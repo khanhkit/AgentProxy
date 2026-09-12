@@ -1,0 +1,13 @@
+[package]
+name = "agentproxy-providers"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+agentproxy-control-protocol = { path = "../control-protocol" }
+serde_json = "1"
+
+[lints]
+workspace = true
