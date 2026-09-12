@@ -1,3 +1,13 @@
+# ── AgentProxy Rust data-plane builder ─────────────────────────────────────
+FROM rust:1.98-slim-trixie AS rust-builder
+WORKDIR /app/rust
+COPY rust/Cargo.toml rust/Cargo.lock ./
+COPY rust/crates ./crates
+RUN --mount=type=cache,target=/usr/local/cargo/registry \
+    --mount=type=cache,target=/app/rust/target \
+    cargo build --locked --release -p agentproxy-gateway \
+    && cp /app/rust/target/release/agentproxy-gateway /tmp/agentproxy-gateway
+
 # ── Common base with runtime deps ──────────────────────────────────────────
 FROM node:26-trixie-slim AS base
 WORKDIR /app
@@ -205,15 +215,18 @@ RUN --mount=type=cache,id=s/92ca8a61-c1ba-421f-a389-d48ac7258c2d-next-cache,targ
 # ── Runner base ────────────────────────────────────────────────────────────
 FROM base AS runner-base
 
-LABEL org.opencontainers.image.title="omniroute" \
-  org.opencontainers.image.description="Unified AI proxy — route any LLM through one endpoint" \
-  org.opencontainers.image.url="https://omniroute.online" \
-  org.opencontainers.image.source="https://github.com/diegosouzapw/OmniRoute" \
+LABEL org.opencontainers.image.title="AgentProxy" \
+  org.opencontainers.image.description="Agent-first AI proxy with a native Rust streaming data plane" \
+  org.opencontainers.image.url="https://github.com/khanhkit/AgentProxy" \
+  org.opencontainers.image.source="https://github.com/khanhkit/AgentProxy" \
   org.opencontainers.image.licenses="MIT"
 
 ENV NODE_ENV=production
 ENV PORT=20128
+ENV API_PORT=20128
+ENV DASHBOARD_PORT=20129
 ENV HOSTNAME=0.0.0.0
+ENV AGENTPROXY_RUST_CORE=1
 # Runtime heap ceiling. 1024MB is enough for normal traffic but can be tight
 # for large fusion-combo panels (many models fanned out in parallel, each
 # response buffered in full — see open-sse/services/fusion.ts::FUSION_DEFAULTS
@@ -236,6 +249,7 @@ RUN mkdir -p /app/data
 # (build-output-isolation cleanup). See scripts/build/assembleStandalone.mjs
 # (EXTRA_MODULE_ENTRIES) for the single source of truth.
 COPY --from=builder /app/.build/next/standalone ./
+COPY --from=rust-builder /tmp/agentproxy-gateway ./rust/target/release/agentproxy-gateway
 # better-sqlite3 is the one exception still copied explicitly: assembleStandalone
 # only syncs its native build/ dir; the JS wrapper (lib/, package.json) is left to
 # Next.js tracing. bootstrap-env requires SQLite BEFORE the standalone server
@@ -253,7 +267,7 @@ COPY --from=builder /app/scripts/dev/healthcheck.mjs ./healthcheck.mjs
 # COPYs so it covers files originally owned by root in the builder stage.
 RUN chown -R node:node /app
 
-EXPOSE 20128
+EXPOSE 20128 20129
 
 # Drop to non-root before ENTRYPOINT/CMD so every derived stage (runner-cli,
 # runner-web) also runs as a non-root user unless they explicitly switch back.

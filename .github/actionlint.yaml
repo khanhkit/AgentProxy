@@ -1,0 +1,10 @@
+self-hosted-runner:
+  labels:
+    - agentproxy-secure
+    - kitmcp-arm64
+paths:
+  .github/workflows/**/*.yml:
+    ignore:
+      # GitHub.com supports $/ self-repository references since 2026-07-30;
+      # actionlint 1.7.12 predates that syntax. Remove once actionlint supports it.
+      - 'specifying action "\$/.*" in invalid format because ref is missing'

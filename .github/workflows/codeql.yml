@@ -8,6 +8,11 @@ name: CodeQL
 # default setup's alerts in the meantime.)
 on:
   workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 jobs:
@@ -15,8 +20,8 @@ jobs:
     name: Analyze (javascript-typescript)
     runs-on: ubuntu-latest
     permissions:
-      security-events: write
-      actions: read
+      security-events: write # Required to upload CodeQL SARIF results.
+      actions: read # Required by CodeQL to inspect workflow metadata.
       contents: read
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1

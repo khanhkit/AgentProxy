@@ -93,6 +93,18 @@
 - **feat(cli):** run `omniroute serve --tray` as a detached desktop process after server and tray readiness, with graphical login auto-start support.
 - **feat(routing):** add client-, provider-, and model-neutral exclusive managed session connection leases with API-key-bound generation fencing, durable SQLite ownership, explicit allowlist policy, and bounded 429 capacity retry semantics.
 
+## [0.1.0] — 2026-09-12
+
+Initial **AgentProxy** release, published as an independent repository seeded from OmniRoute.
+
+- Added the Rust inference gateway with native Codex Responses streaming, first-event commit, pre-commit account fallback, in-memory API-key admission, and connection-aware scheduling.
+- Added Node→Rust snapshot synchronization, process supervision, split API/dashboard ports, and legacy HTTP/WebSocket fallback.
+- Reworked the container path so the standalone bundle ships and supervises the Rust gateway.
+- Replaced inherited Docker Hub publishing with AgentProxy GHCR multi-architecture publishing and per-architecture runtime smoke checks.
+- Preserved OmniRoute history below for attribution and migration reference; AgentProxy versioning starts at `0.1.0`.
+
+
+
 ## [3.8.51] — TBD
 
 _Living section — cycle opened at the v3.8.50 freeze (parallel-cycle model). Bullets are aggregated from `changelog.d/` fragments at each `/generate-release` phase._

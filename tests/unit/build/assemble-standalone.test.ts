@@ -49,6 +49,7 @@ function seedSidecarSources(root: string) {
     "src/lib/db/migrations/001_init.sql",
     "src/mitm/server.cjs",
     "scripts/dev/run-standalone.mjs",
+    "scripts/dev/rust-core-supervisor.mjs",
     "scripts/dev/standalone-server-ws.mjs",
     "scripts/dev/peer-stamp.mjs",
     "scripts/dev/responses-ws-proxy.mjs",

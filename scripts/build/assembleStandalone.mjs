@@ -190,6 +190,11 @@ const EXTRA_MODULE_ENTRIES = [
     dest: ["dev", "run-standalone.mjs"],
   },
   {
+    label: "AgentProxy Rust core supervisor",
+    src: ["scripts", "dev", "rust-core-supervisor.mjs"],
+    dest: ["dev", "rust-core-supervisor.mjs"],
+  },
+  {
     // WS-aware wrapper that run-standalone.mjs prefers over bare server.js.
     // It installs the trusted peer-IP stamp the authz middleware needs to allow
     // loopback/LAN access to LOCAL_ONLY routes; without it the Docker container

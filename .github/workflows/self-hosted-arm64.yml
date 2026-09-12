@@ -1,0 +1,66 @@
+name: Self-hosted ARM64 Gate
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "17 3 * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: self-hosted-arm64-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  trusted-arm64:
+    name: Trusted ARM64 reproduction
+    runs-on: [self-hosted, Linux, ARM64, agentproxy-secure, kitmcp-arm64]
+    timeout-minutes: 45
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Assert runner isolation
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(id -u)" -ne 0
+          test ! -S /var/run/docker.sock
+          test "$(uname -m)" = "aarch64"
+
+      - name: Set up Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --ignore-scripts=false
+
+      - name: Typecheck core
+        run: npm run typecheck:core
+
+      - name: Verify release metadata
+        run: npm run check:docs-sync
+
+      - name: Run AgentProxy runtime regressions
+        shell: bash
+        run: |
+          set -euo pipefail
+          tests=(
+            tests/unit/agentproxy-docker-rust-wiring.test.mjs
+            tests/unit/build/assemble-standalone.test.ts
+            tests/unit/runtime-ports.test.ts
+            tests/unit/api-bridge-rust-core.test.ts
+            tests/unit/rust-core-snapshot.test.ts
+            tests/unit/rust-core-snapshot-route.test.ts
+            tests/unit/rust-core-supervisor.test.ts
+          )
+          for test_file in "${tests[@]}"; do
+            node --import tsx/esm --test "$test_file"
+          done

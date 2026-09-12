@@ -26,6 +26,7 @@ concurrency:
   cancel-in-progress: true
 jobs:
   dast-smoke:
+    name: DAST smoke
     runs-on: ubuntu-latest
     # ADVISORY while this new gate matures (repo convention: advisory -> blocking).
     # Flip to blocking (remove continue-on-error) once it's proven stable across a few PRs.
@@ -45,7 +46,7 @@ jobs:
         with:
           node-version: "24"
           cache: npm
-      - uses: ./.github/actions/npm-ci-retry
+      - uses: $/.github/actions/npm-ci-retry
       - name: Build CLI bundle
         env:
           OMNIROUTE_BUILD_BACKEND_ONLY: "1"
@@ -80,13 +81,18 @@ jobs:
             --exclude-path-regex '^/api/auth/(oidc/|login)' \
             --max-examples 8 --workers 4 --checks all --max-response-time 30 \
             --request-timeout 20 --suppress-health-check all --no-color
-      - name: Install promptfoo
-        run: npm install -g promptfoo@0.122.0
       - name: promptfoo injection-guard (blocking)
         env:
           OMNIROUTE_URL: http://localhost:20128
           OMNIROUTE_API_KEY: not-needed-blocked-before-upstream
-        run: promptfoo eval -c promptfooconfig.yaml --no-cache
+        run: |
+          docker run --rm --network host \
+            --volume "$GITHUB_WORKSPACE:/work" \
+            --workdir /work \
+            --env OMNIROUTE_URL \
+            --env OMNIROUTE_API_KEY \
+            ghcr.io/promptfoo/promptfoo:0.122.0@sha256:53d9faa8813d9eecdc91a65dbb3dbdd87dd9e9aab9a9900c5a2cda3276909206 \
+            promptfoo eval -c promptfooconfig.yaml --no-cache
       - name: Stop server
         if: always()
         run: kill "$(cat server.pid)" || true
