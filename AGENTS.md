@@ -46,7 +46,7 @@ Repository map and Reference Documentation sections below.
 
 ## Project at a Glance
 
-**OmniRoute** — unified AI proxy/router. One endpoint, 356 LLM providers, auto-fallback.
+**AgentProxy** — agent-first AI gateway. One endpoint, 358 inherited provider integrations, auto-fallback, and a Rust streaming data plane.
 
 | Layer         | Location                | Purpose                                                                                                                                                                   |
 | ------------- | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

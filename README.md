@@ -15,7 +15,7 @@ The immediate goal is a low-latency, resilient gateway for Codex and other agent
 - in-memory account leases, health-aware routing, and concurrency limits
 - hash-only client API-key admission in the Rust hot path
 - config/credential snapshots from the local control plane with restart-safe generations
-- HTTP and WebSocket compatibility fallback to the inherited control plane while providers migrate to Rust
+- HTTP and WebSocket compatibility fallback to the inherited 358-provider control-plane catalog while providers migrate to Rust
 - native Codex Responses fast path with connection pooling and inactivity-based stream timeouts
 
 ## Architecture

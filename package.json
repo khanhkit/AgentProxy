@@ -1,7 +1,7 @@
 {
   "name": "agentproxy",
   "version": "0.1.0",
-  "description": "Agent-first AI gateway with a Rust streaming data plane and extensible control plane for routing, MCP, memory, RAG, and knowledge workflows.",
+  "description": "Agent-first AI gateway with a Rust streaming data plane and an inherited 358-provider control plane for routing, MCP, memory, RAG, and knowledge workflows.",
   "type": "module",
   "bin": {
     "agentproxy": "bin/omniroute.mjs",
@@ -94,7 +94,7 @@
     "dev": "node --max-old-space-size=8192 scripts/dev/run-next.mjs dev",
     "dev:rust-core": "node scripts/dev/run-rust-core.mjs dev",
     "prebuild:docs": "node scripts/docs/gen-openapi-module.mjs",
-    "gen:provider-reference": "bun scripts/docs/gen-provider-reference.ts",
+    "gen:provider-reference": "node --import tsx/esm scripts/docs/gen-provider-reference.ts",
     "bench:compression": "bun scripts/compression/benchmark.ts",
     "bench:heap-body": "node --expose-gc --import tsx/esm scripts/perf/request-body-heap.ts",
     "bench:routing-events": "node --import tsx/esm scripts/perf/routing-events-bench.ts",

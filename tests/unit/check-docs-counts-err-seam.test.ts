@@ -49,6 +49,51 @@ describe("readCodeFacts failure is reported as a strict failure", () => {
     assert.match(String(v.detail), /readCodeFacts|tsx|spawnSync/i);
   });
 
+  it("uses live provider facts as the canonical provider count", () => {
+    const facts = {
+      freeSteady: 1_000_000_000,
+      entries: 1,
+      freeFirst: 1_000_000_000,
+      freeGated: 1_000_000,
+      freePools: 1,
+      engines: 1,
+      cliTotal: 1,
+      cliCode: 1,
+      cliAgent: 0,
+      mcpTools: 1,
+      mcpScopes: 1,
+      providers: 999,
+      freeForever: 1,
+      modePacks: [],
+      catalogDate: "2026-09-03",
+      sortBy: "reliability",
+      intelligentKeys: 16,
+      hardStop: 1,
+      trainsOnPrompts: 1,
+      freeTierCount: 1,
+      freeTierReg: 1,
+      manifestFreeTier: 1,
+    };
+    __setSpawnSyncForTest(
+      () =>
+        ({
+          status: 0,
+          stdout: `@@${JSON.stringify(facts)}\n`,
+          stderr: "",
+          pid: 1,
+          output: [],
+          signal: null,
+        }) as never
+    );
+    const checks = buildChecks() as Check[];
+    const provider = checks.find((c) => c.label === "Provider count");
+    const packageProvider = checks.find(
+      (c) => c.label === "Provider count (package.json description)"
+    );
+    assert.equal(provider?.actual, 999);
+    assert.equal(packageProvider?.actual, 999);
+  });
+
   it("tallyDrift does not skip actual ERR", () => {
     const checks = [
       {

@@ -542,21 +542,23 @@ const SVG_DIAGRAM_FILES = [
 ];
 
 export function buildChecks() {
+  const codeFacts = readCodeFacts();
+  const liveProviderCount = codeFacts?.providers ?? 0;
   return [
     {
       label: "Provider count",
-      actual: readProviderTotal(),
+      actual: liveProviderCount,
       docKey: "providers",
       strict: true,
       files: ["README.md", "AGENTS.md", "llm.txt"],
     },
     {
       label: "Provider count (package.json description)",
-      actual: readProviderTotal(),
+      actual: liveProviderCount,
       docKey: "providers",
       strict: true,
       files: ["package.json"],
-      validate: makePackageDescriptionValidator(readProviderTotal()),
+      validate: makePackageDescriptionValidator(liveProviderCount),
     },
     {
       label: "DB migrations count",
@@ -588,7 +590,7 @@ export function buildChecks() {
       files: ["docs/README.md", "docs/guides/I18N.md"],
     },
     ...(() => {
-      const f = readCodeFacts();
+      const f = codeFacts;
       if (!f)
         return [
           {
