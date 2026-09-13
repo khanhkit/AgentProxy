@@ -20,6 +20,20 @@ test("async tier reflects a DB price write without restart", async () => {
   }
 });
 
+test("async tier preserves explicit-free provider precedence over DB pricing", async () => {
+  try {
+    await updatePricing({ kiro: { "claude-sonnet-4.5": { input: 7, output: 21 } } });
+    const asyncTier = await classifyTierAsync("kiro", "claude-sonnet-4.5");
+    assert.equal(asyncTier.tier, "free");
+    assert.equal(asyncTier.costPer1MInput, 0);
+    assert.equal(asyncTier.costPer1MOutput, 0);
+    assert.deepEqual(classifyTier("kiro", "claude-sonnet-4.5"), asyncTier);
+  } finally {
+    await resetPricing("kiro", "claude-sonnet-4.5");
+    clearTierCache();
+  }
+});
+
 test("resetAllPricing (full wipe, no read-cache bust) also falls back cleanly", async () => {
   try {
     await updatePricing({ testprov: { "testmodel-cache-2": { input: 0, output: 0 } } });

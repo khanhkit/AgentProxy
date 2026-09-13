@@ -146,6 +146,20 @@ export function getTierStats(): Record<ProviderTier, number> {
 export let tierAsyncFallbackTotal = 0; // exported for testability
 
 export async function classifyTierAsync(provider: string, model: string): Promise<TierAssignment> {
+  const hasProviderOverride = currentConfig.providerOverrides.some(
+    (o) => o.provider.toLowerCase() === provider.toLowerCase()
+  );
+  const hasModelOverride = currentConfig.modelOverrides.some(
+    (o) => o.provider.toLowerCase() === provider.toLowerCase() && matchGlob(o.modelPattern, model)
+  );
+
+  // Explicit-free providers and operator overrides are policy, not pricing hints. They must
+  // win before the mutable DB-pricing layer just as they do in classifyTier(). Otherwise an
+  // async lookup can poison the shared cache with a paid tier for a provider configured free.
+  if (isExplicitlyFree(provider, currentConfig) || hasProviderOverride || hasModelOverride) {
+    return classifyTier(provider, model);
+  }
+
   try {
     const { getPricingForModel } = await import("@/lib/db/settings");
     const db = await getPricingForModel(provider, model);

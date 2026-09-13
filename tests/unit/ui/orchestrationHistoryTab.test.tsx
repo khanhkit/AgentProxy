@@ -23,6 +23,10 @@ vi.mock("@/app/(dashboard)/dashboard/orchestration/drawer/OrchestrationDrawer", 
 
 import { HistoryTab } from "@/app/(dashboard)/dashboard/orchestration/tabs/HistoryTab";
 
+(
+  globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT?: boolean }
+).IS_REACT_ACT_ENVIRONMENT = true;
+
 function render(el: React.ReactElement) {
   const c = document.createElement("div");
   document.body.appendChild(c);
@@ -52,7 +56,7 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
-const NOW = Date.parse("2026-09-01T12:00:00Z");
+const NOW = Date.now();
 const hoursAgo = (h: number) => new Date(NOW - h * 60 * 60 * 1000).toISOString();
 /** Relative to the REAL clock — for assertions that must hold inside the 1d window too
  * (the component derives its range from `Date.now()`, not from the fixed `NOW` above). */

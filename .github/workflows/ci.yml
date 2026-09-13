@@ -965,17 +965,6 @@ jobs:
       # PR #7127 — 69 fails triaged: matchMedia polyfill, node:test→vitest migration,
       # CompareTab D22 cap). Promoted to BLOCKING per the plan's post-merge step.
       - run: npm run test:vitest:ui -- --reporter=default --reporter=junit --outputFile.junit=trunk-junit/vitest-ui.xml
-      # Trunk Flaky Tests upload — advisory (never blocks), own-origin only (fork PRs
-      # have no TRUNK_TOKEN). Pinned by SHA (tag v2.1.2).
-      - name: Upload test results to Trunk (advisory)
-        if: ${{ always() && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) }}
-        continue-on-error: true
-        uses: trunk-io/analytics-uploader@385f1ccdf345b4532dc4b6c665dd432b702b8e28 # v2.1.2
-        with:
-          junit-paths: trunk-junit/**/*.xml
-          org-slug: omniroute
-          token: ${{ secrets.TRUNK_TOKEN }}
-
   # Node 24/26 compatibility matrices moved to .github/workflows/nightly-compat.yml
   # (plano mestre testes+CI, Eixo D2 — they cost ~28% of every heavy run to catch a
   # failure class that rarely originates in a PR; nightly catches it within 24h and
@@ -1296,16 +1285,6 @@ jobs:
             echo "[e2e-balance] balancer unavailable — plain --shard fallback"
             npx playwright test tests/e2e/*.spec.ts --shard="$SHARD"/9 --reporter=line,junit
           fi
-      # WS5.2/5.3: Trunk Flaky Tests upload — advisory, own-origin only, SHA-pinned.
-      - name: Upload test results to Trunk (advisory)
-        if: ${{ always() && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) }}
-        continue-on-error: true
-        uses: trunk-io/analytics-uploader@385f1ccdf345b4532dc4b6c665dd432b702b8e28 # v2.1.2
-        with:
-          junit-paths: junit-e2e-results.xml
-          org-slug: omniroute
-          token: ${{ secrets.TRUNK_TOKEN }}
-
   test-integration:
     name: Integration Tests (${{ matrix.shard }}/2)
     runs-on: ubuntu-latest

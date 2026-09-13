@@ -20,9 +20,12 @@ import {
   AUTO_FAMILY_IDS,
 } from "../../../open-sse/services/autoCombo/modelFamily";
 
-// First-touch DB migrations run once per worker and can exceed vitest's 5s
-// default in a cold thread; the DB-backed materialization tests below need it.
-vi.setConfig({ testTimeout: 20_000 });
+// First-touch DB migrations run once per worker. This file is fast in isolation
+// (~4s for the heaviest case) but can exceed 20s when the full MCP suite runs
+// 20 workers that cold-migrate separate SQLite databases concurrently. Keep the
+// larger timeout scoped to this DB-heavy file instead of weakening the global
+// test timeout.
+vi.setConfig({ testTimeout: 60_000 });
 
 const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-family-combo-"));
 const ORIGINAL_DATA_DIR = process.env.DATA_DIR;

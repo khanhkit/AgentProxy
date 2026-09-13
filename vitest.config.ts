@@ -8,7 +8,9 @@ export default defineConfig({
     globals: true,
     setupFiles: ["./tests/_setup/vitestUiPolyfills.ts"],
     pool: "threads",
-    maxWorkers: 20,
+    // Keep jsdom-heavy UI suites deterministic on 10 GiB runners; higher file fan-out
+    // causes cross-test timing failures even though the affected files pass in isolation.
+    maxWorkers: 4,
     fileParallelism: true,
     maxConcurrency: 20,
     include: [
