@@ -5,6 +5,8 @@ updates:
     schedule:
       interval: "weekly"
       day: "monday"
+    cooldown:
+      default-days: 7
     commit-message:
       prefix: "deps"
     open-pull-requests-limit: 10
@@ -79,12 +81,16 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    cooldown:
+      default-days: 7
 
   - package-ecosystem: "npm"
     directory: "/electron"
     schedule:
       interval: "weekly"
       day: "monday"
+    cooldown:
+      default-days: 7
     commit-message:
       prefix: "deps"
 
@@ -93,5 +99,7 @@ updates:
     schedule:
       interval: "weekly"
       day: "monday"
+    cooldown:
+      default-days: 7
     commit-message:
       prefix: "deps"
