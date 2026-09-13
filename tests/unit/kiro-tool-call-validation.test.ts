@@ -227,7 +227,7 @@ test("Kiro cancels the upstream body after an invalid wrapper", async () => {
   assert.equal(cancelled, true);
 });
 
-test("Kiro stream errors become Responses response.failed events", async () => {
+test("Kiro stream errors emit Responses response.failed before terminating the stream", async () => {
   const transform = createSSETransformStreamWithLogger(
     FORMATS.KIRO,
     FORMATS.OPENAI_RESPONSES,
@@ -236,23 +236,40 @@ test("Kiro stream errors become Responses response.failed events", async () => {
     null,
     "kiro-model"
   );
-  const writer = transform.writable.getWriter();
-  const responseText = new Response(transform.readable).text();
+  const source = new ReadableStream<Uint8Array>({
+    start(controller) {
+      controller.enqueue(
+        textEncoder.encode(
+          `data: ${JSON.stringify({
+            error: {
+              message: "Invalid Kiro tool_call payload: missing nested MCP tool name at input.name",
+              type: "invalid_request_error",
+              code: "invalid_kiro_tool_call",
+            },
+          })}\n\n`
+        )
+      );
+      controller.close();
+    },
+  });
+  const reader = source.pipeThrough(transform).getReader();
+  const decoder = new TextDecoder();
+  let text = "";
+  let streamError: unknown = null;
 
-  await writer.write(
-    textEncoder.encode(
-      `data: ${JSON.stringify({
-        error: {
-          message: "Invalid Kiro tool_call payload: missing nested MCP tool name at input.name",
-          type: "invalid_request_error",
-          code: "invalid_kiro_tool_call",
-        },
-      })}\n\n`
-    )
-  );
-  await writer.close();
-  const text = await responseText;
+  try {
+    while (true) {
+      const chunk = await reader.read();
+      if (chunk.done) break;
+      text += decoder.decode(chunk.value, { stream: true });
+    }
+    text += decoder.decode();
+  } catch (error) {
+    streamError = error;
+  }
 
+  assert.ok(streamError, "terminal Kiro failure must reject the stream for fallback/persistence");
+  assert.match(String(streamError), /missing nested MCP tool name/);
   assert.match(text, /event: response\.failed/);
   assert.match(text, /invalid_kiro_tool_call/);
   assert.match(text, /missing nested MCP tool name/);

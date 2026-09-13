@@ -653,7 +653,7 @@ async function handleChatImplementation(
     log.warn("CHAT", `Rejecting image-generation model on chat endpoint: ${modelStr}`);
     return errorResponse(
       HTTP_STATUS.BAD_REQUEST,
-      `Model '${modelStr}' is an image-generation model and cannot be used on /v1/chat/completions. Use POST /v1/images/generations instead.`
+      `Model '${modelStr}' is an image-generation model and cannot be used on Route /v1/chat/completions. Use POST /v1/images/generations instead.`
     );
   }
 

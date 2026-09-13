@@ -24,10 +24,34 @@ export interface VideoContactSheetResult {
 
 const MAX_FRAMES = 16;
 const MAX_SHEET_BYTES = 32 * 1024 * 1024;
-const LABEL_FONT_SIZE = 32;
 const LABEL_HEIGHT = 64;
 const LABEL_PADDING = 16;
 const TILE_SIZE = 512;
+const TIMESTAMP_GLYPH_SCALE = 4;
+const TIMESTAMP_GLYPH_WIDTH = 5;
+const TIMESTAMP_GLYPH_GAP = 4;
+
+const TIMESTAMP_GLYPHS: Record<string, readonly string[]> = {
+  "0": ["11111", "10001", "10011", "10101", "11001", "10001", "11111"],
+  "1": ["00100", "01100", "00100", "00100", "00100", "00100", "01110"],
+  "2": ["11110", "00001", "00001", "11110", "10000", "10000", "11111"],
+  "3": ["11110", "00001", "00001", "01110", "00001", "00001", "11110"],
+  "4": ["10010", "10010", "10010", "11111", "00010", "00010", "00010"],
+  "5": ["11111", "10000", "10000", "11110", "00001", "00001", "11110"],
+  "6": ["01111", "10000", "10000", "11110", "10001", "10001", "01110"],
+  "7": ["11111", "00001", "00010", "00100", "01000", "01000", "01000"],
+  "8": ["01110", "10001", "10001", "01110", "10001", "10001", "01110"],
+  "9": ["01110", "10001", "10001", "01111", "00001", "00001", "11110"],
+  ":": ["00000", "00100", "00100", "00000", "00100", "00100", "00000"],
+  ".": ["00000", "00000", "00000", "00000", "00000", "00100", "00100"],
+  t: ["00100", "00100", "11111", "00100", "00100", "00101", "00010"],
+  e: ["00000", "01110", "10001", "11111", "10000", "10001", "01110"],
+  s: ["00000", "01111", "10000", "01110", "00001", "00001", "11110"],
+  "=": ["00000", "11111", "00000", "11111", "00000", "00000", "00000"],
+  "+": ["00000", "00100", "00100", "11111", "00100", "00100", "00000"],
+  "-": ["00000", "00000", "00000", "11111", "00000", "00000", "00000"],
+  "?": ["01110", "10001", "00010", "00100", "00100", "00000", "00100"],
+};
 
 function fallback(frames: readonly ContactSheetFrame[]): VideoContactSheetResult {
   return {
@@ -50,10 +74,26 @@ function formatContactSheetTimestamp(timestampSeconds: number): string {
 function buildTimestampLabel(timestampSeconds: number): Buffer {
   const label = formatContactSheetTimestamp(timestampSeconds);
   const labelTop = TILE_SIZE - LABEL_HEIGHT;
+  const glyphAdvance = TIMESTAMP_GLYPH_WIDTH * TIMESTAMP_GLYPH_SCALE + TIMESTAMP_GLYPH_GAP;
+  const glyphTop = labelTop + 18;
+  const glyphRects: string[] = [];
+
+  for (let index = 0; index < label.length; index++) {
+    const rows = TIMESTAMP_GLYPHS[label[index]] ?? TIMESTAMP_GLYPHS["?"];
+    for (let row = 0; row < rows.length; row++) {
+      for (let column = 0; column < rows[row].length; column++) {
+        if (rows[row][column] !== "1") continue;
+        glyphRects.push(
+          `<rect x="${LABEL_PADDING + index * glyphAdvance + column * TIMESTAMP_GLYPH_SCALE}" y="${glyphTop + row * TIMESTAMP_GLYPH_SCALE}" width="${TIMESTAMP_GLYPH_SCALE}" height="${TIMESTAMP_GLYPH_SCALE}" fill="#ffffff" />`
+        );
+      }
+    }
+  }
+
   return Buffer.from(
-    `<svg xmlns="http://www.w3.org/2000/svg" width="${TILE_SIZE}" height="${TILE_SIZE}" viewBox="0 0 ${TILE_SIZE} ${TILE_SIZE}">
+    `<svg xmlns="http://www.w3.org/2000/svg" width="${TILE_SIZE}" height="${TILE_SIZE}" viewBox="0 0 ${TILE_SIZE} ${TILE_SIZE}" shape-rendering="crispEdges">
       <rect x="0" y="${labelTop}" width="${TILE_SIZE}" height="${LABEL_HEIGHT}" fill="#000000" fill-opacity="0.82" />
-      <text x="${LABEL_PADDING}" y="${labelTop + 42}" fill="#ffffff" font-family="DejaVu Sans Mono, monospace" font-size="${LABEL_FONT_SIZE}" font-weight="700">${label}</text>
+      ${glyphRects.join("")}
     </svg>`
   );
 }

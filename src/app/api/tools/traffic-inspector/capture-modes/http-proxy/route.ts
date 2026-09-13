@@ -12,7 +12,14 @@ import { InspectorCaptureModeActionSchema } from "@/shared/schemas/inspector";
 import { startHttpProxyServer } from "@/mitm/inspector/httpProxyServer";
 import { getHttpProxyHandle, setHttpProxyHandle } from "@/lib/inspector/captureState";
 
-const DEFAULT_PORT = Number(process.env.INSPECTOR_HTTP_PROXY_PORT ?? "8080") || 8080;
+function resolveHttpProxyPort(raw: string | undefined): number {
+  if (raw === undefined || raw.trim() === "") return 8080;
+  const parsed = Number(raw);
+  return Number.isInteger(parsed) && parsed >= 0 && parsed <= 65_535 ? parsed : 8080;
+}
+
+// Port 0 is intentional and valid: ask the OS for an ephemeral listener.
+const DEFAULT_PORT = resolveHttpProxyPort(process.env.INSPECTOR_HTTP_PROXY_PORT);
 
 export async function POST(request: Request): Promise<Response> {
   let body: unknown;

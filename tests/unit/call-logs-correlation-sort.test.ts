@@ -104,6 +104,37 @@ test("buildCallLogListRows: in-memory entries carry correlationId for downstream
   assert.equal(completed?.correlationId, null);
 });
 
+test("buildCallLogListRows: dedupes a completed live request when its persisted combo attempt has the same correlation id", () => {
+  const now = 3_500_000;
+  const rows = buildCallLogListRows({
+    logs: [
+      {
+        id: "combo-attempt-unique",
+        timestamp: new Date(now - 1_000).toISOString(),
+        correlationId: "corr-combo-1",
+      },
+    ],
+    connections: [],
+    pendingDetails: [],
+    completedDetails: [
+      {
+        id: "live-pending-id",
+        startedAt: now - 3_000,
+        completedAt: now - 2_000,
+        provider: "openai",
+        model: "gpt-4o",
+        connectionId: "conn-1",
+        correlationId: "corr-combo-1",
+      },
+    ],
+    now,
+  });
+
+  assert.equal(rows.length, 1);
+  assert.equal(rows[0].id, "combo-attempt-unique");
+  assert.equal(rows[0].completed, undefined);
+});
+
 test("buildCallLogListRows: dedupes completed in-memory entries already persisted to the DB", () => {
   const now = 4_000_000;
   const rows = buildCallLogListRows({

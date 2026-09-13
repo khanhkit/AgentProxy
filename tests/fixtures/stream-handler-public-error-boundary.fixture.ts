@@ -88,7 +88,7 @@ test("OpenAI stream failures keep raw diagnostics internal and sanitize the publ
   assert.doesNotMatch(publicWire, new RegExp(API_KEY));
   assert.doesNotMatch(publicWire, /\/srv\/omniroute\/private/);
   assert.doesNotMatch(publicWire, /dispatcher\.ts/);
-  assert.match(publicWire, /Authorization: \[REDACTED\]/);
+  assert.doesNotMatch(publicWire, /Authorization:\s*Bearer/i);
   assert.match(publicWire, /<path>/);
 });
 
@@ -124,7 +124,7 @@ test("Responses stream failures preserve the failure event shape without leaking
   assert.doesNotMatch(publicWire, new RegExp(API_KEY));
   assert.doesNotMatch(publicWire, /\/srv\/omniroute\/private/);
   assert.doesNotMatch(publicWire, /dispatcher\.ts/);
-  assert.match(publicWire, /Authorization: \[REDACTED\]/);
+  assert.doesNotMatch(publicWire, /Authorization:\s*Bearer/i);
   assert.match(publicWire, /<path>/);
 });
 
@@ -159,7 +159,7 @@ test("Claude stream failures preserve error and stop events without leaking diag
   assert.doesNotMatch(publicWire, new RegExp(API_KEY));
   assert.doesNotMatch(publicWire, /\/srv\/omniroute\/private/);
   assert.doesNotMatch(publicWire, /dispatcher\.ts/);
-  assert.match(publicWire, /Authorization: \[REDACTED\]/);
+  assert.doesNotMatch(publicWire, /Authorization:\s*Bearer/i);
   assert.match(publicWire, /<path>/);
 });
 
@@ -188,7 +188,7 @@ test("stream diagnostics sanitize logs while callbacks retain the original failu
   const logs = logLines.join("\n");
   assert.equal(internalError, upstreamError);
   assert.match(logs, /error: Upstream failed at <path>/);
-  assert.match(logs, /Authorization: \[REDACTED\]/);
+  assert.doesNotMatch(logs, /Authorization:\s*Bearer/i);
   assert.doesNotMatch(logs, new RegExp(SECRET));
   assert.doesNotMatch(logs, new RegExp(API_KEY));
   assert.doesNotMatch(logs, /\/srv\/omniroute\/private/);

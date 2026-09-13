@@ -35,6 +35,7 @@ interface OutputStyleLanguageConfig {
   enabled?: boolean;
   autoDetect?: boolean;
   defaultLanguage?: string;
+  enabledPacks?: string[];
 }
 
 function lastUserText(body: ChatRequestBody): string {
@@ -70,7 +71,11 @@ export function resolveOutputStyleLanguage(
   if (languageConfig?.enabled !== true) return "en";
   if (languageConfig.autoDetect === true) {
     const text = lastUserText(body);
-    if (text) return detectCompressionLanguage(text);
+    if (text) {
+      const detected = detectCompressionLanguage(text);
+      const enabledPacks = languageConfig.enabledPacks?.filter(Boolean) ?? [];
+      if (enabledPacks.length === 0 || enabledPacks.includes(detected)) return detected;
+    }
   }
   return languageConfig.defaultLanguage || "en";
 }

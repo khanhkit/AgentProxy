@@ -92,8 +92,13 @@ export async function GET(request: NextRequest) {
       // Best effort only: keep endpoint fast and resilient.
     }
 
-    // Ensure the default always exists as a safe fallback.
-    if (!options.some((o) => o.value === "openai/text-embedding-3-small")) {
+    // Keep the OpenAI default available only when OpenAI itself is configured.
+    // A quick-select entry without a usable provider connection is not a safe
+    // fallback: selecting it would persist a model the runtime cannot call.
+    if (
+      configuredProviders.has("openai") &&
+      !options.some((o) => o.value === "openai/text-embedding-3-small")
+    ) {
       options.unshift({
         value: "openai/text-embedding-3-small",
         label: "openai/text-embedding-3-small - OpenAI Text Embedding 3 Small",
@@ -105,7 +110,11 @@ export async function GET(request: NextRequest) {
     // embedding providers instead of only chat-catalog text matches and
     // OpenRouter live discovery. Registry options dedupe against the above;
     // mergeEmbeddingOptions returns value-sorted options for stable UI order.
-    const withRegistry = mergeEmbeddingOptions(options, buildRegistryEmbeddingOptions());
+    const configuredRegistryOptions = buildRegistryEmbeddingOptions().filter((option) => {
+      const providerId = option.value.split("/", 1)[0];
+      return configuredProviders.has(providerId);
+    });
+    const withRegistry = mergeEmbeddingOptions(options, configuredRegistryOptions);
 
     return NextResponse.json({ models: withRegistry });
   } catch (error) {

@@ -3,7 +3,13 @@ import type { getProviderCredentials } from "@/sse/services/auth.ts";
 import type { updateFromHeaders, updateFromResponseBody } from "../../services/rateLimitManager.ts";
 import type { writeTerminalStatus } from "@/shared/utils/terminalStatus.ts";
 import type { updateProviderConnection } from "@/lib/db/providers.ts";
-import type { lockModel, recordCoreOwnedAntigravityQuotaState } from "../../services/accountFallback.ts";
+import type {
+  lockModel,
+  lockModelIfPerModelQuota,
+  recordCoreOwnedAntigravityQuotaState,
+} from "../../services/accountFallback.ts";
+import { parseRetryAfterFromBody } from "../../services/accountFallback.ts";
+import { classifyProviderError, PROVIDER_ERROR_TYPES } from "../../services/errorClassifier.ts";
 import { createErrorResult } from "../../utils/error.ts";
 import { applyStatusRestatement } from "../../config/upstreamStatusRestatement.ts";
 import { recoverAnthropicThinkingSignature } from "./thinkingSignatureRecovery.ts";
@@ -84,6 +90,7 @@ export interface PipelineStateHooks {
     untilMs: number | null
   ) => void | Promise<void>;
   lockModel: typeof lockModel;
+  lockModelIfPerModelQuota: typeof lockModelIfPerModelQuota;
   recordAntigravityQuotaState: typeof recordCoreOwnedAntigravityQuotaState;
   markAccountSemaphoreBlocked: (connectionId: string) => void;
   isolateProbeFailures: () => boolean | Promise<boolean>;
@@ -136,6 +143,51 @@ function retryAfterMsFrom(attempt: ChatCoreExecutorResult): number | null {
   return parsed * 1000;
 }
 
+async function readFailureDetails(
+  attempt: ChatCoreExecutorResult
+): Promise<{ message: string; body: unknown; errorCode?: string; errorType?: string }> {
+  let message = attempt.response.statusText || "upstream error";
+  let body: unknown = attempt.transformedBody;
+  let errorCode: string | undefined;
+  let errorType: string | undefined;
+  try {
+    const text = await attempt.response.clone().text();
+    if (!text) return { message, body };
+    body = text;
+    try {
+      const parsed = JSON.parse(text);
+      body = parsed;
+      const envelope = parsed as {
+        error?: { message?: unknown; code?: unknown; type?: unknown } | string;
+        message?: unknown;
+        code?: unknown;
+        type?: unknown;
+      } | null;
+      const err = envelope?.error;
+      const extracted =
+        err && typeof err === "object" && typeof err.message === "string"
+          ? err.message
+          : typeof envelope?.message === "string"
+            ? envelope.message
+            : typeof err === "string"
+              ? err
+              : null;
+      if (extracted) message = extracted;
+      const rawCode = err && typeof err === "object" ? err.code : envelope?.code;
+      const rawType = err && typeof err === "object" ? err.type : envelope?.type;
+      if (typeof rawCode === "string" && rawCode) errorCode = rawCode;
+      if (typeof rawType === "string" && rawType) errorType = rawType;
+    } catch {
+      // Plain-text upstream errors are still meaningful diagnostics and should
+      // survive the pipeline instead of being replaced by a generic statusText.
+      message = text;
+    }
+  } catch {
+    // Keep the response status text and transformed request body fallback.
+  }
+  return { message, body, errorCode, errorType };
+}
+
 function leaseMismatch(model: string, connectionId: string): ProviderExecutionOutcome {
   const result = createErrorResult(
     LEASE_MISMATCH_STATUS,
@@ -178,17 +230,7 @@ async function toOutcome(
       connectionId,
     };
   }
-  let message = attempt.response.statusText || "upstream error";
-  let body: unknown = attempt.transformedBody;
-  try {
-    // clone() is the drain. sendProviderAttempt must not cancel() a streaming
-    // non-2xx body before we get here (BYOP 422 / Codex 429 Retry-After).
-    body = JSON.parse(await attempt.response.clone().text());
-    const err = (body as { error?: { message?: unknown } } | null)?.error;
-    if (err && typeof err.message === "string" && err.message) message = err.message;
-  } catch {
-    // keep statusText
-  }
+  const { message, body, errorCode, errorType } = await readFailureDetails(attempt);
   const restatement = applyStatusRestatement({
     provider,
     status,
@@ -199,7 +241,10 @@ async function toOutcome(
   const result = createErrorResult(
     restatement.status,
     message,
-    restatement.retryAfterMs
+    restatement.retryAfterMs,
+    errorCode,
+    errorType,
+    body
   );
   return {
     kind: "error",
@@ -276,8 +321,44 @@ export async function runProviderExecutionPipeline(
       return toOutcome(attempt, wire.currentModel, currentConnectionId(connection), target.provider);
     }
 
+    const failedConnectionId = currentConnectionId(connection);
+    const failureDetails = await readFailureDetails(attempt);
+    try {
+      state.recordRateLimitHeaders(
+        target.provider,
+        failedConnectionId,
+        attempt.response.headers,
+        status,
+        wire.currentModel
+      );
+      state.recordRateLimitBody(
+        target.provider,
+        failedConnectionId,
+        failureDetails.body,
+        status,
+        wire.currentModel
+      );
+    } catch {
+      // Rate-limit learning is best-effort and must not replace the upstream failure.
+    }
+
     const isolateProbe = await state.isolateProbeFailures();
     const canRotateAccount = policy.allowAccountRotation && !isolateProbe;
+
+    if (!isolateProbe && failedConnectionId) {
+      const failureType = classifyProviderError(status, failureDetails.message, target.provider);
+      if (failureType === PROVIDER_ERROR_TYPES.QUOTA_EXHAUSTED) {
+        const bodyRetryAfterMs = parseRetryAfterFromBody(failureDetails.body).retryAfterMs;
+        const quotaCooldownMs = bodyRetryAfterMs ?? retryAfterMsFrom(attempt) ?? COOLDOWN_MS.rateLimit;
+        state.lockModelIfPerModelQuota(
+          target.provider,
+          failedConnectionId,
+          target.requestedModel || wire.currentModel,
+          "quota_exhausted",
+          quotaCooldownMs
+        );
+      }
+    }
 
     if (
       canRotateAccount &&

@@ -46,6 +46,7 @@ function noopState(): PipelineStateHooks {
     persistConnectionPatch: () => {},
     setConnectionRateLimitedUntil: () => {},
     lockModel: () => {},
+    lockModelIfPerModelQuota: () => false,
     recordAntigravityQuotaState: async () => {},
     markAccountSemaphoreBlocked: () => {},
     isolateProbeFailures: () => false,

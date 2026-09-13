@@ -62,7 +62,7 @@ async function getMemories(query = "") {
 
 test.beforeEach(async () => {
   await resetStorage();
-  await localDb.updateSettings({ requireLogin: false });
+  await localDb.updateSettings({ setupComplete: true, requireLogin: false });
 });
 
 test.after(() => {

@@ -147,7 +147,7 @@ test("HuggingChat turns a pre-content JSONL generation error into a sanitized 50
       error: { message: string; type?: string; code?: string };
     };
     assert.equal(payload.error.type, "upstream_error");
-    assert.equal(payload.error.code, "huggingchat_generation_error");
+    assert.equal(payload.error.code, "bad_gateway");
     assert.match(payload.error.message, /generation failed/);
     assert.doesNotMatch(payload.error.message, /\/srv\/omniroute/);
     assert.doesNotMatch(payload.error.message, /super-secret/);
@@ -196,7 +196,7 @@ test("HuggingChat turns a terminal non-stream JSONL error into a sanitized 502",
       error: { message: string; type?: string; code?: string };
     };
     assert.equal(payload.error.type, "upstream_error");
-    assert.equal(payload.error.code, "huggingchat_generation_error");
+    assert.equal(payload.error.code, "bad_gateway");
     assert.doesNotMatch(payload.error.message, /\/srv\/omniroute/);
     assert.doesNotMatch(payload.error.message, /super-secret/);
     assert.doesNotMatch(payload.error.message, /\n\s*at /);

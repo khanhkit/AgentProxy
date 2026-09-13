@@ -180,12 +180,17 @@ function applyDrr(targets: ResolvedComboTarget[], comboName: string): ResolvedCo
   if (targets.length <= 1) return targets.slice();
 
   const deficits = getDrrDeficits(comboName);
-  const totalWeight = targets.reduce((sum, t) => sum + normalizeWeight(t.weight), 0);
-  if (totalWeight <= 0) return targets.slice();
+  const effectiveWeights = targets.map((target) => normalizeWeight(target.weight));
+  const totalWeight = effectiveWeights.reduce((sum, weight) => sum + weight, 0);
+  const useEqualSplit = totalWeight <= 0;
 
-  // Add each target's quantum (weight share) to its deficit.
-  for (const target of targets) {
-    const quantum = normalizeWeight(target.weight) / totalWeight;
+  // Add each target's quantum (weight share) to its deficit. An all-zero pool is
+  // the legacy/default representation for "weights not configured", so treat
+  // that specific case as an equal split. In a mixed pool, explicit zero still
+  // stays disabled because totalWeight is positive and its quantum remains 0.
+  for (let index = 0; index < targets.length; index++) {
+    const target = targets[index];
+    const quantum = useEqualSplit ? 1 / targets.length : effectiveWeights[index] / totalWeight;
     deficits.set(target.executionKey, (deficits.get(target.executionKey) ?? 0) + quantum);
   }
 

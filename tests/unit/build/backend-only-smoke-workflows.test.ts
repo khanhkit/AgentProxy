@@ -5,8 +5,8 @@
 // "Build CLI bundle" step silently runs a full Next.js production build inline,
 // which is the actual source of the multi-minute variance/timeouts reported in #7226.
 //
-// npm-publish.yml is intentionally excluded: its "Build CLI bundle (standalone app)"
-// step legitimately ships the full dashboard UI in the published npm package.
+// AgentProxy production intentionally removed the inherited OmniRoute nightly/npm
+// publishing workflows. Only active API-only smoke workflows belong in this guard.
 import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
@@ -61,10 +61,6 @@ interface Target {
 
 const TARGETS: Target[] = [
   { file: "dast-smoke.yml", jobName: "dast-smoke", stepName: "Build CLI bundle" },
-  { file: "nightly-schemathesis.yml", jobName: "schemathesis", stepName: "Build CLI bundle" },
-  { file: "nightly-resilience.yml", jobName: "k6-soak", stepName: "Build CLI bundle" },
-  { file: "nightly-llm-security.yml", jobName: "promptfoo-guard", stepName: "Build CLI bundle" },
-  { file: "nightly-llm-security.yml", jobName: "garak", stepName: "Build CLI bundle" },
 ];
 
 for (const { file, jobName, stepName } of TARGETS) {
@@ -81,17 +77,3 @@ for (const { file, jobName, stepName } of TARGETS) {
     );
   });
 }
-
-test("npm-publish.yml 'Build CLI bundle (standalone app)' step must NOT be backend-only (it legitimately ships the full dashboard UI)", () => {
-  const doc = loadWorkflow("npm-publish.yml");
-  const publishJob = Object.values(doc.jobs).find((job) =>
-    job.steps.some((s) => s.name === "Build CLI bundle (standalone app)")
-  );
-  assert.ok(publishJob, "npm-publish.yml must have a job with a 'Build CLI bundle (standalone app)' step");
-  const step = publishJob!.steps.find((s) => s.name === "Build CLI bundle (standalone app)")!;
-  assert.equal(
-    isBackendOnly(step),
-    false,
-    "npm-publish.yml's build step must ship the full dashboard UI, not the backend-only stub"
-  );
-});

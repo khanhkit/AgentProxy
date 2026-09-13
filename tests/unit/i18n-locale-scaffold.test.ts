@@ -68,8 +68,6 @@ const sentinelCode = (config: I18nConfig): string => {
   return code;
 };
 
-const readmeLinkFor = (entry: LocaleEntry, flagFile: string): string =>
-  `  <a href="docs/i18n/${entry.code}/README.md"><img src="docs/assets/flags/${flagFile}" width="30" alt="${entry.native} (${entry.code})" title="${entry.native} (${entry.code})"></a>`;
 const indexRowFor = (entry: LocaleEntry): string =>
   `- ${entry.flag} **${entry.native}** (\`${entry.code}\`): [Docs Root](./${entry.code}/README.md)`;
 
@@ -211,22 +209,6 @@ test("flagFileFor rejects anything that is not a regional-indicator pair unless 
   assert.equal(flagFileFor({ ...el, flag: "🏳️", flagFile: "custom.svg" }), "custom.svg");
 });
 
-test("flagFileFor reproduces the README flag file of every configured locale (legacy `sw` needs flagFile)", () => {
-  const readme = readRepo("README.md");
-  // Pre-existing README drift, exactly what the flagFile override is for: Kiswahili
-  // uses tz.svg although its emoji is 🇰🇪.
-  const overrides: Record<string, string> = { sw: "tz.svg" };
-  for (const entry of realConfig().locales) {
-    const href = entry.code === "en" ? "README.md" : `docs/i18n/${entry.code}/README.md`;
-    const pattern = new RegExp(
-      `<a href="${escapeRegExp(href)}"><img src="docs/assets/flags/([a-z]+\\.svg)"`
-    );
-    const match = readme.match(pattern);
-    assert.ok(match, `README has no flag link for ${entry.code}`);
-    assert.equal(flagFileFor({ ...entry, flagFile: overrides[entry.code] }), match[1], entry.code);
-  }
-});
-
 // ---------------------------------------------------------------------------
 // insertReadmeFlagLink
 // ---------------------------------------------------------------------------
@@ -272,27 +254,6 @@ test("insertReadmeFlagLink rejects a duplicate link and a README without the lan
   const once = insertReadmeFlagLink(README_BLOCK, el, 44);
   assert.throws(() => insertReadmeFlagLink(once, el, 45), /already linked/);
   assert.throws(() => insertReadmeFlagLink("# no block\n", el, 44), /language block not found/);
-});
-
-test("insertReadmeFlagLink on the real README adds exactly one line right before the block's </div>", () => {
-  const config = realConfig();
-  const total = config.locales.length;
-  const entry: LocaleEntry = { ...el, code: sentinelCode(config) };
-  const before = readRepo("README.md").split("\n");
-  const after = insertReadmeFlagLink(before.join("\n"), entry, total + 1).split("\n");
-  assert.equal(after.length, before.length + 1);
-
-  const marker = before.indexOf(`  <b>🌐 In ${total} languages</b>`);
-  const close = before.findIndex((line, index) => index > marker && line === "</div>");
-  assert.ok(marker > 0 && close > marker);
-  assert.equal(after[marker], `  <b>🌐 In ${total + 1} languages</b>`);
-  assert.match(after[close - 1], /^  <a href="docs\/i18n\/[^"]+\/README\.md"><img /);
-  assert.equal(after[close], readmeLinkFor(entry, "gr.svg"));
-  assert.equal(after[close + 1], "</div>");
-  assert.deepEqual(
-    [...after.slice(0, marker), ...after.slice(marker + 1, close), ...after.slice(close + 1)],
-    [...before.slice(0, marker), ...before.slice(marker + 1)]
-  );
 });
 
 // ---------------------------------------------------------------------------

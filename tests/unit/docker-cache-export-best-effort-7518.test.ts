@@ -26,12 +26,7 @@ test("Docker publish treats every GitHub Actions cache export as best effort", (
     })
     .sort();
 
-  assert.deepEqual(scopes, [
-    "docker-${{ matrix.arch }}",
-    "docker-bun-base-${{ matrix.arch }}",
-    "docker-bun-web-${{ matrix.arch }}",
-    "docker-web-${{ matrix.arch }}",
-  ]);
+  assert.deepEqual(scopes, ["agentproxy-${{ matrix.arch }}"]);
 
   for (const config of exports) {
     assert.ok(

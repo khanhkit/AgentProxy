@@ -5,8 +5,9 @@ import {
   encodeRedeemResetRequest,
 } from "../../open-sse/services/grokResetCreditsFrame.ts";
 
-const GRANTED = 1786560540;
-const EXPIRES = 1789238940;
+const FIXTURE_NOW = Math.floor(Date.now() / 1000);
+const GRANTED = FIXTURE_NOW - 7 * 86400;
+const EXPIRES = FIXTURE_NOW + 30 * 86400;
 const TOKEN_ID = "test-token-id"; // 13 bytes
 
 function encodeVarint(value: number): Buffer {

@@ -18,6 +18,9 @@ const { mergeProviderLimitsCacheEntry } =
   await import("../../src/lib/usage/providerLimitsCache.ts");
 
 const originalFetch = globalThis.fetch;
+const RESET_FIXTURE_NOW = Math.floor(Date.now() / 1000);
+const RESET_GRANTED = RESET_FIXTURE_NOW - 7 * 86400;
+const RESET_EXPIRES = RESET_FIXTURE_NOW + 30 * 86400;
 
 interface FetchCall {
   url: string;
@@ -74,8 +77,8 @@ function encodeVarintField(fieldNumber: number, value: number): Buffer {
 function oneResetTokenResponse(): Response {
   const token = Buffer.concat([
     encodeLengthDelimited(1, Buffer.from("test-token-id", "utf8")),
-    encodeVarintField(2, 1786560540),
-    encodeVarintField(3, 1789238940),
+    encodeVarintField(2, RESET_GRANTED),
+    encodeVarintField(3, RESET_EXPIRES),
   ]);
   const payload = encodeLengthDelimited(10, token);
   const trailer = Buffer.from("grpc-status:0\r\n", "utf8");
@@ -90,8 +93,8 @@ function liveResetTokenResponse(): Response {
   const timestamp = (unixSeconds: number) => encodeVarintField(1, unixSeconds);
   const token = Buffer.concat([
     encodeLengthDelimited(10, Buffer.from("test-token-id", "utf8")),
-    encodeLengthDelimited(20, timestamp(1786560540)),
-    encodeLengthDelimited(30, timestamp(1789238940)),
+    encodeLengthDelimited(20, timestamp(RESET_GRANTED)),
+    encodeLengthDelimited(30, timestamp(RESET_EXPIRES)),
   ]);
   const payload = encodeLengthDelimited(10, token);
   const trailer = Buffer.from("grpc-status:0\r\n", "utf8");

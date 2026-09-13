@@ -23,15 +23,14 @@ test("chatCore acquires cumulative gates immediately before withRateLimit", () =
   assert.match(admission, /maxQueueDepth/);
 });
 
-test("each rotated account attempt acquires and releases a fresh composite slot", () => {
-  const attemptLoop = source.indexOf(
-    "while (attempts < maxAttempts || antigravityByopRotationPending)"
-  );
+test("each executor attempt acquires and releases a fresh composite slot", () => {
+  const executeProviderRequest = source.indexOf("const executeProviderRequest = async");
+  const attemptLoop = source.indexOf("while (attempts < maxAttempts)", executeProviderRequest);
   const acquire = source.indexOf("await acquireConcurrencyGates(", attemptLoop);
   const finallyRelease = source.indexOf("releaseAccountSemaphore();", acquire);
   const retryContinue = source.indexOf("continue;", acquire);
 
-  assert.ok(attemptLoop >= 0 && acquire > attemptLoop);
+  assert.ok(executeProviderRequest >= 0 && attemptLoop > executeProviderRequest && acquire > attemptLoop);
   assert.ok(finallyRelease > acquire, "each attempt must release the composite slot");
-  assert.ok(retryContinue > acquire, "rotation remains inside the per-attempt acquisition loop");
+  assert.ok(retryContinue > acquire, "retry/rotation remains inside the per-attempt acquisition loop");
 });

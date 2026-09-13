@@ -21,7 +21,7 @@ test("the custom Next runner owns exit and awaits application cleanup before clo
     "await globalThis.__omnirouteRequestShutdown?.(signal)"
   );
   const nextClose = runNextSource.indexOf("await nextApp.close()", applicationCleanup);
-  const processExit = runNextSource.indexOf("process.exit(0)", nextClose);
+  const processExit = runNextSource.indexOf("process.exit(exitCode)", nextClose);
 
   assert.ok(serverClose < applicationCleanup, "stop accepting requests before application cleanup");
   assert.ok(applicationCleanup < nextClose, "application cleanup must finish before Next closes");

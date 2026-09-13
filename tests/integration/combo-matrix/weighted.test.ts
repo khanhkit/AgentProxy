@@ -4,7 +4,7 @@ import assert from "node:assert/strict";
 import { createComboRoutingHarness } from "../_comboRoutingHarness.ts";
 
 const h = await createComboRoutingHarness("combo-weighted");
-const { BaseExecutor, combosDb, handleChat, buildRequest, seedConnection, resetStorage } = h;
+const { BaseExecutor, combosDb, handleChat, buildRequest, seedConnection, resetStorage, settingsDb } = h;
 
 function body(model: string) {
   return { model, stream: false, messages: [{ role: "user", content: "w" }] };
@@ -13,6 +13,14 @@ function body(model: string) {
 test.beforeEach(async () => {
   BaseExecutor.RETRY_CONFIG.delayMs = 0;
   await resetStorage();
+  // This test measures weighted routing distribution, not admission/rate-limit policy.
+  // Keep API-key providers out of the default limiter so a 200-request sample cannot
+  // exhaust the normal 60 RPM reservoir and collapse the eligible pool mid-test.
+  await settingsDb.updateSettings({
+    resilienceSettings: {
+      requestQueue: { autoEnableApiKeyProviders: false },
+    },
+  });
 });
 test.afterEach(async () => {
   BaseExecutor.RETRY_CONFIG.delayMs = h.originalRetryDelayMs;

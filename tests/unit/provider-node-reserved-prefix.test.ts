@@ -163,7 +163,7 @@ test("shared set excludes manual aliases that never intercept nodes at runtime",
   assert.equal(RESERVED_PROVIDER_PREFIXES.has("aq"), false);
 });
 
-test("shared set size includes live REGISTRY and retired Designer + Felo + Qwen Web prefixes", () => {
+test("shared set size includes live REGISTRY and all retired web-provider tombstones", () => {
   // 2026-08-30: 398 → 400 with Perplexity Agent API (#12103) and the second prefix the same
   // afternoon batch registered — computed, not hand-derived (see the note below).
   // Computed (not hand-derived) after combining Designer's 2 retired
@@ -180,7 +180,9 @@ test("shared set size includes live REGISTRY and retired Designer + Felo + Qwen 
   // 2026-09-02: a keyless provider was removed at its operator's request, taking its id and
   // alias out of the REGISTRY walk (408 → 406).
   // #11786: SeekAi adds id "seekai" + alias "ska" (406 → 408).
-  assert.equal(RESERVED_PREFIX_COUNT, 408);
+  // Clean-room ChatGPT Web restoration adds live id "chatgpt-web" while the retired
+  // legacy alias "cgpt-web" remains reserved as a tombstone (408 → 410).
+  assert.equal(RESERVED_PREFIX_COUNT, 410);
 });
 
 test("isReservedProviderPrefix rejects non-string input", () => {

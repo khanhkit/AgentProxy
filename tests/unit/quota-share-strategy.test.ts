@@ -242,6 +242,30 @@ describe("gating: per-model bucket saturation", () => {
 // ─── DRR ─────────────────────────────────────────────────────────────────────
 
 describe("DRR: deficit round robin", () => {
+  test("all-zero weights are treated as equal shares and alternate", () => {
+    const t1 = makeTarget("ek-zero-1", "conn-zero-1", 0);
+    const t2 = makeTarget("ek-zero-2", "conn-zero-2", 0);
+
+    const r1 = selectQuotaShareTarget(
+      [t1, t2],
+      "combo-zero-drr",
+      "anthropic/claude-sonnet-4-5",
+      NOW
+    );
+    r1.decrementInflight();
+    const r2 = selectQuotaShareTarget(
+      [t1, t2],
+      "combo-zero-drr",
+      "anthropic/claude-sonnet-4-5",
+      NOW
+    );
+    r2.decrementInflight();
+
+    const selected = [r1.target?.executionKey, r2.target?.executionKey];
+    assert.ok(selected.includes("ek-zero-1"), "first zero-weight target must receive a turn");
+    assert.ok(selected.includes("ek-zero-2"), "second zero-weight target must receive a turn");
+  });
+
   test("equal weight: two connections alternate across consecutive calls", () => {
     const t1 = makeTarget("ek-1", "conn-1", 100);
     const t2 = makeTarget("ek-2", "conn-2", 100);

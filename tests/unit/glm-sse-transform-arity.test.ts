@@ -5,12 +5,9 @@ import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
 /**
- * GLM's translateSseResponse used to pass a 16th positional (65536) to
- * createSSETransformStreamWithLogger. The helper only has 15 parameters
- * (last is requestToolIdentityMap) — tsc reports TS2554 and the number
- * never reached TransformStream.
- *
- * Guard the call site in source: no 65536, last arg is suppressThinkClose.
+ * GLM's translateSseResponse needs a provider-specific 64 KB stream queue.
+ * The stream helper now exposes streamBufferBytes as its 16th positional, so
+ * the GLM call must keep the explicit buffer argument wired to that final slot.
  */
 const root = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 
@@ -26,18 +23,18 @@ function extractParens(src: string, openAt: number): string {
   return src.slice(openAt, i);
 }
 
-test("createSSETransformStreamWithLogger has no highWaterMark slot", () => {
+test("createSSETransformStreamWithLogger exposes streamBufferBytes as its final slot", () => {
   const src = readFileSync(join(root, "open-sse", "utils", "stream.ts"), "utf8");
   const needle = "export function createSSETransformStreamWithLogger(";
   const start = src.indexOf(needle);
   assert.ok(start >= 0);
   const header = extractParens(src, start + needle.length - 1);
-  assert.equal(/highWaterMark/.test(header), false, header);
   assert.match(header, /requestToolIdentityMap/);
   assert.match(header, /suppressThinkClose/);
+  assert.match(header, /streamBufferBytes:[\s\S]*DEFAULT_STREAM_BUFFER_BYTES\s*\)\s*$/);
 });
 
-test("GLM translateSseResponse does not pass a 16th positional to the stream helper", () => {
+test("GLM translateSseResponse wires its 64 KB buffer into the final stream-helper slot", () => {
   const src = readFileSync(join(root, "open-sse", "executors", "glm.ts"), "utf8");
   const fnStart = src.indexOf("export function translateSseResponse(");
   assert.ok(fnStart >= 0);
@@ -46,6 +43,6 @@ test("GLM translateSseResponse does not pass a 16th positional to the stream hel
   const callAt = body.indexOf("createSSETransformStreamWithLogger(");
   assert.ok(callAt >= 0);
   const call = extractParens(body, callAt + "createSSETransformStreamWithLogger".length);
-  assert.equal(/65536/.test(call), false, `dead 16th arg still present:\n${call}`);
-  assert.match(call, /suppressThinkClose\s*\)\s*$/);
+  assert.equal(/65536/.test(call), false, `buffer size must use the named constant:\n${call}`);
+  assert.match(call, /suppressThinkClose,[\s\S]*GLM_STREAM_BUFFER_BYTES\s*\)\s*$/);
 });

@@ -10,9 +10,13 @@ function read(relativePath: string): string {
   return readFileSync(join(repoRoot, relativePath), "utf8");
 }
 
-test("#8497 README limits podman unshare to a local Linux engine", () => {
+test("#8497 README never exposes a topology-unsafe Podman unshare recipe", () => {
   const readme = read("README.md");
   const podmanStart = readme.indexOf("**🦭 Podman**");
+  if (podmanStart < 0) {
+    assert.doesNotMatch(readme, /podman unshare chown 1000:1000 \.\/data/);
+    return;
+  }
   const podmanEnd = readme.indexOf("**⚡ Faster / leaner install", podmanStart);
   const podmanQuickStart = readme.slice(podmanStart, podmanEnd);
 

@@ -122,7 +122,7 @@ test("a 200 stream carrying an error frame emits a terminal error instead of fal
       error: {
         message: "Z.ai stream failed: signature invalid",
         type: "upstream_error",
-        code: "zai_stream_error",
+        code: "bad_gateway",
       },
     },
   ]);
