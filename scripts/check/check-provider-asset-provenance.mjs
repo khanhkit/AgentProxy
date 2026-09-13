@@ -187,16 +187,39 @@ function inspectGitCommit(objectId) {
     encoding: "utf8",
   });
   if (result.error) {
-    return `unable to verify auditedCommit with Git: ${result.error.message}`;
+    return {
+      state: "error",
+      failure: `unable to verify auditedCommit with Git: ${result.error.message}`,
+    };
   }
   if (result.status !== 0) {
-    return `auditedCommit object does not exist: ${objectId}`;
+    return {
+      state: "missing",
+      failure: `auditedCommit object does not exist: ${objectId}`,
+    };
   }
   const objectType = result.stdout.trim();
   if (objectType !== "commit") {
-    return `auditedCommit must identify a Git commit: ${objectId} (found ${objectType || "unknown"})`;
+    return {
+      state: "invalid",
+      failure: `auditedCommit must identify a Git commit: ${objectId} (found ${objectType || "unknown"})`,
+    };
   }
-  return null;
+  return { state: "commit", failure: null };
+}
+
+async function computeProviderSnapshotSha256(physicalFiles) {
+  const snapshotHash = createHash("sha256");
+  for (const path of physicalFiles) {
+    const fileName = path.slice("public/providers/".length);
+    const content = await readFile(join(providersDir, fileName));
+    const fileSha256 = createHash("sha256").update(content).digest("hex");
+    snapshotHash.update(path);
+    snapshotHash.update("\0");
+    snapshotHash.update(fileSha256);
+    snapshotHash.update("\n");
+  }
+  return `sha256:${snapshotHash.digest("hex")}`;
 }
 
 function verifyAuditedProviderSnapshot(commit, physicalFiles) {
@@ -298,6 +321,7 @@ async function main() {
     .sort();
   const manifestPaths = new Set(assets.map((asset) => asset.path));
   const physicalPaths = new Set(physicalFiles);
+  const physicalSnapshotSha256 = await computeProviderSnapshotSha256(physicalFiles);
   const failures = [];
   const pathsBySha256 = new Map();
 
@@ -325,11 +349,27 @@ async function main() {
     if (typeof header.auditedCommit !== "string" || !/^[0-9a-f]{40}$/i.test(header.auditedCommit)) {
       failures.push("manifest auditedCommit must be a full 40-character Git SHA");
     } else {
-      const gitCommitFailure = inspectGitCommit(header.auditedCommit);
-      if (gitCommitFailure) {
-        failures.push(gitCommitFailure);
-      } else if (providersDir === defaultProvidersDir) {
-        failures.push(...verifyAuditedProviderSnapshot(header.auditedCommit, physicalFiles));
+      const gitCommitInspection = inspectGitCommit(header.auditedCommit);
+      if (gitCommitInspection.state === "commit") {
+        if (providersDir === defaultProvidersDir) {
+          failures.push(...verifyAuditedProviderSnapshot(header.auditedCommit, physicalFiles));
+        }
+      } else if (gitCommitInspection.state === "missing") {
+        const hasExternalRepository =
+          typeof header.auditedRepository === "string" &&
+          /^https:\/\/[^\s]+$/i.test(header.auditedRepository);
+        const hasExternalSnapshot =
+          typeof header.auditedSnapshotSha256 === "string" &&
+          /^sha256:[0-9a-f]{64}$/.test(header.auditedSnapshotSha256);
+        if (!hasExternalRepository || !hasExternalSnapshot) {
+          failures.push(gitCommitInspection.failure);
+        } else if (header.auditedSnapshotSha256 !== physicalSnapshotSha256) {
+          failures.push(
+            `auditedSnapshotSha256 mismatch: manifest ${header.auditedSnapshotSha256}, physical ${physicalSnapshotSha256}`
+          );
+        }
+      } else if (gitCommitInspection.failure) {
+        failures.push(gitCommitInspection.failure);
       }
     }
     if (typeof header.auditedAt !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(header.auditedAt)) {

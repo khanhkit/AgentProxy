@@ -513,6 +513,48 @@ test("provider asset provenance gate rejects a missing or non-commit auditedComm
   }
 });
 
+test("provider asset provenance gate accepts an externally audited snapshot in an independent history", () => {
+  const fixture = makeFixture();
+  const missingObject = "f".repeat(40);
+  try {
+    const assetPath = "public/providers/registered.svg";
+    writeFileSync(join(fixture.providersDir, "registered.svg"), SVG);
+    const snapshotDigest = sha256(`${assetPath}\0${sha256(SVG)}\n`);
+    writeManifest(fixture.manifestPath, [unresolvedAsset(assetPath)], {
+      auditedCommit: missingObject,
+      auditedRepository: "https://github.com/diegosouzapw/OmniRoute",
+      auditedSnapshotSha256: `sha256:${snapshotDigest}`,
+    });
+
+    const result = runGate(fixture.providersDir, fixture.manifestPath);
+
+    assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
+  } finally {
+    rmSync(fixture.root, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
+  }
+});
+
+test("provider asset provenance gate rejects an external snapshot digest that does not match physical bytes", () => {
+  const fixture = makeFixture();
+  const missingObject = "f".repeat(40);
+  try {
+    const assetPath = "public/providers/registered.svg";
+    writeFileSync(join(fixture.providersDir, "registered.svg"), SVG);
+    writeManifest(fixture.manifestPath, [unresolvedAsset(assetPath)], {
+      auditedCommit: missingObject,
+      auditedRepository: "https://github.com/diegosouzapw/OmniRoute",
+      auditedSnapshotSha256: `sha256:${"0".repeat(64)}`,
+    });
+
+    const result = runGate(fixture.providersDir, fixture.manifestPath);
+
+    assert.equal(result.status, 1, `${result.stdout}\n${result.stderr}`);
+    assert.match(`${result.stdout}\n${result.stderr}`, /auditedSnapshotSha256 mismatch/);
+  } finally {
+    rmSync(fixture.root, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
+  }
+});
+
 test("provider asset provenance gate binds auditedCommit to the physical provider snapshot", () => {
   const fixture = makeFixture();
   try {
