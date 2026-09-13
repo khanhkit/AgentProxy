@@ -11,11 +11,10 @@
  *    body disclosed host layout, binary install paths, the OS account name and —
  *    for Tailscale — live `tskey-*` credentials. Hard Rule #12 forbids this.
  *
- *    `sanitizeErrorMessage()` alone does not close it: it only rewrites tokens
- *    that look like an absolute path ending in a *source* extension (SOURCE_EXT
- *    in open-sse/utils/error.ts), so `.json` state paths, extension-less binary
- *    paths and `tskey-*` keys all survive it verbatim. The first test below pins
- *    that, so the reason this module exists stays visible.
+ *    The shared `sanitizeErrorMessage()` now covers the filesystem-path forms,
+ *    including state files and extension-less binaries. The route-specific public-safe
+ *    wrapper is still required because public responses must never echo arbitrary
+ *    upstream text (for example provider auth keys), and it also classifies causes.
  *
  * 2. `validateBody()` returns `{ success, error }` and has NO `response` field
  *    (`validatedJsonBody()` is the helper that has one). Three call sites did
@@ -101,17 +100,14 @@ async function withSilencedConsoleError<T>(fn: () => T | Promise<T>): Promise<[T
   }
 }
 
-// ── Why a dedicated module: sanitizeErrorMessage does not cover these ───────
+// ── Shared sanitizer path coverage ─────────────────────────────────────────
 
-test("sanitizeErrorMessage alone leaves every tunnel leak shape intact", () => {
-  for (const leak of LEAKS) {
+test("sanitizeErrorMessage redacts the filesystem-path tunnel leak shapes it recognizes", () => {
+  for (const leak of LEAKS.filter((entry) => entry.label !== "tailscale auth key")) {
     const out = sanitizeErrorMessage(leak.message);
-    const stillLeaks = leak.secrets.some((s) => out.includes(s));
-    assert.ok(
-      stillLeaks,
-      `${leak.label}: sanitizeErrorMessage unexpectedly covers this now — if the ` +
-        `shared sanitizer grew to handle it, simplify publicSafeTunnelError accordingly. Got: ${out}`
-    );
+    for (const secret of leak.secrets) {
+      assert.ok(!out.includes(secret), `${leak.label}: shared sanitizer leaked ${secret}`);
+    }
   }
 });
 

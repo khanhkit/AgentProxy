@@ -5,8 +5,13 @@ import os from "node:os";
 import path from "node:path";
 
 const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-9147-"));
+const ORIGINAL_CATALOG_BUILD_TIMEOUT_MS = process.env.CATALOG_BUILD_TIMEOUT_MS;
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.API_KEY_SECRET = process.env.API_KEY_SECRET || "catalog-9147-test-secret";
+// This probe measures event-loop yielding, not cold-build timeout behavior (#12627).
+// Give the synthetic catalog-scale build enough wall-clock headroom on slower runners
+// so the test reaches its max-gap assertion instead of being preempted at 8s.
+process.env.CATALOG_BUILD_TIMEOUT_MS = "30000";
 
 const core = await import("../../src/lib/db/core.ts");
 const apiKeysDb = await import("../../src/lib/db/apiKeys.ts");
@@ -56,6 +61,8 @@ test.after(async () => {
   core.resetDbInstance();
   apiKeysDb.resetApiKeyState();
   fs.rmSync(TEST_DATA_DIR, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
+  if (ORIGINAL_CATALOG_BUILD_TIMEOUT_MS === undefined) delete process.env.CATALOG_BUILD_TIMEOUT_MS;
+  else process.env.CATALOG_BUILD_TIMEOUT_MS = ORIGINAL_CATALOG_BUILD_TIMEOUT_MS;
 });
 
 test("#9147 — catalog build at catalog-scale must not pin the event loop for a long stretch", async (t) => {
