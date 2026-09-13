@@ -46,6 +46,30 @@ function emptySources() {
   };
 }
 
+// ── Source integrity ──────────────────────────────────────────────────────────
+
+test("generator fails closed when canonical source files are unavailable", async () => {
+  const tmpDir = mkTmpDir();
+  const originalCwd = process.cwd();
+  process.chdir(tmpDir);
+  try {
+    await assert.rejects(
+      () =>
+        generateAgentSkills({
+          dryRun: true,
+          prune: false,
+          outputDir: path.join(tmpDir, "skills"),
+          onlyIds: ["cli-tunnel"],
+        }),
+      /(?:openapiParser|cliRegistryParser): could not read/,
+      "generator must not silently replace missing canonical inputs with empty registries"
+    );
+  } finally {
+    process.chdir(originalCwd);
+    rmTmpDir(tmpDir);
+  }
+});
+
 // ── Dry-run: no writes ────────────────────────────────────────────────────────
 
 test("dry-run (default) returns report without writing any files", async () => {

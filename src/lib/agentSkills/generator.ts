@@ -296,19 +296,15 @@ export async function generateAgentSkills(opts: GeneratorOptions): Promise<Gener
   let _cliRegistry: ParsedCliRegistry | null = null;
 
   function getSources(): BuildSources {
+    // Generated skills are release artifacts derived from tracked canonical inputs.
+    // Fail closed when either source cannot be parsed: silently substituting empty
+    // registries makes the output environment-dependent and can turn a parser/cache
+    // problem into apparently valid but stale SKILL.md content.
     if (!_openapi) {
-      try {
-        _openapi = parseOpenapi();
-      } catch {
-        _openapi = { paths: new Map(), areas: new Map() };
-      }
+      _openapi = parseOpenapi();
     }
     if (!_cliRegistry) {
-      try {
-        _cliRegistry = parseCliRegistry();
-      } catch {
-        _cliRegistry = { commands: new Map(), families: new Map() };
-      }
+      _cliRegistry = parseCliRegistry();
     }
     return { openapi: _openapi, cliRegistry: _cliRegistry };
   }
