@@ -35,9 +35,16 @@ const evaluateZizmor = evaluateZizmorRatchet as (
 ) => RatchetVerdict;
 const readZizmorBaseline = readBaselineZizmorValue as (p?: string) => number | null;
 const qualityWorkflowPath = new URL("../../../.github/workflows/quality.yml", import.meta.url);
+const ciWorkflowPath = new URL("../../../.github/workflows/ci.yml", import.meta.url);
+const dastWorkflowPath = new URL("../../../.github/workflows/dast-smoke.yml", import.meta.url);
+const codeqlWorkflowPath = new URL("../../../.github/workflows/codeql.yml", import.meta.url);
 
 function readQualityWorkflow(): string {
   return fs.readFileSync(qualityWorkflowPath, "utf8");
+}
+
+function readWorkflow(path: URL): string {
+  return fs.readFileSync(path, "utf8");
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -369,4 +376,28 @@ test("findEmbeddedBashSyntaxErrors accepts valid explicit bash run blocks", () =
     "",
   ].join("\n");
   assert.deepEqual(findEmbeddedBashSyntaxErrors(workflow, "docker-publish.yml"), []);
+});
+
+
+test("manual DAST is blocking and authenticates protected management routes", () => {
+  const workflow = readWorkflow(dastWorkflowPath);
+  assert.match(workflow, /continue-on-error:\s*\$\{\{\s*github\.event_name == 'pull_request'\s*\}\}/);
+  assert.match(workflow, /INITIAL_PASSWORD:/);
+  assert.match(workflow, /\/api\/auth\/login/);
+  assert.match(workflow, /DAST_AUTH_COOKIE/);
+  assert.match(workflow, /Cookie:/);
+});
+
+test("manual CodeQL uses the baseline-compatible default query suite", () => {
+  const workflow = readWorkflow(codeqlWorkflowPath);
+  assert.doesNotMatch(workflow, /queries:\s*security-extended/);
+});
+
+
+test("Core Build caps Next static-generation workers on hosted runners", () => {
+  const workflow = readWorkflow(ciWorkflowPath);
+  assert.match(
+    workflow,
+    /OMNIROUTE_NEXT_BUILD_CPUS:\s*\$\{\{\s*vars\.USE_VPS_RUNNER == 'true' && '3' \|\| '1'\s*\}\}/
+  );
 });

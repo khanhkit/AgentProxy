@@ -5,9 +5,20 @@ const http = require("node:http");
 const HIGH_RISK_METHOD_RULES = [
   [/^\/api\/auth\/login\/?$/, ["POST"]],
   [/^\/api\/auth\/logout\/?$/, ["POST"]],
+  [/^\/api\/auth\/csrf\/?$/, ["GET"]],
+  [/^\/api\/auth\/status\/?$/, ["GET"]],
   [/^\/api\/keys\/?$/, ["GET", "POST"]],
-  [/^\/api\/keys\/[^/]+\/?$/, ["GET", "PATCH", "DELETE"]],
+  // Static groups routes MUST precede the generic /api/keys/{id} rule; otherwise
+  // "groups" is misclassified as an API-key id and POST /groups is rejected as 405.
+  [/^\/api\/keys\/groups\/?$/, ["GET", "POST"]],
+  [/^\/api\/keys\/groups\/[^/]+\/?$/, ["GET", "PUT", "DELETE"]],
+  [/^\/api\/keys\/groups\/[^/]+\/keys\/?$/, ["GET", "POST", "DELETE"]],
+  [/^\/api\/keys\/groups\/[^/]+\/permissions\/?$/, ["GET", "POST", "DELETE"]],
   [/^\/api\/keys\/[^/]+\/devices\/?$/, ["GET"]],
+  [/^\/api\/keys\/[^/]+\/regenerate\/?$/, ["POST"]],
+  [/^\/api\/keys\/[^/]+\/reveal\/?$/, ["GET"]],
+  [/^\/api\/keys\/[^/]+\/usage-limits\/?$/, ["GET"]],
+  [/^\/api\/keys\/[^/]+\/?$/, ["GET", "PATCH", "DELETE"]],
 ];
 
 let installed = false;

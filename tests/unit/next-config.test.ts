@@ -5,6 +5,7 @@ import { pathToFileURL } from "node:url";
 
 const modulePath = path.join(process.cwd(), "next.config.mjs");
 const originalNextDistDir = process.env.NEXT_DIST_DIR;
+const originalNextBuildCpus = process.env.OMNIROUTE_NEXT_BUILD_CPUS;
 
 async function loadNextConfig(label) {
   return import(`${pathToFileURL(modulePath).href}?case=${label}-${Date.now()}`);
@@ -15,6 +16,11 @@ test.afterEach(() => {
     delete process.env.NEXT_DIST_DIR;
   } else {
     process.env.NEXT_DIST_DIR = originalNextDistDir;
+  }
+  if (originalNextBuildCpus === undefined) {
+    delete process.env.OMNIROUTE_NEXT_BUILD_CPUS;
+  } else {
+    process.env.OMNIROUTE_NEXT_BUILD_CPUS = originalNextBuildCpus;
   }
 });
 
@@ -72,6 +78,16 @@ test("next config exposes standalone build settings and canonical rewrites", asy
       destination: "/api/v1/models",
     },
   ]);
+});
+
+test("next config honors an explicit static-generation worker cap", async () => {
+  process.env.OMNIROUTE_NEXT_BUILD_CPUS = "1";
+  const { default: capped } = await loadNextConfig("static-workers-capped");
+  assert.equal(capped.experimental?.cpus, 1);
+
+  process.env.OMNIROUTE_NEXT_BUILD_CPUS = "0";
+  const { default: invalid } = await loadNextConfig("static-workers-invalid");
+  assert.equal(invalid.experimental?.cpus, undefined);
 });
 
 test("next config declares Turbopack aliases, runtime assets and server externals", async () => {

@@ -135,7 +135,7 @@ const GATES = new Map<number, GateEvidence[]>([
   [85, [chat(/preserves the lifecycle lease after completion/)]],
   [86, [inventory(/managed request surfaces are fenced centrally/)]],
   [87, [inventory(/managed request surfaces are fenced centrally/)]],
-  [88, [inventory(/provider === "codex"/)]],
+  [88, [inventory(/allowAccountRotation:\\s\*!managedLease/)]],
   [89, [ws(/LEASE_UNSUPPORTED_TRANSPORT|lease:exclusive/)]],
   [90, [chat(/managed combos reject every fan-out route/)]],
   [91, [evidence("tests/unit/chat-context-relay.test.ts", /context-relay/i)]],

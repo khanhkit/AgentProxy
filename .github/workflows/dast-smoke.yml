@@ -28,9 +28,9 @@ jobs:
   dast-smoke:
     name: DAST smoke
     runs-on: ubuntu-latest
-    # ADVISORY while this new gate matures (repo convention: advisory -> blocking).
-    # Flip to blocking (remove continue-on-error) once it's proven stable across a few PRs.
-    continue-on-error: true
+    # PR checks remain advisory while manual release dispatches are blocking.
+    # A release smoke must surface the actual DAST job conclusion.
+    continue-on-error: ${{ github.event_name == 'pull_request' }}
     # Build CLI bundle alone varies 6-11min on GitHub-hosted runners (3 consecutive
     # timeouts observed on 2026-07-14 with the old 12min cap killing schemathesis
     # mid-run) — 25min leaves real headroom for the actual DAST steps.
@@ -38,6 +38,7 @@ jobs:
     env:
       JWT_SECRET: ci-build-secret-with-sufficient-length-for-validation
       API_KEY_SECRET: ci-api-key-secret-with-sufficient-length-aaaa
+      INITIAL_PASSWORD: ci-dast-admin-password-with-sufficient-length
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -63,6 +64,17 @@ jobs:
             if curl -sf http://localhost:20128/api/monitoring/health >/dev/null; then echo up; break; fi
             sleep 2
           done
+      - name: Authenticate DAST management session
+        run: |
+          headers="$RUNNER_TEMP/dast-login.headers"
+          curl --fail-with-body -sS -D "$headers" -o "$RUNNER_TEMP/dast-login.json" \
+            -H 'Content-Type: application/json' \
+            --data "{\"password\":\"${INITIAL_PASSWORD}\"}" \
+            http://localhost:20128/api/auth/login
+          auth_cookie="$(awk 'BEGIN { IGNORECASE=1 } /^set-cookie:[[:space:]]*auth_token=/ { sub(/\r$/, ""); sub(/^set-cookie:[[:space:]]*/, ""); sub(/;.*/, ""); print; exit }' "$headers")"
+          test -n "$auth_cookie"
+          echo "::add-mask::$auth_cookie"
+          echo "DAST_AUTH_COOKIE=$auth_cookie" >> "$GITHUB_ENV"
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: "3.12"
@@ -80,7 +92,8 @@ jobs:
             --include-path-regex '^/v1/(chat/completions|models)$|^/api/(auth|keys)' \
             --exclude-path-regex '^/api/auth/(oidc/|login)' \
             --max-examples 8 --workers 4 --checks all --max-response-time 30 \
-            --request-timeout 20 --suppress-health-check all --no-color
+            --request-timeout 20 --suppress-health-check all --no-color \
+            -H "Cookie: ${DAST_AUTH_COOKIE}"
       - name: promptfoo injection-guard (blocking)
         env:
           OMNIROUTE_URL: http://localhost:20128

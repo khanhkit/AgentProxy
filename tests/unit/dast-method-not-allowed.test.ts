@@ -32,6 +32,25 @@ test("raw HTTP guard rejects high-risk unsupported methods before Next.js handle
       url: "/api/keys/0",
       allow: "GET, PATCH, DELETE",
     },
+    { label: "key groups QUERY", method: "QUERY", url: "/api/keys/groups", allow: "GET, POST" },
+    {
+      label: "key group detail QUERY",
+      method: "QUERY",
+      url: "/api/keys/groups/0",
+      allow: "GET, PUT, DELETE",
+    },
+    {
+      label: "key group members QUERY",
+      method: "QUERY",
+      url: "/api/keys/groups/0/keys",
+      allow: "GET, POST, DELETE",
+    },
+    {
+      label: "key group permissions QUERY",
+      method: "QUERY",
+      url: "/api/keys/groups/0/permissions",
+      allow: "GET, POST, DELETE",
+    },
   ];
 
   for (const testCase of cases) {
@@ -73,6 +92,10 @@ test("raw HTTP guard allows documented methods through", () => {
     false
   );
   assert.equal(maybeHandleDisallowedMethod({ method: "GET", url: "/api/keys" }, response), false);
+  assert.equal(
+    maybeHandleDisallowedMethod({ method: "POST", url: "/api/keys/groups" }, response),
+    false
+  );
   assert.equal(
     maybeHandleDisallowedMethod({ method: "OPTIONS", url: "/api/keys" }, response),
     false
@@ -129,4 +152,30 @@ test("OpenAPI documents high-risk route auth and setup responses", () => {
   assert.match(login, /"401":\n\s+description: Invalid password/);
   assert.match(login, /"403":\n\s+description: Password setup required/);
   assert.match(login, /"429":\n\s+description: Too many failed attempts/);
+});
+
+
+test("OpenAPI key subresources declare path ids and group create matches runtime", () => {
+  const spec = readFileSync("docs/openapi.yaml", "utf8");
+  const paths = [
+    "/api/keys/{id}/regenerate",
+    "/api/keys/{id}/reveal",
+    "/api/keys/{id}/usage-limits",
+    "/api/keys/groups/{id}",
+    "/api/keys/groups/{id}/keys",
+    "/api/keys/groups/{id}/permissions",
+  ];
+  for (const routePath of paths) {
+    const start = spec.indexOf(`  ${routePath}:`);
+    assert.notEqual(start, -1, routePath);
+    const end = spec.indexOf("\n  /", start + 3);
+    const block = spec.slice(start, end === -1 ? spec.length : end);
+    assert.match(block, /parameters:\n\s+- \$ref: "#\/components\/parameters\/ResourceId"/, routePath);
+  }
+
+  const groupsStart = spec.indexOf("  /api/keys/groups:");
+  const groupsEnd = spec.indexOf("\n  /api/keys/groups/{id}:", groupsStart);
+  const groups = spec.slice(groupsStart, groupsEnd);
+  assert.match(groups, /\n    post:/);
+  assert.match(groups, /"201":(?:\s*\{\s*description:|\n\s+description:)/);
 });

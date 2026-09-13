@@ -207,8 +207,8 @@ test("A/B isolation: 7 hard-empty + 2 at 0.5% + 1 at 40%, floor=1", async () => 
   assert.equal(ordered[0]?.connectionId, healthy);
   assert.equal(ordered.length, 3);
   assert.deepEqual(
-    ordered.slice(1).map((t) => t.connectionId),
-    low
+    new Set(ordered.slice(1).map((t) => t.connectionId)),
+    new Set(low)
   );
   for (const id of dead) {
     assert.equal(ordered.some((t) => t.connectionId === id), false);

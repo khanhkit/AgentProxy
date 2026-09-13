@@ -665,6 +665,10 @@ jobs:
       - run: npm run build
         env:
           OMNIROUTE_USE_TURBOPACK: "1"
+          # Turbopack compile is already successful on hosted runners; failures happen
+          # after compile when page-data workers fan out. Keep hosted at one worker,
+          # while the intended high-memory omni-build runner retains three.
+          OMNIROUTE_NEXT_BUILD_CPUS: ${{ vars.USE_VPS_RUNNER == 'true' && '3' || '1' }}
       - name: Archive Next.js build for downstream jobs
         # Use tar so the archive preserves paths relative to CWD (.build/next/...).
         # upload-artifact path-stripping is ambiguous when exclude patterns are used;

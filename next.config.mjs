@@ -136,6 +136,14 @@ function readTimeoutMs(...values) {
   return 600_000;
 }
 
+function readPositiveInteger(value) {
+  if (typeof value !== "string" || value.trim() === "") return undefined;
+  const parsed = Number(value);
+  return Number.isInteger(parsed) && parsed > 0 ? parsed : undefined;
+}
+
+const staticGenerationCpus = readPositiveInteger(process.env.OMNIROUTE_NEXT_BUILD_CPUS);
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Opt-in subpath deployment behind a reverse proxy (e.g. nginx/Caddy serving
@@ -236,6 +244,11 @@ const nextConfig = {
   // accept for image-bearing requests; tune via env if a deployment needs
   // more.
   experimental: {
+    // Next uses this knob for page-data/static-generation workers after the bundler
+    // compile. It is deliberately opt-in so normal/dev builds retain Next defaults;
+    // CI caps hosted runners to avoid the page-data memory spike that repeatedly
+    // shut down ubuntu-latest after a successful Turbopack compile.
+    ...(staticGenerationCpus ? { cpus: staticGenerationCpus } : {}),
     serverActions: {
       bodySizeLimit: process.env.OMNIROUTE_SERVER_ACTIONS_BODY_LIMIT || "50mb",
     },
