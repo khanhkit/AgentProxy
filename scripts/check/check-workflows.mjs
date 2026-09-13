@@ -42,6 +42,7 @@ import { execFileSync, spawnSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
+import * as yaml from "js-yaml";
 import { findProvenanceOnSelfHosted, formatProvenanceFinding } from "./lib/provenanceRunner.mjs";
 
 const ROOT = process.cwd();
@@ -200,6 +201,68 @@ export function collectWorkflowFiles(workflowsDir) {
     .readdirSync(workflowsDir)
     .filter((f) => f.endsWith(".yml") || f.endsWith(".yaml"))
     .map((f) => path.join(workflowsDir, f));
+}
+
+/**
+ * Syntax-checks explicit Bash `run:` blocks in one workflow.
+ * GitHub expressions are replaced with an inert token before `bash -n` so the
+ * local shell parser only judges Bash syntax, not Actions expression syntax.
+ *
+ * @param {string} workflowText
+ * @param {string} sourceName
+ * @returns {string[]}
+ */
+export function findEmbeddedBashSyntaxErrors(workflowText, sourceName = "<workflow>") {
+  let document;
+  try {
+    document = yaml.load(workflowText);
+  } catch {
+    // YAML syntax belongs to actionlint; avoid double-reporting it here.
+    return [];
+  }
+
+  const findings = [];
+  const jobs = document && typeof document === "object" ? document.jobs : null;
+  if (!jobs || typeof jobs !== "object") return findings;
+
+  for (const [jobId, job] of Object.entries(jobs)) {
+    const steps = job && typeof job === "object" && Array.isArray(job.steps) ? job.steps : [];
+    for (const [index, step] of steps.entries()) {
+      if (!step || typeof step !== "object" || typeof step.run !== "string") continue;
+      const shell = typeof step.shell === "string" ? step.shell.trim() : "";
+      if (!(shell === "bash" || shell.startsWith("bash "))) continue;
+
+      const script = step.run.replace(/\$\{\{[\s\S]*?\}\}/g, "__GITHUB_EXPR__");
+      const result = spawnSync("bash", ["-n"], {
+        input: script,
+        encoding: "utf8",
+        timeout: 5_000,
+        windowsHide: true,
+      });
+      if (result.status === 0) continue;
+
+      const detail = String(result.stderr || result.stdout || "bash syntax error")
+        .trim()
+        .split("\n")[0];
+      const stepName = typeof step.name === "string" ? step.name : `step ${index + 1}`;
+      findings.push(`${sourceName}: job ${jobId}, ${stepName}: ${detail}`);
+    }
+  }
+  return findings;
+}
+
+/**
+ * Runs embedded Bash syntax checks over workflow files.
+ * @param {string[]} files
+ * @returns {string[]}
+ */
+export function runEmbeddedBashSyntaxCheck(files) {
+  const findings = [];
+  for (const file of files) {
+    const text = fs.readFileSync(file, "utf8");
+    findings.push(...findEmbeddedBashSyntaxErrors(text, path.relative(ROOT, file)));
+  }
+  return findings;
 }
 
 /**
@@ -368,6 +431,16 @@ function main() {
     }
   }
 
+  const bashSyntaxFindings = runEmbeddedBashSyntaxCheck(workflowFiles);
+  if (bashSyntaxFindings.length > 0) {
+    console.error(
+      `[check-workflows] embedded-bash-syntax: ${bashSyntaxFindings.length} finding(s) — HARD RULE:`
+    );
+    bashSyntaxFindings.forEach((finding) => console.error(`  ${finding}`));
+  } else if (!QUIET) {
+    console.log("[check-workflows] embedded-bash-syntax: OK (0 findings)");
+  }
+
   const provenanceFindings = runProvenanceRunnerCheck(workflowFiles);
   if (provenanceFindings.length > 0) {
     console.error(
@@ -378,14 +451,21 @@ function main() {
     console.log("[check-workflows] provenance×self-hosted: OK (0 findings)");
   }
 
-  const total = actionlintCount + zizmorCount;
+  const total = actionlintCount + zizmorCount + bashSyntaxFindings.length;
   process.stdout.write(`workflowFindings=${total}\n`);
   process.stdout.write(`actionlintFindings=${actionlintCount}\n`);
   process.stdout.write(`zizmorFindings=${zizmorCount}\n`);
+  process.stdout.write(`embeddedBashSyntaxFindings=${bashSyntaxFindings.length}\n`);
   // Read this line with the count above: a finding total is only reproducible against the
   // version that produced it. See zizmorVersion().
   process.stdout.write(`zizmorVersion=${hasZizmor ? zizmorVersion() : "absent"}\n`);
   process.stdout.write(`provenanceRunnerFindings=${provenanceFindings.length}\n`);
+  if ((STRICT || RATCHET) && bashSyntaxFindings.length > 0) {
+    console.error(
+      `\n[check-workflows] FAIL — ${bashSyntaxFindings.length} explicit Bash run block(s) have syntax errors.`
+    );
+    process.exit(1);
+  }
   if ((STRICT || RATCHET) && provenanceFindings.length > 0) {
     console.error(
       `\n[check-workflows] FAIL — ${provenanceFindings.length} job(s) publish with --provenance from a self-hosted runner.\n` +
