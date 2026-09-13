@@ -85,6 +85,7 @@ import {
 } from "./chatCore/passthroughHelpers.ts";
 import { recoverAnthropicThinkingSignature } from "./chatCore/thinkingSignatureRecovery.ts";
 import { runProviderExecutionPipeline } from "./chatCore/providerExecutionPipeline.ts";
+import { createPipelineCredentialRefresher } from "./chatCore/pipelineCredentialRefresh.ts";
 import { runNonStreamingProviderLeg } from "./chatCore/nonStreamingProviderLeg.ts";
 import type { NonStreamingProviderLegResult } from "@/lib/skills/toolLoopTypes.ts";
 import {
@@ -1035,12 +1036,6 @@ export async function handleChatCore({
   const reasoningCacheScope = reasoningReplaySessionKey
     ? `api-key:${String(apiKeyInfo?.id ?? "local")}\x1f${String(reasoningReplaySessionKey)}`
     : null;
-  // persistAttemptLogs extracted to chatCore/attemptLogging.ts (#3501); bind the per-request context
-  // once so the call sites keep passing only per-attempt args. Combo target attempts share
-  // one live pendingRequestId by design (so the dashboard can poll across fallback), but
-  // call_logs.id is a per-row primary key. Give each persisted combo attempt its own id
-  // and keep correlationId as the stable logical-request join key. Non-combo requests keep
-  // the historical pendingRequestId == call_logs.id behavior.
   const persistAttemptLogs = (args: PersistAttemptLogsArgs) =>
     persistAttemptLogsFor(args, {
       traceId,
@@ -3615,74 +3610,11 @@ export async function handleChatCore({
   let providerResponse;
   let providerUrl;
   let providerHeaders;
-  let finalBody;
-  let claudePromptCacheLogMeta = null;
-
-  const refreshPipelineCredentials = async (
-    currentCredentials: Record<string, unknown>
-  ): Promise<Record<string, unknown> | null> => {
-    if (await shouldIsolateProbeFailures()) return null;
-
-    const attemptedRefreshToken =
-      typeof currentCredentials.refreshToken === "string" ? currentCredentials.refreshToken : null;
-    let persistFnRan = false;
-    const persistFn = onCredentialsRefreshed
-      ? async (refreshResult: Record<string, unknown>) => {
-          persistFnRan = true;
-          Object.assign(credentials, refreshResult);
-          await onCredentialsRefreshed(refreshResult);
-        }
-      : undefined;
-    const casConnectionId =
-      typeof currentCredentials.connectionId === "string"
-        ? currentCredentials.connectionId.trim()
-        : "";
-    const casReread = casConnectionId
-      ? async () => {
-          const latest = await getProviderConnectionById(casConnectionId);
-          return typeof latest?.refreshToken === "string" ? latest.refreshToken : null;
-        }
-      : null;
-
-    const refreshed = (await refreshWithRetry(
-      () =>
-        runWithCasGuard(
-          casReread ? { expectedRefreshToken: attemptedRefreshToken, reread: casReread } : null,
-          () =>
-            runWithOnPersist(persistFn, () =>
-              executor.refreshCredentials(currentCredentials, log)
-            )
-        ),
-      3,
-      log,
-      provider
-    )) as Record<string, unknown> | null;
-
-    if (refreshed?.accessToken || refreshed?.copilotToken) {
-      if (!persistFnRan) {
-        Object.assign(credentials, refreshed);
-        if (onCredentialsRefreshed) await onCredentialsRefreshed(refreshed);
-      }
-      return refreshed;
-    }
-
-    if (isUnrecoverableRefreshError(refreshed) && onCredentialsRefreshed) {
-      let alreadyRotated = false;
-      if (casConnectionId && attemptedRefreshToken) {
-        try {
-          const latest = await getProviderConnectionById(casConnectionId);
-          alreadyRotated = wasRefreshTokenRotated(attemptedRefreshToken, latest?.refreshToken);
-        } catch {
-          // Safe default below is to mark the credential expired.
-        }
-      }
-      if (!alreadyRotated) {
-        await onCredentialsRefreshed({ testStatus: "expired", isActive: false });
-      }
-    }
-    return null;
-  };
-
+  let finalBody, claudePromptCacheLogMeta = null;
+  const refreshPipelineCredentials = createPipelineCredentialRefresher({
+    shouldIsolateProbeFailures, credentials, onCredentialsRefreshed, provider, log,
+    refreshCredentials: (currentCredentials) => executor.refreshCredentials(currentCredentials, log),
+  });
   let pipelineRecovered = false;
   if (stream) {
     try {
