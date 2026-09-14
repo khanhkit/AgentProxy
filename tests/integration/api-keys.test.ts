@@ -246,6 +246,51 @@ test("POST /api/keys returns 400 for malformed or missing JSON payloads", async 
   }
 });
 
+test("API key USD limits reject JSON booleans at the HTTP boundary", async () => {
+  await enableManagementAuth();
+  await createManagementKey();
+  const created = await apiKeysDb.createApiKey("Usage Limit Target", MACHINE_ID);
+
+  const createResponse = await listRoute.POST(
+    await makeManagementSessionRequest("http://localhost/api/keys", {
+      method: "POST",
+      body: { name: "Invalid Boolean Limit", weeklyUsageLimitUsd: false },
+    })
+  );
+  const patchResponse = await keyRoute.PATCH(
+    await makeManagementSessionRequest(`http://localhost/api/keys/${created.id}`, {
+      method: "PATCH",
+      body: { dailyUsageLimitUsd: false },
+    }),
+    { params: Promise.resolve({ id: created.id }) }
+  );
+
+  const createBody = (await createResponse.json()) as { error?: { message?: string } };
+  const patchBody = (await patchResponse.json()) as { error?: { message?: string } };
+  assert.equal(createResponse.status, 400);
+  assert.equal(createBody.error?.message, "Invalid request");
+  assert.equal(patchResponse.status, 400);
+  assert.equal(patchBody.error?.message, "Invalid request");
+});
+
+test("PATCH /api/keys/[id] rejects an incomplete accessSchedule object", async () => {
+  await enableManagementAuth();
+  await createManagementKey();
+  const created = await apiKeysDb.createApiKey("Schedule Target", MACHINE_ID);
+
+  const response = await keyRoute.PATCH(
+    await makeManagementSessionRequest(`http://localhost/api/keys/${created.id}`, {
+      method: "PATCH",
+      body: { accessSchedule: {} },
+    }),
+    { params: Promise.resolve({ id: created.id }) }
+  );
+  const body = (await response.json()) as { error?: { message?: string } };
+
+  assert.equal(response.status, 400);
+  assert.equal(body.error?.message, "Invalid request");
+});
+
 test("API key group mutations return 400 when their required JSON body is missing", async () => {
   const create = await groupRoute.POST(
     new Request("http://localhost/api/keys/groups", { method: "POST" })

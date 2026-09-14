@@ -5,6 +5,7 @@ import test from "node:test";
 
 const require = createRequire(import.meta.url);
 const { maybeHandleDisallowedMethod } = require("../../scripts/dev/http-method-guard.cjs");
+const { load: loadYaml } = require("js-yaml") as { load: (source: string) => unknown };
 
 test("raw HTTP guard rejects high-risk unsupported methods before Next.js handles them", () => {
   const cases: Array<{
@@ -185,6 +186,7 @@ test("OpenAPI key subresources declare path ids and group create matches runtime
 
 test("OpenAPI key mutation bodies match runtime validation", () => {
   const spec = readFileSync("docs/openapi.yaml", "utf8");
+  assert.doesNotThrow(() => loadYaml(spec), "OpenAPI YAML must parse before contract assertions");
 
   const keysStart = spec.indexOf("  /api/keys:");
   const keysEnd = spec.indexOf("\n  /api/keys/{id}:", keysStart);
@@ -203,5 +205,11 @@ test("OpenAPI key mutation bodies match runtime validation", () => {
   assert.match(patch, /requestBody:\n\s+required: true/);
   assert.match(patch, /type: object\n\s+minProperties: 1/);
   assert.match(patch, /properties:\n\s+name:\s+\{ type: string, minLength: 1, maxLength: 200 \}/);
+  assert.match(
+    patch,
+    /accessSchedule:\n\s+oneOf:\n\s+- type: object\n\s+required: \[enabled, from, until, days, tz\]/
+  );
+  assert.match(patch, /days:\n\s+type: array\n\s+minItems: 1\n\s+maxItems: 7/);
+  assert.match(patch, /tz:\s+\{ type: string, minLength: 1, maxLength: 100 \}/);
   assert.match(patch, /anyOf:\n\s+- required: \[name\]/);
 });

@@ -58,8 +58,8 @@ export const createKeySchema = z
     noLog: z.boolean().optional(),
     allowUsageCommand: z.boolean().optional(),
     usageLimitEnabled: z.boolean().optional(),
-    dailyUsageLimitUsd: z.coerce.number().min(0).optional().nullable(),
-    weeklyUsageLimitUsd: z.coerce.number().min(0).optional().nullable(),
+    dailyUsageLimitUsd: z.number().min(0).optional().nullable(),
+    weeklyUsageLimitUsd: z.number().min(0).optional().nullable(),
     chaosModeEnabled: z.boolean().optional(),
     scopes: z.array(z.string().trim().min(1).max(64)).max(32).optional(),
     allowedConnections: z.array(z.string().uuid()).min(1).max(100).optional(),
@@ -153,8 +153,8 @@ export const updateKeyPermissionsSchema = z
     disableNonPublicModels: z.boolean().optional(),
     allowUsageCommand: z.boolean().optional(),
     usageLimitEnabled: z.boolean().optional(),
-    dailyUsageLimitUsd: z.coerce.number().min(0).optional().nullable(),
-    weeklyUsageLimitUsd: z.coerce.number().min(0).optional().nullable(),
+    dailyUsageLimitUsd: z.number().min(0).optional().nullable(),
+    weeklyUsageLimitUsd: z.number().min(0).optional().nullable(),
     chaosModeEnabled: z.boolean().optional(),
   })
   .superRefine((value, ctx) => {
