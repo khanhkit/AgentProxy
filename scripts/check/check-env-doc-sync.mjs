@@ -103,6 +103,9 @@ const IGNORE_FROM_CODE = new Set([
   // Set by the Actions runner; the ts7 ratchet appends its job summary there
   // (scripts/check/check-ts7-diagnostics-ratchet.mjs) — never OmniRoute runtime config (#9985).
   "GITHUB_STEP_SUMMARY",
+  // Blocking DAST harness session cookie: minted by the workflow login step and passed only
+  // to scripts/dast/* probes/Schemathesis. Ephemeral CI auth context, never user config.
+  "DAST_AUTH_COOKIE",
   // Same class as BASE_REF: CI passes the PR base ref to the ts7 diagnostics ratchet
   // (scripts/check/check-ts7-diagnostics-ratchet.mjs) — a check signal, not runtime config (#9985).
   "TS7_BASE_REF",

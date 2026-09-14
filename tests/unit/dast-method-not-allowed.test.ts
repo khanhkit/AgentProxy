@@ -211,6 +211,16 @@ test("OpenAPI key mutation bodies match runtime validation", () => {
   );
   assert.match(patch, /days:\n\s+type: array\n\s+minItems: 1\n\s+maxItems: 7/);
   assert.match(patch, /tz:\s+\{ type: string, minLength: 1, maxLength: 100 \}/);
+  assert.match(
+    patch,
+    /limit:\s+\{ type: integer, minimum: 1, maximum: 9007199254740991 \}/,
+    "rateLimits.limit must match Zod safe-integer bounds"
+  );
+  assert.match(
+    patch,
+    /window:\s+\{ type: integer, minimum: 1, maximum: 9007199254740991 \}/,
+    "rateLimits.window must match Zod safe-integer bounds"
+  );
   assert.match(patch, /anyOf:\n\s+- required: \[name\]/);
 });
 
