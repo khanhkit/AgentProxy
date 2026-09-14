@@ -366,4 +366,19 @@ test("DAST Schemathesis hook keeps API-key semantic filtering narrow and statefu
   assert.match(hook, /allowedModels/);
   assert.match(hook, /connectionAccessMode/);
   assert.match(hook, /allowedConnections/);
+  assert.match(
+    hook,
+    /def _has_blank_trimmed_string\(/,
+    "Schemathesis positive-case filter must reject whitespace-only values that runtime trim().min(1) rejects"
+  );
+  assert.match(hook, /allowedCombos/);
+  assert.match(hook, /allowedEndpoints/);
+
+  const liveSmoke = readFileSync("scripts/dast/check-api-key-cross-field.mjs", "utf8");
+  assert.match(
+    liveSmoke,
+    /patch rejects whitespace-only allowedCombos/,
+    "blocking live smoke must prove runtime still rejects whitespace-only allowedCombos"
+  );
+  assert.match(liveSmoke, /allowedCombos:\s*\["\\u00a0"\]/);
 });

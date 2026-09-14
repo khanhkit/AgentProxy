@@ -36,12 +36,37 @@ def _has_nonempty_list(body, field):
     return isinstance(value, list) and len(value) > 0
 
 
+def _is_blank_trimmed_string(value):
+    return isinstance(value, str) and value.strip() == ""
+
+
+def _has_blank_trimmed_string(body, *, scalar_fields=(), list_fields=()):
+    for field in scalar_fields:
+        if field in body and _is_blank_trimmed_string(body[field]):
+            return True
+    for field in list_fields:
+        value = body.get(field)
+        if isinstance(value, list) and any(_is_blank_trimmed_string(item) for item in value):
+            return True
+    return False
+
+
 def _valid_create_positive_body(body):
+    if _has_blank_trimmed_string(
+        body, list_fields=("allowedModels", "allowedCombos", "scopes")
+    ):
+        return False
     return not (body.get("modelAccessMode") == "all" and _has_nonempty_list(body, "allowedModels"))
 
 
 def _valid_patch_positive_body(body):
     if not _valid_create_positive_body(body):
+        return False
+    if _has_blank_trimmed_string(
+        body,
+        scalar_fields=("name",),
+        list_fields=("allowedModels", "allowedCombos", "scopes", "allowedEndpoints"),
+    ):
         return False
 
     mode = body.get("connectionAccessMode")

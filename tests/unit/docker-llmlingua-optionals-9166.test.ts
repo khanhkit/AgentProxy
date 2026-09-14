@@ -248,12 +248,15 @@ test("#9166 Docker explicitly installs and validates LLMLingua optionals", () =>
   const dockerfile = readFileSync(new URL("../../Dockerfile", import.meta.url), "utf8");
 
   const builderStart = dockerfile.indexOf("FROM base AS builder");
-  const runnerStart = dockerfile.indexOf("FROM base AS runner-base");
+  const runtimeStart = dockerfile.indexOf("FROM base AS runner-debian-base");
 
   assert.ok(builderStart >= 0, "Docker builder stage must exist");
-  assert.ok(runnerStart > builderStart, "Docker runner stage must follow builder");
+  assert.ok(
+    runtimeStart > builderStart,
+    "Docker Debian compatibility runtime stage must follow builder"
+  );
 
-  const builder = dockerfile.slice(builderStart, runnerStart);
+  const builder = dockerfile.slice(builderStart, runtimeStart);
 
   assert.match(
     builder,

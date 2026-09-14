@@ -76,6 +76,7 @@ try {
       "patch rejects empty allowedConnections when connectionAccessMode=restricted",
       { connectionAccessMode: "restricted", allowedConnections: [] },
     ],
+    ["patch rejects whitespace-only allowedCombos", { allowedCombos: ["\u00a0"] }],
   ];
 
   for (const [label, body] of cases) {
