@@ -454,13 +454,15 @@ export async function runNonStreamingProviderLeg(
       );
     }
   } catch (error) {
-    if (
-      !!error &&
-      typeof error === "object" &&
-      ((error as { code?: unknown }).code === "SEMAPHORE_TIMEOUT" ||
-        (error as { code?: unknown }).code === "SEMAPHORE_QUEUE_FULL")
-    ) {
-      throw error;
+    if (!!error && typeof error === "object") {
+      const code = (error as { code?: unknown }).code;
+      if (
+        code === "SEMAPHORE_TIMEOUT" ||
+        code === "SEMAPHORE_QUEUE_FULL" ||
+        (typeof code === "string" && code.startsWith("LEASE_"))
+      ) {
+        throw error;
+      }
     }
     // `abort(reason)` can reject with a raw string that has no `name`/`status`, so
     // `error.name === "AbortError"` is too narrow — that shape fell through to the 502

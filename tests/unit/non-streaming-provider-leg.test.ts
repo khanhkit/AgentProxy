@@ -860,11 +860,7 @@ test("dynamic connection: ID changes between initial and retry -> 409 on retry p
     assert.equal(result.result.status, 409);
     assert.equal(result.result.errorCode, "LEASE_CONNECTION_MISMATCH");
   }
-  assert.equal(
-    executorCallCount,
-    1,
-    "retry executor must not run after the lease already moved"
-  );
+  assert.equal(executorCallCount, 1, "retry executor must not run after the lease already moved");
 });
 
 /* -- fallback with real parsed response ----------------------------------- */
@@ -1070,7 +1066,11 @@ test("empty-content fallback with invalid SSE body is 502, not 200 empty", async
   });
   const result = await runNonStreamingProviderLeg(input);
   assert.ok(executorCallCount >= 2, "should attempt fallback");
-  assert.equal(result.kind, "error", "invalid SSE on fallback must not finishOk the empty original");
+  assert.equal(
+    result.kind,
+    "error",
+    "invalid SSE on fallback must not finishOk the empty original"
+  );
   if (result.kind !== "error") return;
   assert.equal(result.result.status, 502);
   assert.equal(result.result.errorCode, "invalid_sse_payload");
@@ -1109,6 +1109,28 @@ test("finishOk caches reasoning against translatedBody.messages, not Responses i
     lookupReasoning(cacheKey),
     "let me think...",
     "finishOk must pass historyMessages from translatedBody.messages"
+  );
+});
+
+test("managed lease fence errors rethrow so chatCore can map them to 409 without provider retry", async () => {
+  const fenceError = Object.assign(new Error("Managed lease request fence rejected the dispatch"), {
+    code: "LEASE_REQUIRED",
+    status: 409,
+  });
+  const input = baseInput({
+    runProviderExecution: async () => {
+      throw fenceError;
+    },
+  });
+
+  await assert.rejects(
+    () => runNonStreamingProviderLeg(input),
+    (err: unknown) => {
+      assert.equal(err, fenceError, "the original lease fence error must propagate unchanged");
+      assert.equal((err as { code?: string }).code, "LEASE_REQUIRED");
+      assert.equal((err as { status?: number }).status, 409);
+      return true;
+    }
   );
 });
 
