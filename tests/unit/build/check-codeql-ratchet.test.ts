@@ -7,6 +7,7 @@
 //                           (Hard Rule #14: dismissed alerts do not count)
 import test from "node:test";
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 // @ts-expect-error — .mjs helper has no type declarations; runtime shape is known.
 import {
   parseCodeQLAlerts,
@@ -324,4 +325,25 @@ test("evaluateCodeqlRatchet: strict integer comparison — any increase regresse
   assert.equal(evaluate(6, 5).regressed, true);
   assert.equal(evaluate(5, 5).regressed, false);
   assert.equal(evaluate(4, 5).regressed, false);
+});
+
+// ---------------------------------------------------------------------------
+// AgentProxy repository migration baseline
+// ---------------------------------------------------------------------------
+
+test("AgentProxy CodeQL debt ledger is seeded from the stable default-suite analysis", () => {
+  const baseline = JSON.parse(readFileSync("config/quality/quality-baseline.json", "utf8"));
+  const metric = baseline.metrics?.codeqlAlerts;
+
+  assert.equal(metric?.value, 132, "AgentProxy stable default-suite debt ledger must be 132");
+  assert.match(
+    metric?._agentproxy_migration_rebaseline_2026_09_14 ?? "",
+    /AgentProxy.*132.*default-suite/i,
+    "migration note must explain the AgentProxy default-suite provenance"
+  );
+  assert.match(
+    metric?._agentproxy_critical_debt_2026_09_14 ?? "",
+    /2 critical.*request-forgery/i,
+    "critical debt must remain explicit rather than silently absorbed"
+  );
 });
