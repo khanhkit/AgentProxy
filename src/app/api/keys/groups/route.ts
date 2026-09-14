@@ -25,8 +25,22 @@ export async function GET() {
  * Body: { name, description? }
  */
 export async function POST(request: Request) {
+  let rawBody;
   try {
-    const rawBody = await request.json();
+    rawBody = await request.json();
+  } catch {
+    return NextResponse.json(
+      {
+        error: {
+          message: "Invalid request",
+          details: [{ field: "body", message: "Invalid JSON body" }],
+        },
+      },
+      { status: 400 }
+    );
+  }
+
+  try {
     const validation = validateBody(createKeyGroupSchema, rawBody);
     if (isValidationFailure(validation)) {
       return NextResponse.json({ error: validation.error }, { status: 400 });

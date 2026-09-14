@@ -52,6 +52,14 @@ export function pickTarball(packJsonOutput) {
   return filename.replace(/\//g, "-");
 }
 
+/** Resolve the globally-installed package root from the manifest being packed. */
+export function resolveInstalledPackageRoot(prefix, packageName) {
+  if (typeof packageName !== "string" || packageName.trim() === "") {
+    throw new Error("package.json name is required to locate the installed pack smoke root");
+  }
+  return path.join(prefix, "lib", "node_modules", packageName);
+}
+
 /**
  * Boot verdict: HTTP 200 + a JSON body reporting the version we just packed.
  * `status` is logged but NOT asserted — a clean install with zero providers may
@@ -410,9 +418,9 @@ async function main() {
     );
     process.exit(2);
   }
-  const expectedVersion = JSON.parse(
-    fs.readFileSync(path.join(ROOT, "package.json"), "utf8")
-  ).version;
+  const packageManifest = JSON.parse(fs.readFileSync(path.join(ROOT, "package.json"), "utf8"));
+  const expectedVersion = packageManifest.version;
+  const packageName = packageManifest.name;
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-pack-boot-"));
   let child = null;
   let tail = [];
@@ -434,7 +442,7 @@ async function main() {
       encoding: "utf8",
       maxBuffer: 64 * 1024 * 1024,
     });
-    const packageRoot = path.join(prefix, "lib", "node_modules", "omniroute");
+    const packageRoot = resolveInstalledPackageRoot(prefix, packageName);
     const missingSqlJsFiles = findMissingSqlJsRuntimeFiles(packageRoot);
     if (missingSqlJsFiles.length > 0) {
       throw new Error(

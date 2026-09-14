@@ -154,7 +154,6 @@ test("OpenAPI documents high-risk route auth and setup responses", () => {
   assert.match(login, /"429":\n\s+description: Too many failed attempts/);
 });
 
-
 test("OpenAPI key subresources declare path ids and group create matches runtime", () => {
   const spec = readFileSync("docs/openapi.yaml", "utf8");
   const paths = [
@@ -170,7 +169,11 @@ test("OpenAPI key subresources declare path ids and group create matches runtime
     assert.notEqual(start, -1, routePath);
     const end = spec.indexOf("\n  /", start + 3);
     const block = spec.slice(start, end === -1 ? spec.length : end);
-    assert.match(block, /parameters:\n\s+- \$ref: "#\/components\/parameters\/ResourceId"/, routePath);
+    assert.match(
+      block,
+      /parameters:\n\s+- \$ref: "#\/components\/parameters\/ResourceId"/,
+      routePath
+    );
   }
 
   const groupsStart = spec.indexOf("  /api/keys/groups:");
@@ -178,4 +181,27 @@ test("OpenAPI key subresources declare path ids and group create matches runtime
   const groups = spec.slice(groupsStart, groupsEnd);
   assert.match(groups, /\n    post:/);
   assert.match(groups, /"201":(?:\s*\{\s*description:|\n\s+description:)/);
+});
+
+test("OpenAPI key mutation bodies match runtime validation", () => {
+  const spec = readFileSync("docs/openapi.yaml", "utf8");
+
+  const keysStart = spec.indexOf("  /api/keys:");
+  const keysEnd = spec.indexOf("\n  /api/keys/{id}:", keysStart);
+  const keys = spec.slice(keysStart, keysEnd);
+  assert.match(keys, /required: \[name\]/);
+  assert.doesNotMatch(keys, /required: \[label\]/);
+  assert.match(keys, /name:\n\s+type: string\n\s+minLength: 1\n\s+maxLength: 200/);
+  assert.match(keys, /"400":(?:\s*\{\s*description:|\n\s+description:)/);
+
+  const detailStart = spec.indexOf("  /api/keys/{id}:");
+  const detailEnd = spec.indexOf("\n  /api/keys/{id}/devices:", detailStart);
+  const detail = spec.slice(detailStart, detailEnd);
+  const patchStart = detail.indexOf("\n    patch:");
+  const deleteStart = detail.indexOf("\n    delete:", patchStart);
+  const patch = detail.slice(patchStart, deleteStart);
+  assert.match(patch, /requestBody:\n\s+required: true/);
+  assert.match(patch, /type: object\n\s+minProperties: 1/);
+  assert.match(patch, /properties:\n\s+name:\s+\{ type: string, minLength: 1, maxLength: 200 \}/);
+  assert.match(patch, /anyOf:\n\s+- required: \[name\]/);
 });

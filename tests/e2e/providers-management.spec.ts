@@ -267,14 +267,8 @@ test.describe("Providers management", () => {
     await expect(page.getByText("Primary OpenAI")).toBeVisible();
     await expect.poll(async () => (await readProviderMockState(page)).connections.length).toBe(1);
 
-    // After save, the UI opens a model-import modal (setShowImportModal). The sync-models
-    // endpoint is mocked to return instantly (0 models), so the modal reaches "done" phase
-    // and shows a Close button. Dismiss it before interacting with the connection list.
-    const importDialog = page.getByRole("dialog");
-    // The Modal renders two "Close" elements (header X + footer button) — use .first()
-    await expect(importDialog.getByRole("button", { name: "Close" }).first()).toBeVisible({ timeout: 15_000 });
-    await importDialog.getByRole("button", { name: "Close" }).first().click();
-    await expect(importDialog).not.toBeVisible();
+    // Model sync is opt-in (providerSpecificData.autoFetchModels === true). This flow
+    // intentionally omits it, so saving a connection must not block on an import modal.
 
     await page.getByTitle(/^edit$/i).click();
     const editDialog = page.getByRole("dialog");
@@ -315,9 +309,7 @@ test.describe("Providers management", () => {
     // #7361 replaced the native window.confirm() with a ConfirmModal, so the old
     // page.once("dialog") handler never fires and the delete request was never sent.
     await page.getByTitle(/^delete$/i).click();
-    const confirmDialog = page
-      .getByRole("dialog")
-      .filter({ hasText: /delete this connection/i });
+    const confirmDialog = page.getByRole("dialog").filter({ hasText: /delete this connection/i });
     await expect(confirmDialog).toBeVisible({ timeout: 10000 });
     await confirmDialog.getByRole("button", { name: /^delete$/i }).click();
 

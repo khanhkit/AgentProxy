@@ -76,7 +76,7 @@ curl https://localhost:20128/api/keys/{id}/devices \
 
 ### POST /api/keys/{id}/regenerate
 
-POST keys › <id> › regenerate
+Regenerate API key secret
 
 ```bash
 curl -X POST https://localhost:20128/api/keys/{id}/regenerate \
@@ -87,7 +87,7 @@ curl -X POST https://localhost:20128/api/keys/{id}/regenerate \
 
 ### GET /api/keys/{id}/reveal
 
-GET keys › <id> › reveal
+Reveal API key secret when reveal is enabled
 
 ```bash
 curl https://localhost:20128/api/keys/{id}/reveal \
@@ -96,7 +96,7 @@ curl https://localhost:20128/api/keys/{id}/reveal \
 
 ### GET /api/keys/{id}/usage-limits
 
-GET keys › <id> › usage limits
+Get API key usage limits
 
 ```bash
 curl https://localhost:20128/api/keys/{id}/usage-limits \
@@ -105,7 +105,7 @@ curl https://localhost:20128/api/keys/{id}/usage-limits \
 
 ### GET /api/keys/groups
 
-GET keys › groups
+List API key groups
 
 ```bash
 curl https://localhost:20128/api/keys/groups \
@@ -114,7 +114,7 @@ curl https://localhost:20128/api/keys/groups \
 
 ### POST /api/keys/groups
 
-POST keys › groups
+Create API key group
 
 ```bash
 curl -X POST https://localhost:20128/api/keys/groups \
@@ -125,7 +125,7 @@ curl -X POST https://localhost:20128/api/keys/groups \
 
 ### GET /api/keys/groups/{id}
 
-GET keys › groups › <id>
+Get API key group
 
 ```bash
 curl https://localhost:20128/api/keys/groups/{id} \
@@ -134,7 +134,7 @@ curl https://localhost:20128/api/keys/groups/{id} \
 
 ### PUT /api/keys/groups/{id}
 
-PUT keys › groups › <id>
+Update API key group
 
 ```bash
 curl -X PUT https://localhost:20128/api/keys/groups/{id} \
@@ -145,7 +145,7 @@ curl -X PUT https://localhost:20128/api/keys/groups/{id} \
 
 ### DELETE /api/keys/groups/{id}
 
-DELETE keys › groups › <id>
+Delete API key group
 
 ```bash
 curl -X DELETE https://localhost:20128/api/keys/groups/{id} \
@@ -154,7 +154,7 @@ curl -X DELETE https://localhost:20128/api/keys/groups/{id} \
 
 ### GET /api/keys/groups/{id}/keys
 
-GET keys › groups › <id> › keys
+List keys in an API key group
 
 ```bash
 curl https://localhost:20128/api/keys/groups/{id}/keys \
@@ -163,7 +163,7 @@ curl https://localhost:20128/api/keys/groups/{id}/keys \
 
 ### POST /api/keys/groups/{id}/keys
 
-POST keys › groups › <id> › keys
+Add API key to group
 
 ```bash
 curl -X POST https://localhost:20128/api/keys/groups/{id}/keys \
@@ -174,7 +174,7 @@ curl -X POST https://localhost:20128/api/keys/groups/{id}/keys \
 
 ### DELETE /api/keys/groups/{id}/keys
 
-DELETE keys › groups › <id> › keys
+Remove API key from group
 
 ```bash
 curl -X DELETE https://localhost:20128/api/keys/groups/{id}/keys \
@@ -183,7 +183,7 @@ curl -X DELETE https://localhost:20128/api/keys/groups/{id}/keys \
 
 ### GET /api/keys/groups/{id}/permissions
 
-GET keys › groups › <id> › permissions
+List API key group permissions
 
 ```bash
 curl https://localhost:20128/api/keys/groups/{id}/permissions \
@@ -192,7 +192,7 @@ curl https://localhost:20128/api/keys/groups/{id}/permissions \
 
 ### POST /api/keys/groups/{id}/permissions
 
-POST keys › groups › <id> › permissions
+Add API key group permission
 
 ```bash
 curl -X POST https://localhost:20128/api/keys/groups/{id}/permissions \
@@ -203,7 +203,7 @@ curl -X POST https://localhost:20128/api/keys/groups/{id}/permissions \
 
 ### DELETE /api/keys/groups/{id}/permissions
 
-DELETE keys › groups › <id> › permissions
+Remove API key group permission
 
 ```bash
 curl -X DELETE https://localhost:20128/api/keys/groups/{id}/permissions \

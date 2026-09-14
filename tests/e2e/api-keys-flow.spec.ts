@@ -1044,6 +1044,7 @@ test.describe("API keys flow", () => {
     const denyAllPatch = state.patchPayloads[state.patchPayloads.length - 1]!;
     expect(denyAllPatch.modelAccessMode).toBe("restricted");
     expect(denyAllPatch.allowedModels).toEqual([]);
+    await expect(reopened).not.toBeVisible({ timeout: UI_STABILITY_TIMEOUT_MS });
 
     await keyRow.locator('button[title="Edit permissions"]').click({ force: true });
     const denyAllReopened = page.getByRole("dialog", {

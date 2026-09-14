@@ -43,9 +43,23 @@ export async function GET(request: Request, { params }: RouteParams) {
  * PUT /api/keys/groups/[id] — Update a group
  */
 export async function PUT(request: Request, { params }: RouteParams) {
+  let rawBody;
+  try {
+    rawBody = await request.json();
+  } catch {
+    return NextResponse.json(
+      {
+        error: {
+          message: "Invalid request",
+          details: [{ field: "body", message: "Invalid JSON body" }],
+        },
+      },
+      { status: 400 }
+    );
+  }
+
   try {
     const { id } = await params;
-    const rawBody = await request.json();
     const validation = validateBody(updateKeyGroupSchema, rawBody);
     if (isValidationFailure(validation)) {
       return NextResponse.json({ error: validation.error }, { status: 400 });

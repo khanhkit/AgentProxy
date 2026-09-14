@@ -8,6 +8,7 @@ import {
   REQUIRED_SQLJS_RUNTIME_FILES,
   REQUIRED_MACHINE_TOKEN_RUNTIME_FILES,
   pickTarball,
+  resolveInstalledPackageRoot,
   evaluateBoot,
   pickPort,
   findMissingSqlJsRuntimeFiles,
@@ -41,6 +42,17 @@ test("pickTarball normalizes scoped slashes to the on-disk dash form", () => {
 test("pickTarball throws on empty/odd npm output instead of booting garbage", () => {
   assert.throws(() => pickTarball("[]"));
   assert.throws(() => pickTarball("{}"));
+});
+
+test("installed package root follows the package manifest name instead of the legacy OmniRoute name", () => {
+  assert.equal(
+    resolveInstalledPackageRoot("/prefix", "agentproxy"),
+    path.join("/prefix", "lib", "node_modules", "agentproxy")
+  );
+  assert.equal(
+    resolveInstalledPackageRoot("/prefix", "@scope/agentproxy"),
+    path.join("/prefix", "lib", "node_modules", "@scope", "agentproxy")
+  );
 });
 
 test("evaluateBoot passes on HTTP 200 + matching version, whatever the health status", () => {

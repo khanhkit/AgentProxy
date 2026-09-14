@@ -2379,13 +2379,43 @@ paths:
           application/json:
             schema:
               type: object
-              required: [label]
+              required: [name]
               properties:
-                label:
+                name:
                   type: string
+                  minLength: 1
+                  maxLength: 200
+                modelAccessMode:
+                  type: string
+                  enum: [all, restricted]
+                allowedModels:
+                  type: array
+                  maxItems: 1000
+                  items: { type: string, minLength: 1 }
+                allowedCombos:
+                  type: array
+                  maxItems: 500
+                  items: { type: string, minLength: 1, maxLength: 200 }
+                noLog: { type: boolean }
+                allowUsageCommand: { type: boolean }
+                usageLimitEnabled: { type: boolean }
+                dailyUsageLimitUsd: { type: [number, "null"], minimum: 0 }
+                weeklyUsageLimitUsd: { type: [number, "null"], minimum: 0 }
+                chaosModeEnabled: { type: boolean }
+                scopes:
+                  type: array
+                  maxItems: 32
+                  items: { type: string, minLength: 1, maxLength: 64 }
+                allowedConnections:
+                  type: array
+                  minItems: 1
+                  maxItems: 100
+                  items: { type: string, format: uuid }
       responses:
         "201":
           description: Created API key (includes full key value)
+        "400":
+          description: Invalid API key payload
         "401":
           description: Authentication required
 
@@ -2413,7 +2443,87 @@ paths:
           application/json:
             schema:
               type: object
+              minProperties: 1
+              properties:
+                name: { type: string, minLength: 1, maxLength: 200 }
+                modelAccessMode: { type: string, enum: [all, restricted] }
+                connectionAccessMode: { type: string, enum: [all, restricted] }
+                allowedModels:
+                  type: array
+                  maxItems: 1000
+                  items: { type: string, minLength: 1 }
+                allowedCombos:
+                  type: array
+                  maxItems: 500
+                  items: { type: string, minLength: 1, maxLength: 200 }
+                allowedConnections:
+                  type: array
+                  maxItems: 100
+                  items: { type: string, format: uuid }
+                noLog: { type: boolean }
+                autoResolve: { type: boolean }
+                isActive: { type: boolean }
+                throttleDelayMs: { type: integer, minimum: 0, maximum: 300000 }
+                isBanned: { type: boolean }
+                expiresAt: { type: [string, "null"], format: date-time }
+                maxSessions: { type: integer, minimum: 0, maximum: 10000 }
+                accessSchedule: { type: [object, "null"] }
+                rateLimits:
+                  oneOf:
+                    - type: array
+                      maxItems: 50
+                      items:
+                        type: object
+                        required: [limit, window]
+                        properties:
+                          limit: { type: integer, minimum: 1 }
+                          window: { type: integer, minimum: 1 }
+                    - type: "null"
+                scopes:
+                  type: array
+                  maxItems: 32
+                  items: { type: string, minLength: 1, maxLength: 64 }
+                allowedEndpoints:
+                  type: array
+                  maxItems: 20
+                  items: { type: string, minLength: 1, maxLength: 64 }
+                streamDefaultMode: { type: string, enum: [legacy, json] }
+                compressionEnabled: { type: boolean }
+                cacheDefaultMode: { type: string, enum: [legacy, bypass] }
+                disableNonPublicModels: { type: boolean }
+                allowUsageCommand: { type: boolean }
+                usageLimitEnabled: { type: boolean }
+                dailyUsageLimitUsd: { type: [number, "null"], minimum: 0 }
+                weeklyUsageLimitUsd: { type: [number, "null"], minimum: 0 }
+                chaosModeEnabled: { type: boolean }
               additionalProperties: true
+              anyOf:
+                - required: [name]
+                - required: [modelAccessMode]
+                - required: [connectionAccessMode]
+                - required: [allowedModels]
+                - required: [allowedCombos]
+                - required: [allowedConnections]
+                - required: [noLog]
+                - required: [autoResolve]
+                - required: [isActive]
+                - required: [throttleDelayMs]
+                - required: [isBanned]
+                - required: [expiresAt]
+                - required: [maxSessions]
+                - required: [accessSchedule]
+                - required: [rateLimits]
+                - required: [scopes]
+                - required: [allowedEndpoints]
+                - required: [streamDefaultMode]
+                - required: [compressionEnabled]
+                - required: [cacheDefaultMode]
+                - required: [disableNonPublicModels]
+                - required: [allowUsageCommand]
+                - required: [usageLimitEnabled]
+                - required: [dailyUsageLimitUsd]
+                - required: [weeklyUsageLimitUsd]
+                - required: [chaosModeEnabled]
       responses:
         "200":
           description: API key settings updated

@@ -19,6 +19,8 @@ const localDb = { updateSettings };
 const compliance = await import("../../src/lib/compliance/index.ts");
 const listRoute = await import("../../src/app/api/keys/route.ts");
 const keyRoute = await import("../../src/app/api/keys/[id]/route.ts");
+const groupRoute = await import("../../src/app/api/keys/groups/route.ts");
+const groupDetailRoute = await import("../../src/app/api/keys/groups/[id]/route.ts");
 const revealRoute = await import("../../src/app/api/keys/[id]/reveal/route.ts");
 
 const MACHINE_ID = "1234567890abcdef";
@@ -225,21 +227,40 @@ test("POST /api/keys validates missing and oversized names", async () => {
   assert.equal(oversizedName.status, 400);
 });
 
-test("POST /api/keys returns a server error for malformed JSON payloads", async () => {
+test("POST /api/keys returns 400 for malformed or missing JSON payloads", async () => {
   await enableManagementAuth();
   await createManagementKey();
 
-  const response = await listRoute.POST(
+  for (const request of [
     await makeManagementSessionRequest("http://localhost/api/keys", {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: "{",
-    })
-  );
-  const body = (await response.json()) as any;
+    }),
+    await makeManagementSessionRequest("http://localhost/api/keys", { method: "POST" }),
+  ]) {
+    const response = await listRoute.POST(request);
+    const body = (await response.json()) as any;
+    assert.equal(response.status, 400);
+    assert.equal(body.error?.message, "Invalid request");
+  }
+});
 
-  assert.equal(response.status, 500);
-  assert.equal(body.error, "Failed to create key");
+test("API key group mutations return 400 when their required JSON body is missing", async () => {
+  const create = await groupRoute.POST(
+    new Request("http://localhost/api/keys/groups", { method: "POST" })
+  );
+  const update = await groupDetailRoute.PUT(
+    new Request("http://localhost/api/keys/groups/nonexistent", { method: "PUT" }),
+    { params: Promise.resolve({ id: "nonexistent" }) }
+  );
+
+  const createBody = (await create.json()) as { error?: { message?: string } };
+  const updateBody = (await update.json()) as { error?: { message?: string } };
+  assert.equal(create.status, 400);
+  assert.equal(update.status, 400);
+  assert.equal(createBody.error?.message, "Invalid request");
+  assert.equal(updateBody.error?.message, "Invalid request");
 });
 
 test("GET /api/keys lists masked keys with pagination and GET /api/keys/[id] stays masked", async () => {

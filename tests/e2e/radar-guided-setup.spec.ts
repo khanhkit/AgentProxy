@@ -138,12 +138,8 @@ test.describe("Radar guided setup", () => {
     const connectionId = created.connection?.id;
     expect(connectionId).toBeTruthy();
 
-    const importDialog = page.getByRole("dialog").last();
-    const closeImportButton = importDialog.getByRole("button", { name: "Close" }).last();
-    await expect(closeImportButton).toBeVisible({
-      timeout: NAVIGATION_TIMEOUT_MS,
-    });
-    await closeImportButton.click();
+    // Model sync is opt-in; this guided setup does not request autoFetchModels,
+    // so the connection save completes without an import-progress modal.
 
     await page.goto("/dashboard/radar/setup?provider=groq", {
       waitUntil: "commit",

@@ -287,7 +287,12 @@ test("loadAllowlist: exceptions entries have required fields", () => {
 
 test("loadAllowlist: LGPL packages have registered exceptions", () => {
   const allowlist = loadAllowlist();
-  const lgplPkgs = ["@img/sharp-libvips-linux-x64", "@img/sharp-libvips-linuxmusl-x64"];
+  const lgplPkgs = [
+    "@img/sharp-libvips-linux-x64",
+    "@img/sharp-libvips-linuxmusl-x64",
+    "@img/sharp-libvips-linux-arm64",
+    "@img/sharp-libvips-linuxmusl-arm64",
+  ];
   for (const pkg of lgplPkgs) {
     assert.ok(
       allowlist.exceptions[pkg],

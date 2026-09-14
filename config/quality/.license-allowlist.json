@@ -45,6 +45,18 @@
       "risk": "low",
       "reviewAt": "v4.0.0"
     },
+    "@img/sharp-libvips-linux-arm64": {
+      "license": "LGPL-3.0-or-later",
+      "justification": "Same rationale as @img/sharp-libvips-linux-x64 — ARM64 glibc variant of the same prebuilt libvips shared library used by sharp. Dynamically linked, not modified by OmniRoute, and required for the supported native ARM64 runtime image.",
+      "risk": "low",
+      "reviewAt": "v4.0.0"
+    },
+    "@img/sharp-libvips-linuxmusl-arm64": {
+      "license": "LGPL-3.0-or-later",
+      "justification": "Same rationale as @img/sharp-libvips-linuxmusl-x64 — ARM64 musl variant of the same prebuilt libvips shared library used by sharp. Dynamically linked and not modified by OmniRoute.",
+      "risk": "low",
+      "reviewAt": "v4.0.0"
+    },
     "lightningcss": {
       "license": "MPL-2.0",
       "justification": "MPL-2.0 is a weak, file-level copyleft: only modifications to MPL-licensed files must be released under MPL. OmniRoute does not modify lightningcss source. It is pulled in transitively as a runtime dep of vite (via monaco-editor, a production dep). MPL-2.0 is explicitly compatible with Apache/MIT combinations per the Mozilla FAQ and is routinely used in Node.js production stacks. The OmniRoute codebase remains MIT.",

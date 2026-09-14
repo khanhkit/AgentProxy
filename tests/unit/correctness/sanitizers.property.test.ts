@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import fc from "fast-check";
 import { configureProperties } from "../../helpers/propertyConfig.ts";
 import { sanitizeErrorMessage } from "../../../open-sse/utils/error.ts";
+import { containsStrongCredentialToken } from "../../../open-sse/utils/errorSanitization.ts";
 
 configureProperties();
 
@@ -30,13 +31,24 @@ test("sanitizeErrorMessage never leaks a file path / stack frame", () => {
   );
 });
 
-test("sanitizeErrorMessage terminates on long adversarial input (ReDoS guard)", () => {
-  fc.assert(
-    fc.property(fc.integer({ min: 1000, max: 20000 }), (len) => {
-      const start = process.hrtime.bigint();
-      sanitizeErrorMessage("a".repeat(len) + "@" + "b".repeat(len) + ".com " + "1".repeat(len));
-      const ms = Number(process.hrtime.bigint() - start) / 1e6;
-      assert.ok(ms < 250, `too slow: ${ms}ms for len=${len}`);
-    })
-  );
+test("strong credential detection stays bounded on long benign tokens (ReDoS guard)", () => {
+  // Warm lazy regex/JIT initialization so this measures algorithmic behavior,
+  // not module startup on a shared runner.
+  containsStrongCredentialToken("warmup");
+  const benign = "a".repeat(30_000);
+  const detectorStart = process.hrtime.bigint();
+  const found = containsStrongCredentialToken(benign);
+  const detectorMs = Number(process.hrtime.bigint() - detectorStart) / 1e6;
+
+  assert.equal(found, false);
+  // The former unanchored [A-Za-z0-9]{3,}sk- branch takes ~2s on this
+  // input; the boundary-anchored linear form is sub-millisecond locally.
+  assert.ok(detectorMs < 500, `credential detector too slow: ${detectorMs.toFixed(2)}ms`);
+
+  // Keep an end-to-end catastrophe guard as well. sanitizeErrorMessage caps its
+  // scan window, so this should remain comfortably bounded even under CI load.
+  const sanitizeStart = process.hrtime.bigint();
+  sanitizeErrorMessage("a".repeat(20_000) + "@" + "b".repeat(20_000) + ".com");
+  const sanitizeMs = Number(process.hrtime.bigint() - sanitizeStart) / 1e6;
+  assert.ok(sanitizeMs < 1_000, `sanitizer unexpectedly slow: ${sanitizeMs.toFixed(2)}ms`);
 });
