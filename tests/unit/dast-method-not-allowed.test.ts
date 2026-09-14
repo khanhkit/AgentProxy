@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import test from "node:test";
 
@@ -250,4 +250,35 @@ test("OpenAPI API-key cross-field constraints match runtime refinements", () => 
     /connectionAccessMode:[\s\S]*const: restricted[\s\S]*required: \[allowedConnections\][\s\S]*minItems: 1/,
     "patch schema must require non-empty allowedConnections when connectionAccessMode=restricted"
   );
+});
+
+test("DAST Schemathesis hook keeps API-key semantic filtering narrow and stateful enabled", () => {
+  const workflow = readFileSync(".github/workflows/dast-smoke.yml", "utf8");
+  const hookPath = "scripts/dast/schemathesis_hooks.py";
+
+  assert.match(workflow, /SCHEMATHESIS_HOOKS:\s+scripts\/dast\/schemathesis_hooks\.py/);
+  assert.match(workflow, /pip install schemathesis==4\.27\.1/);
+  assert.match(workflow, /API-key cross-field validation smoke \(blocking\)/);
+  assert.match(workflow, /node scripts\/dast\/check-api-key-cross-field\.mjs/);
+  assert.match(workflow, /--checks all/);
+  assert.doesNotMatch(workflow, /--exclude-checks[^\n]*(positive_data_acceptance|all)/);
+  assert.doesNotMatch(workflow, /--phases[^\n]*((?!stateful).)*$/m);
+  assert.ok(existsSync(hookPath), "DAST Schemathesis hook file must exist");
+  assert.ok(
+    existsSync("scripts/dast/check-api-key-cross-field.mjs"),
+    "live API-key cross-field smoke script must exist"
+  );
+
+  const hook = readFileSync(hookPath, "utf8");
+  assert.match(hook, /def before_load_schema\(/);
+  assert.match(hook, /def filter_case\(/);
+  assert.match(hook, /["']\/api\/keys["']/);
+  assert.match(hook, /["']\/api\/keys\/\{id\}["']/);
+  assert.match(hook, /["']post["']/i);
+  assert.match(hook, /["']patch["']/i);
+  assert.match(hook, /\.pop\(["']allOf["'], None\)/);
+  assert.match(hook, /modelAccessMode/);
+  assert.match(hook, /allowedModels/);
+  assert.match(hook, /connectionAccessMode/);
+  assert.match(hook, /allowedConnections/);
 });

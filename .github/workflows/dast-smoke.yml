@@ -75,11 +75,17 @@ jobs:
           test -n "$auth_cookie"
           echo "::add-mask::$auth_cookie"
           echo "DAST_AUTH_COOKIE=$auth_cookie" >> "$GITHUB_ENV"
+      - name: API-key cross-field validation smoke (blocking)
+        env:
+          OMNIROUTE_URL: http://localhost:20128
+        run: node scripts/dast/check-api-key-cross-field.mjs
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: "3.12"
-      - run: pip install schemathesis
+      - run: pip install schemathesis==4.27.1
       - name: Schemathesis smoke (high-risk endpoints, blocking)
+        env:
+          SCHEMATHESIS_HOOKS: scripts/dast/schemathesis_hooks.py
         run: |
           # /api/auth/oidc/* is a BROWSER redirect flow (302 to the IdP, 302 back to
           # /login?oidc_error=... on every failure), not a REST endpoint: Schemathesis reads
