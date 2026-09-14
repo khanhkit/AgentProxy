@@ -14,6 +14,11 @@ test("Docker image ships and enables the AgentProxy Rust gateway", () => {
     /COPY --from=rust-builder \/tmp\/agentproxy-gateway \.\/rust\/target\/release\/agentproxy-gateway/
   );
   assert.match(dockerfile, /ENV AGENTPROXY_RUST_CORE=1/);
+  assert.match(
+    dockerfile,
+    /ENV AGENTPROXY_RUST_CORE_HOST=0\.0\.0\.0/,
+    "Docker must bind the Rust API gateway to the container interface so published port 20128 is reachable"
+  );
 });
 
 test("standalone bundle ships and launches the Rust supervisor", () => {

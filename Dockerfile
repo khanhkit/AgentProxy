@@ -227,6 +227,10 @@ ENV API_PORT=20128
 ENV DASHBOARD_PORT=20129
 ENV HOSTNAME=0.0.0.0
 ENV AGENTPROXY_RUST_CORE=1
+# The Rust API is the externally published data plane on 20128. The supervisor
+# defaults to loopback for non-container use, so Docker must opt into binding the
+# container interface; otherwise `-p ...:20128:20128` cannot reach the gateway.
+ENV AGENTPROXY_RUST_CORE_HOST=0.0.0.0
 # Runtime heap ceiling. 1024MB is enough for normal traffic but can be tight
 # for large fusion-combo panels (many models fanned out in parallel, each
 # response buffered in full — see open-sse/services/fusion.ts::FUSION_DEFAULTS
