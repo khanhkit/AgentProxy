@@ -4,7 +4,7 @@
 
 import test from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -34,16 +34,48 @@ test("both native Linux architectures are built and exactly two digests are requ
 
 test("every platform image is runtime-smoked before publication", () => {
   assert.match(WORKFLOW, /name: Smoke platform image/);
-  assert.match(WORKFLOW, /docker exec agentproxy-smoke test -x \/app\/rust\/target\/release\/agentproxy-gateway/);
+  assert.match(
+    WORKFLOW,
+    /docker exec agentproxy-smoke test -x \/app\/rust\/target\/release\/agentproxy-gateway/
+  );
   assert.match(WORKFLOW, /127\.0\.0\.1:20128\/readyz/);
   assert.match(WORKFLOW, /127\.0\.0\.1:20129\/healthz/);
 });
 
 test("platform images retain blocking HIGH and CRITICAL vulnerability scanning", () => {
-  const gate = WORKFLOW.match(/- name: Scan platform image for vulnerabilities[\s\S]*?severity: CRITICAL,HIGH/);
+  const gate = WORKFLOW.match(
+    /- name: Scan platform image for vulnerabilities[\s\S]*?severity: CRITICAL,HIGH/
+  );
   assert.ok(gate, "blocking Trivy gate must remain present");
   assert.match(gate[0], /exit-code: "1"/);
   assert.match(gate[0], /ignore-unfixed: false/);
+});
+
+test("Trivy exceptions are explicit, reviewable, and time-bounded", () => {
+  const ignorePath = path.join(ROOT, ".trivyignore.yaml");
+  assert.equal(
+    existsSync(ignorePath),
+    true,
+    "release scan exceptions must live in .trivyignore.yaml"
+  );
+  assert.match(WORKFLOW, /trivyignores:\s*\.trivyignore\.yaml/);
+
+  const ignore = readFileSync(ignorePath, "utf8");
+  const expected = [
+    "CVE-2025-69720",
+    "CVE-2026-16742",
+    "CVE-2026-54369",
+    "CVE-2026-76642",
+    "CVE-2026-78408",
+    "CVE-2026-78409",
+    "CVE-2026-78410",
+    "CVE-2026-9538",
+  ];
+  for (const cve of expected) {
+    assert.match(ignore, new RegExp(`- id: ${cve}\\n(?:[\\s\\S]*?\\n)?\\s+expired_at: 2026-10-15`));
+  }
+  assert.equal((ignore.match(/- id: CVE-/g) ?? []).length, expected.length);
+  assert.match(ignore, /statement:/);
 });
 
 test("published manifest carries supply-chain evidence and is keyless-signed", () => {

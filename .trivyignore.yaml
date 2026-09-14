@@ -1,0 +1,33 @@
+# Production container vulnerability exceptions.
+#
+# These are exact, time-bounded exceptions for Debian trixie findings that have
+# no fixed package in Debian stable as of 2026-09-14. The production container
+# runs as UID 1000 without privileged/container-admin capabilities, and AgentProxy
+# does not invoke the affected privileged/local-only utilities. Re-evaluate each
+# exception when Debian publishes a fix or no later than the expiry date below.
+# Generic ignore-unfixed remains forbidden; every new CVE requires review here.
+vulnerabilities:
+  - id: CVE-2025-69720
+    expired_at: 2026-10-15
+    statement: "Debian trixie has no fix; affected ncurses infocmp CLI is not invoked by AgentProxy runtime."
+  - id: CVE-2026-16742
+    expired_at: 2026-10-15
+    statement: "Debian trixie has no fix; systemd-homed is not present as a running service in the non-root container."
+  - id: CVE-2026-54369
+    expired_at: 2026-10-15
+    statement: "Debian trixie has no fix; exploit requires privileged libacl pathname operations that AgentProxy does not perform."
+  - id: CVE-2026-76642
+    expired_at: 2026-10-15
+    statement: "Debian trixie has no fix; exploit requires privileged mount helper/post-hook behavior unavailable to the non-root container."
+  - id: CVE-2026-78408
+    expired_at: 2026-10-15
+    statement: "Debian trixie has no fix; nsenter --join-cgroup is not used and the runtime has no container-admin privileges."
+  - id: CVE-2026-78409
+    expired_at: 2026-10-15
+    statement: "Debian trixie has no fix; X-mount.subdir privileged mount path is not used by the non-root runtime."
+  - id: CVE-2026-78410
+    expired_at: 2026-10-15
+    statement: "Debian trixie has no fix; restricted bind-mount mutation path is not available to the non-root runtime."
+  - id: CVE-2026-9538
+    expired_at: 2026-10-15
+    statement: "Debian trixie fix is deferred; AgentProxy runtime does not invoke Perl Archive::Tar on untrusted input."
