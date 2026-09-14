@@ -1,6 +1,9 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
+import { spawnSync } from "node:child_process";
 
 const dockerfile = fs.readFileSync("Dockerfile", "utf8");
 const assemble = fs.readFileSync("scripts/build/assembleStandalone.mjs", "utf8");
@@ -58,6 +61,50 @@ test("Docker publish workflow is AgentProxy GHCR-only and multi-arch", () => {
   assert.match(workflow, /linux\/arm64/);
   assert.match(workflow, /OMNIROUTE_BUILD_MEMORY_MB=7168/);
   assert.match(workflow, /OMNIROUTE_USE_TURBOPACK=0/);
+});
+
+test("Docker manifest platform verification accepts pretty OCI index JSON", (t) => {
+  const workflow = fs.readFileSync(".github/workflows/docker-publish.yml", "utf8");
+  const step = workflow.match(
+    /- name: Verify manifest platforms\n\s+shell: bash\n\s+run: \|\n((?: {10}.*(?:\n|$))+)/
+  );
+  assert.ok(step, "Verify manifest platforms shell step must exist");
+  const script = step[1].replace(/^ {10}/gm, "");
+
+  const fakeBin = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-fake-docker-"));
+  t.after(() => fs.rmSync(fakeBin, { recursive: true, force: true }));
+  const fakeDocker = path.join(fakeBin, "docker");
+  fs.writeFileSync(
+    fakeDocker,
+    `#!/usr/bin/env bash
+cat <<'JSON'
+{
+  "schemaVersion": 2,
+  "manifests": [
+    {"platform": {"architecture": "amd64", "os": "linux"}},
+    {"platform": {"architecture": "arm64", "os": "linux"}}
+  ]
+}
+JSON
+`
+  );
+  fs.chmodSync(fakeDocker, 0o755);
+
+  const result = spawnSync("bash", ["-c", script], {
+    encoding: "utf8",
+    env: {
+      ...process.env,
+      IMAGE_NAME: "ghcr.io/example/agentproxy",
+      VERSION: "0.1.0",
+      PATH: `${fakeBin}:${process.env.PATH ?? ""}`,
+    },
+  });
+
+  assert.equal(
+    result.status,
+    0,
+    `pretty OCI index with linux/amd64 + linux/arm64 must pass; stderr=${result.stderr}`
+  );
 });
 
 test("Docker publish workflow enforces supply-chain gates before promotion", () => {

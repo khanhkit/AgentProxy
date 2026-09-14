@@ -248,8 +248,8 @@ jobs:
         run: |
           set -euo pipefail
           raw=$(docker buildx imagetools inspect "${IMAGE_NAME}:${VERSION}" --raw)
-          printf '%s' "$raw" | grep -q '"architecture":"amd64"'
-          printf '%s' "$raw" | grep -q '"architecture":"arm64"'
+          grep -qE '"architecture"[[:space:]]*:[[:space:]]*"amd64"' <<<"$raw"
+          grep -qE '"architecture"[[:space:]]*:[[:space:]]*"arm64"' <<<"$raw"
 
       - name: Resolve immutable manifest digest
         id: manifest
