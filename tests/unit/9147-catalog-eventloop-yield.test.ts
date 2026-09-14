@@ -75,11 +75,16 @@ test("#9147 — catalog build at catalog-scale must not pin the event loop for a
   });
   let lastTick = performance.now();
   let maxGapMs = 0;
+  let maxCpuGapMs = 0;
+  let cpuCheckpoint = process.cpuUsage();
   let ticks = 0;
   while (!settled) {
     await new Promise((resolve) => setTimeout(resolve, 0));
     const now = performance.now();
     maxGapMs = Math.max(maxGapMs, now - lastTick);
+    const cpuDelta = process.cpuUsage(cpuCheckpoint);
+    cpuCheckpoint = process.cpuUsage();
+    maxCpuGapMs = Math.max(maxCpuGapMs, (cpuDelta.user + cpuDelta.system) / 1000);
     lastTick = now;
     ticks++;
     if (ticks > 20000) break;
@@ -87,21 +92,25 @@ test("#9147 — catalog build at catalog-scale must not pin the event loop for a
   const res = await buildPromise;
   assert.equal(res.status, 200);
   t.diagnostic(
-    `maximum event-loop gap: ${maxGapMs.toFixed(1)}ms across ${ticks} interleaved ticks`
+    `maximum event-loop gap: ${maxGapMs.toFixed(1)}ms; max process CPU between ticks: ${maxCpuGapMs.toFixed(1)}ms across ${ticks} interleaved ticks`
   );
-  // 2026-08-30: 400 → 800. With the catalog at 352 providers the hosted shards measure
-  // 410–633ms gaps (runs 33325191658, 33327592128, 33328119934); 800ms still fails a
-  // true pin (seconds) — re-tighten with the v4.0 catalog modularization.
-  // 150ms is tight on GitHub-hosted unit shards (`--test-concurrency=4`):
-  // sibling tests share the event loop, so a healthy yielding builder still
-  // records 200–260ms gaps. 400ms still fails a true pin (seconds) while
-  // absorbing shard contention. Observed CI: 252.5ms on run 32494847431.
+  // Wall-clock delay on an oversubscribed runner includes time when this process is
+  // descheduled. Keep a catastrophe wall bound, but apply the historical 800ms pin
+  // threshold to CPU time actually consumed by this process between timer ticks.
+  // Local probes on 2026-09-14 saw 0.9–1.3s wall gaps with only 577–587ms process CPU
+  // while still producing 868–970 interleaved ticks; treating those as a builder pin
+  // made the gate non-deterministic.
   assert.ok(
-    maxGapMs < 800,
-    `event loop was blocked for ${maxGapMs.toFixed(1)}ms in a single stretch while building the ` +
-      `catalog for ${CONNECTION_COUNT} connections / ${CONNECTION_COUNT * MODELS_PER_CONNECTION} models ` +
-      `(${ticks} interleaved ticks observed) — the builder is not yielding to the event loop`
+    maxGapMs < 1500,
+    `event loop had a catastrophic ${maxGapMs.toFixed(1)}ms wall gap while building the catalog`
   );
+  assert.ok(
+    maxCpuGapMs < 800,
+    `catalog builder consumed ${maxCpuGapMs.toFixed(1)}ms of process CPU without yielding for ` +
+      `${CONNECTION_COUNT} connections / ${CONNECTION_COUNT * MODELS_PER_CONNECTION} models ` +
+      `(${ticks} interleaved ticks observed)`
+  );
+  assert.ok(ticks >= 100, `catalog builder yielded only ${ticks} interleaved ticks`);
   const body = (await res.json()) as { data?: Array<{ root?: string }> };
   assert.ok(
     body.data?.some((model) => model.root === "probe-model-59-11"),

@@ -224,11 +224,11 @@ test("api keys route rejects invalid payloads and malformed JSON", async () => {
     })
   );
 
-  const malformedBody = (await malformed.json()) as any;
+  const malformedBody = (await malformed.json()) as { error?: { message?: string } };
 
   assert.equal(missingName.status, 400);
-  assert.equal(malformed.status, 500);
-  assert.equal(malformedBody.error, "Failed to create key");
+  assert.equal(malformed.status, 400);
+  assert.equal(malformedBody.error?.message, "Invalid request");
 });
 
 test("settings proxy route covers full config, resolve, validation, delete and global fallback", async () => {

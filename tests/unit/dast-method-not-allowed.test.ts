@@ -213,3 +213,41 @@ test("OpenAPI key mutation bodies match runtime validation", () => {
   assert.match(patch, /tz:\s+\{ type: string, minLength: 1, maxLength: 100 \}/);
   assert.match(patch, /anyOf:\n\s+- required: \[name\]/);
 });
+
+test("OpenAPI API-key cross-field constraints match runtime refinements", () => {
+  const spec = readFileSync("docs/openapi.yaml", "utf8");
+  assert.doesNotThrow(
+    () => loadYaml(spec),
+    "OpenAPI YAML must parse before cross-field assertions"
+  );
+
+  const createStart = spec.indexOf("  /api/keys:");
+  const createEnd = spec.indexOf("\n  /api/keys/{id}:", createStart);
+  const create = spec.slice(createStart, createEnd);
+  assert.match(
+    create,
+    /allOf:[\s\S]*const: all[\s\S]*allowedModels:[\s\S]*maxItems: 0/,
+    "create schema must reject non-empty allowedModels when modelAccessMode=all"
+  );
+
+  const detailStart = spec.indexOf("  /api/keys/{id}:");
+  const detailEnd = spec.indexOf("\n  /api/keys/{id}/devices:", detailStart);
+  const patchStart = spec.indexOf("\n    patch:", detailStart);
+  const deleteStart = spec.indexOf("\n    delete:", patchStart);
+  const patch = spec.slice(patchStart, deleteStart > patchStart ? deleteStart : detailEnd);
+  assert.match(
+    patch,
+    /allOf:[\s\S]*modelAccessMode:[\s\S]*const: all[\s\S]*allowedModels:[\s\S]*maxItems: 0/,
+    "patch schema must reject non-empty allowedModels when modelAccessMode=all"
+  );
+  assert.match(
+    patch,
+    /connectionAccessMode:[\s\S]*const: all[\s\S]*allowedConnections:[\s\S]*maxItems: 0/,
+    "patch schema must reject non-empty allowedConnections when connectionAccessMode=all"
+  );
+  assert.match(
+    patch,
+    /connectionAccessMode:[\s\S]*const: restricted[\s\S]*required: \[allowedConnections\][\s\S]*minItems: 1/,
+    "patch schema must require non-empty allowedConnections when connectionAccessMode=restricted"
+  );
+});

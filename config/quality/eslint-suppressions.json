@@ -4767,7 +4767,7 @@
   },
   "tests/unit/route-edge-coverage.test.ts": {
     "@typescript-eslint/no-explicit-any": {
-      "count": 57
+      "count": 56
     },
     "@typescript-eslint/no-unused-vars": {
       "count": 1

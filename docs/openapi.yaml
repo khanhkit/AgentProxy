@@ -2411,6 +2411,15 @@ paths:
                   minItems: 1
                   maxItems: 100
                   items: { type: string, format: uuid }
+              allOf:
+                - if:
+                    properties:
+                      modelAccessMode: { const: all }
+                    required: [modelAccessMode]
+                  then:
+                    properties:
+                      allowedModels:
+                        maxItems: 0
       responses:
         "201":
           description: Created API key (includes full key value)
@@ -2538,6 +2547,32 @@ paths:
                 - required: [dailyUsageLimitUsd]
                 - required: [weeklyUsageLimitUsd]
                 - required: [chaosModeEnabled]
+              allOf:
+                - if:
+                    properties:
+                      modelAccessMode: { const: all }
+                    required: [modelAccessMode]
+                  then:
+                    properties:
+                      allowedModels:
+                        maxItems: 0
+                - if:
+                    properties:
+                      connectionAccessMode: { const: all }
+                    required: [connectionAccessMode]
+                  then:
+                    properties:
+                      allowedConnections:
+                        maxItems: 0
+                - if:
+                    properties:
+                      connectionAccessMode: { const: restricted }
+                    required: [connectionAccessMode]
+                  then:
+                    required: [allowedConnections]
+                    properties:
+                      allowedConnections:
+                        minItems: 1
       responses:
         "200":
           description: API key settings updated
