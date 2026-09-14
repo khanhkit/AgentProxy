@@ -327,12 +327,10 @@ test("floor=0 puts 0.5% in the main pool", async () => {
     true
   );
   _clearInflightForTest();
-  const cfg = resolveResetAwareConfig({});
-  const sOk = scoreResetAwareQuota(quotaAt(0.6), cfg).score;
-  const sLow = scoreResetAwareQuota(quotaAt(0.995), cfg).score;
-  // Pool keeps expand order, not score order. r = sOk is the half-open
-  // boundary after the healthy slot, so the leftover 0.5% account leads.
-  _setSecureRandomFloatSource(() => sOk / (sOk + sLow));
+  // Exact half-open weighted boundaries are pinned by the pickWeightedIndex
+  // primitive test above. Reset-aware scores intentionally depend on Date.now(),
+  // so keep this integration probe safely inside the final pool member's interval.
+  _setSecureRandomFloatSource(() => 1 - Number.EPSILON);
   const lowFirst = await orderTargetsByQuotaWeighted(
     [makeTarget(provider, ok), makeTarget(provider, low)],
     "f0-first",
