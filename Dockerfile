@@ -212,8 +212,11 @@ RUN --mount=type=cache,id=s/92ca8a61-c1ba-421f-a389-d48ac7258c2d-next-cache,targ
   && npm run build \
   && node --input-type=module -e "import { createRequire } from 'node:module'; import { pathToFileURL } from 'node:url'; const standaloneRoot = '/app/.build/next/standalone/node_modules/'; const require = createRequire('/app/.build/next/standalone/package.json'); for (const pkg of ['@atjsh/llmlingua-2', '@huggingface/transformers', 'js-tiktoken']) { const resolved = require.resolve(pkg); if (!resolved.startsWith(standaloneRoot)) throw new Error(pkg + ' resolved outside standalone: ' + resolved); await import(pathToFileURL(resolved).href); } const onnxRuntime = require.resolve('onnxruntime-node'); if (!onnxRuntime.startsWith(standaloneRoot)) throw new Error('onnxruntime-node resolved outside standalone: ' + onnxRuntime); await import(pathToFileURL(onnxRuntime).href);"
 
-# ── Runner base ────────────────────────────────────────────────────────────
-FROM base AS runner-base
+# ── Debian compatibility runner base ──────────────────────────────────────
+# Keep the existing Debian runtime as the source for runner-web / runner-cli,
+# whose Playwright/system-package layers are Debian-specific. The production
+# publication target below copies only /app into a hardened Wolfi runtime.
+FROM base AS runner-debian-base
 
 LABEL org.opencontainers.image.title="AgentProxy" \
   org.opencontainers.image.description="Agent-first AI proxy with a native Rust streaming data plane" \
@@ -286,6 +289,46 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
 
 CMD ["node", "dev/run-standalone.mjs"]
 
+# ── Production runner base ─────────────────────────────────────────────────
+# Pinned multi-arch Chainguard Node/Wolfi image (Node 26.8.2). Wolfi is glibc
+# based, so the Debian-built onnxruntime-node, keytar, better-sqlite3, and Rust
+# artifacts remain ABI-compatible. The dev image intentionally retains npm and
+# a POSIX shell because AgentProxy invokes npm at runtime and has a shell
+# entrypoint. Trivy v0.69.3 reports 0 HIGH/CRITICAL on this exact index digest.
+FROM cgr.dev/chainguard/node@sha256:37ea42c0860729767b090a7c700c836eac660eb4bcfee3b5fe63eb85acd63df4 AS runner-base
+USER root
+WORKDIR /app
+RUN apk add --no-cache libsecret ca-certificates \
+  && addgroup -g 1000 node \
+  && adduser -D -u 1000 -G node -h /home/node node
+
+LABEL org.opencontainers.image.title="AgentProxy" \
+  org.opencontainers.image.description="Agent-first AI proxy with a native Rust streaming data plane" \
+  org.opencontainers.image.url="https://github.com/khanhkit/AgentProxy" \
+  org.opencontainers.image.source="https://github.com/khanhkit/AgentProxy" \
+  org.opencontainers.image.licenses="MIT"
+
+ENV NODE_ENV=production
+ENV PORT=20128
+ENV API_PORT=20128
+ENV DASHBOARD_PORT=20129
+ENV HOSTNAME=0.0.0.0
+ENV AGENTPROXY_RUST_CORE=1
+ENV AGENTPROXY_RUST_CORE_HOST=0.0.0.0
+ENV OMNIROUTE_MEMORY_MB=1024
+ENV NODE_OPTIONS="--max-old-space-size=${OMNIROUTE_MEMORY_MB}"
+ENV DATA_DIR=/app/data
+ENV OMNIROUTE_MIGRATIONS_DIR=/app/migrations
+
+COPY --from=runner-debian-base --chown=node:node /app /app
+
+EXPOSE 20128 20129
+USER node
+ENTRYPOINT ["/app/check-permissions.sh"]
+HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
+  CMD ["node", "healthcheck.mjs"]
+CMD ["node", "dev/run-standalone.mjs"]
+
 # ── Runner Web (web-cookie providers: Gemini Web, Claude Turnstile) ───────────
 #
 #  Two image flavors:
@@ -301,7 +344,7 @@ CMD ["node", "dev/run-standalone.mjs"]
 #    build:
 #      context: .
 #      target: runner-web
-FROM runner-base AS runner-web
+FROM runner-debian-base AS runner-web
 
 USER root
 
@@ -328,7 +371,7 @@ RUN --mount=type=cache,id=s/92ca8a61-c1ba-421f-a389-d48ac7258c2d-apt-cache,targe
 
 USER node
 
-FROM runner-base AS runner-cli
+FROM runner-debian-base AS runner-cli
 
 # Drop back to root briefly so we can install system + global npm packages,
 # then return to the `node` non-root user before the CMD inherited from

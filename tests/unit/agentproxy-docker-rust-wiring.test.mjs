@@ -21,6 +21,19 @@ test("Docker image ships and enables the AgentProxy Rust gateway", () => {
   );
 });
 
+test("production runner uses a pinned zero-HIGH glibc runtime without weakening Trivy", () => {
+  assert.match(
+    dockerfile,
+    /FROM cgr\.dev\/chainguard\/node@sha256:37ea42c0860729767b090a7c700c836eac660eb4bcfee3b5fe63eb85acd63df4 AS runner-base/,
+    "runner-base must use the verified multi-arch Chainguard Node digest"
+  );
+  assert.match(dockerfile, /apk add --no-cache[^\n]*libsecret/);
+  assert.match(dockerfile, /adduser[^\n]*-u 1000[^\n]*node/);
+
+  const workflow = fs.readFileSync(".github/workflows/docker-publish.yml", "utf8");
+  assert.match(workflow, /ignore-unfixed:\s*false/);
+});
+
 test("standalone bundle ships and launches the Rust supervisor", () => {
   assert.match(assemble, /rust-core-supervisor\.mjs/);
   assert.match(standalone, /from "\.\/rust-core-supervisor\.mjs"/);
