@@ -28,7 +28,14 @@ test("production runner uses a pinned zero-HIGH glibc runtime without weakening 
     "runner-base must use the verified multi-arch Chainguard Node digest"
   );
   assert.match(dockerfile, /apk add --no-cache[^\n]*libsecret/);
-  assert.match(dockerfile, /adduser[^\n]*-u 1000[^\n]*node/);
+  const runnerBase = dockerfile.match(/AS runner-base[\s\S]*?(?=\n# ── Runner Web|$)/)?.[0] ?? "";
+  assert.doesNotMatch(
+    runnerBase,
+    /addgroup[^\n]*node|adduser[^\n]*node/,
+    "Chainguard Node already provides the node user/group; recreating it breaks both platform builds"
+  );
+  assert.match(runnerBase, /COPY --from=runner-debian-base --chown=node:node \/app \/app/);
+  assert.match(runnerBase, /USER node/);
 
   const workflow = fs.readFileSync(".github/workflows/docker-publish.yml", "utf8");
   assert.match(workflow, /ignore-unfixed:\s*false/);

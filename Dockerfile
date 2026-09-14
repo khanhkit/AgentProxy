@@ -298,9 +298,9 @@ CMD ["node", "dev/run-standalone.mjs"]
 FROM cgr.dev/chainguard/node@sha256:37ea42c0860729767b090a7c700c836eac660eb4bcfee3b5fe63eb85acd63df4 AS runner-base
 USER root
 WORKDIR /app
-RUN apk add --no-cache libsecret ca-certificates \
-  && addgroup -g 1000 node \
-  && adduser -D -u 1000 -G node -h /home/node node
+# Chainguard Node already provides the non-root node user/group.
+# Recreating that identity fails deterministically on both amd64 and arm64.
+RUN apk add --no-cache libsecret ca-certificates
 
 LABEL org.opencontainers.image.title="AgentProxy" \
   org.opencontainers.image.description="Agent-first AI proxy with a native Rust streaming data plane" \
