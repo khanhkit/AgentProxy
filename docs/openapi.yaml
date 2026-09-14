@@ -2391,11 +2391,11 @@ paths:
                 allowedModels:
                   type: array
                   maxItems: 1000
-                  items: { type: string, minLength: 1 }
+                  items: { type: string, minLength: 1, pattern: '\S' }
                 allowedCombos:
                   type: array
                   maxItems: 500
-                  items: { type: string, minLength: 1, maxLength: 200 }
+                  items: { type: string, minLength: 1, maxLength: 200, pattern: '\S' }
                 noLog: { type: boolean }
                 allowUsageCommand: { type: boolean }
                 usageLimitEnabled: { type: boolean }
@@ -2405,7 +2405,7 @@ paths:
                 scopes:
                   type: array
                   maxItems: 32
-                  items: { type: string, minLength: 1, maxLength: 64 }
+                  items: { type: string, minLength: 1, maxLength: 64, pattern: '\S' }
                 allowedConnections:
                   type: array
                   minItems: 1
@@ -2454,17 +2454,17 @@ paths:
               type: object
               minProperties: 1
               properties:
-                name: { type: string, minLength: 1, maxLength: 200 }
+                name: { type: string, minLength: 1, maxLength: 200, pattern: '\S' }
                 modelAccessMode: { type: string, enum: [all, restricted] }
                 connectionAccessMode: { type: string, enum: [all, restricted] }
                 allowedModels:
                   type: array
                   maxItems: 1000
-                  items: { type: string, minLength: 1 }
+                  items: { type: string, minLength: 1, pattern: '\S' }
                 allowedCombos:
                   type: array
                   maxItems: 500
-                  items: { type: string, minLength: 1, maxLength: 200 }
+                  items: { type: string, minLength: 1, maxLength: 200, pattern: '\S' }
                 allowedConnections:
                   type: array
                   maxItems: 100
@@ -2474,7 +2474,7 @@ paths:
                 isActive: { type: boolean }
                 throttleDelayMs: { type: integer, minimum: 0, maximum: 300000 }
                 isBanned: { type: boolean }
-                expiresAt: { type: [string, "null"], format: date-time }
+                expiresAt: { type: [string, "null"], format: date-time, pattern: "Z$" }
                 maxSessions: { type: integer, minimum: 0, maximum: 10000 }
                 accessSchedule:
                   oneOf:
@@ -2505,11 +2505,11 @@ paths:
                 scopes:
                   type: array
                   maxItems: 32
-                  items: { type: string, minLength: 1, maxLength: 64 }
+                  items: { type: string, minLength: 1, maxLength: 64, pattern: '\S' }
                 allowedEndpoints:
                   type: array
                   maxItems: 20
-                  items: { type: string, minLength: 1, maxLength: 64 }
+                  items: { type: string, minLength: 1, maxLength: 64, pattern: '\S' }
                 streamDefaultMode: { type: string, enum: [legacy, json] }
                 compressionEnabled: { type: boolean }
                 cacheDefaultMode: { type: string, enum: [legacy, bypass] }

@@ -204,7 +204,10 @@ test("OpenAPI key mutation bodies match runtime validation", () => {
   const patch = detail.slice(patchStart, deleteStart);
   assert.match(patch, /requestBody:\n\s+required: true/);
   assert.match(patch, /type: object\n\s+minProperties: 1/);
-  assert.match(patch, /properties:\n\s+name:\s+\{ type: string, minLength: 1, maxLength: 200 \}/);
+  assert.match(
+    patch,
+    /properties:\n\s+name:\s+\{ type: string, minLength: 1, maxLength: 200, pattern: '\\S' \}/
+  );
   assert.match(
     patch,
     /accessSchedule:\n\s+oneOf:\n\s+- type: object\n\s+required: \[enabled, from, until, days, tz\]/
@@ -222,6 +225,78 @@ test("OpenAPI key mutation bodies match runtime validation", () => {
     "rateLimits.window must match Zod safe-integer bounds"
   );
   assert.match(patch, /anyOf:\n\s+- required: \[name\]/);
+});
+
+test("OpenAPI API-key trimmed strings and expiresAt match runtime validation", () => {
+  const spec = readFileSync("docs/openapi.yaml", "utf8");
+  assert.doesNotThrow(() => loadYaml(spec), "OpenAPI YAML must parse before string constraints");
+
+  const createStart = spec.indexOf("  /api/keys:");
+  const createEnd = spec.indexOf("\n  /api/keys/{id}:", createStart);
+  const create = spec.slice(createStart, createEnd);
+  assert.ok(
+    create.includes(
+      String.raw`items: { type: string, minLength: 1, maxLength: 64, pattern: '\S' }`
+    ),
+    "create scopes must reject whitespace-only strings like z.string().trim().min(1)"
+  );
+  assert.ok(
+    create.includes(String.raw`items: { type: string, minLength: 1, pattern: '\S' }`),
+    "create allowedModels must reject whitespace-only strings"
+  );
+  assert.ok(
+    create.includes(
+      String.raw`items: { type: string, minLength: 1, maxLength: 200, pattern: '\S' }`
+    ),
+    "create allowedCombos must reject whitespace-only strings"
+  );
+
+  const detailStart = spec.indexOf("  /api/keys/{id}:");
+  const detailEnd = spec.indexOf("\n  /api/keys/{id}/devices:", detailStart);
+  const patchStart = spec.indexOf("\n    patch:", detailStart);
+  const deleteStart = spec.indexOf("\n    delete:", patchStart);
+  const patch = spec.slice(patchStart, deleteStart > patchStart ? deleteStart : detailEnd);
+  const parsedSpec = loadYaml(spec) as {
+    paths?: {
+      "/api/keys/{id}"?: {
+        patch?: {
+          requestBody?: {
+            content?: {
+              "application/json"?: {
+                schema?: { properties?: { expiresAt?: { pattern?: string } } };
+              };
+            };
+          };
+        };
+      };
+    };
+  };
+  assert.equal(
+    parsedSpec.paths?.["/api/keys/{id}"]?.patch?.requestBody?.content?.["application/json"]?.schema
+      ?.properties?.expiresAt?.pattern,
+    "Z$",
+    "patch expiresAt must document the UTC-Z-only z.string().datetime() contract"
+  );
+  assert.ok(
+    patch.includes(String.raw`name: { type: string, minLength: 1, maxLength: 200, pattern: '\S' }`),
+    "patch name must reject whitespace-only strings"
+  );
+  assert.ok(
+    patch.includes(String.raw`items: { type: string, minLength: 1, pattern: '\S' }`),
+    "patch allowedModels must reject whitespace-only strings"
+  );
+  assert.ok(
+    patch.includes(
+      String.raw`items: { type: string, minLength: 1, maxLength: 200, pattern: '\S' }`
+    ),
+    "patch allowedCombos must reject whitespace-only strings"
+  );
+  const trimmed64 = String.raw`items: { type: string, minLength: 1, maxLength: 64, pattern: '\S' }`;
+  assert.equal(
+    patch.split(trimmed64).length - 1,
+    2,
+    "patch scopes and allowedEndpoints must both reject whitespace-only strings"
+  );
 });
 
 test("OpenAPI API-key cross-field constraints match runtime refinements", () => {
