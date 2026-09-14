@@ -256,8 +256,9 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          digest=$(docker buildx imagetools inspect "${IMAGE_NAME}:${VERSION}" | awk '$1 == "Digest:" {print $2; exit}')
-          if ! printf '%s' "$digest" | grep -qE '^sha256:[0-9a-f]{64}$'; then
+          inspect=$(docker buildx imagetools inspect "${IMAGE_NAME}:${VERSION}")
+          digest=$(awk '$1 == "Digest:" && !seen {print $2; seen=1}' <<<"$inspect")
+          if ! grep -qE '^sha256:[0-9a-f]{64}$' <<<"$digest"; then
             echo "::error::Unable to resolve immutable manifest digest"
             exit 1
           fi

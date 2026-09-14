@@ -107,6 +107,55 @@ JSON
   );
 });
 
+test("Docker immutable manifest digest resolution tolerates inspect output after the Digest line", (t) => {
+  const workflow = fs.readFileSync(".github/workflows/docker-publish.yml", "utf8");
+  const step = workflow.match(
+    /- name: Resolve immutable manifest digest\n\s+id: manifest\n\s+shell: bash\n\s+run: \|\n((?: {10}.*(?:\n|$))+)/
+  );
+  assert.ok(step, "Resolve immutable manifest digest shell step must exist");
+  const script = step[1].replace(/^ {10}/gm, "");
+
+  const fakeBin = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-fake-docker-digest-"));
+  t.after(() => fs.rmSync(fakeBin, { recursive: true, force: true }));
+  const fakeDocker = path.join(fakeBin, "docker");
+  fs.writeFileSync(
+    fakeDocker,
+    `#!/usr/bin/env bash
+set -e
+trap 'exit 255' PIPE
+printf '%s\\n' 'Name: ghcr.io/example/agentproxy:0.1.0'
+printf '%s\\n' 'MediaType: application/vnd.oci.image.index.v1+json'
+printf '%s\\n' 'Digest: sha256:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef'
+for i in $(seq 1 20000); do
+  printf 'Manifest %05d: sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\n' "$i"
+done
+`
+  );
+  fs.chmodSync(fakeDocker, 0o755);
+
+  const outputFile = path.join(fakeBin, "github-output");
+  const result = spawnSync("bash", ["-c", script], {
+    encoding: "utf8",
+    env: {
+      ...process.env,
+      IMAGE_NAME: "ghcr.io/example/agentproxy",
+      VERSION: "0.1.0",
+      GITHUB_OUTPUT: outputFile,
+      PATH: `${fakeBin}:${process.env.PATH ?? ""}`,
+    },
+  });
+
+  assert.equal(
+    result.status,
+    0,
+    `digest resolution must not fail when inspect emits content after Digest; status=${result.status}; stderr=${result.stderr}`
+  );
+  assert.match(
+    fs.readFileSync(outputFile, "utf8"),
+    /digest=sha256:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef/
+  );
+});
+
 test("Docker publish workflow enforces supply-chain gates before promotion", () => {
   const workflow = fs.readFileSync(".github/workflows/docker-publish.yml", "utf8");
   assert.match(workflow, /provenance:\s*mode=max/);
