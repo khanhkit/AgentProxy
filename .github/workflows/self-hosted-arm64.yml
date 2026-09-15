@@ -1,4 +1,4 @@
-name: Self-hosted ARM64 Gate
+name: ARM64 Gate
 
 on:
   workflow_dispatch:
@@ -11,13 +11,13 @@ permissions:
   contents: read
 
 concurrency:
-  group: self-hosted-arm64-${{ github.ref }}
+  group: arm64-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   trusted-arm64:
     name: Trusted ARM64 reproduction
-    runs-on: [self-hosted, Linux, ARM64, agentproxy-secure, kitmcp-arm64]
+    runs-on: ubuntu-24.04-arm
     timeout-minutes: 45
     steps:
       - name: Checkout
@@ -25,12 +25,10 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Assert runner isolation
+      - name: Assert native ARM64 runner
         shell: bash
         run: |
           set -euo pipefail
-          test "$(id -u)" -ne 0
-          test ! -S /var/run/docker.sock
           test "$(uname -m)" = "aarch64"
 
       - name: Set up Node

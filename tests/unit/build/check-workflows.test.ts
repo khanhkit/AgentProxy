@@ -395,18 +395,13 @@ test("manual CodeQL uses the baseline-compatible default query suite", () => {
   assert.doesNotMatch(workflow, /queries:\s*security-extended/);
 });
 
-test("Core Build caps Next static-generation workers on hosted runners", () => {
+test("Core Build caps Next static-generation workers on GitHub-hosted runners", () => {
   const workflow = readWorkflow(ciWorkflowPath);
-  assert.match(
-    workflow,
-    /OMNIROUTE_NEXT_BUILD_CPUS:\s*\$\{\{\s*vars\.USE_VPS_RUNNER == 'true' && '3' \|\| '1'\s*\}\}/
-  );
+  assert.match(workflow, /OMNIROUTE_NEXT_BUILD_CPUS:\s*["']1["']/);
 });
 
-test("Core Build uses webpack on hosted fallback and Turbopack on high-memory VPS", () => {
+test("Core Build always uses the memory-safe webpack path on GitHub-hosted runners", () => {
   const workflow = readWorkflow(ciWorkflowPath);
-  assert.match(
-    workflow,
-    /OMNIROUTE_USE_TURBOPACK:\s*\$\{\{\s*vars\.USE_VPS_RUNNER == 'true' && '1' \|\| '0'\s*\}\}/
-  );
+  assert.match(workflow, /OMNIROUTE_USE_TURBOPACK:\s*["']0["']/);
+  assert.doesNotMatch(workflow, /USE_VPS_RUNNER/);
 });

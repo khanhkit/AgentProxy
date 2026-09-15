@@ -1,14 +1,10 @@
 name: Build App
 
-# Manual-only since #11946. The hosted 7 GB runner can no longer build this tree — 19 of
-# the last 30 runs died with "The runner has received a shutdown signal" (VM out of
-# memory) ~8 min into `next build`, release/v3.8.51 itself included, even with the 10 GB
-# swapfile below. Triggered on `push: branches: ["**"]` it painted every branch and every
-# PR red while producing an artefact nothing downloads. The bundle is validated where a
-# build actually fits:
-#   - main:       ci.yml `Build` (self-hosted omni-build pool) on every merge
-#   - release/**: nightly-release-green.yml (same pool, continuous)
-# Dispatch this workflow by hand when a hosted build artefact is genuinely needed.
+# Manual-only since #11946. Historical push-triggered builds suffered repeated memory
+# shutdowns and produced an artifact no downstream job consumed. The canonical build is
+# ci.yml `Build`, which now runs exclusively on GitHub-hosted x64 with the memory-safe
+# webpack/one-worker path. Dispatch this workflow only when a standalone build artifact
+# is explicitly needed.
 on:
   workflow_dispatch:
 

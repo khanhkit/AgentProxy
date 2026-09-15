@@ -1,7 +1,3 @@
-self-hosted-runner:
-  labels:
-    - agentproxy-secure
-    - kitmcp-arm64
 paths:
   .github/workflows/**/*.yml:
     ignore:

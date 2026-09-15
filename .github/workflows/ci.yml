@@ -618,24 +618,12 @@ jobs:
 
   build:
     name: Build
-    # Dynamic runner: when the release captain flips the USE_VPS_RUNNER repo var to
-    # 'true' (scripts/vps/release-runner-up.sh does it after the self-hosted VM is
-    # online), the heavy jobs run on the dedicated 32-core VPS runners (label
-    # omni-build) instead of queueing on the 20-concurrent-job hosted pool.
-    # Safety: fork PRs NEVER reach the self-hosted runner — the expression falls
-    # back to ubuntu-latest unless the PR head repo is this repository (push /
-    # dispatch events are own-origin by definition). Any failure path (VM down,
-    # var unset/false) also falls back to ubuntu-latest.
-    runs-on: ${{ (vars.USE_VPS_RUNNER == 'true' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)) && fromJSON('["self-hosted","omni-build"]') || 'ubuntu-latest' }}
+    # Public repository: use GitHub-hosted x64 exclusively.
+    runs-on: ubuntu-latest
     needs: changes
-    # The .113 pool runs ONE next-build with room to spare and two at the edge: the
-    # box has 31 GB and a single next-build peaks at 14–16 GB RSS. On 2026-08-28
-    # 13:50Z the kernel OOM-killed main's build while a PR build ran beside it
-    # (five Build jobs had been queued by a burst of PRs). Two lanes: main keeps
-    # its own so a release is never queued behind PR traffic; PR builds serialize
-    # among themselves. docker-publish.yml's amd64 leg joins `heavy-build-main`
-    # so a :next image build waits beside this artefact instead of becoming the
-    # third heavy (#11976). GitHub keeps one running + one pending per group.
+    # Keep heavy builds serialized per lane so main/release work is not contending
+    # with another memory-heavy build. docker-publish.yml's amd64 leg joins
+    # `heavy-build-main`; GitHub keeps one running + one pending per group.
     concurrency:
       group: heavy-build-${{ github.ref == 'refs/heads/main' && 'main' || 'pr' }}
       cancel-in-progress: false
@@ -650,23 +638,12 @@ jobs:
           cache: npm
       - uses: $/.github/actions/npm-ci-retry
       - run: npm run check:node-runtime
-      # NOTE: the webpack `.build/next/cache` actions/cache step was removed with the
-      # Turbopack switch below — Turbopack does not read/write the webpack cache dir
-      # (its persistent FS cache is still experimental and intentionally NOT enabled),
-      # so restoring the old ~0.5 GB webpack cache would only waste download time.
-      # Rolling back to webpack = revert this commit (cache step comes back with it).
-      #
-      # High-memory omni-build uses Turbopack for the faster production compile.
-      # Hosted fallback is intentionally webpack: this repository's Turbopack build
-      # peaks at 14–16 GB RSS, which puts ubuntu-latest at the VM limit and has caused
-      # repeated runner shutdowns during page-data collection. Webpack is the documented
-      # RAM-constrained fallback and is already used by the production Docker build.
+      # GitHub-hosted builds use webpack and one static-generation worker to stay
+      # below the runner's memory ceiling; Turbopack has peaked at 14–16 GB RSS here.
       - run: npm run build
         env:
-          OMNIROUTE_USE_TURBOPACK: ${{ vars.USE_VPS_RUNNER == 'true' && '1' || '0' }}
-          # Keep hosted static generation at one worker; the intended high-memory
-          # omni-build runner retains three.
-          OMNIROUTE_NEXT_BUILD_CPUS: ${{ vars.USE_VPS_RUNNER == 'true' && '3' || '1' }}
+          OMNIROUTE_USE_TURBOPACK: "0"
+          OMNIROUTE_NEXT_BUILD_CPUS: "1"
       - name: Archive Next.js build for downstream jobs
         # Use tar so the archive preserves paths relative to CWD (.build/next/...).
         # upload-artifact path-stripping is ambiguous when exclude patterns are used;
@@ -832,13 +809,7 @@ jobs:
 
   test-unit:
     name: Unit Tests (${{ matrix.shard }}/8)
-    # Same dynamic-runner rule as Build (own-origin only; fallback ubuntu-latest).
-    # PINNED to hosted, deliberately not on the USE_VPS_RUNNER switch (gap 19). One variable
-    # governed the build and the test jobs, which want OPPOSITE machines: the build needs the
-    # .113's RAM, the tests need the hosted runner's link. Measured on 2026-07-29 —
-    # actions/setup-node took 20m06s on .113 with 4 concurrent runners versus 16s hosted (npm
-    # cache restore saturating the link), while the tests themselves tied, 2m54 vs 2m31. So
-    # self-hosted is strictly worse here and there is nothing to configure.
+    # GitHub-hosted runner only.
     runs-on: ubuntu-latest
     timeout-minutes: 25
     # needs: changes (not build) — this job never downloads the next-build artifact;
@@ -933,13 +904,7 @@ jobs:
 
   test-vitest:
     name: Vitest (MCP / autoCombo / UI components)
-    # Same dynamic-runner rule as Build (own-origin only; fallback ubuntu-latest).
-    # PINNED to hosted, deliberately not on the USE_VPS_RUNNER switch (gap 19). One variable
-    # governed the build and the test jobs, which want OPPOSITE machines: the build needs the
-    # .113's RAM, the tests need the hosted runner's link. Measured on 2026-07-29 —
-    # actions/setup-node took 20m06s on .113 with 4 concurrent runners versus 16s hosted (npm
-    # cache restore saturating the link), while the tests themselves tied, 2m54 vs 2m31. So
-    # self-hosted is strictly worse here and there is nothing to configure.
+    # GitHub-hosted runner only.
     runs-on: ubuntu-latest
     timeout-minutes: 15
     # needs: changes (not build) — no artifact consumed; see test-unit note.
