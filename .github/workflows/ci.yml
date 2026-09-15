@@ -656,18 +656,16 @@ jobs:
       # so restoring the old ~0.5 GB webpack cache would only waste download time.
       # Rolling back to webpack = revert this commit (cache step comes back with it).
       #
-      # Turbopack production build (Next 16, stable): benchmarked 1.9× faster than the
-      # webpack pass (9min0s vs 17min15s on a 32-core box; multi-core Rust vs webpack's
-      # single-threaded compile). Standalone output smoke-validated (server boots,
-      # /api/monitoring/health 200). Downstream jobs (e2e ×9, package-artifact,
-      # electron-package-smoke) consume this artifact, so a green run here validates
-      # the Turbopack artifact end-to-end.
+      # High-memory omni-build uses Turbopack for the faster production compile.
+      # Hosted fallback is intentionally webpack: this repository's Turbopack build
+      # peaks at 14–16 GB RSS, which puts ubuntu-latest at the VM limit and has caused
+      # repeated runner shutdowns during page-data collection. Webpack is the documented
+      # RAM-constrained fallback and is already used by the production Docker build.
       - run: npm run build
         env:
-          OMNIROUTE_USE_TURBOPACK: "1"
-          # Turbopack compile is already successful on hosted runners; failures happen
-          # after compile when page-data workers fan out. Keep hosted at one worker,
-          # while the intended high-memory omni-build runner retains three.
+          OMNIROUTE_USE_TURBOPACK: ${{ vars.USE_VPS_RUNNER == 'true' && '1' || '0' }}
+          # Keep hosted static generation at one worker; the intended high-memory
+          # omni-build runner retains three.
           OMNIROUTE_NEXT_BUILD_CPUS: ${{ vars.USE_VPS_RUNNER == 'true' && '3' || '1' }}
       - name: Archive Next.js build for downstream jobs
         # Use tar so the archive preserves paths relative to CWD (.build/next/...).

@@ -378,10 +378,12 @@ test("findEmbeddedBashSyntaxErrors accepts valid explicit bash run blocks", () =
   assert.deepEqual(findEmbeddedBashSyntaxErrors(workflow, "docker-publish.yml"), []);
 });
 
-
 test("manual DAST is blocking and authenticates protected management routes", () => {
   const workflow = readWorkflow(dastWorkflowPath);
-  assert.match(workflow, /continue-on-error:\s*\$\{\{\s*github\.event_name == 'pull_request'\s*\}\}/);
+  assert.match(
+    workflow,
+    /continue-on-error:\s*\$\{\{\s*github\.event_name == 'pull_request'\s*\}\}/
+  );
   assert.match(workflow, /INITIAL_PASSWORD:/);
   assert.match(workflow, /\/api\/auth\/login/);
   assert.match(workflow, /DAST_AUTH_COOKIE/);
@@ -393,11 +395,18 @@ test("manual CodeQL uses the baseline-compatible default query suite", () => {
   assert.doesNotMatch(workflow, /queries:\s*security-extended/);
 });
 
-
 test("Core Build caps Next static-generation workers on hosted runners", () => {
   const workflow = readWorkflow(ciWorkflowPath);
   assert.match(
     workflow,
     /OMNIROUTE_NEXT_BUILD_CPUS:\s*\$\{\{\s*vars\.USE_VPS_RUNNER == 'true' && '3' \|\| '1'\s*\}\}/
+  );
+});
+
+test("Core Build uses webpack on hosted fallback and Turbopack on high-memory VPS", () => {
+  const workflow = readWorkflow(ciWorkflowPath);
+  assert.match(
+    workflow,
+    /OMNIROUTE_USE_TURBOPACK:\s*\$\{\{\s*vars\.USE_VPS_RUNNER == 'true' && '1' \|\| '0'\s*\}\}/
   );
 });
