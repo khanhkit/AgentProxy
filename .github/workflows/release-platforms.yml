@@ -1,0 +1,339 @@
+name: Publish Native Release Assets
+
+on:
+  release:
+    types: [released]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Existing tag to build (for example v0.1.1)"
+        required: true
+        type: string
+      publish_assets:
+        description: "Attach successful native artifacts to the existing GitHub Release"
+        required: false
+        default: false
+        type: boolean
+
+concurrency:
+  group: native-release-${{ github.event.release.tag_name || inputs.tag || github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  prepare:
+    name: Resolve release metadata
+    runs-on: ubuntu-24.04
+    outputs:
+      tag: ${{ steps.meta.outputs.tag }}
+      version: ${{ steps.meta.outputs.version }}
+      publish_assets: ${{ steps.meta.outputs.publish_assets }}
+    steps:
+      - id: meta
+        name: Validate release tag
+        shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+          INPUT_TAG: ${{ inputs.tag }}
+          INPUT_PUBLISH: ${{ inputs.publish_assets }}
+        run: |
+          set -euo pipefail
+          if [ "$EVENT_NAME" = "release" ]; then
+            tag="$RELEASE_TAG"
+            publish_assets=true
+          else
+            tag="$INPUT_TAG"
+            publish_assets="${INPUT_PUBLISH:-false}"
+          fi
+          if ! printf '%s' "$tag" | grep -qE '^v[0-9]+\.[0-9]+\.[0-9]+([.-][0-9A-Za-z.-]+)?$'; then
+            echo "::error::Invalid release tag: $tag"
+            exit 1
+          fi
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "version=${tag#v}" >> "$GITHUB_OUTPUT"
+          echo "publish_assets=$publish_assets" >> "$GITHUB_OUTPUT"
+
+  web-build:
+    name: Build shared Next standalone
+    needs: prepare
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - name: Checkout release tag
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ needs.prepare.outputs.tag }}
+          persist-credentials: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build shared standalone bundle
+        env:
+          JWT_SECRET: ci-build-secret-with-sufficient-length-for-validation
+          NODE_OPTIONS: "--max-old-space-size=12288"
+          OMNIROUTE_USE_TURBOPACK: "0"
+          OMNIROUTE_NEXT_BUILD_CPUS: "1"
+        run: npm run build
+
+      - name: Pack shared standalone bundle
+        run: node scripts/build/standaloneBundle.mjs pack --out web-bundle.tar.gz
+
+      - name: Upload shared standalone bundle
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: agentproxy-web-standalone
+          path: |
+            web-bundle.tar.gz
+            web-bundle.tar.gz.manifest.json
+          compression-level: 0
+          retention-days: 1
+
+  package:
+    name: Package ${{ matrix.platform }}
+    needs: [prepare, web-build]
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: linux-x64
+            runner: ubuntu-24.04
+            node_platform: linux
+            arch: x64
+            builder_os: linux
+          - platform: linux-arm64
+            runner: ubuntu-24.04-arm
+            node_platform: linux
+            arch: arm64
+            builder_os: linux
+          - platform: windows-x64
+            runner: windows-2025
+            node_platform: win32
+            arch: x64
+            builder_os: win
+          - platform: windows-arm64
+            runner: windows-11-arm
+            node_platform: win32
+            arch: arm64
+            builder_os: win
+          - platform: macos-x64
+            runner: macos-15-intel
+            node_platform: darwin
+            arch: x64
+            builder_os: mac
+          - platform: macos-arm64
+            runner: macos-15
+            node_platform: darwin
+            arch: arm64
+            builder_os: mac
+    env:
+      CSC_IDENTITY_AUTO_DISCOVERY: "false"
+      JWT_SECRET: ci-build-secret-with-sufficient-length-for-validation
+    steps:
+      - name: Checkout release tag
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ needs.prepare.outputs.tag }}
+          persist-credentials: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+
+      - name: Install root dependencies
+        run: npm ci
+
+      - name: Assert native runner architecture
+        shell: bash
+        env:
+          EXPECTED_ARCH: ${{ matrix.arch }}
+        run: |
+          set -euo pipefail
+          actual=$(node -p 'process.arch')
+          printf 'runner node arch: %s\n' "$actual"
+          test "$actual" = "$EXPECTED_ARCH"
+
+      - name: Download shared standalone bundle
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: agentproxy-web-standalone
+          path: shared-web
+
+      - name: Restore and hydrate standalone for native platform
+        shell: bash
+        env:
+          NODE_PLATFORM: ${{ matrix.node_platform }}
+          TARGET_ARCH: ${{ matrix.arch }}
+        run: |
+          set -euo pipefail
+          node scripts/build/standaloneBundle.mjs restore --archive shared-web/web-bundle.tar.gz
+          node scripts/build/standaloneBundle.mjs hydrate --platform "$NODE_PLATFORM" --arch "$TARGET_ARCH"
+
+      - name: Install fpm for Linux packages
+        if: runner.os == 'Linux'
+        shell: bash
+        run: sudo gem install fpm --no-document
+
+      - name: Install Electron dependencies
+        working-directory: electron
+        run: npm ci --no-audit --no-fund
+
+      - name: Sync desktop package version
+        shell: bash
+        env:
+          VERSION: ${{ needs.prepare.outputs.version }}
+        run: |
+          set -euo pipefail
+          node - <<'NODE'
+          const fs = require('node:fs');
+          const file = 'electron/package.json';
+          const pkg = JSON.parse(fs.readFileSync(file, 'utf8'));
+          pkg.version = process.env.VERSION;
+          fs.writeFileSync(file, `${JSON.stringify(pkg, null, 2)}\n`);
+          NODE
+
+      - name: Build Rust gateway natively
+        run: cargo build --manifest-path rust/Cargo.toml --release -p agentproxy-gateway
+
+      - name: Build Electron package natively
+        working-directory: electron
+        shell: bash
+        env:
+          BUILDER_OS: ${{ matrix.builder_os }}
+          TARGET_ARCH: ${{ matrix.arch }}
+        run: |
+          set -euo pipefail
+          npm run prepare:bundle
+          npx electron-builder "--${BUILDER_OS}" "--${TARGET_ARCH}" --publish never
+
+      - name: Collect uniquely named release assets
+        shell: bash
+        env:
+          PLATFORM: ${{ matrix.platform }}
+          VERSION: ${{ needs.prepare.outputs.version }}
+        run: |
+          set -euo pipefail
+          mkdir -p release-assets
+
+          gateway="rust/target/release/agentproxy-gateway"
+          gateway_ext=""
+          if [ "$RUNNER_OS" = "Windows" ]; then
+            gateway="${gateway}.exe"
+            gateway_ext=".exe"
+          fi
+          test -f "$gateway"
+          cp "$gateway" "release-assets/AgentProxy-${VERSION}-${PLATFORM}-gateway${gateway_ext}"
+
+          case "$PLATFORM" in
+            linux-*)
+              appimage=$(find electron/dist-electron -maxdepth 1 -type f -name '*.AppImage' -print -quit)
+              deb=$(find electron/dist-electron -maxdepth 1 -type f -name '*.deb' -print -quit)
+              test -n "$appimage" && test -n "$deb"
+              cp "$appimage" "release-assets/AgentProxy-${VERSION}-${PLATFORM}.AppImage"
+              cp "$deb" "release-assets/AgentProxy-${VERSION}-${PLATFORM}.deb"
+              ;;
+            windows-*)
+              setup=$(find electron/dist-electron -maxdepth 1 -type f -name '*Setup*.exe' -print -quit)
+              portable=$(find electron/dist-electron -maxdepth 1 -type f -name '*.exe' ! -name '*Setup*.exe' -print -quit)
+              test -n "$setup" && test -n "$portable"
+              cp "$setup" "release-assets/AgentProxy-${VERSION}-${PLATFORM}-setup.exe"
+              cp "$portable" "release-assets/AgentProxy-${VERSION}-${PLATFORM}-portable.exe"
+              ;;
+            macos-*)
+              dmg=$(find electron/dist-electron -maxdepth 1 -type f -name '*.dmg' -print -quit)
+              test -n "$dmg"
+              cp "$dmg" "release-assets/AgentProxy-${VERSION}-${PLATFORM}.dmg"
+              ;;
+            *)
+              echo "::error::Unknown platform $PLATFORM"
+              exit 1
+              ;;
+          esac
+          ls -lh release-assets
+
+      - name: Upload native release assets
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: agentproxy-native-${{ matrix.platform }}
+          path: release-assets/*
+          if-no-files-found: error
+          retention-days: 3
+
+  publish:
+    name: Attach native assets to GitHub Release
+    needs: [prepare, package]
+    if: ${{ always() && !cancelled() && needs.prepare.result == 'success' && needs.prepare.outputs.publish_assets == 'true' }}
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - name: Download successful native artifacts
+        continue-on-error: true
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          pattern: agentproxy-native-*
+          path: release-assets
+          merge-multiple: true
+
+      - name: Require at least one native artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -d release-assets
+          test -n "$(find release-assets -maxdepth 1 -type f -print -quit)"
+          find release-assets -maxdepth 1 -type f -printf '%f\n' | sort
+
+      - name: Upload assets to existing release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ needs.prepare.outputs.tag }}
+        run: |
+          set -euo pipefail
+          gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null
+          gh release upload "$TAG" release-assets/* --clobber --repo "$GITHUB_REPOSITORY"
+
+      - name: Verify all six native platforms landed
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ needs.prepare.outputs.tag }}
+          VERSION: ${{ needs.prepare.outputs.version }}
+        run: |
+          set -euo pipefail
+          names=$(gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name')
+          printf '%s\n' "$names"
+
+          missing=0
+          for platform in linux-x64 linux-arm64 windows-x64 windows-arm64 macos-x64 macos-arm64; do
+            if ! grep -Fq "AgentProxy-${VERSION}-${platform}-gateway" <<<"$names"; then
+              echo "::error::Missing native gateway for $platform"
+              missing=1
+            fi
+          done
+          for asset in \
+            "AgentProxy-${VERSION}-linux-x64.AppImage" \
+            "AgentProxy-${VERSION}-linux-arm64.AppImage" \
+            "AgentProxy-${VERSION}-windows-x64-setup.exe" \
+            "AgentProxy-${VERSION}-windows-arm64-setup.exe" \
+            "AgentProxy-${VERSION}-macos-x64.dmg" \
+            "AgentProxy-${VERSION}-macos-arm64.dmg"; do
+            if ! grep -Fxq "$asset" <<<"$names"; then
+              echo "::error::Missing desktop asset $asset"
+              missing=1
+            fi
+          done
+          exit "$missing"
