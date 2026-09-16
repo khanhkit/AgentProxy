@@ -155,16 +155,34 @@ function startEvictTimer(): void {
   state.evictTimer.unref?.();
 }
 
+export function resolveBrowserLaunchSecurity(effectiveUid?: number): {
+  chromiumSandbox: true;
+  args: string[];
+} {
+  const uid = effectiveUid ?? (typeof process.getuid === "function" ? process.getuid() : undefined);
+  if (uid === 0) {
+    throw new Error(
+      "Browser pool refuses to launch Chromium as root. Run OmniRoute as a non-root user so Chromium sandboxing can remain enabled."
+    );
+  }
+  return {
+    chromiumSandbox: true,
+    args: ["--disable-dev-shm-usage"],
+  };
+}
+
 async function launchBrowser(): Promise<Browser> {
   if (state.browser) return state.browser;
   if (state.launching) return state.launching;
   state.launching = (async () => {
+    const launchSecurity = resolveBrowserLaunchSecurity();
     const cloakLaunch = await resolveCloakLaunch();
     let browser: Browser;
     if (cloakLaunch) {
       browser = await cloakLaunch({
         headless: true,
-        args: ["--no-sandbox", "--disable-dev-shm-usage"],
+        chromiumSandbox: launchSecurity.chromiumSandbox,
+        args: launchSecurity.args,
       });
     } else {
       // Fallback: plain Playwright. Works for Claude web (cookie-only
@@ -172,11 +190,8 @@ async function launchBrowser(): Promise<Browser> {
       const { chromium } = await import("playwright");
       browser = await chromium.launch({
         headless: true,
-        args: [
-          "--no-sandbox",
-          "--disable-dev-shm-usage",
-          "--disable-blink-features=AutomationControlled",
-        ],
+        chromiumSandbox: launchSecurity.chromiumSandbox,
+        args: [...launchSecurity.args, "--disable-blink-features=AutomationControlled"],
       });
     }
     state.browser = browser;

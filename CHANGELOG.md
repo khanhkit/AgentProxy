@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 - **fix(security):** unify embedded HTTP/WebSocket proxy header confinement: strip static and `Connection`-nominated hop-by-hop fields, proxy credentials, and spoofable `Forwarded`/`X-Forwarded-*`/`X-Relay-*` provenance while explicitly reconstructing the required WebSocket upgrade handshake.
+- **fix(security):** browser-pool Chromium launch now fails closed when the AgentProxy process runs as UID 0 and keeps Chromium sandboxing enabled for supported non-root launches; the shipped Node/Bun web images already run as non-root users.
 
 ### ✨ New Features
 
