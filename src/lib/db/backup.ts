@@ -520,7 +520,7 @@ export interface ExportAllRows {
 /**
  * Reads summary rows used by the exportAll backup route.
  *
- * - settings:  full key_value table (key → value map)
+ * - settings:  non-secret key_value rows (key → value map); secret markers/material are excluded
  * - combos:    full combos table
  * - providers: provider_connections rows, **excluding sensitive credentials**
  *              (id, provider, name, auth_type, is_active, email, created_at only)
@@ -535,7 +535,9 @@ export function exportAllSummaryRows(): ExportAllRows {
 
   const settings: Record<string, string> = {};
   try {
-    const rows = db.prepare("SELECT key, value FROM key_value").all() as {
+    const rows = db
+      .prepare("SELECT key, value FROM key_value WHERE namespace != 'secrets'")
+      .all() as {
       key: string;
       value: string;
     }[];

@@ -131,7 +131,9 @@ async function ensureSecrets(): Promise<void> {
       const generated = toBase64(getRandomBytes(48));
       process.env.JWT_SECRET = generated;
       persistSecret("jwtSecret", generated);
-      console.log("[STARTUP] JWT_SECRET auto-generated and persisted (random 64-char secret)");
+      console.log(
+        "[STARTUP] JWT_SECRET auto-generated and persisted in protected owner-only storage"
+      );
     }
   }
 
@@ -144,7 +146,7 @@ async function ensureSecrets(): Promise<void> {
       process.env.API_KEY_SECRET = generated;
       persistSecret("apiKeySecret", generated);
       console.log(
-        "[STARTUP] API_KEY_SECRET auto-generated and persisted (random 64-char hex secret)"
+        "[STARTUP] API_KEY_SECRET auto-generated and persisted in protected owner-only storage"
       );
     }
   }
@@ -314,7 +316,7 @@ export async function registerQuotaFetchers(): Promise<void> {
         id: typeof node.id === "string" ? node.id : null,
         prefix: typeof node.prefix === "string" ? node.prefix : null,
         baseUrl: typeof node.baseUrl === "string" ? node.baseUrl : null,
-      })),
+      }))
     );
   } catch (error) {
     console.warn("[STARTUP] Moonshot custom-node fetcher scan skipped:", error);
@@ -630,12 +632,14 @@ export async function registerNodejs(): Promise<void> {
 
       // Conductor bridge (PRD Conductor RF1): mirrors OmniConductor hub tasks into the
       // A2A TaskManager via the hub SSE. Opt-in — self-gated on CONDUCTOR_HUB_URL.
-      import("@/lib/conductor/boot").then((m) => {
-        if (m.initConductorBridge()) console.log("[STARTUP] Conductor bridge started");
-      }).catch((err: unknown) => {
-        const msg = err instanceof Error ? err.message : String(err);
-        console.warn("[STARTUP] Conductor bridge failed to start (non-fatal):", msg);
-      }),
+      import("@/lib/conductor/boot")
+        .then((m) => {
+          if (m.initConductorBridge()) console.log("[STARTUP] Conductor bridge started");
+        })
+        .catch((err: unknown) => {
+          const msg = err instanceof Error ? err.message : String(err);
+          console.warn("[STARTUP] Conductor bridge failed to start (non-fatal):", msg);
+        }),
 
       // Proactive connection-cooldown recovery (#8): re-validate connections whose
       // transient `rate_limited_until` window has elapsed OUTSIDE the request hot path,

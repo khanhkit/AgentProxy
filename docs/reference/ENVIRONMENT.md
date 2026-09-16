@@ -76,6 +76,8 @@ echo "OMNIROUTE_WS_BRIDGE_SECRET=$(openssl rand -base64 32)"
 
 > [!CAUTION]
 > Never commit `.env` files with real secrets to version control. The `.gitignore` already excludes `.env`, but verify before pushing.
+>
+> When `JWT_SECRET` or `API_KEY_SECRET` is omitted, zero-config startup generates it and persists the reusable value in owner-only files under `DATA_DIR/secrets` (`0700` directory, `0600` files on POSIX systems). SQLite stores only a non-secret storage marker, and database/full-export artifacts intentionally exclude the generated signing material. A same-host database restore continues to use the protected sidecar. For portable/cross-host restores that must preserve existing signing identity, provide the same secret explicitly through the environment or transfer the protected sidecar through an operator-managed secure channel; otherwise new signing material invalidates existing sessions/signatures.
 
 ---
 

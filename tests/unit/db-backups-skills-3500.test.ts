@@ -128,8 +128,20 @@ test("exportAllSummaryRows — returns key_value rows", () => {
 
   const { settings } = backupMod.exportAllSummaryRows();
 
-  // exportAllSummaryRows does "SELECT key, value FROM key_value" (all namespaces)
   assert.equal(settings["test.export.key"], "hello-value", "settings must contain seeded key");
+});
+
+test("exportAllSummaryRows — excludes secret namespace rows", () => {
+  const db = core.getDbInstance();
+  db.prepare("INSERT OR REPLACE INTO key_value (namespace, key, value) VALUES (?, ?, ?)").run(
+    "secrets",
+    "jwtSecret",
+    JSON.stringify("must-not-export")
+  );
+
+  const { settings } = backupMod.exportAllSummaryRows();
+
+  assert.equal(Object.prototype.hasOwnProperty.call(settings, "jwtSecret"), false);
 });
 
 test("exportAllSummaryRows — returns combos rows", () => {
