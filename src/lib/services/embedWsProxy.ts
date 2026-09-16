@@ -31,6 +31,10 @@ import {
   attachRequestStreamGuards,
   installProcessCrashGuard,
 } from "@/shared/utils/httpClientAbortGuard.mjs";
+import {
+  connectionHeaderTokens,
+  isForbiddenProxyBoundaryHeaderName,
+} from "@/shared/constants/upstreamHeaders";
 
 const DEFAULT_HOST = "127.0.0.1";
 const DEFAULT_PORT = 20131;
@@ -43,6 +47,14 @@ const IDLE_TIMEOUT_MS = 5 * 60 * 1000;
 
 /** Headers to strip from the client upgrade request (case-insensitive). */
 const STRIPPED_HEADERS = new Set(["cookie", "authorization", "origin"]);
+
+/** Required/negotiated WebSocket request fields that remain end-to-end. */
+const WS_HANDSHAKE_HEADERS = new Set([
+  "sec-websocket-key",
+  "sec-websocket-version",
+  "sec-websocket-protocol",
+  "sec-websocket-extensions",
+]);
 
 declare global {
   var __omnirouteEmbedWsStarted: boolean | undefined;
@@ -101,11 +113,20 @@ function unregisterConnection(name: string, socket: net.Socket): void {
 
 /**
  * Build the filtered header list for the upstream upgrade request.
- * Strips cookie, authorization, and origin; rewrites host; injects Bearer token.
+ * Client hop/proxy/provenance headers are discarded. The proxy reconstructs
+ * Connection/Upgrade itself while preserving required WebSocket negotiation fields.
  */
 function buildUpstreamHeaders(rawHeaders: string[], port: number, apiKey: string): string[] {
   const lines: string[] = [];
   let wroteHost = false;
+  const connectionValues: string[] = [];
+
+  for (let i = 0; i < rawHeaders.length; i += 2) {
+    if (rawHeaders[i]?.toLowerCase() === "connection") {
+      connectionValues.push(rawHeaders[i + 1] ?? "");
+    }
+  }
+  const connectionTokens = connectionHeaderTokens(connectionValues.join(","));
 
   for (let i = 0; i < rawHeaders.length; i += 2) {
     const headerName = rawHeaders[i];
@@ -115,15 +136,22 @@ function buildUpstreamHeaders(rawHeaders: string[], port: number, apiKey: string
     if (lower === "host") {
       lines.push(`Host: 127.0.0.1:${port}`);
       wroteHost = true;
-    } else if (!STRIPPED_HEADERS.has(lower)) {
-      lines.push(`${headerName}: ${headerValue}`);
+      continue;
     }
-    // cookie / authorization / origin are intentionally dropped here
+    if (STRIPPED_HEADERS.has(lower) || lower === "connection" || lower === "upgrade") continue;
+    if (WS_HANDSHAKE_HEADERS.has(lower)) {
+      lines.push(`${headerName}: ${headerValue}`);
+      continue;
+    }
+    if (isForbiddenProxyBoundaryHeaderName(lower, connectionTokens)) continue;
+    lines.push(`${headerName}: ${headerValue}`);
   }
 
   if (!wroteHost) lines.push(`Host: 127.0.0.1:${port}`);
 
-  // Always inject the service API key regardless of what the client sent
+  lines.push("Connection: Upgrade");
+  lines.push("Upgrade: websocket");
+  // Always inject the service API key regardless of what the client sent.
   lines.push(`Authorization: Bearer ${apiKey}`);
 
   return lines;

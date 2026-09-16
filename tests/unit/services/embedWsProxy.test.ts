@@ -243,3 +243,60 @@ describe("embedWsProxy", () => {
     );
   });
 });
+
+it("G-06: strips proxy/provenance/dynamic hop headers while reconstructing required WS handshake", () => {
+  const rawHeaders = [
+    "Host",
+    "localhost:3000",
+    "Connection",
+    "keep-alive, Upgrade, X-Hop-Token",
+    "Upgrade",
+    "websocket",
+    "Proxy-Authorization",
+    "Basic c2VjcmV0",
+    "Proxy-Connection",
+    "keep-alive",
+    "Trailer",
+    "x-checksum",
+    "X-Hop-Token",
+    "remove-me",
+    "Forwarded",
+    "for=203.0.113.9;proto=https",
+    "X-Forwarded-For",
+    "203.0.113.9",
+    "X-Forwarded-Proto",
+    "https",
+    "X-Relay-Trace",
+    "client-controlled",
+    "Sec-WebSocket-Key",
+    "dGhlIHNhbXBsZSBub25jZQ==",
+    "Sec-WebSocket-Version",
+    "13",
+    "Sec-WebSocket-Protocol",
+    "jsonrpc",
+  ];
+
+  const headers = buildUpstreamHeaders(rawHeaders, 20130, "nr_injectedkey");
+  const lower = headers.map((line) => line.toLowerCase());
+  for (const prefix of [
+    "proxy-authorization:",
+    "proxy-connection:",
+    "trailer:",
+    "x-hop-token:",
+    "forwarded:",
+    "x-forwarded-for:",
+    "x-forwarded-proto:",
+    "x-relay-trace:",
+  ]) {
+    assert.equal(
+      lower.some((line) => line.startsWith(prefix)),
+      false,
+      prefix
+    );
+  }
+  assert.equal(lower.filter((line) => line === "connection: upgrade").length, 1);
+  assert.equal(lower.filter((line) => line === "upgrade: websocket").length, 1);
+  assert.equal(lower.filter((line) => line.startsWith("sec-websocket-key:")).length, 1);
+  assert.equal(lower.filter((line) => line === "sec-websocket-version: 13").length, 1);
+  assert.equal(lower.filter((line) => line === "sec-websocket-protocol: jsonrpc").length, 1);
+});

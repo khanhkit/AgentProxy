@@ -23,6 +23,10 @@ import { getOrCreateApiKey } from "@/lib/services/apiKey";
 import { rewriteHtml } from "@/lib/services/htmlRewriter";
 import { toUpstreamPath } from "@/lib/services/embedPath";
 import { createErrorResponse } from "@/lib/api/errorResponse";
+import {
+  connectionHeaderTokens,
+  isForbiddenProxyBoundaryHeaderName,
+} from "@/shared/constants/upstreamHeaders";
 import { sanitizeErrorMessage } from "@omniroute/open-sse/utils/error";
 
 // ─── constants ────────────────────────────────────────────────────────────────
@@ -30,11 +34,13 @@ import { sanitizeErrorMessage } from "@omniroute/open-sse/utils/error";
 /** Standard hop-by-hop headers that must never be forwarded. */
 export const HOP_BY_HOP = new Set([
   "connection",
+  "content-length",
   "keep-alive",
+  "proxy-connection",
   "proxy-authenticate",
   "proxy-authorization",
   "te",
-  "trailers",
+  "trailer",
   "transfer-encoding",
   "upgrade",
   "host",
@@ -66,6 +72,28 @@ export const STRIPPED_RESPONSE_HEADERS = new Set([
   "cross-origin-opener-policy",
   "cross-origin-resource-policy",
 ]);
+
+export function shouldStripProxyRequestHeader(
+  name: string,
+  connectionTokens: ReadonlySet<string> = new Set()
+): boolean {
+  const lower = name.trim().toLowerCase();
+  return (
+    STRIPPED_REQUEST_HEADERS.has(lower) ||
+    isForbiddenProxyBoundaryHeaderName(lower, connectionTokens)
+  );
+}
+
+export function shouldStripProxyResponseHeader(
+  name: string,
+  connectionTokens: ReadonlySet<string> = new Set()
+): boolean {
+  const lower = name.trim().toLowerCase();
+  return (
+    STRIPPED_RESPONSE_HEADERS.has(lower) ||
+    isForbiddenProxyBoundaryHeaderName(lower, connectionTokens)
+  );
+}
 
 export const PROXY_TIMEOUT_MS = 30_000;
 
@@ -118,11 +146,12 @@ export async function proxyRequest(
   const upstreamPath = toUpstreamPath(pathSegments);
   const upstreamUrl = `http://127.0.0.1:${port}${upstreamPath}${incomingUrl.search}`;
 
-  // Build forwarded headers: strip hop-by-hop AND sensitive client headers.
+  // Build forwarded headers: strip hop-by-hop, client credentials, untrusted
+  // forwarding provenance, and every extension token nominated by Connection.
   const forwardHeaders = new Headers();
+  const requestConnectionTokens = connectionHeaderTokens(request.headers.get("connection"));
   for (const [k, v] of request.headers.entries()) {
-    const lower = k.toLowerCase();
-    if (!HOP_BY_HOP.has(lower) && !STRIPPED_REQUEST_HEADERS.has(lower)) {
+    if (!shouldStripProxyRequestHeader(k, requestConnectionTokens)) {
       forwardHeaders.set(k, v);
     }
   }
@@ -145,11 +174,12 @@ export async function proxyRequest(
       signal: AbortSignal.timeout(PROXY_TIMEOUT_MS),
     });
 
-    // Build response headers: strip hop-by-hop and security-conflicting headers.
+    // Build response headers: strip hop-by-hop, security-conflicting, and
+    // every extension token nominated by the upstream Connection header.
     const responseHeaders = new Headers();
+    const responseConnectionTokens = connectionHeaderTokens(upstream.headers.get("connection"));
     for (const [k, v] of upstream.headers.entries()) {
-      const lower = k.toLowerCase();
-      if (!HOP_BY_HOP.has(lower) && !STRIPPED_RESPONSE_HEADERS.has(lower)) {
+      if (!shouldStripProxyResponseHeader(k, responseConnectionTokens)) {
         responseHeaders.set(k, v);
       }
     }

@@ -56,11 +56,86 @@ test("the canonical list now covers every hop-by-hop name reverseProxy strips", 
 });
 
 test("ordinary headers are still allowed", () => {
-  for (const name of ["x-custom", "x-forwarded-for", "user-agent", "accept"]) {
+  for (const name of ["x-custom", "user-agent", "accept"]) {
     assert.equal(isForbiddenUpstreamHeaderName(name), false, name);
   }
   // Auth headers stay allowed as *upstream* headers (the credential layer owns
   // them) while remaining forbidden as operator-supplied custom headers.
   assert.equal(isForbiddenUpstreamHeaderName("authorization"), false);
   assert.equal(isForbiddenCustomHeaderName("authorization"), true);
+});
+
+test("embedded-service HTTP proxy rejects provenance and Connection-nominated headers", async () => {
+  const reverseProxy = (await import("../../src/lib/services/reverseProxy.ts")) as Record<
+    string,
+    unknown
+  >;
+  const shouldStrip = reverseProxy.shouldStripProxyRequestHeader;
+  assert.equal(
+    typeof shouldStrip,
+    "function",
+    "reverse proxy must expose one canonical filter helper"
+  );
+  if (typeof shouldStrip !== "function") return;
+
+  const fn = shouldStrip as (name: string, connectionTokens?: Set<string>) => boolean;
+  const dynamic = new Set(["x-hop-token"]);
+  for (const name of [
+    "proxy-connection",
+    "proxy-authorization",
+    "trailer",
+    "content-length",
+    "forwarded",
+    "x-forwarded-for",
+    "x-forwarded-host",
+    "x-forwarded-proto",
+    "forward-to",
+    "x-relay-id",
+    "x-hop-token",
+  ]) {
+    assert.equal(fn(name, dynamic), true, `${name} must not cross the embedded-service boundary`);
+  }
+  assert.equal(fn("accept", dynamic), false);
+});
+
+test("spoofable forwarding provenance is forbidden by the canonical upstream policy", () => {
+  for (const name of [
+    "forwarded",
+    "forward-to",
+    "x-forwarded-for",
+    "x-forwarded-host",
+    "x-forwarded-proto",
+    "x-forwarded-port",
+    "x-relay-id",
+  ]) {
+    assert.equal(isForbiddenUpstreamHeaderName(name), true, name);
+    assert.equal(isForbiddenCustomHeaderName(name), true, name);
+  }
+});
+
+test("embedded-service HTTP response drops static and Connection-nominated hop headers", async () => {
+  const reverseProxy = (await import("../../src/lib/services/reverseProxy.ts")) as Record<
+    string,
+    unknown
+  >;
+  const shouldStrip = reverseProxy.shouldStripProxyResponseHeader;
+  assert.equal(
+    typeof shouldStrip,
+    "function",
+    "reverse proxy must expose one response filter helper"
+  );
+  if (typeof shouldStrip !== "function") return;
+
+  const fn = shouldStrip as (name: string, connectionTokens?: Set<string>) => boolean;
+  const dynamic = new Set(["x-response-hop"]);
+  for (const name of [
+    "connection",
+    "trailer",
+    "proxy-authenticate",
+    "x-response-hop",
+    "set-cookie",
+  ]) {
+    assert.equal(fn(name, dynamic), true, `${name} must not cross back to the browser`);
+  }
+  assert.equal(fn("content-type", dynamic), false);
 });

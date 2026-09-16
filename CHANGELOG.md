@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- **fix(security):** unify embedded HTTP/WebSocket proxy header confinement: strip static and `Connection`-nominated hop-by-hop fields, proxy credentials, and spoofable `Forwarded`/`X-Forwarded-*`/`X-Relay-*` provenance while explicitly reconstructing the required WebSocket upgrade handshake.
+
 ### ✨ New Features
 
 - **feat(dashboard):** adaptive context-budget dial on the compression settings panel — mode (`off` / `floor` / `replace-autotrigger`) and policy (`reserve-output` / `percentage` / `absolute`) persist via `PUT /api/settings/compression` `contextBudget`. Completes the dashboard half of #7005 (API + DB already shipped in #7183).

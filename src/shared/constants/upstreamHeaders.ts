@@ -27,8 +27,42 @@ const FORBIDDEN = new Set(
   ].map((s) => s.toLowerCase())
 );
 
+const FORWARDED_PROVENANCE = new Set(["forwarded", "forward-to", "x-real-ip"]);
+
+function normalizeHeaderName(name: string): string {
+  return String(name).trim().toLowerCase();
+}
+
+export function isUntrustedForwardingProvenanceHeaderName(name: string): boolean {
+  const normalized = normalizeHeaderName(name);
+  return (
+    FORWARDED_PROVENANCE.has(normalized) ||
+    normalized.startsWith("x-forwarded-") ||
+    normalized.startsWith("x-relay-")
+  );
+}
+
+export function connectionHeaderTokens(value: string | null | undefined): Set<string> {
+  const tokens = new Set<string>();
+  if (!value) return tokens;
+  for (const token of value.split(",")) {
+    const normalized = normalizeHeaderName(token);
+    if (normalized) tokens.add(normalized);
+  }
+  return tokens;
+}
+
 export function isForbiddenUpstreamHeaderName(name: string): boolean {
-  return FORBIDDEN.has(String(name).trim().toLowerCase());
+  const normalized = normalizeHeaderName(name);
+  return FORBIDDEN.has(normalized) || isUntrustedForwardingProvenanceHeaderName(normalized);
+}
+
+export function isForbiddenProxyBoundaryHeaderName(
+  name: string,
+  connectionTokens: ReadonlySet<string> = new Set()
+): boolean {
+  const normalized = normalizeHeaderName(name);
+  return isForbiddenUpstreamHeaderName(normalized) || connectionTokens.has(normalized);
 }
 
 /**
