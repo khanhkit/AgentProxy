@@ -2,6 +2,10 @@ import path from "path";
 import fs from "fs";
 import { resolveMitmDataDir } from "../dataDir.ts";
 import { ANTIGRAVITY_TARGET } from "../targets/antigravity.ts";
+import {
+  repairOwnerOnlyFileSync,
+  writeOwnerOnlyFileSync,
+} from "../../lib/security/ownerOnlyFile.ts";
 
 // #6494: the proxy terminates TLS locally for all 4 antigravity/cloudcode
 // hosts (see `TARGET_HOSTS` in server.cjs), but the generated cert previously
@@ -27,12 +31,13 @@ export async function generateCert(options?: {
   // regenerate endpoint has to actually mint a new one — otherwise a cert missing the
   // SANs added in #6494 can never be replaced from the UI.
   if (!options?.force && fs.existsSync(keyPath) && fs.existsSync(certPath)) {
+    repairOwnerOnlyFileSync(keyPath);
     console.log("✅ SSL certificate already exists");
     return { key: keyPath, cert: certPath };
   }
 
   if (!fs.existsSync(certDir)) {
-    fs.mkdirSync(certDir, { recursive: true });
+    fs.mkdirSync(certDir, { recursive: true, mode: 0o700 });
   }
 
   // Dynamic import for optional dependency
@@ -52,7 +57,7 @@ export async function generateCert(options?: {
     ],
   });
 
-  fs.writeFileSync(keyPath, pems.private);
+  writeOwnerOnlyFileSync(keyPath, pems.private, { encoding: "utf8" });
   fs.writeFileSync(certPath, pems.cert);
 
   console.log(`✅ Generated SSL certificate for ${TARGET_HOSTS.join(", ")}`);

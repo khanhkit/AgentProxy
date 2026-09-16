@@ -17,6 +17,7 @@ import os from "node:os";
 import { printHeading, printInfo, printSuccess, printError, createPrompt } from "../io.mjs";
 import { resolveActiveContext } from "../contexts.mjs";
 import { guardHostConfigTarget } from "../utils/config-home-guard.mjs";
+import { repairOwnerOnlyFileSync, writeOwnerOnlyFileSync } from "../utils/owner-only-file.mjs";
 
 function stripToRoot(url) {
   let s = String(url || "").replace(/\/+$/, "");
@@ -130,7 +131,12 @@ export async function runSetupClineCommand(opts = {}) {
   const gsPath = join(clineDir, "globalState.json");
   const secPath = join(clineDir, "secrets.json");
   const globalState = buildClineGlobalState(readJson(gsPath), { baseUrl, model });
-  const secrets = buildClineSecrets(readJson(secPath), { apiKey });
+  let existingSecrets = {};
+  if (!dryRun && existsSync(secPath)) {
+    repairOwnerOnlyFileSync(secPath);
+    existingSecrets = readJson(secPath);
+  }
+  const secrets = buildClineSecrets(existingSecrets, { apiKey });
 
   if (dryRun) {
     console.log(`\n── [dry-run] ${gsPath} ──`);
@@ -148,9 +154,9 @@ export async function runSetupClineCommand(opts = {}) {
     );
     console.log(`\n── [dry-run] ${secPath} ── (openAiApiKey: ${apiKey ? "set" : "sk_omniroute"})`);
   } else {
-    if (!existsSync(clineDir)) mkdirSync(clineDir, { recursive: true });
+    if (!existsSync(clineDir)) mkdirSync(clineDir, { recursive: true, mode: 0o700 });
     writeFileSync(gsPath, JSON.stringify(globalState, null, 2) + "\n", "utf8");
-    writeFileSync(secPath, JSON.stringify(secrets, null, 2) + "\n", "utf8");
+    writeOwnerOnlyFileSync(secPath, JSON.stringify(secrets, null, 2) + "\n", { encoding: "utf8" });
     printSuccess(`Wrote ${gsPath}`);
     printSuccess(`Wrote ${secPath}`);
   }

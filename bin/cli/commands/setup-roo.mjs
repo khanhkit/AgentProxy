@@ -17,6 +17,7 @@ import os from "node:os";
 import { printHeading, printInfo, printSuccess, printError } from "../io.mjs";
 import { resolveActiveContext } from "../contexts.mjs";
 import { guardHostConfigTarget } from "../utils/config-home-guard.mjs";
+import { repairOwnerOnlyFileSync, writeOwnerOnlyFileSync } from "../utils/owner-only-file.mjs";
 
 function ensureV1(url) {
   const s = String(url || "").replace(/\/+$/, "");
@@ -164,8 +165,11 @@ export async function runSetupRooCommand(opts = {}) {
       `\n── [dry-run] ${vscodePath} ── ${vscodeExists ? "(would set roo-cline.autoImportSettingsPath)" : "(skipped — file absent)"}`
     );
   } else {
-    mkdirSync(join(importPath, ".."), { recursive: true });
-    writeFileSync(importPath, JSON.stringify(importDoc, null, 2) + "\n", "utf8");
+    if (existsSync(importPath)) repairOwnerOnlyFileSync(importPath);
+    mkdirSync(join(importPath, ".."), { recursive: true, mode: 0o700 });
+    writeOwnerOnlyFileSync(importPath, JSON.stringify(importDoc, null, 2) + "\n", {
+      encoding: "utf8",
+    });
     printSuccess(`Wrote ${importPath}`);
     if (vscodeExists) {
       const merged = buildRooVscodeAutoImport(readJson(vscodePath), importPath);

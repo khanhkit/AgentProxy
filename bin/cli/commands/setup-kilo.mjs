@@ -9,12 +9,13 @@
  * Unlike Cline, Kilo's openAi baseURL INCLUDES /v1 (it appends /chat/completions).
  */
 
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import os from "node:os";
 import { printHeading, printInfo, printSuccess, printError, createPrompt } from "../io.mjs";
 import { resolveActiveContext } from "../contexts.mjs";
 import { guardHostConfigTarget } from "../utils/config-home-guard.mjs";
+import { repairOwnerOnlyFileSync, writeOwnerOnlyFileSync } from "../utils/owner-only-file.mjs";
 
 /** Ensure the URL ends with /v1 (Kilo appends /chat/completions to it). */
 function ensureV1(url) {
@@ -140,13 +141,20 @@ export async function runSetupKiloCommand(opts = {}) {
     return 2;
   }
 
-  const auth = buildKiloAuth(readJson(authPath), { apiKey, baseUrl, model });
+  let existingAuth = {};
+  if (!dryRun && existsSync(authPath)) {
+    repairOwnerOnlyFileSync(authPath);
+    existingAuth = readJson(authPath);
+  }
+  const auth = buildKiloAuth(existingAuth, { apiKey, baseUrl, model });
   // Only touch VS Code settings.json if it already exists (avoid creating a
   // bogus one for users who don't use that VS Code variant).
   const vscodeExists = existsSync(vscodePath);
-  const vscodeSettings = vscodeExists
-    ? buildKiloVscodeSettings(readJson(vscodePath), { apiKey, baseUrl, model })
-    : null;
+  let vscodeSettings = null;
+  if (!dryRun && vscodeExists) {
+    repairOwnerOnlyFileSync(vscodePath);
+    vscodeSettings = buildKiloVscodeSettings(readJson(vscodePath), { apiKey, baseUrl, model });
+  }
 
   if (dryRun) {
     console.log(`\n── [dry-run] ${authPath} ──`);
@@ -166,11 +174,13 @@ export async function runSetupKiloCommand(opts = {}) {
       `\n── [dry-run] ${vscodePath} ── ${vscodeExists ? "(would merge kilocode.* keys)" : "(skipped — file absent)"}`
     );
   } else {
-    mkdirSync(join(authPath, ".."), { recursive: true });
-    writeFileSync(authPath, JSON.stringify(auth, null, 2) + "\n", "utf8");
+    mkdirSync(join(authPath, ".."), { recursive: true, mode: 0o700 });
+    writeOwnerOnlyFileSync(authPath, JSON.stringify(auth, null, 2) + "\n", { encoding: "utf8" });
     printSuccess(`Wrote ${authPath}`);
     if (vscodeSettings) {
-      writeFileSync(vscodePath, JSON.stringify(vscodeSettings, null, 2) + "\n", "utf8");
+      writeOwnerOnlyFileSync(vscodePath, JSON.stringify(vscodeSettings, null, 2) + "\n", {
+        encoding: "utf8",
+      });
       printSuccess(`Updated ${vscodePath} (kilocode.customProvider + defaultModel)`);
     } else {
       printInfo(`Skipped VS Code settings (${vscodePath} not found).`);
