@@ -40,20 +40,18 @@ function toDateMs(value: unknown): number {
 //   2. We verify the signature with `crypto.timingSafeEqual` before parsing the
 //      JSON, so a MITM on the CLOUD_URL channel — or a misconfigured CLOUD_URL
 //      pointing at an attacker — cannot inject providers/tokens.
-// If `OMNIROUTE_CLOUD_SYNC_SECRET` is unset, signature validation is logged but
-// not enforced (back-compat for users on v3.8.x who haven't issued a shared
-// secret yet). The enforce-by-default switch will flip in v3.9.
+// Cloud sync is fail-closed: without a non-blank shared secret there is no
+// trustworthy way to authenticate remote state, so verification must reject.
+export function isCloudSyncIntegrityConfigured(): boolean {
+  return CLOUD_SYNC_SECRET.trim().length > 0;
+}
+
 export function verifyCloudSignature(rawBody: string, sigHeader: string | null): boolean {
-  if (!CLOUD_SYNC_SECRET) {
-    if (sigHeader) {
-      // We can't verify, but the server is at least trying. Pass through.
-      return true;
-    }
+  if (!isCloudSyncIntegrityConfigured()) {
     console.warn(
-      "[cloudSync] OMNIROUTE_CLOUD_SYNC_SECRET is not set and the Cloud response carries no X-Cloud-Sig. " +
-        "Token sync runs in legacy unverified mode — set the secret to enforce HMAC verification."
+      "[cloudSync] OMNIROUTE_CLOUD_SYNC_SECRET is not configured — rejecting unverified cloud state."
     );
-    return true;
+    return false;
   }
   if (!sigHeader) {
     console.warn("[cloudSync] Cloud response missing X-Cloud-Sig — rejecting payload.");
@@ -88,6 +86,9 @@ export async function fetchWithTimeout(url, options = {}, timeoutMs = CLOUD_SYNC
 export async function syncToCloud(machineId, createdKey = null) {
   if (!CLOUD_URL) {
     return { error: "NEXT_PUBLIC_CLOUD_URL is not configured" };
+  }
+  if (!isCloudSyncIntegrityConfigured()) {
+    return { error: "OMNIROUTE_CLOUD_SYNC_SECRET is not configured" };
   }
 
   // Keep legacy field names for upstream compatibility, but derive them

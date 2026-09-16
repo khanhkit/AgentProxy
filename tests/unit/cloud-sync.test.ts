@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import crypto from "node:crypto";
 import { pathToFileURL } from "node:url";
 
 const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-cloud-sync-"));
@@ -11,8 +12,13 @@ const ORIGINAL_CLOUD_URL = process.env.CLOUD_URL;
 const ORIGINAL_PUBLIC_CLOUD_URL = process.env.NEXT_PUBLIC_CLOUD_URL;
 const ORIGINAL_TIMEOUT = process.env.CLOUD_SYNC_TIMEOUT_MS;
 const ORIGINAL_CLOUD_SECRETS = process.env.OMNIROUTE_CLOUD_SYNC_SECRETS;
+const ORIGINAL_SYNC_SECRET = process.env.OMNIROUTE_CLOUD_SYNC_SECRET;
+const TEST_HMAC_KEY = crypto.createHash("sha256").update("omniroute-cloud-sync-test").digest("hex");
 const ORIGINAL_FETCH = globalThis.fetch;
 const cloudSyncModuleUrl = pathToFileURL(path.join(process.cwd(), "src/lib/cloudSync.ts")).href;
+const initCloudSyncModuleUrl = pathToFileURL(
+  path.join(process.cwd(), "src/shared/services/initializeCloudSync.ts")
+).href;
 
 process.env.DATA_DIR = TEST_DATA_DIR;
 // FASE-01: API_KEY_SECRET is required for CRC operations (no hardcoded fallback)
@@ -44,6 +50,7 @@ async function resetStorage() {
   delete process.env.NEXT_PUBLIC_CLOUD_URL;
   delete process.env.CLOUD_SYNC_TIMEOUT_MS;
   delete process.env.OMNIROUTE_CLOUD_SYNC_SECRETS;
+  delete process.env.OMNIROUTE_CLOUD_SYNC_SECRET;
 }
 
 test.beforeEach(async () => {
@@ -80,6 +87,11 @@ test.after(() => {
   } else {
     process.env.OMNIROUTE_CLOUD_SYNC_SECRETS = ORIGINAL_CLOUD_SECRETS;
   }
+  if (ORIGINAL_SYNC_SECRET === undefined) {
+    delete process.env.OMNIROUTE_CLOUD_SYNC_SECRET;
+  } else {
+    process.env.OMNIROUTE_CLOUD_SYNC_SECRET = ORIGINAL_SYNC_SECRET;
+  }
 });
 
 test("cloudSync returns a configuration error when the cloud URL is missing", async () => {
@@ -88,6 +100,21 @@ test("cloudSync returns a configuration error when the cloud URL is missing", as
   const result = await cloudSync.syncToCloud("machine-1");
 
   assert.deepEqual(result, { error: "NEXT_PUBLIC_CLOUD_URL is not configured" });
+});
+
+test("initializeCloudSync rejects enabled cloud sync when integrity secret is missing", async () => {
+  delete process.env.OMNIROUTE_CLOUD_SYNC_SECRET;
+  const settingsDb = await import("../../src/lib/db/settings.ts");
+  await settingsDb.updateSettings({ cloudEnabled: true });
+
+  const initCloudSync = await import(
+    `${initCloudSyncModuleUrl}?case=missing-secret-startup-${Date.now()}-${Math.random()}`
+  );
+
+  await assert.rejects(
+    initCloudSync.initializeCloudSync(),
+    /OMNIROUTE_CLOUD_SYNC_SECRET is required before enabled cloud sync can start/
+  );
 });
 
 test("fetchWithTimeout aborts when the timeout elapses", async () => {
@@ -107,6 +134,7 @@ test("fetchWithTimeout aborts when the timeout elapses", async () => {
 test("cloudSync maps timeout and transport failures to stable error messages", async () => {
   process.env.NEXT_PUBLIC_CLOUD_URL = "https://cloud.example";
   process.env.CLOUD_SYNC_TIMEOUT_MS = "5";
+  process.env.OMNIROUTE_CLOUD_SYNC_SECRET = TEST_HMAC_KEY;
 
   globalThis.fetch = (_url, options) =>
     new Promise((_, reject) => {
@@ -127,6 +155,7 @@ test("cloudSync maps timeout and transport failures to stable error messages", a
 
 test("cloudSync returns a generic error when the API responds with a non-OK status", async () => {
   process.env.CLOUD_URL = "https://cloud.example";
+  process.env.OMNIROUTE_CLOUD_SYNC_SECRET = TEST_HMAC_KEY;
 
   const originalConsoleLog = console.log;
   const logged = [];
@@ -155,6 +184,7 @@ test("cloudSync returns a generic error when the API responds with a non-OK stat
 test("cloudSync syncs data upstream and refreshes only locally stale provider tokens", async () => {
   process.env.NEXT_PUBLIC_CLOUD_URL = "https://cloud.example";
   process.env.OMNIROUTE_CLOUD_SYNC_SECRETS = "true";
+  process.env.OMNIROUTE_CLOUD_SYNC_SECRET = TEST_HMAC_KEY;
 
   const stale = await providersDb.createProviderConnection({
     provider: "openai",
@@ -212,9 +242,11 @@ test("cloudSync syncs data upstream and refreshes only locally stale provider to
         },
       },
     };
-    return new Response(JSON.stringify(responseData), {
+    const rawBody = JSON.stringify(responseData);
+    const signature = crypto.createHmac("sha256", TEST_HMAC_KEY).update(rawBody).digest("hex");
+    return new Response(rawBody, {
       status: 200,
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", "X-Cloud-Sig": signature },
     });
   };
 

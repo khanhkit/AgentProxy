@@ -1,6 +1,7 @@
 import { getCloudSyncScheduler } from "@/shared/services/cloudSyncScheduler";
 import { isCloudEnabled } from "@/lib/db/settings";
 import { cleanupProviderConnections } from "@/lib/db/providers";
+import { isCloudSyncIntegrityConfigured } from "@/lib/cloudSync";
 
 /**
  * Initialize cloud sync scheduler
@@ -8,6 +9,13 @@ import { cleanupProviderConnections } from "@/lib/db/providers";
  */
 export async function initializeCloudSync() {
   try {
+    const enabled = await isCloudEnabled();
+    if (enabled && !isCloudSyncIntegrityConfigured()) {
+      throw new Error(
+        "OMNIROUTE_CLOUD_SYNC_SECRET is required before enabled cloud sync can start"
+      );
+    }
+
     // Cleanup null fields from existing data
     await cleanupProviderConnections();
 

@@ -12,9 +12,9 @@ test("verifyCloudSignature accepts a valid HMAC", async () => {
   const TEST_HMAC_KEY = crypto.createHash("sha256").update("omniroute-test").digest("hex");
   process.env.OMNIROUTE_CLOUD_SYNC_SECRET = TEST_HMAC_KEY;
   // Re-import so the module re-reads the env.
-  const mod = await import(
-    "../../../src/lib/cloudSync.ts?cache=" + Date.now()
-  ).catch(() => import("../../../src/lib/cloudSync.ts"));
+  const mod = await import("../../../src/lib/cloudSync.ts?cache=" + Date.now()).catch(
+    () => import("../../../src/lib/cloudSync.ts")
+  );
   const body = JSON.stringify({ data: { providers: {} } });
   const sig = crypto.createHmac("sha256", TEST_HMAC_KEY).update(body).digest("hex");
   assert.equal((mod as any).verifyCloudSignature(body, sig), true);
@@ -39,13 +39,11 @@ test("verifyCloudSignature rejects when the secret is set but sig header is miss
   assert.equal((mod as any).verifyCloudSignature(body, null), false);
 });
 
-test("verifyCloudSignature falls through (legacy mode) when secret is unset", async () => {
+test("verifyCloudSignature fails closed when secret is unset", async () => {
   delete process.env.OMNIROUTE_CLOUD_SYNC_SECRET;
-  // Force re-import so module constants pick up the cleared env.
-  delete (globalThis as any).__omniroute_cloudSync_cache;
-  const mod = await import("../../../src/lib/cloudSync.ts");
+  const mod = await import(
+    "../../../src/lib/cloudSync.ts?missing-secret=" + Date.now() + "-" + Math.random()
+  );
   const body = JSON.stringify({ data: { providers: {} } });
-  // Behaviour: accept unsigned body but log warning. We assert it doesn't throw.
-  const result = (mod as any).verifyCloudSignature(body, null);
-  assert.equal(typeof result, "boolean");
+  assert.equal((mod as any).verifyCloudSignature(body, null), false);
 });
