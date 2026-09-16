@@ -9,7 +9,7 @@
  */
 
 import { extractApiKey } from "@/sse/services/auth";
-import { getApiKeyMetadata, isModelAllowedForKey, getApiKeyById } from "@/lib/db/apiKeys";
+import { getApiKeyMetadata, isModelAllowedForKey, recoverApiKeyById } from "@/lib/db/apiKeys";
 import { getComboByName } from "@/lib/db/combos";
 import { isDashboardSessionAuthenticated } from "./apiAuth";
 import { resolveComboForModel } from "@/lib/db/modelComboMappings";
@@ -415,8 +415,7 @@ export async function resolvePlaygroundTestKey(request: Request): Promise<string
   if (!keyId) return null;
   if (!(await isDashboardSessionAuthenticated(request))) return null;
   try {
-    const row = await getApiKeyById(keyId);
-    return typeof row?.key === "string" ? row.key : null;
+    return await recoverApiKeyById(keyId);
   } catch {
     return null;
   }

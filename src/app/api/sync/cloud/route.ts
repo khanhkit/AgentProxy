@@ -100,7 +100,7 @@ export async function POST(request: any) {
           createdKey = await createApiKey("Default Key", machineId);
         }
         // Sync first — only enable if sync succeeds
-        const enableResult = await syncAndVerify(machineId, createdKey?.key, keys);
+        const enableResult = await syncAndVerify(machineId, createdKey?.key);
         const enableBody = await enableResult
           .clone()
           .json()
@@ -133,7 +133,7 @@ export async function POST(request: any) {
 /**
  * Sync and verify connection with ping (retry on verify)
  */
-async function syncAndVerify(machineId: string, createdKey: any, existingKeys: any[]) {
+async function syncAndVerify(machineId: string, createdKey: any) {
   // Step 1: Sync data to cloud
   const syncResult: any = await syncToCloud(machineId, createdKey);
   if (syncResult.error) {
@@ -144,7 +144,7 @@ async function syncAndVerify(machineId: string, createdKey: any, existingKeys: a
   const cloudUrl = CLOUD_URL ? `${CLOUD_URL}/${machineId}` : null;
 
   // Step 2: Verify connection by pinging the cloud (with retry)
-  const apiKey = createdKey || existingKeys[0]?.key;
+  const apiKey = createdKey || (await pickApiKeyForInternalUse("cloud-sync-verify"));
   if (!apiKey) {
     return NextResponse.json({
       ...syncResult,

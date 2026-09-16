@@ -328,6 +328,7 @@ const SCHEMA_SQL = `
     id TEXT PRIMARY KEY,
     name TEXT NOT NULL,
     key TEXT NOT NULL UNIQUE,
+    key_ciphertext TEXT,
     machine_id TEXT,
     allowed_models TEXT DEFAULT '[]',
     no_log INTEGER NOT NULL DEFAULT 0,

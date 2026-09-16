@@ -10,7 +10,7 @@ import {
   getCurrentHermesAgentRoles,
 } from "@/lib/cli-helper/config-generator/hermes-agent";
 import { getHermesConfigPath } from "@/lib/cli-helper/config-generator/hermesHome";
-import { getApiKeyById } from "@/lib/db/apiKeys";
+import { recoverApiKeyById } from "@/lib/db/apiKeys";
 import { sanitizeErrorMessage } from "@omniroute/open-sse/utils/error.ts";
 
 const hermesAgentSettingsSchema = z.object({
@@ -110,10 +110,8 @@ export async function POST(request: Request) {
   let resolvedApiKey = apiKey ?? null;
   if (keyId) {
     try {
-      const keyRecord = await getApiKeyById(keyId);
-      if (keyRecord?.key) {
-        resolvedApiKey = keyRecord.key as string;
-      }
+      const recovered = await recoverApiKeyById(keyId);
+      if (recovered) resolvedApiKey = recovered;
     } catch {
       // Non-critical: fall back to whatever apiKey (if any) was already provided.
     }

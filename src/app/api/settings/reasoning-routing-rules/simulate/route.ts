@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { buildErrorBody } from "@omniroute/open-sse/utils/error.ts";
 import { requireManagementAuth } from "@/lib/api/requireManagementAuth";
-import { getApiKeyById } from "@/lib/db/apiKeys";
+import { getApiKeyById, recoverApiKeyById } from "@/lib/db/apiKeys";
 import { getComboForModel } from "@/sse/services/model";
 import {
   resolveReasoningRoutingRule,
@@ -94,7 +94,7 @@ export async function POST(request: Request) {
   const targetRejection = decision
     ? await validateApiKeyRoutingTarget(
         request,
-        typeof apiKey?.key === "string" ? apiKey.key : null,
+        apiKeyId ? await recoverApiKeyById(apiKeyId) : null,
         apiKey as never,
         decision.targetModel
       )

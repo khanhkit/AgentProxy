@@ -11,7 +11,7 @@
  * applies unchanged. The key is cached in-memory per user id.
  */
 import { handleChat } from "@/sse/handlers/chat";
-import { createApiKey, getApiKeys } from "@/lib/db/apiKeys";
+import { createApiKey, getApiKeys, recoverApiKeyById } from "@/lib/db/apiKeys";
 import { getConsistentMachineId } from "@/shared/utils/machineId";
 import { randomUUID } from "node:crypto";
 
@@ -51,16 +51,18 @@ export async function resolveUserApiKey(telegramUserId: number): Promise<string>
 
   // Reuse an existing key whose name matches, else mint one.
   const existing = await getApiKeys();
-  const match = existing?.find(
-    (k) =>
-      (k as { name?: string }).name === `telegram:${telegramUserId}` &&
-      typeof (k as { key?: string }).key === "string" &&
-      ((k as { key?: string }).key?.length ?? 0) > 0
-  );
-  const matchKey = (match as { key?: string } | undefined)?.key;
-  if (typeof matchKey === "string" && matchKey.length > 0) {
-    rememberUserApiKey(telegramUserId, matchKey);
-    return matchKey;
+  const match = existing?.find((k) => (k as { name?: string }).name === `telegram:${telegramUserId}`);
+  const matchId = (match as { id?: string } | undefined)?.id;
+  if (typeof matchId === "string" && matchId.length > 0) {
+    try {
+      const matchKey = await recoverApiKeyById(matchId);
+      if (matchKey) {
+        rememberUserApiKey(telegramUserId, matchKey);
+        return matchKey;
+      }
+    } catch {
+      // Fall through and mint a replacement key if the historical row is unrecoverable.
+    }
   }
 
   const created = await createApiKey(`telegram:${telegramUserId}`, machineId);

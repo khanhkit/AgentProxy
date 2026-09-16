@@ -28,7 +28,7 @@ test.afterEach(() => {
   else process.env.API_KEY_SECRET = originalApiKeySecret;
 });
 
-test("CLI tools key list can return unmasked keys for authenticated internal consumers", async () => {
+test("CLI tools key list stays masked and does not bulk-decrypt vault bearers", async () => {
   process.env.API_KEY_SECRET = "test-api-key-secret";
   const created = await createApiKey("CLI Tools Test Key", "test-machine-cli-tools");
 
@@ -48,7 +48,7 @@ test("CLI tools key list can return unmasked keys for authenticated internal con
     assert.ok(key, "created key should be present");
     assert.notEqual(key.key, created.key);
     assert.match(key.key, /^.{8}\*\*\*\*.*$/);
-    assert.equal(key.rawKey, created.key);
+    assert.equal(key.rawKey, null);
   } finally {
     await deleteApiKey(created.id);
   }

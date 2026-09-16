@@ -1,7 +1,7 @@
 import { POST as postChatCompletion } from "@/app/api/v1/chat/completions/route";
 import type { PersistedEvalRun, EvalTargetType } from "@/lib/db/evals";
 import { saveEvalRun } from "@/lib/db/evals";
-import { getApiKeyById } from "@/lib/db/apiKeys";
+import { getApiKeyById, recoverApiKeyById } from "@/lib/db/apiKeys";
 import { getCombos } from "@/lib/db/combos";
 import { getSuite, listSuites, runSuite } from "./evalRunner";
 
@@ -268,13 +268,14 @@ export async function runEvalSuiteAgainstTarget(input: {
   let resolvedApiKey: string | null = null;
   if (typeof input.apiKeyId === "string" && input.apiKeyId.trim().length > 0) {
     const keyRecord = await getApiKeyById(input.apiKeyId);
-    if (!keyRecord || typeof keyRecord.key !== "string" || keyRecord.key.trim().length === 0) {
+    if (!keyRecord) {
       throw new Error("Selected API key was not found");
     }
     if (keyRecord.isActive === false) {
       throw new Error("Selected API key is inactive");
     }
-    resolvedApiKey = keyRecord.key;
+    resolvedApiKey = await recoverApiKeyById(input.apiKeyId);
+    if (!resolvedApiKey) throw new Error("Selected API key is not recoverable");
   }
 
   const outputs: Record<string, string> = {};

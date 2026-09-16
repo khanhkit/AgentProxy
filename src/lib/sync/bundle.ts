@@ -114,7 +114,6 @@ function sanitizeApiKeyForSync(apiKey: unknown): JsonRecord {
   return pickDefined(record, [
     "id",
     "name",
-    "key",
     "machineId",
     "modelAccessMode",
     "allowedModels",

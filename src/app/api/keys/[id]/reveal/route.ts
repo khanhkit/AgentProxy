@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getApiKeyById } from "@/lib/db/apiKeys";
+import { recoverApiKeyById } from "@/lib/db/apiKeys";
 import { isApiKeyRevealEnabled } from "@/lib/apiKeyExposure";
 import { requireManagementAuth } from "@/lib/api/requireManagementAuth";
 import * as log from "@/sse/utils/logger";
@@ -15,13 +15,13 @@ export async function GET(request, { params }) {
     }
 
     const { id } = await params;
-    const key = await getApiKeyById(id);
+    const key = await recoverApiKeyById(id);
 
-    if (!key || typeof key.key !== "string") {
+    if (!key) {
       return NextResponse.json({ error: "Key not found" }, { status: 404 });
     }
 
-    return NextResponse.json({ key: key.key });
+    return NextResponse.json({ key });
   } catch (error) {
     log.error("keys", "Error revealing key", error);
     return NextResponse.json({ error: "Failed to reveal key" }, { status: 500 });

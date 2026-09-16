@@ -3,6 +3,13 @@
  */
 
 import { createHash } from "crypto";
+import {
+  ApiKeyVaultError,
+  buildApiKeyStorageSentinel,
+  decryptApiKeyBearer,
+  encryptApiKeyBearer,
+  isApiKeyStorageSentinel,
+} from "./apiKeyVault";
 import { v4 as uuidv4 } from "uuid";
 import { getDbInstance, rowToCamel } from "./core";
 import { backupDbFile } from "./backup";
@@ -129,6 +136,8 @@ interface ApiKeyRow extends JsonRecord {
   id?: unknown;
   name?: unknown;
   key?: unknown;
+  key_ciphertext?: unknown;
+  keyCiphertext?: unknown;
   machine_id?: unknown;
   machineId?: unknown;
   allowed_models?: unknown;
@@ -405,7 +414,29 @@ function ensureApiKeyColumn(
   console.log(`[DB] Added api_keys.${column.name} column`);
 }
 
-function ensureApiKeysColumns(db: ApiKeysDbLike) {
+function hashKeySync(key: string): string {
+  if (!key || typeof key !== "string") return "";
+  return createHash("sha256").update(key).digest("hex");
+}
+
+function ensureLegacyApiKeyHashMetadata(db: ApiKeysDbLike): void {
+  const rows = db
+    .prepare<ApiKeyRow>(
+      "SELECT id, key, key_hash, key_prefix FROM api_keys WHERE key_hash IS NULL OR key_prefix IS NULL"
+    )
+    .all();
+  const update = db.prepare(
+    "UPDATE api_keys SET key_hash = COALESCE(key_hash, ?), key_prefix = COALESCE(key_prefix, ?) WHERE id = ?"
+  );
+  for (const row of rows) {
+    if (typeof row.id !== "string" || typeof row.key !== "string" || isApiKeyStorageSentinel(row.key)) {
+      continue;
+    }
+    update.run(hashKeySync(row.key), row.key.slice(0, 12), row.id);
+  }
+}
+
+function ensureApiKeysColumns(db: ApiKeysDbLike, migrateLegacy = true) {
   if (_schemaChecked) return;
 
   try {
@@ -414,10 +445,26 @@ function ensureApiKeysColumns(db: ApiKeysDbLike) {
     for (const column of API_KEY_COLUMN_FALLBACKS) {
       ensureApiKeyColumn(db, columnNames, column);
     }
+    // Hash/prefix become authoritative before plaintext conversion so request
+    // authentication remains available even when vault recovery is unavailable.
+    ensureLegacyApiKeyHashMetadata(db);
     _schemaChecked = true;
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     console.warn("[DB] Failed to verify api_keys schema:", message);
+    return;
+  }
+
+  if (migrateLegacy) {
+    try {
+      const migrated = migrateLegacyApiKeyVaultRowsForDb(db);
+      if (migrated > 0) {
+        console.log("[DB] Migrated " + migrated + " legacy API key bearer(s) into the vault");
+      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      console.warn("[DB] API key vault migration deferred:", message);
+    }
   }
 }
 
@@ -438,13 +485,13 @@ function getPreparedStatements(db: ApiKeysDbLike): ApiKeysStatements {
     _stmtGetAllKeys = db.prepare<ApiKeyRow>("SELECT * FROM api_keys ORDER BY created_at");
     _stmtGetKeyById = db.prepare<ApiKeyRow>("SELECT * FROM api_keys WHERE id = ?");
     _stmtValidateKey = db.prepare<JsonRecord>(
-      "SELECT id, expires_at, revoked_at, is_active, is_banned FROM api_keys WHERE key = ? OR key_hash = ?"
+      "SELECT id, expires_at, revoked_at, is_active, is_banned FROM api_keys WHERE key_hash = ?"
     );
     _stmtGetKeyMetadata = db.prepare<ApiKeyRow>(
-      "SELECT id, name, machine_id, model_access_mode, allowed_models, blocked_models, allowed_combos, allowed_connections, allowed_quotas, no_log, auto_resolve, is_active, access_schedule, max_requests_per_day, max_requests_per_minute, throttle_delay_ms, max_sessions, revoked_at, expires_at, ip_allowlist, scopes, rate_limits, is_banned, key_hash, allowed_endpoints, stream_default_mode, cache_default_mode, disable_non_public_models, allow_usage_command, usage_limit_enabled, daily_usage_limit_usd, weekly_usage_limit_usd, chaos_mode_enabled, compression_enabled, proxy_id FROM api_keys WHERE key = ? OR key_hash = ?"
+      "SELECT id, name, machine_id, model_access_mode, allowed_models, blocked_models, allowed_combos, allowed_connections, allowed_quotas, no_log, auto_resolve, is_active, access_schedule, max_requests_per_day, max_requests_per_minute, throttle_delay_ms, max_sessions, revoked_at, expires_at, ip_allowlist, scopes, rate_limits, is_banned, key_hash, allowed_endpoints, stream_default_mode, cache_default_mode, disable_non_public_models, allow_usage_command, usage_limit_enabled, daily_usage_limit_usd, weekly_usage_limit_usd, chaos_mode_enabled, compression_enabled, proxy_id FROM api_keys WHERE key_hash = ?"
     );
     _stmtInsertKey = db.prepare(
-      "INSERT INTO api_keys (id, name, key, machine_id, model_access_mode, allowed_models, allowed_combos, allowed_connections, no_log, created_at, key_prefix, key_hash, scopes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+      "INSERT INTO api_keys (id, name, key, key_ciphertext, machine_id, model_access_mode, allowed_models, allowed_combos, allowed_connections, no_log, created_at, key_prefix, key_hash, scopes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
     );
     _stmtDeleteKey = db.prepare("DELETE FROM api_keys WHERE id = ?");
   }
@@ -565,7 +612,7 @@ export async function pickApiKeyForInternalUse(
 ): Promise<string | null> {
   try {
     const keys = (await getApiKeys()) as Array<{
-      key?: string;
+      id?: string;
       isActive?: boolean;
       revokedAt?: string | null;
       isBanned?: boolean;
@@ -575,42 +622,46 @@ export async function pickApiKeyForInternalUse(
       lastUsedAt?: string | number | null;
     }>;
 
-    const isUsable = (k: (typeof keys)[number]) =>
-      Boolean(k.key) &&
-      k.isActive !== false &&
-      !k.revokedAt &&
-      k.isBanned !== true &&
-      !k.scopes?.includes(EXCLUSIVE_LEASE_SCOPE);
-
-    // 1. Management-scoped key (preferred for any internal probe).
-    const manageKey = keys.find(
-      (k) => isUsable(k) && Array.isArray(k.scopes) && k.scopes.includes("manage")
-    );
-    if (manageKey?.key) return manageKey.key;
-
-    // 2. Allow-all key (empty allowedModels means no model restrictions).
-    const allowAllKey = keys.find(
+    const usable = keys.filter(
       (k) =>
-        isUsable(k) &&
-        k.modelAccessMode !== "restricted" &&
-        Array.isArray(k.allowedModels) &&
-        k.allowedModels.length === 0
+        typeof k.id === "string" &&
+        k.isActive !== false &&
+        !k.revokedAt &&
+        k.isBanned !== true &&
+        !k.scopes?.includes(EXCLUSIVE_LEASE_SCOPE)
     );
-    if (allowAllKey?.key) return allowAllKey.key;
 
-    // 3. Most recently used (proxy for "the user actually wants this one
-    //    working right now").
-    const byRecency = [...keys].filter(isUsable).sort((a, b) => {
-      const aT = typeof a.lastUsedAt === "number" ? a.lastUsedAt : 0;
-      const bT = typeof b.lastUsedAt === "number" ? b.lastUsedAt : 0;
+    const ranked: typeof usable = [];
+    const pushUnique = (candidate: (typeof usable)[number] | undefined) => {
+      if (candidate && !ranked.some((entry) => entry.id === candidate.id)) ranked.push(candidate);
+    };
+
+    pushUnique(usable.find((k) => Array.isArray(k.scopes) && k.scopes.includes("manage")));
+    pushUnique(
+      usable.find(
+        (k) =>
+          k.modelAccessMode !== "restricted" &&
+          Array.isArray(k.allowedModels) &&
+          k.allowedModels.length === 0
+      )
+    );
+    for (const candidate of [...usable].sort((a, b) => {
+      const aT = typeof a.lastUsedAt === "number" ? a.lastUsedAt : Date.parse(String(a.lastUsedAt ?? "")) || 0;
+      const bT = typeof b.lastUsedAt === "number" ? b.lastUsedAt : Date.parse(String(b.lastUsedAt ?? "")) || 0;
       return bT - aT;
-    });
-    if (byRecency[0]?.key) return byRecency[0].key;
+    })) {
+      pushUnique(candidate);
+    }
 
-    // 4. Legacy fallback: first active key. Keeps the function working
-    //    for setups with no managed/allow-all/recently-used key.
-    const firstActive = keys.find(isUsable);
-    return firstActive?.key ?? null;
+    for (const candidate of ranked) {
+      try {
+        const recovered = await recoverApiKeyById(candidate.id!);
+        if (recovered) return recovered;
+      } catch {
+        // Skip an unrecoverable candidate; selection metadata itself remains non-secret.
+      }
+    }
+    return null;
   } catch {
     return null;
   }
@@ -654,13 +705,109 @@ export async function getApiKeyById(id: string) {
 }
 
 async function hashKey(key: string): Promise<string> {
-  if (!key || typeof key !== "string") return "";
   // CodeQL: This is intentionally SHA-256, NOT password hashing. API keys are
   // high-entropy random tokens (not user-chosen passwords) and need fast O(1)
   // comparison for per-request validation. bcrypt/scrypt would add ~100ms per
   // request, which is unacceptable for an API proxy.
   // lgtm[js/insufficient-password-hash]
-  return createHash("sha256").update(key).digest("hex"); // nosemgrep: insufficient-password-hash
+  return hashKeySync(key); // nosemgrep: insufficient-password-hash
+}
+
+interface RecoverableApiKeyRow extends ApiKeyRow {
+  id?: unknown;
+  key?: unknown;
+  key_hash?: unknown;
+  key_prefix?: unknown;
+  key_ciphertext?: unknown;
+}
+
+function verifyRecoveredBearer(row: RecoverableApiKeyRow, bearer: string): void {
+  const expectedHash = typeof row.key_hash === "string" ? row.key_hash : hashKeySync(bearer);
+  const expectedPrefix = typeof row.key_prefix === "string" ? row.key_prefix : bearer.slice(0, 12);
+  if (hashKeySync(bearer) !== expectedHash || bearer.slice(0, 12) !== expectedPrefix) {
+    throw new ApiKeyVaultError("API key vault recovery failed hash/prefix verification");
+  }
+}
+
+function recoverOrMigrateApiKeyRow(db: ApiKeysDbLike, row: RecoverableApiKeyRow): string {
+  if (typeof row.id !== "string") {
+    throw new ApiKeyVaultError("API key vault recovery requires a stable row id");
+  }
+
+  if (typeof row.key_ciphertext === "string" && row.key_ciphertext) {
+    const bearer = decryptApiKeyBearer(row.id, row.key_ciphertext);
+    verifyRecoveredBearer(row, bearer);
+    return bearer;
+  }
+
+  if (typeof row.key !== "string" || !row.key || isApiKeyStorageSentinel(row.key)) {
+    throw new ApiKeyVaultError("API key bearer is not recoverable with the current vault state");
+  }
+
+  const bearer = row.key;
+  const hash = typeof row.key_hash === "string" && row.key_hash ? row.key_hash : hashKeySync(bearer);
+  const prefix =
+    typeof row.key_prefix === "string" && row.key_prefix ? row.key_prefix : bearer.slice(0, 12);
+  if (hashKeySync(bearer) !== hash || bearer.slice(0, 12) !== prefix) {
+    throw new ApiKeyVaultError("Legacy API key hash/prefix verification failed");
+  }
+
+  const ciphertext = encryptApiKeyBearer(row.id, bearer);
+  if (decryptApiKeyBearer(row.id, ciphertext) !== bearer) {
+    throw new ApiKeyVaultError("API key vault round-trip verification failed");
+  }
+  const sentinel = buildApiKeyStorageSentinel(bearer, hash);
+  const result = db
+    .prepare(
+      "UPDATE api_keys SET key = ?, key_hash = ?, key_prefix = ?, key_ciphertext = ? WHERE id = ? AND key = ? AND key_ciphertext IS NULL"
+    )
+    .run(sentinel, hash, prefix, ciphertext, row.id, bearer);
+  if (result.changes !== 1) {
+    throw new ApiKeyVaultError("Legacy API key migration lost its compare-and-swap precondition");
+  }
+  return bearer;
+}
+
+export async function recoverApiKeyById(id: string): Promise<string | null> {
+  const db = getDbInstance() as ApiKeysDbLike;
+  ensureApiKeysColumns(db);
+  const row = db
+    .prepare<RecoverableApiKeyRow>(
+      "SELECT id, key, key_hash, key_prefix, key_ciphertext FROM api_keys WHERE id = ?"
+    )
+    .get(id);
+  if (!row || typeof row.id !== "string") return null;
+  return recoverOrMigrateApiKeyRow(db, row);
+}
+
+function migrateLegacyApiKeyVaultRowsForDb(db: ApiKeysDbLike): number {
+  const rows = db
+    .prepare<RecoverableApiKeyRow>(
+      "SELECT id, key, key_hash, key_prefix, key_ciphertext FROM api_keys WHERE key_ciphertext IS NULL"
+    )
+    .all();
+  let migrated = 0;
+  for (const row of rows) {
+    if (typeof row.id !== "string" || typeof row.key !== "string" || isApiKeyStorageSentinel(row.key)) {
+      continue;
+    }
+    try {
+      recoverOrMigrateApiKeyRow(db, row);
+      migrated += 1;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      // Row ids are non-secret metadata. Never log bearer or ciphertext.
+      console.warn("[DB] API key vault migration deferred for " + row.id + ": " + message);
+    }
+  }
+  return migrated;
+}
+
+export async function migrateLegacyApiKeyVaultRows(): Promise<number> {
+  const db = getDbInstance() as ApiKeysDbLike;
+  // Explicit migration owns this pass so its caller gets the migrated count.
+  ensureApiKeysColumns(db, false);
+  return migrateLegacyApiKeyVaultRowsForDb(db);
 }
 
 export async function createApiKey(
@@ -688,8 +835,16 @@ export async function createApiKey(
   const { generateApiKeyWithMachine } = await import("@/shared/utils/apiKey");
   const result = generateApiKeyWithMachine(machineId);
 
+  const id = uuidv4();
+  const keyHash = hashKeySync(result.key);
+  const keyCiphertext = encryptApiKeyBearer(id, result.key);
+  if (decryptApiKeyBearer(id, keyCiphertext) !== result.key) {
+    throw new ApiKeyVaultError("API key vault round-trip verification failed");
+  }
+  const storageSentinel = buildApiKeyStorageSentinel(result.key, keyHash);
+
   const apiKey = {
-    id: uuidv4(),
+    id,
     name: name,
     key: result.key,
     machineId: machineId,
@@ -707,7 +862,8 @@ export async function createApiKey(
   stmt.insertKey.run(
     apiKey.id,
     apiKey.name,
-    apiKey.key,
+    storageSentinel,
+    keyCiphertext,
     apiKey.machineId,
     apiKey.modelAccessMode,
     JSON.stringify(apiKey.allowedModels),
@@ -716,7 +872,7 @@ export async function createApiKey(
     0,
     apiKey.createdAt,
     apiKey.key.slice(0, 12),
-    await hashKey(apiKey.key),
+    keyHash,
     JSON.stringify(scopes)
   );
   setNoLog(apiKey.id, false);
@@ -736,12 +892,17 @@ export async function regenerateApiKey(id: string) {
   const { key: newKey } = generateApiKeyWithMachine(machineId);
   const newHash = await hashKey(newKey);
   const newPrefix = newKey.slice(0, 12);
+  const newCiphertext = encryptApiKeyBearer(id, newKey);
+  if (decryptApiKeyBearer(id, newCiphertext) !== newKey) {
+    throw new ApiKeyVaultError("API key vault round-trip verification failed");
+  }
+  const storageSentinel = buildApiKeyStorageSentinel(newKey, newHash);
 
-  // Update in DB
+  // Update in DB only after strict encryption + round-trip verification succeeds.
   const updateStmt = db.prepare(
-    "UPDATE api_keys SET key = ?, key_hash = ?, key_prefix = ? WHERE id = ?"
+    "UPDATE api_keys SET key = ?, key_ciphertext = ?, key_hash = ?, key_prefix = ? WHERE id = ?"
   );
-  updateStmt.run(newKey, newHash, newPrefix, id);
+  updateStmt.run(storageSentinel, newCiphertext, newHash, newPrefix, id);
 
   // Invalidate all caches
   clearApiKeyCaches();
@@ -1267,7 +1428,7 @@ export async function validateApiKey(key: string | null | undefined) {
 
   const db = getDbInstance() as ApiKeysDbLike;
   const stmt = getPreparedStatements(db);
-  const row = stmt.validateKey.get(key, hashedKey) as JsonRecord | undefined;
+  const row = stmt.validateKey.get(hashedKey) as JsonRecord | undefined;
 
   if (!row) return false;
 
@@ -1401,7 +1562,7 @@ export async function getApiKeyMetadata(
 
   const db = getDbInstance() as ApiKeysDbLike;
   const stmt = getPreparedStatements(db);
-  const row = stmt.getKeyMetadata.get(key, hashedKey);
+  const row = stmt.getKeyMetadata.get(hashedKey);
 
   if (!row) return null;
 
