@@ -30,6 +30,7 @@ import {
 import { isGlobalProxyEnabled, PROXY_ALIVE_PREDICATE } from "./proxies/guards";
 import { bumpProxyRegistryGeneration } from "./proxies/registryGeneration";
 export {
+  hasBlockingAccountProxyAssignment,
   hasBlockingProxyAssignment,
   hasBlockingProxyAssignmentForProvider,
 } from "./proxies/guards";

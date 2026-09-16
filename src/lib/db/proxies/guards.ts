@@ -50,6 +50,40 @@ export function hasBlockingProxyAssignment(connectionId: string, providerId?: st
 }
 
 /**
+ * Fail closed when an account-scoped registry assignment exists but none of its
+ * pool members are serviceable. Explicit global/connection proxy-off still wins.
+ */
+export function hasBlockingAccountProxyAssignment(connectionId: string): boolean {
+  try {
+    const db = getDbInstance();
+    if (!isGlobalProxyEnabled(db)) return false;
+
+    const conn = db
+      .prepare("SELECT proxy_enabled FROM provider_connections WHERE id = ?")
+      .get(connectionId) as { proxy_enabled?: number } | undefined;
+    if (conn && conn.proxy_enabled === 0) return false;
+
+    const assignments = db
+      .prepare(
+        `SELECT
+           EXISTS(
+             SELECT 1 FROM proxy_assignments a
+             WHERE a.scope = 'account' AND a.scope_id = ?
+           ) AS assigned,
+           EXISTS(
+             SELECT 1 FROM proxy_assignments a JOIN proxy_registry p ON p.id = a.proxy_id
+             WHERE a.scope = 'account' AND a.scope_id = ?
+               AND ${PROXY_ALIVE_PREDICATE}
+           ) AS alive`
+      )
+      .get(connectionId, connectionId) as { assigned?: number; alive?: number } | undefined;
+    return assignments?.assigned === 1 && assignments.alive === 0;
+  } catch {
+    return false;
+  }
+}
+
+/**
  * #7380 fail-closed guard for providers without a connection row. Returns true
  * when a provider/global proxy assignment exists but all assigned proxies are known dead.
  */

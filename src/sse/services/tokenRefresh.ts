@@ -2,7 +2,7 @@
 import * as log from "../utils/logger";
 import { updateProviderConnection } from "@/lib/db/providers";
 import { resolveProxyForConnection } from "@/lib/db/settings";
-import { resolveProxyForProvider } from "@/lib/db/proxies";
+import { hasBlockingAccountProxyAssignment, resolveProxyForProvider } from "@/lib/db/proxies";
 import {
   TOKEN_EXPIRY_BUFFER_MS as BUFFER_MS,
   getRefreshLeadMs as _getRefreshLeadMs,
@@ -31,6 +31,15 @@ export const TOKEN_EXPIRY_BUFFER_MS = BUFFER_MS;
 
 async function resolveProxyForCredentials(provider: string, credentials?: any) {
   if (credentials?.connectionId) {
+    if (hasBlockingAccountProxyAssignment(credentials.connectionId)) {
+      throw Object.assign(
+        new Error(
+          "PROXY_ASSIGNED_UNAVAILABLE: assigned account proxy is inactive/unavailable; refusing OAuth refresh fallback egress"
+        ),
+        { code: "PROXY_ASSIGNED_UNAVAILABLE" }
+      );
+    }
+
     const resolved = await resolveProxyForConnection(credentials.connectionId);
     if (resolved?.proxy) {
       return resolved.proxy;

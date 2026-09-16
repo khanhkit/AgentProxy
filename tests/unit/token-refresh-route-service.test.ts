@@ -12,6 +12,7 @@ process.env.API_KEY_SECRET = "test-api-key-secret";
 
 const core = await import("../../src/lib/db/core.ts");
 const providersDb = await import("../../src/lib/db/providers.ts");
+const proxiesDb = await import("../../src/lib/db/proxies.ts");
 const settingsDb = await import("../../src/lib/db/settings.ts");
 const tokenRefresh = await import("../../src/sse/services/tokenRefresh.ts");
 const { PROVIDERS, OAUTH_ENDPOINTS } = await import("../../open-sse/config/constants.ts");
@@ -414,6 +415,74 @@ test("provider-specific refresh helper accepts connection proxy context", async 
           if (connectionId) {
             await settingsDb.deleteProxyForLevel("key", connectionId);
           }
+          OAUTH_ENDPOINTS.anthropic.token = originalAnthropicTokenUrl;
+        }
+      });
+    }
+  );
+});
+
+test("OAuth refresh fails closed instead of falling through a dead account proxy assignment", async () => {
+  const refreshRequests = [];
+
+  await withHttpServer(
+    (req, res) => {
+      refreshRequests.push({ method: req.method, url: req.url });
+      res.writeHead(200, { "content-type": "application/json" });
+      res.end(
+        JSON.stringify({
+          access_token: "unexpected-fallback-access",
+          refresh_token: "unexpected-fallback-refresh",
+          expires_in: 1200,
+        })
+      );
+    },
+    async (tokenServer) => {
+      await withConnectProxyServer(async (providerProxy) => {
+        const originalAnthropicTokenUrl = OAUTH_ENDPOINTS.anthropic.token;
+        OAUTH_ENDPOINTS.anthropic.token = `${tokenServer.url}/token`;
+        try {
+          const connection = await providersDb.createProviderConnection({
+            provider: "claude",
+            authType: "oauth",
+            name: "Claude Dead Account Proxy OAuth",
+            accessToken: "old-access",
+            refreshToken: "refresh-must-not-fallback",
+          });
+          const connectionId = (connection as { id: string }).id;
+
+          const deadAccountProxy = await proxiesDb.createProxy({
+            name: "Dead account refresh proxy",
+            type: "http",
+            host: "127.0.0.1",
+            port: 65534,
+          });
+          assert.ok(deadAccountProxy);
+          await proxiesDb.updateProxy(deadAccountProxy.id, { status: "inactive" });
+          await proxiesDb.assignProxyToScope("account", connectionId, deadAccountProxy.id);
+
+          const liveProviderProxy = await proxiesDb.createProxy({
+            name: "Live provider fallback proxy",
+            type: "http",
+            host: providerProxy.host,
+            port: providerProxy.port,
+          });
+          assert.ok(liveProviderProxy);
+          await proxiesDb.assignProxyToScope("provider", "claude", liveProviderProxy.id);
+
+          await assert.rejects(
+            tokenRefresh.refreshClaudeOAuthToken("refresh-must-not-fallback", { connectionId }),
+            (error: unknown) =>
+              error instanceof Error &&
+              (error as Error & { code?: string }).code === "PROXY_ASSIGNED_UNAVAILABLE"
+          );
+          assert.equal(
+            providerProxy.connectRequests.length,
+            0,
+            "refresh must not fall through to the provider-scoped proxy"
+          );
+          assert.equal(refreshRequests.length, 0, "refresh endpoint must not receive a request");
+        } finally {
           OAUTH_ENDPOINTS.anthropic.token = originalAnthropicTokenUrl;
         }
       });
