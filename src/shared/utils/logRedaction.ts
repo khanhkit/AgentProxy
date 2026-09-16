@@ -14,7 +14,8 @@
 const CENSOR = "[REDACTED]";
 
 // Cheap pre-test: skip the (still bounded) replace work entirely for clean strings.
-const SECRET_HINT = /bearer|telegram\.org\/bot|api[_-]?key|authorization|sk-/i;
+const SECRET_HINT =
+  /bearer|telegram\.org\/bot|api[_-]?key|authorization|refresh[_-]?token|id[_-]?token|access[_-]?token|tailscale[_-]?key|tskey-|eyJ|sk-/i;
 
 const PATTERNS: ReadonlyArray<readonly [RegExp, string]> = [
   // Authorization: Bearer <token>  /  authorization=Bearer <token>
@@ -25,6 +26,14 @@ const PATTERNS: ReadonlyArray<readonly [RegExp, string]> = [
   [/((?:x-api-key|api[_-]?key)\s*[:=]\s*)[\w.\-]{6,}/gi, `$1${CENSOR}`],
   // Telegram bot token in a URL: api.telegram.org/bot<digits>:<token>
   [/(api\.telegram\.org\/bot)\d{6,}:[\w\-]{20,}/gi, `$1${CENSOR}`],
+  // Labeled OAuth/session tokens. Keep the field name for diagnostics.
+  [
+    /((?:refresh[_-]?token|id[_-]?token|access[_-]?token|tailscale[_-]?key)\s*[:=]\s*)[^\s,;"\']{6,}/gi,
+    `$1${CENSOR}`,
+  ],
+  // Tailscale auth keys and JWTs can also appear bare in Error stacks.
+  [/\btskey-[A-Za-z0-9_-]{8,}/g, CENSOR],
+  [/\beyJ[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{2,}\.[A-Za-z0-9_-]{2,}\b/g, CENSOR],
   // OpenAI-style keys: sk-... (also sk-proj-...)
   [/\bsk-[A-Za-z0-9_\-]{16,}/g, `sk-${CENSOR}`],
 ];
@@ -45,6 +54,32 @@ export function redactSecrets(text: string): string {
 interface RedactState {
   budget: number;
   seen: WeakSet<object>;
+}
+
+const SENSITIVE_LOG_KEYS = new Set([
+  "authorization",
+  "apikey",
+  "accesstoken",
+  "refreshtoken",
+  "idtoken",
+  "clientsecret",
+  "tailscalekey",
+  "password",
+  "cookie",
+  "setcookie",
+  "secret",
+  "token",
+]);
+
+function isSensitiveLogKey(key: string): boolean {
+  const normalized = key.replace(/[^a-z0-9]/gi, "").toLowerCase();
+  return (
+    SENSITIVE_LOG_KEYS.has(normalized) ||
+    normalized.endsWith("token") ||
+    normalized.endsWith("apikey") ||
+    normalized.endsWith("secret") ||
+    normalized.endsWith("password")
+  );
 }
 
 function redactValue(value: unknown, depth: number, state: RedactState): unknown {
@@ -83,6 +118,11 @@ function redactValue(value: unknown, depth: number, state: RedactState): unknown
   const out: Record<string, unknown> = {};
   for (const key of Object.keys(value as Record<string, unknown>)) {
     const original = (value as Record<string, unknown>)[key];
+    if (isSensitiveLogKey(key)) {
+      out[key] = CENSOR;
+      if (original !== CENSOR) changed = true;
+      continue;
+    }
     const redacted = redactValue(original, depth + 1, state);
     if (redacted !== original) changed = true;
     out[key] = redacted;

@@ -21,7 +21,9 @@ test("redactSecrets removes x-api-key values", () => {
 });
 
 test("redactSecrets removes a Telegram bot token in a URL", () => {
-  const out = redactSecrets("posting to https://api.telegram.org/bot123456789:AAExampleTokenValue_abcdEFGH/send");
+  const out = redactSecrets(
+    "posting to https://api.telegram.org/bot123456789:AAExampleTokenValue_abcdEFGH/send"
+  );
   assert.match(out, /api\.telegram\.org\/bot\[REDACTED\]/);
   assert.doesNotMatch(out, /AAExampleTokenValue/);
 });
@@ -98,4 +100,28 @@ test("redactLogArgs is bounded on huge/deep objects", () => {
   const start = Date.now();
   assert.doesNotThrow(() => redactLogArgs([deep]));
   assert.ok(Date.now() - start < 1000, "must stay bounded on pathological structures");
+});
+
+test("redactSecrets removes labeled refresh tokens, bare JWTs, and tskeys", () => {
+  const input =
+    "refresh_token=kittest-refresh-secret-123456 tskey-auth-kittest-123456 eyJhbGciOiJIUzI1NiJ9.payload.signature";
+  const out = redactSecrets(input);
+  assert.doesNotMatch(out, /kittest-refresh-secret-123456/);
+  assert.doesNotMatch(out, /tskey-auth-kittest-123456/);
+  assert.doesNotMatch(out, /eyJhbGciOiJIUzI1NiJ9\.payload\.signature/);
+});
+
+test("redactLogArgs censors values under sensitive structured keys", () => {
+  const [obj] = redactLogArgs([
+    {
+      provider: "demo",
+      accessToken: "opaque-value",
+      nested: { apiKey: "another-value", status: "ok" },
+    },
+  ]) as [Record<string, unknown>];
+  assert.deepEqual(obj, {
+    provider: "demo",
+    accessToken: "[REDACTED]",
+    nested: { apiKey: "[REDACTED]", status: "ok" },
+  });
 });

@@ -14,6 +14,7 @@ import { appendFileSync, existsSync, mkdirSync } from "fs";
 import { dirname, resolve } from "path";
 import { format } from "util";
 import { getAppLogFilePath, getAppLogToFile } from "./logEnv";
+import { redactLogArgs } from "@/shared/utils/logRedaction";
 
 const logToFile = getAppLogToFile();
 const logFilePath = resolve(getAppLogFilePath());
@@ -226,7 +227,7 @@ function emitMissingDirNoticeOnce(): void {
  */
 function writeEntry(level: string, args: unknown[]) {
   try {
-    const message = argsToMessage(args);
+    const message = argsToMessage(redactLogArgs(args));
     if (level === "error" && shouldSuppressErrorEntry(message)) return;
 
     const entry = {
