@@ -85,6 +85,43 @@ describe("CLIProxyAPI account health", () => {
     assert.equal(JSON.stringify(result).includes("management-secret"), false);
   });
 
+  it("distinguishes management reachability from routed credential readiness", async () => {
+    const allUnavailable = await getCliproxyAccountHealth({
+      managementKey: "key",
+      fetchImpl: async () =>
+        Response.json({
+          files: [
+            { auth_index: "cooling", status: "active", unavailable: true },
+            { auth_index: "disabled", status: "active", disabled: true },
+          ],
+        }),
+    });
+    assert.equal(allUnavailable.state, "ready", "management API itself is reachable");
+    assert.equal(allUnavailable.ready, false, "no routed credential is currently usable");
+
+    const oneUsable = await getCliproxyAccountHealth({
+      managementKey: "key",
+      fetchImpl: async () =>
+        Response.json({
+          files: [
+            { auth_index: "cooling", status: "active", unavailable: true },
+            { auth_index: "usable", status: "active", disabled: false, unavailable: false },
+          ],
+        }),
+    });
+    assert.equal(oneUsable.state, "ready");
+    assert.equal(oneUsable.ready, true, "one usable routed credential makes the service ready");
+  });
+
+  it("reports not ready when management is reachable but no credentials are configured", async () => {
+    const result = await getCliproxyAccountHealth({
+      managementKey: "key",
+      fetchImpl: async () => Response.json({ files: [] }),
+    });
+    assert.equal(result.state, "ready");
+    assert.equal(result.ready, false);
+  });
+
   it("distinguishes missing, unauthorized, unsupported, invalid, and unreachable states", async () => {
     assert.equal(
       (await getCliproxyAccountHealth({ managementKey: null, embedded: false })).state,

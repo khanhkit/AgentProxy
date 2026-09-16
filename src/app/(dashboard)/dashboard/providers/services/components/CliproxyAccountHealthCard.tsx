@@ -56,7 +56,7 @@ async function fetchAccountHealth(): Promise<CliproxyAccountHealthResult> {
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     return await response.json();
   } catch {
-    return { state: "unreachable", accounts: [], version: null };
+    return { state: "unreachable", ready: false, accounts: [], version: null };
   }
 }
 
@@ -89,7 +89,7 @@ export function CliproxyAccountHealthCard() {
   return (
     <Card
       title="CLIProxyAPI accounts"
-      subtitle="Read-only status from the authenticated management API"
+      subtitle="Credential readiness from the authenticated management API; process liveness is shown separately above"
       action={
         <Button variant="secondary" size="sm" onClick={handleRefresh} loading={loading}>
           Refresh
@@ -97,15 +97,26 @@ export function CliproxyAccountHealthCard() {
       }
     >
       {result?.state === "ready" ? (
-        result.accounts.length > 0 ? (
-          <ul aria-label="CLIProxyAPI account health">
-            {result.accounts.map((account) => (
-              <AccountRow key={account.authIndex} account={account} />
-            ))}
-          </ul>
-        ) : (
-          <p className="text-sm text-text-muted">No CLIProxyAPI accounts found.</p>
-        )
+        <>
+          <div
+            data-testid="cliproxy-request-readiness"
+            className="flex items-center justify-between gap-3 pb-3"
+          >
+            <span className="text-sm font-medium text-text-main">Request readiness</span>
+            <Badge variant={result.ready ? "success" : "warning"}>
+              {result.ready ? "Ready" : "Not ready"}
+            </Badge>
+          </div>
+          {result.accounts.length > 0 ? (
+            <ul aria-label="CLIProxyAPI account health">
+              {result.accounts.map((account) => (
+                <AccountRow key={account.authIndex} account={account} />
+              ))}
+            </ul>
+          ) : (
+            <p className="text-sm text-text-muted">No CLIProxyAPI accounts found.</p>
+          )}
+        </>
       ) : (
         <p className="text-sm text-text-muted">
           {loading && !result
