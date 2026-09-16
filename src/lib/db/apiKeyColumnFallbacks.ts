@@ -25,6 +25,7 @@ export const API_KEY_COLUMN_FALLBACKS = [
   { name: "rate_limits", definition: "rate_limits TEXT" },
   { name: "is_banned", definition: "is_banned INTEGER NOT NULL DEFAULT 0" },
   { name: "key_hash", definition: "key_hash TEXT" },
+  { name: "key_ciphertext", definition: "key_ciphertext TEXT" },
   { name: "proxy_id", definition: "proxy_id TEXT" },
   { name: "allowed_endpoints", definition: "allowed_endpoints TEXT" },
   { name: "allowed_quotas", definition: "allowed_quotas TEXT NOT NULL DEFAULT '[]'" },

@@ -13,7 +13,7 @@ import { createMultiBackup } from "@/shared/services/backupService";
 import { saveCliToolLastConfigured, deleteCliToolLastConfigured } from "@/lib/db/cliToolState";
 import { cliModelConfigSchema } from "@/shared/validation/schemas";
 import { isValidationFailure, validateBody } from "@/shared/validation/helpers";
-import { getApiKeyById } from "@/lib/db/apiKeys";
+import { recoverApiKeyById } from "@/lib/db/apiKeys";
 import { normalizeCodexBaseUrl } from "@/shared/utils/codexBaseUrl";
 import { migrateCodexFeatureFlags } from "@/shared/utils/codexConfig";
 
@@ -225,10 +225,8 @@ export async function POST(request: Request) {
     // Resolve real key from DB by ID
     if (keyId) {
       try {
-        const keyRecord = await getApiKeyById(keyId);
-        if (keyRecord?.key) {
-          apiKey = keyRecord.key as string;
-        }
+        const recovered = await recoverApiKeyById(keyId);
+        if (recovered) apiKey = recovered;
       } catch {
         // Non-critical: fall back to whatever value was in apiKey
       }

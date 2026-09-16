@@ -1,4 +1,4 @@
-import { getApiKeyById, createApiKey } from "@/lib/db/apiKeys";
+import { recoverApiKeyById, createApiKey } from "@/lib/db/apiKeys";
 import { getConsistentMachineId } from "@/shared/utils/machineId";
 
 export async function resolveApiKey(
@@ -7,8 +7,8 @@ export async function resolveApiKey(
 ): Promise<string> {
   if (apiKeyId) {
     try {
-      const keyRecord = await getApiKeyById(apiKeyId);
-      if (keyRecord?.key) return keyRecord.key as string;
+      const recovered = await recoverApiKeyById(apiKeyId);
+      if (recovered) return recovered;
     } catch {
       /* fall through */
     }
@@ -24,8 +24,8 @@ export async function resolveApiKey(
 export async function getOrCreateApiKey(apiKeyId?: string | null): Promise<string> {
   if (apiKeyId) {
     try {
-      const keyRecord = await getApiKeyById(apiKeyId);
-      if (keyRecord?.key) return keyRecord.key as string;
+      const recovered = await recoverApiKeyById(apiKeyId);
+      if (recovered) return recovered;
     } catch {
       /* fall through */
     }

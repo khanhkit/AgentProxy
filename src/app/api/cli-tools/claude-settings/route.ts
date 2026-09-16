@@ -14,7 +14,7 @@ import { normalizeClaudeBaseUrl } from "@/shared/services/claudeCliConfig";
 import { saveCliToolLastConfigured, deleteCliToolLastConfigured } from "@/lib/db/cliToolState";
 import { cliSettingsEnvSchema } from "@/shared/validation/schemas";
 import { isValidationFailure, validateBody } from "@/shared/validation/helpers";
-import { getApiKeyById } from "@/lib/db/apiKeys";
+import { recoverApiKeyById } from "@/lib/db/apiKeys";
 import { readJsoncConfig } from "../_lib/jsoncConfig";
 
 // Get claude settings path based on OS
@@ -114,10 +114,8 @@ export async function POST(request: Request) {
     // Resolve the real API key from DB by ID
     if (keyId) {
       try {
-        const keyRecord = await getApiKeyById(keyId);
-        if (keyRecord?.key) {
-          env.ANTHROPIC_AUTH_TOKEN = keyRecord.key as string;
-        }
+        const recovered = await recoverApiKeyById(keyId);
+        if (recovered) env.ANTHROPIC_AUTH_TOKEN = recovered;
       } catch {
         // Non-critical: fall back to whatever value was already provided in env.
       }

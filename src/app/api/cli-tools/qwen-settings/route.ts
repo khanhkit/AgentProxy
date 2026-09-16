@@ -8,7 +8,7 @@ import { NextResponse } from "next/server";
 import { sanitizeErrorMessage } from "@omniroute/open-sse/utils/error";
 
 import { requireCliToolsAuth } from "@/lib/api/requireCliToolsAuth";
-import { getApiKeyById } from "@/lib/db/apiKeys";
+import { recoverApiKeyById } from "@/lib/db/apiKeys";
 import { deleteCliToolLastConfigured, saveCliToolLastConfigured } from "@/lib/db/cliToolState";
 import { createMultiBackup } from "@/shared/services/backupService";
 import {
@@ -135,8 +135,8 @@ export async function POST(request: Request): Promise<Response> {
     const keyId = typeof bodyRecord.keyId === "string" ? bodyRecord.keyId.trim() : "";
     let apiKey = validation.data.apiKey || "";
     if (keyId) {
-      const keyRecord = await getApiKeyById(keyId);
-      if (keyRecord?.key) apiKey = keyRecord.key;
+      const recovered = await recoverApiKeyById(keyId);
+      if (recovered) apiKey = recovered;
     }
     if (!apiKey) apiKey = "sk_omniroute";
 
