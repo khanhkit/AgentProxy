@@ -37,6 +37,8 @@ export interface CliproxyAccountHealth {
 
 export interface CliproxyAccountHealthResult {
   state: CliproxyAccountHealthState;
+  /** True only when at least one configured CLIProxyAPI credential is usable for routing now. */
+  ready: boolean;
   accounts: CliproxyAccountHealth[];
   version: string | null;
 }
@@ -160,10 +162,10 @@ export async function getCliproxyAccountHealth(
   try {
     connection = await resolveConnection(options);
   } catch {
-    return { state: "missing_key", accounts: [], version: null };
+    return { state: "missing_key", ready: false, accounts: [], version: null };
   }
   if (connection.state !== "ready") {
-    return { state: connection.state, accounts: [], version: null };
+    return { state: connection.state, ready: false, accounts: [], version: null };
   }
 
   const controller = new AbortController();
@@ -178,26 +180,28 @@ export async function getCliproxyAccountHealth(
     );
     const version = response.headers.get("x-cpa-version");
     if (response.status === 401 || response.status === 403) {
-      return { state: "unauthorized", accounts: [], version };
+      return { state: "unauthorized", ready: false, accounts: [], version };
     }
     if (response.status === 404) {
-      return { state: "unsupported", accounts: [], version };
+      return { state: "unsupported", ready: false, accounts: [], version };
     }
     if (!response.ok) {
-      return { state: "unreachable", accounts: [], version };
+      return { state: "unreachable", ready: false, accounts: [], version };
     }
     let payload: unknown;
     try {
       payload = await response.json();
     } catch {
-      return { state: "invalid_response", accounts: [], version };
+      return { state: "invalid_response", ready: false, accounts: [], version };
     }
     const accounts = sanitizeCliproxyAuthFiles(payload);
-    return accounts
-      ? { state: "ready", accounts, version }
-      : { state: "invalid_response", accounts: [], version };
+    if (!accounts) {
+      return { state: "invalid_response", ready: false, accounts: [], version };
+    }
+    const ready = accounts.some((account) => !account.disabled && !account.unavailable);
+    return { state: "ready", ready, accounts, version };
   } catch {
-    return { state: "unreachable", accounts: [], version: null };
+    return { state: "unreachable", ready: false, accounts: [], version: null };
   } finally {
     clearTimeout(timeout);
   }
