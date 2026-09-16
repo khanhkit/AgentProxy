@@ -9,6 +9,8 @@ import {
 } from "@/shared/network/outboundUrlGuard";
 
 const DEFAULT_IDEMPOTENT_METHODS = ["GET", "HEAD", "OPTIONS", "PUT", "DELETE"];
+const DEFAULT_MAX_REDIRECTS = 3;
+const FOLLOWABLE_REDIRECT_STATUSES = new Set([301, 302, 303, 307, 308]);
 
 // Some upstream providers (Cerebras, Cloudflare AI, Groq observed in practice) routinely take
 // close to 5s to answer a lightweight /models probe, which is indistinguishable from a real
@@ -24,11 +26,7 @@ const PROVIDER_PROBE_TIMEOUT_MS = resolveProbeTimeoutMs();
 
 export type SafeOutboundFetchGuard = OutboundUrlGuardMode;
 export type SafeOutboundFetchErrorCode =
-  | "INVALID_URL"
-  | "URL_GUARD_BLOCKED"
-  | "TIMEOUT"
-  | "REDIRECT_BLOCKED"
-  | "NETWORK_ERROR";
+  "INVALID_URL" | "URL_GUARD_BLOCKED" | "TIMEOUT" | "REDIRECT_BLOCKED" | "NETWORK_ERROR";
 
 export interface SafeOutboundFetchRetryOptions {
   attempts?: number;
@@ -40,6 +38,7 @@ export interface SafeOutboundFetchRetryOptions {
 export interface SafeOutboundFetchOptions extends RequestInit {
   timeoutMs?: number;
   allowRedirect?: boolean;
+  maxRedirects?: number;
   retry?: SafeOutboundFetchRetryOptions | false;
   guard?: SafeOutboundFetchGuard;
   proxyConfig?: unknown;
@@ -284,68 +283,182 @@ export async function safeOutboundFetch(url: string | URL, options: SafeOutbound
   const {
     timeoutMs,
     allowRedirect = false,
+    maxRedirects: requestedMaxRedirects,
     retry,
     guard = "none",
     proxyConfig,
     bypassProxyPatch = false,
     signal,
+    redirect: requestedRedirect,
     ...fetchOptions
   } = options;
 
   applyUrlGuard(targetUrl, guard, method);
 
   const retryConfig = getRetryConfig(retry, method);
-  const redirect = allowRedirect ? (fetchOptions.redirect ?? "follow") : "manual";
+  const redirect = allowRedirect ? (requestedRedirect ?? "follow") : "manual";
+  const guardedManualRedirects = allowRedirect && guard !== "none" && redirect === "follow";
+  const maxRedirects =
+    typeof requestedMaxRedirects === "number" && Number.isFinite(requestedMaxRedirects)
+      ? Math.max(0, Math.floor(requestedMaxRedirects))
+      : DEFAULT_MAX_REDIRECTS;
 
-  for (let attempt = 1; attempt <= retryConfig.attempts; attempt++) {
+  attemptLoop: for (let attempt = 1; attempt <= retryConfig.attempts; attempt++) {
+    let activeUrl = targetUrl;
+    let activeMethod = method;
+    let activeBody = fetchOptions.body;
+    let activeHeaders = fetchOptions.headers;
+    let redirectCount = 0;
+
     try {
-      const executeFetch = () =>
-        fetchWithTimeout(targetUrl.toString(), {
-          ...fetchOptions,
-          method,
-          redirect,
-          signal,
-          timeoutMs,
-          // When bypassing the proxy patch, use the original native fetch directly.
-          fetchFn: bypassProxyPatch ? getOriginalFetch() : undefined,
-        });
+      while (true) {
+        // Guard every concrete destination immediately before transport. The
+        // initial URL is checked above as an early fail-fast and again here so
+        // the same invariant owns every hop in the chain.
+        applyUrlGuard(activeUrl, guard, activeMethod);
 
-      const response = bypassProxyPatch
-        ? await executeFetch()
-        : proxyConfig
-          ? await runWithProxyContext(proxyConfig, executeFetch)
-          : await executeFetch();
+        const executeFetch = () =>
+          fetchWithTimeout(activeUrl.toString(), {
+            ...fetchOptions,
+            method: activeMethod,
+            headers: activeHeaders,
+            body: activeBody,
+            redirect: guardedManualRedirects ? "manual" : redirect,
+            signal,
+            timeoutMs,
+            // When bypassing the proxy patch, use the original native fetch directly.
+            fetchFn: bypassProxyPatch ? getOriginalFetch() : undefined,
+          });
 
-      if (!allowRedirect && response.status >= 300 && response.status < 400) {
-        const location = response.headers.get("location");
-        await cancelResponseBody(response);
-        throw new SafeOutboundFetchError(
-          `Redirect blocked for ${method} ${targetUrl.toString()} (${response.status})`,
-          {
-            code: "REDIRECT_BLOCKED",
-            url: targetUrl.toString(),
-            method,
-            attempts: attempt,
-            status: response.status,
-            location,
-            isRetryable: false,
+        const response = bypassProxyPatch
+          ? await executeFetch()
+          : proxyConfig
+            ? await runWithProxyContext(proxyConfig, executeFetch)
+            : await executeFetch();
+
+        if (guardedManualRedirects && FOLLOWABLE_REDIRECT_STATUSES.has(response.status)) {
+          const location = response.headers.get("location");
+          // Fetch returns the redirect response unchanged when there is no
+          // Location header, even in follow mode.
+          if (!location) return response;
+
+          if (redirectCount >= maxRedirects) {
+            await cancelResponseBody(response);
+            throw new SafeOutboundFetchError(
+              `Redirect limit exceeded for ${method} ${targetUrl.toString()} (max ${maxRedirects})`,
+              {
+                code: "REDIRECT_BLOCKED",
+                url: activeUrl.toString(),
+                method: activeMethod,
+                attempts: attempt,
+                status: response.status,
+                location,
+                isRetryable: false,
+              }
+            );
           }
-        );
-      }
 
-      if (
-        retryConfig.shouldRetryMethod &&
-        attempt < retryConfig.attempts &&
-        retryConfig.statusCodes.has(response.status)
-      ) {
-        await cancelResponseBody(response);
-        await sleep(getBackoffDelay(retryConfig.backoffMs, attempt));
-        continue;
-      }
+          let nextUrl: URL;
+          try {
+            nextUrl = normalizeUrl(new URL(location, activeUrl));
+          } catch (error) {
+            await cancelResponseBody(response);
+            if (error instanceof SafeOutboundFetchError) throw error;
+            throw new SafeOutboundFetchError(
+              `Invalid redirect location for ${activeMethod} ${activeUrl.toString()}`,
+              {
+                code: "INVALID_URL",
+                url: location,
+                method: activeMethod,
+                attempts: attempt,
+                status: response.status,
+                location,
+                isRetryable: false,
+                cause: error,
+              }
+            );
+          }
 
-      return response;
+          try {
+            // Validate before cancelling/continuing so the dangerous target is
+            // rejected without issuing another transport call.
+            applyUrlGuard(nextUrl, guard, activeMethod);
+          } catch (error) {
+            await cancelResponseBody(response);
+            throw error;
+          }
+
+          const rewriteToGet =
+            (response.status === 303 && activeMethod !== "HEAD") ||
+            ((response.status === 301 || response.status === 302) && activeMethod === "POST");
+          const nextHeaders = activeHeaders == null ? undefined : new Headers(activeHeaders);
+
+          if (nextHeaders && rewriteToGet) {
+            for (const name of [
+              "content-encoding",
+              "content-language",
+              "content-length",
+              "content-location",
+              "content-type",
+            ]) {
+              nextHeaders.delete(name);
+            }
+          }
+          if (nextHeaders && activeUrl.origin !== nextUrl.origin) {
+            // Match native fetch credential-forwarding safety when following a
+            // redirect manually across origins.
+            nextHeaders.delete("authorization");
+            nextHeaders.delete("cookie");
+            nextHeaders.delete("proxy-authorization");
+          }
+
+          await cancelResponseBody(response);
+          activeUrl = nextUrl;
+          if (rewriteToGet) {
+            activeMethod = "GET";
+            activeBody = undefined;
+          }
+          if (nextHeaders) activeHeaders = nextHeaders;
+          redirectCount += 1;
+          continue;
+        }
+
+        if (!allowRedirect && response.status >= 300 && response.status < 400) {
+          const location = response.headers.get("location");
+          await cancelResponseBody(response);
+          throw new SafeOutboundFetchError(
+            `Redirect blocked for ${method} ${targetUrl.toString()} (${response.status})`,
+            {
+              code: "REDIRECT_BLOCKED",
+              url: targetUrl.toString(),
+              method,
+              attempts: attempt,
+              status: response.status,
+              location,
+              isRetryable: false,
+            }
+          );
+        }
+
+        if (
+          retryConfig.shouldRetryMethod &&
+          attempt < retryConfig.attempts &&
+          retryConfig.statusCodes.has(response.status)
+        ) {
+          await cancelResponseBody(response);
+          await sleep(getBackoffDelay(retryConfig.backoffMs, attempt));
+          continue attemptLoop;
+        }
+
+        return response;
+      }
     } catch (error) {
-      const normalizedError = normalizeFetchFailure(error, targetUrl.toString(), method, attempt);
+      const normalizedError = normalizeFetchFailure(
+        error,
+        activeUrl.toString(),
+        activeMethod,
+        attempt
+      );
       const shouldRetry =
         retryConfig.shouldRetryMethod &&
         attempt < retryConfig.attempts &&
