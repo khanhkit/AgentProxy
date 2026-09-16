@@ -133,7 +133,7 @@ export async function discoverZedCredentials(): Promise<ZedCredential[]> {
       for (const cred of creds) {
         // FIX #1: Add null check for cred.password
         if (!cred.password) {
-          console.debug(`Skipping credential with missing password: ${pattern}/${cred.account}`);
+          console.debug(`Skipping credential with missing password: ${pattern}`);
           continue;
         }
 
