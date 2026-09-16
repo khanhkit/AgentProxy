@@ -1,11 +1,18 @@
-use std::{env, net::SocketAddr, time::Duration};
+use std::{
+    env,
+    net::SocketAddr,
+    process,
+    time::{Duration, Instant, SystemTime, UNIX_EPOCH},
+};
 
-use agentproxy_gateway::{app, sync_snapshot_once, AppState, SnapshotSyncOutcome};
+use agentproxy_gateway::{
+    app, snapshot_poll::SnapshotPollPolicy, sync_snapshot_once_conditional, AppState,
+    SnapshotConditionalOutcome, SnapshotSyncOutcome,
+};
 use tokio::{net::TcpListener, task::JoinHandle, time::sleep};
 
 const DEFAULT_API_PORT: u16 = 20128;
 const DEFAULT_DASHBOARD_PORT: u16 = 20129;
-const SNAPSHOT_POLL_INTERVAL: Duration = Duration::from_secs(2);
 
 #[tokio::main(flavor = "multi_thread")]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -81,6 +88,14 @@ fn env_port(name: &str, default: u16) -> Result<u16, Box<dyn std::error::Error>>
     }
 }
 
+fn snapshot_poll_seed() -> u64 {
+    let nanos = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .unwrap_or_default()
+        .as_nanos();
+    (nanos as u64) ^ ((nanos >> 64) as u64) ^ u64::from(process::id())
+}
+
 fn spawn_snapshot_poller(state: AppState, url: String, token: String) -> JoinHandle<()> {
     tokio::spawn(async move {
         let client = match reqwest::Client::builder()
@@ -95,24 +110,34 @@ fn spawn_snapshot_poller(state: AppState, url: String, token: String) -> JoinHan
                 return;
             }
         };
+        let started_at = Instant::now();
+        let mut policy = SnapshotPollPolicy::new(snapshot_poll_seed(), Duration::ZERO);
+        let mut etag: Option<String> = None;
         let mut last_error = String::new();
 
         loop {
-            match sync_snapshot_once(&state, &client, &url, &token).await {
-                Ok(SnapshotSyncOutcome::Installed {
-                    source_id,
-                    generation,
-                }) => {
+            match sync_snapshot_once_conditional(&state, &client, &url, &token, etag.as_deref())
+                .await
+            {
+                Ok(result) => {
+                    if let Some(next_etag) = result.etag {
+                        etag = Some(next_etag);
+                    }
+                    policy.record_success(started_at.elapsed());
                     last_error.clear();
-                    eprintln!(
-                        "[agentproxy-rust] installed control snapshot source={} generation={generation}",
-                        short_source(&source_id)
-                    );
-                }
-                Ok(SnapshotSyncOutcome::Unchanged { .. }) => {
-                    last_error.clear();
+                    if let SnapshotConditionalOutcome::Snapshot(SnapshotSyncOutcome::Installed {
+                        source_id,
+                        generation,
+                    }) = result.outcome
+                    {
+                        eprintln!(
+                            "[agentproxy-rust] installed control snapshot source={} generation={generation}",
+                            short_source(&source_id)
+                        );
+                    }
                 }
                 Err(error) => {
+                    policy.record_failure();
                     let message = error.to_string();
                     if message != last_error {
                         eprintln!("[agentproxy-rust] control snapshot sync pending: {message}");
@@ -120,7 +145,14 @@ fn spawn_snapshot_poller(state: AppState, url: String, token: String) -> JoinHan
                     }
                 }
             }
-            sleep(SNAPSHOT_POLL_INTERVAL).await;
+
+            if let Some(stale_for) = policy.take_stale_alert(started_at.elapsed()) {
+                eprintln!(
+                    "[agentproxy-rust] control snapshot stale for {}s; continuing with last known good state",
+                    stale_for.as_secs()
+                );
+            }
+            sleep(policy.next_delay()).await;
         }
     })
 }

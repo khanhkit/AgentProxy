@@ -1,6 +1,10 @@
 use std::{error::Error, fmt};
 
 use agentproxy_control_protocol::snapshot::{ConfigSnapshot, SnapshotError};
+use reqwest::{
+    header::{ETAG, IF_NONE_MATCH},
+    StatusCode,
+};
 
 use crate::AppState;
 
@@ -10,6 +14,18 @@ pub const INTERNAL_SERVICE_AUTH_HEADER: &str = "x-agentproxy-internal-service-to
 pub enum SnapshotSyncOutcome {
     Installed { source_id: String, generation: u64 },
     Unchanged { source_id: String, generation: u64 },
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum SnapshotConditionalOutcome {
+    Snapshot(SnapshotSyncOutcome),
+    NotModified,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct SnapshotConditionalResult {
+    pub outcome: SnapshotConditionalOutcome,
+    pub etag: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -39,18 +55,46 @@ pub async fn sync_snapshot_once(
     url: &str,
     token: &str,
 ) -> Result<SnapshotSyncOutcome, SnapshotSyncError> {
+    let result = sync_snapshot_once_conditional(state, client, url, token, None).await?;
+    match result.outcome {
+        SnapshotConditionalOutcome::Snapshot(outcome) => Ok(outcome),
+        SnapshotConditionalOutcome::NotModified => Err(SnapshotSyncError::new(
+            "snapshot endpoint returned 304 without a conditional validator",
+        )),
+    }
+}
+
+pub async fn sync_snapshot_once_conditional(
+    state: &AppState,
+    client: &reqwest::Client,
+    url: &str,
+    token: &str,
+    etag: Option<&str>,
+) -> Result<SnapshotConditionalResult, SnapshotSyncError> {
     if token.trim().is_empty() {
         return Err(SnapshotSyncError::new("internal service token is empty"));
     }
-
-    let response = client
-        .get(url)
-        .header(INTERNAL_SERVICE_AUTH_HEADER, token)
+    let mut request = client.get(url).header(INTERNAL_SERVICE_AUTH_HEADER, token);
+    if let Some(etag) = etag.filter(|value| !value.trim().is_empty()) {
+        request = request.header(IF_NONE_MATCH, etag);
+    }
+    let response = request
         .send()
         .await
         .map_err(|error| SnapshotSyncError::new(format!("snapshot request failed: {error}")))?;
 
     let status = response.status();
+    let response_etag = response
+        .headers()
+        .get(ETAG)
+        .and_then(|value| value.to_str().ok())
+        .map(str::to_owned);
+    if status == StatusCode::NOT_MODIFIED {
+        return Ok(SnapshotConditionalResult {
+            outcome: SnapshotConditionalOutcome::NotModified,
+            etag: response_etag.or_else(|| etag.map(str::to_owned)),
+        });
+    }
     if !status.is_success() {
         return Err(SnapshotSyncError::new(format!(
             "snapshot endpoint returned HTTP {}",
@@ -67,19 +111,26 @@ pub async fn sync_snapshot_once(
     let source_id = snapshot.source_id.clone();
     let generation = snapshot.generation;
 
-    match state.install_snapshot(snapshot, false) {
-        Ok(()) => Ok(SnapshotSyncOutcome::Installed {
+    let outcome = match state.install_snapshot(snapshot, false) {
+        Ok(()) => SnapshotSyncOutcome::Installed {
             source_id,
             generation,
-        }),
+        },
         Err(SnapshotError::StaleGeneration { current, received }) if current == received => {
-            Ok(SnapshotSyncOutcome::Unchanged {
+            SnapshotSyncOutcome::Unchanged {
                 source_id,
                 generation,
-            })
+            }
         }
-        Err(error) => Err(SnapshotSyncError::new(format!(
-            "snapshot rejected: {error:?}"
-        ))),
-    }
+        Err(error) => {
+            return Err(SnapshotSyncError::new(format!(
+                "snapshot rejected: {error:?}"
+            )))
+        }
+    };
+
+    Ok(SnapshotConditionalResult {
+        outcome: SnapshotConditionalOutcome::Snapshot(outcome),
+        etag: response_etag,
+    })
 }
