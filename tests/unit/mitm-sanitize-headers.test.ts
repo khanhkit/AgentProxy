@@ -39,6 +39,11 @@ test("sanitizeHeaders — authorization bearer token is still masked, not leaked
   );
 });
 
+test("sanitizeHeaders — credential values remain valid Fetch header bytes", () => {
+  const out = sanitizeHeaders({ "x-api-key": "client-api-secret-abcdefghijklmnopqrstuvwxyz0123456789" });
+  assert.doesNotThrow(() => new Headers(out));
+});
+
 test("sanitizeHeaders — drops framing, hop-by-hop, and proxy credential headers", () => {
   const out = sanitizeHeaders({
     Host: "provider.example",
