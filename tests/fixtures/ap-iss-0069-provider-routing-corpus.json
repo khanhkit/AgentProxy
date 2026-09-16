@@ -1,0 +1,181 @@
+{
+  "issue": "AP-ISS-0069",
+  "purpose": "Bounded provider/routing/admission compatibility classification. VERIFIED entries have direct executable regressions; PARTIAL entries identify the exact inherited provider-specific signature that still lacks end-to-end replay. No production fix is bundled into this investigation.",
+  "contracts": [
+    {
+      "id": "Q09",
+      "name": "Embeddings Authorization propagation",
+      "classification": "VERIFIED_PROTECTED",
+      "evidence": ["tests/unit/embeddings-handler.test.ts"],
+      "note": "Forced-exit execution passes 9/9 and directly asserts upstream Authorization forwarding for keyed providers plus no fabricated Authorization for keyless providers; leaked handles require Node's test-force-exit mode in this shared checkout."
+    },
+    {
+      "id": "Q10",
+      "name": "OAuth refresh assigned-proxy confinement and proxy selection",
+      "classification": "PARTIAL_COMPOSED_GAP",
+      "evidence": [
+        "tests/unit/token-refresh-route-service.test.ts",
+        "tests/unit/security/oauth-refresh-proxy-confinement-kittest.test.ts"
+      ],
+      "note": "Both direct refresh-proxy suites currently cancel with a pending Promise before assertions complete; the historical fail-closed implementation remains present but this corpus does not claim fresh executable verification."
+    },
+    {
+      "id": "Q11",
+      "name": "Admission queue and execution timeout semantics",
+      "classification": "VERIFIED_MULTI_SURFACE",
+      "evidence": [
+        "tests/unit/ratelimit-admission-control-6593.test.ts",
+        "tests/unit/adaptive-admission-cost.test.ts"
+      ],
+      "note": "Queue depth, scheduling maxWaitMs, execution backstop, provider budgets, and adaptive cost behavior have direct unit coverage; this does not claim every upstream timeout implementation is identical."
+    },
+    {
+      "id": "Q12",
+      "name": "Routing aliases and native Codex turn-pin fallback",
+      "classification": "VERIFIED_MULTI_SURFACE",
+      "evidence": [
+        "tests/unit/native-codex-turn-pin-10379.test.ts",
+        "tests/unit/native-codex-turn-pin-model-scoped-fallback.test.ts"
+      ],
+      "note": "Model-scoped pinning/fallback is directly covered; alias variants are covered elsewhere but not used to overstate this classification."
+    },
+    {
+      "id": "Q15",
+      "name": "Codex Cloudflare challenge/input_tokens terminal classification",
+      "classification": "PARTIAL_PROVIDER_SPECIFIC_GAP",
+      "evidence": ["tests/unit/error-classification.test.ts"],
+      "note": "Generic auth/transient classification is tested, but the inherited Codex input_tokens Cloudflare challenge signature is not replayed end-to-end."
+    },
+    {
+      "id": "Q18",
+      "name": "Custom provider baseUrl routing",
+      "classification": "VERIFIED_PROTECTED",
+      "evidence": ["tests/unit/lmstudio-connection-baseurl-11233.test.ts"],
+      "note": "Configured connection baseUrl wins and default behavior remains covered."
+    },
+    {
+      "id": "Q20",
+      "name": "Combo target skipping and call-log behavior",
+      "classification": "PARTIAL_COMPOSED_GAP",
+      "evidence": [
+        "tests/unit/combo-recovery-quota-10966.test.ts",
+        "tests/unit/combo-diag-exhausted-connection-10967.test.ts"
+      ],
+      "note": "Combo recovery/exhaustion diagnostics are covered; the exact inherited image/video sequential execution plus call-log-ID-collision signature is not replayed as one fixture."
+    },
+    {
+      "id": "Q21",
+      "name": "Models discovery latency, fallback, and token-limit precedence",
+      "classification": "PARTIAL_COMPOSED_GAP",
+      "evidence": ["tests/unit/provider-models-route-codex.test.ts"],
+      "note": "Live/fallback/cache behavior and token-limit precedence are covered; the inherited 75-120s latency/502 and explicit limit-ignored scenario is not replayed end-to-end."
+    },
+    {
+      "id": "Q22",
+      "name": "AgentRouter GLM/Astra reasoning and routing contracts",
+      "classification": "PARTIAL_PROVIDER_SPECIFIC_GAP",
+      "evidence": ["tests/unit/glm-executor-max-tokens-clamp-7364.test.ts"],
+      "note": "GLM transport bounds have direct coverage, but the full inherited GLM adaptive-thinking and GPT-6 Astra context/timeout/405/tools+reasoning matrix is not replayed."
+    },
+    {
+      "id": "Q23",
+      "name": "Provider reasoning-history continuity",
+      "classification": "VERIFIED_MULTI_SURFACE",
+      "evidence": [
+        "tests/unit/codebuddy-reasoning-optin.test.ts",
+        "tests/unit/translator-xiaomi-mimo-reasoning-replay-1321.test.ts"
+      ],
+      "note": "Reasoning replay/opt-in behavior is directly covered across provider paths; provider-specific MiniMax think-tag behavior is not generalized beyond its own tests."
+    },
+    {
+      "id": "Q24",
+      "name": "Model-sync catalog filtering and hidden variants",
+      "classification": "PARTIAL_COMPOSED_GAP",
+      "evidence": ["tests/unit/provider-models-route-codex.test.ts"],
+      "note": "Catalog merge/filter fallback is covered; the exact inherited *:batch import plus hideAutoCombos/hideNoThinkVariants matrix is not replayed as one contract fixture."
+    },
+    {
+      "id": "Q25",
+      "name": "Antigravity error-body, large-tool, search, and retest contracts",
+      "classification": "PARTIAL_PROVIDER_SPECIFIC_GAP",
+      "evidence": ["tests/unit/antigravity-streaming-error-body-sanitized-2461.test.ts"],
+      "note": "Non-OK upstream body handling is directly tested; the inherited ~357-tool, native web-search, and retest-body variants remain provider-specific replay gaps."
+    },
+    {
+      "id": "Q26",
+      "name": "Claude/Responses prompt-cache continuity",
+      "classification": "VERIFIED_MULTI_SURFACE",
+      "evidence": [
+        "tests/unit/claude-cache-control-passthrough.test.ts",
+        "tests/unit/translator-openai-responses-req.test.ts"
+      ],
+      "note": "Cache-control and prompt_cache_key/session-affinity preservation have direct translation coverage."
+    },
+    {
+      "id": "Q27",
+      "name": "Gemini Web system/tools/multiline/model-selection behavior",
+      "classification": "PARTIAL_PROVIDER_SPECIFIC_GAP",
+      "evidence": ["tests/unit/gemini-web.test.ts"],
+      "note": "Gemini Web auth/model registration/error/parser behavior is covered, but the exact inherited system/tools/multiline/slow-typing and stale-model-ID signatures are not all replayed."
+    },
+    {
+      "id": "Q28",
+      "name": "Zed hosted Gemini safety/function-calling and Claude Haiku thinking limits",
+      "classification": "PARTIAL_PROVIDER_SPECIFIC_GAP",
+      "evidence": ["tests/unit/zed-hosted-think-close-marker.test.ts"],
+      "note": "Zed-hosted stream formatting is tested, but the inherited safety/function-calling and Haiku max-token overflow signatures remain unreplayed."
+    },
+    {
+      "id": "Q29",
+      "name": "AI/ML provider parser stale/null optionals",
+      "classification": "PARTIAL_PROVIDER_SPECIFIC_GAP",
+      "evidence": ["tests/unit/provider-service-kind-filter-4240.test.ts"],
+      "note": "Provider parsing/filtering has adjacent coverage; the inherited AI/ML stale/null optional parser signature lacks a direct named replay."
+    },
+    {
+      "id": "Q30",
+      "name": "Kiro profile/runtime and orphan tool-use continuity",
+      "classification": "PARTIAL_COMPOSED_GAP",
+      "evidence": [
+        "tests/unit/validation-kiro-split.test.ts",
+        "tests/unit/kiro-interleaved-tool-results-8903.test.ts"
+      ],
+      "note": "Runtime endpoint/auth and interleaved tool-result continuity are covered; the exact profileArn fallback and repeated-large-doc prepend cases are not replayed together."
+    },
+    {
+      "id": "Q31",
+      "name": "Alibaba/Bailian custom endpoint routing",
+      "classification": "VERIFIED_PROTECTED",
+      "evidence": ["tests/unit/bailian-token-plan-endpoint-parity.test.ts"],
+      "note": "Region presets and genuinely custom base URLs have direct precedence coverage."
+    },
+    {
+      "id": "Q32",
+      "name": "Claude/Codex client-version identity compatibility",
+      "classification": "PARTIAL_PROVIDER_SPECIFIC_GAP",
+      "evidence": ["tests/unit/provider-models-route-codex.test.ts"],
+      "note": "Codex catalog compatibility is tested, but Fable 5.1/GPT-6 Astra minimum client-identity negotiation is not directly replayed."
+    },
+    {
+      "id": "Q33",
+      "name": "Groq Cloudflare 1010/custom transport",
+      "classification": "PARTIAL_PROVIDER_SPECIFIC_GAP",
+      "evidence": ["tests/unit/thinking-budget-groq-3258.test.ts"],
+      "note": "Groq provider behavior has unit coverage, but the inherited Cloudflare 1010/custom-transport signature is not directly replayed."
+    },
+    {
+      "id": "Q34",
+      "name": "xAI/Grok usage.total_tokens normalization",
+      "classification": "PARTIAL_PROVIDER_SPECIFIC_GAP",
+      "evidence": ["tests/unit/usage-extractor.test.ts"],
+      "note": "Usage normalization/extraction is broadly tested, but the inherited xAI-specific total_tokens=0 signature lacks a direct provider fixture."
+    },
+    {
+      "id": "Q35",
+      "name": "Audio transcription observability and cost logging",
+      "classification": "PARTIAL_COMPOSED_GAP",
+      "evidence": ["tests/unit/audio-soniox-provider.test.ts"],
+      "note": "Successful/error transcription transport is covered; the inherited successful-transcription call-log/cost observability signature is not replayed end-to-end."
+    }
+  ]
+}
