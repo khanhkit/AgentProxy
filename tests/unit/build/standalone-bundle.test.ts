@@ -22,7 +22,12 @@ const manifestMod = await import("../../../scripts/build/standaloneManifest.mjs"
 const hydrateMod = await import("../../../scripts/build/hydrateNativeDeps.mjs");
 
 const { runPack, runRestore } = bundleMod as typeof bundleMod & {
-  runPack: (opts: { dir?: string; out: string; manifest?: string }) => Promise<{
+  runPack: (opts: {
+    dir?: string;
+    out: string;
+    manifest?: string;
+    portableRoot?: string;
+  }) => Promise<{
     archive: string;
     manifest: string;
     files: number;
@@ -130,6 +135,66 @@ test("pack → restore roundtrip restores the tree byte-for-byte", async () => {
     fs.rmSync(src, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
     fs.rmSync(path.dirname(out), { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
     fs.rmSync(dst, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
+  }
+});
+
+test("pack rebases workspace-absolute symlinks to portable relative targets", async () => {
+  const project = tmpDir("s8-portable-");
+  const src = path.join(project, ".build", "next");
+  const out = path.join(project, "web-bundle.tar.gz");
+  const dst = path.join(project, ".restore", "next");
+  try {
+    const target = path.join(
+      project,
+      "node_modules",
+      "global-agent",
+      "node_modules",
+      "semver",
+      "bin",
+      "semver.js"
+    );
+    fs.mkdirSync(path.dirname(target), { recursive: true });
+    fs.writeFileSync(target, "#!/usr/bin/env node\n");
+
+    const link = path.join(
+      src,
+      "standalone",
+      "node_modules",
+      "global-agent",
+      "node_modules",
+      ".bin",
+      "semver"
+    );
+    fs.mkdirSync(path.dirname(link), { recursive: true });
+    fs.symlinkSync(target, link);
+
+    await runPack({ dir: src, out, portableRoot: project });
+    const manifest = JSON.parse(fs.readFileSync(`${out}.manifest.json`, "utf8"));
+    const entry = manifest.entries.find(
+      (candidate: { path: string }) =>
+        candidate.path === "standalone/node_modules/global-agent/node_modules/.bin/semver"
+    );
+    assert.ok(entry, "absolute workspace symlink must be present in the manifest");
+    assert.equal(path.isAbsolute(entry.symlink), false, "manifest target must be relocatable");
+    assert.equal(
+      entry.symlink,
+      path.relative(path.dirname(link), target).split(path.sep).join("/"),
+      "portable target must preserve the same workspace-relative referent"
+    );
+
+    await runRestore({ archive: out, dir: dst });
+    const restoredLink = path.join(
+      dst,
+      "standalone",
+      "node_modules",
+      "global-agent",
+      "node_modules",
+      ".bin",
+      "semver"
+    );
+    assert.equal(fs.realpathSync(restoredLink), fs.realpathSync(target));
+  } finally {
+    fs.rmSync(project, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
   }
 });
 

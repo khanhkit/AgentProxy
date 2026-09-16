@@ -42,10 +42,15 @@ function manifestPathFor(archive) {
  * manifest (which embeds the archive's own sha256 so transfer corruption is
  * caught before extraction).
  *
- * @param {{dir?: string, out: string, manifest?: string}} opts
+ * @param {{dir?: string, out: string, manifest?: string, portableRoot?: string}} opts
  * @returns {Promise<{archive: string, manifest: string, files: number, archiveBytes: number}>}
  */
-export async function runPack({ dir = ".build/next", out, manifest }) {
+export async function runPack({
+  dir = ".build/next",
+  out,
+  manifest,
+  portableRoot = process.cwd(),
+}) {
   if (!out) throw new Error("pack requires --out <file.tar.gz>");
   const rootDir = path.resolve(dir);
   if (!fs.existsSync(rootDir)) {
@@ -53,8 +58,8 @@ export async function runPack({ dir = ".build/next", out, manifest }) {
   }
   fs.mkdirSync(path.dirname(path.resolve(out)), { recursive: true });
 
-  const built = await buildStandaloneManifest(rootDir);
-  await createTarGz(rootDir, out);
+  const built = await buildStandaloneManifest(rootDir, { portableRoot });
+  await createTarGz(rootDir, out, { portableRoot });
   const archiveBytes = fs.statSync(out).size;
   const archiveSha = await sha256File(out);
 

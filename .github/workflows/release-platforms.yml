@@ -30,6 +30,7 @@ jobs:
       tag: ${{ steps.meta.outputs.tag }}
       version: ${{ steps.meta.outputs.version }}
       publish_assets: ${{ steps.meta.outputs.publish_assets }}
+      source_ref: ${{ steps.meta.outputs.source_ref }}
     steps:
       - id: meta
         name: Validate release tag
@@ -39,14 +40,23 @@ jobs:
           RELEASE_TAG: ${{ github.event.release.tag_name }}
           INPUT_TAG: ${{ inputs.tag }}
           INPUT_PUBLISH: ${{ inputs.publish_assets }}
+          # Dry-runs exercise the workflow/source commit being dispatched. Publishing
+          # remains tag-pinned so release assets always come from the immutable tag.
+          DISPATCH_SHA: ${{ github.sha }}
         run: |
           set -euo pipefail
           if [ "$EVENT_NAME" = "release" ]; then
             tag="$RELEASE_TAG"
             publish_assets=true
+            source_ref="$tag"
           else
             tag="$INPUT_TAG"
             publish_assets="${INPUT_PUBLISH:-false}"
+            if [ "$publish_assets" = "true" ]; then
+              source_ref="$tag"
+            else
+              source_ref="$DISPATCH_SHA"
+            fi
           fi
           if ! printf '%s' "$tag" | grep -qE '^v[0-9]+\.[0-9]+\.[0-9]+([.-][0-9A-Za-z.-]+)?$'; then
             echo "::error::Invalid release tag: $tag"
@@ -55,6 +65,7 @@ jobs:
           echo "tag=$tag" >> "$GITHUB_OUTPUT"
           echo "version=${tag#v}" >> "$GITHUB_OUTPUT"
           echo "publish_assets=$publish_assets" >> "$GITHUB_OUTPUT"
+          echo "source_ref=$source_ref" >> "$GITHUB_OUTPUT"
 
   web-build:
     name: Build shared Next standalone
@@ -62,10 +73,10 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 45
     steps:
-      - name: Checkout release tag
+      - name: Checkout release source
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: ${{ needs.prepare.outputs.tag }}
+          ref: ${{ needs.prepare.outputs.source_ref }}
           persist-credentials: false
 
       - name: Setup Node.js
@@ -141,10 +152,10 @@ jobs:
       CSC_IDENTITY_AUTO_DISCOVERY: "false"
       JWT_SECRET: ci-build-secret-with-sufficient-length-for-validation
     steps:
-      - name: Checkout release tag
+      - name: Checkout release source
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: ${{ needs.prepare.outputs.tag }}
+          ref: ${{ needs.prepare.outputs.source_ref }}
           persist-credentials: false
 
       - name: Setup Node.js

@@ -786,7 +786,7 @@ jobs:
           tar -xzf next-build-artifact/e2e-build.tar.gz
       - name: Install Electron dependencies
         working-directory: electron
-        run: npm install --no-audit --no-fund
+        run: npm ci --no-audit --no-fund
       - name: Pack Electron app
         if: runner.os == 'Linux'
         working-directory: electron
