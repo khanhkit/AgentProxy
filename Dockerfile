@@ -9,7 +9,7 @@ RUN --mount=type=cache,target=/usr/local/cargo/registry \
     && cp /app/rust/target/release/agentproxy-gateway /tmp/agentproxy-gateway
 
 # ── Common base with runtime deps ──────────────────────────────────────────
-FROM node:26-trixie-slim AS base
+FROM node:26.0.0-trixie-slim AS base
 WORKDIR /app
 
 # `apt-get upgrade` pulls the security-patched versions of the Debian (trixie)
@@ -35,7 +35,7 @@ RUN --mount=type=cache,id=s/92ca8a61-c1ba-421f-a389-d48ac7258c2d-apt-cache,targe
 #   ip-address      10.2.0 (needs >= 10.3.1)  CVE-2026-69192/-69198/-54272
 #   tar             7.5.19 (needs >= 7.5.21)  GHSA-r292-9mhp-454m
 #   undici          6.27.0 (needs >= 6.28.0)  CVE-2026-16729/-16728/-15157
-# No published npm release carries patched copies, so `npm install -g npm@latest`
+# No published npm release carries patched copies, so `npm install -g npm@12.0.2`
 # alone was pure build time for zero CVEs — it is kept only to land on a known,
 # current npm tree, and the patched copies are overlaid on top below.
 #
@@ -51,7 +51,7 @@ RUN --mount=type=cache,id=s/92ca8a61-c1ba-421f-a389-d48ac7258c2d-apt-cache,targe
 # --install-strategy=nested makes each replacement self-contained, so it cannot
 # perturb the versions the rest of npm's flat tree resolves.
 RUN set -eux; \
-  npm install -g npm@latest; \
+  npm install -g npm@12.0.2; \
   npm install --prefix /tmp/npm-cve-patch --no-audit --no-fund --ignore-scripts \
     --install-strategy=nested \
     brace-expansion@5.0.9 ip-address@10.5.0 tar@7.5.22 undici@6.28.0; \
