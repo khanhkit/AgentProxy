@@ -1,0 +1,94 @@
+{
+  "issue": "AP-ISS-0068",
+  "purpose": "Inherited translator/schema/error compatibility classification corpus",
+  "contracts": [
+    {
+      "id": "Q06",
+      "name": "internal _omniroute metadata confinement",
+      "classification": "VERIFIED_PROTECTED",
+      "evidence": [
+        "tests/unit/strip-store-responses.test.ts",
+        "tests/unit/codex-ws-policy-enforcement-6564.test.ts"
+      ]
+    },
+    {
+      "id": "Q07",
+      "name": "Responses dynamic error envelope after keepalive",
+      "classification": "PARTIAL_COMPOSED_GAP",
+      "evidence": ["tests/unit/diagnostics.test.ts", "tests/unit/stream-readiness.test.ts"],
+      "note": "Typed Responses failure envelopes and buffered keepalive/error replay are verified separately; the inherited post-keepalive dynamic-error sequence is not yet replayed as one end-to-end fixture."
+    },
+    {
+      "id": "Q08",
+      "name": "tool schema prefixItems/properties/anyOf/oneOf/allOf compatibility",
+      "classification": "VERIFIED_PROTECTED",
+      "evidence": [
+        "tests/unit/translator-helper-branches.test.ts",
+        "tests/unit/gemini-malformed-required-and-bare-map-12269.test.ts",
+        "tests/unit/tool-schema-sanitizer.test.mjs"
+      ]
+    },
+    {
+      "id": "Q16",
+      "name": "MCP namespace identity continuity",
+      "classification": "VERIFIED_PROTECTED",
+      "evidence": [
+        "tests/unit/9780-namespace-identity-pivot.test.ts",
+        "tests/unit/translator-resp-openai-responses-namespace-identity.test.ts"
+      ]
+    },
+    {
+      "id": "Q17",
+      "name": "null/non-object messages and legacy function_call compatibility",
+      "classification": "VERIFIED_PROTECTED",
+      "evidence": [
+        "tests/unit/chat-messages-validation-6402.test.ts",
+        "tests/unit/responses-input-item-status-8083.test.ts"
+      ]
+    },
+    {
+      "id": "Q23",
+      "name": "reasoning history continuity",
+      "classification": "VERIFIED_PROTECTED",
+      "evidence": [
+        "tests/unit/translator-helper-branches.test.ts",
+        "tests/unit/translator-openai-to-claude.test.ts",
+        "tests/unit/translator-xiaomi-mimo-reasoning-replay-1321.test.ts",
+        "tests/unit/codebuddy-reasoning-optin.test.ts"
+      ]
+    },
+    {
+      "id": "Q26",
+      "name": "prompt-cache continuity through translation",
+      "classification": "VERIFIED_PROTECTED",
+      "evidence": [
+        "tests/unit/translator-openai-responses-req.test.ts",
+        "tests/unit/claude-cache-control-passthrough.test.ts"
+      ]
+    },
+    {
+      "id": "Q36",
+      "name": "multibyte text encoding fidelity",
+      "classification": "PARTIAL_PROVIDER_SPECIFIC_GAP",
+      "evidence": ["tests/unit/responses-transformer-cjk-split.test.ts"],
+      "note": "Current regression proves split multibyte response fidelity, but does not directly replay the inherited Claude-Web Persian/Arabic mojibake signature."
+    },
+    {
+      "id": "Q37",
+      "name": "content-encoding/decompressed response header correctness",
+      "classification": "VERIFIED_PROTECTED",
+      "evidence": ["tests/unit/upstream-response-headers-strip.test.ts"]
+    },
+    {
+      "id": "Q38",
+      "name": "compression/RTK/PII compatibility and observability",
+      "classification": "VERIFIED_MULTI_SURFACE",
+      "evidence": [
+        "tests/unit/chatcore-compression-analytics-write.test.ts",
+        "tests/unit/compression/rtk-cache-control-preserve.test.ts",
+        "tests/unit/compression/stacked-compression-tool-result-savings.test.ts",
+        "tests/unit/adversarialPii.test.ts"
+      ]
+    }
+  ]
+}
