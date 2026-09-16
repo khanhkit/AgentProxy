@@ -258,15 +258,13 @@ export async function startBrowserWarmup(
   cookieDomain: string,
   signal: AbortSignal | null
 ): Promise<void> {
-  if (process.env.OMNIROUTE_BROWSER_POOL === "off") return;
-  const pooled = await acquireBrowserContext(poolKey, {
+  if (process.env.OMNIROUTE_BROWSER_POOL === "off" || signal?.aborted) return;
+  await acquireBrowserContext(poolKey, {
     cookieDomain,
     cookieString: null,
     warmupUrl: chatPageUrl,
     waitFor: 2000,
   });
-  // Warmup: open a page in the pooled context — this can happen in parallel
-  openPage(pooled).catch(() => {});
 }
 
 /**
