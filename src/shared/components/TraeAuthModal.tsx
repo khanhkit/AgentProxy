@@ -8,15 +8,6 @@ import Input from "./Input";
 
 const TRAE_CLIENT_ID = "en1oxy7wnw8j9n";
 
-function uuid(): string {
-  const c = (globalThis.crypto || (globalThis as any).crypto) as Crypto | undefined;
-  if (c?.randomUUID) return c.randomUUID();
-  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (ch) => {
-    const r = (Math.random() * 16) | 0;
-    return (ch === "x" ? r : (r & 0x3) | 0x8).toString(16);
-  });
-}
-
 function randomHex(bytes: number): string {
   const buf = new Uint8Array(bytes);
   (globalThis.crypto || (globalThis as any).crypto).getRandomValues(buf);
@@ -116,7 +107,8 @@ export default function TraeAuthModal({
       // Accept this window's origin OR the sibling loopback host: the dashboard
       // usually runs on localhost while Trae forces the callback onto 127.0.0.1,
       // so they are different origins by design. Restrict to that known pair
-      // (never wildcard), then rely on the random loginTraceId for CSRF.
+      // (never wildcard), then match the server-issued one-time state echoed
+      // by the callback. The server already consumes that state before persistence.
       const here = window.location;
       const altHost =
         here.hostname === "127.0.0.1"
@@ -141,37 +133,59 @@ export default function TraeAuthModal({
     return () => window.removeEventListener("message", onMessage);
   }, [isOpen, onSuccess, onClose, t]);
 
-  const handleAuthorizeWithBrowser = () => {
+  const handleAuthorizeWithBrowser = async () => {
     setError(null);
     setAuthorizing(true);
-    const traceId = uuid();
-    traceIdRef.current = traceId;
-    // Trae's authorize endpoint validates two things about auth_callback_url:
-    //  1. host must be a loopback IP (127.0.0.1) — "localhost" hostname gets
-    //     rejected with "Login Failed".
-    //  2. path must end with `/authorize` — any other path (e.g. our earlier
-    //     "/api/oauth/trae/callback") also short-circuits to "Login Failed".
-    // The receiving handler therefore lives at the app root (src/app/authorize).
-    const port = window.location.port || (window.location.protocol === "https:" ? "443" : "80");
-    const callbackUrl = `http://127.0.0.1:${port}/authorize`;
-    const authUrl = buildTraeAuthorizeUrl(callbackUrl, traceId);
-    const w = window.open(authUrl, "trae-oauth", "width=520,height=720");
-    if (!w) {
+
+    // Open synchronously while the click still carries browser user activation;
+    // navigating a popup only after an awaited fetch is frequently blocked.
+    const popup = window.open("about:blank", "trae-oauth", "width=520,height=720");
+    if (!popup) {
       setAuthorizing(false);
       setError(t("errorPopupBlocked"));
       return;
     }
-    popupRef.current = w;
-    // If the user closes the popup without completing, drop the spinner.
-    const poll = setInterval(() => {
-      if (w.closed) {
-        clearInterval(poll);
-        setAuthorizing((prev) => {
-          if (prev) setError(t("errorPopupClosed"));
-          return false;
-        });
+    popupRef.current = popup;
+
+    try {
+      const response = await fetch("/api/oauth/trae/authorize-state", { method: "POST" });
+      const payload = (await response.json()) as { state?: unknown; error?: unknown };
+      const state = typeof payload.state === "string" ? payload.state : "";
+      if (!response.ok || !state) {
+        throw new Error(
+          typeof payload.error === "string" ? payload.error : t("errorAuthorizationFailed")
+        );
       }
-    }, 700);
+
+      traceIdRef.current = state;
+      // Trae's authorize endpoint validates two things about auth_callback_url:
+      //  1. host must be a loopback IP (127.0.0.1) — "localhost" hostname gets
+      //     rejected with "Login Failed".
+      //  2. path must end with `/authorize` — any other path (e.g. our earlier
+      //     "/api/oauth/trae/callback") also short-circuits to "Login Failed".
+      // The receiving handler therefore lives at the app root (src/app/authorize).
+      const port = window.location.port || (window.location.protocol === "https:" ? "443" : "80");
+      const callbackUrl = `http://127.0.0.1:${port}/authorize`;
+      const authUrl = buildTraeAuthorizeUrl(callbackUrl, state);
+      popup.location.href = authUrl;
+
+      // If the user closes the popup without completing, drop the spinner.
+      const poll = setInterval(() => {
+        if (popup.closed) {
+          clearInterval(poll);
+          setAuthorizing((prev) => {
+            if (prev) setError(t("errorPopupClosed"));
+            return false;
+          });
+        }
+      }, 700);
+    } catch (err) {
+      popup.close();
+      popupRef.current = null;
+      traceIdRef.current = null;
+      setAuthorizing(false);
+      setError(err instanceof Error ? err.message : t("errorAuthorizationFailed"));
+    }
   };
 
   const handleImportToken = async () => {

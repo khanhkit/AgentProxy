@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { getTranslations } from "next-intl/server";
-import { createProviderConnection } from "@/models";
-import { parseTraeCallbackQuery } from "./parseCallback";
+import { processTraeAuthorizeCallback } from "./processCallback";
 
 /**
  * GET /authorize
@@ -26,9 +25,12 @@ import { parseTraeCallbackQuery } from "./parseCallback";
  * opening window before closing itself — that's how TraeAuthModal knows
  * the import succeeded.
  *
- * State validation: the caller passes its UUID as `login_trace_id` in the
- * authorize URL; Trae echoes it back as `loginTraceID`. The modal verifies
- * the echoed state before trusting the postMessage.
+ * State/locality validation: the dashboard first obtains a short-lived,
+ * server-issued one-time state and sends it as `login_trace_id`; Trae echoes it
+ * back as `loginTraceID`. Before parsing or persisting credentials, the callback
+ * processor verifies the authenticated TCP peer stamp is direct loopback and
+ * atomically consumes that state. The modal additionally matches the echoed
+ * value on postMessage as a presentation-layer defense in depth.
  */
 function htmlClose(message: Record<string, unknown>, t: (key: string) => string): NextResponse {
   // Embedding values: only emit the small/sanitized status payload — never the
@@ -66,26 +68,30 @@ function htmlClose(message: Record<string, unknown>, t: (key: string) => string)
   );
 }
 
+function rejectUntrustedCallback(message: string): NextResponse {
+  return new NextResponse(
+    `<!doctype html><html><body style="font:16px sans-serif;padding:40px"><h2>Trae authorization failed</h2><p>${message}</p></body></html>`,
+    { status: 403, headers: { "Content-Type": "text/html; charset=utf-8" } }
+  );
+}
+
 export async function GET(request: Request) {
+  const result = await processTraeAuthorizeCallback(request);
+  if (!result.ok && result.kind === "security") {
+    return rejectUntrustedCallback(result.error);
+  }
+
   const t = await getTranslations("auth");
-  const url = new URL(request.url);
-  const q = url.searchParams;
-  const parsed = parseTraeCallbackQuery(q);
-  if (!parsed.ok) {
-    return htmlClose({ success: false, error: parsed.error }, t);
+  if (!result.ok) {
+    return htmlClose({ success: false, error: result.error }, t);
   }
-  try {
-    const connection: any = await createProviderConnection(parsed.record);
-    return htmlClose(
-      {
-        success: true,
-        connectionId: connection.id,
-        loginTraceId: q.get("loginTraceID") || null,
-      },
-      t
-    );
-  } catch (err: any) {
-    console.error("[trae callback] error:", err);
-    return htmlClose({ success: false, error: "Internal error during callback" }, t);
-  }
+
+  return htmlClose(
+    {
+      success: true,
+      connectionId: result.connectionId,
+      loginTraceId: result.loginTraceId,
+    },
+    t
+  );
 }
