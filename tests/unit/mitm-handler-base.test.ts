@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import type { IncomingMessage, ServerResponse } from "node:http";
+import type { IncomingHttpHeaders, IncomingMessage, ServerResponse } from "node:http";
 import type { AgentId } from "../../src/mitm/types.ts";
 import { MitmHandlerBase } from "../../src/mitm/handlers/base.ts";
 
@@ -14,6 +14,10 @@ class TestHandler extends MitmHandlerBase {
 
   publicExtract(buf: Buffer): string | null {
     return this.extractSourceModel(buf);
+  }
+
+  publicFetchRouter(body: unknown, path: string, headers: IncomingHttpHeaders): Promise<Response> {
+    return this.fetchRouter(body, path, headers);
   }
 
   async publicHookStart(
@@ -158,4 +162,45 @@ test("base.writeError — writes sanitized JSON error body", async () => {
   const obj = JSON.parse(payload);
   assert.equal(obj.error.type, "mitm_error");
   assert.ok(typeof obj.error.message === "string");
+});
+
+test("base.fetchRouter — gateway router credential wins over client secrets", async () => {
+  const h = new TestHandler();
+  const originalFetch = globalThis.fetch;
+  const originalApiKey = process.env.ROUTER_API_KEY;
+  const originalBaseUrl = process.env.OMNIROUTE_BASE_URL;
+  let sentHeaders = new Headers();
+
+  process.env.ROUTER_API_KEY = "router-owned-secret";
+  process.env.OMNIROUTE_BASE_URL = "http://router.internal:20128/";
+  globalThis.fetch = (async (_input: RequestInfo | URL, init?: RequestInit) => {
+    sentHeaders = new Headers(init?.headers);
+    return new Response("{}", { status: 200 });
+  }) as typeof fetch;
+
+  try {
+    await h.publicFetchRouter(
+      { model: "test" },
+      "/v1/chat/completions",
+      {
+        Authorization: "Bearer client-owned-secret",
+        cookie: "session=client-cookie-secret",
+        "x-api-key": "client-api-secret",
+        "x-request-id": "req-42",
+      },
+    );
+  } finally {
+    globalThis.fetch = originalFetch;
+    if (originalApiKey === undefined) delete process.env.ROUTER_API_KEY;
+    else process.env.ROUTER_API_KEY = originalApiKey;
+    if (originalBaseUrl === undefined) delete process.env.OMNIROUTE_BASE_URL;
+    else process.env.OMNIROUTE_BASE_URL = originalBaseUrl;
+  }
+
+  assert.equal(sentHeaders.get("authorization"), "Bearer router-owned-secret");
+  assert.equal(sentHeaders.get("cookie"), "[REDACTED]");
+  assert.equal(sentHeaders.get("x-request-id"), "req-42");
+  assert.equal(Array.from(sentHeaders.values()).join("\n").includes("client-owned-secret"), false);
+  assert.equal(Array.from(sentHeaders.values()).join("\n").includes("client-cookie-secret"), false);
+  assert.equal(Array.from(sentHeaders.values()).join("\n").includes("client-api-secret"), false);
 });

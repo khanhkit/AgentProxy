@@ -142,10 +142,10 @@ export abstract class MitmHandlerBase {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        ...(apiKey ? { Authorization: `Bearer ${apiKey}` } : {}),
         "x-omniroute-source": "agent-bridge",
         "x-omniroute-agent": this.agentId,
         ...sanitizeHeaders(headers),
+        ...(apiKey ? { authorization: `Bearer ${apiKey}` } : {}),
       },
       body: typeof body === "string" ? body : JSON.stringify(body),
     });

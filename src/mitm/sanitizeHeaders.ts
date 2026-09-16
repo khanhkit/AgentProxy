@@ -13,7 +13,7 @@ const FULLY_REDACTED_HEADERS = new Set(["cookie", "set-cookie"]);
 
 function sanitizeCredentialValue(value: string): string {
   const masked = maskSecret(value);
-  return masked === value ? "[REDACTED]" : masked;
+  return (masked === value ? "[REDACTED]" : masked).replaceAll("…", "...");
 }
 
 export function sanitizeHeaders(
