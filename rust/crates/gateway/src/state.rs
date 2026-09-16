@@ -1,6 +1,9 @@
 use std::{
     collections::{HashMap, HashSet},
-    sync::{Arc, Mutex},
+    sync::{
+        atomic::{AtomicU64, Ordering},
+        Arc, Mutex,
+    },
     time::Duration,
 };
 
@@ -47,6 +50,7 @@ pub struct AppState {
     tracker: Arc<Mutex<SnapshotTracker>>,
     http_client: reqwest::Client,
     legacy_base_url: Option<Arc<str>>,
+    selection_cursor: Arc<AtomicU64>,
 }
 
 impl Default for AppState {
@@ -71,6 +75,7 @@ impl AppState {
             tracker: Arc::new(Mutex::new(SnapshotTracker::default())),
             http_client,
             legacy_base_url: None,
+            selection_cursor: Arc::new(AtomicU64::new(0)),
         }
     }
 
@@ -221,6 +226,12 @@ impl AppState {
                     && !excluded_ids.iter().any(|id| *id == entry.config.id)
             })
             .collect();
+
+        if candidates.len() > 1 {
+            let offset =
+                self.selection_cursor.fetch_add(1, Ordering::Relaxed) as usize % candidates.len();
+            candidates.rotate_left(offset);
+        }
 
         while !candidates.is_empty() {
             let mut best_index = 0;
