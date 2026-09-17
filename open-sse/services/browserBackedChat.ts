@@ -20,7 +20,7 @@ import { Buffer } from "node:buffer";
 import {
   acquireBrowserContext,
   openPage,
-  readPageResponseBody,
+  startBoundedPageResponseCapture,
   shutdownPool,
   type PooledContext,
 } from "./browserPool.ts";
@@ -263,6 +263,7 @@ export async function browserBackedChat(
   const acquireContextMs = Date.now() - tAcquireStart;
 
   const page = await openPage(pooled);
+  let boundedCapture: Awaited<ReturnType<typeof startBoundedPageResponseCapture>> | null = null;
   const observedPostUrls: string[] = [];
   const observedPostResponses: Array<{ url: string; status: number }> = [];
   page.on("request", (request) => {
@@ -311,22 +312,14 @@ export async function browserBackedChat(
     await inputLocator.fill(userMessage);
     await waitWithSignal(800, signal);
 
-    const tSubmitStart = Date.now();
-    const responsePromise = page.waitForResponse(
-      (r) =>
-        r.request().method() === "POST" && chatUrlMatcher(r.url(), chatUrlMatchDomain, chatUrl),
-      { timeout: 30000 }
+    const matchesChatResponse = (url: string, method: string) =>
+      method === "POST" && chatUrlMatcher(url, chatUrlMatchDomain, chatUrl);
+    boundedCapture = await startBoundedPageResponseCapture(
+      page,
+      matchesChatResponse,
+      MAX_RESPONSE_BYTES,
+      { timeoutMs: 30000 + Math.min(postSubmitWaitMs, 30000), signal }
     );
-
-    // Wire signal to responsePromise via Promise.race
-    let abortListener: (() => void) | undefined;
-    const signalPromise = signal
-      ? new Promise<never>((_, reject) => {
-          if (signal.aborted) return reject(new DOMException("Aborted", "AbortError"));
-          abortListener = () => reject(new DOMException("Aborted", "AbortError"));
-          signal.addEventListener("abort", abortListener, { once: true });
-        })
-      : null;
 
     if (submitButtonSelector) {
       const btn = page.locator(submitButtonSelector).first();
@@ -347,46 +340,24 @@ export async function browserBackedChat(
       await page.keyboard.press("Enter");
     }
     const tCaptureStart = Date.now();
-    const response = signalPromise
-      ? await Promise.race([responsePromise, signalPromise]).catch(() => null)
-      : await responsePromise.catch(() => null);
-    if (signal && abortListener) {
-      signal.removeEventListener("abort", abortListener);
-    }
-    if (response) {
-      // Most provider streams finish well before the safety window. Return as
-      // soon as Playwright reports completion instead of always paying the
-      // full fixed delay before reading the already-buffered body.
-      await Promise.race([
-        response.finished().then(() => undefined),
-        waitWithSignal(Math.min(postSubmitWaitMs, 30000), signal),
-      ]);
-    }
+    const captured = await boundedCapture.result;
     const captureResponseMs = Date.now() - tCaptureStart;
     const submitMs = captureResponseMs;
 
-    let status = 0;
-    let contentType: string | null = null;
-    let body = Buffer.alloc(0);
-    if (response) {
-      const captured = await readPageResponseBody(response);
-      // OOM guard: reject responses larger than MAX_RESPONSE_BYTES
-      if (captured.body.length > MAX_RESPONSE_BYTES) {
-        body = Buffer.from(
-          JSON.stringify({
-            error: {
-              message: "Response too large",
-              type: "upstream_error",
-            },
-          })
-        );
-        status = 502;
-        contentType = "application/json";
-      } else {
-        status = captured.status;
-        contentType = captured.headers["content-type"] || null;
-        body = captured.body;
-      }
+    let status = captured.status;
+    let contentType: string | null = captured.headers["content-type"] || null;
+    let body = captured.body;
+    if (captured.tooLarge) {
+      body = Buffer.from(
+        JSON.stringify({
+          error: {
+            message: "Response too large",
+            type: "upstream_error",
+          },
+        })
+      );
+      status = 502;
+      contentType = "application/json";
     }
 
     return {
@@ -431,6 +402,7 @@ export async function browserBackedChat(
       },
     };
   } finally {
+    await boundedCapture?.dispose().catch(() => {});
     await page.close();
     if (!reuseAcquired) {
       // Non-reused contexts are uniquely keyed. Close the page's context
