@@ -17,7 +17,7 @@ import { Buffer } from "node:buffer";
 import {
   acquireBrowserContext,
   openPage,
-  readPageResponseBody,
+  startBoundedPageResponseCapture,
   releaseBrowserContext,
 } from "./browserPool.ts";
 import type {
@@ -332,6 +332,7 @@ export async function browserBackedChat(
   const acquireContextMs = Date.now() - tAcquireStart;
 
   const page = await openPage(pooled);
+  let boundedCapture: Awaited<ReturnType<typeof startBoundedPageResponseCapture>> | null = null;
   try {
     const tNavStart = Date.now();
     await page.goto(chatPageUrl, {
@@ -344,20 +345,14 @@ export async function browserBackedChat(
     await inputLocator.waitFor({ state: "visible", timeout: 10000 });
     await waitWithSignal(800, signal);
 
-    const responsePromise = page.waitForResponse(
-      (r) =>
-        r.request().method() === "POST" && chatUrlMatcher(r.url(), chatUrlMatchDomain, chatUrl),
-      { timeout: 30000 }
+    const matchesChatResponse = (url: string, method: string) =>
+      method === "POST" && chatUrlMatcher(url, chatUrlMatchDomain, chatUrl);
+    boundedCapture = await startBoundedPageResponseCapture(
+      page,
+      matchesChatResponse,
+      MAX_RESPONSE_BYTES,
+      { timeoutMs: 30000 + Math.min(postSubmitWaitMs, 30000), signal }
     );
-
-    let abortListener: (() => void) | undefined;
-    const signalPromise = signal
-      ? new Promise<never>((_, reject) => {
-          if (signal.aborted) return reject(new DOMException("Aborted", "AbortError"));
-          abortListener = () => reject(new DOMException("Aborted", "AbortError"));
-          signal.addEventListener("abort", abortListener, { once: true });
-        })
-      : null;
 
     if (submitButtonSelector) {
       const btn = page.locator(submitButtonSelector).first();
@@ -374,40 +369,24 @@ export async function browserBackedChat(
       await page.keyboard.press("Enter");
     }
     const tCaptureStart = Date.now();
-    const response = signalPromise
-      ? await Promise.race([responsePromise, signalPromise]).catch(() => null)
-      : await responsePromise.catch(() => null);
-    if (signal && abortListener) {
-      signal.removeEventListener("abort", abortListener);
-    }
-    if (response) {
-      await waitWithSignal(Math.min(postSubmitWaitMs, 30000), signal);
-    } else {
-      await waitWithSignal(postSubmitWaitMs, signal);
-    }
+    const captured = await boundedCapture.result;
     const captureResponseMs = Date.now() - tCaptureStart;
     const submitMs = captureResponseMs;
 
-    let status = 0;
-    let contentType: string | null = null;
-    let body: Buffer = Buffer.alloc(0);
-    if (response) {
-      const captured = await readPageResponseBody(response);
-      if (captured.body.length > MAX_RESPONSE_BYTES) {
-        body = Buffer.from(
-          JSON.stringify({
-            error: {
-              message: "Response too large",
-              type: "upstream_error",
-            },
-          })
-        );
-        status = 502;
-        contentType = "application/json";
-      } else {
-        body = captured.body as unknown as Buffer;
-        contentType = captured.headers["content-type"] || null;
-      }
+    let status = captured.status;
+    let contentType: string | null = captured.headers["content-type"] || null;
+    let body: Buffer = captured.body;
+    if (captured.tooLarge) {
+      body = Buffer.from(
+        JSON.stringify({
+          error: {
+            message: "Response too large",
+            type: "upstream_error",
+          },
+        })
+      );
+      status = 502;
+      contentType = "application/json";
     }
 
     return {
@@ -447,6 +426,7 @@ export async function browserBackedChat(
       },
     };
   } finally {
+    await boundedCapture?.dispose().catch(() => {});
     await page.close();
     if (!reuseAcquired) {
       try {

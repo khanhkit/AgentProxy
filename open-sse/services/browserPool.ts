@@ -670,3 +670,250 @@ export async function readPageResponseBody(
   const body = await response.body();
   return { status: response.status(), headers, body: Buffer.from(body) };
 }
+export interface BoundedPageResponseCaptureResult {
+  status: number;
+  headers: Record<string, string>;
+  body: Buffer;
+  tooLarge: boolean;
+}
+
+export interface BoundedPageResponseCapture {
+  result: Promise<BoundedPageResponseCaptureResult>;
+  dispose: () => Promise<void>;
+}
+
+const BOUNDED_RESPONSE_READ_CHUNK_BYTES = 64 * 1024;
+
+type BoundedCdpPausedResponse = {
+  requestId: string;
+  request: { url: string; method: string };
+  responseStatusCode?: number;
+  responseStatusText?: string;
+  responseErrorReason?: string;
+  responseHeaders?: Array<{ name: string; value: string }>;
+};
+
+function responseHeadersToRecord(
+  entries: Array<{ name: string; value: string }>
+): Record<string, string> {
+  const headers: Record<string, string> = {};
+  for (const { name, value } of entries) headers[name.toLowerCase()] = value;
+  return headers;
+}
+
+function responseHeadersForFulfill(
+  entries: Array<{ name: string; value: string }>,
+  bodyLength: number
+): Array<{ name: string; value: string }> {
+  const filtered = entries.filter(({ name }) => {
+    const normalized = name.toLowerCase();
+    return (
+      normalized !== "content-length" &&
+      normalized !== "content-encoding" &&
+      normalized !== "transfer-encoding"
+    );
+  });
+  filtered.push({ name: "content-length", value: String(bodyLength) });
+  return filtered;
+}
+
+function decodeCdpStreamChunk(data: string, base64Encoded?: boolean): Buffer {
+  return Buffer.from(data, base64Encoded ? "base64" : "utf8");
+}
+
+function cdpStreamChunkByteLength(data: string, base64Encoded?: boolean): number {
+  return Buffer.byteLength(data, base64Encoded ? "base64" : "utf8");
+}
+
+/**
+ * Capture one matching page response without ever calling Playwright response.body().
+ * Chromium Fetch interception pauses matching response bodies after headers; the body is
+ * read in bounded CDP IO chunks, then either fulfilled back to the page or cancelled once
+ * the byte cap would be exceeded. Unrelated responses are continued immediately.
+ */
+export async function startBoundedPageResponseCapture(
+  page: Page,
+  matches: (url: string, method: string) => boolean,
+  maxBytes: number,
+  options: { timeoutMs?: number; signal?: AbortSignal | null } = {}
+): Promise<BoundedPageResponseCapture> {
+  if (!Number.isSafeInteger(maxBytes) || maxBytes < 0) {
+    throw new RangeError("maxBytes must be a non-negative safe integer");
+  }
+
+  const timeoutMs = options.timeoutMs ?? 30000;
+  const session = await page.context().newCDPSession(page);
+  let settled = false;
+  let targetRequestId: string | null = null;
+  let streamHandle: string | null = null;
+  let timeout: NodeJS.Timeout | null = null;
+  let abortListener: (() => void) | null = null;
+  let resolveResult!: (value: BoundedPageResponseCaptureResult) => void;
+  let rejectResult!: (reason: unknown) => void;
+  const result = new Promise<BoundedPageResponseCaptureResult>((resolve, reject) => {
+    resolveResult = resolve;
+    rejectResult = reject;
+  });
+
+  const cleanup = async (): Promise<void> => {
+    if (timeout) {
+      clearTimeout(timeout);
+      timeout = null;
+    }
+    if (abortListener && options.signal) {
+      options.signal.removeEventListener("abort", abortListener);
+      abortListener = null;
+    }
+    session.off("Fetch.requestPaused", onRequestPaused);
+    if (streamHandle) {
+      const handle = streamHandle;
+      streamHandle = null;
+      await session.send("IO.close", { handle }).catch(() => {});
+    }
+    await session.send("Fetch.disable").catch(() => {});
+    await session.detach().catch(() => {});
+  };
+
+  const resolveCapture = async (value: BoundedPageResponseCaptureResult): Promise<void> => {
+    if (settled) return;
+    settled = true;
+    await cleanup();
+    resolveResult(value);
+  };
+
+  const rejectCapture = async (reason: unknown): Promise<void> => {
+    if (settled) return;
+    settled = true;
+    if (targetRequestId) {
+      await session
+        .send("Fetch.failRequest", { requestId: targetRequestId, errorReason: "Aborted" })
+        .catch(() => {});
+    }
+    await cleanup();
+    rejectResult(reason);
+  };
+
+  const cancelAsTooLarge = async (
+    requestId: string,
+    status: number,
+    headers: Record<string, string>
+  ): Promise<void> => {
+    await session.send("Fetch.failRequest", { requestId, errorReason: "Aborted" }).catch(() => {});
+    await resolveCapture({ status, headers, body: Buffer.alloc(0), tooLarge: true });
+  };
+
+  const readTargetResponse = async (
+    requestId: string,
+    status: number,
+    responsePhrase: string | undefined,
+    headerEntries: Array<{ name: string; value: string }>
+  ): Promise<void> => {
+    const headers = responseHeadersToRecord(headerEntries);
+    const declaredLength = Number.parseInt(headers["content-length"] ?? "", 10);
+    if (Number.isFinite(declaredLength) && declaredLength > maxBytes) {
+      await cancelAsTooLarge(requestId, status, headers);
+      return;
+    }
+
+    const stream = await session.send("Fetch.takeResponseBodyAsStream", { requestId });
+    streamHandle = stream.stream;
+    const chunks: Buffer[] = [];
+    let totalBytes = 0;
+
+    while (!settled) {
+      const chunk = await session.send("IO.read", {
+        handle: stream.stream,
+        size: BOUNDED_RESPONSE_READ_CHUNK_BYTES,
+      });
+      if (chunk.data) {
+        const chunkBytes = cdpStreamChunkByteLength(chunk.data, chunk.base64Encoded);
+        if (totalBytes + chunkBytes > maxBytes) {
+          await cancelAsTooLarge(requestId, status, headers);
+          return;
+        }
+        chunks.push(decodeCdpStreamChunk(chunk.data, chunk.base64Encoded));
+        totalBytes += chunkBytes;
+      }
+      if (chunk.eof) break;
+    }
+    if (settled) return;
+
+    const body = Buffer.concat(chunks, totalBytes);
+    await session.send("Fetch.fulfillRequest", {
+      requestId,
+      responseCode: status,
+      responsePhrase,
+      responseHeaders: responseHeadersForFulfill(headerEntries, body.length),
+      body: body.toString("base64"),
+    });
+    await resolveCapture({ status, headers, body, tooLarge: false });
+  };
+
+  const onRequestPaused = (event: BoundedCdpPausedResponse) => {
+    void (async () => {
+      const isResponseStage =
+        event.responseStatusCode !== undefined || event.responseErrorReason !== undefined;
+      if (!isResponseStage) {
+        await session.send("Fetch.continueRequest", { requestId: event.requestId });
+        return;
+      }
+
+      if (targetRequestId || !matches(event.request.url, event.request.method)) {
+        await session.send("Fetch.continueResponse", { requestId: event.requestId });
+        return;
+      }
+
+      targetRequestId = event.requestId;
+      if (event.responseStatusCode === undefined) {
+        await rejectCapture(
+          new Error(
+            `Browser response failed before headers: ${event.responseErrorReason ?? "unknown"}`
+          )
+        );
+        return;
+      }
+
+      await readTargetResponse(
+        event.requestId,
+        event.responseStatusCode,
+        event.responseStatusText,
+        event.responseHeaders ?? []
+      );
+    })().catch((error) => {
+      void rejectCapture(error);
+    });
+  };
+
+  session.on("Fetch.requestPaused", onRequestPaused);
+  try {
+    await session.send("Fetch.enable", {
+      patterns: [{ urlPattern: "*", requestStage: "Response" }],
+    });
+  } catch (error) {
+    session.off("Fetch.requestPaused", onRequestPaused);
+    await session.detach().catch(() => {});
+    throw error;
+  }
+
+  timeout = setTimeout(() => {
+    void rejectCapture(new Error("Timed out waiting for bounded browser response"));
+  }, timeoutMs);
+  timeout.unref?.();
+
+  if (options.signal) {
+    abortListener = () => {
+      void rejectCapture(new DOMException("Aborted", "AbortError"));
+    };
+    if (options.signal.aborted) abortListener();
+    else options.signal.addEventListener("abort", abortListener, { once: true });
+  }
+
+  return {
+    result,
+    dispose: async () => {
+      if (settled) return;
+      await rejectCapture(new DOMException("Aborted", "AbortError"));
+      await result.catch(() => {});
+    },
+  };
+}

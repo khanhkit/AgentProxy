@@ -36,6 +36,7 @@ export async function acquireBrowserContext() {
 }
 export async function openPage(pooled) { return pooled.context.newPage(); }
 export async function readPageResponseBody() { throw new Error("not used"); }
+export async function startBoundedPageResponseCapture() { throw new Error("not used"); }
 export async function releaseBrowserContext() {}
 `;
 const mockModuleUrl = `data:text/javascript,${encodeURIComponent(mockModuleSource)}`;
