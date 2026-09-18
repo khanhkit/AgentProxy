@@ -140,6 +140,11 @@ const ingestShim = require("./_internal/ingest.cjs");
 const forwardShim = require("./_internal/forwardTarget.cjs");
 const aliasConfigShim = require("./_internal/aliasConfig.cjs");
 const standaloneRoutingShim = require("./_internal/standaloneRouting.cjs");
+const {
+  REQUEST_BODY_LIMIT_BYTES,
+  collectBodyRaw,
+  isPayloadTooLargeError,
+} = require("./_internal/boundedBody.cjs");
 
 // Inspector capture (D4 fallback). The standalone proxy intercepts AgentBridge
 // traffic inline (no MitmHandlerBase / agentBridgeHook), so it posts captured
@@ -337,15 +342,6 @@ async function resolveTargetIP(targetHost) {
   const targetIP = addresses[0];
   cachedTargetIPs.set(targetHost, targetIP);
   return targetIP;
-}
-
-function collectBodyRaw(req) {
-  return new Promise((resolve, reject) => {
-    const chunks = [];
-    req.on("data", (chunk) => chunks.push(chunk));
-    req.on("end", () => resolve(Buffer.concat(chunks)));
-    req.on("error", reject);
-  });
 }
 
 /**
@@ -635,7 +631,28 @@ async function startMitmServer() {
     stats.lastRequestAt = new Date().toISOString();
     writeStats();
 
-    const bodyBuffer = await collectBodyRaw(req);
+    let bodyBuffer;
+    try {
+      bodyBuffer = await collectBodyRaw(req, REQUEST_BODY_LIMIT_BYTES);
+    } catch (error) {
+      if (isPayloadTooLargeError(error)) {
+        const responseBody = JSON.stringify({
+          error: {
+            message: `Request body too large. Maximum allowed: ${REQUEST_BODY_LIMIT_BYTES} bytes`,
+            type: "payload_too_large",
+            code: "PAYLOAD_TOO_LARGE",
+          },
+        });
+        res.writeHead(413, {
+          "content-type": "application/json",
+          "content-length": Buffer.byteLength(responseBody),
+          connection: "close",
+        });
+        res.end(responseBody);
+        return;
+      }
+      throw error;
+    }
     const host = String(req.headers.host || "")
       .split(":")[0]
       .toLowerCase();
