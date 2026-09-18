@@ -1,0 +1,39 @@
+{
+  "branch": "main",
+  "enforceAdmins": true,
+  "strictRequiredChecks": true,
+  "requiredChecks": [
+    {
+      "context": "Quality Ratchet",
+      "appId": 15368
+    },
+    {
+      "context": "Security Tests",
+      "appId": 15368
+    }
+  ],
+  "requiredApprovingReviewCount": 1,
+  "dismissStaleReviews": true,
+  "requireLastPushApproval": true,
+  "requireConversationResolution": true,
+  "requiredLinearHistory": true,
+  "allowForcePushes": false,
+  "allowDeletions": false,
+  "breakGlass": {
+    "enabled": true,
+    "authorization": "repository-owner-explicit",
+    "temporaryMutation": ["enforce_admins"],
+    "requireProtectionSnapshot": true,
+    "requireImmediateRestore": true,
+    "requirePostRestoreGovernanceCheck": true,
+    "requireAuditEvidence": true,
+    "preserveRequiredChecks": true,
+    "preserveReviewConfiguration": true,
+    "forbidSelfApproval": true
+  },
+  "rationale": {
+    "requiredChecks": "Existing deployed GitHub Actions contexts observed on known-good PRs #16 and #17. App ID 15368 binds contexts to github-actions so another app cannot spoof the same names.",
+    "codeql": "AP-ISS-0107 automatic PR CodeQL is not yet deployed on remote main, so requiring its context now would deadlock merges. Add it only after the workflow is present on the default branch and observed on PRs.",
+    "dashboard": "CI Dashboard is intentionally not required because it can conclude success while underlying fail-closed jobs are red."
+  }
+}
