@@ -17,8 +17,8 @@ type ToolHandler = (
   extra?: ToolExtra
 ) => Promise<Record<string, unknown>>;
 
-const registry = skillRegistry as any;
-const executor = skillExecutor as any;
+const registry = skillRegistry;
+const executor = skillExecutor;
 const originals = {
   loadFromDatabase: registry.loadFromDatabase,
   list: registry.list,
