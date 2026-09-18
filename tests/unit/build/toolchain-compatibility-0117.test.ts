@@ -28,6 +28,24 @@ test("AP-0117 keeps Node 25 as runtime compatibility without forcing npm 12", ()
   assert.match(action, /if:\s*inputs\.pin_authoritative_npm\s*==\s*'true'/);
 });
 
+test("AP-0117 nightly compatibility lanes pin npm only where npm 12 supports the Node line", () => {
+  const workflow = readFileSync(".github/workflows/nightly-compat.yml", "utf8");
+  const expectations = [
+    ["22.22.2", "true"],
+    ["24.15.0", "true"],
+    ["25.0.0", "false"],
+    ["26.0.0", "true"],
+  ] as const;
+
+  for (const [nodeVersion, pinMode] of expectations) {
+    const escaped = nodeVersion.replaceAll(".", "\\.");
+    const lane = new RegExp(
+      `node:\\s*"${escaped}"[\\s\\S]{0,140}pin_authoritative_npm:\\s*"${pinMode}"`
+    );
+    assert.match(workflow, lane, `Node ${nodeVersion} must set pin_authoritative_npm=${pinMode}`);
+  }
+});
+
 test("AP-0117 default/recommended active pins no longer contain 24.14.1", () => {
   const files = [
     ".nvmrc",
