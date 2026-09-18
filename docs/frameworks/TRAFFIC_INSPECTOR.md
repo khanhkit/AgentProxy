@@ -82,6 +82,8 @@ export HTTPS_PROXY=http://127.0.0.1:8080
 
 **TLS limitation:** HTTPS `CONNECT` tunnels are captured as metadata only (host, port, timing) — TLS body is not decrypted by default. Enable "Decrypt HTTPS in proxy mode" toggle (opt-in, requires AgentBridge cert to be trusted) for full body inspection.
 
+**Direct HTTP egress policy:** direct HTTP forwarding uses the shared public-only outbound guard. Loopback/private/link-local/cloud-metadata destinations and mixed public/private DNS answers are rejected before upstream I/O; every DNS answer is validated and direct connections are pinned to the accepted address so rebinding cannot change the destination after validation. The request runs in an explicit direct-fetch context so ambient proxy configuration cannot recurse into the Traffic Inspector or bypass DNS pinning. Direct HTTP keeps normal public HTTP/HTTPS port compatibility; raw CONNECT keeps its separate stricter port-443 policy.
+
 **Port conflict:** If port 8080 is in use, AgentBridge returns a 409 with a structured error. Change the port via `INSPECTOR_HTTP_PROXY_PORT` env var.
 
 ### Mode 4 — System-wide proxy (advanced, opt-in)

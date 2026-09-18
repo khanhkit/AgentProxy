@@ -17,6 +17,8 @@ import http from "node:http";
 import net from "node:net";
 import { randomUUID } from "node:crypto";
 import { sanitizeErrorMessage } from "@omniroute/open-sse/utils/error";
+import { runWithDirectFetchContext } from "@omniroute/open-sse/utils/proxyFetch.ts";
+import { safeOutboundFetch } from "@/shared/network/safeOutboundFetch";
 import { sanitizeHeaders } from "../sanitizeHeaders.ts";
 import { maskSecret } from "../maskSecrets.ts";
 import { applyIdleTimeout, MITM_IDLE_TIMEOUT_MS } from "../socketTimeouts.ts";
@@ -123,12 +125,17 @@ function handleHttp(req: http.IncomingMessage, res: http.ServerResponse): void {
       intercepted.requestBody = body.length > 0 ? maskSecret(body.toString("utf8")) : null;
 
       const upstreamHeaders = buildFetchHeaders(req.headers);
-      const upstream = await fetch(target.toString(), {
-        method: req.method ?? "GET",
-        headers: upstreamHeaders,
-        body: body.length > 0 ? body : undefined,
-        redirect: "manual",
-      });
+      const upstream = await runWithDirectFetchContext(() =>
+        safeOutboundFetch(target, {
+          method: req.method ?? "GET",
+          headers: upstreamHeaders,
+          body: body.length > 0 ? body : undefined,
+          allowRedirect: false,
+          retry: false,
+          guard: "public-only",
+          pinDns: true,
+        })
+      );
 
       const respBuf = Buffer.from(await upstream.arrayBuffer());
       const totalLatencyMs = performance.now() - startedAt;
