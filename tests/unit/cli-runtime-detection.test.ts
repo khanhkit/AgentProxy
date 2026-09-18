@@ -15,7 +15,7 @@ const { getCliRuntimeStatus, getKnownToolPaths, normalizeCliToolId, CLI_TOOL_IDS
 // ─── Helpers ──────────────────────────────────────────────────
 
 function createTempDir() {
-  const testRoot = path.join(os.tmpdir(), "omniroute-test-tmp");
+  const testRoot = path.join(os.tmpdir(), "agentproxy-test-tmp");
   if (!fs.existsSync(testRoot)) {
     fs.mkdirSync(testRoot, { recursive: true });
   }

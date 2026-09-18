@@ -216,7 +216,7 @@ import {
   detectMalformedNonStream,
   describeMalformedNonStream,
 } from "../utils/diagnostics.ts";
-import { checkTokenLimits } from "@omniroute/open-sse/services/tokenLimitCounter.ts";
+import { checkTokenLimits } from "@agentproxy/open-sse/services/tokenLimitCounter.ts";
 import {
   COOLDOWN_MS,
   HTTP_STATUS,
@@ -236,7 +236,7 @@ import {
 } from "@/lib/resilience/settings";
 import { classifyProviderError, PROVIDER_ERROR_TYPES } from "../services/errorClassifier.ts";
 import { updateProviderConnection, getProviderConnectionById } from "@/lib/db/providers";
-import { wasRefreshTokenRotated } from "@omniroute/open-sse/services/refreshSerializer.ts";
+import { wasRefreshTokenRotated } from "@agentproxy/open-sse/services/refreshSerializer.ts";
 import { connectionHasExtraKeys } from "../services/apiKeyRotator.ts";
 import { recordKeyHealthStatus as recordKeyHealthStatusFor } from "./chatCore/keyHealth.ts";
 import { getSkillsModelIdForFormat } from "./chatCore/skillsFormat.ts";
@@ -536,7 +536,7 @@ export async function handleChatCore({
       comboName: comboName || undefined,
     });
   });
-  const traceEnabled = process.env.OMNIROUTE_TRACE === "true" || process.env.DEBUG === "true";
+  const traceEnabled = process.env.AGENTPROXY_TRACE === "true" || process.env.DEBUG === "true";
   // Stage trace extracted to chatCore/stageTrace.ts (#3501); bind the per-request inputs once so the
   // call sites stay byte-identical.
   const trace = (label: string, extra?: Record<string, unknown>) =>
@@ -898,7 +898,7 @@ export async function handleChatCore({
   // Capture client tool names BEFORE fallback injection so the owner-provenance
   // merge can distinguish tools the client already declared from synthetic tools
   // added by the fallback preparer. Without this, a client function named
-  // `omniroute_web_search` (colliding with the fallback tool name) would be
+  // `agentproxy_web_search` (colliding with the fallback tool name) would be
   // marked server-owned even though the client owns it.
   const preConversionClientToolNames: string[] = (
     Array.isArray((body as Record<string, unknown>).tools)
@@ -946,7 +946,7 @@ export async function handleChatCore({
     }
     log?.info?.(
       "TOOLS",
-      `Converted ${webSearchFallbackPlan.convertedToolCount} web_search tool(s) to OmniRoute fallback for ${provider}`
+      `Converted ${webSearchFallbackPlan.convertedToolCount} web_search tool(s) to AgentProxy fallback for ${provider}`
     );
   }
   // #7339: interceptFetch (Phase 3-4 of #3384) — same per-model rule + native-bypass
@@ -964,7 +964,7 @@ export async function handleChatCore({
     body = bodyWithWebFetchFallback as typeof body;
     log?.info?.(
       "TOOLS",
-      `Converted ${webFetchFallbackPlan.convertedToolCount} web_fetch tool(s) to OmniRoute fallback for ${provider}`
+      `Converted ${webFetchFallbackPlan.convertedToolCount} web_fetch tool(s) to AgentProxy fallback for ${provider}`
     );
   }
   const noLogEnabled = apiKeyInfo?.noLog === true;
@@ -1026,10 +1026,10 @@ export async function handleChatCore({
   // header — never synthesized from the internal per-request skillRequestId.
   const explicitSessionIdHeader =
     (clientRawRequest?.headers && typeof clientRawRequest.headers.get === "function"
-      ? clientRawRequest.headers.get("x-omniroute-session-id")
+      ? clientRawRequest.headers.get("x-agentproxy-session-id")
       : getHeaderValueCaseInsensitive(
           clientRawRequest?.headers ?? null,
-          "x-omniroute-session-id"
+          "x-agentproxy-session-id"
         )) || null;
   const pipelineSessionId = explicitSessionIdHeader || skillRequestId;
   const reasoningReplaySessionKey = sessionAffinityKey || explicitSessionIdHeader;
@@ -1063,7 +1063,7 @@ export async function handleChatCore({
       modelPinned,
       // Resolved conversationId (open-sse/services/conversationTracker.ts) wins when
       // present — it's populated for every request now, not just ones where the
-      // client explicitly sent x-omniroute-session-id. The raw header remains a
+      // client explicitly sent x-agentproxy-session-id. The raw header remains a
       // fallback for any caller that somehow bypassed conversationId resolution.
       sessionTag: conversationId || explicitSessionIdHeader,
       // #12150 P1b surface 1: undefined for every non-video request (byte-identical
@@ -1122,7 +1122,7 @@ export async function handleChatCore({
     .join(" ");
 
   // Explicit per-request opt-in/out for the `</think>` close marker
-  // (#5312 / #5245): `x-omniroute-thinking-marker: off` suppresses it for
+  // (#5312 / #5245): `x-agentproxy-thinking-marker: off` suppresses it for
   // reasoning_content-native clients (e.g. Cursor's OpenAI path) that the UA
   // allowlist does not cover; absent the header, the UA policy applies.
   const thinkingMarkerHeader = getHeaderValueCaseInsensitive(
@@ -1133,7 +1133,7 @@ export async function handleChatCore({
   const explicitStreamAlias = resolveExplicitStreamAlias(body);
 
   // Remove non-standard non-stream aliases before provider translation/execution.
-  // They are accepted for compatibility at the OmniRoute API boundary only.
+  // They are accepted for compatibility at the AgentProxy API boundary only.
   if (body && typeof body === "object") {
     const b = body as Record<string, unknown>;
     if (explicitStreamAlias !== undefined) {
@@ -1198,12 +1198,12 @@ export async function handleChatCore({
   logClientRawRequestRedacted(reqLogger, clientRawRequest, videoBridgeObserved);
   const reasoningRouteDecision =
     body && typeof body === "object"
-      ? (body as Record<string, unknown>)._omnirouteReasoningRouteTrace
+      ? (body as Record<string, unknown>)._agentproxyReasoningRouteTrace
       : null;
   if (reasoningRouteDecision) {
     reqLogger.logRouteDecision(reasoningRouteDecision);
     body = { ...(body as Record<string, unknown>) };
-    delete (body as Record<string, unknown>)._omnirouteReasoningRouteTrace;
+    delete (body as Record<string, unknown>)._agentproxyReasoningRouteTrace;
   }
 
   log?.debug?.("FORMAT", `${sourceFormat} → ${targetFormat} | stream=${stream}`);
@@ -1274,7 +1274,7 @@ export async function handleChatCore({
 
   body = sanitizeChatRequestBody(body, sourceFormat, targetFormat);
   // Per-request opt-out: clients that manage their own context send
-  // `x-omniroute-no-memory: true` to skip memory+skills injection (a null owner
+  // `x-agentproxy-no-memory: true` to skip memory+skills injection (a null owner
   // disables both branches in injectMemoryAndSkills). See PRD-2026-06-19-no-memory-header.
   const memoryOwnerId = isNoMemoryRequested(clientRawRequest?.headers ?? null)
     ? null
@@ -1353,7 +1353,7 @@ export async function handleChatCore({
     );
     // A per-key opt-out is a request-scoped hard kill for prompt compression. It
     // deliberately does not disable the independent reactive context-fit safety
-    // passes, matching the existing x-omniroute-compression: off contract.
+    // passes, matching the existing x-agentproxy-compression: off contract.
     const apiKeyCompressionEnabled = apiKeyInfo?.compressionEnabled !== false;
     let promptCompressionEnabled =
       compressionSettingsResult.enabled && !compressionExcluded && apiKeyCompressionEnabled;
@@ -1549,7 +1549,7 @@ export async function handleChatCore({
       // Phase 3: per-request override. Unknown values fall through in the resolver (never error).
       const compressionHeader = resolveCompressionHeader(clientRawRequest?.headers ?? null);
       if (compressionHeader) {
-        log?.debug?.("COMPRESSION", `x-omniroute-compression header: ${compressionHeader}`);
+        log?.debug?.("COMPRESSION", `x-agentproxy-compression header: ${compressionHeader}`);
       }
       const connectionCacheOverride = resolveConnectionCacheOverride(
         credentials?.providerSpecificData
@@ -1776,10 +1776,10 @@ export async function handleChatCore({
           const { applyLiveZoneCompression } = await import("../services/compression/liveZone.ts");
           const explicitSessionId =
             clientRawRequest?.headers && typeof clientRawRequest.headers.get === "function"
-              ? clientRawRequest.headers.get("x-omniroute-session-id")
+              ? clientRawRequest.headers.get("x-agentproxy-session-id")
               : getHeaderValueCaseInsensitive(
                   clientRawRequest?.headers ?? null,
-                  "x-omniroute-session-id"
+                  "x-agentproxy-session-id"
                 );
           const liveZoneSessionId =
             explicitSessionId ||
@@ -2714,7 +2714,7 @@ export async function handleChatCore({
   }
 
   // Xiaomi MiMo controls reasoning ONLY via `thinking:{type:"enabled"|"disabled"}` and
-  // rejects unknown/extra params with a strict "400 Param Incorrect". Map OmniRoute's
+  // rejects unknown/extra params with a strict "400 Param Incorrect". Map AgentProxy's
   // OpenAI reasoning signals onto that native shape: reduce any thinking object to
   // `{type}` and drop `reasoning_effort`/`reasoning`. See services/mimoThinking.ts.
   if (provider === "xiaomi-mimo") {
@@ -5106,7 +5106,7 @@ export async function handleChatCore({
       finalBody = providerRequestCapture.body(okLeg.providerRequest || translatedBody);
       // Built inside executeProviderRequest on the pre-#12867 path. The leg now owns the
       // first non-streaming send, so that assignment never runs here and the meta stayed
-      // null — `_omniroute.claudePromptCache` silently vanished from every call log on
+      // null — `_agentproxy.claudePromptCache` silently vanished from every call log on
       // this path. Same inputs, same helper, at the point where they are available.
       claudePromptCacheLogMeta = buildClaudePromptCacheLogMeta(
         targetFormat,
@@ -5438,7 +5438,7 @@ export async function handleChatCore({
         compressionResponseMeta,
         comboStrategy,
       });
-      // #6426: align response body `model` with the `X-OmniRoute-Model` header
+      // #6426: align response body `model` with the `X-AgentProxy-Model` header
       // (both must be the resolved backend model). Some upstreams (notably legacy
       // /v1/completions text-completion path) return a body `model` field that
       // differs from the resolved backend id we advertised in the header, leaving
@@ -5961,7 +5961,7 @@ export async function handleChatCore({
       handleStreamFailure,
       copilotCompatibleReasoning,
       // Suppress the `</think>` close marker for clients that render it verbatim
-      // (e.g. OpenCode by UA; any client via `x-omniroute-thinking-marker: off`);
+      // (e.g. OpenCode by UA; any client via `x-agentproxy-thinking-marker: off`);
       // preserved for Claude Code / Cursor and unknown clients by default (#5245 /
       // #5312). Responses API clients always suppress it (structured reasoning
       // items make the marker meaningless); otherwise the header wins over the

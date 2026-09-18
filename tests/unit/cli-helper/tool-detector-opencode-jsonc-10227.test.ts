@@ -7,7 +7,7 @@ import path from "node:path";
 import * as toolDetector from "../../../src/lib/cli-helper/tool-detector.ts";
 
 test("detectTool reports an existing opencode.jsonc as the real config path (#10227)", async () => {
-  const xdgRoot = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-detector-jsonc-"));
+  const xdgRoot = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-detector-jsonc-"));
   const configDir = path.join(xdgRoot, "opencode");
   const configPath = path.join(configDir, "opencode.jsonc");
   const previousXdg = process.env.XDG_CONFIG_HOME;
@@ -21,7 +21,7 @@ test("detectTool reports an existing opencode.jsonc as the real config path (#10
       `{
   // OpenCode accepts JSONC
   "provider": {
-    "omniroute": { "options": { "baseURL": "http://localhost:20128/v1" } },
+    "agentproxy": { "options": { "baseURL": "http://localhost:20128/v1" } },
   },
 }\n`
     );

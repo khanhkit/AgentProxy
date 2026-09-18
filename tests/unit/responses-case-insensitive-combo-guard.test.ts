@@ -58,7 +58,7 @@ test("Responses route uses the downstream combo resolver for the Codex rewrite g
 });
 
 const TEST_DATA_DIR = fs.mkdtempSync(
-  path.join(os.tmpdir(), "omniroute-responses-ci-" + Date.now())
+  path.join(os.tmpdir(), "agentproxy-responses-ci-" + Date.now())
 );
 process.env.DATA_DIR = TEST_DATA_DIR;
 

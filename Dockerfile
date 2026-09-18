@@ -128,22 +128,22 @@ RUN --mount=type=cache,id=s/92ca8a61-c1ba-421f-a389-d48ac7258c2d-npm-cache,targe
 # 2026-07-05 with clean amd64 (12min14s, image smoke-tested: /api/monitoring/health
 # 200) and arm64 (qemu, exit 0, zero panic strings) builds. Turbopack cut the bare
 # build from 17min to 9min on the same 32-core box. Webpack stays available as the
-# escape hatch: `--build-arg`/-e OMNIROUTE_USE_TURBOPACK=0.
+# escape hatch: `--build-arg`/-e AGENTPROXY_USE_TURBOPACK=0.
 # See docs/ops/QUALITY_GATE_PLAYBOOK.md Parte 6.
 #
 # Declared as ARG+ENV, not a bare ENV: a bare ENV shadows any same-named ARG for
-# the rest of the stage, so `--build-arg OMNIROUTE_USE_TURBOPACK=0` was silently
+# the rest of the stage, so `--build-arg AGENTPROXY_USE_TURBOPACK=0` was silently
 # ignored and the escape hatch above only ever worked via `-e` at runtime, never
 # at build time. Turbopack compiles in native Rust memory that lives outside the
-# V8 heap, so OMNIROUTE_BUILD_MEMORY_MB cannot bound it and a memory-constrained
+# V8 heap, so AGENTPROXY_BUILD_MEMORY_MB cannot bound it and a memory-constrained
 # build host gets SIGKILLed by the cgroup OOM killer with no error message.
-ARG OMNIROUTE_USE_TURBOPACK=1
-ENV OMNIROUTE_USE_TURBOPACK="${OMNIROUTE_USE_TURBOPACK}"
+ARG AGENTPROXY_USE_TURBOPACK=1
+ENV AGENTPROXY_USE_TURBOPACK="${AGENTPROXY_USE_TURBOPACK}"
 
-# Next.js basePath is fixed at build time; pass OMNIROUTE_BASE_PATH here when the
+# Next.js basePath is fixed at build time; pass AGENTPROXY_BASE_PATH here when the
 # image should serve under a reverse-proxy subpath without a runtime patch.
-ARG OMNIROUTE_BASE_PATH=""
-ENV OMNIROUTE_BASE_PATH=$OMNIROUTE_BASE_PATH
+ARG AGENTPROXY_BASE_PATH=""
+ENV AGENTPROXY_BASE_PATH=$AGENTPROXY_BASE_PATH
 
 # #10273: the dashboard's `frame-ancestors` policy is compiled into the route
 # manifest by next.config.mjs (via scripts/build/dashboardEmbed.mjs), so it is
@@ -160,7 +160,7 @@ ENV DASHBOARD_ALLOW_EMBED=$DASHBOARD_ALLOW_EMBED
 # Docker containers cannot run the MITM/Agent-Bridge stack (no host DNS/cert
 # access), so keep @/mitm/manager on the graceful stub (#3390). This flag is
 # Docker-only: npm/Electron/VPS builds must bundle the REAL manager (#6344).
-ENV OMNIROUTE_MITM_STUB=1
+ENV AGENTPROXY_MITM_STUB=1
 
 # Raise the V8 heap ceiling for the build. The webpack production optimization
 # pass needs more than V8's default ceiling (~2 GB) for a codebase this size; a
@@ -170,11 +170,11 @@ ENV OMNIROUTE_MITM_STUB=1
 # on V8, so keep the ceiling. NODE_OPTIONS propagates to the spawned `next build`
 # child (build-next-isolated.mjs → resolveNextBuildEnv spreads process.env).
 # Build-only; the runtime heap is set separately on the runner stage
-# (OMNIROUTE_MEMORY_MB). Override: `--build-arg OMNIROUTE_BUILD_MEMORY_MB=6144`.
+# (AGENTPROXY_MEMORY_MB). Override: `--build-arg AGENTPROXY_BUILD_MEMORY_MB=6144`.
 # Default raised 4096 → 6144 (#10060): the Next 16 production pass on a codebase
 # this size intermittently OOMs a build worker at 4 GB on memory-tight hosts.
-ARG OMNIROUTE_BUILD_MEMORY_MB=6144
-ENV NODE_OPTIONS="--max-old-space-size=${OMNIROUTE_BUILD_MEMORY_MB}"
+ARG AGENTPROXY_BUILD_MEMORY_MB=6144
+ENV NODE_OPTIONS="--max-old-space-size=${AGENTPROXY_BUILD_MEMORY_MB}"
 
 # Cap Next.js build worker pools. Next 16 defaults to `os.cpus().length - 1`
 # workers for page-data collection (31 on a 32-core builder); on memory-tight
@@ -204,9 +204,9 @@ ENV NODE_OPTIONS="--max-old-space-size=${OMNIROUTE_BUILD_MEMORY_MB}"
 # tests/unit/docker-build-memory-budget.test.ts does the arithmetic against
 # the measured figure and fails if either knob is raised past what a 16 GB
 # runner holds. Override for a big builder: `--build-arg
-# OMNIROUTE_BUILD_WORKERS=8`.
-ARG OMNIROUTE_BUILD_WORKERS=2
-ENV CIRCLE_NODE_TOTAL=${OMNIROUTE_BUILD_WORKERS}
+# AGENTPROXY_BUILD_WORKERS=8`.
+ARG AGENTPROXY_BUILD_WORKERS=2
+ENV CIRCLE_NODE_TOTAL=${AGENTPROXY_BUILD_WORKERS}
 
 COPY . ./
 RUN --mount=type=cache,id=s/92ca8a61-c1ba-421f-a389-d48ac7258c2d-next-cache,target=/app/.build/next/cache \
@@ -240,10 +240,10 @@ ENV AGENTPROXY_RUST_CORE_HOST=0.0.0.0
 # for large fusion-combo panels (many models fanned out in parallel, each
 # response buffered in full — see open-sse/services/fusion.ts::FUSION_DEFAULTS
 # .maxPanel, issue #1905). Override at `docker run` time with
-# `-e OMNIROUTE_MEMORY_MB=2048` (or higher) if you raise fusionTuning.maxPanel
+# `-e AGENTPROXY_MEMORY_MB=2048` (or higher) if you raise fusionTuning.maxPanel
 # above the default cap.
-ENV OMNIROUTE_MEMORY_MB=1024
-ENV NODE_OPTIONS="--max-old-space-size=${OMNIROUTE_MEMORY_MB}"
+ENV AGENTPROXY_MEMORY_MB=1024
+ENV NODE_OPTIONS="--max-old-space-size=${AGENTPROXY_MEMORY_MB}"
 
 # Data directory inside Docker — must match the volume mount in docker-compose.yml
 ENV DATA_DIR=/app/data
@@ -265,7 +265,7 @@ COPY --from=rust-builder /tmp/agentproxy-gateway ./rust/target/release/agentprox
 # starts, so guarantee the complete package independent of trace behaviour.
 COPY --from=builder /app/node_modules/better-sqlite3 ./node_modules/better-sqlite3
 # migrations land at <standalone>/migrations via assembleStandalone; point the runtime at them.
-ENV OMNIROUTE_MIGRATIONS_DIR=/app/migrations
+ENV AGENTPROXY_MIGRATIONS_DIR=/app/migrations
 
 # Docker healthcheck script — not traced by Next.js standalone output, so copy
 # it explicitly. The HEALTHCHECK CMD references it as `node healthcheck.mjs`.
@@ -317,10 +317,10 @@ ENV DASHBOARD_PORT=20129
 ENV HOSTNAME=0.0.0.0
 ENV AGENTPROXY_RUST_CORE=1
 ENV AGENTPROXY_RUST_CORE_HOST=0.0.0.0
-ENV OMNIROUTE_MEMORY_MB=1024
-ENV NODE_OPTIONS="--max-old-space-size=${OMNIROUTE_MEMORY_MB}"
+ENV AGENTPROXY_MEMORY_MB=1024
+ENV NODE_OPTIONS="--max-old-space-size=${AGENTPROXY_MEMORY_MB}"
 ENV DATA_DIR=/app/data
-ENV OMNIROUTE_MIGRATIONS_DIR=/app/migrations
+ENV AGENTPROXY_MIGRATIONS_DIR=/app/migrations
 
 COPY --from=runner-debian-base --chown=node:node /app /app
 
@@ -334,14 +334,14 @@ CMD ["node", "dev/run-standalone.mjs"]
 # ── Runner Web (web-cookie providers: Gemini Web, Claude Turnstile) ───────────
 #
 #  Two image flavors:
-#    runner-base  →  omniroute:VERSION        Lean base (~500 MB). No browsers.
-#    runner-web   →  omniroute:VERSION-web    +Chromium/Playwright (~800 MB).
+#    runner-base  →  agentproxy:VERSION        Lean base (~500 MB). No browsers.
+#    runner-web   →  agentproxy:VERSION-web    +Chromium/Playwright (~800 MB).
 #
 #  Use runner-web when you need web-cookie providers (gemini-web, claude-web,
 #  claude-turnstile). For all other providers runner-base is sufficient.
 #
 #  Build:
-#    docker build --target runner-web -t omniroute:web .
+#    docker build --target runner-web -t agentproxy:web .
 #  Compose:
 #    build:
 #      context: .

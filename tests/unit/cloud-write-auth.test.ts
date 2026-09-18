@@ -4,7 +4,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-cloud-write-auth-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-cloud-write-auth-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.DISABLE_SQLITE_AUTO_BACKUP = "true";
 process.env.JWT_SECRET = "cloud-write-auth-jwt";
@@ -37,7 +37,7 @@ const credentialsRoute = await import("../../src/app/api/cloud/credentials/updat
 const aliasRoute = await import("../../src/app/api/cloud/models/alias/route.ts");
 
 async function resetStorage() {
-  delete process.env.OMNIROUTE_API_KEY;
+  delete process.env.AGENTPROXY_API_KEY;
   delete process.env.ROUTER_API_KEY;
   process.env.INITIAL_PASSWORD = "bootstrap-password";
   process.env.JWT_SECRET = "cloud-write-auth-jwt";

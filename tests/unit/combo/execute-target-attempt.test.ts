@@ -91,7 +91,7 @@ function emptyContent200(connectionId = "c-fail"): Response {
       status: 200,
       headers: {
         "content-type": "application/json",
-        "x-omniroute-selected-connection-id": connectionId,
+        "x-agentproxy-selected-connection-id": connectionId,
       },
     }
   );

@@ -9,7 +9,7 @@
  * this script translates and inserts only those 11 keys into every locale
  * file that is missing them, leaving everything else in each locale file
  * byte-identical. Reuses the same translation backend env vars as
- * scripts/i18n/sync-ui-keys.mjs (OMNIROUTE_TRANSLATION_API_URL/KEY/MODEL).
+ * scripts/i18n/sync-ui-keys.mjs (AGENTPROXY_TRANSLATION_API_URL/KEY/MODEL).
  *
  * Usage: node scripts/ad-hoc/sync-provider-auto-fetch-i18n-keys.mjs
  */
@@ -70,10 +70,10 @@ function requireEnv(name) {
 }
 
 function backendConfig() {
-  const apiUrl = requireEnv("OMNIROUTE_TRANSLATION_API_URL").replace(/\/$/, "");
-  const apiKey = requireEnv("OMNIROUTE_TRANSLATION_API_KEY");
-  const model = requireEnv("OMNIROUTE_TRANSLATION_MODEL");
-  const timeoutMs = Number(process.env.OMNIROUTE_TRANSLATION_TIMEOUT_MS || 60000);
+  const apiUrl = requireEnv("AGENTPROXY_TRANSLATION_API_URL").replace(/\/$/, "");
+  const apiKey = requireEnv("AGENTPROXY_TRANSLATION_API_KEY");
+  const model = requireEnv("AGENTPROXY_TRANSLATION_MODEL");
+  const timeoutMs = Number(process.env.AGENTPROXY_TRANSLATION_TIMEOUT_MS || 60000);
   return { apiUrl, apiKey, model, timeoutMs };
 }
 
@@ -182,7 +182,7 @@ async function main() {
     .map((l) => l.code)
     .filter((code) => code !== "en" && onDisk.has(code));
 
-  const limit = createLimiter(Number(process.env.OMNIROUTE_TRANSLATION_CONCURRENCY || 4));
+  const limit = createLimiter(Number(process.env.AGENTPROXY_TRANSLATION_CONCURRENCY || 4));
   let filesChanged = 0;
   let keysAdded = 0;
 

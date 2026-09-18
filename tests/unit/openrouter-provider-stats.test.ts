@@ -37,7 +37,7 @@ function jsonResponse(data: unknown, status = 200): Response {
 }
 
 function useTempDataDir(): string {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-or-provider-stats-test-"));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-or-provider-stats-test-"));
   process.env.DATA_DIR = dir;
   return dir;
 }

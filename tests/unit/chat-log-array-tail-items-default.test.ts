@@ -8,7 +8,7 @@
  * (responsesContinuationStore.ts) reads this same bounded artifact back to
  * reconstruct `previous_response_id` history server-side, so once a stored
  * conversation's input/output array crossed the cap, continuation failed
- * the call outright on the `_omniroute_truncated_array` sentinel. Retention
+ * the call outright on the `_agentproxy_truncated_array` sentinel. Retention
  * (CALL_LOG_RETENTION_DAYS) already bounds total on-disk size independent of
  * this per-item cap, so raising it further doesn't change the storage
  * ceiling.

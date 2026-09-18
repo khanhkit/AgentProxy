@@ -57,7 +57,7 @@ describe("memory-embedding-remote", () => {
 describe("memory-embedding-remote error paths (with stubs)", () => {
   it("network failure returns EmbeddingError{reason:request_failed}", async () => {
     // Create a test-specific inline implementation to test error handling logic
-    const { sanitizeErrorMessage } = await import("@omniroute/open-sse/utils/error.ts");
+    const { sanitizeErrorMessage } = await import("@agentproxy/open-sse/utils/error.ts");
 
     // Simulate what embedRemote does on network failure
     const networkError = new Error("ECONNREFUSED: connection refused");
@@ -105,7 +105,7 @@ describe("memory-embedding-remote error paths (with stubs)", () => {
   });
 
   it("sanitizeErrorMessage strips stack traces from error messages", async () => {
-    const { sanitizeErrorMessage } = await import("@omniroute/open-sse/utils/error.ts");
+    const { sanitizeErrorMessage } = await import("@agentproxy/open-sse/utils/error.ts");
     const rawMsg = "Error at /home/user/project/src/index.ts:45:12";
     const sanitized = sanitizeErrorMessage(rawMsg);
     assert.ok(!sanitized.includes("/home/user"), "absolute path stripped");

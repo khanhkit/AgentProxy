@@ -5,7 +5,7 @@ import os from "node:os";
 import path from "node:path";
 
 const routeSource = fs.readFileSync("src/app/api/v1/responses/route.ts", "utf8");
-const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-responses-route-test-"));
+const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-responses-route-test-"));
 process.env.DATA_DIR = dataDir;
 process.env.REQUIRE_API_KEY = "false";
 after(() => fs.rmSync(dataDir, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 }));

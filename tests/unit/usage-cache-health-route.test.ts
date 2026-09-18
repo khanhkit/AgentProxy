@@ -12,7 +12,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-cache-health-"));
+const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-cache-health-"));
 process.env.DATA_DIR = tmpDir;
 
 // Cleanup on exit, not in test.after(): a root after-hook fires as soon as the

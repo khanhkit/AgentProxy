@@ -1,9 +1,9 @@
-import type { RequestPipelinePayloads } from "@omniroute/open-sse/utils/requestLogger.ts";
-import { classifyProviderError } from "@omniroute/open-sse/services/errorClassifier.ts";
+import type { RequestPipelinePayloads } from "@agentproxy/open-sse/utils/requestLogger.ts";
+import { classifyProviderError } from "@agentproxy/open-sse/services/errorClassifier.ts";
 import {
   sanitizeErrorMessage,
   sanitizeUpstreamDetails,
-} from "@omniroute/open-sse/utils/errorSanitization.ts";
+} from "@agentproxy/open-sse/utils/errorSanitization.ts";
 import { sanitizePII } from "../../piiSanitizer";
 import {
   omitEncryptedReasoningFromLogChunks,

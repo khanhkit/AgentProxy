@@ -97,8 +97,8 @@ export function setOperatorProviderErrorRules(
 // Scope note: `scope: "connection"` (not "provider") is correct because the
 // upstream quota is per egress IP for the free tier (the opencode free tier
 // is IP-bucketed, not account-bucketed — see #9611) and per account for paid
-// plans; a single OmniRoute provider entry maps to one user account. Multiple
-// OmniRoute connections under the same provider name mean the user has
+// plans; a single AgentProxy provider entry maps to one user account. Multiple
+// AgentProxy connections under the same provider name mean the user has
 // multiple upstream accounts — locking at the provider level would disable
 // every one of them when only one is exhausted. See Issue #2 (Monthly quota
 // exhausted treated as transient 429) and #10880 (egress-bucketed cooldown).

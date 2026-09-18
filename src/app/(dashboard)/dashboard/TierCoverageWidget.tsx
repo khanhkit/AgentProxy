@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { NOAUTH_PROVIDERS, OAUTH_PROVIDERS } from "@/shared/constants/providers";
-import type { ProviderTier } from "@omniroute/open-sse/services/tierTypes";
+import type { ProviderTier } from "@agentproxy/open-sse/services/tierTypes";
 
 type TierCount = { configured: number; active: number };
 type Coverage = { tier1: TierCount; tier2: TierCount; tier3: TierCount };

@@ -6,20 +6,20 @@
 
 ---
 
-title: "Οδηγός Ανάπτυξης OmniRoute στο Fly.io"
+title: "Οδηγός Ανάπτυξης AgentProxy στο Fly.io"
 version: 3.8.40
 lastUpdated: 2026-06-28
 ---
 
-# Οδηγός Ανάπτυξης OmniRoute στο Fly.io
+# Οδηγός Ανάπτυξης AgentProxy στο Fly.io
 
-Αυτό το έγγραφο περιγράφει την πραγματική διαδικασία ανάπτυξης του OmniRoute στο Fly.io, καλύπτοντας δύο σενάρια:
+Αυτό το έγγραφο περιγράφει την πραγματική διαδικασία ανάπτυξης του AgentProxy στο Fly.io, καλύπτοντας δύο σενάρια:
 
 - Ανάπτυξη του τρέχοντος έργου στο Fly.io για πρώτη φορά
 - Δημοσίευση μεταγενέστερων ενημερώσεων κώδικα
 - Νέα έργα που ακολουθούν την ίδια ροή εργασίας ανάπτυξης
 
-Αυτός ο οδηγός βασίζεται σε μια επαληθευμένη λειτουργική διαμόρφωση για το τρέχον έργο. Το όνομα της εφαρμογής είναι `omniroute`.
+Αυτός ο οδηγός βασίζεται σε μια επαληθευμένη λειτουργική διαμόρφωση για το τρέχον έργο. Το όνομα της εφαρμογής είναι `agentproxy`.
 
 ---
 
@@ -29,7 +29,7 @@ lastUpdated: 2026-06-28
 - Μέθοδος ανάπτυξης: Άμεση δημοσίευση μέσω τοπικού `flyctl`
 - Περιβάλλον εκτέλεσης: Χρήση του υπάρχοντος `Dockerfile` και `fly.toml` στο αποθετήριο
 - Επιμονή δεδομένων: Fly Volume προσαρτημένο στο `/data`
-- URL πρόσβασης: `https://omniroute.fly.dev/`
+- URL πρόσβασης: `https://agentproxy.example.com/`
 
 ---
 
@@ -38,7 +38,7 @@ lastUpdated: 2026-06-28
 Το `fly.toml` στο τρέχον αποθετήριο έχει επιβεβαιωθεί ότι περιέχει τα ακόλουθα βασικά στοιχεία:
 
 ```toml
-app = 'omniroute'
+app = 'agentproxy'
 primary_region = 'sin'
 
 [[mounts]]
@@ -60,7 +60,7 @@ primary_region = 'sin'
 
 Σημειώσεις:
 
-- Το `app = 'omniroute'` καθορίζει σε ποια εφαρμογή Fly στοχεύει η ανάπτυξη
+- Το `app = 'agentproxy'` καθορίζει σε ποια εφαρμογή Fly στοχεύει η ανάπτυξη
 - Το `destination = '/data'` καθορίζει τον κατάλογο προσάρτησης του μόνιμου τόμου
 - Αυτό το έργο πρέπει να ορίσει `DATA_DIR=/data`, διαφορετικά η βάση δεδομένων και τα κλειδιά θα εγγραφούν στον προσωρινό κατάλογο του container
 
@@ -98,8 +98,8 @@ flyctl version
 ### 4.1 Κλωνοποίηση του Κώδικα και Είσοδος στον Κατάλογο
 
 ```powershell
-git clone https://github.com/diegosouzapw/OmniRoute.git
-cd OmniRoute
+git clone https://github.com/khanhkit/AgentProxy.git
+cd AgentProxy
 ```
 
 ### 4.2 Επιβεβαίωση του Ονόματος Εφαρμογής
@@ -107,29 +107,29 @@ cd OmniRoute
 Ανοίξτε το `fly.toml` και επαληθεύστε την ακόλουθη γραμμή:
 
 ```toml
-app = 'omniroute'
+app = 'agentproxy'
 ```
 
 Εάν αναπτύσσετε τη δική σας νέα εφαρμογή, μπορείτε να το αλλάξετε σε ένα παγκοσμίως μοναδικό όνομα, για παράδειγμα:
 
 ```toml
-app = 'omniroute-yourname'
+app = 'agentproxy-yourname'
 ```
 
 Σημείωση:
 
 - Βεβαιωθείτε ότι η εφαρμογή που βλέπετε στην κονσόλα αντιστοιχεί στην τιμή `app` στο `fly.toml`
-- Εάν προηγουμένως χρησιμοποιούσατε διαφορετικό όνομα, όπως `oroute`, μην το συγχέετε με το `omniroute`
+- Εάν προηγουμένως χρησιμοποιούσατε διαφορετικό όνομα, όπως `oroute`, μην το συγχέετε με το `agentproxy`
 
 ### 4.3 Δημιουργία της Εφαρμογής
 
 Εάν η εφαρμογή δεν υπάρχει ακόμα:
 
 ```powershell
-flyctl apps create omniroute
+flyctl apps create agentproxy
 ```
 
-Εάν αλλάξατε το όνομα της εφαρμογής, αντικαταστήστε το `omniroute` με το όνομα που επιλέξατε.
+Εάν αλλάξατε το όνομα της εφαρμογής, αντικαταστήστε το `agentproxy` με το όνομα που επιλέξατε.
 
 ### 4.4 Πρώτη Ανάπτυξη
 
@@ -145,14 +145,14 @@ flyctl deploy
 
 ### 5.1 Επαληθευμένες Παράμετροι
 
-Αυτές οι παράμετροι έχουν χρησιμοποιηθεί σε πραγματικές αναπτύξεις στην τρέχουσα εφαρμογή `omniroute`:
+Αυτές οι παράμετροι έχουν χρησιμοποιηθεί σε πραγματικές αναπτύξεις στην τρέχουσα εφαρμογή `agentproxy`:
 
 - `API_KEY_SECRET`
 - `DATA_DIR`
 - `JWT_SECRET`
 - `MACHINE_ID_SALT`
 - `NEXT_PUBLIC_BASE_URL`
-- `OMNIROUTE_WS_BRIDGE_SECRET` (απαιτείται στην παραγωγή — χρησιμοποιείται για έλεγχο ταυτότητας γέφυρας WebSocket)
+- `AGENTPROXY_WS_BRIDGE_SECRET` (απαιτείται στην παραγωγή — χρησιμοποιείται για έλεγχο ταυτότητας γέφυρας WebSocket)
 - `STORAGE_ENCRYPTION_KEY`
 
 ### 5.2 Σχετικά με το `INITIAL_PASSWORD`
@@ -180,7 +180,7 @@ flyctl deploy
 | --------------------------------- | ----------------------- | ----------------------------------------------------------------- |
 | `API_KEY_SECRET`                  | Απαιτείται              | Χρησιμοποιείται για δημιουργία και επικύρωση κλειδιών API         |
 | `JWT_SECRET`                      | Απαιτείται              | Χρησιμοποιείται για συνεδρίες σύνδεσης και υπογραφή JWT           |
-| `OMNIROUTE_WS_BRIDGE_SECRET`      | Απαιτείται σε παραγωγή  | Μυστικό αυθεντικοποίησης γέφυρας WebSocket                        |
+| `AGENTPROXY_WS_BRIDGE_SECRET`      | Απαιτείται σε παραγωγή  | Μυστικό αυθεντικοποίησης γέφυρας WebSocket                        |
 | `STORAGE_ENCRYPTION_KEY`          | Συνιστάται ανεπιφύλακτα | Κρυπτογραφεί ευαίσθητες πληροφορίες σύνδεσης σε κατάσταση ηρεμίας |
 | `MACHINE_ID_SALT`                 | Συνιστάται              | Δημιουργεί ένα σταθερό αναγνωριστικό μηχανής                      |
 | `INITIAL_PASSWORD`                | Προαιρετικό             | Ορίζει τον αρχικό κωδικό backend κατά την πρώτη ανάπτυξη          |
@@ -191,7 +191,7 @@ flyctl deploy
 | Μεταβλητή              | Προτεινόμενη Τιμή           |
 | ---------------------- | --------------------------- |
 | `DATA_DIR`             | `/data`                     |
-| `NEXT_PUBLIC_BASE_URL` | `https://omniroute.fly.dev` |
+| `NEXT_PUBLIC_BASE_URL` | `https://agentproxy.example.com` |
 
 Σημειώσεις:
 
@@ -205,10 +205,10 @@ flyctl deploy
 1. **Ορίστε το `NEXT_PUBLIC_BASE_URL` στο δημόσιο HTTPS domain σας**
 
    ```powershell
-   flyctl secrets set NEXT_PUBLIC_BASE_URL=https://omniroute.fly.dev -a omniroute
+   flyctl secrets set NEXT_PUBLIC_BASE_URL=https://agentproxy.example.com -a agentproxy
    ```
 
-   Εάν χρησιμοποιείτε προσαρμοσμένο domain, αντικαταστήστε το με το αντίστοιχο domain (π.χ. `https://omniroute.yourdomain.com`).
+   Εάν χρησιμοποιείτε προσαρμοσμένο domain, αντικαταστήστε το με το αντίστοιχο domain (π.χ. `https://agentproxy.yourdomain.com`).
 
 2. **Διαμορφώστε το URL callback στην κονσόλα του παρόχου**
 
@@ -219,7 +219,7 @@ flyctl deploy
    ```
 
    Για παράδειγμα, ανεξάρτητα από το Gemini, Antigravity, Cursor ή GitLab Duo:
-   - `https://omniroute.fly.dev/callback`
+   - `https://agentproxy.example.com/callback`
 
    Εάν το `NEXT_PUBLIC_BASE_URL` δεν ταιριάζει με το URL callback που έχει καταχωρηθεί στον πάροχο, η ροή OAuth θα αποτύχει κατά το βήμα ανακατεύθυνσης του προγράμματος περιήγησης.
 
@@ -232,7 +232,7 @@ flyctl deploy
 Σημειώσεις:
 
 - Δεν περιλαμβάνει το `INITIAL_PASSWORD`
-- Προορίζεται για το τρέχον έργο `omniroute`
+- Προορίζεται για το τρέχον έργο `agentproxy`
 
 ```powershell
 $apiKeySecret = [Convert]::ToHexString((1..32 | ForEach-Object { Get-Random -Minimum 0 -Maximum 256 })).ToLower()
@@ -246,26 +246,26 @@ flyctl secrets set `
   JWT_SECRET=$jwtSecret `
   MACHINE_ID_SALT=$machineIdSalt `
   STORAGE_ENCRYPTION_KEY=$storageKey `
-  OMNIROUTE_WS_BRIDGE_SECRET=$wsBridgeSecret `
+  AGENTPROXY_WS_BRIDGE_SECRET=$wsBridgeSecret `
   DATA_DIR=/data `
-  NEXT_PUBLIC_BASE_URL=https://omniroute.fly.dev `
-  -a omniroute
+  NEXT_PUBLIC_BASE_URL=https://agentproxy.example.com `
+  -a agentproxy
 ```
 
 Σε Linux / macOS, μπορείτε επίσης να χρησιμοποιήσετε το `openssl rand -hex 32`:
 
 ```bash
-flyctl secrets set OMNIROUTE_WS_BRIDGE_SECRET=$(openssl rand -hex 32) -a omniroute
+flyctl secrets set AGENTPROXY_WS_BRIDGE_SECRET=$(openssl rand -hex 32) -a agentproxy
 ```
 
 Σημειώσεις:
 
-- Το `OMNIROUTE_WS_BRIDGE_SECRET` απαιτείται σε παραγωγή· η απουσία του θα διακόψει τη χειραψία της γέφυρας WebSocket
+- Το `AGENTPROXY_WS_BRIDGE_SECRET` απαιτείται σε παραγωγή· η απουσία του θα διακόψει τη χειραψία της γέφυρας WebSocket
 
 Εάν θέλετε επίσης να ορίσετε έναν αρχικό κωδικό πρόσβασης:
 
 ```powershell
-flyctl secrets set INITIAL_PASSWORD=your-strong-password -a omniroute
+flyctl secrets set INITIAL_PASSWORD=your-strong-password -a agentproxy
 ```
 
 ---
@@ -273,12 +273,12 @@ flyctl secrets set INITIAL_PASSWORD=your-strong-password -a omniroute
 ## 8. Προβολή Τρεχόντων Παραμέτρων
 
 ```powershell
-flyctl secrets list -a omniroute
+flyctl secrets list -a agentproxy
 ```
 
 Εάν η σελίδα `Secrets` στην κονσόλα δεν εμφανίζει τις αναμενόμενες μεταβλητές, ελέγξτε:
 
-- Ότι βλέπετε την εφαρμογή `omniroute`
+- Ότι βλέπετε την εφαρμογή `agentproxy`
 - Ότι η τιμή `app` στο `fly.toml` ταιριάζει με την εφαρμογή στην κονσόλα
 
 ---
@@ -295,14 +295,14 @@ flyctl deploy
 Εάν χρειάζεται μόνο να ενημερώσετε παραμέτρους χωρίς αλλαγή κώδικα:
 
 ```powershell
-flyctl secrets set KEY=value -a omniroute
+flyctl secrets set KEY=value -a agentproxy
 ```
 
 Το Fly θα εκτελέσει αυτόματα μια κυλιόμενη ενημέρωση των μηχανών.
 
 ### 9.1 Παρακολούθηση Ενημερώσεων του Upstream Repository με Διατήρηση του `fly.toml` του Fork σας
 
-Εάν το τρέχον repository είναι ένα fork και θέλετε να συγχρονίσετε ενημερώσεις από το upstream `https://github.com/diegosouzapw/OmniRoute`, ακολουθήστε την παρακάτω ροή εργασίας.
+Εάν το τρέχον repository είναι ένα fork και θέλετε να συγχρονίσετε ενημερώσεις από το upstream `https://github.com/khanhkit/AgentProxy`, ακολουθήστε την παρακάτω ροή εργασίας.
 
 Αρχικά, επαληθεύστε τα remotes σας:
 
@@ -318,7 +318,7 @@ git remote -v
 Εάν το `upstream` δεν έχει ρυθμιστεί, προσθέστε το:
 
 ```powershell
-git remote add upstream https://github.com/diegosouzapw/OmniRoute.git
+git remote add upstream https://github.com/khanhkit/AgentProxy.git
 ```
 
 Πριν από τον συγχρονισμό με το upstream, ανακτήστε τα τελευταία commits και tags:
@@ -370,8 +370,8 @@ git merge-base --is-ancestor v3.4.7 upstream/main
 3. Επαναφέρετε το `fly.toml` του fork
 4. `git push origin main`
 5. `flyctl deploy`
-6. `flyctl status -a omniroute`
-7. `flyctl logs --no-tail -a omniroute`
+6. `flyctl status -a agentproxy`
+7. `flyctl logs --no-tail -a agentproxy`
 
 Αυτή είναι η πραγματική ροή εργασίας που χρησιμοποιήθηκε κατά την αναβάθμιση του τρέχοντος έργου στην έκδοση `v3.4.7` (το παράδειγμα αναφέρεται σε ιστορική έκδοση· η τρέχουσα πραγματική έκδοση είναι `v3.8.0`).
 
@@ -382,20 +382,20 @@ git merge-base --is-ancestor v3.4.7 upstream/main
 ### 10.1 Έλεγχος Κατάστασης Εφαρμογής
 
 ```powershell
-flyctl status -a omniroute
+flyctl status -a agentproxy
 ```
 
 ### 10.2 Προβολή Αρχείων Καταγραφής Εκκίνησης
 
 ```powershell
-flyctl logs --no-tail -a omniroute
+flyctl logs --no-tail -a agentproxy
 ```
 
 ### 10.3 Επαλήθευση Προσβασιμότητας Ιστότοπου
 
 ```powershell
 try {
-  (Invoke-WebRequest -Uri "https://omniroute.fly.dev" -MaximumRedirection 5 -UseBasicParsing).StatusCode
+  (Invoke-WebRequest -Uri "https://agentproxy.example.com" -MaximumRedirection 5 -UseBasicParsing).StatusCode
 } catch {
   if ($_.Exception.Response) {
     $_.Exception.Response.StatusCode.value__
@@ -434,14 +434,14 @@ try {
 Συνήθως υπάρχουν δύο λόγοι:
 
 - Δεν έχετε εκτελέσει ακόμα `flyctl secrets set`
-- Βλέπετε διαφορετική εφαρμογή (π.χ. `oroute` αντί για `omniroute`)
+- Βλέπετε διαφορετική εφαρμογή (π.χ. `oroute` αντί για `agentproxy`)
 
 ### 12.2 Το `flyctl deploy` Αναφέρει `app not found`
 
 Δημιουργήστε πρώτα την εφαρμογή:
 
 ```powershell
-flyctl apps create omniroute
+flyctl apps create agentproxy
 ```
 
 ### 12.3 Η Ανάλυση του `fly.toml` Αποτυγχάνει
@@ -484,10 +484,10 @@ flyctl apps create omniroute
 
 ```powershell
 flyctl auth whoami
-flyctl status -a omniroute
-flyctl secrets list -a omniroute
+flyctl status -a agentproxy
+flyctl secrets list -a agentproxy
 flyctl deploy
-flyctl logs --no-tail -a omniroute
+flyctl logs --no-tail -a agentproxy
 ```
 
 Για μια κανονική έκδοση, η βασική εντολή είναι απλώς:
@@ -499,7 +499,7 @@ flyctl deploy
 Για πρώτη φορά ανάπτυξη σε νέο περιβάλλον, τα βασικά βήματα είναι:
 
 1. `flyctl auth login`
-2. `flyctl apps create omniroute`
-3. `flyctl secrets set ... -a omniroute`
+2. `flyctl apps create agentproxy`
+3. `flyctl secrets set ... -a agentproxy`
 4. `flyctl deploy`
-5. `flyctl logs --no-tail -a omniroute`
+5. `flyctl logs --no-tail -a agentproxy`

@@ -140,7 +140,7 @@ test("AP-ISS-0099 small call-log export preserves the legacy JSON envelope and f
   assert.equal(response.headers.get("content-type"), "application/json");
   assert.match(
     response.headers.get("content-disposition") ?? "",
-    /^attachment; filename="omniroute-call_logs-168h-\d{4}-\d{2}-\d{2}\.json"$/
+    /^attachment; filename="agentproxy-call_logs-168h-\d{4}-\d{2}-\d{2}\.json"$/
   );
   assert.equal(
     text,
@@ -161,7 +161,7 @@ test("AP-ISS-0099 request-log alias keeps call_logs filename and request-logs ty
   assert.equal(body.type, "request-logs");
   assert.match(
     response.headers.get("content-disposition") ?? "",
-    /^attachment; filename="omniroute-call_logs-168h-\d{4}-\d{2}-\d{2}\.json"$/
+    /^attachment; filename="agentproxy-call_logs-168h-\d{4}-\d{2}-\d{2}\.json"$/
   );
 });
 

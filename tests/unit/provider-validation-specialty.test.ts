@@ -874,8 +874,8 @@ test("search provider validators cover success, client errors, server errors and
 });
 
 test("extended search provider validators cover Google PSE, Linkup, SearchAPI, You.com and SearXNG", async () => {
-  const originalAllowPrivateProviderUrls = process.env.OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS;
-  process.env.OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS = "true";
+  const originalAllowPrivateProviderUrls = process.env.AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS;
+  process.env.AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS = "true";
   const calls = [];
   try {
     globalThis.fetch = async (url, init = {}) => {
@@ -932,9 +932,9 @@ test("extended search provider validators cover Google PSE, Linkup, SearchAPI, Y
     assert.equal(calls[3].init.headers["X-API-Key"], "you-key");
   } finally {
     if (originalAllowPrivateProviderUrls === undefined) {
-      delete process.env.OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS;
+      delete process.env.AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS;
     } else {
-      process.env.OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS = originalAllowPrivateProviderUrls;
+      process.env.AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS = originalAllowPrivateProviderUrls;
     }
   }
 });
@@ -1019,8 +1019,8 @@ test("Maritalk treats a rate-limited models probe as valid credentials", async (
 });
 
 test("local OpenAI-style providers validate without sending Authorization when apiKey is blank", async () => {
-  const originalAllowPrivateProviderUrls = process.env.OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS;
-  process.env.OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS = "true";
+  const originalAllowPrivateProviderUrls = process.env.AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS;
+  process.env.AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS = "true";
   const calls = [];
 
   try {
@@ -1065,9 +1065,9 @@ test("local OpenAI-style providers validate without sending Authorization when a
     assert.equal(calls[3].headers.Authorization, undefined);
   } finally {
     if (originalAllowPrivateProviderUrls === undefined) {
-      delete process.env.OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS;
+      delete process.env.AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS;
     } else {
-      process.env.OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS = originalAllowPrivateProviderUrls;
+      process.env.AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS = originalAllowPrivateProviderUrls;
     }
   }
 });
@@ -2543,7 +2543,7 @@ test("copilot-web validator: empty input → paste prompt", async () => {
 
 // ─── copilot-m365-web validator ──────────────────────────────────────────────
 
-test("copilot-m365-web validator: accepts pasted OmniRoute credential without /models probe", async () => {
+test("copilot-m365-web validator: accepts pasted AgentProxy credential without /models probe", async () => {
   globalThis.fetch = async () => {
     throw new Error("should not fetch");
   };

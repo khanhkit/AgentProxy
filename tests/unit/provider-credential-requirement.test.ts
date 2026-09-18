@@ -8,7 +8,7 @@ import {
   listNoCredentialProviders,
   worksWithoutCredential,
 } from "@/shared/utils/providerCredentialRequirement.ts";
-import { FREE_MODEL_BUDGETS } from "@omniroute/open-sse/config/freeModelCatalog.data.ts";
+import { FREE_MODEL_BUDGETS } from "@agentproxy/open-sse/config/freeModelCatalog.data.ts";
 
 test("classifies each credential model from the real registries", () => {
   // noAuth: the connect form never asks for a key.

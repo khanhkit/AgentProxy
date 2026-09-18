@@ -14,7 +14,7 @@ const providersPage = readFileSync(
 test("provider Learn more link uses the maintained documentation entry point", () => {
   assert.match(
     providersPage,
-    /href="https:\/\/github\.com\/diegosouzapw\/OmniRoute#-documentation"/,
+    /href="https:\/\/github\.com\/diegosouzapw\/AgentProxy#-documentation"/,
     "the provider help CTA should open the maintained GitHub documentation section"
   );
 });
@@ -22,7 +22,7 @@ test("provider Learn more link uses the maintained documentation entry point", (
 test("provider Learn more link does not use the retired documentation host", () => {
   assert.doesNotMatch(
     providersPage,
-    /https:\/\/docs\.omniroute\.io\/providers/,
-    "docs.omniroute.io/providers is no longer reachable"
+    /https:\/\/docs\.agentproxy\.io\/providers/,
+    "docs.agentproxy.io/providers is no longer reachable"
   );
 });

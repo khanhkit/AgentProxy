@@ -123,7 +123,7 @@ export function runCheckpointNow(
 }
 
 export function getWalMaintenanceIntervalMs(env: NodeJS.ProcessEnv = process.env): number {
-  const rawValue = env.OMNIROUTE_WAL_TRUNCATE_INTERVAL_MS;
+  const rawValue = env.AGENTPROXY_WAL_TRUNCATE_INTERVAL_MS;
   if (typeof rawValue === "string" && rawValue.trim().length > 0) {
     const parsed = Number(rawValue);
     if (Number.isFinite(parsed) && parsed >= 0) {

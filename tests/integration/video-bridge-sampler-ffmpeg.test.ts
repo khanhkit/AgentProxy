@@ -111,7 +111,7 @@ test(
   "scene-aware sampling handles the canonical real FFmpeg fixture matrix",
   { skip: REAL_FFMPEG_SKIP },
   async (context) => {
-    const directory = await mkdtemp(join(tmpdir(), "omniroute-video-sampler-fixtures-"));
+    const directory = await mkdtemp(join(tmpdir(), "agentproxy-video-sampler-fixtures-"));
     context.after(async () =>
       rm(directory, { force: true, recursive: true, maxRetries: 5, retryDelay: 100 })
     );

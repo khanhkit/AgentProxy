@@ -8,15 +8,15 @@ function requiredEnv(name: string): string {
   return value;
 }
 
-const testRoot = requiredEnv("OMNIROUTE_HUGGINGCHAT_TEST_ROOT");
-const fixtureRunId = requiredEnv("OMNIROUTE_HUGGINGCHAT_TEST_RUN_ID");
+const testRoot = requiredEnv("AGENTPROXY_HUGGINGCHAT_TEST_ROOT");
+const fixtureRunId = requiredEnv("AGENTPROXY_HUGGINGCHAT_TEST_RUN_ID");
 const testDataDir = requiredEnv("DATA_DIR");
-const testPluginsDir = requiredEnv("OMNIROUTE_PLUGINS_DIR");
+const testPluginsDir = requiredEnv("AGENTPROXY_PLUGINS_DIR");
 const xdgConfigDir = requiredEnv("XDG_CONFIG_HOME");
 
 for (const [name, candidate] of [
   ["DATA_DIR", testDataDir],
-  ["OMNIROUTE_PLUGINS_DIR", testPluginsDir],
+  ["AGENTPROXY_PLUGINS_DIR", testPluginsDir],
   ["XDG_CONFIG_HOME", xdgConfigDir],
 ] as const) {
   const fromRoot = relative(testRoot, candidate);
@@ -100,8 +100,8 @@ async function collectStream(body: ReadableStream<Uint8Array>): Promise<string> 
 
 test("HuggingChat turns a pre-content JSONL generation error into a sanitized 502", async () => {
   const rawError =
-    "generation failed at /srv/omniroute/providers/huggingchat.ts:44:9 api_key=super-secret\n" +
-    "    at provider (/srv/omniroute/runtime.ts:1:1)";
+    "generation failed at /srv/agentproxy/providers/huggingchat.ts:44:9 api_key=super-secret\n" +
+    "    at provider (/srv/agentproxy/runtime.ts:1:1)";
   const realFetch = globalThis.fetch;
   let callCount = 0;
   const errorLogs: string[] = [];
@@ -149,11 +149,11 @@ test("HuggingChat turns a pre-content JSONL generation error into a sanitized 50
     assert.equal(payload.error.type, "upstream_error");
     assert.equal(payload.error.code, "bad_gateway");
     assert.match(payload.error.message, /generation failed/);
-    assert.doesNotMatch(payload.error.message, /\/srv\/omniroute/);
+    assert.doesNotMatch(payload.error.message, /\/srv\/agentproxy/);
     assert.doesNotMatch(payload.error.message, /super-secret/);
     assert.doesNotMatch(payload.error.message, /\n\s*at /);
     assert.equal(errorLogs.length, 1);
-    assert.doesNotMatch(errorLogs[0], /\/srv\/omniroute/);
+    assert.doesNotMatch(errorLogs[0], /\/srv\/agentproxy/);
     assert.doesNotMatch(errorLogs[0], /super-secret/);
     assert.doesNotMatch(errorLogs[0], /\n\s*at /);
   } finally {
@@ -163,8 +163,8 @@ test("HuggingChat turns a pre-content JSONL generation error into a sanitized 50
 
 test("HuggingChat turns a terminal non-stream JSONL error into a sanitized 502", async () => {
   const rawError =
-    "generation failed at /srv/omniroute/providers/huggingchat.ts:55:2 cookie=super-secret\n" +
-    "    at provider (/srv/omniroute/runtime.ts:1:1)";
+    "generation failed at /srv/agentproxy/providers/huggingchat.ts:55:2 cookie=super-secret\n" +
+    "    at provider (/srv/agentproxy/runtime.ts:1:1)";
   const realFetch = globalThis.fetch;
   let callCount = 0;
 
@@ -197,7 +197,7 @@ test("HuggingChat turns a terminal non-stream JSONL error into a sanitized 502",
     };
     assert.equal(payload.error.type, "upstream_error");
     assert.equal(payload.error.code, "bad_gateway");
-    assert.doesNotMatch(payload.error.message, /\/srv\/omniroute/);
+    assert.doesNotMatch(payload.error.message, /\/srv\/agentproxy/);
     assert.doesNotMatch(payload.error.message, /super-secret/);
     assert.doesNotMatch(payload.error.message, /\n\s*at /);
   } finally {
@@ -207,8 +207,8 @@ test("HuggingChat turns a terminal non-stream JSONL error into a sanitized 502",
 
 test("HuggingChat rejects its JSONL generator after partial content instead of faking success", async () => {
   const rawError =
-    "generation failed at /srv/omniroute/providers/huggingchat.ts:44:9 access_token=super-secret\n" +
-    "    at provider (/srv/omniroute/runtime.ts:1:1)";
+    "generation failed at /srv/agentproxy/providers/huggingchat.ts:44:9 access_token=super-secret\n" +
+    "    at provider (/srv/agentproxy/runtime.ts:1:1)";
   const stream = streamJsonlToOpenAi(
     jsonlBody([
       JSON.stringify({ type: "stream", token: "partial answer" }),
@@ -235,8 +235,8 @@ test("HuggingChat partial failures reach stream finalization, persistence, and f
   const connectionId = `huggingchat-stream-error-boundary-${fixtureRunId}`;
   const publicErrorMessage = "HuggingChat generation failed";
   const rawError =
-    "generation failed at /srv/omniroute/providers/huggingchat.ts:44:9 access_token=super-secret\n" +
-    "    at provider (/srv/omniroute/runtime.ts:1:1)";
+    "generation failed at /srv/agentproxy/providers/huggingchat.ts:44:9 access_token=super-secret\n" +
+    "    at provider (/srv/agentproxy/runtime.ts:1:1)";
   const realFetch = globalThis.fetch;
   let callCount = 0;
   const errorLogs: string[] = [];
@@ -375,10 +375,10 @@ test("HuggingChat partial failures reach stream finalization, persistence, and f
     assert.match(wire, new RegExp(publicErrorMessage));
     assert.match(wire, /data: \[DONE\]/);
     assert.doesNotMatch(wire, /"finish_reason":"stop"/);
-    assert.doesNotMatch(wire, /\/srv\/omniroute/);
+    assert.doesNotMatch(wire, /\/srv\/agentproxy/);
     assert.doesNotMatch(wire, /super-secret/);
     assert.equal(errorLogs.length, 1);
-    assert.doesNotMatch(errorLogs[0], /\/srv\/omniroute/);
+    assert.doesNotMatch(errorLogs[0], /\/srv\/agentproxy/);
     assert.doesNotMatch(errorLogs[0], /super-secret/);
     assert.doesNotMatch(errorLogs[0], /\n\s*at /);
 
@@ -402,7 +402,7 @@ test("HuggingChat partial failures reach stream finalization, persistence, and f
     assert.equal(completedDetail.status, 502);
     assert.equal(completedDetail.error, publicErrorMessage);
     assert.equal(completedDetail.errorCode, "stream_pipeline_error");
-    assert.doesNotMatch(JSON.stringify(completedDetail), /\/srv\/omniroute|super-secret/);
+    assert.doesNotMatch(JSON.stringify(completedDetail), /\/srv\/agentproxy|super-secret/);
     assert.deepEqual(
       [...usageHistory.getCompletedDetails().keys()],
       [requestId],

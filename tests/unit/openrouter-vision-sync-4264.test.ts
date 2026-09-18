@@ -11,7 +11,7 @@ import path from "node:path";
 // derived vision from the OpenRouter live block, which is SKIPPED once a provider
 // has synced models. So vision-capable models showed up as non-vision after import.
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-or-vision-4264-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-or-vision-4264-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.API_KEY_SECRET = process.env.API_KEY_SECRET || "vision-4264-secret";
 

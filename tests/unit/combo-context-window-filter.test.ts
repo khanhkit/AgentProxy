@@ -8,7 +8,7 @@ import path from "node:path";
 // Context metadata is advisory: known-fitting targets are preferred, while
 // unknown and catalog-too-small targets remain available for runtime fallback.
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-combo-context-filter-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-combo-context-filter-"));
 const ORIGINAL_DATA_DIR = process.env.DATA_DIR;
 process.env.DATA_DIR = TEST_DATA_DIR;
 

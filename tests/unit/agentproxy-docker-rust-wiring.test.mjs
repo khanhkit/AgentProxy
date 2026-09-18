@@ -54,13 +54,13 @@ test("standalone bundle ships and launches the Rust supervisor", () => {
 test("Docker publish workflow is AgentProxy GHCR-only and multi-arch", () => {
   const workflow = fs.readFileSync(".github/workflows/docker-publish.yml", "utf8");
   assert.match(workflow, /ghcr\.io\/\$\{\{ github\.repository_owner \}\}\/agentproxy/i);
-  assert.doesNotMatch(workflow, /diegosouzapw\/omniroute/i);
+  assert.doesNotMatch(workflow, /diegosouzapw\/agentproxy/i);
   assert.doesNotMatch(workflow, /DOCKERHUB_(USERNAME|TOKEN)/);
   assert.doesNotMatch(workflow, /docker\.io/i);
   assert.match(workflow, /linux\/amd64/);
   assert.match(workflow, /linux\/arm64/);
-  assert.match(workflow, /OMNIROUTE_BUILD_MEMORY_MB=7168/);
-  assert.match(workflow, /OMNIROUTE_USE_TURBOPACK=0/);
+  assert.match(workflow, /AGENTPROXY_BUILD_MEMORY_MB=7168/);
+  assert.match(workflow, /AGENTPROXY_USE_TURBOPACK=0/);
 });
 
 test("Docker manifest platform verification accepts pretty OCI index JSON", (t) => {

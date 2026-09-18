@@ -8,14 +8,14 @@
  * mirrors the first time it was written as a duplicate.
  */
 
-import { appendNoThinkingVariants } from "@omniroute/open-sse/utils/noThinkingAlias";
-import { appendClaudeEffortVariants } from "@omniroute/open-sse/utils/claudeEffortVariants";
-import { appendSyncedEffortVariants } from "@omniroute/open-sse/utils/syncedEffortVariants";
-import { appendCcDiscoveryAliases } from "@omniroute/open-sse/utils/ccDiscoveryAliases";
+import { appendNoThinkingVariants } from "@agentproxy/open-sse/utils/noThinkingAlias";
+import { appendClaudeEffortVariants } from "@agentproxy/open-sse/utils/claudeEffortVariants";
+import { appendSyncedEffortVariants } from "@agentproxy/open-sse/utils/syncedEffortVariants";
+import { appendCcDiscoveryAliases } from "@agentproxy/open-sse/utils/ccDiscoveryAliases";
 import {
   appendFunctionalGatewayMirrors,
   isFunctionalGatewayMirror,
-} from "@omniroute/open-sse/utils/functionalGatewayMirrors";
+} from "@agentproxy/open-sse/utils/functionalGatewayMirrors";
 import { isCcAliasGlobalEnabled, getCcAliasSettingsBulk } from "@/lib/db/ccDiscoveryAliases";
 import { buildCcAliasPredicate } from "./ccAliasPredicate";
 import {
@@ -23,7 +23,7 @@ import {
   getFunctionalGatewaySettingsBulk,
 } from "@/lib/db/functionalGatewayMirrors";
 import { buildFunctionalGatewayPredicate } from "./functionalGatewayPredicate";
-import { getPassthroughProviders, REGISTRY } from "@omniroute/open-sse/config/providerRegistry";
+import { getPassthroughProviders, REGISTRY } from "@agentproxy/open-sse/config/providerRegistry";
 import { hasEligibleConnectionForModel } from "@/domain/connectionModelRules";
 import { dedupeExactCatalogIds } from "./catalogDedupe";
 import { sortCatalogModelsProviderGrouped } from "./catalogOrder";

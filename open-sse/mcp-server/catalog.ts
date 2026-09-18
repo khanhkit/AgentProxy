@@ -249,7 +249,7 @@ export async function getMcpModelsCatalog(
     listProviderConnections?: () => Promise<ProviderConnectionLike[]>;
   } = {}
 ): Promise<McpCatalogResponse> {
-  const fetchJson = deps.fetchJson ?? ((path: string) => import("./server.ts").then((m) => m.omniRouteFetch(path)));
+  const fetchJson = deps.fetchJson ?? ((path: string) => import("./server.ts").then((m) => m.AgentProxyFetch(path)));
   const listProviderConnections = deps.listProviderConnections ?? getProviderConnections;
   const aliasMap = buildProviderAliasMap();
   const normalizeProviderId = (value: string) => aliasMap[value] || value;

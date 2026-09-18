@@ -1,3 +1,7 @@
+---
+title: "GitHub Main-Branch Governance Policy"
+---
+
 # GitHub Main-Branch Governance Policy
 
 ## Authority

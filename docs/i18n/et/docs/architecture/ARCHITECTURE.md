@@ -4,7 +4,7 @@
 
 ---
 
-# OmniRoute Arhitektuur
+# AgentProxy Arhitektuur
 
 🌐 **Languages:** 🇺🇸 [English](../../../../architecture/ARCHITECTURE.md) · 🇸🇦 [ar](../../../ar/docs/architecture/ARCHITECTURE.md) · 🇦🇿 [az](../../../az/docs/architecture/ARCHITECTURE.md) · 🇧🇬 [bg](../../../bg/docs/architecture/ARCHITECTURE.md) · 🇧🇩 [bn](../../../bn/docs/architecture/ARCHITECTURE.md) · 🇨🇿 [cs](../../../cs/docs/architecture/ARCHITECTURE.md) · 🇩🇰 [da](../../../da/docs/architecture/ARCHITECTURE.md) · 🇩🇪 [de](../../../de/docs/architecture/ARCHITECTURE.md) · 🇬🇷 [el](../../../el/docs/architecture/ARCHITECTURE.md) · 🇪🇸 [es](../../../es/docs/architecture/ARCHITECTURE.md) · 🇮🇷 [fa](../../../fa/docs/architecture/ARCHITECTURE.md) · 🇫🇮 [fi](../../../fi/docs/architecture/ARCHITECTURE.md) · 🇫🇷 [fr](../../../fr/docs/architecture/ARCHITECTURE.md) · 🇮🇪 [ga](../../../ga/docs/architecture/ARCHITECTURE.md) · 🇮🇳 [gu](../../../gu/docs/architecture/ARCHITECTURE.md) · 🇮🇱 [he](../../../he/docs/architecture/ARCHITECTURE.md) · 🇮🇳 [hi](../../../hi/docs/architecture/ARCHITECTURE.md) · 🇭🇷 [hr](../../../hr/docs/architecture/ARCHITECTURE.md) · 🇭🇺 [hu](../../../hu/docs/architecture/ARCHITECTURE.md) · 🇮🇩 [id](../../../id/docs/architecture/ARCHITECTURE.md) · 🇮🇹 [it](../../../it/docs/architecture/ARCHITECTURE.md) · 🇯🇵 [ja](../../../ja/docs/architecture/ARCHITECTURE.md) · 🇰🇷 [ko](../../../ko/docs/architecture/ARCHITECTURE.md) · 🇱🇹 [lt](../../../lt/docs/architecture/ARCHITECTURE.md) · 🇱🇻 [lv](../../../lv/docs/architecture/ARCHITECTURE.md) · 🇮🇳 [mr](../../../mr/docs/architecture/ARCHITECTURE.md) · 🇲🇾 [ms](../../../ms/docs/architecture/ARCHITECTURE.md) · 🇲🇹 [mt](../../../mt/docs/architecture/ARCHITECTURE.md) · 🇳🇱 [nl](../../../nl/docs/architecture/ARCHITECTURE.md) · 🇳🇴 [no](../../../no/docs/architecture/ARCHITECTURE.md) · 🇵🇭 [phi](../../../phi/docs/architecture/ARCHITECTURE.md) · 🇵🇱 [pl](../../../pl/docs/architecture/ARCHITECTURE.md) · 🇵🇹 [pt](../../../pt/docs/architecture/ARCHITECTURE.md) · 🇧🇷 [pt-BR](../../../pt-BR/docs/architecture/ARCHITECTURE.md) · 🇷🇴 [ro](../../../ro/docs/architecture/ARCHITECTURE.md) · 🇷🇺 [ru](../../../ru/docs/architecture/ARCHITECTURE.md) · 🇸🇰 [sk](../../../sk/docs/architecture/ARCHITECTURE.md) · 🇸🇮 [sl](../../../sl/docs/architecture/ARCHITECTURE.md) · 🇷🇸 [sr](../../../sr/docs/architecture/ARCHITECTURE.md) · 🇸🇪 [sv](../../../sv/docs/architecture/ARCHITECTURE.md) · 🇰🇪 [sw](../../../sw/docs/architecture/ARCHITECTURE.md) · 🇮🇳 [ta](../../../ta/docs/architecture/ARCHITECTURE.md) · 🇮🇳 [te](../../../te/docs/architecture/ARCHITECTURE.md) · 🇹🇭 [th](../../../th/docs/architecture/ARCHITECTURE.md) · 🇹🇷 [tr](../../../tr/docs/architecture/ARCHITECTURE.md) · 🇺🇦 [uk-UA](../../../uk-UA/docs/architecture/ARCHITECTURE.md) · 🇵🇰 [ur](../../../ur/docs/architecture/ARCHITECTURE.md) · 🇻🇳 [vi](../../../vi/docs/architecture/ARCHITECTURE.md) · 🇨🇳 [zh-CN](../../../zh-CN/docs/architecture/ARCHITECTURE.md) · 🇹🇼 [zh-TW](../../../zh-TW/docs/architecture/ARCHITECTURE.md)
 
@@ -12,7 +12,7 @@ _Viimati uuendatud: 2026-06-28_
 
 ## Kokkuvõte
 
-OmniRoute on kohalik AI ruuteri lüüs ja töölaud, mis on ehitatud Next.js baasil.
+AgentProxy on kohalik AI ruuteri lüüs ja töölaud, mis on ehitatud Next.js baasil.
 See pakub ühte OpenAI-ga ühilduvat lõpp-punkti (`/v1/*`) ja suunab liikluse mitmete ülemvoolu teenusepakkujate vahel, tegeledes tõlkimise, tõrketaluvuse, tokenite värskendamise ja kasutuse jälgimisega.
 
 Peamised võimalused:
@@ -164,7 +164,7 @@ flowchart LR
         BROWSER[Brauseri töölaud]
     end
 
-    subgraph Router[OmniRoute kohalik protsess]
+    subgraph Router[AgentProxy kohalik protsess]
         API[V1 ühilduvuse API\n/v1/*]
         DASH[Töölaud + haldus-API\n/api/*]
         CORE[SSE + tõlketuum\nopen-sse + src/sse]
@@ -327,7 +327,7 @@ OAuth teenusepakkuja moodulid (22 üksikfaili kataloogis `src/lib/oauth/provider
 
 ## 5) Manustatud teenused (v3.8.4)
 
-OmniRoute saab paigaldada, jälgida ja marsruutida kohalikult töötavatesse AI tööriistade protsessidesse, mida nimetatakse **manustatud teenusteks** (embedded services). Tarnitakse viit: 9Router, CLIProxyAPI, Bifrost, Mux ja Dario.
+AgentProxy saab paigaldada, jälgida ja marsruutida kohalikult töötavatesse AI tööriistade protsessidesse, mida nimetatakse **manustatud teenusteks** (embedded services). Tarnitakse viit: 9Router, CLIProxyAPI, Bifrost, Mux ja Dario.
 
 Arhitektuuri kihid:
 
@@ -435,7 +435,7 @@ ei peaks lockout/eelarve/tagavara loogikat ise kokku panema.
 - Kvoodivahemälu: `src/domain/quotaCache.ts`
 - Degradatsiooni olek: `src/domain/degradation.ts`
 - Konfiguratsiooni audit: `src/domain/configAudit.ts`
-- OmniRoute vastuse metaandmete ehitaja: `src/domain/omnirouteResponseMeta.ts`
+- AgentProxy vastuse metaandmete ehitaja: `src/domain/agentproxyResponseMeta.ts`
 - Hindamise allsüsteem: `src/domain/assessment/` — perioodilised hindamistööd
 
 ### E. Autoriseerimise torujuhe
@@ -519,7 +519,7 @@ Peamine olekuandmebaas (SQLite):
 
 - Põhitaristu: `src/lib/db/core.ts` (better-sqlite3, migratsioonid, WAL)
 - Andmebaasi kasutus: impordi konkreetsed `src/lib/db/*` moodulid otse (vana `localDb.ts` koondmoodul on eemaldatud)
-- fail: `${DATA_DIR}/storage.sqlite` (või `$XDG_CONFIG_HOME/omniroute/storage.sqlite`, kui see on määratud, vastasel juhul `~/.omniroute/storage.sqlite`)
+- fail: `${DATA_DIR}/storage.sqlite` (või `$XDG_CONFIG_HOME/agentproxy/storage.sqlite`, kui see on määratud, vastasel juhul `~/.agentproxy/storage.sqlite`)
 - olemid (tabelid + KV nimeruumid): providerConnections, providerNodes, modelAliases, combos, apiKeys, settings, pricing, **customModels**, **proxyConfig**, **ipFilter**, **thinkingBudget**, **systemPrompt**
 
 Kasutuse (usage) püsivus:
@@ -815,7 +815,7 @@ flowchart LR
         Browser[Töölaua veebilehitseja]
     end
 
-    subgraph ContainerOrProcess[OmniRoute töötlusaegne keskkond]
+    subgraph ContainerOrProcess[AgentProxy töötlusaegne keskkond]
         Next[Next.js server\nPORT=20128]
         Core[SSE tuum + täiturid]
         MainDB[(storage.sqlite)]
@@ -934,7 +934,7 @@ Kõik muud pakkujad (kaasa arvatud kohandatud ühilduvad sõlmed) kasutavad `Def
 ## Pakkujate ühilduvusmaatriks
 
 > **Märkus:** Allolev maatriks on esinduslik valik 351 registreeritud pakkujast
-> OmniRoute v3.8.0-s. Kanoonilise ja pidevalt värskendatava loendi leiate
+> AgentProxy v3.8.0-s. Kanoonilise ja pidevalt värskendatava loendi leiate
 > failist [`docs/reference/PROVIDER_REFERENCE.md`](../reference/PROVIDER_REFERENCE.md) (automaatselt genereeritud) või usaldusväärikast allikast
 > `src/shared/constants/providers.ts` (valideeritud Zod-iga laadimisel).
 
@@ -1116,7 +1116,7 @@ Detailne päringu andmekoormuse jäädvustus salvestab kuni neli JSON-andmekoorm
 - kliendilt saadud töötlemata päring
 - tõlgitud päring, mis tegelikult upstream-i saadeti
 - pakkuja vastus, taastatud JSON-ina; voogesitatud vastused pakitakse kokku lõppkokkuvõtteks pluss voo metaandmed
-- OmniRoute'i tagastatud lõplik kliendivastus; voogesitatud vastused salvestatakse samal kokkupakitud kokkuvõtte kujul
+- AgentProxy'i tagastatud lõplik kliendivastus; voogesitatud vastused salvestatakse samal kokkupakitud kokkuvõtte kujul
 
 ## Turvatundlikud piirid
 
@@ -1142,11 +1142,11 @@ Koodis aktiivselt kasutatavad keskkonnamuutujad:
 
 ## Tuntud arhitektuurilised märkused
 
-1. `usageDb` ja `localDb` jagavad sama baaskataloogi põhimõtet (`DATA_DIR` -> `XDG_CONFIG_HOME/omniroute` -> `~/.omniroute`) koos pärandfailide migratsiooniga.
+1. `usageDb` ja `localDb` jagavad sama baaskataloogi põhimõtet (`DATA_DIR` -> `XDG_CONFIG_HOME/agentproxy` -> `~/.agentproxy`) koos pärandfailide migratsiooniga.
 2. `/api/v1/route.ts` delegeerib samale ühtsele kataloogiehitajale, mida kasutab `/api/v1/models` (`src/app/api/v1/models/catalog.ts`), et vältida semantilist lahknevust.
 3. Päringulogija kirjutab kui lubatud, täielikud päised/kehad; käsitle logikataloogi kui tundlikku.
 4. Pilve käitumine sõltub õigest `NEXT_PUBLIC_BASE_URL` väärtusest ja pilve lõpp-punkti kättesaadavusest.
-5. Kataloog `open-sse/` avaldatakse **npm workspace paketina** `@omniroute/open-sse`. Lähtekood impordib seda kaudu `@omniroute/open-sse/...` (lahendatakse Next.js `transpilePackages` abil). Selle dokumendi failiteed kasutavad järjepidevuse huvides jätkuvalt kataloogi nime `open-sse/`.
+5. Kataloog `open-sse/` avaldatakse **npm workspace paketina** `@agentproxy/open-sse`. Lähtekood impordib seda kaudu `@agentproxy/open-sse/...` (lahendatakse Next.js `transpilePackages` abil). Selle dokumendi failiteed kasutavad järjepidevuse huvides jätkuvalt kataloogi nime `open-sse/`.
 6. Töölaua diagrammid kasutavad **Recharts**'i (SVG-põhine) juurdepääsetavate, interaktiivsete analüütikavisualisatsioonide jaoks (mudeli kasutuse tulpdiagrammid, teenusepakkujate jaotuse tabelid õnnestumismääradega).
 7. E2E testid kasutavad **Playwright**'it (`tests/e2e/`), käivitatakse käsuga `npm run test:e2e`. Ühiktestid kasutavad **Node.js test runner**'it (`tests/unit/`), käivitatakse käsuga `npm run test:unit`. Lähtekood kataloogis `src/` on **TypeScript** (`.ts`/`.tsx`); `open-sse/` workspace jääb JavaScript'iks (`.js`).
 8. Seadete leht on jaotatud 7 vahelehele: General, Appearance, AI, Security, Routing, Resilience, Advanced. Resilience leht konfigureerib ainult päringujärjekorra, ühenduse jahtumisaja, teenusepakkuja katkestaja (breaker) ja jahtumisaja-ootamise käitumise; katkestaja käituse hetkeseisu näidatakse Health lehel.
@@ -1157,7 +1157,7 @@ Koodis aktiivselt kasutatavad keskkonnamuutujad:
 ## Toimimise kontrollnimekiri
 
 - Ehita lähtekoodist: `npm run build`
-- Ehita Docker'i pilt: `docker build -t omniroute .`
+- Ehita Docker'i pilt: `docker build -t agentproxy .`
 - Käivita teenus ja kontrolli:
 - `GET /api/settings`
 - `GET /api/v1/models`

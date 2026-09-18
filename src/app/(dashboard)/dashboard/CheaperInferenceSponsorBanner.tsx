@@ -5,19 +5,19 @@ import { useTranslations } from "next-intl";
 import ProviderIcon from "@/shared/components/ProviderIcon";
 
 // The URL in README.md's Open Source Friends section. This used to go through
-// our own link.omniroute.online shortener for click metrics, but that domain no
+// our own link.agentproxy.online shortener for click metrics, but that domain no
 // longer resolves (every slug 404s) after the move to omniskill.online, so the
 // CTA points straight at the destination again.
-const CHEAPER_INFERENCE_URL = "https://cheaperinference.com/?utm_source=omniroute";
+const CHEAPER_INFERENCE_URL = "https://cheaperinference.com/";
 
 // Cheaper Inference brand green (#31f889). White text on it fails contrast, so
 // the CTA pairs it with the dark ink from the provider's color token (colors.ts:
 // cheaperinference.text = #04170d). Hex values stay in sync with that token.
 
-const DISMISS_STORAGE_KEY = "omniroute-cheaperinference-sponsor-banner-dismissed-v1";
+const DISMISS_STORAGE_KEY = "agentproxy-cheaperinference-sponsor-banner-dismissed-v1";
 // Same-tab signal for the dismiss button, since writing localStorage doesn't
 // fire a "storage" event in the tab that wrote it.
-const DISMISS_EVENT = "omniroute:cheaperinference-sponsor-banner-dismissed";
+const DISMISS_EVENT = "agentproxy:cheaperinference-sponsor-banner-dismissed";
 
 function isNotDismissed(): boolean {
   try {
@@ -40,7 +40,7 @@ function getServerSnapshot() {
 }
 
 /**
- * Dismissable banner announcing the Cheaper Inference OmniRoute partnership on
+ * Dismissable banner announcing the Cheaper Inference AgentProxy partnership on
  * the dashboard home page — same size/shape as KimiSponsorBanner, no version
  * gate (durable partnership, not a time-boxed offer). The logomark reuses
  * <ProviderIcon providerId="cheaperinference" .../>.

@@ -57,7 +57,7 @@ test("buildRunPlan for codex injects model into provider args", async () => {
   assert.equal(plan.model, "glm/glm-4.5");
   assert.equal(logicalArgs(plan.args).includes("--help"), true);
   assert.equal(
-    logicalArgs(plan.args).some((a) => a.includes("model_providers.omniroute.model")),
+    logicalArgs(plan.args).some((a) => a.includes("model_providers.agentproxy.model")),
     true
   );
   assert.equal(plan.authSource, "option");
@@ -96,9 +96,9 @@ test("buildRunPlan for OpenCode uses an ephemeral compatible config", async () =
     ["run", "reply OK"]
   );
   assert.equal(plan.target, "opencode");
-  assert.deepEqual(logicalArgs(plan.args).slice(0, 2), ["--model", "omniroute/glm/glm-5.2"]);
+  assert.deepEqual(logicalArgs(plan.args).slice(0, 2), ["--model", "agentproxy/glm/glm-5.2"]);
   assert.equal(plan.envDiff.changedOrAdded.includes("OPENCODE_CONFIG_CONTENT"), true);
-  assert.equal(plan.envDiff.changedOrAdded.includes("OMNIROUTE_API_KEY"), true);
+  assert.equal(plan.envDiff.changedOrAdded.includes("AGENTPROXY_API_KEY"), true);
   assert.equal(plan.configOverlay, "OPENCODE_CONFIG_CONTENT (process environment only)");
   assert.equal(JSON.stringify(plan).includes("sk_test_x"), false);
 });
@@ -111,7 +111,7 @@ test("buildRunPlan for Qwen requires a deterministic model and injects only env 
   );
   assert.equal(plan.target, "qwen");
   assert.deepEqual(logicalArgs(plan.args).slice(0, 2), ["--model", "glm/glm-5.2"]);
-  assert.equal(plan.envDiff.changedOrAdded.includes("OMNIROUTE_API_KEY"), true);
+  assert.equal(plan.envDiff.changedOrAdded.includes("AGENTPROXY_API_KEY"), true);
   assert.equal(plan.configOverlay, "temporary QWEN_HOME (removed after exit)");
   await assert.rejects(
     () => buildRunPlan("qwen", { baseUrl: "https://relay.example.test", apiKey: "sk_test_x" }),
@@ -176,15 +176,15 @@ test("dry-run --json does not print resolved auth token", async () => {
 });
 
 test("--api-key-env resolves credentials without exposing their value in the plan", async () => {
-  const previous = process.env.OMNIROUTE_RUN_TEST_TOKEN;
-  process.env.OMNIROUTE_RUN_TEST_TOKEN = "sk_env_private";
+  const previous = process.env.AGENTPROXY_RUN_TEST_TOKEN;
+  process.env.AGENTPROXY_RUN_TEST_TOKEN = "sk_env_private";
   try {
-    const plan = await buildRunPlan("codex-cli", { apiKeyEnv: "OMNIROUTE_RUN_TEST_TOKEN" });
+    const plan = await buildRunPlan("codex-cli", { apiKeyEnv: "AGENTPROXY_RUN_TEST_TOKEN" });
     assert.equal(plan.authSource, "env");
-    assert.equal(plan.envDiff.changedOrAdded.includes("OMNIROUTE_API_KEY"), true);
+    assert.equal(plan.envDiff.changedOrAdded.includes("AGENTPROXY_API_KEY"), true);
     assert.equal(JSON.stringify(plan).includes("sk_env_private"), false);
   } finally {
-    if (previous === undefined) delete process.env.OMNIROUTE_RUN_TEST_TOKEN;
-    else process.env.OMNIROUTE_RUN_TEST_TOKEN = previous;
+    if (previous === undefined) delete process.env.AGENTPROXY_RUN_TEST_TOKEN;
+    else process.env.AGENTPROXY_RUN_TEST_TOKEN = previous;
   }
 });

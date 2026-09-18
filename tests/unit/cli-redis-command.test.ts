@@ -2,7 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 
-// ─── T-12 (#3932 PR-3): `omniroute redis` CLI command ─────────────────────
+// ─── T-12 (#3932 PR-3): `agentproxy redis` CLI command ─────────────────────
 
 test("registerRedis: exports a registerRedis function", async () => {
   const mod = await import(`../../bin/cli/commands/redis.mjs?case=${Date.now()}-${Math.random()}`);
@@ -197,7 +197,7 @@ test("runRedisDownCommand: returns 1 when no podman/docker is available", async 
   }
 });
 
-// ─── `omniroute redis up` must publish on loopback, not 0.0.0.0 ───────────
+// ─── `agentproxy redis up` must publish on loopback, not 0.0.0.0 ───────────
 // The launcher starts Redis with no `requirepass` unless --password is given,
 // so a bare "6379:6379" publish spec would hand the LAN an unauthenticated
 // Redis (the container runtime defaults an unqualified spec to 0.0.0.0).

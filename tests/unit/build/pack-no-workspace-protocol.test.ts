@@ -26,42 +26,42 @@ function readJson(filePath: string): Record<string, unknown> {
 
 test("resolvePackageJsonWorkspaceProtocols replaces workspace:*, workspace:^, workspace:~", () => {
   const versions = new Map([
-    ["@omniroute/open-sse", "3.8.51"],
-    ["@omniroute/shared", "1.2.3"],
+    ["@agentproxy/open-sse", "3.8.51"],
+    ["@agentproxy/shared", "1.2.3"],
   ]);
 
   const resolved = resolvePackageJsonWorkspaceProtocols(
     {
-      name: "omniroute",
+      name: "agentproxy",
       version: "3.8.51",
       dependencies: {
-        "@omniroute/open-sse": "workspace:^",
-        "@omniroute/shared": "workspace:*",
+        "@agentproxy/open-sse": "workspace:^",
+        "@agentproxy/shared": "workspace:*",
         lodash: "^4.17.0",
       },
       devDependencies: {
-        "@omniroute/open-sse": "workspace:~",
+        "@agentproxy/open-sse": "workspace:~",
       },
       peerDependencies: {
-        "@omniroute/shared": "workspace:1.2.3",
+        "@agentproxy/shared": "workspace:1.2.3",
       },
       optionalDependencies: {
-        "@omniroute/open-sse": "workspace:>=3.0.0",
+        "@agentproxy/open-sse": "workspace:>=3.0.0",
       },
     },
     versions
   );
 
-  assert.equal((resolved.dependencies as Record<string, string>)["@omniroute/open-sse"], "^3.8.51");
-  assert.equal((resolved.dependencies as Record<string, string>)["@omniroute/shared"], "1.2.3");
+  assert.equal((resolved.dependencies as Record<string, string>)["@agentproxy/open-sse"], "^3.8.51");
+  assert.equal((resolved.dependencies as Record<string, string>)["@agentproxy/shared"], "1.2.3");
   assert.equal((resolved.dependencies as Record<string, string>).lodash, "^4.17.0");
   assert.equal(
-    (resolved.devDependencies as Record<string, string>)["@omniroute/open-sse"],
+    (resolved.devDependencies as Record<string, string>)["@agentproxy/open-sse"],
     "~3.8.51"
   );
-  assert.equal((resolved.peerDependencies as Record<string, string>)["@omniroute/shared"], "1.2.3");
+  assert.equal((resolved.peerDependencies as Record<string, string>)["@agentproxy/shared"], "1.2.3");
   assert.equal(
-    (resolved.optionalDependencies as Record<string, string>)["@omniroute/open-sse"],
+    (resolved.optionalDependencies as Record<string, string>)["@agentproxy/open-sse"],
     ">=3.0.0"
   );
 });
@@ -234,7 +234,7 @@ test("prepublish Step 11 fixture resolves workspace: protocols in dist package.j
   fs.mkdirSync(distDir, { recursive: true });
   const distPkgPath = path.join(distDir, "package.json");
   writeJson(distPkgPath, {
-    name: "omniroute",
+    name: "agentproxy",
     version: "3.8.51",
     dependencies: {
       "@scope/shared": "workspace:^",

@@ -236,7 +236,7 @@ function getCodexAccountRotation(detail) {
   const sources = [detail?.requestBody, detail?.responseBody];
 
   for (const source of sources) {
-    const meta = source?._omniroute;
+    const meta = source?._agentproxy;
     const rotation = meta?.codexAccountRotation;
     if (
       rotation &&

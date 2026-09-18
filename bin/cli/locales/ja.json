@@ -1,8 +1,8 @@
 {
   "common": {
     "error": "エラー: {message}",
-    "serverOffline": "OmniRouteサーバーはオフラインです。起動: omniroute serve",
-    "authRequired": "認証が必要です。OMNIROUTE_API_KEYを設定するか実行してください: omniroute setup",
+    "serverOffline": "AgentProxyサーバーはオフラインです。起動: agentproxy serve",
+    "authRequired": "認証が必要です。AGENTPROXY_API_KEYを設定するか実行してください: agentproxy setup",
     "rateLimited": "リクエスト制限を超えました。{seconds}秒後に再試行してください。",
     "timeout": "{ms}ms後にリクエストがタイムアウトしました。",
     "success": "完了。",
@@ -15,18 +15,18 @@
     "yesOpt": "確認をスキップ"
   },
   "program": {
-    "description": "OmniRoute — 自動フォールバック付きスマートAIルーター",
+    "description": "AgentProxy — 自動フォールバック付きスマートAIルーター",
     "version": "バージョンを表示して終了",
     "output": "出力形式 (table, json, jsonl, csv)",
     "quiet": "重要でない出力を抑制",
     "no_color": "カラー出力を無効化",
     "timeout": "HTTPリクエストタイムアウト（ミリ秒）",
-    "api_key": "OmniRouteサーバーのAPIキー",
-    "base_url": "OmniRouteサーバーのベースURL",
+    "api_key": "AgentProxyサーバーのAPIキー",
+    "base_url": "AgentProxyサーバーのベースURL",
     "context": "このコマンドで使用するサーバーコンテキスト/プロファイル",
-    "lang": "CLI表示言語を設定（OMNIROUTE_LANGを上書き）"
+    "lang": "CLI表示言語を設定（AGENTPROXY_LANGを上書き）"
   },
   "redis": {
-    "description": "OmniRouteのキャッシュとクォータ追跡用に、ローカルRedisコンテナー（PodmanまたはDocker）をワンクリックで起動"
+    "description": "AgentProxyのキャッシュとクォータ追跡用に、ローカルRedisコンテナー（PodmanまたはDocker）をワンクリックで起動"
   }
 }

@@ -4,7 +4,7 @@ import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-process.env.DATA_DIR = mkdtempSync(join(tmpdir(), "omniroute-aihorde-image-"));
+process.env.DATA_DIR = mkdtempSync(join(tmpdir(), "agentproxy-aihorde-image-"));
 
 import {
   capHordeN,

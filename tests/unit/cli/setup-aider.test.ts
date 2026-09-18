@@ -18,7 +18,7 @@ test("buildAiderConfig sets openai-api-base + openai/<model>, preserves rest", (
 test("buildAiderRecipe references the env key + headless command", () => {
   const r = buildAiderRecipe({ apiBase: "http://vps:20128", model: "glm/glm-5.2" });
   assert.ok(r.includes("OPENAI_API_BASE=http://vps:20128"));
-  assert.ok(r.includes("OPENAI_API_KEY=$OMNIROUTE_API_KEY"));
+  assert.ok(r.includes("OPENAI_API_KEY=$AGENTPROXY_API_KEY"));
   assert.ok(r.includes("--model openai/glm/glm-5.2"));
   assert.ok(r.includes("--message") && r.includes("--yes"));
 });

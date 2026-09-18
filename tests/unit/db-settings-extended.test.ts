@@ -4,7 +4,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-settings-ext-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-settings-ext-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../src/lib/db/core.ts");
@@ -12,11 +12,11 @@ const settings = await import("../../src/lib/db/settings.ts");
 
 function cleanupGlobalDb() {
   try {
-    if ((globalThis as any).__omnirouteDb?.open) {
-      (globalThis as any).__omnirouteDb.close();
+    if ((globalThis as any).__agentproxyDb?.open) {
+      (globalThis as any).__agentproxyDb.close();
     }
   } catch {}
-  delete (globalThis as any).__omnirouteDb;
+  delete (globalThis as any).__agentproxyDb;
 }
 
 async function resetStorage() {

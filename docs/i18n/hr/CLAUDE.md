@@ -55,7 +55,7 @@ Pohranite te artefakte unutar repozitorija `_tasks/` (`git -C _tasks …`), nika
 
 Ovaj projekt nadograđuje zadani privremeni radni prostor sustava (`/tmp/claude-*/…`). Privremene/radne
 datoteke — izvozi, generirani zipovi, jednokratni međuizlazi, sve što biste inače stavili u `/tmp` —
-pišite u `/home/diegosouzapw/dev/proxys/OmniRoute/_artifacts/`.
+pišite u `/home/diegosouzapw/dev/proxys/AgentProxy/_artifacts/`.
 
 - `_artifacts/` je korijen `_*` putanje: već je u gitignore (`AGENTS.md` → "Korijen `_*` putanja"), živi
   samo na disku, nikada se ne prati.

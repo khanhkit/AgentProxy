@@ -83,7 +83,7 @@ test("backup auto status sem arquivo retorna 0", async () => {
 });
 
 // Regressão #8512: `backup` re-declara os mesmos nomes de opção que `create`/
-// `auto enable` no fallback legacy ("omniroute backup" sem subcomando) — o
+// `auto enable` no fallback legacy ("agentproxy backup" sem subcomando) — o
 // Commander resolve a opção no ancestral mais próximo que a declara, então o
 // valor do subcomando é descartado silenciosamente e substituído pelo default
 // da própria opção do subcomando (null/false/[]).
@@ -94,7 +94,7 @@ test("backup auto enable — nenhuma opção é sombreada pelo parent backup", a
   const { tmpdir } = await import("node:os");
   const { join } = await import("node:path");
 
-  const dataDir = mkdtempSync(join(tmpdir(), "omniroute-backup-test-"));
+  const dataDir = mkdtempSync(join(tmpdir(), "agentproxy-backup-test-"));
   const origDataDir = process.env.DATA_DIR;
   process.env.DATA_DIR = dataDir;
   try {
@@ -164,9 +164,9 @@ test("backup create — nenhuma opção é sombreada pelo parent backup", async 
   assert.deepEqual(capturedOpts.exclude, ["*.log"], "--exclude não deve ser sombreado");
 });
 
-// Regressão de documentação: `omniroute backup` sem subcomando é o uso
+// Regressão de documentação: `agentproxy backup` sem subcomando é o uso
 // canônico documentado em USER_GUIDE.md / CLI-TOOLS.md / AGENT-SKILLS.md
-// ("omniroute backup # Snapshot config + DB"). Remover só as opções
+// ("agentproxy backup # Snapshot config + DB"). Remover só as opções
 // duplicadas do parent (causa real do #8512) não pode remover essa ação.
 test("backup — sem subcomando ainda cria um backup (uso legado documentado)", async () => {
   const { registerBackup } = await import("../../bin/cli/commands/backup.mjs");
@@ -175,7 +175,7 @@ test("backup — sem subcomando ainda cria um backup (uso legado documentado)", 
   const { tmpdir } = await import("node:os");
   const { join } = await import("node:path");
 
-  const dataDir = mkdtempSync(join(tmpdir(), "omniroute-backup-bare-test-"));
+  const dataDir = mkdtempSync(join(tmpdir(), "agentproxy-backup-bare-test-"));
   const origDataDir = process.env.DATA_DIR;
   process.env.DATA_DIR = dataDir;
   try {
@@ -184,7 +184,7 @@ test("backup — sem subcomando ainda cria um backup (uso legado documentado)", 
     await prog.parseAsync(["node", "x", "backup"], { from: "node" });
     assert.ok(
       existsSync(join(dataDir, "backups")),
-      "omniroute backup deve criar o diretório de backups"
+      "agentproxy backup deve criar o diretório de backups"
     );
   } finally {
     if (origDataDir === undefined) delete process.env.DATA_DIR;

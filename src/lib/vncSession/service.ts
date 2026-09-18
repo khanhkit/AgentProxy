@@ -39,7 +39,7 @@ export interface HarvestSessionResult {
   } | null;
 }
 
-const LABEL = "com.omniroute.browser-login";
+const LABEL = "com.agentproxy.browser-login";
 const SESSIONS = new Map<string, VncSession>();
 let idleTimer: NodeJS.Timeout | null = null;
 let reconciliationPromise: Promise<void> | null = null;
@@ -81,7 +81,7 @@ function docker(
 }
 
 export function sessionKey(sessionId: string): string {
-  return `omniroute-browser-login-${sessionId.replace(/[^a-zA-Z0-9]/g, "").slice(0, 20)}`;
+  return `agentproxy-browser-login-${sessionId.replace(/[^a-zA-Z0-9]/g, "").slice(0, 20)}`;
 }
 
 export function getSession(connectionId: string, sessionId: string): VncSession | undefined {
@@ -225,9 +225,9 @@ export async function startSession(connectionId: string): Promise<VncSession> {
     if (result.code !== 0) {
       const message = result.err.trim() || "docker run failed";
       const buildHint =
-        VNC_CONFIG.image === "omniroute-vnc-chromium:local" &&
+        VNC_CONFIG.image === "agentproxy-vnc-chromium:local" &&
         /pull access denied|unable to find image|not found/i.test(message)
-          ? " Build it with: docker build -t omniroute-vnc-chromium:local docker/vnc-browser/chromium"
+          ? " Build it with: docker build -t agentproxy-vnc-chromium:local docker/vnc-browser/chromium"
           : "";
       throw new Error(`${message}${buildHint}`);
     }

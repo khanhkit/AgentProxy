@@ -1,7 +1,7 @@
 /**
  * Tests for Kiro multi-account isolation (issue #2328).
  *
- * Each OmniRoute connection must own its own OIDC client registration
+ * Each AgentProxy connection must own its own OIDC client registration
  * (clientId + clientSecret) so that refreshing or re-authenticating one
  * account does not invalidate another account's refresh token.
  */
@@ -21,7 +21,7 @@ import assert from "node:assert/strict";
 import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-const ISOLATED_HOME = mkdtempSync(join(tmpdir(), "omniroute-kiro-home-"));
+const ISOLATED_HOME = mkdtempSync(join(tmpdir(), "agentproxy-kiro-home-"));
 process.env.HOME = ISOLATED_HOME;
 process.env.USERPROFILE = ISOLATED_HOME;
 

@@ -10,7 +10,7 @@ import { promisify } from "util";
 import { getChecksums, getReleaseByVersion } from "./releaseChecker.ts";
 
 const execFileAsync = promisify(execFile);
-const DEFAULT_DATA_DIR = process.env.DATA_DIR || path.join(os.homedir(), ".omniroute");
+const DEFAULT_DATA_DIR = process.env.DATA_DIR || path.join(os.homedir(), ".agentproxy");
 const IMMUTABLE_RELEASE_VERSION_PATTERN =
   /^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$/;
 const SHA256_HEX_PATTERN = /^[0-9a-fA-F]{64}$/;

@@ -23,9 +23,9 @@ test.after(() => {
   delete process.env.RADAR_SUPPORTER_PLANS_URL;
 });
 
-test("getContributorClaimUrl: defaults to the radar.omniroute.online GitHub OAuth entry point", async () => {
+test("getContributorClaimUrl: defaults to the AgentProxy repository when no private claim service is configured", async () => {
   const { getContributorClaimUrl } = await import("../../src/lib/radar/links.ts");
-  assert.equal(getContributorClaimUrl(), "https://radar.omniroute.online/auth/github");
+  assert.equal(getContributorClaimUrl(), "https://github.com/khanhkit/AgentProxy");
 });
 
 test("getContributorClaimUrl: honors RADAR_CONTRIBUTOR_CLAIM_URL override", async () => {
@@ -34,9 +34,9 @@ test("getContributorClaimUrl: honors RADAR_CONTRIBUTOR_CLAIM_URL override", asyn
   assert.equal(getContributorClaimUrl(), "https://fork.example.com/auth/github");
 });
 
-test("getSupporterPlansUrl: defaults to the radar.omniroute.online plans page", async () => {
+test("getSupporterPlansUrl: defaults to the AgentProxy repository when no private plans service is configured", async () => {
   const { getSupporterPlansUrl } = await import("../../src/lib/radar/links.ts");
-  assert.equal(getSupporterPlansUrl(), "https://radar.omniroute.online/planos");
+  assert.equal(getSupporterPlansUrl(), "https://github.com/khanhkit/AgentProxy");
 });
 
 test("getSupporterPlansUrl: honors RADAR_SUPPORTER_PLANS_URL override", async () => {
@@ -48,9 +48,8 @@ test("getSupporterPlansUrl: honors RADAR_SUPPORTER_PLANS_URL override", async ()
 test("getContributorClaimUrl / getSupporterPlansUrl: empty-string env falls back to default (not a blank link)", async () => {
   process.env.RADAR_CONTRIBUTOR_CLAIM_URL = "";
   process.env.RADAR_SUPPORTER_PLANS_URL = "";
-  const { getContributorClaimUrl, getSupporterPlansUrl } = await import(
-    "../../src/lib/radar/links.ts"
-  );
-  assert.equal(getContributorClaimUrl(), "https://radar.omniroute.online/auth/github");
-  assert.equal(getSupporterPlansUrl(), "https://radar.omniroute.online/planos");
+  const { getContributorClaimUrl, getSupporterPlansUrl } =
+    await import("../../src/lib/radar/links.ts");
+  assert.equal(getContributorClaimUrl(), "https://github.com/khanhkit/AgentProxy");
+  assert.equal(getSupporterPlansUrl(), "https://github.com/khanhkit/AgentProxy");
 });

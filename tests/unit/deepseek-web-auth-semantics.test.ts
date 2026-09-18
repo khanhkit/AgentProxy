@@ -8,7 +8,7 @@ const { classifyFailure } = await import(
   "../../src/app/api/providers/[id]/test/route.ts"
 );
 
-const SYNTHETIC_INVALID_TOKEN = "omniroute-auth-keeper-invalid-session-deepseek";
+const SYNTHETIC_INVALID_TOKEN = "agentproxy-auth-keeper-invalid-session-deepseek";
 
 type DeepSeekValidationResult = Awaited<ReturnType<typeof validateDeepSeekWebProvider>>;
 

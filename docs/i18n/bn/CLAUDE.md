@@ -39,7 +39,7 @@ npm run test:all
 
 ## প্রকল্পের সংক্ষিপ্ত বিবরণ
 
-**OmniRoute** — একক AI প্রক্সি/রাউটার। একটি এন্ডপয়েন্ট, 329 LLM প্রদানকারী, স্বয়ংক্রিয় ফ fallback।
+**AgentProxy** — একক AI প্রক্সি/রাউটার। একটি এন্ডপয়েন্ট, 329 LLM প্রদানকারী, স্বয়ংক্রিয় ফ fallback।
 
 | স্তর          | অবস্থান                 | উদ্দেশ্য                                                                  |
 | ------------- | ----------------------- | ------------------------------------------------------------------------- |
@@ -82,7 +82,7 @@ API রুটগুলি একটি সঙ্গতিপূর্ণ প্�
 
 ## রেজিলিয়েন্স রানটাইম স্টেট
 
-OmniRoute-এ তিনটি সম্পর্কিত কিন্তু আলাদা অস্থায়ী-ব্যর্থতা মেকানিজম রয়েছে। রাউটিং আচরণ ডিবাগ করার সময় তাদের পরিধি আলাদা রাখুন। একটি সংক্ষিপ্ত মানচিত্রের জন্য [3-স্তরের রেজিলিয়েন্স ডায়াগ্রাম](./docs/diagrams/exported/resilience-3layers.svg) দেখুন (সূত্র: [docs/diagrams/resilience-3layers.mmd](./docs/diagrams/resilience-3layers.mmd))।
+AgentProxy-এ তিনটি সম্পর্কিত কিন্তু আলাদা অস্থায়ী-ব্যর্থতা মেকানিজম রয়েছে। রাউটিং আচরণ ডিবাগ করার সময় তাদের পরিধি আলাদা রাখুন। একটি সংক্ষিপ্ত মানচিত্রের জন্য [3-স্তরের রেজিলিয়েন্স ডায়াগ্রাম](./docs/diagrams/exported/resilience-3layers.svg) দেখুন (সূত্র: [docs/diagrams/resilience-3layers.mmd](./docs/diagrams/resilience-3layers.mmd))।
 
 ### প্রোভাইডার সার্কিট ব্রেকার
 
@@ -194,7 +194,7 @@ baseCooldownMs * 2 ** failureIndex;
 ### কোড শৈলী
 
 - **2 স্পেস**, সেমিকোলন, ডাবল কোটেশন, 100 চর প্রস্থ, es5 ট্রেইলিং কমা (lint-staged দ্বারা Prettier এর মাধ্যমে প্রয়োগিত)
-- **ইম্পোর্ট**: বাইরের → অভ্যন্তরীণ (`@/`, `@omniroute/open-sse`) → আপেক্ষিক
+- **ইম্পোর্ট**: বাইরের → অভ্যন্তরীণ (`@/`, `@agentproxy/open-sse`) → আপেক্ষিক
 - **নামকরণ**: ফাইল=camelCase/kebab, উপাদান=PascalCase, ধ্রুবক=UPPER_SNAKE
 - **ESLint**: `no-eval`, `no-implied-eval`, `no-new-func` = সর্বত্র ত্রুটি; `no-explicit-any` = `open-sse/` এবং `tests/` এ সতর্কতা
 - **TypeScript**: `strict: false`, লক্ষ্য ES2022, মডিউল esnext, রেজোলিউশন বান্ডলার। স্পষ্ট টাইপ পছন্দ করুন।
@@ -364,9 +364,9 @@ git push -u origin feat/your-feature
   | ≥22.22.2 <23 |
   | ≥24 <25, ES মডিউল
 - **টাইপস্ক্রিপ্ট**: 5.9+, লক্ষ্য ES2022, মডিউল esnext, রেজোলিউশন bundler
-- **পথ অ্যালিয়াস**: `@/*` → `src/`, `@omniroute/open-sse` → `open-sse/`, `@omniroute/open-sse/*` → `open-sse/*`
+- **পথ অ্যালিয়াস**: `@/*` → `src/`, `@agentproxy/open-sse` → `open-sse/`, `@agentproxy/open-sse/*` → `open-sse/*`
 - **ডিফল্ট পোর্ট**: 20128 (API + ড্যাশবোর্ড একই পোর্টে)
-- **ডেটা ডিরেক্টরি**: `DATA_DIR` env var, ডিফল্ট `~/.omniroute/`
+- **ডেটা ডিরেক্টরি**: `DATA_DIR` env var, ডিফল্ট `~/.agentproxy/`
 - **মূল env vars**: `PORT`, `JWT_SECRET`, `API_KEY_SECRET`, `INITIAL_PASSWORD`, `REQUIRE_API_KEY`, `APP_LOG_LEVEL`
 - সেটআপ: `cp .env.example .env` তারপর `JWT_SECRET` (`openssl rand -base64 48`) এবং `API_KEY_SECRET` (`openssl rand -hex 32`) তৈরি করুন
 
@@ -389,4 +389,4 @@ git push -u origin feat/your-feature
 13. কখনও শেল স্ক্রিপ্টে বাহ্যিক পথ বা রানটাইম মানগুলি `exec()`/`spawn()` এ পাস করার সময় স্ট্রিং-ইন্টারপোলেট করবেন না — পরিবর্তে `env` অপশন দ্বারা পাস করুন। রেফারেন্স: `src/mitm/cert/install.ts::updateNssDatabases`।
 14. কখনও CodeQL / Secret-Scanning সতর্কতা অগ্রাহ্য করবেন না (a) প্রথমে উপরের প্যাটার্ন ডকস চেক করে দেখুন যে সহায়কটি প্রযোজ্য কিনা, এবং (b) অগ্রাহ্য মন্তব্যে প্রযুক্তিগত যুক্তি রেকর্ড করুন। প্রিসিডেন্ট: `js/stack-trace-exposure` কলসাইটে উত্থাপিত হয়েছে যা ইতিমধ্যে `sanitizeErrorMessage()` এর মাধ্যমে রুট করে এটি একটি পরিচিত CodeQL সীমাবদ্ধতা (কাস্টম স্যানিটাইজার স্বীকৃত নয়) — `false positive` হিসাবে অগ্রাহ্য করুন `docs/security/ERROR_SANITIZATION.md` উল্লেখ করে।
 15. কখনও শিশু প্রক্রিয়া স্পন করে এমন রুটগুলি প্রকাশ করবেন না (`/api/mcp/`, `/api/cli-tools/runtime/`) `src/server/authz/routeGuard.ts` এ `isLocalOnlyPath()` শ্রেণীবিভাগ ছাড়া। লুপব্যাক প্রয়োগ যে কোনও প্রমাণীকরণ চেকের আগে শর্তহীনভাবে ঘটে — টানেলের মাধ্যমে ফাঁস হওয়া JWT প্রক্রিয়া স্পনিংকে ট্রিগার করতে পারে না। দেখুন `docs/security/ROUTE_GUARD_TIERS.md`।
-16. কখনই AI সহকারী, LLM, বা স্বয়ংক্রিয় অ্যাকাউন্টকে কৃতিত্ব দেওয়া `Co-Authored-By` ট্রেইলার অন্তর্ভুক্ত করবেন না (যেমন "Claude", "GPT", "Copilot", "Bot" নাম সম্বলিত; `anthropic.com` / `openai.com` / বট-মালিকানাধীন `noreply.github.com` ঠিকানার ইমেইল)। এই ধরনের ট্রেইলার GitHub-এ বট অ্যাকাউন্টে কমিট অ্যাট্রিবিউশন রাউট করে, PR ইতিহাসে আসল লেখককে (`diegosouzapw`) লুকিয়ে রাখে। মানব সহযোগীরা — upstream PR লেখক এবং OmniRoute-এ পোর্ট করা issue রিপোর্টার সহ — মানক `Co-authored-by: Name <email>` ট্রেইলার দিয়ে কৃতিত্ব পেতে পারেন এবং পাওয়া উচিত; upstream-port ওয়ার্কফ্লো (`/port-upstream-features`, `/port-upstream-issues`) এর উপর নির্ভর করে।
+16. কখনই AI সহকারী, LLM, বা স্বয়ংক্রিয় অ্যাকাউন্টকে কৃতিত্ব দেওয়া `Co-Authored-By` ট্রেইলার অন্তর্ভুক্ত করবেন না (যেমন "Claude", "GPT", "Copilot", "Bot" নাম সম্বলিত; `anthropic.com` / `openai.com` / বট-মালিকানাধীন `noreply.github.com` ঠিকানার ইমেইল)। এই ধরনের ট্রেইলার GitHub-এ বট অ্যাকাউন্টে কমিট অ্যাট্রিবিউশন রাউট করে, PR ইতিহাসে আসল লেখককে (`diegosouzapw`) লুকিয়ে রাখে। মানব সহযোগীরা — upstream PR লেখক এবং AgentProxy-এ পোর্ট করা issue রিপোর্টার সহ — মানক `Co-authored-by: Name <email>` ট্রেইলার দিয়ে কৃতিত্ব পেতে পারেন এবং পাওয়া উচিত; upstream-port ওয়ার্কফ্লো (`/port-upstream-features`, `/port-upstream-issues`) এর উপর নির্ভর করে।

@@ -4,7 +4,7 @@ title: "Supply-Chain Gates"
 
 # Supply-Chain Gates (Phase 8 · Block A)
 
-OmniRoute publishes npm + Docker artifacts. These gates provide provenance,
+AgentProxy publishes npm + Docker artifacts. These gates provide provenance,
 inventory (SBOM) and CVE scanning, all OSS, plugged into release workflows.
 **Advisory-first** posture — they report now, promote to blocking after the 1st
 green release.
@@ -61,7 +61,7 @@ audits the workflows themselves; Scorecard measures the repo posture in aggregat
 ## Runtime managed-update integrity
 
 Release-time gates are complemented by fail-closed admission for operator-triggered updates.
-OmniRoute's CLI updater resolves the current npm release version and SRI together, then promotes the
+AgentProxy's CLI updater resolves the current npm release version and SRI together, then promotes the
 exact version rather than `@latest`. npm-managed embedded services similarly resolve an exact
 version plus `dist.integrity` before installation. CLIProxyAPI release installs require a matching
 SHA-256 entry in upstream `checksums.txt` before extraction; absent or malformed checksum metadata

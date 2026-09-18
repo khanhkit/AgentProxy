@@ -18,9 +18,9 @@
     "forceConsistentCasingInFileNames": true,
     "paths": {
       "@/*": ["./src/*"],
-      "@omniroute/open-sse": ["./open-sse"],
-      "@omniroute/open-sse/*": ["./open-sse/*"],
-      "@omniroute/browser-pool": ["./packages/browser-pool/src"]
+      "@agentproxy/open-sse": ["./open-sse"],
+      "@agentproxy/open-sse/*": ["./open-sse/*"],
+      "@agentproxy/browser-pool": ["./packages/browser-pool/src"]
     },
     "plugins": [
       {
@@ -55,7 +55,7 @@
     ".tmp",
     ".claude",
     ".worktrees",
-    "@omniroute",
+    "@agentproxy",
     "_tasks",
     "_ideia",
     "_mono_repo",

@@ -6,10 +6,10 @@
 
 ## Tuairiscithe Léire
 
-Má aimsíonn tú leochaileacht slándála i OmniRoute, cuir in iúl go freagrach é:
+Má aimsíonn tú leochaileacht slándála i AgentProxy, cuir in iúl go freagrach é:
 
 1. **NÁ OSCAIL** acheist phoiblí GitHub
-2. Úsáid [Advisories Slándála GitHub](https://github.com/diegosouzapw/OmniRoute/security/advisories/new)
+2. Úsáid [Advisories Slándála GitHub](https://github.com/khanhkit/AgentProxy/security/advisories/new)
 3. Cuir san áireamh: cur síos, na chéimeanna le hathsholáthar, agus tionchar indéanta
 
 ## Amlíne Freagartha
@@ -32,7 +32,7 @@ Má aimsíonn tú leochaileacht slándála i OmniRoute, cuir in iúl go freagrac
 
 ## Airgeadraíocht Slándála
 
-Cuireann OmniRoute i bhfeidhm móilín sábháilteachta il-shraithe:
+Cuireann AgentProxy i bhfeidhm móilín sábháilteachta il-shraithe:
 
 ```
 Iarratas → CORS → Líne (sainaithin → polasaithe → coinnigh)
@@ -69,7 +69,7 @@ STORAGE_ENCRYPTION_KEY=$(openssl rand -hex 32)
 
 ### 🛡️ Créatúr Cosanta
 
-Tá **clárlann cosaintí** athluchtaithe te a sheachadann OmniRoute (`src/lib/guardrails/`) le 3 chosaintí ionsuite eagraithe de réir túsála:
+Tá **clárlann cosaintí** athluchtaithe te a sheachadann AgentProxy (`src/lib/guardrails/`) le 3 chosaintí ionsuite eagraithe de réir túsála:
 
 | Cosaint            | Túsála | Cuspóir                                                                                                  |
 | ------------------ | ------ | -------------------------------------------------------------------------------------------------------- |
@@ -77,7 +77,7 @@ Tá **clárlann cosaintí** athluchtaithe te a sheachadann OmniRoute (`src/lib/g
 | `pii-masker`       | 10     | Scriosadh PII roimh iarratas + tar éis iarratais (ríomhphoist, fóin, CPF, CNPJ, cártaí creidmheasa, SSN) |
 | `prompt-injection` | 20     | Braíonn patrúin cealaithe/athsamhaltáin/réabadóireachta/sreabhála                                        |
 
-Cláraíonn cosaintí saincheaptha trí `registerGuardrail(new MyGuardrail())`. Tá an tsamhail oscailte d'éifeachtaí (ní chuireann eisceachtaí cosc ar thráffic). Rogh-amach in aghaidh an iarratais tríd an ceanntinn `x-omniroute-disabled-guardrails`. → Féach [`docs/security/GUARDRAILS.md`](docs/security/GUARDRAILS.md).
+Cláraíonn cosaintí saincheaptha trí `registerGuardrail(new MyGuardrail())`. Tá an tsamhail oscailte d'éifeachtaí (ní chuireann eisceachtaí cosc ar thráffic). Rogh-amach in aghaidh an iarratais tríd an ceanntinn `x-agentproxy-disabled-guardrails`. → Féach [`docs/security/GUARDRAILS.md`](docs/security/GUARDRAILS.md).
 
 ### 🧠 Cosaint Ionsaí Achainí
 
@@ -178,15 +178,15 @@ Diúltaíonn an freastalaí go gníomhach do luachanna lag aitheanta ar nós `ch
 
 ```bash
 docker run -d \
-  --name omniroute \
+  --name agentproxy \
   --restart unless-stopped \
   --read-only \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
+  -v agentproxy-data:/app/data \
   -e JWT_SECRET="$(openssl rand -base64 48)" \
   -e API_KEY_SECRET="$(openssl rand -hex 32)" \
   -e STORAGE_ENCRYPTION_KEY="$(openssl rand -hex 32)" \
-  diegosouzapw/omniroute:latest
+  khanhkit/agentproxy:latest
 ```
 
 ---
@@ -218,7 +218,7 @@ Tá na rialacha seo forfheidhmithe ag uirlisí agus athbhreithneoirí:
 
 ## Torthaí scanta slabhra soláthair (Socket.dev / Snyk / cosúil leis sin)
 
-Baineann an tsoithse npm `omniroute` foilsithe le tógáil Next.js `output: "standalone"`, a chiallaíonn go dtéann gach láimhseálaí bealaigh — lena n-áirítear gnéithe pribhléid a bhfuil doicimhéadú déanta orthu (MITM, iompórtáil Zed, Cloud Sync, forimeallaigh seirbhíse insínte) — i bpíosaí móideim `next/server/*.js`. Déanann scanóirí slabhra soláthair heuristics cumascú ar na píosaí sin i gcoinne comharthaímharcanna malware go minic.
+Baineann an tsoithse npm `agentproxy` foilsithe le tógáil Next.js `output: "standalone"`, a chiallaíonn go dtéann gach láimhseálaí bealaigh — lena n-áirítear gnéithe pribhléid a bhfuil doicimhéadú déanta orthu (MITM, iompórtáil Zed, Cloud Sync, forimeallaigh seirbhíse insínte) — i bpíosaí móideim `next/server/*.js`. Déanann scanóirí slabhra soláthair heuristics cumascú ar na píosaí sin i gcoinne comharthaímharcanna malware go minic.
 
 Maidir le gach catagóir torthaí, coinnimid dearbhú cothabhála do gach tortha:
 
@@ -227,7 +227,7 @@ Maidir le gach catagóir torthaí, coinnimid dearbhú cothabhála do gach tortha
 - Bloic `SECURITY-AUDITOR-NOTE:` i bhfochód ag gach feidhmmharc san áireamh ag dul ar ais go dtí an doiciméad céanna.
 
 Maidir le húsáideoirí nach féidir leo an foláireamh a mhaolú ina n-iarratas: tóg le
-`OMNIROUTE_BUILD_PROFILE=minimal npm run build`. Athraíonn sin ceithre mhódúl íogair le stubs a sheolann HTTP 503 `feature-disabled` ag am rith, ionas go bhfuil na cosáin pribhléide fhisiciúil as láthair ón bhfardal.
+`AGENTPROXY_BUILD_PROFILE=minimal npm run build`. Athraíonn sin ceithre mhódúl íogair le stubs a sheolann HTTP 503 `feature-disabled` ag am rith, ionas go bhfuil na cosáin pribhléide fhisiciúil as láthair ón bhfardal.
 Féach [`docs/security/SOCKET_DEV_FINDINGS.md`](docs/security/SOCKET_DEV_FINDINGS.md)
 don oideas foilseacháin.
 

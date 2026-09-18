@@ -12,7 +12,7 @@
  */
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { applyCompression } from "@omniroute/open-sse/services/compression/strategySelector.ts";
+import { applyCompression } from "@agentproxy/open-sse/services/compression/strategySelector.ts";
 import { normalizeStackedPipeline } from "../../../src/lib/db/compression.ts";
 
 test("standard mode compresses even when cavemanConfig.enabled is false (B-MODE-ENGINE-DECOUPLE)", () => {

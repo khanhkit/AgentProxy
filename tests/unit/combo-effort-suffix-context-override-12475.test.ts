@@ -9,7 +9,7 @@ import path from "node:path";
 // the static catalog and inverts priority order (Diego confirmed the
 // chokepoint is resolveContextOverrideVerdict).
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-12475-effort-override-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-12475-effort-override-"));
 const ORIGINAL_DATA_DIR = process.env.DATA_DIR;
 process.env.DATA_DIR = TEST_DATA_DIR;
 

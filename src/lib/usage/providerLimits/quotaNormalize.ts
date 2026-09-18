@@ -1,8 +1,8 @@
 import {
   isUserCallableAntigravityModelId,
   toClientAntigravityModelId,
-} from "@omniroute/open-sse/config/antigravityModelAliases.ts";
-import { isDiscoverableAgyModelId } from "@omniroute/open-sse/config/agyModels.ts";
+} from "@agentproxy/open-sse/config/antigravityModelAliases.ts";
+import { isDiscoverableAgyModelId } from "@agentproxy/open-sse/config/agyModels.ts";
 
 type JsonRecord = Record<string, unknown>;
 

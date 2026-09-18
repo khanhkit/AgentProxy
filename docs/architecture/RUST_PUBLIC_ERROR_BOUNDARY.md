@@ -1,3 +1,7 @@
+---
+title: "Rust Public Error Boundary"
+---
+
 # Rust Public Error Boundary
 
 AP-ISS-0085 defines the Rust native Codex public-error contract.

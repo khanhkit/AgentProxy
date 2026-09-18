@@ -120,9 +120,9 @@ jobs:
           target: runner-base
           platforms: ${{ matrix.platform }}
           build-args: |
-            OMNIROUTE_USE_TURBOPACK=0
-            OMNIROUTE_BUILD_MEMORY_MB=7168
-            OMNIROUTE_BUILD_WORKERS=2
+            AGENTPROXY_USE_TURBOPACK=0
+            AGENTPROXY_BUILD_MEMORY_MB=7168
+            AGENTPROXY_BUILD_WORKERS=2
           outputs: type=image,push-by-digest=true,name-canonical=true,push=true
           tags: ${{ env.IMAGE_NAME }}
           provenance: mode=max
@@ -143,7 +143,7 @@ jobs:
           docker run -d --name agentproxy-smoke \
             -p 127.0.0.1:20128:20128 \
             -p 127.0.0.1:20129:20129 \
-            -e OMNIROUTE_AUTH_DISABLED=1 \
+            -e AGENTPROXY_AUTH_DISABLED=1 \
             "$image_ref"
           for attempt in $(seq 1 120); do
             if curl --fail --silent --max-time 2 http://127.0.0.1:20128/readyz >/dev/null \

@@ -1,9 +1,9 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 
-import { parseAutoConfig } from "@omniroute/open-sse/services/combo/autoConfig.ts";
-import { DEFAULT_WEIGHTS, normalizeScoringWeights } from "@omniroute/open-sse/services/autoCombo/scoring.ts";
-import { MODE_PACKS } from "@omniroute/open-sse/services/autoCombo/modePacks.ts";
+import { parseAutoConfig } from "@agentproxy/open-sse/services/combo/autoConfig.ts";
+import { DEFAULT_WEIGHTS, normalizeScoringWeights } from "@agentproxy/open-sse/services/autoCombo/scoring.ts";
+import { MODE_PACKS } from "@agentproxy/open-sse/services/autoCombo/modePacks.ts";
 
 // Split guard for Block J Task 2: parseAutoConfig was extracted verbatim from
 // handleComboChat's inline auto-strategy config block. These assertions pin the

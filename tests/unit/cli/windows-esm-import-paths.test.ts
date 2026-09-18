@@ -19,7 +19,7 @@ const PROJECT_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), 
 // parses as the URL scheme `e:` and rejects. Every such call site must go
 // through pathToFileURL().
 //
-// This broke `omniroute combo list/create/delete/switch` on Windows whenever
+// This broke `agentproxy combo list/create/delete/switch` on Windows whenever
 // the CLI fell back to direct DB access with the server offline.
 
 const CLI_DIR = path.join(PROJECT_ROOT, "bin", "cli");

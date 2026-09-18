@@ -39,7 +39,7 @@ npm run test:all
 
 ## 專案概覽
 
-**OmniRoute** — 統一的 AI 代理/路由器。一個端點，329 LLM 提供者，自動回退。
+**AgentProxy** — 統一的 AI 代理/路由器。一個端點，329 LLM 提供者，自動回退。
 
 | 層級       | 位置                    | 目的                                                                      |
 | ---------- | ----------------------- | ------------------------------------------------------------------------- |
@@ -82,7 +82,7 @@ API 路由遵循一致的模式：`路由 → CORS 預檢 → Zod 請求體驗�
 
 ## 彈性運行時狀態
 
-OmniRoute 有三種相關但不同的臨時故障機制。在調試路由行為時，請保持它們的範圍分開。請參見
+AgentProxy 有三種相關但不同的臨時故障機制。在調試路由行為時，請保持它們的範圍分開。請參見
 [3 層彈性圖](./docs/diagrams/exported/resilience-3layers.svg)
 （來源: [docs/diagrams/resilience-3layers.mmd](./docs/diagrams/resilience-3layers.mmd)）
 以獲取一目了然的地圖。
@@ -197,7 +197,7 @@ baseCooldownMs * 2 ** failureIndex;
 ### 程式碼風格
 
 - **2個空格**，分號，雙引號，100字符寬度，es5尾隨逗號（通過lint-staged和Prettier強制執行）
-- **導入**：外部 → 內部（`@/`，`@omniroute/open-sse`）→ 相對
+- **導入**：外部 → 內部（`@/`，`@agentproxy/open-sse`）→ 相對
 - **命名**：文件=camelCase/kebab，組件=PascalCase，常量=UPPER_SNAKE
 - **ESLint**：`no-eval`，`no-implied-eval`，`no-new-func` = 在任何地方都報錯；`no-explicit-any` = 在`open-sse/`和`tests/`中警告
 - **TypeScript**：`strict: false`，目標ES2022，模組esnext，解析器為打包器。優先使用顯式類型。
@@ -367,9 +367,9 @@ git push -u origin feat/your-feature
   | ≥22.22.2 <23 |
   | ≥24 <25, ES Modules
 - **TypeScript**：5.9+，目標 ES2022，模組 esnext，解析器 bundler
-- **路徑別名**：`@/*` → `src/`，`@omniroute/open-sse` → `open-sse/`，`@omniroute/open-sse/*` → `open-sse/*`
+- **路徑別名**：`@/*` → `src/`，`@agentproxy/open-sse` → `open-sse/`，`@agentproxy/open-sse/*` → `open-sse/*`
 - **預設埠**：20128（API + 儀表板在同一埠）
-- **數據目錄**：`DATA_DIR` 環境變量，預設為 `~/.omniroute/`
+- **數據目錄**：`DATA_DIR` 環境變量，預設為 `~/.agentproxy/`
 - **關鍵環境變量**：`PORT`、`JWT_SECRET`、`API_KEY_SECRET`、`INITIAL_PASSWORD`、`REQUIRE_API_KEY`、`APP_LOG_LEVEL`
 - 設置：`cp .env.example .env` 然後生成 `JWT_SECRET` (`openssl rand -base64 48`) 和 `API_KEY_SECRET` (`openssl rand -hex 32`)
 
@@ -392,4 +392,4 @@ git push -u origin feat/your-feature
 13. 永遠不要將外部路徑或運行時值字串插值到傳遞給 `exec()`/`spawn()` 的 shell 腳本中 — 應通過 `env` 選項傳遞。參考：`src/mitm/cert/install.ts::updateNssDatabases`。
 14. 永遠不要在沒有 (a) 首先檢查上述模式文件以查看幫助程序是否適用，以及 (b) 在駁回評論中記錄技術理由的情況下駁回 CodeQL / Secret-Scanning 警報。先例：在已經通過 `sanitizeErrorMessage()` 路由的呼叫站點上引發的 `js/stack-trace-exposure` 是已知的 CodeQL 限制（自定義清理程序未被識別） — 駁回為 `false positive`，引用 `docs/security/ERROR_SANITIZATION.md`。
 15. 永遠不要暴露生成子進程的路由（`/api/mcp/`、`/api/cli-tools/runtime/`），而不在 `src/server/authz/routeGuard.ts` 中進行 `isLocalOnlyPath()` 分類。迴環強制執行在任何身份驗證檢查之前無條件發生 — 通過隧道洩露的 JWT 不能觸發進程生成。參見 `docs/security/ROUTE_GUARD_TIERS.md`。
-16. 切勿在提交消息中包含將 AI 助手、LLM 或自動化帳戶作為作者的 `Co-Authored-By` 尾部（例如包含 "Claude"、"GPT"、"Copilot"、"Bot" 的名稱；`anthropic.com` / `openai.com` / 機器人擁有的 `noreply.github.com` 地址上的電子郵件）。這類尾部會將 commit 歸屬路由到 GitHub 上的機器人帳戶，從而在 PR 歷史中隱藏真正的作者 (`diegosouzapw`)。人類協作者——包括 upstream PR 作者和被移植到 OmniRoute 的 issue 報告者——可以並且應該使用標準的 `Co-authored-by: Name <email>` 尾部進行署名；upstream-port 工作流（`/port-upstream-features`、`/port-upstream-issues`）依賴於此。
+16. 切勿在提交消息中包含將 AI 助手、LLM 或自動化帳戶作為作者的 `Co-Authored-By` 尾部（例如包含 "Claude"、"GPT"、"Copilot"、"Bot" 的名稱；`anthropic.com` / `openai.com` / 機器人擁有的 `noreply.github.com` 地址上的電子郵件）。這類尾部會將 commit 歸屬路由到 GitHub 上的機器人帳戶，從而在 PR 歷史中隱藏真正的作者 (`diegosouzapw`)。人類協作者——包括 upstream PR 作者和被移植到 AgentProxy 的 issue 報告者——可以並且應該使用標準的 `Co-authored-by: Name <email>` 尾部進行署名；upstream-port 工作流（`/port-upstream-features`、`/port-upstream-issues`）依賴於此。

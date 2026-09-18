@@ -3,7 +3,7 @@
  * confirmed missing, so credential selection rotates to healthy siblings
  * instead of re-dispatching into a guaranteed 422 on every request.
  *
- * Production evidence (VPS docker `omniroute`, 2026-08-24): five rows carried
+ * Production evidence (VPS docker `agentproxy`, 2026-08-24): five rows carried
  * project_id="" with NO missing-project marker — nothing excluded them from
  * selection, so each dispatch paid the discovery round-trip and failed.
  *
@@ -21,7 +21,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-ag-11284-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-ag-11284-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.API_KEY_SECRET = process.env.API_KEY_SECRET || "ag-11284-test-secret";
 

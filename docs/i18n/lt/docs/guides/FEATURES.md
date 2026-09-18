@@ -6,16 +6,16 @@
 
 ---
 
-title: "OmniRoute — valdymo skydelio funkcijų galerija"
+title: "AgentProxy — valdymo skydelio funkcijų galerija"
 version: 3.8.40
 lastUpdated: 2026-06-28
 ---
 
-# OmniRoute — valdymo skydelio funkcijų galerija
+# AgentProxy — valdymo skydelio funkcijų galerija
 
 🌐 **Languages:** 🇺🇸 [English](../../../../guides/FEATURES.md) · 🇸🇦 [ar](../../../ar/docs/guides/FEATURES.md) · 🇦🇿 [az](../../../az/docs/guides/FEATURES.md) · 🇧🇬 [bg](../../../bg/docs/guides/FEATURES.md) · 🇧🇩 [bn](../../../bn/docs/guides/FEATURES.md) · 🇨🇿 [cs](../../../cs/docs/guides/FEATURES.md) · 🇩🇰 [da](../../../da/docs/guides/FEATURES.md) · 🇩🇪 [de](../../../de/docs/guides/FEATURES.md) · 🇬🇷 [el](../../../el/docs/guides/FEATURES.md) · 🇪🇸 [es](../../../es/docs/guides/FEATURES.md) · 🇪🇪 [et](../../../et/docs/guides/FEATURES.md) · 🇮🇷 [fa](../../../fa/docs/guides/FEATURES.md) · 🇫🇮 [fi](../../../fi/docs/guides/FEATURES.md) · 🇫🇷 [fr](../../../fr/docs/guides/FEATURES.md) · 🇮🇪 [ga](../../../ga/docs/guides/FEATURES.md) · 🇮🇳 [gu](../../../gu/docs/guides/FEATURES.md) · 🇮🇱 [he](../../../he/docs/guides/FEATURES.md) · 🇮🇳 [hi](../../../hi/docs/guides/FEATURES.md) · 🇭🇷 [hr](../../../hr/docs/guides/FEATURES.md) · 🇭🇺 [hu](../../../hu/docs/guides/FEATURES.md) · 🇮🇩 [id](../../../id/docs/guides/FEATURES.md) · 🇮🇹 [it](../../../it/docs/guides/FEATURES.md) · 🇯🇵 [ja](../../../ja/docs/guides/FEATURES.md) · 🇰🇷 [ko](../../../ko/docs/guides/FEATURES.md) · 🇱🇻 [lv](../../../lv/docs/guides/FEATURES.md) · 🇮🇳 [mr](../../../mr/docs/guides/FEATURES.md) · 🇲🇾 [ms](../../../ms/docs/guides/FEATURES.md) · 🇲🇹 [mt](../../../mt/docs/guides/FEATURES.md) · 🇳🇱 [nl](../../../nl/docs/guides/FEATURES.md) · 🇳🇴 [no](../../../no/docs/guides/FEATURES.md) · 🇵🇭 [phi](../../../phi/docs/guides/FEATURES.md) · 🇵🇱 [pl](../../../pl/docs/guides/FEATURES.md) · 🇵🇹 [pt](../../../pt/docs/guides/FEATURES.md) · 🇧🇷 [pt-BR](../../../pt-BR/docs/guides/FEATURES.md) · 🇷🇴 [ro](../../../ro/docs/guides/FEATURES.md) · 🇷🇺 [ru](../../../ru/docs/guides/FEATURES.md) · 🇸🇰 [sk](../../../sk/docs/guides/FEATURES.md) · 🇸🇮 [sl](../../../sl/docs/guides/FEATURES.md) · 🇷🇸 [sr](../../../sr/docs/guides/FEATURES.md) · 🇸🇪 [sv](../../../sv/docs/guides/FEATURES.md) · 🇰🇪 [sw](../../../sw/docs/guides/FEATURES.md) · 🇮🇳 [ta](../../../ta/docs/guides/FEATURES.md) · 🇮🇳 [te](../../../te/docs/guides/FEATURES.md) · 🇹🇭 [th](../../../th/docs/guides/FEATURES.md) · 🇹🇷 [tr](../../../tr/docs/guides/FEATURES.md) · 🇺🇦 [uk-UA](../../../uk-UA/docs/guides/FEATURES.md) · 🇵🇰 [ur](../../../ur/docs/guides/FEATURES.md) · 🇻🇳 [vi](../../../vi/docs/guides/FEATURES.md) · 🇨🇳 [zh-CN](../../../zh-CN/docs/guides/FEATURES.md) · 🇹🇼 [zh-TW](../../../zh-TW/docs/guides/FEATURES.md)
 
-Vaizdinis visų OmniRoute valdymo skydelio skilčių vadovas.
+Vaizdinis visų AgentProxy valdymo skydelio skilčių vadovas.
 
 > 📅 **Paskutinį kartą atnaujinta:** 2026-06-28 — **v3.8.40**
 
@@ -45,7 +45,7 @@ Perėjimo iš v3.7.x į v3.8.0 cikle pridėtas automatinis maršruto parinkimas 
 - 🚦 **Kiekvienam paslaugų teikėjui pritaikyta 429 klasifikacija** ir `useUpstream429BreakerHints` jungiklis — tikslesnis grandinės išjungiklio veikimas naudojant pirminės paslaugos užklausų dažnio ribojimo užuominas
 - 🩺 **Modelių atvėsimo laikotarpių valdymo skydelis** — stebėkite kiekvieno modelio blokavimus ir rankiniu būdu vėl juos įjunkite naudotojo sąsajoje
 - 🔒 **Dinaminis MITM Linux sertifikatų aptikimas** — veikia Debian/Ubuntu, Fedora/RHEL, Arch ir kituose platinamuosiuose paketuose
-- 💻 **CLI patobulinimų rinkinys** — daugiau nei 20 komandų, įskaitant `omniroute providers`, `omniroute combos`, `omniroute doctor`, `omniroute setup`
+- 💻 **CLI patobulinimų rinkinys** — daugiau nei 20 komandų, įskaitant `agentproxy providers`, `agentproxy combos`, `agentproxy doctor`, `agentproxy setup`
 - 🔍 **Qdrant įterpinių modelio aptikimas** — automatinis vektorių saugyklos modelio tikrinimas
 - 🔑 **API raktai / „Bearer“ raktai su `manage` aprėptimi** — administravimo operacijas programiškai atlikite per API
 - 🏥 **Derinių tikslų būklės analizė** ir **struktūrizuotas derinių kūrimo įrankis** — kiekvieno tikslo būklė ir naudotojo sąsajos kūrimo priemonė `(provider, model, connection)` veiksmams sudaryti
@@ -60,7 +60,7 @@ Perėjimo iš v3.7.x į v3.8.0 cikle pridėtas automatinis maršruto parinkimas 
 
 Valdykite ryšius su DI teikėjais: OAuth teikėjus (Claude Code, Codex), API rakto teikėjus (Groq, DeepSeek, OpenRouter) ir nemokamus teikėjus (Qoder, Kiro). Kiro paskyrose stebimas kreditų likutis — likę kreditai, bendras limitas ir atnaujinimo data matomi skiltyje Valdymo skydas → Naudojimas.
 
-OpenRouter ryšiams išplėstiniuose nustatymuose galima išsaugoti kiekvienam ryšiui skirtą `preset`. Kai jis nustatytas, OmniRoute siunčia jį kaip aukščiausio lygio OpenRouter užklausos lauką, pavyzdžiui, `"preset": "email-copywriter"`, nebent kliento užklausoje jau pateiktas nuosavas `preset`.
+OpenRouter ryšiams išplėstiniuose nustatymuose galima išsaugoti kiekvienam ryšiui skirtą `preset`. Kai jis nustatytas, AgentProxy siunčia jį kaip aukščiausio lygio OpenRouter užklausos lauką, pavyzdžiui, `"preset": "email-copywriter"`, nebent kliento užklausoje jau pateiktas nuosavas `preset`.
 
 ![Teikėjų valdymo skydas](../screenshots/01-providers.png)
 
@@ -166,7 +166,7 @@ CLI agentų paieškos ir valdymo skydelis. Jame rodomas 16 integruotų agentų t
 
 ## 🔗 Konteksto perdavimas _(v3.5.5+)_
 
-Kombinuota strategija, išsauganti sesijos tęstinumą, kai paskyra pakeičiama pokalbio viduryje. Prieš išnaudojant aktyvios paskyros limitą, „OmniRoute“ fone sugeneruoja struktūrizuotą perdavimo santrauką. Kai kita užklausa nukreipiama į kitą paskyrą, santrauka įterpiama kaip sistemos pranešimas, kad naujoji paskyra galėtų tęsti darbą turėdama visą kontekstą.
+Kombinuota strategija, išsauganti sesijos tęstinumą, kai paskyra pakeičiama pokalbio viduryje. Prieš išnaudojant aktyvios paskyros limitą, „AgentProxy“ fone sugeneruoja struktūrizuotą perdavimo santrauką. Kai kita užklausa nukreipiama į kitą paskyrą, santrauka įterpiama kaip sistemos pranešimas, kad naujoji paskyra galėtų tęsti darbą turėdama visą kontekstą.
 
 Konfigūruojama derinio arba visuotiniais nustatymais:
 
@@ -235,7 +235,7 @@ Vieno spustelėjimo veiksmas „Taisyti aplinką“, skirtas OAuth teikėjams, a
 
 | Komanda                  | Veiksmas                                                                                       |
 | ------------------------ | ---------------------------------------------------------------------------------------------- |
-| `npm run uninstall`      | Pašalina sistemos programą, bet **išsaugo jūsų DB ir konfigūracijas** kataloge `~/.omniroute`. |
+| `npm run uninstall`      | Pašalina sistemos programą, bet **išsaugo jūsų DB ir konfigūracijas** kataloge `~/.agentproxy`. |
 | `npm run uninstall:full` | Pašalina programą IR visam laikui **ištrina visas konfigūracijas, raktus ir duomenų bazes**.   |
 
 ---
@@ -276,7 +276,7 @@ Administracinių veiksmų stebėjimas su filtravimu pagal veiksmo tipą, vykdyto
 
 ## 🖥️ Darbalaukio programa
 
-Savoji Electron darbalaukio programa, skirta Windows, macOS ir Linux. Paleiskite OmniRoute kaip atskirą programą su integracija į sistemos dėklą, veikimu neprisijungus, automatiniu naujinimu ir diegimu vienu spustelėjimu.
+Savoji Electron darbalaukio programa, skirta Windows, macOS ir Linux. Paleiskite AgentProxy kaip atskirą programą su integracija į sistemos dėklą, veikimu neprisijungus, automatiniu naujinimu ir diegimu vienu spustelėjimu.
 
 Pagrindinės funkcijos:
 
@@ -295,7 +295,7 @@ Pagrindinės funkcijos:
 
 ## 🌐 V1 WebSocket tiltas _(v3.6.6+)_
 
-Dabar OmniRoute palaiko **su OpenAI suderinamus WebSocket klientus** per `/v1/ws` naujovinimo galinį tašką. Pasirinktinis `scripts/dev/v1-ws-bridge.mjs` serveris apgaubia Next.js ir naujovina WS ryšius į visiškai dvikrypčio srautinio perdavimo seansus. Autentifikavimui naudojamas tas pats API raktas arba seanso slapukas kaip ir HTTP užklausoms.
+Dabar AgentProxy palaiko **su OpenAI suderinamus WebSocket klientus** per `/v1/ws` naujovinimo galinį tašką. Pasirinktinis `scripts/dev/v1-ws-bridge.mjs` serveris apgaubia Next.js ir naujovina WS ryšius į visiškai dvikrypčio srautinio perdavimo seansus. Autentifikavimui naudojamas tas pats API raktas arba seanso slapukas kaip ir HTTP užklausoms.
 
 Pagrindinės veikimo ypatybės:
 
@@ -321,7 +321,7 @@ Konfigūracijos paketą sukuria `src/lib/sync/bundle.ts`. Klientai lygina `ETag`
 
 **GLM Thinking (`glmt`)** dabar yra registruotas visavertis teikėjas: daugiausia 65 536 išvesties prieigos raktų, 24 576 mąstymo biudžetas, numatytasis 900 s skirtasis laikas, su Claude suderinamas API formatas ir su GLM šeima bendrinamas naudojimo sinchronizavimas.
 
-v3.6.6 taip pat pristatytas **hibridinis prieigos raktų skaičiavimas**: kai su Claude suderinamas teikėjas pateikia `/messages/count_tokens`, prieš dideles užklausas OmniRoute jį iškviečia, o nepavykus sklandžiai pereina prie apytikslio skaičiavimo.
+v3.6.6 taip pat pristatytas **hibridinis prieigos raktų skaičiavimas**: kai su Claude suderinamas teikėjas pateikia `/messages/count_tokens`, prieš dideles užklausas AgentProxy jį iškviečia, o nepavykus sklandžiai pereina prie apytikslio skaičiavimo.
 
 ---
 

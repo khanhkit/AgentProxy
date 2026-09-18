@@ -5,7 +5,7 @@
 // ("GLIBC_2.29 not found"), so the native module fails to dlopen and any test that
 // reaches better-sqlite3 directly (or asserts stdout that the load-failure warning
 // would pollute) fails HERE while passing in CI. This is a known environment
-// limitation, not a defect in the code under test: the OmniRoute runtime itself
+// limitation, not a defect in the code under test: the AgentProxy runtime itself
 // cascades to node:sqlite/sql.js when better-sqlite3 is unavailable. See
 // tests/unit/_helpers/betterSqlite3Availability.ts for a guard helper.
 import test from "node:test";
@@ -34,7 +34,7 @@ interface DoctorResult {
 }
 
 function createTempDataDir() {
-  return fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-cli-doctor-"));
+  return fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-cli-doctor-"));
 }
 
 async function withDoctorEnv(fn: (dataDir: string) => Promise<void>) {
@@ -130,7 +130,7 @@ test("doctor probes the real machine-token endpoint without exposing the token",
       const url = String(input);
       assert.match(url, /\/api\/cli\/whoami$/);
       assert.equal(init?.redirect, "error");
-      observedToken = new Headers(init?.headers).get("x-omniroute-cli-token") || "";
+      observedToken = new Headers(init?.headers).get("x-agentproxy-cli-token") || "";
       return new Response(JSON.stringify({ authenticated: true }), {
         status: observedToken ? 200 : 401,
         headers: { "content-type": "application/json" },
@@ -161,7 +161,7 @@ test("doctor only sends the machine token to supported loopback URL shapes", asy
   globalThis.fetch = (async (input: string | URL | Request, init?: RequestInit) => {
     observedUrls.push(String(input));
     assert.equal(init?.redirect, "error");
-    assert.match(new Headers(init?.headers).get("x-omniroute-cli-token") || "", /^[0-9a-f]{64}$/);
+    assert.match(new Headers(init?.headers).get("x-agentproxy-cli-token") || "", /^[0-9a-f]{64}$/);
     return new Response(null, { status: 200 });
   }) as typeof fetch;
 
@@ -226,7 +226,7 @@ test("doctor never follows a machine-token redirect to another origin", async ()
   globalThis.fetch = (async (_input: string | URL | Request, init?: RequestInit) => {
     if (init?.redirect !== "error") {
       crossOriginRequests += 1;
-      crossOriginTokenObserved = new Headers(init?.headers).has("x-omniroute-cli-token");
+      crossOriginTokenObserved = new Headers(init?.headers).has("x-agentproxy-cli-token");
       return new Response(null, { status: 200 });
     }
     throw new TypeError("redirect blocked");
@@ -255,16 +255,16 @@ test("doctor gives connect guidance when the server rejects a machine token", as
       livenessUrl: "http://127.0.0.1:21999/api/health/degradation",
     });
     assert.equal(check.status, "warn");
-    assert.match(check.message || "", /omniroute connect/i);
+    assert.match(check.message || "", /agentproxy connect/i);
   } finally {
     globalThis.fetch = originalFetch;
   }
 });
 
 test("doctor reports explicitly disabled machine-token auth without probing", async () => {
-  const previous = process.env.OMNIROUTE_DISABLE_CLI_TOKEN;
+  const previous = process.env.AGENTPROXY_DISABLE_CLI_TOKEN;
   const originalFetch = globalThis.fetch;
-  process.env.OMNIROUTE_DISABLE_CLI_TOKEN = "true";
+  process.env.AGENTPROXY_DISABLE_CLI_TOKEN = "true";
   globalThis.fetch = (async () => {
     throw new Error("fetch should not run");
   }) as typeof fetch;
@@ -276,7 +276,7 @@ test("doctor reports explicitly disabled machine-token auth without probing", as
     assert.match(check.message || "", /disabled/i);
   } finally {
     globalThis.fetch = originalFetch;
-    if (previous === undefined) delete process.env.OMNIROUTE_DISABLE_CLI_TOKEN;
-    else process.env.OMNIROUTE_DISABLE_CLI_TOKEN = previous;
+    if (previous === undefined) delete process.env.AGENTPROXY_DISABLE_CLI_TOKEN;
+    else process.env.AGENTPROXY_DISABLE_CLI_TOKEN = previous;
   }
 });

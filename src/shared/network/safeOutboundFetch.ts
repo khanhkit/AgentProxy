@@ -4,7 +4,7 @@ import {
   runWithProxyContext,
   getOriginalFetch,
   hasAmbientProxyContext,
-} from "@omniroute/open-sse/utils/proxyFetch.ts";
+} from "@agentproxy/open-sse/utils/proxyFetch.ts";
 import { FetchTimeoutError, fetchWithTimeout } from "@/shared/utils/fetchTimeout";
 import {
   OutboundUrlGuardError,
@@ -28,7 +28,7 @@ const FOLLOWABLE_REDIRECT_STATUSES = new Set([301, 302, 303, 307, 308]);
 // from any real failure. Configurable via env so it can be tuned per-deployment without a code
 // change; default raised from 5000ms to 8000ms to give slow-but-healthy providers headroom.
 function resolveProbeTimeoutMs(): number {
-  const parsed = parseInt(process.env.OMNIROUTE_PROVIDER_PROBE_TIMEOUT_MS || "", 10);
+  const parsed = parseInt(process.env.AGENTPROXY_PROVIDER_PROBE_TIMEOUT_MS || "", 10);
   return Number.isFinite(parsed) && parsed >= 1000 ? parsed : 8000;
 }
 const PROVIDER_PROBE_TIMEOUT_MS = resolveProbeTimeoutMs();

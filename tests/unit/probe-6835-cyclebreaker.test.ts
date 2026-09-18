@@ -5,7 +5,7 @@ import os from "node:os";
 import path from "node:path";
 
 test("getDbInstance() caps the probe-failed/restore cycle at 3 attempts (#6835)", async () => {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-6835-"));
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-6835-"));
   process.env.DATA_DIR = tmpDir;
   const sqliteFile = path.join(tmpDir, "storage.sqlite");
   const backupFile = `${sqliteFile}.probe-failed-1000000000000`;

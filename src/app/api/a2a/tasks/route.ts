@@ -99,7 +99,7 @@ export function tokensMatch(provided: string, expected: string): boolean {
  * POST uses authorizeA2ATaskRoute() above the Conductor boundary instead.
  */
 export function authenticateA2A(request: Request): boolean {
-  const configuredKey = process.env.AGENTPROXY_API_KEY || process.env.OMNIROUTE_API_KEY;
+  const configuredKey = process.env.AGENTPROXY_API_KEY;
   if (!configuredKey) return true;
   const token = (request.headers.get("authorization") || "").replace(/^Bearer\s+/i, "");
   return tokensMatch(token, configuredKey);

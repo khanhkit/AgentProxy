@@ -6,12 +6,12 @@
 
 ---
 
-title: "OmniRoute arhitektūra"
+title: "AgentProxy arhitektūra"
 version: 3.8.40
 lastUpdated: 2026-06-28
 ---
 
-# OmniRoute arhitektūra
+# AgentProxy arhitektūra
 
 🌐 **Languages:** 🇺🇸 [English](../../../../architecture/ARCHITECTURE.md) · 🇸🇦 [ar](../../../ar/docs/architecture/ARCHITECTURE.md) · 🇦🇿 [az](../../../az/docs/architecture/ARCHITECTURE.md) · 🇧🇬 [bg](../../../bg/docs/architecture/ARCHITECTURE.md) · 🇧🇩 [bn](../../../bn/docs/architecture/ARCHITECTURE.md) · 🇨🇿 [cs](../../../cs/docs/architecture/ARCHITECTURE.md) · 🇩🇰 [da](../../../da/docs/architecture/ARCHITECTURE.md) · 🇩🇪 [de](../../../de/docs/architecture/ARCHITECTURE.md) · 🇬🇷 [el](../../../el/docs/architecture/ARCHITECTURE.md) · 🇪🇸 [es](../../../es/docs/architecture/ARCHITECTURE.md) · 🇪🇪 [et](../../../et/docs/architecture/ARCHITECTURE.md) · 🇮🇷 [fa](../../../fa/docs/architecture/ARCHITECTURE.md) · 🇫🇮 [fi](../../../fi/docs/architecture/ARCHITECTURE.md) · 🇫🇷 [fr](../../../fr/docs/architecture/ARCHITECTURE.md) · 🇮🇪 [ga](../../../ga/docs/architecture/ARCHITECTURE.md) · 🇮🇳 [gu](../../../gu/docs/architecture/ARCHITECTURE.md) · 🇮🇱 [he](../../../he/docs/architecture/ARCHITECTURE.md) · 🇮🇳 [hi](../../../hi/docs/architecture/ARCHITECTURE.md) · 🇭🇷 [hr](../../../hr/docs/architecture/ARCHITECTURE.md) · 🇭🇺 [hu](../../../hu/docs/architecture/ARCHITECTURE.md) · 🇮🇩 [id](../../../id/docs/architecture/ARCHITECTURE.md) · 🇮🇹 [it](../../../it/docs/architecture/ARCHITECTURE.md) · 🇯🇵 [ja](../../../ja/docs/architecture/ARCHITECTURE.md) · 🇰🇷 [ko](../../../ko/docs/architecture/ARCHITECTURE.md) · 🇱🇹 [lt](../../../lt/docs/architecture/ARCHITECTURE.md) · 🇮🇳 [mr](../../../mr/docs/architecture/ARCHITECTURE.md) · 🇲🇾 [ms](../../../ms/docs/architecture/ARCHITECTURE.md) · 🇲🇹 [mt](../../../mt/docs/architecture/ARCHITECTURE.md) · 🇳🇱 [nl](../../../nl/docs/architecture/ARCHITECTURE.md) · 🇳🇴 [no](../../../no/docs/architecture/ARCHITECTURE.md) · 🇵🇭 [phi](../../../phi/docs/architecture/ARCHITECTURE.md) · 🇵🇱 [pl](../../../pl/docs/architecture/ARCHITECTURE.md) · 🇵🇹 [pt](../../../pt/docs/architecture/ARCHITECTURE.md) · 🇧🇷 [pt-BR](../../../pt-BR/docs/architecture/ARCHITECTURE.md) · 🇷🇴 [ro](../../../ro/docs/architecture/ARCHITECTURE.md) · 🇷🇺 [ru](../../../ru/docs/architecture/ARCHITECTURE.md) · 🇸🇰 [sk](../../../sk/docs/architecture/ARCHITECTURE.md) · 🇸🇮 [sl](../../../sl/docs/architecture/ARCHITECTURE.md) · 🇷🇸 [sr](../../../sr/docs/architecture/ARCHITECTURE.md) · 🇸🇪 [sv](../../../sv/docs/architecture/ARCHITECTURE.md) · 🇰🇪 [sw](../../../sw/docs/architecture/ARCHITECTURE.md) · 🇮🇳 [ta](../../../ta/docs/architecture/ARCHITECTURE.md) · 🇮🇳 [te](../../../te/docs/architecture/ARCHITECTURE.md) · 🇹🇭 [th](../../../th/docs/architecture/ARCHITECTURE.md) · 🇹🇷 [tr](../../../tr/docs/architecture/ARCHITECTURE.md) · 🇺🇦 [uk-UA](../../../uk-UA/docs/architecture/ARCHITECTURE.md) · 🇵🇰 [ur](../../../ur/docs/architecture/ARCHITECTURE.md) · 🇻🇳 [vi](../../../vi/docs/architecture/ARCHITECTURE.md) · 🇨🇳 [zh-CN](../../../zh-CN/docs/architecture/ARCHITECTURE.md) · 🇹🇼 [zh-TW](../../../zh-TW/docs/architecture/ARCHITECTURE.md)
 
@@ -19,7 +19,7 @@ _Pēdējoreiz atjaunināts: 2026-06-28_
 
 ## Kopsavilkums vadībai
 
-OmniRoute ir lokāls MI maršrutēšanas vārtejas un informācijas paneļa risinājums, kas izveidots uz Next.js bāzes.
+AgentProxy ir lokāls MI maršrutēšanas vārtejas un informācijas paneļa risinājums, kas izveidots uz Next.js bāzes.
 Tas nodrošina vienu ar OpenAI saderīgu galapunktu (`/v1/*`) un maršrutē datplūsmu starp vairākiem augšupējiem pakalpojumu sniedzējiem, nodrošinot tulkošanu, atkāpšanos, marķieru atsvaidzināšanu un lietojuma uzskaiti.
 
 Galvenās iespējas:
@@ -173,7 +173,7 @@ flowchart LR
         BROWSER[Browser Dashboard]
     end
 
-    subgraph Router[OmniRoute Local Process]
+    subgraph Router[AgentProxy Local Process]
         API[V1 Compatibility API\n/v1/*]
         DASH[Dashboard + Management API\n/api/*]
         CORE[SSE + Translation Core\nopen-sse + src/sse]
@@ -335,7 +335,7 @@ OAuth pakalpojumu moduļi (22 atsevišķi faili zem `src/lib/oauth/providers/`):
 
 ## 5) Iegultie pakalpojumi (v3.8.4)
 
-OmniRoute var instalēt, uzraudzīt un maršrutēt pie lokāli darbojošiem MI rīku procesiem,
+AgentProxy var instalēt, uzraudzīt un maršrutēt pie lokāli darbojošiem MI rīku procesiem,
 ko sauc par **iegultajiem pakalpojumiem**. Tiek piegādāti pieci: 9Router, CLIProxyAPI, Bifrost, Mux un Dario.
 
 Arhitektūras slāņi:
@@ -444,7 +444,7 @@ pašiem jāapkopo bloķēšanas/limita/rezerves darbības loģika.
 - Kvotas kešatmiņa: `src/domain/quotaCache.ts`
 - Degradācijas stāvoklis: `src/domain/degradation.ts`
 - Konfigurācijas audits: `src/domain/configAudit.ts`
-- OmniRoute atbildes metadatu veidotājs: `src/domain/omnirouteResponseMeta.ts`
+- AgentProxy atbildes metadatu veidotājs: `src/domain/agentproxyResponseMeta.ts`
 - Novērtēšanas apakšsistēma: `src/domain/assessment/` — periodiski novērtēšanas darbi
 
 ### E. Autorizācijas konveijers
@@ -524,7 +524,7 @@ Primārā stāvokļa DB (SQLite):
 
 - Pamatinfrastruktūra: `src/lib/db/core.ts` (better-sqlite3, migrācijas, WAL)
 - Piekļuve DB: importējiet konkrētus `src/lib/db/*` moduļus tieši (vecais `localDb.ts` barelis tika noņemts)
-- fails: `${DATA_DIR}/storage.sqlite` (vai `$XDG_CONFIG_HOME/omniroute/storage.sqlite`, ja iestatīts, citādi `~/.omniroute/storage.sqlite`)
+- fails: `${DATA_DIR}/storage.sqlite` (vai `$XDG_CONFIG_HOME/agentproxy/storage.sqlite`, ja iestatīts, citādi `~/.agentproxy/storage.sqlite`)
 - entītijas (tabulas + KV nosaukumvietas): providerConnections, providerNodes, modelAliases, combos, apiKeys, settings, pricing, **customModels**, **proxyConfig**, **ipFilter**, **thinkingBudget**, **systemPrompt**
 
 Lietošanas datu noturība:
@@ -820,7 +820,7 @@ flowchart LR
         Browser[Informācijas paneļa pārlūkprogramma]
     end
 
-    subgraph ContainerOrProcess[OmniRoute izpildlaiks]
+    subgraph ContainerOrProcess[AgentProxy izpildlaiks]
         Next[Next.js serveris\nPORT=20128]
         Core[SSE kodols + izpildītāji]
         MainDB[(storage.sqlite)]
@@ -939,7 +939,7 @@ Visi pārējie pakalpojumu sniedzēji (tostarp pielāgoti saderīgi mezgli) izma
 ## Sniedzēja saderības matrica
 
 > **Piezīme:** Tālāk redzamā matrica ir reprezentatīvs paraugs no 351 reģistrētajiem sniedzējiem
-> OmniRoute v3.8.0. Lai iegūtu kanonisko un nepārtraukti atjaunināto sarakstu, skatiet
+> AgentProxy v3.8.0. Lai iegūtu kanonisko un nepārtraukti atjaunināto sarakstu, skatiet
 > [`docs/reference/PROVIDER_REFERENCE.md`](../reference/PROVIDER_REFERENCE.md) (automātiski ģenerēts) vai patiesības avotu
 > `src/shared/constants/providers.ts` (Zod-validēts ielādēšanas laikā).
 
@@ -1120,7 +1120,7 @@ Detalizēts pieprasījuma datu nosūtījuma reģistrēšanas mehānisms saglabā
 - Neapstrādāts no klienta saņemtais pieprasījums
 - Faktiski augšupejai nosūtītais tulkinātais pieprasījums
 - Nodrošinātāja atbilde, kas pārveidota JSON formātā; strāmas atbildes tiek apkopotas gala kopsavilkumā kopā ar strāmas meta datiem
-- Galīgā klienta atbilde, ko atgriež OmniRoute; strāmas atbildes tiek saglabātas tajā pašā apkopotā kopsavilkuma formātā
+- Galīgā klienta atbilde, ko atgriež AgentProxy; strāmas atbildes tiek saglabātas tajā pašā apkopotā kopsavilkuma formātā
 
 ## Drošības-jūtīgi robežas
 
@@ -1146,11 +1146,11 @@ Vides mainīgie, ko kods aktīvi izmanto:
 
 ## Zināmas arhitektoniskās piezīmes
 
-1. `usageDb` un `localDb` dalās tādu pašu bāzes direktoriju politiku (`DATA_DIR` -> `XDG_CONFIG_HOME/omniroute` -> `~/.omniroute`) ar mantoto failu migrāciju.
+1. `usageDb` un `localDb` dalās tādu pašu bāzes direktoriju politiku (`DATA_DIR` -> `XDG_CONFIG_HOME/agentproxy` -> `~/.agentproxy`) ar mantoto failu migrāciju.
 2. `/api/v1/route.ts` nodod kontrolē to pašu vienoto kataloga veidotāju, ko izmanto `/api/v1/models` (`src/app/api/v1/models/catalog.ts`), lai novērstu semantisku dzesēšanos.
 3. Pieprasījumu žurnāleris ieraksta pilnus galvenes/korpusus, ja iespējots; žurnālu direktoriju jāuzskata par jūtīgu.
 4. Mākoņa uzvedība ir atkarīga no pareiza `NEXT_PUBLIC_BASE_URL` un mākoņa galapunkta pieejamības.
-5. `open-sse/` direktorija ir publicēta kā `@omniroute/open-sse` **npm darbvietas pakete**. Avota kods to importē, izmantojot `@omniroute/open-sse/...` (atrisināts ar Next.js `transpilePackages`). Šajā dokumentā failu ceļi joprojām izmanto direktorijas nosaukumu `open-sse/` konsekvences labad.
+5. `open-sse/` direktorija ir publicēta kā `@agentproxy/open-sse` **npm darbvietas pakete**. Avota kods to importē, izmantojot `@agentproxy/open-sse/...` (atrisināts ar Next.js `transpilePackages`). Šajā dokumentā failu ceļi joprojām izmanto direktorijas nosaukumu `open-sse/` konsekvences labad.
 6. Dēļdatu diagrammas izmanto **Recharts** (SVG-bazētu) pieejamām, interaktīvām analītikas vizualizācijām (modeļa izmantošanas stabiņu diagrammas, pakalpojumu sadalījuma tabulas ar veiksmīgas darbības rādītājiem).
 7. E2E testi izmanto **Playwright** (`tests/e2e/`), palaiduši ar `npm run test:e2e`. Vienību testi izmanto **Node.js testu palaižu** (`tests/unit/`), palaiduši ar `npm run test:unit`. Avota kods `src/` apakšā ir **TypeScript** (`.ts`/`.tsx`); `open-sse/` darbvieta paliek JavaScript (`.js`).
 8. Iestatījumu lapa ir sadalīta 7 cilnēs: Vispārīgi, Izskats, AI, Drošība, Maršrutēšana, Atspējas, Izeja. Atspēju lapa konfigurē tikai pieprasījumu rindu, savienojuma atdzēšanos, pakalpojumu pārtraukci un gaidīšanas-pārtraukcijas uzvedību; dzīvo pārtraukci izpildes stāvokli rāda Veselības lapā.
@@ -1161,7 +1161,7 @@ Vides mainīgie, ko kods aktīvi izmanto:
 ## Darbības pārbaudes saraksts
 
 - Veidot no avota koda: `npm run build`
-- Veidot Docker attēlu: `docker build -t omniroute .`
+- Veidot Docker attēlu: `docker build -t agentproxy .`
 - Start pakalpojumu un pārbaudīt:
 - `GET /api/settings`
 - `GET /api/v1/models`

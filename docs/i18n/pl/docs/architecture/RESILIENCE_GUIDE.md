@@ -6,7 +6,7 @@ lastUpdated: 2026-06-28
 
 # Przewodnik po odporności (Resilience)
 
-OmniRoute ma trzy odrębne, ale powiązane mechanizmy odporności. Każdy ma inny zakres i cel. Trzymaj je osobno przy debugowaniu zachowania routingu.
+AgentProxy ma trzy odrębne, ale powiązane mechanizmy odporności. Każdy ma inny zakres i cel. Trzymaj je osobno przy debugowaniu zachowania routingu.
 
 ![3-layer resilience model](../diagrams/exported/resilience-3layers.svg)
 
@@ -91,7 +91,7 @@ Trwają, dopóki nie zmienią się poświadczenia albo operator ich nie zresetuj
 
 ### Session affinity (#7274)
 
-**Zakres:** jedna sesja klienta (nagłówek `X-Session-Id` / `x-codex-session-id` / `x-omniroute-session`) przypięta do jednego połączenia, dla **dowolnego** providera.
+**Zakres:** jedna sesja klienta (nagłówek `X-Session-Id` / `x-codex-session-id` / `x-agentproxy-session`) przypięta do jednego połączenia, dla **dowolnego** providera.
 
 **Cel:** utrzymać agenta multi-turn (Claude Code, aider, własne agenty) na tym samym koncie między żądaniami, zmniejszając utratę kontekstu między kontami oraz powtarzające się cold-start 429 u providerów ze stanem sesji per konto.
 
@@ -266,7 +266,7 @@ jest unit-testowalna bez prawdziwego limitera Bottleneck.
 - **Reset-aware routing** (v3.8.0) — priorytetyzuje połączenia według czasu resetu kwoty.
 - **Background mode degradation** — Responses API `background: true` zdegradowane do sync z ostrzeżeniem.
 - **Dynamic tool limit detection** — wycofuje się z providerów przy trafieniu w limity liczby tooli.
-- **Emergency fallback** — sterowane przez `OMNIROUTE_EMERGENCY_FALLBACK`; operatorzy mogą to nadpisać ze strony Feature Flags bez restartu.
+- **Emergency fallback** — sterowane przez `AGENTPROXY_EMERGENCY_FALLBACK`; operatorzy mogą to nadpisać ze strony Feature Flags bez restartu.
 
 ---
 

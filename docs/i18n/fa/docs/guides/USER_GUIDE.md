@@ -4,7 +4,7 @@
 
 ---
 
-راهنمای کامل پیکربندی ارائه‌دهندگان، ساخت ترکیب‌ها، یکپارچه‌سازی ابزارهای خط فرمان و استقرار OmniRoute.
+راهنمای کامل پیکربندی ارائه‌دهندگان، ساخت ترکیب‌ها، یکپارچه‌سازی ابزارهای خط فرمان و استقرار AgentProxy.
 
 ---
 
@@ -123,7 +123,7 @@ Dashboard → Providers → Connect Claude Code
   cc/claude-haiku-4-5-20251001
 ```
 
-**نکته کاربردی:** برای کارهای پیچیده از Opus و برای سرعت بیشتر از Sonnet استفاده کنید. OmniRoute سهمیه هر مدل را جداگانه پایش می‌کند.
+**نکته کاربردی:** برای کارهای پیچیده از Opus و برای سرعت بیشتر از Sonnet استفاده کنید. AgentProxy سهمیه هر مدل را جداگانه پایش می‌کند.
 
 #### OpenAI Codex (Plus/Pro)
 
@@ -232,7 +232,7 @@ Dashboard → Combos → Create New
 ```
 Settings → Models → Advanced:
   OpenAI API Base URL: http://localhost:20128/v1
-  OpenAI API Key: [from omniroute dashboard]
+  OpenAI API Key: [from agentproxy dashboard]
   Model: cc/claude-opus-4-7
 ```
 
@@ -243,7 +243,7 @@ Settings → Models → Advanced:
 ```json
 {
   "anthropic_api_base": "http://localhost:20128/v1",
-  "anthropic_api_key": "your-omniroute-api-key"
+  "anthropic_api_key": "your-agentproxy-api-key"
 }
 ```
 
@@ -251,7 +251,7 @@ Settings → Models → Advanced:
 
 ```bash
 export OPENAI_BASE_URL="http://localhost:20128"
-export OPENAI_API_KEY="your-omniroute-api-key"
+export OPENAI_API_KEY="your-agentproxy-api-key"
 codex "your prompt"
 ```
 
@@ -263,14 +263,14 @@ codex "your prompt"
 {
   "agents": {
     "defaults": {
-      "model": { "primary": "omniroute/if/glm-4.7" }
+      "model": { "primary": "agentproxy/if/glm-4.7" }
     }
   },
   "models": {
     "providers": {
-      "omniroute": {
+      "agentproxy": {
         "baseUrl": "http://localhost:20128/v1",
-        "apiKey": "your-omniroute-api-key",
+        "apiKey": "your-agentproxy-api-key",
         "api": "openai-completions",
         "models": [{ "id": "if/glm-4.7", "name": "glm-4.7" }]
       }
@@ -297,42 +297,42 @@ Model: cc/claude-opus-4-7
 ### نصب سراسری با npm (پیشنهادی)
 
 ```bash
-npm install -g omniroute
+npm install -g agentproxy
 
 # Create config directory
-mkdir -p ~/.omniroute
+mkdir -p ~/.agentproxy
 
 # Create .env file (see .env.example)
-cp .env.example ~/.omniroute/.env
+cp .env.example ~/.agentproxy/.env
 
 # Start server
-omniroute
+agentproxy
 # Or with custom port:
-omniroute --port 3000
+agentproxy --port 3000
 ```
 
-ابزار خط فرمان فایل `.env` را به‌طور خودکار از مسیر `~/.omniroute/.env` یا `./.env` بارگذاری می‌کند.
+ابزار خط فرمان فایل `.env` را به‌طور خودکار از مسیر `~/.agentproxy/.env` یا `./.env` بارگذاری می‌کند.
 
 ### حذف برنامه
 
-هنگامی که دیگر به OmniRoute نیاز ندارید، برای حذف تمیز برنامه دو اسکریپت سریع در اختیار دارید:
+هنگامی که دیگر به AgentProxy نیاز ندارید، برای حذف تمیز برنامه دو اسکریپت سریع در اختیار دارید:
 
 | دستور                    | عملکرد                                                                                             |
 | ------------------------ | -------------------------------------------------------------------------------------------------- |
-| `npm run uninstall`      | برنامه را از سیستم حذف می‌کند، اما **پایگاه داده و تنظیمات شما** را در `~/.omniroute` نگه می‌دارد. |
+| `npm run uninstall`      | برنامه را از سیستم حذف می‌کند، اما **پایگاه داده و تنظیمات شما** را در `~/.agentproxy` نگه می‌دارد. |
 | `npm run uninstall:full` | برنامه را حذف می‌کند و **تمام تنظیمات، کلیدها و پایگاه‌های داده را برای همیشه پاک می‌کند**.        |
 
-> **توجه:** اگر مخزن را کلون کرده‌اید، برای اجرای این دستورها به پوشه پروژه OmniRoute بروید. اگر برنامه را به‌صورت سراسری نصب کرده‌اید، می‌توانید از دستور `npm uninstall -g omniroute` استفاده کنید.
+> **توجه:** اگر مخزن را کلون کرده‌اید، برای اجرای این دستورها به پوشه پروژه AgentProxy بروید. اگر برنامه را به‌صورت سراسری نصب کرده‌اید، می‌توانید از دستور `npm uninstall -g agentproxy` استفاده کنید.
 
 ### استقرار روی VPS
 
 ```bash
-git clone https://github.com/diegosouzapw/OmniRoute.git
-cd OmniRoute && npm install && npm run build
+git clone https://github.com/khanhkit/AgentProxy.git
+cd AgentProxy && npm install && npm run build
 
 export JWT_SECRET="your-secure-secret-change-this"
 export INITIAL_PASSWORD="your-password"
-export DATA_DIR="/var/lib/omniroute"
+export DATA_DIR="/var/lib/agentproxy"
 export PORT="20128"
 export HOSTNAME="0.0.0.0"
 export NODE_ENV="production"
@@ -340,7 +340,7 @@ export NEXT_PUBLIC_BASE_URL="http://localhost:20128"
 export API_KEY_SECRET="endpoint-proxy-api-key-secret"
 
 npm run start
-# Or: pm2 start npm --name omniroute -- start
+# Or: pm2 start npm --name agentproxy -- start
 ```
 
 ### استقرار با PM2 (حافظه کم)
@@ -349,10 +349,10 @@ npm run start
 
 ```bash
 # With 512MB limit (default)
-pm2 start npm --name omniroute -- start
+pm2 start npm --name agentproxy -- start
 
 # Or with custom memory limit
-OMNIROUTE_MEMORY_MB=512 pm2 start npm --name omniroute -- start
+AGENTPROXY_MEMORY_MB=512 pm2 start npm --name agentproxy -- start
 
 # Or using ecosystem.config.js
 pm2 start ecosystem.config.js
@@ -364,12 +364,12 @@ pm2 start ecosystem.config.js
 module.exports = {
   apps: [
     {
-      name: "omniroute",
+      name: "agentproxy",
       script: "npm",
       args: "start",
       env: {
         NODE_ENV: "production",
-        OMNIROUTE_MEMORY_MB: "512",
+        AGENTPROXY_MEMORY_MB: "512",
         JWT_SECRET: "your-secret",
         INITIAL_PASSWORD: "your-password",
       },
@@ -384,24 +384,24 @@ module.exports = {
 
 ```bash
 # Build image (default = runner-cli with codex/claude/droid preinstalled)
-docker build -t omniroute:cli .
+docker build -t agentproxy:cli .
 
 # Portable mode (recommended)
-docker run -d --name omniroute -p 20128:20128 --env-file ./.env -v omniroute-data:/app/data omniroute:cli
+docker run -d --name agentproxy -p 20128:20128 --env-file ./.env -v agentproxy-data:/app/data agentproxy:cli
 ```
 
 برای استفاده در حالت یکپارچه با میزبان و همراه با فایل‌های اجرایی خط فرمان، بخش Docker در مستندات اصلی را ببینید.
 
 ### Void Linux ‏(xbps-src)
 
-کاربران Void Linux می‌توانند با چارچوب کامپایل چندسکویی `xbps-src`، بسته بومی OmniRoute را بسازند و نصب کنند. این فرایند، ساخت مستقل Node.js و اتصال‌های بومی لازم برای `better-sqlite3` را به‌صورت خودکار انجام می‌دهد.
+کاربران Void Linux می‌توانند با چارچوب کامپایل چندسکویی `xbps-src`، بسته بومی AgentProxy را بسازند و نصب کنند. این فرایند، ساخت مستقل Node.js و اتصال‌های بومی لازم برای `better-sqlite3` را به‌صورت خودکار انجام می‌دهد.
 
 <details>
 <summary><b>مشاهده قالب xbps-src</b></summary>
 
 ```bash
-# Template file for 'omniroute'
-pkgname=omniroute
+# Template file for 'agentproxy'
+pkgname=agentproxy
 version=3.2.4
 revision=1
 hostmakedepends="nodejs python3 make"
@@ -409,11 +409,11 @@ depends="openssl"
 short_desc="Universal AI gateway with smart routing for multiple LLM providers"
 maintainer="zenobit <zenobit@disroot.org>"
 license="MIT"
-homepage="https://github.com/diegosouzapw/OmniRoute"
-distfiles="https://github.com/diegosouzapw/OmniRoute/archive/refs/tags/v${version}.tar.gz"
+homepage="https://github.com/khanhkit/AgentProxy"
+distfiles="https://github.com/khanhkit/AgentProxy/archive/refs/tags/v${version}.tar.gz"
 checksum=009400afee90a9f32599d8fe734145cfd84098140b7287990183dde45ae2245b
-system_accounts="_omniroute"
-omniroute_homedir="/var/lib/omniroute"
+system_accounts="_agentproxy"
+agentproxy_homedir="/var/lib/agentproxy"
 export NODE_ENV=production
 export npm_config_engine_strict=false
 export npm_config_loglevel=error
@@ -463,26 +463,26 @@ do_check() {
 }
 
 do_install() {
-	vmkdir usr/lib/omniroute/.next
-	vcopy .next/standalone/. usr/lib/omniroute/.next/standalone
+	vmkdir usr/lib/agentproxy/.next
+	vcopy .next/standalone/. usr/lib/agentproxy/.next/standalone
 
 	# Prevent removal of empty Next.js app router dirs by the post-install hook
 	for _d in \
 		.next/standalone/.next/server/app/dashboard \
 		.next/standalone/.next/server/app/dashboard/settings \
 		.next/standalone/.next/server/app/dashboard/providers; do
-		touch "${DESTDIR}/usr/lib/omniroute/${_d}/.keep"
+		touch "${DESTDIR}/usr/lib/agentproxy/${_d}/.keep"
 	done
 
-	cat > "${WRKDIR}/omniroute" <<'EOF'
+	cat > "${WRKDIR}/agentproxy" <<'EOF'
 #!/bin/sh
 export PORT="${PORT:-20128}"
-export DATA_DIR="${DATA_DIR:-${XDG_DATA_HOME:-${HOME}/.local/share}/omniroute}"
+export DATA_DIR="${DATA_DIR:-${XDG_DATA_HOME:-${HOME}/.local/share}/agentproxy}"
 export APP_LOG_TO_FILE="${APP_LOG_TO_FILE:-false}"
 mkdir -p "${DATA_DIR}"
-exec node /usr/lib/omniroute/.next/standalone/server.js "$@"
+exec node /usr/lib/agentproxy/.next/standalone/server.js "$@"
 EOF
-	vbin "${WRKDIR}/omniroute"
+	vbin "${WRKDIR}/agentproxy"
 }
 
 post_install() {
@@ -496,14 +496,14 @@ post_install() {
 
 | متغیر                                   | مقدار پیش‌فرض                        | توضیح                                                                                                                              |
 | --------------------------------------- | ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------- |
-| `JWT_SECRET`                            | `omniroute-default-secret-change-me` | کلید محرمانه امضای JWT؛ **در محیط عملیاتی تغییر دهید**                                                                             |
+| `JWT_SECRET`                            | `agentproxy-default-secret-change-me` | کلید محرمانه امضای JWT؛ **در محیط عملیاتی تغییر دهید**                                                                             |
 | `INITIAL_PASSWORD`                      | `123456`                             | گذرواژه نخستین ورود                                                                                                                |
-| `DATA_DIR`                              | `~/.omniroute`                       | پوشه داده‌ها شامل پایگاه داده، میزان مصرف و گزارش‌ها                                                                               |
+| `DATA_DIR`                              | `~/.agentproxy`                       | پوشه داده‌ها شامل پایگاه داده، میزان مصرف و گزارش‌ها                                                                               |
 | `PORT`                                  | پیش‌فرض چارچوب                       | درگاه سرویس؛ در مثال‌ها `20128`                                                                                                    |
 | `HOSTNAME`                              | پیش‌فرض چارچوب                       | میزبان اتصال؛ مقدار پیش‌فرض Docker برابر `0.0.0.0` است                                                                             |
 | `NODE_ENV`                              | پیش‌فرض محیط اجرا                    | برای استقرار روی `production` تنظیم کنید                                                                                           |
 | `BASE_URL`                              | `http://localhost:20128`             | نشانی پایه داخلی سمت سرور                                                                                                          |
-| `CLOUD_URL`                             | `https://omniroute.dev`              | نشانی پایه نقطه پایانی همگام‌سازی ابری                                                                                             |
+| `CLOUD_URL`                             | `https://agentproxy.example.com`              | نشانی پایه نقطه پایانی همگام‌سازی ابری                                                                                             |
 | `API_KEY_SECRET`                        | `endpoint-proxy-api-key-secret`      | کلید محرمانه HMAC برای تولید کلیدهای API                                                                                           |
 | `REQUIRE_API_KEY`                       | `false`                              | الزام کلید Bearer API برای مسیرهای `/v1/*`                                                                                         |
 | `ALLOW_API_KEY_REVEAL`                  | `false`                              | اجازه به مدیر API برای کپی کامل کلیدهای API در صورت درخواست                                                                        |
@@ -513,7 +513,7 @@ post_install() {
 | `AUTH_COOKIE_SECURE`                    | `false`                              | اجبار ویژگی `Secure` برای کوکی احراز هویت در پشت پراکسی معکوس HTTPS                                                                |
 | `CLOUDFLARED_BIN`                       | تنظیم‌نشده                           | استفاده از فایل اجرایی موجود `cloudflared` به‌جای دانلود مدیریت‌شده                                                                |
 | `CLOUDFLARED_PROTOCOL`                  | `http2`                              | روش انتقال برای تونل‌های سریع مدیریت‌شده؛ یکی از `http2`، `quic` یا `auto`                                                         |
-| `OMNIROUTE_MEMORY_MB`                   | `512`                                | سقف حافظه heap در Node.js بر حسب مگابایت                                                                                           |
+| `AGENTPROXY_MEMORY_MB`                   | `512`                                | سقف حافظه heap در Node.js بر حسب مگابایت                                                                                           |
 | `PROMPT_CACHE_MAX_SIZE`                 | `50`                                 | حداکثر تعداد ورودی‌های حافظه نهان پرامپت                                                                                           |
 | `SEMANTIC_CACHE_MAX_SIZE`               | `100`                                | حداکثر تعداد ورودی‌های حافظه نهان معنایی                                                                                           |
 
@@ -636,7 +636,7 @@ curl http://localhost:20128/api/models/catalog
 - برای Docker و دیگر استقرارهای خودمیزبان از مسیر **Dashboard → Endpoints** در دسترس است.
 - یک نشانی موقت `https://*.trycloudflare.com` می‌سازد که درخواست‌ها را به نقطه پایانی فعلی و سازگار با OpenAI در مسیر `/v1` هدایت می‌کند.
 - در نخستین فعال‌سازی، `cloudflared` فقط در صورت نیاز نصب می‌شود؛ در راه‌اندازی‌های بعدی همان فایل اجرایی مدیریت‌شده دوباره استفاده خواهد شد.
-- تونل‌های سریع پس از راه‌اندازی مجدد OmniRoute یا کانتینر، خودکار بازیابی نمی‌شوند؛ در صورت نیاز آن‌ها را دوباره از پیشخوان فعال کنید.
+- تونل‌های سریع پس از راه‌اندازی مجدد AgentProxy یا کانتینر، خودکار بازیابی نمی‌شوند؛ در صورت نیاز آن‌ها را دوباره از پیشخوان فعال کنید.
 - نشانی تونل‌ها موقتی است و با هر بار توقف و شروع تونل تغییر می‌کند.
 - روش انتقال پیش‌فرض تونل‌های سریع مدیریت‌شده HTTP/2 است تا در کانتینرهای محدود، هشدارهای پرتعداد بافر UDP مربوط به QUIC ایجاد نشود.
 - برای تغییر روش انتقال مدیریت‌شده، مقدار `CLOUDFLARED_PROTOCOL` را روی `quic` یا `auto` قرار دهید.
@@ -644,15 +644,15 @@ curl http://localhost:20128/api/models/catalog
 
 ### هوشمندی درگاه مدل‌های زبانی بزرگ (مرحله ۹)
 
-- **حافظه نهان معنایی** — پاسخ‌های غیرجریانی با `temperature=0` را خودکار ذخیره می‌کند؛ برای عبور از آن از `X-OmniRoute-No-Cache: true` استفاده کنید.
+- **حافظه نهان معنایی** — پاسخ‌های غیرجریانی با `temperature=0` را خودکار ذخیره می‌کند؛ برای عبور از آن از `X-AgentProxy-No-Cache: true` استفاده کنید.
 - **تکرارناپذیری درخواست** — درخواست‌های تکراری در بازه ۵ ثانیه را با سرآیند `Idempotency-Key` یا `X-Request-Id` حذف می‌کند.
-- **پایش پیشرفت** — با سرآیند `X-OmniRoute-Progress: true`، رویدادهای اختیاری SSE از نوع `event: progress` را فعال می‌کند.
+- **پایش پیشرفت** — با سرآیند `X-AgentProxy-Progress: true`، رویدادهای اختیاری SSE از نوع `event: progress` را فعال می‌کند.
 
 ---
 
 ### محیط آزمایش مترجم
 
-از مسیر **Dashboard → Translator** وارد شوید. در این بخش می‌توانید نحوه تبدیل درخواست‌های API بین ارائه‌دهندگان توسط OmniRoute را اشکال‌زدایی و مشاهده کنید.
+از مسیر **Dashboard → Translator** وارد شوید. در این بخش می‌توانید نحوه تبدیل درخواست‌های API بین ارائه‌دهندگان توسط AgentProxy را اشکال‌زدایی و مشاهده کنید.
 
 | حالت             | کاربرد                                                                       |
 | ---------------- | ---------------------------------------------------------------------------- |
@@ -690,7 +690,7 @@ curl http://localhost:20128/api/models/catalog
 X-Session-Id: your-session-key
 ```
 
-OmniRoute مقدار `x_session_id` را نیز می‌پذیرد و کلید مؤثر نشست را در `X-OmniRoute-Session-Id` برمی‌گرداند.
+AgentProxy مقدار `x_session_id` را نیز می‌پذیرد و کلید مؤثر نشست را در `X-AgentProxy-Session-Id` برمی‌گرداند.
 
 اگر از Nginx استفاده می‌کنید و سرآیندها را با نویسه زیرخط می‌فرستید، گزینه زیر را فعال کنید:
 
@@ -726,7 +726,7 @@ Chain: production-fallback
 
 از مسیر **Dashboard → Settings → Resilience** پیکربندی کنید.
 
-OmniRoute تاب‌آوری در سطح ارائه‌دهنده را با پنج مؤلفه پیاده‌سازی می‌کند:
+AgentProxy تاب‌آوری در سطح ارائه‌دهنده را با پنج مؤلفه پیاده‌سازی می‌کند:
 
 1. **صف و آهنگ درخواست‌ها** — شکل‌دهی درخواست‌ها در سطح سامانه:
    - **درخواست در دقیقه (RPM)** — حداکثر تعداد درخواست در دقیقه برای هر حساب
@@ -749,7 +749,7 @@ OmniRoute تاب‌آوری در سطح ارائه‌دهنده را با پنج
 
    وضعیت زمان اجرای مدارشکن ارائه‌دهنده فقط در **Dashboard → Health** نمایش داده می‌شود.
 
-4. **انتظار برای پایان دوره توقف** — اگر همه اتصال‌های نامزد در دوره انتظار باشند، OmniRoute می‌تواند تا پایان نخستین دوره منتظر بماند و همان درخواست کارخواه را خودکار دوباره اجرا کند.
+4. **انتظار برای پایان دوره توقف** — اگر همه اتصال‌های نامزد در دوره انتظار باشند، AgentProxy می‌تواند تا پایان نخستین دوره منتظر بماند و همان درخواست کارخواه را خودکار دوباره اجرا کند.
 
 5. **تشخیص خودکار محدودیت نرخ** — وقتی ارائه‌دهنده بالادستی بازه انتظار صریحی برمی‌گرداند، در صورت فعال‌بودن این تنظیم، آن راهنما جایگزین دوره انتظار محلی اتصال می‌شود.
 
@@ -783,7 +783,7 @@ curl -X POST http://localhost:20128/api/db-backups/import \
 
 **موارد استفاده:**
 
-- انتقال OmniRoute میان دستگاه‌ها
+- انتقال AgentProxy میان دستگاه‌ها
 - ساخت نسخه پشتیبان بیرونی برای بازیابی پس از خرابی
 - اشتراک‌گذاری پیکربندی میان اعضای تیم با برون‌برد کامل و ارسال بایگانی
 
@@ -829,7 +829,7 @@ curl http://localhost:20128/api/usage/budget
 
 ### رونویسی صوت
 
-OmniRoute از رونویسی صوت از طریق نقطه پایانی سازگار با OpenAI پشتیبانی می‌کند:
+AgentProxy از رونویسی صوت از طریق نقطه پایانی سازگار با OpenAI پشتیبانی می‌کند:
 
 ```bash
 POST /v1/audio/transcriptions
@@ -885,7 +885,7 @@ curl -X POST http://localhost:20128/v1/audio/transcriptions \
 
 ## 🖥️ برنامه دسکتاپ (Electron)
 
-OmniRoute به‌صورت برنامه دسکتاپ بومی برای Windows، macOS و Linux در دسترس است.
+AgentProxy به‌صورت برنامه دسکتاپ بومی برای Windows، macOS و Linux در دسترس است.
 
 ### نصب
 
@@ -928,7 +928,7 @@ npm run build:linux    # Linux (.AppImage)
 
 | متغیر                 | مقدار پیش‌فرض | توضیح                                            |
 | --------------------- | ------------- | ------------------------------------------------ |
-| `OMNIROUTE_PORT`      | `20128`       | درگاه سرور                                       |
-| `OMNIROUTE_MEMORY_MB` | `512`         | سقف حافظه heap در Node.js از ۶۴ تا ۱۶۳۸۴ مگابایت |
+| `AGENTPROXY_PORT`      | `20128`       | درگاه سرور                                       |
+| `AGENTPROXY_MEMORY_MB` | `512`         | سقف حافظه heap در Node.js از ۶۴ تا ۱۶۳۸۴ مگابایت |
 
 📖 مستندات کامل: [`electron/README.md`](../../../../../electron/README.md)

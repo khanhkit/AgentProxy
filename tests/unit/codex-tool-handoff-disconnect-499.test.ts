@@ -1,7 +1,7 @@
 /**
  * Regression coverage for Codex Responses tool handoffs: Codex can close the
  * current HTTP response immediately after receiving a complete tool-call item,
- * before the trailing response.completed frame reaches the client. OmniRoute
+ * before the trailing response.completed frame reaches the client. AgentProxy
  * must keep the upstream transform alive briefly so its normal completion and
  * usage bookkeeping can still win over the delayed 499 finalizer.
  */

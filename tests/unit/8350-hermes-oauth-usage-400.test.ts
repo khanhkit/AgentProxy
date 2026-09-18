@@ -71,7 +71,7 @@ test("non-Hermes system prompt passes through byte-identical through the claude 
 
 // #10484 — #8358 added "hermes" to DEFAULT_OBFUSCATE_WORDS. The ZWJ op
 // targets user messages with a case-insensitive, no-word-boundary regex, so
-// hostnames and ordinary mentions of the OmniRoute hermes CLI tool were
+// hostnames and ordinary mentions of the AgentProxy hermes CLI tool were
 // rewritten. System-prompt identity drops (#8350) must stay; user text must not
 // be mutated.
 test("user message containing hermes hostname stays byte-identical (#10484)", () => {

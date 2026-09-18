@@ -10,10 +10,10 @@ import { act } from "react";
 import { createRoot } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-const STORAGE_KEY = "omniroute-kimi-sponsor-banner-dismissed-v2";
-const LEGACY_V1_STORAGE_KEY = "omniroute-kimi-sponsor-banner-dismissed-v1";
+const STORAGE_KEY = "agentproxy-kimi-sponsor-banner-dismissed-v2";
+const LEGACY_V1_STORAGE_KEY = "agentproxy-kimi-sponsor-banner-dismissed-v1";
 const KIMI_PLATFORM_AFF_URL =
-  "https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798&aff=omniroute";
+  "https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798";
 
 vi.mock("next-intl", () => ({ useTranslations: () => (k: string) => k }));
 vi.mock("@/shared/components/ProviderIcon", () => ({ default: () => null }));
@@ -21,7 +21,7 @@ vi.mock("@/shared/components/ProviderIcon", () => ({ default: () => null }));
 async function renderBanner(version: string): Promise<HTMLDivElement> {
   vi.resetModules();
   vi.doMock("@/shared/constants/appConfig", () => ({
-    APP_CONFIG: { name: "OmniRoute", description: "AI Gateway", version },
+    APP_CONFIG: { name: "AgentProxy", description: "AI Gateway", version },
   }));
   const { default: KimiSponsorBanner } =
     await import("../../../src/app/(dashboard)/dashboard/KimiSponsorBanner");

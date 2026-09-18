@@ -1,12 +1,12 @@
 ---
-title: "Dokumentacja serwera A2A OmniRoute"
+title: "Dokumentacja serwera A2A AgentProxy"
 version: 3.8.40
 lastUpdated: 2026-06-28
 ---
 
-# Dokumentacja serwera A2A OmniRoute
+# Dokumentacja serwera A2A AgentProxy
 
-> Agent-to-Agent Protocol v0.3 — OmniRoute jako inteligentny agent routingu
+> Agent-to-Agent Protocol v0.3 — AgentProxy jako inteligentny agent routingu
 
 Powierzchnia A2A ma dwie twarze:
 
@@ -21,7 +21,7 @@ Zadania są śledzone przez `A2ATaskManager` (`src/lib/a2a/taskManager.ts`, domy
 curl http://localhost:20128/.well-known/agent.json
 ```
 
-Zwraca Agent Card opisującą możliwości OmniRoute, skills oraz wymagania uwierzytelniania.
+Zwraca Agent Card opisującą możliwości AgentProxy, skills oraz wymagania uwierzytelniania.
 
 Pole `version` w Agent Card pochodzi z `process.env.npm_package_version` (zob. `src/app/.well-known/agent.json/route.ts:13`), więc pozostaje automatycznie zsynchronizowane z `package.json` przy każdym release.
 
@@ -32,7 +32,7 @@ Pole `version` w Agent Card pochodzi z `process.env.npm_package_version` (zob. `
 Wszystkie żądania `/a2a` wymagają klucza API w nagłówku `Authorization`:
 
 ```
-Authorization: Bearer YOUR_OMNIROUTE_API_KEY
+Authorization: Bearer YOUR_AGENTPROXY_API_KEY
 ```
 
 Jeśli na serwerze nie skonfigurowano klucza API, uwierzytelnianie jest pomijane.
@@ -139,22 +139,22 @@ curl -X POST http://localhost:20128/a2a \
 
 ## Dostępne skills
 
-OmniRoute udostępnia 6 skills A2A podpiętych w `src/lib/a2a/taskExecution.ts::A2A_SKILL_HANDLERS`. Każdy moduł skillu znajduje się w `src/lib/a2a/skills/`.
+AgentProxy udostępnia 6 skills A2A podpiętych w `src/lib/a2a/taskExecution.ts::A2A_SKILL_HANDLERS`. Każdy moduł skillu znajduje się w `src/lib/a2a/skills/`.
 
 | Skill              | ID                   | Opis                                                                                                                   | Tagi                       | Przykłady                              |
 | :----------------- | :------------------- | :--------------------------------------------------------------------------------------------------------------------- | :------------------------- | :------------------------------------- |
-| Smart Routing      | `smart-routing`      | Kieruje prompt przez optymalny provider/combo, używając silnika combo + scoringu OmniRoute                             | routing, providers         | "Route this prompt via the best model" |
+| Smart Routing      | `smart-routing`      | Kieruje prompt przez optymalny provider/combo, używając silnika combo + scoringu AgentProxy                             | routing, providers         | "Route this prompt via the best model" |
 | Quota Management   | `quota-management`   | Raportuje stan quota per provider; pomaga decydować, kiedy throttlować/przełączać                                      | quota, providers           | "Check quota for anthropic"            |
 | Provider Discovery | `provider-discovery` | Listuje zainstalowanych providerów z możliwościami, flagami free-tier i statusem OAuth                                 | providers, discovery       | "What providers are available?"        |
 | Cost Analysis      | `cost-analysis`      | Szacuje koszt żądania/rozmowy na podstawie katalogu + niedawnego usage                                                 | cost, usage                | "Estimate cost for this conversation"  |
 | Health Report      | `health-report`      | Agreguje stan circuit breakera, cooldown i lockout per provider                                                        | health, resilience         | "Show health status of all providers"  |
-| List Capabilities  | `list-capabilities`  | Zwraca pełny 42-elementowy katalog Agent Skills jako tabelę markdown z raw URL-ami SKILL.md do wstrzykiwania kontekstu | catalog, discovery, skills | "List all OmniRoute capabilities"      |
+| List Capabilities  | `list-capabilities`  | Zwraca pełny 42-elementowy katalog Agent Skills jako tabelę markdown z raw URL-ami SKILL.md do wstrzykiwania kontekstu | catalog, discovery, skills | "List all AgentProxy capabilities"      |
 
 > Uwaga: opis Agent Card obecnie reklamuje „36+ providers” (`src/app/.well-known/agent.json/route.ts:26` oraz `:55`). Faktyczny katalog urósł do 180+ providerów — ten string powinien zostać zaktualizowany w osobnej zmianie (śledzone jako osobne TODO w docs/kodzie; tutaj nie modyfikowane).
 
 ### Szczegóły skillu `list-capabilities`
 
-Skill `list-capabilities` jest szczególnie przydatny dla zewnętrznych agentów, które muszą odkryć, co OmniRoute udostępnia, zanim wyślą wywołania API. Zwraca ustrukturyzowany artefakt w postaci tabeli markdown:
+Skill `list-capabilities` jest szczególnie przydatny dla zewnętrznych agentów, które muszą odkryć, co AgentProxy udostępnia, zanim wyślą wywołania API. Zwraca ustrukturyzowany artefakt w postaci tabeli markdown:
 
 ```
 | ID | Name | Category | Area | Endpoints/Commands | Raw URL |

@@ -61,7 +61,7 @@ bridge_test_env() {
 
 bridge_run_devin() {
   docker compose -f "$BRIDGE_COMPOSE" --profile live-devin run --rm --no-deps \
-    omniroute-live sh -ceu '
+    agentproxy-live sh -ceu '
       trusted_proxy=http://network-guard:8080
       test "${DEVIN_BRIDGE_PROXY_URL:-}" = "$trusted_proxy"
       export HTTP_PROXY="$trusted_proxy" HTTPS_PROXY="$trusted_proxy"

@@ -20,10 +20,10 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-codex-ws-policy-6564-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-codex-ws-policy-6564-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.API_KEY_SECRET = process.env.API_KEY_SECRET || "issue-6564-api-key-secret";
-process.env.OMNIROUTE_WS_BRIDGE_SECRET = "issue-6564-bridge-secret";
+process.env.AGENTPROXY_WS_BRIDGE_SECRET = "issue-6564-bridge-secret";
 
 const coreDb = await import("../../src/lib/db/core.ts");
 const apiKeysDb = await import("../../src/lib/db/apiKeys.ts");
@@ -40,8 +40,8 @@ type CodexWsPrepareBody = {
   model: string;
   response: {
     reasoning: { effort: string };
-    _omnirouteReasoningRule?: unknown;
-    _omnirouteReasoningRouteTrace?: unknown;
+    _agentproxyReasoningRule?: unknown;
+    _agentproxyReasoningRouteTrace?: unknown;
   };
   reasoningRouting: {
     ruleId: string;
@@ -104,7 +104,7 @@ function buildPrepareRequest(apiKey: string, model: string): Request {
     method: "POST",
     headers: {
       "content-type": "application/json",
-      "x-omniroute-ws-bridge-secret": process.env.OMNIROUTE_WS_BRIDGE_SECRET as string,
+      "x-agentproxy-ws-bridge-secret": process.env.AGENTPROXY_WS_BRIDGE_SECRET as string,
     },
     body: JSON.stringify({
       action: "prepare",
@@ -247,8 +247,8 @@ test("WS reasoning rules apply Codex-to-Codex effort and reject non-Codex target
   assert.equal(allowedBody.reasoningRouting.ruleId, codexRule.id);
   assert.equal(allowedBody.reasoningRouting.sourceModel, "codex/gpt-5.5");
   assert.equal(allowedBody.reasoningRouting.targetModel, "codex/gpt-5.6-sol");
-  assert.equal(allowedBody.response._omnirouteReasoningRule, undefined);
-  assert.equal(allowedBody.response._omnirouteReasoningRouteTrace, undefined);
+  assert.equal(allowedBody.response._agentproxyReasoningRule, undefined);
+  assert.equal(allowedBody.response._agentproxyReasoningRouteTrace, undefined);
 
   await rulesDb.updateReasoningRoutingRule(codexRule.id, {
     targetModel: "openai/gpt-4o",

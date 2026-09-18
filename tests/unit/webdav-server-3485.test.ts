@@ -5,7 +5,7 @@
 // ("GLIBC_2.29 not found"), so the native module fails to dlopen and any test that
 // reaches better-sqlite3 directly (or asserts stdout that the load-failure warning
 // would pollute) fails HERE while passing in CI. This is a known environment
-// limitation, not a defect in the code under test: the OmniRoute runtime itself
+// limitation, not a defect in the code under test: the AgentProxy runtime itself
 // cascades to node:sqlite/sql.js when better-sqlite3 is unavailable. See
 // tests/unit/_helpers/betterSqlite3Availability.ts for a guard helper.
 /**
@@ -52,10 +52,10 @@ async function importHandler(): Promise<typeof import("../../scripts/dev/webdav-
   return import(`${url}?t=${Date.now()}-${Math.random().toString(36).slice(2)}`);
 }
 
-/** Encrypt a string with the OmniRoute enc:v1: format using the given secret.
+/** Encrypt a string with the AgentProxy enc:v1: format using the given secret.
  *  Mirrors src/lib/db/encryption.ts: scrypt with static salt, AES-256-GCM. */
 function encryptTs(secret: string, plaintext: string): string {
-  const STATIC_SALT = "omniroute-field-encryption-v1";
+  const STATIC_SALT = "agentproxy-field-encryption-v1";
   const key = scryptSync(secret, STATIC_SALT, 32);
   const iv = randomBytes(16);
   const cipher = createCipheriv("aes-256-gcm", key, iv);

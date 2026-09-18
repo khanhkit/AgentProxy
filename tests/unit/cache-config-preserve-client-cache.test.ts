@@ -11,7 +11,7 @@ import path from "node:path";
 // the router never changed behavior. This test proves the value written
 // through the route is the one the cache-control policy actually consumes.
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-cache-config-flat-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-cache-config-flat-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.DISABLE_SQLITE_AUTO_BACKUP = "true";
 

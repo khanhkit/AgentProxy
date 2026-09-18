@@ -6,14 +6,14 @@
 
 <div align="center">
 
-<img src="./docs/screenshots/MainOmniRoute.png" alt="Painéal rialaithe OmniRoute" width="820"/>
+<img src="./docs/screenshots/MainAgentProxy.png" alt="Painéal rialaithe AgentProxy" width="820"/>
 
 <br/>
 <br/>
 
-# 🚀 OmniRoute — An Gáteau AI Saor in Aice
+# 🚀 AgentProxy — An Gáteau AI Saor in Aice
 
-<img src="./docs/diagrams/readme-hero.svg" width="100%" alt="OmniRoute — Ná stop ag clódchur. Gach uirlis AI → 355 soláthraí — 150+ saor in aisce — tríd amháin ceann deiridh. Claude Code, Codex, Cursor, Cline, Copilot & Antigravity isteach saor in aisce i Claude / GPT / Gemini le titim-uathoibríoch. RTK + Caveman stacáil comhbhrú sábhálann 15–95% teicneoirí (~89% ar meán) — ná buail teorainneacha riamh. 355 soláthraí AI · 150+ léibhéal saor in aisce · ~1.51B teicneoirí saor in aisce/mí · 19 straitéis ródaithe · $0 le tosú."/>
+<img src="./docs/diagrams/readme-hero.svg" width="100%" alt="AgentProxy — Ná stop ag clódchur. Gach uirlis AI → 355 soláthraí — 150+ saor in aisce — tríd amháin ceann deiridh. Claude Code, Codex, Cursor, Cline, Copilot & Antigravity isteach saor in aisce i Claude / GPT / Gemini le titim-uathoibríoch. RTK + Caveman stacáil comhbhrú sábhálann 15–95% teicneoirí (~89% ar meán) — ná buail teorainneacha riamh. 355 soláthraí AI · 150+ léibhéal saor in aisce · ~1.51B teicneoirí saor in aisce/mí · 19 straitéis ródaithe · $0 le tosú."/>
 
 </div>
 
@@ -23,9 +23,9 @@
 
 </div>
 
-> Tá cruachadh na léibhéalacha saor in aisce de láimh pianmhár — oiread agus SDKanna, oiread agus teorainneacha rátaí, agus gan a fhios agat cé mhéid atá agat i ndáiríre. Míníonn OmniRoute **446 iontráil léibhéal saor in aisce thar 38 eochair linnte athfhillteach** agus ríomhann an teicneoir ceannlitreach ó na **20 linnte le buiséad míosúil dearfach foilsithe**, gan dul i bhfíorú agus gan dul i bhfíorú ag úsáid an linnte comhroinnte. Tá an toradh le feiceáil i gcónaí ar an bpainéal rialaithe (`/dashboard/free-tiers`).
+> Tá cruachadh na léibhéalacha saor in aisce de láimh pianmhár — oiread agus SDKanna, oiread agus teorainneacha rátaí, agus gan a fhios agat cé mhéid atá agat i ndáiríre. Míníonn AgentProxy **446 iontráil léibhéal saor in aisce thar 38 eochair linnte athfhillteach** agus ríomhann an teicneoir ceannlitreach ó na **20 linnte le buiséad míosúil dearfach foilsithe**, gan dul i bhfíorú agus gan dul i bhfíorú ag úsáid an linnte comhroinnte. Tá an toradh le feiceáil i gcónaí ar an bpainéal rialaithe (`/dashboard/free-tiers`).
 
-<img src="./docs/diagrams/free-tier-budget.svg" width="100%" alt="Cárta buiséid léibhéil saor in aisce OmniRoute: ~1.51B teicneoirí saor in aisce in aghaidh na míosa go seasmhach, suas le ~2.13B sa chéad mí le creidmheachtaí síntiúis, ó 38 eochair linnte athfhillteacha cláraithe ag clúdach 446 iontráil léibhéal saor in aisce cláraithe taobh thiar de cheann amháin deiridh. Matamaitic iontaofa linnte-dúblach — gach líne comhroinnte a chomhaireamh uair amháin, lena n-áirítear 20 líne athfhillteach le buiséad teicneoirí míosúla dearfach foilsithe; 13 soláthraí marcáilte le seachaint i gcláirscríbhinn na dtéarmaí-risk ionas gur féidir leat féin a chinneadh. Tá barra buiséid ag áireamh Mistral 1B, LLM7 150M, Nara 150M, Gemini 60M agus linnte níos lú, chomh maith le creidmheachtaí síntiúis na chéad mí agus soláthraí saor in aisce gan teorainn teicneoirí go buan a chur i láthair go discréideach ionas nach mbíonn siad ag brú an cheannlitreach. Úsáidtear/iarmhéid beo ar /dashboard/free-tiers."/>
+<img src="./docs/diagrams/free-tier-budget.svg" width="100%" alt="Cárta buiséid léibhéil saor in aisce AgentProxy: ~1.51B teicneoirí saor in aisce in aghaidh na míosa go seasmhach, suas le ~2.13B sa chéad mí le creidmheachtaí síntiúis, ó 38 eochair linnte athfhillteacha cláraithe ag clúdach 446 iontráil léibhéal saor in aisce cláraithe taobh thiar de cheann amháin deiridh. Matamaitic iontaofa linnte-dúblach — gach líne comhroinnte a chomhaireamh uair amháin, lena n-áirítear 20 líne athfhillteach le buiséad teicneoirí míosúla dearfach foilsithe; 13 soláthraí marcáilte le seachaint i gcláirscríbhinn na dtéarmaí-risk ionas gur féidir leat féin a chinneadh. Tá barra buiséid ag áireamh Mistral 1B, LLM7 150M, Nara 150M, Gemini 60M agus linnte níos lú, chomh maith le creidmheachtaí síntiúis na chéad mí agus soláthraí saor in aisce gan teorainn teicneoirí go buan a chur i láthair go discréideach ionas nach mbíonn siad ag brú an cheannlitreach. Úsáidtear/iarmhéid beo ar /dashboard/free-tiers."/>
 
 > Achoimre bheo de leathanach beo `/dashboard/free-tiers`. Modheolaíocht iomlán (díolúine linnte, léibhéalacha creidmheachta, téarmaí soláthraí): **[docs/reference/FREE_TIERS.md](docs/reference/FREE_TIERS.md)**.
 >
@@ -37,14 +37,14 @@
 
 <h3>
 
-⭐ Stársáil an repo má chabhraigh OMNIROUTE leat airgead a shábháil agus do chuid oibre a éascú.
+⭐ Stársáil an repo má chabhraigh AGENTPROXY leat airgead a shábháil agus do chuid oibre a éascú.
 
 </h3>
 
-[![Stars](https://img.shields.io/github/stars/diegosouzapw/OmniRoute?style=social)](https://github.com/diegosouzapw/OmniRoute)
-<a href="https://trendshift.io/repositories/23589" target="_blank"><img src="https://trendshift.io/api/badge/repositories/23589" alt="diegosouzapw%2FOmniRoute | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
-[![Star History Rank](https://api.star-history.com/badge?repo=diegosouzapw/OmniRoute&theme=dark)](https://www.star-history.com/diegosouzapw/omniroute)
-[![olud.ai](https://olud.ai/badge.php?tool=diegosouzapw-omniroute)](https://olud.ai/project/diegosouzapw-omniroute.html)
+[![Stars](https://img.shields.io/github/stars/khanhkit/AgentProxy?style=social)](https://github.com/khanhkit/AgentProxy)
+<a href="https://trendshift.io/repositories/23589" target="_blank"><img src="https://trendshift.io/api/badge/repositories/23589" alt="diegosouzapw%2FAgentProxy | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
+[![Star History Rank](https://api.star-history.com/badge?repo=khanhkit/AgentProxy&theme=dark)](https://www.star-history.com/khanhkit/agentproxy)
+[![olud.ai](https://olud.ai/badge.php?tool=diegosouzapw-agentproxy)](https://olud.ai/project/diegosouzapw-agentproxy.html)
 
 ### 💬 Bí páirteach sa phobal
 
@@ -54,12 +54,12 @@
 [![Lean @diegosouzapw ar GitHub](https://img.shields.io/github/followers/diegosouzapw?style=for-the-badge&logo=github&logoColor=white&label=Lean%20ar%20GitHub&color=181717)](https://github.com/diegosouzapw)
 
 [![Discord](https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/U47eFqAXCn)
-[![Telegram](https://img.shields.io/badge/Telegram-26A5E4?style=for-the-badge&logo=telegram&logoColor=white)](https://t.me/omnirouteOficial)
+[![Telegram](https://img.shields.io/badge/Telegram-26A5E4?style=for-the-badge&logo=telegram&logoColor=white)](https://github.com/khanhkit/AgentProxy/discussions)
 [![WhatsApp Domhanda](https://img.shields.io/badge/WhatsApp_Domhanda-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://chat.whatsapp.com/FvuCbrpZmQ6I85n2vW5QIC?s=cl&p=a&mlu=4)
 [![WhatsApp an Bhrasaíl](https://img.shields.io/badge/WhatsApp_an_Bhrasaíl-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://chat.whatsapp.com/KWgatljAjmbELQory59Oti?s=cl&p=a&mlu=4)
-[![Suíomh Gréasáin](https://img.shields.io/badge/Suíomh_Gréasáin-omniroute.online-blue?logo=google-chrome&logoColor=white)](https://omniroute.online)
+[![Suíomh Gréasáin](https://img.shields.io/badge/Suíomh_Gréasáin-agentproxy.online-blue?logo=google-chrome&logoColor=white)](https://agentproxy.example.com)
 
-**Ceisteanna, leideanna soláthraí, bótharraise & tacaíocht → [Discord](https://discord.gg/U47eFqAXCn) · [Telegram](https://t.me/omnirouteOficial) · WhatsApp [🌍 Domhanda](https://chat.whatsapp.com/FvuCbrpZmQ6I85n2vW5QIC?s=cl&p=a&mlu=4) / [🇧🇷 An Bhrasaíl](https://chat.whatsapp.com/KWgatljAjmbELQory59Oti?s=cl&p=a&mlu=4) / [Portal](https://portal.sthub.com.br/communities/groups/st-hub/channels/Omniroute-World-8kRjmK)**
+**Ceisteanna, leideanna soláthraí, bótharraise & tacaíocht → [Discord](https://discord.gg/U47eFqAXCn) · [Telegram](https://github.com/khanhkit/AgentProxy/discussions) · WhatsApp [🌍 Domhanda](https://chat.whatsapp.com/FvuCbrpZmQ6I85n2vW5QIC?s=cl&p=a&mlu=4) / [🇧🇷 An Bhrasaíl](https://chat.whatsapp.com/KWgatljAjmbELQory59Oti?s=cl&p=a&mlu=4) / [Portal](https://portal.sthub.com.br/communities/groups/st-hub/channels/AgentProxy-World-8kRjmK)**
 
 <br/>
 
@@ -84,12 +84,12 @@
 
 ## 🧩 Ar Fáil
 
-[![npm version](https://img.shields.io/npm/v/omniroute?color=cb3837&logo=npm)](https://www.npmjs.com/package/omniroute)
-![NPM Monthly](https://img.shields.io/npm/dm/omniroute?label=npm/month&color=cb3837&logo=npm)
-[![Docker Hub](https://img.shields.io/docker/v/diegosouzapw/omniroute?label=Docker%20Hub&logo=docker&color=2496ED)](https://hub.docker.com/r/diegosouzapw/omniroute)
+[![npm version](https://img.shields.io/npm/v/agentproxy?color=cb3837&logo=npm)](https://www.npmjs.com/package/agentproxy)
+![NPM Monthly](https://img.shields.io/npm/dm/agentproxy?label=npm/month&color=cb3837&logo=npm)
+[![Docker Hub](https://img.shields.io/docker/v/khanhkit/agentproxy?label=Docker%20Hub&logo=docker&color=2496ED)](https://github.com/khanhkit/AgentProxy/pkgs/container/agentproxy)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)
-![Docker Pulls](https://img.shields.io/docker/pulls/diegosouzapw/omniroute?label=docker%20pulls&logo=docker&color=2496ED)
-![Electron Downloads](https://img.shields.io/github/downloads/diegosouzapw/omniroute/total?style=flat&label=electron%20downloads&logo=electron&color=47848F)
+![Docker Pulls](https://img.shields.io/docker/pulls/khanhkit/agentproxy?label=docker%20pulls&logo=docker&color=2496ED)
+![Electron Downloads](https://img.shields.io/github/downloads/khanhkit/agentproxy/total?style=flat&label=electron%20downloads&logo=electron&color=47848F)
 
 <table>
   <tr>
@@ -101,8 +101,8 @@
   <tr>
     <td align="right"><b>💡 Foghlaim</b></td>
     <td align="center"><a href="#-the-promise">💥 An Gealltanas</a></td>
-    <td align="center"><a href="#-why-omniroute">🤔 Cén Fáth OmniRoute</a></td>
-    <td align="center"><a href="#-what-sets-omniroute-apart">🏆 Cad a Dhéanann Éagsúil é</a></td>
+    <td align="center"><a href="#-why-agentproxy">🤔 Cén Fáth AgentProxy</a></td>
+    <td align="center"><a href="#-what-sets-agentproxy-apart">🏆 Cad a Dhéanann Éagsúil é</a></td>
   </tr>
   <tr>
     <td align="right"><b>⚙️ Gnéithe</b></td>
@@ -113,18 +113,18 @@
   <tr>
     <td align="right"></td>
     <td align="center"><a href="#%EF%B8%8F-save-1595-tokens--automatically">🗜️ Comhbhrú</a></td>
-    <td align="center"><a href="#%EF%B8%8F-where-omniroute-runs--anywhere">🖥️ Cá Ritheann sé</a></td>
+    <td align="center"><a href="#%EF%B8%8F-where-agentproxy-runs--anywhere">🖥️ Cá Ritheann sé</a></td>
     <td align="center"><a href="#-private--local-first">🔒 Príobháideach</a></td>
   </tr>
   <tr>
     <td align="right"><b>👀 Féach air</b></td>
-    <td align="center"><a href="#-omniroute-in-action">🎬 I mBun Gnímh</a></td>
+    <td align="center"><a href="#-agentproxy-in-action">🎬 I mBun Gnímh</a></td>
     <td align="center"><a href="#-whats-new">✨ Cad atá Nua</a></td>
     <td align="center"><a href="#-compatible-clis--coding-agents">🤖 CLIanna Comhoiriúnacha</a></td>
   </tr>
   <tr>
     <td align="right"><b>💚 Tacaíocht</b></td>
-    <td align="center"><a href="#-support-omniroute">💚 Tacaíocht / Síntiús</a></td>
+    <td align="center"><a href="#-support-agentproxy">💚 Tacaíocht / Síntiús</a></td>
     <td align="center"><a href="#-community--help">💬 Pobal</a></td>
     <td align="center"><a href="#-sponsors">💖 Urraitheoirí</a></td>
   </tr>
@@ -202,7 +202,7 @@
 
 </div>
 
-<img src="./docs/diagrams/works-zero-config.svg" width="100%" alt="Oibríonn sé an nóiméad a shuiteálann tú é — gan chumraíocht. Trí chéim: 1. Suiteáil — npm i -g omniroute, tosaíonn an freastalaí ar localhost:20128. 2. Díreoigh d'uirlis ar http://localhost:20128/v1 — aon uirlis atá comhoiriúnach le OpenAI (Claude Code, Cursor, Cline). 3. Freagraíonn sé — glaoigh ar mhúnla auto le haghaidh freagra láithreach, gan aon API key, gan chlárú, gan chumraíocht. Tá soláthraí gan eochair OpenCode Free réamh-nasctha sa chomhcheangal auto, mar sin freagraíonn suiteáil úr as an mbosca."/>
+<img src="./docs/diagrams/works-zero-config.svg" width="100%" alt="Oibríonn sé an nóiméad a shuiteálann tú é — gan chumraíocht. Trí chéim: 1. Suiteáil — npm i -g agentproxy, tosaíonn an freastalaí ar localhost:20128. 2. Díreoigh d'uirlis ar http://localhost:20128/v1 — aon uirlis atá comhoiriúnach le OpenAI (Claude Code, Cursor, Cline). 3. Freagraíonn sé — glaoigh ar mhúnla auto le haghaidh freagra láithreach, gan aon API key, gan chlárú, gan chumraíocht. Tá soláthraí gan eochair OpenCode Free réamh-nasctha sa chomhcheangal auto, mar sin freagraíonn suiteáil úr as an mbosca."/>
 
 ```bash
 # Suiteáil úr, gan aon dintiúir — oibríonn `auto` cheana féin:
@@ -211,7 +211,7 @@ curl http://localhost:20128/v1/chat/completions \
   -d '{"model":"auto","messages":[{"role":"user","content":"Hello!"}]}'
 ```
 
-<sub>An fearr leat backend saor in aisce ar leith? Glaoigh ar `oc/…` (OpenCode Free) go díreach. Ansin céim suas go `auto` agus lig do OmniRoute roghnú.</sub>
+<sub>An fearr leat backend saor in aisce ar leith? Glaoigh ar `oc/…` (OpenCode Free) go díreach. Ansin céim suas go `auto` agus lig do AgentProxy roghnú.</sub>
 
 <sub>📦 Scripteanna tapaidh cóipeáil-ghreamaithe do **Python, Node.js, PHP, agus cURL** → [`examples/quickstart/`](examples/quickstart/)</sub>
 
@@ -230,15 +230,15 @@ curl http://localhost:20128/v1/chat/completions \
 
 <div align="center">
 
-# 🤔 Cén fáth OmniRoute?
+# 🤔 Cén fáth AgentProxy?
 
 </div>
 
-<img src="./docs/diagrams/why-pain-fix.svg" width="100%" alt="Cén fáth OmniRoute — stad de bheith ag láimhseáil 10 deais, eochracha API marbha agus billí iontais. Deich bpian laethúil vs réitigh: cuóta ag dul in éag gan úsáid → uasmhéadaigh síntiúis; teorainneacha ráta i lár an chóid → aisghabháil uathoibríoch 4-leibhéal (Síntiús → API → Saor → Saor in Aisce); aschuir uirlisí ag dó comharthaí → comhbhrú RTK + Caveman (15–95%); APIs costasacha → ródú costas-optamaithe; gach uirlis lena socrú féin → aon chríochphointe amháin, aon deais amháin; AI blocáilte → seachfhreastalaí 3-leibhéal + TLS stealth; eochracha marbha → athléimneacht 3-shraith (scoradáin chiorcaid, fuarú eochrach, glasáil mhúnla); foireann ag roinnt síntiús amháin → linnte eochracha le cuótaí cothroma; leideanna trí scamall duine eile → áitiúil-ar dtús le heochracha criptithe AES-256-GCM; gan infheictheacht caiteachais → anailísíocht bheo (úsáid, cuóta, coigilteas, latency p95)."/>
+<img src="./docs/diagrams/why-pain-fix.svg" width="100%" alt="Cén fáth AgentProxy — stad de bheith ag láimhseáil 10 deais, eochracha API marbha agus billí iontais. Deich bpian laethúil vs réitigh: cuóta ag dul in éag gan úsáid → uasmhéadaigh síntiúis; teorainneacha ráta i lár an chóid → aisghabháil uathoibríoch 4-leibhéal (Síntiús → API → Saor → Saor in Aisce); aschuir uirlisí ag dó comharthaí → comhbhrú RTK + Caveman (15–95%); APIs costasacha → ródú costas-optamaithe; gach uirlis lena socrú féin → aon chríochphointe amháin, aon deais amháin; AI blocáilte → seachfhreastalaí 3-leibhéal + TLS stealth; eochracha marbha → athléimneacht 3-shraith (scoradáin chiorcaid, fuarú eochrach, glasáil mhúnla); foireann ag roinnt síntiús amháin → linnte eochracha le cuótaí cothroma; leideanna trí scamall duine eile → áitiúil-ar dtús le heochracha criptithe AES-256-GCM; gan infheictheacht caiteachais → anailísíocht bheo (úsáid, cuóta, coigilteas, latency p95)."/>
 
 <div align="center">
 
-<img src="./docs/diagrams/tier-cascade.svg" width="100%" alt="Sreabhadh iarratais OmniRoute: glaonn d'IDE nó CLI (Claude Code, Cursor, Cline…) ar aon chríochphointe áitiúil (http://localhost:20128/v1); is féidir le Ródóir Cliste OmniRoute (comhbhrú RTK + Caveman, 19 straitéis ródaithe, scoradáin chiorcaid, TLS stealth, MCP, A2A, gardaí ráillí) aisghabháil thar 4 leibhéal soláthraí fad is atá sprioc shláintiúil incháilithe ar fáil — Leibhéal 1 Síntiús, Leibhéal 2 API Key, Leibhéal 3 Saor agus Leibhéal 4 Saor in Aisce."/>
+<img src="./docs/diagrams/tier-cascade.svg" width="100%" alt="Sreabhadh iarratais AgentProxy: glaonn d'IDE nó CLI (Claude Code, Cursor, Cline…) ar aon chríochphointe áitiúil (http://localhost:20128/v1); is féidir le Ródóir Cliste AgentProxy (comhbhrú RTK + Caveman, 19 straitéis ródaithe, scoradáin chiorcaid, TLS stealth, MCP, A2A, gardaí ráillí) aisghabháil thar 4 leibhéal soláthraí fad is atá sprioc shláintiúil incháilithe ar fáil — Leibhéal 1 Síntiús, Leibhéal 2 API Key, Leibhéal 3 Saor agus Leibhéal 4 Saor in Aisce."/>
 
 </div>
 
@@ -251,17 +251,17 @@ curl http://localhost:20128/v1/chat/completions \
 </div>
 
 <p align="center">
-  <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798&aff=omniroute">
+  <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798">
     <img src="public/sponsors/kimi-k3-banner.png" width="100%" alt="Kimi K3 — Intleacht Réabhlóideach Oscailte · 2.8T paraiméadar · Comhthéacs de 1M comhartha"/>
   </a>
 </p>
 
-> **Ar mhaith leat bheith linn mar Charde an Fhoinse Oscailte?** Is iad na cuideachtaí seo a thacaíonn le foinse oscailte agus a chuidíonn le OmniRoute teacht ar aghaidh — agus deimhnímid go poibli cá dteastaíonn gach comhartha a thugann siad dúinn. Déan teagmháil: [diegosouza.pw@outlook.com](mailto:diegosouza.pw@outlook.com)
+> **Ar mhaith leat bheith linn mar Charde an Fhoinse Oscailte?** Is iad na cuideachtaí seo a thacaíonn le foinse oscailte agus a chuidíonn le AgentProxy teacht ar aghaidh — agus deimhnímid go poibli cá dteastaíonn gach comhartha a thugann siad dúinn. Déan teagmháil: [diegosouza.pw@outlook.com](mailto:diegosouza.pw@outlook.com)
 
 <table>
   <tr>
     <td align="center" width="150">
-      <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798&aff=omniroute">
+      <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798">
         <picture>
           <source media="(prefers-color-scheme: dark)" srcset="public/providers/kimi-logomark-dark.svg">
           <img src="public/providers/kimi-logomark-light.svg" width="64" alt="Kimi (Moonshot AI)"/>
@@ -271,35 +271,35 @@ curl http://localhost:20128/v1/chat/completions \
       <img src="https://img.shields.io/badge/Founding_Friend-1783FF?style=flat-square" alt="Carde Bunaitheach na Foinse Oscailte"/>
     </td>
     <td>
-      Buíochas le <b>Kimi (Moonshot AI)</b>, ár gCara Bunaitheach Foinse Oscailte, as an tionscadal seo a thacaíú! Is é Kimi an tsaotharlann intleachta artificial atá taobh thiar de na teaghlaigh samhlacha K2 agus K3 le meáchan oscailte — cuireann <b>Kimi K3</b> ar fáil comhthéacs de 1M comhartha, radharc dúchasach agus códú ar an leibhéal teorann ar bhlas an tsraithphraghsanna de mhodhanna dúnta, agus oibríonn sé as an mbosca le Claude Code, Codex agus gach uirlis códaithe a sheirbheálann OmniRoute.
+      Buíochas le <b>Kimi (Moonshot AI)</b>, ár gCara Bunaitheach Foinse Oscailte, as an tionscadal seo a thacaíú! Is é Kimi an tsaotharlann intleachta artificial atá taobh thiar de na teaghlaigh samhlacha K2 agus K3 le meáchan oscailte — cuireann <b>Kimi K3</b> ar fáil comhthéacs de 1M comhartha, radharc dúchasach agus códú ar an leibhéal teorann ar bhlas an tsraithphraghsanna de mhodhanna dúnta, agus oibríonn sé as an mbosca le Claude Code, Codex agus gach uirlis códaithe a sheirbheálann AgentProxy.
       <br/><br/>
-      <b>Ag cur cumhachta le tacaíochta Kimi:</b> Cumhachtaíonn creidmheasanna API Kimi feadhphíobáin nuashonrú a fhíoraítear le AI de OmniRoute — an chéim <i> Validation comhtháthaithe ag Kimi K3</i> a thaiscíonn gach iarratas tarraing roimh é a sheoladh — mar aon le forbairt gnéithe laethúil. Tacaíocht Kimi den chéad scoth seoltar ar an dá rille: an <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798&aff=omniroute">API Kimi</a> díreach (<code>kimi-k3</code>) agus an <a href="https://www.kimi.com/code?aff=omniroute">plean códaithe Kimi Code</a> (OAuth agus eochair API). Is é OmniRoute an chéad tionscadal foinse oscailte Brasaíle chomh maith i gclár tacaíochta Kimi. <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798&aff=omniroute"><b>Faigh eochair API Kimi le 15% creidmheas breise →</b></a>
+      <b>Ag cur cumhachta le tacaíochta Kimi:</b> Cumhachtaíonn creidmheasanna API Kimi feadhphíobáin nuashonrú a fhíoraítear le AI de AgentProxy — an chéim <i> Validation comhtháthaithe ag Kimi K3</i> a thaiscíonn gach iarratas tarraing roimh é a sheoladh — mar aon le forbairt gnéithe laethúil. Tacaíocht Kimi den chéad scoth seoltar ar an dá rille: an <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798">API Kimi</a> díreach (<code>kimi-k3</code>) agus an <a href="https://www.kimi.com/code">plean códaithe Kimi Code</a> (OAuth agus eochair API). Is é AgentProxy an chéad tionscadal foinse oscailte Brasaíle chomh maith i gclár tacaíochta Kimi. <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798"><b>Faigh eochair API Kimi le 15% creidmheas breise →</b></a>
     </td>
   </tr>
   <tr>
     <td align="center" width="150">
-      <a href="https://cheaperinference.com/?utm_source=omniroute">
+      <a href="https://cheaperinference.com/">
         <img src="./public/providers/cli-generic.svg" width="64" alt="Cheaper Inference"/>
       </a>
       <br/><b>Cheaper Inference</b><br/><sub>cheaperinference.com</sub><br/><br/>
       <img src="https://img.shields.io/badge/Open_Source_Friend-31f889?style=flat-square&labelColor=04170d" alt="Cara na Foinse Oscailte"/>
     </td>
     <td>
-      Buíochas le <b>Cheaper Inference</b>, Cara Foinse Oscailte de OmniRoute, as an tionscadal seo a thacaíú! Is geata ráitíoch é Cheaper Inference a dhíolaíonn 42 samhail teorann — Claude, GPT-5.x, Gemini, Kimi K3, GLM, DeepSeek, Grok agus MiniMax — taobh thiar de chríochphointe amháin atá comhoiriúnach le OpenAI, ag ródáil gach iarratais chuig an soláthraí inchuírite is saoire gan riamh a ghearradh os cionn an phraghs liosta Déantóra an tsamhail.
+      Buíochas le <b>Cheaper Inference</b>, Cara Foinse Oscailte de AgentProxy, as an tionscadal seo a thacaíú! Is geata ráitíoch é Cheaper Inference a dhíolaíonn 42 samhail teorann — Claude, GPT-5.x, Gemini, Kimi K3, GLM, DeepSeek, Grok agus MiniMax — taobh thiar de chríochphointe amháin atá comhoiriúnach le OpenAI, ag ródáil gach iarratais chuig an soláthraí inchuírite is saoire gan riamh a ghearradh os cionn an phraghs liosta Déantóra an tsamhail.
       <br/><br/>
-      <b>Tacaíocht den chéad scoth i OmniRoute:</b> Comhlánaíochtaí Comhrá, an chríochphointe dúchasach <code>/v1/responses</code>, radharc, glao gairme agus 3 mhodh íomhá (<code>grok-imagine</code>, <code>nano-banana-pro</code>, <code>nano-banana-2</code>, inrochtana mar <code>cheaperinference/&lt;model&gt;</code>). <a href="https://cheaperinference.com/?utm_source=omniroute"><b>Faigh eochair API →</b></a>
+      <b>Tacaíocht den chéad scoth i AgentProxy:</b> Comhlánaíochtaí Comhrá, an chríochphointe dúchasach <code>/v1/responses</code>, radharc, glao gairme agus 3 mhodh íomhá (<code>grok-imagine</code>, <code>nano-banana-pro</code>, <code>nano-banana-2</code>, inrochtana mar <code>cheaperinference/&lt;model&gt;</code>). <a href="https://cheaperinference.com/"><b>Faigh eochair API →</b></a>
     </td>
   </tr>
 </table>
 
-<sub>Ceangailte le <code>aff=omniroute</code> iad na naisc. Maoiníonn siad an tionscadal gan aon chostas breise ort.</sub>
+<sub>Ceangailte le <code>aff=agentproxy</code> iad na naisc. Maoiníonn siad an tionscadal gan aon chostas breise ort.</sub>
 
 <br/>
 
 <details open>
 <summary><sub><b>🎟️ Práchomhshóraigh Chairde</b> — cóipeanna saor in aisce ó sholáthraithe nach dtacaímid leo (cliceáil le leathnú)</sub></summary>
 
-<sub><i>Tá an rannán seo do chóipeanna tagartha/práchomhshóraigh amháin. Tá comhpháirtíochtaí urraíochta sa rannán <b>🤝 Tacaíochtaí ó chairde an Fhoinse Oscailte</b> thuas. Níl aon urraíocht nó comhpháirtíocht ag OmniRoute leis na soláthraithe liostaithe anseo — is cóipeanna poiblí iad seo is féidir le duine ar bith a úsáid.</i></sub>
+<sub><i>Tá an rannán seo do chóipeanna tagartha/práchomhshóraigh amháin. Tá comhpháirtíochtaí urraíochta sa rannán <b>🤝 Tacaíochtaí ó chairde an Fhoinse Oscailte</b> thuas. Níl aon urraíocht nó comhpháirtíocht ag AgentProxy leis na soláthraithe liostaithe anseo — is cóipeanna poiblí iad seo is féidir le duine ar bith a úsáid.</i></sub>
 
 <table>
   <tr>
@@ -310,14 +310,14 @@ curl http://localhost:20128/v1/chat/completions \
       <br/><sub><b>AgentRouter</b></sub><br/><sub>agentrouter.org</sub>
     </td>
     <td>
-      <sub><b><a href="https://agentrouter.org/register?aff=70LM">AgentRouter</a></b> — clárú comhfhreagrach · <b>$100 creidmheas saor in aisce</b> ar chlárú (freastalaí saor in aisce, bí ag súil le moill níos airde — is fearr le haghaidh tástála, ná táirgeadh). Tacaíocht den chéad scoth i OmniRoute ó <b>v3.8.50</b>: Comhlánaíochtaí Comhrá, an formáid sreanga comhoiriúnach le Anthropic agus an cosán comhoiriúnach le OpenAI. I measc na samhlacha atá ar fáil tá <code>claude-opus-4-8</code>, <code>claude-opus-5</code>, <code>gpt-5.6-sol</code> agus tuilleadh. <b><a href="https://agentrouter.org/register?aff=70LM">Faigh do $100 →</a></b></sub>
+      <sub><b><a href="https://agentrouter.org/register?aff=70LM">AgentRouter</a></b> — clárú comhfhreagrach · <b>$100 creidmheas saor in aisce</b> ar chlárú (freastalaí saor in aisce, bí ag súil le moill níos airde — is fearr le haghaidh tástála, ná táirgeadh). Tacaíocht den chéad scoth i AgentProxy ó <b>v3.8.50</b>: Comhlánaíochtaí Comhrá, an formáid sreanga comhoiriúnach le Anthropic agus an cosán comhoiriúnach le OpenAI. I measc na samhlacha atá ar fáil tá <code>claude-opus-4-8</code>, <code>claude-opus-5</code>, <code>gpt-5.6-sol</code> agus tuilleadh. <b><a href="https://agentrouter.org/register?aff=70LM">Faigh do $100 →</a></b></sub>
       <br/><br/>
-      <sub>⚠️ <i>Nasc comhfhreagrach — níl aon urraíocht nó comhpháirtíocht ag OmniRoute leis an soláthraí seo.</i></sub>
+      <sub>⚠️ <i>Nasc comhfhreagrach — níl aon urraíocht nó comhpháirtíocht ag AgentProxy leis an soláthraí seo.</i></sub>
     </td>
   </tr>
 </table>
 
-<sub>An bhfuil a fhios agat faoin soláthraí eile le cóip práchomhshóraigh saor in aisce flaithiúil ar fhabhrúsoirí úsáideoirí OmniRoute? Oscail ábhar agus cuirfimid é anseo.</sub>
+<sub>An bhfuil a fhios agat faoin soláthraí eile le cóip práchomhshóraigh saor in aisce flaithiúil ar fhabhrúsoirí úsáideoirí AgentProxy? Oscail ábhar agus cuirfimid é anseo.</sub>
 
 </details>
 
@@ -331,11 +331,11 @@ curl http://localhost:20128/v1/chat/completions \
 
 <img src="./docs/diagrams/strategies-grid.svg" width="100%" alt="Na 19 straitéis ródaithe combo go léir beoite — tíl amháin in aghaidh na straitéise: tosaíocht, líon-isteach-ar dtús, meáite, babhta-rothlach, p2c, is-lú-úsáidte, randamach, randamach-dian, costas-uasmhéadaithe, ceannas, fuinneog-athshocraithe, athshocraithe-fheasach, comhthéacs-seachadta, comhthéacs-uasmhéadaithe, taisce-uasmhéadaithe, lkgp, uathoibríoch, comhleá, píblíne. Féach an tábla thuas le haghaidh cad a dhéanann gach ceann."/>
 
-> Is éard is **combo** ann ná slabhra samhlacha a ródaíonn OmniRoute **go huathoibríoch**. Má ritheann cuóta amach, má theipeann ar sholáthraí, nó má ardaíonn costais, is féidir leis an gcombo bogadh go dtí an chéad tsamhail shláintiúil incháilithe eile. 🛡️
+> Is éard is **combo** ann ná slabhra samhlacha a ródaíonn AgentProxy **go huathoibríoch**. Má ritheann cuóta amach, má theipeann ar sholáthraí, nó má ardaíonn costais, is féidir leis an gcombo bogadh go dtí an chéad tsamhail shláintiúil incháilithe eile. 🛡️
 
 ### ⚡ Nialas-chumraíocht — bain úsáid as `auto` díreach
 
-Níl aon chombo le cruthú. Socraigh do mhúnla go `auto` (nó leagan de) agus tógann OmniRoute combo fíorúil ó do sholáthraithe nasctha, scóráilte beo:
+Níl aon chombo le cruthú. Socraigh do mhúnla go `auto` (nó leagan de) agus tógann AgentProxy combo fíorúil ó do sholáthraithe nasctha, scóráilte beo:
 
 <table>
   <tr><th align="left">Aitheantas Samhla</th><th align="left">Cad a uasmhéadaíonn sé</th></tr>
@@ -464,7 +464,7 @@ Na **19** straitéis go léir — measc & meaitseáil in aghaidh chéim combo:
 
 ### 🧱 Tá athléimneacht ionsuite (3 shraith neamhspleácha)
 
-<img src="./docs/diagrams/resilience-layers.svg" width="100%" alt="Athléimneacht OmniRoute — 3 shraith féin-leighis neamhspleácha, an tsraith cheart don teip cheart. Sraith 1 scoradán ciorcaid soláthraí (soláthraí iomlán): téann sé as ach amháin ar 408/5xx, tairseacha OAuth 8× / API-key 12× / áitiúil 2×, athshocraíonn 60s/30s/15s isteach i taiscéalaíocht HALF-OPEN, aisghabháil mhall; agus é OPEN athródaíonn an combo go dtí an chéad soláthraí eile. Sraith 2 fuarú ceangail (eochair/cuntas amháin): bonn 5s OAuth / 3s API-key, cúlchéimniú easpónantúil ×2 le cosaint frith-thréada, 429 onóraíonn Retry-After, rath glanann gach staid earráide; scipeáiltear eochair fhuaraithe amháin agus leanann eochracha deirfiúracha ag freastal. Sraith 3 glasáil samhla (samhail amháin): 429 in aghaidh na samhla, 404 áitiúil nó diúltaithe mód glasáiltear díreach an tsamhail sin — riamh an ceangal iomlán. Stáit deiridh (toirmiscthe, imithe in éag, creidmheasanna ídithe) don oibreoir, ní do fhuaruithe."/>
+<img src="./docs/diagrams/resilience-layers.svg" width="100%" alt="Athléimneacht AgentProxy — 3 shraith féin-leighis neamhspleácha, an tsraith cheart don teip cheart. Sraith 1 scoradán ciorcaid soláthraí (soláthraí iomlán): téann sé as ach amháin ar 408/5xx, tairseacha OAuth 8× / API-key 12× / áitiúil 2×, athshocraíonn 60s/30s/15s isteach i taiscéalaíocht HALF-OPEN, aisghabháil mhall; agus é OPEN athródaíonn an combo go dtí an chéad soláthraí eile. Sraith 2 fuarú ceangail (eochair/cuntas amháin): bonn 5s OAuth / 3s API-key, cúlchéimniú easpónantúil ×2 le cosaint frith-thréada, 429 onóraíonn Retry-After, rath glanann gach staid earráide; scipeáiltear eochair fhuaraithe amháin agus leanann eochracha deirfiúracha ag freastal. Sraith 3 glasáil samhla (samhail amháin): 429 in aghaidh na samhla, 404 áitiúil nó diúltaithe mód glasáiltear díreach an tsamhail sin — riamh an ceangal iomlán. Stáit deiridh (toirmiscthe, imithe in éag, creidmheasanna ídithe) don oibreoir, ní do fhuaruithe."/>
 
 <sub>📖 [Inneall Auto-Combo](docs/routing/AUTO-COMBO.md) · [Treoir Athléimneachta](docs/architecture/RESILIENCE_GUIDE.md)</sub>
 
@@ -472,22 +472,22 @@ Na **19** straitéis go léir — measc & meaitseáil in aghaidh chéim combo:
 
 <div align="center">
 
-## 🏆 Cad a Dhéanann OmniRoute Uathúil
+## 🏆 Cad a Dhéanann AgentProxy Uathúil
 
 </div>
 
-<img src="./docs/diagrams/comparison-table.svg" width="100%" alt="Cad a dhéanann OmniRoute uathúil — léargas feidhmiúlachta as dáta i gcomparáid le 9router, OpenRouter, CLIProxyAPI agus LiteLLM trasna 13 cumhacht. OmniRoute: 355 soláthraí, 150+ saor in aisce ionsuite, 19 straitéis ródháilta, comhbhrú teicín 1-ingeall, freastalaí MCP ionsuite le 110 uirlis, prótacal ailtireachta A2A, cuimhne buan, cosaintí, ailtireachta scamall, TLS méarloorga soiléir, Desktop/Termux/PWA agus 42 áit choimeádta i18n san fhaiseal. Tá MIT-cheadúnas ag OmniRoute agus is féidir é a óstáil féin. D'fhéadfadh cumhachtaí agus uimhriúchán iomaitheoirí athrú; féach an modheolaíocht nasctha."/>
+<img src="./docs/diagrams/comparison-table.svg" width="100%" alt="Cad a dhéanann AgentProxy uathúil — léargas feidhmiúlachta as dáta i gcomparáid le 9router, OpenRouter, CLIProxyAPI agus LiteLLM trasna 13 cumhacht. AgentProxy: 355 soláthraí, 150+ saor in aisce ionsuite, 19 straitéis ródháilta, comhbhrú teicín 1-ingeall, freastalaí MCP ionsuite le 110 uirlis, prótacal ailtireachta A2A, cuimhne buan, cosaintí, ailtireachta scamall, TLS méarloorga soiléir, Desktop/Termux/PWA agus 42 áit choimeádta i18n san fhaiseal. Tá MIT-cheadúnas ag AgentProxy agus is féidir é a óstáil féin. D'fhéadfadh cumhachtaí agus uimhriúchán iomaitheoirí athrú; féach an modheolaíocht nasctha."/>
 
-<sub>📊 Modheolaíocht iomlán agus mion-cúrsaí feidhmiúlachta i gcoinne 9router, OpenRouter, CLIProxyAPI & LiteLLM → [`docs/comparison/OMNIROUTE_VS_ALTERNATIVES.md`](docs/comparison/OMNIROUTE_VS_ALTERNATIVES.md)</sub>
+<sub>📊 Modheolaíocht iomlán agus mion-cúrsaí feidhmiúlachta i gcoinne 9router, OpenRouter, CLIProxyAPI & LiteLLM → [`docs/comparison/AGENTPROXY_VS_ALTERNATIVES.md`](docs/comparison/AGENTPROXY_VS_ALTERNATIVES.md)</sub>
 
 <br/>
 
-## 💚 Tacaigh le OmniRoute
+## 💚 Tacaigh le AgentProxy
 
-Tá MIT-cheadúnas ag OmniRoute agus coinnítear é oscailte. Má shábhálann sé am nó airgead duit, seo conas é a choinneáil neamhspleách — roghnaigh a oireann duit. Ní dhéanann urraíocht tionchar ar tosaíocht ródháilta; ceannaíonn sé infheictheacht, ná rangú.
+Tá MIT-cheadúnas ag AgentProxy agus coinnítear é oscailte. Má shábhálann sé am nó airgead duit, seo conas é a choinneáil neamhspleách — roghnaigh a oireann duit. Ní dhéanann urraíocht tionchar ar tosaíocht ródháilta; ceannaíonn sé infheictheacht, ná rangú.
 
 <table>
-  <tr><td nowrap>⭐ <b>Realtaigh an tionscadal</b></td><td>Saor in aisce — cuireann sé i ndáiríre le infheictheacht</td><td><a href="https://github.com/diegosouzapw/OmniRoute">Realtaigh OmniRoute</a></td></tr>
+  <tr><td nowrap>⭐ <b>Realtaigh an tionscadal</b></td><td>Saor in aisce — cuireann sé i ndáiríre le infheictheacht</td><td><a href="https://github.com/khanhkit/AgentProxy">Realtaigh AgentProxy</a></td></tr>
   <tr><td nowrap>🐙 <b>URRAÍGH</b></td><td>Aon uair nó míosúil · táille ardán náid</td><td><a href="https://github.com/sponsors/diegosouzapw">github.com/sponsors/diegosouzapw</a></td></tr>
   <tr><td nowrap>☕ <b>Ko-fi</b></td><td>Bronntanas tapa aon uair, gan clárú don bhronntóir</td><td><a href="https://ko-fi.com/diegosouzapw">ko-fi.com/diegosouzapw</a></td></tr>
   <tr><td nowrap>🧋 <b>Ceannaigh Tábhli Caife</b></td><td>Gestsmall, neamhoifigiúil</td><td><a href="https://www.buymeacoffee.com/diegosouzapw">buymeacoffee.com/diegosouzapw</a></td></tr>
@@ -498,14 +498,14 @@ Tá MIT-cheadúnas ag OmniRoute agus coinnítear é oscailte. Má shábhálann s
 
 **🇧🇷 PIX** — tapa, gan táillí (An Bhrasaíl)
 
-<img src="docs/assets/pix-qr.png" width="140" align="right" alt="Cód QR PIX OmniRoute"/>
+<img src="docs/assets/pix-qr.png" width="140" align="right" alt="Cód QR PIX AgentProxy"/>
 
 Eochair (randamach): `5d865059-bc44-483a-962d-43ceb80126eb`
 
 Cóip-phrása PIX:
 
 ```
-00020101021126580014br.gov.bcb.pix01365d865059-bc44-483a-962d-43ceb80126eb5204000053039865802BR5922OMNIROUTE CONTRIBUICAO6006BRASIL62070503***630475DD
+00020101021126580014br.gov.bcb.pix01365d865059-bc44-483a-962d-43ceb80126eb5204000053039865802BR5922AGENTPROXY CONTRIBUICAO6006BRASIL62070503***630475DD
 ```
 
 <br clear="right"/>
@@ -524,18 +524,18 @@ Cóip-phrása PIX:
 
 </details>
 
-🐛 Fuarthas fabht nó tá aiseolas agat? Oscail [Díospóireacht](https://github.com/diegosouzapw/OmniRoute/discussions).
+🐛 Fuarthas fabht nó tá aiseolas agat? Oscail [Díospóireacht](https://github.com/khanhkit/AgentProxy/discussions).
 
 <br/>
 
 <p><strong>Nótaí forbróra:</strong> D'fhéadfadh an tionscadal comhad <code>.env</code> áitiúil a ghiniúint le linn npm install/postinstall le haghaidh áisiúlacht forbróra. Déantar an comhad seo a sheachaint go Soiléir trí <code>.gitignore</code> (féach <code>.gitignore</code>) agus níor cheart é a thiomnú choíche — má thiontúear é go teagmhasach, cas aon rúin nochtaithe agus bain an comhad amach as stair. Féach <a href="docs/DEVELOPER-ENVIRONMENT.md">docs/DEVELOPER-ENVIRONMENT.md</a> le haghaidh treorach maidir le comhaid timpeallachta áitiúla agus rúin a bhainistiú.</p>
 
-## �📡 Radair OmniRoute
+## �📡 Radair AgentProxy
 
 An príomhcheannlíne saor-tairisceana fanann mar **~1.51B comharthaí/an t-iomlán** ón catalóg,
 atá dídhúblaithe ag líonra, thuas. Is féidir creidmheachtaí sínithe sealadach ard-soláthraí a ardú an chéad
 mí go **~2.13B** ar leithligh. Is radair roghnach, catalóg shínithe é Radair le haghaidh daoine ar mian leo
-ábharthacht saor-mhúnla nua-aimseartha idir eisiúintí OmniRoute; fanann an catalóg pobail agus gach gné
+ábharthacht saor-mhúnla nua-aimseartha idir eisiúintí AgentProxy; fanann an catalóg pobail agus gach gné
 saor-tairisceana reatha saor in aisce.
 
 Is féidir le tacaíocht tairbhithe an catalóg beo agus deiseanna soláthraí breise a fháil. Is é a leibhéal
@@ -543,9 +543,9 @@ inaistrithe ar leith **thart ar 3B comharthaí/an t-iomlán ar a mhéad**, ag br
 Ní ráthaíocht é an leibhéal sin: is féidir le soláthraíteanna cuótaí, incháilitheacht, múnlaí nó réigiúin a athrú
 am ar bith.
 
-Tógtha le Radair agus gan ach GET. Ní uaslódálann cliant OmniRoute ceisteanna, tráffic, cumraíocht soláthraí,
+Tógtha le Radair agus gan ach GET. Ní uaslódálann cliant AgentProxy ceisteanna, tráffic, cumraíocht soláthraí,
 teileamheadrach úsáide, ná stáid dhíothaithe fógra áitiúil. Faigh amach faoin incháilitheacht agus
-an catalóg reatha ag **[radar.omniroute.online/planos](https://radar.omniroute.online/planos)**.
+an catalóg reatha ag **[radar.agentproxy.online/planos](https://radar.agentproxy.example.com/planos)**.
 
 <br/>
 
@@ -563,19 +563,19 @@ an catalóg reatha ag **[radar.omniroute.online/planos](https://radar.omniroute.
 - **🗜️ Deisiú comhbhrú** — garda inflisiúin réamhshocraithe, pacáistí Cavaman le haghaidh DE / FR / JA + Síneach (wényán), scagairí RTK le haghaidh Gradle agus .NET. → [Comhbhrú](docs/compression/COMPRESSION_ENGINES.md)
 - **💸 Praghsáil ionracais cothrom** — soláthraí síntiúis / pleananna ríomhchlárnóireachta léann **$0** i mbunaitheannas costais; coinníonn buiséad, cuóta agus ródú ag meastachán. → [Tagairt API](docs/reference/API_REFERENCE.md)
 - **⚖️ Ródú Cuóta-Comhroinn** — roinn cuóta cuntas comhroinnte go cothrom thar eochracha líonra, oibriúcháin choimeádta ionas go ndéantar sliceanna díomhaoin iasacht. → [Treoir Seasmhachta](docs/architecture/RESILIENCE_GUIDE.md)
-- **🤖 Socrú CLI/gníomhaire le hordú amháin** — 13 ordú `setup-*` cláraithe; seolann `omniroute run` 7 CLI (Claude Code, Codex, Aider, Goose, OpenCode, Qwen Code, Gemini CLI); tacaíonn `omniroute configure` le 10 spriocanna le roghnóir idirghníomhach soláthraí+múnla agus roghanna is fearr in aghaidh an comhthéacs. → [Comhtháthuithe CLI](docs/guides/CLI-INTEGRATIONS.md)
-- **🛰️ Mód cianda** — rith cianda OmniRoute le teochóidí scóipe (`connect` / `contexts` / `tokens`) + cúntóir `antigravity` OAuth le haghaidh suiteálacha VPS. → [Mód Cianda](docs/guides/REMOTE-MODE.md)
+- **🤖 Socrú CLI/gníomhaire le hordú amháin** — 13 ordú `setup-*` cláraithe; seolann `agentproxy run` 7 CLI (Claude Code, Codex, Aider, Goose, OpenCode, Qwen Code, Gemini CLI); tacaíonn `agentproxy configure` le 10 spriocanna le roghnóir idirghníomhach soláthraí+múnla agus roghanna is fearr in aghaidh an comhthéacs. → [Comhtháthuithe CLI](docs/guides/CLI-INTEGRATIONS.md)
+- **🛰️ Mód cianda** — rith cianda AgentProxy le teochóidí scóipe (`connect` / `contexts` / `tokens`) + cúntóir `antigravity` OAuth le haghaidh suiteálacha VPS. → [Mód Cianda](docs/guides/REMOTE-MODE.md)
 - **🧭 Ródú uathoibríoch níos cliste** — combothaiceanna `auto/<category>:<tier>`, **Fusion** (painéal múnla + breitheamh), ródú ionduchtaithe ag tasc, tarraing-ansc-ansáil múnla / mód / buiséad USD in aghaidh an iarratais. → [Uath-Combo](docs/routing/AUTO-COMBO.md)
 - **🗜️ Comhbhrú in-suiteáilte** — 12 innill chomhdhírithe + Stiúideanna Comhbhrú: LLMLingua-2, dá-chéim Ultra, omnightil, geata ionracais in aghaidh an chéime, GCF v3.2, eagarthóir tarraing-athordú. → [Comhbhrú](docs/compression/COMPRESSION_ENGINES.md)
 - **🕵️ Cripthír MITM trédhearcach (TPROXY)** — tógann CLIs nach n-úsáideann athróga timpeallachta seachfhreastalaí, le CA in aghaidh an SNI + suiteálaí stór iontaoibh. → [MITM/TPROXY](docs/security/MITM-TPROXY-DECRYPT.md)
-- **💸 Teileamheadrach costais i ngach áit** — ceadanna costas/úsáide `X-OmniRoute-*` ar gach pointe deiridh, ceadanna sábháilteacht caidhm-HIT, cuótaí caiteachas USD in aghaidh an eochrach. → [Tagairt API](docs/reference/API_REFERENCE.md)
-- **🧠 Cuimhne faoi do rialú** - as as beagnach de réir réamhshocraithe, ionchóiriú veicteach in8 roghnach + tréchú ríthábhachtach, `x-omniroute-no-memory` in aghaidh an iarratais. → [Cuimhne](docs/frameworks/MEMORY.md)
+- **💸 Teileamheadrach costais i ngach áit** — ceadanna costas/úsáide `X-AgentProxy-*` ar gach pointe deiridh, ceadanna sábháilteacht caidhm-HIT, cuótaí caiteachas USD in aghaidh an eochrach. → [Tagairt API](docs/reference/API_REFERENCE.md)
+- **🧠 Cuimhne faoi do rialú** - as as beagnach de réir réamhshocraithe, ionchóiriú veicteach in8 roghnach + tréchú ríthábhachtach, `x-agentproxy-no-memory` in aghaidh an iarratais. → [Cuimhne](docs/frameworks/MEMORY.md)
 - **🛡️ Slándáil** - garda inste idirghníomhaíochta ar gach cosán LLM (sraith dearg-fhoirne), garda fíorthaifeadh ainmneacha úsáideora roghnach (marthanann clárlann pasfhocail i gcónaí), cuardach gréasáin chúltaca DuckDuckGo saor in aisce, agus geata logáilte OIDC roghnach le haghaidh an phainéil stiúrtha. → [Treoracha Slándála](docs/security/GUARDRAILS.md)
 - **🖼️ Pointí deiridh nua** - cuireann `/v1/ocr` (Mistral OCR) agus `/v1/audio/translations` (cosúil le Whisper) críoch le dromchla meáin. → [Tagairt API](docs/reference/API_REFERENCE.md)
 - **🎨 Giniúint íomhá / físe / fuaime** - API amháin le haghaidh meáin: xAI Grok Imagine & Novita AI físeán, ComfyUI, Magnific, Adobe Firefly, Segmind, agus soláthraithe cainte cosúil le ElevenLabs. → [Tagairt API](docs/reference/API_REFERENCE.md)
 - **🌍 Imscaradh agus oibríochtaí** - basePath seachfhreastalaí droim ar ais, braith teanga bhrabhsálaí uathoibríoch, rianú gléasanna in aghaidh an eochrach, iontaobh MITM gan fréamh, logánú zh-TW. → [Timpeallacht](docs/reference/ENVIRONMENT.md)
 - **🤝 Tuilleadh soláthraí agus gníomhairí** - gníomhairí scamall (Codex Cloud, Cursor, Devin, Jules), Grok Build (xAI) le brabhsálaí + logáil isteach OAuth, cárta príomhshraith Ollama, Claude Opus 5 & Sonnet 5, comhpháirtíocht oifigiúil Kimi (Code/Web/Moonshot), Zed, Requesty, SenseNova, Yuanbao, Agnes AI… agus catalóg athnuaite **352 soláthraí**. → [Soláthraíteanna](docs/reference/PROVIDER_REFERENCE.md)
-- **📡 Trédhearcacht ródú** - iompraíonn gach freagra ceannlitir `X-OmniRoute-Decision` a ainmníonn an straitéis/soláthraí/ama freagairtha a chónaigh air, combothaiceanna `cache-optimized` nua + `cacheAffinity` uath-comhoiriúnach a sheolann iarrataí atá ag aisghníomhú ar ais go dtí an nasc a sheilg an réamhchostas caidhm, agus pointe deiridh léite amháin `/v1/auto-combo/{channel}/candidates` nochtaíonn poll iarrthóirí beo an chainéil `auto/*`. → [Uath-Combo](docs/routing/AUTOCOMBO.md)
+- **📡 Trédhearcacht ródú** - iompraíonn gach freagra ceannlitir `X-AgentProxy-Decision` a ainmníonn an straitéis/soláthraí/ama freagairtha a chónaigh air, combothaiceanna `cache-optimized` nua + `cacheAffinity` uath-comhoiriúnach a sheolann iarrataí atá ag aisghníomhú ar ais go dtí an nasc a sheilg an réamhchostas caidhm, agus pointe deiridh léite amháin `/v1/auto-combo/{channel}/candidates` nochtaíonn poll iarrthóirí beo an chainéil `auto/*`. → [Uath-Combo](docs/routing/AUTOCOMBO.md)
 - **⚡ Feidhmíocht agus bonneagar áitiúil** - Redis áitiúil le clic amháin, reolaithe rith Cloudflare Workers / Deno Deploy, Bifrost agus Mux mar sheirbhísí tacaíochta leabaithe. → [Seirbhísí Leabaithe](docs/frameworks/EMBEDDED-SERVICES.md)
 - **🧩 Sa bhosca freisin** - frámaíochta breiseán + margadh, frámaíochta scileanna Omni/Agent/GhostHub, comhtháthú seicléis Obsidian (22 uirlis MCP), APIanna Grúpa agus Comhaid comhoiriúnach le OpenAI, freagra semantach caidhm, gamification le ceannaireachtaí, aimsiú ACP gníomhaire (16 gníomhaire bunaithe), easpórtáil logáil sceidealaithe go BigQuery, tástáil lochtanna `auto/chaos`, droichead bot Telegram, bainisteoir leagan in-app agus ritháin saor-tairisceana LMArena-ELO. → [Doiciméadú](docs/README.md)
 
@@ -628,29 +628,29 @@ an catalóg reatha ag **[radar.omniroute.online/planos](https://radar.omniroute.
 <b>＋ oibríonn sé freisin le</b> · Kiro · Command Code · Antigravity · Windsurf · AMP · <b>aon uirlis atá comhoiriúnach le OpenAI</b>
 </div>
 
-<sub>📖 Socrú in aghaidh na huirlise do na 36 uirlis go léir (26 CLI Code's + 10 CLI Agents) → [`docs/reference/CLI-TOOLS.md`](docs/reference/CLI-TOOLS.md) · 🧩 Breiseán OpenCode → [`@omniroute/opencode-provider`](https://www.npmjs.com/package/@omniroute/opencode-provider)</sub>
+<sub>📖 Socrú in aghaidh na huirlise do na 36 uirlis go léir (26 CLI Code's + 10 CLI Agents) → [`docs/reference/CLI-TOOLS.md`](docs/reference/CLI-TOOLS.md) · 🧩 Breiseán OpenCode → [`@agentproxy/opencode-provider`](https://www.npmjs.com/package/@agentproxy/opencode-provider)</sub>
 
 </div>
 
 <br/>
 
-**Seol aon CLI tacaithe trí OmniRoute le hordú amháin** — gan aon chomhaid chumraíochta a scríobh,
+**Seol aon CLI tacaithe trí AgentProxy le hordú amháin** — gan aon chomhaid chumraíochta a scríobh,
 dintiúir á instealladh in aghaidh an phróisis, faigheann Qwen/Gemini baile scoite sealadach:
 
 ```bash
-omniroute run claude   --model openai/gpt-5.4          # Claude Code
-omniroute run codex    --model glm/glm-5.2             # OpenAI Codex CLI
-omniroute run aider    --model glm/glm-5.2 -- --message "reply OK"
-omniroute run goose    --model glm/glm-5.2
-omniroute run opencode --model glm/glm-5.2 -- run "reply OK"
-omniroute run qwen     --model glm/glm-5.2 -- -p "reply OK"
-omniroute run gemini   --model glm/glm-5.2 -- --skip-trust -p "reply OK"
+agentproxy run claude   --model openai/gpt-5.4          # Claude Code
+agentproxy run codex    --model glm/glm-5.2             # OpenAI Codex CLI
+agentproxy run aider    --model glm/glm-5.2 -- --message "reply OK"
+agentproxy run goose    --model glm/glm-5.2
+agentproxy run opencode --model glm/glm-5.2 -- run "reply OK"
+agentproxy run qwen     --model glm/glm-5.2 -- -p "reply OK"
+agentproxy run gemini   --model glm/glm-5.2 -- --skip-trust -p "reply OK"
 
 # Nó roghnaigh soláthraí+múnla go hidirghníomhach agus scríobh cumraíocht na huirlise féin:
-omniroute configure codex          # freisin: claude opencode qwen aider goose gemini cline continue kilo
+agentproxy configure codex          # freisin: claude opencode qwen aider goose gemini cline continue kilo
 ```
 
-Tugann gach ordú ómós do chomhthéacs cianda gníomhach (`omniroute connect <host>`), réamhamharcann `--dry-run`
+Tugann gach ordú ómós do chomhthéacs cianda gníomhach (`agentproxy connect <host>`), réamhamharcann `--dry-run`
 ar na env/args beacht gan iad a fhorghníomhú, agus coinníonn `--api-key-env NAME` rúin amach
 as do stair scaoill. → [Comhtháthú CLI](docs/guides/CLI-INTEGRATIONS.md)
 
@@ -727,7 +727,7 @@ as do stair scaoill. → [Comhtháthú CLI](docs/guides/CLI-INTEGRATIONS.md)
 
 <div align="center">
 
-## 🖥️ An áit a n- ritheann OmniRoute — I ngach áit
+## 🖥️ An áit a n- ritheann AgentProxy — I ngach áit
 
 </div>
 
@@ -735,14 +735,14 @@ as do stair scaoill. → [Comhtháthú CLI](docs/guides/CLI-INTEGRATIONS.md)
 
 <table>
   <tr><th align="left">Ardán</th><th align="left">Suiteáil</th><th align="left">Gnéithe</th></tr>
-  <tr><td align="left" nowrap>📦 <b>npm (domhanda)</b></td><td align="left" nowrap><code>npm install -g omniroute</code></td><td align="left">Ordú amháin, aon OS</td></tr>
-  <tr><td align="left" nowrap>🐳 <b>Docker</b></td><td align="left" nowrap><code>docker run … diegosouzapw/omniroute</code></td><td align="left">Il-ailt <b>AMD64 + ARM64</b></td></tr>
+  <tr><td align="left" nowrap>📦 <b>npm (domhanda)</b></td><td align="left" nowrap><code>npm install -g agentproxy</code></td><td align="left">Ordú amháin, aon OS</td></tr>
+  <tr><td align="left" nowrap>🐳 <b>Docker</b></td><td align="left" nowrap><code>docker run … khanhkit/agentproxy</code></td><td align="left">Il-ailt <b>AMD64 + ARM64</b></td></tr>
   <tr><td align="left" nowrap>🖥️ <b>Deisce (Electron)</b></td><td align="left" nowrap><code>npm run electron:build</code></td><td align="left">Fuinneog dhúchais + tráidire córais — <b>Windows / macOS / Linux</b></td></tr>
   <tr><td align="left" nowrap>💪 <b>ARM</b></td><td align="left" nowrap>dúchasach <code>arm64</code></td><td align="left">Raspberry Pi, freastalaithe ARM, Apple Silicon</td></tr>
-  <tr><td align="left" nowrap>📱 <b>Android (Termux)</b></td><td align="left" nowrap><code>pkg install nodejs && npx -y omniroute</code></td><td align="left">Ritheann <b>ar do ghuthán</b>, 24/7, gan fréamh</td></tr>
+  <tr><td align="left" nowrap>📱 <b>Android (Termux)</b></td><td align="left" nowrap><code>pkg install nodejs && npx -y agentproxy</code></td><td align="left">Ritheann <b>ar do ghuthán</b>, 24/7, gan fréamh</td></tr>
   <tr><td align="left" nowrap>📲 <b>PWA</b></td><td align="left" nowrap>"Cuir le Baile Scáileáin"</td><td align="left">Lánscáileán, as-líonra, suiteáilte ón mbrabhsálaí</td></tr>
-  <tr><td align="left" nowrap>🧩 <b>Breiseán OpenCode</b></td><td align="left" nowrap><code>@omniroute/opencode-provider</code></td><td align="left">Comhtháthú dúchasach OpenCode</td></tr>
-  <tr><td align="left" nowrap>🤖 <b>VS Code Copilot Chat</b></td><td align="left" nowrap>suiteáil an síneadh <b>OmniCopilot</b></td><td align="left">Gan samhail OmniRoute sa roghnóir Copilot Chat dúchasach — cobhsaí &amp; Insiders</td></tr>
+  <tr><td align="left" nowrap>🧩 <b>Breiseán OpenCode</b></td><td align="left" nowrap><code>@agentproxy/opencode-provider</code></td><td align="left">Comhtháthú dúchasach OpenCode</td></tr>
+  <tr><td align="left" nowrap>🤖 <b>VS Code Copilot Chat</b></td><td align="left" nowrap>suiteáil an síneadh <b>OmniCopilot</b></td><td align="left">Gan samhail AgentProxy sa roghnóir Copilot Chat dúchasach — cobhsaí &amp; Insiders</td></tr>
   <tr><td align="left" nowrap>🛠️ <b>Ón bhfoinse</b></td><td align="left" nowrap><code>npm install && npm run dev</code></td><td align="left">Déan é a phrúchadh, glac páirt</td></tr>
 </table>
 
@@ -752,18 +752,18 @@ as do stair scaoill. → [Comhtháthú CLI](docs/guides/CLI-INTEGRATIONS.md)
 
 <div align="center">
 
-### 🧩 Nua: OmniRoute taobh istigh de Copilot Chat dúchasach VS Code
+### 🧩 Nua: AgentProxy taobh istigh de Copilot Chat dúchasach VS Code
 
 </div>
 
-> Gan barra taoibh nua, gan comhéadan comhrá nua — gach samhail a sheirbheálann OmniRoute
+> Gan barra taoibh nua, gan comhéadan comhrá nua — gach samhail a sheirbheálann AgentProxy
 > le feiceáil i díreach an **roghnóir samhla Copilot Chat a úsáideann tú cheana féin**. Ó VS Code 1.122,
 > oibríonn samhlacha soláthraí gan síniú isteach GitHub nó síntiús Copilot — modh gníomhaire,
 > glao uirlise agus amharc, saor in aisce.
 
 Suiteáil an síneadh **[OmniCopilot](https://github.com/diegosouzapw/OmniCopilot)**, cuir é
-ar do bhunachar OmniRoute (réamhshocrú go dtí `localhost:20128`), ansin oscail Copilot Chat → roghnóir samhail
-→ **Bainistigh Samhlacha…** → **OmniRoute**.
+ar do bhunachar AgentProxy (réamhshocrú go dtí `localhost:20128`), ansin oscail Copilot Chat → roghnóir samhail
+→ **Bainistigh Samhlacha…** → **AgentProxy**.
 
 <table>
   <tr><th align="left">Stóras</th><th align="left">Nasc</th><th align="left">Oibríonn le</th></tr>
@@ -771,7 +771,7 @@ ar do bhunachar OmniRoute (réamhshocrú go dtí `localhost:20128`), ansin oscai
   <tr><td align="left" nowrap>🔓 <b>Clárlann Open VSX</b></td><td align="left"><a href="https://open-vsx.org/extension/diegosouzapw/omnicopilot">Suiteáil →</a></td><td align="left">Cursor, Windsurf, VSCodium, Theia, code-server, Gitpod, Antigravity, Kiro…</td></tr>
 </table>
 
-Iontaru ón eagarthóir: oscail an radharc **Sínithe**, cuardaigh **"OmniRoute"**, cliceáil **Suiteáil**
+Iontaru ón eagarthóir: oscail an radharc **Sínithe**, cuardaigh **"AgentProxy"**, cliceáil **Suiteáil**
 — oibríonn an bealach céanna ar an dá stóras. Foinse, saincheisteanna agus an leabhar oibre foilseácháin ag
 [diegosouzapw/OmniCopilot](https://github.com/diegosouzapw/OmniCopilot).
 
@@ -785,7 +785,7 @@ Iontaru ón eagarthóir: oscail an radharc **Sínithe**, cuardaigh **"OmniRoute"
 
 </div>
 
-<img src="./docs/diagrams/privacy-local.svg" width="100%" alt="Príobháideach agus áitiúil ar dtús — rith geata agus pláin rialaithe OmniRoute ar do mheaisín. Seoltar leideanna chuig an soláthraí atá roghnaithe gach iarratas; ní chuireann OmniRoute lúcháin próiseála leideanna óstáilte leis agus tá teileametra aisiompaithe de réir réamhshocraithe. Tá creidmheannaí criptaithe in Aimsir AES-256-GCM; cuimsíonn rialuithe raon eochracha API, scagadh IP, teorainneacha ráta, cosaint frith-instealladh leideanna, glanadh ceanntacca upstream, athrú PII de rogha, earráidí glantrais agus cosán iniúchta SQLite áitiúil. Tá ceadúnas MIT ag OmniRoute agus is féidir é a óstáil féin."/>
+<img src="./docs/diagrams/privacy-local.svg" width="100%" alt="Príobháideach agus áitiúil ar dtús — rith geata agus pláin rialaithe AgentProxy ar do mheaisín. Seoltar leideanna chuig an soláthraí atá roghnaithe gach iarratas; ní chuireann AgentProxy lúcháin próiseála leideanna óstáilte leis agus tá teileametra aisiompaithe de réir réamhshocraithe. Tá creidmheannaí criptaithe in Aimsir AES-256-GCM; cuimsíonn rialuithe raon eochracha API, scagadh IP, teorainneacha ráta, cosaint frith-instealladh leideanna, glanadh ceanntacca upstream, athrú PII de rogha, earráidí glantrais agus cosán iniúchta SQLite áitiúil. Tá ceadúnas MIT ag AgentProxy agus is féidir é a óstáil féin."/>
 
 <sub>📖 [Údarú](docs/architecture/AUTHZ_GUIDE.md) · [Bainistíochta Sábháilteachta](docs/security/GUARDRAILS.md) · [Comhlíonadh](docs/security/COMPLIANCE.md)</sub>
 
@@ -797,27 +797,27 @@ Iontaru ón eagarthóir: oscail an radharc **Sínithe**, cuardaigh **"OmniRoute"
 
 </div>
 
-> Thar an bhfreastalaí, tá **cockpit líne ordaithe iomlán** ag OmniRoute le **80+ ordú**, chomh maith le prótacail gníomhaí oscailte ionas gur féidir le gníomhaí AI é a thiomáint **leis féin**.
+> Thar an bhfreastalaí, tá **cockpit líne ordaithe iomlán** ag AgentProxy le **80+ ordú**, chomh maith le prótacail gníomhaí oscailte ionas gur féidir le gníomhaí AI é a thiomáint **leis féin**.
 
 ### ⌨️ CLI fíor (ní hamháin `start`)
 
 ```bash
-omniroute               # freastalaí geata + deais (port 20128)
-omniroute chat          # cliant TUI comhrá idirghníomhach (scléip: /model /combo /skill /memory)
-omniroute setup         # treoir chéad-rith treoraithe
-omniroute doctor        # diagnóis soláthraithe, poirt, spleácháin dhúchasacha
+agentproxy               # freastalaí geata + deais (port 20128)
+agentproxy chat          # cliant TUI comhrá idirghníomhach (scléip: /model /combo /skill /memory)
+agentproxy setup         # treoir chéad-rith treoraithe
+agentproxy doctor        # diagnóis soláthraithe, poirt, spleácháin dhúchasacha
 ```
 
-### 🛰️ Mód cianda — rith an CLI anseo, OmniRoute ar VPS
+### 🛰️ Mód cianda — rith an CLI anseo, AgentProxy ar VPS
 
-OmniRoute ar fhreastalaí? Tiomáine é as do ríomhaire glúine leis an **CLI céanna**. Logáil isteach uair amháin le comhartha rochtana scópáilte; gach ordú ansin mar sin díríonn ar an gcéanna cianda.
+AgentProxy ar fhreastalaí? Tiomáine é as do ríomhaire glúine leis an **CLI céanna**. Logáil isteach uair amháin le comhartha rochtana scópáilte; gach ordú ansin mar sin díríonn ar an gcéanna cianda.
 
 ```bash
-omniroute connect 192.168.0.15            # pasfhocal → comhartha scópáilte, saabh mar théacs comhthéacs
-omniroute models list                     # ← rith i gcoinne an fhreastalaí CIANDA
-omniroute configure codex                 # ← roghnaíonn múnla cianda, scríobh próifíl Codex áitiúil
-omniroute tokens create --name ci -- scope read   # cuir comharthaí níos cúinge ar fáil do mheaisíní eile
-omniroute contexts use default            # ← athraigh ar ais go dtí an freastalaí áitiúil
+agentproxy connect 192.168.0.15            # pasfhocal → comhartha scópáilte, saabh mar théacs comhthéacs
+agentproxy models list                     # ← rith i gcoinne an fhreastalaí CIANDA
+agentproxy configure codex                 # ← roghnaíonn múnla cianda, scríobh próifíl Codex áitiúil
+agentproxy tokens create --name ci -- scope read   # cuir comharthaí níos cúinge ar fáil do mheaisíní eile
+agentproxy contexts use default            # ← athraigh ar ais go dtí an freastalaí áitiúil
 ```
 
 Tá comharthaí scópáilte `read` / `write` / `admin`; fanann bealaí athrú próiseála i lúb-eisiach.
@@ -825,28 +825,28 @@ Tá comharthaí scópáilte `read` / `write` / `admin`; fanann bealaí athrú pr
 
 <div align="left">
 
-<img src="./docs/diagrams/cli-terminal.svg" width="50%" alt="Deais teirmínáin beoite ag taispeáint CLI OmniRoute — omniroute providers list, omniroute combo list agus omniroute health — ag rothlú thar an dromchla 86-ordú: soláthraithe · oauth · eochracha · combo · nóid · múnlaí · taisce · comhbhrú · costas · úsáid · quota · sláinte · athléimneacht · teileametra · logaí · iniúchadh · mcp · a2a · scamall · cuimhne · scileanna · measúnú · tunaíl · cóipeáil · sioncrónú · webhooks · polasaí · prághsáil · aistritheoir · insamhladh …"/>
+<img src="./docs/diagrams/cli-terminal.svg" width="50%" alt="Deais teirmínáin beoite ag taispeáint CLI AgentProxy — agentproxy providers list, agentproxy combo list agus agentproxy health — ag rothlú thar an dromchla 86-ordú: soláthraithe · oauth · eochracha · combo · nóid · múnlaí · taisce · comhbhrú · costas · úsáid · quota · sláinte · athléimneacht · teileametra · logaí · iniúchadh · mcp · a2a · scamall · cuimhne · scileanna · measúnú · tunaíl · cóipeáil · sioncrónú · webhooks · polasaí · prághsáil · aistritheoir · insamhladh …"/>
 
 </div>
 
-### 🤝 Ceangail gníomhaí — agus rialaí sé OmniRoute féin
+### 🤝 Ceangail gníomhaí — agus rialaí sé AgentProxy féin
 
-Nocht OmniRoute thar **MCP**, **A2A**, **REST API**, **webhooks** nó **CLI cianda** — beirann aon ghníomhaí inniúil (nó do chuid féin cóid) na heochracha ar fad an gheata: ródú, soláthraithe, combos, taisce, comhbhrú, cuimhne — go hiomhánach. Seirbhísí HTTP thíos faoin teideal `http://localhost:20128`.
+Nocht AgentProxy thar **MCP**, **A2A**, **REST API**, **webhooks** nó **CLI cianda** — beirann aon ghníomhaí inniúil (nó do chuid féin cóid) na heochracha ar fad an gheata: ródú, soláthraithe, combos, taisce, comhbhrú, cuimhne — go hiomhánach. Seirbhísí HTTP thíos faoin teideal `http://localhost:20128`.
 
 <table>
   <tr><th align="left">Comhéadan</th><th align="left">Críochphointe / ordú</th><th align="left">Úsáid é le haghaidh</th></tr>
-  <tr><td align="left" nowrap>🧰 <b>MCP (stdio)</b></td><td align="left" nowrap><code>omniroute --mcp</code></td><td align="left">plugáil isteach i Claude Desktop, Cursor, aon chliant MCP</td></tr>
+  <tr><td align="left" nowrap>🧰 <b>MCP (stdio)</b></td><td align="left" nowrap><code>agentproxy --mcp</code></td><td align="left">plugáil isteach i Claude Desktop, Cursor, aon chliant MCP</td></tr>
   <tr><td align="left" nowrap>🌊 <b>MCP (HTTP)</b></td><td align="left" nowrap><code>/api/mcp/stream</code></td><td align="left">MCP cianda — <b>110 uirlis</b>, 33 raon (rogha forfheidhmithe), cosán iniúchta iomlán</td></tr>
   <tr><td align="left" nowrap>📡 <b>MCP (SSE)</b></td><td align="left" nowrap><code>/api/mcp/sse</code></td><td align="left">iompar sruthú MCP</td></tr>
   <tr><td align="left" nowrap>🤝 <b>A2A</b></td><td align="left" nowrap><code>/.well-known/agent.json</code></td><td align="left">gníomhaí go gníomhaí, <b>JSON-RPC 2.0</b> + SSE, 6 scileanna</td></tr>
   <tr><td align="left" nowrap>🌐 <b>REST API</b></td><td align="left" nowrap><code>/v1/*</code></td><td align="left">ag teacht le OpenAI — comhrá, leabú, íomhanna, fuaim, OCR</td></tr>
   <tr><td align="left" nowrap>🔔 <b>Webhooks</b></td><td align="left" nowrap><code>/api/webhooks</code></td><td align="left">brúigh iarratais / imeachtaí quota chuig Slack, Discord, Telegram nó aon URL</td></tr>
-  <tr><td align="left" nowrap>🛰️ <b>CLI Cianda</b></td><td align="left" nowrap><code>omniroute connect <host></code></td><td align="left">tiomáin cóiméid cianda le comharthaí rochtana scópáilte</td></tr>
+  <tr><td align="left" nowrap>🛰️ <b>CLI Cianda</b></td><td align="left" nowrap><code>agentproxy connect <host></code></td><td align="left">tiomáin cóiméid cianda le comharthaí rochtana scópáilte</td></tr>
 </table>
 
 ```bash
-# Tabhair an tacar uirlisí iomlán OmniRoute do Claude Code thar MCP:
-claude mcp add-server omniroute --type http --url http://localhost:20128/api/mcp/stream
+# Tabhair an tacar uirlisí iomlán AgentProxy do Claude Code thar MCP:
+claude mcp add-server agentproxy --type http --url http://localhost:20128/api/mcp/stream
 ```
 
 <sub>📖 [Freastalaí MCP](docs/frameworks/MCP-SERVER.md) · [Freastalaí A2A](docs/frameworks/A2A-SERVER.md) · [Prótacail Gníomhaí](docs/frameworks/AGENT_PROTOCOLS_GUIDE.md)</sub>
@@ -861,7 +861,7 @@ claude mcp add-server omniroute --type http --url http://localhost:20128/api/mcp
 
 ### 📞 Conas a oibríonn sé — paslíne, ailtireacht & matamasaic sábhála
 
-<img src="./docs/diagrams/compression-pipeline.svg" width="100%" alt="Paslíne comhbhrú OmniRoute: pasann iarratas cliant 10,000 comhartha samplach tríd 12 innealra in-堆叠tha — Session-Dedup, CCR, Lite, RTK, Responses Tool Output, Headroom, Relevance, Caveman, Aggressive, LLMLingua-2, Ultra agus OmniGlyph — agus is féidir é a sheachadadh chuig an soláthraí ag thart ar 1,080 comhartha san shampla chruanna dhoiciméadaithe. Tá innealra cosanta ag gardaí caomhnaithe agus geataí dílseachta in aghaidh an chéime; is féidir le modhanna caillteanais sainráiteacha nó turgnamhacha ábhar incháilithe a chruthú."/>
+<img src="./docs/diagrams/compression-pipeline.svg" width="100%" alt="Paslíne comhbhrú AgentProxy: pasann iarratas cliant 10,000 comhartha samplach tríd 12 innealra in-堆叠tha — Session-Dedup, CCR, Lite, RTK, Responses Tool Output, Headroom, Relevance, Caveman, Aggressive, LLMLingua-2, Ultra agus OmniGlyph — agus is féidir é a sheachadadh chuig an soláthraí ag thart ar 1,080 comhartha san shampla chruanna dhoiciméadaithe. Tá innealra cosanta ag gardaí caomhnaithe agus geataí dílseachta in aghaidh an chéime; is féidir le modhanna caillteanais sainráiteacha nó turgnamhacha ábhar incháilithe a chruthú."/>
 
 Seinneann an comhcheangal réamhshocraithe stacáilte `RTK → Caveman`. Nuair a dhéanann an dá cheann obair ar an ualach uirlis/comhthéacs céanna, méadaítear na sábhálacha:
 
@@ -873,7 +873,7 @@ range    = 78.4 – 94.6%
 
 Tá **cosaint i gcónaí** ag an inneall caomhnaithe ar bhloic chód, URLanna, JSON agus sonraí struchtúrtha.
 
-> **Cén fáth an oiread sin comharthaí a úsáid nuair a dhéanann roinnt beag an cleas?** Téann gach iarratas tríd paslíne comhbhrú OmniRoute **go trasnáitheach** — aon athrú ag an gcliant. Is é atá ann anois **stac 12 innealra in-堆叠tha** a rithann in ord agus a mheascann agus a mheaitseálann de réir comhcheangail ródaithe — ag tógáil ar smaointe ó [RTK](https://github.com/rtk-ai/rtk), [Caveman](https://github.com/JuliusBrussee/caveman) (⭐ 90K+), [LLMLingua-2](https://github.com/microsoft/LLMLingua), agus [Troglodita](https://github.com/leninejunior/troglodita) (PT-BR).
+> **Cén fáth an oiread sin comharthaí a úsáid nuair a dhéanann roinnt beag an cleas?** Téann gach iarratas tríd paslíne comhbhrú AgentProxy **go trasnáitheach** — aon athrú ag an gcliant. Is é atá ann anois **stac 12 innealra in-堆叠tha** a rithann in ord agus a mheascann agus a mheaitseálann de réir comhcheangail ródaithe — ag tógáil ar smaointe ó [RTK](https://github.com/rtk-ai/rtk), [Caveman](https://github.com/JuliusBrussee/caveman) (⭐ 90K+), [LLMLingua-2](https://github.com/microsoft/LLMLingua), agus [Troglodita](https://github.com/leninejunior/troglodita) (PT-BR).
 
 ### 🧱 An stac 12-innealra
 
@@ -936,7 +936,7 @@ Laghdaíonn na 12 innealra thuas dul **isteach**. Múnlaíonn trí shraith eile 
   - **Tá ADHD agam (gníomh-ar dtús)** — ceannaireacht gníomhaíochta eile, na céimeanna uimhrithe, céim chéanna amháin concreta, gan réamhchaint.
   - **Terse CJK (文言)** — stíl ultra-ghearr Síneach Clasaiceach (teoranta don rogha teanga `zh`).
 - **🎯 Bhuiséad comhthéacs iomlánaithe** _(an dial)_ — in ionad imlíne comhartha amháin ar/díochlasach, Ard-údarás na n-innealra is saoire, is gan chaillteanas ach an méid is gá chun **oiriúnú don fhuinneog comhthéacs an tsamhail**. Polasaí: `reserve-output` (réamhshocrú, samhail-eolasach) · `percentage` · `absolute`. Modh: `floor` (ráthaigh oiriúnú) · `replace-autotrigger` (buaigh do rogha sainráiteacha) · `off` (imlíne sean-aimseartha).
-- **🎛️ Áit a gcinnfear comhbhrú** _(tosaíocht, ard → íseal)_ — ceanntásc `x-omniroute-compression` in aghaidh an iarratais › forshuíomh comhcheangail ródaithe › próifíl ainmnithe ghníomhach / uaththriogaireacht iomlánaithe › réamhshocrú painéil › díochlasach. Cuireann an plean i bhfeidhm an freagra ar ais i gceanntásc freagra `X-OmniRoute-Compression: <modh>; foinse=<foinse>`.
+- **🎛️ Áit a gcinnfear comhbhrú** _(tosaíocht, ard → íseal)_ — ceanntásc `x-agentproxy-compression` in aghaidh an iarratais › forshuíomh comhcheangail ródaithe › próifíl ainmnithe ghníomhach / uaththriogaireacht iomlánaithe › réamhshocrú painéil › díochlasach. Cuireann an plean i bhfeidhm an freagra ar ais i gceanntásc freagra `X-AgentProxy-Compression: <modh>; foinse=<foinse>`.
 
 Uaththriogaireacht de réir imlíne comhartha, cas air an dial iomlánaithe, pierce próifíl ainmnithe, socrú am-aonair in aghaidh an iarratais, nó socraigh paslíne do gach comhcheangal ródaithe — cibé rud a oibríonn leis an ualach oibre. Tá córas luachála aslínne roghnach (`npm run eval:compression`) ar fáil a scóráil dílseacht vs. sábhálacha ar choirpíoll shocraithe sula gcuirfidh tú athrú ar aghaidh.
 
@@ -953,8 +953,8 @@ Uaththriogaireacht de réir imlíne comhartha, cas air an dial iomlánaithe, pie
 **1) Suiteáil & rith**
 
 ```bash
-npm install -g omniroute
-omniroute
+npm install -g agentproxy
+agentproxy
 ```
 
 > 💡 Feiceann tú `npm warn ERESOLVE` nó rabhaidh comhpháirtíochta? [Tá siad neamhdhíobhálach](docs/guides/TROUBLESHOOTING.md#npm-install-warnings-eresolve--peer--deprecated).
@@ -979,7 +979,7 @@ Samhail:    auto            (ródáil chliste gan chumrú — nó aon soláthra�
 curl http://localhost:20128/v1/models -H "Authorization: Bearer YOUR_KEY"
 ```
 
-Ba cheart duit na samhlacha ceangailte liostaithe a fheiceáil. 🎉 Sin é — tosaigh ag códáil, agus cuireann OmniRoute ródáil & trasbhealach ar fáil duit go huathoibríoch.
+Ba cheart duit na samhlacha ceangailte liostaithe a fheiceáil. 🎉 Sin é — tosaigh ag códáil, agus cuireann AgentProxy ródáil & trasbhealach ar fáil duit go huathoibríoch.
 
 Más féidir le do chliant ceanntásca saincheaptha a sheoladh, nochtann OmniReceiver freisin ailtreabhair comhoiriúnachta comharthaithe:
 
@@ -1001,39 +1001,39 @@ Clibeanna Ollama:      http://localhost:20128/vscode/YOUR_KEY/api/tags
 **🐳 Docker**
 
 ```bash
-docker run -d --name omniroute --restart unless-stopped --stop-timeout 40 \
-  -p 127.0.0.1:20128:20128 -v omniroute-data:/app/data diegosouzapw/omniroute:latest
+docker run -d --name agentproxy --restart unless-stopped --stop-timeout 40 \
+  -p 127.0.0.1:20128:20128 -v agentproxy-data:/app/data khanhkit/agentproxy:latest
 ```
 
-`:latest` leanann an leagan seasmhach **foilsithe** is airde SemVer. Ní leanann sé príomh-`main` git. Cuir `:X.Y.Z` le haghaidh GitOps. Féach [Cainéil Scaoileadh Docker](docs/guides/DOCKER_GUIDE.md#release-channels).Phinnann an íomhá **`OMNIROUTE_MEMORY_MB=1024`**. Tá sin leor don deais agus comhrá éadrom. Tá **gníomhairí ríomhchlárúcháin** (`POST /v1/responses` ó Claude Code, Codex, Grok, …) ag teastáil ó heap V8 i bhfad níos mó nó déanfaidh an phróiseas `FATAL ERROR` ag thart ar 12 GiB faoi dhá chomhthéacs fada ag teacht le chéile. Méadaigh an coimeádán os cionn an heap (sit buffreachtaí dúchasigh taobh amuigh de V8):
+`:latest` leanann an leagan seasmhach **foilsithe** is airde SemVer. Ní leanann sé príomh-`main` git. Cuir `:X.Y.Z` le haghaidh GitOps. Féach [Cainéil Scaoileadh Docker](docs/guides/DOCKER_GUIDE.md#release-channels).Phinnann an íomhá **`AGENTPROXY_MEMORY_MB=1024`**. Tá sin leor don deais agus comhrá éadrom. Tá **gníomhairí ríomhchlárúcháin** (`POST /v1/responses` ó Claude Code, Codex, Grok, …) ag teastáil ó heap V8 i bhfad níos mó nó déanfaidh an phróiseas `FATAL ERROR` ag thart ar 12 GiB faoi dhá chomhthéacs fada ag teacht le chéile. Méadaigh an coimeádán os cionn an heap (sit buffreachtaí dúchasigh taobh amuigh de V8):
 
-| Ualach                                | Heap (`-e OMNIROUTE_MEMORY_MB`) | Coimeádán (`--memory`) |
+| Ualach                                | Heap (`-e AGENTPROXY_MEMORY_MB`) | Coimeádán (`--memory`) |
 | ------------------------------------- | ------------------------------- | ---------------------- |
 | Deais / comhrá éadrom                 | `1024` (ríomhshocrú íomhá)      | ≥2 g                   |
 | Aon ghníomhaire ríomhchlárúcháin      | `8192`                          | ≥10 g                  |
 | Dhá `/v1/responses` fada comhuaineach | `10240`–`12288`                 | ≥12–16 g               |
 
 ```bash
-docker run -d --name omniroute --restart unless-stopped --stop-timeout 40 \
-  -e OMNIROUTE_MEMORY_MB=8192 --memory=10g \
-  -p 127.0.0.1:20128:20128 -v omniroute-data:/app/data diegosouzapw/omniroute:latest
+docker run -d --name agentproxy --restart unless-stopped --stop-timeout 40 \
+  -e AGENTPROXY_MEMORY_MB=8192 --memory=10g \
+  -p 127.0.0.1:20128:20128 -v agentproxy-data:/app/data khanhkit/agentproxy:latest
 ```
 
 Tábla iomlán: [Treoir Docker — RAM am rite](docs/guides/DOCKER_GUIDE.md#runtime-ram-for-coding-agents).
 
-> **Cainéal réamhshaoileadh Docker:** Leanann `diegosouzapw/omniroute:next` agus
-> `diegosouzapw/omniroute:next-web` an brainse réamhshocraithe reatha `release/v*`.
+> **Cainéal réamhshaoileadh Docker:** Leanann `khanhkit/agentproxy:next` agus
+> `khanhkit/agentproxy:next-web` an brainse réamhshocraithe reatha `release/v*`.
 > Tá na clibeanna inathraitheacha seo dírithe ach amháin le haghaidh tástála
 > socrúcháin neamhshaoilithe agus **ní thacaítear leo le haghaidh táirgíochta**. Féach
 > [Cainéil Scaoileadh Docker](docs/guides/DOCKER_GUIDE.md#release-channels).
 
 **🥟 Bun**
 
-Tacaítear le `bun install` caighdeánach agus suiteáil dhomhanda (`bun install -g omniroute`) trí bhrath rithimh Bun:
+Tacaítear le `bun install` caighdeánach agus suiteáil dhomhanda (`bun install -g agentproxy`) trí bhrath rithimh Bun:
 
-- **`bun:sqlite` ionsuite**: Úsáideann OmniRoute tiománaí `bun:sqlite` ionsuite Bun agus é ag rith faoi Bun, ag filleadh ar `better-sqlite3` faoi Node.js nó `sql.js`.
-- **Roghnú uathoibríoch Webpack bundler san fhorbairt**: Déanann forbairt (`bun run dev`) brath uathoibríoch ar Bun agus díchumasaíonn Turbopack ar son Webpack chun neamh-chomhoiriúnacht ceangail dúchasach V8 a chosc. Leanann tógálacha táirgíochta (`bun run build`) `OMNIROUTE_USE_TURBOPACK` go díreach mar ar Node: Turbopach de réir réamhshocraithe, `OMNIROUTE_USE_TURBOPACK=0` le tógáil le Webpack (`nochtann Dockerfile.bun é mar `--build-arg`).
-- **Dockerfile Bun tiomnaithe**: `Dockerfile.bun` il-chéime le haghaidh rithimheanna táirgíochta dúchasacha Bun (`docker build -f Dockerfile.bun -t omniroute:bun .`).
+- **`bun:sqlite` ionsuite**: Úsáideann AgentProxy tiománaí `bun:sqlite` ionsuite Bun agus é ag rith faoi Bun, ag filleadh ar `better-sqlite3` faoi Node.js nó `sql.js`.
+- **Roghnú uathoibríoch Webpack bundler san fhorbairt**: Déanann forbairt (`bun run dev`) brath uathoibríoch ar Bun agus díchumasaíonn Turbopack ar son Webpack chun neamh-chomhoiriúnacht ceangail dúchasach V8 a chosc. Leanann tógálacha táirgíochta (`bun run build`) `AGENTPROXY_USE_TURBOPACK` go díreach mar ar Node: Turbopach de réir réamhshocraithe, `AGENTPROXY_USE_TURBOPACK=0` le tógáil le Webpack (`nochtann Dockerfile.bun é mar `--build-arg`).
+- **Dockerfile Bun tiomnaithe**: `Dockerfile.bun` il-chéime le haghaidh rithimheanna táirgíochta dúchasacha Bun (`docker build -f Dockerfile.bun -t agentproxy:bun .`).
 
 ```bash
 # Suiteáil agus rith le Bun
@@ -1051,13 +1051,13 @@ PORT=20128 npm run dev
 **📦 pnpm**
 
 ```bash
-pnpm add -g omniroute@latest --allow-build=better-sqlite3 --allow-build=@swc/core && omniroute
+pnpm add -g agentproxy@latest --allow-build=better-sqlite3 --allow-build=@swc/core && agentproxy
 ```
 
 **🐧 Arch Linux (AUR)**
 
 ```bash
-yay -S omniroute-bin && systemctl --user enable --now omniroute.service
+yay -S agentproxy-bin && systemctl --user enable --now agentproxy.service
 ```
 
 **🔧 Nix (Flake)**
@@ -1104,7 +1104,7 @@ níl aon uirlisí tógála ag teastáil.
 Chun an téamh ina dhiaidh-suiteála a scipeáil go hiomlán (CI, gan ceapaire, nó meaisíní mall):
 
 ```bash
-OMNIROUTE_SKIP_POSTINSTALL=1 npm install -g omniroute   # osclaíonn CI=1 é freisin
+AGENTPROXY_SKIP_POSTINSTALL=1 npm install -g agentproxy   # osclaíonn CI=1 é freisin
 ```
 
 Le haghaidh na suiteálacha is tapúla roghnaigh **pnpm** (stóras seoladh-inniúil + naisc crua — féach thuas).
@@ -1116,7 +1116,7 @@ phróiseas céanna ar aon amháin poirt, mar sin níl aon phacáiste CLI-amháin
 
 <div align="center">
 
-# 🎬 OmniRoute i nGníomh
+# 🎬 AgentProxy i nGníomh
 
 </div>
 
@@ -1180,7 +1180,7 @@ phróiseas céanna ar aon amháin poirt, mar sin níl aon phacáiste CLI-amháin
 
 Métrics canónacha ar 2026-08-24: **1,029 físeán uathúil** · **11,132,922 amharc ar eolas** (`v > 0`) · **639 chainéal/profíl per líonra**. Tá 1,070 líne sa phainéal amh; cuireadh 41 dúbáilte Instagram in ord tríd an URL canónach, ag coinneáil an chunta is airde in aghaidh an fhíseáin.
 
-> 📹 **D'fhéach tú físeán faoi OmniRoute?** Oscail [cheist](https://github.com/diegosouzapw/OmniRoute/issues/new) nó [plé](https://github.com/diegosouzapw/OmniRoute/discussions) leis an nasc — cuirfimid é anseo.
+> 📹 **D'fhéach tú físeán faoi AgentProxy?** Oscail [cheist](https://github.com/khanhkit/AgentProxy/issues/new) nó [plé](https://github.com/khanhkit/AgentProxy/discussions) leis an nasc — cuirfimid é anseo.
 
 <br/>
 
@@ -1195,15 +1195,15 @@ Métrics canónacha ar 2026-08-24: **1,029 físeán uathúil** · **11,132,922 a
 | 💼 **LinkedIn** — lean an coimeádaí                    | [linkedin.com/in/diegosouzapw](https://www.linkedin.com/in/diegosouzapw/)                                                     |
 | 🐙 **GitHub** — lean le haghaidh eisiúintí & leideanna | [@diegosouzapw](https://github.com/diegosouzapw)                                                                              |
 | 💬 **Discord**                                         | [discord.gg/U47eFqAXCn](https://discord.gg/U47eFqAXCn)                                                                        |
-| ✈️ **Telegram**                                        | [t.me/omnirouteOficial](https://t.me/omnirouteOficial)                                                                        |
+| ✈️ **Telegram**                                        | [t.me/agentproxyOficial](https://github.com/khanhkit/AgentProxy/discussions)                                                                        |
 | 🟢 **WhatsApp — 🌍 Domhanda**                          | [bachlóigh an grúpa](https://chat.whatsapp.com/FvuCbrpZmQ6I85n2vW5QIC?s=cl&p=a&mlu=4)                                         |
 | 🟢 **WhatsApp — 🇧🇷 An Bhrasaíl**                       | [isteach sa ghrúpa](https://chat.whatsapp.com/KWgatljAjmbELQory59Oti?s=cl&p=a&mlu=4)                                          |
-| 🌍 **Suíomh Gréasáin**                                 | [omniroute.online](https://omniroute.online)                                                                                  |
-| 🌍 **🌍StHub Pobal OmniRoute (saor in aisce)**         | [portál sthub](https://portal.sthub.com.br/communities/groups/st-hub/channels/Omniroute-World-8kRjmK)                         |
-| 📦 **Cód foinse**                                      | [github.com/diegosouzapw/OmniRoute](https://github.com/diegosouzapw/OmniRoute)                                                |
-| 🐛 **Tuairiscigh fabht**                               | [oscail ceist](https://github.com/diegosouzapw/OmniRoute/issues) — ceangail torthaí `npm run system-info`                     |
+| 🌍 **Suíomh Gréasáin**                                 | [agentproxy.online](https://agentproxy.example.com)                                                                                  |
+| 🌍 **🌍StHub Pobal AgentProxy (saor in aisce)**         | [portál sthub](https://portal.sthub.com.br/communities/groups/st-hub/channels/AgentProxy-World-8kRjmK)                         |
+| 📦 **Cód foinse**                                      | [github.com/khanhkit/AgentProxy](https://github.com/khanhkit/AgentProxy)                                                |
+| 🐛 **Tuairiscigh fabht**                               | [oscail ceist](https://github.com/khanhkit/AgentProxy/issues) — ceangail torthaí `npm run system-info`                     |
 | 🤝 **Cuir leis**                                       | [CONTRIBUTING.md](CONTRIBUTING.md) · [Múnla Brainse & Eisiúna](docs/ops/BRANCHING_MODEL.md) · roghnaigh `cheist mhaith chéad` |
-| 💚 **Tacaigh leis an tionscadal**                      | [Bealaí le tacaíocht ↑](#-tacaigh-omniroute) · [Sponsors GitHub](https://github.com/sponsors/diegosouzapw)                    |
+| 💚 **Tacaigh leis an tionscadal**                      | [Bealaí le tacaíocht ↑](#-tacaigh-agentproxy) · [Sponsors GitHub](https://github.com/sponsors/diegosouzapw)                    |
 
 </div>
 
@@ -1234,7 +1234,7 @@ Métrics canónacha ar 2026-08-24: **1,029 físeán uathúil** · **11,132,922 a
   <tr><td nowrap><b>Tástáil</b></td><td>Ritheoir tástála Node.js + Vitest — <b>39,000+ dearbhuithe tástála statacha</b> ar fud 5,100+ comhad tástála rianaithe (aonaid, comhtháthú, E2E, slándáil, éiceachóras)</td></tr>
   <tr><td nowrap><b>Ardáin</b></td><td>Deisce (Electron) · Android (Termux) · PWA (aon bhrabhsálaí)</td></tr>
   <tr><td nowrap><b>CI/CD</b></td><td>GitHub Actions — foilsiú uathoibríoch npm + Docker Hub ar scaoileadh</td></tr>
-  <tr><td nowrap><b>Naisc</b></td><td><a href="https://omniroute.online">Suíomh Gréasáin</a> · <a href="https://www.npmjs.com/package/omniroute">npm</a> · <a href="https://hub.docker.com/r/diegosouzapw/omniroute">Docker Hub</a></td></tr>
+  <tr><td nowrap><b>Naisc</b></td><td><a href="https://agentproxy.example.com">Suíomh Gréasáin</a> · <a href="https://www.npmjs.com/package/agentproxy">npm</a> · <a href="https://github.com/khanhkit/AgentProxy/pkgs/container/agentproxy">Docker Hub</a></td></tr>
 </table>
 
 <div align="center">
@@ -1252,8 +1252,8 @@ Métrics canónacha ar 2026-08-24: **1,029 físeán uathúil** · **11,132,922 a
   <tr><td nowrap><b><a href="docs/guides/USER_GUIDE.md">Treoir Úsáideora</a></b></td><td>Soláthraithe, comhcheangail, comhtháthú CLI, imscaradh</td></tr>
   <tr><td nowrap><b><a href="docs/guides/SETUP_GUIDE.md">Treoir Socraithe</a></b></td><td>Modhanna suiteála iomlána, cumraíochtaí uirlisí CLI, socrú prótacail, tiúnadh ama-ama</td></tr>
   <tr><td nowrap><b><a href="docs/reference/CLI-TOOLS.md">Treoir Uirlisí CLI</a></b></td><td>Socrú in aghaidh na huirlise do Claude Code, Codex, Cursor, Cline, OpenClaw, Kilo, Copilot</td></tr>
-  <tr><td nowrap><b><a href="docs/guides/REMOTE-MODE.md">Modh Cianda</a></b></td><td>Tiomáin OmniRoute cianda (VPS) ó do CLI ríomhaire glúine trí thóicíní rochtana scóipeáilte</td></tr>
-  <tr><td nowrap><b><a href="docs/guides/CLAUDE-CODE-CONFIGURATION.md">Cumraíocht Claude Code</a></b></td><td>Dírigh Claude Code ar OmniRoute (áitiúil/cianda) le <code>launch</code> + próifílí in aghaidh an mhúnla</td></tr>
+  <tr><td nowrap><b><a href="docs/guides/REMOTE-MODE.md">Modh Cianda</a></b></td><td>Tiomáin AgentProxy cianda (VPS) ó do CLI ríomhaire glúine trí thóicíní rochtana scóipeáilte</td></tr>
+  <tr><td nowrap><b><a href="docs/guides/CLAUDE-CODE-CONFIGURATION.md">Cumraíocht Claude Code</a></b></td><td>Dírigh Claude Code ar AgentProxy (áitiúil/cianda) le <code>launch</code> + próifílí in aghaidh an mhúnla</td></tr>
   <tr><td nowrap><b><a href="README.md#-quick-start">Tosú Tapa</a></b></td><td>Suiteáil 3-chéim → ceangail → cumraigh</td></tr>
 </table>
 
@@ -1265,7 +1265,7 @@ Métrics canónacha ar 2026-08-24: **1,029 físeán uathúil** · **11,132,922 a
   <tr><td nowrap><b><a href="contrib/podman/README.md">Treoir Podman</a></b></td><td>Comhtháthú Quadlet systemd, podman-compose, SELinux</td></tr>
   <tr><td nowrap><b><a href="docs/ops/VM_DEPLOYMENT_GUIDE.md">Imscaradh VM</a></b></td><td>Treoir iomlán: socrú VM + nginx + Cloudflare</td></tr>
   <tr><td nowrap><b><a href="docs/ops/FLY_IO_DEPLOYMENT_GUIDE.md">Imscaradh Fly.io</a></b></td><td>Imscar go Fly.io le stóráil bhuan</td></tr>
-  <tr><td nowrap><b><a href="docs/guides/TERMUX_GUIDE.md">Treoir Termux</a></b></td><td>Rith OmniRoute ar Android trí Termux</td></tr>
+  <tr><td nowrap><b><a href="docs/guides/TERMUX_GUIDE.md">Treoir Termux</a></b></td><td>Rith AgentProxy ar Android trí Termux</td></tr>
   <tr><td nowrap><b><a href="docs/guides/PWA_GUIDE.md">Treoir PWA</a></b></td><td>Suiteáil Aip Ghréasáin Fhorásach, taisclann, ailtireacht</td></tr>
   <tr><td nowrap><b><a href="docs/guides/UNINSTALL.md">Treoir Dhíshuiteála</a></b></td><td>Baint ghlan do gach modh suiteála</td></tr>
   <tr><td nowrap><b><a href="docs/reference/ENVIRONMENT.md">Cumraíocht Timpeallachta</a></b></td><td>Iomlán <code>.env</code> athróga agus tagairtí</td></tr>
@@ -1320,7 +1320,7 @@ Métrics canónacha ar 2026-08-24: **1,029 físeán uathúil** · **11,132,922 a
 
 # ⭐ Rannpháirtithe Barr
 
-> Múnlaítear OmniRoute ag pobal foinse oscailte paiseanta. Rinne na daoine seo ranníocaíochtaí eisceachtúla a mbíonn tionchar díreach acu ar cháilíocht, chobhsaíocht, agus raon an tionscadail. **Go raibh maith agaibh.**
+> Múnlaítear AgentProxy ag pobal foinse oscailte paiseanta. Rinne na daoine seo ranníocaíochtaí eisceachtúla a mbíonn tionchar díreach acu ar cháilíocht, chobhsaíocht, agus raon an tionscadail. **Go raibh maith agaibh.**
 
 ### Rannpháirtithe seachtracha de réir PRanna comhcheangailte
 
@@ -1439,7 +1439,7 @@ Métrics canónacha ar 2026-08-24: **1,029 físeán uathúil** · **11,132,922 a
 
 <sub>Athsheiceáilte ag 2026-08-24 06:14:31 UTC: Tiomantais chláraithe ag GitHub a thuairiscigh API Rannpháirtithe an stóir don bhrainse réamhshocraithe <code>release/v3.8.50</code>. D'fhill an API 525 céannacht (415 úsáideoir, 2 róbat, 108 gan ainm); eisiann an tábla seo an cothaitheoir, róbait agus céannachtaí gan ainm agus coinníonn sé comhcheangail iomaíochta. Tá sé ar leith ón rangú PR comhcheangailte thuas agus ón daonáireamh meiteashonraí Git 639-duine thíos.</sub>
 
-> 🙏 Gnéithe, ceartúcháin fabhtanna, agus feabhsuithe bonneagair na rannpháirtithe seo is ea <b>croílár</b> a dhéanann OmniRoute iontaofa agus saibhir i ngnéithe. Tá gach pull request, gach cás tástála, agus gach comhad aistriúcháin i18n tábhachtach. Tógtar foinse oscailte ag daoine cosúil leo.
+> 🙏 Gnéithe, ceartúcháin fabhtanna, agus feabhsuithe bonneagair na rannpháirtithe seo is ea <b>croílár</b> a dhéanann AgentProxy iontaofa agus saibhir i ngnéithe. Tá gach pull request, gach cás tástála, agus gach comhad aistriúcháin i18n tábhachtach. Tógtar foinse oscailte ag daoine cosúil leo.
 
 </div>
 
@@ -1451,7 +1451,7 @@ Métrics canónacha ar 2026-08-24: **1,029 físeán uathúil** · **11,132,922 a
 
 <div align="center">
 
-Buíochas ó chroí le daoine a mhaoiníonn OmniRoute as a bpóca féin — coinníonn gach síntiús an tionscadal saor, neamhspleách agus ag gluaiseacht.
+Buíochas ó chroí le daoine a mhaoiníonn AgentProxy as a bpóca féin — coinníonn gach síntiús an tionscadal saor, neamhspleách agus ag gluaiseacht.
 
 <table>
   <tr>
@@ -1497,7 +1497,7 @@ Buíochas ó chroí le daoine a mhaoiníonn OmniRoute as a bpóca féin — coin
 
 <sub>Urraitheoirí poiblí GitHub athdheimhnithe ar 2026-08-24. Cinnfidh stádas <code>activeOnly</code> GitHub na lipéid ghníomhacha thuas; fanann na tacadóirí poiblí aonuaire a nochtadh roimhe seo buíochas leo, agus fanann urraitheoirí príobháideacha gan ainm.</sub>
 
-<b><a href="https://github.com/sponsors/diegosouzapw">💖 Bí i d'urraitheoir →</a></b> — coinníonn gach dollar OmniRoute saor agus neamhspleách.
+<b><a href="https://github.com/sponsors/diegosouzapw">💖 Bí i d'urraitheoir →</a></b> — coinníonn gach dollar AgentProxy saor agus neamhspleách.
 
 </div>
 
@@ -1509,7 +1509,7 @@ Buíochas ó chroí le daoine a mhaoiníonn OmniRoute as a bpóca féin — coin
 
 </div>
 
-[![Rannpháirtithe](https://contrib.rocks/image?repo=diegosouzapw/OmniRoute&max=639&columns=20&anon=1)](https://github.com/diegosouzapw/OmniRoute/graphs/contributors)
+[![Rannpháirtithe](https://contrib.rocks/image?repo=khanhkit/AgentProxy&max=639&columns=20&anon=1)](https://github.com/khanhkit/AgentProxy/graphs/contributors)
 
 <sub>Iniúchadh ar 2026-08-24 ag bonn reoite <code>ac02c5b42f</code> agus athsheiceáil ag barr beo <code>release/v3.8.50</code> <code>dafb4ae808</code>: <b>639 aitheantais daonna Git normalaithe</b> — feictear 407 mar údair tiomantais (lena n-áirítear an cothaitheoir) agus 232 ach amháin i línte <code>Co-authored-by</code> sainráite. Déanann an daonáireamh normalú ar láimhseálacha noreply GitHub, eisiann 26 aitheantas bot/gníomhaire/seirbhís/áitchoimeádta, agus ní chumascann sé seoltaí ríomhphoist gnáthacha toisc amháin go meaitseálann a n-ainmneacha taispeána.</sub>
 
@@ -1538,11 +1538,11 @@ gh release create "v${VERSION}" --title "v${VERSION}" --generate-notes
 
 ## 📊 Réaltaí
 
-<a href="https://www.star-history.com/?repos=diegosouzapw%2FOmniRoute&type=date&legend=top-left">
+<a href="https://www.star-history.com/?repos=diegosouzapw%2FAgentProxy&type=date&legend=top-left">
  <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=diegosouzapw/OmniRoute&type=date&theme=dark&legend=top-left&sealed_token=XP_ycEjv7s31p1edvhsMOXry51OWYsUjDRWjflSG7jQKRpO9hPGg7i_EHvwhI6QtrARTMH-YGjJhi8sumRYflEJD0DPlH_MMHjizhBYCX8fbHFrHEiNvVA" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=diegosouzapw/OmniRoute&type=date&legend=top-left&sealed_token=XP_ycEjv7s31p1edvhsMOXry51OWYsUjDRWjflSG7jQKRpO9hPGg7i_EHvwhI6QtrARTMH-YGjJhi8sumRYflEJD0DPlH_MMHjizhBYCX8fbHFrHEiNvVA" />
-   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=diegosouzapw/OmniRoute&type=date&legend=top-left&sealed_token=XP_ycEjv7s31p1edvhsMOXry51OWYsUjDRWjflSG7jQKRpO9hPGg7i_EHvwhI6QtrARTMH-YGjJhi8sumRYflEJD0DPlH_MMHjizhBYCX8fbHFrHEiNvVA" />
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=khanhkit/AgentProxy&type=date&theme=dark&legend=top-left&sealed_token=XP_ycEjv7s31p1edvhsMOXry51OWYsUjDRWjflSG7jQKRpO9hPGg7i_EHvwhI6QtrARTMH-YGjJhi8sumRYflEJD0DPlH_MMHjizhBYCX8fbHFrHEiNvVA" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=khanhkit/AgentProxy&type=date&legend=top-left&sealed_token=XP_ycEjv7s31p1edvhsMOXry51OWYsUjDRWjflSG7jQKRpO9hPGg7i_EHvwhI6QtrARTMH-YGjJhi8sumRYflEJD0DPlH_MMHjizhBYCX8fbHFrHEiNvVA" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=khanhkit/AgentProxy&type=date&legend=top-left&sealed_token=XP_ycEjv7s31p1edvhsMOXry51OWYsUjDRWjflSG7jQKRpO9hPGg7i_EHvwhI6QtrARTMH-YGjJhi8sumRYflEJD0DPlH_MMHjizhBYCX8fbHFrHEiNvVA" />
  </picture>
 </a>
 
@@ -1552,11 +1552,11 @@ gh release create "v${VERSION}" --title "v${VERSION}" --generate-notes
 
 ## 🌍 StarMapper
 
-<a href="https://starmapper.bruniaux.com/diegosouzapw/omniroute">
+<a href="https://starmapper.bruniaux.com/khanhkit/agentproxy">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://starmapper.bruniaux.com/api/map-image/diegosouzapw/omniroute?theme=dark" />
-    <source media="(prefers-color-scheme: light)" srcset="https://starmapper.bruniaux.com/api/map-image/diegosouzapw/omniroute?theme=light" />
-    <img alt="StarMapper" src="https://starmapper.bruniaux.com/api/map-image/diegosouzapw/omniroute" />
+    <source media="(prefers-color-scheme: dark)" srcset="https://starmapper.bruniaux.com/api/map-image/khanhkit/agentproxy?theme=dark" />
+    <source media="(prefers-color-scheme: light)" srcset="https://starmapper.bruniaux.com/api/map-image/khanhkit/agentproxy?theme=light" />
+    <img alt="StarMapper" src="https://starmapper.bruniaux.com/api/map-image/khanhkit/agentproxy" />
   </picture>
 </a>
 </div>
@@ -1569,14 +1569,14 @@ gh release create "v${VERSION}" --title "v${VERSION}" --generate-notes
 
 </div>
 
-Seasann OmniRoute ar gualainn na ngianta. Thosaigh sé mar forghabháil ar **[9router](https://github.com/decolua/9router)** agus mar aschur TypeScript de thionscadal Go **[CLIProxyAPI](https://github.com/router-for-me/CLIProxyAPI)** — agus ó shin i leith, coimeádaigh gach fo-chóras thíos ag tionscadal foinse oscailte a shroich ann ar dtús. Gach ceann acu mhúin píosa concreach den OmniRoute. Seo é ár mbuíochas do gach aon acu. 🙏
+Seasann AgentProxy ar gualainn na ngianta. Thosaigh sé mar forghabháil ar **[9router](https://github.com/decolua/9router)** agus mar aschur TypeScript de thionscadal Go **[CLIProxyAPI](https://github.com/router-for-me/CLIProxyAPI)** — agus ó shin i leith, coimeádaigh gach fo-chóras thíos ag tionscadal foinse oscailte a shroich ann ar dtús. Gach ceann acu mhúin píosa concreach den AgentProxy. Seo é ár mbuíochas do gach aon acu. 🙏
 
 > ⚍ cuntais réaltaí deimhnithe ó REST API GitHub ar 24 Lúnasa 2026 — téigh ag tabhairt réalta do na tionscadail seo. Tá na cuntais ina scáthshonraí beacht dáta agus athróidh siad go nádúrtha.
 
 ### 🧬 Líneáil agus geata
 
 <table>
-  <tr><th align="left">Tionscadal</th><th align="center">⭐</th><th align="left">Conas a spreag sé OmniRoute</th></tr>
+  <tr><th align="left">Tionscadal</th><th align="center">⭐</th><th align="left">Conas a spreag sé AgentProxy</th></tr>
   <tr><td nowrap><b><a href="https://github.com/decolua/9router">9router</a></b></td><td align="center">2,6161</td><td>An tionscadal bunaidh a tógadh an forghabháil seo air — leathnaithe anseo le APIs il-mhódacha agus atscríbhinn iomlán TypeScript.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/router-for-me/CLIProxyAPI">CLIProxyAPI</a></b></td><td align="center">48,497</td><td>An cur i bhfeidhm Go a spreag an port JavaScript / TypeScript seo.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/BerriAI/litellm">LiteLLM</a></b></td><td align="center">57,100</td><td>An geata AI a chothaíonn an tacar praghsanna poiblí atá ag ár shioncronú rianú costais agus a samhail normalaithe soláthraí a d'fhoghlaim ár ródú.</td></tr>
@@ -1584,20 +1584,20 @@ Seasann OmniRoute ar gualainn na ngianta. Thosaigh sé mar forghabháil ar **[9r
   <tr><td nowrap><b><a href="https://github.com/Alishahryar1/free-claude-code">free-claude-code</a></b></td><td align="center">48,112</td><td>Patrúin curtha ar a dtús isteach i ndéanamh srutha, ailtiúin gan smaointeoireacht, cuardach gréasáin ionadacha, teorainneacha fuinneoige sleamhain, scriosadh loga agus sreafaí seoladóra crua.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/standardagents/composer-api">composer-api</a></b></td><td align="center">322</td><td>Patrúin roghnú uirlis, sriantacht aschur agus tiomantas uirlis Cursor Composer comhoiriúnaithe isteach i rithóir Cursor nádúrtha.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/ndycode/codex-multi-auth">codex-multi-auth</a></b></td><td align="center">457</td><td>Patrúin logáil isteach úr agus rothlú comhartha athnuachana curtha ar a dtús isteach in athfhiúnú Codex OAuth.</td></tr>
-  <tr><td nowrap><b><a href="https://github.com/ex-machina-co/opencode-anthropic-auth">opencode-anthropic-auth</a></b></td><td align="center">510</td><td> Réamhshocruithe claochlaithe comhoiriúnach le Claude Code agus iompar ceanntacs billeála ginearálaithe isteach sa droichead cumraíochta-rialaithe OmniRoute.</td></tr>
-  <tr><td nowrap><b><a href="https://github.com/520mmxx/grok2api-merged">grok2api-merged</a></b></td><td align="center">2</td><td>Dá dhéanamh Grok, gineadóir Statsig fake-TypeError, réamhshocruithe iarratais agus gléas, agus próiseálaí freagra NDJSON comhoiriúnaithe go mór isteach i rithóir Grok Web OmniRoute.</td></tr>
+  <tr><td nowrap><b><a href="https://github.com/ex-machina-co/opencode-anthropic-auth">opencode-anthropic-auth</a></b></td><td align="center">510</td><td> Réamhshocruithe claochlaithe comhoiriúnach le Claude Code agus iompar ceanntacs billeála ginearálaithe isteach sa droichead cumraíochta-rialaithe AgentProxy.</td></tr>
+  <tr><td nowrap><b><a href="https://github.com/520mmxx/grok2api-merged">grok2api-merged</a></b></td><td align="center">2</td><td>Dá dhéanamh Grok, gineadóir Statsig fake-TypeError, réamhshocruithe iarratais agus gléas, agus próiseálaí freagra NDJSON comhoiriúnaithe go mór isteach i rithóir Grok Web AgentProxy.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/TQZHR/grok2api">TQZHR/grok2api</a></b></td><td align="center">705</td><td>An príomhfhoinse idirthreorach cóid taobh thiar de grok2api-merged; cuirtear cur i bhfeidhm a shamhla, ceanntacs, íoslódáil, Statsig agus próiseálaí in iúl i líneáil Grok Web.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/chenyme/grok2api">chenyme/grok2api</a></b></td><td align="center">7,520</td><td>An bhunfhoinse MIT le haghaidh réamhshocruithe íoslódála agus gléas Grok, an gineadóir Statsig, agus an próiseálaí <code>result.response</code> a iompraítear trí TQZHR agus grok2api-merged.</td></tr>
-  <tr><td nowrap><b><a href="https://github.com/miuzhaii/grok2api-pro">grok2api-pro</a></b></td><td align="center">27</td><td>Foinse idirthreorach a deirtear le grok2api-merged dá chiseal púla seachbhóthair; coimeádann OmniRoute an fhógra líneála sin ach ní éilíonn sé port púla seachbhóthair ina rithóir Grok Web teoranta.</td></tr>
-  <tr><td nowrap><b><a href="https://github.com/CNFlyCat/GrokProxy">GrokProxy</a></b></td><td align="center">50</td><td>Dá chomhartha fíordheimhnithe Grok agus a phatrún srutha <code>result.response.token</code> d'fhoghlaim taom传输 OmniRoute Grok Web.</td></tr>
+  <tr><td nowrap><b><a href="https://github.com/miuzhaii/grok2api-pro">grok2api-pro</a></b></td><td align="center">27</td><td>Foinse idirthreorach a deirtear le grok2api-merged dá chiseal púla seachbhóthair; coimeádann AgentProxy an fhógra líneála sin ach ní éilíonn sé port púla seachbhóthair ina rithóir Grok Web teoranta.</td></tr>
+  <tr><td nowrap><b><a href="https://github.com/CNFlyCat/GrokProxy">GrokProxy</a></b></td><td align="center">50</td><td>Dá chomhartha fíordheimhnithe Grok agus a phatrún srutha <code>result.response.token</code> d'fhoghlaim taom传输 AgentProxy Grok Web.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/lianying1716/GrokBridge">GrokBridge</a></b></td><td align="center">5</td><td>Déanadh an tionscadal bunaidh Grok Web a chur i bhfeidhm a dhearadh HTTP/brabhsálaí uachtarach; díorthaíonn a shlí HTTP díreach ó GrokProxy, mar sin ní éilítear port cóid neamhspleách.</td></tr>
-  <tr><td nowrap><b><a href="https://github.com/imjustprism/grok-web-api">grok-web-api</a></b></td><td align="center">14</td><td>Dá chomhchruinniú <code>ChatOptions</code> Rust agus scéimeanna um chaibidil freagraí d'fhoghlaim cineálacha iarratais agus freagraí srutha TypeScript Grok OmniRoute.</td></tr>
+  <tr><td nowrap><b><a href="https://github.com/imjustprism/grok-web-api">grok-web-api</a></b></td><td align="center">14</td><td>Dá chomhchruinniú <code>ChatOptions</code> Rust agus scéimeanna um chaibidil freagraí d'fhoghlaim cineálacha iarratais agus freagraí srutha TypeScript Grok AgentProxy.</td></tr>
 </table>
 
 ### 🗜️ Comhthéacs agus comhbhrú comharthaí — inneall
 
 <table>
-  <tr><th align="left">Tionscadal</th><th align="center">⭐</th><th align="left">Conas a spreag sé OmniRoute</th></tr>
+  <tr><th align="left">Tionscadal</th><th align="center">⭐</th><th align="left">Conas a spreag sé AgentProxy</th></tr>
   <tr><td nowrap><b><a href="https://github.com/JuliusBrussee/caveman">Caveman</a></b></td><td align="center">100,538</td><td>An tionscadal víreasach "cén fáth a úsáid mórán comharthaí nuair a dhéanann beagán cleas" — a chuid fealsúnachta caveman-speak a chumhachtaíonn ár mód comhbhrú caighdeánach agus 30+ riail líonadh/dlúthú.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/rtk-ai/rtk">RTK – Rust Token Killer</a></b></td><td align="center">77,185</td><td>Comhbhrú aschur ordaithe ardfheidhmíochta — spreag ár inneall RTK, DSL scagaire JSON, déanamh aschur amh agus píobáil RTK → Caveman leibhéalaithe.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/headroomlabs-ai/headroom">headroom</a></b></td><td align="center">67,310</td><td>Comhbhrú comhthéacs insroichte (SmartCrusher) — spreag ár inneall <code>headroom</code> agus an phatrún marcóra athbhailiúcháin <code>ccr</code>.</td></tr>
@@ -1605,15 +1605,15 @@ Seasann OmniRoute ar gualainn na ngianta. Thosaigh sé mar forghabháil ar **[9r
   <tr><td nowrap><b><a href="https://github.com/atjsh/llmlingua-2-js">llmlingua-2-js</a></b></td><td align="center">31</td><td>An port JS/ONNX (MobileBERT / XLM-RoBERTa) a úsáidtear mar chúlra snáithe oibreora dár inneall LLMLingua.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/leninejunior/troglodita">Troglodita</a></b></td><td align="center">40</td><td>Comhbhrú comharthaí PT-BR — a chumhachtaíonn ár bpacáil teanga pt-BR: laghdú pleonásm agus bhaint líonadh athrige don ghramadach Phortaiginéise-Brazil.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/DietrichGebert/ponytail">ponytail</a></b></td><td align="center">108,957</td><td>Scile víreasach "bhunaitheoir leisciúil" YAGNI-coder — spreag ár stíl aschur <b>less-code</b>: treorú athrú oibre is lú a ghearrann an cód _ginte_ (an comhreir aschur don phróis gairid Caveman).</td></tr>
-  <tr><td nowrap><b><a href="https://github.com/ayghri/i-have-adhd">i-have-adhd</a></b></td><td align="center">23,526</td><td>A chuid freagraí gníomh-dhírithe, cairdiúil le ADHD comhoiriúnaithe isteach i stíl aschur ghairid OmniRoute i gcúig theanga.</td></tr>
+  <tr><td nowrap><b><a href="https://github.com/ayghri/i-have-adhd">i-have-adhd</a></b></td><td align="center">23,526</td><td>A chuid freagraí gníomh-dhírithe, cairdiúil le ADHD comhoiriúnaithe isteach i stíl aschur ghairid AgentProxy i gcúig theanga.</td></tr>
 </table>
 
 ### 🧧 Formáidí dlúithe, taighde comharthaí agus uirlisí eolasach maidir le cód
 
 <table>
-  <tr><th align="left">Tionscadal</th><th align="center">⭐</th><th align="left">Conas a spreag sé OmniRoute</th></tr>
+  <tr><th align="left">Tionscadal</th><th align="center">⭐</th><th align="left">Conas a spreag sé AgentProxy</th></tr>
   <tr><td nowrap><b><a href="https://github.com/toon-format/toon">TOON</a></b></td><td align="center">25,233</td><td>Token-Oriented Object Notation — a samhail colún, ceanntacs-plus-róanna a mhúnlaigh ár gcéim comhbhrú colúnach.</td></tr>
-  <tr><td nowrap><b><a href="https://github.com/blackwell-systems/gcf">GCF – Graph Compact Format</a></b></td><td align="center">41</td><td>A fhormáid ghráfa dlúithe agus a dhearadh próifíl ginearálta d'fhoghlaim comhbhrú colúnach OmniRoute agus formáid codec Headroom.</td></tr>
+  <tr><td nowrap><b><a href="https://github.com/blackwell-systems/gcf">GCF – Graph Compact Format</a></b></td><td align="center">41</td><td>A fhormáid ghráfa dlúithe agus a dhearadh próifíl ginearálta d'fhoghlaim comhbhrú colúnach AgentProxy agus formáid codec Headroom.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/blackwell-systems/gcf-typescript">gcf-typescript</a></b></td><td align="center">4</td><td>Cur i bhfeidhm TypeScript MIT díreach inabháitithe agus leathnaithe mar codec próifíl ginearálta Headroom.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/ooples/token-optimizer-mcp">token-optimizer-mcp</a></b></td><td align="center">494</td><td>Brotli/SQLite cache + delta comhthéacs in aghaidh an tseisiúin — spreag ár inneall <code>session-dedup</code>.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/Mibayy/token-savior">token-savior</a></b></td><td align="center">1,122</td><td>Comhbhrú aschur Bash + próifílí MCP — spreag ár ndisciplín teip comhbhrú agus laghdú manifeast uirlise MCP.</td></tr>
@@ -1630,7 +1630,7 @@ Seasann OmniRoute ar gualainn na ngianta. Thosaigh sé mar forghabháil ar **[9r
 ### 🧠 Cuimhne agus RAG
 
 <table>
-  <tr><th align="left">Tionscadal</th><th align="center">⭐</th><th align="left">Conas a spreag sé OmniRoute</th></tr>
+  <tr><th align="left">Tionscadal</th><th align="center">⭐</th><th align="left">Conas a spreag sé AgentProxy</th></tr>
   <tr><td nowrap><b><a href="https://github.com/mem0ai/mem0">Mem0</a></b></td><td align="center">63,902</td><td>Ciseal cuimhne uilíoch — a samhail seachbhóthair-mar-teorainn-léithe/scríofa a mhúnlaigh ár gcealla cuimhne.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/letta-ai/letta">Letta (MemGPT)</a></b></td><td align="center">24,382</td><td>Gníomhairí stáitsebhialaigh le cuimhne léibhéalaithe — spreag ár samhail léibhéalaithe Rialú Comhthéacs agus Athshlánú (CCR).</td></tr>
   <tr><td nowrap><b><a href="https://github.com/onestardao/WFGY">WFGY</a></b></td><td align="center">1,781</td><td>Catagóir ProblemMap de 16 modheanna teip ATH/LLM athfhorbartha — an stoc focal comhroinnte inár dtreoir fabhtcheartaithe.</td></tr>
@@ -1639,15 +1639,15 @@ Seasann OmniRoute ar gualainn na ngianta. Thosaigh sé mar forghabháil ar **[9r
 ### 🛰️ Athbhreithniú tráchta, MITM agus seachbhóthar trédhearcach
 
 <table>
-  <tr><th align="left">Tionscadal</th><th align="center">⭐</th><th align="left">Conas a spreag sé OmniRoute</th></tr>
-  <tr><td nowrap><b><a href="https://github.com/chouzz/llm-interceptor">llm-interceptor</a></b></td><td align="center">66</td><td>Idirghabháil/anailís MITM ar thráchta cúntóra ionchlannáin ↔ LLM a d'fhoghlaim riachtanais luath-Thaiscéalaí Tráchta. Ceithre mhodúl a tháinig anuas roimhe seo — cumascú SSE, normalú comhrá, scríobadh rúnda agus sláintíú ceanntacs — tá siad curtha in ionad maidir le cur i bhfeidhm neamhspleách glan-bhunaíochta bunaithe ar shonraíochtaí prótacail phoiblí. Tá an dá dhromchla pas-through óstach (<code>passthrough.ts</code> agus <code>_internal/bypass.cjs</code>) fós ina ríochtaí inmheánacha OmniRoute a chatagóriú go neamhspleách; níor athscríobh iad mar chuid den athsholáthar sin.</td></tr>
+  <tr><th align="left">Tionscadal</th><th align="center">⭐</th><th align="left">Conas a spreag sé AgentProxy</th></tr>
+  <tr><td nowrap><b><a href="https://github.com/chouzz/llm-interceptor">llm-interceptor</a></b></td><td align="center">66</td><td>Idirghabháil/anailís MITM ar thráchta cúntóra ionchlannáin ↔ LLM a d'fhoghlaim riachtanais luath-Thaiscéalaí Tráchta. Ceithre mhodúl a tháinig anuas roimhe seo — cumascú SSE, normalú comhrá, scríobadh rúnda agus sláintíú ceanntacs — tá siad curtha in ionad maidir le cur i bhfeidhm neamhspleách glan-bhunaíochta bunaithe ar shonraíochtaí prótacail phoiblí. Tá an dá dhromchla pas-through óstach (<code>passthrough.ts</code> agus <code>_internal/bypass.cjs</code>) fós ina ríochtaí inmheánacha AgentProxy a chatagóriú go neamhspleách; níor athscríobh iad mar chuid den athsholáthar sin.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/InterceptSuite/ProxyBridge">ProxyBridge</a></b></td><td align="center">5,995</td><td>Ródú seachbhóthair trédhearcach in aghaidh an phróisis — spreag ár ndímhúchadh MITM saor ó thuirlingt, amanna díomhaoin soicinn, ainmniúchán próiseis <code>/proc</code> agus gafa TPROXY.</td></tr>
 </table>
 
 ### 📚 Sonraí samhla, infheictheacht agus comhéadan úsáideora
 
 <table>
-  <tr><th align="left">Tionscadal</th><th align="center">⭐</th><th align="left">Conas a spreag sé OmniRoute</th></tr>
+  <tr><th align="left">Tionscadal</th><th align="center">⭐</th><th align="left">Conas a spreag sé AgentProxy</th></tr>
   <tr><td nowrap><b><a href="https://github.com/anomalyco/models.dev">models.dev</a></b></td><td align="center">6,555</td><td>Bunachar sonraí oscailte de shonraíochtaí, praghsanna agus cumais AI — sioncrónaithe go nádúrtha isteach i ndlúthchatalog na samhlacha.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/xyflow/xyflow">React Flow / xyflow</a></b></td><td align="center">38,108</td><td>An leabharlann graif node-bhunaithe a chumhachtaíonn ár Stiúideo Comhbhrú agus Comhcheangail/Ródú fíor-ama.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/langchain-ai/langgraph">LangGraph</a></b></td><td align="center">40,314</td><td>Léirshamhlú graif oibre fíor-ama LangGraph Studio a spreag an amharc casáid fíor-ama i Stiúideonna.</td></tr>
@@ -1660,19 +1660,19 @@ Seasann OmniRoute ar gualainn na ngianta. Thosaigh sé mar forghabháil ar **[9r
 ### 🛡️ Slándáil
 
 <table>
-  <tr><th align="left">Tionscadal</th><th align="center">⭐</th><th align="left">Conas a spreag sé OmniRoute</th></tr>
+  <tr><th align="left">Tionscadal</th><th align="center">⭐</th><th align="left">Conas a spreag sé AgentProxy</th></tr>
   <tr><td nowrap><b><a href="https://github.com/tldrsec/awesome-secure-defaults">awesome-secure-defaults</a></b></td><td align="center">721</td><td>Liostáil choimeádta de leabharlanna sábháilte le réamhshocruithe a threoraíonn ár roghanna slándála (Helmet.js, DOMPurify, ssrf-req-filter, safe-regex, Google Tink).</td></tr>
 </table>
 
 ### 🧭 Uirlisí comhlánacha
 
 <table>
-  <tr><th align="left">Tionscadal</th><th align="center">⭐</th><th align="left">Conas a spreag sé OmniRoute</th></tr>
+  <tr><th align="left">Tionscadal</th><th align="center">⭐</th><th align="left">Conas a spreag sé AgentProxy</th></tr>
   <tr><td nowrap><b><a href="https://github.com/BlockRunAI/ClawRouter">ClawRouter</a></b></td><td align="center">6,564</td><td>Spreag déanamh dúblála iarratais, teacht aniar éigeandála gan chostas, straitéisí Comhcheangail Auto-inphlogáilte agus aicmiú intinn ilteanga.</td></tr>
-  <tr><td nowrap><b><a href="https://github.com/lbjlaq/Antigravity-Manager">Antigravity-Manager</a></b></td><td align="center">30,652</td><td>A athmharcáil samhla atá aicmithe le cuntais, deimhniú cosáin inrite agus iompar lipéid phlean a d'fhoghlaim rithóir Antigravity OmniRoute.</td></tr>
-  <tr><td nowrap><b><a href="https://github.com/jlcodes99/vscode-antigravity-cockpit">vscode-antigravity-coockpit</a></b></td><td align="center">4,817</td><td>A fhormáid chomhaireamh aisghabhála cothromaíochta dlúithe a spreag an taispeántas comhfhreagairach srianta soláthraí in OmniRoute.</td></tr>
-  <tr><td nowrap><b><a href="https://github.com/iOfficeAI/AionUi">AionUi</a></b></td><td align="center">32,230</td><td>A chomhtháthúcháin ACP a spreag bhrath uathoibríoch OmniRoute ar na gníomhairí CLI suiteáilte.</td></tr>
-  <tr><td nowrap><b><a href="https://github.com/steipete/CodexBar">CodexBar</a></b></td><td align="center">20,507</td><td>Aithníodh dromchla cuóta Grok Build; ansin, dheimhnigh OmniRoute agus cheartaigh an fhormáid sreafa beo go neamhspleách.</td></tr>
+  <tr><td nowrap><b><a href="https://github.com/lbjlaq/Antigravity-Manager">Antigravity-Manager</a></b></td><td align="center">30,652</td><td>A athmharcáil samhla atá aicmithe le cuntais, deimhniú cosáin inrite agus iompar lipéid phlean a d'fhoghlaim rithóir Antigravity AgentProxy.</td></tr>
+  <tr><td nowrap><b><a href="https://github.com/jlcodes99/vscode-antigravity-cockpit">vscode-antigravity-coockpit</a></b></td><td align="center">4,817</td><td>A fhormáid chomhaireamh aisghabhála cothromaíochta dlúithe a spreag an taispeántas comhfhreagairach srianta soláthraí in AgentProxy.</td></tr>
+  <tr><td nowrap><b><a href="https://github.com/iOfficeAI/AionUi">AionUi</a></b></td><td align="center">32,230</td><td>A chomhtháthúcháin ACP a spreag bhrath uathoibríoch AgentProxy ar na gníomhairí CLI suiteáilte.</td></tr>
+  <tr><td nowrap><b><a href="https://github.com/steipete/CodexBar">CodexBar</a></b></td><td align="center">20,507</td><td>Aithníodh dromchla cuóta Grok Build; ansin, dheimhnigh AgentProxy agus cheartaigh an fhormáid sreafa beo go neamhspleách.</td></tr>
 </table>
 
 ## 📄 Ceadúnas
@@ -1683,9 +1683,9 @@ Ceadúnas MIT - féach [CEADÚNAS](LICENSE) le haghaidh sonraí.
 
 <div align="center">
 
-**[⬆ Ar ais go barr](#-omniroute)** · Tógtha le ❤️ don phobal AI foinse oscailte.
+**[⬆ Ar ais go barr](#-agentproxy)** · Tógtha le ❤️ don phobal AI foinse oscailte.
 
-<sub>OmniRoute v3.8.51 · Nód ≥22.22.2 · Ceadúnas MIT · <a href="https://omniroute.online">omniroute.online</a></sub>
+<sub>AgentProxy v3.8.51 · Nód ≥22.22.2 · Ceadúnas MIT · <a href="https://agentproxy.example.com">agentproxy.online</a></sub>
 
 </div>
 <!-- Plé GitHub cumasaithe le haghaidh ceisteanna agus freagraí pobail -->

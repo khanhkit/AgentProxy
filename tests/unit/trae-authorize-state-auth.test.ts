@@ -20,7 +20,7 @@ function restoreEnv(name: string, value: string | undefined) {
 
 function request(authorization?: string): Request {
   const headers = new Headers({
-    "x-omniroute-peer-locality": "loopback",
+    "x-agentproxy-peer-locality": "loopback",
     origin: "http://127.0.0.1:20128",
     "sec-fetch-site": "same-origin",
   });

@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { isAuthenticated } from "@/shared/utils/apiAuth";
-import { RERANK_PROVIDERS } from "@omniroute/open-sse/config/rerankRegistry.ts";
+import { RERANK_PROVIDERS } from "@agentproxy/open-sse/config/rerankRegistry.ts";
 import { getProviderCredentials } from "@/sse/services/auth";
 import {
   buildRerankProviderListing,
   mergeRerankProviderListings,
 } from "@/lib/memory/embedding/rerankListings";
-import { sanitizeErrorMessage } from "@omniroute/open-sse/utils/error.ts";
+import { sanitizeErrorMessage } from "@agentproxy/open-sse/utils/error.ts";
 
 /**
  * GET /api/memory/rerank-providers

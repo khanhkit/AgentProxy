@@ -42,7 +42,7 @@ describe("getModelPreserveVideoUrl", () => {
   it("translateRequest resolves preserveVideoUrl with the routed model", async () => {
     const { mergeModelCompatOverride, removeModelCompatOverride } =
       await import("@/lib/db/models/compat");
-    const { translateRequest } = await import("@omniroute/open-sse/translator/index.ts");
+    const { translateRequest } = await import("@agentproxy/open-sse/translator/index.ts");
     const provider = "test-provider-video-override";
     const model = "test-model-video-override";
 

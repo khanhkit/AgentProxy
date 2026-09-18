@@ -42,7 +42,7 @@ test("isFlatRateProvider: clean-room ChatGPT Web is flat-rate but its legacy ali
 });
 
 test("isFlatRateProvider: metered / cost-tracked providers are NOT flat-rate (no hidden cost)", () => {
-  // codex/cx = OmniRoute actively tracks Codex token cost (Fast-tier multipliers,
+  // codex/cx = AgentProxy actively tracks Codex token cost (Fast-tier multipliers,
   // GPT-5.x pricing) and Codex can be a metered account; byteplus = metered ModelArk;
   // minimax-cn = metered China API; glm-thinking = metered tier; anthropic = the
   // metered Anthropic API, distinct from the `claude`/`cc` Claude Code plan.

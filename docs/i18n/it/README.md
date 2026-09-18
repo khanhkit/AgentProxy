@@ -1,4 +1,4 @@
-# 🚀 OmniRoute — Il Gateway AI Gratuito
+# 🚀 AgentProxy — Il Gateway AI Gratuito
 
 🌐 **Languages:** 🇺🇸 [English](../../../README.md) · 🇸🇦 [ar](../ar/README.md) · 🇦🇿 [az](../az/README.md) · 🇧🇬 [bg](../bg/README.md) · 🇧🇩 [bn](../bn/README.md) · 🇨🇿 [cs](../cs/README.md) · 🇩🇰 [da](../da/README.md) · 🇩🇪 [de](../de/README.md) · 🇬🇷 [el](../el/README.md) · 🇪🇸 [es](../es/README.md) · 🇪🇪 [et](../et/README.md) · 🇮🇷 [fa](../fa/README.md) · 🇫🇮 [fi](../fi/README.md) · 🇫🇷 [fr](../fr/README.md) · 🇮🇪 [ga](../ga/README.md) · 🇮🇳 [gu](../gu/README.md) · 🇮🇱 [he](../he/README.md) · 🇮🇳 [hi](../hi/README.md) · 🇭🇷 [hr](../hr/README.md) · 🇭🇺 [hu](../hu/README.md) · 🇮🇩 [id](../id/README.md) · 🇯🇵 [ja](../ja/README.md) · 🇰🇷 [ko](../ko/README.md) · 🇱🇹 [lt](../lt/README.md) · 🇱🇻 [lv](../lv/README.md) · 🇮🇳 [mr](../mr/README.md) · 🇲🇾 [ms](../ms/README.md) · 🇲🇹 [mt](../mt/README.md) · 🇳🇱 [nl](../nl/README.md) · 🇳🇴 [no](../no/README.md) · 🇵🇭 [phi](../phi/README.md) · 🇵🇱 [pl](../pl/README.md) · 🇵🇹 [pt](../pt/README.md) · 🇧🇷 [pt-BR](../pt-BR/README.md) · 🇷🇴 [ro](../ro/README.md) · 🇷🇺 [ru](../ru/README.md) · 🇸🇰 [sk](../sk/README.md) · 🇸🇮 [sl](../sl/README.md) · 🇷🇸 [sr](../sr/README.md) · 🇸🇪 [sv](../sv/README.md) · 🇰🇪 [sw](../sw/README.md) · 🇮🇳 [ta](../ta/README.md) · 🇮🇳 [te](../te/README.md) · 🇹🇭 [th](../th/README.md) · 🇹🇷 [tr](../tr/README.md) · 🇺🇦 [uk-UA](../uk-UA/README.md) · 🇵🇰 [ur](../ur/README.md) · 🇻🇳 [vi](../vi/README.md) · 🇨🇳 [zh-CN](../zh-CN/README.md) · 🇹🇼 [zh-TW](../zh-TW/README.md)
 
@@ -6,16 +6,16 @@
 
 <div align="center">
 
-<img src="../../screenshots/MainOmniRoute.png" alt="Dashboard di OmniRoute" width="820"/>
+<img src="../../screenshots/MainAgentProxy.png" alt="Dashboard di AgentProxy" width="820"/>
 
 <br/>
 <br/>
 
-<a id="-omniroute"></a>
+<a id="-agentproxy"></a>
 
-# 🚀 OmniRoute — Il Gateway AI Gratuito
+# 🚀 AgentProxy — Il Gateway AI Gratuito
 
-<img src="../../diagrams/readme-hero.svg" width="100%" alt="OmniRoute — Non smettere mai di programmare. Ogni strumento AI → 349 provider — oltre 90 gratuiti — tramite un unico endpoint. Collega Claude Code, Codex, Cursor, Cline, Copilot e Antigravity a Claude / GPT / Gemini GRATUITI con fallback automatico. La compressione combinata RTK + Caveman riduce i token del 15–95% (~89% in media) — per non raggiungere i limiti. 350 provider AI · oltre 90 tier gratuiti · ~1,51 miliardi di token gratuiti/mese · 19 strategie di routing · $0 per iniziare."/>
+<img src="../../diagrams/readme-hero.svg" width="100%" alt="AgentProxy — Non smettere mai di programmare. Ogni strumento AI → 349 provider — oltre 90 gratuiti — tramite un unico endpoint. Collega Claude Code, Codex, Cursor, Cline, Copilot e Antigravity a Claude / GPT / Gemini GRATUITI con fallback automatico. La compressione combinata RTK + Caveman riduce i token del 15–95% (~89% in media) — per non raggiungere i limiti. 350 provider AI · oltre 90 tier gratuiti · ~1,51 miliardi di token gratuiti/mese · 19 strategie di routing · $0 per iniziare."/>
 
 </div>
 
@@ -25,9 +25,9 @@
 
 </div>
 
-> Combinare manualmente i tier gratuiti è scomodo: decine di SDK, decine di rate limit e nessuna idea chiara di quanta capacità sia davvero disponibile. OmniRoute aggrega i tier gratuiti **documentati** di **42 pool di provider / 495 modelli** in un unico numero trasparente e lo mostra in tempo reale nella dashboard (`/dashboard/free-tiers`).
+> Combinare manualmente i tier gratuiti è scomodo: decine di SDK, decine di rate limit e nessuna idea chiara di quanta capacità sia davvero disponibile. AgentProxy aggrega i tier gratuiti **documentati** di **42 pool di provider / 495 modelli** in un unico numero trasparente e lo mostra in tempo reale nella dashboard (`/dashboard/free-tiers`).
 
-<img src="../../diagrams/free-tier-budget.svg" width="100%" alt="Scheda del budget dei tier gratuiti di OmniRoute: ~1,51 miliardi di token gratuiti al mese in modo continuativo, fino a ~2,13 miliardi nel primo mese includendo i crediti di registrazione, calcolati sui tier gratuiti documentati di 42 pool di provider / 495 modelli dietro un unico endpoint. Calcolo trasparente con deduplicazione dei pool: ogni pool condiviso viene conteggiato una sola volta (contare ogni rate limit 24/7 darebbe ~10 miliardi, dato non pubblicato); 15 provider sono segnalati per i ToS così puoi decidere. Barra del budget dei pool gratuiti conteggiabili con griglia per modello, crediti una tantum del primo mese e provider permanentemente gratuiti senza limite di token pubblicato, mostrati separatamente per non gonfiare il valore principale. Utilizzo e residuo in tempo reale su /dashboard/free-tiers."/>
+<img src="../../diagrams/free-tier-budget.svg" width="100%" alt="Scheda del budget dei tier gratuiti di AgentProxy: ~1,51 miliardi di token gratuiti al mese in modo continuativo, fino a ~2,13 miliardi nel primo mese includendo i crediti di registrazione, calcolati sui tier gratuiti documentati di 42 pool di provider / 495 modelli dietro un unico endpoint. Calcolo trasparente con deduplicazione dei pool: ogni pool condiviso viene conteggiato una sola volta (contare ogni rate limit 24/7 darebbe ~10 miliardi, dato non pubblicato); 15 provider sono segnalati per i ToS così puoi decidere. Barra del budget dei pool gratuiti conteggiabili con griglia per modello, crediti una tantum del primo mese e provider permanentemente gratuiti senza limite di token pubblicato, mostrati separatamente per non gonfiare il valore principale. Utilizzo e residuo in tempo reale su /dashboard/free-tiers."/>
 
 > Riepilogo animato della pagina live `/dashboard/free-tiers`. Metodologia completa (deduplicazione dei pool, tier di credito, condizioni dei provider): **[docs/reference/FREE_TIERS.md](../../reference/FREE_TIERS.md)**.
 >
@@ -39,14 +39,14 @@
 
 <h3>
 
-⭐ Metti una stella alla repo se OMNIROUTE ti ha aiutato a risparmiare e a lavorare meglio.
+⭐ Metti una stella alla repo se AGENTPROXY ti ha aiutato a risparmiare e a lavorare meglio.
 
 </h3>
 
-[![Stars](https://img.shields.io/github/stars/diegosouzapw/OmniRoute?style=social)](https://github.com/diegosouzapw/OmniRoute)
-<a href="https://trendshift.io/repositories/23589" target="_blank"><img src="https://trendshift.io/api/badge/repositories/23589" alt="diegosouzapw%2FOmniRoute | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
-[![Star History Rank](https://api.star-history.com/badge?repo=diegosouzapw/OmniRoute&theme=dark)](https://www.star-history.com/diegosouzapw/omniroute)
-[![olud.ai](https://olud.ai/badge.php?tool=diegosouzapw-omniroute)](https://olud.ai/project/diegosouzapw-omniroute.html)
+[![Stars](https://img.shields.io/github/stars/khanhkit/AgentProxy?style=social)](https://github.com/khanhkit/AgentProxy)
+<a href="https://trendshift.io/repositories/23589" target="_blank"><img src="https://trendshift.io/api/badge/repositories/23589" alt="diegosouzapw%2FAgentProxy | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
+[![Star History Rank](https://api.star-history.com/badge?repo=khanhkit/AgentProxy&theme=dark)](https://www.star-history.com/khanhkit/agentproxy)
+[![olud.ai](https://olud.ai/badge.php?tool=diegosouzapw-agentproxy)](https://olud.ai/project/diegosouzapw-agentproxy.html)
 
 ### 💬 Unisciti alla community
 
@@ -56,12 +56,12 @@
 [![Follow @diegosouzapw on GitHub](https://img.shields.io/github/followers/diegosouzapw?style=for-the-badge&logo=github&logoColor=white&label=Follow%20on%20GitHub&color=181717)](https://github.com/diegosouzapw)
 
 [![Discord](https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/U47eFqAXCn)
-[![Telegram](https://img.shields.io/badge/Telegram-26A5E4?style=for-the-badge&logo=telegram&logoColor=white)](https://t.me/omnirouteOficial)
+[![Telegram](https://img.shields.io/badge/Telegram-26A5E4?style=for-the-badge&logo=telegram&logoColor=white)](https://github.com/khanhkit/AgentProxy/discussions)
 [![WhatsApp Global](https://img.shields.io/badge/WhatsApp_Global-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://chat.whatsapp.com/JI7cDQ1GyaiDHhVBpLxf8b?mode=gi_t)
 [![WhatsApp Brasil](https://img.shields.io/badge/WhatsApp_Brasil-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://chat.whatsapp.com/LTSpdFhXTxjH4R6CCNiKWz)
-[![Website](https://img.shields.io/badge/Website-omniroute.online-blue?logo=google-chrome&logoColor=white)](https://omniroute.online)
+[![Website](https://img.shields.io/badge/Website-agentproxy.online-blue?logo=google-chrome&logoColor=white)](https://agentproxy.example.com)
 
-**Domande, suggerimenti sui provider, roadmap e supporto → [Discord](https://discord.gg/U47eFqAXCn) · [Telegram](https://t.me/omnirouteOficial) · WhatsApp [🌍 Global](https://chat.whatsapp.com/JI7cDQ1GyaiDHhVBpLxf8b?mode=gi_t) / [🇧🇷 Brasil](https://chat.whatsapp.com/LTSpdFhXTxjH4R6CCNiKWz)**
+**Domande, suggerimenti sui provider, roadmap e supporto → [Discord](https://discord.gg/U47eFqAXCn) · [Telegram](https://github.com/khanhkit/AgentProxy/discussions) · WhatsApp [🌍 Global](https://chat.whatsapp.com/JI7cDQ1GyaiDHhVBpLxf8b?mode=gi_t) / [🇧🇷 Brasil](https://chat.whatsapp.com/LTSpdFhXTxjH4R6CCNiKWz)**
 
 <br/>
 
@@ -86,12 +86,12 @@
 
 ## 🧩 Disponibile come
 
-[![npm version](https://img.shields.io/npm/v/omniroute?color=cb3837&logo=npm)](https://www.npmjs.com/package/omniroute)
-![NPM Monthly](https://img.shields.io/npm/dm/omniroute?label=npm/month&color=cb3837&logo=npm)
-[![Docker Hub](https://img.shields.io/docker/v/diegosouzapw/omniroute?label=Docker%20Hub&logo=docker&color=2496ED)](https://hub.docker.com/r/diegosouzapw/omniroute)
+[![npm version](https://img.shields.io/npm/v/agentproxy?color=cb3837&logo=npm)](https://www.npmjs.com/package/agentproxy)
+![NPM Monthly](https://img.shields.io/npm/dm/agentproxy?label=npm/month&color=cb3837&logo=npm)
+[![Docker Hub](https://img.shields.io/docker/v/khanhkit/agentproxy?label=Docker%20Hub&logo=docker&color=2496ED)](https://github.com/khanhkit/AgentProxy/pkgs/container/agentproxy)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](../../../LICENSE)
-![Docker Pulls](https://img.shields.io/docker/pulls/diegosouzapw/omniroute?label=docker%20pulls&logo=docker&color=2496ED)
-![Electron Downloads](https://img.shields.io/github/downloads/diegosouzapw/omniroute/total?style=flat&label=electron%20downloads&logo=electron&color=47848F)
+![Docker Pulls](https://img.shields.io/docker/pulls/khanhkit/agentproxy?label=docker%20pulls&logo=docker&color=2496ED)
+![Electron Downloads](https://img.shields.io/github/downloads/khanhkit/agentproxy/total?style=flat&label=electron%20downloads&logo=electron&color=47848F)
 
 <table>
   <tr>
@@ -103,8 +103,8 @@
   <tr>
     <td align="right"><b>💡 Scopri</b></td>
     <td align="center"><a href="#-the-promise">💥 La promessa</a></td>
-    <td align="center"><a href="#-why-omniroute">🤔 Perché OmniRoute</a></td>
-    <td align="center"><a href="#-what-sets-omniroute-apart">🏆 Cosa lo distingue</a></td>
+    <td align="center"><a href="#-why-agentproxy">🤔 Perché AgentProxy</a></td>
+    <td align="center"><a href="#-what-sets-agentproxy-apart">🏆 Cosa lo distingue</a></td>
   </tr>
   <tr>
     <td align="right"><b>⚙️ Funzionalità</b></td>
@@ -115,18 +115,18 @@
   <tr>
     <td align="right"></td>
     <td align="center"><a href="#-save-1595-tokens--automatically">🗜️ Compressione</a></td>
-    <td align="center"><a href="#-where-omniroute-runs--anywhere">🖥️ Dove funziona</a></td>
+    <td align="center"><a href="#-where-agentproxy-runs--anywhere">🖥️ Dove funziona</a></td>
     <td align="center"><a href="#-private--local-first">🔒 Privacy</a></td>
   </tr>
   <tr>
     <td align="right"><b>👀 Guarda</b></td>
-    <td align="center"><a href="#-omniroute-in-action">🎬 In azione</a></td>
+    <td align="center"><a href="#-agentproxy-in-action">🎬 In azione</a></td>
     <td align="center"><a href="#-whats-new">✨ Novità</a></td>
     <td align="center"><a href="#-compatible-clis--coding-agents">🤖 CLI compatibili</a></td>
   </tr>
   <tr>
     <td align="right"><b>💚 Supporto</b></td>
-    <td align="center"><a href="#-support-omniroute">💚 Supporta / Dona</a></td>
+    <td align="center"><a href="#-support-agentproxy">💚 Supporta / Dona</a></td>
     <td align="center"><a href="#-community--help">💬 Community</a></td>
     <td align="center"><a href="#-sponsors">💖 Sponsor</a></td>
   </tr>
@@ -199,7 +199,7 @@
 
 </div>
 
-<img src="../../diagrams/works-zero-config.svg" width="100%" alt="Funziona subito dopo l'installazione — configurazione zero. Tre passaggi: 1. Installa — npm i -g omniroute, il server parte su localhost:20128. 2. Punta il tuo strumento a http://localhost:20128/v1 — qualunque strumento compatibile con OpenAI (Claude Code, Cursor, Cline). 3. Risponde — usa il modello auto per una risposta immediata, senza API key, registrazione o configurazione. OpenCode Free è già collegato alla combo auto, quindi una nuova installazione risponde immediatamente."/>
+<img src="../../diagrams/works-zero-config.svg" width="100%" alt="Funziona subito dopo l'installazione — configurazione zero. Tre passaggi: 1. Installa — npm i -g agentproxy, il server parte su localhost:20128. 2. Punta il tuo strumento a http://localhost:20128/v1 — qualunque strumento compatibile con OpenAI (Claude Code, Cursor, Cline). 3. Risponde — usa il modello auto per una risposta immediata, senza API key, registrazione o configurazione. OpenCode Free è già collegato alla combo auto, quindi una nuova installazione risponde immediatamente."/>
 
 ```bash
 # Fresh install, zero credentials — `auto` already works:
@@ -208,7 +208,7 @@ curl http://localhost:20128/v1/chat/completions \
   -d '{"model":"auto","messages":[{"role":"user","content":"Hello!"}]}'
 ```
 
-<sub>Preferisci uno specifico backend gratuito? Chiama direttamente `oc/…` (OpenCode Free). Poi passa a `auto` e lascia che sia OmniRoute a scegliere.</sub>
+<sub>Preferisci uno specifico backend gratuito? Chiama direttamente `oc/…` (OpenCode Free). Poi passa a `auto` e lascia che sia AgentProxy a scegliere.</sub>
 
 <sub>📦 Script di avvio rapido pronti da copiare per **Python, Node.js, PHP e cURL** → [`examples/quickstart/`](../../../examples/quickstart/)</sub>
 
@@ -222,24 +222,24 @@ curl http://localhost:20128/v1/chat/completions \
 
 </div>
 
-<img src="../../diagrams/promise-pillars.svg" width="100%" alt="La promessa — Un endpoint. 349 provider. Non smettere mai di creare: OmniRoute sceglie quello più economico che funziona. Sei pilastri: non raggiungere mai i limiti (fallback automatico tra 349 provider in millisecondi, zero downtime) · risparmia fino al 95% dei token (compressione combinata RTK + Caveman del 15–95%, ~89% in media nelle sessioni ricche di tool) · $0 per iniziare (oltre 90 tier gratuiti, 56 gratis per sempre, senza carta) · ogni strumento funziona (33 agenti di coding con una sola configurazione) · un endpoint (OpenAI ↔ Claude ↔ Gemini ↔ Responses API su /v1) · pronto per la produzione (circuit breaker, TLS stealth, MCP con 110 tool, A2A, memoria, guardrail, eval — oltre 25.000 test)."/>
+<img src="../../diagrams/promise-pillars.svg" width="100%" alt="La promessa — Un endpoint. 349 provider. Non smettere mai di creare: AgentProxy sceglie quello più economico che funziona. Sei pilastri: non raggiungere mai i limiti (fallback automatico tra 349 provider in millisecondi, zero downtime) · risparmia fino al 95% dei token (compressione combinata RTK + Caveman del 15–95%, ~89% in media nelle sessioni ricche di tool) · $0 per iniziare (oltre 90 tier gratuiti, 56 gratis per sempre, senza carta) · ogni strumento funziona (33 agenti di coding con una sola configurazione) · un endpoint (OpenAI ↔ Claude ↔ Gemini ↔ Responses API su /v1) · pronto per la produzione (circuit breaker, TLS stealth, MCP con 110 tool, A2A, memoria, guardrail, eval — oltre 25.000 test)."/>
 
 <br/>
 <br/>
 
 <div align="center">
 
-<a id="-why-omniroute"></a>
+<a id="-why-agentproxy"></a>
 
-# 🤔 Perché OmniRoute?
+# 🤔 Perché AgentProxy?
 
 </div>
 
-<img src="../../diagrams/why-pain-fix.svg" width="100%" alt="Perché OmniRoute — basta destreggiarsi tra 10 dashboard, API key non valide e fatture impreviste. Dieci problemi quotidiani e relative soluzioni: quota che scade inutilizzata → massimizza gli abbonamenti; rate limit durante il coding → fallback automatico a 4 livelli (Subscription → API → Cheap → Free); output dei tool che consumano token → compressione RTK + Caveman (15–95%); API costose → routing ottimizzato per i costi; ogni tool con una configurazione diversa → un endpoint, una dashboard; AI bloccata → proxy a 3 livelli + TLS stealth; chiavi non valide → resilienza a 3 livelli (circuit breaker, cooldown della chiave, lockout del modello); team che condivide un abbonamento → pool di chiavi con quote fair-share; prompt che passano dal cloud di altri → local-first con chiavi cifrate AES-256-GCM; nessuna visibilità sulla spesa → analytics live (utilizzo, quota, risparmio, latenza p95)."/>
+<img src="../../diagrams/why-pain-fix.svg" width="100%" alt="Perché AgentProxy — basta destreggiarsi tra 10 dashboard, API key non valide e fatture impreviste. Dieci problemi quotidiani e relative soluzioni: quota che scade inutilizzata → massimizza gli abbonamenti; rate limit durante il coding → fallback automatico a 4 livelli (Subscription → API → Cheap → Free); output dei tool che consumano token → compressione RTK + Caveman (15–95%); API costose → routing ottimizzato per i costi; ogni tool con una configurazione diversa → un endpoint, una dashboard; AI bloccata → proxy a 3 livelli + TLS stealth; chiavi non valide → resilienza a 3 livelli (circuit breaker, cooldown della chiave, lockout del modello); team che condivide un abbonamento → pool di chiavi con quote fair-share; prompt che passano dal cloud di altri → local-first con chiavi cifrate AES-256-GCM; nessuna visibilità sulla spesa → analytics live (utilizzo, quota, risparmio, latenza p95)."/>
 
 <div align="center">
 
-<img src="../../diagrams/tier-cascade.svg" width="100%" alt="Flusso delle richieste OmniRoute: il tuo IDE o CLI (Claude Code, Cursor, Cline…) chiama un unico endpoint locale (http://localhost:20128/v1); lo Smart Router di OmniRoute (compressione RTK + Caveman, 19 strategie di routing, circuit breaker, TLS stealth, MCP, A2A, guardrail) effettua automaticamente il fallback tra 4 livelli di provider — Tier 1 Subscription (Claude Code, Codex, Copilot), quota esaurita? Tier 2 API Key (DeepSeek, Groq, xAI), budget raggiunto? Tier 3 Cheap (GLM $0.5, MiniMax $0.2), budget raggiunto? Tier 4 Free (Kiro, Qoder, Pollinations) — sempre attivo."/>
+<img src="../../diagrams/tier-cascade.svg" width="100%" alt="Flusso delle richieste AgentProxy: il tuo IDE o CLI (Claude Code, Cursor, Cline…) chiama un unico endpoint locale (http://localhost:20128/v1); lo Smart Router di AgentProxy (compressione RTK + Caveman, 19 strategie di routing, circuit breaker, TLS stealth, MCP, A2A, guardrail) effettua automaticamente il fallback tra 4 livelli di provider — Tier 1 Subscription (Claude Code, Codex, Copilot), quota esaurita? Tier 2 API Key (DeepSeek, Groq, xAI), budget raggiunto? Tier 3 Cheap (GLM $0.5, MiniMax $0.2), budget raggiunto? Tier 4 Free (Kiro, Qoder, Pollinations) — sempre attivo."/>
 
 </div>
 
@@ -252,17 +252,17 @@ curl http://localhost:20128/v1/chat/completions \
 </div>
 
 <p align="center">
-  <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798&aff=omniroute">
+  <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798">
     <img src="../../../public/sponsors/kimi-k3-banner.png" width="100%" alt="Kimi K3 — Open Frontier Intelligence · 2.8T parameters · 1M-token context"/>
   </a>
 </p>
 
-> **Vuoi diventare un Open Source Friend?** Queste sono le aziende che sostengono l'open source e aiutano OmniRoute a continuare a crescere — e dichiariamo pubblicamente dove viene usato ogni token che ci forniscono. Contatto: [diegosouza.pw@outlook.com](mailto:diegosouza.pw@outlook.com)
+> **Vuoi diventare un Open Source Friend?** Queste sono le aziende che sostengono l'open source e aiutano AgentProxy a continuare a crescere — e dichiariamo pubblicamente dove viene usato ogni token che ci forniscono. Contatto: [diegosouza.pw@outlook.com](mailto:diegosouza.pw@outlook.com)
 
 <table>
   <tr>
     <td align="center" width="150">
-      <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798&aff=omniroute">
+      <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798">
         <picture>
           <source media="(prefers-color-scheme: dark)" srcset="../../../public/providers/kimi-logomark-dark.svg">
           <img src="../../../public/providers/kimi-logomark-light.svg" width="64" alt="Kimi (Moonshot AI)"/>
@@ -272,35 +272,35 @@ curl http://localhost:20128/v1/chat/completions \
       <img src="https://img.shields.io/badge/Founding_Friend-1783FF?style=flat-square" alt="Open Source Friend fondatore"/>
     </td>
     <td>
-      Grazie a <b>Kimi (Moonshot AI)</b>, il nostro Open Source Friend fondatore, per il sostegno al progetto! Kimi è il laboratorio AI dietro le famiglie di modelli open-weight K2 e K3 — <b>Kimi K3</b> offre una finestra di contesto da 1M token, vision nativa e capacità di coding di frontiera a una frazione del prezzo dei modelli chiusi, e funziona subito con Claude Code, Codex e ogni strumento di coding supportato da OmniRoute.
+      Grazie a <b>Kimi (Moonshot AI)</b>, il nostro Open Source Friend fondatore, per il sostegno al progetto! Kimi è il laboratorio AI dietro le famiglie di modelli open-weight K2 e K3 — <b>Kimi K3</b> offre una finestra di contesto da 1M token, vision nativa e capacità di coding di frontiera a una frazione del prezzo dei modelli chiusi, e funziona subito con Claude Code, Codex e ogni strumento di coding supportato da AgentProxy.
       <br/><br/>
-      <b>Cosa rende possibile il supporto di Kimi:</b> i crediti API di Kimi alimentano la pipeline di release validata dall'AI di OmniRoute — la fase <i>merge validation powered by Kimi K3</i> che esamina ogni pull request prima del rilascio — oltre allo sviluppo quotidiano delle funzionalità. Il supporto Kimi di prima classe è disponibile su entrambi i canali: la <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798&aff=omniroute">Kimi API</a> diretta (<code>kimi-k3</code>) e il <a href="https://www.kimi.com/code?aff=omniroute">piano di coding Kimi Code</a> (OAuth e API key). OmniRoute è anche il primo progetto open source brasiliano nel programma di supporto di Kimi. <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798&aff=omniroute"><b>Ottieni una Kimi API key con il 15% di crediti extra →</b></a>
+      <b>Cosa rende possibile il supporto di Kimi:</b> i crediti API di Kimi alimentano la pipeline di release validata dall'AI di AgentProxy — la fase <i>merge validation powered by Kimi K3</i> che esamina ogni pull request prima del rilascio — oltre allo sviluppo quotidiano delle funzionalità. Il supporto Kimi di prima classe è disponibile su entrambi i canali: la <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798">Kimi API</a> diretta (<code>kimi-k3</code>) e il <a href="https://www.kimi.com/code">piano di coding Kimi Code</a> (OAuth e API key). AgentProxy è anche il primo progetto open source brasiliano nel programma di supporto di Kimi. <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798"><b>Ottieni una Kimi API key con il 15% di crediti extra →</b></a>
     </td>
   </tr>
   <tr>
     <td align="center" width="150">
-      <a href="https://cheaperinference.com/?utm_source=omniroute">
+      <a href="https://cheaperinference.com/">
         <img src="../../../public/providers/cli-generic.svg" width="64" alt="Cheaper Inference"/>
       </a>
       <br/><b>Cheaper Inference</b><br/><sub>cheaperinference.com</sub><br/><br/>
       <img src="https://img.shields.io/badge/Open_Source_Friend-31f889?style=flat-square&labelColor=04170d" alt="Open Source Friend"/>
     </td>
     <td>
-      Grazie a <b>Cheaper Inference</b>, un Open Source Friend di OmniRoute, per il sostegno al progetto! Cheaper Inference è un gateway ordinato per costo che rivende 42 modelli di frontiera — Claude, GPT-5.x, Gemini, Kimi K3, GLM, DeepSeek, Grok e MiniMax — dietro un unico endpoint compatibile con OpenAI, instradando ogni richiesta verso il provider idoneo più economico senza mai addebitare più del prezzo di listino del produttore del modello.
+      Grazie a <b>Cheaper Inference</b>, un Open Source Friend di AgentProxy, per il sostegno al progetto! Cheaper Inference è un gateway ordinato per costo che rivende 42 modelli di frontiera — Claude, GPT-5.x, Gemini, Kimi K3, GLM, DeepSeek, Grok e MiniMax — dietro un unico endpoint compatibile con OpenAI, instradando ogni richiesta verso il provider idoneo più economico senza mai addebitare più del prezzo di listino del produttore del modello.
       <br/><br/>
-      <b>Supporto di prima classe in OmniRoute:</b> Chat Completions, endpoint nativo <code>/v1/responses</code>, vision, tool calling e 3 modelli immagine (<code>grok-imagine</code>, <code>nano-banana-pro</code>, <code>nano-banana-2</code>, raggiungibili come <code>cheaperinference/&lt;model&gt;</code>). <a href="https://cheaperinference.com/?utm_source=omniroute"><b>Ottieni una API key →</b></a>
+      <b>Supporto di prima classe in AgentProxy:</b> Chat Completions, endpoint nativo <code>/v1/responses</code>, vision, tool calling e 3 modelli immagine (<code>grok-imagine</code>, <code>nano-banana-pro</code>, <code>nano-banana-2</code>, raggiungibili come <code>cheaperinference/&lt;model&gt;</code>). <a href="https://cheaperinference.com/"><b>Ottieni una API key →</b></a>
     </td>
   </tr>
 </table>
 
-<sub>I link contrassegnati con <code>aff=omniroute</code> sono link partner. Finanziano il progetto senza costi aggiuntivi per te.</sub>
+<sub>I link contrassegnati con <code>aff=agentproxy</code> sono link partner. Finanziano il progetto senza costi aggiuntivi per te.</sub>
 
 <br/>
 
 <details open>
 <summary><sub><b>🎟️ Promo affiliati</b> — coupon gratuiti di registrazione da provider che non sponsorizziamo (clicca per espandere)</sub></summary>
 
-<sub><i>Questa sezione contiene soltanto codici referral/coupon. Le partnership sponsorizzate sono riportate sopra in <b>🤝 Supportato dai nostri amici dell'Open Source</b>. OmniRoute non ha sponsorizzazioni o partnership con i provider elencati qui: sono coupon pubblici utilizzabili da chiunque.</i></sub>
+<sub><i>Questa sezione contiene soltanto codici referral/coupon. Le partnership sponsorizzate sono riportate sopra in <b>🤝 Supportato dai nostri amici dell'Open Source</b>. AgentProxy non ha sponsorizzazioni o partnership con i provider elencati qui: sono coupon pubblici utilizzabili da chiunque.</i></sub>
 
 <table>
   <tr>
@@ -311,14 +311,14 @@ curl http://localhost:20128/v1/chat/completions \
       <br/><sub><b>AgentRouter</b></sub><br/><sub>agentrouter.org</sub>
     </td>
     <td>
-      <sub><b><a href="https://agentrouter.org/register?aff=70LM">AgentRouter</a></b> — registrazione affiliata · <b>$100 di crediti gratuiti</b> alla registrazione (server gratuito, aspettati una latenza maggiore — ideale per test, non per produzione). Supporto di prima classe in OmniRoute dalla <b>v3.8.50</b>: Chat Completions, formato wire compatibile con Anthropic e percorso compatibile con OpenAI. I modelli disponibili includono <code>claude-opus-4-8</code>, <code>claude-opus-5</code>, <code>gpt-5.6-sol</code> e altri. <b><a href="https://agentrouter.org/register?aff=70LM">Ottieni i tuoi $100 →</a></b></sub>
+      <sub><b><a href="https://agentrouter.org/register?aff=70LM">AgentRouter</a></b> — registrazione affiliata · <b>$100 di crediti gratuiti</b> alla registrazione (server gratuito, aspettati una latenza maggiore — ideale per test, non per produzione). Supporto di prima classe in AgentProxy dalla <b>v3.8.50</b>: Chat Completions, formato wire compatibile con Anthropic e percorso compatibile con OpenAI. I modelli disponibili includono <code>claude-opus-4-8</code>, <code>claude-opus-5</code>, <code>gpt-5.6-sol</code> e altri. <b><a href="https://agentrouter.org/register?aff=70LM">Ottieni i tuoi $100 →</a></b></sub>
       <br/><br/>
-      <sub>⚠️ <i>Link affiliato — OmniRoute non ha sponsorizzazioni o partnership con questo provider.</i></sub>
+      <sub>⚠️ <i>Link affiliato — AgentProxy non ha sponsorizzazioni o partnership con questo provider.</i></sub>
     </td>
   </tr>
 </table>
 
-<sub>Conosci un altro provider con un generoso coupon gratuito di registrazione utile agli utenti OmniRoute? Apri una issue e lo aggiungeremo qui.</sub>
+<sub>Conosci un altro provider con un generoso coupon gratuito di registrazione utile agli utenti AgentProxy? Apri una issue e lo aggiungeremo qui.</sub>
 
 </details>
 
@@ -334,11 +334,11 @@ curl http://localhost:20128/v1/chat/completions \
 
 <img src="../../diagrams/strategies-grid.svg" width="100%" alt="Tutte le 19 strategie di routing delle combo animate — una scheda per strategia: priority, fill-first, weighted, round-robin, p2c, least-used, random, strict-random, cost-optimized, headroom, reset-window, reset-aware, context-relay, context-optimized, cache-optimized, lkgp, auto, fusion, pipeline. Consulta la tabella seguente per capire cosa fa ciascuna."/>
 
-> Una **combo** è una catena di modelli tra cui OmniRoute instrada le richieste **automaticamente**. La quota finisce, un provider fallisce o i costi aumentano: la combo passa silenziosamente al modello successivo. **È questo che rende OmniRoute resistente ai guasti.** 🛡️
+> Una **combo** è una catena di modelli tra cui AgentProxy instrada le richieste **automaticamente**. La quota finisce, un provider fallisce o i costi aumentano: la combo passa silenziosamente al modello successivo. **È questo che rende AgentProxy resistente ai guasti.** 🛡️
 
 ### ⚡ Zero-config — usa semplicemente `auto`
 
-Non devi creare nessuna combo. Imposta il modello su `auto` (o una sua variante) e OmniRoute costruisce una combo virtuale a partire dai provider collegati, assegnando i punteggi in tempo reale:
+Non devi creare nessuna combo. Imposta il modello su `auto` (o una sua variante) e AgentProxy costruisce una combo virtuale a partire dai provider collegati, assegnando i punteggi in tempo reale:
 
 <table>
   <tr><th align="left">ID modello</th><th align="left">Cosa ottimizza</th></tr>
@@ -389,7 +389,7 @@ Tutte e **19** le strategie — combinabili liberamente per ogni passaggio della
 
 ### 🧱 Resilienza integrata (3 livelli indipendenti)
 
-<img src="../../diagrams/resilience-layers.svg" width="100%" alt="Resilienza di OmniRoute — 3 livelli indipendenti e autoriparanti, ciascuno dedicato al guasto corretto. Livello 1 circuit breaker del provider (intero provider): scatta solo su 408/5xx, soglie OAuth 10× / API-key 15× / locale 2×, reset dopo 60s/30s/15s con una sonda HALF-OPEN, recupero lazy; mentre è OPEN la combo passa al provider successivo. Livello 2 cooldown della connessione (una chiave/account): base 5s OAuth / 3s API-key, backoff esponenziale ×2 con protezione anti-thundering-herd, i 429 rispettano Retry-After, un successo azzera lo stato d'errore; una chiave in cooldown viene saltata mentre le altre continuano a servire. Livello 3 lockout del modello (un solo modello): 429 per-modello, 404 locali o dinieghi di modalità bloccano solo quel modello, mai l'intera connessione. Gli stati terminali (bannato, scaduto, crediti esauriti) richiedono l'intervento dell'operatore e non sono cooldown."/>
+<img src="../../diagrams/resilience-layers.svg" width="100%" alt="Resilienza di AgentProxy — 3 livelli indipendenti e autoriparanti, ciascuno dedicato al guasto corretto. Livello 1 circuit breaker del provider (intero provider): scatta solo su 408/5xx, soglie OAuth 10× / API-key 15× / locale 2×, reset dopo 60s/30s/15s con una sonda HALF-OPEN, recupero lazy; mentre è OPEN la combo passa al provider successivo. Livello 2 cooldown della connessione (una chiave/account): base 5s OAuth / 3s API-key, backoff esponenziale ×2 con protezione anti-thundering-herd, i 429 rispettano Retry-After, un successo azzera lo stato d'errore; una chiave in cooldown viene saltata mentre le altre continuano a servire. Livello 3 lockout del modello (un solo modello): 429 per-modello, 404 locali o dinieghi di modalità bloccano solo quel modello, mai l'intera connessione. Gli stati terminali (bannato, scaduto, crediti esauriti) richiedono l'intervento dell'operatore e non sono cooldown."/>
 
 <sub>📖 [Motore Auto-Combo](../../routing/AUTO-COMBO.md) · [Guida alla resilienza](../../architecture/RESILIENCE_GUIDE.md)</sub>
 
@@ -397,26 +397,26 @@ Tutte e **19** le strategie — combinabili liberamente per ogni passaggio della
 
 <div align="center">
 
-<a id="-what-sets-omniroute-apart"></a>
+<a id="-what-sets-agentproxy-apart"></a>
 
-## 🏆 Cosa distingue OmniRoute
+## 🏆 Cosa distingue AgentProxy
 
 </div>
 
-<img src="../../diagrams/comparison-table.svg" width="100%" alt="Cosa distingue OmniRoute — tabella di confronto con 9router, OpenRouter, CLIProxyAPI e LiteLLM su 13 capacità. OmniRoute: 349 provider, oltre 90 provider gratuiti integrati, 19 strategie di routing, compressione token con 12 motori, server MCP integrato con 110 tool, protocollo agenti A2A, memoria persistente, guardrail, cloud agent, TLS fingerprint stealth, Desktop/Termux/PWA, 42 locale UI i18n, self-hosting 100% MIT. OmniRoute è l'unico a includere l'intero insieme; i concorrenti mostrano combinazioni di supporto completo, parziale e assente. Verificato sulla documentazione di ciascun progetto."/>
+<img src="../../diagrams/comparison-table.svg" width="100%" alt="Cosa distingue AgentProxy — tabella di confronto con 9router, OpenRouter, CLIProxyAPI e LiteLLM su 13 capacità. AgentProxy: 349 provider, oltre 90 provider gratuiti integrati, 19 strategie di routing, compressione token con 12 motori, server MCP integrato con 110 tool, protocollo agenti A2A, memoria persistente, guardrail, cloud agent, TLS fingerprint stealth, Desktop/Termux/PWA, 42 locale UI i18n, self-hosting 100% MIT. AgentProxy è l'unico a includere l'intero insieme; i concorrenti mostrano combinazioni di supporto completo, parziale e assente. Verificato sulla documentazione di ciascun progetto."/>
 
-<sub>📊 Metodologia completa e dettaglio per funzionalità rispetto a 9router, OpenRouter, CLIProxyAPI e LiteLLM → [`docs/comparison/OMNIROUTE_VS_ALTERNATIVES.md`](../../comparison/OMNIROUTE_VS_ALTERNATIVES.md)</sub>
+<sub>📊 Metodologia completa e dettaglio per funzionalità rispetto a 9router, OpenRouter, CLIProxyAPI e LiteLLM → [`docs/comparison/AGENTPROXY_VS_ALTERNATIVES.md`](../../comparison/AGENTPROXY_VS_ALTERNATIVES.md)</sub>
 
 <br/>
 
-<a id="-support-omniroute"></a>
+<a id="-support-agentproxy"></a>
 
-## 💚 Supporta OmniRoute
+## 💚 Supporta AgentProxy
 
-OmniRoute è distribuito con licenza MIT e mantenuto apertamente. Se ti fa risparmiare tempo o denaro, ecco come aiutarlo a restare indipendente — scegli ciò che preferisci. Le sponsorizzazioni non influenzano mai la priorità del routing: acquistano visibilità, non posizionamento.
+AgentProxy è distribuito con licenza MIT e mantenuto apertamente. Se ti fa risparmiare tempo o denaro, ecco come aiutarlo a restare indipendente — scegli ciò che preferisci. Le sponsorizzazioni non influenzano mai la priorità del routing: acquistano visibilità, non posizionamento.
 
 <table>
-  <tr><td nowrap>⭐ <b>Metti una stella alla repo</b></td><td>Gratis — aiuta davvero la visibilità</td><td><a href="https://github.com/diegosouzapw/OmniRoute">Dai una stella a OmniRoute</a></td></tr>
+  <tr><td nowrap>⭐ <b>Metti una stella alla repo</b></td><td>Gratis — aiuta davvero la visibilità</td><td><a href="https://github.com/khanhkit/AgentProxy">Dai una stella a AgentProxy</a></td></tr>
   <tr><td nowrap>🐙 <b>GitHub Sponsors</b></td><td>Una tantum o mensile · zero commissioni della piattaforma</td><td><a href="https://github.com/sponsors/diegosouzapw">github.com/sponsors/diegosouzapw</a></td></tr>
   <tr><td nowrap>☕ <b>Ko-fi</b></td><td>Mancia una tantum, senza registrazione per chi dona</td><td><a href="https://ko-fi.com/diegosouzapw">ko-fi.com/diegosouzapw</a></td></tr>
   <tr><td nowrap>🧋 <b>Buy Me a Coffee</b></td><td>Piccolo gesto informale</td><td><a href="https://www.buymeacoffee.com/diegosouzapw">buymeacoffee.com/diegosouzapw</a></td></tr>
@@ -427,14 +427,14 @@ OmniRoute è distribuito con licenza MIT e mantenuto apertamente. Se ti fa rispa
 
 **🇧🇷 PIX** — istantaneo, senza commissioni (Brasile)
 
-<img src="../../assets/pix-qr.png" width="140" align="right" alt="Codice QR PIX di OmniRoute"/>
+<img src="../../assets/pix-qr.png" width="140" align="right" alt="Codice QR PIX di AgentProxy"/>
 
 Chiave (casuale): `5d865059-bc44-483a-962d-43ceb80126eb`
 
 Pix copia-e-cola:
 
 ```
-00020101021126580014br.gov.bcb.pix01365d865059-bc44-483a-962d-43ceb80126eb5204000053039865802BR5922OMNIROUTE CONTRIBUICAO6006BRASIL62070503***630475DD
+00020101021126580014br.gov.bcb.pix01365d865059-bc44-483a-962d-43ceb80126eb5204000053039865802BR5922AGENTPROXY CONTRIBUICAO6006BRASIL62070503***630475DD
 ```
 
 <br clear="right"/>
@@ -453,19 +453,19 @@ Pix copia-e-cola:
 
 </details>
 
-🐛 Hai trovato un bug o vuoi lasciare un feedback? Apri una [Discussion](https://github.com/diegosouzapw/OmniRoute/discussions).
+🐛 Hai trovato un bug o vuoi lasciare un feedback? Apri una [Discussion](https://github.com/khanhkit/AgentProxy/discussions).
 
 <br/>
 
 <p><strong>Note per gli sviluppatori:</strong> il progetto può generare un file locale <code>.env</code> durante npm install/postinstall per comodità nello sviluppo. Questo file viene intenzionalmente ignorato tramite <code>.gitignore</code> (vedi <code>.gitignore</code>) e non deve mai essere incluso nei commit; se viene committato accidentalmente, ruota ogni secret esposto e rimuovi il file dalla cronologia. Consulta <a href="../../DEVELOPER-ENVIRONMENT.md">docs/DEVELOPER-ENVIRONMENT.md</a> per le indicazioni sulla gestione dei file di ambiente locali e dei secret.</p>
 
-## 📡 OmniRoute Radar
+## 📡 AgentProxy Radar
 
-Il valore principale dei tier gratuiti resta **~1,53 miliardi di token/mese**, calcolato sul catalogo documentato con deduplicazione dei pool riportato sopra. I crediti temporanei di registrazione dei provider possono separatamente portare il primo mese a **~2,15 miliardi**. Radar è un overlay opzionale e firmato del catalogo, pensato per chi vuole informazioni più aggiornate sulla disponibilità dei modelli gratuiti tra una release di OmniRoute e la successiva; il catalogo della community e tutte le funzionalità gratuite esistenti restano gratuiti.
+Il valore principale dei tier gratuiti resta **~1,53 miliardi di token/mese**, calcolato sul catalogo documentato con deduplicazione dei pool riportato sopra. I crediti temporanei di registrazione dei provider possono separatamente portare il primo mese a **~2,15 miliardi**. Radar è un overlay opzionale e firmato del catalogo, pensato per chi vuole informazioni più aggiornate sulla disponibilità dei modelli gratuiti tra una release di AgentProxy e la successiva; il catalogo della community e tutte le funzionalità gratuite esistenti restano gratuiti.
 
 I sostenitori possono ricevere il catalogo live e ulteriori opportunità offerte dai provider. Il relativo tetto separato e variabile è di **circa 3 miliardi di token/mese al massimo**, a seconda della disponibilità dei provider. Questo limite non è una garanzia: i provider possono modificare quote, requisiti, modelli o regioni in qualsiasi momento.
 
-Radar è opt-in e usa soltanto richieste GET. Il client OmniRoute non carica prompt, traffico, configurazione dei provider, telemetria d'uso o lo stato locale di chiusura degli annunci. Dettagli sui requisiti e sul catalogo corrente su **[radar.omniroute.online/planos](https://radar.omniroute.online/planos)**.
+Radar è opt-in e usa soltanto richieste GET. Il client AgentProxy non carica prompt, traffico, configurazione dei provider, telemetria d'uso o lo stato locale di chiusura degli annunci. Dettagli sui requisiti e sul catalogo corrente su **[radar.agentproxy.online/planos](https://radar.agentproxy.example.com/planos)**.
 
 <br/>
 
@@ -485,19 +485,19 @@ Radar è opt-in e usa soltanto richieste GET. Il client OmniRoute non carica pro
 - **🗜️ Rafforzamento della compressione** — protezione dall'inflazione attiva per impostazione predefinita, pack Caveman per DE / FR / JA + cinese (wényán), filtri RTK per Gradle e .NET. → [Compressione](../../compression/COMPRESSION_ENGINES.md)
 - **💸 Costo flat-rate trasparente** — i provider in abbonamento / coding plan risultano a **$0** nelle analytics dei costi; budget, quote e routing continuano a fare stime. → [Riferimento API](../../reference/API_REFERENCE.md)
 - **⚖️ Routing Quota-Share** — divide equamente la quota di un account condiviso tra chiavi in pool, in modo work-conserving così le porzioni inattive vengono prestate. → [Guida alla resilienza](../../architecture/RESILIENCE_GUIDE.md)
-- **🤖 Configurazione CLI/agente con un comando** — `setup-*` configura oltre 12 strumenti di coding; `omniroute run` avvia 7 CLI (Claude Code, Codex, Aider, Goose, OpenCode, Qwen Code, Gemini CLI) senza scrivere configurazioni; `omniroute configure` è un selettore interattivo provider+modello con preferiti per contesto. → [Integrazioni CLI](../../guides/CLI-INTEGRATIONS.md)
-- **🛰️ Modalità remota** — controlla un OmniRoute remoto con token scoped (`connect` / `contexts` / `tokens`) + helper OAuth `antigravity` per installazioni VPS. → [Modalità remota](../../guides/REMOTE-MODE.md)
+- **🤖 Configurazione CLI/agente con un comando** — `setup-*` configura oltre 12 strumenti di coding; `agentproxy run` avvia 7 CLI (Claude Code, Codex, Aider, Goose, OpenCode, Qwen Code, Gemini CLI) senza scrivere configurazioni; `agentproxy configure` è un selettore interattivo provider+modello con preferiti per contesto. → [Integrazioni CLI](../../guides/CLI-INTEGRATIONS.md)
+- **🛰️ Modalità remota** — controlla un AgentProxy remoto con token scoped (`connect` / `contexts` / `tokens`) + helper OAuth `antigravity` per installazioni VPS. → [Modalità remota](../../guides/REMOTE-MODE.md)
 - **🧭 Auto-routing più intelligente** — combo `auto/<category>:<tier>`, **Fusion** (gruppo di modelli + giudice), routing task-aware, override per-request di modello / modalità / budget USD. → [Auto-Combo](../../routing/AUTO-COMBO.md)
 - **🗜️ Compressione pluggable** — 12 motori componibili + Compression Studios: LLMLingua-2, Ultra a due livelli, omniglyph, fidelity gate per passaggio, GCF v3.2, editor drag-reorder. → [Compressione](../../compression/COMPRESSION_ENGINES.md)
 - **🕵️ Decrittazione MITM trasparente (TPROXY)** — cattura le CLI che ignorano le variabili d'ambiente del proxy, con CA per-SNI + installer del trust store. → [MITM/TPROXY](../../security/MITM-TPROXY-DECRYPT.md)
-- **💸 Telemetria dei costi ovunque** — header di costo/utilizzo `X-OmniRoute-*` su ogni endpoint, header del risparmio su cache HIT, quote di spesa USD per chiave. → [Riferimento API](../../reference/API_REFERENCE.md)
-- **🧠 Memoria sotto il tuo controllo** — disattivata per impostazione predefinita, quantizzazione vettoriale int8 opt-in + decadimento tipizzato, `x-omniroute-no-memory` per-request. → [Memoria](../../frameworks/MEMORY.md)
+- **💸 Telemetria dei costi ovunque** — header di costo/utilizzo `X-AgentProxy-*` su ogni endpoint, header del risparmio su cache HIT, quote di spesa USD per chiave. → [Riferimento API](../../reference/API_REFERENCE.md)
+- **🧠 Memoria sotto il tuo controllo** — disattivata per impostazione predefinita, quantizzazione vettoriale int8 opt-in + decadimento tipizzato, `x-agentproxy-no-memory` per-request. → [Memoria](../../frameworks/MEMORY.md)
 - **🛡️ Sicurezza** — guard contro la prompt injection su ogni route LLM (suite red-team), guardrail opzionale per il masking delle credenziali (oscura API key/secret trapelati in entrambe le direzioni), web search DuckDuckGo gratuita come ultima risorsa e gate di login OIDC opzionale per la dashboard (il login con password resta sempre disponibile). → [Guardrail](../../security/GUARDRAILS.md)
 - **🖼️ Nuovi endpoint** — `/v1/ocr` (Mistral OCR) e `/v1/audio/translations` (stile Whisper) completano la superficie media. → [Riferimento API](../../reference/API_REFERENCE.md)
 - **🎨 Generazione immagini / video / audio** — una sola API per i media: xAI Grok Imagine e Novita AI video, ComfyUI, Magnific, Adobe Firefly, Segmind e provider vocali come ElevenLabs. → [Riferimento API](../../reference/API_REFERENCE.md)
 - **🌍 Deployment e operazioni** — `basePath` del reverse proxy, rilevamento automatico della lingua del browser, tracking dei dispositivi per chiave, trust MITM senza root, localizzazione zh-TW. → [Ambiente](../../reference/ENVIRONMENT.md)
 - **🤝 Più provider e agenti** — Cursor Cloud Agent, Grok Build (xAI) con login browser + OAuth, scheda Ollama di prima classe, Claude Opus 5 e Sonnet 5, partnership ufficiale Kimi (Code/Web/Moonshot), Zed, Requesty, SenseNova, Yuanbao, Agnes AI… e un catalogo aggiornato di **350 provider**. → [Provider](../../reference/PROVIDER_REFERENCE.md)
-- **📡 Trasparenza del routing** — ogni risposta include un header `X-OmniRoute-Decision` con strategia/provider/latenza che l'ha servita; una nuova strategia combo `cache-optimized` + il fattore `cacheAffinity` di Auto-Combo riportano le richieste ripetute alla connessione che possiede il prefisso in cache; un endpoint read-only `/v1/auto-combo/{channel}/candidates` espone il pool di candidati live di un canale `auto/*`. → [Auto-Combo](../../routing/AUTO-COMBO.md)
+- **📡 Trasparenza del routing** — ogni risposta include un header `X-AgentProxy-Decision` con strategia/provider/latenza che l'ha servita; una nuova strategia combo `cache-optimized` + il fattore `cacheAffinity` di Auto-Combo riportano le richieste ripetute alla connessione che possiede il prefisso in cache; un endpoint read-only `/v1/auto-combo/{channel}/candidates` espone il pool di candidati live di un canale `auto/*`. → [Auto-Combo](../../routing/AUTO-COMBO.md)
 - **⚡ Prestazioni e infrastruttura locali** — Redis locale con un clic, deployer relay Cloudflare Workers / Deno Deploy, Bifrost e Mux come servizi embedded supervisionati. → [Servizi embedded](../../frameworks/EMBEDDED-SERVICES.md)
 
 <br/>
@@ -551,29 +551,29 @@ Radar è opt-in e usa soltanto richieste GET. Il client OmniRoute non carica pro
 <b>＋ funziona anche con</b> · Kiro · Command Code · Antigravity · Windsurf · AMP · <b>qualsiasi strumento compatibile con OpenAI</b>
 </div>
 
-<sub>📖 Configurazione per ciascuno dei 34 strumenti (26 CLI Code + 8 CLI Agents) → [`docs/reference/CLI-TOOLS.md`](../../reference/CLI-TOOLS.md) · 🧩 Plugin OpenCode → [`@omniroute/opencode-provider`](https://www.npmjs.com/package/@omniroute/opencode-provider)</sub>
+<sub>📖 Configurazione per ciascuno dei 34 strumenti (26 CLI Code + 8 CLI Agents) → [`docs/reference/CLI-TOOLS.md`](../../reference/CLI-TOOLS.md) · 🧩 Plugin OpenCode → [`@agentproxy/opencode-provider`](https://www.npmjs.com/package/@agentproxy/opencode-provider)</sub>
 
 </div>
 
 <br/>
 
-**Avvia qualsiasi CLI supportata tramite OmniRoute con un solo comando** — senza scrivere file di configurazione,
+**Avvia qualsiasi CLI supportata tramite AgentProxy con un solo comando** — senza scrivere file di configurazione,
 con le credenziali iniettate per singolo processo e una home temporanea isolata per Qwen/Gemini:
 
 ```bash
-omniroute run claude   --model openai/gpt-5.4          # Claude Code
-omniroute run codex    --model glm/glm-5.2             # OpenAI Codex CLI
-omniroute run aider    --model glm/glm-5.2 -- --message "reply OK"
-omniroute run goose    --model glm/glm-5.2
-omniroute run opencode --model glm/glm-5.2 -- run "reply OK"
-omniroute run qwen     --model glm/glm-5.2 -- -p "reply OK"
-omniroute run gemini   --model glm/glm-5.2 -- --skip-trust -p "reply OK"
+agentproxy run claude   --model openai/gpt-5.4          # Claude Code
+agentproxy run codex    --model glm/glm-5.2             # OpenAI Codex CLI
+agentproxy run aider    --model glm/glm-5.2 -- --message "reply OK"
+agentproxy run goose    --model glm/glm-5.2
+agentproxy run opencode --model glm/glm-5.2 -- run "reply OK"
+agentproxy run qwen     --model glm/glm-5.2 -- -p "reply OK"
+agentproxy run gemini   --model glm/glm-5.2 -- --skip-trust -p "reply OK"
 
 # Or pick provider+model interactively and write the tool's own config:
-omniroute configure codex          # also: claude opencode qwen aider goose cline continue kilo
+agentproxy configure codex          # also: claude opencode qwen aider goose cline continue kilo
 ```
 
-Ogni comando rispetta il contesto remoto attivo (`omniroute connect <host>`); `--dry-run`
+Ogni comando rispetta il contesto remoto attivo (`agentproxy connect <host>`); `--dry-run`
 mostra in anteprima env/argomenti esatti senza eseguire nulla, mentre `--api-key-env NAME` evita che i segreti
 finiscano nella cronologia della shell. → [Integrazioni CLI](../../guides/CLI-INTEGRATIONS.md)
 
@@ -649,10 +649,10 @@ finiscano nella cronologia della shell. → [Integrazioni CLI](../../guides/CLI-
 <br/>
 </div>
 
-<a id="-where-omniroute-runs--anywhere"></a>
+<a id="-where-agentproxy-runs--anywhere"></a>
 <div align="center">
 
-## 🖥️ Dove gira OmniRoute — ovunque
+## 🖥️ Dove gira AgentProxy — ovunque
 
 </div>
 
@@ -660,14 +660,14 @@ finiscano nella cronologia della shell. → [Integrazioni CLI](../../guides/CLI-
 
 <table>
   <tr><th align="left">Piattaforma</th><th align="left">Installazione</th><th align="left">Punti di forza</th></tr>
-  <tr><td align="left" nowrap>📦 <b>npm (globale)</b></td><td align="left" nowrap><code>npm install -g omniroute</code></td><td align="left">Un comando, qualsiasi OS</td></tr>
-  <tr><td align="left" nowrap>🐳 <b>Docker</b></td><td align="left" nowrap><code>docker run … diegosouzapw/omniroute</code></td><td align="left">Multi-arch <b>AMD64 + ARM64</b></td></tr>
+  <tr><td align="left" nowrap>📦 <b>npm (globale)</b></td><td align="left" nowrap><code>npm install -g agentproxy</code></td><td align="left">Un comando, qualsiasi OS</td></tr>
+  <tr><td align="left" nowrap>🐳 <b>Docker</b></td><td align="left" nowrap><code>docker run … khanhkit/agentproxy</code></td><td align="left">Multi-arch <b>AMD64 + ARM64</b></td></tr>
   <tr><td align="left" nowrap>🖥️ <b>Desktop (Electron)</b></td><td align="left" nowrap><code>npm run electron:build</code></td><td align="left">Finestra nativa + system tray — <b>Windows / macOS / Linux</b></td></tr>
   <tr><td align="left" nowrap>💪 <b>ARM</b></td><td align="left" nowrap>nativo <code>arm64</code></td><td align="left">Raspberry Pi, server ARM, Apple Silicon</td></tr>
-  <tr><td align="left" nowrap>📱 <b>Android (Termux)</b></td><td align="left" nowrap><code>pkg install nodejs && npx -y omniroute</code></td><td align="left">Gira <b>sul tuo telefono</b>, 24/7, senza root</td></tr>
+  <tr><td align="left" nowrap>📱 <b>Android (Termux)</b></td><td align="left" nowrap><code>pkg install nodejs && npx -y agentproxy</code></td><td align="left">Gira <b>sul tuo telefono</b>, 24/7, senza root</td></tr>
   <tr><td align="left" nowrap>📲 <b>PWA</b></td><td align="left" nowrap>"Aggiungi alla schermata Home"</td><td align="left">Schermo intero, offline, installabile dal browser</td></tr>
-  <tr><td align="left" nowrap>🧩 <b>Plugin OpenCode</b></td><td align="left" nowrap><code>@omniroute/opencode-provider</code></td><td align="left">Integrazione nativa con OpenCode</td></tr>
-  <tr><td align="left" nowrap>🤖 <b>VS Code Copilot Chat</b></td><td align="left" nowrap>installa l'estensione <b>OmniCopilot</b></td><td align="left">Tutti i modelli OmniRoute nel selettore nativo di Copilot Chat — Stable e Insiders</td></tr>
+  <tr><td align="left" nowrap>🧩 <b>Plugin OpenCode</b></td><td align="left" nowrap><code>@agentproxy/opencode-provider</code></td><td align="left">Integrazione nativa con OpenCode</td></tr>
+  <tr><td align="left" nowrap>🤖 <b>VS Code Copilot Chat</b></td><td align="left" nowrap>installa l'estensione <b>OmniCopilot</b></td><td align="left">Tutti i modelli AgentProxy nel selettore nativo di Copilot Chat — Stable e Insiders</td></tr>
   <tr><td align="left" nowrap>🛠️ <b>Da sorgente</b></td><td align="left" nowrap><code>npm install && npm run dev</code></td><td align="left">Modificalo e contribuisci</td></tr>
 </table>
 
@@ -677,17 +677,17 @@ finiscano nella cronologia della shell. → [Integrazioni CLI](../../guides/CLI-
 
 <div align="center">
 
-### 🧩 Novità: OmniRoute dentro il Copilot Chat nativo di VS Code
+### 🧩 Novità: AgentProxy dentro il Copilot Chat nativo di VS Code
 
 </div>
 
-> Nessuna nuova barra laterale, nessuna nuova UI di chat — ogni modello servito da OmniRoute compare direttamente nel
+> Nessuna nuova barra laterale, nessuna nuova UI di chat — ogni modello servito da AgentProxy compare direttamente nel
 > **selettore modelli di Copilot Chat che usi già**. Da VS Code 1.122, i modelli dei provider funzionano
 > senza accesso GitHub né abbonamento Copilot — modalità agent, tool calling e vision, gratuitamente.
 
 Installa l'estensione **[OmniCopilot](https://github.com/diegosouzapw/OmniCopilot)**, collegala
-al tuo server OmniRoute (predefinito `localhost:20128`), poi apri Copilot Chat → selettore modelli
-→ **Manage Models…** → **OmniRoute**.
+al tuo server AgentProxy (predefinito `localhost:20128`), poi apri Copilot Chat → selettore modelli
+→ **Manage Models…** → **AgentProxy**.
 
 <table>
   <tr><th align="left">Store</th><th align="left">Link</th><th align="left">Compatibile con</th></tr>
@@ -695,7 +695,7 @@ al tuo server OmniRoute (predefinito `localhost:20128`), poi apri Copilot Chat �
   <tr><td align="left" nowrap>🔓 <b>Open VSX Registry</b></td><td align="left"><a href="https://open-vsx.org/extension/diegosouzapw/omnicopilot">Installa →</a></td><td align="left">Cursor, Windsurf, VSCodium, Theia, code-server, Gitpod, Antigravity, Kiro…</td></tr>
 </table>
 
-Dall'editor: apri la vista **Extensions**, cerca **"OmniRoute"**, fai clic su **Install**
+Dall'editor: apri la vista **Extensions**, cerca **"AgentProxy"**, fai clic su **Install**
 — funziona allo stesso modo su entrambi gli store. Sorgenti, issue e runbook di pubblicazione sono su
 [diegosouzapw/OmniCopilot](https://github.com/diegosouzapw/OmniCopilot).
 
@@ -710,7 +710,7 @@ Dall'editor: apri la vista **Extensions**, cerca **"OmniRoute"**, fai clic su **
 
 </div>
 
-<img src="../../diagrams/privacy-local.svg" width="100%" alt="Privato e local-first — le tue chiavi, la tua macchina, i tuoi dati; OmniRoute è un proxy locale che non comunica autonomamente con servizi cloud. Undici garanzie: gira al 100% sul tuo hardware (0 passaggi cloud), telemetria disattivata per impostazione predefinita, credenziali cifrate a riposo (AES-256-GCM), nessun account o registrazione, gateway rafforzato (scoping delle API key, filtro IP, rate limit, difesa dalla prompt injection), route di processo limitate al loopback, pulizia degli header upstream, redazione PII rigorosamente opt-in, errori sanitizzati che non espongono dettagli interni, audit trail locale nel tuo SQLite e codice completamente open source con licenza MIT."/>
+<img src="../../diagrams/privacy-local.svg" width="100%" alt="Privato e local-first — le tue chiavi, la tua macchina, i tuoi dati; AgentProxy è un proxy locale che non comunica autonomamente con servizi cloud. Undici garanzie: gira al 100% sul tuo hardware (0 passaggi cloud), telemetria disattivata per impostazione predefinita, credenziali cifrate a riposo (AES-256-GCM), nessun account o registrazione, gateway rafforzato (scoping delle API key, filtro IP, rate limit, difesa dalla prompt injection), route di processo limitate al loopback, pulizia degli header upstream, redazione PII rigorosamente opt-in, errori sanitizzati che non espongono dettagli interni, audit trail locale nel tuo SQLite e codice completamente open source con licenza MIT."/>
 
 <sub>📖 [Autorizzazione](../../architecture/AUTHZ_GUIDE.md) · [Guardrail](../../security/GUARDRAILS.md) · [Conformità](../../security/COMPLIANCE.md)</sub>
 
@@ -723,28 +723,28 @@ Dall'editor: apri la vista **Extensions**, cerca **"OmniRoute"**, fai clic su **
 
 </div>
 
-> Oltre al server, OmniRoute è una **console completa da riga di comando** con **oltre 80 comandi**, più protocolli agent aperti che permettono a un agent AI di gestirlo **autonomamente**.
+> Oltre al server, AgentProxy è una **console completa da riga di comando** con **oltre 80 comandi**, più protocolli agent aperti che permettono a un agent AI di gestirlo **autonomamente**.
 
 ### ⌨️ Una vera CLI (non solo `start`)
 
 ```bash
-omniroute               # serve gateway + dashboard (port 20128)
-omniroute chat          # interactive TUI chat client (slash: /model /combo /skill /memory)
-omniroute setup         # guided first-run wizard
-omniroute doctor        # diagnose providers, ports, native deps
+agentproxy               # serve gateway + dashboard (port 20128)
+agentproxy chat          # interactive TUI chat client (slash: /model /combo /skill /memory)
+agentproxy setup         # guided first-run wizard
+agentproxy doctor        # diagnose providers, ports, native deps
 ```
 
-### 🛰️ Modalità remota — esegui qui la CLI, OmniRoute su un VPS
+### 🛰️ Modalità remota — esegui qui la CLI, AgentProxy su un VPS
 
-OmniRoute gira su un server? Gestiscilo dal laptop con la **stessa CLI**. Accedi una volta
+AgentProxy gira su un server? Gestiscilo dal laptop con la **stessa CLI**. Accedi una volta
 con un token di accesso con scope; da quel momento ogni comando punta all'istanza remota.
 
 ```bash
-omniroute connect 192.168.0.15            # password → scoped token, saved as a context
-omniroute models list                     # ← runs against the REMOTE server
-omniroute configure codex                 # ← picks a remote model, writes a local Codex profile
-omniroute tokens create --name ci --scope read   # mint narrower tokens for other machines
-omniroute contexts use default            # ← switch back to the local server
+agentproxy connect 192.168.0.15            # password → scoped token, saved as a context
+agentproxy models list                     # ← runs against the REMOTE server
+agentproxy configure codex                 # ← picks a remote model, writes a local Codex profile
+agentproxy tokens create --name ci --scope read   # mint narrower tokens for other machines
+agentproxy contexts use default            # ← switch back to the local server
 ```
 
 I token hanno scope `read` / `write` / `admin`; le route che avviano processi restano limitate al loopback.
@@ -752,28 +752,28 @@ I token hanno scope `read` / `write` / `admin`; le route che avviano processi re
 
 <div align="left">
 
-<img src="../../diagrams/cli-terminal.svg" width="50%" alt="Demo animata del terminale con la CLI OmniRoute — omniroute providers list, omniroute combo list, omniroute health — che scorre gli oltre 80 comandi disponibili: providers · oauth · keys · combo · nodes · models · cache · compression · cost · usage · quota · health · resilience · telemetry · logs · audit · mcp · a2a · cloud · memory · skills · eval · tunnel · backup · sync · webhooks · policy · pricing · translator · simulate …"/>
+<img src="../../diagrams/cli-terminal.svg" width="50%" alt="Demo animata del terminale con la CLI AgentProxy — agentproxy providers list, agentproxy combo list, agentproxy health — che scorre gli oltre 80 comandi disponibili: providers · oauth · keys · combo · nodes · models · cache · compression · cost · usage · quota · health · resilience · telemetry · logs · audit · mcp · a2a · cloud · memory · skills · eval · tunnel · backup · sync · webhooks · policy · pricing · translator · simulate …"/>
 
 </div>
 
-### 🤝 Collega un agent — e controllerà OmniRoute stesso
+### 🤝 Collega un agent — e controllerà AgentProxy stesso
 
-Esponi OmniRoute tramite **MCP**, **A2A**, una **REST API**, **webhook** o una **CLI remota** — qualsiasi agent compatibile (o il tuo codice) ottiene accesso al gateway: routing, provider, combo, cache, compressione, memoria — in autonomia. Gli endpoint HTTP qui sotto sono serviti su `http://localhost:20128`.
+Esponi AgentProxy tramite **MCP**, **A2A**, una **REST API**, **webhook** o una **CLI remota** — qualsiasi agent compatibile (o il tuo codice) ottiene accesso al gateway: routing, provider, combo, cache, compressione, memoria — in autonomia. Gli endpoint HTTP qui sotto sono serviti su `http://localhost:20128`.
 
 <table>
   <tr><th align="left">Interfaccia</th><th align="left">Endpoint / comando</th><th align="left">A cosa serve</th></tr>
-  <tr><td align="left" nowrap>🧰 <b>MCP (stdio)</b></td><td align="left" nowrap><code>omniroute --mcp</code></td><td align="left">Collegamento a Claude Desktop, Cursor e qualsiasi client MCP</td></tr>
+  <tr><td align="left" nowrap>🧰 <b>MCP (stdio)</b></td><td align="left" nowrap><code>agentproxy --mcp</code></td><td align="left">Collegamento a Claude Desktop, Cursor e qualsiasi client MCP</td></tr>
   <tr><td align="left" nowrap>🌊 <b>MCP (HTTP)</b></td><td align="left" nowrap><code>/api/mcp/stream</code></td><td align="left">MCP remoto — <b>110 tool</b>, 33 scope, audit trail completo</td></tr>
   <tr><td align="left" nowrap>📡 <b>MCP (SSE)</b></td><td align="left" nowrap><code>/api/mcp/sse</code></td><td align="left">Trasporto MCP in streaming</td></tr>
   <tr><td align="left" nowrap>🤝 <b>A2A</b></td><td align="left" nowrap><code>/.well-known/agent.json</code></td><td align="left">Agent-to-agent, <b>JSON-RPC 2.0</b> + SSE, 6 skill</td></tr>
   <tr><td align="left" nowrap>🌐 <b>REST API</b></td><td align="left" nowrap><code>/v1/*</code></td><td align="left">Compatibile con OpenAI — chat, embedding, immagini, audio, OCR</td></tr>
   <tr><td align="left" nowrap>🔔 <b>Webhook</b></td><td align="left" nowrap><code>/api/webhooks</code></td><td align="left">Invia eventi (utilizzo, quota, errori, routing) al tuo URL</td></tr>
-  <tr><td align="left" nowrap>🛰️ <b>CLI remota</b></td><td align="left" nowrap><code>omniroute connect <host></code></td><td align="left">Gestisci un'istanza remota con token di accesso con scope</td></tr>
+  <tr><td align="left" nowrap>🛰️ <b>CLI remota</b></td><td align="left" nowrap><code>agentproxy connect <host></code></td><td align="left">Gestisci un'istanza remota con token di accesso con scope</td></tr>
 </table>
 
 ```bash
-# Give Claude Code the full OmniRoute toolset over MCP:
-claude mcp add-server omniroute --type http --url http://localhost:20128/api/mcp/stream
+# Give Claude Code the full AgentProxy toolset over MCP:
+claude mcp add-server agentproxy --type http --url http://localhost:20128/api/mcp/stream
 ```
 
 <sub>📖 [MCP Server](../../frameworks/MCP-SERVER.md) · [A2A Server](../../frameworks/A2A-SERVER.md) · [Protocolli agent](../../frameworks/AGENT_PROTOCOLS_GUIDE.md)</sub>
@@ -789,7 +789,7 @@ claude mcp add-server omniroute --type http --url http://localhost:20128/api/mcp
 
 ### 📖 Come funziona — pipeline, architettura e calcolo del risparmio
 
-<img src="../../diagrams/compression-pipeline.svg" width="100%" alt="Pipeline di compressione OmniRoute: una richiesta client da 10.000 token attraversa 12 motori in cascata — Session-Dedup, CCR, Lite, RTK, Responses Tool Output, Headroom, Relevance, Caveman, Aggressive, LLMLingua-2, Ultra, OmniGlyph — e raggiunge il provider con circa 1.080 token, con un risparmio fino al 95%. Codice, URL e JSON sono sempre preservati byte per byte."/>
+<img src="../../diagrams/compression-pipeline.svg" width="100%" alt="Pipeline di compressione AgentProxy: una richiesta client da 10.000 token attraversa 12 motori in cascata — Session-Dedup, CCR, Lite, RTK, Responses Tool Output, Headroom, Relevance, Caveman, Aggressive, LLMLingua-2, Ultra, OmniGlyph — e raggiunge il provider con circa 1.080 token, con un risparmio fino al 95%. Codice, URL e JSON sono sempre preservati byte per byte."/>
 
 La combinazione in cascata predefinita esegue `RTK → Caveman`. Quando entrambi intervengono sullo stesso payload di tool/contesto, i risparmi si compongono:
 
@@ -801,7 +801,7 @@ range    = 78.4 – 94.6%
 
 Blocchi di codice, URL, JSON e dati strutturati sono **sempre protetti** dal motore di preservazione.
 
-> **Perché usare molti token quando ne bastano pochi?** Ogni richiesta attraversa la pipeline di compressione di OmniRoute **in modo trasparente** — senza modifiche al client. Ora è una **stack di 12 motori componibili** eseguiti in ordine e combinabili per ciascun routing combo — basati anche su idee di [RTK](https://github.com/rtk-ai/rtk), [Caveman](https://github.com/JuliusBrussee/caveman) (⭐ 90K+), [LLMLingua-2](https://github.com/microsoft/LLMLingua) e [Troglodita](https://github.com/leninejunior/troglodita) (PT-BR).
+> **Perché usare molti token quando ne bastano pochi?** Ogni richiesta attraversa la pipeline di compressione di AgentProxy **in modo trasparente** — senza modifiche al client. Ora è una **stack di 12 motori componibili** eseguiti in ordine e combinabili per ciascun routing combo — basati anche su idee di [RTK](https://github.com/rtk-ai/rtk), [Caveman](https://github.com/JuliusBrussee/caveman) (⭐ 90K+), [LLMLingua-2](https://github.com/microsoft/LLMLingua) e [Troglodita](https://github.com/leninejunior/troglodita) (PT-BR).
 
 ### 🧱 La stack di 12 motori
 
@@ -862,7 +862,7 @@ I 12 motori sopra riducono ciò che entra **in input**. Altri tre livelli defini
   - **Less code** — YAGNI da "senior dev pigro": modifica minima funzionante, nessuna infrastruttura non richiesta.
   - **Terse CJK (文言)** — stile cinese classico ultra-conciso (limitato alla locale `zh`).
 - **🎯 Adaptive context-budget** _(la regolazione)_ — invece di una singola soglia token on/off, aumenta gradualmente l'uso dei motori più economici e lossless solo quanto necessario per **rientrare nella context window del modello**. Policy: `reserve-output` (predefinita, model-aware) · `percentage` · `absolute`. Modalità: `floor` (garantisce il fit) · `replace-autotrigger` (vince la tua scelta esplicita) · `off` (soglia legacy).
-- **🎛️ Dove viene decisa la compressione** _(precedenza, alta → bassa)_ — header per richiesta `x-omniroute-compression` › override del routing combo › profilo nominato attivo › adaptive / auto-trigger › impostazione predefinita del pannello › off. Il piano applicato viene restituito nell'header di risposta `X-OmniRoute-Compression: <mode>; source=<source>`.
+- **🎛️ Dove viene decisa la compressione** _(precedenza, alta → bassa)_ — header per richiesta `x-agentproxy-compression` › override del routing combo › profilo nominato attivo › adaptive / auto-trigger › impostazione predefinita del pannello › off. Il piano applicato viene restituito nell'header di risposta `X-AgentProxy-Compression: <mode>; source=<source>`.
 
 Puoi attivare l'auto-trigger tramite soglia token, abilitare la regolazione adattiva, fissare un profilo nominato, impostare una scelta una tantum per richiesta oppure assegnare una pipeline a ciascun routing combo — scegli ciò che si adatta al carico di lavoro. Un **eval harness** offline opt-in (`npm run eval:compression`) misura fedeltà e risparmio su un corpus fissato prima di promuovere una modifica.
 
@@ -880,8 +880,8 @@ Puoi attivare l'auto-trigger tramite soglia token, abilitare la regolazione adat
 **1) Installa e avvia**
 
 ```bash
-npm install -g omniroute
-omniroute
+npm install -g agentproxy
+agentproxy
 ```
 
 > 💡 Vedi `npm warn ERESOLVE` o avvisi sulle peer dependency? [Sono innocui](../../guides/TROUBLESHOOTING.md#npm-install-warnings-eresolve--peer--deprecated).
@@ -906,9 +906,9 @@ Model:    auto            (zero-config smart routing — or any provider/model)
 curl http://localhost:20128/v1/models -H "Authorization: Bearer YOUR_KEY"
 ```
 
-Dovresti vedere elencati i modelli collegati. 🎉 Tutto qui — inizia a programmare: OmniRoute instrada automaticamente le richieste ed esegue il fallback quando serve.
+Dovresti vedere elencati i modelli collegati. 🎉 Tutto qui — inizia a programmare: AgentProxy instrada automaticamente le richieste ed esegue il fallback quando serve.
 
-Se il tuo client non può inviare header personalizzati, OmniRoute espone anche alias di compatibilità con token incorporato:
+Se il tuo client non può inviare header personalizzati, AgentProxy espone anche alias di compatibilità con token incorporato:
 
 ```txt
 OpenAI catalog:   http://localhost:20128/vscode/YOUR_KEY/
@@ -930,39 +930,39 @@ Usali solo con client che non possono aggiungere `Authorization: Bearer ...`. L'
 **🐳 Docker**
 
 ```bash
-docker run -d --name omniroute --restart unless-stopped --stop-timeout 40 \
-  -p 127.0.0.1:20128:20128 -v omniroute-data:/app/data diegosouzapw/omniroute:latest
+docker run -d --name agentproxy --restart unless-stopped --stop-timeout 40 \
+  -p 127.0.0.1:20128:20128 -v agentproxy-data:/app/data khanhkit/agentproxy:latest
 ```
 
-`:latest` segue la versione SemVer stabile **pubblicata** più alta. Non segue il branch git `main`. Per GitOps, fissa `:X.Y.Z`. Vedi [Canali di release Docker](../../guides/DOCKER_GUIDE.md#release-channels). L'immagine imposta **`OMNIROUTE_MEMORY_MB=1024`**. È sufficiente per la dashboard e una chat leggera. I **coding agent** (`POST /v1/responses` da Claude Code, Codex, Grok, …) richiedono un heap V8 molto più grande, altrimenti il processo va in `FATAL ERROR` a ~12 GiB con due contesti lunghi sovrapposti. Dimensiona il container oltre l'heap (i buffer nativi si trovano fuori da V8):
+`:latest` segue la versione SemVer stabile **pubblicata** più alta. Non segue il branch git `main`. Per GitOps, fissa `:X.Y.Z`. Vedi [Canali di release Docker](../../guides/DOCKER_GUIDE.md#release-channels). L'immagine imposta **`AGENTPROXY_MEMORY_MB=1024`**. È sufficiente per la dashboard e una chat leggera. I **coding agent** (`POST /v1/responses` da Claude Code, Codex, Grok, …) richiedono un heap V8 molto più grande, altrimenti il processo va in `FATAL ERROR` a ~12 GiB con due contesti lunghi sovrapposti. Dimensiona il container oltre l'heap (i buffer nativi si trovano fuori da V8):
 
-| Carico di lavoro                      | Heap (`-e OMNIROUTE_MEMORY_MB`) | Container (`--memory`) |
+| Carico di lavoro                      | Heap (`-e AGENTPROXY_MEMORY_MB`) | Container (`--memory`) |
 | ------------------------------------- | ------------------------------- | ---------------------- |
 | Dashboard / chat leggera              | `1024` (predefinito immagine)   | ≥2 g                   |
 | Un coding agent                       | `8192`                          | ≥10 g                  |
 | Due `/v1/responses` lunghe simultanee | `10240`–`12288`                 | ≥12–16 g               |
 
 ```bash
-docker run -d --name omniroute --restart unless-stopped --stop-timeout 40 \
-  -e OMNIROUTE_MEMORY_MB=8192 --memory=10g \
-  -p 127.0.0.1:20128:20128 -v omniroute-data:/app/data diegosouzapw/omniroute:latest
+docker run -d --name agentproxy --restart unless-stopped --stop-timeout 40 \
+  -e AGENTPROXY_MEMORY_MB=8192 --memory=10g \
+  -p 127.0.0.1:20128:20128 -v agentproxy-data:/app/data khanhkit/agentproxy:latest
 ```
 
 Tabella completa: [Guida Docker — RAM di runtime](../../guides/DOCKER_GUIDE.md#runtime-ram-for-coding-agents).
 
-> **Canale Docker pre-release:** `diegosouzapw/omniroute:next` e
-> `diegosouzapw/omniroute:next-web` seguono l'attuale branch `release/v*` predefinito.
+> **Canale Docker pre-release:** `khanhkit/agentproxy:next` e
+> `khanhkit/agentproxy:next-web` seguono l'attuale branch `release/v*` predefinito.
 > Questi tag mutabili sono destinati esclusivamente al test di fix non ancora rilasciati e
 > **non sono supportati in produzione**. Vedi
 > [Canali di release Docker](../../guides/DOCKER_GUIDE.md#release-channels).
 
 **🥟 Bun**
 
-Sono supportati `bun install` standard e l'installazione globale (`bun install -g omniroute`) tramite rilevamento del runtime Bun:
+Sono supportati `bun install` standard e l'installazione globale (`bun install -g agentproxy`) tramite rilevamento del runtime Bun:
 
-- **`bun:sqlite` integrato**: OmniRoute usa il driver integrato `bun:sqlite` quando gira con Bun, con fallback a `better-sqlite3` su Node.js o a `sql.js`.
+- **`bun:sqlite` integrato**: AgentProxy usa il driver integrato `bun:sqlite` quando gira con Bun, con fallback a `better-sqlite3` su Node.js o a `sql.js`.
 - **Selezione automatica del bundler Webpack**: sviluppo (`bun run dev`) e build di produzione (`bun run build`) rilevano automaticamente Bun e disabilitano Turbopack a favore di Webpack per evitare incompatibilità dei binding V8 nativi.
-- **Dockerfile Bun dedicato**: `Dockerfile.bun` multi-stage per deployment di produzione nativi Bun (`docker build -f Dockerfile.bun -t omniroute:bun .`).
+- **Dockerfile Bun dedicato**: `Dockerfile.bun` multi-stage per deployment di produzione nativi Bun (`docker build -f Dockerfile.bun -t agentproxy:bun .`).
 
 ```bash
 # Install and run with Bun
@@ -980,13 +980,13 @@ PORT=20128 npm run dev
 **📦 pnpm**
 
 ```bash
-pnpm add -g omniroute@latest --allow-build=better-sqlite3 --allow-build=@swc/core && omniroute
+pnpm add -g agentproxy@latest --allow-build=better-sqlite3 --allow-build=@swc/core && agentproxy
 ```
 
 **🐧 Arch Linux (AUR)**
 
 ```bash
-yay -S omniroute-bin && systemctl --user enable --now omniroute.service
+yay -S agentproxy-bin && systemctl --user enable --now agentproxy.service
 ```
 
 **🔧 Nix (Flake)**
@@ -1032,7 +1032,7 @@ per la tua piattaforma/Node e altrimenti passa in modo trasparente a un motore p
 Per saltare completamente il warm-up nativo post-installazione (CI, sistemi headless o macchine lente):
 
 ```bash
-OMNIROUTE_SKIP_POSTINSTALL=1 npm install -g omniroute   # CI=1 also skips it
+AGENTPROXY_SKIP_POSTINSTALL=1 npm install -g agentproxy   # CI=1 also skips it
 ```
 
 Per installazioni più rapide preferisci **pnpm** (store content-addressed + hard link — vedi sopra).
@@ -1042,10 +1042,10 @@ stesso processo su una sola porta, quindi oggi non esiste un pacchetto separato 
 
 <br/>
 
-<a id="-omniroute-in-action"></a>
+<a id="-agentproxy-in-action"></a>
 <div align="center">
 
-# 🎬 OmniRoute in azione
+# 🎬 AgentProxy in azione
 
 </div>
 
@@ -1109,7 +1109,7 @@ stesso processo su una sola porta, quindi oggi non esiste un pacchetto separato 
 
 Metriche di validazione: 1002 video monitorati · 7,069,190 visualizzazioni note · 595 profili/canali · 13+ lingue · 13+ creator.
 
-> 🎬 **Hai realizzato un video su OmniRoute?** Apri una [issue](https://github.com/diegosouzapw/OmniRoute/issues/new) o una [discussion](https://github.com/diegosouzapw/OmniRoute/discussions) con il link — lo metteremo in evidenza qui.
+> 🎬 **Hai realizzato un video su AgentProxy?** Apri una [issue](https://github.com/khanhkit/AgentProxy/issues/new) o una [discussion](https://github.com/khanhkit/AgentProxy/discussions) con il link — lo metteremo in evidenza qui.
 
 <br/>
 
@@ -1125,14 +1125,14 @@ Metriche di validazione: 1002 video monitorati · 7,069,190 visualizzazioni note
 | 💼 **LinkedIn** — segui il maintainer        | [linkedin.com/in/diegosouzapw](https://www.linkedin.com/in/diegosouzapw/)                                                                    |
 | 🐙 **GitHub** — segui release e suggerimenti | [@diegosouzapw](https://github.com/diegosouzapw)                                                                                             |
 | 💬 **Discord**                               | [discord.gg/U47eFqAXCn](https://discord.gg/U47eFqAXCn)                                                                                       |
-| ✈️ **Telegram**                              | [t.me/omnirouteOficial](https://t.me/omnirouteOficial)                                                                                       |
+| ✈️ **Telegram**                              | [t.me/agentproxyOficial](https://github.com/khanhkit/AgentProxy/discussions)                                                                                       |
 | 🟢 **WhatsApp — 🌍 Global**                  | [entra nel gruppo](https://chat.whatsapp.com/JI7cDQ1GyaiDHhVBpLxf8b?mode=gi_t)                                                               |
 | 🟢 **WhatsApp — 🇧🇷 Brasil**                  | [entra nel gruppo](https://chat.whatsapp.com/LTSpdFhXTxjH4R6CCNiKWz)                                                                         |
-| 🌍 **Sito web**                              | [omniroute.online](https://omniroute.online)                                                                                                 |
-| 📦 **Codice sorgente**                       | [github.com/diegosouzapw/OmniRoute](https://github.com/diegosouzapw/OmniRoute)                                                               |
-| 🐛 **Segnala un bug**                        | [apri una issue](https://github.com/diegosouzapw/OmniRoute/issues) — allega l'output di `npm run system-info`                                |
+| 🌍 **Sito web**                              | [agentproxy.online](https://agentproxy.example.com)                                                                                                 |
+| 📦 **Codice sorgente**                       | [github.com/khanhkit/AgentProxy](https://github.com/khanhkit/AgentProxy)                                                               |
+| 🐛 **Segnala un bug**                        | [apri una issue](https://github.com/khanhkit/AgentProxy/issues) — allega l'output di `npm run system-info`                                |
 | 🤝 **Contribuisci**                          | [CONTRIBUTING.md](../../../CONTRIBUTING.md) · [Modello di branching e release](../../ops/BRANCHING_MODEL.md) · scegli una `good first issue` |
-| 💚 **Sostieni il progetto**                  | [Modi per sostenere ↑](#-support-omniroute) · [GitHub Sponsors](https://github.com/sponsors/diegosouzapw)                                    |
+| 💚 **Sostieni il progetto**                  | [Modi per sostenere ↑](#-support-agentproxy) · [GitHub Sponsors](https://github.com/sponsors/diegosouzapw)                                    |
 
 </div>
 
@@ -1165,7 +1165,7 @@ Metriche di validazione: 1002 video monitorati · 7,069,190 visualizzazioni note
   <tr><td nowrap><b>Test</b></td><td>Test runner Node.js + Vitest — <b>oltre 25.000 casi di test</b> su 3.300+ file (unitari, integrazione, E2E, sicurezza, ecosistema)</td></tr>
   <tr><td nowrap><b>Piattaforme</b></td><td>Desktop (Electron) · Android (Termux) · PWA (qualsiasi browser)</td></tr>
   <tr><td nowrap><b>CI/CD</b></td><td>GitHub Actions — pubblicazione automatica npm + Docker Hub alla release</td></tr>
-  <tr><td nowrap><b>Link</b></td><td><a href="https://omniroute.online">Sito web</a> · <a href="https://www.npmjs.com/package/omniroute">npm</a> · <a href="https://hub.docker.com/r/diegosouzapw/omniroute">Docker Hub</a></td></tr>
+  <tr><td nowrap><b>Link</b></td><td><a href="https://agentproxy.example.com">Sito web</a> · <a href="https://www.npmjs.com/package/agentproxy">npm</a> · <a href="https://github.com/khanhkit/AgentProxy/pkgs/container/agentproxy">Docker Hub</a></td></tr>
 </table>
 
 <div align="center">
@@ -1185,8 +1185,8 @@ Metriche di validazione: 1002 video monitorati · 7,069,190 visualizzazioni note
   <tr><td nowrap><b><a href="../../guides/USER_GUIDE.md">Guida utente</a></b></td><td>Provider, combo, integrazione CLI, deployment</td></tr>
   <tr><td nowrap><b><a href="../../guides/SETUP_GUIDE.md">Guida alla configurazione</a></b></td><td>Tutti i metodi di installazione, configurazioni degli strumenti CLI, protocolli, regolazione dei timeout</td></tr>
   <tr><td nowrap><b><a href="../../reference/CLI-TOOLS.md">Guida agli strumenti CLI</a></b></td><td>Configurazione specifica per Claude Code, Codex, Cursor, Cline, OpenClaw, Kilo, Copilot</td></tr>
-  <tr><td nowrap><b><a href="../../guides/REMOTE-MODE.md">Modalità remota</a></b></td><td>Gestisci un OmniRoute remoto (VPS) dalla CLI del laptop tramite token di accesso con scope</td></tr>
-  <tr><td nowrap><b><a href="../../guides/CLAUDE-CODE-CONFIGURATION.md">Configurazione Claude Code</a></b></td><td>Collega Claude Code a OmniRoute (locale/remoto) con <code>launch</code> + profili per modello</td></tr>
+  <tr><td nowrap><b><a href="../../guides/REMOTE-MODE.md">Modalità remota</a></b></td><td>Gestisci un AgentProxy remoto (VPS) dalla CLI del laptop tramite token di accesso con scope</td></tr>
+  <tr><td nowrap><b><a href="../../guides/CLAUDE-CODE-CONFIGURATION.md">Configurazione Claude Code</a></b></td><td>Collega Claude Code a AgentProxy (locale/remoto) con <code>launch</code> + profili per modello</td></tr>
   <tr><td nowrap><b><a href="#-quick-start">Avvio rapido</a></b></td><td>Installazione in 3 passaggi → collega → configura</td></tr>
 </table>
 
@@ -1198,7 +1198,7 @@ Metriche di validazione: 1002 video monitorati · 7,069,190 visualizzazioni note
   <tr><td nowrap><b><a href="../../../contrib/podman/README.md">Guida Podman</a></b></td><td>Integrazione Quadlet systemd, podman-compose, SELinux</td></tr>
   <tr><td nowrap><b><a href="../../ops/VM_DEPLOYMENT_GUIDE.md">Deployment VM</a></b></td><td>Guida completa: VM + nginx + configurazione Cloudflare</td></tr>
   <tr><td nowrap><b><a href="../../ops/FLY_IO_DEPLOYMENT_GUIDE.md">Deployment Fly.io</a></b></td><td>Deployment su Fly.io con storage persistente</td></tr>
-  <tr><td nowrap><b><a href="../../guides/TERMUX_GUIDE.md">Guida Termux</a></b></td><td>Esegui OmniRoute su Android tramite Termux</td></tr>
+  <tr><td nowrap><b><a href="../../guides/TERMUX_GUIDE.md">Guida Termux</a></b></td><td>Esegui AgentProxy su Android tramite Termux</td></tr>
   <tr><td nowrap><b><a href="../../guides/PWA_GUIDE.md">Guida PWA</a></b></td><td>Installazione Progressive Web App, caching, architettura</td></tr>
   <tr><td nowrap><b><a href="../../guides/UNINSTALL.md">Guida alla disinstallazione</a></b></td><td>Rimozione pulita per tutti i metodi di installazione</td></tr>
   <tr><td nowrap><b><a href="../../reference/ENVIRONMENT.md">Configurazione ambiente</a></b></td><td>Elenco completo di variabili <code>.env</code> e riferimenti</td></tr>
@@ -1253,7 +1253,7 @@ Metriche di validazione: 1002 video monitorati · 7,069,190 visualizzazioni note
 
 # ⭐ Principali contributor
 
-> OmniRoute è plasmato da una community open source appassionata. Queste persone hanno apportato contributi eccezionali che incidono direttamente su qualità, stabilità e diffusione del progetto. **Grazie.**
+> AgentProxy è plasmato da una community open source appassionata. Queste persone hanno apportato contributi eccezionali che incidono direttamente su qualità, stabilità e diffusione del progetto. **Grazie.**
 
 <table>
   <tr>
@@ -1342,7 +1342,7 @@ Metriche di validazione: 1002 video monitorati · 7,069,190 visualizzazioni note
   </tr>
 </table>
 
-> 🙏 Funzionalità, bug fix e miglioramenti infrastrutturali di questi contributor sono una **parte fondamentale** di ciò che rende OmniRoute affidabile e ricco di funzionalità. Ogni pull request, ogni caso di test e ogni file di traduzione i18n conta. L'open source è costruito da persone come loro.
+> 🙏 Funzionalità, bug fix e miglioramenti infrastrutturali di questi contributor sono una **parte fondamentale** di ciò che rende AgentProxy affidabile e ricco di funzionalità. Ogni pull request, ogni caso di test e ogni file di traduzione i18n conta. L'open source è costruito da persone come loro.
 
 </div>
 
@@ -1356,7 +1356,7 @@ Metriche di validazione: 1002 video monitorati · 7,069,190 visualizzazioni note
 
 <div align="center">
 
-Un grazie di cuore alle persone che finanziano OmniRoute di tasca propria — ogni contributo aiuta a mantenere il progetto gratuito, indipendente e in evoluzione.
+Un grazie di cuore alle persone che finanziano AgentProxy di tasca propria — ogni contributo aiuta a mantenere il progetto gratuito, indipendente e in evoluzione.
 
 <table>
   <tr>
@@ -1379,7 +1379,7 @@ Un grazie di cuore alle persone che finanziano OmniRoute di tasca propria — og
 
 <sub>… e altri che preferiscono restare anonimi 💛</sub>
 
-<b><a href="https://github.com/sponsors/diegosouzapw">💖 Diventa sponsor →</a></b> — ogni contributo mantiene OmniRoute gratuito e indipendente.
+<b><a href="https://github.com/sponsors/diegosouzapw">💖 Diventa sponsor →</a></b> — ogni contributo mantiene AgentProxy gratuito e indipendente.
 
 </div>
 
@@ -1392,7 +1392,7 @@ Un grazie di cuore alle persone che finanziano OmniRoute di tasca propria — og
 
 </div>
 
-[![Contributors](https://contrib.rocks/image?repo=diegosouzapw/OmniRoute&max=400&columns=20&anon=1)](https://github.com/diegosouzapw/OmniRoute/graphs/contributors)
+[![Contributors](https://contrib.rocks/image?repo=khanhkit/AgentProxy&max=400&columns=20&anon=1)](https://github.com/khanhkit/AgentProxy/graphs/contributors)
 
 ### Come contribuire
 
@@ -1418,11 +1418,11 @@ gh release create v3.8.2 --title "v3.8.2" --generate-notes
 
 ## 📊 Stelle
 
-<a href="https://www.star-history.com/?repos=diegosouzapw%2FOmniRoute&type=date&legend=top-left">
+<a href="https://www.star-history.com/?repos=diegosouzapw%2FAgentProxy&type=date&legend=top-left">
  <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=diegosouzapw/OmniRoute&type=date&theme=dark&legend=top-left&sealed_token=XP_ycEjv7s31p1edvhsMOXry51OWYsUjDRWjflSG7jQKRpO9hPGg7i_EHvwhI6QtrARTMH-YGjJhi8sumRYflEJD0DPlH_MMHjizhBYCX8fbHFrHEiNvVA" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=diegosouzapw/OmniRoute&type=date&legend=top-left&sealed_token=XP_ycEjv7s31p1edvhsMOXry51OWYsUjDRWjflSG7jQKRpO9hPGg7i_EHvwhI6QtrARTMH-YGjJhi8sumRYflEJD0DPlH_MMHjizhBYCX8fbHFrHEiNvVA" />
-   <img alt="Grafico storico delle stelle" src="https://api.star-history.com/chart?repos=diegosouzapw/OmniRoute&type=date&legend=top-left&sealed_token=XP_ycEjv7s31p1edvhsMOXry51OWYsUjDRWjflSG7jQKRpO9hPGg7i_EHvwhI6QtrARTMH-YGjJhi8sumRYflEJD0DPlH_MMHjizhBYCX8fbHFrHEiNvVA" />
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=khanhkit/AgentProxy&type=date&theme=dark&legend=top-left&sealed_token=XP_ycEjv7s31p1edvhsMOXry51OWYsUjDRWjflSG7jQKRpO9hPGg7i_EHvwhI6QtrARTMH-YGjJhi8sumRYflEJD0DPlH_MMHjizhBYCX8fbHFrHEiNvVA" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=khanhkit/AgentProxy&type=date&legend=top-left&sealed_token=XP_ycEjv7s31p1edvhsMOXry51OWYsUjDRWjflSG7jQKRpO9hPGg7i_EHvwhI6QtrARTMH-YGjJhi8sumRYflEJD0DPlH_MMHjizhBYCX8fbHFrHEiNvVA" />
+   <img alt="Grafico storico delle stelle" src="https://api.star-history.com/chart?repos=khanhkit/AgentProxy&type=date&legend=top-left&sealed_token=XP_ycEjv7s31p1edvhsMOXry51OWYsUjDRWjflSG7jQKRpO9hPGg7i_EHvwhI6QtrARTMH-YGjJhi8sumRYflEJD0DPlH_MMHjizhBYCX8fbHFrHEiNvVA" />
  </picture>
 </a>
 
@@ -1432,11 +1432,11 @@ gh release create v3.8.2 --title "v3.8.2" --generate-notes
 
 ## 🌍 StarMapper
 
-<a href="https://starmapper.bruniaux.com/diegosouzapw/omniroute">
+<a href="https://starmapper.bruniaux.com/khanhkit/agentproxy">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://starmapper.bruniaux.com/api/map-image/diegosouzapw/omniroute?theme=dark" />
-    <source media="(prefers-color-scheme: light)" srcset="https://starmapper.bruniaux.com/api/map-image/diegosouzapw/omniroute?theme=light" />
-    <img alt="StarMapper" src="https://starmapper.bruniaux.com/api/map-image/diegosouzapw/omniroute" />
+    <source media="(prefers-color-scheme: dark)" srcset="https://starmapper.bruniaux.com/api/map-image/khanhkit/agentproxy?theme=dark" />
+    <source media="(prefers-color-scheme: light)" srcset="https://starmapper.bruniaux.com/api/map-image/khanhkit/agentproxy?theme=light" />
+    <img alt="StarMapper" src="https://starmapper.bruniaux.com/api/map-image/khanhkit/agentproxy" />
   </picture>
 </a>
 </div>
@@ -1449,14 +1449,14 @@ gh release create v3.8.2 --title "v3.8.2" --generate-notes
 
 </div>
 
-OmniRoute è costruito sulle spalle di giganti. È nato come fork di **[9router](https://github.com/decolua/9router)** e come port TypeScript del progetto Go **[CLIProxyAPI](https://github.com/router-for-me/CLIProxyAPI)** — da lì, ogni sottosistema qui sotto è stato ispirato da un progetto open source arrivato prima. Ognuno ha influenzato una parte concreta di OmniRoute. Questo è il nostro ringraziamento a tutti loro. 🙏
+AgentProxy è costruito sulle spalle di giganti. È nato come fork di **[9router](https://github.com/decolua/9router)** e come port TypeScript del progetto Go **[CLIProxyAPI](https://github.com/router-for-me/CLIProxyAPI)** — da lì, ogni sottosistema qui sotto è stato ispirato da un progetto open source arrivato prima. Ognuno ha influenzato una parte concreta di AgentProxy. Questo è il nostro ringraziamento a tutti loro. 🙏
 
 > ⭐ conteggio stelle a luglio 2026 — vai a lasciare una stella a questi progetti.
 
 ### 🧬 Origini e gateway
 
 <table>
-  <tr><th align="left">Progetto</th><th align="center">⭐</th><th align="left">Come ha ispirato OmniRoute</th></tr>
+  <tr><th align="left">Progetto</th><th align="center">⭐</th><th align="left">Come ha ispirato AgentProxy</th></tr>
   <tr><td nowrap><b><a href="https://github.com/decolua/9router">9router</a></b></td><td align="center">22.7k</td><td>Il progetto originale su cui si basa questo fork — esteso qui con API multimodali e una riscrittura completa in TypeScript.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/router-for-me/CLIProxyAPI">CLIProxyAPI</a></b></td><td align="center">43.6k</td><td>L'implementazione Go che ha ispirato questo port JavaScript / TypeScript.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/BerriAI/litellm">LiteLLM</a></b></td><td align="center">54.0k</td><td>Il gateway AI il cui dataset pubblico dei prezzi alimenta la sincronizzazione del cost tracking e il cui modello di normalizzazione dei provider ha influenzato il nostro routing.</td></tr>
@@ -1465,7 +1465,7 @@ OmniRoute è costruito sulle spalle di giganti. È nato come fork di **[9router]
 ### 🗜️ Compressione di contesto e token — motori
 
 <table>
-  <tr><th align="left">Progetto</th><th align="center">⭐</th><th align="left">Come ha ispirato OmniRoute</th></tr>
+  <tr><th align="left">Progetto</th><th align="center">⭐</th><th align="left">Come ha ispirato AgentProxy</th></tr>
   <tr><td nowrap><b><a href="https://github.com/JuliusBrussee/caveman">Caveman</a></b></td><td align="center">90.8k</td><td>Il progetto virale "why use many token when few token do trick" — la sua filosofia caveman-speak alimenta la nostra modalità di compressione standard e oltre 30 regole di rimozione riempitivi/condensazione.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/rtk-ai/rtk">RTK – Rust Token Killer</a></b></td><td align="center">71.8k</td><td>Compressione ad alte prestazioni dell'output dei comandi — ha ispirato il nostro motore RTK, la DSL per filtri JSON, il recupero dell'output grezzo e la pipeline stacked RTK → Caveman.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/headroomlabs-ai/headroom">headroom</a></b></td><td align="center">60.1k</td><td>Compressione reversibile del contesto (SmartCrusher) — ha ispirato il nostro motore <code>headroom</code> e il pattern dei marker di recupero <code>ccr</code>.</td></tr>
@@ -1478,7 +1478,7 @@ OmniRoute è costruito sulle spalle di giganti. È nato come fork di **[9router]
 ### 🧩 Formati compatti, ricerca sui token e tooling code-aware
 
 <table>
-  <tr><th align="left">Progetto</th><th align="center">⭐</th><th align="left">Come ha ispirato OmniRoute</th></tr>
+  <tr><th align="left">Progetto</th><th align="center">⭐</th><th align="left">Come ha ispirato AgentProxy</th></tr>
   <tr><td nowrap><b><a href="https://github.com/toon-format/toon">TOON</a></b></td><td align="center">24.9k</td><td>Token-Oriented Object Notation — il suo modello colonnare con header + righe ha influenzato la nostra fase di compattazione tabellare.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/blackwell-systems/gcf">GCF – Graph Compact Format</a></b></td><td align="center">22</td><td>Ha inizialmente ispirato la nostra fase di compattazione tabellare; ora il suo encoder generic-profile lossless e senza dipendenze è <b>incluso direttamente</b> come codec Headroom (MIT, con marcatura SPDX), insieme ai successivi fix di correttezza per dominio numerico e discrepanze nei conteggi.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/ooples/token-optimizer-mcp">token-optimizer-mcp</a></b></td><td align="center">444</td><td>Cache Brotli/SQLite + delta del contesto per sessione — ha ispirato il nostro motore <code>session-dedup</code>.</td></tr>
@@ -1496,7 +1496,7 @@ OmniRoute è costruito sulle spalle di giganti. È nato come fork di **[9router]
 ### 🧠 Memoria e RAG
 
 <table>
-  <tr><th align="left">Progetto</th><th align="center">⭐</th><th align="left">Come ha ispirato OmniRoute</th></tr>
+  <tr><th align="left">Progetto</th><th align="center">⭐</th><th align="left">Come ha ispirato AgentProxy</th></tr>
   <tr><td nowrap><b><a href="https://github.com/mem0ai/mem0">Mem0</a></b></td><td align="center">61.2k</td><td>Layer di memoria universale — il suo modello proxy-as-write/read-boundary ha plasmato la nostra architettura della memoria.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/letta-ai/letta">Letta (MemGPT)</a></b></td><td align="center">23.9k</td><td>Agent stateful con memoria a livelli — ha ispirato il nostro modello a livelli Context Control & Recovery (CCR).</td></tr>
   <tr><td nowrap><b><a href="https://github.com/onestardao/WFGY">WFGY</a></b></td><td align="center">1.8k</td><td>La tassonomia ProblemMap di 16 modalità ricorrenti di errore RAG/LLM — il vocabolario condiviso nella nostra guida alla risoluzione dei problemi.</td></tr>
@@ -1505,7 +1505,7 @@ OmniRoute è costruito sulle spalle di giganti. È nato come fork di **[9router]
 ### 🛰️ Ispezione del traffico, MITM e proxy trasparente
 
 <table>
-  <tr><th align="left">Progetto</th><th align="center">⭐</th><th align="left">Come ha ispirato OmniRoute</th></tr>
+  <tr><th align="left">Progetto</th><th align="center">⭐</th><th align="left">Come ha ispirato AgentProxy</th></tr>
   <tr><td nowrap><b><a href="https://github.com/chouzz/llm-interceptor">llm-interceptor</a></b></td><td align="center">49</td><td>Intercettazione/analisi MITM del traffico coding-assistant ↔ LLM — il nostro Traffic Inspector adatta il suo merge SSE, la normalizzazione delle conversazioni, il passthrough degli host e il masking dei segreti (MIT).</td></tr>
   <tr><td nowrap><b><a href="https://github.com/InterceptSuite/ProxyBridge">ProxyBridge</a></b></td><td align="center">5.5k</td><td>Routing proxy trasparente per processo — ha ispirato il teardown MITM crash-safe, gli idle timeout dei socket, l'attribuzione dei processi tramite <code>/proc</code> e la cattura TPROXY.</td></tr>
 </table>
@@ -1513,7 +1513,7 @@ OmniRoute è costruito sulle spalle di giganti. È nato come fork di **[9router]
 ### 📚 Dati dei modelli, osservabilità e UI
 
 <table>
-  <tr><th align="left">Progetto</th><th align="center">⭐</th><th align="left">Come ha ispirato OmniRoute</th></tr>
+  <tr><th align="left">Progetto</th><th align="center">⭐</th><th align="left">Come ha ispirato AgentProxy</th></tr>
   <tr><td nowrap><b><a href="https://github.com/anomalyco/models.dev">models.dev</a></b></td><td align="center">6.0k</td><td>Database aperto di specifiche, prezzi e capacità dei modelli AI — sincronizzato nativamente nel nostro catalogo modelli.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/xyflow/xyflow">React Flow / xyflow</a></b></td><td align="center">37.7k</td><td>La libreria di grafi node-based che alimenta Compression Studio e Combo/Routing Studio in tempo reale.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/langchain-ai/langgraph">LangGraph</a></b></td><td align="center">37.6k</td><td>La visualizzazione live dei grafi di workflow di LangGraph Studio ha ispirato la vista a cascata in tempo reale dei nostri Studio.</td></tr>
@@ -1525,14 +1525,14 @@ OmniRoute è costruito sulle spalle di giganti. È nato come fork di **[9router]
 ### 🛡️ Sicurezza
 
 <table>
-  <tr><th align="left">Progetto</th><th align="center">⭐</th><th align="left">Come ha ispirato OmniRoute</th></tr>
+  <tr><th align="left">Progetto</th><th align="center">⭐</th><th align="left">Come ha ispirato AgentProxy</th></tr>
   <tr><td nowrap><b><a href="https://github.com/tldrsec/awesome-secure-defaults">awesome-secure-defaults</a></b></td><td align="center">710</td><td>Una raccolta curata di librerie secure-by-default che guida le nostre scelte di sicurezza (Helmet.js, DOMPurify, ssrf-req-filter, safe-regex, Google Tink).</td></tr>
 </table>
 
 ### 🧭 Strumenti complementari
 
 <table>
-  <tr><th align="left">Progetto</th><th align="center">⭐</th><th align="left">Come ha ispirato OmniRoute</th></tr>
+  <tr><th align="left">Progetto</th><th align="center">⭐</th><th align="left">Come ha ispirato AgentProxy</th></tr>
 </table>
 
 ## 📄 Licenza
@@ -1543,9 +1543,9 @@ Licenza MIT - vedi [LICENSE](../../../LICENSE) per i dettagli.
 
 <div align="center">
 
-**[⬆ Torna all'inizio](#-omniroute)** · Realizzato con ❤️ per la community AI open source.
+**[⬆ Torna all'inizio](#-agentproxy)** · Realizzato con ❤️ per la community AI open source.
 
-<sub>OmniRoute v3.8.49 · Node ≥22.22.2 · Licenza MIT · <a href="https://omniroute.online">omniroute.online</a></sub>
+<sub>AgentProxy v3.8.49 · Node ≥22.22.2 · Licenza MIT · <a href="https://agentproxy.example.com">agentproxy.online</a></sub>
 
 </div>
 <!-- GitHub Discussions enabled for community Q&A -->

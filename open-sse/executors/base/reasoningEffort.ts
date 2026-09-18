@@ -163,7 +163,7 @@ function withNvidiaGlm52TemplateKwargs(
 }
 
 /**
- * Map OmniRoute's reasoning-effort inputs onto the binary thinking switch exposed by
+ * Map AgentProxy's reasoning-effort inputs onto the binary thinking switch exposed by
  * NVIDIA's hosted GLM-5.2 chat template. This runs before DefaultExecutor's unsupported
  * parameter stripping so a nested `reasoning.effort` is not discarded first, and is also
  * reused by the final provider sanitizer for non-default execution paths.
@@ -216,8 +216,8 @@ export function supportsMaxEffortForProvider(provider: string, model: string): b
 }
 
 // ── Effort carrier helpers (#7044) ──────────────────────────────────────────
-// OmniRoute carries the requested effort on up to three shapes:
-//   1. top-level `reasoning_effort`        — OpenAI / OmniRoute-internal
+// AgentProxy carries the requested effort on up to three shapes:
+//   1. top-level `reasoning_effort`        — OpenAI / AgentProxy-internal
 //   2. `reasoning.effort`                  — OpenAI Responses shape
 //   3. `output_config.effort`              — Anthropic Messages native (Claude Code / Claude passthrough)
 // Carrier (3) was previously invisible to this sanitizer, so a native Claude request
@@ -477,7 +477,7 @@ export function sanitizeReasoningEffortForProvider(
   }
 
   // Providers and model families whose top reasoning tier is `max` natively
-  // (or whose gateways expect `max` rather than OmniRoute's internal `xhigh`):
+  // (or whose gateways expect `max` rather than AgentProxy's internal `xhigh`):
   //   - Command Code (`command-code` / `cmd`)
   //   - Ollama Cloud (`ollama-cloud` / `ollamacloud`)
   //   - OpenCode Go (`opencode-go` / `opencode-zen` / `opencode`)
@@ -502,7 +502,7 @@ export function sanitizeReasoningEffortForProvider(
 
   // Native DeepSeek (api.deepseek.com) — V4 Pro and Flash use the native
   // {low, high, max} vocabulary, while other model ids retain the {high, max}
-  // floor. OmniRoute's internal top tier xhigh maps to DeepSeek's literal max,
+  // floor. AgentProxy's internal top tier xhigh maps to DeepSeek's literal max,
   // while compatibility-only medium maps to high. `none` is already the OpenAI
   // no-thinking carrier and passes through unchanged.
   if (provider === "deepseek") {
@@ -573,7 +573,7 @@ export function sanitizeReasoningEffortForProvider(
   const supportsMax = supportsMaxEffortForProvider(provider, modelStr);
 
   // ── xhigh handling ──────────────────────────────────────────────────────
-  // xhigh is OmniRoute-internal. Map it to the best effort the model accepts.
+  // xhigh is AgentProxy-internal. Map it to the best effort the model accepts.
   if (effortStr === "xhigh") {
     if (supportsXHigh) return body; // model accepts xhigh natively
     if (supportsMax) {

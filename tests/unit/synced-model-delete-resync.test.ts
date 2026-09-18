@@ -10,7 +10,7 @@ import path from "node:path";
 import fs from "node:fs";
 
 // Hermetic DB: this test mutates the syncedAvailableModels key_value namespace.
-const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-test-synced-del-"));
+const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-test-synced-del-"));
 process.env.DATA_DIR = tmpDir;
 
 const { replaceSyncedAvailableModelsForConnection, getSyncedAvailableModels } =

@@ -442,7 +442,7 @@ function isSubscriptionFetchRetryable(e: unknown): boolean {
 }
 
 async function fetchSubscriptionContent(url: string): Promise<string> {
-  const headers = { "User-Agent": "OmniRoute-ProxySubscription" };
+  const headers = { "User-Agent": "AgentProxy-ProxySubscription" };
   // Retry transient failures (timeouts, 5xx, 429) with bounded exponential
   // backoff; give up fast on permanent errors (4xx, SSRF block).
   return withRetry(() => doSafeFetch(url, headers), {

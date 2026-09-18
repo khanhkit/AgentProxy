@@ -81,7 +81,7 @@ test("FIX6: body within the 10MB cap proceeds normally", async () => {
     fetch: (() =>
       Promise.resolve(
         mockResponse(fixtureBytes, {
-          "x-omniroute-feed-signature": signBytes(fixtureBytes),
+          "x-agentproxy-feed-signature": signBytes(fixtureBytes),
         })
       )) as unknown as typeof globalThis.fetch,
   });

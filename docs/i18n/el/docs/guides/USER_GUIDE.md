@@ -15,7 +15,7 @@ lastUpdated: 2026-06-28
 
 🌐 **Languages:** 🇺🇸 [English](../../../../guides/USER_GUIDE.md) · 🇸🇦 [ar](../../../ar/docs/guides/USER_GUIDE.md) · 🇦🇿 [az](../../../az/docs/guides/USER_GUIDE.md) · 🇧🇬 [bg](../../../bg/docs/guides/USER_GUIDE.md) · 🇧🇩 [bn](../../../bn/docs/guides/USER_GUIDE.md) · 🇨🇿 [cs](../../../cs/docs/guides/USER_GUIDE.md) · 🇩🇰 [da](../../../da/docs/guides/USER_GUIDE.md) · 🇩🇪 [de](../../../de/docs/guides/USER_GUIDE.md) · 🇪🇸 [es](../../../es/docs/guides/USER_GUIDE.md) · 🇪🇪 [et](../../../et/docs/guides/USER_GUIDE.md) · 🇮🇷 [fa](../../../fa/docs/guides/USER_GUIDE.md) · 🇫🇮 [fi](../../../fi/docs/guides/USER_GUIDE.md) · 🇫🇷 [fr](../../../fr/docs/guides/USER_GUIDE.md) · 🇮🇪 [ga](../../../ga/docs/guides/USER_GUIDE.md) · 🇮🇳 [gu](../../../gu/docs/guides/USER_GUIDE.md) · 🇮🇱 [he](../../../he/docs/guides/USER_GUIDE.md) · 🇮🇳 [hi](../../../hi/docs/guides/USER_GUIDE.md) · 🇭🇷 [hr](../../../hr/docs/guides/USER_GUIDE.md) · 🇭🇺 [hu](../../../hu/docs/guides/USER_GUIDE.md) · 🇮🇩 [id](../../../id/docs/guides/USER_GUIDE.md) · 🇮🇹 [it](../../../it/docs/guides/USER_GUIDE.md) · 🇯🇵 [ja](../../../ja/docs/guides/USER_GUIDE.md) · 🇰🇷 [ko](../../../ko/docs/guides/USER_GUIDE.md) · 🇱🇹 [lt](../../../lt/docs/guides/USER_GUIDE.md) · 🇱🇻 [lv](../../../lv/docs/guides/USER_GUIDE.md) · 🇮🇳 [mr](../../../mr/docs/guides/USER_GUIDE.md) · 🇲🇾 [ms](../../../ms/docs/guides/USER_GUIDE.md) · 🇲🇹 [mt](../../../mt/docs/guides/USER_GUIDE.md) · 🇳🇱 [nl](../../../nl/docs/guides/USER_GUIDE.md) · 🇳🇴 [no](../../../no/docs/guides/USER_GUIDE.md) · 🇵🇭 [phi](../../../phi/docs/guides/USER_GUIDE.md) · 🇵🇱 [pl](../../../pl/docs/guides/USER_GUIDE.md) · 🇵🇹 [pt](../../../pt/docs/guides/USER_GUIDE.md) · 🇧🇷 [pt-BR](../../../pt-BR/docs/guides/USER_GUIDE.md) · 🇷🇴 [ro](../../../ro/docs/guides/USER_GUIDE.md) · 🇷🇺 [ru](../../../ru/docs/guides/USER_GUIDE.md) · 🇸🇰 [sk](../../../sk/docs/guides/USER_GUIDE.md) · 🇸🇮 [sl](../../../sl/docs/guides/USER_GUIDE.md) · 🇷🇸 [sr](../../../sr/docs/guides/USER_GUIDE.md) · 🇸🇪 [sv](../../../sv/docs/guides/USER_GUIDE.md) · 🇰🇪 [sw](../../../sw/docs/guides/USER_GUIDE.md) · 🇮🇳 [ta](../../../ta/docs/guides/USER_GUIDE.md) · 🇮🇳 [te](../../../te/docs/guides/USER_GUIDE.md) · 🇹🇭 [th](../../../th/docs/guides/USER_GUIDE.md) · 🇹🇷 [tr](../../../tr/docs/guides/USER_GUIDE.md) · 🇺🇦 [uk-UA](../../../uk-UA/docs/guides/USER_GUIDE.md) · 🇵🇰 [ur](../../../ur/docs/guides/USER_GUIDE.md) · 🇻🇳 [vi](../../../vi/docs/guides/USER_GUIDE.md) · 🇨🇳 [zh-CN](../../../zh-CN/docs/guides/USER_GUIDE.md) · 🇹🇼 [zh-TW](../../../zh-TW/docs/guides/USER_GUIDE.md)
 
-Πλήρης οδηγός για τη ρύθμιση παρόχων, τη δημιουργία συνδυασμών, την ενσωμάτωση εργαλείων CLI και την ανάπτυξη του OmniRoute.
+Πλήρης οδηγός για τη ρύθμιση παρόχων, τη δημιουργία συνδυασμών, την ενσωμάτωση εργαλείων CLI και την ανάπτυξη του AgentProxy.
 
 ---
 
@@ -144,11 +144,11 @@ Models:
   cc/claude-haiku-4-5-20251001
 ```
 
-**Χρήσιμη Συμβουλή:** Χρησιμοποιήστε το Opus για σύνθετες εργασίες, το Sonnet για ταχύτητα. Το OmniRoute παρακολουθεί το όριο ανά μοντέλο!
+**Χρήσιμη Συμβουλή:** Χρησιμοποιήστε το Opus για σύνθετες εργασίες, το Sonnet για ταχύτητα. Το AgentProxy παρακολουθεί το όριο ανά μοντέλο!
 
 Οι διαδρομές συμβατές με Claude και Claude Code διατηρούν τη σκέψη `max` για τα μοντέλα
 Opus και Sonnet. Τα μοντέλα Haiku δεν δέχονται το επίπεδο προσπάθειας `max`, οπότε το
-OmniRoute υποβαθμίζει αυτό το αίτημα σε υψηλό προϋπολογισμό σκέψης πριν το αποστείλει.
+AgentProxy υποβαθμίζει αυτό το αίτημα σε υψηλό προϋπολογισμό σκέψης πριν το αποστείλει.
 
 #### OpenAI Codex (Plus/Pro)
 
@@ -198,7 +198,7 @@ Models:
 
 #### Kimi K2 ($9/μήνα σταθερά)
 
-1. Συνδρομή: [Moonshot AI](https://platform.kimi.ai?aff=omniroute)
+1. Συνδρομή: [Moonshot AI](https://platform.kimi.ai?aff=agentproxy)
 2. Αποκτήστε κλειδί API → Dashboard → Add API Key
 
 **Χρήση:** `kimi/kimi-k2.5` — **Χρήσιμη Συμβουλή:** Σταθερά $9/μήνα για 10M tokens = αποτελεσματικό κόστος $0.90/1M!
@@ -269,16 +269,16 @@ Cost: αναφέρεται ως $0 αυτή τη στιγμή· οι όροι κ
 
 ### Cursor IDE
 
-**Χρήση του Cursor ως πελάτη OmniRoute** (δρομολόγηση συνομιλίας Cursor μέσω OmniRoute):
+**Χρήση του Cursor ως πελάτη AgentProxy** (δρομολόγηση συνομιλίας Cursor μέσω AgentProxy):
 
 ```
 Settings → Models → Advanced:
   OpenAI API Base URL: http://localhost:20128/v1
-  OpenAI API Key: [from omniroute dashboard]
+  OpenAI API Key: [from agentproxy dashboard]
   Model: cc/claude-opus-4-7
 ```
 
-**Χρήση του OmniRoute ως παροχέα Cursor** (το OmniRoute καλεί το Cursor ανάντη): προτιμήστε
+**Χρήση του AgentProxy ως παροχέα Cursor** (το AgentProxy καλεί το Cursor ανάντη): προτιμήστε
 **Dashboard → Providers → Cursor → Login with Cursor**. Σε Docker, δείτε
 [`docs/providers/CURSOR-DOCKER.md`](../providers/CURSOR-DOCKER.md).
 
@@ -290,7 +290,7 @@ Settings → Models → Advanced:
 {
   "env": {
     "ANTHROPIC_BASE_URL": "http://localhost:20128",
-    "ANTHROPIC_AUTH_TOKEN": "your-omniroute-api-key"
+    "ANTHROPIC_AUTH_TOKEN": "your-agentproxy-api-key"
   }
 }
 ```
@@ -301,7 +301,7 @@ Settings → Models → Advanced:
 
 ```bash
 export OPENAI_BASE_URL="http://localhost:20128"
-export OPENAI_API_KEY="your-omniroute-api-key"
+export OPENAI_API_KEY="your-agentproxy-api-key"
 codex "your prompt"
 ```
 
@@ -313,14 +313,14 @@ codex "your prompt"
 {
   "agents": {
     "defaults": {
-      "model": { "primary": "omniroute/if/kimi-k2.7-code" }
+      "model": { "primary": "agentproxy/if/kimi-k2.7-code" }
     }
   },
   "models": {
     "providers": {
-      "omniroute": {
+      "agentproxy": {
         "baseUrl": "http://localhost:20128/v1",
-        "apiKey": "your-omniroute-api-key",
+        "apiKey": "your-agentproxy-api-key",
         "api": "openai-completions",
         "models": [{ "id": "if/kimi-k2.7-code", "name": "Kimi K2.7 Code" }]
       }
@@ -347,28 +347,28 @@ Model: cc/claude-opus-4-7
 ### Καθολική εγκατάσταση npm (Προτεινόμενη)
 
 ```bash
-npm install -g omniroute
+npm install -g agentproxy
 
 # Δημιουργία καταλόγου ρυθμίσεων
-mkdir -p ~/.omniroute
+mkdir -p ~/.agentproxy
 
 # Δημιουργία αρχείου .env (δείτε .env.example)
-cp .env.example ~/.omniroute/.env
+cp .env.example ~/.agentproxy/.env
 
 # Εκκίνηση διακομιστή
-omniroute
+agentproxy
 # Ή με προσαρμοσμένη θύρα:
-omniroute --port 3000
+agentproxy --port 3000
 ```
 
-Το CLI φορτώνει αυτόματα το `.env` από `~/.omniroute/.env` ή `./.env`.
+Το CLI φορτώνει αυτόματα το `.env` από `~/.agentproxy/.env` ή `./.env`.
 
 ### Λειτουργία δίσκου συστήματος (Tray)
 
-Εκκινήστε το OmniRoute στο δίσκο συστήματος:
+Εκκινήστε το AgentProxy στο δίσκο συστήματος:
 
 ```bash
-omniroute serve --tray
+agentproxy serve --tray
 ```
 
 Η εντολή επιστρέφει μετά την ετοιμότητα του διακομιστή και του δίσκου.
@@ -382,7 +382,7 @@ omniroute serve --tray
 - Άνοιγμα του dashboard.
 - Άνοιγμα του `/dashboard/logs`.
 - Αλλαγή αυτόματης εκκίνησης.
-- Διακοπή του OmniRoute.
+- Διακοπή του AgentProxy.
 
 Μη συνδυάζετε το `--tray` με αυτές τις επιλογές:
 
@@ -395,7 +395,7 @@ omniroute serve --tray
 Ενεργοποιήστε την εκκίνηση κατά την επόμενη σύνδεση στο μηχάνημα:
 
 ```bash
-omniroute autostart enable
+agentproxy autostart enable
 ```
 
 Η αυτόματη εκκίνηση χρησιμοποιεί λειτουργία δίσκου σε macOS, Windows και γραφικές συνεδρίες Linux. Το headless Linux χρησιμοποιεί την υπάρχουσα υπηρεσία χρήστη systemd.
@@ -403,29 +403,29 @@ omniroute autostart enable
 Απενεργοποιήστε την εκκίνηση κατά τη σύνδεση:
 
 ```bash
-omniroute autostart disable
+agentproxy autostart disable
 ```
 
 ### Απεγκατάσταση
 
-Όταν δεν χρειάζεστε πλέον το OmniRoute, παρέχουμε δύο γρήγορα σενάρια για καθαρή αφαίρεση:
+Όταν δεν χρειάζεστε πλέον το AgentProxy, παρέχουμε δύο γρήγορα σενάρια για καθαρή αφαίρεση:
 
 | Εντολή                   | Ενέργεια                                                                                                      |
 | ------------------------ | ------------------------------------------------------------------------------------------------------------- |
-| `npm run uninstall`      | Αφαιρεί την εφαρμογή συστήματος αλλά **διατηρεί τη βάση δεδομένων και τις ρυθμίσεις σας** στο `~/.omniroute`. |
+| `npm run uninstall`      | Αφαιρεί την εφαρμογή συστήματος αλλά **διατηρεί τη βάση δεδομένων και τις ρυθμίσεις σας** στο `~/.agentproxy`. |
 | `npm run uninstall:full` | Αφαιρεί την εφαρμογή ΚΑΙ **διαγράφει μόνιμα όλες τις ρυθμίσεις, τα κλειδιά και τις βάσεις δεδομένων**.        |
 
-> Σημείωση: Για να εκτελέσετε αυτές τις εντολές, μεταβείτε στον φάκελο του έργου OmniRoute (εάν το κλωνοποιήσατε) και εκτελέστε τες. Εναλλακτικά, εάν είναι εγκατεστημένο καθολικά, μπορείτε απλώς να εκτελέσετε `npm uninstall -g omniroute`.
+> Σημείωση: Για να εκτελέσετε αυτές τις εντολές, μεταβείτε στον φάκελο του έργου AgentProxy (εάν το κλωνοποιήσατε) και εκτελέστε τες. Εναλλακτικά, εάν είναι εγκατεστημένο καθολικά, μπορείτε απλώς να εκτελέσετε `npm uninstall -g agentproxy`.
 
 ### Ανάπτυξη σε VPS
 
 ```bash
-git clone https://github.com/diegosouzapw/OmniRoute.git
-cd OmniRoute && npm install && npm run build
+git clone https://github.com/khanhkit/AgentProxy.git
+cd AgentProxy && npm install && npm run build
 
 export JWT_SECRET="your-secure-secret-change-this"
 export INITIAL_PASSWORD="your-password"
-export DATA_DIR="/var/lib/omniroute"
+export DATA_DIR="/var/lib/agentproxy"
 export PORT="20128"
 export HOSTNAME="0.0.0.0"
 export NODE_ENV="production"
@@ -433,7 +433,7 @@ export NEXT_PUBLIC_BASE_URL="http://localhost:20128"
 export API_KEY_SECRET="endpoint-proxy-api-key-secret"
 
 npm run start
-# Ή: pm2 start npm --name omniroute -- start
+# Ή: pm2 start npm --name agentproxy -- start
 ```
 
 ### Ανάπτυξη με PM2 (Χαμηλή Μνήμη)
@@ -442,10 +442,10 @@ npm run start
 
 ```bash
 # Με όριο 512MB (προεπιλογή)
-pm2 start npm --name omniroute -- start
+pm2 start npm --name agentproxy -- start
 
 # Ή με προσαρμοσμένο όριο μνήμης
-OMNIROUTE_MEMORY_MB=512 pm2 start npm --name omniroute -- start
+AGENTPROXY_MEMORY_MB=512 pm2 start npm --name agentproxy -- start
 
 # Ή χρησιμοποιώντας το ecosystem.config.js
 pm2 start ecosystem.config.js
@@ -457,12 +457,12 @@ pm2 start ecosystem.config.js
 module.exports = {
   apps: [
     {
-      name: "omniroute",
+      name: "agentproxy",
       script: "npm",
       args: "start",
       env: {
         NODE_ENV: "production",
-        OMNIROUTE_MEMORY_MB: "512",
+        AGENTPROXY_MEMORY_MB: "512",
         JWT_SECRET: "your-secret",
         INITIAL_PASSWORD: "your-password",
       },
@@ -477,24 +477,24 @@ module.exports = {
 
 ```bash
 # Κατασκευή εικόνας (προεπιλογή = runner-cli με προεγκατεστημένα codex/claude/droid)
-docker build -t omniroute:cli .
+docker build -t agentproxy:cli .
 
 # Φορητή λειτουργία (προτεινόμενη)
-docker run -d --name omniroute -p 20128:20128 --env-file ./.env -v omniroute-data:/app/data omniroute:cli
+docker run -d --name agentproxy -p 20128:20128 --env-file ./.env -v agentproxy-data:/app/data agentproxy:cli
 ```
 
 Για λειτουργία ενσωματωμένη στον κεντρικό υπολογιστή με δυαδικά αρχεία CLI, δείτε την ενότητα Docker στην κύρια τεκμηρίωση.
 
 ### Void Linux (xbps-src)
 
-Οι χρήστες Void Linux μπορούν να δημιουργήσουν πακέτο και να εγκαταστήσουν το OmniRoute εγγενώς χρησιμοποιώντας το πλαίσιο cross-compilation `xbps-src`. Αυτό αυτοματοποιεί τη μεμονωμένη κατασκευή Node.js μαζί με τις απαιτούμενες εγγενείς συνδέσεις `better-sqlite3`.
+Οι χρήστες Void Linux μπορούν να δημιουργήσουν πακέτο και να εγκαταστήσουν το AgentProxy εγγενώς χρησιμοποιώντας το πλαίσιο cross-compilation `xbps-src`. Αυτό αυτοματοποιεί τη μεμονωμένη κατασκευή Node.js μαζί με τις απαιτούμενες εγγενείς συνδέσεις `better-sqlite3`.
 
 <details>
 <summary><b>Προβολή προτύπου xbps-src</b></summary>
 
 ```bash
-# Template file for 'omniroute'
-pkgname=omniroute
+# Template file for 'agentproxy'
+pkgname=agentproxy
 version=3.8.0
 revision=1
 hostmakedepends="nodejs python3 make"
@@ -502,11 +502,11 @@ depends="openssl"
 short_desc="Universal AI gateway with smart routing for multiple LLM providers"
 maintainer="zenobit <zenobit@disroot.org>"
 license="MIT"
-homepage="https://github.com/diegosouzapw/OmniRoute"
-distfiles="https://github.com/diegosouzapw/OmniRoute/archive/refs/tags/v${version}.tar.gz"
+homepage="https://github.com/khanhkit/AgentProxy"
+distfiles="https://github.com/khanhkit/AgentProxy/archive/refs/tags/v${version}.tar.gz"
 checksum=009400afee90a9f32599d8fe734145cfd84098140b7287990183dde45ae2245b
-system_accounts="_omniroute"
-omniroute_homedir="/var/lib/omniroute"
+system_accounts="_agentproxy"
+agentproxy_homedir="/var/lib/agentproxy"
 export NODE_ENV=production
 export npm_config_engine_strict=false
 export npm_config_loglevel=error
@@ -556,26 +556,26 @@ do_check() {
 }
 
 do_install() {
-	vmkdir usr/lib/omniroute/.next
-	vcopy .next/standalone/. usr/lib/omniroute/.next/standalone
+	vmkdir usr/lib/agentproxy/.next
+	vcopy .next/standalone/. usr/lib/agentproxy/.next/standalone
 
 	# Αποτροπή αφαίρεσης κενών καταλόγων δρομολογητή Next.js app από το hook μετά την εγκατάσταση
 	for _d in \
 		.next/standalone/.next/server/app/dashboard \
 		.next/standalone/.next/server/app/dashboard/settings \
 		.next/standalone/.next/server/app/dashboard/providers; do
-		touch "${DESTDIR}/usr/lib/omniroute/${_d}/.keep"
+		touch "${DESTDIR}/usr/lib/agentproxy/${_d}/.keep"
 	done
 
-	cat > "${WRKDIR}/omniroute" <<'EOF'
+	cat > "${WRKDIR}/agentproxy" <<'EOF'
 #!/bin/sh
 export PORT="${PORT:-20128}"
-export DATA_DIR="${DATA_DIR:-${XDG_DATA_HOME:-${HOME}/.local/share}/omniroute}"
+export DATA_DIR="${DATA_DIR:-${XDG_DATA_HOME:-${HOME}/.local/share}/agentproxy}"
 export APP_LOG_TO_FILE="${APP_LOG_TO_FILE:-false}"
 mkdir -p "${DATA_DIR}"
-exec node /usr/lib/omniroute/.next/standalone/server.js "$@"
+exec node /usr/lib/agentproxy/.next/standalone/server.js "$@"
 EOF
-	vbin "${WRKDIR}/omniroute"
+	vbin "${WRKDIR}/agentproxy"
 }
 
 post_install() {
@@ -589,14 +589,14 @@ post_install() {
 
 | Μεταβλητή                               | Προεπιλογή                           | Περιγραφή                                                                                                                                                               |
 | --------------------------------------- | ------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `JWT_SECRET`                            | `omniroute-default-secret-change-me` | Μυστικό υπογραφής JWT (**αλλάξτε σε παραγωγή**)                                                                                                                         |
+| `JWT_SECRET`                            | `agentproxy-default-secret-change-me` | Μυστικό υπογραφής JWT (**αλλάξτε σε παραγωγή**)                                                                                                                         |
 | `INITIAL_PASSWORD`                      | `CHANGEME`                           | Κωδικός πρόσβασης πρώτης σύνδεσης                                                                                                                                       |
-| `DATA_DIR`                              | `~/.omniroute`                       | Κατάλογος δεδομένων (db, χρήση, αρχεία καταγραφής)                                                                                                                      |
+| `DATA_DIR`                              | `~/.agentproxy`                       | Κατάλογος δεδομένων (db, χρήση, αρχεία καταγραφής)                                                                                                                      |
 | `PORT`                                  | προεπιλογή framework                 | Θύρα υπηρεσίας (`20128` στα παραδείγματα)                                                                                                                               |
 | `HOSTNAME`                              | προεπιλογή framework                 | Κεντρικός υπολογιστής δέσμευσης (Docker προεπιλέγει `0.0.0.0`)                                                                                                          |
 | `NODE_ENV`                              | προεπιλογή runtime                   | Ορίστε `production` για ανάπτυξη                                                                                                                                        |
 | `NEXT_PUBLIC_BASE_URL`                  | `http://localhost:20128`             | Δημόσιο βασικό URL που εμφανίζεται στο dashboard και εκτίθεται στον διακομιστή (αντικαθιστά το παλαιό `BASE_URL`)                                                       |
-| `NEXT_PUBLIC_CLOUD_URL`                 | `https://omniroute.dev`              | Βασικό URL endpoint συγχρονισμού cloud (αντικαθιστά το παλαιό `CLOUD_URL`)                                                                                              |
+| `NEXT_PUBLIC_CLOUD_URL`                 | `https://agentproxy.example.com`              | Βασικό URL endpoint συγχρονισμού cloud (αντικαθιστά το παλαιό `CLOUD_URL`)                                                                                              |
 | `API_KEY_SECRET`                        | `endpoint-proxy-api-key-secret`      | Μυστικό HMAC για τα παραγόμενα κλειδιά API                                                                                                                              |
 | `REQUIRE_API_KEY`                       | `false`                              | Επιβολή κλειδιού API Bearer στο `/v1/*`                                                                                                                                 |
 | `ALLOW_API_KEY_REVEAL`                  | `false`                              | Επιτρέπει σε πιστοποιημένους χρήστες dashboard να αποκαλύπτουν πλήρεις αποθηκευμένες τιμές κλειδιών API κατ' απαίτηση                                                   |
@@ -606,7 +606,7 @@ post_install() {
 | `AUTH_COOKIE_SECURE`                    | `false`                              | Επιβολή cookie ταυτοποίησης `Secure` (πίσω από αντίστροφο διακομιστή μεσολάβησης HTTPS)                                                                                 |
 | `CLOUDFLARED_BIN`                       | μη ορισμένο                          | Χρήση υπάρχοντος δυαδικού `cloudflared` αντί για διαχειριζόμενη λήψη                                                                                                    |
 | `CLOUDFLARED_PROTOCOL`                  | `http2`                              | Μεταφορά για διαχειριζόμενα Quick Tunnels (`http2`, `quic` ή `auto`)                                                                                                    |
-| `OMNIROUTE_MEMORY_MB`                   | `512`                                | Όριο heap Node.js σε MB                                                                                                                                                 |
+| `AGENTPROXY_MEMORY_MB`                   | `512`                                | Όριο heap Node.js σε MB                                                                                                                                                 |
 | `PROMPT_CACHE_MAX_SIZE`                 | `50`                                 | Μέγιστες καταχωρήσεις προσωρινής αποθήκευσης prompt                                                                                                                     |
 | `SEMANTIC_CACHE_MAX_SIZE`               | `100`                                | Μέγιστες καταχωρήσεις σημασιολογικής προσωρινής αποθήκευσης                                                                                                             |
 
@@ -667,7 +667,7 @@ post_install() {
 
 **Άλλοι συμβατοί πάροχοι** (επιλεγμένοι): `cohere`, `databricks`, `snowflake`, `together`, `vertex`, `alibaba`, `alibaba-cn`, `bedrock` (μέσω `aws-bedrock`), `azure-ai`, `openrouter` (κατάλογος passthrough), `siliconflow`, `hyperbolic`, `huggingface`, `featherless-ai`, `cloudflare-ai`, `scaleway`, `deepinfra`, `vercel-ai-gateway`, `bazaarlink`, `friendliai`, `nous-research`, `reka`, `volcengine`, `ai21`, `gigachat`. Ο καθένας διατηρεί τη δική του λίστα μοντέλων στο `providerRegistry.ts` και μπορεί να συγχρονιστεί αυτόματα όταν ο πάροχος εκθέτει ένα endpoint `/models`.
 
-**Σημείωση για τα αναγνωριστικά μοντέλων:** Το OmniRoute χρησιμοποιεί τα native αναγνωριστικά του παρόχου (`claude-opus-4-8`, `gpt-5.5`, `glm-5.1`, `MiniMax-M2.7`, `kimi-k2.5`, `grok-4.20-0309-reasoning`). Ορισμένα αναγνωριστικά περιλαμβάνουν εκδόσεις με τελείες επειδή έτσι τα αναμένει το upstream API. Εάν ένα μοντέλο δεν εμφανίζεται παραπάνω, εκτελέστε `omniroute models --search <term>` ή χτυπήστε `GET /api/models/catalog` για να επιβεβαιώσετε τη διαθεσιμότητα.
+**Σημείωση για τα αναγνωριστικά μοντέλων:** Το AgentProxy χρησιμοποιεί τα native αναγνωριστικά του παρόχου (`claude-opus-4-8`, `gpt-5.5`, `glm-5.1`, `MiniMax-M2.7`, `kimi-k2.5`, `grok-4.20-0309-reasoning`). Ορισμένα αναγνωριστικά περιλαμβάνουν εκδόσεις με τελείες επειδή έτσι τα αναμένει το upstream API. Εάν ένα μοντέλο δεν εμφανίζεται παραπάνω, εκτελέστε `agentproxy models --search <term>` ή χτυπήστε `GET /api/models/catalog` για να επιβεβαιώσετε τη διαθεσιμότητα.
 
 </details>
 
@@ -696,34 +696,34 @@ curl -X POST http://localhost:20128/api/provider-models \
 - Οι πάροχοι OpenRouter και OpenAI/Anthropic-compatible διαχειρίζονται μόνο από τα **Available Models**. Η χειροκίνητη προσθήκη, εισαγωγή και αυτόματος συγχρονισμός καταλήγουν στην ίδια λίστα διαθέσιμων μοντέλων, οπότε δεν υπάρχει ξεχωριστή ενότητα Custom Models για αυτούς τους παρόχους.
 - Η ενότητα **Custom Models** προορίζεται για παρόχους που δεν εκθέτουν διαχειριζόμενες εισαγωγές διαθέσιμων μοντέλων.
 
-### Αλυσίδωση OmniRoute Peers
+### Αλυσίδωση AgentProxy Peers
 
-Ένα άλλο gateway OmniRoute μπορεί να προστεθεί ως πάροχος **Custom OpenAI-compatible**. Χρησιμοποιήστε τη βασική διεύθυνση URL `/v1` του peer και ένα αποκλειστικό κλειδί API ελάχιστων δικαιωμάτων που εκδίδεται από αυτό το peer.
+Ένα άλλο gateway AgentProxy μπορεί να προστεθεί ως πάροχος **Custom OpenAI-compatible**. Χρησιμοποιήστε τη βασική διεύθυνση URL `/v1` του peer και ένα αποκλειστικό κλειδί API ελάχιστων δικαιωμάτων που εκδίδεται από αυτό το peer.
 
 Για αμοιβαίες ή πολυ-hop αλυσίδες, ενεργοποιήστε την προαιρετική φρουρά βρόχου σε κάθε gateway:
 
 ```bash
 # gateway-a
-OMNIROUTE_INSTANCE_ID=gateway-a
-OMNIROUTE_PEER_URLS=http://gateway-b:20128/v1
-OMNIROUTE_PEER_MAX_HOPS=4
+AGENTPROXY_INSTANCE_ID=gateway-a
+AGENTPROXY_PEER_URLS=http://gateway-b:20128/v1
+AGENTPROXY_PEER_MAX_HOPS=4
 ```
 
 ```bash
 # gateway-b
-OMNIROUTE_INSTANCE_ID=gateway-b
-OMNIROUTE_PEER_URLS=http://gateway-a:20128/v1
-OMNIROUTE_PEER_MAX_HOPS=4
+AGENTPROXY_INSTANCE_ID=gateway-b
+AGENTPROXY_PEER_URLS=http://gateway-a:20128/v1
+AGENTPROXY_PEER_MAX_HOPS=4
 ```
 
 Μόνο τα αιτήματα που αποστέλλονται σε ρητά επιτρεπόμενη διεύθυνση URL peer λαμβάνουν την
-κεφαλίδα `X-OmniRoute-Peer-Trace`. Ένα gateway απορρίπτει ένα επαναλαμβανόμενο αναγνωριστικό instance ή εξαντλημένο hop
+κεφαλίδα `X-AgentProxy-Peer-Trace`. Ένα gateway απορρίπτει ένα επαναλαμβανόμενο αναγνωριστικό instance ή εξαντλημένο hop
 budget με HTTP `508 Loop Detected`· οι κανονικοί upstream πάροχοι δεν λαμβάνουν μεταδεδομένα peer.
 
 Η αλυσίδωση peer δεν είναι αντιγραφή βάσης δεδομένων ή failover κεντρικού υπολογιστή. Κάθε gateway διατηρεί ανεξάρτητη
 κατάσταση SQLite, caches, μετρητές ρυθμού και συνεδρίες. Χρησιμοποιήστε ένα reverse proxy με έλεγχο υγείας ή client
 failover για διαθεσιμότητα active/passive ή active/active, και ποτέ μην τοποθετείτε μία βάση δεδομένων SQLite
-σε πολλαπλές ενεργές instances OmniRoute.
+σε πολλαπλές ενεργές instances AgentProxy.
 
 ### Αποκλειστικές Διαδρομές Παρόχων
 
@@ -774,7 +774,7 @@ curl http://localhost:20128/api/models/catalog
 - Διαθέσιμο στο **Dashboard → Endpoints** για Docker και άλλες αυτο-φιλοξενούμενες αναπτύξεις
 - Δημιουργεί μια προσωρινή διεύθυνση URL `https://*.trycloudflare.com` που προωθεί στο τρέχον OpenAI-compatible `/v1` endpoint σας
 - Η πρώτη ενεργοποίηση εγκαθιστά το `cloudflared` μόνο όταν χρειάζεται· οι επόμενες επανεκκινήσεις επαναχρησιμοποιούν το ίδιο διαχειριζόμενο δυαδικό αρχείο
-- Τα Quick Tunnels δεν αποκαθίστανται αυτόματα μετά από επανεκκίνηση OmniRoute ή container· ενεργοποιήστε τα ξανά από το dashboard όταν χρειάζεται
+- Τα Quick Tunnels δεν αποκαθίστανται αυτόματα μετά από επανεκκίνηση AgentProxy ή container· ενεργοποιήστε τα ξανά από το dashboard όταν χρειάζεται
 - Οι διευθύνσεις URL tunnel είναι εφήμερες και αλλάζουν κάθε φορά που διακόπτετε/ξεκινάτε το tunnel
 - Τα διαχειριζόμενα Quick Tunnels χρησιμοποιούν από προεπιλογή μεταφορά HTTP/2 για να αποφύγουν θορυβώδεις προειδοποιήσεις buffer QUIC UDP σε περιορισμένα containers
 - Ορίστε `CLOUDFLARED_PROTOCOL=quic` ή `auto` αν θέλετε να παρακάμψετε την επιλογή διαχειριζόμενης μεταφοράς
@@ -783,15 +783,15 @@ curl http://localhost:20128/api/models/catalog
 
 ### Νοημοσύνη LLM Gateway (Φάση 9)
 
-- **Σημασιολογική Cache** — Αυτόματη αποθήκευση μη-streaming απαντήσεων με temperature=0 (παράκαμψη με `X-OmniRoute-No-Cache: true`)
+- **Σημασιολογική Cache** — Αυτόματη αποθήκευση μη-streaming απαντήσεων με temperature=0 (παράκαμψη με `X-AgentProxy-No-Cache: true`)
 - **Idempotency Αιτημάτων** — Αφαίρεση διπλότυπων αιτημάτων εντός 5s μέσω κεφαλίδας `Idempotency-Key` ή `X-Request-Id`
-- **Παρακολούθηση Προόδου** — Προαιρετικά SSE `event: progress` events μέσω κεφαλίδας `X-OmniRoute-Progress: true`
+- **Παρακολούθηση Προόδου** — Προαιρετικά SSE `event: progress` events μέσω κεφαλίδας `X-AgentProxy-Progress: true`
 
 ---
 
 ### Playground Μεταφραστή
 
-Πρόσβαση μέσω **Dashboard → Translator**. Αποσφαλματώστε και οπτικοποιήστε τον τρόπο με τον οποίο το OmniRoute μεταφράζει αιτήματα API μεταξύ παρόχων.
+Πρόσβαση μέσω **Dashboard → Translator**. Αποσφαλματώστε και οπτικοποιήστε τον τρόπο με τον οποίο το AgentProxy μεταφράζει αιτήματα API μεταξύ παρόχων.
 
 | Λειτουργία       | Σκοπός                                                                                              |
 | ---------------- | --------------------------------------------------------------------------------------------------- |
@@ -844,7 +844,7 @@ curl http://localhost:20128/api/models/catalog
 X-Session-Id: your-session-key
 ```
 
-Το OmniRoute αποδέχεται επίσης `x_session_id` και επιστρέφει το ενεργό κλειδί συνεδρίας στο `X-OmniRoute-Session-Id`.
+Το AgentProxy αποδέχεται επίσης `x_session_id` και επιστρέφει το ενεργό κλειδί συνεδρίας στο `X-AgentProxy-Session-Id`.
 
 Αν χρησιμοποιείτε Nginx και αποστέλλετε κεφαλίδες με κάτω παύλα, ενεργοποιήστε:
 
@@ -880,7 +880,7 @@ Chain: production-fallback
 
 Διαμόρφωση μέσω **Dashboard → Settings → Resilience**.
 
-Το OmniRoute υλοποιεί ανθεκτικότητα σε επίπεδο παρόχου με πέντε συστατικά:
+Το AgentProxy υλοποιεί ανθεκτικότητα σε επίπεδο παρόχου με πέντε συστατικά:
 
 1. **Ουρά Αιτημάτων & Pacing** — Διαμόρφωση αιτημάτων σε επίπεδο συστήματος:
    - **Requests Per Minute (RPM)** — Μέγιστα αιτήματα ανά λεπτό ανά λογαριασμό
@@ -905,7 +905,7 @@ Chain: production-fallback
 
    Η κατάσταση runtime του provider breaker εμφανίζεται μόνο στο **Dashboard → Health**.
 
-4. **Wait For Cooldown** — Αν κάθε υποψήφια σύνδεση βρίσκεται ήδη σε cooldown, το OmniRoute μπορεί να περιμένει το νωρίτερο cooldown και να επαναλάβει αυτόματα το ίδιο αίτημα client.
+4. **Wait For Cooldown** — Αν κάθε υποψήφια σύνδεση βρίσκεται ήδη σε cooldown, το AgentProxy μπορεί να περιμένει το νωρίτερο cooldown και να επαναλάβει αυτόματα το ίδιο αίτημα client.
 
 5. **Αυτόματη Ανίχνευση Rate Limit** — Όταν οι upstream πάροχοι επιστρέφουν ρητά παράθυρα αναμονής, αυτές οι υποδείξεις παρακάμπτουν το τοπικό connection cooldown όταν η ρύθμιση είναι ενεργοποιημένη.
 
@@ -939,7 +939,7 @@ curl -X POST http://localhost:20128/api/db-backups/import \
 
 **Περιπτώσεις Χρήσης:**
 
-- Μετεγκατάσταση OmniRoute μεταξύ μηχανών
+- Μετεγκατάσταση AgentProxy μεταξύ μηχανών
 - Δημιουργία εξωτερικών αντιγράφων ασφαλείας για ανάκτηση από καταστροφή
 - Κοινή χρήση διαμορφώσεων μεταξύ μελών ομάδας (εξαγωγή όλων → κοινή χρήση αρχείου)
 
@@ -991,7 +991,7 @@ curl http://localhost:20128/api/usage/budget
 
 ### Μεταγραφή Ήχου
 
-Το OmniRoute υποστηρίζει μεταγραφή ήχου μέσω του OpenAI-compatible endpoint:
+Το AgentProxy υποστηρίζει μεταγραφή ήχου μέσω του OpenAI-compatible endpoint:
 
 ```bash
 POST /v1/audio/transcriptions
@@ -1066,7 +1066,7 @@ curl -X POST http://localhost:20128/v1/audio/transcriptions \
 όρια `max_tokens` / `maxOutputTokens`. Όταν είναι ενεργοποιημένο, η δρομολόγηση συνδυασμού προσθέτει χώρο reasoning-model
 μόνο για μοντέλα με γνωστό ανώτατο όριο εξόδου και αφήνει το όριο token του client αμετάβλητο όταν η
 ασφαλής buffered τιμή θα υπερέβαινε αυτό το όριο. Αν το όριο του client είναι ήδη πάνω από γνωστό ανώτατο όριο,
-το OmniRoute το περιορίζει σε αυτό το ανώτατο όριο πριν αποστείλει το upstream αίτημα.
+το AgentProxy το περιορίζει σε αυτό το ανώτατο όριο πριν αποστείλει το upstream αίτημα.
 
 ---
 
@@ -1089,7 +1089,7 @@ curl -X POST http://localhost:20128/v1/audio/transcriptions \
 
 ## 🤖 Αυτόματη Δρομολόγηση (Χωρίς Ρύθμιση)
 
-Το OmniRoute διαθέτει έναν **αυτόματο δρομολογητή βαθμολογίας** που επιλέγει το καλύτερο μοντέλο για κάθε αίτημα από όλους τους συνδεδεμένους παρόχους — χωρίς συνδυασμό προς συντήρηση. Απλώς στείλτε το αίτημα με ένα από τα προθέματα `auto/*` και το OmniRoute θα συναρμολογήσει έναν εικονικό συνδυασμό εν κινήσει, βαθμολογώντας τους υποψηφίους βάσει καθυστέρησης, κόστους, ποσοστού επιτυχίας, καταλληλότητας πλαισίου, καταλληλότητας μοντέλου για την εργασία, πρόσφατων αποτυχιών, ορίου χρήσης και κατάστασης διακόπτη κυκλώματος.
+Το AgentProxy διαθέτει έναν **αυτόματο δρομολογητή βαθμολογίας** που επιλέγει το καλύτερο μοντέλο για κάθε αίτημα από όλους τους συνδεδεμένους παρόχους — χωρίς συνδυασμό προς συντήρηση. Απλώς στείλτε το αίτημα με ένα από τα προθέματα `auto/*` και το AgentProxy θα συναρμολογήσει έναν εικονικό συνδυασμό εν κινήσει, βαθμολογώντας τους υποψηφίους βάσει καθυστέρησης, κόστους, ποσοστού επιτυχίας, καταλληλότητας πλαισίου, καταλληλότητας μοντέλου για την εργασία, πρόσφατων αποτυχιών, ορίου χρήσης και κατάστασης διακόπτη κυκλώματος.
 
 | Πρόθεμα        | Βελτιστοποιεί για                                                                                                  |
 | -------------- | ------------------------------------------------------------------------------------------------------------------ |
@@ -1105,7 +1105,7 @@ curl -X POST http://localhost:20128/v1/audio/transcriptions \
 
 ```bash
 curl -X POST http://localhost:20128/v1/chat/completions \
-  -H "Authorization: Bearer $OMNIROUTE_KEY" \
+  -H "Authorization: Bearer $AGENTPROXY_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "auto/coding",
@@ -1120,13 +1120,13 @@ curl -X POST http://localhost:20128/v1/chat/completions \
 
 ## 🔌 Ενσωμάτωση MCP & A2A
 
-Το OmniRoute είναι ταυτόχρονα **διακομιστής MCP** (Model Context Protocol) και **διακομιστής A2A** (Agent-to-Agent JSON-RPC 2.0). Οποιοδήποτε IDE ή περιβάλλον εκτέλεσης πράκτορα που είναι συμβατό με MCP μπορεί να καλεί εργαλεία του OmniRoute απευθείας — χωρίς επιπλέον περιτύλιγμα.
+Το AgentProxy είναι ταυτόχρονα **διακομιστής MCP** (Model Context Protocol) και **διακομιστής A2A** (Agent-to-Agent JSON-RPC 2.0). Οποιοδήποτε IDE ή περιβάλλον εκτέλεσης πράκτορα που είναι συμβατό με MCP μπορεί να καλεί εργαλεία του AgentProxy απευθείας — χωρίς επιπλέον περιτύλιγμα.
 
 ### Μεταφορές MCP
 
 - **SSE**: `http://localhost:20128/api/mcp/sse`
 - **Streamable HTTP**: `http://localhost:20128/api/mcp/stream`
-- **stdio**: `omniroute --mcp` (για πρόσθετα IDE που προτιμούν stdio)
+- **stdio**: `agentproxy --mcp` (για πρόσθετα IDE που προτιμούν stdio)
 
 ### Σύνδεση του Claude Desktop
 
@@ -1135,8 +1135,8 @@ curl -X POST http://localhost:20128/v1/chat/completions \
 ```json
 {
   "mcpServers": {
-    "omniroute": {
-      "command": "omniroute",
+    "agentproxy": {
+      "command": "agentproxy",
       "args": ["--mcp"]
     }
   }
@@ -1155,7 +1155,7 @@ curl -X POST http://localhost:20128/v1/chat/completions \
 
 ## 🧠 Σύστημα Δεξιοτήτων
 
-Το OmniRoute παρέχει ένα επεκτάσιμο **πλαίσιο δεξιοτήτων** (`src/lib/skills/`) ώστε οι agents και το endpoint A2A να μπορούν να εκτελούν εξειδικευμένες ρουτίνες (π.χ. `code-review`, `summarize`, `extract-facts`, `web-research`).
+Το AgentProxy παρέχει ένα επεκτάσιμο **πλαίσιο δεξιοτήτων** (`src/lib/skills/`) ώστε οι agents και το endpoint A2A να μπορούν να εκτελούν εξειδικευμένες ρουτίνες (π.χ. `code-review`, `summarize`, `extract-facts`, `web-research`).
 
 - **Marketplace UI** — Περιήγηση και εγκατάσταση δεξιοτήτων από **Dashboard → Skills**
 - **Εμβέλειες ανά κλειδί** — Περιορισμός των κλειδιών API που μπορούν να καλούν συγκεκριμένες δεξιότητες
@@ -1167,7 +1167,7 @@ curl -X POST http://localhost:20128/v1/chat/completions \
 
 ## 💾 Σύστημα Μνήμης
 
-Το OmniRoute διατηρεί **μακροπρόθεσμη συνομιλιακή μνήμη** με υβριδική ανάκτηση:
+Το AgentProxy διατηρεί **μακροπρόθεσμη συνομιλιακή μνήμη** με υβριδική ανάκτηση:
 
 - **SQLite FTS5** για αναζήτηση με λέξεις-κλειδιά σε προηγούμενες συνομιλίες
 - **Qdrant vector store** (προαιρετικό) για σημασιολογική ανάκληση
@@ -1180,11 +1180,11 @@ curl -X POST http://localhost:20128/v1/chat/completions \
 
 ## 🔔 Webhooks
 
-Εγγραφείτε σε συμβάντα του OmniRoute για παρακολούθηση και αυτοματισμό σε πραγματικό χρόνο.
+Εγγραφείτε σε συμβάντα του AgentProxy για παρακολούθηση και αυτοματισμό σε πραγματικό χρόνο.
 
 - Δημιουργήστε ένα webhook στο **Dashboard → Webhooks** με URL προορισμού και μυστικό υπογραφής HMAC
 - Διαθέσιμα συμβάντα: `request.completed`, `request.failed`, `provider.unavailable`, `budget.exceeded`, `combo.switched`, `circuit_breaker.opened`, `circuit_breaker.closed`
-- Κάθε payload περιλαμβάνει `X-OmniRoute-Signature` (HMAC-SHA256) για επαλήθευση
+- Κάθε payload περιλαμβάνει `X-AgentProxy-Signature` (HMAC-SHA256) για επαλήθευση
 - Επαναλήψεις: 3 προσπάθειες με εκθετική καθυστέρηση, έπειτα ουρά νεκρών γραμμάτων
 
 Πλήρες σχήμα στο [WEBHOOKS.md](../frameworks/WEBHOOKS.md).
@@ -1193,11 +1193,11 @@ curl -X POST http://localhost:20128/v1/chat/completions \
 
 ## ☁️ Cloud Agents
 
-Το OmniRoute ενσωματώνεται με cloud agents κωδικοποίησης (**OpenAI Codex Cloud**, **Devin**, **Jules**, **Antigravity**) ώστε να μπορείτε να αναθέτετε εργασίες μεγάλης διάρκειας από το ίδιο dashboard που διαχειρίζεται την τοπική σας δρομολόγηση.
+Το AgentProxy ενσωματώνεται με cloud agents κωδικοποίησης (**OpenAI Codex Cloud**, **Devin**, **Jules**, **Antigravity**) ώστε να μπορείτε να αναθέτετε εργασίες μεγάλης διάρκειας από το ίδιο dashboard που διαχειρίζεται την τοπική σας δρομολόγηση.
 
 - Δημιουργήστε εργασίες στο **Dashboard → Cloud Agents** ή μέσω `POST /api/v1/agents/tasks`
 - Παρακολουθήστε κατάσταση, αρχεία καταγραφής και artifacts ανά εργασία
-- Χρησιμοποιήστε το δικό σας κλειδί API ανά πάροχο — τα διαπιστευτήρια δεν εγκαταλείπουν ποτέ την παρουσία του OmniRoute
+- Χρησιμοποιήστε το δικό σας κλειδί API ανά πάροχο — τα διαπιστευτήρια δεν εγκαταλείπουν ποτέ την παρουσία του AgentProxy
 
 Πλήρης αναφορά: [CLOUD_AGENT.md](../frameworks/CLOUD_AGENT.md).
 
@@ -1205,30 +1205,30 @@ curl -X POST http://localhost:20128/v1/chat/completions \
 
 ## 🛠️ Προγραμματιστική Διαχείριση
 
-Μπορείτε να διαχειριστείτε κάθε πόρο του OmniRoute (παρόχους, combos, κλειδιά, ρυθμίσεις) μέσω HTTP χρησιμοποιώντας ένα **Bearer κλειδί με την εμβέλεια `manage`**.
+Μπορείτε να διαχειριστείτε κάθε πόρο του AgentProxy (παρόχους, combos, κλειδιά, ρυθμίσεις) μέσω HTTP χρησιμοποιώντας ένα **Bearer κλειδί με την εμβέλεια `manage`**.
 
 Δημιουργήστε το κλειδί στο **Dashboard → API Keys → New Key → Scope: manage**, και στη συνέχεια:
 
 ```bash
 # Λίστα παρόχων
 curl http://localhost:20128/api/providers \
-  -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY"
+  -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY"
 
 # Προσθήκη σύνδεσης παρόχου
 curl -X POST http://localhost:20128/api/providers \
-  -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY" \
+  -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY" \
   -H "Content-Type: application/json" \
   -d '{ "provider": "openai", "apiKey": "sk-...", "name": "main" }'
 
 # Δημιουργία combo
 curl -X POST http://localhost:20128/api/combos \
-  -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY" \
+  -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY" \
   -H "Content-Type: application/json" \
   -d '{ "name": "premium", "strategy": "priority", "models": [{ "model": "cc/claude-opus-4-7" }, { "model": "glm/glm-5.1" }] }'
 
 # Λίστα/δημιουργία κλειδιών API
-curl http://localhost:20128/api/keys -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY"
-curl -X POST http://localhost:20128/api/keys -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY" \
+curl http://localhost:20128/api/keys -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY"
+curl -X POST http://localhost:20128/api/keys -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY" \
   -d '{ "name": "ci-bot", "scopes": ["chat"] }'
 ```
 
@@ -1238,38 +1238,38 @@ curl -X POST http://localhost:20128/api/keys -H "Authorization: Bearer $OMNIROUT
 
 ## 💻 Εσωτερικό CLI
 
-Το OmniRoute διαθέτει ένα εσωτερικό CLI (`omniroute …`) για εγκατάσταση, διαγνωστικά και έλεγχο χρόνου εκτέλεσης. Αυτό είναι **ξεχωριστό από τη σελίδα "CLI Tools" στον πίνακα ελέγχου**, η οποία διαμορφώνει CLIs τρίτων (Claude Code, Cursor, Codex, Cline, …) ώστε να επικοινωνούν με το OmniRoute.
+Το AgentProxy διαθέτει ένα εσωτερικό CLI (`agentproxy …`) για εγκατάσταση, διαγνωστικά και έλεγχο χρόνου εκτέλεσης. Αυτό είναι **ξεχωριστό από τη σελίδα "CLI Tools" στον πίνακα ελέγχου**, η οποία διαμορφώνει CLIs τρίτων (Claude Code, Cursor, Codex, Cline, …) ώστε να επικοινωνούν με το AgentProxy.
 
 ```bash
-omniroute setup                    # Διαδραστικός οδηγός (κωδικός πρόσβασης, πάροχοι, combos)
-omniroute setup --non-interactive  # Κατάλληλο για CI
-omniroute doctor                   # Διαγνωστικά υγείας (data dir, DB, πάροχοι, θύρες)
-omniroute providers available      # Λίστα υποστηριζόμενων παρόχων
-omniroute providers list           # Λίστα διαμορφωμένων συνδέσεων
-omniroute providers test <id>      # Δοκιμή σύνδεσης παρόχου σε πραγματικό χρόνο
-omniroute combos list              # Λίστα combos
-omniroute combos switch <name>     # Ορισμός προεπιλεγμένου combo
-omniroute models                   # Λίστα διαθέσιμων μοντέλων (--json, --search)
-omniroute keys add | list | remove # Διαχείριση κλειδιών API από το τερματικό
-omniroute backup                   # Στιγμιότυπο διαμόρφωσης + DB
-omniroute restore [<timestamp>]    # Επαναφορά από στιγμιότυπο
-omniroute health                   # Λεπτομερής υγεία (breakers, cache, μνήμη)
-omniroute quota                    # Χρήση ορίου παρόχου
-omniroute mcp status               # Κατάσταση διακομιστή MCP
-omniroute a2a status               # Κατάσταση διακομιστή A2A
-omniroute tunnel list|create|stop  # Tunnels Cloudflare/Tailscale/ngrok
-omniroute reset-password           # Επαναφορά κωδικού πρόσβασης διαχειριστή
-omniroute --mcp                    # Εκκίνηση διακομιστή MCP μέσω stdio
-omniroute --port 3000              # Εκκίνηση διακομιστή σε προσαρμοσμένη θύρα
+agentproxy setup                    # Διαδραστικός οδηγός (κωδικός πρόσβασης, πάροχοι, combos)
+agentproxy setup --non-interactive  # Κατάλληλο για CI
+agentproxy doctor                   # Διαγνωστικά υγείας (data dir, DB, πάροχοι, θύρες)
+agentproxy providers available      # Λίστα υποστηριζόμενων παρόχων
+agentproxy providers list           # Λίστα διαμορφωμένων συνδέσεων
+agentproxy providers test <id>      # Δοκιμή σύνδεσης παρόχου σε πραγματικό χρόνο
+agentproxy combos list              # Λίστα combos
+agentproxy combos switch <name>     # Ορισμός προεπιλεγμένου combo
+agentproxy models                   # Λίστα διαθέσιμων μοντέλων (--json, --search)
+agentproxy keys add | list | remove # Διαχείριση κλειδιών API από το τερματικό
+agentproxy backup                   # Στιγμιότυπο διαμόρφωσης + DB
+agentproxy restore [<timestamp>]    # Επαναφορά από στιγμιότυπο
+agentproxy health                   # Λεπτομερής υγεία (breakers, cache, μνήμη)
+agentproxy quota                    # Χρήση ορίου παρόχου
+agentproxy mcp status               # Κατάσταση διακομιστή MCP
+agentproxy a2a status               # Κατάσταση διακομιστή A2A
+agentproxy tunnel list|create|stop  # Tunnels Cloudflare/Tailscale/ngrok
+agentproxy reset-password           # Επαναφορά κωδικού πρόσβασης διαχειριστή
+agentproxy --mcp                    # Εκκίνηση διακομιστή MCP μέσω stdio
+agentproxy --port 3000              # Εκκίνηση διακομιστή σε προσαρμοσμένη θύρα
 ```
 
-Συμβουλή: συνδυάστε το `omniroute doctor --json` με το εργαλείο παρακολούθησής σας για ειδοποιήσεις σε μη υγιείς συνδέσεις παρόχων.
+Συμβουλή: συνδυάστε το `agentproxy doctor --json` με το εργαλείο παρακολούθησής σας για ειδοποιήσεις σε μη υγιείς συνδέσεις παρόχων.
 
 ---
 
 ## 🖥️ Εφαρμογή Desktop (Electron)
 
-Το OmniRoute διατίθεται ως εγγενής εφαρμογή desktop για Windows, macOS και Linux.
+Το AgentProxy διατίθεται ως εγγενής εφαρμογή desktop για Windows, macOS και Linux.
 
 ### Εγκατάσταση
 
@@ -1312,7 +1312,7 @@ npm run build:linux    # Linux (.AppImage)
 
 | Μεταβλητή             | Προεπιλογή | Περιγραφή                       |
 | --------------------- | ---------- | ------------------------------- |
-| `OMNIROUTE_PORT`      | `20128`    | Θύρα διακομιστή                 |
-| `OMNIROUTE_MEMORY_MB` | `512`      | Όριο heap Node.js (64–16384 MB) |
+| `AGENTPROXY_PORT`      | `20128`    | Θύρα διακομιστή                 |
+| `AGENTPROXY_MEMORY_MB` | `512`      | Όριο heap Node.js (64–16384 MB) |
 
 📖 Πλήρης τεκμηρίωση: [`electron/README.md`](../../electron/README.md)

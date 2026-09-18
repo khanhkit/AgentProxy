@@ -12,13 +12,13 @@ import path from "node:path";
 import os from "node:os";
 
 // Set DATA_DIR before importing modules that read it
-process.env.DATA_DIR = path.join(os.tmpdir(), "omniroute-check-tool-test");
+process.env.DATA_DIR = path.join(os.tmpdir(), "agentproxy-check-tool-test");
 
 const { checkToolConfigStatus } = await import("../../src/lib/cliTools/checkToolConfigStatus.ts");
 
 // Helper: create a temp file with given content and return its path
 async function writeTempFile(filename: string, content: string): Promise<string> {
-  const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "omniroute-clicheck-"));
+  const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "agentproxy-clicheck-"));
   const filePath = path.join(tmpDir, filename);
   await fs.writeFile(filePath, content, "utf-8");
   return filePath;
@@ -26,13 +26,13 @@ async function writeTempFile(filename: string, content: string): Promise<string>
 
 // Helper: create a temp TOML config for codex with optional auth.json alongside
 async function writeCodexConfig(opts: {
-  hasOmniRoute: boolean;
+  hasAgentProxy: boolean;
   authApiKey?: string;
 }): Promise<string> {
-  const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "omniroute-codex-"));
+  const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "agentproxy-codex-"));
   const configPath = path.join(tmpDir, "config.toml");
 
-  const tomlContent = opts.hasOmniRoute
+  const tomlContent = opts.hasAgentProxy
     ? `[openai]\nbase_url = "http://localhost:20128/v1"\napi_key_env = "OPENAI_API_KEY"\n`
     : `[openai]\nbase_url = "https://api.openai.com/v1"\n`;
 
@@ -65,33 +65,33 @@ test("claude: returns 'not_configured' when ANTHROPIC_BASE_URL is absent", async
 
 // ── Codex tests ───────────────────────────────────────────────────────────────
 
-test("codex: returns 'configured' when TOML has OmniRoute URL + valid auth key", async () => {
+test("codex: returns 'configured' when TOML has AgentProxy URL + valid auth key", async () => {
   const configPath = await writeCodexConfig({
-    hasOmniRoute: true,
-    authApiKey: "sk_omniroute_testkey_1234567890abcdef",
+    hasAgentProxy: true,
+    authApiKey: "sk_agentproxy_testkey_1234567890abcdef",
   });
   const result = await checkToolConfigStatus("codex", configPath);
   assert.equal(result, "configured");
 });
 
-test("codex: returns 'not_configured' when TOML has OmniRoute URL but auth key is masked", async () => {
+test("codex: returns 'not_configured' when TOML has AgentProxy URL but auth key is masked", async () => {
   const configPath = await writeCodexConfig({
-    hasOmniRoute: true,
+    hasAgentProxy: true,
     authApiKey: "sk_****",
   });
   const result = await checkToolConfigStatus("codex", configPath);
   assert.equal(result, "not_configured");
 });
 
-test("codex: returns 'not_configured' when TOML does not mention OmniRoute", async () => {
-  const configPath = await writeCodexConfig({ hasOmniRoute: false });
+test("codex: returns 'not_configured' when TOML does not mention AgentProxy", async () => {
+  const configPath = await writeCodexConfig({ hasAgentProxy: false });
   const result = await checkToolConfigStatus("codex", configPath);
   assert.equal(result, "not_configured");
 });
 
 // ── Hermes tests ──────────────────────────────────────────────────────────────
 
-test("hermes: returns 'configured' when config contains OmniRoute", async () => {
+test("hermes: returns 'configured' when config contains AgentProxy", async () => {
   const configPath = await writeTempFile(
     "hermes.toml",
     `[openai]\nbase_url = "http://localhost:20128/v1"\n`
@@ -114,9 +114,9 @@ test("grok-build: requires the managed default and chat completions backend", as
     "config.toml",
     [
       "[models]",
-      'default = "omniroute"',
+      'default = "agentproxy"',
       "",
-      "[model.omniroute]",
+      "[model.agentproxy]",
       'model = "openai/gpt-5.5"',
       'base_url = "https://gateway.example/v1"',
       'api_backend = "chat_completions"',
@@ -127,26 +127,26 @@ test("grok-build: requires the managed default and chat completions backend", as
 
   const inactive = await writeTempFile(
     "config.toml",
-    '[models]\ndefault = "custom"\n\n[model.omniroute]\nbase_url = "https://gateway.example/v1"\n'
+    '[models]\ndefault = "custom"\n\n[model.agentproxy]\nbase_url = "https://gateway.example/v1"\n'
   );
   assert.equal(await checkToolConfigStatus("grok-build", inactive), "not_configured");
 });
 
 // ── Droid / Openclaw / Kilo ───────────────────────────────────────────────────
 
-test("droid: returns 'configured' when JSON config contains sk_omniroute marker", async () => {
+test("droid: returns 'configured' when JSON config contains sk_agentproxy marker", async () => {
   const configPath = await writeTempFile(
     "droid.json",
-    JSON.stringify({ apiKey: "sk_omniroute_somekey", baseUrl: "http://localhost:20128/v1" })
+    JSON.stringify({ apiKey: "sk_agentproxy_somekey", baseUrl: "http://localhost:20128/v1" })
   );
   const result = await checkToolConfigStatus("droid", configPath);
   assert.equal(result, "configured");
 });
 
-test("openclaw: returns 'configured' when JSON config contains omniroute text", async () => {
+test("openclaw: returns 'configured' when JSON config contains agentproxy text", async () => {
   const configPath = await writeTempFile(
     "openclaw.json",
-    JSON.stringify({ openAiBaseUrl: "http://omniroute.local/v1", openAiApiKey: "sk-test" })
+    JSON.stringify({ openAiBaseUrl: "http://agentproxy.local/v1", openAiApiKey: "sk-test" })
   );
   const result = await checkToolConfigStatus("openclaw", configPath);
   assert.equal(result, "configured");
@@ -164,7 +164,7 @@ test("cline: returns 'configured' when openAiBaseUrl is set with openai provider
   assert.equal(result, "configured");
 });
 
-test("kilo: returns 'not_configured' when no OmniRoute markers present", async () => {
+test("kilo: returns 'not_configured' when no AgentProxy markers present", async () => {
   const configPath = await writeTempFile(
     "kilo.json",
     JSON.stringify({ apiProvider: "anthropic", model: "claude-3-sonnet" })
@@ -175,7 +175,7 @@ test("kilo: returns 'not_configured' when no OmniRoute markers present", async (
 
 // ── Qwen Code ────────────────────────────────────────────────────────────────
 
-test("qwen: returns 'configured' only for an OmniRoute-managed model entry", async () => {
+test("qwen: returns 'configured' only for an AgentProxy-managed model entry", async () => {
   const configPath = await writeTempFile(
     "settings.json",
     JSON.stringify({
@@ -183,7 +183,7 @@ test("qwen: returns 'configured' only for an OmniRoute-managed model entry", asy
         openai: [
           {
             id: "model-id",
-            envKey: "OMNIROUTE_API_KEY",
+            envKey: "AGENTPROXY_API_KEY",
             baseUrl: "http://localhost:20128/v1",
           },
         ],

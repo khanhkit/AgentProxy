@@ -8,7 +8,7 @@
  * (streaming) directly, without first calling `withSelectedConnectionHeader()`
  * — unlike every failure exit in the same function, which does call it.
  *
- * As a result `X-OmniRoute-Selected-Connection-Id` was absent on every
+ * As a result `X-AgentProxy-Selected-Connection-Id` was absent on every
  * successful response for a dynamically-selected (unpinned) connection, so
  * combo.ts's consumers (success-decay, provider cooldown recovery, webhook
  * attribution, session stickiness, LKGP) fell back to the target's static
@@ -65,7 +65,7 @@ test.after(async () => {
   await harness.cleanup();
 });
 
-test("#11810 combo success response carries X-OmniRoute-Selected-Connection-Id for a dynamically selected connection", async () => {
+test("#11810 combo success response carries X-AgentProxy-Selected-Connection-Id for a dynamically selected connection", async () => {
   const connection = await seedConnection("openai", {
     apiKey: "sk-openai-11810",
   });
@@ -95,7 +95,7 @@ test("#11810 combo success response carries X-OmniRoute-Selected-Connection-Id f
   const body = (await response.json()) as { choices: Array<{ message: { content: string } }> };
   assert.equal(body.choices[0].message.content, "hello from o3-mini");
 
-  const selectedConnectionId = response.headers.get("X-OmniRoute-Selected-Connection-Id");
+  const selectedConnectionId = response.headers.get("X-AgentProxy-Selected-Connection-Id");
   assert.equal(
     selectedConnectionId,
     connection.id,
@@ -103,7 +103,7 @@ test("#11810 combo success response carries X-OmniRoute-Selected-Connection-Id f
   );
 });
 
-test("#11810 combo streaming success response carries X-OmniRoute-Selected-Connection-Id for a dynamically selected connection", async () => {
+test("#11810 combo streaming success response carries X-AgentProxy-Selected-Connection-Id for a dynamically selected connection", async () => {
   const connection = await seedConnection("openai", {
     apiKey: "sk-openai-11810-stream",
   });
@@ -131,7 +131,7 @@ test("#11810 combo streaming success response carries X-OmniRoute-Selected-Conne
 
   assert.equal(response.status, 200);
 
-  const selectedConnectionId = response.headers.get("X-OmniRoute-Selected-Connection-Id");
+  const selectedConnectionId = response.headers.get("X-AgentProxy-Selected-Connection-Id");
   assert.equal(
     selectedConnectionId,
     connection.id,

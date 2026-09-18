@@ -7,8 +7,8 @@ import path from "node:path";
 // DefaultExecutor transitively touches the DB layer (provider/key rotation
 // lookups) at import/call time. Point DATA_DIR at an isolated temp dir
 // BEFORE importing it so these tests never read/write the operator's real
-// ~/.omniroute database (see CLAUDE.md "Database Handles in Tests").
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-client-identity-"));
+// ~/.agentproxy database (see CLAUDE.md "Database Handles in Tests").
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-client-identity-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const {

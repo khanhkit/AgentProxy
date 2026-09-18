@@ -4,7 +4,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const testDataDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-stream-delta-contract-"));
+const testDataDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-stream-delta-contract-"));
 process.env.DATA_DIR = testDataDir;
 
 const { createSSEStream } = await import("../../open-sse/utils/stream.ts");

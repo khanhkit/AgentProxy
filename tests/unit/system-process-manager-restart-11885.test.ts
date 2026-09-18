@@ -3,13 +3,13 @@ import assert from "node:assert/strict";
 import { restartRunningServer } from "@/lib/system/processManagerRestart";
 
 // #11885: the dashboard's npm-mode Update flow (src/app/api/system/version/route.ts)
-// hardcoded `pm2 restart omniroute` as the ONLY restart mechanism, at two
-// near-identical branches. When pm2 isn't the process manager (OmniRoute's own
-// `omniroute serve --daemon` supervisor, or plain `npm run start`) it silently
+// hardcoded `pm2 restart agentproxy` as the ONLY restart mechanism, at two
+// near-identical branches. When pm2 isn't the process manager (AgentProxy's own
+// `agentproxy serve --daemon` supervisor, or plain `npm run start`) it silently
 // degraded to a "skipped" status while the install step still reported "done" —
 // reading like a completed live update when the running server never restarted.
 
-test("restartRunningServer: uses OmniRoute's own supervisor when both the supervisor and server pids are alive", async () => {
+test("restartRunningServer: uses AgentProxy's own supervisor when both the supervisor and server pids are alive", async () => {
   const killed = [];
   const pm2Calls = [];
   const outcome = await restartRunningServer({
@@ -30,7 +30,7 @@ test("restartRunningServer: uses OmniRoute's own supervisor when both the superv
   assert.equal(pm2Calls.length, 0, "must not fall back to pm2 when the own supervisor path succeeds");
 });
 
-test("restartRunningServer: falls back to pm2 when no OmniRoute supervisor is detected", async () => {
+test("restartRunningServer: falls back to pm2 when no AgentProxy supervisor is detected", async () => {
   const pm2Calls = [];
   const outcome = await restartRunningServer({
     readPidFile: () => null,
@@ -46,7 +46,7 @@ test("restartRunningServer: falls back to pm2 when no OmniRoute supervisor is de
   assert.equal(outcome.method, "pm2");
   assert.equal(outcome.status, "done");
   assert.equal(pm2Calls.length, 1);
-  assert.deepEqual(pm2Calls[0], ["restart", "omniroute", "--update-env"]);
+  assert.deepEqual(pm2Calls[0], ["restart", "agentproxy", "--update-env"]);
 });
 
 test("restartRunningServer: falls back to pm2 when the supervisor pid is stale", async () => {

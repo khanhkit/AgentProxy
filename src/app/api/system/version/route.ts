@@ -23,7 +23,7 @@ import {
   isNewer,
   resolveLatestVersionCached,
 } from "@/lib/system/versionCheck";
-import { resolveGlobalOmniroutePath } from "@/lib/system/globalPackagePath";
+import { resolveGlobalAgentProxyPath } from "@/lib/system/globalPackagePath";
 import { restartRunningServer } from "@/lib/system/processManagerRestart";
 import { APP_CONFIG } from "@/shared/constants/appConfig";
 // #5542 — On Windows npm is `npm.cmd`; Node ≥24 refuses to execFile a `.cmd` without
@@ -41,9 +41,9 @@ function getCurrentVersion(): string {
 
 /**
  * Shared restart step for both npm-mode update flows (source-checkout and global-install
- * below). #11885: this used to hardcode `pm2 restart omniroute` in each branch separately
+ * below). #11885: this used to hardcode `pm2 restart agentproxy` in each branch separately
  * and silently report "skipped" — reading like a completed update — whenever pm2 wasn't
- * the process manager. `restartRunningServer()` tries OmniRoute's own PID-file-managed
+ * the process manager. `restartRunningServer()` tries AgentProxy's own PID-file-managed
  * supervisor first, then pm2, and this wrapper turns its honest "restart-required" outcome
  * into an SSE step the dashboard renders as a warning instead of a false "done".
  */
@@ -318,13 +318,13 @@ export async function POST(req: NextRequest) {
           controller.close();
           return;
         }
-        send({ step: "install", status: "running", message: `Installing omniroute@${latest}...` });
+        send({ step: "install", status: "running", message: `Installing agentproxy@${latest}...` });
           await execFileAsync(
             "npm",
-            ["install", "-g", `omniroute@${latest}`, "--ignore-scripts", "--legacy-peer-deps"],
+            ["install", "-g", `agentproxy@${latest}`, "--ignore-scripts", "--legacy-peer-deps"],
             buildNpmExecOptions(process.platform, { cwd: PROJECT_ROOT, timeoutMs: 300_000 })
           );
-        send({ step: "install", status: "done", message: `Installed omniroute@${latest}` });
+        send({ step: "install", status: "done", message: `Installed agentproxy@${latest}` });
 
         // Step 2: Rebuild native modules (critical for better-sqlite3)
         send({
@@ -332,7 +332,7 @@ export async function POST(req: NextRequest) {
           status: "running",
           message: "Rebuilding native modules (better-sqlite3)...",
         });
-        const omniPath = await resolveGlobalOmniroutePath();
+        const omniPath = await resolveGlobalAgentProxyPath();
         await execFileAsync(
           "npm",
           ["rebuild", "better-sqlite3"],

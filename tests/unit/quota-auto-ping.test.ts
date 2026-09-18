@@ -17,9 +17,9 @@ import path from "node:path";
 // This module transitively imports src/lib/db/core.ts (via @/lib/localDb),
 // which lazily opens the DB singleton on first use. Point DATA_DIR at a throwaway
 // tmpdir *before* importing so the suite never touches the operator's real
-// ~/.omniroute/storage.sqlite (deps are injected below anyway — nothing here
+// ~/.agentproxy/storage.sqlite (deps are injected below anyway — nothing here
 // exercises the real DB, this only prevents an accidental production open).
-process.env.DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-quota-autoping-"));
+process.env.DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-quota-autoping-"));
 
 const { runQuotaAutoPingTick, createQuotaAutoPingState, resolveQuotaAutoPingModel } =
   await import("../../src/lib/services/quotaAutoPing.ts");

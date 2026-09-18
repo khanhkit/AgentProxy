@@ -1,7 +1,7 @@
-import { getGitHubCopilotChatUserAgent } from "@omniroute/open-sse/config/providerHeaderProfiles.ts";
+import { getGitHubCopilotChatUserAgent } from "@agentproxy/open-sse/config/providerHeaderProfiles.ts";
 import { GHE_COPILOT_CONFIG } from "../constants/oauth";
-import { sanitizeErrorMessage } from "@omniroute/open-sse/utils/error";
-import { stripTrailingSlashes } from "@omniroute/open-sse/utils/urlSanitize.ts";
+import { sanitizeErrorMessage } from "@agentproxy/open-sse/utils/error";
+import { stripTrailingSlashes } from "@agentproxy/open-sse/utils/urlSanitize.ts";
 import { safeOutboundFetch } from "@/shared/network/safeOutboundFetch";
 
 /**

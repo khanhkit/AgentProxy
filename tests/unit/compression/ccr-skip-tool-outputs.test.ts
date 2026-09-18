@@ -1,8 +1,8 @@
 /**
  * TDD tests for CCR skip-on-tool-outputs behavior (Fix 1).
  *
- * Background: when OmniRoute is used as a chat-completion PROVIDER (not as an
- * MCP server), the upstream LLM cannot call `omniroute_ccr_retrieve` to
+ * Background: when AgentProxy is used as a chat-completion PROVIDER (not as an
+ * MCP server), the upstream LLM cannot call `agentproxy_ccr_retrieve` to
  * expand CCR markers. Replacing tool outputs with `[CCR retrieve hash=X
  * chars=Y]` markers therefore breaks the agent loop — the LLM sees an
  * opaque placeholder where the actual tool result should be and stalls.
@@ -136,14 +136,14 @@ describe("ccr engine — skip tool outputs", () => {
     // Sanity check: the fix must NOT regress the existing compression path.
     // A plain user-role message with large text content must still be compressed.
     // #7746 follow-up: CCR now only compresses for callers that advertise the
-    // omniroute_ccr_retrieve tool (otherwise the content-addressed marker is
+    // agentproxy_ccr_retrieve tool (otherwise the content-addressed marker is
     // unresolvable). Advertise it here so this guard exercises the real
     // plain-user-text compression path rather than tripping the new caller gate.
     const LARGE_USER_TEXT = LARGE_TOOL_OUTPUT; // same length, same trigger
     const body = {
       model: "gpt-4",
       messages: [{ role: "user", content: LARGE_USER_TEXT }],
-      tools: [{ type: "function", function: { name: "omniroute_ccr_retrieve" } }],
+      tools: [{ type: "function", function: { name: "agentproxy_ccr_retrieve" } }],
     };
 
     const result = ccrEngine.apply(body as Record<string, unknown>);

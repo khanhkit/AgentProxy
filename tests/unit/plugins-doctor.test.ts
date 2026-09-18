@@ -5,7 +5,7 @@ import { join } from "path";
 import { tmpdir } from "os";
 
 // Isolate to a temp DB so doctor's db check doesn't hit the production DB.
-const TEST_DATA_DIR = mkdtempSync(join(tmpdir(), "omniroute-doctor-"));
+const TEST_DATA_DIR = mkdtempSync(join(tmpdir(), "agentproxy-doctor-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const { resetDbInstance } = await import("../../src/lib/db/core.ts");

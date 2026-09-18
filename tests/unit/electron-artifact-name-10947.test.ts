@@ -6,11 +6,11 @@
 // Any target whose name contains a space therefore ships a manifest pointing at
 // a file that does not exist. Measured on the published v3.8.49 release:
 //
-//   latest.yml       url: OmniRoute-Setup-3.8.49.exe
-//   uploaded asset        OmniRoute.Setup.3.8.49.exe   (identical size, 340441395)
+//   latest.yml       url: AgentProxy-Setup-3.8.49.exe
+//   uploaded asset        AgentProxy.Setup.3.8.49.exe   (identical size, 340441395)
 //
-//   latest-linux.yml url: OmniRoute-3.8.49.AppImage  -> asset matches verbatim
-//   latest-mac.yml   url: OmniRoute-3.8.49.dmg       -> asset matches verbatim
+//   latest-linux.yml url: AgentProxy-3.8.49.AppImage  -> asset matches verbatim
+//   latest-mac.yml   url: AgentProxy-3.8.49.dmg       -> asset matches verbatim
 //
 // Only Windows breaks, because NSIS carries the one default artifact name that
 // contains spaces (`${productName} Setup ${version}.${ext}`); the AppImage, dmg
@@ -18,7 +18,7 @@
 //
 // The name is pinned to the DOT form rather than a hyphen one so the asset that
 // gets published keeps the exact name it has today — the dashboard's manual
-// "Download EXE" link and the docs both hardcode `OmniRoute.Setup.<v>.exe`, and
+// "Download EXE" link and the docs both hardcode `AgentProxy.Setup.<v>.exe`, and
 // a hyphen rename would break the very workaround the issue reports as working.
 import test from "node:test";
 import assert from "node:assert/strict";
@@ -57,7 +57,7 @@ test("#10947 the NSIS installer name is set explicitly and carries no space", ()
 test("#10947 the NSIS name still contains 'Setup'", () => {
   // The release workflow picks the portable exe by skipping the installer with
   // `case "$file" in *Setup*) continue ;;`, so renaming it away from "Setup"
-  // would silently publish the installer as OmniRoute.exe.
+  // would silently publish the installer as AgentProxy.exe.
   assert.match(String(buildConfig.nsis?.artifactName), /Setup/);
 });
 

@@ -4,7 +4,7 @@ import os from "node:os";
 import path from "node:path";
 import test from "node:test";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-felo-runtime-block-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-felo-runtime-block-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../src/lib/db/core.ts");
@@ -216,7 +216,7 @@ test("priority combo skips retired Felo target and falls back to a healthy targe
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "X-OmniRoute-No-Cache": "true",
+        "X-AgentProxy-No-Cache": "true",
       },
       body: JSON.stringify({
         model: "retired-felo-fallback",

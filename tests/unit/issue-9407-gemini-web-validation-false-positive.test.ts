@@ -44,7 +44,7 @@ describe("validateGeminiWebProvider — ServiceLogin detection (#9407)", () => {
 describe("GeminiWebExecutor — testConnection", () => {
   it("has a testConnection method", async () => {
     const { GeminiWebExecutor } = await import(
-      "@omniroute/open-sse/executors/gemini-web.ts"
+      "@agentproxy/open-sse/executors/gemini-web.ts"
     );
     const executor = new GeminiWebExecutor();
     assert.equal(typeof executor.testConnection, "function");
@@ -52,14 +52,14 @@ describe("GeminiWebExecutor — testConnection", () => {
 
   it("returns false for empty credentials", async () => {
     const { GeminiWebExecutor } = await import(
-      "@omniroute/open-sse/executors/gemini-web.ts"
+      "@agentproxy/open-sse/executors/gemini-web.ts"
     );
     assert.equal(await new GeminiWebExecutor().testConnection({}), false);
   });
 
   it("returns false for missing apiKey", async () => {
     const { GeminiWebExecutor } = await import(
-      "@omniroute/open-sse/executors/gemini-web.ts"
+      "@agentproxy/open-sse/executors/gemini-web.ts"
     );
     assert.equal(
       await new GeminiWebExecutor().testConnection({ apiKey: "" }),
@@ -69,7 +69,7 @@ describe("GeminiWebExecutor — testConnection", () => {
 
   it("returns false for empty cookie value", async () => {
     const { GeminiWebExecutor } = await import(
-      "@omniroute/open-sse/executors/gemini-web.ts"
+      "@agentproxy/open-sse/executors/gemini-web.ts"
     );
     assert.equal(
       await new GeminiWebExecutor().testConnection({
@@ -81,7 +81,7 @@ describe("GeminiWebExecutor — testConnection", () => {
 
   it("returns true for well-formed cookie", async () => {
     const { GeminiWebExecutor } = await import(
-      "@omniroute/open-sse/executors/gemini-web.ts"
+      "@agentproxy/open-sse/executors/gemini-web.ts"
     );
     assert.equal(
       await new GeminiWebExecutor().testConnection({
@@ -93,7 +93,7 @@ describe("GeminiWebExecutor — testConnection", () => {
 
   it("accepts bare cookie value (without prefix)", async () => {
     const { GeminiWebExecutor } = await import(
-      "@omniroute/open-sse/executors/gemini-web.ts"
+      "@agentproxy/open-sse/executors/gemini-web.ts"
     );
     assert.equal(
       await new GeminiWebExecutor().testConnection({
@@ -105,7 +105,7 @@ describe("GeminiWebExecutor — testConnection", () => {
 
   it("handles providerSpecificData.cookie", async () => {
     const { GeminiWebExecutor } = await import(
-      "@omniroute/open-sse/executors/gemini-web.ts"
+      "@agentproxy/open-sse/executors/gemini-web.ts"
     );
     assert.equal(
       await new GeminiWebExecutor().testConnection({
@@ -119,7 +119,7 @@ describe("GeminiWebExecutor — testConnection", () => {
 describe("gemini-web queue timeout", () => {
   it("default queueTimeoutMs is at least 30s", async () => {
     const { getDefaultComboConfig } = await import(
-      "@omniroute/open-sse/services/comboConfig.ts"
+      "@agentproxy/open-sse/services/comboConfig.ts"
     );
     const config = getDefaultComboConfig();
     assert.ok(

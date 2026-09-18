@@ -50,7 +50,7 @@ function runProbe(env: NodeJS.ProcessEnv): Promise<{ stdout: string; stderr: str
 
 test("persistAttemptLogs redacts request.failed delivery, replay, and persisted diagnostics", async () => {
   const isolationRoot = fs.mkdtempSync(
-    path.join(os.tmpdir(), "omniroute-dashboard-failure-redaction-")
+    path.join(os.tmpdir(), "agentproxy-dashboard-failure-redaction-")
   );
   const dataDir = path.join(isolationRoot, "data");
   const pluginsDir = path.join(isolationRoot, "plugins");
@@ -58,7 +58,7 @@ test("persistAttemptLogs redacts request.failed delivery, replay, and persisted 
   fs.mkdirSync(pluginsDir, { recursive: true });
 
   try {
-    // The subprocess receives only process/runtime basics plus synthetic OmniRoute settings: no
+    // The subprocess receives only process/runtime basics plus synthetic AgentProxy settings: no
     // provider credentials are inherited and no parent singleton/env/global state is mutated.
     const { stdout, stderr } = await runProbe({
       PATH: process.env.PATH,
@@ -69,13 +69,13 @@ test("persistAttemptLogs redacts request.failed delivery, replay, and persisted 
       TMPDIR: process.env.TMPDIR,
       NODE_ENV: "test",
       DATA_DIR: dataDir,
-      OMNIROUTE_PLUGINS_DIR: pluginsDir,
+      AGENTPROXY_PLUGINS_DIR: pluginsDir,
       API_KEY_SECRET: "test-dashboard-failure-redaction-secret",
       PII_RESPONSE_SANITIZATION: "false",
-      OMNIROUTE_ENABLE_LIVE_WS: "0",
+      AGENTPROXY_ENABLE_LIVE_WS: "0",
     });
 
-    assert.doesNotMatch(stderr, /sk-live-dashboard-secret|\/srv\/omniroute/);
+    assert.doesNotMatch(stderr, /sk-live-dashboard-secret|\/srv\/agentproxy/);
     const resultLine = stdout.split(/\r?\n/).find((line) => line.startsWith(RESULT_PREFIX));
     assert.ok(resultLine, `probe did not emit its result marker; stdout:\n${stdout}`);
     const result = JSON.parse(resultLine.slice(RESULT_PREFIX.length)) as ProbeResult;

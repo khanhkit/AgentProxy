@@ -1,4 +1,4 @@
-import { detectMediaParts, type MediaPart } from "@omniroute/open-sse/utils/mediaParts";
+import { detectMediaParts, type MediaPart } from "@agentproxy/open-sse/utils/mediaParts";
 
 import { fetchRemoteMedia, type RemoteMediaFetchResult } from "@/shared/network/remoteImageFetch";
 import type { VideoAnalysisMode } from "@/shared/constants/modalityBridgeDefaults";

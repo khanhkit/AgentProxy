@@ -8,7 +8,7 @@ import net from "node:net";
 import { spawn } from "node:child_process";
 import { fileURLToPath } from "node:url";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-batch-e2e-rl-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-batch-e2e-rl-"));
 const REPO_ROOT = fileURLToPath(new URL("../..", import.meta.url));
 const RELAY_PORT = await getFreePort();
 const SERVER_PORT = await getFreePort();
@@ -159,7 +159,7 @@ function createFakeEmbeddingRelay() {
   };
 }
 
-/* ---------- OmniRoute server process ---------- */
+/* ---------- AgentProxy server process ---------- */
 function createServerProcess() {
   const stdoutLines: string[] = [];
   const stderrLines: string[] = [];
@@ -179,11 +179,11 @@ function createServerProcess() {
       DISABLE_SQLITE_AUTO_BACKUP: "true",
       INITIAL_PASSWORD: "",
       NEXT_TELEMETRY_DISABLED: "1",
-      OMNIROUTE_E2E_BOOTSTRAP_MODE: "open",
-      OMNIROUTE_DISABLE_BACKGROUND_SERVICES: "false",
-      OMNIROUTE_DISABLE_TOKEN_HEALTHCHECK: "true",
-      OMNIROUTE_DISABLE_LOCAL_HEALTHCHECK: "true",
-      OMNIROUTE_HIDE_HEALTHCHECK_LOGS: "true",
+      AGENTPROXY_E2E_BOOTSTRAP_MODE: "open",
+      AGENTPROXY_DISABLE_BACKGROUND_SERVICES: "false",
+      AGENTPROXY_DISABLE_TOKEN_HEALTHCHECK: "true",
+      AGENTPROXY_DISABLE_LOCAL_HEALTHCHECK: "true",
+      AGENTPROXY_HIDE_HEALTHCHECK_LOGS: "true",
       PATH: process.env.PATH,
     },
     stdio: ["ignore", "pipe", "pipe"],

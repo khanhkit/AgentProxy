@@ -23,7 +23,7 @@ import path from "node:path";
 const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omni-a2a-idor-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.API_KEY_SECRET = process.env.API_KEY_SECRET || "a2a-idor-test-secret";
-process.env.OMNIROUTE_DISABLE_REDIS_AUTH_CACHE = "1";
+process.env.AGENTPROXY_DISABLE_REDIS_AUTH_CACHE = "1";
 
 const core = await import("../../src/lib/db/core.ts");
 const apiKeysDb = await import("../../src/lib/db/apiKeys.ts");
@@ -136,7 +136,7 @@ describe("REST /api/a2a/tasks — owner-scoped totals", () => {
 describe("REST /api/a2a/tasks/[id] — authentication (GHSA-jcm5)", () => {
   it("rejects an unkeyed call when REQUIRE_API_KEY=true (was: no auth at all)", async () => {
     process.env.REQUIRE_API_KEY = "true";
-    delete process.env.OMNIROUTE_API_KEY;
+    delete process.env.AGENTPROXY_API_KEY;
     const res = await restGet.GET(new Request("http://localhost/api/a2a/tasks/abc") as never, {
       params: Promise.resolve({ id: "abc" }),
     });

@@ -11,7 +11,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-video-combo-route-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-video-combo-route-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.API_KEY_SECRET = process.env.API_KEY_SECRET || "video-combo-route-test-secret";
 process.env.JWT_SECRET = process.env.JWT_SECRET || "test-jwt-secret-for-video-combo-route-tests";
@@ -102,12 +102,12 @@ test("video route diverts a combo name to the combo executor and honors the Comf
   const response = await postVideo({ model: "vid-local-override-combo", prompt: "a red cube" });
 
   assert.equal(response.status, 200);
-  assert.equal(response.headers.get("X-OmniRoute-Provider"), "comfyui");
-  assert.equal(response.headers.get("X-OmniRoute-Model"), "comfyui/animatediff");
+  assert.equal(response.headers.get("X-AgentProxy-Provider"), "comfyui");
+  assert.equal(response.headers.get("X-AgentProxy-Model"), "comfyui/animatediff");
   // Fallback-attempts header is only emitted when a prior target failed first;
   // this combo has a single target that succeeds on the first try.
-  assert.equal(response.headers.get("X-OmniRoute-Fallback-Attempts"), null);
-  assert.match(response.headers.get("X-OmniRoute-Decision") ?? "", /strategy=priority/);
+  assert.equal(response.headers.get("X-AgentProxy-Fallback-Attempts"), null);
+  assert.match(response.headers.get("X-AgentProxy-Decision") ?? "", /strategy=priority/);
   assert.ok(seenUrls.length > 0, "the ComfyUI client made at least one request");
   assert.ok(
     seenUrls.every((u) => u.startsWith(OVERRIDE)),

@@ -36,7 +36,7 @@ test("permissions modal uses i18n for management access description", () => {
   );
 
   assert.match(managementBlock, /\{t\("managementAccessDesc"\)\}/);
-  assert.doesNotMatch(managementBlock, /Allow this API key to manage OmniRoute configuration\./);
+  assert.doesNotMatch(managementBlock, /Allow this API key to manage AgentProxy configuration\./);
 });
 
 test("API manager page renders purpose-first header", () => {
@@ -51,10 +51,10 @@ test("API manager page renders purpose-first header", () => {
   assert.match(headerBlock, /aria-label=\{t\("requestFlowAria"\)\}/);
   assert.match(headerBlock, /\{t\("requestFlowYourApp"\)\}/);
   assert.match(headerBlock, /\{t\("requestFlowApiKey"\)\}/);
-  assert.match(headerBlock, /\{t\("requestFlowOmniRoute"\)\}/);
+  assert.match(headerBlock, /\{t\("requestFlowAgentProxy"\)\}/);
   assert.doesNotMatch(headerBlock, />\s*Your app\s*</);
   assert.doesNotMatch(headerBlock, />\s*API key\s*</);
-  assert.doesNotMatch(headerBlock, />\s*OmniRoute\s*</);
+  assert.doesNotMatch(headerBlock, />\s*AgentProxy\s*</);
   assert.match(headerBlock, /setShowAddModal\(true\)/);
   assert.match(headerBlock, /\{t\("createKey"\)\}/);
 });

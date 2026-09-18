@@ -201,7 +201,7 @@ export const HIDDEN_SIDEBAR_ITEMS_SETTING_KEY = "hiddenSidebarItems";
 export const SIDEBAR_SECTION_ORDER_KEY = "sidebarSectionOrder";
 export const SIDEBAR_ITEM_ORDER_KEY = "sidebarItemOrder";
 export const SIDEBAR_PRESET_KEY = "sidebarActivePreset";
-export const SIDEBAR_SETTINGS_UPDATED_EVENT = "omniroute:settings-updated";
+export const SIDEBAR_SETTINGS_UPDATED_EVENT = "agentproxy:settings-updated";
 
 /** Beginner Essentials: core path only. Advanced tools stay reachable via search. */
 const ESSENTIALS_SHOWN: ReadonlySet<HideableSidebarItemId> = new Set([

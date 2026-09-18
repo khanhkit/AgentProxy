@@ -41,7 +41,7 @@ function spawnWith(arg: string | URL): Promise<void> {
 }
 
 test("a file: URL STRING is rejected by node:worker_threads (the #12822 crash)", async () => {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-worker-"));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-worker-"));
   const child = path.join(dir, "child.mjs");
   fs.writeFileSync(child, "process.exit(0);\n");
 
@@ -55,7 +55,7 @@ test("a file: URL STRING is rejected by node:worker_threads (the #12822 crash)",
 });
 
 test("a file: URL OBJECT spawns cleanly", async () => {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-worker-"));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-worker-"));
   const child = path.join(dir, "child.mjs");
   fs.writeFileSync(child, "process.exit(0);\n");
 

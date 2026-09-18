@@ -5,7 +5,7 @@ import os from "node:os";
 import path from "node:path";
 
 // Regression guard for Hard Rule: PII redaction/sanitization is OPT-IN.
-// OmniRoute proxies for self-hosted / local LLMs where the operator owns the
+// AgentProxy proxies for self-hosted / local LLMs where the operator owns the
 // data; mutating request/response payloads by default would silently corrupt
 // that traffic. The two data-mutating PII feature flags MUST default to "false"
 // so a vanilla chat request passes data through untouched. Flipping either
@@ -18,7 +18,7 @@ import path from "node:path";
 
 // Isolate DB state so the resolution chain (DB override > env > default) reads
 // a clean store and we exercise the definition default, not a leaked override.
-const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-test-pii-default-"));
+const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-test-pii-default-"));
 process.env.DATA_DIR = tmpDir;
 
 const { FEATURE_FLAG_DEFINITIONS } = await import(

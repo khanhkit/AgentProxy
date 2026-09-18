@@ -230,7 +230,7 @@ export async function isPinnedTargetModelScopedUnusable(args: {
   if (provider && rawModel && isModelLocked(provider, connectionId, rawModel)) return true;
 
   if (
-    process.env.OMNIROUTE_QUOTA_AWARE_ROUTING === "1" &&
+    process.env.AGENTPROXY_QUOTA_AWARE_ROUTING === "1" &&
     provider &&
     connectionId &&
     !canAffordRequest(connectionId, target.modelStr, body).affordable

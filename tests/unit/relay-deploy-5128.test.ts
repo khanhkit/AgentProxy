@@ -19,7 +19,7 @@ import path from "node:path";
 //   D) the proxy-registry schema enum lacked "deno"/"cloudflare", so editing a
 //      deployed relay in the UI failed Zod validation with a silent 400.
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-5128-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-5128-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../src/lib/db/core.ts");
@@ -114,7 +114,7 @@ test("#5128C: Cloudflare worker upload sends an accepted script Content-Type", a
         body: JSON.stringify({
           accountId: "abcdef0123456789",
           apiToken: "cf-token-aaaaaaaaaaaaaaaaaaaaaa",
-          projectName: "omniroute-relay",
+          projectName: "agentproxy-relay",
         }),
       })
     );
@@ -174,7 +174,7 @@ test("#6416: Cloudflare worker script body is Service Worker syntax (no top-leve
         body: JSON.stringify({
           accountId: "abcdef0123456789",
           apiToken: "cf-token-aaaaaaaaaaaaaaaaaaaaaa",
-          projectName: "omniroute-relay",
+          projectName: "agentproxy-relay",
         }),
       })
     );
@@ -194,7 +194,7 @@ test("#6416: Cloudflare worker script body is Service Worker syntax (no top-leve
     "Cloudflare worker script must register a fetch event listener"
   );
 
-  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-cf-worker-"));
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-cf-worker-"));
   const tempFile = path.join(tempDir, "worker.js");
   try {
     fs.writeFileSync(tempFile, capturedScriptBody, "utf8");

@@ -13,13 +13,13 @@
 import { test } from "vitest";
 import assert from "node:assert/strict";
 
-import type { ConnectionBillingEntry } from "@omniroute/open-sse/config/connectionBillingCatalog.ts";
+import type { ConnectionBillingEntry } from "@agentproxy/open-sse/config/connectionBillingCatalog.ts";
 import {
   classifyConnectionBilling,
   isOverageSafe,
   isPlanIncluded,
-} from "@omniroute/open-sse/services/autoCombo/connectionBilling.ts";
-import { SYNTHETIC_NOAUTH_CONNECTION_ID } from "@omniroute/open-sse/services/autoCombo/resilienceCandidateFilter.ts";
+} from "@agentproxy/open-sse/services/autoCombo/connectionBilling.ts";
+import { SYNTHETIC_NOAUTH_CONNECTION_ID } from "@agentproxy/open-sse/services/autoCombo/resilienceCandidateFilter.ts";
 import {
   RUNG_ORDER,
   assignRung,
@@ -30,8 +30,8 @@ import {
   orderPoolByRung,
   type LadderCandidate,
   type LadderOptions,
-} from "@omniroute/open-sse/services/autoCombo/subscriptionLadder.ts";
-import type { FreeAccessState } from "@omniroute/open-sse/services/autoCombo/strictZeroCostFilter.ts";
+} from "@agentproxy/open-sse/services/autoCombo/subscriptionLadder.ts";
+import type { FreeAccessState } from "@agentproxy/open-sse/services/autoCombo/strictZeroCostFilter.ts";
 
 const NOW = Date.parse("2026-08-22T12:00:00.000Z");
 

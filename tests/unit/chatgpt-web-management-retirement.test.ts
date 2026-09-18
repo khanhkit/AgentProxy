@@ -7,7 +7,7 @@ import test from "node:test";
 import { makeManagementSessionRequest } from "../helpers/managementSession.ts";
 
 const TEST_DATA_DIR = fs.mkdtempSync(
-  path.join(os.tmpdir(), "omniroute-chatgpt-web-management-retirement-")
+  path.join(os.tmpdir(), "agentproxy-chatgpt-web-management-retirement-")
 );
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.JWT_SECRET = "chatgpt-web-management-retirement-secret";

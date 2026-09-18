@@ -11,10 +11,10 @@ let origPath: string | undefined;
 /**
  * Redirecting HOME is NOT enough to isolate this test.
  *
- * `disableLinux()` runs `systemctl --user disable --now omniroute.service` and
+ * `disableLinux()` runs `systemctl --user disable --now agentproxy.service` and
  * `enableLinux()` runs `systemctl --user enable` + `start`. `systemctl --user`
  * talks to the caller's systemd bus via XDG_RUNTIME_DIR and does not care about
- * HOME, so on any Linux developer machine that actually runs omniroute as a user
+ * HOME, so on any Linux developer machine that actually runs agentproxy as a user
  * service these tests stopped and disabled the REAL service — repeatedly, since
  * the pair enable()/disable() ping-pongs it. Symptom: an ordered `Stopped` that
  * `Restart=always` will not recover from, plus a silently `disabled` unit.
@@ -33,7 +33,7 @@ function installSystemctlStubs(binDir: string): void {
 }
 
 test.before(() => {
-  tmpDir = mkdtempSync(join(tmpdir(), "omniroute-autostart-linux-"));
+  tmpDir = mkdtempSync(join(tmpdir(), "agentproxy-autostart-linux-"));
   origHome = process.env.HOME;
   process.env.HOME = tmpDir;
   origPath = process.env.PATH;
@@ -52,7 +52,7 @@ test.after(() => {
   } catch {}
 });
 
-test("resolveCliPath finds omniroute.mjs from argv", async () => {
+test("resolveCliPath finds agentproxy.mjs from argv", async () => {
   const { enable, disable, getAutostartStatus } =
     await import("../../../bin/cli/tray/autostart.mjs");
   if (process.platform !== "linux") return;
@@ -60,8 +60,8 @@ test("resolveCliPath finds omniroute.mjs from argv", async () => {
   const ok = enable();
   assert.equal(typeof ok, "boolean");
 
-  const unitPath = join(tmpDir, ".config", "systemd", "user", "omniroute.service");
-  const desktopPath = join(tmpDir, ".config", "autostart", "omniroute.desktop");
+  const unitPath = join(tmpDir, ".config", "systemd", "user", "agentproxy.service");
+  const desktopPath = join(tmpDir, ".config", "autostart", "agentproxy.desktop");
 
   const status = getAutostartStatus();
   assert.equal(typeof status.enabled, "boolean");
@@ -69,7 +69,7 @@ test("resolveCliPath finds omniroute.mjs from argv", async () => {
   if (existsSync(unitPath)) {
     const unit = readFileSync(unitPath, "utf8");
     assert.match(unit, /^\[Unit\]/m);
-    assert.match(unit, /ExecStart=.*omniroute\.mjs.*serve --no-open/m);
+    assert.match(unit, /ExecStart=.*agentproxy\.mjs.*serve --no-open/m);
     assert.doesNotMatch(unit, /--tray/);
   }
 
@@ -106,7 +106,7 @@ test("Linux enable path prefers graphical desktop autostart over systemd", () =>
 test("systemd branch writes Type=notify sd_notify directives (headless, stubs succeed)", async () => {
   if (process.platform !== "linux") return;
   const stubBin = join(tmpDir, "stub-bin");
-  const unitPath = join(tmpDir, ".config", "systemd", "user", "omniroute.service");
+  const unitPath = join(tmpDir, ".config", "systemd", "user", "agentproxy.service");
   const envKeys = ["DISPLAY", "WAYLAND_DISPLAY", "XDG_CURRENT_DESKTOP"] as const;
   const savedEnv: Record<string, string | undefined> = {};
   for (const key of envKeys) savedEnv[key] = process.env[key];

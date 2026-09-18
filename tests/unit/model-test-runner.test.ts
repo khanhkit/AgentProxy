@@ -13,12 +13,12 @@ import {
   classifyTestErrorQuota,
 } from "@/lib/api/modelTestRunner.ts";
 import Bottleneck from "bottleneck";
-import * as rateLimitManager from "@omniroute/open-sse/services/rateLimitManager.ts";
+import * as rateLimitManager from "@agentproxy/open-sse/services/rateLimitManager.ts";
 import {
   markLocalRateLimitError,
   RATE_LIMIT_EXECUTION_TIMEOUT_CODE,
   RATE_LIMIT_QUEUE_WEDGED_CODE,
-} from "@omniroute/open-sse/services/rateLimitManager/errors.ts";
+} from "@agentproxy/open-sse/services/rateLimitManager/errors.ts";
 
 // ---------------------------------------------------------------------------
 // parseRetryAfterHeader — Retry-After is either delta-seconds or an HTTP-date.

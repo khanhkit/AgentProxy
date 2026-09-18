@@ -2,7 +2,7 @@
  * Task B2: the vision bridge self-loop fetches a remote image and hands it
  * to the vision model as a data URI (`fetchRemoteImageAsDataUri`,
  * `src/lib/guardrails/visionBridgeHelpers.ts`). That fetched image must be
- * normalized (long-edge cap 2048, `@omniroute/open-sse/utils/imageNormalize`)
+ * normalized (long-edge cap 2048, `@agentproxy/open-sse/utils/imageNormalize`)
  * before being embedded — the same treatment `normalizeDataUri` already
  * gives any other image, now applied to remote fetches performed by the
  * bridge itself. Scope: ONLY this self-call path, never the user's raw

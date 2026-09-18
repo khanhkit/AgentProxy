@@ -15,7 +15,7 @@ lastUpdated: 2026-08-31
 
 🌐 **Languages:** 🇺🇸 [English](../../../../reference/API_REFERENCE.md) · 🇸🇦 [ar](../../../ar/docs/reference/API_REFERENCE.md) · 🇦🇿 [az](../../../az/docs/reference/API_REFERENCE.md) · 🇧🇬 [bg](../../../bg/docs/reference/API_REFERENCE.md) · 🇧🇩 [bn](../../../bn/docs/reference/API_REFERENCE.md) · 🇨🇿 [cs](../../../cs/docs/reference/API_REFERENCE.md) · 🇩🇰 [da](../../../da/docs/reference/API_REFERENCE.md) · 🇩🇪 [de](../../../de/docs/reference/API_REFERENCE.md) · 🇪🇸 [es](../../../es/docs/reference/API_REFERENCE.md) · 🇪🇪 [et](../../../et/docs/reference/API_REFERENCE.md) · 🇮🇷 [fa](../../../fa/docs/reference/API_REFERENCE.md) · 🇫🇮 [fi](../../../fi/docs/reference/API_REFERENCE.md) · 🇫🇷 [fr](../../../fr/docs/reference/API_REFERENCE.md) · 🇮🇪 [ga](../../../ga/docs/reference/API_REFERENCE.md) · 🇮🇳 [gu](../../../gu/docs/reference/API_REFERENCE.md) · 🇮🇱 [he](../../../he/docs/reference/API_REFERENCE.md) · 🇮🇳 [hi](../../../hi/docs/reference/API_REFERENCE.md) · 🇭🇷 [hr](../../../hr/docs/reference/API_REFERENCE.md) · 🇭🇺 [hu](../../../hu/docs/reference/API_REFERENCE.md) · 🇮🇩 [id](../../../id/docs/reference/API_REFERENCE.md) · 🇮🇹 [it](../../../it/docs/reference/API_REFERENCE.md) · 🇯🇵 [ja](../../../ja/docs/reference/API_REFERENCE.md) · 🇰🇷 [ko](../../../ko/docs/reference/API_REFERENCE.md) · 🇱🇹 [lt](../../../lt/docs/reference/API_REFERENCE.md) · 🇱🇻 [lv](../../../lv/docs/reference/API_REFERENCE.md) · 🇮🇳 [mr](../../../mr/docs/reference/API_REFERENCE.md) · 🇲🇾 [ms](../../../ms/docs/reference/API_REFERENCE.md) · 🇲🇹 [mt](../../../mt/docs/reference/API_REFERENCE.md) · 🇳🇱 [nl](../../../nl/docs/reference/API_REFERENCE.md) · 🇳🇴 [no](../../../no/docs/reference/API_REFERENCE.md) · 🇵🇭 [phi](../../../phi/docs/reference/API_REFERENCE.md) · 🇵🇱 [pl](../../../pl/docs/reference/API_REFERENCE.md) · 🇵🇹 [pt](../../../pt/docs/reference/API_REFERENCE.md) · 🇧🇷 [pt-BR](../../../pt-BR/docs/reference/API_REFERENCE.md) · 🇷🇴 [ro](../../../ro/docs/reference/API_REFERENCE.md) · 🇷🇺 [ru](../../../ru/docs/reference/API_REFERENCE.md) · 🇸🇰 [sk](../../../sk/docs/reference/API_REFERENCE.md) · 🇸🇮 [sl](../../../sl/docs/reference/API_REFERENCE.md) · 🇷🇸 [sr](../../../sr/docs/reference/API_REFERENCE.md) · 🇸🇪 [sv](../../../sv/docs/reference/API_REFERENCE.md) · 🇰🇪 [sw](../../../sw/docs/reference/API_REFERENCE.md) · 🇮🇳 [ta](../../../ta/docs/reference/API_REFERENCE.md) · 🇮🇳 [te](../../../te/docs/reference/API_REFERENCE.md) · 🇹🇭 [th](../../../th/docs/reference/API_REFERENCE.md) · 🇹🇷 [tr](../../../tr/docs/reference/API_REFERENCE.md) · 🇺🇦 [uk-UA](../../../uk-UA/docs/reference/API_REFERENCE.md) · 🇵🇰 [ur](../../../ur/docs/reference/API_REFERENCE.md) · 🇻🇳 [vi](../../../vi/docs/reference/API_REFERENCE.md) · 🇨🇳 [zh-CN](../../../zh-CN/docs/reference/API_REFERENCE.md) · 🇹🇼 [zh-TW](../../../zh-TW/docs/reference/API_REFERENCE.md)
 
-Βασική αναφορά για το OmniRoute API. Καλύπτει την δημόσια επιφάνεια `/v1` και τα πιο χρησιμοποιούμενα endpoints διαχείρισης· το αναγνώσιμο από μηχανές [`docs/openapi.yaml`](../openapi.yaml) και το δέντρο διαδρομών κάτω από `src/app/api/` αποτελούν τις εξαντλητικές πηγές.
+Βασική αναφορά για το AgentProxy API. Καλύπτει την δημόσια επιφάνεια `/v1` και τα πιο χρησιμοποιούμενα endpoints διαχείρισης· το αναγνώσιμο από μηχανές [`docs/openapi.yaml`](../openapi.yaml) και το δέντρο διαδρομών κάτω από `src/app/api/` αποτελούν τις εξαντλητικές πηγές.
 
 ---
 
@@ -72,32 +72,32 @@ Content-Type: application/json
 
 | Κεφαλίδα                 | Κατεύθυνση | Περιγραφή                                                                                                                                                                                                                                |
 | ------------------------ | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `X-OmniRoute-No-Cache`   | Αίτημα     | Ορίστε σε `true` για παράκαμψη της κρυφής μνήμης                                                                                                                                                                                         |
-| `x-omniroute-no-memory`  | Αίτημα     | Ορίστε σε `true` για παράλειψη της έγχυσης μνήμης + δεξιοτήτων για αυτό το αίτημα (αντικατοπτρίζει το no-cache· αποφεύγει το ανά-κλήση κόστος tokens)                                                                                    |
-| `X-OmniRoute-Progress`   | Αίτημα     | Ορίστε σε `true` για συμβάντα προόδου                                                                                                                                                                                                    |
+| `X-AgentProxy-No-Cache`   | Αίτημα     | Ορίστε σε `true` για παράκαμψη της κρυφής μνήμης                                                                                                                                                                                         |
+| `x-agentproxy-no-memory`  | Αίτημα     | Ορίστε σε `true` για παράλειψη της έγχυσης μνήμης + δεξιοτήτων για αυτό το αίτημα (αντικατοπτρίζει το no-cache· αποφεύγει το ανά-κλήση κόστος tokens)                                                                                    |
+| `X-AgentProxy-Progress`   | Αίτημα     | Ορίστε σε `true` για συμβάντα προόδου                                                                                                                                                                                                    |
 | `X-Session-Id`           | Αίτημα     | Κλειδί σταθερής συνεδρίας για εξωτερική συγγένεια συνεδρίας                                                                                                                                                                              |
 | `x_session_id`           | Αίτημα     | Η παραλλαγή με κάτω παύλα γίνεται επίσης αποδεκτή (άμεσο HTTP)                                                                                                                                                                           |
-| `X-OmniRoute-Session-Id` | Αίτημα     | Ετικέτα συνεδρίας/συνομιλίας που παρέχεται από τον καλούντα (τροφοδοτεί επίσης τη μνήμη). Όταν υπάρχει, αποθηκεύεται αυτούσια στο `call_logs.session_tag` για αποδοχή κόστους ανά συνεδρία (#8249) — δεν συντίθεται ποτέ όταν απουσιάζει |
+| `X-AgentProxy-Session-Id` | Αίτημα     | Ετικέτα συνεδρίας/συνομιλίας που παρέχεται από τον καλούντα (τροφοδοτεί επίσης τη μνήμη). Όταν υπάρχει, αποθηκεύεται αυτούσια στο `call_logs.session_tag` για αποδοχή κόστους ανά συνεδρία (#8249) — δεν συντίθεται ποτέ όταν απουσιάζει |
 | `Idempotency-Key`        | Αίτημα     | Κλειδί αποκλεισμού διπλοτύπων (παράθυρο 5s)                                                                                                                                                                                              |
 | `X-Request-Id`           | Αίτημα     | Εναλλακτικό κλειδί αποκλεισμού διπλοτύπων                                                                                                                                                                                                |
-| `X-OmniRoute-Cache`      | Απόκριση   | `HIT` ή `MISS` (μη ροϊκό)                                                                                                                                                                                                                |
-| `X-OmniRoute-Idempotent` | Απόκριση   | `true` εάν απαλείφθηκαν διπλότυπα                                                                                                                                                                                                        |
-| `X-OmniRoute-Progress`   | Απόκριση   | `enabled` εάν η παρακολούθηση προόδου είναι ενεργή                                                                                                                                                                                       |
-| `X-OmniRoute-Session-Id` | Απόκριση   | Πραγματικό αναγνωριστικό συνεδρίας που χρησιμοποιείται από το OmniRoute                                                                                                                                                                  |
-| `X-OmniRoute-Request-Id` | Απόκριση   | Αναγνωριστικό συσχέτισης αιτήματος (όταν είναι γνωστό)                                                                                                                                                                                   |
-| `X-OmniRoute-Version`    | Απόκριση   | Έκδοση κατασκευής OmniRoute (πάντα παρούσα)                                                                                                                                                                                              |
-| `X-OmniRoute-Cost-Saved` | Απόκριση   | Δολάρια USD που εξοικονομήθηκαν από την κρυφή μνήμη σε HIT (μόνο για επιτυχίες κρυφής μνήμης)                                                                                                                                            |
-| `X-OmniRoute-Decision`   | Απόκριση   | Ίχνος δρομολόγησης: `strategy=<name>; provider=<alias>; latency_ms=<n>` (`<name>` είναι η στρατηγική συνδυασμού, ή `single` για μη-συνδυαστικό αίτημα) — πάντα παρόν στις αποκρίσεις ολοκλήρωσης                                         |
+| `X-AgentProxy-Cache`      | Απόκριση   | `HIT` ή `MISS` (μη ροϊκό)                                                                                                                                                                                                                |
+| `X-AgentProxy-Idempotent` | Απόκριση   | `true` εάν απαλείφθηκαν διπλότυπα                                                                                                                                                                                                        |
+| `X-AgentProxy-Progress`   | Απόκριση   | `enabled` εάν η παρακολούθηση προόδου είναι ενεργή                                                                                                                                                                                       |
+| `X-AgentProxy-Session-Id` | Απόκριση   | Πραγματικό αναγνωριστικό συνεδρίας που χρησιμοποιείται από το AgentProxy                                                                                                                                                                  |
+| `X-AgentProxy-Request-Id` | Απόκριση   | Αναγνωριστικό συσχέτισης αιτήματος (όταν είναι γνωστό)                                                                                                                                                                                   |
+| `X-AgentProxy-Version`    | Απόκριση   | Έκδοση κατασκευής AgentProxy (πάντα παρούσα)                                                                                                                                                                                              |
+| `X-AgentProxy-Cost-Saved` | Απόκριση   | Δολάρια USD που εξοικονομήθηκαν από την κρυφή μνήμη σε HIT (μόνο για επιτυχίες κρυφής μνήμης)                                                                                                                                            |
+| `X-AgentProxy-Decision`   | Απόκριση   | Ίχνος δρομολόγησης: `strategy=<name>; provider=<alias>; latency_ms=<n>` (`<name>` είναι η στρατηγική συνδυασμού, ή `single` για μη-συνδυαστικό αίτημα) — πάντα παρόν στις αποκρίσεις ολοκλήρωσης                                         |
 
 > Σημείωση Nginx: εάν βασίζεστε σε κεφαλίδες με κάτω παύλα (για παράδειγμα `x_session_id`), ενεργοποιήστε το `underscores_in_headers on;`.
 
-> **Κεφαλίδες τηλεμετρίας κόστους:** οι μη ροϊκές αποκρίσεις επιτυχίας φέρουν επίσης το σύνολο κεφαλίδων τηλεμετρίας κόστους `X-OmniRoute-*` — `X-OmniRoute-Response-Cost` (USD, σταθερά 10 δεκαδικά· `0.0000000000` για δωρεάν/μη τιμολογημένα), `X-OmniRoute-Tokens-In` / `X-OmniRoute-Tokens-Out`, `X-OmniRoute-Model`, `X-OmniRoute-Provider`, `X-OmniRoute-Latency-Ms`, `X-OmniRoute-Cache-Hit`, και `X-OmniRoute-Fallback-Attempts` (μόνο όταν > 0), καθώς και `X-OmniRoute-Request-Id` και `X-OmniRoute-Version`. Αυτές εκπέμπονται από ολοκληρώσεις συνομιλιών, `/v1/responses`, `/v1/messages`, **και τα τελικά σημεία πολυμέσων** — `/v1/embeddings`, `/v1/images/generations`, `/v1/audio/speech`, `/v1/audio/transcriptions`, `/v1/rerank`, `/v1/videos/generations`, `/v1/music/generations`, και `/v1/moderations` (πάντα κόστος `0`). Το κόστος πολυμέσων υπολογίζεται ανά τρόπο (ανά εικόνα, ανά δευτερόλεπτο, ανά χαρακτήρα, ανά μονάδα αναζήτησης) όταν υπάρχουν διαθέσιμες τιμές, διαφορετικά `0` (ανοιχτή αποτυχία).
+> **Κεφαλίδες τηλεμετρίας κόστους:** οι μη ροϊκές αποκρίσεις επιτυχίας φέρουν επίσης το σύνολο κεφαλίδων τηλεμετρίας κόστους `X-AgentProxy-*` — `X-AgentProxy-Response-Cost` (USD, σταθερά 10 δεκαδικά· `0.0000000000` για δωρεάν/μη τιμολογημένα), `X-AgentProxy-Tokens-In` / `X-AgentProxy-Tokens-Out`, `X-AgentProxy-Model`, `X-AgentProxy-Provider`, `X-AgentProxy-Latency-Ms`, `X-AgentProxy-Cache-Hit`, και `X-AgentProxy-Fallback-Attempts` (μόνο όταν > 0), καθώς και `X-AgentProxy-Request-Id` και `X-AgentProxy-Version`. Αυτές εκπέμπονται από ολοκληρώσεις συνομιλιών, `/v1/responses`, `/v1/messages`, **και τα τελικά σημεία πολυμέσων** — `/v1/embeddings`, `/v1/images/generations`, `/v1/audio/speech`, `/v1/audio/transcriptions`, `/v1/rerank`, `/v1/videos/generations`, `/v1/music/generations`, και `/v1/moderations` (πάντα κόστος `0`). Το κόστος πολυμέσων υπολογίζεται ανά τρόπο (ανά εικόνα, ανά δευτερόλεπτο, ανά χαρακτήρα, ανά μονάδα αναζήτησης) όταν υπάρχουν διαθέσιμες τιμές, διαφορετικά `0` (ανοιχτή αποτυχία).
 
-> **Σημασιολογία κόστους επιτυχίας κρυφής μνήμης:** σε σημασιολογική HIT κρυφής μνήμης (`X-OmniRoute-Cache-Hit: true`) δεν πραγματοποιείται upstream κλήση, οπότε το `X-OmniRoute-Response-Cost` είναι `0.0000000000` (το **επιπλέον** κόστος εξυπηρέτησης της επιτυχίας). Το αρχικό/υποθετικό κόστος αναφέρεται ξεχωριστά στο `X-OmniRoute-Cost-Saved`. Οι καταναλωτές χρέωσης θα πρέπει να αθροίζουν το `X-OmniRoute-Response-Cost` (οι επιτυχίες δεν έχουν κόστος)· η ανάλυση κρυφής μνήμης μπορεί να συγκεντρώνει το `X-OmniRoute-Cost-Saved`.
+> **Σημασιολογία κόστους επιτυχίας κρυφής μνήμης:** σε σημασιολογική HIT κρυφής μνήμης (`X-AgentProxy-Cache-Hit: true`) δεν πραγματοποιείται upstream κλήση, οπότε το `X-AgentProxy-Response-Cost` είναι `0.0000000000` (το **επιπλέον** κόστος εξυπηρέτησης της επιτυχίας). Το αρχικό/υποθετικό κόστος αναφέρεται ξεχωριστά στο `X-AgentProxy-Cost-Saved`. Οι καταναλωτές χρέωσης θα πρέπει να αθροίζουν το `X-AgentProxy-Response-Cost` (οι επιτυχίες δεν έχουν κόστος)· η ανάλυση κρυφής μνήμης μπορεί να συγκεντρώνει το `X-AgentProxy-Cost-Saved`.
 
 ## Αποκλειστικές Μισθώσεις Διαχειριζόμενης Συνεδρίας
 
-Η αποκλειστική μίσθωση διαχειριζόμενης συνεδρίας είναι ένα προαιρετικό, ουδέτερο ως προς τον πελάτη συμβόλαιο δρομολόγησης: ένας ενεργός κάτοχος διατηρεί μία επιλέξιμη σύνδεση OmniRoute. Δεν μισθώνει μοντέλο, δεν απαιτεί OAuth, δεν αναγνωρίζει συγκεκριμένο πελάτη και δεν απαιτεί συγκεκριμένο πάροχο.
+Η αποκλειστική μίσθωση διαχειριζόμενης συνεδρίας είναι ένα προαιρετικό, ουδέτερο ως προς τον πελάτη συμβόλαιο δρομολόγησης: ένας ενεργός κάτοχος διατηρεί μία επιλέξιμη σύνδεση AgentProxy. Δεν μισθώνει μοντέλο, δεν απαιτεί OAuth, δεν αναγνωρίζει συγκεκριμένο πελάτη και δεν απαιτεί συγκεκριμένο πάροχο.
 
 Το κλειδί API που χρησιμοποιείται για την πιστοποίηση πρέπει να έχει εμβέλεια `lease:exclusive` και μια ρητή μη κενή λίστα `allowedConnections`. Το όριο μετάλλαξης της βάσης δεδομένων επιβάλλει και τα δύο πεδία μαζί κατά τη δημιουργία κλειδιού και τις μερικές ενημερώσεις.
 
@@ -105,7 +105,7 @@ Content-Type: application/json
 POST /api/v1/session-leases
 Authorization: Bearer <managed-api-key>
 Content-Type: application/json
-X-OmniRoute-Lease-Owner: vlo_<43-base64url-characters>
+X-AgentProxy-Lease-Owner: vlo_<43-base64url-characters>
 
 {"action":"acquire","model":"glm/glm-4.6"}
 ```
@@ -140,7 +140,7 @@ X-OmniRoute-Lease-Owner: vlo_<43-base64url-characters>
 }
 ```
 
-Αυτή η προαιρετική ενέργεια κατάστασης φράσσεται από τον αδιαφανή κάτοχο, το πιστοποιημένο διαχειριζόμενο κλειδί API και την ακριβή ενεργή generation σε μία συναλλαγή βάσης δεδομένων. Το `displayName` είναι μόνο το διαμορφωμένο όνομα σύνδεσης μετά από περικοπή κενών· είναι `null` όταν δεν υπάρχει ασφαλές διαμορφωμένο όνομα. Το OmniRoute δεν υποκαθιστά ποτέ μια διεύθυνση email ή μια δημιουργημένη ταυτότητα λογαριασμού. Η τιμή του παρόχου είναι μια μη ευαίσθητη ετικέτα εμφάνισης και ποτέ ένα δημιουργημένο αναγνωριστικό συμβατού παρόχου. Διαπιστευτήρια, tokens, cookies, ακατέργαστα αναγνωριστικά σύνδεσης ή κλειδιού API, κατακερματισμοί κατόχου, μυστικά φράγματος και εσωτερικά δεδομένα δρομολόγησης εξαιρούνται.
+Αυτή η προαιρετική ενέργεια κατάστασης φράσσεται από τον αδιαφανή κάτοχο, το πιστοποιημένο διαχειριζόμενο κλειδί API και την ακριβή ενεργή generation σε μία συναλλαγή βάσης δεδομένων. Το `displayName` είναι μόνο το διαμορφωμένο όνομα σύνδεσης μετά από περικοπή κενών· είναι `null` όταν δεν υπάρχει ασφαλές διαμορφωμένο όνομα. Το AgentProxy δεν υποκαθιστά ποτέ μια διεύθυνση email ή μια δημιουργημένη ταυτότητα λογαριασμού. Η τιμή του παρόχου είναι μια μη ευαίσθητη ετικέτα εμφάνισης και ποτέ ένα δημιουργημένο αναγνωριστικό συμβατού παρόχου. Διαπιστευτήρια, tokens, cookies, ακατέργαστα αναγνωριστικά σύνδεσης ή κλειδιού API, κατακερματισμοί κατόχου, μυστικά φράγματος και εσωτερικά δεδομένα δρομολόγησης εξαιρούνται.
 
 Οι αναζητήσεις με λάθος κλειδί, λάθος κάτοχο, παρωχημένη generation, ανύπαρκτη, ληγμένη, αποδεσμευμένη ή ακυρωμένη μίσθωση επιστρέφουν όλες το ίδιο σφάλμα `409 LEASE_FENCE_STALE` χωρίς μεταδεδομένα σύνδεσης. Ένας πελάτης που έλαβε την απόκριση αναμονής χωρητικότητας δεν έχει ενεργή δέσμευση για επιθεώρηση. Όταν η δρομολόγηση μεταβαίνει μια ενεργή μίσθωση, η ίδια generation παραμένει έγκυρη και η κατάσταση επιστρέφει ατομικά τη νέα δέσμευση, ποτέ την παλιά. Οι υπάρχοντες πελάτες παραμένουν αμετάβλητοι, καθώς οι αποκρίσεις απόκτησης, ανανέωσης, αποδέσμευσης και αναμονής διατηρούν τα προηγούμενα σχήματά τους.
 
@@ -149,8 +149,8 @@ X-OmniRoute-Lease-Owner: vlo_<43-base64url-characters>
 Κάθε διαχειριζόμενο αίτημα συμπερασμού παρέχει έπειτα και τις δύο κεφαλίδες ελέγχου:
 
 ```http
-X-OmniRoute-Lease-Owner: vlo_<43-base64url-characters>
-X-OmniRoute-Lease-Generation: 1
+X-AgentProxy-Lease-Owner: vlo_<43-base64url-characters>
+X-AgentProxy-Lease-Generation: 1
 ```
 
 Ο ακριβής κάτοχος, η generation, η ενεργή σύνδεση και το πιστοποιημένο κλειδί API φράσσονται αμέσως πριν από κάθε υποστηριζόμενη απόπειρα upstream. Η αναπαραγωγή κατόχου και generation με άλλο κλειδί αποτυγχάνει ακόμη και όταν αυτό το κλειδί επιτρέπει την ίδια σύνδεση. Οι ακατέργαστοι κάτοχοι δεν διατηρούνται, δεν καταγράφονται, δεν αποθηκεύονται στο στιγμιότυπο αιτήματος και δεν προωθούνται upstream.
@@ -166,9 +166,9 @@ X-OmniRoute-Lease-Generation: 1
 }
 ```
 
-Αυτή η απόκριση σημαίνει μόνο ότι το κανονικό επιλέξιμο σύνολο ήταν μη κενό και κάθε ελεύθερος υποψήφιος κατεχόταν από μια ξένη ενεργή μίσθωση. Μη υποστηριζόμενα μοντέλα/πάροχοι, αναντιστοιχία πολιτικής, περίοδος ψύξης, ποσόστωση, υγεία και άλλες συνήθεις αποτυχίες επιλεξιμότητας διατηρούν τις υπάρχουσες αποκρίσεις OmniRoute.
+Αυτή η απόκριση σημαίνει μόνο ότι το κανονικό επιλέξιμο σύνολο ήταν μη κενό και κάθε ελεύθερος υποψήφιος κατεχόταν από μια ξένη ενεργή μίσθωση. Μη υποστηριζόμενα μοντέλα/πάροχοι, αναντιστοιχία πολιτικής, περίοδος ψύξης, ποσόστωση, υγεία και άλλες συνήθεις αποτυχίες επιλεξιμότητας διατηρούν τις υπάρχουσες αποκρίσεις AgentProxy.
 
-### `x-omniroute-compression`
+### `x-agentproxy-compression`
 
 Παράκαμψη ανά αίτημα του πλάνου συμπίεσης. Υψηλότερη προτεραιότητα — υπερισχύει της παράκαμψης combo δρομολόγησης, του ενεργού προφίλ, της αυτόματης ενεργοποίησης και της Προεπιλογής πίνακα. Τιμές:
 
@@ -189,7 +189,7 @@ X-OmniRoute-Lease-Generation: 1
 Το εφαρμοσμένο πλάνο αντηχείται πίσω στην κεφαλίδα απόκρισης:
 
 ```
-X-OmniRoute-Compression: <mode>; source=<source>
+X-AgentProxy-Compression: <mode>; source=<source>
 ```
 
 όπου `<source>` είναι ένα από τα εξής: `request-header`, `routing-override`, `active-profile`, `auto-trigger`, `default` ή `off`.
@@ -232,7 +232,7 @@ Content-Type: application/json
 }
 ```
 
-Οι εγγενείς τιμές `{ image | audio | video | pdf }` μπορεί να είναι δημόσιο URL HTTPS, URI `data:` ή ακατέργαστο base64. Το OmniRoute δεν μετατρέπει αυτά τα αντικείμενα σε συμβολοσειρές ούτε ανακτά εγγενή URL εικόνων — η Jina ανακτά τα δημόσια πολυμέσα μόνη της. Επιπλέον πεδία Jina (`task`, `normalized`, `truncate`, `embedding_type`) προωθούνται. Τα SKU Jina αποκλειστικά κειμένου εξακολουθούν να απορρίπτουν έγγραφα που δεν είναι κείμενο.
+Οι εγγενείς τιμές `{ image | audio | video | pdf }` μπορεί να είναι δημόσιο URL HTTPS, URI `data:` ή ακατέργαστο base64. Το AgentProxy δεν μετατρέπει αυτά τα αντικείμενα σε συμβολοσειρές ούτε ανακτά εγγενή URL εικόνων — η Jina ανακτά τα δημόσια πολυμέσα μόνη της. Επιπλέον πεδία Jina (`task`, `normalized`, `truncate`, `embedding_type`) προωθούνται. Τα SKU Jina αποκλειστικά κειμένου εξακολουθούν να απορρίπτουν έγγραφα που δεν είναι κείμενο.
 
 Ασφάλεια και όρια μεταφοράς:
 
@@ -332,7 +332,7 @@ Content-Type: application/json
 
 ### Επίλυση auth και endpoint του Vertex AI DeepSeek OCR
 
-Το `vertex-deepseek-ocr` επαναχρησιμοποιεί την ίδια αυθεντικοποίηση Vertex AI που υποστηρίζει ήδη το OmniRoute για κίνηση chat/εικόνας (`open-sse/executors/vertex.ts`): το κλειδί API της σύνδεσης είναι είτε διαπιστευτήριο JSON Λογαριασμού Υπηρεσίας (που ανταλλάσσεται για ένα βραχύβιο OAuth access token μέσω της ροής JWT-bearer) είτε ένα ήδη εκδοθέν OAuth access token που χρησιμοποιείται ως έχει. Η URL του upstream endpoint είναι το γενικό endpoint συνεργάτη `openapi/chat/completions` του Vertex, που δημιουργείται από το project και την περιοχή της σύνδεσης — ένα ρητό `providerSpecificData.project`/`providerSpecificData.region` υπερισχύει πάντα· διαφορετικά, το project προέρχεται από το `project_id` του JSON Λογαριασμού Υπηρεσίας και η περιοχή προεπιλέγεται σε `us-central1`. Και οι δύο επιλύσεις πραγματοποιούνται στο `open-sse/handlers/ocr.ts` (`resolveVertexOcrAccessToken`, `resolveVertexOcrBaseUrl`), και καταναλώνονται από το `src/app/api/v1/ocr/route.ts` πριν από την αποστολή στο `handleOcr`.
+Το `vertex-deepseek-ocr` επαναχρησιμοποιεί την ίδια αυθεντικοποίηση Vertex AI που υποστηρίζει ήδη το AgentProxy για κίνηση chat/εικόνας (`open-sse/executors/vertex.ts`): το κλειδί API της σύνδεσης είναι είτε διαπιστευτήριο JSON Λογαριασμού Υπηρεσίας (που ανταλλάσσεται για ένα βραχύβιο OAuth access token μέσω της ροής JWT-bearer) είτε ένα ήδη εκδοθέν OAuth access token που χρησιμοποιείται ως έχει. Η URL του upstream endpoint είναι το γενικό endpoint συνεργάτη `openapi/chat/completions` του Vertex, που δημιουργείται από το project και την περιοχή της σύνδεσης — ένα ρητό `providerSpecificData.project`/`providerSpecificData.region` υπερισχύει πάντα· διαφορετικά, το project προέρχεται από το `project_id` του JSON Λογαριασμού Υπηρεσίας και η περιοχή προεπιλέγεται σε `us-central1`. Και οι δύο επιλύσεις πραγματοποιούνται στο `open-sse/handlers/ocr.ts` (`resolveVertexOcrAccessToken`, `resolveVertexOcrBaseUrl`), και καταναλώνονται από το `src/app/api/v1/ocr/route.ts` πριν από την αποστολή στο `handleOcr`.
 
 ---
 
@@ -371,10 +371,10 @@ GET /v1/models?prefix=canonical    # μόνο το πλήρες πρόθημα p
 
 ### Παραλλαγές μοντέλων χωρίς thinking
 
-Για μοντέλα Claude με δυνατότητα thinking, το `/v1/models` διαφημίζει επίσης μια παραλλαγή **χωρίς thinking** της οποίας το αναγνωριστικό φέρει πρόθημα `claude-3-omniroute-no-thinking/`:
+Για μοντέλα Claude με δυνατότητα thinking, το `/v1/models` διαφημίζει επίσης μια παραλλαγή **χωρίς thinking** της οποίας το αναγνωριστικό φέρει πρόθημα `claude-3-agentproxy-no-thinking/`:
 
 ```
-claude-3-omniroute-no-thinking/<provider>/<model>
+claude-3-agentproxy-no-thinking/<provider>/<model>
 ```
 
 Η επιλογή αυτού του αναγνωριστικού (π.χ. σε ρύθμιση Claude Code που επισυνάπτει πάντα ένα μπλοκ `thinking`) επιστρέφει στο πραγματικό `<provider>/<model>` με κατεσταλμένο το συλλογισμό — `thinking:{type:"disabled"}` στο μονοπάτι `/v1/messages`, ή με τα πεδία `reasoning`/`reasoning_effort` αφαιρεμένα στο μονοπάτι `/v1/chat/completions`. Η παραλλαγή εμφανίζεται μόνο για μοντέλα της οικογένειας Claude που υποστηρίζουν thinking **και** τιμούν το `disabled` (έτσι π.χ. τα μοντέλα που λειτουργούν μόνο σε προσαρμοστική λειτουργία και απορρίπτουν το `disabled` εξαιρούνται). Οι διαχειριστές μπορούν να επιβάλουν την ενεργοποίηση ή απενεργοποίηση της παραλλαγής ανά μοντέλο μέσω του `ModelSpec.noThinkingAlias`.
@@ -428,7 +428,7 @@ GET /api/v1/provider-plugin-manifest
 
 Όλες οι διαδρομές POST ακολουθούν το ίδιο σχήμα: `Bearer your-api-key` + σώμα JSON επικυρωμένο από Zod (`v1RerankSchema`, `v1ModerationSchema`, `v1AudioSpeechSchema`, κ.λπ., βλ. `src/shared/validation/schemas.ts`). Επιστρέφεται 4xx σε αποτυχία σχήματος.
 
-Για clients που δεν μπορούν να επισυνάψουν `Authorization: Bearer ...`, το OmniRoute δέχεται επίσης κλειδιά API στο URL είτε μέσω συμβατότητας query-string (`?token=...`, `?apiKey=...`, `?api_key=...`, `?key=...`) είτε μέσω των αφιερωμένων endpoints `/api/v1/vscode/{token}/...` που τεκμηριώνονται παρακάτω.
+Για clients που δεν μπορούν να επισυνάψουν `Authorization: Bearer ...`, το AgentProxy δέχεται επίσης κλειδιά API στο URL είτε μέσω συμβατότητας query-string (`?token=...`, `?apiKey=...`, `?api_key=...`, `?key=...`) είτε μέσω των αφιερωμένων endpoints `/api/v1/vscode/{token}/...` που τεκμηριώνονται παρακάτω.
 
 ```bash
 # Rerank
@@ -554,8 +554,8 @@ GET /v1/ws?handshake=1
 
 ```bash
 # Ίδιος host:port με το HTTP API (προεπιλογή 20128)· αναβάθμιση της σύνδεσης:
-wscat -c "ws://localhost:20128/v1/responses?api_key=<OMNIROUTE_API_KEY>"
-# (ή: -H "Authorization: Bearer <OMNIROUTE_API_KEY>")
+wscat -c "ws://localhost:20128/v1/responses?api_key=<AGENTPROXY_API_KEY>"
+# (ή: -H "Authorization: Bearer <AGENTPROXY_API_KEY>")
 
 # Το πρώτο frame ΠΡΕΠΕΙ να είναι response.create:
 { "type": "response.create", "model": "gpt-5.5", "input": [ { "role": "user", "content": "hi" } ] }
@@ -578,35 +578,35 @@ ChatGPT). Ακούει στην ίδια θύρα με το API/dashboard στι
 Το **Codex CLI** της OpenAI επικυρώνει το όνομα μοντέλου από την πλευρά του πελάτη όταν
 `supports_websockets = true` και **απορρίπτει αναγνωριστικά με πρόθεμα παρόχου** όπως
 `codex/gpt-5.5` (`The 'codex/gpt-5.5' model is not supported when using Codex with
-a ChatGPT account`). Στείλτε το **ανεπεξέργαστο** αναγνωριστικό (π.χ. `gpt-5.5`). Η γέφυρα του OmniRoute είναι
+a ChatGPT account`). Στείλτε το **ανεπεξέργαστο** αναγνωριστικό (π.χ. `gpt-5.5`). Η γέφυρα του AgentProxy είναι
 αποκλειστικά codex, οπότε επαναλύει ένα ανεπεξέργαστο αναγνωριστικό ως μοντέλο codex
 (`resolveCodexWsModelInfo`) πριν τη δρομολόγηση upstream — ακόμα και αν ένα ανεπεξέργαστο
 `gpt-5.5` θα δρομολογούταν διαφορετικά σε άλλον πάροχο μέσω HTTP.
 
 #### Ρύθμιση του OpenAI Codex CLI
 
-Κατευθύνετε το Codex CLI στο OmniRoute προσθέτοντας έναν προσαρμοσμένο πάροχο με υποστήριξη WebSocket
+Κατευθύνετε το Codex CLI στο AgentProxy προσθέτοντας έναν προσαρμοσμένο πάροχο με υποστήριξη WebSocket
 στο `~/.codex/config.toml` (χρησιμοποιήστε ξεχωριστό `CODEX_HOME` για να αποφύγετε την τροποποίηση
 υπάρχουσας ρύθμισης):
 
 ```toml
 model = "gpt-5.5"                 # ανεπεξέργαστο αναγνωριστικό — ΟΧΙ "codex/gpt-5.5"
-model_provider = "omniroute"
+model_provider = "agentproxy"
 
-[model_providers.omniroute]
-name = "OmniRoute (WS)"
+[model_providers.agentproxy]
+name = "AgentProxy (WS)"
 base_url = "http://localhost:20128/v1"   # χωρίς τελεία κάθετο· το URL του WS προκύπτει αυτόματα (χρησιμοποιήστε https/wss στην παραγωγή)
 wire_api = "responses"                    # η μόνη υποστηριζόμενη τιμή από τον Φεβρουάριο 2026
 supports_websockets = true                # ενεργοποιεί τη μεταφορά Responses-over-WS
-env_key = "OMNIROUTE_API_KEY"             # περιέχει το API key του OmniRoute (Bearer)
+env_key = "AGENTPROXY_API_KEY"             # περιέχει το API key του AgentProxy (Bearer)
 ```
 
 ```bash
-export OMNIROUTE_API_KEY=sk-...           # ένα API key του OmniRoute (οποιοδήποτε key αν REQUIRE_API_KEY=false)
+export AGENTPROXY_API_KEY=sk-...           # ένα API key του AgentProxy (οποιοδήποτε key αν REQUIRE_API_KEY=false)
 codex exec "Responda apenas: PONG"
 ```
 
-Το CLI αναβαθμίζει το `base_url + /responses` σε WebSocket και το OmniRoute το δρομολογεί
+Το CLI αναβαθμίζει το `base_url + /responses` σε WebSocket και το AgentProxy το δρομολογεί
 στην επιλεγμένη σύνδεση codex OAuth. Επικυρώθηκε από άκρο σε άκρο έναντι του τοπικού
 server: το ChatGPT επιστρέφει `codex.rate_limits` + `response.created` και μεταδίδει
 ροή την ολοκλήρωση.
@@ -706,10 +706,10 @@ DELETE /api/cache/stats
 
 ### Επίπτωση στην καθυστέρηση
 
-Μια ΕΠΙΤΥΧΊΑ σημασιολογικής κρυφής μνήμης εξυπηρετεί την απόκριση από την κρυφή μνήμη **χωρίς κλήση upstream**, οπότε η αναφερόμενη `X-OmniRoute-Response-Latency` είναι σχεδόν μηδενική
+Μια ΕΠΙΤΥΧΊΑ σημασιολογικής κρυφής μνήμης εξυπηρετεί την απόκριση από την κρυφή μνήμη **χωρίς κλήση upstream**, οπότε η αναφερόμενη `X-AgentProxy-Response-Latency` είναι σχεδόν μηδενική
 (ανεξαρτήτως της αρχικής καθυστέρησης upstream). Οι clients που είναι ευαίσθητοι στην καθυστέρηση
 (benchmarking, παρακολούθηση p50/p99) θα πρέπει να ελέγχουν την
-κεφαλίδα απόκρισης `X-OmniRoute-Cache-Latency`:
+κεφαλίδα απόκρισης `X-AgentProxy-Cache-Latency`:
 
 | Τιμή        | Σημασία                                                                                       |
 | ----------- | --------------------------------------------------------------------------------------------- |
@@ -736,7 +736,7 @@ DELETE /api/cache/stats
 Οποιοδήποτε αίτημα μπορεί να παρακάμψει την κρυφή μνήμη ανεξαρτήτως ρυθμίσεων κλειδιού:
 
 ```
-X-OmniRoute-No-Cache: true
+X-AgentProxy-No-Cache: true
 ```
 
 ---
@@ -958,7 +958,7 @@ Content-Type: application/json
 {
   "success": true,
   "repaired": ["CLAUDE_CODE_OAUTH_CLIENT_ID", "CLAUDE_CODE_OAUTH_CLIENT_SECRET"],
-  "backupPath": "/home/user/.omniroute/backups/env-repair-2026-04-11.bak"
+  "backupPath": "/home/user/.agentproxy/backups/env-repair-2026-04-11.bak"
 }
 ```
 
@@ -1045,7 +1045,7 @@ curl -X POST https://your-host.example/api/v1/vscode/YOUR_API_KEY/chat/completio
 
 - Τα tokenized ψευδώνυμα επαναχρησιμοποιούν τους ίδιους χειριστές με τα `/v1/*` και `/api/tags`· τα σχήματα απόκρισης παραμένουν πανομοιότυπα.
 - Προτιμήστε το `Authorization: Bearer ...` όποτε ο πελάτης υποστηρίζει προσαρμοσμένες επικεφαλίδες.
-- Τα διακριτικά βάσει URL ενδέχεται να εμφανίζονται σε αρχεία καταγραφής reverse-proxy, ιστορικό προγράμματος περιήγησης και τηλεμετρία εκτός του OmniRoute. Αντιμετωπίστε τα ως επιλογή συμβατότητας και όχι ως προεπιλεγμένη λειτουργία ελέγχου ταυτότητας.
+- Τα διακριτικά βάσει URL ενδέχεται να εμφανίζονται σε αρχεία καταγραφής reverse-proxy, ιστορικό προγράμματος περιήγησης και τηλεμετρία εκτός του AgentProxy. Αντιμετωπίστε τα ως επιλογή συμβατότητας και όχι ως προεπιλεγμένη λειτουργία ελέγχου ταυτότητας.
 
 ---
 
@@ -1153,7 +1153,7 @@ DELETE /api/usage/token-limits?id=tl-abc
 
 ## Webhooks
 
-Εξερχόμενες συνδρομές webhook για συμβάντα OmniRoute (ολοκλήρωση αιτήματος, εξάντληση ορίου, εναλλαγή κλειδιών, κ.λπ.).
+Εξερχόμενες συνδρομές webhook για συμβάντα AgentProxy (ολοκλήρωση αιτήματος, εξάντληση ορίου, εναλλαγή κλειδιών, κ.λπ.).
 
 | Μέθοδος | Διαδρομή                  | Περιγραφή                                                                                     |
 | ------- | ------------------------- | --------------------------------------------------------------------------------------------- |
@@ -1186,7 +1186,7 @@ DELETE /api/usage/token-limits?id=tl-abc
 
 ## Πρωτόκολλο Agents
 
-Εργασίες cloud agent (Claude Code, Codex Cloud, OpenHands, κ.λπ.) που εκτελούνται απομακρυσμένα εκ μέρους των χρηστών του OmniRoute.
+Εργασίες cloud agent (Claude Code, Codex Cloud, OpenHands, κ.λπ.) που εκτελούνται απομακρυσμένα εκ μέρους των χρηστών του AgentProxy.
 
 | Μέθοδος | Διαδρομή                      | Περιγραφή                                                                                                                                                          |
 | ------- | ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -1232,7 +1232,7 @@ curl -X POST http://localhost:20128/api/v1/agents/tasks \
 
 ## Ανθεκτικότητα (εκτεταμένη)
 
-Το OmniRoute εκθέτει τρεις ανεξάρτητους μηχανισμούς προσωρινής αποτυχίας· τα παρακάτω endpoints διαχείρισης επιτρέπουν στους διαχειριστές να τους διαβάζουν και να τους παρακάμπτουν:
+Το AgentProxy εκθέτει τρεις ανεξάρτητους μηχανισμούς προσωρινής αποτυχίας· τα παρακάτω endpoints διαχείρισης επιτρέπουν στους διαχειριστές να τους διαβάζουν και να τους παρακάμπτουν:
 
 | Εύρος             | Αποθήκευση κατάστασης                     | Ανάγνωση                                  | Επαναφορά / εκκαθάριση                                   |
 | ----------------- | ----------------------------------------- | ----------------------------------------- | -------------------------------------------------------- |
@@ -1261,7 +1261,7 @@ curl -X DELETE http://localhost:20128/api/resilience/model-cooldowns \
 
 ## Skills
 
-Πλαίσιο Skills για την επέκταση του OmniRoute με προσαρμοσμένους εκτελέσιμους χειριστές, καθώς και ενσωματώσεις marketplace.
+Πλαίσιο Skills για την επέκταση του AgentProxy με προσαρμοσμένους εκτελέσιμους χειριστές, καθώς και ενσωματώσεις marketplace.
 
 | Μέθοδος | Διαδρομή                          | Περιγραφή                                                                                                                                           |
 | ------- | --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -1298,7 +1298,7 @@ curl -X DELETE http://localhost:20128/api/resilience/model-cooldowns \
 
 ## MCP Server
 
-Το OmniRoute διαθέτει ενσωματωμένο διακομιστή Model Context Protocol με 3 μεταφορές (stdio, SSE, streamable-http) και εργαλεία περιορισμένης εμβέλειας. Τα παρακάτω endpoints του πίνακα ελέγχου διαβάζουν δεδομένα κατάστασης/ελέγχου και δρομολογούν διαμέσου των μεταφορών HTTP.
+Το AgentProxy διαθέτει ενσωματωμένο διακομιστή Model Context Protocol με 3 μεταφορές (stdio, SSE, streamable-http) και εργαλεία περιορισμένης εμβέλειας. Τα παρακάτω endpoints του πίνακα ελέγχου διαβάζουν δεδομένα κατάστασης/ελέγχου και δρομολογούν διαμέσου των μεταφορών HTTP.
 
 | Μέθοδος | Διαδρομή | Περιγραφή |
 | ------- | ---------------------- | ------------------------------------------------------------------------------------------------ | -------------------- |
@@ -1320,13 +1320,13 @@ curl -X DELETE http://localhost:20128/api/resilience/model-cooldowns \
 
 ## A2A Server
 
-Το OmniRoute παρέχει ένα A2A (Agent-to-Agent) JSON-RPC 2.0 endpoint καθώς και ένα REST wrapper για επιθεώρηση/χρήση από το dashboard.
+Το AgentProxy παρέχει ένα A2A (Agent-to-Agent) JSON-RPC 2.0 endpoint καθώς και ένα REST wrapper για επιθεώρηση/χρήση από το dashboard.
 
 ### JSON-RPC
 
 ```bash
 POST /a2a
-Authorization: Bearer your-api-key   # προαιρετικό εκτός αν το OMNIROUTE_API_KEY είναι ορισμένο
+Authorization: Bearer your-api-key   # προαιρετικό εκτός αν το AGENTPROXY_API_KEY είναι ορισμένο
 Content-Type: application/json
 
 {
@@ -1369,7 +1369,7 @@ GET /.well-known/agent.json
 | GET     | `/api/a2a/tasks/[id]`        | Ανάκτηση μίας εργασίας                                                                                              |
 | POST    | `/api/a2a/tasks/[id]/cancel` | Ακύρωση εργασίας                                                                                                    |
 
-**Αυθεντικοποίηση:** τα REST βοηθητικά endpoints λειτουργούν χωρίς αυθεντικοποίηση διαχείρισης (ανάγνωση από dashboard)· η διαδρομή JSON-RPC `/a2a` χρησιμοποιεί Bearer `OMNIROUTE_API_KEY` εφόσον έχει ρυθμιστεί.
+**Αυθεντικοποίηση:** τα REST βοηθητικά endpoints λειτουργούν χωρίς αυθεντικοποίηση διαχείρισης (ανάγνωση από dashboard)· η διαδρομή JSON-RPC `/a2a` χρησιμοποιεί Bearer `AGENTPROXY_API_KEY` εφόσον έχει ρυθμιστεί.
 
 ---
 
@@ -1546,7 +1546,7 @@ Endpoints αναλυτικών σε πραγματικό χρόνο για τη�
 
 ## Διαχείριση Εργαλείων CLI
 
-Διαχείριση εργαλείων CLI που ενσωματώνονται με το OmniRoute (antigravity, chipotle, commandCode,
+Διαχείριση εργαλείων CLI που ενσωματώνονται με το AgentProxy (antigravity, chipotle, commandCode,
 devin-cli, κ.λπ.). Δείτε την [Αναφορά Παρόχου](./PROVIDER_REFERENCE.md) για την πλήρη λίστα.
 
 | Μέθοδος | Διαδρομή                                | Περιγραφή                                                                                                                                                                         |
@@ -1657,7 +1657,7 @@ devin-cli, κ.λπ.). Δείτε την [Αναφορά Παρόχου](./PROVID
 
 ## Πρόσθετα
 
-Διαχείριση πρόσθετων OmniRoute (επεκτάσεις τρίτων).
+Διαχείριση πρόσθετων AgentProxy (επεκτάσεις τρίτων).
 
 | Μέθοδος | Διαδρομή                           | Περιγραφή                           |
 | ------- | ---------------------------------- | ----------------------------------- |
@@ -1683,7 +1683,7 @@ devin-cli, κ.λπ.). Δείτε την [Αναφορά Παρόχου](./PROVID
 
 ## Προστατευτικές Ράβδοι
 
-Επιθεώρηση των προστατευτικών ράβδων χρόνου εκτέλεσης (ανίχνευση PII, ανίχνευση έγχυσης prompt, γεφύρωση όρασης). Οι προστατευτικές ράβδοι εκτελούνται σε κάθε αίτημα· η εξαίρεση ανά κλήση γίνεται μέσω της κεφαλίδας αιτήματος `x-omniroute-disabled-guardrails` — δεν υπάρχει μόνιμη επιφάνεια ενεργοποίησης/απενεργοποίησης.
+Επιθεώρηση των προστατευτικών ράβδων χρόνου εκτέλεσης (ανίχνευση PII, ανίχνευση έγχυσης prompt, γεφύρωση όρασης). Οι προστατευτικές ράβδοι εκτελούνται σε κάθε αίτημα· η εξαίρεση ανά κλήση γίνεται μέσω της κεφαλίδας αιτήματος `x-agentproxy-disabled-guardrails` — δεν υπάρχει μόνιμη επιφάνεια ενεργοποίησης/απενεργοποίησης.
 
 | Μέθοδος | Διαδρομή               | Περιγραφή                                                                                              |
 | ------- | ---------------------- | ------------------------------------------------------------------------------------------------------ |

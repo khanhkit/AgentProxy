@@ -90,7 +90,7 @@ test("TC-MCP-SKILL-SEC-001 list foreign/omitted subject is rebound to authentica
     return [fakeSkill(String(apiKeyId ?? "unscoped"))];
   };
 
-  const run = handler("omniroute_skills_list");
+  const run = handler("agentproxy_skills_list");
   await run({ apiKeyId: foreign }, auth(caller, ["read:skills"]));
   await run({}, auth(caller, ["read:skills"]));
   await run({ apiKeyId: caller }, auth(caller, ["read:skills"]));
@@ -113,7 +113,7 @@ test("TC-MCP-SKILL-SEC-002 enable mutation owner is authenticated tenant", async
     return fakeSkill(apiKeyId);
   };
 
-  const run = handler("omniroute_skills_enable");
+  const run = handler("agentproxy_skills_enable");
   await run(
     { apiKeyId: foreign, skillId: "skill-b-1", enabled: false },
     auth(caller, ["write:skills"])
@@ -141,7 +141,7 @@ test("TC-MCP-SKILL-SEC-003 execution context principal is authenticated tenant",
     return fakeExecution(context.apiKeyId);
   };
 
-  const run = handler("omniroute_skills_execute");
+  const run = handler("agentproxy_skills_execute");
   await run(
     { apiKeyId: foreign, skillName: "tenant-skill", input: { value: "probe" } },
     auth(caller, ["execute:skills"])
@@ -164,7 +164,7 @@ test("TC-MCP-SKILL-SEC-004 execution history foreign/omitted subject is rebound 
     return [fakeExecution(String(apiKeyId ?? "unscoped"))];
   };
 
-  const run = handler("omniroute_skills_executions");
+  const run = handler("agentproxy_skills_executions");
   await run({ apiKeyId: foreign, limit: 10 }, auth(caller, ["read:skills"]));
   await run({ limit: 10 }, auth(caller, ["read:skills"]));
   await run({ apiKeyId: caller, limit: 10 }, auth(caller, ["read:skills"]));

@@ -6,22 +6,22 @@
 
 ---
 
-title: "Zana za CLI — OmniRoute"
+title: "Zana za CLI — AgentProxy"
 version: 3.8.50
 lastUpdated: 2026-08-18
 ---
 
-# Zana za CLI — OmniRoute
+# Zana za CLI — AgentProxy
 
 Imesasishwa mwisho: 2026-08-18
 
-OmniRoute inajumuisha aina tatu za zana za CLI zilizotawanyika kwenye kurasa tatu za dashibodi maalum:
+AgentProxy inajumuisha aina tatu za zana za CLI zilizotawanyika kwenye kurasa tatu za dashibodi maalum:
 
 | Ukurasa        | Njia                    | Dhana                                                                                   | Hesabu          |
 | -------------- | ----------------------- | --------------------------------------------------------------------------------------- | --------------- |
-| **CLI Code's** | `/dashboard/cli-code`   | Zana za uandishi unazopointisha kwa OmniRoute (Mteja → CLI → OmniRoute → Mtoa huduma)   | 26              |
-| **CLI Agents** | `/dashboard/cli-agents` | Wakala huru unazopointisha kwa OmniRoute (mchakato sawa, upeo mpana)                    | 8               |
-| **ACP Agents** | `/dashboard/acp-agents` | CLIs ambazo OmniRoute inazizalisha kama backend kupitia stdio/ACP (mchakato wa kinyume) | angalia rejista |
+| **CLI Code's** | `/dashboard/cli-code`   | Zana za uandishi unazopointisha kwa AgentProxy (Mteja → CLI → AgentProxy → Mtoa huduma)   | 26              |
+| **CLI Agents** | `/dashboard/cli-agents` | Wakala huru unazopointisha kwa AgentProxy (mchakato sawa, upeo mpana)                    | 8               |
+| **ACP Agents** | `/dashboard/acp-agents` | CLIs ambazo AgentProxy inazizalisha kama backend kupitia stdio/ACP (mchakato wa kinyume) | angalia rejista |
 
 Njia za zamani zinaelekeza kupitia 308: `/dashboard/cli-tools` → `/dashboard/cli-code`, `/dashboard/agents` → `/dashboard/acp-agents`.
 
@@ -33,14 +33,14 @@ Njia za zamani zinaelekeza kupitia 308: `/dashboard/cli-tools` → `/dashboard/c
 CLI Code's / CLI Agents (mchakato wa matumizi):
 Claude / Codex / OpenCode / Cline / KiloCode / Continue / Hermes Agent / Goose / ...
            │
-           ▼  (zote zinaelekeza kwa OmniRoute)
+           ▼  (zote zinaelekeza kwa AgentProxy)
     http://YOUR_SERVER:20128/v1
            │
-           ▼  (OmniRoute inaelekeza kwa mtoa huduma sahihi)
+           ▼  (AgentProxy inaelekeza kwa mtoa huduma sahihi)
     Anthropic / OpenAI / Gemini / DeepSeek / Groq / Mistral / ...
 
 ACP Agents (mchakato wa kuzalisha kinyume):
-    Ombi la Mteja → OmniRoute → inazalisha CLI kupitia stdio/ACP → jibu
+    Ombi la Mteja → AgentProxy → inazalisha CLI kupitia stdio/ACP → jibu
 ```
 
 **Manufaa:**
@@ -54,26 +54,26 @@ ACP Agents (mchakato wa kuzalisha kinyume):
 
 ## Auto-configure na `setup-*`
 
-Huna haja ya kuandika usanidi wa kila zana kwa mkono. OmniRoute inatoa amri ya `setup-*`
-kila CLI inayoungwa mkono ambayo inasoma katalogi ya mifano **hai** kutoka kwa OmniRoute inayofanya kazi
+Huna haja ya kuandika usanidi wa kila zana kwa mkono. AgentProxy inatoa amri ya `setup-*`
+kila CLI inayoungwa mkono ambayo inasoma katalogi ya mifano **hai** kutoka kwa AgentProxy inayofanya kazi
 (ya ndani au ya mbali) na kuandika usanidi wa zana mwenyewe kwenye mashine yako:
 
 ```bash
-omniroute setup-codex        omniroute setup-claude       omniroute setup-opencode
-omniroute setup-cline        omniroute setup-kilo         omniroute setup-continue
-omniroute setup-cursor       omniroute setup-roo          omniroute setup-crush
-omniroute setup-goose        omniroute setup-qwen         omniroute setup-aider
+agentproxy setup-codex        agentproxy setup-claude       agentproxy setup-opencode
+agentproxy setup-cline        agentproxy setup-kilo         agentproxy setup-continue
+agentproxy setup-cursor       agentproxy setup-roo          agentproxy setup-crush
+agentproxy setup-goose        agentproxy setup-qwen         agentproxy setup-aider
 ```
 
 Kila moja inakubali `--remote <url> --api-key <key>` (kuunda zana ya ndani dhidi ya
-OmniRoute ya mbali), `--dry-run` (kuangalia bila kuandika), na `--port`. Zana
+AgentProxy ya mbali), `--dry-run` (kuangalia bila kuandika), na `--port`. Zana
 bila ugunduzi wa mifano (Cline, Kilo, Roo, Goose, Aider, Qwen) zinahitaji
 `--model <id>` (na `--yes` kwa kazi zisizo za mwingiliano). Ili kuzindua CLI na
 muhimu sahihi iliyowekwa na hakuna usanidi ulioandikwa kabisa, tumia
-mwanzo wa jumla `omniroute run <target>` (claude, codex, aider, goose, opencode, qwen,
+mwanzo wa jumla `agentproxy run <target>` (claude, codex, aider, goose, opencode, qwen,
 gemini — malengo na majina yanatoka `bin/cli/cli-manifest.mjs`); mwanzo wa zamani
-wa kila zana `omniroute launch` (Claude Code) na `omniroute launch-codex`
-(Codex) bado zinapatikana. Gemini CLI ni ya kuzindua tu: ni lengo la `omniroute run`
+wa kila zana `agentproxy launch` (Claude Code) na `agentproxy launch-codex`
+(Codex) bado zinapatikana. Gemini CLI ni ya kuzindua tu: ni lengo la `agentproxy run`
 lakini haina mapishi ya `setup-*`/`configure`.
 
 > **Rejeleo kamili:** jedwali kuu — kila amri inayoandika, kila bendera,
@@ -82,22 +82,22 @@ lakini haina mapishi ya `setup-*`/`configure`.
 
 ### Kukimbia hizi ndani ya kontena
 
-Amri ya `setup-*` iliyotekelezwa ndani ya kontena la OmniRoute inaandika kwenye
+Amri ya `setup-*` iliyotekelezwa ndani ya kontena la AgentProxy inaandika kwenye
 nyumba ya kontena yenyewe, ambayo hakuna CLI ya mwenyeji inayosoma na ambayo inatoweka na
-kontena. OmniRoute inagundua hilo na inatoka `2` na maagizo badala ya
+kontena. AgentProxy inagundua hilo na inatoka `2` na maagizo badala ya
 kuandika. Njia mbili zinazoungwa mkono — sakinisha CLI kwenye mwenyeji na
-`omniroute connect` kwa kontena, au bind-mount saraka za usanidi na kuweka
+`agentproxy connect` kwa kontena, au bind-mount saraka za usanidi na kuweka
 `CLI_CONFIG_HOME` (profaili ya compose `host`). Kila amri ya `setup-*`, pamoja na
-`omniroute configure` na `omniroute config set`, inakubali
-`--allow-container-write` wakati usanidi wa CLIs za kontena mwenyewe ndio unachomaanisha; `OMNIROUTE_ALLOW_CONTAINER_CONFIG_WRITE=true` inafanya vivyo hivyo kwa
+`agentproxy configure` na `agentproxy config set`, inakubali
+`--allow-container-write` wakati usanidi wa CLIs za kontena mwenyewe ndio unachomaanisha; `AGENTPROXY_ALLOW_CONTAINER_CONFIG_WRITE=true` inafanya vivyo hivyo kwa
 seva. Tazama
-[Muongozo wa Docker → Kuweka zana za CLI za mwenyeji](../guides/DOCKER_GUIDE.md#configuring-host-cli-tools-when-omniroute-runs-in-docker).
+[Muongozo wa Docker → Kuweka zana za CLI za mwenyeji](../guides/DOCKER_GUIDE.md#configuring-host-cli-tools-when-agentproxy-runs-in-docker).
 
 **Kipengele cha kutekeleza** cha dashibodi (`POST /api/cli-tools/apply`) kinathibitisha
 mlinzi sawa: ndani ya kontena, kuandika ambako lengo lake halijabind-mount kutoka kwa
 mwenyeji kunajibu **`422`** na `containerEphemeralTarget: true`, maandiko salama ya kosa
 na — kwa zana zenye mapishi ya mwenyeji (claude, codex, opencode, cline,
-kilo, continue) — `hostSetupCommand` (mfano `omniroute setup-opencode`) ya kutekeleza
+kilo, continue) — `hostSetupCommand` (mfano `agentproxy setup-opencode`) ya kutekeleza
 kwenye mwenyeji badala yake; hakuna kitu kinachoandikwa. `dryRun: true` inaendelea kufanya kazi katika
 hali ya kontena na inarudisha yaliyomo yaliyoundwa + njia ya lengo bila kugusa diski, hivyo
 unaweza kuangalia kutoka kwenye dashibodi na kutekeleza kwenye mwenyeji. Tabia hii ni
@@ -132,8 +132,8 @@ Sio kila zana iliyoorodheshwa inaweza kuonekana, kusanidiwa au kuzinduliwa. Kila
 | ------------------------- | ------------------------------------------------------------------------------ | ----------------------------------------------------------------- |
 | **Katalogi**              | Inaonekana katika katalogi ya dashibodi (jina, muuzaji, hati, aina ya usanidi) | `src/shared/constants/cliTools.ts` (`CLI_TOOLS`)                  |
 | **Inayoonekana**          | Ugunduzi wa binary/usanidi, ukaguzi wa afya, njia za usanidi                   | `src/shared/services/cliRuntime.ts` (`CLI_TOOLS` runtime catalog) |
-| **Inayoweza kusanidiwa**  | Inasaidiwa na `omniroute configure <cli>` (mapishi ya usanidi yapo)            | `bin/cli/cli-manifest.mjs` (`configure: true`)                    |
-| **Inayoweza kuzinduliwa** | Inasaidiwa na `omniroute run <target>` (injection ya env/args imeainishwa)     | `bin/cli/cli-manifest.mjs` (`run: true`)                          |
+| **Inayoweza kusanidiwa**  | Inasaidiwa na `agentproxy configure <cli>` (mapishi ya usanidi yapo)            | `bin/cli/cli-manifest.mjs` (`configure: true`)                    |
+| **Inayoweza kuzinduliwa** | Inasaidiwa na `agentproxy run <target>` (injection ya env/args imeainishwa)     | `bin/cli/cli-manifest.mjs` (`run: true`)                          |
 
 `bin/cli/cli-manifest.mjs` ni hati ya kutekeleza ya kawaida kwa amri za CLI
 zinazoonekana: `run`, `configure` na jenereta za kukamilisha shell zote zinapata orodha zao za
@@ -197,7 +197,7 @@ Wakala huru wanaoonekana katika `/dashboard/cli-agents`:
 
 ## 3. Wakala wa ACP (/dashboard/acp-agents)
 
-Ukurasa huu (uliobadilishwa kutoka `/dashboard/agents`) unaonyesha CLIs ambazo OmniRoute inaweza **kuanzisha** kama injini za utekelezaji wa nyuma kupitia stdio/ACP protokali. Katalogi inashughulikiwa tofauti katika `src/lib/acp/registry.ts` na **siyo** sawa na `CLI_TOOLS`.
+Ukurasa huu (uliobadilishwa kutoka `/dashboard/agents`) unaonyesha CLIs ambazo AgentProxy inaweza **kuanzisha** kama injini za utekelezaji wa nyuma kupitia stdio/ACP protokali. Katalogi inashughulikiwa tofauti katika `src/lib/acp/registry.ts` na **siyo** sawa na `CLI_TOOLS`.
 
 ---
 
@@ -260,7 +260,7 @@ Zana mpya zenye `configType: "custom"` zina njia maalum za API za mipangilio:
 | `POST /api/cli-tools/codewhale-settings`    | CodeWhale (OPENAI_BASE_URL, primary + legacy `~/.deepseek` sync) |
 | `POST /api/cli-tools/smelt-settings`        | Smelt                                                            |
 | `POST /api/cli-tools/pi-settings`           | Pi coding agent                                                  |
-| `POST /api/cli-tools/grok-build-settings`   | Grok Build (~/.grok/config.toml, `[model.omniroute]`)            |
+| `POST /api/cli-tools/grok-build-settings`   | Grok Build (~/.grok/config.toml, `[model.agentproxy]`)            |
 | `POST /api/cli-tools/qwen-settings`         | Qwen Code (`~/.qwen/settings.json` + dedicated `.env` key)       |
 
 Njia zote zinatumia `sanitizeErrorMessage()` kwa majibu ya makosa (Sheria Kali #12).
@@ -320,7 +320,7 @@ Tafsiri kamili za PT-BR na EN zinapatikana. Lugha 39 nyingine zinarudi kwa EN mo
 
 ## 9. Kuanzia Haraka
 
-### Hatua ya 1 — Pata Funguo ya API ya OmniRoute
+### Hatua ya 1 — Pata Funguo ya API ya AgentProxy
 
 1. Fungua `/dashboard/api-manager` → **Unda Funguo ya API**
 2. Mpe jina (mfano `cli-tools`) na chagua ruhusa zote
@@ -353,7 +353,7 @@ npm install -g kilocode
 # Qwen Code
 npm install -g @qwen-code/qwen-code
 
-# Google Gemini CLI (inaweza kuzinduliwa kupitia `omniroute run gemini` → /v1beta surface)
+# Google Gemini CLI (inaweza kuzinduliwa kupitia `agentproxy run gemini` → /v1beta surface)
 npm install -g @google/gemini-cli
 
 # Aider
@@ -384,14 +384,14 @@ cargo install smelt  # Inategemea Rust
 ### Hatua ya 4 — Weka Mabadiliko ya Mazingira ya Ulimwengu
 
 ```bash
-# OmniRoute Universal Endpoint
+# AgentProxy Universal Endpoint
 export OPENAI_BASE_URL="http://localhost:20128/v1"
-export OPENAI_API_KEY="sk-your-omniroute-key"
+export OPENAI_API_KEY="sk-your-agentproxy-key"
 export ANTHROPIC_BASE_URL="http://localhost:20128"
-export ANTHROPIC_AUTH_TOKEN="sk-your-omniroute-key"
+export ANTHROPIC_AUTH_TOKEN="sk-your-agentproxy-key"
 # Gemini CLI inasoma GOOGLE_GEMINI_BASE_URL kwenye ROOT (SDK yake inaongeza /v1beta/... yenyewe)
 export GOOGLE_GEMINI_BASE_URL="http://localhost:20128"
-export GEMINI_API_KEY="sk-your-omniroute-key"
+export GEMINI_API_KEY="sk-your-agentproxy-key"
 ```
 
 > Kwa **seva ya mbali** badilisha `localhost:20128` na IP ya seva au jina la kikoa,
@@ -409,7 +409,7 @@ mkdir -p ~/.claude && cat > ~/.claude/settings.json << EOF
 {
   "env": {
     "ANTHROPIC_BASE_URL": "http://localhost:20128",
-    "ANTHROPIC_AUTH_TOKEN": "sk-your-omniroute-key"
+    "ANTHROPIC_AUTH_TOKEN": "sk-your-agentproxy-key"
   }
 }
 EOF
@@ -425,20 +425,20 @@ Tumia lango la pamoja la Anthropic kama mzizi kwa Claude Code. Usiongeze `/v1` h
 
 Codex ya kisasa (v0.137+) inasoma `~/.codex/config.toml` pekee — ya zamani
 `config.yaml` inahusiana na CLI ya zamani ya npm na inapuuziliwa mbali kimya. Funguo ya API
-inasalia katika mabadiliko ya mazingira ya `OMNIROUTE_API_KEY` (`env_key`), kamwe
+inasalia katika mabadiliko ya mazingira ya `AGENTPROXY_API_KEY` (`env_key`), kamwe
 ndani ya faili:
 
 ```bash
 mkdir -p ~/.codex && cat > ~/.codex/config.toml << EOF
-model_provider = "omniroute"
+model_provider = "agentproxy"
 
-[model_providers.omniroute]
-name                 = "OmniRoute"
+[model_providers.agentproxy]
+name                 = "AgentProxy"
 base_url             = "http://localhost:20128/v1"
-env_key              = "OMNIROUTE_API_KEY"
+env_key              = "AGENTPROXY_API_KEY"
 requires_openai_auth = false
 EOF
-export OMNIROUTE_API_KEY="sk-your-omniroute-key"
+export AGENTPROXY_API_KEY="sk-your-agentproxy-key"
 ```
 
 Marejeo kamili (profaili, `wire_api`, madirisha ya muktadha): [CODEX-CLI-CONFIGURATION.md](../guides/CODEX-CLI-CONFIGURATION.md).
@@ -454,12 +454,12 @@ mkdir -p ~/.config/opencode && cat > ~/.config/opencode/opencode.json << EOF
 {
   "\$schema": "https://opencode.ai/config.json",
   "provider": {
-    "omniroute": {
+    "agentproxy": {
       "npm": "@ai-sdk/openai-compatible",
-      "name": "OmniRoute",
+      "name": "AgentProxy",
       "options": {
         "baseURL": "http://localhost:20128/v1",
-        "apiKey": "sk-your-omniroute-key"
+        "apiKey": "sk-your-agentproxy-key"
       },
       "models": {
         "claude-sonnet-4-5": { "name": "claude-sonnet-4-5" },
@@ -474,7 +474,7 @@ EOF
 
 **Jaribu:** `opencode`
 
-> Tumia `opencode run "your prompt" --model omniroute/claude-sonnet-4-5-thinking --variant high`
+> Tumia `opencode run "your prompt" --model agentproxy/claude-sonnet-4-5-thinking --variant high`
 > kutuma toleo la kufikiri.
 
 ---
@@ -488,7 +488,7 @@ mkdir -p ~/.cline/data && cat > ~/.cline/data/globalState.json << EOF
 {
   "apiProvider": "openai",
   "openAiBaseUrl": "http://localhost:20128/v1",
-  "openAiApiKey": "sk-your-omniroute-key"
+  "openAiApiKey": "sk-your-agentproxy-key"
 }
 EOF
 ```
@@ -496,7 +496,7 @@ EOF
 **Hali ya VS Code:**
 Mipangilio ya kiendelezi cha Cline → Mtoa API: `OpenAI Compatible` → URL ya Msingi: `http://localhost:20128/v1`
 
-Au tumia dashibodi ya OmniRoute → **Zana za CLI → Cline → Tumia Mipangilio**.
+Au tumia dashibodi ya AgentProxy → **Zana za CLI → Cline → Tumia Mipangilio**.
 
 ---
 
@@ -505,7 +505,7 @@ Au tumia dashibodi ya OmniRoute → **Zana za CLI → Cline → Tumia Mipangilio
 **Hali ya CLI:**
 
 ```bash
-kilocode --api-base http://localhost:20128/v1 --api-key sk-your-omniroute-key
+kilocode --api-base http://localhost:20128/v1 --api-key sk-your-agentproxy-key
 ```
 
 **Mipangilio ya VS Code:**
@@ -513,11 +513,11 @@ kilocode --api-base http://localhost:20128/v1 --api-key sk-your-omniroute-key
 ```json
 {
   "kilo-code.openAiBaseUrl": "http://localhost:20128/v1",
-  "kilo-code.apiKey": "sk-your-omniroute-key"
+  "kilo-code.apiKey": "sk-your-agentproxy-key"
 }
 ```
 
-Au tumia dashibodi ya OmniRoute → **Zana za CLI → KiloCode → Tumia Mipangilio**.
+Au tumia dashibodi ya AgentProxy → **Zana za CLI → KiloCode → Tumia Mipangilio**.
 
 ---
 
@@ -527,11 +527,11 @@ Hariri `~/.continue/config.yaml`:
 
 ```yaml
 models:
-  - name: OmniRoute
+  - name: AgentProxy
     provider: openai
     model: auto
     apiBase: http://localhost:20128/v1
-    apiKey: sk-your-omniroute-key
+    apiKey: sk-your-agentproxy-key
     default: true
 ```
 
@@ -541,25 +541,25 @@ Restart VS Code baada ya kuhariri.
 
 #### VS Code Insiders (`chatLanguageModels.json`)
 
-Tumia hii wakati VS Code Insiders imewekwa kwa mifano ya mwisho ya mwisho na unataka OmniRoute ifanye kazi bila uwanja wa kichwa maalum.
+Tumia hii wakati VS Code Insiders imewekwa kwa mifano ya mwisho ya mwisho na unataka AgentProxy ifanye kazi bila uwanja wa kichwa maalum.
 
 **Mahali panap推荐:**
 
 - Linux: `~/.config/Code - Insiders/User/chatLanguageModels.json`
 - Windows: `%APPDATA%/Code - Insiders/User/chatLanguageModels.json`
 
-**Mfano ukitumia jina la OmniRoute lililotolewa tokeni:**
+**Mfano ukitumia jina la AgentProxy lililotolewa tokeni:**
 
 ```json
 [
   {
     "vendor": "customendpoint",
     "id": "auto",
-    "name": "OmniRoute Auto",
+    "name": "AgentProxy Auto",
     "family": "gpt-4",
     "version": "1.0.0",
-    "url": "http://localhost:20128/api/v1/vscode/sk-your-omniroute-key/chat/completions",
-    "modelsUrl": "http://localhost:20128/api/v1/vscode/sk-your-omniroute-key/models",
+    "url": "http://localhost:20128/api/v1/vscode/sk-your-agentproxy-key/chat/completions",
+    "modelsUrl": "http://localhost:20128/api/v1/vscode/sk-your-agentproxy-key/models",
     "requestFormat": "openai-chat-completions",
     "contextWindow": 256000,
     "maxOutputTokens": 32768,
@@ -572,7 +572,7 @@ Tumia hii wakati VS Code Insiders imewekwa kwa mifano ya mwisho ya mwisho na una
 
 **Maelezo:**
 
-- Badilisha `sk-your-omniroute-key` na funguo ya API iliyoundwa katika OmniRoute.
+- Badilisha `sk-your-agentproxy-key` na funguo ya API iliyoundwa katika AgentProxy.
 - Sehemu ya `url` inapaswa kuelekeza kwenye `/api/v1/vscode/{token}/chat/completions`.
 - Sehemu ya `modelsUrl` inapaswa kuelekeza kwenye `/api/v1/vscode/{token}/models`.
 - Prefer njia ya kawaida ya `/v1` + kichwa cha Bearer wakati mteja unasaidia vichwa maalum.
@@ -586,40 +586,40 @@ Tumia hii wakati VS Code Insiders imewekwa kwa mifano ya mwisho ya mwisho na una
 # Ingia kwenye akaunti yako ya AWS/Kiro:
 kiro-cli login
 
-# CLI inatumia uthibitisho wake mwenyewe — OmniRoute haitahitajika kama nyuma kwa Kiro CLI yenyewe.
-# Tumia kiro-cli pamoja na OmniRoute kwa zana nyingine.
+# CLI inatumia uthibitisho wake mwenyewe — AgentProxy haitahitajika kama nyuma kwa Kiro CLI yenyewe.
+# Tumia kiro-cli pamoja na AgentProxy kwa zana nyingine.
 kiro-cli status
 ```
 
-Kwa programu ya desktop ya **Kiro IDE**, tumia mwisho wa MITM ulioonyeshwa na OmniRoute
+Kwa programu ya desktop ya **Kiro IDE**, tumia mwisho wa MITM ulioonyeshwa na AgentProxy
 chini ya `/dashboard/cli-tools → Kiro`.
 
 ---
 
-## 10. OmniRoute CLI ya Ndani
+## 10. AgentProxy CLI ya Ndani
 
-Binary ya `omniroute` inatoa amri za mzunguko wa seva, usanidi, uchunguzi, na usimamizi wa watoa huduma. Kituo cha kuingia: `bin/omniroute.mjs`.
+Binary ya `agentproxy` inatoa amri za mzunguko wa seva, usanidi, uchunguzi, na usimamizi wa watoa huduma. Kituo cha kuingia: `bin/agentproxy.mjs`.
 
 ```bash
-omniroute                              # Anza seva (bandia port 20128)
-omniroute setup                        # Mwandiko wa usanidi wa mwingiliano
-omniroute doctor                       # Angalia usanidi, DB, port, muda wa kukimbia
-omniroute providers list               # Mifumo ya watoa huduma iliyowekwa
-omniroute providers test-all           # Jaribu kila muunganisho hai
-omniroute reset-password               # Weka upya nenosiri la admin
-omniroute logs                         # Pitia kumbukumbu za maombi
-omniroute health                       # Afya ya kina (vikwazo, cache, kumbukumbu)
-omniroute --version                    # Chapisha toleo
-omniroute --help                       # Onyesha amri zote
+agentproxy                              # Anza seva (bandia port 20128)
+agentproxy setup                        # Mwandiko wa usanidi wa mwingiliano
+agentproxy doctor                       # Angalia usanidi, DB, port, muda wa kukimbia
+agentproxy providers list               # Mifumo ya watoa huduma iliyowekwa
+agentproxy providers test-all           # Jaribu kila muunganisho hai
+agentproxy reset-password               # Weka upya nenosiri la admin
+agentproxy logs                         # Pitia kumbukumbu za maombi
+agentproxy health                       # Afya ya kina (vikwazo, cache, kumbukumbu)
+agentproxy --version                    # Chapisha toleo
+agentproxy --help                       # Onyesha amri zote
 ```
 
 ### Usanidi & Uanzishaji
 
 ```bash
-omniroute setup                        # Mwandiko wa usanidi wa mwingiliano
-omniroute setup --non-interactive      # Hali ya CI/automatiska (inasoma mabadiliko ya mazingira + bendera)
-omniroute setup --password '<value>'   # Weka nenosiri la admin moja kwa moja
-omniroute setup --add-provider \
+agentproxy setup                        # Mwandiko wa usanidi wa mwingiliano
+agentproxy setup --non-interactive      # Hali ya CI/automatiska (inasoma mabadiliko ya mazingira + bendera)
+agentproxy setup --password '<value>'   # Weka nenosiri la admin moja kwa moja
+agentproxy setup --add-provider \
   --provider openai \
   --api-key '<value>' \
   --test-provider                      # Ongeza na jaribu mtoa huduma kwa wakati mmoja
@@ -629,21 +629,21 @@ Mabadiliko ya mazingira yanayotambuliwa kwa usanidi usio wa mwingiliano:
 
 | Var                 | Kusudi                                                                             |
 | ------------------- | ---------------------------------------------------------------------------------- |
-| `OMNIROUTE_API_KEY` | Funguo ya API ya mtoa huduma (imefungwa na `--api-key` kupitia Commander `.env()`) |
-| `DATA_DIR`          | Badilisha saraka ya data ya OmniRoute                                              |
+| `AGENTPROXY_API_KEY` | Funguo ya API ya mtoa huduma (imefungwa na `--api-key` kupitia Commander `.env()`) |
+| `DATA_DIR`          | Badilisha saraka ya data ya AgentProxy                                              |
 
 Mingine yote ya pembejeo zisizo za mwingiliano inapitishwa kama bendera, si mabadiliko ya mazingira:
 `--password`, `--provider`, `--provider-name`, `--provider-base-url`, `--default-model`
-(tazama chaguzi za `omniroute setup` hapo juu).
+(tazama chaguzi za `agentproxy setup` hapo juu).
 
 ### Uchunguzi
 
 ```bash
-omniroute doctor                       # Angalia usanidi, DB, port, muda wa kukimbia, kumbukumbu, uhai
-omniroute doctor --json                # JSON inayoweza kusomwa na mashine
-omniroute doctor --no-liveness         # Kosa uchunguzi wa afya ya HTTP
-omniroute doctor --host 0.0.0.0        # Badilisha mwenyeji wa uhai
-omniroute doctor --liveness-url <url>  # Badilisha URL ya mwisho wa afya
+agentproxy doctor                       # Angalia usanidi, DB, port, muda wa kukimbia, kumbukumbu, uhai
+agentproxy doctor --json                # JSON inayoweza kusomwa na mashine
+agentproxy doctor --no-liveness         # Kosa uchunguzi wa afya ya HTTP
+agentproxy doctor --host 0.0.0.0        # Badilisha mwenyeji wa uhai
+agentproxy doctor --liveness-url <url>  # Badilisha URL ya mwisho wa afya
 ```
 
 Daktari anafanya uchunguzi haya: `Usanidi`, `Hifadhi`, `Hifadhi/kuandika`,
@@ -653,47 +653,47 @@ Daktari anafanya uchunguzi haya: `Usanidi`, `Hifadhi`, `Hifadhi/kuandika`,
 ### Usimamizi wa Watoa Huduma
 
 ```bash
-omniroute providers available                       # Katalogi ya watoa huduma wa OmniRoute
-omniroute providers available --search openai       # Chuja katalogi kwa id/jina/alias/kikundi
-omniroute providers available --category api-key    # Chuja kwa kikundi (api-key, oauth, bure, ...)
-omniroute providers available --json                # JSON inayoweza kusomwa na mashine
+agentproxy providers available                       # Katalogi ya watoa huduma wa AgentProxy
+agentproxy providers available --search openai       # Chuja katalogi kwa id/jina/alias/kikundi
+agentproxy providers available --category api-key    # Chuja kwa kikundi (api-key, oauth, bure, ...)
+agentproxy providers available --json                # JSON inayoweza kusomwa na mashine
 
-omniroute providers list                            # Mifumo ya watoa huduma iliyowekwa
-omniroute providers list --json
+agentproxy providers list                            # Mifumo ya watoa huduma iliyowekwa
+agentproxy providers list --json
 
-omniroute providers test <id|name>                  # Jaribu muunganisho mmoja uliowekwa
-omniroute providers test-all                        # Jaribu kila muunganisho hai
-omniroute providers validate                        # Uthibitisho wa muundo wa ndani pekee
-omniroute providers add <provider> --credential-env PROVIDER_KEY
-omniroute providers import ./providers.json --dry-run --json
-omniroute providers auth <provider>                 # Mchakato wa OAuth uliopo
-omniroute providers edit <id|name> --default-model <model>
-omniroute providers remove <id|name> --yes
+agentproxy providers test <id|name>                  # Jaribu muunganisho mmoja uliowekwa
+agentproxy providers test-all                        # Jaribu kila muunganisho hai
+agentproxy providers validate                        # Uthibitisho wa muundo wa ndani pekee
+agentproxy providers add <provider> --credential-env PROVIDER_KEY
+agentproxy providers import ./providers.json --dry-run --json
+agentproxy providers auth <provider>                 # Mchakato wa OAuth uliopo
+agentproxy providers edit <id|name> --default-model <model>
+agentproxy providers remove <id|name> --yes
 ```
 
 `providers add/import/auth/edit/remove` ni API-ya kwanza na kwa hivyo inafanya kazi dhidi
 ya muktadha wa ndani au wa mbali. Pembejeo za akidi zinapaswa kutumia
 `--credential-stdin` au `--credential-env`; `--dry-run --json` inaripoti tu
-kuwepo/kichwa kilichofichwa. `providers available` inasoma katalogi ya OmniRoute;
+kuwepo/kichwa kilichofichwa. `providers available` inasoma katalogi ya AgentProxy;
 `providers list/test/test-all/validate` zinabaki na tabia yao ya ndani ya SQLite na
 hazihitaji seva kuwa inakimbia.
 
 ### Urejeleaji & Weka Upya
 
 ```bash
-omniroute reset-password                # Weka upya nenosiri la admin (pia: omniroute-reset-password)
-omniroute reset-encrypted-columns       # Onyesha onyo + jaribio la kuweka upya akidi iliyofichwa
-omniroute reset-encrypted-columns --force  # Kwa kweli futa akidi zilizofichwa katika SQLite
+agentproxy reset-password                # Weka upya nenosiri la admin (pia: agentproxy-reset-password)
+agentproxy reset-encrypted-columns       # Onyesha onyo + jaribio la kuweka upya akidi iliyofichwa
+agentproxy reset-encrypted-columns --force  # Kwa kweli futa akidi zilizofichwa katika SQLite
 ```
 
 ### Uhamasishaji wa Akidi (⚠ shughulikia kwa uangalifu)
 
 ```bash
-omniroute auth export                                 # Onyesha onyo + lango la uthibitisho — hakuna ufikiaji wa DB
-omniroute auth export --force                          # Hamasisha akidi ZOTE zilizofichwa za muunganisho kwa stdout kama JSON
-omniroute auth export --force --id <id>                 # Hamasisha tu muunganisho unaolingana
-omniroute auth export --force --format env               # Tolea mistari ya OMNIROUTE_<PROVIDER>_<FIELD>=<value>
-omniroute auth export --force --out creds.json           # Andika kwenye faili (iliyoundwa na ruhusa 0600)
+agentproxy auth export                                 # Onyesha onyo + lango la uthibitisho — hakuna ufikiaji wa DB
+agentproxy auth export --force                          # Hamasisha akidi ZOTE zilizofichwa za muunganisho kwa stdout kama JSON
+agentproxy auth export --force --id <id>                 # Hamasisha tu muunganisho unaolingana
+agentproxy auth export --force --format env               # Tolea mistari ya AGENTPROXY_<PROVIDER>_<FIELD>=<value>
+agentproxy auth export --force --out creds.json           # Andika kwenye faili (iliyoundwa na ruhusa 0600)
 ```
 
 `auth export` ni **ya ndani pekee** (kusoma moja kwa moja kutoka SQLite, hakuna njia ya HTTP) na kwa makusudi inachapisha/kuandika
@@ -705,36 +705,36 @@ iwe imewekwa. Sehemu ambayo inashindwa kufichuliwa (funguo ya zamani, ciphertext
 
 ### Amri nyingine za chini
 
-Hizi zinadhani seva ya OmniRoute inakimbia, isipokuwa ilipobainishwa vinginevyo:
+Hizi zinadhani seva ya AgentProxy inakimbia, isipokuwa ilipobainishwa vinginevyo:
 
 ```bash
-omniroute status                       # Hali ya kina ya kukimbia
-omniroute logs                         # Pitia kumbukumbu za maombi (--json, --search, --follow)
-omniroute config show                  # Onyesha usanidi wa sasa
+agentproxy status                       # Hali ya kina ya kukimbia
+agentproxy logs                         # Pitia kumbukumbu za maombi (--json, --search, --follow)
+agentproxy config show                  # Onyesha usanidi wa sasa
 
-omniroute provider list                # Orodha ya watoa huduma wanaopatikana (alias ya providers list)
-omniroute provider add                 # Register OmniRoute kama mtoa huduma kwenye chombo
-omniroute keys add | list | remove     # Simamia funguo za API
-omniroute models [provider]            # Orodha ya mifano (--json, --search)
-omniroute combo list | switch | create | delete
+agentproxy provider list                # Orodha ya watoa huduma wanaopatikana (alias ya providers list)
+agentproxy provider add                 # Register AgentProxy kama mtoa huduma kwenye chombo
+agentproxy keys add | list | remove     # Simamia funguo za API
+agentproxy models [provider]            # Orodha ya mifano (--json, --search)
+agentproxy combo list | switch | create | delete
 
-omniroute backup                       # Picha ya usanidi + DB
-omniroute restore                      # Rejesha kutoka picha ya awali
+agentproxy backup                       # Picha ya usanidi + DB
+agentproxy restore                      # Rejesha kutoka picha ya awali
 
-omniroute health                       # Afya ya kina (vikwazo, cache, kumbukumbu)
-omniroute quota                        # Matumizi ya quota ya mtoa huduma
-omniroute cache                        # Hali ya cache
-omniroute cache clear                  # Futa cache za semantiki + saini
+agentproxy health                       # Afya ya kina (vikwazo, cache, kumbukumbu)
+agentproxy quota                        # Matumizi ya quota ya mtoa huduma
+agentproxy cache                        # Hali ya cache
+agentproxy cache clear                  # Futa cache za semantiki + saini
 
-omniroute mcp status | restart         # Hali ya seva ya MCP / re-start
-omniroute a2a status | card            # Hali ya seva ya A2A / kadi ya wakala
+agentproxy mcp status | restart         # Hali ya seva ya MCP / re-start
+agentproxy a2a status | card            # Hali ya seva ya A2A / kadi ya wakala
 
-omniroute tunnel list | create | stop  # Simamia tunnels (cloudflare/tailscale/ngrok)
-omniroute env show | get <k> | set <k> <v>  # Kagua / weka mabadiliko ya mazingira (ya muda)
+agentproxy tunnel list | create | stop  # Simamia tunnels (cloudflare/tailscale/ngrok)
+agentproxy env show | get <k> | set <k> <v>  # Kagua / weka mabadiliko ya mazingira (ya muda)
 
-omniroute test                         # Jaribio la muunganisho wa mtoa huduma
-omniroute update                       # Angalia masasisho
-omniroute completion                   # Tengeneza ukamilifu wa shell
+agentproxy test                         # Jaribio la muunganisho wa mtoa huduma
+agentproxy update                       # Angalia masasisho
+agentproxy completion                   # Tengeneza ukamilifu wa shell
 ```
 
 ### Bendera za Kawaida
@@ -761,7 +761,7 @@ omniroute completion                   # Tengeneza ukamilifu wa shell
 | `/v1/audio/speech`         | Maandishi hadi sauti                      | ElevenLabs, OpenAI TTS               |
 | `/v1/audio/transcriptions` | Sauti hadi maandiko                       | Deepgram, AssemblyAI                 |
 
-Mifano ya kuandika kwa urahisi yenye URL ya OmniRoute iliyotolewa:
+Mifano ya kuandika kwa urahisi yenye URL ya AgentProxy iliyotolewa:
 
 ```txt
 Mfano wa token: sk-a3ab3c080beaee3a-69f4a4-070d71af
@@ -780,7 +780,7 @@ Mazungumzo ya Ollama: http://localhost:20128/api/v1/vscode/sk-a3ab3c080beaee3a-6
 
 | Kosa                                                       | Sababu                                  | Suluhisho                                                 |
 | ---------------------------------------------------------- | --------------------------------------- | --------------------------------------------------------- |
-| `Connection refused`                                       | OmniRoute haifanyi kazi                 | `omniroute serve`                                         |
+| `Connection refused`                                       | AgentProxy haifanyi kazi                 | `agentproxy serve`                                         |
 | `401 Unauthorized`                                         | Funguo ya API si sahihi                 | Angalia katika `/dashboard/api-manager`                   |
 | `No combo configured`                                      | Hakuna combo ya routing inayofanya kazi | Weka katika `/dashboard/combos`                           |
 | CLI inaonyesha "haijasanidi"                               | Binary haipo katika PATH                | Angalia `which <command>`                                 |

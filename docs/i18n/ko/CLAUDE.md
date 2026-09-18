@@ -39,7 +39,7 @@ npm run test:all
 
 ## 프로젝트 개요
 
-**OmniRoute** — 통합 AI 프록시/라우터. 하나의 엔드포인트, 329 LLM 제공자, 자동 대체.
+**AgentProxy** — 통합 AI 프록시/라우터. 하나의 엔드포인트, 329 LLM 제공자, 자동 대체.
 
 | 레이어       | 위치                    | 목적                                                                      |
 | ------------ | ----------------------- | ------------------------------------------------------------------------- |
@@ -82,7 +82,7 @@ API 경로는 일관된 패턴을 따릅니다: `경로 → CORS 사전 비행 �
 
 ## 복원력 런타임 상태
 
-OmniRoute에는 세 가지 관련 있지만 구별되는 임시 실패 메커니즘이 있습니다. 라우팅 동작을 디버깅할 때 그 범위를 분리하십시오. 한눈에 볼 수 있는 맵은 [3계층 복원력 다이어그램](./docs/diagrams/exported/resilience-3layers.svg)에서 확인할 수 있습니다 (출처: [docs/diagrams/resilience-3layers.mmd](./docs/diagrams/resilience-3layers.mmd)).
+AgentProxy에는 세 가지 관련 있지만 구별되는 임시 실패 메커니즘이 있습니다. 라우팅 동작을 디버깅할 때 그 범위를 분리하십시오. 한눈에 볼 수 있는 맵은 [3계층 복원력 다이어그램](./docs/diagrams/exported/resilience-3layers.svg)에서 확인할 수 있습니다 (출처: [docs/diagrams/resilience-3layers.mmd](./docs/diagrams/resilience-3layers.mmd)).
 
 ### 공급자 회로 차단기
 
@@ -194,7 +194,7 @@ baseCooldownMs * 2 ** failureIndex;
 ### 코드 스타일
 
 - **2 공백**, 세미콜론, 더블 쿼트, 100자 너비, es5 후행 쉼표 (lint-staged를 통해 Prettier로 강제)
-- **임포트**: 외부 → 내부 (`@/`, `@omniroute/open-sse`) → 상대
+- **임포트**: 외부 → 내부 (`@/`, `@agentproxy/open-sse`) → 상대
 - **명명**: 파일=camelCase/kebab, 컴포넌트=PascalCase, 상수=UPPER_SNAKE
 - **ESLint**: `no-eval`, `no-implied-eval`, `no-new-func` = 모든 곳에서 오류; `no-explicit-any` = `open-sse/` 및 `tests/`에서 경고
 - **TypeScript**: `strict: false`, 타겟 ES2022, 모듈 esnext, 해상도 번들러. 명시적 타입을 선호.
@@ -362,9 +362,9 @@ git push -u origin feat/your-feature
   | ≥22.22.2 <23 |
   | ≥24 <25, ES 모듈
 - **TypeScript**: 5.9+, 대상 ES2022, 모듈 esnext, 해상도 번들러
-- **경로 별칭**: `@/*` → `src/`, `@omniroute/open-sse` → `open-sse/`, `@omniroute/open-sse/*` → `open-sse/*`
+- **경로 별칭**: `@/*` → `src/`, `@agentproxy/open-sse` → `open-sse/`, `@agentproxy/open-sse/*` → `open-sse/*`
 - **기본 포트**: 20128 (API + 대시보드 동일 포트)
-- **데이터 디렉토리**: `DATA_DIR` 환경 변수, 기본값 `~/.omniroute/`
+- **데이터 디렉토리**: `DATA_DIR` 환경 변수, 기본값 `~/.agentproxy/`
 - **주요 환경 변수**: `PORT`, `JWT_SECRET`, `API_KEY_SECRET`, `INITIAL_PASSWORD`, `REQUIRE_API_KEY`, `APP_LOG_LEVEL`
 - 설정: `cp .env.example .env` 후 `JWT_SECRET` (`openssl rand -base64 48`) 및 `API_KEY_SECRET` (`openssl rand -hex 32`) 생성
 
@@ -387,4 +387,4 @@ git push -u origin feat/your-feature
 13. `exec()`/`spawn()`에 전달되는 셸 스크립트에 외부 경로 또는 런타임 값을 문자열 보간하지 마세요 — 대신 `env` 옵션을 통해 전달하세요. 참조: `src/mitm/cert/install.ts::updateNssDatabases`.
 14. CodeQL / 비밀 스캔 경고를 무시하지 마세요 (a) 먼저 위의 패턴 문서를 확인하여 도우미가 적용되는지 확인하고, (b) 무시 댓글에 기술적 정당성을 기록하세요. 선례: `js/stack-trace-exposure`는 이미 `sanitizeErrorMessage()`를 통해 라우팅되는 호출 지점에서 발생하며, 이는 알려진 CodeQL 제한입니다 (사용자 정의 정리기가 인식되지 않음) — `docs/security/ERROR_SANITIZATION.md`를 참조하여 `false positive`로 무시하세요.
 15. 자식 프로세스를 생성하는 경로 (`/api/mcp/`, `/api/cli-tools/runtime/`)를 `src/server/authz/routeGuard.ts`에서 `isLocalOnlyPath()` 분류 없이 노출하지 마세요. 루프백 강제 적용은 모든 인증 검사 전에 무조건 발생합니다 — 터널을 통해 유출된 JWT는 프로세스 생성을 트리거할 수 없습니다. `docs/security/ROUTE_GUARD_TIERS.md`를 참조하세요.
-16. AI 어시스턴트, LLM 또는 자동화 계정을 인정하는 `Co-Authored-By` 트레일러를 커밋 메시지에 절대 포함하지 마세요 (예: "Claude", "GPT", "Copilot", "Bot"을 포함한 이름; `anthropic.com` / `openai.com` / 봇 소유 `noreply.github.com` 주소의 이메일). 이러한 트레일러는 GitHub에서 커밋 귀속을 봇 계정으로 라우팅하여 PR 기록에서 실제 작성자 (`diegosouzapw`)를 숨깁니다. 인간 협력자 — upstream PR 작성자와 OmniRoute로 이식되는 issue 보고자 포함 — 은 표준 `Co-authored-by: Name <email>` 트레일러로 인정될 수 있고 인정되어야 합니다; upstream-port 워크플로 (`/port-upstream-features`, `/port-upstream-issues`)는 이에 의존합니다.
+16. AI 어시스턴트, LLM 또는 자동화 계정을 인정하는 `Co-Authored-By` 트레일러를 커밋 메시지에 절대 포함하지 마세요 (예: "Claude", "GPT", "Copilot", "Bot"을 포함한 이름; `anthropic.com` / `openai.com` / 봇 소유 `noreply.github.com` 주소의 이메일). 이러한 트레일러는 GitHub에서 커밋 귀속을 봇 계정으로 라우팅하여 PR 기록에서 실제 작성자 (`diegosouzapw`)를 숨깁니다. 인간 협력자 — upstream PR 작성자와 AgentProxy로 이식되는 issue 보고자 포함 — 은 표준 `Co-authored-by: Name <email>` 트레일러로 인정될 수 있고 인정되어야 합니다; upstream-port 워크플로 (`/port-upstream-features`, `/port-upstream-issues`)는 이에 의존합니다.

@@ -37,20 +37,20 @@ import {
 import { isModelImageable } from "omniglyph/applicability";
 
 /**
- * Teto de modelos do OmniRoute — sempre o escopo mais restrito do pacote.
+ * Teto de modelos do AgentProxy — sempre o escopo mais restrito do pacote.
  *
  * `isOmniGlyphSupportedModel()` resolve o escopo lendo `OMNIGLYPH_PROFILE` do
  * processo, e a lista base sai de `OMNIGLYPH_MODELS`. Duas variáveis do HOST
- * decidiriam, em silêncio, o gate de todo request do OmniRoute: `passthrough`
+ * decidiriam, em silêncio, o gate de todo request do AgentProxy: `passthrough`
  * desligaria a engine inteira e `OMNIGLYPH_MODELS` ADMITIRIA modelos sem
  * recibo medido — enquanto a UI continua prometendo "Claude Fable 5 na rota
  * direta medida". Fixar o escopo mais restrito faz o gate só poder ESTREITAR
- * pela env, nunca alargar, e mantém a decisão na configuração do OmniRoute.
+ * pela env, nunca alargar, e mantém a decisão na configuração do AgentProxy.
  */
 const MEASURED_MODEL_SCOPE: OmniGlyphSafetyScope = "coding-safe";
 
 /**
- * Perfil padrão do OmniRoute.
+ * Perfil padrão do AgentProxy.
  *
  * `aggressive` é a política que os recibos publicados mediram. `coding-safe` e
  * `balanced` fixam `minCompressChars` no máximo e só colapsam histórico antigo:
@@ -60,7 +60,7 @@ const MEASURED_MODEL_SCOPE: OmniGlyphSafetyScope = "coding-safe";
  */
 const DEFAULT_PROFILE: OmniGlyphSafetyScope = "aggressive";
 
-/** Perfil do passo (mais específico) > perfil global > default do OmniRoute. */
+/** Perfil do passo (mais específico) > perfil global > default do AgentProxy. */
 function resolveProfileName(options?: CompressionEngineApplyOptions): string {
   const step = options?.stepConfig?.profile;
   if (typeof step === "string" && step.trim()) return step;
@@ -201,7 +201,7 @@ async function applyOmniglyph(
       : options?.config?.preserveSystemPrompt) === true;
   // `compressSystem` só existe no transform Anthropic. Os wires OpenAI honram
   // apenas compressTools/gptHistory/minCompressChars/reflow e sempre trocam a
-  // instrução por um ponteiro para a imagem. Imagear o system quando o OmniRoute
+  // instrução por um ponteiro para a imagem. Imagear o system quando o AgentProxy
   // decidiu preservá-lo queimaria o prefixo quente que a política cache-aware
   // está protegendo — e nada no corpo devolvido denunciaria isso. Sem como
   // honrar a política nesse wire, a engine pula.
@@ -288,7 +288,7 @@ export const omniglyphEngine: CompressionEngine = {
     inputScope: "mixed",
     targetLatencyMs: 250, // render+encode PNG de páginas grandes
     supportsPreview: true,
-    stable: false, // P1: preview — promover após o e2e P3 (30/30 via OmniRoute)
+    stable: false, // P1: preview — promover após o e2e P3 (30/30 via AgentProxy)
     executionStages: ["pre-translation", "post-translation"],
   },
   // Contrato da interface: engines async-only mantêm apply síncrono como pass-through seguro.

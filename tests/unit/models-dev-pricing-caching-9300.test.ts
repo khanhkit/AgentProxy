@@ -14,7 +14,7 @@ import os from "node:os";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 
-const testDataDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-pricing-cache-"));
+const testDataDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-pricing-cache-"));
 process.env.DATA_DIR = testDataDir;
 
 const modulePath = path.join(process.cwd(), "src/lib/modelsDevSync.ts");

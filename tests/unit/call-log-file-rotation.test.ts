@@ -7,7 +7,7 @@ import path from "node:path";
 import { useDecollidedMigrationsDir } from "./helpers/decollidedMigrationsDir.ts";
 
 useDecollidedMigrationsDir();
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-call-log-files-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-call-log-files-"));
 const ORIGINAL_DATA_DIR = process.env.DATA_DIR;
 const ORIGINAL_RETENTION_DAYS = process.env.CALL_LOG_RETENTION_DAYS;
 const ORIGINAL_MAX_ENTRIES = process.env.CALL_LOG_MAX_ENTRIES;

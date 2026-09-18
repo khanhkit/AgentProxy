@@ -6,20 +6,20 @@
 
 ---
 
-title: "Gwida għat-Tħaddim ta' OmniRoute fuq Fly.io"
+title: "Gwida għat-Tħaddim ta' AgentProxy fuq Fly.io"
 version: 3.8.40
 lastUpdated: 2026-06-28
 ---
 
-# Gwida għat-Tħaddim ta' OmniRoute fuq Fly.io
+# Gwida għat-Tħaddim ta' AgentProxy fuq Fly.io
 
-Dan id-dokument jiddeskrivi l-proċess attwali ta' tħaddim ta' OmniRoute fuq Fly.io, ikopri żewġ xenarji:
+Dan id-dokument jiddeskrivi l-proċess attwali ta' tħaddim ta' AgentProxy fuq Fly.io, ikopri żewġ xenarji:
 
 - It-tħaddim tal-proġett attwali fuq Fly.io għall-ewwel darba
 - It-tħaddim ta' ġdid tal-kodici wara dan
 - Proġetti ġodda li jsegwew l-istess xogħol ta' tħaddim
 
-Din il-gwida hija bbażata fuq konfigurazzjoni verifikata ta' ħidma għall-proġett attwali. L-isem tal-applikazzjoni huwa `omniroute`.
+Din il-gwida hija bbażata fuq konfigurazzjoni verifikata ta' ħidma għall-proġett attwali. L-isem tal-applikazzjoni huwa `agentproxy`.
 
 ---
 
@@ -29,7 +29,7 @@ Din il-gwida hija bbażata fuq konfigurazzjoni verifikata ta' ħidma għall-pro�
 - Metodu tat-tħaddim: Tħaddim dirett lokali permezz ta' `flyctl`
 - Ħin ta' eżekuzzjoni: Użu tal-`Dockerfile` u `fly.toml` eżistenti fil-repożitorju
 - Perżistenza ta' dati: Volum Fly immontat fuq `/data`
-- URL ta' aċċess: `https://omniroute.fly.dev/`
+- URL ta' aċċess: `https://agentproxy.example.com/`
 
 ---
 
@@ -38,7 +38,7 @@ Din il-gwida hija bbażata fuq konfigurazzjoni verifikata ta' ħidma għall-pro�
 Il-`fly.toml` fil-repożitorju attwali ġie kkonfermat li fih iċ-ċavetti li ġejjin:
 
 ```toml
-app = 'omniroute'
+app = 'agentproxy'
 primary_region = 'sin'
 
 [[mounts]]
@@ -60,7 +60,7 @@ primary_region = 'sin'
 
 Noti:
 
-- `app = 'omniroute'` jiddetermina liema applikazzjoni Fly il-ħaddim jimmira lejha
+- `app = 'agentproxy'` jiddetermina liema applikazzjoni Fly il-ħaddim jimmira lejha
 - `destination = '/data'` jiddetermina d-direttorju tal-montar tal-volum perżistenti
 - Dan il-proġett irid jissettja `DATA_DIR=/data`, mod ieħor id-database uċ-ċavetti se jinkitbu fit-temporanea tal-kontenitur
 
@@ -98,8 +98,8 @@ flyctl version
 ### 4.1 Cloni tal-Kodici u Dħul fid-Direttorju
 
 ```powershell
-git clone https://github.com/diegosouzapw/OmniRoute.git
-cd OmniRoute
+git clone https://github.com/khanhkit/AgentProxy.git
+cd AgentProxy
 ```
 
 ### 4.2 Konferma tal-Isem tal-Applikazzjoni
@@ -107,29 +107,29 @@ cd OmniRoute
 Agħtax sifta tal-`fly.toml` u ivverifika l-linja li ġejja:
 
 ```toml
-app = 'omniroute'
+app = 'agentproxy'
 ```
 
 Jekk qed tħaddem applikazzjoni ġdida propja tiegħek, tista' tbiddelha f'isem uniku globalment, pereżempju:
 
 ```toml
-app = 'omniroute-ismek'
+app = 'agentproxy-ismek'
 ```
 
 Nota:
 
 - Liżgur li l-applikazzjoni li tara fil-konsol tikkorrispondi mal-valur ta' `app` fil-`fly.toml`
-- Jekk inti qatt użajt isem differenti, bħal `oroute`, tagħmilx konfuż ma' `omniroute`
+- Jekk inti qatt użajt isem differenti, bħal `oroute`, tagħmilx konfuż ma' `agentproxy`
 
 ### 4.3 Ħolqien tal-Applikazzjoni
 
 Jekk l-applikazzjoni għadha ma teżistix:
 
 ```powershell
-flyctl apps create omniroute
+flyctl apps create agentproxy
 ```
 
-Jekk tbdelt l-isem tal-applikazzjoni, sostitwixxi `omniroute` bl-isem li għżilt.
+Jekk tbdelt l-isem tal-applikazzjoni, sostitwixxi `agentproxy` bl-isem li għżilt.
 
 ### 4.4 Tħaddim għall-Ewwel Darba
 
@@ -145,14 +145,14 @@ Dan il-proġett jirrakkomanda li tista' tikkonfigura mill-inqas il-parametri li 
 
 ### 5.1 Parametri Verifikati
 
-Dawn il-parametri intużaw fil-ħaddim attwali fuq l-applikazzjoni attwali `omniroute`:
+Dawn il-parametri intużaw fil-ħaddim attwali fuq l-applikazzjoni attwali `agentproxy`:
 
 - `API_KEY_SECRET`
 - `DATA_DIR`
 - `JWT_SECRET`
 - `MACHINE_ID_SALT`
 - `NEXT_PUBLIC_BASE_URL`
-- `OMNIROUTE_WS_BRIDGE_SECRET` (meħtieġ fil-produzzjoni — jintuża għall-awtentikazzjoni tal-pont WebSocket)
+- `AGENTPROXY_WS_BRIDGE_SECRET` (meħtieġ fil-produzzjoni — jintuża għall-awtentikazzjoni tal-pont WebSocket)
 - `STORAGE_ENCRYPTION_KEY`
 
 ### 5.2 Dwar `INITIAL_PASSWORD`
@@ -178,7 +178,7 @@ L-varjabeli li ġejjin huma rakkomandati għal Fly Secrets:
 | ----------------------------- | ------------------------ | ------------------------------------------------------------------ |
 | `API_KEY_SECRET`              | Meħtieġa                 | Użata għall-ġenerazzjoni u l-validazzjoni tal-API Key              |
 | `JWT_SECRET`                  | Meħtieġa                 | Użata għas-sessjonijiet tal-login u l-iffirmar JWT                 |
-| `OMNIROUTE_WS_BRIDGE_SECRET`  | Meħtieġa fil-produzzjoni | Sigriet tal-awtentikazzjoni tal-pont WebSocket                     |
+| `AGENTPROXY_WS_BRIDGE_SECRET`  | Meħtieġa fil-produzzjoni | Sigriet tal-awtentikazzjoni tal-pont WebSocket                     |
 | `STORAGE_ENCRYPTION_KEY`      | B'saħħitha rakkomandata  | Tiddaħħal informazzjoni sensittiva ta' konnessjoni fuq il-mistrieħ |
 | `MACHINE_ID_SALT`             | Rakkomandata             | Tġenera identifikatur tal-maġina stabbil                           |
 | `INITIAL_PASSWORD`            | Opzjonali                | Tistabbilixxi l-password inizjali tal-backend fid-dħul ewlieni     |
@@ -189,7 +189,7 @@ L-varjabeli li ġejjin huma rakkomandati għal Fly Secrets:
 | Varjabbli              | Valur Rakkomandat           |
 | ---------------------- | --------------------------- |
 | `DATA_DIR`             | `/data`                     |
-| `NEXT_PUBLIC_BASE_URL` | `https://omniroute.fly.dev` |
+| `NEXT_PUBLIC_BASE_URL` | `https://agentproxy.example.com` |
 
 Noti:
 
@@ -203,10 +203,10 @@ Jekk trid tippermetti lill-fornituri bbażati fuq OAuth (pereż. Antigravity, Ge
 1. **Ibbażat `NEXT_PUBLIC_BASE_URL` għad-dominju pubbliku HTTPS tiegħek**
 
    ```powershell
-   flyctl secrets set NEXT_PUBLIC_BASE_URL=https://omniroute.fly.dev -a omniroute
+   flyctl secrets set NEXT_PUBLIC_BASE_URL=https://agentproxy.example.com -a agentproxy
    ```
 
-   Jekk qed tuża dominju personalizzat, substitwixxiha mal-dominju korrispondenti (pereż. `https://omniroute.yourdomain.com`).
+   Jekk qed tuża dominju personalizzat, substitwixxiha mal-dominju korrispondenti (pereż. `https://agentproxy.yourdomain.com`).
 
 2. **Ibbażat l-URL callback mal-konsolu tal-fornitur**
 
@@ -217,7 +217,7 @@ Jekk trid tippermetti lill-fornituri bbażati fuq OAuth (pereż. Antigravity, Ge
    ```
 
    Pereż., irrispettivament minn Gemini, Antigravity, Cursor, jew GitLab Duo:
-   - `https://omniroute.fly.dev/callback`
+   - `https://agentproxy.example.com/callback`
 
    Jekk `NEXT_PUBLIC_BASE_URL` ma jkunx jikkorrispondi mal-URL callback reġistrat mal-fornitur, il-fluss tal-OAuth se falli fil-pass tar-ritorn tal-browser.
 
@@ -230,7 +230,7 @@ Il-kmandi li ġejjin jġeneraw valuri sikuri b'mod aleatorju u jiktbu l-parametr
 Noti:
 
 - Ma jinkludix `INITIAL_PASSWORD`
-- Intenzjonat għall-proġett kurrenti `omniroute`
+- Intenzjonat għall-proġett kurrenti `agentproxy`
 
 ```powershell
 $apiKeySecret = [Convert]::ToHexString((1..32 | ForEach-Object { Get-Random -Minimum 0 -Maximum 256 })).ToLower()
@@ -244,26 +244,26 @@ flyctl secrets set `
   JWT_SECRET=$jwtSecret `
   MACHINE_ID_SALT=$machineIdSalt `
   STORAGE_ENCRYPTION_KEY=$storageKey `
-  OMNIROUTE_WS_BRIDGE_SECRET=$wsBridgeSecret `
+  AGENTPROXY_WS_BRIDGE_SECRET=$wsBridgeSecret `
   DATA_DIR=/data `
-  NEXT_PUBLIC_BASE_URL=https://omniroute.fly.dev `
-  -a omniroute
+  NEXT_PUBLIC_BASE_URL=https://agentproxy.example.com `
+  -a agentproxy
 ```
 
 Fuq Linux / macOS, tista' tuża wkoll `openssl rand -hex 32`:
 
 ```bash
-flyctl secrets set OMNIROUTE_WS_BRIDGE_SECRET=$(openssl rand -hex 32) -a omniroute
+flyctl secrets set AGENTPROXY_WS_BRIDGE_SECRET=$(openssl rand -hex 32) -a agentproxy
 ```
 
 Noti:
 
-- `OMNIROUTE_WS_BRIDGE_SECRET` hija meħtieġa fil-produzzjoni; in-nuqqas tagħha se tfixkel il-qabda tal-pont WebSocket
+- `AGENTPROXY_WS_BRIDGE_SECRET` hija meħtieġa fil-produzzjoni; in-nuqqas tagħha se tfixkel il-qabda tal-pont WebSocket
 
 Jekk trid tistabbilixxi wkoll password inizjali:
 
 ```powershell
-flyctl secrets set INITIAL_PASSWORD=your-strong-password -a omniroute
+flyctl secrets set INITIAL_PASSWORD=your-strong-password -a agentproxy
 ```
 
 ---
@@ -271,12 +271,12 @@ flyctl secrets set INITIAL_PASSWORD=your-strong-password -a omniroute
 ## 8. Jar l-Parametri Attwali
 
 ```powershell
-flyctl secrets list -a omniroute
+flyctl secrets list -a agentproxy
 ```
 
 Jekk il-paġna tal-`Secrets` fil-konsol ma tax l-variabli mistennija, iċċekkja:
 
-- Li qed tar l-applikazzjoni `omniroute`
+- Li qed tar l-applikazzjoni `agentproxy`
 - Li l-valur tal-`app` fil-`fly.toml` jaqbel mal-applikazzjoni fil-konsol
 
 ---
@@ -293,14 +293,14 @@ flyctl deploy
 Jekk għandek biss bżonn taġġorna l-parametri mingħajr ma tbiddel il-kodċi:
 
 ```powershell
-flyctl secrets set KEY=value -a omniroute
+flyctl secrets set KEY=value -a agentproxy
 ```
 
 Fly se twettaq awtomatikament aġġornament ta' rotta tal-magni.
 
 ### 9.1 Traċċar tal-Aġġornamenti tal-Repositorju ta' Linn fuq il-Linja, filwaqt li Jippreserva l-`fly.toml` tal-Fork Tiegħek
 
-Jekk ir-repositorju attwali huwa fork u trid tissinkronizza aġġornamenti mir-repositorju ta' linn fuq il-linja `https://github.com/diegosouzapw/OmniRoute`, segwi l-workflow hawn taħt.
+Jekk ir-repositorju attwali huwa fork u trid tissinkronizza aġġornamenti mir-repositorju ta' linn fuq il-linja `https://github.com/khanhkit/AgentProxy`, segwi l-workflow hawn taħt.
 
 L-ewwel, ivverifika r-remotes tiegħek:
 
@@ -316,7 +316,7 @@ Għandek tara tal-inqas:
 Jekk `upstream` ma huwiex konkfigurat, żidu:
 
 ```powershell
-git remote add upstream https://github.com/diegosouzapw/OmniRoute.git
+git remote add upstream https://github.com/khanhkit/AgentProxy.git
 ```
 
 Qabel tissinkronizza mal-upstream, ġib l-aħħar commits u tags:
@@ -368,8 +368,8 @@ Wara s-sinkronizzazzjoni mal-repositorju oriġinali, segwi l-ordni rakkomandata 
 3. Irrestawra l-`fly.toml` tal-fork
 4. `git push origin main`
 5. `flyctl deploy`
-6. `flyctl status -a omniroute`
-7. `flyctl logs --no-tail -a omniroute`
+6. `flyctl status -a agentproxy`
+7. `flyctl logs --no-tail -a agentproxy`
 
 Dan huwa l-workflow attwali użat meta tiġi upgraded il-verżjoni attwali tal-proġett għal `v3.4.7` (l-eżempju jirreferi għal verżjoni storika; il-verżjoni attwali reali hija `v3.8.0`).
 
@@ -380,20 +380,20 @@ Dan huwa l-workflow attwali użat meta tiġi upgraded il-verżjoni attwali tal-p
 ### 10.1 Iċċekkjia l-Istat tal-Applikazzjoni
 
 ```powershell
-flyctl status -a omniroute
+flyctl status -a agentproxy
 ```
 
 ### 10.2 Raw il-Logħob tal-Bidu
 
 ```powershell
-flyctl logs --no-tail -a omniroute
+flyctl logs --no-tail -a agentproxy
 ```
 
 ### 10.3 Verifika l-Aċċessibbiltà tas-Sit
 
 ```powershell
 try {
-  (Invoke-WebRequest -Uri "https://omniroute.fly.dev" -MaximumRedirection 5 -UseBasicParsing).StatusCode
+  (Invoke-WebRequest -Uri "https://agentproxy.example.com" -MaximumRedirection 5 -UseBasicParsing).StatusCode
 } catch {
   if ($_.Exception.Response) {
     $_.Exception.Response.StatusCode.value__
@@ -432,14 +432,14 @@ Jekk tara `/app/data/...` minflok, `DATA_DIR` ġie kkunfigurat ħażin u għandu
 Normalment hemm żewġ raġunijiet:
 
 - Għadek ma għamiltx `flyctl secrets set`
-- Qiegħed tara applikazzjoni differenti (eż. `oroute` minflok `omniroute`)
+- Qiegħed tara applikazzjoni differenti (eż. `oroute` minflok `agentproxy`)
 
 ### 12.2 `flyctl deploy` Jirrappurta `app not found`
 
 Oħloq l-applikazzjoni l-ewwel:
 
 ```powershell
-flyctl apps create omniroute
+flyctl apps create agentproxy
 ```
 
 ### 12.3 Il-Parsing ta' `fly.toml` Falla
@@ -482,10 +482,10 @@ Il-kmandi l-aktar użati għal ħruġ fil-produzzjoni ulterjuri huma:
 
 ```powershell
 flyctl auth whoami
-flyctl status -a omniroute
-flyctl secrets list -a omniroute
+flyctl status -a agentproxy
+flyctl secrets list -a agentproxy
 flyctl deploy
-flyctl logs --no-tail -a omniroute
+flyctl logs --no-tail -a agentproxy
 ```
 
 Għal ħruġ fil-produzzjoni normali, il-kmand bażiku huwa sempliċement:
@@ -497,7 +497,7 @@ flyctl deploy
 Għal ħruġ fil-produzzjoni l-ewwel darba f'ambjent ġdid, il-passi bażiċi huma:
 
 1. `flyctl auth login`
-2. `flyctl apps create omniroute`
-3. `flyctl secrets set ... -a omniroute`
+2. `flyctl apps create agentproxy`
+3. `flyctl secrets set ... -a agentproxy`
 4. `flyctl deploy`
-5. `flyctl logs --no-tail -a omniroute`
+5. `flyctl logs --no-tail -a agentproxy`

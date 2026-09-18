@@ -4,7 +4,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-rerank-test-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-rerank-test-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../src/lib/db/core.ts");
@@ -96,8 +96,8 @@ test.describe("Local rerank provider logging and fallback", () => {
 
     const res = await POST(req, {} as Record<string, unknown>);
     assert.equal(res.status, 200);
-    assert.equal(res.headers.get("x-omniroute-provider"), "vram");
-    assert.equal(res.headers.get("x-omniroute-model"), "BAAI/bge-reranker-v2-m3");
+    assert.equal(res.headers.get("x-agentproxy-provider"), "vram");
+    assert.equal(res.headers.get("x-agentproxy-model"), "BAAI/bge-reranker-v2-m3");
 
     const json = (await res.json()) as RerankSuccessResponse;
     assert.equal(json.results.length, 2);

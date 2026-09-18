@@ -1,7 +1,7 @@
 /**
  * scripts/test/combo-live-vps.mjs
  *
- * Phase-3 VPS HTTP scenario driver for OmniRoute combo routing.
+ * Phase-3 VPS HTTP scenario driver for AgentProxy combo routing.
  * Exercises 6 strategies (priority / round-robin / weighted / cost-optimized /
  * fusion / auto) against the live server at 192.168.0.15:20128.
  *
@@ -40,7 +40,7 @@ const BROAD_CANDIDATES = [
   "gemini/gemini-2.0-flash",
 ];
 
-// Known approximate input cost ($/M tokens) from OmniRoute's default-pricing constants.
+// Known approximate input cost ($/M tokens) from AgentProxy's default-pricing constants.
 // Used only to identify cheap vs pricey pairs for cost-optimized scenario.
 // Models absent from this map are treated as unknown cost (Infinity in the server's
 // sortModelsByCost, i.e. sorted last — effectively "most expensive").
@@ -287,7 +287,7 @@ async function scenarioWeighted(healthy) {
 // Insert pricey first (position 0) so cost-optimized must reorder.
 // Assert: the served model matches the cheap provider.
 //
-// OmniRoute's sortModelsByCost uses getPricingForModel which merges
+// AgentProxy's sortModelsByCost uses getPricingForModel which merges
 // default-pricing constants. groq models have price=0; minimax M3 has $0.5.
 // Cost-optimized sorts ascending → groq (0) before minimax (0.5).
 // ---------------------------------------------------------------------------
@@ -331,7 +331,7 @@ async function scenarioCostOptimized(healthy) {
     }
     // Verify the cheap model was served (response.model contains cheap provider's model name)
     const cheapProvider = splitProviderModel(cheapModel).providerId;
-    // Both direct match and provider-substring match are accepted since OmniRoute
+    // Both direct match and provider-substring match are accepted since AgentProxy
     // returns the raw upstream model name (e.g. "llama-3.1-8b-instant" not "groq/...")
     const cheapModelPart = splitProviderModel(cheapModel).modelPart.toLowerCase();
     const servedModel = (r.model ?? "").toLowerCase();
@@ -445,7 +445,7 @@ async function scenarioAuto() {
 //
 // Why cross-provider?
 //   A same-provider bogus-model fails silently: when target[0] (bogus) returns a
-//   404, OmniRoute calls recordProviderCooldown(providerA, undefined) — a provider-
+//   404, AgentProxy calls recordProviderCooldown(providerA, undefined) — a provider-
 //   wide key. The combo then pre-screens target[1] (same providerA, real model) and
 //   finds providerA in cooldown → skips it → combo returns the 404 from target[0].
 //   Using DIFFERENT providers avoids this: target[0] puts providerA in cooldown,
@@ -461,8 +461,8 @@ async function scenarioAuto() {
 // comment below for how to implement it using encrypted wrong API key via SSH sqlite).
 //
 // BROKEN-CONNECTION approach (for future reference or if cross-provider is unavailable):
-//   1. SSH to read STORAGE_ENCRYPTION_KEY from /root/.omniroute/.env
-//   2. Encrypt a wrong API key using scryptSync(key,"omniroute-field-encryption-v1",32)+AES-256-GCM
+//   1. SSH to read STORAGE_ENCRYPTION_KEY from /root/.agentproxy/.env
+//   2. Encrypt a wrong API key using scryptSync(key,"agentproxy-field-encryption-v1",32)+AES-256-GCM
 //   3. INSERT broken provider_connection row into provider_connections table via SSH sqlite
 //   4. Combo: [{providerId:glm, model:glm/glm-4-flash, connectionId:brokenConnId}, realModel]
 //   5. Broken conn → 401 → recordProviderCooldown("glm",brokenConnId) → key "glm:brokenConnId"
@@ -594,7 +594,7 @@ async function scenarioFailover(healthy) {
 // Main
 // ---------------------------------------------------------------------------
 async function main() {
-  console.log("=== OmniRoute combo-live-vps scenario driver ===");
+  console.log("=== AgentProxy combo-live-vps scenario driver ===");
   if (onlyScenario) console.log(`Filtering to scenario: ${onlyScenario}`);
   console.log();
 

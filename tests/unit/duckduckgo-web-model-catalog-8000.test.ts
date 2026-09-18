@@ -21,7 +21,7 @@ const CURRENT_FREE_IDS = new Set([
   "tinfoil/gemma4-31b",
 ]);
 
-// Ids OmniRoute historically advertised that Duck.ai has since retired.
+// Ids AgentProxy historically advertised that Duck.ai has since retired.
 const RETIRED_IDS = [
   "gpt-4o-mini",
   "gpt-5-mini",

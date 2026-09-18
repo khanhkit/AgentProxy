@@ -115,7 +115,7 @@ async function prepareJinaInput(
 
 /**
  * Mixed batches: keep Jina-native docs / strings intact and only translate
- * OmniRoute canonical `{ type, source }` items into Jina ImageDoc/TextDoc.
+ * AgentProxy canonical `{ type, source }` items into Jina ImageDoc/TextDoc.
  */
 export async function prepareJinaMixedEmbeddingInput(
   input: unknown[],
@@ -286,7 +286,7 @@ function normalizeEmbeddingInputItems(input: unknown): unknown[] {
 }
 
 /**
- * Translate OmniRoute's provider-neutral structured input into a documented
+ * Translate AgentProxy's provider-neutral structured input into a documented
  * provider-native transport. Each top-level input array element is one
  * embedding. Gemini Embedding 2 fuses multiple parts inside one Content;
  * N OpenAI `input` items must become N vectors via batchEmbedContents.

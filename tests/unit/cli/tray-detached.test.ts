@@ -46,13 +46,13 @@ test("buildTrayLaunch detaches Windows and Linux workers from the terminal", () 
     const launch = buildTrayLaunch({
       platform,
       execPath: "/usr/bin/node",
-      cliPath: "/opt/omniroute/bin/omniroute.mjs",
+      cliPath: "/opt/agentproxy/bin/agentproxy.mjs",
       workerArgs: ["serve", "--tray-worker"],
-      label: "com.omniroute.tray.123",
+      label: "com.agentproxy.tray.123",
     });
 
     assert.equal(launch.command, "/usr/bin/node");
-    assert.deepEqual(launch.args, ["/opt/omniroute/bin/omniroute.mjs", "serve", "--tray-worker"]);
+    assert.deepEqual(launch.args, ["/opt/agentproxy/bin/agentproxy.mjs", "serve", "--tray-worker"]);
     assert.deepEqual(launch.options, {
       detached: true,
       stdio: "ignore",
@@ -65,19 +65,19 @@ test("buildTrayLaunch submits a macOS launchd job", () => {
   const launch = buildTrayLaunch({
     platform: "darwin",
     execPath: "/usr/bin/node",
-    cliPath: "/opt/omniroute/bin/omniroute.mjs",
+    cliPath: "/opt/agentproxy/bin/agentproxy.mjs",
     workerArgs: ["serve", "--tray-worker"],
-    label: "com.omniroute.tray.123",
+    label: "com.agentproxy.tray.123",
   });
 
   assert.equal(launch.command, "launchctl");
   assert.deepEqual(launch.args, [
     "submit",
     "-l",
-    "com.omniroute.tray.123",
+    "com.agentproxy.tray.123",
     "--",
     "/usr/bin/node",
-    "/opt/omniroute/bin/omniroute.mjs",
+    "/opt/agentproxy/bin/agentproxy.mjs",
     "serve",
     "--tray-worker",
   ]);
@@ -128,7 +128,7 @@ test("startDetachedTray waits for worker readiness and detaches it", async () =>
   let unrefCalled = false;
   const result = await startDetachedTray(
     {
-      cliPath: "/tmp/omniroute.mjs",
+      cliPath: "/tmp/agentproxy.mjs",
       port: 20128,
       maxRestarts: 2,
       timeoutMs: 1000,
@@ -175,7 +175,7 @@ test("startDetachedTray stops a worker that never becomes ready", async () => {
     await assert.rejects(
       startDetachedTray(
         {
-          cliPath: "/tmp/omniroute.mjs",
+          cliPath: "/tmp/agentproxy.mjs",
           port: 20128,
           maxRestarts: 2,
           timeoutMs: 20,

@@ -115,7 +115,7 @@ export function mergeVendorEntries(current, parsed, vendor) {
 }
 
 async function fetchText(url) {
-  const res = await fetch(url, { headers: { "user-agent": "omniroute-lifecycle-refresh" } });
+  const res = await fetch(url, { headers: { "user-agent": "agentproxy-lifecycle-refresh" } });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   return res.text();
 }

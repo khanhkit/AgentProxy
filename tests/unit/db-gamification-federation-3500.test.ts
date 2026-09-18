@@ -16,7 +16,7 @@ import os from "node:os";
 import path from "node:path";
 
 // Set temp DATA_DIR BEFORE importing any db module
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-gamif-fed-3500-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-gamif-fed-3500-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../src/lib/db/core.ts");

@@ -1,4 +1,4 @@
-import { handleEmbedding } from "@omniroute/open-sse/handlers/embeddings.ts";
+import { handleEmbedding } from "@agentproxy/open-sse/handlers/embeddings.ts";
 import {
   parseEmbeddingModel,
   getEmbeddingProvider,
@@ -6,9 +6,9 @@ import {
   deriveEmbeddingProviderForChatProvider,
   type EmbeddingProviderNodeRow,
   type EmbeddingProvider,
-} from "@omniroute/open-sse/config/embeddingRegistry.ts";
-import { errorResponse, unavailableResponse } from "@omniroute/open-sse/utils/error.ts";
-import { HTTP_STATUS } from "@omniroute/open-sse/config/constants.ts";
+} from "@agentproxy/open-sse/config/embeddingRegistry.ts";
+import { errorResponse, unavailableResponse } from "@agentproxy/open-sse/utils/error.ts";
+import { HTTP_STATUS } from "@agentproxy/open-sse/config/constants.ts";
 import * as log from "@/sse/utils/logger";
 import { toJsonErrorPayload } from "@/shared/utils/upstreamError";
 import {
@@ -20,9 +20,9 @@ import { getCachedProviderNodes } from "@/lib/db/readCache";
 import { getComboByName, getCombos } from "@/lib/db/combos";
 import { getDatabaseSettings } from "@/lib/db/databaseSettings";
 import { resolveProxyForConnection } from "@/lib/db/settings";
-import { runWithProxyContext } from "@omniroute/open-sse/utils/proxyFetch.ts";
-import { handleComboChat } from "@omniroute/open-sse/services/combo.ts";
-import { resolveBareModelToConnectionDefault } from "@omniroute/open-sse/services/model.ts";
+import { runWithProxyContext } from "@agentproxy/open-sse/utils/proxyFetch.ts";
+import { handleComboChat } from "@agentproxy/open-sse/services/combo.ts";
+import { resolveBareModelToConnectionDefault } from "@agentproxy/open-sse/services/model.ts";
 import { findEmbeddingComboDimensionConflict } from "./familyGuard";
 import {
   formatMissingEmbeddingCredentialsError,
@@ -30,7 +30,7 @@ import {
 } from "./errors";
 import { isPrivateHost, isCloudMetadataHost } from "@/shared/network/outboundUrlGuard";
 import { calculateCost } from "@/lib/usage/costCalculator";
-import { attachOmniRouteMetaHeaders } from "@/domain/omnirouteResponseMeta";
+import { attachAgentProxyMetaHeaders } from "@/domain/agentproxyResponseMeta";
 import { generateRequestId } from "@/shared/utils/requestId";
 import { resolveLocalSyncedEndpointRoute } from "@/lib/providerModels/syncedEndpointRouting";
 
@@ -242,7 +242,7 @@ export async function createEmbeddingResponse(
   // entries are checked first and keep their specialized configuration.
   if (!providerConfig && !options.resolvedProvider) {
     try {
-      const { REGISTRY } = await import("@omniroute/open-sse/config/providerRegistry.ts");
+      const { REGISTRY } = await import("@agentproxy/open-sse/config/providerRegistry.ts");
       const chatEntry = (REGISTRY as Record<string, { baseUrl?: string } | undefined>)[provider];
       providerConfig = deriveEmbeddingProviderForChatProvider(provider, chatEntry);
       if (providerConfig) {
@@ -415,7 +415,7 @@ export async function createEmbeddingResponse(
     responseHeaders.set("Content-Type", "application/json");
     const usage = (result.data as { usage?: Record<string, number> })?.usage ?? null;
     const costUsd = usage ? await calculateCost(provider, effectiveModel ?? "", usage) : 0;
-    attachOmniRouteMetaHeaders(responseHeaders, {
+    attachAgentProxyMetaHeaders(responseHeaders, {
       provider,
       model: effectiveModel,
       usage,

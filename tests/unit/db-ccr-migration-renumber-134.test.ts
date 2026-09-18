@@ -5,7 +5,7 @@
 // ("GLIBC_2.29 not found"), so the native module fails to dlopen and any test that
 // reaches better-sqlite3 directly (or asserts stdout that the load-failure warning
 // would pollute) fails HERE while passing in CI. This is a known environment
-// limitation, not a defect in the code under test: the OmniRoute runtime itself
+// limitation, not a defect in the code under test: the AgentProxy runtime itself
 // cascades to node:sqlite/sql.js when better-sqlite3 is unavailable. See
 // tests/unit/_helpers/betterSqlite3Availability.ts for a guard helper.
 import test from "node:test";
@@ -15,9 +15,9 @@ import os from "node:os";
 import path from "node:path";
 import Database from "better-sqlite3";
 
-const migrationsDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-ccr-migration-"));
-const originalMigrationsDir = process.env.OMNIROUTE_MIGRATIONS_DIR;
-process.env.OMNIROUTE_MIGRATIONS_DIR = migrationsDir;
+const migrationsDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-ccr-migration-"));
+const originalMigrationsDir = process.env.AGENTPROXY_MIGRATIONS_DIR;
+process.env.AGENTPROXY_MIGRATIONS_DIR = migrationsDir;
 
 fs.writeFileSync(
   path.join(migrationsDir, "134_proxy_logs_egress_ip.sql"),
@@ -35,13 +35,13 @@ function createLegacyDb(appliedName: string) {
   db.exec(`
     CREATE TABLE proxy_logs (id TEXT PRIMARY KEY);
     CREATE TABLE ccr_blocks (principal_id TEXT PRIMARY KEY);
-    CREATE TABLE _omniroute_migrations (
+    CREATE TABLE _agentproxy_migrations (
       version TEXT PRIMARY KEY,
       name TEXT NOT NULL,
       applied_at TEXT NOT NULL DEFAULT (datetime('now'))
     );
   `);
-  db.prepare("INSERT INTO _omniroute_migrations (version, name) VALUES (?, ?)").run(
+  db.prepare("INSERT INTO _agentproxy_migrations (version, name) VALUES (?, ?)").run(
     "134",
     appliedName
   );
@@ -50,8 +50,8 @@ function createLegacyDb(appliedName: string) {
 
 test.after(() => {
   fs.rmSync(migrationsDir, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
-  if (originalMigrationsDir === undefined) delete process.env.OMNIROUTE_MIGRATIONS_DIR;
-  else process.env.OMNIROUTE_MIGRATIONS_DIR = originalMigrationsDir;
+  if (originalMigrationsDir === undefined) delete process.env.AGENTPROXY_MIGRATIONS_DIR;
+  else process.env.AGENTPROXY_MIGRATIONS_DIR = originalMigrationsDir;
 });
 
 test("renumbered CCR migration frees 134 for proxy_logs on existing databases", () => {
@@ -59,7 +59,7 @@ test("renumbered CCR migration frees 134 for proxy_logs on existing databases", 
   try {
     assert.equal(runMigrations(db), 1);
     assert.deepEqual(
-      db.prepare("SELECT version, name FROM _omniroute_migrations ORDER BY version").all(),
+      db.prepare("SELECT version, name FROM _agentproxy_migrations ORDER BY version").all(),
       [
         { version: "134", name: "proxy_logs_egress_ip" },
         { version: "139", name: "ccr_blocks" },
@@ -77,7 +77,7 @@ test("renumbered CCR migration marks an existing table without recreating it", (
   try {
     assert.equal(runMigrations(db), 1);
     assert.deepEqual(
-      db.prepare("SELECT version, name FROM _omniroute_migrations ORDER BY version").all(),
+      db.prepare("SELECT version, name FROM _agentproxy_migrations ORDER BY version").all(),
       [
         { version: "134", name: "proxy_logs_egress_ip" },
         { version: "139", name: "ccr_blocks" },

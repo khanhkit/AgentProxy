@@ -18,8 +18,8 @@ async function json(response: Response): Promise<Record<string, unknown>> {
 }
 
 test("issue-agent status reports default-off recorded triage support", async () => {
-  const previous = process.env.OMNIROUTE_ISSUE_AGENT_ENABLED;
-  delete process.env.OMNIROUTE_ISSUE_AGENT_ENABLED;
+  const previous = process.env.AGENTPROXY_ISSUE_AGENT_ENABLED;
+  delete process.env.AGENTPROXY_ISSUE_AGENT_ENABLED;
   try {
     const response = await GET();
     const body = await json(response);
@@ -29,8 +29,8 @@ test("issue-agent status reports default-off recorded triage support", async () 
     assert.equal(body.enabled, false);
     assert.deepEqual(body.supportedModes, ["recorded-triage"]);
   } finally {
-    if (previous === undefined) delete process.env.OMNIROUTE_ISSUE_AGENT_ENABLED;
-    else process.env.OMNIROUTE_ISSUE_AGENT_ENABLED = previous;
+    if (previous === undefined) delete process.env.AGENTPROXY_ISSUE_AGENT_ENABLED;
+    else process.env.AGENTPROXY_ISSUE_AGENT_ENABLED = previous;
   }
 });
 
@@ -90,8 +90,8 @@ test("issue-agent run rejects invalid recorded-triage field types", async () => 
 });
 
 test("issue-agent run is disabled by default", async () => {
-  const previous = process.env.OMNIROUTE_ISSUE_AGENT_ENABLED;
-  delete process.env.OMNIROUTE_ISSUE_AGENT_ENABLED;
+  const previous = process.env.AGENTPROXY_ISSUE_AGENT_ENABLED;
+  delete process.env.AGENTPROXY_ISSUE_AGENT_ENABLED;
   try {
     const response = await POST(
       new Request("http://localhost/api/issue-agent/runs", {
@@ -106,23 +106,23 @@ test("issue-agent run is disabled by default", async () => {
 
     assert.equal(response.status, 403);
     assert.equal(body.enabled, false);
-    assert.equal(body.requiredEnv, "OMNIROUTE_ISSUE_AGENT_ENABLED=true");
+    assert.equal(body.requiredEnv, "AGENTPROXY_ISSUE_AGENT_ENABLED=true");
   } finally {
-    if (previous === undefined) delete process.env.OMNIROUTE_ISSUE_AGENT_ENABLED;
-    else process.env.OMNIROUTE_ISSUE_AGENT_ENABLED = previous;
+    if (previous === undefined) delete process.env.AGENTPROXY_ISSUE_AGENT_ENABLED;
+    else process.env.AGENTPROXY_ISSUE_AGENT_ENABLED = previous;
   }
 });
 
 test("issue-agent run returns deterministic recorded-triage plan when enabled", async () => {
-  const previous = process.env.OMNIROUTE_ISSUE_AGENT_ENABLED;
-  process.env.OMNIROUTE_ISSUE_AGENT_ENABLED = "true";
+  const previous = process.env.AGENTPROXY_ISSUE_AGENT_ENABLED;
+  process.env.AGENTPROXY_ISSUE_AGENT_ENABLED = "true";
   try {
     const response = await POST(
       new Request("http://localhost/api/issue-agent/runs", {
         method: "POST",
         body: JSON.stringify({
           mode: "recorded-triage",
-          issueUrl: "https://github.com/KooshaPari/OmniRoute/issues/6059",
+          issueUrl: "https://github.com/KooshaPari/AgentProxy/issues/6059",
           dryRun: true,
         }),
       })
@@ -132,18 +132,18 @@ test("issue-agent run returns deterministic recorded-triage plan when enabled", 
     assert.equal(response.status, 200);
     assert.equal(body.accepted, true);
     assert.equal(body.mode, "recorded-triage");
-    assert.equal(body.repository, "KooshaPari/OmniRoute");
+    assert.equal(body.repository, "KooshaPari/AgentProxy");
     assert.equal(body.issueNumber, 6059);
     assert.match(String(body.runId), /^issue-agent-recorded-triage-[a-f0-9]{16}$/);
   } finally {
-    if (previous === undefined) delete process.env.OMNIROUTE_ISSUE_AGENT_ENABLED;
-    else process.env.OMNIROUTE_ISSUE_AGENT_ENABLED = previous;
+    if (previous === undefined) delete process.env.AGENTPROXY_ISSUE_AGENT_ENABLED;
+    else process.env.AGENTPROXY_ISSUE_AGENT_ENABLED = previous;
   }
 });
 
 test("issue-agent run rejects invalid enabled recorded-triage URL", async () => {
-  const previous = process.env.OMNIROUTE_ISSUE_AGENT_ENABLED;
-  process.env.OMNIROUTE_ISSUE_AGENT_ENABLED = "true";
+  const previous = process.env.AGENTPROXY_ISSUE_AGENT_ENABLED;
+  process.env.AGENTPROXY_ISSUE_AGENT_ENABLED = "true";
   try {
     const response = await POST(
       new Request("http://localhost/api/issue-agent/runs", {
@@ -156,15 +156,15 @@ test("issue-agent run rejects invalid enabled recorded-triage URL", async () => 
     assert.equal(response.status, 400);
     assert.equal(body.error, "Expected a GitHub issue or pull request URL");
   } finally {
-    if (previous === undefined) delete process.env.OMNIROUTE_ISSUE_AGENT_ENABLED;
-    else process.env.OMNIROUTE_ISSUE_AGENT_ENABLED = previous;
+    if (previous === undefined) delete process.env.AGENTPROXY_ISSUE_AGENT_ENABLED;
+    else process.env.AGENTPROXY_ISSUE_AGENT_ENABLED = previous;
   }
 });
 
 test("issue-agent run returns recorded context summary with redaction", async () => {
-  const previous = process.env.OMNIROUTE_ISSUE_AGENT_ENABLED;
+  const previous = process.env.AGENTPROXY_ISSUE_AGENT_ENABLED;
   const previousDataDir = process.env.DATA_DIR;
-  process.env.OMNIROUTE_ISSUE_AGENT_ENABLED = "true";
+  process.env.AGENTPROXY_ISSUE_AGENT_ENABLED = "true";
   process.env.DATA_DIR = mkdtempSync(join(tmpdir(), "issue-agent-route-"));
   try {
     const response = await POST(
@@ -172,7 +172,7 @@ test("issue-agent run returns recorded context summary with redaction", async ()
         method: "POST",
         body: JSON.stringify({
           mode: "recorded-triage",
-          issueUrl: "https://github.com/KooshaPari/OmniRoute/issues/7",
+          issueUrl: "https://github.com/KooshaPari/AgentProxy/issues/7",
           recordedContext: {
             title: "Review PR mention",
             body: "Authorization: Bearer sk-routeSecret1234567890",
@@ -192,17 +192,17 @@ test("issue-agent run returns recorded context summary with redaction", async ()
     assert.doesNotMatch(String(context.redactedDigestSource), /sk-routeSecret/);
     assert.match(String(context.redactedDigestSource), /\[REDACTED\]/);
   } finally {
-    if (previous === undefined) delete process.env.OMNIROUTE_ISSUE_AGENT_ENABLED;
-    else process.env.OMNIROUTE_ISSUE_AGENT_ENABLED = previous;
+    if (previous === undefined) delete process.env.AGENTPROXY_ISSUE_AGENT_ENABLED;
+    else process.env.AGENTPROXY_ISSUE_AGENT_ENABLED = previous;
     if (previousDataDir === undefined) delete process.env.DATA_DIR;
     else process.env.DATA_DIR = previousDataDir;
   }
 });
 
 test("issue-agent run accepts recorded GitHub export payloads", async () => {
-  const previous = process.env.OMNIROUTE_ISSUE_AGENT_ENABLED;
+  const previous = process.env.AGENTPROXY_ISSUE_AGENT_ENABLED;
   const previousDataDir = process.env.DATA_DIR;
-  process.env.OMNIROUTE_ISSUE_AGENT_ENABLED = "true";
+  process.env.AGENTPROXY_ISSUE_AGENT_ENABLED = "true";
   process.env.DATA_DIR = mkdtempSync(join(tmpdir(), "issue-agent-export-route-"));
   try {
     const response = await POST(
@@ -214,7 +214,7 @@ test("issue-agent run accepts recorded GitHub export payloads", async () => {
             issue: {
               title: "Fix GitHub export importer",
               body: "bug in recorded context path",
-              html_url: "https://github.com/KooshaPari/OmniRoute/issues/88",
+              html_url: "https://github.com/KooshaPari/AgentProxy/issues/88",
             },
             comments: [{ user: { login: "maintainer", type: "User" }, body: "please patch" }],
           },
@@ -225,23 +225,23 @@ test("issue-agent run accepts recorded GitHub export payloads", async () => {
     const context = body.context as Record<string, unknown>;
 
     assert.equal(response.status, 200);
-    assert.equal(body.issueUrl, "https://github.com/KooshaPari/OmniRoute/issues/88");
+    assert.equal(body.issueUrl, "https://github.com/KooshaPari/AgentProxy/issues/88");
     assert.equal(body.issueNumber, 88);
     assert.equal(context.issueTitle, "Fix GitHub export importer");
     assert.equal(context.intent, "bugfix");
     assert.equal(body.auditPath, join(process.env.DATA_DIR, "issue-agent", "audit.jsonl"));
   } finally {
-    if (previous === undefined) delete process.env.OMNIROUTE_ISSUE_AGENT_ENABLED;
-    else process.env.OMNIROUTE_ISSUE_AGENT_ENABLED = previous;
+    if (previous === undefined) delete process.env.AGENTPROXY_ISSUE_AGENT_ENABLED;
+    else process.env.AGENTPROXY_ISSUE_AGENT_ENABLED = previous;
     if (previousDataDir === undefined) delete process.env.DATA_DIR;
     else process.env.DATA_DIR = previousDataDir;
   }
 });
 
 test("issue-agent run sanitizes a forced audit-write failure instead of leaking its absolute path", async () => {
-  const previous = process.env.OMNIROUTE_ISSUE_AGENT_ENABLED;
+  const previous = process.env.AGENTPROXY_ISSUE_AGENT_ENABLED;
   const previousDataDir = process.env.DATA_DIR;
-  process.env.OMNIROUTE_ISSUE_AGENT_ENABLED = "true";
+  process.env.AGENTPROXY_ISSUE_AGENT_ENABLED = "true";
   const auditBlockerDir = mkdtempSync(join(tmpdir(), "issue-agent-audit-blocker-"));
   // appendIssueAgentAuditRecord() (src/lib/issueAgent/audit.ts) does
   // `mkdir(join(DATA_DIR, "issue-agent"), { recursive: true })`. Pre-creating a
@@ -257,7 +257,7 @@ test("issue-agent run sanitizes a forced audit-write failure instead of leaking 
         method: "POST",
         body: JSON.stringify({
           mode: "recorded-triage",
-          issueUrl: "https://github.com/KooshaPari/OmniRoute/issues/1",
+          issueUrl: "https://github.com/KooshaPari/AgentProxy/issues/1",
         }),
       })
     );
@@ -277,8 +277,8 @@ test("issue-agent run sanitizes a forced audit-write failure instead of leaking 
     );
     assert.equal(errorMessage, "Issue Agent request failed due to an internal error");
   } finally {
-    if (previous === undefined) delete process.env.OMNIROUTE_ISSUE_AGENT_ENABLED;
-    else process.env.OMNIROUTE_ISSUE_AGENT_ENABLED = previous;
+    if (previous === undefined) delete process.env.AGENTPROXY_ISSUE_AGENT_ENABLED;
+    else process.env.AGENTPROXY_ISSUE_AGENT_ENABLED = previous;
     if (previousDataDir === undefined) delete process.env.DATA_DIR;
     else process.env.DATA_DIR = previousDataDir;
   }

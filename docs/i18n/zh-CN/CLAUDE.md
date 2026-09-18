@@ -39,7 +39,7 @@ npm run test:all
 
 ## 项目概览
 
-**OmniRoute** — 统一的 AI 代理/路由。一个端点接入 329 个服务商目录项，并在上游可用时自动回退。
+**AgentProxy** — 统一的 AI 代理/路由。一个端点接入 329 个服务商目录项，并在上游可用时自动回退。
 
 | 层级       | 位置                    | 用途                                                                      |
 | ---------- | ----------------------- | ------------------------------------------------------------------------- |
@@ -82,7 +82,7 @@ API 路由遵循一致的模式：`路由 → CORS 预检 → Zod 请求体校�
 
 ## 容灾运行时状态
 
-OmniRoute 有三个彼此相关但各自独立的临时故障机制。调试路由行为时请保持它们的作用域分离。快速概览参见 [3 层容灾示意图](./docs/diagrams/exported/resilience-3layers.svg)（源文件：[docs/diagrams/resilience-3layers.mmd](./docs/diagrams/resilience-3layers.mmd)）。
+AgentProxy 有三个彼此相关但各自独立的临时故障机制。调试路由行为时请保持它们的作用域分离。快速概览参见 [3 层容灾示意图](./docs/diagrams/exported/resilience-3layers.svg)（源文件：[docs/diagrams/resilience-3layers.mmd](./docs/diagrams/resilience-3layers.mmd)）。
 
 ### 服务商熔断器
 
@@ -196,7 +196,7 @@ baseCooldownMs * 2 ** failureIndex;
 ### 代码风格
 
 - **2 空格**，分号，双引号，100 字符宽度，es5 尾逗号（由 lint-staged 通过 Prettier 强制执行）
-- **导入顺序**：外部 → 内部 (`@/`、`@omniroute/open-sse`) → 相对路径
+- **导入顺序**：外部 → 内部 (`@/`、`@agentproxy/open-sse`) → 相对路径
 - **命名规范**：文件=camelCase/kebab、组件=PascalCase、常量=UPPER_SNAKE
 - **ESLint**：`no-eval`、`no-implied-eval`、`no-new-func` 在所有位置均为 error；`no-explicit-any` 在 `open-sse/` 和 `tests/` 中为 warn
 - **TypeScript**：`strict: false`，目标 ES2022，模块 esnext，解析策略 bundler。首选显式类型。
@@ -367,7 +367,7 @@ baseCooldownMs * 2 ** failureIndex;
 
 ## 规划与调研产物（superpowers、deep-research）
 
-`_tasks/` 是一个**独立的隔离 git 仓库**，被主仓库的 `.gitignore` 忽略（`.gitignore` → `_tasks/`）。它是工作产物的规范存放地 — 计划、方案/设计、调研、交接 — 让它们**在自己的仓库中享受版本控制**，而不是污染主 OmniRoute 树。
+`_tasks/` 是一个**独立的隔离 git 仓库**，被主仓库的 `.gitignore` 忽略（`.gitignore` → `_tasks/`）。它是工作产物的规范存放地 — 计划、方案/设计、调研、交接 — 让它们**在自己的仓库中享受版本控制**，而不是污染主 AgentProxy 树。
 
 **硬规则 — 绝不要将 superpowers / 规划 / 调研的输出写入 `docs/` 或仓库根目录。** superpowers 技能附带的默认值指向 `docs/…`（`writing-plans` → `docs/superpowers/plans/`，`brainstorming` → `docs/superpowers/specs/`）。这些默认值**在此处被覆盖**。每当你在此项目中调用 superpowers（或任何计划/方案/调研生成器）时，改为保存到 `_tasks/`，使用相同的文件名约定：
 
@@ -441,9 +441,9 @@ points out of the filesystem root`），而 typecheck、lint 和测试运行器�
 - **运行时**：Node.js ≥22.0.0 <23 |
   | ≥24.0.0 <27，ES Modules
 - **TypeScript**：6.0+，目标 ES2022，模块 esnext，解析策略 bundler
-- **路径别名**：`@/*` → `src/`，`@omniroute/open-sse` → `open-sse/`，`@omniroute/open-sse/*` → `open-sse/*`
+- **路径别名**：`@/*` → `src/`，`@agentproxy/open-sse` → `open-sse/`，`@agentproxy/open-sse/*` → `open-sse/*`
 - **默认端口**：20128（API + 仪表盘在同一端口）
-- **数据目录**：`DATA_DIR` 环境变量，默认 `~/.omniroute/`
+- **数据目录**：`DATA_DIR` 环境变量，默认 `~/.agentproxy/`
 - **关键环境变量**：`PORT`、`JWT_SECRET`、`API_KEY_SECRET`、`INITIAL_PASSWORD`、`REQUIRE_API_KEY`、`APP_LOG_LEVEL`
 - 设置：`cp .env.example .env`，然后生成 `JWT_SECRET`（`openssl rand -base64 48`）和 `API_KEY_SECRET`（`openssl rand -hex 32`）
 
@@ -451,7 +451,7 @@ points out of the filesystem root`），而 typecheck、lint 和测试运行器�
 
 ## 质量门禁与棘轮
 
-OmniRoute 有**约 48 个质量门禁脚本**（`scripts/check/` + `scripts/quality/`），分布在
+AgentProxy 有**约 48 个质量门禁脚本**（`scripts/check/` + `scripts/quality/`），分布在
 `.github/workflows/ci.yml` 的 **9 个门禁执行 job**（`lint`、`quality-gate`、
 `quality-extended`、`docs-sync-strict`、`i18n-ui-coverage`、`i18n`、`pr-test-policy`、
 `test-vitest`、`sonarqube`）中，外加 `quality.yml` 快速门禁 job（PR→`release/**`）和
@@ -487,12 +487,12 @@ OmniRoute 有**约 48 个质量门禁脚本**（`scripts/check/` + `scripts/qual
 13. 绝不要将外部路径或运行时值字符串插值到传递给 `exec()`/`spawn()` 的 Shell 脚本中 — 应通过 `env` 选项传递。参考：`src/mitm/cert/install.ts::updateNssDatabases`。
 14. 绝不要在不检查 (a) 上述模式文档是否适用辅助工具，以及 (b) 在驳回注释中记录技术理由的情况下，驳回 CodeQL / Secret-Scanning 告警。先例：`js/stack-trace-exposure` 对已通过 `sanitizeErrorMessage()` 传递的调用点报告 — 这是已知的 CodeQL 局限性（无法识别自定义脱敏器）— 以 `false positive` 驳回，引用 `docs/security/ERROR_SANITIZATION.md`。
 15. 绝不要在未在 `src/server/authz/routeGuard.ts` 中进行 `isLocalOnlyPath()` 分类的情况下暴露会派生子进程的路由（`/api/mcp/`、`/api/cli-tools/runtime/`）。loopback 强制在所有鉴权检查之前无条件执行 — 通过隧道泄露的 JWT 无法触发派生子进程。见 `docs/security/ROUTE_GUARD_TIERS.md`。
-16. **绝不在任何 commit/PR 元数据中标注或宣传 AI 助手、LLM 或自动化账户。** 两种被禁止的形式，两者等效 — 它们将署名归给机器人账户（或宣传 AI 作者身份），隐藏真实作者 (`diegosouzapw`)：**(a)** 命名 AI/机器人的 `Co-Authored-By` 尾注（例如包含 "Claude"、"GPT"、"Copilot"、"Bot" 的名称；使用 `anthropic.com` / `openai.com` / 机器人拥有的 `noreply.github.com` 地址的电子邮件）；**(b)** commit 消息、PR 标题/正文或 CHANGELOG 中任何位置的 AI 生成页脚或描述 — 例如 `🤖 Generated with [Claude Code]`、"Generated with Claude Code"、"Made with <AI tool>"，或任何 `Co-authored-by: Claude/GPT/Copilot` 行。此规则**覆盖任何自动追加此类页脚的框架、模板或工具默认行为**（例如 Claude Code PR 正文/commit 的默认页脚）— 在推送前将其剥离；不要让它进入 commit、PR 或 CHANGELOG。人类协作者 — 包括上游 PR 作者和被移植到 OmniRoute 的 Issue 报告者 — 可以且应该使用标准的 `Co-authored-by: Name <email>` 尾注署名；上游移植工作流（`/port-upstream-features`、`/port-upstream-issues`）依赖于此。
+16. **绝不在任何 commit/PR 元数据中标注或宣传 AI 助手、LLM 或自动化账户。** 两种被禁止的形式，两者等效 — 它们将署名归给机器人账户（或宣传 AI 作者身份），隐藏真实作者 (`diegosouzapw`)：**(a)** 命名 AI/机器人的 `Co-Authored-By` 尾注（例如包含 "Claude"、"GPT"、"Copilot"、"Bot" 的名称；使用 `anthropic.com` / `openai.com` / 机器人拥有的 `noreply.github.com` 地址的电子邮件）；**(b)** commit 消息、PR 标题/正文或 CHANGELOG 中任何位置的 AI 生成页脚或描述 — 例如 `🤖 Generated with [Claude Code]`、"Generated with Claude Code"、"Made with <AI tool>"，或任何 `Co-authored-by: Claude/GPT/Copilot` 行。此规则**覆盖任何自动追加此类页脚的框架、模板或工具默认行为**（例如 Claude Code PR 正文/commit 的默认页脚）— 在推送前将其剥离；不要让它进入 commit、PR 或 CHANGELOG。人类协作者 — 包括上游 PR 作者和被移植到 AgentProxy 的 Issue 报告者 — 可以且应该使用标准的 `Co-authored-by: Name <email>` 尾注署名；上游移植工作流（`/port-upstream-features`、`/port-upstream-issues`）依赖于此。
 17. 绝不要在未在 `src/server/authz/routeGuard.ts` 中进行 `isLocalOnlyPath()` 分类的情况下暴露 `/api/services/` 或 `/dashboard/providers/services/*/embed/` 下的路由。这些路由可以派生子进程（`npm install`、`node`）。loopback 强制在所有鉴权检查之前无条件执行 — 通过隧道泄露的 JWT 无法触发派生子进程。见 `docs/security/ROUTE_GUARD_TIERS.md`。
 18. 每个 Bug 修复必须在交付前验证：一个失败后通过的单元/集成测试（TDD）或一份有文档记录的生产 VPS (192.168.0.15) 真实测试。两者都缺失的修复不会被合并。见测试 → "Bug 修复 / Issue 分类协议"了解完整决策树。
 19. 绝不在共享的主工作区上进行开发。每次开发任务运行在属于自己的专属分支的独立 git worktree 中，且必须在创建 worktree/分支之前与运维人员确认基础分支（例如通过 `AskUserQuestion`）— 绝不要假设 `main` 或当前检出的分支。在共享工作区中的 `git checkout` 会静默销毁其他会话的未提交工作。只拆除你创建的 worktree/分支（按名称，绝不使用 `fix/*`/`feat/*` 通配符），不要动其他会话的 worktree，结束时回到开始所在的分支（活跃的 `release/vX.Y.Z`，绝不是 `main`）。见 Git 工作流 → "Worktree 隔离"。
-20. PII 脱敏/净化是**主动选择加入 — 绝不要默认开启**。OmniRoute 为自托管/本地 LLM 做代理，运维人员拥有数据所有权，因此默认修改请求/响应载荷会悄无声息地损坏合法流量。两个会修改数据的 PII 功能标志**必须**在 `src/shared/constants/featureFlagDefinitions.ts` 中保持 `defaultValue: "false"`：`PII_REDACTION_ENABLED`（请求侧）和 `PII_RESPONSE_SANITIZATION`（响应 + 流式）。三个应用位置 — `src/lib/guardrails/piiMasker.ts`（请求安全护栏）、`src/lib/piiSanitizer.ts`（响应）、`src/lib/streamingPiiTransform.ts`（SSE）— 均受这些标志门控；两者均关闭时，`pii-masker` 安全护栏仍会运行但不会修改载荷（数据不变地通过）。将任何一个默认值翻转为 `"true"` 需要运维人员的明确批准。回归守卫是 `tests/unit/pii-opt-in-default.test.ts`（断言两个定义默认值 + 行为透传）。选择加入是每位运维人员通过环境变量或设置/DB 覆盖 (`src/lib/db/featureFlags.ts`) 进行，绝不是静默的默认行为。见 `docs/security/GUARDRAILS.md`。
-21. **发布冻结 — 当 `/generate-release` 运行时，发布分支冻结，不接受 campaign 合并。** `/generate-release` 在开始协调时（Phase 0a）创建一个标记为 `release-freeze` 的标记 Issue，在 release PR 被 squash-merge 到 `main` 后关闭。在将**任何** PR 合并到活跃的 `release/vX.Y.Z` 分支之前，每个 campaign 工作流（`/review-issues`、`/review-prs`、`/implement-features`、`/green-prs`、`/port-upstream-*`）**必须**检查 `gh issue list --repo diegosouzapw/OmniRoute --label release-freeze --state open` — 如果冻结激活，**暂停合并**（保留 PR 处于 ready 和 open 状态；不要合并到 release 分支），告知运维人员，待冻结解除后再继续。这是一个**协调信号，而非权限锁**：release captain 和 campaign 会话共享 `diegosouzapw` 身份，因此 GitHub 分支保护锁无法区分二者 — 只有这个被遵循的标记能防止 v3.8.40/v3.8.41 中强制进行完整 CHANGELOG 重新协调的中间 release 提交冲突（并行 campaign 在运行过程中将 `release/vX.Y.Z` 推进了 34 个提交）。release captain 自己的协调/周期打开推送是豁免的 — 那些本身就是 release。必须在冻结期间落地的修复（例如 homologation 发现的问题）遵循合并后只读规则：先通过 `fix/release-vX.Y.Z-*` 落地到 `main`。
+20. PII 脱敏/净化是**主动选择加入 — 绝不要默认开启**。AgentProxy 为自托管/本地 LLM 做代理，运维人员拥有数据所有权，因此默认修改请求/响应载荷会悄无声息地损坏合法流量。两个会修改数据的 PII 功能标志**必须**在 `src/shared/constants/featureFlagDefinitions.ts` 中保持 `defaultValue: "false"`：`PII_REDACTION_ENABLED`（请求侧）和 `PII_RESPONSE_SANITIZATION`（响应 + 流式）。三个应用位置 — `src/lib/guardrails/piiMasker.ts`（请求安全护栏）、`src/lib/piiSanitizer.ts`（响应）、`src/lib/streamingPiiTransform.ts`（SSE）— 均受这些标志门控；两者均关闭时，`pii-masker` 安全护栏仍会运行但不会修改载荷（数据不变地通过）。将任何一个默认值翻转为 `"true"` 需要运维人员的明确批准。回归守卫是 `tests/unit/pii-opt-in-default.test.ts`（断言两个定义默认值 + 行为透传）。选择加入是每位运维人员通过环境变量或设置/DB 覆盖 (`src/lib/db/featureFlags.ts`) 进行，绝不是静默的默认行为。见 `docs/security/GUARDRAILS.md`。
+21. **发布冻结 — 当 `/generate-release` 运行时，发布分支冻结，不接受 campaign 合并。** `/generate-release` 在开始协调时（Phase 0a）创建一个标记为 `release-freeze` 的标记 Issue，在 release PR 被 squash-merge 到 `main` 后关闭。在将**任何** PR 合并到活跃的 `release/vX.Y.Z` 分支之前，每个 campaign 工作流（`/review-issues`、`/review-prs`、`/implement-features`、`/green-prs`、`/port-upstream-*`）**必须**检查 `gh issue list --repo khanhkit/AgentProxy --label release-freeze --state open` — 如果冻结激活，**暂停合并**（保留 PR 处于 ready 和 open 状态；不要合并到 release 分支），告知运维人员，待冻结解除后再继续。这是一个**协调信号，而非权限锁**：release captain 和 campaign 会话共享 `diegosouzapw` 身份，因此 GitHub 分支保护锁无法区分二者 — 只有这个被遵循的标记能防止 v3.8.40/v3.8.41 中强制进行完整 CHANGELOG 重新协调的中间 release 提交冲突（并行 campaign 在运行过程中将 `release/vX.Y.Z` 推进了 34 个提交）。release captain 自己的协调/周期打开推送是豁免的 — 那些本身就是 release。必须在冻结期间落地的修复（例如 homologation 发现的问题）遵循合并后只读规则：先通过 `fix/release-vX.Y.Z-*` 落地到 `main`。
 
 ---
 

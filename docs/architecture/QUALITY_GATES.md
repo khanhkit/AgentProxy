@@ -4,7 +4,7 @@ title: Quality Gates Reference
 
 # Quality Gates Reference
 
-This document is the authoritative reference for all CI quality gates in OmniRoute.
+This document is the authoritative reference for all CI quality gates in AgentProxy.
 It describes each gate, what it validates, which CI job it runs in, whether it uses
 a ratchet baseline or a pass/fail policy, and whether it blocks the build or is advisory.
 
@@ -28,7 +28,7 @@ changes:
 
 | Job                                              | Scope                                                                                                                                                                                                            | Blocking                                                                                  |
 | ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| `Build (advisory)`                               | Non-draft code PRs and Mergify queue branches; Node 24, `npm-ci-retry`, `check:node-runtime`, `npm run build` with `OMNIROUTE_USE_TURBOPACK=1`; no artifact upload because no downstream quality job consumes it | **Advisory** (`continue-on-error: true`; remove after one week of stable release-PR runs) |
+| `Build (advisory)`                               | Non-draft code PRs and Mergify queue branches; Node 24, `npm-ci-retry`, `check:node-runtime`, `npm run build` with `AGENTPROXY_USE_TURBOPACK=1`; no artifact upload because no downstream quality job consumes it | **Advisory** (`continue-on-error: true`; remove after one week of stable release-PR runs) |
 | `Docs Gates (fast-path)`                         | Docs/code PRs; API docs refs and docs-all                                                                                                                                                                        | Yes                                                                                       |
 | `Fast Quality Gates`                             | Code PRs; static checks, typecheck, dashboard typecheck, impacted unit tests                                                                                                                                     | Yes                                                                                       |
 | `Forgotten sibling tests`                        | Code PRs; changed modules traced to static consumers and candidate sibling tests; barrel and dynamic-import paths are reported as advisory diagnostics, with referenced allowlist exceptions                     | **Advisory**                                                                              |
@@ -224,7 +224,7 @@ These run on a cron schedule (and `workflow_dispatch`), never on PRs. All are ad
 | `nightly-property`     | fast-check property tests with a random seed + high run count                                                                                       | **Advisory** |
 | `nightly-resilience`   | heap-growth gate, chaos fault-injection, k6 load/soak                                                                                               | **Advisory** |
 | `nightly-llm-security` | promptfoo injection guard (block mode) + garak probes (skipped without a provider secret)                                                           | **Advisory** |
-| `nightly-schemathesis` | OpenAPI contract fuzzing (schemathesis) against a live OmniRoute using `docs/openapi.yaml` — surfaces spec violations / unhandled 500s (Fase 8 B.4) | **Advisory** |
+| `nightly-schemathesis` | OpenAPI contract fuzzing (schemathesis) against a live AgentProxy using `docs/openapi.yaml` — surfaces spec violations / unhandled 500s (Fase 8 B.4) | **Advisory** |
 | `nightly-mutation`     | Stryker mutation-testing score over the fast unit lane — surviving mutants surface weak asserts                                                     | **Advisory** |
 | `nightly-compat`       | Node engine compatibility matrix across the supported `engines.node` ranges                                                                         | **Advisory** |
 
@@ -327,7 +327,7 @@ pending implementation).
 ### CodeQL ratchet: refresh cadence and manual trigger
 
 `check:codeql-ratchet` reads **repo state, refreshed on a schedule — not per PR.**
-`gh api repos/diegosouzapw/OmniRoute/code-scanning/default-setup` reports
+`gh api repos/khanhkit/AgentProxy/code-scanning/default-setup` reports
 `state: configured`, `schedule: weekly`: GitHub's default-setup scan, not a per-push
 analysis. Consequence: after a PR that FIXES alerts merges, the ratchet keeps reading
 the old, higher count until the next scheduled scan runs — so it reports a regression
@@ -480,7 +480,7 @@ allowlist is a false sense of quality.
 
 ## Agent tooling: LSP-in-the-loop (opt-in)
 
-Beyond the CI gates, OmniRoute ships an **opt-in** `agent-lsp` scaffold
+Beyond the CI gates, AgentProxy ships an **opt-in** `agent-lsp` scaffold
 (a project-level `.mcp.json`, Fase 7 Task 15). Create `.mcp.json`
 to expose a TypeScript language server to coding agents, so they resolve symbols /
 diagnostics **before** writing code — a compile-before-claim companion to

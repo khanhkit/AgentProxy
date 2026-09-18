@@ -226,10 +226,10 @@ test("plain-text composer insertion establishes a caret when focus has no select
   assert.equal(selection.anchorNode, element);
 });
 
-test("keeps OmniRoute DATA_DIR isolation and Docker CDP browser ownership", () => {
+test("keeps AgentProxy DATA_DIR isolation and Docker CDP browser ownership", () => {
   const previousDataDir = process.env.DATA_DIR;
   const previousDedicatedHome = process.env.CODEX_CHATGPT_WEB_HOME;
-  const root = mkdtempSync(join(tmpdir(), "omniroute-chatgpt-web-config-"));
+  const root = mkdtempSync(join(tmpdir(), "agentproxy-chatgpt-web-config-"));
   try {
     process.env.DATA_DIR = root;
     delete process.env.CODEX_CHATGPT_WEB_HOME;
@@ -253,23 +253,23 @@ test("keeps OmniRoute DATA_DIR isolation and Docker CDP browser ownership", () =
   }
 });
 
-test("rejects the previously shipped OmniRoute connector identity after the MCP contract change", () => {
+test("rejects the previously shipped AgentProxy connector identity after the MCP contract change", () => {
   assert.throws(
     () =>
       resolveBrowserConfig({
         adapter: "chatgpt-web",
         baseUrl: "https://chatgpt.com",
         chatgptWeb: {
-          appName: "OmniRoute Codex",
-          storageStatePath: "/tmp/omniroute-chatgpt-web-storage-state.json",
+          appName: "AgentProxy Codex",
+          storageStatePath: "/tmp/agentproxy-chatgpt-web-storage-state.json",
         },
       }),
-    /newly created connector named "OmniRoute Codex v2"/
+    /newly created connector named "AgentProxy Codex v2"/
   );
 });
 
 test("verified capability refresh preserves the credential marker binding", () => {
-  const root = mkdtempSync(join(tmpdir(), "omniroute-chatgpt-web-marker-"));
+  const root = mkdtempSync(join(tmpdir(), "agentproxy-chatgpt-web-marker-"));
   const statePath = join(root, "storage-state.json");
   const markerPath = loginVerificationMarkerPath(statePath);
   try {
@@ -298,7 +298,7 @@ test("verified capability refresh preserves the credential marker binding", () =
 
 test("cookie-header storage state satisfies Playwright cookie requirements", () => {
   const previousDataDir = process.env.DATA_DIR;
-  const root = mkdtempSync(join(tmpdir(), "omniroute-chatgpt-web-cookie-state-"));
+  const root = mkdtempSync(join(tmpdir(), "agentproxy-chatgpt-web-cookie-state-"));
   try {
     process.env.DATA_DIR = root;
     const statePath = ensureConnectionStorageState(
@@ -398,16 +398,16 @@ test("tunnel status is ready only when the process is running and healthy", () =
 });
 
 test("tunnel runtime status and stop use only flags accepted by alias commands", () => {
-  assert.deepEqual(buildTunnelRuntimeStatusArgs("omniroute-chatgpt-web-codex"), [
+  assert.deepEqual(buildTunnelRuntimeStatusArgs("agentproxy-chatgpt-web-codex"), [
     "runtimes",
     "status",
-    "omniroute-chatgpt-web-codex",
+    "agentproxy-chatgpt-web-codex",
     "--json",
   ]);
-  assert.deepEqual(buildTunnelRuntimeStopArgs("omniroute-chatgpt-web-codex"), [
+  assert.deepEqual(buildTunnelRuntimeStopArgs("agentproxy-chatgpt-web-codex"), [
     "runtimes",
     "stop",
-    "omniroute-chatgpt-web-codex",
+    "agentproxy-chatgpt-web-codex",
     "--json",
   ]);
 });
@@ -435,7 +435,7 @@ test("pins tunnel-client 0.0.13 and upgrades previously shipped builds", () => {
 });
 
 test("turn broker holds a tool invocation and rejects wrong or duplicate results", async () => {
-  const root = mkdtempSync(join(tmpdir(), "omniroute-cgw-broker-"));
+  const root = mkdtempSync(join(tmpdir(), "agentproxy-cgw-broker-"));
   const socketPath = join(root, "runtime", "turn-broker.sock");
   const broker = TurnBroker.forSocket(socketPath);
   try {
@@ -482,7 +482,7 @@ test("turn broker holds a tool invocation and rejects wrong or duplicate results
 });
 
 test("revoking a turn rejects a pending connector invocation", async () => {
-  const root = mkdtempSync(join(tmpdir(), "omniroute-cgw-revoke-"));
+  const root = mkdtempSync(join(tmpdir(), "agentproxy-cgw-revoke-"));
   const socketPath = join(root, "runtime", "turn-broker.sock");
   const broker = TurnBroker.forSocket(socketPath);
   try {
@@ -520,7 +520,7 @@ test("revoking a turn rejects a pending connector invocation", async () => {
 });
 
 test("an explicitly bounded turn token expires closed", async () => {
-  const root = mkdtempSync(join(tmpdir(), "omniroute-cgw-expiry-"));
+  const root = mkdtempSync(join(tmpdir(), "agentproxy-cgw-expiry-"));
   const socketPath = join(root, "runtime", "turn-broker.sock");
   const broker = TurnBroker.forSocket(socketPath);
   try {
@@ -791,7 +791,7 @@ test("forced previous_response_id state flushes immediately and reloads after an
     const continuation = {
       previous_response_id: "resp_force_flush",
       input: [
-        { type: "function_call_output", call_id: "call_1", output: "/Users/backryun/OmniRoute" },
+        { type: "function_call_output", call_id: "call_1", output: "/Users/backryun/AgentProxy" },
       ],
     };
     const expanded = expandPreviousResponseInput(continuation, namespace);
@@ -940,7 +940,7 @@ test("self-contained Codex continuations ignore an unknown previous_response_id 
         name: "exec_command",
         arguments: '{"cmd":"pwd"}',
       },
-      { type: "function_call_output", call_id: "call_1", output: "/Users/backryun/OmniRoute" },
+      { type: "function_call_output", call_id: "call_1", output: "/Users/backryun/AgentProxy" },
     ],
   };
   assert.equal(inputHasSelfContainedCodexContinuation(body), true);

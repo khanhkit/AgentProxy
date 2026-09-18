@@ -59,7 +59,7 @@ põhirepositooriumis.
 See projekt kirjutab üle töökeskkonna seansi mustandiala vaikeasukoha (`/tmp/claude-*/…`).
 Kirjuta ajutised/tööfailid — ekspordid, genereeritud zip-failid, ühekordsed vahetulemused ja kõik,
 mille muidu paigutaksid kataloogi `/tmp` — selle asemel asukohta
-`/home/diegosouzapw/dev/proxys/OmniRoute/_artifacts/`.
+`/home/diegosouzapw/dev/proxys/AgentProxy/_artifacts/`.
 
 - `_artifacts/` on juurtaseme `_*` asukoht: git juba ignoreerib seda (`AGENTS.md` → „Juurtaseme
   `_*` asukohad“), see eksisteerib ainult kettal ja seda ei jälgita kunagi.

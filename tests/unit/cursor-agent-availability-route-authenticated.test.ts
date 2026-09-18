@@ -13,7 +13,7 @@ import path from "node:path";
 
 process.env.NODE_ENV = "test";
 const TEST_DATA_DIR = fs.mkdtempSync(
-  path.join(os.tmpdir(), "omniroute-agent-availability-route-auth-")
+  path.join(os.tmpdir(), "agentproxy-agent-availability-route-auth-")
 );
 process.env.DATA_DIR = TEST_DATA_DIR;
 
@@ -34,7 +34,7 @@ if (args[0] === "status") {
 
 const originalHome = process.env.HOME;
 const originalUserProfile = process.env.USERPROFILE;
-const tmpHome = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-agent-availability-home-auth-"));
+const tmpHome = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-agent-availability-home-auth-"));
 process.env.HOME = tmpHome;
 process.env.USERPROFILE = tmpHome;
 const binaryPath = path.join(tmpHome, ".local", "bin", "cursor-agent");

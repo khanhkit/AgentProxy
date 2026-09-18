@@ -6,7 +6,7 @@ import path from "node:path";
 
 // #10083 — `doctor` only looked for the node-gyp layout
 // (build/Release/better_sqlite3.node), so every install that resolves a
-// prebuilt binary (`npm i -g omniroute`) warned "better-sqlite3 native binary
+// prebuilt binary (`npm i -g agentproxy`) warned "better-sqlite3 native binary
 // was not found" even though the binary was present and loading fine.
 
 const ORIGINAL_DATA_DIR = process.env.DATA_DIR;
@@ -25,8 +25,8 @@ function nativeBinaryCheck(result: { checks: DoctorCheck[] }) {
 }
 
 async function withTempRoot(fn: (rootDir: string) => Promise<void>) {
-  const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-prebuild-data-"));
-  const rootDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-prebuild-root-"));
+  const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-prebuild-data-"));
+  const rootDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-prebuild-root-"));
   process.env.DATA_DIR = dataDir;
   try {
     await fn(rootDir);

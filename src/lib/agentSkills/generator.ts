@@ -133,7 +133,7 @@ function buildApiBody(skill: AgentSkill, sources: BuildSources): string {
           lines.push(`curl ${curlMethod}https://localhost:20128${op.path} \\`);
           lines.push("  -b cookie.jar \\");
           const hasJsonBody = ["POST", "PUT", "PATCH"].includes(op.method);
-          lines.push(`  -H "x-omniroute-csrf: $CSRF_TOKEN"${hasJsonBody ? " \\" : ""}`);
+          lines.push(`  -H "x-agentproxy-csrf: $CSRF_TOKEN"${hasJsonBody ? " \\" : ""}`);
           if (hasJsonBody) {
             lines.push('  -H "Content-Type: application/json" \\');
             lines.push("  -d '{}'");
@@ -143,7 +143,7 @@ function buildApiBody(skill: AgentSkill, sources: BuildSources): string {
         const curlMethod = op.method === "GET" ? "" : `-X ${op.method} `;
         const hasJsonBody = ["POST", "PUT", "PATCH"].includes(op.method);
         lines.push(`curl ${curlMethod}https://localhost:20128${op.path} \\`);
-        lines.push(`  -H "Authorization: Bearer $OMNIROUTE_TOKEN"${hasJsonBody ? " \\" : ""}`);
+        lines.push(`  -H "Authorization: Bearer $AGENTPROXY_TOKEN"${hasJsonBody ? " \\" : ""}`);
         if (hasJsonBody) {
           lines.push('  -H "Content-Type: application/json" \\');
           lines.push("  -d '{}'");
@@ -176,8 +176,8 @@ function buildCliBody(skill: AgentSkill, sources: BuildSources): string {
 
   lines.push("## Quick install\n");
   lines.push("```bash");
-  lines.push("npm install -g omniroute   # or: npx omniroute");
-  lines.push("omniroute --version");
+  lines.push("npm install -g agentproxy   # or: npx agentproxy");
+  lines.push("agentproxy --version");
   lines.push("```");
   lines.push("");
 
@@ -204,7 +204,7 @@ function buildCliBody(skill: AgentSkill, sources: BuildSources): string {
 
       lines.push("**Example:**\n");
       lines.push("```bash");
-      lines.push(`omniroute ${cmd.name}`);
+      lines.push(`agentproxy ${cmd.name}`);
       lines.push("```");
       lines.push("");
     }

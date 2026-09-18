@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { sanitizeErrorMessage } from "@omniroute/open-sse/utils/error";
+import { sanitizeErrorMessage } from "@agentproxy/open-sse/utils/error";
 import { createErrorResponse } from "@/lib/api/errorResponse";
 import {
   resolveVideoBridgeDrilldownPrincipal,

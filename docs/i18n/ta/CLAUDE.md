@@ -39,7 +39,7 @@ npm run test:all
 
 ## திட்டம் ஒரு பார்வையில்
 
-**OmniRoute** — ஒருங்கிணைந்த AI பிராக்சி/ரூட்டர். ஒரு முடிவிடம், 329 LLM வழங்குநர்கள், தானாகவே fallback.
+**AgentProxy** — ஒருங்கிணைந்த AI பிராக்சி/ரூட்டர். ஒரு முடிவிடம், 329 LLM வழங்குநர்கள், தானாகவே fallback.
 
 | அடுக்கு       | இடம்                    | நோக்கம்                                                                   |
 | ------------- | ----------------------- | ------------------------------------------------------------------------- |
@@ -82,7 +82,7 @@ API பாதைகள் ஒரே மாதிரியான வடிவத�
 
 ## நிலைத்தன்மை இயக்கநிலை நிலை
 
-OmniRoute இல் மூன்று தொடர்புடைய ஆனால் தனித்துவமான தற்காலிக-தவறுகள் முறைமைகள் உள்ளன. வழிமுறை நடத்தை பிழைகளை சரிசெய்யும் போது அவற்றின் பரப்பை தனியாக வைத்திருக்கவும். ஒரு பார்வையில் வரைபடத்திற்கான
+AgentProxy இல் மூன்று தொடர்புடைய ஆனால் தனித்துவமான தற்காலிக-தவறுகள் முறைமைகள் உள்ளன. வழிமுறை நடத்தை பிழைகளை சரிசெய்யும் போது அவற்றின் பரப்பை தனியாக வைத்திருக்கவும். ஒரு பார்வையில் வரைபடத்திற்கான
 [3-அடுக்கு நிலைத்தன்மை வரைபடம்](./docs/diagrams/exported/resilience-3layers.svg)
 (மூல: [docs/diagrams/resilience-3layers.mmd](./docs/diagrams/resilience-3layers.mmd)) ஐப் பார்க்கவும்.
 
@@ -196,7 +196,7 @@ baseCooldownMs * 2 ** failureIndex;
 ### குறியீட்டு பாணி
 
 - **2 இடங்கள்**, செமிகோலன், இரட்டை மேற்கோள்கள், 100 எழுத்து அகலம், es5 பின்னணி கமா (lint-staged மூலம் Prettier மூலம் கட்டாயமாக்கப்பட்டது)
-- **இறக்குமதிகள்**: வெளிப்புறம் → உள்ளகம் (`@/`, `@omniroute/open-sse`) → தொடர்புடைய
+- **இறக்குமதிகள்**: வெளிப்புறம் → உள்ளகம் (`@/`, `@agentproxy/open-sse`) → தொடர்புடைய
 - **பெயரிடுதல்**: கோப்புகள்=camelCase/kebab, கூறுகள்=PascalCase, நிலையானவை=UPPER_SNAKE
 - **ESLint**: `no-eval`, `no-implied-eval`, `no-new-func` = எங்கு வேண்டுமானாலும் பிழை; `no-explicit-any` = `open-sse/` மற்றும் `tests/` இல் எச்சரிக்கை
 - **TypeScript**: `strict: false`, இலக்கு ES2022, தொகுப்பு esnext, தீர்வு bundler. தெளிவான வகைகளை முன்னுரிமை கொடுக்கவும்.
@@ -364,9 +364,9 @@ git push -u origin feat/your-feature
   | ≥22.22.2 <23 |
   | ≥24 <25, ES Modules
 - **TypeScript**: 5.9+, இலக்கு ES2022, மாடுல் esnext, தீர்வு bundler
-- **பாதை அலியாஸ்**: `@/*` → `src/`, `@omniroute/open-sse` → `open-sse/`, `@omniroute/open-sse/*` → `open-sse/*`
+- **பாதை அலியாஸ்**: `@/*` → `src/`, `@agentproxy/open-sse` → `open-sse/`, `@agentproxy/open-sse/*` → `open-sse/*`
 - **இயல்புநிலை போர்ட்**: 20128 (API + dashboard ஒரே போர்டில்)
-- **தரவியல் அடைவு**: `DATA_DIR` env var, இயல்பாக `~/.omniroute/`
+- **தரவியல் அடைவு**: `DATA_DIR` env var, இயல்பாக `~/.agentproxy/`
 - **முக்கிய env vars**: `PORT`, `JWT_SECRET`, `API_KEY_SECRET`, `INITIAL_PASSWORD`, `REQUIRE_API_KEY`, `APP_LOG_LEVEL`
 - அமைப்பு: `cp .env.example .env` பின்னர் `JWT_SECRET` (`openssl rand -base64 48`) மற்றும் `API_KEY_SECRET` (`openssl rand -hex 32`) உருவாக்கவும்
 
@@ -389,4 +389,4 @@ git push -u origin feat/your-feature
 13. `exec()`/`spawn()` க்கு வழங்கப்படும் ஷெல் ஸ்கிரிப்ட்களில் வெளிப்புற பாதைகள் அல்லது இயக்க நேர மதிப்புகளை எப்போதும் சரம் இடைவெளி செய்யாதீர்கள் — `env` விருப்பத்தின் மூலம் வழங்கவும். குறிப்புரை: `src/mitm/cert/install.ts::updateNssDatabases`.
 14. CodeQL / Secret-Scanning எச்சரிக்கையை (a) மேலே உள்ள மாதிரி ஆவணங்களை முதலில் சரிபார்க்காமல் மற்றும் (b) நீக்கம் கருத்தில் தொழில்நுட்ப காரணத்தை பதிவு செய்யாமல் எப்போதும் மறுக்காதீர்கள். முன்னணி: `js/stack-trace-exposure` என்பது ஏற்கனவே `sanitizeErrorMessage()` மூலம் வழி நடத்தப்படும் அழைப்பிடங்களில் எழுப்பப்பட்டது என்பது ஒரு அறியப்பட்ட CodeQL வரம்பு (சாதாரண சுத்திகரிப்புகள் அடையாளம் காணப்படவில்லை) — `docs/security/ERROR_SANITIZATION.md` ஐ மேற்கோள் காட்டி `false positive` ஆக மறுக்கவும்.
 15. குழந்தை செயல்முறைகளை உருவாக்கும் வழிகளை ( `/api/mcp/`, `/api/cli-tools/runtime/`) `src/server/authz/routeGuard.ts` இல் `isLocalOnlyPath()` வகைப்படுத்தலின்றி எப்போதும் வெளிப்படுத்தாதீர்கள். எந்த அங்கீகார சோதனைக்கும் முன் கட்டாயமாக லூப்பேக் அமலாக்கம் நடைபெறும் — குழாயில் ஊடுருவிய JWT செயல்முறை உருவாக்கத்தை தூண்ட முடியாது. `docs/security/ROUTE_GUARD_TIERS.md` ஐப் பார்க்கவும்.
-16. AI உதவியாளர், LLM அல்லது தானியங்கி கணக்கிற்கு பெருமை வழங்கும் `Co-Authored-By` டிரெய்லர்களை commit செய்திகளில் ஒருபோதும் சேர்க்க வேண்டாம் (உதா. "Claude", "GPT", "Copilot", "Bot" கொண்ட பெயர்கள்; `anthropic.com` / `openai.com` / bot-உரிமை உள்ள `noreply.github.com` முகவரிகளில் மின்னஞ்சல்கள்). இத்தகைய டிரெய்லர்கள் GitHub இல் bot கணக்கிற்கு commit attribution-ஐ வழிநடத்தி, PR வரலாற்றில் உண்மையான ஆசிரியரை (`diegosouzapw`) மறைக்கின்றன. மனித ஒத்துழைப்பாளர்கள் — upstream PR ஆசிரியர்கள் மற்றும் OmniRoute-க்கு port செய்யப்படும் issue அறிக்கையாளர்கள் உட்பட — நிலையான `Co-authored-by: Name <email>` டிரெய்லர்களுடன் பெருமை பெறலாம் மற்றும் வேண்டும்; upstream-port பணி ஓட்டங்கள் (`/port-upstream-features`, `/port-upstream-issues`) இதை சார்ந்துள்ளன.
+16. AI உதவியாளர், LLM அல்லது தானியங்கி கணக்கிற்கு பெருமை வழங்கும் `Co-Authored-By` டிரெய்லர்களை commit செய்திகளில் ஒருபோதும் சேர்க்க வேண்டாம் (உதா. "Claude", "GPT", "Copilot", "Bot" கொண்ட பெயர்கள்; `anthropic.com` / `openai.com` / bot-உரிமை உள்ள `noreply.github.com` முகவரிகளில் மின்னஞ்சல்கள்). இத்தகைய டிரெய்லர்கள் GitHub இல் bot கணக்கிற்கு commit attribution-ஐ வழிநடத்தி, PR வரலாற்றில் உண்மையான ஆசிரியரை (`diegosouzapw`) மறைக்கின்றன. மனித ஒத்துழைப்பாளர்கள் — upstream PR ஆசிரியர்கள் மற்றும் AgentProxy-க்கு port செய்யப்படும் issue அறிக்கையாளர்கள் உட்பட — நிலையான `Co-authored-by: Name <email>` டிரெய்லர்களுடன் பெருமை பெறலாம் மற்றும் வேண்டும்; upstream-port பணி ஓட்டங்கள் (`/port-upstream-features`, `/port-upstream-issues`) இதை சார்ந்துள்ளன.

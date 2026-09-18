@@ -4,7 +4,7 @@ import os from "node:os";
 import path from "node:path";
 import test from "node:test";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-designer-image-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-designer-image-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.DISABLE_SQLITE_AUTO_BACKUP = "true";
 
@@ -35,7 +35,7 @@ test("image handler blocks exact retired providers before any upstream fetch", a
 
       assert.equal(result.success, false, resolvedProvider);
       assert.equal(result.status, 410, resolvedProvider);
-      assert.equal(result.error, "Provider has been retired from OmniRoute runtime.");
+      assert.equal(result.error, "Provider has been retired from AgentProxy runtime.");
     }
     assert.equal(fetchCalls, 0);
   } finally {

@@ -5,7 +5,7 @@ import os from "node:os";
 import path from "node:path";
 
 test("getDbInstance() eventually caps a persistently-OOMing sql.js probe (#6835)", async () => {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-6835-oom-"));
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-6835-oom-"));
   process.env.DATA_DIR = tmpDir;
   const sqliteFile = path.join(tmpDir, "storage.sqlite");
   fs.mkdirSync(sqliteFile); // forces better-sqlite3/node:sqlite to fail synchronously (EISDIR-style)
@@ -34,8 +34,8 @@ test("getDbInstance() eventually caps a persistently-OOMing sql.js probe (#6835)
     raw: null,
   };
   (
-    globalThis as unknown as { __omnirouteSqlJsAdapters: Map<string, unknown> }
-  ).__omnirouteSqlJsAdapters = new Map([[sqliteFile, fakeAdapter]]);
+    globalThis as unknown as { __agentproxySqlJsAdapters: Map<string, unknown> }
+  ).__agentproxySqlJsAdapters = new Map([[sqliteFile, fakeAdapter]]);
   const errors: string[] = [];
   for (let i = 0; i < 8; i++) {
     try {

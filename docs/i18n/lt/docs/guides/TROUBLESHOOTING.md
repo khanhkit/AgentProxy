@@ -17,17 +17,17 @@ lastUpdated: 2026-07-15
 
 🌐 **Languages:** 🇺🇸 [English](../../../../guides/TROUBLESHOOTING.md) · 🇸🇦 [ar](../../../ar/docs/guides/TROUBLESHOOTING.md) · 🇦🇿 [az](../../../az/docs/guides/TROUBLESHOOTING.md) · 🇧🇬 [bg](../../../bg/docs/guides/TROUBLESHOOTING.md) · 🇧🇩 [bn](../../../bn/docs/guides/TROUBLESHOOTING.md) · 🇨🇿 [cs](../../../cs/docs/guides/TROUBLESHOOTING.md) · 🇩🇰 [da](../../../da/docs/guides/TROUBLESHOOTING.md) · 🇩🇪 [de](../../../de/docs/guides/TROUBLESHOOTING.md) · 🇬🇷 [el](../../../el/docs/guides/TROUBLESHOOTING.md) · 🇪🇸 [es](../../../es/docs/guides/TROUBLESHOOTING.md) · 🇪🇪 [et](../../../et/docs/guides/TROUBLESHOOTING.md) · 🇮🇷 [fa](../../../fa/docs/guides/TROUBLESHOOTING.md) · 🇫🇮 [fi](../../../fi/docs/guides/TROUBLESHOOTING.md) · 🇫🇷 [fr](../../../fr/docs/guides/TROUBLESHOOTING.md) · 🇮🇪 [ga](../../../ga/docs/guides/TROUBLESHOOTING.md) · 🇮🇳 [gu](../../../gu/docs/guides/TROUBLESHOOTING.md) · 🇮🇱 [he](../../../he/docs/guides/TROUBLESHOOTING.md) · 🇮🇳 [hi](../../../hi/docs/guides/TROUBLESHOOTING.md) · 🇭🇷 [hr](../../../hr/docs/guides/TROUBLESHOOTING.md) · 🇭🇺 [hu](../../../hu/docs/guides/TROUBLESHOOTING.md) · 🇮🇩 [id](../../../id/docs/guides/TROUBLESHOOTING.md) · 🇮🇹 [it](../../../it/docs/guides/TROUBLESHOOTING.md) · 🇯🇵 [ja](../../../ja/docs/guides/TROUBLESHOOTING.md) · 🇰🇷 [ko](../../../ko/docs/guides/TROUBLESHOOTING.md) · 🇱🇻 [lv](../../../lv/docs/guides/TROUBLESHOOTING.md) · 🇮🇳 [mr](../../../mr/docs/guides/TROUBLESHOOTING.md) · 🇲🇾 [ms](../../../ms/docs/guides/TROUBLESHOOTING.md) · 🇲🇹 [mt](../../../mt/docs/guides/TROUBLESHOOTING.md) · 🇳🇱 [nl](../../../nl/docs/guides/TROUBLESHOOTING.md) · 🇳🇴 [no](../../../no/docs/guides/TROUBLESHOOTING.md) · 🇵🇭 [phi](../../../phi/docs/guides/TROUBLESHOOTING.md) · 🇵🇱 [pl](../../../pl/docs/guides/TROUBLESHOOTING.md) · 🇵🇹 [pt](../../../pt/docs/guides/TROUBLESHOOTING.md) · 🇧🇷 [pt-BR](../../../pt-BR/docs/guides/TROUBLESHOOTING.md) · 🇷🇴 [ro](../../../ro/docs/guides/TROUBLESHOOTING.md) · 🇷🇺 [ru](../../../ru/docs/guides/TROUBLESHOOTING.md) · 🇸🇰 [sk](../../../sk/docs/guides/TROUBLESHOOTING.md) · 🇸🇮 [sl](../../../sl/docs/guides/TROUBLESHOOTING.md) · 🇷🇸 [sr](../../../sr/docs/guides/TROUBLESHOOTING.md) · 🇸🇪 [sv](../../../sv/docs/guides/TROUBLESHOOTING.md) · 🇰🇪 [sw](../../../sw/docs/guides/TROUBLESHOOTING.md) · 🇮🇳 [ta](../../../ta/docs/guides/TROUBLESHOOTING.md) · 🇮🇳 [te](../../../te/docs/guides/TROUBLESHOOTING.md) · 🇹🇭 [th](../../../th/docs/guides/TROUBLESHOOTING.md) · 🇹🇷 [tr](../../../tr/docs/guides/TROUBLESHOOTING.md) · 🇺🇦 [uk-UA](../../../uk-UA/docs/guides/TROUBLESHOOTING.md) · 🇵🇰 [ur](../../../ur/docs/guides/TROUBLESHOOTING.md) · 🇻🇳 [vi](../../../vi/docs/guides/TROUBLESHOOTING.md) · 🇨🇳 [zh-CN](../../../zh-CN/docs/guides/TROUBLESHOOTING.md) · 🇹🇼 [zh-TW](../../../zh-TW/docs/guides/TROUBLESHOOTING.md)
 
-Dažniausios „OmniRoute“ problemos ir jų sprendimai.
+Dažniausios „AgentProxy“ problemos ir jų sprendimai.
 
 ---
 
 ## Greitoji atmintinė
 
-**Pirmą kartą naudojate „OmniRoute“?** Pradėkite čia — šie sprendimai padeda išspręsti 90 % problemų:
+**Pirmą kartą naudojate „AgentProxy“?** Pradėkite čia — šie sprendimai padeda išspręsti 90 % problemų:
 
 | Matau šį pranešimą                 | Ką tai reiškia                                     | Ką daryti                                                                                               |
 | ---------------------------------- | -------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
-| „Nepavyksta prisijungti“           | „OmniRoute“ neveikia                               | Paleiskite `omniroute` arba `docker restart omniroute`                                                  |
+| „Nepavyksta prisijungti“           | „AgentProxy“ neveikia                               | Paleiskite `agentproxy` arba `docker restart agentproxy`                                                  |
 | „Netinkamas API raktas“            | Jūsų raktas neteisingas arba jo galiojimas baigėsi | Iš naujo nukopijuokite raktą iš paslaugos teikėjo svetainės                                             |
 | „Viršytas užklausų dažnio limitas“ | Siunčiate per daug užklausų                        | Palaukite 1 minutę arba naudokite `model: "auto"`, kad būtų automatiškai pasirinkta atsarginė parinktis |
 | „Viršyta kvota“                    | Išnaudojote nemokamą arba mokamą kvotą             | Prijunkite daugiau paslaugų teikėjų arba naudokite nemokamus teikėjus („Kiro“, „Pollinations“)          |
@@ -58,18 +58,18 @@ Dažniausios „OmniRoute“ problemos ir jų sprendimai.
 **Patikrintas sprendimas (bendruomenės pranešimas, 2026-08-10)**: sureguliuokite tris aplinkos kintamuosius, kad rotacija, lygiagretumo valdymas ir atsarginis mechanizmas kompensuotų nemokamo plano nestabilumą, užuot dėl jo nutraukę veikimą:
 
 ```bash
-export OMNIROUTE_ROTATE_ON_400=true           # gavus 400/401 pereiti prie kito modelio / teikėjo (praleidžiami neveikiantys tiesioginio perdavimo modeliai)
-export OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT=4   # aiški sudėtingų užklausų priėmimo viršutinė riba (pagal numatytąsias nuostatas nenustatyta: užklausų skaičiaus ribos nėra, žr. pastabą toliau)
-export OMNIROUTE_CHAT_ADMISSION_QUEUE_MS=5000 # ilgesnis ribotas sudėtingų užklausų pajėgumo laukimas vietoj nedelsiant grąžinamos pakartotinai bandytinos 503 klaidos
+export AGENTPROXY_ROTATE_ON_400=true           # gavus 400/401 pereiti prie kito modelio / teikėjo (praleidžiami neveikiantys tiesioginio perdavimo modeliai)
+export AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT=4   # aiški sudėtingų užklausų priėmimo viršutinė riba (pagal numatytąsias nuostatas nenustatyta: užklausų skaičiaus ribos nėra, žr. pastabą toliau)
+export AGENTPROXY_CHAT_ADMISSION_QUEUE_MS=5000 # ilgesnis ribotas sudėtingų užklausų pajėgumo laukimas vietoj nedelsiant grąžinamos pakartotinai bandytinos 503 klaidos
 ```
 
-Nustatykite juos OmniRoute proceso aplinkoje (demone, pvz., per LaunchAgent plist arba `systemctl edit`), tada paleiskite OmniRoute iš naujo. Rotacijos vėliavėlė yra vienintelė didžiausią poveikį turinti priemonė: ji neištaisomą klaidą paverčia skaidriu pakartotiniu bandymu naudojant veikiantį telkinio teikėją.
+Nustatykite juos AgentProxy proceso aplinkoje (demone, pvz., per LaunchAgent plist arba `systemctl edit`), tada paleiskite AgentProxy iš naujo. Rotacijos vėliavėlė yra vienintelė didžiausią poveikį turinti priemonė: ji neištaisomą klaidą paverčia skaidriu pakartotiniu bandymu naudojant veikiantį telkinio teikėją.
 
-**Pastaba**: `OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT` riboja, kiek sudėtingų — ilgo konteksto — užklausų vykdoma vienu metu; ši riba yra priėmimo vartai, o ne teikėjo užklausų dažnio ribotuvas. **#503-fanout atnaujinimas:** šis kintamasis pagal numatytąsias nuostatas nebėra nustatomas (dabar jis taikomas tik tada, kai aiškiai sukonfigūruojamas, kaip parodyta pirmiau) — vietoj to sudėtingų užklausų priėmimą riboja automatiškai apskaičiuojamas baitų biudžetas (`OMNIROUTE_CHAT_MAX_INFLIGHT_BYTES`), kuris prisitaiko prie faktinės pagrindinio kompiuterio atminties ribos, todėl naujame diegime turėtų būti gerokai mažiau `503 chat_admission_busy` atmetimų net ir visai nenustačius šio kintamojo; aiškus jo nustatymas čia ir toliau veikia tiksliai taip, kaip aprašyta dokumentacijoje. Aiškiai nurodytos baitų biudžeto reikšmės apribojamos iki 8 MiB–2 GiB intervalo. `413 body_exceeds_budget` nėra laikina klaida: padidinkite šį baitų biudžetą, sumažinkite `OMNIROUTE_CHAT_HARD_MAX_BODY_BYTES` arba padidinkite proceso atminties ribą. `inflight_bytes_budget` apkrovos atmetimas reiškia laikiną konkurenciją dėl išteklių, todėl užklausą galima bandyti pakartotinai. Kiekvieno teikėjo užklausų dažnio ribojimas (`open-sse/services/rateLimitManager.ts`) atskirai valdomas naudojant `RATE_LIMIT_MAX_WAIT_MS`, `RATE_LIMIT_MAX_QUEUE_DEPTH` ir `RATE_LIMIT_AUTO_ENABLE` — žr. `.env.example`.
+**Pastaba**: `AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT` riboja, kiek sudėtingų — ilgo konteksto — užklausų vykdoma vienu metu; ši riba yra priėmimo vartai, o ne teikėjo užklausų dažnio ribotuvas. **#503-fanout atnaujinimas:** šis kintamasis pagal numatytąsias nuostatas nebėra nustatomas (dabar jis taikomas tik tada, kai aiškiai sukonfigūruojamas, kaip parodyta pirmiau) — vietoj to sudėtingų užklausų priėmimą riboja automatiškai apskaičiuojamas baitų biudžetas (`AGENTPROXY_CHAT_MAX_INFLIGHT_BYTES`), kuris prisitaiko prie faktinės pagrindinio kompiuterio atminties ribos, todėl naujame diegime turėtų būti gerokai mažiau `503 chat_admission_busy` atmetimų net ir visai nenustačius šio kintamojo; aiškus jo nustatymas čia ir toliau veikia tiksliai taip, kaip aprašyta dokumentacijoje. Aiškiai nurodytos baitų biudžeto reikšmės apribojamos iki 8 MiB–2 GiB intervalo. `413 body_exceeds_budget` nėra laikina klaida: padidinkite šį baitų biudžetą, sumažinkite `AGENTPROXY_CHAT_HARD_MAX_BODY_BYTES` arba padidinkite proceso atminties ribą. `inflight_bytes_budget` apkrovos atmetimas reiškia laikiną konkurenciją dėl išteklių, todėl užklausą galima bandyti pakartotinai. Kiekvieno teikėjo užklausų dažnio ribojimas (`open-sse/services/rateLimitManager.ts`) atskirai valdomas naudojant `RATE_LIMIT_MAX_WAIT_MS`, `RATE_LIMIT_MAX_QUEUE_DEPTH` ir `RATE_LIMIT_AUTO_ENABLE` — žr. `.env.example`.
 
 **Kaip patikrinti, ar sprendimas suveikė**: du kartus iš eilės greitai paleiskite savo agentą / cron užduotį ir įsitikinkite, kad abu vykdymai sėkmingi. Prieš pritaikant sprendimą antrasis vykdymas paprastai pateikia `429`/`401`. Pritaikius sprendimą, klaidos (jei jų pasitaiko) skaidriai bandomos iš naujo ir iškvietimas užbaigiamas. Taip pat galite vykdyti `curl /monitoring/health` ir stebėti teikėjų ryšių lauką `rateLimitedUntil` bei paveiktų teikėjų `circuitBreakers.providerBreakers[].state` — būsena gali būti `CLOSED`, `DEGRADED`, `OPEN` arba `HALF_OPEN` (žr. `src/shared/utils/circuitBreaker.ts`), o nuolat klaidas pateikiantis teikėjas pereis iš `CLOSED → DEGRADED → OPEN`, kol pasibaigus nustatymo iš naujo intervalui bus praleista bandomoji užklausa (`HALF_OPEN`).
 
-**Jei vis tiek matote 429**: aktyvi to teikėjo paskyra iš tiesų išnaudojo savo _kvotą_ (ne tik užklausų dažnio limitą). OmniRoute valdymo skydelyje → Providers → Accounts pridėkite antrą to paties teikėjo paskyrą arba įtraukite kitą nemokamą teikėją (pvz., `routeway`, `auggie`). Rotacija padeda tik esant laikinam dažnio ribojimui / 400 / 401 klaidoms; visiškai išnaudojus kvotą reikia antrų prisijungimo duomenų arba kito teikėjo.
+**Jei vis tiek matote 429**: aktyvi to teikėjo paskyra iš tiesų išnaudojo savo _kvotą_ (ne tik užklausų dažnio limitą). AgentProxy valdymo skydelyje → Providers → Accounts pridėkite antrą to paties teikėjo paskyrą arba įtraukite kitą nemokamą teikėją (pvz., `routeway`, `auggie`). Rotacija padeda tik esant laikinam dažnio ribojimui / 400 / 401 klaidoms; visiškai išnaudojus kvotą reikia antrų prisijungimo duomenų arba kito teikėjo.
 
 **Jei naudojant vaizdo modelius (`auto/vision`, `bazaarlink/*`) rodoma 403**: prijungta paskyra neturi mokamo plano, apimančio vaizdų apdorojimą, arba API raktui nesuteikta pakankamai teisių. Teikėjo valdymo skydelyje patikrinkite, ar rakto apimtis apima vaizdų apdorojimą / daugiarūšį veikimą, arba prijunkite mokamo plano paskyrą ir palikite ją kaip vaizdų apdorojimo tikslą.
 
@@ -77,9 +77,9 @@ Nustatykite juos OmniRoute proceso aplinkoje (demone, pvz., per LaunchAgent plis
 
 ## `npm install` įspėjimai (ERESOLVE / lygiavertės priklausomybės / nebenaudojami paketai)
 
-Paleidę `npm install -g omniroute`, galite pamatyti daugybę įspėjimų, pvz., `npm warn ERESOLVE`, pranešimų apie lygiavertes priklausomybes ir `deprecated` pranešimų. **Jie yra numatyti ir nepavojingi.** Diegimas pavyko, jei išvestyje matote `added <N> packages`.
+Paleidę `npm install -g agentproxy`, galite pamatyti daugybę įspėjimų, pvz., `npm warn ERESOLVE`, pranešimų apie lygiavertes priklausomybes ir `deprecated` pranešimų. **Jie yra numatyti ir nepavojingi.** Diegimas pavyko, jei išvestyje matote `added <N> packages`.
 
-Įspėjimai rodomi dėl pasenusių lygiaverčių priklausomybių versijų intervalų trečiųjų šalių paketuose, kurių „OmniRoute“ nevaldo:
+Įspėjimai rodomi dėl pasenusių lygiaverčių priklausomybių versijų intervalų trečiųjų šalių paketuose, kurių „AgentProxy“ nevaldo:
 
 1. **`marked-terminal` reikalauja `marked >=1 <16`, tačiau rasta `marked@18`** — praktiškai veikia tinkamai; pirminio paketo lygiavertės priklausomybės versijų intervalas tiesiog pasenęs.
 2. **`deprecated prebuild-install@7.1.3`** — tranzityvusis pagalbinis įrankis, skirtas vietiniams dvejetainiams failams gauti. Jis nėra
@@ -97,10 +97,10 @@ Paleidę `npm install -g omniroute`, galite pamatyti daugybę įspėjimų, pvz.,
 | Pirmasis prisijungimas neveikia                             | Nustatykite `INITIAL_PASSWORD` faile `.env` (nėra kode įrašyto numatytojo slaptažodžio)                                                                                                                                   |
 | Valdymo skydelis atidaromas netinkamu prievadu              | Nustatykite `PORT=20128` ir `NEXT_PUBLIC_BASE_URL=http://localhost:20128`                                                                                                                                                 |
 | Žurnalai neįrašomi į diską                                  | Nustatykite `APP_LOG_TO_FILE=true` ir patikrinkite, ar įjungtas iškvietimų žurnalo fiksavimas                                                                                                                             |
-| EACCES: prieiga uždrausta                                   | Nustatykite `DATA_DIR=/path/to/writable/dir`, kad pakeistumėte `~/.omniroute`                                                                                                                                             |
+| EACCES: prieiga uždrausta                                   | Nustatykite `DATA_DIR=/path/to/writable/dir`, kad pakeistumėte `~/.agentproxy`                                                                                                                                             |
 | Maršruto parinkimo strategija neišsaugoma                   | Atnaujinkite į naujausią v3.x leidimą (ankstesnėse versijose išleista Zod schemos pataisa, skirta nuostatoms išsaugoti)                                                                                                   |
 | Prisijungiant programa užstringa / rodomas tuščias puslapis | Patikrinkite Node.js versiją — žr. toliau pateiktą skiltį [Node.js suderinamumas](#nodejs-compatibility)                                                                                                                  |
-| `dlopen` / `slice is not valid mach-o file` (macOS)         | Paleiskite `cd $(npm root -g)/omniroute/app && npm rebuild better-sqlite3 && omniroute` — žr. toliau pateiktą skiltį [macOS vietinio modulio perkompiliavimas](#macos-native-module-rebuild)                              |
+| `dlopen` / `slice is not valid mach-o file` (macOS)         | Paleiskite `cd $(npm root -g)/agentproxy/app && npm rebuild better-sqlite3 && agentproxy` — žr. toliau pateiktą skiltį [macOS vietinio modulio perkompiliavimas](#macos-native-module-rebuild)                              |
 | Tarpinio serverio klaida „fetch failed“                     | Įsitikinkite, kad tarpinio serverio konfigūracija nustatyta tinkamu lygmeniu — žr. toliau pateiktą skiltį [Tarpinio serverio problemos](#proxy-issues)                                                                    |
 | Docker `curl: (56) Recv failure: Connection reset by peer`  | „Docker“ prievado susiejimas gali būti atliekamas per IPv6. Naudokite `-p 127.0.0.1:20128:20128`, kad priverstinai naudotumėte IPv4, arba tikrinkite su `curl -4`. Žr. toliau pateiktą skiltį [Docker IPv6](#docker-ipv6) |
 | Antivirusinė programa karantinuoja `README.md`              | Klaidingas teigiamas rezultatas — žr. toliau pateiktą skiltį [Klaidingi antivirusinių programų aptikimai](#antivirus-false-positives)                                                                                     |
@@ -117,8 +117,8 @@ Paleidę `npm install -g omniroute`, galite pamatyti daugybę įspėjimų, pvz.,
 **Tai klaidingas aptikimas. Niekas nėra užkrėsta ir nereikia imtis jokių veiksmų.**
 
 Avast ir AVG naudoja euristinį tikrinimą, kuris pažymi paprastojo teksto ar Markdown failus, turinčius daug
-HTTP užklausas primenančių nuorodų. OmniRoute `README.md` pateikiamas npm pakete (jis
-nurodytas `package.json` → `files`), todėl visuotinai įdiegus atsiduria adresu `node_modules/omniroute/README.md` —
+HTTP užklausas primenančių nuorodų. AgentProxy `README.md` pateikiamas npm pakete (jis
+nurodytas `package.json` → `files`), todėl visuotinai įdiegus atsiduria adresu `node_modules/agentproxy/README.md` —
 jame yra apie 15 `http://localhost:20128/...` pavyzdžių (MCP
 HTTP/SSE galiniai taškai, A2A `.well-known` URL ir `curl` fragmentai). Tokio nuorodų tankio
 pakanka euristiniam tikrinimui suaktyvinti.
@@ -134,7 +134,7 @@ iš karantino.
 
 1. **Sustabdykite pranešimus** — įtraukite diegimo katalogą į antivirusinės programos išimtis
    (Avast: Settings → Exceptions), pridėdami savo visuotinį `node_modules` kelią ir (arba)
-   OmniRoute duomenų katalogą (`~/.omniroute/`).
+   AgentProxy duomenų katalogą (`~/.agentproxy/`).
 2. **Praneškite apie klaidingą aptikimą** — <https://www.avast.com/false-positive-file-form.php>,
    pridėdami į karantiną perkeltą `README.md`. Tai sprendimas, padedantis visiems, nes šiuo atveju
    tiekėjo euristinis tikrinimas pernelyg jautriai reaguoja į tekstinį failą.
@@ -164,24 +164,24 @@ darbalaukio programą, dalys, pavyzdžiui:
 **Kodėl tai suveikia:** Windows diegimo programa **dar nėra pasirašyta kodiniu parašu**, todėl nepasirašyta NSIS
 diegimo programa neturi jokios reputacijos, o elgsenos euristika veikia maksimaliai agresyviai. Kartu
 su įtraukta savąja DLL ir šimtais `.js` failų, įrašomų į
-`%LOCALAPPDATA%\Programs\OmniRoute` (įskaitant Next.js autonominės versijos paketų katalogus, kurių pavadinimuose yra
+`%LOCALAPPDATA%\Programs\AgentProxy` (įskaitant Next.js autonominės versijos paketų katalogus, kurių pavadinimuose yra
 maišos priesagos), to pakanka euristiniam tikrinimui suaktyvinti. Kodinį pasirašymą planuojama įdiegti;
 kol tai nebus padaryta, problema gali kartotis su naujomis laidomis.
 
 **Ką daryti:**
 
 1. **Pirmiausia patikrinkite atsisiųstą failą** (taip atmetama failo pakeitimo galimybė). Su kiekviena laida paskelbiamas
-   `latest.yml`, kurio laukas `sha512` (base64 formatu) apima `OmniRoute.Setup.<version>.exe`
+   `latest.yml`, kurio laukas `sha512` (base64 formatu) apima `AgentProxy.Setup.<version>.exe`
    diegimo programą. PowerShell aplinkoje, būdami kataloge, kuriame yra diegimo programa, vykdykite:
    ```powershell
    $b = [System.Security.Cryptography.SHA512]::Create().ComputeHash(
-     [System.IO.File]::ReadAllBytes("$PWD\OmniRoute.Setup.<version>.exe"))
+     [System.IO.File]::ReadAllBytes("$PWD\AgentProxy.Setup.<version>.exe"))
    [Convert]::ToBase64String($b)
    ```
    Išvestis turi sutapti su `latest.yml` → `sha512`. Jei nesutampa, ištrinkite failą ir
-   atsisiųskite jį iš naujo tik iš [GitHub laidų puslapio](https://github.com/diegosouzapw/OmniRoute/releases).
+   atsisiųskite jį iš naujo tik iš [GitHub laidų puslapio](https://github.com/khanhkit/AgentProxy/releases).
 2. **Atkurkite + pridėkite išimtį** — atkurkite iš karantino pašalintus elementus ir pridėkite išimtį
-   katalogui `%LOCALAPPDATA%\Programs\OmniRoute` (Kaspersky → Settings → Threats and Exclusions),
+   katalogui `%LOCALAPPDATA%\Programs\AgentProxy` (Kaspersky → Settings → Threats and Exclusions),
    tada įdiekite iš naujo.
 3. **Praneškite apie klaidingą aptikimą** — <https://opentip.kaspersky.com/>. Naudotojų pateiktos klaidingų aptikimų
    ataskaitos iš tiesų pagreitina įtraukimą į leidžiamų failų sąrašą.
@@ -194,7 +194,7 @@ kol tai nebus padaryta, problema gali kartotis su naujomis laidomis.
 
 ### Prisijungimo puslapis užstringa arba rodoma klaida „Module self-registration“
 
-**Priežastis:** naudojate Node.js versiją, kuri neatitinka „OmniRoute“ patvirtintos saugios vykdymo aplinkos minimalių reikalavimų. Dažniausiai naudojama senesnė Node 22 arba 24 pataisų versija, kuri yra senesnė už mažiausią „OmniRoute“ reikalaujamą saugumo pataisų versiją.
+**Priežastis:** naudojate Node.js versiją, kuri neatitinka „AgentProxy“ patvirtintos saugios vykdymo aplinkos minimalių reikalavimų. Dažniausiai naudojama senesnė Node 22 arba 24 pataisų versija, kuri yra senesnė už mažiausią „AgentProxy“ reikalaujamą saugumo pataisų versiją.
 
 **Požymiai:**
 
@@ -210,8 +210,8 @@ kol tai nebus padaryta, problema gali kartotis su naujomis laidomis.
    nvm use 24
    ```
 2. Patikrinkite versiją: `node --version` turi rodyti `v24.0.0` arba naujesnę 24.x LTS šakos versiją
-3. Iš naujo įdiekite „OmniRoute“: `npm install -g omniroute`
-4. Paleiskite iš naujo: `omniroute`
+3. Iš naujo įdiekite „AgentProxy“: `npm install -g agentproxy`
+4. Paleiskite iš naujo: `agentproxy`
 
 > **Palaikomos saugios versijos:** `>=22.22.2 <23` arba `>=24.0.0 <27`. Node.js 24.x LTS (Krypton) ir Node.js 26 yra visiškai palaikomos.
 
@@ -249,7 +249,7 @@ ir jam būtinas savasis kompiliavimas (`node-gyp rebuild`), npm tyliai jį prale
 
 <a name="macos-native-module-rebuild"></a>
 
-**Priežastis:** visuotinai įdiegus paketą naudojant `npm install -g omniroute`, pakete esantis savasis `better-sqlite3` dvejetainis failas gali būti sukompiliuotas kitai architektūrai arba Node.js ABI nei naudojama vietoje. Tai dažnai pasitaiko macOS sistemose (tiek „Apple Silicon“, tiek „Intel“), kai iš anksto sukompiliuotas dvejetainis failas neatitinka jūsų aplinkos.
+**Priežastis:** visuotinai įdiegus paketą naudojant `npm install -g agentproxy`, pakete esantis savasis `better-sqlite3` dvejetainis failas gali būti sukompiliuotas kitai architektūrai arba Node.js ABI nei naudojama vietoje. Tai dažnai pasitaiko macOS sistemose (tiek „Apple Silicon“, tiek „Intel“), kai iš anksto sukompiliuotas dvejetainis failas neatitinka jūsų aplinkos.
 
 **Požymiai:**
 
@@ -258,15 +258,15 @@ ir jam būtinas savasis kompiliavimas (`node-gyp rebuild`), npm tyliai jį prale
 - Visas pavyzdys:
 
 ```
-dlopen(/Users/<user>/.nvm/versions/node/v24.14.1/lib/node_modules/omniroute/app/node_modules/better-sqlite3/build/Release/better_sqlite3.node, 0x0001): tried: '...' (slice is not valid mach-o file)
+dlopen(/Users/<user>/.nvm/versions/node/v24.14.1/lib/node_modules/agentproxy/app/node_modules/better-sqlite3/build/Release/better_sqlite3.node, 0x0001): tried: '...' (slice is not valid mach-o file)
 ```
 
 **Sprendimas — perkompiliuokite savo vietinei aplinkai (nereikia įdiegti senesnės Node.js versijos):**
 
 ```bash
-cd $(npm root -g)/omniroute/app
+cd $(npm root -g)/agentproxy/app
 npm rebuild better-sqlite3
-omniroute
+agentproxy
 ```
 
 > **Pastaba:** taip savasis susiejimas perkompiliuojamas pagal jūsų vietinę Node.js versiją ir procesoriaus architektūrą, todėl pašalinama dvejetainių failų neatitiktis. Oficialiai palaikomas vykdymo aplinkos versijų intervalas yra **`>=22.22.2 <23` arba `>=24.0.0 <27`** (`SUPPORTED_NODE_RANGE` faile `src/shared/utils/nodeRuntimeSupport.ts`, suderintas su `package.json` lauku `engines`). Node.js 24.x LTS (Krypton) ir Node.js 26 yra visiškai palaikomos naudojant `better-sqlite3` v12.x.
@@ -293,13 +293,13 @@ omniroute
 
 **Priežastis:** Naudojant Node.js 22, undici@8 užklausų siųstuvas nesuderinamas su Node integruotu `fetch()` įgyvendinimu.
 
-**Pataisymas (v3.5.5+):** Kai aktyvus tarpinio serverio užklausų siųstuvas, OmniRoute dabar naudoja pačios undici bibliotekos `fetch()` funkciją, taip užtikrindama nuoseklų veikimą. Atnaujinkite į v3.5.5+.
+**Pataisymas (v3.5.5+):** Kai aktyvus tarpinio serverio užklausų siųstuvas, AgentProxy dabar naudoja pačios undici bibliotekos `fetch()` funkciją, taip užtikrindama nuoseklų veikimą. Atnaujinkite į v3.5.5+.
 
 ### MITM tarpinis serveris WSL aplinkoje: „Windows“ pagrindinėje sistemoje veikiančios darbalaukio programos neperimamos
 
-**Priežastis:** MITM tarpinis serveris ir jo CA sertifikatas įdiegiami aplinkoje, kurioje veikia OmniRoute. Naudojant WSL, ši aplinka yra „Linux“ svečio sistema, o DI darbalaukio programos (Kiro, Trae, Copilot, Zed, …) veikia „Windows“ pagrindinėje sistemoje. Pagrindinės sistemos programos nepasitiki svečio sistemos sertifikatų saugykla ir nenaudoja svečio sistemos tarpinio serverio, todėl jų darbalaukio srautas neperimamas.
+**Priežastis:** MITM tarpinis serveris ir jo CA sertifikatas įdiegiami aplinkoje, kurioje veikia AgentProxy. Naudojant WSL, ši aplinka yra „Linux“ svečio sistema, o DI darbalaukio programos (Kiro, Trae, Copilot, Zed, …) veikia „Windows“ pagrindinėje sistemoje. Pagrindinės sistemos programos nepasitiki svečio sistemos sertifikatų saugykla ir nenaudoja svečio sistemos tarpinio serverio, todėl jų darbalaukio srautas neperimamas.
 
-**Rekomendacija:** Paleiskite OmniRoute tiesiogiai toje pačioje OS, kurioje veikia norimos perimti darbalaukio programos („Windows“ – „Windows“ programoms; analogiškai „macOS“ ar „Linux“). Jei OmniRoute paliekate WSL aplinkoje ir norite perimti pagrindinės sistemos programų srautą, turite rankiniu būdu pažymėti sugeneruotą CA sertifikatą kaip patikimą „Windows“ pagrindinėje sistemoje ir kiekvienos pagrindinės sistemos programos tinklo ar tarpinio serverio nustatymuose nurodyti WSL tarpinio serverio galinį tašką — tai nepalaikoma ir nepatikima konfigūracija.
+**Rekomendacija:** Paleiskite AgentProxy tiesiogiai toje pačioje OS, kurioje veikia norimos perimti darbalaukio programos („Windows“ – „Windows“ programoms; analogiškai „macOS“ ar „Linux“). Jei AgentProxy paliekate WSL aplinkoje ir norite perimti pagrindinės sistemos programų srautą, turite rankiniu būdu pažymėti sugeneruotą CA sertifikatą kaip patikimą „Windows“ pagrindinėje sistemoje ir kiekvienos pagrindinės sistemos programos tinklo ar tarpinio serverio nustatymuose nurodyti WSL tarpinio serverio galinį tašką — tai nepalaikoma ir nepatikima konfigūracija.
 
 ---
 
@@ -326,7 +326,7 @@ omniroute
 
 ### Baigėsi OAuth prieigos rakto galiojimas
 
-OmniRoute automatiškai atnaujina prieigos raktus. Jei problemos išlieka:
+AgentProxy automatiškai atnaujina prieigos raktus. Jei problemos išlieka:
 
 1. Valdymo skydas → Teikėjas → Prisijungti iš naujo
 2. Pašalinkite ir iš naujo pridėkite teikėjo ryšį
@@ -358,7 +358,7 @@ rasite faile [`docs/guides/KIRO_SETUP.md`](./KIRO_SETUP.md).
 ### Debbesijos sinchronizavimo klaidos
 
 1. Patikrinkite, ar `BASE_URL` nurodo jūsų veikiantį egzempliorių (pvz., `http://localhost:20128`)
-2. Patikrinkite, ar `CLOUD_URL` nurodo jūsų debesijos galinį tašką (pvz., `https://omniroute.dev`)
+2. Patikrinkite, ar `CLOUD_URL` nurodo jūsų debesijos galinį tašką (pvz., `https://agentproxy.example.com`)
 3. Užtikrinkite, kad `NEXT_PUBLIC_*` reikšmės atitiktų serverio pusės reikšmes
 
 ### Debesijoje `stream=false` grąžina 500
@@ -392,8 +392,8 @@ rasite faile [`docs/guides/KIRO_SETUP.md`](./KIRO_SETUP.md).
 1. **Greita diagnostika:** Paleiskite `curl -4 http://localhost:20128/v1/models`. Jei su `-4` tai veikia, o be jo neveikia, IPv6 susiejimas yra nesuderintas.
 2. **Nuolatinis sprendimas:** Aiškiai susiekite su IPv4, savo `docker run` komandoje naudodami `-p 127.0.0.1:20128:20128`:
    ```bash
-   docker run -d --name omniroute --restart unless-stopped --stop-timeout 40 \
-     -p 127.0.0.1:20128:20128 -v omniroute-data:/app/data diegosouzapw/omniroute:latest
+   docker run -d --name agentproxy --restart unless-stopped --stop-timeout 40 \
+     -p 127.0.0.1:20128:20128 -v agentproxy-data:/app/data khanhkit/agentproxy:latest
    ```
    Tai priverstinai susieja su IPv4 ir taip pat neleidžia tarpiniam serveriui būti pasiekiamam per visas pagrindinio kompiuterio sąsajas.
 
@@ -538,7 +538,7 @@ Teikėjų profiliuose palaikomi šie nustatymai:
 
 ### Apsauga nuo užklausų lavinos
 
-Kai daug lygiagrečių užklausų pasiekia teikėją, kuriam taikomas užklausų dažnio ribojimas, „OmniRoute“ naudoja mutex ir automatinį užklausų dažnio ribojimą, kad nuosekliai apdorotų užklausas ir užkirstų kelią pakopinėms triktims. API rakto teikėjams tai atliekama automatiškai.
+Kai daug lygiagrečių užklausų pasiekia teikėją, kuriam taikomas užklausų dažnio ribojimas, „AgentProxy“ naudoja mutex ir automatinį užklausų dažnio ribojimą, kad nuosekliai apdorotų užklausas ir užkirstų kelią pakopinėms triktims. API rakto teikėjams tai atliekama automatiškai.
 
 ### Pokalbių užklausos nepavyksta su 503 / chat_admission_busy
 
@@ -547,7 +547,7 @@ Kai daug lygiagrečių užklausų pasiekia teikėją, kuriam taikomas užklausų
 - Pokalbių užbaigimo galinis taškas grąžina pakartotinai bandomą `503` atsakymą, kurio klaidos kodas yra
   `chat_admission_busy`.
 - Atsakyme pateikiama `Retry-After` antraštė. Nuo #12135 jos reikšmė nustatoma pagal stebimą
-  užimtumą — pasirenkama didesnioji reikšmė iš `OMNIROUTE_CHAT_ADMISSION_QUEUE_MS` intervalo, kurį užklausa jau
+  užimtumą — pasirenkama didesnioji reikšmė iš `AGENTPROXY_CHAT_ADMISSION_QUEUE_MS` intervalo, kurį užklausa jau
   laukė, ir laiko, kurį buvo išlaikomos dabartinės didelės apkrovos rezervacijos, — suapvalinama aukštyn iki sveikų
   sekundžių ir apribojama iki 60. Kai užklausų vartai neapkrauti, išlaikomos istorinės mažiausios reikšmės: 2 sekundės
   baitais pagrįstame kelyje ir 1 sekundė struktūra pagrįstame kelyje (kuriame taip pat pateikiama
@@ -573,23 +573,23 @@ Esant numatytosioms ribinėms reikšmėms, užklausa laikoma struktūriškai sud
 bent `64` įrankiai arba bent `32,000` apskaičiuotų žetonų, arba kai apribotas struktūros vertinimas
 pasiekia savo ribas — `10,000` aplankytų mazgų arba `12` gylį.
 
-**Priežastis:** tai sąmoningas apkrovos mažinimas „OmniRoute“ viduje, o ne aukštesnio lygmens teikėjo triktis.
+**Priežastis:** tai sąmoningas apkrovos mažinimas „AgentProxy“ viduje, o ne aukštesnio lygmens teikėjo triktis.
 Kiekvienas procesas naudoja vietinį proceso saugiklį, kad rezervuotų ribotus didelės apkrovos pajėgumus prieš išlaikant
 ir analizuojant didelį užklausos turinį. Didelės apkrovos rezervacija išlaikoma visą SSE
 atsakymo gyvavimo laiką.
 
 **#503 išplitimas:** prieš šį pataisymą saugiklis ribojo lygiagretumą pagal fiksuotą užklausų SKAIČIŲ
-(`OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT`, numatytoji reikšmė `1`), neatsižvelgdamas į pagrindinio kompiuterio atmintį, todėl programavimo agentų
+(`AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT`, numatytoji reikšmė `1`), neatsižvelgdamas į pagrindinio kompiuterio atmintį, todėl programavimo agentų
 išsišakojimas (keli pagalbiniai agentai / CLI, užklausų turinys paprastai > 256 KB) sumažindavo faktinį
 lygiagretumą iki maždaug 1 ir visiškai įprastos apkrovos metu sukeldavo 503 klaidas. Dabar saugiklis prisiderina
-automatiškai: jo veikimą valdo automatiškai nustatomas gaunamų BAITŲ biudžetas (`OMNIROUTE_CHAT_MAX_INFLIGHT_BYTES`), apskaičiuojamas pagal
+automatiškai: jo veikimą valdo automatiškai nustatomas gaunamų BAITŲ biudžetas (`AGENTPROXY_CHAT_MAX_INFLIGHT_BYTES`), apskaičiuojamas pagal
 realią proceso atminties ribą, be to, jis atsižvelgia į tiesioginį išteklių apkrovos signalą, todėl
 apkrova mažinama tik tada, kai pagrindiniame kompiuteryje iš tiesų trūksta atminties, o ne vien todėl, kad vienu metu
-buvo gauta daugiau nei viena sudėtinga užklausa. Senojo skaičiaus apribojimo (`OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT`) vis dar
+buvo gauta daugiau nei viena sudėtinga užklausa. Senojo skaičiaus apribojimo (`AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT`) vis dar
 paisoma, tačiau tik tuo atveju, jei jį aiškiai nustatote.
 
 Kai pajėgumai užimti, didelės apkrovos užklausa pirmiausia iki
-`OMNIROUTE_CHAT_ADMISSION_QUEUE_MS` (numatytoji reikšmė `2000`, `0` išjungia laukimą) laukia, kol atsilaisvins vieta,
+`AGENTPROXY_CHAT_ADMISSION_QUEUE_MS` (numatytoji reikšmė `2000`, `0` išjungia laukimą) laukia, kol atsilaisvins vieta,
 ir tik tada pateikiamas pakartotinai bandomas `503` atsakymas. Ribotas laukimas skirtas tam, kad agentų tipo klientai
 (OpenCode, Claude Code, Cursor), vienu metu išsišakojantys į sudėtingas papildomas užklausas, apdorotų šį srautą nuosekliai,
 užuot išnaudoję visą pakartotinių bandymų limitą dėl momentinių atmetimų ir nutrūkę užduoties viduryje.
@@ -609,7 +609,7 @@ false` ir pakankamai didelė `maxInflightBytes` reikšmė reiškia, kad automati
    to negalima ištaisyti priėmimo aplinkos kintamuoju; reikia daugiau RAM arba mažesnio darbo krūvio.
 3. Tik jei `/api/monitoring/health` rodo, kad automatiškai nustatytas biudžetas jūsų pagrindiniam kompiuteriui iš tiesų per mažas
    (tai reta — jis jau pritaikomas nuo konteinerių iki fizinių serverių), pakeiskite jį tiesiogiai naudodami
-   `OMNIROUTE_CHAT_MAX_INFLIGHT_BYTES`, užuot grįžę prie senojo užklausų skaičiaus apribojimo.
+   `AGENTPROXY_CHAT_MAX_INFLIGHT_BYTES`, užuot grįžę prie senojo užklausų skaičiaus apribojimo.
 
 Patikimus priėmimo nustatymus rasite [aplinkos kintamųjų žinyne](../reference/ENVIRONMENT.md#4-security--authentication).
 
@@ -617,7 +617,7 @@ Patikimus priėmimo nustatymus rasite [aplinkos kintamųjų žinyne](../referenc
 
 ## Neprivaloma RAG / LLM trikčių taksonomija (16 problemų)
 
-Kai kurie „OmniRoute“ naudotojai šliuzą naudoja prieš RAG arba agentų sistemas. Tokiose konfigūracijose dažnai pastebimas keistas dėsningumas: „OmniRoute“ atrodo veikiantis tinkamai (teikėjai pasiekiami, maršruto parinkimo profiliai tvarkingi, nėra įspėjimų apie dažnio apribojimus), tačiau galutinis atsakymas vis tiek yra klaidingas.
+Kai kurie „AgentProxy“ naudotojai šliuzą naudoja prieš RAG arba agentų sistemas. Tokiose konfigūracijose dažnai pastebimas keistas dėsningumas: „AgentProxy“ atrodo veikiantis tinkamai (teikėjai pasiekiami, maršruto parinkimo profiliai tvarkingi, nėra įspėjimų apie dažnio apribojimus), tačiau galutinis atsakymas vis tiek yra klaidingas.
 
 Praktiškai šiuos incidentus paprastai sukelia tolesniame etape veikiantis RAG duomenų srautas, o ne pats šliuzas.
 
@@ -636,17 +636,17 @@ Idėja paprasta:
 
 1. Tirdami netinkamą atsakymą, užfiksuokite:
    - naudotojo užduotį ir užklausą
-   - „OmniRoute“ maršruto arba teikėjų derinį
+   - „AgentProxy“ maršruto arba teikėjų derinį
    - bet kokį tolesniame etape naudotą RAG kontekstą (gautus dokumentus, įrankių iškvietimus ir kt.)
 2. Priskirkite incidentą vienam ar dviem „WFGY ProblemMap“ numeriams (`No.1` … `No.16`).
-3. Įrašykite numerį savo valdymo skydelyje, veiksmų vadove arba incidentų stebėjimo sistemoje šalia „OmniRoute“ žurnalų.
+3. Įrašykite numerį savo valdymo skydelyje, veiksmų vadove arba incidentų stebėjimo sistemoje šalia „AgentProxy“ žurnalų.
 4. Naudodamiesi atitinkamu WFGY puslapiu nuspręskite, ar reikia keisti RAG sistemą, informacijos paieškos komponentą arba maršruto parinkimo strategiją.
 
 Visą tekstą ir konkrečius sprendimo būdus rasite čia (MIT licencija, tik tekstas):
 
 [„WFGY ProblemMap“ README](https://github.com/onestardao/WFGY/blob/main/ProblemMap/README.md)
 
-Jei už „OmniRoute“ nenaudojate RAG arba agentų duomenų apdorojimo sistemų, galite šio skyriaus nepaisyti.
+Jei už „AgentProxy“ nenaudojate RAG arba agentų duomenų apdorojimo sistemų, galite šio skyriaus nepaisyti.
 
 ---
 
@@ -670,7 +670,7 @@ Problemos, būdingos v3.8.0 laidai, ir šiuo metu taikomi jų sprendimo būdai. 
 
 1. Įdiekite savo platformai skirtą „Devin CLI“
 2. Faile `.env` nustatykite `CLI_DEVIN_BIN=/usr/local/bin/devin` (arba tikrąjį kelią)
-3. Paleiskite „OmniRoute“ iš naujo ir dar kartą patikrinkite per **Valdymo skydelis → CLI įrankiai**
+3. Paleiskite „AgentProxy“ iš naujo ir dar kartą patikrinkite per **Valdymo skydelis → CLI įrankiai**
 
 ### Modelio atvėsimo būsena užstrigo (rankinis nustatymas iš naujo)
 
@@ -695,7 +695,7 @@ Problemos, būdingos v3.8.0 laidai, ir šiuo metu taikomi jų sprendimo būdai. 
 
 **Sprendimas:**
 
-- CLI aplinkoje paleiskite `omniroute providers`, kad iš naujo inicijuotumėte OAuth procesą, arba
+- CLI aplinkoje paleiskite `agentproxy providers`, kad iš naujo inicijuotumėte OAuth procesą, arba
 - Iš naujo paleiskite OAuth per **Valdymo skydelis → Teikėjai → Command Code → Prisijungti iš naujo**
 
 ### „ModelScope“ taiko agresyvius 429 atvėsimo laikotarpius
@@ -712,20 +712,20 @@ Problemos, būdingos v3.8.0 laidai, ir šiuo metu taikomi jų sprendimo būdai. 
 - Įsitikinkite, kad naudojate v3.8.0 arba naujesnę versiją
 - Patikrinkite, ar per **Nustatymai → Atsparumas** įjungtas `useUpstream429BreakerHints` jungiklis
 
-### Gamybinėje aplinkoje trūksta OMNIROUTE_WS_BRIDGE_SECRET
+### Gamybinėje aplinkoje trūksta AGENTPROXY_WS_BRIDGE_SECRET
 
 **Požymiai:**
 
 - Nuotoliniame gamybiniame pagrindiniame kompiuteryje kiekviena „Codex“ / „Responses“ WebSocket tilto užklausa gauna 401 atsakymą
 - WebSocket tilto ryšio užmezgimas nutraukiamas iškart po prisijungimo
 
-**Priežastis:** Gamybinėje aplinkoje trūksta `OMNIROUTE_WS_BRIDGE_SECRET` aplinkos kintamojo.
+**Priežastis:** Gamybinėje aplinkoje trūksta `AGENTPROXY_WS_BRIDGE_SECRET` aplinkos kintamojo.
 
 **Sprendimas:**
 
 1. Sugeneruokite atsitiktinę paslaptį: `openssl rand -hex 32`
-2. Gamybinio serverio aplinkoje (ir visuose su tiltu susisiekiančiuose klientuose) nustatykite `OMNIROUTE_WS_BRIDGE_SECRET=<random-secret>`
-3. Paleiskite „OmniRoute“ iš naujo
+2. Gamybinio serverio aplinkoje (ir visuose su tiltu susisiekiančiuose klientuose) nustatykite `AGENTPROXY_WS_BRIDGE_SECRET=<random-secret>`
+3. Paleiskite „AgentProxy“ iš naujo
 
 ### „Responses API“: foninis režimas pakeičiamas sinchroniniu
 
@@ -745,7 +745,7 @@ Problemos, būdingos v3.8.0 laidai, ir šiuo metu taikomi jų sprendimo būdai. 
 
 ## Vis dar kyla sunkumų?
 
-- **GitHub problemos**: [github.com/diegosouzapw/OmniRoute/issues](https://github.com/diegosouzapw/OmniRoute/issues)
+- **GitHub problemos**: [github.com/khanhkit/AgentProxy/issues](https://github.com/khanhkit/AgentProxy/issues)
 - **Architektūra**: Vidinę informaciją rasite [`docs/architecture/ARCHITECTURE.md`](../architecture/ARCHITECTURE.md)
 - **API žinynas**: Visus galinius taškus rasite [`docs/reference/API_REFERENCE.md`](../reference/API_REFERENCE.md)
 - **Būklės suvestinė**: Sistemos būseną realiuoju laiku galite patikrinti skiltyje **Suvestinė → Būklė**

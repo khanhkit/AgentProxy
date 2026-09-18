@@ -4,8 +4,8 @@ import {
   markForbidden as sqliteMarkForbidden,
   upsertWarmupState as sqliteUpsertWarmupState,
 } from "@/lib/db/connectionRuntimeState";
-import { logger } from "@omniroute/open-sse/utils/logger";
-import { sanitizeErrorMessage } from "@omniroute/open-sse/utils/error";
+import { logger } from "@agentproxy/open-sse/utils/logger";
+import { sanitizeErrorMessage } from "@agentproxy/open-sse/utils/error";
 import type { WarmupResult } from "./core";
 
 const log = logger("WarmupCircuitBreaker");
@@ -18,7 +18,7 @@ type RedisLike = {
   persist: (key: string) => Promise<unknown>;
 };
 
-const KEY_PREFIX = "omniroute:warmup:cb:";
+const KEY_PREFIX = "agentproxy:warmup:cb:";
 
 export class RedisCircuitBreakerStore implements CircuitBreakerStore {
   constructor(private redis: RedisLike) {}

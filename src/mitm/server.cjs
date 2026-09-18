@@ -10,7 +10,7 @@ const os = require("os");
 // This file runs as a standalone CommonJS process and cannot import the ES module.
 function getDataDir() {
   if (process.env.DATA_DIR) return path.resolve(process.env.DATA_DIR.trim());
-  return path.join(os.homedir(), ".omniroute");
+  return path.join(os.homedir(), ".agentproxy");
 }
 
 // Configuration
@@ -41,7 +41,7 @@ const parsedIdleTimeout = Number.parseInt(process.env.MITM_IDLE_TIMEOUT_MS || "6
 const MITM_IDLE_TIMEOUT_MS =
   Number.isInteger(parsedIdleTimeout) && parsedIdleTimeout > 0 ? parsedIdleTimeout : 60000;
 const ROUTER_BASE_URL = (
-  process.env.OMNIROUTE_BASE_URL ||
+  process.env.AGENTPROXY_BASE_URL ||
   process.env.BASE_URL ||
   "http://localhost:20128"
 )
@@ -150,7 +150,7 @@ const {
 // Inspector capture (D4 fallback). The standalone proxy intercepts AgentBridge
 // traffic inline (no MitmHandlerBase / agentBridgeHook), so it posts captured
 // entries to the local-only ingest endpoint to make them visible in the Traffic
-// Inspector. The token is injected by manager.ts (same value the OmniRoute
+// Inspector. The token is injected by manager.ts (same value the AgentProxy
 // process uses); absent token → capture is silently skipped.
 const INGEST_TOKEN = process.env.INSPECTOR_INTERNAL_INGEST_TOKEN || "";
 // Cap captured bodies to keep proxy memory bounded (the buffer truncates again).
@@ -406,7 +406,7 @@ function getSqliteDb() {
 /**
  * Resolve the stored alias override for a source model: `{ model?, reasoningEffort? }`.
  * `normalizeAliasMappings` upgrades legacy plain-string mappings into the structured
- * shape. The route-only namespace is reserved for client-facing OmniRoute model ids;
+ * shape. The route-only namespace is reserved for client-facing AgentProxy model ids;
  * fall back to `mitmAlias` until a route-alias writer is available.
  */
 function getMappedOverride(model, agentId = "antigravity") {
@@ -422,7 +422,7 @@ async function passthrough(req, res, bodyBuffer) {
   const targetHost = getTargetHost(req);
   const targetIP = await resolveTargetIP(targetHost);
 
-  // Defense-in-depth loop guard (Gap 14). The x-omniroute-source header is the
+  // Defense-in-depth loop guard (Gap 14). The x-agentproxy-source header is the
   // primary guard; this is a structural backstop for when it is stripped: if
   // the upstream resolves to ourselves (loopback on our own listen port),
   // forwarding would re-enter this server forever. Refuse instead of looping.
@@ -500,7 +500,7 @@ function captureToInspector(o) {
 
 async function intercept(req, res, bodyBuffer, override, sourceModel) {
   // C2 — Inject AgentBridge correlation headers per master plan §3.5.
-  // The OmniRoute router uses these to distinguish AgentBridge traffic from
+  // The AgentProxy router uses these to distinguish AgentBridge traffic from
   // other inbound clients and to record the originating IDE agent id.
   // Resolve agent id from the Host header against the target map; defensive
   // fallback to "unknown" when the host is somehow not in the map.
@@ -548,8 +548,8 @@ async function intercept(req, res, bodyBuffer, override, sourceModel) {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${API_KEY}`,
-        "x-omniroute-source": "agent-bridge",
-        "x-omniroute-agent": agentId,
+        "x-agentproxy-source": "agent-bridge",
+        "x-agentproxy-agent": agentId,
       },
       body: JSON.stringify(body),
     });
@@ -561,7 +561,7 @@ async function intercept(req, res, bodyBuffer, override, sourceModel) {
       const errText = await response.text().catch(() => "");
       respBody = errText.slice(0, INGEST_MAX_BODY);
       respSize = Buffer.byteLength(errText);
-      throw new Error(`OmniRoute ${response.status}: ${errText}`);
+      throw new Error(`AgentProxy ${response.status}: ${errText}`);
     }
 
     res.writeHead(200, {
@@ -670,8 +670,8 @@ async function startMitmServer() {
 
     if (bodyBuffer.length > 0) saveRequestLog(req.url, bodyBuffer);
 
-    if (req.headers["x-omniroute-source"] === "omniroute") {
-      vlog(1, `[MITM] → PASSTHROUGH (OmniRoute source loop)`);
+    if (req.headers["x-agentproxy-source"] === "agentproxy") {
+      vlog(1, `[MITM] → PASSTHROUGH (AgentProxy source loop)`);
       return passthrough(req, res, bodyBuffer);
     }
 

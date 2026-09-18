@@ -11,7 +11,7 @@ import {
 } from "../../open-sse/services/accountFallback.ts";
 import { PROVIDER_PROFILES } from "../../open-sse/config/constants.ts";
 
-// Network-layer errors and OmniRoute's own queue timeouts must NOT trip the
+// Network-layer errors and AgentProxy's own queue timeouts must NOT trip the
 // provider circuit breaker. These are not provider failures — the provider never
 // saw the request, so it may be perfectly healthy while only the network path is
 // broken (single-model path; the combo same-provider dead-proxy case is #8376's

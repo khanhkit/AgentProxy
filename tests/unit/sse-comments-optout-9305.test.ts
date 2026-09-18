@@ -5,7 +5,7 @@ import os from "node:os";
 import path from "node:path";
 
 const previousDataDir = process.env.DATA_DIR;
-const testDataDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-sse-comments-9305-"));
+const testDataDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-sse-comments-9305-"));
 process.env.DATA_DIR = testDataDir;
 
 const core = await import("../../src/lib/db/core.ts");
@@ -60,12 +60,12 @@ async function runFinalizationCase({
   envValue: string | undefined;
   upstreamDone: boolean;
 }) {
-  const previousComments = process.env.OMNIROUTE_SSE_COMMENTS;
+  const previousComments = process.env.AGENTPROXY_SSE_COMMENTS;
   usageHistory.clearPendingRequests();
 
   try {
-    if (envValue === undefined) delete process.env.OMNIROUTE_SSE_COMMENTS;
-    else process.env.OMNIROUTE_SSE_COMMENTS = envValue;
+    if (envValue === undefined) delete process.env.AGENTPROXY_SSE_COMMENTS;
+    else process.env.AGENTPROXY_SSE_COMMENTS = envValue;
 
     const provider = "test-provider";
     const model = "test-model";
@@ -118,8 +118,8 @@ async function runFinalizationCase({
     };
   } finally {
     usageHistory.clearPendingRequests();
-    if (previousComments === undefined) delete process.env.OMNIROUTE_SSE_COMMENTS;
-    else process.env.OMNIROUTE_SSE_COMMENTS = previousComments;
+    if (previousComments === undefined) delete process.env.AGENTPROXY_SSE_COMMENTS;
+    else process.env.AGENTPROXY_SSE_COMMENTS = previousComments;
   }
 }
 
@@ -127,8 +127,8 @@ for (const upstreamDone of [true, false]) {
   const finalization = upstreamDone ? "upstream [DONE]" : "natural EOF";
 
   for (const [label, envValue, commentsExpected] of [
-    // #10524: OMNIROUTE_SSE_COMMENTS now defaults to disabled — strict SSE
-    // clients (WorkBuddy, etc.) crash on `: x-omniroute-*` comment lines.
+    // #10524: AGENTPROXY_SSE_COMMENTS now defaults to disabled — strict SSE
+    // clients (WorkBuddy, etc.) crash on `: x-agentproxy-*` comment lines.
     ["default", undefined, false],
     ["explicitly enabled", "yes", true],
     ["disabled", "off", false],
@@ -136,7 +136,7 @@ for (const upstreamDone of [true, false]) {
     test(`createSSEStream ${finalization} finalization preserves invariants with comments ${label}`, async () => {
       const result = await runFinalizationCase({ envValue, upstreamDone });
       const finishMarker = '"finish_reason":"stop"';
-      const metadataMarker = ": x-omniroute-response-cost=";
+      const metadataMarker = ": x-agentproxy-response-cost=";
       const doneMarker = "data: [DONE]";
 
       assert.match(result.output, /"content":"ordinary-data"/);
@@ -168,11 +168,11 @@ for (const upstreamDone of [true, false]) {
       assert.ok(finishIndex < doneIndex, "synthetic finish chunk should precede [DONE]");
 
       if (commentsExpected) {
-        assert.match(result.output, /: x-omniroute-provider=test-provider/);
+        assert.match(result.output, /: x-agentproxy-provider=test-provider/);
         assert.ok(metadataIndex > finishIndex, "metadata should follow the finish chunk");
         assert.ok(metadataIndex < doneIndex, "metadata should precede [DONE]");
       } else {
-        assert.doesNotMatch(result.output, /: x-omniroute-/);
+        assert.doesNotMatch(result.output, /: x-agentproxy-/);
       }
     });
   }

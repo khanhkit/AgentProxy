@@ -1,8 +1,8 @@
-import { REGISTRY } from "@omniroute/open-sse/config/providerRegistry.ts";
+import { REGISTRY } from "@agentproxy/open-sse/config/providerRegistry.ts";
 import {
   deriveEmbeddingProviderForChatProvider,
   getEmbeddingProvider,
-} from "@omniroute/open-sse/config/embeddingRegistry.ts";
+} from "@agentproxy/open-sse/config/embeddingRegistry.ts";
 import type {
   EmbeddingProviderListing,
 } from "./types";

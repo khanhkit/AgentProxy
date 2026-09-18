@@ -8,7 +8,7 @@ import { generateKeyPair, exportJWK, SignJWT } from "jose";
 // NOTE: Dynamic imports below are used (with comment) solely because the modules read process.env at evaluation time.
 // The specifiers are literals. This is the established pattern in this repo's auth tests for env-controlled DB setup.
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-oidc-callback-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-oidc-callback-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.JWT_SECRET = "test-jwt-secret-for-oidc-callback";
 
@@ -487,15 +487,15 @@ test("OIDC callback rejects missing JWT_SECRET at mint time (server_misconfigure
 
 test("OIDC callback error redirect respects authenticated trusted-proxy headers (#10224)", async () => {
   await setupFullOidcSettings();
-  process.env.OMNIROUTE_TRUST_PROXY = "true";
-  process.env.OMNIROUTE_PEER_STAMP_TOKEN = "oidc-callback-test-peer-stamp";
+  process.env.AGENTPROXY_TRUST_PROXY = "true";
+  process.env.AGENTPROXY_PEER_STAMP_TOKEN = "oidc-callback-test-peer-stamp";
 
   try {
     const request = new Request("http://127.0.0.1:20128/api/auth/oidc/callback", {
       headers: {
         "x-forwarded-proto": "https",
         "x-forwarded-host": "auth.pubg-sell.ir",
-        "x-omniroute-peer-ip": "oidc-callback-test-peer-stamp|127.0.0.1",
+        "x-agentproxy-peer-ip": "oidc-callback-test-peer-stamp|127.0.0.1",
       },
     });
 
@@ -506,8 +506,8 @@ test("OIDC callback error redirect respects authenticated trusted-proxy headers 
       "https://auth.pubg-sell.ir/login?oidc_error=missing_code"
     );
   } finally {
-    delete process.env.OMNIROUTE_TRUST_PROXY;
-    delete process.env.OMNIROUTE_PEER_STAMP_TOKEN;
+    delete process.env.AGENTPROXY_TRUST_PROXY;
+    delete process.env.AGENTPROXY_PEER_STAMP_TOKEN;
   }
 });
 

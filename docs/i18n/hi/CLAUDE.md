@@ -39,7 +39,7 @@ npm run test:all
 
 ## परियोजना एक नज़र में
 
-**OmniRoute** — एकीकृत AI प्रॉक्सी/राउटर। एक एंडपॉइंट, 329 LLM प्रदाता, स्वचालित फॉलबैक।
+**AgentProxy** — एकीकृत AI प्रॉक्सी/राउटर। एक एंडपॉइंट, 329 LLM प्रदाता, स्वचालित फॉलबैक।
 
 | परत          | स्थान                   | उद्देश्य                                                                  |
 | ------------ | ----------------------- | ------------------------------------------------------------------------- |
@@ -82,7 +82,7 @@ API रूट एक सुसंगत पैटर्न का पालन �
 
 ## लचीलापन रनटाइम स्थिति
 
-OmniRoute में तीन संबंधित लेकिन अलग अस्थायी-फेल्योर तंत्र हैं। रूटिंग व्यवहार को डिबग करते समय उनके दायरे को अलग रखें। एक झलक के लिए [3-लेयर लचीलापन आरेख](./docs/diagrams/exported/resilience-3layers.svg) देखें (स्रोत: [docs/diagrams/resilience-3layers.mmd](./docs/diagrams/resilience-3layers.mmd))।
+AgentProxy में तीन संबंधित लेकिन अलग अस्थायी-फेल्योर तंत्र हैं। रूटिंग व्यवहार को डिबग करते समय उनके दायरे को अलग रखें। एक झलक के लिए [3-लेयर लचीलापन आरेख](./docs/diagrams/exported/resilience-3layers.svg) देखें (स्रोत: [docs/diagrams/resilience-3layers.mmd](./docs/diagrams/resilience-3layers.mmd))।
 
 ### प्रदाता सर्किट ब्रेकर
 
@@ -194,7 +194,7 @@ baseCooldownMs * 2 ** failureIndex;
 ### कोड शैली
 
 - **2 स्पेस**, सेमीकोलन, डबल कोट्स, 100 कैरेक्टर चौड़ाई, es5 ट्रेलिंग कॉमा (lint-staged द्वारा Prettier के माध्यम से लागू)
-- **इम्पोर्ट्स**: बाहरी → आंतरिक (`@/`, `@omniroute/open-sse`) → सापेक्ष
+- **इम्पोर्ट्स**: बाहरी → आंतरिक (`@/`, `@agentproxy/open-sse`) → सापेक्ष
 - **नामकरण**: फाइलें=camelCase/kebab, घटक=PascalCase, स्थिरांक=UPPER_SNAKE
 - **ESLint**: `no-eval`, `no-implied-eval`, `no-new-func` = हर जगह त्रुटि; `no-explicit-any` = `open-sse/` और `tests/` में चेतावनी
 - **TypeScript**: `strict: false`, लक्ष्य ES2022, मॉड्यूल esnext, समाधान बंडलर। स्पष्ट प्रकारों को प्राथमिकता दें।
@@ -362,9 +362,9 @@ git push -u origin feat/your-feature
   | ≥22.22.2 <23 |
   | ≥24 <25, ES मॉड्यूल
 - **TypeScript**: 5.9+, लक्ष्य ES2022, मॉड्यूल esnext, समाधान बंडलर
-- **पथ उपनाम**: `@/*` → `src/`, `@omniroute/open-sse` → `open-sse/`, `@omniroute/open-sse/*` → `open-sse/*`
+- **पथ उपनाम**: `@/*` → `src/`, `@agentproxy/open-sse` → `open-sse/`, `@agentproxy/open-sse/*` → `open-sse/*`
 - **डिफ़ॉल्ट पोर्ट**: 20128 (API + डैशबोर्ड एक ही पोर्ट पर)
-- **डेटा निर्देशिका**: `DATA_DIR` env var, डिफ़ॉल्ट रूप से `~/.omniroute/`
+- **डेटा निर्देशिका**: `DATA_DIR` env var, डिफ़ॉल्ट रूप से `~/.agentproxy/`
 - **मुख्य env vars**: `PORT`, `JWT_SECRET`, `API_KEY_SECRET`, `INITIAL_PASSWORD`, `REQUIRE_API_KEY`, `APP_LOG_LEVEL`
 - सेटअप: `cp .env.example .env` फिर `JWT_SECRET` (`openssl rand -base64 48`) और `API_KEY_SECRET` (`openssl rand -hex 32`) उत्पन्न करें
 
@@ -387,4 +387,4 @@ git push -u origin feat/your-feature
 13. कभी भी बाहरी पथों या रनटाइम मानों को `exec()`/`spawn()` को पास किए गए शेल स्क्रिप्ट में स्ट्रिंग-इंटरपोलेट न करें — इसके बजाय `env` विकल्प के माध्यम से पास करें। संदर्भ: `src/mitm/cert/install.ts::updateNssDatabases`।
 14. कभी भी CodeQL / Secret-Scanning अलर्ट को खारिज न करें बिना (a) पहले ऊपर पैटर्न दस्तावेज़ों की जांच किए कि क्या सहायक लागू होता है, और (b) खारिज़ टिप्पणी में तकनीकी औचित्य को रिकॉर्ड किए बिना। मिसाल: `js/stack-trace-exposure` को कॉलसाइट्स पर उठाया गया जो पहले से ही `sanitizeErrorMessage()` के माध्यम से रूट करते हैं, यह एक ज्ञात CodeQL सीमा है (कस्टम सैनिटाइज़र मान्यता प्राप्त नहीं हैं) — इसे `false positive` के रूप में खारिज करें जो `docs/security/ERROR_SANITIZATION.md` का संदर्भ देता है।
 15. कभी भी उन रूट्स को उजागर न करें जो चाइल्ड प्रोसेस को स्पॉन करते हैं (`/api/mcp/`, `/api/cli-tools/runtime/`) बिना `src/server/authz/routeGuard.ts` में `isLocalOnlyPath()` वर्गीकरण के। लूपबैक प्रवर्तन किसी भी प्रमाणीकरण जांच से पहले बिना शर्त होता है — टनल के माध्यम से लीक किया गया JWT प्रक्रिया स्पॉनिंग को ट्रिगर नहीं कर सकता। देखें `docs/security/ROUTE_GUARD_TIERS.md`।
-16. कभी भी `Co-Authored-By` ट्रेलर्स शामिल न करें जो AI सहायक, LLM या स्वचालन खाते को क्रेडिट देते हैं (जैसे "Claude", "GPT", "Copilot", "Bot" युक्त नाम; `anthropic.com` / `openai.com` / बॉट-स्वामित्व वाले `noreply.github.com` पतों पर ईमेल)। ऐसे ट्रेलर्स GitHub पर बॉट खाते में कमिट एट्रिब्यूशन रूट करते हैं, PR इतिहास में वास्तविक लेखक (`diegosouzapw`) को छिपाते हैं। मानव सहयोगी — upstream PR लेखकों और OmniRoute में पोर्ट किए जा रहे issue रिपोर्टरों सहित — मानक `Co-authored-by: Name <email>` ट्रेलर्स के साथ क्रेडिट प्राप्त कर सकते हैं और चाहिए; upstream-port वर्कफ़्लो (`/port-upstream-features`, `/port-upstream-issues`) इस पर निर्भर हैं।
+16. कभी भी `Co-Authored-By` ट्रेलर्स शामिल न करें जो AI सहायक, LLM या स्वचालन खाते को क्रेडिट देते हैं (जैसे "Claude", "GPT", "Copilot", "Bot" युक्त नाम; `anthropic.com` / `openai.com` / बॉट-स्वामित्व वाले `noreply.github.com` पतों पर ईमेल)। ऐसे ट्रेलर्स GitHub पर बॉट खाते में कमिट एट्रिब्यूशन रूट करते हैं, PR इतिहास में वास्तविक लेखक (`diegosouzapw`) को छिपाते हैं। मानव सहयोगी — upstream PR लेखकों और AgentProxy में पोर्ट किए जा रहे issue रिपोर्टरों सहित — मानक `Co-authored-by: Name <email>` ट्रेलर्स के साथ क्रेडिट प्राप्त कर सकते हैं और चाहिए; upstream-port वर्कफ़्लो (`/port-upstream-features`, `/port-upstream-issues`) इस पर निर्भर हैं।

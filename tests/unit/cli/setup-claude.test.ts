@@ -87,7 +87,7 @@ test("fallbackClaudeProfile skips media and non-text models", () => {
 });
 
 test("syncClaudeProfilesFromModels falls back to a generic profile for unmatched catalog models", async () => {
-  const claudeHome = await fs.mkdtemp(path.join(os.tmpdir(), "omniroute-claude-fallback-"));
+  const claudeHome = await fs.mkdtemp(path.join(os.tmpdir(), "agentproxy-claude-fallback-"));
   try {
     const result = await syncClaudeProfilesFromModels(
       [{ id: "new-provider/future-chat-1", output_modalities: ["text"] }],
@@ -114,7 +114,7 @@ test("syncClaudeProfilesFromModels falls back to a generic profile for unmatched
 });
 
 test("syncClaudeProfilesFromModels writes directory-per-profile settings + threads baseUrl, skips non-ids", async () => {
-  const claudeHome = await fs.mkdtemp(path.join(os.tmpdir(), "omniroute-claude-profiles-"));
+  const claudeHome = await fs.mkdtemp(path.join(os.tmpdir(), "agentproxy-claude-profiles-"));
   try {
     const result = await syncClaudeProfilesFromModels([{ id: "glm/glm-5.2" }, { id: "" }], {
       claudeHome,
@@ -142,7 +142,7 @@ test("syncClaudeProfilesFromModels writes directory-per-profile settings + threa
 });
 
 test("syncClaudeProfilesFromModels dry-run writes nothing and reports via the injected log (#5959)", async () => {
-  const claudeHome = await fs.mkdtemp(path.join(os.tmpdir(), "omniroute-claude-dry-"));
+  const claudeHome = await fs.mkdtemp(path.join(os.tmpdir(), "agentproxy-claude-dry-"));
   // The collector keeps the dry-run's multi-byte "──" heading OFF this child
   // process's stdout: under the node:test runner that write corrupts the V8
   // serialization stream ~50% of runs (#5959, "Unable to deserialize cloned

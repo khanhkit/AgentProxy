@@ -106,7 +106,7 @@ test("empty/missing inputs do not crash", () => {
 // The v3.8.50 publish run (CI 33104507735) failed with "15 tables a CLEAN install creates
 // but an UPGRADE does not". None of them was missing: the Phase B upgrade install had hit
 // `npm warn tar TAR_ENTRY_ERROR ENOSPC: no space left on device` 5611 times, npm still
-// exited 0, the truncated `omniroute serve` "exited with code 0 before serving", and the
+// exited 0, the truncated `agentproxy serve` "exited with code 0 before serving", and the
 // database therefore still held the 3.8.49 schema. npm reporting disk exhaustion as a
 // warning is what let a full disk masquerade as a schema defect.
 

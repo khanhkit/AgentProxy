@@ -7,13 +7,13 @@ import type { NextRequest } from "next/server";
 
 const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-ap0006-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
-process.env.OMNIROUTE_DISABLE_REDIS_AUTH_CACHE = "1";
+process.env.AGENTPROXY_DISABLE_REDIS_AUTH_CACHE = "1";
 
 const ORIGINAL = {
   dataDir: process.env.DATA_DIR,
   jwtSecret: process.env.JWT_SECRET,
   initialPassword: process.env.INITIAL_PASSWORD,
-  peerStampToken: process.env.OMNIROUTE_PEER_STAMP_TOKEN,
+  peerStampToken: process.env.AGENTPROXY_PEER_STAMP_TOKEN,
 };
 
 const apiAuth = await import("../../../src/shared/utils/apiAuth.ts");
@@ -43,7 +43,7 @@ test.beforeEach(() => {
   loginGuard.resetLoginGuardForTests();
   delete process.env.JWT_SECRET;
   delete process.env.INITIAL_PASSWORD;
-  delete process.env.OMNIROUTE_PEER_STAMP_TOKEN;
+  delete process.env.AGENTPROXY_PEER_STAMP_TOKEN;
 });
 
 test.after(() => {
@@ -51,7 +51,7 @@ test.after(() => {
   fs.rmSync(TEST_DATA_DIR, { recursive: true, force: true, maxRetries: 5, retryDelay: 50 });
   restoreEnv("jwtSecret", "JWT_SECRET");
   restoreEnv("initialPassword", "INITIAL_PASSWORD");
-  restoreEnv("peerStampToken", "OMNIROUTE_PEER_STAMP_TOKEN");
+  restoreEnv("peerStampToken", "AGENTPROXY_PEER_STAMP_TOKEN");
 });
 
 test("AP-ISS-0006: forged localhost authority is not loopback without trusted peer context", () => {
@@ -63,7 +63,7 @@ test("AP-ISS-0006: forged localhost authority is not loopback without trusted pe
 });
 
 test("AP-ISS-0006: valid peer stamp controls loopback and proxy-hop locality", () => {
-  process.env.OMNIROUTE_PEER_STAMP_TOKEN = "ap0006-stamp";
+  process.env.AGENTPROXY_PEER_STAMP_TOKEN = "ap0006-stamp";
 
   const directLoopback = new Request("https://dashboard.example/api/keys", {
     headers: {
@@ -146,7 +146,7 @@ test("AP-ISS-0006: no peer means XFF cannot become the client identity", () => {
 });
 
 test("AP-ISS-0006: forged localhost cannot open fresh management bootstrap for a stamped remote peer", async () => {
-  process.env.OMNIROUTE_PEER_STAMP_TOKEN = "ap0006-stamp";
+  process.env.AGENTPROXY_PEER_STAMP_TOKEN = "ap0006-stamp";
   await settingsDb.updateSettings({ requireLogin: true, password: null, setupComplete: false });
 
   const out = await managementPolicy.evaluate({

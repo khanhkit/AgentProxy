@@ -110,18 +110,18 @@ test("interval defaults to 6h, rejects garbage, honors 0", async () => {
   assert.equal(getWalMaintenanceIntervalMs({} as NodeJS.ProcessEnv), 6 * 60 * 60 * 1000);
   assert.equal(
     getWalMaintenanceIntervalMs({
-      OMNIROUTE_WAL_TRUNCATE_INTERVAL_MS: "nope",
+      AGENTPROXY_WAL_TRUNCATE_INTERVAL_MS: "nope",
     } as NodeJS.ProcessEnv),
     6 * 60 * 60 * 1000
   );
   assert.equal(
     getWalMaintenanceIntervalMs({
-      OMNIROUTE_WAL_TRUNCATE_INTERVAL_MS: "60000",
+      AGENTPROXY_WAL_TRUNCATE_INTERVAL_MS: "60000",
     } as NodeJS.ProcessEnv),
     60000
   );
   assert.equal(
-    getWalMaintenanceIntervalMs({ OMNIROUTE_WAL_TRUNCATE_INTERVAL_MS: "0" } as NodeJS.ProcessEnv),
+    getWalMaintenanceIntervalMs({ AGENTPROXY_WAL_TRUNCATE_INTERVAL_MS: "0" } as NodeJS.ProcessEnv),
     0
   );
 });

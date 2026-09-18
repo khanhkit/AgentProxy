@@ -428,9 +428,9 @@ test("recurring-pools gate skips the positive-budget subset", () => {
 
 test("version gate compares README-footer and llm.txt prose against package.json", () => {
   const v = makeVersionValidator("3.8.51");
-  assert.equal(v("OmniRoute v3.8.51 · Node ≥22.22.2").ok, true);
+  assert.equal(v("AgentProxy v3.8.51 · Node ≥22.22.2").ok, true);
   assert.equal(v("**Current version:** 3.8.51").ok, true);
-  assert.equal(v("OmniRoute v3.8.50 · Node ≥22.22.2").ok, false);
+  assert.equal(v("AgentProxy v3.8.50 · Node ≥22.22.2").ok, false);
   assert.equal(v("**Current version:** 3.8.50").ok, false);
   assert.equal(v("no version here").ok, true);
   assert.equal(makeVersionValidator(null)("anything").ok, false);

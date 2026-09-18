@@ -6,7 +6,7 @@ import path from "node:path";
 import type { GuardrailContext } from "@/lib/guardrails/base";
 
 // Isolate DB state to avoid polluting production database
-const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-test-pii-"));
+const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-test-pii-"));
 process.env.DATA_DIR = tmpDir;
 
 test("PIIMaskerGuardrail respects feature flag DB overrides", async (t) => {

@@ -62,7 +62,7 @@ async function waitForFile(file: string, timeoutMs: number): Promise<void> {
 }
 
 test("getDbInstance() waits out a transient exclusive file lock instead of failing on its first statement", async () => {
-  const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-open-busy-"));
+  const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-open-busy-"));
   const sqliteFile = path.join(dataDir, "storage.sqlite");
   const ready = path.join(dataDir, "ready");
   const env = { DATA_DIR: dataDir, OPEN_READY_FILE: ready };

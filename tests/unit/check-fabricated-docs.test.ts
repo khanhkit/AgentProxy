@@ -79,7 +79,7 @@ test("isDirectExecution: matches a module URL to its filesystem argv path", () =
   assert.equal(isDirectExecution(pathToFileURL(scriptPath).href, undefined), false);
 });
 
-test("runFabricatedDocsCheck: index contains real OmniRoute routes", () => {
+test("runFabricatedDocsCheck: index contains real AgentProxy routes", () => {
   const result = runFabricatedDocsCheck();
   // The real repo has /api/v1/chat/completions — a known truth
   assert.ok(result.index.apiRoutes.has("/api/v1/chat/completions"));
@@ -189,12 +189,12 @@ test('env-var: a var read via an env helper (envInt("X")) is NOT flagged', () =>
   const found = findingsFor({
     files: {
       "open-sse/config/constants.ts":
-        'const t = envInt("OMNIROUTE_CIRCUIT_BREAKER_OAUTH_THRESHOLD", 8);\n',
+        'const t = envInt("AGENTPROXY_CIRCUIT_BREAKER_OAUTH_THRESHOLD", 8);\n',
     },
-    docs: { "cfg.md": "Override with `OMNIROUTE_CIRCUIT_BREAKER_OAUTH_THRESHOLD`.\n" },
+    docs: { "cfg.md": "Override with `AGENTPROXY_CIRCUIT_BREAKER_OAUTH_THRESHOLD`.\n" },
   });
   assert.ok(
-    !found.has("env-var::OMNIROUTE_CIRCUIT_BREAKER_OAUTH_THRESHOLD"),
+    !found.has("env-var::AGENTPROXY_CIRCUIT_BREAKER_OAUTH_THRESHOLD"),
     'envInt("X", …) helper read must be indexed'
   );
 });
@@ -352,10 +352,10 @@ test("cli-cmd: an arg-bearing `.command('connect <host>')` registration is NOT f
       "bin/cli/commands/connect.mjs":
         'export function registerConnect(p) {\n  p.command("connect <host>").action(() => {});\n}\n',
     },
-    docs: { "guides/remote.md": "You log in once with `omniroute connect <host>`.\n" },
+    docs: { "guides/remote.md": "You log in once with `agentproxy connect <host>`.\n" },
   });
   assert.ok(
-    !found.has("cli-cmd::omniroute connect"),
+    !found.has("cli-cmd::agentproxy connect"),
     "a registered arg-bearing subcommand must be recognized and not flagged"
   );
 });
@@ -368,10 +368,10 @@ test("ANTI-OVER-SUPPRESSION: an unregistered subcommand IS still flagged", () =>
       "bin/cli/commands/connect.mjs":
         'export function registerConnect(p) {\n  p.command("connect <host>").action(() => {});\n}\n',
     },
-    docs: { "guides/remote.md": "Then run `omniroute teleport <host>` to finish.\n" },
+    docs: { "guides/remote.md": "Then run `agentproxy teleport <host>` to finish.\n" },
   });
   assert.ok(
-    found.has("cli-cmd::omniroute teleport"),
+    found.has("cli-cmd::agentproxy teleport"),
     "an unregistered subcommand must remain flagged — precision must not blind detection"
   );
 });

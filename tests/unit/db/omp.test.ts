@@ -5,14 +5,14 @@
 // ("GLIBC_2.29 not found"), so the native module fails to dlopen and any test that
 // reaches better-sqlite3 directly (or asserts stdout that the load-failure warning
 // would pollute) fails HERE while passing in CI. This is a known environment
-// limitation, not a defect in the code under test: the OmniRoute runtime itself
+// limitation, not a defect in the code under test: the AgentProxy runtime itself
 // cascades to node:sqlite/sql.js when better-sqlite3 is unavailable. See
 // tests/unit/_helpers/betterSqlite3Availability.ts for a guard helper.
 /**
  * Unit tests for src/lib/db/omp.ts — OMP (Oh My Pi) credential CRUD.
  *
  * omp.ts opens the third-party OMP CLI's OWN local sqlite database
- * (~/.omp/agent/agent.db) directly, per request — NOT OmniRoute's own DB.
+ * (~/.omp/agent/agent.db) directly, per request — NOT AgentProxy's own DB.
  * These tests cover both the happy path (round trip against a fixture DB
  * with the omp CLI's real `auth_credentials` schema) and the missing-DB-file
  * path (omp CLI never run yet), which each exported function must handle
@@ -28,7 +28,7 @@ import Database from "better-sqlite3";
 const { getOmpCredentials, saveOmpCredentials, deleteOmpCredentials } =
   await import("../../../src/lib/db/omp.ts");
 
-const PROVIDER_ID = "omniroute";
+const PROVIDER_ID = "agentproxy";
 
 let tmpHome: string;
 let origHome: string | undefined;
@@ -68,19 +68,19 @@ afterEach(() => {
 });
 
 describe("db/omp.ts — getOmpCredentials", () => {
-  it("returns hasOmniRoute:false without throwing when the omp DB file does not exist", () => {
+  it("returns hasAgentProxy:false without throwing when the omp DB file does not exist", () => {
     assert.ok(!fs.existsSync(getOmpDbPath()), "precondition: no DB file yet");
     const creds = getOmpCredentials(PROVIDER_ID);
-    assert.deepEqual(creds, { hasOmniRoute: false, baseUrl: null, apiKey: null });
+    assert.deepEqual(creds, { hasAgentProxy: false, baseUrl: null, apiKey: null });
   });
 
-  it("returns hasOmniRoute:false when the DB exists but has no matching row", () => {
+  it("returns hasAgentProxy:false when the DB exists but has no matching row", () => {
     seedOmpDb();
     const creds = getOmpCredentials(PROVIDER_ID);
-    assert.deepEqual(creds, { hasOmniRoute: false, baseUrl: null, apiKey: null });
+    assert.deepEqual(creds, { hasAgentProxy: false, baseUrl: null, apiKey: null });
   });
 
-  it("returns hasOmniRoute:false gracefully when the schema itself is missing (corrupt/foreign DB)", () => {
+  it("returns hasAgentProxy:false gracefully when the schema itself is missing (corrupt/foreign DB)", () => {
     const dbPath = getOmpDbPath();
     fs.mkdirSync(path.dirname(dbPath), { recursive: true });
     // Valid sqlite file, but no auth_credentials table at all.
@@ -89,7 +89,7 @@ describe("db/omp.ts — getOmpCredentials", () => {
     db.close();
 
     const creds = getOmpCredentials(PROVIDER_ID);
-    assert.deepEqual(creds, { hasOmniRoute: false, baseUrl: null, apiKey: null });
+    assert.deepEqual(creds, { hasAgentProxy: false, baseUrl: null, apiKey: null });
   });
 });
 
@@ -100,7 +100,7 @@ describe("db/omp.ts — saveOmpCredentials + getOmpCredentials round trip", () =
     saveOmpCredentials(PROVIDER_ID, "sk-test-omp-key", "http://localhost:20128/v1");
 
     const creds = getOmpCredentials(PROVIDER_ID);
-    assert.equal(creds.hasOmniRoute, true);
+    assert.equal(creds.hasAgentProxy, true);
     assert.equal(creds.apiKey, "sk-test-omp-key");
     assert.equal(creds.baseUrl, "http://localhost:20128/v1");
   });
@@ -126,15 +126,15 @@ describe("db/omp.ts — saveOmpCredentials + getOmpCredentials round trip", () =
 });
 
 describe("db/omp.ts — deleteOmpCredentials", () => {
-  it("removes the row so a subsequent get reports hasOmniRoute:false", () => {
+  it("removes the row so a subsequent get reports hasAgentProxy:false", () => {
     seedOmpDb();
     saveOmpCredentials(PROVIDER_ID, "sk-test-omp-key", "http://localhost:20128/v1");
-    assert.equal(getOmpCredentials(PROVIDER_ID).hasOmniRoute, true);
+    assert.equal(getOmpCredentials(PROVIDER_ID).hasAgentProxy, true);
 
     deleteOmpCredentials(PROVIDER_ID);
 
     assert.deepEqual(getOmpCredentials(PROVIDER_ID), {
-      hasOmniRoute: false,
+      hasAgentProxy: false,
       baseUrl: null,
       apiKey: null,
     });

@@ -4,7 +4,7 @@ title: Toolchain Reproducibility Contract
 
 # Toolchain Reproducibility Contract
 
-OmniRoute uses **npm 12.0.2** and the committed `package-lock.json` as the authoritative JavaScript dependency-install contract for the default contributor, build, release, and protected-CI paths. `pnpm-workspace.yaml` and `pnpm.json` describe workspace/build metadata only; they do not make pnpm an approved unlocked install path, and `pnpm-lock.yaml` must not be introduced unless this contract is deliberately changed.
+AgentProxy uses **npm 12.0.2** and the committed `package-lock.json` as the authoritative JavaScript dependency-install contract for the default contributor, build, release, and protected-CI paths. `pnpm-workspace.yaml` and `pnpm.json` describe workspace/build metadata only; they do not make pnpm an approved unlocked install path, and `pnpm-lock.yaml` must not be introduced unless this contract is deliberately changed.
 
 The default contributor, release, and primary CI Node.js version is **24.15.0**, recorded exactly in `.nvmrc`. This is the smallest Node 24 release accepted by npm 12.0.2, whose Node engine contract is **`^22.22.2 || ^24.15.0 || >=26.0.0`**. The toolchain checker treats Node/npm compatibility as a cross-constraint, not as two independent literal pins.
 

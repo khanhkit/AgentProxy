@@ -6,11 +6,11 @@ import { join } from "node:path";
 // Lint dos manifests de skills da CLI (skills/<dir>/SKILL.md).
 //
 // Religado pela auditoria 6A.1 (2026-06-09): este arquivo era órfão (nenhum runner
-// coletava tests/unit/docs/) e apodreceu — filtrava dirs `omniroute*`, mas os skills
+// coletava tests/unit/docs/) e apodreceu — filtrava dirs `agentproxy*`, mas os skills
 // foram renomeados para `cli-*`; com 0 dirs o segundo teste passava VACUOSAMENTE.
 // Atualizado para o estado real: todo dir de skills/ com SKILL.md é validado, e o
-// invariante de uso é "referencia as env vars ($OMNIROUTE_URL/OMNIROUTE_KEY) OU
-// comandos da CLI (`omniroute …`)" — 3 skills (health/keys/batches) usam só a CLI.
+// invariante de uso é "referencia as env vars ($AGENTPROXY_URL/AGENTPROXY_KEY) OU
+// comandos da CLI (`agentproxy …`)" — 3 skills (health/keys/batches) usam só a CLI.
 const SKILLS_DIR = join(process.cwd(), "skills");
 const REQUIRED_FRONTMATTER = ["name:", "description:"];
 
@@ -43,11 +43,11 @@ test("each skill dir has SKILL.md with frontmatter", async () => {
     // estado "no endpoints mapped yet", sem refs de uso) — o invariante de uso vale
     // só para os manifests manuscritos (cli-* e config-*). `ponytail` é a entrada
     // `external` do catálogo (#9058, conteúdo MIT de terceiro) — não descreve uso
-    // do OmniRoute, então também fica fora do invariante.
+    // do AgentProxy, então também fica fora do invariante.
     if (!dir.startsWith("omni-") && dir !== "ponytail") {
       assert.ok(
-        content.includes("OMNIROUTE_") || content.includes("omniroute "),
-        `${dir}: missing usage references (OMNIROUTE_* env vars or omniroute CLI commands)`
+        content.includes("AGENTPROXY_") || content.includes("agentproxy "),
+        `${dir}: missing usage references (AGENTPROXY_* env vars or agentproxy CLI commands)`
       );
     }
   }

@@ -11,7 +11,7 @@ import path from "node:path";
 // embedding-account-cooldown-10347.test.ts would pass even if the
 // production block were removed.
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-embed-int-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-embed-int-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.API_KEY_SECRET = process.env.API_KEY_SECRET || "embed-int-test-secret";
 

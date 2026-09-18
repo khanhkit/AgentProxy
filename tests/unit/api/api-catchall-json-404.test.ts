@@ -8,12 +8,12 @@ import assert from "node:assert/strict";
  * CLI/SDK callers to parse ~463 KB of HTML.
  *
  * Complements the /v1/* catch-all from #6405; asserts the app-router catch-all
- * under `src/app/api/[...omnirouteApiCatchAll]/route.ts` returns JSON for
+ * under `src/app/api/[...agentproxyApiCatchAll]/route.ts` returns JSON for
  * every HTTP method.
  */
 
 const catchAll = await import(
-  "../../../src/app/api/[...omnirouteApiCatchAll]/route.ts"
+  "../../../src/app/api/[...agentproxyApiCatchAll]/route.ts"
 );
 
 function makeReq(pathname: string, method = "GET"): Request {

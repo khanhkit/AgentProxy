@@ -4,7 +4,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-mimocode-retirement-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-mimocode-retirement-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../src/lib/db/core.ts");
@@ -18,7 +18,7 @@ test("migration 159 removes stale MiMoCode provider state and is idempotent", ()
   const db = core.getDbInstance();
 
   const applied = db
-    .prepare("SELECT version FROM _omniroute_migrations WHERE version = 159")
+    .prepare("SELECT version FROM _agentproxy_migrations WHERE version = 159")
     .get() as { version: number } | undefined;
 
   assert.ok(applied, "migration 159 must be recorded as applied");

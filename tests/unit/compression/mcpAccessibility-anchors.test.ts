@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { smartFilterText } from "@omniroute/open-sse/services/compression/engines/mcpAccessibility/index.ts";
-import { DEFAULT_MCP_ACCESSIBILITY_CONFIG } from "@omniroute/open-sse/services/compression/engines/mcpAccessibility/constants.ts";
+import { smartFilterText } from "@agentproxy/open-sse/services/compression/engines/mcpAccessibility/index.ts";
+import { DEFAULT_MCP_ACCESSIBILITY_CONFIG } from "@agentproxy/open-sse/services/compression/engines/mcpAccessibility/constants.ts";
 
 /** Regex-extract every [ref=eNN] anchor from a blob, as a sorted unique list. */
 function extractRefs(s: string): string[] {
@@ -39,7 +39,7 @@ test("collapse fires on interleaved tree AND no [ref=eXX] anchor is lost", () =>
   // BUG B: collapse must actually fire despite interleaved noise lines.
   assert.ok(out.length < input.length, "output shorter (compressed)");
   assert.ok(
-    out.includes('items omitted by OmniRoute MCP filter'),
+    out.includes('items omitted by AgentProxy MCP filter'),
     "collapse notice present (collapse fired)"
   );
 

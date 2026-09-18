@@ -7,7 +7,7 @@ import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-process.env.DATA_DIR = mkdtempSync(join(tmpdir(), "omniroute-comfyui-baseurl-"));
+process.env.DATA_DIR = mkdtempSync(join(tmpdir(), "agentproxy-comfyui-baseurl-"));
 
 import { resolveComfyUiBaseUrl } from "../../open-sse/utils/comfyuiClient.ts";
 const { handleImageGeneration } = await import("../../open-sse/handlers/imageGeneration.ts");

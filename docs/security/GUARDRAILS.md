@@ -11,7 +11,7 @@ lastUpdated: 2026-08-29
 > not yet server-verified — clarified per #11661)
 
 Guardrails enforce safety, policy, and content transformations at the boundary
-between OmniRoute and upstream providers. Each guardrail can inspect (and
+between AgentProxy and upstream providers. Each guardrail can inspect (and
 optionally reject, transform, or annotate) request payloads (`preCall`) and
 upstream responses (`postCall`).
 
@@ -101,7 +101,7 @@ Low-detail sampling degrades OCR accuracy for exactly the text-transcription
 task this prompt asks for, so the describe call itself always asks for high
 detail regardless of what detail level the original inbound request used. This
 only affects the internal describe request body; it does not change how
-OmniRoute forwards the caller's own `image_url.detail` on the primary request —
+AgentProxy forwards the caller's own `image_url.detail` on the primary request —
 that default is applied separately, and only for detected OpenCode clients, in
 `defaultImageDetail()` (`open-sse/handlers/chatCore/upstreamBody.ts`). The
 Anthropic wire-format branch of the describe self-loop has no `detail` field
@@ -190,7 +190,7 @@ read fallback for one release cycle.
 #### Transparency header + stats
 
 Describe-transformed responses carry
-`x-omniroute-modality-bridge: image->text;model=<visionModel>;parts=<n>`
+`x-agentproxy-modality-bridge: image->text;model=<visionModel>;parts=<n>`
 (built by `buildModalityBridgeHeader()` in `modalityBridge/bridgeStats.ts`,
 stamped by `withModalityBridgeHeader()` in `src/sse/handlers/chatHelpers.ts`).
 Rerouted requests get **no** header — the payload was untouched and the model
@@ -230,11 +230,11 @@ new page; it no longer owns a second copy of the form. Media Providers also
 links Image-to-Text and Speech-to-Text workflows to the corresponding Modality
 Bridge tabs without removing the existing Speech-to-Text playground.
 
-**Self-loop admission bypass:** when the describe call routes through OmniRoute's
+**Self-loop admission bypass:** when the describe call routes through AgentProxy's
 own `/v1` self-loop (non-standard provider model), the sub-request sends
-`x-omniroute-admission-bypass: internal` and is authenticated with the resolved
-self-loop credential — the local `sk_omniroute` sentinel in local mode, or the
-operator-configured `OMNIROUTE_API_KEY` / `ROUTER_API_KEY` env key (#1350) so
+`x-agentproxy-admission-bypass: internal` and is authenticated with the resolved
+self-loop credential — the local `sk_agentproxy` sentinel in local mode, or the
+operator-configured `AGENTPROXY_API_KEY` / `ROUTER_API_KEY` env key (#1350) so
 `REQUIRE_API_KEY=true` deployments can still run the describe call. The bypass
 is only honored for those exact credentials, so external clients cannot use the
 header to skip admission.
@@ -288,7 +288,7 @@ key combines the audio reference, the stable `audio-transcription` operation
 label, and selected STT model; failures are never cached. Audio attempts update
 the shared `bridged`, `cacheHits`, `failures`, and `lastUsedAt` counters.
 Transformed responses carry
-`x-omniroute-modality-bridge: audio->text;model=<sttModel>;parts=<n>`; untouched
+`x-agentproxy-modality-bridge: audio->text;model=<sttModel>;parts=<n>`; untouched
 requests do not receive an Audio Bridge segment.
 
 Runtime settings are DB-backed and Zod-validated:
@@ -420,7 +420,7 @@ estimate; the script never fabricates either result.
 
 Each frame is limited to 4 MiB, all raw frames together to 23 MiB, and the
 serialized broker response to 32 MiB. A private temporary directory is removed
-in `finally`. OmniRoute does not bundle FFmpeg and does not accept a custom
+in `finally`. AgentProxy does not bundle FFmpeg and does not accept a custom
 executable path. Before captioning, the bridge applies a conservative visual
 deduplication pass: each JPEG is reduced to a 16×16 grayscale buffer and is
 compared only with the last frame retained. For a requested caption budget
@@ -453,7 +453,7 @@ provider-reported tokens, end-to-end wall latency (including sheet composition),
 model-call count, and manifest-defined fact retention. Raw model responses are not
 written to the report; only SHA-256 digests and matched fact IDs are retained. The
 harness makes no network or paid model call unless `--execute-real` is passed and
-`--model`, `OMNIROUTE_BASE_URL`, and `OMNIROUTE_API_KEY` are configured. Without
+`--model`, `AGENTPROXY_BASE_URL`, and `AGENTPROXY_API_KEY` are configured. Without
 that explicit real run, its machine-readable verdict remains `HOLD`; synthetic
 payload/call-count measurements alone are not promotion evidence.
 
@@ -462,12 +462,12 @@ part when they already possess aligned text. Each cue must carry `text`, a
 finite `start`/`end` interval inside the probed duration, and a whitelisted
 `source` (`client`, `embedded`, or `audio-bridge`); `confidence` defaults to
 `1` and must remain between `0` and `1`. Exact duplicate cues are collapsed.
-OmniRoute never starts transcription from this metadata: validated cues are
+AgentProxy never starts transcription from this metadata: validated cues are
 copied into the described result with source, confidence, and interval, and
 are rendered as untrusted observations alongside the frame captions. Invalid,
 out-of-range, or provenance-free text is rejected rather than mixed into the
 caption stream. The `source` field is presently caller-declared, not
-server-verified: OmniRoute enforces that the value is one of the three
+server-verified: AgentProxy enforces that the value is one of the three
 allowed strings, but does not yet cryptographically confirm that an
 `embedded` or `audio-bridge` label actually came from a server-owned
 extraction. Treat `source` as an untrusted hint until that verification
@@ -602,7 +602,7 @@ reason when the runtime is unavailable. The internal extraction endpoint is not
 a public upload API: queue saturation returns `503` plus `Retry-After`, a caller
 disconnect returns `499`, and the fixed broker deadline returns `504`. Converted responses add
 `video->text;model=<visionModel>;parts=<videos>` to the central
-`x-omniroute-modality-bridge` header without removing Vision or Audio segments.
+`x-agentproxy-modality-bridge` header without removing Vision or Audio segments.
 
 ### PII Masker (`piiMasker.ts`)
 
@@ -767,7 +767,7 @@ request. Sources (all optional, all merged):
 - `apiKeyInfo.disabledGuardrails`
 - Request body `disabledGuardrails` (top-level)
 - Request body `metadata.disabledGuardrails`
-- Header `x-omniroute-disabled-guardrails` (or legacy
+- Header `x-agentproxy-disabled-guardrails` (or legacy
   `x-disabled-guardrails`)
 
 Values may be arrays of strings or a comma-separated string; names are
@@ -918,7 +918,7 @@ dispatch) has two jobs:
   previous instructions…", DAN-style jailbreaks) asserts the response carries
   `error.code === "SECURITY_001"`, i.e. the guard actually rejected the request.
 - **`garak` (advisory)** — runs garak `--probes promptinject,dan,leakreplay`
-  against a local OmniRoute instance (`http://localhost:20128/v1`). Gated on a
+  against a local AgentProxy instance (`http://localhost:20128/v1`). Gated on a
   provider secret (`PROMPTFOO_PROVIDER_KEY`); skips gracefully and is suffixed
   `|| true`, so it reports without failing CI.
 
@@ -944,6 +944,6 @@ same guard before the Copilot bearer token is used.
 For direct egress, the connection is pinned to the DNS answer that passed the
 guard, closing the validation/connect DNS-rebinding gap. If an account/provider
 proxy is assigned, the proxy route is preserved and is **not** silently bypassed
-to obtain direct pinning; OmniRoute performs local DNS pre-validation first, but
+to obtain direct pinning; AgentProxy performs local DNS pre-validation first, but
 the proxy may perform its own DNS resolution. Operators using remote-DNS proxies
 must enforce equivalent metadata/link-local protections at that proxy boundary.

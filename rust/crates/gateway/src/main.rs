@@ -94,7 +94,7 @@ impl RuntimeConfig {
         let api_port = env_port("API_PORT", DEFAULT_API_PORT)?;
         let dashboard_port = env_port("DASHBOARD_PORT", DEFAULT_DASHBOARD_PORT)?;
         let host = env::var("AGENTPROXY_RUST_CORE_HOST")
-            .or_else(|_| env::var("OMNIROUTE_RUST_CORE_HOST"))
+            .or_else(|_| env::var("AGENTPROXY_RUST_CORE_HOST"))
             .ok()
             .filter(|value| !value.trim().is_empty())
             .or_else(|| {
@@ -105,24 +105,24 @@ impl RuntimeConfig {
             .unwrap_or_else(|| "0.0.0.0".to_owned());
         let listen_addr: SocketAddr = format!("{host}:{api_port}").parse()?;
         let snapshot_url = env::var("AGENTPROXY_RUST_CORE_SNAPSHOT_URL")
-            .or_else(|_| env::var("OMNIROUTE_RUST_CORE_SNAPSHOT_URL"))
+            .or_else(|_| env::var("AGENTPROXY_RUST_CORE_SNAPSHOT_URL"))
             .ok()
             .filter(|value| !value.trim().is_empty())
             .unwrap_or_else(|| {
                 format!("http://127.0.0.1:{dashboard_port}/api/internal/rust-core/snapshot")
             });
         let legacy_base_url = env::var("AGENTPROXY_RUST_CORE_LEGACY_BASE_URL")
-            .or_else(|_| env::var("OMNIROUTE_RUST_CORE_LEGACY_BASE_URL"))
+            .or_else(|_| env::var("AGENTPROXY_RUST_CORE_LEGACY_BASE_URL"))
             .ok()
             .filter(|value| !value.trim().is_empty())
             .unwrap_or_else(|| format!("http://127.0.0.1:{dashboard_port}"));
-        let token = env::var("AGENTPROXY_INTERNAL_SERVICE_TOKEN").or_else(|_| env::var("OMNIROUTE_INTERNAL_SERVICE_TOKEN"))
+        let token = env::var("AGENTPROXY_INTERNAL_SERVICE_TOKEN")
             .ok()
             .filter(|value| !value.trim().is_empty())
-            .ok_or("AGENTPROXY_INTERNAL_SERVICE_TOKEN (or legacy OMNIROUTE_INTERNAL_SERVICE_TOKEN) is required")?;
+            .ok_or("AGENTPROXY_INTERNAL_SERVICE_TOKEN is required")?;
         let shutdown_drain_timeout = env_duration_ms(
             "AGENTPROXY_RUST_CORE_SHUTDOWN_DRAIN_MS",
-            "OMNIROUTE_RUST_CORE_SHUTDOWN_DRAIN_MS",
+            "AGENTPROXY_RUST_CORE_SHUTDOWN_DRAIN_MS",
             DEFAULT_SHUTDOWN_DRAIN_MS,
         )?;
 

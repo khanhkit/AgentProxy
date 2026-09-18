@@ -5,7 +5,7 @@ import os from "node:os";
 import path from "node:path";
 import test from "node:test";
 
-import { computeFreeModelTotals } from "@omniroute/open-sse/config/freeModelCatalog.ts";
+import { computeFreeModelTotals } from "@agentproxy/open-sse/config/freeModelCatalog.ts";
 
 const fmt = (n: number) => (n >= 1e9 ? (n / 1e9).toFixed(2) + "B" : Math.round(n / 1e6) + "M");
 

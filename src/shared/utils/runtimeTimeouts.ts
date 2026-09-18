@@ -34,7 +34,7 @@ export const DEFAULT_CUSTOM_HTTP_SERVER_TIMEOUTS: Readonly<CustomHttpServerTimeo
     keepAliveTimeoutMs: 5_000,
   });
 // A client that closes its connection right after reading a fully-completed
-// SSE stream can race OmniRoute's own completion bookkeeping (#9653): the
+// SSE stream can race AgentProxy's own completion bookkeeping (#9653): the
 // bytes already reached the client, but the disconnect handler can fire
 // before the stream's own completion callback finishes recording it,
 // persisting a false 499 with zero token usage. Before committing to that

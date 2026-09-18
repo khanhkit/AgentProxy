@@ -4,7 +4,7 @@ title: Odniesienie do bramek jakości
 
 # Odniesienie do bramek jakości
 
-Ten dokument jest autorytatywnym odniesieniem dla wszystkich bramek jakości CI w OmniRoute.
+Ten dokument jest autorytatywnym odniesieniem dla wszystkich bramek jakości CI w AgentProxy.
 Opisuje każdą bramkę, co waliduje, w którym jobie CI działa, czy używa
 baseline ratchet albo polityki pass/fail, oraz czy blokuje build, czy jest advisory.
 
@@ -26,7 +26,7 @@ zmian w kodzie:
 
 | Job                                              | Zakres                                                                                                                                                                                                                   | Blokująca                                                                              |
 | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------- |
-| `Build (advisory)`                               | Non-draft PR-y kodowe i gałęzie kolejki Mergify; Node 24, `npm-ci-retry`, `check:node-runtime`, `npm run build` z `OMNIROUTE_USE_TURBOPACK=1`; bez uploadu artefaktów, bo żaden downstream quality job ich nie konsumuje | **Advisory** (`continue-on-error: true`; usuń po tygodniu stabilnych runów release-PR) |
+| `Build (advisory)`                               | Non-draft PR-y kodowe i gałęzie kolejki Mergify; Node 24, `npm-ci-retry`, `check:node-runtime`, `npm run build` z `AGENTPROXY_USE_TURBOPACK=1`; bez uploadu artefaktów, bo żaden downstream quality job ich nie konsumuje | **Advisory** (`continue-on-error: true`; usuń po tygodniu stabilnych runów release-PR) |
 | `Docs Gates (fast-path)`                         | PR-y docs/kod; API docs refs i docs-all                                                                                                                                                                                  | Tak                                                                                    |
 | `Fast Quality Gates`                             | PR-y kodowe; static checks, typecheck, dashboard typecheck, impacted unit tests                                                                                                                                          | Tak                                                                                    |
 | `Vitest (fast-path)`                             | PR-y kodowe; szybki suite vitest                                                                                                                                                                                         | Tak                                                                                    |
@@ -200,7 +200,7 @@ Te działają na cronie (oraz `workflow_dispatch`), nigdy na PR-ach. Wszystkie s
 | `nightly-property`     | Testy property fast-check z losowym seedem + wysokim run count                                                                                             | **Advisory** |
 | `nightly-resilience`   | Bramka heap-growth, chaos fault-injection, k6 load/soak                                                                                                    | **Advisory** |
 | `nightly-llm-security` | promptfoo injection guard (block mode) + probe garak (pomijane bez provider secret)                                                                        | **Advisory** |
-| `nightly-schemathesis` | Fuzzing kontraktu OpenAPI (schemathesis) względem żywego OmniRoute z użyciem `docs/openapi.yaml` — ujawnia naruszenia spec / nieobsłużone 500 (Fase 8 B.4) | **Advisory** |
+| `nightly-schemathesis` | Fuzzing kontraktu OpenAPI (schemathesis) względem żywego AgentProxy z użyciem `docs/openapi.yaml` — ujawnia naruszenia spec / nieobsłużone 500 (Fase 8 B.4) | **Advisory** |
 
 ---
 
@@ -358,7 +358,7 @@ allowlist to fałszywe poczucie jakości.
 
 ## Tooling agentów: LSP-in-the-loop (opt-in)
 
-Poza bramkami CI OmniRoute dostarcza **opt-in** scaffold `agent-lsp`
+Poza bramkami CI AgentProxy dostarcza **opt-in** scaffold `agent-lsp`
 (projektowy `.mcp.json`, Fase 7 Task 15). Utwórz `.mcp.json`,
 by wystawić TypeScript language server agentom kodującym, żeby resolve’owały symbole /
 diagnostics **zanim** napiszą kod — companion compile-before-claim do

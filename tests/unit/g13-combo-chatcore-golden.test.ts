@@ -197,7 +197,7 @@ function snapshotCombo(overrides: GoldenOverrides): Record<string, unknown> {
 function normalizeStreamingHeaders(headers: Record<string, string>): Record<string, string> {
   return {
     ...headers,
-    "X-OmniRoute-Version": "<APP_VERSION>",
+    "X-AgentProxy-Version": "<APP_VERSION>",
   };
 }
 
@@ -261,7 +261,7 @@ function snapshotChatCore(): Record<string, unknown> {
       "retry-after": "15",
       "x-ratelimit-remaining": "7",
       "x-upstream-debug": "safe",
-      "x-omniroute-internal": "drop",
+      "x-agentproxy-internal": "drop",
       "x-middleware-rewrite": "/internal",
     }),
     new Headers({

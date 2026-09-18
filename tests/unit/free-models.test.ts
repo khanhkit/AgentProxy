@@ -7,7 +7,7 @@ import {
   selectModelsForImport,
   sortModelsFreeFirst,
 } from "@/shared/utils/freeModels";
-import { FREE_MODEL_BUDGETS } from "@omniroute/open-sse/config/freeModelCatalog";
+import { FREE_MODEL_BUDGETS } from "@agentproxy/open-sse/config/freeModelCatalog";
 
 test("providerHasFreeModels: true for a provider in the free catalog", () => {
   assert.equal(providerHasFreeModels("openrouter"), true);

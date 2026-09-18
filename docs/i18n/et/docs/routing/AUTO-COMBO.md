@@ -6,12 +6,12 @@
 
 ---
 
-title: "OmniRoute Auto-Combo mootor"
+title: "AgentProxy Auto-Combo mootor"
 version: 3.8.40
 lastUpdated: 2026-06-28
 ---
 
-# OmniRoute Auto-Combo mootor
+# AgentProxy Auto-Combo mootor
 
 > **Kasutajatele**: Otsite kiiret alustamist? Vaadake [Auto-Combo kasutusjuhendit](../getting-started/AUTO-COMBO-GUIDE.md) lihtsate seletuste ja näidete jaoks.
 
@@ -69,7 +69,7 @@ model: "auto/cheap"           # odavaim tokni kohta
 
 **Mis juhtub:**
 
-1. OmniRoute tuvastab `auto/` eesliidi failis `src/sse/handlers/chat.ts`
+1. AgentProxy tuvastab `auto/` eesliidi failis `src/sse/handlers/chat.ts`
 2. Pärib kõik **aktiivsed pakkujaühendused** andmebaasist
 3. Filtreerib need, millel on kehtiv tõendus (API võti või OAuth token)
 4. Määrab igaühenduse jaoks mudeli (`connection.defaultModel` või pakkuja esimene mudel)
@@ -97,7 +97,7 @@ olemasolevaid vastupidavuse lugemisi (mitte kunagi tooret ülekoormuslüliti `st
 - mudeli blokeerimine — `isModelLocked(provider, connectionId, model)`
 
 Igal kandidaadil on ka selle API võtme `excluded` lipp. Välistused salvestatakse
-API võtme kohta (`auto_candidate_overrides` tabel, migratsioon `128`) — OmniRoute on
+API võtme kohta (`auto_candidate_overrides` tabel, migratsioon `128`) — AgentProxy on
 üürniku-ülene, `users` tabelit pole, seega `apiKeyId` on lähim reaalne kõneleja identiteet —
 ja need jõustatakse kandidaatide basseini kitsaskohas
 `open-sse/services/autoCombo/virtualFactory.ts` puhta, üksiktestitud
@@ -138,7 +138,7 @@ Automaatne skoorimine valib iga päringu jaoks parima pakkuja/mudeli
 
 ## Kombo nimed, mis vastavad tegelikule mudeli ID-le
 
-Kombo, mille `name` on identne alasti mudeli ID-ga (nt kombo nimeks on `gpt-5.5`), on **tahtlik ja toetatud muster**, mitte viga: see on mehhanism per-mudeli-ID pakkuja varundamiseks, mida kirjeldatakse [#6940](https://github.com/diegosouzapw/OmniRoute/issues/6940). Kuna kombo lahendamine kontrollitakse enne alasti mudeli ID lahendamist (`getComboForModel()` `src/sse/services/model.ts`), suunatakse alasti ID `gpt-5.5` päringud läbi kombo sihtmärkide (nt `acme-responses/gpt-5.5`, `backup-responses/gpt-5.5`) asemel otse ühele pakkujale – see kasutab ära kombo-enne-ümbertöötlemise eelistust, mis ehitati [#3227/#3233](https://github.com/diegosouzapw/OmniRoute/issues/3227) jaoks ning mida testitakse regressioonina `tests/unit/responses-combo-resolution-3227.test.ts` ja `tests/unit/combo-name-codex-responses-rewrite.test.ts` abil.
+Kombo, mille `name` on identne alasti mudeli ID-ga (nt kombo nimeks on `gpt-5.5`), on **tahtlik ja toetatud muster**, mitte viga: see on mehhanism per-mudeli-ID pakkuja varundamiseks, mida kirjeldatakse [#6940](https://github.com/khanhkit/AgentProxy/issues/6940). Kuna kombo lahendamine kontrollitakse enne alasti mudeli ID lahendamist (`getComboForModel()` `src/sse/services/model.ts`), suunatakse alasti ID `gpt-5.5` päringud läbi kombo sihtmärkide (nt `acme-responses/gpt-5.5`, `backup-responses/gpt-5.5`) asemel otse ühele pakkujale – see kasutab ära kombo-enne-ümbertöötlemise eelistust, mis ehitati [#3227/#3233](https://github.com/khanhkit/AgentProxy/issues/3227) jaoks ning mida testitakse regressioonina `tests/unit/responses-combo-resolution-3227.test.ts` ja `tests/unit/combo-name-codex-responses-rewrite.test.ts` abil.
 
 Kombo loomine või ümbernimetamine nimeks, mis varjutab tegeliku mudeli ID, **ei ole kunasi keelatud** – selline tegevus rikuks seda dokumenteeritud töövoogu. Selle asemel (#8530) lisavad `POST /api/combos` ja `PUT /api/combos/[id]` vastusele mitteblokeeriva `warning` välja, kui (uus) nimi kattub tegeliku mudeli ID-ga:
 
@@ -172,9 +172,9 @@ curl -X POST http://localhost:20128/v1/chat/completions \
 Kaks tavalist komistuskivi:
 
 - **`auto` ei kasuta teie kombosid.** `auto`/`auto/*` loob oma null-konfiguratsiooniga kandidaatide kogumi ja konsulteerib salvestatud kombodega ainult siis, kui kombo on sõna-sõnalt nimetatud `auto` (pole soovitatav). Kombo kaudu suunamiseks saatke selle täpne nimi – mitte `auto`.
-- **`openrouter/auto` on reaalne tasuline OpenRouter toode** ("Auto Best Available"), mitte OmniRoute alias. See on OpenRouter registri (`open-sse/config/providers/registry/openrouter/index.ts`) ainus staatiline mudeli kanded ja seda arveldatakse eraldi. Kasutage Seaded → Suunamine → Peida tasulised mudelid, et see `auto` kogumitest välja jätta.
+- **`openrouter/auto` on reaalne tasuline OpenRouter toode** ("Auto Best Available"), mitte AgentProxy alias. See on OpenRouter registri (`open-sse/config/providers/registry/openrouter/index.ts`) ainus staatiline mudeli kanded ja seda arveldatakse eraldi. Kasutage Seaded → Suunamine → Peida tasulised mudelid, et see `auto` kogumitest välja jätta.
 
-Vaata [#7992](https://github.com/diegosouzapw/OmniRoute/issues/7992) ja [#7111](https://github.com/diegosouzapw/OmniRoute/issues/7111) selle algse segaduse kohta, mida see dokumenteerib.
+Vaata [#7992](https://github.com/khanhkit/AgentProxy/issues/7992) ja [#7111](https://github.com/khanhkit/AgentProxy/issues/7111) selle algse segaduse kohta, mida see dokumenteerib.
 
 ## Kuidas see töötab (Talletatud Automaatilised Komoodid)
 
@@ -246,17 +246,17 @@ väärtusi kasutatakse siis, kui päist ei ole.
 
 | Päis                          | Aktsepteerib                                                                                                                                                                                  | Mõju                                                                                                                                                                                                                                                |
 | :---------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `X-OmniRoute-Mode`            | eelmääratud aliase (`fast`, `balanced`, `quality`, `cheap`, `reliable`, `offline`) või toores paki nimi (`ship-fast`, `cost-saver`, `quality-first`, `offline-friendly`, `reliability-first`) | Käesoleva päringu jaoks katab hindamise kaalud. `balanced`/`default` sunnib kasutama vaikimisi kaale (pakita). Tundmatuid väärtusi eiratakse (konfiguratsioon säilib).                                                                              |
-| `X-OmniRoute-Budget`          | positiivne arv (maks USD päringu kohta)                                                                                                                                                       | Jäik kulupiir: kandidaadid, kelle hinnanguline kulu ületab selle, filtreeritakse enne valikut. Mida juhtub siis, kui **iga** kandidaat seda ületab, kontrollib allolev `X-OmniRoute-Budget-Fallback`.                                               |
-| `X-OmniRoute-Budget-Fallback` | `cheapest` (vaikimisi, aliased: `cheapest-viable`, `soft`) või `strict` (aliased: `block`, `hard`)                                                                                            | `cheapest`: taandub kõige odavamale globaalsele kandidaadile, kuigi see ületab siiski piiri (vanem käitumine). `strict`: keeldub valimast — päring nurjub kiiresti `HTTP 402` koodiga, mitte vaikselt üle kulutades. Tundmatuid väärtusi eiratakse. |
+| `X-AgentProxy-Mode`            | eelmääratud aliase (`fast`, `balanced`, `quality`, `cheap`, `reliable`, `offline`) või toores paki nimi (`ship-fast`, `cost-saver`, `quality-first`, `offline-friendly`, `reliability-first`) | Käesoleva päringu jaoks katab hindamise kaalud. `balanced`/`default` sunnib kasutama vaikimisi kaale (pakita). Tundmatuid väärtusi eiratakse (konfiguratsioon säilib).                                                                              |
+| `X-AgentProxy-Budget`          | positiivne arv (maks USD päringu kohta)                                                                                                                                                       | Jäik kulupiir: kandidaadid, kelle hinnanguline kulu ületab selle, filtreeritakse enne valikut. Mida juhtub siis, kui **iga** kandidaat seda ületab, kontrollib allolev `X-AgentProxy-Budget-Fallback`.                                               |
+| `X-AgentProxy-Budget-Fallback` | `cheapest` (vaikimisi, aliased: `cheapest-viable`, `soft`) või `strict` (aliased: `block`, `hard`)                                                                                            | `cheapest`: taandub kõige odavamale globaalsele kandidaadile, kuigi see ületab siiski piiri (vanem käitumine). `strict`: keeldub valimast — päring nurjub kiiresti `HTTP 402` koodiga, mitte vaikselt üle kulutades. Tundmatuid väärtusi eiratakse. |
 
 ```bash
 # Sunni kiireimat profiili, piira käesolevat päringut summaga $0.05 ja keela jäigalt ülekulutamine
 curl -sS http://localhost:20128/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "X-OmniRoute-Mode: fast" \
-  -H "X-OmniRoute-Budget: 0.05" \
-  -H "X-OmniRoute-Budget-Fallback: strict" \
+  -H "X-AgentProxy-Mode: fast" \
+  -H "X-AgentProxy-Budget: 0.05" \
+  -H "X-AgentProxy-Budget-Fallback: strict" \
   -d '{"model":"auto","messages":[{"role":"user","content":"hi"}]}'
 ```
 
@@ -267,7 +267,7 @@ väärtused toidavad mootori olemasolevaid `config.modePaks` / `config.budgetCap
 
 ## Kõik marsruutimisstrateegiad
 
-OmniRoute'i kombomootor toetab **19 marsruutimisstrateegiat** (deklareeritud `src/shared/constants/routingStrategies.ts` → `ROUTING_STRATEGY_VALUES`). Automaatne kombineerimismootor ise on kättesaadav strateegia `auto` all; teised on saadaval püsivaks muudetud kombineeringute jaoks.
+AgentProxy'i kombomootor toetab **19 marsruutimisstrateegiat** (deklareeritud `src/shared/constants/routingStrategies.ts` → `ROUTING_STRATEGY_VALUES`). Automaatne kombineerimismootor ise on kättesaadav strateegia `auto` all; teised on saadaval püsivaks muudetud kombineeringute jaoks.
 
 | Strateegia          | Kirjeldus                                                                                                                                                                                                         |
 | :------------------ | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -586,7 +586,7 @@ Saate registreerida oma `RouterStrategy` implementatsiooni avaliku API kaudu:
 import {
   registerStrategy,
   type RouterStrategy,
-} from "@omniroute/open-sse/services/autoCombo/routerStrategy";
+} from "@agentproxy/open-sse/services/autoCombo/routerStrategy";
 
 class MyCustomStrategy implements RouterStrategy {
   readonly name = "my-custom";
@@ -692,8 +692,8 @@ See komplekt käivitub CI-s (`test:integration` töö) parameetritega `--test-co
 
 | Käsk                                   | Mida teeb                                                                                         |
 | :------------------------------------- | :------------------------------------------------------------------------------------------------ |
-| `npm run test:combo:live`              | Reaalne marsruutimine protsessisiseselt `RUN_COMBO_LIVE=1` abil; teeb elava OmniRoute DB hetktõve |
-| `npm run test:combo:live:vps`          | HTTP-päringud elava OmniRoute serveri vastu (sea `COMBO_LIVE_BASE_URL`)                           |
+| `npm run test:combo:live`              | Reaalne marsruutimine protsessisiseselt `RUN_COMBO_LIVE=1` abil; teeb elava AgentProxy DB hetktõve |
+| `npm run test:combo:live:vps`          | HTTP-päringud elava AgentProxy serveri vastu (sea `COMBO_LIVE_BASE_URL`)                           |
 | `npm run test:combo:live:vps:failover` | Sama, tahtliku üleandmise stsenaariumidega                                                        |
 
 Need suitsukatsed kasutavad reaalset kaabli teekonda (kombo → pakkuja → valmimine). Need on tahtlikult CI-st välja jäetud, kuna need nõuavad elavaid volitusi ja VPS-i juurdepääsu.

@@ -1,6 +1,6 @@
 /**
  * Live combo cooldown-wait test — "default" combo (strategy=auto, two gemma-4
- * models), against a real running OmniRoute instance with a real Gemini key.
+ * models), against a real running AgentProxy instance with a real Gemini key.
  *
  * #7360: a request against the "default" combo was crystallizing a 503
  * "all targets exhausted" ~6s after BOTH gemma-4 targets hit a real Gemini
@@ -24,8 +24,8 @@
  * cooldown, then succeeds"), which proves the exact behavior deterministically.
  *
  * Env vars:
- *   OMNIROUTE_URL       — base URL (default http://localhost:20128)
- *   OMNIROUTE_API_KEY   — API key for auth (REQUIRED)
+ *   AGENTPROXY_URL       — base URL (default http://localhost:20128)
+ *   AGENTPROXY_API_KEY   — API key for auth (REQUIRED)
  *   GEMINI_API_KEY      — used by liveGeminiShared to provision a gemini
  *                         connection if one doesn't already exist
  */

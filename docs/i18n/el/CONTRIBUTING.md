@@ -1,4 +1,4 @@
-# Contributing to OmniRoute (Ελληνικά)
+# Contributing to AgentProxy (Ελληνικά)
 
 🌐 **Languages:** 🇺🇸 [English](../../../CONTRIBUTING.md) · 🇸🇦 [ar](../ar/CONTRIBUTING.md) · 🇦🇿 [az](../az/CONTRIBUTING.md) · 🇧🇬 [bg](../bg/CONTRIBUTING.md) · 🇧🇩 [bn](../bn/CONTRIBUTING.md) · 🇨🇿 [cs](../cs/CONTRIBUTING.md) · 🇩🇰 [da](../da/CONTRIBUTING.md) · 🇩🇪 [de](../de/CONTRIBUTING.md) · 🇪🇸 [es](../es/CONTRIBUTING.md) · 🇪🇪 [et](../et/CONTRIBUTING.md) · 🇮🇷 [fa](../fa/CONTRIBUTING.md) · 🇫🇮 [fi](../fi/CONTRIBUTING.md) · 🇫🇷 [fr](../fr/CONTRIBUTING.md) · 🇮🇪 [ga](../ga/CONTRIBUTING.md) · 🇮🇳 [gu](../gu/CONTRIBUTING.md) · 🇮🇱 [he](../he/CONTRIBUTING.md) · 🇮🇳 [hi](../hi/CONTRIBUTING.md) · 🇭🇷 [hr](../hr/CONTRIBUTING.md) · 🇭🇺 [hu](../hu/CONTRIBUTING.md) · 🇮🇩 [id](../id/CONTRIBUTING.md) · 🇮🇹 [it](../it/CONTRIBUTING.md) · 🇯🇵 [ja](../ja/CONTRIBUTING.md) · 🇰🇷 [ko](../ko/CONTRIBUTING.md) · 🇱🇹 [lt](../lt/CONTRIBUTING.md) · 🇱🇻 [lv](../lv/CONTRIBUTING.md) · 🇮🇳 [mr](../mr/CONTRIBUTING.md) · 🇲🇾 [ms](../ms/CONTRIBUTING.md) · 🇲🇹 [mt](../mt/CONTRIBUTING.md) · 🇳🇱 [nl](../nl/CONTRIBUTING.md) · 🇳🇴 [no](../no/CONTRIBUTING.md) · 🇵🇭 [phi](../phi/CONTRIBUTING.md) · 🇵🇱 [pl](../pl/CONTRIBUTING.md) · 🇵🇹 [pt](../pt/CONTRIBUTING.md) · 🇧🇷 [pt-BR](../pt-BR/CONTRIBUTING.md) · 🇷🇴 [ro](../ro/CONTRIBUTING.md) · 🇷🇺 [ru](../ru/CONTRIBUTING.md) · 🇸🇰 [sk](../sk/CONTRIBUTING.md) · 🇸🇮 [sl](../sl/CONTRIBUTING.md) · 🇷🇸 [sr](../sr/CONTRIBUTING.md) · 🇸🇪 [sv](../sv/CONTRIBUTING.md) · 🇰🇪 [sw](../sw/CONTRIBUTING.md) · 🇮🇳 [ta](../ta/CONTRIBUTING.md) · 🇮🇳 [te](../te/CONTRIBUTING.md) · 🇹🇭 [th](../th/CONTRIBUTING.md) · 🇹🇷 [tr](../tr/CONTRIBUTING.md) · 🇺🇦 [uk-UA](../uk-UA/CONTRIBUTING.md) · 🇵🇰 [ur](../ur/CONTRIBUTING.md) · 🇻🇳 [vi](../vi/CONTRIBUTING.md) · 🇨🇳 [zh-CN](../zh-CN/CONTRIBUTING.md) · 🇹🇼 [zh-TW](../zh-TW/CONTRIBUTING.md)
 
@@ -30,8 +30,8 @@ UI/UX, i18n, CLI, βάση δεδομένων και build/deploy στα συμ�
 ### Κλωνοποίηση & Εγκατάσταση
 
 ```bash
-git clone https://github.com/diegosouzapw/OmniRoute.git
-cd OmniRoute
+git clone https://github.com/khanhkit/AgentProxy.git
+cd AgentProxy
 npm install
 ```
 
@@ -116,7 +116,7 @@ npm run build
 μετά το build. Χρησιμοποιήστε `npm run build` για αλλαγές που επηρεάζουν το UI του dashboard ή για πλήρη
 επικύρωση έκδοσης· το προφίλ contributor δεν αντικαθιστά το build έκδοσης.
 
-> **Σημείωση deploy σε VPS:** ο απομακρυσμένος κατάλογος εικόνων `/usr/lib/node_modules/omniroute/app/`
+> **Σημείωση deploy σε VPS:** ο απομακρυσμένος κατάλογος εικόνων `/usr/lib/node_modules/agentproxy/app/`
 > παραμένει αμετάβλητος. Τα deploy skills κάνουν rsync τα περιεχόμενα του `dist/` σε αυτόν.
 > Μόνο η διαδρομή εξόδου build εντός του repo άλλαξε (`app/` → `dist/`).
 
@@ -314,7 +314,7 @@ src/                        # TypeScript (.ts / .tsx)
 │   └── validation/         # Σχήματα Zod v4
 └── sse/                    # Αγωγός proxy SSE
 
-open-sse/                   # Χώρος εργασίας @omniroute/open-sse
+open-sse/                   # Χώρος εργασίας @agentproxy/open-sse
 ├── executors/              # 89 ενότητες υλοποίησης executor
 ├── handlers/               # 11 χειριστές αιτημάτων (chat, responses, embeddings, images, κ.λπ.)
 ├── mcp-server/             # Διακομιστής MCP (110 μοναδικά εργαλεία, 3 μεταφορές, 33 πεδία)
@@ -336,7 +336,7 @@ tests/
 docs/
 ├── adr/                     # Αρχεία Αποφάσεων Αρχιτεκτονικής
 ├── architecture/            # Αρχιτεκτονική συστήματος & ανθεκτικότητα
-├── comparison/              # OmniRoute έναντι εναλλακτικών
+├── comparison/              # AgentProxy έναντι εναλλακτικών
 ├── compression/             # Οδηγοί & κανόνες συμπίεσης
 ├── dev/                     # Οδηγοί ανάπτυξης
 ├── diagrams/                # Διαγράμματα αρχιτεκτονικής
@@ -425,5 +425,5 @@ docs/
 - **Αναφορά API**: Δείτε [`docs/reference/API_REFERENCE.md`](docs/reference/API_REFERENCE.md)
 - **Έγγραφα ασφαλείας**: [`docs/security/CLI_TOKEN.md`](docs/security/CLI_TOKEN.md), [`docs/security/ROUTE_GUARD_TIERS.md`](docs/security/ROUTE_GUARD_TIERS.md), [`docs/security/ERROR_SANITIZATION.md`](docs/security/ERROR_SANITIZATION.md), [`docs/security/PUBLIC_CREDS.md`](docs/security/PUBLIC_CREDS.md)
 - **Έγγραφα λειτουργίας**: [`docs/ops/SQLITE_RUNTIME.md`](docs/ops/SQLITE_RUNTIME.md)
-- **Ζητήματα**: [github.com/diegosouzapw/OmniRoute/issues](https://github.com/diegosouzapw/OmniRoute/issues)
+- **Ζητήματα**: [github.com/khanhkit/AgentProxy/issues](https://github.com/khanhkit/AgentProxy/issues)
 - **ADRs**: Δείτε τον φάκελο `docs/adr/` για αρχεία αποφάσεων αρχιτεκτονικής

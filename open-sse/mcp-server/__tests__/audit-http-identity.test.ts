@@ -14,13 +14,13 @@ type MockAuditDb = {
 
 describe("AP-ISS-0016 MCP HTTP audit caller identity", () => {
   beforeEach(() => {
-    delete process.env.OMNIROUTE_API_KEY_ID;
-    globalThis.__omnirouteMcpAuditDb = undefined;
+    delete process.env.AGENTPROXY_API_KEY_ID;
+    globalThis.__agentproxyMcpAuditDb = undefined;
   });
 
   afterEach(() => {
-    delete process.env.OMNIROUTE_API_KEY_ID;
-    globalThis.__omnirouteMcpAuditDb = undefined;
+    delete process.env.AGENTPROXY_API_KEY_ID;
+    globalThis.__agentproxyMcpAuditDb = undefined;
     vi.restoreAllMocks();
   });
 
@@ -32,7 +32,7 @@ describe("AP-ISS-0016 MCP HTTP audit caller identity", () => {
       close: vi.fn(),
       open: true,
     };
-    globalThis.__omnirouteMcpAuditDb = mockDb as unknown as typeof globalThis.__omnirouteMcpAuditDb;
+    globalThis.__agentproxyMcpAuditDb = mockDb as unknown as typeof globalThis.__agentproxyMcpAuditDb;
 
     const invoke = (rawToken: string, id: string, tool: string) =>
       withMcpHttpAuthContext(
@@ -67,8 +67,8 @@ describe("AP-ISS-0016 MCP HTTP audit caller identity", () => {
       close: vi.fn(),
       open: true,
     };
-    globalThis.__omnirouteMcpAuditDb = mockDb as unknown as typeof globalThis.__omnirouteMcpAuditDb;
-    process.env.OMNIROUTE_API_KEY_ID = "stdio-static-id";
+    globalThis.__agentproxyMcpAuditDb = mockDb as unknown as typeof globalThis.__agentproxyMcpAuditDb;
+    process.env.AGENTPROXY_API_KEY_ID = "stdio-static-id";
 
     await logToolCall("stdio-tool", {}, { ok: true }, 1, true);
 

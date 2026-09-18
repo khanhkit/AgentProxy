@@ -1,4 +1,4 @@
-import { isResourceNotFoundResponse } from "@omniroute/open-sse/services/errorClassifier.ts";
+import { isResourceNotFoundResponse } from "@agentproxy/open-sse/services/errorClassifier.ts";
 
 type HealthLogger = {
   info(tag: string, message: string): void;

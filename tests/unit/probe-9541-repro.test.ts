@@ -82,7 +82,7 @@ test("BUG-CONFIRMED (regression guard): probe failure renames DB and loses persi
   // reached (all transient retries exhausted or non-transient), data IS lost.
   // This is the EXISTING behavior on non-transient errors; the fix only
   // ADDED a retry window for transient errors before this path.
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-9541-data-loss-"));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-9541-data-loss-"));
   const sqliteFile = path.join(dir, "storage.sqlite");
 
   try {

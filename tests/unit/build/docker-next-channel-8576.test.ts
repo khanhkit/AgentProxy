@@ -1,5 +1,5 @@
 // AgentProxy container publication contract.
-// The inherited OmniRoute :next/release-branch channel was intentionally removed
+// The inherited AgentProxy :next/release-branch channel was intentionally removed
 // when AgentProxy narrowed production to release + explicit main dispatch.
 
 import test from "node:test";
@@ -22,8 +22,8 @@ test("container publication is release-driven with explicit manual dispatch only
 
 test("AgentProxy publishes only the GHCR AgentProxy image", () => {
   assert.match(WORKFLOW, /IMAGE_NAME: ghcr\.io\/\$\{\{ github\.repository_owner \}\}\/agentproxy/);
-  assert.doesNotMatch(WORKFLOW, /diegosouzapw\/omniroute/i);
-  assert.doesNotMatch(WORKFLOW, /docker\.io\/.*omniroute/i);
+  assert.doesNotMatch(WORKFLOW, /diegosouzapw\/agentproxy/i);
+  assert.doesNotMatch(WORKFLOW, /docker\.io\/.*agentproxy/i);
 });
 
 test("both native Linux architectures are built and exactly two digests are required", () => {

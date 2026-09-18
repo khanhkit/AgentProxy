@@ -61,7 +61,7 @@ test("#11500 — createLazyRowProxy dedupes decrypt-failure logging across sync 
   // exactly "Auth tag validation likely failed."
   const staleCiphertext = encryptWithStaticSalt(
     "some-other-key-that-was-rotated-away",
-    "omniroute-field-encryption-v1",
+    "agentproxy-field-encryption-v1",
     "sk-super-secret-api-key"
   );
 
@@ -107,7 +107,7 @@ test("#11500 — createLazyConnectionView dedupes decrypt-failure logging across
 
   const staleCiphertext = encryptWithStaticSalt(
     "some-other-key-that-was-rotated-away-view",
-    "omniroute-field-encryption-v1",
+    "agentproxy-field-encryption-v1",
     "sk-super-secret-api-key-view"
   );
 

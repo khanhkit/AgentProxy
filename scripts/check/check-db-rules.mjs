@@ -20,12 +20,12 @@ const API_DIR = path.join(cwd, "src/app/api");
 const HANDLERS_DIR = path.join(cwd, "open-sse/handlers");
 
 // (c) Leituras de SQL contra bancos EXTERNOS, permitidas por design (#3500).
-// Esta rota NÃO consulta o DB do OmniRoute (getDbInstance) — ela abre o
+// Esta rota NÃO consulta o DB do AgentProxy (getDbInstance) — ela abre o
 // SQLite de OUTRO aplicativo (Kiro) para auto-importar credenciais.
-// Por isso NÃO pode viver em src/lib/db/ (que é o domínio do DB do OmniRoute):
+// Por isso NÃO pode viver em src/lib/db/ (que é o domínio do DB do AgentProxy):
 // é uma leitura read-only de um arquivo externo, com caminho/escopo próprio.
 // Continua no allowlist como exceção DOCUMENTADA — o gate ainda bloqueia
-// QUALQUER novo SQL cru contra o DB do OmniRoute em rotas/handlers.
+// QUALQUER novo SQL cru contra o DB do AgentProxy em rotas/handlers.
 // Toda a dívida real da Hard Rule #5 (15 rotas internas) foi migrada para
 // módulos src/lib/db/ nas slices do #3500; este set ficou só com as exceções.
 // O análogo do Cursor (src/app/api/oauth/cursor/auto-import/route.ts) NÃO

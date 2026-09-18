@@ -17,11 +17,11 @@ import {
 import { tarPack } from "../../scripts/build/optionalPackStaging.mjs";
 
 test("electron smoke discovers the default Linux executable name", () => {
-  assert.ok(LINUX_EXECUTABLE_NAMES.includes("omniroute-desktop"));
+  assert.ok(LINUX_EXECUTABLE_NAMES.includes("agentproxy-desktop"));
 });
 
 test("electron smoke env allowlists runtime variables and drops secrets", () => {
-  const dataDir = path.join("/tmp", "omniroute-electron-smoke-test");
+  const dataDir = path.join("/tmp", "agentproxy-electron-smoke-test");
   const env = buildSmokeEnv({
     currentPlatform: "linux",
     dataDir,
@@ -52,7 +52,7 @@ test("electron smoke pre-creates the USERPROFILE-derived Roaming userData tree o
   // (USERPROFILE takes precedence over the APPDATA env var) and the path
   // service throws — rather than creates — when the directory is missing, so
   // requestSingleInstanceLock() returns false and the app exits(0) silently.
-  const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-smoke-env-test-"));
+  const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-smoke-env-test-"));
   try {
     const smokeEnv = buildSmokeEnv({ currentPlatform: "win32", dataDir });
     // Inject the smoke TARGET platform: ensureSmokeEnvDirs must key its win32
@@ -60,7 +60,7 @@ test("electron smoke pre-creates the USERPROFILE-derived Roaming userData tree o
     // guard can never pass on a Linux CI host (the 8/9 red the reviewer hit).
     await ensureSmokeEnvDirs(smokeEnv, dataDir, { currentPlatform: "win32" });
 
-    for (const appName of ["omniroute-desktop", "OmniRoute", "omniroute"]) {
+    for (const appName of ["agentproxy-desktop", "AgentProxy", "agentproxy"]) {
       const derived = path.join(smokeEnv.USERPROFILE, "AppData", "Roaming", appName);
       assert.ok(fs.existsSync(derived), `expected pre-created derived userData dir: ${derived}`);
       const viaAppData = path.join(smokeEnv.APPDATA, appName);
@@ -75,7 +75,7 @@ test("electron smoke tarPack handles absolute Windows-style tarball paths", () =
   // GNU tar treats `C:\...` in `-f` as a remote rsh target ("Cannot connect to
   // C:"), which broke optional-pack staging on Windows. tarPack() must pass a
   // bare filename with cwd at the tarball directory instead.
-  const staging = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-tar-pack-test-"));
+  const staging = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-tar-pack-test-"));
   try {
     const nodeModules = path.join(staging, "pack", "node_modules");
     fs.mkdirSync(path.join(nodeModules, "fixture-pkg"), { recursive: true });

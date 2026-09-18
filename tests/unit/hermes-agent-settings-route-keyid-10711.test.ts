@@ -6,8 +6,8 @@
  * real key from a stored keyId is expected to happen server-side, mirroring
  * claude-settings/route.ts and codex-settings/route.ts. The POST handler for
  * hermes-agent-settings never resolved `keyId` before this fix, so it always
- * fell through to the literal placeholder "YOUR_OMNIROUTE_API_KEY_HERE" in
- * providers.omniroute.api_key, delegation.api_key, and every auxiliary.*.api_key.
+ * fell through to the literal placeholder "YOUR_AGENTPROXY_API_KEY_HERE" in
+ * providers.agentproxy.api_key, delegation.api_key, and every auxiliary.*.api_key.
  *
  * This test drives the real POST handler end-to-end (real DB-backed API key,
  * real JWT auth cookie, preview mode so nothing is written to disk) and
@@ -23,7 +23,7 @@ import { SignJWT } from "jose";
 import * as yaml from "js-yaml";
 
 interface HermesAgentParsedConfig {
-  providers: { omniroute: { api_key: string } };
+  providers: { agentproxy: { api_key: string } };
   delegation: { api_key: string };
   auxiliary: Record<string, { api_key: string }>;
 }
@@ -86,11 +86,11 @@ test("#10711: POST hermes-agent-settings resolves keyId server-side instead of w
 
   const parsed = yaml.load(body.yaml) as HermesAgentParsedConfig;
   assert.notEqual(
-    parsed.providers.omniroute.api_key,
-    "YOUR_OMNIROUTE_API_KEY_HERE",
-    "providers.omniroute.api_key must not be the unresolved placeholder"
+    parsed.providers.agentproxy.api_key,
+    "YOUR_AGENTPROXY_API_KEY_HERE",
+    "providers.agentproxy.api_key must not be the unresolved placeholder"
   );
-  assert.equal(parsed.providers.omniroute.api_key, realKey);
+  assert.equal(parsed.providers.agentproxy.api_key, realKey);
   assert.equal(parsed.delegation.api_key, realKey);
   assert.equal(parsed.auxiliary.vision.api_key, realKey);
 });

@@ -6,16 +6,16 @@
 
 ---
 
-title: "OmniRoute — juhtpaneeli funktsioonide galerii"
+title: "AgentProxy — juhtpaneeli funktsioonide galerii"
 version: 3.8.40
 lastUpdated: 2026-06-28
 ---
 
-# OmniRoute — juhtpaneeli funktsioonide galerii
+# AgentProxy — juhtpaneeli funktsioonide galerii
 
 🌐 **Languages:** 🇺🇸 [English](../../../../guides/FEATURES.md) · 🇸🇦 [ar](../../../ar/docs/guides/FEATURES.md) · 🇦🇿 [az](../../../az/docs/guides/FEATURES.md) · 🇧🇬 [bg](../../../bg/docs/guides/FEATURES.md) · 🇧🇩 [bn](../../../bn/docs/guides/FEATURES.md) · 🇨🇿 [cs](../../../cs/docs/guides/FEATURES.md) · 🇩🇰 [da](../../../da/docs/guides/FEATURES.md) · 🇩🇪 [de](../../../de/docs/guides/FEATURES.md) · 🇬🇷 [el](../../../el/docs/guides/FEATURES.md) · 🇪🇸 [es](../../../es/docs/guides/FEATURES.md) · 🇮🇷 [fa](../../../fa/docs/guides/FEATURES.md) · 🇫🇮 [fi](../../../fi/docs/guides/FEATURES.md) · 🇫🇷 [fr](../../../fr/docs/guides/FEATURES.md) · 🇮🇪 [ga](../../../ga/docs/guides/FEATURES.md) · 🇮🇳 [gu](../../../gu/docs/guides/FEATURES.md) · 🇮🇱 [he](../../../he/docs/guides/FEATURES.md) · 🇮🇳 [hi](../../../hi/docs/guides/FEATURES.md) · 🇭🇷 [hr](../../../hr/docs/guides/FEATURES.md) · 🇭🇺 [hu](../../../hu/docs/guides/FEATURES.md) · 🇮🇩 [id](../../../id/docs/guides/FEATURES.md) · 🇮🇹 [it](../../../it/docs/guides/FEATURES.md) · 🇯🇵 [ja](../../../ja/docs/guides/FEATURES.md) · 🇰🇷 [ko](../../../ko/docs/guides/FEATURES.md) · 🇱🇹 [lt](../../../lt/docs/guides/FEATURES.md) · 🇱🇻 [lv](../../../lv/docs/guides/FEATURES.md) · 🇮🇳 [mr](../../../mr/docs/guides/FEATURES.md) · 🇲🇾 [ms](../../../ms/docs/guides/FEATURES.md) · 🇲🇹 [mt](../../../mt/docs/guides/FEATURES.md) · 🇳🇱 [nl](../../../nl/docs/guides/FEATURES.md) · 🇳🇴 [no](../../../no/docs/guides/FEATURES.md) · 🇵🇭 [phi](../../../phi/docs/guides/FEATURES.md) · 🇵🇱 [pl](../../../pl/docs/guides/FEATURES.md) · 🇵🇹 [pt](../../../pt/docs/guides/FEATURES.md) · 🇧🇷 [pt-BR](../../../pt-BR/docs/guides/FEATURES.md) · 🇷🇴 [ro](../../../ro/docs/guides/FEATURES.md) · 🇷🇺 [ru](../../../ru/docs/guides/FEATURES.md) · 🇸🇰 [sk](../../../sk/docs/guides/FEATURES.md) · 🇸🇮 [sl](../../../sl/docs/guides/FEATURES.md) · 🇷🇸 [sr](../../../sr/docs/guides/FEATURES.md) · 🇸🇪 [sv](../../../sv/docs/guides/FEATURES.md) · 🇰🇪 [sw](../../../sw/docs/guides/FEATURES.md) · 🇮🇳 [ta](../../../ta/docs/guides/FEATURES.md) · 🇮🇳 [te](../../../te/docs/guides/FEATURES.md) · 🇹🇭 [th](../../../th/docs/guides/FEATURES.md) · 🇹🇷 [tr](../../../tr/docs/guides/FEATURES.md) · 🇺🇦 [uk-UA](../../../uk-UA/docs/guides/FEATURES.md) · 🇵🇰 [ur](../../../ur/docs/guides/FEATURES.md) · 🇻🇳 [vi](../../../vi/docs/guides/FEATURES.md) · 🇨🇳 [zh-CN](../../../zh-CN/docs/guides/FEATURES.md) · 🇹🇼 [zh-TW](../../../zh-TW/docs/guides/FEATURES.md)
 
-Visuaalne juhend kõikide OmniRoute juhtpaneeli jaotiste kohta.
+Visuaalne juhend kõikide AgentProxy juhtpaneeli jaotiste kohta.
 
 > 📅 **Viimati uuendatud:** 2026-06-28 — **v3.8.40**
 
@@ -45,7 +45,7 @@ v3.7.x → v3.8.0 tsükkel tõi kaasa nullkonfiguratsiooniga automaatse ruutimis
 - 🚦 **Teenusepakkuja-põhine 429 klassifitseerimine** + `useUpstream429BreakerHints` lüliti — täpsem katkestaja käitumine, mis kasutab ülemvoolu kiirusepiirangu vihjeid
 - 🩺 **Mudelite jahtumisaja juhtpaneel** — vaata mudelipõhiseid lukustusi ja lülita need kasutajaliidesest käsitsi taas sisse
 - 🔒 **MITM dünaamiline Linuxi sertifikaadi tuvastamine** — töötab Debian/Ubuntu, Fedora/RHEL, Arch ja teiste distributsioonide korral
-- 💻 **CLI täienduste kogum** — 20+ käsku, sh `omniroute providers`, `omniroute combos`, `omniroute doctor`, `omniroute setup`
+- 💻 **CLI täienduste kogum** — 20+ käsku, sh `agentproxy providers`, `agentproxy combos`, `agentproxy doctor`, `agentproxy setup`
 - 🔍 **Qdrant manustusmudeli tuvastamine** — automaatne vektorihoidla mudeli tuvastamine
 - 🔑 **API võtmed / `manage` õigusega Bearer-võtmed** — teosta administraatoritoiminguid programmiliselt API kaudu
 - 🏥 **Kombo sihtmärgi tervise analüütika** + **struktureeritud kombobilduri** — sihtmärgipõhine tervis ja kasutajaliidese ehitaja `(provider, model, connection)` sammude koostamiseks
@@ -60,7 +60,7 @@ v3.7.x → v3.8.0 tsükkel tõi kaasa nullkonfiguratsiooniga automaatse ruutimis
 
 Halda AI-teenusepakkujate ühendusi: OAuth-teenusepakkujad (Claude Code, Codex), API-võtmega teenusepakkujad (Groq, DeepSeek, OpenRouter) ja tasuta teenusepakkujad (Qoder, Kiro). Kiro kontod sisaldavad krediidijäägi jälgimist — allesjäänud krediidid, koguvõimalus ja pikendamise kuupäev on nähtavad menüüs Dashboard → Usage.
 
-OpenRouteri ühendused saavad hoida iga ühenduse kohta eraldi `preset` väärtust jaotises Advanced Settings. Kui see on määratud, saadab OmniRoute selle OpenRouteri ülataseme päringuväljana, näiteks `"preset": "email-copywriter"`, välja arvatud juhul, kui kliendipäring on juba enda `preset` väärtuse edastanud.
+OpenRouteri ühendused saavad hoida iga ühenduse kohta eraldi `preset` väärtust jaotises Advanced Settings. Kui see on määratud, saadab AgentProxy selle OpenRouteri ülataseme päringuväljana, näiteks `"preset": "email-copywriter"`, välja arvatud juhul, kui kliendipäring on juba enda `preset` väärtuse edastanud.
 
 ![Teenusepakkujate juhtpaneel](../screenshots/01-providers.png)
 
@@ -165,7 +165,7 @@ Töölaud CLI agentide avastamiseks ja haldamiseks. Näitab 16 sisseehitatud age
 
 ## 🔗 Kontekstiedastus (Context Relay) _(v3.5.5+)_
 
-Kombineeritud strateegia, mis säilitab seansi järjepidevuse, kui kontode rotatsioon toimub vestluse keskel. Enne aktiivse konto ammendumist genereerib OmniRoute taustal struktureeritud üleandmiskokkuvõtte (handoff summary). Pärast seda, kui järgmine päring lahendatakse teise kontole, süstitakse kokkuvõte süsteemsõnumina, et uus konto saaks jätkata täieliku kontekstiga.
+Kombineeritud strateegia, mis säilitab seansi järjepidevuse, kui kontode rotatsioon toimub vestluse keskel. Enne aktiivse konto ammendumist genereerib AgentProxy taustal struktureeritud üleandmiskokkuvõtte (handoff summary). Pärast seda, kui järgmine päring lahendatakse teise kontole, süstitakse kokkuvõte süsteemsõnumina, et uus konto saaks jätkata täieliku kontekstiga.
 
 Konfigureeritav kombo tasandil või globaalsete seadete kaudu:
 
@@ -234,7 +234,7 @@ Puhtad eemaldamisskriptid kõikide installimismeetodite jaoks:
 
 | Käsklus                  | Toiming                                                                                                       |
 | ------------------------ | ------------------------------------------------------------------------------------------------------------- |
-| `npm run uninstall`      | Eemaldab süsteemirakenduse, kuid **säilitab teie andmebaasi ja konfiguratsioonid** kataloogis `~/.omniroute`. |
+| `npm run uninstall`      | Eemaldab süsteemirakenduse, kuid **säilitab teie andmebaasi ja konfiguratsioonid** kataloogis `~/.agentproxy`. |
 | `npm run uninstall:full` | Eemaldab rakenduse JA kustutab jäädavalt **kõik konfiguratsioonid, võtmed ja andmebaasid**.                   |
 
 ---
@@ -275,7 +275,7 @@ Administratiivsete toimingute jälgimine filtreerimisega toimingu tüübi, tegij
 
 ## 🖥️ Töölauarakendus
 
-Natiivne Electron töölauarakendus Windowsile, macOS-ile ja Linuxile. Käivita OmniRoute iseseisva rakendusena süsteemisalve (system tray) integratsiooniga, võrguühenduseta toega, automaatse uuendamisega ja ühe klõpsuga installimisega.
+Natiivne Electron töölauarakendus Windowsile, macOS-ile ja Linuxile. Käivita AgentProxy iseseisva rakendusena süsteemisalve (system tray) integratsiooniga, võrguühenduseta toega, automaatse uuendamisega ja ühe klõpsuga installimisega.
 
 Põhifunktsioonid:
 
@@ -294,7 +294,7 @@ Põhifunktsioonid:
 
 ## 🌐 V1 WebSocket sild _(v3.6.6+)_
 
-OmniRoute toetab nüüd **OpenAI-ühilduvaid WebSocket kliente** `/v1/ws` uuenduspunkti (upgrade endpoint) kaudu. Kohandatud `scripts/dev/v1-ws-bridge.mjs` server mähib Next.js'i ja uuendab WS ühendused täielikeks kahesuunalisteks voogesitussessioonideks. Autentimine kasutab sama API võtit või sessiooniküpsist (session cookie) mis HTTP päringud.
+AgentProxy toetab nüüd **OpenAI-ühilduvaid WebSocket kliente** `/v1/ws` uuenduspunkti (upgrade endpoint) kaudu. Kohandatud `scripts/dev/v1-ws-bridge.mjs` server mähib Next.js'i ja uuendab WS ühendused täielikeks kahesuunalisteks voogesitussessioonideks. Autentimine kasutab sama API võtit või sessiooniküpsist (session cookie) mis HTTP päringud.
 
 Peamised omadused:
 
@@ -320,7 +320,7 @@ Seadistuste komplekti koostab `src/lib/sync/bundle.ts`. Tarbijad võrdlevad `ETa
 
 **GLM Thinking (`glmt`)** on nüüd registreeritud täieõiguslik teenusepakkuja: 65 536 maksimaalset väljundtokenit, 24 576 mõtlemise eelarve, 900 s vaikimisi ajapiirang, Claude'iga ühilduv API vorming ja jagatud kasutuse sünkroonimine GLM perekonnaga.
 
-**Hübriidne tokenite loendus** jõuab samuti versiooni v3.6.6: kui Claude'iga ühilduv teenusepakkuja pakub `/messages/count_tokens`, kutsub OmniRoute selle välja enne suuremahulisi päringuid, tagavaraks toimiva hinnangulise arvutusega.
+**Hübriidne tokenite loendus** jõuab samuti versiooni v3.6.6: kui Claude'iga ühilduv teenusepakkuja pakub `/messages/count_tokens`, kutsub AgentProxy selle välja enne suuremahulisi päringuid, tagavaraks toimiva hinnangulise arvutusega.
 
 ---
 

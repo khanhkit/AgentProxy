@@ -1,6 +1,6 @@
 // #10268: "[BUG] API call failed (attempt 1/3): InternalServerError [HTTP 503]" — Hermes
 // Agent / Cursor coding-agent fan-out landed on the same structural admission gate as
-// #10183 and burned its 3 retries on OmniRoute's own `chat_admission_busy` 503, which it
+// #10183 and burned its 3 retries on AgentProxy's own `chat_admission_busy` 503, which it
 // misread as an upstream capacity error. Same root cause, same fix (heap-conditional
 // shedding in `admitChatStructure`): this test is the permanent regression guard proving
 // the exact reported 503 shape is still produced when heap pressure is GENUINELY high,

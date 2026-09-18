@@ -98,7 +98,7 @@ export async function install(version = "latest"): Promise<InstallResult> {
     fs.writeFileSync(
       hostPkgPath,
       JSON.stringify(
-        { name: "omniroute-9router-host", version: "0.0.0", private: true, dependencies: {} },
+        { name: "agentproxy-9router-host", version: "0.0.0", private: true, dependencies: {} },
         null,
         2
       ),
@@ -200,7 +200,7 @@ export function resolveSpawnArgs(apiKey: string, port: number): SpawnArgs {
       PORT: String(port),
       HOSTNAME: "127.0.0.1",
       // API_KEY_SECRET is the HMAC secret 9router uses to generate/validate API keys.
-      // OmniRoute generates this secret and can derive valid keys from it.
+      // AgentProxy generates this secret and can derive valid keys from it.
       API_KEY_SECRET: apiKey,
       DATA_DIR: path.join(NINEROUTER_INSTALL_DIR, "data"),
       NODE_ENV: "production",

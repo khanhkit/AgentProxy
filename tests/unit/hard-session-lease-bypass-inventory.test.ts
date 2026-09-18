@@ -122,7 +122,7 @@ const EXPECTED: Record<InventoryKind, Record<string, number>> = {
     "src/app/api/providers/route.ts": 3,
     "src/app/api/providers/test-batch/route.ts": 2,
     "src/app/api/rate-limits/route.ts": 1,
-    "src/app/api/services/dario/admin/import-from-omniroute/route.ts": 2,
+    "src/app/api/services/dario/admin/import-from-agentproxy/route.ts": 2,
     "src/app/api/settings/export-json/route.ts": 1,
     "src/app/api/settings/qdrant/embedding-models/route.ts": 1,
     "src/app/api/settings/route.ts": 1,

@@ -1,4 +1,4 @@
-# .gitleaks.toml — Configuração do gitleaks para OmniRoute
+# .gitleaks.toml — Configuração do gitleaks para AgentProxy
 # Task 7.18 — PLANO-QUALITY-GATES-FASE7.md
 #
 # Estende as regras padrão do gitleaks com allowlists específicas do projeto.
@@ -35,7 +35,7 @@
 # Entradas aqui são ignoradas em TODAS as varreduras.
 # ---------------------------------------------------------------------------
 [allowlist]
-  description = "OmniRoute project-level allowlist — fixtures, test vectors, public OAuth creds"
+  description = "AgentProxy project-level allowlist — fixtures, test vectors, public OAuth creds"
 
   # Paths a ignorar completamente (node_modules, builds, etc.)
   paths = [
@@ -91,10 +91,10 @@
       #   generalizado para -v\d+ no round 3 de base-reds #9985), so um identificador de UI;
       # - x-api-key PUBLICO do Firefly web (documentado em open-sse/utils/publicCreds.ts:207);
       #   as duas ocorrencias sinalizadas estao em COMENTARIOS JSDoc, o runtime le de resolvePublicCred().
-      '''omniroute-kimi-sponsor-banner-dismissed-v\d+''',
+      '''agentproxy-kimi-sponsor-banner-dismissed-v\d+''',
       # CheaperInference sponsor banner localStorage key (upstream #11196 /
       # eb5797370). Same UI-identifier pattern as the kimi banner above, not a
       # credential; the generic-api-key rule flags the long hyphenated string.
-      '''omniroute-cheaperinference-sponsor-banner-dismissed-v\d+''',
+      '''agentproxy-cheaperinference-sponsor-banner-dismissed-v\d+''',
       '''SunbreakWebUI1''',
     ]

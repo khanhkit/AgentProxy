@@ -14,8 +14,8 @@ import {
 test("Rust core mode is opt-in and exact", () => {
   assert.equal(isRustCoreEnabled({}), false);
   assert.equal(isRustCoreEnabled({ AGENTPROXY_RUST_CORE: "1" }), true);
-  assert.equal(isRustCoreEnabled({ OMNIROUTE_RUST_CORE: "true" }), false);
-  assert.equal(isRustCoreEnabled({ OMNIROUTE_RUST_CORE: "1" }), true);
+  assert.equal(isRustCoreEnabled({ AGENTPROXY_RUST_CORE: "true" }), false);
+  assert.equal(isRustCoreEnabled({ AGENTPROXY_RUST_CORE: "1" }), true);
 });
 
 test("internal service token is generated once and reused", () => {
@@ -24,11 +24,11 @@ test("internal service token is generated once and reused", () => {
   const second = ensureRustCoreInternalToken(env);
   assert.equal(first, second);
   assert.equal(first.length, 64);
-  assert.equal(env.OMNIROUTE_INTERNAL_SERVICE_TOKEN, first);
+  assert.equal(env.AGENTPROXY_INTERNAL_SERVICE_TOKEN, first);
 });
 
 test("binary override wins and missing binaries fail closed", () => {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-rust-core-"));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-rust-core-"));
   try {
     const binary = path.join(dir, "gateway");
     fs.writeFileSync(binary, "binary");

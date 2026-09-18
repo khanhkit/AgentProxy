@@ -10,7 +10,7 @@ process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.API_KEY_SECRET = "test-secret";
 // API-key validation falls through to a Redis-backed cache otherwise — disable
 // it for the local test loop so isValidApiKey() does not stall on ETIMEDOUT.
-process.env.OMNIROUTE_DISABLE_REDIS_AUTH_CACHE = "1";
+process.env.AGENTPROXY_DISABLE_REDIS_AUTH_CACHE = "1";
 
 const core = await import("../../../src/lib/db/core.ts");
 const apiKeysDb = await import("../../../src/lib/db/apiKeys.ts");
@@ -167,7 +167,7 @@ test("managementPolicy: rejects 401 when auth required and no credentials", asyn
 test("managementPolicy: allows a valid internal service token only from loopback", async () => {
   process.env.JWT_SECRET = "test-jwt-secret-for-mgmt-policy";
   process.env.INITIAL_PASSWORD = "initial-pass";
-  process.env.OMNIROUTE_INTERNAL_SERVICE_TOKEN = "internal-service-token-0123456789";
+  process.env.AGENTPROXY_INTERNAL_SERVICE_TOKEN = "internal-service-token-0123456789";
   await settingsDb.updateSettings({ requireLogin: true });
   const policy = await loadPolicy();
   const headers = new Headers({
@@ -181,7 +181,7 @@ test("managementPolicy: allows a valid internal service token only from loopback
 
   const remote = await policy.evaluate(remoteCtx(headers, "GET", "/api/combos"));
   assert.equal(remote.allow, false);
-  delete process.env.OMNIROUTE_INTERNAL_SERVICE_TOKEN;
+  delete process.env.AGENTPROXY_INTERNAL_SERVICE_TOKEN;
 });
 
 test("managementPolicy: rejects client API keys for dashboard access", async () => {

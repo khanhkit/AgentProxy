@@ -37,17 +37,17 @@ test("resolveProviderHeaderLink: no referral, no static website => website undef
 });
 
 test("resolveProviderHeaderLink: referral present => overrides the static website, isReferralLink=true", () => {
-  const result = resolveProviderHeaderLink("https://groq.com", "https://groq.com/?ref=omniroute");
+  const result = resolveProviderHeaderLink("https://groq.com", "https://groq.com/");
   assert.deepEqual(result, {
-    website: "https://groq.com/?ref=omniroute",
+    website: "https://groq.com/",
     isReferralLink: true,
   });
 });
 
 test("resolveProviderHeaderLink: referral present even when catalog has no static website => still links out", () => {
-  const result = resolveProviderHeaderLink(undefined, "https://groq.com/?ref=omniroute");
+  const result = resolveProviderHeaderLink(undefined, "https://groq.com/");
   assert.deepEqual(result, {
-    website: "https://groq.com/?ref=omniroute",
+    website: "https://groq.com/",
     isReferralLink: true,
   });
 });

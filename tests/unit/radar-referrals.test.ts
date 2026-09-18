@@ -39,7 +39,7 @@ import { getRadarReferrals, getDefaultReferralFor } from "../../src/lib/radar/in
 /** A standalone referrals feed (`GET /v1/referrals/latest` shape). */
 function baseReferralsFeed(): Record<string, unknown> {
   return {
-    feed: "omniroute-radar-referrals",
+    feed: "agentproxy-radar-referrals",
     schemaVersion: 1,
     generatedAt: new Date().toISOString(),
     referrals: { fixed: [], campaigns: [] },
@@ -49,7 +49,7 @@ function baseReferralsFeed(): Record<string, unknown> {
 function makeReferral(overrides: Partial<RadarReferral> = {}): RadarReferral {
   return {
     provider: "groq",
-    url: "https://groq.com/?ref=omniroute",
+    url: "https://groq.com/",
     kind: "fixo",
     validUntil: null,
     requiredAction: null,
@@ -103,7 +103,7 @@ test("RadarReferralsFeedSchema: full referrals section round-trips", () => {
 test("RadarReferralsFeedSchema: rejects a referral with a non-https url", () => {
   const feed = {
     ...baseReferralsFeed(),
-    referrals: { fixed: [makeReferral({ url: "http://groq.com/?ref=omniroute" })], campaigns: [] },
+    referrals: { fixed: [makeReferral({ url: "http://groq.com/" })], campaigns: [] },
   };
   assert.throws(() => RadarReferralsFeedSchema.parse(feed));
 });
@@ -185,7 +185,7 @@ test("getRadarReferrals: flag on, cached payload fails schema validation => empt
       generatedAt: "x",
       tier: "live",
       // Wrong `feed` literal -- fails RadarReferralsFeedSchema.
-      payload: JSON.stringify({ ...baseReferralsFeed(), feed: "omniroute-radar" }),
+      payload: JSON.stringify({ ...baseReferralsFeed(), feed: "agentproxy-radar" }),
       fetchedAt: new Date().toISOString(),
     }),
   });

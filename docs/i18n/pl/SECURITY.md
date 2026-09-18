@@ -2,10 +2,10 @@
 
 ## Zgłaszanie luk bezpieczeństwa
 
-Jeśli odkryjesz lukę bezpieczeństwa w OmniRoute, zgłoś ją w odpowiedzialny sposób:
+Jeśli odkryjesz lukę bezpieczeństwa w AgentProxy, zgłoś ją w odpowiedzialny sposób:
 
 1. **NIE** otwieraj publicznego zgłoszenia (issue) na GitHub
-2. Użyj [GitHub Security Advisories](https://github.com/diegosouzapw/OmniRoute/security/advisories/new)
+2. Użyj [GitHub Security Advisories](https://github.com/khanhkit/AgentProxy/security/advisories/new)
 3. Dołącz: opis, kroki reprodukcji oraz potencjalny wpływ
 
 ## Harmonogram reakcji
@@ -28,7 +28,7 @@ Jeśli odkryjesz lukę bezpieczeństwa w OmniRoute, zgłoś ją w odpowiedzialny
 
 ## Architektura bezpieczeństwa
 
-OmniRoute wdraża wielowarstwowy model bezpieczeństwa:
+AgentProxy wdraża wielowarstwowy model bezpieczeństwa:
 
 ```
 Request → CORS → Authz pipeline (classify → policies → enforce)
@@ -65,7 +65,7 @@ STORAGE_ENCRYPTION_KEY=$(openssl rand -hex 32)
 
 ### 🛡️ Framework Guardrails
 
-OmniRoute dostarcza przeładowywalny na gorąco **rejestr guardrails** (`src/lib/guardrails/`) z 3 wbudowanymi guardrails uporządkowanymi według priorytetu:
+AgentProxy dostarcza przeładowywalny na gorąco **rejestr guardrails** (`src/lib/guardrails/`) z 3 wbudowanymi guardrails uporządkowanymi według priorytetu:
 
 | Guardrail          | Priorytet | Cel                                                                                      |
 | ------------------ | --------- | ---------------------------------------------------------------------------------------- |
@@ -73,7 +73,7 @@ OmniRoute dostarcza przeładowywalny na gorąco **rejestr guardrails** (`src/lib
 | `pii-masker`       | 10        | Redakcja PII przed i po wywołaniu (e-maile, telefon, CPF, CNPJ, karty kredytowe, SSN)    |
 | `prompt-injection` | 20        | Wykrywa wzorce override / role-hijack / jailbreak / leak                                 |
 
-Własne guardrails rejestruje się przez `registerGuardrail(new MyGuardrail())`. Model jest fail-open (wyjątki nigdy nie blokują ruchu). Rezygnacja per żądanie przez nagłówek `x-omniroute-disabled-guardrails`. → Zob. [`docs/security/GUARDRAILS.md`](docs/security/GUARDRAILS.md).
+Własne guardrails rejestruje się przez `registerGuardrail(new MyGuardrail())`. Model jest fail-open (wyjątki nigdy nie blokują ruchu). Rezygnacja per żądanie przez nagłówek `x-agentproxy-disabled-guardrails`. → Zob. [`docs/security/GUARDRAILS.md`](docs/security/GUARDRAILS.md).
 
 ### 🧠 Ochrona przed prompt injection
 
@@ -178,15 +178,15 @@ Serwer aktywnie odrzuca znane słabe wartości, takie jak `changeme`, `secret` l
 
 ```bash
 docker run -d \
-  --name omniroute \
+  --name agentproxy \
   --restart unless-stopped \
   --read-only \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
+  -v agentproxy-data:/app/data \
   -e JWT_SECRET="$(openssl rand -base64 48)" \
   -e API_KEY_SECRET="$(openssl rand -hex 32)" \
   -e STORAGE_ENCRYPTION_KEY="$(openssl rand -hex 32)" \
-  diegosouzapw/omniroute:latest
+  khanhkit/agentproxy:latest
 ```
 
 ---
@@ -218,7 +218,7 @@ Te reguły są egzekwowane przez narzędzia i recenzentów:
 
 ## Ustalenia skanerów łańcucha dostaw (Socket.dev / Snyk / podobne)
 
-Opublikowany artefakt npm `omniroute` bundluje build Next.js `output: "standalone"`,
+Opublikowany artefakt npm `agentproxy` bundluje build Next.js `output: "standalone"`,
 co oznacza, że każdy route handler — w tym udokumentowane uprzywilejowane
 funkcje (MITM, Zed import, Cloud Sync, embedded service supervisor) — trafia
 do zminifikowanych chunków `.next/server/*.js`. Heurystyczne skanery łańcucha dostaw
@@ -233,7 +233,7 @@ Dla każdej kategorii ustaleń utrzymujemy poświadczenie maintainerów per usta
   do tego samego dokumentu.
 
 Dla użytkowników, których pipeline nie może poluzować alertu: buduj z
-`OMNIROUTE_BUILD_PROFILE=minimal npm run build`. To zastępuje cztery
+`AGENTPROXY_BUILD_PROFILE=minimal npm run build`. To zastępuje cztery
 wrażliwe moduły stubami zwracającymi HTTP 503 `feature-disabled` w
 runtime, więc uprzywilejowane ścieżki kodu są fizycznie nieobecne w bundlu.
 Zob. [`docs/security/SOCKET_DEV_FINDINGS.md`](docs/security/SOCKET_DEV_FINDINGS.md)

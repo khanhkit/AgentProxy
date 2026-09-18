@@ -11,7 +11,7 @@ import path from "node:path";
 // branches — id+whereUsed, id-only, list (no id) — must stay equivalent across
 // the parameterized callers.
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-proxy-route-handlers-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-proxy-route-handlers-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.API_KEY_SECRET = "test-secret";
 

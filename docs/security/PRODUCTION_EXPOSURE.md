@@ -2,7 +2,7 @@
 title: "Production Exposure Profile"
 ---
 
-OmniRoute keeps a **local-first/keyless** compatibility posture for trusted single-user deployments on a trusted network. That posture is not a safe default for an untrusted LAN or the public Internet. Production exposure is an operator decision: bind narrowly, put remotely reachable traffic behind an authenticated TLS perimeter, and explicitly enable the controls below.
+AgentProxy keeps a **local-first/keyless** compatibility posture for trusted single-user deployments on a trusted network. That posture is not a safe default for an untrusted LAN or the public Internet. Production exposure is an operator decision: bind narrowly, put remotely reachable traffic behind an authenticated TLS perimeter, and explicitly enable the controls below.
 
 ## Supported exposure profiles
 
@@ -25,11 +25,11 @@ Before allowing remote clients through a reverse proxy, tunnel, or load balancer
 1. Set `REQUIRE_API_KEY=true` for client API routes. Keyless behavior is intentionally supported for trusted local-first use, but keyless/global-operator semantics must not be treated as multi-user isolation.
 2. Configure dashboard authentication: replace `INITIAL_PASSWORD=CHANGEME` or use the supported OIDC flow. Set a strong, unique `JWT_SECRET` and `API_KEY_SECRET`.
 3. Terminate **TLS** at the trusted reverse proxy/tunnel/load balancer. Set `AUTH_COOKIE_SECURE=true` for HTTPS browser deployments.
-4. Set `NEXT_PUBLIC_BASE_URL=https://your.example` (or the higher-priority `OMNIROUTE_PUBLIC_BASE_URL`) to the externally visible origin used for redirects and generated links.
-5. Leave `OMNIROUTE_TRUST_PROXY` unset when a configured public base URL is sufficient. Enable it only when direct client access is blocked and the trusted proxy strips/rebuilds forwarded headers. Forwarded headers alone are never caller identity.
-6. Keep the internal **peer stamp** contract intact. The custom server authenticates its peer/locality stamp with `OMNIROUTE_PEER_STAMP_TOKEN`; leave that token auto-generated for normal single-process deployments and only pin it when cooperating processes intentionally share the stamp.
+4. Set `NEXT_PUBLIC_BASE_URL=https://your.example` (or the higher-priority `AGENTPROXY_PUBLIC_BASE_URL`) to the externally visible origin used for redirects and generated links.
+5. Leave `AGENTPROXY_TRUST_PROXY` unset when a configured public base URL is sufficient. Enable it only when direct client access is blocked and the trusted proxy strips/rebuilds forwarded headers. Forwarded headers alone are never caller identity.
+6. Keep the internal **peer stamp** contract intact. The custom server authenticates its peer/locality stamp with `AGENTPROXY_PEER_STAMP_TOKEN`; leave that token auto-generated for normal single-process deployments and only pin it when cooperating processes intentionally share the stamp.
 7. Set `STORAGE_ENCRYPTION_KEY` to a strong deployment-specific key when persisted provider credentials require encryption at rest. Protect the SQLite volume and backups with the same sensitivity as credentials.
-8. Set `OMNIROUTE_ALLOW_LOCAL_PROVIDER_URLS=false` for an untrusted/multi-user deployment unless reaching loopback/LAN provider endpoints is an explicit requirement with a separately controlled egress boundary.
+8. Set `AGENTPROXY_ALLOW_LOCAL_PROVIDER_URLS=false` for an untrusted/multi-user deployment unless reaching loopback/LAN provider endpoints is an explicit requirement with a separately controlled egress boundary.
 9. Configure finite upstream/reverse-proxy request, connection, and rate limits appropriate to the deployment. Product-specific limits remain additional controls; an external proxy is defence in depth, not a replacement for route authorization.
 10. Restrict any non-loopback `PROD_BIND_HOST` with host/network firewall rules so only the intended TLS perimeter can reach the backend ports.
 
@@ -39,14 +39,14 @@ Example hardened values behind a same-host HTTPS reverse proxy:
 PROD_BIND_HOST=127.0.0.1
 REQUIRE_API_KEY=true
 AUTH_COOKIE_SECURE=true
-NEXT_PUBLIC_BASE_URL=https://omniroute.example.com
-OMNIROUTE_ALLOW_LOCAL_PROVIDER_URLS=false
+NEXT_PUBLIC_BASE_URL=https://agentproxy.example.com
+AGENTPROXY_ALLOW_LOCAL_PROVIDER_URLS=false
 JWT_SECRET=<strong-random-secret>
 API_KEY_SECRET=<strong-random-secret>
 STORAGE_ENCRYPTION_KEY=<strong-random-key>
 ```
 
-`OMNIROUTE_TRUST_PROXY` is intentionally omitted from this example. Prefer a configured public origin; only opt into forwarded-origin trust when the proxy topology requires it and the peer-stamp/trusted-proxy requirements are satisfied.
+`AGENTPROXY_TRUST_PROXY` is intentionally omitted from this example. Prefer a configured public origin; only opt into forwarded-origin trust when the proxy topology requires it and the peer-stamp/trusted-proxy requirements are satisfied.
 
 ## Listener and trust boundaries
 

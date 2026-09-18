@@ -120,7 +120,7 @@ Husky hooks 位于 `.husky/` 目录，在 git 操作时自动运行。
 - [ ] `npm run i18n:check` 退出码 0 — 翻译状态（`.i18n-state.json`）与源文档同步（严格模式下无漂移源文件；warn 级别的建议可接受用于最后一刻的文档完善，但打 tag 前必须为 0）
 - [ ] `npm run i18n:check-ui-coverage` 退出码 0 — 所有 UI 语言的覆盖率不低于 80%
 - [ ] `npm run i18n:sync-ui:dry` 报告跨 42 个语言 0 个缺失 key
-- [ ] 若英文源文档有变更，打 tag 前运行 `npm run i18n:run`（需要 `.env` 中设置 `OMNIROUTE_TRANSLATION_API_KEY`）
+- [ ] 若英文源文档有变更，打 tag 前运行 `npm run i18n:run`（需要 `.env` 中设置 `AGENTPROXY_TRANSLATION_API_KEY`）
 - [ ] 翻译贡献可推迟到下一版本（若改动较小，在 CHANGELOG 中标注）
 
 ### 数据库迁移
@@ -129,7 +129,7 @@ Husky hooks 位于 `.husky/` 目录，在 git 操作时自动运行。
   - [ ] 每个迁移是幂等的（使用 `CREATE TABLE IF NOT EXISTS` 等）
   - [ ] 迁移包裹在事务中
   - [ ] 编号正确（序列中无间隙）
-- [ ] 全新安装测试：删除 `~/.omniroute/omniroute.db` 并运行 `npm run dev`
+- [ ] 全新安装测试：删除 `~/.agentproxy/agentproxy.db` 并运行 `npm run dev`
 - [ ] 已有安装测试：备份数据库，运行迁移，验证 Schema
 - [ ] 若迁移重写数据表，WAL 文件（`-wal`、`-shm`）处理正确
 
@@ -164,7 +164,7 @@ Husky hooks 位于 `.husky/` 目录，在 git 操作时自动运行。
 | `.build/`  | 构建中间产物 — `next build` 输出（`distDir`）             | 否（gitignored） |
 | `dist/`    | 可分发的 npm 包 — 由 `assembleStandalone` 组装            | 否（gitignored） |
 
-> **运维说明：** 远程 VPS 镜像目录仍为 `/usr/lib/node_modules/omniroute/app/`。
+> **运维说明：** 远程 VPS 镜像目录仍为 `/usr/lib/node_modules/agentproxy/app/`。
 > 仅**仓库内**的构建输出路径有变化（`app/` → `dist/`）。部署技能将 `dist/` 内容
 > rsync 到远程 `app/` 目录 — 无需更改 VPS 路径。
 
@@ -268,12 +268,12 @@ npm run build:release
 
 发布任何 v3.8.x 版本前，验证以下附加项：
 
-- [ ] `omniroute --tray` 在 macOS 上启动（systray2 安装到 `~/.omniroute/runtime/`）
-- [ ] `omniroute --tray` 在 Linux 上启动（需要 DISPLAY；未设置时优雅报错）
-- [ ] `omniroute --tray` 在 Windows 上启动（PowerShell NotifyIcon，无额外二进制文件）
-- [ ] `omniroute config tray enable` 创建自启动条目；disable 则移除
-- [ ] `npm install -g omniroute@<this-version>` 运行 postinstall 无致命退出
-- [ ] 更新路径保留可选依赖：`omniroute update --apply` 以及自动更新器
+- [ ] `agentproxy --tray` 在 macOS 上启动（systray2 安装到 `~/.agentproxy/runtime/`）
+- [ ] `agentproxy --tray` 在 Linux 上启动（需要 DISPLAY；未设置时优雅报错）
+- [ ] `agentproxy --tray` 在 Windows 上启动（PowerShell NotifyIcon，无额外二进制文件）
+- [ ] `agentproxy config tray enable` 创建自启动条目；disable 则移除
+- [ ] `npm install -g agentproxy@<this-version>` 运行 postinstall 无致命退出
+- [ ] 更新路径保留可选依赖：`agentproxy update --apply` 以及自动更新器
       运行 `npm install -g … --include=optional` 以确保 `optionalDependencies`（better-sqlite3、
       keytar、tls-client 以及 llmlingua SLM 栈：`@atjsh/llmlingua-2@2.0.5`、
       `js-tiktoken`）在更新后仍然存在。Ultra 模式的 `modelPath` SLM 层还需要
@@ -283,13 +283,13 @@ npm run build:release
       实例 — standalone trace 仅打包 transformers，不包含动态导入的
       可选依赖，否则 Worker 会基于根目录的 transformers 加载 llmlingua-2，
       SLM 层将静默失效。
-- [ ] `omniroute status` 在无 `.env` 的情况下正常工作（CLI Token 路径，仅 loopback）
+- [ ] `agentproxy status` 在无 `.env` 的情况下正常工作（CLI Token 路径，仅 loopback）
 - [ ] `curl http://localhost:20128/api/shutdown` 返回 401（始终受保护的路由）
 - [ ] `curl -H "host: evil.com" http://localhost:20128/api/mcp/sse` 返回 401（loopback 防护）
 - [ ] SQLite 运行时首次运行时解析为 `bundled`（内嵌二进制文件对当前平台有效）
 - [ ] 删除 `node_modules/better-sqlite3` 后 SQLite 运行时回退到 `runtime`
 - [ ] 智能 MCP 过滤器压缩真实 `playwright-mcp browser_snapshot` 输出（压缩率 ≥50%）
-- [ ] 全部 10 个 `skills/omniroute*/SKILL.md` 文件可通过 GitHub raw URL 公开访问
+- [ ] 全部 10 个 `skills/agentproxy*/SKILL.md` 文件可通过 GitHub raw URL 公开访问
 - [ ] 全新安装时引导向导显示"How It Works"服务商层级介绍步骤
 - [ ] 首页仪表盘服务商层级覆盖率组件显示已配置/活跃数量
 

@@ -42,13 +42,13 @@ function toAuthSource(targetOpts) {
   }
 
   try {
-    const context = resolveActiveContext(targetOpts.context || process.env.OMNIROUTE_CONTEXT);
+    const context = resolveActiveContext(targetOpts.context || process.env.AGENTPROXY_CONTEXT);
     if (context && (context.accessToken || context.apiKey)) return "context";
   } catch {
     // no active context
   }
 
-  if (!isBlank(process.env.OMNIROUTE_API_KEY)) return "env";
+  if (!isBlank(process.env.AGENTPROXY_API_KEY)) return "env";
   if (!isBlank(process.env.ANTHROPIC_AUTH_TOKEN)) return "env";
   return "none";
 }
@@ -181,7 +181,7 @@ async function buildCodexPlan(rawOpts, args = []) {
   };
 }
 
-const NO_AUTH_SENTINEL = "omniroute-no-auth";
+const NO_AUTH_SENTINEL = "agentproxy-no-auth";
 
 function resolveGenericSpawn(command) {
   if (process.platform !== "win32") return { command, shell: undefined };
@@ -221,7 +221,7 @@ function genericEnv(baseEnv, kind, baseUrl, authToken, model) {
       delete env[key];
     }
     if (kind === "opencode" && key === "OPENCODE_CONFIG_CONTENT") delete env[key];
-    if (kind === "qwen" && (key === "QWEN_HOME" || key === "OMNIROUTE_API_KEY")) {
+    if (kind === "qwen" && (key === "QWEN_HOME" || key === "AGENTPROXY_API_KEY")) {
       delete env[key];
     }
     if (
@@ -244,27 +244,27 @@ function genericEnv(baseEnv, kind, baseUrl, authToken, model) {
     env.OPENAI_API_KEY = token;
     if (model) env.GOOSE_MODEL = model;
   } else if (kind === "opencode") {
-    env.OMNIROUTE_API_KEY = token;
+    env.AGENTPROXY_API_KEY = token;
     env.OPENCODE_CONFIG_CONTENT = JSON.stringify({
       $schema: "https://opencode.ai/config.json",
       provider: {
-        omniroute: {
+        agentproxy: {
           npm: "@ai-sdk/openai-compatible",
-          name: "OmniRoute",
+          name: "AgentProxy",
           options: {
             baseURL: ensureV1BaseUrl(baseUrl),
-            apiKey: "{env:OMNIROUTE_API_KEY}",
+            apiKey: "{env:AGENTPROXY_API_KEY}",
           },
           ...(model ? { models: { [model]: { name: model } } } : {}),
         },
       },
     });
   } else if (kind === "qwen") {
-    env.OMNIROUTE_API_KEY = token;
+    env.AGENTPROXY_API_KEY = token;
   } else if (kind === "gemini") {
     // Verified against @google/gemini-cli 0.50.0: the SDK appends
     // /v1beta/models/<model>:generateContent to this base URL, which is
-    // OmniRoute's native Gemini surface. Auth is the API-key path; the
+    // AgentProxy's native Gemini surface. Auth is the API-key path; the
     // isolated GEMINI_CLI_HOME (set at spawn time) keeps any stored OAuth
     // session from overriding it.
     env.GOOGLE_GEMINI_BASE_URL = baseUrl;
@@ -285,7 +285,7 @@ function modelArgsForTarget(target, model) {
 
 function buildGeminiSettings() {
   // Force API-key auth in the isolated home so the operator's stored OAuth
-  // session (Code Assist) never leaks into an OmniRoute-directed launch.
+  // session (Code Assist) never leaks into an AgentProxy-directed launch.
   return JSON.stringify({ security: { auth: { selectedType: "gemini-api-key" } } }, null, 2);
 }
 
@@ -297,8 +297,8 @@ function buildQwenSettings(baseUrl, model) {
         openai: [
           {
             id: model,
-            name: `${model} (OmniRoute)`,
-            envKey: "OMNIROUTE_API_KEY",
+            name: `${model} (AgentProxy)`,
+            envKey: "AGENTPROXY_API_KEY",
             baseUrl: qwenBaseUrl,
           },
         ],
@@ -319,7 +319,7 @@ async function buildGenericPlan(target, rawOpts, args = []) {
   const commandSpec = resolveGenericSpawn(target);
   const model = resolveModelFromTargetOptions(rawOpts);
   if (manifestRequiresModel(target) && !model) {
-    throw new Error("Qwen Code requires --model in non-interactive OmniRoute launches");
+    throw new Error("Qwen Code requires --model in non-interactive AgentProxy launches");
   }
   const modelArgs = modelArgsForTarget(target, model);
   const fullArgs = [...modelArgs, ...args];
@@ -364,13 +364,13 @@ async function runGenericTarget(target, rawOpts, args) {
     apiKey: resolveAuthTokenOption(rawOpts),
   });
   if (!(await healthCheckForRun(baseUrl))) {
-    console.error(`OmniRoute is not reachable at ${baseUrl}. Start it or check --remote.`);
+    console.error(`AgentProxy is not reachable at ${baseUrl}. Start it or check --remote.`);
     return 1;
   }
 
   const model = resolveModelFromTargetOptions(rawOpts);
   if (manifestRequiresModel(target) && !model) {
-    console.error("Qwen Code requires --model in non-interactive OmniRoute launches.");
+    console.error("Qwen Code requires --model in non-interactive AgentProxy launches.");
     return 2;
   }
   const modelArgs = modelArgsForTarget(target, model);
@@ -378,14 +378,14 @@ async function runGenericTarget(target, rawOpts, args) {
   const childEnv = genericEnv(process.env, target, baseUrl, authToken, model);
   let overlayHome;
   if (target === "qwen") {
-    overlayHome = mkdtempSync(join(os.tmpdir(), "omniroute-qwen-run-"));
+    overlayHome = mkdtempSync(join(os.tmpdir(), "agentproxy-qwen-run-"));
     writeFileSync(join(overlayHome, "settings.json"), buildQwenSettings(baseUrl, model), {
       encoding: "utf8",
       mode: 0o600,
     });
     childEnv.QWEN_HOME = overlayHome;
   } else if (target === "gemini") {
-    overlayHome = mkdtempSync(join(os.tmpdir(), "omniroute-gemini-run-"));
+    overlayHome = mkdtempSync(join(os.tmpdir(), "agentproxy-gemini-run-"));
     mkdirSync(join(overlayHome, ".gemini"), { recursive: true });
     writeFileSync(join(overlayHome, ".gemini", "settings.json"), buildGeminiSettings(), {
       encoding: "utf8",
@@ -574,17 +574,17 @@ export async function runCliTarget(target, opts = {}, args = []) {
 export function registerRun(program) {
   program
     .command("run <target>")
-    .description(t("run.description") || "Run a supported CLI target through OmniRoute")
+    .description(t("run.description") || "Run a supported CLI target through AgentProxy")
     .option(
       "--port <port>",
-      "Local OmniRoute port (ignored when --remote or --base-url is set)",
+      "Local AgentProxy port (ignored when --remote or --base-url is set)",
       "20128"
     )
     .option(
       "--remote <url>",
-      "Remote OmniRoute base URL (overrides --port, --base-url, and the active context)"
+      "Remote AgentProxy base URL (overrides --port, --base-url, and the active context)"
     )
-    .option("--base-url <url>", "OmniRoute base URL (alias for --remote)")
+    .option("--base-url <url>", "AgentProxy base URL (alias for --remote)")
     .option("--context <name>", "Named local/remote context to use for URL and credentials")
     .option("--provider <id>", "Provider id for shorthand model composition")
     .option("--model <id>", "Model id to inject in the launched target where supported")

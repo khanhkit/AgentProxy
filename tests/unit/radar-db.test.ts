@@ -15,7 +15,7 @@ import os from "node:os";
 import path from "node:path";
 
 // Isolate DB state in a temp directory
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-radar-db-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-radar-db-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 // Enable encryption so we can verify at-rest encryption of supporter key
 process.env.STORAGE_ENCRYPTION_KEY = "test-encryption-key-for-radar-db-tests-32b!";

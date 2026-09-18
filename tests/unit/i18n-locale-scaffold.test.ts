@@ -228,7 +228,7 @@ test("insertReadmeFlagLink lands after the last link, before </div>, and only re
   const link = (code: string, file: string): string =>
     `  <a href="docs/i18n/${code}/README.md"><img src="docs/assets/flags/${file}" width="30" alt="${code}" title="${code}"></a>`;
   const lines = [
-    "# OmniRoute",
+    "# AgentProxy",
     "",
     "Docs In 43 languages, see below.",
     "",
@@ -339,7 +339,7 @@ test("insertDocsIndexRow on the real docs/i18n/README.md adds one row at the der
 // ---------------------------------------------------------------------------
 
 const GUIDE_FIXTURE =
-  "OmniRoute supports **43 languages** with full dashboard UI translation.\n\n| Code | Language | RTL | Google Translate Code |\n| --- | --- | --- | --- |\n| `de` | Deutsch | No | `de` |\n| `es` | Español | No | `es` |\n";
+  "AgentProxy supports **43 languages** with full dashboard UI translation.\n\n| Code | Language | RTL | Google Translate Code |\n| --- | --- | --- | --- |\n| `de` | Deutsch | No | `de` |\n| `es` | Español | No | `es` |\n";
 
 test("insertI18nGuideRow adds a table row in code order and bumps the headline", () => {
   const out = insertI18nGuideRow(GUIDE_FIXTURE, el, 44);
@@ -388,7 +388,7 @@ test("insertI18nGuideRow rejects a duplicate row, a missing headline and a guide
 
 test("insertI18nGuideRow pads the new row to the column widths of a Prettier-aligned table", () => {
   const aligned = [
-    "OmniRoute supports **43 languages** with full dashboard UI translation.",
+    "AgentProxy supports **43 languages** with full dashboard UI translation.",
     "",
     "| Code    | Language             | RTL | Google Translate Code |",
     "| ------- | -------------------- | --- | --------------------- |",
@@ -412,11 +412,11 @@ test("insertI18nGuideRow pads the new row to the column widths of a Prettier-ali
 
 test("insertI18nGuideRow only touches the locale table, not other tables with backticked cells", () => {
   const guide = [
-    "OmniRoute supports **43 languages** with full dashboard UI translation.",
+    "AgentProxy supports **43 languages** with full dashboard UI translation.",
     "",
     "| Variable | Default |",
     "| --- | --- |",
-    "| `OMNIROUTE_LANG` | `en` |",
+    "| `AGENTPROXY_LANG` | `en` |",
     "| `zz` | `zz` |",
     "",
     "### Supported Locales",
@@ -443,7 +443,7 @@ test("insertI18nGuideRow only touches the locale table, not other tables with ba
   assert.throws(
     () =>
       insertI18nGuideRow(
-        "OmniRoute supports **43 languages**\n\n| `de` | Deutsch | No | `de` |\n",
+        "AgentProxy supports **43 languages**\n\n| `de` | Deutsch | No | `de` |\n",
         el,
         44
       ),
@@ -555,19 +555,19 @@ test("bumpCounts on the real llm.txt is a no-op at the current locale total", ()
 test("buildMirrorStub produces the header + separator layout check-docs-sync expects", () => {
   assert.equal(
     buildMirrorStub({
-      heading: "OmniRoute",
+      heading: "AgentProxy",
       native: "Ελληνικά",
       bar: "🌐 **Languages:** x",
       body: "body\n",
     }),
-    "# OmniRoute (Ελληνικά)\n\n🌐 **Languages:** x\n\n---\n\nbody\n"
+    "# AgentProxy (Ελληνικά)\n\n🌐 **Languages:** x\n\n---\n\nbody\n"
   );
 });
 
 test("buildMirrorStub is accepted by check-docs-sync's separator logic and is a fixed point of sync-llm-mirrors", () => {
-  const body = "> OmniRoute is a proxy.\n\n## Section\n\ntext\n";
+  const body = "> AgentProxy is a proxy.\n\n## Section\n\ntext\n";
   const stub = buildMirrorStub({
-    heading: "OmniRoute",
+    heading: "AgentProxy",
     native: "Ελληνικά",
     bar: "🌐 **Languages:** x",
     body,
@@ -591,7 +591,7 @@ test("buildMirrorStub reproduces a real mirror byte for byte", () => {
   );
   assert.ok(parts, "docs/i18n/pt-BR/llm.txt does not have the five-part mirror layout");
   const [, heading, native, bar, body] = parts;
-  assert.equal(heading, "OmniRoute");
+  assert.equal(heading, "AgentProxy");
   assert.equal(native, realConfig().locales.find((l) => l.code === "pt-BR")?.native);
   assert.equal(buildMirrorStub({ heading, native, bar, body }), mirror);
 });

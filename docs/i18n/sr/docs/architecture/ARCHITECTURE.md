@@ -6,12 +6,12 @@
 
 ---
 
-title: "OmniRoute Architecture"
+title: "AgentProxy Architecture"
 version: 3.8.40
 lastUpdated: 2026-06-28
 ---
 
-# OmniRoute Architecture
+# AgentProxy Architecture
 
 🌐 **Languages:** 🇺🇸 [English](../../../../architecture/ARCHITECTURE.md) · 🇸🇦 [ar](../../../ar/docs/architecture/ARCHITECTURE.md) · 🇦🇿 [az](../../../az/docs/architecture/ARCHITECTURE.md) · 🇧🇬 [bg](../../../bg/docs/architecture/ARCHITECTURE.md) · 🇧🇩 [bn](../../../bn/docs/architecture/ARCHITECTURE.md) · 🇨🇿 [cs](../../../cs/docs/architecture/ARCHITECTURE.md) · 🇩🇰 [da](../../../da/docs/architecture/ARCHITECTURE.md) · 🇩🇪 [de](../../../de/docs/architecture/ARCHITECTURE.md) · 🇬🇷 [el](../../../el/docs/architecture/ARCHITECTURE.md) · 🇪🇸 [es](../../../es/docs/architecture/ARCHITECTURE.md) · 🇪🇪 [et](../../../et/docs/architecture/ARCHITECTURE.md) · 🇮🇷 [fa](../../../fa/docs/architecture/ARCHITECTURE.md) · 🇫🇮 [fi](../../../fi/docs/architecture/ARCHITECTURE.md) · 🇫🇷 [fr](../../../fr/docs/architecture/ARCHITECTURE.md) · 🇮🇪 [ga](../../../ga/docs/architecture/ARCHITECTURE.md) · 🇮🇳 [gu](../../../gu/docs/architecture/ARCHITECTURE.md) · 🇮🇱 [he](../../../he/docs/architecture/ARCHITECTURE.md) · 🇮🇳 [hi](../../../hi/docs/architecture/ARCHITECTURE.md) · 🇭🇷 [hr](../../../hr/docs/architecture/ARCHITECTURE.md) · 🇭🇺 [hu](../../../hu/docs/architecture/ARCHITECTURE.md) · 🇮🇩 [id](../../../id/docs/architecture/ARCHITECTURE.md) · 🇮🇹 [it](../../../it/docs/architecture/ARCHITECTURE.md) · 🇯🇵 [ja](../../../ja/docs/architecture/ARCHITECTURE.md) · 🇰🇷 [ko](../../../ko/docs/architecture/ARCHITECTURE.md) · 🇱🇹 [lt](../../../lt/docs/architecture/ARCHITECTURE.md) · 🇱🇻 [lv](../../../lv/docs/architecture/ARCHITECTURE.md) · 🇮🇳 [mr](../../../mr/docs/architecture/ARCHITECTURE.md) · 🇲🇾 [ms](../../../ms/docs/architecture/ARCHITECTURE.md) · 🇲🇹 [mt](../../../mt/docs/architecture/ARCHITECTURE.md) · 🇳🇱 [nl](../../../nl/docs/architecture/ARCHITECTURE.md) · 🇳🇴 [no](../../../no/docs/architecture/ARCHITECTURE.md) · 🇵🇭 [phi](../../../phi/docs/architecture/ARCHITECTURE.md) · 🇵🇱 [pl](../../../pl/docs/architecture/ARCHITECTURE.md) · 🇵🇹 [pt](../../../pt/docs/architecture/ARCHITECTURE.md) · 🇧🇷 [pt-BR](../../../pt-BR/docs/architecture/ARCHITECTURE.md) · 🇷🇴 [ro](../../../ro/docs/architecture/ARCHITECTURE.md) · 🇷🇺 [ru](../../../ru/docs/architecture/ARCHITECTURE.md) · 🇸🇰 [sk](../../../sk/docs/architecture/ARCHITECTURE.md) · 🇸🇮 [sl](../../../sl/docs/architecture/ARCHITECTURE.md) · 🇸🇪 [sv](../../../sv/docs/architecture/ARCHITECTURE.md) · 🇰🇪 [sw](../../../sw/docs/architecture/ARCHITECTURE.md) · 🇮🇳 [ta](../../../ta/docs/architecture/ARCHITECTURE.md) · 🇮🇳 [te](../../../te/docs/architecture/ARCHITECTURE.md) · 🇹🇭 [th](../../../th/docs/architecture/ARCHITECTURE.md) · 🇹🇷 [tr](../../../tr/docs/architecture/ARCHITECTURE.md) · 🇺🇦 [uk-UA](../../../uk-UA/docs/architecture/ARCHITECTURE.md) · 🇵🇰 [ur](../../../ur/docs/architecture/ARCHITECTURE.md) · 🇻🇳 [vi](../../../vi/docs/architecture/ARCHITECTURE.md) · 🇨🇳 [zh-CN](../../../zh-CN/docs/architecture/ARCHITECTURE.md) · 🇹🇼 [zh-TW](../../../zh-TW/docs/architecture/ARCHITECTURE.md)
 
@@ -19,7 +19,7 @@ _Последње ажурирано: 2026-06-28_
 
 ## Кратак преглед
 
-OmniRoute је локални gateway за AI рутирање и контролна табла изграђена на Next.js.
+AgentProxy је локални gateway за AI рутирање и контролна табла изграђена на Next.js.
 Обезбеђује јединствену OpenAI-компатибилну крајњу тачку (`/v1/*`) и рутира саобраћај кроз више upstream провајдера уз превод, резервни режим (fallback), обнову токена и праћење потрошње.
 
 Основне могућности:
@@ -173,7 +173,7 @@ flowchart LR
         BROWSER[Browser Dashboard]
     end
 
-    subgraph Router[OmniRoute Local Process]
+    subgraph Router[AgentProxy Local Process]
         API[V1 Compatibility API\n/v1/*]
         DASH[Dashboard + Management API\n/api/*]
         CORE[SSE + Translation Core\nopen-sse + src/sse]
@@ -336,7 +336,7 @@ OAuth moduli provajdera (22 pojedinačna fajla u `src/lib/oauth/providers/`):
 
 ## 5) Уграђене услуге (v3.8.4)
 
-OmniRoute може да инсталира, надгледа и рутира ка локално покренутим процесима AI алата
+AgentProxy може да инсталира, надгледа и рутира ка локално покренутим процесима AI алата
 названим **уграђене услуге**. Испоручено је пет: 9Router, CLIProxyAPI, Bifrost, Mux и Dario.
 
 Слојеви архитектуре:
@@ -445,7 +445,7 @@ Namespace `src/domain/` централизује одлуке политике �
 - Кеш квоте: `src/domain/quotaCache.ts`
 - Стање деградације: `src/domain/degradation.ts`
 - Ревизија конфигурације: `src/domain/configAudit.ts`
-- Градитељ метаподатака OmniRoute одговора: `src/domain/omnirouteResponseMeta.ts`
+- Градитељ метаподатака AgentProxy одговора: `src/domain/agentproxyResponseMeta.ts`
 - Подсистем процене: `src/domain/assessment/` — периодични послови евалуације
 
 ### E. Токовник ауторизације (Authorization Pipeline)
@@ -526,7 +526,7 @@ Primarna baza stanja (SQLite):
 
 - Osnovna infrastruktura: `src/lib/db/core.ts` (better-sqlite3, migracije, WAL)
 - Pristup bazi: uvozite konkretne `src/lib/db/*` module direktno (stari `localDb.ts` barrel je uklonjen)
-- fajl: `${DATA_DIR}/storage.sqlite` (ili `$XDG_CONFIG_HOME/omniroute/storage.sqlite` kada je podešeno, inače `~/.omniroute/storage.sqlite`)
+- fajl: `${DATA_DIR}/storage.sqlite` (ili `$XDG_CONFIG_HOME/agentproxy/storage.sqlite` kada je podešeno, inače `~/.agentproxy/storage.sqlite`)
 - entiteti (tabele + KV imenski prostori): providerConnections, providerNodes, modelAliases, combos, apiKeys, settings, pricing, **customModels**, **proxyConfig**, **ipFilter**, **thinkingBudget**, **systemPrompt**
 
 Perzistencija korišćenja:
@@ -822,7 +822,7 @@ flowchart LR
         Browser[Прегледач контролне табле]
     end
 
-    subgraph ContainerOrProcess[OmniRoute Runtime]
+    subgraph ContainerOrProcess[AgentProxy Runtime]
         Next[Next.js Server\nPORT=20128]
         Core[SSE Core + Executors]
         MainDB[(storage.sqlite)]
@@ -941,7 +941,7 @@ flowchart LR
 ## Матрица компатибилности провајдера
 
 > **Напомена:** Матрица испод представља репрезентативан узорак 351 регистрованог провајдера у
-> OmniRoute v3.8.0. За канонски и континуирано ажурирани списак, погледајте
+> AgentProxy v3.8.0. За канонски и континуирано ажурирани списак, погледајте
 > [`docs/reference/PROVIDER_REFERENCE.md`](../reference/PROVIDER_REFERENCE.md) (аутоматски генерисано) или изворну
 > истину у `src/shared/constants/providers.ts` (валидирано Zod-ом при учитавању).
 
@@ -1123,7 +1123,7 @@ legacy компатибилност. Тренутни runtime уговор ко�
 - сирови захтев примљен од клијента
 - преведени захтев који је стварно послат узводно
 - одговор провајдера реконструисан као JSON; стримовани одговори се сажимају у финални резиме плус метаподатке стрима
-- финални одговор клијенту који враћа OmniRoute; стримовани одговори се чувају у истом сажетом облику резимеа
+- финални одговор клијенту који враћа AgentProxy; стримовани одговори се чувају у истом сажетом облику резимеа
 
 ## Bezbednosno osetljive granice
 
@@ -1149,11 +1149,11 @@ Promenljive okruženja koje aktivno koristi kod:
 
 ## Poznate arhitektonske napomene
 
-1. `usageDb` i `localDb` dele istu politiku osnovnog direktorijuma (`DATA_DIR` -> `XDG_CONFIG_HOME/omniroute` -> `~/.omniroute`) uz migraciju zastarelih fajlova.
+1. `usageDb` i `localDb` dele istu politiku osnovnog direktorijuma (`DATA_DIR` -> `XDG_CONFIG_HOME/agentproxy` -> `~/.agentproxy`) uz migraciju zastarelih fajlova.
 2. `/api/v1/route.ts` prosleđuje isti unifikovani graditelj katalog koji koristi `/api/v1/models` (`src/app/api/v1/models/catalog.ts`) da bi se izbeglo semantičko rasipanje.
 3. Request logger upisuje kompletna zaglavlja/tela kada je omogućen; direktorijum logova treba tretirati kao osetljiv.
 4. Ponašanje облака zavisi od pravilno podešenog `NEXT_PUBLIC_BASE_URL` i dostupnosti krajnje tačke облака.
-5. Direktorijum `open-sse/` se objavljuje kao **npm workspace paket** `@omniroute/open-sse`. Izvorni kod ga uvozi preko `@omniroute/open-sse/...` (razrešava se putem Next.js `transpilePackages`). Putanje fajlova u ovom dokumentu i dalje koriste naziv direktorijuma `open-sse/` radi konzistentnosti.
+5. Direktorijum `open-sse/` se objavljuje kao **npm workspace paket** `@agentproxy/open-sse`. Izvorni kod ga uvozi preko `@agentproxy/open-sse/...` (razrešava se putem Next.js `transpilePackages`). Putanje fajlova u ovom dokumentu i dalje koriste naziv direktorijuma `open-sse/` radi konzistentnosti.
 6. Grafikoni na kontrolnoj tabli koriste **Recharts** (zasnovan na SVG-u) za pristupačne, interaktivne vizualizacije analitike (bar grafikoni korišćenja modela, tabele pregleda po provajderima sa stopama uspešnosti).
 7. E2E testovi koriste **Playwright** (`tests/e2e/`), pokreću se putem `npm run test:e2e`. Jedinični testovi koriste **Node.js test runner** (`tests/unit/`), pokreću se putem `npm run test:unit`. Izvorni kod u `src/` je napisan u **TypeScript-u** (`.ts`/`.tsx`); workspace `open-sse/` ostaje u JavaScript-u (`.js`).
 8. Stranica podešavanja organizovana je u 7 tabova: General, Appearance, AI, Security, Routing, Resilience, Advanced. Stranica Resilience konfiguriše samo red čekanja zahteva, hlađenje veze (connection cooldown), prekidač provajdera (provider breaker) i ponašanje čekanja na hlađenje; stanje prekidača u realnom vremenu prikazano je na stranici Health.
@@ -1164,7 +1164,7 @@ Promenljive okruženja koje aktivno koristi kod:
 ## Контролна листа за оперативну верификацију
 
 - Изградња из извора: `npm run build`
-- Изградња Docker слике: `docker build -t omniroute .`
+- Изградња Docker слике: `docker build -t agentproxy .`
 - Покретање сервиса и верификација:
 - `GET /api/settings`
 - `GET /api/v1/models`

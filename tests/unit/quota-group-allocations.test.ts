@@ -31,7 +31,7 @@ import os from "node:os";
 import path from "node:path";
 
 // ── DB / store harness ────────────────────────────────────────────────────────
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-quota-group-alloc-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-quota-group-alloc-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 // Ensure a deterministic secret for apiKey tests (check 5).
 process.env.API_KEY_SECRET = process.env.API_KEY_SECRET || "group-alloc-test-secret-32ch-xxxx";

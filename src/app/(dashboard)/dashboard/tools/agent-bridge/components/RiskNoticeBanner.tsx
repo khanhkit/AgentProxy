@@ -3,10 +3,10 @@
 import { useSyncExternalStore } from "react";
 import { useTranslations } from "next-intl";
 
-const STORAGE_KEY = "omniroute-agentbridge-risk-dismissed";
+const STORAGE_KEY = "agentproxy-agentbridge-risk-dismissed";
 // Same-tab signal for the dismiss button, since writing localStorage doesn't
 // fire a "storage" event in the tab that wrote it.
-const DISMISS_EVENT = "omniroute:agentbridge-risk-dismissed";
+const DISMISS_EVENT = "agentproxy:agentbridge-risk-dismissed";
 
 function isNotDismissed(): boolean {
   try {

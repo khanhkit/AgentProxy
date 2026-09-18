@@ -24,7 +24,7 @@ test("openai-responses client format always suppresses the close marker", () => 
 
 test("openai-responses suppression wins over an explicit keep header", () => {
   // There is no legitimate marker consumer in the Responses API format; an
-  // explicit `x-omniroute-thinking-marker: on` would only re-create the leak.
+  // explicit `x-agentproxy-thinking-marker: on` would only re-create the leak.
   assert.equal(
     resolveSuppressThinkClose({
       userAgent: null,

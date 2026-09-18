@@ -31,7 +31,7 @@ function runChild(script: string, cwd = REPO_ROOT) {
     env: {
       ...process.env,
       DATA_DIR: mkdtempSync(join(tmpdir(), "alias-resolver-12073-")),
-      OMNIROUTE_CLI_SKIP_REPO_ENV: "1",
+      AGENTPROXY_CLI_SKIP_REPO_ENV: "1",
     },
     encoding: "utf8",
   });
@@ -158,7 +158,7 @@ describe("aliasResolver Node 26 registration (#12073)", () => {
       await assert.rejects(() => registerAliasResolver(123), TypeError);
 
       assert.equal(resolveAlias("@/../../../etc/hostname", REPO_ROOT), null);
-      assert.equal(resolveAlias("@omniroute/open-sse/../../etc/passwd", REPO_ROOT), null);
+      assert.equal(resolveAlias("@agentproxy/open-sse/../../etc/passwd", REPO_ROOT), null);
     } finally {
       rmSync(noSrcRoot, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
       rmSync(emptySrcRoot, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });

@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 
-import { parseNonStreamingResponseBody } from "@omniroute/open-sse/handlers/chatCore/nonStreamingResponseParse.ts";
+import { parseNonStreamingResponseBody } from "@agentproxy/open-sse/handlers/chatCore/nonStreamingResponseParse.ts";
 
 // Minimal Response stub: only the surface parseNonStreamingResponseBody touches
 // (headers.get + text()). upstreamStream is passed false so readNonStreamingResponseBody

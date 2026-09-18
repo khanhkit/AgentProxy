@@ -6,20 +6,20 @@
 
 ---
 
-title: "OmniRoute Fly.io izvietošanas rokasgrāmata"
+title: "AgentProxy Fly.io izvietošanas rokasgrāmata"
 version: 3.8.40
 lastUpdated: 2026-06-28
 ---
 
-# OmniRoute Fly.io izvietošanas rokasgrāmata
+# AgentProxy Fly.io izvietošanas rokasgrāmata
 
-Šis dokuments apraksta faktisko OmniRoute izvietošanas procesu Fly.io, aptverot divus scenārijus:
+Šis dokuments apraksta faktisko AgentProxy izvietošanas procesu Fly.io, aptverot divus scenārijus:
 
 - Pašreizējā projekta pirmā reize izvietošana Fly.io
 - Turpmāko kodu atjauninājumu publicēšana
 - Jauni projekti, kas seko tam pašam izvietošanas darbam
 
-Šī rokasgrāmata ir balstīta uz pašreizējam projektam verificētu darba konfigurāciju. Lietotnes nosaukums ir `omniroute`.
+Šī rokasgrāmata ir balstīta uz pašreizējam projektam verificētu darba konfigurāciju. Lietotnes nosaukums ir `agentproxy`.
 
 ---
 
@@ -29,7 +29,7 @@ lastUpdated: 2026-06-28
 - Izvietošanas metode: Lokālais `flyctl` tiešais publicēšanas
 - Izpildlaids: Esošo `Dockerfile` un `fly.toml` izmantošana repozitorijā
 - Datu noturība: Fly Volume montēts uz `/data`
-- Piekļuves URL: `https://omniroute.fly.dev/`
+- Piekļuves URL: `https://agentproxy.example.com/`
 
 ---
 
@@ -38,7 +38,7 @@ lastUpdated: 2026-06-28
 Pašreizējā repozitorija `fly.toml` ir apstiprināts, ka satur šādus galvenos elementus:
 
 ```toml
-app = 'omniroute'
+app = 'agentproxy'
 primary_region = 'sin'
 
 [[mounts]]
@@ -60,7 +60,7 @@ primary_region = 'sin'
 
 Piezīmes:
 
-- `app = 'omniroute'` nosaka, uz kuru Fly lietotni izvietošana ir vērsta
+- `app = 'agentproxy'` nosaka, uz kuru Fly lietotni izvietošana ir vērsta
 - `destination = '/data'` nosaka noturīgā sējuma montēšanas direktoriju
 - Šim projektam jāiestata `DATA_DIR=/data`, pretējā gadījumā datubāze un atslēgas tiks rakstītas konteinera pagaidu direktorijā
 
@@ -98,8 +98,8 @@ flyctl version
 ### 4.1 Klonējiet kodu un ieejiet direktorijā
 
 ```powershell
-git clone https://github.com/diegosouzapw/OmniRoute.git
-cd OmniRoute
+git clone https://github.com/khanhkit/AgentProxy.git
+cd AgentProxy
 ```
 
 ### 4.2 Apstipriniet lietotnes nosaukumu
@@ -107,29 +107,29 @@ cd OmniRoute
 Atveriet `fly.toml` un pārbaudiet šādu rindu:
 
 ```toml
-app = 'omniroute'
+app = 'agentproxy'
 ```
 
 Ja izvietojat savā jaunajā lietotnī, varat to mainīt uz globāli unikālu nosaukumu, piemēram:
 
 ```toml
-app = 'omniroute-yourname'
+app = 'agentproxy-yourname'
 ```
 
 Piezīme:
 
 - Pārliecinieties, ka konsolē redzamā lietotne atbilst `fly.toml` esošajai `app` vērtībai
-- Ja iepriekš esat izmantojis citu nosaukumu, piemēram, `oroute`, nesajauciet to ar `omniroute`
+- Ja iepriekš esat izmantojis citu nosaukumu, piemēram, `oroute`, nesajauciet to ar `agentproxy`
 
 ### 4.3 Izveidojiet lietotni
 
 Ja lietotne vēl nepastāv:
 
 ```powershell
-flyctl apps create omniroute
+flyctl apps create agentproxy
 ```
 
-Ja mainījāt lietotnes nosaukumu, aizstājiet `omniroute` ar izvēlēto nosaukumu.
+Ja mainījāt lietotnes nosaukumu, aizstājiet `agentproxy` ar izvēlēto nosaukumu.
 
 ### 4.4 Pirmā izvietošana
 
@@ -145,14 +145,14 @@ flyctl deploy
 
 ### 5.1 Verificēti parametri
 
-Šie parametri ir izmantoti faktiskajās izvietošanās pašreizējā `omniroute` lietotnē:
+Šie parametri ir izmantoti faktiskajās izvietošanās pašreizējā `agentproxy` lietotnē:
 
 - `API_KEY_SECRET`
 - `DATA_DIR`
 - `JWT_SECRET`
 - `MACHINE_ID_SALT`
 - `NEXT_PUBLIC_BASE_URL`
-- `OMNIROUTE_WS_BRIDGE_SECRET` (nepieciešams ražošanā — tiek izmantots WebSocket tilta autentifikācijai)
+- `AGENTPROXY_WS_BRIDGE_SECRET` (nepieciešams ražošanā — tiek izmantots WebSocket tilta autentifikācijai)
 - `STORAGE_ENCRYPTION_KEY`
 
 ### 5.2 Par `INITIAL_PASSWORD`
@@ -178,7 +178,7 @@ Ja vēlaties inicializēt aizmugures parole bez uzraudzības, varat to pievēlā
 | ------------------------------------- | ----------------- | ----------------------------------------------------------- |
 | `API_KEY_SECRET`                      | Obligāti          | Tiek izmantota API atslēgas ģenerēšanai un validācijai      |
 | `JWT_SECRET`                          | Obligāti          | Tiek izmantota pieteikšanās sesijām un JWT parakstīšanai    |
-| `OMNIROUTE_WS_BRIDGE_SECRET`          | Obligāti ražošanā | WebSocket tilta autentifikācijas noslēpums                  |
+| `AGENTPROXY_WS_BRIDGE_SECRET`          | Obligāti ražošanā | WebSocket tilta autentifikācijas noslēpums                  |
 | `STORAGE_ENCRYPTION_KEY`              | Stingri ieteicams | Šifrē sensitīvu savienojuma informāciju miera stāvoklī      |
 | `MACHINE_ID_SALT`                     | Ieteicams         | Ģenerē stabilu mašīnas identifikatoru                       |
 | `INITIAL_PASSWORD`                    | Pēc izvēles       | Iestata sākotnējo aizmugures paroli pirmreizējā deplojēšanā |
@@ -189,7 +189,7 @@ Ja vēlaties inicializēt aizmugures parole bez uzraudzības, varat to pievēlā
 | Mainīgais              | Ieteicamā vērtība           |
 | ---------------------- | --------------------------- |
 | `DATA_DIR`             | `/data`                     |
-| `NEXT_PUBLIC_BASE_URL` | `https://omniroute.fly.dev` |
+| `NEXT_PUBLIC_BASE_URL` | `https://agentproxy.example.com` |
 
 Piezīmes:
 
@@ -203,10 +203,10 @@ Ja jums ir jāaktivē OAuth balstīti pakalpojumu sniedzēji (piemēram, Antigra
 1. **Iestatiet `NEXT_PUBLIC_BASE_URL` uz savu publisko HTTPS domēnu**
 
    ```powershell
-   flyctl secrets set NEXT_PUBLIC_BASE_URL=https://omniroute.fly.dev -a omniroute
+   flyctl secrets set NEXT_PUBLIC_BASE_URL=https://agentproxy.example.com -a agentproxy
    ```
 
-   Ja izmantojat pielāgotu domēnu, aizstājiet to ar atbilstošo domēnu (piemēram, `https://omniroute.yourdomain.com`).
+   Ja izmantojat pielāgotu domēnu, aizstājiet to ar atbilstošo domēnu (piemēram, `https://agentproxy.yourdomain.com`).
 
 2. **Konfigurējiet atzvanīšanas URL pakalpojumu sniedzāja konsolē**
 
@@ -217,7 +217,7 @@ Ja jums ir jāaktivē OAuth balstīti pakalpojumu sniedzēji (piemēram, Antigra
    ```
 
    Piemēram, neatkarīgi no Gemini, Antigravity, Cursor vai GitLab Duo:
-   - `https://omniroute.fly.dev/callback`
+   - `https://agentproxy.example.com/callback`
 
    Ja `NEXT_PUBLIC_BASE_URL` neatbilst pakalpojumu sniedzājam reģistrētajam atzvanīšanas URL, OAuth plūsma neizdosies pārlūka novirzīšanas solī.
 
@@ -230,7 +230,7 @@ Ja jums ir jāaktivē OAuth balstīti pakalpojumu sniedzēji (piemēram, Antigra
 Piezīmes:
 
 - Neietver `INITIAL_PASSWORD`
-- Domāts pašreizējam projektam `omniroute`
+- Domāts pašreizējam projektam `agentproxy`
 
 ```powershell
 $apiKeySecret = [Convert]::ToHexString((1..32 | ForEach-Object { Get-Random -Minimum 0 -Maximum 256 })).ToLower()
@@ -244,26 +244,26 @@ flyctl secrets set `
   JWT_SECRET=$jwtSecret `
   MACHINE_ID_SALT=$machineIdSalt `
   STORAGE_ENCRYPTION_KEY=$storageKey `
-  OMNIROUTE_WS_BRIDGE_SECRET=$wsBridgeSecret `
+  AGENTPROXY_WS_BRIDGE_SECRET=$wsBridgeSecret `
   DATA_DIR=/data `
-  NEXT_PUBLIC_BASE_URL=https://omniroute.fly.dev `
-  -a omniroute
+  NEXT_PUBLIC_BASE_URL=https://agentproxy.example.com `
+  -a agentproxy
 ```
 
 Linux/macOS vidē varat arī izmantot `openssl rand -hex 32`:
 
 ```bash
-flyctl secrets set OMNIROUTE_WS_BRIDGE_SECRET=$(openssl rand -hex 32) -a omniroute
+flyctl secrets set AGENTPROXY_WS_BRIDGE_SECRET=$(openssl rand -hex 32) -a agentproxy
 ```
 
 Piezīmes:
 
-- `OMNIROUTE_WS_BRIDGE_SECRET` ir obligāti ražošanā; tā trūkums pārtrauks WebSocket tilta rokasspiedienu
+- `AGENTPROXY_WS_BRIDGE_SECRET` ir obligāti ražošanā; tā trūkums pārtrauks WebSocket tilta rokasspiedienu
 
 Ja vēlaties arī iestatīt sākotnējo paroli:
 
 ```powershell
-flyctl secrets set INITIAL_PASSWORD=your-strong-password -a omniroute
+flyctl secrets set INITIAL_PASSWORD=your-strong-password -a agentproxy
 ```
 
 ---
@@ -271,12 +271,12 @@ flyctl secrets set INITIAL_PASSWORD=your-strong-password -a omniroute
 ## 8. Pašreizējo parametru skatīšana
 
 ```powershell
-flyctl secrets list -a omniroute
+flyctl secrets list -a agentproxy
 ```
 
 Ja konsoles lapā `Secrets` nav redzami gaidītie mainīgie, pārbaudiet:
 
-- Vai skatāt lietojumprogrammu `omniroute`
+- Vai skatāt lietojumprogrammu `agentproxy`
 - Vai `app` vērtība `fly.toml` failā atbilst konsolei redzamajai lietojumprogrammai
 
 ---
@@ -293,14 +293,14 @@ flyctl deploy
 Ja nepieciešams atjaunināt tikai parametrus, nemainot kodu:
 
 ```powershell
-flyctl secrets set KEY=value -a omniroute
+flyctl secrets set KEY=value -a agentproxy
 ```
 
 Fly automātiski veiks mašīnu rotācijas atjaunināšanu.
 
 ### 9.1 Upstream repozitorija atjauninājumu izsekošana, saglabājot jūsu dakšas `fly.toml`
 
-Ja pašreizējais repozijs ir dakša un vēlaties sinhronizēt atjauninājumus no upstream `https://github.com/diegosouzapw/OmniRoute`, sekojiet zemāk aprakstītajai darbplūsmai.
+Ja pašreizējais repozijs ir dakša un vēlaties sinhronizēt atjauninājumus no upstream `https://github.com/khanhkit/AgentProxy`, sekojiet zemāk aprakstītajai darbplūsmai.
 
 Vispirms pārbaudiet savus attālinātos repozitorijus:
 
@@ -316,7 +316,7 @@ Jums vajadzētu redzēt vismaz:
 Ja `upstream` nav konfigurēts, pievienojiet to:
 
 ```powershell
-git remote add upstream https://github.com/diegosouzapw/OmniRoute.git
+git remote add upstream https://github.com/khanhkit/AgentProxy.git
 ```
 
 Pirms sinhronizēšanas ar upstream, izvelciet jaunākos kommitus un tagus:
@@ -368,8 +368,8 @@ Pēc sinhronizēšanas ar sākotnējo repozitoriju, sekojiet šim ieteicamajam l
 3. Atjaunojiet dakšas `fly.toml`
 4. `git push origin main`
 5. `flyctl deploy`
-6. `flyctl status -a omniroute`
-7. `flyctl logs --no-tail -a omniroute`
+6. `flyctl status -a agentproxy`
+7. `flyctl logs --no-tail -a agentproxy`
 
 Šī ir faktiskā darbplūsma, ko izmantoja, atjauninot pašreizējo projektu līdz `v3.4.7` (piemērs attiecas uz vēsturisku versiju; pašreizējā faktiskā versija ir `v3.8.0`).
 
@@ -380,20 +380,20 @@ Pēc sinhronizēšanas ar sākotnējo repozitoriju, sekojiet šim ieteicamajam l
 ### 10.1 Pārbaudīt Lietojumprogrammas Statusu
 
 ```powershell
-flyctl status -a omniroute
+flyctl status -a agentproxy
 ```
 
 ### 10.2 Skatīt Startēšanas Žurnālus
 
 ```powershell
-flyctl logs --no-tail -a omniroute
+flyctl logs --no-tail -a agentproxy
 ```
 
 ### 10.3 Pārbaudīt Vietnes Pieejamību
 
 ```powershell
 try {
-  (Invoke-WebRequest -Uri "https://omniroute.fly.dev" -MaximumRedirection 5 -UseBasicParsing).StatusCode
+  (Invoke-WebRequest -Uri "https://agentproxy.example.com" -MaximumRedirection 5 -UseBasicParsing).StatusCode
 } catch {
   if ($_.Exception.Response) {
     $_.Exception.Response.StatusCode.value__
@@ -432,14 +432,14 @@ Ja redzat `/app/data/...` vietā, `DATA_DIR` ir nepareizi konfigurēts, un tas n
 Parasti ir divi iemesli:
 
 - Vēl neesat izpildījis `flyctl secrets set`
-- Skatāties citu lietojumprogrammu (piem., `oroute` vietā `omniroute`)
+- Skatāties citu lietojumprogrammu (piem., `oroute` vietā `agentproxy`)
 
 ### 12.2 `flyctl deploy` ziņo `app not found`
 
 Vispirms izveidojiet lietojumprogrammu:
 
 ```powershell
-flyctl apps create omniroute
+flyctl apps create agentproxy
 ```
 
 ### 12.3 `fly.toml` parsēšana neizdodas
@@ -482,10 +482,10 @@ Visbiežāk izmantotās komandas turpmākām izlaidēm ir:
 
 ```powershell
 flyctl auth whoami
-flyctl status -a omniroute
-flyctl secrets list -a omniroute
+flyctl status -a agentproxy
+flyctl secrets list -a agentproxy
 flyctl deploy
-flyctl logs --no-tail -a omniroute
+flyctl logs --no-tail -a agentproxy
 ```
 
 Parastai izlaidumai galvenā komanda ir vienkārši:
@@ -497,7 +497,7 @@ flyctl deploy
 Pirmajai ieviešanai jaunā vidē galvenie soļi ir:
 
 1. `flyctl auth login`
-2. `flyctl apps create omniroute`
-3. `flyctl secrets set ... -a omniroute`
+2. `flyctl apps create agentproxy`
+3. `flyctl secrets set ... -a agentproxy`
 4. `flyctl deploy`
-5. `flyctl logs --no-tail -a omniroute`
+5. `flyctl logs --no-tail -a agentproxy`

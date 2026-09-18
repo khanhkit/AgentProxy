@@ -8,10 +8,10 @@ import path from "node:path";
 
 const execFileAsync = promisify(execFile);
 const repoRoot = path.resolve(import.meta.dirname, "../../..");
-const cliPath = path.join(repoRoot, "bin", "omniroute.mjs");
+const cliPath = path.join(repoRoot, "bin", "agentproxy.mjs");
 
 test("#12407: config set claude preserves existing settings and writes Claude Code env keys", async () => {
-  const home = await fs.mkdtemp(path.join(os.tmpdir(), "omniroute-claude-config-"));
+  const home = await fs.mkdtemp(path.join(os.tmpdir(), "agentproxy-claude-config-"));
   try {
     const settingsPath = path.join(home, ".claude", "settings.json");
     await fs.mkdir(path.dirname(settingsPath), { recursive: true });
@@ -22,7 +22,7 @@ test("#12407: config set claude preserves existing settings and writes Claude Co
           model: "existing-model",
           effortLevel: "high",
           hooks: { PreToolUse: [{ command: "echo keep" }] },
-          statusLine: { type: "command", command: "omniroute status" },
+          statusLine: { type: "command", command: "agentproxy status" },
           env: { KEEP_ME: "1", ANTHROPIC_BASE_URL: "http://old" },
         },
         null,
@@ -49,8 +49,8 @@ test("#12407: config set claude preserves existing settings and writes Claude Co
           ...process.env,
           HOME: home,
           USERPROFILE: home,
-          OMNIROUTE_API_KEY: "sk_test_12407",
-          OMNIROUTE_BASE_URL: "http://localhost:20128/v1",
+          AGENTPROXY_API_KEY: "sk_test_12407",
+          AGENTPROXY_BASE_URL: "http://localhost:20128/v1",
         },
         timeout: 30_000,
       }
@@ -62,7 +62,7 @@ test("#12407: config set claude preserves existing settings and writes Claude Co
     assert.equal(written.model, "claude-fallback");
     assert.equal(written.effortLevel, "high");
     assert.deepEqual(written.hooks, { PreToolUse: [{ command: "echo keep" }] });
-    assert.deepEqual(written.statusLine, { type: "command", command: "omniroute status" });
+    assert.deepEqual(written.statusLine, { type: "command", command: "agentproxy status" });
     assert.equal(written.env.KEEP_ME, "1");
     assert.equal(written.env.ANTHROPIC_BASE_URL, "http://localhost:20128");
     assert.equal(written.env.ANTHROPIC_AUTH_TOKEN, "sk_test_12407");

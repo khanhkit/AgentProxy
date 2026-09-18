@@ -1,3 +1,7 @@
+---
+title: "Rust Safe Upstream Response Headers"
+---
+
 # Rust Safe Upstream Response Headers
 
 AP-ISS-0088 defines the metadata that the Rust native Codex path may copy from an upstream provider response to the downstream client.

@@ -6,7 +6,7 @@ import assert from "node:assert/strict";
 // Upstream ships ONE model id (`glm-5.3`) — effort is a request parameter
 // (`reasoning_effort`: low|high|max, default max) on the coding chat/completions
 // endpoint, and `thinking.type: "disabled"` is rejected (converted to low by the
-// coding endpoint). OmniRoute keeps the GLM-5.2 tier UX: `glm-5.3-high` /
+// coding endpoint). AgentProxy keeps the GLM-5.2 tier UX: `glm-5.3-high` /
 // `glm-5.3-low` pseudo-ids resolved by the GlmExecutor only. Base `glm-5.3` uses
 // the upstream default (max). Unlike the 5.2 tiers (Anthropic-transport effort
 // beta header), the 5.3 tiers use the documented `reasoning_effort` param on the

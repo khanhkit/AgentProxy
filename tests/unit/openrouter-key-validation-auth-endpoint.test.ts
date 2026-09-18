@@ -104,7 +104,7 @@ describe("openrouter registry — authenticated key-validation endpoint (#11226)
   });
 });
 
-describe("omniroute providers test — openrouter probe (#11226)", () => {
+describe("agentproxy providers test — openrouter probe (#11226)", () => {
   it("marks a bad key INVALID even though the public /models endpoint answers 200", async () => {
     const stub = stubRealOpenRouter();
     try {

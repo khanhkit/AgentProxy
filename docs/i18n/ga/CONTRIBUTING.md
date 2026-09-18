@@ -1,4 +1,4 @@
-# Contributing to OmniRoute (Gaeilge)
+# Contributing to AgentProxy (Gaeilge)
 
 🌐 **Languages:** 🇺🇸 [English](../../../CONTRIBUTING.md) · 🇸🇦 [ar](../ar/CONTRIBUTING.md) · 🇦🇿 [az](../az/CONTRIBUTING.md) · 🇧🇬 [bg](../bg/CONTRIBUTING.md) · 🇧🇩 [bn](../bn/CONTRIBUTING.md) · 🇨🇿 [cs](../cs/CONTRIBUTING.md) · 🇩🇰 [da](../da/CONTRIBUTING.md) · 🇩🇪 [de](../de/CONTRIBUTING.md) · 🇬🇷 [el](../el/CONTRIBUTING.md) · 🇪🇸 [es](../es/CONTRIBUTING.md) · 🇪🇪 [et](../et/CONTRIBUTING.md) · 🇮🇷 [fa](../fa/CONTRIBUTING.md) · 🇫🇮 [fi](../fi/CONTRIBUTING.md) · 🇫🇷 [fr](../fr/CONTRIBUTING.md) · 🇮🇳 [gu](../gu/CONTRIBUTING.md) · 🇮🇱 [he](../he/CONTRIBUTING.md) · 🇮🇳 [hi](../hi/CONTRIBUTING.md) · 🇭🇷 [hr](../hr/CONTRIBUTING.md) · 🇭🇺 [hu](../hu/CONTRIBUTING.md) · 🇮🇩 [id](../id/CONTRIBUTING.md) · 🇮🇹 [it](../it/CONTRIBUTING.md) · 🇯🇵 [ja](../ja/CONTRIBUTING.md) · 🇰🇷 [ko](../ko/CONTRIBUTING.md) · 🇱🇹 [lt](../lt/CONTRIBUTING.md) · 🇱🇻 [lv](../lv/CONTRIBUTING.md) · 🇮🇳 [mr](../mr/CONTRIBUTING.md) · 🇲🇾 [ms](../ms/CONTRIBUTING.md) · 🇲🇹 [mt](../mt/CONTRIBUTING.md) · 🇳🇱 [nl](../nl/CONTRIBUTING.md) · 🇳🇴 [no](../no/CONTRIBUTING.md) · 🇵🇭 [phi](../phi/CONTRIBUTING.md) · 🇵🇱 [pl](../pl/CONTRIBUTING.md) · 🇵🇹 [pt](../pt/CONTRIBUTING.md) · 🇧🇷 [pt-BR](../pt-BR/CONTRIBUTING.md) · 🇷🇴 [ro](../ro/CONTRIBUTING.md) · 🇷🇺 [ru](../ru/CONTRIBUTING.md) · 🇸🇰 [sk](../sk/CONTRIBUTING.md) · 🇸🇮 [sl](../sl/CONTRIBUTING.md) · 🇷🇸 [sr](../sr/CONTRIBUTING.md) · 🇸🇪 [sv](../sv/CONTRIBUTING.md) · 🇰🇪 [sw](../sw/CONTRIBUTING.md) · 🇮🇳 [ta](../ta/CONTRIBUTING.md) · 🇮🇳 [te](../te/CONTRIBUTING.md) · 🇹🇭 [th](../th/CONTRIBUTING.md) · 🇹🇷 [tr](../tr/CONTRIBUTING.md) · 🇺🇦 [uk-UA](../uk-UA/CONTRIBUTING.md) · 🇵🇰 [ur](../ur/CONTRIBUTING.md) · 🇻🇳 [vi](../vi/CONTRIBUTING.md) · 🇨🇳 [zh-CN](../zh-CN/CONTRIBUTING.md) · 🇹🇼 [zh-TW](../zh-TW/CONTRIBUTING.md)
 
@@ -28,8 +28,8 @@ Chun an sreabhadh oibre oifigiúil in aghaidh an athróra, tosaigh leis an
 ### Clónáil agus Suiteáil
 
 ```bash
-git clone https://github.com/diegosouzapw/OmniRoute.git
-cd OmniRoute
+git clone https://github.com/khanhkit/AgentProxy.git
+cd AgentProxy
 npm install
 ```
 
@@ -109,7 +109,7 @@ Ní mhaolann `npm run build:release` an dá chomhadlann ar dtús agus scríobhan
 
 Úsáideann `npm run build:comhoibriúcháin` prófíl tógála cúltaca-amháin. Stubsann sé comhaid chomhéadan deais go sealadach agus é ag tógáil, coinníonn sé lámh-chóireálaithe ruteála API, agus athshuiteálann sé na bunaidh comhaid tar éis na tógála. Úsáid `npm run build` le haghaidh athruithe a théann i bhfeidhm ar chomhéadan an deais nó le haghaidh bailíochtú scaoilte iomlán; ní ionadaíonn próifíl an rannpháirtithe don tógáil scaoilte.
 
-> **Nóta sábhála VPS:** ní athraítear an chomhadlann íomhá iargháltach `/usr/lib/node_modules/omniroute/app/`.
+> **Nóta sábhála VPS:** ní athraítear an chomhadlann íomhá iargháltach `/usr/lib/node_modules/agentproxy/app/`.
 > Seolann na scileanna sábhála ábhar `dist/` isteach ann le rsync.
 > D'aistrigh cosán aschur na tógála sa stór amháin (`app/` → `dist/`).
 
@@ -299,7 +299,7 @@ src/                        # TypeScript (.ts / .tsx)
 │   └── validation/         # Scéimeanna Zod v4
 └── sse/                    # Píblíne seachfhreastalaí SSE
 
-open-sse/                   # @omniroute/open-sse spás oibre
+open-sse/                   # @agentproxy/open-sse spás oibre
 ├── executors/              # 89 modúl feidhmitheora
 ├── handlers/               # 11 láimhseálaí iarratais (comhrá, freagraí, leabú, íomhánna, srl.)
 ├── mcp-server/             # Freastalaí MCP (110 uirlis uathúla, 3 iompar, 33 scóip)
@@ -321,7 +321,7 @@ tests/
 docs/
 ├── adr/                     # Taifid Chinntí Ailtireachta
 ├── architecture/            # Ailtireacht chórais & athléimneacht
-├── comparison/              # OmniRoute vs roghanna eile
+├── comparison/              # AgentProxy vs roghanna eile
 ├── compression/             # Treoracha & rialacha comhbhrú
 ├── dev/                     # Treoracha forbartha
 ├── diagrams/                # Léaráidí ailtireachta
@@ -408,5 +408,5 @@ Le haghaidh imscaradh VPS, bain úsáid as `npm run build:release` (ní `npm run
 - **Tagairt API**: Féach [`docs/reference/API_REFERENCE.md`](docs/reference/API_REFERENCE.md)
 - **Doiciméid slándála**: [`docs/security/CLI_TOKEN.md`](docs/security/CLI_TOKEN.md), [`docs/security/ROUTE_GUARD_TIERS.md`](docs/security/ROUTE_GUARD_TIERS.md), [`docs/security/ERROR_SANITIZATION.md`](docs/security/ERROR_SANITIZATION.md), [`docs/security/PUBLIC_CREDS.md`](docs/security/PUBLIC_CREDS.md)
 - **Doiciméid oibriúcháin**: [`docs/ops/SQLITE_RUNTIME.md`](docs/ops/SQLITE_RUNTIME.md)
-- **Saincheisteanna**: [github.com/diegosouzapw/OmniRoute/issues](https://github.com/diegosouzapw/OmniRoute/issues)
+- **Saincheisteanna**: [github.com/khanhkit/AgentProxy/issues](https://github.com/khanhkit/AgentProxy/issues)
 - **ADRs**: Féach `docs/adr/` le haghaidh taifid chinntí ailtireachta

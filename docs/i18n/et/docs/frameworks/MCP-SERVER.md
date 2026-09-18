@@ -6,30 +6,30 @@
 
 ---
 
-title: "OmniRoute MCP serveri dokumentatsioon"
+title: "AgentProxy MCP serveri dokumentatsioon"
 version: 3.8.50
 lastUpdated: 2026-08-08
 ---
 
-# OmniRoute MCP serveri dokumentatsioon
+# AgentProxy MCP serveri dokumentatsioon
 
 > Model Context Protocol server 110 tööriistaga, mis hõlmavad ruutimist, vahemälu, tihendamist, mälu, oskuseid, puhverserverit, basseini, Radari ja kontekstiallika toiminguid.
 >
-> Tõe allikas: `open-sse/mcp-server/server.ts` arvutab välja **110 unikaalset tööriista**, kasutades funktsiooni `countUniqueMcpTools()`: 45 kanoonilist definitsiooni (kaasa arvatud kuus CCR eluringi tööriista, agendi oskuste kolmik, `omniroute_radar_catalog` ja `omniroute_x_search`), pluss mälu (3), oskused (4), GitHubi oskused (3), bassein (6), gamifikatsioon (8), pluginad (8), Notion (6), Obsidian (22), lokaalne korpus (3) ja kaks ainult RTK-le kuuluvat tihendustööriista.
+> Tõe allikas: `open-sse/mcp-server/server.ts` arvutab välja **110 unikaalset tööriista**, kasutades funktsiooni `countUniqueMcpTools()`: 45 kanoonilist definitsiooni (kaasa arvatud kuus CCR eluringi tööriista, agendi oskuste kolmik, `agentproxy_radar_catalog` ja `agentproxy_x_search`), pluss mälu (3), oskused (4), GitHubi oskused (3), bassein (6), gamifikatsioon (8), pluginad (8), Notion (6), Obsidian (22), lokaalne korpus (3) ja kaks ainult RTK-le kuuluvat tihendustööriista.
 
 ## Paigaldamine
 
-OmniRoute MCP on sisseehitatud. Käivita see käsuga:
+AgentProxy MCP on sisseehitatud. Käivita see käsuga:
 
 ```bash
-omniroute --mcp
+agentproxy --mcp
 ```
 
 Või open-sse transpordi kaudu:
 
 ```bash
 # HTTP voogesitatav transport (port 20130)
-omniroute --dev  # MCP käivitub automaatselt /mcp lõpp-punktis
+agentproxy --dev  # MCP käivitub automaatselt /mcp lõpp-punktis
 ```
 
 ## Transpordid
@@ -75,61 +75,61 @@ Cursor, Cline ja ühilduvate MCP klientide seadistamiseks.
 
 | Tööriist                        | Õigused               | Kirjeldus                                                                                                                  |
 | :------------------------------ | :-------------------- | :------------------------------------------------------------------------------------------------------------------------- |
-| `omniroute_get_health`          | `read:health`         | Tööaeg, mälu, katkestuslülitid (circuit breakers), kiiruspiirangud, vahemälu statistika                                    |
-| `omniroute_list_combos`         | `read:combos`         | Kõik seadistatud kombod koos strateegiatega (valikuline mõõdikud)                                                          |
-| `omniroute_get_combo_metrics`   | `read:combos`         | Konkreetse kombo jõudlusmõõdikud                                                                                           |
-| `omniroute_switch_combo`        | `write:combos`        | Kombo aktiveerimine või deaktiveerimine                                                                                    |
-| `omniroute_create_combo`        | `write:combos`        | Kinnitatud kombo loomine olemasoleva kombo API kaudu                                                                       |
-| `omniroute_check_quota`         | `read:quota`          | Kasutatud/koguhulk kvoot, protsent järelejäänud, taaskäivituse aeg, tokeni tervis                                          |
-| `omniroute_route_request`       | `execute:completions` | Vestluse lõpetamise (chat completion) päringu saatmine läbi OmniRoute suunamise                                            |
-| `omniroute_cost_report`         | `read:usage`          | Kuluaruanne perioodi kaupa (seanss/päev/nädal/kuu)                                                                         |
-| `omniroute_list_models_catalog` | `read:models`         | Täielik mudelikataloog koos võimaluste, olekute ja hindadega                                                               |
-| `omniroute_radar_catalog`       | `read:radar`          | Lokaalne allkirjastatud Radar kataloog; valikulised pakkuja/perekonna filtrid                                              |
-| `omniroute_tool_search`         | `read:tools`          | Tööriistade avastamine registreeritud MCP kataloogist                                                                      |
-| `omniroute_web_search`          | `execute:search`      | Veebiotsing seadistatud otsingupakkujate kaudu. Ei hõlma X/Twitterit.                                                      |
-| `omniroute_x_search`            | `execute:search`      | X-i otsimine xAI/SuperGrok kaudu, või vali `xquik-search` Xquik API tulemuste jaoks. Vajab valitud tagaosa jaoks mandaate. |
-| `omniroute_web_fetch`           | `execute:search`      | Veebisisu toomine seadistatud toomispakkujate kaudu                                                                        |
+| `agentproxy_get_health`          | `read:health`         | Tööaeg, mälu, katkestuslülitid (circuit breakers), kiiruspiirangud, vahemälu statistika                                    |
+| `agentproxy_list_combos`         | `read:combos`         | Kõik seadistatud kombod koos strateegiatega (valikuline mõõdikud)                                                          |
+| `agentproxy_get_combo_metrics`   | `read:combos`         | Konkreetse kombo jõudlusmõõdikud                                                                                           |
+| `agentproxy_switch_combo`        | `write:combos`        | Kombo aktiveerimine või deaktiveerimine                                                                                    |
+| `agentproxy_create_combo`        | `write:combos`        | Kinnitatud kombo loomine olemasoleva kombo API kaudu                                                                       |
+| `agentproxy_check_quota`         | `read:quota`          | Kasutatud/koguhulk kvoot, protsent järelejäänud, taaskäivituse aeg, tokeni tervis                                          |
+| `agentproxy_route_request`       | `execute:completions` | Vestluse lõpetamise (chat completion) päringu saatmine läbi AgentProxy suunamise                                            |
+| `agentproxy_cost_report`         | `read:usage`          | Kuluaruanne perioodi kaupa (seanss/päev/nädal/kuu)                                                                         |
+| `agentproxy_list_models_catalog` | `read:models`         | Täielik mudelikataloog koos võimaluste, olekute ja hindadega                                                               |
+| `agentproxy_radar_catalog`       | `read:radar`          | Lokaalne allkirjastatud Radar kataloog; valikulised pakkuja/perekonna filtrid                                              |
+| `agentproxy_tool_search`         | `read:tools`          | Tööriistade avastamine registreeritud MCP kataloogist                                                                      |
+| `agentproxy_web_search`          | `execute:search`      | Veebiotsing seadistatud otsingupakkujate kaudu. Ei hõlma X/Twitterit.                                                      |
+| `agentproxy_x_search`            | `execute:search`      | X-i otsimine xAI/SuperGrok kaudu, või vali `xquik-search` Xquik API tulemuste jaoks. Vajab valitud tagaosa jaoks mandaate. |
+| `agentproxy_web_fetch`           | `execute:search`      | Veebisisu toomine seadistatud toomispakkujate kaudu                                                                        |
 
 ## Täiustatud tööriistad (11) — Faas 2
 
 | Tööriist                           | Õigused                              | Kirjeldus                                                                                                        |
 | :--------------------------------- | :----------------------------------- | :--------------------------------------------------------------------------------------------------------------- |
-| `omniroute_simulate_route`         | `read:health`, `read:combos`         | Kuivkäivituse ruutimissimulatsioon koos varuahelaga (fallback tree)                                              |
-| `omniroute_set_budget_guard`       | `write:budget`                       | Seansi eelarvekaitse degradeerimis-/blokeerimis-/hoiatustegevusega                                               |
-| `omniroute_set_routing_strategy`   | `write:combos`                       | Kombo strateegia värskendamine käitusajal (priority/weighted/auto/jne.)                                          |
-| `omniroute_set_resilience_profile` | `write:resilience`                   | `aggressive` / `balanced` / `conservative` vastupidavuse eelseadistuse rakendamine                               |
-| `omniroute_test_combo`             | `execute:completions`, `read:combos` | Kombo kõikide pakkujate reaalajaline testimine tegeliku ülesvoolu (upstream) kõne abil                           |
-| `omniroute_get_provider_metrics`   | `read:health`                        | Pakkuja-põhised meetrikud koos p50/p95/p99 latentsuse ja katkestaja (circuit breaker) olekuga                    |
-| `omniroute_best_combo_for_task`    | `read:combos`, `read:health`         | Kombo soovitus ülesande tüübi järgi eelarve/latentsuse piirangutega                                              |
-| `omniroute_explain_route`          | `read:health`, `read:usage`          | Selgitab, miks päring suunati konkreetsele pakkujale (skoorimistegurid + varuvõimalused)                         |
-| `omniroute_get_session_snapshot`   | `read:usage`                         | Täielik seansi ülevaade: maksumus, tokenid, populaarsemad mudelid/pakkujad, vead, eelarvekaitse                  |
-| `omniroute_db_health_check`        | `read:health`, `write:resilience`    | Diagnoosib (ja soovi korral parandab automaatselt) andmebaasi nihkeid, nagu katkised kombo-viited / orbrittiread |
-| `omniroute_sync_pricing`           | `pricing:write`                      | Sünkroonib hinnaandmed välistest allikatest (LiteLLM); toetab `dryRun`                                           |
+| `agentproxy_simulate_route`         | `read:health`, `read:combos`         | Kuivkäivituse ruutimissimulatsioon koos varuahelaga (fallback tree)                                              |
+| `agentproxy_set_budget_guard`       | `write:budget`                       | Seansi eelarvekaitse degradeerimis-/blokeerimis-/hoiatustegevusega                                               |
+| `agentproxy_set_routing_strategy`   | `write:combos`                       | Kombo strateegia värskendamine käitusajal (priority/weighted/auto/jne.)                                          |
+| `agentproxy_set_resilience_profile` | `write:resilience`                   | `aggressive` / `balanced` / `conservative` vastupidavuse eelseadistuse rakendamine                               |
+| `agentproxy_test_combo`             | `execute:completions`, `read:combos` | Kombo kõikide pakkujate reaalajaline testimine tegeliku ülesvoolu (upstream) kõne abil                           |
+| `agentproxy_get_provider_metrics`   | `read:health`                        | Pakkuja-põhised meetrikud koos p50/p95/p99 latentsuse ja katkestaja (circuit breaker) olekuga                    |
+| `agentproxy_best_combo_for_task`    | `read:combos`, `read:health`         | Kombo soovitus ülesande tüübi järgi eelarve/latentsuse piirangutega                                              |
+| `agentproxy_explain_route`          | `read:health`, `read:usage`          | Selgitab, miks päring suunati konkreetsele pakkujale (skoorimistegurid + varuvõimalused)                         |
+| `agentproxy_get_session_snapshot`   | `read:usage`                         | Täielik seansi ülevaade: maksumus, tokenid, populaarsemad mudelid/pakkujad, vead, eelarvekaitse                  |
+| `agentproxy_db_health_check`        | `read:health`, `write:resilience`    | Diagnoosib (ja soovi korral parandab automaatselt) andmebaasi nihkeid, nagu katkised kombo-viited / orbrittiread |
+| `agentproxy_sync_pricing`           | `pricing:write`                      | Sünkroonib hinnaandmed välistest allikatest (LiteLLM); toetab `dryRun`                                           |
 
 ## Vahemälu tööriistad (2)
 
 | Tööriist                | Õigused       | Kirjeldus                                                        |
 | :---------------------- | :------------ | :--------------------------------------------------------------- |
-| `omniroute_cache_stats` | `read:cache`  | Semantilise vahemälu, viipavahemälu ja idempotentsuse statistika |
-| `omniroute_cache_flush` | `write:cache` | Vahemälu tühjendamine globaalselt või signatuuri/mudeli järgi    |
+| `agentproxy_cache_stats` | `read:cache`  | Semantilise vahemälu, viipavahemälu ja idempotentsuse statistika |
+| `agentproxy_cache_flush` | `write:cache` | Vahemälu tühjendamine globaalselt või signatuuri/mudeli järgi    |
 
 ## Tihendamise tööriistad (13)
 
 | Tööriist                            | Õigused             | Kirjeldus                                                                                                                            |
 | :---------------------------------- | :------------------ | :----------------------------------------------------------------------------------------------------------------------------------- |
-| `omniroute_compression_status`      | `read:compression`  | Tihendamise seaded, analüütika kokkuvõte ja vahemälu-teadlik statistika (sisaldab `analytics.mcpDescriptionCompression` metaandmeid) |
-| `omniroute_compression_configure`   | `write:compression` | Konfigureerib tihendusrežiimi, läve, sihttihendussuhte, süsteemiviipa säilitamise, MCP kirjelduse tihenduse lüliti                   |
-| `omniroute_set_compression_engine`  | `write:compression` | Aktiivse mootori valik (off/caveman/rtk/stacked) ja Caveman/RTK intensiivsus                                                         |
-| `omniroute_list_compression_combos` | `read:compression`  | Loetleb nimetatud tihenduskombod ja nende mootorite töövood                                                                          |
-| `omniroute_compression_combo_stats` | `read:compression`  | Analüütika, mis on grupeeritud tihenduskombo ja mootori järgi                                                                        |
-| `omniroute_ccr_store`               | `write:compression` | Salvestab kutsuja-isoleeritud sisu piiratud mahulise mällu sees olevasse CCR-hoidlasse ja tagastab markeri koos `ccr://` viitega     |
-| `omniroute_ccr_retrieve`            | `read:compression`  | Toob CCR sisu tervikuna või päise, saba, ridade, grep- ja statistikarežiimides                                                       |
-| `omniroute_ccr_inspect`             | `read:compression`  | Vaatab kutsujale kuuluvaid CCR metaandmeid, tagastamata sisu                                                                         |
-| `omniroute_ccr_list`                | `read:compression`  | Loetleb kutsujale kuuluvate CCR-plokkide metaandmed lehekülgede kaupa                                                                |
-| `omniroute_ccr_delete`              | `write:compression` | Kustutab kutsujale kuuluva CCR-ploki                                                                                                 |
-| `omniroute_ccr_stats`               | `read:compression`  | Annab teada kutsuja-põhise mälukasutuse, elutsükli loendurid ja hoidla piirangud                                                     |
-| `omniroute_rtk_discover`            | `read:compression`  | Avastab korduvat müra vabatahtlikult esitatud RTK väljundnäidistest                                                                  |
-| `omniroute_rtk_learn`               | `read:compression`  | Loob ülevaatamiseks mõeldud RTK filtri mustandi vabatahtlikult esitatud näidistest                                                   |
+| `agentproxy_compression_status`      | `read:compression`  | Tihendamise seaded, analüütika kokkuvõte ja vahemälu-teadlik statistika (sisaldab `analytics.mcpDescriptionCompression` metaandmeid) |
+| `agentproxy_compression_configure`   | `write:compression` | Konfigureerib tihendusrežiimi, läve, sihttihendussuhte, süsteemiviipa säilitamise, MCP kirjelduse tihenduse lüliti                   |
+| `agentproxy_set_compression_engine`  | `write:compression` | Aktiivse mootori valik (off/caveman/rtk/stacked) ja Caveman/RTK intensiivsus                                                         |
+| `agentproxy_list_compression_combos` | `read:compression`  | Loetleb nimetatud tihenduskombod ja nende mootorite töövood                                                                          |
+| `agentproxy_compression_combo_stats` | `read:compression`  | Analüütika, mis on grupeeritud tihenduskombo ja mootori järgi                                                                        |
+| `agentproxy_ccr_store`               | `write:compression` | Salvestab kutsuja-isoleeritud sisu piiratud mahulise mällu sees olevasse CCR-hoidlasse ja tagastab markeri koos `ccr://` viitega     |
+| `agentproxy_ccr_retrieve`            | `read:compression`  | Toob CCR sisu tervikuna või päise, saba, ridade, grep- ja statistikarežiimides                                                       |
+| `agentproxy_ccr_inspect`             | `read:compression`  | Vaatab kutsujale kuuluvaid CCR metaandmeid, tagastamata sisu                                                                         |
+| `agentproxy_ccr_list`                | `read:compression`  | Loetleb kutsujale kuuluvate CCR-plokkide metaandmed lehekülgede kaupa                                                                |
+| `agentproxy_ccr_delete`              | `write:compression` | Kustutab kutsujale kuuluva CCR-ploki                                                                                                 |
+| `agentproxy_ccr_stats`               | `read:compression`  | Annab teada kutsuja-põhise mälukasutuse, elutsükli loendurid ja hoidla piirangud                                                     |
+| `agentproxy_rtk_discover`            | `read:compression`  | Avastab korduvat müra vabatahtlikult esitatud RTK väljundnäidistest                                                                  |
+| `agentproxy_rtk_learn`               | `read:compression`  | Loob ülevaatamiseks mõeldud RTK filtri mustandi vabatahtlikult esitatud näidistest                                                   |
 
 CCR kirjed asuvad ainult mälus ja kaovad taaskäivitamisel. Iga plokk on piiratud 2 MiB-ga, iga
 printsiip 16 MiB-ga ja globaalne hoidla 64 MiB-ga. Kirjete vaikimisi eluiga (TTL) on 24 tundi (maksimaalselt
@@ -137,14 +137,14 @@ seitse päeva). Täielik MCP toomine on piiratud 256 KiB-ga; suuremad plokid jä
 piiratud vahemiku ja grep-režiimide kaudu. Salvestamine, toomine, loetlemine, kontrollimine, kustutamine ja statistika on
 isoleeritud autenditud API-võtme printsiibi järgi. Auditkirjed sisaldavad räsisid ja suurusandmeid, mitte kunagi sisu.
 
-`omniroute_compression_status` esitab MCP kirjelduse tihenduse eraldi
+`agentproxy_compression_status` esitab MCP kirjelduse tihenduse eraldi
 `analytics.mcpDescriptionCompression` all. Need väärtused on metaandmete suuruse hinnangud MCP loetletavate
 kirjelduste jaoks (`tools`, `prompts`, `resources` ja `resourceTemplates`); need ei ole pakkuja kasutuse
 kviitungid ja on märgistatud kui `source: "mcp_metadata_estimate"`.
 
 ### MCP ligipääsetavuspuu filter (v3.8.0)
 
-Eraldiseisvalt ülalkirjeldatud tihendustööriistadest sisaldab OmniRoute käitusjärgset filtrit, mis
+Eraldiseisvalt ülalkirjeldatud tihendustööriistadest sisaldab AgentProxy käitusjärgset filtrit, mis
 tihendab MCP brauseri/ligipääsetavuse tööriistade **tulemusi** enne nende tagastamist agendile. See
 filter ei ole iseenesest tööriist — see töötab läbipaistvalt igal tööriistatulemusel, mis sisaldab
 paljusõnalist ligipääsetavuspuu- või brauserimomenttõmmise teksti (≥2000 tähemärki).
@@ -167,9 +167,9 @@ mõista neid tööriistu toetavat käitusaegset tihendusmudelit.
 
 | Tööriist                    | Ulatused       | Kirjeldus                                                                                      |
 | :-------------------------- | :------------- | :--------------------------------------------------------------------------------------------- |
-| `omniroute_oneproxy_fetch`  | `read:proxies` | Toob tasuta puhverserverid 1proxy turuplatsist (protokolli/riigi/kvaliteedi/limiidi filtrid)   |
-| `omniroute_oneproxy_rotate` | `read:proxies` | Toob järgmise saadaoleva puhverserveri strateegia (`random` / `quality` / `sequential`) alusel |
-| `omniroute_oneproxy_stats`  | `read:proxies` | Pooli statistika, sünkroonimise olek, jaotus protokolli ja riigi kaupa                         |
+| `agentproxy_oneproxy_fetch`  | `read:proxies` | Toob tasuta puhverserverid 1proxy turuplatsist (protokolli/riigi/kvaliteedi/limiidi filtrid)   |
+| `agentproxy_oneproxy_rotate` | `read:proxies` | Toob järgmise saadaoleva puhverserveri strateegia (`random` / `quality` / `sequential`) alusel |
+| `agentproxy_oneproxy_stats`  | `read:proxies` | Pooli statistika, sünkroonimise olek, jaotus protokolli ja riigi kaupa                         |
 
 ## Mälu tööriistad (3)
 
@@ -177,9 +177,9 @@ Defineeritud failis `open-sse/mcp-server/tools/memoryTools.ts`. Autentimine/ulat
 
 | Tööriist                  | Ulatused       | Kirjeldus                                                                                       |
 | :------------------------ | :------------- | :---------------------------------------------------------------------------------------------- |
-| `omniroute_memory_search` | `read:memory`  | Otsi mälukirjeid päringu / tüübi / API-võtme alusel, jõustades märgieelarve (token-budget)      |
-| `omniroute_memory_add`    | `write:memory` | Lisa uus mälukirje (`factual` / `episodic` / `procedural` / `semantic`)                         |
-| `omniroute_memory_clear`  | `write:memory` | Kustuta API-võtme mälukirjed, valikuliselt filtreerituna tüübi või `olderThan` ajatempli alusel |
+| `agentproxy_memory_search` | `read:memory`  | Otsi mälukirjeid päringu / tüübi / API-võtme alusel, jõustades märgieelarve (token-budget)      |
+| `agentproxy_memory_add`    | `write:memory` | Lisa uus mälukirje (`factual` / `episodic` / `procedural` / `semantic`)                         |
+| `agentproxy_memory_clear`  | `write:memory` | Kustuta API-võtme mälukirjed, valikuliselt filtreerituna tüübi või `olderThan` ajatempli alusel |
 
 ## Oskuste tööriistad (4)
 
@@ -187,10 +187,10 @@ Defineeritud failis `open-sse/mcp-server/tools/skillTools.ts`. Toetub `src/lib/s
 
 | Tööriist                      | Ulatused         | Kirjeldus                                                                                          |
 | :---------------------------- | :--------------- | :------------------------------------------------------------------------------------------------- |
-| `omniroute_skills_list`       | `read:skills`    | Loetle registreeritud oskused, valikuliselt filtreerituna API-võtme, nime või lubatud oleku alusel |
-| `omniroute_skills_enable`     | `write:skills`   | Luba või keela konkreetne oskus ID alusel                                                          |
-| `omniroute_skills_execute`    | `execute:skills` | Käivita oskus etteantud sisendiga ja tagasta täitmise kirje                                        |
-| `omniroute_skills_executions` | `read:skills`    | Loetle viimane oskuste täitmise ajalugu                                                            |
+| `agentproxy_skills_list`       | `read:skills`    | Loetle registreeritud oskused, valikuliselt filtreerituna API-võtme, nime või lubatud oleku alusel |
+| `agentproxy_skills_enable`     | `write:skills`   | Luba või keela konkreetne oskus ID alusel                                                          |
+| `agentproxy_skills_execute`    | `execute:skills` | Käivita oskus etteantud sisendiga ja tagasta täitmise kirje                                        |
+| `agentproxy_skills_executions` | `read:skills`    | Loetle viimane oskuste täitmise ajalugu                                                            |
 
 ## Notioni kontekstiallikas (6)
 
@@ -226,9 +226,9 @@ Defineeritud failis `open-sse/mcp-server/tools/agentSkillTools.ts`. Töötab `sr
 
 | Tööriist                          | Ulatused       | Kirjeldus                                                                                                                                       |
 | :-------------------------------- | :------------- | :---------------------------------------------------------------------------------------------------------------------------------------------- |
-| `omniroute_agent_skills_list`     | `read:catalog` | Loetleb kõik 45 agendioskust valikuliste `category` (api\|cli) ja `area` filtritega; tagastab metaandmed + katvuse                              |
-| `omniroute_agent_skills_get`      | `read:catalog` | Hangib ühe oskuse täieliku metaandmestiku + SKILL.md sisu kanoonilise `id` järgi                                                                |
-| `omniroute_agent_skills_coverage` | `read:catalog` | Katvuse statistika: kui paljudel 23 API, 21 CLI ja 1 konfiguratsiooni oskusest on failisüsteemis SKILL.md failid võrreldes kataloogi koguarvuga |
+| `agentproxy_agent_skills_list`     | `read:catalog` | Loetleb kõik 45 agendioskust valikuliste `category` (api\|cli) ja `area` filtritega; tagastab metaandmed + katvuse                              |
+| `agentproxy_agent_skills_get`      | `read:catalog` | Hangib ühe oskuse täieliku metaandmestiku + SKILL.md sisu kanoonilise `id` järgi                                                                |
+| `agentproxy_agent_skills_coverage` | `read:catalog` | Katvuse statistika: kui paljudel 23 API, 21 CLI ja 1 konfiguratsiooni oskusest on failisüsteemis SKILL.md failid võrreldes kataloogi koguarvuga |
 
 Vaata [AGENT-SKILLS.md](./AGENT-SKILLS.md) täielikku kataloogi ja seda, kuidas välised agendid seda kasutavad.
 
@@ -241,7 +241,7 @@ raamistikku käivad MCP serveriga kaasas versioonis v3.8.0 ning on dokumenteerit
 ### Pilveagendid
 
 Pilveagendid on protsessivälised AI koodiagendid (codex-cloud, cursor-cloud, devin, jules), mis on ühendatud
-OmniRoute'iga sama ühendusmudeli kaudu, mida kasutatakse LLM pakkujate puhul. Need on eksponeeritud
+AgentProxy'iga sama ühendusmudeli kaudu, mida kasutatakse LLM pakkujate puhul. Need on eksponeeritud
 oma REST liidese kaudu (`/api/v1/agents/*`) ja **ei** ole MCP tööriistade kataloogi osa
 — Pilveagendi kutsumine ei tarbi MCP ulatust.
 
@@ -312,8 +312,8 @@ failis `open-sse/mcp-server/scopeEnforcement.ts`. Igal tööriistal on vaja konk
 | `write:skills`        | `skills_enable`                                                                                                                                                                    |
 | `execute:skills`      | `skills_execute`                                                                                                                                                                   |
 | `read:catalog`        | `agent_skills_list`, `agent_skills_get`, `agent_skills_coverage`                                                                                                                   |
-| `read:tools`          | `omniroute_tool_search`                                                                                                                                                            |
-| `read:radar`          | `omniroute_radar_catalog`                                                                                                                                                          |
+| `read:tools`          | `agentproxy_tool_search`                                                                                                                                                            |
+| `read:radar`          | `agentproxy_radar_catalog`                                                                                                                                                          |
 | `read:gamification`   | `gamification_profile`, `gamification_rank`, `gamification_leaderboard`, `gamification_badges`, `gamification_servers`, `gamification_anomalies`                                   |
 | `write:gamification`  | `gamification_invite`, `gamification_transfer`                                                                                                                                     |
 | `read:plugins`        | `plugin_list`, `plugin_executions`                                                                                                                                                 |
@@ -346,12 +346,12 @@ HTTP/SSE kaudu lahendab `open-sse/mcp-server/httpTransport.ts` nüüd kutsuja te
 funktsioonile `transport.handleRequest(req, { authInfo })`, nii et
 `extra.authInfo.scopes`, mis jõuab igasse tööriistakutsesse, peegeldab Bearer-võtme
 enda õigusi. Fail `scopeEnforcement.ts` funktsioon `resolveCallerScopeContext()` andis
-juba varem `authInfo`-le eelisõiguse `_meta` ja `OMNIROUTE_MCP_SCOPES` keskkonnamuutuja
+juba varem `authInfo`-le eelisõiguse `_meta` ja `AGENTPROXY_MCP_SCOPES` keskkonnamuutuja
 varulahenduse ees — see muudatus lihtsalt täidab selle esimese, kõrgeima prioriteediga
 allika, mis oli varem HTTP kaudu tühjalt jäänud. Kui ühtegi API võtit ei õnnestu
 lahendada (päist puudub või võti on kehtetu), jääb `authInfo` väärtuseks `undefined` ja
 lahendus liigub olemasolevasse `meta`/keskkonnamuutuja ahelasse muutumatult. See EI
-muuda `OMNIROUTE_MCP_ENFORCE_SCOPES` vaikeväärtust — jõustamine tuleb endiselt eraldi
+muuda `AGENTPROXY_MCP_ENFORCE_SCOPES` vaikeväärtust — jõustamine tuleb endiselt eraldi
 sisse lülitada; see muudatus tagab vaid, et võtmepõhine tee saab eelisõiguse, kui see
 juba sisse lülitatud on. stdio-l puudub kutsujapõhine identiteet (vaata
 `mcpCallerIdentity.ts`) ja see jääb mõjutamata — see jääb `_meta`/keskkonnamuutuja
@@ -363,17 +363,17 @@ varulahenduse ahelale.
 
 | Muutuja                                 | Vaikeväärtus                          | Eesmärk                                                                                                                               |
 | :-------------------------------------- | :------------------------------------ | :------------------------------------------------------------------------------------------------------------------------------------ |
-| `OMNIROUTE_BASE_URL`                    | `http://localhost:20128`              | Baas-URL, mida MCP server kasutab OmniRoute sisemiste API-de kutsumisel                                                               |
-| `OMNIROUTE_API_KEY`                     | (tühi)                                | API-võti, mis edastatakse sisemistele API-kõnedele kui `Authorization: Bearer`                                                        |
-| `OMNIROUTE_MCP_ENFORCE_SCOPES`          | `false` (ainult `"true"` lubab selle) | Kui lubatud, keelavad puuduvad õigused (scope) tööriista kutsed ning logitakse `scope_denied:<reason>` auditlogisse                   |
-| `OMNIROUTE_MCP_SCOPES`                  | (tühi)                                | Komadega eraldatud lubatud õiguste (scope) nimekiri, mida peetakse vaikimisi "saadavaks" (kasutusel, kui kutsuja ei esita omi õigusi) |
-| `OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS`   | (määramata = sees)                    | Kui väärtuseks on määratud `0/false/off/no`, lülitab registreerimise ajal MCP kirjelduste tihendamise välja                           |
-| `OMNIROUTE_MCP_DESCRIPTION_COMPRESSION` | (määramata = sees)                    | Alternatiivne nimi samale lülitile kui ülal                                                                                           |
-| `OMNIROUTE_MCP_FETCH_TIMEOUT_MS`        | `10000`                               | Katkestamise ajapiirang sisemiste haldusandmete lugemiseks (health, resilience, combos, quota, usage)                                 |
-| `OMNIROUTE_MCP_UPSTREAM_TIMEOUT_MS`     | `60000`                               | Katkestamise ajapiirang hüpetele, mis ootavad teenusepakkujat (`route_request`, `web_search`, `web_fetch`)                            |
+| `AGENTPROXY_BASE_URL`                    | `http://localhost:20128`              | Baas-URL, mida MCP server kasutab AgentProxy sisemiste API-de kutsumisel                                                               |
+| `AGENTPROXY_API_KEY`                     | (tühi)                                | API-võti, mis edastatakse sisemistele API-kõnedele kui `Authorization: Bearer`                                                        |
+| `AGENTPROXY_MCP_ENFORCE_SCOPES`          | `false` (ainult `"true"` lubab selle) | Kui lubatud, keelavad puuduvad õigused (scope) tööriista kutsed ning logitakse `scope_denied:<reason>` auditlogisse                   |
+| `AGENTPROXY_MCP_SCOPES`                  | (tühi)                                | Komadega eraldatud lubatud õiguste (scope) nimekiri, mida peetakse vaikimisi "saadavaks" (kasutusel, kui kutsuja ei esita omi õigusi) |
+| `AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS`   | (määramata = sees)                    | Kui väärtuseks on määratud `0/false/off/no`, lülitab registreerimise ajal MCP kirjelduste tihendamise välja                           |
+| `AGENTPROXY_MCP_DESCRIPTION_COMPRESSION` | (määramata = sees)                    | Alternatiivne nimi samale lülitile kui ülal                                                                                           |
+| `AGENTPROXY_MCP_FETCH_TIMEOUT_MS`        | `10000`                               | Katkestamise ajapiirang sisemiste haldusandmete lugemiseks (health, resilience, combos, quota, usage)                                 |
+| `AGENTPROXY_MCP_UPSTREAM_TIMEOUT_MS`     | `60000`                               | Katkestamise ajapiirang hüpetele, mis ootavad teenusepakkujat (`route_request`, `web_search`, `web_fetch`)                            |
 | `MCP_TOOL_DENY`                         | (määramata = filtreerimist ei toimu)  | Komadega eraldatud tööriistade nimed, mis jäetakse `tools/list` loendist välja (tööriistade arvu vähendamine — vaata allpool)         |
 | `MCP_TOOL_ALLOW`                        | (määramata = filtreerimist ei toimu)  | Komadega eraldatud tööriistade nimed, mida ainsana säilitatakse (lubatud nimekirja režiim — vaata allpool)                            |
-| `DATA_DIR`                              | `~/.omniroute`                        | Südamelöögi (heartbeat) fail kirjutatakse asukohta `${DATA_DIR}/runtime/mcp-heartbeat.json`                                           |
+| `DATA_DIR`                              | `~/.agentproxy`                        | Südamelöögi (heartbeat) fail kirjutatakse asukohta `${DATA_DIR}/runtime/mcp-heartbeat.json`                                           |
 
 ---
 
@@ -383,8 +383,8 @@ MCP tööriistade, promptide ja ressursside registrid saavad registreerimise/loe
 
 - Tihendamine töötleb kirjeldusteksti, kasutades Caveman reeglistikku (`getRulesForContext("all", "full")`), koos säilitatavate blokkide eraldamisega (kooditükid, piiratud plokid jne), et struktuurset sisu ei muudetaks.
 - Lülita seadistuse kaupa sisse/välja `key_value` seadistuste tabeli väärtusega `compression.mcpDescriptionCompressionEnabled` (vaikimisi: lubatud) — kasutajaliideses näidatud kui **Analytics → MCP description compression**.
-- Lülita protsessi tasemel sisse/välja kasutades `OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS=false` või `OMNIROUTE_MCP_DESCRIPTION_COMPRESSION=false`.
-- Reaalajastatistika kuvatakse `omniroute_compression_status` alt teekonnal `analytics.mcpDescriptionCompression` ja on märgistatud sildiga `source: "mcp_metadata_estimate"`, et eristada seda päris teenusepakkuja kasutuse andmetest.
+- Lülita protsessi tasemel sisse/välja kasutades `AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS=false` või `AGENTPROXY_MCP_DESCRIPTION_COMPRESSION=false`.
+- Reaalajastatistika kuvatakse `agentproxy_compression_status` alt teekonnal `analytics.mcpDescriptionCompression` ja on märgistatud sildiga `source: "mcp_metadata_estimate"`, et eristada seda päris teenusepakkuja kasutuse andmetest.
 
 ---
 
@@ -403,10 +403,10 @@ Kirjelduse tihendamine kahandab iga tööriista metaandmeid; **tööriistade arv
 
 ```bash
 # Eemalda kataloogist kaks tööriista
-MCP_TOOL_DENY="omniroute_get_health,omniroute_list_combos" omniroute --mcp
+MCP_TOOL_DENY="agentproxy_get_health,agentproxy_list_combos" agentproxy --mcp
 
 # Teata ainult ruutimise + kvoodi tööriistad (lubatavate nimekirja režiim)
-MCP_TOOL_ALLOW="omniroute_route_request,omniroute_check_quota" omniroute --mcp
+MCP_TOOL_ALLOW="agentproxy_route_request,agentproxy_check_quota" agentproxy --mcp
 ```
 
 **Kuidas filtreeritud tööriistad eemaldatakse:** registreerimine õnnestub alati; tööriist, mille profiil tagasi lükkab, seejärel `.disable()`itakse MCP SDK käepidemel, nii et see ei ilmu kunagi `tools/list`-is, kuid ühendus jääb terveks (puhas lubamine/keelamine, pole vajadust uuesti registreerida). Profiili parser on `readMcpToolProfileFromEnv(process.env)`, mis tagastab `null` (filtreerimist ei toimu), kui mõlemad muutujad on tühjad.

@@ -7,7 +7,7 @@ import path from "node:path";
 const update = await import("../../bin/cli/commands/update.mjs");
 
 test("runUpdateCommand claims success without verifying the running binary version changed (#9475)", async () => {
-  const fakeBin = mkdtempSync(path.join(tmpdir(), "omniroute-cli-update-9475-"));
+  const fakeBin = mkdtempSync(path.join(tmpdir(), "agentproxy-cli-update-9475-"));
   writeFileSync(
     path.join(fakeBin, "npm"),
     `#!/usr/bin/env bash

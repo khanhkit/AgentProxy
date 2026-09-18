@@ -16,9 +16,9 @@ import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import ts from "typescript";
 
-const PLUGIN_SRC = fileURLToPath(new URL("../../@omniroute/opencode-plugin/src", import.meta.url));
+const PLUGIN_SRC = fileURLToPath(new URL("../../@agentproxy/opencode-plugin/src", import.meta.url));
 
-test("@omniroute/opencode-plugin sources parse without syntax errors", async () => {
+test("@agentproxy/opencode-plugin sources parse without syntax errors", async () => {
   const entries = await readdir(PLUGIN_SRC, { withFileTypes: true });
   const files = entries
     .filter((e) => e.isFile() && e.name.endsWith(".ts"))

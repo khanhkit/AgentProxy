@@ -96,7 +96,7 @@ function createBigQueryDestination(overrides: Record<string, unknown> = {}) {
     maxRowsPerRun: 1000,
     config: secrets.encryptDestinationConfig("bigquery", {
       projectId: "test-project",
-      datasetId: "omniroute_test",
+      datasetId: "agentproxy_test",
       tableId: "call_logs",
       location: "EU",
       serviceAccountJson: SERVICE_ACCOUNT_JSON,
@@ -302,7 +302,7 @@ test("migration170_DatabaseThatPredatesTheFeature_GainsTheTableOnUpgrade", () =>
   // querying a table that does not exist.
   const db = coreDb.getDbInstance();
   db.prepare("DROP TABLE IF EXISTS log_export_destinations").run();
-  db.prepare("DELETE FROM _omniroute_migrations WHERE version = '170'").run();
+  db.prepare("DELETE FROM _agentproxy_migrations WHERE version = '170'").run();
   assert.equal(tableExists("log_export_destinations"), false, "precondition: table removed");
 
   coreDb.resetDbInstance();

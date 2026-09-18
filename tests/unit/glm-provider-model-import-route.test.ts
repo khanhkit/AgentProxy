@@ -10,7 +10,7 @@ import path from "node:path";
 // mocked `fetch` in each test actually gets called — without it, the route short-circuits
 // to the local/cached catalog before ever reaching the network call these tests assert on.
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-glm-models-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-glm-models-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../src/lib/db/core.ts");

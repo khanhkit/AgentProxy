@@ -1,4 +1,4 @@
-const baseUrl = process.env.OMNIROUTE_URL || "http://localhost:20128";
+const baseUrl = process.env.AGENTPROXY_URL || "http://localhost:20128";
 const authCookie = process.env.DAST_AUTH_COOKIE;
 const probeConnectionId = "e3e70682-c209-1cac-a29f-6fbed82c07cd";
 

@@ -6,14 +6,14 @@
 
 ---
 
-title: "OmniRoute A2A serverio dokumentacija"
+title: "AgentProxy A2A serverio dokumentacija"
 version: 3.8.40
 lastUpdated: 2026-06-28
 ---
 
-# OmniRoute A2A serverio dokumentacija
+# AgentProxy A2A serverio dokumentacija
 
-> Agentų tarpusavio protokolas v0.3 — OmniRoute kaip išmanusis maršruto parinkimo agentas
+> Agentų tarpusavio protokolas v0.3 — AgentProxy kaip išmanusis maršruto parinkimo agentas
 
 A2A sąsaja turi dvi formas:
 
@@ -28,7 +28,7 @@ Užduotis seka `A2ATaskManager` (`src/lib/a2a/taskManager.ts`, numatytoji TTL tr
 curl http://localhost:20128/.well-known/agent.json
 ```
 
-Grąžinama agento kortelė, aprašanti OmniRoute galimybes, įgūdžius ir autentifikavimo reikalavimus.
+Grąžinama agento kortelė, aprašanti AgentProxy galimybes, įgūdžius ir autentifikavimo reikalavimus.
 
 Agento kortelės lauko `version` reikšmė gaunama iš `process.env.npm_package_version` (žr. `src/app/.well-known/agent.json/route.ts:13`), todėl kiekvieno leidimo metu ji automatiškai sinchronizuojama su `package.json`.
 
@@ -39,7 +39,7 @@ Agento kortelės lauko `version` reikšmė gaunama iš `process.env.npm_package_
 Visoms `/a2a` užklausoms reikalingas API raktas, perduodamas per `Authorization` antraštę:
 
 ```
-Authorization: Bearer YOUR_OMNIROUTE_API_KEY
+Authorization: Bearer YOUR_AGENTPROXY_API_KEY
 ```
 
 Jei serveryje nesukonfigūruotas joks API raktas, autentifikavimas praleidžiamas.
@@ -157,22 +157,22 @@ curl -X POST http://localhost:20128/a2a \
 
 ## Pasiekiami gebėjimai
 
-OmniRoute pateikia 6 A2A gebėjimus, susietus faile `src/lib/a2a/taskExecution.ts::A2A_SKILL_HANDLERS`. Kiekvieno gebėjimo modulis yra kataloge `src/lib/a2a/skills/`.
+AgentProxy pateikia 6 A2A gebėjimus, susietus faile `src/lib/a2a/taskExecution.ts::A2A_SKILL_HANDLERS`. Kiekvieno gebėjimo modulis yra kataloge `src/lib/a2a/skills/`.
 
 | Gebėjimas             | ID                   | Aprašas                                                                                                                                                | Žymos                           | Pavyzdžiai                                      |
 | :-------------------- | :------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------ | :---------------------------------------------- |
-| Išmanusis nukreipimas | `smart-routing`      | Nukreipia užklausą per optimalų teikėją arba derinį, naudodamas OmniRoute derinių variklį ir vertinimą                                                 | nukreipimas, teikėjai           | „Nukreipkite šią užklausą per geriausią modelį“ |
+| Išmanusis nukreipimas | `smart-routing`      | Nukreipia užklausą per optimalų teikėją arba derinį, naudodamas AgentProxy derinių variklį ir vertinimą                                                 | nukreipimas, teikėjai           | „Nukreipkite šią užklausą per geriausią modelį“ |
 | Kvotų valdymas        | `quota-management`   | Pateikia kiekvieno teikėjo kvotos būseną ir padeda kvietėjams nuspręsti, kada riboti srautą arba pakeisti teikėją                                      | kvotos, teikėjai                | „Patikrinkite anthropic kvotą“                  |
 | Teikėjų aptikimas     | `provider-discovery` | Išvardija įdiegtus teikėjus, jų galimybes, nemokamo lygio požymius ir OAuth būseną                                                                     | teikėjai, aptikimas             | „Kokie teikėjai yra pasiekiami?“                |
 | Išlaidų analizė       | `cost-analysis`      | Įvertina užklausos ar pokalbio kainą pagal katalogą ir naujausius naudojimo duomenis                                                                   | išlaidos, naudojimas            | „Įvertinkite šio pokalbio kainą“                |
 | Būklės ataskaita      | `health-report`      | Apibendrina kiekvieno teikėjo grandinės pertraukiklio, atvėsimo laikotarpio ir blokavimo būseną                                                        | būklė, atsparumas               | „Parodykite visų teikėjų būklę“                 |
-| Galimybių sąrašas     | `list-capabilities`  | Grąžina visą 45 įrašų Agent Skills katalogą (23 API + 21 CLI + 1 konfigūracija) kaip markdown lentelę su tiesioginiais SKILL.md URL kontekstui įterpti | katalogas, aptikimas, gebėjimai | „Išvardykite visas OmniRoute galimybes“         |
+| Galimybių sąrašas     | `list-capabilities`  | Grąžina visą 45 įrašų Agent Skills katalogą (23 API + 21 CLI + 1 konfigūracija) kaip markdown lentelę su tiesioginiais SKILL.md URL kontekstui įterpti | katalogas, aptikimas, gebėjimai | „Išvardykite visas AgentProxy galimybes“         |
 
 > Agent Card turi būti suderinta su aktualiu 352 teikėjų katalogu; teikėjų skaičius ir nemokamo lygio bei autentifikavimo nereikalaujančių teikėjų metaduomenys gaunami iš vykdymo laiko registro.
 
 ### Išsami informacija apie `list-capabilities` gebėjimą
 
-`list-capabilities` gebėjimas ypač naudingas išoriniams agentams, kuriems prieš siunčiant API iškvietimus reikia sužinoti, ką pateikia OmniRoute. Jis grąžina struktūrizuotą markdown lentelės artefaktą:
+`list-capabilities` gebėjimas ypač naudingas išoriniams agentams, kuriems prieš siunčiant API iškvietimus reikia sužinoti, ką pateikia AgentProxy. Jis grąžina struktūrizuotą markdown lentelės artefaktą:
 
 ```
 | ID | Pavadinimas | Kategorija | Sritis | Galiniai taškai / komandos | Tiesioginis URL |
@@ -196,9 +196,9 @@ JSON-RPC galinis taškas `/a2a` yra pagrindinis A2A įvesties taškas. Toliau pa
 | `/api/a2a/tasks/[id]`        | GET     | Gauti užduotį pagal ID                                                  | valdymas                                     |
 | `/api/a2a/tasks/[id]/cancel` | POST    | Atšaukti vykdomą užduotį                                                | valdymas                                     |
 | `/.well-known/agent.json`    | GET     | Agento kortelė (A2A aptikimas)                                          | (vieša, podėlyje laikoma 3600s)              |
-| `/api/a2a/tasks`             | POST    | Gaunamų užduočių delegavimas „OmniConductor“ grupei (Conductor PRD RF5) | Bearer su `OMNIROUTE_API_KEY` + `a2aEnabled` |
+| `/api/a2a/tasks`             | POST    | Gaunamų užduočių delegavimas „OmniConductor“ grupei (Conductor PRD RF5) | Bearer su `AGENTPROXY_API_KEY` + `a2aEnabled` |
 
-**Gaunamas „Conductor“ delegavimas (`POST /api/a2a/tasks`):** išoriniai A2A agentai per „OmniRoute“ deleguoja programavimo darbus „OmniConductor“ grupei. Turinys: `{ skill: "conductor" | "conductor-cli-<profile>", messages: [{role, content}], metadata: { conductor: { repo: { url, base_ref? }, mode?, cli?, model? } } }` — deleguoti galima tik „Conductor“ grupės įgūdžius (paskelbtus Agento kortelėje); `metadata.conductor.repo.url` yra privalomas (grupė dirba su git saugyklomis). Maršrutas transformuojamas į centro `POST /v1/tasks`, naudojant serverio pusės `CONDUCTOR_ORCHESTRATOR_TOKEN` (atsarginis variantas – `CONDUCTOR_HUB_TOKEN`), ir grąžina `201 { conductor_task_id, state: "submitted" }`; užduočių būsenos perduodamos atgal per SSE→A2A atspindį (RF1) ir yra matomos naudojant `GET /api/a2a/tasks?skill=conductor`.
+**Gaunamas „Conductor“ delegavimas (`POST /api/a2a/tasks`):** išoriniai A2A agentai per „AgentProxy“ deleguoja programavimo darbus „OmniConductor“ grupei. Turinys: `{ skill: "conductor" | "conductor-cli-<profile>", messages: [{role, content}], metadata: { conductor: { repo: { url, base_ref? }, mode?, cli?, model? } } }` — deleguoti galima tik „Conductor“ grupės įgūdžius (paskelbtus Agento kortelėje); `metadata.conductor.repo.url` yra privalomas (grupė dirba su git saugyklomis). Maršrutas transformuojamas į centro `POST /v1/tasks`, naudojant serverio pusės `CONDUCTOR_ORCHESTRATOR_TOKEN` (atsarginis variantas – `CONDUCTOR_HUB_TOKEN`), ir grąžina `201 { conductor_task_id, state: "submitted" }`; užduočių būsenos perduodamos atgal per SSE→A2A atspindį (RF1) ir yra matomos naudojant `GET /api/a2a/tasks?skill=conductor`.
 
 ---
 

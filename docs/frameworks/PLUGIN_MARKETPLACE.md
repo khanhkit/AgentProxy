@@ -11,7 +11,7 @@ lastUpdated: 2026-06-28
 > `src/app/(dashboard)/dashboard/plugins/`
 > **Last updated:** 2026-06-28 — v3.8.40
 
-OmniRoute ships a WordPress-style plugin system. Plugins are self-contained
+AgentProxy ships a WordPress-style plugin system. Plugins are self-contained
 directories — each with a `plugin.json` manifest and an entry file — that hook
 into the request pipeline (`onRequest` / `onResponse` / `onError`) and into
 lifecycle events (`onInstall` / `onActivate` / `onDeactivate` / `onUninstall`).
@@ -153,10 +153,10 @@ are allowed through.
 
 ### Plugin directory
 
-Plugins live under the OmniRoute data directory:
+Plugins live under the AgentProxy data directory:
 
 ```
-~/.omniroute/plugins/<plugin-name>/
+~/.agentproxy/plugins/<plugin-name>/
   ├─ plugin.json
   └─ index.js          # (or whatever manifest.main points to)
 ```
@@ -164,24 +164,24 @@ Plugins live under the OmniRoute data directory:
 `getDefaultPluginDir()` (`src/lib/plugins/scanner.ts`) resolves that directory in
 three steps:
 
-1. **`OMNIROUTE_PLUGINS_DIR`**, when set — used verbatim, whatever `HOME` says. This is
+1. **`AGENTPROXY_PLUGINS_DIR`**, when set — used verbatim, whatever `HOME` says. This is
    the explicit knob for Docker/K8s, where the plugin tree is bind-mounted at a path
    that usually has nothing to do with the container's home directory (#11827).
-2. `<home>/.omniroute/plugins`, where `<home>` comes from the `HOME` / `USERPROFILE`
+2. `<home>/.agentproxy/plugins`, where `<home>` comes from the `HOME` / `USERPROFILE`
    environment variables.
-3. `/tmp/.omniroute/plugins`, when the process exports no home at all.
+3. `/tmp/.agentproxy/plugins`, when the process exports no home at all.
 
 The resolved directory is logged once at startup as `scanner.dir_resolved`, naming the
-input that won (`OMNIROUTE_PLUGINS_DIR`, `home`, or `no-home-fallback`) — so an image
+input that won (`AGENTPROXY_PLUGINS_DIR`, `home`, or `no-home-fallback`) — so an image
 that silently lands on step 3 says so, instead of only reporting an empty plugin list.
 `POST /api/plugins/scan` discovers any subdirectory there that holds a valid
 `plugin.json` and registers it; the same directory is the root that
 `pluginManager.install()` copies plugins into, so an override moves discovery and
 installation together.
 
-> **`OMNIROUTE_PLUGINS_DIR` is not `OMNIROUTE_PLUGIN_PATH`.** The latter is read only by
-> the CLI command-plugin loader (`bin/cli/plugins.mjs`) to find `omniroute-cmd-*` npm
-> packages that add `omniroute` subcommands — it has no effect on the runtime scanner
+> **`AGENTPROXY_PLUGINS_DIR` is not `AGENTPROXY_PLUGIN_PATH`.** The latter is read only by
+> the CLI command-plugin loader (`bin/cli/plugins.mjs`) to find `agentproxy-cmd-*` npm
+> packages that add `agentproxy` subcommands — it has no effect on the runtime scanner
 > described here. See [PLUGINS.md](./PLUGINS.md) for that side.
 
 ### Custom marketplace registry URL
@@ -274,7 +274,7 @@ Validated by `PluginManifestSchema` (`src/lib/plugins/manifest.ts`):
 | `main`             | string?   | Entry file; defaults to `index.js`                          |
 | `source`           | enum?     | `local` \| `marketplace` (defaults to `local`)              |
 | `tags`             | string[]? | Search tags                                                 |
-| `requires`         | object?   | `{ omniroute?, permissions[] }`                             |
+| `requires`         | object?   | `{ agentproxy?, permissions[] }`                             |
 | `hooks`            | object?   | Booleans declaring which hooks the plugin implements        |
 | `skills`           | object[]? | Optional skill definitions                                  |
 | `enabledByDefault` | boolean?  | Auto-activate on install                                    |
@@ -289,7 +289,7 @@ Permissions are drawn from the enum
 ```
 install (POST /api/plugins, path)
   → scan/validate manifest → copy to staging → assert main within dir
-  → atomic rename into ~/.omniroute/plugins/<name> → insert DB row
+  → atomic rename into ~/.agentproxy/plugins/<name> → insert DB row
   → fire onInstall → if enabledByDefault: activate
 
 activate (POST /api/plugins/{name}/activate)

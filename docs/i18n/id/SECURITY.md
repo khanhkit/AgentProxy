@@ -6,10 +6,10 @@
 
 ## Melaporkan Kerentanan
 
-Jika Anda menemukan kerentanan keamanan di OmniRoute, harap laporkan secara bertanggung jawab:
+Jika Anda menemukan kerentanan keamanan di AgentProxy, harap laporkan secara bertanggung jawab:
 
 1. **JANGAN** membuka isu GitHub yang bersifat publik
-2. Gunakan [GitHub Security Advisories](https://github.com/diegosouzapw/OmniRoute/security/advisories/new)
+2. Gunakan [GitHub Security Advisories](https://github.com/khanhkit/AgentProxy/security/advisories/new)
 3. Sertakan: deskripsi, langkah-langkah reproduksi, dan potensi dampak
 
 ## Linimasa Respons
@@ -32,7 +32,7 @@ Jika Anda menemukan kerentanan keamanan di OmniRoute, harap laporkan secara bert
 
 ## Arsitektur Keamanan
 
-OmniRoute menerapkan model keamanan berlapis:
+AgentProxy menerapkan model keamanan berlapis:
 
 ```
 Request → CORS → API Key Auth → Prompt Injection Guard → Input Sanitizer → Rate Limiter → Circuit Breaker → Provider
@@ -157,15 +157,15 @@ Server secara aktif menolak nilai yang diketahui lemah seperti `changeme`, `secr
 
 ```bash
 docker run -d \
-  --name omniroute \
+  --name agentproxy \
   --restart unless-stopped \
   --read-only \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
+  -v agentproxy-data:/app/data \
   -e JWT_SECRET="$(openssl rand -base64 48)" \
   -e API_KEY_SECRET="$(openssl rand -hex 32)" \
   -e STORAGE_ENCRYPTION_KEY="$(openssl rand -hex 32)" \
-  diegosouzapw/omniroute:latest
+  khanhkit/agentproxy:latest
 ```
 
 ---

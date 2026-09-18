@@ -106,7 +106,7 @@ test("buildVercelRelayHeaders throws on an unparsable target URL", () => {
 
 const VERCEL_CTX = {
   type: "vercel" as const,
-  host: "omniroute-relay-abc123.vercel.app",
+  host: "agentproxy-relay-abc123.vercel.app",
   relayAuth: "live-relay-secret",
 };
 
@@ -134,7 +134,7 @@ test("proxyFetch routes a vercel-type context through the relay endpoint with re
   const call = relayCalls[0];
 
   // The request is rewritten to the relay edge endpoint, NOT the upstream target.
-  assert.equal(call.input, "https://omniroute-relay-abc123.vercel.app");
+  assert.equal(call.input, "https://agentproxy-relay-abc123.vercel.app");
 
   const sentHeaders = new Headers(call.init.headers);
   // Relay headers carry the real upstream routing.

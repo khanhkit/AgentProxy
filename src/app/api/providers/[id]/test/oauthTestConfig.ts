@@ -1,8 +1,8 @@
 import { buildGitLabOAuthEndpoints, resolveGitLabOAuthBaseUrl } from "@/lib/oauth/gitlab";
-import { ANTIGRAVITY_RUNTIME_BASE_URLS } from "@omniroute/open-sse/config/antigravityUpstream.ts";
-import { getAntigravityContentHeaders } from "@omniroute/open-sse/services/antigravityHeaders.ts";
-import { getAntigravityClientProfile } from "@omniroute/open-sse/services/antigravityClientProfile.ts";
-import { isGeoBlockedError } from "@omniroute/open-sse/services/errorClassifier.ts";
+import { ANTIGRAVITY_RUNTIME_BASE_URLS } from "@agentproxy/open-sse/config/antigravityUpstream.ts";
+import { getAntigravityContentHeaders } from "@agentproxy/open-sse/services/antigravityHeaders.ts";
+import { getAntigravityClientProfile } from "@agentproxy/open-sse/services/antigravityClientProfile.ts";
+import { isGeoBlockedError } from "@agentproxy/open-sse/services/errorClassifier.ts";
 
 // Real model-surface probe for antigravity/agy. The previous probe only hit the
 // OAuth userinfo endpoint, which is NOT geo-restricted — so "Test Connection"
@@ -182,7 +182,7 @@ export const OAUTH_TEST_CONFIG: Record<string, OAuthTestConfigEntry> = {
     method: "GET",
     authHeader: "Authorization",
     authPrefix: "Bearer ",
-    extraHeaders: { "User-Agent": "OmniRoute", Accept: "application/vnd.github+json" },
+    extraHeaders: { "User-Agent": "AgentProxy", Accept: "application/vnd.github+json" },
   },
   "gitlab-duo": {
     getUrl: (connection: any) =>
@@ -268,7 +268,7 @@ export const OAUTH_TEST_CONFIG: Record<string, OAuthTestConfigEntry> = {
     method: "GET",
     authHeader: "Authorization",
     authPrefix: "Bearer ",
-    extraHeaders: { "User-Agent": "OmniRoute", Accept: "application/vnd.github+json" },
+    extraHeaders: { "User-Agent": "AgentProxy", Accept: "application/vnd.github+json" },
     refreshable: true,
   },
   // Openference: first-party OAuth gateway — list models to verify the JWT without

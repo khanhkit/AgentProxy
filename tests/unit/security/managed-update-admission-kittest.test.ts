@@ -121,7 +121,7 @@ test("TC-SUPPLY-SEC-001 mutable release references are not promotion/install ide
   );
 
   const mutablePromotionPaths = [
-    /npm install -g omniroute@latest\b/.test(cliUpdater) ? "cli:omniroute@latest" : null,
+    /npm install -g agentproxy@latest\b/.test(cliUpdater) ? "cli:agentproxy@latest" : null,
     /return\s+install\(["']latest["']\)/.test(nineRouter) ? "ninerouter:update->latest" : null,
     /return\s+install\(["']latest["']\)/.test(cliProxy) ? "cliproxy:update->latest" : null,
   ].filter(Boolean);

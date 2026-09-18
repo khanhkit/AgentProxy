@@ -1,13 +1,13 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { REGISTRY } from "@omniroute/open-sse/config/providers/index.ts";
-import { FREE_MODEL_BUDGETS } from "@omniroute/open-sse/config/freeModelCatalog.data.ts";
+import { REGISTRY } from "@agentproxy/open-sse/config/providers/index.ts";
+import { FREE_MODEL_BUDGETS } from "@agentproxy/open-sse/config/freeModelCatalog.data.ts";
 
 // Kiro's upstream (`generateAssistantResponse`) returns 400 "Invalid model.
 // Please select a different model" for any model id it does not recognize. The
 // registry must therefore expose ONLY ids Kiro actually serves. These ids were
-// fabricated (copied from OmniRoute's own Anthropic catalog) and live-verified
+// fabricated (copied from AgentProxy's own Anthropic catalog) and live-verified
 // to 400 on the VPS — they must never reappear. Regression guard for the kiro
 // cluster (#6112/#6113/#6099).
 const FABRICATED_KIRO_IDS = [

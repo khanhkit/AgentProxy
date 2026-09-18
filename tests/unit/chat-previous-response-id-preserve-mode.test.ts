@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 
 import { createChatPipelineHarness } from "../integration/_chatPipelineHarness.ts";
 
-// Regression guard: the OmniRoute-native previous_response_id virtualization
+// Regression guard: the AgentProxy-native previous_response_id virtualization
 // in chat.ts (see src/lib/db/responsesContinuationStore.ts) used to run
 // unconditionally for every OpenAI-Responses-source request, before target
 // selection and before applyResponsesPreviousResponseIdPolicy (chatCore.ts)
@@ -11,7 +11,7 @@ import { createChatPipelineHarness } from "../integration/_chatPipelineHarness.t
 // mode="preserve" -- the explicit, connection-independent contract for "let
 // the upstream resolve previous_response_id natively" -- a no-op: the field
 // was already deleted and replaced with a reconstructed `input` before the
-// policy ever ran, hard-rejecting any previous_response_id that OmniRoute's
+// policy ever ran, hard-rejecting any previous_response_id that AgentProxy's
 // own call-log store never captured, instead of forwarding it upstream like
 // a real Codex/ChatGPT-store-enabled connection expects.
 
@@ -46,7 +46,7 @@ async function postResponses(
 }
 
 test("mode=auto (default): unknown previous_response_id is virtualized and fails closed with previous_response_not_found", async () => {
-  const { status, payload } = await postResponses("resp_never_seen_by_omniroute");
+  const { status, payload } = await postResponses("resp_never_seen_by_agentproxy");
   assert.equal(status, 400);
   assert.equal(payload.error?.code, "previous_response_not_found");
 });
@@ -67,10 +67,10 @@ test("mode=auto: ChatGPT Web Codex defers previous_response_id resolution to its
 test("mode=preserve: previous_response_id is left untouched, request proceeds to normal routing instead of local virtualization", async () => {
   await settingsDb.updateSettings({ responsesPreviousResponseIdMode: "preserve" });
 
-  const { status, payload } = await postResponses("resp_never_seen_by_omniroute");
+  const { status, payload } = await postResponses("resp_never_seen_by_agentproxy");
 
   // Virtualization is skipped entirely: the id is not looked up against
-  // OmniRoute's own store, so this must NOT be the virtualization's
+  // AgentProxy's own store, so this must NOT be the virtualization's
   // previous_response_not_found rejection. It falls through to ordinary
   // model routing, which 404s for an unknown model or 401 if that path
   // now authenticates before catalog lookup.

@@ -8,7 +8,7 @@ import path from "node:path";
 // semantics + wiring of the built-ins). Behavior parity of the full map is
 // covered separately by tests/unit/executor-map-golden.test.ts.
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-executor-registry-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-executor-registry-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const { registerExecutor, getRegisteredExecutor, hasRegisteredExecutor, listExecutorAliases } =

@@ -4,24 +4,24 @@ import os from "node:os";
 import path from "node:path";
 import test from "node:test";
 
-const testRoot = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-provider-errors-"));
+const testRoot = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-provider-errors-"));
 const originalDataDir = process.env.DATA_DIR;
-const originalPluginsDir = process.env.OMNIROUTE_PLUGINS_DIR;
+const originalPluginsDir = process.env.AGENTPROXY_PLUGINS_DIR;
 const originalApiKeySecret = process.env.API_KEY_SECRET;
 const originalDisableBackup = process.env.DISABLE_SQLITE_AUTO_BACKUP;
-const originalDisableHealthCheck = process.env.OMNIROUTE_DISABLE_CREDENTIAL_HEALTH_CHECK;
+const originalDisableHealthCheck = process.env.AGENTPROXY_DISABLE_CREDENTIAL_HEALTH_CHECK;
 const pluginsDir = path.join(testRoot, "plugins");
 const testDataDir = path.join(testRoot, "data");
 fs.mkdirSync(pluginsDir, { recursive: true });
 fs.mkdirSync(testDataDir, { recursive: true });
-process.env.OMNIROUTE_PLUGINS_DIR = pluginsDir;
+process.env.AGENTPROXY_PLUGINS_DIR = pluginsDir;
 process.env.DATA_DIR = testDataDir;
-assert.notEqual(fs.realpathSync(testDataDir), "/home/diegosouzapw/.omniroute");
-assert.notEqual(fs.realpathSync(pluginsDir), "/home/diegosouzapw/.omniroute/plugins");
+assert.notEqual(fs.realpathSync(testDataDir), "/home/diegosouzapw/.agentproxy");
+assert.notEqual(fs.realpathSync(pluginsDir), "/home/diegosouzapw/.agentproxy/plugins");
 
 process.env.API_KEY_SECRET = "provider-error-boundary-test-secret";
 process.env.DISABLE_SQLITE_AUTO_BACKUP = "true";
-process.env.OMNIROUTE_DISABLE_CREDENTIAL_HEALTH_CHECK = "true";
+process.env.AGENTPROXY_DISABLE_CREDENTIAL_HEALTH_CHECK = "true";
 
 // Connection tests suppress their call-log entry under node --test. This file
 // exercises the real persistent boundary, so present a normal runtime identity
@@ -32,7 +32,7 @@ const originalNodeEnv = process.env.NODE_ENV;
 const originalVitest = process.env.VITEST;
 process.argv = [
   process.execPath,
-  path.join(process.cwd(), "scripts/ad-hoc/omniroute-boundary-harness.mjs"),
+  path.join(process.cwd(), "scripts/ad-hoc/agentproxy-boundary-harness.mjs"),
 ];
 process.execArgv = [];
 process.env.NODE_ENV = "development";
@@ -87,8 +87,8 @@ test.after(async () => {
   else process.env.NODE_ENV = originalNodeEnv;
   if (originalVitest === undefined) delete process.env.VITEST;
   else process.env.VITEST = originalVitest;
-  if (originalPluginsDir === undefined) delete process.env.OMNIROUTE_PLUGINS_DIR;
-  else process.env.OMNIROUTE_PLUGINS_DIR = originalPluginsDir;
+  if (originalPluginsDir === undefined) delete process.env.AGENTPROXY_PLUGINS_DIR;
+  else process.env.AGENTPROXY_PLUGINS_DIR = originalPluginsDir;
   core.resetDbInstance();
   if (originalDataDir === undefined) delete process.env.DATA_DIR;
   else process.env.DATA_DIR = originalDataDir;
@@ -97,9 +97,9 @@ test.after(async () => {
   if (originalDisableBackup === undefined) delete process.env.DISABLE_SQLITE_AUTO_BACKUP;
   else process.env.DISABLE_SQLITE_AUTO_BACKUP = originalDisableBackup;
   if (originalDisableHealthCheck === undefined) {
-    delete process.env.OMNIROUTE_DISABLE_CREDENTIAL_HEALTH_CHECK;
+    delete process.env.AGENTPROXY_DISABLE_CREDENTIAL_HEALTH_CHECK;
   } else {
-    process.env.OMNIROUTE_DISABLE_CREDENTIAL_HEALTH_CHECK = originalDisableHealthCheck;
+    process.env.AGENTPROXY_DISABLE_CREDENTIAL_HEALTH_CHECK = originalDisableHealthCheck;
   }
   fs.rmSync(testRoot, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
 });

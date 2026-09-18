@@ -22,15 +22,15 @@ type FormattedResponse = {
   };
 };
 
-const TEST_ROOT = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-skills-interception-owned-"));
+const TEST_ROOT = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-skills-interception-owned-"));
 const TEST_DATA_DIR = path.join(TEST_ROOT, "data");
 const TEST_PLUGINS_DIR = path.join(TEST_ROOT, "plugins");
 const ORIGINAL_DATA_DIR = process.env.DATA_DIR;
-const ORIGINAL_PLUGINS_DIR = process.env.OMNIROUTE_PLUGINS_DIR;
+const ORIGINAL_PLUGINS_DIR = process.env.AGENTPROXY_PLUGINS_DIR;
 fs.mkdirSync(TEST_DATA_DIR, { recursive: true });
 fs.mkdirSync(TEST_PLUGINS_DIR, { recursive: true });
 process.env.DATA_DIR = TEST_DATA_DIR;
-process.env.OMNIROUTE_PLUGINS_DIR = TEST_PLUGINS_DIR;
+process.env.AGENTPROXY_PLUGINS_DIR = TEST_PLUGINS_DIR;
 
 const coreDb = await import("../../src/lib/db/core.ts");
 const { skillRegistry } = await import("../../src/lib/skills/registry.ts");
@@ -86,7 +86,7 @@ async function registerRuntimeSkills() {
 
 test.beforeEach(async () => {
   process.env.DATA_DIR = TEST_DATA_DIR;
-  process.env.OMNIROUTE_PLUGINS_DIR = TEST_PLUGINS_DIR;
+  process.env.AGENTPROXY_PLUGINS_DIR = TEST_PLUGINS_DIR;
   await resetStorage();
   await registerRuntimeSkills();
 });
@@ -96,8 +96,8 @@ test.after(() => {
   coreDb.resetDbInstance();
   if (ORIGINAL_DATA_DIR === undefined) delete process.env.DATA_DIR;
   else process.env.DATA_DIR = ORIGINAL_DATA_DIR;
-  if (ORIGINAL_PLUGINS_DIR === undefined) delete process.env.OMNIROUTE_PLUGINS_DIR;
-  else process.env.OMNIROUTE_PLUGINS_DIR = ORIGINAL_PLUGINS_DIR;
+  if (ORIGINAL_PLUGINS_DIR === undefined) delete process.env.AGENTPROXY_PLUGINS_DIR;
+  else process.env.AGENTPROXY_PLUGINS_DIR = ORIGINAL_PLUGINS_DIR;
   fs.rmSync(TEST_ROOT, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
 });
 

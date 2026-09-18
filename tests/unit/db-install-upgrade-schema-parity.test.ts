@@ -33,7 +33,7 @@ import { fileURLToPath } from "node:url";
 const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
 const MIGRATIONS_DIR = path.join(REPO_ROOT, "src", "lib", "db", "migrations");
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-install-upgrade-parity-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-install-upgrade-parity-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.DISABLE_SQLITE_AUTO_BACKUP = "true";
 
@@ -70,7 +70,7 @@ function hasTable(name: string): boolean {
 test("a clean install applies every migration file on disk", () => {
   const ledger = new Set(
     (
-      db.prepare("SELECT version FROM _omniroute_migrations").all() as Array<{ version: string }>
+      db.prepare("SELECT version FROM _agentproxy_migrations").all() as Array<{ version: string }>
     ).map((row) => row.version)
   );
   const unapplied = migrationFiles()

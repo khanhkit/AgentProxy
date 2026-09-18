@@ -1,7 +1,7 @@
 /** POST a server-side Radar offers sync. The browser never receives the supporter key. */
 
 import { NextResponse } from "next/server";
-import { buildErrorBody, sanitizeErrorMessage } from "@omniroute/open-sse/utils/error";
+import { buildErrorBody, sanitizeErrorMessage } from "@agentproxy/open-sse/utils/error";
 import { syncRadarOffers } from "@/lib/radar/offersSync";
 import { isAuthenticated } from "@/shared/utils/apiAuth";
 import { CORS_HEADERS, handleCorsOptions } from "@/shared/utils/cors";

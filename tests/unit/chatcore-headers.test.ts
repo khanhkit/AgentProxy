@@ -49,13 +49,13 @@ test("getHeaderValueCaseInsensitive returns null for null/undefined/non-object i
 
 describe("resolveCompressionHeader", () => {
   it("reads the raw value case-insensitively and trims it", () => {
-    assert.equal(resolveCompressionHeader({ "x-omniroute-compression": "  engine:rtk " }), "engine:rtk");
-    assert.equal(resolveCompressionHeader(new Headers({ "X-OmniRoute-Compression": "off" })), "off");
+    assert.equal(resolveCompressionHeader({ "x-agentproxy-compression": "  engine:rtk " }), "engine:rtk");
+    assert.equal(resolveCompressionHeader(new Headers({ "X-AgentProxy-Compression": "off" })), "off");
   });
 
   it("returns null when absent or blank", () => {
     assert.equal(resolveCompressionHeader({}), null);
-    assert.equal(resolveCompressionHeader({ "x-omniroute-compression": "   " }), null);
+    assert.equal(resolveCompressionHeader({ "x-agentproxy-compression": "   " }), null);
     assert.equal(resolveCompressionHeader(null), null);
   });
 });

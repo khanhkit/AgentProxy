@@ -72,7 +72,7 @@ function sha256File(filePath: string): string {
 function buildWebTree(root: string): void {
   const standalone = path.join(root, "standalone");
   fs.mkdirSync(path.join(standalone, "node_modules", "left-pad"), { recursive: true });
-  fs.writeFileSync(path.join(standalone, "server.js"), "console.log('omniroute');\n");
+  fs.writeFileSync(path.join(standalone, "server.js"), "console.log('agentproxy');\n");
   fs.writeFileSync(
     path.join(standalone, "node_modules", "left-pad", "index.js"),
     "module.exports = (s, n) => String(s).padStart(n);\n"
@@ -109,7 +109,7 @@ test("pack → restore roundtrip restores the tree byte-for-byte", async () => {
 
     assert.equal(
       fs.readFileSync(path.join(dst, "standalone", "server.js"), "utf8"),
-      "console.log('omniroute');\n"
+      "console.log('agentproxy');\n"
     );
     // The restored tree satisfies the manifest (sizes + hashes + symlink targets).
     const manifest = JSON.parse(fs.readFileSync(`${out}.manifest.json`, "utf8"));

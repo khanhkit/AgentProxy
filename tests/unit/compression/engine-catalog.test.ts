@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { ENGINE_CATALOG, engineMeta, ENGINE_IDS } from "@omniroute/open-sse/services/compression/engineCatalog.ts";
-import { DEFAULT_COMPRESSION_CONFIG } from "@omniroute/open-sse/services/compression/types.ts";
+import { ENGINE_CATALOG, engineMeta, ENGINE_IDS } from "@agentproxy/open-sse/services/compression/engineCatalog.ts";
+import { DEFAULT_COMPRESSION_CONFIG } from "@agentproxy/open-sse/services/compression/types.ts";
 
 test("catalog lists every engine with stackPriority", () => {
   for (const id of ["session-dedup","ccr","lite","rtk","headroom","caveman","aggressive","llmlingua","ultra"]) {

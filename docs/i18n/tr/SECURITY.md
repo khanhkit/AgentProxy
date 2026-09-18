@@ -6,10 +6,10 @@
 
 ## Güvenlik Açıklarını Bildirme
 
-OmniRoute'ta bir güvenlik açığı keşfederseniz, lütfen sorumlu bir şekilde bildirin:
+AgentProxy'ta bir güvenlik açığı keşfederseniz, lütfen sorumlu bir şekilde bildirin:
 
 1. **KESİNLİKLE** herkese açık bir GitHub issue'su açmayın
-2. [GitHub Security Advisories](https://github.com/diegosouzapw/OmniRoute/security/advisories/new) kullanın
+2. [GitHub Security Advisories](https://github.com/khanhkit/AgentProxy/security/advisories/new) kullanın
 3. Şunları ekleyin: açıklama, yeniden oluşturma adımları ve olası etki
 
 ## Yanıt Zaman Çizelgesi
@@ -32,7 +32,7 @@ OmniRoute'ta bir güvenlik açığı keşfederseniz, lütfen sorumlu bir şekild
 
 ## Güvenlik Mimarisi
 
-OmniRoute çok katmanlı bir güvenlik modeli uygular:
+AgentProxy çok katmanlı bir güvenlik modeli uygular:
 
 ```
 Request → CORS → Authz pipeline (classify → policies → enforce)
@@ -69,7 +69,7 @@ STORAGE_ENCRYPTION_KEY=$(openssl rand -hex 32)
 
 ### 🛡️ Güvenlik Önlemleri Çerçevesi (Guardrails Framework)
 
-OmniRoute, öncelik sırasına göre sıralanmış 3 yerleşik güvenlik önlemi içeren, çalışırken yeniden yüklenebilir bir **güvenlik önlemleri kayıt defteri** (`src/lib/guardrails/`) ile gelir:
+AgentProxy, öncelik sırasına göre sıralanmış 3 yerleşik güvenlik önlemi içeren, çalışırken yeniden yüklenebilir bir **güvenlik önlemleri kayıt defteri** (`src/lib/guardrails/`) ile gelir:
 
 | Güvenlik Önlemi    | Öncelik | Amaç                                                                                                          |
 | ------------------ | ------- | ------------------------------------------------------------------------------------------------------------- |
@@ -77,7 +77,7 @@ OmniRoute, öncelik sırasına göre sıralanmış 3 yerleşik güvenlik önlemi
 | `pii-masker`       | 10      | Çağrı öncesi ve sonrası PII (kişisel veri) maskeleme (e-posta, telefon, CPF, CNPJ, kredi kartı, SSN)          |
 | `prompt-injection` | 20      | Geçersiz kılma / rol ele geçirme / jailbreak / sızıntı kalıplarını algılar                                    |
 
-Özel güvenlik önlemleri `registerGuardrail(new MyGuardrail())` aracılığıyla kaydedilir. Model hata durumunda açıktır (fail-open; istisnalar trafiği asla engellemez). İstek başına devre dışı bırakma `x-omniroute-disabled-guardrails` başlığı ile yapılır. → Bkz. [`docs/security/GUARDRAILS.md`](docs/security/GUARDRAILS.md).
+Özel güvenlik önlemleri `registerGuardrail(new MyGuardrail())` aracılığıyla kaydedilir. Model hata durumunda açıktır (fail-open; istisnalar trafiği asla engellemez). İstek başına devre dışı bırakma `x-agentproxy-disabled-guardrails` başlığı ile yapılır. → Bkz. [`docs/security/GUARDRAILS.md`](docs/security/GUARDRAILS.md).
 
 ### 🧠 İstem Enjeksiyonu Koruması (Prompt Injection Guard)
 
@@ -182,15 +182,15 @@ Sunucu `changeme`, `secret` veya `password` gibi bilinen zayıf değerleri açı
 
 ```bash
 docker run -d \
-  --name omniroute \
+  --name agentproxy \
   --restart unless-stopped \
   --read-only \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
+  -v agentproxy-data:/app/data \
   -e JWT_SECRET="$(openssl rand -base64 48)" \
   -e API_KEY_SECRET="$(openssl rand -hex 32)" \
   -e STORAGE_ENCRYPTION_KEY="$(openssl rand -hex 32)" \
-  diegosouzapw/omniroute:latest
+  khanhkit/agentproxy:latest
 ```
 
 ---
@@ -222,7 +222,7 @@ Bu kurallar araçlar ve inceleyiciler tarafından zorunlu kılınmıştır:
 
 ## Tedarik Zinciri Tarayıcı Bulguları (Socket.dev / Snyk / Benzeri)
 
-Yayımlanan `omniroute` npm paketi, Next.js `output: "standalone"` derlemesini paketler; bu da belgelenmiş ayrıcalıklı özellikler (MITM, Zed içe aktarma, Cloud Sync, gömülü servis süpervizörü) dahil her rota işleyicisinin `.next/server/*.js` küçültülmüş yığınlarında yer alması anlamına gelir. Sezgisel tedarik zinciri tarayıcıları bu yığınları sıklıkla kötü amaçlı yazılım imzalarıyla eşleştirebilir.
+Yayımlanan `agentproxy` npm paketi, Next.js `output: "standalone"` derlemesini paketler; bu da belgelenmiş ayrıcalıklı özellikler (MITM, Zed içe aktarma, Cloud Sync, gömülü servis süpervizörü) dahil her rota işleyicisinin `.next/server/*.js` küçültülmüş yığınlarında yer alması anlamına gelir. Sezgisel tedarik zinciri tarayıcıları bu yığınları sıklıkla kötü amaçlı yazılım imzalarıyla eşleştirebilir.
 
 Her bulgu kategorisi için proje yöneticisi onay beyanı tutulmaktadır:
 
@@ -230,7 +230,7 @@ Her bulgu kategorisi için proje yöneticisi onay beyanı tutulmaktadır:
   bulgu başına harita: kaynak dosya ↔ işaretlenen yığın ↔ davranış ↔ v3.8.6'da uygulanan hafifletme.
 - İşaretlenen her fonksiyondaki kaynak içi `SECURITY-AUDITOR-NOTE:` blokları aynı belgeye işaret eder.
 
-Geliştirme hattında uyarıları esnetemeyen kullanıcılar için: `OMNIROUTE_BUILD_PROFILE=minimal npm run build` ile derleme yapın. Bu, dört hassas modülü çalışma zamanında HTTP 503 `feature-disabled` döndüren taslaklarla değiştirir; böylece ayrıcalıklı kod yolları pakette fiziksel olarak bulunmaz. Yayımlama tarifi için bkz. [`docs/security/SOCKET_DEV_FINDINGS.md`](docs/security/SOCKET_DEV_FINDINGS.md).
+Geliştirme hattında uyarıları esnetemeyen kullanıcılar için: `AGENTPROXY_BUILD_PROFILE=minimal npm run build` ile derleme yapın. Bu, dört hassas modülü çalışma zamanında HTTP 503 `feature-disabled` döndüren taslaklarla değiştirir; böylece ayrıcalıklı kod yolları pakette fiziksel olarak bulunmaz. Yayımlama tarifi için bkz. [`docs/security/SOCKET_DEV_FINDINGS.md`](docs/security/SOCKET_DEV_FINDINGS.md).
 
 ## Referanslar
 

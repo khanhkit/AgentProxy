@@ -460,7 +460,7 @@ describe("OpencodeExecutor", () => {
   });
 
   // #4022: OpenCode CLI only emits x-opencode-* when the provider id starts with
-  // "opencode". For a custom-named provider (e.g. "omniroute") it instead sends
+  // "opencode". For a custom-named provider (e.g. "agentproxy") it instead sends
   // x-session-affinity / X-Session-Id (both carry the same OpenCode sessionID).
   // The executor must map that session id onto x-opencode-session so session
   // continuity to the opencode.ai upstream works regardless of provider name.

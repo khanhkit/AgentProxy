@@ -14,7 +14,7 @@ import {
  * still got the compiled-in 20132 and a permanently disconnected Combo Studio
  * (#11331).
  */
-const DEFAULT_URL = "wss://omniroute.example.tld:20132/live-ws";
+const DEFAULT_URL = "wss://agentproxy.example.tld:20132/live-ws";
 
 describe("sanitizeLiveWsPort", () => {
   it("accepts a port in range, as a number or a string", () => {
@@ -33,7 +33,7 @@ describe("resolveLiveWsUrl", () => {
   it("uses the port the handshake reports instead of the compiled-in one", () => {
     const url = resolveLiveWsUrl({ handshakePort: 20140, defaultUrl: DEFAULT_URL });
     assert.equal(new URL(url).port, "20140");
-    assert.equal(new URL(url).hostname, "omniroute.example.tld");
+    assert.equal(new URL(url).hostname, "agentproxy.example.tld");
     assert.equal(new URL(url).pathname, "/live-ws");
   });
 
@@ -65,11 +65,11 @@ describe("resolveLiveWsUrl", () => {
   it("lets a complete publicUrl win over the reported port", () => {
     assert.equal(
       resolveLiveWsUrl({
-        handshakeUrl: "wss://omniroute.example.tld/live-ws",
+        handshakeUrl: "wss://agentproxy.example.tld/live-ws",
         handshakePort: 20140,
         defaultUrl: DEFAULT_URL,
       }),
-      "wss://omniroute.example.tld/live-ws"
+      "wss://agentproxy.example.tld/live-ws"
     );
   });
 
@@ -77,7 +77,7 @@ describe("resolveLiveWsUrl", () => {
     assert.equal(
       resolveLiveWsUrl({
         explicit: "wss://elsewhere.example/socket",
-        handshakeUrl: "wss://omniroute.example.tld/live-ws",
+        handshakeUrl: "wss://agentproxy.example.tld/live-ws",
         handshakePort: 20140,
         defaultUrl: DEFAULT_URL,
       }),

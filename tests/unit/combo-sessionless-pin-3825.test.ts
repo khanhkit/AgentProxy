@@ -13,7 +13,7 @@ import path from "node:path";
 // request body when no session id is present, so a combo re-pins to the same model
 // across turns of the same conversation — but ONLY when context_cache_protection is on.
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-combo-pin-3825-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-combo-pin-3825-"));
 const ORIGINAL_DATA_DIR = process.env.DATA_DIR;
 process.env.DATA_DIR = TEST_DATA_DIR;
 

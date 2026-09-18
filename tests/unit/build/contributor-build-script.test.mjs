@@ -12,18 +12,18 @@ const nextConfigSource = fs.readFileSync(path.join(process.cwd(), "next.config.m
 const packageJson = JSON.parse(fs.readFileSync(path.join(process.cwd(), "package.json"), "utf8"));
 
 test("contributor build profile selects the webpack fallback", () => {
-  assert.match(packageJson.scripts["build:contributor"], /OMNIROUTE_USE_TURBOPACK=0/);
+  assert.match(packageJson.scripts["build:contributor"], /AGENTPROXY_USE_TURBOPACK=0/);
 });
 
 test("contributor build profile skips standalone packaging", () => {
-  assert.equal(isContributorBuild({ OMNIROUTE_BUILD_PROFILE: "contributor" }), true);
-  assert.equal(isContributorBuild({ OMNIROUTE_BUILD_PROFILE: "backend" }), false);
+  assert.equal(isContributorBuild({ AGENTPROXY_BUILD_PROFILE: "contributor" }), true);
+  assert.equal(isContributorBuild({ AGENTPROXY_BUILD_PROFILE: "backend" }), false);
 });
 
 test("contributor instrumentation stubs are reversible", async () => {
   const fs = await import("node:fs/promises");
   const os = await import("node:os");
-  const tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "omniroute-contributor-"));
+  const tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "agentproxy-contributor-"));
   const instrumentationDir = path.join(tempRoot, "src");
   await fs.mkdir(instrumentationDir, { recursive: true });
   const files = ["instrumentation.ts", "instrumentation-node.ts"];

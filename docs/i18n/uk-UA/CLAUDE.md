@@ -39,7 +39,7 @@ npm run test:all
 
 ## Проект на один погляд
 
-**OmniRoute** — єдиний AI проксі/маршрутизатор. Один кінцевий пункт, 329 постачальників LLM, автоматичне резервування.
+**AgentProxy** — єдиний AI проксі/маршрутизатор. Один кінцевий пункт, 329 постачальників LLM, автоматичне резервування.
 
 | Шар            | Розташування            | Призначення                                                               |
 | -------------- | ----------------------- | ------------------------------------------------------------------------- |
@@ -82,7 +82,7 @@ API маршрути дотримуються послідовного шабл�
 
 ## Стан виконання стійкості
 
-OmniRoute має три пов'язані, але різні механізми тимчасових збоїв. Тримайте їх
+AgentProxy має три пов'язані, але різні механізми тимчасових збоїв. Тримайте їх
 обсяг окремим під час налагодження поведінки маршрутизації. Дивіться
 [діаграму стійкості з 3 шарів](./docs/diagrams/exported/resilience-3layers.svg)
 (джерело: [docs/diagrams/resilience-3layers.mmd](./docs/diagrams/resilience-3layers.mmd))
@@ -216,7 +216,7 @@ baseCooldownMs * 2 ** failureIndex;
 ### Стиль Коду
 
 - **2 пробіли**, крапки з комою, подвійні лапки, ширина 100 символів, коми в кінці es5 (забезпечується lint-staged через Prettier)
-- **Імпорти**: зовнішні → внутрішні (`@/`, `@omniroute/open-sse`) → відносні
+- **Імпорти**: зовнішні → внутрішні (`@/`, `@agentproxy/open-sse`) → відносні
 - **Іменування**: файли=camelCase/kebab, компоненти=PascalCase, константи=UPPER_SNAKE
 - **ESLint**: `no-eval`, `no-implied-eval`, `no-new-func` = помилка скрізь; `no-explicit-any` = попередження в `open-sse/` та `tests/`
 - **TypeScript**: `strict: false`, ціль ES2022, модуль esnext, розв'язання бандлера. Вибирайте явні типи.
@@ -384,9 +384,9 @@ git push -u origin feat/your-feature
   | ≥22.22.2 <23 |
   | ≥24 <25, ES Modules
 - **TypeScript**: 5.9+, target ES2022, module esnext, resolution bundler
-- **Псевдоніми шляхів**: `@/*` → `src/`, `@omniroute/open-sse` → `open-sse/`, `@omniroute/open-sse/*` → `open-sse/*`
+- **Псевдоніми шляхів**: `@/*` → `src/`, `@agentproxy/open-sse` → `open-sse/`, `@agentproxy/open-sse/*` → `open-sse/*`
 - **Порт за замовчуванням**: 20128 (API + панель управління на одному порту)
-- **Директорія даних**: `DATA_DIR` змінна середовища, за замовчуванням `~/.omniroute/`
+- **Директорія даних**: `DATA_DIR` змінна середовища, за замовчуванням `~/.agentproxy/`
 - **Ключові змінні середовища**: `PORT`, `JWT_SECRET`, `API_KEY_SECRET`, `INITIAL_PASSWORD`, `REQUIRE_API_KEY`, `APP_LOG_LEVEL`
 - Налаштування: `cp .env.example .env`, а потім згенеруйте `JWT_SECRET` (`openssl rand -base64 48`) та `API_KEY_SECRET` (`openssl rand -hex 32`)
 
@@ -409,4 +409,4 @@ git push -u origin feat/your-feature
 13. Ніколи не вставляйте зовнішні шляхи або значення часу виконання в shell-скрипти, передані в `exec()`/`spawn()` — передавайте через опцію `env`. Посилання: `src/mitm/cert/install.ts::updateNssDatabases`.
 14. Ніколи не ігноруйте сповіщення CodeQL / Secret-Scanning без (a) попередньої перевірки документації шаблонів вище, щоб побачити, чи застосовується допоміжний засіб, і (b) запису технічного обґрунтування в коментарі про відхилення. Прецедент: `js/stack-trace-exposure`, піднятий на викликах, які вже маршрутизуються через `sanitizeErrorMessage()`, є відомим обмеженням CodeQL (кастомні санітайзери не розпізнаються) — відхиляйте як `false positive`, посилаючись на `docs/security/ERROR_SANITIZATION.md`.
 15. Ніколи не відкривайте маршрути, які запускають дочірні процеси (`/api/mcp/`, `/api/cli-tools/runtime/`), без класифікації `isLocalOnlyPath()` в `src/server/authz/routeGuard.ts`. Контроль зворотного зв'язку відбувається безумовно перед будь-якою перевіркою автентифікації — витік JWT через тунель не може викликати запуск процесу. Дивіться `docs/security/ROUTE_GUARD_TIERS.md`.
-16. Ніколи не включайте трейлери `Co-Authored-By`, які приписують авторство AI-помічнику, LLM або обліковому запису автоматизації (наприклад, імена, що містять "Claude", "GPT", "Copilot", "Bot"; листи на `anthropic.com` / `openai.com` / адресах `noreply.github.com`, що належать ботам). Такі трейлери спрямовують атрибуцію коміту до облікового запису бота в GitHub, приховуючи справжнього автора (`diegosouzapw`) в історії PR. Людські співавтори — включаючи авторів upstream PR і репортерів issues, які портуються в OmniRoute — МОЖУТЬ і ПОВИННІ бути зазначені стандартними трейлерами `Co-authored-by: Name <email>`; робочі процеси upstream-port (`/port-upstream-features`, `/port-upstream-issues`) залежать від цього.
+16. Ніколи не включайте трейлери `Co-Authored-By`, які приписують авторство AI-помічнику, LLM або обліковому запису автоматизації (наприклад, імена, що містять "Claude", "GPT", "Copilot", "Bot"; листи на `anthropic.com` / `openai.com` / адресах `noreply.github.com`, що належать ботам). Такі трейлери спрямовують атрибуцію коміту до облікового запису бота в GitHub, приховуючи справжнього автора (`diegosouzapw`) в історії PR. Людські співавтори — включаючи авторів upstream PR і репортерів issues, які портуються в AgentProxy — МОЖУТЬ і ПОВИННІ бути зазначені стандартними трейлерами `Co-authored-by: Name <email>`; робочі процеси upstream-port (`/port-upstream-features`, `/port-upstream-issues`) залежать від цього.

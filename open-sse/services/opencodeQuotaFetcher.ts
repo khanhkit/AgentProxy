@@ -14,7 +14,7 @@ import { registerMonitorFetcher } from "./quotaMonitor.ts";
 import { throttleQuotaFetch } from "./quotaFetchThrottle.ts";
 
 const OPENCODE_QUOTA_URL =
-  process.env.OMNIROUTE_OPENCODE_QUOTA_URL ?? "https://opencode.ai/zen/go/v1/usage";
+  process.env.AGENTPROXY_OPENCODE_QUOTA_URL ?? "https://opencode.ai/zen/go/v1/usage";
 
 const CACHE_TTL_MS = 60_000;
 
@@ -190,7 +190,7 @@ export async function fetchOpencodeQuota(
         _warned404Urls.add(OPENCODE_QUOTA_URL);
         console.warn(
           `[opencodeQuotaFetcher] Official usage endpoint ${OPENCODE_QUOTA_URL} returned 404. ` +
-            "Verify OMNIROUTE_OPENCODE_QUOTA_URL when using a relay or test server."
+            "Verify AGENTPROXY_OPENCODE_QUOTA_URL when using a relay or test server."
         );
       }
       if (response.status === 401 || response.status === 403) quotaCache.delete(connectionId);

@@ -15,7 +15,7 @@ import { createChatPipelineHarness } from "../integration/_chatPipelineHarness.t
 const harness = await createChatPipelineHarness("adaptive-admission-route-matrix");
 assert.ok(
   harness.TEST_DATA_DIR.includes("adaptive-admission-route-matrix") ||
-    harness.TEST_DATA_DIR.includes("omniroute-"),
+    harness.TEST_DATA_DIR.includes("agentproxy-"),
   "task-private harness DATA_DIR must be set before DB imports"
 );
 console.log(`[adaptive-admission-route-matrix] DATA_DIR=${harness.TEST_DATA_DIR}`);
@@ -319,14 +319,14 @@ test.beforeEach(async () => {
   reloadNormalResourcePressure();
   reloadEnforceOversized();
   globalThis.fetch = originalFetch;
-  delete process.env.OMNIROUTE_RELAY_BACKEND;
+  delete process.env.AGENTPROXY_RELAY_BACKEND;
   delete process.env.RELAY_ROUTING_BACKEND;
 });
 
 test.afterEach(async () => {
   globalThis.fetch = originalFetch;
   resetAdaptiveAdmissionRuntimeForTests();
-  delete process.env.OMNIROUTE_RELAY_BACKEND;
+  delete process.env.AGENTPROXY_RELAY_BACKEND;
   delete process.env.RELAY_ROUTING_BACKEND;
   await resetStorage();
 });
@@ -355,7 +355,7 @@ test(
 
     const rawRelayToken = `relay_matrix_${createHash("sha256").update("admission").digest("hex").slice(0, 24)}`;
     insertRelayToken(rawRelayToken);
-    process.env.OMNIROUTE_RELAY_BACKEND = "ts";
+    process.env.AGENTPROXY_RELAY_BACKEND = "ts";
 
     const cases: RouteCase[] = ROUTE_CASES.map((routeCase) => {
       if (routeCase.name !== "relay.chat.completions") return routeCase;

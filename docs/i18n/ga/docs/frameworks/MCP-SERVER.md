@@ -6,30 +6,30 @@
 
 ---
 
-title: "Agallamh Faisnéise maidir le Freastalaí OmniRoute MCP"
+title: "Agallamh Faisnéise maidir le Freastalaí AgentProxy MCP"
 version: 3.8.50
 lastUpdated: 2026-08-08
 ---
 
-# Agallamh Faisnéise maidir le Freastalaí OmniRoute MCP
+# Agallamh Faisnéise maidir le Freastalaí AgentProxy MCP
 
 > Freastalaí Prótacail Comhthéacs Múnla le 110 uirlisí i dtaca le ródáil, taisce, comhbhrú, cuimhne, scileanna, seachfhreastalaí, linn, Radar, agus oibríochtaí foinsí comhthéacs.
 >
-> Foinse fírinne: `open-sse/mcp-server/server.ts` ríomhann **110 uirlis uathúil** le `countUniqueMcpTools()`: 45 sainmhíniú canonach (lena n-áirítear an sé uirlis saolré CCR, an triad scileanna oibríochtaí, `omniroute_radar_catalog`, agus `omniroute_x_search`), móide cuimhne (3), scileanna (4), scileanna GitHub (3), linn (6), geamúchais (8), breiseáin (8), Notion (6), Obsidian (22), corpas áitiúil (3), agus dhá uirlis comhbhrú RTK-amháin.
+> Foinse fírinne: `open-sse/mcp-server/server.ts` ríomhann **110 uirlis uathúil** le `countUniqueMcpTools()`: 45 sainmhíniú canonach (lena n-áirítear an sé uirlis saolré CCR, an triad scileanna oibríochtaí, `agentproxy_radar_catalog`, agus `agentproxy_x_search`), móide cuimhne (3), scileanna (4), scileanna GitHub (3), linn (6), geamúchais (8), breiseáin (8), Notion (6), Obsidian (22), corpas áitiúil (3), agus dhá uirlis comhbhrú RTK-amháin.
 
 ## Suiteáil
 
-Tá OmniRoute MCP ionsuite. Cuir ar siúl é le:
+Tá AgentProxy MCP ionsuite. Cuir ar siúl é le:
 
 ```bash
-omniroute --mcp
+agentproxy --mcp
 ```
 
 Nó tríd an iompar `open-sse`:
 
 ```bash
 # Iompar sruthaithe HTTP (port 20130)
-omniroute --dev  # Cuirfidh MCP ar siúl go huathoibríoch ar an achrann /mcp
+agentproxy --dev  # Cuirfidh MCP ar siúl go huathoibríoch ar an achrann /mcp
 ```
 
 ## Iompar
@@ -75,61 +75,61 @@ Cursor, Cline, agus socrú cliaint MCP comhoiriúnach.
 
 | Uirlis                          | Scóip                 | Cur Síos                                                                                                                             |
 | :------------------------------ | :-------------------- | :----------------------------------------------------------------------------------------------------------------------------------- |
-| `omniroute_get_health`          | `read:health`         | Uptime, cuimhne, scoradáin chiorcaid, teorainneacha ráta, staitisticí taisce                                                         |
-| `omniroute_list_combos`         | `read:combos`         | Gach combo cumraithe le straitéisí (méadracht roghnach)                                                                              |
-| `omniroute_get_combo_metrics`   | `read:combos`         | Méadracht feidhmíochta do combo ar leith                                                                                             |
-| `omniroute_switch_combo`        | `write:combos`        | Combo a ghníomhachtú nó a dhíghníomhachtú                                                                                            |
-| `omniroute_create_combo`        | `write:combos`        | Combo bailíochtaithe a chruthú tríd an API combo atá ann cheana                                                                      |
-| `omniroute_check_quota`         | `read:quota`          | Cuóta úsáidte/iomlán, céatadán fágtha, am athshocraithe, sláinte comhartha                                                           |
-| `omniroute_route_request`       | `execute:completions` | Comhlánú comhrá a sheoladh trí ródú OmniRoute                                                                                        |
-| `omniroute_cost_report`         | `read:usage`          | Tuarascáil costais de réir tréimhse (seisiún/lá/seachtain/mí)                                                                        |
-| `omniroute_list_models_catalog` | `read:models`         | Catalóg iomlán samhlacha le cumais, stádas, praghsáil                                                                                |
-| `omniroute_radar_catalog`       | `read:radar`          | Catalóg Radar sínithe áitiúil; scagairí roghnacha soláthraí/teaghlaigh                                                               |
-| `omniroute_tool_search`         | `read:tools`          | Uirlisí a fháil amach ón gcatalóg MCP cláraithe                                                                                      |
-| `omniroute_web_search`          | `execute:search`      | Cuardach gréasáin trí na soláthraithe cuardaigh cumraithe. Ní X/Twitter.                                                             |
-| `omniroute_x_search`            | `execute:search`      | Cuardach X trí xAI/SuperGrok, nó roghnaigh `xquik-search` le haghaidh torthaí API Xquik. Éilíonn dintiúir don chúlchóras roghnaithe. |
-| `omniroute_web_fetch`           | `execute:search`      | Ábhar gréasáin a fháil trí na soláthraithe feitseála cumraithe                                                                       |
+| `agentproxy_get_health`          | `read:health`         | Uptime, cuimhne, scoradáin chiorcaid, teorainneacha ráta, staitisticí taisce                                                         |
+| `agentproxy_list_combos`         | `read:combos`         | Gach combo cumraithe le straitéisí (méadracht roghnach)                                                                              |
+| `agentproxy_get_combo_metrics`   | `read:combos`         | Méadracht feidhmíochta do combo ar leith                                                                                             |
+| `agentproxy_switch_combo`        | `write:combos`        | Combo a ghníomhachtú nó a dhíghníomhachtú                                                                                            |
+| `agentproxy_create_combo`        | `write:combos`        | Combo bailíochtaithe a chruthú tríd an API combo atá ann cheana                                                                      |
+| `agentproxy_check_quota`         | `read:quota`          | Cuóta úsáidte/iomlán, céatadán fágtha, am athshocraithe, sláinte comhartha                                                           |
+| `agentproxy_route_request`       | `execute:completions` | Comhlánú comhrá a sheoladh trí ródú AgentProxy                                                                                        |
+| `agentproxy_cost_report`         | `read:usage`          | Tuarascáil costais de réir tréimhse (seisiún/lá/seachtain/mí)                                                                        |
+| `agentproxy_list_models_catalog` | `read:models`         | Catalóg iomlán samhlacha le cumais, stádas, praghsáil                                                                                |
+| `agentproxy_radar_catalog`       | `read:radar`          | Catalóg Radar sínithe áitiúil; scagairí roghnacha soláthraí/teaghlaigh                                                               |
+| `agentproxy_tool_search`         | `read:tools`          | Uirlisí a fháil amach ón gcatalóg MCP cláraithe                                                                                      |
+| `agentproxy_web_search`          | `execute:search`      | Cuardach gréasáin trí na soláthraithe cuardaigh cumraithe. Ní X/Twitter.                                                             |
+| `agentproxy_x_search`            | `execute:search`      | Cuardach X trí xAI/SuperGrok, nó roghnaigh `xquik-search` le haghaidh torthaí API Xquik. Éilíonn dintiúir don chúlchóras roghnaithe. |
+| `agentproxy_web_fetch`           | `execute:search`      | Ábhar gréasáin a fháil trí na soláthraithe feitseála cumraithe                                                                       |
 
 ## Uirlisí Casta (11) — Céim 2
 
 | Uirlis                             | Scóip                                | Cur Síos                                                                                                     |
 | :--------------------------------- | :----------------------------------- | :----------------------------------------------------------------------------------------------------------- |
-| `omniroute_simulate_route`         | `read:health`, `read:combos`         | Insamhladh ródaithe tirim le crann titim-siar                                                                |
-| `omniroute_set_budget_guard`       | `write:budget`                       | Buiséad seisiúin le gníomh díghrádaithe/coisc/foláirimh                                                      |
-| `omniroute_set_routing_strategy`   | `write:combos`                       | Nuashonraigh straitéis combo ag am rite (tosaíocht/meáite/uathoibríoch/srl.)                                 |
-| `omniroute_set_resilience_profile` | `write:resilience`                   | Cuir i bhfeidhm réamhshocrú athléimneachta `ionsaitheach` / `cothrom` / `coimeádach`                         |
-| `omniroute_test_combo`             | `execute:completions`, `read:combos` | Tástáil bheo ar gach soláthróir i gcombo ag úsáid glao fíor-uasshrutha                                       |
-| `omniroute_get_provider_metrics`   | `read:health`                        | Méadracht in aghaidh an tsoláthróra le latency p50/p95/p99 agus staid scoradáin chiorcaid                    |
-| `omniroute_best_combo_for_task`    | `read:combos`, `read:health`         | Mol combo de réir chineál tasc le srianta buiséid/latency                                                    |
-| `omniroute_explain_route`          | `read:health`, `read:usage`          | Mínigh cén fáth ar ródaíodh iarratas chuig soláthróir (fachtóirí scórála + titim-siar)                       |
-| `omniroute_get_session_snapshot`   | `read:usage`                         | Léargas iomlán seisiúin: costas, comharthaí, samhlacha/soláthróirí is fearr, earráidí, garda buiséid         |
-| `omniroute_db_health_check`        | `read:health`, `write:resilience`    | Diagnóisigh (agus deisigh go roghnach) sruth bunachair shonraí cosúil le tagairtí combo briste / ró-eangacha |
-| `omniroute_sync_pricing`           | `pricing:write`                      | Sync sonraí praghsála ó fhoinsí seachtracha (LiteLLM); tacaíonn sé le `dryRun`                               |
+| `agentproxy_simulate_route`         | `read:health`, `read:combos`         | Insamhladh ródaithe tirim le crann titim-siar                                                                |
+| `agentproxy_set_budget_guard`       | `write:budget`                       | Buiséad seisiúin le gníomh díghrádaithe/coisc/foláirimh                                                      |
+| `agentproxy_set_routing_strategy`   | `write:combos`                       | Nuashonraigh straitéis combo ag am rite (tosaíocht/meáite/uathoibríoch/srl.)                                 |
+| `agentproxy_set_resilience_profile` | `write:resilience`                   | Cuir i bhfeidhm réamhshocrú athléimneachta `ionsaitheach` / `cothrom` / `coimeádach`                         |
+| `agentproxy_test_combo`             | `execute:completions`, `read:combos` | Tástáil bheo ar gach soláthróir i gcombo ag úsáid glao fíor-uasshrutha                                       |
+| `agentproxy_get_provider_metrics`   | `read:health`                        | Méadracht in aghaidh an tsoláthróra le latency p50/p95/p99 agus staid scoradáin chiorcaid                    |
+| `agentproxy_best_combo_for_task`    | `read:combos`, `read:health`         | Mol combo de réir chineál tasc le srianta buiséid/latency                                                    |
+| `agentproxy_explain_route`          | `read:health`, `read:usage`          | Mínigh cén fáth ar ródaíodh iarratas chuig soláthróir (fachtóirí scórála + titim-siar)                       |
+| `agentproxy_get_session_snapshot`   | `read:usage`                         | Léargas iomlán seisiúin: costas, comharthaí, samhlacha/soláthróirí is fearr, earráidí, garda buiséid         |
+| `agentproxy_db_health_check`        | `read:health`, `write:resilience`    | Diagnóisigh (agus deisigh go roghnach) sruth bunachair shonraí cosúil le tagairtí combo briste / ró-eangacha |
+| `agentproxy_sync_pricing`           | `pricing:write`                      | Sync sonraí praghsála ó fhoinsí seachtracha (LiteLLM); tacaíonn sé le `dryRun`                               |
 
 ## Uirlisí Taisce (2)
 
 | Uirlis                  | Scóip         | Cur Síos                                                              |
 | :---------------------- | :------------ | :-------------------------------------------------------------------- |
-| `omniroute_cache_stats` | `read:cache`  | Taisce shéimeantach, taisce leid, agus staitisticí idir-éifeachtachta |
-| `omniroute_cache_flush` | `write:cache` | Sruthlaigh taisce go domhanda nó de réir sínithe/samhla               |
+| `agentproxy_cache_stats` | `read:cache`  | Taisce shéimeantach, taisce leid, agus staitisticí idir-éifeachtachta |
+| `agentproxy_cache_flush` | `write:cache` | Sruthlaigh taisce go domhanda nó de réir sínithe/samhla               |
 
 ## Uirlisí Comhbhrú (13)
 
 | Uirlis                              | Scóip               | Cur Síos                                                                                                                                           |
 | :---------------------------------- | :------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `omniroute_compression_status`      | `read:compression`  | Socruithe comhbhrú, achoimre anailísíochta, agus staitisticí feasach-taisce (ionchuimsíonn sé meiteashonraí `analytics.mcpDescriptionCompression`) |
-| `omniroute_compression_configure`   | `write:compression` | Cumraigh modh comhbhrú, tairseach, cóimheas sprice, caomhnú córas-leid, scorán comhbhrú tuairisc MCP                                               |
-| `omniroute_set_compression_engine`  | `write:compression` | Roghnaigh an t-inneall gníomhach (off/caveman/rtk/stacked) agus déine Caveman/RTK                                                                  |
-| `omniroute_list_compression_combos` | `read:compression`  | Liostaigh combos comhbhrú ainmnithe agus a bpíblínte innill                                                                                        |
-| `omniroute_compression_combo_stats` | `read:compression`  | Anailísíocht grúpáilte de réir combo comhbhrú agus innill                                                                                          |
-| `omniroute_ccr_store`               | `write:compression` | Stóráil ábhar aonraithe-ghlaoiteora sa stóras CCR cuimhne-teoranta agus fill marcóir móide tagairt `ccr://`                                        |
-| `omniroute_ccr_retrieve`            | `read:compression`  | Aisghabh ábhar CCR go hiomlán nó le modhanna ceann, eireaball, línte, grep, agus staitisticí                                                       |
-| `omniroute_ccr_inspect`             | `read:compression`  | Scrúdaigh meiteashonraí CCR úinéireachta-ghlaoiteora gan ábhar a thabhairt ar ais                                                                  |
-| `omniroute_ccr_list`                | `read:compression`  | Liostaigh meiteashonraí págánaithe do bhlocanna CCR úinéireachta-ghlaoiteora                                                                       |
-| `omniroute_ccr_delete`              | `write:compression` | Scrios bloc CCR úinéireachta-ghlaoiteora                                                                                                           |
-| `omniroute_ccr_stats`               | `read:compression`  | Tuairiscigh úsáid chuimhne scóip-ghlaoiteora, cuntair shaolré, agus teorainneacha stórais                                                          |
-| `omniroute_rtk_discover`            | `read:compression`  | Faigh amach torann athfhillteach i samplaí aschuir RTK rogha-iontrála                                                                              |
-| `omniroute_rtk_learn`               | `read:compression`  | Gine dréacht scagaire RTK in-athbhreithnithe ó shamplaí rogha-iontrála                                                                             |
+| `agentproxy_compression_status`      | `read:compression`  | Socruithe comhbhrú, achoimre anailísíochta, agus staitisticí feasach-taisce (ionchuimsíonn sé meiteashonraí `analytics.mcpDescriptionCompression`) |
+| `agentproxy_compression_configure`   | `write:compression` | Cumraigh modh comhbhrú, tairseach, cóimheas sprice, caomhnú córas-leid, scorán comhbhrú tuairisc MCP                                               |
+| `agentproxy_set_compression_engine`  | `write:compression` | Roghnaigh an t-inneall gníomhach (off/caveman/rtk/stacked) agus déine Caveman/RTK                                                                  |
+| `agentproxy_list_compression_combos` | `read:compression`  | Liostaigh combos comhbhrú ainmnithe agus a bpíblínte innill                                                                                        |
+| `agentproxy_compression_combo_stats` | `read:compression`  | Anailísíocht grúpáilte de réir combo comhbhrú agus innill                                                                                          |
+| `agentproxy_ccr_store`               | `write:compression` | Stóráil ábhar aonraithe-ghlaoiteora sa stóras CCR cuimhne-teoranta agus fill marcóir móide tagairt `ccr://`                                        |
+| `agentproxy_ccr_retrieve`            | `read:compression`  | Aisghabh ábhar CCR go hiomlán nó le modhanna ceann, eireaball, línte, grep, agus staitisticí                                                       |
+| `agentproxy_ccr_inspect`             | `read:compression`  | Scrúdaigh meiteashonraí CCR úinéireachta-ghlaoiteora gan ábhar a thabhairt ar ais                                                                  |
+| `agentproxy_ccr_list`                | `read:compression`  | Liostaigh meiteashonraí págánaithe do bhlocanna CCR úinéireachta-ghlaoiteora                                                                       |
+| `agentproxy_ccr_delete`              | `write:compression` | Scrios bloc CCR úinéireachta-ghlaoiteora                                                                                                           |
+| `agentproxy_ccr_stats`               | `read:compression`  | Tuairiscigh úsáid chuimhne scóip-ghlaoiteora, cuntair shaolré, agus teorainneacha stórais                                                          |
+| `agentproxy_rtk_discover`            | `read:compression`  | Faigh amach torann athfhillteach i samplaí aschuir RTK rogha-iontrála                                                                              |
+| `agentproxy_rtk_learn`               | `read:compression`  | Gine dréacht scagaire RTK in-athbhreithnithe ó shamplaí rogha-iontrála                                                                             |
 
 Níl iontrálacha CCR ach i gcuimhne agus imíonn siad ar atosú. Tá gach bloc teoranta do 2 MiB, gach
 príomh-áiritheoir go 16 MiB, agus an stóras domhanda go 64 MiB. Is é 24 uair an TTL réamhshocraithe
@@ -138,14 +138,14 @@ ar fáil trí na modhanna raon agus grep. Tá stóráil, aisghabháil, liostú, 
 staitisticí aonraithe ag príomh-áiritheoir eochair-API fíordheimhnithe. Tá hashes agus meiteashonraí
 méide in iontrálacha iniúchta, riamh ábhar.
 
-Tuairiscíonn `omniroute_compression_status` comhbhrú tuairisc MCP ar leithligh faoi
+Tuairiscíonn `agentproxy_compression_status` comhbhrú tuairisc MCP ar leithligh faoi
 `analytics.mcpDescriptionCompression`. Is meastacháin mhéid-mheiteashonraí iad na luachanna sin do
 thuairiscí inliostaithe MCP (`tools`, `prompts`, `resources`, agus `resourceTemplates`); ní
 admhálacha úsáide soláthróra iad agus tá siad marcáilte le `source: "mcp_metadata_estimate"`.
 
 ### Scagaire Crann Inrochtaineachta MCP (v3.8.0)
 
-Ar leithligh ó na huirlisí comhbhrú thuas, ionchuimsíonn OmniRoute scagaire iar-fhorghníomhaithe a
+Ar leithligh ó na huirlisí comhbhrú thuas, ionchuimsíonn AgentProxy scagaire iar-fhorghníomhaithe a
 chomhbhrúíonn **torthaí uirlisí** na n-uirlisí brabhsálaí/inrochtaineachta MCP sula dtuigtear iad don
 ghníomhaire. Ní uirlis é an scagaire seo féin — ritheann sé go trédhearcach ar aon toradh uirlise a
 ionchuimsíonn téacs crann-inrochtaineachta nó scáthán-brabhsálaí foclach (≥2000 carachtar).
@@ -168,9 +168,9 @@ an tsamhail chomhbhrú rite atá taobh thiar de na huirlisí seo.
 
 | Uirlis                      | Scóipeanna     | Cur Síos                                                                                 |
 | :-------------------------- | :------------- | :--------------------------------------------------------------------------------------- |
-| `omniroute_oneproxy_fetch`  | `read:proxies` | Faigh saor-phróicsí ó mhargadh 1proxy (scagairí prótacail/tíre/cáilíochta/teorainn)      |
-| `omniroute_oneproxy_rotate` | `read:proxies` | Faigh an chéad phróicsí ar fáil de réir straitéise (`random` / `quality` / `sequential`) |
-| `omniroute_oneproxy_stats`  | `read:proxies` | Staitisticí polla, stádas sioncronaithe, dáileadh de réir prótacail agus tíre            |
+| `agentproxy_oneproxy_fetch`  | `read:proxies` | Faigh saor-phróicsí ó mhargadh 1proxy (scagairí prótacail/tíre/cáilíochta/teorainn)      |
+| `agentproxy_oneproxy_rotate` | `read:proxies` | Faigh an chéad phróicsí ar fáil de réir straitéise (`random` / `quality` / `sequential`) |
+| `agentproxy_oneproxy_stats`  | `read:proxies` | Staitisticí polla, stádas sioncronaithe, dáileadh de réir prótacail agus tíre            |
 
 ## Uirlisí Cuimhne (3)
 
@@ -178,9 +178,9 @@ Sainmhínithe in `open-sse/mcp-server/tools/memoryTools.ts`. Cuirtear údarú/sc
 
 | Uirlis                    | Scóipeanna     | Cur Síos                                                                                         |
 | :------------------------ | :------------- | :----------------------------------------------------------------------------------------------- |
-| `omniroute_memory_search` | `read:memory`  | Cuardaigh cuimhní de réir iarratais / cineáil / eochair API le buiséid token á cur i bhfeidhm    |
-| `omniroute_memory_add`    | `write:memory` | Cuir iontráil cuimhne nua leis (`factual` / `episodic` / `procedural` / `semantic`)              |
-| `omniroute_memory_clear`  | `write:memory` | Glan cuimhní le haghaidh eochaire API, scagtha go roghnach de réir cineáil nó stampa `olderThan` |
+| `agentproxy_memory_search` | `read:memory`  | Cuardaigh cuimhní de réir iarratais / cineáil / eochair API le buiséid token á cur i bhfeidhm    |
+| `agentproxy_memory_add`    | `write:memory` | Cuir iontráil cuimhne nua leis (`factual` / `episodic` / `procedural` / `semantic`)              |
+| `agentproxy_memory_clear`  | `write:memory` | Glan cuimhní le haghaidh eochaire API, scagtha go roghnach de réir cineáil nó stampa `olderThan` |
 
 ## Uirlisí Scileanna (4)
 
@@ -188,10 +188,10 @@ Sainmhínithe in `open-sse/mcp-server/tools/skillTools.ts`. Tacaíocht ag `src/l
 
 | Uirlis                        | Scóipeanna       | Cur Síos                                                                                           |
 | :---------------------------- | :--------------- | :------------------------------------------------------------------------------------------------- |
-| `omniroute_skills_list`       | `read:skills`    | Liostaigh scileanna cláraithe le scagadh roghnach de réir eochaire API, ainm, nó stádas cumasaithe |
-| `omniroute_skills_enable`     | `write:skills`   | Cumasaigh nó díchumasaigh scile ar leith de réir ID                                                |
-| `omniroute_skills_execute`    | `execute:skills` | Rith scile le tionchur ar fáil agus fill ar an taifead rith                                        |
-| `omniroute_skills_executions` | `read:skills`    | Liostaigh stair na rithanna scileanna le déanaí                                                    |
+| `agentproxy_skills_list`       | `read:skills`    | Liostaigh scileanna cláraithe le scagadh roghnach de réir eochaire API, ainm, nó stádas cumasaithe |
+| `agentproxy_skills_enable`     | `write:skills`   | Cumasaigh nó díchumasaigh scile ar leith de réir ID                                                |
+| `agentproxy_skills_execute`    | `execute:skills` | Rith scile le tionchur ar fáil agus fill ar an taifead rith                                        |
+| `agentproxy_skills_executions` | `read:skills`    | Liostaigh stair na rithanna scileanna le déanaí                                                    |
 
 ## Foinse Comhthéacs Notion (6)
 
@@ -227,9 +227,9 @@ Sainmhínithe in `open-sse/mcp-server/tools/agentSkillTools.ts`. Tacaíochta ag 
 
 | Uirlis                            | Scóipanna      | Cur Síos                                                                                                                                                              |
 | :-------------------------------- | :------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `omniroute_agent_skills_list`     | `read:catalog` | Liostaigh gach 45 scil gníomhaire le rogha scagairí `category` (api\|cli) agus `area`; tugann metadata + clúdach leis                                                 |
-| `omniroute_agent_skills_get`      | `read:catalog` | Faigh metadata iomlán + ábhar SKILL.md do scil amháin le `id` canonach                                                                                                |
-| `omniroute_agent_skills_coverage` | `read:catalog` | Staitisticí clúdaigh: cé méid de na 23 scil API, 21 scil CLI agus 1 scil cumraíochta atá comhaid SKILL.md acu ar anbhíomaíochtaí i gcomparáid leis na hiomlán catalóg |
+| `agentproxy_agent_skills_list`     | `read:catalog` | Liostaigh gach 45 scil gníomhaire le rogha scagairí `category` (api\|cli) agus `area`; tugann metadata + clúdach leis                                                 |
+| `agentproxy_agent_skills_get`      | `read:catalog` | Faigh metadata iomlán + ábhar SKILL.md do scil amháin le `id` canonach                                                                                                |
+| `agentproxy_agent_skills_coverage` | `read:catalog` | Staitisticí clúdaigh: cé méid de na 23 scil API, 21 scil CLI agus 1 scil cumraíochta atá comhaid SKILL.md acu ar anbhíomaíochtaí i gcomparáid leis na hiomlán catalóg |
 
 Féach [AGENT-SKILL.md](./AGENT-SKILLS.md) le haghaidh an chatalóg iomlán agus conas a úsáideann gníomhairí seachtracha é.
 
@@ -239,7 +239,7 @@ Tá rith an MPCI uirlisí thuas (110 uirlis uathúil, á ríomh ag `countUniqueM
 
 ### Gníomhairí Scála
 
-Is iad Gníomhairí Scála ná gníomhairí códála AI i bpróiseas seachtrach (codex-cloud, cursor-cloud, devin, jules) a nascadh le OmniRoute tríd an tsamhail nasc céanna a úsáidtear do sholáthraithe LLM. Nochtaítear iad trína dromchla REST féin (`/api/v1/agents/*`) agus **ní** bhaineann siad le catalóg uirlisí MPCI — ní íocann glao ar Ghníomhaire Scála le scóp MPCI.
+Is iad Gníomhairí Scála ná gníomhairí códála AI i bpróiseas seachtrach (codex-cloud, cursor-cloud, devin, jules) a nascadh le AgentProxy tríd an tsamhail nasc céanna a úsáidtear do sholáthraithe LLM. Nochtaítear iad trína dromchla REST féin (`/api/v1/agents/*`) agus **ní** bhaineann siad le catalóg uirlisí MPCI — ní íocann glao ar Ghníomhaire Scála le scóp MPCI.
 
 - Impleachtú: `src/lib/cloudAgent/` (`registry.ts`, `agents/codex.ts`, `agents/cursor.ts`, `agents/devin.ts`, `agents/jules.ts`).
 - Saolré: `createTask`, `getStatus`, `approvePlan`, `sendMessage`, `listSources`.
@@ -301,8 +301,8 @@ Déantar uirlisí MCP a fhíordheimhniú trí scóipeanna eochracha API. Tá for
 | `write:skills`        | `skills_enable`                                                                                                                                                                           |
 | `execute:skills`      | `skills_execute`                                                                                                                                                                          |
 | `read:catalog`        | `agent_skills_list`, `agent_skills_get`, `agent_skills_coverage`                                                                                                                          |
-| `read:tools`          | `omniroute_tool_search`                                                                                                                                                                   |
-| `read:radar`          | `omniroute_radar_catalog`                                                                                                                                                                 |
+| `read:tools`          | `agentproxy_tool_search`                                                                                                                                                                   |
+| `read:radar`          | `agentproxy_radar_catalog`                                                                                                                                                                 |
 | `read:gamification`   | `gamification_profile`, `gamification_rank`, `gamification_leaderboard`, `gamification_badges`, `gamification_servers`, `gamification_anomalies`                                          |
 | `write:gamification`  | `gamification_invite`, `gamification_transfer`                                                                                                                                            |
 | `read:plugins`        | `plugin_list`, `plugin_executions`                                                                                                                                                        |
@@ -319,23 +319,23 @@ Chun an t-iompar HTTP/SSE MCP (`/api/mcp/*`) a bhaint amach ó lasmuigh den lúb
 
 ### Ceangal scóip HTTP in aghaidh eochrach (#7895)
 
-Thar HTTP/SSE, réitíonn `open-sse/mcp-server/httpTransport.ts` anois fíor-scóip `api_keys.scopes` an fhéachtóra trí `resolveMcpCallerAuthInfo()` (`open-sse/mcp-server/httpAuthContext.ts`) agus cuireann sé ar aghaidh chuig `transport.handleRequest(req, { authInfo })` de chuid SDK MCP é, ionas go léiríonn `extra.authInfo.scopes` a shroicheann gach glao uirlise scóip féin an eochair Bearer. Thug `resolveCallerScopeContext()` de chuid `scopeEnforcement.ts` tús áite cheana do `authInfo` thar an titim siar `_meta` agus `OMNIROUTE_MCP_SCOPES` env — ní dhéanann sé seo ach an chéad fhoinse sin, an fhoinse is airde tosaíochta, a líonadh, nach raibh á beathú roimhe seo thar HTTP. Nuair nach réitíonn aon eochair API (gan ceanntásc, eochair neamhbhailí), fanann `authInfo` mar `undefined` agus titim an réiteach tríd an slabhra `meta`/env atá ann cheana gan athrú. Ní dhéanann sé seo an réamhshocrú de chuid `OMNIROUTE_MCP_ENFORCE_SCOPES` a aisiompú — caithfear forfheidhmiú a chumasú go follasach fós; ní dhéanann an t-athrú seo ach go mbeidh an cosán in aghaidh eochrach i réim nuair a bheidh sé. Níl aon aitheantas in aghaidh an fhéachtóra ag stdio (féach `mcpCallerIdentity.ts`) agus ní dhéantar difear dó — fanann sé ar an slabhra titime siar `_meta`/env.
+Thar HTTP/SSE, réitíonn `open-sse/mcp-server/httpTransport.ts` anois fíor-scóip `api_keys.scopes` an fhéachtóra trí `resolveMcpCallerAuthInfo()` (`open-sse/mcp-server/httpAuthContext.ts`) agus cuireann sé ar aghaidh chuig `transport.handleRequest(req, { authInfo })` de chuid SDK MCP é, ionas go léiríonn `extra.authInfo.scopes` a shroicheann gach glao uirlise scóip féin an eochair Bearer. Thug `resolveCallerScopeContext()` de chuid `scopeEnforcement.ts` tús áite cheana do `authInfo` thar an titim siar `_meta` agus `AGENTPROXY_MCP_SCOPES` env — ní dhéanann sé seo ach an chéad fhoinse sin, an fhoinse is airde tosaíochta, a líonadh, nach raibh á beathú roimhe seo thar HTTP. Nuair nach réitíonn aon eochair API (gan ceanntásc, eochair neamhbhailí), fanann `authInfo` mar `undefined` agus titim an réiteach tríd an slabhra `meta`/env atá ann cheana gan athrú. Ní dhéanann sé seo an réamhshocrú de chuid `AGENTPROXY_MCP_ENFORCE_SCOPES` a aisiompú — caithfear forfheidhmiú a chumasú go follasach fós; ní dhéanann an t-athrú seo ach go mbeidh an cosán in aghaidh eochrach i réim nuair a bheidh sé. Níl aon aitheantas in aghaidh an fhéachtóra ag stdio (féach `mcpCallerIdentity.ts`) agus ní dhéantar difear dó — fanann sé ar an slabhra titime siar `_meta`/env.
 
 ## Athrógacha Timpeallachta
 
 | Athróg                                  | Réamhshocrú                                                  | Cúis                                                                                                                                                |
 | :-------------------------------------- | :----------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `OMNIROUTE_BASE_URL`                    | `http://localhost:20128`                                     | An Príomh-URL a úsáideann an MCP freastalaí agus ag glaoch ar APIanna inmheánacha OmniRoute                                                         |
-| `OMNIROUTE_API_KEY`                     | (folamh)                                                     | Eochair API a sheoltar mar `Authorization: Bearer` go glaonna API inmheánacha                                                                       |
-| `OMNIROUTE_MCP_ENFORCE_SCOPES`          | `false` (ní fheadaíonn ach `"true"` nuair atá sé cumasaithe) | Nuair atá sé cumasaithe, diúltaíonn scóip easnamhacha do ghlaonna uirlisí agus logálann sé `scope_denied:<reason>` i log iniúchta                   |
-| `OMNIROUTE_MCP_SCOPES`                  | (folamh)                                                     | Liosta dearmadta de scoipeanna ina n-áirítear "ar fáil" de réir réamhshocraithe (úsáidtear nuair nach soláthraíonn an glaoiteoir a scoipeanna féin) |
-| `OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS`   | (neamhshocrú = air)                                          | Nuair atá sé socraithe go `0/false/off/no`, cuireann sé cosc ar chomhbhrú cur síos MCP ag am clárnachais                                            |
-| `OMNIROUTE_MCP_DESCRIPTION_COMPRESSION` | (neamhshocrú = air)                                          | Ailias malartach don lasc céanna leis an méid atá thuas                                                                                             |
-| `OMNIROUTE_MCP_FETCH_TIMEOUT_MS`        | `10000`                                                      | Buget cur ar ceal do léamhanna bainistíochta inmheánacha (sláinte, athléimneacht, combo, cuóta, úsáid)                                              |
-| `OMNIROUTE_MCP_UPSTREAM_TIMEOUT_MS`     | `60000`                                                      | Buget cur ar ceal do hopaí ag fanacht ar soláthraí (`route_request`, `web_search`, `web_fetch`)                                                     |
+| `AGENTPROXY_BASE_URL`                    | `http://localhost:20128`                                     | An Príomh-URL a úsáideann an MCP freastalaí agus ag glaoch ar APIanna inmheánacha AgentProxy                                                         |
+| `AGENTPROXY_API_KEY`                     | (folamh)                                                     | Eochair API a sheoltar mar `Authorization: Bearer` go glaonna API inmheánacha                                                                       |
+| `AGENTPROXY_MCP_ENFORCE_SCOPES`          | `false` (ní fheadaíonn ach `"true"` nuair atá sé cumasaithe) | Nuair atá sé cumasaithe, diúltaíonn scóip easnamhacha do ghlaonna uirlisí agus logálann sé `scope_denied:<reason>` i log iniúchta                   |
+| `AGENTPROXY_MCP_SCOPES`                  | (folamh)                                                     | Liosta dearmadta de scoipeanna ina n-áirítear "ar fáil" de réir réamhshocraithe (úsáidtear nuair nach soláthraíonn an glaoiteoir a scoipeanna féin) |
+| `AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS`   | (neamhshocrú = air)                                          | Nuair atá sé socraithe go `0/false/off/no`, cuireann sé cosc ar chomhbhrú cur síos MCP ag am clárnachais                                            |
+| `AGENTPROXY_MCP_DESCRIPTION_COMPRESSION` | (neamhshocrú = air)                                          | Ailias malartach don lasc céanna leis an méid atá thuas                                                                                             |
+| `AGENTPROXY_MCP_FETCH_TIMEOUT_MS`        | `10000`                                                      | Buget cur ar ceal do léamhanna bainistíochta inmheánacha (sláinte, athléimneacht, combo, cuóta, úsáid)                                              |
+| `AGENTPROXY_MCP_UPSTREAM_TIMEOUT_MS`     | `60000`                                                      | Buget cur ar ceal do hopaí ag fanacht ar soláthraí (`route_request`, `web_search`, `web_fetch`)                                                     |
 | `MCP_TOOL_DENY`                         | (neamhshocrú = gan scagaire)                                 | Liosta de na hainmneacha uirlisí ina n-áirítear le cealadh ó `tools/list` — (laghdú líon uirlisí — féach thíos)                                     |
 | `MCP_TOOL_ALLOW`                        | (neamhshocrú = gan scagaire)                                 | Liosta de na hainmneacha uirlisí le choinneáil go heisiach (mód liosta ceadaithe — féach thíos)                                                     |
-| `DATA_DIR`                              | `~/.omniroute`                                               | Scriostar an comhad croí i `${DATA_DIR}/runtime/mcp-heartbeat.json`                                                                                 |
+| `DATA_DIR`                              | `~/.agentproxy`                                               | Scriostar an comhad croí i `${DATA_DIR}/runtime/mcp-heartbeat.json`                                                                                 |
 
 ---
 
@@ -345,8 +345,8 @@ Is féidir le formáidí uirlisí, leideanna, acmhainneacha MCP cur síos a chom
 
 - Rithann comhbhrú thar an téacs cur síos ag baint úsáide as an tacar rialacha Caveman (`getRulesForContext("all", "full")`) le gabháil blocanna stóráilte (spásanna cód, blocanna fallaí, srl.) ionas nach n-athraítear ábhar struchtúrach.
 - Cuir tús/tuirlingt in aghaidh an imscaraidh tríd an luach `compression.mcpDescriptionCompressionEnabled` sa tábla socruithe `key_value` (réamhshocrú: cumasaithe) — nochtar sa tsiúl mar **Anailís → Comhbhrú cur síos MCP**.
-- Cuir tús/tuirlingt tríd an phróiseas trí `OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS=false` nó `OMNIROUTE_MCP_DESCRIPTION_COMPRESSION=false`.
-- Nochtar staitisticí fíor-ama trí `omniroute_compression_status` faoi `analytics.mcpDescriptionCompression` agus tá sé marcáilte le `source: "mcp_metadata_estimate"` chun é a dhifriú ó admhálacha úsáide soláthraí fíor.
+- Cuir tús/tuirlingt tríd an phróiseas trí `AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS=false` nó `AGENTPROXY_MCP_DESCRIPTION_COMPRESSION=false`.
+- Nochtar staitisticí fíor-ama trí `agentproxy_compression_status` faoi `analytics.mcpDescriptionCompression` agus tá sé marcáilte le `source: "mcp_metadata_estimate"` chun é a dhifriú ó admhálacha úsáide soláthraí fíor.
 
 ## Laghdú Líon na nUirlisí (F4.3)
 
@@ -363,10 +363,10 @@ Tosaíonn `deny` os cionn `allow`. Scartha le camóg iad na hainmneacha, baintea
 
 ```bash
 # Bain dhá uirlis as an catalóg
-MCP_TOOL_DENY="omniroute_get_health,omniroute_list_combos" omniroute --mcp
+MCP_TOOL_DENY="agentproxy_get_health,agentproxy_list_combos" agentproxy --mcp
 
 # Fógraigh ach na huirlisí ródú + cuóta (mód liosta ceadaithe)
-MCP_TOOL_ALLOW="omniroute_route_request,omniroute_check_quota" omniroute --mcp
+MCP_TOOL_ALLOW="agentproxy_route_request,agentproxy_check_quota" agentproxy --mcp
 ```
 
 **Conas a bhaintear uirlisí scagtha:** éiríonn le clárnúchán i gcónaí; díultaíonn próifíl uirlis ansin ar an sciath MCP SDK trí `.disable()`, ionas nach bhfeicfear riamh iad in `tools/list` ach go gcoinneoidh an nascadh i bhfeidhm (cumasaigh/díchumasaigh glan, gan athchlárnú). Is é an parsálaí próifíle `readMcpToolProfileFromEnv(process.env)`, a thugann `null` (gan scagadh) ar ais nuair a bhíonn an dá athróg folamh.

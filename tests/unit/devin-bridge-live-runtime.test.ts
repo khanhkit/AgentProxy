@@ -101,7 +101,7 @@ test("compose isolates guard audit mounts and waits for healthy guards", () => {
     assert.ok(services[guard].healthcheck?.test, `${guard} healthcheck`);
   }
   assert.equal(
-    services["omniroute-live"].depends_on?.["network-guard"].condition,
+    services["agentproxy-live"].depends_on?.["network-guard"].condition,
     "service_healthy"
   );
   assert.equal(services.claude.depends_on?.["claude-egress-guard"].condition, "service_healthy");
@@ -120,15 +120,15 @@ test("compose keeps role-separated credentials and proxy settings", () => {
       name === "claude" || name === "claude-live",
       `${name} Claude config ownership`
     );
-    assert.equal(sources.includes("devin-auth"), name === "omniroute-live", `${name} Devin auth`);
+    assert.equal(sources.includes("devin-auth"), name === "agentproxy-live", `${name} Devin auth`);
   }
   assert.equal(
-    services["omniroute-live"].environment?.DEVIN_BRIDGE_PROXY_URL,
+    services["agentproxy-live"].environment?.DEVIN_BRIDGE_PROXY_URL,
     "http://network-guard:8080"
   );
   for (const name of ["claude", "claude-live"]) {
     assert.equal(services[name].environment?.HTTP_PROXY, "http://claude-egress-guard:8080");
-    assert.equal(services[name].environment?.NO_PROXY, "omniroute");
+    assert.equal(services[name].environment?.NO_PROXY, "agentproxy");
   }
 });
 
@@ -159,7 +159,7 @@ test("model discovery accepts only explicit uid/id fields and detects catalog am
   assert.throws(() => selectLiveModel({ metadata: { id: "swe-1.7" } }), /no model identifier/i);
   assert.throws(
     () => selectLiveModel({ models: [{ model_uid: "a.b" }] }, {}, [{ id: "a.b" }, { id: "a-b" }]),
-    /Ambiguous OmniRoute catalog normalization/
+    /Ambiguous AgentProxy catalog normalization/
   );
 });
 

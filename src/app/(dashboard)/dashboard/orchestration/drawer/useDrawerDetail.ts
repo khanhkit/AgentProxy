@@ -84,7 +84,7 @@ function routeFor(node: OrchNode): SourceRoute {
  * OBSERVABILITY written by the previous run (`src/lib/a2a/taskExecution.ts`) — never
  * caller input — so echoing it back would make the new task be born carrying the old
  * run's memory snippets, and would keep showing them in the drawer even with the
- * `OMNIROUTE_A2A_MEMORY_HITS=0` kill-switch on. `taskManager.createTask` no longer aliases
+ * `AGENTPROXY_A2A_MEMORY_HITS=0` kill-switch on. `taskManager.createTask` no longer aliases
  * `metadata` into `input`, but historical tasks persisted before that fix still carry the
  * hits inside `input.metadata`, so the repeat path must drop them too.
  * Returns `undefined` for a missing/non-object metadata so the JSON body omits the field

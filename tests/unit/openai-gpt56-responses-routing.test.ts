@@ -6,7 +6,7 @@
  * requests that combine function tools with an active `reasoning_effort` for
  * the GPT-5.6 family with HTTP 400 ("Function tools with reasoning_effort are
  * not supported for <model> in /v1/chat/completions. Please use /v1/responses
- * instead."). OmniRoute already has a generic model-specific `targetFormat`
+ * instead."). AgentProxy already has a generic model-specific `targetFormat`
  * override (used today for gpt-5.5-pro / gpt-5.4-pro, #5842) that routes the
  * request body translation AND the executor's outbound URL to
  * api.openai.com/v1/responses — the GPT-5.6 family registry entries were

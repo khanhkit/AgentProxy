@@ -113,7 +113,7 @@ describe("resolveCursorAgentBinary", () => {
   let tmpHome: string;
 
   beforeEach(() => {
-    tmpHome = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-resolve-cursor-agent-"));
+    tmpHome = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-resolve-cursor-agent-"));
     process.env.HOME = tmpHome;
     process.env.USERPROFILE = tmpHome;
   });
@@ -143,7 +143,7 @@ describe("resolveCursorAgentBinary", () => {
     const fixedBinary = path.join(tmpHome, ".local", "bin", "cursor-agent");
     writeFakeBinary(fixedBinary, NOOP_SCRIPT);
 
-    const pathDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-decoy-path-"));
+    const pathDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-decoy-path-"));
     const decoyBinary = path.join(pathDir, "cursor-agent");
     writeFakeBinary(decoyBinary, NOOP_SCRIPT);
     process.env.PATH = `${pathDir}${path.delimiter}${ORIGINAL_PATH ?? ""}`;
@@ -167,7 +167,7 @@ describe("resolveCursorAgentBinary", () => {
       );
       return;
     }
-    const pathDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-real-path-only-"));
+    const pathDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-real-path-only-"));
     const pathOnlyBinary = path.join(pathDir, "cursor-agent");
     writeFakeBinary(pathOnlyBinary, NOOP_SCRIPT);
     process.env.PATH = `${pathDir}${path.delimiter}${ORIGINAL_PATH ?? ""}`;
@@ -191,7 +191,7 @@ describe("resolveCursorAgentBinary", () => {
         : false,
     },
     () => {
-      const pathDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-path-only-no-fallback-"));
+      const pathDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-path-only-no-fallback-"));
       const pathOnlyBinary = path.join(pathDir, "cursor-agent");
       writeFakeBinary(pathOnlyBinary, NOOP_SCRIPT);
       process.env.PATH = `${pathDir}${path.delimiter}${ORIGINAL_PATH ?? ""}`;
@@ -254,7 +254,7 @@ if (selfExitMs) {
 `;
 
   beforeEach(() => {
-    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-run-cursor-agent-"));
+    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-run-cursor-agent-"));
     binary = path.join(tmpDir, "fake-cursor-agent");
     writeFakeBinary(binary, HANG_IGNORE_SIGTERM_SCRIPT);
   });

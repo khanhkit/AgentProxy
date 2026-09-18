@@ -134,8 +134,8 @@ test("dnsConfig Windows branch is selected via isWin32()/os.platform(), not a mo
 });
 
 test("addDNSEntries on win32 uses elevated PowerShell and never POSIX sudo -S (#11430)", async () => {
-  const previousSkip = process.env.OMNIROUTE_SKIP_DNS_WRITE;
-  delete process.env.OMNIROUTE_SKIP_DNS_WRITE;
+  const previousSkip = process.env.AGENTPROXY_SKIP_DNS_WRITE;
+  delete process.env.AGENTPROXY_SKIP_DNS_WRITE;
   const platformMock = mock.method(os, "platform", () => "win32" as NodeJS.Platform);
   const execCalls: Array<{ command: string; args: string[] }> = [];
   let powershellScript = "";
@@ -161,8 +161,8 @@ test("addDNSEntries on win32 uses elevated PowerShell and never POSIX sudo -S (#
     );
   } finally {
     platformMock.mock.restore();
-    if (previousSkip === undefined) delete process.env.OMNIROUTE_SKIP_DNS_WRITE;
-    else process.env.OMNIROUTE_SKIP_DNS_WRITE = previousSkip;
+    if (previousSkip === undefined) delete process.env.AGENTPROXY_SKIP_DNS_WRITE;
+    else process.env.AGENTPROXY_SKIP_DNS_WRITE = previousSkip;
   }
 });
 

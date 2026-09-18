@@ -2,7 +2,7 @@ import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { appendSyncedEffortVariants } from "../../open-sse/utils/syncedEffortVariants";
 
-describe("OMNIROUTE_DISABLE_THINKING_LEVEL_VARIANTS helper behavior", () => {
+describe("AGENTPROXY_DISABLE_THINKING_LEVEL_VARIANTS helper behavior", () => {
   it("appendSyncedEffortVariants generates variants for eligible models", () => {
     const input = [
       {

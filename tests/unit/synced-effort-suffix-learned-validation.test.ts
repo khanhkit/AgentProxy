@@ -12,7 +12,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-c1-effort-dispatch-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-c1-effort-dispatch-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.API_KEY_SECRET = process.env.API_KEY_SECRET || "c1-test-secret";
 
@@ -21,7 +21,7 @@ const providersDb = await import("../../src/lib/db/providers.ts");
 const modelDiscovery = await import("../../src/lib/providerModels/modelDiscovery.ts");
 const { getModelInfo } = await import("../../src/sse/services/model.ts");
 const { recordLearnedReasoningEffort, __test_resetLearnedReasoningEffortCaps } =
-  await import("@omniroute/open-sse/services/learnedReasoningEffortCaps.ts");
+  await import("@agentproxy/open-sse/services/learnedReasoningEffortCaps.ts");
 
 async function resetStorage() {
   core.resetDbInstance();

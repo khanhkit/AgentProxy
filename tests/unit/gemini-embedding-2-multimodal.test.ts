@@ -4,7 +4,7 @@ import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-process.env.DATA_DIR = mkdtempSync(join(tmpdir(), "omniroute-gemini-embed2-"));
+process.env.DATA_DIR = mkdtempSync(join(tmpdir(), "agentproxy-gemini-embed2-"));
 
 import {
   GEMINI_ENV_CONNECTION_ID,

@@ -20,7 +20,7 @@ import path from "node:path";
 // (the function combo.ts calls) picks it up.
 
 const TEST_DATA_DIR = fs.mkdtempSync(
-  path.join(os.tmpdir(), "omniroute-provider-model-context-override-4125-")
+  path.join(os.tmpdir(), "agentproxy-provider-model-context-override-4125-")
 );
 process.env.DATA_DIR = TEST_DATA_DIR;
 

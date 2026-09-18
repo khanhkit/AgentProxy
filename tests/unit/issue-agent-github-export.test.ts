@@ -8,7 +8,7 @@ test("normalizeGitHubIssueExport reads GitHub REST issue plus comments shape", (
     issue: {
       title: "Fix route guard bypass",
       body: "failing when Host is spoofed",
-      html_url: "https://github.com/KooshaPari/OmniRoute/issues/6059",
+      html_url: "https://github.com/KooshaPari/AgentProxy/issues/6059",
     },
     comments: [
       { user: { login: "renovate[bot]", type: "Bot" }, body: "automated" },
@@ -16,7 +16,7 @@ test("normalizeGitHubIssueExport reads GitHub REST issue plus comments shape", (
     ],
   });
 
-  assert.equal(normalized.issueUrl, "https://github.com/KooshaPari/OmniRoute/issues/6059");
+  assert.equal(normalized.issueUrl, "https://github.com/KooshaPari/AgentProxy/issues/6059");
   assert.deepEqual(normalized.recordedContext, {
     title: "Fix route guard bypass",
     body: "failing when Host is spoofed",
@@ -31,11 +31,11 @@ test("normalizeGitHubIssueExport reads flat issue export shape", () => {
   const normalized = normalizeGitHubIssueExport({
     title: "Question about native router",
     body: "how should cooldowns work?",
-    url: "https://github.com/KooshaPari/OmniRoute/pull/6085",
+    url: "https://github.com/KooshaPari/AgentProxy/pull/6085",
     comments: [{ author: "human", body: "review please", isBot: false }],
   });
 
-  assert.equal(normalized.issueUrl, "https://github.com/KooshaPari/OmniRoute/pull/6085");
+  assert.equal(normalized.issueUrl, "https://github.com/KooshaPari/AgentProxy/pull/6085");
   assert.equal(normalized.recordedContext.title, "Question about native router");
   assert.equal(normalized.recordedContext.comments?.[0]?.author, "human");
 });

@@ -45,7 +45,7 @@ function defaultQdrantSettings(): QdrantSettings {
     enabled: false,
     host: "",
     port: 6333,
-    collection: "omniroute_memory",
+    collection: "agentproxy_memory",
     embeddingModel: "openai/text-embedding-3-small",
     hasApiKey: false,
     apiKeyMasked: null,

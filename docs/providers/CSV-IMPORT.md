@@ -6,7 +6,7 @@ title: "Import providers from a CSV or JSON file"
 
 Dashboard → Providers → **Import from file** creates API-key connections from a CSV or JSON list. Each row can target a different provider. Partial failure is the contract: valid rows still import when others fail, and the modal lists why the failed rows were rejected.
 
-This import does **not** create new OpenAI/Anthropic-compatible endpoint nodes. Create those first (Dashboard → Providers → Add OpenAI-Compatible, or `omniroute nodes add`), then import rows whose `provider` column is that node's id. A per-row `baseUrl` can still override the node's URL.
+This import does **not** create new OpenAI/Anthropic-compatible endpoint nodes. Create those first (Dashboard → Providers → Add OpenAI-Compatible, or `agentproxy nodes add`), then import rows whose `provider` column is that node's id. A per-row `baseUrl` can still override the node's URL.
 
 ## CSV (positional)
 
@@ -25,7 +25,7 @@ A first line whose first column is the literal word `provider` (any case) is ski
 Download a starter file from the import modal (**Download CSV template**). Example:
 
 ```csv
-# OmniRoute provider import (positional columns)
+# AgentProxy provider import (positional columns)
 provider,name,apiKey,baseUrl,priority
 openai,Prod OpenAI,sk-your-openai-key,,1
 ```

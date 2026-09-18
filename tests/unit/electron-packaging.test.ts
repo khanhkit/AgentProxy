@@ -67,7 +67,7 @@ test("electron standalone assembly normalizes Turbopack hashed external imports"
 });
 
 test("electron docs manifest prunes authoring payloads without removing runtime docs", () => {
-  const bundleRoot = mkdtempSync(join(tmpdir(), "omniroute-electron-docs-"));
+  const bundleRoot = mkdtempSync(join(tmpdir(), "agentproxy-electron-docs-"));
   const files = new Map([
     ["docs/openapi.yaml", "openapi: 3.1.0"],
     ["docs/guides/CODEX-CLI-CONFIGURATION.md", "# Codex CLI"],

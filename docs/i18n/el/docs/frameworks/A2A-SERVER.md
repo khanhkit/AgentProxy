@@ -6,14 +6,14 @@
 
 ---
 
-title: "OmniRoute A2A Server Documentation"
+title: "AgentProxy A2A Server Documentation"
 version: 3.8.40
 lastUpdated: 2026-06-28
 ---
 
-# Τεκμηρίωση OmniRoute A2A Server
+# Τεκμηρίωση AgentProxy A2A Server
 
-> Agent-to-Agent Protocol v0.3 — Το OmniRoute ως έξυπνος agent δρομολόγησης
+> Agent-to-Agent Protocol v0.3 — Το AgentProxy ως έξυπνος agent δρομολόγησης
 
 Η επιφάνεια A2A έχει δύο όψεις:
 
@@ -28,7 +28,7 @@ lastUpdated: 2026-06-28
 curl http://localhost:20128/.well-known/agent.json
 ```
 
-Επιστρέφει το Agent Card που περιγράφει τις δυνατότητες, τις δεξιότητες και τις απαιτήσεις αυθεντικοποίησης του OmniRoute.
+Επιστρέφει το Agent Card που περιγράφει τις δυνατότητες, τις δεξιότητες και τις απαιτήσεις αυθεντικοποίησης του AgentProxy.
 
 Το πεδίο `version` του Agent Card αντλείται από το `process.env.npm_package_version` (βλ. `src/app/.well-known/agent.json/route.ts:13`), οπότε παραμένει αυτόματα συγχρονισμένο με το `package.json` σε κάθε έκδοση.
 
@@ -39,7 +39,7 @@ curl http://localhost:20128/.well-known/agent.json
 Όλες οι αιτήσεις στο `/a2a` απαιτούν κλειδί API μέσω της κεφαλίδας `Authorization`:
 
 ```
-Authorization: Bearer YOUR_OMNIROUTE_API_KEY
+Authorization: Bearer YOUR_AGENTPROXY_API_KEY
 ```
 
 Εάν δεν έχει διαμορφωθεί κλειδί API στον διακομιστή, η αυθεντικοποίηση παρακάμπτεται.
@@ -157,22 +157,22 @@ curl -X POST http://localhost:20128/a2a \
 
 ## Διαθέσιμες Δεξιότητες
 
-Το OmniRoute εκθέτει 6 δεξιότητες A2A που καταχωρούνται στο `src/lib/a2a/taskExecution.ts::A2A_SKILL_HANDLERS`. Κάθε module δεξιότητας βρίσκεται στο `src/lib/a2a/skills/`.
+Το AgentProxy εκθέτει 6 δεξιότητες A2A που καταχωρούνται στο `src/lib/a2a/taskExecution.ts::A2A_SKILL_HANDLERS`. Κάθε module δεξιότητας βρίσκεται στο `src/lib/a2a/skills/`.
 
 | Δεξιότητα          | ID                   | Περιγραφή                                                                                                                                          | Ετικέτες                   | Παραδείγματα                           |
 | :----------------- | :------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------- | :------------------------------------- |
-| Smart Routing      | `smart-routing`      | Δρομολογεί ένα prompt μέσω του βέλτιστου παρόχου/συνδυασμού χρησιμοποιώντας τη μηχανή συνδυασμών και βαθμολόγησης του OmniRoute                    | routing, providers         | "Route this prompt via the best model" |
+| Smart Routing      | `smart-routing`      | Δρομολογεί ένα prompt μέσω του βέλτιστου παρόχου/συνδυασμού χρησιμοποιώντας τη μηχανή συνδυασμών και βαθμολόγησης του AgentProxy                    | routing, providers         | "Route this prompt via the best model" |
 | Quota Management   | `quota-management`   | Αναφέρει την κατάσταση ορίου χρήσης ανά πάροχο, βοηθά τους καλούντες να αποφασίσουν πότε να περιορίσουν ή να αλλάξουν πάροχο                       | quota, providers           | "Check quota for anthropic"            |
 | Provider Discovery | `provider-discovery` | Παραθέτει τους εγκατεστημένους παρόχους με τις δυνατότητές τους, σημαίες δωρεάν επιπέδου και κατάσταση OAuth                                       | providers, discovery       | "What providers are available?"        |
 | Cost Analysis      | `cost-analysis`      | Εκτιμά το κόστος ενός αιτήματος/συνομιλίας βάσει του καταλόγου και της πρόσφατης χρήσης                                                            | cost, usage                | "Estimate cost for this conversation"  |
 | Health Report      | `health-report`      | Συγκεντρώνει την κατάσταση του circuit breaker, της περιόδου αναμονής και του αποκλεισμού ανά πάροχο                                               | health, resilience         | "Show health status of all providers"  |
-| List Capabilities  | `list-capabilities`  | Επιστρέφει τον πλήρη κατάλογο 45 δεξιοτήτων Agent (23 API + 21 CLI + 1 διαμόρφωση) ως πίνακα markdown με raw SKILL.md URLs για έγχυση περιεχομένου | catalog, discovery, skills | "List all OmniRoute capabilities"      |
+| List Capabilities  | `list-capabilities`  | Επιστρέφει τον πλήρη κατάλογο 45 δεξιοτήτων Agent (23 API + 21 CLI + 1 διαμόρφωση) ως πίνακα markdown με raw SKILL.md URLs για έγχυση περιεχομένου | catalog, discovery, skills | "List all AgentProxy capabilities"      |
 
 > Το Agent Card θα πρέπει να παραμένει συγχρονισμένο με τον ενεργό κατάλογο 352 παρόχων· τα πλήθη παρόχων και τα μεταδεδομένα δωρεάν/χωρίς-πιστοποίηση αντλούνται από το μητρώο εκτέλεσης.
 
 ### Λεπτομέρειες Δεξιότητας `list-capabilities`
 
-Η δεξιότητα `list-capabilities` είναι ιδιαίτερα χρήσιμη για εξωτερικούς agents που χρειάζεται να ανακαλύψουν τι εκθέτει το OmniRoute πριν στείλουν κλήσεις API. Επιστρέφει ένα δομημένο artifact πίνακα markdown:
+Η δεξιότητα `list-capabilities` είναι ιδιαίτερα χρήσιμη για εξωτερικούς agents που χρειάζεται να ανακαλύψουν τι εκθέτει το AgentProxy πριν στείλουν κλήσεις API. Επιστρέφει ένα δομημένο artifact πίνακα markdown:
 
 ```
 | ID | Name | Category | Area | Endpoints/Commands | Raw URL |
@@ -196,9 +196,9 @@ curl -X POST http://localhost:20128/a2a \
 | `/api/a2a/tasks/[id]`        | GET     | Ανάκτηση εργασίας βάσει ID                                      | management                                   |
 | `/api/a2a/tasks/[id]/cancel` | POST    | Ακύρωση εκτελούμενης εργασίας                                   | management                                   |
 | `/.well-known/agent.json`    | GET     | Agent Card (ανακάλυψη A2A)                                      | (δημόσιο, cached 3600s)                      |
-| `/api/a2a/tasks`             | POST    | Εισερχόμενη ανάθεση στο OmniConductor fleet (Conductor PRD RF5) | Bearer vs `OMNIROUTE_API_KEY` + `a2aEnabled` |
+| `/api/a2a/tasks`             | POST    | Εισερχόμενη ανάθεση στο OmniConductor fleet (Conductor PRD RF5) | Bearer vs `AGENTPROXY_API_KEY` + `a2aEnabled` |
 
-**Εισερχόμενη ανάθεση Conductor (`POST /api/a2a/tasks`):** εξωτερικοί A2A agents αναθέτουν εργασίες κώδικα στο OmniConductor fleet μέσω OmniRoute. Body: `{ skill: "conductor" | "conductor-cli-<profile>", messages: [{role, content}], metadata: { conductor: { repo: { url, base_ref? }, mode?, cli?, model? } } }` — μόνο οι δεξιότητες του Conductor fleet (αυτές που ανακοινώνονται στο Agent Card) είναι αναθέσιμες· το `metadata.conductor.repo.url` είναι υποχρεωτικό (το fleet εργάζεται σε git repos). Η διαδρομή μεταφράζεται στο `POST /v1/tasks` του hub χρησιμοποιώντας το `CONDUCTOR_ORCHESTRATOR_TOKEN` από την πλευρά του διακομιστή (εναλλακτικά `CONDUCTOR_HUB_TOKEN`) και επιστρέφει `201 { conductor_task_id, state: "submitted" }`· οι καταστάσεις εργασιών ρέουν πίσω μέσω του SSE→A2A mirror (RF1) και είναι ορατές μέσω `GET /api/a2a/tasks?skill=conductor`.
+**Εισερχόμενη ανάθεση Conductor (`POST /api/a2a/tasks`):** εξωτερικοί A2A agents αναθέτουν εργασίες κώδικα στο OmniConductor fleet μέσω AgentProxy. Body: `{ skill: "conductor" | "conductor-cli-<profile>", messages: [{role, content}], metadata: { conductor: { repo: { url, base_ref? }, mode?, cli?, model? } } }` — μόνο οι δεξιότητες του Conductor fleet (αυτές που ανακοινώνονται στο Agent Card) είναι αναθέσιμες· το `metadata.conductor.repo.url` είναι υποχρεωτικό (το fleet εργάζεται σε git repos). Η διαδρομή μεταφράζεται στο `POST /v1/tasks` του hub χρησιμοποιώντας το `CONDUCTOR_ORCHESTRATOR_TOKEN` από την πλευρά του διακομιστή (εναλλακτικά `CONDUCTOR_HUB_TOKEN`) και επιστρέφει `201 { conductor_task_id, state: "submitted" }`· οι καταστάσεις εργασιών ρέουν πίσω μέσω του SSE→A2A mirror (RF1) και είναι ορατές μέσω `GET /api/a2a/tasks?skill=conductor`.
 
 ---
 

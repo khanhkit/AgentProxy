@@ -11,7 +11,7 @@
 # `auto_index_limit=50000`, total indexável medido ≈11.546 arquivos (folga 4,3×).
 #
 # Fontes cruzadas:
-#   - `codebase-memory-mcp cli index_status --project home-diegosouzapw-dev-proxys-OmniRoute`
+#   - `codebase-memory-mcp cli index_status --project home-diegosouzapw-dev-proxys-AgentProxy`
 #     → `not_indexed.dirs` (27) + `not_indexed.files` (336), todos `BY DESIGN`.
 #   - `.gitignore` deste repo (5.691 B) — fonte canônica secundária.
 #
@@ -37,10 +37,10 @@ electron/node_modules/
 icon.iconset/
 
 # Workspaces internos que tem proprio node_modules
-@omniroute/opencode-plugin/dist/
-@omniroute/opencode-plugin/node_modules/
-@omniroute/opencode-provider/dist/
-@omniroute/opencode-provider/node_modules/
+@agentproxy/opencode-plugin/dist/
+@agentproxy/opencode-plugin/node_modules/
+@agentproxy/opencode-provider/dist/
+@agentproxy/opencode-provider/node_modules/
 
 # Recursos nativos compilados (C/JNI/wasm)
 src/mitm/tproxy/native/build/
@@ -107,9 +107,9 @@ _tasks/
 .superpowers/
 .claude-flow/
 .omnivscodeagent/
-omnirouteCloud/
-omnirouteSite/
-.omniroute/
+agentproxyCloud/
+agentproxySite/
+.agentproxy/
 .stent/
 
 # Subpaths especificos do Claude Code que nao estao em .claude/ (criados sob repo)
@@ -191,8 +191,8 @@ audit-report.json
 scripts/i18n/_audit.json
 scripts/i18n/_pending-keys.json
 
-# NOTA: bin/omniroute.mjs foi removido daqui (2026-08-05). Estava marcado como
-# "scratch", mas e o entrypoint real do CLI publicado (package.json -> bin.omniroute)
+# NOTA: bin/agentproxy.mjs foi removido daqui (2026-08-05). Estava marcado como
+# "scratch", mas e o entrypoint real do CLI publicado (package.json -> bin.agentproxy)
 # e consta em PACK_ARTIFACT_REQUIRED_PATHS. Precisa estar no grafo.
 
 # Deploy / docker backups

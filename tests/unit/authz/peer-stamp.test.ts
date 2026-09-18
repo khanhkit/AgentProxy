@@ -1,6 +1,6 @@
 // Direct unit tests for scripts/dev/peer-stamp.mjs::stampPeerIp.
 //
-// These tests assert the exact x-omniroute-peer-ip / x-omniroute-via-proxy
+// These tests assert the exact x-agentproxy-peer-ip / x-agentproxy-via-proxy
 // headers the custom server stamps before forwarding the request to Next.js.
 // They are intentionally standalone (mock IncomingMessage) so a bug in the
 // cf-connecting-ip path can be reproduced by reverting the corresponding line
@@ -18,7 +18,7 @@ const {
   isCloudflareIP,
 } = peerStamp;
 
-const ORIGINAL_STAMP_TOKEN = process.env.OMNIROUTE_PEER_STAMP_TOKEN;
+const ORIGINAL_STAMP_TOKEN = process.env.AGENTPROXY_PEER_STAMP_TOKEN;
 
 function makeReq(remoteAddress: string, headers: Record<string, string> = {}) {
   return {
@@ -36,13 +36,13 @@ function getViaProxy(req: ReturnType<typeof makeReq>) {
 }
 
 test.after(() => {
-  if (ORIGINAL_STAMP_TOKEN === undefined) delete process.env.OMNIROUTE_PEER_STAMP_TOKEN;
-  else process.env.OMNIROUTE_PEER_STAMP_TOKEN = ORIGINAL_STAMP_TOKEN;
+  if (ORIGINAL_STAMP_TOKEN === undefined) delete process.env.AGENTPROXY_PEER_STAMP_TOKEN;
+  else process.env.AGENTPROXY_PEER_STAMP_TOKEN = ORIGINAL_STAMP_TOKEN;
 });
 
 test.beforeEach(() => {
-  delete process.env.OMNIROUTE_PEER_STAMP_TOKEN;
-  process.env.OMNIROUTE_PEER_STAMP_TOKEN = "stamp-tok";
+  delete process.env.AGENTPROXY_PEER_STAMP_TOKEN;
+  process.env.AGENTPROXY_PEER_STAMP_TOKEN = "stamp-tok";
 });
 
 test("stamps peer IP and via-proxy=0 for direct connection (no forwarding headers)", () => {

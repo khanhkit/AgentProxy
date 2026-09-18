@@ -17,7 +17,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-quota-mig-idem-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-quota-mig-idem-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../src/lib/db/core.ts");
@@ -80,7 +80,7 @@ test("migrations 073-075 create all expected tables and indexes on first init", 
 
 test("running migration runner a second time produces zero errors and identical schema", async () => {
   // Second initialization after reset: migration runner runs again but all
-  // migrations are already recorded in _omniroute_migrations — should be no-op.
+  // migrations are already recorded in _agentproxy_migrations — should be no-op.
   core.resetDbInstance();
 
   // Re-initialize (must not throw)

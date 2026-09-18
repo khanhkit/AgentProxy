@@ -1,5 +1,5 @@
 /**
- * browserBackedChat.ts — Full browser-backed chat interaction for @omniroute/browser-pool.
+ * browserBackedChat.ts — Full browser-backed chat interaction for @agentproxy/browser-pool.
  *
  * Opens a page on a shared browser context, navigates to the provider's
  * chat page, types the user's message, clicks Send, and returns the
@@ -258,7 +258,7 @@ export async function startBrowserWarmup(
   cookieDomain: string,
   signal: AbortSignal | null
 ): Promise<void> {
-  if (process.env.OMNIROUTE_BROWSER_POOL === "off" || signal?.aborted) return;
+  if (process.env.AGENTPROXY_BROWSER_POOL === "off" || signal?.aborted) return;
   await acquireBrowserContext(poolKey, {
     cookieDomain,
     cookieString: null,

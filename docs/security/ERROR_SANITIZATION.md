@@ -42,7 +42,7 @@ prototype-control keys before a response is serialized.
 Use `buildErrorBody()` — sanitization is built-in:
 
 ```ts
-import { buildErrorBody } from "@omniroute/open-sse/utils/error.ts";
+import { buildErrorBody } from "@agentproxy/open-sse/utils/error.ts";
 
 export async function POST(req: Request) {
   try {
@@ -66,7 +66,7 @@ import {
   unavailableResponse, // adds Retry-After
   providerCircuitOpenResponse,
   modelCooldownResponse,
-} from "@omniroute/open-sse/utils/error.ts";
+} from "@agentproxy/open-sse/utils/error.ts";
 ```
 
 All of these apply the canonical public-error boundary. `errorResponse`, `writeStreamError`, and
@@ -79,7 +79,7 @@ project and sanitize their public context directly. **You never need to call
 When you can't use the helpers above (e.g. the response shape is dictated by an upstream protocol like Connect-RPC), import `sanitizeErrorMessage` directly:
 
 ```ts
-import { sanitizeErrorMessage } from "@omniroute/open-sse/utils/error.ts";
+import { sanitizeErrorMessage } from "@agentproxy/open-sse/utils/error.ts";
 
 const body = JSON.stringify({
   error: {
@@ -183,7 +183,7 @@ Sanitization rules applied to `upstreamDetails`:
 3. Depth cap: nesting beyond 4 levels is replaced with the string `"[truncated]"`.
 4. Arrays are capped at 32 elements.
 
-Only call sites with a parsed provider error body should pass `upstreamDetails`. Internal OmniRoute
+Only call sites with a parsed provider error body should pass `upstreamDetails`. Internal AgentProxy
 errors (SSE parse failures, empty content, guardrail blocks) must not include it.
 
 Do NOT pass raw `err.stack`, `err.message`, or any string from a runtime exception to
@@ -194,7 +194,7 @@ Selective upstream 4xx passthrough preserves the provider's safe JSON shape and 
 client auto-recovery, but it is not byte-for-byte passthrough: the recursive sanitizer always runs
 before serialization. Cyclic, BigInt-bearing, or hostile `toJSON()` bodies fail closed and are not
 eligible for passthrough. OCR and moderation apply the same rule; non-JSON, blank, or mislabeled
-upstream bodies are converted to the canonical OmniRoute JSON error envelope.
+upstream bodies are converted to the canonical AgentProxy JSON error envelope.
 
 ## Known CodeQL limitation: custom sanitizers not recognized
 

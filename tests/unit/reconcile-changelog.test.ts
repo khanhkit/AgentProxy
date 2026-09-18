@@ -17,7 +17,7 @@ const {
   reconcile,
 } = mod;
 
-const REPO = "diegosouzapw/OmniRoute";
+const REPO = "khanhkit/AgentProxy";
 const link = (n: number) => `[#${n}](https://github.com/${REPO}/pull/${n})`;
 
 test("primaryRefs: /pull links and the LAST #N count, incidental mentions do not", () => {
@@ -219,7 +219,7 @@ test("reconcile: folds fragments under the version section, credits by fragment 
 
 ### 🐛 Bug Fixes
 
-- **fix(cli):** \`omniroute update\` now finds npm on Windows. It called execFile with no shell (#11335)
+- **fix(cli):** \`agentproxy update\` now finds npm on Windows. It called execFile with no shell (#11335)
 
 ---
 `;
@@ -355,7 +355,7 @@ test("reconcile: folds fragments under the version section, credits by fragment 
     {
       path: "changelog.d/fixes/cli-update-npm-win32.md",
       section: "fixes",
-      text: "- **fix(cli):** `omniroute update` now finds npm on Windows. It called execFile with no shell\n",
+      text: "- **fix(cli):** `agentproxy update` now finds npm on Windows. It called execFile with no shell\n",
       originHash: "d3d3d3d3d",
       originPr: 11434,
       prefixPr: null,

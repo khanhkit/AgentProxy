@@ -9,15 +9,15 @@ let origHome: string | undefined;
 let origPath: string | undefined;
 
 test.before(() => {
-  tmpDir = mkdtempSync(join(tmpdir(), "omniroute-tray-test-"));
+  tmpDir = mkdtempSync(join(tmpdir(), "agentproxy-tray-test-"));
   origHome = process.env.HOME;
   // Redirecionar HOME para tmpDir para isolar testes de autostart
   process.env.HOME = tmpDir;
 
   // HOME alone does NOT isolate this test: `enable()`/`disable()` shell out to
   // `systemctl --user enable|start` and `systemctl --user disable --now
-  // omniroute.service`, which reach the caller's real systemd bus (XDG_RUNTIME_DIR,
-  // not HOME) and therefore stopped and disabled the developer's REAL omniroute
+  // agentproxy.service`, which reach the caller's real systemd bus (XDG_RUNTIME_DIR,
+  // not HOME) and therefore stopped and disabled the developer's REAL agentproxy
   // service every time this suite ran. Shadow systemctl/loginctl with failing
   // stubs so `isSystemdUserAvailable()` is false and the systemd branch is skipped;
   // the XDG desktop-file branch still runs and is properly isolated by HOME.

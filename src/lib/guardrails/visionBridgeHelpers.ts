@@ -1,13 +1,13 @@
 /**
  * Vision Bridge helper functions for image processing.
  */
-import { detectMediaParts, type MediaPart } from "@omniroute/open-sse/utils/mediaParts";
-import { normalizeDataUri } from "@omniroute/open-sse/utils/imageNormalize";
+import { detectMediaParts, type MediaPart } from "@agentproxy/open-sse/utils/mediaParts";
+import { normalizeDataUri } from "@agentproxy/open-sse/utils/imageNormalize";
 import { fetchRemoteImage } from "@/shared/network/remoteImageFetch";
 import { getRuntimePorts } from "@/lib/runtime/ports";
 import { resolveSelfLoopBearer } from "@/shared/middleware/chatBodyAdmission";
 import { getBestVisionModel, getFallbackModels, recordLatency } from "./visionBridgeRouter";
-import { REGISTRY } from "@omniroute/open-sse/config/providers";
+import { REGISTRY } from "@agentproxy/open-sse/config/providers";
 /**
  * Provider to environment variable mapping for API key resolution.
  */
@@ -46,7 +46,7 @@ export function isClaudeWireFormatModel(model: string | null | undefined): boole
  *   2. `VISION_BRIDGE_API_KEY` env var — operator-set, takes precedence over
  *      per-provider env vars. Used when the operator wants every vision-bridge
  *      call to go through a single OpenAI-compatible endpoint (e.g.,
- *      OmniRoute itself, OpenRouter, a Gemini-OpenAI-compat URL).
+ *      AgentProxy itself, OpenRouter, a Gemini-OpenAI-compat URL).
  *   3. Per-provider env var (`ANTHROPIC_API_KEY`, `GOOGLE_API_KEY`,
  *      `OPENAI_API_KEY`) based on the `provider/` prefix in the model id.
  *   4. `OPENAI_API_KEY` as final fallback when the prefix is unrecognized.
@@ -72,16 +72,16 @@ export function resolveProviderApiKey(model: string, explicitKey?: string): stri
 let selfLoopKeyPromise: Promise<string> | null = null;
 
 /**
- * Resolve a real API key for the OmniRoute SELF-LOOP describe call.
+ * Resolve a real API key for the AgentProxy SELF-LOOP describe call.
  *
- * The `sk_omniroute` sentinel works only when REQUIRE_API_KEY is disabled; on
+ * The `sk_agentproxy` sentinel works only when REQUIRE_API_KEY is disabled; on
  * REQUIRE_API_KEY instances it is rejected with 401 "Missing API key", which
  * silently breaks every vision-bridge describe. Priority:
  *   1. VISION_BRIDGE_API_KEY env (already handled by resolveProviderApiKey —
  *      kept here for the injected-resolver test path).
  *   2. Injected resolver (tests) or the DB-backed `getOrCreateApiKey()` —
  *      memoized so at most one key is created per process.
- *   3. `sk_omniroute` as a final fallback (local mode without auth).
+ *   3. `sk_agentproxy` as a final fallback (local mode without auth).
  */
 export async function resolveSelfLoopApiKey(resolver?: () => Promise<string>): Promise<string> {
   const envKey = (process.env.VISION_BRIDGE_API_KEY || "").trim();
@@ -89,7 +89,7 @@ export async function resolveSelfLoopApiKey(resolver?: () => Promise<string>): P
   if (resolver) {
     const key = (await resolver()).trim();
     if (key) return key;
-    return "sk_omniroute";
+    return "sk_agentproxy";
   }
   if (!selfLoopKeyPromise) {
     selfLoopKeyPromise = (async () => {
@@ -100,7 +100,7 @@ export async function resolveSelfLoopApiKey(resolver?: () => Promise<string>): P
       } catch {
         /* fall through */
       }
-      return "sk_omniroute";
+      return "sk_agentproxy";
     })();
   }
   return selfLoopKeyPromise;
@@ -112,19 +112,19 @@ export async function resolveSelfLoopApiKey(resolver?: () => Promise<string>): P
  *
  * Priority:
  *   1. `VISION_BRIDGE_BASE_URL` env var — operator-set, e.g. point this at
- *      OmniRoute's own `/v1` so the vision model can be any provider
- *      registered in OmniRoute (`google/gemini-2.0-flash`,
+ *      AgentProxy's own `/v1` so the vision model can be any provider
+ *      registered in AgentProxy (`google/gemini-2.0-flash`,
  *      `openrouter/...`, etc.) instead of being limited to OpenAI/Anthropic.
  *   2. `OPENAI_API_URL` env var (legacy)
- *   3. OmniRoute self-loop (`http://localhost:20128/v1`) — auto-detected when
- *      the model uses a known OmniRoute-internal provider (e.g. `kr/`, `if/`,
+ *   3. AgentProxy self-loop (`http://localhost:20128/v1`) — auto-detected when
+ *      the model uses a known AgentProxy-internal provider (e.g. `kr/`, `if/`,
  *      `pol/`, `groq/`, etc.) instead of a direct OpenAI/Anthropic endpoint.
  *   4. `https://api.openai.com/v1` (fallback when the model is `openai/*` or
  *      unprefixed — works only when the operator actually has an OpenAI
  *      account and OPENAI_API_KEY set)
  *
  * @param model - Optional model identifier used to detect non-standard providers
- *                that require OmniRoute self-loop routing.
+ *                that require AgentProxy self-loop routing.
  */
 export function resolveVisionBridgeBaseUrl(model?: string): string {
   const explicit = (process.env.VISION_BRIDGE_BASE_URL || "").trim();
@@ -133,9 +133,9 @@ export function resolveVisionBridgeBaseUrl(model?: string): string {
   if (legacy) return legacy.replace(/\/+$/, "");
 
   // When the model has a non-standard provider prefix (not openai/ or
-  // anthropic/), it can only be resolved through OmniRoute's own router,
+  // anthropic/), it can only be resolved through AgentProxy's own router,
   // not through a direct OpenAI/Anthropic endpoint. Use the operator-configured
-  // port via OMNIROUTE_PORT / PORT env vars, falling back to the default 20128.
+  // port via AGENTPROXY_PORT / PORT env vars, falling back to the default 20128.
   if (model && model.includes("/")) {
     const provider = model.split("/")[0].toLowerCase();
     if (provider !== "openai" && provider !== "anthropic") {
@@ -215,7 +215,7 @@ export function extractImageParts(messages: RequestMessage[]): ImagePart[] {
 }
 
 // Wikimedia (and other CDNs) reject requests without a browser-ish UA.
-const VISION_BRIDGE_FETCH_HEADERS = { "user-agent": "omniroute-vision-bridge" };
+const VISION_BRIDGE_FETCH_HEADERS = { "user-agent": "agentproxy-vision-bridge" };
 
 /**
  * Resolve every image part in the body to a base64 data URI when the target
@@ -337,8 +337,8 @@ export interface VisionModelConfig {
   prompt: string;
   timeoutMs: number;
   maxImages: number;
-  /** Route catalog models through OmniRoute so provider connections remain authoritative. */
-  routeThroughOmniRoute?: boolean;
+  /** Route catalog models through AgentProxy so provider connections remain authoritative. */
+  routeThroughAgentProxy?: boolean;
   /** Optional parent deadline/abort propagated by multi-step media bridges. */
   signal?: AbortSignal;
   /** Injectable fetch (tests). Defaults to undici fetch to bypass the runtime's hooked global fetch. */
@@ -432,7 +432,7 @@ export async function callVisionModel(
 }
 
 /**
- * Unwrap the detailed-log/diagnostics envelope that some OmniRoute paths attach
+ * Unwrap the detailed-log/diagnostics envelope that some AgentProxy paths attach
  * to provider responses (`{ _streamed, _format, summary: {...} }`). Returns the
  * inner `summary` object when present, otherwise the value unchanged.
  */
@@ -450,7 +450,7 @@ function unwrapVisionSummary(value: unknown): unknown {
  * Parse a vision-bridge response body that may be:
  *   1. Plain JSON (`{ choices: [...] }` / `{ content: [...] }`)
  *   2. An SSE stream of `data: {...}` lines (forceStream providers, or
- *      OmniRoute's self-loop when the `stream` default kicks in)
+ *      AgentProxy's self-loop when the `stream` default kicks in)
  *   3. The `{ _streamed, _format, summary }` diagnostics envelope
  *
  * For SSE input, aggregates `delta.content` / `delta.reasoning_content`
@@ -570,14 +570,14 @@ function parseSseVisionBody(rawBody: string): unknown {
 /**
  * Read a vision-model HTTP response body tolerantly: try `json()` first, then
  * fall back to text/SSE parsing. Some OpenAI-compatible backends (including
- * OmniRoute's own self-loop and forceStream providers) reply with a `data:`
+ * AgentProxy's own self-loop and forceStream providers) reply with a `data:`
  * SSE stream even for `stream: false`, which makes `response.json()` throw
  * `Unexpected token 'd'`.
  */
 async function readVisionResponseBody(response: Response): Promise<unknown> {
   try {
     // JSON path — also unwrap the { _streamed, summary } diagnostics envelope
-    // that some OmniRoute capture paths attach to provider responses.
+    // that some AgentProxy capture paths attach to provider responses.
     return unwrapVisionSummary(await response.json());
   } catch {
     // Not JSON — attempt SSE / envelope parsing from the raw text.
@@ -664,8 +664,8 @@ async function callVisionModelSingle(
   // body reaches the backend as a data URI (the OpenAI→claude translator only
   // preserves data URIs as base64; remote URLs become source.url which these
   // backends reject).
-  const routeThroughOmniRoute = config.routeThroughOmniRoute === true;
-  const isAnthropic = !routeThroughOmniRoute && config.model.startsWith("anthropic/");
+  const routeThroughAgentProxy = config.routeThroughAgentProxy === true;
+  const isAnthropic = !routeThroughAgentProxy && config.model.startsWith("anthropic/");
   const requiresBase64 = isAnthropic || isClaudeWireFormatModel(config.model);
 
   try {
@@ -729,31 +729,31 @@ async function callVisionModelSingle(
     } else {
       // OpenAI-compatible path (default) — issue #2232: honor
       // VISION_BRIDGE_BASE_URL so the vision-bridge call can be routed through
-      // OmniRoute itself or any other OpenAI-compatible endpoint instead of
+      // AgentProxy itself or any other OpenAI-compatible endpoint instead of
       // hardcoded api.openai.com.
-      const baseUrl = routeThroughOmniRoute
+      const baseUrl = routeThroughAgentProxy
         ? `http://localhost:${getRuntimePorts().port}/v1`
         : resolveVisionBridgeBaseUrl(config.model);
 
-      // When routing through the OmniRoute self-loop (non-standard provider),
-      // keep the full provider-prefixed model ID so OmniRoute can resolve the
+      // When routing through the AgentProxy self-loop (non-standard provider),
+      // keep the full provider-prefixed model ID so AgentProxy can resolve the
       // correct provider backend. Only strip the prefix for direct OpenAI calls.
       const useFullModelId =
-        routeThroughOmniRoute ||
+        routeThroughAgentProxy ||
         (baseUrl.startsWith("http://localhost") &&
           config.model.includes("/") &&
           !config.model.startsWith("openai/"));
       const requestModel = useFullModelId ? config.model : modelName;
 
       // Build headers with optional recursion guard for self-loop calls.
-      // When routing through OmniRoute's own API, omit the vision-bridge
+      // When routing through AgentProxy's own API, omit the vision-bridge
       // guardrail on the sub-request to prevent infinite recursion.
-      // Use a real DB-backed key for self-loop (sk_omniroute is rejected by
+      // Use a real DB-backed key for self-loop (sk_agentproxy is rejected by
       // REQUIRE_API_KEY instances with 401 "Missing API key").
       const selfLoopApiKey = resolvedApiKey || (await resolveSelfLoopApiKey());
       const headers: Record<string, string> = {
         "Content-Type": "application/json",
-        // Explicit JSON opt-in: without `Accept: application/json` OmniRoute's
+        // Explicit JSON opt-in: without `Accept: application/json` AgentProxy's
         // self-loop defaults to SSE (resolveStreamFlag's legacy default) and the
         // describe call would receive a `data:` stream that response.json() can't
         // parse (`Unexpected token 'd'`), failing the whole vision-bridge
@@ -762,7 +762,7 @@ async function callVisionModelSingle(
         Authorization: `Bearer ${selfLoopApiKey}`,
       };
       if (useFullModelId) {
-        headers["x-omniroute-disabled-guardrails"] = routeThroughOmniRoute
+        headers["x-agentproxy-disabled-guardrails"] = routeThroughAgentProxy
           ? "vision-bridge,video-bridge"
           : "vision-bridge";
         // Internal self-loop sub-request: the parent request already holds the
@@ -770,14 +770,14 @@ async function callVisionModelSingle(
         // large base64-image describe body would be rejected with 503
         // `chat_admission_busy` before it is described. The route only honors
         // this header for trusted self-loop credentials (the local
-        // `sk_omniroute` sentinel OR the operator-configured env key), so
+        // `sk_agentproxy` sentinel OR the operator-configured env key), so
         // external clients cannot use it to bypass admission.
-        headers["x-omniroute-admission-bypass"] = "internal";
+        headers["x-agentproxy-admission-bypass"] = "internal";
         // The compression pipeline must not touch the image payload of the
         // self-loop describe call (stacked RTK/Caveman can mangle data URIs).
-        headers["x-omniroute-compression"] = "off";
+        headers["x-agentproxy-compression"] = "off";
         // The admission bypass honors the env key when set (REQUIRE_API_KEY=true
-        // deployments) and the `sk_omniroute` sentinel otherwise. Force the same
+        // deployments) and the `sk_agentproxy` sentinel otherwise. Force the same
         // resolved credential so the bypass holds even when a real vision key is
         // configured for the vision model's provider.
         headers["Authorization"] = `Bearer ${resolveSelfLoopBearer()}`;
@@ -795,7 +795,7 @@ async function callVisionModelSingle(
               role: "user",
               content: [
                 {
-                  // Global, not OpenCode-scoped: this is OmniRoute's own internal
+                  // Global, not OpenCode-scoped: this is AgentProxy's own internal
                   // describe self-loop (VisionBridgeGuardrail), called for every
                   // caller/provider when the target model lacks vision support —
                   // there is no client-identity signal at this layer to gate on

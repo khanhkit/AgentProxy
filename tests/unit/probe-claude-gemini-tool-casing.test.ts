@@ -6,7 +6,7 @@ const { claudeToGeminiRequest } =
 const { geminiToClaudeResponse } =
   await import("../../open-sse/translator/response/gemini-to-claude.ts");
 
-// Claude Code (Anthropic Messages format) → OmniRoute → Gemini.
+// Claude Code (Anthropic Messages format) → AgentProxy → Gemini.
 //
 // Gemini always lowercases tool names in its functionCall responses, so the
 // round trip only works if the request translator publishes a lowercase alias

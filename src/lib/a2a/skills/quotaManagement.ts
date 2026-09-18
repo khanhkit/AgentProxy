@@ -7,16 +7,16 @@
 
 import type { A2ATask, TaskArtifact } from "../taskManager";
 import { normalizeQuotaResponse } from "@/shared/contracts/quota";
-import { resolveOmniRouteBaseUrl } from "@/shared/utils/resolveOmniRouteBaseUrl";
+import { resolveAgentProxyBaseUrl } from "@/shared/utils/resolveAgentProxyBaseUrl";
 
-const OMNIROUTE_BASE_URL = resolveOmniRouteBaseUrl();
-const OMNIROUTE_API_KEY = process.env.OMNIROUTE_API_KEY || "";
+const AGENTPROXY_BASE_URL = resolveAgentProxyBaseUrl();
+const AGENTPROXY_API_KEY = process.env.AGENTPROXY_API_KEY || "";
 
 async function quotaFetch(path: string, signal?: AbortSignal): Promise<any> {
-  const url = `${OMNIROUTE_BASE_URL}${path}`;
+  const url = `${AGENTPROXY_BASE_URL}${path}`;
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
-    ...(OMNIROUTE_API_KEY ? { Authorization: `Bearer ${OMNIROUTE_API_KEY}` } : {}),
+    ...(AGENTPROXY_API_KEY ? { Authorization: `Bearer ${AGENTPROXY_API_KEY}` } : {}),
   };
   const timeoutSignal = AbortSignal.timeout(10000);
   const requestSignal = signal ? AbortSignal.any([signal, timeoutSignal]) : timeoutSignal;

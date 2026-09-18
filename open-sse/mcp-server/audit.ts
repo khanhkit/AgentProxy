@@ -81,7 +81,7 @@ function createNodeSqliteAuditAdapter(db: NodeSqliteDatabase): AuditDatabase {
 }
 
 declare global {
-  var __omnirouteMcpAuditDb: AuditDatabase | null | undefined;
+  var __agentproxyMcpAuditDb: AuditDatabase | null | undefined;
 }
 
 interface AuditStatsRow {
@@ -186,11 +186,11 @@ function buildAuditFilterSql(filters: McpAuditQuery): { whereSql: string; params
 }
 
 function getCachedAuditDb(): AuditDatabase | null {
-  return globalThis.__omnirouteMcpAuditDb ?? null;
+  return globalThis.__agentproxyMcpAuditDb ?? null;
 }
 
 function setCachedAuditDb(database: AuditDatabase | null): void {
-  globalThis.__omnirouteMcpAuditDb = database;
+  globalThis.__agentproxyMcpAuditDb = database;
 }
 
 function toNumber(value: unknown, fallback = 0): number {
@@ -250,7 +250,7 @@ async function openFallbackAuditDb(dbPath: string, nativeMessage: string): Promi
     console.error(
       `[MCP Audit] better-sqlite3 native binding unavailable and Node ${process.version} ` +
         "has no built-in sqlite. Audit logging disabled. Fix: run " +
-        "`npm rebuild better-sqlite3` in the omniroute install root."
+        "`npm rebuild better-sqlite3` in the agentproxy install root."
     );
     return null;
   }
@@ -271,7 +271,7 @@ async function openFallbackAuditDb(dbPath: string, nativeMessage: string): Promi
 
 /**
  * Lazy-load the database connection.
- * Uses the same SQLite database as the main OmniRoute app.
+ * Uses the same SQLite database as the main AgentProxy app.
  *
  * Driver priority:
  *   1. better-sqlite3 — fast native binding (when its compiled `.node`
@@ -294,7 +294,7 @@ async function getDb(): Promise<AuditDatabase | null> {
 
     const dbPath = process.env.DATA_DIR
       ? join(process.env.DATA_DIR, "storage.sqlite")
-      : join(homedir(), ".omniroute", "storage.sqlite");
+      : join(homedir(), ".agentproxy", "storage.sqlite");
 
     if (!existsSync(dbPath)) {
       console.error(`[MCP Audit] Database not found at ${dbPath} — audit logging disabled`);
@@ -371,7 +371,7 @@ export async function logToolCall(
 
     const inputHash = await hashInput(input);
     const outputSummary = summarizeOutput(output);
-    const apiKeyId = getMcpHttpAuditApiKeyId() || process.env.OMNIROUTE_API_KEY_ID || null;
+    const apiKeyId = getMcpHttpAuditApiKeyId() || process.env.AGENTPROXY_API_KEY_ID || null;
 
     database
       .prepare(

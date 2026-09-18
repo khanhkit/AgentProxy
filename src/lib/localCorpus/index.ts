@@ -35,7 +35,7 @@ const DENIED_PATH_SEGMENTS = new Set([
   ".env",
   ".git",
   ".next",
-  ".omniroute",
+  ".agentproxy",
   ".ssh",
   "coverage",
   "dist",

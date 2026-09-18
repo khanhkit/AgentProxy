@@ -1,25 +1,25 @@
 /**
  * A2A Skill: Smart Routing
  *
- * Receives a prompt + metadata → routes via OmniRoute pipeline →
+ * Receives a prompt + metadata → routes via AgentProxy pipeline →
  * returns response with routing_explanation, cost_envelope, resilience_trace, policy_verdict.
  */
 
 import type { A2ATask, TaskArtifact } from "../taskManager";
-import { resolveOmniRouteBaseUrl } from "@/shared/utils/resolveOmniRouteBaseUrl";
+import { resolveAgentProxyBaseUrl } from "@/shared/utils/resolveAgentProxyBaseUrl";
 
-const OMNIROUTE_BASE_URL = resolveOmniRouteBaseUrl();
-const OMNIROUTE_API_KEY = process.env.OMNIROUTE_API_KEY || "";
+const AGENTPROXY_BASE_URL = resolveAgentProxyBaseUrl();
+const AGENTPROXY_API_KEY = process.env.AGENTPROXY_API_KEY || "";
 
 async function routeFetch(
   path: string,
   options: RequestInit = {},
   signal?: AbortSignal
 ): Promise<any> {
-  const url = `${OMNIROUTE_BASE_URL}${path}`;
+  const url = `${AGENTPROXY_BASE_URL}${path}`;
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
-    ...(OMNIROUTE_API_KEY ? { Authorization: `Bearer ${OMNIROUTE_API_KEY}` } : {}),
+    ...(AGENTPROXY_API_KEY ? { Authorization: `Bearer ${AGENTPROXY_API_KEY}` } : {}),
   };
   const timeoutSignal = AbortSignal.timeout(30000);
   const requestSignal = signal ? AbortSignal.any([signal, timeoutSignal]) : timeoutSignal;

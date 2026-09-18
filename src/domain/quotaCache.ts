@@ -16,10 +16,10 @@
  * @module domain/quotaCache
  */
 
-import { getUsageForProvider } from "@omniroute/open-sse/services/usage.ts";
+import { getUsageForProvider } from "@agentproxy/open-sse/services/usage.ts";
 import { getCachedProviderConnectionById } from "@/lib/db/readCache";
 import { resolveProxyForConnection } from "@/lib/db/settings";
-import { runWithProxyContext } from "@omniroute/open-sse/utils/proxyFetch.ts";
+import { runWithProxyContext } from "@agentproxy/open-sse/utils/proxyFetch.ts";
 import { safePercentage } from "@/shared/utils/formatting";
 import {
   saveQuotaSnapshot,
@@ -31,15 +31,15 @@ import {
   CODEX_SPARK_QUOTA_SESSION,
   CODEX_SPARK_QUOTA_WEEKLY,
   getCodexQuotaWindowFilterForModel,
-} from "@omniroute/open-sse/config/codexQuotaScopes.ts";
+} from "@agentproxy/open-sse/config/codexQuotaScopes.ts";
 import { liftCodexScopeCooldownOnHeadroom } from "@/lib/db/providers/codexAccountState";
 import {
   createCodexAccountPool,
   getCodexChildQuotaHydration,
   resolveCodexAccount,
   type CodexPersistedQuotaState,
-} from "@omniroute/open-sse/services/codexAccount/index.ts";
-import { selectAntigravityQuotaWindowNames } from "@omniroute/open-sse/services/antigravityQuotaFamily.ts";
+} from "@agentproxy/open-sse/services/codexAccount/index.ts";
+import { selectAntigravityQuotaWindowNames } from "@agentproxy/open-sse/services/antigravityQuotaFamily.ts";
 import { isClaudeExtraUsageAllowed } from "@/lib/providers/claudeExtraUsage";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
@@ -111,19 +111,19 @@ interface QuotaCacheState {
 }
 
 declare global {
-  var __omnirouteQuotaCacheState: QuotaCacheState | undefined;
+  var __agentproxyQuotaCacheState: QuotaCacheState | undefined;
 }
 
 function getState(): QuotaCacheState {
-  if (!globalThis.__omnirouteQuotaCacheState) {
-    globalThis.__omnirouteQuotaCacheState = {
+  if (!globalThis.__agentproxyQuotaCacheState) {
+    globalThis.__agentproxyQuotaCacheState = {
       cache: new Map(),
       refreshingSet: new Set(),
       refreshTimer: null,
       tickRunning: false,
     };
   }
-  return globalThis.__omnirouteQuotaCacheState;
+  return globalThis.__agentproxyQuotaCacheState;
 }
 
 const MAX_CONCURRENT_REFRESHES = 5;

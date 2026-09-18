@@ -1,10 +1,10 @@
 ---
-title: "OmniRoute MCP Server 文件"
+title: "AgentProxy MCP Server 文件"
 version: 3.8.40
 lastUpdated: 2026-06-28
 ---
 
-# OmniRoute MCP Server 文件
+# AgentProxy MCP Server 文件
 
 > 模型上下文協定（Model Context Protocol）伺服器，提供 105 個工具，涵蓋路由、快取、壓縮、記憶、技能、代理、池與上下文來源操作。
 >
@@ -12,17 +12,17 @@ lastUpdated: 2026-06-28
 
 ## 安裝
 
-OmniRoute MCP 為內建功能。透過以下指令啟動：
+AgentProxy MCP 為內建功能。透過以下指令啟動：
 
 ```bash
-omniroute --mcp
+agentproxy --mcp
 ```
 
 或透過 open-sse 傳輸層：
 
 ```bash
 # HTTP 可串流傳輸（連接埠 20130）
-omniroute --dev  # MCP 會自動在 /mcp 端點啟動
+agentproxy --dev  # MCP 會自動在 /mcp 端點啟動
 ```
 
 ## 傳輸層
@@ -67,69 +67,69 @@ curl -i \
 
 | 工具                              | 範圍                   | 說明                                                              |
 | :-------------------------------- | :--------------------- | :---------------------------------------------------------------- |
-| `omniroute_get_health`            | `read:health`          | 運作時間、記憶體、斷路器、速率限制、快取統計                      |
-| `omniroute_list_combos`           | `read:combos`          | 所有已設定的組合及策略（可選指標）                                |
-| `omniroute_get_combo_metrics`     | `read:combos`          | 特定組合的效能指標                                                |
-| `omniroute_switch_combo`          | `write:combos`         | 啟用或停用組合                                                    |
-| `omniroute_check_quota`           | `read:quota`           | 已用配額／總配額、剩餘百分比、重置時間、代幣健康狀態              |
-| `omniroute_route_request`         | `execute:completions`  | 透過 OmniRoute 路由發送聊天完成請求                               |
-| `omniroute_cost_report`           | `read:usage`           | 按期間（工作階段／日／週／月）的成本報告                          |
-| `omniroute_list_models_catalog`   | `read:models`          | 完整模型目錄，包含功能、狀態、定價                                |
+| `agentproxy_get_health`            | `read:health`          | 運作時間、記憶體、斷路器、速率限制、快取統計                      |
+| `agentproxy_list_combos`           | `read:combos`          | 所有已設定的組合及策略（可選指標）                                |
+| `agentproxy_get_combo_metrics`     | `read:combos`          | 特定組合的效能指標                                                |
+| `agentproxy_switch_combo`          | `write:combos`         | 啟用或停用組合                                                    |
+| `agentproxy_check_quota`           | `read:quota`           | 已用配額／總配額、剩餘百分比、重置時間、代幣健康狀態              |
+| `agentproxy_route_request`         | `execute:completions`  | 透過 AgentProxy 路由發送聊天完成請求                               |
+| `agentproxy_cost_report`           | `read:usage`           | 按期間（工作階段／日／週／月）的成本報告                          |
+| `agentproxy_list_models_catalog`   | `read:models`          | 完整模型目錄，包含功能、狀態、定價                                |
 
 ## 第一階段 — 搜尋
 
 | 工具                     | 範圍             | 說明                                                                                                                       |
 | :----------------------- | :--------------- | :------------------------------------------------------------------------------------------------------------------------- |
-| `omniroute_web_search`   | `execute:search` | 透過 OmniRoute 搜尋閘道（Serper/Brave/Perplexity/Exa/Tavily/Google PSE/Linkup/SearchAPI/SearXNG）進行網路搜尋，支援容錯轉移 |
+| `agentproxy_web_search`   | `execute:search` | 透過 AgentProxy 搜尋閘道（Serper/Brave/Perplexity/Exa/Tavily/Google PSE/Linkup/SearchAPI/SearXNG）進行網路搜尋，支援容錯轉移 |
 
 ## 進階工具（11 個）— 第二階段
 
 | 工具                                 | 範圍                                  | 說明                                                                                  |
 | :----------------------------------- | :------------------------------------ | :------------------------------------------------------------------------------------ |
-| `omniroute_simulate_route`           | `read:health`、`read:combos`          | 乾執行路由模擬，含備援樹                                                              |
-| `omniroute_set_budget_guard`         | `write:budget`                        | 工作階段預算，可設為降級／封鎖／警示動作                                               |
-| `omniroute_set_routing_strategy`     | `write:combos`                        | 於執行階段更新組合策略（優先／加權／自動等）                                          |
-| `omniroute_set_resilience_profile`   | `write:resilience`                    | 套用 `aggressive`／`balanced`／`conservative` 復原能力預設                            |
-| `omniroute_test_combo`               | `execute:completions`、`read:combos`  | 使用真實上游呼叫，對組合中的每個提供者進行即時測試                                    |
-| `omniroute_get_provider_metrics`     | `read:health`                         | 各提供者指標，含 p50/p95/p99 延遲與斷路器狀態                                         |
-| `omniroute_best_combo_for_task`      | `read:combos`、`read:health`          | 依任務類型推薦組合，考量預算與延遲限制                                                |
-| `omniroute_explain_route`            | `read:health`、`read:usage`           | 解釋為何請求被路由至某提供者（評分因素＋備援）                                        |
-| `omniroute_get_session_snapshot`     | `read:usage`                          | 完整工作階段快照：成本、代幣、熱門模型／提供者、錯誤、預算守衛                        |
-| `omniroute_db_health_check`          | `read:health`、`write:resilience`     | 診斷（並可選自動修復）資料庫漂移，如中斷的組合參考／孤立資料列                        |
-| `omniroute_sync_pricing`             | `pricing:write`                       | 從外部來源（LiteLLM）同步定價資料；支援 `dryRun`                                      |
+| `agentproxy_simulate_route`           | `read:health`、`read:combos`          | 乾執行路由模擬，含備援樹                                                              |
+| `agentproxy_set_budget_guard`         | `write:budget`                        | 工作階段預算，可設為降級／封鎖／警示動作                                               |
+| `agentproxy_set_routing_strategy`     | `write:combos`                        | 於執行階段更新組合策略（優先／加權／自動等）                                          |
+| `agentproxy_set_resilience_profile`   | `write:resilience`                    | 套用 `aggressive`／`balanced`／`conservative` 復原能力預設                            |
+| `agentproxy_test_combo`               | `execute:completions`、`read:combos`  | 使用真實上游呼叫，對組合中的每個提供者進行即時測試                                    |
+| `agentproxy_get_provider_metrics`     | `read:health`                         | 各提供者指標，含 p50/p95/p99 延遲與斷路器狀態                                         |
+| `agentproxy_best_combo_for_task`      | `read:combos`、`read:health`          | 依任務類型推薦組合，考量預算與延遲限制                                                |
+| `agentproxy_explain_route`            | `read:health`、`read:usage`           | 解釋為何請求被路由至某提供者（評分因素＋備援）                                        |
+| `agentproxy_get_session_snapshot`     | `read:usage`                          | 完整工作階段快照：成本、代幣、熱門模型／提供者、錯誤、預算守衛                        |
+| `agentproxy_db_health_check`          | `read:health`、`write:resilience`     | 診斷（並可選自動修復）資料庫漂移，如中斷的組合參考／孤立資料列                        |
+| `agentproxy_sync_pricing`             | `pricing:write`                       | 從外部來源（LiteLLM）同步定價資料；支援 `dryRun`                                      |
 
 ## 快取工具（2 個）
 
 | 工具                      | 範圍           | 說明                                              |
 | :------------------------ | :------------- | :------------------------------------------------ |
-| `omniroute_cache_stats`   | `read:cache`   | 語意快取、提示快取與冪等性統計                    |
-| `omniroute_cache_flush`   | `write:cache`  | 全域或依簽章／模型清除快取                        |
+| `agentproxy_cache_stats`   | `read:cache`   | 語意快取、提示快取與冪等性統計                    |
+| `agentproxy_cache_flush`   | `write:cache`  | 全域或依簽章／模型清除快取                        |
 
 ## 壓縮工具（13 個）
 
 | 工具                                  | 範圍                | 說明                                                                                                                       |
 | :------------------------------------ | :------------------ | :------------------------------------------------------------------------------------------------------------------------- |
-| `omniroute_compression_status`        | `read:compression`  | 壓縮設定、分析摘要與快取感知統計（包含 `analytics.mcpDescriptionCompression` 元資料）                                      |
-| `omniroute_compression_configure`     | `write:compression` | 設定壓縮模式、閾值、目標比率、系統提示保留、MCP 描述壓縮開關                                                              |
-| `omniroute_set_compression_engine`    | `write:compression` | 選取作用中引擎（off/caveman/rtk/stacked）與 Caveman/RTK 強度                                                              |
-| `omniroute_list_compression_combos`   | `read:compression`  | 列出已命名的壓縮組合及其引擎管線                                                                                           |
-| `omniroute_compression_combo_stats`   | `read:compression`  | 依壓縮組合與引擎分組的分析資料                                                                                             |
-| `omniroute_ccr_store`                 | `write:compression` | 將呼叫者隔離的內容儲存至有界限的記憶體內 CCR 存放區，並回傳標記與 `ccr://` 參考                                               |
-| `omniroute_ccr_retrieve`              | `read:compression`  | 以完整、開頭、結尾、行數、grep 及統計模式擷取 CCR 內容                                                                       |
-| `omniroute_ccr_inspect`               | `read:compression`  | 檢查呼叫者擁有的 CCR 元資料，不回傳內容                                                                                    |
-| `omniroute_ccr_list`                  | `read:compression`  | 列出呼叫者擁有的 CCR 區塊之分頁元資料                                                                                      |
-| `omniroute_ccr_delete`                | `write:compression` | 刪除呼叫者擁有的 CCR 區塊                                                                                                  |
-| `omniroute_ccr_stats`                 | `read:compression`  | 回報呼叫者範圍的記憶體使用量、生命週期計數器與存放區限制                                                                   |
-| `omniroute_rtk_discover`              | `read:compression`  | 在選擇性加入的 RTK 輸出樣本中發現重複出現的雜訊                                                                             |
-| `omniroute_rtk_learn`                 | `read:compression`  | 從選擇性加入的樣本產生可供審查的 RTK 過濾器草稿                                                                              |
+| `agentproxy_compression_status`        | `read:compression`  | 壓縮設定、分析摘要與快取感知統計（包含 `analytics.mcpDescriptionCompression` 元資料）                                      |
+| `agentproxy_compression_configure`     | `write:compression` | 設定壓縮模式、閾值、目標比率、系統提示保留、MCP 描述壓縮開關                                                              |
+| `agentproxy_set_compression_engine`    | `write:compression` | 選取作用中引擎（off/caveman/rtk/stacked）與 Caveman/RTK 強度                                                              |
+| `agentproxy_list_compression_combos`   | `read:compression`  | 列出已命名的壓縮組合及其引擎管線                                                                                           |
+| `agentproxy_compression_combo_stats`   | `read:compression`  | 依壓縮組合與引擎分組的分析資料                                                                                             |
+| `agentproxy_ccr_store`                 | `write:compression` | 將呼叫者隔離的內容儲存至有界限的記憶體內 CCR 存放區，並回傳標記與 `ccr://` 參考                                               |
+| `agentproxy_ccr_retrieve`              | `read:compression`  | 以完整、開頭、結尾、行數、grep 及統計模式擷取 CCR 內容                                                                       |
+| `agentproxy_ccr_inspect`               | `read:compression`  | 檢查呼叫者擁有的 CCR 元資料，不回傳內容                                                                                    |
+| `agentproxy_ccr_list`                  | `read:compression`  | 列出呼叫者擁有的 CCR 區塊之分頁元資料                                                                                      |
+| `agentproxy_ccr_delete`                | `write:compression` | 刪除呼叫者擁有的 CCR 區塊                                                                                                  |
+| `agentproxy_ccr_stats`                 | `read:compression`  | 回報呼叫者範圍的記憶體使用量、生命週期計數器與存放區限制                                                                   |
+| `agentproxy_rtk_discover`              | `read:compression`  | 在選擇性加入的 RTK 輸出樣本中發現重複出現的雜訊                                                                             |
+| `agentproxy_rtk_learn`                 | `read:compression`  | 從選擇性加入的樣本產生可供審查的 RTK 過濾器草稿                                                                              |
 
 CCR 條目僅存在於記憶體中，重新啟動後即消失。每個區塊限制為 2 MiB，每個主體限制為 16 MiB，全域存放區限制為 64 MiB。條目預設 TTL 為 24 小時（最長七天）。完整的 MCP 擷取限制為 256 KiB；較大的區塊仍可透過範圍與 grep 模式使用。儲存、擷取、列出、檢查、刪除與統計皆以通過驗證的 API 金鑰主體進行隔離。稽核記錄包含雜湊與大小元資料，絕不包含內容。
 
-`omniroute_compression_status` 會將 MCP 描述壓縮分別回報於 `analytics.mcpDescriptionCompression` 之下。這些數值是對 MCP 可列出描述（`tools`、`prompts`、`resources` 與 `resourceTemplates`）的元資料大小估計值，並非提供者使用收據，並標記有 `source: "mcp_metadata_estimate"`。
+`agentproxy_compression_status` 會將 MCP 描述壓縮分別回報於 `analytics.mcpDescriptionCompression` 之下。這些數值是對 MCP 可列出描述（`tools`、`prompts`、`resources` 與 `resourceTemplates`）的元資料大小估計值，並非提供者使用收據，並標記有 `source: "mcp_metadata_estimate"`。
 
 ### MCP 無障礙樹過濾器（v3.8.0）
 
-與上述壓縮工具不同，OmniRoute 包含一個執行後過濾器，可在 MCP 瀏覽器／無障礙工具的**工具結果**回傳給代理之前對其進行壓縮。此過濾器本身不是一個工具 — 它會透明地作用於任何包含冗長無障礙樹或瀏覽器快照文字（≥2000 字元）的工具結果。
+與上述壓縮工具不同，AgentProxy 包含一個執行後過濾器，可在 MCP 瀏覽器／無障礙工具的**工具結果**回傳給代理之前對其進行壓縮。此過濾器本身不是一個工具 — 它會透明地作用於任何包含冗長無障礙樹或瀏覽器快照文字（≥2000 字元）的工具結果。
 
 關鍵行為：
 
@@ -148,9 +148,9 @@ CCR 條目僅存在於記憶體中，重新啟動後即消失。每個區塊限�
 
 | 工具                          | 範圍            | 說明                                                                                 |
 | :---------------------------- | :-------------- | :----------------------------------------------------------------------------------- |
-| `omniroute_oneproxy_fetch`    | `read:proxies`  | 從 1proxy 市集取得免費代理（協定／國家／品質／數量過濾器）                            |
-| `omniroute_oneproxy_rotate`   | `read:proxies`  | 依策略（`random`／`quality`／`sequential`）取得下一個可用代理                         |
-| `omniroute_oneproxy_stats`    | `read:proxies`  | 池統計、同步狀態、依協定與國家的分佈                                                 |
+| `agentproxy_oneproxy_fetch`    | `read:proxies`  | 從 1proxy 市集取得免費代理（協定／國家／品質／數量過濾器）                            |
+| `agentproxy_oneproxy_rotate`   | `read:proxies`  | 依策略（`random`／`quality`／`sequential`）取得下一個可用代理                         |
+| `agentproxy_oneproxy_stats`    | `read:proxies`  | 池統計、同步狀態、依協定與國家的分佈                                                 |
 
 ## 記憶工具（3 個）
 
@@ -158,9 +158,9 @@ CCR 條目僅存在於記憶體中，重新啟動後即消失。每個區塊限�
 
 | 工具                        | 範圍            | 說明                                                                           |
 | :-------------------------- | :-------------- | :----------------------------------------------------------------------------- |
-| `omniroute_memory_search`   | `read:memory`   | 依查詢／類型／API 金鑰搜尋記憶，並執行代幣預算限制                             |
-| `omniroute_memory_add`      | `write:memory`  | 新增記憶條目（`factual`／`episodic`／`procedural`／`semantic`）                |
-| `omniroute_memory_clear`    | `write:memory`  | 清除某 API 金鑰的記憶，可選擇依類型或 `olderThan` 時間戳過濾                    |
+| `agentproxy_memory_search`   | `read:memory`   | 依查詢／類型／API 金鑰搜尋記憶，並執行代幣預算限制                             |
+| `agentproxy_memory_add`      | `write:memory`  | 新增記憶條目（`factual`／`episodic`／`procedural`／`semantic`）                |
+| `agentproxy_memory_clear`    | `write:memory`  | 清除某 API 金鑰的記憶，可選擇依類型或 `olderThan` 時間戳過濾                    |
 
 ## 技能工具（4 個）
 
@@ -168,10 +168,10 @@ CCR 條目僅存在於記憶體中，重新啟動後即消失。每個區塊限�
 
 | 工具                            | 範圍              | 說明                                                                           |
 | :------------------------------ | :---------------- | :----------------------------------------------------------------------------- |
-| `omniroute_skills_list`         | `read:skills`     | 列出已註冊的技能，可依 API 金鑰、名稱或啟用狀態過濾                            |
-| `omniroute_skills_enable`       | `write:skills`    | 依 ID 啟用或停用特定技能                                                       |
-| `omniroute_skills_execute`      | `execute:skills`  | 以提供的輸入執行技能，並回傳執行記錄                                            |
-| `omniroute_skills_executions`   | `read:skills`     | 列出近期技能執行歷史                                                            |
+| `agentproxy_skills_list`         | `read:skills`     | 列出已註冊的技能，可依 API 金鑰、名稱或啟用狀態過濾                            |
+| `agentproxy_skills_enable`       | `write:skills`    | 依 ID 啟用或停用特定技能                                                       |
+| `agentproxy_skills_execute`      | `execute:skills`  | 以提供的輸入執行技能，並回傳執行記錄                                            |
+| `agentproxy_skills_executions`   | `read:skills`     | 列出近期技能執行歷史                                                            |
 
 ## Notion 上下文來源（6 個）
 
@@ -207,9 +207,9 @@ curl -X DELETE http://localhost:20128/api/settings/notion
 
 | 工具                                | 範圍            | 說明                                                                                                             |
 | :---------------------------------- | :-------------- | :--------------------------------------------------------------------------------------------------------------- |
-| `omniroute_agent_skills_list`       | `read:catalog`  | 列出全部 42 個 agent 技能，可選 `category`（api\|cli）與 `area` 過濾器；回傳元資料＋覆蓋率                        |
-| `omniroute_agent_skills_get`        | `read:catalog`  | 依標準 `id` 取得單一技能的完整元資料＋SKILL.md 內容                                                               |
-| `omniroute_agent_skills_coverage`   | `read:catalog`  | 覆蓋率統計：22 個 API 與 20 個 CLI 技能中有多少個在檔案系統上擁有 SKILL.md 檔案，與目錄總數比較                   |
+| `agentproxy_agent_skills_list`       | `read:catalog`  | 列出全部 42 個 agent 技能，可選 `category`（api\|cli）與 `area` 過濾器；回傳元資料＋覆蓋率                        |
+| `agentproxy_agent_skills_get`        | `read:catalog`  | 依標準 `id` 取得單一技能的完整元資料＋SKILL.md 內容                                                               |
+| `agentproxy_agent_skills_coverage`   | `read:catalog`  | 覆蓋率統計：22 個 API 與 20 個 CLI 技能中有多少個在檔案系統上擁有 SKILL.md 檔案，與目錄總數比較                   |
 
 請參閱 [AGENT-SKILLS.md](./AGENT-SKILLS.md) 了解完整目錄及外部代理如何使用。
 
@@ -219,7 +219,7 @@ curl -X DELETE http://localhost:20128/api/settings/notion
 
 ### Cloud Agents
 
-Cloud Agents 是行程外的 AI 編碼代理（codex-cloud、devin、jules），透過與 LLM 提供者相同的連線模型接入 OmniRoute。它們透過自己的 REST 介面（`/api/v1/agents/*`）暴露，且**不屬於** MCP 工具目錄的一部分 — 呼叫 Cloud Agent 不會消耗 MCP 範圍。
+Cloud Agents 是行程外的 AI 編碼代理（codex-cloud、devin、jules），透過與 LLM 提供者相同的連線模型接入 AgentProxy。它們透過自己的 REST 介面（`/api/v1/agents/*`）暴露，且**不屬於** MCP 工具目錄的一部分 — 呼叫 Cloud Agent 不會消耗 MCP 範圍。
 
 - 實作：`src/lib/cloudAgent/`（`registry.ts`、`agents/codex-cloud.ts`、`agents/devin.ts`、`agents/jules.ts`）。
 - 生命週期：`createTask`、`getStatus`、`approvePlan`、`sendMessage`、`listSources`。
@@ -292,15 +292,15 @@ MCP 工具透過 API 金鑰範圍進行認證。範圍強制執行集中於 `ope
 
 | 變數                                      | 預設值                             | 用途                                                                                                                        |
 | :---------------------------------------- | :--------------------------------- | :-------------------------------------------------------------------------------------------------------------------------- |
-| `OMNIROUTE_BASE_URL`                      | `http://localhost:20128`           | MCP 伺服器在呼叫 OmniRoute 內部 API 時使用的基礎 URL                                                                        |
-| `OMNIROUTE_API_KEY`                       | （空）                             | 轉發為 `Authorization: <key>` 至內部 API 呼叫的 API 金鑰                                                                      |
-| `OMNIROUTE_MCP_ENFORCE_SCOPES`            | `false`（僅 `"true"` 啟用）          | 啟用時，缺少範圍會拒絕工具呼叫，並在稽核日誌中記錄 `scope_denied:<原因>`                                                      |
-| `OMNIROUTE_MCP_SCOPES`                    | （空）                             | 逗號分隔的範圍允許清單，視為預設「可用」（用於呼叫者未提供自身範圍時）                                                          |
-| `OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS`     | （未設定＝開啟）                    | 設為 `0/false/off/no` 時，在註冊時停用 MCP 描述壓縮                                                                         |
-| `OMNIROUTE_MCP_DESCRIPTION_COMPRESSION`   | （未設定＝開啟）                    | 上述相同開關的別名                                                                                                            |
+| `AGENTPROXY_BASE_URL`                      | `http://localhost:20128`           | MCP 伺服器在呼叫 AgentProxy 內部 API 時使用的基礎 URL                                                                        |
+| `AGENTPROXY_API_KEY`                       | （空）                             | 轉發為 `Authorization: <key>` 至內部 API 呼叫的 API 金鑰                                                                      |
+| `AGENTPROXY_MCP_ENFORCE_SCOPES`            | `false`（僅 `"true"` 啟用）          | 啟用時，缺少範圍會拒絕工具呼叫，並在稽核日誌中記錄 `scope_denied:<原因>`                                                      |
+| `AGENTPROXY_MCP_SCOPES`                    | （空）                             | 逗號分隔的範圍允許清單，視為預設「可用」（用於呼叫者未提供自身範圍時）                                                          |
+| `AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS`     | （未設定＝開啟）                    | 設為 `0/false/off/no` 時，在註冊時停用 MCP 描述壓縮                                                                         |
+| `AGENTPROXY_MCP_DESCRIPTION_COMPRESSION`   | （未設定＝開啟）                    | 上述相同開關的別名                                                                                                            |
 | `MCP_TOOL_DENY`                           | （未設定＝無過濾）                  | 逗號分隔的工具名稱，從 `tools/list` 中移除（工具基數減少 — 請參閱下方）                                                       |
 | `MCP_TOOL_ALLOW`                          | （未設定＝無過濾）                  | 逗號分隔的工具名稱，僅保留這些工具（允許清單模式 — 請參閱下方）                                                               |
-| `DATA_DIR`                                | `~/.omniroute`                     | 心跳檔案寫入至 `${DATA_DIR}/runtime/mcp-heartbeat.json`                                                                      |
+| `DATA_DIR`                                | `~/.agentproxy`                     | 心跳檔案寫入至 `${DATA_DIR}/runtime/mcp-heartbeat.json`                                                                      |
 
 ---
 
@@ -310,8 +310,8 @@ MCP 工具、提示與資源註冊表可在註冊／列出時壓縮描述，以�
 
 - 壓縮使用 Caveman 規則集（`getRulesForContext("all", "full")`）對描述文字進行壓縮，並保留區塊提取（程式碼跨度、圍欄區塊等），以確保結構性內容不被改變。
 - 可透過 `key_value` 設定表中的 `compression.mcpDescriptionCompressionEnabled` 值（預設：啟用）依部署切換 — 在 UI 中顯示為**分析 → MCP 描述壓縮**。
-- 可透過 `OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS=false` 或 `OMNIROUTE_MCP_DESCRIPTION_COMPRESSION=false` 全域切換。
-- 即時統計資料透過 `omniroute_compression_status` 在 `analytics.mcpDescriptionCompression` 下呈現，並標記為 `source: "mcp_metadata_estimate"`，以與真實的提供者使用收據區分。
+- 可透過 `AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS=false` 或 `AGENTPROXY_MCP_DESCRIPTION_COMPRESSION=false` 全域切換。
+- 即時統計資料透過 `agentproxy_compression_status` 在 `analytics.mcpDescriptionCompression` 下呈現，並標記為 `source: "mcp_metadata_estimate"`，以與真實的提供者使用收據區分。
 
 ---
 
@@ -330,10 +330,10 @@ MCP 工具、提示與資源註冊表可在註冊／列出時壓縮描述，以�
 
 ```bash
 # 從目錄中移除兩個工具
-MCP_TOOL_DENY="omniroute_get_health,omniroute_list_combos" omniroute --mcp
+MCP_TOOL_DENY="agentproxy_get_health,agentproxy_list_combos" agentproxy --mcp
 
 # 僅宣告路由＋配額工具（允許清單模式）
-MCP_TOOL_ALLOW="omniroute_route_request,omniroute_check_quota" omniroute --mcp
+MCP_TOOL_ALLOW="agentproxy_route_request,agentproxy_check_quota" agentproxy --mcp
 ```
 
 **被過濾的工具如何移除：** 註冊始終成功；設定檔拒絕的工具隨後會在 MCP SDK 控制代碼上被 `.disable()`，因此它永遠不會出現在 `tools/list` 中，但接線保持完整（乾淨的啟用／停用，無需重新註冊）。設定檔解析器為 `readMcpToolProfileFromEnv(process.env)`，當兩個變數皆為空時回傳 `null`（不過濾）。

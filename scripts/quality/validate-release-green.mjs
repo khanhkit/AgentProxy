@@ -43,7 +43,7 @@
 //                   read straight from ci.yml so the set never drifts. Catches the whole
 //                   "static base-red" category the curated list missed (v3.8.46: 11 of 16
 //                   leaked reds). Pair with --quick for the fast "1 command, 0 CI layers" pass.
-//     --hermetic    scrub OMNIROUTE_API_KEY/OMNIROUTE_URL from gate env so live
+//     --hermetic    scrub AGENTPROXY_API_KEY/AGENTPROXY_URL from gate env so live
 //                   tests self-skip exactly like CI (dev machines otherwise run
 //                   them against localhost and produce false-positive reds)
 //
@@ -395,9 +395,9 @@ export function classifyRunError(err, timeoutMs) {
 }
 
 // --hermetic: scrub the live-test trigger vars so the pre-flight behaves like CI
-// (a dev machine with OMNIROUTE_API_KEY set runs 17+ live tests that CI skips —
+// (a dev machine with AGENTPROXY_API_KEY set runs 17+ live tests that CI skips —
 // every one a false-positive red against the release branch).
-const HERMETIC_SCRUB = ["OMNIROUTE_API_KEY", "OMNIROUTE_URL"];
+const HERMETIC_SCRUB = ["AGENTPROXY_API_KEY", "AGENTPROXY_URL"];
 let hermetic = false;
 function buildGateEnv(extra) {
   const env = { ...process.env, FORCE_COLOR: "0", ...(extra || {}) };

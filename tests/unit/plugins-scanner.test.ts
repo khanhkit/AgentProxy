@@ -20,7 +20,7 @@ describe("plugin scanner", () => {
   describe("getDefaultPluginDir", () => {
     // Every case pins all three inputs so the result never depends on the
     // ambient environment of the test runner.
-    const ENV_KEYS = ["OMNIROUTE_PLUGINS_DIR", "HOME", "USERPROFILE"] as const;
+    const ENV_KEYS = ["AGENTPROXY_PLUGINS_DIR", "HOME", "USERPROFILE"] as const;
 
     function withEnv<T>(env: Partial<Record<(typeof ENV_KEYS)[number], string>>, fn: () => T): T {
       const saved = ENV_KEYS.map((key) => [key, process.env[key]] as const);
@@ -42,19 +42,19 @@ describe("plugin scanner", () => {
     it("returns a string path", () => {
       const dir = mod.getDefaultPluginDir();
       assert.equal(typeof dir, "string");
-      assert.ok(dir.includes("plugins") || dir.includes("omniroute"));
+      assert.ok(dir.includes("plugins") || dir.includes("agentproxy"));
     });
 
-    it("honors OMNIROUTE_PLUGINS_DIR regardless of HOME", () => {
+    it("honors AGENTPROXY_PLUGINS_DIR regardless of HOME", () => {
       const dir = withEnv(
-        { OMNIROUTE_PLUGINS_DIR: "/opt/omniroute/plugins", HOME: "/home/somebody-else" },
+        { AGENTPROXY_PLUGINS_DIR: "/opt/agentproxy/plugins", HOME: "/home/somebody-else" },
         () => mod.getDefaultPluginDir()
       );
-      assert.equal(dir, "/opt/omniroute/plugins");
+      assert.equal(dir, "/opt/agentproxy/plugins");
     });
 
-    it("honors OMNIROUTE_PLUGINS_DIR when the process has no HOME at all", () => {
-      const dir = withEnv({ OMNIROUTE_PLUGINS_DIR: "/mnt/plugins" }, () =>
+    it("honors AGENTPROXY_PLUGINS_DIR when the process has no HOME at all", () => {
+      const dir = withEnv({ AGENTPROXY_PLUGINS_DIR: "/mnt/plugins" }, () =>
         mod.getDefaultPluginDir()
       );
       assert.equal(dir, "/mnt/plugins");
@@ -62,19 +62,19 @@ describe("plugin scanner", () => {
 
     it("keeps the home-derived default when the override is unset", () => {
       const dir = withEnv({ HOME: "/home/tester" }, () => mod.getDefaultPluginDir());
-      assert.equal(dir, join("/home/tester", ".omniroute", "plugins"));
+      assert.equal(dir, join("/home/tester", ".agentproxy", "plugins"));
     });
 
     it("treats a blank override as unset", () => {
-      const dir = withEnv({ OMNIROUTE_PLUGINS_DIR: "   ", HOME: "/home/tester" }, () =>
+      const dir = withEnv({ AGENTPROXY_PLUGINS_DIR: "   ", HOME: "/home/tester" }, () =>
         mod.getDefaultPluginDir()
       );
-      assert.equal(dir, join("/home/tester", ".omniroute", "plugins"));
+      assert.equal(dir, join("/home/tester", ".agentproxy", "plugins"));
     });
 
     it("falls back to /tmp when neither the override nor a home is set", () => {
       const dir = withEnv({}, () => mod.getDefaultPluginDir());
-      assert.equal(dir, join("/tmp", ".omniroute", "plugins"));
+      assert.equal(dir, join("/tmp", ".agentproxy", "plugins"));
     });
 
     it("makes the scanner read the overridden directory (Docker bind-mount case)", async () => {
@@ -82,8 +82,8 @@ describe("plugin scanner", () => {
       try {
         makePluginDir(mounted, "bind-mounted", { name: "bind-mounted", version: "1.0.0" });
         // A container image that never exports HOME: before the override existed the
-        // scanner silently landed on /tmp/.omniroute/plugins and found nothing.
-        const dir = withEnv({ OMNIROUTE_PLUGINS_DIR: mounted }, () => mod.getDefaultPluginDir());
+        // scanner silently landed on /tmp/.agentproxy/plugins and found nothing.
+        const dir = withEnv({ AGENTPROXY_PLUGINS_DIR: mounted }, () => mod.getDefaultPluginDir());
         const result = await mod.scanPluginDir(dir);
         assert.equal(result.plugins.length, 1);
         assert.equal(result.plugins[0].name, "bind-mounted");

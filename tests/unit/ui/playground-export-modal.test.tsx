@@ -70,11 +70,11 @@ describe("ExportCodeModal", () => {
     expect(el.textContent).toContain("exportCodeTitle");
   });
 
-  it("shows curl code with $OMNIROUTE_API_KEY placeholder", () => {
+  it("shows curl code with $AGENTPROXY_API_KEY placeholder", () => {
     const el = renderModal();
     const pre = el.querySelector("pre");
     expect(pre?.textContent).toContain(API_KEY_PLACEHOLDER);
-    expect(pre?.textContent).toContain("$OMNIROUTE_API_KEY");
+    expect(pre?.textContent).toContain("$AGENTPROXY_API_KEY");
   });
 
   it("never contains a real API key pattern (sk-...) in any tab", async () => {
@@ -143,7 +143,7 @@ describe("ExportCodeModal", () => {
 
     const pre = el.querySelector("pre");
     const code = pre?.textContent ?? "";
-    // TypeScript code should contain OMNIROUTE_API_KEY
+    // TypeScript code should contain AGENTPROXY_API_KEY
     expect(code).toContain(API_KEY_PLACEHOLDER);
     expect(code).not.toMatch(/sk-[A-Za-z0-9_-]{16,}/);
   });

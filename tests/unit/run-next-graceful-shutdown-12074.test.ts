@@ -7,7 +7,7 @@ const runNextSource = readFileSync(join(process.cwd(), "scripts/dev/run-next.mjs
 
 test("the custom Next runner owns exit and awaits application cleanup before closing Next", () => {
   const ownerRegistration = runNextSource.indexOf(
-    "globalThis.__omnirouteCustomServerOwnsShutdown = true"
+    "globalThis.__agentproxyCustomServerOwnsShutdown = true"
   );
   const prepareCall = runNextSource.indexOf("await prepareWithHeal()");
   assert.ok(ownerRegistration >= 0, "custom server shutdown ownership must be registered");
@@ -18,7 +18,7 @@ test("the custom Next runner owns exit and awaits application cleanup before clo
 
   const serverClose = runNextSource.indexOf("server.close(resolve)");
   const applicationCleanup = runNextSource.indexOf(
-    "await globalThis.__omnirouteRequestShutdown?.(signal)"
+    "await globalThis.__agentproxyRequestShutdown?.(signal)"
   );
   const nextClose = runNextSource.indexOf("await nextApp.close()", applicationCleanup);
   const processExit = runNextSource.indexOf("process.exit(exitCode)", nextClose);

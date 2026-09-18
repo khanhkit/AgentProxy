@@ -21,7 +21,7 @@ export async function processTraeAuthorizeCallback(
     return {
       ok: false,
       kind: "security",
-      error: "This callback is only accepted from the local OmniRoute process.",
+      error: "This callback is only accepted from the local AgentProxy process.",
     };
   }
 

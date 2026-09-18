@@ -26,7 +26,7 @@ import {
   antigravityPersistStatus,
 } from "../../src/lib/oauth/antigravityProjectGate.ts";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-11284-empty-project-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-11284-empty-project-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../src/lib/db/core.ts");

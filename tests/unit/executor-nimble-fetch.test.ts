@@ -23,7 +23,7 @@ function extractResponse(data: Record<string, unknown>) {
   );
 }
 
-test("nimbleFetch posts to /v1/extract with bearer auth and the omniroute client-source header", async () => {
+test("nimbleFetch posts to /v1/extract with bearer auth and the agentproxy client-source header", async () => {
   const originalFetch = globalThis.fetch;
   let captured: { url: string; init: RequestInit } = { url: "", init: {} };
 
@@ -47,7 +47,7 @@ test("nimbleFetch posts to /v1/extract with bearer auth and the omniroute client
     const headers = captured.init.headers as Record<string, string>;
     assert.equal(headers.Authorization, "Bearer nimble-key");
     assert.equal(headers[NIMBLE_CLIENT_SOURCE_HEADER], NIMBLE_CLIENT_SOURCE);
-    assert.equal(headers[NIMBLE_CLIENT_SOURCE_HEADER], "omniroute");
+    assert.equal(headers[NIMBLE_CLIENT_SOURCE_HEADER], "agentproxy");
 
     const body = JSON.parse(String(captured.init.body));
     assert.equal(body.url, "https://example.com");
@@ -58,7 +58,7 @@ test("nimbleFetch posts to /v1/extract with bearer auth and the omniroute client
   }
 });
 
-test("nimbleFetch requests each OmniRoute format from Extract and returns the matching field", async () => {
+test("nimbleFetch requests each AgentProxy format from Extract and returns the matching field", async () => {
   const cases: Array<{
     format: "markdown" | "html" | "links" | "screenshot";
     data: Record<string, unknown>;

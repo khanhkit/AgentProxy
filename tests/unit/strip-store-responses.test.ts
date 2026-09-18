@@ -94,7 +94,7 @@ test("DefaultExecutor never serializes native passthrough markers upstream", asy
         _nativeOpenAICompatibleResponsesPassthrough: true,
         _nativeCodexPassthrough: true,
         _nativeXaiResponsesPassthrough: true,
-        _omnirouteResponsesStore: false,
+        _agentproxyResponsesStore: false,
       },
       stream: false,
       credentials: {
@@ -116,5 +116,5 @@ test("DefaultExecutor never serializes native passthrough markers upstream", asy
   assert.equal(capturedBody._nativeOpenAICompatibleResponsesPassthrough, undefined);
   assert.equal(capturedBody._nativeCodexPassthrough, undefined);
   assert.equal(capturedBody._nativeXaiResponsesPassthrough, undefined);
-  assert.equal(capturedBody._omnirouteResponsesStore, undefined);
+  assert.equal(capturedBody._agentproxyResponsesStore, undefined);
 });

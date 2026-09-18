@@ -16,7 +16,7 @@ import path from "node:path";
 // consts, at import time — changing process.env.DATA_DIR afterwards has no effect, so tests
 // cannot get a fresh file per case by re-pointing the env var). resetDbInstance()+rm the temp
 // dir in test.after so the node:test runner does not hang.
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-a2a-tasks-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-a2a-tasks-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../src/lib/db/core.ts");

@@ -4,7 +4,7 @@ import { register } from "../../src/instrumentation";
 
 // Regression guard for #10171: on native Windows/WSL2 boots, the reported
 // symptom is a bare HTTP 500 on every DB-touching route with `app.log`
-// staying completely empty, even though the CLI prints "OmniRoute is
+// staying completely empty, even though the CLI prints "AgentProxy is
 // running!". ensureDbReadyForBoot() (#7773/#7828) already guarantees a
 // non-empty [STARTUP] Fatal: log line for ONE specific failure class
 // (database driver init), but nothing previously guaranteed a fatal throw

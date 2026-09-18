@@ -6,16 +6,16 @@
 
 ---
 
-title: "OmniRoute koda bāzes dokumentācija"
+title: "AgentProxy koda bāzes dokumentācija"
 version: 3.8.40
 lastUpdated: 2026-06-28
 ---
 
-# OmniRoute koda bāzes dokumentācija
+# AgentProxy koda bāzes dokumentācija
 
 > **Versija:** v3.8.51
 > **Pēdējoreiz atjaunināts:** 2026-06-28
-> **Mērķauditorija:** Inženieri, kas sniedz ieguldījumu OmniRoute izstrādē vai veido uz tā balstītas integrācijas.
+> **Mērķauditorija:** Inženieri, kas sniedz ieguldījumu AgentProxy izstrādē vai veido uz tā balstītas integrācijas.
 >
 > Augsta līmeņa arhitektūras diagrammas un katras apakšsistēmas pamatojumu skatiet
 > [ARCHITECTURE.md](./ARCHITECTURE.md). Lai padziļināti izpētītu atsevišķas apakšsistēmas
@@ -46,22 +46,22 @@ neizgudrojot jaunus moduļus.
 Ceļu aizstājvārdi (`tsconfig.json`):
 
 - `@/*` → `src/*`
-- `@omniroute/open-sse` → `open-sse/index.ts`
-- `@omniroute/open-sse/*` → `open-sse/*`
+- `@agentproxy/open-sse` → `open-sse/index.ts`
+- `@agentproxy/open-sse/*` → `open-sse/*`
 
 Noklusējuma HTTP ports: **`20128`** (API un informācijas panelis izmanto vienu un to pašu procesu). Datu
-direktoriju nosaka `DATA_DIR` vides mainīgais; pēc noklusējuma tā ir `~/.omniroute/`.
+direktoriju nosaka `DATA_DIR` vides mainīgais; pēc noklusējuma tā ir `~/.agentproxy/`.
 
 ---
 
 ## 2. Repozitorija izkārtojums
 
 ```
-OmniRoute/
+AgentProxy/
 ├── src/                  Next.js lietotne (App Router, bibliotēkas, domēns, serveris, koplietojamie resursi)
-├── open-sse/             Straumēšanas dzinēja darbvieta (@omniroute/open-sse)
+├── open-sse/             Straumēšanas dzinēja darbvieta (@agentproxy/open-sse)
 ├── electron/             Darbvirsmas ietvars (Electron 41 galvenais process + preload)
-├── bin/                  CLI ieejas punkti (omniroute, reset-password)
+├── bin/                  CLI ieejas punkti (agentproxy, reset-password)
 ├── tests/                Vienību, integrācijas, e2e, protocols-e2e, translator, drošības testi un armatūra
 ├── scripts/              Būvēšanas, sinhronizācijas, pārbaudes, migrācijas un izpildlaika palīgskripti
 ├── docs/                 Publiskā dokumentācija (šis direktorijs)
@@ -307,7 +307,7 @@ Tabulā sagrupētas faktiskās mapes un ievērojamie augšējā līmeņa faili.
 | `runtime/`        | Darbināšanas vides funkciju noteikšana                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | `search/`         | `executeWebSearch.ts`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | `services/`       | Iegulto pakalpojumu ietvars: `ServiceSupervisor.ts` (vispārīgs bērnprocesu uzraugs ar darbību slēdzeni, gredzenveida buferi un veselības pārbaudītāju), `bootstrap.ts` (procesa līmeņa reģistrācija un automātiskā palaišana), `registry.ts` (rīka → uzrauga kartējums), `apiKey.ts` (AES-256-GCM atslēgu krātuve), `modelSync.ts` (periodiska modeļu sinhronizācija), `ringBuffer.ts` (5 MB cirkulārais žurnāla buferis), `healthCheck.ts` (HTTP veselības pārbaude), `types.ts`, `embedWsProxy.ts` (WebSocket starpnieks), `installers/{ninerouter,cliproxy}.ts`. Skatiet `docs/frameworks/EMBEDDED-SERVICES.md`                                                                            |
-| `agentSkills/`    | Aģentu prasmju katalogs + ģenerators: `catalog.ts` (getCatalog/getSkillById/filterCatalog/computeCoverage), `generator.ts` (generateAgentSkills → raksta `skills/{id}/SKILL.md`), `openapiParser.ts` (izdala REST galapunktus no OpenAPI specifikācijas), `cliRegistryParser.ts` (izdala CLI apakškomandas no bin/cli-registry), `schemas.ts` (Zod: AgentSkillSchema, SkillCoverageSchema, ListQuerySchema, GenerateBodySchema), `types.ts` (AgentSkill, SkillCoverage, SkillMarkdown, GeneratorReport). To izmanto REST maršruti (`/api/agent-skills/*`), MCP rīki (`omniroute_agent_skills_*`) un A2A prasme `list-capabilities`. Skatiet [AGENT-SKILLS.md](../frameworks/AGENT-SKILLS.md). |
+| `agentSkills/`    | Aģentu prasmju katalogs + ģenerators: `catalog.ts` (getCatalog/getSkillById/filterCatalog/computeCoverage), `generator.ts` (generateAgentSkills → raksta `skills/{id}/SKILL.md`), `openapiParser.ts` (izdala REST galapunktus no OpenAPI specifikācijas), `cliRegistryParser.ts` (izdala CLI apakškomandas no bin/cli-registry), `schemas.ts` (Zod: AgentSkillSchema, SkillCoverageSchema, ListQuerySchema, GenerateBodySchema), `types.ts` (AgentSkill, SkillCoverage, SkillMarkdown, GeneratorReport). To izmanto REST maršruti (`/api/agent-skills/*`), MCP rīki (`agentproxy_agent_skills_*`) un A2A prasme `list-capabilities`. Skatiet [AGENT-SKILLS.md](../frameworks/AGENT-SKILLS.md). |
 | `skills/`         | Prasmju ietvars: `registry.ts`, `executor.ts`, `interception.ts`, `injection.ts`, `sandbox.ts`, `custom.ts`, `hybrid.ts`, `builtins.ts`, `a2a.ts`, `providerSettings.ts`, `schemas.ts`, `skillssh.ts`, `types.ts`, kā arī `builtin/browser.ts`                                                                                                                                                                                                                                                                                                                                                                                                                                                |
 | `spend/`          | `batchWriter.ts` (atliktās rakstīšanas buferis)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 | `sync/`           | `bundle.ts`, `tokens.ts` (Cloud Sync)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
@@ -382,7 +382,7 @@ Tīra biznesa loģika
 
 ## 4. `open-sse/` — Straumēšanas dziņa darbvieta
 
-Atsevišķa npm darbvieta, kas tiek publicēta kā `@omniroute/open-sse`. Tā pārvalda pieprasījumu
+Atsevišķa npm darbvieta, kas tiek publicēta kā `@agentproxy/open-sse`. Tā pārvalda pieprasījumu
 apstrādi, izpildītājus, tulkotājus, pakalpojumus, transformatoru un MCP serveri.
 
 ```
@@ -546,7 +546,7 @@ GitHub laidienu plūsmu.
 
 ```
 bin/
-├── omniroute.mjs           Galvenais CLI ievades punkts (Node ESM)
+├── agentproxy.mjs           Galvenais CLI ievades punkts (Node ESM)
 ├── reset-password.mjs      Pārvaldības paroles atiestatīšana no CLI
 ├── mcp-server.mjs          MCP servera palaidējs (stdio)
 ├── nodeRuntimeSupport.mjs  Node versijas pārbaude
@@ -569,8 +569,8 @@ bin/
 
 `package.json` → `bin` tiek eksponēti divi binārie faili:
 
-- `omniroute` → `bin/omniroute.mjs`
-- `omniroute-reset-password` → `bin/reset-password.mjs`
+- `agentproxy` → `bin/agentproxy.mjs`
+- `agentproxy-reset-password` → `bin/reset-password.mjs`
 
 ---
 
@@ -726,7 +726,7 @@ Skatīt [A2A-SERVER.md § Adding a New Skill](../frameworks/A2A-SERVER.md). Pras
 
 - **Koda stils**: 2 atstarpju indents, dubultās pēdiņas, 100 simbolu platums, semikoli,
   `es5` komati pēc pēdējā elementa — uzlikts ar Prettier caur `lint-staged`.
-- **Importi**: ārējie → iekšējie (`@/`, `@omniroute/open-sse`) → relatīvie.
+- **Importi**: ārējie → iekšējie (`@/`, `@agentproxy/open-sse`) → relatīvie.
 - **Nosaukšana**: faili `camelCase` vai `kebab-case`, komponenti `PascalCase`,
   konstantes `UPPER_SNAKE`.
 - **ESLint**: `no-eval`, `no-implied-eval`, `no-new-func` = `error` visur;

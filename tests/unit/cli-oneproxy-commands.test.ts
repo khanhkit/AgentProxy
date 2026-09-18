@@ -10,12 +10,12 @@ function makeCmd(output = "json") {
   return { optsWithGlobals: () => ({ output, quiet: output !== "table" }) };
 }
 
-test("oneproxy status chama omniroute_oneproxy_stats via MCP", async () => {
+test("oneproxy status chama agentproxy_oneproxy_stats via MCP", async () => {
   // #10960 rewrote this test around the shared stream mock but left it asserting
   // `calls.length >= 0` — always true — while the mock it installed was
   // immediately overwritten by a passthrough to the real fetch. Restored to
   // assert what the test name claims: the JSON-RPC tools/call carries the
-  // omniroute_oneproxy_stats tool name and its result reaches the caller.
+  // agentproxy_oneproxy_stats tool name and its result reaches the caller.
   // Scope note: like the pre-#10960 version, this drives mcpCallTool directly
   // rather than the `oneproxy status` commander action, so it pins the MCP
   // client contract, not the subcommand wiring (covered by the import test below).
@@ -30,21 +30,21 @@ test("oneproxy status chama omniroute_oneproxy_stats via MCP", async () => {
 
   try {
     const { mcpCallTool } = await import("../../bin/cli/mcpClient.mjs");
-    const result = await mcpCallTool("omniroute_oneproxy_stats", {});
+    const result = await mcpCallTool("agentproxy_oneproxy_stats", {});
     assert.deepEqual(result, { poolSize: 10, activeProxies: 8 });
   } finally {
     globalThis.fetch = origFetch;
   }
 
   assert.equal(toolCalls.length, 1, "exactly one tools/call must reach the MCP endpoint");
-  assert.equal(toolCalls[0].name, "omniroute_oneproxy_stats");
+  assert.equal(toolCalls[0].name, "agentproxy_oneproxy_stats");
 });
 
 test("oneproxy stats passa provider e period para MCP", async () => {
   const origFetch = globalThis.fetch;
   globalThis.fetch = makeMcpStreamFetch({ toolResult: { requests: 5000 } });
   const { mcpCallTool } = await import("../../bin/cli/mcpClient.mjs");
-  const result = await mcpCallTool("omniroute_oneproxy_stats", {
+  const result = await mcpCallTool("agentproxy_oneproxy_stats", {
     provider: "openai",
     period: "24h",
   });
@@ -52,23 +52,23 @@ test("oneproxy stats passa provider e period para MCP", async () => {
   assert.deepEqual(result, { requests: 5000 });
 });
 
-test("oneproxy fetch chama omniroute_oneproxy_fetch com count e type", async () => {
+test("oneproxy fetch chama agentproxy_oneproxy_fetch com count e type", async () => {
   const origFetch = globalThis.fetch;
   globalThis.fetch = makeMcpStreamFetch({
     toolResult: { proxies: [{ host: "10.0.0.1", type: "http" }] },
   });
   const { mcpCallTool } = await import("../../bin/cli/mcpClient.mjs");
-  const result = await mcpCallTool("omniroute_oneproxy_fetch", { count: 5, type: "http" });
+  const result = await mcpCallTool("agentproxy_oneproxy_fetch", { count: 5, type: "http" });
   globalThis.fetch = origFetch;
   assert.equal((result as any).proxies[0].host, "10.0.0.1");
   assert.equal((result as any).proxies[0].type, "http");
 });
 
-test("oneproxy rotate chama omniroute_oneproxy_rotate com provider", async () => {
+test("oneproxy rotate chama agentproxy_oneproxy_rotate com provider", async () => {
   const origFetch = globalThis.fetch;
   globalThis.fetch = makeMcpStreamFetch({ toolResult: { rotated: true, newProxy: "10.0.0.2" } });
   const { mcpCallTool } = await import("../../bin/cli/mcpClient.mjs");
-  const result = await mcpCallTool("omniroute_oneproxy_rotate", { provider: "anthropic" });
+  const result = await mcpCallTool("agentproxy_oneproxy_rotate", { provider: "anthropic" });
   globalThis.fetch = origFetch;
   assert.equal((result as any).rotated, true);
   assert.equal((result as any).newProxy, "10.0.0.2");

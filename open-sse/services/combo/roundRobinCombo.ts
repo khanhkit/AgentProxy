@@ -657,7 +657,7 @@ export async function handleRoundRobinCombo({
           // dispatch (opt-in, same env gate as the pre-request check). Best-effort
           // and non-blocking — recording must never break the request path.
           if (
-            process.env.OMNIROUTE_QUOTA_AWARE_ROUTING === "1" &&
+            process.env.AGENTPROXY_QUOTA_AWARE_ROUTING === "1" &&
             target.connectionId &&
             attemptBody &&
             typeof attemptBody === "object"
@@ -698,8 +698,8 @@ export async function handleRoundRobinCombo({
               // so release the sticky pin here rather than on the next turn.
               {
                 const rrSelectedConnectionId =
-                  result.headers?.get("X-OmniRoute-Selected-Connection-Id") ||
-                  result.headers?.get("x-omniroute-selected-connection-id") ||
+                  result.headers?.get("X-AgentProxy-Selected-Connection-Id") ||
+                  result.headers?.get("x-agentproxy-selected-connection-id") ||
                   undefined;
                 releaseStickyPinOnFailure(
                   _rrSessionSticky.messageHash,
@@ -742,8 +742,8 @@ export async function handleRoundRobinCombo({
             recordedAttempts++;
 
             const selectedConnectionId =
-              result.headers?.get("X-OmniRoute-Selected-Connection-Id") ||
-              result.headers?.get("x-omniroute-selected-connection-id") ||
+              result.headers?.get("X-AgentProxy-Selected-Connection-Id") ||
+              result.headers?.get("x-agentproxy-selected-connection-id") ||
               undefined;
             const effectiveConnectionId = selectedConnectionId || target.connectionId || "";
 
@@ -925,8 +925,8 @@ export async function handleRoundRobinCombo({
           );
           const { cooldownMs } = fallbackResult;
           const selectedConnectionId =
-            result.headers?.get("X-OmniRoute-Selected-Connection-Id") ||
-            result.headers?.get("x-omniroute-selected-connection-id") ||
+            result.headers?.get("X-AgentProxy-Selected-Connection-Id") ||
+            result.headers?.get("x-agentproxy-selected-connection-id") ||
             undefined;
           const targetWithConnection = selectedConnectionId
             ? { ...target, connectionId: selectedConnectionId }

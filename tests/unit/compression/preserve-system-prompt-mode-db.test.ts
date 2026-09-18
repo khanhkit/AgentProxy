@@ -15,7 +15,7 @@ import path from "node:path";
 // set BEFORE any import and the db file is shared across tests. Each test isolates by wiping the
 // `compression` namespace and busting the module-level TTL cache via resetDbInstance() (which hands
 // out a NEW db object, so the cache — keyed by db ref — misses).
-const TEMP_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-preserve-mode-"));
+const TEMP_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-preserve-mode-"));
 process.env.DATA_DIR = TEMP_DIR;
 
 async function freshCompressionDb() {

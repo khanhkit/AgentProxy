@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 
-import { applyStackedCompression } from "@omniroute/open-sse/services/compression/strategySelector";
+import { applyStackedCompression } from "@agentproxy/open-sse/services/compression/strategySelector";
 
 // #6485 — a stacked pipeline step naming an engine which is not registered used to
 // silently `continue`, so the caller had no signal that a configured step was a no-op.

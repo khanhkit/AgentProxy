@@ -8,7 +8,7 @@ import path from "node:path";
 // getModelLatencyStats(). Seeds usage_history rows directly through
 // saveRequestUsage() and asserts the three new ModelLatencyStatsEntry fields.
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-latency-ttft-6875-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-latency-ttft-6875-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../src/lib/db/core.ts");

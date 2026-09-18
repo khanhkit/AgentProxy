@@ -17,7 +17,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import os from "node:os";
 
-const tmpDir = fs.mkdtempSync(os.tmpdir() + "/omniroute-kiro-3615-");
+const tmpDir = fs.mkdtempSync(os.tmpdir() + "/agentproxy-kiro-3615-");
 process.env.DATA_DIR = tmpDir;
 process.env.JWT_SECRET = process.env.JWT_SECRET || "test-jwt-secret-3615";
 process.env.API_KEY_SECRET = process.env.API_KEY_SECRET || "test-api-key-secret-3615";

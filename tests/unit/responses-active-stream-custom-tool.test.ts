@@ -6,7 +6,7 @@ import test from "node:test";
 
 import { FORMATS } from "../../open-sse/translator/formats.ts";
 
-process.env.DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-responses-stream-"));
+process.env.DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-responses-stream-"));
 const { createSSETransformStreamWithLogger } = await import("../../open-sse/utils/stream.ts");
 
 test("active Responses stream restores declared custom tool metadata", async () => {

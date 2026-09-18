@@ -12,7 +12,7 @@ import path from "node:path";
 // singleton keeps whatever DATA_DIR it resolved at import time, so an isolated test
 // directory assigned later is silently never used and the #10460 tests below would
 // actually read/write the shared default DATA_DIR instead.
-const TEST_DATA_DIR_10460 = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-10460-"));
+const TEST_DATA_DIR_10460 = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-10460-"));
 process.env.DATA_DIR = TEST_DATA_DIR_10460;
 process.env.API_KEY_SECRET = process.env.API_KEY_SECRET || "10460-test-secret";
 

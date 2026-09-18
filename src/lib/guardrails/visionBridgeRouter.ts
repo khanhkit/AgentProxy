@@ -5,8 +5,8 @@
 
 import { getResolvedModelCapabilities } from "@/lib/modelCapabilities";
 import { getActiveSyncedCatalog } from "@/lib/db/models/activeSyncedCatalog";
-import { PROVIDER_MODELS } from "@omniroute/open-sse/config/providerModels";
-import { getRegisteredProviderEffortBaseModelId } from "@omniroute/open-sse/utils/registeredEffortVariants.ts";
+import { PROVIDER_MODELS } from "@agentproxy/open-sse/config/providerModels";
+import { getRegisteredProviderEffortBaseModelId } from "@agentproxy/open-sse/utils/registeredEffortVariants.ts";
 import { hasUsableCredentialsForModel } from "./visionBridgeCredentials";
 import { isVisionBridgeForcedModel } from "@/shared/constants/visionBridgeDefaults";
 

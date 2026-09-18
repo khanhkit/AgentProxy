@@ -10,7 +10,7 @@ import os from "node:os";
 import path from "node:path";
 import { NextRequest } from "next/server";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-ipenforce-6131-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-ipenforce-6131-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.JWT_SECRET = "test-secret-6131";
 
@@ -18,13 +18,13 @@ const core = await import("../../../src/lib/db/core.ts");
 const ipFilter = await import("../../../open-sse/services/ipFilter.ts");
 const pipeline = await import("../../../src/server/authz/pipeline.ts");
 
-const ORIGINAL_STAMP_TOKEN = process.env.OMNIROUTE_PEER_STAMP_TOKEN;
+const ORIGINAL_STAMP_TOKEN = process.env.AGENTPROXY_PEER_STAMP_TOKEN;
 
 test.after(() => {
   core.resetDbInstance();
   fs.rmSync(TEST_DATA_DIR, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
-  if (ORIGINAL_STAMP_TOKEN === undefined) delete process.env.OMNIROUTE_PEER_STAMP_TOKEN;
-  else process.env.OMNIROUTE_PEER_STAMP_TOKEN = ORIGINAL_STAMP_TOKEN;
+  if (ORIGINAL_STAMP_TOKEN === undefined) delete process.env.AGENTPROXY_PEER_STAMP_TOKEN;
+  else process.env.AGENTPROXY_PEER_STAMP_TOKEN = ORIGINAL_STAMP_TOKEN;
 });
 
 test.beforeEach(() => {
@@ -32,7 +32,7 @@ test.beforeEach(() => {
   fs.rmSync(TEST_DATA_DIR, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
   fs.mkdirSync(TEST_DATA_DIR, { recursive: true });
   ipFilter.resetIPFilter();
-  delete process.env.OMNIROUTE_PEER_STAMP_TOKEN;
+  delete process.env.AGENTPROXY_PEER_STAMP_TOKEN;
 });
 
 const BLOCKED = "203.0.113.9";
@@ -79,13 +79,13 @@ test("#6131 disabled filter never blocks (even a listed IP)", async () => {
 });
 
 test("#6131 loopback is exempt — operator can't lock themselves out locally", async () => {
-  process.env.OMNIROUTE_PEER_STAMP_TOKEN = "stamp-tok";
+  process.env.AGENTPROXY_PEER_STAMP_TOKEN = "stamp-tok";
   ipFilter.configureIPFilter({ enabled: true, mode: "blacklist" });
   ipFilter.addToBlacklist(BLOCKED);
 
   // A trusted stamped loopback peer IP downgrades the request to "loopback".
   const res = await pipeline.runAuthzPipeline(
-    req(BLOCKED, { "x-omniroute-peer-ip": "stamp-tok|127.0.0.1" }),
+    req(BLOCKED, { "x-agentproxy-peer-ip": "stamp-tok|127.0.0.1" }),
     { enforce: true }
   );
   assert.equal(await isIpBlocked(res), false, "loopback must be exempt from the IP filter");

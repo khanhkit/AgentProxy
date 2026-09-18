@@ -22,7 +22,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-13070-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-13070-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../src/lib/db/core.ts");
@@ -109,15 +109,15 @@ test("buildInternalResponsesRequest targets /v1/responses with the health-check 
   assert.equal(new URL(req.url).pathname, "/v1/responses");
   assert.equal(req.method, "POST");
   assert.equal(req.headers.get("X-Internal-Test"), "combo-health-check");
-  assert.equal(req.headers.get("X-OmniRoute-No-Cache"), "true");
-  assert.equal(req.headers.get("X-OmniRoute-Compression"), "off");
-  assert.equal(req.headers.get("X-OmniRoute-Connection"), "conn-1");
+  assert.equal(req.headers.get("X-AgentProxy-No-Cache"), "true");
+  assert.equal(req.headers.get("X-AgentProxy-Compression"), "off");
+  assert.equal(req.headers.get("X-AgentProxy-Connection"), "conn-1");
   assert.deepEqual(await req.json(), { model: "vendor/opaque", input: "hi" });
 });
 
 test("buildInternalResponsesRequest omits the connection header when there is no connection", () => {
   const req = runner.buildInternalResponsesRequest({ model: "m" }, new AbortController().signal);
-  assert.equal(req.headers.get("X-OmniRoute-Connection"), null);
+  assert.equal(req.headers.get("X-AgentProxy-Connection"), null);
 });
 
 // ---------------------------------------------------------------------------

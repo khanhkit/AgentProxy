@@ -42,7 +42,7 @@ test("G14 rejects localDb barrel imports outside src/lib/db", async () => {
 
 test("G14 rejects executor implementation imports from src/app", async () => {
   for (const importPath of [
-    "@omniroute/open-sse/executors/default.ts",
+    "@agentproxy/open-sse/executors/default.ts",
     "open-sse/executors/default.ts",
   ]) {
     const messages = await restrictedImportMessages(
@@ -62,11 +62,11 @@ test("G14 allows imports through the intended boundaries", async () => {
       filePath: "src/lib/db/example.ts",
     },
     {
-      code: 'import { DefaultExecutor } from "@omniroute/open-sse/executors/default.ts";\nvoid DefaultExecutor;',
+      code: 'import { DefaultExecutor } from "@agentproxy/open-sse/executors/default.ts";\nvoid DefaultExecutor;',
       filePath: "src/sse/handlers/example.ts",
     },
     {
-      code: 'import { handleChat } from "@omniroute/open-sse/handlers/chat";\nvoid handleChat;',
+      code: 'import { handleChat } from "@agentproxy/open-sse/handlers/chat";\nvoid handleChat;',
       filePath: "src/app/api/example/route.ts",
     },
   ];

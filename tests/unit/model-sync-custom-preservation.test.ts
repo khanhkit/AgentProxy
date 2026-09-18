@@ -5,7 +5,7 @@ import path from "node:path";
 import test from "node:test";
 
 const TEST_DATA_DIR = fs.mkdtempSync(
-  path.join(os.tmpdir(), "omniroute-model-sync-custom-preservation-")
+  path.join(os.tmpdir(), "agentproxy-model-sync-custom-preservation-")
 );
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.API_KEY_SECRET ||= `test-model-sync-custom-${Date.now()}`;

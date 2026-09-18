@@ -9,7 +9,7 @@ lastUpdated: 2026-06-28
 > **Source of truth:** `src/lib/webhookDispatcher.ts`, `src/lib/db/webhooks.ts`, `src/app/api/webhooks/`
 > **Last updated:** 2026-06-28 — v3.8.40
 
-OmniRoute może wysyłać HTTP webhooki na zdarzenia platformy. Użyj ich do integracji ze
+AgentProxy może wysyłać HTTP webhooki na zdarzenia platformy. Użyj ich do integracji ze
 Slackiem, PagerDuty, Datadog, wewnętrznymi usługami alertowania lub dowolnym odbiornikiem HTTP.
 
 Dispatcher podpisuje każdą dostawę HMAC-SHA256, ponawia próby przy przejściowych
@@ -59,17 +59,17 @@ błędy per webhook, więc jeden zły odbiornik nie może zablokować pozostały
 
 ## Podpis HMAC
 
-Gdy webhook ma `secret`, OmniRoute podpisuje ciało JSON i wysyła:
+Gdy webhook ma `secret`, AgentProxy podpisuje ciało JSON i wysyła:
 
 ```
 Content-Type: application/json
-User-Agent: OmniRoute-Webhook/1.0
+User-Agent: AgentProxy-Webhook/1.0
 X-Webhook-Event: <event>
 X-Webhook-Timestamp: <ISO-8601>
 X-Webhook-Signature: sha256=<hex HMAC-SHA256(secret, body)>
 ```
 
-> Nazwy nagłówków używają prefiksu `X-Webhook-*` (nie `X-OmniRoute-*`). Wartość podpisu
+> Nazwy nagłówków używają prefiksu `X-Webhook-*` (nie `X-AgentProxy-*`). Wartość podpisu
 > to `sha256=<hex>` — weryfikuj z pełnym prefiksem.
 
 Jeśli `createWebhook` zostanie wywołane bez secreta, moduł DB generuje jeden
@@ -225,7 +225,7 @@ Strona dashboardu pod `/dashboard/webhooks` (zob.
   "event": "test.ping",
   "timestamp": "2026-05-13T20:32:00.000Z",
   "data": {
-    "message": "Test webhook delivery from OmniRoute",
+    "message": "Test webhook delivery from AgentProxy",
     "webhookId": "<uuid>"
   }
 }

@@ -29,7 +29,7 @@ import os from "node:os";
 import path from "node:path";
 
 process.env.NODE_ENV = "test";
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-agent-availability-route-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-agent-availability-route-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../src/lib/db/core.ts");
@@ -61,7 +61,7 @@ function writeFakeCursorAgentBinary(destPath: string): void {
 
 const originalHome = process.env.HOME;
 const originalUserProfile = process.env.USERPROFILE;
-const tmpHome = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-agent-availability-home-"));
+const tmpHome = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-agent-availability-home-"));
 process.env.HOME = tmpHome;
 process.env.USERPROFILE = tmpHome;
 process.env.FAKE_CURSOR_AGENT_STATUS_MODE = "unauthenticated";

@@ -68,8 +68,8 @@ function applyKimiExecutionMetadata(
   if (provider !== "kimi-coding" && provider !== "kimi-coding-apikey") return;
 
   const staticThinkingPolicy = getKimiCodeStaticThinkingPolicy(modelInfo?.model);
-  providerSpecificData._omnirouteKimiTargetFormat = targetFormat;
-  providerSpecificData._omnirouteKimiThinking = buildKimiThinkingMetadata(
+  providerSpecificData._agentproxyKimiTargetFormat = targetFormat;
+  providerSpecificData._agentproxyKimiThinking = buildKimiThinkingMetadata(
     modelInfo,
     staticThinkingPolicy
   );
@@ -119,13 +119,13 @@ export function resolveExecutionCredentials(opts: {
     targetFormat === FORMATS.OPENAI_RESPONSES &&
     (provider === "azure-ai" || provider === "oci")
   ) {
-    providerSpecificData._omnirouteForceResponsesUpstream = true;
+    providerSpecificData._agentproxyForceResponsesUpstream = true;
   }
 
   // #8969: Poe's native /v1/responses surface — DefaultExecutor.buildUrl("poe")
   // reads this marker so Responses requests do not land on chat/completions.
   if (targetFormat === FORMATS.OPENAI_RESPONSES && provider === "poe") {
-    providerSpecificData._omnirouteForceResponsesUpstream = true;
+    providerSpecificData._agentproxyForceResponsesUpstream = true;
   }
 
   // #8969: Claude-tagged Poe models speak Anthropic Messages wire format. Keep

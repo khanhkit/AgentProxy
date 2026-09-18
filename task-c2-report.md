@@ -17,7 +17,7 @@ Branch: `feat/orch-fase3-c`. Arquivos commitados (só estes dois):
 - `collectMemoryHits` roda `Promise.race([search(...), deadline])`; estouro ⇒ `log.warn` +
   `[]`. O contrato best-effort é idêntico ao de hoje: nada propaga, a task segue.
 - `finally { if (timer) clearTimeout(timer); }` — limpo nos DOIS caminhos.
-- `logger("A2A_TASKS")` importado de `@omniroute/open-sse/utils/logger` (mesmo canal já usado
+- `logger("A2A_TASKS")` importado de `@agentproxy/open-sse/utils/logger` (mesmo canal já usado
   por `src/lib/a2a/taskManager.ts`). O log não contém `err.message`/`err.stack` — só o id da
   task e o deadline (Hard Rule #12; nada disso vai para resposta nenhuma).
 
@@ -93,7 +93,7 @@ Todas as suítes a2a (`node --import tsx/esm --test $(ls tests/unit/*a2a*.test.t
 ## Divergências plano × código
 
 - **Nenhuma no contrato.** `MemoryHit`, `MemoryHitsDeps`, a assinatura de `collectMemoryHits` e
-  o kill-switch `OMNIROUTE_A2A_MEMORY_HITS === "0"` estão exatamente como o plano copiou.
+  o kill-switch `AGENTPROXY_A2A_MEMORY_HITS === "0"` estão exatamente como o plano copiou.
 - Detalhe não previsto: o plano dizia "estouro ⇒ `[]` + log" sem dizer qual logger. Usei o
   mesmo `logger("A2A_TASKS")` de `taskManager.ts` (o `taskExecution.ts` não tinha logger algum).
 - O `unref` sugerido pela minha leitura inicial de "sem handle pendurado segurando o processo do

@@ -18,7 +18,7 @@ import path from "node:path";
 
 type Row = Record<string, unknown>;
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-agy-autosync-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-agy-autosync-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const { agy } = await import("../../src/lib/oauth/providers/agy.ts");

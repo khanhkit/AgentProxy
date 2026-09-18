@@ -202,8 +202,8 @@ async function compileTwoIssuerDepths(nextConfig: NextConfigLike): Promise<void>
 }
 
 test("AP-ISS-0104 minimal Webpack replacements are root-stable and match Turbopack targets", async () => {
-  const previousProfile = process.env.OMNIROUTE_BUILD_PROFILE;
-  process.env.OMNIROUTE_BUILD_PROFILE = "minimal";
+  const previousProfile = process.env.AGENTPROXY_BUILD_PROFILE;
+  process.env.AGENTPROXY_BUILD_PROFILE = "minimal";
   try {
     const { default: nextConfig } = (await import(`${configUrl}?ap0104=minimal-${Date.now()}`)) as {
       default: NextConfigLike;
@@ -229,31 +229,31 @@ test("AP-ISS-0104 minimal Webpack replacements are root-stable and match Turbopa
       assert.equal(path.resolve(projectRoot, turbopackTarget), resource.request);
     }
   } finally {
-    if (previousProfile === undefined) delete process.env.OMNIROUTE_BUILD_PROFILE;
-    else process.env.OMNIROUTE_BUILD_PROFILE = previousProfile;
+    if (previousProfile === undefined) delete process.env.AGENTPROXY_BUILD_PROFILE;
+    else process.env.AGENTPROXY_BUILD_PROFILE = previousProfile;
   }
 });
 
 test("AP-ISS-0104 real Webpack compilation succeeds from two issuer depths", async () => {
-  const previousProfile = process.env.OMNIROUTE_BUILD_PROFILE;
-  process.env.OMNIROUTE_BUILD_PROFILE = "minimal";
+  const previousProfile = process.env.AGENTPROXY_BUILD_PROFILE;
+  process.env.AGENTPROXY_BUILD_PROFILE = "minimal";
   try {
     const { default: nextConfig } = (await import(`${configUrl}?ap0104=compile-${Date.now()}`)) as {
       default: NextConfigLike;
     };
     await compileTwoIssuerDepths(nextConfig);
   } finally {
-    if (previousProfile === undefined) delete process.env.OMNIROUTE_BUILD_PROFILE;
-    else process.env.OMNIROUTE_BUILD_PROFILE = previousProfile;
+    if (previousProfile === undefined) delete process.env.AGENTPROXY_BUILD_PROFILE;
+    else process.env.AGENTPROXY_BUILD_PROFILE = previousProfile;
   }
 });
 
 test("AP-ISS-0104 non-minimal and contributor profiles do not install privileged replacements", async () => {
-  const previousProfile = process.env.OMNIROUTE_BUILD_PROFILE;
+  const previousProfile = process.env.AGENTPROXY_BUILD_PROFILE;
   try {
     for (const profile of [undefined, "contributor"] as const) {
-      if (profile === undefined) delete process.env.OMNIROUTE_BUILD_PROFILE;
-      else process.env.OMNIROUTE_BUILD_PROFILE = profile;
+      if (profile === undefined) delete process.env.AGENTPROXY_BUILD_PROFILE;
+      else process.env.AGENTPROXY_BUILD_PROFILE = profile;
 
       const { default: nextConfig } = (await import(
         `${configUrl}?ap0104=${profile ?? "normal"}-${Date.now()}-${Math.random()}`
@@ -261,7 +261,7 @@ test("AP-ISS-0104 non-minimal and contributor profiles do not install privileged
       assert.equal(captureWebpackReplacements(nextConfig).length, 0);
     }
   } finally {
-    if (previousProfile === undefined) delete process.env.OMNIROUTE_BUILD_PROFILE;
-    else process.env.OMNIROUTE_BUILD_PROFILE = previousProfile;
+    if (previousProfile === undefined) delete process.env.AGENTPROXY_BUILD_PROFILE;
+    else process.env.AGENTPROXY_BUILD_PROFILE = previousProfile;
   }
 });

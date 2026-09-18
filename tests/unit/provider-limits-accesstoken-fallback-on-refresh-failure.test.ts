@@ -19,7 +19,7 @@ import os from "node:os";
 import path from "node:path";
 
 process.env.DATA_DIR = fs.mkdtempSync(
-  path.join(os.tmpdir(), "omniroute-accesstoken-fallback-")
+  path.join(os.tmpdir(), "agentproxy-accesstoken-fallback-")
 );
 
 const { getCredentialRefreshExecutor } =

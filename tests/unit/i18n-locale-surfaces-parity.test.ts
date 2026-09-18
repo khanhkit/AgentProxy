@@ -10,7 +10,7 @@ import i18nConfig from "../../config/i18n.json" with { type: "json" };
  * truth) must exist on every in-repo surface — dashboard catalog, CLI catalog,
  * docs mirror (README.md / llm.txt / CHANGELOG.md) and the docs/i18n/README.md
  * index row. AgentProxy's root README intentionally does not duplicate the
- * inherited OmniRoute flag wall. Locales listed in `docsExcluded` (the English
+ * inherited AgentProxy flag wall. Locales listed in `docsExcluded` (the English
  * source) only need the two catalogs. The reverse direction is guarded as well:
  * every docs-surface entry (index row, docs/i18n/ directory) must map back to a
  * configured docs locale, so a retired locale cannot leave orphans behind.

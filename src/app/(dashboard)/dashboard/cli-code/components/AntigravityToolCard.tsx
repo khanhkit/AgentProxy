@@ -140,7 +140,7 @@ export default function AntigravityToolCard({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          apiKey: !cloudEnabled ? "sk_omniroute" : null,
+          apiKey: !cloudEnabled ? "sk_agentproxy" : null,
           keyId: selectedKeyId,
           sudoPassword: password,
         }),
@@ -356,7 +356,7 @@ export default function AntigravityToolCard({
                   </select>
                 ) : (
                   <span className="flex-1 text-xs text-text-muted px-2 py-1.5">
-                    {cloudEnabled ? t("noApiKeysCreateOne") : t("defaultOmnirouteKey")}
+                    {cloudEnabled ? t("noApiKeysCreateOne") : t("defaultAgentProxyKey")}
                   </span>
                 )}
               </div>

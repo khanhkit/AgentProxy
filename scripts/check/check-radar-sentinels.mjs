@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * OmniRoute — Radar silent-cell structural gate.
+ * AgentProxy — Radar silent-cell structural gate.
  *
  * Asserts three structural invariants over the Radar catalog table —
  * every absent-data sentinel in that table must carry an explaining title.

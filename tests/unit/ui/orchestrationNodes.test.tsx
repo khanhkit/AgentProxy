@@ -131,10 +131,10 @@ describe("orchestration nodes", () => {
   });
 
   it("OrchestratorNode renders the label as text content and as aria-label", () => {
-    const data = { id: "orchestrator", kind: "orchestrator", label: "OmniRoute" };
+    const data = { id: "orchestrator", kind: "orchestrator", label: "AgentProxy" };
     const { c, cleanup } = render(<OrchestratorNode data={data as never} />);
-    expect(c.textContent).toContain("OmniRoute");
-    expect(c.querySelector('[aria-label="OmniRoute"]')).toBeTruthy();
+    expect(c.textContent).toContain("AgentProxy");
+    expect(c.querySelector('[aria-label="AgentProxy"]')).toBeTruthy();
     cleanup();
   });
 

@@ -5,7 +5,7 @@
  */
 
 import type { A2ATask, TaskArtifact } from "../taskManager";
-import { resolveOmniRouteBaseUrl } from "@/shared/utils/resolveOmniRouteBaseUrl";
+import { resolveAgentProxyBaseUrl } from "@/shared/utils/resolveAgentProxyBaseUrl";
 import { formatCost } from "@/shared/utils/formatting";
 import { toNumber } from "@/shared/utils/numeric";
 
@@ -18,8 +18,8 @@ type CostEntry = {
   tokens: number;
 };
 
-const OMNIROUTE_BASE_URL = resolveOmniRouteBaseUrl();
-const OMNIROUTE_API_KEY = process.env.OMNIROUTE_API_KEY || "";
+const AGENTPROXY_BASE_URL = resolveAgentProxyBaseUrl();
+const AGENTPROXY_API_KEY = process.env.AGENTPROXY_API_KEY || "";
 
 function detectRange(task: A2ATask): string {
   const metadataRange = task.input.metadata?.range;
@@ -34,10 +34,10 @@ function detectRange(task: A2ATask): string {
 }
 
 async function costFetch(path: string, signal?: AbortSignal): Promise<AnalyticsRecord> {
-  const url = `${OMNIROUTE_BASE_URL}${path}`;
+  const url = `${AGENTPROXY_BASE_URL}${path}`;
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
-    ...(OMNIROUTE_API_KEY ? { Authorization: `Bearer ${OMNIROUTE_API_KEY}` } : {}),
+    ...(AGENTPROXY_API_KEY ? { Authorization: `Bearer ${AGENTPROXY_API_KEY}` } : {}),
   };
   const timeoutSignal = AbortSignal.timeout(15000);
   const requestSignal = signal ? AbortSignal.any([signal, timeoutSignal]) : timeoutSignal;

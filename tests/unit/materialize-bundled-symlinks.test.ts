@@ -57,7 +57,7 @@ test("materializeBundledSymlinks relinks a dangling hashed symlink to its siblin
     makePkg(nm, "better-sqlite3", "real-bsq");
     // Dangling absolute link into a build machine that does not exist here.
     symlinkSync(
-      "/Users/runner/work/OmniRoute/OmniRoute/.build/next/standalone/node_modules/better-sqlite3",
+      "/Users/runner/work/AgentProxy/AgentProxy/.build/next/standalone/node_modules/better-sqlite3",
       join(nm, "better-sqlite3-90e2652d1716b047"),
       "dir"
     );

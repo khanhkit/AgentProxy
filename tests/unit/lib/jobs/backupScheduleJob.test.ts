@@ -5,7 +5,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 async function withTmpDataDir(fn: (dataDir: string) => Promise<void>) {
-  const dataDir = mkdtempSync(join(tmpdir(), "omniroute-backup-job-test-"));
+  const dataDir = mkdtempSync(join(tmpdir(), "agentproxy-backup-job-test-"));
   const orig = process.env.DATA_DIR;
   process.env.DATA_DIR = dataDir;
   try {

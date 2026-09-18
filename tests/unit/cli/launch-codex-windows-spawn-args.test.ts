@@ -56,12 +56,12 @@ test("quoteCodexArgs: exact win32 encoding (golden)", () => {
   const golden: Array<[string, string]> = [
     ["-c", '^^^"-c^^^"'],
     [
-      'model_providers.omniroute.base_url="http://localhost:20128/v1"',
-      '^^^"model_providers.omniroute.base_url=\\^^^"http://localhost:20128/v1\\^^^"^^^"',
+      'model_providers.agentproxy.base_url="http://localhost:20128/v1"',
+      '^^^"model_providers.agentproxy.base_url=\\^^^"http://localhost:20128/v1\\^^^"^^^"',
     ],
     [
-      "model_providers.omniroute.requires_openai_auth=false",
-      '^^^"model_providers.omniroute.requires_openai_auth=false^^^"',
+      "model_providers.agentproxy.requires_openai_auth=false",
+      '^^^"model_providers.agentproxy.requires_openai_auth=false^^^"',
     ],
     ["fix the bug & ship it", '^^^"fix^^^ the^^^ bug^^^ ^^^&^^^ ship^^^ it^^^"'],
     ["", '""'],
@@ -76,9 +76,9 @@ test("quoteCodexArgs: exact win32 encoding (golden)", () => {
 });
 
 test("quoteCodexArgs does not mutate the caller's array", () => {
-  const input = ["-c", 'model_provider="omniroute"'];
+  const input = ["-c", 'model_provider="agentproxy"'];
   quoteCodexArgs(input, "win32");
-  assert.deepEqual(input, ["-c", 'model_provider="omniroute"']);
+  assert.deepEqual(input, ["-c", 'model_provider="agentproxy"']);
 });
 
 // The real contract: whatever we hand to spawn(shell:true) must arrive at the
@@ -88,7 +88,7 @@ test(
   "quoteCodexArgs survives a real cmd.exe round-trip",
   { skip: isWindows ? false : "windows-only: exercises the cmd.exe shell path" },
   async () => {
-    const dir = mkdtempSync(join(tmpdir(), "omniroute-codex-argv-"));
+    const dir = mkdtempSync(join(tmpdir(), "agentproxy-codex-argv-"));
     try {
       // Mirror the real shape of `codex.cmd`: an npm .cmd shim forwarding %*
       // to a node script. Printing argv as JSON keeps the oracle exact.

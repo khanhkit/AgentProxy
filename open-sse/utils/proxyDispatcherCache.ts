@@ -1,8 +1,8 @@
 import type { Dispatcher } from "undici";
 
-const DISPATCHER_CACHE_KEY = Symbol.for("omniroute.proxyDispatcher.cache");
-const DEFAULT_DISPATCHER_KEY = Symbol.for("omniroute.proxyDispatcher.default");
-const RETRY_DISPATCHER_KEY = Symbol.for("omniroute.proxyDispatcher.retry");
+const DISPATCHER_CACHE_KEY = Symbol.for("agentproxy.proxyDispatcher.cache");
+const DEFAULT_DISPATCHER_KEY = Symbol.for("agentproxy.proxyDispatcher.default");
+const RETRY_DISPATCHER_KEY = Symbol.for("agentproxy.proxyDispatcher.retry");
 
 /** Upper bound on cached per-URL proxy dispatchers; oldest entries are evicted first. */
 const MAX_DISPATCHER_CACHE_ENTRIES = 512;

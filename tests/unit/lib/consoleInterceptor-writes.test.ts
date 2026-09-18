@@ -27,7 +27,7 @@ const interceptorPath = fileURLToPath(
 type ChildResult = { status: number | null; stderr: string; lines: Array<Record<string, string>> };
 
 function runChild(body: string[]): ChildResult {
-  const dir = mkdtempSync(join(tmpdir(), "omniroute-writes-8181-"));
+  const dir = mkdtempSync(join(tmpdir(), "agentproxy-writes-8181-"));
   const logFile = join(dir, "logs", "application", "app.log");
   const childFile = join(dir, "probe.mts");
 

@@ -4,7 +4,7 @@ import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-process.env.DATA_DIR = mkdtempSync(join(tmpdir(), "omniroute-embeddings-9089-"));
+process.env.DATA_DIR = mkdtempSync(join(tmpdir(), "agentproxy-embeddings-9089-"));
 
 const { handleEmbedding } = await import("../../open-sse/handlers/embeddings.ts");
 

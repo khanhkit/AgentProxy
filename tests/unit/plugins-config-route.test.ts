@@ -5,7 +5,7 @@ import os from "node:os";
 import path from "node:path";
 
 // ── Temp dirs ──
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-plugins-config-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-plugins-config-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 // ── Dynamic imports (after DATA_DIR set) ──

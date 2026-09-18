@@ -12,7 +12,7 @@
  * DATA_DIR isolation is self-contained (mkdtempSync below), not dependent on
  * the test:unit harness's `--import ./tests/_setup/isolateDataDir.ts`. This
  * file calls real DELETE-based cleanup functions against getDbInstance(),
- * which resolves to the developer's real ~/.omniroute/storage.sqlite when
+ * which resolves to the developer's real ~/.agentproxy/storage.sqlite when
  * DATA_DIR is unset — running this file directly (as documented under
  * "Running Tests": `node --import tsx/esm --test tests/unit/<file>.test.ts`)
  * would otherwise delete real rows from that database, not test rows. Do NOT
@@ -25,7 +25,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-6848-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-6848-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 // Import the real functions — they use getDbInstance(), which resolves to the

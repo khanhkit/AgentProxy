@@ -6,7 +6,7 @@ import {
   getConnectionEffectiveStatus,
 } from "../../src/app/(dashboard)/dashboard/providers/[id]/components/connectionRowHelpers";
 
-// Reorder-by-availability — upstream 9router PR #2558 ported to OmniRoute's
+// Reorder-by-availability — upstream 9router PR #2558 ported to AgentProxy's
 // resilience model (rateLimitedUntil cooldown + testStatus), not the
 // upstream `modelLock_*` field convention. See CLAUDE.md "Resilience Runtime
 // State" → Connection Cooldown.

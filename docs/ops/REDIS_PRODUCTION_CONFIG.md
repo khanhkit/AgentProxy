@@ -8,7 +8,7 @@ lastUpdated: 2026-08-06
 
 ## Overview
 
-Redis is an **optional, soft dependency** in OmniRoute — the application degrades gracefully (in-memory
+Redis is an **optional, soft dependency** in AgentProxy — the application degrades gracefully (in-memory
 fallbacks) when Redis is unavailable. In production, tuning Redis reduces latency for three distinct
 workloads:
 
@@ -18,7 +18,7 @@ workloads:
 | Auth cache | `apiKeys.ts` | Reuses `rateLimiter`'s client | `<prefix>auth:api_key:<sha256>` with TTL |
 | Quota store | `redisQuotaStore.ts` | Separate `getRedisClient(url)` singleton | `<prefix>quota:*` configurable per-instance |
 
-All three workloads share one namespace prefix so OmniRoute can co-exist with other apps on a
+All three workloads share one namespace prefix so AgentProxy can co-exist with other apps on a
 single Redis instance (e.g. `127.0.0.1:6379`). See [Key Namespacing](#key-namespacing).
 
 ---
@@ -28,7 +28,7 @@ single Redis instance (e.g. `127.0.0.1:6379`). See [Key Namespacing](#key-namesp
 | Setting | Value | Where |
 |---|---|---|
 | `REDIS_URL` env var | `redis://redis:6379` (compose), optional | `rateLimiter.ts:5`, `.env.example` |
-| `REDIS_KEY_PREFIX` env var | `omniroute:` (default) | `rateLimiter.ts`, `redisQuotaStore.ts`, `.env.example` |
+| `REDIS_KEY_PREFIX` env var | `agentproxy:` (default) | `rateLimiter.ts`, `redisQuotaStore.ts`, `.env.example` |
 | `QUOTA_STORE_REDIS_URL` env var | separate, can differ from `REDIS_URL` | `quota/storeFactory.ts` |
 | `QUOTA_STORE_DRIVER` | `"sqlite"` (default), `"redis"` optional | `quota/storeFactory.ts` |
 | ioredis `maxRetriesPerRequest` | `3` | `rateLimiter.ts` client creation |
@@ -42,18 +42,18 @@ single Redis instance (e.g. `127.0.0.1:6379`). See [Key Namespacing](#key-namesp
 
 ## Key Namespacing
 
-OmniRoute shares a Redis instance with whatever else runs on the host. Without a namespace,
+AgentProxy shares a Redis instance with whatever else runs on the host. Without a namespace,
 keys like `auth:api_key:<sha256>` or `rl:*` could collide with keys from other applications
 using the same Redis (this instance runs Redis on `127.0.0.1:6379` alongside other services).
 
-Set `REDIS_KEY_PREFIX` to a non-empty string to prefix **every** OmniRoute key:
+Set `REDIS_KEY_PREFIX` to a non-empty string to prefix **every** AgentProxy key:
 
 ```bash
-# .env — all OmniRoute keys become omniroute:rl:*, omniroute:auth:*, omniroute:quota:*
-REDIS_KEY_PREFIX=omniroute:
+# .env — all AgentProxy keys become agentproxy:rl:*, agentproxy:auth:*, agentproxy:quota:*
+REDIS_KEY_PREFIX=agentproxy:
 ```
 
-- **Default:** `omniroute:` (applied when `REDIS_KEY_PREFIX` is unset or blank).
+- **Default:** `agentproxy:` (applied when `REDIS_KEY_PREFIX` is unset or blank).
 - **Applied to:** rate limiter + auth cache (shared `ioredis` client via `keyPrefix`) and the
   quota store (`KEY_PREFIX = "${REDIS_KEY_PREFIX}quota"`).
 - **Changing the prefix** when keys already exist in Redis orphans the old keys (they expire
@@ -100,7 +100,7 @@ const redis = new Redis(REDIS_URL, {
 maxmemory 80%                        # leave room for OS page cache
 maxmemory-policy allkeys-lru         # evict stale auth cache entries under pressure
 
-# Persistence (optional — OmniRoute is crash‑safe without it)
+# Persistence (optional — AgentProxy is crash‑safe without it)
 save 300 1                           # snapshot at least every 5 min if ≥1 key changed
 appendonly no                        # AOF not needed; data is regeneratable
 appendfsync no                       # no fsync overhead (RDB is sufficient)

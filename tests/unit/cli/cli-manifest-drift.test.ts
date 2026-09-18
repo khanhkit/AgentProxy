@@ -22,8 +22,8 @@ import { getCliTool } from "../../../src/shared/constants/cliTools";
 /**
  * Drift guard for the executable manifest (`bin/cli/cli-manifest.mjs`).
  *
- * The manifest is the single declaration of which targets `omniroute run` /
- * `omniroute configure` / shell completion expose. These assertions fail as
+ * The manifest is the single declaration of which targets `agentproxy run` /
+ * `agentproxy configure` / shell completion expose. These assertions fail as
  * soon as any consumer surface — or the server-side runtime catalog — starts
  * disagreeing with it silently.
  */
@@ -117,7 +117,7 @@ test("model-flag wiring stays declared in the manifest", () => {
   assert.deepEqual(manifestModelArgs("aider", "glm/glm-5.2"), ["--model", "openai/glm/glm-5.2"]);
   assert.deepEqual(manifestModelArgs("opencode", "glm/glm-5.2"), [
     "--model",
-    "omniroute/glm/glm-5.2",
+    "agentproxy/glm/glm-5.2",
   ]);
   assert.deepEqual(manifestModelArgs("qwen", "glm/glm-5.2"), ["--model", "glm/glm-5.2"]);
   assert.deepEqual(manifestModelArgs("claude", "glm/glm-5.2"), []);

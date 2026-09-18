@@ -1,6 +1,6 @@
 /**
  * Regression: Cloud sync must verify the X-Cloud-Sig HMAC and must NOT
- * overwrite accessToken / refreshToken unless OMNIROUTE_CLOUD_SYNC_SECRETS=true.
+ * overwrite accessToken / refreshToken unless AGENTPROXY_CLOUD_SYNC_SECRETS=true.
  * See docs/security/SOCKET_DEV_FINDINGS.md §5.
  */
 import { test } from "node:test";
@@ -9,8 +9,8 @@ import crypto from "node:crypto";
 
 test("verifyCloudSignature accepts a valid HMAC", async () => {
   // Test-only HMAC key derived deterministically — no hardcoded production secret.
-  const TEST_HMAC_KEY = crypto.createHash("sha256").update("omniroute-test").digest("hex");
-  process.env.OMNIROUTE_CLOUD_SYNC_SECRET = TEST_HMAC_KEY;
+  const TEST_HMAC_KEY = crypto.createHash("sha256").update("agentproxy-test").digest("hex");
+  process.env.AGENTPROXY_CLOUD_SYNC_SECRET = TEST_HMAC_KEY;
   // Re-import so the module re-reads the env.
   const mod = await import("../../../src/lib/cloudSync.ts?cache=" + Date.now()).catch(
     () => import("../../../src/lib/cloudSync.ts")
@@ -22,8 +22,8 @@ test("verifyCloudSignature accepts a valid HMAC", async () => {
 
 test("verifyCloudSignature rejects a forged signature", async () => {
   // Test-only HMAC key derived deterministically — no hardcoded production secret.
-  const TEST_HMAC_KEY = crypto.createHash("sha256").update("omniroute-test").digest("hex");
-  process.env.OMNIROUTE_CLOUD_SYNC_SECRET = TEST_HMAC_KEY;
+  const TEST_HMAC_KEY = crypto.createHash("sha256").update("agentproxy-test").digest("hex");
+  process.env.AGENTPROXY_CLOUD_SYNC_SECRET = TEST_HMAC_KEY;
   const mod = await import("../../../src/lib/cloudSync.ts");
   const body = JSON.stringify({ data: { providers: {} } });
   const forged = "0".repeat(64);
@@ -32,15 +32,15 @@ test("verifyCloudSignature rejects a forged signature", async () => {
 
 test("verifyCloudSignature rejects when the secret is set but sig header is missing", async () => {
   // Test-only HMAC key derived deterministically — no hardcoded production secret.
-  const TEST_HMAC_KEY = crypto.createHash("sha256").update("omniroute-test").digest("hex");
-  process.env.OMNIROUTE_CLOUD_SYNC_SECRET = TEST_HMAC_KEY;
+  const TEST_HMAC_KEY = crypto.createHash("sha256").update("agentproxy-test").digest("hex");
+  process.env.AGENTPROXY_CLOUD_SYNC_SECRET = TEST_HMAC_KEY;
   const mod = await import("../../../src/lib/cloudSync.ts");
   const body = JSON.stringify({ data: { providers: {} } });
   assert.equal((mod as any).verifyCloudSignature(body, null), false);
 });
 
 test("verifyCloudSignature fails closed when secret is unset", async () => {
-  delete process.env.OMNIROUTE_CLOUD_SYNC_SECRET;
+  delete process.env.AGENTPROXY_CLOUD_SYNC_SECRET;
   const mod = await import(
     "../../../src/lib/cloudSync.ts?missing-secret=" + Date.now() + "-" + Math.random()
   );

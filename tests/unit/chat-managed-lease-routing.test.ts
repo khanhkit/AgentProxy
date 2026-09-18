@@ -39,8 +39,8 @@ function managedRequest(
     url,
     authKey: key,
     headers: {
-      "X-OmniRoute-Lease-Owner": owner,
-      "X-OmniRoute-Lease-Generation": String(generation),
+      "X-AgentProxy-Lease-Owner": owner,
+      "X-AgentProxy-Lease-Generation": String(generation),
       ...extraHeaders,
     },
     body: {
@@ -103,7 +103,7 @@ test("managed chat requires explicit owner and generation before provider dispat
   const missingGeneration = await handleChat(
     buildRequest({
       authKey: key.key,
-      headers: { "X-OmniRoute-Lease-Owner": OWNER },
+      headers: { "X-AgentProxy-Lease-Owner": OWNER },
       body: {
         model: "openai/gpt-4.1",
         stream: false,
@@ -445,8 +445,8 @@ test("managed Responses-shaped request uses the same fenced chat path", async ()
       url: "http://localhost/v1/responses",
       authKey: key.key,
       headers: {
-        "X-OmniRoute-Lease-Owner": OWNER,
-        "X-OmniRoute-Lease-Generation": String(acquired.lease.generation),
+        "X-AgentProxy-Lease-Owner": OWNER,
+        "X-AgentProxy-Lease-Generation": String(acquired.lease.generation),
       },
       body: {
         model: "openai/gpt-4.1",
@@ -483,9 +483,9 @@ test("a direct foreign connection pin cannot override the active binding", async
   assert.equal(leaseDb.getActiveExclusiveConnectionLease(OWNER)?.connectionId, bound.id);
 
   const pinnedRequest = managedRequest(key.key, acquired.lease.generation, {
-    "X-OmniRoute-Connection": other.id,
+    "X-AgentProxy-Connection": other.id,
   });
-  assert.equal(pinnedRequest.headers.get("x-omniroute-connection"), other.id);
+  assert.equal(pinnedRequest.headers.get("x-agentproxy-connection"), other.id);
   const response = await handleChat(pinnedRequest);
   assert.equal(response.status, 409);
   assert.equal((await response.json()).error.code, "LEASE_CONNECTION_MISMATCH");

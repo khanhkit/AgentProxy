@@ -3,19 +3,19 @@
 /**
  * Dario account panel — drives the headless Claude OAuth login flow against the
  * server-side admin-proxy routes (/api/services/dario/admin/*). The real
- * DARIO_ADMIN_TOKEN never reaches this component; the OmniRoute routes attach it.
+ * DARIO_ADMIN_TOKEN never reaches this component; the AgentProxy routes attach it.
  *
  * Flow: "Start Login" → render the returned Claude authorize_url as an external
  * link + expiry countdown + a code input → "Complete Login" posts the pasted
  * code → on success the account is routable immediately (Dario hot-reloads) and
  * the account list refreshes. Each row has a "Remove" button.
  *
- * Also offers "Import from OmniRoute": lists any existing OmniRoute `claude`
+ * Also offers "Import from AgentProxy": lists any existing AgentProxy `claude`
  * provider connection (OAuth-based) and imports its access+refresh token pair
  * directly into Dario's account store, skipping the browser OAuth round trip
  * entirely — valid because both tools authenticate against the same public
  * Claude Code OAuth client. See
- * /api/services/dario/admin/import-from-omniroute/route.ts for why this is
+ * /api/services/dario/admin/import-from-agentproxy/route.ts for why this is
  * safe (no re-implemented OAuth, just a decrypt()'d token handoff).
  *
  * Structurally mirrors the shared services components (Card/Button, text-xs
@@ -86,7 +86,7 @@ async function fetchDarioAccounts(): Promise<{ accounts: DarioAccount[] } | { er
 
 async function fetchOmniConnectionsList(): Promise<OmniConnection[] | null> {
   try {
-    const res = await fetch("/api/services/dario/admin/import-from-omniroute");
+    const res = await fetch("/api/services/dario/admin/import-from-agentproxy");
     const json = (await res.json().catch(() => null)) as {
       connections?: OmniConnection[];
       error?: string;
@@ -154,12 +154,12 @@ export function DarioAccountPanel() {
     void refreshAccounts();
   };
 
-  async function importFromOmniroute(connectionId: string) {
+  async function importFromAgentProxy(connectionId: string) {
     setImportBusyId(connectionId);
     setError(null);
     setNotice(null);
     try {
-      const res = await fetch("/api/services/dario/admin/import-from-omniroute", {
+      const res = await fetch("/api/services/dario/admin/import-from-agentproxy", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ connectionId }),
@@ -314,11 +314,11 @@ export function DarioAccountPanel() {
           )}
         </div>
 
-        {/* Import from OmniRoute */}
+        {/* Import from AgentProxy */}
         <div className="space-y-2 border-t border-border pt-3">
-          <p className="text-xs font-medium">Import from OmniRoute</p>
+          <p className="text-xs font-medium">Import from AgentProxy</p>
           <p className="text-xs text-text-muted">
-            Reuse an existing OmniRoute Claude connection&apos;s OAuth tokens instead of logging in
+            Reuse an existing AgentProxy Claude connection&apos;s OAuth tokens instead of logging in
             again — skips the browser approval step entirely.
           </p>
           {omniLoading && omniConnections.length === 0 ? (
@@ -326,9 +326,9 @@ export function DarioAccountPanel() {
           ) : omniConnections.length === 0 ? (
             <div className="flex items-center justify-between gap-3 rounded-lg border border-border px-3 py-2">
               <p className="text-xs text-text-muted">
-                No eligible OmniRoute Claude connections found.
+                No eligible AgentProxy Claude connections found.
               </p>
-              <Tooltip content="Will be active once a Claude connection exists in OmniRoute.">
+              <Tooltip content="Will be active once a Claude connection exists in AgentProxy.">
                 <Button size="sm" disabled>
                   Import
                 </Button>
@@ -349,7 +349,7 @@ export function DarioAccountPanel() {
                 <Button
                   size="sm"
                   disabled={importBusyId !== null}
-                  onClick={() => void importFromOmniroute(c.id)}
+                  onClick={() => void importFromAgentProxy(c.id)}
                 >
                   {importBusyId === c.id ? "Importing…" : "Import"}
                 </Button>

@@ -6,10 +6,10 @@
 
 ## Pranešimas apie pažeidžiamumus
 
-Jei aptikote „OmniRoute“ saugumo pažeidžiamumą, praneškite apie jį atsakingai:
+Jei aptikote „AgentProxy“ saugumo pažeidžiamumą, praneškite apie jį atsakingai:
 
 1. **NEKURKITE** viešos „GitHub“ problemos
-2. Naudokite [„GitHub“ saugumo rekomendacijas](https://github.com/diegosouzapw/OmniRoute/security/advisories/new)
+2. Naudokite [„GitHub“ saugumo rekomendacijas](https://github.com/khanhkit/AgentProxy/security/advisories/new)
 3. Įtraukite: aprašymą, atkūrimo veiksmus ir galimą poveikį
 
 ## Reagavimo terminai
@@ -32,7 +32,7 @@ Jei aptikote „OmniRoute“ saugumo pažeidžiamumą, praneškite apie jį atsa
 
 ## Saugumo architektūra
 
-„OmniRoute“ įgyvendina daugiasluoksnį saugumo modelį:
+„AgentProxy“ įgyvendina daugiasluoksnį saugumo modelį:
 
 ```
 Užklausa → CORS → Authz konvejeris (klasifikuoti → strategijos → taikyti)
@@ -69,7 +69,7 @@ STORAGE_ENCRYPTION_KEY=$(openssl rand -hex 32)
 
 ### 🛡️ Apsaugos priemonių sistema
 
-„OmniRoute“ pateikiamas su dinamiškai iš naujo įkeliamu **apsaugos priemonių registru** (`src/lib/guardrails/`), kuriame yra 3 integruotos apsaugos priemonės, surikiuotos pagal prioritetą:
+„AgentProxy“ pateikiamas su dinamiškai iš naujo įkeliamu **apsaugos priemonių registru** (`src/lib/guardrails/`), kuriame yra 3 integruotos apsaugos priemonės, surikiuotos pagal prioritetą:
 
 | Apsaugos priemonė  | Prioritetas | Paskirtis                                                                                                  |
 | ------------------ | ----------- | ---------------------------------------------------------------------------------------------------------- |
@@ -77,7 +77,7 @@ STORAGE_ENCRYPTION_KEY=$(openssl rand -hex 32)
 | `pii-masker`       | 10          | PII redagavimas prieš iškvietimą ir po jo (el. pašto adresai, telefonai, CPF, CNPJ, kredito kortelės, SSN) |
 | `prompt-injection` | 20          | Aptinka nurodymų perrašymo, vaidmens užgrobimo, apsaugų apėjimo ir duomenų nutekinimo šablonus             |
 
-Pasirinktinės apsaugos priemonės registruojamos naudojant `registerGuardrail(new MyGuardrail())`. Modelis veikia „fail-open“ principu (išimtys niekada neblokuoja srauto). Kiekvienai užklausai galima atsisakyti apsaugos priemonių naudojant `x-omniroute-disabled-guardrails` antraštę. → Žr. [`docs/security/GUARDRAILS.md`](docs/security/GUARDRAILS.md).
+Pasirinktinės apsaugos priemonės registruojamos naudojant `registerGuardrail(new MyGuardrail())`. Modelis veikia „fail-open“ principu (išimtys niekada neblokuoja srauto). Kiekvienai užklausai galima atsisakyti apsaugos priemonių naudojant `x-agentproxy-disabled-guardrails` antraštę. → Žr. [`docs/security/GUARDRAILS.md`](docs/security/GUARDRAILS.md).
 
 ### 🧠 Apsauga nuo raginimo injekcijų
 
@@ -182,15 +182,15 @@ Serveris aktyviai atmeta žinomas silpnas reikšmes, pvz., `changeme`, `secret` 
 
 ```bash
 docker run -d \
-  --name omniroute \
+  --name agentproxy \
   --restart unless-stopped \
   --read-only \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
+  -v agentproxy-data:/app/data \
   -e JWT_SECRET="$(openssl rand -base64 48)" \
   -e API_KEY_SECRET="$(openssl rand -hex 32)" \
   -e STORAGE_ENCRYPTION_KEY="$(openssl rand -hex 32)" \
-  diegosouzapw/omniroute:latest
+  khanhkit/agentproxy:latest
 ```
 
 ---
@@ -222,7 +222,7 @@ docker run -d \
 
 ## Tiekimo grandinės skaitytuvo aptiktos problemos (Socket.dev / Snyk / panašūs įrankiai)
 
-Paskelbtame `omniroute` npm artefakte yra Next.js `output: "standalone"`
+Paskelbtame `agentproxy` npm artefakte yra Next.js `output: "standalone"`
 kompiliacijos rezultatas, todėl kiekvienas maršruto apdorojimo modulis, įskaitant dokumentuotas privilegijuotąsias
 funkcijas (MITM, „Zed“ importavimą, „Cloud Sync“, integruotą paslaugų prižiūrėtoją), patenka
 į `.next/server/*.js` minifikuotus fragmentus. Euristiniai tiekimo grandinės skaitytuvai
@@ -237,7 +237,7 @@ Kiekvienai aptiktų problemų kategorijai pateikiame atskirą prižiūrėtojų p
   tą patį dokumentą.
 
 Naudotojai, kurių konvejeris neleidžia sušvelninti įspėjimo, turėtų kompiliuoti naudodami
-`OMNIROUTE_BUILD_PROFILE=minimal npm run build`. Taip keturi jautrūs moduliai pakeičiami
+`AGENTPROXY_BUILD_PROFILE=minimal npm run build`. Taip keturi jautrūs moduliai pakeičiami
 ruošiniais, kurie vykdymo metu grąžina HTTP 503 `feature-disabled`, todėl privilegijuotieji
 kodo vykdymo keliai fiziškai nepatenka į paketą.
 Publikavimo instrukcijas rasite [`docs/security/SOCKET_DEV_FINDINGS.md`](docs/security/SOCKET_DEV_FINDINGS.md).

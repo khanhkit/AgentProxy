@@ -9,7 +9,7 @@
  * The container's DATA_DIR is a persistent host directory (not wiped between
  * runs) so the "default" combo + real provider connections only need
  * seeding once; seeding is idempotent and copies from the operator's local
- * omniroute-dev instance (same source used for the manual omniroute-beta
+ * agentproxy-dev instance (same source used for the manual agentproxy-beta
  * seed earlier this session).
  */
 import { spawnSync } from "node:child_process";
@@ -21,17 +21,17 @@ const REPO_ROOT = fileURLToPath(new URL("../..", import.meta.url));
 
 export const LIVE_CONTAINER_ENABLED = process.env.RUN_LIVE_WIRE_CAPTURE === "1";
 
-const IMAGE_TAG = process.env.LIVE_CONTAINER_IMAGE || "localhost/omniroute:live-wire-test";
-const CONTAINER_NAME = process.env.LIVE_CONTAINER_NAME || "omniroute-live-wire-test";
+const IMAGE_TAG = process.env.LIVE_CONTAINER_IMAGE || "localhost/agentproxy:live-wire-test";
+const CONTAINER_NAME = process.env.LIVE_CONTAINER_NAME || "agentproxy-live-wire-test";
 const DATA_DIR_HOST =
-  process.env.LIVE_CONTAINER_DATA_DIR || "/data/podman-data/omniroute-live-wire-test/data";
-const ENV_FILE = process.env.LIVE_CONTAINER_ENV_FILE || "/data/podman-data/omniroute/omniroute.env";
+  process.env.LIVE_CONTAINER_DATA_DIR || "/data/podman-data/agentproxy-live-wire-test/data";
+const ENV_FILE = process.env.LIVE_CONTAINER_ENV_FILE || "/data/podman-data/agentproxy/agentproxy.env";
 // Source DB to seed the "default" combo + provider connections from — the
-// operator's local omniroute-dev instance, same source used for the manual
-// omniroute-beta seed earlier this session.
+// operator's local agentproxy-dev instance, same source used for the manual
+// agentproxy-beta seed earlier this session.
 const SEED_SOURCE_DB =
   process.env.LIVE_CONTAINER_SEED_SOURCE_DB ||
-  "/home/markus/code/podman/OmniRoute/data/storage.sqlite";
+  "/home/markus/code/podman/AgentProxy/data/storage.sqlite";
 const SEED_PROVIDERS = ["gemini", "openrouter", "mistral", "cerebras"];
 
 export interface LiveContainerHandle {
@@ -239,7 +239,7 @@ export async function startLiveContainer(): Promise<LiveContainerHandle> {
   // the earlier pre-start chmod only reached the (then-empty) directory.
   // Without this, seedDefaultComboAndConnections()'s direct host-side
   // better-sqlite3 open fails with "attempt to write a readonly database"
-  // (same root cause hit manually with omniroute-beta earlier this session).
+  // (same root cause hit manually with agentproxy-beta earlier this session).
   tryRun("podman", ["unshare", "chmod", "-R", "a+rwX", DATA_DIR_HOST]);
   await seedDefaultComboAndConnections();
   const { apiKey, managementApiKey } = await provisionApiKeys(baseUrl);

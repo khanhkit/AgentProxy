@@ -5,18 +5,18 @@ import os from "node:os";
 import path from "node:path";
 import { SignJWT } from "jose";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-legacy-ws-perimeter-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-legacy-ws-perimeter-"));
 const ORIGINAL_DATA_DIR = process.env.DATA_DIR;
 const ORIGINAL_API_KEY_SECRET = process.env.API_KEY_SECRET;
 const ORIGINAL_JWT_SECRET = process.env.JWT_SECRET;
-const ORIGINAL_BRIDGE_SECRET = process.env.OMNIROUTE_WS_BRIDGE_SECRET;
-const ORIGINAL_PEER_STAMP_TOKEN = process.env.OMNIROUTE_PEER_STAMP_TOKEN;
+const ORIGINAL_BRIDGE_SECRET = process.env.AGENTPROXY_WS_BRIDGE_SECRET;
+const ORIGINAL_PEER_STAMP_TOKEN = process.env.AGENTPROXY_PEER_STAMP_TOKEN;
 
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.API_KEY_SECRET = "ap-iss-0047-api-key-secret";
 process.env.JWT_SECRET = "ap-iss-0047-jwt-secret";
-process.env.OMNIROUTE_WS_BRIDGE_SECRET = "ap-iss-0047-bridge-secret";
-process.env.OMNIROUTE_PEER_STAMP_TOKEN = "ap-iss-0095-peer-stamp";
+process.env.AGENTPROXY_WS_BRIDGE_SECRET = "ap-iss-0047-bridge-secret";
+process.env.AGENTPROXY_PEER_STAMP_TOKEN = "ap-iss-0095-peer-stamp";
 
 const core = await import("../../../src/lib/db/core.ts");
 const apiKeysDb = await import("../../../src/lib/db/apiKeys.ts");
@@ -50,7 +50,7 @@ function authenticateRequest({
     method: "POST",
     headers: {
       "content-type": "application/json",
-      "x-omniroute-ws-bridge-secret": process.env.OMNIROUTE_WS_BRIDGE_SECRET as string,
+      "x-agentproxy-ws-bridge-secret": process.env.AGENTPROXY_WS_BRIDGE_SECRET as string,
     },
     body: JSON.stringify({ action: "authenticate", requestUrl, headers }),
   });
@@ -59,7 +59,7 @@ function authenticateRequest({
 function trustedBrowserHeaders(origin?: string): Record<string, string> {
   const headers: Record<string, string> = {
     host: "localhost",
-    "x-omniroute-peer-ip": `${process.env.OMNIROUTE_PEER_STAMP_TOKEN}|127.0.0.1`,
+    "x-agentproxy-peer-ip": `${process.env.AGENTPROXY_PEER_STAMP_TOKEN}|127.0.0.1`,
   };
   if (origin) headers.origin = origin;
   return headers;
@@ -104,7 +104,7 @@ async function runAdapterHandshake(
   let upstreamConnects = 0;
   const proxy = createResponsesWsProxy({
     baseUrl: "http://127.0.0.1:20128",
-    bridgeSecret: process.env.OMNIROUTE_WS_BRIDGE_SECRET,
+    bridgeSecret: process.env.AGENTPROXY_WS_BRIDGE_SECRET,
     fetchImpl: async (input: RequestInfo | URL, init?: RequestInit) =>
       route.POST(new Request(input, init)),
     wsFactory: async () => {
@@ -148,8 +148,8 @@ test.after(() => {
   restore("DATA_DIR", ORIGINAL_DATA_DIR);
   restore("API_KEY_SECRET", ORIGINAL_API_KEY_SECRET);
   restore("JWT_SECRET", ORIGINAL_JWT_SECRET);
-  restore("OMNIROUTE_WS_BRIDGE_SECRET", ORIGINAL_BRIDGE_SECRET);
-  restore("OMNIROUTE_PEER_STAMP_TOKEN", ORIGINAL_PEER_STAMP_TOKEN);
+  restore("AGENTPROXY_WS_BRIDGE_SECRET", ORIGINAL_BRIDGE_SECRET);
+  restore("AGENTPROXY_PEER_STAMP_TOKEN", ORIGINAL_PEER_STAMP_TOKEN);
 });
 
 test("wsAuth=true rejects an unauthenticated Responses WebSocket bridge handshake", async () => {

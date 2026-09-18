@@ -6,12 +6,12 @@
 
 ---
 
-title: "OmniRoute Auto-Combo Engine"
+title: "AgentProxy Auto-Combo Engine"
 version: 3.8.40
 lastUpdated: 2026-06-28
 ---
 
-# OmniRoute Auto-Combo Engine
+# AgentProxy Auto-Combo Engine
 
 > **Għall-Utenti**: Qed tfittex bidu rapidu? Ara l-[Gwida għall-Utent Auto-Combo](../getting-started/AUTO-COMBO-GUIDE.md) għal spjegazzjonijiet sempliċi u eżempji.
 
@@ -69,7 +69,7 @@ model: "auto/cheap"           # l-irħas għal kull token
 
 **X'jiġri:**
 
-1. OmniRoute jiskopri l-prefiss `auto/` f'`src/sse/handlers/chat.ts`
+1. AgentProxy jiskopri l-prefiss `auto/` f'`src/sse/handlers/chat.ts`
 2. Jistaqsi lill-**konnessjonijiet kollha tal-fornituri attivi** mid-database
 3. Jiffiltra dawk b'kredenzjali validi (ċavetta API jew token OAuth)
 4. Jiddetermina l-mudell għal kull konnessjoni (`connection.defaultModel` jew l-ewwel mudell tal-fornitur)
@@ -97,7 +97,7 @@ jerġa' juża l-qari tar-reżiljenza eżistenti (qatt l-istat `state` mhux ippro
 - lockout tal-mudell — `isModelLocked(provider, connectionId, model)`
 
 Kull kandidat iġorr ukoll il-bandiera `excluded` ta' din iċ-ċavetta API. L-esklużjonijiet huma maħżuna
-għal kull ċavetta API (tabella `auto_candidate_overrides`, migrazzjoni `128`) — OmniRoute huwa
+għal kull ċavetta API (tabella `auto_candidate_overrides`, migrazzjoni `128`) — AgentProxy huwa
 single-tenant mingħajr tabella `users`, għalhekk `apiKeyId` hija l-identità reali l-eqreb
 għal kull min jsejjaħ — u infurzata fil-punt ta' kontroll tal-pool tal-kandidati f'
 `open-sse/services/autoCombo/virtualFactory.ts` permezz tal-funzjoni pura u ttestjata
@@ -140,7 +140,7 @@ Skorjar awtomatiku jagħżel l-aħjar fornitur/mudell għal kull talba
 
 ## Ismijiet ta' Combos Li Jaqblu ma' ID ta' Mudell Reali
 
-Combo li l-`name` tiegħu huwa identiku għal ID ta' mudell sempliċi (eż. combo jismu `gpt-5.5`) huwa **mudell intenzjonat u appoġġjat**, mhux bug: huwa l-mekkaniżmu għal fallback tal-provider għal kull ID ta' mudell dokumentat f'[#6940](https://github.com/diegosouzapw/OmniRoute/issues/6940). Minħabba li r-riżoluzzjoni tal-combo tiġi ċċekkjata qabel ir-riżoluzzjoni tal-ID ta' mudell sempliċi (`getComboForModel()` f'`src/sse/services/model.ts`), talba għall-ID sempliċi `gpt-5.5` tiġi rrottata permezz tal-miri tal-combo (eż. `acme-responses/gpt-5.5`, `backup-responses/gpt-5.5`) minflok direttament lejn fornitur wieħed — dan jerġa' juża l-preċedenza li l-combo jingħata qabel il-rewrite mibnija għal [#3227/#3233](https://github.com/diegosouzapw/OmniRoute/issues/3227) u huwa ttestjat b'regression minn `tests/unit/responses-combo-resolution-3227.test.ts` u `tests/unit/combo-name-codex-responses-rewrite.test.ts`.
+Combo li l-`name` tiegħu huwa identiku għal ID ta' mudell sempliċi (eż. combo jismu `gpt-5.5`) huwa **mudell intenzjonat u appoġġjat**, mhux bug: huwa l-mekkaniżmu għal fallback tal-provider għal kull ID ta' mudell dokumentat f'[#6940](https://github.com/khanhkit/AgentProxy/issues/6940). Minħabba li r-riżoluzzjoni tal-combo tiġi ċċekkjata qabel ir-riżoluzzjoni tal-ID ta' mudell sempliċi (`getComboForModel()` f'`src/sse/services/model.ts`), talba għall-ID sempliċi `gpt-5.5` tiġi rrottata permezz tal-miri tal-combo (eż. `acme-responses/gpt-5.5`, `backup-responses/gpt-5.5`) minflok direttament lejn fornitur wieħed — dan jerġa' juża l-preċedenza li l-combo jingħata qabel il-rewrite mibnija għal [#3227/#3233](https://github.com/khanhkit/AgentProxy/issues/3227) u huwa ttestjat b'regression minn `tests/unit/responses-combo-resolution-3227.test.ts` u `tests/unit/combo-name-codex-responses-rewrite.test.ts`.
 
 Il-ħolqien jew il-bidla tal-isem ta' combo għal isem li jitfa' dell fuq ID ta' mudell reali **qatt ma jiġi rrifjutat** — li tagħmel dan ikisser dan il-fluss tax-xogħol dokumentat. Minflok (#8530), `POST /api/combos` u `PUT /api/combos/[id]` iwaħħlu kamp `warning` mhux li jimblokka mar-rispons meta l-isem (il-ġdid) jaħbat ma' ID ta' mudell reali:
 
@@ -168,9 +168,9 @@ curl -X POST http://localhost:20128/v1/chat/completions \
 Żewġ nases komuni:
 
 - **`auto` ma jużax il-combos tiegħek.** `auto`/`auto/*` jibni l-pool ta' kandidati tiegħu stess b'zero-config u jikkonsulta biss combos persistiti jekk combo jismu litteralment `auto` (mhux rakkomandat). Biex tirrotta permezz ta' combo, ibgħat l-isem eżatt tiegħu — mhux `auto`.
-- **`openrouter/auto` huwa prodott reali mħallas ta' OpenRouter** ("Auto Best Available"), mhux alias ta' OmniRoute. Huwa l-entrata statika unika tal-mudell fir-reġistru ta' OpenRouter (`open-sse/config/providers/registry/openrouter/index.ts`) u jiġi ffatturat separatament. Uża Settings → Routing → Hide paid models biex teskludih mill-pools ta' `auto`.
+- **`openrouter/auto` huwa prodott reali mħallas ta' OpenRouter** ("Auto Best Available"), mhux alias ta' AgentProxy. Huwa l-entrata statika unika tal-mudell fir-reġistru ta' OpenRouter (`open-sse/config/providers/registry/openrouter/index.ts`) u jiġi ffatturat separatament. Uża Settings → Routing → Hide paid models biex teskludih mill-pools ta' `auto`.
 
-Ara [#7992](https://github.com/diegosouzapw/OmniRoute/issues/7992) u [#7111](https://github.com/diegosouzapw/OmniRoute/issues/7111) għall-konfużjoni oriġinali li dan jiddokumenta.
+Ara [#7992](https://github.com/khanhkit/AgentProxy/issues/7992) u [#7111](https://github.com/khanhkit/AgentProxy/issues/7111) għall-konfużjoni oriġinali li dan jiddokumenta.
 
 ## Kif Jaħdem (Auto-Combos Persistenti)
 
@@ -239,17 +239,17 @@ Kombo `auto` jista' jkun iggwidat **għal kull talba** permezz ta' tliet headers
 
 | Header                        | Jaċċetta                                                                                                                                                                                                     | Effett                                                                                                                                                                                                                                                      |
 | :---------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `X-OmniRoute-Mode`            | alias predefinit (`fast`, `balanced`, `quality`, `cheap`, `reliable`, `offline`) jew isem ta' pakkett mhux ipproċessat (`ship-fast`, `cost-saver`, `quality-first`, `offline-friendly`, `reliability-first`) | Jissostitwixxi l-piżijiet tal-iskor għal din it-talba. `balanced`/`default` jġiegħlu l-piżijiet default (l-ebda pakkett). Valuri mhux magħrufa jiġu injorati (il-konfigurazzjoni tinżamm).                                                                  |
-| `X-OmniRoute-Budget`          | numru pożittiv (massimu USD għal kull talba)                                                                                                                                                                 | Limitu iebes tal-ispiża: kandidati li l-ispiża stmata tagħhom taqbeżu jiġu ffiltrati qabel l-għażla. X'jiġri meta **kull** kandidat jaqbeżu huwa kkontrollat minn `X-OmniRoute-Budget-Fallback` hawn taħt.                                                  |
-| `X-OmniRoute-Budget-Fallback` | `cheapest` (default, aliases: `cheapest-viable`, `soft`) jew `strict` (aliases: `block`, `hard`)                                                                                                             | `cheapest`: jaqa' lura għall-aktar kandidat irħis globalment anki jekk xorta jaqbeż il-limitu (imġiba legacy). `strict`: jirrifjuta li jagħżel — it-talba tfalli malajr b'`HTTP 402` minflok tonfoq iżżejjed fis-skiet. Valuri mhux magħrufa jiġu injorati. |
+| `X-AgentProxy-Mode`            | alias predefinit (`fast`, `balanced`, `quality`, `cheap`, `reliable`, `offline`) jew isem ta' pakkett mhux ipproċessat (`ship-fast`, `cost-saver`, `quality-first`, `offline-friendly`, `reliability-first`) | Jissostitwixxi l-piżijiet tal-iskor għal din it-talba. `balanced`/`default` jġiegħlu l-piżijiet default (l-ebda pakkett). Valuri mhux magħrufa jiġu injorati (il-konfigurazzjoni tinżamm).                                                                  |
+| `X-AgentProxy-Budget`          | numru pożittiv (massimu USD għal kull talba)                                                                                                                                                                 | Limitu iebes tal-ispiża: kandidati li l-ispiża stmata tagħhom taqbeżu jiġu ffiltrati qabel l-għażla. X'jiġri meta **kull** kandidat jaqbeżu huwa kkontrollat minn `X-AgentProxy-Budget-Fallback` hawn taħt.                                                  |
+| `X-AgentProxy-Budget-Fallback` | `cheapest` (default, aliases: `cheapest-viable`, `soft`) jew `strict` (aliases: `block`, `hard`)                                                                                                             | `cheapest`: jaqa' lura għall-aktar kandidat irħis globalment anki jekk xorta jaqbeż il-limitu (imġiba legacy). `strict`: jirrifjuta li jagħżel — it-talba tfalli malajr b'`HTTP 402` minflok tonfoq iżżejjed fis-skiet. Valuri mhux magħrufa jiġu injorati. |
 
 ```bash
 # Ġiegħel l-aktar profil veloċi, illimita din it-talba għal $0.05, u ibblokja iebes minflok tonfoq iżżejjed
 curl -sS http://localhost:20128/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "X-OmniRoute-Mode: fast" \
-  -H "X-OmniRoute-Budget: 0.05" \
-  -H "X-OmniRoute-Budget-Fallback: strict" \
+  -H "X-AgentProxy-Mode: fast" \
+  -H "X-AgentProxy-Budget: 0.05" \
+  -H "X-AgentProxy-Budget-Fallback: strict" \
   -d '{"model":"auto","messages":[{"role":"user","content":"hi"}]}'
 ```
 
@@ -257,7 +257,7 @@ Ir-riżoluzzjoni hija funzjoni pura (`open-sse/services/autoCombo/requestControl
 
 ## L-Istrateġiji Kollha tar-Routing
 
-Il-magna combo ta' OmniRoute tappoġġja **19-il strateġija ta' routing** (iddikjarati f'`src/shared/constants/routingStrategies.ts` → `ROUTING_STRATEGY_VALUES`). Il-magna Auto Combo nnifisha hija esposta taħt l-istrateġija `auto`; l-oħrajn huma disponibbli għal combos persistenti.
+Il-magna combo ta' AgentProxy tappoġġja **19-il strateġija ta' routing** (iddikjarati f'`src/shared/constants/routingStrategies.ts` → `ROUTING_STRATEGY_VALUES`). Il-magna Auto Combo nnifisha hija esposta taħt l-istrateġija `auto`; l-oħrajn huma disponibbli għal combos persistenti.
 
 | Strategy            | Description                                                                                                                                                                                                                |
 | :------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -611,7 +611,7 @@ Tista' tireġistra l-implimentazzjoni tiegħek stess ta' `RouterStrategy` permez
 import {
   registerStrategy,
   type RouterStrategy,
-} from "@omniroute/open-sse/services/autoCombo/routerStrategy";
+} from "@agentproxy/open-sse/services/autoCombo/routerStrategy";
 
 class MyCustomStrategy implements RouterStrategy {
   readonly name = "my-custom";
@@ -716,8 +716,8 @@ Dan is-suite jitħaddem fil-CI (xogħol `test:integration`) b'`--test-concurrenc
 
 | Kmand                                  | X'jagħmel                                                                            |
 | :------------------------------------- | :----------------------------------------------------------------------------------- |
-| `npm run test:combo:live`              | Routing reali fil-proċess b'`RUN_COMBO_LIVE=1`; jieħu snapshot ta' DB OmniRoute live |
-| `npm run test:combo:live:vps`          | Sejħiet HTTP kontra server OmniRoute live (issettja `COMBO_LIVE_BASE_URL`)           |
+| `npm run test:combo:live`              | Routing reali fil-proċess b'`RUN_COMBO_LIVE=1`; jieħu snapshot ta' DB AgentProxy live |
+| `npm run test:combo:live:vps`          | Sejħiet HTTP kontra server AgentProxy live (issettja `COMBO_LIVE_BASE_URL`)           |
 | `npm run test:combo:live:vps:failover` | L-istess, b'xenarji ta' failover deliberati                                          |
 
 Dawn is-smoke tests jeżerċitaw il-passaġġ reali tal-wire (combo → provider → completion). Huma esklużi apposta mill-CI għaliex jeħtieġu kredenzjali live u aċċess għal VPS.

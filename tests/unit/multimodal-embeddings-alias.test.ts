@@ -4,7 +4,7 @@ import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-process.env.DATA_DIR = mkdtempSync(join(tmpdir(), "omniroute-mm-embed-alias-"));
+process.env.DATA_DIR = mkdtempSync(join(tmpdir(), "agentproxy-mm-embed-alias-"));
 
 const embeddings = await import("../../src/app/api/v1/embeddings/route.ts");
 const multimodal = await import("../../src/app/api/v1/multimodal-embeddings/route.ts");

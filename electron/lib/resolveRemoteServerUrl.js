@@ -4,7 +4,7 @@ const fs = require("fs");
 
 /**
  * resolveRemoteServerUrl.js — pure helper for resolving an operator-configured
- * remote OmniRoute server URL, so the Electron shell can attach to an
+ * remote AgentProxy server URL, so the Electron shell can attach to an
  * already-running instance (e.g. a Docker/OrbStack container, or a server on
  * another machine on the LAN) instead of spawning its own bundled Next.js
  * server.
@@ -16,7 +16,7 @@ const fs = require("fs");
  * entirely.
  *
  * Precedence:
- *   1. OMNIROUTE_REMOTE_URL env var (explicit, session-scoped override)
+ *   1. AGENTPROXY_REMOTE_URL env var (explicit, session-scoped override)
  *   2. `remoteServerUrl` key in <dataDir>/electron-preferences.json (persisted
  *      via the tray menu's "Connect to Remote Server…" prompt)
  *   3. null — caller falls back to spawning the local embedded server
@@ -44,7 +44,7 @@ function resolveRemoteServerUrl({
 }
 
 function readCandidate({ env, prefsPath, existsSync, readFileSync }) {
-  const fromEnv = (env.OMNIROUTE_REMOTE_URL || "").trim();
+  const fromEnv = (env.AGENTPROXY_REMOTE_URL || "").trim();
   if (fromEnv) return fromEnv;
 
   if (!prefsPath || !existsSync(prefsPath)) return null;

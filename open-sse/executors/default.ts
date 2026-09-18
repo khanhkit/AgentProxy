@@ -235,7 +235,7 @@ export class DefaultExecutor extends BaseExecutor {
       const normalized = baseUrl.replace(/\/$/, "");
       const customPath = typeof psd?.chatPath === "string" && psd.chatPath ? psd.chatPath : null;
       if (customPath) return `${normalized}${customPath}`;
-      const forceResponses = psd?._omnirouteForceResponsesUpstream === true;
+      const forceResponses = psd?._agentproxyForceResponsesUpstream === true;
       const path =
         forceResponses || getOpenAICompatibleType(this.provider, psd) === "responses"
           ? "/responses"
@@ -327,7 +327,7 @@ export class DefaultExecutor extends BaseExecutor {
       }
       case "azure-ai": {
         const forceResponses =
-          credentials?.providerSpecificData?._omnirouteForceResponsesUpstream === true;
+          credentials?.providerSpecificData?._agentproxyForceResponsesUpstream === true;
         const apiType =
           forceResponses || credentials?.providerSpecificData?.apiType === "responses"
             ? "responses"
@@ -346,7 +346,7 @@ export class DefaultExecutor extends BaseExecutor {
       }
       case "oci": {
         const forceResponses =
-          credentials?.providerSpecificData?._omnirouteForceResponsesUpstream === true;
+          credentials?.providerSpecificData?._agentproxyForceResponsesUpstream === true;
         const apiType =
           forceResponses || credentials?.providerSpecificData?.apiType === "responses"
             ? "responses"
@@ -414,7 +414,7 @@ export class DefaultExecutor extends BaseExecutor {
         const psd = credentials?.providerSpecificData;
         const manualBaseUrl =
           typeof psd?.baseUrl === "string" && psd.baseUrl.trim() ? psd.baseUrl.trim() : null;
-        const forceResponses = psd?._omnirouteForceResponsesUpstream === true;
+        const forceResponses = psd?._agentproxyForceResponsesUpstream === true;
         const modelTarget = getModelTargetFormat("poe", model);
         const connectionTarget =
           typeof psd?.targetFormat === "string" ? (psd.targetFormat as string) : null;
@@ -854,7 +854,7 @@ export class DefaultExecutor extends BaseExecutor {
       const hasUserTag = stringTags.some((t) => t.startsWith("user="));
       if (!hasUserTag) {
         const username =
-          typeof record.user === "string" && record.user.trim() ? record.user.trim() : "omniroute";
+          typeof record.user === "string" && record.user.trim() ? record.user.trim() : "agentproxy";
         record.tags = [...stringTags, `user=${username}`];
       } else {
         record.tags = stringTags;

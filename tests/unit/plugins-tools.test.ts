@@ -5,7 +5,7 @@ import os from "node:os";
 import path from "node:path";
 
 // ── Temp dirs ──
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-plugins-tools-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-plugins-tools-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 // ── Dynamic imports (after DATA_DIR set) ──
@@ -25,7 +25,7 @@ function getTool(name: string) {
 function writeTestPlugin(opts?: { name?: string; onRequest?: boolean }) {
   const name = opts?.name ?? "test-tools-plugin";
   const onRequest = opts?.onRequest ?? true;
-  const sourceDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-plugin-src-"));
+  const sourceDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-plugin-src-"));
   const pluginDir = path.join(sourceDir, name);
   fs.mkdirSync(pluginDir, { recursive: true });
   const manifest = {

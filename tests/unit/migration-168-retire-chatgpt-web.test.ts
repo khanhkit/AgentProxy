@@ -4,7 +4,7 @@ import os from "node:os";
 import path from "node:path";
 import test from "node:test";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-chatgpt-web-retirement-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-chatgpt-web-retirement-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../src/lib/db/core.ts");
@@ -42,7 +42,7 @@ test("migration 168 retires every common ChatGPT Web id fail-closed and preserve
   const db = core.getDbInstance();
 
   const applied = db
-    .prepare("SELECT version FROM _omniroute_migrations WHERE version = 168")
+    .prepare("SELECT version FROM _agentproxy_migrations WHERE version = 168")
     .get() as { version: number } | undefined;
   assert.ok(applied, "migration 168 must be recorded as applied");
 
@@ -223,7 +223,7 @@ test("migration 168 retires every common ChatGPT Web id fail-closed and preserve
     assert.equal(connection.is_active, 0);
     assert.equal(connection.test_status, "unavailable");
     assert.equal(connection.error_code, "PROVIDER_REMOVED");
-    assert.equal(connection.last_error, "Provider integration retired from OmniRoute v3.8.51");
+    assert.equal(connection.last_error, "Provider integration retired from AgentProxy v3.8.51");
     assert.equal(connection.last_error_type, "provider_removed");
     assert.equal(connection.last_error_source, "migration:retire-chatgpt-web");
     assert.notEqual(connection.last_error_at, "2000-01-01T00:00:00.000Z");
@@ -394,7 +394,7 @@ test("migration 168 retires every common ChatGPT Web id fail-closed and preserve
       "last_error_type, last_error_source, last_error_at, created_at, updated_at) " +
       "VALUES ('already-tombstoned-cgpt-web-insert-connection', '\u00a0chatgpt-web\uFEFF', " +
       "'apikey', 'already tombstoned restore', 0, 'unavailable', 'PROVIDER_REMOVED', " +
-      "'Provider integration retired from OmniRoute v3.8.51', 'provider_removed', " +
+      "'Provider integration retired from AgentProxy v3.8.51', 'provider_removed', " +
       "'migration:retire-chatgpt-web', '2001-01-01T00:00:00.000Z', datetime('now'), datetime('now'))"
   ).run();
   assert.equal(readLease(alreadyTombstonedInsertLeaseId).state, "INVALIDATED");
@@ -414,7 +414,7 @@ test("migration 168 retires every common ChatGPT Web id fail-closed and preserve
   db.prepare(
     "UPDATE provider_connections SET provider = '\u2003CGPT-WEB\u2029', is_active = 0, " +
       "test_status = 'unavailable', error_code = 'PROVIDER_REMOVED', " +
-      "last_error = 'Provider integration retired from OmniRoute v3.8.51', " +
+      "last_error = 'Provider integration retired from AgentProxy v3.8.51', " +
       "last_error_type = 'provider_removed', last_error_source = 'migration:retire-chatgpt-web', " +
       "last_error_at = '2001-01-01T00:00:00.000Z' " +
       "WHERE id = 'already-tombstoned-cgpt-web-update-connection'"

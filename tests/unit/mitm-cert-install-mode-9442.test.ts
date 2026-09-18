@@ -16,7 +16,7 @@
  * Methodology: real stub executables on PATH capture the argv of every spawned
  * command (`cp`, `mkdir`, `chmod`, `update-ca-certificates`), with
  * `process.platform` forced to `linux` before the module is imported and
- * `OMNIROUTE_NO_SUDO=1` so `sudo -S` is stripped and the underlying commands
+ * `AGENTPROXY_NO_SUDO=1` so `sudo -S` is stripped and the underlying commands
  * run directly (same `resolveSudoSpawn` seam tested in
  * `mitm-systemCommands-no-sudo.test.ts`). No `child_process` mocking.
  */
@@ -30,19 +30,19 @@ import { execFileSync } from "node:child_process";
 
 const originalPlatformDescriptor = Object.getOwnPropertyDescriptor(process, "platform")!;
 const originalPath = process.env.PATH;
-const originalNoSudo = process.env.OMNIROUTE_NO_SUDO;
+const originalNoSudo = process.env.AGENTPROXY_NO_SUDO;
 // The global test harness (tests/_setup/isolateDataDir.ts) sets
-// OMNIROUTE_SKIP_SYSTEM_TRUST=1 so no test mutates the host trust store —
+// AGENTPROXY_SKIP_SYSTEM_TRUST=1 so no test mutates the host trust store —
 // which makes installCert() return before issuing any command, so this file
 // captures nothing and its install-gap assert can never pass under `npm run
 // test:unit` (it only passed when invoked directly, without the harness).
 // Clearing it here is safe: every spawned command (cp/mkdir/chmod/update-ca-*)
-// is a logging stub on PATH and OMNIROUTE_NO_SUDO=1 strips sudo, so nothing
+// is a logging stub on PATH and AGENTPROXY_NO_SUDO=1 strips sudo, so nothing
 // touches the real system. Restored in test.after below.
-const originalSkipSystemTrust = process.env.OMNIROUTE_SKIP_SYSTEM_TRUST;
-delete process.env.OMNIROUTE_SKIP_SYSTEM_TRUST;
+const originalSkipSystemTrust = process.env.AGENTPROXY_SKIP_SYSTEM_TRUST;
+delete process.env.AGENTPROXY_SKIP_SYSTEM_TRUST;
 
-const tmpRoot = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-9442-"));
+const tmpRoot = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-9442-"));
 const binDir = path.join(tmpRoot, "bin");
 fs.mkdirSync(binDir, { recursive: true });
 const captureFile = path.join(tmpRoot, "argv.log");
@@ -67,19 +67,19 @@ for (const cmd of ["cp", "mkdir", "chmod", "update-ca-certificates", "update-ca-
 
 Object.defineProperty(process, "platform", { value: "linux", configurable: true });
 process.env.PATH = `${binDir}${path.delimiter}${originalPath}`;
-process.env.OMNIROUTE_NO_SUDO = "1";
+process.env.AGENTPROXY_NO_SUDO = "1";
 
-// Imported AFTER forcing linux + OMNIROUTE_NO_SUDO=1 so the module-level
+// Imported AFTER forcing linux + AGENTPROXY_NO_SUDO=1 so the module-level
 // IS_WIN/IS_MAC consts see `linux` and resolveSudoSpawn strips `sudo -S`.
 const { installCert, ensureSystemCertMode } = await import("../../src/mitm/cert/install.ts");
 
 test.after(() => {
   Object.defineProperty(process, "platform", originalPlatformDescriptor);
   process.env.PATH = originalPath;
-  if (originalNoSudo === undefined) delete process.env.OMNIROUTE_NO_SUDO;
-  else process.env.OMNIROUTE_NO_SUDO = originalNoSudo;
-  if (originalSkipSystemTrust === undefined) delete process.env.OMNIROUTE_SKIP_SYSTEM_TRUST;
-  else process.env.OMNIROUTE_SKIP_SYSTEM_TRUST = originalSkipSystemTrust;
+  if (originalNoSudo === undefined) delete process.env.AGENTPROXY_NO_SUDO;
+  else process.env.AGENTPROXY_NO_SUDO = originalNoSudo;
+  if (originalSkipSystemTrust === undefined) delete process.env.AGENTPROXY_SKIP_SYSTEM_TRUST;
+  else process.env.AGENTPROXY_SKIP_SYSTEM_TRUST = originalSkipSystemTrust;
   fs.rmSync(tmpRoot, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
 });
 
@@ -120,7 +120,7 @@ test("installCert on linux issues `chmod 0644 <destFile>` after cp (install gap)
   const chmod = chmodCalls[0];
   assert.equal(chmod[1], "0644", "mode must be 0644 (world-readable)");
   assert.ok(
-    chmod[2].endsWith("omniroute-mitm.crt"),
+    chmod[2].endsWith("agentproxy-mitm.crt"),
     `chmod must target the system cert, got: ${chmod[2]}`
   );
   // cp must precede chmod (install order: mkdir → cp → chmod → update-ca-*).

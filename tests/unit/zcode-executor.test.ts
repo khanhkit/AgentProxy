@@ -5,7 +5,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 const fixture = join(process.cwd(), "tests/fixtures/fake-zcode-app-server.mjs");
-const TEST_DATA_DIR = mkdtempSync(join(tmpdir(), "omniroute-zcode-"));
+const TEST_DATA_DIR = mkdtempSync(join(tmpdir(), "agentproxy-zcode-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 test.after(() =>

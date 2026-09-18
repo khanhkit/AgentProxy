@@ -35,7 +35,7 @@ export type CursorErrorKind =
 
 export type ClassifiedCursorError = {
   kind: CursorErrorKind;
-  /** HTTP status to surface to OmniRoute clients. */
+  /** HTTP status to surface to AgentProxy clients. */
   status: number;
   /** OpenAI-style error.type */
   type: string;
@@ -92,7 +92,7 @@ export function classifyCursorErrorKind(rawMessage: string): CursorErrorKind {
 
   // Live Cursor out-of-usage for premium models often surfaces as:
   //   not_found: AI Model Not Found (reset after 109h …)
-  // OmniRoute may also append "(reset after …)" after classification; treat the
+  // AgentProxy may also append "(reset after …)" after classification; treat the
   // Cursor-specific "AI Model Not Found" cue as rate/quota either way.
   if (
     lower.includes("ai model not found") ||

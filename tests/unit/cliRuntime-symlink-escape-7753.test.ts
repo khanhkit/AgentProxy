@@ -7,8 +7,8 @@ import path from "node:path";
 
 // cliRuntime.ts computes EXPECTED_PARENT_PATHS from os.homedir() at MODULE LOAD
 // time, so HOME must be redirected before the module is imported.
-const sandboxHome = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-7753-home-"));
-const outsideDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-7753-outside-"));
+const sandboxHome = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-7753-home-"));
+const outsideDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-7753-outside-"));
 
 process.env.HOME = sandboxHome;
 process.env.USERPROFILE = sandboxHome;
@@ -42,7 +42,7 @@ test("#7753: a CLI symlink located inside an expected parent dir is wrongly repo
 test("#7753: a genuinely unsafe symlink whose ORIGINAL location is also untrusted must still be rejected", async () => {
   // Neither the symlink's own location nor its resolved target is inside any
   // EXPECTED_PARENT_PATHS entry — this must stay rejected as symlink_escape.
-  const untrustedDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-7753-untrusted-"));
+  const untrustedDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-7753-untrusted-"));
   const untrustedSymlink = path.join(untrustedDir, "opencode");
   fs.symlinkSync(realBinaryPath, untrustedSymlink);
 

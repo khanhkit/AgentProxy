@@ -3,7 +3,7 @@
 // The always-on per-connection admission layer (#9940 / #9654) enforces
 // CHAT_MAX_HEAVY_IN_FLIGHT and CHAT_ADMISSION_MAX_QUEUED_BYTES PER LANE, so the
 // documented "in one process" contract (docs/reference/ENVIRONMENT.md:193) is
-// multiplied by OMNIROUTE_CHAT_VIRTUAL_MAX_SESSIONS (default 64): up to 64
+// multiplied by AGENTPROXY_CHAT_VIRTUAL_MAX_SESSIONS (default 64): up to 64
 // concurrent heavy requests and 256 MiB of parked bodies process-wide.
 //
 // These tests assert the AGGREGATE contract that the issue's acceptance

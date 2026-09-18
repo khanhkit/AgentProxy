@@ -113,7 +113,7 @@ or documented manual check appropriate to the change.
 - CLI catalogs live separately under `bin/cli/locales/`.
 - Preserve ICU placeholders and tags exactly. Do not translate product/provider/model names,
   protocol and header names, commands, code/JSON identifiers, URLs, environment variables, or
-  protected terms such as `OmniRoute`, `OAuth`, `MCP`, and `A2A`. The current source list is
+  protected terms such as `AgentProxy`, `OAuth`, `MCP`, and `A2A`. The current source list is
   `scripts/i18n/glossary/protected-terms.json`.
 
 **Focused loop**

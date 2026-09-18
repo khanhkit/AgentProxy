@@ -8,7 +8,7 @@ import path from "node:path";
 // GET /api/providers/{id}/models already merges customModels; getActiveSyncedCatalog
 // and getActiveProvidersWithSyncedModel did not, so combo + bare inference 400'd.
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-12597-custom-live-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-12597-custom-live-"));
 
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.API_KEY_SECRET = process.env.API_KEY_SECRET || "custom-live-12597-test-secret";

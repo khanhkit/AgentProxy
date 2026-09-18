@@ -101,7 +101,7 @@ export function readSnapshot(snapshotPath = SNAPSHOT_PATH) {
 async function loadProductionTables() {
   // Nenhum gate pode migrar o banco do operador: taskFitness.ts importa src/lib/db/core.ts,
   // então DATA_DIR aponta para um diretório descartável ANTES do import dinâmico.
-  process.env.DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-lifecycle-gate-"));
+  process.env.DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-lifecycle-gate-"));
   const [{ REGISTRY }, { getStaticFitnessTableScore }, { getBuiltInAliases }] = await Promise.all([
     import(pathToFileURL(path.join(ROOT, "open-sse/config/providers/index.ts")).href),
     import(pathToFileURL(path.join(ROOT, "open-sse/services/autoCombo/taskFitness.ts")).href),

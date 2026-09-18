@@ -13,18 +13,18 @@ import path from "node:path";
 // mock.module is unreliable under this tsx/ESM + node:test runner (see
 // instrumentation-warm-catalog-cache.test.ts), so the singleton method is monkey-patched.
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-skills-sanitize-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-skills-sanitize-"));
 const ORIGINAL_DATA_DIR = process.env.DATA_DIR;
-const ORIGINAL_OMNIROUTE_API_KEY = process.env.OMNIROUTE_API_KEY;
+const ORIGINAL_AGENTPROXY_API_KEY = process.env.AGENTPROXY_API_KEY;
 
 process.env.DATA_DIR = TEST_DATA_DIR;
-delete process.env.OMNIROUTE_API_KEY;
+delete process.env.AGENTPROXY_API_KEY;
 
 const core = await import("../../src/lib/db/core.ts");
 const { skillRegistry } = await import("../../src/lib/skills/registry.ts");
 const skillsRoute = await import("../../src/app/api/skills/route.ts");
 
-const LEAKY_PATH = "/home/testuser/.omniroute/skills/evil/handler.js";
+const LEAKY_PATH = "/home/testuser/.agentproxy/skills/evil/handler.js";
 
 function resetStorage() {
   core.resetDbInstance();
@@ -33,7 +33,7 @@ function resetStorage() {
 }
 
 test.beforeEach(() => {
-  delete process.env.OMNIROUTE_API_KEY;
+  delete process.env.AGENTPROXY_API_KEY;
   resetStorage();
 });
 
@@ -42,8 +42,8 @@ test.after(() => {
   fs.rmSync(TEST_DATA_DIR, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
   if (ORIGINAL_DATA_DIR === undefined) delete process.env.DATA_DIR;
   else process.env.DATA_DIR = ORIGINAL_DATA_DIR;
-  if (ORIGINAL_OMNIROUTE_API_KEY === undefined) delete process.env.OMNIROUTE_API_KEY;
-  else process.env.OMNIROUTE_API_KEY = ORIGINAL_OMNIROUTE_API_KEY;
+  if (ORIGINAL_AGENTPROXY_API_KEY === undefined) delete process.env.AGENTPROXY_API_KEY;
+  else process.env.AGENTPROXY_API_KEY = ORIGINAL_AGENTPROXY_API_KEY;
 });
 
 test("GET /api/skills sanitizes an absolute path out of a 500 error body", async () => {

@@ -27,8 +27,8 @@ import {
 } from "../../open-sse/services/systemTransforms.ts";
 
 const store = globalThis as unknown as Record<string, unknown>;
-const BG_KEY = "__omniroute_backgroundDegradation_config__";
-const ST_KEY = "__omniroute_systemTransforms_config__";
+const BG_KEY = "__agentproxy_backgroundDegradation_config__";
+const ST_KEY = "__agentproxy_systemTransforms_config__";
 
 test.afterEach(() => {
   setBackgroundDegradationConfig({ enabled: false });

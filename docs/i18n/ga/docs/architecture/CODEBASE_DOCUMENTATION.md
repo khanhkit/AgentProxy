@@ -6,16 +6,16 @@
 
 ---
 
-title: "Doiciméadú Cóid OmniRoute"
+title: "Doiciméadú Cóid AgentProxy"
 version: 3.8.40
 lastUpdated: 2026-06-28
 ---
 
-# Doiciméadú Cóid OmniRoute
+# Doiciméadú Cóid AgentProxy
 
 > **Leagan:** v3.8.51
 > **Nuashonraithe deireanach:** 2026-06-28
-> **Lucht féachana:** Innealtóirí a chuireann le OmniRoute nó a thógann comhtháthú air.
+> **Lucht féachana:** Innealtóirí a chuireann le AgentProxy nó a thógann comhtháthú air.
 >
 > Le haghaidh léaráidí ailtireachta ardleibhéil agus an réasúnaíocht taobh thiar de gach fochóras, léigh
 > [ARCHITECTURE.md](./ARCHITECTURE.md). Le haghaidh tumthaí domhaine ar fhó-chórais aonair
@@ -46,22 +46,22 @@ gan modúil nua a chumadh.
 Ailiasanna cosáin (`tsconfig.json`):
 
 - `@/*` → `src/*`
-- `@omniroute/open-sse` → `open-sse/index.ts`
-- `@omniroute/open-sse/*` → `open-sse/*`
+- `@agentproxy/open-sse` → `open-sse/index.ts`
+- `@agentproxy/open-sse/*` → `open-sse/*`
 
 Port HTTP réamhshocraithe: **`20128`** (roinneann API agus deais an próiseas céanna). Eolaire
-sonraí is ea athróg timpeallachta `DATA_DIR`, agus is é `~/.omniroute/` an réamhshocrú.
+sonraí is ea athróg timpeallachta `DATA_DIR`, agus is é `~/.agentproxy/` an réamhshocrú.
 
 ---
 
 ## 2. Leagan Amach an Stóir
 
 ```
-OmniRoute/
+AgentProxy/
 ├── src/                  Feidhmchlár Next.js (App Router, leabharlanna, fearann, freastalaí, comhroinnte)
-├── open-sse/             Inneall sruthaithe spás oibre (@omniroute/open-sse)
+├── open-sse/             Inneall sruthaithe spás oibre (@agentproxy/open-sse)
 ├── electron/             Timfhilleadh deisce (Electron 41 príomh + preload)
-├── bin/                  Pointí iontrála CLI (omniroute, reset-password)
+├── bin/                  Pointí iontrála CLI (agentproxy, reset-password)
 ├── tests/                Aonaid, comhtháthú, e2e, protocols-e2e, aistritheoir, slándáil, daingneáin
 ├── scripts/              Scriptí cúnta tógála, sioncronaithe, seiceála, imirce, agus rite ama
 ├── docs/                 Doiciméadú poiblí (an t-eolaire seo)
@@ -307,7 +307,7 @@ Táirgeann an tábla na hainmchláir iarbhír agus comhaid barr-leibhéal suntas
 | `runtime/`        | Brath gnéithe rith-am                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | `search/`         | `executeWebSearch.ts`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | `services/`       | Creat seirbhíse comhtháite: `ServiceSupervisor.ts` (sárlán próiseas clainne le glas oibríochta, bufer fáinne, seiceálaí sláinte), `bootstrap.ts` (clárú leibhéal próisis agus tosú uathoibríoch), `registry.ts` (léarscáil uirlis → sárlán), `apiKey.ts` (stóras eochair AES-256-GCM), `modelSync.ts` (sioncrónú múnla tráthrialta), `ringBuffer.ts` (bufer loga ciorclach 5 MB), `healthCheck.ts` (fiosrú sláinte HTTP), `types.ts`, `embedWsProxy.ts` (seachadóir WebSocket), `installers/{ninerouter,cliproxy}.ts`. Féach `docs/frameworks/EMBEDDED-SERVICES.md`                                                                                                                                   |
-| `agentSkills/`    | Catalóg + gineadh Scileanna Gníomhaire: `catalog.ts` (getCatalog/getSkillById/filterCatalog/computeCoverage), `generator.ts` (generateAgentSkills → scríobhann `skills/{id}/SKILL.md`), `openapiParser.ts` (ionsúilítear críocha REST ó shonraíochta OpenAPI), `cliRegistryParser.ts` (ionsúilítear fo-chiúnanna CLI ó bin/cli-registry), `schemas.ts` (Zod: AgentSkillSchema, SkillCoverageSchema, ListQuerySchema, GenerateBodySchema), `types.ts` (AgentSkill, SkillCoverage, SkillMarkdown, GeneratorReport). Úsáidte ag rótaireanna REST (`/api/agent-skills/*`), uirlisí MCP (`omniroute_agent_skills_*`), agus liosta-cumas A2A skill. Féach [AGENT-SKILLS.md](../frameworks/AGENT-SKILLS.md). |
+| `agentSkills/`    | Catalóg + gineadh Scileanna Gníomhaire: `catalog.ts` (getCatalog/getSkillById/filterCatalog/computeCoverage), `generator.ts` (generateAgentSkills → scríobhann `skills/{id}/SKILL.md`), `openapiParser.ts` (ionsúilítear críocha REST ó shonraíochta OpenAPI), `cliRegistryParser.ts` (ionsúilítear fo-chiúnanna CLI ó bin/cli-registry), `schemas.ts` (Zod: AgentSkillSchema, SkillCoverageSchema, ListQuerySchema, GenerateBodySchema), `types.ts` (AgentSkill, SkillCoverage, SkillMarkdown, GeneratorReport). Úsáidte ag rótaireanna REST (`/api/agent-skills/*`), uirlisí MCP (`agentproxy_agent_skills_*`), agus liosta-cumas A2A skill. Féach [AGENT-SKILLS.md](../frameworks/AGENT-SKILLS.md). |
 | `skills/`         | Creat scileanna: `registry.ts`, `executor.ts`, `interception.ts`, `injection.ts`, `sandbox.ts`, `custom.ts`, `hybrid.ts`, `builtins.ts`, `a2a.ts`, `providerSettings.ts`, `schemas.ts`, `skillssh.ts`, `types.ts`, chomh maith le `builtin/browser.ts`                                                                                                                                                                                                                                                                                                                                                                                                                                                |
 | `spend/`          | `batchWriter.ts` (bufer scríofa-diaidh-ar-nós)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | `sync/`           | `bundle.ts`, `tokens.ts` (Sioncrónú Scáileáin)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
@@ -393,7 +393,7 @@ Gnóthachtáil ghlan, gan I/O. Iompórtáilte ag rótaireanna agus láimhseálai
 | `degradation.ts`                           | Athruithe trasnáinse cothromaithe                             |
 | `providerExpiration.ts`                    | Brath cuntas/eochracha atá imithe in éag                      |
 | `quotaCache.ts`                            | Cinntí cuóta stóráilte                                        |
-| `responses.ts`, `omnirouteResponseMeta.ts` | Cúntóirí cruth freagairtha                                    |
+| `responses.ts`, `agentproxyResponseMeta.ts` | Cúntóirí cruth freagairtha                                    |
 | `configAudit.ts`                           | Iniúchadh athruithe cumraíochta                               |
 | `assessment/`                              | Measúnadh múnla (de réir RFC, curtha i bhfeidhm go páirteach) |
 | `types.ts`                                 | Cineálanna réimse roinnte                                     |
@@ -443,7 +443,7 @@ Roinnte i bhfochomhlaigh dírithe:
 
 ## 4. `open-sse/` — Spás oibre an innill srutha
 
-Spás oibre npm deighlaithe a fhoilsítear mar `@omniroute/open-sse. Is é aige an phróiseáil iarratais, na forbróirí, na haistritheoirí, na seirbhísí, an t-iompóirteoir, agus an freastalaí MCP.
+Spás oibre npm deighlaithe a fhoilsítear mar `@agentproxy/open-sse. Is é aige an phróiseáil iarratais, na forbróirí, na haistritheoirí, na seirbhísí, an t-iompóirteoir, agus an freastalaí MCP.
 
 ```
 open-sse/
@@ -605,7 +605,7 @@ Cúig script npm ag fréamh an spás oibre: `electron:dev`, `electron:build`,
 
 ```
 bin/
-├── omniroute.mjs           Príomhiontráil CLI (Node ESM)
+├── agentproxy.mjs           Príomhiontráil CLI (Node ESM)
 ├── reset-password.mjs      Athshocraigh an pasfhocal bainistíochta ó CLI
 ├── mcp-server.mjs          Seoltóir freastalaí MCP (stdio)
 ├── nodeRuntimeSupport.mjs  Garda leagan Node
@@ -628,8 +628,8 @@ bin/
 
 Tá dhá dhénártha nochtaithe in `package.json` → `bin`:
 
-- `omniroute` → `bin/omniroute.mjs`
-- `omniroute-reset-password` → `bin/reset-password.mjs`
+- `agentproxy` → `bin/agentproxy.mjs`
+- `agentproxy-reset-password` → `bin/reset-password.mjs`
 
 ---
 
@@ -786,7 +786,7 @@ Féach [A2A-SERVER.md § Adding a New Skill](../frameworks/A2A-SERVER.md). Tá s
 
 - **Stíl chód**: eallaigh 2-spás, dátheisteacha, leithead 100 carachtar, leathchomharthaí,
   `es5` camóga iarmhíreach — forfheidhmithe ag Prettier trí `lint-staged`.
-- **Iompórtálacha**: seachtrach → inmheánach (`@/`, `@omniroute/open-sse`) → coibhneasta.
+- **Iompórtálacha**: seachtrach → inmheánach (`@/`, `@agentproxy/open-sse`) → coibhneasta.
 - **Ainmniúchán**: comhaid `camelCase` nó `kebab-case`, comhpháirteanna `PascalCase`,
   tairiscintí `UPPER_SNAKE`.
 - **ESLint**: `no-eval`, `no-implied-eval`, `no-new-func` = `error` i ngach áit;

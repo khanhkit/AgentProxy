@@ -1,3 +1,7 @@
+---
+title: "Native Codex Wire Contract v1"
+---
+
 # Native Codex Wire Contract v1
 
 AP-ISS-0080 defines the Rust native Codex route as a **normalized compatibility boundary**, not transparent header passthrough.

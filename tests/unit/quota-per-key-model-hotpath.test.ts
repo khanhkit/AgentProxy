@@ -29,7 +29,7 @@ import os from "node:os";
 import path from "node:path";
 
 // ── Single isolated DATA_DIR (same reset pattern as db-quota-pools.test.ts) ───
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-model-cap-hotpath-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-model-cap-hotpath-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../src/lib/db/core.ts");

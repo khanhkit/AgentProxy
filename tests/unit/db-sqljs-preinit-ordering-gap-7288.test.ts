@@ -5,7 +5,7 @@
 // ("GLIBC_2.29 not found"), so the native module fails to dlopen and any test that
 // reaches better-sqlite3 directly (or asserts stdout that the load-failure warning
 // would pollute) fails HERE while passing in CI. This is a known environment
-// limitation, not a defect in the code under test: the OmniRoute runtime itself
+// limitation, not a defect in the code under test: the AgentProxy runtime itself
 // cascades to node:sqlite/sql.js when better-sqlite3 is unavailable. See
 // tests/unit/_helpers/betterSqlite3Availability.ts for a guard helper.
 import test from "node:test";
@@ -125,7 +125,7 @@ test(
     "the ordering-gap 'sql.js WASM ainda não foi pré-inicializado' error when both " +
     "sync drivers fail on an EXISTING db file (#7288 / #7494)",
   async () => {
-    dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-7288-"));
+    dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-7288-"));
     const sqliteFile = path.join(dataDir, "storage.sqlite");
     // A directory in place of the sqlite file makes BOTH better-sqlite3 and
     // node:sqlite fail to open it for real (no mocking needed), while
@@ -180,7 +180,7 @@ test(
   "the warm-up costs nothing on the happy path: sql.js stays un-initialized when a " +
     "sync driver can already open the file",
   async () => {
-    const dir2 = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-7288-happy-"));
+    const dir2 = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-7288-happy-"));
     const file2 = path.join(dir2, "storage.sqlite");
     try {
       const { tryOpenSync, getSqlJsAdapter } =

@@ -13,10 +13,10 @@ try {
   machineIdSync = () => "";
 }
 
-const BUILTIN_DEFAULT_SALT = "omniroute-cli-auth-v1";
+const BUILTIN_DEFAULT_SALT = "agentproxy-cli-auth-v1";
 
 function getActiveSalt(): string {
-  return process.env.OMNIROUTE_CLI_SALT || BUILTIN_DEFAULT_SALT;
+  return process.env.AGENTPROXY_CLI_SALT || BUILTIN_DEFAULT_SALT;
 }
 
 export function deriveMachineToken(rawId: string, salt: string): string {

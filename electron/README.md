@@ -1,6 +1,6 @@
-# OmniRoute Electron Desktop App
+# AgentProxy Electron Desktop App
 
-This directory contains the Electron desktop application wrapper for OmniRoute.
+This directory contains the Electron desktop application wrapper for AgentProxy.
 
 ## Architecture (v1.6.4)
 
@@ -108,15 +108,15 @@ Built applications are placed in `dist-electron/`:
 
 ### macOS
 
-1. Download the latest `.dmg` from the [Releases](https://github.com/diegosouzapw/OmniRoute/releases) page.
+1. Download the latest `.dmg` from the [Releases](https://github.com/khanhkit/AgentProxy/releases) page.
 2. Open the `.dmg` file.
-3. Drag `OmniRoute.app` to the Applications folder.
+3. Drag `AgentProxy.app` to the Applications folder.
 4. Launch from Applications.
 
 > ⚠️ **Note:** The app is not signed with an Apple Developer certificate yet. If macOS blocks the app, run:
 >
 > ```bash
-> xattr -cr /Applications/OmniRoute.app
+> xattr -cr /Applications/AgentProxy.app
 > ```
 >
 > Or right-click the app → Open → Open (to bypass Gatekeeper on first launch).
@@ -125,25 +125,25 @@ Built applications are placed in `dist-electron/`:
 
 **Installer (Recommended):**
 
-1. Download `OmniRoute.Setup.*.exe` from [Releases](https://github.com/diegosouzapw/OmniRoute/releases).
+1. Download `AgentProxy.Setup.*.exe` from [Releases](https://github.com/khanhkit/AgentProxy/releases).
 2. Run the installer.
 3. Launch from Start Menu or Desktop shortcut.
 
 **Portable (No Installation):**
 
-1. Download `OmniRoute.exe` from [Releases](https://github.com/diegosouzapw/OmniRoute/releases).
+1. Download `AgentProxy.exe` from [Releases](https://github.com/khanhkit/AgentProxy/releases).
 2. Run directly from any folder.
 
 ### Linux
 
-1. Download the `.AppImage` from [Releases](https://github.com/diegosouzapw/OmniRoute/releases).
+1. Download the `.AppImage` from [Releases](https://github.com/khanhkit/AgentProxy/releases).
 2. Make it executable:
    ```bash
-   chmod +x OmniRoute-*.AppImage
+   chmod +x AgentProxy-*.AppImage
    ```
 3. Run:
    ```bash
-   ./OmniRoute-*.AppImage
+   ./AgentProxy-*.AppImage
    ```
 
 ## Features
@@ -151,7 +151,7 @@ Built applications are placed in `dist-electron/`:
 - **Server Readiness** — Waits for health check before showing window
 - **System Tray** — Minimize to tray with quick actions (open, port change, quit)
 - **Port Management** — Change port from tray menu (server restarts automatically)
-- **Remote Server Mode** — Point the shell at an already-running OmniRoute server (e.g. a Docker/OrbStack container, or another machine) instead of spawning a local one — see below
+- **Remote Server Mode** — Point the shell at an already-running AgentProxy server (e.g. a Docker/OrbStack container, or another machine) instead of spawning a local one — see below
 - **Window Controls** — Custom minimize, maximize, close via IPC
 - **Content Security Policy** — Restrictive CSP via session headers
 - **Offline Support** — Bundled Next.js standalone server
@@ -160,7 +160,7 @@ Built applications are placed in `dist-electron/`:
 ## Remote Server Mode
 
 By default the desktop shell spawns and manages its own bundled Next.js server. If you
-already run OmniRoute elsewhere — most commonly in a Docker/OrbStack container, so
+already run AgentProxy elsewhere — most commonly in a Docker/OrbStack container, so
 provider credentials and env-var handling stay isolated from the host — you can point the
 shell at that instance instead, so it's purely a native window + tray onto a server you
 already run.
@@ -171,8 +171,8 @@ disconnect and go back to the local embedded server. The preference persists acr
 restarts in `<data dir>/electron-preferences.json` (see `DATA_DIR` above for where that
 lives on your platform).
 
-**Via environment variable:** set `OMNIROUTE_REMOTE_URL` before launching the app (e.g.
-`OMNIROUTE_REMOTE_URL=http://localhost:20128 npm run dev`, or export it in the
+**Via environment variable:** set `AGENTPROXY_REMOTE_URL` before launching the app (e.g.
+`AGENTPROXY_REMOTE_URL=http://localhost:20128 npm run dev`, or export it in the
 environment that launches the packaged app). The env var always wins over the persisted
 preference and is session-scoped — it doesn't get written to the prefs file.
 
@@ -189,9 +189,9 @@ different origin (for example HTTP to HTTPS), configure the final origin directl
 
 | Variable               | Default      | Description                                                                                           |
 | ---------------------- | ------------ | ----------------------------------------------------------------------------------------------------- |
-| `OMNIROUTE_PORT`       | `20128`      | Server port                                                                                           |
-| `OMNIROUTE_MEMORY_MB`  | `512`        | Node.js heap limit (64–16384 MB)                                                                      |
-| `OMNIROUTE_REMOTE_URL` | _(unset)_    | Attach to this server instead of spawning a local one — see [Remote Server Mode](#remote-server-mode) |
+| `AGENTPROXY_PORT`       | `20128`      | Server port                                                                                           |
+| `AGENTPROXY_MEMORY_MB`  | `512`        | Node.js heap limit (64–16384 MB)                                                                      |
+| `AGENTPROXY_REMOTE_URL` | _(unset)_    | Attach to this server instead of spawning a local one — see [Remote Server Mode](#remote-server-mode) |
 | `NODE_ENV`             | `production` | Set to `development` for dev mode                                                                     |
 
 ### Custom Icon

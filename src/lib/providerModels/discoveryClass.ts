@@ -1,4 +1,4 @@
-import { getRegistryEntry } from "@omniroute/open-sse/config/providerRegistry";
+import { getRegistryEntry } from "@agentproxy/open-sse/config/providerRegistry";
 import { providerUsesCuratedModelsOnly } from "@/lib/providers/modelListingCapability";
 import { HARDCODED_MODELS_CONFIG_IDS } from "./hardcodedModelsConfigIds.ts";
 

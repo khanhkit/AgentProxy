@@ -5,7 +5,7 @@ lastUpdated: 2026-07-22
 
 # Branching & Release Model
 
-OmniRoute uses a **parallel-cycle** release model: a dedicated `release/vX.Y.Z`
+AgentProxy uses a **parallel-cycle** release model: a dedicated `release/vX.Y.Z`
 branch for the active cycle, `main` for the published line, and an immutable
 `vX.Y.Z` tag when that cycle ships. Seeing commits land on `release/*` *and* on
 `main` is expected — not a mix-up.
@@ -57,7 +57,7 @@ opened. That **does not stop development**:
 Check for an open freeze before assuming the branch you want is mergeable:
 
 ```bash
-gh issue list --repo diegosouzapw/OmniRoute --label release-freeze --state open
+gh issue list --repo khanhkit/AgentProxy --label release-freeze --state open
 ```
 
 Merge mechanics (owner `queue` label → Mergify) are documented in

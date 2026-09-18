@@ -493,7 +493,7 @@ test("muse-spark-web: fetch failures do not expose stack traces or source paths"
   const originalFetch = globalThis.fetch;
   const errorLogs: string[] = [];
   globalThis.fetch = async () => {
-    throw new Error("socket failed at /srv/omniroute/secrets.ts:42\n    at fetchGraphql");
+    throw new Error("socket failed at /srv/agentproxy/secrets.ts:42\n    at fetchGraphql");
   };
 
   try {

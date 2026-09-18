@@ -16,7 +16,7 @@
 // aparece como órfão reverso e o gate falha.
 import { pathToFileURL } from "node:url";
 import { AI_PROVIDERS, getProviderById } from "@/shared/constants/providers.ts";
-import { REGISTRY } from "@omniroute/open-sse/config/providerRegistry.ts";
+import { REGISTRY } from "@agentproxy/open-sse/config/providerRegistry.ts";
 import { assertNoStale } from "./lib/allowlist.mjs";
 
 // Entradas registry-only conhecidas (meia-registro pré-existente). Cada uma com

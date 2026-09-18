@@ -236,7 +236,7 @@ test("AP-ISS-0038 — DNS answers are fail-closed and pinned to a public address
   });
 });
 
-test("C2 header contract — server.cjs intercept must inject x-omniroute-source and x-omniroute-agent", async () => {
+test("C2 header contract — server.cjs intercept must inject x-agentproxy-source and x-agentproxy-agent", async () => {
   // This is a documentation/spec assertion: the exact header names that
   // server.cjs::intercept must inject per master plan §3.5. If anyone
   // edits server.cjs to remove or rename them, this test fails and
@@ -249,13 +249,13 @@ test("C2 header contract — server.cjs intercept must inject x-omniroute-source
   const src = fs.readFileSync(serverPath, "utf-8");
   assert.match(
     src,
-    /"x-omniroute-source":\s*"agent-bridge"/,
-    'server.cjs must inject "x-omniroute-source: agent-bridge"'
+    /"x-agentproxy-source":\s*"agent-bridge"/,
+    'server.cjs must inject "x-agentproxy-source: agent-bridge"'
   );
   assert.match(
     src,
-    /"x-omniroute-agent":\s*agentId/,
-    'server.cjs must inject "x-omniroute-agent: <id>" from the host→agent map'
+    /"x-agentproxy-agent":\s*agentId/,
+    'server.cjs must inject "x-agentproxy-agent: <id>" from the host→agent map'
   );
   // Antigravity non-regression: the historical host must still resolve to
   // the antigravity agent id, so the existing flow continues to work.

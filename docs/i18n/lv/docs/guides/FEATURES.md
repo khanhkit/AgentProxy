@@ -6,16 +6,16 @@
 
 ---
 
-title: "OmniRoute — informācijas paneļa funkciju galerija"
+title: "AgentProxy — informācijas paneļa funkciju galerija"
 version: 3.8.40
 lastUpdated: 2026-06-28
 ---
 
-# OmniRoute — informācijas paneļa funkciju galerija
+# AgentProxy — informācijas paneļa funkciju galerija
 
 🌐 **Languages:** 🇺🇸 [English](../../../../guides/FEATURES.md) · 🇸🇦 [ar](../../../ar/docs/guides/FEATURES.md) · 🇦🇿 [az](../../../az/docs/guides/FEATURES.md) · 🇧🇬 [bg](../../../bg/docs/guides/FEATURES.md) · 🇧🇩 [bn](../../../bn/docs/guides/FEATURES.md) · 🇨🇿 [cs](../../../cs/docs/guides/FEATURES.md) · 🇩🇰 [da](../../../da/docs/guides/FEATURES.md) · 🇩🇪 [de](../../../de/docs/guides/FEATURES.md) · 🇬🇷 [el](../../../el/docs/guides/FEATURES.md) · 🇪🇸 [es](../../../es/docs/guides/FEATURES.md) · 🇪🇪 [et](../../../et/docs/guides/FEATURES.md) · 🇮🇷 [fa](../../../fa/docs/guides/FEATURES.md) · 🇫🇮 [fi](../../../fi/docs/guides/FEATURES.md) · 🇫🇷 [fr](../../../fr/docs/guides/FEATURES.md) · 🇮🇪 [ga](../../../ga/docs/guides/FEATURES.md) · 🇮🇳 [gu](../../../gu/docs/guides/FEATURES.md) · 🇮🇱 [he](../../../he/docs/guides/FEATURES.md) · 🇮🇳 [hi](../../../hi/docs/guides/FEATURES.md) · 🇭🇷 [hr](../../../hr/docs/guides/FEATURES.md) · 🇭🇺 [hu](../../../hu/docs/guides/FEATURES.md) · 🇮🇩 [id](../../../id/docs/guides/FEATURES.md) · 🇮🇹 [it](../../../it/docs/guides/FEATURES.md) · 🇯🇵 [ja](../../../ja/docs/guides/FEATURES.md) · 🇰🇷 [ko](../../../ko/docs/guides/FEATURES.md) · 🇱🇹 [lt](../../../lt/docs/guides/FEATURES.md) · 🇮🇳 [mr](../../../mr/docs/guides/FEATURES.md) · 🇲🇾 [ms](../../../ms/docs/guides/FEATURES.md) · 🇲🇹 [mt](../../../mt/docs/guides/FEATURES.md) · 🇳🇱 [nl](../../../nl/docs/guides/FEATURES.md) · 🇳🇴 [no](../../../no/docs/guides/FEATURES.md) · 🇵🇭 [phi](../../../phi/docs/guides/FEATURES.md) · 🇵🇱 [pl](../../../pl/docs/guides/FEATURES.md) · 🇵🇹 [pt](../../../pt/docs/guides/FEATURES.md) · 🇧🇷 [pt-BR](../../../pt-BR/docs/guides/FEATURES.md) · 🇷🇴 [ro](../../../ro/docs/guides/FEATURES.md) · 🇷🇺 [ru](../../../ru/docs/guides/FEATURES.md) · 🇸🇰 [sk](../../../sk/docs/guides/FEATURES.md) · 🇸🇮 [sl](../../../sl/docs/guides/FEATURES.md) · 🇷🇸 [sr](../../../sr/docs/guides/FEATURES.md) · 🇸🇪 [sv](../../../sv/docs/guides/FEATURES.md) · 🇰🇪 [sw](../../../sw/docs/guides/FEATURES.md) · 🇮🇳 [ta](../../../ta/docs/guides/FEATURES.md) · 🇮🇳 [te](../../../te/docs/guides/FEATURES.md) · 🇹🇭 [th](../../../th/docs/guides/FEATURES.md) · 🇹🇷 [tr](../../../tr/docs/guides/FEATURES.md) · 🇺🇦 [uk-UA](../../../uk-UA/docs/guides/FEATURES.md) · 🇵🇰 [ur](../../../ur/docs/guides/FEATURES.md) · 🇻🇳 [vi](../../../vi/docs/guides/FEATURES.md) · 🇨🇳 [zh-CN](../../../zh-CN/docs/guides/FEATURES.md) · 🇹🇼 [zh-TW](../../../zh-TW/docs/guides/FEATURES.md)
 
-Vizuāls ceļvedis par katru OmniRoute informācijas paneļa sadaļu.
+Vizuāls ceļvedis par katru AgentProxy informācijas paneļa sadaļu.
 
 > 📅 **Pēdējo reizi atjaunināts:** 2026-06-28 — **v3.8.40**
 
@@ -45,7 +45,7 @@ Cikls v3.7.x → v3.8.0 pievienoja automātisko maršrutēšanu bez konfigurāci
 - 🚦 **429 kļūdu klasifikācija katram nodrošinātājam** + `useUpstream429BreakerHints` pārslēgs — precīzāka slēdža darbība, izmantojot augšupējā pakalpojuma ātruma ierobežojumu norādes
 - 🩺 **Modeļu atdzišanas informācijas panelis** — skatiet katra modeļa bloķēšanu un manuāli atkārtoti iespējojiet to lietotāja saskarnē
 - 🔒 **MITM dinamiska Linux sertifikātu noteikšana** — darbojas Debian/Ubuntu, Fedora/RHEL, Arch un citos distributīvos
-- 💻 **CLI uzlabojumu komplekts** — vairāk nekā 20 komandas, tostarp `omniroute providers`, `omniroute combos`, `omniroute doctor`, `omniroute setup`
+- 💻 **CLI uzlabojumu komplekts** — vairāk nekā 20 komandas, tostarp `agentproxy providers`, `agentproxy combos`, `agentproxy doctor`, `agentproxy setup`
 - 🔍 **Qdrant iegulšanas modeļu atklāšana** — automātiska vektoru krātuves modeļa pārbaude
 - 🔑 **API Keys / Bearer keys ar `manage` tvērumu** — administrēšanas darbības var programmatiski veikt, izmantojot API
 - 🏥 **Kombinācijas mērķu darbspējas analītika** + **strukturēts kombināciju veidotājs** — katra mērķa darbspējas dati un lietotāja saskarnes veidotājs `(provider, model, connection)` soļu izveidei
@@ -60,7 +60,7 @@ Cikls v3.7.x → v3.8.0 pievienoja automātisko maršrutēšanu bez konfigurāci
 
 Pārvaldiet AI pakalpojumu sniedzēju savienojumus: OAuth pakalpojumu sniedzējus (Claude Code, Codex), API atslēgu pakalpojumu sniedzējus (Groq, DeepSeek, OpenRouter) un bezmaksas pakalpojumu sniedzējus (Qoder, Kiro). Kiro kontos tiek uzskaitīts kredītu atlikums — informācijas panelī → lietojumā ir redzami atlikušie kredīti, kopējais piešķīrums un atjaunošanas datums.
 
-OpenRouter savienojumos sadaļā Advanced Settings var saglabāt katram savienojumam atsevišķu `preset`. Ja tas ir iestatīts, OmniRoute to nosūta kā OpenRouter augstākā līmeņa pieprasījuma lauku, piemēram, `"preset": "email-copywriter"`, izņemot gadījumu, kad klienta pieprasījumā jau ir norādīts savs `preset`.
+OpenRouter savienojumos sadaļā Advanced Settings var saglabāt katram savienojumam atsevišķu `preset`. Ja tas ir iestatīts, AgentProxy to nosūta kā OpenRouter augstākā līmeņa pieprasījuma lauku, piemēram, `"preset": "email-copywriter"`, izņemot gadījumu, kad klienta pieprasījumā jau ir norādīts savs `preset`.
 
 ![Pakalpojumu sniedzēju informācijas panelis](../screenshots/01-providers.png)
 
@@ -168,7 +168,7 @@ Vadības panelis CLI aģentu atklāšanai un pārvaldībai. Tajā tiek parādīt
 
 ## 🔗 Konteksta pārsūtīšana _(v3.5.5+)_
 
-Kombinēta stratēģija, kas saglabā sesijas nepārtrauktību, kad sarunas laikā notiek konta rotācija. Pirms aktīvā konta resursi tiek izsmelti, OmniRoute fonā ģenerē strukturētu nodošanas kopsavilkumu. Kad nākamais pieprasījums tiek novirzīts uz citu kontu, kopsavilkums tiek ievietots kā sistēmas ziņojums, lai jaunais konts varētu turpināt darbu ar pilnu kontekstu.
+Kombinēta stratēģija, kas saglabā sesijas nepārtrauktību, kad sarunas laikā notiek konta rotācija. Pirms aktīvā konta resursi tiek izsmelti, AgentProxy fonā ģenerē strukturētu nodošanas kopsavilkumu. Kad nākamais pieprasījums tiek novirzīts uz citu kontu, kopsavilkums tiek ievietots kā sistēmas ziņojums, lai jaunais konts varētu turpināt darbu ar pilnu kontekstu.
 
 Konfigurējams kombinācijas līmeņa vai globālajos iestatījumos:
 
@@ -237,7 +237,7 @@ Tīras noņemšanas skripti visām instalēšanas metodēm:
 
 | Command                  | Action                                                                                        |
 | ------------------------ | --------------------------------------------------------------------------------------------- |
-| `npm run uninstall`      | Noņem sistēmas lietotni, bet **saglabā jūsu datubāzi un konfigurācijas** mapē `~/.omniroute`. |
+| `npm run uninstall`      | Noņem sistēmas lietotni, bet **saglabā jūsu datubāzi un konfigurācijas** mapē `~/.agentproxy`. |
 | `npm run uninstall:full` | Noņem lietotni un **neatgriezeniski dzēš visas konfigurācijas, atslēgas un datubāzes**.       |
 
 ---
@@ -278,7 +278,7 @@ Administratīvo darbību uzskaite ar filtrēšanu pēc darbības veida, veicēja
 
 ## 🖥️ Darbvirsmas lietotne
 
-Native Electron darbvirsmas lietotne operētājsistēmām Windows, macOS un Linux. Palaidiet OmniRoute kā savrupu lietotni ar sistēmas teknes integrāciju, bezsaistes atbalstu, automātisko atjaunināšanu un instalēšanu ar vienu klikšķi.
+Native Electron darbvirsmas lietotne operētājsistēmām Windows, macOS un Linux. Palaidiet AgentProxy kā savrupu lietotni ar sistēmas teknes integrāciju, bezsaistes atbalstu, automātisko atjaunināšanu un instalēšanu ar vienu klikšķi.
 
 Galvenās funkcijas:
 
@@ -297,7 +297,7 @@ Galvenās funkcijas:
 
 ## 🌐 V1 WebSocket tilts _(v3.6.6+)_
 
-OmniRoute tagad atbalsta **OpenAI saderīgus WebSocket klientus**, izmantojot `/v1/ws` jaunināšanas galapunktu. Pielāgotais `scripts/dev/v1-ws-bridge.mjs` serveris aptver Next.js un jaunināto WS savienojumu pārveido par pilnībā divvirzienu straumēšanas sesiju. Autentifikācijai tiek izmantota tā pati API atslēga vai sesijas sīkdatne kā HTTP pieprasījumiem.
+AgentProxy tagad atbalsta **OpenAI saderīgus WebSocket klientus**, izmantojot `/v1/ws` jaunināšanas galapunktu. Pielāgotais `scripts/dev/v1-ws-bridge.mjs` serveris aptver Next.js un jaunināto WS savienojumu pārveido par pilnībā divvirzienu straumēšanas sesiju. Autentifikācijai tiek izmantota tā pati API atslēga vai sesijas sīkdatne kā HTTP pieprasījumiem.
 
 Galvenā darbība:
 
@@ -323,7 +323,7 @@ Konfigurācijas pakete tiek veidota ar `src/lib/sync/bundle.ts`. Patērētāji s
 
 **GLM domāšana (`glmt`)** tagad ir reģistrēts pirmās klases nodrošinātājs: 65 536 maksimālie izejas marķieri, 24 576 domāšanas budžets, 900 s noklusējuma noildze, Claude-saderīgs API formāts un koplietots lietojuma sinhronizācija ar GLM ģimeni.
 
-**Hibrīdā marķieru skaitīšana** arī nonāk v3.6.6: kad Claude-saderīgs nodrošinātājs atklāj `/messages/count_tokens`, OmniRoute to izsauc pirms lieliem pieprasījumiem ar graciozas novērtēšanas atpakaļkārtību.
+**Hibrīdā marķieru skaitīšana** arī nonāk v3.6.6: kad Claude-saderīgs nodrošinātājs atklāj `/messages/count_tokens`, AgentProxy to izsauc pirms lieliem pieprasījumiem ar graciozas novērtēšanas atpakaļkārtību.
 
 ---
 

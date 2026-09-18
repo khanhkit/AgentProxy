@@ -8,7 +8,7 @@ let tempDir: string;
 let originalDataDir: string | undefined;
 
 function setup() {
-  tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-compression-"));
+  tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-compression-"));
   originalDataDir = process.env.DATA_DIR;
   process.env.DATA_DIR = tempDir;
 }

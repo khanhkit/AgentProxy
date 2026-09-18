@@ -6,7 +6,7 @@ import path from "node:path";
 import { makeManagementSessionRequest } from "../../helpers/managementSession.ts";
 
 // DATA_DIR must be set before the DB core module evaluates its singleton.
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-free-api-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-free-api-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.DISABLE_SQLITE_AUTO_BACKUP = "true";
 

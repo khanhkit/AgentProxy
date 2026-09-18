@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { runManagedDbHealthCheck } from "@/lib/db/core";
 import { isAuthenticated } from "@/shared/utils/apiAuth";
-import { sanitizeErrorMessage } from "@omniroute/open-sse/utils/error";
+import { sanitizeErrorMessage } from "@agentproxy/open-sse/utils/error";
 
 export async function GET(request: Request) {
   if (!(await isAuthenticated(request))) {

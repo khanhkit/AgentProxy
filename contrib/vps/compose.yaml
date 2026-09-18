@@ -1,4 +1,4 @@
-name: omniroute-vps
+name: agentproxy-vps
 
 services:
   redis:
@@ -18,8 +18,8 @@ services:
         max-size: "10m"
         max-file: "3"
 
-  omniroute:
-    image: ${OMNIROUTE_IMAGE:?Set OMNIROUTE_IMAGE to a versioned tag or digest}
+  agentproxy:
+    image: ${AGENTPROXY_IMAGE:?Set AGENTPROXY_IMAGE to a versioned tag or digest}
     restart: unless-stopped
     stop_grace_period: 40s
     depends_on:
@@ -38,20 +38,20 @@ services:
       JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in .env}
       API_KEY_SECRET: ${API_KEY_SECRET:?Set API_KEY_SECRET in .env}
       INITIAL_PASSWORD: ${INITIAL_PASSWORD:?Set INITIAL_PASSWORD in .env}
-      OMNIROUTE_WS_BRIDGE_SECRET: ${OMNIROUTE_WS_BRIDGE_SECRET:?Set OMNIROUTE_WS_BRIDGE_SECRET in .env}
+      AGENTPROXY_WS_BRIDGE_SECRET: ${AGENTPROXY_WS_BRIDGE_SECRET:?Set AGENTPROXY_WS_BRIDGE_SECRET in .env}
     ports:
-      - "${OMNIROUTE_BIND_HOST:-127.0.0.1}:${OMNIROUTE_PORT:-20128}:20128"
+      - "${AGENTPROXY_BIND_HOST:-127.0.0.1}:${AGENTPROXY_PORT:-20128}:20128"
     volumes:
-      - omniroute-data:/app/data
+      - agentproxy-data:/app/data
     tmpfs:
       - /tmp:size=256m,mode=1777
     security_opt:
       - no-new-privileges:true
     cap_drop:
       - ALL
-    pids_limit: ${OMNIROUTE_PIDS_LIMIT:-256}
-    mem_limit: ${OMNIROUTE_MEMORY_LIMIT:-1536m}
-    cpus: ${OMNIROUTE_CPUS:-1.0}
+    pids_limit: ${AGENTPROXY_PIDS_LIMIT:-256}
+    mem_limit: ${AGENTPROXY_MEMORY_LIMIT:-1536m}
+    cpus: ${AGENTPROXY_CPUS:-1.0}
     healthcheck:
       test: ["CMD", "node", "healthcheck.mjs"]
       interval: 30s
@@ -65,5 +65,5 @@ services:
         max-file: "3"
 
 volumes:
-  omniroute-data:
+  agentproxy-data:
   redis-data:

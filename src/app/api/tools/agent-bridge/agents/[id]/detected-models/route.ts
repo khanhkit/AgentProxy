@@ -6,7 +6,7 @@
  *
  * LOCAL_ONLY: covered by the "/api/tools/agent-bridge/" prefix in routeGuard.ts.
  */
-import { sanitizeErrorMessage } from "@omniroute/open-sse/utils/error";
+import { sanitizeErrorMessage } from "@agentproxy/open-sse/utils/error";
 import { createErrorResponse } from "@/lib/api/errorResponse";
 import { globalTrafficBuffer } from "@/mitm/inspector/buffer";
 import type { AgentId } from "@/mitm/types";

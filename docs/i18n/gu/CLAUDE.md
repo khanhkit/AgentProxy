@@ -39,7 +39,7 @@ npm run test:all
 
 ## પ્રોજેક્ટ એક નજરમાં
 
-**OmniRoute** — એકીકૃત AI પ્રોક્સી/રાઉટર. એક એન્ડપોઈન્ટ, 329 LLM પ્રદાતાઓ, ઓટો-ફોલબેક.
+**AgentProxy** — એકીકૃત AI પ્રોક્સી/રાઉટર. એક એન્ડપોઈન્ટ, 329 LLM પ્રદાતાઓ, ઓટો-ફોલબેક.
 
 | સ્તર          | સ્થાન                   | ઉદ્દેશ્ય                                                                  |
 | ------------- | ----------------------- | ------------------------------------------------------------------------- |
@@ -80,7 +80,7 @@ API માર્ગો એક સંગ્રહિત પેટર્નનુ�
 
 ## રેસિલિયન્સ રનટાઇમ સ્ટેટ
 
-OmniRoute પાસે ત્રણ સંબંધિત પરંતુ અલગ તાત્કાલિક-અસફળતા મિકેનિઝમ છે. રૂટિંગ વર્તન ડિબગ કરતી વખતે તેમના વ્યાપને અલગ રાખો. એક નજરમાં નકશો માટે [3-સ્તરીય રેસિલિયન્સ આકૃતિ](./docs/diagrams/exported/resilience-3layers.svg) જુઓ (સ્ત્રોત: [docs/diagrams/resilience-3layers.mmd](./docs/diagrams/resilience-3layers.mmd)).
+AgentProxy પાસે ત્રણ સંબંધિત પરંતુ અલગ તાત્કાલિક-અસફળતા મિકેનિઝમ છે. રૂટિંગ વર્તન ડિબગ કરતી વખતે તેમના વ્યાપને અલગ રાખો. એક નજરમાં નકશો માટે [3-સ્તરીય રેસિલિયન્સ આકૃતિ](./docs/diagrams/exported/resilience-3layers.svg) જુઓ (સ્ત્રોત: [docs/diagrams/resilience-3layers.mmd](./docs/diagrams/resilience-3layers.mmd)).
 
 ### પ્રદાતા સર્કિટ બ્રેકર
 
@@ -192,7 +192,7 @@ baseCooldownMs * 2 ** failureIndex;
 ### કોડ શૈલી
 
 - **2 જગ્યા**, સેમિકોલન, ડબલ કોટ્સ, 100 અક્ષર પહોળાઈ, es5 ટ્રેઇલિંગ કોમ્મા (lint-staged દ્વારા Prettier દ્વારા અમલમાં)
-- **આયાતો**: બાહ્ય → આંતરિક (`@/`, `@omniroute/open-sse`) → સંબંધિત
+- **આયાતો**: બાહ્ય → આંતરિક (`@/`, `@agentproxy/open-sse`) → સંબંધિત
 - **નામકરણ**: ફાઇલો=camelCase/kebab, ઘટકો=PascalCase, સ્થિરતા=UPPER_SNAKE
 - **ESLint**: `no-eval`, `no-implied-eval`, `no-new-func` = દરેક જગ્યાએ ભૂલ; `no-explicit-any` = `open-sse/` અને `tests/` માં ચેતવણી
 - **TypeScript**: `strict: false`, લક્ષ્ય ES2022, મોડ્યુલ esnext, રિઝોલ્યુશન bundler. સ્પષ્ટ પ્રકારોને પ્રાથમિકતા આપો.
@@ -362,9 +362,9 @@ git push -u origin feat/your-feature
   | ≥22.22.2 <23 |
   | ≥24 <25, ES Modules
 - **ટાઇપસ્ક્રિપ્ટ**: 5.9+, લક્ષ્ય ES2022, મોડ્યુલ esnext, રિઝોલ્યુશન બંડલર
-- **પાથ એલિયાસ**: `@/*` → `src/`, `@omniroute/open-sse` → `open-sse/`, `@omniroute/open-sse/*` → `open-sse/*`
+- **પાથ એલિયાસ**: `@/*` → `src/`, `@agentproxy/open-sse` → `open-sse/`, `@agentproxy/open-sse/*` → `open-sse/*`
 - **ડિફોલ્ટ પોર્ટ**: 20128 (API + ડેશબોર્ડ એક જ પોર્ટ પર)
-- **ડેટા ડિરેક્ટરી**: `DATA_DIR` env var, ડિફોલ્ટ `~/.omniroute/`
+- **ડેટા ડિરેક્ટરી**: `DATA_DIR` env var, ડિફોલ્ટ `~/.agentproxy/`
 - **કી env vars**: `PORT`, `JWT_SECRET`, `API_KEY_SECRET`, `INITIAL_PASSWORD`, `REQUIRE_API_KEY`, `APP_LOG_LEVEL`
 - સેટઅપ: `cp .env.example .env` પછી `JWT_SECRET` (`openssl rand -base64 48`) અને `API_KEY_SECRET` (`openssl rand -hex 32`) જનરેટ કરો
 
@@ -387,4 +387,4 @@ git push -u origin feat/your-feature
 13. ક્યારેય બાહ્ય પાથ અથવા રનટાઇમ મૂલ્યોને `exec()`/`spawn()` ને પસાર કરવામાં આવેલા શેલ સ્ક્રિપ્ટોમાં સ્ટ્રિંગ-ઇન્ટરપોલેટ ન કરો — તેના બદલે `env` વિકલ્પ મારફતે પસાર કરો. સંદર્ભ: `src/mitm/cert/install.ts::updateNssDatabases`.
 14. ક્યારેય CodeQL / Secret-Scanning એલર્ટને (a) પ્રથમ ઉપર દર્શાવેલ પેટર્ન દસ્તાવેજો તપાસ્યા વિના નકારી નાંખો કે શું સહાયક લાગુ પડે છે, અને (b) નકારી નાખવાના ટિપ્પણમાં ટેકનિકલ ન્યાયને નોંધો. નમૂનો: `js/stack-trace-exposure` જે કૉલસાઇટ્સ પર ઉઠાવવામાં આવ્યું છે જે પહેલાથી જ `sanitizeErrorMessage()` મારફતે રૂટ કરે છે તે એક જાણીતી CodeQL મર્યાદા છે (કસ્ટમ સેનિટાઇઝર્સ માન્ય નથી) — `docs/security/ERROR_SANITIZATION.md` ને સંદર્ભિત કરીને `false positive` તરીકે નકારી નાખો.
 15. ક્યારેય બાળકોની પ્રક્રિયાઓને શરૂ કરતી રૂટ્સને ( `/api/mcp/`, `/api/cli-tools/runtime/`) `src/server/authz/routeGuard.ts` માં `isLocalOnlyPath()` વર્ગીકરણ વિના સામેલ ન કરો. લૂપબેક અમલમાં કોઈપણ ઓથ ચેક પહેલાં શરત વિના થાય છે — ટનલ દ્વારા લીક થયેલ JWT પ્રક્રિયા શરૂ કરવા માટે પ્રેરણા આપી શકતું નથી. જુઓ `docs/security/ROUTE_GUARD_TIERS.md`.
-16. ક્યારેય `Co-Authored-By` ટ્રેલર્સને સામેલ ન કરો જે AI સહાયક, LLM અથવા સ્વચાલિત ખાતાને શ્રેય આપે છે (દા.ત. "Claude", "GPT", "Copilot", "Bot" ધરાવતા નામો; `anthropic.com` / `openai.com` / બોટની માલિકીના `noreply.github.com` સરનામા પરના ઈમેઈલો). આવા ટ્રેલર્સ GitHub પર બોટ ખાતામાં કમિટ એટ્રિબ્યુશન રૂટ કરે છે, PR ઇતિહાસમાં વાસ્તવિક લેખકને (`diegosouzapw`) છુપાવે છે. માનવ સહયોગીઓ — upstream PR લેખકો અને OmniRoute પર પોર્ટ થતા issue રિપોર્ટરો સહિત — પ્રમાણભૂત `Co-authored-by: Name <email>` ટ્રેલર્સ સાથે શ્રેય મેળવી શકે છે અને જોઈએ; upstream-port વર્કફ્લો (`/port-upstream-features`, `/port-upstream-issues`) આના પર નિર્ભર છે.
+16. ક્યારેય `Co-Authored-By` ટ્રેલર્સને સામેલ ન કરો જે AI સહાયક, LLM અથવા સ્વચાલિત ખાતાને શ્રેય આપે છે (દા.ત. "Claude", "GPT", "Copilot", "Bot" ધરાવતા નામો; `anthropic.com` / `openai.com` / બોટની માલિકીના `noreply.github.com` સરનામા પરના ઈમેઈલો). આવા ટ્રેલર્સ GitHub પર બોટ ખાતામાં કમિટ એટ્રિબ્યુશન રૂટ કરે છે, PR ઇતિહાસમાં વાસ્તવિક લેખકને (`diegosouzapw`) છુપાવે છે. માનવ સહયોગીઓ — upstream PR લેખકો અને AgentProxy પર પોર્ટ થતા issue રિપોર્ટરો સહિત — પ્રમાણભૂત `Co-authored-by: Name <email>` ટ્રેલર્સ સાથે શ્રેય મેળવી શકે છે અને જોઈએ; upstream-port વર્કફ્લો (`/port-upstream-features`, `/port-upstream-issues`) આના પર નિર્ભર છે.

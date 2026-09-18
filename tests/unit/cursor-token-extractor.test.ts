@@ -224,7 +224,7 @@ describe("tryAgentAuth", () => {
   let tmpHome: string;
 
   beforeEach(() => {
-    tmpHome = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-cursor-agent-auth-"));
+    tmpHome = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-cursor-agent-auth-"));
     process.env.HOME = tmpHome;
     process.env.USERPROFILE = tmpHome;
   });
@@ -359,7 +359,7 @@ describe("tryIdeAuth", () => {
   describe("on a supported platform (darwin), against a real state.vscdb", () => {
     beforeEach(() => {
       Object.defineProperty(process, "platform", { value: "darwin", configurable: true });
-      tmpHome = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-cursor-ide-auth-"));
+      tmpHome = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-cursor-ide-auth-"));
       process.env.HOME = tmpHome;
       process.env.USERPROFILE = tmpHome;
     });

@@ -10,8 +10,8 @@
  * verdict on who closed the connection first). Catches bugs where the app
  * layer claims success but the wire shows a truncated/reset stream.
  *
- * Fully self-contained — does not touch omniroute-beta or omniroute-dev
- * (only reads from omniroute-dev's DB once, to seed its own dedicated
+ * Fully self-contained — does not touch agentproxy-beta or agentproxy-dev
+ * (only reads from agentproxy-dev's DB once, to seed its own dedicated
  * container's data dir). Gated on RUN_LIVE_WIRE_CAPTURE=1: needs podman,
  * tcpdump, python3, and a real .env with provider credentials, so it must
  * never run in CI.
@@ -57,7 +57,7 @@ test.before(async () => {
   // PID-scoped so a concurrent session running this same test never
   // collides on the capture file or the pkill-by-path cleanup in
   // wireCapture.ts's stop().
-  const pcapPath = `/tmp/omniroute-live-wire-capture-${process.pid}.pcap`;
+  const pcapPath = `/tmp/agentproxy-live-wire-capture-${process.pid}.pcap`;
   // Capture happens INSIDE the container's own netns (podman unshare
   // nsenter --net=<SandboxKey>), so packets there are addressed to the
   // container's internal listening port (20128), not the dynamically

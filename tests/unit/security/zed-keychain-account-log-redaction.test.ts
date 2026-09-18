@@ -5,7 +5,7 @@ import path from "node:path";
 import { registerHooks } from "node:module";
 import test from "node:test";
 
-const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-zed-keychain-log-"));
+const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-zed-keychain-log-"));
 const logPath = path.join(tempDir, "app.log");
 const canaryAccount = "work-profile-alice-7842";
 const originalLogToFile = process.env.APP_LOG_TO_FILE;

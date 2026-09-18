@@ -10,7 +10,7 @@ import { registerHook, unregisterHook, updateHook } from "@/lib/middleware/regis
 import type { HookConfig } from "@/lib/middleware/types";
 import { isValidationFailure, validateBody } from "@/shared/validation/helpers";
 import { requireManagementAuth } from "@/lib/api/requireManagementAuth";
-import { sanitizeErrorMessage } from "@omniroute/open-sse/utils/error";
+import { sanitizeErrorMessage } from "@agentproxy/open-sse/utils/error";
 
 type RouteParams = { params: Promise<{ name: string }> };
 

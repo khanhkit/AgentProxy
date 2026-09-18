@@ -14,7 +14,7 @@ const OWNER = "vlo_AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 test("routing session identity is never accepted as lease owner identity", () => {
   const headers = new Headers({
     "X-Session-Id": OWNER,
-    "X-OmniRoute-Lease-Generation": "1",
+    "X-AgentProxy-Lease-Generation": "1",
   });
   assert.throws(
     () => parseManagedLeaseRequestContext(headers),
@@ -28,8 +28,8 @@ test("routing session identity is never accepted as lease owner identity", () =>
 test("parses only canonical explicit owner and positive safe generation", () => {
   const context = parseManagedLeaseRequestContext(
     new Headers({
-      "X-OmniRoute-Lease-Owner": OWNER,
-      "X-OmniRoute-Lease-Generation": "42",
+      "X-AgentProxy-Lease-Owner": OWNER,
+      "X-AgentProxy-Lease-Generation": "42",
       "X-Session-Id": "routing-session-a",
     })
   );
@@ -46,8 +46,8 @@ for (const [name, owner, generation] of [
   ["unsafe generation", OWNER, "9007199254740992"],
 ] as const) {
   test(`rejects ${name}`, () => {
-    const headers = new Headers({ "X-OmniRoute-Lease-Owner": owner });
-    if (generation) headers.set("X-OmniRoute-Lease-Generation", generation);
+    const headers = new Headers({ "X-AgentProxy-Lease-Owner": owner });
+    if (generation) headers.set("X-AgentProxy-Lease-Generation", generation);
     assert.throws(
       () => parseManagedLeaseRequestContext(headers),
       (error: unknown) =>

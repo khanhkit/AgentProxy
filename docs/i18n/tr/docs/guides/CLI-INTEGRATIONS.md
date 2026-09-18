@@ -1,5 +1,5 @@
 ---
-title: "CLI Entegrasyonları — Herhangi bir kodlama CLI'ını OmniRoute'a Bağlayın"
+title: "CLI Entegrasyonları — Herhangi bir kodlama CLI'ını AgentProxy'a Bağlayın"
 version: 3.8.50
 lastUpdated: 2026-08-23
 ---
@@ -10,16 +10,16 @@ lastUpdated: 2026-08-23
 
 ---
 
-OmniRoute, kodlama CLI araçlarını (Codex, Claude Code, OpenCode, Cline vb.) arka uç olarak OmniRoute'u kullanacak şekilde yapılandıran bir dizi `setup-*` komutu sunar — böylece araç **tek bir** uç nokta ile konuşur ve OmniRoute otomatik geri dönüş ile doğru sağlayıcıya yönlendirir.
+AgentProxy, kodlama CLI araçlarını (Codex, Claude Code, OpenCode, Cline vb.) arka uç olarak AgentProxy'u kullanacak şekilde yapılandıran bir dizi `setup-*` komutu sunar — böylece araç **tek bir** uç nokta ile konuşur ve AgentProxy otomatik geri dönüş ile doğru sağlayıcıya yönlendirir.
 
-Ayrıca hiçbir yapılandırma dosyası yazmadan doğru ortam değişkenleriyle `claude`, `codex`, `aider`, `goose`, `opencode`, `qwen` veya `gemini` başlatan genel bir çalıştırıcı vardır: `omniroute run <target>`.
+Ayrıca hiçbir yapılandırma dosyası yazmadan doğru ortam değişkenleriyle `claude`, `codex`, `aider`, `goose`, `opencode`, `qwen` veya `gemini` başlatan genel bir çalıştırıcı vardır: `agentproxy run <target>`.
 
 ```bash
-omniroute providers add glm --credential-env GLM_API_KEY --name work
-omniroute providers import ./providers.json --dry-run --json
-omniroute providers auth openai
-omniroute providers edit <connection-id> --default-model glm/glm-5.2
-omniroute providers remove <connection-id> --yes
+agentproxy providers add glm --credential-env GLM_API_KEY --name work
+agentproxy providers import ./providers.json --dry-run --json
+agentproxy providers auth openai
+agentproxy providers edit <connection-id> --default-model glm/glm-5.2
+agentproxy providers remove <connection-id> --yes
 ```
 
 ---
@@ -28,17 +28,17 @@ omniroute providers remove <connection-id> --yes
 
 | Komut                      | Araç                         | Ne Yazar                                                                                                               | Temel Bayraklar                                                                                                                            | Yerel vs Uzak |
 | -------------------------- | ---------------------------- | ---------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ | ------------- |
-| `omniroute setup-codex`    | OpenAI Codex CLI             | `~/.codex/<name>.config.toml` — uyumlu model başına bir profil (`codex --profile <name>`)                              | `--remote` `--api-key` `--only` `--dry-run` `--port` `--codex-home`                                                                        | Her ikisi de  |
-| `omniroute setup-claude`   | Claude Code                  | `~/.claude/profiles/<name>/settings.json` — eşleşen model başına bir profil (`CLAUDE_CONFIG_DIR`)                      | `--remote` `--api-key` `--only` `--dry-run` `--port` `--claude-home`                                                                       | Her ikisi de  |
-| `omniroute setup-opencode` | OpenCode (openai-compatible) | `~/.config/opencode/opencode.json` — katalogdaki her modelle `omniroute` sağlayıcısı (`opencode -m omniroute/<model>`) | `--remote` `--api-key` `--only` `--model` `--dry-run` `--port`                                                                             | Her ikisi de  |
-| `omniroute setup-cline`    | Cline                        | `~/.cline/data/{globalState,secrets}.json` (CLI modu) + VS Code eklenti ayarlarını yazdırır                            | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--cline-dir`                                                                | Her ikisi de  |
-| `omniroute setup-kilo`     | Kilo Code                    | `~/.local/share/kilo/auth.json` (CLI) + varsa VS Code `settings.json` içine `kilocode.*` birleştirir                   | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--auth-path` `--vscode-settings`                                            | Her ikisi de  |
-| `omniroute setup-continue` | Continue / `cn` CLI          | `~/.continue/config.yaml` — `provider: openai` modelleri, anahtar `${{ secrets.OMNIROUTE_API_KEY }}` üzerinden         | `--remote` `--api-key` `--only` `--dry-run` `--port` `--config-path`                                                                       | Her ikisi de  |
-| `omniroute setup-cursor`   | Cursor                       | Hiçbir dosya yazmaz — uygulama içi adımları konsola yazdırır                                                           | `--remote` `--api-key` `--only` `--port`                                                                                                   | Her ikisi de  |
-| `omniroute setup-roo`      | Roo Code                     | `~/.omniroute/roo-settings.json` (içe aktarma belgesi)                                                                 | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--import-path` `--vscode-settings`                                          | Her ikisi de  |
-| `omniroute setup-goose`    | Goose                        | `~/.config/goose/config.yaml` (`GOOSE_PROVIDER`/`OPENAI_HOST`/`GOOSE_MODEL`)                                           | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--config-path`                                                              | Her ikisi de  |
-| `omniroute setup-aider`    | Aider                        | `~/.aider.conf.yml` (`openai-api-base` + `model: openai/<id>`)                                                         | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--config-path`                                                              | Her ikisi de  |
-| `omniroute setup-qwen`     | Qwen Code                    | `~/.qwen/settings.json` — V4 `modelProviders.openai` dizisi                                                            | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--config-path` `--env-path`                                                 | Her ikisi de  |
-| `omniroute run <target>`   | Doğrudan Başlatma (Genel)    | Dosya yazmaz — doğru ortam değişkenleriyle hedef aracı doğrudan başlatır                                               | `--remote` `--base-url` `--context` `--provider` `--model` `--api-key` `--api-key-env` `--dry-run` `--json` `--port` `--profile` `--token` | Her ikisi de  |
-| `omniroute launch`         | Claude Code                  | Dosya yazmaz — `ANTHROPIC_BASE_URL`/`ANTHROPIC_AUTH_TOKEN` ile `claude` başlatır                                       | `--remote` `--api-key` `--token` `--profile` `--port`                                                                                      | Her ikisi de  |
-| `omniroute launch-codex`   | OpenAI Codex CLI             | Dosya yazmaz — `-c` parametreleri ile `codex` başlatır                                                                 | `--remote` `--api-key` `--profile` (`-p`) `--port`                                                                                         | Her ikisi de  |
+| `agentproxy setup-codex`    | OpenAI Codex CLI             | `~/.codex/<name>.config.toml` — uyumlu model başına bir profil (`codex --profile <name>`)                              | `--remote` `--api-key` `--only` `--dry-run` `--port` `--codex-home`                                                                        | Her ikisi de  |
+| `agentproxy setup-claude`   | Claude Code                  | `~/.claude/profiles/<name>/settings.json` — eşleşen model başına bir profil (`CLAUDE_CONFIG_DIR`)                      | `--remote` `--api-key` `--only` `--dry-run` `--port` `--claude-home`                                                                       | Her ikisi de  |
+| `agentproxy setup-opencode` | OpenCode (openai-compatible) | `~/.config/opencode/opencode.json` — katalogdaki her modelle `agentproxy` sağlayıcısı (`opencode -m agentproxy/<model>`) | `--remote` `--api-key` `--only` `--model` `--dry-run` `--port`                                                                             | Her ikisi de  |
+| `agentproxy setup-cline`    | Cline                        | `~/.cline/data/{globalState,secrets}.json` (CLI modu) + VS Code eklenti ayarlarını yazdırır                            | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--cline-dir`                                                                | Her ikisi de  |
+| `agentproxy setup-kilo`     | Kilo Code                    | `~/.local/share/kilo/auth.json` (CLI) + varsa VS Code `settings.json` içine `kilocode.*` birleştirir                   | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--auth-path` `--vscode-settings`                                            | Her ikisi de  |
+| `agentproxy setup-continue` | Continue / `cn` CLI          | `~/.continue/config.yaml` — `provider: openai` modelleri, anahtar `${{ secrets.AGENTPROXY_API_KEY }}` üzerinden         | `--remote` `--api-key` `--only` `--dry-run` `--port` `--config-path`                                                                       | Her ikisi de  |
+| `agentproxy setup-cursor`   | Cursor                       | Hiçbir dosya yazmaz — uygulama içi adımları konsola yazdırır                                                           | `--remote` `--api-key` `--only` `--port`                                                                                                   | Her ikisi de  |
+| `agentproxy setup-roo`      | Roo Code                     | `~/.agentproxy/roo-settings.json` (içe aktarma belgesi)                                                                 | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--import-path` `--vscode-settings`                                          | Her ikisi de  |
+| `agentproxy setup-goose`    | Goose                        | `~/.config/goose/config.yaml` (`GOOSE_PROVIDER`/`OPENAI_HOST`/`GOOSE_MODEL`)                                           | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--config-path`                                                              | Her ikisi de  |
+| `agentproxy setup-aider`    | Aider                        | `~/.aider.conf.yml` (`openai-api-base` + `model: openai/<id>`)                                                         | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--config-path`                                                              | Her ikisi de  |
+| `agentproxy setup-qwen`     | Qwen Code                    | `~/.qwen/settings.json` — V4 `modelProviders.openai` dizisi                                                            | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--config-path` `--env-path`                                                 | Her ikisi de  |
+| `agentproxy run <target>`   | Doğrudan Başlatma (Genel)    | Dosya yazmaz — doğru ortam değişkenleriyle hedef aracı doğrudan başlatır                                               | `--remote` `--base-url` `--context` `--provider` `--model` `--api-key` `--api-key-env` `--dry-run` `--json` `--port` `--profile` `--token` | Her ikisi de  |
+| `agentproxy launch`         | Claude Code                  | Dosya yazmaz — `ANTHROPIC_BASE_URL`/`ANTHROPIC_AUTH_TOKEN` ile `claude` başlatır                                       | `--remote` `--api-key` `--token` `--profile` `--port`                                                                                      | Her ikisi de  |
+| `agentproxy launch-codex`   | OpenAI Codex CLI             | Dosya yazmaz — `-c` parametreleri ile `codex` başlatır                                                                 | `--remote` `--api-key` `--profile` (`-p`) `--port`                                                                                         | Her ikisi de  |

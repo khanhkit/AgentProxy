@@ -12,8 +12,8 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 
-import { getAvailableLanguagePacks } from "@omniroute/open-sse/services/compression/ruleLoader.ts";
-import { getRtkFilterCatalog } from "@omniroute/open-sse/services/compression/engines/rtk/filterLoader.ts";
+import { getAvailableLanguagePacks } from "@agentproxy/open-sse/services/compression/ruleLoader.ts";
+import { getRtkFilterCatalog } from "@agentproxy/open-sse/services/compression/engines/rtk/filterLoader.ts";
 
 test("rule loader resolves its built-in language packs (getModuleDir works)", () => {
   const packs = getAvailableLanguagePacks();

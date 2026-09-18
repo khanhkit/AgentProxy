@@ -1,12 +1,12 @@
-# Przewodnik po providerach: podłącz modele AI do OmniRoute
+# Przewodnik po providerach: podłącz modele AI do AgentProxy
 
-> **TL;DR**: Provider to połączenie z usługą AI (np. OpenAI, Anthropic, Google). Potrzebujesz co najmniej jednego providera, aby korzystać z OmniRoute.
+> **TL;DR**: Provider to połączenie z usługą AI (np. OpenAI, Anthropic, Google). Potrzebujesz co najmniej jednego providera, aby korzystać z AgentProxy.
 
 ---
 
 ## Czym jest provider?
 
-Traktuj providera jak **operatora komórkowego**. Tak jak potrzebujesz operatora, by dzwonić, tak potrzebujesz providera AI, by korzystać z modeli AI. OmniRoute jest jak telefon, który działa z **wszystkimi operatorami** — możesz między nimi przełączać się automatycznie.
+Traktuj providera jak **operatora komórkowego**. Tak jak potrzebujesz operatora, by dzwonić, tak potrzebujesz providera AI, by korzystać z modeli AI. AgentProxy jest jak telefon, który działa z **wszystkimi operatorami** — możesz między nimi przełączać się automatycznie.
 
 ### Typy providerów
 
@@ -134,12 +134,12 @@ Provider jest podłączony. Możesz go używać z `model: "auto"` albo wskazać 
 
 ## Korzystanie z wielu providerów
 
-OmniRoute działa najlepiej z **wieloma providerami**. Daje to:
+AgentProxy działa najlepiej z **wieloma providerami**. Daje to:
 
-- **Automatyczny fallback** — jeśli jeden provider zawiedzie, OmniRoute próbuje kolejnego
-- **Optymalizacja kosztów** — OmniRoute wybiera najtańszego providera dla każdego żądania
-- **Optymalizacja szybkości** — OmniRoute wybiera najszybszego providera dla każdego żądania
-- **Optymalizacja jakości** — OmniRoute wybiera najlepszego providera do danego zadania
+- **Automatyczny fallback** — jeśli jeden provider zawiedzie, AgentProxy próbuje kolejnego
+- **Optymalizacja kosztów** — AgentProxy wybiera najtańszego providera dla każdego żądania
+- **Optymalizacja szybkości** — AgentProxy wybiera najszybszego providera dla każdego żądania
+- **Optymalizacja jakości** — AgentProxy wybiera najlepszego providera do danego zadania
 
 ### Zalecana konfiguracja
 
@@ -149,7 +149,7 @@ Podłącz co najmniej **3 providery**, aby uzyskać najlepsze doświadczenie:
 2. **Jeden szybki provider** (Groq, Cerebras) — do szybkich odpowiedzi
 3. **Jeden provider jakości** (OpenAI, Anthropic, Google) — do złożonych zadań
 
-Następnie używaj `model: "auto"`, a OmniRoute automatycznie wybierze najlepszy wariant dla każdego żądania.
+Następnie używaj `model: "auto"`, a AgentProxy automatycznie wybierze najlepszy wariant dla każdego żądania.
 
 ---
 
@@ -158,40 +158,40 @@ Następnie używaj `model: "auto"`, a OmniRoute automatycznie wybierze najlepszy
 ### OpenAI
 
 1. Pobierz klucz API: https://platform.openai.com/api-keys
-2. W OmniRoute: Providers → Add Provider → OpenAI
+2. W AgentProxy: Providers → Add Provider → OpenAI
 3. Wklej klucz API → Connect
 
 ### Anthropic
 
 1. Pobierz klucz API: https://console.anthropic.com/
-2. W OmniRoute: Providers → Add Provider → Anthropic
+2. W AgentProxy: Providers → Add Provider → Anthropic
 3. Wklej klucz API → Connect
 
 ### Google (Gemini)
 
 1. Pobierz klucz API: https://aistudio.google.com/apikey
-2. W OmniRoute: Providers → Add Provider → Gemini
+2. W AgentProxy: Providers → Add Provider → Gemini
 3. Wklej klucz API → Connect
 
 ### DeepSeek
 
 1. Pobierz klucz API: https://platform.deepseek.com/
-2. W OmniRoute: Providers → Add Provider → DeepSeek
+2. W AgentProxy: Providers → Add Provider → DeepSeek
 3. Wklej klucz API → Connect
 
 ### Groq
 
 1. Pobierz klucz API: https://console.groq.com/
-2. W OmniRoute: Providers → Add Provider → Groq
+2. W AgentProxy: Providers → Add Provider → Groq
 3. Wklej klucz API → Connect
 
 ---
 
 ## Częste pytania
 
-### „Czy muszę płacić, żeby korzystać z OmniRoute?”
+### „Czy muszę płacić, żeby korzystać z AgentProxy?”
 
-**Nie!** OmniRoute jest darmowy i open-source. Możesz używać darmowych providerów (Kiro, OpenCode Free, Pollinations) bez żadnych opłat. Płacisz tylko wtedy, gdy zdecydujesz się na płatnych providerów.
+**Nie!** AgentProxy jest darmowy i open-source. Możesz używać darmowych providerów (Kiro, OpenCode Free, Pollinations) bez żadnych opłat. Płacisz tylko wtedy, gdy zdecydujesz się na płatnych providerów.
 
 ### „Od którego providera zacząć?”
 
@@ -199,11 +199,11 @@ Zacznij od **Kiro AI** — jest darmowy, nie wymaga klucza API i daje dostęp do
 
 ### „Czy mogę używać wielu providerów naraz?”
 
-**Tak!** Na tym właśnie polega OmniRoute. Podłącz wielu providerów i używaj `model: "auto"`, aby OmniRoute wybierał najlepszy wariant dla każdego żądania.
+**Tak!** Na tym właśnie polega AgentProxy. Podłącz wielu providerów i używaj `model: "auto"`, aby AgentProxy wybierał najlepszy wariant dla każdego żądania.
 
 ### „Co jeśli provider padnie?”
 
-OmniRoute automatycznie pomija niedziałających providerów i próbuje kolejnego. Nic nie musisz robić.
+AgentProxy automatycznie pomija niedziałających providerów i próbuje kolejnego. Nic nie musisz robić.
 
 ### „Jak odłączyć providera?”
 
@@ -211,13 +211,13 @@ Przejdź do Providers → kliknij providera → kliknij **Disconnect**.
 
 ### „Czy mogę użyć istniejących kluczy API?”
 
-**Tak!** Jeśli masz już klucze API do OpenAI, Anthropic, Google itd., możesz ich użyć w OmniRoute. Wystarczy wkleić je przy podłączaniu providera.
+**Tak!** Jeśli masz już klucze API do OpenAI, Anthropic, Google itd., możesz ich użyć w AgentProxy. Wystarczy wkleić je przy podłączaniu providera.
 
 ---
 
 ## Co dalej?
 
-- **[Auto-Combo Guide](./AUTO-COMBO-GUIDE.md)** — pozwól OmniRoute wybrać najlepsze AI za Ciebie
+- **[Auto-Combo Guide](./AUTO-COMBO-GUIDE.md)** — pozwól AgentProxy wybrać najlepsze AI za Ciebie
 - **[Free Tiers Guide](./FREE-TIERS-GUIDE.md)** — darmowe AI bez karty kredytowej
 - **[Troubleshooting](./TROUBLESHOOTING.md)** — rozwiązywanie typowych problemów
 - **[Provider Reference](../reference/PROVIDER_REFERENCE.md)** — pełna lista 329 wpisów providerów

@@ -2,15 +2,15 @@
 
 import crypto from "node:crypto";
 
-import { sanitizeErrorMessage } from "@omniroute/open-sse/utils/error";
+import { sanitizeErrorMessage } from "@agentproxy/open-sse/utils/error";
 
 import { isFeatureFlagEnabled } from "@/shared/utils/featureFlags";
 
 import { RadarIntelFeedSchema, type RadarIntelFeed } from "./intelFeedSchema";
 import { compareVersions, type RadarSettingsSnapshot } from "./sync";
 import { verifyFeedBytes } from "./verify";
+import { RADAR_FEED_URL_MISSING_REASON, resolveRadarFeedBaseUrl } from "./feedUrl";
 
-const DEFAULT_FEED_BASE_URL = "https://radar.omniroute.online";
 const SYNC_TIMEOUT_MS = 30_000;
 const MAX_FEED_BYTES = 10 * 1024 * 1024;
 
@@ -103,7 +103,10 @@ export async function syncRadarIntel(deps: IntelSyncDeps = {}): Promise<IntelSyn
     if (!settings.optIn) return { status: "opt_out" };
     if (!settings.supporterKey) return { status: "no_key" };
 
-    const baseUrl = (process.env.RADAR_FEED_URL || DEFAULT_FEED_BASE_URL).replace(/\/+$/, "");
+    const baseUrl = resolveRadarFeedBaseUrl();
+    if (!baseUrl) {
+      return { status: "error", reason: RADAR_FEED_URL_MISSING_REASON };
+    }
     const response = await fetchFn(`${baseUrl}/v1/intel/latest`, {
       method: "GET",
       headers: { Authorization: `Bearer ${settings.supporterKey}` },
@@ -119,7 +122,7 @@ export async function syncRadarIntel(deps: IntelSyncDeps = {}): Promise<IntelSyn
     const rawBytes = await readBoundedBytes(response);
     if (!rawBytes) return { status: "too_large" };
 
-    const signature = response.headers.get("x-omniroute-feed-signature") ?? "";
+    const signature = response.headers.get("x-agentproxy-feed-signature") ?? "";
     if (!verifyFeedBytes(rawBytes, signature)) return { status: "invalid_signature" };
 
     let feed: RadarIntelFeed;
@@ -128,7 +131,7 @@ export async function syncRadarIntel(deps: IntelSyncDeps = {}): Promise<IntelSyn
     } catch {
       return { status: "invalid_schema" };
     }
-    if (response.headers.get("x-omniroute-feed-tier") !== "live" || feed.tier !== "live") {
+    if (response.headers.get("x-agentproxy-feed-tier") !== "live" || feed.tier !== "live") {
       return { status: "wrong_tier" };
     }
 

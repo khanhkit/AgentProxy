@@ -59,7 +59,7 @@ export function decidePreSpawn(
       message:
         `Port ${port} is already serving a healthy response, but adopting an ` +
         `existing listener is disabled by default (a 2xx cannot prove the listener ` +
-        `is this service). Set OMNIROUTE_ADOPT_EXISTING_SERVICE=1 to allow adoption, ` +
+        `is this service). Set AGENTPROXY_ADOPT_EXISTING_SERVICE=1 to allow adoption, ` +
         `or stop the process holding the port and start the service again.`,
     };
   }
@@ -86,7 +86,7 @@ export function decidePreSpawn(
  * genuinely their (externally-managed) instance.
  */
 export function isAdoptExistingEnabled(env: NodeJS.ProcessEnv = process.env): boolean {
-  const v = env.OMNIROUTE_ADOPT_EXISTING_SERVICE;
+  const v = env.AGENTPROXY_ADOPT_EXISTING_SERVICE;
   return v === "1" || v === "true";
 }
 

@@ -25,7 +25,7 @@ const core = await import("../../src/lib/db/core.ts");
 const apiKeysDb = await import("../../src/lib/db/apiKeys.ts");
 const { runAuthzPipeline } = await import("../../src/server/authz/pipeline.ts");
 
-globalThis.__omnirouteShutdown = { init: false, shuttingDown: false, activeRequests: 0 };
+globalThis.__agentproxyShutdown = { init: false, shuttingDown: false, activeRequests: 0 };
 
 function restoreEnv(name: keyof typeof originalEnv): void {
   const value = originalEnv[name];
@@ -42,7 +42,7 @@ test.after(() => {
   restoreEnv("REQUIRE_API_KEY");
   restoreEnv("INITIAL_PASSWORD");
   restoreEnv("JWT_SECRET");
-  globalThis.__omnirouteShutdown = { init: false, shuttingDown: false, activeRequests: 0 };
+  globalThis.__agentproxyShutdown = { init: false, shuttingDown: false, activeRequests: 0 };
 });
 
 test("keyless local-first models routes remain anonymous when REQUIRE_API_KEY=false", async () => {
@@ -55,6 +55,6 @@ test("keyless local-first models routes remain anonymous when REQUIRE_API_KEY=fa
     );
 
     assert.equal(response.status, 200, pathname);
-    assert.equal(response.headers.get("x-omniroute-route-class"), "CLIENT_API", pathname);
+    assert.equal(response.headers.get("x-agentproxy-route-class"), "CLIENT_API", pathname);
   }
 });

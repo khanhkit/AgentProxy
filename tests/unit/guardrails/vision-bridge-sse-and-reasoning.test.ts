@@ -1,10 +1,10 @@
 /**
- * Regression tests for the vision-bridge describe call against OmniRoute's own
+ * Regression tests for the vision-bridge describe call against AgentProxy's own
  * self-loop (or any OpenAI-compatible endpoint that defaults to SSE).
  *
  * Root cause (observed with `cmd/xiaomi/mimo-v2.5`):
  *   callVisionModelSingle() sent no `stream` field and no `Accept` header, so
- *   OmniRoute's resolveStreamFlag() defaulted the request to `stream=true` and
+ *   AgentProxy's resolveStreamFlag() defaulted the request to `stream=true` and
  *   returned a `data: {...}` SSE stream. response.json() then threw
  *   `Unexpected token 'd'` ("data: {...} is not valid JSON"), the description
  *   became `null`, and (per #4012) the raw image was preserved instead of being
@@ -211,7 +211,7 @@ test("vision-bridge: parses SSE reasoning_content deltas when content is empty",
 });
 
 test("vision-bridge: parses the diagnostics envelope { _streamed, summary }", async () => {
-  // Some OmniRoute capture paths wrap the provider response in
+  // Some AgentProxy capture paths wrap the provider response in
   // { _streamed: true, _format: "sse-json", summary: {...} }.
   const mockResponse = {
     ok: true,

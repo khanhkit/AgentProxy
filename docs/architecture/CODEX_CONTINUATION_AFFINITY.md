@@ -1,3 +1,7 @@
+---
+title: "Native Codex Continuation Affinity"
+---
+
 # Native Codex Continuation Affinity
 
 AP-ISS-0106 defines a narrow producing-auth affinity contract for provider-owned Codex continuation references.

@@ -4,7 +4,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-auth-login-route-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-auth-login-route-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.JWT_SECRET = "test-jwt-secret-for-login-route";
 
@@ -190,7 +190,7 @@ test("AP-ISS-0005: password auth cookie follows configured HTTPS origin, not spo
 test("AP-ISS-0005: direct HTTP password login stays non-Secure unless override forces it", async () => {
   process.env.INITIAL_PASSWORD = "bootstrap-secret";
   delete process.env.NEXT_PUBLIC_BASE_URL;
-  delete process.env.OMNIROUTE_PUBLIC_BASE_URL;
+  delete process.env.AGENTPROXY_PUBLIC_BASE_URL;
   delete process.env.NEXT_PUBLIC_APP_URL;
   delete process.env.AUTH_COOKIE_SECURE;
   const setCalls: unknown[][] = [];

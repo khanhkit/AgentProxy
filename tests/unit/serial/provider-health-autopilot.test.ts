@@ -6,7 +6,7 @@ import path from "node:path";
 import { NextRequest } from "next/server";
 import { makeManagementSessionRequest } from "../../helpers/managementSession.ts";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-health-autopilot-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-health-autopilot-"));
 const ORIGINAL_DATA_DIR = process.env.DATA_DIR;
 const ORIGINAL_INITIAL_PASSWORD = process.env.INITIAL_PASSWORD;
 const ORIGINAL_JWT_SECRET = process.env.JWT_SECRET;
@@ -22,7 +22,7 @@ const actionsRoute =
 const reportRoute = await import("../../../src/app/api/providers/health-autopilot/route.ts");
 const routeGuard = await import("../../../src/server/authz/routeGuard.ts");
 const authzPipeline = await import("../../../src/server/authz/pipeline.ts");
-const accountFallback = await import("@omniroute/open-sse/services/accountFallback");
+const accountFallback = await import("@agentproxy/open-sse/services/accountFallback");
 
 const PROVIDER = "autopilot-test-provider";
 
@@ -262,7 +262,7 @@ test("provider health autopilot action rejects cross-site mutations", async () =
   });
 
   assert.equal(response.status, 403);
-  assert.equal(response.headers.get("x-omniroute-route-class"), "MANAGEMENT");
+  assert.equal(response.headers.get("x-agentproxy-route-class"), "MANAGEMENT");
   // The pipeline blocks before the route handler runs, so the cooldown is untouched.
   const unchanged = (await providersDb.getProviderConnectionById(String(connection.id))) as Record<
     string,
@@ -305,7 +305,7 @@ test("provider health autopilot action accepts LAN dashboard requests (#6277)", 
       },
     }
   );
-  assert.equal(request.headers.get("x-omniroute-peer-ip"), null);
+  assert.equal(request.headers.get("x-agentproxy-peer-ip"), null);
 
   const response = await actionsRoute.POST(request);
   assert.equal(response.status, 200);

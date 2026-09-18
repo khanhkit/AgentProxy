@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-// Regression guard for issue #6584: webpack (OMNIROUTE_USE_TURBOPACK=0) build breaks on
+// Regression guard for issue #6584: webpack (AGENTPROXY_USE_TURBOPACK=0) build breaks on
 // case-insensitive filesystems (macOS APFS default, Windows) because two source
 // files in the same directory differ only by casing:
 //   src/app/(dashboard)/dashboard/playground/components/ReasoningControls.tsx
