@@ -76,18 +76,18 @@ function sendConnect(proxyPort: number, target: string): Promise<number> {
   });
 }
 
-test("HTTP direct passes through and records buffer entry", async () => {
+test("HTTP direct rejects a private target and records the blocked buffer entry", async () => {
   globalTrafficBuffer.clear();
   const upstream = await withUpstream((_req, res) => {
     res.writeHead(200, { "content-type": "text/plain" });
-    res.end("hello");
+    res.end("must-not-be-reached");
   });
   const proxy = await startHttpProxyServer(0);
   try {
     const sizeBefore = globalTrafficBuffer.size();
     const { status, body } = await sendThroughProxy(proxy.port, upstream.port);
-    assert.equal(status, 200);
-    assert.equal(body, "hello");
+    assert.equal(status, 502);
+    assert.equal(body, "Bad Gateway");
     // give buffer.update a tick (it runs inside async path)
     await new Promise((r) => setTimeout(r, 30));
     assert.ok(globalTrafficBuffer.size() > sizeBefore);
@@ -95,8 +95,9 @@ test("HTTP direct passes through and records buffer entry", async () => {
     assert.ok(entry);
     assert.equal(entry.source, "http-proxy");
     assert.equal(entry.method, "GET");
-    assert.equal(entry.status, 200);
-    assert.match(entry.responseBody ?? "", /hello/);
+    assert.equal(entry.status, "error");
+    assert.match(entry.error ?? "", /blocked private|local provider URL/i);
+    assert.equal(entry.responseBody, null);
   } finally {
     await proxy.stop();
     await upstream.close();
