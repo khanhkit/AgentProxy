@@ -9,10 +9,17 @@ inputs:
     description: Set to "false" to skip the node_modules cache and always run npm ci.
     required: false
     default: "true"
+  pin_authoritative_npm:
+    description: >-
+      Set to "false" only for an explicit runtime-compatibility lane whose Node
+      release is rejected by the authoritative npm version.
+    required: false
+    default: "true"
 runs:
   using: composite
   steps:
     - name: Pin authoritative npm
+      if: inputs.pin_authoritative_npm == 'true'
       shell: bash
       run: npm install -g npm@12.0.2 --no-audit --no-fund
 
