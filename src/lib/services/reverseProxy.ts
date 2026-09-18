@@ -97,6 +97,57 @@ export function shouldStripProxyResponseHeader(
 
 export const PROXY_TIMEOUT_MS = 30_000;
 
+/** Maximum upstream HTML bytes buffered for path rewriting. */
+export const MAX_HTML_REWRITE_BYTES = 8 * 1024 * 1024;
+
+function htmlResponseTooLargeError(limitBytes: number): Error {
+  return new Error(`HTML response exceeds ${limitBytes} bytes`);
+}
+
+/**
+ * Read an upstream HTML response through a strict byte budget.
+ *
+ * Declared oversized bodies are cancelled before the first read. Responses
+ * without a trustworthy Content-Length are streamed incrementally and cancelled
+ * immediately once their observed UTF-8 byte payload crosses the same budget.
+ */
+export async function readHtmlResponseWithLimit(
+  response: Response,
+  maxBytes: number = MAX_HTML_REWRITE_BYTES
+): Promise<string> {
+  const declaredRaw = response.headers.get("content-length")?.trim() ?? "";
+  if (/^\d+$/.test(declaredRaw)) {
+    const declaredBytes = Number(declaredRaw);
+    if (Number.isFinite(declaredBytes) && declaredBytes > maxBytes) {
+      await response.body?.cancel("HTML response size limit exceeded").catch(() => undefined);
+      throw htmlResponseTooLargeError(maxBytes);
+    }
+  }
+
+  if (!response.body) return "";
+
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  let totalBytes = 0;
+  let html = "";
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    if (!value) continue;
+
+    totalBytes += value.byteLength;
+    if (totalBytes > maxBytes) {
+      await reader.cancel("HTML response size limit exceeded").catch(() => undefined);
+      throw htmlResponseTooLargeError(maxBytes);
+    }
+    html += decoder.decode(value, { stream: true });
+  }
+
+  html += decoder.decode();
+  return html;
+}
+
 // ─── public interface ─────────────────────────────────────────────────────────
 
 export interface ReverseProxyConfig {
@@ -190,7 +241,7 @@ export async function proxyRequest(
 
     // HTML responses: buffer, rewrite links, return as string.
     if (htmlRewrite && contentType.startsWith("text/html")) {
-      const html = await upstream.text();
+      const html = await readHtmlResponseWithLimit(upstream);
       const rewritten = rewriteHtml(html, publicPrefix);
       return new Response(rewritten, {
         status: upstream.status,

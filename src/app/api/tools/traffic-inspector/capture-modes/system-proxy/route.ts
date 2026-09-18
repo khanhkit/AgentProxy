@@ -25,9 +25,8 @@ import {
 } from "@/lib/inspector/captureState";
 
 const DEFAULT_PORT = Number(process.env.INSPECTOR_HTTP_PROXY_PORT ?? "8080") || 8080;
-const DEFAULT_GUARD_MINUTES = Number(
-  process.env.INSPECTOR_SYSTEM_PROXY_GUARD_MINUTES ?? "30"
-) || 30;
+const DEFAULT_GUARD_MINUTES =
+  Number(process.env.INSPECTOR_SYSTEM_PROXY_GUARD_MINUTES ?? "30") || 30;
 
 export async function POST(request: Request): Promise<Response> {
   let body: unknown;
@@ -73,8 +72,11 @@ export async function POST(request: Request): Promise<Response> {
 
   // action === "apply"
   try {
-    const result = await apply(resolvedPort);
-    setSystemProxyApplied(resolvedPort, result.previousState, resolvedGuard);
+    const result = await apply(resolvedPort, ({ previousState }) => {
+      // Persist/authenticate the previous OS state before apply() performs its
+      // first system mutation. If this fails, apply aborts with the OS untouched.
+      setSystemProxyApplied(resolvedPort, previousState, resolvedGuard);
+    });
     return Response.json({
       ok: true,
       applied: true,

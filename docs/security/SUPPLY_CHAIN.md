@@ -57,3 +57,18 @@ After the 1st green release with Scorecard reporting:
 
 Complements the Phase 7 gates (osv-scanner, gitleaks, actionlint+zizmor): zizmor
 audits the workflows themselves; Scorecard measures the repo posture in aggregate.
+
+## Runtime managed-update integrity
+
+Release-time gates are complemented by fail-closed admission for operator-triggered updates.
+OmniRoute's CLI updater resolves the current npm release version and SRI together, then promotes the
+exact version rather than `@latest`. npm-managed embedded services similarly resolve an exact
+version plus `dist.integrity` before installation. CLIProxyAPI release installs require a matching
+SHA-256 entry in upstream `checksums.txt` before extraction; absent or malformed checksum metadata
+is an install failure.
+
+Embedded-service compatibility policy is stored in the existing `version_manager` state:
+`pinnedVersion` pins one candidate, while `configOverrides.managedUpdate.allowedVersions` and
+`blockedVersions` provide explicit allow/deny admission. Successful installs record the verified
+candidate, last-known-good version, previous rollback version, verification metadata, and timestamp
+under `configOverrides.managedUpdate` so rollback state survives process restart.

@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import { PEER_IP_HEADER } from "@/server/authz/headers";
 
 // NOTE: Dynamic imports below are used (with comment) solely because the modules read process.env at evaluation time.
 // The specifiers are literals. This is the established pattern in this repo's auth tests for env-controlled DB setup.
@@ -118,4 +119,85 @@ test("OIDC login returns 400 without redirecting when OIDC is not configured", a
   assert.equal(response.status, 400);
   assert.equal(response.headers.get("location"), null);
   assert.equal(response.headers.get("set-cookie"), null);
+});
+
+test("AP-ISS-0005: configured HTTPS origin resists spoofed Host/XFP for OIDC redirect and cookie", async () => {
+  await setupFullOidcSettings();
+  process.env.NEXT_PUBLIC_BASE_URL = "https://trusted.example.test";
+
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = (async (input: RequestInfo | URL) => {
+    const url = typeof input === "string" ? input : (input as URL).toString();
+    if (url.includes("/.well-known/openid-configuration")) {
+      return new Response("not found", { status: 404 });
+    }
+    return new Response("not mocked", { status: 404 });
+  }) as unknown as typeof fetch;
+
+  try {
+    const response = await loginRoute.GET(
+      new Request("http://internal.local/api/auth/oidc/login", {
+        headers: {
+          host: "attacker.example.test",
+          "x-forwarded-proto": "http",
+        },
+      })
+    );
+
+    const location = response.headers.get("location");
+    assert.ok(location, "OIDC authorization redirect must exist");
+    const redirectUri = new URL(location).searchParams.get("redirect_uri");
+    assert.equal(redirectUri, "https://trusted.example.test/api/auth/oidc/callback");
+
+    const setCookieHeader = response.headers.get("set-cookie");
+    assert.ok(setCookieHeader, "OIDC state cookie must be set");
+    assert.match(setCookieHeader, /;\s*Secure(?:;|$)/i);
+  } finally {
+    globalThis.fetch = originalFetch;
+    delete process.env.NEXT_PUBLIC_BASE_URL;
+  }
+});
+
+
+test("AP-ISS-0005: trusted stamped proxy origin is honored for OIDC redirect and cookie", async () => {
+  await setupFullOidcSettings();
+  delete process.env.OMNIROUTE_PUBLIC_BASE_URL;
+  delete process.env.NEXT_PUBLIC_BASE_URL;
+  delete process.env.NEXT_PUBLIC_APP_URL;
+  process.env.OMNIROUTE_TRUST_PROXY = "true";
+  process.env.OMNIROUTE_PEER_STAMP_TOKEN = "oidc-login-test-peer-stamp";
+
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = (async (input: RequestInfo | URL) => {
+    const url = typeof input === "string" ? input : (input as URL).toString();
+    if (url.includes("/.well-known/openid-configuration")) {
+      return new Response("not found", { status: 404 });
+    }
+    return new Response("not mocked", { status: 404 });
+  }) as unknown as typeof fetch;
+
+  try {
+    const response = await loginRoute.GET(
+      new Request("http://internal.local/api/auth/oidc/login", {
+        headers: {
+          host: "attacker.example.test",
+          "x-forwarded-host": "trusted-proxy.example.test",
+          "x-forwarded-proto": "https",
+          [PEER_IP_HEADER]: "oidc-login-test-peer-stamp|127.0.0.1",
+        },
+      })
+    );
+
+    const location = response.headers.get("location");
+    assert.ok(location, "OIDC authorization redirect must exist");
+    assert.equal(
+      new URL(location).searchParams.get("redirect_uri"),
+      "https://trusted-proxy.example.test/api/auth/oidc/callback"
+    );
+    assert.match(response.headers.get("set-cookie") || "", /;\s*Secure(?:;|$)/i);
+  } finally {
+    globalThis.fetch = originalFetch;
+    delete process.env.OMNIROUTE_TRUST_PROXY;
+    delete process.env.OMNIROUTE_PEER_STAMP_TOKEN;
+  }
 });

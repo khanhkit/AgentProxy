@@ -8,7 +8,6 @@ import { getRuntimePorts } from "@/lib/runtime/ports";
 import { resolveSelfLoopBearer } from "@/shared/middleware/chatBodyAdmission";
 import { getBestVisionModel, getFallbackModels, recordLatency } from "./visionBridgeRouter";
 import { REGISTRY } from "@omniroute/open-sse/config/providers";
-import { fetch as undiciFetch } from "undici";
 /**
  * Provider to environment variable mapping for API key resolution.
  */
@@ -215,17 +214,8 @@ export function extractImageParts(messages: RequestMessage[]): ImagePart[] {
     }));
 }
 
-// Undici fetch with a browser-ish User-Agent: Wikimedia (and other CDNs)
-// reject requests without a UA with HTTP 400, silently breaking remote image
-// downloads in the describe path.
-const VISION_BRIDGE_UA_FETCH: typeof fetch = ((input: RequestInfo | URL, init?: RequestInit) =>
-  undiciFetch(input as string | URL, {
-    ...(init as Parameters<typeof undiciFetch>[1]),
-    headers: {
-      "user-agent": "omniroute-vision-bridge",
-      ...((init?.headers as Record<string, string> | undefined) ?? {}),
-    },
-  })) as unknown as typeof fetch;
+// Wikimedia (and other CDNs) reject requests without a browser-ish UA.
+const VISION_BRIDGE_FETCH_HEADERS = { "user-agent": "omniroute-vision-bridge" };
 
 /**
  * Resolve every image part in the body to a base64 data URI when the target
@@ -236,7 +226,7 @@ const VISION_BRIDGE_UA_FETCH: typeof fetch = ((input: RequestInfo | URL, init?: 
 export async function ensureBase64ImagesForClaudeWire(
   body: RequestBody,
   model: string,
-  fetchImpl: typeof fetch = VISION_BRIDGE_UA_FETCH
+  fetchImpl?: typeof fetch
 ): Promise<RequestBody> {
   if (!isClaudeWireFormatModel(model)) return body;
   const parts = extractImageParts(body.messages as RequestMessage[]);
@@ -306,12 +296,13 @@ export function resolveImageAsDataUri(imageUrl: string): string {
 async function fetchRemoteImageAsDataUri(
   imageUrl: string,
   signal: AbortSignal,
-  fetchImpl: typeof fetch = VISION_BRIDGE_UA_FETCH
+  fetchImpl?: typeof fetch
 ): Promise<string> {
   const remoteImage = await fetchRemoteImage(imageUrl, {
     signal,
-    // Bypass the runtime's hooked global fetch (ProxyFetch) — a dead local
-    // proxy (e.g. 127.0.0.1:8317) would otherwise break the download.
+    guard: "public-only",
+    pinDns: true,
+    headers: VISION_BRIDGE_FETCH_HEADERS,
     fetchImpl,
   });
   const mediaType = remoteImage.contentType.split(";")[0]?.trim() || "image/png";

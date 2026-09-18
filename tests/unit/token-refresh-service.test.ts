@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 const tokenRefresh = await import("../../open-sse/services/tokenRefresh.ts");
+const { resolveProxyForRequest } = await import("../../open-sse/utils/proxyFetch.ts");
 const { PROVIDERS, OAUTH_ENDPOINTS } = await import("../../open-sse/config/constants.ts");
 const { KIMI_CODE_CLI_PLATFORM, getKimiCodeCliVersion } =
   await import("../../open-sse/config/providers/registry/kimi/coding/runtime.ts");
@@ -221,8 +222,58 @@ test("refreshAccessToken posts form data and returns rotated tokens", async () =
   );
 });
 
-test("refreshAccessToken returns null on upstream refresh failure", async () => {
+test("refreshAccessToken retries one transient failure on the same proxy context", async () => {
   const log = createLog();
+  const contexts: Array<{ source: string; proxyUrl: string | null }> = [];
+  let attempts = 0;
+  const proxyConfig = { type: "vercel", host: "retry-proxy.example.invalid" };
+
+  await withPatchedProperties(
+    PROVIDERS,
+    {
+      "custom-oauth-task-207": { tokenUrl: "https://oauth-refresh.ap-iss-0061.invalid/token" },
+    },
+    async () => {
+      await withMockedFetch(
+        async (url) => {
+          attempts++;
+          contexts.push(resolveProxyForRequest(String(url)));
+          if (attempts === 1) {
+            throw Object.assign(new Error("socket reset during CONNECT"), { code: "ECONNRESET" });
+          }
+          return jsonResponse({
+            access_token: "retry-access",
+            refresh_token: "retry-refresh",
+            expires_in: 3600,
+          });
+        },
+        async () => {
+          const result = await refreshAccessToken(
+            "custom-oauth-task-207",
+            "refresh-123",
+            {},
+            log,
+            proxyConfig
+          );
+
+          assert.deepEqual(result, {
+            accessToken: "retry-access",
+            refreshToken: "retry-refresh",
+            expiresIn: 3600,
+          });
+        }
+      );
+    }
+  );
+
+  assert.equal(attempts, 2);
+  assert.equal(contexts[0].source, "context");
+  assert.deepEqual(contexts[1], contexts[0]);
+});
+
+test("refreshAccessToken bounds repeated transient failures to one retry", async () => {
+  const log = createLog();
+  let attempts = 0;
 
   await withPatchedProperties(
     PROVIDERS,
@@ -231,7 +282,63 @@ test("refreshAccessToken returns null on upstream refresh failure", async () => 
     },
     async () => {
       await withMockedFetch(
-        async () => textResponse("rate limited", 429),
+        async () => {
+          attempts++;
+          throw Object.assign(new Error("socket reset"), { code: "ECONNRESET" });
+        },
+        async () => {
+          const result = await refreshAccessToken("custom-oauth-task-207", "refresh-123", {}, log);
+          assert.equal(result, null);
+        }
+      );
+    }
+  );
+
+  assert.equal(attempts, 2);
+});
+
+test("refreshAccessToken does not retry cancellation", async () => {
+  const log = createLog();
+  let attempts = 0;
+
+  await withPatchedProperties(
+    PROVIDERS,
+    {
+      "custom-oauth-task-207": { tokenUrl: "https://auth.example.com/token" },
+    },
+    async () => {
+      await withMockedFetch(
+        async () => {
+          attempts++;
+          const error = new Error("cancelled");
+          error.name = "AbortError";
+          throw error;
+        },
+        async () => {
+          const result = await refreshAccessToken("custom-oauth-task-207", "refresh-123", {}, log);
+          assert.equal(result, null);
+        }
+      );
+    }
+  );
+
+  assert.equal(attempts, 1);
+});
+test("refreshAccessToken returns null on upstream refresh failure", async () => {
+  const log = createLog();
+  let attempts = 0;
+
+  await withPatchedProperties(
+    PROVIDERS,
+    {
+      "custom-oauth-task-207": { tokenUrl: "https://auth.example.com/token" },
+    },
+    async () => {
+      await withMockedFetch(
+        async () => {
+          attempts++;
+          return textResponse("rate limited", 429);
+        },
         async () => {
           const result = await refreshAccessToken("custom-oauth-task-207", "refresh-123", {}, log);
 
@@ -244,6 +351,7 @@ test("refreshAccessToken returns null on upstream refresh failure", async () => 
       );
     }
   );
+  assert.equal(attempts, 1);
 });
 
 test("refreshClineToken handles nested payloads and computes expiresIn", async () => {

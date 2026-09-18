@@ -14,8 +14,11 @@ const {
   tryParseJSON,
 } = await import("../../open-sse/translator/helpers/geminiHelper.ts");
 const { ANTIGRAVITY_DEFAULT_SYSTEM } = await import("../../open-sse/config/constants.ts");
-const { clearGeminiThoughtSignatures } =
-  await import("../../open-sse/services/geminiThoughtSignatureStore.ts");
+const {
+  buildGeminiThoughtSignatureKey,
+  storeGeminiThoughtSignature,
+  clearGeminiThoughtSignatures,
+} = await import("../../open-sse/services/geminiThoughtSignatureStore.ts");
 
 type UnknownRecord = Record<string, unknown>;
 type GeminiRequestWithConfig = { generationConfig: UnknownRecord };
@@ -194,6 +197,13 @@ test("OpenAI -> Gemini helper inlines local refs and preserves only additionalPr
 });
 
 test("OpenAI -> Gemini request maps messages, merged system instructions, tools and response schema", () => {
+  const signatureNamespace = "conn-general-map";
+  const reasoningSignature = "SIG_GENERAL_MAP";
+  storeGeminiThoughtSignature(
+    buildGeminiThoughtSignatureKey(signatureNamespace, "call_1"),
+    reasoningSignature
+  );
+
   const result = openaiToGeminiRequest(
     "gemini-2.5-pro",
     {
@@ -258,7 +268,8 @@ test("OpenAI -> Gemini request maps messages, merged system instructions, tools 
         },
       },
     },
-    false
+    false,
+    { _signatureNamespace: signatureNamespace }
   );
 
   const systemInstruction = (result as GeminiRequestWithSystem).systemInstruction;
@@ -274,10 +285,15 @@ test("OpenAI -> Gemini request maps messages, merged system instructions, tools 
     (content) => content.role === "model" && content.parts.some((part) => part.functionCall)
   );
   assert.ok(modelTurn, "expected a model turn with functionCall");
-  const modelTurnThought = modelTurn.parts[0] as { thought?: boolean; text?: string };
+  const modelTurnThought = modelTurn.parts[0] as {
+    thought?: boolean;
+    text?: string;
+    thoughtSignature?: string;
+  };
   const modelTurnFunctionCall = getFunctionCall(modelTurn.parts[2]);
   assert.equal(modelTurn.parts[0].thought, true);
   assert.equal(modelTurnThought.text, "Need live data");
+  assert.equal(modelTurnThought.thoughtSignature, reasoningSignature);
   assert.equal(modelTurn.parts[1].text, "Calling a tool");
   assert.equal(modelTurnFunctionCall.name, "weather");
   assert.deepEqual(modelTurnFunctionCall.args, { city: "Tokyo" });

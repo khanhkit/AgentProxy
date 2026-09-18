@@ -1,5 +1,9 @@
 use std::{convert::Infallible, time::Duration};
 
+use agentproxy_control_protocol::snapshot::{
+    ApiKeyConfig, CodexConnectionConfig, ConfigSnapshot, SUPPORTED_SCHEMA_VERSION,
+};
+use agentproxy_gateway::{app, AppState};
 use async_stream::stream;
 use axum::{
     body::{Body, Bytes},
@@ -9,10 +13,6 @@ use axum::{
     Router,
 };
 use http_body_util::BodyExt;
-use agentproxy_control_protocol::snapshot::{
-    ApiKeyConfig, CodexConnectionConfig, ConfigSnapshot, SUPPORTED_SCHEMA_VERSION,
-};
-use agentproxy_gateway::{app, AppState};
 use sha2::{Digest, Sha256};
 use tokio::{
     net::TcpListener,
@@ -461,4 +461,89 @@ async fn explicit_codex_prefix_is_stripped_before_upstream() {
     let text = String::from_utf8_lossy(&bytes);
     assert!(text.contains("\"model\":\"gpt-5.6-sol\""));
     assert!(!text.contains("codex/gpt-5.6-sol-high"));
+}
+
+fn two_account_snapshot(first: String, second: String) -> ConfigSnapshot {
+    ConfigSnapshot {
+        schema_version: SUPPORTED_SCHEMA_VERSION,
+        source_id: "node-semantic-sse".to_owned(),
+        generation: 1,
+        api_keys: vec![api_key("client-secret", vec![])],
+        codex_connections: vec![
+            CodexConnectionConfig {
+                id: "first".to_owned(),
+                access_token: "token-first".to_owned(),
+                workspace_id: None,
+                base_url: first,
+                max_concurrent: Some(2),
+                credential_version: 1,
+            },
+            CodexConnectionConfig {
+                id: "second".to_owned(),
+                access_token: "token-second".to_owned(),
+                workspace_id: None,
+                base_url: second,
+                max_concurrent: Some(2),
+                credential_version: 1,
+            },
+        ],
+        codex_catalog_models: vec!["gpt-5.6-sol-high".to_owned()],
+        codex_native_models: vec!["gpt-5.6-sol-high".to_owned()],
+    }
+}
+
+fn native_codex_request() -> Request<Body> {
+    Request::builder()
+        .method("POST")
+        .uri("/v1/responses")
+        .header("content-type", "application/json")
+        .header("authorization", "Bearer client-secret")
+        .body(Body::from(r#"{"model":"gpt-5.6-sol-high","input":[]}"#))
+        .unwrap()
+}
+
+#[tokio::test]
+async fn benign_output_text_with_error_words_does_not_trigger_failover() {
+    let upstream = spawn_single_event_codex(
+        b"event: response.output_text.delta\ndata: {\"type\":\"response.output_text.delta\",\"delta\":\"server_is_overloaded is user-visible text\"}\n\n",
+    )
+    .await;
+    let state = AppState::new();
+    state
+        .install_snapshot(
+            single_account_snapshot(upstream, api_key("client-secret", vec![])),
+            false,
+        )
+        .unwrap();
+
+    let response = app(state).oneshot(native_codex_request()).await.unwrap();
+
+    assert_eq!(response.status(), StatusCode::OK);
+    let bytes = response.into_body().collect().await.unwrap().to_bytes();
+    assert!(String::from_utf8_lossy(&bytes).contains("server_is_overloaded"));
+}
+
+#[tokio::test]
+async fn structured_rate_limit_inside_http_200_retries_before_commit() {
+    let rate_limited = spawn_single_event_codex(
+        b"event: response.failed\ndata: {\"type\":\"response.failed\",\"response\":{\"status\":\"failed\",\"error\":{\"code\":\"rate_limit_exceeded\",\"message\":\"quota exhausted\"}}}\n\n",
+    )
+    .await;
+    let healthy = spawn_single_event_codex(
+        b"event: response.created\ndata: {\"type\":\"response.created\",\"source\":\"fallback\"}\n\n",
+    )
+    .await;
+    let state = AppState::new();
+    state
+        .install_snapshot(two_account_snapshot(rate_limited, healthy), false)
+        .unwrap();
+
+    let response = app(state).oneshot(native_codex_request()).await.unwrap();
+
+    assert_eq!(response.status(), StatusCode::OK);
+    let bytes = response.into_body().collect().await.unwrap().to_bytes();
+    let text = String::from_utf8_lossy(&bytes);
+    assert!(text.contains("response.created"));
+    assert!(text.contains("fallback"));
+    assert!(!text.contains("rate_limit_exceeded"));
 }

@@ -461,6 +461,7 @@ test("handleImageGeneration routes Stability AI edit models to native endpoints"
       },
       credentials: { apiKey: "stability-key" },
       log: null,
+      remoteMediaFetchImpl: globalThis.fetch,
     });
 
     assert.equal(result.success, true);
@@ -595,6 +596,7 @@ test("handleImageGeneration polls Black Forest Labs results and sends base64 inp
       },
       credentials: { apiKey: "bfl-key" },
       log: null,
+      remoteMediaFetchImpl: globalThis.fetch,
     });
 
     assert.equal(result.success, true);
@@ -699,6 +701,7 @@ test("handleImageGeneration uploads source images to Topaz and returns base64 ou
       },
       credentials: { apiKey: "topaz-key" },
       log: null,
+      remoteMediaFetchImpl: globalThis.fetch,
     });
 
     assert.equal(result.success, true);

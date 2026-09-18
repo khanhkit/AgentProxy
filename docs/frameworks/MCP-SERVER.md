@@ -317,6 +317,11 @@ MCP tools are authenticated through API key scopes. Scope enforcement is central
 
 Wildcard scopes are supported: `read:*` grants all read-scopes, `*` grants full access.
 
+`gamification_anomalies` is a population-wide administrative read. Its resource scope remains
+`read:gamification`, but authenticated HTTP/SSE callers must also carry `manage` or `admin`
+authority (or the full-access `*` scope). `read:gamification` and `read:*` alone are insufficient.
+stdio has no per-request authenticated principal and preserves the local-operator behavior.
+
 ### `mcp:connect` — narrow route capability (#7895)
 
 Reaching the HTTP/SSE MCP transport (`/api/mcp/*`) from non-loopback requires the
@@ -344,6 +349,19 @@ existing `meta`/env chain unchanged. This does NOT flip `OMNIROUTE_MCP_ENFORCE_S
 default — enforcement still has to be explicitly enabled; this change only makes the
 per-key path take precedence once it is. stdio has no per-caller identity (see
 `mcpCallerIdentity.ts`) and is unaffected — it stays on the `_meta`/env fallback chain.
+
+For HTTP/SSE gamification tools, that authenticated `clientId` is also the authoritative
+principal for caller-oriented reads and writes. Caller-supplied `apiKeyId` / `fromApiKeyId`
+values cannot select another principal unless the authenticated key carries the canonical
+`manage` or `admin` management scope. stdio remains operator-local and keeps its explicit-ID
+behavior because it has no per-request authenticated principal.
+
+The same tenant-binding rule applies to the four MCP skill tools (`skills_list`,
+`skills_enable`, `skills_execute`, and `skills_executions`). Normal authenticated callers are
+always scoped to `extra.authInfo.clientId`, including when `apiKeyId` is omitted or names a
+foreign tenant. A `manage`/`admin` caller may explicitly address another tenant. stdio/local
+operator calls preserve their explicit `apiKeyId` behavior because no per-request authenticated
+principal is available there.
 
 ---
 

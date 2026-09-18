@@ -73,6 +73,17 @@ export function createFailureEvent(taskId: string, error: string): string {
   });
 }
 
+export function createCancellationEvent(taskId: string): string {
+  return formatSSE({
+    jsonrpc: "2.0",
+    method: "message/stream",
+    params: {
+      task: { id: taskId, state: "cancelled" },
+      metadata: { cancelled: true },
+    },
+  });
+}
+
 /**
  * SSE response headers for A2A streaming.
  */
@@ -115,7 +126,7 @@ export function createA2AStream(
       try {
         // Check for cancellation
         if (abortSignal?.aborted) {
-          controller.enqueue(encoder.encode(createFailureEvent(task.id, "Cancelled")));
+          controller.enqueue(encoder.encode(createCancellationEvent(task.id)));
           controller.close();
           return;
         }
@@ -130,15 +141,19 @@ export function createA2AStream(
         }
 
         if (abortSignal?.aborted) {
-          controller.enqueue(encoder.encode(createFailureEvent(task.id, "Cancelled")));
+          controller.enqueue(encoder.encode(createCancellationEvent(task.id)));
           return;
         }
 
         // Emit completion with metadata
         controller.enqueue(encoder.encode(createCompletionEvent(task.id, result.metadata)));
       } catch (err) {
-        const msg = err instanceof Error ? err.message : String(err);
-        controller.enqueue(encoder.encode(createFailureEvent(task.id, msg)));
+        if (task.state === "cancelled" || abortSignal?.aborted) {
+          controller.enqueue(encoder.encode(createCancellationEvent(task.id)));
+        } else {
+          const msg = err instanceof Error ? err.message : String(err);
+          controller.enqueue(encoder.encode(createFailureEvent(task.id, msg)));
+        }
       } finally {
         clearInterval(heartbeatInterval);
         lifecycle?.onEnd?.();

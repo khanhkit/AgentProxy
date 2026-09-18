@@ -251,7 +251,20 @@ export const managementPolicy: RoutePolicy = {
     }
 
     // Tier 2: always-protected routes skip the requireLogin=false bypass.
-    if (!isAlwaysProtectedPath(path) && !(await isAuthRequired(ctx.request))) {
+    if (
+      !isAlwaysProtectedPath(path) &&
+      !(await isAuthRequired(ctx.request, { trustPipelineLocalityHeader: false }))
+    ) {
+      // The one unauthenticated management mutation used by first-run setup is
+      // loopback-only. Use the token-stamped TCP peer verdict here; Host/XFF are
+      // client-controlled and must never establish bootstrap ownership.
+      if (
+        path === "/api/settings/require-login" &&
+        ctx.request?.method?.toUpperCase() === "POST" &&
+        !isLoopbackRequest(ctx)
+      ) {
+        return reject(403, "LOCAL_ONLY", "Initial login setup requires localhost access");
+      }
       return allow({ kind: "anonymous", id: "anonymous", label: "auth-disabled" });
     }
 

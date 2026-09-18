@@ -16,6 +16,7 @@
 import http from "node:http";
 import net from "node:net";
 import { randomUUID } from "node:crypto";
+import { createRequire } from "node:module";
 import { sanitizeErrorMessage } from "@omniroute/open-sse/utils/error";
 import { runWithDirectFetchContext } from "@omniroute/open-sse/utils/proxyFetch.ts";
 import { safeOutboundFetch } from "@/shared/network/safeOutboundFetch";
@@ -24,6 +25,23 @@ import { maskSecret } from "../maskSecrets.ts";
 import { applyIdleTimeout, MITM_IDLE_TIMEOUT_MS } from "../socketTimeouts.ts";
 import { globalTrafficBuffer } from "./buffer.ts";
 import type { InterceptedRequest } from "./types.ts";
+
+const requireCjs = createRequire(import.meta.url);
+const { REQUEST_BODY_LIMIT_BYTES, collectBodyRaw, isPayloadTooLargeError } = requireCjs(
+  "../_internal/boundedBody.cjs"
+) as {
+  REQUEST_BODY_LIMIT_BYTES: number;
+  collectBodyRaw: (req: http.IncomingMessage, limit?: number) => Promise<Buffer>;
+  isPayloadTooLargeError: (error: unknown) => boolean;
+};
+const connectPolicy = requireCjs("../_internal/bypass.cjs") as {
+  parseConnectAuthorityStrict: (authority: string) => { host: string; port: number } | null;
+  resolveConnectDestination: (
+    host: string,
+    port: number
+  ) => Promise<{ host: string; port: number; address: string; family: number }>;
+
+};
 
 const DEFAULT_PORT = parseEnvNumber(process.env.INSPECTOR_HTTP_PROXY_PORT, 8080);
 
@@ -83,14 +101,6 @@ function safeUrl(rawUrl: string | undefined, hostHeader: string | undefined): UR
   return null;
 }
 
-async function readBody(req: http.IncomingMessage): Promise<Buffer> {
-  const chunks: Buffer[] = [];
-  for await (const chunk of req) {
-    chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
-  }
-  return Buffer.concat(chunks);
-}
-
 function handleHttp(req: http.IncomingMessage, res: http.ServerResponse): void {
   const startedAt = performance.now();
   const intercepted: InterceptedRequest = {
@@ -120,7 +130,7 @@ function handleHttp(req: http.IncomingMessage, res: http.ServerResponse): void {
       intercepted.host = target.host;
       intercepted.path = target.pathname + target.search;
 
-      const body = await readBody(req);
+      const body = await collectBodyRaw(req, REQUEST_BODY_LIMIT_BYTES);
       intercepted.requestSize = body.length;
       intercepted.requestBody = body.length > 0 ? maskSecret(body.toString("utf8")) : null;
 
@@ -161,6 +171,28 @@ function handleHttp(req: http.IncomingMessage, res: http.ServerResponse): void {
 
       globalTrafficBuffer.update(intercepted.id, intercepted);
     } catch (err) {
+      if (isPayloadTooLargeError(err)) {
+        intercepted.status = 413;
+        intercepted.error = "Request body too large";
+        intercepted.totalLatencyMs = performance.now() - startedAt;
+        globalTrafficBuffer.update(intercepted.id, intercepted);
+        if (!res.headersSent) {
+          res.writeHead(413, { "content-type": "application/json", connection: "close" });
+          res.end(
+            JSON.stringify({
+              error: {
+                message: `Request body too large. Maximum allowed: ${REQUEST_BODY_LIMIT_BYTES} bytes`,
+                type: "payload_too_large",
+                code: "PAYLOAD_TOO_LARGE",
+              },
+            })
+          );
+        } else {
+          res.end();
+        }
+        return;
+      }
+
       intercepted.status = "error";
       intercepted.error = sanitizeErrorMessage(err);
       intercepted.totalLatencyMs = performance.now() - startedAt;
@@ -175,14 +207,17 @@ function handleHttp(req: http.IncomingMessage, res: http.ServerResponse): void {
   })();
 }
 
-function handleConnect(
+async function handleConnect(
   req: http.IncomingMessage,
   clientSocket: net.Socket,
   head: Buffer
-): void {
-  const target = req.url ?? "";
-  const [host, rawPort] = target.split(":");
-  const port = Number(rawPort) || 443;
+): Promise<void> {
+  const parsed = connectPolicy.parseConnectAuthorityStrict(req.url ?? "");
+  if (!parsed) {
+    clientSocket.end("HTTP/1.1 400 Bad Request\r\nConnection: close\r\nContent-Length: 0\r\n\r\n");
+    return;
+  }
+  const { host, port } = parsed;
 
   const intercepted: InterceptedRequest = {
     id: randomUUID(),
@@ -203,13 +238,22 @@ function handleConnect(
 
   globalTrafficBuffer.push(intercepted);
 
-  const targetSocket = net.connect(port, host);
-
   const finalize = (status: number | "error", err?: unknown): void => {
     intercepted.status = status;
     if (err !== undefined) intercepted.error = sanitizeErrorMessage(err);
     globalTrafficBuffer.update(intercepted.id, intercepted);
   };
+
+  let destination: { address: string };
+  try {
+    destination = await connectPolicy.resolveConnectDestination(host, port);
+  } catch (err) {
+    finalize(403, err);
+    clientSocket.end("HTTP/1.1 403 Forbidden\r\nConnection: close\r\nContent-Length: 0\r\n\r\n");
+    return;
+  }
+
+  const targetSocket = net.connect(port, destination.address);
 
   targetSocket.once("connect", () => {
     clientSocket.write("HTTP/1.1 200 Connection Established\r\n\r\n");
@@ -254,7 +298,18 @@ export function startHttpProxyServer(port: number = DEFAULT_PORT): Promise<HttpP
     server.on("connection", (socket) => applyIdleTimeout(socket));
 
     server.on("request", (req, res) => handleHttp(req, res));
-    server.on("connect", (req, socket, head) => handleConnect(req, socket as net.Socket, head));
+    server.on("connect", (req, socket, head) => {
+      void handleConnect(req, socket as net.Socket, head).catch((err) => {
+        try {
+          (socket as net.Socket).end(
+            "HTTP/1.1 502 Bad Gateway\r\nConnection: close\r\nContent-Length: 0\r\n\r\n"
+          );
+        } catch {
+          // socket already closed
+        }
+        console.error("[HTTP Proxy] CONNECT handler failed:", sanitizeErrorMessage(err));
+      });
+    });
 
     server.once("error", (err: NodeJS.ErrnoException) => {
       // Decorate with a code so callers can pattern-match without parsing strings.

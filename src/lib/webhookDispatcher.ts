@@ -21,6 +21,55 @@ function signPayload(payload: string, secret: string): string {
   return `sha256=${crypto.createHmac("sha256", secret).update(payload).digest("hex")}`;
 }
 
+const MAX_WEBHOOK_REDIRECTS = 5;
+const WEBHOOK_REDIRECT_STATUSES = new Set([301, 302, 303, 307, 308]);
+
+async function fetchWebhookWithValidatedRedirects(
+  input: string,
+  init: RequestInit,
+  confineToOrigin: string | null = null
+): Promise<Response> {
+  let currentUrl = parseAndValidateWebhookUrl(input);
+  let method = (init.method ?? "GET").toUpperCase();
+  let body = init.body;
+  const headers = new Headers(init.headers);
+
+  for (let redirectCount = 0; ; redirectCount++) {
+    const response = await fetch(currentUrl.toString(), {
+      ...init,
+      method,
+      body,
+      headers,
+      redirect: "manual",
+    });
+
+    if (!WEBHOOK_REDIRECT_STATUSES.has(response.status)) return response;
+
+    const location = response.headers.get("location");
+    if (!location) return response;
+    if (redirectCount >= MAX_WEBHOOK_REDIRECTS) {
+      throw new Error(`Webhook redirect limit exceeded (${MAX_WEBHOOK_REDIRECTS})`);
+    }
+
+    const nextUrl = parseAndValidateWebhookUrl(new URL(location, currentUrl));
+    if (confineToOrigin && nextUrl.origin !== confineToOrigin) {
+      throw new Error("Signed webhook redirect changed origin");
+    }
+
+    // Match fetch redirect semantics for POST on 301/302 and for 303: the
+    // redirected request becomes GET and no payload signature is replayed.
+    if (response.status === 303 || ((response.status === 301 || response.status === 302) && method === "POST")) {
+      method = "GET";
+      body = undefined;
+      headers.delete("content-type");
+      headers.delete("content-length");
+      headers.delete("x-webhook-signature");
+    }
+
+    currentUrl = nextUrl;
+  }
+}
+
 export function encryptMetadata(meta: Record<string, string>): string {
   return encrypt(JSON.stringify(meta)) ?? JSON.stringify(meta);
 }
@@ -46,7 +95,7 @@ async function deliverRaw(
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 10_000);
     try {
-      const res = await fetch(url, {
+      const res = await fetchWebhookWithValidatedRedirects(url, {
         method: "POST",
         headers: { "Content-Type": "application/json", "User-Agent": "OmniRoute-Webhook/1.0" },
         body: JSON.stringify(body),
@@ -74,8 +123,9 @@ export async function deliverWebhook(
   secret?: string | null,
   maxRetries = 3
 ): Promise<{ success: boolean; status: number; error?: string }> {
+  let initialOrigin: string;
   try {
-    parseAndValidateWebhookUrl(url);
+    initialOrigin = parseAndValidateWebhookUrl(url).origin;
   } catch (error: any) {
     return { success: false, status: 0, error: error.message || "Blocked outbound URL" };
   }
@@ -98,12 +148,16 @@ export async function deliverWebhook(
 
       let res: Response;
       try {
-        res = await fetch(url, {
-          method: "POST",
-          headers,
-          body,
-          signal: controller.signal,
-        });
+        res = await fetchWebhookWithValidatedRedirects(
+          url,
+          {
+            method: "POST",
+            headers,
+            body,
+            signal: controller.signal,
+          },
+          secret ? initialOrigin : null
+        );
       } finally {
         // Clear the abort timer on every path — a non-timeout fetch error previously skipped
         // clearTimeout, leaking a dangling 10s timer + AbortController per failed attempt.

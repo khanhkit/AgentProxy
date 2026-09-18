@@ -239,6 +239,20 @@ test("POST proxy-subscriptions — invalid updateIntervalMinutes silently falls 
   assert.equal(body.updateIntervalMinutes, 60);
 });
 
+test("POST proxy-subscriptions — rejects numeric refresh intervals outside 1..525600 minutes", async () => {
+  for (const updateIntervalMinutes of [0, -1, 525_601]) {
+    const req = jsonRequest("http://localhost/api/v1/management/proxy-subscriptions", {
+      name: `interval-${updateIntervalMinutes}`,
+      url: "https://example.com/interval-bounds.txt",
+      updateIntervalMinutes,
+    });
+    const res = await collectionRoute.POST(req);
+    assert.equal(res.status, 400, `interval=${updateIntervalMinutes} must be rejected`);
+    const body = (await res.json()) as { error?: string };
+    assert.equal(body.error, "updateIntervalMinutes must be between 1 and 525600");
+  }
+});
+
 test("POST proxy-subscriptions — enabled must be exactly `true`, not truthy", async () => {
   const req = jsonRequest("http://localhost/api/v1/management/proxy-subscriptions", {
     name: "enabled-sub",
@@ -288,6 +302,21 @@ test("PATCH proxy-subscriptions/:id — wrong-typed fields are ignored, not reje
   assert.equal(body.name, "kept");
   assert.equal(body.updateIntervalMinutes, 60, "untouched — non-number was ignored, not coerced");
   assert.equal(body.enabled, false, "untouched — non-boolean was ignored");
+});
+
+test("PATCH proxy-subscriptions/:id — rejects numeric refresh intervals outside 1..525600 minutes", async () => {
+  const fixture = await createValidSubscription("patch-interval-bounds");
+  for (const updateIntervalMinutes of [0, -5, 525_601]) {
+    const req = jsonRequest(
+      `http://localhost/api/v1/management/proxy-subscriptions/${fixture.id}`,
+      { updateIntervalMinutes },
+      "PATCH"
+    );
+    const res = await itemRoute.PATCH(req, { params: Promise.resolve({ id: fixture.id }) });
+    assert.equal(res.status, 400, `interval=${updateIntervalMinutes} must be rejected`);
+    const body = (await res.json()) as { error?: string };
+    assert.equal(body.error, "updateIntervalMinutes must be between 1 and 525600");
+  }
 });
 
 test("PATCH proxy-subscriptions/:id — malformed JSON body returns 400 'Invalid JSON body'", async () => {

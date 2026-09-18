@@ -32,6 +32,7 @@ let callLogRotateScheduled = false;
 export type DeleteResult = {
   deletedRows: number;
   deletedArtifacts: number;
+  errors: number;
 };
 
 export function clearArtifactReference(relativePath: string, nextState: CallLogDetailState) {
@@ -54,35 +55,71 @@ export function clearArtifactReference(relativePath: string, nextState: CallLogD
 // under the limit so each DELETE/SELECT stays valid.
 const DELETE_ID_CHUNK_SIZE = 500;
 
+class CallLogArtifactDeleteError extends Error {}
+
 function deleteCallLogRowsByIds(ids: string[]): DeleteResult {
   if (ids.length === 0) {
-    return { deletedRows: 0, deletedArtifacts: 0 };
+    return { deletedRows: 0, deletedArtifacts: 0, errors: 0 };
   }
 
   const db = getDbInstance();
   let deletedRows = 0;
   let deletedArtifacts = 0;
+  let errors = 0;
 
   for (let i = 0; i < ids.length; i += DELETE_ID_CHUNK_SIZE) {
     const chunk = ids.slice(i, i + DELETE_ID_CHUNK_SIZE);
     const placeholders = chunk.map(() => "?").join(", ");
     const rows = db
-      .prepare(`SELECT artifact_relpath FROM call_logs WHERE id IN (${placeholders})`)
-      .all(...chunk) as Array<{ artifact_relpath: string | null }>;
+      .prepare(`SELECT id, artifact_relpath FROM call_logs WHERE id IN (${placeholders})`)
+      .all(...chunk) as Array<{ id: string; artifact_relpath: string | null }>;
 
-    const result = db.prepare(`DELETE FROM call_logs WHERE id IN (${placeholders})`).run(...chunk);
-    deletedRows += result.changes;
+    const metadataOnlyIds = rows.filter((row) => !row.artifact_relpath).map((row) => row.id);
+    if (metadataOnlyIds.length > 0) {
+      const deletePlaceholders = metadataOnlyIds.map(() => "?").join(", ");
+      const result = db
+        .prepare(`DELETE FROM call_logs WHERE id IN (${deletePlaceholders})`)
+        .run(...metadataOnlyIds);
+      deletedRows += result.changes;
+    }
+
     for (const row of rows) {
-      if (deleteCallArtifact(row.artifact_relpath)) {
-        deletedArtifacts++;
+      if (!row.artifact_relpath) continue;
+      const relativePath = row.artifact_relpath;
+      try {
+        const deleteOne = db.transaction(() => {
+          const sharedReference = db
+            .prepare(
+              "SELECT 1 AS present FROM call_logs WHERE artifact_relpath = ? AND id <> ? LIMIT 1"
+            )
+            .get(relativePath, row.id);
+          const result = db.prepare("DELETE FROM call_logs WHERE id = ?").run(row.id);
+          if (result.changes === 0) return { deletedRows: 0, deletedArtifact: false };
+          if (sharedReference) return { deletedRows: result.changes, deletedArtifact: false };
+
+          const outcome = deleteCallArtifact(relativePath);
+          if (outcome.state === "error") {
+            throw new CallLogArtifactDeleteError(outcome.error);
+          }
+          return {
+            deletedRows: result.changes,
+            deletedArtifact: outcome.state === "deleted",
+          };
+        });
+        const outcome = deleteOne();
+        deletedRows += outcome.deletedRows;
+        if (outcome.deletedArtifact) deletedArtifacts++;
+      } catch (error) {
+        if (error instanceof CallLogArtifactDeleteError) {
+          errors++;
+          continue;
+        }
+        throw error;
       }
     }
   }
 
-  return {
-    deletedRows,
-    deletedArtifacts,
-  };
+  return { deletedRows, deletedArtifacts, errors };
 }
 
 type OrphanScanCursor = {
@@ -210,7 +247,10 @@ export function cleanupOrphanCallLogFiles(
       });
       const referenced = findReferencedArtifacts(oldEnough);
       for (const relativePath of oldEnough) {
-        if (!referenced.has(relativePath) && deleteCallArtifact(relativePath, baseDir)) deleted++;
+        if (!referenced.has(relativePath)) {
+          const outcome = deleteCallArtifact(relativePath, baseDir);
+          if (outcome.state === "deleted") deleted++;
+        }
       }
       if (exhausted || scannedEntries === 0) break;
     }
@@ -242,9 +282,10 @@ export function cleanupOverflowCallLogFiles(
       if (paths.length === 0) break;
       let progress = 0;
       for (const relativePath of paths) {
-        if (deleteCallArtifact(relativePath, baseDir)) {
+        const outcome = deleteCallArtifact(relativePath, baseDir);
+        if (outcome.state !== "error") {
           clearArtifactReference(relativePath, "missing");
-          deleted++;
+          if (outcome.state === "deleted") deleted++;
           progress++;
         }
       }
@@ -266,15 +307,17 @@ export function deleteCallLogsBefore(
 ): DeleteResult {
   let deletedRows = 0;
   let deletedArtifacts = 0;
+  let errors = 0;
   while (deletedRows < maxDeletes) {
     const ids = selectCallLogIdsBefore(cutoff, Math.min(5000, maxDeletes - deletedRows));
     if (ids.length === 0) break;
     const result = deleteCallLogRowsByIds(ids);
     deletedRows += result.deletedRows;
     deletedArtifacts += result.deletedArtifacts;
-    if (result.deletedRows === 0) break;
+    errors += result.errors;
+    if (result.errors > 0 || result.deletedRows === 0) break;
   }
-  return { deletedRows, deletedArtifacts };
+  return { deletedRows, deletedArtifacts, errors };
 }
 
 export function trimCallLogsToMaxRows(
@@ -282,12 +325,13 @@ export function trimCallLogsToMaxRows(
   maxDeletes = Number.POSITIVE_INFINITY
 ) {
   if (!Number.isInteger(maxRows) || maxRows < 1 || maxDeletes <= 0) {
-    return { deletedRows: 0, deletedArtifacts: 0 };
+    return { deletedRows: 0, deletedArtifacts: 0, errors: 0 };
   }
 
   const db = getDbInstance();
   let deletedRows = 0;
   let deletedArtifacts = 0;
+  let errors = 0;
 
   while (deletedRows < maxDeletes) {
     const currentCount = db.prepare("SELECT COUNT(*) AS cnt FROM call_logs").get() as {
@@ -303,10 +347,11 @@ export function trimCallLogsToMaxRows(
     const result = deleteCallLogRowsByIds(ids);
     deletedRows += result.deletedRows;
     deletedArtifacts += result.deletedArtifacts;
-    if (result.deletedRows === 0) break;
+    errors += result.errors;
+    if (result.errors > 0 || result.deletedRows === 0) break;
   }
 
-  return { deletedRows, deletedArtifacts };
+  return { deletedRows, deletedArtifacts, errors };
 }
 
 let callLogRotatePaused = false;
@@ -338,8 +383,13 @@ export function rotateCallLogs() {
     const retentionMs = getCallLogRetentionDays() * 24 * 60 * 60 * 1000;
     const cutoff = new Date(Date.now() - retentionMs).toISOString();
 
-    deleteCallLogsBefore(cutoff, CALL_LOG_ROTATE_BATCH_SIZE);
-    trimCallLogsToMaxRows(getCallLogsTableMaxRows(), CALL_LOG_ROTATE_BATCH_SIZE);
+    const expired = deleteCallLogsBefore(cutoff, CALL_LOG_ROTATE_BATCH_SIZE);
+    const trimmed = trimCallLogsToMaxRows(getCallLogsTableMaxRows(), CALL_LOG_ROTATE_BATCH_SIZE);
+    if (expired.errors + trimmed.errors > 0) {
+      handleCallLogRotateError(
+        new Error(`call-log artifact deletion failed (errors=${expired.errors + trimmed.errors})`)
+      );
+    }
     cleanupOverflowCallLogFiles(CALL_LOGS_DIR, getCallLogMaxEntries(), CALL_LOG_ROTATE_BATCH_SIZE);
     cleanupOrphanCallLogFiles(CALL_LOGS_DIR, {
       maxCandidates: CALL_LOG_ROTATE_BATCH_SIZE,

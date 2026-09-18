@@ -11,13 +11,19 @@ import { resolveOmniRouteBaseUrl } from "@/shared/utils/resolveOmniRouteBaseUrl"
 const OMNIROUTE_BASE_URL = resolveOmniRouteBaseUrl();
 const OMNIROUTE_API_KEY = process.env.OMNIROUTE_API_KEY || "";
 
-async function routeFetch(path: string, options: RequestInit = {}): Promise<any> {
+async function routeFetch(
+  path: string,
+  options: RequestInit = {},
+  signal?: AbortSignal
+): Promise<any> {
   const url = `${OMNIROUTE_BASE_URL}${path}`;
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
     ...(OMNIROUTE_API_KEY ? { Authorization: `Bearer ${OMNIROUTE_API_KEY}` } : {}),
   };
-  const res = await fetch(url, { ...options, headers, signal: AbortSignal.timeout(30000) });
+  const timeoutSignal = AbortSignal.timeout(30000);
+  const requestSignal = signal ? AbortSignal.any([signal, timeoutSignal]) : timeoutSignal;
+  const res = await fetch(url, { ...options, headers, signal: requestSignal });
   if (!res.ok) throw new Error(`API [${res.status}]: ${await res.text().catch(() => "error")}`);
   return res.json();
 }
@@ -32,7 +38,10 @@ export interface SmartRoutingResult {
   };
 }
 
-export async function executeSmartRouting(task: A2ATask): Promise<SmartRoutingResult> {
+export async function executeSmartRouting(
+  task: A2ATask,
+  signal?: AbortSignal
+): Promise<SmartRoutingResult> {
   const messages = task.input.messages;
   const model = (task.input.metadata?.model as string) || "auto";
   const combo = task.input.metadata?.combo as string | undefined;
@@ -42,10 +51,14 @@ export async function executeSmartRouting(task: A2ATask): Promise<SmartRoutingRe
   const body: Record<string, unknown> = { model, messages, stream: false };
   if (combo) body["x-combo"] = combo;
 
-  const raw = await routeFetch("/v1/chat/completions", {
-    method: "POST",
-    body: JSON.stringify(body),
-  });
+  const raw = await routeFetch(
+    "/v1/chat/completions",
+    {
+      method: "POST",
+      body: JSON.stringify(body),
+    },
+    signal
+  );
   const latencyMs = Date.now() - start;
 
   const content = raw?.choices?.[0]?.message?.content || "";

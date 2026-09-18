@@ -60,6 +60,8 @@ describe("OAuth callback page — postMessage target origin scope (#998)", () =>
       writable: true,
       value: originalOpener,
     });
+    localStorage.clear();
+    vi.unstubAllGlobals();
     vi.clearAllMocks();
   });
 
@@ -118,5 +120,98 @@ describe("OAuth callback page — postMessage target origin scope (#998)", () =>
         state: "test_state_xyz789",
       }),
     });
+  });
+
+  it("uses only a state-scoped ephemeral channel and purges legacy storage for token-bearing callbacks", async () => {
+    const channels: Array<{ name: string; postMessage: ReturnType<typeof vi.fn> }> = [];
+    class MockBroadcastChannel {
+      name: string;
+      postMessage = vi.fn();
+      close = vi.fn();
+      constructor(name: string) {
+        this.name = name;
+        channels.push(this);
+      }
+    }
+    vi.stubGlobal("BroadcastChannel", MockBroadcastChannel);
+    localStorage.setItem("oauth_callback", JSON.stringify({ code: "stale-secret", timestamp: 1 }));
+    window.history.replaceState(
+      {},
+      "",
+      "/callback?access_token=zed_secret&user_id=user-1&state=flow_nonce"
+    );
+
+    await act(async () => {
+      root.render(<CallbackPage />);
+    });
+    await act(async () => {
+      await Promise.resolve();
+    });
+
+    expect(localStorage.getItem("oauth_callback")).toBeNull();
+    expect(channels).toHaveLength(1);
+    expect(channels[0].name).toBe("oauth_callback:flow_nonce");
+    expect(channels[0].postMessage).toHaveBeenCalledTimes(1);
+    const payload = channels[0].postMessage.mock.calls[0][0];
+    expect(payload.state).toBe("flow_nonce");
+    expect(payload.code).toContain("access_token=zed_secret");
+    expect(payload).not.toHaveProperty("fullUrl");
+  });
+
+  it("does not broadcast callback credentials when state is missing", async () => {
+    const channelCtor = vi.fn();
+    vi.stubGlobal("BroadcastChannel", channelCtor);
+    localStorage.setItem("oauth_callback", "legacy-secret");
+    window.history.replaceState({}, "", "/callback?code=code_without_state");
+
+    await act(async () => {
+      root.render(<CallbackPage />);
+    });
+    await act(async () => {
+      await Promise.resolve();
+    });
+
+    expect(channelCtor).not.toHaveBeenCalled();
+    expect(localStorage.getItem("oauth_callback")).toBeNull();
+    expect(container.textContent).toContain("copyUrl");
+  });
+
+  it("delivers error callbacks only on the matching state-scoped channel without persistence", async () => {
+    const channels: Array<{ name: string; postMessage: ReturnType<typeof vi.fn> }> = [];
+    class MockBroadcastChannel {
+      name: string;
+      postMessage = vi.fn();
+      close = vi.fn();
+      constructor(name: string) {
+        this.name = name;
+        channels.push(this);
+      }
+    }
+    vi.stubGlobal("BroadcastChannel", MockBroadcastChannel);
+    localStorage.setItem("oauth_callback", "stale-error-secret");
+    window.history.replaceState(
+      {},
+      "",
+      "/callback?error=access_denied&error_description=denied&state=error_state"
+    );
+
+    await act(async () => {
+      root.render(<CallbackPage />);
+    });
+    await act(async () => {
+      await Promise.resolve();
+    });
+
+    expect(localStorage.getItem("oauth_callback")).toBeNull();
+    expect(channels).toHaveLength(1);
+    expect(channels[0].name).toBe("oauth_callback:error_state");
+    expect(channels[0].postMessage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        state: "error_state",
+        error: "access_denied",
+        errorDescription: "denied",
+      })
+    );
+    expect(channels[0].postMessage.mock.calls[0][0]).not.toHaveProperty("fullUrl");
   });
 });

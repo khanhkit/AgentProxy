@@ -18,7 +18,7 @@ const URL_RE = /https?:\/\/[^\s"'<>)]+/g;
 // non-http(s) match degrades to plain text (no `href`). This also makes the sink safe to
 // static analysis: `href` provably can never carry a javascript:/data:/vbscript: scheme
 // (CodeQL js/xss + js/client-side-unvalidated-url-redirection).
-function safeHttpHref(url: string): string | undefined {
+export function safeHttpHref(url: string): string | undefined {
   let protocol: string;
   try {
     protocol = new URL(url).protocol;

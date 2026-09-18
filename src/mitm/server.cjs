@@ -34,6 +34,7 @@ const LOCAL_PORT =
   Number.isInteger(parsedLocalPort) && parsedLocalPort > 0 && parsedLocalPort <= 65535
     ? parsedLocalPort
     : 443;
+const MITM_BIND_HOST = "127.0.0.1";
 // Idle timeout for sockets/tunnels. Mirrors ProxyBridge's 60s relay timeout so
 // hung/half-open connections cannot accumulate and exhaust fds. (Gap 10.)
 const parsedIdleTimeout = Number.parseInt(process.env.MITM_IDLE_TIMEOUT_MS || "60000", 10);
@@ -140,6 +141,11 @@ const ingestShim = require("./_internal/ingest.cjs");
 const forwardShim = require("./_internal/forwardTarget.cjs");
 const aliasConfigShim = require("./_internal/aliasConfig.cjs");
 const standaloneRoutingShim = require("./_internal/standaloneRouting.cjs");
+const {
+  REQUEST_BODY_LIMIT_BYTES,
+  collectBodyRaw,
+  isPayloadTooLargeError,
+} = require("./_internal/boundedBody.cjs");
 
 // Inspector capture (D4 fallback). The standalone proxy intercepts AgentBridge
 // traffic inline (no MitmHandlerBase / agentBridgeHook), so it posts captured
@@ -255,7 +261,11 @@ function loadLegacySslOptions() {
 // `tproxy/dynamicCert.ts` — see that file's header for why it's duplicated
 // rather than imported). Resolved once during async bootstrap below.
 async function loadRootCaSslOptions() {
-  const { loadOrCreateMitmCa, issueLeafCert, DynamicCertStore } = require("./_internal/rootCaShim.cjs");
+  const {
+    loadOrCreateMitmCa,
+    issueLeafCert,
+    DynamicCertStore,
+  } = require("./_internal/rootCaShim.cjs");
   const ca = await loadOrCreateMitmCa(certDir);
   const certStore = new DynamicCertStore({ key: ca.key, cert: ca.cert });
   const defaultHost = [...TARGET_HOSTS][0];
@@ -337,15 +347,6 @@ async function resolveTargetIP(targetHost) {
   const targetIP = addresses[0];
   cachedTargetIPs.set(targetHost, targetIP);
   return targetIP;
-}
-
-function collectBodyRaw(req) {
-  return new Promise((resolve, reject) => {
-    const chunks = [];
-    req.on("data", (chunk) => chunks.push(chunk));
-    req.on("end", () => resolve(Buffer.concat(chunks)));
-    req.on("error", reject);
-  });
 }
 
 /**
@@ -635,7 +636,28 @@ async function startMitmServer() {
     stats.lastRequestAt = new Date().toISOString();
     writeStats();
 
-    const bodyBuffer = await collectBodyRaw(req);
+    let bodyBuffer;
+    try {
+      bodyBuffer = await collectBodyRaw(req, REQUEST_BODY_LIMIT_BYTES);
+    } catch (error) {
+      if (isPayloadTooLargeError(error)) {
+        const responseBody = JSON.stringify({
+          error: {
+            message: `Request body too large. Maximum allowed: ${REQUEST_BODY_LIMIT_BYTES} bytes`,
+            type: "payload_too_large",
+            code: "PAYLOAD_TOO_LARGE",
+          },
+        });
+        res.writeHead(413, {
+          "content-type": "application/json",
+          "content-length": Buffer.byteLength(responseBody),
+          connection: "close",
+        });
+        res.end(responseBody);
+        return;
+      }
+      throw error;
+    }
     const host = String(req.headers.host || "")
       .split(":")[0]
       .toLowerCase();
@@ -705,7 +727,9 @@ async function startMitmServer() {
     vlog(
       1,
       `[MITM] INTERCEPTED ${agentId} ${model} → ${mappedOverride.model || model}` +
-        (mappedOverride.reasoningEffort ? ` (reasoningEffort=${mappedOverride.reasoningEffort})` : "")
+        (mappedOverride.reasoningEffort
+          ? ` (reasoningEffort=${mappedOverride.reasoningEffort})`
+          : "")
     );
     return intercept(req, res, bodyBuffer, mappedOverride, model);
   });
@@ -736,15 +760,23 @@ async function startMitmServer() {
   // =========================================================================
 
   function parseConnectAuthority(authority) {
-    // CONNECT host[:port]
-    const idx = authority.lastIndexOf(":");
-    if (idx === -1) return { host: authority.toLowerCase(), port: 443 };
-    const host = authority.slice(0, idx).toLowerCase();
-    const port = Number.parseInt(authority.slice(idx + 1), 10);
-    return {
-      host,
-      port: Number.isInteger(port) && port > 0 && port <= 65535 ? port : 443,
-    };
+    return bypassShim.parseConnectAuthorityStrict(authority);
+  }
+
+  function rejectConnect(clientSocket, statusCode, reason) {
+    const phrase = statusCode === 400 ? "Bad Request" : "Forbidden";
+    vlog(1, `[MITM] CONNECT rejected (${statusCode}): ${reason}`);
+    try {
+      clientSocket.end(
+        `HTTP/1.1 ${statusCode} ${phrase}\r\nConnection: close\r\nContent-Length: 0\r\n\r\n`
+      );
+    } catch {
+      try {
+        clientSocket.destroy();
+      } catch {
+        // ignore
+      }
+    }
   }
 
   function rawTcpForward(clientSocket, head, host, port, label) {
@@ -811,19 +843,16 @@ async function startMitmServer() {
   // passthrough); true on-wire bypass-without-decrypt at :443 under direct TLS would
   // require SNI sniffing on the raw 'connection' event, which is intentionally out
   // of scope for this release.
-  server.on("connect", (req, clientSocket, head) => {
+  server.on("connect", async (req, clientSocket, head) => {
     const authority = String(req.url || "");
-    const { host: connectHost, port: connectPort } = parseConnectAuthority(authority);
-
-    const decision = routeBypass(connectHost);
-
-    if (decision === "bypass") {
-      // Privacy: bypass hosts are never logged with body/headers and never
-      // TLS-decrypted. Only the hostname appears in console output.
-      vlog(1, `[MITM] CONNECT ${connectHost}:${connectPort} → BYPASS (TCP tunnel)`);
-      rawTcpForward(clientSocket, head, connectHost, connectPort, "bypass");
+    const parsed = parseConnectAuthority(authority);
+    if (!parsed) {
+      rejectConnect(clientSocket, 400, "malformed authority");
       return;
     }
+    const { host: connectHost, port: connectPort } = parsed;
+
+    const decision = routeBypass(connectHost);
 
     if (decision === "target") {
       // Hand the tunnel off to the local TLS-terminating server so the existing
@@ -837,9 +866,29 @@ async function startMitmServer() {
       return;
     }
 
+    let destination;
+    try {
+      destination = await bypassShim.resolveConnectDestination(connectHost, connectPort);
+    } catch (error) {
+      rejectConnect(
+        clientSocket,
+        403,
+        error && error.message ? error.message : "egress policy denied"
+      );
+      return;
+    }
+
+    if (decision === "bypass") {
+      // Privacy: bypass hosts are never logged with body/headers and never
+      // TLS-decrypted. Only the hostname appears in console output.
+      vlog(1, `[MITM] CONNECT ${connectHost}:${connectPort} → BYPASS (TCP tunnel)`);
+      rawTcpForward(clientSocket, head, destination.address, connectPort, "bypass");
+      return;
+    }
+
     // decision === "passthrough"
     vlog(1, `[MITM] CONNECT ${connectHost}:${connectPort} → PASSTHROUGH (TCP tunnel)`);
-    rawTcpForward(clientSocket, head, connectHost, connectPort, "passthrough");
+    rawTcpForward(clientSocket, head, destination.address, connectPort, "passthrough");
   });
 
   // Bound full-request / header / keep-alive lifetimes so a slow or hung client
@@ -848,10 +897,10 @@ async function startMitmServer() {
   server.headersTimeout = MITM_IDLE_TIMEOUT_MS; // time allowed to send headers
   server.keepAliveTimeout = MITM_IDLE_TIMEOUT_MS; // idle keep-alive window
 
-  server.listen(LOCAL_PORT, () => {
+  server.listen(LOCAL_PORT, MITM_BIND_HOST, () => {
     stats.startedAt = new Date().toISOString();
     writeStats();
-    console.log(`🚀 MITM ready on :${LOCAL_PORT} → ${ROUTER_URL}`);
+    console.log(`🚀 MITM ready on ${MITM_BIND_HOST}:${LOCAL_PORT} → ${ROUTER_URL}`);
   });
 
   server.on("connection", (socket) => {

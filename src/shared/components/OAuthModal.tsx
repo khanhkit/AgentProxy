@@ -24,6 +24,10 @@ import OAuthWaitingStep from "@/shared/components/oauthModal/OAuthWaitingStep";
 import { parseGrokCliPasteToken } from "@/lib/oauth/utils/grokCliAuthJson";
 import { buildGoogleLoopbackHint } from "@/lib/oauth/utils/googleLoopbackHint";
 import {
+  getOAuthCallbackChannelName,
+  LEGACY_OAUTH_CALLBACK_STORAGE_KEY,
+} from "@/shared/utils/oauthCallbackHandoff";
+import {
   buildPkceLoopbackMismatchHint,
   type PkceLoopbackMismatchHint,
 } from "@/lib/oauth/utils/pkceLoopbackWarning";
@@ -737,7 +741,7 @@ export default function OAuthModal({
 
       const { code, state, error: callbackError, errorDescription } = data;
 
-      if (authData?.state && state && state !== authData.state) {
+      if (authData?.state && state !== authData.state) {
         callbackProcessedRef.current = true;
         setError(t("errorStateMismatch"));
         setStep("error");
@@ -790,47 +794,29 @@ export default function OAuthModal({
     };
     window.addEventListener("message", handleMessage);
 
-    // Method 2: BroadcastChannel
-    let channel;
+    // Legacy persistent relay data may contain OAuth codes/tokens. Purge it
+    // unconditionally; new callbacks use only ephemeral transports.
     try {
-      channel = new BroadcastChannel("oauth_callback");
-      channel.onmessage = (event) => handleCallback(event.data);
-    } catch (e) {
-      console.log("BroadcastChannel not supported");
+      localStorage.removeItem(LEGACY_OAUTH_CALLBACK_STORAGE_KEY);
+    } catch {
+      // localStorage can be disabled; nothing else depends on it.
     }
 
-    // Method 3: localStorage event
-    const handleStorage = (event) => {
-      if (event.key === "oauth_callback" && event.newValue) {
-        try {
-          const data = JSON.parse(event.newValue);
-          handleCallback(data);
-          localStorage.removeItem("oauth_callback");
-        } catch (e) {
-          console.log("Failed to parse localStorage data");
-        }
+    // Method 2: state-scoped BroadcastChannel. Without an expected state there
+    // is no broadcast fallback; the callback page retains the manual-copy path.
+    let channel;
+    const callbackChannelName = getOAuthCallbackChannelName(authData?.state);
+    if (callbackChannelName) {
+      try {
+        channel = new BroadcastChannel(callbackChannelName);
+        channel.onmessage = (event) => handleCallback(event.data);
+      } catch (e) {
+        console.log("BroadcastChannel not supported");
       }
-    };
-    window.addEventListener("storage", handleStorage);
-
-    // Also check localStorage on mount (in case callback already happened)
-    try {
-      const stored = localStorage.getItem("oauth_callback");
-      if (stored) {
-        const data = JSON.parse(stored);
-        // Only use if recent (within 30 seconds)
-        if (data.timestamp && Date.now() - data.timestamp < 30000) {
-          handleCallback(data);
-          localStorage.removeItem("oauth_callback");
-        }
-      }
-    } catch {
-      // localStorage may be unavailable or data may be malformed - ignore silently
     }
 
     return () => {
       window.removeEventListener("message", handleMessage);
-      window.removeEventListener("storage", handleStorage);
       if (channel) channel.close();
     };
   }, [authData, exchangeTokens, provider, t]);

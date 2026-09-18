@@ -109,12 +109,13 @@ export function classifyIpScope(addr: string | null | undefined): IpScope {
 /**
  * Extract client IP from a Request or NextRequest object.
  *
- * Behind a local reverse proxy (TCP peer is loopback) we trust the standard
- * forwarding headers in priority order: CF-Connecting-IP > X-Forwarded-For >
- * X-Real-IP. Directly from a public socket those headers are spoofable, so we
- * key by the unspoofable TCP peer address instead. When no peer is known
- * (edge runtime / fetch path with no socket) we fall back to the headers so
- * we don't regress to "unknown" for every request in that path.
+ * Behind an explicitly local reverse proxy (TCP peer is loopback) we trust the
+ * standard forwarding headers in priority order: CF-Connecting-IP >
+ * X-Forwarded-For > X-Real-IP. Directly from a public socket those headers are
+ * spoofable, so we key by the unspoofable TCP peer address instead. When no
+ * peer is known, forwarding headers are not sufficient identity evidence and
+ * the helper fails closed to "unknown"; security-sensitive callers should use
+ * the authz pipeline's trusted peer stamp instead.
  */
 export function getClientIpFromRequest(req: {
   headers?: Headers | { get?: (n: string) => string | null };
@@ -132,9 +133,9 @@ export function getClientIpFromRequest(req: {
 
   const remoteAddress = req.ip ?? req.socket?.remoteAddress;
   const hasPeer = Boolean(normalizePeer(remoteAddress));
-  const trustForwardingHeaders = !hasPeer || isLoopbackPeer(remoteAddress);
+  if (!hasPeer) return "unknown";
 
-  if (trustForwardingHeaders) {
+  if (isLoopbackPeer(remoteAddress)) {
     const cfIp = getHeader("cf-connecting-ip");
     if (cfIp && isIP(cfIp.trim()) !== 0) return cfIp.trim();
 

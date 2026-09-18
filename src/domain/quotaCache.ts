@@ -32,6 +32,7 @@ import {
   CODEX_SPARK_QUOTA_WEEKLY,
   getCodexQuotaWindowFilterForModel,
 } from "@omniroute/open-sse/config/codexQuotaScopes.ts";
+import { liftCodexScopeCooldownOnHeadroom } from "@/lib/db/providers/codexAccountState";
 import {
   createCodexAccountPool,
   getCodexChildQuotaHydration,
@@ -370,9 +371,27 @@ export function hydrateCodexQuotaCacheForRequest(
       exhausted: false,
       nextResetAt: null,
     };
-  mergeCodexPersistedQuota(entry, hydration.scope, hydration.quotaState);
+
+  // AP-ISS-0059: request-time hydration must not overwrite a newer quota-cache
+  // observation (including one reconstructed from quota_snapshots) with stale
+  // providerSpecificData from the 429 that originally parked the child cooldown.
+  const persistedObservedMs = hydration.quotaState.observedAt
+    ? new Date(hydration.quotaState.observedAt).getTime()
+    : NaN;
+  const scopeFilter = getCodexQuotaWindowFilterForModel(requestedModel);
+  const hasScopedCacheEvidence = Object.keys(entry.quotas).some((windowName) =>
+    scopeFilter?.(windowName)
+  );
+  const cacheIsNewer =
+    hasScopedCacheEvidence &&
+    Number.isFinite(persistedObservedMs) &&
+    entry.fetchedAt > persistedObservedMs;
+
+  if (!cacheIsNewer) {
+    mergeCodexPersistedQuota(entry, hydration.scope, hydration.quotaState);
+  }
   let exhaustedResetAt: string | null = null;
-  if (hydration.exhaustedWindow) {
+  if (!cacheIsNewer && hydration.exhaustedWindow) {
     const windowName =
       hydration.scope === "spark"
         ? hydration.exhaustedWindow === "5h"
@@ -448,6 +467,44 @@ export function isQuotaExhaustedForRequest(
   return isStandardQuotaExhausted(entry, now);
 }
 
+function freshQuotaWindowHasHeadroom(quotaInfo: unknown): boolean {
+  if (!quotaInfo || typeof quotaInfo !== "object") return false;
+  const info = quotaInfo as Record<string, unknown>;
+  const explicit = safePercentage(info.remainingPercentage);
+  if (explicit != null) return explicit > 0;
+  const total = Number(info.total);
+  const used = Number(info.used ?? 0);
+  return Number.isFinite(total) && total > 0 && Number.isFinite(used) && used < total;
+}
+
+/**
+ * AP-ISS-0059: a single fresh Codex usage response is stronger evidence than a
+ * persisted reset deadline when it reports headroom for the complete child scope.
+ * Require both canonical windows from the SAME refresh before overriding an
+ * active quota_reset cooldown; individual snapshot writes remain conservative.
+ */
+function reconcileCodexChildCooldownFromFreshQuota(
+  connectionId: string,
+  provider: string,
+  rawQuotas: Record<string, any>
+): void {
+  if (provider.toLowerCase() !== "codex") return;
+
+  const normalKeys = ["session", "weekly"] as const;
+  if (normalKeys.every((key) => freshQuotaWindowHasHeadroom(rawQuotas[key]))) {
+    liftCodexScopeCooldownOnHeadroom(connectionId, "codex", {
+      authoritativeFreshScopeHeadroom: true,
+    });
+  }
+
+  const sparkKeys = [CODEX_SPARK_QUOTA_SESSION, CODEX_SPARK_QUOTA_WEEKLY] as const;
+  if (sparkKeys.every((key) => freshQuotaWindowHasHeadroom(rawQuotas[key]))) {
+    liftCodexScopeCooldownOnHeadroom(connectionId, "spark", {
+      authoritativeFreshScopeHeadroom: true,
+    });
+  }
+}
+
 /**
  * Store quota data for a connection (called by usage endpoint and background refresh).
  */
@@ -515,6 +572,8 @@ export function setQuotaCache(
       }
     }
   }
+
+  reconcileCodexChildCooldownFromFreshQuota(connectionId, provider, rawQuotas);
 }
 
 /**

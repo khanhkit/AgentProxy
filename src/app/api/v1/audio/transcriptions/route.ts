@@ -17,13 +17,18 @@ import {
 import { resolveDynamicAudioProviders } from "@/app/api/v1/_shared/audioProviderNodes";
 import { errorResponse } from "@omniroute/open-sse/utils/error.ts";
 import { HTTP_STATUS } from "@omniroute/open-sse/config/constants.ts";
-import { enforceApiKeyPolicy } from "@/shared/utils/apiKeyPolicy";
+import { enforceApiKeyPolicy, type ApiKeyMetadata } from "@/shared/utils/apiKeyPolicy";
 import {
   isAllRateLimitedCredentials,
   rateLimitedProviderResponse,
 } from "@/app/api/v1/_shared/rateLimit";
 import { attachOmniRouteMetaToResponse } from "@/domain/omnirouteResponseMeta";
 import { generateRequestId } from "@/shared/utils/requestId";
+import { calculateModalCost } from "@/lib/usage/costCalculator";
+import { saveCallLog } from "@/lib/usage/callLogs";
+import { saveRequestUsage } from "@/lib/usage/usageHistory";
+import { resolveUploadedAudioDurationSeconds } from "@/lib/usage/audioDuration";
+import { recordCost } from "@/domain/costRules";
 import { getComboByName, getCombos } from "@/lib/db/combos";
 import { getDatabaseSettings } from "@/lib/db/databaseSettings";
 import { handleComboChat } from "@omniroute/open-sse/services/combo.ts";
@@ -42,6 +47,102 @@ function withModel(formData: FormData, modelStr: string): FormData {
   }
   next.set("model", modelStr);
   return next;
+}
+
+type TranscriptionTelemetryContext = {
+  apiKeyInfo: ApiKeyMetadata | null;
+  requestedModel: string;
+  audioDurationSeconds: number | null;
+  contentType: string | null;
+  sizeBytes: number | null;
+  comboName?: string | null;
+};
+
+function resolveConnectionId(credentials: unknown): string | null {
+  if (!credentials || typeof credentials !== "object") return null;
+  const value = (credentials as { connectionId?: unknown }).connectionId;
+  return typeof value === "string" && value.length > 0 ? value : null;
+}
+
+async function finalizeTranscriptionResponse({
+  response,
+  provider,
+  model,
+  credentials,
+  startTime,
+  telemetry,
+}: {
+  response: Response;
+  provider: string;
+  model: string;
+  credentials: unknown;
+  startTime: number;
+  telemetry: TranscriptionTelemetryContext;
+}): Promise<Response> {
+  const latencyMs = Date.now() - startTime;
+  const connectionId = resolveConnectionId(credentials);
+  const costUsd = response.ok
+    ? await calculateModalCost("audio", provider, model, {
+        seconds: telemetry.audioDurationSeconds ?? 0,
+      })
+    : 0;
+  const timestamp = new Date().toISOString();
+  const status = response.status;
+
+  await Promise.allSettled([
+    saveCallLog({
+      method: "POST",
+      path: "/v1/audio/transcriptions",
+      status,
+      model,
+      requestedModel: telemetry.requestedModel,
+      provider,
+      connectionId,
+      duration: latencyMs,
+      requestType: "audio_transcription",
+      requestBody: {
+        ...(telemetry.audioDurationSeconds !== null
+          ? { audioDurationSeconds: telemetry.audioDurationSeconds }
+          : {}),
+        ...(telemetry.contentType ? { contentType: telemetry.contentType } : {}),
+        ...(telemetry.sizeBytes !== null ? { sizeBytes: telemetry.sizeBytes } : {}),
+      },
+      error: response.ok ? null : `Audio transcription failed with status ${status}`,
+      apiKeyId: telemetry.apiKeyInfo?.id || null,
+      apiKeyName: telemetry.apiKeyInfo?.name || null,
+      noLog: telemetry.apiKeyInfo?.noLog === true,
+      comboName: telemetry.comboName || null,
+    }),
+    saveRequestUsage({
+      provider,
+      model,
+      status: String(status),
+      success: response.ok,
+      latencyMs,
+      timeToFirstTokenMs: latencyMs,
+      errorCode: response.ok ? null : String(status),
+      timestamp,
+      connectionId,
+      apiKeyId: telemetry.apiKeyInfo?.id || null,
+      apiKeyName: telemetry.apiKeyInfo?.name || null,
+      endpoint: "/v1/audio/transcriptions",
+    }),
+  ]);
+
+  if (response.ok && costUsd > 0 && telemetry.apiKeyInfo?.id) {
+    recordCost(telemetry.apiKeyInfo.id, costUsd);
+  }
+
+  if (!response.ok) return response;
+
+  await clearRecoveredProviderState(credentials);
+  return attachOmniRouteMetaToResponse(response, {
+    provider,
+    model,
+    costUsd,
+    latencyMs,
+    requestId: generateRequestId(),
+  });
 }
 
 /**
@@ -63,7 +164,8 @@ export async function OPTIONS() {
 async function transcribeWithModel(
   formData: FormData,
   modelStr: string,
-  startTime: number
+  startTime: number,
+  telemetry: TranscriptionTelemetryContext
 ): Promise<Response> {
   // Provider nodes eligible for transcription: this route's own audio type plus
   // general chat/responses gateways. Remote hosts are opt-in (default OFF).
@@ -76,10 +178,18 @@ async function transcribeWithModel(
   let provider = parsed.provider;
   let resolvedModel = parsed.model;
   if (!provider) {
-    return errorResponse(
+    const response = errorResponse(
       HTTP_STATUS.BAD_REQUEST,
       `Invalid transcription model: ${modelStr}. Use format: provider/model`
     );
+    return finalizeTranscriptionResponse({
+      response,
+      provider: "unknown",
+      model: modelStr,
+      credentials: null,
+      startTime,
+      telemetry,
+    });
   }
 
   // Check provider config — hardcoded first, then dynamic
@@ -119,38 +229,49 @@ async function transcribeWithModel(
     }
     if (!credentials) {
       const candidates = audioModelAliasCandidates(modelStr, provider, resolvedModel);
-      return errorResponse(
+      const response = errorResponse(
         HTTP_STATUS.BAD_REQUEST,
         missingAudioProviderCredentialsMessage(
           provider,
           listAlternateAudioModelIds(AUDIO_TRANSCRIPTION_PROVIDERS, provider, candidates)
         )
       );
+      return finalizeTranscriptionResponse({
+        response,
+        provider,
+        model: resolvedModel || modelStr,
+        credentials: null,
+        startTime,
+        telemetry,
+      });
     }
     if (isAllRateLimitedCredentials(credentials)) {
-      return rateLimitedProviderResponse(provider, credentials);
+      const response = rateLimitedProviderResponse(provider, credentials);
+      return finalizeTranscriptionResponse({
+        response,
+        provider,
+        model: resolvedModel || modelStr,
+        credentials,
+        startTime,
+        telemetry,
+      });
     }
   }
 
-  let response = await handleAudioTranscription({
+  const response = await handleAudioTranscription({
     formData,
     credentials,
     resolvedProvider: providerConfig,
     resolvedModel,
   });
-  if (response?.ok) {
-    await clearRecoveredProviderState(credentials);
-    // No text body / playback duration available from the multipart upload, so
-    // per-second pricing cannot be applied → cost 0 (ADD-only headers, body intact).
-    response = attachOmniRouteMetaToResponse(response, {
-      provider,
-      model: resolvedModel,
-      costUsd: 0,
-      latencyMs: Date.now() - startTime,
-      requestId: generateRequestId(),
-    });
-  }
-  return response;
+  return finalizeTranscriptionResponse({
+    response,
+    provider,
+    model: resolvedModel || modelStr,
+    credentials,
+    startTime,
+    telemetry,
+  });
 }
 
 /**
@@ -177,6 +298,17 @@ export async function POST(request) {
   const policy = await enforceApiKeyPolicy(request, modelStr);
   if (policy.rejection) return policy.rejection;
 
+  const uploadedFile = formData.get("file");
+  const audioDurationSeconds = await resolveUploadedAudioDurationSeconds(uploadedFile);
+  const telemetry: TranscriptionTelemetryContext = {
+    apiKeyInfo: policy.apiKeyInfo,
+    requestedModel: modelStr,
+    audioDurationSeconds,
+    contentType:
+      uploadedFile instanceof Blob && uploadedFile.type.trim().length > 0 ? uploadedFile.type : null,
+    sizeBytes: uploadedFile instanceof Blob ? uploadedFile.size : null,
+  };
+
   // A bare name (no "/") may be a combo. /v1/models advertises combos, and chat and
   // embeddings both resolve them — resolving here too keeps the catalog honest and
   // frees callers from hardcoding a provider's internal model id.
@@ -197,7 +329,10 @@ export async function POST(request) {
           body: { model: modelStr } as any,
           combo: combo as any,
           handleSingleModel: async (_reqBody: any, targetModelStr: string) =>
-            transcribeWithModel(withModel(formData, targetModelStr), targetModelStr, startTime),
+            transcribeWithModel(withModel(formData, targetModelStr), targetModelStr, startTime, {
+              ...telemetry,
+              comboName: modelStr,
+            }),
           isModelAvailable: undefined,
           log,
           settings,
@@ -211,5 +346,5 @@ export async function POST(request) {
     }
   }
 
-  return transcribeWithModel(formData, modelStr, startTime);
+  return transcribeWithModel(formData, modelStr, startTime, telemetry);
 }

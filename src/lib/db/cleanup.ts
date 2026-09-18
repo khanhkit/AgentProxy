@@ -9,13 +9,12 @@ import { getUserDatabaseSettings } from "./databaseSettings";
 import { rollupUsageHistoryBeforeDate } from "@/lib/usage/aggregateHistory";
 import { purgeCallLogArtifactDirectory } from "@/lib/usage/callLogArtifacts";
 import {
-  collectCallLogArtifactsBefore,
   deleteAllFromTable,
-  deleteCallLogArtifacts,
   deleteFromTableBefore,
   tableExists,
   type DeleteByPeriodTarget,
 } from "./cleanup/usagePurge";
+import { deleteCallLogsBefore } from "@/lib/usage/callLogs";
 import { ensureCompressionRunTelemetryTable } from "./compressionRunTelemetry";
 
 interface CleanupResult {
@@ -501,22 +500,23 @@ export async function purgeCallLogs(): Promise<CleanupResult> {
   const db = getDbInstance();
   const result: CleanupResult = { deleted: 0, deletedArtifacts: 0, errors: 0 };
 
-  try {
-    const runResult = db.prepare("DELETE FROM call_logs").run();
-    result.deleted = runResult.changes;
-
-    console.log(`[Cleanup] Purged ${result.deleted} call_logs`);
-  } catch (err: unknown) {
-    console.error("[Cleanup] Error purging call_logs:", err);
-    result.errors++;
-  }
-
+  // Preserve the owning DB rows if filesystem cleanup fails. A later retry can
+  // deterministically retry any residual artifact instead of losing its path.
   const artifactResult = purgeCallLogArtifactDirectory();
   result.deletedArtifacts = artifactResult.deletedArtifacts;
   result.errors += artifactResult.errors;
+  if (artifactResult.errors > 0) {
+    return result;
+  }
 
-  if (artifactResult.errors === 0) {
+  try {
+    const runResult = db.prepare("DELETE FROM call_logs").run();
+    result.deleted = runResult.changes;
+    console.log(`[Cleanup] Purged ${result.deleted} call_logs`);
     console.log(`[Cleanup] Purged ${result.deletedArtifacts} call log artifact(s)`);
+  } catch (err: unknown) {
+    console.error("[Cleanup] Error purging call_logs:", err);
+    result.errors++;
   }
 
   return result;
@@ -689,40 +689,43 @@ export async function resetUsageHistory(period: string): Promise<ResetUsageHisto
   };
 
   try {
-    let artifactsToDelete: string[] = [];
+    const cutoffIso =
+      period === "all"
+        ? null
+        : new Date(Date.now() - RESET_USAGE_HISTORY_PERIOD_MS[period]).toISOString();
+
+    // call_logs owns filesystem artifacts, so it cannot participate in the
+    // generic rows-first transaction. Delete artifacts first and retain rows on
+    // real filesystem errors so the next cleanup retains a retry handle.
+    if (period === "all") {
+      const callLogResult = await purgeCallLogs();
+      result.deletedCallLogs = callLogResult.deleted;
+      result.deletedCallLogArtifacts = callLogResult.deletedArtifacts ?? 0;
+      result.errors += callLogResult.errors;
+    } else {
+      const callLogResult = deleteCallLogsBefore(cutoffIso!);
+      result.deletedCallLogs = callLogResult.deletedRows;
+      result.deletedCallLogArtifacts = callLogResult.deletedArtifacts;
+      result.errors += callLogResult.errors;
+    }
+    result.deletedArtifacts = result.deletedCallLogArtifacts;
 
     const runReset = db.transaction(() => {
-      if (period === "all") {
-        for (const target of RESET_TARGETS) {
-          (result[target.resultKey] as number) = deleteAllFromTable(target.table);
-        }
-        return;
-      }
-
-      const cutoffIso = new Date(Date.now() - RESET_USAGE_HISTORY_PERIOD_MS[period]).toISOString();
-      artifactsToDelete = collectCallLogArtifactsBefore(cutoffIso);
       for (const target of RESET_TARGETS) {
-        (result[target.resultKey] as number) = deleteFromTableBefore(target, cutoffIso);
+        if (target.table === "call_logs") continue;
+        (result[target.resultKey] as number) =
+          period === "all"
+            ? deleteAllFromTable(target.table)
+            : deleteFromTableBefore(target, cutoffIso!);
       }
     });
-
     runReset();
-
-    let artifactResult: { deletedArtifacts: number; errors: number };
-    if (period === "all") {
-      artifactResult = purgeCallLogArtifactDirectory();
-    } else {
-      artifactResult = deleteCallLogArtifacts(artifactsToDelete);
-    }
-    result.deletedCallLogArtifacts = artifactResult.deletedArtifacts;
-    result.deletedArtifacts = artifactResult.deletedArtifacts;
-    result.errors += artifactResult.errors;
 
     result.deleted = RESET_TARGETS.reduce((sum, t) => sum + (result[t.resultKey] as number), 0);
 
     console.log(
       `[Cleanup] Reset usage/log data (period=${period}): ${result.deleted} row(s), ` +
-        `${result.deletedCallLogArtifacts} call log artifact(s)`
+        `${result.deletedCallLogArtifacts} call log artifact(s), errors=${result.errors}`
     );
   } catch (err: unknown) {
     console.error("[Cleanup] Error resetting usage history:", err);

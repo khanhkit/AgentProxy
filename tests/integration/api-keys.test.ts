@@ -116,6 +116,50 @@ test("API keys POST also requires management auth when login protection is enabl
   assert.equal(invalidTokenBody.error.message, "Invalid management token");
 });
 
+test("TC-APIKEY-SEC-001: self-service key cannot mint privileged API keys", async () => {
+  await enableManagementAuth();
+  const caller = await apiKeysDb.createApiKey("self-service-caller", MACHINE_ID, ["self:usage"]);
+  const baselineCount = apiKeysDb.getApiKeysCount();
+
+  for (const scope of ["manage", "admin", "mcp:connect"]) {
+    const response = await listRoute.POST(
+      makeRequest("http://localhost/api/keys", {
+        method: "POST",
+        token: caller.key,
+        body: { name: `blocked-${scope}`, scopes: [scope] },
+      })
+    );
+
+    assert.equal(response.status, 403, `self-service caller must not mint ${scope}`);
+    assert.equal(
+      apiKeysDb.getApiKeysCount(),
+      baselineCount,
+      `${scope} attempt must not persist a new API key`
+    );
+  }
+});
+
+test("TC-APIKEY-SEC-002: self-service key cannot elevate another API key", async () => {
+  await enableManagementAuth();
+  const caller = await apiKeysDb.createApiKey("self-service-caller", MACHINE_ID, ["self:usage"]);
+  const target = await apiKeysDb.createApiKey("scope-target", `${MACHINE_ID}-target`, ["chat"]);
+
+  for (const scope of ["manage", "admin", "mcp:connect"]) {
+    const response = await keyRoute.PATCH(
+      makeRequest(`http://localhost/api/keys/${target.id}`, {
+        method: "PATCH",
+        token: caller.key,
+        body: { scopes: [scope] },
+      }),
+      { params: Promise.resolve({ id: target.id }) }
+    );
+
+    assert.equal(response.status, 403, `self-service caller must not grant ${scope}`);
+    const persisted = await apiKeysDb.getApiKeyById(target.id);
+    assert.deepEqual(persisted?.scopes, ["chat"], `${scope} attempt must not mutate target scopes`);
+  }
+});
+
 test("POST /api/keys creates a key, preserves special characters, and persists noLog", async () => {
   await enableManagementAuth();
   await createManagementKey();

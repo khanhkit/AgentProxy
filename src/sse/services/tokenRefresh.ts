@@ -3,6 +3,7 @@ import * as log from "../utils/logger";
 import { updateProviderConnection } from "@/lib/db/providers";
 import { resolveProxyForConnection } from "@/lib/db/settings";
 import { hasBlockingAccountProxyAssignment, resolveProxyForProvider } from "@/lib/db/proxies";
+import { stripTrailingSlashes } from "@omniroute/open-sse/utils/urlSanitize.ts";
 import {
   TOKEN_EXPIRY_BUFFER_MS as BUFFER_MS,
   getRefreshLeadMs as _getRefreshLeadMs,
@@ -28,6 +29,44 @@ import {
 // docs/architecture/SSE_BOUNDARY.md and tests/unit/token-refresh-race-comprehensive.test.ts.
 
 export const TOKEN_EXPIRY_BUFFER_MS = BUFFER_MS;
+
+const MAX_DATE_MS = 8_640_000_000_000_000;
+const EPOCH_SECONDS_CUTOFF = 100_000_000_000;
+const NUMERIC_EXPIRY_PATTERN = /^\+?\d+(?:\.\d+)?$/;
+
+/**
+ * Normalize persisted OAuth expiry values to epoch milliseconds.
+ *
+ * Legacy/imported credentials can contain ISO timestamps, epoch milliseconds,
+ * epoch seconds, or decimal-string millisecond values (for example
+ * `"1768527451123.0"`). Numeric-looking strings are handled before Date.parse
+ * so Node cannot reinterpret them as year-like date strings.
+ */
+export function normalizeOAuthExpiryMs(value: unknown): number | null {
+  let numericValue: number | null = null;
+
+  if (typeof value === "number") {
+    numericValue = value;
+  } else if (typeof value === "string") {
+    const trimmed = value.trim();
+    if (!trimmed) return null;
+
+    if (NUMERIC_EXPIRY_PATTERN.test(trimmed)) {
+      numericValue = Number(trimmed);
+    } else {
+      const parsed = Date.parse(trimmed);
+      return Number.isFinite(parsed) && parsed > 0 && parsed <= MAX_DATE_MS ? parsed : null;
+    }
+  } else {
+    return null;
+  }
+
+  if (!Number.isFinite(numericValue) || numericValue <= 0) return null;
+
+  const epochMs = numericValue < EPOCH_SECONDS_CUTOFF ? numericValue * 1000 : numericValue;
+  if (!Number.isFinite(epochMs) || epochMs <= 0 || epochMs > MAX_DATE_MS) return null;
+  return epochMs;
+}
 
 async function resolveProxyForCredentials(provider: string, credentials?: any) {
   if (credentials?.connectionId) {
@@ -112,7 +151,7 @@ export function resolveCopilotTokenBaseUrl(
   if (provider !== "ghe-copilot") return undefined;
   const gheUrl = credentials?.providerSpecificData?.gheUrl;
   if (typeof gheUrl === "string" && gheUrl.trim().length > 0) {
-    return `${gheUrl.trim().replace(/\/+$/, "")}/api/v3`;
+    return `${stripTrailingSlashes(gheUrl.trim())}/api/v3`;
   }
   return undefined;
 }
@@ -214,11 +253,11 @@ export async function checkAndRefreshToken(provider: string, credentials: any) {
   // keeps the refresh_token "warm" — refreshed regularly enough that Auth0 doesn't
   // mark it as stale and revoke the token family on first use after long idle.
   if (updatedCredentials.expiresAt) {
-    const expiresAt = new Date(updatedCredentials.expiresAt).getTime();
+    const expiresAt = normalizeOAuthExpiryMs(updatedCredentials.expiresAt);
     const now = Date.now();
     const refreshLead = _getRefreshLeadMs(provider, updatedCredentials.providerSpecificData);
 
-    if (expiresAt - now < refreshLead) {
+    if (expiresAt !== null && expiresAt - now < refreshLead) {
       log.info("TOKEN_REFRESH", "Token expiring soon, refreshing proactively", {
         provider,
         expiresIn: Math.round((expiresAt - now) / 1000),

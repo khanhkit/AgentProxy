@@ -39,6 +39,7 @@ const KEY_LENGTH = 32;
 const AUTH_TAG_LENGTH = 16;
 const PREFIX = "enc:v1:";
 const STATIC_SALT = "omniroute-field-encryption-v1";
+const ALLOW_PLAINTEXT_PROVIDER_CREDENTIALS_ENV = "ALLOW_PLAINTEXT_PROVIDER_CREDENTIALS";
 
 let _staticKey: Buffer | null = null;
 let _legacyDynamicKey: Buffer | null = null;
@@ -162,6 +163,23 @@ function getLegacyDynamicKey(): Buffer | null {
 /** Check if encryption is enabled. */
 export function isEncryptionEnabled(): boolean {
   return !!ensureSecretLoaded();
+}
+
+function isProviderPlaintextPersistenceAllowed(): boolean {
+  if (process.env.NODE_ENV === "production") return false;
+  const explicitOptIn = process.env[ALLOW_PLAINTEXT_PROVIDER_CREDENTIALS_ENV] === "1";
+  if (process.env.NODE_ENV === "development") return explicitOptIn;
+  if (isTestContext()) return true;
+  return explicitOptIn;
+}
+
+function providerEncryptionPolicyError(reason: string): Error {
+  return new Error(
+    `[Encryption] Provider credential persistence refused: ${reason}. ` +
+      `Set STORAGE_ENCRYPTION_KEY to a valid value. Plaintext provider credentials are allowed ` +
+      `only in automated tests or non-production development with ` +
+      `${ALLOW_PLAINTEXT_PROVIDER_CREDENTIALS_ENV}=1.`
+  );
 }
 
 /**
@@ -319,18 +337,43 @@ export function decryptQuiet(
 }
 
 /**
- * Encrypt sensitive fields in a connection object (mutates in-place).
+ * Encrypt sensitive provider fields in a connection object (mutates in-place).
+ *
+ * Provider credential persistence is fail-closed: production never writes these
+ * fields as plaintext, and non-production development must explicitly opt in to
+ * plaintext storage. Automated test runners are the only implicit non-production
+ * harness because their execution mode is itself explicit and isolated.
+ *
  * After decryption that required legacy key, re-encrypt with static key
  * to migrate tokens automatically.
  */
 export function encryptConnectionFields<T extends ConnectionFields | null | undefined>(conn: T): T {
-  if (!isEncryptionEnabled()) return conn;
   if (!conn) return conn;
 
-  if (conn.apiKey) conn.apiKey = encrypt(conn.apiKey);
-  if (conn.accessToken) conn.accessToken = encrypt(conn.accessToken);
-  if (conn.refreshToken) conn.refreshToken = encrypt(conn.refreshToken);
-  if (conn.idToken) conn.idToken = encrypt(conn.idToken);
+  const credentialFields: Array<
+    keyof Pick<ConnectionFields, "apiKey" | "accessToken" | "refreshToken" | "idToken">
+  > = ["apiKey", "accessToken", "refreshToken", "idToken"];
+  const fieldsToPersist = credentialFields.filter((field) => {
+    const value = conn[field];
+    return typeof value === "string" && value.length > 0;
+  });
+
+  if (fieldsToPersist.length === 0) return conn;
+
+  const key = getStaticKey();
+  if (!key) {
+    if (isProviderPlaintextPersistenceAllowed()) return conn;
+    throw providerEncryptionPolicyError("STORAGE_ENCRYPTION_KEY is missing, blank, or unusable");
+  }
+
+  for (const field of fieldsToPersist) {
+    const value = conn[field] as string;
+    const encrypted = encrypt(value);
+    if (typeof encrypted !== "string" || !encrypted.startsWith(PREFIX)) {
+      throw providerEncryptionPolicyError(`encryption failed for ${String(field)}`);
+    }
+    conn[field] = encrypted;
+  }
   return conn;
 }
 

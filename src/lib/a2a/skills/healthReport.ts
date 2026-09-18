@@ -19,13 +19,15 @@ type ProviderHealthEntry = {
 const OMNIROUTE_BASE_URL = resolveOmniRouteBaseUrl();
 const OMNIROUTE_API_KEY = process.env.OMNIROUTE_API_KEY || "";
 
-async function healthFetch(path: string): Promise<JsonRecord> {
+async function healthFetch(path: string, signal?: AbortSignal): Promise<JsonRecord> {
   const url = `${OMNIROUTE_BASE_URL}${path}`;
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
     ...(OMNIROUTE_API_KEY ? { Authorization: `Bearer ${OMNIROUTE_API_KEY}` } : {}),
   };
-  const response = await fetch(url, { headers, signal: AbortSignal.timeout(10000) });
+  const timeoutSignal = AbortSignal.timeout(10000);
+  const requestSignal = signal ? AbortSignal.any([signal, timeoutSignal]) : timeoutSignal;
+  const response = await fetch(url, { headers, signal: requestSignal });
   if (!response.ok) {
     throw new Error(`API [${response.status}]: ${await response.text().catch(() => "error")}`);
   }
@@ -90,10 +92,13 @@ export interface HealthReportResult {
   };
 }
 
-export async function executeHealthReport(_task: A2ATask): Promise<HealthReportResult> {
+export async function executeHealthReport(
+  _task: A2ATask,
+  signal?: AbortSignal
+): Promise<HealthReportResult> {
   const [healthResult, telemetryResult] = await Promise.allSettled([
-    healthFetch("/api/monitoring/health"),
-    healthFetch("/api/telemetry/summary"),
+    healthFetch("/api/monitoring/health", signal),
+    healthFetch("/api/telemetry/summary", signal),
   ]);
 
   if (healthResult.status === "rejected") {

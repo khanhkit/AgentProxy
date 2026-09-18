@@ -20,6 +20,8 @@ import { BaseExecutor, mergeUpstreamExtraHeaders } from "./base.ts";
 import { PROVIDERS } from "../config/constants.ts";
 import { sanitizeErrorMessage } from "../utils/error.ts";
 import { resolvePublicCred } from "../utils/publicCreds.ts";
+import { canonicalizeTraeOAuthOrigin } from "@/lib/oauth/traeOrigins";
+import { safeOutboundFetch } from "@/shared/network/safeOutboundFetch";
 
 type JsonRecord = Record<string, unknown>;
 type ChatMessage = { role?: string; content?: unknown };
@@ -438,16 +440,20 @@ export class TraeExecutor extends BaseExecutor {
     const psd = (credentials?.providerSpecificData as JsonRecord) || {};
     const refreshToken = credentials?.refreshToken as string | undefined;
     if (!refreshToken) return null;
-    const host = ((psd.host as string) || "https://api-us-east.trae.ai").replace(/\/$/, "");
+    const host = canonicalizeTraeOAuthOrigin(psd.host);
     const clientId =
       (psd.clientId as string) || resolvePublicCred("trae_id", "TRAE_OAUTH_CLIENT_ID");
     const url = `${host}/cloudide/api/v3/trae/oauth/ExchangeToken`;
     const body = { ClientID: clientId, RefreshToken: refreshToken, ClientSecret: "-", UserID: "" };
 
-    const res = await fetch(url, {
+    const res = await safeOutboundFetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
+      guard: "public-only",
+      timeoutMs: 10_000,
+      allowRedirect: false,
+      retry: false,
     });
     const text = await res.text();
     if (!res.ok) {

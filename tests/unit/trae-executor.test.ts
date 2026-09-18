@@ -453,3 +453,145 @@ test("parseTraeCallbackQuery falls back to flat refreshToken/refreshExpireAt whe
   assert.equal(result.record.refreshToken, "FLAT_REFRESH");
   assert.equal(result.record.providerSpecificData.refreshExpireAt, Date.UTC(2027, 0, 1));
 });
+
+test("AP-ISS-0004 refreshCredentials rejects persisted private Trae host before fetch", async () => {
+  const original = globalThis.fetch;
+  let fetchCalled = false;
+  globalThis.fetch = (async () => {
+    fetchCalled = true;
+    return new Response(
+      JSON.stringify({
+        ResponseMetadata: {},
+        Result: { Token: "SHOULD_NOT_BE_USED" },
+      }),
+      { status: 200 }
+    );
+  }) as typeof fetch;
+  try {
+    const ex = new TraeExecutor();
+    await assert.rejects(
+      ex.refreshCredentials({
+        ...CREDS,
+        refreshToken: "REFRESH",
+        providerSpecificData: {
+          ...CREDS.providerSpecificData,
+          host: "http://127.0.0.1:19001",
+        },
+      }),
+      /Trae.*host|approved.*origin|refresh.*origin/i
+    );
+    assert.equal(fetchCalled, false, "host validation must fail before any network transport");
+  } finally {
+    globalThis.fetch = original;
+  }
+});
+
+test("AP-ISS-0004 refreshCredentials uses bounded no-redirect transport for approved Trae origin", async () => {
+  const original = globalThis.fetch;
+  let seenInit: RequestInit | undefined;
+  globalThis.fetch = (async (_input: RequestInfo | URL, init?: RequestInit) => {
+    seenInit = init;
+    return new Response(
+      JSON.stringify({
+        ResponseMetadata: {},
+        Result: { Token: "NEW_SAFE_TOKEN" },
+      }),
+      { status: 200, headers: { "content-type": "application/json" } }
+    );
+  }) as typeof fetch;
+  try {
+    const ex = new TraeExecutor();
+    const out = await ex.refreshCredentials({
+      ...CREDS,
+      refreshToken: "REFRESH",
+      providerSpecificData: {
+        ...CREDS.providerSpecificData,
+        host: "https://api-us-east.trae.ai/",
+      },
+    });
+    assert.equal(out?.accessToken, "NEW_SAFE_TOKEN");
+    assert.equal(seenInit?.redirect, "manual", "refresh transport must not auto-follow redirects");
+    assert.ok(
+      seenInit?.signal instanceof AbortSignal,
+      "refresh transport must carry a timeout signal"
+    );
+  } finally {
+    globalThis.fetch = original;
+  }
+});
+
+test("AP-ISS-0004 parseTraeCallbackQuery rejects an unapproved callback host", () => {
+  const userJwt = JSON.stringify({ ClientID: "en1oxy7wnw8j9n", Token: "T", RefreshToken: "R" });
+  const result = parseTraeCallbackQuery(
+    new URLSearchParams({ userJwt, host: "http://169.254.169.254/latest/meta-data" })
+  );
+  assert.equal(result.ok, false);
+  if (result.ok) return;
+  assert.match(result.error, /host|origin/i);
+});
+
+test("AP-ISS-0004 parseTraeCallbackQuery canonicalizes the approved Trae host", () => {
+  const userJwt = JSON.stringify({ ClientID: "en1oxy7wnw8j9n", Token: "T", RefreshToken: "R" });
+  const result = parseTraeCallbackQuery(
+    new URLSearchParams({ userJwt, host: "https://api-us-east.trae.ai/" })
+  );
+  assert.equal(result.ok, true);
+  if (!result.ok) return;
+  assert.equal(result.record.providerSpecificData.host, "https://api-us-east.trae.ai");
+});
+
+test("AP-ISS-0004 refreshCredentials blocks redirects instead of following a private Location", async () => {
+  const original = globalThis.fetch;
+  let calls = 0;
+  globalThis.fetch = (async (_input: RequestInfo | URL, init?: RequestInit) => {
+    calls += 1;
+    assert.equal(init?.redirect, "manual");
+    return new Response(null, {
+      status: 302,
+      headers: { location: "http://127.0.0.1:19001/token" },
+    });
+  }) as typeof fetch;
+  try {
+    const ex = new TraeExecutor();
+    await assert.rejects(
+      ex.refreshCredentials({
+        ...CREDS,
+        refreshToken: "REFRESH",
+        providerSpecificData: {
+          ...CREDS.providerSpecificData,
+          host: "https://api-us-east.trae.ai",
+        },
+      }),
+      /Redirect blocked/i
+    );
+    assert.equal(calls, 1, "blocked redirect must not trigger a second transport call");
+  } finally {
+    globalThis.fetch = original;
+  }
+});
+
+test("AP-ISS-0004 refreshCredentials rejects arbitrary public HTTPS origins before fetch", async () => {
+  const original = globalThis.fetch;
+  let called = false;
+  globalThis.fetch = (async () => {
+    called = true;
+    return new Response("{}");
+  }) as typeof fetch;
+  try {
+    const ex = new TraeExecutor();
+    await assert.rejects(
+      ex.refreshCredentials({
+        ...CREDS,
+        refreshToken: "REFRESH",
+        providerSpecificData: {
+          ...CREDS.providerSpecificData,
+          host: "https://attacker.example.test",
+        },
+      }),
+      /approved origin/i
+    );
+    assert.equal(called, false);
+  } finally {
+    globalThis.fetch = original;
+  }
+});

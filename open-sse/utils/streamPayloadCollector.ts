@@ -1,6 +1,7 @@
 import { cloneLogPayload } from "@/lib/logPayloads";
 import { toNumber } from "@/shared/utils/numeric";
 import { FORMATS } from "../translator/formats.ts";
+import { appendBoundedText } from "./streamHelpers.ts";
 import { jsonLength } from "./jsonSize.ts";
 
 type StructuredSSEEvent = {
@@ -32,9 +33,12 @@ type BuildOptions = {
 
 type JsonRecord = Record<string, unknown>;
 
+const STREAM_SUMMARY_ITEM_LIMIT = 128;
+
 interface SummaryReducer {
   ingest(payload: JsonRecord): void;
   finalize(): unknown;
+  isTruncated?(): boolean;
 }
 
 function getEventName(payload: unknown): string | undefined {
@@ -205,8 +209,8 @@ function createOpenAIReducer(fallbackModel?: string | null): SummaryReducer {
   let firstId: string | null = null;
   let firstCreated: number | null = null;
   let firstModel: string | null = null;
-  const contentParts: string[] = [];
-  const reasoningParts: string[] = [];
+  let contentText = "";
+  let reasoningText = "";
   type ToolCall = {
     id: string | null;
     index: number;
@@ -223,6 +227,12 @@ function createOpenAIReducer(fallbackModel?: string | null): SummaryReducer {
   let unknownToolCallSeq = 0;
   let finishReason = "stop";
   let usage: JsonRecord | null = null;
+  let summaryTruncated = false;
+  const appendSummary = (current: string, next: string) => {
+    const value = appendBoundedText(current, next);
+    if (value.length < current.length + next.length) summaryTruncated = true;
+    return value;
+  };
 
   const getToolCallKey = (toolCall: JsonRecord) => {
     const idKey = typeof toolCall.id === "string" && toolCall.id ? `id:${toolCall.id}` : null;
@@ -255,18 +265,18 @@ function createOpenAIReducer(fallbackModel?: string | null): SummaryReducer {
       const delta = asRecord(choice.delta);
 
       if (typeof delta.content === "string" && delta.content.length > 0) {
-        contentParts.push(delta.content);
+        contentText = appendSummary(contentText, delta.content);
       }
       if (Array.isArray(delta.content)) {
         for (const part of delta.content) {
           const partObj = asRecord(part);
           if (typeof partObj.text === "string" && partObj.text.length > 0) {
-            contentParts.push(partObj.text);
+            contentText = appendSummary(contentText, partObj.text);
           }
         }
       }
       if (typeof delta.reasoning_content === "string" && delta.reasoning_content.length > 0) {
-        reasoningParts.push(delta.reasoning_content);
+        reasoningText = appendSummary(reasoningText, delta.reasoning_content);
       }
       // Normalize `reasoning` alias (NVIDIA kimi-k2.5 etc.)
       if (
@@ -274,12 +284,20 @@ function createOpenAIReducer(fallbackModel?: string | null): SummaryReducer {
         delta.reasoning.length > 0 &&
         !delta.reasoning_content
       ) {
-        reasoningParts.push(delta.reasoning);
+        reasoningText = appendSummary(reasoningText, delta.reasoning);
       }
 
       if (Array.isArray(delta.tool_calls)) {
         for (const item of delta.tool_calls) {
           const toolCall = asRecord(item);
+          const idKey = typeof toolCall.id === "string" && toolCall.id ? `id:${toolCall.id}` : null;
+          const idxKey = Number.isInteger(toolCall.index) ? `idx:${toolCall.index}` : null;
+          const existingAlias =
+            (idKey && keyAliases.get(idKey)) || (idxKey && keyAliases.get(idxKey));
+          if (!existingAlias && toolCalls.size >= STREAM_SUMMARY_ITEM_LIMIT) {
+            summaryTruncated = true;
+            continue;
+          }
           const key = getToolCallKey(toolCall);
           const existing = toolCalls.get(key);
           const deltaArgs =
@@ -294,7 +312,7 @@ function createOpenAIReducer(fallbackModel?: string | null): SummaryReducer {
               type: toString(toolCall.type, "function"),
               function: {
                 name: toString(asRecord(toolCall.function).name, "unknown"),
-                arguments: deltaArgs,
+                arguments: appendSummary("", deltaArgs),
               },
             });
             continue;
@@ -310,7 +328,7 @@ function createOpenAIReducer(fallbackModel?: string | null): SummaryReducer {
           if (typeof asRecord(toolCall.function).name === "string" && !existing.function.name) {
             existing.function.name = String(asRecord(toolCall.function).name);
           }
-          existing.function.arguments += deltaArgs;
+          existing.function.arguments = appendSummary(existing.function.arguments, deltaArgs);
         }
       }
 
@@ -322,11 +340,15 @@ function createOpenAIReducer(fallbackModel?: string | null): SummaryReducer {
       }
     },
 
+    isTruncated() {
+      return summaryTruncated;
+    },
+
     finalize(): unknown {
       if (!sawAny) return null;
 
-      const joinedContent = contentParts.length > 0 ? contentParts.join("").trim() : null;
-      const joinedReasoning = reasoningParts.length > 0 ? reasoningParts.join("").trim() : null;
+      const joinedContent = contentText ? contentText.trim() : null;
+      const joinedReasoning = reasoningText ? reasoningText.trim() : null;
       const message: JsonRecord = {
         role: "assistant",
         content: joinedContent || null,
@@ -403,14 +425,20 @@ function createResponsesReducer(fallbackModel?: string | null): SummaryReducer {
   let completedSnapshot: ResponseSnapshot | null = null;
   let latestSnapshot: ResponseSnapshot | null = null;
   let usage: JsonRecord | null = null;
-  const textParts: string[] = [];
+  let outputText = "";
+  let summaryTruncated = false;
+  const appendSummary = (current: string, next: string) => {
+    const value = appendBoundedText(current, next);
+    if (value.length < current.length + next.length) summaryTruncated = true;
+    return value;
+  };
   const buildOutputFromText = () =>
-    textParts.length > 0
+    outputText
       ? [
           {
             type: "message",
             role: "assistant",
-            content: [{ type: "output_text", text: textParts.join("") }],
+            content: [{ type: "output_text", text: outputText }],
           },
         ]
       : [];
@@ -448,13 +476,17 @@ function createResponsesReducer(fallbackModel?: string | null): SummaryReducer {
         typeof payload.delta === "string" &&
         payload.delta.length > 0
       ) {
-        textParts.push(payload.delta);
+        outputText = appendSummary(outputText, payload.delta);
       }
       if (payload.usage && typeof payload.usage === "object") {
         usage = { ...asRecord(payload.usage) };
       } else if (payload.response && typeof asRecord(payload.response).usage === "object") {
         usage = { ...asRecord(asRecord(payload.response).usage) };
       }
+    },
+
+    isTruncated() {
+      return summaryTruncated;
     },
 
     finalize(): unknown {
@@ -519,6 +551,12 @@ function createClaudeReducer(fallbackModel?: string | null): SummaryReducer {
   // so streaming context-clear savings reach `extractContextEditingTelemetry`, mirroring the
   // non-streaming JSON path. Last-writer-wins: the final snapshot is authoritative.
   let contextManagement: JsonRecord | null = null;
+  let summaryTruncated = false;
+  const appendSummary = (current: string, next: string) => {
+    const value = appendBoundedText(current, next);
+    if (value.length < current.length + next.length) summaryTruncated = true;
+    return value;
+  };
 
   return {
     ingest(payload: JsonRecord) {
@@ -544,6 +582,10 @@ function createClaudeReducer(fallbackModel?: string | null): SummaryReducer {
 
       if (eventType === "content_block_start") {
         const index = toNumber(payload.index, blocks.size);
+        if (!blocks.has(index) && blocks.size >= STREAM_SUMMARY_ITEM_LIMIT) {
+          summaryTruncated = true;
+          return;
+        }
         const contentBlock = asRecord(payload.content_block);
         const blockType = toString(contentBlock.type);
 
@@ -551,7 +593,7 @@ function createClaudeReducer(fallbackModel?: string | null): SummaryReducer {
           blocks.set(index, {
             type: "thinking",
             index,
-            thinking: toString(contentBlock.thinking),
+            thinking: appendSummary("", toString(contentBlock.thinking)),
             signature:
               typeof contentBlock.signature === "string" ? contentBlock.signature : undefined,
           });
@@ -568,7 +610,7 @@ function createClaudeReducer(fallbackModel?: string | null): SummaryReducer {
           blocks.set(index, {
             type: "text",
             index,
-            text: toString(contentBlock.text),
+            text: appendSummary("", toString(contentBlock.text)),
           });
         }
         return;
@@ -579,6 +621,10 @@ function createClaudeReducer(fallbackModel?: string | null): SummaryReducer {
         const delta = asRecord(payload.delta);
         const deltaType = toString(delta.type);
         const existing = blocks.get(index);
+        if (!existing && blocks.size >= STREAM_SUMMARY_ITEM_LIMIT) {
+          summaryTruncated = true;
+          return;
+        }
 
         if (deltaType === "input_json_delta") {
           const toolUse =
@@ -592,7 +638,7 @@ function createClaudeReducer(fallbackModel?: string | null): SummaryReducer {
                   input: {},
                   inputJson: "",
                 };
-          toolUse.inputJson += toString(delta.partial_json);
+          toolUse.inputJson = appendSummary(toolUse.inputJson, toString(delta.partial_json));
           blocks.set(index, toolUse);
           return;
         }
@@ -602,7 +648,7 @@ function createClaudeReducer(fallbackModel?: string | null): SummaryReducer {
             existing && existing.type === "thinking"
               ? existing
               : { type: "thinking" as const, index, thinking: "", signature: undefined };
-          thinking.thinking += toString(delta.thinking);
+          thinking.thinking = appendSummary(thinking.thinking, toString(delta.thinking));
           blocks.set(index, thinking);
           return;
         }
@@ -615,7 +661,7 @@ function createClaudeReducer(fallbackModel?: string | null): SummaryReducer {
                 index,
                 text: "",
               };
-        textBlock.text += toString(delta.text);
+        textBlock.text = appendSummary(textBlock.text, toString(delta.text));
         blocks.set(index, textBlock);
         return;
       }
@@ -630,6 +676,10 @@ function createClaudeReducer(fallbackModel?: string | null): SummaryReducer {
       }
 
       mergeUsage(usage, payload.usage);
+    },
+
+    isTruncated() {
+      return summaryTruncated;
     },
 
     finalize(): unknown {
@@ -696,8 +746,17 @@ function createGeminiReducer(fallbackModel?: string | null): SummaryReducer {
   let modelVersion = fallbackModel || "gemini";
   let finishReason = "STOP";
   let role = "model";
+  let summaryTruncated = false;
+  const appendSummary = (current: string, next: string) => {
+    const value = appendBoundedText(current, next);
+    if (value.length < current.length + next.length) summaryTruncated = true;
+    return value;
+  };
 
   const appendPart = (part: JsonRecord) => {
+    if (typeof part.text === "string") {
+      part = { ...part, text: appendSummary("", part.text) };
+    }
     const last = parts[parts.length - 1];
     if (
       last &&
@@ -705,7 +764,11 @@ function createGeminiReducer(fallbackModel?: string | null): SummaryReducer {
       typeof part.text === "string" &&
       Boolean(last.thought) === Boolean(part.thought)
     ) {
-      last.text += part.text;
+      last.text = appendSummary(last.text, part.text);
+      return;
+    }
+    if (parts.length >= STREAM_SUMMARY_ITEM_LIMIT) {
+      summaryTruncated = true;
       return;
     }
     parts.push(part);
@@ -735,6 +798,10 @@ function createGeminiReducer(fallbackModel?: string | null): SummaryReducer {
       for (const item of content.parts) {
         const part = asRecord(item);
         if (part.functionCall && typeof part.functionCall === "object") {
+          if (parts.length >= STREAM_SUMMARY_ITEM_LIMIT) {
+            summaryTruncated = true;
+            continue;
+          }
           parts.push({
             functionCall: cloneLogPayload(part.functionCall),
           });
@@ -745,6 +812,10 @@ function createGeminiReducer(fallbackModel?: string | null): SummaryReducer {
           });
         }
       }
+    },
+
+    isTruncated() {
+      return summaryTruncated;
     },
 
     finalize(): unknown {
@@ -867,6 +938,9 @@ export function compactStructuredStreamPayload(payload: unknown): unknown {
   if (record._truncated === true) {
     streamMeta.truncated = true;
   }
+  if (record._summaryTruncated === true) {
+    streamMeta.summaryTruncated = true;
+  }
   if (typeof record._droppedEvents === "number" && record._droppedEvents > 0) {
     streamMeta.droppedEvents = record._droppedEvents;
   }
@@ -965,12 +1039,15 @@ export function createStructuredSSECollector(options: CollectorOptions = {}) {
 
     build(summary?: unknown, buildOptions: BuildOptions = {}) {
       const { includeEvents = true } = buildOptions;
+      const summaryTruncated = reducer?.isTruncated?.() === true;
       return {
         _streamed: true,
         _format: "sse-json",
         ...(stage ? { _stage: stage } : {}),
         _eventCount: events.length + droppedEvents,
-        ...(droppedEvents > 0 ? { _truncated: true, _droppedEvents: droppedEvents } : {}),
+        ...(droppedEvents > 0 || summaryTruncated ? { _truncated: true } : {}),
+        ...(droppedEvents > 0 ? { _droppedEvents: droppedEvents } : {}),
+        ...(summaryTruncated ? { _summaryTruncated: true } : {}),
         ...(includeEvents ? { events } : {}),
         ...(summary === undefined ? {} : { summary: cloneLogPayload(summary) }),
       };

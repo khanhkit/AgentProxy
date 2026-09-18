@@ -475,6 +475,8 @@ Use this endpoint when a sidecar runs out-of-process and cannot import
 | POST   | `/api/v1/vscode/{token}/api/chat`         | Ollama tokenized alias             |
 | GET    | `/api/v1/vscode/{token}/api/tags`         | Ollama tags tokenized alias        |
 
+**Codex HTTP compatibility alias:** `POST /codex` maps to the canonical Responses root `/api/v1/responses`. `POST /codex/<suffix>` preserves the suffix one-for-one and maps to `/api/v1/responses/<suffix>` (for example, `/codex/compact` → `/api/v1/responses/compact`). Arbitrary suffixes are handled by the Responses catch-all route rather than silently collapsed to the root path.
+
 All POST routes follow the same shape: `Bearer your-api-key` + Zod-validated JSON body (`v1RerankSchema`, `v1ModerationSchema`, `v1AudioSpeechSchema`, etc., see `src/shared/validation/schemas.ts`). 4xx is returned on schema failure.
 
 For clients that cannot attach `Authorization: Bearer ...`, OmniRoute also accepts API keys in the URL via either query-string compatibility (`?token=...`, `?apiKey=...`, `?api_key=...`, `?key=...`) or the dedicated `/api/v1/vscode/{token}/...` endpoints documented below.
@@ -661,6 +663,11 @@ The CLI upgrades `base_url + /responses` to a WebSocket and OmniRoute tunnels it
 to the selected codex OAuth connection. Validated end-to-end against the local
 server: ChatGPT returns `codex.rate_limits` + `response.created` and streams the
 completion.
+
+When this traffic traverses the Rust legacy WebSocket relay, the upstream handshake
+is bounded to 10 seconds, relay sends are bounded to 30 seconds, incoming messages
+are capped at 64 MiB with a 16 MiB per-frame cap, and the write buffer is finite.
+WebSocket close codes and reasons are preserved in both relay directions.
 
 ---
 

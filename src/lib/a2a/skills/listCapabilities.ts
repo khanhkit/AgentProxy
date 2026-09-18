@@ -39,7 +39,11 @@ function buildMarkdownTable(skills: AgentSkill[]): string {
   return [header, separator, ...rows].join("\n");
 }
 
-export async function executeListCapabilities(_task: A2ATask): Promise<ListCapabilitiesResult> {
+export async function executeListCapabilities(
+  _task: A2ATask,
+  signal?: AbortSignal
+): Promise<ListCapabilitiesResult> {
+  signal?.throwIfAborted();
   const catalog = getCatalog();
   const coverage = computeCoverage();
 

@@ -31,7 +31,7 @@ test("getNodeRuntimeSupport accepts patched Node 24 and 22 LTS lines", () => {
     supportedRange: SUPPORTED_NODE_RANGE,
     supportedDisplay:
       "Node.js 22.22.2+ (22.x LTS), 24.0.0+ (24.x LTS), 25.0.0+ (25.x), or 26.0.0+ (26.x)",
-    recommendedVersion: "v24.14.1",
+    recommendedVersion: "v24.15.0",
     minimumSecureVersion: "v22.22.2",
   });
 
@@ -43,7 +43,7 @@ test("getNodeRuntimeSupport accepts patched Node 24 and 22 LTS lines", () => {
     supportedRange: SUPPORTED_NODE_RANGE,
     supportedDisplay:
       "Node.js 22.22.2+ (22.x LTS), 24.0.0+ (24.x LTS), 25.0.0+ (25.x), or 26.0.0+ (26.x)",
-    recommendedVersion: "v24.14.1",
+    recommendedVersion: "v24.15.0",
     minimumSecureVersion: "v24.0.0",
   });
 });

@@ -18,6 +18,8 @@ import {
 import { createPinnedFetch } from "@/shared/network/remoteImageFetch";
 
 const DEFAULT_IDEMPOTENT_METHODS = ["GET", "HEAD", "OPTIONS", "PUT", "DELETE"];
+const DEFAULT_MAX_REDIRECTS = 3;
+const FOLLOWABLE_REDIRECT_STATUSES = new Set([301, 302, 303, 307, 308]);
 
 // Some upstream providers (Cerebras, Cloudflare AI, Groq observed in practice) routinely take
 // close to 5s to answer a lightweight /models probe, which is indistinguishable from a real
@@ -33,7 +35,11 @@ const PROVIDER_PROBE_TIMEOUT_MS = resolveProbeTimeoutMs();
 
 export type SafeOutboundFetchGuard = OutboundUrlGuardMode;
 export type SafeOutboundFetchErrorCode =
-  "INVALID_URL" | "URL_GUARD_BLOCKED" | "TIMEOUT" | "REDIRECT_BLOCKED" | "NETWORK_ERROR";
+  | "INVALID_URL"
+  | "URL_GUARD_BLOCKED"
+  | "TIMEOUT"
+  | "REDIRECT_BLOCKED"
+  | "NETWORK_ERROR";
 
 export interface SafeOutboundFetchRetryOptions {
   attempts?: number;
@@ -49,6 +55,7 @@ export type SafeOutboundDnsLookup = (
 export interface SafeOutboundFetchOptions extends RequestInit {
   timeoutMs?: number;
   allowRedirect?: boolean;
+  maxRedirects?: number;
   retry?: SafeOutboundFetchRetryOptions | false;
   guard?: SafeOutboundFetchGuard;
   proxyConfig?: unknown;
@@ -214,12 +221,7 @@ const defaultDnsLookup: SafeOutboundDnsLookup = (hostname) =>
   dns.promises.lookup(hostname, { all: true });
 
 function isIpv6LinkLocal(address: string): boolean {
-  const normalized = address
-    .trim()
-    .toLowerCase()
-    .replace(/^\[/, "")
-    .replace(/\]$/, "")
-    .split("%")[0];
+  const normalized = address.trim().toLowerCase().replace(/^\[/, "").replace(/\]$/, "").split("%")[0];
   if (isIP(normalized) !== 6) return false;
   const first = Number.parseInt(normalized.split(":", 1)[0] || "0", 16);
   return Number.isFinite(first) && (first & 0xffc0) === 0xfe80;
@@ -241,10 +243,9 @@ async function resolveValidatedDns(
 ): Promise<Array<{ address: string; family: number }>> {
   if (guard === "none") return [];
 
-  const hostname =
-    targetUrl.hostname.startsWith("[") && targetUrl.hostname.endsWith("]")
-      ? targetUrl.hostname.slice(1, -1)
-      : targetUrl.hostname;
+  const hostname = targetUrl.hostname.startsWith("[") && targetUrl.hostname.endsWith("]")
+    ? targetUrl.hostname.slice(1, -1)
+    : targetUrl.hostname;
   if (!hostname) return [];
 
   let resolved: Array<{ address: string; family: number }>;
@@ -382,6 +383,7 @@ export async function safeOutboundFetch(url: string | URL, options: SafeOutbound
   const {
     timeoutMs,
     allowRedirect = false,
+    maxRedirects: requestedMaxRedirects,
     retry,
     guard = "none",
     proxyConfig,
@@ -390,79 +392,192 @@ export async function safeOutboundFetch(url: string | URL, options: SafeOutbound
     fetchImpl,
     bypassProxyPatch = false,
     signal,
+    redirect: requestedRedirect,
     ...fetchOptions
   } = options;
 
   applyUrlGuard(targetUrl, guard, method);
 
-  const resolvedAddresses = pinDns
-    ? await resolveValidatedDns(targetUrl, guard, dnsLookup, method)
-    : [];
   const proxyIsActive = Boolean(proxyConfig) || hasAmbientProxyContext();
 
   const retryConfig = getRetryConfig(retry, method);
-  const redirect = allowRedirect ? (fetchOptions.redirect ?? "follow") : "manual";
+  const redirect = allowRedirect ? (requestedRedirect ?? "follow") : "manual";
+  const guardedManualRedirects = allowRedirect && guard !== "none" && redirect === "follow";
+  const maxRedirects =
+    typeof requestedMaxRedirects === "number" && Number.isFinite(requestedMaxRedirects)
+      ? Math.max(0, Math.floor(requestedMaxRedirects))
+      : DEFAULT_MAX_REDIRECTS;
 
-  for (let attempt = 1; attempt <= retryConfig.attempts; attempt++) {
+  attemptLoop: for (let attempt = 1; attempt <= retryConfig.attempts; attempt++) {
+    let activeUrl = targetUrl;
+    let activeMethod = method;
+    let activeBody = fetchOptions.body;
+    let activeHeaders = fetchOptions.headers;
+    let redirectCount = 0;
+
     try {
-      const executeFetch = () => {
-        // Do not silently bypass an assigned/ambient proxy merely to obtain DNS
-        // pinning. Direct egress pins to the already-validated answer; proxied
-        // egress retains the proxy route after local DNS pre-validation.
-        const pinnedFetch =
-          pinDns && resolvedAddresses.length > 0 && !proxyIsActive && !fetchImpl
-            ? createPinnedFetch(resolvedAddresses[0].address, resolvedAddresses[0].family)
-            : undefined;
-        const selectedFetch =
-          fetchImpl || pinnedFetch || (bypassProxyPatch ? getOriginalFetch() : undefined);
+      while (true) {
+        // Guard and, when requested, resolve every concrete destination
+        // immediately before transport. Redirect targets must pass the same
+        // URL + DNS policy as the initial request.
+        applyUrlGuard(activeUrl, guard, activeMethod);
+        const resolvedAddresses = pinDns
+          ? await resolveValidatedDns(activeUrl, guard, dnsLookup, activeMethod)
+          : [];
 
-        return fetchWithTimeout(targetUrl.toString(), {
-          ...fetchOptions,
-          method,
-          redirect,
-          signal,
-          timeoutMs,
-          fetchFn: selectedFetch,
-        });
-      };
+        const executeFetch = () => {
+          // Do not silently bypass an assigned/ambient proxy merely to obtain DNS
+          // pinning. Direct egress pins to the already-validated answer; proxied
+          // egress retains the proxy route after local DNS pre-validation.
+          const pinnedFetch =
+            pinDns && resolvedAddresses.length > 0 && !proxyIsActive && !fetchImpl
+              ? createPinnedFetch(resolvedAddresses[0].address, resolvedAddresses[0].family)
+              : undefined;
+          const selectedFetch =
+            fetchImpl || pinnedFetch || (bypassProxyPatch ? getOriginalFetch() : undefined);
 
-      const response =
-        bypassProxyPatch && !proxyConfig
-          ? await executeFetch()
-          : proxyConfig
-            ? await runWithProxyContext(proxyConfig, executeFetch)
-            : await executeFetch();
+          return fetchWithTimeout(activeUrl.toString(), {
+            ...fetchOptions,
+            method: activeMethod,
+            headers: activeHeaders,
+            body: activeBody,
+            redirect: guardedManualRedirects ? "manual" : redirect,
+            signal,
+            timeoutMs,
+            fetchFn: selectedFetch,
+          });
+        };
 
-      if (!allowRedirect && response.status >= 300 && response.status < 400) {
-        const location = response.headers.get("location");
-        await cancelResponseBody(response);
-        throw new SafeOutboundFetchError(
-          `Redirect blocked for ${method} ${targetUrl.toString()} (${response.status})`,
-          {
-            code: "REDIRECT_BLOCKED",
-            url: targetUrl.toString(),
-            method,
-            attempts: attempt,
-            status: response.status,
-            location,
-            isRetryable: false,
+        const response =
+          bypassProxyPatch && !proxyConfig
+            ? await executeFetch()
+            : proxyConfig
+              ? await runWithProxyContext(proxyConfig, executeFetch)
+              : await executeFetch();
+
+        if (guardedManualRedirects && FOLLOWABLE_REDIRECT_STATUSES.has(response.status)) {
+          const location = response.headers.get("location");
+          // Fetch returns the redirect response unchanged when there is no
+          // Location header, even in follow mode.
+          if (!location) return response;
+
+          if (redirectCount >= maxRedirects) {
+            await cancelResponseBody(response);
+            throw new SafeOutboundFetchError(
+              `Redirect limit exceeded for ${method} ${targetUrl.toString()} (max ${maxRedirects})`,
+              {
+                code: "REDIRECT_BLOCKED",
+                url: activeUrl.toString(),
+                method: activeMethod,
+                attempts: attempt,
+                status: response.status,
+                location,
+                isRetryable: false,
+              }
+            );
           }
-        );
-      }
 
-      if (
-        retryConfig.shouldRetryMethod &&
-        attempt < retryConfig.attempts &&
-        retryConfig.statusCodes.has(response.status)
-      ) {
-        await cancelResponseBody(response);
-        await sleep(getBackoffDelay(retryConfig.backoffMs, attempt));
-        continue;
-      }
+          let nextUrl: URL;
+          try {
+            nextUrl = normalizeUrl(new URL(location, activeUrl));
+          } catch (error) {
+            await cancelResponseBody(response);
+            if (error instanceof SafeOutboundFetchError) throw error;
+            throw new SafeOutboundFetchError(
+              `Invalid redirect location for ${activeMethod} ${activeUrl.toString()}`,
+              {
+                code: "INVALID_URL",
+                url: location,
+                method: activeMethod,
+                attempts: attempt,
+                status: response.status,
+                location,
+                isRetryable: false,
+                cause: error,
+              }
+            );
+          }
 
-      return response;
+          try {
+            // Validate before cancelling/continuing so the dangerous target is
+            // rejected without issuing another transport call.
+            applyUrlGuard(nextUrl, guard, activeMethod);
+          } catch (error) {
+            await cancelResponseBody(response);
+            throw error;
+          }
+
+          const rewriteToGet =
+            (response.status === 303 && activeMethod !== "HEAD") ||
+            ((response.status === 301 || response.status === 302) && activeMethod === "POST");
+          const nextHeaders = activeHeaders == null ? undefined : new Headers(activeHeaders);
+
+          if (nextHeaders && rewriteToGet) {
+            for (const name of [
+              "content-encoding",
+              "content-language",
+              "content-length",
+              "content-location",
+              "content-type",
+            ]) {
+              nextHeaders.delete(name);
+            }
+          }
+          if (nextHeaders && activeUrl.origin !== nextUrl.origin) {
+            // Match native fetch credential-forwarding safety when following a
+            // redirect manually across origins.
+            nextHeaders.delete("authorization");
+            nextHeaders.delete("cookie");
+            nextHeaders.delete("proxy-authorization");
+          }
+
+          await cancelResponseBody(response);
+          activeUrl = nextUrl;
+          if (rewriteToGet) {
+            activeMethod = "GET";
+            activeBody = undefined;
+          }
+          if (nextHeaders) activeHeaders = nextHeaders;
+          redirectCount += 1;
+          continue;
+        }
+
+        if (!allowRedirect && response.status >= 300 && response.status < 400) {
+          const location = response.headers.get("location");
+          await cancelResponseBody(response);
+          throw new SafeOutboundFetchError(
+            `Redirect blocked for ${method} ${targetUrl.toString()} (${response.status})`,
+            {
+              code: "REDIRECT_BLOCKED",
+              url: targetUrl.toString(),
+              method,
+              attempts: attempt,
+              status: response.status,
+              location,
+              isRetryable: false,
+            }
+          );
+        }
+
+        if (
+          retryConfig.shouldRetryMethod &&
+          attempt < retryConfig.attempts &&
+          retryConfig.statusCodes.has(response.status)
+        ) {
+          await cancelResponseBody(response);
+          await sleep(getBackoffDelay(retryConfig.backoffMs, attempt));
+          continue attemptLoop;
+        }
+
+        return response;
+      }
     } catch (error) {
-      const normalizedError = normalizeFetchFailure(error, targetUrl.toString(), method, attempt);
+      const normalizedError = normalizeFetchFailure(
+        error,
+        activeUrl.toString(),
+        activeMethod,
+        attempt
+      );
       const shouldRetry =
         retryConfig.shouldRetryMethod &&
         attempt < retryConfig.attempts &&

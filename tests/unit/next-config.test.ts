@@ -80,6 +80,17 @@ test("next config exposes standalone build settings and canonical rewrites", asy
   ]);
 });
 
+test("codex rewrite preserves Responses suffix semantics", async () => {
+  const { default: nextConfig } = await loadNextConfig("codex-suffix");
+  const rewrites = await nextConfig.rewrites();
+
+  const codexRules = rewrites.filter(({ source }) => source === "/codex" || source === "/codex/:path*");
+  assert.deepEqual(codexRules, [
+    { source: "/codex", destination: "/api/v1/responses" },
+    { source: "/codex/:path*", destination: "/api/v1/responses/:path*" },
+  ]);
+});
+
 test("next config honors an explicit static-generation worker cap", async () => {
   process.env.OMNIROUTE_NEXT_BUILD_CPUS = "1";
   const { default: capped } = await loadNextConfig("static-workers-capped");

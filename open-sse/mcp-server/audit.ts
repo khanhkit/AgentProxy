@@ -7,6 +7,7 @@
  */
 
 import { hashInput, summarizeOutput } from "./schemas/audit.ts";
+import { getMcpHttpAuditApiKeyId } from "./httpAuthContext.ts";
 import { isNativeSqliteLoadError } from "../../src/lib/db/core.ts";
 
 // ============ Database Connection ============
@@ -370,7 +371,7 @@ export async function logToolCall(
 
     const inputHash = await hashInput(input);
     const outputSummary = summarizeOutput(output);
-    const apiKeyId = process.env.OMNIROUTE_API_KEY_ID || null;
+    const apiKeyId = getMcpHttpAuditApiKeyId() || process.env.OMNIROUTE_API_KEY_ID || null;
 
     database
       .prepare(

@@ -292,7 +292,7 @@ test("artifact deletion never removes an equivalent trailing-slash root", () => 
   fs.mkdirSync(baseDir, { recursive: true });
   fs.writeFileSync(artifactPath, "{}");
 
-  assert.equal(deleteCallArtifact("root.json", `${baseDir}${path.sep}`), true);
+  assert.equal(deleteCallArtifact("root.json", `${baseDir}${path.sep}`).state, "deleted");
   assert.equal(fs.existsSync(artifactPath), false);
   assert.equal(fs.existsSync(baseDir), true);
 });

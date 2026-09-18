@@ -40,6 +40,7 @@ import { getSpecialtyModelsResponse } from "@/app/api/v1/_shared/specialtyCatalo
 import { enforceClientApiRouteAuth } from "@/shared/utils/clientApiRouteAuth";
 import { runWithCallLogApiKeyContext } from "@/lib/usage/callLogApiKeyContext";
 import { executeImageWithCredentialFallback } from "@/sse/services/imageCredentialRetry";
+import { MAX_BODY_BYTES_MEDIA } from "@/shared/middleware/bodySizeGuard";
 import { AUTHZ_HEADER_PEER_LOCALITY } from "@/server/authz/headers";
 import {
   assertCommonChatGptWebModelAvailable,
@@ -107,7 +108,7 @@ function publicBaseUrlHeaders(headers: Headers): Record<string, string> {
   return out;
 }
 
-async function postHandler(request, context) {
+async function postHandler(request, _context) {
   let rawBody;
   try {
     rawBody = await request.json();
@@ -395,4 +396,4 @@ async function postHandler(request, context) {
   return errorResponse((result as any).status, message);
 }
 
-export const POST = withInjectionGuard(postHandler);
+export const POST = withInjectionGuard(postHandler, { bodySizeLimit: MAX_BODY_BYTES_MEDIA });

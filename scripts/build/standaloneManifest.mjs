@@ -17,6 +17,7 @@ import { createHash } from "node:crypto";
 import { createReadStream } from "node:fs";
 import fs from "node:fs";
 import path from "node:path";
+import { comparableSymlinkTarget, portableSymlinkTarget } from "./portableSymlink.mjs";
 
 export const MANIFEST_VERSION = 1;
 
@@ -31,7 +32,7 @@ async function sha256File(filePath) {
   });
 }
 
-function walkDir(root, current, entries) {
+function walkDir(root, current, entries, portableRoot = process.cwd()) {
   const children = fs.readdirSync(current, { withFileTypes: true });
   // Sort for determinism: manifest of the same tree is byte-identical.
   children.sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
@@ -39,9 +40,12 @@ function walkDir(root, current, entries) {
     const abs = path.join(current, child.name);
     const rel = path.relative(root, abs).split(path.sep).join("/");
     if (child.isSymbolicLink()) {
-      entries.push({ path: rel, symlink: fs.readlinkSync(abs) });
+      entries.push({
+        path: rel,
+        symlink: portableSymlinkTarget(abs, fs.readlinkSync(abs), portableRoot),
+      });
     } else if (child.isDirectory()) {
-      walkDir(root, abs, entries);
+      walkDir(root, abs, entries, portableRoot);
     } else if (child.isFile()) {
       entries.push({ path: rel, file: abs });
     }
@@ -55,9 +59,9 @@ function walkDir(root, current, entries) {
  *
  * @returns {Promise<{version: number, entries: {path: string, bytes: number, sha256: string, symlink?: string}[]}>}
  */
-export async function buildStandaloneManifest(rootDir) {
+export async function buildStandaloneManifest(rootDir, { portableRoot = process.cwd() } = {}) {
   const entries = [];
-  walkDir(rootDir, rootDir, entries);
+  walkDir(rootDir, rootDir, entries, portableRoot);
   const manifestEntries = [];
   for (const entry of entries) {
     if (entry.symlink !== undefined) {
@@ -102,7 +106,7 @@ export async function verifyStandaloneManifest(rootDir, manifest) {
         errors.push(`${entry.path}: expected symlink, found regular entry`);
       } else {
         const target = fs.readlinkSync(abs);
-        if (target !== entry.symlink) {
+        if (comparableSymlinkTarget(target) !== comparableSymlinkTarget(entry.symlink)) {
           errors.push(`${entry.path}: symlink target ${target} != ${entry.symlink}`);
         }
       }

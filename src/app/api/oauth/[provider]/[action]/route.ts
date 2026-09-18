@@ -40,7 +40,7 @@ import {
   oauthPollSchema,
 } from "@/shared/validation/schemas";
 import { isValidationFailure, validateBody } from "@/shared/validation/helpers";
-import { isAuthRequired, isAuthenticated } from "@/shared/utils/apiAuth";
+import { isAuthRequired, isAuthenticated, verifyAuth } from "@/shared/utils/apiAuth";
 import { sanitizeErrorMessage } from "@omniroute/open-sse/utils/error";
 import { GITLAB_DUO_OAUTH_SETUP_MESSAGE } from "@/shared/constants/gitlabDuoSetupMessage";
 import { keychainImportOnlyGuard } from "./keychainImportOnly";
@@ -108,7 +108,12 @@ function resolvePublicBaseUrl(request: Request): string {
   return new URL(request.url).origin;
 }
 
-async function requireOAuthRouteAuth(request: Request) {
+async function requireOAuthRouteAuth(request: Request, forceManagementAuth = false) {
+  if (forceManagementAuth) {
+    const authError = await verifyAuth(request);
+    if (!authError) return null;
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
   if (!(await isAuthRequired(request))) return null;
   if (await isAuthenticated(request)) return null;
   return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -155,7 +160,8 @@ export async function GET(
     /* fall through to normal handling */
   }
 
-  const authResponse = await requireOAuthRouteAuth(request);
+  const authParams = await params;
+  const authResponse = await requireOAuthRouteAuth(request, authParams.provider === "ghe-copilot");
   if (authResponse) return authResponse;
 
   try {
@@ -301,7 +307,7 @@ export async function GET(
  */
 async function handleStartCallbackServer(
   provider: string,
-  searchParams: URLSearchParams,
+  _searchParams: URLSearchParams,
   request?: Request
 ) {
   if (!PKCE_CALLBACK_PROVIDERS.has(provider)) {
@@ -317,7 +323,7 @@ async function handleStartCallbackServer(
   if (callbackStates[provider]?.close) {
     try {
       callbackStates[provider].close();
-    } catch (e) {
+    } catch {
       /* ignore */
     }
   }
@@ -353,7 +359,7 @@ async function handleStartCallbackServer(
       if (callbackStates[provider]?.startedAt === startedAt) {
         try {
           close();
-        } catch (e) {
+        } catch {
           /* ignore */
         }
         delete callbackStates[provider];
@@ -415,7 +421,8 @@ export async function POST(
     /* fall through to normal handling */
   }
 
-  const authResponse = await requireOAuthRouteAuth(request);
+  const authParams = await params;
+  const authResponse = await requireOAuthRouteAuth(request, authParams.provider === "ghe-copilot");
   if (authResponse) return authResponse;
 
   try {
@@ -712,7 +719,7 @@ export async function POST(
       // Clean up server
       try {
         close();
-      } catch (e) {
+      } catch {
         /* ignore */
       }
       delete callbackStates[provider];

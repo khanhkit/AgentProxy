@@ -1,5 +1,6 @@
 import http from "http";
 import { URL } from "url";
+import { applyCustomHttpServerTimeouts } from "@/shared/utils/runtimeTimeouts";
 
 /**
  * Start a local HTTP server to receive OAuth callback
@@ -66,6 +67,7 @@ export function startLocalServer(
         res.end("Not found");
       }
     });
+    applyCustomHttpServerTimeouts(server);
 
     // Listen on fixed port or find available port
     const portToUse = fixedPort || 0;

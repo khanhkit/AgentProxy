@@ -20,8 +20,6 @@ const localDb = { updateSettings };
 // @ts-ignore - intentional for test harness timing
 const callbackRoute = await import("../../src/app/api/auth/oidc/callback/route.ts");
 
-import type { default as CookieStore } from "next/headers"; // not really, just for shape
-
 interface CapturedCookie {
   value: string;
   options?: Record<string, unknown>;
@@ -110,7 +108,7 @@ test("OIDC callback happy path: exchanges code, validates ID token, mints identi
 
   const originalFetch = globalThis.fetch;
 
-  globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
+  globalThis.fetch = (async (input: RequestInfo | URL) => {
     const url = typeof input === "string" ? input : (input as URL).toString();
 
     if (url.includes("/.well-known/openid-configuration")) {
@@ -487,23 +485,111 @@ test("OIDC callback rejects missing JWT_SECRET at mint time (server_misconfigure
   }
 });
 
-test("OIDC callback error redirect respects proxy headers (#10224)", async () => {
+test("OIDC callback error redirect respects authenticated trusted-proxy headers (#10224)", async () => {
   await setupFullOidcSettings();
+  process.env.OMNIROUTE_TRUST_PROXY = "true";
+  process.env.OMNIROUTE_PEER_STAMP_TOKEN = "oidc-callback-test-peer-stamp";
 
-  // Omit code/state to force an immediate error redirect
-  // Use a bind-address style URL like when behind an internal proxy
-  const request = new Request("http://127.0.0.1:20128/api/auth/oidc/callback", {
-    headers: {
-      "x-forwarded-proto": "https",
-      host: "auth.pubg-sell.ir",
-    },
+  try {
+    const request = new Request("http://127.0.0.1:20128/api/auth/oidc/callback", {
+      headers: {
+        "x-forwarded-proto": "https",
+        "x-forwarded-host": "auth.pubg-sell.ir",
+        "x-omniroute-peer-ip": "oidc-callback-test-peer-stamp|127.0.0.1",
+      },
+    });
+
+    const response = await callbackRoute.GET(request);
+    assert.equal(response.status, 307);
+    assert.equal(
+      response.headers.get("location"),
+      "https://auth.pubg-sell.ir/login?oidc_error=missing_code"
+    );
+  } finally {
+    delete process.env.OMNIROUTE_TRUST_PROXY;
+    delete process.env.OMNIROUTE_PEER_STAMP_TOKEN;
+  }
+});
+
+
+test("AP-ISS-0005: callback hostile Host/XFP cannot control configured origin", async () => {
+  await setupFullOidcSettings();
+  process.env.NEXT_PUBLIC_BASE_URL = "https://trusted.example.test";
+
+  try {
+    const response = await callbackRoute.GET(
+      new Request("http://internal.local/api/auth/oidc/callback", {
+        headers: {
+          host: "attacker.example.test",
+          "x-forwarded-proto": "http",
+        },
+      })
+    );
+
+    assert.equal(response.status, 307);
+    assert.equal(
+      response.headers.get("location"),
+      "https://trusted.example.test/login?oidc_error=missing_code"
+    );
+  } finally {
+    delete process.env.NEXT_PUBLIC_BASE_URL;
+  }
+});
+
+test("AP-ISS-0005: callback token redirect, success redirect, and cookie use configured HTTPS origin", async () => {
+  await setupFullOidcSettings();
+  process.env.NEXT_PUBLIC_BASE_URL = "https://trusted.example.test";
+
+  const { idToken, jwks } = await createSignedIdToken({
+    iss: "https://idp.test",
+    aud: "client-oidc-test",
+    sub: "user-123",
   });
+  const testState = "state-trusted-origin";
+  capturedCookies["oidc_state"] = { value: testState };
+  let tokenRedirectUri: string | null = null;
+  const originalFetch = globalThis.fetch;
 
-  const response = await callbackRoute.GET(request);
-  assert.equal(response.status, 307);
+  globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
+    const url = typeof input === "string" ? input : (input as URL).toString();
+    if (url.includes("/.well-known/openid-configuration")) {
+      return new Response(
+        JSON.stringify({
+          token_endpoint: "https://idp.test/token",
+          jwks_uri: "https://idp.test/jwks",
+        }),
+        { status: 200 }
+      );
+    }
+    if (url.includes("/token")) {
+      tokenRedirectUri = new URLSearchParams(String(init?.body || "")).get("redirect_uri");
+      return new Response(JSON.stringify({ id_token: idToken }), { status: 200 });
+    }
+    if (url.includes("/jwks")) {
+      return new Response(JSON.stringify(jwks), { status: 200 });
+    }
+    return new Response("not mocked", { status: 404 });
+  }) as unknown as typeof fetch;
 
-  const loc = response.headers.get("location") || "";
-  // Without the fix, this would be http://127.0.0.1:20128/login?oidc_error=missing_code
-  // With the fix, it correctly uses originEarly
-  assert.equal(loc, "https://auth.pubg-sell.ir/login?oidc_error=missing_code");
+  try {
+    const response = await callbackRoute.GET(
+      new Request(
+        `http://internal.local/api/auth/oidc/callback?code=auth-code&state=${testState}`,
+        {
+          headers: {
+            host: "attacker.example.test",
+            "x-forwarded-proto": "http",
+          },
+        }
+      )
+    );
+
+    assert.equal(response.status, 307);
+    assert.equal(tokenRedirectUri, "https://trusted.example.test/api/auth/oidc/callback");
+    assert.equal(response.headers.get("location"), "https://trusted.example.test/dashboard");
+    assert.equal(capturedCookies["auth_token"]?.options?.secure, true);
+  } finally {
+    globalThis.fetch = originalFetch;
+    delete process.env.NEXT_PUBLIC_BASE_URL;
+  }
 });

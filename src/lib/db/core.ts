@@ -1234,6 +1234,7 @@ export function getDbInstance(): SqliteDatabase {
   }
 
   const db = openSqliteDatabase(sqliteFile);
+  try {
   // Emit the same "[DB] Driver: ..." line openDatabaseAsync() prints so the
   // packaged-app smoke guard (#7592) can assert the native driver was
   // selected on the server's primary DB path too, not only the backup-import
@@ -1342,6 +1343,19 @@ export function getDbInstance(): SqliteDatabase {
   }
 
   setDb(db);
+  } catch (error) {
+    // The primary adapter is not owned by the singleton until setDb(db) succeeds.
+    // Close only per-open native adapters here: sql.js reuses one module-global
+    // adapter, and closeProbeIfSafe intentionally leaves that shared adapter alive.
+    try {
+      closeProbeIfSafe(db);
+    } finally {
+      setDb(null);
+      resetAllDbModuleState();
+      invalidateDbCache();
+    }
+    throw error;
+  }
 
   // Re-encrypt any tokens using the legacy dynamic salt to canonical static salt
   try {

@@ -115,13 +115,17 @@ Two separate retention windows are honoured:
 
 `cleanupExpiredLogs()` runs the retention pass. It is invoked on server startup
 from `src/instrumentation-node.ts`. Each run logs a
-`compliance.cleanup` audit event with the per-table delete counts. Proxy/call
-log trimming is batched (`BATCH_SIZE = 5000`) to avoid long write locks.
+`compliance.cleanup` audit event with the per-table delete counts. If a call-log
+artifact cannot be deleted, the owning `call_logs` row is retained for retry and
+the audit event is recorded with `status: "error"`. Proxy/call log trimming is
+batched (`BATCH_SIZE = 5000`) to avoid long write locks.
 
 Manual request-history cleanup is separate from retention. The Request Logs
 page calls `POST /api/settings/purge-request-history`, which deletes `call_logs`,
 legacy `request_detail_logs`, and local request artifacts under
-`${DATA_DIR}/call_logs/`.
+`${DATA_DIR}/call_logs/`. User-triggered call-log purge endpoints fail with HTTP
+500 and a nonzero `errors` count when artifact deletion fails; the owning database
+row remains intact so a later retry can remove the residual sensitive artifact.
 
 Defaults are defined in `src/lib/logEnv.ts`
 (`DEFAULT_APP_LOG_RETENTION_DAYS = 7`, `DEFAULT_CALL_LOG_RETENTION_DAYS = 7`).

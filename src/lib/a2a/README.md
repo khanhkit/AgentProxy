@@ -178,6 +178,14 @@ curl -X POST http://localhost:20128/a2a \
   -d '{"jsonrpc":"2.0","id":"3","method":"tasks/cancel","params":{"taskId":"TASK_UUID"}}'
 ```
 
+Cancellation is execution-aware, not only a state mutation. Active tasks own an
+`AbortSignal`; `tasks/cancel` aborts that signal after committing the terminal
+`cancelled` state. Fetch-backed built-in skills combine task cancellation with
+their existing provider timeout, and an HTTP stream disconnect is also merged
+into the execution signal. A cancelled task never transitions to `completed` or
+`failed` afterward; streaming clients receive a terminal `cancelled` event when
+the stream is still writable.
+
 ---
 
 ## Skills Reference
