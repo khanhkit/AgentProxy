@@ -9,7 +9,7 @@ RUN --mount=type=cache,target=/usr/local/cargo/registry \
     && cp /app/rust/target/release/agentproxy-gateway /tmp/agentproxy-gateway
 
 # ── Common base with runtime deps ──────────────────────────────────────────
-FROM node:26.9.0-trixie-slim AS base
+FROM node:26.0.0-trixie-slim AS base
 WORKDIR /app
 
 # `apt-get upgrade` pulls the security-patched versions of the Debian (trixie)
