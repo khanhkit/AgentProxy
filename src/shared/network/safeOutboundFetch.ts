@@ -1,12 +1,21 @@
-import { runWithProxyContext, getOriginalFetch } from "@omniroute/open-sse/utils/proxyFetch.ts";
+import dns from "node:dns";
+import { isIP } from "node:net";
+import {
+  runWithProxyContext,
+  getOriginalFetch,
+  hasAmbientProxyContext,
+} from "@omniroute/open-sse/utils/proxyFetch.ts";
 import { FetchTimeoutError, fetchWithTimeout } from "@/shared/utils/fetchTimeout";
 import {
   OutboundUrlGuardError,
   type OutboundUrlGuardMode,
+  isCloudMetadataHost,
+  isPrivateHost,
   parseAndValidateNonMetadataUrl,
   parseAndValidatePublicUrl,
   parseOutboundUrl,
 } from "@/shared/network/outboundUrlGuard";
+import { createPinnedFetch } from "@/shared/network/remoteImageFetch";
 
 const DEFAULT_IDEMPOTENT_METHODS = ["GET", "HEAD", "OPTIONS", "PUT", "DELETE"];
 
@@ -24,11 +33,7 @@ const PROVIDER_PROBE_TIMEOUT_MS = resolveProbeTimeoutMs();
 
 export type SafeOutboundFetchGuard = OutboundUrlGuardMode;
 export type SafeOutboundFetchErrorCode =
-  | "INVALID_URL"
-  | "URL_GUARD_BLOCKED"
-  | "TIMEOUT"
-  | "REDIRECT_BLOCKED"
-  | "NETWORK_ERROR";
+  "INVALID_URL" | "URL_GUARD_BLOCKED" | "TIMEOUT" | "REDIRECT_BLOCKED" | "NETWORK_ERROR";
 
 export interface SafeOutboundFetchRetryOptions {
   attempts?: number;
@@ -37,12 +42,22 @@ export interface SafeOutboundFetchRetryOptions {
   statusCodes?: number[];
 }
 
+export type SafeOutboundDnsLookup = (
+  hostname: string
+) => Promise<Array<{ address: string; family: number }>>;
+
 export interface SafeOutboundFetchOptions extends RequestInit {
   timeoutMs?: number;
   allowRedirect?: boolean;
   retry?: SafeOutboundFetchRetryOptions | false;
   guard?: SafeOutboundFetchGuard;
   proxyConfig?: unknown;
+  /** Validate DNS answers before egress and pin direct connections to one validated answer. */
+  pinDns?: boolean;
+  /** Test seam / custom resolver for DNS validation. */
+  dnsLookup?: SafeOutboundDnsLookup;
+  /** Test seam / caller-provided transport. Production callers normally leave this unset. */
+  fetchImpl?: typeof fetch;
   /** Bypass the global proxy/TLS patched fetch and use the native Node.js
    *  fetch directly. Use when a provider endpoint has compatibility issues
    *  with the undici dispatcher layer. */
@@ -195,6 +210,89 @@ function applyUrlGuard(targetUrl: URL, guard: SafeOutboundFetchGuard, method: st
   }
 }
 
+const defaultDnsLookup: SafeOutboundDnsLookup = (hostname) =>
+  dns.promises.lookup(hostname, { all: true });
+
+function isIpv6LinkLocal(address: string): boolean {
+  const normalized = address
+    .trim()
+    .toLowerCase()
+    .replace(/^\[/, "")
+    .replace(/\]$/, "")
+    .split("%")[0];
+  if (isIP(normalized) !== 6) return false;
+  const first = Number.parseInt(normalized.split(":", 1)[0] || "0", 16);
+  return Number.isFinite(first) && (first & 0xffc0) === 0xfe80;
+}
+
+function isBlockedResolvedAddress(address: string, guard: SafeOutboundFetchGuard): boolean {
+  if (guard === "public-only") return isPrivateHost(address);
+  if (guard === "block-metadata") {
+    return isCloudMetadataHost(address) || isIpv6LinkLocal(address);
+  }
+  return false;
+}
+
+async function resolveValidatedDns(
+  targetUrl: URL,
+  guard: SafeOutboundFetchGuard,
+  lookup: SafeOutboundDnsLookup,
+  method: string
+): Promise<Array<{ address: string; family: number }>> {
+  if (guard === "none") return [];
+
+  const hostname =
+    targetUrl.hostname.startsWith("[") && targetUrl.hostname.endsWith("]")
+      ? targetUrl.hostname.slice(1, -1)
+      : targetUrl.hostname;
+  if (!hostname) return [];
+
+  let resolved: Array<{ address: string; family: number }>;
+  if (isIP(hostname)) {
+    resolved = [{ address: hostname, family: isIP(hostname) }];
+  } else {
+    try {
+      resolved = await lookup(hostname);
+    } catch (cause) {
+      throw new SafeOutboundFetchError(`Outbound host could not be resolved: ${hostname}`, {
+        code: "NETWORK_ERROR",
+        url: targetUrl.toString(),
+        method,
+        attempts: 1,
+        isRetryable: true,
+        cause,
+      });
+    }
+  }
+
+  if (!resolved.length) {
+    throw new SafeOutboundFetchError(`Outbound host could not be resolved: ${hostname}`, {
+      code: "NETWORK_ERROR",
+      url: targetUrl.toString(),
+      method,
+      attempts: 1,
+      isRetryable: true,
+    });
+  }
+
+  for (const answer of resolved) {
+    if (isBlockedResolvedAddress(answer.address, guard)) {
+      throw new SafeOutboundFetchError(
+        `Outbound host resolves to a blocked address: ${answer.address}`,
+        {
+          code: "URL_GUARD_BLOCKED",
+          url: targetUrl.toString(),
+          method,
+          attempts: 1,
+          isRetryable: false,
+        }
+      );
+    }
+  }
+
+  return resolved;
+}
+
 function getRetryConfig(retry: SafeOutboundFetchRetryOptions | false | undefined, method: string) {
   if (retry === false) {
     return {
@@ -287,6 +385,9 @@ export async function safeOutboundFetch(url: string | URL, options: SafeOutbound
     retry,
     guard = "none",
     proxyConfig,
+    pinDns = false,
+    dnsLookup = defaultDnsLookup,
+    fetchImpl,
     bypassProxyPatch = false,
     signal,
     ...fetchOptions
@@ -294,27 +395,43 @@ export async function safeOutboundFetch(url: string | URL, options: SafeOutbound
 
   applyUrlGuard(targetUrl, guard, method);
 
+  const resolvedAddresses = pinDns
+    ? await resolveValidatedDns(targetUrl, guard, dnsLookup, method)
+    : [];
+  const proxyIsActive = Boolean(proxyConfig) || hasAmbientProxyContext();
+
   const retryConfig = getRetryConfig(retry, method);
   const redirect = allowRedirect ? (fetchOptions.redirect ?? "follow") : "manual";
 
   for (let attempt = 1; attempt <= retryConfig.attempts; attempt++) {
     try {
-      const executeFetch = () =>
-        fetchWithTimeout(targetUrl.toString(), {
+      const executeFetch = () => {
+        // Do not silently bypass an assigned/ambient proxy merely to obtain DNS
+        // pinning. Direct egress pins to the already-validated answer; proxied
+        // egress retains the proxy route after local DNS pre-validation.
+        const pinnedFetch =
+          pinDns && resolvedAddresses.length > 0 && !proxyIsActive && !fetchImpl
+            ? createPinnedFetch(resolvedAddresses[0].address, resolvedAddresses[0].family)
+            : undefined;
+        const selectedFetch =
+          fetchImpl || pinnedFetch || (bypassProxyPatch ? getOriginalFetch() : undefined);
+
+        return fetchWithTimeout(targetUrl.toString(), {
           ...fetchOptions,
           method,
           redirect,
           signal,
           timeoutMs,
-          // When bypassing the proxy patch, use the original native fetch directly.
-          fetchFn: bypassProxyPatch ? getOriginalFetch() : undefined,
+          fetchFn: selectedFetch,
         });
+      };
 
-      const response = bypassProxyPatch
-        ? await executeFetch()
-        : proxyConfig
-          ? await runWithProxyContext(proxyConfig, executeFetch)
-          : await executeFetch();
+      const response =
+        bypassProxyPatch && !proxyConfig
+          ? await executeFetch()
+          : proxyConfig
+            ? await runWithProxyContext(proxyConfig, executeFetch)
+            : await executeFetch();
 
       if (!allowRedirect && response.status >= 300 && response.status < 400) {
         const location = response.headers.get("location");
