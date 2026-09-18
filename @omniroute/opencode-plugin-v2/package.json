@@ -63,5 +63,10 @@
   },
   "peerDependencies": {
     "@opencode-ai/plugin": ">=1.18.29 <2"
+  },
+  "overrides": {
+    "tsup": {
+      "esbuild": "0.28.2"
+    }
   }
 }
