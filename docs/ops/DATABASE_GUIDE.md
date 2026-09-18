@@ -379,6 +379,21 @@ curl -X POST http://localhost:20128/api/db-backups/restore \
 
 > **Warning**: Restore overwrites the entire DB. Stop all clients first.
 
+### API-key vault portability
+
+API-key credentials have two different backup contracts:
+
+- **Legacy JSON export** is configuration-only. API-key policy/identity metadata may be present, but bearer material, vault ciphertext, hashes/prefixes used for credential storage, and the vault root key are omitted. Exported key metadata is marked `redacted-non-restorable`; importing it does not create credential authority.
+- **Full SQLite/native backup** preserves API-key hashes and authenticated ciphertext so the database remains internally consistent, but it never embeds `API_KEY_VAULT_SECRET` or the generated `DATA_DIR/secrets/api-key-vault-v1.secret` sidecar.
+
+Restore behavior is therefore explicit:
+
+1. Same-host restore with the existing sidecar keeps API-key authentication and bearer recovery/internal-use available.
+2. Cross-host restore with the securely transferred matching vault secret has the same behavior.
+3. Cross-host restore without the matching vault secret keeps hash-based authentication working for clients that already know their bearer, while reveal/internal-use recovery fails closed until affected keys are regenerated. There is no plaintext fallback.
+
+Historical backups created before the vault/redacted-export contract may contain reusable plaintext API keys. Treat those files as secrets: remove them from ordinary retention when no longer required and use secure disposal appropriate to the storage medium and your retention policy.
+
 ### Automated Backups
 
 ```bash

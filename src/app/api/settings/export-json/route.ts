@@ -42,6 +42,30 @@ export function filterPaidComboSteps<T extends { models?: unknown }>(combos: T[]
   });
 }
 
+const API_KEY_PORTABLE_SECRET_FIELDS = new Set([
+  "key",
+  "keyCiphertext",
+  "key_ciphertext",
+  "keyHash",
+  "key_hash",
+  "keyPrefix",
+  "key_prefix",
+]);
+
+/** Legacy JSON is configuration-only: preserve policy metadata, never credential authority. */
+export function redactApiKeysForLegacyExport(
+  apiKeys: Array<Record<string, unknown>>
+): Array<Record<string, unknown>> {
+  return apiKeys.map((apiKey) => {
+    const safe: Record<string, unknown> = {};
+    for (const [name, value] of Object.entries(apiKey)) {
+      if (!API_KEY_PORTABLE_SECRET_FIELDS.has(name)) safe[name] = value;
+    }
+    safe.credentialState = "redacted-non-restorable";
+    return safe;
+  });
+}
+
 /**
  * GET /api/settings/export-json
  * Exports a legacy OmniRoute-compatible JSON backup.
@@ -69,7 +93,9 @@ export async function GET(request: Request) {
     const providerConnections = await getProviderConnections();
     const providerNodes = await getCachedProviderNodes();
     const combosRaw = await getCombos();
-    const apiKeys = await getApiKeys();
+    const apiKeys = redactApiKeysForLegacyExport(
+      (await getApiKeys()) as Array<Record<string, unknown>>
+    );
 
     // #6328: honor hidePaidModels at the export boundary so backup files
     // cannot silently smuggle paid model ids back in on import.
@@ -89,6 +115,7 @@ export async function GET(request: Request) {
         exportedAt: new Date().toISOString(),
         version: "omniroute-v3-legacy-export",
         includesHistory: includeHistory,
+        apiKeyCredentialPolicy: "redacted-non-restorable",
       },
     };
 

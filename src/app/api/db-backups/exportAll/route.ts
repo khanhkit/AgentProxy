@@ -9,6 +9,31 @@ import { execFileSync } from "node:child_process";
 import { isAuthenticated } from "@/shared/utils/apiAuth";
 import { sanitizeErrorMessage } from "@omniroute/open-sse/utils/error";
 
+export function buildFullBackupMetadata(exportedAt: string, version: string) {
+  return {
+    exportedAt,
+    version,
+    format: "omniroute-full-backup-v1",
+    contents: [
+      "storage.sqlite - Full database",
+      "settings.json - Key-value settings",
+      "combos.json - Combo configurations",
+      "providers.json - Provider connections (no credentials)",
+      "api-keys.json - API key metadata (masked)",
+      "reasoning-routing-rules.json - Reasoning routing policies",
+      "call_logs/ - Detailed call log artifacts",
+    ],
+    apiKeyRecovery: {
+      databaseMaterial: "hash-and-ciphertext-only",
+      vaultKeyIncluded: false,
+      vaultKeyLocation: "API_KEY_VAULT_SECRET or DATA_DIR/secrets/api-key-vault-v1.secret",
+      withMatchingVaultKey: "authentication-and-recovery-available",
+      withoutMatchingVaultKey: "hash-authentication-only-recovery-unavailable",
+      portableJsonPolicy: "redacted-non-restorable",
+    },
+  };
+}
+
 /**
  * GET /api/db-backups/exportAll
  * Exports the entire database + settings as a ZIP archive
@@ -56,21 +81,11 @@ export async function GET(request: NextRequest) {
         fs.cpSync(CALL_LOGS_DIR, path.join(tempDir, "call_logs"), { recursive: true });
       }
 
-      // 7. Export metadata
-      const metadata = {
-        exportedAt: new Date().toISOString(),
-        version: process.env.npm_package_version || "unknown",
-        format: "omniroute-full-backup-v1",
-        contents: [
-          "storage.sqlite - Full database",
-          "settings.json - Key-value settings",
-          "combos.json - Combo configurations",
-          "providers.json - Provider connections (no credentials)",
-          "api-keys.json - API key metadata (masked)",
-          "reasoning-routing-rules.json - Reasoning routing policies",
-          "call_logs/ - Detailed call log artifacts",
-        ],
-      };
+      // 7. Export metadata. The vault root key is intentionally external to the archive.
+      const metadata = buildFullBackupMetadata(
+        new Date().toISOString(),
+        process.env.npm_package_version || "unknown"
+      );
       fs.writeFileSync(path.join(tempDir, "metadata.json"), JSON.stringify(metadata, null, 2));
 
       // Create ZIP using tar (available on all Linux/macOS, and the archiver npm package is not installed)

@@ -11,11 +11,20 @@
  * here, so this function never touches authentication configuration.
  */
 
+import { createHash } from "node:crypto";
+
 import type { SqliteAdapter } from "./adapters/types";
 import { normalizeRoutingStrategy } from "@/shared/constants/routingStrategies";
 import { normalizeComboRecord } from "@/lib/combos/steps";
 import { validateComboInvariant } from "@/lib/combos/invariants";
 import { parseModelAccessMode } from "./apiKeys/modelAccessMode";
+import { API_KEY_COLUMN_FALLBACKS } from "./apiKeyColumnFallbacks";
+import {
+  buildApiKeyStorageSentinel,
+  decryptApiKeyBearer,
+  encryptApiKeyBearer,
+  isApiKeyStorageSentinel,
+} from "./apiKeyVault";
 import {
   resolveImportedUsageAccountIdentity,
   resolveOrphanedUsageAccountIdentity,
@@ -45,6 +54,70 @@ export interface LegacyJsonData {
   domainBudgets?: Record<string, unknown>[];
 }
 
+const IMPORTED_API_KEY_VAULT_COLUMNS = new Set(["key_ciphertext", "key_hash", "key_prefix"]);
+
+function ensureImportedApiKeyVaultColumns(db: SqliteDatabase): void {
+  const existing = new Set(
+    (db.prepare("PRAGMA table_info(api_keys)").all() as Array<{ name?: unknown }>).map((column) =>
+      String(column.name ?? "")
+    )
+  );
+  for (const column of API_KEY_COLUMN_FALLBACKS) {
+    if (!IMPORTED_API_KEY_VAULT_COLUMNS.has(column.name) || existing.has(column.name)) continue;
+    db.exec(`ALTER TABLE api_keys ADD COLUMN ${column.definition}`);
+    existing.add(column.name);
+  }
+}
+
+interface PreparedLegacyApiKeyImport {
+  id: string;
+  name: string;
+  key: string;
+  keyCiphertext: string;
+  keyHash: string;
+  keyPrefix: string;
+  machineId: unknown;
+  modelAccessMode: string;
+  allowedModels: string;
+  noLog: number;
+  createdAt: unknown;
+}
+
+function prepareLegacyApiKeyImport(
+  apiKey: Record<string, unknown>
+): PreparedLegacyApiKeyImport | null {
+  if (apiKey.credentialState === "redacted-non-restorable") return null;
+
+  const bearer = typeof apiKey.key === "string" ? apiKey.key : "";
+  if (!bearer || isApiKeyStorageSentinel(bearer)) return null;
+
+  const id = typeof apiKey.id === "string" ? apiKey.id : "";
+  const name = typeof apiKey.name === "string" ? apiKey.name : "";
+  if (!id || !name) throw new Error("Historical API key import requires id and name");
+
+  const keyHash = createHash("sha256").update(bearer).digest("hex");
+  const keyPrefix = bearer.slice(0, 12);
+  const keyCiphertext = encryptApiKeyBearer(id, bearer);
+  if (decryptApiKeyBearer(id, keyCiphertext) !== bearer) {
+    throw new Error("Historical API key import vault round-trip verification failed");
+  }
+
+  const allowedModels = Array.isArray(apiKey.allowedModels) ? apiKey.allowedModels : [];
+  return {
+    id,
+    name,
+    key: buildApiKeyStorageSentinel(bearer, keyHash),
+    keyCiphertext,
+    keyHash,
+    keyPrefix,
+    machineId: apiKey.machineId ?? null,
+    modelAccessMode: parseModelAccessMode(apiKey.modelAccessMode, allowedModels),
+    allowedModels: JSON.stringify(allowedModels),
+    noLog: apiKey.noLog ? 1 : 0,
+    createdAt: apiKey.createdAt ?? new Date().toISOString(),
+  };
+}
+
 /**
  * Runs a single SQLite transaction that upserts all entities from a legacy
  * JSON backup into the provided database instance.
@@ -63,6 +136,13 @@ export function runJsonMigration(
   domainCostHistory: number;
   domainBudgets: number;
 } {
+  // Prepare all historical credential-bearing rows before opening the write transaction.
+  // Redacted/non-restorable records are metadata-only and intentionally do not create authority.
+  const preparedApiKeys = (data.apiKeys ?? [])
+    .map(prepareLegacyApiKeyImport)
+    .filter((entry): entry is PreparedLegacyApiKeyImport => entry !== null);
+  if (preparedApiKeys.length > 0) ensureImportedApiKeyVaultColumns(db);
+
   const insertConn = db.prepare(`
     INSERT OR REPLACE INTO provider_connections (
       id, provider, auth_type, name, email, priority, is_active,
@@ -99,13 +179,18 @@ export function runJsonMigration(
     VALUES (@id, @name, @data, @sortOrder, @createdAt, @updatedAt)
   `);
 
-  const insertKey = db.prepare(`
-    INSERT OR REPLACE INTO api_keys (
-      id, name, key, machine_id, model_access_mode, allowed_models, no_log, created_at
-    ) VALUES (
-      @id, @name, @key, @machineId, @modelAccessMode, @allowedModels, @noLog, @createdAt
-    )
-  `);
+  const insertKey =
+    preparedApiKeys.length > 0
+      ? db.prepare(`
+        INSERT OR REPLACE INTO api_keys (
+          id, name, key, key_ciphertext, key_hash, key_prefix,
+          machine_id, model_access_mode, allowed_models, no_log, created_at
+        ) VALUES (
+          @id, @name, @key, @keyCiphertext, @keyHash, @keyPrefix,
+          @machineId, @modelAccessMode, @allowedModels, @noLog, @createdAt
+        )
+      `)
+      : null;
 
   const migrate = db.transaction(() => {
     // 1. Provider Connections
@@ -221,19 +306,10 @@ export function runJsonMigration(
       });
     }
 
-    // 6. API Keys
-    for (const apiKey of data.apiKeys ?? []) {
-      const allowedModels = Array.isArray(apiKey.allowedModels) ? apiKey.allowedModels : [];
-      insertKey.run({
-        id: apiKey.id,
-        name: apiKey.name,
-        key: apiKey.key,
-        machineId: apiKey.machineId ?? null,
-        modelAccessMode: parseModelAccessMode(apiKey.modelAccessMode, allowedModels),
-        allowedModels: JSON.stringify(allowedModels),
-        noLog: apiKey.noLog ? 1 : 0,
-        createdAt: apiKey.createdAt ?? new Date().toISOString(),
-      });
+    // 6. API Keys — only historical raw-bearer records create credential authority.
+    // New portable exports contain redacted metadata and are intentionally skipped.
+    for (const apiKey of preparedApiKeys) {
+      insertKey!.run(apiKey);
     }
     // 7. Usage History
     if (data.usageHistory && data.usageHistory.length > 0) {
@@ -341,7 +417,7 @@ export function runJsonMigration(
     connections: (data.providerConnections ?? []).length,
     nodes: (data.providerNodes ?? []).length,
     combos: (data.combos ?? []).length,
-    apiKeys: (data.apiKeys ?? []).length,
+    apiKeys: preparedApiKeys.length,
     usageHistory: (data.usageHistory ?? []).length,
     domainCostHistory: (data.domainCostHistory ?? []).length,
     domainBudgets: (data.domainBudgets ?? []).length,
