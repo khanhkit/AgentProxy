@@ -126,7 +126,7 @@ async function resetStorage() {
   process.env.REQUIRE_API_KEY = "true";
   process.env.INITIAL_PASSWORD = "kittest-authz-canon-password";
   delete process.env.DEFAULT_RATE_LIMIT_PER_DAY;
-  globalThis.__omnirouteShutdown = { init: false, shuttingDown: false, activeRequests: 0 };
+  globalThis.__agentproxyShutdown = { init: false, shuttingDown: false, activeRequests: 0 };
 }
 
 function restoreEnv(name: string, value: string | undefined) {
@@ -148,7 +148,7 @@ test.after(() => {
   restoreEnv("REQUIRE_API_KEY", ORIGINAL_REQUIRE_API_KEY);
   restoreEnv("INITIAL_PASSWORD", ORIGINAL_INITIAL_PASSWORD);
   restoreEnv("DEFAULT_RATE_LIMIT_PER_DAY", ORIGINAL_DEFAULT_RATE_LIMIT);
-  globalThis.__omnirouteShutdown = { init: false, shuttingDown: false, activeRequests: 0 };
+  globalThis.__agentproxyShutdown = { init: false, shuttingDown: false, activeRequests: 0 };
 });
 
 test("TC-AUTHZ-CANON-SEC-001 equivalent client routes classify to the same canonical targets", () => {
@@ -235,13 +235,13 @@ test("TC-AUTHZ-CANON-SEC-003 keyless and valid-key auth outcomes are invariant a
     }
     if (
       keyless.status !== 401 ||
-      keyless.headers.get("x-omniroute-route-class") !== "CLIENT_API" ||
+      keyless.headers.get("x-agentproxy-route-class") !== "CLIENT_API" ||
       keylessCode !== "AUTH_002"
     ) {
       keylessMismatches.push({
         label: entry.label,
         status: keyless.status,
-        routeClass: keyless.headers.get("x-omniroute-route-class"),
+        routeClass: keyless.headers.get("x-agentproxy-route-class"),
         code: keylessCode,
       });
     }
@@ -253,11 +253,11 @@ test("TC-AUTHZ-CANON-SEC-003 keyless and valid-key auth outcomes are invariant a
       }),
       { enforce: true }
     );
-    if (valid.status !== 200 || valid.headers.get("x-omniroute-route-class") !== "CLIENT_API") {
+    if (valid.status !== 200 || valid.headers.get("x-agentproxy-route-class") !== "CLIENT_API") {
       validKeyMismatches.push({
         label: entry.label,
         status: valid.status,
-        routeClass: valid.headers.get("x-omniroute-route-class"),
+        routeClass: valid.headers.get("x-agentproxy-route-class"),
       });
     }
   }

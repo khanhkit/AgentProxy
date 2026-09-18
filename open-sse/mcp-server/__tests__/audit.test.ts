@@ -23,7 +23,7 @@ function createStatementMock() {
 // module graph. The old better-sqlite3 doMock therefore never engaged: the code
 // opened a REAL sqlite file in the temp DATA_DIR ("no such table" on stderr)
 // and every mock assertion counted 0 calls. The shutdown tests now inject the
-// mock through the audit connection cache (globalThis.__omnirouteMcpAuditDb),
+// mock through the audit connection cache (globalThis.__agentproxyMcpAuditDb),
 // and the fallback test uses the __setBetterSqliteLoaderForTests seam.
 describe("MCP audit shutdown", () => {
   let dataDir: string;
@@ -31,8 +31,8 @@ describe("MCP audit shutdown", () => {
 
   beforeEach(() => {
     vi.resetModules();
-    globalThis.__omnirouteMcpAuditDb = undefined;
-    dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-mcp-audit-"));
+    globalThis.__agentproxyMcpAuditDb = undefined;
+    dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-mcp-audit-"));
     dbFile = path.join(dataDir, "storage.sqlite");
     fs.writeFileSync(dbFile, "");
     process.env.DATA_DIR = dataDir;
@@ -40,7 +40,7 @@ describe("MCP audit shutdown", () => {
 
   afterEach(() => {
     delete process.env.DATA_DIR;
-    globalThis.__omnirouteMcpAuditDb = undefined;
+    globalThis.__agentproxyMcpAuditDb = undefined;
     vi.restoreAllMocks();
   });
 
@@ -56,9 +56,9 @@ describe("MCP audit shutdown", () => {
 
       const audit = await import("../audit.ts");
       // Inject through the connection cache — the seam the module itself uses.
-      globalThis.__omnirouteMcpAuditDb = mockDb as unknown as typeof globalThis.__omnirouteMcpAuditDb;
+      globalThis.__agentproxyMcpAuditDb = mockDb as unknown as typeof globalThis.__agentproxyMcpAuditDb;
 
-      await audit.logToolCall("omniroute_get_health", { ok: true }, { ok: true }, 12, true);
+      await audit.logToolCall("agentproxy_get_health", { ok: true }, { ok: true }, 12, true);
       expect(mockDb.prepare).toHaveBeenCalledTimes(1);
 
       expect(audit.closeAuditDb()).toBe(true);
@@ -84,9 +84,9 @@ describe("MCP audit shutdown", () => {
     };
 
     const audit = await import("../audit.ts");
-    globalThis.__omnirouteMcpAuditDb = mockDb as unknown as typeof globalThis.__omnirouteMcpAuditDb;
+    globalThis.__agentproxyMcpAuditDb = mockDb as unknown as typeof globalThis.__agentproxyMcpAuditDb;
 
-    await audit.logToolCall("omniroute_get_health", {}, {}, 5, true);
+    await audit.logToolCall("agentproxy_get_health", {}, {}, 5, true);
     expect(audit.closeAuditDb()).toBe(true);
     expect(mockDb.close).toHaveBeenCalledTimes(1);
   });
@@ -125,7 +125,7 @@ describe("MCP audit shutdown", () => {
     });
 
     try {
-      await audit.logToolCall("omniroute_get_health", { ok: true }, { ok: true }, 4, true);
+      await audit.logToolCall("agentproxy_get_health", { ok: true }, { ok: true }, 4, true);
       expect(DatabaseSync).toHaveBeenCalledWith(dbFile);
       expect(mockNodeDb.prepare).toHaveBeenCalled();
 

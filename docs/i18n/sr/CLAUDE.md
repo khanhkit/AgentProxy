@@ -56,7 +56,7 @@ worktree add` команде, затим позовите `EnterWorktree` са �
 
 Овај пројекат преклапа подразумевани session scratchpad harness-а (`/tmp/claude-*/…`). Пишите
 привремене/радне фајлове — извозе, генерисане zip-ове, једнократне посредне излазе, било шта што
-бисте иначе ставили у `/tmp` — у `/home/diegosouzapw/dev/proxys/OmniRoute/_artifacts/` уместо тога.
+бисте иначе ставили у `/tmp` — у `/home/diegosouzapw/dev/proxys/AgentProxy/_artifacts/` уместо тога.
 
 - `_artifacts/` је root `_*` путања: већ је игнорисана у git-у (`AGENTS.md` → "Root `_*` paths"),
   постоји само на диску, никада се не праћа.

@@ -77,18 +77,18 @@ function waitForLines(child, expected, timeoutMs) {
 
 test("isSystemdNotifyEnabled: false without NOTIFY_SOCKET", () => {
   assert.equal(isSystemdNotifyEnabled({}), false);
-  assert.equal(isSystemdNotifyEnabled({ OMNIROUTE_DISABLE_SD_NOTIFY: "0" }), false);
+  assert.equal(isSystemdNotifyEnabled({ AGENTPROXY_DISABLE_SD_NOTIFY: "0" }), false);
 });
 
 test("isSystemdNotifyEnabled: true when NOTIFY_SOCKET is set", () => {
   assert.equal(isSystemdNotifyEnabled({ NOTIFY_SOCKET: "/run/systemd/notify" }), true);
 });
 
-test("isSystemdNotifyEnabled: opt-out OMNIROUTE_DISABLE_SD_NOTIFY=1 wins", () => {
+test("isSystemdNotifyEnabled: opt-out AGENTPROXY_DISABLE_SD_NOTIFY=1 wins", () => {
   assert.equal(
     isSystemdNotifyEnabled({
       NOTIFY_SOCKET: "/run/systemd/notify",
-      OMNIROUTE_DISABLE_SD_NOTIFY: "1",
+      AGENTPROXY_DISABLE_SD_NOTIFY: "1",
     }),
     false
   );
@@ -97,7 +97,7 @@ test("isSystemdNotifyEnabled: opt-out OMNIROUTE_DISABLE_SD_NOTIFY=1 wins", () =>
 test("notifier honors the opt-out (no spawn, no timer)", async () => {
   const calls = [];
   const notifier = createSystemdNotifier({
-    env: { NOTIFY_SOCKET: "/run/systemd/notify", OMNIROUTE_DISABLE_SD_NOTIFY: "1" },
+    env: { NOTIFY_SOCKET: "/run/systemd/notify", AGENTPROXY_DISABLE_SD_NOTIFY: "1" },
     spawnFn: fakeSpawn(calls),
   });
   assert.equal(notifier.enabled, false);
@@ -236,7 +236,7 @@ test(
       "systemd-notify and/or python3 unavailable",
   },
   async () => {
-    const sockPath = path.join(os.tmpdir(), `omniroute-sdnotify-${process.pid}.sock`);
+    const sockPath = path.join(os.tmpdir(), `agentproxy-sdnotify-${process.pid}.sock`);
     const listener = spawn("python3", ["-c", PY_DGRAM_LISTENER, sockPath], {
       stdio: ["ignore", "pipe", "ignore"],
     });

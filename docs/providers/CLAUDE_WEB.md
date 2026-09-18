@@ -113,7 +113,7 @@ Chrome 146 profile and the supplied cookie (`open-sse/services/claudeTlsClient.t
 not launch a solver or manufacture a replacement cookie.
 
 Set `WEB_COOKIE_USE_BROWSER` to `1`, `true`, or `on` to make the account-scoped browser
-adapter the primary transport. Set `OMNIROUTE_BROWSER_POOL` to one of the same values to
+adapter the primary transport. Set `AGENTPROXY_BROWSER_POOL` to one of the same values to
 allow a recognized Cloudflare 403 challenge to fall back from direct transport to the
 browser adapter (`open-sse/executors/claude-web.ts:195`). Other HTTP failures do not trigger
 that fallback.
@@ -140,7 +140,7 @@ text deltas to `content`, thinking deltas to `reasoning_content`, and known meta
 to the `claude_web` response extension. Each metadata event is projected through its own field
 allowlist (`open-sse/executors/claude-web/stream.ts:37`). The
 conversation, parent-message, assistant-message, and operation metadata are also returned in
-`X-OmniRoute-Claude-Web-*` headers (`open-sse/executors/claude-web/stream.ts:364`).
+`X-AgentProxy-Claude-Web-*` headers (`open-sse/executors/claude-web/stream.ts:364`).
 
 The parser fails closed on malformed JSON, upstream `error` events, unknown event types,
 invalid ordering, content-block mismatches, or EOF before `message_stop`. Streaming output
@@ -179,7 +179,7 @@ script, so those skipped cases are not runtime proof.
 
 ### Setup
 
-1. Start OmniRoute with `npm run dev` or a built installation.
+1. Start AgentProxy with `npm run dev` or a built installation.
 2. Open Dashboard → Providers → Add Provider.
 3. Select the Web Cookie category and Claude Web.
 4. Paste the full Cookie header copied from an authenticated `claude.ai` request.

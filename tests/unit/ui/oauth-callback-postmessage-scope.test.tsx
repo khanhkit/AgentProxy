@@ -18,7 +18,7 @@ import CallbackPage from "@/app/callback/page";
  * complete the OAuth flow as the user. Trusted targets are the same-origin
  * parent, the loopback hostname variants of the same port (localhost vs
  * 127.0.0.1 — Zed native-app redirects may land on the other spelling than the
- * dashboard the modal was opened from; same port means the same OmniRoute
+ * dashboard the modal was opened from; same port means the same AgentProxy
  * server), and Codex's fixed loopback helper (127.0.0.1:1455).
  */
 describe("OAuth callback page — postMessage target origin scope (#998)", () => {

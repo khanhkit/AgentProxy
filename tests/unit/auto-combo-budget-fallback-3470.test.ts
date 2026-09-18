@@ -143,9 +143,9 @@ test("parseRequestBudgetFallback: ignores unknown/empty/non-string values", () =
 
 test("resolveRequestAutoControls: aggregates mode/budget/budgetFallback headers, omitting unset ones", () => {
   const headers = new Headers({
-    "x-omniroute-mode": "fast",
-    "x-omniroute-budget": "0.05",
-    "x-omniroute-budget-fallback": "strict",
+    "x-agentproxy-mode": "fast",
+    "x-agentproxy-budget": "0.05",
+    "x-agentproxy-budget-fallback": "strict",
   });
   const controls = resolveRequestAutoControls(headers);
   assert.deepEqual(controls, {

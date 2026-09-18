@@ -192,9 +192,9 @@ test("OpenAI não roda no estágio pré-tradução", async () => {
 // `aggressive`/`passthrough`) e passou a resolvê-los, dentro de
 // `isOmniGlyphSupportedModel()`, lendo `process.env.OMNIGLYPH_PROFILE`. Isso
 // transforma uma variável de ambiente do HOST num gate silencioso de TODO
-// request do OmniRoute: um `OMNIGLYPH_PROFILE=passthrough` exportado no shell
-// do processo desligaria a engine sem que nenhuma configuração do OmniRoute
-// tivesse mudado — e sem nenhum sinal na UI. A política é do OmniRoute; o
+// request do AgentProxy: um `OMNIGLYPH_PROFILE=passthrough` exportado no shell
+// do processo desligaria a engine sem que nenhuma configuração do AgentProxy
+// tivesse mudado — e sem nenhum sinal na UI. A política é do AgentProxy; o
 // adapter tem de passar o escopo explicitamente.
 async function withEnv<T>(key: string, value: string, fn: () => Promise<T>): Promise<T> {
   const had = Object.prototype.hasOwnProperty.call(process.env, key);
@@ -208,18 +208,18 @@ async function withEnv<T>(key: string, value: string, fn: () => Promise<T>): Pro
   }
 }
 
-test("OMNIGLYPH_PROFILE do host não decide o gate de modelo do OmniRoute", async () => {
+test("OMNIGLYPH_PROFILE do host não decide o gate de modelo do AgentProxy", async () => {
   const r = await withEnv("OMNIGLYPH_PROFILE", "passthrough", () =>
     omniglyphEngine.applyAsync!(claudeBody(), OK)
   );
   assert.equal(
     r.compressed,
     true,
-    "env do processo não pode desligar a engine: o escopo vem da config do OmniRoute"
+    "env do processo não pode desligar a engine: o escopo vem da config do AgentProxy"
   );
 });
 
-test("OMNIGLYPH_PROFILE do host não amplia a allowlist de modelos do OmniRoute", async () => {
+test("OMNIGLYPH_PROFILE do host não amplia a allowlist de modelos do AgentProxy", async () => {
   const body = { ...claudeBody(), model: "claude-sonnet-5" };
   const r = await withEnv("OMNIGLYPH_PROFILE", "aggressive", () =>
     withEnv("OMNIGLYPH_MODELS", "claude-fable-5,claude-sonnet-5", () =>
@@ -313,8 +313,8 @@ test("preserveSystemPrompt: wire OpenAI pula, porque o pacote não sabe preserva
   // O transform OpenAI do OmniGlyph 1.4.0 honra apenas compressTools, gptHistory,
   // minCompressChars e reflow — não existe compressSystem nesse wire, e a
   // instrução vira sempre um ponteiro para a imagem. Imagear assim queimaria o
-  // prefixo quente que a decisão cache-aware do OmniRoute mandou preservar, e o
-  // OmniRoute não teria como saber. Sem opção de honrar a política, pula.
+  // prefixo quente que a decisão cache-aware do AgentProxy mandou preservar, e o
+  // AgentProxy não teria como saber. Sem opção de honrar a política, pula.
   const r = await omniglyphEngine.applyAsync!(openaiChatBody(), {
     ...GPT_OK,
     config: { preserveSystemPrompt: true } as never,

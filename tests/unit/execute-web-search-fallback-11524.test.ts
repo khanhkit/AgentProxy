@@ -5,7 +5,7 @@ import os from "node:os";
 import path from "node:path";
 
 const TEST_DATA_DIR = fs.mkdtempSync(
-  path.join(os.tmpdir(), "omniroute-execute-web-search-fallback-")
+  path.join(os.tmpdir(), "agentproxy-execute-web-search-fallback-")
 );
 process.env.DATA_DIR = TEST_DATA_DIR;
 
@@ -81,7 +81,7 @@ test("auto-selects credentialed provider before duckduckgo-free fallback (#11524
   };
 
   try {
-    const result = await executeWebSearch({ query: "latest omniroute roadmap" });
+    const result = await executeWebSearch({ query: "latest agentproxy roadmap" });
 
     assert.equal(
       result.data.provider,

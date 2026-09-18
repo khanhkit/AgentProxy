@@ -27,7 +27,7 @@ import pino from "pino";
 // after removing the tmp DATA_DIR exactly like a test teardown does.
 //
 // Configure file logging BEFORE importing the logger (buildLogger runs at import time).
-const dir = mkdtempSync(join(tmpdir(), "omniroute-logger-6360-"));
+const dir = mkdtempSync(join(tmpdir(), "agentproxy-logger-6360-"));
 const logFile = join(dir, "logs", "application", "app.log");
 process.env.NODE_ENV = "production"; // JSON to file, simplest single-target-per-destination path
 process.env.APP_LOG_TO_FILE = "true";

@@ -31,7 +31,7 @@ const contentSecurityPolicy = [
   "media-src 'self' data: blob:",
   // `ws:` is permitted scheme-wide (mirroring the bare `wss:` already allowed) so the
   // dashboard can open `ws://<lan-or-tailscale-host>:*` to its own Live WS server when
-  // OmniRoute is reached from a non-loopback host. Same-origin HTTP fetches stay covered
+  // AgentProxy is reached from a non-loopback host. Same-origin HTTP fetches stay covered
   // by `'self'`; the loopback origins remain listed explicitly for clarity. (#5083)
   "connect-src 'self' http://localhost:* http://127.0.0.1:* ws://localhost:* ws://127.0.0.1:* https: ws: wss:",
   "worker-src 'self' blob:",
@@ -103,17 +103,17 @@ function filterKnownInfrastructureWarnings(baseConsole) {
   return filteredConsole;
 }
 
-// OMNIROUTE_BUILD_PROFILE=minimal physically removes four optional privileged
+// AGENTPROXY_BUILD_PROFILE=minimal physically removes four optional privileged
 // modules (MITM cert install, Zed keychain import, Cloud Sync, 9router
 // installer) from the built bundle by aliasing them to feature-disabled stubs.
-// The resulting artifact is intended to be published as `omniroute-secure`
+// The resulting artifact is intended to be published as `agentproxy-secure`
 // for security-sensitive environments. See docs/security/SOCKET_DEV_FINDINGS.md.
-const isMinimalBuild = process.env.OMNIROUTE_BUILD_PROFILE === "minimal";
+const isMinimalBuild = process.env.AGENTPROXY_BUILD_PROFILE === "minimal";
 // Contributor builds validate compilation only and do not need a shippable standalone bundle.
-const isContributorBuild = process.env.OMNIROUTE_BUILD_PROFILE === "contributor";
+const isContributorBuild = process.env.AGENTPROXY_BUILD_PROFILE === "contributor";
 
 // #10273: `null` unless the operator opts in with DASHBOARD_ALLOW_EMBED=vscode. Read at build
-// time like every other knob in this file (OMNIROUTE_BASE_PATH, OMNIROUTE_BUILD_PROFILE, …),
+// time like every other knob in this file (AGENTPROXY_BASE_PATH, AGENTPROXY_BUILD_PROFILE, …),
 // so changing it requires a rebuild. See scripts/build/dashboardEmbed.mjs.
 const dashboardEmbedMode = resolveDashboardEmbedMode(process.env);
 
@@ -142,36 +142,36 @@ function readPositiveInteger(value) {
   return Number.isInteger(parsed) && parsed > 0 ? parsed : undefined;
 }
 
-const staticGenerationCpus = readPositiveInteger(process.env.OMNIROUTE_NEXT_BUILD_CPUS);
+const staticGenerationCpus = readPositiveInteger(process.env.AGENTPROXY_NEXT_BUILD_CPUS);
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Opt-in subpath deployment behind a reverse proxy (e.g. nginx/Caddy serving
-  // OmniRoute under https://host/omniroute/). Empty by default so root-path
+  // AgentProxy under https://host/agentproxy/). Empty by default so root-path
   // deployments are unaffected. Next.js strips this prefix from `pathname`
   // before route matching, so authz classification (classifyRoute/isLocalOnlyPath)
   // keeps operating on un-prefixed paths — see src/server/authz/pipeline.ts for
   // the two redirect call sites that re-add it via `request.nextUrl.basePath`.
-  basePath: normalizeBasePath(process.env.OMNIROUTE_BASE_PATH),
+  basePath: normalizeBasePath(process.env.AGENTPROXY_BASE_PATH),
   // Next 16 (both webpack and Turbopack) app-router renders SSR asset URLs from
   // `assetPrefix` ALONE — basePath only affects routing/links. Without mirroring
   // it here, a subpath build emits /_next/static shell references that 404
   // behind a reverse proxy. The Docker runtime patcher (ensure-docker-base-path)
   // rewrites the same knob for prebuilt root-path images.
-  assetPrefix: normalizeBasePath(process.env.OMNIROUTE_BASE_PATH) || undefined,
+  assetPrefix: normalizeBasePath(process.env.AGENTPROXY_BASE_PATH) || undefined,
   // Client-visible mirror of basePath for fetch/EventSource rewriting under reverse
   // proxies (installBasePathFetch), and for client display helpers (useDisplayBaseUrl)
   // that append the subpath to window.location.origin when building curl/endpoint
   // examples. Empty by default (root deploys unchanged).
   env: {
-    NEXT_PUBLIC_OMNIROUTE_BASE_PATH: normalizeBasePath(process.env.OMNIROUTE_BASE_PATH),
+    NEXT_PUBLIC_AGENTPROXY_BASE_PATH: normalizeBasePath(process.env.AGENTPROXY_BASE_PATH),
     // Deployment identity for the PWA service worker URL (PwaRegister):
     // a browser holding a worker from an older deployment must see a
     // different /sw.js?v=<id> URL so the browser treats it as an update
     // instead of keeping the old generation in control. Falls back to a
     // value that is unique per build run when git is absent (CI tarball).
     NEXT_PUBLIC_SW_BUILD_ID:
-      process.env.OMNIROUTE_SW_BUILD_ID || process.env.SOURCE_VERSION || `${Date.now()}`,
+      process.env.AGENTPROXY_SW_BUILD_ID || process.env.SOURCE_VERSION || `${Date.now()}`,
   },
   distDir,
   // Turbopack config: redirect native modules to stubs at build time
@@ -179,7 +179,7 @@ const nextConfig = {
     root: projectRoot,
     resolveAlias: {
       // @/mitm/manager → stub ONLY where the runtime can't run the MITM stack
-      // (Docker sets OMNIROUTE_MITM_STUB=1 — #3390 graceful degradation). The
+      // (Docker sets AGENTPROXY_MITM_STUB=1 — #3390 graceful degradation). The
       // alias used to be unconditional, which was fine while Docker was the
       // only Turbopack consumer — but the v3.8.45 bundler-default flip shipped
       // the stub to every npm/Electron/VPS artifact and broke Agent Bridge
@@ -187,7 +187,7 @@ const nextConfig = {
       ...mitmManagerAliasFor(process.env),
       // better-sqlite3 → build-time stub ONLY where the build worker actually
       // aborts while tracing the native addon (SIGABRT at worker teardown,
-      // #10060); opt in with OMNIROUTE_BETTER_SQLITE3_STUB=1. The alias used to
+      // #10060); opt in with AGENTPROXY_BETTER_SQLITE3_STUB=1. The alias used to
       // be unconditional on the premise that serverExternalPackages still won
       // at runtime — it does not: resolveAlias rewrites the request before the
       // externals check, so the stub was bundled and EVERY route answered 500
@@ -234,7 +234,7 @@ const nextConfig = {
   // Issue #67: enable React Compiler — automates memoization, removes manual useCallback/useMemo debt.
   // See: https://next.dev/blog/react-compiler
   reactCompiler: true,
-  // OmniRoute is a proxy for AI APIs — request bodies routinely include
+  // AgentProxy is a proxy for AI APIs — request bodies routinely include
   // multi-MB payloads (vision models, image edits, base64-encoded files,
   // long chat histories with embedded images). Next.js's Server Action
   // handler intercepts POSTs with multipart/form-data or
@@ -250,7 +250,7 @@ const nextConfig = {
     // shut down ubuntu-latest after a successful Turbopack compile.
     ...(staticGenerationCpus ? { cpus: staticGenerationCpus } : {}),
     serverActions: {
-      bodySizeLimit: process.env.OMNIROUTE_SERVER_ACTIONS_BODY_LIMIT || "50mb",
+      bodySizeLimit: process.env.AGENTPROXY_SERVER_ACTIONS_BODY_LIMIT || "50mb",
     },
     // Reduce peak heap during production builds (Next.js 15+).
     webpackMemoryOptimizations: true,
@@ -260,16 +260,16 @@ const nextConfig = {
     // uploads (OpenAI-compatible /v1/files) routinely exceed this. Match the
     // 512 MB server-side cap; tune via env if needed.
     proxyClientMaxBodySize: process.env.NEXT_PROXY_BODY_LIMIT || "512mb",
-    // Next's internal router proxy defaults to 30s when this is unset. OmniRoute
+    // Next's internal router proxy defaults to 30s when this is unset. AgentProxy
     // can legitimately hold non-streaming chat requests open for minutes while an
     // upstream provider finishes, so reuse the existing request-timeout knobs.
     proxyTimeout: readTimeoutMs(process.env.REQUEST_TIMEOUT_MS, process.env.FETCH_TIMEOUT_MS),
-    // PR-2 of diegosouzapw/OmniRoute#3932: tree-shake barrel re-exports so
+    // PR-2 of khanhkit/AgentProxy#3932: tree-shake barrel re-exports so
     // route bundles don't pull in 14 locale files, every lucide-react icon,
     // or the full date-fns surface when only one helper is used.
     //
     // NOTE: this list must only contain EXTERNAL barrel libraries. Do NOT add
-    // the internal `@omniroute/open-sse` workspace here: optimizePackageImports
+    // the internal `@agentproxy/open-sse` workspace here: optimizePackageImports
     // makes Next.js resolve every export of the package's barrel at build time,
     // and open-sse's `index.ts` re-exports the entire streaming engine
     // (executors/translators/services/handlers/mcp-server — thousands of
@@ -389,7 +389,7 @@ const nextConfig = {
     "util",
     "process",
   ],
-  transpilePackages: ["@omniroute/open-sse", "@lobehub/icons", "fumadocs-ui", "fumadocs-core"],
+  transpilePackages: ["@agentproxy/open-sse", "@lobehub/icons", "fumadocs-ui", "fumadocs-core"],
   allowedDevOrigins: ["localhost", "127.0.0.1", "192.168.0.250"],
   typescript: {
     // TODO: Re-enable after fixing all sub-component useTranslations scope issues
@@ -441,7 +441,7 @@ const nextConfig = {
           chunks: "all",
           priority: 20,
         },
-        // PR-2 of diegosouzapw/OmniRoute#3932: isolate the heavy long-tail
+        // PR-2 of khanhkit/AgentProxy#3932: isolate the heavy long-tail
         // vendor chunks that only some routes actually need, so dashboard
         // pages don't pay for the docs bundle (or vice versa).
         nextIntl: {
@@ -513,7 +513,7 @@ const nextConfig = {
     });
     return [
       ...embedRules,
-      // G-10: allow OmniRoute's own dashboard to embed the 9Router UI via our reverse proxy.
+      // G-10: allow AgentProxy's own dashboard to embed the 9Router UI via our reverse proxy.
       // `frame-ancestors 'self'` overrides the global `frame-ancestors 'none'` only for this
       // path. The route is already LOCAL_ONLY (routeGuard.ts) so remote origins cannot reach it.
       {
@@ -766,7 +766,7 @@ const nextConfig = {
       },
       // Issue #6405 follow-up: unknown root-level paths must return JSON 404,
       // not the dashboard HTML shell. Rewrite the missing prefixes under /api/*
-      // so they hit the /api/[...omnirouteApiCatchAll] route (#6424) — which
+      // so they hit the /api/[...agentproxyApiCatchAll] route (#6424) — which
       // returns application/json with error.type === "not_found". Real /api/*
       // routes take precedence over the catch-all, so any future
       // /api/anthropic/*, /api/openai/*, /api/metrics, /api/debug endpoints

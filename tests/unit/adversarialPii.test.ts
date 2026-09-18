@@ -5,7 +5,7 @@ import os from "node:os";
 import path from "node:path";
 
 // Isolate DB state
-const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-test-adversarial-pii-"));
+const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-test-adversarial-pii-"));
 process.env.DATA_DIR = tmpDir;
 
 import { createPiiSseTransform } from "../../src/lib/streamingPiiTransform";

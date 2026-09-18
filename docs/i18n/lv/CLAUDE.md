@@ -55,7 +55,7 @@ Iesniedziet šos artefaktus `_tasks/` repozitorijā (`git -C _tasks …`), nekad
 
 Šis projekts pārraksta vides noklusēto sesijas pagaidu vietu (`/tmp/claude-*/…`). Rakstiet pagaidu/darba failus — eksportus,
 ģenerētus zip arhīvus, vienreizējus starpposma failus un visu pārējo, ko citādi ievietotu `/tmp` — uz
-`/home/diegosouzapw/dev/proxys/OmniRoute/_artifacts/` tā vietā.
+`/home/diegosouzapw/dev/proxys/AgentProxy/_artifacts/` tā vietā.
 
 - `_artifacts/` ir saknes `_*` ceļš: tas jau ir ignorēts ar git (`AGENTS.md` → "Saknes `_*` ceļi"), atrodas
   tikai diskā un nekad netiek izsekojams.

@@ -71,7 +71,7 @@ export function filterScope(paths, { dirs, exts, excludePrefixes = [] }) {
  * always tear it down. Never touches the caller's tree or index (no stash, no checkout).
  */
 export function withBaseWorktree(sha, fn) {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-newcode-base-"));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-newcode-base-"));
   fs.rmdirSync(dir); // git worktree add wants a non-existent path
   git(["worktree", "add", "--detach", "--quiet", dir, sha]);
   try {

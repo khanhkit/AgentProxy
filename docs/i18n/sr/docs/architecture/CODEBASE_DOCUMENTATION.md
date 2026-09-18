@@ -6,16 +6,16 @@
 
 ---
 
-title: "OmniRoute Codebase Documentation"
+title: "AgentProxy Codebase Documentation"
 version: 3.8.40
 lastUpdated: 2026-06-28
 ---
 
-# OmniRoute Codebase Documentation
+# AgentProxy Codebase Documentation
 
 > **Verzija:** v3.8.51
 > **Zadnje ažurirano:** 2026-06-28
-> **Ciljna publika:** Inženjeri koji doprinose OmniRoute-u ili prave integracije na osnovu njega.
+> **Ciljna publika:** Inženjeri koji doprinose AgentProxy-u ili prave integracije na osnovu njega.
 >
 > Za dijagrame arhitekture na visokom nivou i razmišljanje koje stoji iza svakog podsistema, pročitajte
 > [ARCHITECTURE.md](./ARCHITECTURE.md). Za detaljne uvide u pojedinačne podsisteme
@@ -46,22 +46,22 @@ bez izmišljanja novih modula.
 Aliasi za putanje (`tsconfig.json`):
 
 - `@/*` → `src/*`
-- `@omniroute/open-sse` → `open-sse/index.ts`
-- `@omniroute/open-sse/*` → `open-sse/*`
+- `@agentproxy/open-sse` → `open-sse/index.ts`
+- `@agentproxy/open-sse/*` → `open-sse/*`
 
 Podrazumevani HTTP port: **`20128`** (API i dashboard dele isti proces). Direktorijum
-za podatke se navodi kroz `DATA_DIR` env varijablu, čija je podrazumevana vrednost `~/.omniroute/`.
+za podatke se navodi kroz `DATA_DIR` env varijablu, čija je podrazumevana vrednost `~/.agentproxy/`.
 
 ---
 
 ## 2. Struktura repozitorijuma
 
 ```
-OmniRoute/
+AgentProxy/
 ├── src/                  Next.js aplikacija (App Router, biblioteke, domen, server, deljeno)
-├── open-sse/             Workspace za streaming engine (@omniroute/open-sse)
+├── open-sse/             Workspace za streaming engine (@agentproxy/open-sse)
 ├── electron/             Desktop wrapper (Electron 41 main + preload)
-├── bin/                  CLI ulazne tačke (omniroute, reset-password)
+├── bin/                  CLI ulazne tačke (agentproxy, reset-password)
 ├── tests/                Unit, integration, e2e, protocols-e2e, translator, security, fixtures
 ├── scripts/              Build, sync, check, migration i runtime helper skripte
 ├── docs/                 Javna dokumentacija (ovaj direktorijum)
@@ -307,7 +307,7 @@ grupiše stvarne direktorijume i značajne datoteke najvišeg nivoa.
 | `runtime/`        | Detekcija runtime funkcionalnosti                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | `search/`         | `executeWebSearch.ts`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
 | `services/`       | Framework ugrađenih servisa: `ServiceSupervisor.ts` (generički supervizor child procesa sa zaključavanjem operacija, ring bufer-om, health checker-om), `bootstrap.ts` (registracija na nivou procesa i auto-start), `registry.ts` (mapa alat → supervizor), `apiKey.ts` (skladište ključeva AES-256-GCM), `modelSync.ts` (periodična sinhronizacija modela), `ringBuffer.ts` (5 MB kružni bafer za logove), `healthCheck.ts` (HTTP health probe), `types.ts`, `embedWsProxy.ts` (WebSocket proxy), `installers/{ninerouter,cliproxy}.ts`. Vidi `docs/frameworks/EMBEDDED-SERVICES.md`                                                                                             |
-| `agentSkills/`    | Katalog Agent Skills + generator: `catalog.ts` (getCatalog/getSkillById/filterCatalog/computeCoverage), `generator.ts` (generateAgentSkills → upisuje `skills/{id}/SKILL.md`), `openapiParser.ts` (izvlači REST endpoint-e iz OpenAPI specifikacije), `cliRegistryParser.ts` (izvlači CLI podkomande iz bin/cli-registry), `schemas.ts` (Zod: AgentSkillSchema, SkillCoverageSchema, ListQuerySchema, GenerateBodySchema), `types.ts` (AgentSkill, SkillCoverage, SkillMarkdown, GeneratorReport). Koriste ga REST rute (`/api/agent-skills/*`), MCP alati (`omniroute_agent_skills_*`), i A2A veština `list-capabilities`. Vidi [AGENT-SKILLS.md](../frameworks/AGENT-SKILLS.md). |
+| `agentSkills/`    | Katalog Agent Skills + generator: `catalog.ts` (getCatalog/getSkillById/filterCatalog/computeCoverage), `generator.ts` (generateAgentSkills → upisuje `skills/{id}/SKILL.md`), `openapiParser.ts` (izvlači REST endpoint-e iz OpenAPI specifikacije), `cliRegistryParser.ts` (izvlači CLI podkomande iz bin/cli-registry), `schemas.ts` (Zod: AgentSkillSchema, SkillCoverageSchema, ListQuerySchema, GenerateBodySchema), `types.ts` (AgentSkill, SkillCoverage, SkillMarkdown, GeneratorReport). Koriste ga REST rute (`/api/agent-skills/*`), MCP alati (`agentproxy_agent_skills_*`), i A2A veština `list-capabilities`. Vidi [AGENT-SKILLS.md](../frameworks/AGENT-SKILLS.md). |
 | `skills/`         | Framework veština: `registry.ts`, `executor.ts`, `interception.ts`, `injection.ts`, `sandbox.ts`, `custom.ts`, `hybrid.ts`, `builtins.ts`, `a2a.ts`, `providerSettings.ts`, `schemas.ts`, `skillssh.ts`, `types.ts`, plus `builtin/browser.ts`                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | `spend/`          | `batchWriter.ts` (write-behind bafer)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
 | `sync/`           | `bundle.ts`, `tokens.ts` (Cloud Sync)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
@@ -393,7 +393,7 @@ Tabele kreirane kroz migracije (ukupno 123):
 | `degradation.ts`                           | Prelazi u degradirani režim                          |
 | `providerExpiration.ts`                    | Otkrivanje isteklih naloga/ključeva                  |
 | `quotaCache.ts`                            | Keširane odluke o kvotama                            |
-| `responses.ts`, `omnirouteResponseMeta.ts` | Pomoćne funkcije za oblik odgovora                   |
+| `responses.ts`, `agentproxyResponseMeta.ts` | Pomoćne funkcije za oblik odgovora                   |
 | `configAudit.ts`                           | Revizija promena konfiguracije                       |
 | `assessment/`                              | Procena modela (prema RFC, delimično implementirano) |
 | `types.ts`                                 | Deljeni domenski tipovi                              |
@@ -445,7 +445,7 @@ Podeljeno u ciljane poddirektorijume:
 
 ## 4. `open-sse/` — Radni prostor za streaming engine
 
-Zaseban npm workspace objavljen kao `@omniroute/open-sse`. Sadrži obradu
+Zaseban npm workspace objavljen kao `@agentproxy/open-sse`. Sadrži obradu
 zahteva, izvršavače (executors), prevodioce (translators), servise, transformer i MCP server.
 
 ```
@@ -608,7 +608,7 @@ Pet npm skripti u korenu workspace-a: `electron:dev`, `electron:build`,
 
 ```
 bin/
-├── omniroute.mjs           Glavna CLI tačka ulaska (Node ESM)
+├── agentproxy.mjs           Glavna CLI tačka ulaska (Node ESM)
 ├── reset-password.mjs      Resetovanje lozinke za upravljanje iz CLI-ja
 ├── mcp-server.mjs          MCP server launcher (stdio)
 ├── nodeRuntimeSupport.mjs  Provera verzije Node-a
@@ -631,8 +631,8 @@ bin/
 
 Dva binarna fajla su izložena u `package.json` → `bin`:
 
-- `omniroute` → `bin/omniroute.mjs`
-- `omniroute-reset-password` → `bin/reset-password.mjs`
+- `agentproxy` → `bin/agentproxy.mjs`
+- `agentproxy-reset-password` → `bin/reset-password.mjs`
 
 ---
 
@@ -788,7 +788,7 @@ Pogledajte [A2A-SERVER.md § Adding a New Skill](../frameworks/A2A-SERVER.md). V
 
 - **Stil koda**: uvlačenje od 2 razmaka, duplo navodnici, širina 100 karaktera, tačka-zapeta,
   `es5` zarezi na kraju — nameće se putem Prettier-a preko `lint-staged`.
-- **Importi**: eksterni → interni (`@/`, `@omniroute/open-sse`) → relativni.
+- **Importi**: eksterni → interni (`@/`, `@agentproxy/open-sse`) → relativni.
 - **Nazivi**: fajlovi u `camelCase` ili `kebab-case`, komponente u `PascalCase`,
   konstante u `UPPER_SNAKE`.
 - **ESLint**: `no-eval`, `no-implied-eval`, `no-new-func` = `error` svuda;

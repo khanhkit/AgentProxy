@@ -14,7 +14,7 @@ import { DEFAULT_RTK_CONFIG } from "../../../open-sse/services/compression/types
 // stripJsTsComments. This proves the new RTK config fields wire it end to end and that
 // preserveDocstrings now keeps JSDoc.
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-rtk-strip-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-rtk-strip-"));
 const ORIGINAL_DATA_DIR = process.env.DATA_DIR;
 process.env.DATA_DIR = TEST_DATA_DIR;
 

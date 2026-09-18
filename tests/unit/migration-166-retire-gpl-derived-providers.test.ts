@@ -4,7 +4,7 @@ import os from "node:os";
 import path from "node:path";
 import test from "node:test";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-gpl-provider-retirement-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-gpl-provider-retirement-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../src/lib/db/core.ts");
@@ -21,7 +21,7 @@ test("migration 166 disables GPL-derived connections fail-closed and preserves a
   const db = core.getDbInstance();
 
   const applied = db
-    .prepare("SELECT version FROM _omniroute_migrations WHERE version = 166")
+    .prepare("SELECT version FROM _agentproxy_migrations WHERE version = 166")
     .get() as { version: number } | undefined;
   assert.ok(applied, "migration 166 must be recorded as applied");
 

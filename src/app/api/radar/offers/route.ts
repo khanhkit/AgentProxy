@@ -1,7 +1,7 @@
 /** GET the verified local Radar offers cache. Never proxies the private service. */
 
 import { NextResponse } from "next/server";
-import { buildErrorBody, sanitizeErrorMessage } from "@omniroute/open-sse/utils/error";
+import { buildErrorBody, sanitizeErrorMessage } from "@agentproxy/open-sse/utils/error";
 import { getRadarOffers } from "@/lib/radar";
 import { isAuthenticated } from "@/shared/utils/apiAuth";
 import { CORS_HEADERS, handleCorsOptions } from "@/shared/utils/cors";

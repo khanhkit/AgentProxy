@@ -6,7 +6,7 @@ import path from "node:path";
 
 // Isolated DATA_DIR: the refresh path persists tokens through the real
 // updateProviderConnection — without this the test would write into the
-// operator's ~/.omniroute database.
+// operator's ~/.agentproxy database.
 const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omr-oauth400-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 

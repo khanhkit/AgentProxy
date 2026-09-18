@@ -4,7 +4,7 @@ import crypto from "node:crypto";
 
 const ORIGINAL_CLOUD_URL = process.env.CLOUD_URL;
 const ORIGINAL_PUBLIC_CLOUD_URL = process.env.NEXT_PUBLIC_CLOUD_URL;
-const ORIGINAL_SYNC_SECRET = process.env.OMNIROUTE_CLOUD_SYNC_SECRET;
+const ORIGINAL_SYNC_SECRET = process.env.AGENTPROXY_CLOUD_SYNC_SECRET;
 const ORIGINAL_API_KEY_SECRET = process.env.API_KEY_SECRET;
 const ORIGINAL_FETCH = globalThis.fetch;
 const cloudSyncModuleUrl = new URL("../../../src/lib/cloudSync.ts", import.meta.url).href;
@@ -20,8 +20,8 @@ function restoreEnv() {
   if (ORIGINAL_PUBLIC_CLOUD_URL === undefined) delete process.env.NEXT_PUBLIC_CLOUD_URL;
   else process.env.NEXT_PUBLIC_CLOUD_URL = ORIGINAL_PUBLIC_CLOUD_URL;
 
-  if (ORIGINAL_SYNC_SECRET === undefined) delete process.env.OMNIROUTE_CLOUD_SYNC_SECRET;
-  else process.env.OMNIROUTE_CLOUD_SYNC_SECRET = ORIGINAL_SYNC_SECRET;
+  if (ORIGINAL_SYNC_SECRET === undefined) delete process.env.AGENTPROXY_CLOUD_SYNC_SECRET;
+  else process.env.AGENTPROXY_CLOUD_SYNC_SECRET = ORIGINAL_SYNC_SECRET;
 
   if (ORIGINAL_API_KEY_SECRET === undefined) delete process.env.API_KEY_SECRET;
   else process.env.API_KEY_SECRET = ORIGINAL_API_KEY_SECRET;
@@ -35,7 +35,7 @@ test.after(restoreEnv);
 test("TC-CLOUD-SEC-001 missing HMAC secret blocks cloud sync before transport", async () => {
   process.env.CLOUD_URL = "https://cloud.invalid";
   process.env.API_KEY_SECRET = "kittest-cloud-sync-api-key-secret";
-  delete process.env.OMNIROUTE_CLOUD_SYNC_SECRET;
+  delete process.env.AGENTPROXY_CLOUD_SYNC_SECRET;
 
   let fetchCalls = 0;
   globalThis.fetch = (async () => {
@@ -53,13 +53,13 @@ test("TC-CLOUD-SEC-001 missing HMAC secret blocks cloud sync before transport", 
   assert.equal(
     typeof result?.error,
     "string",
-    "cloud sync must return an error when OMNIROUTE_CLOUD_SYNC_SECRET is absent"
+    "cloud sync must return an error when AGENTPROXY_CLOUD_SYNC_SECRET is absent"
   );
 });
 
 test("TC-CLOUD-SEC-002 configured verifier rejects missing and forged signatures", async () => {
   const secret = crypto.createHash("sha256").update("kittest-cloud-hmac").digest("hex");
-  process.env.OMNIROUTE_CLOUD_SYNC_SECRET = secret;
+  process.env.AGENTPROXY_CLOUD_SYNC_SECRET = secret;
 
   const cloudSync = await loadCloudSync("invalid-signatures");
   const body = JSON.stringify({ data: { providers: {} } });
@@ -70,7 +70,7 @@ test("TC-CLOUD-SEC-002 configured verifier rejects missing and forged signatures
 
 test("TC-CLOUD-SEC-003 valid HMAC remains accepted", async () => {
   const secret = crypto.createHash("sha256").update("kittest-cloud-hmac").digest("hex");
-  process.env.OMNIROUTE_CLOUD_SYNC_SECRET = secret;
+  process.env.AGENTPROXY_CLOUD_SYNC_SECRET = secret;
 
   const cloudSync = await loadCloudSync("valid-signature");
   const body = JSON.stringify({ data: { providers: {} } });

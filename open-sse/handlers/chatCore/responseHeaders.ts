@@ -1,9 +1,9 @@
 import {
-  attachOmniRouteMetaHeaders,
-  buildOmniRouteResponseMetaHeaders,
-} from "@/domain/omnirouteResponseMeta";
-import { OMNIROUTE_RESPONSE_HEADERS } from "@/shared/constants/headers";
-import { defaultLogger } from "@omniroute/open-sse/utils/logger";
+  attachAgentProxyMetaHeaders,
+  buildAgentProxyResponseMetaHeaders,
+} from "@/domain/agentproxyResponseMeta";
+import { AGENTPROXY_RESPONSE_HEADERS } from "@/shared/constants/headers";
+import { defaultLogger } from "@agentproxy/open-sse/utils/logger";
 
 const STREAMING_RESPONSE_HEADER_DENYLIST = new Set([
   "content-type",
@@ -44,14 +44,14 @@ const DEFAULT_FORWARDED_HEADER_BUDGET_BYTES = 768;
 
 /**
  * Resolve the forwarded upstream response-header budget from an optional string value
- * (typically `process.env.OMNIROUTE_FORWARDING_HEADER_BUDGET_BYTES`). Returns the
+ * (typically `process.env.AGENTPROXY_FORWARDING_HEADER_BUDGET_BYTES`). Returns the
  * default of 768 when the input is unset, empty, or non-positive.
  * Extracted as a pure function so unit tests can pass values directly without
  * module-cache manipulation.
  */
 export function resolveForwardedHeaderBudget(env?: string): number {
   const parsed = Number.parseInt(
-    String(env ?? process.env.OMNIROUTE_FORWARDING_HEADER_BUDGET_BYTES),
+    String(env ?? process.env.AGENTPROXY_FORWARDING_HEADER_BUDGET_BYTES),
     10
   );
   return Number.isFinite(parsed) && parsed > 0 ? parsed : DEFAULT_FORWARDED_HEADER_BUDGET_BYTES;
@@ -59,9 +59,9 @@ export function resolveForwardedHeaderBudget(env?: string): number {
 
 /**
  * Keep upstream-derived headers comfortably below common reverse-proxy response-header limits.
- * This budget includes each header name, separator, value, and trailing CRLF. OmniRoute's own
+ * This budget includes each header name, separator, value, and trailing CRLF. AgentProxy's own
  * response metadata and framework/security headers are added separately.
- * Override with `OMNIROUTE_FORWARDING_HEADER_BUDGET_BYTES`.
+ * Override with `AGENTPROXY_FORWARDING_HEADER_BUDGET_BYTES`.
  */
 export const MAX_FORWARDED_UPSTREAM_RESPONSE_HEADER_BYTES = resolveForwardedHeaderBudget();
 const MAX_LOGGED_DROPPED_RESPONSE_HEADERS = 20;
@@ -98,8 +98,8 @@ function responseHeaderWireBytes(name: string, value: string): number {
   return responseHeaderEncoder.encode(`${name}: ${value}\r\n`).byteLength;
 }
 
-function isOmniRouteInternalHeader(headerName: string): boolean {
-  return headerName.toLowerCase().startsWith("x-omniroute-");
+function isAgentProxyInternalHeader(headerName: string): boolean {
+  return headerName.toLowerCase().startsWith("x-agentproxy-");
 }
 
 function getForwardingPriority(headerName: string): number {
@@ -151,7 +151,7 @@ function getForwardingPriority(headerName: string): number {
  * `x-middleware-next`, `x-middleware-override-headers`,
  * `x-middleware-set-cookie`, and the `x-middleware-request-*` family.
  *
- * If OmniRoute re-emits those headers from an App Router route handler, Next
+ * If AgentProxy re-emits those headers from an App Router route handler, Next
  * 16's `app-route` runtime
  * interprets `x-middleware-rewrite` as a `NextResponse.rewrite()` call and
  * throws `NextResponse.rewrite() was used in a app route handler` — turning a
@@ -189,7 +189,7 @@ export function stripNextMiddlewareControlHeaders(headers: Headers): void {
 
 export function buildStreamingResponseHeaders(
   providerHeaders: Headers,
-  meta: Parameters<typeof buildOmniRouteResponseMetaHeaders>[0],
+  meta: Parameters<typeof buildAgentProxyResponseMetaHeaders>[0],
   log: ResponseHeaderLogger = defaultLogger
 ): Record<string, string> {
   const connectionScopedHeaders = new Set(
@@ -213,7 +213,7 @@ export function buildStreamingResponseHeaders(
       STREAMING_RESPONSE_HEADER_DENYLIST.has(normalized) ||
       connectionScopedHeaders.has(normalized) ||
       isNextMiddlewareControlHeader(normalized) ||
-      isOmniRouteInternalHeader(normalized) ||
+      isAgentProxyInternalHeader(normalized) ||
       // Forwarded separately below, outside the byte budget.
       normalized === CODEX_TURN_STATE_RESPONSE_HEADER
     ) {
@@ -276,13 +276,13 @@ export function buildStreamingResponseHeaders(
     "Cache-Control": "no-cache, no-transform",
     Connection: "keep-alive",
     "X-Accel-Buffering": "no",
-    [OMNIROUTE_RESPONSE_HEADERS.cache]: "MISS",
+    [AGENTPROXY_RESPONSE_HEADERS.cache]: "MISS",
   };
   const codexTurnState = providerHeaders.get(CODEX_TURN_STATE_RESPONSE_HEADER)?.trim();
   if (codexTurnState) {
     responseHeaders[CODEX_TURN_STATE_RESPONSE_HEADER] = codexTurnState;
   }
-  attachOmniRouteMetaHeaders(responseHeaders, meta);
+  attachAgentProxyMetaHeaders(responseHeaders, meta);
   return responseHeaders;
 }
 

@@ -4,15 +4,14 @@
   "description": "Agent-first AI gateway with a Rust streaming data plane and an inherited 358-provider control plane for routing, MCP, memory, RAG, and knowledge workflows.",
   "type": "module",
   "bin": {
-    "agentproxy": "bin/omniroute.mjs",
-    "agentproxy-reset-password": "bin/reset-password.mjs",
-    "omniroute": "bin/omniroute.mjs"
+    "agentproxy": "bin/agentproxy.mjs",
+    "agentproxy-reset-password": "bin/reset-password.mjs"
   },
   "files": [
     "bin/",
     "dist/",
-    "@omniroute/opencode-plugin/",
-    "@omniroute/opencode-provider/",
+    "@agentproxy/opencode-plugin/",
+    "@agentproxy/opencode-provider/",
     "open-sse/",
     "src/domain/",
     "src/lib/",
@@ -109,12 +108,11 @@
     "release:sync-changelog-i18n": "node scripts/release/sync-changelog-i18n.mjs",
     "prebuild": "npm run check:native-deps",
     "build": "node scripts/build/build-next-isolated.mjs",
-    "build:secure": "OMNIROUTE_BUILD_PROFILE=minimal node scripts/build/build-next-isolated.mjs",
-    "build:backend": "cross-env OMNIROUTE_BUILD_BACKEND_ONLY=1 node scripts/build/build-next-isolated.mjs",
-    "build:contributor": "cross-env OMNIROUTE_BUILD_PROFILE=contributor OMNIROUTE_USE_TURBOPACK=0 node scripts/build/build-next-isolated.mjs",
+    "build:secure": "AGENTPROXY_BUILD_PROFILE=minimal node scripts/build/build-next-isolated.mjs",
+    "build:backend": "cross-env AGENTPROXY_BUILD_BACKEND_ONLY=1 node scripts/build/build-next-isolated.mjs",
+    "build:contributor": "cross-env AGENTPROXY_BUILD_PROFILE=contributor AGENTPROXY_USE_TURBOPACK=0 node scripts/build/build-next-isolated.mjs",
     "build:cli": "node --import tsx scripts/build/prepublish.ts",
-    "omniroute:verify": "node scripts/check/omniroute-verify.mjs",
-    "build:release": "rm -rf .build dist && OMNIROUTE_BUILD_SHA=$(git rev-parse --short HEAD) npm run build && npm run build:cli && node scripts/build/write-build-sha.mjs",
+    "build:release": "rm -rf .build dist && AGENTPROXY_BUILD_SHA=$(git rev-parse --short HEAD) npm run build && npm run build:cli && node scripts/build/write-build-sha.mjs",
     "build:native:tproxy": "cd src/mitm/tproxy/native && node-gyp rebuild",
     "start": "node scripts/dev/run-next.mjs start",
     "start:rust-core": "node scripts/dev/run-rust-core.mjs start",
@@ -294,8 +292,9 @@
     "test:coverage:runner": "node --max-old-space-size=8192 --import tsx/esm --import ./open-sse/utils/setupPolyfill.ts --import ./tests/_setup/isolateDataDir.ts --test --test-force-exit --test-concurrency=8 tests/unit/*.test.ts \"tests/unit/{api,auth,authz,build,cli,cli-helper,combo,compression,correctness,cors,db,db-adapters,docs,gamification,guardrails,lib,mcp,memory,runtime,security,services,settings,shared,translator,ui,usage}/**/*.test.ts\" \"tests/unit/**/*.test.mjs\" && cross-env DISABLE_SQLITE_AUTO_BACKUP=true NODE_OPTIONS=--max-old-space-size=8192 c8 --merge-async --output-dir coverage --exclude=tests/** --exclude=**/*.test.* --reporter=text-summary --reporter=html --reporter=json-summary --reporter=lcov --check-coverage --statements 60 --lines 60 --functions 60 --branches 60 node --max-old-space-size=8192 --import tsx --import ./open-sse/utils/setupPolyfill.ts --import ./tests/_setup/isolateDataDir.ts --test --test-force-exit --test-concurrency=8 \"tests/unit/dashboard/**/*.test.ts\" && npm run test:unit:serial",
     "test:unit:serial": "cross-env DISABLE_SQLITE_AUTO_BACKUP=true node --max-old-space-size=8192 --import tsx/esm --import ./open-sse/utils/setupPolyfill.ts --import ./tests/_setup/isolateDataDir.ts --test --test-force-exit --test-concurrency=1 \"tests/unit/serial/**/*.test.ts\"",
     "alibaba:sync-allowlist": "node --import tsx/esm scripts/ops/sync-alibaba-allowlist.mjs",
-    "agentproxy:verify": "node scripts/check/omniroute-verify.mjs",
-    "check:toolchain-contract": "node scripts/check/check-toolchain-contract.mjs"
+    "agentproxy:verify": "node scripts/check/agentproxy-verify.mjs",
+    "check:toolchain-contract": "node scripts/check/check-toolchain-contract.mjs",
+    "check:agentproxy-identity": "node scripts/check/check-agentproxy-identity.mjs"
   },
   "dependencies": {
     "@aws-sdk/client-bedrock-runtime": "^3.1130.0",
@@ -468,7 +467,7 @@
       "@swc/core",
       "better-sqlite3",
       "esbuild",
-      "omniroute",
+      "agentproxy",
       "sharp"
     ]
   },

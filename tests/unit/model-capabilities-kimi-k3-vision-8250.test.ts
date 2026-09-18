@@ -19,7 +19,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-kimi-k3-vision-8250-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-kimi-k3-vision-8250-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../src/lib/db/core.ts");
@@ -166,7 +166,7 @@ test("#8250 sync transform promotes attachment=false when modalities declare ima
     },
   } as never);
 
-  // Mapped onto OmniRoute provider ids for kimi-for-coding
+  // Mapped onto AgentProxy provider ids for kimi-for-coding
   const row = caps["kimi-coding-apikey"]?.k3 ?? caps["kimi-coding"]?.k3;
   assert.ok(row, "expected transformed k3 capability under a kimi-coding* provider");
   assert.equal(row.attachment, true, "sync must normalize attachment to true");

@@ -3,7 +3,7 @@
 **AgentProxy** is an independent, self-hosted AI gateway built for coding agents and multi-agent systems.
 It combines a high-performance **Rust inference data plane** with an extensible **TypeScript/Next.js control plane**.
 
-AgentProxy began from the OmniRoute codebase, which itself evolved from 9router and CLIProxyAPI ideas. AgentProxy is an independent repository and product; it is not an upstream pull-request branch. The inherited code remains MIT-licensed and its attribution/notices are preserved in `LICENSE` and `THIRD_PARTY_NOTICES.md`.
+AgentProxy was seeded from an earlier MIT-licensed gateway codebase and is now maintained as an independent repository and product. The inherited copyright and license attribution is preserved in LICENSE, dependency notices remain in THIRD_PARTY_NOTICES.md, and repository history preserves implementation provenance.
 
 ## Why AgentProxy
 
@@ -51,7 +51,7 @@ Default topology in Rust-core mode:
 - API / Rust gateway: `http://127.0.0.1:20128`
 - Dashboard / control plane: `http://127.0.0.1:20129`
 
-Canonical environment variables use the `AGENTPROXY_` prefix. `OMNIROUTE_` variables are accepted as migration aliases in v0.1.x where documented.
+Canonical environment variables use the AGENTPROXY_ prefix. Green Release removes former product-prefixed runtime aliases; operators should use the AgentProxy names documented in docs/reference/ENVIRONMENT.md.
 
 ## Verification
 
@@ -78,7 +78,7 @@ The architecture keeps these control/knowledge services out of latency-sensitive
 
 ## Lineage and attribution
 
-AgentProxy is derived from [OmniRoute](https://github.com/diegosouzapw/OmniRoute), which documents additional lineage and inspirations including [9router](https://github.com/decolua/9router) and [CLIProxyAPI](https://github.com/router-for-me/CLIProxyAPI). AgentProxy keeps the inherited MIT license and third-party notices. New AgentProxy-specific work is developed independently in this repository.
+AgentProxy preserves the inherited MIT copyright and license terms while developing new work independently in this repository. Earlier implementation provenance remains available in Git history; current architecture and release documentation use AgentProxy identity exclusively.
 
 ## Status
 

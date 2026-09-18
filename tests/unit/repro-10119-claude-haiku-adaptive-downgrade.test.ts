@@ -4,7 +4,7 @@ import assert from "node:assert/strict";
 import { openaiToClaudeRequest } from "../../open-sse/translator/request/openai-to-claude.ts";
 
 // Issue #10119: a request that already carries `thinking:{type:"adaptive"}` (the shape
-// OmniRoute builds for an adaptive-only sibling like Opus 4.7+/Sonnet-5 in a combo) is
+// AgentProxy builds for an adaptive-only sibling like Opus 4.7+/Sonnet-5 in a combo) is
 // forwarded verbatim when combo/fallback routing re-targets the SAME request to a model
 // that only supports manual extended thinking (e.g. claude-haiku-4-5-20251001). Anthropic
 // rejects `type:"adaptive"` on Haiku with "adaptive thinking is not supported on this

@@ -1,4 +1,4 @@
-# 🚀 OmniRoute — درگاه رایگان هوش مصنوعی (فارسی)
+# 🚀 AgentProxy — درگاه رایگان هوش مصنوعی (فارسی)
 
 🌐 **Languages:** 🇺🇸 [English](../../../README.md) · 🇸🇦 [ar](../ar/README.md) · 🇦🇿 [az](../az/README.md) · 🇧🇬 [bg](../bg/README.md) · 🇧🇩 [bn](../bn/README.md) · 🇨🇿 [cs](../cs/README.md) · 🇩🇰 [da](../da/README.md) · 🇩🇪 [de](../de/README.md) · 🇬🇷 [el](../el/README.md) · 🇪🇸 [es](../es/README.md) · 🇪🇪 [et](../et/README.md) · 🇫🇮 [fi](../fi/README.md) · 🇫🇷 [fr](../fr/README.md) · 🇮🇪 [ga](../ga/README.md) · 🇮🇳 [gu](../gu/README.md) · 🇮🇱 [he](../he/README.md) · 🇮🇳 [hi](../hi/README.md) · 🇭🇷 [hr](../hr/README.md) · 🇭🇺 [hu](../hu/README.md) · 🇮🇩 [id](../id/README.md) · 🇮🇹 [it](../it/README.md) · 🇯🇵 [ja](../ja/README.md) · 🇰🇷 [ko](../ko/README.md) · 🇱🇹 [lt](../lt/README.md) · 🇱🇻 [lv](../lv/README.md) · 🇮🇳 [mr](../mr/README.md) · 🇲🇾 [ms](../ms/README.md) · 🇲🇹 [mt](../mt/README.md) · 🇳🇱 [nl](../nl/README.md) · 🇳🇴 [no](../no/README.md) · 🇵🇭 [phi](../phi/README.md) · 🇵🇱 [pl](../pl/README.md) · 🇵🇹 [pt](../pt/README.md) · 🇧🇷 [pt-BR](../pt-BR/README.md) · 🇷🇴 [ro](../ro/README.md) · 🇷🇺 [ru](../ru/README.md) · 🇸🇰 [sk](../sk/README.md) · 🇸🇮 [sl](../sl/README.md) · 🇷🇸 [sr](../sr/README.md) · 🇸🇪 [sv](../sv/README.md) · 🇰🇪 [sw](../sw/README.md) · 🇮🇳 [ta](../ta/README.md) · 🇮🇳 [te](../te/README.md) · 🇹🇭 [th](../th/README.md) · 🇹🇷 [tr](../tr/README.md) · 🇺🇦 [uk-UA](../uk-UA/README.md) · 🇵🇰 [ur](../ur/README.md) · 🇻🇳 [vi](../vi/README.md) · 🇨🇳 [zh-CN](../zh-CN/README.md) · 🇹🇼 [zh-TW](../zh-TW/README.md)
 
@@ -14,34 +14,34 @@ _پراکسی جهانی API شما - یک نقطه پایانی، 329 ورود�
 
 <div align="center">
 
-[![npm version](https://img.shields.io/npm/v/omniroute?color=cb3837&logo=npm)](https://www.npmjs.com/package/omniroute)
-[![Docker Hub](https://img.shields.io/docker/v/diegosouzapw/omniroute?label=Docker%20Hub&logo=docker&color=2496ED)](https://hub.docker.com/r/diegosouzapw/omniroute)
+[![npm version](https://img.shields.io/npm/v/agentproxy?color=cb3837&logo=npm)](https://www.npmjs.com/package/agentproxy)
+[![Docker Hub](https://img.shields.io/docker/v/khanhkit/agentproxy?label=Docker%20Hub&logo=docker&color=2496ED)](https://github.com/khanhkit/AgentProxy/pkgs/container/agentproxy)
 
-![بارگیری‌های NPM](https://img.shields.io/npm/dw/omniroute?label=npm%20down%20week&color=red)
-![بارگیری‌های NPM](https://img.shields.io/npm/dm/omniroute?label=npm%20down%20month&color=red)
+![بارگیری‌های NPM](https://img.shields.io/npm/dw/agentproxy?label=npm%20down%20week&color=red)
+![بارگیری‌های NPM](https://img.shields.io/npm/dm/agentproxy?label=npm%20down%20month&color=red)
 
-![بارگیری‌های NPM](https://img.shields.io/npm/d18m/omniroute?label=npm%20down%20year&color=red)
-![Docker Pulls](https://img.shields.io/docker/pulls/diegosouzapw/omniroute)
-![بارگیری‌های GitHub (همه دارایی‌ها، همه نسخه‌ها)](https://img.shields.io/github/downloads/diegosouzapw/omniroute/total?style=flat&label=eletron%20donwloads&color=blue)
+![بارگیری‌های NPM](https://img.shields.io/npm/d18m/agentproxy?label=npm%20down%20year&color=red)
+![Docker Pulls](https://img.shields.io/docker/pulls/khanhkit/agentproxy)
+![بارگیری‌های GitHub (همه دارایی‌ها، همه نسخه‌ها)](https://img.shields.io/github/downloads/khanhkit/agentproxy/total?style=flat&label=eletron%20donwloads&color=blue)
 
-[![stars](https://custom-icon-badges.demolab.com/github/stars/diegosouzapw/OmniRoute?logo=star&style=flat)](https://github.com/diegosouzapw/OmniRoute/stargazers)
-[![open issues](https://custom-icon-badges.demolab.com/github/issues-raw/diegosouzapw/OmniRoute?logo=issue)](https://github.com/diegosouzapw/OmniRoute/issues)
-[![license](https://custom-icon-badges.demolab.com/github/license/diegosouzapw/OmniRoute?logo=law)](https://github.com/diegosouzapw/OmniRoute/blob/main/LICENSE)
-[![last commit](https://custom-icon-badges.demolab.com/github/last-commit/diegosouzapw/OmniRoute?logo=history&logoColor=white)](https://github.com/diegosouzapw/OmniRoute/commits/main)
+[![stars](https://custom-icon-badges.demolab.com/github/stars/khanhkit/AgentProxy?logo=star&style=flat)](https://github.com/khanhkit/AgentProxy/stargazers)
+[![open issues](https://custom-icon-badges.demolab.com/github/issues-raw/khanhkit/AgentProxy?logo=issue)](https://github.com/khanhkit/AgentProxy/issues)
+[![license](https://custom-icon-badges.demolab.com/github/license/khanhkit/AgentProxy?logo=law)](https://github.com/khanhkit/AgentProxy/blob/main/LICENSE)
+[![last commit](https://custom-icon-badges.demolab.com/github/last-commit/khanhkit/AgentProxy?logo=history&logoColor=white)](https://github.com/khanhkit/AgentProxy/commits/main)
 [![total contributions](https://custom-icon-badges.demolab.com/badge/dynamic/json?logo=graph&logoColor=fff&color=blue&label=total%20contributions&query=%24.totalContributions&url=https%3A%2F%2Fstreak-stats.demolab.com%2F%3Fuser%3Ddiegosouzapw%26type%3Djson)](https://github.com/diegosouzapw)
-[![code size](https://custom-icon-badges.demolab.com/github/languages/code-size/diegosouzapw/OmniRoute?logo=file-code&logoColor=white)](https://github.com/diegosouzapw/OmniRoute)
-[![pr closed](https://custom-icon-badges.demolab.com/github/issues-pr-closed/diegosouzapw/OmniRoute?color=purple&logo=git-pull-request&logoColor=white)](https://github.com/diegosouzapw/OmniRoute/pulls?q=is%3Apr+is%3Aclosed)
-[![tag](https://custom-icon-badges.demolab.com/github/v/tag/diegosouzapw/OmniRoute?logo=tag&logoColor=white)](https://github.com/diegosouzapw/OmniRoute/tags)
+[![code size](https://custom-icon-badges.demolab.com/github/languages/code-size/khanhkit/AgentProxy?logo=file-code&logoColor=white)](https://github.com/khanhkit/AgentProxy)
+[![pr closed](https://custom-icon-badges.demolab.com/github/issues-pr-closed/khanhkit/AgentProxy?color=purple&logo=git-pull-request&logoColor=white)](https://github.com/khanhkit/AgentProxy/pulls?q=is%3Apr+is%3Aclosed)
+[![tag](https://custom-icon-badges.demolab.com/github/v/tag/khanhkit/AgentProxy?logo=tag&logoColor=white)](https://github.com/khanhkit/AgentProxy/tags)
 [![github streak](https://custom-icon-badges.demolab.com/badge/dynamic/json?logo=fire&logoColor=fff&color=orange&label=github%20streak&query=%24.currentStreak.length&suffix=%20days&url=https%3A%2F%2Fstreak-stats.demolab.com%2F%3Fuser%3Ddiegosouzapw%26type%3Djson)](https://github.com/diegosouzapw)
 [![followers](https://custom-icon-badges.demolab.com/github/followers/diegosouzapw?logo=person-add)](https://github.com/diegosouzapw?tab=followers)
-[![fork](https://custom-icon-badges.demolab.com/github/forks/diegosouzapw/OmniRoute?logo=fork)](https://github.com/diegosouzapw/OmniRoute/network/members)
-[![watch](https://custom-icon-badges.demolab.com/github/watchers/diegosouzapw/OmniRoute?logo=eye)](https://github.com/diegosouzapw/OmniRoute/watchers)
+[![fork](https://custom-icon-badges.demolab.com/github/forks/khanhkit/AgentProxy?logo=fork)](https://github.com/khanhkit/AgentProxy/network/members)
+[![watch](https://custom-icon-badges.demolab.com/github/watchers/khanhkit/AgentProxy?logo=eye)](https://github.com/khanhkit/AgentProxy/watchers)
 
-[![License](https://img.shields.io/github/license/diegosouzapw/OmniRoute)](https://github.com/diegosouzapw/OmniRoute/blob/main/LICENSE)
-[![Website](https://img.shields.io/badge/Website-omniroute.online-blue?logo=google-chrome&logoColor=white)](https://omniroute.online)
+[![License](https://img.shields.io/github/license/khanhkit/AgentProxy)](https://github.com/khanhkit/AgentProxy/blob/main/LICENSE)
+[![Website](https://img.shields.io/badge/Website-agentproxy.online-blue?logo=google-chrome&logoColor=white)](https://agentproxy.example.com)
 [![WhatsApp](https://img.shields.io/badge/WhatsApp-Community-25D366?logo=whatsapp&logoColor=white)](https://chat.whatsapp.com/JI7cDQ1GyaiDHhVBpLxf8b?mode=gi_t)
 
-[🌐 Website](https://omniroute.online) • [🚀 Quick Start](#-quick-start) • [💡 Features](#-key-features) • [📖 Docs](#-documentation) • [💰 Pricing](#-pricing-at-a-glance) • [💬 WhatsApp](https://chat.whatsapp.com/JI7cDQ1GyaiDHhVBpLxf8b?mode=gi_t)
+[🌐 Website](https://agentproxy.example.com) • [🚀 Quick Start](#-quick-start) • [💡 Features](#-key-features) • [📖 Docs](#-documentation) • [💰 Pricing](#-pricing-at-a-glance) • [💬 WhatsApp](https://chat.whatsapp.com/JI7cDQ1GyaiDHhVBpLxf8b?mode=gi_t)
 
 </div>
 
@@ -52,7 +52,7 @@ _پراکسی جهانی API شما - یک نقطه پایانی، 329 ورود�
 ## 🖼️ داشبورد اصلی
 
 <div align="center">
-  <img src="./docs/screenshots/MainOmniRoute.png" alt="OmniRoute Dashboard" width="800"/>
+  <img src="./docs/screenshots/MainAgentProxy.png" alt="AgentProxy Dashboard" width="800"/>
 </div>
 
 ---
@@ -80,7 +80,7 @@ _پراکسی جهانی API شما - یک نقطه پایانی، 329 ورود�
 
 ### 🤖 ارائه دهنده رایگان هوش مصنوعی برای عوامل برنامه نویسی مورد علاقه شما
 
-_هر ابزار IDE یا CLI مجهز به هوش مصنوعی را از طریق OmniRoute - دروازه هوش مصنوعی با دسترسی آزاد وصل کنید. محدودیت ها و شرایط ارائه دهنده اعمال می شود._
+_هر ابزار IDE یا CLI مجهز به هوش مصنوعی را از طریق AgentProxy - دروازه هوش مصنوعی با دسترسی آزاد وصل کنید. محدودیت ها و شرایط ارائه دهنده اعمال می شود._
 
   <table>
     <tr>
@@ -152,11 +152,11 @@ _هر ابزار IDE یا CLI مجهز به هوش مصنوعی را از طری
     </tr>
   </table>
 
-<sub>📡 All agents connect via <code>http://localhost:20128/v1</code> or <code>http://cloud.omniroute.online/v1</code> — one config; model access and quotas depend on providers</sub>
+<sub>📡 All agents connect via <code>http://localhost:20128/v1</code> or <code>http://cloud.agentproxy.example.com/v1</code> — one config; model access and quotas depend on providers</sub>
 
 ---
 
-## 🤔 چرا OmniRoute؟
+## 🤔 چرا AgentProxy؟
 
 **از هدر دادن پول و رسیدن به محدودیت ها جلوگیری کنید:**
 
@@ -165,7 +165,7 @@ _هر ابزار IDE یا CLI مجهز به هوش مصنوعی را از طری
 - <img src="https://img.shields.io/badge/✗-e74c3c?style=flat-square" height="16"/> API های گران قیمت (20-50 دلار در ماه برای هر ارائه دهنده)
 - <img src="https://img.shields.io/badge/✗-e74c3c?style=flat-square" height="16"/> تعویض دستی بین ارائه دهندگان
 
-**OmniRoute این مشکل را حل می کند:**
+**AgentProxy این مشکل را حل می کند:**
 
 - ✅ ** اشتراک ها را به حداکثر برسانید ** - سهمیه را پیگیری کنید، از هر بیت قبل از تنظیم مجدد استفاده کنید
 - ✅ ** بازگشت خودکار ** - اشتراک → کلید API → ارزان → رایگان. در دسترس بودن بستگی به مسیرهای واجد شرایط بالادست دارد
@@ -177,9 +177,9 @@ _هر ابزار IDE یا CLI مجهز به هوش مصنوعی را از طری
 
 > 💬 **به انجمن ما بپیوندید!** [گروه واتساپ](https://chat.whatsapp.com/JI7cDQ1GyaiDHhVBpLxf8b?mode=gi_t) - راهنمایی دریافت کنید، نکات را به اشتراک بگذارید و به روز بمانید.
 
-- **وب سایت**: [omniroute.online](https://omniroute.online)
-- **GitHub**: [github.com/diegosouzapw/OmniRoute](https://github.com/diegosouzapw/OmniRoute)
-- **مشکلات**: [github.com/diegosouzapw/OmniRoute/issues](https://github.com/diegosouzapw/OmniRoute/issues)
+- **وب سایت**: [agentproxy.online](https://agentproxy.example.com)
+- **GitHub**: [github.com/khanhkit/AgentProxy](https://github.com/khanhkit/AgentProxy)
+- **مشکلات**: [github.com/khanhkit/AgentProxy/issues](https://github.com/khanhkit/AgentProxy/issues)
 - **WhatsApp**: [گروه انجمن](https://chat.whatsapp.com/JI7cDQ1GyaiDHhVBpLxf8b?mode=gi_t)
 - **مشارکت**: به [CONTRIBUTING.md](CONTRIBUTING.md) مراجعه کنید، یک PR باز کنید، یا یک `good first issue` انتخاب کنید
 
@@ -191,7 +191,7 @@ _هر ابزار IDE یا CLI مجهز به هوش مصنوعی را از طری
 npm run system-info
 ```
 
-این فرمان فایل `system-info.txt` را شامل نسخه Node.js و OmniRoute، جزئیات سیستم‌عامل، ابزارهای CLI نصب‌شده (qoder، gemini، claude، codex، antigravity، droid و غیره)، وضعیت Docker/PM2 و بسته‌های سیستم تولید می‌کند؛ هرآنچه برای بازتولید سریع مشکل لازم است. فایل را مستقیماً به گزارش مشکل GitHub پیوست کنید.
+این فرمان فایل `system-info.txt` را شامل نسخه Node.js و AgentProxy، جزئیات سیستم‌عامل، ابزارهای CLI نصب‌شده (qoder، gemini، claude، codex، antigravity، droid و غیره)، وضعیت Docker/PM2 و بسته‌های سیستم تولید می‌کند؛ هرآنچه برای بازتولید سریع مشکل لازم است. فایل را مستقیماً به گزارش مشکل GitHub پیوست کنید.
 
 ---
 
@@ -205,7 +205,7 @@ npm run system-info
        │ http://localhost:20128/v1
        ↓
 ┌─────────────────────────────────────────┐
-│           OmniRoute (Smart Router)        │
+│           AgentProxy (Smart Router)        │
 │  • Format translation (OpenAI ↔ Claude) │
 │  • Quota tracking + Embeddings + Images │
 │  • Auto token refresh                   │
@@ -224,16 +224,16 @@ Result: broader fallback coverage and cost control; availability is not guarante
 
 ---
 
-## 🎯 آنچه OmniRoute حل می کند - 30 نقطه درد واقعی و موارد استفاده
+## 🎯 آنچه AgentProxy حل می کند - 30 نقطه درد واقعی و موارد استفاده
 
-> **هر برنامه‌نویسی که از ابزارهای هوش مصنوعی استفاده می‌کند، روزانه با این مشکلات روبرو می‌شود. ** OmniRoute برای حل همه آنها ساخته شده است - از مازاد هزینه تا بلوک‌های منطقه‌ای، از جریان‌های شکسته OAuth تا عملیات پروتکل و قابلیت مشاهده سازمانی.
+> **هر برنامه‌نویسی که از ابزارهای هوش مصنوعی استفاده می‌کند، روزانه با این مشکلات روبرو می‌شود. ** AgentProxy برای حل همه آنها ساخته شده است - از مازاد هزینه تا بلوک‌های منطقه‌ای، از جریان‌های شکسته OAuth تا عملیات پروتکل و قابلیت مشاهده سازمانی.
 
 <details>
 <summary><b>💸 ۱. «برای اشتراک گران‌قیمت پول می‌دهم، اما محدودیت‌ها همچنان کارم را قطع می‌کنند»</b></summary>
 
 توسعه‌دهندگان 20 تا 200 دلار در ماه برای Claude Pro، Codex Pro، یا GitHub Copilot می‌پردازند. حتی با پرداخت، سهمیه سقفی دارد - 5 ساعت استفاده، محدودیت های هفتگی یا محدودیت نرخ در دقیقه. در اواسط جلسه کدنویسی، ارائه دهنده پاسخ نمی دهد و توسعه دهنده جریان و بهره وری را از دست می دهد.
 
-** چگونه OmniRoute آن را حل می کند:**
+** چگونه AgentProxy آن را حل می کند:**
 
 - ** بازگشت هوشمند 4-سطحی ** - اگر سهمیه اشتراک تمام شود، به طور خودکار به کلید API هدایت می شود → ارزان → رایگان با دخالت دستی صفر
 - **ردیابی محدودیت های ارائه دهنده** - عکس های لحظه ای سهمیه ذخیره شده در حافظه پنهان در یک برنامه زمانی سمت سرور (پیش فرض `PROVIDER_LIMITS_SYNC_INTERVAL_MINUTES=70`) با بازخوانی دستی موجود در رابط کاربری بازخوانی می شوند.
@@ -250,7 +250,7 @@ Result: broader fallback coverage and cost control; availability is not guarante
 
 OpenAI از یک قالب استفاده می کند، Claude (انتروپیک) از فرمت دیگری، جمینی از فرمت دیگری استفاده می کند. اگر یک برنامه‌نویس بخواهد مدل‌هایی را از ارائه‌دهندگان مختلف آزمایش کند یا بین آن‌ها بازگشتی ایجاد کند، باید SDK‌ها را دوباره پیکربندی کند، نقاط پایانی را تغییر دهد، با فرمت‌های ناسازگار برخورد کند. ارائه دهندگان سفارشی (FriendLI، NIM) دارای نقاط پایانی مدل غیر استاندارد هستند.
 
-** چگونه OmniRoute آن را حل می کند:**
+** چگونه AgentProxy آن را حل می کند:**
 
 - **نقطه پایانی یکپارچه** - یک `http://localhost:20128/v1` به عنوان پروکسی برای تمام 329 ورودی کاتالوگ ارائه دهنده عمل می کند
 - **ترجمه فرمت** — خودکار و شفاف: OpenAI ↔ Claude ↔ Gemini ↔ پاسخ ها API
@@ -267,7 +267,7 @@ OpenAI از یک قالب استفاده می کند، Claude (انتروپیک)
 
 ارائه دهندگانی مانند OpenAI/Codex دسترسی از مناطق جغرافیایی خاص را مسدود می کنند. کاربران در طول اتصالات OAuth و API خطاهایی مانند `unsupported_country_region_territory` دریافت می کنند. این امر به ویژه برای توسعه دهندگان کشورهای در حال توسعه ناامید کننده است.
 
-** چگونه OmniRoute آن را حل می کند:**
+** چگونه AgentProxy آن را حل می کند:**
 
 - ** پیکربندی پروکسی 3 سطح ** - پروکسی قابل تنظیم در 3 سطح: جهانی (تمام ترافیک)، هر ارائه دهنده (فقط یک ارائه دهنده) و هر اتصال/کلید
 - **نشانهای پروکسی با کد رنگی** - نشانگرهای تصویری: پروکسی جهانی، پروکسی ارائه دهنده، 🔵 پروکسی اتصال، همیشه IP را نشان می دهد
@@ -284,7 +284,7 @@ OpenAI از یک قالب استفاده می کند، Claude (انتروپیک)
 
 همه نمی توانند 20 تا 200 دلار در ماه برای اشتراک هوش مصنوعی بپردازند. دانش‌آموزان، توسعه‌دهندگان کشورهای نوظهور، علاقه‌مندان و مشاغل آزاد نیاز به دسترسی به مدل‌های باکیفیت با هزینه صفر دارند.
 
-** چگونه OmniRoute آن را حل می کند:**
+** چگونه AgentProxy آن را حل می کند:**
 
 - **Ollama Cloud** - مدل های Ollama میزبان ابر در `api.ollama.com` با سطح رایگان "استفاده از نور". از پیشوند `ollamacloud/<model>` استفاده کنید
 - **ترکیب‌های فقط رایگان** - زنجیره `if/kimi-k2-thinking → kr/qwen3-coder-next` می‌تواند از دسترسی $0 فهرست‌شده فعلی استفاده کند. محدودیت ها و در دسترس بودن اعمال می شود
@@ -298,7 +298,7 @@ OpenAI از یک قالب استفاده می کند، Claude (انتروپیک)
 
 هنگامی که یک دروازه هوش مصنوعی را در معرض شبکه قرار می دهید (LAN، VPS، Docker)، هر کسی که آدرس را داشته باشد می تواند توکن ها/سهمیه توسعه دهنده را مصرف کند. بدون محافظت، APIها در برابر سوء استفاده، تزریق سریع و سوء استفاده آسیب پذیر هستند.
 
-** چگونه OmniRoute آن را حل می کند:**
+** چگونه AgentProxy آن را حل می کند:**
 
 - **API مدیریت کلید** — تولید، چرخش و محدوده برای هر ارائه دهنده با صفحه اختصاصی `/dashboard/api-manager`
 - **مجوزهای سطح مدل** - کلیدهای API را به مدل‌های خاص محدود کنید (`openai/*`، الگوهای عام)، با تغییر حالت Allow All/Restrict
@@ -316,7 +316,7 @@ OpenAI از یک قالب استفاده می کند، Claude (انتروپیک)
 
 ارائه‌دهندگان هوش مصنوعی می‌توانند ناپایدار شوند، خطاهای 5xx را برگردانند یا به محدودیت‌های نرخ موقت برسند. اگر یک توسعه دهنده به یک ارائه دهنده وابسته باشد، آنها قطع می شوند. بدون قطع کننده مدار، تلاش های مجدد مکرر می تواند برنامه را خراب کند.
 
-** چگونه OmniRoute آن را حل می کند:**
+** چگونه AgentProxy آن را حل می کند:**
 
 - **صف و سرعت درخواست** - سطل های درخواست هر اتصال قبل از اینکه به سقف های نرخ بالادستی برسند، یکنواخت می شوند
 - ** خنک کننده اتصال ** - یک اتصال واحد پس از خرابی های قابل امتحان مجدد با نکات اختیاری بالادست `Retry-After` و عقب نشینی نمایی خنک می شود
@@ -331,7 +331,7 @@ OpenAI از یک قالب استفاده می کند، Claude (انتروپیک)
 <details>
 <summary><b>🔧 ۷. «پیکربندی تک‌تک ابزارهای هوش مصنوعی خسته‌کننده و تکراری است»</b></summary>
 
-** چگونه OmniRoute آن را حل می کند:**
+** چگونه AgentProxy آن را حل می کند:**
 
 - **داشبورد ابزارهای CLI** — صفحه‌ای اختصاصی با راه‌اندازی تک‌کلیکی برای Claude Code، Codex CLI، OpenClaw، Kilo Code، Antigravity و Cline
 - **GitHub Copilot Config Generator** — `chatLanguageModels.json` را برای کد VS با انتخاب مدل انبوه تولید می کند
@@ -345,7 +345,7 @@ OpenAI از یک قالب استفاده می کند، Claude (انتروپیک)
 
 کد Claude، Codex، Copilot — همه از OAuth 2.0 با توکن های در حال انقضا استفاده می کنند. توسعه‌دهندگان باید دائماً احراز هویت مجدد کنند، با `client_secret is missing`، `redirect_uri_mismatch` و خرابی‌های سرورهای راه دور مقابله کنند. OAuth در LAN/VPS به ویژه مشکل ساز است.
 
-** چگونه OmniRoute آن را حل می کند:**
+** چگونه AgentProxy آن را حل می کند:**
 
 - **بازسازی خودکار توکن** - توکن های OAuth قبل از انقضا در پس زمینه به روز می شوند
 - **OAuth 2.0 (PKCE) داخلی** — جریان خودکار برای Claude Code، Codex، Copilot، Kiro و Qoder
@@ -361,7 +361,7 @@ OpenAI از یک قالب استفاده می کند، Claude (انتروپیک)
 
 توسعه‌دهندگان از چندین ارائه‌دهنده پولی استفاده می‌کنند، اما دیدگاه واحدی از هزینه‌ها ندارند. هر ارائه دهنده داشبورد صورتحساب خود را دارد، اما هیچ نمای تلفیقی وجود ندارد. هزینه های غیرمنتظره می تواند روی هم انباشته شود.
 
-** چگونه OmniRoute آن را حل می کند:**
+** چگونه AgentProxy آن را حل می کند:**
 
 - **داشبورد تجزیه و تحلیل هزینه** - ردیابی هزینه هر توکن و مدیریت بودجه به ازای هر ارائه دهنده
 - **محدودیت بودجه در هر ردیف** - سقف هزینه در هر ردیف که باعث بازگشت خودکار می شود
@@ -376,7 +376,7 @@ OpenAI از یک قالب استفاده می کند، Claude (انتروپیک)
 
 وقتی یک تماس با شکست مواجه می‌شود، برنامه‌نویس نمی‌داند که آیا محدودیت نرخ، رمز منقضی شده، فرمت اشتباه یا خطای ارائه‌دهنده بوده است. لاگ های تکه تکه شده در پایانه های مختلف. بدون قابلیت مشاهده، اشکال زدایی آزمون و خطا است.
 
-** چگونه OmniRoute آن را حل می کند:**
+** چگونه AgentProxy آن را حل می کند:**
 
 - **داشبورد گزارش های یکپارچه** - 4 تب: گزارش های درخواست، گزارش های پروکسی، گزارش های حسابرسی، کنسول
 - **نمایشگر ورود به سیستم** - نمایشگر به سبک ترمینال در زمان واقعی با سطوح رنگی، اسکرول خودکار، جستجو، فیلتر
@@ -384,7 +384,7 @@ OpenAI از یک قالب استفاده می کند، Claude (انتروپیک)
 - ** مترجم زمین بازی ** - 4 حالت اشکال زدایی: زمین بازی (ترجمه فرمت)، تستر چت (رفت و برگشت)، میز تست (دسته ای)، مانیتور زنده (زمان واقعی)
 - **تله متری درخواست** — تأخیر p50/p95/p99 + ردیابی X-Request-Id
 - ** مصنوعات جزئیات مبتنی بر فایل ** - سیاهههای مربوط به برنامه بر اساس اندازه، روزهای نگهداری و تعداد آرشیو می چرخند. بارهای درخواست/پاسخ دقیق در `DATA_DIR/call_logs/` زندگی می کنند و مستقل از خلاصه های SQLite می چرخند
-- **گزارش اطلاعات سیستم** - `npm run system-info` `system-info.txt` را با محیط کامل شما تولید می کند (نسخه Node، نسخه OmniRoute، سیستم عامل، ابزار CLI، وضعیت Docker/PM2). هنگام گزارش مشکلات برای تریاژ فوری، آن را ضمیمه کنید.
+- **گزارش اطلاعات سیستم** - `npm run system-info` `system-info.txt` را با محیط کامل شما تولید می کند (نسخه Node، نسخه AgentProxy، سیستم عامل، ابزار CLI، وضعیت Docker/PM2). هنگام گزارش مشکلات برای تریاژ فوری، آن را ضمیمه کنید.
 
 </details>
 
@@ -393,9 +393,9 @@ OpenAI از یک قالب استفاده می کند، Claude (انتروپیک)
 
 نصب، پیکربندی و نگهداری یک پروکسی هوش مصنوعی در محیط های مختلف (محلی، VPS، Docker، ابر) کار فشرده ای است. مشکلاتی مانند مسیرهای کدگذاری شده، `EACCES` در دایرکتوری‌ها، تداخل پورت‌ها، و ساخت‌های بین پلتفرمی باعث ایجاد اصطکاک می‌شوند.
 
-** چگونه OmniRoute آن را حل می کند:**
+** چگونه AgentProxy آن را حل می کند:**
 
-- ** نصب جهانی npm ** — `npm install -g omniroute && omniroute` — انجام شد
+- ** نصب جهانی npm ** — `npm install -g agentproxy && agentproxy` — انجام شد
 - **Docker چند پلتفرم** — AMD64 + ARM64 بومی (Apple Silicon، AWS Graviton، Raspberry Pi)
 - **پروفایل‌های Docker Compose** — `base` (بدون ابزار CLI) و `cli` (همراه Claude Code، Codex و OpenClaw)
 - **برنامه Electron Desktop** - برنامه بومی برای Windows/macOS/Linux با سینی سیستم، شروع خودکار، حالت آفلاین
@@ -410,7 +410,7 @@ OpenAI از یک قالب استفاده می کند، Claude (انتروپیک)
 
 تیم های کشورهای غیر انگلیسی زبان، به ویژه در آمریکای لاتین، آسیا و اروپا، با رابط های فقط انگلیسی مبارزه می کنند. موانع زبان پذیرش را کاهش می دهد و خطاهای پیکربندی را افزایش می دهد.
 
-** چگونه OmniRoute آن را حل می کند:**
+** چگونه AgentProxy آن را حل می کند:**
 
 - **داشبورد i18n - 30 زبان** - تمام 500+ کلید ترجمه شده از جمله عربی، بلغاری، دانمارکی، آلمانی، اسپانیایی، فنلاندی، فرانسوی، عبری، هندی، مجارستانی، اندونزیایی، ایتالیایی، ژاپنی، کره ای، مالایی، هلندی، نروژی، لهستانی، پرتغالی (PT/BR)، رومانیایی، روسی، اسلواکی، سوئدی، تایلندی، اوکراینی، ویتنامی، چینی، فیلیپینی، انگلیسی
 - ** پشتیبانی RTL ** - پشتیبانی از راست به چپ برای عربی و عبری
@@ -424,7 +424,7 @@ OpenAI از یک قالب استفاده می کند، Claude (انتروپیک)
 
 هوش مصنوعی فقط تکمیل چت نیست. توسعه دهندگان نیاز به تولید تصاویر، رونویسی صدا، ایجاد جاسازی برای RAG، رتبه بندی مجدد اسناد، و تعدیل محتوا دارند. هر API نقطه پایانی و قالب متفاوتی دارد.
 
-** چگونه OmniRoute آن را حل می کند:**
+** چگونه AgentProxy آن را حل می کند:**
 
 - **جاسازی ها** — `/v1/embeddings` با 6 ارائه دهنده و 9+ مدل
 - **تولید تصویر** — `/v1/images/generations` با 10 ارائه دهنده و 20+ مدل (OpenAI، xAI، Together، Fireworks، Nebius، Hyperbolic، NanoBanana، Antigravity، SD WebUI، ComfyUI)
@@ -443,7 +443,7 @@ OpenAI از یک قالب استفاده می کند، Claude (انتروپیک)
 
 توسعه‌دهندگان می‌خواهند بدانند کدام مدل برای موارد استفاده آنها بهترین است - کد، ترجمه، استدلال - اما مقایسه دستی کند است. هیچ ابزار ارزیابی یکپارچه وجود ندارد.
 
-** چگونه OmniRoute آن را حل می کند:**
+** چگونه AgentProxy آن را حل می کند:**
 
 - ** ارزیابی های LLM ** - تست مجموعه طلایی با 10 مورد از پیش بارگذاری شده که احوالپرسی، ریاضی، جغرافیا، تولید کد، انطباق با JSON، ترجمه، علامت گذاری، امتناع ایمنی را پوشش می دهد
 - **4 استراتژی مطابقت ** — `exact`، `contains`، `regex`، `custom` (عملکرد JS)
@@ -458,7 +458,7 @@ OpenAI از یک قالب استفاده می کند، Claude (انتروپیک)
 
 با افزایش حجم درخواست، بدون ذخیره سازی در حافظه پنهان، همان سوالات هزینه های تکراری ایجاد می کنند. بدون ناتوانی، درخواست های تکراری پردازش زباله. محدودیت های نرخ هر ارائه دهنده باید رعایت شود.
 
-** چگونه OmniRoute آن را حل می کند:**
+** چگونه AgentProxy آن را حل می کند:**
 
 - ** کش معنایی ** - کش دو لایه (امضا + معنایی) هزینه و تأخیر را کاهش می دهد
 - ** درخواست Idempotency ** - پنجره deduplication 5s برای درخواست های یکسان
@@ -474,7 +474,7 @@ OpenAI از یک قالب استفاده می کند، Claude (انتروپیک)
 
 توسعه دهندگانی که همه پاسخ ها را به زبانی خاص، با لحن خاصی می خواهند یا می خواهند نشانه های استدلال را محدود کنند. پیکربندی این در هر ابزار/درخواست غیرعملی است.
 
-** چگونه OmniRoute آن را حل می کند:**
+** چگونه AgentProxy آن را حل می کند:**
 
 - **تزریق سریع سیستم** - اعلان جهانی برای همه درخواست ها اعمال می شود
 - ** اعتبارسنجی بودجه فکری ** - کنترل تخصیص رمز استدلال در هر درخواست (گذرا، خودکار، سفارشی، تطبیقی)
@@ -492,11 +492,11 @@ OpenAI از یک قالب استفاده می کند، Claude (انتروپیک)
 
 بسیاری از دروازه‌های هوش مصنوعی MCP را تنها به عنوان یک جزئیات پیاده‌سازی پنهان نشان می‌دهند. تیم ها به یک لایه عملیاتی قابل کنترل و قابل مشاهده نیاز دارند.
 
-** چگونه OmniRoute آن را حل می کند:**
+** چگونه AgentProxy آن را حل می کند:**
 
 - MCP در برگه ناوبری داشبورد و پروتکل نقطه پایان ظاهر می شود
 - صفحه مدیریت اختصاصی MCP با فرآیند، ابزار، دامنه و ممیزی
-- راه اندازی سریع داخلی برای `omniroute --mcp` و نصب مشتری
+- راه اندازی سریع داخلی برای `agentproxy --mcp` و نصب مشتری
 
 </details>
 
@@ -505,7 +505,7 @@ OpenAI از یک قالب استفاده می کند، Claude (انتروپیک)
 
 گردش کار عامل هم به پاسخ های مستقیم و هم به اجرای جریانی طولانی مدت با کنترل چرخه حیات نیاز دارد.
 
-** چگونه OmniRoute آن را حل می کند:**
+** چگونه AgentProxy آن را حل می کند:**
 
 - نقطه پایانی A2A JSON-RPC (`POST /a2a`) با `message/send` و `message/stream`
 - پخش جریانی SSE با انتشار حالت ترمینال
@@ -518,7 +518,7 @@ OpenAI از یک قالب استفاده می کند، Claude (انتروپیک)
 
 تیم های عملیاتی باید بدانند که آیا MCP واقعاً زنده است یا نه، نه فقط اینکه آیا API قابل دسترسی است یا خیر.
 
-** چگونه OmniRoute آن را حل می کند:**
+** چگونه AgentProxy آن را حل می کند:**
 
 - فایل ضربان قلب در زمان اجرا با PID، مهرهای زمانی، حمل و نقل، شمارش ابزار و حالت دامنه
 - وضعیت MCP API ترکیبی از ضربان قلب + فعالیت اخیر
@@ -531,7 +531,7 @@ OpenAI از یک قالب استفاده می کند، Claude (انتروپیک)
 
 هنگامی که ابزارها پیکربندی را تغییر می دهند یا اقدامات عملیاتی را آغاز می کنند، تیم ها به قابلیت ردیابی قانونی نیاز دارند.
 
-** چگونه OmniRoute آن را حل می کند:**
+** چگونه AgentProxy آن را حل می کند:**
 
 - ثبت حسابرسی با پشتیبانی SQLite برای تماس های ابزار MCP
 - فیلترها بر اساس ابزار، موفقیت/شکست، کلید API و صفحه بندی
@@ -544,7 +544,7 @@ OpenAI از یک قالب استفاده می کند، Claude (انتروپیک)
 
 مشتریان مختلف باید کمترین امتیاز را به دسته های ابزار داشته باشند.
 
-** چگونه OmniRoute آن را حل می کند:**
+** چگونه AgentProxy آن را حل می کند:**
 
 - 32 اسکوپ گرانول MCP برای دسترسی کنترل شده به ابزار
 - اجرای محدوده و دید در رابط کاربری مدیریت MCP
@@ -557,7 +557,7 @@ OpenAI از یک قالب استفاده می کند، Claude (انتروپیک)
 
 تیم ها به تغییرات سریع در زمان اجرا در طول حوادث یا رویدادهای هزینه نیاز دارند.
 
-** چگونه OmniRoute آن را حل می کند:**
+** چگونه AgentProxy آن را حل می کند:**
 
 - فعال سازی ترکیبی را مستقیماً از داشبورد MCP تغییر دهید
 - تنظیمات صف، خنک کننده، شکن و انتظار را از صفحه اختصاصی Resilience تنظیم کنید
@@ -570,7 +570,7 @@ OpenAI از یک قالب استفاده می کند، Claude (انتروپیک)
 
 بدون دید چرخه حیات، تریاژ حوادث کار سخت می شود.
 
-** چگونه OmniRoute آن را حل می کند:**
+** چگونه AgentProxy آن را حل می کند:**
 
 - فهرست کار/فیلتر کردن بر اساس وضعیت/مهارت با صفحه بندی
 - متادیتاهای وظیفه، رویدادها و مصنوعات را بررسی کنید
@@ -583,7 +583,7 @@ OpenAI از یک قالب استفاده می کند، Claude (انتروپیک)
 
 جریان کار مستلزم بینش عملیاتی در مورد همزمانی و اتصالات زنده است.
 
-** چگونه OmniRoute آن را حل می کند:**
+** چگونه AgentProxy آن را حل می کند:**
 
 - شمارنده های جریان فعال در وضعیت A2A یکپارچه شده است
 - آخرین مهر زمان کار و تعداد هر ایالت
@@ -596,7 +596,7 @@ OpenAI از یک قالب استفاده می کند، Claude (انتروپیک)
 
 مشتریان خارجی و ارکستراتورها برای سوار شدن به ابرداده قابل خواندن توسط ماشین نیاز دارند.
 
-** چگونه OmniRoute آن را حل می کند:**
+** چگونه AgentProxy آن را حل می کند:**
 
 - کارت نماینده در `/.well-known/agent.json` در معرض دید قرار گرفت
 - قابلیت ها و مهارت های نشان داده شده در رابط کاربری مدیریت
@@ -609,7 +609,7 @@ OpenAI از یک قالب استفاده می کند، Claude (انتروپیک)
 
 اگر کاربران نتوانند سطوح پروتکل را کشف کنند، کیفیت پذیرش و پشتیبانی کاهش می یابد.
 
-** چگونه OmniRoute آن را حل می کند:**
+** چگونه AgentProxy آن را حل می کند:**
 
 - صفحه تلفیقی **Endpoints** با برگه‌های Proxy، MCP، A2A، و API
 - تغییر وضعیت سرویس درون خطی (آنلاین/آفلاین) برای MCP و A2A
@@ -622,7 +622,7 @@ OpenAI از یک قالب استفاده می کند، Claude (انتروپیک)
 
 تست های ساختگی برای تایید سازگاری پروتکل قبل از انتشار کافی نیستند.
 
-** چگونه OmniRoute آن را حل می کند:**
+** چگونه AgentProxy آن را حل می کند:**
 
 - مجموعه E2E که برنامه را بوت می کند و از حمل و نقل مشتری واقعی MCP SDK استفاده می کند
 - تست مشتری A2A برای کشف، ارسال، پخش، دریافت و لغو جریان ها
@@ -635,7 +635,7 @@ OpenAI از یک قالب استفاده می کند، Claude (انتروپیک)
 
 تقسیم قابلیت مشاهده توسط پروتکل باعث ایجاد نقاط کور و MTTR طولانی تر می شود.
 
-** چگونه OmniRoute آن را حل می کند:**
+** چگونه AgentProxy آن را حل می کند:**
 
 - داشبورد / سیاهههای مربوط / تجزیه و تحلیل یکپارچه در یک محصول
 - سلامت + ممیزی + درخواست تله متری در لایه های OpenAI، MCP، و A2A
@@ -648,7 +648,7 @@ OpenAI از یک قالب استفاده می کند، Claude (انتروپیک)
 
 اجرای بسیاری از خدمات جداگانه هزینه عملیاتی و حالت های خرابی را افزایش می دهد.
 
-** چگونه OmniRoute آن را حل می کند:**
+** چگونه AgentProxy آن را حل می کند:**
 
 - پروکسی سازگار با OpenAI، سرور MCP و سرور A2A در یک پشته
 - اعتبار مشترک، انعطاف پذیری، ذخیره داده ها و قابلیت مشاهده
@@ -661,7 +661,7 @@ OpenAI از یک قالب استفاده می کند، Claude (انتروپیک)
 
 تیم ها هنگام دوخت چندین سرویس ad-hoc و اسکریپت سرعت خود را از دست می دهند.
 
-** چگونه OmniRoute آن را حل می کند:**
+** چگونه AgentProxy آن را حل می کند:**
 
 - استراتژی نقطه پایانی یکپارچه برای مشتریان و نمایندگان
 - رابط های کاربری داخلی مدیریت پروتکل و مسیرهای اعتبارسنجی دود
@@ -674,7 +674,7 @@ OpenAI از یک قالب استفاده می کند، Claude (انتروپیک)
 
 در طول اشکال‌زدایی عمیق، تاریخچه‌های طولانی با نتایج ابزار به سرعت از پنجره‌های رمز ارائه‌دهنده فراتر می‌روند، که باعث درخواست‌های ناموفق و زمینه بی‌اطلاعی می‌شود.
 
-** چگونه OmniRoute آن را حل می کند:**
+** چگونه AgentProxy آن را حل می کند:**
 
 - ** فشرده سازی متن پیشگیرانه ** - قبل از اینکه درخواست به بالادست برسد، بودجه توکن ها را ارزیابی می کند و به طور فعال تاریخچه مکالمات قدیمی را با مکانیزم جستجوی باینری هوشمند حذف می کند.
 - ** محافظ یکپارچگی ساختاری** - تعاریف صریح `tool_use` را به طور خودکار ردیابی می کند و تضمین می کند که اگر ورودی ابزار کوتاه شود، `tool_result` مربوطه آن نیز با خیال راحت حذف می شود و از خطاهای اعتبارسنجی API جلوگیری می کند.
@@ -723,7 +723,7 @@ Outcome: deep fallback depth for deadline-critical workloads
 **راهنمای D: عملیات عامل با MCP + A2A**
 
 ```txt
-1) Start MCP transport (`omniroute --mcp`) for tool-driven operations
+1) Start MCP transport (`agentproxy --mcp`) for tool-driven operations
 2) Run A2A tasks via `message/send` and `message/stream`
 3) Observe via /dashboard/endpoint (MCP and A2A tabs)
 4) Toggle services via inline status controls
@@ -750,54 +750,54 @@ Outcome: deep fallback depth for deadline-critical workloads
 ### 1) نصب و اجرا کنید
 
 ```bash
-npm install -g omniroute
-omniroute
+npm install -g agentproxy
+agentproxy
 ```
 
 > **کاربران pnpm:** در زمان نصب `--allow-build` را برای فعال کردن اسکریپت های ساخت بومی مورد نیاز `better-sqlite3` و `@swc/core` ارسال کنید (دستور `approve-builds -g` برای نصب های جهانی در pnpm v11 پشتیبانی نمی شود):
 >
 > ```bash
-> pnpm add -g omniroute@latest --allow-build=better-sqlite3 --allow-build=@swc/core
-> omniroute
+> pnpm add -g agentproxy@latest --allow-build=better-sqlite3 --allow-build=@swc/core
+> agentproxy
 > ```
 
 داشبورد در `http://localhost:20128` باز می شود و پایه API URL `http://localhost:20128/v1` است.
 
 #### آرچ لینوکس (AUR)
 
-کاربران آرچ لینوکس می توانند [بسته AUR](https://aur.archlinux.org/packages/omniroute-bin) را نصب کنند که OmniRoute را نصب می کند و یک سرویس کاربر سیستمی ارائه می دهد:
+کاربران آرچ لینوکس می توانند [بسته AUR](https://aur.archlinux.org/packages/agentproxy-bin) را نصب کنند که AgentProxy را نصب می کند و یک سرویس کاربر سیستمی ارائه می دهد:
 
 ```bash
-yay -S omniroute-bin
-systemctl --user enable --now omniroute.service
+yay -S agentproxy-bin
+systemctl --user enable --now agentproxy.service
 ```
 
 | فرمان                   | توضیحات                                                    |
 | ----------------------- | ---------------------------------------------------------- |
-| `omniroute`             | راه اندازی سرور (`PORT=20128`، API و داشبورد در همان پورت) |
-| `omniroute --port 3000` | پورت canonical/API را روی 3000                             | تنظیم کنید |
-| `omniroute --mcp`       | راه اندازی سرور MCP (stdio transport)                      |
-| `omniroute --no-open`   | مرورگر خودکار باز نشود                                     |
-| `omniroute --help`      | نمایش کمک                                                  |
+| `agentproxy`             | راه اندازی سرور (`PORT=20128`، API و داشبورد در همان پورت) |
+| `agentproxy --port 3000` | پورت canonical/API را روی 3000                             | تنظیم کنید |
+| `agentproxy --mcp`       | راه اندازی سرور MCP (stdio transport)                      |
+| `agentproxy --no-open`   | مرورگر خودکار باز نشود                                     |
+| `agentproxy --help`      | نمایش کمک                                                  |
 
 حالت اسپلیت پورت اختیاری:
 
 ```bash
-PORT=20128 DASHBOARD_PORT=20129 omniroute
+PORT=20128 DASHBOARD_PORT=20129 agentproxy
 # API:       http://localhost:20128/v1
 # Dashboard: http://localhost:20129
 ```
 
 ### 2) حذف نصب
 
-هنگامی که دیگر نیازی به OmniRoute ندارید، ما دو اسکریپت سریع برای حذف تمیز ارائه می دهیم:
+هنگامی که دیگر نیازی به AgentProxy ندارید، ما دو اسکریپت سریع برای حذف تمیز ارائه می دهیم:
 
 | فرمان                    | اقدام                                                                                         |
 | ------------------------ | --------------------------------------------------------------------------------------------- |
-| `npm run uninstall`      | برنامه سیستم را حذف می کند اما **DB و تنظیمات** شما را در `~/.omniroute` نگه می دارد.         |
+| `npm run uninstall`      | برنامه سیستم را حذف می کند اما **DB و تنظیمات** شما را در `~/.agentproxy` نگه می دارد.         |
 | `npm run uninstall:full` | برنامه را حذف می کند و برای همیشه **همه پیکربندی ها، کلیدها و پایگاه داده ها را پاک می کند**. |
 
-> توجه: برای اجرای این دستورات، به پوشه پروژه OmniRoute (اگر آن را شبیه سازی کرده اید) بروید و آنها را اجرا کنید. از طرف دیگر، اگر به صورت سراسری نصب شده باشد، می توانید به سادگی `npm uninstall -g omniroute` را اجرا کنید.
+> توجه: برای اجرای این دستورات، به پوشه پروژه AgentProxy (اگر آن را شبیه سازی کرده اید) بروید و آنها را اجرا کنید. از طرف دیگر، اگر به صورت سراسری نصب شده باشد، می توانید به سادگی `npm uninstall -g agentproxy` را اجرا کنید.
 
 ### وقفه های طولانی مدت استریم
 
@@ -806,16 +806,16 @@ PORT=20128 DASHBOARD_PORT=20129 omniroute
 | متغیر                    | پیش فرض                            | هدف                                                                                                                                   |
 | ------------------------ | ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
 | `REQUEST_TIMEOUT_MS`     | `600000`                           | خط پایه مشترک برای مهلت زمانی شروع پاسخ بالادست، مهلت زمانی پنهان Undici، درخواست‌های اثر انگشت TLS و زمان‌بندی درخواست پل/پراکسی API |
-| `STREAM_IDLE_TIMEOUT_MS` | به ارث می برد `REQUEST_TIMEOUT_MS` | حداکثر فاصله بین تکه های جریان قبل از اینکه OmniRoute جریان SSE را لغو کند                                                            |
+| `STREAM_IDLE_TIMEOUT_MS` | به ارث می برد `REQUEST_TIMEOUT_MS` | حداکثر فاصله بین تکه های جریان قبل از اینکه AgentProxy جریان SSE را لغو کند                                                            |
 
 سازگاری به عقب حفظ می شود: `FETCH_TIMEOUT_MS`، `API_BRIDGE_PROXY_TIMEOUT_MS`، و سایر متغیرهای وقفه زمانی هر لایه هنوز کار می کنند و خط پایه مشترک را لغو می کنند.
 
-برای Claude بالادستی سازگار با کد (`anthropic-compatible-cc-*`)، OmniRoute همچنین سرصفحه خروجی `X-Stainless-Timeout` را از بازه زمانی واکشی حل‌شده استخراج می‌کند، بنابراین زمان‌بندی خواندن سمت ارائه‌دهنده با پیکربندی env شما همسو می‌شود.
+برای Claude بالادستی سازگار با کد (`anthropic-compatible-cc-*`)، AgentProxy همچنین سرصفحه خروجی `X-Stainless-Timeout` را از بازه زمانی واکشی حل‌شده استخراج می‌کند، بنابراین زمان‌بندی خواندن سمت ارائه‌دهنده با پیکربندی env شما همسو می‌شود.
 
-برای پراکسی های معکوس Claude شخص ثالث سازگار با کد، OmniRoute پیش فرض را نگه می دارد
+برای پراکسی های معکوس Claude شخص ثالث سازگار با کد، AgentProxy پیش فرض را نگه می دارد
 `anthropic-beta` محافظه کارانه تنظیم می شود و وقتی `Client Cache Control` روی `Auto` باقی می ماند،
 فقط نشانگرهای `cache_control` ارائه شده توسط مشتری را فوروارد می کند. اگر درخواست شامل نمی شود
-`cache_control`، OmniRoute نشانگرهای متعلق به پل را تزریق نمی کند.
+`cache_control`، AgentProxy نشانگرهای متعلق به پل را تزریق نمی کند.
 
 در صورت نیاز به کنترل دقیق تر، لغو پیشرفته در دسترس است:
 
@@ -833,10 +833,10 @@ PORT=20128 DASHBOARD_PORT=20129 omniroute
 | `API_BRIDGE_SERVER_KEEPALIVE_TIMEOUT_MS` | `5000`                                         | وقفه ماندن زنده در سرور پل API                                           |
 | `API_BRIDGE_SERVER_SOCKET_TIMEOUT_MS`    | `0`                                            | پایان زمان عدم فعالیت سوکت در سرور پل API (`0` آن را غیرفعال می کند)     |
 
-برای درخواست‌های پخش جریانی، `FETCH_TIMEOUT_MS` فقط راه‌اندازی اتصال / انتظار برای اولین پاسخ بالادستی را پوشش می‌دهد. پس از فعال شدن جریان، OmniRoute فقط در حالت توقف واقعی (`STREAM_IDLE_TIMEOUT_MS`) یا عدم فعالیت بدنه Undici (`FETCH_BODY_TIMEOUT_MS`) متوقف می شود.
+برای درخواست‌های پخش جریانی، `FETCH_TIMEOUT_MS` فقط راه‌اندازی اتصال / انتظار برای اولین پاسخ بالادستی را پوشش می‌دهد. پس از فعال شدن جریان، AgentProxy فقط در حالت توقف واقعی (`STREAM_IDLE_TIMEOUT_MS`) یا عدم فعالیت بدنه Undici (`FETCH_BODY_TIMEOUT_MS`) متوقف می شود.
 
-اگر OmniRoute را پشت Nginx، Caddy، Cloudflare یا یک پراکسی معکوس دیگر اجرا می‌کنید، از پراکسی مطمئن شوید
-زمان‌بندی‌ها نیز بیشتر از زمان‌های زمانی پخش/واکشی OmniRoute شما هستند.
+اگر AgentProxy را پشت Nginx، Caddy، Cloudflare یا یک پراکسی معکوس دیگر اجرا می‌کنید، از پراکسی مطمئن شوید
+زمان‌بندی‌ها نیز بیشتر از زمان‌های زمانی پخش/واکشی AgentProxy شما هستند.
 
 ### 2) ارائه دهندگان را متصل کنید و کلید API خود را ایجاد کنید
 
@@ -844,7 +844,7 @@ PORT=20128 DASHBOARD_PORT=20129 omniroute
 2. داشبورد → `Endpoints` را باز کنید و یک کلید API ایجاد کنید.
 3. (اختیاری) داشبورد → `Combos` را باز کنید و زنجیره بازگشتی خود را تنظیم کنید.
 
-### 3) ابزار کدنویسی خود را روی OmniRoute قرار دهید
+### 3) ابزار کدنویسی خود را روی AgentProxy قرار دهید
 
 ```txt
 Base URL: http://localhost:20128/v1
@@ -857,13 +857,13 @@ Model:    if/kimi-k2-thinking (or any provider/model prefix)
 **MCP (برای عملیات ابزار محور):**
 
 ```bash
-omniroute --mcp
+agentproxy --mcp
 ```
 
 سپس مشتری MCP خود را به `stdio` متصل کنید و ابزارهایی مانند:
 
-- `omniroute_get_health`
-- `omniroute_list_combos`
+- `agentproxy_get_health`
+- `agentproxy_list_combos`
 
 **A2A (برای گردش کار عامل به عامل):**
 
@@ -896,11 +896,11 @@ PORT=20128 DASHBOARD_PORT=20129 NEXT_PUBLIC_BASE_URL=http://localhost:20129 npm 
 <details>
 <summary><b>Void Linux (`xbps-src` template)</b></summary>
 
-برای کاربران Void Linux، می توانید یک بسته بومی با استفاده از `xbps-src` بسازید. این بلوک را به عنوان `srcpkgs/omniroute/template` ذخیره کنید:
+برای کاربران Void Linux، می توانید یک بسته بومی با استفاده از `xbps-src` بسازید. این بلوک را به عنوان `srcpkgs/agentproxy/template` ذخیره کنید:
 
 ```bash
-# Template file for 'omniroute'
-pkgname=omniroute
+# Template file for 'agentproxy'
+pkgname=agentproxy
 version=3.4.1
 revision=1
 hostmakedepends="nodejs python3 make"
@@ -908,11 +908,11 @@ depends="openssl"
 short_desc="Universal AI gateway with smart routing for multiple LLM providers"
 maintainer="zenobit <zenobit@disroot.org>"
 license="MIT"
-homepage="https://github.com/diegosouzapw/OmniRoute"
-distfiles="https://github.com/diegosouzapw/OmniRoute/archive/refs/tags/v${version}.tar.gz"
+homepage="https://github.com/khanhkit/AgentProxy"
+distfiles="https://github.com/khanhkit/AgentProxy/archive/refs/tags/v${version}.tar.gz"
 checksum=009400afee90a9f32599d8fe734145cfd84098140b7287990183dde45ae2245b
-system_accounts="_omniroute"
-omniroute_homedir="/var/lib/omniroute"
+system_accounts="_agentproxy"
+agentproxy_homedir="/var/lib/agentproxy"
 export NODE_ENV=production
 export npm_config_engine_strict=false
 export npm_config_loglevel=error
@@ -970,27 +970,27 @@ do_check() {
 }
 
 do_install() {
-	vmkdir usr/lib/omniroute/.next
+	vmkdir usr/lib/agentproxy/.next
 
-	vcopy .next/standalone/. usr/lib/omniroute/.next/standalone
+	vcopy .next/standalone/. usr/lib/agentproxy/.next/standalone
 
 	# Prevent removal of empty Next.js app router dirs by the post-install hook
 	for _d in \
 		.next/standalone/.next/server/app/dashboard \
 		.next/standalone/.next/server/app/dashboard/settings \
 		.next/standalone/.next/server/app/dashboard/providers; do
-		touch "${DESTDIR}/usr/lib/omniroute/${_d}/.keep"
+		touch "${DESTDIR}/usr/lib/agentproxy/${_d}/.keep"
 	done
 
-	cat > "${WRKDIR}/omniroute" <<'EOF'
+	cat > "${WRKDIR}/agentproxy" <<'EOF'
 #!/bin/sh
 export PORT="${PORT:-20128}"
-export DATA_DIR="${DATA_DIR:-${XDG_DATA_HOME:-${HOME}/.local/share}/omniroute}"
+export DATA_DIR="${DATA_DIR:-${XDG_DATA_HOME:-${HOME}/.local/share}/agentproxy}"
 export APP_LOG_TO_FILE="${APP_LOG_TO_FILE:-false}"
 mkdir -p "${DATA_DIR}"
-exec node /usr/lib/omniroute/.next/standalone/server.js "$@"
+exec node /usr/lib/agentproxy/.next/standalone/server.js "$@"
 EOF
-	vbin "${WRKDIR}/omniroute"
+	vbin "${WRKDIR}/agentproxy"
 }
 
 post_install() {
@@ -1004,18 +1004,18 @@ post_install() {
 
 ## 🐳 Docker
 
-OmniRoute به عنوان یک تصویر عمومی Docker در [Docker Hub](https://hub.docker.com/r/diegosouzapw/omniroute) در دسترس است.
+AgentProxy به عنوان یک تصویر عمومی Docker در [Docker Hub](https://github.com/khanhkit/AgentProxy/pkgs/container/agentproxy) در دسترس است.
 
 **اجرای سریع:**
 
 ```bash
 docker run -d \
-  --name omniroute \
+  --name agentproxy \
   --restart unless-stopped \
   --stop-timeout 40 \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
-  diegosouzapw/omniroute:latest
+  -v agentproxy-data:/app/data \
+  khanhkit/agentproxy:latest
 ```
 
 **به همراه فایل محیطی:**
@@ -1025,13 +1025,13 @@ docker run -d \
 cp .env.example .env
 
 docker run -d \
-  --name omniroute \
+  --name agentproxy \
   --restart unless-stopped \
   --stop-timeout 40 \
   --env-file .env \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
-  diegosouzapw/omniroute:latest
+  -v agentproxy-data:/app/data \
+  khanhkit/agentproxy:latest
 ```
 
 **با استفاده از Docker نوشتن:**
@@ -1049,26 +1049,26 @@ docker compose --profile cli up -d
 Notes:
 
 - URL های تونل سریع موقتی هستند و پس از هر بار راه اندازی مجدد تغییر می کنند.
-- تونل های سریع پس از راه اندازی مجدد OmniRoute یا کانتینر به طور خودکار بازیابی نمی شوند. در صورت نیاز دوباره آنها را از داشبورد فعال کنید.
+- تونل های سریع پس از راه اندازی مجدد AgentProxy یا کانتینر به طور خودکار بازیابی نمی شوند. در صورت نیاز دوباره آنها را از داشبورد فعال کنید.
 - نصب مدیریت شده در حال حاضر از لینوکس، macOS و ویندوز در `x64` / `arm64` پشتیبانی می کند.
 - تونل های سریع مدیریت شده به طور پیش فرض برای حمل و نقل HTTP/2 برای جلوگیری از هشدارهای بافر QUIC UDP پر سر و صدا در محیط های کانتینری محدود. اگر می خواهید حمل و نقل متفاوتی داشته باشید، `CLOUDFLARED_PROTOCOL=quic` یا `auto` را تنظیم کنید.
 - تصاویر Docker ریشه های CA سیستم را بسته بندی می کند و آنها را به `cloudflared` مدیریت شده ارسال می کند، که از خرابی اعتماد TLS در هنگام بوت استرپ تونل در داخل ظرف جلوگیری می کند.
-- SQLite در حالت WAL اجرا می شود. باید به `docker stop` اجازه داده شود تا پایان یابد تا OmniRoute بتواند آخرین تغییرات را به `storage.sqlite` بازرسی کند.
+- SQLite در حالت WAL اجرا می شود. باید به `docker stop` اجازه داده شود تا پایان یابد تا AgentProxy بتواند آخرین تغییرات را به `storage.sqlite` بازرسی کند.
 - فایل های Compose همراه از قبل یک دوره مهلت توقف 40 ثانیه تعیین کرده اند. اگر مستقیماً تصویر را اجرا می‌کنید، `--stop-timeout 40` (یا مشابه) را نگه دارید تا توقف‌های دستی پاکسازی خاموش را قطع نکنند.
-- اگر می خواهید OmniRoute از یک باینری موجود به جای دانلود استفاده کند، `CLOUDFLARED_BIN=/absolute/path/to/cloudflared` را تنظیم کنید.
+- اگر می خواهید AgentProxy از یک باینری موجود به جای دانلود استفاده کند، `CLOUDFLARED_BIN=/absolute/path/to/cloudflared` را تنظیم کنید.
 
 **استفاده از Docker Compose with Caddy (HTTPS Auto-TLS):**
 
-OmniRoute را می توان با استفاده از تهیه خودکار SSL Caddy به طور ایمن در معرض دید قرار داد. مطمئن شوید که رکورد DNS A دامنه شما به IP سرور شما اشاره دارد.
+AgentProxy را می توان با استفاده از تهیه خودکار SSL Caddy به طور ایمن در معرض دید قرار داد. مطمئن شوید که رکورد DNS A دامنه شما به IP سرور شما اشاره دارد.
 
 ```yaml
 services:
-  omniroute:
-    image: diegosouzapw/omniroute:latest
-    container_name: omniroute
+  agentproxy:
+    image: khanhkit/agentproxy:latest
+    container_name: agentproxy
     restart: unless-stopped
     volumes:
-      - omniroute-data:/app/data
+      - agentproxy-data:/app/data
     environment:
       - PORT=20128
       - NEXT_PUBLIC_BASE_URL=https://your-domain.com
@@ -1080,27 +1080,27 @@ services:
     ports:
       - "80:80"
       - "443:443"
-    command: caddy reverse-proxy --from https://your-domain.com --to http://omniroute:20128
+    command: caddy reverse-proxy --from https://your-domain.com --to http://agentproxy:20128
 
 volumes:
-  omniroute-data:
+  agentproxy-data:
 ```
 
 | تصویر                    | برچسب    | اندازه       | توضیحات           |
 | ------------------------ | -------- | ------------ | ----------------- |
-| `diegosouzapw/omniroute` | `latest` | ~250 مگابایت | آخرین نسخه پایدار |
-| `diegosouzapw/omniroute` | `3.6.2`  | ~250 مگابایت | نسخه فعلی         |
+| `khanhkit/agentproxy` | `latest` | ~250 مگابایت | آخرین نسخه پایدار |
+| `khanhkit/agentproxy` | `3.6.2`  | ~250 مگابایت | نسخه فعلی         |
 
 ---
 
 ## 🖥️ برنامه دسکتاپ — آفلاین و همیشه روشن
 
-> 🆕 **جدید!** OmniRoute اکنون به عنوان یک **برنامه دسکتاپ بومی** برای Windows، macOS و Linux در دسترس است.
+> 🆕 **جدید!** AgentProxy اکنون به عنوان یک **برنامه دسکتاپ بومی** برای Windows، macOS و Linux در دسترس است.
 
-OmniRoute را به عنوان یک برنامه دسکتاپ مستقل اجرا کنید - بدون پایانه، بدون مرورگر، بدون نیاز به اینترنت برای مدل‌های محلی. برنامه مبتنی بر الکترون شامل موارد زیر است:
+AgentProxy را به عنوان یک برنامه دسکتاپ مستقل اجرا کنید - بدون پایانه، بدون مرورگر، بدون نیاز به اینترنت برای مدل‌های محلی. برنامه مبتنی بر الکترون شامل موارد زیر است:
 
 - 🖥️ **پنجره بومی** - پنجره برنامه اختصاصی با ادغام سینی سیستم
-- 🔄 **شروع خودکار** — راه اندازی OmniRoute در ورود به سیستم
+- 🔄 **شروع خودکار** — راه اندازی AgentProxy در ورود به سیستم
 - 🔔 ** اعلان های بومی ** - هشدارهایی را برای اتمام سهمیه یا مشکلات ارائه دهنده دریافت کنید
 - ⚡ **نصب با یک کلیک** - NSIS (ویندوز)، DMG (macOS)، AppImage (لینوکس)
 - 🌐 ** حالت آفلاین ** - با سرور همراه به طور کامل آفلاین کار می کند
@@ -1120,7 +1120,7 @@ npm run electron:build:linux   # Linux (.AppImage)
 
 ### سینی سیستم
 
-هنگامی که به حداقل می رسد، OmniRoute با اقدامات سریع در سینی سیستم شما زندگی می کند:
+هنگامی که به حداقل می رسد، AgentProxy با اقدامات سریع در سینی سیستم شما زندگی می کند:
 
 - داشبورد را باز کنید
 - تغییر پورت سرور
@@ -1312,7 +1312,7 @@ Nodes:
 
 ## 💡 ویژگی های کلیدی
 
-OmniRoute v3.6 به عنوان یک پلت فرم عملیاتی ساخته شده است، نه فقط یک پروکسی رله.
+AgentProxy v3.6 به عنوان یک پلت فرم عملیاتی ساخته شده است، نه فقط یک پروکسی رله.
 
 ### 🆕 جدید — نسخه های برجسته نسخه 3.6.x (آوریل 2026)
 
@@ -1491,7 +1491,7 @@ Combo: "my-coding-stack"
   4. if/kimi-k2-thinking
 ```
 
-هنگامی که سهمیه، نرخ، یا سلامت ناموفق باشد، OmniRoute به طور خودکار بدون تغییر دستی به نامزد بعدی منتقل می شود.
+هنگامی که سهمیه، نرخ، یا سلامت ناموفق باشد، AgentProxy به طور خودکار بدون تغییر دستی به نامزد بعدی منتقل می شود.
 
 #### مدیریت پروتکل قابل مشاهده و قابل اجرا
 
@@ -1516,11 +1516,11 @@ Combo: "my-coding-stack"
 
 ## 🧪 ارزیابی ها (ارزیابی ها)
 
-OmniRoute شامل یک چارچوب ارزیابی داخلی برای آزمایش کیفیت پاسخ LLM در برابر یک مجموعه طلایی است. از طریق **Analytics → Evals** در داشبورد به آن دسترسی داشته باشید.
+AgentProxy شامل یک چارچوب ارزیابی داخلی برای آزمایش کیفیت پاسخ LLM در برابر یک مجموعه طلایی است. از طریق **Analytics → Evals** در داشبورد به آن دسترسی داشته باشید.
 
 ### ست طلایی توکار
 
-«مجموعه طلایی OmniRoute» از پیش بارگذاری شده حاوی موارد آزمایشی برای موارد زیر است:
+«مجموعه طلایی AgentProxy» از پیش بارگذاری شده حاوی موارد آزمایشی برای موارد زیر است:
 
 - با سلام، ریاضی، جغرافیا، تولید کد
 - مطابقت با فرمت JSON، ترجمه، تولید علامت گذاری
@@ -1547,14 +1547,14 @@ OmniRoute شامل یک چارچوب ارزیابی داخلی برای آزما
 حمل و نقل MCP را در حالت stdio شروع کنید:
 
 ```bash
-omniroute --mcp
+agentproxy --mcp
 ```
 
 جریان اعتبارسنجی توصیه شده:
 
 1. مشتری MCP خود را از طریق stdio وصل کنید.
-2. `omniroute_get_health` را اجرا کنید.
-3. `omniroute_list_combos` را اجرا کنید.
+2. `agentproxy_get_health` را اجرا کنید.
+3. `agentproxy_list_combos` را اجرا کنید.
 4. `/dashboard/mcp` را برای تأیید ضربان قلب، فعالیت و ممیزی باز کنید.
 
 APIهای مفید برای اتوماسیون:
@@ -1629,7 +1629,7 @@ Models:
   cc/claude-haiku-4-5-20251001
 ```
 
-**نکته حرفه ای:** از Opus برای کارهای پیچیده و Sonnet برای سرعت استفاده کنید. OmniRoute سهمیه هر مدل را دنبال می کند!
+**نکته حرفه ای:** از Opus برای کارهای پیچیده و Sonnet برای سرعت استفاده کنید. AgentProxy سهمیه هر مدل را دنبال می کند!
 
 ### OpenAI Codex (Plus/Pro)
 
@@ -1650,7 +1650,7 @@ Models:
 - `5h` (روشن/خاموش): سیاست آستانه پنجره 5 ساعته را اجرا کنید.
 - `Weekly` (روشن/خاموش): سیاست آستانه پنجره هفتگی را اجرا کنید.
 - رفتار آستانه: هنگامی که یک پنجره فعال به >=90 درصد استفاده می رسد، آن حساب حذف می شود.
-- رفتار چرخش: OmniRoute به طور خودکار به حساب بعدی واجد شرایط Codex مسیر می‌دهد.
+- رفتار چرخش: AgentProxy به طور خودکار به حساب بعدی واجد شرایط Codex مسیر می‌دهد.
 - رفتار بازنشانی: هنگامی که زمان ارائه دهنده `resetAt` می گذرد، حساب دوباره به طور خودکار واجد شرایط می شود.
 
 Scenarios:
@@ -1687,7 +1687,7 @@ Models:
 
 **مدل ها:** `nvidia/llama-3.3-70b-instruct`، `nvidia/mistral-7b-instruct`، و بیش از 50 مدل دیگر
 
-** نکته حرفه ای: ** OpenAI سازگار با API - با ترجمه فرمت OmniRoute یکپارچه کار می کند!
+** نکته حرفه ای: ** OpenAI سازگار با API - با ترجمه فرمت AgentProxy یکپارچه کار می کند!
 
 ### DeepSeek
 
@@ -1826,7 +1826,7 @@ Cost: currently listed as $0; terms and availability may change
 ```
 Settings → Models → Advanced:
   OpenAI API Base URL: http://localhost:20128/v1
-  OpenAI API Key: [from OmniRoute dashboard]
+  OpenAI API Key: [from AgentProxy dashboard]
   Model: cc/claude-opus-4-7
 ```
 
@@ -1838,7 +1838,7 @@ Settings → Models → Advanced:
 
 ```bash
 export OPENAI_BASE_URL="http://localhost:20128"
-export OPENAI_API_KEY="your-omniroute-api-key"
+export OPENAI_API_KEY="your-agentproxy-api-key"
 
 codex "your prompt"
 ```
@@ -1857,9 +1857,9 @@ Dashboard → CLI Tools → OpenClaw → Select Model → Apply
 {
   "models": {
     "providers": {
-      "omniroute": {
+      "agentproxy": {
         "baseUrl": "http://127.0.0.1:20128/v1",
-        "apiKey": "sk_omniroute",
+        "apiKey": "sk_agentproxy",
         "api": "openai-completions"
       }
     }
@@ -1867,7 +1867,7 @@ Dashboard → CLI Tools → OpenClaw → Select Model → Apply
 }
 ```
 
-> **توجه:** OpenClaw فقط با OmniRoute محلی کار می کند. از `127.0.0.1` به جای `localhost` برای جلوگیری از مشکلات وضوح IPv6 استفاده کنید.
+> **توجه:** OpenClaw فقط با AgentProxy محلی کار می کند. از `127.0.0.1` به جای `localhost` برای جلوگیری از مشکلات وضوح IPv6 استفاده کنید.
 
 ### Cline / Continue / RooCode
 
@@ -1875,18 +1875,18 @@ Dashboard → CLI Tools → OpenClaw → Select Model → Apply
 Settings → API Configuration:
   Provider: OpenAI Compatible
   Base URL: http://localhost:20128/v1
-  API Key: [from OmniRoute dashboard]
+  API Key: [from AgentProxy dashboard]
   Model: if/kimi-k2-thinking
 ```
 
 ### OpenCode
 
-**مرحله 1:** OmniRoute را به عنوان یک ارائه دهنده سفارشی اضافه کنید:
+**مرحله 1:** AgentProxy را به عنوان یک ارائه دهنده سفارشی اضافه کنید:
 
 ```bash
 opencode
 /connect
-# Select "Other" → Enter ID: "omniroute" → Enter your OmniRoute API key
+# Select "Other" → Enter ID: "agentproxy" → Enter your AgentProxy API key
 ```
 
 **مرحله 2:** `opencode.json` را در ریشه پروژه خود ایجاد/ویرایش کنید:
@@ -1895,9 +1895,9 @@ opencode
 {
   "$schema": "https://opencode.ai/config.json",
   "provider": {
-    "omniroute": {
+    "agentproxy": {
       "npm": "@ai-sdk/openai-compatible",
-      "name": "OmniRoute",
+      "name": "AgentProxy",
       "options": {
         "baseURL": "http://localhost:20128/v1"
       },
@@ -1915,10 +1915,10 @@ opencode
 
 ```bash
 /models
-# Select any OmniRoute model from the list
+# Select any AgentProxy model from the list
 ```
 
-> **نکته:** هر مدل موجود در نقطه پایانی OmniRoute `/v1/models` خود را به بخش `models` اضافه کنید. از قالب `provider/model-id` از داشبورد OmniRoute خود استفاده کنید.
+> **نکته:** هر مدل موجود در نقطه پایانی AgentProxy `/v1/models` خود را به بخش `models` اضافه کنید. از قالب `provider/model-id` از داشبورد AgentProxy خود استفاده کنید.
 
 </details>
 
@@ -1941,7 +1941,7 @@ opencode
 
 **توکن OAuth منقضی شده**
 
-- به‌روزرسانی خودکار توسط OmniRoute
+- به‌روزرسانی خودکار توسط AgentProxy
 - در صورت وجود مشکلات: داشبورد → ارائه دهنده → اتصال مجدد
 
 **هزینه های بالا**
@@ -1979,7 +1979,7 @@ opencode
 **آزمایش اتصال "نامعتبر" را برای ارائه دهندگان سازگار با OpenAI نشان می دهد**
 
 - بسیاری از ارائه دهندگان نقطه پایانی `/models` را افشا نمی کنند
-- OmniRoute نسخه 1.0.6+ شامل اعتبار سنجی مجدد از طریق تکمیل چت است
+- AgentProxy نسخه 1.0.6+ شامل اعتبار سنجی مجدد از طریق تکمیل چت است
 - مطمئن شوید که پایه URL دارای پسوند `/v1` است
 
 ### 🔐 OAuth در یک سرور راه دور
@@ -1987,9 +1987,9 @@ opencode
 <a name="oauth-on-a-remote-server"></a>
 <a name="oauth-em-servidor-remoto"></a>
 
-> **⚠️ برای کاربرانی که OmniRoute را روی VPS، Docker یا هر سرور راه دور اجرا می کنند مهم است**
+> **⚠️ برای کاربرانی که AgentProxy را روی VPS، Docker یا هر سرور راه دور اجرا می کنند مهم است**
 
-اعتبارنامه OAuth همراه با OmniRoute **فقط برای `localhost`** ثبت شده است. هنگامی که به OmniRoute در یک سرور راه دور (مثلاً `https://omniroute.myserver.com`) دسترسی دارید، Google احراز هویت را با:
+اعتبارنامه OAuth همراه با AgentProxy **فقط برای `localhost`** ثبت شده است. هنگامی که به AgentProxy در یک سرور راه دور (مثلاً `https://agentproxy.myserver.com`) دسترسی دارید، Google احراز هویت را با:
 
 ```
 Error 400: redirect_uri_mismatch
@@ -2009,7 +2009,7 @@ Error 400: redirect_uri_mismatch
 
 - روی **"+ ایجاد اعتبارنامه"** → **"OAuth شناسه مشتری"** کلیک کنید
 - نوع برنامه: **"برنامه وب"**
-- نام: هر چیزی که دوست دارید (به عنوان مثال `OmniRoute Remote`)
+- نام: هر چیزی که دوست دارید (به عنوان مثال `AgentProxy Remote`)
 
 **3. URIهای مجاز تغییر مسیر را اضافه کنید**
 
@@ -2038,14 +2038,14 @@ GEMINI_OAUTH_CLIENT_ID=your-client-id.apps.googleusercontent.com
 GEMINI_OAUTH_CLIENT_SECRET=GOCSPX-your-secret
 ```
 
-**6. راه اندازی مجدد OmniRoute**
+**6. راه اندازی مجدد AgentProxy**
 
 ```bash
 # npm:
 npm run dev
 
 # Docker:
-docker restart omniroute
+docker restart agentproxy
 ```
 
 **7. دوباره سعی کنید وصل شوید**
@@ -2058,10 +2058,10 @@ Google اکنون به درستی به `https://your-server.com/callback` تغی
 
 اگر نمی‌خواهید اعتبار خود را در حال حاضر تنظیم کنید، همچنان می‌توانید از **جریان دستی URL** استفاده کنید:
 
-1. OmniRoute مجوز Google را باز می کند URL
+1. AgentProxy مجوز Google را باز می کند URL
 2. پس از تأیید، Google سعی می‌کند به `localhost` تغییر مسیر دهد (که در سرور راه دور با مشکل مواجه می‌شود)
 3. **URL** را از نوار آدرس مرورگر خود کپی کنید (حتی اگر صفحه بارگیری نشود)
-4. آن URL را در فیلد نشان داده شده در مدال اتصال OmniRoute قرار دهید
+4. آن URL را در فیلد نشان داده شده در مدال اتصال AgentProxy قرار دهید
 5. روی **"اتصال"** کلیک کنید
 
 > این کار به این دلیل کار می کند که کد مجوز در URL بدون توجه به بارگیری صفحه تغییر مسیر معتبر است.
@@ -2083,9 +2083,9 @@ Google اکنون به درستی به `https://your-server.com/callback` تغی
 - **Auth**: OAuth 2.0 (PKCE) + کلیدهای JWT + API + مجوز محدوده MCP
 - **تست**: Node.js تست دونده + Vitest (900+ تست شامل واحد، ادغام، E2E)
 - **CI/CD**: اقدامات GitHub (انتشار خودکار npm + مرکز Docker در زمان انتشار)
-- **وب سایت**: [omniroute.online](https://omniroute.online)
-- **بسته**: [npmjs.com/package/omniroute](https://www.npmjs.com/package/omniroute)
-- **Docker**: [hub.docker.com/r/diegosouzapw/omniroute](https://hub.docker.com/r/diegosouzapw/omniroute)
+- **وب سایت**: [agentproxy.online](https://agentproxy.example.com)
+- **بسته**: [npmjs.com/package/agentproxy](https://www.npmjs.com/package/agentproxy)
+- **Docker**: [hub.docker.com/r/khanhkit/agentproxy](https://github.com/khanhkit/AgentProxy/pkgs/container/agentproxy)
 - **ارتعاش**: قطع کننده مدار، عقب نشینی نمایی، گله ضد رعد و برق، جعل TLS، خودترمیمی خودکار ترکیبی
 
 </details>
@@ -2118,7 +2118,7 @@ Google اکنون به درستی به `https://your-server.com/callback` تغی
 
 ## 🗺️ نقشه راه
 
-OmniRoute دارای **218+ ویژگی برنامه ریزی شده** در چندین فاز توسعه است. در اینجا مناطق کلیدی وجود دارد:
+AgentProxy دارای **218+ ویژگی برنامه ریزی شده** در چندین فاز توسعه است. در اینجا مناطق کلیدی وجود دارد:
 
 | دسته بندی                       | ویژگی های برنامه ریزی شده | نکات برجسته                                                                                                            |
 | ------------------------------- | ------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
@@ -2143,7 +2143,7 @@ OmniRoute دارای **218+ ویژگی برنامه ریزی شده** در چن�
 
 ## 👥 مشارکت کنندگان
 
-[![Contributors](https://contrib.rocks/image?repo=diegosouzapw/OmniRoute&max=100&columns=20&anon=1)](https://github.com/diegosouzapw/OmniRoute/graphs/contributors)
+[![Contributors](https://contrib.rocks/image?repo=khanhkit/AgentProxy&max=100&columns=20&anon=1)](https://github.com/khanhkit/AgentProxy/graphs/contributors)
 
 ### نحوه مشارکت
 
@@ -2166,21 +2166,21 @@ gh release create v2.0.0 --title "v2.0.0" --generate-notes
 
 ## 📊 تاریخچه ستاره
 
-<a href="https://www.star-history.com/?repos=diegosouzapw%2Fomniroute&type=date&legend=top-left">
+<a href="https://www.star-history.com/?repos=diegosouzapw%2Fagentproxy&type=date&legend=top-left">
  <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=diegosouzapw/omniroute&type=date&theme=dark&legend=top-left" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=diegosouzapw/omniroute&type=date&legend=top-left" />
-   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=diegosouzapw/omniroute&type=date&legend=top-left" />
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=khanhkit/agentproxy&type=date&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=khanhkit/agentproxy&type=date&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=khanhkit/agentproxy&type=date&legend=top-left" />
  </picture>
 </a>
 
 ## 🌍 StarMapper
 
-<a href="https://starmapper.bruniaux.com/diegosouzapw/omniroute">
+<a href="https://starmapper.bruniaux.com/khanhkit/agentproxy">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://starmapper.bruniaux.com/api/map-image/diegosouzapw/omniroute?theme=dark" />
-    <source media="(prefers-color-scheme: light)" srcset="https://starmapper.bruniaux.com/api/map-image/diegosouzapw/omniroute?theme=light" />
-    <img alt="StarMapper" src="https://starmapper.bruniaux.com/api/map-image/diegosouzapw/omniroute" />
+    <source media="(prefers-color-scheme: dark)" srcset="https://starmapper.bruniaux.com/api/map-image/khanhkit/agentproxy?theme=dark" />
+    <source media="(prefers-color-scheme: light)" srcset="https://starmapper.bruniaux.com/api/map-image/khanhkit/agentproxy?theme=light" />
+    <img alt="StarMapper" src="https://starmapper.bruniaux.com/api/map-image/khanhkit/agentproxy" />
   </picture>
 </a>
 
@@ -2199,6 +2199,6 @@ gh release create v2.0.0 --title "v2.0.0" --generate-notes
 <div align="center">
   <sub>Built with ❤️ for developers who code 24/7</sub>
   <br/>
-  <sub><a href="https://omniroute.online">omniroute.online</a></sub>
+  <sub><a href="https://agentproxy.example.com">agentproxy.online</a></sub>
 </div>
 <!-- GitHub Discussions enabled for community Q&A -->

@@ -13,12 +13,12 @@ const TARGETS = [
   {
     file: "src/sse/services/tokenRefresh.ts",
     importPattern:
-      /import \{ stripTrailingSlashes \} from "@omniroute\/open-sse\/utils\/urlSanitize\.ts";/,
+      /import \{ stripTrailingSlashes \} from "@agentproxy\/open-sse\/utils\/urlSanitize\.ts";/,
   },
   {
     file: "src/lib/oauth/providers/ghe-copilot.ts",
     importPattern:
-      /import \{ stripTrailingSlashes \} from "@omniroute\/open-sse\/utils\/urlSanitize\.ts";/,
+      /import \{ stripTrailingSlashes \} from "@agentproxy\/open-sse\/utils\/urlSanitize\.ts";/,
   },
 ];
 

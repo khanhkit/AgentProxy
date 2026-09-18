@@ -9,7 +9,7 @@
 export interface ContainerWriteRefusalOptions {
   /** Human label for the tool being configured, e.g. "Codex". */
   toolLabel?: string;
-  /** The command that would fix it from the host, e.g. "omniroute setup-codex". */
+  /** The command that would fix it from the host, e.g. "agentproxy setup-codex". */
   hostCommand?: string;
   /** How to override, worded for the surface that is refusing. */
   overrideHint?: string;
@@ -28,7 +28,7 @@ export function isContainerWriteRefusal(message: string | null | undefined): boo
 
 /** Default override hint for server-side (API) callers. */
 export const SERVER_OVERRIDE_HINT =
-  "Set OMNIROUTE_ALLOW_CONTAINER_CONFIG_WRITE=true to configure the container's own CLIs anyway.";
+  "Set AGENTPROXY_ALLOW_CONTAINER_CONFIG_WRITE=true to configure the container's own CLIs anyway.";
 
 /** Default override hint for CLI callers. */
 export const CLI_OVERRIDE_HINT =
@@ -42,14 +42,14 @@ export function buildContainerWriteRefusal(
   const subject = toolLabel ? `${toolLabel} config` : "CLI tool config";
 
   return [
-    `${REFUSAL_PREFIX} ${subject} to ${targetPath} — OmniRoute is running in a container ` +
+    `${REFUSAL_PREFIX} ${subject} to ${targetPath} — AgentProxy is running in a container ` +
       `and that path is not mounted from the host, so the file would be discarded when the ` +
       `container is recreated and your host CLI would never read it.`,
     "",
     "Configure from the host instead (recommended):",
-    "  npm install -g omniroute",
-    "  omniroute connect http://localhost:20128",
-    `  ${hostCommand || "omniroute setup-<tool>"}`,
+    "  npm install -g agentproxy",
+    "  agentproxy connect http://localhost:20128",
+    `  ${hostCommand || "agentproxy setup-<tool>"}`,
     "",
     'Or bind-mount the host config dir into the container (compose profile "host"):',
     '  volumes:     [ "~/.codex:/host-home/.codex:rw" ]',

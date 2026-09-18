@@ -1,6 +1,6 @@
 // Regression test for issue #10527 — "Deepseek web just never does anything" (Cline).
 //
-// DeepSeek Web has no native messages[]/tool-calling API, so OmniRoute flattens the chat
+// DeepSeek Web has no native messages[]/tool-calling API, so AgentProxy flattens the chat
 // history into a single `prompt` string via messagesToPrompt(). Cline (and most
 // XML-tool-convention agentic clients) never sends OpenAI-native `tools[]`, so it always
 // takes this non-tool path. With the old default (historyWindow<=0 -> system + last user

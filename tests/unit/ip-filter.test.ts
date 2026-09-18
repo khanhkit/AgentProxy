@@ -6,8 +6,8 @@ import path from "node:path";
 
 // Isolate DATA_DIR before importing ipFilter: since #6131 the filter lazily
 // loads/persists its config to the DB, so an un-isolated run would touch the
-// real ~/.omniroute DB (side-effect + WAL-lock flake). Pin a throwaway dir.
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-ipfilter-unit-"));
+// real ~/.agentproxy DB (side-effect + WAL-lock flake). Pin a throwaway dir.
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-ipfilter-unit-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../src/lib/db/core.ts");

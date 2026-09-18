@@ -31,7 +31,7 @@ import {
 } from "@/lib/oauth/antigravityProjectGate";
 import { syncToCloud } from "@/lib/cloudSync";
 import { startLocalServer } from "@/lib/oauth/utils/server";
-import { runWithProxyContextOrDirect } from "@omniroute/open-sse/utils/proxyFetch.ts";
+import { runWithProxyContextOrDirect } from "@agentproxy/open-sse/utils/proxyFetch.ts";
 import {
   jsonObjectSchema,
   oauthDeviceCompleteSchema,
@@ -41,7 +41,7 @@ import {
 } from "@/shared/validation/schemas";
 import { isValidationFailure, validateBody } from "@/shared/validation/helpers";
 import { isAuthRequired, isAuthenticated, verifyAuth } from "@/shared/utils/apiAuth";
-import { sanitizeErrorMessage } from "@omniroute/open-sse/utils/error";
+import { sanitizeErrorMessage } from "@agentproxy/open-sse/utils/error";
 import { GITLAB_DUO_OAUTH_SETUP_MESSAGE } from "@/shared/constants/gitlabDuoSetupMessage";
 import { keychainImportOnlyGuard } from "./keychainImportOnly";
 import { buildRemoteOAuthHint } from "./remoteOAuthHint";
@@ -100,7 +100,7 @@ function safeEqual(a: string | null | undefined, b: string | null | undefined): 
  * link points at the host the operator actually serves (not an internal origin).
  */
 function resolvePublicBaseUrl(request: Request): string {
-  const env = process.env.NEXT_PUBLIC_BASE_URL || process.env.OMNIROUTE_PUBLIC_BASE_URL;
+  const env = process.env.NEXT_PUBLIC_BASE_URL || process.env.AGENTPROXY_PUBLIC_BASE_URL;
   if (env && env.trim()) return env.trim().replace(/\/+$/, "");
   const host = request.headers.get("x-forwarded-host") || request.headers.get("host");
   const proto = request.headers.get("x-forwarded-proto") || "https";
@@ -368,7 +368,7 @@ async function handleStartCallbackServer(
 
     // #7523: the PKCE callback server listens on the SERVER's loopback
     // (localhost:PORT). When the operator drives the OAuth flow from a
-    // *different* machine (OmniRoute running on a remote host/VPS), the
+    // *different* machine (AgentProxy running on a remote host/VPS), the
     // provider redirects the browser to the operator's own localhost:PORT,
     // not the server's — so the final confirmation screen hangs forever.
     // Detect a non-loopback Host and surface the reverse-tunnel instruction

@@ -75,7 +75,7 @@ export default function LoginPage() {
       });
 
       if (res.ok) {
-        sessionStorage.setItem("omniroute_login_time", String(Date.now()));
+        sessionStorage.setItem("agentproxy_login_time", String(Date.now()));
         window.location.href = "/dashboard";
       } else {
         const data = await res.json();
@@ -175,7 +175,7 @@ export default function LoginPage() {
           </div>
 
           <p className="text-center text-xs text-text-muted/60 mt-8">
-            OmniRoute — {t("unifiedProxy")}
+            AgentProxy — {t("unifiedProxy")}
           </p>
         </div>
       </div>
@@ -215,7 +215,7 @@ export default function LoginPage() {
           </div>
 
           <p className="text-center text-xs text-text-muted/60 mt-8">
-            OmniRoute — {t("unifiedAiApiProxy")}
+            AgentProxy — {t("unifiedAiApiProxy")}
           </p>
         </div>
       </div>
@@ -238,7 +238,7 @@ export default function LoginPage() {
                   <span className="material-symbols-outlined text-white text-[20px]">hub</span>
                 </div>
                 <span className="text-xl font-semibold text-text-main tracking-tight">
-                  OmniRoute
+                  AgentProxy
                 </span>
               </div>
               <h1 className="text-2xl font-bold text-text-main tracking-tight">{t("signIn")}</h1>

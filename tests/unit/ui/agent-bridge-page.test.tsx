@@ -86,7 +86,7 @@ describe("RiskNoticeBanner", () => {
 
   it("renders risk notice banner when not dismissed", async () => {
     // Ensure not dismissed
-    try { localStorage.removeItem("omniroute-agentbridge-risk-dismissed"); } catch { /* ignore */ }
+    try { localStorage.removeItem("agentproxy-agentbridge-risk-dismissed"); } catch { /* ignore */ }
 
     const { RiskNoticeBanner } = await import(
       "../../../src/app/(dashboard)/dashboard/tools/agent-bridge/components/RiskNoticeBanner"
@@ -105,7 +105,7 @@ describe("RiskNoticeBanner", () => {
 
   it("does not render risk banner when already dismissed", async () => {
     try {
-      localStorage.setItem("omniroute-agentbridge-risk-dismissed", "true");
+      localStorage.setItem("agentproxy-agentbridge-risk-dismissed", "true");
     } catch { /* ignore */ }
 
     const { RiskNoticeBanner } = await import(
@@ -122,7 +122,7 @@ describe("RiskNoticeBanner", () => {
   });
 
   it("dismisses banner on close click", async () => {
-    try { localStorage.removeItem("omniroute-agentbridge-risk-dismissed"); } catch { /* ignore */ }
+    try { localStorage.removeItem("agentproxy-agentbridge-risk-dismissed"); } catch { /* ignore */ }
 
     const { RiskNoticeBanner } = await import(
       "../../../src/app/(dashboard)/dashboard/tools/agent-bridge/components/RiskNoticeBanner"

@@ -8,7 +8,7 @@ lastUpdated: 2026-06-28
 
 🌐 **Languages:** 🇺🇸 [English](../../../../guides/USER_GUIDE.md) · 🇸🇦 [ar](../../../ar/docs/guides/USER_GUIDE.md) · 🇦🇿 [az](../../../az/docs/guides/USER_GUIDE.md) · 🇧🇬 [bg](../../../bg/docs/guides/USER_GUIDE.md) · 🇧🇩 [bn](../../../bn/docs/guides/USER_GUIDE.md) · 🇨🇿 [cs](../../../cs/docs/guides/USER_GUIDE.md) · 🇩🇰 [da](../../../da/docs/guides/USER_GUIDE.md) · 🇩🇪 [de](../../../de/docs/guides/USER_GUIDE.md) · 🇬🇷 [el](../../../el/docs/guides/USER_GUIDE.md) · 🇪🇸 [es](../../../es/docs/guides/USER_GUIDE.md) · 🇪🇪 [et](../../../et/docs/guides/USER_GUIDE.md) · 🇮🇷 [fa](../../../fa/docs/guides/USER_GUIDE.md) · 🇫🇮 [fi](../../../fi/docs/guides/USER_GUIDE.md) · 🇫🇷 [fr](../../../fr/docs/guides/USER_GUIDE.md) · 🇮🇪 [ga](../../../ga/docs/guides/USER_GUIDE.md) · 🇮🇳 [gu](../../../gu/docs/guides/USER_GUIDE.md) · 🇮🇱 [he](../../../he/docs/guides/USER_GUIDE.md) · 🇮🇳 [hi](../../../hi/docs/guides/USER_GUIDE.md) · 🇭🇷 [hr](../../../hr/docs/guides/USER_GUIDE.md) · 🇭🇺 [hu](../../../hu/docs/guides/USER_GUIDE.md) · 🇮🇩 [id](../../../id/docs/guides/USER_GUIDE.md) · 🇮🇹 [it](../../../it/docs/guides/USER_GUIDE.md) · 🇯🇵 [ja](../../../ja/docs/guides/USER_GUIDE.md) · 🇰🇷 [ko](../../../ko/docs/guides/USER_GUIDE.md) · 🇱🇹 [lt](../../../lt/docs/guides/USER_GUIDE.md) · 🇱🇻 [lv](../../../lv/docs/guides/USER_GUIDE.md) · 🇮🇳 [mr](../../../mr/docs/guides/USER_GUIDE.md) · 🇲🇾 [ms](../../../ms/docs/guides/USER_GUIDE.md) · 🇲🇹 [mt](../../../mt/docs/guides/USER_GUIDE.md) · 🇳🇱 [nl](../../../nl/docs/guides/USER_GUIDE.md) · 🇳🇴 [no](../../../no/docs/guides/USER_GUIDE.md) · 🇵🇭 [phi](../../../phi/docs/guides/USER_GUIDE.md) · 🇵🇱 [pl](../../../pl/docs/guides/USER_GUIDE.md) · 🇵🇹 [pt](../../../pt/docs/guides/USER_GUIDE.md) · 🇧🇷 [pt-BR](../../../pt-BR/docs/guides/USER_GUIDE.md) · 🇷🇴 [ro](../../../ro/docs/guides/USER_GUIDE.md) · 🇷🇺 [ru](../../../ru/docs/guides/USER_GUIDE.md) · 🇸🇰 [sk](../../../sk/docs/guides/USER_GUIDE.md) · 🇸🇮 [sl](../../../sl/docs/guides/USER_GUIDE.md) · 🇷🇸 [sr](../../../sr/docs/guides/USER_GUIDE.md) · 🇸🇪 [sv](../../../sv/docs/guides/USER_GUIDE.md) · 🇰🇪 [sw](../../../sw/docs/guides/USER_GUIDE.md) · 🇮🇳 [ta](../../../ta/docs/guides/USER_GUIDE.md) · 🇮🇳 [te](../../../te/docs/guides/USER_GUIDE.md) · 🇹🇭 [th](../../../th/docs/guides/USER_GUIDE.md) · 🇹🇷 [tr](../../../tr/docs/guides/USER_GUIDE.md) · 🇺🇦 [uk-UA](../../../uk-UA/docs/guides/USER_GUIDE.md) · 🇵🇰 [ur](../../../ur/docs/guides/USER_GUIDE.md) · 🇻🇳 [vi](../../../vi/docs/guides/USER_GUIDE.md) · 🇨🇳 [zh-CN](../../../zh-CN/docs/guides/USER_GUIDE.md)
 
-設定提供者、建立組合、整合 CLI 工具及部署 OmniRoute 的完整指南。
+設定提供者、建立組合、整合 CLI 工具及部署 AgentProxy 的完整指南。
 
 ---
 
@@ -137,10 +137,10 @@ Combo：「openclaw-free」
   cc/claude-haiku-4-5-20251001
 ```
 
-**小撇步：** 複雜任務使用 Opus，追求速度使用 Sonnet。OmniRoute 會追蹤每個模型的額度！
+**小撇步：** 複雜任務使用 Opus，追求速度使用 Sonnet。AgentProxy 會追蹤每個模型的額度！
 
 Claude 及與 Claude Code 相容的路由會保留 Opus 和 Sonnet 模型的 `max` 思考強度設定。
-Haiku 模型不接受 `max` 思考強度層級，因此 OmniRoute 會在將請求發送給上游之前，
+Haiku 模型不接受 `max` 思考強度層級，因此 AgentProxy 會在將請求發送給上游之前，
 將該設定降級為較高的思考預算。
 
 #### OpenAI Codex（Plus/Pro）
@@ -265,7 +265,7 @@ Haiku 模型不接受 `max` 思考強度層級，因此 OmniRoute 會在將請�
 ```
 設定 → 模型 → 進階：
   OpenAI API 基礎網址：http://localhost:20128/v1
-  OpenAI API 金鑰：［取自 omniroute 控制台］
+  OpenAI API 金鑰：［取自 agentproxy 控制台］
   模型：cc/claude-opus-4-7
 ```
 
@@ -277,7 +277,7 @@ Haiku 模型不接受 `max` 思考強度層級，因此 OmniRoute 會在將請�
 {
   "env": {
     "ANTHROPIC_BASE_URL": "http://localhost:20128",
-    "ANTHROPIC_AUTH_TOKEN": "your-omniroute-api-key"
+    "ANTHROPIC_AUTH_TOKEN": "your-agentproxy-api-key"
   }
 }
 ```
@@ -288,7 +288,7 @@ Haiku 模型不接受 `max` 思考強度層級，因此 OmniRoute 會在將請�
 
 ```bash
 export OPENAI_BASE_URL="http://localhost:20128"
-export OPENAI_API_KEY="your-omniroute-api-key"
+export OPENAI_API_KEY="your-agentproxy-api-key"
 codex "your prompt"
 ```
 
@@ -300,14 +300,14 @@ codex "your prompt"
 {
   "agents": {
     "defaults": {
-      "model": { "primary": "omniroute/if/kimi-k2.7-code" }
+      "model": { "primary": "agentproxy/if/kimi-k2.7-code" }
     }
   },
   "models": {
     "providers": {
-      "omniroute": {
+      "agentproxy": {
         "baseUrl": "http://localhost:20128/v1",
-        "apiKey": "your-omniroute-api-key",
+        "apiKey": "your-agentproxy-api-key",
         "api": "openai-completions",
         "models": [{ "id": "if/kimi-k2.7-code", "name": "Kimi K2.7 Code" }]
       }
@@ -334,42 +334,42 @@ API 金鑰：［取自控制台］
 ### 全域 npm 安裝（建議）
 
 ```bash
-npm install -g omniroute
+npm install -g agentproxy
 
 # 建立配置目錄
-mkdir -p ~/.omniroute
+mkdir -p ~/.agentproxy
 
 # 建立 .env 檔案（參閱 .env.example）
-cp .env.example ~/.omniroute/.env
+cp .env.example ~/.agentproxy/.env
 
 # 啟動伺服器
-omniroute
+agentproxy
 # 或使用自訂連接埠：
-omniroute --port 3000
+agentproxy --port 3000
 ```
 
-CLI 會自動從 `~/.omniroute/.env` 或 `./.env` 載入 `.env`。
+CLI 會自動從 `~/.agentproxy/.env` 或 `./.env` 載入 `.env`。
 
 ### 解除安裝
 
-當您不再需要 OmniRoute 時，我們提供兩個快速腳本進行乾淨移除：
+當您不再需要 AgentProxy 時，我們提供兩個快速腳本進行乾淨移除：
 
 | 指令                     | 動作                                                            |
 | ------------------------ | --------------------------------------------------------------- |
-| `npm run uninstall`      | 移除系統應用程式，但**保留您的資料庫和配置**於 `~/.omniroute`。 |
+| `npm run uninstall`      | 移除系統應用程式，但**保留您的資料庫和配置**於 `~/.agentproxy`。 |
 | `npm run uninstall:full` | 移除應用程式並永久**清除所有配置、金鑰和資料庫**。              |
 
-> 注意：若要執行這些指令，請導航至 OmniRoute 專案資料夾（如果您是透過複製倉庫的方式）並執行。或者，若是全域安裝，您可以直接執行 `npm uninstall -g omniroute`。
+> 注意：若要執行這些指令，請導航至 AgentProxy 專案資料夾（如果您是透過複製倉庫的方式）並執行。或者，若是全域安裝，您可以直接執行 `npm uninstall -g agentproxy`。
 
 ### VPS 部署
 
 ```bash
-git clone https://github.com/diegosouzapw/OmniRoute.git
-cd OmniRoute && npm install && npm run build
+git clone https://github.com/khanhkit/AgentProxy.git
+cd AgentProxy && npm install && npm run build
 
 export JWT_SECRET="your-secure-secret-change-this"
 export INITIAL_PASSWORD="your-password"
-export DATA_DIR="/var/lib/omniroute"
+export DATA_DIR="/var/lib/agentproxy"
 export PORT="20128"
 export HOSTNAME="0.0.0.0"
 export NODE_ENV="production"
@@ -377,7 +377,7 @@ export NEXT_PUBLIC_BASE_URL="http://localhost:20128"
 export API_KEY_SECRET="endpoint-proxy-api-key-secret"
 
 npm run start
-# 或：pm2 start npm --name omniroute -- start
+# 或：pm2 start npm --name agentproxy -- start
 ```
 
 ### PM2 部署（低記憶體）
@@ -386,10 +386,10 @@ npm run start
 
 ```bash
 # 使用 512MB 限制（預設）
-pm2 start npm --name omniroute -- start
+pm2 start npm --name agentproxy -- start
 
 # 或使用自訂記憶體限制
-OMNIROUTE_MEMORY_MB=512 pm2 start npm --name omniroute -- start
+AGENTPROXY_MEMORY_MB=512 pm2 start npm --name agentproxy -- start
 
 # 或使用 ecosystem.config.js
 pm2 start ecosystem.config.js
@@ -401,12 +401,12 @@ pm2 start ecosystem.config.js
 module.exports = {
   apps: [
     {
-      name: "omniroute",
+      name: "agentproxy",
       script: "npm",
       args: "start",
       env: {
         NODE_ENV: "production",
-        OMNIROUTE_MEMORY_MB: "512",
+        AGENTPROXY_MEMORY_MB: "512",
         JWT_SECRET: "your-secret",
         INITIAL_PASSWORD: "your-password",
       },
@@ -421,24 +421,24 @@ module.exports = {
 
 ```bash
 # 建立映像檔（預設 = runner-cli 搭配內建的 codex/claude/droid）
-docker build -t omniroute:cli .
+docker build -t agentproxy:cli .
 
 # 可攜式模式（建議）
-docker run -d --name omniroute -p 20128:20128 --env-file ./.env -v omniroute-data:/app/data omniroute:cli
+docker run -d --name agentproxy -p 20128:20128 --env-file ./.env -v agentproxy-data:/app/data agentproxy:cli
 ```
 
 如需整合主機模式搭配 CLI 二進位檔，請參閱主要文件中的 Docker 章節。
 
 ### Void Linux（xbps-src）
 
-Void Linux 使用者可以使用 `xbps-src` 跨編譯框架，以原生方式封裝並安裝 OmniRoute。這會自動化 Node.js 獨立建置以及所需的 `better-sqlite3` 原生繫結。
+Void Linux 使用者可以使用 `xbps-src` 跨編譯框架，以原生方式封裝並安裝 AgentProxy。這會自動化 Node.js 獨立建置以及所需的 `better-sqlite3` 原生繫結。
 
 <details>
 <summary><b>檢視 xbps-src 模板</b></summary>
 
 ```bash
-# Template file for 'omniroute'
-pkgname=omniroute
+# Template file for 'agentproxy'
+pkgname=agentproxy
 version=3.8.0
 revision=1
 hostmakedepends="nodejs python3 make"
@@ -446,11 +446,11 @@ depends="openssl"
 short_desc="Universal AI gateway with smart routing for multiple LLM providers"
 maintainer="zenobit <zenobit@disroot.org>"
 license="MIT"
-homepage="https://github.com/diegosouzapw/OmniRoute"
-distfiles="https://github.com/diegosouzapw/OmniRoute/archive/refs/tags/v${version}.tar.gz"
+homepage="https://github.com/khanhkit/AgentProxy"
+distfiles="https://github.com/khanhkit/AgentProxy/archive/refs/tags/v${version}.tar.gz"
 checksum=009400afee90a9f32599d8fe734145cfd84098140b7287990183dde45ae2245b
-system_accounts="_omniroute"
-omniroute_homedir="/var/lib/omniroute"
+system_accounts="_agentproxy"
+agentproxy_homedir="/var/lib/agentproxy"
 export NODE_ENV=production
 export npm_config_engine_strict=false
 export npm_config_loglevel=error
@@ -500,26 +500,26 @@ do_check() {
 }
 
 do_install() {
-	vmkdir usr/lib/omniroute/.next
-	vcopy .next/standalone/. usr/lib/omniroute/.next/standalone
+	vmkdir usr/lib/agentproxy/.next
+	vcopy .next/standalone/. usr/lib/agentproxy/.next/standalone
 
 	# Prevent removal of empty Next.js app router dirs by the post-install hook
 	for _d in \
 		.next/standalone/.next/server/app/dashboard \
 		.next/standalone/.next/server/app/dashboard/settings \
 		.next/standalone/.next/server/app/dashboard/providers; do
-		touch "${DESTDIR}/usr/lib/omniroute/${_d}/.keep"
+		touch "${DESTDIR}/usr/lib/agentproxy/${_d}/.keep"
 	done
 
-	cat > "${WRKDIR}/omniroute" <<'EOF'
+	cat > "${WRKDIR}/agentproxy" <<'EOF'
 #!/bin/sh
 export PORT="${PORT:-20128}"
-export DATA_DIR="${DATA_DIR:-${XDG_DATA_HOME:-${HOME}/.local/share}/omniroute}"
+export DATA_DIR="${DATA_DIR:-${XDG_DATA_HOME:-${HOME}/.local/share}/agentproxy}"
 export APP_LOG_TO_FILE="${APP_LOG_TO_FILE:-false}"
 mkdir -p "${DATA_DIR}"
-exec node /usr/lib/omniroute/.next/standalone/server.js "$@"
+exec node /usr/lib/agentproxy/.next/standalone/server.js "$@"
 EOF
-	vbin "${WRKDIR}/omniroute"
+	vbin "${WRKDIR}/agentproxy"
 }
 
 post_install() {
@@ -533,14 +533,14 @@ post_install() {
 
 | 變數                                    | 預設值                               | 說明                                                                      |
 | --------------------------------------- | ------------------------------------ | ------------------------------------------------------------------------- |
-| `JWT_SECRET`                            | `omniroute-default-secret-change-me` | JWT 簽署密鑰（**生產環境務必修改**）                                      |
+| `JWT_SECRET`                            | `agentproxy-default-secret-change-me` | JWT 簽署密鑰（**生產環境務必修改**）                                      |
 | `INITIAL_PASSWORD`                      | `CHANGEME`                           | 首次登入密碼                                                              |
-| `DATA_DIR`                              | `~/.omniroute`                       | 資料目錄（資料庫、用量、日誌）                                            |
+| `DATA_DIR`                              | `~/.agentproxy`                       | 資料目錄（資料庫、用量、日誌）                                            |
 | `PORT`                                  | framework 預設                       | 服務連接埠（範例中為 `20128`）                                            |
 | `HOSTNAME`                              | framework 預設                       | 繫結主機（Docker 預設為 `0.0.0.0`）                                       |
 | `NODE_ENV`                              | runtime 預設                         | 部署時設定為 `production`                                                 |
 | `NEXT_PUBLIC_BASE_URL`                  | `http://localhost:20128`             | 公開的基礎網址，顯示於控制台並暴露給伺服器（取代舊的 `BASE_URL`）         |
-| `NEXT_PUBLIC_CLOUD_URL`                 | `https://omniroute.dev`              | 雲端同步端點基礎網址（取代舊的 `CLOUD_URL`）                              |
+| `NEXT_PUBLIC_CLOUD_URL`                 | `https://agentproxy.example.com`              | 雲端同步端點基礎網址（取代舊的 `CLOUD_URL`）                              |
 | `API_KEY_SECRET`                        | `endpoint-proxy-api-key-secret`      | 用於產生 API 金鑰的 HMAC 密鑰                                             |
 | `REQUIRE_API_KEY`                       | `false`                              | 對 `/v1/*` 強制要求 Bearer API 金鑰                                       |
 | `ALLOW_API_KEY_REVEAL`                  | `false`                              | 允許已驗證的控制台使用者按需顯示完整儲存的 API 金鑰值                     |
@@ -550,7 +550,7 @@ post_install() {
 | `AUTH_COOKIE_SECURE`                    | `false`                              | 強制使用安全 `Secure` 認證 Cookie（在 HTTPS 反向代理後方）                |
 | `CLOUDFLARED_BIN`                       | 未設定                               | 使用既有的 `cloudflared` 二進位檔而非受管理的下載                         |
 | `CLOUDFLARED_PROTOCOL`                  | `http2`                              | 受管理快速隧道的傳輸協定（`http2`、`quic` 或 `auto`）                     |
-| `OMNIROUTE_MEMORY_MB`                   | `512`                                | Node.js 堆積限制（MB）                                                    |
+| `AGENTPROXY_MEMORY_MB`                   | `512`                                | Node.js 堆積限制（MB）                                                    |
 | `PROMPT_CACHE_MAX_SIZE`                 | `50`                                 | 提示快取最大條目數                                                        |
 | `SEMANTIC_CACHE_MAX_SIZE`               | `100`                                | 語意快取最大條目數                                                        |
 
@@ -609,7 +609,7 @@ post_install() {
 
 **其他相容提供者**（部分）：`cohere`, `databricks`, `snowflake`, `together`, `vertex`, `alibaba`, `alibaba-cn`, `bedrock`（透過 `aws-bedrock`）, `azure-ai`, `openrouter`（直通目錄）, `siliconflow`, `hyperbolic`, `huggingface`, `featherless-ai`, `cloudflare-ai`, `scaleway`, `deepinfra`, `vercel-ai-gateway`, `bazaarlink`, `friendliai`, `nous-research`, `reka`, `volcengine`, `ai21`, `gigachat`。每個都在 `providerRegistry.ts` 中維護自己的模型清單，並可在提供者公開 `/models` 端點時自動同步。
 
-**關於模型 ID 的說明：** OmniRoute 使用提供者原生 ID（`claude-opus-4-8`, `gpt-5.5`, `glm-5.1`, `MiniMax-M2.7`, `kimi-k2.5`, `grok-4.20-0309-reasoning`）。部分 ID 包含帶點號的版本號，因為上游 API 期望如此。如果以上未列出某個模型，請執行 `omniroute models --search <term>` 或存取 `GET /api/models/catalog` 以確認可用性。
+**關於模型 ID 的說明：** AgentProxy 使用提供者原生 ID（`claude-opus-4-8`, `gpt-5.5`, `glm-5.1`, `MiniMax-M2.7`, `kimi-k2.5`, `grok-4.20-0309-reasoning`）。部分 ID 包含帶點號的版本號，因為上游 API 期望如此。如果以上未列出某個模型，請執行 `agentproxy models --search <term>` 或存取 `GET /api/models/catalog` 以確認可用性。
 
 </details>
 
@@ -638,35 +638,35 @@ curl -X POST http://localhost:20128/api/provider-models \
 - OpenRouter 和 OpenAI/Anthropic 相容提供者僅透過**可用模型**管理。手動新增、匯入和自動同步都會匯入同一個可用模型清單，因此這些提供者沒有獨立的自訂模型區塊。
 - **自訂模型**區塊專為不提供受管可用模型匯入的提供者而設計。
 
-### 串聯 OmniRoute 對等節點
+### 串聯 AgentProxy 對等節點
 
-另一個 OmniRoute 閘道可以作為**自訂 OpenAI 相容**提供者加入。使用
+另一個 AgentProxy 閘道可以作為**自訂 OpenAI 相容**提供者加入。使用
 對等節點的 `/v1` 基礎網址以及由該對等節點簽發的專用最小權限 API 金鑰。
 
 對於雙向或多跳鍊，請在每個閘道上啟用選擇性迴圈防護：
 
 ```bash
 # gateway-a
-OMNIROUTE_INSTANCE_ID=gateway-a
-OMNIROUTE_PEER_URLS=http://gateway-b:20128/v1
-OMNIROUTE_PEER_MAX_HOPS=4
+AGENTPROXY_INSTANCE_ID=gateway-a
+AGENTPROXY_PEER_URLS=http://gateway-b:20128/v1
+AGENTPROXY_PEER_MAX_HOPS=4
 ```
 
 ```bash
 # gateway-b
-OMNIROUTE_INSTANCE_ID=gateway-b
-OMNIROUTE_PEER_URLS=http://gateway-a:20128/v1
-OMNIROUTE_PEER_MAX_HOPS=4
+AGENTPROXY_INSTANCE_ID=gateway-b
+AGENTPROXY_PEER_URLS=http://gateway-a:20128/v1
+AGENTPROXY_PEER_MAX_HOPS=4
 ```
 
 只有發送到明確允許清單中的對等節點網址的請求，才會收到
-`X-OmniRoute-Peer-Trace` 標頭。閘道在遇到重複的執行個體 ID 或用盡跳數
+`X-AgentProxy-Peer-Trace` 標頭。閘道在遇到重複的執行個體 ID 或用盡跳數
 預算時，會回應 `508 Loop Detected`；一般上游提供者不會收到任何對等節點中繼資料。
 
 對等串聯並非資料庫複寫或主機容錯移轉。每個閘道維護獨立的
 SQLite 狀態、快取、速率計數器和工作階段。請使用健康檢查反向代理或用戶端
 容錯移轉來實現主動/被動或主動/主動的高可用性，且絕不要將一個 SQLite 資料庫
-掛載到多個正在執行的 OmniRoute 執行個體中。
+掛載到多個正在執行的 AgentProxy 執行個體中。
 
 ### 專用提供者路由
 
@@ -717,7 +717,7 @@ curl http://localhost:20128/api/models/catalog
 - 在**控制台 → 端點**中可用，適用於 Docker 和其他自架部署
 - 建立一個暫時的 `https://*.trycloudflare.com` 網址，轉發到您目前的 OpenAI 相容 `/v1` 端點
 - 首次啟用時僅在需要時安裝 `cloudflared`；後續重啟會重複使用相同的受管理二進位檔
-- 快速隧道在 OmniRoute 或容器重啟後不會自動恢復；請在需要時從控制台重新啟用
+- 快速隧道在 AgentProxy 或容器重啟後不會自動恢復；請在需要時從控制台重新啟用
 - 隧道網址是暫時的，每次停止/啟動隧道時都會變更
 - 受管理的快速隧道預設使用 HTTP/2 傳輸，以避免在受限容器中產生大量的 QUIC UDP 緩衝區警告
 - 如果您想覆蓋受管理的傳輸選擇，請設定 `CLOUDFLARED_PROTOCOL=quic` 或 `auto`
@@ -726,15 +726,15 @@ curl http://localhost:20128/api/models/catalog
 
 ### LLM 閘道智慧功能（第 9 階段）
 
-- **語意快取** — 自動快取非串流、temperature=0 的回應（可透過 `X-OmniRoute-No-Cache: true` 繞過）
+- **語意快取** — 自動快取非串流、temperature=0 的回應（可透過 `X-AgentProxy-No-Cache: true` 繞過）
 - **請求冪等性** — 透過 `Idempotency-Key` 或 `X-Request-Id` 標頭在 5 秒內去重複請求
-- **進度追蹤** — 選擇性 SSE `event: progress` 事件，透過 `X-OmniRoute-Progress: true` 標頭啟用
+- **進度追蹤** — 選擇性 SSE `event: progress` 事件，透過 `X-AgentProxy-Progress: true` 標頭啟用
 
 ---
 
 ### 翻譯器測試平台
 
-透過**控制台 → 翻譯器**存取。偵錯並視覺化 OmniRoute 如何在提供者之間轉換 API 請求。
+透過**控制台 → 翻譯器**存取。偵錯並視覺化 AgentProxy 如何在提供者之間轉換 API 請求。
 
 | 模式           | 用途                                                  |
 | -------------- | ----------------------------------------------------- |
@@ -787,7 +787,7 @@ curl http://localhost:20128/api/models/catalog
 X-Session-Id: your-session-key
 ```
 
-OmniRoute 也接受 `x_session_id`，並在 `X-OmniRoute-Session-Id` 中回傳有效的會話金鑰。
+AgentProxy 也接受 `x_session_id`，並在 `X-AgentProxy-Session-Id` 中回傳有效的會話金鑰。
 
 如果您使用 Nginx 並發送底線格式的標頭，請啟用：
 
@@ -823,7 +823,7 @@ underscores_in_headers on;
 
 透過**控制台 → 設定 → 韌性**配置。
 
-OmniRoute 提供五個元件的提供者層級韌性：
+AgentProxy 提供五個元件的提供者層級韌性：
 
 1. **請求佇列與節流** — 系統層級的請求塑形：
    - **每分鐘請求數（RPM）** — 每個帳戶每分鐘的最大請求數
@@ -848,7 +848,7 @@ OmniRoute 提供五個元件的提供者層級韌性：
 
    提供者斷路器的執行時期狀態僅顯示於**控制台 → 健康狀態**。
 
-4. **等待冷卻** — 如果所有候選連線都處於冷卻狀態，OmniRoute 可以等待最早的冷卻結束，並自動重試相同的用戶端請求。
+4. **等待冷卻** — 如果所有候選連線都處於冷卻狀態，AgentProxy 可以等待最早的冷卻結束，並自動重試相同的用戶端請求。
 
 5. **速率限制自動偵測** — 當上游提供者回傳明確的等待視窗時，這些提示會在啟用設定時覆蓋本機連線冷卻。
 
@@ -882,7 +882,7 @@ curl -X POST http://localhost:20128/api/db-backups/import \
 
 **使用情境：**
 
-- 在機器間遷移 OmniRoute
+- 在機器間遷移 AgentProxy
 - 建立外部備份以進行災難復原
 - 在團隊成員之間分享配置（全部匯出 → 分享封存檔）
 
@@ -934,7 +934,7 @@ curl http://localhost:20128/api/usage/budget
 
 ### 音訊轉錄
 
-OmniRoute 透過 OpenAI 相容端點支援音訊轉錄：
+AgentProxy 透過 OpenAI 相容端點支援音訊轉錄：
 
 ```bash
 POST /v1/audio/transcriptions
@@ -1003,7 +1003,7 @@ curl -X POST http://localhost:20128/v1/audio/transcriptions \
 
 當上游提供者要求嚴格的 `max_tokens` / `maxOutputTokens` 限制時，請停用**推理權杖緩衝區**。啟用時，組合路由僅在模型有已知輸出上限時為推理模型增加
 緩衝空間，若安全的緩衝值超過該上限，則保留用戶端權杖限制不變。如果用戶端限制已高於已知上限，
-OmniRoute 會在發送上游請求前將其限制在該上限內。
+AgentProxy 會在發送上游請求前將其限制在該上限內。
 
 ---
 
@@ -1026,7 +1026,7 @@ OmniRoute 會在發送上游請求前將其限制在該上限內。
 
 ## 🤖 自動路由（零配置）
 
-OmniRoute 內建**評分驅動的自動路由器**，會為每次請求在已連線的所有提供者中選取最佳模型 — 無需維護組合。只需使用 `auto/*` 前綴發送請求，OmniRoute 就會即時組裝一個虛擬組合，依據延遲、成本、成功率、上下文適應性、模型對任務的適合度、近期失敗、額度和斷路器狀態對候選者進行評分。
+AgentProxy 內建**評分驅動的自動路由器**，會為每次請求在已連線的所有提供者中選取最佳模型 — 無需維護組合。只需使用 `auto/*` 前綴發送請求，AgentProxy 就會即時組裝一個虛擬組合，依據延遲、成本、成功率、上下文適應性、模型對任務的適合度、近期失敗、額度和斷路器狀態對候選者進行評分。
 
 | 前綴           | 最佳化目標                                                             |
 | -------------- | ---------------------------------------------------------------------- |
@@ -1057,13 +1057,13 @@ curl -X POST http://localhost:20128/v1/chat/completions \
 
 ## 🔌 MCP 與 A2A 整合
 
-OmniRoute 既是 **MCP 伺服器**（模型上下文協定），也是 **A2A 伺服器**（代理間 JSON-RPC 2.0）。任何相容 MCP 的 IDE 或代理主機都可以直接呼叫 OmniRoute 工具 — 無需額外的包裝器。
+AgentProxy 既是 **MCP 伺服器**（模型上下文協定），也是 **A2A 伺服器**（代理間 JSON-RPC 2.0）。任何相容 MCP 的 IDE 或代理主機都可以直接呼叫 AgentProxy 工具 — 無需額外的包裝器。
 
 ### MCP 傳輸方式
 
 - **SSE**：`http://localhost:20128/api/mcp/sse`
 - **可串流 HTTP**：`http://localhost:20128/api/mcp/stream`
-- **stdio**：`omniroute --mcp`（適用於偏好 stdio 的 IDE 外掛程式）
+- **stdio**：`agentproxy --mcp`（適用於偏好 stdio 的 IDE 外掛程式）
 
 ### 連接 Claude Desktop
 
@@ -1072,8 +1072,8 @@ OmniRoute 既是 **MCP 伺服器**（模型上下文協定），也是 **A2A 伺
 ```json
 {
   "mcpServers": {
-    "omniroute": {
-      "command": "omniroute",
+    "agentproxy": {
+      "command": "agentproxy",
       "args": ["--mcp"]
     }
   }
@@ -1092,7 +1092,7 @@ MCP 目前定義 32 個具名範圍。每個 Bearer 金鑰可以限制在特定�
 
 ## 🧠 技能系統
 
-OmniRoute 提供可擴充的**技能框架**（`src/lib/skills/`），讓代理和 A2A 端點可以執行領域特定的常式（例如 `code-review`、`summarize`、`extract-facts`、`web-research`）。
+AgentProxy 提供可擴充的**技能框架**（`src/lib/skills/`），讓代理和 A2A 端點可以執行領域特定的常式（例如 `code-review`、`summarize`、`extract-facts`、`web-research`）。
 
 - **市集 UI** — 從**控制台 → 技能**瀏覽和安裝技能
 - **各金鑰範圍** — 限制哪些 API 金鑰可以呼叫哪些技能
@@ -1104,7 +1104,7 @@ OmniRoute 提供可擴充的**技能框架**（`src/lib/skills/`），讓代理�
 
 ## 💾 記憶系統
 
-OmniRoute 使用混合檢索來持久保存**長期對話記憶**：
+AgentProxy 使用混合檢索來持久保存**長期對話記憶**：
 
 - **SQLite FTS5** 用於跨回合的關鍵字搜尋
 - **Qdrant 向量儲存**（選擇性）用於語意回憶
@@ -1117,11 +1117,11 @@ OmniRoute 使用混合檢索來持久保存**長期對話記憶**：
 
 ## 🔔 Webhooks
 
-訂閱 OmniRoute 事件以進行即時監控和自動化。
+訂閱 AgentProxy 事件以進行即時監控和自動化。
 
 - 在**控制台 → Webhooks** 中建立 webhook，包含目標網址和 HMAC 簽署密鑰
 - 可用事件：`request.completed`, `request.failed`, `provider.unavailable`, `budget.exceeded`, `combo.switched`, `circuit_breaker.opened`, `circuit_breaker.closed`
-- 每個承載都包含 `X-OmniRoute-Signature`（HMAC-SHA256）以供驗證
+- 每個承載都包含 `X-AgentProxy-Signature`（HMAC-SHA256）以供驗證
 - 重試：3 次嘗試，使用指數退避，之後進入死信佇列
 
 完整架構請見 [WEBHOOKS.md](../frameworks/WEBHOOKS.md)。
@@ -1130,11 +1130,11 @@ OmniRoute 使用混合檢索來持久保存**長期對話記憶**：
 
 ## ☁️ 雲端代理
 
-OmniRoute 與雲端編碼代理（**OpenAI Codex Cloud**, **Devin**, **Jules**, **Antigravity**）整合，讓您可以從處理本地路由的同一個控制台分派長時間執行的任務。
+AgentProxy 與雲端編碼代理（**OpenAI Codex Cloud**, **Devin**, **Jules**, **Antigravity**）整合，讓您可以從處理本地路由的同一個控制台分派長時間執行的任務。
 
 - 在**控制台 → 雲端代理**或透過 `POST /api/v1/agents/tasks` 建立任務
 - 追蹤每個任務的狀態、日誌和產出物
-- 自備每個提供者的 API 金鑰 — 憑證絕不會離開 OmniRoute 實例
+- 自備每個提供者的 API 金鑰 — 憑證絕不會離開 AgentProxy 實例
 
 完整參考：[CLOUD_AGENT.md](../frameworks/CLOUD_AGENT.md)。
 
@@ -1142,7 +1142,7 @@ OmniRoute 與雲端編碼代理（**OpenAI Codex Cloud**, **Devin**, **Jules**, 
 
 ## 🛠️ 程式化管理
 
-您可以使用具有 `manage` 範圍的 **Bearer 金鑰**，透過 HTTP 管理所有 OmniRoute 資源（提供者、組合、金鑰、設定）。
+您可以使用具有 `manage` 範圍的 **Bearer 金鑰**，透過 HTTP 管理所有 AgentProxy 資源（提供者、組合、金鑰、設定）。
 
 在**控制台 → API 金鑰 → 新增金鑰 → 範圍：manage** 中產生金鑰，然後：
 
@@ -1175,38 +1175,38 @@ curl -X POST http://localhost:20128/api/keys -H "Authorization: Bearer $OMNIR...
 
 ## 💻 內部 CLI
 
-OmniRoute 內建一個內部 CLI（`omniroute …`），用於設定、診斷和執行時期控制。這**與控制台中的「CLI 工具」頁面不同**，後者用於配置第三方 CLI（Claude Code, Cursor, Codex, Cline, …）使其能夠與 OmniRoute 通訊。
+AgentProxy 內建一個內部 CLI（`agentproxy …`），用於設定、診斷和執行時期控制。這**與控制台中的「CLI 工具」頁面不同**，後者用於配置第三方 CLI（Claude Code, Cursor, Codex, Cline, …）使其能夠與 AgentProxy 通訊。
 
 ```bash
-omniroute setup                    # 互動式精靈（密碼、提供者、組合）
-omniroute setup --non-interactive  # CI 友善模式
-omniroute doctor                   # 健康診斷（資料目錄、資料庫、提供者、連接埠）
-omniroute providers available      # 列出支援的提供者
-omniroute providers list           # 列出已配置的連線
-omniroute providers test <id>      # 即時測試提供者連線
-omniroute combos list              # 列出組合
-omniroute combos switch <name>     # 設定預設組合
-omniroute models                   # 列出可用模型（--json, --search）
-omniroute keys add | list | remove # 從終端機管理 API 金鑰
-omniroute backup                   # 快照配置 + 資料庫
-omniroute restore [<timestamp>]    # 從快照還原
-omniroute health                   # 詳細健康狀態（斷路器、快取、記憶體）
-omniroute quota                    # 提供者額度使用情況
-omniroute mcp status               # MCP 伺服器狀態
-omniroute a2a status               # A2A 伺服器狀態
-omniroute tunnel list|create|stop  # Cloudflare/Tailscale/ngrok 隧道
-omniroute reset-password           # 重設管理員密碼
-omniroute --mcp                    # 透過 stdio 啟動 MCP 伺服器
-omniroute --port 3000              # 在自訂連接埠上啟動伺服器
+agentproxy setup                    # 互動式精靈（密碼、提供者、組合）
+agentproxy setup --non-interactive  # CI 友善模式
+agentproxy doctor                   # 健康診斷（資料目錄、資料庫、提供者、連接埠）
+agentproxy providers available      # 列出支援的提供者
+agentproxy providers list           # 列出已配置的連線
+agentproxy providers test <id>      # 即時測試提供者連線
+agentproxy combos list              # 列出組合
+agentproxy combos switch <name>     # 設定預設組合
+agentproxy models                   # 列出可用模型（--json, --search）
+agentproxy keys add | list | remove # 從終端機管理 API 金鑰
+agentproxy backup                   # 快照配置 + 資料庫
+agentproxy restore [<timestamp>]    # 從快照還原
+agentproxy health                   # 詳細健康狀態（斷路器、快取、記憶體）
+agentproxy quota                    # 提供者額度使用情況
+agentproxy mcp status               # MCP 伺服器狀態
+agentproxy a2a status               # A2A 伺服器狀態
+agentproxy tunnel list|create|stop  # Cloudflare/Tailscale/ngrok 隧道
+agentproxy reset-password           # 重設管理員密碼
+agentproxy --mcp                    # 透過 stdio 啟動 MCP 伺服器
+agentproxy --port 3000              # 在自訂連接埠上啟動伺服器
 ```
 
-提示：將 `omniroute doctor --json` 與您的監控工具搭配使用，可在提供者連線異常時發出警報。
+提示：將 `agentproxy doctor --json` 與您的監控工具搭配使用，可在提供者連線異常時發出警報。
 
 ---
 
 ## 🖥️ 桌面應用程式（Electron）
 
-OmniRoute 也可作為 Windows、macOS 和 Linux 的原生桌面應用程式使用。
+AgentProxy 也可作為 Windows、macOS 和 Linux 的原生桌面應用程式使用。
 
 ### 安裝
 
@@ -1249,7 +1249,7 @@ npm run build:linux    # Linux（.AppImage）
 
 | 變數                  | 預設值  | 說明                            |
 | --------------------- | ------- | ------------------------------- |
-| `OMNIROUTE_PORT`      | `20128` | 伺服器連接埠                    |
-| `OMNIROUTE_MEMORY_MB` | `512`   | Node.js 堆積限制（64–16384 MB） |
+| `AGENTPROXY_PORT`      | `20128` | 伺服器連接埠                    |
+| `AGENTPROXY_MEMORY_MB` | `512`   | Node.js 堆積限制（64–16384 MB） |
 
 📖 完整文件：[`electron/README.md`](../../electron/README.md)

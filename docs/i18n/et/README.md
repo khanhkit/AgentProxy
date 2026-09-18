@@ -6,14 +6,14 @@
 
 <div align="center">
 
-<img src="./docs/screenshots/MainOmniRoute.png" alt="OmniRoute'i juhtpaneel" width="820"/>
+<img src="./docs/screenshots/MainAgentProxy.png" alt="AgentProxy'i juhtpaneel" width="820"/>
 
 <br/>
 <br/>
 
-# 🚀 OmniRoute — tasuta tehisintellekti lüüs
+# 🚀 AgentProxy — tasuta tehisintellekti lüüs
 
-<img src="./docs/diagrams/readme-hero.svg" width="100%" alt="OmniRoute — ära kunagi lõpeta programmeerimist. Iga tehisintellekti tööriist → 355 teenusepakkujat — 150+ tasuta — ühe lõpp-punkti kaudu. Claude Code, Codex, Cursor, Cline, Copilot ja Antigravity TASUTA Claude'i / GPT / Gemini kasutamiseks automaatse ümberlülitusega. RTK + Caveman virnastatud tihendus säästab 15–95% tokeneid (keskmiselt ~89%) — limiidid ei saa kunagi täis. 355 tehisintellekti teenusepakkujat · 150+ tasuta paketti · ~1.51B tasuta tokenit kuus · 19 marsruutimisstrateegiat · alustamine maksab $0."/>
+<img src="./docs/diagrams/readme-hero.svg" width="100%" alt="AgentProxy — ära kunagi lõpeta programmeerimist. Iga tehisintellekti tööriist → 355 teenusepakkujat — 150+ tasuta — ühe lõpp-punkti kaudu. Claude Code, Codex, Cursor, Cline, Copilot ja Antigravity TASUTA Claude'i / GPT / Gemini kasutamiseks automaatse ümberlülitusega. RTK + Caveman virnastatud tihendus säästab 15–95% tokeneid (keskmiselt ~89%) — limiidid ei saa kunagi täis. 355 tehisintellekti teenusepakkujat · 150+ tasuta paketti · ~1.51B tasuta tokenit kuus · 19 marsruutimisstrateegiat · alustamine maksab $0."/>
 
 </div>
 
@@ -23,9 +23,9 @@
 
 </div>
 
-> Tasuta pakettide käsitsi virnastamine on vaevaline — kümned SDK-d, kümned kiiruspiirangud ja puudub ülevaade sellest, kui palju sul tegelikult kasutada on. OmniRoute kataloogib **446 tasuta paketi kirjet 38 korduva kogumivõtme lõikes** ning arvutab tokenite põhinäitaja **20 kogumi põhjal, mille kohta on avaldatud positiivne kuueelarve**, eemaldades jagatud kogumite duplikaadid. Tulemus on alati nähtav juhtpaneelil (`/dashboard/free-tiers`).
+> Tasuta pakettide käsitsi virnastamine on vaevaline — kümned SDK-d, kümned kiiruspiirangud ja puudub ülevaade sellest, kui palju sul tegelikult kasutada on. AgentProxy kataloogib **446 tasuta paketi kirjet 38 korduva kogumivõtme lõikes** ning arvutab tokenite põhinäitaja **20 kogumi põhjal, mille kohta on avaldatud positiivne kuueelarve**, eemaldades jagatud kogumite duplikaadid. Tulemus on alati nähtav juhtpaneelil (`/dashboard/free-tiers`).
 
-<img src="./docs/diagrams/free-tier-budget.svg" width="100%" alt="OmniRoute'i tasuta pakettide eelarvekaart: püsivalt ~1.51B tasuta tokenit kuus, registreerumiskrediitidega esimesel kuul kuni ~2.13B, tuginedes 38 dokumenteeritud korduvale kogumivõtmele, mis hõlmavad ühe lõpp-punkti taga 446 kataloogitud tasuta paketi kirjet. Aus, kogumite duplikaate eemaldav arvutus — iga jagatud kogumit arvestatakse üks kord, sealhulgas 20 korduvat kogumit, mille kohta on avaldatud positiivne kuine tokenieelarve; 13 teenusepakkujat on tingimuste riskikataloogis märgitud vältimiseks, et saaksid ise otsustada. Eelarveriba hõlmab Mistral 1B, LLM7 150M, Nara 150M, Gemini 60M ja väiksemaid kogumeid; esimese kuu registreerumiskrediidid ning püsivalt tasuta tokenipiiranguta teenusepakkujad kuvatakse eraldi, et need põhinäitajat kunagi kunstlikult ei suurendaks. Reaalajas kasutatud/järelejäänud maht lehel /dashboard/free-tiers."/>
+<img src="./docs/diagrams/free-tier-budget.svg" width="100%" alt="AgentProxy'i tasuta pakettide eelarvekaart: püsivalt ~1.51B tasuta tokenit kuus, registreerumiskrediitidega esimesel kuul kuni ~2.13B, tuginedes 38 dokumenteeritud korduvale kogumivõtmele, mis hõlmavad ühe lõpp-punkti taga 446 kataloogitud tasuta paketi kirjet. Aus, kogumite duplikaate eemaldav arvutus — iga jagatud kogumit arvestatakse üks kord, sealhulgas 20 korduvat kogumit, mille kohta on avaldatud positiivne kuine tokenieelarve; 13 teenusepakkujat on tingimuste riskikataloogis märgitud vältimiseks, et saaksid ise otsustada. Eelarveriba hõlmab Mistral 1B, LLM7 150M, Nara 150M, Gemini 60M ja väiksemaid kogumeid; esimese kuu registreerumiskrediidid ning püsivalt tasuta tokenipiiranguta teenusepakkujad kuvatakse eraldi, et need põhinäitajat kunagi kunstlikult ei suurendaks. Reaalajas kasutatud/järelejäänud maht lehel /dashboard/free-tiers."/>
 
 > Reaalajas `/dashboard/free-tiers` lehe animeeritud kokkuvõte. Täielik metoodika (kogumite duplikaatide eemaldamine, krediiditasemed, teenusepakkujate tingimused): **[docs/reference/FREE_TIERS.md](docs/reference/FREE_TIERS.md)**.
 >
@@ -37,14 +37,14 @@
 
 <h3>
 
-⭐ Anna hoidlale täht, kui OMNIROUTE aitas sul raha säästa ja tööd lihtsamaks muuta.
+⭐ Anna hoidlale täht, kui AGENTPROXY aitas sul raha säästa ja tööd lihtsamaks muuta.
 
 </h3>
 
-[![Tähed](https://img.shields.io/github/stars/diegosouzapw/OmniRoute?style=social)](https://github.com/diegosouzapw/OmniRoute)
-<a href="https://trendshift.io/repositories/23589" target="_blank"><img src="https://trendshift.io/api/badge/repositories/23589" alt="diegosouzapw%2FOmniRoute | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
-[![Täheajaloo edetabelikoht](https://api.star-history.com/badge?repo=diegosouzapw/OmniRoute&theme=dark)](https://www.star-history.com/diegosouzapw/omniroute)
-[![olud.ai](https://olud.ai/badge.php?tool=diegosouzapw-omniroute)](https://olud.ai/project/diegosouzapw-omniroute.html)
+[![Tähed](https://img.shields.io/github/stars/khanhkit/AgentProxy?style=social)](https://github.com/khanhkit/AgentProxy)
+<a href="https://trendshift.io/repositories/23589" target="_blank"><img src="https://trendshift.io/api/badge/repositories/23589" alt="diegosouzapw%2FAgentProxy | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
+[![Täheajaloo edetabelikoht](https://api.star-history.com/badge?repo=khanhkit/AgentProxy&theme=dark)](https://www.star-history.com/khanhkit/agentproxy)
+[![olud.ai](https://olud.ai/badge.php?tool=diegosouzapw-agentproxy)](https://olud.ai/project/diegosouzapw-agentproxy.html)
 
 ### 💬 Liitu kogukonnaga
 
@@ -54,12 +54,12 @@
 [![Jälgi kasutajat @diegosouzapw GitHubis](https://img.shields.io/github/followers/diegosouzapw?style=for-the-badge&logo=github&logoColor=white&label=Follow%20on%20GitHub&color=181717)](https://github.com/diegosouzapw)
 
 [![Discord](https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/U47eFqAXCn)
-[![Telegram](https://img.shields.io/badge/Telegram-26A5E4?style=for-the-badge&logo=telegram&logoColor=white)](https://t.me/omnirouteOficial)
+[![Telegram](https://img.shields.io/badge/Telegram-26A5E4?style=for-the-badge&logo=telegram&logoColor=white)](https://github.com/khanhkit/AgentProxy/discussions)
 [![WhatsApp ülemaailmne](https://img.shields.io/badge/WhatsApp_Global-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://chat.whatsapp.com/FvuCbrpZmQ6I85n2vW5QIC?s=cl&p=a&mlu=4)
 [![WhatsApp Brasiilia](https://img.shields.io/badge/WhatsApp_Brasil-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://chat.whatsapp.com/KWgatljAjmbELQory59Oti?s=cl&p=a&mlu=4)
-[![Veebisait](https://img.shields.io/badge/Website-omniroute.online-blue?logo=google-chrome&logoColor=white)](https://omniroute.online)
+[![Veebisait](https://img.shields.io/badge/Website-agentproxy.online-blue?logo=google-chrome&logoColor=white)](https://agentproxy.example.com)
 
-**Küsimused, teenusepakkujate näpunäited, tegevuskava ja tugi → [Discord](https://discord.gg/U47eFqAXCn) · [Telegram](https://t.me/omnirouteOficial) · WhatsApp [🌍 ülemaailmne](https://chat.whatsapp.com/FvuCbrpZmQ6I85n2vW5QIC?s=cl&p=a&mlu=4) / [🇧🇷 Brasiilia](https://chat.whatsapp.com/KWgatljAjmbELQory59Oti?s=cl&p=a&mlu=4) / [portaal](https://portal.sthub.com.br/communities/groups/st-hub/channels/Omniroute-World-8kRjmK)**
+**Küsimused, teenusepakkujate näpunäited, tegevuskava ja tugi → [Discord](https://discord.gg/U47eFqAXCn) · [Telegram](https://github.com/khanhkit/AgentProxy/discussions) · WhatsApp [🌍 ülemaailmne](https://chat.whatsapp.com/FvuCbrpZmQ6I85n2vW5QIC?s=cl&p=a&mlu=4) / [🇧🇷 Brasiilia](https://chat.whatsapp.com/KWgatljAjmbELQory59Oti?s=cl&p=a&mlu=4) / [portaal](https://portal.sthub.com.br/communities/groups/st-hub/channels/AgentProxy-World-8kRjmK)**
 
 <br/>
 
@@ -84,12 +84,12 @@
 
 ## 🧩 Saadaval
 
-[![npm-i versioon](https://img.shields.io/npm/v/omniroute?color=cb3837&logo=npm)](https://www.npmjs.com/package/omniroute)
-![NPM-i igakuised allalaadimised](https://img.shields.io/npm/dm/omniroute?label=npm/month&color=cb3837&logo=npm)
-[![Docker Hub](https://img.shields.io/docker/v/diegosouzapw/omniroute?label=Docker%20Hub&logo=docker&color=2496ED)](https://hub.docker.com/r/diegosouzapw/omniroute)
+[![npm-i versioon](https://img.shields.io/npm/v/agentproxy?color=cb3837&logo=npm)](https://www.npmjs.com/package/agentproxy)
+![NPM-i igakuised allalaadimised](https://img.shields.io/npm/dm/agentproxy?label=npm/month&color=cb3837&logo=npm)
+[![Docker Hub](https://img.shields.io/docker/v/khanhkit/agentproxy?label=Docker%20Hub&logo=docker&color=2496ED)](https://github.com/khanhkit/AgentProxy/pkgs/container/agentproxy)
 [![Litsents: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)
-![Dockeri tõmbamised](https://img.shields.io/docker/pulls/diegosouzapw/omniroute?label=docker%20pulls&logo=docker&color=2496ED)
-![Electroni allalaadimised](https://img.shields.io/github/downloads/diegosouzapw/omniroute/total?style=flat&label=electron%20downloads&logo=electron&color=47848F)
+![Dockeri tõmbamised](https://img.shields.io/docker/pulls/khanhkit/agentproxy?label=docker%20pulls&logo=docker&color=2496ED)
+![Electroni allalaadimised](https://img.shields.io/github/downloads/khanhkit/agentproxy/total?style=flat&label=electron%20downloads&logo=electron&color=47848F)
 
 <table>
   <tr>
@@ -101,8 +101,8 @@
   <tr>
     <td align="right"><b>💡 Õppimine</b></td>
     <td align="center"><a href="#-the-promise">💥 Lubadus</a></td>
-    <td align="center"><a href="#-why-omniroute">🤔 Miks OmniRoute</a></td>
-    <td align="center"><a href="#-what-sets-omniroute-apart">🏆 Mis seda eristab</a></td>
+    <td align="center"><a href="#-why-agentproxy">🤔 Miks AgentProxy</a></td>
+    <td align="center"><a href="#-what-sets-agentproxy-apart">🏆 Mis seda eristab</a></td>
   </tr>
   <tr>
     <td align="right"><b>⚙️ Funktsioonid</b></td>
@@ -113,18 +113,18 @@
   <tr>
     <td align="right"></td>
     <td align="center"><a href="#%EF%B8%8F-save-1595-tokens--automatically">🗜️ Tihendamine</a></td>
-    <td align="center"><a href="#%EF%B8%8F-where-omniroute-runs--anywhere">🖥️ Kus see töötab</a></td>
+    <td align="center"><a href="#%EF%B8%8F-where-agentproxy-runs--anywhere">🖥️ Kus see töötab</a></td>
     <td align="center"><a href="#-private--local-first">🔒 Privaatne</a></td>
   </tr>
   <tr>
     <td align="right"><b>👀 Vaata</b></td>
-    <td align="center"><a href="#-omniroute-in-action">🎬 Töös</a></td>
+    <td align="center"><a href="#-agentproxy-in-action">🎬 Töös</a></td>
     <td align="center"><a href="#-whats-new">✨ Mis on uut</a></td>
     <td align="center"><a href="#-compatible-clis--coding-agents">🤖 Ühilduvad CLI-d</a></td>
   </tr>
   <tr>
     <td align="right"><b>💚 Toetus</b></td>
-    <td align="center"><a href="#-support-omniroute">💚 Toeta / anneta</a></td>
+    <td align="center"><a href="#-support-agentproxy">💚 Toeta / anneta</a></td>
     <td align="center"><a href="#-community--help">💬 Kogukond</a></td>
     <td align="center"><a href="#-sponsors">💖 Sponsorid</a></td>
   </tr>
@@ -198,7 +198,7 @@
 
 </div>
 
-<img src="./docs/diagrams/works-zero-config.svg" width="100%" alt="Töötab kohe pärast installi — null konfiguratsiooni. Kolm sammu: 1. Installi — npm i -g omniroute, server käivitub aadressil localhost:20128. 2. Suuna oma tööriist aadressile http://localhost:20128/v1 — ükskõik milline OpenAI-ühilduv tööriist (Claude Code, Cursor, Cline). 3. See vastab — kutsu mudelit auto kohese vastuse saamiseks, ilma API võtme, registreerumise või seadistuseta. Võtmeta pakkuja OpenCode Free on auto kombosse eelühendatud, nii et värske install vastab kohe. "/>
+<img src="./docs/diagrams/works-zero-config.svg" width="100%" alt="Töötab kohe pärast installi — null konfiguratsiooni. Kolm sammu: 1. Installi — npm i -g agentproxy, server käivitub aadressil localhost:20128. 2. Suuna oma tööriist aadressile http://localhost:20128/v1 — ükskõik milline OpenAI-ühilduv tööriist (Claude Code, Cursor, Cline). 3. See vastab — kutsu mudelit auto kohese vastuse saamiseks, ilma API võtme, registreerumise või seadistuseta. Võtmeta pakkuja OpenCode Free on auto kombosse eelühendatud, nii et värske install vastab kohe. "/>
 
 ```bash
 # Värske install, null volitusi — `auto` juba töötab:
@@ -207,7 +207,7 @@ curl http://localhost:20128/v1/chat/completions \
   -d '{"model":"auto","messages":[{"role":"user","content":"Hello!"}]}'
 ```
 
-<sub>Eelistad kindlat tasuta taustsüsteemi? Kutsu `oc/…` (OpenCode Free) otse. Seejärel liigu `auto` peale ja lase OmniRoute’il valida.</sub>
+<sub>Eelistad kindlat tasuta taustsüsteemi? Kutsu `oc/…` (OpenCode Free) otse. Seejärel liigu `auto` peale ja lase AgentProxy’il valida.</sub>
 
 <sub>📦 Kopeeri-kleebi kiirstardi skriptid **Pythonile, Node.js-ile, PHP-le ja cURL-ile** → [`examples/quickstart/`](examples/quickstart/)</sub>
 
@@ -226,15 +226,15 @@ curl http://localhost:20128/v1/chat/completions \
 
 <div align="center">
 
-# 🤔 Miks OmniRoute?
+# 🤔 Miks AgentProxy?
 
 </div>
 
-<img src="./docs/diagrams/why-pain-fix.svg" width="100%" alt="Miks OmniRoute — lõpeta 10 juhtpaneeli, surnud API võtmete ja üllatusarvete žongleerimine. Kümme igapäevast muret vs lahendused: kasutamata aeguv kvoot → maksimeeri tellimusi; kiiruspiirangud keset koodi → 4-tasemeline automaatne tagavaralülitus (Subscription → API → Cheap → Free); tööriista väljundid põletavad tokeneid → RTK + Caveman kompressioon (15–95%); kallid API-d → kulupõhine suunamine; igal tööriistal oma seadistus → üks lõpp-punkt, üks juhtpaneel; AI blokeeritud → 3-tasemeline proxy + TLS-varjamine; surnud võtmed → 3-kihiline vastupidavus (circuit breaker’id, võtme jahutus, mudeli lukustus); meeskond jagab üht tellimust → võtmebasseinid õiglase jaotuse kvootidega; promptid läbi kellegi pilve → kohalik-esimesena AES-256-GCM krüpteeritud võtmetega; kulude nähtavust pole → reaalajas analüütika (kasutus, kvoot, säästud, p95 latentsus)."/>
+<img src="./docs/diagrams/why-pain-fix.svg" width="100%" alt="Miks AgentProxy — lõpeta 10 juhtpaneeli, surnud API võtmete ja üllatusarvete žongleerimine. Kümme igapäevast muret vs lahendused: kasutamata aeguv kvoot → maksimeeri tellimusi; kiiruspiirangud keset koodi → 4-tasemeline automaatne tagavaralülitus (Subscription → API → Cheap → Free); tööriista väljundid põletavad tokeneid → RTK + Caveman kompressioon (15–95%); kallid API-d → kulupõhine suunamine; igal tööriistal oma seadistus → üks lõpp-punkt, üks juhtpaneel; AI blokeeritud → 3-tasemeline proxy + TLS-varjamine; surnud võtmed → 3-kihiline vastupidavus (circuit breaker’id, võtme jahutus, mudeli lukustus); meeskond jagab üht tellimust → võtmebasseinid õiglase jaotuse kvootidega; promptid läbi kellegi pilve → kohalik-esimesena AES-256-GCM krüpteeritud võtmetega; kulude nähtavust pole → reaalajas analüütika (kasutus, kvoot, säästud, p95 latentsus)."/>
 
 <div align="center">
 
-<img src="./docs/diagrams/tier-cascade.svg" width="100%" alt="OmniRoute’i päringuvoog: sinu IDE või CLI (Claude Code, Cursor, Cline…) kutsub üht lokaalset lõpp-punkti (http://localhost:20128/v1); OmniRoute’i nutikas ruuter (RTK + Caveman kompressioon, 19 suunamisstrateegiat, circuit breaker’id, TLS-varjamine, MCP, A2A, guardrail’id) saab langeda tagasi üle 4 pakkuja taseme, kuni on saadaval sobiv terve sihtmärk — Tase 1 Subscription, Tase 2 API Key, Tase 3 Cheap ja Tase 4 Free."/>
+<img src="./docs/diagrams/tier-cascade.svg" width="100%" alt="AgentProxy’i päringuvoog: sinu IDE või CLI (Claude Code, Cursor, Cline…) kutsub üht lokaalset lõpp-punkti (http://localhost:20128/v1); AgentProxy’i nutikas ruuter (RTK + Caveman kompressioon, 19 suunamisstrateegiat, circuit breaker’id, TLS-varjamine, MCP, A2A, guardrail’id) saab langeda tagasi üle 4 pakkuja taseme, kuni on saadaval sobiv terve sihtmärk — Tase 1 Subscription, Tase 2 API Key, Tase 3 Cheap ja Tase 4 Free."/>
 
 </div>
 
@@ -247,17 +247,17 @@ curl http://localhost:20128/v1/chat/completions \
 </div>
 
 <p align="center">
-  <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798&aff=omniroute">
+  <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798">
     <img src="public/sponsors/kimi-k3-banner.png" width="100%" alt="Kimi K3 — Open Frontier Intelligence · 2.8T parameters · 1M-token context"/>
   </a>
 </p>
 
-> **Soovid liituda avatud lähtekoodi sõbrana?** Need on ettevõtted, kes toetavad avatud lähtekoodi ja aitavad OmniRoute'i liikuma hoida — ja me avaldame avalikult, kuhu iga neilt saadud toke läheb. Võta ühendust: [diegosouza.pw@outlook.com](mailto:diegosouza.pw@outlook.com)
+> **Soovid liituda avatud lähtekoodi sõbrana?** Need on ettevõtted, kes toetavad avatud lähtekoodi ja aitavad AgentProxy'i liikuma hoida — ja me avaldame avalikult, kuhu iga neilt saadud toke läheb. Võta ühendust: [diegosouza.pw@outlook.com](mailto:diegosouza.pw@outlook.com)
 
 <table>
   <tr>
     <td align="center" width="150">
-      <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798&aff=omniroute">
+      <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798">
         <picture>
           <source media="(prefers-color-scheme: dark)" srcset="public/providers/kimi-logomark-dark.svg">
           <img src="public/providers/kimi-logomark-light.svg" width="64" alt="Kimi (Moonshot AI)"/>
@@ -267,35 +267,35 @@ curl http://localhost:20128/v1/chat/completions \
       <img src="https://img.shields.io/badge/Founding_Friend-1783FF?style=flat-square" alt="Founding Open Source Friend"/>
     </td>
     <td>
-      Tänud <b>Kimile (Moonshot AI)</b>, meie esimesele avatud lähtekoodi sõbrale, selle projekti toetamise eest! Kimi on AI-labor, mis on avatud kaaludega K2 ja K3 mudeliperede loojad — <b>Kimi K3</b> pakub 1M-tokenilist kontekstiakent, sisseehitatud nägemisvõimet ja tipptasemel koodikirjutamist murdosa hinnaga suletud mudelitest, ning töötab kohe kastist välja koos Claude Code'i, Codexi ja kõigi teiste koodivahenditega, mida OmniRoute teenindab.
+      Tänud <b>Kimile (Moonshot AI)</b>, meie esimesele avatud lähtekoodi sõbrale, selle projekti toetamise eest! Kimi on AI-labor, mis on avatud kaaludega K2 ja K3 mudeliperede loojad — <b>Kimi K3</b> pakub 1M-tokenilist kontekstiakent, sisseehitatud nägemisvõimet ja tipptasemel koodikirjutamist murdosa hinnaga suletud mudelitest, ning töötab kohe kastist välja koos Claude Code'i, Codexi ja kõigi teiste koodivahenditega, mida AgentProxy teenindab.
       <br/><br/>
-      <b>Mida Kimi toetus võimaldab:</b> Kimi API krediidid toidavad OmniRoute'i AI-valideeritud väljalaskeprotsessi — <i>Kimi K3 toega ühendamise valideerimist</i>, mis vaatab läbi iga pull request'i enne selle avaldamist — lisaks igapäevasele funktsioonide arendusele. Esmaklassiline Kimi tugi on olemas mõlemal teel: otsene <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798&aff=omniroute">Kimi API</a> (<code>kimi-k3</code>) ja <a href="https://www.kimi.com/code?aff=omniroute">Kimi Code koodiplaan</a> (OAuth ja API võti). OmniRoute on ka esimene brasiillik avatud lähtekoodi projekt Kimi toetusprogrammis. <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798&aff=omniroute"><b>Hangi Kimi API võti, millega saad 15% lisakrediiti →</b></a>
+      <b>Mida Kimi toetus võimaldab:</b> Kimi API krediidid toidavad AgentProxy'i AI-valideeritud väljalaskeprotsessi — <i>Kimi K3 toega ühendamise valideerimist</i>, mis vaatab läbi iga pull request'i enne selle avaldamist — lisaks igapäevasele funktsioonide arendusele. Esmaklassiline Kimi tugi on olemas mõlemal teel: otsene <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798">Kimi API</a> (<code>kimi-k3</code>) ja <a href="https://www.kimi.com/code">Kimi Code koodiplaan</a> (OAuth ja API võti). AgentProxy on ka esimene brasiillik avatud lähtekoodi projekt Kimi toetusprogrammis. <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798"><b>Hangi Kimi API võti, millega saad 15% lisakrediiti →</b></a>
     </td>
   </tr>
   <tr>
     <td align="center" width="150">
-      <a href="https://cheaperinference.com/?utm_source=omniroute">
+      <a href="https://cheaperinference.com/">
         <img src="./public/providers/cli-generic.svg" width="64" alt="Cheaper Inference"/>
       </a>
       <br/><b>Cheaper Inference</b><br/><sub>cheaperinference.com</sub><br/><br/>
       <img src="https://img.shields.io/badge/Open_Source_Friend-31f889?style=flat-square&labelColor=04170d" alt="Open Source Friend"/>
     </td>
     <td>
-      Tänud <b>Cheaper Inference'ile</b>, OmniRoute'i avatud lähtekoodi sõbrale, selle projekti toetamise eest! Cheaper Inference on hinna järgi järjestatud vahendussüsteem, mis vahendab 42 tipptasemel mudelit — Claude, GPT-5.x, Gemini, Kimi K3, GLM, DeepSeek, Grok ja MiniMax — ühe OpenAI-ga ühilduva otspunkti tagant, suunates iga päringu odavaimale sobivale pakkujale, ilma et hind ületaks kunagi mudeli looja avaldatud hinnakirja.
+      Tänud <b>Cheaper Inference'ile</b>, AgentProxy'i avatud lähtekoodi sõbrale, selle projekti toetamise eest! Cheaper Inference on hinna järgi järjestatud vahendussüsteem, mis vahendab 42 tipptasemel mudelit — Claude, GPT-5.x, Gemini, Kimi K3, GLM, DeepSeek, Grok ja MiniMax — ühe OpenAI-ga ühilduva otspunkti tagant, suunates iga päringu odavaimale sobivale pakkujale, ilma et hind ületaks kunagi mudeli looja avaldatud hinnakirja.
       <br/><br/>
-      <b>Esmaklassiline tugi OmniRoute'is:</b> Chat Completions, natiivne <code>/v1/responses</code> otspunkt, nägemine, tööriistade kutsumine ja 3 pildimudelit (<code>grok-imagine</code>, <code>nano-banana-pro</code>, <code>nano-banana-2</code>, kättesaadavad kui <code>cheaperinference/&lt;model&gt;</code>). <a href="https://cheaperinference.com/?utm_source=omniroute"><b>Hangi API võti →</b></a>
+      <b>Esmaklassiline tugi AgentProxy'is:</b> Chat Completions, natiivne <code>/v1/responses</code> otspunkt, nägemine, tööriistade kutsumine ja 3 pildimudelit (<code>grok-imagine</code>, <code>nano-banana-pro</code>, <code>nano-banana-2</code>, kättesaadavad kui <code>cheaperinference/&lt;model&gt;</code>). <a href="https://cheaperinference.com/"><b>Hangi API võti →</b></a>
     </td>
   </tr>
 </table>
 
-<sub>Lingid tähisega <code>aff=omniroute</code> on partnerlingid. Need rahastavad projekti, ilma et see sulle lisakulu tooks.</sub>
+<sub>Lingid tähisega <code>aff=agentproxy</code> on partnerlingid. Need rahastavad projekti, ilma et see sulle lisakulu tooks.</sub>
 
 <br/>
 
 <details open>
 <summary><sub><b>🎟️ Partnerprogrammi soodustused</b> — pakkujate tasuta registreerimiskupongid, keda me ei sponsoreeri (klõpsa avamiseks)</sub></summary>
 
-<sub><i>See jaotis on mõeldud ainult soovitus-/kupongikoodidele. Sponsoreeritud partnerlused on toodud eespool jaotises <b>🤝 Meie avatud lähtekoodi sõprade toel</b>. OmniRoute'il ei ole sponsorlust ega partnerlust siin loetletud pakkujatega — need on avalikud kupongid, mida igaüks saab kasutada.</i></sub>
+<sub><i>See jaotis on mõeldud ainult soovitus-/kupongikoodidele. Sponsoreeritud partnerlused on toodud eespool jaotises <b>🤝 Meie avatud lähtekoodi sõprade toel</b>. AgentProxy'il ei ole sponsorlust ega partnerlust siin loetletud pakkujatega — need on avalikud kupongid, mida igaüks saab kasutada.</i></sub>
 
 <table>
   <tr>
@@ -306,14 +306,14 @@ curl http://localhost:20128/v1/chat/completions \
       <br/><sub><b>AgentRouter</b></sub><br/><sub>agentrouter.org</sub>
     </td>
     <td>
-      <sub><b><a href="https://agentrouter.org/register?aff=70LM">AgentRouter</a></b> — partnerregistreerimine · <b>$100 tasuta krediiti</b> registreerumisel (tasuta server, arvesta suurema latentsusega — sobib parimini testimiseks, mitte tootmiseks). Esmaklassiline tugi OmniRoute'is alates versioonist <b>v3.8.50</b>: Chat Completions, Anthropicuga ühilduv edastusvorming ja OpenAI-ga ühilduv tee. Saadaval mudelite hulgas on <code>claude-opus-4-8</code>, <code>claude-opus-5</code>, <code>gpt-5.6-sol</code> ja teised. <b><a href="https://agentrouter.org/register?aff=70LM">Hangi oma $100 →</a></b></sub>
+      <sub><b><a href="https://agentrouter.org/register?aff=70LM">AgentRouter</a></b> — partnerregistreerimine · <b>$100 tasuta krediiti</b> registreerumisel (tasuta server, arvesta suurema latentsusega — sobib parimini testimiseks, mitte tootmiseks). Esmaklassiline tugi AgentProxy'is alates versioonist <b>v3.8.50</b>: Chat Completions, Anthropicuga ühilduv edastusvorming ja OpenAI-ga ühilduv tee. Saadaval mudelite hulgas on <code>claude-opus-4-8</code>, <code>claude-opus-5</code>, <code>gpt-5.6-sol</code> ja teised. <b><a href="https://agentrouter.org/register?aff=70LM">Hangi oma $100 →</a></b></sub>
       <br/><br/>
-      <sub>⚠️ <i>Partnerlink — OmniRoute'il ei ole sponsorlust ega partnerlust selle pakkujaga.</i></sub>
+      <sub>⚠️ <i>Partnerlink — AgentProxy'il ei ole sponsorlust ega partnerlust selle pakkujaga.</i></sub>
     </td>
   </tr>
 </table>
 
-<sub>Tead veel pakkujat, kellel on helde tasuta registreerimiskupong, mis oleks OmniRoute'i kasutajatele kasulik? Ava probleem (issue) ja me lisame selle siia.</sub>
+<sub>Tead veel pakkujat, kellel on helde tasuta registreerimiskupong, mis oleks AgentProxy'i kasutajatele kasulik? Ava probleem (issue) ja me lisame selle siia.</sub>
 
 </details>
 
@@ -327,11 +327,11 @@ curl http://localhost:20128/v1/chat/completions \
 
 <img src="./docs/diagrams/strategies-grid.svg" width="100%" alt="All 19 combo routing strategies animated — one tile per strategy: priority, fill-first, weighted, round-robin, p2c, least-used, random, strict-random, cost-optimized, headroom, reset-window, reset-aware, context-relay, context-optimized, cache-optimized, lkgp, auto, fusion, pipeline. See the table above for what each one does."/>
 
-> **Combo** on mudelite ahel, mille vahel OmniRoute suunab liiklust **automaatselt**. Kui kvoot saab otsa, teenusepakkuja tõrgub või kulud tõusevad hüppeliselt, saab combo liikuda järgmise sobiva ja töökorras mudeli juurde. 🛡️
+> **Combo** on mudelite ahel, mille vahel AgentProxy suunab liiklust **automaatselt**. Kui kvoot saab otsa, teenusepakkuja tõrgub või kulud tõusevad hüppeliselt, saab combo liikuda järgmise sobiva ja töökorras mudeli juurde. 🛡️
 
 ### ⚡ Nullkonfiguratsiooniga — kasuta lihtsalt `auto`
 
-Combo't ei pea looma. Sea mudeliks `auto` (või selle variant) ja OmniRoute loob sinu ühendatud teenusepakkujatest virtuaalse combo, mida hinnatakse jooksvalt:
+Combo't ei pea looma. Sea mudeliks `auto` (või selle variant) ja AgentProxy loob sinu ühendatud teenusepakkujatest virtuaalse combo, mida hinnatakse jooksvalt:
 
 <table>
   <tr><th align="left">Mudeli ID</th><th align="left">Mille jaoks see on optimeeritud</th></tr>
@@ -460,7 +460,7 @@ Kõik **19** strateegiat — segunda ja kombineeri iga combo etapi kaupa:
 
 ### 🧱 Vastupidavus on sisse ehitatud (3 sõltumatut kihti)
 
-<img src="./docs/diagrams/resilience-layers.svg" width="100%" alt="OmniRoute resilience — 3 independent self-healing layers, the right layer for the right failure. Layer 1 provider circuit breaker (whole provider): trips only on 408/5xx, thresholds OAuth 8× / API-key 12× / local 2×, resets 60s/30s/15s into a HALF-OPEN probe, lazy recovery; while OPEN the combo reroutes to the next provider. Layer 2 connection cooldown (one key/account): base 5s OAuth / 3s API-key, exponential ×2 backoff with anti-thundering-herd guard, 429 honors Retry-After, success clears all error state; one cooling key is skipped while sibling keys keep serving. Layer 3 model lockout (one model): per-model 429, local 404 or mode denials lock just that model — never the whole connection. Terminal states (banned, expired, credits exhausted) are for the operator, not cooldowns."/>
+<img src="./docs/diagrams/resilience-layers.svg" width="100%" alt="AgentProxy resilience — 3 independent self-healing layers, the right layer for the right failure. Layer 1 provider circuit breaker (whole provider): trips only on 408/5xx, thresholds OAuth 8× / API-key 12× / local 2×, resets 60s/30s/15s into a HALF-OPEN probe, lazy recovery; while OPEN the combo reroutes to the next provider. Layer 2 connection cooldown (one key/account): base 5s OAuth / 3s API-key, exponential ×2 backoff with anti-thundering-herd guard, 429 honors Retry-After, success clears all error state; one cooling key is skipped while sibling keys keep serving. Layer 3 model lockout (one model): per-model 429, local 404 or mode denials lock just that model — never the whole connection. Terminal states (banned, expired, credits exhausted) are for the operator, not cooldowns."/>
 
 <sub>📖 [Auto-Combo mootor](docs/routing/AUTO-COMBO.md) · [Vastupidavuse juhend](docs/architecture/RESILIENCE_GUIDE.md)</sub>
 
@@ -468,22 +468,22 @@ Kõik **19** strateegiat — segunda ja kombineeri iga combo etapi kaupa:
 
 <div align="center">
 
-## 🏆 Mis teeb OmniRoute'i eriliseks
+## 🏆 Mis teeb AgentProxy'i eriliseks
 
 </div>
 
-<img src="./docs/diagrams/comparison-table.svg" width="100%" alt="Mis teeb OmniRoute'i eriliseks — kuupäevastatud funktsioonide ülevaade vs 9router, OpenRouter, CLIProxyAPI ja LiteLLM 13 võimekuse lõikes. OmniRoute: 355 pakkujat, 150+ tasuta liiklust sisseehitatult, 19 ruutimisstrateegiat, 12-mootoriline tokenite kokkusurumine, sisseehitatud MCP-server 110 tööriistaga, A2A agendiprotokoll, püsimälu, kaitsepiirangud (guardrails), pilveagendid, TLS-jäljendi varjamine, Desktop/Termux/PWA ja 42 i18n kasutajaliidese keelt. OmniRoute on MIT-litsentsi all ja iseseisvalt majutatav. Konkurentide võimekused ja arvud võivad muutuda; vaata seotud metoodikat."/>
+<img src="./docs/diagrams/comparison-table.svg" width="100%" alt="Mis teeb AgentProxy'i eriliseks — kuupäevastatud funktsioonide ülevaade vs 9router, OpenRouter, CLIProxyAPI ja LiteLLM 13 võimekuse lõikes. AgentProxy: 355 pakkujat, 150+ tasuta liiklust sisseehitatult, 19 ruutimisstrateegiat, 12-mootoriline tokenite kokkusurumine, sisseehitatud MCP-server 110 tööriistaga, A2A agendiprotokoll, püsimälu, kaitsepiirangud (guardrails), pilveagendid, TLS-jäljendi varjamine, Desktop/Termux/PWA ja 42 i18n kasutajaliidese keelt. AgentProxy on MIT-litsentsi all ja iseseisvalt majutatav. Konkurentide võimekused ja arvud võivad muutuda; vaata seotud metoodikat."/>
 
-<sub>📊 Täielik metoodika ja funktsioonide detailne võrdlus vs 9router, OpenRouter, CLIProxyAPI ja LiteLLM → [`docs/comparison/OMNIROUTE_VS_ALTERNATIVES.md`](docs/comparison/OMNIROUTE_VS_ALTERNATIVES.md)</sub>
+<sub>📊 Täielik metoodika ja funktsioonide detailne võrdlus vs 9router, OpenRouter, CLIProxyAPI ja LiteLLM → [`docs/comparison/AGENTPROXY_VS_ALTERNATIVES.md`](docs/comparison/AGENTPROXY_VS_ALTERNATIVES.md)</sub>
 
 <br/>
 
-## 💚 Toeta OmniRoute'i
+## 💚 Toeta AgentProxy'i
 
-OmniRoute on MIT-litsentsi all ja hooldatakse avatult. Kui see säästab teie aega või raha, siis siin on võimalused, kuidas hoida projekt iseseisvana — valige see, mis teile sobib. Sponsorlus ei mõjuta kunagi ruutimise prioriteeti; see ostab nähtavust, mitte paremusjärjestust.
+AgentProxy on MIT-litsentsi all ja hooldatakse avatult. Kui see säästab teie aega või raha, siis siin on võimalused, kuidas hoida projekt iseseisvana — valige see, mis teile sobib. Sponsorlus ei mõjuta kunagi ruutimise prioriteeti; see ostab nähtavust, mitte paremusjärjestust.
 
 <table>
-  <tr><td nowrap>⭐ <b>Andke repole täht</b></td><td>Tasuta — aitab tegelikult nähtavust suurendada</td><td><a href="https://github.com/diegosouzapw/OmniRoute">Andke OmniRoute'ile täht</a></td></tr>
+  <tr><td nowrap>⭐ <b>Andke repole täht</b></td><td>Tasuta — aitab tegelikult nähtavust suurendada</td><td><a href="https://github.com/khanhkit/AgentProxy">Andke AgentProxy'ile täht</a></td></tr>
   <tr><td nowrap>🐙 <b>GitHub Sponsors</b></td><td>Ühekordne või igakuine · null platvormitasu</td><td><a href="https://github.com/sponsors/diegosouzapw">github.com/sponsors/diegosouzapw</a></td></tr>
   <tr><td nowrap>☕ <b>Ko-fi</b></td><td>Kiire ühekordne annetus, annetaja ei pea registreeruma</td><td><a href="https://ko-fi.com/diegosouzapw">ko-fi.com/diegosouzapw</a></td></tr>
   <tr><td nowrap>🧋 <b>Buy Me a Coffee</b></td><td>Väike, mitteformaalne žest</td><td><a href="https://www.buymeacoffee.com/diegosouzapw">buymeacoffee.com/diegosouzapw</a></td></tr>
@@ -494,14 +494,14 @@ OmniRoute on MIT-litsentsi all ja hooldatakse avatult. Kui see säästab teie ae
 
 **🇧🇷 PIX** — koheselt, tasuta (Brasiilia)
 
-<img src="docs/assets/pix-qr.png" width="140" align="right" alt="OmniRoute PIX QR-kood"/>
+<img src="docs/assets/pix-qr.png" width="140" align="right" alt="AgentProxy PIX QR-kood"/>
 
 Võti (juhuslik): `5d865059-bc44-483a-962d-43ceb80126eb`
 
 Pix copia-e-cola:
 
 ```
-00020101021126580014br.gov.bcb.pix01365d865059-bc44-483a-962d-43ceb80126eb5204000053039865802BR5922OMNIROUTE CONTRIBUICAO6006BRASIL62070503***630475DD
+00020101021126580014br.gov.bcb.pix01365d865059-bc44-483a-962d-43ceb80126eb5204000053039865802BR5922AGENTPROXY CONTRIBUICAO6006BRASIL62070503***630475DD
 ```
 
 <br clear="right"/>
@@ -520,19 +520,19 @@ Pix copia-e-cola:
 
 </details>
 
-🐛 Leidsid vea või on tagasisidet? Avage [arutelu (Discussion)](https://github.com/diegosouzapw/OmniRoute/discussions).
+🐛 Leidsid vea või on tagasisidet? Avage [arutelu (Discussion)](https://github.com/khanhkit/AgentProxy/discussions).
 
 <br/>
 
 <p><strong>Arendaja märkused:</strong> Projekt võib npm install/postinstall käigus genereerida kohaliku <code>.env</code> faili arendaja mugavuse jaoks. See fail on tahtlikult ignoreeritud <code>.gitignore</code> kaudu (vaata <code>.gitignore</code>) ja seda ei tohi kunagi commit'ida — kui see kogemata commit'itakse, tuleb kõik avalikustatud saladused rotate'ida ja fail ajaloost eemaldada. Vaata <a href="docs/DEVELOPER-ENVIRONMENT.md">docs/DEVELOPER-ENVIRONMENT.md</a> juhiseid kohalike keskkonnafailide ja saladuste haldamiseks.</p>
 
-## 📡 OmniRoute Radar
+## 📡 AgentProxy Radar
 
-Peamine tasuta paketi pealkirjanumber on jätkuvalt **~1,51 miljardit tokenit kuus**, mis pärineb dokumenteeritud, poolide kaupa dubleerimisest puhastatud kataloogist ülal. Ajutised tootja registreerimiskrediidid võivad esimesel kuul seda eraldi tõsta kuni **~2,13 miljardini**. Radar on valikuline, allkirjastatud kataloogi ülekate neile, kes soovivad OmniRoute väljalaskete vahel värskemat tasuta mudelite kättesaadavust; kogukonna kataloog ja kõik olemasolevad tasuta funktsioonid jäävad tasuta.
+Peamine tasuta paketi pealkirjanumber on jätkuvalt **~1,51 miljardit tokenit kuus**, mis pärineb dokumenteeritud, poolide kaupa dubleerimisest puhastatud kataloogist ülal. Ajutised tootja registreerimiskrediidid võivad esimesel kuul seda eraldi tõsta kuni **~2,13 miljardini**. Radar on valikuline, allkirjastatud kataloogi ülekate neile, kes soovivad AgentProxy väljalaskete vahel värskemat tasuta mudelite kättesaadavust; kogukonna kataloog ja kõik olemasolevad tasuta funktsioonid jäävad tasuta.
 
 Toetajad saavad ligipääsu reaalajas kataloogile ja täiendavatele tootjapõhistele võimalustele. Selle eraldi, muutuv ülempiir on **maksimaalselt umbes 3 miljardit tokenit kuus**, sõltuvalt tootjate saadavusest. See ülempiir ei ole garantii: tootjad võivad igal ajal muuta kvoote, õigustatust, mudeleid või regioone.
 
-Radar on vabatahtlik ja kasutab ainult GET-päringuid. OmniRoute klient ei laadi üles päringuid, liiklust, tootja seadistust, kasutustelemeetriat ega kohalikku teavituste-suletud olekut. Loe õigustatuse ja praeguse kataloogi kohta lähemalt aadressil **[radar.omniroute.online/planos](https://radar.omniroute.online/planos)**.
+Radar on vabatahtlik ja kasutab ainult GET-päringuid. AgentProxy klient ei laadi üles päringuid, liiklust, tootja seadistust, kasutustelemeetriat ega kohalikku teavituste-suletud olekut. Loe õigustatuse ja praeguse kataloogi kohta lähemalt aadressil **[radar.agentproxy.online/planos](https://radar.agentproxy.example.com/planos)**.
 
 <br/>
 
@@ -550,19 +550,19 @@ Radar on vabatahtlik ja kasutab ainult GET-päringuid. OmniRoute klient ei laadi
 - **🗜️ Tihendamise tugevdamine** — vaikimisi sisselülitatud paisumiskaitse, Caveman'i paketid DE / FR / JA + hiina keele (wényán) jaoks, RTK filtrid Gradle'i ja .NET-i jaoks. → [Tihendamine](docs/compression/COMPRESSION_ENGINES.md)
 - **💸 Aus fikseeritud hinnaga maksumus** — tellimuse / koodimisplaani tootjad näitavad kuluanalüütikas **0 $**; eelarve, kvoot ja ruutimine jätkavad hindamist. → [API viitedokumentatsioon](docs/reference/API_REFERENCE.md)
 - **⚖️ Kvoodijaotuse ruutimine** — ühiskonto kvoodi õiglane jagamine kogutud võtmete vahel, töökonserveeriv, nii et jõude olevad tükid laenatakse edasi. → [Vastupidavuse juhend](docs/architecture/RESILIENCE_GUIDE.md)
-- **🤖 Ühe käsuga CLI/agendi seadistus** — 13 registreeritud `setup-*` käsku; `omniroute run` käivitab 7 CLI-d (Claude Code, Codex, Aider, Goose, OpenCode, Qwen Code, Gemini CLI); `omniroute configure` toetab 10 sihtmärki interaktiivse tootja- ja mudelivalija ning kontekstipõhiste lemmikutega. → [CLI integratsioonid](docs/guides/CLI-INTEGRATIONS.md)
-- **🛰️ Kaugrežiim** — juhi kaugjuhtimisega OmniRoute't piiratud õigustega tokenitega (`connect` / `contexts` / `tokens`) + `antigravity` OAuth abivahend VPS-i paigaldustele. → [Kaugrežiim](docs/guides/REMOTE-MODE.md)
+- **🤖 Ühe käsuga CLI/agendi seadistus** — 13 registreeritud `setup-*` käsku; `agentproxy run` käivitab 7 CLI-d (Claude Code, Codex, Aider, Goose, OpenCode, Qwen Code, Gemini CLI); `agentproxy configure` toetab 10 sihtmärki interaktiivse tootja- ja mudelivalija ning kontekstipõhiste lemmikutega. → [CLI integratsioonid](docs/guides/CLI-INTEGRATIONS.md)
+- **🛰️ Kaugrežiim** — juhi kaugjuhtimisega AgentProxy't piiratud õigustega tokenitega (`connect` / `contexts` / `tokens`) + `antigravity` OAuth abivahend VPS-i paigaldustele. → [Kaugrežiim](docs/guides/REMOTE-MODE.md)
 - **🧭 Nutikam automaatne ruutimine** — `auto/<category>:<tier>` kombinatsioonid, **Fusion** (mudelipaneel + kohtunik), ülesandeteadlik ruutimine, päringupõhised mudeli / režiimi / USD-eelarve ülekirjutused. → [Auto-Combo](docs/routing/AUTO-COMBO.md)
 - **🗜️ Ühendatavad tihendusmoodulid** — 12 kombineeritavat mootorit + tihendusstuudioid: LLMLingua-2, kaheastmeline Ultra, omniglyph, sammupõhine täpsuskontroll, GCF v3.2, lohista-ümberjärjestamise redaktor. → [Tihendamine](docs/compression/COMPRESSION_ENGINES.md)
 - **🕵️ Läbipaistev MITM-dekrüpteerimine (TPROXY)** — jäädvustab CLI-d, mis ignoreerivad puhverserveri keskkonnamuutujaid, koos SNI-põhise CA-ga ja usaldushoidla installeerijaga. → [MITM/TPROXY](docs/security/MITM-TPROXY-DECRYPT.md)
-- **💸 Kuludelemeetria kõikjal** — `X-OmniRoute-*` kulu/kasutuse päised igal lõpp-punktil, vahemälu-HIT-i säästupäis, võtmepõhised USD-kulude kvoodid. → [API viitedokumentatsioon](docs/reference/API_REFERENCE.md)
-- **🧠 Sinu kontrolli all mälu** — vaikimisi väljas, valikuline int8 vektorkvantimine + tüübipõhine vähenemine, päringupõhine `x-omniroute-no-memory`. → [Mälu](docs/frameworks/MEMORY.md)
+- **💸 Kuludelemeetria kõikjal** — `X-AgentProxy-*` kulu/kasutuse päised igal lõpp-punktil, vahemälu-HIT-i säästupäis, võtmepõhised USD-kulude kvoodid. → [API viitedokumentatsioon](docs/reference/API_REFERENCE.md)
+- **🧠 Sinu kontrolli all mälu** — vaikimisi väljas, valikuline int8 vektorkvantimine + tüübipõhine vähenemine, päringupõhine `x-agentproxy-no-memory`. → [Mälu](docs/frameworks/MEMORY.md)
 - **🛡️ Turvalisus** — süstesõna-süstimise kaitse igal LLM-marsruudil (red-team komplekt), valikuline mandaadi-varjamise kaitsemeede (peidab lekkinud API-võtmed/saladused mõlemas suunas), tasuta DuckDuckGo viimase abinõu veebiotsing ja valikuline OIDC sisselogimislävi armatuurlauale (parooliga sisselogimine on alati saadaval). → [Kaitsemeetmed](docs/security/GUARDRAILS.md)
 - **🖼️ Uued lõpp-punktid** — `/v1/ocr` (Mistral OCR) ja `/v1/audio/translations` (Whisper-stiilis) täiendavad meediapinda. → [API viitedokumentatsioon](docs/reference/API_REFERENCE.md)
 - **🎨 Pildi/video/audio genereerimine** — üks API meedia jaoks: xAI Grok Imagine ja Novita AI video, ComfyUI, Magnific, Adobe Firefly, Segmind ja kõnetootjad nagu ElevenLabs. → [API viitedokumentatsioon](docs/reference/API_REFERENCE.md)
 - **🌍 Juurutamine ja käitamine** — pöördpuhverserveri `basePath`, brauseri keele automaatne tuvastamine, võtmepõhine seadmejälgimine, juurõigusteta MITM-usaldus, zh-TW lokaliseerimine. → [Keskkond](docs/reference/ENVIRONMENT.md)
 - **🤝 Rohkem tootjaid ja agente** — pilveagendid (Codex Cloud, Cursor, Devin, Jules), Grok Build (xAI) brauseri- ja OAuth-sisselogimisega, Ollama esmaklassilise kaardiga, Claude Opus 5 ja Sonnet 5, Kimi ametlik partnerlus (Code/Web/Moonshot), Zed, Requesty, SenseNova, Yuanbao, Agnes AI… ning uuendatud **352 tootjaga kataloog**. → [Tootjad](docs/reference/PROVIDER_REFERENCE.md)
-- **📡 Ruutimise läbipaistvus** — igas vastuses on `X-OmniRoute-Decision` päis, mis nimetab strateegia/tootja/latentsuse, mis päringu teenindas; uus `cache-optimized` kombinatsioonistrateegia + Auto-Combo `cacheAffinity` tegur suunavad kordunud päringud tagasi ühendusele, mille käes on vahemällu salvestatud eesliide; ning kirjutuskaitstud `/v1/auto-combo/{channel}/candidates` lõpp-punkt näitab `auto/*` kanali reaalajas kandidaatide kogumit. → [Auto-Combo](docs/routing/AUTO-COMBO.md)
+- **📡 Ruutimise läbipaistvus** — igas vastuses on `X-AgentProxy-Decision` päis, mis nimetab strateegia/tootja/latentsuse, mis päringu teenindas; uus `cache-optimized` kombinatsioonistrateegia + Auto-Combo `cacheAffinity` tegur suunavad kordunud päringud tagasi ühendusele, mille käes on vahemällu salvestatud eesliide; ning kirjutuskaitstud `/v1/auto-combo/{channel}/candidates` lõpp-punkt näitab `auto/*` kanali reaalajas kandidaatide kogumit. → [Auto-Combo](docs/routing/AUTO-COMBO.md)
 - **⚡ Kohalik jõudlus ja infrastruktuur** — ühe klõpsuga kohalik Redis, Cloudflare Workers / Deno Deploy edastuse juurutajad, Bifrost ja Mux hallatud manustatud teenustena. → [Manustatud teenused](docs/frameworks/EMBEDDED-SERVICES.md)
 - **🧩 Karbis on veel** — pluginate raamistik + turuplats, Omni/Agent/GitHub oskuste raamistikud, Obsidian vault'i integratsioon (22 MCP tööriista), OpenAI-ga ühilduvad Batch ja Files API-d, semantiline vastuste vahemälu, gamifikatsioon edetabelitega, ACP agentide avastamine (15 sisseehitatud agenti), ajastatud logide eksport BigQuery-sse, `auto/chaos` veasüstimine, Telegrami boti sild, rakendusesisene versioonihaldur ja LMArena-ELO tasuta tootjate edetabelid. → [Dokumentatsioon](docs/README.md)
 
@@ -615,29 +615,29 @@ Radar on vabatahtlik ja kasutab ainult GET-päringuid. OmniRoute klient ei laadi
 <b>＋ töötab ka koos</b> · Kiro · Command Code · Antigravity · Windsurf · AMP · <b>iga OpenAI-ühilduva tööriistaga</b>
 </div>
 
-<sub>📖 Iga tööriista jaoks eraldi seadistusjuhis kõigi 36 tööriista kohta (26 CLI koodiagenti + 10 CLI agenti) → [`docs/reference/CLI-TOOLS.md`](docs/reference/CLI-TOOLS.md) · 🧩 OpenCode plugin → [`@omniroute/opencode-provider`](https://www.npmjs.com/package/@omniroute/opencode-provider)</sub>
+<sub>📖 Iga tööriista jaoks eraldi seadistusjuhis kõigi 36 tööriista kohta (26 CLI koodiagenti + 10 CLI agenti) → [`docs/reference/CLI-TOOLS.md`](docs/reference/CLI-TOOLS.md) · 🧩 OpenCode plugin → [`@agentproxy/opencode-provider`](https://www.npmjs.com/package/@agentproxy/opencode-provider)</sub>
 
 </div>
 
 <br/>
 
-**Käivita iga toetatud CLI OmniRoute kaudu ühe käsuga** — konfiguratsioonifaile ei kirjutata,
+**Käivita iga toetatud CLI AgentProxy kaudu ühe käsuga** — konfiguratsioonifaile ei kirjutata,
 volitused süstitakse protsessi kaupa, Qwen/Gemini saavad ühekordse eraldatud kodukataloogi:
 
 ```bash
-omniroute run claude   --model openai/gpt-5.4          # Claude Code
-omniroute run codex    --model glm/glm-5.2             # OpenAI Codex CLI
-omniroute run aider    --model glm/glm-5.2 -- --message "reply OK"
-omniroute run goose    --model glm/glm-5.2
-omniroute run opencode --model glm/glm-5.2 -- run "reply OK"
-omniroute run qwen     --model glm/glm-5.2 -- -p "reply OK"
-omniroute run gemini   --model glm/glm-5.2 -- --skip-trust -p "reply OK"
+agentproxy run claude   --model openai/gpt-5.4          # Claude Code
+agentproxy run codex    --model glm/glm-5.2             # OpenAI Codex CLI
+agentproxy run aider    --model glm/glm-5.2 -- --message "reply OK"
+agentproxy run goose    --model glm/glm-5.2
+agentproxy run opencode --model glm/glm-5.2 -- run "reply OK"
+agentproxy run qwen     --model glm/glm-5.2 -- -p "reply OK"
+agentproxy run gemini   --model glm/glm-5.2 -- --skip-trust -p "reply OK"
 
 # Või vali provider+mudel interaktiivselt ja kirjuta tööriista oma konfiguratsioon:
-omniroute configure codex          # samuti: claude opencode qwen aider goose gemini cline continue kilo
+agentproxy configure codex          # samuti: claude opencode qwen aider goose gemini cline continue kilo
 ```
 
-Kõik käsud austavad aktiivset kaugkontekst (`omniroute connect <host>`), `--dry-run`
+Kõik käsud austavad aktiivset kaugkontekst (`agentproxy connect <host>`), `--dry-run`
 näitab ette täpsed env/argumendid ilma käivitamata, ja `--api-key-env NAME` hoiab saladused
 eemal sinu shelli ajaloost. → [CLI integratsioonid](docs/guides/CLI-INTEGRATIONS.md)
 
@@ -714,7 +714,7 @@ eemal sinu shelli ajaloost. → [CLI integratsioonid](docs/guides/CLI-INTEGRATIO
 
 <div align="center">
 
-## 🖥️ Kus OmniRoute töötab — kõikjal
+## 🖥️ Kus AgentProxy töötab — kõikjal
 
 </div>
 
@@ -722,14 +722,14 @@ eemal sinu shelli ajaloost. → [CLI integratsioonid](docs/guides/CLI-INTEGRATIO
 
 <table>
   <tr><th align="left">Platvorm</th><th align="left">Paigaldamine</th><th align="left">Eripärad</th></tr>
-  <tr><td align="left" nowrap>📦 <b>npm (globaalne)</b></td><td align="left" nowrap><code>npm install -g omniroute</code></td><td align="left">Üks käsklus, suvaline OS</td></tr>
-  <tr><td align="left" nowrap>🐳 <b>Docker</b></td><td align="left" nowrap><code>docker run … diegosouzapw/omniroute</code></td><td align="left">Multi-arhitektuurne <b>AMD64 + ARM64</b></td></tr>
+  <tr><td align="left" nowrap>📦 <b>npm (globaalne)</b></td><td align="left" nowrap><code>npm install -g agentproxy</code></td><td align="left">Üks käsklus, suvaline OS</td></tr>
+  <tr><td align="left" nowrap>🐳 <b>Docker</b></td><td align="left" nowrap><code>docker run … khanhkit/agentproxy</code></td><td align="left">Multi-arhitektuurne <b>AMD64 + ARM64</b></td></tr>
   <tr><td align="left" nowrap>🖥️ <b>Töölaud (Electron)</b></td><td align="left" nowrap><code>npm run electron:build</code></td><td align="left">Native aken + süsteemisalv — <b>Windows / macOS / Linux</b></td></tr>
   <tr><td align="left" nowrap>💪 <b>ARM</b></td><td align="left" nowrap>native <code>arm64</code></td><td align="left">Raspberry Pi, ARM-serverid, Apple Silicon</td></tr>
-  <tr><td align="left" nowrap>📱 <b>Android (Termux)</b></td><td align="left" nowrap><code>pkg install nodejs && npx -y omniroute</code></td><td align="left">Töötab <b>sinu telefonis</b>, 24/7, ilma root-õigusteta</td></tr>
+  <tr><td align="left" nowrap>📱 <b>Android (Termux)</b></td><td align="left" nowrap><code>pkg install nodejs && npx -y agentproxy</code></td><td align="left">Töötab <b>sinu telefonis</b>, 24/7, ilma root-õigusteta</td></tr>
   <tr><td align="left" nowrap>📲 <b>PWA</b></td><td align="left" nowrap>"Lisa avakuvale"</td><td align="left">Täisekraan, võrguühenduseta, paigaldatav brauserist</td></tr>
-  <tr><td align="left" nowrap>🧩 <b>OpenCode plugin</b></td><td align="left" nowrap><code>@omniroute/opencode-provider</code></td><td align="left">Native OpenCode integratsioon</td></tr>
-  <tr><td align="left" nowrap>🤖 <b>VS Code Copilot Chat</b></td><td align="left" nowrap>paigalda <b>OmniCopilot</b> laiendus</td><td align="left">Iga OmniRoute'i mudel native Copilot Chati valikumenüüs — stabiilne &amp; Insiders</td></tr>
+  <tr><td align="left" nowrap>🧩 <b>OpenCode plugin</b></td><td align="left" nowrap><code>@agentproxy/opencode-provider</code></td><td align="left">Native OpenCode integratsioon</td></tr>
+  <tr><td align="left" nowrap>🤖 <b>VS Code Copilot Chat</b></td><td align="left" nowrap>paigalda <b>OmniCopilot</b> laiendus</td><td align="left">Iga AgentProxy'i mudel native Copilot Chati valikumenüüs — stabiilne &amp; Insiders</td></tr>
   <tr><td align="left" nowrap>🛠️ <b>Lähtekoodist</b></td><td align="left" nowrap><code>npm install && npm run dev</code></td><td align="left">Nokitse selle kallal, panusta</td></tr>
 </table>
 
@@ -739,18 +739,18 @@ eemal sinu shelli ajaloost. → [CLI integratsioonid](docs/guides/CLI-INTEGRATIO
 
 <div align="center">
 
-### 🧩 Uus: OmniRoute VS Code'i native Copilot Chati sees
+### 🧩 Uus: AgentProxy VS Code'i native Copilot Chati sees
 
 </div>
 
-> Ei ühtegi uut kõrvalpaneeli, ei ühtegi uut vestlusliidest — iga mudel, mida OmniRoute pakub,
+> Ei ühtegi uut kõrvalpaneeli, ei ühtegi uut vestlusliidest — iga mudel, mida AgentProxy pakub,
 > ilmub otse **Copilot Chati mudelivalijasse, mida sa juba kasutad**. Alates VS Code 1.122-st
 > töötavad pakkuja mudelid ilma GitHubi sisselogimiseta või Copiloti tellimuseta — agendirežiim,
 > tööriistade väljakutsumine ja visioon, tasuta.
 
 Paigalda laiendus **[OmniCopilot](https://github.com/diegosouzapw/OmniCopilot)**, suuna see
-oma OmniRoute serverile (vaikimisi `localhost:20128`), ning ava seejärel Copilot Chat → mudelivalija
-→ **Manage Models…** → **OmniRoute**.
+oma AgentProxy serverile (vaikimisi `localhost:20128`), ning ava seejärel Copilot Chat → mudelivalija
+→ **Manage Models…** → **AgentProxy**.
 
 <table>
   <tr><th align="left">Pood</th><th align="left">Link</th><th align="left">Töötab koos</th></tr>
@@ -758,7 +758,7 @@ oma OmniRoute serverile (vaikimisi `localhost:20128`), ning ava seejärel Copilo
   <tr><td align="left" nowrap>🔓 <b>Open VSX Registry</b></td><td align="left"><a href="https://open-vsx.org/extension/diegosouzapw/omnicopilot">Paigalda →</a></td><td align="left">Cursor, Windsurf, VSCodium, Theia, code-server, Gitpod, Antigravity, Kiro…</td></tr>
 </table>
 
-Redaktori sees: ava vaade **Extensions**, otsi **"OmniRoute"**, klõpsa **Install**
+Redaktori sees: ava vaade **Extensions**, otsi **"AgentProxy"**, klõpsa **Install**
 — töötab samamoodi mõlemas poes. Lähtekood, probleemid ja avaldamise juhend asuvad
 aadressil [diegosouzapw/OmniCopilot](https://github.com/diegosouzapw/OmniCopilot).
 
@@ -772,7 +772,7 @@ aadressil [diegosouzapw/OmniCopilot](https://github.com/diegosouzapw/OmniCopilot
 
 </div>
 
-<img src="./docs/diagrams/privacy-local.svg" width="100%" alt="Private and local-first — OmniRoute's gateway and control plane run on your machine. Prompts are sent to the upstream provider selected for each request; OmniRoute adds no hosted prompt-processing hop and telemetry is disabled by default. Credentials are encrypted at rest with AES-256-GCM; controls include API-key scoping, IP filtering, rate limits, prompt-injection guards, upstream-header scrubbing, opt-in PII redaction, sanitized errors and a local SQLite audit trail. OmniRoute is MIT-licensed and self-hostable."/>
+<img src="./docs/diagrams/privacy-local.svg" width="100%" alt="Private and local-first — AgentProxy's gateway and control plane run on your machine. Prompts are sent to the upstream provider selected for each request; AgentProxy adds no hosted prompt-processing hop and telemetry is disabled by default. Credentials are encrypted at rest with AES-256-GCM; controls include API-key scoping, IP filtering, rate limits, prompt-injection guards, upstream-header scrubbing, opt-in PII redaction, sanitized errors and a local SQLite audit trail. AgentProxy is MIT-licensed and self-hostable."/>
 
 <sub>📖 [Autoriseerimine](docs/architecture/AUTHZ_GUIDE.md) · [Turvapiirded](docs/security/GUARDRAILS.md) · [Vastavus](docs/security/COMPLIANCE.md)</sub>
 
@@ -784,28 +784,28 @@ aadressil [diegosouzapw/OmniCopilot](https://github.com/diegosouzapw/OmniCopilot
 
 </div>
 
-> Lisaks serverile on OmniRoute **täielik käsurea juhtpult** koos **80+ käsuga**, ning avatud agendiprotokollid, mis võimaldavad AI-agendil seda **iseseisvalt** juhtida.
+> Lisaks serverile on AgentProxy **täielik käsurea juhtpult** koos **80+ käsuga**, ning avatud agendiprotokollid, mis võimaldavad AI-agendil seda **iseseisvalt** juhtida.
 
 ### ⌨️ Tõeline CLI (mitte ainult `start`)
 
 ```bash
-omniroute               # käivitab lüüsi + juhtpaneeli (port 20128)
-omniroute chat          # interaktiivne TUI vestlusklient (kaldkriips: /model /combo /skill /memory)
-omniroute setup         # juhendatud esmakäivituse viisard
-omniroute doctor        # diagnoosib teenusepakkujaid, porte, natiivseid sõltuvusi
+agentproxy               # käivitab lüüsi + juhtpaneeli (port 20128)
+agentproxy chat          # interaktiivne TUI vestlusklient (kaldkriips: /model /combo /skill /memory)
+agentproxy setup         # juhendatud esmakäivituse viisard
+agentproxy doctor        # diagnoosib teenusepakkujaid, porte, natiivseid sõltuvusi
 ```
 
-### 🛰️ Kaugrežiim — käivita CLI siin, OmniRoute VPS-il
+### 🛰️ Kaugrežiim — käivita CLI siin, AgentProxy VPS-il
 
-OmniRoute serveris? Juhi seda oma sülearvutist **samaga CLI-ga**. Logi sisse ühe korra
+AgentProxy serveris? Juhi seda oma sülearvutist **samaga CLI-ga**. Logi sisse ühe korra
 piiratud õigustega pöörduslubaga; iga järgnev käsk suunatakse siis kaugserverisse.
 
 ```bash
-omniroute connect 192.168.0.15            # parool → piiratud õigustega luba, salvestatakse kontekstina
-omniroute models list                     # ← töötab KAUGSERVERI vastu
-omniroute configure codex                 # ← valib kaugmudeli, kirjutab kohaliku Codexi profiili
-omniroute tokens create --name ci --scope read   # loob kitsamad load teistele masinatele
-omniroute contexts use default            # ← lülitub tagasi kohalikule serverile
+agentproxy connect 192.168.0.15            # parool → piiratud õigustega luba, salvestatakse kontekstina
+agentproxy models list                     # ← töötab KAUGSERVERI vastu
+agentproxy configure codex                 # ← valib kaugmudeli, kirjutab kohaliku Codexi profiili
+agentproxy tokens create --name ci --scope read   # loob kitsamad load teistele masinatele
+agentproxy contexts use default            # ← lülitub tagasi kohalikule serverile
 ```
 
 Load on piiritletud õigustega `read` / `write` / `admin`; protsesse käivitavad rajad jäävad ainult loopback-ile.
@@ -813,28 +813,28 @@ Load on piiritletud õigustega `read` / `write` / `admin`; protsesse käivitavad
 
 <div align="left">
 
-<img src="./docs/diagrams/cli-terminal.svg" width="50%" alt="Animated terminal demoing the OmniRoute CLI — omniroute providers list, omniroute combo list and omniroute health — cycling over the 86-command top-level surface: providers · oauth · keys · combo · nodes · models · cache · compression · cost · usage · quota · health · resilience · telemetry · logs · audit · mcp · a2a · cloud · memory · skills · eval · tunnel · backup · sync · webhooks · policy · pricing · translator · simulate …"/>
+<img src="./docs/diagrams/cli-terminal.svg" width="50%" alt="Animated terminal demoing the AgentProxy CLI — agentproxy providers list, agentproxy combo list and agentproxy health — cycling over the 86-command top-level surface: providers · oauth · keys · combo · nodes · models · cache · compression · cost · usage · quota · health · resilience · telemetry · logs · audit · mcp · a2a · cloud · memory · skills · eval · tunnel · backup · sync · webhooks · policy · pricing · translator · simulate …"/>
 
 </div>
 
-### 🤝 Ühenda agent — ja see juhib OmniRoute'i ennast
+### 🤝 Ühenda agent — ja see juhib AgentProxy'i ennast
 
-Ava OmniRoute üle **MCP**, **A2A**, **REST API**, **veebihaagiste (webhooks)** või **kaug-CLI** kaudu — iga võimekas agent (või oma kood) saab võtmed kogu lüüsi juurde: ruutimine, teenusepakkujad, kombinatsioonid, vahemälu, tihendus, mälu — kõik iseseisvalt. Allolevad HTTP lõpp-punktid on teenindatud aadressilt `http://localhost:20128`.
+Ava AgentProxy üle **MCP**, **A2A**, **REST API**, **veebihaagiste (webhooks)** või **kaug-CLI** kaudu — iga võimekas agent (või oma kood) saab võtmed kogu lüüsi juurde: ruutimine, teenusepakkujad, kombinatsioonid, vahemälu, tihendus, mälu — kõik iseseisvalt. Allolevad HTTP lõpp-punktid on teenindatud aadressilt `http://localhost:20128`.
 
 <table>
   <tr><th align="left">Liides</th><th align="left">Lõpp-punkt / käsk</th><th align="left">Kasutus</th></tr>
-  <tr><td align="left" nowrap>🧰 <b>MCP (stdio)</b></td><td align="left" nowrap><code>omniroute --mcp</code></td><td align="left">Ühenda Claude Desktopiga, Cursoriga, iga MCP kliendiga</td></tr>
+  <tr><td align="left" nowrap>🧰 <b>MCP (stdio)</b></td><td align="left" nowrap><code>agentproxy --mcp</code></td><td align="left">Ühenda Claude Desktopiga, Cursoriga, iga MCP kliendiga</td></tr>
   <tr><td align="left" nowrap>🌊 <b>MCP (HTTP)</b></td><td align="left" nowrap><code>/api/mcp/stream</code></td><td align="left">Kauge MCP — <b>110 tööriista</b>, 33 ulatust (jõustamine valikuline), täielik auditijälg</td></tr>
   <tr><td align="left" nowrap>📡 <b>MCP (SSE)</b></td><td align="left" nowrap><code>/api/mcp/sse</code></td><td align="left">Voogesitatav MCP transport</td></tr>
   <tr><td align="left" nowrap>🤝 <b>A2A</b></td><td align="left" nowrap><code>/.well-known/agent.json</code></td><td align="left">Agent-agent, <b>JSON-RPC 2.0</b> + SSE, 6 oskust</td></tr>
   <tr><td align="left" nowrap>🌐 <b>REST API</b></td><td align="left" nowrap><code>/v1/*</code></td><td align="left">OpenAI-ühilduv — vestlus, manustused, pildid, audio, OCR</td></tr>
   <tr><td align="left" nowrap>🔔 <b>Veebihaagised</b></td><td align="left" nowrap><code>/api/webhooks</code></td><td align="left">Suunab päringu / kvoodi sündmusi Slacki, Discordi, Telegrami või mistahes URL-ile</td></tr>
-  <tr><td align="left" nowrap>🛰️ <b>Kaug-CLI</b></td><td align="left" nowrap><code>omniroute connect <host></code></td><td align="left">Juhi kaugeksemplari piiratud õigustega pöörduslubadega</td></tr>
+  <tr><td align="left" nowrap>🛰️ <b>Kaug-CLI</b></td><td align="left" nowrap><code>agentproxy connect <host></code></td><td align="left">Juhi kaugeksemplari piiratud õigustega pöörduslubadega</td></tr>
 </table>
 
 ```bash
-# Anna Claude Code'ile täielik OmniRoute'i tööriistastik MCP kaudu:
-claude mcp add-server omniroute --type http --url http://localhost:20128/api/mcp/stream
+# Anna Claude Code'ile täielik AgentProxy'i tööriistastik MCP kaudu:
+claude mcp add-server agentproxy --type http --url http://localhost:20128/api/mcp/stream
 ```
 
 <sub>📖 [MCP server](docs/frameworks/MCP-SERVER.md) · [A2A server](docs/frameworks/A2A-SERVER.md) · [Agendiprotokollid](docs/frameworks/AGENT_PROTOCOLS_GUIDE.md)</sub>
@@ -849,7 +849,7 @@ claude mcp add-server omniroute --type http --url http://localhost:20128/api/mcp
 
 ### 📖 Kuidas see töötab — pipeline, arhitektuur ja säästuarvutus
 
-<img src="./docs/diagrams/compression-pipeline.svg" width="100%" alt="OmniRoute'i tihendamise pipeline: illustratiivne 10 000-tokenine kliendipäring läbib 12 kombineeritavat mootorit — Session-Dedup, CCR, Lite, RTK, Responses Tool Output, Headroom, Relevance, Caveman, Aggressive, LLMLingua-2, Ultra ja OmniGlyph — ja jõuab pakkujani dokumenteeritud pinutatud näites umbes 1080 tokeniga. Struktureeritud sisu on kaitstud säilitusvalvurite ja iga etapi täpsusväravatega; selgesõnalised kahjustavad või eksperimentaalsed režiimid võivad sobivat sisu muundada."/>
+<img src="./docs/diagrams/compression-pipeline.svg" width="100%" alt="AgentProxy'i tihendamise pipeline: illustratiivne 10 000-tokenine kliendipäring läbib 12 kombineeritavat mootorit — Session-Dedup, CCR, Lite, RTK, Responses Tool Output, Headroom, Relevance, Caveman, Aggressive, LLMLingua-2, Ultra ja OmniGlyph — ja jõuab pakkujani dokumenteeritud pinutatud näites umbes 1080 tokeniga. Struktureeritud sisu on kaitstud säilitusvalvurite ja iga etapi täpsusväravatega; selgesõnalised kahjustavad või eksperimentaalsed režiimid võivad sobivat sisu muundada."/>
 
 Vaikimisi pinutatud kombo käivitab `RTK → Caveman`. Kui mõlemad mõjutavad sama tööriista/konteksti sisu, säästud kumuleeruvad:
 
@@ -861,7 +861,7 @@ range    = 78.4 – 94.6%
 
 Koodiplokid, URL-id, JSON ja struktureeritud andmed on **alati kaitstud** säilitusmootori poolt.
 
-> **Milleks kasutada palju tokeneid, kui vähestest piisab?** Iga päring läbib OmniRoute'i tihendamise pipeline'i **läbipaistvalt** — kliendipoolseid muudatusi ei vaja. See on nüüd **12 kombineeritava mootori pakett**, mis töötavad järjekorras ja segunevad vastavalt marsruutimiskombole — tuginedes ideedele projektidest [RTK](https://github.com/rtk-ai/rtk), [Caveman](https://github.com/JuliusBrussee/caveman) (⭐ 90K+), [LLMLingua-2](https://github.com/microsoft/LLMLingua) ja [Troglodita](https://github.com/leninejunior/troglodita) (PT-BR).
+> **Milleks kasutada palju tokeneid, kui vähestest piisab?** Iga päring läbib AgentProxy'i tihendamise pipeline'i **läbipaistvalt** — kliendipoolseid muudatusi ei vaja. See on nüüd **12 kombineeritava mootori pakett**, mis töötavad järjekorras ja segunevad vastavalt marsruutimiskombole — tuginedes ideedele projektidest [RTK](https://github.com/rtk-ai/rtk), [Caveman](https://github.com/JuliusBrussee/caveman) (⭐ 90K+), [LLMLingua-2](https://github.com/microsoft/LLMLingua) ja [Troglodita](https://github.com/leninejunior/troglodita) (PT-BR).
 
 ### 🧱 12-mootoriline pakett
 
@@ -924,7 +924,7 @@ Koodiplokid, URL-id ja struktureeritud andmed on **alati säilitatud** täpselt 
   - **I have ADHD (action-first)** — järgmine tegevus ees, sammud nummerdatud, üks konkreetne järgmine samm, ei mingit sissejuhatust.
   - **Napp CJK (文言)** — klassikaline hiina ultra-napp stiil (lokaadipõhiselt lubatud vaid `zh`).
 - **🎯 Adaptiivne konteksti-eelarve** _(regulaator)_ — ühe sisse/välja tokenipiiri asemel eskaleeritakse ainult kõige odavamaid, kõige kadudeta mootoreid vajaduse korras, et **mahutada mudeli kontekstiaknasse**. Poliitika: `reserve-output` (vaikimisi, mudeli-teadlik) · `percentage` · `absolute`. Režiim: `floor` (garanteerib mahtumise) · `replace-autotrigger` (sinu selgesõnaline valik võidab) · `off` (pärandi künnisväärtus).
-- **🎛️ Kus tihendamine otsustatakse** _(prioriteetsus, kõrgeimast madalaimani)_ — päringupõhine `x-omniroute-compression` päis › marsruutimiskombo ülekirjutus › aktiivne nimeline profiil › adaptiivne / automaatpäästik › paneeli vaikeväärtus › väljas. Rakendatud plaan kajastub `X-OmniRoute-Compression: <mode>; source=<source>` vastuse päises.
+- **🎛️ Kus tihendamine otsustatakse** _(prioriteetsus, kõrgeimast madalaimani)_ — päringupõhine `x-agentproxy-compression` päis › marsruutimiskombo ülekirjutus › aktiivne nimeline profiil › adaptiivne / automaatpäästik › paneeli vaikeväärtus › väljas. Rakendatud plaan kajastub `X-AgentProxy-Compression: <mode>; source=<source>` vastuse päises.
 
 Käivita automaatselt tokenipiiri järgi, lülita sisse adaptiivne regulaator, kinnita nimeline profiil, sea ühekordne väärtus konkreetseks päringuks või määra pipeline marsruutimiskombo kohta — vastavalt sellele, mis tööks sobib. Opt-in võrguühenduseta **hindamisraamistik** (`npm run eval:compression`) hindab täpsust vs säästu fikseeritud korpusel enne muudatuse rakendamist.
 
@@ -941,8 +941,8 @@ Käivita automaatselt tokenipiiri järgi, lülita sisse adaptiivne regulaator, k
 **1) Paigalda ja käivita**
 
 ```bash
-npm install -g omniroute
-omniroute
+npm install -g agentproxy
+agentproxy
 ```
 
 > 💡 Nägid `npm warn ERESOLVE` või sõltuvuste (peer-dep) hoiatusi? [Need on ohutud](docs/guides/TROUBLESHOOTING.md#npm-install-warnings-eresolve--peer--deprecated).
@@ -967,9 +967,9 @@ Model:    auto            (nullkonfiguratsiooniga nutikas marsruutimine — või
 curl http://localhost:20128/v1/models -H "Authorization: Bearer YOUR_KEY"
 ```
 
-Peaksid näha saama oma ühendatud mudelite loetelu. 🎉 See on kõik — alusta kodeerimist, OmniRoute marsruutib ja teeb tagavaravariante sinu eest automaatselt.
+Peaksid näha saama oma ühendatud mudelite loetelu. 🎉 See on kõik — alusta kodeerimist, AgentProxy marsruutib ja teeb tagavaravariante sinu eest automaatselt.
 
-Kui sinu klient ei saa saata kohandatud päiseid, pakub OmniRoute ka tokenistatud ühilduvusaliaseid:
+Kui sinu klient ei saa saata kohandatud päiseid, pakub AgentProxy ka tokenistatud ühilduvusaliaseid:
 
 ```txt
 OpenAI catalog:   http://localhost:20128/vscode/YOUR_KEY/
@@ -989,39 +989,39 @@ Kasuta neid vaid klientide jaoks, mis ei saa lisada `Authorization: Bearer ...` 
 **🐳 Docker**
 
 ```bash
-docker run -d --name omniroute --restart unless-stopped --stop-timeout 40 \
-  -p 127.0.0.1:20128:20128 -v omniroute-data:/app/data diegosouzapw/omniroute:latest
+docker run -d --name agentproxy --restart unless-stopped --stop-timeout 40 \
+  -p 127.0.0.1:20128:20128 -v agentproxy-data:/app/data khanhkit/agentproxy:latest
 ```
 
-`:latest` järgib kõrgeimat **avaldatud** stabiilset SemVer versiooni. See ei jälgi git `main` haru. Kasuta GitOps'i jaoks fikseeritud `:X.Y.Z` versiooni. Vaata [Docker Release Channels](docs/guides/DOCKER_GUIDE.md#release-channels).Image fikseerib **`OMNIROUTE_MEMORY_MB=1024`**. Sellest jätkub töölaua ja kerge vestluse jaoks. **Koodiagentidele** (`POST /v1/responses` Claude Code'ist, Codex'ist, Grok'ist jt) on vaja märkimisväärselt suuremat V8 heap'i, vastasel juhul protsess lõpetab tööga **FATAL ERROR** ~12 GiB juures kahe kattuva pika konteksti korral. Määra konteinerile heap'ist suurem maht (natiivpuhvrid asuvad V8-st väljas):
+`:latest` järgib kõrgeimat **avaldatud** stabiilset SemVer versiooni. See ei jälgi git `main` haru. Kasuta GitOps'i jaoks fikseeritud `:X.Y.Z` versiooni. Vaata [Docker Release Channels](docs/guides/DOCKER_GUIDE.md#release-channels).Image fikseerib **`AGENTPROXY_MEMORY_MB=1024`**. Sellest jätkub töölaua ja kerge vestluse jaoks. **Koodiagentidele** (`POST /v1/responses` Claude Code'ist, Codex'ist, Grok'ist jt) on vaja märkimisväärselt suuremat V8 heap'i, vastasel juhul protsess lõpetab tööga **FATAL ERROR** ~12 GiB juures kahe kattuva pika konteksti korral. Määra konteinerile heap'ist suurem maht (natiivpuhvrid asuvad V8-st väljas):
 
-| Töökoormus                                       | Heap (`-e OMNIROUTE_MEMORY_MB`) | Konteiner (`--memory`) |
+| Töökoormus                                       | Heap (`-e AGENTPROXY_MEMORY_MB`) | Konteiner (`--memory`) |
 | ------------------------------------------------ | ------------------------------- | ---------------------- |
 | Töölaud / kerge vestlus                          | `1024` (image'i vaikeväärtus)   | ≥2 g                   |
 | Üks koodiagent                                   | `8192`                          | ≥10 g                  |
 | Kaks paralleelset pikka `/v1/responses` päringut | `10240`–`12288`                 | ≥12–16 g               |
 
 ```bash
-docker run -d --name omniroute --restart unless-stopped --stop-timeout 40 \
-  -e OMNIROUTE_MEMORY_MB=8192 --memory=10g \
-  -p 127.0.0.1:20128:20128 -v omniroute-data:/app/data diegosouzapw/omniroute:latest
+docker run -d --name agentproxy --restart unless-stopped --stop-timeout 40 \
+  -e AGENTPROXY_MEMORY_MB=8192 --memory=10g \
+  -p 127.0.0.1:20128:20128 -v agentproxy-data:/app/data khanhkit/agentproxy:latest
 ```
 
 Täielik tabel: [Docker Guide — runtime RAM](docs/guides/DOCKER_GUIDE.md#runtime-ram-for-coding-agents).
 
-> **Docker'i eelväljalaske kanal:** `diegosouzapw/omniroute:next` ja
-> `diegosouzapw/omniroute:next-web` järgivad praegust vaikimisi `release/v*`
+> **Docker'i eelväljalaske kanal:** `khanhkit/agentproxy:next` ja
+> `khanhkit/agentproxy:next-web` järgivad praegust vaikimisi `release/v*`
 > haru. Need muutuvad tagid on mõeldud ainult avaldamata parandustega
 > testimiseks ega ole toetatud tootmiskeskkonnas. Vaata
 > [Docker Release Channels](docs/guides/DOCKER_GUIDE.md#release-channels).
 
 **🥟 Bun**
 
-Standardne `bun install` ja globaalne paigaldus (`bun install -g omniroute`) on toetatud Bun runtime'i tuvastamise abil:
+Standardne `bun install` ja globaalne paigaldus (`bun install -g agentproxy`) on toetatud Bun runtime'i tuvastamise abil:
 
-- **Sisseehitatud `bun:sqlite`**: OmniRoute kasutab Buni sisseehitatud `bun:sqlite` draiverit, kui töötab Buni all, ning langeb tagasi `better-sqlite3` peale Node.js-il või `sql.js` peale.
-- **Automaatne Webpack bundleri valik dev-režiimis**: Arendusrežiim (`bun run dev`) tuvastab automaatselt Buni ja lülitab Turbopacki välja, kasutades selle asemel Webpacki, et vältida natiivsete V8 seoste ühilduvusprobleeme. Tootmisbuildid (`bun run build`) järgivad `OMNIROUTE_USE_TURBOPACK` täpselt nagu Node'iga: vaikimisi Turbopack, `OMNIROUTE_USE_TURBOPACK=0` build'imiseks Webpackiga (`Dockerfile.bun` teeb selle kättesaadavaks `--build-arg`-na).
-- **Eraldi Bun Dockerfile**: Mitmeetapiline `Dockerfile.bun` natiivsete Buni tootmiskeskkonna juurutuste jaoks (`docker build -f Dockerfile.bun -t omniroute:bun .`).
+- **Sisseehitatud `bun:sqlite`**: AgentProxy kasutab Buni sisseehitatud `bun:sqlite` draiverit, kui töötab Buni all, ning langeb tagasi `better-sqlite3` peale Node.js-il või `sql.js` peale.
+- **Automaatne Webpack bundleri valik dev-režiimis**: Arendusrežiim (`bun run dev`) tuvastab automaatselt Buni ja lülitab Turbopacki välja, kasutades selle asemel Webpacki, et vältida natiivsete V8 seoste ühilduvusprobleeme. Tootmisbuildid (`bun run build`) järgivad `AGENTPROXY_USE_TURBOPACK` täpselt nagu Node'iga: vaikimisi Turbopack, `AGENTPROXY_USE_TURBOPACK=0` build'imiseks Webpackiga (`Dockerfile.bun` teeb selle kättesaadavaks `--build-arg`-na).
+- **Eraldi Bun Dockerfile**: Mitmeetapiline `Dockerfile.bun` natiivsete Buni tootmiskeskkonna juurutuste jaoks (`docker build -f Dockerfile.bun -t agentproxy:bun .`).
 
 ```bash
 # Paigalda ja käivita Bun'iga
@@ -1039,13 +1039,13 @@ PORT=20128 npm run dev
 **📦 pnpm**
 
 ```bash
-pnpm add -g omniroute@latest --allow-build=better-sqlite3 --allow-build=@swc/core && omniroute
+pnpm add -g agentproxy@latest --allow-build=better-sqlite3 --allow-build=@swc/core && agentproxy
 ```
 
 **🐧 Arch Linux (AUR)**
 
 ```bash
-yay -S omniroute-bin && systemctl --user enable --now omniroute.service
+yay -S agentproxy-bin && systemctl --user enable --now agentproxy.service
 ```
 
 **🔧 Nix (Flake)**
@@ -1091,7 +1091,7 @@ puhta JS mootori peale (`node:sqlite` Node 22+ puhul, muidu kaasasolev `sql.js` 
 Et jätta paigaldusjärgne natiivne soojenduskäivitus täielikult vahele (CI, ekraanivaba või aeglane masin):
 
 ```bash
-OMNIROUTE_SKIP_POSTINSTALL=1 npm install -g omniroute   # CI=1 jätab selle samuti vahele
+AGENTPROXY_SKIP_POSTINSTALL=1 npm install -g agentproxy   # CI=1 jätab selle samuti vahele
 ```
 
 Kiireima paigalduse jaoks eelista **pnpm** (sisu-aadressitud pood + hard linkid — vaata eespool).
@@ -1103,7 +1103,7 @@ samast protsessist ühel pordil, seega eraldi CLI-ainult paketti praegu ei ole.
 
 <div align="center">
 
-# 🎬 OmniRoute tegevuses
+# 🎬 AgentProxy tegevuses
 
 </div>
 
@@ -1167,7 +1167,7 @@ samast protsessist ühel pordil, seega eraldi CLI-ainult paketti praegu ei ole.
 
 Kanoonilised näitajad 2026-08-24 seisuga: **1029 unikaalset videot** · **11 132 922 teadaolevat vaatamist** (`v > 0`) · **639 kanalit/profiili võrgustiku kohta**. Toorpaneel sisaldab 1070 rida; 41 Instagrami duplikaati normaliseeriti kanoonilise URL-i alusel, säilitades igale videole suurima loenduse.
 
-> 🎬 **Tegid OmniRoute'ist video?** Ava [issue](https://github.com/diegosouzapw/OmniRoute/issues/new) või [arutelu](https://github.com/diegosouzapw/OmniRoute/discussions), lisades lingi — toome selle siin esile.
+> 🎬 **Tegid AgentProxy'ist video?** Ava [issue](https://github.com/khanhkit/AgentProxy/issues/new) või [arutelu](https://github.com/khanhkit/AgentProxy/discussions), lisades lingi — toome selle siin esile.
 
 <br/>
 
@@ -1182,15 +1182,15 @@ Kanoonilised näitajad 2026-08-24 seisuga: **1029 unikaalset videot** · **11 13
 | 💼 **LinkedIn** — jälgi haldajat                | [linkedin.com/in/diegosouzapw](https://www.linkedin.com/in/diegosouzapw/)                                                   |
 | 🐙 **GitHub** — jälgi väljalaskeid ja nõuandeid | [@diegosouzapw](https://github.com/diegosouzapw)                                                                            |
 | 💬 **Discord**                                  | [discord.gg/U47eFqAXCn](https://discord.gg/U47eFqAXCn)                                                                      |
-| ✈️ **Telegram**                                 | [t.me/omnirouteOficial](https://t.me/omnirouteOficial)                                                                      |
+| ✈️ **Telegram**                                 | [t.me/agentproxyOficial](https://github.com/khanhkit/AgentProxy/discussions)                                                                      |
 | 🟢 **WhatsApp — 🌍 Globaalne**                  | [liitu grupiga](https://chat.whatsapp.com/FvuCbrpZmQ6I85n2vW5QIC?s=cl&p=a&mlu=4)                                            |
 | 🟢 **WhatsApp — 🇧🇷 Brasiilia**                  | [liitu grupiga](https://chat.whatsapp.com/KWgatljAjmbELQory59Oti?s=cl&p=a&mlu=4)                                            |
-| 🌍 **Veebisait**                                | [omniroute.online](https://omniroute.online)                                                                                |
-| 🌍 **🌍StHub OmniRoute kogukond (tasuta)**      | [portal sthub](https://portal.sthub.com.br/communities/groups/st-hub/channels/Omniroute-World-8kRjmK)                       |
-| 📦 **Lähtekood**                                | [github.com/diegosouzapw/OmniRoute](https://github.com/diegosouzapw/OmniRoute)                                              |
-| 🐛 **Teata veast**                              | [ava issue](https://github.com/diegosouzapw/OmniRoute/issues) — lisa `npm run system-info` väljund                          |
+| 🌍 **Veebisait**                                | [agentproxy.online](https://agentproxy.example.com)                                                                                |
+| 🌍 **🌍StHub AgentProxy kogukond (tasuta)**      | [portal sthub](https://portal.sthub.com.br/communities/groups/st-hub/channels/AgentProxy-World-8kRjmK)                       |
+| 📦 **Lähtekood**                                | [github.com/khanhkit/AgentProxy](https://github.com/khanhkit/AgentProxy)                                              |
+| 🐛 **Teata veast**                              | [ava issue](https://github.com/khanhkit/AgentProxy/issues) — lisa `npm run system-info` väljund                          |
 | 🤝 **Panusta projekti**                         | [CONTRIBUTING.md](CONTRIBUTING.md) · [Hargnemis- ja väljalaskemudel](docs/ops/BRANCHING_MODEL.md) · vali `good first issue` |
-| 💚 **Toeta projekti**                           | [Toetamise võimalused ↑](#-support-omniroute) · [GitHub Sponsors](https://github.com/sponsors/diegosouzapw)                 |
+| 💚 **Toeta projekti**                           | [Toetamise võimalused ↑](#-support-agentproxy) · [GitHub Sponsors](https://github.com/sponsors/diegosouzapw)                 |
 
 </div>
 
@@ -1221,7 +1221,7 @@ Kanoonilised näitajad 2026-08-24 seisuga: **1029 unikaalset videot** · **11 13
   <tr><td nowrap><b>Testimine</b></td><td>Node.js testijooksutaja + Vitest — <b>üle 39 000 staatilise testideklaratsiooni</b> enam kui 5100 jälgitavas testifailis (üksus-, integratsiooni-, E2E-, turva- ja ekosüsteemitestid)</td></tr>
   <tr><td nowrap><b>Platvormid</b></td><td>Töölaud (Electron) · Android (Termux) · PWA (mis tahes brauser)</td></tr>
   <tr><td nowrap><b>CI/CD</b></td><td>GitHub Actions — automaatne npm-avaldamine + Docker Hub väljalaskmisel</td></tr>
-  <tr><td nowrap><b>Lingid</b></td><td><a href="https://omniroute.online">Veebisait</a> · <a href="https://www.npmjs.com/package/omniroute">npm</a> · <a href="https://hub.docker.com/r/diegosouzapw/omniroute">Docker Hub</a></td></tr>
+  <tr><td nowrap><b>Lingid</b></td><td><a href="https://agentproxy.example.com">Veebisait</a> · <a href="https://www.npmjs.com/package/agentproxy">npm</a> · <a href="https://github.com/khanhkit/AgentProxy/pkgs/container/agentproxy">Docker Hub</a></td></tr>
 </table>
 
 <div align="center">
@@ -1239,8 +1239,8 @@ Kanoonilised näitajad 2026-08-24 seisuga: **1029 unikaalset videot** · **11 13
   <tr><td nowrap><b><a href="docs/guides/USER_GUIDE.md">Kasutusjuhend</a></b></td><td>Pakkujad, kombod, käsurea liidesed, juurutamine</td></tr>
   <tr><td nowrap><b><a href="docs/guides/SETUP_GUIDE.md">Seadistusjuhend</a></b></td><td>Kõik paigaldusmeetodid, käsurea tööriistade seadistused, protokolli seadistus, ajapiirangute häälestus</td></tr>
   <tr><td nowrap><b><a href="docs/reference/CLI-TOOLS.md">Käsurea tööriistade juhend</a></b></td><td>Iga tööriista seadistus: Claude Code, Codex, Cursor, Cline, OpenClaw, Kilo, Copilot</td></tr>
-  <tr><td nowrap><b><a href="docs/guides/REMOTE-MODE.md">Kaugrežiim</a></b></td><td>Halda kaugsuse OmniRoute't (VPS) sülearvuti käsurealt piiratud pöörduslubadega</td></tr>
-  <tr><td nowrap><b><a href="docs/guides/CLAUDE-CODE-CONFIGURATION.md">Claude Code seadistus</a></b></td><td>Suuna Claude Code OmniRoute'ile (kohalik/kauge) kasutades <code>launch</code> käsku ja mudelipõhiseid profiile</td></tr>
+  <tr><td nowrap><b><a href="docs/guides/REMOTE-MODE.md">Kaugrežiim</a></b></td><td>Halda kaugsuse AgentProxy't (VPS) sülearvuti käsurealt piiratud pöörduslubadega</td></tr>
+  <tr><td nowrap><b><a href="docs/guides/CLAUDE-CODE-CONFIGURATION.md">Claude Code seadistus</a></b></td><td>Suuna Claude Code AgentProxy'ile (kohalik/kauge) kasutades <code>launch</code> käsku ja mudelipõhiseid profiile</td></tr>
   <tr><td nowrap><b><a href="README.md#-quick-start">Kiirjuhend</a></b></td><td>3-astmeline paigaldus → ühendamine → seadistamine</td></tr>
 </table>
 
@@ -1252,7 +1252,7 @@ Kanoonilised näitajad 2026-08-24 seisuga: **1029 unikaalset videot** · **11 13
   <tr><td nowrap><b><a href="contrib/podman/README.md">Podman juhend</a></b></td><td>Quadlet systemd integratsioon, podman-compose, SELinux</td></tr>
   <tr><td nowrap><b><a href="docs/ops/VM_DEPLOYMENT_GUIDE.md">Virtuaalmasina juurutus</a></b></td><td>Täielik juhend: virtuaalmasin + nginx + Cloudflare seadistus</td></tr>
   <tr><td nowrap><b><a href="docs/ops/FLY_IO_DEPLOYMENT_GUIDE.md">Fly.io juurutus</a></b></td><td>Juuruta Fly.io platvormile püsivate andmesalvestuslahendustega</td></tr>
-  <tr><td nowrap><b><a href="docs/guides/TERMUX_GUIDE.md">Termux juhend</a></b></td><td>Käivita OmniRoute Androidil Termuxi kaudu</td></tr>
+  <tr><td nowrap><b><a href="docs/guides/TERMUX_GUIDE.md">Termux juhend</a></b></td><td>Käivita AgentProxy Androidil Termuxi kaudu</td></tr>
   <tr><td nowrap><b><a href="docs/guides/PWA_GUIDE.md">PWA juhend</a></b></td><td>Progressiivse veebirakenduse paigaldus, vahemällu salvestamine, arhitektuur</td></tr>
   <tr><td nowrap><b><a href="docs/guides/UNINSTALL.md">Eemaldamise juhend</a></b></td><td>Puhas eemaldamine kõikide paigaldusmeetodite jaoks</td></tr>
   <tr><td nowrap><b><a href="docs/reference/ENVIRONMENT.md">Keskkonna seadistus</a></b></td><td>Kõik <code>.env</code> muutujad ja viited</td></tr>
@@ -1307,7 +1307,7 @@ Kanoonilised näitajad 2026-08-24 seisuga: **1029 unikaalset videot** · **11 13
 
 # ⭐ Parimad panustajad
 
-> OmniRoute'i kujundab kirglik avatud lähtekoodi kogukond. Need inimesed on andnud erakordse panuse, mis mõjutab otseselt projekti kvaliteeti, stabiilsust ja haardeulatust. **Suur tänu.**
+> AgentProxy'i kujundab kirglik avatud lähtekoodi kogukond. Need inimesed on andnud erakordse panuse, mis mõjutab otseselt projekti kvaliteeti, stabiilsust ja haardeulatust. **Suur tänu.**
 
 ### Väliste panustajate liitmispõhised pull request'id
 
@@ -1426,7 +1426,7 @@ Kanoonilised näitajad 2026-08-24 seisuga: **1029 unikaalset videot** · **11 13
 
 <sub>Uuesti kontrollitud 2026-08-24 06:14:31 UTC seisuga: GitHubile omistatud commitid, mis on saadud hoidla Contributors API-st haru <code>release/v3.8.50</code> vaikeharu kohta. API tagastas 525 identiteeti (415 kasutajat, 2 robotit, 108 anonüümset); see tabel jätab välja hooldaja, robotid ja anonüümsed identiteedid, kuid säilitab viigid. See erineb nii ülaltoodud liidetud PR-ide edetabelist kui ka allpool olevast 639-liikmelisest Git-metaandmete kokkuvõttest.</sub>
 
-> 🙏 Nende panustajate funktsioonid, veaparandused ja infrastruktuuri täiendused on **oluline osa** sellest, mis teeb OmniRoute'i usaldusväärseks ja funktsioonirikkaks. Iga pull request, iga testjuhtum ja iga i18n tõlkefail on tähtis. Avatud lähtekood on ehitatud selliste inimeste poolt.
+> 🙏 Nende panustajate funktsioonid, veaparandused ja infrastruktuuri täiendused on **oluline osa** sellest, mis teeb AgentProxy'i usaldusväärseks ja funktsioonirikkaks. Iga pull request, iga testjuhtum ja iga i18n tõlkefail on tähtis. Avatud lähtekood on ehitatud selliste inimeste poolt.
 
 </div>
 
@@ -1438,7 +1438,7 @@ Kanoonilised näitajad 2026-08-24 seisuga: **1029 unikaalset videot** · **11 13
 
 <div align="center">
 
-Südamlik tänu inimestele, kes rahastavad OmniRoute't oma taskust — igaüks nendest panustustest hoiab projekti tasuta, sõltumatuna ja liikumas.
+Südamlik tänu inimestele, kes rahastavad AgentProxy't oma taskust — igaüks nendest panustustest hoiab projekti tasuta, sõltumatuna ja liikumas.
 
 <table>
   <tr>
@@ -1484,7 +1484,7 @@ Südamlik tänu inimestele, kes rahastavad OmniRoute't oma taskust — igaüks n
 
 <sub>Avalikud GitHub Sponsorid kinnitati uuesti 24.08.2026. GitHubi <code>activeOnly</code> olek määrab ülaltoodud aktiivsed märgised; varem avalikustatud avalikud ühekordsed toetajad on jätkuvalt ära tänatud, ja erasponsorid jäävad anonüümseks.</sub>
 
-<b><a href="https://github.com/sponsors/diegosouzapw">💖 Hakka sponsoriks →</a></b> — igaüks dollarist hoiab OmniRoute'i tasuta ja sõltumatuna.
+<b><a href="https://github.com/sponsors/diegosouzapw">💖 Hakka sponsoriks →</a></b> — igaüks dollarist hoiab AgentProxy'i tasuta ja sõltumatuna.
 
 </div>
 
@@ -1496,7 +1496,7 @@ Südamlik tänu inimestele, kes rahastavad OmniRoute't oma taskust — igaüks n
 
 </div>
 
-[![Contributors](https://contrib.rocks/image?repo=diegosouzapw/OmniRoute&max=639&columns=20&anon=1)](https://github.com/diegosouzapw/OmniRoute/graphs/contributors)
+[![Contributors](https://contrib.rocks/image?repo=khanhkit/AgentProxy&max=639&columns=20&anon=1)](https://github.com/khanhkit/AgentProxy/graphs/contributors)
 
 <sub>Auditeeritud 24.08.2026 külmutatud baasil <code>ac02c5b42f</code> ja korduskontroll live <code>release/v3.8.50</code> tipuga <code>dafb4ae808</code>: <b>639 normaliseeritud inimlikku Git-identiteeti</b> — 407 esineb commitide autoritena (kaasa arvatud haldaja) ja 232 vaid otsestes <code>Co-authored-by</code> järgmärgetes. Loendus normaliseerib GitHubi noreply-aadressid, jätab välja 26 boti/agendi/teenuse/asendusidentiteeti ning ei liida tavalisi e-posti aadresse ainuüksi seetõttu, et nende kuvatavad nimed ühtivad.</sub>
 
@@ -1525,11 +1525,11 @@ gh release create "v${VERSION}" --title "v${VERSION}" --generate-notes
 
 ## 📊 Tähed
 
-<a href="https://www.star-history.com/?repos=diegosouzapw%2FOmniRoute&type=date&legend=top-left">
+<a href="https://www.star-history.com/?repos=diegosouzapw%2FAgentProxy&type=date&legend=top-left">
  <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=diegosouzapw/OmniRoute&type=date&theme=dark&legend=top-left&sealed_token=XP_ycEjv7s31p1edvhsMOXry51OWYsUjDRWjflSG7jQKRpO9hPGg7i_EHvwhI6QtrARTMH-YGjJhi8sumRYflEJD0DPlH_MMHjizhBYCX8fbHFrHEiNvVA" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=diegosouzapw/OmniRoute&type=date&legend=top-left&sealed_token=XP_ycEjv7s31p1edvhsMOXry51OWYsUjDRWjflSG7jQKRpO9hPGg7i_EHvwhI6QtrARTMH-YGjJhi8sumRYflEJD0DPlH_MMHjizhBYCX8fbHFrHEiNvVA" />
-   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=diegosouzapw/OmniRoute&type=date&legend=top-left&sealed_token=XP_ycEjv7s31p1edvhsMOXry51OWYsUjDRWjflSG7jQKRpO9hPGg7i_EHvwhI6QtrARTMH-YGjJhi8sumRYflEJD0DPlH_MMHjizhBYCX8fbHFrHEiNvVA" />
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=khanhkit/AgentProxy&type=date&theme=dark&legend=top-left&sealed_token=XP_ycEjv7s31p1edvhsMOXry51OWYsUjDRWjflSG7jQKRpO9hPGg7i_EHvwhI6QtrARTMH-YGjJhi8sumRYflEJD0DPlH_MMHjizhBYCX8fbHFrHEiNvVA" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=khanhkit/AgentProxy&type=date&legend=top-left&sealed_token=XP_ycEjv7s31p1edvhsMOXry51OWYsUjDRWjflSG7jQKRpO9hPGg7i_EHvwhI6QtrARTMH-YGjJhi8sumRYflEJD0DPlH_MMHjizhBYCX8fbHFrHEiNvVA" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=khanhkit/AgentProxy&type=date&legend=top-left&sealed_token=XP_ycEjv7s31p1edvhsMOXry51OWYsUjDRWjflSG7jQKRpO9hPGg7i_EHvwhI6QtrARTMH-YGjJhi8sumRYflEJD0DPlH_MMHjizhBYCX8fbHFrHEiNvVA" />
  </picture>
 </a>
 
@@ -1539,11 +1539,11 @@ gh release create "v${VERSION}" --title "v${VERSION}" --generate-notes
 
 ## 🌍 StarMapper
 
-<a href="https://starmapper.bruniaux.com/diegosouzapw/omniroute">
+<a href="https://starmapper.bruniaux.com/khanhkit/agentproxy">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://starmapper.bruniaux.com/api/map-image/diegosouzapw/omniroute?theme=dark" />
-    <source media="(prefers-color-scheme: light)" srcset="https://starmapper.bruniaux.com/api/map-image/diegosouzapw/omniroute?theme=light" />
-    <img alt="StarMapper" src="https://starmapper.bruniaux.com/api/map-image/diegosouzapw/omniroute" />
+    <source media="(prefers-color-scheme: dark)" srcset="https://starmapper.bruniaux.com/api/map-image/khanhkit/agentproxy?theme=dark" />
+    <source media="(prefers-color-scheme: light)" srcset="https://starmapper.bruniaux.com/api/map-image/khanhkit/agentproxy?theme=light" />
+    <img alt="StarMapper" src="https://starmapper.bruniaux.com/api/map-image/khanhkit/agentproxy" />
   </picture>
 </a>
 </div>
@@ -1556,14 +1556,14 @@ gh release create "v${VERSION}" --title "v${VERSION}" --generate-notes
 
 </div>
 
-OmniRoute toetub hiiglaste õlgadele. See sai alguse **[9router](https://github.com/decolua/9router)** hargnemisena ja Go projekti **[CLIProxyAPI](https://github.com/router-for-me/CLIProxyAPI)** TypeScript-porditisena — ja sealt edasi on iga allpool nimetatud allsüsteem saanud inspiratsiooni avatud lähtekoodiga projektist, mis jõudis sinna esimesena. Igaüks neist kujundas OmniRoute'i konkreetse osa. See on meie tänu kõigile neile. 🙏
+AgentProxy toetub hiiglaste õlgadele. See sai alguse **[9router](https://github.com/decolua/9router)** hargnemisena ja Go projekti **[CLIProxyAPI](https://github.com/router-for-me/CLIProxyAPI)** TypeScript-porditisena — ja sealt edasi on iga allpool nimetatud allsüsteem saanud inspiratsiooni avatud lähtekoodiga projektist, mis jõudis sinna esimesena. Igaüks neist kujundas AgentProxy'i konkreetse osa. See on meie tänu kõigile neile. 🙏
 
 > ⭐ tähtede arv on kontrollitud GitHubi REST API-st 24. augustil 2026 — käige neile projektidele tärn andmas. Arvud on täpne dateeritud hetktõmmis ja muutuvad loomulikult ajas.
 
 ### 🧬 Päritolu ja lüüs (gateway)
 
 <table>
-  <tr><th align="left">Projekt</th><th align="center">⭐</th><th align="left">Kuidas see OmniRoute'i inspireeris</th></tr>
+  <tr><th align="left">Projekt</th><th align="center">⭐</th><th align="left">Kuidas see AgentProxy'i inspireeris</th></tr>
   <tr><td nowrap><b><a href="https://github.com/decolua/9router">9router</a></b></td><td align="center">26 161</td><td>Algne projekt, millel see hargnemine põhineb — siin laiendatud multimodaalsete API-de ja täieliku TypeScript-ümberkirjutusega.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/router-for-me/CLIProxyAPI">CLIProxyAPI</a></b></td><td align="center">48 497</td><td>Go-implementatsioon, mis inspireeris seda JavaScript / TypeScript porti.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/BerriAI/litellm">LiteLLM</a></b></td><td align="center">57 100</td><td>AI-lüüs, mille avaliku hinnaandmestiku andmed toidavad meie kulujälgimise sünkroonimist ja mille teenusepakkuja-normaliseerimise mudel mõjutas meie ruutimist.</td></tr>
@@ -1571,20 +1571,20 @@ OmniRoute toetub hiiglaste õlgadele. See sai alguse **[9router](https://github.
   <tr><td nowrap><b><a href="https://github.com/Alishahryar1/free-claude-code">free-claude-code</a></b></td><td align="center">48 112</td><td>Mustrid, mis on porditud voo taastamisse, "no-thinking" pseudonüümidesse, varuveebiotsingusse, liuguraakna piirangutesse, logide varjamisse ja tugevdatud käivitusvoogudesse.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/standardagents/composer-api">composer-api</a></b></td><td align="center">322</td><td>Cursor Composer'i tööriistavaliku, väljundipiirangute ja tööriista-kinnituse mustrid, mis on kohandatud pärisliku Cursor-täitja jaoks.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/ndycode/codex-multi-auth">codex-multi-auth</a></b></td><td align="center">457</td><td>Värske sisselogimise ja värskendustoken'i rotatsiooni mustrid, porditud Codex OAuth taastautentimisse.</td></tr>
-  <tr><td nowrap><b><a href="https://github.com/ex-machina-co/opencode-anthropic-auth">opencode-anthropic-auth</a></b></td><td align="center">510</td><td>Claude Code-ga ühilduvad teisendusvaikeväärtused ja arveldus-päise käitumine, üldistatud OmniRoute'i konfiguratsioonipõhisesse sillasse.</td></tr>
-  <tr><td nowrap><b><a href="https://github.com/520mmxx/grok2api-merged">grok2api-merged</a></b></td><td align="center">2</td><td>Selle Grok mudeli kaardistused, võlts-TypeError Statsig generaator, päringu- ja seadme vaikeväärtused ning NDJSON vastuse töötleja on sisuliselt kohandatud OmniRoute'i Grok Web täitja jaoks.</td></tr>
+  <tr><td nowrap><b><a href="https://github.com/ex-machina-co/opencode-anthropic-auth">opencode-anthropic-auth</a></b></td><td align="center">510</td><td>Claude Code-ga ühilduvad teisendusvaikeväärtused ja arveldus-päise käitumine, üldistatud AgentProxy'i konfiguratsioonipõhisesse sillasse.</td></tr>
+  <tr><td nowrap><b><a href="https://github.com/520mmxx/grok2api-merged">grok2api-merged</a></b></td><td align="center">2</td><td>Selle Grok mudeli kaardistused, võlts-TypeError Statsig generaator, päringu- ja seadme vaikeväärtused ning NDJSON vastuse töötleja on sisuliselt kohandatud AgentProxy'i Grok Web täitja jaoks.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/TQZHR/grok2api">TQZHR/grok2api</a></b></td><td align="center">705</td><td>grok2api-merged'i peamine transitiivne lähtekoodi allikas; selle mudeli, päise, koorma, Statsigi ja töötleja implementatsioonid on säilinud Grok Web pärandliinis.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/chenyme/grok2api">chenyme/grok2api</a></b></td><td align="center">7 520</td><td>Aluseks olev MIT-lähtekood Grok koorma ja seadme vaikeväärtuste, Statsig generaatori ning <code>result.response</code> töötleja jaoks, mis on kantud üle TQZHR ja grok2api-merged kaudu.</td></tr>
-  <tr><td nowrap><b><a href="https://github.com/miuzhaii/grok2api-pro">grok2api-pro</a></b></td><td align="center">27</td><td>Transitiivne allikas, mille grok2api-merged tunnustab proksi-puuli kihi eest; OmniRoute säilitab selle pärandimärke, kuid ei väida oma piiratud Grok Web täitjas proksi-puuli porti.</td></tr>
-  <tr><td nowrap><b><a href="https://github.com/CNFlyCat/GrokProxy">GrokProxy</a></b></td><td align="center">50</td><td>Selle küpsise-autentimisega Grok proksi ja <code>result.response.token</code> voogesitusmuster mõjutasid OmniRoute'i Grok Web transporti.</td></tr>
+  <tr><td nowrap><b><a href="https://github.com/miuzhaii/grok2api-pro">grok2api-pro</a></b></td><td align="center">27</td><td>Transitiivne allikas, mille grok2api-merged tunnustab proksi-puuli kihi eest; AgentProxy säilitab selle pärandimärke, kuid ei väida oma piiratud Grok Web täitjas proksi-puuli porti.</td></tr>
+  <tr><td nowrap><b><a href="https://github.com/CNFlyCat/GrokProxy">GrokProxy</a></b></td><td align="center">50</td><td>Selle küpsise-autentimisega Grok proksi ja <code>result.response.token</code> voogesitusmuster mõjutasid AgentProxy'i Grok Web transporti.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/lianying1716/GrokBridge">GrokBridge</a></b></td><td align="center">5</td><td>Algne Grok Web implementatsioon konsulteeris selle HTTP/brauseri-põhise ülemvoo disainiga; selle otsene HTTP tee tuleneb GrokProxy'st, seega ei väidetaks siin sõltumatut koodiporti.</td></tr>
-  <tr><td nowrap><b><a href="https://github.com/imjustprism/grok-web-api">grok-web-api</a></b></td><td align="center">14</td><td>Selle Rust <code>ChatOptions</code> ja vastuse-ümbriku skeemid mõjutasid OmniRoute'i TypeScript Grok päringu- ja voogesitus-vastuse tüüpe.</td></tr>
+  <tr><td nowrap><b><a href="https://github.com/imjustprism/grok-web-api">grok-web-api</a></b></td><td align="center">14</td><td>Selle Rust <code>ChatOptions</code> ja vastuse-ümbriku skeemid mõjutasid AgentProxy'i TypeScript Grok päringu- ja voogesitus-vastuse tüüpe.</td></tr>
 </table>
 
 ### 🗜️ Kontekst ja tokenite tihendamine — mootorid
 
 <table>
-  <tr><th align="left">Projekt</th><th align="center">⭐</th><th align="left">Kuidas see OmniRoute'i inspireeris</th></tr>
+  <tr><th align="left">Projekt</th><th align="center">⭐</th><th align="left">Kuidas see AgentProxy'i inspireeris</th></tr>
   <tr><td nowrap><b><a href="https://github.com/JuliusBrussee/caveman">Caveman</a></b></td><td align="center">100 538</td><td>Viraalne "miks kasutada palju tokenit, kui vähe tokenit teeb ka trikki" projekt — selle koopamehe-kõne filosoofia toidab meie standardset tihendusrežiimi ja 30+ täite-/kondenseerimisreeglit.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/rtk-ai/rtk">RTK – Rust Token Killer</a></b></td><td align="center">77 185</td><td>Kõrge jõudlusega käsurea-väljundi tihendamine — inspireeris meie RTK mootorit, JSON-filtri DSL-i, töötlemata väljundi taastamist ja pinnatud RTK → Caveman torustikku.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/headroomlabs-ai/headroom">headroom</a></b></td><td align="center">67 310</td><td>Pööratav kontekstitihendus (SmartCrusher) — inspireeris meie <code>headroom</code> mootorit ja <code>ccr</code> taastemarkeri mustrit.</td></tr>
@@ -1592,15 +1592,15 @@ OmniRoute toetub hiiglaste õlgadele. See sai alguse **[9router](https://github.
   <tr><td nowrap><b><a href="https://github.com/atjsh/llmlingua-2-js">llmlingua-2-js</a></b></td><td align="center">31</td><td>JS/ONNX port (MobileBERT / XLM-RoBERTa), mida kasutatakse meie LLMLingua mootori tööniidi (worker-thread) taustsüsteemina.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/leninejunior/troglodita">Troglodita</a></b></td><td align="center">40</td><td>PT-BR tokenite tihendus — toidab meie pt-BR keelepaketti: pleonasmide vähendamine ja täitesõnade eemaldamine, häälestatud Brasiilia portugali grammatikale.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/DietrichGebert/ponytail">ponytail</a></b></td><td align="center">108 957</td><td>Viraalne "laisa senior-arendaja" YAGNI-oskus — inspireeris meie <b>less-code</b> väljundistiili: väikseima toimiva muudatuse juhtimist, mis kärbib _genereeritud_ koodi (väljundi-telje vaste Caveman'i lühikesele proosale).</td></tr>
-  <tr><td nowrap><b><a href="https://github.com/ayghri/i-have-adhd">i-have-adhd</a></b></td><td align="center">23 526</td><td>Selle tegevuseelistav, ADHD-sõbralik vastusestiil on kohandatud OmniRoute'i kompaktseks väljundistiiliks viies keeles.</td></tr>
+  <tr><td nowrap><b><a href="https://github.com/ayghri/i-have-adhd">i-have-adhd</a></b></td><td align="center">23 526</td><td>Selle tegevuseelistav, ADHD-sõbralik vastusestiil on kohandatud AgentProxy'i kompaktseks väljundistiiliks viies keeles.</td></tr>
 </table>
 
 ### 🧩 Kompaktsed vormingud, tokenite uuringud ja koodile teadlik tööriistastik
 
 <table>
-  <tr><th align="left">Projekt</th><th align="center">⭐</th><th align="left">Kuidas see OmniRoute'i inspireeris</th></tr>
+  <tr><th align="left">Projekt</th><th align="center">⭐</th><th align="left">Kuidas see AgentProxy'i inspireeris</th></tr>
   <tr><td nowrap><b><a href="https://github.com/toon-format/toon">TOON</a></b></td><td align="center">25 233</td><td>Token-Oriented Object Notation — selle veerulise, päis-pluss-ridade mudel kujundas meie tabelikuju tihendusetappi.</td></tr>
-  <tr><td nowrap><b><a href="https://github.com/blackwell-systems/gcf">GCF – Graph Compact Format</a></b></td><td align="center">41</td><td>Selle kompaktne graafivorming ja generic-profiili disain mõjutasid OmniRoute'i tabelikuju tihendust ja Headroom koodeki vormingut.</td></tr>
+  <tr><td nowrap><b><a href="https://github.com/blackwell-systems/gcf">GCF – Graph Compact Format</a></b></td><td align="center">41</td><td>Selle kompaktne graafivorming ja generic-profiili disain mõjutasid AgentProxy'i tabelikuju tihendust ja Headroom koodeki vormingut.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/blackwell-systems/gcf-typescript">gcf-typescript</a></b></td><td align="center">4</td><td>MIT-litsentsiga TypeScript-implementatsioon, mis on otse sisse võetud ja laiendatud Headroom generic-profiili koodekiks.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/ooples/token-optimizer-mcp">token-optimizer-mcp</a></b></td><td align="center">494</td><td>Brotli/SQLite vahemälu + seansipõhine konteksti-delta — inspireeris meie <code>session-dedup</code> mootorit.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/Mibayy/token-savior">token-savior</a></b></td><td align="center">1 122</td><td>Bash-väljundi tihendamine + MCP profiilid — inspireeris meie tihendamise katkestusdistsipliini ja MCP tööriista-manifesti vähendamist.</td></tr>
@@ -1617,7 +1617,7 @@ OmniRoute toetub hiiglaste õlgadele. See sai alguse **[9router](https://github.
 ### 🧠 Mälu ja RAG
 
 <table>
-  <tr><th align="left">Projekt</th><th align="center">⭐</th><th align="left">Kuidas see OmniRoute'i inspireeris</th></tr>
+  <tr><th align="left">Projekt</th><th align="center">⭐</th><th align="left">Kuidas see AgentProxy'i inspireeris</th></tr>
   <tr><td nowrap><b><a href="https://github.com/mem0ai/mem0">Mem0</a></b></td><td align="center">63 902</td><td>Universaalne mälukiht — selle proksina-kirjutamise/lugemispiiri mudel kujundas meie mäluarhitektuuri.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/letta-ai/letta">Letta (MemGPT)</a></b></td><td align="center">24 382</td><td>Olekulised agendid kihilise mäluga — inspireeris meie Context Control & Recovery (CCR) kihilist mudelit.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/onestardao/WFGY">WFGY</a></b></td><td align="center">1 781</td><td>ProblemMap taksonoomia 16 korduvast RAG/LLM tõrkemustrist — jagatud sõnavara meie tõrkeotsingu juhendis.</td></tr>
@@ -1626,15 +1626,15 @@ OmniRoute toetub hiiglaste õlgadele. See sai alguse **[9router](https://github.
 ### 🛰️ Liikluse jälgimine, MITM ja läbipaistev proksi
 
 <table>
-  <tr><th align="left">Projekt</th><th align="center">⭐</th><th align="left">Kuidas see OmniRoute'i inspireeris</th></tr>
-  <tr><td nowrap><b><a href="https://github.com/chouzz/llm-interceptor">llm-interceptor</a></b></td><td align="center">66</td><td>Kodeerimisassistendi ↔ LLM liikluse MITM-vahepealtkuulamine/analüüs mõjutas Traffic Inspectori algseid nõudeid. Neli varem tuletatud moodulit — SSE liitmine, vestluse normaliseerimine, saladuste maskimine ja päiste sanitiseerimine — on asendatud sõltumatute puhta-toa implementatsioonidega, mis põhinevad avalikel protokollistandarditel. Kaks host-läbilaskepinda (<code>passthrough.ts</code> ja <code>_internal/bypass.cjs</code>) jäävad OmniRoute-sisemisteks implementatsioonideks, mis on klassifitseeritud sõltumatult; neid selle asendamise käigus ümber ei kirjutatud.</td></tr>
+  <tr><th align="left">Projekt</th><th align="center">⭐</th><th align="left">Kuidas see AgentProxy'i inspireeris</th></tr>
+  <tr><td nowrap><b><a href="https://github.com/chouzz/llm-interceptor">llm-interceptor</a></b></td><td align="center">66</td><td>Kodeerimisassistendi ↔ LLM liikluse MITM-vahepealtkuulamine/analüüs mõjutas Traffic Inspectori algseid nõudeid. Neli varem tuletatud moodulit — SSE liitmine, vestluse normaliseerimine, saladuste maskimine ja päiste sanitiseerimine — on asendatud sõltumatute puhta-toa implementatsioonidega, mis põhinevad avalikel protokollistandarditel. Kaks host-läbilaskepinda (<code>passthrough.ts</code> ja <code>_internal/bypass.cjs</code>) jäävad AgentProxy-sisemisteks implementatsioonideks, mis on klassifitseeritud sõltumatult; neid selle asendamise käigus ümber ei kirjutatud.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/InterceptSuite/ProxyBridge">ProxyBridge</a></b></td><td align="center">5 995</td><td>Läbipaistev protsessipõhine proksi-ruutimine — inspireeris meie krahhikindlat MITM-lammutamist, pesade tegevusetuse ajapiiranguid, <code>/proc</code> protsessiomistamist ja TPROXY püüdmist.</td></tr>
 </table>
 
 ### 📚 Mudeliandmed, jälgitavus ja kasutajaliides
 
 <table>
-  <tr><th align="left">Projekt</th><th align="center">⭐</th><th align="left">Kuidas see OmniRoute'i inspireeris</th></tr>
+  <tr><th align="left">Projekt</th><th align="center">⭐</th><th align="left">Kuidas see AgentProxy'i inspireeris</th></tr>
   <tr><td nowrap><b><a href="https://github.com/anomalyco/models.dev">models.dev</a></b></td><td align="center">6 555</td><td>Avatud andmebaas AI-mudelite spetsifikatsioonide, hindade ja võimaluste kohta — sünkroonitud natiivselt meie mudelikataloogi.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/xyflow/xyflow">React Flow / xyflow</a></b></td><td align="center">38 108</td><td>Sõlmedel põhinev graafikaraamatukogu, mis toidab meie reaalajas Compression Studiot ja Combo/Routing Studiot.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/langchain-ai/langgraph">LangGraph</a></b></td><td align="center">40 314</td><td>LangGraph Studio'i elava töövoo-graafi visualiseerimine inspireeris meie Studiote reaalajas kaskaadivaadet.</td></tr>
@@ -1647,19 +1647,19 @@ OmniRoute toetub hiiglaste õlgadele. See sai alguse **[9router](https://github.
 ### 🛡️ Turvalisus
 
 <table>
-  <tr><th align="left">Projekt</th><th align="center">⭐</th><th align="left">Kuidas see OmniRoute'i inspireeris</th></tr>
+  <tr><th align="left">Projekt</th><th align="center">⭐</th><th align="left">Kuidas see AgentProxy'i inspireeris</th></tr>
   <tr><td nowrap><b><a href="https://github.com/tldrsec/awesome-secure-defaults">awesome-secure-defaults</a></b></td><td align="center">721</td><td>Kureeritud nimekiri turvalise-vaikeseadega teekidest, mis juhib meie turvavalikuid (Helmet.js, DOMPurify, ssrf-req-filter, safe-regex, Google Tink).</td></tr>
 </table>
 
 ### 🧭 Täiendavad tööriistad
 
 <table>
-  <tr><th align="left">Projekt</th><th align="center">⭐</th><th align="left">Kuidas see OmniRoute'i inspireeris</th></tr>
+  <tr><th align="left">Projekt</th><th align="center">⭐</th><th align="left">Kuidas see AgentProxy'i inspireeris</th></tr>
   <tr><td nowrap><b><a href="https://github.com/BlockRunAI/ClawRouter">ClawRouter</a></b></td><td align="center">6 564</td><td>Inspireeris päringute dubleerimise vähendamist, hädaolukorra nullkuluga varulahendust, ühendatavaid Auto-Combo strateegiaid ja mitmekeelset kavatsuse klassifitseerimist.</td></tr>
-  <tr><td nowrap><b><a href="https://github.com/lbjlaq/Antigravity-Manager">Antigravity-Manager</a></b></td><td align="center">30 652</td><td>Selle konto-teadlik mudeli ümberkaardistamine, käivitatava faili tee valideerimine ja plaanimärgise käitumine mõjutasid OmniRoute'i Antigravity käitusaega.</td></tr>
-  <tr><td nowrap><b><a href="https://github.com/jlcodes99/vscode-antigravity-cockpit">vscode-antigravity-cockpit</a></b></td><td align="center">4 817</td><td>Selle kompaktne kvoodi-taastamise loenduri vorming inspireeris OmniRoute'i vastavat teenusepakkuja-piirangu kuvamist.</td></tr>
-  <tr><td nowrap><b><a href="https://github.com/iOfficeAI/AionUi">AionUi</a></b></td><td align="center">32 230</td><td>Selle ACP integratsioonid inspireerisid OmniRoute'i installitud CLI-agentide automaatset tuvastamist.</td></tr>
-  <tr><td nowrap><b><a href="https://github.com/steipete/CodexBar">CodexBar</a></b></td><td align="center">20 507</td><td>Tuvastas Grok Build kvoodipinna; OmniRoute kontrollis ja korrigeeris seejärel elava juhtmevormingu iseseisvalt.</td></tr>
+  <tr><td nowrap><b><a href="https://github.com/lbjlaq/Antigravity-Manager">Antigravity-Manager</a></b></td><td align="center">30 652</td><td>Selle konto-teadlik mudeli ümberkaardistamine, käivitatava faili tee valideerimine ja plaanimärgise käitumine mõjutasid AgentProxy'i Antigravity käitusaega.</td></tr>
+  <tr><td nowrap><b><a href="https://github.com/jlcodes99/vscode-antigravity-cockpit">vscode-antigravity-cockpit</a></b></td><td align="center">4 817</td><td>Selle kompaktne kvoodi-taastamise loenduri vorming inspireeris AgentProxy'i vastavat teenusepakkuja-piirangu kuvamist.</td></tr>
+  <tr><td nowrap><b><a href="https://github.com/iOfficeAI/AionUi">AionUi</a></b></td><td align="center">32 230</td><td>Selle ACP integratsioonid inspireerisid AgentProxy'i installitud CLI-agentide automaatset tuvastamist.</td></tr>
+  <tr><td nowrap><b><a href="https://github.com/steipete/CodexBar">CodexBar</a></b></td><td align="center">20 507</td><td>Tuvastas Grok Build kvoodipinna; AgentProxy kontrollis ja korrigeeris seejärel elava juhtmevormingu iseseisvalt.</td></tr>
 </table>
 
 ## 📄 Litsents
@@ -1670,9 +1670,9 @@ MIT litsents - vaata täpsemalt [LICENSE](LICENSE).
 
 <div align="center">
 
-**[⬆ Tagasi üles](#-omniroute)** · Loodud ❤️-ga avatud lähtekoodiga AI kogukonna jaoks.
+**[⬆ Tagasi üles](#-agentproxy)** · Loodud ❤️-ga avatud lähtekoodiga AI kogukonna jaoks.
 
-<sub>OmniRoute v3.8.51 · Node ≥22.22.2 · MIT License · <a href="https://omniroute.online">omniroute.online</a></sub>
+<sub>AgentProxy v3.8.51 · Node ≥22.22.2 · MIT License · <a href="https://agentproxy.example.com">agentproxy.online</a></sub>
 
 </div>
 <!-- GitHub Discussions enabled for community Q&A -->

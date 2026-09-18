@@ -23,7 +23,7 @@
 //
 // This test reads the source rather than importing it: postinstall.mjs performs
 // its work at module scope, so importing it would run the real postinstall
-// (spawning npm, touching ~/.omniroute) as a side effect of the test.
+// (spawning npm, touching ~/.agentproxy) as a side effect of the test.
 import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";

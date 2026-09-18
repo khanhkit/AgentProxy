@@ -41,7 +41,7 @@ function makeLeakyError(): Error {
   const err = new Error(
     `SqliteError: disk I/O error while opening ${LEAK_PATH_POSIX}:42\n` +
       `    at Database.prepare (${LEAK_PATH_WIN}:10:5)\n` +
-      `    at listEntries (/opt/omniroute/src/lib/db/x.ts:88:12)`
+      `    at listEntries (/opt/agentproxy/src/lib/db/x.ts:88:12)`
   );
   return err;
 }
@@ -92,7 +92,7 @@ function patchPragmaToThrow(): () => void {
 function assertSanitized(raw: string, context: string): void {
   assert.ok(!raw.includes("/home/omni/secret"), `${context}: posix path leaked → ${raw}`);
   assert.ok(!raw.includes("C:\\Users\\secret"), `${context}: windows path leaked → ${raw}`);
-  assert.ok(!raw.includes("/opt/omniroute"), `${context}: stack path leaked → ${raw}`);
+  assert.ok(!raw.includes("/opt/agentproxy"), `${context}: stack path leaked → ${raw}`);
   // The task's contract: body must not contain a leading absolute-path frame.
   assert.ok(!/at \/|[A-Za-z]:\\/.test(raw), `${context}: matched /at \\/|[A-Za-z]:\\\\/ → ${raw}`);
 }

@@ -31,7 +31,7 @@ test("adds a claude/ mirror with display_name and root for an eligible model", (
   const alias = out[1];
   assert.equal(alias.id, "claude/kimi/kimi-k2.6");
   assert.equal(alias.root, "kimi-k2.6");
-  assert.equal(alias.display_name, "Kimi K2.6 (OmniRoute)");
+  assert.equal(alias.display_name, "Kimi K2.6 (AgentProxy)");
   assert.equal(alias.owned_by, "kimi");
 });
 
@@ -52,7 +52,7 @@ test("keeps root bare even when the original id carries a provider prefix", () =
 test("falls back to the id for display_name when name is missing", () => {
   const models: CatalogEntry[] = [{ id: "kimi/kimi-k2.6" }];
   const out = appendCcDiscoveryAliases(models, alwaysEnabled);
-  assert.equal(out[1].display_name, "kimi/kimi-k2.6 (OmniRoute)");
+  assert.equal(out[1].display_name, "kimi/kimi-k2.6 (AgentProxy)");
 });
 
 test("never re-mirrors ids that already start with claude or anthropic", () => {
@@ -87,7 +87,7 @@ test("mirrors combo entries under claude/combo/", () => {
   assert.equal(out.length, 2);
   assert.equal(out[1].id, "claude/combo/custo-otimizado");
   assert.equal(out[1].root, "custo-otimizado");
-  assert.equal(out[1].display_name, "Custo Otimizado (OmniRoute)");
+  assert.equal(out[1].display_name, "Custo Otimizado (AgentProxy)");
 });
 
 test("mirrors combo names containing spaces (comboNameSchema allows them)", () => {

@@ -8,7 +8,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-pi-settings-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-pi-settings-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.API_KEY_SECRET = "test-api-key-secret-pi";
 process.env.JWT_SECRET = "test-jwt-secret-pi";
@@ -107,7 +107,7 @@ test("pi-settings POST: writes config.json with valid body", async () => {
       const configPath = path.join(tmpHome, ".pi", "config.json");
       if (fs.existsSync(configPath)) {
         const written = JSON.parse(fs.readFileSync(configPath, "utf-8"));
-        assert.equal(written._managedBy, "omniroute");
+        assert.equal(written._managedBy, "agentproxy");
         assert.ok(written.baseUrl.includes("localhost:20128"));
         assert.equal(written.model, "gpt-5.4-mini");
       }
@@ -118,9 +118,9 @@ test("pi-settings POST: writes config.json with valid body", async () => {
   }
 });
 
-// ── Test 5: DELETE → removes OmniRoute fields ────────────────────────────────
+// ── Test 5: DELETE → removes AgentProxy fields ────────────────────────────────
 
-test("pi-settings DELETE: removes OmniRoute fields from existing config", async () => {
+test("pi-settings DELETE: removes AgentProxy fields from existing config", async () => {
   const tmpHome = fs.mkdtempSync(path.join(os.tmpdir(), "pi-home-del-"));
   const origHome = process.env.HOME;
   process.env.HOME = tmpHome;
@@ -131,7 +131,7 @@ test("pi-settings DELETE: removes OmniRoute fields from existing config", async 
     fs.writeFileSync(
       path.join(piDir, "config.json"),
       JSON.stringify({
-        _managedBy: "omniroute",
+        _managedBy: "agentproxy",
         baseUrl: "http://localhost:20128",
         apiKey: "sk-test",
         model: "gpt-5",

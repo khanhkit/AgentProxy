@@ -16,7 +16,7 @@ grep -q 'CLAUDE_CONFIG_DIR: /home/bridge/.claude-devin-isolated' <<<"$config" ||
 node -e '
   const fs = require("node:fs");
   const config = JSON.parse(fs.readFileSync(0, "utf8"));
-  const liveNetworks = Object.keys(config.services["omniroute-live"].networks || {}).sort();
+  const liveNetworks = Object.keys(config.services["agentproxy-live"].networks || {}).sort();
   if (JSON.stringify(liveNetworks) !== JSON.stringify(["bridge-internal", "devin-guard-internal"])) {
     throw new Error(`live runtime network escape: ${liveNetworks.join(",")}`);
   }
@@ -46,7 +46,7 @@ node -e '
       throw new Error(`${guardName} does not use its guard-only audit bind`);
     }
   }
-  const runtimeNames = ["omniroute", "claude", "contract", "omniroute-live", "claude-live"];
+  const runtimeNames = ["agentproxy", "claude", "contract", "agentproxy-live", "claude-live"];
   for (const serviceName of [...runtimeNames, "network-guard", "claude-egress-guard"]) {
     const service = config.services[serviceName];
     if (String(service.user) !== "10001:10001" || !service.read_only) {
@@ -66,7 +66,7 @@ node -e '
       (mount) => mount.target === "/home/bridge/.local/share/devin",
     );
     const expectsClaudeConfig = serviceName === "claude" || serviceName === "claude-live";
-    const expectsDevinAuth = serviceName === "omniroute-live";
+    const expectsDevinAuth = serviceName === "agentproxy-live";
     if (hasClaudeConfig !== expectsClaudeConfig) {
       throw new Error(`${serviceName} Claude config volume ownership mismatch`);
     }
@@ -85,22 +85,22 @@ node -e '
       }
     }
   }
-  if (config.services["omniroute-live"].depends_on["network-guard"].condition !== "service_healthy") {
-    throw new Error("omniroute-live does not wait for a healthy Devin guard");
+  if (config.services["agentproxy-live"].depends_on["network-guard"].condition !== "service_healthy") {
+    throw new Error("agentproxy-live does not wait for a healthy Devin guard");
   }
   for (const serviceName of ["claude", "claude-live"]) {
     if (config.services[serviceName].depends_on["claude-egress-guard"].condition !== "service_healthy") {
       throw new Error(`${serviceName} does not wait for a healthy Claude guard`);
     }
   }
-  const liveEnv = config.services["omniroute-live"].environment;
+  const liveEnv = config.services["agentproxy-live"].environment;
   if (liveEnv.DEVIN_BRIDGE_PROXY_URL !== "http://network-guard:8080") {
     throw new Error("trusted Devin bridge proxy is missing");
   }
   for (const key of ["HTTP_PROXY", "HTTPS_PROXY", "ALL_PROXY", "NO_PROXY"]) {
-    if (liveEnv[key]) throw new Error(`omniroute-live must not inherit ${key}`);
+    if (liveEnv[key]) throw new Error(`agentproxy-live must not inherit ${key}`);
   }
-  for (const serviceName of runtimeNames.filter((name) => name !== "omniroute-live")) {
+  for (const serviceName of runtimeNames.filter((name) => name !== "agentproxy-live")) {
     if (config.services[serviceName].environment.DEVIN_BRIDGE_PROXY_URL) {
       throw new Error(`${serviceName} received the Devin bridge proxy setting`);
     }
@@ -111,7 +111,7 @@ node -e '
       env.NODE_USE_ENV_PROXY !== "1" ||
       env.HTTP_PROXY !== "http://claude-egress-guard:8080" ||
       env.HTTPS_PROXY !== "http://claude-egress-guard:8080" ||
-      env.NO_PROXY !== "omniroute"
+      env.NO_PROXY !== "agentproxy"
     ) {
       throw new Error(`${serviceName} does not use the deny-all Claude guard`);
     }
@@ -216,7 +216,7 @@ docker compose -f "$BRIDGE_COMPOSE" --profile offline run --rm --no-deps claude 
   test "$(id -u)" = 10001
   test "$HOME" = /home/bridge
   test "$CLAUDE_CONFIG_DIR" = /home/bridge/.claude-devin-isolated
-  test "$ANTHROPIC_BASE_URL" = http://omniroute:20128
+  test "$ANTHROPIC_BASE_URL" = http://agentproxy:20128
   test "$ANTHROPIC_AUTH_TOKEN" = sk-local-devin-gateway
   test -z "${ANTHROPIC_API_KEY:-}${CLAUDE_CODE_OAUTH_TOKEN:-}${AWS_ACCESS_KEY_ID:-}${AWS_SECRET_ACCESS_KEY:-}${GOOGLE_APPLICATION_CREDENTIALS:-}${AZURE_OPENAI_API_KEY:-}"
   test ! -e /var/run/docker.sock

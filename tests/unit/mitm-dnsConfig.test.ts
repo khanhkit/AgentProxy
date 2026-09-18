@@ -1,5 +1,5 @@
 /**
- * Unit tests: OMNIROUTE_SKIP_DNS_WRITE guard on addDNSEntries / removeDNSEntries.
+ * Unit tests: AGENTPROXY_SKIP_DNS_WRITE guard on addDNSEntries / removeDNSEntries.
  *
  * A loader hook replaces child_process.spawn with a mock that records calls
  * instead of executing real sudo. The mock is process-wide but only replaces
@@ -7,7 +7,7 @@
  * is harmless).
  *
  * The isolateDataDir.ts setup (loaded via --import) sets
- * OMNIROUTE_SKIP_DNS_WRITE=1 by default, so the guard tests are inherently
+ * AGENTPROXY_SKIP_DNS_WRITE=1 by default, so the guard tests are inherently
  * safe. The "proceeds" tests temporarily clear the guard and rely on the
  * spawn mock to prevent real sudo.
  *
@@ -62,7 +62,7 @@ try {
  *
  * `resolveSudoSpawn()` (src/mitm/systemCommands.ts) deliberately drops the
  * `sudo -S` prefix when the process is already root, when `sudo` is not
- * installed (slim containers) or under `OMNIROUTE_NO_SUDO` (#6122) — so the
+ * installed (slim containers) or under `AGENTPROXY_NO_SUDO` (#6122) — so the
  * spawned command is `sudo` for an unprivileged user and the bare underlying
  * binary otherwise. Hardcoding `sudo` made this test fail whenever the suite
  * ran as root. Assert the *effective* invocation instead: the write always
@@ -84,15 +84,15 @@ function assertHostsWriteSpawn(call: { command: string; args: string[] }): void 
 }
 
 function guardEnv(value: string | undefined): () => void {
-  const prev = process.env.OMNIROUTE_SKIP_DNS_WRITE;
+  const prev = process.env.AGENTPROXY_SKIP_DNS_WRITE;
   if (value === undefined) {
-    delete process.env.OMNIROUTE_SKIP_DNS_WRITE;
+    delete process.env.AGENTPROXY_SKIP_DNS_WRITE;
   } else {
-    process.env.OMNIROUTE_SKIP_DNS_WRITE = value;
+    process.env.AGENTPROXY_SKIP_DNS_WRITE = value;
   }
   return () => {
-    if (prev === undefined) delete process.env.OMNIROUTE_SKIP_DNS_WRITE;
-    else process.env.OMNIROUTE_SKIP_DNS_WRITE = prev;
+    if (prev === undefined) delete process.env.AGENTPROXY_SKIP_DNS_WRITE;
+    else process.env.AGENTPROXY_SKIP_DNS_WRITE = prev;
   };
 }
 
@@ -105,7 +105,7 @@ async function importDnsConfig() {
 // addDNSEntries guard
 // ---------------------------------------------------------------------------
 
-test("addDNSEntries: returns early when OMNIROUTE_SKIP_DNS_WRITE=1", async () => {
+test("addDNSEntries: returns early when AGENTPROXY_SKIP_DNS_WRITE=1", async () => {
   resetSpawnCalls();
   const { addDNSEntries } = await importDnsConfig();
   const restore = guardEnv("1");
@@ -130,7 +130,7 @@ test("addDNSEntries: proceeds when env var is unset", async () => {
   }
 });
 
-test("addDNSEntries: proceeds when OMNIROUTE_SKIP_DNS_WRITE=0", async () => {
+test("addDNSEntries: proceeds when AGENTPROXY_SKIP_DNS_WRITE=0", async () => {
   resetSpawnCalls();
   const { addDNSEntries } = await importDnsConfig();
   const restore = guardEnv("0");
@@ -160,7 +160,7 @@ test("addDNSEntries: guard does NOT trigger for value 'true'", async () => {
 // removeDNSEntries guard
 // ---------------------------------------------------------------------------
 
-test("removeDNSEntries: returns early when OMNIROUTE_SKIP_DNS_WRITE=1", async () => {
+test("removeDNSEntries: returns early when AGENTPROXY_SKIP_DNS_WRITE=1", async () => {
   resetSpawnCalls();
   const { removeDNSEntries } = await importDnsConfig();
   const restore = guardEnv("1");
@@ -190,7 +190,7 @@ test("removeDNSEntries: proceeds when env var is unset", async () => {
   }
 });
 
-test("removeDNSEntries: proceeds when OMNIROUTE_SKIP_DNS_WRITE=0", async () => {
+test("removeDNSEntries: proceeds when AGENTPROXY_SKIP_DNS_WRITE=0", async () => {
   resetSpawnCalls();
   const { removeDNSEntries } = await importDnsConfig();
   const restore = guardEnv("0");

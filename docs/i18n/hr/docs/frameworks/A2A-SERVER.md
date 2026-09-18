@@ -6,14 +6,14 @@
 
 ---
 
-title: "OmniRoute A2A Server Dokumentacija"
+title: "AgentProxy A2A Server Dokumentacija"
 version: 3.8.40
 lastUpdated: 2026-06-28
 ---
 
-# OmniRoute A2A Server Dokumentacija
+# AgentProxy A2A Server Dokumentacija
 
-> Agent-to-Agent Protokol v0.3 — OmniRoute kao inteligentni agent za usmjeravanje
+> Agent-to-Agent Protokol v0.3 — AgentProxy kao inteligentni agent za usmjeravanje
 
 A2A sučelje ima dva lica:
 
@@ -28,7 +28,7 @@ Zadaci se prate pomoću `A2ATaskManager` (`src/lib/a2a/taskManager.ts`, zadani T
 curl http://localhost:20128/.well-known/agent.json
 ```
 
-Vraća Agent Card koji opisuje mogućnosti, vještine i zahtjeve za autentifikaciju OmniRoutea.
+Vraća Agent Card koji opisuje mogućnosti, vještine i zahtjeve za autentifikaciju AgentProxya.
 
 Polje `version` u Agent Cardu preuzima se iz `process.env.npm_package_version` (vidi `src/app/.well-known/agent.json/route.ts:13`), što ga drži automatski sinkroniziranim s `package.json` pri svakom izdanju.
 
@@ -39,7 +39,7 @@ Polje `version` u Agent Cardu preuzima se iz `process.env.npm_package_version` (
 Svi zahtjevi na `/a2a` zahtijevaju API ključ putem zaglavlja `Authorization`:
 
 ```
-Authorization: Bearer YOUR_OMNIROUTE_API_KEY
+Authorization: Bearer YOUR_AGENTPROXY_API_KEY
 ```
 
 Ako na poslužitelju nije konfiguriran API ključ, autentifikacija se preskače.
@@ -157,22 +157,22 @@ curl -X POST http://localhost:20128/a2a \
 
 ## Dostupne vještine
 
-OmniRoute izlaže 6 A2A vještina registriranih u `src/lib/a2a/taskExecution.ts::A2A_SKILL_HANDLERS`. Svaki modul vještine nalazi se u `src/lib/a2a/skills/`.
+AgentProxy izlaže 6 A2A vještina registriranih u `src/lib/a2a/taskExecution.ts::A2A_SKILL_HANDLERS`. Svaki modul vještine nalazi se u `src/lib/a2a/skills/`.
 
 | Vještina              | ID                   | Opis                                                                                                                                                 | Oznake                     | Primjeri                                     |
 | :-------------------- | :------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------- | :------------------------------------------- |
-| Pametno usmjeravanje  | `smart-routing`      | Usmjerava prompt kroz optimalnog pružatelja/kombinaciju koristeći OmniRoute-ov kombinirani mehanizam i bodovanje                                     | routing, providers         | "Usmjeri ovaj prompt putem najboljeg modela" |
+| Pametno usmjeravanje  | `smart-routing`      | Usmjerava prompt kroz optimalnog pružatelja/kombinaciju koristeći AgentProxy-ov kombinirani mehanizam i bodovanje                                     | routing, providers         | "Usmjeri ovaj prompt putem najboljeg modela" |
 | Upravljanje kvotama   | `quota-management`   | Izvještava o stanju kvote po pružatelju, pomaže pozivateljima odlučiti kada usporiti/prebaciti se                                                    | quota, providers           | "Provjeri kvotu za anthropic"                |
 | Otkrivanje pružatelja | `provider-discovery` | Prikazuje instalirane pružatelje s mogućnostima, oznakama besplatnog nivoa i OAuth statusom                                                          | providers, discovery       | "Koji su pružatelji dostupni?"               |
 | Analiza troškova      | `cost-analysis`      | Procjenjuje trošak zahtjeva/razgovora na temelju kataloga i nedavne upotrebe                                                                         | cost, usage                | "Procijeni trošak za ovaj razgovor"          |
 | Izvještaj o zdravlju  | `health-report`      | Agregira stanje prekidača strujnog kruga, hlađenja i blokiranja po pružatelju                                                                        | health, resilience         | "Prikaži zdravstveni status svih pružatelja" |
-| Popis mogućnosti      | `list-capabilities`  | Vraća kompletan katalog od 45 Agent vještina (23 API + 21 CLI + 1 konfiguracija) kao markdown tablicu s raw SKILL.md URL-ovima za umetanje konteksta | catalog, discovery, skills | "Navedi sve OmniRoute mogućnosti"            |
+| Popis mogućnosti      | `list-capabilities`  | Vraća kompletan katalog od 45 Agent vještina (23 API + 21 CLI + 1 konfiguracija) kao markdown tablicu s raw SKILL.md URL-ovima za umetanje konteksta | catalog, discovery, skills | "Navedi sve AgentProxy mogućnosti"            |
 
 > Agent Card treba biti usklađen s aktivnim katalogom od 352 pružatelja; broj pružatelja i metapodaci o besplatnom pristupu/bez autentifikacije potječu iz registra u izvođenju.
 
 ### Detalji vještine `list-capabilities`
 
-Vještina `list-capabilities` posebno je korisna za vanjske agente koji trebaju otkriti što OmniRoute izlaže prije slanja API poziva. Vraća strukturirani markdown artefakt tablice:
+Vještina `list-capabilities` posebno je korisna za vanjske agente koji trebaju otkriti što AgentProxy izlaže prije slanja API poziva. Vraća strukturirani markdown artefakt tablice:
 
 ```
 | ID | Name | Category | Area | Endpoints/Commands | Raw URL |
@@ -196,9 +196,9 @@ JSON-RPC krajnja točka `/a2a` je kanonična A2A ulazna točka. Dolje navedene R
 | `/api/a2a/tasks/[id]`        | GET    | Dohvati zadatak prema ID-u                                     | upravljanje                                  |
 | `/api/a2a/tasks/[id]/cancel` | POST   | Otkaži zadatak koji se izvršava                                | upravljanje                                  |
 | `/.well-known/agent.json`    | GET    | Agent Card (A2A otkrivanje)                                    | (javno, predmemorija 3600s)                  |
-| `/api/a2a/tasks`             | POST   | Dolazno delegiranje na OmniConductor fleet (Conductor PRD RF5) | Bearer vs `OMNIROUTE_API_KEY` + `a2aEnabled` |
+| `/api/a2a/tasks`             | POST   | Dolazno delegiranje na OmniConductor fleet (Conductor PRD RF5) | Bearer vs `AGENTPROXY_API_KEY` + `a2aEnabled` |
 
-**Dolazno Conductor delegiranje (`POST /api/a2a/tasks`):** vanjski A2A agenti delegiraju poslove kodiranja OmniConductor fleetu putem OmniRoute. Tijelo: `{ skill: "conductor" | "conductor-cli-<profile>", messages: [{role, content}], metadata: { conductor: { repo: { url, base_ref? }, mode?, cli?, model? } } }` — delegirati se mogu samo Conductor fleet vještine (one objavljene na Agent Cardu); `metadata.conductor.repo.url` je obavezan (fleet radi na git repozitorijima). Ruta se prevodi u hub-ov `POST /v1/tasks` koristeći poslužiteljski `CONDUCTOR_ORCHESTRATOR_TOKEN` (pričuva `CONDUCTOR_HUB_TOKEN`) i vraća `201 { conductor_task_id, state: "submitted" }`; stanja zadataka teku natrag kroz SSE→A2A zrcalo (RF1) i vidljiva su putem `GET /api/a2a/tasks?skill=conductor`.
+**Dolazno Conductor delegiranje (`POST /api/a2a/tasks`):** vanjski A2A agenti delegiraju poslove kodiranja OmniConductor fleetu putem AgentProxy. Tijelo: `{ skill: "conductor" | "conductor-cli-<profile>", messages: [{role, content}], metadata: { conductor: { repo: { url, base_ref? }, mode?, cli?, model? } } }` — delegirati se mogu samo Conductor fleet vještine (one objavljene na Agent Cardu); `metadata.conductor.repo.url` je obavezan (fleet radi na git repozitorijima). Ruta se prevodi u hub-ov `POST /v1/tasks` koristeći poslužiteljski `CONDUCTOR_ORCHESTRATOR_TOKEN` (pričuva `CONDUCTOR_HUB_TOKEN`) i vraća `201 { conductor_task_id, state: "submitted" }`; stanja zadataka teku natrag kroz SSE→A2A zrcalo (RF1) i vidljiva su putem `GET /api/a2a/tasks?skill=conductor`.
 
 ---
 

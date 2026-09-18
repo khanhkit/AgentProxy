@@ -16,7 +16,7 @@ import {
 } from "../../open-sse/executors/claude-web/transport.ts";
 
 const originalBrowserFlag = process.env.WEB_COOKIE_USE_BROWSER;
-const originalPoolFlag = process.env.OMNIROUTE_BROWSER_POOL;
+const originalPoolFlag = process.env.AGENTPROXY_BROWSER_POOL;
 
 function textStream(text: string): ReadableStream<Uint8Array> {
   const bytes = new TextEncoder().encode(text);
@@ -89,14 +89,14 @@ function restoreEnv(name: string, value: string | undefined): void {
 
 beforeEach(() => {
   delete process.env.WEB_COOKIE_USE_BROWSER;
-  delete process.env.OMNIROUTE_BROWSER_POOL;
+  delete process.env.AGENTPROXY_BROWSER_POOL;
   __resetClaudeWebSessionForTesting();
   __resetClaudeWebBrowserTemplatesForTesting();
 });
 
 afterEach(() => {
   restoreEnv("WEB_COOKIE_USE_BROWSER", originalBrowserFlag);
-  restoreEnv("OMNIROUTE_BROWSER_POOL", originalPoolFlag);
+  restoreEnv("AGENTPROXY_BROWSER_POOL", originalPoolFlag);
   __resetClaudeWebSessionForTesting();
   __resetClaudeWebBrowserTemplatesForTesting();
 });
@@ -196,7 +196,7 @@ describe("Claude Web executor transport orchestration", () => {
     assert.equal(responseBody.choices[0].message.content, "direct answer");
     assert.equal(responseBody.claude_web.conversation_id, requests[0].conversationId);
     assert.match(
-      execution.response.headers.get("X-OmniRoute-Claude-Web-Assistant-Message-Uuid") ?? "",
+      execution.response.headers.get("X-AgentProxy-Claude-Web-Assistant-Message-Uuid") ?? "",
       /^[a-f0-9-]+$/
     );
   });
@@ -277,7 +277,7 @@ describe("Claude Web executor transport orchestration", () => {
   });
 
   it("falls back from a direct challenge to the same scoped browser request when enabled", async () => {
-    process.env.OMNIROUTE_BROWSER_POOL = "on";
+    process.env.AGENTPROXY_BROWSER_POOL = "on";
     let directRequest: ClaudeWebTransportRequest | undefined;
     let browserRequest: ClaudeWebTransportRequest | undefined;
     const executor = new ClaudeWebExecutor({

@@ -90,7 +90,7 @@ test("provider JSON output redacts raw credentials recursively", () => {
       id: "conn-1",
       apiKey: "provider-secret",
       providerSpecificData: { client_secret: "oauth-secret" },
-      credentialRef: "omniroute-cli:context:remote",
+      credentialRef: "agentproxy-cli:context:remote",
     },
     token: "management-secret",
   });
@@ -100,7 +100,7 @@ test("provider JSON output redacts raw credentials recursively", () => {
       id: "conn-1",
       apiKey: { present: true, length: 15 },
       providerSpecificData: { client_secret: { present: true, length: 12 } },
-      credentialRef: "omniroute-cli:context:remote",
+      credentialRef: "agentproxy-cli:context:remote",
     },
     token: { present: true, length: 17 },
   });

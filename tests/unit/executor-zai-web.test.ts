@@ -121,7 +121,7 @@ describe("ZaiWebExecutor", () => {
   it("reproduces the live frontend HMAC signature algorithm", () => {
     assert.equal(
       mod.buildZaiSignature({
-        prompt: "Reply with exactly: OMNIROUTE_ZAI_WEB_TEST",
+        prompt: "Reply with exactly: AGENTPROXY_ZAI_WEB_TEST",
         requestId: "3b907de9-793c-41d1-8b8e-6ed6a714ee08",
         timestamp: 1784855934807,
         userId: "user-123",
@@ -340,7 +340,7 @@ describe("ZaiWebExecutor", () => {
       assert.equal(capturedRequest?.userMessage, "hi");
       assert.match(capturedRequest?.chatPageUrl ?? "", /model=GLM-5\.3/);
       assert.equal(typeof capturedRequest?.beforeSubmit, "function");
-      assert.equal(result.headers["X-OmniRoute-Transport"], "browser");
+      assert.equal(result.headers["X-AgentProxy-Transport"], "browser");
       assert.equal(result.transformedBody.browser_backed, true);
       assert.equal(result.transformedBody.enable_thinking, true);
       assert.equal(result.transformedBody.reasoning_effort, "max");
@@ -384,7 +384,7 @@ describe("ZaiWebExecutor", () => {
     let capturedRequest: BrowserBackedChatRequest | null = null;
     browserChat.__setBrowserBackedChatOverrideForTesting(async (request) => {
       capturedRequest = request;
-      return makeBrowserResult("The image says OMNIROUTE.");
+      return makeBrowserResult("The image says AGENTPROXY.");
     });
 
     try {
@@ -415,7 +415,7 @@ describe("ZaiWebExecutor", () => {
       assert.equal(result.response.status, 200);
       assert.equal(capturedRequest?.userMessage, "What word is in this image?");
       assert.equal(capturedRequest?.attachments?.length, 1);
-      assert.equal(capturedRequest?.attachments?.[0]?.name, "omniroute-image-1.png");
+      assert.equal(capturedRequest?.attachments?.[0]?.name, "agentproxy-image-1.png");
       assert.equal(capturedRequest?.attachments?.[0]?.mimeType, "image/png");
       assert.equal(capturedRequest?.attachments?.[0]?.buffer.toString("utf8"), "image-bytes");
       assert.equal(result.transformedBody.image_count, 1);

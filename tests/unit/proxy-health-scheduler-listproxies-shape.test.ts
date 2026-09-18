@@ -19,9 +19,9 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-proxy-sched-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-proxy-sched-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
-process.env.OMNIROUTE_DISABLE_BACKGROUND_SERVICES = "true";
+process.env.AGENTPROXY_DISABLE_BACKGROUND_SERVICES = "true";
 process.env.PROXY_AUTO_REMOVE = "true";
 process.env.PROXY_AUTO_REMOVE_AFTER = "1";
 

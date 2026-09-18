@@ -10,7 +10,7 @@ import {
   isCoveredByFiles,
 } from "../../scripts/build/mcpPublishedFilesClosure.ts";
 
-// #3578 — `omniroute --mcp` crashed on npm installs with ERR_MODULE_NOT_FOUND for
+// #3578 — `agentproxy --mcp` crashed on npm installs with ERR_MODULE_NOT_FOUND for
 // src/lib/combos/steps.ts: the MCP server runs from raw TypeScript source and imports
 // across src/ + open-sse/, but the published `files` allowlist only shipped a few
 // cherry-picked paths. This gate computes the MCP server's transitive import closure

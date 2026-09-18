@@ -6,7 +6,7 @@
 // reachable only via its prefix. Operator decision 2026-07-31.
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { IMAGE_PROVIDERS, parseImageModel } from "@omniroute/open-sse/config/imageRegistry.ts";
+import { IMAGE_PROVIDERS, parseImageModel } from "@agentproxy/open-sse/config/imageRegistry.ts";
 
 test("cheaperinference is registered as an image provider with the 3 measured models", () => {
   const provider = IMAGE_PROVIDERS.cheaperinference;
@@ -39,7 +39,7 @@ test("REGRESSION GUARD: bare nano-banana ids still route to adobe-firefly", () =
 });
 
 test("cheaperinference image models are NOT in the chat registry", async () => {
-  const { REGISTRY } = await import("@omniroute/open-sse/config/providers/index.ts");
+  const { REGISTRY } = await import("@agentproxy/open-sse/config/providers/index.ts");
   const chatIds = new Set(
     (REGISTRY.cheaperinference as unknown as { models: Array<{ id: string }> }).models.map(
       (m) => m.id

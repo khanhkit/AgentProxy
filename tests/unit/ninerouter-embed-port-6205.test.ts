@@ -79,7 +79,7 @@ describe("#6205 B — pre-spawn port probe avoids raw EADDRINUSE", () => {
     const decision = decidePreSpawn({ healthy: true, portInUse: true }, 20130);
     assert.equal(decision.action, "error");
     assert.match(decision.message, /adopt/i);
-    assert.match(decision.message, /OMNIROUTE_ADOPT_EXISTING_SERVICE/);
+    assert.match(decision.message, /AGENTPROXY_ADOPT_EXISTING_SERVICE/);
     assert.ok(!decision.message.includes("at /"), "must not leak a stack trace");
   });
 

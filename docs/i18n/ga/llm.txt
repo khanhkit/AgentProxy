@@ -1,4 +1,4 @@
-# OmniRoute (Gaeilge)
+# AgentProxy (Gaeilge)
 
 🌐 **Languages:** 🇺🇸 [English](../../../llm.txt) · 🇸🇦 [ar](../ar/llm.txt) · 🇦🇿 [az](../az/llm.txt) · 🇧🇬 [bg](../bg/llm.txt) · 🇧🇩 [bn](../bn/llm.txt) · 🇨🇿 [cs](../cs/llm.txt) · 🇩🇰 [da](../da/llm.txt) · 🇩🇪 [de](../de/llm.txt) · 🇬🇷 [el](../el/llm.txt) · 🇪🇸 [es](../es/llm.txt) · 🇪🇪 [et](../et/llm.txt) · 🇮🇷 [fa](../fa/llm.txt) · 🇫🇮 [fi](../fi/llm.txt) · 🇫🇷 [fr](../fr/llm.txt) · 🇮🇳 [gu](../gu/llm.txt) · 🇮🇱 [he](../he/llm.txt) · 🇮🇳 [hi](../hi/llm.txt) · 🇭🇷 [hr](../hr/llm.txt) · 🇭🇺 [hu](../hu/llm.txt) · 🇮🇩 [id](../id/llm.txt) · 🇮🇹 [it](../it/llm.txt) · 🇯🇵 [ja](../ja/llm.txt) · 🇰🇷 [ko](../ko/llm.txt) · 🇱🇹 [lt](../lt/llm.txt) · 🇱🇻 [lv](../lv/llm.txt) · 🇮🇳 [mr](../mr/llm.txt) · 🇲🇾 [ms](../ms/llm.txt) · 🇲🇹 [mt](../mt/llm.txt) · 🇳🇱 [nl](../nl/llm.txt) · 🇳🇴 [no](../no/llm.txt) · 🇵🇭 [phi](../phi/llm.txt) · 🇵🇱 [pl](../pl/llm.txt) · 🇵🇹 [pt](../pt/llm.txt) · 🇧🇷 [pt-BR](../pt-BR/llm.txt) · 🇷🇴 [ro](../ro/llm.txt) · 🇷🇺 [ru](../ru/llm.txt) · 🇸🇰 [sk](../sk/llm.txt) · 🇸🇮 [sl](../sl/llm.txt) · 🇷🇸 [sr](../sr/llm.txt) · 🇸🇪 [sv](../sv/llm.txt) · 🇰🇪 [sw](../sw/llm.txt) · 🇮🇳 [ta](../ta/llm.txt) · 🇮🇳 [te](../te/llm.txt) · 🇹🇭 [th](../th/llm.txt) · 🇹🇷 [tr](../tr/llm.txt) · 🇺🇦 [uk-UA](../uk-UA/llm.txt) · 🇵🇰 [ur](../ur/llm.txt) · 🇻🇳 [vi](../vi/llm.txt) · 🇨🇳 [zh-CN](../zh-CN/llm.txt) · 🇹🇼 [zh-TW](../zh-TW/llm.txt)
 
@@ -28,7 +28,7 @@ AgentProxy solves the problem of managing multiple AI provider subscriptions, qu
 - **Proxy engine:** Custom pipeline with format translation, circuit breaker, rate limiting, auto-combo engine
 - **i18n:** next-intl with 51 languages
 - **Desktop:** Electron (cross-platform: Windows, macOS, Linux)
-- **Package:** Published on npm (`omniroute`) and Docker Hub (`diegosouzapw/omniroute`)
+- **Package:** Published on npm (`agentproxy`) and Docker Hub (`khanhkit/agentproxy`)
 
 ## Project Structure
 
@@ -273,7 +273,7 @@ AgentProxy solves the problem of managing multiple AI provider subscriptions, qu
 │   ├── ops/                      # RELEASE_CHECKLIST.md, TUNNELS_GUIDE.md, VM deployment
 │   ├── openapi.yaml              # OpenAPI specification
 │   └── screenshots/              # Dashboard screenshots
-├── bin/                          # CLI entry points (omniroute, reset-password)
+├── bin/                          # CLI entry points (agentproxy, reset-password)
 ├── scripts/                      # Build and utility scripts
 └── .env.example                  # Environment variable template
 ```
@@ -377,7 +377,7 @@ diagnostics) plus **memory**, **skill**, **agentSkill**, **githubSkill**, **pool
 
 ## Key Architectural Decisions
 
-1. **OpenAI-compatible API surface:** All incoming requests follow the OpenAI API format. This makes OmniRoute a drop-in replacement for any tool that supports custom OpenAI endpoints.
+1. **OpenAI-compatible API surface:** All incoming requests follow the OpenAI API format. This makes AgentProxy a drop-in replacement for any tool that supports custom OpenAI endpoints.
 
 2. **Provider abstraction via format translators:** Each AI provider has a translator in `open-sse/translator/` that converts between OpenAI format and the provider's native format transparently.
 
@@ -467,7 +467,7 @@ diagnostics) plus **memory**, **skill**, **agentSkill**, **githubSkill**, **pool
 
 19. **Cloud Agents** in `src/lib/cloudAgent/` — four external autonomous coding agents (Codex Cloud, Cursor, Devin, Jules) with task lifecycle endpoints under `/api/v1/agents/tasks/`. Require management auth, not client auth.
 
-20. **Guardrails framework** in `src/lib/guardrails/` — hot-reloadable registry. Built-ins (priority-ordered): `vision-bridge` (5) → `audio-bridge` (6) → `video-bridge` (7) → `pii-masker` (10) → `prompt-injection` (20) → `credential-masker` (95). Fail-open model: exceptions never block traffic. Per-request opt-out via `x-omniroute-disabled-guardrails` header.
+20. **Guardrails framework** in `src/lib/guardrails/` — hot-reloadable registry. Built-ins (priority-ordered): `vision-bridge` (5) → `audio-bridge` (6) → `video-bridge` (7) → `pii-masker` (10) → `prompt-injection` (20) → `credential-masker` (95). Fail-open model: exceptions never block traffic. Per-request opt-out via `x-agentproxy-disabled-guardrails` header.
 
 21. **Authz pipeline** (`src/server/authz/`): every request is classified as `PUBLIC`, `CLIENT_API`, or `MANAGEMENT`, then run through policy + enforce stages. See `docs/architecture/AUTHZ_GUIDE.md`.
 
@@ -489,10 +489,10 @@ diagnostics) plus **memory**, **skill**, **agentSkill**, **githubSkill**, **pool
 
 ## Links
 
-- Repository: https://github.com/diegosouzapw/OmniRoute
-- Website: https://omniroute.online
-- npm: https://www.npmjs.com/package/omniroute
-- Docker Hub: https://hub.docker.com/r/diegosouzapw/omniroute
+- Repository: https://github.com/khanhkit/AgentProxy
+- Website: https://agentproxy.example.com
+- npm: https://www.npmjs.com/package/agentproxy
+- Docker Hub: https://github.com/khanhkit/AgentProxy/pkgs/container/agentproxy
 - Documentation: See `/docs/` directory
 
 ### Documentation Index

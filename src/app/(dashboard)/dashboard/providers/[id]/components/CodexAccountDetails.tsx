@@ -1,6 +1,6 @@
 "use client";
 
-import type { CodexAccountPoolProjection } from "@omniroute/open-sse/services/codexAccount/index.ts";
+import type { CodexAccountPoolProjection } from "@agentproxy/open-sse/services/codexAccount/index.ts";
 import { useLocale, useTranslations } from "next-intl";
 
 export interface CodexAccountDetailsProps {

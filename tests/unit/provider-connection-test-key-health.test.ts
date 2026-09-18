@@ -4,10 +4,10 @@ import os from "node:os";
 import path from "node:path";
 import test from "node:test";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-exact-key-health-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-exact-key-health-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.DISABLE_SQLITE_AUTO_BACKUP = "true";
-process.env.OMNIROUTE_DISABLE_CREDENTIAL_HEALTH_CHECK = "true";
+process.env.AGENTPROXY_DISABLE_CREDENTIAL_HEALTH_CHECK = "true";
 
 const originalFetch = globalThis.fetch;
 

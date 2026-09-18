@@ -6,7 +6,7 @@ lastUpdated: 2026-06-28
 
 # Architektura open-sse
 
-> **TL;DR**: `open-sse/` to rdzeń silnika strumieniowania, który obsługuje każde żądanie LLM w OmniRoute. Zawiera ~900 plików implementujących pipeline żądań, executory, serwisy, serwer MCP oraz warstwę tłumaczenia formatów. Ten przewodnik wyjaśnia, jak te elementy współgrają ze sobą.
+> **TL;DR**: `open-sse/` to rdzeń silnika strumieniowania, który obsługuje każde żądanie LLM w AgentProxy. Zawiera ~900 plików implementujących pipeline żądań, executory, serwisy, serwer MCP oraz warstwę tłumaczenia formatów. Ten przewodnik wyjaśnia, jak te elementy współgrają ze sobą.
 
 **Źródło:** `open-sse/` (pakiet workspace, ~900 plików; 811 `.ts`)
 
@@ -14,10 +14,10 @@ lastUpdated: 2026-06-28
 
 ## Po co osobny pakiet workspace?
 
-`open-sse/` to **samodzielny workspace** w monorepo OmniRoute z kilku powodów:
+`open-sse/` to **samodzielny workspace** w monorepo AgentProxy z kilku powodów:
 
-1. **Reużywalność** — `open-sse` jest publikowany jako `@omniroute/open-sse` na npm, więc inne projekty mogą go używać niezależnie
-2. **Czyste granice** — silnik strumieniowania jest odseparowany od warstwy UI/DB specyficznej dla OmniRoute
+1. **Reużywalność** — `open-sse` jest publikowany jako `@agentproxy/open-sse` na npm, więc inne projekty mogą go używać niezależnie
+2. **Czyste granice** — silnik strumieniowania jest odseparowany od warstwy UI/DB specyficznej dla AgentProxy
 3. **Wydajność** — silnik nie ma zależności od Next.js, co umożliwia szybsze cold starty w kontekstach CLI/serverless
 4. **Wersjonowanie** — `open-sse` może wydawać releasy we własnym rytmie
 
@@ -34,7 +34,7 @@ lastUpdated: 2026-06-28
 open-sse/
 ├── index.ts              # Public entry point
 ├── types.d.ts            # Public type exports
-├── package.json          # @omniroute/open-sse
+├── package.json          # @agentproxy/open-sse
 ├── config/               # Provider configs, constants, registries
 ├── executors/            # Per-provider HTTP executors (67 + base.ts/index.ts)
 ├── handlers/             # Request handlers (chatCore, responses, etc.)
@@ -362,7 +362,7 @@ export default {
 `executors/index.ts` eksportuje `getExecutor(providerId)`:
 
 ```ts
-import { getExecutor } from "@omniroute/open-sse/executors";
+import { getExecutor } from "@agentproxy/open-sse/executors";
 
 const executor = getExecutor("anthropic");
 const result = await executor.execute({
@@ -382,7 +382,7 @@ Tłumaczą między **3 formatami**: OpenAI, Anthropic, Gemini, plus nowy Respons
 ### Kiedy następuje tłumaczenie
 
 ```ts
-import { needsTranslation, translateRequest } from "@omniroute/open-sse/translator";
+import { needsTranslation, translateRequest } from "@agentproxy/open-sse/translator";
 
 if (needsTranslation(sourceFormat, targetFormat)) {
   body = translateRequest(body, sourceFormat, targetFormat);
@@ -421,7 +421,7 @@ Narzędzia są rejestrowane jako samodzielne pliki w `open-sse/mcp-server/tools/
 // open-sse/mcp-server/tools/getHealth.ts
 import { z } from "zod";
 export default {
-  name: "omniroute_get_health",
+  name: "agentproxy_get_health",
   description: "Get system health snapshot",
   scope: "read:health",
   inputSchema: z.object({}),
@@ -462,7 +462,7 @@ if (!hasScope(apiKey, "providers:read")) {
 
 ### Po co osobny transformer?
 
-Responses API to nowy format OpenAI ze **stateful conversations** (`previous_response_id`). Gdy klient wysyła żądanie Responses, OmniRoute:
+Responses API to nowy format OpenAI ze **stateful conversations** (`previous_response_id`). Gdy klient wysyła żądanie Responses, AgentProxy:
 
 1. Konwertuje Responses → Chat Completions wewnętrznie
 2. Wysyła do providera (dowolnego wspierającego Chat Completions)

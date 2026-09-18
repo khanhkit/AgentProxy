@@ -5,7 +5,7 @@ import {
   computeFreeModelTotals,
   FREE_MODEL_BUDGETS,
   type FreeModelBudget,
-} from "@omniroute/open-sse/config/freeModelCatalog.ts";
+} from "@agentproxy/open-sse/config/freeModelCatalog.ts";
 
 /**
  * `eligibilityGate` changes COUNTING only: a gated row leaves the steady

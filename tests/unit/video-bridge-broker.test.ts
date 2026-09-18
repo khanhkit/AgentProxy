@@ -21,9 +21,9 @@ const EXTRACT_PATH = "/api/modality-bridge/video/extract";
 
 test("broker origin is pinned to the active loopback listener and ignores client-controlled origins", () => {
   const previousPort = process.env.PORT;
-  const previousScheme = process.env.OMNIROUTE_INTERNAL_SCHEME;
+  const previousScheme = process.env.AGENTPROXY_INTERNAL_SCHEME;
   process.env.PORT = "21128";
-  delete process.env.OMNIROUTE_INTERNAL_SCHEME;
+  delete process.env.AGENTPROXY_INTERNAL_SCHEME;
   try {
     assert.equal(
       resolveVideoBridgeBrokerBaseUrl("https://attacker.example/v1"),
@@ -32,8 +32,8 @@ test("broker origin is pinned to the active loopback listener and ignores client
   } finally {
     if (previousPort === undefined) delete process.env.PORT;
     else process.env.PORT = previousPort;
-    if (previousScheme === undefined) delete process.env.OMNIROUTE_INTERNAL_SCHEME;
-    else process.env.OMNIROUTE_INTERNAL_SCHEME = previousScheme;
+    if (previousScheme === undefined) delete process.env.AGENTPROXY_INTERNAL_SCHEME;
+    else process.env.AGENTPROXY_INTERNAL_SCHEME = previousScheme;
   }
 });
 
@@ -134,7 +134,7 @@ test("broker carries the explicit scene-aware policy and preserves effective fal
 
 test("default broker transport lets Node calculate the Buffer content length", async () => {
   const previousPort = process.env.PORT;
-  const previousOmniRoutePort = process.env.OMNIROUTE_PORT;
+  const previousAgentProxyPort = process.env.AGENTPROXY_PORT;
   const previousDashboardPort = process.env.DASHBOARD_PORT;
   const videoBytes = Buffer.from("safe-video");
   let receivedBody = Buffer.alloc(0);
@@ -157,7 +157,7 @@ test("default broker transport lets Node calculate the Buffer content length", a
   await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
   const address = server.address();
   assert.ok(address && typeof address === "object");
-  delete process.env.OMNIROUTE_PORT;
+  delete process.env.AGENTPROXY_PORT;
   delete process.env.DASHBOARD_PORT;
   process.env.PORT = String(address.port);
 
@@ -175,8 +175,8 @@ test("default broker transport lets Node calculate the Buffer content length", a
     );
     if (previousPort === undefined) delete process.env.PORT;
     else process.env.PORT = previousPort;
-    if (previousOmniRoutePort === undefined) delete process.env.OMNIROUTE_PORT;
-    else process.env.OMNIROUTE_PORT = previousOmniRoutePort;
+    if (previousAgentProxyPort === undefined) delete process.env.AGENTPROXY_PORT;
+    else process.env.AGENTPROXY_PORT = previousAgentProxyPort;
     if (previousDashboardPort === undefined) delete process.env.DASHBOARD_PORT;
     else process.env.DASHBOARD_PORT = previousDashboardPort;
   }

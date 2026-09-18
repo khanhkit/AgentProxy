@@ -4,7 +4,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-reasoning-routing-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-reasoning-routing-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.API_KEY_SECRET = process.env.API_KEY_SECRET || "test-reasoning-routing-secret";
 
@@ -155,7 +155,7 @@ test("default does not override a budget-only signal and force replaces discrete
     reasoning_effort: "low",
     reasoning: { effort: "low", summary: "auto" },
     thinking: { type: "enabled", budget_tokens: 2048 },
-    _omnirouteReasoningRule: {
+    _agentproxyReasoningRule: {
       id: "force-high",
       effortMode: "force",
       targetEffort: "high",
@@ -167,7 +167,7 @@ test("default does not override a budget-only signal and force replaces discrete
   assert.equal(forced.effort, undefined);
   assert.deepEqual(forced.reasoning, { summary: "auto", effort: "high" });
   assert.deepEqual(forced.thinking, { type: "enabled", budget_tokens: 2048 });
-  assert.equal(forced._omnirouteReasoningRule, undefined);
+  assert.equal(forced._agentproxyReasoningRule, undefined);
 
   const untouched = { model: "openai/gpt-4o", messages: [] };
   assert.equal(policy.applyReasoningRuleDirective(untouched), untouched);

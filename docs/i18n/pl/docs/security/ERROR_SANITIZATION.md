@@ -32,7 +32,7 @@ Helper `sanitizeErrorMessage` w `open-sse/utils/error.ts` usuwa obie klasy wycie
 Używaj `buildErrorBody()` — sanityzacja jest wbudowana:
 
 ```ts
-import { buildErrorBody } from "@omniroute/open-sse/utils/error.ts";
+import { buildErrorBody } from "@agentproxy/open-sse/utils/error.ts";
 
 export async function POST(req: Request) {
   try {
@@ -56,7 +56,7 @@ import {
   unavailableResponse, // adds Retry-After
   providerCircuitOpenResponse,
   modelCooldownResponse,
-} from "@omniroute/open-sse/utils/error.ts";
+} from "@agentproxy/open-sse/utils/error.ts";
 ```
 
 Wszystkie one przechodzą przez `buildErrorBody`, a więc przez `sanitizeErrorMessage`. **Nigdy nie musisz wywoływać `sanitizeErrorMessage` ręcznie**, gdy używasz tych helperów.
@@ -66,7 +66,7 @@ Wszystkie one przechodzą przez `buildErrorBody`, a więc przez `sanitizeErrorMe
 Gdy nie możesz użyć powyższych helperów (np. kształt odpowiedzi dyktuje protokół upstream jak Connect-RPC), importuj `sanitizeErrorMessage` bezpośrednio:
 
 ```ts
-import { sanitizeErrorMessage } from "@omniroute/open-sse/utils/error.ts";
+import { sanitizeErrorMessage } from "@agentproxy/open-sse/utils/error.ts";
 
 const body = JSON.stringify({
   error: {
@@ -152,7 +152,7 @@ Reguły sanityzacji stosowane do `upstreamDetails`:
 4. Tablice są ograniczane do 32 elementów.
 
 Tylko siedem miejsc wywołania `createErrorResult` dla błędów upstream w `chatCore.ts` przekazuje
-`upstreamErrorBody`. Wewnętrzne błędy OmniRoute (awarie parsowania SSE, pusta treść,
+`upstreamErrorBody`. Wewnętrzne błędy AgentProxy (awarie parsowania SSE, pusta treść,
 bloki guardrail) nie dołączają `upstream_details`.
 
 NIE przekazuj surowego `err.stack`, `err.message` ani żadnego stringa z wyjątku runtime do

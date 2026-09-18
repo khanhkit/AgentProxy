@@ -6,16 +6,16 @@
 
 ---
 
-title: "OmniRoute koodivaramu dokumentatsioon"
+title: "AgentProxy koodivaramu dokumentatsioon"
 version: 3.8.40
 lastUpdated: 2026-06-28
 ---
 
-# OmniRoute koodivaramu dokumentatsioon
+# AgentProxy koodivaramu dokumentatsioon
 
 > **Versioon:** v3.8.51
 > **Viimati uuendatud:** 2026-06-28
-> **Sihtgrupp:** Insenerid, kes aitavad kaasa OmniRoute'le või ehitavad selle peale integratsioone.
+> **Sihtgrupp:** Insenerid, kes aitavad kaasa AgentProxy'le või ehitavad selle peale integratsioone.
 >
 > Ülevaatlike arhitektuuridiagrammide ja iga alamsüsteemi taga oleva põhjenduse kohta lugege
 > [ARCHITECTURE.md](./ARCHITECTURE.md). Üksikasjalike sukeldumiste kohta üksikute alamsüsteemide
@@ -45,21 +45,21 @@ puu sirvida, käitamiskihte mõista ja teada, kuhu koodi lisada, ilma uusi moodu
 Tee aliased (`tsconfig.json`):
 
 - `@/*` → `src/*`
-- `@omniroute/open-sse` → `open-sse/index.ts`
-- `@omniroute/open-sse/*` → `open-sse/*`
+- `@agentproxy/open-sse` → `open-sse/index.ts`
+- `@agentproxy/open-sse/*` → `open-sse/*`
 
-Vaikimisi HTTP port: **`20128`** (API ja armatuurlaud jagavad sama protsessi). Andmekataloog on `DATA_DIR` keskkonnamuutuja, vaikimisi `~/.omniroute/`.
+Vaikimisi HTTP port: **`20128`** (API ja armatuurlaud jagavad sama protsessi). Andmekataloog on `DATA_DIR` keskkonnamuutuja, vaikimisi `~/.agentproxy/`.
 
 ---
 
 ## 2. Hoidla paigutus
 
 ```
-OmniRoute/
+AgentProxy/
 ├── src/                  Next.js rakendus (App Router, libs, domeen, server, jagatud)
-├── open-sse/             Voogmootori tööruum (@omniroute/open-sse)
+├── open-sse/             Voogmootori tööruum (@agentproxy/open-sse)
 ├── electron/             Töölaud mähis (Electron 41 peamine + preload)
-├── bin/                  CLI sisenemispunktid (omniroute, reset-password)
+├── bin/                  CLI sisenemispunktid (agentproxy, reset-password)
 ├── tests/                Üksik, integreerimine, e2e, protocols-e2e, tõlkija, turvalisus, testandmed
 ├── scripts/              Ehituse, sünkroonimise, kontrolli, migratsiooni ja käitamise abiskriptid
 ├── docs/                 Avalik dokumentatsioon (see kataloog)
@@ -305,7 +305,7 @@ rühmitab tegelikud kataloogid ja märkimisväärsed tasetaseme failid.
 | `runtime/`        | Jooksva aja funktsioonide tuvastamine                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
 | `search/`         | `executeWebSearch.ts`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
 | `services/`       | Manustatud teenuste raamistik: `ServiceSupervisor.ts` (üldine tütarprotsesside juht töö lukustusega, rõngaspuhveriga, tervisekontrolliga), `bootstrap.ts` (protsessitase register ja automaatne käivitamine), `registry.ts` (tööriist → juhi vaste), `apiKey.ts` (AES-256-GCM võtme hoidla), `modelSync.ts` (perioodiline mudelite sünkroonimine), `ringBuffer.ts` (5 MB rõngaslogi puhver), `healthCheck.ts` (HTTP tervisekatse), `types.ts`, `embedWsProxy.ts` (WebSocket proksi), `installers/{ninerouter,cliproxy}.ts`. Vaata `docs/frameworks/EMBEDDED-SERVICES.md`                                                                                                                             |
-| `agentSkills/`    | Agentide oskuste kataloog + generaator: `catalog.ts` (getCatalog/getSkillById/filterCatalog/computeCoverage), `generator.ts` (generateAgentSkills → kirjutab `skills/{id}/SKILL.md`), `openapiParser.ts` (võtab REST lõpp-punktid OpenAPI spetsist välja), `cliRegistryParser.ts` (võtab CLI alamkäsud bin/cli-registry-st välja), `schemas.ts` (Zod: AgentSkillSchema, SkillCoverageSchema, ListQuerySchema, GenerateBodySchema), `types.ts` (AgentSkill, SkillCoverage, SkillMarkdown, GeneratorReport). Kasutavad REST marsruudid (`/api/agent-skills/*`), MCP tööriistad (`omniroute_agent_skills_*`) ja A2A oskuse `list-capabilities`. Vaata [AGENT-SKILLS.md](../frameworks/AGENT-SKILLS.md). |
+| `agentSkills/`    | Agentide oskuste kataloog + generaator: `catalog.ts` (getCatalog/getSkillById/filterCatalog/computeCoverage), `generator.ts` (generateAgentSkills → kirjutab `skills/{id}/SKILL.md`), `openapiParser.ts` (võtab REST lõpp-punktid OpenAPI spetsist välja), `cliRegistryParser.ts` (võtab CLI alamkäsud bin/cli-registry-st välja), `schemas.ts` (Zod: AgentSkillSchema, SkillCoverageSchema, ListQuerySchema, GenerateBodySchema), `types.ts` (AgentSkill, SkillCoverage, SkillMarkdown, GeneratorReport). Kasutavad REST marsruudid (`/api/agent-skills/*`), MCP tööriistad (`agentproxy_agent_skills_*`) ja A2A oskuse `list-capabilities`. Vaata [AGENT-SKILLS.md](../frameworks/AGENT-SKILLS.md). |
 | `skills/`         | Oskuste raamistik: `registry.ts`, `executor.ts`, `interception.ts`, `injection.ts`, `sandbox.ts`, `custom.ts`, `hybrid.ts`, `builtins.ts`, `a2a.ts`, `providerSettings.ts`, `schemas.ts`, `skillssh.ts`, `types.ts`, lisaks `builtin/browser.ts`                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | `spend/`          | `batchWriter.ts` (mahakandmise puhver)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 | `sync/`           | `bundle.ts`, `tokens.ts` (Pilve sünkroonimine)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
@@ -391,7 +391,7 @@ Puhas äriloogika, ilma I/O-ta. Imporditakse marsruutide ja käsitsejate poolt.
 | `degradation.ts`                           | Halvenenud režiimi üleminekud                              |
 | `providerExpiration.ts`                    | Aegunud konto/võtme tuvastamine                            |
 | `quotaCache.ts`                            | Küpsised kvootide otsused                                  |
-| `responses.ts`, `omnirouteResponseMeta.ts` | Vastuse kujundite abid                                     |
+| `responses.ts`, `agentproxyResponseMeta.ts` | Vastuse kujundite abid                                     |
 | `configAudit.ts`                           | Konfiguratsioonimuudatuste audit                           |
 | `assessment/`                              | Mudelite hindamine (vastavalt RFC-le, osaliselt teostatud) |
 | `types.ts`                                 | Jagatud domeenitüübid                                      |
@@ -443,7 +443,7 @@ Jaotatud keskendunud alamkataloogidesse:
 
 ## 4. `open-sse/` — Voogude mootori tööruum
 
-Eraldi npm tööruum, avaldatud kui `@omniroute/open-sse`. Vastutab
+Eraldi npm tööruum, avaldatud kui `@agentproxy/open-sse`. Vastutab
 päringu töötlemise, käivitajate, tõlkijate, teenuste, teisendaja ja MCP serveri eest.
 
 ```
@@ -604,7 +604,7 @@ Juurkaustas on viis npm-skripti: `electron:dev`, `electron:build`,
 
 ```
 bin/
-├── omniroute.mjs           Põhiline CLI sissepääs (Node ESM)
+├── agentproxy.mjs           Põhiline CLI sissepääs (Node ESM)
 ├── reset-password.mjs      Lähtestage haldusparool käsurealt
 ├── mcp-server.mjs          MCP serveri käivitaja (stdio)
 ├── nodeRuntimeSupport.mjs  Node versiooni valvur
@@ -627,8 +627,8 @@ bin/
 
 `package.json` → `bin` esitatakse kaks binaarfaili:
 
-- `omniroute` → `bin/omniroute.mjs`
-- `omniroute-reset-password` → `bin/reset-password.mjs`
+- `agentproxy` → `bin/agentproxy.mjs`
+- `agentproxy-reset-password` → `bin/reset-password.mjs`
 
 ---
 
@@ -784,7 +784,7 @@ Vaata [A2A-SERVER.md § Uue oskuse lisamine](../frameworks/A2A-SERVER.md). Oskus
 
 - **Koodistiil**: 2-tühiku sisesed, topelt jutumärgid, 100 märgi laius, semikoolonid,
   `es5` järelolevad kriipsud – kehtestatud Prettieri poolt `lint-staged` kaudu.
-- **Impordid**: välised → sisemised (`@/`, `@omniroute/open-sse`) → suhtelised.
+- **Impordid**: välised → sisemised (`@/`, `@agentproxy/open-sse`) → suhtelised.
 - **Nimetusolemine**: failid `camelCase` või `kebab-case`, komponendid `PascalCase`,
   konstandid `UPPER_SNAKE`.
 - **ESLint**: `no-eval`, `no-implied-eval`, `no-new-func` = `error` kõikjal;

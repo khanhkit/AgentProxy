@@ -33,7 +33,7 @@ function resolveMainCheckout(): string {
 const mainCwd = resolveMainCheckout();
 
 const BOOT_DISABLED_SCRIPT = `
-  process.env.OMNIROUTE_DISABLE_CREDENTIAL_HEALTH_CHECK = "true";
+  process.env.AGENTPROXY_DISABLE_CREDENTIAL_HEALTH_CHECK = "true";
   const { initCredentialHealthCheck } = await import(
     "./src/lib/credentialHealth/scheduler.ts"
   );
@@ -54,7 +54,7 @@ test("disabled scheduler emits [STARTUP] Credential health scheduler disabled vi
       cwd: mainCwd,
       env: {
         ...process.env,
-        OMNIROUTE_DISABLE_CREDENTIAL_HEALTH_CHECK: "true",
+        AGENTPROXY_DISABLE_CREDENTIAL_HEALTH_CHECK: "true",
         NODE_NO_WARNINGS: "1",
       },
       encoding: "utf8",
@@ -65,7 +65,7 @@ test("disabled scheduler emits [STARTUP] Credential health scheduler disabled vi
   assert.match(
     result,
     /\[STARTUP\] Credential health scheduler disabled/,
-    "must log the disabled message when OMNIROUTE_DISABLE_CREDENTIAL_HEALTH_CHECK is set"
+    "must log the disabled message when AGENTPROXY_DISABLE_CREDENTIAL_HEALTH_CHECK is set"
   );
   assert.doesNotMatch(
     result,

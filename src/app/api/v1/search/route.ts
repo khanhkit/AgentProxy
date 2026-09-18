@@ -1,4 +1,4 @@
-import { handleSearch } from "@omniroute/open-sse/handlers/search.ts";
+import { handleSearch } from "@agentproxy/open-sse/handlers/search.ts";
 import {
   getProviderCredentialsWithQuotaPreflight,
   extractApiKey,
@@ -13,9 +13,9 @@ import {
   isUnconfiguredLoopbackSearchProvider,
   SEARCH_PROVIDERS,
   getSearchCredentialFallbacks,
-} from "@omniroute/open-sse/config/searchRegistry.ts";
-import { errorResponse } from "@omniroute/open-sse/utils/error.ts";
-import { HTTP_STATUS } from "@omniroute/open-sse/config/constants.ts";
+} from "@agentproxy/open-sse/config/searchRegistry.ts";
+import { errorResponse } from "@agentproxy/open-sse/utils/error.ts";
+import { HTTP_STATUS } from "@agentproxy/open-sse/config/constants.ts";
 import * as log from "@/sse/utils/logger";
 import { toJsonErrorPayload } from "@/shared/utils/upstreamError";
 import { enforceApiKeyPolicy } from "@/shared/utils/apiKeyPolicy";
@@ -30,7 +30,7 @@ import {
   computeCacheKey,
   getOrCoalesce,
   SEARCH_CACHE_DEFAULT_TTL_MS,
-} from "@omniroute/open-sse/services/searchCache.ts";
+} from "@agentproxy/open-sse/services/searchCache.ts";
 import {
   isAllRateLimitedCredentials,
   rateLimitedProviderResponse,

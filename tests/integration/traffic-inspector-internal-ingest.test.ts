@@ -15,7 +15,7 @@ import os from "node:os";
 import path from "node:path";
 import { randomUUID } from "node:crypto";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-ti-ingest-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-ti-ingest-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 // Set a known token BEFORE importing the route so the module picks it up

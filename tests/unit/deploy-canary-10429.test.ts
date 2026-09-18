@@ -93,8 +93,8 @@ test("D7: zero completion probes is a failure, not a vacuous pass", () => {
 test("D8: remote steps are argv arrays — never shell strings (Hard Rule #13)", () => {
   const steps = buildRemoteSteps({
     host: "root@192.168.0.17",
-    tarballPath: "/root/omniroute-e05ac345da.tgz",
-    pm2App: "omniroute",
+    tarballPath: "/root/agentproxy-e05ac345da.tgz",
+    pm2App: "agentproxy",
   });
   for (const step of steps) {
     assert.ok(Array.isArray(step.argv), `${step.name} must expose argv, not a shell string`);
@@ -111,8 +111,8 @@ test("D8: remote steps are argv arrays — never shell strings (Hard Rule #13)",
 test("D9: the install step records the previous version so rollback is possible", () => {
   const steps = buildRemoteSteps({
     host: "root@192.168.0.17",
-    tarballPath: "/root/omniroute-e05ac345da.tgz",
-    pm2App: "omniroute",
+    tarballPath: "/root/agentproxy-e05ac345da.tgz",
+    pm2App: "agentproxy",
   });
   const names = steps.map((s) => s.name);
   assert.ok(names.includes("capture-current-sha"), `expected a rollback anchor, got ${names}`);
@@ -125,8 +125,8 @@ test("D9: the install step records the previous version so rollback is possible"
 test("D10: restart comes after install, and the smoke after the restart", () => {
   const steps = buildRemoteSteps({
     host: "root@192.168.0.17",
-    tarballPath: "/root/omniroute-e05ac345da.tgz",
-    pm2App: "omniroute",
+    tarballPath: "/root/agentproxy-e05ac345da.tgz",
+    pm2App: "agentproxy",
   });
   const names = steps.map((s) => s.name);
   assert.ok(names.indexOf("install") < names.indexOf("restart"));

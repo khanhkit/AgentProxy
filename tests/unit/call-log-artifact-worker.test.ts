@@ -4,7 +4,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-call-log-worker-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-call-log-worker-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const { writeCallArtifactAsync, closeCallLogArtifactWriter, resolveCallLogArtifactWorker } =
@@ -54,7 +54,7 @@ function buildArtifact(id: string) {
 }
 
 test("worker resolution covers npm, standalone, source, and missing layouts", () => {
-  const layoutRoot = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-worker-layout-"));
+  const layoutRoot = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-worker-layout-"));
   const createWorker = (workerFile: string) => {
     fs.mkdirSync(path.dirname(workerFile), { recursive: true });
     fs.writeFileSync(workerFile, "");

@@ -1,7 +1,7 @@
 /**
  * A2A Skill: List Capabilities
  *
- * Returns the full catalog of OmniRoute agent skills (23 API + 21 CLI + 1 config)
+ * Returns the full catalog of AgentProxy agent skills (23 API + 21 CLI + 1 config)
  * as a markdown table with raw SKILL.md URLs for orchestrating agents.
  */
 
@@ -50,7 +50,7 @@ export async function executeListCapabilities(
   const table = buildMarkdownTable(catalog);
 
   const content = [
-    `# OmniRoute Agent Skills Catalog`,
+    `# AgentProxy Agent Skills Catalog`,
     ``,
     `Total: ${catalog.length} skills (${coverage.api.total} API + ${coverage.cli.total} CLI + ${coverage.config.total} config)`,
     ``,

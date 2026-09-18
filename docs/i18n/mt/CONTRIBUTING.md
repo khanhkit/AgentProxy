@@ -1,4 +1,4 @@
-# Contributing to OmniRoute (Malti)
+# Contributing to AgentProxy (Malti)
 
 🌐 **Languages:** 🇺🇸 [English](../../../CONTRIBUTING.md) · 🇸🇦 [ar](../ar/CONTRIBUTING.md) · 🇦🇿 [az](../az/CONTRIBUTING.md) · 🇧🇬 [bg](../bg/CONTRIBUTING.md) · 🇧🇩 [bn](../bn/CONTRIBUTING.md) · 🇨🇿 [cs](../cs/CONTRIBUTING.md) · 🇩🇰 [da](../da/CONTRIBUTING.md) · 🇩🇪 [de](../de/CONTRIBUTING.md) · 🇬🇷 [el](../el/CONTRIBUTING.md) · 🇪🇸 [es](../es/CONTRIBUTING.md) · 🇪🇪 [et](../et/CONTRIBUTING.md) · 🇮🇷 [fa](../fa/CONTRIBUTING.md) · 🇫🇮 [fi](../fi/CONTRIBUTING.md) · 🇫🇷 [fr](../fr/CONTRIBUTING.md) · 🇮🇪 [ga](../ga/CONTRIBUTING.md) · 🇮🇳 [gu](../gu/CONTRIBUTING.md) · 🇮🇱 [he](../he/CONTRIBUTING.md) · 🇮🇳 [hi](../hi/CONTRIBUTING.md) · 🇭🇷 [hr](../hr/CONTRIBUTING.md) · 🇭🇺 [hu](../hu/CONTRIBUTING.md) · 🇮🇩 [id](../id/CONTRIBUTING.md) · 🇮🇹 [it](../it/CONTRIBUTING.md) · 🇯🇵 [ja](../ja/CONTRIBUTING.md) · 🇰🇷 [ko](../ko/CONTRIBUTING.md) · 🇱🇹 [lt](../lt/CONTRIBUTING.md) · 🇱🇻 [lv](../lv/CONTRIBUTING.md) · 🇮🇳 [mr](../mr/CONTRIBUTING.md) · 🇲🇾 [ms](../ms/CONTRIBUTING.md) · 🇳🇱 [nl](../nl/CONTRIBUTING.md) · 🇳🇴 [no](../no/CONTRIBUTING.md) · 🇵🇭 [phi](../phi/CONTRIBUTING.md) · 🇵🇱 [pl](../pl/CONTRIBUTING.md) · 🇵🇹 [pt](../pt/CONTRIBUTING.md) · 🇧🇷 [pt-BR](../pt-BR/CONTRIBUTING.md) · 🇷🇴 [ro](../ro/CONTRIBUTING.md) · 🇷🇺 [ru](../ru/CONTRIBUTING.md) · 🇸🇰 [sk](../sk/CONTRIBUTING.md) · 🇸🇮 [sl](../sl/CONTRIBUTING.md) · 🇷🇸 [sr](../sr/CONTRIBUTING.md) · 🇸🇪 [sv](../sv/CONTRIBUTING.md) · 🇰🇪 [sw](../sw/CONTRIBUTING.md) · 🇮🇳 [ta](../ta/CONTRIBUTING.md) · 🇮🇳 [te](../te/CONTRIBUTING.md) · 🇹🇭 [th](../th/CONTRIBUTING.md) · 🇹🇷 [tr](../tr/CONTRIBUTING.md) · 🇺🇦 [uk-UA](../uk-UA/CONTRIBUTING.md) · 🇵🇰 [ur](../ur/CONTRIBUTING.md) · 🇻🇳 [vi](../vi/CONTRIBUTING.md) · 🇨🇳 [zh-CN](../zh-CN/CONTRIBUTING.md) · 🇹🇼 [zh-TW](../zh-TW/CONTRIBUTING.md)
 
@@ -30,8 +30,8 @@ u mal-passi ta' rikonċiljazzjoni.
 ### Ikklona u Installa
 
 ```bash
-git clone https://github.com/diegosouzapw/OmniRoute.git
-cd OmniRoute
+git clone https://github.com/khanhkit/AgentProxy.git
+cd AgentProxy
 npm install
 ```
 
@@ -116,7 +116,7 @@ il-fajls tal-UI tad-dashboard bi stubs matul il-bini, iżomm il-handlers tar-rot
 wara l-bini. Uża `npm run build` għal bidliet li jaffettwaw l-UI tad-dashboard jew għal
 validazzjoni sħiħa tar-rilaxx; il-profil għall-kontributuri mhuwiex sostitut għall-bini tar-rilaxx.
 
-> **Nota dwar l-implimentazzjoni fuq VPS:** id-direttorju remot tal-immaġni `/usr/lib/node_modules/omniroute/app/`
+> **Nota dwar l-implimentazzjoni fuq VPS:** id-direttorju remot tal-immaġni `/usr/lib/node_modules/agentproxy/app/`
 > ma nbidilx. Il-proċeduri tal-implimentazzjoni jużaw rsync għall-kontenut ta' `dist/` fih.
 > Inbidlet biss il-mogħdija tal-output tal-bini fir-repo (`app/` → `dist/`).
 
@@ -314,7 +314,7 @@ src/                        # TypeScript (.ts / .tsx)
 │   └── validation/         # Schemas tal-Zod v4
 └── sse/                    # Provvista tal-rotta SSE
 
-open-sse/                   # Spazju ta' @omniroute/open-sse
+open-sse/                   # Spazju ta' @agentproxy/open-sse
 ├── executors/              # 89 modulu ta' implimentazzjoni tal-eżekutur
 ├── handlers/               # 11 trattaturi tal-bżonnijiet (chat, risposti, embendings, immaġini, eċċ.)
 ├── mcp-server/             # Server MCP (110 għodod uniċi, 3 trasporti, 33 ambiti)
@@ -336,7 +336,7 @@ tests/
 docs/
 ├── adr/                     # Rekords tad-deċiżjonijiet tal-arkitettura
 ├── architecture/            # Arkitettura tal-isistema u reżiljenza
-├── comparison/              # OmniRoute vs alternattivi
+├── comparison/              # AgentProxy vs alternattivi
 ├── compression/             # Gwidi u regoli tal-kompressjoni
 ├── dev/                     # Gwidi tal-iżvilupp
 ├── diagrams/                # Dijagrammi tal-arkitettura
@@ -421,5 +421,5 @@ Għad-displokki VPS, uża `npm run build:release` (mhux `npm run build`) — dan
 - **Referenza API**: Ara [`docs/reference/API_REFERENCE.md`](docs/reference/API_REFERENCE.md)
 - **Dokumentazzjoni tas-Sigurtà**: [`docs/security/CLI_TOKEN.md`](docs/security/CLI_TOKEN.md), [`docs/security/ROUTE_GUARD_TIERS.md`](docs/security/ROUTE_GUARD_TIERS.md), [`docs/security/ERROR_SANITIZATION.md`](docs/security/ERROR_SANITIZATION.md), [`docs/security/PUBLIC_CREDS.md`](docs/security/PUBLIC_CREDS.md)
 - **Dokumentazzjoni tal-Operazzjonijiet**: [`docs/ops/SQLITE_RUNTIME.md`](docs/ops/SQLITE_RUNTIME.md)
-- **Għaddas ta' Problemi**: [github.com/diegosouzapw/OmniRoute/issues](https://github.com/diegosouzapw/OmniRoute/issues)
+- **Għaddas ta' Problemi**: [github.com/khanhkit/AgentProxy/issues](https://github.com/khanhkit/AgentProxy/issues)
 - **ADRs**: Ara `docs/adr/` għar-rekords tad-deċiżjonijiet tal-arkitettura

@@ -50,9 +50,9 @@ jobs:
       - uses: $/.github/actions/npm-ci-retry
       - name: Build CLI bundle
         env:
-          OMNIROUTE_BUILD_BACKEND_ONLY: "1"
+          AGENTPROXY_BUILD_BACKEND_ONLY: "1"
         run: npm run build:cli
-      - name: Start OmniRoute
+      - name: Start AgentProxy
         env:
           PORT: "20128"
           INJECTION_GUARD_MODE: block
@@ -77,7 +77,7 @@ jobs:
           echo "DAST_AUTH_COOKIE=$auth_cookie" >> "$GITHUB_ENV"
       - name: API-key cross-field validation smoke (blocking)
         env:
-          OMNIROUTE_URL: http://localhost:20128
+          AGENTPROXY_URL: http://localhost:20128
         run: node scripts/dast/check-api-key-cross-field.mjs
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
@@ -102,14 +102,14 @@ jobs:
             -H "Cookie: ${DAST_AUTH_COOKIE}"
       - name: promptfoo injection-guard (blocking)
         env:
-          OMNIROUTE_URL: http://localhost:20128
-          OMNIROUTE_API_KEY: not-needed-blocked-before-upstream
+          AGENTPROXY_URL: http://localhost:20128
+          AGENTPROXY_API_KEY: not-needed-blocked-before-upstream
         run: |
           docker run --rm --network host \
             --volume "$GITHUB_WORKSPACE:/work" \
             --workdir /work \
-            --env OMNIROUTE_URL \
-            --env OMNIROUTE_API_KEY \
+            --env AGENTPROXY_URL \
+            --env AGENTPROXY_API_KEY \
             ghcr.io/promptfoo/promptfoo:0.122.0@sha256:53d9faa8813d9eecdc91a65dbb3dbdd87dd9e9aab9a9900c5a2cda3276909206 \
             promptfoo eval -c promptfooconfig.yaml --no-cache
       - name: Stop server

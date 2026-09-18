@@ -7,7 +7,7 @@ import path from "node:path";
 import { rtkConfigSchema } from "../../../src/shared/validation/compressionConfigSchemas.ts";
 import { DEFAULT_RTK_CONFIG } from "../../../open-sse/services/compression/types.ts";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-rtk-renderers-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-rtk-renderers-"));
 const ORIGINAL_DATA_DIR = process.env.DATA_DIR;
 process.env.DATA_DIR = TEST_DATA_DIR;
 

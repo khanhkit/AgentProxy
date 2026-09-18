@@ -68,10 +68,10 @@ function requestBody(call: CapturedCall): ChatBody {
 }
 
 const ENV_KEYS = [
-  "OMNIROUTE_TRANSLATION_API_URL",
-  "OMNIROUTE_TRANSLATION_API_KEY",
-  "OMNIROUTE_TRANSLATION_MODEL",
-  "OMNIROUTE_TRANSLATION_TIMEOUT_MS",
+  "AGENTPROXY_TRANSLATION_API_URL",
+  "AGENTPROXY_TRANSLATION_API_KEY",
+  "AGENTPROXY_TRANSLATION_MODEL",
+  "AGENTPROXY_TRANSLATION_TIMEOUT_MS",
 ] as const;
 
 /** Runs `fn` with exactly `values` set for the backend env vars, then restores the shell's. */
@@ -321,12 +321,12 @@ test("callChat rejects an empty or missing completion", async () => {
 // backendConfig — env-driven configuration
 // ---------------------------------------------------------------------------
 
-test("backendConfig reads OMNIROUTE_TRANSLATION_* and strips a trailing slash from the URL", () => {
+test("backendConfig reads AGENTPROXY_TRANSLATION_* and strips a trailing slash from the URL", () => {
   withEnv(
     {
-      OMNIROUTE_TRANSLATION_API_URL: "http://translation.test/v1/",
-      OMNIROUTE_TRANSLATION_API_KEY: "  sk-test  ",
-      OMNIROUTE_TRANSLATION_MODEL: "test-model",
+      AGENTPROXY_TRANSLATION_API_URL: "http://translation.test/v1/",
+      AGENTPROXY_TRANSLATION_API_KEY: "  sk-test  ",
+      AGENTPROXY_TRANSLATION_MODEL: "test-model",
     },
     () => {
       assert.deepEqual(backendConfig(), {
@@ -339,10 +339,10 @@ test("backendConfig reads OMNIROUTE_TRANSLATION_* and strips a trailing slash fr
   );
   withEnv(
     {
-      OMNIROUTE_TRANSLATION_API_URL: "http://translation.test/v1",
-      OMNIROUTE_TRANSLATION_API_KEY: "sk-test",
-      OMNIROUTE_TRANSLATION_MODEL: "test-model",
-      OMNIROUTE_TRANSLATION_TIMEOUT_MS: "1234",
+      AGENTPROXY_TRANSLATION_API_URL: "http://translation.test/v1",
+      AGENTPROXY_TRANSLATION_API_KEY: "sk-test",
+      AGENTPROXY_TRANSLATION_MODEL: "test-model",
+      AGENTPROXY_TRANSLATION_TIMEOUT_MS: "1234",
     },
     () => {
       assert.equal(backendConfig().timeoutMs, 1234);
@@ -353,24 +353,24 @@ test("backendConfig reads OMNIROUTE_TRANSLATION_* and strips a trailing slash fr
 test("backendConfig fails fast with the documented message when a var is missing", () => {
   withEnv(
     {
-      OMNIROUTE_TRANSLATION_API_KEY: "sk-test",
-      OMNIROUTE_TRANSLATION_MODEL: "test-model",
+      AGENTPROXY_TRANSLATION_API_KEY: "sk-test",
+      AGENTPROXY_TRANSLATION_MODEL: "test-model",
     },
     () => {
       assert.throws(
         () => backendConfig(),
-        /Missing required env var: OMNIROUTE_TRANSLATION_API_URL\. Set it in \.env/
+        /Missing required env var: AGENTPROXY_TRANSLATION_API_URL\. Set it in \.env/
       );
     }
   );
   withEnv(
     {
-      OMNIROUTE_TRANSLATION_API_URL: "http://translation.test/v1",
-      OMNIROUTE_TRANSLATION_API_KEY: "sk-test",
-      OMNIROUTE_TRANSLATION_MODEL: "   ",
+      AGENTPROXY_TRANSLATION_API_URL: "http://translation.test/v1",
+      AGENTPROXY_TRANSLATION_API_KEY: "sk-test",
+      AGENTPROXY_TRANSLATION_MODEL: "   ",
     },
     () => {
-      assert.throws(() => backendConfig(), /Missing required env var: OMNIROUTE_TRANSLATION_MODEL/);
+      assert.throws(() => backendConfig(), /Missing required env var: AGENTPROXY_TRANSLATION_MODEL/);
     }
   );
 });

@@ -109,7 +109,7 @@ Przełączanie zakładek zachowuje stan konfiguracji.
 ## Modal Export Code
 
 `ExportCodeModal.tsx` używa `codeExport.ts` do generowania snippetów curl / Python / TypeScript
-z bieżącego `PlaygroundState`. Placeholder klucza API to zawsze `$OMNIROUTE_API_KEY` (D11).
+z bieżącego `PlaygroundState`. Placeholder klucza API to zawsze `$AGENTPROXY_API_KEY` (D11).
 
 ---
 
@@ -199,7 +199,7 @@ Auth: opcjonalny (`REQUIRE_API_KEY`). Błędy przez `buildErrorBody()` (Hard Rul
 | Metryki pokazują `null` TTFT                   | Handler pierwszego chunka niepodłączony | Sprawdź, że `useStreamMetrics.onFirstChunk()` jest wywoływane w pętli czytnika SSE |
 | Preset się nie zapisuje                        | Migracja DB nie została uruchomiona     | Uruchom `npm run db:migrate` albo zrestartuj serwer (migracja auto przy starcie)   |
 | Improve prompt zwraca 502                      | Model nieustawiony w Config             | Użytkownik musi wpisać nazwę modelu w panelu Config przed improve                  |
-| Eksport kodu pokazuje `MISSING_API_KEY`        | Placeholder nie wstawiony               | `codeExport.ts` zawsze używa `API_KEY_PLACEHOLDER = "$OMNIROUTE_API_KEY"`          |
+| Eksport kodu pokazuje `MISSING_API_KEY`        | Placeholder nie wstawiony               | `codeExport.ts` zawsze używa `API_KEY_PLACEHOLDER = "$AGENTPROXY_API_KEY"`          |
 
 ---
 

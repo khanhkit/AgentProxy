@@ -7,7 +7,7 @@ import path from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 
-const CACHE_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-swr-cache-8728-"));
+const CACHE_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-swr-cache-8728-"));
 process.env.DATA_DIR = CACHE_DATA_DIR;
 
 const catalogCache = await import("../../src/app/api/v1/models/catalogCache.ts");
@@ -101,7 +101,7 @@ test("the /v1/models route wires Next after() as its response-flush-safe schedul
 
 test("an external client receives the stale body before synchronous refresh finishes blocking", async (t) => {
   catalogCache.__resetCatalogBuilderRunsForTest();
-  const socketDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-swr-http-8728-"));
+  const socketDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-swr-http-8728-"));
   const socketPath = path.join(socketDir, "catalog.sock");
 
   let buildCount = 0;

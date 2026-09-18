@@ -9,7 +9,7 @@ import * as yaml from "js-yaml";
 const guideSettingsRoute =
   await import("../../src/app/api/cli-tools/guide-settings/[toolId]/route.ts");
 
-const DUMMY_HOME = path.join(os.tmpdir(), "omniroute-guide-settings-test-" + Date.now());
+const DUMMY_HOME = path.join(os.tmpdir(), "agentproxy-guide-settings-test-" + Date.now());
 const OPENCODE_CONFIG_PATH = path.join(DUMMY_HOME, ".config", "opencode", "opencode.json");
 const OPENCODE_JSONC_CONFIG_PATH = path.join(DUMMY_HOME, ".config", "opencode", "opencode.jsonc");
 // cliRuntime.ts hermes entry maps to .config/hermes/config.json (not .hermes/config.yaml)
@@ -32,7 +32,7 @@ async function createAuthCookie() {
 
 type HermesConfig = {
   model?: { default?: string; provider?: string; base_url?: string };
-  providers?: { omniroute?: { base_url?: string; api_key?: string } };
+  providers?: { agentproxy?: { base_url?: string; api_key?: string } };
 };
 
 async function buildRequest(toolId: string, body: unknown) {
@@ -82,10 +82,10 @@ test("guide-settings POST creates new hermes config.yaml if it doesn't exist", a
 
   const content = yaml.load(await fs.readFile(HERMES_CONFIG_PATH, "utf-8")) as HermesConfig;
   assert.equal(content.model?.default, "gpt-5.4-mini");
-  assert.equal(content.model?.provider, "omniroute");
+  assert.equal(content.model?.provider, "agentproxy");
   assert.equal(content.model?.base_url, "http://my-omni/v1");
-  assert.equal(content.providers?.omniroute?.base_url, "http://my-omni/v1");
-  assert.ok(String(content.providers?.omniroute?.api_key || "").startsWith("sk-"));
+  assert.equal(content.providers?.agentproxy?.base_url, "http://my-omni/v1");
+  assert.ok(String(content.providers?.agentproxy?.api_key || "").startsWith("sk-"));
 });
 
 test("guide-settings POST writes OpenCode config with current schema and multi-model selection", async () => {
@@ -122,21 +122,21 @@ test("guide-settings POST writes OpenCode config with current schema and multi-m
   const content = parse(await fs.readFile(OPENCODE_CONFIG_PATH, "utf-8"));
   assert.equal(content.$schema, "https://opencode.ai/config.json");
   assert.ok(content.provider.custom);
-  assert.equal(content.provider.omniroute.npm, "@ai-sdk/openai-compatible");
-  assert.equal(content.provider.omniroute.options.baseURL, "http://my-omni/v1");
-  assert.ok(content.provider.omniroute.options.apiKey.startsWith("sk-"));
-  assert.deepEqual(Object.keys(content.provider.omniroute.models), [
+  assert.equal(content.provider.agentproxy.npm, "@ai-sdk/openai-compatible");
+  assert.equal(content.provider.agentproxy.options.baseURL, "http://my-omni/v1");
+  assert.ok(content.provider.agentproxy.options.apiKey.startsWith("sk-"));
+  assert.deepEqual(Object.keys(content.provider.agentproxy.models), [
     "cc/claude-sonnet-4-20250514",
     "gg/gemini-2.5-pro",
   ]);
   // The v2 provider schema is dual-written alongside the v1 block: the v2
-  // entry lives under `providers.omniroute` with `package`/`settings`.
-  assert.equal(content.providers.omniroute.package, "@opencode-ai/ai/providers/openai-compatible");
-  assert.equal(content.providers.omniroute.settings.baseURL, "http://my-omni/v1");
-  assert.ok(content.providers.omniroute.settings.apiKey.startsWith("sk-"));
+  // entry lives under `providers.agentproxy` with `package`/`settings`.
+  assert.equal(content.providers.agentproxy.package, "@opencode-ai/ai/providers/openai-compatible");
+  assert.equal(content.providers.agentproxy.settings.baseURL, "http://my-omni/v1");
+  assert.ok(content.providers.agentproxy.settings.apiKey.startsWith("sk-"));
 });
 
-test("guide-settings POST preserves existing OpenCode config fields while only updating provider.omniroute", async () => {
+test("guide-settings POST preserves existing OpenCode config fields while only updating provider.agentproxy", async () => {
   await fs.mkdir(path.dirname(OPENCODE_CONFIG_PATH), { recursive: true });
   await fs.writeFile(
     OPENCODE_CONFIG_PATH,
@@ -147,9 +147,9 @@ test("guide-settings POST preserves existing OpenCode config fields while only u
     "custom": {
       "name": "Custom Provider"
     },
-    "omniroute": {
+    "agentproxy": {
       "npm": "old-package",
-      "name": "Old OmniRoute",
+      "name": "Old AgentProxy",
       "options": {
         "baseURL": "http://old-host/v1",
         "apiKey": "old-key"
@@ -200,10 +200,10 @@ test("guide-settings POST preserves existing OpenCode config fields while only u
   assert.deepEqual(content.provider.custom, {
     name: "Custom Provider",
   });
-  assert.equal(content.provider.omniroute.npm, "@ai-sdk/openai-compatible");
-  assert.equal(content.provider.omniroute.options.baseURL, "http://my-omni/v1");
-  assert.ok(content.provider.omniroute.options.apiKey.startsWith("sk-"));
-  assert.deepEqual(content.provider.omniroute.models, {
+  assert.equal(content.provider.agentproxy.npm, "@ai-sdk/openai-compatible");
+  assert.equal(content.provider.agentproxy.options.baseURL, "http://my-omni/v1");
+  assert.ok(content.provider.agentproxy.options.apiKey.startsWith("sk-"));
+  assert.deepEqual(content.provider.agentproxy.models, {
     "cx/gpt-5.6-sol": {
       name: "GPT-5.6 Sol",
       limit: { context: 128_000, output: 8192 },

@@ -1,14 +1,14 @@
 ---
-title: "OmniRoute — 控制台功能画廊"
+title: "AgentProxy — 控制台功能画廊"
 version: 3.8.40
 lastUpdated: 2026-06-28
 ---
 
-# OmniRoute — 控制台功能画廊
+# AgentProxy — 控制台功能画廊
 
 🌐 **Languages:** 🇺🇸 [English](../../../../guides/FEATURES.md) · 🇸🇦 [ar](../../../ar/docs/guides/FEATURES.md) · 🇦🇿 [az](../../../az/docs/guides/FEATURES.md) · 🇧🇬 [bg](../../../bg/docs/guides/FEATURES.md) · 🇧🇩 [bn](../../../bn/docs/guides/FEATURES.md) · 🇨🇿 [cs](../../../cs/docs/guides/FEATURES.md) · 🇩🇰 [da](../../../da/docs/guides/FEATURES.md) · 🇩🇪 [de](../../../de/docs/guides/FEATURES.md) · 🇬🇷 [el](../../../el/docs/guides/FEATURES.md) · 🇪🇸 [es](../../../es/docs/guides/FEATURES.md) · 🇪🇪 [et](../../../et/docs/guides/FEATURES.md) · 🇮🇷 [fa](../../../fa/docs/guides/FEATURES.md) · 🇫🇮 [fi](../../../fi/docs/guides/FEATURES.md) · 🇫🇷 [fr](../../../fr/docs/guides/FEATURES.md) · 🇮🇪 [ga](../../../ga/docs/guides/FEATURES.md) · 🇮🇳 [gu](../../../gu/docs/guides/FEATURES.md) · 🇮🇱 [he](../../../he/docs/guides/FEATURES.md) · 🇮🇳 [hi](../../../hi/docs/guides/FEATURES.md) · 🇭🇷 [hr](../../../hr/docs/guides/FEATURES.md) · 🇭🇺 [hu](../../../hu/docs/guides/FEATURES.md) · 🇮🇩 [id](../../../id/docs/guides/FEATURES.md) · 🇮🇹 [it](../../../it/docs/guides/FEATURES.md) · 🇯🇵 [ja](../../../ja/docs/guides/FEATURES.md) · 🇰🇷 [ko](../../../ko/docs/guides/FEATURES.md) · 🇱🇹 [lt](../../../lt/docs/guides/FEATURES.md) · 🇱🇻 [lv](../../../lv/docs/guides/FEATURES.md) · 🇮🇳 [mr](../../../mr/docs/guides/FEATURES.md) · 🇲🇾 [ms](../../../ms/docs/guides/FEATURES.md) · 🇲🇹 [mt](../../../mt/docs/guides/FEATURES.md) · 🇳🇱 [nl](../../../nl/docs/guides/FEATURES.md) · 🇳🇴 [no](../../../no/docs/guides/FEATURES.md) · 🇵🇭 [phi](../../../phi/docs/guides/FEATURES.md) · 🇵🇱 [pl](../../../pl/docs/guides/FEATURES.md) · 🇵🇹 [pt](../../../pt/docs/guides/FEATURES.md) · 🇧🇷 [pt-BR](../../../pt-BR/docs/guides/FEATURES.md) · 🇷🇴 [ro](../../../ro/docs/guides/FEATURES.md) · 🇷🇺 [ru](../../../ru/docs/guides/FEATURES.md) · 🇸🇰 [sk](../../../sk/docs/guides/FEATURES.md) · 🇸🇮 [sl](../../../sl/docs/guides/FEATURES.md) · 🇷🇸 [sr](../../../sr/docs/guides/FEATURES.md) · 🇸🇪 [sv](../../../sv/docs/guides/FEATURES.md) · 🇰🇪 [sw](../../../sw/docs/guides/FEATURES.md) · 🇮🇳 [ta](../../../ta/docs/guides/FEATURES.md) · 🇮🇳 [te](../../../te/docs/guides/FEATURES.md) · 🇹🇭 [th](../../../th/docs/guides/FEATURES.md) · 🇹🇷 [tr](../../../tr/docs/guides/FEATURES.md) · 🇺🇦 [uk-UA](../../../uk-UA/docs/guides/FEATURES.md) · 🇵🇰 [ur](../../../ur/docs/guides/FEATURES.md) · 🇻🇳 [vi](../../../vi/docs/guides/FEATURES.md) · 🇹🇼 [zh-TW](../../../zh-TW/docs/guides/FEATURES.md)
 
-OmniRoute 控制台各功能区的可视化指南。
+AgentProxy 控制台各功能区的可视化指南。
 
 > 📅 **最近更新：** 2026-06-28 — **v3.8.40**
 
@@ -38,7 +38,7 @@ v3.7.x → v3.8.0 版本周期引入了零配置自动路由、新的服务商�
 - 🚦 **按服务商的 429 分类** + `useUpstream429BreakerHints` 开关 — 利用上游速率限制提示实现更精细的熔断行为
 - 🩺 **模型冷却控制台** — 观察每个模型的锁定状态，并通过 UI 手动恢复
 - 🔒 **MITM 动态 Linux 证书检测** — 跨 Debian/Ubuntu、Fedora/RHEL、Arch 等发行版
-- 💻 **CLI 增强套件** — 20+ 命令，包括 `omniroute providers`、`omniroute combos`、`omniroute doctor`、`omniroute setup`
+- 💻 **CLI 增强套件** — 20+ 命令，包括 `agentproxy providers`、`agentproxy combos`、`agentproxy doctor`、`agentproxy setup`
 - 🔍 **Qdrant 嵌入模型发现** — 自动探测向量存储模型
 - 🔑 **带 `manage` 权限域的 API Key / Bearer Key** — 通过 API 以编程方式执行管理操作
 - 🏥 **Combo 目标健康分析** + **结构化 Combo 构建器** — 按目标健康分析 + UI 构建器，用于组装 `(服务商, 模型, 连接)` 步骤
@@ -53,7 +53,7 @@ v3.7.x → v3.8.0 版本周期引入了零配置自动路由、新的服务商�
 
 管理 AI 服务商连接：OAuth 服务商（Claude Code、Codex）、API Key 服务商（Groq、DeepSeek、OpenRouter）和免费服务商（Qoder、Qwen、Kiro）。Kiro 账户包含积分余额追踪——剩余积分、总额度和续期日期可在 控制台 → 用量 中查看。
 
-OpenRouter 连接可以在 高级设置 中存储每个连接的 `preset`。设置后，除非客户端请求已提供自己的 `preset`，否则 OmniRoute 会将其作为 OpenRouter 的顶层请求字段发送，例如 `"preset": "email-copywriter"`。
+OpenRouter 连接可以在 高级设置 中存储每个连接的 `preset`。设置后，除非客户端请求已提供自己的 `preset`，否则 AgentProxy 会将其作为 OpenRouter 的顶层请求字段发送，例如 `"preset": "email-copywriter"`。
 
 ![服务商控制台](../../screenshots/01-providers.png)
 
@@ -148,7 +148,7 @@ CLI 智能体发现与管理控制台。以网格形式展示 17 个内置智能
 
 ## 🔗 Context Relay _(v3.5.5+)_
 
-一种 Combo 策略，在会话中途发生账户轮换时保持连续性。活跃账户配额耗尽前，OmniRoute 在后台生成结构化的交接摘要。后续请求切换到其他账户后，摘要以系统消息形式注入，使新账户以完整上下文继续服务。
+一种 Combo 策略，在会话中途发生账户轮换时保持连续性。活跃账户配额耗尽前，AgentProxy 在后台生成结构化的交接摘要。后续请求切换到其他账户后，摘要以系统消息形式注入，使新账户以完整上下文继续服务。
 
 支持 Combo 级别或全局配置：
 
@@ -216,7 +216,7 @@ OAuth 服务商的一键"环境修复"操作，恢复缺失的环境变量并修
 
 | 命令                     | 操作                                                    |
 | ------------------------ | ------------------------------------------------------- |
-| `npm run uninstall`      | 移除系统应用，但**保留数据库和配置**在 `~/.omniroute`。 |
+| `npm run uninstall`      | 移除系统应用，但**保留数据库和配置**在 `~/.agentproxy`。 |
 | `npm run uninstall:full` | 移除应用，并永久**清除所有配置、密钥和数据库**。        |
 
 ---
@@ -257,7 +257,7 @@ OAuth 服务商的一键"环境修复"操作，恢复缺失的环境变量并修
 
 ## 🖥️ 桌面应用
 
-面向 Windows、macOS 和 Linux 的原生 Electron 桌面应用。以独立应用程序形式运行 OmniRoute，集成系统托盘、离线支持、自动更新和一键安装。
+面向 Windows、macOS 和 Linux 的原生 Electron 桌面应用。以独立应用程序形式运行 AgentProxy，集成系统托盘、离线支持、自动更新和一键安装。
 
 关键功能：
 
@@ -276,7 +276,7 @@ OAuth 服务商的一键"环境修复"操作，恢复缺失的环境变量并修
 
 ## 🌐 V1 WebSocket Bridge _(v3.6.6+)_
 
-OmniRoute 现通过 `/v1/ws` 升级端点支持 OpenAI 兼容的 WebSocket 客户端。自定义 `scripts/dev/v1-ws-bridge.mjs` 服务器包装 Next.js，将 WS 连接升级为全双工流式会话。认证使用与 HTTP 请求相同的 API Key 或会话 Cookie。
+AgentProxy 现通过 `/v1/ws` 升级端点支持 OpenAI 兼容的 WebSocket 客户端。自定义 `scripts/dev/v1-ws-bridge.mjs` 服务器包装 Next.js，将 WS 连接升级为全双工流式会话。认证使用与 HTTP 请求相同的 API Key 或会话 Cookie。
 
 关键行为：
 
@@ -302,7 +302,7 @@ OmniRoute 现通过 `/v1/ws` 升级端点支持 OpenAI 兼容的 WebSocket 客�
 
 **GLM Thinking（`glmt`）** 现作为一线服务商注册：最大输出 Token 65,536、Thinking 预算 24,576、默认超时 900 秒、Claude 兼容 API 格式，并与 GLM 系列共享用量同步。
 
-**混合 Token 计数**也在 v3.6.6 中落地：当 Claude 兼容的服务商暴露 `/messages/count_tokens` 端点时，OmniRoute 在大请求前调用该端点，并提供优雅的估算回退。
+**混合 Token 计数**也在 v3.6.6 中落地：当 Claude 兼容的服务商暴露 `/messages/count_tokens` 端点时，AgentProxy 在大请求前调用该端点，并提供优雅的估算回退。
 
 ---
 

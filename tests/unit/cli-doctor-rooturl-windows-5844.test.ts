@@ -25,7 +25,7 @@ import { fileURLToPath } from "node:url";
 //      does NOT use the old `new URL(import.meta.url).pathname` pattern anymore.
 
 test("old `new URL(...).pathname` pattern produces the buggy /C: prefix on a Windows file URL", () => {
-  const windowsFileUrl = "file:///C:/Users/x/node_modules/omniroute/bin/cli/commands/doctor.mjs";
+  const windowsFileUrl = "file:///C:/Users/x/node_modules/agentproxy/bin/cli/commands/doctor.mjs";
   const buggyPathname = new URL(windowsFileUrl).pathname;
 
   // This is the defect: the pathname keeps the leading slash before the drive
@@ -33,7 +33,7 @@ test("old `new URL(...).pathname` pattern produces the buggy /C: prefix on a Win
   // treat `/C:/Users/...` as a POSIX-relative-looking segment instead of the
   // real Windows path `C:\Users\...`, producing a malformed rootDir.
   assert.equal(buggyPathname.startsWith("/C:"), true);
-  assert.equal(buggyPathname, "/C:/Users/x/node_modules/omniroute/bin/cli/commands/doctor.mjs");
+  assert.equal(buggyPathname, "/C:/Users/x/node_modules/agentproxy/bin/cli/commands/doctor.mjs");
 });
 
 test("fileURLToPath does not keep the leading-slash drive-letter defect on the current platform", () => {

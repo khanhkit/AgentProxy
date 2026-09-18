@@ -4,18 +4,18 @@ import { AUTHZ_HEADER_PEER_LOCALITY } from "@/server/authz/headers";
 
 export const VIDEO_BRIDGE_BROKER_PATH = "/api/modality-bridge/video/extract";
 export const VIDEO_BRIDGE_DRILLDOWN_PATH = "/api/modality-bridge/video/drilldown";
-export const VIDEO_BRIDGE_BROKER_AUTH_HEADER = "x-omniroute-video-bridge-broker";
-export const VIDEO_BRIDGE_DRILLDOWN_PRINCIPAL_HEADER = "x-omniroute-video-bridge-principal";
+export const VIDEO_BRIDGE_BROKER_AUTH_HEADER = "x-agentproxy-video-bridge-broker";
+export const VIDEO_BRIDGE_DRILLDOWN_PRINCIPAL_HEADER = "x-agentproxy-video-bridge-principal";
 
 const globalState = globalThis as typeof globalThis & {
-  __omnirouteVideoBridgeBrokerToken?: string;
+  __agentproxyVideoBridgeBrokerToken?: string;
 };
 
 function brokerToken(): string {
-  if (!globalState.__omnirouteVideoBridgeBrokerToken) {
-    globalState.__omnirouteVideoBridgeBrokerToken = randomUUID();
+  if (!globalState.__agentproxyVideoBridgeBrokerToken) {
+    globalState.__agentproxyVideoBridgeBrokerToken = randomUUID();
   }
-  return globalState.__omnirouteVideoBridgeBrokerToken;
+  return globalState.__agentproxyVideoBridgeBrokerToken;
 }
 
 export function buildVideoBridgeBrokerHeaders(): Record<string, string> {

@@ -6,14 +6,14 @@
 
 ---
 
-title: "Dokumentazzjoni tal-Server OmniRoute A2A"
+title: "Dokumentazzjoni tal-Server AgentProxy A2A"
 version: 3.8.40
 lastUpdated: 2026-06-28
 ---
 
-# Dokumentazzjoni tal-Server OmniRoute A2A
+# Dokumentazzjoni tal-Server AgentProxy A2A
 
-> Protokoll għall-Aġenti lejn l-Aġenti v0.3 — OmniRoute bħala aġent ta’ rotazzjoni intelliġenti
+> Protokoll għall-Aġenti lejn l-Aġenti v0.3 — AgentProxy bħala aġent ta’ rotazzjoni intelliġenti
 
 Is-superfiċi tal-A2A għandha żewġ naħat:
 
@@ -28,7 +28,7 @@ Il-kompiti jiġu msegwita minn `A2ATaskManager` (`src/lib/a2a/taskManager.ts`, g
 curl http://localhost:20128/.unknown/agent.json
 ```
 
-Jirritorna l-Kard tal-Aġent li tiddeskrivi l-kapaċitajiet, l-għarfien, u r-rekwiżiti tal-awtentikazzjoni tal-OmniRoute.
+Jirritorna l-Kard tal-Aġent li tiddeskrivi l-kapaċitajiet, l-għarfien, u r-rekwiżiti tal-awtentikazzjoni tal-AgentProxy.
 
 Il-qasam `version` tal-Kard tal-Aġent jiġi mill- `process.env.npm_package_version` (ara `src/app/.well-known/agent.json/route.ts:13`), għalhekk jibqa' jiġi sinkronizzat awtomatikament mal-`package.json` f'kull rilaxx.
 
@@ -39,7 +39,7 @@ Il-qasam `version` tal-Kard tal-Aġent jiġi mill- `process.env.npm_package_vers
 It-talbiet kollha tal-`/a2a` jeħtieġu API key permezz tal-intestatura `Authorization`:
 
 ```
-Authorization: Bearer YOUR_OMNIROUTE_API_KEY
+Authorization: Bearer YOUR_AGENTPROXY_API_KEY
 ```
 
 Jekk l-ebda API key mhuwiex konfigurat fis-server, l-awtentikazzjoni tiġi evitata.
@@ -157,22 +157,22 @@ curl -X POST http://localhost:20128/a2a \
 
 ## Kompetenzi Disponibbli
 
-OmniRoute joffri 6 ħiliet A2A marbuta f'`src/lib/a2a/taskExecution.ts::A2A_SKILL_HANDLERS`. Kull modulu tal-ħila jgħix f'`src/lib/a2a/skills/`.
+AgentProxy joffri 6 ħiliet A2A marbuta f'`src/lib/a2a/taskExecution.ts::A2A_SKILL_HANDLERS`. Kull modulu tal-ħila jgħix f'`src/lib/a2a/skills/`.
 
 | Ħila                   | ID                   | Deskrizzjoni                                                                                                                                                          | Tags                                                              | Eżempji                                          |
 | :--------------------- | :------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------- | :----------------------------------------------- |
-| Smart Routing          | `smart-routing`      | Jirrotta prompt permezz tal-fornitur/kombottif ottimali bl-għodda ta' kombo + punteġġ ta' OmniRoute                                                                   | routing, providers                                                | "Rotta dan il-prompt permezz tal-mudell l-aħjar" |
+| Smart Routing          | `smart-routing`      | Jirrotta prompt permezz tal-fornitur/kombottif ottimali bl-għodda ta' kombo + punteġġ ta' AgentProxy                                                                   | routing, providers                                                | "Rotta dan il-prompt permezz tal-mudell l-aħjar" |
 | Ġestjoni tal-Quota     | `quota-management`   | Jirrapporta l-kundizzjoni tal-quota għal kull fornitur, jgħin lis-sejjers jiddeċiedu meta jwaqqfu/jibdlu                                                              | quota, providers                                                  | "Check quota għal anthropic"                     |
 | Skoperta tal-Fornituri | `provider-discovery` | Jilista l-fornituri installati bil-kapaċitajiet, bandier tal-free-tier, stat tal-OAuth                                                                                | providers, discovery                                              | "X'fornituri huma disponibbli?"                  |
 | Analisi tal-Kost       | `cost-analysis`      | Jistima l-ispejjeż ta' talba/lejla mogħdija meta jinqara l-katalogu + l-użu reċenti                                                                                   | cost, usage                                                       | "Estima l-ispejjeż għal din il-lejla"            |
 | Rapport tas-Saħħa      | `health-report`      | Jagħmel aggregates tat-circuit breaker, cooldown, stat tal-lockout għal kull fornitur                                                                                 | health, resilience "Uri l-istat tas-saħħa ta' kollha l-fornituri" |
-| Lista ta' Kapaċitajiet | `list-capabilities`  | Jirritorna l-katalogu sħiħ ta' 45 entry tal-Ħiliet tal-Aġent (23 API + 21 CLI + 1 config) b'taħlita tal-ma hudx raw URLs tal-fajl SKILL.md għal injettar tal-kontekst | catalog, discovery, skills                                        | "Lista ta' kollha l-kapaċitajiet ta' OmniRoute"  |
+| Lista ta' Kapaċitajiet | `list-capabilities`  | Jirritorna l-katalogu sħiħ ta' 45 entry tal-Ħiliet tal-Aġent (23 API + 21 CLI + 1 config) b'taħlita tal-ma hudx raw URLs tal-fajl SKILL.md għal injettar tal-kontekst | catalog, discovery, skills                                        | "Lista ta' kollha l-kapaċitajiet ta' AgentProxy"  |
 
 > Il-Karta tal-Aġent għandha tinżamm allinjata mal-katalogu ħaj ta' 352-fornitur; il-kontijiet tal-fornituri u l-metadati ta' free/no-auth jiġu minn registru runtime.
 
 ### Dettalji tal-Ħila `list-capabilities`
 
-Il-ħila `list-capabilities` hija utli b'mod partikolari għal aġenti esterni li jridu jiskopru dak li OmniRoute juri qabel ma jibagħtu sejħiet API. Jirritorna artifatt tat-taħlita markdown stukturata:
+Il-ħila `list-capabilities` hija utli b'mod partikolari għal aġenti esterni li jridu jiskopru dak li AgentProxy juri qabel ma jibagħtu sejħiet API. Jirritorna artifatt tat-taħlita markdown stukturata:
 
 ```
 | ID | Name | Category | Area | Endpoints/Commands | Raw URL |
@@ -196,9 +196,9 @@ Il-punt ta' dħul JSON-RPC `/a2a` huwa l-punt A2A kanoniku. L-estremitajiet REST
 | `/api/a2a/tasks/[id]`        | GET    | Ħu impjieg bl-ID                                                      | management                                   |
 | `/api/a2a/tasks/[id]/cancel` | POST   | Ikkanċella impjieg li qed jitħaddem                                   | management                                   |
 | `/.well-known/agent.json`    | GET    | Kard tal-Aġent (scoperta A2A)                                         | (pubbliku, cached 3600s)                     |
-| `/api/a2a/tasks`             | POST   | Deleġazzjoni inbound lejn il-frotta OmniConductor (Conductor PRD RF5) | Bearer vs `OMNIROUTE_API_KEY` + `a2aEnabled` |
+| `/api/a2a/tasks`             | POST   | Deleġazzjoni inbound lejn il-frotta OmniConductor (Conductor PRD RF5) | Bearer vs `AGENTPROXY_API_KEY` + `a2aEnabled` |
 
-**Deleġazzjoni inbound Conductor (`POST /api/a2a/tasks`):** aġenti A2A esterni jiddelegaw xogħol tal-kodifikazzjoni lill-frotta OmniConductor permezz ta' OmniRoute. Korpus: `{ skill: "conductor" | "conductor-cli-<profile>", messages: [{role, content}], metadata: { conductor: { repo: { url, base_ref? }, mode?, cli?, model? } } }` — biss il-ħiliet tal-frotta Conductor (dawk imħabbar fil-Kard tal-Aġent) huma delegabbli; `metadata.conductor.repo.url` meħtieġa (il-frotta taħdem fuq repos git). It-traduzzjoni ssir lejn il-`POST /v1/tasks` tal-hub billi juża l-`CONDUCTOR_ORCHESTRATOR_TOKEN` tal-server (fallback `CONDUCTOR_HUB_TOKEN`) u jirritorna `201 { conductor_task_id, state: "submitted" }`; l-istati tal-impjieġ jiġbru lura permezz tal-mirja SSE→A2A (RF1) u huma viżibbli permezz ta' `GET /api/a2a/tasks?skill=conductor`.
+**Deleġazzjoni inbound Conductor (`POST /api/a2a/tasks`):** aġenti A2A esterni jiddelegaw xogħol tal-kodifikazzjoni lill-frotta OmniConductor permezz ta' AgentProxy. Korpus: `{ skill: "conductor" | "conductor-cli-<profile>", messages: [{role, content}], metadata: { conductor: { repo: { url, base_ref? }, mode?, cli?, model? } } }` — biss il-ħiliet tal-frotta Conductor (dawk imħabbar fil-Kard tal-Aġent) huma delegabbli; `metadata.conductor.repo.url` meħtieġa (il-frotta taħdem fuq repos git). It-traduzzjoni ssir lejn il-`POST /v1/tasks` tal-hub billi juża l-`CONDUCTOR_ORCHESTRATOR_TOKEN` tal-server (fallback `CONDUCTOR_HUB_TOKEN`) u jirritorna `201 { conductor_task_id, state: "submitted" }`; l-istati tal-impjieġ jiġbru lura permezz tal-mirja SSE→A2A (RF1) u huma viżibbli permezz ta' `GET /api/a2a/tasks?skill=conductor`.
 
 ---
 

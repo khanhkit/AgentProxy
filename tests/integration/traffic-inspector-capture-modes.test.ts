@@ -15,7 +15,7 @@ import os from "node:os";
 import path from "node:path";
 import net from "node:net";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-ti-capture-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-ti-capture-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.INSPECTOR_HTTP_PROXY_PORT = "0"; // ephemeral port
 

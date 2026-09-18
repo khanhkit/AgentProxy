@@ -82,7 +82,7 @@ test(
   "loadPlugin runs hooks in an isolated child process over IPC",
   { timeout: 5_000 },
   async (t) => {
-    const pluginDir = await mkdtemp(join(tmpdir(), "omniroute-plugin-loader-"));
+    const pluginDir = await mkdtemp(join(tmpdir(), "agentproxy-plugin-loader-"));
     const entryPoint = join(pluginDir, "index.mjs");
     let loaded: LoadedPlugin | undefined;
 
@@ -142,7 +142,7 @@ test(
   "loadPlugin wires declared lifecycle hooks and skips undeclared ones",
   { timeout: 5_000 },
   async (t) => {
-    const pluginDir = await mkdtemp(join(tmpdir(), "omniroute-plugin-lifecycle-"));
+    const pluginDir = await mkdtemp(join(tmpdir(), "agentproxy-plugin-lifecycle-"));
     const entryPoint = join(pluginDir, "index.mjs");
     let loaded: LoadedPlugin | undefined;
 
@@ -202,18 +202,18 @@ export async function onUninstall(_payload) {}
 // Regression (Hard Rule #18): the generated host script used to be deleted with a
 // fire-and-forget `rm(...).catch()`. That unlink loses the race against process exit —
 // under `npm run test:unit` (--test-force-exit) the runner tore the process down before
-// the promise settled, so every plugin load leaked one omniroute-plugin-host-*.mjs into
+// the promise settled, so every plugin load leaked one agentproxy-plugin-host-*.mjs into
 // TMPDIR and they accumulated run over run. cleanup() must have removed it by return.
 test(
   "cleanup() removes the generated host script before returning",
   { timeout: 5_000 },
   async (t) => {
-    const pluginDir = await mkdtemp(join(tmpdir(), "omniroute-plugin-loader-"));
+    const pluginDir = await mkdtemp(join(tmpdir(), "agentproxy-plugin-loader-"));
     const entryPoint = join(pluginDir, "index.mjs");
     // Redirect the loader's tmpdir() so a concurrent test file's host scripts cannot
     // land in the directory we count (test:unit runs at --test-concurrency=20).
     // POSIX reads TMPDIR, Windows reads TEMP/TMP — set all three.
-    const hostScriptDir = await mkdtemp(join(tmpdir(), "omniroute-hostscript-"));
+    const hostScriptDir = await mkdtemp(join(tmpdir(), "agentproxy-hostscript-"));
     const tmpEnvKeys = ["TMPDIR", "TEMP", "TMP"] as const;
     const savedEnv = tmpEnvKeys.map((k) => [k, process.env[k]] as const);
     let loaded: LoadedPlugin | undefined;
@@ -246,7 +246,7 @@ test(
     });
 
     assert.deepEqual(
-      readdirSync(hostScriptDir).filter((f) => f.startsWith("omniroute-plugin-host-")).length,
+      readdirSync(hostScriptDir).filter((f) => f.startsWith("agentproxy-plugin-host-")).length,
       1,
       "sanity: loadPlugin writes exactly one host script"
     );
@@ -255,7 +255,7 @@ test(
     loaded = undefined;
 
     assert.deepEqual(
-      readdirSync(hostScriptDir).filter((f) => f.startsWith("omniroute-plugin-host-")),
+      readdirSync(hostScriptDir).filter((f) => f.startsWith("agentproxy-plugin-host-")),
       [],
       "cleanup() must delete the host script synchronously, not on a later tick"
     );

@@ -6,7 +6,7 @@ import path from "node:path";
 
 // Isolate DATA_DIR before any src import — the scheduler module's default deps
 // reference the DB layer (never invoked here: every test injects its deps).
-const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-test-radar-scheduler-"));
+const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-test-radar-scheduler-"));
 process.env.DATA_DIR = tmpDir;
 
 const {

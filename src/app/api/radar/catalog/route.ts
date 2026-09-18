@@ -15,7 +15,7 @@ import { CORS_HEADERS, handleCorsOptions } from "@/shared/utils/cors";
 import { isFeatureFlagEnabled } from "@/shared/utils/featureFlags";
 import { isAuthenticated } from "@/shared/utils/apiAuth";
 import { getRadarCatalog } from "@/lib/radar";
-import { buildErrorBody } from "@omniroute/open-sse/utils/error";
+import { buildErrorBody } from "@agentproxy/open-sse/utils/error";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -47,7 +47,7 @@ export async function GET(request: Request) {
       { headers: { ...CORS_HEADERS, "Cache-Control": "no-store" } }
     );
   } catch (err: unknown) {
-    const { sanitizeErrorMessage } = await import("@omniroute/open-sse/utils/error");
+    const { sanitizeErrorMessage } = await import("@agentproxy/open-sse/utils/error");
     return NextResponse.json(
       buildErrorBody(500, sanitizeErrorMessage(err) || "Failed to load Radar catalog"),
       { status: 500, headers: CORS_HEADERS }

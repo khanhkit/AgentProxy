@@ -1,5 +1,5 @@
 // @ts-nocheck
-// Regression test for #6912: OmniRoute never renamed a client-sent
+// Regression test for #6912: AgentProxy never renamed a client-sent
 // `max_completion_tokens` back to `max_tokens` for providers/models whose
 // registry entry only documents the legacy field (Volcengine Ark / DeepSeek).
 // chatCore.ts already renamed the OTHER direction (max_tokens ->
@@ -13,7 +13,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-repro-6912-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-repro-6912-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../src/lib/db/core.ts");

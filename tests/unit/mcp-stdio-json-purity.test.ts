@@ -5,7 +5,7 @@
 // ("GLIBC_2.29 not found"), so the native module fails to dlopen and any test that
 // reaches better-sqlite3 directly (or asserts stdout that the load-failure warning
 // would pollute) fails HERE while passing in CI. This is a known environment
-// limitation, not a defect in the code under test: the OmniRoute runtime itself
+// limitation, not a defect in the code under test: the AgentProxy runtime itself
 // cascades to node:sqlite/sql.js when better-sqlite3 is unavailable. See
 // tests/unit/_helpers/betterSqlite3Availability.ts for a guard helper.
 import { describe, it } from "node:test";
@@ -16,7 +16,7 @@ import { join } from "node:path";
 const ROOT = new URL("../..", import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, "$1");
 
 /**
- * Regression coverage: `omniroute --mcp` (the stdio transport Claude Desktop and other MCP
+ * Regression coverage: `agentproxy --mcp` (the stdio transport Claude Desktop and other MCP
  * clients spawn) must write nothing but JSON-RPC to stdout. DB init — a side effect of
  * `createMcpServer()`'s tool registration reading compression settings — used to log via
  * plain `console.log` before any redirect was in place (ES module static imports are hoisted
@@ -28,9 +28,9 @@ const ROOT = new URL("../..", import.meta.url).pathname.replace(/^\/([A-Za-z]:)/
  * (bin/mcp-server.mjs) — the only point early enough to run before the MCP entry's module
  * graph evaluates at all.
  */
-describe("omniroute --mcp stdio transport", () => {
+describe("agentproxy --mcp stdio transport", () => {
   it("writes only valid JSON-RPC to stdout — no DB init or other startup logging leaks through", async () => {
-    const child = spawn(process.execPath, [join(ROOT, "bin", "omniroute.mjs"), "--mcp"], {
+    const child = spawn(process.execPath, [join(ROOT, "bin", "agentproxy.mjs"), "--mcp"], {
       cwd: ROOT,
       env: process.env,
     });
@@ -57,7 +57,7 @@ describe("omniroute --mcp stdio transport", () => {
       })}\n`
     );
 
-    // The full chain (omniroute.mjs CLI startup + spawned MCP child, each paying a tsx
+    // The full chain (agentproxy.mjs CLI startup + spawned MCP child, each paying a tsx
     // import + the child's DB init/migrations) takes ~10s on a warm dev box and longer on
     // loaded CI runners — a fixed 4s sleep made this test red from birth. Poll for the
     // first stdout line instead, then give the stream a short settle window so any

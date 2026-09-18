@@ -137,11 +137,11 @@ export interface RtkFilterDefinition {
   maxLines: number;
   preserveHead: number;
   preserveTail: number;
-  /** Exact RTK TOML schema-v1 head/tail stages. Undefined for OmniRoute-native JSON filters. */
+  /** Exact RTK TOML schema-v1 head/tail stages. Undefined for AgentProxy-native JSON filters. */
   rtkTomlHeadLines?: number;
   rtkTomlTailLines?: number;
   rtkTomlMaxLines?: number;
-  sourceFormat?: "omniroute-json" | "rtk-toml-v1";
+  sourceFormat?: "agentproxy-json" | "rtk-toml-v1";
   source?: "project" | "global" | "builtin";
   tests: Array<{ name: string; input: string; expected: string; command?: string }>;
 }

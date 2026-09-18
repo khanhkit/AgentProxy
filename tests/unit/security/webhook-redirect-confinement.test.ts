@@ -134,8 +134,8 @@ test("AP-ISS-0027: signed webhook never follows a cross-origin 308", async () =>
 });
 
 test("AP-ISS-0027: redirect to cloud metadata is rejected before a second request", async () => {
-  const previousPrivateOptIn = process.env.OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS;
-  delete process.env.OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS;
+  const previousPrivateOptIn = process.env.AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS;
+  delete process.env.AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS;
   const fixture = installRedirectFixture("http://169.254.169.254/latest/meta-data/");
 
   try {
@@ -152,9 +152,9 @@ test("AP-ISS-0027: redirect to cloud metadata is rejected before a second reques
   } finally {
     fixture.restore();
     if (previousPrivateOptIn === undefined) {
-      delete process.env.OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS;
+      delete process.env.AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS;
     } else {
-      process.env.OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS = previousPrivateOptIn;
+      process.env.AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS = previousPrivateOptIn;
     }
   }
 });

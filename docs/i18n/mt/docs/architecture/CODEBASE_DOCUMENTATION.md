@@ -6,16 +6,16 @@
 
 ---
 
-title: "Dokumentazzjoni tal-Bażi tal-Kodiċi OmniRoute"
+title: "Dokumentazzjoni tal-Bażi tal-Kodiċi AgentProxy"
 version: 3.8.40
 lastUpdated: 2026-06-28
 ---
 
-# Dokumentazzjoni tal-Bażi tal-Kodiċi OmniRoute
+# Dokumentazzjoni tal-Bażi tal-Kodiċi AgentProxy
 
 > **Verżjoni:** v3.8.51
 > **Aġġornat l-aħħar:** 2026-06-28
-> **Adience:** Inġiniera li jikkontribwixxu għal OmniRoute jew jibnu integrazzjonijiet fuqu.
+> **Adience:** Inġiniera li jikkontribwixxu għal AgentProxy jew jibnu integrazzjonijiet fuqu.
 >
 > Għal skemi ta' arkitettura ta' livell għoli u r-raġuni wara kull sottosistema, aqra
 > [ARCHITECTURE.md](./ARCHITECTURE.md). Għal tagħtijiet fil-fond fuq sottosistemi individwali
@@ -46,23 +46,23 @@ bla ma joħloq moduli ġodda.
 Subistituzzjonijiet ta' mili (`tsconfig.json`):
 
 - `@/*` → `src/*`
-- `@omniroute/open-sse` → `open-sse/index.ts`
-- `@omniroute/open-sse/*` → `open-sse/*`
+- `@agentproxy/open-sse` → `open-sse/index.ts`
+- `@agentproxy/open-sse/*` → `open-sse/*`
 
 Port HTTP Standard: **`20128`** (API u dashboard jaqsmu l-istess proċess). Il-folder
-d tad-dejta huwa l-varjambli tal-ambjent `DATA_DIR`, b'defaults għal `~/.omniroute/`.
+d tad-dejta huwa l-varjambli tal-ambjent `DATA_DIR`, b'defaults għal `~/.agentproxy/`.
 
 ---
 
 ## 2. Tqassim tal-Repositories
 
 ````
-OmniRoute/
+AgentProxy/
 ├── src/                  Applikazzjoni Next.js (App Router, libs, dominju, server, komuni)
-├── open-sse/             Xejrier tat-tixrid tax-xogħol (@omniroute/open-sse)
+├── open-sse/             Xejrier tat-tixrid tax-xogħol (@agentproxy/open-sse)
 ├── electron/             Warapper desktop (Electron 41 principali + preload)
 ├── bin/```
->Punti tad-dħul CLI (omniroute, reset-password)
+>Punti tad-dħul CLI (agentproxy, reset-password)
 ├── tests/                Unità, integrazzjoni, e2e, protocols-e2e, traduttur, sigurtà, fixtures
 ├── scripts/              Skripts tal-bini, tissinkronizza, tivverifika, migrat, u għajnuna għal ħin reali
 ├── docs/                 Dokumentazzjoni pubblika (din il-folder)
@@ -308,7 +308,7 @@ It-tabella tgroupa d-direttoriji attwali u l-files ewlenin notevoli.
 | `runtime/`        | Identifikazzjoni tal-funzjonalità runtime                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
 | `search/`         | `executeWebSearch.ts`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | `services/`       | Frejmwok tas-servizzi integrati: `ServiceSupervisor.ts` (superviżur universali tal-proċessi wild b'blokk operazzjoni, ring buffer, verifika tal-saħħa), `bootstrap.ts` (reġistrazzjoni u tnedija awtomatika ta' livell tal-proċess), `registry.ts` (mappa ta' għodod → superviżur), `apiKey.ts` (ħażna tal-muftieħ AES-256-GCM), `modelSync.ts` (sinkronizzazzjoni periodika tal-mudelli), `ringBuffer.ts` (buffer log ta' 5 MB ċirkolari), `healthCheck.ts` (indikatur tal-saħħa HTTP), `types.ts`, `embedWsProxy.ts` (proxy WebSocket), `installers/{ninerouter,cliproxy}.ts`. Ara `docs/frameworks/EMBEDDED-SERVICES.md`                                                              |
-| `agentSkills/`    | Katalogu + ġeneratur tal-Ħiliet tal-Aġent: `catalog.ts` (getCatalog/getSkillById/filterCatalog/computeCoverage), `generator.ts` (generateAgentSkills → jikteb `skills/{id}/SKILL.md`), `openapiParser.ts` (jestraħ endpoints REST minn speċi OpenAPI), `cliRegistryParser.ts` (jestraħ sottokmandi CLI minn bin/cli-registry), `schemas.ts` (Zod: AgentSkillSchema, SkillCoverageSchema, ListQuerySchema, GenerateBodySchema), `types.ts` (AgentSkill, SkillCoverage, SkillMarkdown, GeneratorReport). Jingħad minn rotot REST (`/api/agent-skills/*`), għodod MCP (`omniroute_agent_skills_*`), u ħiliet A2A `list-capabilities`. Ara [AGENT-SKILLS.md](../frameworks/AGENT-SKILLS.md). |
+| `agentSkills/`    | Katalogu + ġeneratur tal-Ħiliet tal-Aġent: `catalog.ts` (getCatalog/getSkillById/filterCatalog/computeCoverage), `generator.ts` (generateAgentSkills → jikteb `skills/{id}/SKILL.md`), `openapiParser.ts` (jestraħ endpoints REST minn speċi OpenAPI), `cliRegistryParser.ts` (jestraħ sottokmandi CLI minn bin/cli-registry), `schemas.ts` (Zod: AgentSkillSchema, SkillCoverageSchema, ListQuerySchema, GenerateBodySchema), `types.ts` (AgentSkill, SkillCoverage, SkillMarkdown, GeneratorReport). Jingħad minn rotot REST (`/api/agent-skills/*`), għodod MCP (`agentproxy_agent_skills_*`), u ħiliet A2A `list-capabilities`. Ara [AGENT-SKILLS.md](../frameworks/AGENT-SKILLS.md). |
 | `skills/`         | Frejmwok tal-ħiliet: `registry.ts`, `executor.ts`, `interception.ts`, `injection.ts`, `sandbox.ts`, `custom.ts`, `hybrid.ts`, `builtins.ts`, `a2a.ts`, `providerSettings.ts`, `schemas.ts`, `skillssh.ts`, `types.ts`, kif ukoll `builtin/browser.ts`                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | `spend/`          | `batchWriter.ts` (buffer write-behind)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | `sync/`           | `bundle.ts`, `tokens.ts` (Sincronizzazzjoni Cloud)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
@@ -394,7 +394,7 @@ Loġika tan-negozju pur, l-ebda I/O. Jiġi importat minn rotot u handlers.
 | `degradation.ts`                           | Tranżizzjonijiet għall-mudall inferjuri                   |
 | `providerExpiration.ts`                    | Identifikazzjoni ta' kont/muftieħskad                     |
 | `quotaCache.ts`                            | Deċiżjonijiet tal-kota ġewwa l-cache                      |
-| `responses.ts`, `omnirouteResponseMeta.ts` | Għajnuniet tal-forma tal-petizzjoni                       |
+| `responses.ts`, `agentproxyResponseMeta.ts` | Għajnuniet tal-forma tal-petizzjoni                       |
 | `configAudit.ts`                           | Auditing tal-bidliet fil-konfigurazzjoni                  |
 | `assessment/`                              | Valutazzjoni tal-mudelli (skond RFC, miftuħa parzjalment) |
 | `types.ts`                                 | Tipi dominju maqsumin                                     |
@@ -446,7 +446,7 @@ Maqsum f'sotto-direttoriji ffukati:
 
 ## 4. `open-sse/` — Spazju tax-xogħol tal-magna ta' l-streaming
 
-Workspace npm separat ippubblikat bħala `@omniroute/open-sse`. Jippossjedi l-ipproċessar tal-ħtiġijiet, l-esekuturi, it-tradutturi, is-servizzi, it-trasformatur, u s-servizz MCP.
+Workspace npm separat ippubblikat bħala `@agentproxy/open-sse`. Jippossjedi l-ipproċessar tal-ħtiġijiet, l-esekuturi, it-tradutturi, is-servizzi, it-trasformatur, u s-servizz MCP.
 
 ```
 open-sse/
@@ -606,7 +606,7 @@ electron/
 
 ```
 bin/
-├── omniroute.mjs           Daħla ewlenija tal-CLI (Node ESM)
+├── agentproxy.mjs           Daħla ewlenija tal-CLI (Node ESM)
 ├── reset-password.mjs      Irrisettja l-password tal-ġestjoni mill-CLI
 ├── mcp-server.mjs          Mudell tal-isservizz MCP (stdio)
 ├── nodeRuntimeSupport.mjs  Gwardja tal-verżjoni Node
@@ -629,8 +629,8 @@ bin/
 
 Żewġ binarji huma esposti fil-`package.json` → `bin`:
 
-- `omniroute` → `bin/omniroute.mjs`
-- `omniroute-reset-password` → `bin/reset-password.mjs`
+- `agentproxy` → `bin/agentproxy.mjs`
+- `agentproxy-reset-password` → `bin/reset-password.mjs`
 
 ---
 
@@ -786,7 +786,7 @@ Ara [A2A-SERVER.md § Adding a New Skill](../frameworks/A2A-SERVER.md). Il-ħili
 
 - **Stil tal-kodice**: indentazzjoni ta' 2 spazji, virgoletti doppji, wisa' ta' 100 karattru, punti u virgoli,
   virgoli tat-tmiem `es5` — infurzati minn Prettier permezz ta' `lint-staged`.
-- **Importazzjonijiet**: estern → intern (`@/`, `@omniroute/open-sse`) → relatati.
+- **Importazzjonijiet**: estern → intern (`@/`, `@agentproxy/open-sse`) → relatati.
 - **Tmexxija tal-fajls**: `camelCase` jew `kebab-case`, il-komponenti `PascalCase`,
   il-kostanti `UPPER_SNAKE`.
 - **ESLint**: `no-eval`, `no-implied-eval`, `no-new-func` = `error` kullimkien;

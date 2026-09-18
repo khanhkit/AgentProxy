@@ -5,9 +5,9 @@
 // tool_result / thinking content blocks through the OpenAI shape is lossy.
 //
 // Port of upstream decolua/9router#2608 (author: yidecode), adapted to
-// OmniRoute's architecture: instead of the executor doing its own
+// AgentProxy's architecture: instead of the executor doing its own
 // translateRequest/translateResponse + manual SSE TransformStream (9router has
-// no generic per-model targetFormat mechanism), OmniRoute already has a
+// no generic per-model targetFormat mechanism), AgentProxy already has a
 // registry-driven `targetFormat` field (see opencode/zen's Qwen entries,
 // opencode/go) that makes chatCore.ts translate the request to Claude shape
 // *before* the executor ever sees it, and translate the response back

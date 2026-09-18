@@ -24,7 +24,7 @@ type PayloadMap = { providerResponse?: PayloadEnvelope; clientResponse?: Payload
 import { useDecollidedMigrationsDir } from "./helpers/decollidedMigrationsDir.ts";
 
 useDecollidedMigrationsDir();
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-calllogs-artifacts-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-calllogs-artifacts-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.CALL_LOG_RETENTION_DAYS = "3650";
 process.env.CALL_LOG_MAX_ENTRIES = "100";
@@ -631,7 +631,7 @@ test("saveCallLog omits oversized non-stream pipeline payloads to enforce artifa
   assert.deepEqual(artifact.responseBody, { output: "response" });
   assert.deepEqual(artifact.pipeline, {
     error: {
-      _omniroute_truncated: true,
+      _agentproxy_truncated: true,
       reason: "call_log_artifact_size_limit_exceeded",
     },
   });
@@ -673,7 +673,7 @@ test("saveCallLog honors CALL_LOG_PIPELINE_MAX_SIZE_KB for pipeline artifacts", 
   const artifact = JSON.parse(fs.readFileSync(artifactPath, "utf8"));
   assert.deepEqual(artifact.pipeline, {
     error: {
-      _omniroute_truncated: true,
+      _agentproxy_truncated: true,
       reason: "call_log_artifact_size_limit_exceeded",
     },
   });
@@ -715,7 +715,7 @@ test("saveCallLog falls back to a compact sentinel when the configured cap is ve
   const artifact = JSON.parse(fs.readFileSync(artifactPath, "utf8"));
   assert.deepEqual(artifact, {
     schemaVersion: 5,
-    _omniroute_truncated: true,
+    _agentproxy_truncated: true,
     reason: "call_log_artifact_size_limit_exceeded",
     error: null,
   });
@@ -765,7 +765,7 @@ test("saveCallLog preserves a truncated error in size-limit-fallback artifacts (
     upstreamError,
     "the upstream error must be preserved verbatim in the fallback artifact"
   );
-  assert.equal(artifact._omniroute_truncated, true);
+  assert.equal(artifact._agentproxy_truncated, true);
   assert.equal(
     artifact.requestBody,
     undefined,

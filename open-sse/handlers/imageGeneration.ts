@@ -94,7 +94,7 @@ interface KieImageOptions {
   } | null;
 }
 
-// KIE Market catalog ids are namespaced for OmniRoute's catalog
+// KIE Market catalog ids are namespaced for AgentProxy's catalog
 // (`<vendor>/<model>`), but the KIE Market createTask API expects
 // vendor-specific upstream ids that do not follow a single consistent
 // pattern. Every entry below was confirmed individually against the literal
@@ -1057,7 +1057,7 @@ async function handleGeminiImageGeneration({ model, providerConfig, body, creden
       status: 400,
       startTime,
       error:
-        "Missing Google projectId for Antigravity account. Please reconnect OAuth in Providers so OmniRoute can fetch your Cloud Code project.",
+        "Missing Google projectId for Antigravity account. Please reconnect OAuth in Providers so AgentProxy can fetch your Cloud Code project.",
       requestBody: logRequestBody,
     });
   }
@@ -1408,7 +1408,7 @@ export async function handleOpenAIImageEdit({
   // makes undici serialize it as the string "[object FormData]" (text/plain), dropping every
   // field (including `model`, which reaches the upstream empty). A Buffer body is accepted
   // verbatim by any fetch implementation. (#3273)
-  const boundary = `----OmniRouteImageEdit${randomUUID().replace(/-/g, "")}`;
+  const boundary = `----AgentProxyImageEdit${randomUUID().replace(/-/g, "")}`;
   const CRLF = "\r\n";
   const partBuffers: Buffer[] = [];
   const appendField = (name: string, value: string) => {

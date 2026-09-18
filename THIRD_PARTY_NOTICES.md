@@ -2,7 +2,7 @@
 
 ## wreq-js 3.2.0 native transport
 
-OmniRoute ships `wreq-js@3.2.0` and its platform-specific native bindings for browser-
+AgentProxy ships `wreq-js@3.2.0` and its platform-specific native bindings for browser-
 fingerprinted HTTP transport. The npm package and all nine binding tarballs are tied by npm SLSA
 attestations to signed tag `v3.2.0` and immutable source commit
 [`0d52d5fa252841aeef34d4d063b1766a59612bf7`](https://github.com/sqdshguy/wreq-js/commit/0d52d5fa252841aeef34d4d063b1766a59612bf7).
@@ -343,7 +343,7 @@ because its matching file has no entry or license claim in the fixed registry.
 
 ### Trademark and affiliation disclaimer
 
-All brand names, logos, and trademarks are the property of their respective owners. OmniRoute uses
+All brand names, logos, and trademarks are the property of their respective owners. AgentProxy uses
 these assets nominatively to identify provider integrations. There is no affiliation, sponsorship,
 or endorsement by the respective owners. Copyright provenance and source license claims do not
 provide trademark clearance; users should follow each owner's official brand guidelines.

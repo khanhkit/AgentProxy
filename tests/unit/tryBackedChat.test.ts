@@ -13,7 +13,7 @@ import type { BrowserBackedChatResult } from "../../open-sse/services/browserBac
 
 // Keep the browser pool warmup disabled in the unit test process so the real
 // (non-stubbed) browser pool does not open handles and hang the test runner.
-process.env.OMNIROUTE_BROWSER_POOL = "off";
+process.env.AGENTPROXY_BROWSER_POOL = "off";
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 

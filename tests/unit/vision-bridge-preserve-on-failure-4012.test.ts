@@ -1,6 +1,6 @@
 /**
  * Regression test for #4012 / #8430 — Nvidia NIM (and any vision-capable model
- * whose capability OmniRoute can't prove) via OmniRoute fails to process image
+ * whose capability AgentProxy can't prove) via AgentProxy fails to process image
  * inputs.
  *
  * SEMANTIC CHANGE (#8430): In the combo describe path, when ALL describe calls

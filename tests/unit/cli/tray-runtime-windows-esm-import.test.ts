@@ -16,16 +16,16 @@ import {
 //   URLs. Received protocol 'c:'
 //
 // `import()` resolves its specifier as a URL. A POSIX absolute path like
-// /home/x/.omniroute/runtime/node_modules/systray2 doubles as a valid relative
+// /home/x/.agentproxy/runtime/node_modules/systray2 doubles as a valid relative
 // URL, so passing it works by accident on Linux/macOS (and CI stays green). A
-// Windows absolute path is C:\Users\x\.omniroute\runtime\node_modules\systray2,
+// Windows absolute path is C:\Users\x\.agentproxy\runtime\node_modules\systray2,
 // whose leading drive letter the loader parses as the URL scheme `c:` and
-// rejects — so `omniroute server --tray` never loads the tray on Windows.
+// rejects — so `agentproxy server --tray` never loads the tray on Windows.
 // This is the same defect as #11238 (CLI db-fallback imports), which missed
 // this call site. The specifier must be a file:// URL.
 
 test("systrayModuleSpecifier returns a file:// URL, not a raw absolute path", () => {
-  const runtimeDir = path.join(os.homedir(), ".omniroute", "runtime");
+  const runtimeDir = path.join(os.homedir(), ".agentproxy", "runtime");
   const spec = systrayModuleSpecifier(runtimeDir);
 
   assert.match(
@@ -40,7 +40,7 @@ test("systrayModuleSpecifier returns a file:// URL, not a raw absolute path", ()
 });
 
 test("systrayModuleSpecifier matches pathToFileURL of the module directory", () => {
-  const runtimeDir = path.join(os.tmpdir(), "omniroute-tray-spec-test");
+  const runtimeDir = path.join(os.tmpdir(), "agentproxy-tray-spec-test");
   const expected = pathToFileURL(
     path.join(runtimeDir, "node_modules", SYSTRAY_PACKAGE),
   ).href;

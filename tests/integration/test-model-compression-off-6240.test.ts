@@ -3,12 +3,12 @@
 //
 // Root cause: Phase 4A of handleChatCore (open-sse/handlers/chatCore.ts) injects the Output
 // Styles system message whenever the operator's global `compression.enabled` flag is on,
-// completely independent of the per-request `x-omniroute-compression` header/mode. The internal
+// completely independent of the per-request `x-agentproxy-compression` header/mode. The internal
 // "Test model" request builder (src/lib/api/modelTestRunner.ts::buildInternalChatRequest) never
 // sent that header, so a globally-enabled output style always leaked into test-model calls.
 //
 // This test locks the *chatCore* half of the fix directly: with Output Styles globally enabled,
-// a request carrying `x-omniroute-compression: off` must NOT get the styles system message
+// a request carrying `x-agentproxy-compression: off` must NOT get the styles system message
 // injected, while an otherwise-identical request without the header still does (so we're
 // actually testing the new gate, not something else disabling output styles).
 import test from "node:test";
@@ -17,7 +17,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-testmodel-compression-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-testmodel-compression-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.REQUIRE_API_KEY = "false";
 process.env.API_KEY_SECRET = process.env.API_KEY_SECRET || "test-testmodel-compression-secret";
@@ -104,7 +104,7 @@ async function runChatCore(opts: {
   }
 }
 
-test("chatCore: x-omniroute-compression: off suppresses Output Styles injection even with the operator's global style enabled (#6240)", async () => {
+test("chatCore: x-agentproxy-compression: off suppresses Output Styles injection even with the operator's global style enabled (#6240)", async () => {
   const provider = "openai";
   const model = "gpt-4";
 
@@ -135,14 +135,14 @@ test("chatCore: x-omniroute-compression: off suppresses Output Styles injection 
   });
   const plainFirstMessage = withoutOptOut.capturedBody?.messages?.[0];
   assert.equal(plainFirstMessage?.role, "system");
-  assert.match(plainFirstMessage?.content ?? "", /OmniRoute Output Styles/);
+  assert.match(plainFirstMessage?.content ?? "", /AgentProxy Output Styles/);
 
-  // The "Test model" connection test sends x-omniroute-compression: off — must be clean.
+  // The "Test model" connection test sends x-agentproxy-compression: off — must be clean.
   const testModelBody = await runChatCore({
     provider,
     model,
     connectionId: connection.id,
-    headers: new Headers({ "x-omniroute-compression": "off" }),
+    headers: new Headers({ "x-agentproxy-compression": "off" }),
   });
   const testModelFirstMessage = testModelBody.capturedBody?.messages?.[0];
   assert.ok(
@@ -150,7 +150,7 @@ test("chatCore: x-omniroute-compression: off suppresses Output Styles injection 
     "Test-model request (compression:off) must not receive an injected Output Styles system message"
   );
   const anyMessageHasMarker = (testModelBody.capturedBody?.messages ?? []).some((m) =>
-    (m?.content ?? "").includes("OmniRoute Output Styles")
+    (m?.content ?? "").includes("AgentProxy Output Styles")
   );
   assert.equal(
     anyMessageHasMarker,
@@ -195,22 +195,22 @@ test("chatCore: a per-key opt-out wins over request headers and Output Styles (#
     provider,
     model,
     connectionId: connection.id,
-    headers: new Headers({ "x-omniroute-compression": "default" }),
+    headers: new Headers({ "x-agentproxy-compression": "default" }),
     apiKeyInfo: { compressionEnabled: true },
     messageContent: originalContent,
   });
   assert.equal(enabled.capturedBody?.messages?.[0]?.role, "system");
-  assert.match(enabled.capturedBody?.messages?.[0]?.content ?? "", /OmniRoute Output Styles/);
+  assert.match(enabled.capturedBody?.messages?.[0]?.content ?? "", /AgentProxy Output Styles/);
 
   const disabled = await runChatCore({
     provider,
     model,
     connectionId: connection.id,
-    headers: new Headers({ "x-omniroute-compression": "default" }),
+    headers: new Headers({ "x-agentproxy-compression": "default" }),
     apiKeyInfo: { compressionEnabled: false },
     messageContent: originalContent,
   });
 
   assert.deepEqual(disabled.capturedBody?.messages, [{ role: "user", content: originalContent }]);
-  assert.equal(disabled.response.headers.get("x-omniroute-compression"), "off; source=off");
+  assert.equal(disabled.response.headers.get("x-agentproxy-compression"), "off; source=off");
 });

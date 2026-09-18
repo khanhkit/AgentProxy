@@ -4,7 +4,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-// Repro for #9455: omniroute stop reports success but supervisor respawns child.
+// Repro for #9455: agentproxy stop reports success but supervisor respawns child.
 //
 // Defect 1: runStopCommand() kills the child ("server") PID but never stops the
 //   supervisor, which immediately respawns the child. The fix must have stop.mjs
@@ -30,7 +30,7 @@ type KillByPortDeps = {
 type KillByPortFn = (port: number, deps?: KillByPortDeps) => Promise<boolean>;
 
 function createTempDataDir() {
-  return fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-stop-sup-"));
+  return fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-stop-sup-"));
 }
 
 function setupDataDir(dataDir: string) {
@@ -132,7 +132,7 @@ test("Defect 1: stop must SIGTERM the supervisor BEFORE the child so it does not
 });
 
 test("Defect 1b: pid.mjs SERVICES array must include supervisor so killAllSubprocesses reaches it (#9455)", async () => {
-  const tmpDir = os.tmpdir() + "/omniroute-sup-pid-" + Date.now();
+  const tmpDir = os.tmpdir() + "/agentproxy-sup-pid-" + Date.now();
   process.env.DATA_DIR = tmpDir;
   try {
     const { writePidFile, readPidFile } = await import("../../bin/cli/utils/pid.mjs");

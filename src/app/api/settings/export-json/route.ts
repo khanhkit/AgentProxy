@@ -68,7 +68,7 @@ export function redactApiKeysForLegacyExport(
 
 /**
  * GET /api/settings/export-json
- * Exports a legacy OmniRoute-compatible JSON backup.
+ * Exports a legacy AgentProxy-compatible JSON backup.
  */
 export async function GET(request: Request) {
   if (await isAuthRequired(request)) {
@@ -113,7 +113,7 @@ export async function GET(request: Request) {
       // Metadata to identify export version
       _meta: {
         exportedAt: new Date().toISOString(),
-        version: "omniroute-v3-legacy-export",
+        version: "agentproxy-v3-legacy-export",
         includesHistory: includeHistory,
         apiKeyCredentialPolicy: "redacted-non-restorable",
       },
@@ -132,7 +132,7 @@ export async function GET(request: Request) {
       status: 200,
       headers: {
         "Content-Type": "application/json",
-        "Content-Disposition": `attachment; filename="omniroute-legacy-backup-${new Date().toISOString().replace(/[:.]/g, "-")}.json"`,
+        "Content-Disposition": `attachment; filename="agentproxy-legacy-backup-${new Date().toISOString().replace(/[:.]/g, "-")}.json"`,
       },
     });
   } catch (error) {

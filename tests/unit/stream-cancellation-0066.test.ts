@@ -4,7 +4,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-stream-cancel-0066-"));
+const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-stream-cancel-0066-"));
 process.env.DATA_DIR = dataDir;
 
 const { createSSEStream } = await import("../../open-sse/utils/stream.ts");

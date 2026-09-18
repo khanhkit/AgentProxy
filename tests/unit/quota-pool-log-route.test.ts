@@ -89,7 +89,7 @@ test("log route: uses buildErrorBody from open-sse/utils/error", () => {
     "route must use buildErrorBody for error responses — Hard Rule #12"
   );
   assert.ok(
-    routeSrc.includes("open-sse/utils/error") || routeSrc.includes("@omniroute/open-sse/utils/error"),
+    routeSrc.includes("open-sse/utils/error") || routeSrc.includes("@agentproxy/open-sse/utils/error"),
     "route must import buildErrorBody from open-sse/utils/error"
   );
 });

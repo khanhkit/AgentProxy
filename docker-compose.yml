@@ -1,5 +1,5 @@
 # ──────────────────────────────────────────────────────────────────────
-#  OmniRoute — Docker Compose
+#  AgentProxy — Docker Compose
 # ──────────────────────────────────────────────────────────────────────
 #
 #  Profiles:
@@ -33,7 +33,7 @@ x-common: &common
   env_file: .env
   environment:
     - DATA_DIR=/app/data # Must match the volume mount below
-    - OMNIROUTE_BASE_PATH=${OMNIROUTE_BASE_PATH:-}
+    - AGENTPROXY_BASE_PATH=${AGENTPROXY_BASE_PATH:-}
     - PORT=${PORT:-20128}
     - DASHBOARD_PORT=${DASHBOARD_PORT:-20128}
     - API_PORT=${API_PORT:-20129}
@@ -46,8 +46,8 @@ x-common: &common
     # Codex App-Server transport (provider: codex-app-server). Inert unless the
     # `codex-app-server` compose profile is up (the sidecar below). Points the app
     # at the internal sidecar; the capability token is shared via the mounted file.
-    - OMNIROUTE_CODEX_APPSERVER_WS=${OMNIROUTE_CODEX_APPSERVER_WS:-ws://codex-app-server:1456}
-    - OMNIROUTE_CODEX_APPSERVER_WS_TOKEN_FILE=${OMNIROUTE_CODEX_APPSERVER_WS_TOKEN_FILE:-/run/codex-appserver/token}
+    - AGENTPROXY_CODEX_APPSERVER_WS=${AGENTPROXY_CODEX_APPSERVER_WS:-ws://codex-app-server:1456}
+    - AGENTPROXY_CODEX_APPSERVER_WS_TOKEN_FILE=${AGENTPROXY_CODEX_APPSERVER_WS_TOKEN_FILE:-/run/codex-appserver/token}
   volumes:
     - ./data:/app/data
     # Shared capability token + codex auth for the app-server WS. Only meaningful
@@ -69,7 +69,7 @@ services:
   # ── Redis (Rate Limiter Backend) ──────────────────────────────────
   redis:
     image: docker.io/library/redis:8.6.5-alpine
-    container_name: omniroute-redis
+    container_name: agentproxy-redis
     restart: unless-stopped
     ports:
       # Loopback-only by default: this Redis has no `requirepass`, and the app
@@ -89,15 +89,15 @@ services:
       retries: 3
 
   # ── Profile: base (minimal, no CLI tools) ──────────────────────────
-  omniroute-base:
+  agentproxy-base:
     <<: *common
-    container_name: omniroute
+    container_name: agentproxy
     build:
       context: .
       target: runner-base
       args:
-        OMNIROUTE_BASE_PATH: ${OMNIROUTE_BASE_PATH:-}
-    image: omniroute:base
+        AGENTPROXY_BASE_PATH: ${AGENTPROXY_BASE_PATH:-}
+    image: agentproxy:base
     ports:
       - "${DASHBOARD_PORT:-20128}:${DASHBOARD_PORT:-20128}"
       - "${API_PORT:-20129}:${API_PORT:-20129}"
@@ -109,15 +109,15 @@ services:
   # Required for web-cookie providers (gemini-web, claude-web, claude-turnstile).
   # The default `base` image ships without Chromium, so those providers fail
   # with "Executable doesn't exist at .../ms-playwright/chromium..." (#2832).
-  omniroute-web:
+  agentproxy-web:
     <<: *common
-    container_name: omniroute
+    container_name: agentproxy
     build:
       context: .
       target: runner-web
       args:
-        OMNIROUTE_BASE_PATH: ${OMNIROUTE_BASE_PATH:-}
-    image: omniroute:web
+        AGENTPROXY_BASE_PATH: ${AGENTPROXY_BASE_PATH:-}
+    image: agentproxy:web
     depends_on:
       chatgpt-web-codex-browser:
         condition: service_started
@@ -131,7 +131,7 @@ services:
       - LIVE_WS_HOST=${LIVE_WS_HOST:-0.0.0.0}
       - LIVE_WS_ALLOWED_ORIGINS=${LIVE_WS_ALLOWED_ORIGINS:-http://localhost:20128,http://127.0.0.1:20128}
       - REDIS_URL=${REDIS_URL:-redis://redis:6379}
-      - OMNIROUTE_BASE_PATH=${OMNIROUTE_BASE_PATH:-}
+      - AGENTPROXY_BASE_PATH=${AGENTPROXY_BASE_PATH:-}
       - CHATGPT_WEB_CODEX_CDP_URL=http://chatgpt-web-codex-browser:9223
     ports:
       - "${DASHBOARD_PORT:-20128}:${DASHBOARD_PORT:-20128}"
@@ -146,7 +146,7 @@ services:
     build:
       context: .
       dockerfile: docker/chatgpt-web-codex-browser/Dockerfile
-    image: omniroute:chatgpt-web-codex-browser
+    image: agentproxy:chatgpt-web-codex-browser
     restart: unless-stopped
     shm_size: "2gb"
     volumes:
@@ -155,15 +155,15 @@ services:
       - web
 
   # ── Profile: cli (CLIs installed inside container) ─────────────────
-  omniroute-cli:
+  agentproxy-cli:
     <<: *common
-    container_name: omniroute
+    container_name: agentproxy
     build:
       context: .
       target: runner-cli
       args:
-        OMNIROUTE_BASE_PATH: ${OMNIROUTE_BASE_PATH:-}
-    image: omniroute:cli
+        AGENTPROXY_BASE_PATH: ${AGENTPROXY_BASE_PATH:-}
+    image: agentproxy:cli
     ports:
       - "${DASHBOARD_PORT:-20128}:${DASHBOARD_PORT:-20128}"
       - "${API_PORT:-20129}:${API_PORT:-20129}"
@@ -179,20 +179,20 @@ services:
       # "Escape hatch: configure the container's own CLIs" for the threat model.
       - /var/run/docker.sock:/var/run/docker.sock
       - /usr/libexec/docker/cli-plugins:/usr/libexec/docker/cli-plugins:ro
-      - ${AUTO_UPDATE_HOST_REPO_DIR:-.}:/workspace/omniroute:rw
+      - ${AUTO_UPDATE_HOST_REPO_DIR:-.}:/workspace/agentproxy:rw
     profiles:
       - cli
 
   # ── Profile: host (host-mounted CLI binaries, Linux-first) ────────
-  omniroute-host:
+  agentproxy-host:
     <<: *common
-    container_name: omniroute
+    container_name: agentproxy
     build:
       context: .
       target: runner-base
       args:
-        OMNIROUTE_BASE_PATH: ${OMNIROUTE_BASE_PATH:-}
-    image: omniroute:base
+        AGENTPROXY_BASE_PATH: ${AGENTPROXY_BASE_PATH:-}
+    image: agentproxy:base
     ports:
       - "${DASHBOARD_PORT:-20128}:${DASHBOARD_PORT:-20128}"
       - "${API_PORT:-20129}:${API_PORT:-20129}"
@@ -240,7 +240,7 @@ services:
   # for the workload analysis behind this profile.
   qdrant:
     image: docker.io/qdrant/qdrant:v1.12.4
-    container_name: omniroute-qdrant
+    container_name: agentproxy-qdrant
     restart: unless-stopped
     ports:
       - "${QDRANT_PORT:-6333}:6333"
@@ -261,14 +261,14 @@ services:
   # ── Profile: bifrost (Bifrost Go LLM-router sidecar) ─────────────
   # Off by default. Bifrost is the Tier-1 LLM router (per ADR-031 and
   # open-sse/executors/bifrost.ts). When BIFROST_ENABLED=true is set in
-  # .env, OmniRoute delegates /v1/chat/completions, /v1/responses, and
+  # .env, AgentProxy delegates /v1/chat/completions, /v1/responses, and
   # /v1/embeddings to this sidecar instead of handling them in chatCore.
   # The kill switch is the BIFROST_ENABLED env var — flip to false to
   # fall back to the chatCore path with zero code changes. See
   # docs/architecture/cluster-decisions.md for the activation plan.
   bifrost:
     image: ghcr.io/maximhq/bifrost:v1.6.11
-    container_name: omniroute-bifrost
+    container_name: agentproxy-bifrost
     restart: unless-stopped
     ports:
       - "${BIFROST_PORT:-8080}:8080"
@@ -311,20 +311,20 @@ services:
       - cliproxyapi
 
   # ── Profile: codex-app-server (Codex CLI app-server sidecar) ──────────
-  # A PLAIN Codex app-server for the `codex-app-server` provider: OmniRoute drives
+  # A PLAIN Codex app-server for the `codex-app-server` provider: AgentProxy drives
   # the Codex CLI's own `codex app-server` over JSON-RPC/WebSocket instead of
   # replaying a session token to the API. It listens ONLY on the internal compose
   # network (ws://codex-app-server:1456), guarded by a capability token — it is
   # NEVER published to the host / internet. The Codex CLI (baked into
-  # omniroute:base) self-manages its OpenAI OAuth via the shared ~/.codex volume,
+  # agentproxy:base) self-manages its OpenAI OAuth via the shared ~/.codex volume,
   # which the dashboard "Apply auth" (device-OAuth) writes and this sidecar reads.
   #
   # NOTE: this is the GENERIC public sidecar. An operator wanting residential /
   # UDP egress (via a TUN sidecar) runs that separately as an override; it is
   # intentionally not shipped here.
   codex-app-server:
-    image: omniroute:base
-    container_name: omniroute-codex-app-server
+    image: agentproxy:base
+    container_name: agentproxy-codex-app-server
     restart: unless-stopped
     # Generate the WS capability token on first boot if absent, then run the
     # app-server. entrypoint is overridden because the base image's default is the
@@ -352,7 +352,7 @@ services:
       - codex-appserver-token:/run/codex-appserver
       - codex-appserver-home:/home/node/.codex
     # No `ports:` — internal-only. Reached at ws://codex-app-server:1456 over the
-    # compose network by the omniroute app.
+    # compose network by the agentproxy app.
     healthcheck:
       test:
         ["CMD", "node", "-e", "require('http').get('http://127.0.0.1:1456/readyz',r=>process.exit(r.statusCode===200?0:1)).on('error',()=>process.exit(1))"]
@@ -365,16 +365,16 @@ services:
 
 volumes:
   chatgpt-web-codex-browser-data:
-    name: omniroute-chatgpt-web-codex-browser-data
+    name: agentproxy-chatgpt-web-codex-browser-data
   cliproxyapi-data:
     name: cliproxyapi-data
   redis-data:
-    name: omniroute-redis-data
+    name: agentproxy-redis-data
   qdrant-data:
-    name: omniroute-qdrant-data
+    name: agentproxy-qdrant-data
   bifrost-data:
-    name: omniroute-bifrost-data
+    name: agentproxy-bifrost-data
   codex-appserver-token:
-    name: omniroute-codex-appserver-token
+    name: agentproxy-codex-appserver-token
   codex-appserver-home:
-    name: omniroute-codex-appserver-home
+    name: agentproxy-codex-appserver-home

@@ -397,11 +397,11 @@ test("manual CodeQL uses the baseline-compatible default query suite", () => {
 
 test("Core Build caps Next static-generation workers on GitHub-hosted runners", () => {
   const workflow = readWorkflow(ciWorkflowPath);
-  assert.match(workflow, /OMNIROUTE_NEXT_BUILD_CPUS:\s*["']1["']/);
+  assert.match(workflow, /AGENTPROXY_NEXT_BUILD_CPUS:\s*["']1["']/);
 });
 
 test("Core Build always uses the memory-safe webpack path on GitHub-hosted runners", () => {
   const workflow = readWorkflow(ciWorkflowPath);
-  assert.match(workflow, /OMNIROUTE_USE_TURBOPACK:\s*["']0["']/);
+  assert.match(workflow, /AGENTPROXY_USE_TURBOPACK:\s*["']0["']/);
   assert.doesNotMatch(workflow, /USE_VPS_RUNNER/);
 });

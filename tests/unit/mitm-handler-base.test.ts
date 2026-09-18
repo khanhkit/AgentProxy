@@ -168,11 +168,11 @@ test("base.fetchRouter — gateway router credential wins over client secrets", 
   const h = new TestHandler();
   const originalFetch = globalThis.fetch;
   const originalApiKey = process.env.ROUTER_API_KEY;
-  const originalBaseUrl = process.env.OMNIROUTE_BASE_URL;
+  const originalBaseUrl = process.env.AGENTPROXY_BASE_URL;
   let sentHeaders = new Headers();
 
   process.env.ROUTER_API_KEY = "router-owned-secret";
-  process.env.OMNIROUTE_BASE_URL = "http://router.internal:20128/";
+  process.env.AGENTPROXY_BASE_URL = "http://router.internal:20128/";
   globalThis.fetch = (async (_input: RequestInfo | URL, init?: RequestInit) => {
     sentHeaders = new Headers(init?.headers);
     return new Response("{}", { status: 200 });
@@ -193,8 +193,8 @@ test("base.fetchRouter — gateway router credential wins over client secrets", 
     globalThis.fetch = originalFetch;
     if (originalApiKey === undefined) delete process.env.ROUTER_API_KEY;
     else process.env.ROUTER_API_KEY = originalApiKey;
-    if (originalBaseUrl === undefined) delete process.env.OMNIROUTE_BASE_URL;
-    else process.env.OMNIROUTE_BASE_URL = originalBaseUrl;
+    if (originalBaseUrl === undefined) delete process.env.AGENTPROXY_BASE_URL;
+    else process.env.AGENTPROXY_BASE_URL = originalBaseUrl;
   }
 
   assert.equal(sentHeaders.get("authorization"), "Bearer router-owned-secret");

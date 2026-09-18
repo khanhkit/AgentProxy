@@ -93,7 +93,7 @@ export function isEmptyContentUpstreamFailure(statusCode: number, message: strin
 /**
  * Build a valid truncated OpenAI chat.completion response (200, empty content,
  * `finish_reason: "length"`) used to answer a tiny-budget reasoning probe whose
- * upstream answered the empty outcome with a 5xx. Mirrors the semantics OmniRoute
+ * upstream answered the empty outcome with a 5xx. Mirrors the semantics AgentProxy
  * already grants to `finish_reason: "length"` empty 200s (errorClassifier.ts).
  */
 export function buildReasoningProbeTruncatedResponse(opts: {

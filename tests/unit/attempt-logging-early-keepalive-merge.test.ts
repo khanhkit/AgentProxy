@@ -3,7 +3,7 @@
 // the client (outside the handler's own reqLogger) actually reach the
 // persisted call-log row's pipeline.streamChunks.client, prepended in the
 // order they were sent — the gap flagged against the real 2026-08-13
-// incident: OmniRoute's own call-log artifact never showed the keepalive
+// incident: AgentProxy's own call-log artifact never showed the keepalive
 // frames that were actually on the wire, only what the inner handler
 // produced. Uses a real temp DB + persisted-row polling, same pattern as
 // tests/unit/chatcore-attempt-logging.test.ts.

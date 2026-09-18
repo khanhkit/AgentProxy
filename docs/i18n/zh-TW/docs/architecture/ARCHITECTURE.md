@@ -1,10 +1,10 @@
 ---
-title: "OmniRoute 架構"
+title: "AgentProxy 架構"
 version: 3.8.40
 lastUpdated: 2026-06-28
 ---
 
-# OmniRoute 架構
+# AgentProxy 架構
 
 🌐 **Languages:** 🇺🇸 [English](../../../../architecture/ARCHITECTURE.md) · 🇸🇦 [ar](../../../ar/docs/architecture/ARCHITECTURE.md) · 🇦🇿 [az](../../../az/docs/architecture/ARCHITECTURE.md) · 🇧🇬 [bg](../../../bg/docs/architecture/ARCHITECTURE.md) · 🇧🇩 [bn](../../../bn/docs/architecture/ARCHITECTURE.md) · 🇨🇿 [cs](../../../cs/docs/architecture/ARCHITECTURE.md) · 🇩🇰 [da](../../../da/docs/architecture/ARCHITECTURE.md) · 🇩🇪 [de](../../../de/docs/architecture/ARCHITECTURE.md) · 🇬🇷 [el](../../../el/docs/architecture/ARCHITECTURE.md) · 🇪🇸 [es](../../../es/docs/architecture/ARCHITECTURE.md) · 🇪🇪 [et](../../../et/docs/architecture/ARCHITECTURE.md) · 🇮🇷 [fa](../../../fa/docs/architecture/ARCHITECTURE.md) · 🇫🇮 [fi](../../../fi/docs/architecture/ARCHITECTURE.md) · 🇫🇷 [fr](../../../fr/docs/architecture/ARCHITECTURE.md) · 🇮🇪 [ga](../../../ga/docs/architecture/ARCHITECTURE.md) · 🇮🇳 [gu](../../../gu/docs/architecture/ARCHITECTURE.md) · 🇮🇱 [he](../../../he/docs/architecture/ARCHITECTURE.md) · 🇮🇳 [hi](../../../hi/docs/architecture/ARCHITECTURE.md) · 🇭🇷 [hr](../../../hr/docs/architecture/ARCHITECTURE.md) · 🇭🇺 [hu](../../../hu/docs/architecture/ARCHITECTURE.md) · 🇮🇩 [id](../../../id/docs/architecture/ARCHITECTURE.md) · 🇮🇹 [it](../../../it/docs/architecture/ARCHITECTURE.md) · 🇯🇵 [ja](../../../ja/docs/architecture/ARCHITECTURE.md) · 🇰🇷 [ko](../../../ko/docs/architecture/ARCHITECTURE.md) · 🇱🇹 [lt](../../../lt/docs/architecture/ARCHITECTURE.md) · 🇱🇻 [lv](../../../lv/docs/architecture/ARCHITECTURE.md) · 🇮🇳 [mr](../../../mr/docs/architecture/ARCHITECTURE.md) · 🇲🇾 [ms](../../../ms/docs/architecture/ARCHITECTURE.md) · 🇲🇹 [mt](../../../mt/docs/architecture/ARCHITECTURE.md) · 🇳🇱 [nl](../../../nl/docs/architecture/ARCHITECTURE.md) · 🇳🇴 [no](../../../no/docs/architecture/ARCHITECTURE.md) · 🇵🇭 [phi](../../../phi/docs/architecture/ARCHITECTURE.md) · 🇵🇱 [pl](../../../pl/docs/architecture/ARCHITECTURE.md) · 🇵🇹 [pt](../../../pt/docs/architecture/ARCHITECTURE.md) · 🇧🇷 [pt-BR](../../../pt-BR/docs/architecture/ARCHITECTURE.md) · 🇷🇴 [ro](../../../ro/docs/architecture/ARCHITECTURE.md) · 🇷🇺 [ru](../../../ru/docs/architecture/ARCHITECTURE.md) · 🇸🇰 [sk](../../../sk/docs/architecture/ARCHITECTURE.md) · 🇸🇮 [sl](../../../sl/docs/architecture/ARCHITECTURE.md) · 🇷🇸 [sr](../../../sr/docs/architecture/ARCHITECTURE.md) · 🇸🇪 [sv](../../../sv/docs/architecture/ARCHITECTURE.md) · 🇰🇪 [sw](../../../sw/docs/architecture/ARCHITECTURE.md) · 🇮🇳 [ta](../../../ta/docs/architecture/ARCHITECTURE.md) · 🇮🇳 [te](../../../te/docs/architecture/ARCHITECTURE.md) · 🇹🇭 [th](../../../th/docs/architecture/ARCHITECTURE.md) · 🇹🇷 [tr](../../../tr/docs/architecture/ARCHITECTURE.md) · 🇺🇦 [uk-UA](../../../uk-UA/docs/architecture/ARCHITECTURE.md) · 🇵🇰 [ur](../../../ur/docs/architecture/ARCHITECTURE.md) · 🇻🇳 [vi](../../../vi/docs/architecture/ARCHITECTURE.md) · 🇨🇳 [zh-CN](../../../zh-CN/docs/architecture/ARCHITECTURE.md)
 
@@ -12,7 +12,7 @@ _最後更新：2026-06-28_
 
 ## 執行摘要
 
-OmniRoute 是一個建構於 Next.js 上的本地 AI 路由閘道與儀表板。
+AgentProxy 是一個建構於 Next.js 上的本地 AI 路由閘道與儀表板。
 它提供單一的 OpenAI 相容端點（`/v1/*`），並透過轉換、備援、令牌刷新與用量追蹤，將流量路由至多個上游提供者。
 
 核心能力：
@@ -166,7 +166,7 @@ flowchart LR
         BROWSER[瀏覽器儀表板]
     end
 
-    subgraph Router[OmniRoute 本地程序]
+    subgraph Router[AgentProxy 本地程序]
         API[V1 相容性 API\n/v1/*]
         DASH[儀表板 + 管理 API\n/api/*]
         CORE[SSE + 轉換核心\nopen-sse + src/sse]
@@ -327,7 +327,7 @@ OAuth 提供者模組（`src/lib/oauth/providers/` 下的 22 個個別檔案）�
 
 ## 5) 嵌入式服務（v3.8.4）
 
-OmniRoute 可以安裝、監督並路由至本地運行的 AI 工具程序，
+AgentProxy 可以安裝、監督並路由至本地運行的 AI 工具程序，
 稱為**嵌入式服務**。v3.8.4 中提供了兩項：9Router 和 CLIProxyAPI。
 
 架構層：
@@ -426,7 +426,7 @@ Jules）包裝在統一的 DB 支援任務生命週期後方。所有任務建�
 - 配額快取：`src/domain/quotaCache.ts`
 - 降級狀態：`src/domain/degradation.ts`
 - 設定稽核：`src/domain/configAudit.ts`
-- OmniRoute 回應中繼資料建置器：`src/domain/omnirouteResponseMeta.ts`
+- AgentProxy 回應中繼資料建置器：`src/domain/agentproxyResponseMeta.ts`
 - 評估子系統：`src/domain/assessment/` — 定期評估任務
 
 ### E. 授權管線
@@ -491,7 +491,7 @@ FSM 轉換結果饋入自動組合的評分，對背景/自動化任務偏向較
 
 - 核心基礎設施：`src/lib/db/core.ts`（better-sqlite3、遷移、WAL）
 - 重新匯出外觀：`src/lib/localDb.ts`（供呼叫者使用的薄相容層）
-- 檔案：`${DATA_DIR}/storage.sqlite`（或設定了 `$XDG_CONFIG_HOME/omniroute/storage.sqlite` 時使用該路徑，否則為 `~/.omniroute/storage.sqlite`）
+- 檔案：`${DATA_DIR}/storage.sqlite`（或設定了 `$XDG_CONFIG_HOME/agentproxy/storage.sqlite` 時使用該路徑，否則為 `~/.agentproxy/storage.sqlite`）
 - 實體（表格 + KV 命名空間）：providerConnections、providerNodes、modelAliases、combos、apiKeys、settings、pricing、**customModels**、**proxyConfig**、**ipFilter**、**thinkingBudget**、**systemPrompt**
 
 用量持久化：
@@ -787,7 +787,7 @@ flowchart LR
         Browser[儀表板瀏覽器]
     end
 
-    subgraph ContainerOrProcess[OmniRoute 執行時期]
+    subgraph ContainerOrProcess[AgentProxy 執行時期]
         Next[Next.js 伺服器\nPORT=20128]
         Core[SSE 核心 + 執行器]
         MainDB[(storage.sqlite)]
@@ -905,7 +905,7 @@ flowchart LR
 
 ## 提供者相容性矩陣
 
-> **注意：** 以下矩陣為 OmniRoute v3.8.0 中 351 個已註冊提供者的代表性樣本。
+> **注意：** 以下矩陣為 AgentProxy v3.8.0 中 351 個已註冊提供者的代表性樣本。
 > 完整且持續更新的清單，請參閱
 > [`docs/reference/PROVIDER_REFERENCE.md`](../reference/PROVIDER_REFERENCE.md)（自動產生）或
 > `src/shared/constants/providers.ts`（載入時經 Zod 驗證）中的權威來源。
@@ -1088,7 +1088,7 @@ flowchart LR
 - 從客戶端接收到的原始請求
 - 實際發送給上游的轉換後請求
 - 重建為 JSON 的提供者回應；串流回應壓縮為最終摘要加上串流中繼資料
-- OmniRoute 回傳的最終客戶端回應；串流回應以相同壓縮摘要形式儲存
+- AgentProxy 回傳的最終客戶端回應；串流回應以相同壓縮摘要形式儲存
 
 ## 安全敏感邊界
 
@@ -1115,11 +1115,11 @@ flowchart LR
 
 ## 已知架構說明
 
-1. `usageDb` 與 `localDb` 共用相同的基礎目錄政策（`DATA_DIR` → `XDG_CONFIG_HOME/omniroute` → `~/.omniroute`），附舊版檔案遷移。
+1. `usageDb` 與 `localDb` 共用相同的基礎目錄政策（`DATA_DIR` → `XDG_CONFIG_HOME/agentproxy` → `~/.agentproxy`），附舊版檔案遷移。
 2. `/api/v1/route.ts` 委派給與 `/api/v1/models` 相同的統一目錄建置器（`src/app/api/v1/models/catalog.ts`），以避免語意漂移。
 3. 啟用時請求記錄器寫入完整標頭/主體；請將記錄目錄視為敏感資訊。
 4. 雲端行為取決於正確的 `NEXT_PUBLIC_BASE_URL` 與雲端端點可達性。
-5. `open-sse/` 目錄以 `@omniroute/open-sse` **npm workspace 套件**形式發布。原始碼透過 `@omniroute/open-sse/...` 匯入（由 Next.js `transpilePackages` 解析）。本文件中的檔案路徑為求一致仍使用目錄名稱 `open-sse/`。
+5. `open-sse/` 目錄以 `@agentproxy/open-sse` **npm workspace 套件**形式發布。原始碼透過 `@agentproxy/open-sse/...` 匯入（由 Next.js `transpilePackages` 解析）。本文件中的檔案路徑為求一致仍使用目錄名稱 `open-sse/`。
 6. 儀表板中的圖表使用 **Recharts**（基於 SVG）實現可存取、互動式的分析視覺化（模型用量長條圖、含成功率的提供者 breakdown 表格）。
 7. E2E 測試使用 **Playwright**（`tests/e2e/`），透過 `npm run test:e2e` 執行。單元測試使用 **Node.js test runner**（`tests/unit/`），透過 `npm run test:unit` 執行。`src/` 下的原始碼為 **TypeScript**（`.ts`/`.tsx`）；`open-sse/` workspace 保持 JavaScript（`.js`）。
 8. 設定頁面分為 7 個分頁：一般、外觀、AI、安全性、路由、韌性、進階。韌性頁面僅設定請求佇列、連線冷卻、提供者斷路器與等待冷卻行為；斷路器執行時期狀態顯示在健康狀態頁面上。
@@ -1130,7 +1130,7 @@ flowchart LR
 ## 操作驗證檢查清單
 
 - 從原始碼建置：`npm run build`
-- 建置 Docker 映像：`docker build -t omniroute .`
+- 建置 Docker 映像：`docker build -t agentproxy .`
 - 啟動服務並驗證：
 - `GET /api/settings`
 - `GET /api/v1/models`

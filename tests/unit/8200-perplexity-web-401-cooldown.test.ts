@@ -11,7 +11,7 @@ import path from "node:path";
 // self-heal), which then made getProviderCredentials() filter the
 // connection out on the very next request -> "No active credentials".
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-8200-perplexity-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-8200-perplexity-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../src/lib/db/core.ts");

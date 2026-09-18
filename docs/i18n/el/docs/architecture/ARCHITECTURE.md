@@ -6,12 +6,12 @@
 
 ---
 
-title: "OmniRoute Architecture"
+title: "AgentProxy Architecture"
 version: 3.8.40
 lastUpdated: 2026-06-28
 ---
 
-# Αρχιτεκτονική OmniRoute
+# Αρχιτεκτονική AgentProxy
 
 🌐 **Languages:** 🇺🇸 [English](../../../../architecture/ARCHITECTURE.md) · 🇸🇦 [ar](../../../ar/docs/architecture/ARCHITECTURE.md) · 🇦🇿 [az](../../../az/docs/architecture/ARCHITECTURE.md) · 🇧🇬 [bg](../../../bg/docs/architecture/ARCHITECTURE.md) · 🇧🇩 [bn](../../../bn/docs/architecture/ARCHITECTURE.md) · 🇨🇿 [cs](../../../cs/docs/architecture/ARCHITECTURE.md) · 🇩🇰 [da](../../../da/docs/architecture/ARCHITECTURE.md) · 🇩🇪 [de](../../../de/docs/architecture/ARCHITECTURE.md) · 🇪🇸 [es](../../../es/docs/architecture/ARCHITECTURE.md) · 🇪🇪 [et](../../../et/docs/architecture/ARCHITECTURE.md) · 🇮🇷 [fa](../../../fa/docs/architecture/ARCHITECTURE.md) · 🇫🇮 [fi](../../../fi/docs/architecture/ARCHITECTURE.md) · 🇫🇷 [fr](../../../fr/docs/architecture/ARCHITECTURE.md) · 🇮🇪 [ga](../../../ga/docs/architecture/ARCHITECTURE.md) · 🇮🇳 [gu](../../../gu/docs/architecture/ARCHITECTURE.md) · 🇮🇱 [he](../../../he/docs/architecture/ARCHITECTURE.md) · 🇮🇳 [hi](../../../hi/docs/architecture/ARCHITECTURE.md) · 🇭🇷 [hr](../../../hr/docs/architecture/ARCHITECTURE.md) · 🇭🇺 [hu](../../../hu/docs/architecture/ARCHITECTURE.md) · 🇮🇩 [id](../../../id/docs/architecture/ARCHITECTURE.md) · 🇮🇹 [it](../../../it/docs/architecture/ARCHITECTURE.md) · 🇯🇵 [ja](../../../ja/docs/architecture/ARCHITECTURE.md) · 🇰🇷 [ko](../../../ko/docs/architecture/ARCHITECTURE.md) · 🇱🇹 [lt](../../../lt/docs/architecture/ARCHITECTURE.md) · 🇱🇻 [lv](../../../lv/docs/architecture/ARCHITECTURE.md) · 🇮🇳 [mr](../../../mr/docs/architecture/ARCHITECTURE.md) · 🇲🇾 [ms](../../../ms/docs/architecture/ARCHITECTURE.md) · 🇲🇹 [mt](../../../mt/docs/architecture/ARCHITECTURE.md) · 🇳🇱 [nl](../../../nl/docs/architecture/ARCHITECTURE.md) · 🇳🇴 [no](../../../no/docs/architecture/ARCHITECTURE.md) · 🇵🇭 [phi](../../../phi/docs/architecture/ARCHITECTURE.md) · 🇵🇱 [pl](../../../pl/docs/architecture/ARCHITECTURE.md) · 🇵🇹 [pt](../../../pt/docs/architecture/ARCHITECTURE.md) · 🇧🇷 [pt-BR](../../../pt-BR/docs/architecture/ARCHITECTURE.md) · 🇷🇴 [ro](../../../ro/docs/architecture/ARCHITECTURE.md) · 🇷🇺 [ru](../../../ru/docs/architecture/ARCHITECTURE.md) · 🇸🇰 [sk](../../../sk/docs/architecture/ARCHITECTURE.md) · 🇸🇮 [sl](../../../sl/docs/architecture/ARCHITECTURE.md) · 🇷🇸 [sr](../../../sr/docs/architecture/ARCHITECTURE.md) · 🇸🇪 [sv](../../../sv/docs/architecture/ARCHITECTURE.md) · 🇰🇪 [sw](../../../sw/docs/architecture/ARCHITECTURE.md) · 🇮🇳 [ta](../../../ta/docs/architecture/ARCHITECTURE.md) · 🇮🇳 [te](../../../te/docs/architecture/ARCHITECTURE.md) · 🇹🇭 [th](../../../th/docs/architecture/ARCHITECTURE.md) · 🇹🇷 [tr](../../../tr/docs/architecture/ARCHITECTURE.md) · 🇺🇦 [uk-UA](../../../uk-UA/docs/architecture/ARCHITECTURE.md) · 🇵🇰 [ur](../../../ur/docs/architecture/ARCHITECTURE.md) · 🇻🇳 [vi](../../../vi/docs/architecture/ARCHITECTURE.md) · 🇨🇳 [zh-CN](../../../zh-CN/docs/architecture/ARCHITECTURE.md) · 🇹🇼 [zh-TW](../../../zh-TW/docs/architecture/ARCHITECTURE.md)
 
@@ -19,7 +19,7 @@ _Τελευταία ενημέρωση: 2026-06-28_
 
 ## Σύνοψη Εκτελεστικής Επισκόπησης
 
-Το OmniRoute είναι μια τοπική πύλη δρομολόγησης AI και ταμπλό ελέγχου βασισμένο στο Next.js.
+Το AgentProxy είναι μια τοπική πύλη δρομολόγησης AI και ταμπλό ελέγχου βασισμένο στο Next.js.
 Παρέχει ένα ενιαίο τελικό σημείο συμβατό με OpenAI (`/v1/*`) και δρομολογεί κίνηση μεταξύ πολλαπλών upstream παρόχων με μετάφραση, εναλλακτική δρομολόγηση, ανανέωση token και παρακολούθηση χρήσης.
 
 Βασικές δυνατότητες:
@@ -173,7 +173,7 @@ flowchart LR
         BROWSER[Πίνακας Ελέγχου Browser]
     end
 
-    subgraph Router[Τοπική Διεργασία OmniRoute]
+    subgraph Router[Τοπική Διεργασία AgentProxy]
         API[API Συμβατότητας V1\n/v1/*]
         DASH[Πίνακας Ελέγχου + API Διαχείρισης\n/api/*]
         CORE[SSE + Πυρήνας Μετάφρασης\nopen-sse + src/sse]
@@ -336,7 +336,7 @@ Modules παρόχων OAuth (22 μεμονωμένα αρχεία στον κα
 
 ## 5) Ενσωματωμένες Υπηρεσίες (v3.8.4)
 
-Το OmniRoute μπορεί να εγκαθιστά, να εποπτεύει και να δρομολογεί αιτήματα προς τοπικά εκτελούμενες διεργασίες εργαλείων ΑΙ
+Το AgentProxy μπορεί να εγκαθιστά, να εποπτεύει και να δρομολογεί αιτήματα προς τοπικά εκτελούμενες διεργασίες εργαλείων ΑΙ
 που ονομάζονται **ενσωματωμένες υπηρεσίες**. Παρέχονται πέντε: 9Router, CLIProxyAPI, Bifrost, Mux και Dario.
 
 Επίπεδα αρχιτεκτονικής:
@@ -443,7 +443,7 @@ Jules) πίσω από έναν ομοιόμορφο κύκλο ζωής εργ�
 - Cache quota: `src/domain/quotaCache.ts`
 - Κατάσταση υποβάθμισης: `src/domain/degradation.ts`
 - Έλεγχος ρύθμισης παραμέτρων: `src/domain/configAudit.ts`
-- Δόμηση μεταδεδομένων απόκρισης OmniRoute: `src/domain/omnirouteResponseMeta.ts`
+- Δόμηση μεταδεδομένων απόκρισης AgentProxy: `src/domain/agentproxyResponseMeta.ts`
 - Υποσύστημα αξιολόγησης: `src/domain/assessment/` — περιοδικές εργασίες αξιολόγησης
 
 ### Ε. Αγωγός Εξουσιοδότησης
@@ -524,7 +524,7 @@ review) και της συγγένειας με εργασίες παρασκη�
 
 - Βασική υποδομή: `src/lib/db/core.ts` (better-sqlite3, migrations, WAL)
 - Πρόσβαση στη ΒΔ: εισαγωγή συγκεκριμένων modules `src/lib/db/*` απευθείας (το παλιό barrel `localDb.ts` αφαιρέθηκε)
-- Αρχείο: `${DATA_DIR}/storage.sqlite` (ή `$XDG_CONFIG_HOME/omniroute/storage.sqlite` όταν έχει οριστεί, διαφορετικά `~/.omniroute/storage.sqlite`)
+- Αρχείο: `${DATA_DIR}/storage.sqlite` (ή `$XDG_CONFIG_HOME/agentproxy/storage.sqlite` όταν έχει οριστεί, διαφορετικά `~/.agentproxy/storage.sqlite`)
 - Οντότητες (πίνακες + χώροι ονομάτων KV): providerConnections, providerNodes, modelAliases, combos, apiKeys, settings, pricing, **customModels**, **proxyConfig**, **ipFilter**, **thinkingBudget**, **systemPrompt**
 
 Επιμονή χρήσης:
@@ -820,7 +820,7 @@ flowchart LR
         Browser[Πρόγραμμα Περιήγησης Dashboard]
     end
 
-    subgraph ContainerOrProcess[Χρόνος Εκτέλεσης OmniRoute]
+    subgraph ContainerOrProcess[Χρόνος Εκτέλεσης AgentProxy]
         Next[Next.js Server\nPORT=20128]
         Core[SSE Core + Executors]
         MainDB[(storage.sqlite)]
@@ -939,7 +939,7 @@ flowchart LR
 ## Πίνακας Συμβατότητας Παρόχων
 
 > **Σημείωση:** Ο παρακάτω πίνακας αποτελεί αντιπροσωπευτικό δείγμα από τους 351 καταχωρημένους παρόχους στο
-> OmniRoute v3.8.0. Για την κανονική και συνεχώς ενημερωμένη λίστα, ανατρέξτε στο
+> AgentProxy v3.8.0. Για την κανονική και συνεχώς ενημερωμένη λίστα, ανατρέξτε στο
 > [`docs/reference/PROVIDER_REFERENCE.md`](../reference/PROVIDER_REFERENCE.md) (αυτόματα παραγόμενο) ή στην πηγή αλήθειας
 > στο `src/shared/constants/providers.ts` (επαληθευμένο με Zod κατά τη φόρτωση).
 
@@ -1120,7 +1120,7 @@ Source Format → OpenAI (hub) → Target Format
 - ακατέργαστο αίτημα που λαμβάνεται από τον πελάτη
 - μεταφρασμένο αίτημα που αποστέλλεται πραγματικά upstream
 - απόκριση παρόχου που ανακατασκευάζεται ως JSON· οι ροϊκές αποκρίσεις συμπυκνώνονται στην τελική σύνοψη μαζί με τα μεταδεδομένα ροής
-- τελική απόκριση πελάτη που επιστρέφεται από το OmniRoute· οι ροϊκές αποκρίσεις αποθηκεύονται στην ίδια συμπυκνωμένη μορφή σύνοψης
+- τελική απόκριση πελάτη που επιστρέφεται από το AgentProxy· οι ροϊκές αποκρίσεις αποθηκεύονται στην ίδια συμπυκνωμένη μορφή σύνοψης
 
 ## Όρια Ευαίσθητα σε Θέματα Ασφαλείας
 
@@ -1146,11 +1146,11 @@ Source Format → OpenAI (hub) → Target Format
 
 ## Γνωστές Αρχιτεκτονικές Σημειώσεις
 
-1. Τα `usageDb` και `localDb` μοιράζονται την ίδια πολιτική βασικού καταλόγου (`DATA_DIR` -> `XDG_CONFIG_HOME/omniroute` -> `~/.omniroute`) με μεταφορά αρχαίων αρχείων.
+1. Τα `usageDb` και `localDb` μοιράζονται την ίδια πολιτική βασικού καταλόγου (`DATA_DIR` -> `XDG_CONFIG_HOME/agentproxy` -> `~/.agentproxy`) με μεταφορά αρχαίων αρχείων.
 2. Το `/api/v1/route.ts` μεταβιβάζει στον ίδιο ενοποιημένο κατασκευαστή καταλόγου που χρησιμοποιείται από το `/api/v1/models` (`src/app/api/v1/models/catalog.ts`) για να αποφευχθεί σημασιολογική απόκλιση.
 3. Ο καταγραφέας αιτημάτων γράφει πλήρεις επικεφαλίδες/σώμα όταν είναι ενεργοποιημένος· αντιμετωπίστε τον κατάλογο καταγραφής ως ευαίσθητο.
 4. Η συμπεριφορά cloud εξαρτάται από τη σωστή ρύθμιση `NEXT_PUBLIC_BASE_URL` και την προσβασιμότητα του endpoint cloud.
-5. Ο κατάλογος `open-sse/` δημοσιεύεται ως **πακέτο χώρου εργασίας npm** `@omniroute/open-sse`. Ο πηγαίος κώδικας τον εισάγει μέσω `@omniroute/open-sse/...` (επιλύεται από το `transpilePackages` του Next.js). Τα μονοπάτια αρχείων σε αυτό το έγγραφο εξακολουθούν να χρησιμοποιούν το όνομα καταλόγου `open-sse/` για συνέπεια.
+5. Ο κατάλογος `open-sse/` δημοσιεύεται ως **πακέτο χώρου εργασίας npm** `@agentproxy/open-sse`. Ο πηγαίος κώδικας τον εισάγει μέσω `@agentproxy/open-sse/...` (επιλύεται από το `transpilePackages` του Next.js). Τα μονοπάτια αρχείων σε αυτό το έγγραφο εξακολουθούν να χρησιμοποιούν το όνομα καταλόγου `open-sse/` για συνέπεια.
 6. Τα γραφήματα στο dashboard χρησιμοποιούν **Recharts** (βασισμένα σε SVG) για προσβάσιμες, διαδραστικές οπτικοποιήσεις αναλυτικών στοιχείων (γραφήματα ράβδων χρήσης μοντέλων, πίνακες ανάλυσης παρόχων με ποσοστά επιτυχίας).
 7. Οι δοκιμές E2E χρησιμοποιούν **Playwright** (`tests/e2e/`), εκτελούνται μέσω `npm run test:e2e`. Οι δοκιμές μονάδας χρησιμοποιούν **Node.js test runner** (`tests/unit/`), εκτελούνται μέσω `npm run test:unit`. Ο πηγαίος κώδικας στο `src/` είναι **TypeScript** (`.ts`/`.tsx`)· ο χώρος εργασίας `open-sse/` παραμένει JavaScript (`.js`).
 8. Η σελίδα Ρυθμίσεων είναι οργανωμένη σε 7 καρτέλες: Γενικά, Εμφάνιση, AI, Ασφάλεια, Δρομολόγηση, Ανθεκτικότητα, Για προχωρημένους. Η σελίδα Ανθεκτικότητας διαμορφώνει μόνο την ουρά αιτημάτων, την ψύξη σύνδεσης, τον διακόπτη παρόχου και τη συμπεριφορά αναμονής για ψύξη· η κατάσταση χρόνου εκτέλεσης του ζωντανού διακόπτη εμφανίζεται στη σελίδα Υγείας.
@@ -1161,7 +1161,7 @@ Source Format → OpenAI (hub) → Target Format
 ## Λίστα Ελέγχου Επιχειρησιακής Επαλήθευσης
 
 - Δημιουργία από πηγαίο κώδικα: `npm run build`
-- Δημιουργία εικόνας Docker: `docker build -t omniroute .`
+- Δημιουργία εικόνας Docker: `docker build -t agentproxy .`
 - Εκκίνηση υπηρεσίας και επαλήθευση:
 - `GET /api/settings`
 - `GET /api/v1/models`

@@ -3,7 +3,7 @@
 // the FIRST cookie. Browsers serialize "a=1; auth_token=…", so the same-origin
 // reverse-proxy dashboard auth silently failed whenever any cookie preceded auth_token.
 // Keep the server from auto-starting on import.
-process.env.OMNIROUTE_ENABLE_LIVE_WS = "0";
+process.env.AGENTPROXY_ENABLE_LIVE_WS = "0";
 
 import test from "node:test";
 import assert from "node:assert/strict";

@@ -279,7 +279,7 @@ test("serializeBoundedToolResult: CJK + astral cut lands on code-point boundarie
     `byte bound: ${Buffer.byteLength(bounded.text, "utf8")} <= ${maxBytes}`
   );
   assert.ok(bounded.text.includes("[TRUNCATED"), "marker present");
-  const match = bounded.text.match(/\[TRUNCATED (\d+) BYTES BY OMNIROUTE\]/);
+  const match = bounded.text.match(/\[TRUNCATED (\d+) BYTES BY AGENTPROXY\]/);
   assert.ok(match, "marker format valid");
   const droppedBytes = Number(match![1]);
   assert.ok(droppedBytes > 0, "dropped bytes > 0");

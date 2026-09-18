@@ -3,17 +3,17 @@ import { timingSafeEqual } from "node:crypto";
 import { AUTHZ_HEADER_PEER_LOCALITY } from "@/server/authz/headers";
 
 export const INTERNAL_SERVICE_AUTH_HEADER = "x-agentproxy-internal-service-token";
-export const LEGACY_INTERNAL_SERVICE_AUTH_HEADER = "x-omniroute-internal-service-token";
+export const LEGACY_INTERNAL_SERVICE_AUTH_HEADER = "x-agentproxy-internal-service-token";
 
 function configuredToken(): string {
   const inlineToken =
     process.env.AGENTPROXY_INTERNAL_SERVICE_TOKEN?.trim() ||
-    process.env.OMNIROUTE_INTERNAL_SERVICE_TOKEN?.trim();
+    process.env.AGENTPROXY_INTERNAL_SERVICE_TOKEN?.trim();
   if (inlineToken) return inlineToken;
 
   const tokenFile =
     process.env.AGENTPROXY_INTERNAL_SERVICE_TOKEN_FILE?.trim() ||
-    process.env.OMNIROUTE_INTERNAL_SERVICE_TOKEN_FILE?.trim();
+    process.env.AGENTPROXY_INTERNAL_SERVICE_TOKEN_FILE?.trim();
   if (!tokenFile) return "";
 
   try {

@@ -19,7 +19,7 @@ env:
   # CI must never mutate the runner's OS trust store (2026-07-05: a cert-flow
   # test installed a fake PEM on a persistent self-hosted runner and broke all
   # system TLS). Belt-and-suspenders with tests/_setup/isolateDataDir.ts.
-  OMNIROUTE_SKIP_SYSTEM_TRUST: "1"
+  AGENTPROXY_SKIP_SYSTEM_TRUST: "1"
   CI_NODE_VERSION: "24.15.0"
   CI_NODE_22_VERSION: "22.22.2"
   CI_NODE_25_VERSION: "25.0.0"
@@ -645,8 +645,8 @@ jobs:
       # below the runner's memory ceiling; Turbopack has peaked at 14–16 GB RSS here.
       - run: npm run build
         env:
-          OMNIROUTE_USE_TURBOPACK: "0"
-          OMNIROUTE_NEXT_BUILD_CPUS: "1"
+          AGENTPROXY_USE_TURBOPACK: "0"
+          AGENTPROXY_NEXT_BUILD_CPUS: "1"
       - name: Archive Next.js build for downstream jobs
         # Use tar so the archive preserves paths relative to CWD (.build/next/...).
         # upload-artifact path-stripping is ambiguous when exclude patterns are used;
@@ -700,7 +700,7 @@ jobs:
       # `build:cli` monta dist/ mas NAO grava dist/BUILD_SHA — so `build:release` faz
       # isso, chamando write-build-sha.mjs. O guard de proveniencia do #10427, dentro
       # de check:pack-artifact, rejeita um artefato sem SHA (e rejeita mesmo com
-      # OMNIROUTE_ALLOW_CANARY_BUILD=1: o que nao da para identificar nao da para
+      # AGENTPROXY_ALLOW_CANARY_BUILD=1: o que nao da para identificar nao da para
       # vouchear). Sem este passo o par build+validate deste job e estruturalmente
       # incompativel e falha 100% das vezes.
       - name: Stamp dist/BUILD_SHA for the provenance guard (#10427)
@@ -711,9 +711,9 @@ jobs:
         # isso, e com razao: um artefato carimbado com o merge commit nao pode ser
         # rastreado ate codigo que passou pelos gates.
         env:
-          OMNIROUTE_BUILD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          AGENTPROXY_BUILD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
         run: |
-          export OMNIROUTE_BUILD_SHA="${OMNIROUTE_BUILD_SHA:0:7}"
+          export AGENTPROXY_BUILD_SHA="${AGENTPROXY_BUILD_SHA:0:7}"
           node scripts/build/write-build-sha.mjs
       # O guard de proveniencia checa ancestralidade contra `origin/main` por padrao.
       # Esse e o ref certo na PUBLICACAO (npm-publish.yml roda em main), mas em
@@ -740,7 +740,7 @@ jobs:
           fi
       - run: npm run check:pack-artifact
         env:
-          OMNIROUTE_RELEASE_REF: ${{ steps.provenance-ref.outputs.ref }}
+          AGENTPROXY_RELEASE_REF: ${{ steps.provenance-ref.outputs.ref }}
       # WS1.2 (#7065 class): pack the real tarball, install it into a clean prefix and
       # BOOT it to a healthy /api/monitoring/health — the gate that structure checks
       # cannot provide (3 releases shipped boot-crashing tarballs with green lists).
@@ -1132,7 +1132,7 @@ jobs:
         run: |
           mkdir -p .artifacts
           {
-            echo "<!-- omniroute-coverage-report -->"
+            echo "<!-- agentproxy-coverage-report -->"
             echo "## CI Coverage Report"
             echo ""
             echo "- Coverage job: \`${COVERAGE_RESULT}\`"
@@ -1154,7 +1154,7 @@ jobs:
         with:
           script: |
             const fs = require("fs");
-            const marker = "<!-- omniroute-coverage-report -->";
+            const marker = "<!-- agentproxy-coverage-report -->";
             const body = fs.readFileSync(".artifacts/pr-coverage-comment.md", "utf8");
             const { owner, repo } = context.repo;
             const issue_number = context.issue.number;
@@ -1206,7 +1206,7 @@ jobs:
       JWT_SECRET: ci-test-secret-with-sufficient-length-for-validation
       API_KEY_SECRET: ci-test-api-key-secret-long
       DISABLE_SQLITE_AUTO_BACKUP: "true"
-      OMNIROUTE_PLAYWRIGHT_SKIP_BUILD: "1"
+      AGENTPROXY_PLAYWRIGHT_SKIP_BUILD: "1"
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -1270,7 +1270,7 @@ jobs:
       JWT_SECRET: ci-test-secret-with-sufficient-length-for-validation
       API_KEY_SECRET: ci-test-api-key-secret-long
       INITIAL_PASSWORD: ci-test-password-for-integration
-      DATA_DIR: /tmp/omniroute-ci-${{ matrix.shard }}
+      DATA_DIR: /tmp/agentproxy-ci-${{ matrix.shard }}
       DISABLE_SQLITE_AUTO_BACKUP: "true"
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -1309,7 +1309,7 @@ jobs:
       - run: npm run check:node-runtime
       - run: npm run test:security
 
-  # Live-server E2E. Both suites boot a real OmniRoute via their own runner and
+  # Live-server E2E. Both suites boot a real AgentProxy via their own runner and
   # drive it over HTTP; neither needs provider credentials. They were documented in
   # AGENTS.md's test matrix but wired to NO workflow, and had additionally been
   # unrunnable (vitest.config.ts excluded the very files their runners passed as a

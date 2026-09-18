@@ -20,11 +20,11 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-lkgp-11181-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-lkgp-11181-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const { resolveAutoStrategyOrder } =
-  await import("@omniroute/open-sse/services/combo/resolveAutoStrategy.ts");
+  await import("@agentproxy/open-sse/services/combo/resolveAutoStrategy.ts");
 const settingsDb = await import("@/lib/db/settings.ts");
 const { resetDbInstance } = await import("@/lib/db/core.ts");
 

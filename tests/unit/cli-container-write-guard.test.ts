@@ -37,14 +37,14 @@ test("guard allows any write on a host machine", async () => {
 test("guard refuses an ephemeral container home and explains both escape routes", async () => {
   const result = await assertHostConfigTarget("/home/node/.codex", {
     toolLabel: "Codex",
-    hostCommand: "omniroute setup-codex",
+    hostCommand: "agentproxy setup-codex",
     deps: containerDeps,
     env: {},
   });
 
   assert.equal(result.ok, false);
   assert.match(result.message!, /Refusing to write Codex config to \/home\/node\/\.codex/);
-  assert.match(result.message!, /omniroute setup-codex/);
+  assert.match(result.message!, /agentproxy setup-codex/);
   assert.match(result.message!, /CLI_CONFIG_HOME=\/host-home/);
   assert.match(result.message!, /--allow-container-write/);
 });
@@ -67,11 +67,11 @@ test("--allow-container-write proceeds but warns about the ephemeral write", asy
   assert.match(result.warning!, /lost when the container is recreated/);
 });
 
-test("OMNIROUTE_ALLOW_CONTAINER_CONFIG_WRITE env has the same effect as the flag", async () => {
+test("AGENTPROXY_ALLOW_CONTAINER_CONFIG_WRITE env has the same effect as the flag", async () => {
   for (const value of ["1", "true", "yes", "on", "TRUE"]) {
     const result = await assertHostConfigTarget("/home/node/.codex", {
       deps: containerDeps,
-      env: { OMNIROUTE_ALLOW_CONTAINER_CONFIG_WRITE: value },
+      env: { AGENTPROXY_ALLOW_CONTAINER_CONFIG_WRITE: value },
     });
     assert.equal(result.ok, true, `expected ${value} to allow the write`);
   }
@@ -81,7 +81,7 @@ test("a falsy env override does not allow the write", async () => {
   for (const value of ["0", "false", "off", ""]) {
     const result = await assertHostConfigTarget("/home/node/.codex", {
       deps: containerDeps,
-      env: { OMNIROUTE_ALLOW_CONTAINER_CONFIG_WRITE: value },
+      env: { AGENTPROXY_ALLOW_CONTAINER_CONFIG_WRITE: value },
     });
     assert.equal(result.ok, false, `expected ${value} to keep the refusal`);
   }

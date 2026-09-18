@@ -6,7 +6,7 @@ function makeCmd(output = "json") {
   return { optsWithGlobals: () => ({ output, quiet: output !== "table" }) };
 }
 
-test("combo suggest chama omniroute_best_combo_for_task via MCP", async () => {
+test("combo suggest chama agentproxy_best_combo_for_task via MCP", async () => {
   const origFetch = globalThis.fetch;
   globalThis.fetch = makeMcpStreamFetch({
     toolResult: {
@@ -23,7 +23,7 @@ test("combo suggest chama omniroute_best_combo_for_task via MCP", async () => {
     },
   });
   const { mcpCallTool } = await import("../../bin/cli/mcpClient.mjs");
-  const result = await mcpCallTool("omniroute_best_combo_for_task", {
+  const result = await mcpCallTool("agentproxy_best_combo_for_task", {
     task: "Real-time code completions",
     top: 5,
   });
@@ -43,7 +43,7 @@ test("combo suggest --max-cost/--max-latency-ms passa constraints", async () => 
     return inner(url, init);
   }) as any;
   const { mcpCallTool } = await import("../../bin/cli/mcpClient.mjs");
-  await mcpCallTool("omniroute_best_combo_for_task", {
+  await mcpCallTool("agentproxy_best_combo_for_task", {
     task: "Summarize PDFs",
     constraints: { maxCostUsd: 0.001, maxLatencyMs: 500 },
     top: 3,
@@ -65,7 +65,7 @@ test("combo suggest --weights passa pesos no body", async () => {
     return inner(url, init);
   }) as any;
   const { mcpCallTool } = await import("../../bin/cli/mcpClient.mjs");
-  await mcpCallTool("omniroute_best_combo_for_task", {
+  await mcpCallTool("agentproxy_best_combo_for_task", {
     task: "batch",
     weights: { latency: 0.7, cost: 0.3 },
   });
@@ -91,7 +91,7 @@ test("combo suggest --switch chama /api/combos/switch com melhor combo", async (
   }) as any;
 
   const { mcpCallTool } = await import("../../bin/cli/mcpClient.mjs");
-  const data = await mcpCallTool("omniroute_best_combo_for_task", { task: "x" });
+  const data = await mcpCallTool("agentproxy_best_combo_for_task", { task: "x" });
   const combosSwitchRes = await fetch("/api/combos/switch", { method: "POST", body: JSON.stringify({ name: (data as any).candidates[0].name }) });
   assert.equal(combosSwitchRes.ok, true);
   assert.ok(urls.some((u) => u.includes("/api/combos/switch")));

@@ -37,10 +37,10 @@ test(
         : false,
   },
   async () => {
-    const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-ap0100-"));
+    const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-ap0100-"));
     const sqliteFile = path.join(dataDir, "storage.sqlite");
     const originalDataDir = process.env.DATA_DIR;
-    const originalHealthInterval = process.env.OMNIROUTE_DB_HEALTHCHECK_INTERVAL_MS;
+    const originalHealthInterval = process.env.AGENTPROXY_DB_HEALTHCHECK_INTERVAL_MS;
     const require = createRequire(import.meta.url);
     const Database = require("better-sqlite3") as new (file: string) => {
       exec(sql: string): void;
@@ -55,7 +55,7 @@ test(
 
       fs.chmodSync(sqliteFile, 0o444);
       process.env.DATA_DIR = dataDir;
-      process.env.OMNIROUTE_DB_HEALTHCHECK_INTERVAL_MS = "0";
+      process.env.AGENTPROXY_DB_HEALTHCHECK_INTERVAL_MS = "0";
 
       const core = await import(`../../src/lib/db/core.ts?ap0100=${Date.now()}`);
 
@@ -70,7 +70,7 @@ test(
           0,
           `attempt ${attempt} must not leak the primary SQLite handle`
         );
-        assert.equal(globalThis.__omnirouteDb, undefined, "failed init must not publish a singleton");
+        assert.equal(globalThis.__agentproxyDb, undefined, "failed init must not publish a singleton");
       }
 
       fs.chmodSync(sqliteFile, 0o600);
@@ -79,20 +79,20 @@ test(
       assert.ok(countOpenHandlesFor(sqliteFile) >= 1, "successful init should own a live handle");
       assert.equal(core.closeDbInstance({ checkpointMode: null }), true);
       assert.equal(countOpenHandlesFor(sqliteFile), 0, "closeDbInstance must release the live handle");
-      assert.equal(globalThis.__omnirouteDb, undefined);
+      assert.equal(globalThis.__agentproxyDb, undefined);
     } finally {
       try {
-        if (globalThis.__omnirouteDb?.open) globalThis.__omnirouteDb.close();
+        if (globalThis.__agentproxyDb?.open) globalThis.__agentproxyDb.close();
       } catch {}
-      delete globalThis.__omnirouteDb;
+      delete globalThis.__agentproxyDb;
       try {
         fs.chmodSync(sqliteFile, 0o600);
       } catch {}
       fs.rmSync(dataDir, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
       if (originalDataDir === undefined) delete process.env.DATA_DIR;
       else process.env.DATA_DIR = originalDataDir;
-      if (originalHealthInterval === undefined) delete process.env.OMNIROUTE_DB_HEALTHCHECK_INTERVAL_MS;
-      else process.env.OMNIROUTE_DB_HEALTHCHECK_INTERVAL_MS = originalHealthInterval;
+      if (originalHealthInterval === undefined) delete process.env.AGENTPROXY_DB_HEALTHCHECK_INTERVAL_MS;
+      else process.env.AGENTPROXY_DB_HEALTHCHECK_INTERVAL_MS = originalHealthInterval;
     }
   }
 );

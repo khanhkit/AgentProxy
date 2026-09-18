@@ -6,7 +6,7 @@ import path from "node:path";
 
 // Repro for issue #7680 — RTL layout compatibility.
 //
-// OmniRoute sets <html dir="rtl"> for ar/fa/he/ur locales (src/app/layout.tsx:61,
+// AgentProxy sets <html dir="rtl"> for ar/fa/he/ur locales (src/app/layout.tsx:61,
 // config/i18n.json "rtl": ["ar","fa","he","ur"]) but src/app/globals.css has zero
 // logical-property / RTL-mirroring rules, while dashboard components use Tailwind's
 // *physical* spacing utilities (ml-/mr-/pl-/pr-/left-/right-/border-l-/border-r-).

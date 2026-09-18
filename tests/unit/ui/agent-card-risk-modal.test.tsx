@@ -41,7 +41,7 @@ globalThis.fetch = vi.fn().mockResolvedValue({
   json: () => Promise.resolve({ data: [] }),
 } as unknown as Response);
 
-const RISK_KEY_PREFIX = "omniroute-agentbridge-risk-dismissed-";
+const RISK_KEY_PREFIX = "agentproxy-agentbridge-risk-dismissed-";
 
 const cleanupCallbacks: Array<() => void> = [];
 
@@ -254,7 +254,7 @@ describe("AgentCard RiskNoticeModal", { timeout: 30000 }, () => {
       acceptBtn?.dispatchEvent(new MouseEvent("click", { bubbles: true }));
     });
 
-    const riskKey = "omniroute-agentbridge-risk-dismissed-copilot";
+    const riskKey = "agentproxy-agentbridge-risk-dismissed-copilot";
     const riskWrites = setItemSpy.mock.calls.filter(([key]) => key === riskKey);
     // Must be exactly ONE write — RiskNoticeModal is the sole persistence owner (D16)
     expect(riskWrites).toHaveLength(1);

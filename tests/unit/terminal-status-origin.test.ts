@@ -4,7 +4,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-t11-"));
+const DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-t11-"));
 process.env.DATA_DIR = DIR;
 const core = await import("../../src/lib/db/core.ts");
 const { createProviderConnection } = await import("../../src/lib/db/providers.ts");

@@ -20,7 +20,7 @@ test("upstream error passthrough", async (t) => {
   await t.test("corpo com cara de vazamento interno (stack trace) NÃO é elegível", () => {
     assert.equal(
       shouldPassthroughUpstreamError(400, {
-        error: { message: "Error\n    at /usr/lib/node_modules/omniroute/x.js:1" },
+        error: { message: "Error\n    at /usr/lib/node_modules/agentproxy/x.js:1" },
       }),
       false
     );

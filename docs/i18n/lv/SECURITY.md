@@ -6,10 +6,10 @@
 
 ## Ziņošana par ievainojamībām
 
-Ja atklājat drošības ievainojamību OmniRoute, lūdzu, ziņojiet par to atbildīgi:
+Ja atklājat drošības ievainojamību AgentProxy, lūdzu, ziņojiet par to atbildīgi:
 
 1. **NEIZVEIDOJIET** publisku GitHub issue
-2. Izmantojiet [GitHub Security Advisories](https://github.com/diegosouzapw/OmniRoute/security/advisories/new)
+2. Izmantojiet [GitHub Security Advisories](https://github.com/khanhkit/AgentProxy/security/advisories/new)
 3. Iekļaujiet: aprakstu, reproducēšanas darbības un iespējamo ietekmi
 
 ## Atbildes termiņi
@@ -32,7 +32,7 @@ Ja atklājat drošības ievainojamību OmniRoute, lūdzu, ziņojiet par to atbil
 
 ## Drošības arhitektūra
 
-OmniRoute izmanto daudzslāņu drošības modeli:
+AgentProxy izmanto daudzslāņu drošības modeli:
 
 ```
 Pieprasījums → CORS → Autorizācijas konveijers (klasificēšana → politikas → izpilde)
@@ -69,7 +69,7 @@ STORAGE_ENCRYPTION_KEY=$(openssl rand -hex 32)
 
 ### 🛡️ Aizsargmehānismu ietvars
 
-OmniRoute komplektācijā ir iekļauts dinamiski pārlādējams **aizsargmehānismu reģistrs** (`src/lib/guardrails/`) ar 3 iebūvētiem aizsargmehānismiem, kas sakārtoti pēc prioritātes:
+AgentProxy komplektācijā ir iekļauts dinamiski pārlādējams **aizsargmehānismu reģistrs** (`src/lib/guardrails/`) ar 3 iebūvētiem aizsargmehānismiem, kas sakārtoti pēc prioritātes:
 
 | Aizsargmehānisms   | Prioritāte | Mērķis                                                                                              |
 | ------------------ | ---------- | --------------------------------------------------------------------------------------------------- |
@@ -77,7 +77,7 @@ OmniRoute komplektācijā ir iekļauts dinamiski pārlādējams **aizsargmehāni
 | `pii-masker`       | 10         | PII noņemšana pirms un pēc izsaukuma (e-pasti, tālruņa numuri, CPF, CNPJ, kredītkartes, SSN)        |
 | `prompt-injection` | 20         | Nosaka ignorēšanas, lomas pārņemšanas, jailbreak un noplūdes modeļus                                |
 
-Pielāgoti aizsargmehānismi tiek reģistrēti, izmantojot `registerGuardrail(new MyGuardrail())`. Modelis darbojas pēc principa fail-open (izņēmumi nekad nebloķē datplūsmu). Atteikšanās no aizsargmehānismiem katram pieprasījumam atsevišķi, izmantojot `x-omniroute-disabled-guardrails` galveni. → Skatiet [`docs/security/GUARDRAILS.md`](docs/security/GUARDRAILS.md).
+Pielāgoti aizsargmehānismi tiek reģistrēti, izmantojot `registerGuardrail(new MyGuardrail())`. Modelis darbojas pēc principa fail-open (izņēmumi nekad nebloķē datplūsmu). Atteikšanās no aizsargmehānismiem katram pieprasījumam atsevišķi, izmantojot `x-agentproxy-disabled-guardrails` galveni. → Skatiet [`docs/security/GUARDRAILS.md`](docs/security/GUARDRAILS.md).
 
 ### 🧠 Uzvedņu injekciju aizsargs
 
@@ -182,15 +182,15 @@ Serveris aktīvi noraida zināmas vājas vērtības, piemēram, `changeme`, `sec
 
 ```bash
 docker run -d \
-  --name omniroute \
+  --name agentproxy \
   --restart unless-stopped \
   --read-only \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
+  -v agentproxy-data:/app/data \
   -e JWT_SECRET="$(openssl rand -base64 48)" \
   -e API_KEY_SECRET="$(openssl rand -hex 32)" \
   -e STORAGE_ENCRYPTION_KEY="$(openssl rand -hex 32)" \
-  diegosouzapw/omniroute:latest
+  khanhkit/agentproxy:latest
 ```
 
 ---
@@ -222,7 +222,7 @@ docker run -d \
 
 ## Piegādes ķēdes skenera atradumi (Socket.dev / Snyk / līdzīgi rīki)
 
-Publicētais `omniroute` npm artefakts ietver Next.js `output: "standalone"`
+Publicētais `agentproxy` npm artefakts ietver Next.js `output: "standalone"`
 būvējumu, kas nozīmē, ka katrs maršruta apstrādātājs — tostarp dokumentētās
 priviliģētās funkcijas (MITM, Zed importēšana, Cloud Sync, iegultais pakalpojumu
 uzraugs) — nonāk `.next/server/*.js` minimizētajos gabalos. Heiristiskie
@@ -238,7 +238,7 @@ Katrai atraduma kategorijai mēs uzturam atsevišķu uzturētāja apliecinājumu
   norāda uz to pašu dokumentu.
 
 Lietotājiem, kuru konveijers nevar atslābināt brīdinājumu, jābūvē ar
-`OMNIROUTE_BUILD_PROFILE=minimal npm run build`. Tādējādi četri sensitīvie
+`AGENTPROXY_BUILD_PROFILE=minimal npm run build`. Tādējādi četri sensitīvie
 moduļi tiek aizstāti ar stublājiem, kas izpildes laikā atgriež HTTP 503
 `feature-disabled`, tādēļ priviliģētie koda ceļi fiziski nepastāv komplektā.
 Publicēšanas recepti skatiet [`docs/security/SOCKET_DEV_FINDINGS.md`](docs/security/SOCKET_DEV_FINDINGS.md).

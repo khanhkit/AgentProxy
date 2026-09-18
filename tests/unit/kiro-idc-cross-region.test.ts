@@ -27,7 +27,7 @@ import {
 } from "../../open-sse/services/kiroRegion.ts";
 import { resolveKiroRegion as resolveExecutorRegion } from "../../open-sse/executors/kiro.ts";
 import { kiro } from "@/lib/oauth/providers/kiro";
-import { __testing } from "@omniroute/open-sse/services/usage.ts";
+import { __testing } from "@agentproxy/open-sse/services/usage.ts";
 
 const { getKiroUsage } = __testing;
 

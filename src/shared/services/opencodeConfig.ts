@@ -78,7 +78,7 @@ export const buildOpenCodeProviderConfig = ({
     name: "AgentProxy",
     options: {
       baseURL: normalizedBaseUrl,
-      apiKey: apiKey || "sk_omniroute",
+      apiKey: apiKey || "sk_agentproxy",
     },
     models: modelsRecord,
   };
@@ -102,10 +102,10 @@ export const buildOpenCodeV2ProviderConfig = (
 export const buildOpenCodeConfigDocument = (input: OpenCodeConfigInput) => ({
   $schema: "https://opencode.ai/config.json",
   provider: {
-    omniroute: buildOpenCodeProviderConfig(input),
+    agentproxy: buildOpenCodeProviderConfig(input),
   },
   providers: {
-    omniroute: buildOpenCodeV2ProviderConfig(input),
+    agentproxy: buildOpenCodeV2ProviderConfig(input),
   },
 });
 
@@ -135,11 +135,11 @@ export const mergeOpenCodeConfig = (
     $schema: safeConfig.$schema || "https://opencode.ai/config.json",
     provider: {
       ...safeProvider,
-      omniroute: buildOpenCodeProviderConfig(input),
+      agentproxy: buildOpenCodeProviderConfig(input),
     },
     providers: {
       ...safeProviders,
-      omniroute: buildOpenCodeV2ProviderConfig(input),
+      agentproxy: buildOpenCodeV2ProviderConfig(input),
     },
   };
 };
@@ -181,12 +181,12 @@ export const mergeOpenCodeConfigText = (
   );
   nextText = applyEdits(nextText, schemaEdits);
 
-  const providerEdits = modify(nextText, ["provider", "omniroute"], providerConfig, {
+  const providerEdits = modify(nextText, ["provider", "agentproxy"], providerConfig, {
     formattingOptions: { insertSpaces: true, tabSize: 2 },
   });
   nextText = applyEdits(nextText, providerEdits);
 
-  const v2ProviderEdits = modify(nextText, ["providers", "omniroute"], v2ProviderConfig, {
+  const v2ProviderEdits = modify(nextText, ["providers", "agentproxy"], v2ProviderConfig, {
     formattingOptions: { insertSpaces: true, tabSize: 2 },
   });
 

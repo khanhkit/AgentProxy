@@ -9,7 +9,7 @@ import { isVersionFastPath } from "../../bin/cli/utils/versionFastPath.mjs";
 const execFileAsync = promisify(execFile);
 
 // argv shape is [node, script, ...args]
-const argv = (...args: string[]) => ["node", "omniroute", ...args];
+const argv = (...args: string[]) => ["node", "agentproxy", ...args];
 
 test("fast-path selector: bare --version/-V select the fast path", () => {
   assert.equal(isVersionFastPath(argv("--version")), true);
@@ -37,12 +37,12 @@ test("fast-path selector: defensive on non-array input", () => {
   assert.equal(isVersionFastPath(undefined), false);
 });
 
-test("omniroute CLI --version fast-path prints ONLY the version, skipping bootstrap output", async () => {
+test("agentproxy CLI --version fast-path prints ONLY the version, skipping bootstrap output", async () => {
   const pkg = JSON.parse(
     readFileSync(join(process.cwd(), "package.json"), "utf8")
   ) as { version: string };
 
-  const { stdout } = await execFileAsync(process.execPath, ["bin/omniroute.mjs", "--version"], {
+  const { stdout } = await execFileAsync(process.execPath, ["bin/agentproxy.mjs", "--version"], {
     cwd: process.cwd(),
     env: { ...process.env, DATA_DIR: "" },
   });

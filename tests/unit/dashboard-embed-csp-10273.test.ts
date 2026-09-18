@@ -1,4 +1,4 @@
-// Regression guard for #10273: opt-in CSP relaxation so OmniRoute's HTML pages can be
+// Regression guard for #10273: opt-in CSP relaxation so AgentProxy's HTML pages can be
 // embedded in the VS Code Simple Browser (the OmniCopilot extension's `dashboardOpen:
 // "editor"` mode renders them inside a `vscode-webview:` iframe).
 //

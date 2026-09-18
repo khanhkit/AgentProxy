@@ -4,7 +4,7 @@ import os from "node:os";
 import path from "node:path";
 import test from "node:test";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-audio-telemetry-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-audio-telemetry-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.API_KEY_SECRET = process.env.API_KEY_SECRET || "audio-telemetry-test-secret";
 
@@ -137,7 +137,7 @@ test("AP-ISS-0103 priced one-second WAV records call, usage, durable cost and ma
     transcriptionRequest("telemetrystta/whisper-priced", makePcmWav(1), caller.key)
   );
   assert.equal(response.status, 200);
-  assert.equal(response.headers.get("X-OmniRoute-Response-Cost"), "0.0100000000");
+  assert.equal(response.headers.get("X-AgentProxy-Response-Cost"), "0.0100000000");
   await settleWrites();
 
   const callRows = rows(
@@ -182,7 +182,7 @@ test("AP-ISS-0103 malformed/unknown audio falls back to zero cost without losing
     )
   );
   assert.equal(response.status, 200);
-  assert.equal(response.headers.get("X-OmniRoute-Response-Cost"), "0.0000000000");
+  assert.equal(response.headers.get("X-AgentProxy-Response-Cost"), "0.0000000000");
   await settleWrites();
 
   assert.equal(rows("SELECT id FROM call_logs WHERE api_key_id = ?", caller.id).length, 1);
@@ -252,7 +252,7 @@ test("AP-ISS-0103 combo fallback records one row per attempt and bills only fina
     transcriptionRequest("audio-telemetry-combo", makePcmWav(1), caller.key)
   );
   assert.equal(response.status, 200);
-  assert.equal(response.headers.get("X-OmniRoute-Response-Cost"), "0.0200000000");
+  assert.equal(response.headers.get("X-AgentProxy-Response-Cost"), "0.0200000000");
   await settleWrites();
 
   const callRows = rows(

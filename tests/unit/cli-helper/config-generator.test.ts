@@ -47,10 +47,10 @@ describe("config-generator", () => {
   });
 
   describe("assertSafeCatalogUrl (SSRF guard, CodeQL #326)", () => {
-    it("allows the loopback OmniRoute target (the legitimate default) and returns a URL", async () => {
+    it("allows the loopback AgentProxy target (the legitimate default) and returns a URL", async () => {
       const { assertSafeCatalogUrl } =
         await import("../../../src/lib/cli-helper/config-generator/opencode.ts");
-      // The catalog source IS the user's own OmniRoute — localhost must stay allowed.
+      // The catalog source IS the user's own AgentProxy — localhost must stay allowed.
       assert.doesNotThrow(() => assertSafeCatalogUrl("http://localhost:20128/v1/models"));
       assert.doesNotThrow(() => assertSafeCatalogUrl("http://127.0.0.1:20128/v1/models"));
       // Returns the validated, re-parsed URL (taint-severed value the caller fetches).
@@ -59,10 +59,10 @@ describe("config-generator", () => {
       assert.equal(safe.href, "http://localhost:20128/v1/models");
     });
 
-    it("allows a public OmniRoute Cloud target", async () => {
+    it("allows a public AgentProxy Cloud target", async () => {
       const { assertSafeCatalogUrl } =
         await import("../../../src/lib/cli-helper/config-generator/opencode.ts");
-      assert.doesNotThrow(() => assertSafeCatalogUrl("https://api.omniroute.online/v1/models"));
+      assert.doesNotThrow(() => assertSafeCatalogUrl("https://api.agentproxy.online/v1/models"));
     });
 
     it("blocks the cloud-metadata SSRF→IAM pivot (169.254.169.254)", async () => {
@@ -129,7 +129,7 @@ describe("config-generator", () => {
       assert.strictEqual(result.success, true);
       assert.ok(result.configPath.endsWith(".hermes/config.yaml"));
       assert.ok(String(result.content || "").includes("providers:"));
-      assert.ok(String(result.content || "").includes("omniroute"));
+      assert.ok(String(result.content || "").includes("agentproxy"));
     });
 
     it("returns error for unknown tool", async () => {
@@ -266,7 +266,7 @@ describe("config-generator", () => {
         await import("../../../src/lib/cli-helper/config-generator/hermes-agent.ts");
       const result = await hermesAgent.generateHermesAgentConfig({
         baseUrl: "http://localhost:20128",
-        apiKey: "sk-test-omniroute",
+        apiKey: "sk-test-agentproxy",
         selections: [
           { role: "default", model: "gpt-4o" },
           { role: "delegation", model: "claude-3-5-sonnet" },
@@ -277,7 +277,7 @@ describe("config-generator", () => {
       assert.ok(!result.error);
       assert.ok(typeof result.yaml === "string");
       assert.ok(result.yaml.length > 50);
-      assert.ok(result.yaml.includes("provider: omniroute"));
+      assert.ok(result.yaml.includes("provider: agentproxy"));
     });
 
     it("generateHermesAgentConfig includes auxiliary section for non-default roles", async () => {
@@ -403,7 +403,7 @@ describe("config-generator", () => {
           apiKey: "sk-test",
         });
         const cfg = JSON.parse(out);
-        const models = cfg.provider.omniroute.models;
+        const models = cfg.provider.agentproxy.models;
         assert.strictEqual(models["ds/deepseek-v4-flash"].limit.context, 1_000_000);
         assert.strictEqual(models["MASTER"].limit.context, 131072);
         // Combo with min-of-targets 200K: must reflect the catalog's value,
@@ -427,7 +427,7 @@ describe("config-generator", () => {
         // NO_CTX_COMBO has no context_length in the catalog. OpenCode v1
         // requires a complete limit object, so the compatibility fallback
         // must be explicit rather than leaving the config invalid.
-        const noCtx = cfg.provider.omniroute.models["NO_CTX_COMBO"];
+        const noCtx = cfg.provider.agentproxy.models["NO_CTX_COMBO"];
         assert.strictEqual(
           noCtx.limit?.context,
           128_000,
@@ -448,7 +448,7 @@ describe("config-generator", () => {
           apiKey: "sk-test",
         });
         const cfg = JSON.parse(out);
-        assert.strictEqual(cfg.provider.omniroute.models.llama3.limit.context, 8192);
+        assert.strictEqual(cfg.provider.agentproxy.models.llama3.limit.context, 8192);
       } finally {
         stub.restore();
       }
@@ -497,7 +497,7 @@ describe("config-generator", () => {
           model: "MASTER",
         });
         const cfg = JSON.parse(out);
-        assert.strictEqual(cfg.model, "omniroute/MASTER");
+        assert.strictEqual(cfg.model, "agentproxy/MASTER");
       } finally {
         stub.restore();
       }
@@ -530,7 +530,7 @@ describe("config-generator", () => {
           apiKey: "sk-test",
         });
         const cfg = JSON.parse(out);
-        const model = cfg.provider.omniroute.models[modelId];
+        const model = cfg.provider.agentproxy.models[modelId];
 
         assert.strictEqual(
           model.attachment,
@@ -556,7 +556,7 @@ describe("config-generator", () => {
         });
         const cfg = JSON.parse(out);
         assert.strictEqual(
-          cfg.provider.omniroute.models["Opencode FREE Omni"].limit.context,
+          cfg.provider.agentproxy.models["Opencode FREE Omni"].limit.context,
           200000,
           "Opencode FREE Omni must have context=200000 from the catalog, not 128000"
         );
@@ -676,7 +676,7 @@ describe("config-generator", () => {
       // keep comments inside unrelated providers too
       "name": "Custom Provider"
     },
-    "omniroute": {
+    "agentproxy": {
       "models": {
         "manual-model": { "name": "Manual", "limit": { "context": 77777, }, },
       },
@@ -706,7 +706,7 @@ describe("config-generator", () => {
         assert.match(result.content || "", /keep comments inside unrelated providers too/);
         const config = parse(result.content || "");
         assert.deepStrictEqual(config.provider.custom, { name: "Custom Provider" });
-        assert.strictEqual(config.provider.omniroute.models["manual-model"].limit.context, 77777);
+        assert.strictEqual(config.provider.agentproxy.models["manual-model"].limit.context, 77777);
       } finally {
         stub.restore();
         mock.restoreAll();

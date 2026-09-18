@@ -7,7 +7,7 @@ import type { FreeProxyItem } from "@/lib/freeProxyProviders/types";
 import { makeManagementSessionRequest } from "../../helpers/managementSession.ts";
 
 // DATA_DIR must be set before the DB core module evaluates its singleton.
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-free-list-route-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-free-list-route-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../../src/lib/db/core.ts");

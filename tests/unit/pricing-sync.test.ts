@@ -1,11 +1,11 @@
 import { test, describe } from "node:test";
 import assert from "node:assert/strict";
-import { transformToOmniRoute } from "../../src/lib/pricingSync.ts";
+import { transformToAgentProxy } from "../../src/lib/pricingSync.ts";
 
-// ─── transformToOmniRoute ────────────────────────────────
+// ─── transformToAgentProxy ────────────────────────────────
 
-describe("transformToOmniRoute", () => {
-  test("converts LiteLLM per-token pricing to OmniRoute per-million format", () => {
+describe("transformToAgentProxy", () => {
+  test("converts LiteLLM per-token pricing to AgentProxy per-million format", () => {
     const raw = {
       "openai/gpt-4o": {
         input_cost_per_token: 0.0000025,
@@ -15,7 +15,7 @@ describe("transformToOmniRoute", () => {
       },
     };
 
-    const result = transformToOmniRoute(raw);
+    const result = transformToAgentProxy(raw);
 
     assert.ok(result.openai, "Should have openai provider");
     assert.ok(result.openai["gpt-4o"], "Should have gpt-4o model");
@@ -33,7 +33,7 @@ describe("transformToOmniRoute", () => {
       },
     };
 
-    const result = transformToOmniRoute(raw);
+    const result = transformToAgentProxy(raw);
 
     assert.ok(result.cc, "Should map to cc alias");
     assert.ok(result.cc["claude-sonnet-4-20250514"]);
@@ -51,7 +51,7 @@ describe("transformToOmniRoute", () => {
       },
     };
 
-    const result = transformToOmniRoute(raw);
+    const result = transformToAgentProxy(raw);
 
     assert.ok(result.gemini, "Should map to gemini alias");
     assert.strictEqual(result.gemini["gemini-2.5-flash"].input, 0.3);
@@ -77,7 +77,7 @@ describe("transformToOmniRoute", () => {
       },
     };
 
-    const result = transformToOmniRoute(raw);
+    const result = transformToAgentProxy(raw);
 
     const embedding = result.openai?.["text-embedding-3-small"];
     assert.ok(embedding, "Should ingest token-priced embedding model");
@@ -98,7 +98,7 @@ describe("transformToOmniRoute", () => {
       },
     };
 
-    const result = transformToOmniRoute(raw);
+    const result = transformToAgentProxy(raw);
     const openaiModels = result.openai || {};
     assert.strictEqual(
       Object.keys(openaiModels).length,
@@ -119,7 +119,7 @@ describe("transformToOmniRoute", () => {
       },
     };
 
-    const result = transformToOmniRoute(raw);
+    const result = transformToAgentProxy(raw);
 
     const model = result.anthropic["claude-sonnet-4-20250514"];
     assert.ok(model, "Should have model");
@@ -136,7 +136,7 @@ describe("transformToOmniRoute", () => {
       },
     };
 
-    const result = transformToOmniRoute(raw);
+    const result = transformToAgentProxy(raw);
 
     // deepseek maps to "ds" (its real registry alias — open-sse/config/providers/
     // registry/deepseek/index.ts). Previously mapped to "if" (Qoder's alias, an
@@ -156,7 +156,7 @@ describe("transformToOmniRoute", () => {
       },
     };
 
-    const result = transformToOmniRoute(raw);
+    const result = transformToAgentProxy(raw);
     const unknownModels = result.unknown || {};
     assert.strictEqual(Object.keys(unknownModels).length, 0);
   });
@@ -171,7 +171,7 @@ describe("transformToOmniRoute", () => {
       },
     };
 
-    const result = transformToOmniRoute(raw);
+    const result = transformToAgentProxy(raw);
 
     assert.ok(result.groq, "Should have groq provider");
     assert.strictEqual(result.groq["llama-3.3-70b-versatile"].input, 0);
@@ -188,7 +188,7 @@ describe("transformToOmniRoute", () => {
       },
     };
 
-    const result = transformToOmniRoute(raw);
+    const result = transformToAgentProxy(raw);
 
     assert.ok(result.newprovider, "Should use litellm_provider as-is");
     assert.ok(result.newprovider["some-model"]);
@@ -204,7 +204,7 @@ describe("transformToOmniRoute", () => {
       },
     };
 
-    const result = transformToOmniRoute(raw);
+    const result = transformToAgentProxy(raw);
 
     assert.ok(result.openai["gpt-4o-mini"], "Should strip openai/ prefix");
     assert.strictEqual(result.openai["gpt-4o-mini"].input, 0.15);
@@ -220,7 +220,7 @@ describe("transformToOmniRoute", () => {
       },
     };
 
-    const result = transformToOmniRoute(raw);
+    const result = transformToAgentProxy(raw);
 
     // 0.00000033333 * 1e6 = 0.33333 → rounded to 0.333
     assert.strictEqual(result.openai.model.input, 0.333);
@@ -244,7 +244,7 @@ describe("pricing merge precedence", () => {
       },
     };
 
-    const synced = transformToOmniRoute(raw);
+    const synced = transformToAgentProxy(raw);
     const userOverride = { openai: { "gpt-4o": { input: 999 } } };
 
     // Simulate merge: synced then user

@@ -6,9 +6,9 @@ lastUpdated: 2026-07-02
 
 # Backendy routera i usługi osadzone — kontrakt architektoniczny (ADR)
 
-> **Status:** Accepted · **Context:** [#5670](https://github.com/diegosouzapw/OmniRoute/issues/5670),
-> [#5603](https://github.com/diegosouzapw/OmniRoute/issues/5603) · **Contract:** `domain/routing/routerBackends.ts`
-> (typed registry — kod ląduje wraz z [#5868](https://github.com/diegosouzapw/OmniRoute/pull/5868))
+> **Status:** Accepted · **Context:** [#5670](https://github.com/khanhkit/AgentProxy/issues/5670),
+> [#5603](https://github.com/khanhkit/AgentProxy/issues/5603) · **Contract:** `domain/routing/routerBackends.ts`
+> (typed registry — kod ląduje wraz z [#5868](https://github.com/khanhkit/AgentProxy/pull/5868))
 
 Ten ADR precyzuje, jak silniki `ts` (native), `bifrost`, `cliproxy`, `9router` oraz
 kompatybilne z VibeProxy odnoszą się do siebie, aby kontrybutorzy przestali
@@ -22,10 +22,10 @@ Rola silnika jest opisana przez **dwie niezależne osie**, zakodowane łącznie 
 `RouterBackendDefinition` rejestru:
 
 1. **Lifecycle** (`RouterBackendLifecycle`) — _jak silnik działa_:
-   - `in-process` — działa wewnątrz procesu Node OmniRoute (natywny pipeline TS).
-   - `supervised` — lokalny proces potomny, który OmniRoute instaluje/uruchamia/zatrzymuje/sprawdza
+   - `in-process` — działa wewnątrz procesu Node AgentProxy (natywny pipeline TS).
+   - `supervised` — lokalny proces potomny, który AgentProxy instaluje/uruchamia/zatrzymuje/sprawdza
      health przez `ServiceSupervisor`, a następnie konsumuje jako połączenie providera.
-   - `external` — endpoint HTTP, do którego OmniRoute dysponuje żądania, ale którego **nie**
+   - `external` — endpoint HTTP, do którego AgentProxy dysponuje żądania, ale którego **nie**
      zarządza (konfigurowany przez bazowy URL ze zmiennej środowiskowej).
    - `disabled` — zarejestrowany, ale nie do wyboru.
 2. **Selection axis** (backend routingu relay) — _czy relay do niego dysponuje_:
@@ -41,7 +41,7 @@ był wyłącznie `external`.
 ## Rejestr — jedyne źródło prawdy
 
 Kontrakt `domain/routing/routerBackends.ts` (kod ląduje wraz z
-[#5868](https://github.com/diegosouzapw/OmniRoute/pull/5868)) deklaruje każdy silnik raz, z jego
+[#5868](https://github.com/khanhkit/AgentProxy/pull/5868)) deklaruje każdy silnik raz, z jego
 lifecycle, capabilities, tożsamością usługi, domyślnym portem, konfiguracją health oraz
 wsparciem telemetrii. Konsumenci wyszukują silniki przez `getRouterBackend(id)`,
 `listRouterBackends()` oraz `listRouterBackendsByCapability(cap)` zamiast
@@ -57,7 +57,7 @@ obsługiwać każdy sidecar osobno.
 
 ¹ Promocja Bifrost do osadzonej usługi `supervised` (instalowalnej/uruchamialnej
 z `/api/services/bifrost/`) jest śledzona w
-[#5817](https://github.com/diegosouzapw/OmniRoute/pull/5817); do czasu merge
+[#5817](https://github.com/khanhkit/AgentProxy/pull/5817); do czasu merge
 Bifrost jest wyłącznie `external` (osiągalny tylko przez `BIFROST_BASE_URL`).
 
 `capabilities` (`chat`, `responses`, `streaming`, `tools`, `vision`,
@@ -114,7 +114,7 @@ dyspozycji; główna powierzchnia `/api/v1/chat/completions` nigdy nie konsultuj
 `routingBackend.ts`.
 
 - **Selection** (`resolveRelayRoutingBackend`): jeden globalny przełącznik env —
-  `OMNIROUTE_RELAY_BACKEND` / `RELAY_ROUTING_BACKEND` ∈ {`ts`, `bifrost`, `auto`}.
+  `AGENTPROXY_RELAY_BACKEND` / `RELAY_ROUTING_BACKEND` ∈ {`ts`, `bifrost`, `auto`}.
   Jeśli nieustawiony: `auto` gdy Bifrost jest skonfigurowany+włączony, w przeciwnym razie `ts`.
 - **Behavior:**
   - `bifrost` (forced): awaria Bifrost → twarde `502`, bez fallbacku.
@@ -125,8 +125,8 @@ dyspozycji; główna powierzchnia `/api/v1/chat/completions` nigdy nie konsultuj
 Selection jest **dziś wszystko-albo-nic na poziomie relay** — na `release/v3.8.43` nie ma
 podmiany silnika per-provider ani per-request. Bramka per-request jest dodawana
 w ramach prac sidecar-manifest
-([#5869](https://github.com/diegosouzapw/OmniRoute/pull/5869) manifest +
-[#5870](https://github.com/diegosouzapw/OmniRoute/pull/5870) `shouldTryBifrostForRequest`),
+([#5869](https://github.com/khanhkit/AgentProxy/pull/5869) manifest +
+[#5870](https://github.com/khanhkit/AgentProxy/pull/5870) `shouldTryBifrostForRequest`),
 która pozwala `auto` kierować przez Bifrost tylko providery kwalifikujące się według manifestu.
 
 ## Integracja z dashboardem

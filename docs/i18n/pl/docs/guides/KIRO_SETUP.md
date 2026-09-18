@@ -4,7 +4,7 @@ title: "Przewodnik konfiguracji Kiro"
 
 # Przewodnik konfiguracji Kiro
 
-Ten przewodnik opisuje dodawanie kont Kiro (hostowany w AWS asystent AI do kodowania) do OmniRoute,
+Ten przewodnik opisuje dodawanie kont Kiro (hostowany w AWS asystent AI do kodowania) do AgentProxy,
 ze szczególnym uwzględnieniem jednoczesnej pracy wielu kont bez konfliktów sesji.
 
 ---
@@ -22,10 +22,10 @@ token pierwszego konta.
 
 ---
 
-## Jak OmniRoute to rozwiązuje (v3.8.0+)
+## Jak AgentProxy to rozwiązuje (v3.8.0+)
 
-Od v3.8.0 OmniRoute wywołuje `registerClient()` (AWS SSO OIDC) przy każdym
-imporcie połączenia Kiro. Dzięki temu każde połączenie OmniRoute ma własną, dedykowaną
+Od v3.8.0 AgentProxy wywołuje `registerClient()` (AWS SSO OIDC) przy każdym
+imporcie połączenia Kiro. Dzięki temu każde połączenie AgentProxy ma własną, dedykowaną
 rejestrację klienta OIDC. Ponieważ rejestracje klientów są od siebie niezależne,
 odświeżanie lub ponowne uwierzytelnienie jednego konta nie wpływa na refresh token
 żadnego innego konta.
@@ -60,7 +60,7 @@ połączenia automatycznie otrzymają własną rejestrację klienta.
 
 ### Wymagania wstępne
 
-- OmniRoute v3.8.0 lub nowszy.
+- AgentProxy v3.8.0 lub nowszy.
 - Działające konto Kiro (e-mail + hasło, Google lub logowanie GitHub).
 - Opcjonalnie drugie konto Kiro.
 
@@ -71,7 +71,7 @@ połączenia automatycznie otrzymają własną rejestrację klienta.
    - **Import Token** — wklej refresh token zaczynający się od `aorAAAAAG`.
    - **API Key** — wklej długoterminowy klucz API Kiro / CodeWhisperer.
    - **Google / GitHub login** — dokończ flow OAuth w przeglądarce.
-   - **Auto-Import** — kliknij przycisk; OmniRoute odczyta poświadczenia z
+   - **Auto-Import** — kliknij przycisk; AgentProxy odczyta poświadczenia z
      lokalnej bazy kiro-cli lub z `~/.aws/sso/cache`.
 3. Połączenie zostaje zapisane. Flow oparte o refresh token automatycznie rejestrują
    dedykowanego klienta OIDC. Flow klucza API walidują klucz w AWS i nie przechowują refresh tokena.
@@ -128,7 +128,7 @@ współdzielonych sesji OIDC.
 1. Otwórz **Dashboard -> Providers -> Kiro**.
 2. Wybierz **API Key**.
 3. Wklej klucz API oraz opcjonalnie region AWS (`us-east-1` domyślnie).
-4. OmniRoute waliduje klucz i zapisuje połączenie.
+4. AgentProxy waliduje klucz i zapisuje połączenie.
 
 ### API
 
@@ -167,7 +167,7 @@ jako długoterminowy klucz API, a nie jako token dostępu OIDC lub social.
 ## Wygaśnięcie klienta OIDC
 
 Publiczne klienty AWS SSO OIDC zwykle wygasają po 90 dniach
-(`clientSecretExpiresAt`). OmniRoute przechowuje ten znacznik czasu w `providerSpecificData`
+(`clientSecretExpiresAt`). AgentProxy przechowuje ten znacznik czasu w `providerSpecificData`
 na potrzeby obserwowalności. Jeśli połączenie przestanie się odświeżać po ok. 90 dniach,
 zaimportuj je ponownie, aby uzyskać świeżą rejestrację klienta OIDC. Automatyczna
 ponowna rejestracja po wygaśnięciu jest planowana jako przyszłe usprawnienie.
@@ -188,7 +188,7 @@ odświeżają się przez AWS SSO OIDC.
 ### Import kończy się błędem "Token validation failed"
 
 - Upewnij się, że refresh token zaczyna się od `aorAAAAAG`.
-- Upewnij się, że OmniRoute może dotrzeć do `https://oidc.us-east-1.amazonaws.com` (lub
+- Upewnij się, że AgentProxy może dotrzeć do `https://oidc.us-east-1.amazonaws.com` (lub
   skonfigurowanego regionu). Jeśli jesteś za proxy firmowym, ustaw proxy na poziomie
   providera w **Dashboard → Settings → Proxies**.
 
@@ -196,7 +196,7 @@ odświeżają się przez AWS SSO OIDC.
 
 - Potwierdź, że klucz to klucz API Kiro / CodeWhisperer, a nie refresh token.
 - Potwierdź, że region AWS odpowiada kluczowi/kontu. Domyślnie jest to `us-east-1`.
-- Klucz musi móc wywołać `ListAvailableProfiles`; w przeciwnym razie OmniRoute nie może
+- Klucz musi móc wywołać `ListAvailableProfiles`; w przeciwnym razie AgentProxy nie może
   rozwiązać wymaganego `profileArn`.
 
 W przypadku innych problemów zobacz główny plik [TROUBLESHOOTING.md](./TROUBLESHOOTING.md).

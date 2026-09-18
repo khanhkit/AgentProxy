@@ -9,8 +9,8 @@ const fs = require("fs");
  *
  * #7941: the Helper name is derived from `path.basename(execPath)` — electron-builder
  * generates BOTH the main binary and the Helper.app bundles from `build.productName`
- * ("OmniRoute"). The previous code used `app.getName()`, which reads package.json
- * `name` ("omniroute-desktop"); the two diverged, so it never matched a real Helper
+ * ("AgentProxy"). The previous code used `app.getName()`, which reads package.json
+ * `name` ("agentproxy-desktop"); the two diverged, so it never matched a real Helper
  * path and the caller fell through to `process.execPath`, spawning the main Electron
  * binary and producing a second, inert Dock icon.
  *

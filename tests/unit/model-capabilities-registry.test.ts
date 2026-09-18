@@ -5,7 +5,7 @@ import os from "node:os";
 import path from "node:path";
 import { MODEL_SPECS } from "../../src/shared/constants/modelSpecs.ts";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-model-capabilities-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-model-capabilities-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../src/lib/db/core.ts");

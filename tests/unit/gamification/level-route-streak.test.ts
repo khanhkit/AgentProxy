@@ -8,7 +8,7 @@ import path from "node:path";
 // (operator-wide view, #3484) and now expects the streak alongside the level payload so
 // the streak card (#2403) shows real data instead of a hard-coded 0.
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-level-streak-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-level-streak-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 if (!process.env.API_KEY_SECRET) {
   process.env.API_KEY_SECRET = "test-level-streak-secret-" + Date.now();

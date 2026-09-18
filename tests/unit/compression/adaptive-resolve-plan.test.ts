@@ -4,7 +4,7 @@ import {
   DEFAULT_LADDER,
   aggressivenessOf,
   expectedReductionFactor,
-} from "@omniroute/open-sse/services/compression/adaptiveCompression/ladder.ts";
+} from "@agentproxy/open-sse/services/compression/adaptiveCompression/ladder.ts";
 
 test("default ladder is cheapest → most aggressive (stackPriority order)", () => {
   assert.deepEqual(
@@ -28,8 +28,8 @@ test("expectedReductionFactor is in (0,1) and heavier engines reduce more", () =
   assert.ok(expectedReductionFactor("ultra") < expectedReductionFactor("rtk"));
 });
 
-import { resolveAdaptivePlan } from "@omniroute/open-sse/services/compression/adaptiveCompression/resolveAdaptivePlan.ts";
-import { DEFAULT_CONTEXT_BUDGET } from "@omniroute/open-sse/services/compression/adaptiveCompression/types.ts";
+import { resolveAdaptivePlan } from "@agentproxy/open-sse/services/compression/adaptiveCompression/resolveAdaptivePlan.ts";
+import { DEFAULT_CONTEXT_BUDGET } from "@agentproxy/open-sse/services/compression/adaptiveCompression/types.ts";
 
 const cfg = (over = {}) => ({ ...DEFAULT_CONTEXT_BUDGET, mode: "floor" as const, ...over });
 const basePlan = { mode: "off", stackedPipeline: [] as Array<{ engine: string; intensity?: string }> };

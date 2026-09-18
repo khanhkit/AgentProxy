@@ -19,7 +19,7 @@ test(
     "getSqlJsAdapter() poisons every later query against the SAME singleton " +
     "(documents WHY the probe/close pattern is unsafe for sql.js — #7494)",
   async () => {
-    const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-7494-mech-"));
+    const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-7494-mech-"));
     const sqliteFile = path.join(dataDir, "storage.sqlite");
     try {
       const { preInitSqlJs, getSqlJsAdapter } =
@@ -53,7 +53,7 @@ test(
     "adapter — it is the module-global singleton getDbInstance()'s probe/reopen " +
     "pattern relies on staying alive across the probe step (#7494)",
   async () => {
-    const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-7494-guard-"));
+    const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-7494-guard-"));
     const sqliteFile = path.join(dataDir, "storage.sqlite");
     try {
       const { preInitSqlJs, getSqlJsAdapter } =
@@ -97,7 +97,7 @@ test(
   "closeProbeIfSafe() still closes per-handle drivers (better-sqlite3) — the " +
     "guard is sql.js-specific, not a blanket no-op",
   async () => {
-    const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-7494-real-"));
+    const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-7494-real-"));
     const sqliteFile = path.join(dataDir, "storage.sqlite");
     try {
       const { tryOpenSync } = await import("../../src/lib/db/adapters/driverFactory");

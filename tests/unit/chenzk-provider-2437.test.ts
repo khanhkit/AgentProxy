@@ -9,7 +9,7 @@ const CHENZK_CHAT_URL = "https://chenzk.top/v1/chat/completions";
 const CHENZK_MODELS_URL = "https://chenzk.top/v1/models";
 
 // Port of decolua/9router#2437 ("feat: add Chenzk API provider"), adapted to
-// OmniRoute's directory-per-provider registry (`open-sse/config/providers/registry/`)
+// AgentProxy's directory-per-provider registry (`open-sse/config/providers/registry/`)
 // and the `src/shared/constants/providers/apikey/*` metadata catalog, instead of
 // upstream's flat `open-sse/providers/registry/*.js` + hardcoded model array. Chenzk
 // exposes a "New API"-style OpenAI-compatible gateway with a live /v1/models catalog,

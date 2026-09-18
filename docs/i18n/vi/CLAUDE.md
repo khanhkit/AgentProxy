@@ -39,7 +39,7 @@ npm run test:all
 
 ## Dự án tổng quan
 
-**OmniRoute** — proxy/router AI thống nhất. Một điểm cuối, 329 nhà cung cấp LLM, tự động chuyển tiếp.
+**AgentProxy** — proxy/router AI thống nhất. Một điểm cuối, 329 nhà cung cấp LLM, tự động chuyển tiếp.
 
 | Lớp           | Vị trí                  | Mục đích                                                                  |
 | ------------- | ----------------------- | ------------------------------------------------------------------------- |
@@ -82,7 +82,7 @@ Các route API tuân theo một mẫu nhất quán: `Route → CORS preflight �
 
 ## Trạng Thái Thời Gian Chạy Độ Bền
 
-OmniRoute có ba cơ chế tạm thời liên quan nhưng khác biệt về lỗi. Giữ cho phạm vi của chúng tách biệt khi gỡ lỗi hành vi định tuyến. Xem
+AgentProxy có ba cơ chế tạm thời liên quan nhưng khác biệt về lỗi. Giữ cho phạm vi của chúng tách biệt khi gỡ lỗi hành vi định tuyến. Xem
 [biểu đồ độ bền 3 lớp](./docs/diagrams/exported/resilience-3layers.svg)
 (nguồn: [docs/diagrams/resilience-3layers.mmd](./docs/diagrams/resilience-3layers.mmd))
 để có cái nhìn tổng quan.
@@ -219,7 +219,7 @@ kết nối tiếp tục phục vụ các model khác.
 ### Phong Cách Mã
 
 - **2 khoảng trắng**, dấu chấm phẩy, dấu nháy kép, chiều rộng 100 ký tự, dấu phẩy cuối es5 (được thực thi bởi lint-staged thông qua Prettier)
-- **Nhập khẩu**: bên ngoài → bên trong (`@/`, `@omniroute/open-sse`) → tương đối
+- **Nhập khẩu**: bên ngoài → bên trong (`@/`, `@agentproxy/open-sse`) → tương đối
 - **Đặt tên**: tệp=camelCase/kebab, thành phần=PascalCase, hằng số=UPPER_SNAKE
 - **ESLint**: `no-eval`, `no-implied-eval`, `no-new-func` = lỗi ở mọi nơi; `no-explicit-any` = cảnh báo trong `open-sse/` và `tests/`
 - **TypeScript**: `strict: false`, mục tiêu ES2022, mô-đun esnext, phân giải bundler. Ưu tiên kiểu rõ ràng.
@@ -389,9 +389,9 @@ git push -u origin feat/your-feature
   | ≥22.22.2 <23 |
   | ≥24 <25, ES Modules
 - **TypeScript**: 5.9+, mục tiêu ES2022, mô-đun esnext, giải quyết bundler
-- **Biểu thức đường dẫn**: `@/*` → `src/`, `@omniroute/open-sse` → `open-sse/`, `@omniroute/open-sse/*` → `open-sse/*`
+- **Biểu thức đường dẫn**: `@/*` → `src/`, `@agentproxy/open-sse` → `open-sse/`, `@agentproxy/open-sse/*` → `open-sse/*`
 - **Cổng mặc định**: 20128 (API + bảng điều khiển trên cùng một cổng)
-- **Thư mục dữ liệu**: biến môi trường `DATA_DIR`, mặc định là `~/.omniroute/`
+- **Thư mục dữ liệu**: biến môi trường `DATA_DIR`, mặc định là `~/.agentproxy/`
 - **Các biến môi trường chính**: `PORT`, `JWT_SECRET`, `API_KEY_SECRET`, `INITIAL_PASSWORD`, `REQUIRE_API_KEY`, `APP_LOG_LEVEL`
 - Thiết lập: `cp .env.example .env` sau đó tạo `JWT_SECRET` (`openssl rand -base64 48`) và `API_KEY_SECRET` (`openssl rand -hex 32`)
 
@@ -414,4 +414,4 @@ git push -u origin feat/your-feature
 13. Không bao giờ nội suy chuỗi các đường dẫn bên ngoài hoặc giá trị thời gian chạy vào các tập lệnh shell được truyền cho `exec()`/`spawn()` — hãy truyền qua tùy chọn `env` thay vào đó. Tham khảo: `src/mitm/cert/install.ts::updateNssDatabases`.
 14. Không bao giờ bỏ qua một cảnh báo CodeQL / Secret-Scanning mà không (a) trước tiên kiểm tra tài liệu mẫu ở trên để xem liệu trợ giúp có áp dụng hay không, và (b) ghi lại lý do kỹ thuật trong bình luận từ chối. Tiền lệ: `js/stack-trace-exposure` được nêu trên các điểm gọi đã định tuyến qua `sanitizeErrorMessage()` là một giới hạn đã biết của CodeQL (các bộ làm sạch tùy chỉnh không được công nhận) — từ chối như là `false positive` tham chiếu `docs/security/ERROR_SANITIZATION.md`.
 15. Không bao giờ tiết lộ các tuyến đường tạo ra các quy trình con (`/api/mcp/`, `/api/cli-tools/runtime/`) mà không có phân loại `isLocalOnlyPath()` trong `src/server/authz/routeGuard.ts`. Việc thực thi loopback xảy ra không điều kiện trước bất kỳ kiểm tra xác thực nào — JWT bị rò rỉ qua đường hầm không thể kích hoạt việc tạo quy trình. Xem `docs/security/ROUTE_GUARD_TIERS.md`.
-16. Không bao giờ bao gồm các trailer `Co-Authored-By` ghi nhận trợ lý AI, LLM hoặc tài khoản tự động hóa (ví dụ tên chứa "Claude", "GPT", "Copilot", "Bot"; email tại `anthropic.com` / `openai.com` / địa chỉ `noreply.github.com` thuộc sở hữu của bot). Những trailer như vậy chuyển hướng attribution của commit đến tài khoản bot trên GitHub, ẩn tác giả thực (`diegosouzapw`) trong lịch sử PR. Các cộng tác viên là con người — bao gồm tác giả PR upstream và người báo cáo issue được port vào OmniRoute — CÓ THỂ và NÊN được ghi nhận bằng trailer chuẩn `Co-authored-by: Name <email>`; quy trình upstream-port (`/port-upstream-features`, `/port-upstream-issues`) phụ thuộc vào điều này.
+16. Không bao giờ bao gồm các trailer `Co-Authored-By` ghi nhận trợ lý AI, LLM hoặc tài khoản tự động hóa (ví dụ tên chứa "Claude", "GPT", "Copilot", "Bot"; email tại `anthropic.com` / `openai.com` / địa chỉ `noreply.github.com` thuộc sở hữu của bot). Những trailer như vậy chuyển hướng attribution của commit đến tài khoản bot trên GitHub, ẩn tác giả thực (`diegosouzapw`) trong lịch sử PR. Các cộng tác viên là con người — bao gồm tác giả PR upstream và người báo cáo issue được port vào AgentProxy — CÓ THỂ và NÊN được ghi nhận bằng trailer chuẩn `Co-authored-by: Name <email>`; quy trình upstream-port (`/port-upstream-features`, `/port-upstream-issues`) phụ thuộc vào điều này.

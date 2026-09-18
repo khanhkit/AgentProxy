@@ -386,7 +386,7 @@ export default function ProviderDetailPageClient() {
     openApiKeyAddFlow();
   }, [providerId, isOAuth, openApiKeyAddFlow]);
 
-  // Legacy manual flow: headful browser login on the machine running OmniRoute.
+  // Legacy manual flow: headful browser login on the machine running AgentProxy.
   // Kept as the fallback for the phone/SMS auto-login modal.
   const connectVolcengineAccountManually = useCallback(async () => {
     setConnectingVolcengineAccount(true);

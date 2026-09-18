@@ -1,3 +1,7 @@
+---
+title: "Native vs Legacy Responses Route Policy Parity"
+---
+
 # Native vs Legacy Responses Route Policy Parity
 
 AP-ISS-0091 defines a maintained policy contract for the hybrid `/v1/responses` boundary. The machine-readable source of truth is `config/quality/native-legacy-route-policy-parity.json`; the unit gate verifies that every required control has both native and legacy ownership, runnable evidence locators, and route/source guards.

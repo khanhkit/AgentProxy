@@ -21,7 +21,7 @@ import path from "node:path";
 
 process.env.NODE_ENV = "test";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-refresh-cursor-route-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-refresh-cursor-route-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../src/lib/db/core.ts");
@@ -93,7 +93,7 @@ async function withCursorEnv<T>(fn: (env: CursorEnv) => Promise<T>): Promise<T> 
   const originalPlatformDescriptor = Object.getOwnPropertyDescriptor(process, "platform");
 
   Object.defineProperty(process, "platform", { value: "darwin", configurable: true });
-  const tmpHome = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-refresh-cursor-route-env-"));
+  const tmpHome = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-refresh-cursor-route-env-"));
   process.env.HOME = tmpHome;
   process.env.USERPROFILE = tmpHome;
 

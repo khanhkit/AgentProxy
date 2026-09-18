@@ -42,7 +42,7 @@ test("writeHttpError strips chunked transfer-encoding + leaked pipeline headers 
     "content-type": "application/json",
     "content-security-policy": "default-src 'self'",
     "x-frame-options": "DENY",
-    "x-omniroute-route-class": "MANAGEMENT",
+    "x-agentproxy-route-class": "MANAGEMENT",
     "x-request-id": "abc",
   });
 
@@ -57,7 +57,7 @@ test("writeHttpError strips chunked transfer-encoding + leaked pipeline headers 
   assert.equal((lower.match(/content-type:/g) || []).length, 1, "exactly one Content-Type header");
   // Pipeline / security headers must not leak onto the raw upgrade socket.
   assert.ok(!lower.includes("content-security-policy"), "must not leak CSP");
-  assert.ok(!lower.includes("x-omniroute-route-class"), "must not leak route-class");
+  assert.ok(!lower.includes("x-agentproxy-route-class"), "must not leak route-class");
   // Our own framing defaults win.
   assert.ok(head.startsWith("HTTP/1.1 401 "), "status line preserved");
   assert.ok(lower.includes("connection: close"), "Connection: close default wins");

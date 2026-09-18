@@ -9,7 +9,7 @@ import { execFileSync } from "node:child_process";
 // "already exists" when it shares the same account/workspace id but has a different
 // user identity. Dedup must key on workspace AND chatgpt_user_id.
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-codex-userid-dedup-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-codex-userid-dedup-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.STORAGE_ENCRYPTION_KEY = "codex-import-userid-dedup-test-key";
 

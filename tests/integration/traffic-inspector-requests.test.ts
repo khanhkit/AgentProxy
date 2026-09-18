@@ -12,7 +12,7 @@ import os from "node:os";
 import path from "node:path";
 import { randomUUID } from "node:crypto";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-ti-reqs-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-ti-reqs-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const { globalTrafficBuffer } = await import("../../src/mitm/inspector/buffer.ts");

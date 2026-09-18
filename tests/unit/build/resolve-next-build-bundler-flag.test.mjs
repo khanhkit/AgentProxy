@@ -8,12 +8,12 @@ test("resolveNextBuildBundlerFlag returns --turbopack by default", () => {
   assert.equal(flag, "--turbopack");
 });
 
-test("resolveNextBuildBundlerFlag returns --webpack when OMNIROUTE_USE_TURBOPACK is '0'", () => {
-  const flag = resolveNextBuildBundlerFlag({ OMNIROUTE_USE_TURBOPACK: "0" });
+test("resolveNextBuildBundlerFlag returns --webpack when AGENTPROXY_USE_TURBOPACK is '0'", () => {
+  const flag = resolveNextBuildBundlerFlag({ AGENTPROXY_USE_TURBOPACK: "0" });
   assert.equal(flag, "--webpack");
 });
 
-test("resolveNextBuildBundlerFlag returns --turbopack when OMNIROUTE_USE_TURBOPACK is '1'", () => {
-  const flag = resolveNextBuildBundlerFlag({ OMNIROUTE_USE_TURBOPACK: "1" });
+test("resolveNextBuildBundlerFlag returns --turbopack when AGENTPROXY_USE_TURBOPACK is '1'", () => {
+  const flag = resolveNextBuildBundlerFlag({ AGENTPROXY_USE_TURBOPACK: "1" });
   assert.equal(flag, "--turbopack");
 });

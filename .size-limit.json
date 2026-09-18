@@ -1,7 +1,7 @@
 [
   {
-    "name": "CLI entry (omniroute.mjs)",
-    "path": "bin/omniroute.mjs",
+    "name": "CLI entry (agentproxy.mjs)",
+    "path": "bin/agentproxy.mjs",
     "limit": "15 KB"
   },
   {

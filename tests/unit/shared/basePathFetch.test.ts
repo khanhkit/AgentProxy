@@ -32,9 +32,9 @@ describe("installBasePathFetch", () => {
     const originalFetch = globalThis.fetch;
     globalThis.fetch = native as unknown as typeof fetch;
     try {
-      const uninstall = installBasePathFetch("/omniroute");
+      const uninstall = installBasePathFetch("/agentproxy");
       await fetch("/api/health/ping");
-      assert.deepEqual(native.mock.calls[0].arguments, ["/omniroute/api/health/ping", undefined]);
+      assert.deepEqual(native.mock.calls[0].arguments, ["/agentproxy/api/health/ping", undefined]);
       uninstall();
     } finally {
       globalThis.fetch = originalFetch;
@@ -46,9 +46,9 @@ describe("installBasePathFetch", () => {
     const originalFetch = globalThis.fetch;
     globalThis.fetch = native as unknown as typeof fetch;
     try {
-      const uninstall = installBasePathFetch("/omniroute");
-      await fetch("/omniroute/api/health/ping");
-      assert.deepEqual(native.mock.calls[0].arguments, ["/omniroute/api/health/ping", undefined]);
+      const uninstall = installBasePathFetch("/agentproxy");
+      await fetch("/agentproxy/api/health/ping");
+      assert.deepEqual(native.mock.calls[0].arguments, ["/agentproxy/api/health/ping", undefined]);
       uninstall();
     } finally {
       globalThis.fetch = originalFetch;
@@ -60,11 +60,11 @@ describe("installBasePathFetch", () => {
     const originalFetch = globalThis.fetch;
     globalThis.fetch = native as unknown as typeof fetch;
     try {
-      const a = installBasePathFetch("/omniroute");
-      const b = installBasePathFetch("/omniroute");
+      const a = installBasePathFetch("/agentproxy");
+      const b = installBasePathFetch("/agentproxy");
       a();
       await fetch("/api/x");
-      assert.deepEqual(native.mock.calls[0].arguments, ["/omniroute/api/x", undefined]);
+      assert.deepEqual(native.mock.calls[0].arguments, ["/agentproxy/api/x", undefined]);
       b();
       native.mock.resetCalls();
       await fetch("/api/x");

@@ -7,13 +7,13 @@ import {
   runAntigravityLogin,
 } from "../../bin/cli/commands/login.mjs";
 
-// `omniroute login antigravity` already runs the OAuth on the operator's OWN machine —
+// `agentproxy login antigravity` already runs the OAuth on the operator's OWN machine —
 // the only place Google's firstparty/nativeapp loopback actually resolves — but it
 // stopped at PRINTING a credential blob for the operator to paste into the remote
 // dashboard by hand.
 //
 // Every piece needed to close that loop already exists:
-//   - `omniroute connect <host>` saves an admin-scoped token in the active context;
+//   - `agentproxy connect <host>` saves an admin-scoped token in the active context;
 //   - `apiFetch()` injects that context's baseUrl + Bearer automatically;
 //   - `/api/oauth` is admin-scoped (accessScopes.ts) and stays REMOTE-REACHABLE —
 //     routeGuard.ts loopback-gates only `/api/oauth/cursor/auto-import`;
@@ -46,13 +46,13 @@ test("pushCredentialBlob POSTs the blob to the provider's paste-credentials rout
     };
   };
 
-  const result = await pushCredentialBlob("antigravity", "omniroute-cred-v1.abc", { fetchImpl });
+  const result = await pushCredentialBlob("antigravity", "agentproxy-cred-v1.abc", { fetchImpl });
 
   assert.equal(result.ok, true);
   assert.equal(calls.length, 1);
   assert.equal(calls[0].path, "/api/oauth/antigravity/paste-credentials");
   assert.equal(calls[0].opts.method, "POST");
-  assert.deepEqual(calls[0].opts.body, { blob: "omniroute-cred-v1.abc" });
+  assert.deepEqual(calls[0].opts.body, { blob: "agentproxy-cred-v1.abc" });
 });
 
 test("pushCredentialBlob surfaces a server rejection instead of pretending success", async () => {
@@ -62,7 +62,7 @@ test("pushCredentialBlob surfaces a server rejection instead of pretending succe
     json: async () => ({ error: "Pasted credential provider mismatch" }),
   });
 
-  const result = await pushCredentialBlob("agy", "omniroute-cred-v1.abc", { fetchImpl });
+  const result = await pushCredentialBlob("agy", "agentproxy-cred-v1.abc", { fetchImpl });
 
   assert.equal(result.ok, false);
   assert.match(result.error, /provider mismatch/i);
@@ -116,10 +116,10 @@ test("a remote context auto-pushes and does NOT print the blob", async () => {
 
   assert.ok(pushed, "a remote context must trigger the push");
   assert.equal(pushed!.provider, "antigravity");
-  assert.match(pushed!.blob, /^omniroute-cred-v1\./);
+  assert.match(pushed!.blob, /^agentproxy-cred-v1\./);
   // The blob carries a refresh token; don't spray it on a terminal when it already landed.
   assert.equal(
-    printed.join("").includes("omniroute-cred-v1."),
+    printed.join("").includes("agentproxy-cred-v1."),
     false,
     "a successful push must not also print the secret"
   );
@@ -137,7 +137,7 @@ test("a FAILED push falls back to printing the blob — the firewall case still 
     })
   );
 
-  assert.match(blob, /^omniroute-cred-v1\./);
+  assert.match(blob, /^agentproxy-cred-v1\./);
   assert.ok(
     printed.join("").includes(blob),
     "the operator must still get the blob to paste when the push cannot land"
@@ -161,7 +161,7 @@ test("a LOCAL context prints as before — no surprise network call", async () =
   );
 
   assert.equal(pushCalls, 0, "a loopback context must not auto-push");
-  assert.ok(printed.join("").includes("omniroute-cred-v1."));
+  assert.ok(printed.join("").includes("agentproxy-cred-v1."));
 });
 
 test("--no-push forces print-only even against a remote context", async () => {
@@ -181,7 +181,7 @@ test("--no-push forces print-only even against a remote context", async () => {
   );
 
   assert.equal(pushCalls, 0);
-  assert.ok(printed.join("").includes("omniroute-cred-v1."));
+  assert.ok(printed.join("").includes("agentproxy-cred-v1."));
 });
 
 test("--push forces the push even when the context looks local", async () => {

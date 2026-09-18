@@ -44,7 +44,7 @@ test("writeEsmWorkerScopes never touches the standalone root package.json", () =
   try {
     // Standalone root as assembleStandalone leaves it: CommonJS, no `type`.
     const rootPkgPath = join(root, "package.json");
-    writeFileSync(rootPkgPath, JSON.stringify({ name: "omniroute-standalone" }, null, 2) + "\n");
+    writeFileSync(rootPkgPath, JSON.stringify({ name: "agentproxy-standalone" }, null, 2) + "\n");
 
     const workerDir = join(root, "src", "lib", "usage");
     mkdirSync(workerDir, { recursive: true });
@@ -134,7 +134,7 @@ test("colocate-standalone bundles the required compression worker", () => {
     writeFileSync(join(root, "server.js"), "module.exports = {};\n");
     execFileSync(process.execPath, ["scripts/build/colocate-standalone.mjs"], {
       cwd: join(import.meta.dirname, "..", "..", ".."),
-      env: { ...process.env, OMNIROUTE_STANDALONE_DIR: root },
+      env: { ...process.env, AGENTPROXY_STANDALONE_DIR: root },
       stdio: "pipe",
     });
     const workerDir = join(root, "open-sse", "services", "compression");

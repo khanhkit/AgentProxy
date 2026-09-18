@@ -9,7 +9,7 @@ const { exportCode, exportAllLanguages, endpointToPath, API_KEY_PLACEHOLDER } = 
 
 /** Assert security invariants on every generated snippet. */
 function assertSecurityInvariants(generated: string, label: string) {
-  assert.ok(generated.includes(API_KEY_PLACEHOLDER), `${label}: must include $OMNIROUTE_API_KEY`);
+  assert.ok(generated.includes(API_KEY_PLACEHOLDER), `${label}: must include $AGENTPROXY_API_KEY`);
   assert.ok(generated.length > 0, `${label}: must not be empty`);
   assert.doesNotMatch(
     generated,
@@ -43,8 +43,8 @@ test("endpointToPath: maps all 13 endpoints correctly (D4-rev2)", () => {
 
 // ── API_KEY_PLACEHOLDER ───────────────────────────────────────────────────────
 
-test("API_KEY_PLACEHOLDER is $OMNIROUTE_API_KEY", () => {
-  assert.equal(API_KEY_PLACEHOLDER, "$OMNIROUTE_API_KEY");
+test("API_KEY_PLACEHOLDER is $AGENTPROXY_API_KEY", () => {
+  assert.equal(API_KEY_PLACEHOLDER, "$AGENTPROXY_API_KEY");
 });
 
 // ── Table-driven tests for chat.completions ────────────────────────────────────
@@ -68,7 +68,7 @@ test("chat.completions × python: contains required elements", () => {
   const generated = exportCode(baseState, "python");
   assertSecurityInvariants(generated, "chat.completions/python");
   assert.ok(generated.includes("import requests"), "imports requests");
-  assert.ok(generated.includes('os.environ["OMNIROUTE_API_KEY"]'), "uses os.environ");
+  assert.ok(generated.includes('os.environ["AGENTPROXY_API_KEY"]'), "uses os.environ");
   assert.ok(generated.includes("gpt-4o-mini"), "model present");
 });
 
@@ -76,7 +76,7 @@ test("chat.completions × typescript: contains required elements", () => {
   const generated = exportCode(baseState, "typescript");
   assertSecurityInvariants(generated, "chat.completions/typescript");
   assert.ok(generated.includes("await fetch("), "uses fetch");
-  assert.ok(generated.includes("process.env.OMNIROUTE_API_KEY"), "uses process.env");
+  assert.ok(generated.includes("process.env.AGENTPROXY_API_KEY"), "uses process.env");
   assert.ok(generated.includes("gpt-4o-mini"), "model present");
 });
 

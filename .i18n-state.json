@@ -1542,19 +1542,19 @@
       "source_hash": "be11ba39e9795acb6fb4a28772712752a3f736cb0325950d0d624a63637dff0d",
       "locales": {}
     },
-    "docs/OMNIROUTE_ALLOCATION_HANDOFF.md": {
+    "docs/AGENTPROXY_ALLOCATION_HANDOFF.md": {
       "source_hash": "8cd564ba6ac1124ffeb9d814aca1f48474abfb4769831d34f6669dc6297f2ee7",
       "locales": {}
     },
-    "docs/OMNIROUTE_PROVIDER_FAILOVER.md": {
+    "docs/AGENTPROXY_PROVIDER_FAILOVER.md": {
       "source_hash": "6fa6e3b466b9a682ef9e9591d03cf4e6c6affc2c02da5d7b7569a142d55a0b43",
       "locales": {}
     },
-    "docs/OMNIROUTE_QUOTA_TELEMETRY.md": {
+    "docs/AGENTPROXY_QUOTA_TELEMETRY.md": {
       "source_hash": "6a4983441e4d0f21d61de35841d265d96668153938f633650fbf6bee96d473a4",
       "locales": {}
     },
-    "docs/OMNIROUTE_ROUTING_POLICY.md": {
+    "docs/AGENTPROXY_ROUTING_POLICY.md": {
       "source_hash": "0415e6018749665e40b55a5374340126a793e616c1df2b35a3e9c13464014feb",
       "locales": {}
     },
@@ -2166,7 +2166,7 @@
         }
       }
     },
-    "docs/comparison/OMNIROUTE_VS_ALTERNATIVES.md": {
+    "docs/comparison/AGENTPROXY_VS_ALTERNATIVES.md": {
       "source_hash": "5f87f53ffb0c2d95f4d5e5b0a004d4d564ba0aa480a56e018bf7ff05d6ea0cdb",
       "locales": {
         "pl": {

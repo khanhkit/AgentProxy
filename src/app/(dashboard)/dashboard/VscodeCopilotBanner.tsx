@@ -6,15 +6,15 @@ import { useTranslations } from "next-intl";
 // Marketplace listing is the primary CTA; Open VSX (Cursor/Windsurf/VSCodium/etc.)
 // is called out via secondaryNote instead of a second button, to keep this banner
 // the same size as KimiSponsorBanner.
-// This used to go through our own link.omniroute.online shortener for click
+// This used to go through our own link.agentproxy.online shortener for click
 // metrics, but that domain no longer resolves after the move to omniskill.online.
 const MARKETPLACE_URL =
   "https://marketplace.visualstudio.com/items?itemName=diegosouzapw.omnicopilot";
 
-const DISMISS_STORAGE_KEY = "omniroute-vscode-copilot-banner-dismissed-v1";
+const DISMISS_STORAGE_KEY = "agentproxy-vscode-copilot-banner-dismissed-v1";
 // Same-tab signal for the dismiss button, since writing localStorage doesn't
 // fire a "storage" event in the tab that wrote it.
-const DISMISS_EVENT = "omniroute:vscode-copilot-banner-dismissed";
+const DISMISS_EVENT = "agentproxy:vscode-copilot-banner-dismissed";
 
 function isNotDismissed(): boolean {
   try {

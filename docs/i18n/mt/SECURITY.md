@@ -6,10 +6,10 @@
 
 ## Rappurtar ta' Vulnerabbiltajiet
 
-Jekk tiskopri vulnerabbiltà tas-sigurtà f'OmniRoute, jekk jogħġbok irrapportaha b'mod responsabbli:
+Jekk tiskopri vulnerabbiltà tas-sigurtà f'AgentProxy, jekk jogħġbok irrapportaha b'mod responsabbli:
 
 1. **TIFTAĦX** kwistjoni pubblika fuq GitHub
-2. Uża l-[Avviżi tas-Sigurtà ta' GitHub](https://github.com/diegosouzapw/OmniRoute/security/advisories/new)
+2. Uża l-[Avviżi tas-Sigurtà ta' GitHub](https://github.com/khanhkit/AgentProxy/security/advisories/new)
 3. Inkludi: deskrizzjoni, passi għar-riproduzzjoni, u l-impatt potenzjali
 
 ## Skeda taż-Żmien għar-Rispons
@@ -32,7 +32,7 @@ Jekk tiskopri vulnerabbiltà tas-sigurtà f'OmniRoute, jekk jogħġbok irrapport
 
 ## Arkitettura tas-Sigurtà
 
-OmniRoute jimplimenta mudell tas-sigurtà b'diversi saffi:
+AgentProxy jimplimenta mudell tas-sigurtà b'diversi saffi:
 
 ```
 Talba → CORS → Pipeline tal-awtorizzazzjoni (ikklassifika → politiki → infurza)
@@ -69,7 +69,7 @@ STORAGE_ENCRYPTION_KEY=$(openssl rand -hex 32)
 
 ### 🛡️ Qafas tas-Salvagwardji
 
-OmniRoute jinkludi **reġistru tas-salvagwardji** li jista' jerġa' jitgħabba waqt it-tħaddim (`src/lib/guardrails/`) bi 3 salvagwardji integrati, ordnati skont il-prijorità:
+AgentProxy jinkludi **reġistru tas-salvagwardji** li jista' jerġa' jitgħabba waqt it-tħaddim (`src/lib/guardrails/`) bi 3 salvagwardji integrati, ordnati skont il-prijorità:
 
 | Salvagwardja       | Prijorità | Għan                                                                                                                      |
 | ------------------ | --------- | ------------------------------------------------------------------------------------------------------------------------- |
@@ -77,7 +77,7 @@ OmniRoute jinkludi **reġistru tas-salvagwardji** li jista' jerġa' jitgħabba w
 | `pii-masker`       | 10        | Ċensura tal-PII qabel u wara s-sejħa (emails, telefown, CPF, CNPJ, karti ta' kreditu, SSN)                                |
 | `prompt-injection` | 20        | Jidentifika mudelli ta' sovrascrittura/ħtif tar-rwol/jailbreak/tnixxija                                                   |
 
-Salvagwardji personalizzati jiġu rreġistrati permezz ta' `registerGuardrail(new MyGuardrail())`. Il-mudell huwa fail-open (l-eċċezzjonijiet qatt ma jimblukkaw it-traffiku). Tista' tagħżel li ma tużahomx għal kull talba permezz tal-header `x-omniroute-disabled-guardrails`. → Ara [`docs/security/GUARDRAILS.md`](docs/security/GUARDRAILS.md).
+Salvagwardji personalizzati jiġu rreġistrati permezz ta' `registerGuardrail(new MyGuardrail())`. Il-mudell huwa fail-open (l-eċċezzjonijiet qatt ma jimblukkaw it-traffiku). Tista' tagħżel li ma tużahomx għal kull talba permezz tal-header `x-agentproxy-disabled-guardrails`. → Ara [`docs/security/GUARDRAILS.md`](docs/security/GUARDRAILS.md).
 
 ### 🧠 Protezzjoni Kontra l-Injezzjoni tal-Prompt
 
@@ -182,15 +182,15 @@ Is-servizz iwaqfa b'mod attiv valuri magħrufa dgħajfa bħal `changeme`, `secre
 
 ```bash
 docker run -d \
-  --name omniroute \
+  --name agentproxy \
   --restart unless-stopped \
   --read-only \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
+  -v agentproxy-data:/app/data \
   -e JWT_SECRET="$(openssl rand -base64 48)" \
   -e API_KEY_SECRET="$(openssl rand -hex 32)" \
   -e STORAGE_ENCRYPTION_KEY="$(openssl rand -hex 32)" \
-  diegosouzapw/omniroute:latest
+  khanhkit/agentproxy:latest
 ```
 
 ---
@@ -222,7 +222,7 @@ Dawn ir-regoli jiġu infurzati permezz ta' għodod u rreveduri:
 
 ## Sorsi ta' ħruġ mill-pipeline tal-provvista (Socket.dev / Snyk / simili)
 
-L-arti tal-npm `omniroute` ippubblikat fih il-bini tal-Next.js `output: "standalone"`, li jfisser li kull maniġer tal-rotta - inkluż il-funzjonijiet privileġġati deskritti (MITM, importazzjoni Zed, Sema Sincronizzata, superviżur tas-servizz integrated) - jintwera f'biċċiet `.next/server/*.js` minifika. Is-skenners heuristiċi tal-provvista ta' ħruġ spiss jgħaqqdu dik il-kurġata mal-firxat tal-malware.
+L-arti tal-npm `agentproxy` ippubblikat fih il-bini tal-Next.js `output: "standalone"`, li jfisser li kull maniġer tal-rotta - inkluż il-funzjonijiet privileġġati deskritti (MITM, importazzjoni Zed, Sema Sincronizzata, superviżur tas-servizz integrated) - jintwera f'biċċiet `.next/server/*.js` minifika. Is-skenners heuristiċi tal-provvista ta' ħruġ spiss jgħaqqdu dik il-kurġata mal-firxat tal-malware.
 
 Għal kull kategorija ta' ħruġ inżommu attestazzjoni tal-maniġer għal dak l-ħruġ:
 
@@ -231,7 +231,7 @@ Għal kull kategorija ta' ħruġ inżommu attestazzjoni tal-maniġer għal dak l
 - Blocchi `SECURITY-AUDITOR-NOTE:` fil-kodiċi stess fi kull funzjoni immarkata jirreferixxu lura għad-dokument l-istess.
 
 Għall-utenti li l-pipeline tagħhom ma jistax ifaqqar l-allert, ibnu bħala profili:
-`OMNIROUTE_BUILD_PROFILE=minimal npm run build`. Dan jibdel l-erba 'moduli sensittivi bi sinkopaturi li jirritornaw HTTP 530 "feature-disabled" matul ir-runtim, sabiex il-ħġieġ tal-kodiċi privileġġat huma fiżikament assenti mill-kurġata. Ara [`docs/security/SOCKET_DEV_FINDINGS.md`](docs/security/SOCKET_DEV_FINDINGS.md) għar-riċetta tal-pubblikazzjoni.
+`AGENTPROXY_BUILD_PROFILE=minimal npm run build`. Dan jibdel l-erba 'moduli sensittivi bi sinkopaturi li jirritornaw HTTP 530 "feature-disabled" matul ir-runtim, sabiex il-ħġieġ tal-kodiċi privileġġat huma fiżikament assenti mill-kurġata. Ara [`docs/security/SOCKET_DEV_FINDINGS.md`](docs/security/SOCKET_DEV_FINDINGS.md) għar-riċetta tal-pubblikazzjoni.
 
 ## Riferenzi
 

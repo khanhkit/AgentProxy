@@ -326,7 +326,7 @@ describe("repeatReqFor", () => {
     // `memoryHits` is observability written by the PREVIOUS run, never caller input. Tasks
     // persisted before the createTask copy-fix still carry it inside `input.metadata`, so the
     // repeat path has to drop it — otherwise the new task is born with the old run's snippets
-    // and shows them in the drawer even with `OMNIROUTE_A2A_MEMORY_HITS=0`.
+    // and shows them in the drawer even with `AGENTPROXY_A2A_MEMORY_HITS=0`.
     const node = { id: "a2a:1", kind: "work", source: "a2a", state: "succeeded", label: "x" };
     const detail = {
       input: {
@@ -756,7 +756,7 @@ describe("OrchestrationDrawer repeat action (two-click confirm)", () => {
   });
 
   it("surfaces the sanitized HTTP status when a secured deployment rejects the a2a repeat (HTTP 400)", async () => {
-    // With REQUIRE_API_KEY / OMNIROUTE_API_KEY set, `/a2a` answers -32600 => HTTP 400 to a
+    // With REQUIRE_API_KEY / AGENTPROXY_API_KEY set, `/a2a` answers -32600 => HTTP 400 to a
     // dashboard-session caller. The drawer must say so instead of pretending success.
     const fetchMock = vi.fn((_url: string, init?: RequestInit) => {
       if (init?.method === "POST") {

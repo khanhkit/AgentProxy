@@ -28,7 +28,7 @@ const hostDeps = {
 const HOST_PROFILE_MOUNTINFO = [
   "22 28 0:20 / /proc rw,nosuid,nodev,noexec,relatime - proc proc rw",
   "24 28 0:22 / /sys ro,nosuid,nodev,noexec,relatime - sysfs sysfs ro",
-  "31 28 254:1 /var/lib/docker/volumes/omniroute-data/_data /app/data rw,relatime - ext4 /dev/vda1 rw",
+  "31 28 254:1 /var/lib/docker/volumes/agentproxy-data/_data /app/data rw,relatime - ext4 /dev/vda1 rw",
   "44 28 254:1 /Users/me/.codex /host-home/.codex rw,relatime - ext4 /dev/vda1 rw",
   "45 28 254:1 /Users/me/.claude /host-home/.claude rw,relatime - ext4 /dev/vda1 rw",
   "",
@@ -90,20 +90,20 @@ test("isRunningInContainer returns false when every probe throws", () => {
   assert.equal(isRunningInContainer({ ...throwingFs, env: {} }), false);
 });
 
-test("OMNIROUTE_CONTAINER=1 forces detection on even without container markers", () => {
-  assert.equal(isRunningInContainer({ ...hostDeps, env: { OMNIROUTE_CONTAINER: "1" } }), true);
-  assert.equal(isRunningInContainer({ ...hostDeps, env: { OMNIROUTE_CONTAINER: "true" } }), true);
+test("AGENTPROXY_CONTAINER=1 forces detection on even without container markers", () => {
+  assert.equal(isRunningInContainer({ ...hostDeps, env: { AGENTPROXY_CONTAINER: "1" } }), true);
+  assert.equal(isRunningInContainer({ ...hostDeps, env: { AGENTPROXY_CONTAINER: "true" } }), true);
 });
 
-test("OMNIROUTE_CONTAINER=0 forces detection off even inside a container", () => {
+test("AGENTPROXY_CONTAINER=0 forces detection off even inside a container", () => {
   const inContainer = {
     existsSync: (p: string) => p === "/.dockerenv",
     readFileSync: (_p: string, _enc: string) => "12:cpuset:/docker/abc\n",
-    env: { OMNIROUTE_CONTAINER: "0" } as NodeJS.ProcessEnv,
+    env: { AGENTPROXY_CONTAINER: "0" } as NodeJS.ProcessEnv,
   };
   assert.equal(isRunningInContainer(inContainer), false);
   assert.equal(
-    isRunningInContainer({ ...inContainer, env: { OMNIROUTE_CONTAINER: "false" } }),
+    isRunningInContainer({ ...inContainer, env: { AGENTPROXY_CONTAINER: "false" } }),
     false
   );
 });
@@ -157,7 +157,7 @@ test("hasBindMountAt ignores tmpfs and other in-memory mounts", () => {
     "",
   ].join("\n");
   assert.equal(hasBindMountAt("/tmp", mountDeps(mountinfo)), false);
-  assert.equal(hasBindMountAt("/tmp/omniroute-fake-home/.codex", mountDeps(mountinfo)), false);
+  assert.equal(hasBindMountAt("/tmp/agentproxy-fake-home/.codex", mountDeps(mountinfo)), false);
   assert.equal(hasBindMountAt("/dev/shm/whatever", mountDeps(mountinfo)), false);
   assert.equal(hasBindMountAt("/proc/1", mountDeps(mountinfo)), false);
 });

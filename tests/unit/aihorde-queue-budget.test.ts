@@ -4,7 +4,7 @@ import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-process.env.DATA_DIR = mkdtempSync(join(tmpdir(), "omniroute-aihorde-queue-"));
+process.env.DATA_DIR = mkdtempSync(join(tmpdir(), "agentproxy-aihorde-queue-"));
 
 import { handleAiHordeImageGeneration } from "../../open-sse/handlers/imageGeneration/providers/aihorde.ts";
 import { aiHordeImageCatalog } from "../../open-sse/services/aihordeImageCatalog.ts";

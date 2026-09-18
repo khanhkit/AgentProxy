@@ -54,7 +54,7 @@ test("Ukrainian, Filipino, legacy Indonesian, Hong-Kong/Macau and zh-Hant browse
   assert.deepEqual(LOCALE_ALIASES["uk-UA"], ["uk"]);
   assert.deepEqual(LOCALE_ALIASES["phi"], ["fil", "tl"]);
   // `in` was a duplicate Indonesian locale, retired in favour of `id`. The alias is the
-  // only thing keeping a saved NEXT_LOCALE=in / OMNIROUTE_LANG=in working — do not drop it.
+  // only thing keeping a saved NEXT_LOCALE=in / AGENTPROXY_LANG=in working — do not drop it.
   assert.deepEqual(LOCALE_ALIASES["id"], ["in"]);
   // `zh-hant` lets script-tagged Traditional Chinese (`zh-Hant-TW`, `zh-Hant-HK`)
   // reach zh-TW instead of the first zh-* locale in config order (zh-CN).

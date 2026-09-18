@@ -1,4 +1,4 @@
-const CACHE_NAME = "omniroute-pwa-v3";
+const CACHE_NAME = "agentproxy-pwa-v3";
 const APP_SHELL = [
   "/",
   "/manifest.webmanifest",
@@ -99,15 +99,15 @@ self.addEventListener("push", (event) => {
   try {
     data = event.data ? event.data.json() : {};
   } catch {
-    data = { title: "OmniRoute", body: event.data?.text() || "New notification" };
+    data = { title: "AgentProxy", body: event.data?.text() || "New notification" };
   }
 
-  const title = data.title || "OmniRoute";
+  const title = data.title || "AgentProxy";
   const options = {
     body: data.body || "",
     icon: data.icon || "/icon-512.png",
     badge: data.badge || "/icon-192.png",
-    tag: data.tag || "omniroute-default",
+    tag: data.tag || "agentproxy-default",
     data: {
       url: data.url || "/dashboard",
       timestamp: Date.now(),

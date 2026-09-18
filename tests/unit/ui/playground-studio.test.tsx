@@ -91,7 +91,7 @@ vi.mock("@/lib/playground/codeExport", () => ({
     python: "python mock",
     typescript: "ts mock",
   }),
-  API_KEY_PLACEHOLDER: "$OMNIROUTE_API_KEY",
+  API_KEY_PLACEHOLDER: "$AGENTPROXY_API_KEY",
 }));
 
 vi.mock("@/lib/playground/types", () => ({

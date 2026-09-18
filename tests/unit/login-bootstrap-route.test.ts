@@ -5,7 +5,7 @@ import os from "node:os";
 import path from "node:path";
 import bcrypt from "bcryptjs";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-login-bootstrap-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-login-bootstrap-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../src/lib/db/core.ts");
@@ -254,7 +254,7 @@ test("TC-AUTH-SEC-001: remote peer cannot mutate a fresh passwordless bootstrap 
     method: "POST",
     headers: {
       "content-type": "application/json",
-      "x-omniroute-peer-locality": "remote",
+      "x-agentproxy-peer-locality": "remote",
     },
     body: JSON.stringify({
       requireLogin: false,
@@ -286,7 +286,7 @@ test("TC-AUTH-SEC-002: remote peer cannot mutate passwordless setupComplete stat
     method: "POST",
     headers: {
       "content-type": "application/json",
-      "x-omniroute-peer-locality": "remote",
+      "x-agentproxy-peer-locality": "remote",
     },
     body: JSON.stringify({
       requireLogin: true,

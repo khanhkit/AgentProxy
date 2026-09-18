@@ -11,8 +11,8 @@ View cost breakdowns, token usage, and call logs from the CLI. Filter by provide
 ## Quick install
 
 ```bash
-npm install -g omniroute   # or: npx omniroute
-omniroute --version
+npm install -g agentproxy   # or: npx agentproxy
+agentproxy --version
 ```
 
 ## Subcommands
@@ -31,7 +31,7 @@ omniroute --version
 **Example:**
 
 ```bash
-omniroute cost
+agentproxy cost
 ```
 
 ### `pricing`
@@ -39,7 +39,7 @@ omniroute cost
 **Example:**
 
 ```bash
-omniroute pricing
+agentproxy pricing
 ```
 
 ### `pricing sync`
@@ -52,7 +52,7 @@ omniroute pricing
 **Example:**
 
 ```bash
-omniroute pricing sync
+agentproxy pricing sync
 ```
 
 ### `pricing list`
@@ -66,7 +66,7 @@ omniroute pricing sync
 **Example:**
 
 ```bash
-omniroute pricing list
+agentproxy pricing list
 ```
 
 ### `pricing get <model>`
@@ -74,7 +74,7 @@ omniroute pricing list
 **Example:**
 
 ```bash
-omniroute pricing get <model>
+agentproxy pricing get <model>
 ```
 
 ### `pricing defaults`
@@ -82,7 +82,7 @@ omniroute pricing get <model>
 **Example:**
 
 ```bash
-omniroute pricing defaults
+agentproxy pricing defaults
 ```
 
 ### `pricing show`
@@ -90,7 +90,7 @@ omniroute pricing defaults
 **Example:**
 
 ```bash
-omniroute pricing show
+agentproxy pricing show
 ```
 
 ### `pricing set`
@@ -105,7 +105,7 @@ omniroute pricing show
 **Example:**
 
 ```bash
-omniroute pricing set
+agentproxy pricing set
 ```
 
 ### `pricing diff`
@@ -117,7 +117,7 @@ omniroute pricing set
 **Example:**
 
 ```bash
-omniroute pricing diff
+agentproxy pricing diff
 ```
 
 ### `usage`
@@ -125,7 +125,7 @@ omniroute pricing diff
 **Example:**
 
 ```bash
-omniroute usage
+agentproxy usage
 ```
 
 ### `usage analytics`
@@ -138,7 +138,7 @@ omniroute usage
 **Example:**
 
 ```bash
-omniroute usage analytics
+agentproxy usage analytics
 ```
 
 ### `usage budget`
@@ -146,7 +146,7 @@ omniroute usage analytics
 **Example:**
 
 ```bash
-omniroute usage budget
+agentproxy usage budget
 ```
 
 ### `usage list`
@@ -154,7 +154,7 @@ omniroute usage budget
 **Example:**
 
 ```bash
-omniroute usage list
+agentproxy usage list
 ```
 
 ### `usage get [scope]`
@@ -162,7 +162,7 @@ omniroute usage list
 **Example:**
 
 ```bash
-omniroute usage get [scope]
+agentproxy usage get [scope]
 ```
 
 ### `usage set <amount>`
@@ -175,7 +175,7 @@ omniroute usage get [scope]
 **Example:**
 
 ```bash
-omniroute usage set <amount>
+agentproxy usage set <amount>
 ```
 
 ### `usage reset [scope]`
@@ -183,7 +183,7 @@ omniroute usage set <amount>
 **Example:**
 
 ```bash
-omniroute usage reset [scope]
+agentproxy usage reset [scope]
 ```
 
 ### `usage quota`
@@ -196,7 +196,7 @@ omniroute usage reset [scope]
 **Example:**
 
 ```bash
-omniroute usage quota
+agentproxy usage quota
 ```
 
 ### `usage logs`
@@ -212,7 +212,7 @@ omniroute usage quota
 **Example:**
 
 ```bash
-omniroute usage logs
+agentproxy usage logs
 ```
 
 ### `usage utilization`
@@ -224,7 +224,7 @@ omniroute usage logs
 **Example:**
 
 ```bash
-omniroute usage utilization
+agentproxy usage utilization
 ```
 
 ### `usage history`
@@ -236,7 +236,7 @@ omniroute usage utilization
 **Example:**
 
 ```bash
-omniroute usage history
+agentproxy usage history
 ```
 
 ### `usage proxy-logs`
@@ -248,5 +248,5 @@ omniroute usage history
 **Example:**
 
 ```bash
-omniroute usage proxy-logs
+agentproxy usage proxy-logs
 ```

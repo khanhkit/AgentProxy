@@ -31,10 +31,10 @@ export function ensureRuntimeDir() {
       pkgPath,
       JSON.stringify(
         {
-          name: "omniroute-runtime",
+          name: "agentproxy-runtime",
           version: "1.0.0",
           private: true,
-          description: "User-writable runtime deps for OmniRoute (native binaries)",
+          description: "User-writable runtime deps for AgentProxy (native binaries)",
         },
         null,
         2
@@ -137,7 +137,7 @@ export function npmInstallRuntime(pkgs, opts = {}) {
   }
 
   if (!opts.silent) {
-    process.stdout.write(`[omniroute][runtime] ${displayCmd}\n`);
+    process.stdout.write(`[agentproxy][runtime] ${displayCmd}\n`);
   }
   const res = spawnSync(exe, args, {
     cwd,
@@ -157,18 +157,18 @@ export function ensureBetterSqliteRuntime({ silent = false, force = false } = {}
   ensureRuntimeDir();
   const valid = hasModule("better-sqlite3") && isBetterSqliteBinaryValid();
   if (valid && !force) {
-    if (!silent) process.stdout.write("[omniroute][runtime] better-sqlite3 OK\n");
+    if (!silent) process.stdout.write("[agentproxy][runtime] better-sqlite3 OK\n");
     return { betterSqlite: true };
   }
   if (!silent) {
     process.stdout.write(
-      `[omniroute][runtime] Installing better-sqlite3@${BETTER_SQLITE3_VERSION} into runtime...\n`
+      `[agentproxy][runtime] Installing better-sqlite3@${BETTER_SQLITE3_VERSION} into runtime...\n`
     );
   }
   const ok = npmInstallRuntime([`better-sqlite3@${BETTER_SQLITE3_VERSION}`], { silent });
   if (!ok && !silent) {
     process.stderr.write(
-      "[omniroute][runtime] better-sqlite3 install failed.\n" +
+      "[agentproxy][runtime] better-sqlite3 install failed.\n" +
         "  This usually means npm install scripts are blocked.\n" +
         "  Try: npm install-scripts approve better-sqlite3\n"
     );

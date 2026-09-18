@@ -13,7 +13,7 @@
  *     }
  *   }
  *
- * Browser SPA often uses session cookies (credentials:include). Headless OmniRoute
+ * Browser SPA often uses session cookies (credentials:include). Headless AgentProxy
  * uses the playground JWT (Bearer). We send Bearer always when present and Cookie
  * when providerSpecificData.cookie is stored.
  */

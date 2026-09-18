@@ -15,7 +15,7 @@ lastUpdated: 2026-06-28
 
 🌐 **Languages:** 🇺🇸 [English](../../../../guides/USER_GUIDE.md) · 🇸🇦 [ar](../../../ar/docs/guides/USER_GUIDE.md) · 🇦🇿 [az](../../../az/docs/guides/USER_GUIDE.md) · 🇧🇬 [bg](../../../bg/docs/guides/USER_GUIDE.md) · 🇧🇩 [bn](../../../bn/docs/guides/USER_GUIDE.md) · 🇨🇿 [cs](../../../cs/docs/guides/USER_GUIDE.md) · 🇩🇰 [da](../../../da/docs/guides/USER_GUIDE.md) · 🇩🇪 [de](../../../de/docs/guides/USER_GUIDE.md) · 🇬🇷 [el](../../../el/docs/guides/USER_GUIDE.md) · 🇪🇸 [es](../../../es/docs/guides/USER_GUIDE.md) · 🇪🇪 [et](../../../et/docs/guides/USER_GUIDE.md) · 🇮🇷 [fa](../../../fa/docs/guides/USER_GUIDE.md) · 🇫🇮 [fi](../../../fi/docs/guides/USER_GUIDE.md) · 🇫🇷 [fr](../../../fr/docs/guides/USER_GUIDE.md) · 🇮🇳 [gu](../../../gu/docs/guides/USER_GUIDE.md) · 🇮🇱 [he](../../../he/docs/guides/USER_GUIDE.md) · 🇮🇳 [hi](../../../hi/docs/guides/USER_GUIDE.md) · 🇭🇷 [hr](../../../hr/docs/guides/USER_GUIDE.md) · 🇭🇺 [hu](../../../hu/docs/guides/USER_GUIDE.md) · 🇮🇩 [id](../../../id/docs/guides/USER_GUIDE.md) · 🇮🇹 [it](../../../it/docs/guides/USER_GUIDE.md) · 🇯🇵 [ja](../../../ja/docs/guides/USER_GUIDE.md) · 🇰🇷 [ko](../../../ko/docs/guides/USER_GUIDE.md) · 🇱🇹 [lt](../../../lt/docs/guides/USER_GUIDE.md) · 🇱🇻 [lv](../../../lv/docs/guides/USER_GUIDE.md) · 🇮🇳 [mr](../../../mr/docs/guides/USER_GUIDE.md) · 🇲🇾 [ms](../../../ms/docs/guides/USER_GUIDE.md) · 🇲🇹 [mt](../../../mt/docs/guides/USER_GUIDE.md) · 🇳🇱 [nl](../../../nl/docs/guides/USER_GUIDE.md) · 🇳🇴 [no](../../../no/docs/guides/USER_GUIDE.md) · 🇵🇭 [phi](../../../phi/docs/guides/USER_GUIDE.md) · 🇵🇱 [pl](../../../pl/docs/guides/USER_GUIDE.md) · 🇵🇹 [pt](../../../pt/docs/guides/USER_GUIDE.md) · 🇧🇷 [pt-BR](../../../pt-BR/docs/guides/USER_GUIDE.md) · 🇷🇴 [ro](../../../ro/docs/guides/USER_GUIDE.md) · 🇷🇺 [ru](../../../ru/docs/guides/USER_GUIDE.md) · 🇸🇰 [sk](../../../sk/docs/guides/USER_GUIDE.md) · 🇸🇮 [sl](../../../sl/docs/guides/USER_GUIDE.md) · 🇷🇸 [sr](../../../sr/docs/guides/USER_GUIDE.md) · 🇸🇪 [sv](../../../sv/docs/guides/USER_GUIDE.md) · 🇰🇪 [sw](../../../sw/docs/guides/USER_GUIDE.md) · 🇮🇳 [ta](../../../ta/docs/guides/USER_GUIDE.md) · 🇮🇳 [te](../../../te/docs/guides/USER_GUIDE.md) · 🇹🇭 [th](../../../th/docs/guides/USER_GUIDE.md) · 🇹🇷 [tr](../../../tr/docs/guides/USER_GUIDE.md) · 🇺🇦 [uk-UA](../../../uk-UA/docs/guides/USER_GUIDE.md) · 🇵🇰 [ur](../../../ur/docs/guides/USER_GUIDE.md) · 🇻🇳 [vi](../../../vi/docs/guides/USER_GUIDE.md) · 🇨🇳 [zh-CN](../../../zh-CN/docs/guides/USER_GUIDE.md) · 🇹🇼 [zh-TW](../../../zh-TW/docs/guides/USER_GUIDE.md)
 
-Treoir iomlán le soláthraithe a chumrú，cónaite a chruthú，uirlisí CLI a chomhtháthú，agus OmniRoute a dhéanamh imscartha.
+Treoir iomlán le soláthraithe a chumrú，cónaite a chruthú，uirlisí CLI a chomhtháthú，agus AgentProxy a dhéanamh imscartha.
 
 ---
 
@@ -140,9 +140,9 @@ Models:
   cc/claude-haiku-4-5-20251001
 ```
 
-**Leid Pro:** Úsáid Opus do thascanna casta, Sonnet le haghaidh luais. Rianann OmniRoute an ciseal in aghaidh an tsamhail!
+**Leid Pro:** Úsáid Opus do thascanna casta, Sonnet le haghaidh luais. Rianann AgentProxy an ciseal in aghaidh an tsamhail!
 
-Caomhnaíonn róuteanna ag teacht le Claude agus Claude Code an iarracht smaoinimh `max` do shamhailteanna Opus agus Sonnet. Ní ghlacann samhailteanna Haiku leis an leibhéal iarrachta `max`, mar sin íslíonn OmniRoute an t-iarracht sin go buiséad smaoinimh ard roimh é a sheoladh suas an staighre.
+Caomhnaíonn róuteanna ag teacht le Claude agus Claude Code an iarracht smaoinimh `max` do shamhailteanna Opus agus Sonnet. Ní ghlacann samhailteanna Haiku leis an leibhéal iarrachta `max`, mar sin íslíonn AgentProxy an t-iarracht sin go buiséad smaoinimh ard roimh é a sheoladh suas an staighre.
 
 #### OpenAI Codex (Plus/Pro)
 
@@ -192,7 +192,7 @@ Models:
 
 #### Kimi K2 ($9/mí flat)
 
-1. Liostáil: [Moonshot AI](https://platform.kimi.ai?aff=omniroute)
+1. Liostáil: [Moonshot AI](https://platform.kimi.ai?aff=agentproxy)
 2. Faigh eochair API → Dashboard → Add API Key
 
 **Úsáid:** `kimi/kimi-k2.5` — **Leid Pro:** $9/mí seasta do 10M tóicín = costas éifeachtach $0.90/1M!
@@ -261,16 +261,16 @@ Cost: currently listed as $0; terms and availability may change
 
 ### Cursor IDE
 
-**Ag úsáid Cursor mar chliant OmniRoute** (route Cursor chat trí OmniRoute):
+**Ag úsáid Cursor mar chliant AgentProxy** (route Cursor chat trí AgentProxy):
 
 ```
 Socruithe → Samhlacha → Ardsocruithe:
   URL Bonn API OpenAI: http://localhost:20128/v1
-  Eochair API OpenAI: [ón deais omniroute]
+  Eochair API OpenAI: [ón deais agentproxy]
   Samhail: cc/claude-opus-4-7
 ```
 
-**Ag úsáid OmniRoute mar sholáthraí Cursor** (cuireann OmniRoute glao ar upstream Cursor): roghnaigh **Deais → Soláthraithe → Cursor → Logáil isteach le Cursor**. I Docker, féach [`docs/providers/CURSOR-DOCKER.md`](../providers/CURSOR-DOCKER.md).
+**Ag úsáid AgentProxy mar sholáthraí Cursor** (cuireann AgentProxy glao ar upstream Cursor): roghnaigh **Deais → Soláthraithe → Cursor → Logáil isteach le Cursor**. I Docker, féach [`docs/providers/CURSOR-DOCKER.md`](../providers/CURSOR-DOCKER.md).
 
 ### Claude Code
 
@@ -280,7 +280,7 @@ Cuir `~/.claude/settings.json` in eagar:
 {
   "env": {
     "ANTHROPIC_BASE_URL": "http://localhost:20128",
-    "ANTHROPIC_AUTH_TOKEN": "your-omniroute-api-key"
+    "ANTHROPIC_AUTH_TOKEN": "your-agentproxy-api-key"
   }
 }
 ```
@@ -291,7 +291,7 @@ Bain úsáid as an pointe teagmhála fréamhochomaithe comhoiriúnach le Claude 
 
 ```bash
 export OPENAI_BASE_URL="http://localhost:20128"
-export OPENAI_API_KEY="your-omniroute-api-key"
+export OPENAI_API_KEY="your-agentproxy-api-key"
 codex "your prompt"
 ```
 
@@ -303,14 +303,14 @@ Cuir `~/.openclaw/openclaw.json` in eagar:
 {
   "agents": {
     "defaults": {
-      "model": { "primary": "omniroute/if/kimi-k2.7-code" }
+      "model": { "primary": "agentproxy/if/kimi-k2.7-code" }
     }
   },
   "models": {
     "providers": {
-      "omniroute": {
+      "agentproxy": {
         "baseUrl": "http://localhost:20128/v1",
-        "apiKey": "your-omniroute-api-key",
+        "apiKey": "your-agentproxy-api-key",
         "api": "openai-completions",
         "models": [{ "id": "if/kimi-k2.7-code", "name": "Kimi K2.7 Code" }]
       }
@@ -337,28 +337,28 @@ Samhail: cc/claude-opus-4-7
 ### npm suiteáil domhain (Molta)
 
 ```bash
-npm install -g omniroute
+npm install -g agentproxy
 
 # Cruthaigh eolaire cumraíochta
-mkdir -p ~/.omniroute
+mkdir -p ~/.agentproxy
 
 # Cruthaigh comhad .env (féach .env.example)
-cp .env.example ~/.omniroute/.env
+cp .env.example ~/.agentproxy/.env
 
 # Tosaigh an freastalaí
-omniroute
+agentproxy
 # Nó le port saincheaptha:
-omniroute --port 3000
+agentproxy --port 3000
 ```
 
-Lódann an CLI `.env` go huathoibríoch ó `~/.omniroute/.env` nó `./.env`.
+Lódann an CLI `.env` go huathoibríoch ó `~/.agentproxy/.env` nó `./.env`.
 
 ### Mód trá
 
-Tosaigh OmniRoute sa tray córais:
+Tosaigh AgentProxy sa tray córais:
 
 ```bash
-omniroute serve --tray
+agentproxy serve --tray
 ```
 
 Filleann an t-ordú tar éis don fhreastalaí agus don tray a bheith réidh.
@@ -372,7 +372,7 @@ Bain úsáid as an roghchlár tray le haghaidh na ngníomhartha seo:
 - Oscail an deais.
 - Oscail `/dashboard/logs`.
 - Athraigh tosú uathoibríoch.
-- Stop OmniRoute.
+- Stop AgentProxy.
 
 Ná cuir `--tray` leis na roghanna seo:
 
@@ -385,7 +385,7 @@ Tá na modhanna seo ag teastáil ó sheilbh éagsúla próiseálaí.
 Cumas tosú ag an chéad logáil isteach ar an meaisín eile:
 
 ```bash
-omniroute autostart enable
+agentproxy autostart enable
 ```
 
 Úsáideann an tosú uathoibríoch mód tray ar macOS, Windows, agus seisiúin Linux grafaiciúla. Úsáideann Linux ceanntaisc an tseirbhís úsáideora systemd atá ann cheana féin.
@@ -393,29 +393,29 @@ omniroute autostart enable
 Díchumasigh tosú ag logáil isteach:
 
 ```bash
-omniroute autostart disable
+agentproxy autostart disable
 ```
 
 ### Díshuiteáil
 
-Nuair nach bhfuil OmniRoute de dhíth ort a thuilleadh, cuirimid dhá script tapa ar fáil le haghaidh baint ghlan:
+Nuair nach bhfuil AgentProxy de dhíth ort a thuilleadh, cuirimid dhá script tapa ar fáil le haghaidh baint ghlan:
 
 | Ordú                     | Gníomh                                                                                              |
 | ------------------------ | --------------------------------------------------------------------------------------------------- |
-| `npm run uninstall`      | Baineann an app córais ach **coinníonn sé do bhunachar sonraí agus cumraíochtaí** i `~/.omniroute`. |
+| `npm run uninstall`      | Baineann an app córais ach **coinníonn sé do bhunachar sonraí agus cumraíochtaí** i `~/.agentproxy`. |
 | `npm run uninstall:full` | Baineann an app AGUS scriostar go buan **gach cumraíocht, eochracha, agus bunachar sonraí**.        |
 
-> Nóta: Le haghaidh na n-orduithe seo, téigh go dtí an fillteán tionscadail OmniRoute (más ghearraigh tú é) agus rith iad. Ar an mbealach eile, má tá sé suiteáilte go domhain, is féidir leat `npm uninstall -g omniroute` a rith go simplí.
+> Nóta: Le haghaidh na n-orduithe seo, téigh go dtí an fillteán tionscadail AgentProxy (más ghearraigh tú é) agus rith iad. Ar an mbealach eile, má tá sé suiteáilte go domhain, is féidir leat `npm uninstall -g agentproxy` a rith go simplí.
 
 ### Imscaradh VPS
 
 ```bash
-git clone https://github.com/diegosouzapw/OmniRoute.git
-cd OmniRoute && npm install && npm run build
+git clone https://github.com/khanhkit/AgentProxy.git
+cd AgentProxy && npm install && npm run build
 
 export JWT_SECRET="your-secure-secret-change-this"
 export INITIAL_PASSWORD="your-password"
-export DATA_DIR="/var/lib/omniroute"
+export DATA_DIR="/var/lib/agentproxy"
 export PORT="20128"
 export HOSTNAME="0.0.0.0"
 export NODE_ENV="production"
@@ -423,7 +423,7 @@ export NEXT_PUBLIC_BASE_URL="http://localhost:20128"
 export API_KEY_SECRET="endpoint-proxy-api-key-secret"
 
 npm run start
-# Nó: pm2 start npm --name omniroute -- start
+# Nó: pm2 start npm --name agentproxy -- start
 ```
 
 ### Imscaradh PM2 (Cuimhne Íseal)
@@ -432,10 +432,10 @@ Do fhreastalaithe le RAM teoranta, bain úsáid as an rogha teorainn cuimhne:
 
 ```bash
 # Le teorainn 512MB (réamhshocrú)
-pm2 start npm --name omniroute -- start
+pm2 start npm --name agentproxy -- start
 
 # Nó le teorainn cuimhne saincheaptha
-OMNIROUTE_MEMORY_MB=512 pm2 start npm --name omniroute -- start
+AGENTPROXY_MEMORY_MB=512 pm2 start npm --name agentproxy -- start
 
 # Nó ag úsáid ecosystem.config.js
 pm2 start ecosystem.config.js
@@ -447,12 +447,12 @@ Cruthaigh `ecosystem.config.js`:
 module.exports = {
   apps: [
     {
-      name: "omniroute",
+      name: "agentproxy",
       script: "npm",
       args: "start",
       env: {
         NODE_ENV: "production",
-        OMNIROUTE_MEMORY_MB: "512",
+        AGENTPROXY_MEMORY_MB: "512",
         JWT_SECRET: "your-secret",
         INITIAL_PASSWORD: "your-password",
       },
@@ -467,24 +467,24 @@ module.exports = {
 
 ```bash
 # Tóg íomhá (réamhshocrú = runner-cli le codex/claude/droid suiteáilte roimh ré)
-docker build -t omniroute:cli .
+docker build -t agentproxy:cli .
 
 # Mód iniompartha (molta)
-docker run -d --name omniroute -p 20128:20128 --env-file ./.env -v omniroute-data:/app/data omniroute:cli
+docker run -d --name agentproxy -p 20128:20128 --env-file ./.env -v agentproxy-data:/app/data agentproxy:cli
 ```
 
 Le haghaidh mód comhtháthaithe óstach le binréidh CLI, féach an rannán Docker sa phríomhcháipéisíocht.
 
 ### Void Linux (xbps-src)
 
-Is féidir le húsáideoirí Void Linux OmniRoute a phacáistiú agus a shuiteáil go dúchasach ag baint úsáide as an chreat traschomhshóite `xbps-src`. Léiríonn sé seo an t-ábhar stand-alone Node.js in éineacht le ceangail dhúchasacha `better-sqlite3" atá de dhíth.
+Is féidir le húsáideoirí Void Linux AgentProxy a phacáistiú agus a shuiteáil go dúchasach ag baint úsáide as an chreat traschomhshóite `xbps-src`. Léiríonn sé seo an t-ábhar stand-alone Node.js in éineacht le ceangail dhúchasacha `better-sqlite3" atá de dhíth.
 
 <details>
 <summary><b>Féach samhail xbps-src</b></summary>
 
 ```bash
-# Comhad samhail le haghaidh 'omniroute'
-pkgname=omniroute
+# Comhad samhail le haghaidh 'agentproxy'
+pkgname=agentproxy
 version=3.8.0
 revision=1
 hostmakedepends="nodejs python3 make"
@@ -492,11 +492,11 @@ depends="openssl"
 short_desc="Universal AI gateway with smart routing for multiple LLM providers"
 maintainer="zenobit <zenobit@disroot.org>"
 license="MIT"
-homepage="https://github.com/diegosouzapw/OmniRoute"
-distfiles="https://github.com/diegosouzapw/OmniRoute/archive/refs/tags/v${version}.tar.gz"
+homepage="https://github.com/khanhkit/AgentProxy"
+distfiles="https://github.com/khanhkit/AgentProxy/archive/refs/tags/v${version}.tar.gz"
 checksum=009400afee90a9f32599d8fe734145cfd84098140b7287990183dde45ae2245b
-system_accounts="_omniroute"
-omniroute_homedir="/var/lib/omniroute"
+system_accounts="_agentproxy"
+agentproxy_homedir="/var/lib/agentproxy"
 export NODE_ENV=production
 export npm_config_engine_strict=false
 export npm_config_loglevel=error
@@ -546,26 +546,26 @@ do_check() {
 }
 
 do_install() {
-	vmkdir usr/lib/omniroute/.next
-	vcopy .next/standalone/. usr/lib/omniroute/.next/standalone
+	vmkdir usr/lib/agentproxy/.next
+	vcopy .next/standalone/. usr/lib/agentproxy/.next/standalone
 
 	# Cosc ar bhaint folaíteacha eolaire rautaire app Next.js ag an hook post-suiteáil
 	for _d in \
 		.next/standalone/.next/server/app/dashboard \
 		.next/standalone/.next/server/app/dashboard/settings \
 		.next/standalone/.next/server/app/dashboard/providers; do
-		touch "${DESTDIR}/usr/lib/omniroute/${_d}/.keep"
+		touch "${DESTDIR}/usr/lib/agentproxy/${_d}/.keep"
 	done
 
-	cat > "${WRKDIR}/omniroute" <<'EOF'
+	cat > "${WRKDIR}/agentproxy" <<'EOF'
 #!/bin/sh
 export PORT="${PORT:-20128}"
-export DATA_DIR="${DATA_DIR:-${XDG_DATA_HOME:-${HOME}/.local/share}/omniroute}"
+export DATA_DIR="${DATA_DIR:-${XDG_DATA_HOME:-${HOME}/.local/share}/agentproxy}"
 export APP_LOG_TO_FILE="${APP_LOG_TO_FILE:-false}"
 mkdir -p "${DATA_DIR}"
-exec node /usr/lib/omniroute/.next/standalone/server.js "$@"
+exec node /usr/lib/agentproxy/.next/standalone/server.js "$@"
 EOF
-	vbin "${WRKDIR}/omniroute"
+	vbin "${WRKDIR}/agentproxy"
 }
 
 post_install() {
@@ -579,14 +579,14 @@ post_install() {
 
 | Athróg                                  | Réamhshocrú                          | Cur Síos                                                                                                                                          |
 | --------------------------------------- | ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `JWT_SECRET`                            | `omniroute-default-secret-change-me` | Rúndacht síniú JWT (**athrú i bhforbairt**)                                                                                                       |
+| `JWT_SECRET`                            | `agentproxy-default-secret-change-me` | Rúndacht síniú JWT (**athrú i bhforbairt**)                                                                                                       |
 | `INITIAL_PASSWORD`                      | `CHANGEME`                           | Pasfhocal logála isteach den chéad uair                                                                                                           |
-| `DATA_DIR`                              | `~/.omniroute`                       | Eolaire sonraí (bunachar sonraí, úsáid, logaí)                                                                                                    |
+| `DATA_DIR`                              | `~/.agentproxy`                       | Eolaire sonraí (bunachar sonraí, úsáid, logaí)                                                                                                    |
 | `PORT`                                  | réamhshocrú fréamhchórais            | Port seirbhíse (`20128` san fholláin                                                                                                              |
 | `HOSTNAME`                              | réamhshocrú fréamhchórais            | Ceangal óstach (réamhshocrú Docker `0.0.0.0`)                                                                                                     |
 | `NODE_ENV`                              | réamhshocrú rithime                  | Socraigh `production` le haghaidh imscartha                                                                                                       |
 | `NEXT_PUBLIC_BASE_URL`                  | `http://localhost:20128`             | URL bonn poiblí a thaispeántar don deais agus a nochtar don fhreastalaí (athraíonn `BASE_URL` seanmhod)                                           |
-| `NEXT_PUBLIC_CLOUD_URL`                 | `https://omniroute.dev`              | URL bonn críochphointe sioncronú scamall (athraíonn `CLOUD_URL` seanmhod)                                                                         |
+| `NEXT_PUBLIC_CLOUD_URL`                 | `https://agentproxy.example.com`              | URL bonn críochphointe sioncronú scamall (athraíonn `CLOUD_URL` seanmhod)                                                                         |
 | `API_KEY_SECRET`                        | `endpoint-proxy-api-key-secret`      | Rúndacht HMAC le haghaidh eochracha API ginte                                                                                                     |
 | `REQUIRE_API_KEY`                       | `false`                              | Éileamh eochair API Bearer ar `/v1/*`                                                                                                             |
 | `ALLOW_API_KEY_REVEAL`                  | `false`                              | Ceadaigh d'úsáideoirí deise deimhnithe na luachanna iomlán eochair API stóráilte a nochtadh ar éileamh                                            |
@@ -596,7 +596,7 @@ post_install() {
 | `AUTH_COOKIE_SECURE`                    | `false`                              | Fórsaigh fíorordú `Secure` (taobh thiar de seirbhíse frithbheochana HTTPS)                                                                        |
 | `CLOUDFLARED_BIN`                       | gan socraigh                         | Úsáid bineár `cloudflared` atá ann cheana in ionad íoslódáil bhainistithe                                                                         |
 | `CLOUDFLARED_PROTOCOL`                  | `http2`                              | Iompar le haghaidh Tunnealla Tapa Bainistithe (`http2`, `quic`, nó `auto`)                                                                        |
-| `OMNIROUTE_MEMORY_MB`                   | `512`                                | Teorainn cuimhne Node.js i MB                                                                                                                     |
+| `AGENTPROXY_MEMORY_MB`                   | `512`                                | Teorainn cuimhne Node.js i MB                                                                                                                     |
 | `PROMPT_CACHE_MAX_SIZE`                 | `50`                                 | Méid uasta iontrálacha taisce luaslaíochta                                                                                                        |
 | `SEMANTIC_CACHE_MAX_SIZE`               | `100`                                | Méid uasta iontrálacha taisce séimeantacha                                                                                                        |
 
@@ -657,7 +657,7 @@ Le haghaidh an tagarmharc iomlán athróga timpeallachta, féach an [README](../
 
 **Soláthraithe comhoiriúnacha eile** (roghnaithe): `cohere`, `databricks`, `snowflake`, `together`, `vertex`, `alibaba`, `alibaba-cn`, `bedrock` (tríd an `aws-bedrock`), `azure-ai`, `openrouter` (catalóg pas-tríd), `siliconflow`, `hyperbolic`, `huggingface`, `featherless-ai`, `cloudflare-ai`, `scaleway`, `deepinfra`, `vercel-ai-gateway`, `bazaarlink`, `friendliai`, `nous-research`, `reka`, `volcengine`, `ai21`, `gigachat`. Coinníonn gach ceann acu a liosta samhlacha féin i `providerRegistry.ts` agus is féidir é a shioncronú go huathoibríoch nuair a nochtlann an soláthraí pointe deiridh `/models`.
 
-**Nóta ar aitheantais samhlacha:** Úsáideann OmniRoute aitheantais nádúrtha soláthraí (`claude-opus-4-8`, `gpt-5.5`, `glm-5.1`, `MiniMax-M2.7`, `kimi-k2.5`, `grok-4.20-0309-reasoning`). Tá leaganacha ponctuála i roinnt aitheantais toisc go dteastaíonn siad mar sin ón API upstream. Mura bhfuil samhail ar an liosta thuas, rith `omniroute models --search <téarma>` nó glac `GET /api/models/catalog` chun infhaighteacht a dheimhniú.
+**Nóta ar aitheantais samhlacha:** Úsáideann AgentProxy aitheantais nádúrtha soláthraí (`claude-opus-4-8`, `gpt-5.5`, `glm-5.1`, `MiniMax-M2.7`, `kimi-k2.5`, `grok-4.20-0309-reasoning`). Tá leaganacha ponctuála i roinnt aitheantais toisc go dteastaíonn siad mar sin ón API upstream. Mura bhfuil samhail ar an liosta thuas, rith `agentproxy models --search <téarma>` nó glac `GET /api/models/catalog` chun infhaighteacht a dheimhniú.
 
 </details>
 
@@ -686,29 +686,29 @@ Nótaí:
 - Soláthraithe atá comhoiriúnach le OpenRouter agus OpenAI/Anthropic, ní bhainistítear iad ach amháin ó **Samhlacha ar Fáil**. Teagmháil láimhe, iompórtáil, agus sioncronú uathoibríoch uile cruthaíonn an liosta céanna samhlacha ar fáil, mar sin níl aon rannán Samhlacha Saincheaptha ar leith ag na soláthraithe sin.
 - Tá rannán na **Samhlacha Saincheaptha** dírithe ar sholáthraithe nach nochtann iompórtálacha bainistíochta samhlacha ar fáil.
 
-### Ceangail Comhpháirtithe OmniRoute
+### Ceangail Comhpháirtithe AgentProxy
 
-Is féidir geata eile OmniRoute a chur leis mar sholáthraí **OpenAI-comhoiriúnach Saincheaptha**. Úsáid bun-URL `/v1` na comhpháirtithe agus eochair API speisialta, deich gcéim, eisithe ag an gcomhpháirtí sin.
+Is féidir geata eile AgentProxy a chur leis mar sholáthraí **OpenAI-comhoiriúnach Saincheaptha**. Úsáid bun-URL `/v1` na comhpháirtithe agus eochair API speisialta, deich gcéim, eisithe ag an gcomhpháirtí sin.
 
 Chun ceangail idir a chéile nó ceangail il-hop a chumasú, cumasaigh an cosaint lúb roghnach ar gach geata:
 
 ```bash
 # geata-a
-OMNIROUTE_INSTANCE_ID=gateway-a
-OMNIROUTE_PEER_URLS=http://gateway-b:20128/v1
-OMNIROUTE_PEER_MAX_HOPS=4
+AGENTPROXY_INSTANCE_ID=gateway-a
+AGENTPROXY_PEER_URLS=http://gateway-b:20128/v1
+AGENTPROXY_PEER_MAX_HOPS=4
 ```
 
 ```bash
 # geata-b
-OMNIROUTE_INSTANCE_ID=gateway-b
-OMNIROUTE_PEER_URLS=http://gateway-a:20128/v1
-OMNIROUTE_PEER_MAX_HOPS=4
+AGENTPROXY_INSTANCE_ID=gateway-b
+AGENTPROXY_PEER_URLS=http://gateway-a:20128/v1
+AGENTPROXY_PEER_MAX_HOPS=4
 ```
 
-Ní fhaigheann ach iarratais a sheoltar chuig URL comhpháirtithe atá ar an liosta ceadaithe go sainráite ceanntásca `X-OmniRoute-Peer-Trace`. Diúltaíonn geata aitheantas cásála athdhéanta nó buiséad hopaí indéanta le HTTP `508 Loop Detected`; ní fhaigheann soláthraithe upstream gnáthmhéite comhpháirtithe.
+Ní fhaigheann ach iarratais a sheoltar chuig URL comhpháirtithe atá ar an liosta ceadaithe go sainráite ceanntásca `X-AgentProxy-Peer-Trace`. Diúltaíonn geata aitheantas cásála athdhéanta nó buiséad hopaí indéanta le HTTP `508 Loop Detected`; ní fhaigheann soláthraithe upstream gnáthmhéite comhpháirtithe.
 
-Níl ceangail comhpháirtithe ina atáilchóip bunachar sonraí ná teip freastalaí. Coinníonn gach geata stát SQLite neamhspleách, taisceanna, comhairlithe ráta agus seisiúin. Úsáid seachfhreastalaí polasaí sláinte nó teip chliant le haghaidh infhaighteachta gníomhach/pasach nó gníomhach/gníomhach, agus ná cuir bunachar sonraí SQLite amháin i mbeagnach insteacht OmniRoute atá ag rith.
+Níl ceangail comhpháirtithe ina atáilchóip bunachar sonraí ná teip freastalaí. Coinníonn gach geata stát SQLite neamhspleách, taisceanna, comhairlithe ráta agus seisiúin. Úsáid seachfhreastalaí polasaí sláinte nó teip chliant le haghaidh infhaighteachta gníomhach/pasach nó gníomhach/gníomhach, agus ná cuir bunachar sonraí SQLite amháin i mbeagnach insteacht AgentProxy atá ag rith.
 
 ### Rithanna Soláthraí Speisialta
 
@@ -759,7 +759,7 @@ Tuairisceáil samhlacha grúpáilte de réir soláthraí le cineálacha (`chat`,
 - Ar fáil i **Dashboard → Críochfoirt** le haghaidh deploymentanna Docker agus eile a óstáiltear
 - Cruthaíonn sé URL sealadach `https://*.trycloudflare.com` a sheolann ar do chríochfoirt OpenAI-comhoiriúnach `/v1` reatha
 - Cuireann an chéad chumasú `cloudflared` in easnamh ach amháin nuair is gá; athúsáidtear an dénártha bainistithe céanna ag aththosú ina dhiaidh sin
-- Ní athchuirtear Tonnanna Tapa go huathoibríoch tar éis atosú OmniRoute nó coimeádáin; athchumasaigh iad ón dashboard nuair is gá
+- Ní athchuirtear Tonnanna Tapa go huathoibríoch tar éis atosú AgentProxy nó coimeádáin; athchumasaigh iad ón dashboard nuair is gá
 - Tonnanna URL sealadach agus athraíonn gach uair a stopann/tosú tú an tonn
 - Réamhshocrú Tonnanna Tapa Bainistithe go hiompar HTTP/2 chun foláireamhanna torainn QUIC UDP a sheachaint i gcoimeádáin teoranta
 - Socraigh `CLOUDFLARED_PROTOCOL=quic` nó `auto` más mian leat rogha iompair bainistithe a thrasnú
@@ -768,15 +768,15 @@ Tuairisceáil samhlacha grúpáilte de réir soláthraí le cineálacha (`chat`,
 
 ### Intleacht Geata LLM (Céim 9)
 
-- **Taisce Séimeantach** — Taisceann freagraí neamh-shruthúcháin, teocht=0 go huathoibríoch (seachain le `X-OmniRoute-No-Cache: true`)
+- **Taisce Séimeantach** — Taisceann freagraí neamh-shruthúcháin, teocht=0 go huathoibríoch (seachain le `X-AgentProxy-No-Cache: true`)
 - **Idempotence Iarratais** — Díshrianta iarratais laistigh de 5s trí ceanntásca `Idempotency-Key` nó `X-Request-Id`
-- **Rianú Dul Chun Cinn** — Roghnaigh SSE `event: progress` trí cheanntásca `X-OmniRoute-Progress: true`
+- **Rianú Dul Chun Cinn** — Roghnaigh SSE `event: progress` trí cheanntásca `X-AgentProxy-Progress: true`
 
 ---
 
 ### Súgartha Aistritheoir
 
-Rochtain trí **Dashboard → Aistritheoir**. Dífhabht agus amhairc conas a aistríonn OmniRoute iarratais API idir soláthraithe.
+Rochtain trí **Dashboard → Aistritheoir**. Dífhabht agus amhairc conas a aistríonn AgentProxy iarratais API idir soláthraithe.
 
 | Mód                 | Cuspóir                                                                                                          |
 | ------------------- | ---------------------------------------------------------------------------------------------------------------- |
@@ -829,7 +829,7 @@ Le haghaidh greamaigh seisiún seachtrach (m.sh., gníomhairí Claude Code/Codex
 X-Session-Id: your-session-key
 ```
 
-Glacann OmniRoute freisin le `x_session_id` agus tuairisceann sé eochair seisiún éifeachtach in `X-OmniRoute-Session-Id`.
+Glacann AgentProxy freisin le `x_session_id` agus tuairisceann sé eochair seisiún éifeachtach in `X-AgentProxy-Session-Id`.
 
 Má úsáideann tú Nginx agus seolann tú ceanntásca le foirmíocht usce, cumasaigh:
 
@@ -865,7 +865,7 @@ Chain: production-fallback
 
 Cumraigh trí **Dashboard → Socruithe → Atógáil**.
 
-Cuireann OmniRoute atógáil leibhéal soláthraí i bhfeidhm le cúig chomhpháirt:
+Cuireann AgentProxy atógáil leibhéal soláthraí i bhfeidhm le cúig chomhpháirt:
 
 1. **Líne Iarratais agus Rith** — Múnlú iarratais ar leibhéal an chórais:
    - **Iarratais in aghaidh an nóiméid (RPM)** — Iarratais uasta in aghaidh an nóiméid in aghaidh an chuntais
@@ -890,7 +890,7 @@ Cuireann OmniRoute atógáil leibhéal soláthraí i bhfeidhm le cúig chomhphá
 
    Taispeántar stát rith beo an bhriseadh soláthraí ach amháin i **Dashboard → Sláinte**.
 
-4. **Fan le Fuarú** — Má tá gach ceangal iarrthóra ag fuarú cheana féin, is féidir le OmniRoute fanacht leis an fuarú is luaine agus athiarratas ar an iarratas cliant céanna go huathoibríoch.
+4. **Fan le Fuarú** — Má tá gach ceangal iarrthóra ag fuarú cheana féin, is féidir le AgentProxy fanacht leis an fuarú is luaine agus athiarratas ar an iarratas cliant céanna go huathoibríoch.
 
 5. **Brath Uathoibríoch Ráta** — Nuair a thugann soláthraithe upstream fuinneoga feithimh sainráite ar ais, ionsaíonn na leideanna sin an fuarú ceangailte logánta nuair a chumasaítear an chumraíocht.
 
@@ -924,7 +924,7 @@ curl -X POST http://localhost:20128/api/db-backups/import \
 
 **Cásanna Úsáide:**
 
-- Athlonnú OmniRoute idir meaisíní
+- Athlonnú AgentProxy idir meaisíní
 - Cruthaigh cúltacaí seachtracha le haghaidh aisghabhála tubaiste
 - Comhroinn cumraíochtaí idir baill foirne (easpórtáil gach rud → roinn cartlann)
 
@@ -973,7 +973,7 @@ curl http://localhost:20128/api/usage/budget
 
 ### Transcríobh Fuaime
 
-Tacaíonn OmniRoute le transcríobh fuaime trí chríochfoirt OpenAI-comhoiriúnach:
+Tacaíonn AgentProxy le transcríobh fuaime trí chríochfoirt OpenAI-comhoiriúnach:
 
 ```bash
 POST /v1/audio/transcriptions
@@ -1039,7 +1039,7 @@ Oidhreachann sprioc-ama combo teorainn ama iarratais reatha de réir réamhshocr
 
 Níl optimizationacha neamh-fhulaingt combo roghnach. Fág **Optimizationacha neamh-fhulaingt** díchumasaithe chun na gnéithe moille seo a chosc ó rith le spriocanna tuirlingte, spriocanna a sheachaint bunaithe ar stair TTFT, nó iarratais tuirlingte a chomhbhrú; má chumasaíonn é sin, cheadaítear doláimhsithe cumraithe, skip TTFT réamhshocraithe, agus comhbhrú tuirlingte réamhghníomhach chun ionchurtha/rath iarratais a thrádáil le haghaidh moille tarraing níos ísle.
 
-Díchumasaigh **Buiséad comharthaí réasúnúcháin** nuair a éilíonn soláthraithe upstream teorainneacha dian `max_tokens` / `maxOutputTokens`. Nuair a chumasaítear é, ní chuireann rithanna combo ach spás réasúnúcháin samhla le haghaidh samhlacha le teorainn aschurtha ar eolas agus fágann sé teorainn comharthaí cliant gan athrú nuas luach sábháilte buiséadaithe sárafeadh an teorainn sin. Má tá teorainn an chliant cheana féin os cionn teorainn ar eolas, cuireann OmniRoute síos go dtí an teorainn sin sula seoltar iarratas upstream.
+Díchumasaigh **Buiséad comharthaí réasúnúcháin** nuair a éilíonn soláthraithe upstream teorainneacha dian `max_tokens` / `maxOutputTokens`. Nuair a chumasaítear é, ní chuireann rithanna combo ach spás réasúnúcháin samhla le haghaidh samhlacha le teorainn aschurtha ar eolas agus fágann sé teorainn comharthaí cliant gan athrú nuas luach sábháilte buiséadaithe sárafeadh an teorainn sin. Má tá teorainn an chliant cheana féin os cionn teorainn ar eolas, cuireann AgentProxy síos go dtí an teorainn sin sula seoltar iarratas upstream.
 
 ---
 
@@ -1062,7 +1062,7 @@ Rochtain trí **Dashboard → Sláinte**. Forbhreathnú ar shláinte an chórais
 
 ## 🤑 Auto-Routing (Zero-config)
 
-Seolann OmniRoute le **routálaí uathoibríoch scóráilte** a roghnaíonn an tsamhail is fearr do gach iarratas ar gach soláthraí ceangailte — gan aon combo a choimeád. Níl le déanamh ach an t-iarratas a sheoladh le ceann de na réamhshocruithe `auto/*` agus cuirfidh OmniRoute combo fíorúil le chéile ar an toirt, ag scóráil iarrthóirí ar moill, costas, ráta ratha, oiriúnacht comhthéacs, oiriúnacht samhail don tasc, teipeanna le déanaí, quota, agus stáid briseadh circuit.
+Seolann AgentProxy le **routálaí uathoibríoch scóráilte** a roghnaíonn an tsamhail is fearr do gach iarratas ar gach soláthraí ceangailte — gan aon combo a choimeád. Níl le déanamh ach an t-iarratas a sheoladh le ceann de na réamhshocruithe `auto/*` agus cuirfidh AgentProxy combo fíorúil le chéile ar an toirt, ag scóráil iarrthóirí ar moill, costas, ráta ratha, oiriúnacht comhthéacs, oiriúnacht samhail don tasc, teipeanna le déanaí, quota, agus stáid briseadh circuit.
 
 | Réamhshocrú    | Optamaíonn do                                                                                                   |
 | -------------- | --------------------------------------------------------------------------------------------------------------- |
@@ -1078,7 +1078,7 @@ Sampla:
 
 ```bash
 curl -X POST http://localhost:20128/v1/chat/completions \
-  -H "Authorization: Bearer $OMNIROUTE_KEY" \
+  -H "Authorization: Bearer $AGENTPROXY_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "auto/coding",
@@ -1093,13 +1093,13 @@ Tá an t-uath-routálaí cur síos iomlán air i [AUTO-COMBO.md](../routing/AUTO
 
 ## 🔌 Comhtháthú MCP & A2A
 
-Is **freastalaí MCP** (Model Context Protocol) agus **freastalaí A2A** (Agent-to-Agent JSON-RPC 2.0) é OmniRoute araon. Is féidir le haon IDE nó óstach gníomhaíochta atá comhoiriúnach le MCP uirlisí OmniRoute a ghairm go díreach — gan aon choró sa bhreis ag teastáil.
+Is **freastalaí MCP** (Model Context Protocol) agus **freastalaí A2A** (Agent-to-Agent JSON-RPC 2.0) é AgentProxy araon. Is féidir le haon IDE nó óstach gníomhaíochta atá comhoiriúnach le MCP uirlisí AgentProxy a ghairm go díreach — gan aon choró sa bhreis ag teastáil.
 
 ### Aistrithe MCP
 
 - **SSE**: `http://localhost:20128/api/mcp/sse`
 - **HTTP In-shreafa**: `http://localhost:20128/api/mcp/stream`
-- **stdio**: `omniroute --mcp` (do phlocáin IDE a roghnaíonn stdio)
+- **stdio**: `agentproxy --mcp` (do phlocáin IDE a roghnaíonn stdio)
 
 ### Ceangal le Claude Desktop
 
@@ -1108,8 +1108,8 @@ Cuir `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) n
 ```json
 {
   "mcpServers": {
-    "omniroute": {
-      "command": "omniroute",
+    "agentproxy": {
+      "command": "agentproxy",
       "args": ["--mcp"]
     }
   }
@@ -1128,7 +1128,7 @@ Sainmhíníonn MCP faoi láthair 32 scóip ainmnithe. Is féidir gach eochair Be
 
 ## � Áiseanna Scileanna
 
-Taispeánann OmniRoute **chreat scileanna in-infhiarmaithe** (`src/lib/skills/`) ionas go bhféadfaidh gníomhairí agus an críochfoirm A2A rithinne ábharshuímh (m.sh. `code-review`, `summarize`, `extract-facts`, `web-research`).
+Taispeánann AgentProxy **chreat scileanna in-infhiarmaithe** (`src/lib/skills/`) ionas go bhféadfaidh gníomhairí agus an críochfoirm A2A rithinne ábharshuímh (m.sh. `code-review`, `summarize`, `extract-facts`, `web-research`).
 
 - **Comhéadan Margaidh** — Brabhsáil agus suiteáil scileanna ó **Dashboard → Skills**
 - **Scóipeanna in aghaidh an eochracha** — Cuir teorainn le cén eochracha API a fhéadfaidh scileanna áirithe a thionscnamh
@@ -1140,7 +1140,7 @@ Lámhleabhar iomlán: [SKILLS.md](../frameworks/SKILLS.md).
 
 ## 💾 Córas Cuimhne
 
-Coinníonn OmniRoute **cuimhne comhrá fadtéarmach** le tarrtháil hibrideach:
+Coinníonn AgentProxy **cuimhne comhrá fadtéarmach** le tarrtháil hibrideach:
 
 - **SQLite FTS5** le haghaidh cuardach focailbhoinne thar thréitheanna roimhe seo
 - **Stóras veicteora Qdrant** (roghnach) le haghaidh cuimhneachtáil chiallmhara
@@ -1153,11 +1153,11 @@ Bainistigh cuimhneanna i **Dashboard → Memory** (cuardach, eagar, easpórtáil
 
 ## 🔔 Webhooks
 
-Liostáil le haghaidh teagmhais OmniRoute le haghaidh monatóireachta agus uathoibriú fíor-ama.
+Liostáil le haghaidh teagmhais AgentProxy le haghaidh monatóireachta agus uathoibriú fíor-ama.
 
 - Cruthaigh webhook i **Dashboard → Webhooks** le sprioc URL agus rún sínithe HMAC
 - Teagmhais ar fáil: `request.completed`, `request.failed`, `provider.unavailable`, `budget.exceeded`, `combo.switched`, `circuit_breaker.opened`, `circuit_breaker.closed`
-- Gach pacáiste sonraí cuireann `X-OmniRoute-Signature` (HMAC-SHA256) ar fáil le haghaidh fíorúcháin
+- Gach pacáiste sonraí cuireann `X-AgentProxy-Signature` (HMAC-SHA256) ar fáil le haghaidh fíorúcháin
 - Atreiseanna: 3 iarracht le meitreach drochchúl, ansin scuabadh litreacha marbh
 
 Scéimre iomlán i [WEBHOOKS.md](../frameworks/WEBHOOKS.md).
@@ -1166,11 +1166,11 @@ Scéimre iomlán i [WEBHOOKS.md](../frameworks/WEBHOOKS.md).
 
 ## ☁️ Gníomhairí Scáileáin
 
-Comhtháthaíonn OmniRoute le gníomhairí códála scáileáin (**OpenAI Codex Cloud**, **Devin**, **Jules**, **Antigravity**) ionas gur féidir leat tascanna fadthéarmacha a sheoladh ón an chéanna dashboard a bhainistíonn do ródú áitiúil.
+Comhtháthaíonn AgentProxy le gníomhairí códála scáileáin (**OpenAI Codex Cloud**, **Devin**, **Jules**, **Antigravity**) ionas gur féidir leat tascanna fadthéarmacha a sheoladh ón an chéanna dashboard a bhainistíonn do ródú áitiúil.
 
 - Cruthaigh tascanna i **Dashboard → Cloud Agents** nó trí `POST /api/v1/agents/tasks`
 - Rianaigh stádas, logaanna, agus airtealaí in aghaidh an tasc
-- Eochracha API féin-iompairtha in aghaidh an soláthraí — ní fhágann ainmneacha teagmhasa instanciú OmniRoute choíche
+- Eochracha API féin-iompairtha in aghaidh an soláthraí — ní fhágann ainmneacha teagmhasa instanciú AgentProxy choíche
 
 Lámhleabhar iomlán: [CLOUD_AGENT.md](../frameworks/CLOUD_AGENT.md).
 
@@ -1178,30 +1178,30 @@ Lámhleabhar iomlán: [CLOUD_AGENT.md](../frameworks/CLOUD_AGENT.md).
 
 ## 🛠️ Bainisteoireacht Clárlann
 
-Is féidir leat gach acmhainn OmniRoute (soláthraithe, tiompáin, eochracha, socruithe) a bhainistiú thar HTTP ag baint úsáide as **eochair bearer leis an scóip `manage`**.
+Is féidir leat gach acmhainn AgentProxy (soláthraithe, tiompáin, eochracha, socruithe) a bhainistiú thar HTTP ag baint úsáide as **eochair bearer leis an scóip `manage`**.
 
 Gineadh an eochair i **Dashboard → API Keys → New Key → Scope: manage**, ansin:
 
 ```bash
 # Liostaigh soláthraithe
 curl http://localhost:20128/api/providers \
-  -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY"
+  -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY"
 
 # Cuir nasc soláthraí leis
 curl -X POST http://localhost:20128/api/providers \
-  -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY" \
+  -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY" \
   -H "Content-Type: application/json" \
   -d '{ "provider": "openai", "apiKey": "sk-...", "name": "main" }'
 
 # Cruthaigh tiompán
 curl -X POST http://localhost:20128/api/combos \
-  -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY" \
+  -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY" \
   -H "Content-Type: application/json" \
   -d '{ "name": "premium", "strategy": "priority", "models": [{ "model": "cc/claude-opus-4-7" }, { "model": "glm/glm-5.1" }] }'
 
 # Liostáil/cruthaigh eochracha API
-curl http://localhost:20128/api/keys -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY"
-curl -X POST http://localhost:20128/api/keys -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY" \
+curl http://localhost:20128/api/keys -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY"
+curl -X POST http://localhost:20128/api/keys -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY" \
   -d '{ "name": "ci-bot", "scopes": ["chat"] }'
 ```
 
@@ -1209,38 +1209,38 @@ Féach [API_REFERENCE.md](../reference/API_REFERENCE.md) le haghaidh an catalóg
 
 ## 💧 CLI Inmheánach
 
-Seolann OmniRoute CLI inmheánach (`omniroute …') le haghaidh socraithe, diagnóise agus rialaithe rith. Tá seo **leithleasc ón leathanach "Uirlisí CLI" sa deasc**, a chumraítear le haghaidh CLI tríú páirtí (Claude Code, Cursor, Codex, Cline, …) ionas gur féidir leo labhairt le OmniRoute.
+Seolann AgentProxy CLI inmheánach (`agentproxy …') le haghaidh socraithe, diagnóise agus rialaithe rith. Tá seo **leithleasc ón leathanach "Uirlisí CLI" sa deasc**, a chumraítear le haghaidh CLI tríú páirtí (Claude Code, Cursor, Codex, Cline, …) ionas gur féidir leo labhairt le AgentProxy.
 
 ```bash
-omniroute setup                    # Treoraí idirghníomhach (pasfhocal, soláthraithe, combos)
-omniroute setup --non-interactive  # Oiriúnach do CI
-omniroute doctor                   # Diagnóis sláinte (eolaire sonraí, DB, soláthraithe, poirt)
-omniroute providers available      # Liostáil soláthraithe tacaíochta
-omniroute providers list           # Liostáil naisc chumraithe
-omniroute providers test <id>      # Tástáil beo ar nasc soláthraí
-omniroute combos list              # Liostáil combos
-omniroute combos switch <name>     # Socraigh combo réamhshocraithe
-omniroute models                   # Liostáil samhlacha ar fáil (--json, --search)
-omniroute keys add | list | remove # Bainistigh eochracha API ón tteirminéal
-omniroute backup                   # Grianghraf cumraíocht + DB
-omniroute restore [<timestamp>]    # Athchóirigh ó ghrianghraf
-omniroute health                   # Sláinte mionsonraithe (briseoirí, taisce, cuimhne)
-omniroute quota                    # Úsáid cuóta soláthraí
-omniroute mcp status               # Stádas freastalaí MCP
-omniroute a2a status               # Stádas freastalaí A2A
-omniroute tunnel list|create|stop  # Toilí Cloudflare/Tailscale/ngrok
-omniroute reset-password           # Athshocraigh pasfhocal an riaracháin
-omniroute --mcp                    # Tosaigh freastalaí MCP thar stdio
-omniroute --port 3000              # Tosaigh an freastalaí ar phort saincheaptha
+agentproxy setup                    # Treoraí idirghníomhach (pasfhocal, soláthraithe, combos)
+agentproxy setup --non-interactive  # Oiriúnach do CI
+agentproxy doctor                   # Diagnóis sláinte (eolaire sonraí, DB, soláthraithe, poirt)
+agentproxy providers available      # Liostáil soláthraithe tacaíochta
+agentproxy providers list           # Liostáil naisc chumraithe
+agentproxy providers test <id>      # Tástáil beo ar nasc soláthraí
+agentproxy combos list              # Liostáil combos
+agentproxy combos switch <name>     # Socraigh combo réamhshocraithe
+agentproxy models                   # Liostáil samhlacha ar fáil (--json, --search)
+agentproxy keys add | list | remove # Bainistigh eochracha API ón tteirminéal
+agentproxy backup                   # Grianghraf cumraíocht + DB
+agentproxy restore [<timestamp>]    # Athchóirigh ó ghrianghraf
+agentproxy health                   # Sláinte mionsonraithe (briseoirí, taisce, cuimhne)
+agentproxy quota                    # Úsáid cuóta soláthraí
+agentproxy mcp status               # Stádas freastalaí MCP
+agentproxy a2a status               # Stádas freastalaí A2A
+agentproxy tunnel list|create|stop  # Toilí Cloudflare/Tailscale/ngrok
+agentproxy reset-password           # Athshocraigh pasfhocal an riaracháin
+agentproxy --mcp                    # Tosaigh freastalaí MCP thar stdio
+agentproxy --port 3000              # Tosaigh an freastalaí ar phort saincheaptha
 ```
 
-Leid: páirigh `omniroute doctor --json` le d'fheirm monatóireachta chun a chur ar bun le haghaidh naisc soláthraí neamhshláintiúil.
+Leid: páirigh `agentproxy doctor --json` le d'fheirm monatóireachta chun a chur ar bun le haghaidh naisc soláthraí neamhshláintiúil.
 
 ---
 
 ## 💻 Feidhmchlár Deisce (Electron)
 
-Tá OmniRoute ar fáil mar fheidhmchlár deisce dúchasach le haghaidh Windows, macOS, agus Linux.
+Tá AgentProxy ar fáil mar fheidhmchlár deisce dúchasach le haghaidh Windows, macOS, agus Linux.
 
 ### Suiteáil
 
@@ -1283,7 +1283,7 @@ Aschur → `electron/dist-electron/`
 
 | Athróg                | Réamhshocrú | Cur Síos                               |
 | --------------------- | ----------- | -------------------------------------- |
-| `OMNIROUTE_PORT`      | `20128`     | Port an fhreastalaí                    |
-| `OMNIROUTE_MEMORY_MB` | `512`       | Teorainn cuimhne Node.js (64–16384 MB) |
+| `AGENTPROXY_PORT`      | `20128`     | Port an fhreastalaí                    |
+| `AGENTPROXY_MEMORY_MB` | `512`       | Teorainn cuimhne Node.js (64–16384 MB) |
 
 📖 Doiciméadú iomlán: [`electron/README.md`](../../electron/README.md)

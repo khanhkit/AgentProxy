@@ -5,7 +5,7 @@ lastUpdated: 2026-07-22
 
 # Model gałęzi i wydań
 
-OmniRoute stosuje model wydań oparty na **równoległych cyklach**: dedykowana gałąź
+AgentProxy stosuje model wydań oparty na **równoległych cyklach**: dedykowana gałąź
 `release/vX.Y.Z` dla aktywnego cyklu, `main` dla opublikowanej linii oraz niezmienny
 tag `vX.Y.Z`, gdy dany cykl trafia do produkcji. Widok commitów lądujących na
 `release/*` _oraz_ na `main` jest oczekiwany — to nie pomyłka.
@@ -57,7 +57,7 @@ To **nie wstrzymuje rozwoju**:
 Sprawdź, czy jest otwarte zamrożenie, zanim założysz, że wybrana gałąź jest gotowa do merge:
 
 ```bash
-gh issue list --repo diegosouzapw/OmniRoute --label release-freeze --state open
+gh issue list --repo khanhkit/AgentProxy --label release-freeze --state open
 ```
 
 Mechanika merge (etykieta właściciela `queue` → Mergify) jest opisana w

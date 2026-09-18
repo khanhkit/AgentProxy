@@ -59,8 +59,8 @@ test("full chat pipeline omits absent task ids and preserves inbound ids", async
   await send({ "X-Task-ID": "client-task-123" });
 
   assert.equal(upstreamHeaders.length, 3);
-  assert.equal(upstreamHeaders[0]["x-client-type"], "omniroute");
-  assert.equal(upstreamHeaders[1]["x-client-type"], "omniroute");
+  assert.equal(upstreamHeaders[0]["x-client-type"], "agentproxy");
+  assert.equal(upstreamHeaders[1]["x-client-type"], "agentproxy");
   assert.ok(!("x-task-id" in upstreamHeaders[0]));
   assert.ok(!("x-task-id" in upstreamHeaders[1]));
   assert.equal(upstreamHeaders[2]["x-task-id"], "client-task-123");

@@ -15,7 +15,7 @@ lastUpdated: 2026-06-28
 
 🌐 **Languages:** 🇺🇸 [English](../../../../guides/USER_GUIDE.md) · 🇸🇦 [ar](../../../ar/docs/guides/USER_GUIDE.md) · 🇦🇿 [az](../../../az/docs/guides/USER_GUIDE.md) · 🇧🇬 [bg](../../../bg/docs/guides/USER_GUIDE.md) · 🇧🇩 [bn](../../../bn/docs/guides/USER_GUIDE.md) · 🇨🇿 [cs](../../../cs/docs/guides/USER_GUIDE.md) · 🇩🇰 [da](../../../da/docs/guides/USER_GUIDE.md) · 🇩🇪 [de](../../../de/docs/guides/USER_GUIDE.md) · 🇬🇷 [el](../../../el/docs/guides/USER_GUIDE.md) · 🇪🇸 [es](../../../es/docs/guides/USER_GUIDE.md) · 🇪🇪 [et](../../../et/docs/guides/USER_GUIDE.md) · 🇮🇷 [fa](../../../fa/docs/guides/USER_GUIDE.md) · 🇫🇮 [fi](../../../fi/docs/guides/USER_GUIDE.md) · 🇫🇷 [fr](../../../fr/docs/guides/USER_GUIDE.md) · 🇮🇪 [ga](../../../ga/docs/guides/USER_GUIDE.md) · 🇮🇳 [gu](../../../gu/docs/guides/USER_GUIDE.md) · 🇮🇱 [he](../../../he/docs/guides/USER_GUIDE.md) · 🇮🇳 [hi](../../../hi/docs/guides/USER_GUIDE.md) · 🇭🇷 [hr](../../../hr/docs/guides/USER_GUIDE.md) · 🇭🇺 [hu](../../../hu/docs/guides/USER_GUIDE.md) · 🇮🇩 [id](../../../id/docs/guides/USER_GUIDE.md) · 🇮🇹 [it](../../../it/docs/guides/USER_GUIDE.md) · 🇯🇵 [ja](../../../ja/docs/guides/USER_GUIDE.md) · 🇰🇷 [ko](../../../ko/docs/guides/USER_GUIDE.md) · 🇱🇹 [lt](../../../lt/docs/guides/USER_GUIDE.md) · 🇱🇻 [lv](../../../lv/docs/guides/USER_GUIDE.md) · 🇮🇳 [mr](../../../mr/docs/guides/USER_GUIDE.md) · 🇲🇾 [ms](../../../ms/docs/guides/USER_GUIDE.md) · 🇲🇹 [mt](../../../mt/docs/guides/USER_GUIDE.md) · 🇳🇱 [nl](../../../nl/docs/guides/USER_GUIDE.md) · 🇳🇴 [no](../../../no/docs/guides/USER_GUIDE.md) · 🇵🇭 [phi](../../../phi/docs/guides/USER_GUIDE.md) · 🇵🇱 [pl](../../../pl/docs/guides/USER_GUIDE.md) · 🇵🇹 [pt](../../../pt/docs/guides/USER_GUIDE.md) · 🇧🇷 [pt-BR](../../../pt-BR/docs/guides/USER_GUIDE.md) · 🇷🇴 [ro](../../../ro/docs/guides/USER_GUIDE.md) · 🇷🇺 [ru](../../../ru/docs/guides/USER_GUIDE.md) · 🇸🇰 [sk](../../../sk/docs/guides/USER_GUIDE.md) · 🇷🇸 [sr](../../../sr/docs/guides/USER_GUIDE.md) · 🇸🇪 [sv](../../../sv/docs/guides/USER_GUIDE.md) · 🇰🇪 [sw](../../../sw/docs/guides/USER_GUIDE.md) · 🇮🇳 [ta](../../../ta/docs/guides/USER_GUIDE.md) · 🇮🇳 [te](../../../te/docs/guides/USER_GUIDE.md) · 🇹🇭 [th](../../../th/docs/guides/USER_GUIDE.md) · 🇹🇷 [tr](../../../tr/docs/guides/USER_GUIDE.md) · 🇺🇦 [uk-UA](../../../uk-UA/docs/guides/USER_GUIDE.md) · 🇵🇰 [ur](../../../ur/docs/guides/USER_GUIDE.md) · 🇻🇳 [vi](../../../vi/docs/guides/USER_GUIDE.md) · 🇨🇳 [zh-CN](../../../zh-CN/docs/guides/USER_GUIDE.md) · 🇹🇼 [zh-TW](../../../zh-TW/docs/guides/USER_GUIDE.md)
 
-Celovit priročnik za konfiguriranje ponudnikov, ustvarjanje kombinacij, integracijo orodij CLI in uvajanje OmniRoute.
+Celovit priročnik za konfiguriranje ponudnikov, ustvarjanje kombinacij, integracijo orodij CLI in uvajanje AgentProxy.
 
 ---
 
@@ -144,10 +144,10 @@ Modeli:
   cc/claude-haiku-4-5-20251001
 ```
 
-**Profesionalni nasvet:** Za zahtevne naloge uporabite Opus, za hitrost pa Sonnet. OmniRoute spremlja kvoto za vsak model posebej!
+**Profesionalni nasvet:** Za zahtevne naloge uporabite Opus, za hitrost pa Sonnet. AgentProxy spremlja kvoto za vsak model posebej!
 
 Poti, združljive s Claude in Claude Code, ohranijo raven miselnega napora `max` za modele Opus in Sonnet.
-Modeli Haiku ne sprejemajo ravni napora `max`, zato OmniRoute pred pošiljanjem nadrejenemu ponudniku
+Modeli Haiku ne sprejemajo ravni napora `max`, zato AgentProxy pred pošiljanjem nadrejenemu ponudniku
 zahtevo zniža na visok proračun za razmišljanje.
 
 #### OpenAI Codex (Plus/Pro)
@@ -198,7 +198,7 @@ Modeli:
 
 #### Kimi K2 (fiksno $9/mesec)
 
-1. Naročite se: [Moonshot AI](https://platform.kimi.ai?aff=omniroute)
+1. Naročite se: [Moonshot AI](https://platform.kimi.ai?aff=agentproxy)
 2. Pridobite ključ API → Nadzorna plošča → Dodaj ključ API
 
 **Uporaba:** `kimi/kimi-k2.5` — **Profesionalni nasvet:** Fiksnih $9/mesec za 10M žetonov pomeni dejansko ceno $0.90/1M!
@@ -269,16 +269,16 @@ Cena: trenutno navedena kot $0; pogoji in razpoložljivost se lahko spremenijo
 
 ### Cursor IDE
 
-**Uporaba Cursorja kot odjemalca OmniRoute** (usmerjanje klepeta Cursor prek OmniRoute):
+**Uporaba Cursorja kot odjemalca AgentProxy** (usmerjanje klepeta Cursor prek AgentProxy):
 
 ```
 Nastavitve → Modeli → Napredno:
   Osnovni URL API-ja OpenAI: http://localhost:20128/v1
-  Ključ API-ja OpenAI: [z nadzorne plošče OmniRoute]
+  Ključ API-ja OpenAI: [z nadzorne plošče AgentProxy]
   Model: cc/claude-opus-4-7
 ```
 
-**Uporaba OmniRoute kot ponudnika za Cursor** (OmniRoute kliče Cursor kot nadrejeno storitev): priporočamo
+**Uporaba AgentProxy kot ponudnika za Cursor** (AgentProxy kliče Cursor kot nadrejeno storitev): priporočamo
 **Nadzorna plošča → Ponudniki → Cursor → Prijava s Cursorjem**. Za Docker glejte
 [`docs/providers/CURSOR-DOCKER.md`](../providers/CURSOR-DOCKER.md).
 
@@ -290,7 +290,7 @@ Uredite `~/.claude/settings.json`:
 {
   "env": {
     "ANTHROPIC_BASE_URL": "http://localhost:20128",
-    "ANTHROPIC_AUTH_TOKEN": "your-omniroute-api-key"
+    "ANTHROPIC_AUTH_TOKEN": "your-agentproxy-api-key"
   }
 }
 ```
@@ -301,7 +301,7 @@ Tukaj uporabite korensko končno točko, združljivo s Claude. Spremenljivki `AN
 
 ```bash
 export OPENAI_BASE_URL="http://localhost:20128"
-export OPENAI_API_KEY="your-omniroute-api-key"
+export OPENAI_API_KEY="your-agentproxy-api-key"
 codex "your prompt"
 ```
 
@@ -313,14 +313,14 @@ Uredite `~/.openclaw/openclaw.json`:
 {
   "agents": {
     "defaults": {
-      "model": { "primary": "omniroute/if/kimi-k2.7-code" }
+      "model": { "primary": "agentproxy/if/kimi-k2.7-code" }
     }
   },
   "models": {
     "providers": {
-      "omniroute": {
+      "agentproxy": {
         "baseUrl": "http://localhost:20128/v1",
-        "apiKey": "your-omniroute-api-key",
+        "apiKey": "your-agentproxy-api-key",
         "api": "openai-completions",
         "models": [{ "id": "if/kimi-k2.7-code", "name": "Kimi K2.7 Code" }]
       }
@@ -347,28 +347,28 @@ Model: cc/claude-opus-4-7
 ### Globalna namestitev npm (priporočeno)
 
 ```bash
-npm install -g omniroute
+npm install -g agentproxy
 
 # Ustvarite konfiguracijski imenik
-mkdir -p ~/.omniroute
+mkdir -p ~/.agentproxy
 
 # Ustvarite datoteko .env (glejte .env.example)
-cp .env.example ~/.omniroute/.env
+cp .env.example ~/.agentproxy/.env
 
 # Zaženite strežnik
-omniroute
+agentproxy
 # Ali z vrati po meri:
-omniroute --port 3000
+agentproxy --port 3000
 ```
 
-CLI samodejno naloži `.env` iz `~/.omniroute/.env` ali `./.env`.
+CLI samodejno naloži `.env` iz `~/.agentproxy/.env` ali `./.env`.
 
 ### Način sistemske vrstice
 
-Zaženite OmniRoute v sistemski vrstici:
+Zaženite AgentProxy v sistemski vrstici:
 
 ```bash
-omniroute serve --tray
+agentproxy serve --tray
 ```
 
 Ukaz se zaključi, ko sta strežnik in sistemska vrstica pripravljena.
@@ -382,7 +382,7 @@ V meniju sistemske vrstice so na voljo ta dejanja:
 - Odpiranje nadzorne plošče.
 - Odpiranje `/dashboard/logs`.
 - Spreminjanje samodejnega zagona.
-- Ustavitev OmniRoute.
+- Ustavitev AgentProxy.
 
 Možnosti `--tray` ne uporabljajte skupaj s temi možnostmi:
 
@@ -395,7 +395,7 @@ Ti načini zahtevajo drugačno lastništvo procesa.
 Omogočite zagon ob naslednji prijavi v računalnik:
 
 ```bash
-omniroute autostart enable
+agentproxy autostart enable
 ```
 
 Samodejni zagon uporablja način sistemske vrstice v sistemih macOS, Windows in grafičnih sejah Linuxa. Linux brez grafičnega vmesnika uporablja obstoječo uporabniško storitev systemd.
@@ -403,29 +403,29 @@ Samodejni zagon uporablja način sistemske vrstice v sistemih macOS, Windows in 
 Onemogočite zagon ob prijavi:
 
 ```bash
-omniroute autostart disable
+agentproxy autostart disable
 ```
 
 ### Odstranitev
 
-Ko OmniRoute ne potrebujete več, sta za čisto odstranitev na voljo dva hitra skripta:
+Ko AgentProxy ne potrebujete več, sta za čisto odstranitev na voljo dva hitra skripta:
 
 | Ukaz                     | Dejanje                                                                                             |
 | ------------------------ | --------------------------------------------------------------------------------------------------- |
-| `npm run uninstall`      | Odstrani sistemsko aplikacijo, vendar **ohrani zbirko podatkov in konfiguracije** v `~/.omniroute`. |
+| `npm run uninstall`      | Odstrani sistemsko aplikacijo, vendar **ohrani zbirko podatkov in konfiguracije** v `~/.agentproxy`. |
 | `npm run uninstall:full` | Odstrani aplikacijo IN trajno **izbriše vse konfiguracije, ključe in zbirke podatkov**.             |
 
-> Opomba: Če želite zagnati te ukaze, se pomaknite v mapo projekta OmniRoute (če ste ga klonirali) in jih zaženite. Če ste ga namestili globalno, lahko preprosto zaženete `npm uninstall -g omniroute`.
+> Opomba: Če želite zagnati te ukaze, se pomaknite v mapo projekta AgentProxy (če ste ga klonirali) in jih zaženite. Če ste ga namestili globalno, lahko preprosto zaženete `npm uninstall -g agentproxy`.
 
 ### Namestitev na VPS
 
 ```bash
-git clone https://github.com/diegosouzapw/OmniRoute.git
-cd OmniRoute && npm install && npm run build
+git clone https://github.com/khanhkit/AgentProxy.git
+cd AgentProxy && npm install && npm run build
 
 export JWT_SECRET="your-secure-secret-change-this"
 export INITIAL_PASSWORD="your-password"
-export DATA_DIR="/var/lib/omniroute"
+export DATA_DIR="/var/lib/agentproxy"
 export PORT="20128"
 export HOSTNAME="0.0.0.0"
 export NODE_ENV="production"
@@ -433,7 +433,7 @@ export NEXT_PUBLIC_BASE_URL="http://localhost:20128"
 export API_KEY_SECRET="endpoint-proxy-api-key-secret"
 
 npm run start
-# Ali: pm2 start npm --name omniroute -- start
+# Ali: pm2 start npm --name agentproxy -- start
 ```
 
 ### Namestitev s PM2 (malo pomnilnika)
@@ -442,10 +442,10 @@ Za strežnike z omejenim RAM-om uporabite možnost omejitve pomnilnika:
 
 ```bash
 # Z omejitvijo 512 MB (privzeto)
-pm2 start npm --name omniroute -- start
+pm2 start npm --name agentproxy -- start
 
 # Ali z omejitvijo pomnilnika po meri
-OMNIROUTE_MEMORY_MB=512 pm2 start npm --name omniroute -- start
+AGENTPROXY_MEMORY_MB=512 pm2 start npm --name agentproxy -- start
 
 # Ali z uporabo ecosystem.config.js
 pm2 start ecosystem.config.js
@@ -457,12 +457,12 @@ Ustvarite `ecosystem.config.js`:
 module.exports = {
   apps: [
     {
-      name: "omniroute",
+      name: "agentproxy",
       script: "npm",
       args: "start",
       env: {
         NODE_ENV: "production",
-        OMNIROUTE_MEMORY_MB: "512",
+        AGENTPROXY_MEMORY_MB: "512",
         JWT_SECRET: "your-secret",
         INITIAL_PASSWORD: "your-password",
       },
@@ -477,24 +477,24 @@ module.exports = {
 
 ```bash
 # Zgradite sliko (privzeto = runner-cli s prednameščenimi codex/claude/droid)
-docker build -t omniroute:cli .
+docker build -t agentproxy:cli .
 
 # Prenosni način (priporočeno)
-docker run -d --name omniroute -p 20128:20128 --env-file ./.env -v omniroute-data:/app/data omniroute:cli
+docker run -d --name agentproxy -p 20128:20128 --env-file ./.env -v agentproxy-data:/app/data agentproxy:cli
 ```
 
 Za način, integriran z gostiteljem in binarnimi datotekami CLI, glejte razdelek Docker v glavni dokumentaciji.
 
 ### Void Linux (xbps-src)
 
-Uporabniki Void Linuxa lahko OmniRoute zapakirajo in namestijo izvorno z ogrodjem za navzkrižno prevajanje `xbps-src`. To avtomatizira samostojno gradnjo Node.js skupaj z zahtevanimi izvornimi vezavami `better-sqlite3`.
+Uporabniki Void Linuxa lahko AgentProxy zapakirajo in namestijo izvorno z ogrodjem za navzkrižno prevajanje `xbps-src`. To avtomatizira samostojno gradnjo Node.js skupaj z zahtevanimi izvornimi vezavami `better-sqlite3`.
 
 <details>
 <summary><b>Prikaži predlogo xbps-src</b></summary>
 
 ```bash
-# Datoteka predloge za 'omniroute'
-pkgname=omniroute
+# Datoteka predloge za 'agentproxy'
+pkgname=agentproxy
 version=3.8.0
 revision=1
 hostmakedepends="nodejs python3 make"
@@ -502,11 +502,11 @@ depends="openssl"
 short_desc="Universal AI gateway with smart routing for multiple LLM providers"
 maintainer="zenobit <zenobit@disroot.org>"
 license="MIT"
-homepage="https://github.com/diegosouzapw/OmniRoute"
-distfiles="https://github.com/diegosouzapw/OmniRoute/archive/refs/tags/v${version}.tar.gz"
+homepage="https://github.com/khanhkit/AgentProxy"
+distfiles="https://github.com/khanhkit/AgentProxy/archive/refs/tags/v${version}.tar.gz"
 checksum=009400afee90a9f32599d8fe734145cfd84098140b7287990183dde45ae2245b
-system_accounts="_omniroute"
-omniroute_homedir="/var/lib/omniroute"
+system_accounts="_agentproxy"
+agentproxy_homedir="/var/lib/agentproxy"
 export NODE_ENV=production
 export npm_config_engine_strict=false
 export npm_config_loglevel=error
@@ -556,26 +556,26 @@ do_check() {
 }
 
 do_install() {
-	vmkdir usr/lib/omniroute/.next
-	vcopy .next/standalone/. usr/lib/omniroute/.next/standalone
+	vmkdir usr/lib/agentproxy/.next
+	vcopy .next/standalone/. usr/lib/agentproxy/.next/standalone
 
 	# Preprečite, da bi kavelj po namestitvi odstranil prazne imenike usmerjevalnika aplikacije Next.js
 	for _d in \
 		.next/standalone/.next/server/app/dashboard \
 		.next/standalone/.next/server/app/dashboard/settings \
 		.next/standalone/.next/server/app/dashboard/providers; do
-		touch "${DESTDIR}/usr/lib/omniroute/${_d}/.keep"
+		touch "${DESTDIR}/usr/lib/agentproxy/${_d}/.keep"
 	done
 
-	cat > "${WRKDIR}/omniroute" <<'EOF'
+	cat > "${WRKDIR}/agentproxy" <<'EOF'
 #!/bin/sh
 export PORT="${PORT:-20128}"
-export DATA_DIR="${DATA_DIR:-${XDG_DATA_HOME:-${HOME}/.local/share}/omniroute}"
+export DATA_DIR="${DATA_DIR:-${XDG_DATA_HOME:-${HOME}/.local/share}/agentproxy}"
 export APP_LOG_TO_FILE="${APP_LOG_TO_FILE:-false}"
 mkdir -p "${DATA_DIR}"
-exec node /usr/lib/omniroute/.next/standalone/server.js "$@"
+exec node /usr/lib/agentproxy/.next/standalone/server.js "$@"
 EOF
-	vbin "${WRKDIR}/omniroute"
+	vbin "${WRKDIR}/agentproxy"
 }
 
 post_install() {
@@ -589,14 +589,14 @@ post_install() {
 
 | Spremenljivka                           | Privzeto                             | Opis                                                                                                                                                          |
 | --------------------------------------- | ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `JWT_SECRET`                            | `omniroute-default-secret-change-me` | Skrivnost za podpisovanje JWT (**spremenite v produkcijskem okolju**)                                                                                         |
+| `JWT_SECRET`                            | `agentproxy-default-secret-change-me` | Skrivnost za podpisovanje JWT (**spremenite v produkcijskem okolju**)                                                                                         |
 | `INITIAL_PASSWORD`                      | `CHANGEME`                           | Geslo za prvo prijavo                                                                                                                                         |
-| `DATA_DIR`                              | `~/.omniroute`                       | Imenik podatkov (zbirka podatkov, uporaba, dnevniki)                                                                                                          |
+| `DATA_DIR`                              | `~/.agentproxy`                       | Imenik podatkov (zbirka podatkov, uporaba, dnevniki)                                                                                                          |
 | `PORT`                                  | privzeta vrednost ogrodja            | Vrata storitve (`20128` v primerih)                                                                                                                           |
 | `HOSTNAME`                              | privzeta vrednost ogrodja            | Gostitelj za vezavo (Docker privzeto uporablja `0.0.0.0`)                                                                                                     |
 | `NODE_ENV`                              | privzeta vrednost izvajalnega okolja | Za namestitev nastavite `production`                                                                                                                          |
 | `NEXT_PUBLIC_BASE_URL`                  | `http://localhost:20128`             | Javni osnovni URL, prikazan na nadzorni plošči in izpostavljen strežniku (nadomešča opuščeni `BASE_URL`)                                                      |
-| `NEXT_PUBLIC_CLOUD_URL`                 | `https://omniroute.dev`              | Osnovni URL končne točke za sinhronizacijo z oblakom (nadomešča opuščeni `CLOUD_URL`)                                                                         |
+| `NEXT_PUBLIC_CLOUD_URL`                 | `https://agentproxy.example.com`              | Osnovni URL končne točke za sinhronizacijo z oblakom (nadomešča opuščeni `CLOUD_URL`)                                                                         |
 | `API_KEY_SECRET`                        | `endpoint-proxy-api-key-secret`      | Skrivnost HMAC za ustvarjene ključe API-ja                                                                                                                    |
 | `REQUIRE_API_KEY`                       | `false`                              | Zahteva ključ API-ja Bearer na `/v1/*`                                                                                                                        |
 | `ALLOW_API_KEY_REVEAL`                  | `false`                              | Overjenim uporabnikom nadzorne plošče omogoči, da na zahtevo razkrijejo celotne shranjene vrednosti ključev API-ja                                            |
@@ -606,7 +606,7 @@ post_install() {
 | `AUTH_COOKIE_SECURE`                    | `false`                              | Vsili piškotek za preverjanje pristnosti `Secure` (za povratnim posredniškim strežnikom HTTPS)                                                                |
 | `CLOUDFLARED_BIN`                       | ni nastavljeno                       | Uporabi obstoječo binarno datoteko `cloudflared` namesto upravljanega prenosa                                                                                 |
 | `CLOUDFLARED_PROTOCOL`                  | `http2`                              | Prenos za upravljane hitre tunele (`http2`, `quic` ali `auto`)                                                                                                |
-| `OMNIROUTE_MEMORY_MB`                   | `512`                                | Omejitev kopice Node.js v MB                                                                                                                                  |
+| `AGENTPROXY_MEMORY_MB`                   | `512`                                | Omejitev kopice Node.js v MB                                                                                                                                  |
 | `PROMPT_CACHE_MAX_SIZE`                 | `50`                                 | Največje število vnosov v predpomnilniku pozivov                                                                                                              |
 | `SEMANTIC_CACHE_MAX_SIZE`               | `100`                                | Največje število vnosov v semantičnem predpomnilniku                                                                                                          |
 
@@ -667,7 +667,7 @@ Za celoten seznam okoljskih spremenljivk glejte [README](../README.md).
 
 **Drugi združljivi ponudniki** (izbrani): `cohere`, `databricks`, `snowflake`, `together`, `vertex`, `alibaba`, `alibaba-cn`, `bedrock` (prek `aws-bedrock`), `azure-ai`, `openrouter` (posredovani katalog), `siliconflow`, `hyperbolic`, `huggingface`, `featherless-ai`, `cloudflare-ai`, `scaleway`, `deepinfra`, `vercel-ai-gateway`, `bazaarlink`, `friendliai`, `nous-research`, `reka`, `volcengine`, `ai21`, `gigachat`. Vsak vzdržuje svoj seznam modelov v `providerRegistry.ts` in ga je mogoče samodejno sinhronizirati, kadar ponudnik izpostavi končno točko `/models`.
 
-**Opomba o ID-jih modelov:** OmniRoute uporablja ID-je, izvorne ponudniku (`claude-opus-4-8`, `gpt-5.5`, `glm-5.1`, `MiniMax-M2.7`, `kimi-k2.5`, `grok-4.20-0309-reasoning`). Nekateri ID-ji vključujejo različice s pikami, ker jih v tej obliki pričakuje izvorni API. Če model ni naveden zgoraj, za potrditev razpoložljivosti zaženite `omniroute models --search <term>` ali pokličite `GET /api/models/catalog`.
+**Opomba o ID-jih modelov:** AgentProxy uporablja ID-je, izvorne ponudniku (`claude-opus-4-8`, `gpt-5.5`, `glm-5.1`, `MiniMax-M2.7`, `kimi-k2.5`, `grok-4.20-0309-reasoning`). Nekateri ID-ji vključujejo različice s pikami, ker jih v tej obliki pričakuje izvorni API. Če model ni naveden zgoraj, za potrditev razpoložljivosti zaženite `agentproxy models --search <term>` ali pokličite `GET /api/models/catalog`.
 
 </details>
 
@@ -696,35 +696,35 @@ Opombe:
 - Ponudniki OpenRouter in ponudniki, združljivi z OpenAI/Anthropic, se upravljajo samo v razdelku **Razpoložljivi modeli**. Ročno dodajanje, uvoz in samodejna sinhronizacija se vsi zapišejo na isti seznam razpoložljivih modelov, zato za te ponudnike ni ločenega razdelka Modeli po meri.
 - Razdelek **Modeli po meri** je namenjen ponudnikom, ki ne omogočajo upravljanega uvoza razpoložljivih modelov.
 
-### Veriženje sorodnih prehodov OmniRoute
+### Veriženje sorodnih prehodov AgentProxy
 
-Drug prehod OmniRoute lahko dodate kot ponudnika **Po meri, združljivega z OpenAI**. Uporabite
+Drug prehod AgentProxy lahko dodate kot ponudnika **Po meri, združljivega z OpenAI**. Uporabite
 osnovni URL `/v1` sorodnega prehoda in namenski ključ API z najmanjšimi potrebnimi pravicami, ki ga je izdal ta prehod.
 
 Za vzajemne ali večstopenjske verige omogočite izbirno zaščito pred zankami na vsakem prehodu:
 
 ```bash
 # gateway-a
-OMNIROUTE_INSTANCE_ID=gateway-a
-OMNIROUTE_PEER_URLS=http://gateway-b:20128/v1
-OMNIROUTE_PEER_MAX_HOPS=4
+AGENTPROXY_INSTANCE_ID=gateway-a
+AGENTPROXY_PEER_URLS=http://gateway-b:20128/v1
+AGENTPROXY_PEER_MAX_HOPS=4
 ```
 
 ```bash
 # gateway-b
-OMNIROUTE_INSTANCE_ID=gateway-b
-OMNIROUTE_PEER_URLS=http://gateway-a:20128/v1
-OMNIROUTE_PEER_MAX_HOPS=4
+AGENTPROXY_INSTANCE_ID=gateway-b
+AGENTPROXY_PEER_URLS=http://gateway-a:20128/v1
+AGENTPROXY_PEER_MAX_HOPS=4
 ```
 
-Glavo `X-OmniRoute-Peer-Trace` prejmejo samo zahteve, poslane na izrecno dovoljen URL
+Glavo `X-AgentProxy-Peer-Trace` prejmejo samo zahteve, poslane na izrecno dovoljen URL
 sorodnega prehoda. Prehod zavrne ponovljeni ID primerka ali izčrpano dovoljeno število skokov
 z odgovorom HTTP `508 Loop Detected`; običajni ponudniki v zaledju ne prejmejo nobenih metapodatkov o sorodnih prehodih.
 
 Veriženje sorodnih prehodov ni replikacija zbirke podatkov ali preklop ob odpovedi gostitelja. Vsak prehod vzdržuje neodvisno
 stanje SQLite, predpomnilnike, števce omejitev hitrosti in seje. Za aktivno/pasivno ali aktivno/aktivno razpoložljivost uporabite
 povratni posredniški strežnik s preverjanjem zdravja ali preklop ob odpovedi na strani odjemalca in nikoli ne priklopite ene zbirke podatkov SQLite
-v več sočasno delujočih primerkov OmniRoute.
+v več sočasno delujočih primerkov AgentProxy.
 
 ### Namenske poti ponudnikov
 
@@ -775,7 +775,7 @@ Vrne modele, razvrščene po ponudnikih, z vrstami (`chat`, `embedding`, `image`
 - Na voljo v razdelku **Nadzorna plošča → Končne točke** za Docker in druge samostojno gostovane namestitve
 - Ustvari začasni URL `https://*.trycloudflare.com`, ki posreduje na vašo trenutno končno točko `/v1`, združljivo z OpenAI
 - Ob prvi omogočitvi namesti `cloudflared` samo, ko je to potrebno; poznejši ponovni zagoni znova uporabijo isto upravljano izvedljivo datoteko
-- Hitri predori se po ponovnem zagonu OmniRoute ali vsebnika ne obnovijo samodejno; po potrebi jih znova omogočite na nadzorni plošči
+- Hitri predori se po ponovnem zagonu AgentProxy ali vsebnika ne obnovijo samodejno; po potrebi jih znova omogočite na nadzorni plošči
 - URL-ji predorov so začasni in se spremenijo ob vsaki ustavitvi oziroma zagonu predora
 - Upravljani hitri predori privzeto uporabljajo prenos HTTP/2, da se izognejo motečim opozorilom o medpomnilniku UDP za QUIC v vsebnikih z omejenimi viri
 - Nastavite `CLOUDFLARED_PROTOCOL=quic` ali `auto`, če želite preglasiti izbiro upravljanega prenosa
@@ -784,15 +784,15 @@ Vrne modele, razvrščene po ponudnikih, z vrstami (`chat`, `embedding`, `image`
 
 ### Inteligenca prehoda LLM (9. faza)
 
-- **Semantični predpomnilnik** — Samodejno predpomni odgovore brez pretakanja s temperature=0 (obidete ga z `X-OmniRoute-No-Cache: true`)
+- **Semantični predpomnilnik** — Samodejno predpomni odgovore brez pretakanja s temperature=0 (obidete ga z `X-AgentProxy-No-Cache: true`)
 - **Idempotentnost zahtev** — Odstrani podvojene zahteve znotraj 5 s prek glave `Idempotency-Key` ali `X-Request-Id`
-- **Spremljanje napredka** — Izbirni dogodki SSE `event: progress` prek glave `X-OmniRoute-Progress: true`
+- **Spremljanje napredka** — Izbirni dogodki SSE `event: progress` prek glave `X-AgentProxy-Progress: true`
 
 ---
 
 ### Preizkusno okolje prevajalnika
 
-Dostopajte prek **Nadzorna plošča → Prevajalnik**. Razhroščujte in vizualizirajte, kako OmniRoute prevaja zahteve API med ponudniki.
+Dostopajte prek **Nadzorna plošča → Prevajalnik**. Razhroščujte in vizualizirajte, kako AgentProxy prevaja zahteve API med ponudniki.
 
 | Način                       | Namen                                                                                                      |
 | --------------------------- | ---------------------------------------------------------------------------------------------------------- |
@@ -845,7 +845,7 @@ Za zunanjo pripadnost seji (na primer posredniki Claude Code/Codex za povratnimi
 X-Session-Id: your-session-key
 ```
 
-OmniRoute sprejme tudi `x_session_id` in vrne dejanski ključ seje v `X-OmniRoute-Session-Id`.
+AgentProxy sprejme tudi `x_session_id` in vrne dejanski ključ seje v `X-AgentProxy-Session-Id`.
 
 Če uporabljate Nginx in pošiljate glave s podčrtaji, omogočite:
 
@@ -881,7 +881,7 @@ Veriga: production-fallback
 
 Konfigurirajte prek **Nadzorna plošča → Nastavitve → Odpornost**.
 
-OmniRoute izvaja odpornost na ravni ponudnika s petimi komponentami:
+AgentProxy izvaja odpornost na ravni ponudnika s petimi komponentami:
 
 1. **Čakalna vrsta in uravnavanje zahtev** — Oblikovanje zahtev na ravni sistema:
    - **Zahteve na minuto (RPM)** — Največje število zahtev na minuto za posamezni račun
@@ -906,7 +906,7 @@ OmniRoute izvaja odpornost na ravni ponudnika s petimi komponentami:
 
    Izvajalno stanje odklopnika ponudnika je prikazano samo v razdelku **Nadzorna plošča → Zdravje**.
 
-4. **Čakanje na konec ohlajanja** — Če se vse možne povezave že ohlajajo, lahko OmniRoute počaka na najzgodnejši konec ohlajanja in samodejno ponovi isto zahtevo odjemalca.
+4. **Čakanje na konec ohlajanja** — Če se vse možne povezave že ohlajajo, lahko AgentProxy počaka na najzgodnejši konec ohlajanja in samodejno ponovi isto zahtevo odjemalca.
 
 5. **Samodejno zaznavanje omejitev hitrosti** — Ko ponudniki v zaledju vrnejo izrecna obdobja čakanja, ti namigi preglasijo lokalni čas ohlajanja povezave, če je nastavitev omogočena.
 
@@ -940,7 +940,7 @@ curl -X POST http://localhost:20128/api/db-backups/import \
 
 **Primeri uporabe:**
 
-- Preselite OmniRoute med računalniki
+- Preselite AgentProxy med računalniki
 - Ustvarite zunanje varnostne kopije za obnovitev po nesreči
 - Delite konfiguracije med člani ekipe (izvozite vse → delite arhiv)
 
@@ -992,7 +992,7 @@ curl http://localhost:20128/api/usage/budget
 
 ### Prepisovanje zvoka
 
-OmniRoute podpira prepisovanje zvoka prek končne točke, združljive z OpenAI:
+AgentProxy podpira prepisovanje zvoka prek končne točke, združljive z OpenAI:
 
 ```bash
 POST /v1/audio/transcriptions
@@ -1067,7 +1067,7 @@ Onemogočite **Medpomnilnik žetonov razmišljanja**, kadar ponudniki v zaledju 
 `max_tokens` / `maxOutputTokens`. Ko je omogočen, usmerjanje kombinacij doda dodaten prostor za modele sklepanja
 samo modelom z znano omejitvijo izhoda in pusti omejitev žetonov odjemalca nespremenjeno, kadar bi varna vrednost z medpomnilnikom
 presegla to omejitev. Če je omejitev odjemalca že nad znano zgornjo mejo,
-jo OmniRoute pred pošiljanjem zahteve v zaledje zmanjša na to mejo.
+jo AgentProxy pred pošiljanjem zahteve v zaledje zmanjša na to mejo.
 
 ---
 
@@ -1090,7 +1090,7 @@ Dostopajte prek **Nadzorna plošča → Zdravje**. Pregled zdravja sistema v rea
 
 ## 🤖 Samodejno usmerjanje (brez konfiguracije)
 
-OmniRoute vključuje **samodejni usmerjevalnik na podlagi ocen**, ki za vsako zahtevo izbere najboljši model med vsemi povezanimi ponudniki — brez vzdrževanja kombinacij. Zahtevo preprosto pošljite z eno od predpon `auto/*` in OmniRoute bo sproti sestavil navidezno kombinacijo ter kandidate ocenil glede na zakasnitev, stroške, stopnjo uspešnosti, ustreznost konteksta, primernost modela za nalogo, nedavne napake, kvoto in stanje odklopnika.
+AgentProxy vključuje **samodejni usmerjevalnik na podlagi ocen**, ki za vsako zahtevo izbere najboljši model med vsemi povezanimi ponudniki — brez vzdrževanja kombinacij. Zahtevo preprosto pošljite z eno od predpon `auto/*` in AgentProxy bo sproti sestavil navidezno kombinacijo ter kandidate ocenil glede na zakasnitev, stroške, stopnjo uspešnosti, ustreznost konteksta, primernost modela za nalogo, nedavne napake, kvoto in stanje odklopnika.
 
 | Predpona       | Optimizira za                                                                                   |
 | -------------- | ----------------------------------------------------------------------------------------------- |
@@ -1106,7 +1106,7 @@ Primer:
 
 ```bash
 curl -X POST http://localhost:20128/v1/chat/completions \
-  -H "Authorization: Bearer $OMNIROUTE_KEY" \
+  -H "Authorization: Bearer $AGENTPROXY_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "auto/coding",
@@ -1121,13 +1121,13 @@ Samodejni usmerjevalnik je v celoti opisan v dokumentu [AUTO-COMBO.md](../routin
 
 ## 🔌 Integracija MCP in A2A
 
-OmniRoute je hkrati **strežnik MCP** (Model Context Protocol) in **strežnik A2A** (Agent-to-Agent JSON-RPC 2.0). Vsako razvojno okolje ali gostitelj agenta, združljiv z MCP, lahko neposredno kliče orodja OmniRoute — dodatni ovoj ni potreben.
+AgentProxy je hkrati **strežnik MCP** (Model Context Protocol) in **strežnik A2A** (Agent-to-Agent JSON-RPC 2.0). Vsako razvojno okolje ali gostitelj agenta, združljiv z MCP, lahko neposredno kliče orodja AgentProxy — dodatni ovoj ni potreben.
 
 ### Prenosi MCP
 
 - **SSE**: `http://localhost:20128/api/mcp/sse`
 - **Pretočni HTTP**: `http://localhost:20128/api/mcp/stream`
-- **stdio**: `omniroute --mcp` (za vtičnike razvojnih okolij, ki dajejo prednost stdio)
+- **stdio**: `agentproxy --mcp` (za vtičnike razvojnih okolij, ki dajejo prednost stdio)
 
 ### Povezava z aplikacijo Claude Desktop
 
@@ -1136,8 +1136,8 @@ Uredite `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS
 ```json
 {
   "mcpServers": {
-    "omniroute": {
-      "command": "omniroute",
+    "agentproxy": {
+      "command": "agentproxy",
       "args": ["--mcp"]
     }
   }
@@ -1156,7 +1156,7 @@ MCP trenutno določa 32 poimenovanih obsegov. Vsak ključ Bearer je mogoče omej
 
 ## 🧠 Sistem veščin
 
-OmniRoute ponuja razširljivo **ogrodje veščin** (`src/lib/skills/`), ki agentom in končni točki A2A omogoča izvajanje domensko specifičnih postopkov (npr. `code-review`, `summarize`, `extract-facts`, `web-research`).
+AgentProxy ponuja razširljivo **ogrodje veščin** (`src/lib/skills/`), ki agentom in končni točki A2A omogoča izvajanje domensko specifičnih postopkov (npr. `code-review`, `summarize`, `extract-facts`, `web-research`).
 
 - **Tržnica** — Brskajte po veščinah in jih namestite prek **Nadzorna plošča → Veščine**
 - **Obsegi za posamezne ključe** — Omejite, kateri ključi API lahko prikličejo posamezne veščine
@@ -1168,7 +1168,7 @@ Celotna referenčna dokumentacija: [SKILLS.md](../frameworks/SKILLS.md).
 
 ## 💾 Sistem pomnilnika
 
-OmniRoute trajno shranjuje **dolgoročni pomnilnik pogovorov** s hibridnim pridobivanjem:
+AgentProxy trajno shranjuje **dolgoročni pomnilnik pogovorov** s hibridnim pridobivanjem:
 
 - **SQLite FTS5** za iskanje po ključnih besedah v preteklih izmenjavah
 - **Vektorska zbirka Qdrant** (izbirno) za semantični priklic
@@ -1181,11 +1181,11 @@ Pomnilnike upravljajte prek **Nadzorna plošča → Pomnilnik** (iskanje, urejan
 
 ## 🔔 Spletni kavlji
 
-Naročite se na dogodke OmniRoute za spremljanje in avtomatizacijo v realnem času.
+Naročite se na dogodke AgentProxy za spremljanje in avtomatizacijo v realnem času.
 
 - Ustvarite spletni kavelj prek **Nadzorna plošča → Spletni kavlji** ter določite ciljni URL in skrivnost za podpisovanje HMAC
 - Razpoložljivi dogodki: `request.completed`, `request.failed`, `provider.unavailable`, `budget.exceeded`, `combo.switched`, `circuit_breaker.opened`, `circuit_breaker.closed`
-- Vsaka koristna vsebina vključuje `X-OmniRoute-Signature` (HMAC-SHA256) za preverjanje
+- Vsaka koristna vsebina vključuje `X-AgentProxy-Signature` (HMAC-SHA256) za preverjanje
 - Ponovni poskusi: 3 poskusi z eksponentnim podaljševanjem premora, nato premik v čakalno vrsto neuspelih sporočil
 
 Celotna shema je na voljo v [WEBHOOKS.md](../frameworks/WEBHOOKS.md).
@@ -1194,11 +1194,11 @@ Celotna shema je na voljo v [WEBHOOKS.md](../frameworks/WEBHOOKS.md).
 
 ## ☁️ Agenti v oblaku
 
-OmniRoute se integrira z agenti za programiranje v oblaku (**OpenAI Codex Cloud**, **Devin**, **Jules**, **Antigravity**), zato lahko dolgotrajna opravila pošiljate z iste nadzorne plošče, s katero upravljate lokalno usmerjanje.
+AgentProxy se integrira z agenti za programiranje v oblaku (**OpenAI Codex Cloud**, **Devin**, **Jules**, **Antigravity**), zato lahko dolgotrajna opravila pošiljate z iste nadzorne plošče, s katero upravljate lokalno usmerjanje.
 
 - Ustvarite opravila prek **Nadzorna plošča → Agenti v oblaku** ali z `POST /api/v1/agents/tasks`
 - Spremljajte stanje, dnevnike in artefakte posameznega opravila
-- Uporabite lasten ključ API za vsakega ponudnika — poverilnice nikoli ne zapustijo primerka OmniRoute
+- Uporabite lasten ključ API za vsakega ponudnika — poverilnice nikoli ne zapustijo primerka AgentProxy
 
 Celotna referenčna dokumentacija: [CLOUD_AGENT.md](../frameworks/CLOUD_AGENT.md).
 
@@ -1206,30 +1206,30 @@ Celotna referenčna dokumentacija: [CLOUD_AGENT.md](../frameworks/CLOUD_AGENT.md
 
 ## 🛠️ Programsko upravljanje
 
-Vsak vir OmniRoute (ponudnike, kombinacije, ključe in nastavitve) lahko upravljate prek HTTP-ja s **ključem Bearer z obsegom `manage`**.
+Vsak vir AgentProxy (ponudnike, kombinacije, ključe in nastavitve) lahko upravljate prek HTTP-ja s **ključem Bearer z obsegom `manage`**.
 
 Ustvarite ključ prek **Nadzorna plošča → Ključi API → Nov ključ → Obseg: manage**, nato:
 
 ```bash
 # Prikaži ponudnike
 curl http://localhost:20128/api/providers \
-  -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY"
+  -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY"
 
 # Dodaj povezavo s ponudnikom
 curl -X POST http://localhost:20128/api/providers \
-  -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY" \
+  -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY" \
   -H "Content-Type: application/json" \
   -d '{ "provider": "openai", "apiKey": "sk-...", "name": "main" }'
 
 # Ustvari kombinacijo
 curl -X POST http://localhost:20128/api/combos \
-  -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY" \
+  -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY" \
   -H "Content-Type: application/json" \
   -d '{ "name": "premium", "strategy": "priority", "models": [{ "model": "cc/claude-opus-4-7" }, { "model": "glm/glm-5.1" }] }'
 
 # Prikaži/ustvari ključe API
-curl http://localhost:20128/api/keys -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY"
-curl -X POST http://localhost:20128/api/keys -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY" \
+curl http://localhost:20128/api/keys -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY"
+curl -X POST http://localhost:20128/api/keys -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY" \
   -d '{ "name": "ci-bot", "scopes": ["chat"] }'
 ```
 
@@ -1239,38 +1239,38 @@ Celoten katalog končnih točk ter sheme zahtev in odgovorov so na voljo v [API_
 
 ## 💻 Interni CLI
 
-OmniRoute vključuje interni CLI (`omniroute …`) za nastavitev, diagnostiko in nadzor izvajanja. Ta je **ločen od strani »Orodja CLI« na nadzorni plošči**, kjer konfigurirate CLI-je drugih ponudnikov (Claude Code, Cursor, Codex, Cline, …), da lahko komunicirajo z OmniRoute.
+AgentProxy vključuje interni CLI (`agentproxy …`) za nastavitev, diagnostiko in nadzor izvajanja. Ta je **ločen od strani »Orodja CLI« na nadzorni plošči**, kjer konfigurirate CLI-je drugih ponudnikov (Claude Code, Cursor, Codex, Cline, …), da lahko komunicirajo z AgentProxy.
 
 ```bash
-omniroute setup                    # Interaktivni čarovnik (geslo, ponudniki, kombinacije)
-omniroute setup --non-interactive  # Primerno za CI
-omniroute doctor                   # Diagnostika stanja (podatkovna mapa, zbirka podatkov, ponudniki, vrata)
-omniroute providers available      # Prikaži podprte ponudnike
-omniroute providers list           # Prikaži konfigurirane povezave
-omniroute providers test <id>      # Preizkusi povezavo s ponudnikom v živo
-omniroute combos list              # Prikaži kombinacije
-omniroute combos switch <name>     # Nastavi privzeto kombinacijo
-omniroute models                   # Prikaži razpoložljive modele (--json, --search)
-omniroute keys add | list | remove # Upravljaj ključe API iz terminala
-omniroute backup                   # Ustvari posnetek konfiguracije in zbirke podatkov
-omniroute restore [<timestamp>]    # Obnovi iz posnetka
-omniroute health                   # Podrobno stanje (odklopniki, predpomnilnik, pomnilnik)
-omniroute quota                    # Poraba kvote ponudnika
-omniroute mcp status               # Stanje strežnika MCP
-omniroute a2a status               # Stanje strežnika A2A
-omniroute tunnel list|create|stop  # Predori Cloudflare/Tailscale/ngrok
-omniroute reset-password           # Ponastavi skrbniško geslo
-omniroute --mcp                    # Zaženi strežnik MCP prek stdio
-omniroute --port 3000              # Zaženi strežnik na vratih po meri
+agentproxy setup                    # Interaktivni čarovnik (geslo, ponudniki, kombinacije)
+agentproxy setup --non-interactive  # Primerno za CI
+agentproxy doctor                   # Diagnostika stanja (podatkovna mapa, zbirka podatkov, ponudniki, vrata)
+agentproxy providers available      # Prikaži podprte ponudnike
+agentproxy providers list           # Prikaži konfigurirane povezave
+agentproxy providers test <id>      # Preizkusi povezavo s ponudnikom v živo
+agentproxy combos list              # Prikaži kombinacije
+agentproxy combos switch <name>     # Nastavi privzeto kombinacijo
+agentproxy models                   # Prikaži razpoložljive modele (--json, --search)
+agentproxy keys add | list | remove # Upravljaj ključe API iz terminala
+agentproxy backup                   # Ustvari posnetek konfiguracije in zbirke podatkov
+agentproxy restore [<timestamp>]    # Obnovi iz posnetka
+agentproxy health                   # Podrobno stanje (odklopniki, predpomnilnik, pomnilnik)
+agentproxy quota                    # Poraba kvote ponudnika
+agentproxy mcp status               # Stanje strežnika MCP
+agentproxy a2a status               # Stanje strežnika A2A
+agentproxy tunnel list|create|stop  # Predori Cloudflare/Tailscale/ngrok
+agentproxy reset-password           # Ponastavi skrbniško geslo
+agentproxy --mcp                    # Zaženi strežnik MCP prek stdio
+agentproxy --port 3000              # Zaženi strežnik na vratih po meri
 ```
 
-Namig: povežite `omniroute doctor --json` s svojim orodjem za spremljanje, da vas opozori na nedelujoče povezave s ponudniki.
+Namig: povežite `agentproxy doctor --json` s svojim orodjem za spremljanje, da vas opozori na nedelujoče povezave s ponudniki.
 
 ---
 
 ## 🖥️ Namizna aplikacija (Electron)
 
-OmniRoute je na voljo kot izvorna namizna aplikacija za Windows, macOS in Linux.
+AgentProxy je na voljo kot izvorna namizna aplikacija za Windows, macOS in Linux.
 
 ### Namestitev
 
@@ -1313,7 +1313,7 @@ Izhod → `electron/dist-electron/`
 
 | Spremenljivka         | Privzeto | Opis                                  |
 | --------------------- | -------- | ------------------------------------- |
-| `OMNIROUTE_PORT`      | `20128`  | Vrata strežnika                       |
-| `OMNIROUTE_MEMORY_MB` | `512`    | Omejitev kopice Node.js (64–16384 MB) |
+| `AGENTPROXY_PORT`      | `20128`  | Vrata strežnika                       |
+| `AGENTPROXY_MEMORY_MB` | `512`    | Omejitev kopice Node.js (64–16384 MB) |
 
 📖 Celotna dokumentacija: [`electron/README.md`](../../electron/README.md)

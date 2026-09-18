@@ -14,8 +14,8 @@ import {
   isClaudeCodeCompatibleProvider,
   isOpenAICompatibleProvider,
 } from "@/shared/constants/providers";
-import type { RegistryModel } from "@omniroute/open-sse/config/providerRegistry.ts";
-import { appendSyncedEffortVariants } from "@omniroute/open-sse/utils/syncedEffortVariants";
+import type { RegistryModel } from "@agentproxy/open-sse/config/providerRegistry.ts";
+import { appendSyncedEffortVariants } from "@agentproxy/open-sse/utils/syncedEffortVariants";
 
 type JsonRecord = Record<string, unknown>;
 

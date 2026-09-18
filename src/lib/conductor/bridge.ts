@@ -3,7 +3,7 @@
  *
  * The hub's SSE feed is the source of truth; this mirror is disposable and fully
  * rebuildable by replay (`last_event_id`). State spelling differs on purpose:
- * the Conductor follows A2A upstream with `canceled` (1 L) while OmniRoute's
+ * the Conductor follows A2A upstream with `canceled` (1 L) while AgentProxy's
  * TaskManager uses `cancelled` (2 L) — the mapping here is explicit and tested.
  */
 

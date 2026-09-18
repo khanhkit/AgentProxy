@@ -1,5 +1,5 @@
 /**
- * Regression test for #6911: OMNIROUTE_QUOTA_FETCH_MIN_INTERVAL_MS was only
+ * Regression test for #6911: AGENTPROXY_QUOTA_FETCH_MIN_INTERVAL_MS was only
  * wired into codexQuotaFetcher.ts even though quotaFetchThrottle.ts documents
  * itself as "used by the provider quota fetchers" (plural). This asserts the
  * shared throttle is now honored by fetchDeepseekQuota, fetchBailianQuota
@@ -16,19 +16,19 @@ import { fetchCrofUsage, invalidateCrofUsageCache } from "../../open-sse/service
 import { resetQuotaFetchThrottle } from "../../open-sse/services/quotaFetchThrottle.ts";
 
 const originalFetch = globalThis.fetch;
-const originalEnv = process.env.OMNIROUTE_QUOTA_FETCH_MIN_INTERVAL_MS;
+const originalEnv = process.env.AGENTPROXY_QUOTA_FETCH_MIN_INTERVAL_MS;
 
 test.beforeEach(() => {
-  process.env.OMNIROUTE_QUOTA_FETCH_MIN_INTERVAL_MS = "200";
+  process.env.AGENTPROXY_QUOTA_FETCH_MIN_INTERVAL_MS = "200";
   resetQuotaFetchThrottle();
 });
 
 test.afterEach(() => {
   globalThis.fetch = originalFetch;
   if (originalEnv === undefined) {
-    delete process.env.OMNIROUTE_QUOTA_FETCH_MIN_INTERVAL_MS;
+    delete process.env.AGENTPROXY_QUOTA_FETCH_MIN_INTERVAL_MS;
   } else {
-    process.env.OMNIROUTE_QUOTA_FETCH_MIN_INTERVAL_MS = originalEnv;
+    process.env.AGENTPROXY_QUOTA_FETCH_MIN_INTERVAL_MS = originalEnv;
   }
   resetQuotaFetchThrottle();
 });

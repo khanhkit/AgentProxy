@@ -6,7 +6,7 @@ lastUpdated: 2026-07-25
 
 # Konfiguracja headless w Termux
 
-OmniRoute może działać jako serwer headless na Androidzie przez Termux. Aplikacja desktopowa Electron nie jest obsługiwana w Termux, ale webowy dashboard oraz API zgodne z OpenAI działają z lokalnej przeglądarki lub z innych urządzeń w tej samej sieci.
+AgentProxy może działać jako serwer headless na Androidzie przez Termux. Aplikacja desktopowa Electron nie jest obsługiwana w Termux, ale webowy dashboard oraz API zgodne z OpenAI działają z lokalnej przeglądarki lub z innych urządzeń w tej samej sieci.
 
 ## Wymagania wstępne
 
@@ -18,37 +18,37 @@ pkg upgrade
 pkg install nodejs python build-essential git
 ```
 
-> **Wersja Node.js:** OmniRoute wymaga Node `>=22.22.2 <23 || >=24.0.0 <27` (zgodnie z `engines` w `package.json` / `SUPPORTED_NODE_RANGE`). Pakiet `nodejs-lts` w Termux zwykle dostarcza Node 20 LTS, który **nie jest już wspierany** — zamiast tego zainstaluj `pkg install nodejs` (current) i sprawdź, czy `node --version` zgłasza linię 22.x/24.x+.
+> **Wersja Node.js:** AgentProxy wymaga Node `>=22.22.2 <23 || >=24.0.0 <27` (zgodnie z `engines` w `package.json` / `SUPPORTED_NODE_RANGE`). Pakiet `nodejs-lts` w Termux zwykle dostarcza Node 20 LTS, który **nie jest już wspierany** — zamiast tego zainstaluj `pkg install nodejs` (current) i sprawdź, czy `node --version` zgłasza linię 22.x/24.x+.
 
-Jeśli kompilacja natywnego pakietu się nie powiedzie, ponów powyższe polecenie `pkg install`, a następnie spróbuj ponownie zainstalować OmniRoute.
+Jeśli kompilacja natywnego pakietu się nie powiedzie, ponów powyższe polecenie `pkg install`, a następnie spróbuj ponownie zainstalować AgentProxy.
 
 ## Instalacja
 
 Uruchom najnowszy opublikowany pakiet bezpośrednio:
 
 ```bash
-npx -y omniroute@latest
+npx -y agentproxy@latest
 ```
 
 Możesz też zainstalować go globalnie:
 
 ```bash
-npm install -g omniroute
-omniroute
+npm install -g agentproxy
+agentproxy
 ```
 
 ## Uruchomienie
 
-Uruchom OmniRoute w trybie serwera headless:
+Uruchom AgentProxy w trybie serwera headless:
 
 ```bash
-omniroute
+agentproxy
 ```
 
 lub:
 
 ```bash
-npx omniroute
+npx agentproxy
 ```
 
 Dashboard nasłuchuje pod adresem:
@@ -64,25 +64,25 @@ Otwórz ten URL w przeglądarce Androida. Jeśli uruchamiasz klientów wewnątrz
 Dla prostego procesu w tle:
 
 ```bash
-nohup omniroute > omniroute.log 2>&1 &
+nohup agentproxy > agentproxy.log 2>&1 &
 ```
 
 Aby go zatrzymać:
 
 ```bash
-pkill -f omniroute
+pkill -f agentproxy
 ```
 
 Dla automatycznego startu po uruchomieniu urządzenia zainstaluj dodatek Termux:Boot i utwórz skrypt startowy:
 
 ```bash
 mkdir -p ~/.termux/boot
-cat > ~/.termux/boot/omniroute.sh <<'EOF'
+cat > ~/.termux/boot/agentproxy.sh <<'EOF'
 #!/data/data/com.termux/files/usr/bin/sh
 cd "$HOME"
-nohup omniroute > "$HOME/omniroute.log" 2>&1 &
+nohup agentproxy > "$HOME/agentproxy.log" 2>&1 &
 EOF
-chmod +x ~/.termux/boot/omniroute.sh
+chmod +x ~/.termux/boot/agentproxy.sh
 ```
 
 Optymalizacja baterii w Androidzie może zatrzymać długo działające procesy w tle. Wyłącz optymalizację baterii dla Termux, jeśli serwer ma pozostać online.
@@ -107,15 +107,15 @@ Na przykład:
 http://192.168.1.50:20128
 ```
 
-Trzymaj telefon i klienta w tej samej zaufanej sieci. Jeśli udostępniasz OmniRoute poza telefonem, włącz klucze API oraz uwierzytelnianie dashboardu.
+Trzymaj telefon i klienta w tej samej zaufanej sieci. Jeśli udostępniasz AgentProxy poza telefonem, włącz klucze API oraz uwierzytelnianie dashboardu.
 
 ## Katalog danych
 
-Domyślnie OmniRoute przechowuje dane w katalogu domowym Termux, zgodnie z tą samą ścieżką danych po stronie serwera co na Linuxie. Aby umieścić bazę w konkretnej lokalizacji:
+Domyślnie AgentProxy przechowuje dane w katalogu domowym Termux, zgodnie z tą samą ścieżką danych po stronie serwera co na Linuxie. Aby umieścić bazę w konkretnej lokalizacji:
 
 ```bash
-export DATA_DIR="$HOME/.omniroute"
-omniroute
+export DATA_DIR="$HOME/.agentproxy"
+agentproxy
 ```
 
 ## Ograniczenia
@@ -131,7 +131,7 @@ omniroute
 
 ### Unsupported platform: android (każde żądanie zwraca HTTP 500)
 
-**Objaw:** `omniroute` / `omniroute serve` wypisuje `✔ OmniRoute is running!`, ale każde żądanie do dashboardu lub API zwraca goły `500 Internal Server Error`. Plik `~/.omniroute/logs/application/app.log` pozostaje pusty, `APP_LOG_LEVEL=debug` nic sensownego nie wypisuje, a ciało odpowiedzi to zwykły tekst (`Internal Server Error`) bez szczegółów JSON.
+**Objaw:** `agentproxy` / `agentproxy serve` wypisuje `✔ AgentProxy is running!`, ale każde żądanie do dashboardu lub API zwraca goły `500 Internal Server Error`. Plik `~/.agentproxy/logs/application/app.log` pozostaje pusty, `APP_LOG_LEVEL=debug` nic sensownego nie wypisuje, a ciało odpowiedzi to zwykły tekst (`Internal Server Error`) bez szczegółów JSON.
 
 **Przyczyna:** Niektóre buildy Termux/Node zgłaszają `process.platform === "android"`. Next.js `getCacheDirectory()` nie obsługuje tej platformy: wymaga, aby `~/.cache` (lub generyczny katalog tmp) _już_ istniał, w przeciwnym razie kończy się błędem podczas ładowania instrumentation hooka z komunikatem:
 
@@ -139,16 +139,16 @@ omniroute
 Error: An error occurred while loading instrumentation hook: Unsupported platform: android
 ```
 
-Ponieważ hook się nie ładuje, logowanie nigdy się nie uruchamia — błąd 500 wygląda na całkowicie niemożliwy do zdiagnozowania. OmniRoute tworzy `~/.cache` (i ustawia `XDG_CACHE_HOME`, gdy nie jest ustawione) w punkcie wejścia CLI przed startem Next.js, aby ta sonda zakończyła się powodzeniem na Androidzie/Termux.
+Ponieważ hook się nie ładuje, logowanie nigdy się nie uruchamia — błąd 500 wygląda na całkowicie niemożliwy do zdiagnozowania. AgentProxy tworzy `~/.cache` (i ustawia `XDG_CACHE_HOME`, gdy nie jest ustawione) w punkcie wejścia CLI przed startem Next.js, aby ta sonda zakończyła się powodzeniem na Androidzie/Termux.
 
 **Obsługiwane rozwiązanie (bez łatania pakietu):**
 
 ```bash
 mkdir -p ~/.cache
-omniroute serve
+agentproxy serve
 ```
 
-W aktualnych buildach OmniRoute CLI robi to automatycznie na Androidzie/Termux — świeża instalacja `npx -y omniroute@latest` / globalna nie powinna wymagać kroku ręcznego. Jeśli po aktualizacji nadal widzisz błąd, utwórz raz `~/.cache` jak wyżej i zrestartuj.
+W aktualnych buildach AgentProxy CLI robi to automatycznie na Androidzie/Termux — świeża instalacja `npx -y agentproxy@latest` / globalna nie powinna wymagać kroku ręcznego. Jeśli po aktualizacji nadal widzisz błąd, utwórz raz `~/.cache` jak wyżej i zrestartuj.
 
 **Nie** łataj `dist/server.js`, aby wymusić `process.platform = "linux"`. Tego typu łatka pakietu jest nadpisywana przy każdej reinstalacji/aktualizacji i jest zbędna, gdy katalog cache już istnieje.
 
@@ -163,7 +163,7 @@ pkg install nodejs python build-essential
 Następnie uruchom ponownie:
 
 ```bash
-npx -y omniroute@latest
+npx -y agentproxy@latest
 ```
 
 ### Port już zajęty
@@ -177,7 +177,7 @@ ss -ltnp | grep 20128
 Zatrzymaj stary proces:
 
 ```bash
-pkill -f omniroute
+pkill -f agentproxy
 ```
 
 ### Dashboard niedostępny z innego urządzenia

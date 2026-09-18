@@ -4,7 +4,7 @@ import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-process.env.DATA_DIR = mkdtempSync(join(tmpdir(), "omniroute-search-named-errors-"));
+process.env.DATA_DIR = mkdtempSync(join(tmpdir(), "agentproxy-search-named-errors-"));
 
 const { handleSearch } = await import("../../open-sse/handlers/search.ts");
 const { formatSearchProviderFailure } = await import(

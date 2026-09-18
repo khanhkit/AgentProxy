@@ -39,7 +39,7 @@ test("buildClineHeaders emits the full cline client header set", () => {
   assert.equal(headers.Authorization, "Bearer workos:abc123");
   assert.equal(headers["HTTP-Referer"], "https://cline.bot");
   assert.equal(headers["X-Title"], "Cline");
-  assert.equal(headers["X-CLIENT-TYPE"], "omniroute");
+  assert.equal(headers["X-CLIENT-TYPE"], "agentproxy");
   assert.equal(headers["X-Task-ID"], "task-123");
   assert.equal(headers["X-IS-MULTIROOT"], "false");
   assert.ok(/^Cline\//.test(headers["User-Agent"]));
@@ -56,7 +56,7 @@ test("buildClineHeaders merges extra headers and omits Authorization with no tok
   assert.ok(!("X-Task-ID" in headers));
   assert.ok(!("x-task-id" in headers));
   // Client-identification headers are still present even without a token.
-  assert.equal(headers["X-CLIENT-TYPE"], "omniroute");
+  assert.equal(headers["X-CLIENT-TYPE"], "agentproxy");
 });
 
 test("resolveClineTaskId forwards client task identity but does not invent one", () => {
@@ -76,7 +76,7 @@ test("required Cline protocol headers override conflicting configured casing", (
   );
 
   assert.equal(headers["User-Agent"], "Cline/3.8.49");
-  assert.equal(headers["X-CLIENT-TYPE"], "omniroute");
+  assert.equal(headers["X-CLIENT-TYPE"], "agentproxy");
   assert.equal(headers["X-Task-ID"], "request-task");
   assert.ok(!("user-agent" in headers));
   assert.ok(!("x-client-type" in headers));
@@ -89,21 +89,21 @@ test("ClinePass BYOK and OAuth auth modes both carry the full protocol headers",
   });
   assert.equal(byok.Authorization, "Bearer sk-pass");
   assert.equal(byok["X-Task-ID"], "task-byok");
-  assert.equal(byok["X-CLIENT-TYPE"], "omniroute");
+  assert.equal(byok["X-CLIENT-TYPE"], "agentproxy");
 
   const oauth = buildClinepassHeaders({ accessToken: "oauth-token" }, undefined, {
     taskId: "task-oauth",
   });
   assert.equal(oauth.Authorization, "Bearer workos:oauth-token");
   assert.equal(oauth["X-Task-ID"], "task-oauth");
-  assert.equal(oauth["X-CLIENT-TYPE"], "omniroute");
+  assert.equal(oauth["X-CLIENT-TYPE"], "agentproxy");
 });
 
 test("buildProviderHeaders uses the cline workos auth token shape", () => {
   const headers = buildProviderHeaders("cline", { apiKey: "tok-abc" }, true);
   assert.equal(headers.Authorization, "Bearer workos:tok-abc");
   assert.equal(headers["HTTP-Referer"], "https://cline.bot");
-  assert.equal(headers["X-CLIENT-TYPE"], "omniroute");
+  assert.equal(headers["X-CLIENT-TYPE"], "agentproxy");
 });
 
 test("buildProviderHeaders honors an accessToken for cline", () => {
@@ -118,7 +118,7 @@ test("DefaultExecutor.buildHeaders uses the cline workos auth token shape", () =
   });
   assert.equal(headers.Authorization, "Bearer workos:tok-abc");
   assert.equal(headers["HTTP-Referer"], "https://cline.bot");
-  assert.equal(headers["X-CLIENT-TYPE"], "omniroute");
+  assert.equal(headers["X-CLIENT-TYPE"], "agentproxy");
   assert.equal(headers["X-Title"], "Cline");
   assert.equal(headers["X-Task-ID"], "task-from-client");
 
@@ -132,9 +132,9 @@ test("DefaultExecutor labels internal health checks separately from user traffic
     "X-Internal-Test": "combo-health-check",
   });
 
-  assert.equal(headers["X-CLIENT-TYPE"], "omniroute-internal-health-check");
+  assert.equal(headers["X-CLIENT-TYPE"], "agentproxy-internal-health-check");
 
   // BaseExecutor reapplies the required protocol headers immediately before dispatch.
   applyClineProtocolHeaders(headers, { taskId: headers["X-Task-ID"] });
-  assert.equal(headers["X-CLIENT-TYPE"], "omniroute-internal-health-check");
+  assert.equal(headers["X-CLIENT-TYPE"], "agentproxy-internal-health-check");
 });

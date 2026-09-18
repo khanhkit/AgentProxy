@@ -11,7 +11,7 @@ import ProviderIcon from "@/shared/components/ProviderIcon";
 import type { ToolBatchStatus } from "@/shared/types/cliBatchStatus";
 
 const SETTINGS_ENDPOINT = "/api/cli-tools/grok-build-settings";
-const PRESETS_KEY = "omniroute.grokBuildEndpointPresets";
+const PRESETS_KEY = "agentproxy.grokBuildEndpointPresets";
 const CUSTOM_ENDPOINT = "__custom__";
 const SUBAGENTS = ["general-purpose", "explore", "plan"] as const;
 
@@ -30,7 +30,7 @@ type GrokModelStatus = {
 type GrokStatus = {
   installed?: boolean;
   runnable?: boolean;
-  hasOmniRoute?: boolean;
+  hasAgentProxy?: boolean;
   apiKeyConfigured?: boolean;
   configPath?: string;
   config?: {
@@ -245,17 +245,17 @@ export default function GrokBuildToolCard({
       200000;
     const mainModel = model || "provider/model-id";
     const blocks = [
-      `[models]\ndefault = "omniroute"`,
-      `[model.omniroute]\nmodel = "${mainModel}"\nbase_url = "${baseUrl || "http://127.0.0.1:<API_PORT>/v1"}"\nname = "OmniRoute"\ndescription = "Routed via OmniRoute gateway"\napi_backend = "chat_completions"\napi_key = "<API_KEY_FROM_DASHBOARD>"\ncontext_window = ${contextWindowFor(mainModel)}`,
+      `[models]\ndefault = "agentproxy"`,
+      `[model.agentproxy]\nmodel = "${mainModel}"\nbase_url = "${baseUrl || "http://127.0.0.1:<API_PORT>/v1"}"\nname = "AgentProxy"\ndescription = "Routed via AgentProxy gateway"\napi_backend = "chat_completions"\napi_key = "<API_KEY_FROM_DASHBOARD>"\ncontext_window = ${contextWindowFor(mainModel)}`,
     ];
     const mappings: string[] = [];
     for (const type of SUBAGENTS) {
       const selected = subagentModels[type]?.trim();
       if (!selected) continue;
-      const slot = `omniroute-${type}`;
+      const slot = `agentproxy-${type}`;
       mappings.push(`${type} = "${slot}"`);
       blocks.push(
-        `[model.${slot}]\nmodel = "${selected}"\nbase_url = "${baseUrl || "http://127.0.0.1:<API_PORT>/v1"}"\nname = "OmniRoute ${type}"\ndescription = "Routed via OmniRoute gateway"\napi_backend = "chat_completions"\napi_key = "<API_KEY_FROM_DASHBOARD>"\ncontext_window = ${contextWindowFor(selected)}`
+        `[model.${slot}]\nmodel = "${selected}"\nbase_url = "${baseUrl || "http://127.0.0.1:<API_PORT>/v1"}"\nname = "AgentProxy ${type}"\ndescription = "Routed via AgentProxy gateway"\napi_backend = "chat_completions"\napi_key = "<API_KEY_FROM_DASHBOARD>"\ncontext_window = ${contextWindowFor(selected)}`
       );
     }
     if (mappings.length) blocks.splice(1, 0, `[subagents.models]\n${mappings.join("\n")}`);
@@ -348,7 +348,7 @@ export default function GrokBuildToolCard({
     }
   };
 
-  const configured = Boolean(status?.hasOmniRoute);
+  const configured = Boolean(status?.hasAgentProxy);
   const cliReady = Boolean(status?.installed && status?.runnable);
   const effectiveConfigStatus = status
     ? cliReady
@@ -476,7 +476,7 @@ export default function GrokBuildToolCard({
               value={effectiveKeyId}
               onChange={(event) => setSelectedKeyId(event.target.value)}
             >
-              <option value="">Use the OmniRoute default key</option>
+              <option value="">Use the AgentProxy default key</option>
               {apiKeys.map((key) => (
                 <option key={key.id} value={key.id}>
                   {key.key || key.name || key.id}

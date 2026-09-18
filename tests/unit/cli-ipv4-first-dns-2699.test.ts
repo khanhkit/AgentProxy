@@ -50,7 +50,7 @@ test("ServerSupervisor starts Node with IPv4-first DNS", async () => {
   };
   syncBuiltinESMExports();
 
-  const dataDir = mkdtempSync(join(tmpdir(), "omniroute-ipv4-first-"));
+  const dataDir = mkdtempSync(join(tmpdir(), "agentproxy-ipv4-first-"));
   const previousDataDir = process.env.DATA_DIR;
   process.env.DATA_DIR = dataDir;
   // The supervisor reads process.env (not its own `env`) to decide whether an

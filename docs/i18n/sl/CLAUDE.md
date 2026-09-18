@@ -55,7 +55,7 @@ Te artefakte vključite v objavo znotraj repozitorija `_tasks/` (`git -C _tasks 
 
 Ta projekt preglasi privzeto začasno delovno mesto seje izvajalnega okolja (`/tmp/claude-*/…`). Začasne/delovne
 datoteke — izvoze, ustvarjene datoteke zip, enkratne vmesne izhode in vse, kar bi
-sicer shranili v `/tmp` — namesto tega zapisujte v `/home/diegosouzapw/dev/proxys/OmniRoute/_artifacts/`.
+sicer shranili v `/tmp` — namesto tega zapisujte v `/home/diegosouzapw/dev/proxys/AgentProxy/_artifacts/`.
 
 - `_artifacts/` je korenska pot `_*`: git jo že prezre (`AGENTS.md` → »Korenske poti `_*`«), obstaja
   samo na disku in se nikoli ne sledi.

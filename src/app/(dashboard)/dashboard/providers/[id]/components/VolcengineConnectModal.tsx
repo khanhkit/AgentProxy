@@ -53,7 +53,7 @@ interface SessionView {
   };
 }
 
-const PHONE_STORAGE_KEY = "omniroute.volcengine.phone";
+const PHONE_STORAGE_KEY = "agentproxy.volcengine.phone";
 const TERMINAL_PHASES: SessionPhase[] = [
   "success",
   "error",
@@ -388,7 +388,7 @@ export default function VolcengineConnectModal({
               {providerText(
                 t,
                 "volcAutoLoginDesc",
-                "Enter your phone number. OmniRoute sends a verification code via the Volcano Engine console and extracts the session cookies automatically — no browser interaction needed."
+                "Enter your phone number. AgentProxy sends a verification code via the Volcano Engine console and extracts the session cookies automatically — no browser interaction needed."
               )}
             </p>
             <Input

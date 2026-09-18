@@ -12,7 +12,7 @@ import {
 // surfaced its explanation as one long English sentence rendered in the generic
 // red "Connection failed" step — the operator had to parse prose to work out
 // that BOTH the dashboard port AND the provider's fixed callback port have to be
-// forwarded, and the command shipped with `<port>`/`<omniroute-host>` placeholders
+// forwarded, and the command shipped with `<port>`/`<agentproxy-host>` placeholders
 // they had to resolve by hand.
 //
 // buildPkceLoopbackMismatchHint() returns the same diagnosis as STRUCTURED data

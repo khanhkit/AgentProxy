@@ -4,7 +4,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-probe-testall-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-probe-testall-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../src/lib/db/core.ts");
@@ -13,7 +13,7 @@ const { runSingleModelTest } = await import("../../src/lib/api/modelTestRunner.t
 const { resetAllCircuitBreakers } = await import("../../src/shared/utils/circuitBreaker.ts");
 const { invalidateDbCache } = await import("../../src/lib/db/readCache.ts");
 const { refreshConnectionRateLimits, enableRateLimitProtection } =
-  await import("@omniroute/open-sse/services/rateLimitManager.ts");
+  await import("@agentproxy/open-sse/services/rateLimitManager.ts");
 
 const originalFetch = globalThis.fetch;
 

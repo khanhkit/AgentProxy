@@ -6,7 +6,7 @@ import test from "node:test";
 
 import { registerComboRepositoryConformance } from "../../../helpers/persistence/comboRepositoryConformance.ts";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-repository-contract-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-repository-contract-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../../../src/lib/db/core.ts");

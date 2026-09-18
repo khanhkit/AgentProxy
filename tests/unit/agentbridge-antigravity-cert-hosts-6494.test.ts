@@ -30,8 +30,8 @@ test("ANTIGRAVITY_TARGET.hosts covers all 4 known antigravity/cloudcode-pa hosts
 });
 
 test("generateCert() issues a cert whose SAN list covers all 4 antigravity hosts", async (t) => {
-  // Isolate DATA_DIR so this test never touches (or reuses) a real ~/.omniroute cert.
-  const tmpDataDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-mitm-cert-6494-"));
+  // Isolate DATA_DIR so this test never touches (or reuses) a real ~/.agentproxy cert.
+  const tmpDataDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-mitm-cert-6494-"));
   const previousDataDir = process.env.DATA_DIR;
   process.env.DATA_DIR = tmpDataDir;
 

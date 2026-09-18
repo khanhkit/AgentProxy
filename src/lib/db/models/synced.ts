@@ -1,4 +1,4 @@
-import { isRetiredGitHubCopilotModelId } from "@omniroute/open-sse/config/providers/registry/github/retiredModels.ts";
+import { isRetiredGitHubCopilotModelId } from "@agentproxy/open-sse/config/providers/registry/github/retiredModels.ts";
 
 import { asRecord, toNonEmptyString } from "./shared";
 

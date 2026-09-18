@@ -11,11 +11,11 @@ import { isValidationFailure, validateBody } from "@/shared/validation/helpers";
 import { cliAuthOnlyConfigSchema } from "@/shared/validation/schemas/cli";
 import { getOmpCredentials, saveOmpCredentials, deleteOmpCredentials } from "@/lib/db/omp";
 import { requireCliToolsAuth } from "@/lib/api/requireCliToolsAuth";
-import { sanitizeErrorMessage } from "@omniroute/open-sse/utils/error";
+import { sanitizeErrorMessage } from "@agentproxy/open-sse/utils/error";
 
 const execAsync = promisify(exec);
 
-const PROVIDER_ID = "omniroute";
+const PROVIDER_ID = "agentproxy";
 
 const getOmpDir = () => path.join(os.homedir(), ".omp", "agent");
 const getOmpDbPath = () => path.join(getOmpDir(), "agent.db");
@@ -82,7 +82,7 @@ export async function GET(request: Request) {
           },
         },
       },
-      hasOmniRoute: !!(ymlProvider || creds.hasOmniRoute),
+      hasAgentProxy: !!(ymlProvider || creds.hasAgentProxy),
       configPath: getOmpModelsYmlPath(),
     });
   } catch (error) {
@@ -111,7 +111,7 @@ export async function POST(request: Request) {
     const { baseUrl, apiKey } = validation.data;
 
     const normalizedBaseUrl = baseUrl.endsWith("/v1") ? baseUrl : `${baseUrl}/v1`;
-    const keyRef = apiKey || "sk_omniroute";
+    const keyRef = apiKey || "sk_agentproxy";
 
     await fs.mkdir(getOmpDir(), { recursive: true });
 
@@ -130,13 +130,13 @@ export async function POST(request: Request) {
 
     await fs.writeFile(getOmpModelsYmlPath(), yamlDump(modelsYml, { lineWidth: -1 }), "utf-8");
 
-    // 2. Write auth_credentials — so omp sees omniroute as "logged in"
+    // 2. Write auth_credentials — so omp sees agentproxy as "logged in"
     saveOmpCredentials(PROVIDER_ID, keyRef, normalizedBaseUrl);
 
     return NextResponse.json({
       success: true,
       message:
-        "Oh My Pi settings applied! Run omp and all OmniRoute models appear under omniroute in /model.",
+        "Oh My Pi settings applied! Run omp and all AgentProxy models appear under agentproxy in /model.",
       configPath: getOmpModelsYmlPath(),
     });
   } catch (error) {
@@ -169,7 +169,7 @@ export async function DELETE(request: Request) {
 
     return NextResponse.json({
       success: true,
-      message: "OmniRoute removed from Oh My Pi",
+      message: "AgentProxy removed from Oh My Pi",
     });
   } catch (error) {
     return NextResponse.json(

@@ -42,7 +42,7 @@ export function isClientAbortError(err) {
   const e = /** @type {NodeJS.ErrnoException} */ (err);
   // Node emits `Error: aborted` (no code) from http.Server#abortIncoming.
   if (e.message === "aborted" || e.message === "Aborted") return true;
-  // OmniRoute's SSE teardown aborts in-flight legs with
+  // AgentProxy's SSE teardown aborts in-flight legs with
   // `Error [AbortError]: request_signal_aborted` on client disconnects
   // (open-sse/utils/streamHandler.ts), and fetch/DOM cancellation surfaces as
   // `AbortError` with an abort-flavoured message. Same benign class as
@@ -90,7 +90,7 @@ export function shouldSwallowUncaught(err, origin) {
  * @param {import("node:http").ServerResponse} res
  */
 export function attachRequestStreamGuards(req, res) {
-  const flag = Symbol.for("omniroute.requestAbortGuard");
+  const flag = Symbol.for("agentproxy.requestAbortGuard");
   if (req[flag] || res[flag]) return;
   req[flag] = true;
   res[flag] = true;

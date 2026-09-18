@@ -6,21 +6,21 @@
 
 ---
 
-title: "Għodod CLI — OmniRoute"
+title: "Għodod CLI — AgentProxy"
 version: 3.8.50
 lastUpdated: 2026-08-23
 ---
 
-# Għodod CLI — OmniRoute
+# Għodod CLI — AgentProxy
 
 Aġornata l-aħħar: 2026-08-23
 
-L-OmniRoute jidħol fi tliet kategoriji ta' għodod CLI distribwiti madwar tliet paġni tal-dashboard dedikati:
+L-AgentProxy jidħol fi tliet kategoriji ta' għodod CLI distribwiti madwar tliet paġni tal-dashboard dedikati:
 
 | Paġna          | Rotta                   | Kunċett                                                                                  | Għadd          |
 | -------------- | ----------------------- | ---------------------------------------------------------------------------------------- | -------------- |
-| **CLI Code's** | `/dashboard/cli-code`   | Għodod tal-programmar li tipponta lejn l-OmniRoute (Client → CLI → OmniRoute → Provider) | 26             |
-| **CLI Agents** | `/dashboard/cli-agents` | Aġenti awtonomi li tipponta lejn l-OmniRoute (l-istess fluss, skop akbar)                | 10             |
+| **CLI Code's** | `/dashboard/cli-code`   | Għodod tal-programmar li tipponta lejn l-AgentProxy (Client → CLI → AgentProxy → Provider) | 26             |
+| **CLI Agents** | `/dashboard/cli-agents` | Aġenti awtonomi li tipponta lejn l-AgentProxy (l-istess fluss, skop akbar)                | 10             |
 | **ACP Agents** | `/dashboard/acp-agents` | CLIs li l-Oniroute jnisseġ bħala backend via stdio/ACP (fluss invers)                    | ara l-registru |
 
 Ir-rotot tal-mirja jiddirizzaw mill-ġdid permezz ta' 308: `/dashboard/cli-tools` → `/dashboard/cli-code`, `/dashboard/agents` → `/dashboard/acp-agents`.
@@ -33,14 +33,14 @@ Ir-rotot tal-mirja jiddirizzaw mill-ġdid permezz ta' 308: `/dashboard/cli-tools
 CLI Code's / CLI Agents (fluss ta' konsumazzjoni):
 Claude / Codex / OpenCode / Cline / KiloCode / Continue / Hermes Agent / Goose / ...
            │
-           ▼  (kollha jippuntaw lejn l-OmniRoute)
+           ▼  (kollha jippuntaw lejn l-AgentProxy)
     http://YOUR_SERVER:20128/v1
            │
            ▼  (l-Oniroute jiddirizza lejn il-provider t-tajjeb)
     Anthropic / OpenAI / Gemini / DeepSeek / Groq / Mistral / ...
 
 ACP Agents (fluss invers ta' tnissiġ):
-    Talba tal-Client → OmniRoute → jnisseġ CLI via stdio/ACP → risposta
+    Talba tal-Client → AgentProxy → jnisseġ CLI via stdio/ACP → risposta
 ```
 
 **Benefiċċji:**
@@ -54,30 +54,30 @@ ACP Agents (fluss invers ta' tnissiġ):
 
 ## Awto-ikkonfigura permezz ta' `setup-*`
 
-M'għandekx bżonn tikteb il-konfigurazzjoni ta' kull għodda bl-idejn. L-OmniRoute jibgħat `setup-*`
-kull kmand għal kull CLI appoġġjat li jaqra l-katalgu **dirett** tal-mudelli minn OmniRoute
+M'għandekx bżonn tikteb il-konfigurazzjoni ta' kull għodda bl-idejn. L-AgentProxy jibgħat `setup-*`
+kull kmand għal kull CLI appoġġjat li jaqra l-katalgu **dirett** tal-mudelli minn AgentProxy
 li qed jaħdem (lokali jew mill-bogħod) u jikteb il-konfigurazzjoni tal-għodda stess fuq il-magna tiegħek:
 
 ```bash
-omniroute setup-codex        omniroute setup-claude       omniroute setup-opencode
-omniroute setup-cline        omniroute setup-kilo         omniroute setup-continue
-omniroute setup-cursor       omniroute setup-roo          omniroute setup-crush
-omniroute setup-goose        omniroute setup-qwen         omniroute setup-aider
-omniroute setup-5dive
+agentproxy setup-codex        agentproxy setup-claude       agentproxy setup-opencode
+agentproxy setup-cline        agentproxy setup-kilo         agentproxy setup-continue
+agentproxy setup-cursor       agentproxy setup-roo          agentproxy setup-crush
+agentproxy setup-goose        agentproxy setup-qwen         agentproxy setup-aider
+agentproxy setup-5dive
 ```
 
 Kull wieħed jaċċetta `--remote <url> --api-key <key>` (ikkonfigura għodda lokali kontra
-OmniRoute mill-bogħod), `--dry-run` (urija mingħajr miktub), u `--port`. L-għodod mingħajr skoperta
+AgentProxy mill-bogħod), `--dry-run` (urija mingħajr miktub), u `--port`. L-għodod mingħajr skoperta
 awtomatika tal-mudelli (Cline, Kilo, Roo, Goose, Aider, Qwen, 5dive) jieħdu
 `--model <id>` (u `--yes` għal konnessjonijiet mhux interattivi). `setup-5dive` huwa r-riċetta
 waħda li ma tiktibx taħt `$HOME`: tikkonfigura flotta ta' aġenti 5dive billi tiktib
 profil tal-awtentiċità propjetà tal-għalliem fuq il-host tal-flotta, għalhekk terġa' taqbad permezz ta' `sudo`
 u m'għandu l-ebda mod mill-bogħod tagħha stess. Biex tibda CLI bil-
 ambjent xierqa injettat u l-ebda dikjarar fil-fatt, juża l-iskrin generali
-`omniroute run <target>` (claude, codex, aider, goose, opencode, qwen,
+`agentproxy run <target>` (claude, codex, aider, goose, opencode, qwen,
 gemini — il-miri u l-psewdonimi ġejjin minn `bin/cli/cli-manifest.mjs`); l-iskrini tal-mirja
-persuna ta' qabel `omniroute launch` (Claude Code) u `omniroute launch-codex`
-(Codex) jibqgħu disponibbli. Gemini CLI huwa biss għall-bidu: huwa mirja ta' `omniroute run`
+persuna ta' qabel `agentproxy launch` (Claude Code) u `agentproxy launch-codex`
+(Codex) jibqgħu disponibbli. Gemini CLI huwa biss għall-bidu: huwa mirja ta' `agentproxy run`
 iżda m'għandux riċetta `setup-*`/`configure`.
 
 > **Referenza sħiħa:** it-tabella master — dak li kull kmand jikteb, kull `--`
@@ -86,22 +86,22 @@ iżda m'għandux riċetta `setup-*`/`configure`.
 
 ### Tmexxija ta' dawn ġewwa kontenitur
 
-Kmand `setup-*` eżekwit ġewwa l-kontenitur tal-OmniRoute jikteb fil-
-djar ta' l-ispazju personali tal-kontenitur stess, li l-ebda CLI tal-maħfra ma jaqra u li jidjieq mal-kontenitur. L-OmniRoute jiskopri dan u joħroġ `2` bl-istruzzjonijiet minflok
+Kmand `setup-*` eżekwit ġewwa l-kontenitur tal-AgentProxy jikteb fil-
+djar ta' l-ispazju personali tal-kontenitur stess, li l-ebda CLI tal-maħfra ma jaqra u li jidjieq mal-kontenitur. L-AgentProxy jiskopri dan u joħroġ `2` bl-istruzzjonijiet minflok
 ma jikteb. Tnejn miż-żewġ modi appoġġjati — tinstalla l-CLI fil-maħfra u
-`omniroute connect` mal-kontenitur, jew iġġiegħel-montar il-kartieri tal-konfigurazzjoni u issettja
+`agentproxy connect` mal-kontenitur, jew iġġiegħel-montar il-kartieri tal-konfigurazzjoni u issettja
 `CLI_CONFIG_HOME` (il-profil `host` tal-kompożizzjoni). Kull kmand `setup-*`, flimkien ma'
-`omniroute configure` u `omniroute config set`, jaċċetta
+`agentproxy configure` u `agentproxy config set`, jaċċetta
 `--allow-container-write` meta l-ikkonfigurazzjoni tal-CLIs tal-kontenitur stess hi dak li
-tlabt verament; `OMNIROUTE_ALLOW_CONTAINER_CONFIG_WRITE=true` jagħmel l-istess għas-
+tlabt verament; `AGENTPROXY_ALLOW_CONTAINER_CONFIG_WRITE=true` jagħmel l-istess għas-
 server. Ara
-[Docker Guide → Konfigurazzjoni ta' għodod CLI tal-maħfra](../guides/DOCKER_GUIDE.md#configuring-host-cli-tools-when-omniroute-runs-in-docker).
+[Docker Guide → Konfigurazzjoni ta' għodod CLI tal-maħfra](../guides/DOCKER_GUIDE.md#configuring-host-cli-tools-when-agentproxy-runs-in-docker).
 
 It-twaħħil tal-dashboard **endpoint tal-applikazzjoni** (`POST /api/cli-tools/apply`) jinfurza
 l-istess gardun: ġewwa kontenitur, it-tikjib li l-mira tiegħu mhiex immontata mill-maħfra
 twieġeb **`422`** b'`containerEphemeralTarget: true`, it-test sikur tal-ħsara u — għall-għodod
 b'riċetta tal-maħfra (claude, codex, opencode, cline,
-kilo, continue) — `hostSetupCommand` (eż. `omniroute setup-opencode`) biex imexxi
+kilo, continue) — `hostSetupCommand` (eż. `agentproxy setup-opencode`) biex imexxi
 fil-maħfra minflok; xejn ma jikteb. `dryRun: true` jibqa' jaħdem fil-mudell tal-kontenitur
 u jirritorna l-kontenut ġenerat + it-triq tal-mira mingħajr ma jmiss l-iskrin, sabiex
 tista' preview mill-dashboard u tapplika fil-maħfra. Dan il-ġestjone huwa
@@ -135,8 +135,8 @@ sors dikjarat, u test ta' tibdil iżżommhom allinjati:
 | ----------------------- | -------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
 | **Katkolaġ**            | Jidher fil-katalog tal-dashboard (isem, vender, dokti, tip tal-konfigurazzjoni)  | `src/shared/constants/cliTools.ts` (`CLI_TOOLS`)                  |
 | **Sodod**               | Biċċa/konfigurazzjoni, tazzi tas-saħħa, toroq tal-konfigurazzjoni                | `src/shared/services/cliRuntime.ts` (`CLI_TOOLS` runtime catalog) |
-| **Ikkonfigurabbli**     | Appoġġjat minn `omniroute configure <cli>` (riċetta ta' tħejjija teżisti)        | `bin/cli/cli-manifest.mjs` (`configure: true`)                    |
-| **Li jista' jitwettaq** | Appoġġjat minn `omniroute run <target>` (kuntrarju/argommenti injettat definiti) | `bin/cli/cli-manifest.mjs` (`run: true`)                          |
+| **Ikkonfigurabbli**     | Appoġġjat minn `agentproxy configure <cli>` (riċetta ta' tħejjija teżisti)        | `bin/cli/cli-manifest.mjs` (`configure: true`)                    |
+| **Li jista' jitwettaq** | Appoġġjat minn `agentproxy run <target>` (kuntrarju/argommenti injettat definiti) | `bin/cli/cli-manifest.mjs` (`run: true`)                          |
 
 `bin/cli/cli-manifest.mjs` huwa l-manifest egzekutiv kanoniku għal wiċċ il-kmand CLI:
 `run`, `configure` u l-ġeneraturi tal-kompletar tal-shell kollha jgħoddu l-lista tal-miri tagħhom,
@@ -202,7 +202,7 @@ Aġenti awtonomi li jidhru f'`/dashboard/cli-agents`:
 
 ## 3. Aġenti ACP (/dashboard/acp-agents)
 
-Din il-paġna (imbjha minn `/dashboard/agents`) turi CLI li OmniRoute jista' **jibda** bħala magni ta' wettiq ta' wara permezz tal-protokoll stdio/ACP. Il-katalog huwa żżamm separat f'`src/lib/acp/registry.ts` u **mhux** l-istess bħal `CLI_TOOLS`.
+Din il-paġna (imbjha minn `/dashboard/agents`) turi CLI li AgentProxy jista' **jibda** bħala magni ta' wettiq ta' wara permezz tal-protokoll stdio/ACP. Il-katalog huwa żżamm separat f'`src/lib/acp/registry.ts` u **mhux** l-istess bħal `CLI_TOOLS`.
 
 ---
 
@@ -267,7 +267,7 @@ Għodod ġodda b'`configType: "custom"` għandhom rotti API speċifiċi għas-se
 | `POST /api/cli-tools/codewhale-settings`    | CodeWhale (OPENAI_URL_BASE, primarju + sinkronizzazzjoni antika `~/.deepseek`) |
 | `POST /api/cli-tools/smelt-settings`        | Smelt                                                                          |
 | `POST /api/cli-tools/pi-settings`           | Aġent tal-kodifikazzjoni Pi                                                    |
-| `POST /api/cli-tools/grok-build-settings`   | Grok Build (~/.grok/config.toml, `[model.omniroute]`)                          |
+| `POST /api/cli-tools/grok-build-settings`   | Grok Build (~/.grok/config.toml, `[model.agentproxy]`)                          |
 | `POST /api/cli-tools/qwen-settings`         | Qwen Code (`~/.qwen/settings.json` + chiave `.env` dedikata)                   |
 
 Iċ-ċejq kollha jużaw `sanitizeErrorMessage()` għal twegibiet ta' żbalji (Regola Eżatt #12).
@@ -329,7 +329,7 @@ Ingħataw traduzzjonijiet sħaħ għal PT-BR u EN. 39 locale l-oħra jmorru lura
 
 ## 9. Tqabbil Rapidu
 
-### Pass 1 — Ikseb Ċavetta API OmniRoute
+### Pass 1 — Ikseb Ċavetta API AgentProxy
 
 1. Agħfas `/dashboard/api-manager` → **Ħloq Ċavetta API**
 2. Agħtiha isem (pereż. `cli-tools`) u agħżel il-permessi kollha
@@ -362,7 +362,7 @@ npm install -g kilocode
 # Qwen Code
 npm install -g @qwen-code/qwen-code
 
-# Google Gemini CLI (tnista' tixgħel permezz ta' `omniroute run gemini` → /v1beta surface)
+# Google Gemini CLI (tnista' tixgħel permezz ta' `agentproxy run gemini` → /v1beta surface)
 npm install -g @google/gemini-cli
 
 # Aider
@@ -392,14 +392,14 @@ cargo install smelt  # Bbażat fuq Rust
 
 ### Pass 4 — Issettja Varjabbli tal-Ambjent Globali
 
-```bash# Punt Uniċi OmniRoute
+```bash# Punt Uniċi AgentProxy
 export OPENAI_BASE_URL="http://localhost:20128/v1"
-export OPENAI_API_KEY="sk-your-omniroute-key"
+export OPENAI_API_KEY="sk-your-agentproxy-key"
 export ANTHROPIC_BASE_URL="http://localhost:20128"
-export ANTHROPIC_AUTH_TOKEN="sk-your-omniroute-key"
+export ANTHROPIC_AUTH_TOKEN="sk-your-agentproxy-key"
 # Gemini CLI jaqra GOOGLE_GEMINI_BASE_URL mill-GħERQU (SDK tagħha jiżdied /v1beta/... waħedha)
 export GOOGLE_GEMINI_BASE_URL="http://localhost:20128"
-export GEMINI_API_KEY="sk-your-omniroute-key"
+export GEMINI_API_KEY="sk-your-agentproxy-key"
 ```
 
 > Għal **server bogħod** ibdel `localhost:20128` mal-IP jew id-dominju tal-server,
@@ -416,7 +416,7 @@ mkdir -p ~/.claude && cat > ~/.claude/settings.json << EOF
 {
   "env": {
     "ANTHROPIC_BASE_URL": "http://localhost:20128",
-    "ANTHROPIC_AUTH_TOKEN": "sk-your-omniroute-key"
+    "ANTHROPIC_AUTH_TOKEN": "sk-your-agentproxy-key"
   }
 }
 EOF
@@ -432,18 +432,18 @@ Uża l-Gateway Anthropic unifikat għall-għerq għal Claude Code. Tżidx `/v1` 
 
 Codex modern (v0.137+) jaqra `~/.codex/config.toml` biss — il-`config.yaml` tal-ħorxa
 tal-appoġġ tal-CLI tal-legacy npm tiġi injorata b'mod silenzjuż. Iċ-Ċavetta API tibqa'
-fil-varjabbli tal-ambjent `OMNIROUTE_API_KEY` (`env_key`), qatt ġewwa l-fajl:
+fil-varjabbli tal-ambjent `AGENTPROXY_API_KEY` (`env_key`), qatt ġewwa l-fajl:
 
 ```bashmkdir -p ~/.codex && cat > ~/.codex/config.toml << EOF
-model_provider = "omniroute"
+model_provider = "agentproxy"
 
-[model_providers.omniroute]
-name                 = "OmniRoute"
+[model_providers.agentproxy]
+name                 = "AgentProxy"
 base_url             = "http://localhost:20128/v1"
-env_key              = "OMNIROUTE_API_KEY"
+env_key              = "AGENTPROXY_API_KEY"
 requires_openai_auth = false
 EOF
-export OMNIROUTE_API_KEY="sk-your-omniroute-key"
+export AGENTPROXY_API_KEY="sk-your-agentproxy-key"
 ```
 
 Riferiment sħiħ (profili, `wire_api`, twieqi ta' kuntest): [CODEX-CLI-CONFIGURATION.md](../guides/CODEX-CLI-CONFIGURATION.md).
@@ -458,12 +458,12 @@ Riferiment sħiħ (profili, `wire_api`, twieqi ta' kuntest): [CODEX-CLI-CONFIGUR
 {
   "\$schema": "https://opencode.ai/config.json",
   "provider": {
-    "omniroute": {
+    "agentproxy": {
       "npm": "@ai-sdk/openai-compatible",
-      "name": "OmniRoute",
+      "name": "AgentProxy",
       "options": {
         "baseURL": "http://localhost:20128/v1",
-        "apiKey": "sk-your-omniroute-key"
+        "apiKey": "sk-your-agentproxy-key"
       },
       "models": {
         "claude-sonnet-4-5": { "name": "claude-sonnet-4-5" },
@@ -478,7 +478,7 @@ EOF
 
 **Test:** `opencode`
 
-> Uża `opencode run "your prompt" --model omniroute/claude-sonnet-4-5-thinking --variant high`
+> Uża `opencode run "your prompt" --model agentproxy/claude-sonnet-4-5-thinking --variant high`
 > biex tibgħat varjanti ta' ħsieb.
 
 ---
@@ -491,7 +491,7 @@ EOF
 {
   "apiProvider": "openai",
   "openAiBaseUrl": "http://localhost:20128/v1",
-  "openAiApiKey": "sk-your-omniroute-key"
+  "openAiApiKey": "sk-your-agentproxy-key"
 }
 EOF
 ```
@@ -499,7 +499,7 @@ EOF
 **Modalità VS Code:**
 Settings tal-estensjoni Cline → API Provider: `OpenAI Compatible` → Base URL: `http://localhost:20128/v1`
 
-Jew uża d-dashboard OmniRoute → **CLI Tools → Cline → Applika l-Konfigurazzjoni**.
+Jew uża d-dashboard AgentProxy → **CLI Tools → Cline → Applika l-Konfigurazzjoni**.
 
 ---
 
@@ -507,7 +507,7 @@ Jew uża d-dashboard OmniRoute → **CLI Tools → Cline → Applika l-Konfigura
 
 **Modalità CLI:**
 
-```bashkilocode --api-base http://localhost:20128/v1 --api-key sk-your-omniroute-key
+```bashkilocode --api-base http://localhost:20128/v1 --api-key sk-your-agentproxy-key
 
 ```
 
@@ -516,11 +516,11 @@ Jew uża d-dashboard OmniRoute → **CLI Tools → Cline → Applika l-Konfigura
 ```json
 {
   "kilo-code.openAiBaseUrl": "http://localhost:20128/v1",
-  "kilo-code.apiKey": "sk-your-omniroute-key"
+  "kilo-code.apiKey": "sk-your-agentproxy-key"
 }
 ```
 
-Jew uża d-dashboard OmniRoute → **CLI Tools → KiloCode → Applika l-Konfigurazzjoni**.
+Jew uża d-dashboard AgentProxy → **CLI Tools → KiloCode → Applika l-Konfigurazzjoni**.
 
 ---
 
@@ -530,11 +530,11 @@ Edit `~/.continue/config.yaml`:
 
 ```yaml
 models:
-  - name: OmniRoute
+  - name: AgentProxy
     provider: openai
     model: auto
     apiBase: http://localhost:20128/v1
-    apiKey: sk-your-omniroute-key
+    apiKey: sk-your-agentproxy-key
     default: true
 ```
 
@@ -544,25 +544,25 @@ Agħmel mill-ġdid il-bidu ta' VS Code wara l-editjar.
 
 #### VS Code Insiders (`chatLanguageModels.json`)
 
-Uża dan meta VS Code Insiders ikun imkonfigurat għal mudelli ta' punt uniċi tax-xewqa u trid li OmniRoute jaħdem mingħajr kamp ta' intestatura personalizzat.
+Uża dan meta VS Code Insiders ikun imkonfigurat għal mudelli ta' punt uniċi tax-xewqa u trid li AgentProxy jaħdem mingħajr kamp ta' intestatura personalizzat.
 
 **Post irrakkomandat:**
 
 - Linux: `~/.config/Code - Insiders/User/chatLanguageModels.json`
 - Windows: `%APPDATA%/Code - Insiders/User/chatLanguageModels.json`
 
-**Eżempju bl-alias tokenizzat OmniRoute:**
+**Eżempju bl-alias tokenizzat AgentProxy:**
 
 ```json
 [
   {
     "vendor": "customendpoint",
     "id": "auto",
-    "name": "OmniRoute Auto",
+    "name": "AgentProxy Auto",
     "family": "gpt-4",
     "version": "1.0.0",
-    "url": "http://localhost:20128/api/v1/vscode/sk-your-omniroute-key/chat/completions",
-    "modelsUrl": "http://localhost:20128/api/v1/vscode/sk-your-omniroute-key/models",
+    "url": "http://localhost:20128/api/v1/vscode/sk-your-agentproxy-key/chat/completions",
+    "modelsUrl": "http://localhost:20128/api/v1/vscode/sk-your-agentproxy-key/models",
     "requestFormat": "openai-chat-completions",
     "contextWindow": 256000,
     "maxOutputTokens": 32768,
@@ -575,7 +575,7 @@ Uża dan meta VS Code Insiders ikun imkonfigurat għal mudelli ta' punt uniċi t
 
 **Noti:**
 
-- Ibdel `sk-your-omniroute-key` bi Ċavetta API maħluqa f'OmniRoute.
+- Ibdel `sk-your-agentproxy-key` bi Ċavetta API maħluqa f'AgentProxy.
 - Il-kamp `url` għandu jimmira lejn `/api/v1/vscode/{token}/chat/completions`.
 - Il-kamp `modelsUrl` għandu jimmira lejn `/api/v1/vscode/{token}/models`.
 - Agħmel preferenza għall-fluss normali `/v1` + Bearer header meta l-klijent jappoġġa intestaturi personalizzati.
@@ -588,40 +588,40 @@ Uża dan meta VS Code Insiders ikun imkonfigurat għal mudelli ta' punt uniċi t
 ```bash# Idħol fil-kont tiegħek AWS/Kiro:
 kiro-cli login
 
-# L-CLI juża l-awtentikazzjoni tagħha stess — OmniRoute m'għandux bżonn bħala backend għal Kiro CLI innifisu.
-# Uża kiro-cli flimkien ma' OmniRoute għal għodod oħra.
+# L-CLI juża l-awtentikazzjoni tagħha stess — AgentProxy m'għandux bżonn bħala backend għal Kiro CLI innifisu.
+# Uża kiro-cli flimkien ma' AgentProxy għal għodod oħra.
 kiro-cli status
 ```
 
-Għall-app desktop **Kiro IDE**, uża l-punt MITM li jiġi żvelat minn OmniRoute
+Għall-app desktop **Kiro IDE**, uża l-punt MITM li jiġi żvelat minn AgentProxy
 taħt `/dashboard/cli-tools → Kiro`.
 
 ---
 
-## 10. Omniroute Internu CLI
+## 10. AgentProxy Internu CLI
 
-Il-binarju `omniroute` jipprovdi kmandi għall-ħajja tal-konfigurazzjoni tas-server, t-thaddid, dijanjostika, u ġestjoni tal-fornituri. Punt tad-dħul: `bin/omniroute.mjs`.
+Il-binarju `agentproxy` jipprovdi kmandi għall-ħajja tal-konfigurazzjoni tas-server, t-thaddid, dijanjostika, u ġestjoni tal-fornituri. Punt tad-dħul: `bin/agentproxy.mjs`.
 
 ```bash
-omniroute                              # Staġuna l-is-server (port awżiljarju 20128)
-omniroute setup                        # Għodda interattiva ta' tħejjija
-omniroute doctor                       # Verifika konfigurazzjoni, DB, portijiet, runtime
-omniroute providers list              # Konnessjonijiet tal-fornituri konfigurati
-omniroute providers test-all           # Testja kull konnessjoni attiva
-omniroute reset-password               # Aġġorna l-password tal-amministratur
-omniroute logs                        # Streams tal-logs tat-talbiet
-omniroute health                       # Saħħa dettaljata (breakers, kejbil, memorja)
-omniroute --version                    #uri l-verżjoni
-omniroute --help                      uri l-kmandi kollha
+agentproxy                              # Staġuna l-is-server (port awżiljarju 20128)
+agentproxy setup                        # Għodda interattiva ta' tħejjija
+agentproxy doctor                       # Verifika konfigurazzjoni, DB, portijiet, runtime
+agentproxy providers list              # Konnessjonijiet tal-fornituri konfigurati
+agentproxy providers test-all           # Testja kull konnessjoni attiva
+agentproxy reset-password               # Aġġorna l-password tal-amministratur
+agentproxy logs                        # Streams tal-logs tat-talbiet
+agentproxy health                       # Saħħa dettaljata (breakers, kejbil, memorja)
+agentproxy --version                    #uri l-verżjoni
+agentproxy --help                      uri l-kmandi kollha
 ```
 
 ### Tħejjija u Inizjalizzazzjoni
 
 ```bash
-omniroute setup                        # Għodda interattiva ta' tħejjija
-omniroute setup --non-interactive      # Modalità CI/awtomazzjoni (taqra varjanti ambjentali + flags)
-omniroute setup --password '<valur>'   # Stabilixx l-password tal-amministratur direttament
-omniroute setup --add-provider \
+agentproxy setup                        # Għodda interattiva ta' tħejjija
+agentproxy setup --non-interactive      # Modalità CI/awtomazzjoni (taqra varjanti ambjentali + flags)
+agentproxy setup --password '<valur>'   # Stabilixx l-password tal-amministratur direttament
+agentproxy setup --add-provider \
   --provider openai \
   --api-key '<valur>' \
   --test-provider                      # Żid u testja fornitur f'daqqa waħda
@@ -631,21 +631,21 @@ Varjanti ambjentali rikonoxxuti għat-tħejjija mhux interattiva:
 
 | Var                 | Għan                                                                          |
 | ------------------- | ----------------------------------------------------------------------------- |
-| `OMNIROUTE_API_KEY` | API key tal-fornitur (marbut mal- `--api-key` permezz ta' Commander `.env()`) |
-| `DATA_DIR`          | Override tad-direttorju tad-data tal-OmniRoute                                |
+| `AGENTPROXY_API_KEY` | API key tal-fornitur (marbut mal- `--api-key` permezz ta' Commander `.env()`) |
+| `DATA_DIR`          | Override tad-direttorju tad-data tal-AgentProxy                                |
 
 Input l-ieħor mhux interattiv jgħaddi bħala flags, mhux varjanti ambjentali:
 `--password`, `--provider`, `--provider-name`, `--provider-base-url`, `--default-model`
-(ara l-għażliet tal- `omniroute setup` t'hawn fuq).
+(ara l-għażliet tal- `agentproxy setup` t'hawn fuq).
 
 ### Dijanjostika
 
 ```bash
-omniroute doctor                       # Verifika konfigurazzjoni, DB, portijiet, runtime, memorja, ħajja
-omniroute doctor --json                # JSON li jinqara b'magna
-omniroute doctor --no-liveness         # WAQQA l-prova tal-ħajja HTTP
-omniroute doctor --host 0.0.0.0        # Override tal-host tal-ħajja
-omniroute doctor --liveness-url <url>  # Override sħiħ tal-URL tal-punt tat-tmiem tal-ħajja
+agentproxy doctor                       # Verifika konfigurazzjoni, DB, portijiet, runtime, memorja, ħajja
+agentproxy doctor --json                # JSON li jinqara b'magna
+agentproxy doctor --no-liveness         # WAQQA l-prova tal-ħajja HTTP
+agentproxy doctor --host 0.0.0.0        # Override tal-host tal-ħajja
+agentproxy doctor --liveness-url <url>  # Override sħiħ tal-URL tal-punt tat-tmiem tal-ħajja
 ```
 
 Id-doktor jagħmel dawn il-verifiki: `Konfigurazzjoni`, `Database`, `Ħażen/Kriptografija`,
@@ -655,47 +655,47 @@ Id-doktor jagħmel dawn il-verifiki: `Konfigurazzjoni`, `Database`, `Ħażen/Kri
 ### Ġestjoni tal-Fornituri
 
 ```bash
-omniroute providers available                       # Katalgu tal-fornituri OmniRoute
-omniroute providers available --search openai       # Filtra l-katalgu permezz ta' id/isem/alias/kategorija
-omniroute providers available --category api-key    # Filtra permezz ta' kategorija (api-key, oauth, b'xejn, ...)
-omniroute providers available --json                # JSON li jinqara b'magna
+agentproxy providers available                       # Katalgu tal-fornituri AgentProxy
+agentproxy providers available --search openai       # Filtra l-katalgu permezz ta' id/isem/alias/kategorija
+agentproxy providers available --category api-key    # Filtra permezz ta' kategorija (api-key, oauth, b'xejn, ...)
+agentproxy providers available --json                # JSON li jinqara b'magna
 
-omniroute providers list                            # Konnessjonijiet tal-fornituri konfigurati
-omniroute providers list --json
+agentproxy providers list                            # Konnessjonijiet tal-fornituri konfigurati
+agentproxy providers list --json
 
-omniroute providers test <id|isem>                  # Testja konnessjoni waħda konfigurata
-omniroute providers test-all                        # Testja kull konnessjoni attiva
-omniroute providers validate                       # Validazzjoni strutturali lokalment biss
-omniroute providers add <provider> --credential-env PROVIDER_KEY
-omniroute providers import ./providers.json --dry-run --json
-omniroute providers auth <provider>                 # Flow tal-OAuth li diġà teżisti
-omniroute providers edit <id|isem> --default-model <model>
-omniroute providers remove <id|isem> --yes
+agentproxy providers test <id|isem>                  # Testja konnessjoni waħda konfigurata
+agentproxy providers test-all                        # Testja kull konnessjoni attiva
+agentproxy providers validate                       # Validazzjoni strutturali lokalment biss
+agentproxy providers add <provider> --credential-env PROVIDER_KEY
+agentproxy providers import ./providers.json --dry-run --json
+agentproxy providers auth <provider>                 # Flow tal-OAuth li diġà teżisti
+agentproxy providers edit <id|isem> --default-model <model>
+agentproxy providers remove <id|isem> --yes
 ```
 
 `providers add/import/auth/edit/remove` huma primarily API u għalhekk jaħdmu kontra
 il-kuntest lokali jew ir remot attiv. L-input tal-iskredenzjali għandu juża
 `--credential-stdin` jew `--credential-env`; `--dry-run --json` jirrapporta biss
-preżenza/forma aġġornata. `providers available` jaqra l-katalgu OmniRoute;
+preżenza/forma aġġornata. `providers available` jaqra l-katalgu AgentProxy;
 `providers list/test/test-all/validate` iżommu l-imġieba lokali tagħhom SQLite u
 mhux jeħtieġ li l-is-server ikun qed jaħdem.
 
 ### Tirkupru u Reset
 
 ```bash
-omniroute reset-password                # Aġġorna l-password tal-amministratur (ukoll: omniroute-reset-password)
-omniroute reset-encrypted-columns       #uri twissija + dry-run għar-reset tal-kredenzjali kriptati
-omniroute reset-encrypted-columns --force  # Attwalment ħassar il-kredenzjali kriptati fil-SQLite
+agentproxy reset-password                # Aġġorna l-password tal-amministratur (ukoll: agentproxy-reset-password)
+agentproxy reset-encrypted-columns       #uri twissija + dry-run għar-reset tal-kredenzjali kriptati
+agentproxy reset-encrypted-columns --force  # Attwalment ħassar il-kredenzjali kriptati fil-SQLite
 ```
 
 ### Esportazzjoni tal-Kredenzjali (⚠ trattah b'kawtela)
 
 ```bash
-omniroute auth export                                 #uri twissija + bieb ta' konferma — l-ebda aċċess DB
-omniroute auth export --force                          # Esporta kredenzjali DETTAJJATI ta' KULL konnessjoni fl-istandard output bħala JSON
-omniroute auth export --force --id <id>                 # Esporta biss il-knessjoni korrispondenti
-omniroute auth export --force --format env               # Ħruġ linji tal-valuri `OMNIROUTE_<PROVIDER>_<FIELD>=<value>`
-omniroute auth export --force --out creds.json           # Ikteb f'fajl (magħmul b'permessi 0600)
+agentproxy auth export                                 #uri twissija + bieb ta' konferma — l-ebda aċċess DB
+agentproxy auth export --force                          # Esporta kredenzjali DETTAJJATI ta' KULL konnessjoni fl-istandard output bħala JSON
+agentproxy auth export --force --id <id>                 # Esporta biss il-knessjoni korrispondenti
+agentproxy auth export --force --format env               # Ħruġ linji tal-valuri `AGENTPROXY_<PROVIDER>_<FIELD>=<value>`
+agentproxy auth export --force --out creds.json           # Ikteb f'fajl (magħmul b'permessi 0600)
 ```
 
 `auth export` huwa **lokalment biss** (direttament jaqra SQLite, l-ebda rotta HTTP) u intenzjonat juri/ikteb
@@ -707,36 +707,36 @@ stabilitx. Qasam li falli fis-seħħ (miftuħ ħażin, ciphertext ħażin) jiġi
 
 ### Subkmandi oħra
 
-Dawn jassumu li l-is-server OmniRoute qed jaħdem, sakemm ma jkunx indikat mod ieħor:
+Dawn jassumu li l-is-server AgentProxy qed jaħdem, sakemm ma jkunx indikat mod ieħor:
 
 ```bash
-omniroute status                       # Statut komprensiv tar-runtime
-omniroute logs                         # Streams tal-logs tat-talbiet (--json, --search, --follow)
-omniroute config show                  #uri l-konfigurazzjoni attwali
+agentproxy status                       # Statut komprensiv tar-runtime
+agentproxy logs                         # Streams tal-logs tat-talbiet (--json, --search, --follow)
+agentproxy config show                  #uri l-konfigurazzjoni attwali
 
-omniroute provider list                #uri l-fornituri disponibbli (alias ta' providers list)
-omniroute provider add                 # Reġistra OmniRoute bħala fornitur għal għodda
-omniroute keys add | list | remove     # Ġestjoni tal-API keys
-omniroute models [provider]            #uri l-mudelli (--json, --search)
-omniroute combo list | switch | create | delete
+agentproxy provider list                #uri l-fornituri disponibbli (alias ta' providers list)
+agentproxy provider add                 # Reġistra AgentProxy bħala fornitur għal għodda
+agentproxy keys add | list | remove     # Ġestjoni tal-API keys
+agentproxy models [provider]            #uri l-mudelli (--json, --search)
+agentproxy combo list | switch | create | delete
 
-omniroute backup                       # ritratt tal-konfigurazzjoni + DB
-omniroute restore                      # Irrestawra minn ritratt preċedenti
+agentproxy backup                       # ritratt tal-konfigurazzjoni + DB
+agentproxy restore                      # Irrestawra minn ritratt preċedenti
 
-omniroute health                       # Saħħa dettaljata (breakers, kejbil, memorja)
-omniroute quota                        # Użu tal-kwota tal-fornituri
-omniroute cache                        # Statut tal-cache
-omniroute cache clear                  # Ħassar il-cache semantiku + firma
+agentproxy health                       # Saħħa dettaljata (breakers, kejbil, memorja)
+agentproxy quota                        # Użu tal-kwota tal-fornituri
+agentproxy cache                        # Statut tal-cache
+agentproxy cache clear                  # Ħassar il-cache semantiku + firma
 
-omniroute mcp status | restart         # Statut / restart tal-is-server MCP
-omniroute a2a status | card            # Statut tal-is-server A2A / karta tal-aġent
+agentproxy mcp status | restart         # Statut / restart tal-is-server MCP
+agentproxy a2a status | card            # Statut tal-is-server A2A / karta tal-aġent
 
-omniroute tunnel list | create | stop  # Ġestjoni ta' tunnelli (cloudflare/tailscale/ngrok)
-omniroute env show | get <k> | set <k> <v>  # Spearsa / waqqa variabli tal-ambjentali (temporary)
+agentproxy tunnel list | create | stop  # Ġestjoni ta' tunnelli (cloudflare/tailscale/ngrok)
+agentproxy env show | get <k> | set <k> <v>  # Spearsa / waqqa variabli tal-ambjentali (temporary)
 
-omniroute test                         # Test tal-wasal tal-fornituri
-omniroute update                       # Ġdid għal ġdid
-omniroute completion                   # Għamel il-lesta tal-shell
+agentproxy test                         # Test tal-wasal tal-fornituri
+agentproxy update                       # Ġdid għal ġdid
+agentproxy completion                   # Għamel il-lesta tal-shell
 ```
 
 ### Flags komuni
@@ -765,7 +765,7 @@ omniroute completion                   # Għamel il-lesta tal-shell
 | `/v1/audio/speech`         | Test għal Vjuci                 | ElevenLabs, OpenAI TTS           |
 | `/v1/audio/transcriptions` | Vjuci għal Test                 | Deepgram, AssemblyAI             |
 
-Eżempji lesti biex tħejjihom ma' URL tokenized OmniRoute:
+Eżempji lesti biex tħejjihom ma' URL tokenized AgentProxy:
 
 ```txt
 Token example: sk-a3ab3c080beaee3a-69f4a4-070d71af
@@ -784,7 +784,7 @@ Ollama chat: http://localhost:20128/api/v1/vscode/sk-a3ab3c080beaee3a-69f4a4-070
 
 | Erreur                                            | Kaxxa                     | Twaħħil                                                 |
 | ------------------------------------------------- | ------------------------- | ------------------------------------------------------- |
-| `Connection refused`                              | OmniRoute mhux qed jaħdem | `omniroute serve`                                       |
+| `Connection refused`                              | AgentProxy mhux qed jaħdem | `agentproxy serve`                                       |
 | `401 Unauthorized`                                | Ċavetta tal-API ħażina    | Tista' taħseb fi `/dashboard/api-manager`               |
 | `No combo configured`                             | Ebda combo router attiv   | Ifformula fil-`/dashboard/combos`                       |
 | CLI juri "not installed"                          | Binaries mhux fil-PATH    | Tista' taħseb `which <command>`                         |

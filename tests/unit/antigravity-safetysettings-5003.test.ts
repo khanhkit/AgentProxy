@@ -4,7 +4,7 @@ import assert from "node:assert/strict";
 import { AntigravityExecutor } from "../../open-sse/executors/antigravity.ts";
 import { openaiToAntigravityRequest } from "../../open-sse/translator/request/openai-to-gemini.ts";
 
-// Safety policy belongs to the caller and provider. OmniRoute may remove categories the
+// Safety policy belongs to the caller and provider. AgentProxy may remove categories the
 // Cloud Code endpoint rejects, but it must not silently weaken safety by synthesizing all-OFF.
 
 test("transformRequest omits safetySettings when none are supplied", async () => {

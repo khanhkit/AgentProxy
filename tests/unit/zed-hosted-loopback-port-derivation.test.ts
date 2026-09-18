@@ -7,7 +7,7 @@ import assert from "node:assert/strict";
  * Zed's native-app sign-in always redirects the browser to
  * `http://127.0.0.1:<native_app_port>/`, ignoring any path/redirect_uri we send.
  * `zed-hosted.ts::buildAuthUrl` reuses the dashboard's own loopback port as
- * native_app_port so that redirect lands back on OmniRoute instead of a dead
+ * native_app_port so that redirect lands back on AgentProxy instead of a dead
  * "site can't be reached" page.
  *
  * Before this fix, the port was re-derived from the browser-supplied
@@ -19,20 +19,20 @@ import assert from "node:assert/strict";
  * always plain http regardless of how the browser reached the dashboard.
  *
  * The fix runs server-side (this code executes in the Next.js API route, not
- * the browser) and derives the port from the OmniRoute process's own
+ * the browser) and derives the port from the AgentProxy process's own
  * authoritative listening port (`getRuntimePorts()`, sourced from
- * OMNIROUTE_PORT/PORT/DASHBOARD_PORT) once the redirect URI's hostname is
+ * AGENTPROXY_PORT/PORT/DASHBOARD_PORT) once the redirect URI's hostname is
  * confirmed loopback — no longer trusting the browser-observed scheme/port.
  */
 
 const originalEnv = {
-  OMNIROUTE_PORT: process.env.OMNIROUTE_PORT,
+  AGENTPROXY_PORT: process.env.AGENTPROXY_PORT,
   PORT: process.env.PORT,
   DASHBOARD_PORT: process.env.DASHBOARD_PORT,
 };
 
 function resetPortEnv() {
-  delete process.env.OMNIROUTE_PORT;
+  delete process.env.AGENTPROXY_PORT;
   delete process.env.PORT;
   delete process.env.DASHBOARD_PORT;
 }
@@ -49,7 +49,7 @@ const { resolveDashboardLoopbackPort } = __test__;
 
 test("resolveDashboardLoopbackPort: loopback hostname over HTTPS on the default port resolves via server config, not a guessed 443", () => {
   resetPortEnv();
-  process.env.OMNIROUTE_PORT = "20128";
+  process.env.AGENTPROXY_PORT = "20128";
 
   // This is the exact shape OAuthModal.tsx's buggy fallback used to produce
   // for the true-localhost + default-port case (scheme hardcoded to "http"
@@ -60,9 +60,9 @@ test("resolveDashboardLoopbackPort: loopback hostname over HTTPS on the default 
   assert.equal(port, 20128, "must use the server's own configured port, never the guessed 443");
 });
 
-test("resolveDashboardLoopbackPort: respects OMNIROUTE_PORT override", () => {
+test("resolveDashboardLoopbackPort: respects AGENTPROXY_PORT override", () => {
   resetPortEnv();
-  process.env.OMNIROUTE_PORT = "31415";
+  process.env.AGENTPROXY_PORT = "31415";
 
   assert.equal(resolveDashboardLoopbackPort("http://127.0.0.1:20128/callback"), 31415);
   assert.equal(resolveDashboardLoopbackPort("http://localhost/callback"), 31415);
@@ -80,15 +80,15 @@ test("resolveDashboardLoopbackPort: falls back to PORT then DASHBOARD_PORT prece
 
 test("resolveDashboardLoopbackPort: IPv6 loopback literal resolves to the server port", () => {
   resetPortEnv();
-  process.env.OMNIROUTE_PORT = "20128";
+  process.env.AGENTPROXY_PORT = "20128";
   assert.equal(resolveDashboardLoopbackPort("http://[::1]:20128/callback"), 20128);
 });
 
 test("resolveDashboardLoopbackPort: non-loopback (remote/LAN) redirect URIs return null", () => {
   resetPortEnv();
-  process.env.OMNIROUTE_PORT = "20128";
+  process.env.AGENTPROXY_PORT = "20128";
 
-  assert.equal(resolveDashboardLoopbackPort("https://omniroute.example.com/callback"), null);
+  assert.equal(resolveDashboardLoopbackPort("https://agentproxy.example.com/callback"), null);
   assert.equal(resolveDashboardLoopbackPort("http://192.168.1.50:20128/callback"), null);
 });
 
@@ -100,7 +100,7 @@ test("resolveDashboardLoopbackPort: malformed/missing redirect URIs return null"
 
 test("zedHosted.buildAuthUrl: reuses the server's configured port as native_app_port for a loopback redirect, regardless of the browser-observed scheme", async () => {
   resetPortEnv();
-  process.env.OMNIROUTE_PORT = "20128";
+  process.env.AGENTPROXY_PORT = "20128";
 
   const { zedHosted } = await import("../../src/lib/oauth/providers/zed-hosted.ts");
   const { ZED_HOSTED_CONFIG } = await import("../../src/lib/oauth/constants/oauth.ts");
@@ -108,7 +108,7 @@ test("zedHosted.buildAuthUrl: reuses the server's configured port as native_app_
   // Simulate the redirect URI OAuthModal.tsx sends when the dashboard is
   // reached over HTTPS on its implicit default port (window.location.port is
   // empty): hostname is loopback, but scheme/port do not reflect the real
-  // OmniRoute listener.
+  // AgentProxy listener.
   const built = zedHosted.buildAuthUrl(ZED_HOSTED_CONFIG, "http://localhost:443/callback");
   assert.equal(built.redirectUri, "http://127.0.0.1:20128/");
 
@@ -118,11 +118,11 @@ test("zedHosted.buildAuthUrl: reuses the server's configured port as native_app_
 
 test("zedHosted.buildAuthUrl: remote/LAN redirect URIs keep the configured default native app port", async () => {
   resetPortEnv();
-  process.env.OMNIROUTE_PORT = "20128";
+  process.env.AGENTPROXY_PORT = "20128";
 
   const { zedHosted } = await import("../../src/lib/oauth/providers/zed-hosted.ts");
   const { ZED_HOSTED_CONFIG } = await import("../../src/lib/oauth/constants/oauth.ts");
 
-  const built = zedHosted.buildAuthUrl(ZED_HOSTED_CONFIG, "https://omniroute.example.com/callback");
+  const built = zedHosted.buildAuthUrl(ZED_HOSTED_CONFIG, "https://agentproxy.example.com/callback");
   assert.equal(built.redirectUri, `http://127.0.0.1:${ZED_HOSTED_CONFIG.defaultNativeAppPort}/`);
 });

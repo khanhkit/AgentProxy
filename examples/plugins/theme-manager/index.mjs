@@ -74,7 +74,7 @@ export function onResponse(ctx, response) {
   if (!isHtml || typeof response?.body !== "string") return response;
 
   const vars = buildCssVariables(mode, config);
-  const styleTag = `<style id="omniroute-theme">\n:root {\n${varsToCss(vars)}\n}\n</style>`;
+  const styleTag = `<style id="agentproxy-theme">\n:root {\n${varsToCss(vars)}\n}\n</style>`;
 
   const body = response.body.replace(/<head([^>]*)>/i, `<head$1>${styleTag}`);
 

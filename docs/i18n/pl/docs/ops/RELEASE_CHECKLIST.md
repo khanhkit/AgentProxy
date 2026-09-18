@@ -46,7 +46,7 @@ przeniosła się na PO dowodzie, a nie przed nim.
 
 **Przepływ właściciela po zejściu workflow na zielono:**
 
-1. `npm stage list omniroute` — znajdź stage id (wypisywany też w podsumowaniu workflow).
+1. `npm stage list agentproxy` — znajdź stage id (wypisywany też w podsumowaniu workflow).
 2. Zweryfikuj zaparkowane bajty (zalecane): `npm stage download <id>`, potem zainstaluj
    pobrany tarball do tymczasowego prefiksu i zbootuj go (`npm run check:pack-boot` automatyzuje
    ten sam werdykt pack→install→boot w CI).
@@ -58,10 +58,10 @@ przeniosła się na PO dowodzie, a nie przed nim.
 legacy natychmiastowe `npm publish` (używaj tylko gdy sam staging się psuje; zanotuj dlaczego).
 
 **Jednorazowe utwardzenie (właściciel, npmjs.com):** skonfiguruj Trusted Publisher dla
-`omniroute` w trybie stage-only, żeby wycieknięty długotrwały token nie mógł `npm publish`
+`agentproxy` w trybie stage-only, żeby wycieknięty długotrwały token nie mógł `npm publish`
 bezpośrednio skądkolwiek — CI może tylko stage'ować; tylko 2FA właściciela wypuszcza.
 
-**Playbook zepsutego artefaktu (bez zmian):** `npm deprecate omniroute@<bad> "<reason> — use <fixed>"`
+**Playbook zepsutego artefaktu (bez zmian):** `npm deprecate agentproxy@<bad> "<reason> — use <fixed>"`
 jako domyślny odruch (minuty, odwracalne); `npm unpublish` tylko w oknie 72h/no-dependents
 i nigdy jako pierwszy ruch. Docker: nigdy nie nadpisuj tagu wersji — rollback to
 przepięcie `latest` na ostatni dobry digest.
@@ -171,7 +171,7 @@ Breaking changes: dodaj stopkę `BREAKING CHANGE:` albo `!` po scope (np. `feat(
 - [ ] `npm run i18n:check` kończy się kodem 0 — stan tłumaczeń (`.i18n-state.json`) zsynchronizowany ze źródłowymi docs (brak dryfujących źródeł w trybie strict; doradztwo warn-mode jest akceptowalne przy last-minute poprawkach docs, ale przed tagowaniem powinno być 0)
 - [ ] `npm run i18n:check-ui-coverage` kończy się kodem 0 — każdy locale UI na lub powyżej progu pokrycia 80%
 - [ ] `npm run i18n:sync-ui:dry` raportuje 0 brakujących kluczy we wszystkich 42 locale
-- [ ] Jeśli źródłowe angielskie docs się zmieniły, uruchom `npm run i18n:run` (wymaga `OMNIROUTE_TRANSLATION_API_KEY` w `.env`) przed tagowaniem
+- [ ] Jeśli źródłowe angielskie docs się zmieniły, uruchom `npm run i18n:run` (wymaga `AGENTPROXY_TRANSLATION_API_KEY` w `.env`) przed tagowaniem
 - [ ] Wkłady tłumaczeniowe można odłożyć na następne wydanie, jeśli drobne (śledź w CHANGELOG)
 
 ### Migracje bazy danych
@@ -180,7 +180,7 @@ Breaking changes: dodaj stopkę `BREAKING CHANGE:` albo `!` po scope (np. `feat(
   - [ ] Każda migracja jest idempotentna (`CREATE TABLE IF NOT EXISTS` itd.)
   - [ ] Migracje owinięte w transakcje
   - [ ] Ponumerowane poprawnie (bez luk w sekwencji)
-- [ ] Test na świeżej instalacji: usuń `~/.omniroute/omniroute.db` i uruchom `npm run dev`
+- [ ] Test na świeżej instalacji: usuń `~/.agentproxy/agentproxy.db` i uruchom `npm run dev`
 - [ ] Test na istniejącej instalacji: backup DB, uruchom migrację, zweryfikuj schemat
 - [ ] Pliki WAL (`-wal`, `-shm`) obsłużone poprawnie, jeśli migracja przepisuje tabele
 
@@ -215,7 +215,7 @@ Repozytorium używa trzech odrębnych katalogów wyjściowych — nigdy ich nie 
 | `.build/` | Build intermediates — `next build` output (`distDir`)    | No (gitignored) |
 | `dist/`   | Shippable npm bundle — assembled by `assembleStandalone` | No (gitignored) |
 
-> **Notatka operatorska:** zdalny katalog obrazu VPS pozostaje `/usr/lib/node_modules/omniroute/app/`.
+> **Notatka operatorska:** zdalny katalog obrazu VPS pozostaje `/usr/lib/node_modules/agentproxy/app/`.
 > Przeniesione zostało tylko wyjście buildu **w repo** (`app/` → `dist/`). Skill-e deploy rsyncują
 > zawartość `dist/` do zdalnego katalogu `app/` — nie wymagane żadne zmiany ścieżek VPS.
 
@@ -319,12 +319,12 @@ Przed wypuszczeniem dowolnego wydania zawierającego zmiany embedded services zw
 
 Przed wypuszczeniem dowolnego wydania v3.8.x zweryfikuj te dodatkowe pozycje:
 
-- [ ] `omniroute --tray` bootuje na macOS (systray2 instalowany do `~/.omniroute/runtime/`)
-- [ ] `omniroute --tray` bootuje na Linux (wymaga DISPLAY; graceful error jeśli nie ustawione)
-- [ ] `omniroute --tray` bootuje na Windows (PowerShell NotifyIcon, bez dodatkowych binarek)
-- [ ] `omniroute config tray enable` tworzy wpis autostart; disable go usuwa
-- [ ] `npm install -g omniroute@<this-version>` uruchamia postinstall bez fatalnego wyjścia
-- [ ] Ścieżka update zachowuje optional deps: `omniroute update --apply` i auto-updater
+- [ ] `agentproxy --tray` bootuje na macOS (systray2 instalowany do `~/.agentproxy/runtime/`)
+- [ ] `agentproxy --tray` bootuje na Linux (wymaga DISPLAY; graceful error jeśli nie ustawione)
+- [ ] `agentproxy --tray` bootuje na Windows (PowerShell NotifyIcon, bez dodatkowych binarek)
+- [ ] `agentproxy config tray enable` tworzy wpis autostart; disable go usuwa
+- [ ] `npm install -g agentproxy@<this-version>` uruchamia postinstall bez fatalnego wyjścia
+- [ ] Ścieżka update zachowuje optional deps: `agentproxy update --apply` i auto-updater
       uruchamiają `npm install -g … --include=optional`, żeby `optionalDependencies` (better-sqlite3,
       keytar, tls-client oraz stack SLM llmlingua: `@atjsh/llmlingua-2@2.0.5`,
       `js-tiktoken`) przeżyły update. Tier ultra `modelPath` SLM potrzebuje też
@@ -334,13 +334,13 @@ Przed wypuszczeniem dowolnego wydania v3.8.x zweryfikuj te dodatkowe pozycje:
       — standalone trace bundluje tylko transformers, nie dynamicznie importowane
       optionals, więc bez tego worker załadowałby llmlingua-2 przeciw transformers z roota
       i tier SLM cicho fail-openowałby.
-- [ ] `omniroute status` działa bez `.env` (ścieżka tokenu CLI, tylko loopback)
+- [ ] `agentproxy status` działa bez `.env` (ścieżka tokenu CLI, tylko loopback)
 - [ ] `curl http://localhost:20128/api/shutdown` zwraca 401 (trasa zawsze chroniona)
 - [ ] `curl -H "host: evil.com" http://localhost:20128/api/mcp/sse` zwraca 401 (strażnik loopback)
 - [ ] Runtime SQLite resolvuje do `bundled` przy pierwszym uruchomieniu (bundlowana binarka poprawna dla platformy)
 - [ ] Runtime SQLite spada na `runtime`, gdy `node_modules/better-sqlite3` jest usunięte
 - [ ] Smart MCP filter kompresuje realny output `playwright-mcp browser_snapshot` (redukcja ≥50%)
-- [ ] Wszystkie 10 plików `skills/omniroute*/SKILL.md` są publicznie pobieralne przez raw GitHub URL
+- [ ] Wszystkie 10 plików `skills/agentproxy*/SKILL.md` są publicznie pobieralne przez raw GitHub URL
 - [ ] Kreator onboardingu pokazuje krok tour „How It Works” tier na świeżym setupie
 - [ ] Widget pokrycia tierów na home dashboard pokazuje liczby configured/active
 

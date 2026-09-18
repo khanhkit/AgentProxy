@@ -10,7 +10,7 @@ function src(): string {
   return fs.readFileSync(path.join(process.cwd(), CHAT), "utf8");
 }
 
-test("client fala SÓ com o OmniRoute: /api/conductor/ask + /api/v1/audio/* (nunca Faro/hub direto)", () => {
+test("client fala SÓ com o AgentProxy: /api/conductor/ask + /api/v1/audio/* (nunca Faro/hub direto)", () => {
   const s = src();
   assert.match(s, /"use client"/);
   assert.match(s, /\/api\/conductor\/ask/);

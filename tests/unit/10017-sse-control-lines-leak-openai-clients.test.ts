@@ -2,7 +2,7 @@
  * Regression test for #10017.
  *
  * In "Standard passthrough mode" (source format === client format, no
- * translation needed) OmniRoute buffers upstream SSE control lines
+ * translation needed) AgentProxy buffers upstream SSE control lines
  * (`id:`, `event:`, `retry:`, bare `:` comments) via
  * `createSSEEventPrefixBuffer()` and re-prepends them verbatim onto the next
  * `data:` chunk. For a plain OpenAI Chat-Completions-format client
@@ -25,7 +25,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-10017-sse-control-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-10017-sse-control-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 const core = await import("../../src/lib/db/core.ts");
 
@@ -60,7 +60,7 @@ function leakedUpstreamControlLines(output: string): string[] {
     .split("\n")
     .filter(
       (l) =>
-        /^(?:id:|event:|retry:)/i.test(l) || (l.startsWith(":") && !l.startsWith(": x-omniroute-"))
+        /^(?:id:|event:|retry:)/i.test(l) || (l.startsWith(":") && !l.startsWith(": x-agentproxy-"))
     );
 }
 
@@ -168,7 +168,7 @@ test("#10017: OpenAI Responses passthrough KEEPS event framing (regression guard
   );
   assert.ok(
     !lines.some(
-      (l) => l.startsWith("id:") || (l.startsWith(":") && !l.startsWith(": x-omniroute-"))
+      (l) => l.startsWith("id:") || (l.startsWith(":") && !l.startsWith(": x-agentproxy-"))
     ),
     "Responses passthrough must still strip id:/comment control lines"
   );

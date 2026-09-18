@@ -5,7 +5,7 @@ import os from "node:os";
 import path from "node:path";
 import { SignJWT } from "jose";
 
-const TEST_HOME = path.join(os.tmpdir(), `omniroute-codex-wire-api-${process.pid}-${Date.now()}`);
+const TEST_HOME = path.join(os.tmpdir(), `agentproxy-codex-wire-api-${process.pid}-${Date.now()}`);
 const CONFIG_PATH = path.join(TEST_HOME, ".codex", "config.toml");
 const originalHome = os.homedir;
 const originalJwtSecret = process.env.JWT_SECRET;

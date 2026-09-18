@@ -44,8 +44,8 @@ test("#2357 checkRateLimit falls back when REDIS_URL is unset", () => {
 
 test("redis namespace prefix: rate limiter + auth cache keys are namespaced", () => {
   assert.ok(
-    src.includes('process.env.REDIS_KEY_PREFIX?.trim() || "omniroute:"'),
-    "rateLimiter must read REDIS_KEY_PREFIX with an omniroute: default"
+    src.includes('process.env.REDIS_KEY_PREFIX?.trim() || "agentproxy:"'),
+    "rateLimiter must read REDIS_KEY_PREFIX with an agentproxy: default"
   );
   assert.ok(
     src.includes("keyPrefix: REDIS_KEY_PREFIX"),

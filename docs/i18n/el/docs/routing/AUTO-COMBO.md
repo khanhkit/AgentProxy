@@ -6,12 +6,12 @@
 
 ---
 
-title: "OmniRoute Auto-Combo Engine"
+title: "AgentProxy Auto-Combo Engine"
 version: 3.8.40
 lastUpdated: 2026-06-28
 ---
 
-# OmniRoute Auto-Combo Engine
+# AgentProxy Auto-Combo Engine
 
 > **Για Χρήστες**: Ψάχνετε γρήγορη εκκίνηση; Δείτε τον [Οδηγό Χρήσης Auto-Combo](../getting-started/AUTO-COMBO-GUIDE.md) για απλές εξηγήσεις και παραδείγματα.
 
@@ -69,7 +69,7 @@ model: "auto/cheap"           # φθηνότερο ανά token
 
 **Τι συμβαίνει:**
 
-1. Το OmniRoute εντοπίζει το πρόθεμα `auto/` στο `src/sse/handlers/chat.ts`
+1. Το AgentProxy εντοπίζει το πρόθεμα `auto/` στο `src/sse/handlers/chat.ts`
 2. Ερωτά όλες τις **ενεργές συνδέσεις παρόχων** από τη βάση δεδομένων
 3. Φιλτράρει σε αυτές με έγκυρα διαπιστευτήρια (κλειδί API ή διακριτικό OAuth)
 4. Καθορίζει το μοντέλο ανά σύνδεση (`connection.defaultModel` ή το πρώτο μοντέλο του παρόχου)
@@ -97,7 +97,7 @@ model: "auto/cheap"           # φθηνότερο ανά token
 - κλείδωμα μοντέλου — `isModelLocked(provider, connectionId, model)`
 
 Κάθε υποψήφιος φέρει επίσης τη σημαία `excluded` αυτού του κλειδιού API. Οι εξαιρέσεις αποθηκεύονται
-ανά κλειδί API (πίνακας `auto_candidate_overrides`, migration `128`) — το OmniRoute είναι
+ανά κλειδί API (πίνακας `auto_candidate_overrides`, migration `128`) — το AgentProxy είναι
 μονό-ενοικιαστής χωρίς πίνακα `users`, οπότε το `apiKeyId` είναι η πλησιέστερη πραγματική ταυτότητα ανά καλούντα —
 και εφαρμόζονται στο κομβικό σημείο του συνόλου υποψηφίων στο
 `open-sse/services/autoCombo/virtualFactory.ts` μέσω της καθαρής, ελεγμένης με μοναδικές δοκιμές
@@ -140,13 +140,13 @@ handleComboChat (ίδια μηχανή με τα αποθηκευμένα combos
 Ένα combo του οποίου το `name` είναι πανομοιότυπο με ένα απλό model id (π.χ. ένα combo με όνομα
 `gpt-5.5`) είναι ένα **σκόπιμο, υποστηριζόμενο μοτίβο**, όχι σφάλμα: αποτελεί τον
 μηχανισμό για ανάκαμψη (fallback) παρόχου ανά model id, όπως τεκμηριώνεται στο
-[#6940](https://github.com/diegosouzapw/OmniRoute/issues/6940). Επειδή η
+[#6940](https://github.com/khanhkit/AgentProxy/issues/6940). Επειδή η
 επίλυση combo ελέγχεται πριν από την επίλυση απλού model id
 (`getComboForModel()` στο `src/sse/services/model.ts`), ένα αίτημα για το απλό
 id `gpt-5.5` δρομολογείται μέσω των στόχων του combo (π.χ.
 `acme-responses/gpt-5.5`, `backup-responses/gpt-5.5`) αντί για απευθείας σε
 έναν μόνο πάροχο — αυτό επαναχρησιμοποιεί την προτεραιότητα combo-πριν-από-επανεγγραφή που δημιουργήθηκε για το
-[#3227/#3233](https://github.com/diegosouzapw/OmniRoute/issues/3227) και ελέγχεται
+[#3227/#3233](https://github.com/khanhkit/AgentProxy/issues/3227) και ελέγχεται
 με παλινδρομικά τεστ από τα `tests/unit/responses-combo-resolution-3227.test.ts` και
 `tests/unit/combo-name-codex-responses-rewrite.test.ts`.
 
@@ -190,9 +190,9 @@ curl -X POST http://localhost:20128/v1/chat/completions \
 Δύο συνηθισμένες παγίδες:
 
 - **Το `auto` δεν χρησιμοποιεί τα combo σας.** Το `auto`/`auto/*` δημιουργεί τη δική του δεξαμενή υποψηφίων χωρίς ρύθμιση και συμβουλεύεται αποθηκευμένα combo μόνο αν ένα combo έχει κυριολεκτικά το όνομα `auto` (δεν συνιστάται). Για να δρομολογήσετε μέσω ενός combo, αποστείλετε το ακριβές όνομά του — όχι `auto`.
-- **Το `openrouter/auto` είναι ένα πραγματικό επί πληρωμή προϊόν OpenRouter** («Auto Best Available»), όχι ένα ψευδώνυμο OmniRoute. Αποτελεί την ενιαία στατική καταχώριση μοντέλου του μητρώου OpenRouter (`open-sse/config/providers/registry/openrouter/index.ts`) και χρεώνεται ξεχωριστά. Χρησιμοποιήστε Ρυθμίσεις → Δρομολόγηση → Απόκρυψη επί πληρωμή μοντέλων για να το εξαιρέσετε από τις δεξαμενές `auto`.
+- **Το `openrouter/auto` είναι ένα πραγματικό επί πληρωμή προϊόν OpenRouter** («Auto Best Available»), όχι ένα ψευδώνυμο AgentProxy. Αποτελεί την ενιαία στατική καταχώριση μοντέλου του μητρώου OpenRouter (`open-sse/config/providers/registry/openrouter/index.ts`) και χρεώνεται ξεχωριστά. Χρησιμοποιήστε Ρυθμίσεις → Δρομολόγηση → Απόκρυψη επί πληρωμή μοντέλων για να το εξαιρέσετε από τις δεξαμενές `auto`.
 
-Δείτε τα [#7992](https://github.com/diegosouzapw/OmniRoute/issues/7992) και [#7111](https://github.com/diegosouzapw/OmniRoute/issues/7111) για την αρχική σύγχυση που τεκμηριώνει αυτό το κείμενο.
+Δείτε τα [#7992](https://github.com/khanhkit/AgentProxy/issues/7992) και [#7111](https://github.com/khanhkit/AgentProxy/issues/7111) για την αρχική σύγχυση που τεκμηριώνει αυτό το κείμενο.
 
 ## Πώς Λειτουργεί (Παραμένοντα Auto-Combos)
 
@@ -261,17 +261,17 @@ curl -X POST http://localhost:20128/v1/chat/completions \
 
 | Επικεφαλίδα                   | Δέχεται                                                                                                                                                                                                 | Αποτέλεσμα                                                                                                                                                                                                                                       |
 | :---------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `X-OmniRoute-Mode`            | ψευδώνυμο προεπιλογής (`fast`, `balanced`, `quality`, `cheap`, `reliable`, `offline`) ή ακατέργαστο όνομα πακέτου (`ship-fast`, `cost-saver`, `quality-first`, `offline-friendly`, `reliability-first`) | Παρακάμπτει τα βάρη βαθμολόγησης για αυτό το αίτημα. Τα `balanced`/`default` επιβάλλουν τα προεπιλεγμένα βάρη (χωρίς πακέτο). Άγνωστες τιμές αγνοούνται (η ρύθμιση διατηρείται).                                                                 |
-| `X-OmniRoute-Budget`          | θετικός αριθμός (μέγιστο USD ανά αίτημα)                                                                                                                                                                | Σκληρό ανώτατο όριο κόστους: οι υποψήφιοι των οποίων το εκτιμώμενο κόστος το υπερβαίνει φιλτράρονται πριν την επιλογή. Τι συμβαίνει όταν **κάθε** υποψήφιος το υπερβαίνει ελέγχεται από το `X-OmniRoute-Budget-Fallback` παρακάτω.               |
-| `X-OmniRoute-Budget-Fallback` | `cheapest` (προεπιλογή, ψευδώνυμα: `cheapest-viable`, `soft`) ή `strict` (ψευδώνυμα: `block`, `hard`)                                                                                                   | `cheapest`: υποχωρεί στον παγκοσμίως φθηνότερο υποψήφιο ακόμα και αν υπερβαίνει το όριο (παλαιά συμπεριφορά). `strict`: αρνείται να επιλέξει — το αίτημα αποτυγχάνει αμέσως με `HTTP 402` αντί να υπερδαπανά σιωπηλά. Άγνωστες τιμές αγνοούνται. |
+| `X-AgentProxy-Mode`            | ψευδώνυμο προεπιλογής (`fast`, `balanced`, `quality`, `cheap`, `reliable`, `offline`) ή ακατέργαστο όνομα πακέτου (`ship-fast`, `cost-saver`, `quality-first`, `offline-friendly`, `reliability-first`) | Παρακάμπτει τα βάρη βαθμολόγησης για αυτό το αίτημα. Τα `balanced`/`default` επιβάλλουν τα προεπιλεγμένα βάρη (χωρίς πακέτο). Άγνωστες τιμές αγνοούνται (η ρύθμιση διατηρείται).                                                                 |
+| `X-AgentProxy-Budget`          | θετικός αριθμός (μέγιστο USD ανά αίτημα)                                                                                                                                                                | Σκληρό ανώτατο όριο κόστους: οι υποψήφιοι των οποίων το εκτιμώμενο κόστος το υπερβαίνει φιλτράρονται πριν την επιλογή. Τι συμβαίνει όταν **κάθε** υποψήφιος το υπερβαίνει ελέγχεται από το `X-AgentProxy-Budget-Fallback` παρακάτω.               |
+| `X-AgentProxy-Budget-Fallback` | `cheapest` (προεπιλογή, ψευδώνυμα: `cheapest-viable`, `soft`) ή `strict` (ψευδώνυμα: `block`, `hard`)                                                                                                   | `cheapest`: υποχωρεί στον παγκοσμίως φθηνότερο υποψήφιο ακόμα και αν υπερβαίνει το όριο (παλαιά συμπεριφορά). `strict`: αρνείται να επιλέξει — το αίτημα αποτυγχάνει αμέσως με `HTTP 402` αντί να υπερδαπανά σιωπηλά. Άγνωστες τιμές αγνοούνται. |
 
 ```bash
 # Επιβολή του ταχύτερου προφίλ, ανώτατο όριο αυτού του αιτήματος στα $0.05, και σκληρός αποκλεισμός αντί υπερδαπάνης
 curl -sS http://localhost:20128/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "X-OmniRoute-Mode: fast" \
-  -H "X-OmniRoute-Budget: 0.05" \
-  -H "X-OmniRoute-Budget-Fallback: strict" \
+  -H "X-AgentProxy-Mode: fast" \
+  -H "X-AgentProxy-Budget: 0.05" \
+  -H "X-AgentProxy-Budget-Fallback: strict" \
   -d '{"model":"auto","messages":[{"role":"user","content":"hi"}]}'
 ```
 
@@ -279,7 +279,7 @@ curl -sS http://localhost:20128/v1/chat/completions \
 
 ## Όλες οι Στρατηγικές Δρομολόγησης
 
-Ο κινητήρας combo του OmniRoute υποστηρίζει **19 στρατηγικές δρομολόγησης** (δηλωμένες στο `src/shared/constants/routingStrategies.ts` → `ROUTING_STRATEGY_VALUES`). Ο ίδιος ο κινητήρας Auto Combo εκτίθεται κάτω από τη στρατηγική `auto`· οι υπόλοιπες είναι διαθέσιμες για αποθηκευμένα combo.
+Ο κινητήρας combo του AgentProxy υποστηρίζει **19 στρατηγικές δρομολόγησης** (δηλωμένες στο `src/shared/constants/routingStrategies.ts` → `ROUTING_STRATEGY_VALUES`). Ο ίδιος ο κινητήρας Auto Combo εκτίθεται κάτω από τη στρατηγική `auto`· οι υπόλοιπες είναι διαθέσιμες για αποθηκευμένα combo.
 
 | Στρατηγική          | Περιγραφή                                                                                                                                                                                                                            |
 | :------------------ | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -643,7 +643,7 @@ class LKGPStrategyImpl implements RouterStrategy {
 import {
   registerStrategy,
   type RouterStrategy,
-} from "@omniroute/open-sse/services/autoCombo/routerStrategy";
+} from "@agentproxy/open-sse/services/autoCombo/routerStrategy";
 
 class MyCustomStrategy implements RouterStrategy {
   readonly name = "my-custom";
@@ -759,8 +759,8 @@ offline-friendly) αναφέρονται στον πίνακα «Προφίλ β
 
 | Εντολή                                 | Τι κάνει                                                                                                     |
 | :------------------------------------- | :----------------------------------------------------------------------------------------------------------- |
-| `npm run test:combo:live`              | Ενδο-διεργασιακή πραγματική δρομολόγηση με `RUN_COMBO_LIVE=1`· λαμβάνει στιγμιότυπο ζωντανής βάσης OmniRoute |
-| `npm run test:combo:live:vps`          | HTTP κλήσεις σε ζωντανό διακομιστή OmniRoute (ορίστε `COMBO_LIVE_BASE_URL`)                                  |
+| `npm run test:combo:live`              | Ενδο-διεργασιακή πραγματική δρομολόγηση με `RUN_COMBO_LIVE=1`· λαμβάνει στιγμιότυπο ζωντανής βάσης AgentProxy |
+| `npm run test:combo:live:vps`          | HTTP κλήσεις σε ζωντανό διακομιστή AgentProxy (ορίστε `COMBO_LIVE_BASE_URL`)                                  |
 | `npm run test:combo:live:vps:failover` | Το ίδιο, με σκόπιμα σενάρια αποτυχίας και ανάκαμψης                                                          |
 
 Αυτές οι δοκιμές καπνού ασκούν την πραγματική διαδρομή επικοινωνίας (combo → πάροχος → ολοκλήρωση). Αποκλείονται

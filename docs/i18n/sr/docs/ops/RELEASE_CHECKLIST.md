@@ -53,8 +53,8 @@ npm run test:e2e           # опционо, али препоручено
 то враћа потпуно аутоматски ток који је овај пројекат имао до v3.8.48, задржавајући
 WS1.3 гаранцију (компромитован token сам не може да објави — token не постоји).
 
-**Једнократно подешавање (owner):** npmjs.com → пакет `omniroute` → Settings → _Trusted
-Publisher_ → GitHub: owner `diegosouzapw`, repo `OmniRoute`, workflow `npm-publish.yml`
+**Једнократно подешавање (owner):** npmjs.com → пакет `agentproxy` → Settings → _Trusted
+Publisher_ → GitHub: owner `diegosouzapw`, repo `AgentProxy`, workflow `npm-publish.yml`
 (environment: none). Док то не постоји, аутоматски корак не успева са `ENEEDAUTH`:
 поново покрените dispatch са `publish_mode=staged` (испод) или `direct`.
 
@@ -67,7 +67,7 @@ registry-у, **нису инсталабилни** до одобрења owner-�
 
 **Ток за owner-а након што workflow постане зелен:**
 
-1. `npm stage list omniroute` — пронаћи stage id (такође исписан у сажетку workflow-а).
+1. `npm stage list agentproxy` — пронаћи stage id (такође исписан у сажетку workflow-а).
 2. Верификовати staged бајтове (препоручено): `npm stage download <id>`, затим инсталирати
    преузети tarball у temp prefix и bootovati га (`npm run check:pack-boot` аутоматизује
    исти pack→install→boot verdikt у CI).
@@ -79,10 +79,10 @@ registry-у, **нису инсталабилни** до одобрења owner-�
 legacy тренутно `npm publish` (користити само ако staging сам показује проблеме; записати разлог).
 
 **Једнократно ојачавање (owner, npmjs.com):** конфигурисати Trusted Publisher за
-`omniroute` у stage-only режиму тако да компромитован дуготрајан token не може директно
+`agentproxy` у stage-only режиму тако да компромитован дуготрајан token не може директно
 да изврши `npm publish` ниоткуда — CI може само да stage-ује; само owner-ова 2FA ослобађа издавање.
 
-**Playbook за оштећен артефакт (непромењен):** `npm deprecate omniroute@<bad> "<reason> — use <fixed>"`
+**Playbook за оштећен артефакт (непромењен):** `npm deprecate agentproxy@<bad> "<reason> — use <fixed>"`
 као подразумевани рефлекс (минути, реверзибилно); `npm unpublish` само унутар 72h/no-dependents
 прозора и никад као први потез. Docker: никада не преписивати version tag — rollback значи
 поново усмеравање `latest` на последњи добар digest.
@@ -200,7 +200,7 @@ Prelomne izmene (breaking changes): dodajte `BREAKING CHANGE:` footer ili `!` na
 - [ ] `npm run i18n:check` izlazi sa 0 — stanje prevoda (`.i18n-state.json`) je u sinhronizaciji sa izvornom dokumentacijom (nema odstupljenih izvora u strogom modu; savetodavno upozorenje je prihvatljivo za izmene dokumentacije u zadnji čas, ali treba da bude 0 pre tagovanja)
 - [ ] `npm run i18n:check-ui-coverage` izlazi sa 0 — svaki UI lokal je na ili iznad praga pokrivenosti od 80%
 - [ ] `npm run i18n:sync-ui:dry` izveštava o 0 nedostajućih ključeva u svih 42 lokala
-- [ ] Ako su izvorni engleski dokumenti izmenjeni, pokrenite `npm run i18n:run` (zahteva `OMNIROUTE_TRANSLATION_API_KEY` u `.env`) pre tagovanja
+- [ ] Ako su izvorni engleski dokumenti izmenjeni, pokrenite `npm run i18n:run` (zahteva `AGENTPROXY_TRANSLATION_API_KEY` u `.env`) pre tagovanja
 - [ ] Prevodilački doprinosi mogu biti odloženi za sledeće izdanje ako su manji (pratite u CHANGELOG-u)
 
 ### Migracije baze podataka
@@ -209,7 +209,7 @@ Prelomne izmene (breaking changes): dodajte `BREAKING CHANGE:` footer ili `!` na
   - [ ] Svaka migracija je idempotentna (`CREATE TABLE IF NOT EXISTS`, itd.)
   - [ ] Migracije su umotane u transakcije
   - [ ] Numeracija je ispravna (nema praznina u sekvenci)
-- [ ] Testirajte na svežoj instalaciji: obrišite `~/.omniroute/omniroute.db` i pokrenite `npm run dev`
+- [ ] Testirajte na svežoj instalaciji: obrišite `~/.agentproxy/agentproxy.db` i pokrenite `npm run dev`
 - [ ] Testirajte na postojećoj instalaciji: napravite backup baze, pokrenite migraciju, provjerite šemu
 - [ ] WAL fajlovi (`-wal`, `-shm`) su ispravno obrađeni ako migracija ponovo piše tabele
 
@@ -244,7 +244,7 @@ Repozitorijum koristi tri odvojena izlazna direktorijuma — nikada ih ne pomeš
 | `.build/`    | Build intermediates — izlaz `next build`-a (`distDir`)            | Ne (gitignored) |
 | `dist/`      | Spremni za slanje npm bundle — sastavljen od `assembleStandalone` | Ne (gitignored) |
 
-> **Napomena operatera:** direktorijum slike na udaljenom VPS-u ostaje `/usr/lib/node_modules/omniroute/app/`.
+> **Napomena operatera:** direktorijum slike na udaljenom VPS-u ostaje `/usr/lib/node_modules/agentproxy/app/`.
 > Samo se **u-repozitorijumski** build izlaz premestio (`app/` → `dist/`). Deploy skill-ovi rsync-uju
 > sadržaj `dist/` u udaljeni `app/` direktorijum — nisu potrebne izmene VPS putanja.
 
@@ -364,12 +364,12 @@ izmena nakon što je svaka stavka ispod dokazana:
 
 Пре објављивања сваке v3.8.x верзије, проверите ове додатне ставке:
 
-- [ ] `omniroute --tray` се покреће на macOS-у (systray2 инсталиран у `~/.omniroute/runtime/`)
-- [ ] `omniroute --tray` се покреће на Linux-у (захтева DISPLAY; учтива грешка ако није подешен)
-- [ ] `omniroute --tray` се покреће на Windows-у (PowerShell NotifyIcon, без додатних бинарних фајлова)
-- [ ] `omniroute config tray enable` креира autostart унос; disable га уклања
-- [ ] `npm install -g omniroute@<this-version>` покреће postinstall без фаталног прекида
-- [ ] Путања ажурирања чува опционе зависности: `omniroute update --apply` и аутоматски updater
+- [ ] `agentproxy --tray` се покреће на macOS-у (systray2 инсталиран у `~/.agentproxy/runtime/`)
+- [ ] `agentproxy --tray` се покреће на Linux-у (захтева DISPLAY; учтива грешка ако није подешен)
+- [ ] `agentproxy --tray` се покреће на Windows-у (PowerShell NotifyIcon, без додатних бинарних фајлова)
+- [ ] `agentproxy config tray enable` креира autostart унос; disable га уклања
+- [ ] `npm install -g agentproxy@<this-version>` покреће postinstall без фаталног прекида
+- [ ] Путања ажурирања чува опционе зависности: `agentproxy update --apply` и аутоматски updater
       покрећу `npm install -g … --include=optional` тако да `optionalDependencies` (better-sqlite3,
       keytar, tls-client, и llmlingua SLM стек: `@atjsh/llmlingua-2@2.0.5`,
       `js-tiktoken`) преживе ажурирање. Ultra `modelPath` SLM ниво такође захтева
@@ -379,13 +379,13 @@ izmena nakon što je svaka stavka ispod dokazana:
       — самосталан trace bundle укључује само transformers, а не динамички увезене
       опционе зависности, тако да без овога worker би учитао llmlingua-2 наспрам transformers-а из корена
       и SLM ниво би тихо fail-open-овао.
-- [ ] `omniroute status` радi без `.env` фајла (путања CLI токена, само loopback)
+- [ ] `agentproxy status` радi без `.env` фајла (путања CLI токена, само loopback)
 - [ ] `curl http://localhost:20128/api/shutdown` враћа 401 (увек заштићена рута)
 - [ ] `curl -H "host: evil.com" http://localhost:20128/api/mcp/sse` враћа 401 (loopback заштита)
 - [ ] SQLite runtime се разрешава на `bundled` при првом покретању (bundled бинарни фајл важи за платформу)
 - [ ] SQLite runtime се пребацује на `runtime` када се обрише `node_modules/better-sqlite3`
 - [ ] Smart MCP филтер компримује стварни излаз `playwright-mcp browser_snapshot` (≥50% смањења)
-- [ ] Свих 10 `skills/omniroute*/SKILL.md` фајлова су јавно доступни путем raw GitHub URL-а
+- [ ] Свих 10 `skills/agentproxy*/SKILL.md` фајлова су јавно доступни путем raw GitHub URL-а
 - [ ] Чаробњак за онбординг приказује корак обиласка нивоа "How It Works" при свежем подешавању
 - [ ] Виджет покривености нивоа на почетној контролној табли приказује конфигурисане/активне бројеве
 

@@ -1,10 +1,10 @@
 ---
-title: "OmniRoute 自動組合引擎"
+title: "AgentProxy 自動組合引擎"
 version: 3.8.40
 lastUpdated: 2026-06-28
 ---
 
-# OmniRoute 自動組合引擎
+# AgentProxy 自動組合引擎
 
 > **給一般使用者**：想要快速入門？請參閱[自動組合使用者指南](../getting-started/AUTO-COMBO-GUIDE.md)取得簡單的說明與範例。
 
@@ -61,7 +61,7 @@ model: "auto/cheap"           # 每 token 最便宜
 
 **運作流程：**
 
-1. OmniRoute 在 `src/sse/handlers/chat.ts` 中偵測到 `auto/` 前綴
+1. AgentProxy 在 `src/sse/handlers/chat.ts` 中偵測到 `auto/` 前綴
 2. 查詢資料庫中所有**活躍的提供者連線**
 3. 過濾出具有有效憑證（API 金鑰或 OAuth token）的連線
 4. 為每個連線決定模型（`connection.defaultModel` 或提供者的第一個模型）
@@ -84,7 +84,7 @@ model: "auto/cheap"           # 每 token 最便宜
 - 連線冷卻 — `rateLimitedUntil` / `testStatus`（來自已解析的 `provider_connections` 資料列）
 - 模型鎖定 — `isModelLocked(provider, connectionId, model)`
 
-每個候選項也攜帶此 API 金鑰的 `excluded`（排除）旗標。排除設定依各 API 金鑰儲存（`auto_candidate_overrides` 資料表，遷移 `128`）— OmniRoute 為單租戶架構，無 `users` 資料表，因此 `apiKeyId` 是最接近的實際呼叫者識別身份—並在候選池的瓶頸點透過純粹且經單元測試的 `filterExcludedCandidates()` 強制執行（`open-sse/services/autoCombo/virtualFactory.ts` → `open-sse/services/autoCombo/candidateOverrides.ts`）。此過濾採用**容錯開放**機制：若 `apiKeyId`/channel 未設定或資料庫查詢失敗，則不進行過濾，使未設定任何覆寫的管理員所看到的路由行為與此功能推出前完全一致。
+每個候選項也攜帶此 API 金鑰的 `excluded`（排除）旗標。排除設定依各 API 金鑰儲存（`auto_candidate_overrides` 資料表，遷移 `128`）— AgentProxy 為單租戶架構，無 `users` 資料表，因此 `apiKeyId` 是最接近的實際呼叫者識別身份—並在候選池的瓶頸點透過純粹且經單元測試的 `filterExcludedCandidates()` 強制執行（`open-sse/services/autoCombo/virtualFactory.ts` → `open-sse/services/autoCombo/candidateOverrides.ts`）。此過濾採用**容錯開放**機制：若 `apiKeyId`/channel 未設定或資料庫查詢失敗，則不進行過濾，使未設定任何覆寫的管理員所看到的路由行為與此功能推出前完全一致。
 
 **延至後續議題：** 依候選權重 + 明確排序（Level 3 — 饋入現有的加權/優先策略路徑），以及為每個 `auto/*` 頻道鎖定特定的 `combo.ts` 策略（Level 4）。請參閱 #7819 計畫中有關覆寫設定應維持依 API 金鑰或改為全域的開放問題（考量單租戶模型）。
 
@@ -166,17 +166,17 @@ handleComboChat（與持久化組合使用相同引擎）
 
 | 標頭                          | 接受值                                                                                                                                                                         | 效果                                                                                                                                               |
 | :---------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `X-OmniRoute-Mode`            | 預設別名（`fast`、`balanced`、`quality`、`cheap`、`reliable`、`offline`）或原始套件名稱（`ship-fast`、`cost-saver`、`quality-first`、`offline-friendly`、`reliability-first`） | 覆寫本次請求的評分權重。`balanced`/`default` 強制使用預設權重（無套件）。未知值則忽略（保留原有設定）。                                            |
-| `X-OmniRoute-Budget`          | 正數（每次請求的最大美元金額）                                                                                                                                                 | 硬性成本上限：估計成本超過此值的候選項在選擇前即被過濾。當**每個**候選項都超過上限時，行為由下方的 `X-OmniRoute-Budget-Fallback` 控制。            |
-| `X-OmniRoute-Budget-Fallback` | `cheapest`（預設，別名：`cheapest-viable`、`soft`）或 `strict`（別名：`block`、`hard`）                                                                                        | `cheapest`：回退至全域最便宜的候選項（即使仍超過上限，為舊版行為）。`strict`：拒絕選擇—請求快速失敗，回傳 `HTTP 402`，而非默默超支。未知值則忽略。 |
+| `X-AgentProxy-Mode`            | 預設別名（`fast`、`balanced`、`quality`、`cheap`、`reliable`、`offline`）或原始套件名稱（`ship-fast`、`cost-saver`、`quality-first`、`offline-friendly`、`reliability-first`） | 覆寫本次請求的評分權重。`balanced`/`default` 強制使用預設權重（無套件）。未知值則忽略（保留原有設定）。                                            |
+| `X-AgentProxy-Budget`          | 正數（每次請求的最大美元金額）                                                                                                                                                 | 硬性成本上限：估計成本超過此值的候選項在選擇前即被過濾。當**每個**候選項都超過上限時，行為由下方的 `X-AgentProxy-Budget-Fallback` 控制。            |
+| `X-AgentProxy-Budget-Fallback` | `cheapest`（預設，別名：`cheapest-viable`、`soft`）或 `strict`（別名：`block`、`hard`）                                                                                        | `cheapest`：回退至全域最便宜的候選項（即使仍超過上限，為舊版行為）。`strict`：拒絕選擇—請求快速失敗，回傳 `HTTP 402`，而非默默超支。未知值則忽略。 |
 
 ```bash
 # 強制使用最快設定檔，將此請求上限設為 $0.05，超支時直接封鎖而非降級
 curl -sS http://localhost:20128/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "X-OmniRoute-Mode: fast" \
-  -H "X-OmniRoute-Budget: 0.05" \
-  -H "X-OmniRoute-Budget-Fallback: strict" \
+  -H "X-AgentProxy-Mode: fast" \
+  -H "X-AgentProxy-Budget: 0.05" \
+  -H "X-AgentProxy-Budget-Fallback: strict" \
   -d '{"model":"auto","messages":[{"role":"user","content":"hi"}]}'
 ```
 
@@ -184,7 +184,7 @@ curl -sS http://localhost:20128/v1/chat/completions \
 
 ## 所有路由策略
 
-OmniRoute 的組合引擎支援 **19 種公開路由策略**（宣告於 `src/shared/constants/routingStrategies.ts` → `ROUTING_STRATEGY_VALUES`）。自動組合引擎本身以 `auto` 策略對外提供；其他策略可用於持久化組合。
+AgentProxy 的組合引擎支援 **19 種公開路由策略**（宣告於 `src/shared/constants/routingStrategies.ts` → `ROUTING_STRATEGY_VALUES`）。自動組合引擎本身以 `auto` 策略對外提供；其他策略可用於持久化組合。
 
 | 策略                | 說明                                                                        |
 | :------------------ | :-------------------------------------------------------------------------- |
@@ -487,7 +487,7 @@ class LKGPStrategyImpl implements RouterStrategy {
 import {
   registerStrategy,
   type RouterStrategy,
-} from "@omniroute/open-sse/services/autoCombo/routerStrategy";
+} from "@agentproxy/open-sse/services/autoCombo/routerStrategy";
 
 class MyCustomStrategy implements RouterStrategy {
   readonly name = "my-custom";
@@ -592,8 +592,8 @@ SLA-aware 欄位：
 
 | 指令                                   | 功能說明                                                          |
 | :------------------------------------- | :---------------------------------------------------------------- |
-| `npm run test:combo:live`              | 處理中真實路由（`RUN_COMBO_LIVE=1`）；快照即時 OmniRoute 資料庫   |
-| `npm run test:combo:live:vps`          | 對即時 OmniRoute 伺服器的 HTTP 呼叫（設定 `COMBO_LIVE_BASE_URL`） |
+| `npm run test:combo:live`              | 處理中真實路由（`RUN_COMBO_LIVE=1`）；快照即時 AgentProxy 資料庫   |
+| `npm run test:combo:live:vps`          | 對即時 AgentProxy 伺服器的 HTTP 呼叫（設定 `COMBO_LIVE_BASE_URL`） |
 | `npm run test:combo:live:vps:failover` | 同上，但加入刻意觸發的容錯轉移情境                                |
 
 這些煙霧測試實際演練真實線路（組合 → 提供者 → 完成）。刻意排除在 CI 之外，因為它們需要真實憑證和 VPS 存取權限。

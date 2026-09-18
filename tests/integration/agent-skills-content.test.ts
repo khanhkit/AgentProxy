@@ -3,7 +3,7 @@
  *
  * Verifies:
  *  1. All 46 skill IDs from the catalog have a skills/{id}/ folder with SKILL.md.
- *  2. Zero omniroute-* folders remain (post-prune: old omniroute-* skill dirs were removed).
+ *  2. Zero agentproxy-* folders remain (post-prune: old agentproxy-* skill dirs were removed).
  *  3. 14 specific IDs have <!-- skill:custom-start --> ... <!-- skill:custom-end --> blocks:
  *     omni-mcp, omni-compression, cli-providers, cli-eval, omni-agents-a2a,
  *     omni-combos-routing, omni-auth, omni-resilience, omni-inference, cli-serve.
@@ -64,21 +64,21 @@ test("all 46 catalog IDs have a skills/{id}/SKILL.md file", () => {
   assert.deepEqual(missing, [], `Missing SKILL.md files: ${missing.join(", ")}`);
 });
 
-// ── §2: No omniroute-* directories remain ────────────────────────────────────
+// ── §2: No agentproxy-* directories remain ────────────────────────────────────
 
-test("skills/ has zero omniroute-* directories (all pruned)", () => {
+test("skills/ has zero agentproxy-* directories (all pruned)", () => {
   if (!fs.existsSync(SKILLS_DIR)) {
     // If skills dir doesn't exist at all, nothing to prune
     return;
   }
   const entries = fs.readdirSync(SKILLS_DIR, { withFileTypes: true });
-  const omniRouteDirs = entries
-    .filter((e) => e.isDirectory() && e.name.startsWith("omniroute-"))
+  const AgentProxyDirs = entries
+    .filter((e) => e.isDirectory() && e.name.startsWith("agentproxy-"))
     .map((e) => e.name);
   assert.deepEqual(
-    omniRouteDirs,
+    AgentProxyDirs,
     [],
-    `Found omniroute-* directories that should have been pruned: ${omniRouteDirs.join(", ")}`
+    `Found agentproxy-* directories that should have been pruned: ${AgentProxyDirs.join(", ")}`
   );
 });
 

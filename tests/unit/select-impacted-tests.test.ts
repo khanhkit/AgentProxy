@@ -130,6 +130,6 @@ test("changed electron/ file alone → empty (not unit fail-safe)", () => {
 });
 
 test("changed bin/ file alone → empty (not unit fail-safe)", () => {
-  const sel = selectImpacted({ changed: ["bin/omniroute.js"], map: MAP });
+  const sel = selectImpacted({ changed: ["bin/agentproxy.js"], map: MAP });
   assert.deepEqual(sel, []);
 });

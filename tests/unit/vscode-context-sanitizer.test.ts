@@ -4,7 +4,7 @@ import assert from "node:assert/strict";
 const { sanitizeVscodeRequestBody, sanitizeVscodeRequest } =
   await import("../../src/app/api/v1/vscode/contextSanitizer.ts");
 
-delete process.env.OMNIROUTE_VSCODE_SANITIZE_CONTEXT;
+delete process.env.AGENTPROXY_VSCODE_SANITIZE_CONTEXT;
 
 type FileAttachment = {
   filePath: string;

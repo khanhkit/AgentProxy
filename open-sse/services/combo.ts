@@ -642,14 +642,14 @@ export async function resolveTargetTimeoutMsForTarget(
 
 /**
  * #10681 egress: every combo response carries the opaque trace id in an
- * `X-OmniRoute-Combo-Trace` header so a post-incident lookup of the ordered
+ * `X-AgentProxy-Combo-Trace` header so a post-incident lookup of the ordered
  * per-target decisions is possible; the finalized summary is also emitted as
  * one metadata-only log line for durability across restarts.
  */
 export async function handleComboChat(options: HandleComboChatOptions): Promise<Response> {
   const traceInvocationId = options.invocationId ?? createInvocationId();
   const response = await handleComboChatInner({ ...options, invocationId: traceInvocationId });
-  response.headers.set("X-OmniRoute-Combo-Trace", traceInvocationId);
+  response.headers.set("X-AgentProxy-Combo-Trace", traceInvocationId);
   const trace = getComboTrace(traceInvocationId);
   options.log.info(
     "COMBO",

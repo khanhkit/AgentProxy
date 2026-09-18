@@ -113,7 +113,7 @@ export async function getMcpRadarCatalog(
 ) {
   const fetchJson =
     deps.fetchJson ??
-    ((path: string) => import("./server.ts").then((module) => module.omniRouteFetch(path)));
+    ((path: string) => import("./server.ts").then((module) => module.AgentProxyFetch(path)));
   const raw = record(await fetchJson("/api/radar/catalog"));
   const providerFilter = args.provider?.trim().toLowerCase();
   const familyFilter = args.familyId?.trim().toLowerCase();
@@ -139,7 +139,7 @@ async function handleRadarCatalog(args: {
   try {
     const result = radarCatalogOutput.parse(await getMcpRadarCatalog(args));
     await logToolCall(
-      "omniroute_radar_catalog",
+      "agentproxy_radar_catalog",
       args,
       { modelCount: result.models.length },
       Date.now() - start,
@@ -148,7 +148,7 @@ async function handleRadarCatalog(args: {
     return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
   } catch (error) {
     const message = sanitizeErrorMessage(error) || "Failed to read Radar catalog";
-    await logToolCall("omniroute_radar_catalog", args, null, Date.now() - start, false, message);
+    await logToolCall("agentproxy_radar_catalog", args, null, Date.now() - start, false, message);
     return { content: [{ type: "text", text: `Error: ${message}` }], isError: true };
   }
 }
@@ -158,12 +158,12 @@ export function registerRadarCatalogTool(
   withScopeEnforcement: ScopeEnforcer
 ): void {
   server.registerTool(
-    "omniroute_radar_catalog",
+    "agentproxy_radar_catalog",
     {
       description: "Reads the local signed Radar catalog with optional provider and family filters",
       inputSchema: radarCatalogInput,
     },
-    withScopeEnforcement("omniroute_radar_catalog", (args) =>
+    withScopeEnforcement("agentproxy_radar_catalog", (args) =>
       handleRadarCatalog(radarCatalogInput.parse(args))
     )
   );

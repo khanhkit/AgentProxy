@@ -14,7 +14,7 @@ test("resolveQwenTarget normalizes a remote endpoint to the OpenAI /v1 base", ()
 });
 
 test("setup-qwen writes current V4 settings and only its dedicated env key", async () => {
-  const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "omniroute-setup-qwen-"));
+  const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "agentproxy-setup-qwen-"));
   const settingsPath = path.join(tempDir, "settings.json");
   const envPath = path.join(tempDir, ".env");
   await fs.writeFile(
@@ -54,22 +54,22 @@ test("setup-qwen writes current V4 settings and only its dedicated env key", asy
     assert.equal(settings.modelProviders.openai.length, 2);
     assert.deepEqual(settings.modelProviders.openai[1], {
       id: "qwen/qwen3.8-max-preview",
-      name: "qwen/qwen3.8-max-preview (OmniRoute)",
-      envKey: "OMNIROUTE_API_KEY",
+      name: "qwen/qwen3.8-max-preview (AgentProxy)",
+      envKey: "AGENTPROXY_API_KEY",
       baseUrl: "http://router:20128/v1",
     });
     assert.equal(JSON.stringify(settings).includes("sk-qwen-dedicated"), false);
 
     const env = await fs.readFile(envPath, "utf8");
     assert.match(env, /^OPENAI_API_KEY=keep-me$/m);
-    assert.match(env, /^OMNIROUTE_API_KEY="sk-qwen-dedicated"$/m);
+    assert.match(env, /^AGENTPROXY_API_KEY="sk-qwen-dedicated"$/m);
   } finally {
     await fs.rm(tempDir, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
   }
 });
 
 test("setup-qwen does not overwrite an invalid settings file", async () => {
-  const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "omniroute-setup-qwen-bad-"));
+  const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "agentproxy-setup-qwen-bad-"));
   const settingsPath = path.join(tempDir, "settings.json");
   await fs.writeFile(settingsPath, "{ invalid JSON");
 

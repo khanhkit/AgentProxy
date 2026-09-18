@@ -6,7 +6,7 @@ import path from "node:path";
 
 // The production import helper reaches the real SQLite provider module. Give
 // this file its own database even when it is run without the package harness.
-const testDataDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-claude-import-10144-"));
+const testDataDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-claude-import-10144-"));
 process.env.DATA_DIR = testDataDir;
 process.env.DISABLE_SQLITE_AUTO_BACKUP = "true";
 process.env.APP_LOG_TO_FILE = "false";

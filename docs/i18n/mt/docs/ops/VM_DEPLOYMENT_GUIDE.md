@@ -6,16 +6,16 @@
 
 ---
 
-title: "OmniRoute — Gwida tal-Implimentazzjoni fuq VM ma' Cloudflare"
+title: "AgentProxy — Gwida tal-Implimentazzjoni fuq VM ma' Cloudflare"
 version: 3.8.40
 lastUpdated: 2026-06-28
 ---
 
-# OmniRoute — Gwida tal-Implimentazzjoni fuq VM ma' Cloudflare
+# AgentProxy — Gwida tal-Implimentazzjoni fuq VM ma' Cloudflare
 
 🌐 **Languages:** 🇺🇸 [English](../../../../ops/VM_DEPLOYMENT_GUIDE.md) · 🇸🇦 [ar](../../../ar/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇦🇿 [az](../../../az/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇧🇬 [bg](../../../bg/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇧🇩 [bn](../../../bn/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇨🇿 [cs](../../../cs/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇩🇰 [da](../../../da/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇩🇪 [de](../../../de/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇬🇷 [el](../../../el/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇪🇸 [es](../../../es/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇪🇪 [et](../../../et/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇷 [fa](../../../fa/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇫🇮 [fi](../../../fi/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇫🇷 [fr](../../../fr/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇪 [ga](../../../ga/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇳 [gu](../../../gu/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇱 [he](../../../he/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇳 [hi](../../../hi/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇭🇷 [hr](../../../hr/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇭🇺 [hu](../../../hu/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇩 [id](../../../id/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇹 [it](../../../it/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇯🇵 [ja](../../../ja/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇰🇷 [ko](../../../ko/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇱🇹 [lt](../../../lt/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇱🇻 [lv](../../../lv/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇳 [mr](../../../mr/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇲🇾 [ms](../../../ms/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇳🇱 [nl](../../../nl/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇳🇴 [no](../../../no/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇵🇭 [phi](../../../phi/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇵🇱 [pl](../../../pl/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇵🇹 [pt](../../../pt/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇧🇷 [pt-BR](../../../pt-BR/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇷🇴 [ro](../../../ro/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇷🇺 [ru](../../../ru/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇸🇰 [sk](../../../sk/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇸🇮 [sl](../../../sl/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇷🇸 [sr](../../../sr/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇸🇪 [sv](../../../sv/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇰🇪 [sw](../../../sw/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇳 [ta](../../../ta/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇳 [te](../../../te/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇹🇭 [th](../../../th/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇹🇷 [tr](../../../tr/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇺🇦 [uk-UA](../../../uk-UA/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇵🇰 [ur](../../../ur/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇻🇳 [vi](../../../vi/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇨🇳 [zh-CN](../../../zh-CN/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇹🇼 [zh-TW](../../../zh-TW/docs/ops/VM_DEPLOYMENT_GUIDE.md)
 
-Gwida sħiħa biex tinstalla u tikkonfigura OmniRoute fuq VM (VPS) b'dominju ġestit permezz ta' Cloudflare.
+Gwida sħiħa biex tinstalla u tikkonfigura AgentProxy fuq VM (VPS) b'dominju ġestit permezz ta' Cloudflare.
 
 ---
 
@@ -93,18 +93,18 @@ ufw enable
 
 ---
 
-## 2. Installa OmniRoute
+## 2. Installa AgentProxy
 
 ### 2.1 Oħloq direttorju ta' konfigurazzjoni
 
 ```bash
-mkdir -p /opt/omniroute
+mkdir -p /opt/agentproxy
 ```
 
 ### 2.2 Oħloq fajl tal-varjabbli ambjentali
 
 ```bash
-cat > /opt/omniroute/.env << 'EOF'
+cat > /opt/agentproxy/.env << 'EOF'
 # === Sigurtà ===
 JWT_SECRET=CHANGE-TO-A-UNIQUE-64-CHAR-SECRET-KEY
 INITIAL_PASSWORD=YourSecurePassword123!
@@ -112,7 +112,7 @@ API_KEY_SECRET=REPLACE-WITH-ANOTHER-SECRET-KEY
 STORAGE_ENCRYPTION_KEY=REPLACE-WITH-THIRD-SECRET-KEY
 STORAGE_ENCRYPTION_KEY_VERSION=v1
 MACHINE_ID_SALT=CHANGE-TO-A-UNIQUE-SALT
-OMNIROUTE_WS_BRIDGE_SECRET=REPLACE-WITH-WS-BRIDGE-SECRET  # MEĦTIEG fil-produzzjoni: jintuża mill-Codex Responses WS bridge
+AGENTPROXY_WS_BRIDGE_SECRET=REPLACE-WITH-WS-BRIDGE-SECRET  # MEĦTIEG fil-produzzjoni: jintuża mill-Codex Responses WS bridge
 
 # === App ===
 PORT=20128
@@ -129,11 +129,11 @@ BASE_URL=http://127.0.0.1:20128
 # URL li tħares lejn il-browser, jintuża għal callbacks tal-OAuth, links tad-dashboard, u URLs pubbliċi ġenerati.
 NEXT_PUBLIC_BASE_URL=https://llms.seudominio.com
 # Overrides pubbliċi espliċiti għal URLs ta' assi pubbliċi ġenerati (mhux obbligatorju).
-# OMNIROUTE_PUBLIC_BASE_URL=https://llms.seudominio.com
+# AGENTPROXY_PUBLIC_BASE_URL=https://llms.seudominio.com
 
 # === Synchronizzazzjoni mal-Sħab (mhux obbligatorju) ===
-# CLOUD_URL=https://cloud.omniroute.online
-# NEXT_PUBLIC_CLOUD_URL=https://cloud.omniroute.online
+# CLOUD_URL=https://cloud.agentproxy.example.com
+# NEXT_PUBLIC_CLOUD_URL=https://cloud.agentproxy.example.com
 EOF
 ```
 
@@ -142,22 +142,22 @@ EOF
 ### 2.3 Ibda l-kontenitur
 
 ```bash
-docker pull diegosouzapw/omniroute:latest
+docker pull khanhkit/agentproxy:latest
 
 docker run -d \
-  --name omniroute \
+  --name agentproxy \
   --restart unless-stopped \
-  --env-file /opt/omniroute/.env \
+  --env-file /opt/agentproxy/.env \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
-  diegosouzapw/omniroute:latest
+  -v agentproxy-data:/app/data \
+  khanhkit/agentproxy:latest
 ```
 
 ### 2.4 Verifika li qed jaħdem
 
 ```bash
-docker ps | grep omniroute
-docker logs omniroute --tail 20
+docker ps | grep agentproxy
+docker logs agentproxy --tail 20
 ```
 
 Għandu juri: `[DB] SQLite database ready` u `listening on port 20128`.
@@ -190,7 +190,7 @@ chmod 600 /etc/nginx/ssl/origin.key
 ### 3.2 Konfigurazzjoni tal-Nginx
 
 ```bash
-cat > /etc/nginx/sites-available/omniroute << 'NGINX'
+cat > /etc/nginx/sites-available/agentproxy << 'NGINX'
 # Server default — jimblokka l-aċċess dirett permezz ta' IP
 server {
     listen 80 default_server;
@@ -203,7 +203,7 @@ server {
     return 444;
 }
 
-# OmniRoute — HTTPS
+# AgentProxy — HTTPS
 server {
     listen 443 ssl;
     listen [::]:443 ssl;
@@ -246,16 +246,16 @@ server {
 NGINX
 ```
 
-Żomm il-ħinijiet tat-tluq tal-prokura tal-ħlas allinjati mal-varjabbli tal-ambjent tal-ħin tat-tluq tal-OmniRoute tiegħek. Jekk jogħġbok iżid
+Żomm il-ħinijiet tat-tluq tal-prokura tal-ħlas allinjati mal-varjabbli tal-ambjent tal-ħin tat-tluq tal-AgentProxy tiegħek. Jekk jogħġbok iżid
 `FETCH_TIMEOUT_MS` / `STREAM_IDLE_TIMEOUT_MS`, iżid `proxy_read_timeout` / `proxy_send_timeout`
 'l fuq mill-istess limitu.
 
-L-OmniRoute tuża `NEXT_PUBLIC_BASE_URL` bħala l-origini kanonika li tiffaċċja l-browser għall-appelli tat-tgħawġem
+L-AgentProxy tuża `NEXT_PUBLIC_BASE_URL` bħala l-origini kanonika li tiffaċċja l-browser għall-appelli tat-tgħawġem
 u l-ħolqien tal-link pubbliċi. Il-ħolqien tal-dashboard awtentikat juża talbiet ta' l-istess origini
 flimkien mal-protezzjoni tal-CSRF marbuta mal-sessjoni, għalhekk ma teħtieġx URL pubbliku statiku. It-
 tqassim `X-Forwarded-*` ta' hawn fuq għadu utili bħala metadata tal-rotta, iżda huwa mhux sostitut
 għal setting tal-URL pubbliku espliċit meta l-OAuth jew il-link tal-browser ġenerati jeħtieġ wieħed. Tattivax
-`OMNIROUTE_TRUST_PROXY` jekk l-OmniRoute mhux direttament aċċessibbli mill-klijenti u l-prokura tiegħek
+`AGENTPROXY_TRUST_PROXY` jekk l-AgentProxy mhux direttament aċċessibbli mill-klijenti u l-prokura tiegħek
 tneħħi/tirikostruwx l-intestaturi li ġew mibgħuta.
 
 ### 3.3 Waqfa u Ttestja
@@ -264,8 +264,8 @@ tneħħi/tirikostruwx l-intestaturi li ġew mibgħuta.
 # Neħħi l-konfigurazzjoni awtomatika
 rm -f /etc/nginx/sites-enabled/default
 
-# Waqfa l-OmniRoute
-ln -sf /etc/nginx/sites-available/omniroute /etc/nginx/sites-enabled/omniroute
+# Waqfa l-AgentProxy
+ln -sf /etc/nginx/sites-available/agentproxy /etc/nginx/sites-enabled/agentproxy
 
 # Ttestja u ġeddid
 nginx -t && systemctl reload nginx
@@ -309,40 +309,40 @@ curl -sI https://llms.seudominio.com/health
 ### Aġġornament għal verżjoni ġdida
 
 ```bash
-docker pull diegosouzapw/omniroute:latest
-docker stop omniroute && docker rm omniroute
-docker run -d --name omniroute --restart unless-stopped \
-  --env-file /opt/omniroute/.env \
+docker pull khanhkit/agentproxy:latest
+docker stop agentproxy && docker rm agentproxy
+docker run -d --name agentproxy --restart unless-stopped \
+  --env-file /opt/agentproxy/.env \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
-  diegosouzapw/omniroute:latest
+  -v agentproxy-data:/app/data \
+  khanhkit/agentproxy:latest
 ```
 
 ### Ħares il-logs
 
 ```bash
-docker logs -f omniroute          # Xxow real-time
-docker logs omniroute --tail 50   L-aħħar 50 linja
+docker logs -f agentproxy          # Xxow real-time
+docker logs agentproxy --tail 50   L-aħħar 50 linja
 ```
 
 ### Backup manwali tad-databażi
 
 ```bash
 # Ikkopja d-data mill-volum għall-host
-docker cp omniroute:/app/data ./backup-$(date +%F)
+docker cp agentproxy:/app/data ./backup-$(date +%F)
 
 # Jew issaffar l-intier tal-volum
-docker run --rm -v omniroute-data:/data -v $(pwd):/backup \
-  alpine tar czf /backup/omniroute-data-$(date +%F).tar.gz /data
+docker run --rm -v agentproxy-data:/data -v $(pwd):/backup \
+  alpine tar czf /backup/agentproxy-data-$(date +%F).tar.gz /data
 ```
 
 ### Irrestawra minn backup
 
 ```bash
-docker stop omniroute
-docker run --rm -v omniroute-data:/data -v $(pwd):/backup \
-  alpine sh -c "rm -rf /data/* && tar xzf /backup/omniroute-data-YYYY-MM-DD.tar.gz -C /"
-docker start omniroute
+docker stop agentproxy
+docker run --rm -v agentproxy-data:/data -v $(pwd):/backup \
+  alpine sh -c "rm -rf /data/* && tar xzf /backup/agentproxy-data-YYYY-MM-DD.tar.gz -C /"
+docker start agentproxy
 ```
 
 ---
@@ -411,13 +411,13 @@ Għal aċċcess permezz ta' Cloudflare Workers (bla ħtiegha li toħroġ il-VM d
 
 ```bash
 # Fil-repożitorju lokali
-cd omnirouteCloud
+cd agentproxyCloud
 npm install
 npx wrangler login
 npx wrangler deploy
 ```
 
-Ara wkoll [TUNNELS_GUIDE.md](./TUNNELS_GUIDE.md) għall-walkthrough tal-Cloudflare Tunnel fil-repożitorju. Il-worker indipendenti `omnirouteCloud/` jgħix f'repożitorju komplimentari separat.
+Ara wkoll [TUNNELS_GUIDE.md](./TUNNELS_GUIDE.md) għall-walkthrough tal-Cloudflare Tunnel fil-repożitorju. Il-worker indipendenti `agentproxyCloud/` jgħix f'repożitorju komplimentari separat.
 
 ---
 
@@ -428,15 +428,15 @@ Ara wkoll [TUNNELS_GUIDE.md](./TUNNELS_GUIDE.md) għall-walkthrough tal-Cloudfla
 | 22    | SSH         | Pubbliku (bl-fail2ban)             |
 | 80    | nginx HTTP  | Rindirizzament → HTTPS             |
 | 443   | nginx HTTPS | Permezz tal-Proxy Cloudflare       |
-| 20128 | OmniRoute   | Biss Localhost (permezz tal-nginx) |
+| 20128 | AgentProxy   | Biss Localhost (permezz tal-nginx) |
 
 ## Ottimizzazzjoni għal VPS b'Memorja baxxa / żgħir
 
 Għal deplojamenti fuq istanzi VPS żgħir (1 GB RAM jew inqas):
 
-- **Inattiva servizzi ta' wara l-wiċċ** — issettja `OMNIROUTE_DISABLE_BACKGROUND_SERVICES=1` biex tevita l-pjanifikatur, il-MQP server, u l-kompiti ta' manutenzjoni periodika. Ara `docs/reference/ENVIRONMENT.md`.
+- **Inattiva servizzi ta' wara l-wiċċ** — issettja `AGENTPROXY_DISABLE_BACKGROUND_SERVICES=1` biex tevita l-pjanifikatur, il-MQP server, u l-kompiti ta' manutenzjoni periodika. Ara `docs/reference/ENVIRONMENT.md`.
 - **Uża l-modalità WAL tal-SQLite** — attivata minn qabel, tnaqqas il-memorja massima waqt qari kkonkurrenti.
-- **Limita l-heap V8** — issettja `OMNIROUTE_MEMORY_MB` (per eż. `512`) biex ir-runtimes ma jikkalibrax limitu akbar mill-VM. Ara `docs/reference/ENVIRONMENT.md`.
-- **L-ammessjoni ta' żmien twil tiskala awtomatikament mal-limitu tal-heap** -- ladarba `OMNIROUTE_MEMORY_MB` huwa issettjat 'il fuq, il-budget tal-byte għall-ingest (`OMNIROUTE_CHAT_MAX_INFLIGHT_BYTES`) jidderiv mill-istess limitu, għalhekk VM b'memorja mbiegħda diġà jirċievi budget ta' talba kkonkurrenti iżgħar mingħajr titjib ieħor; talbiet żejda jirċievu `503` li jista' jiġi ripetut b'`Retry-After` minfkom jitkaxkru għall-memorja. Issettja l-limitu tal-numru ta' talbiet antik `OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT` biss jekk għandek bżonn limitu iebes fuq dik.
+- **Limita l-heap V8** — issettja `AGENTPROXY_MEMORY_MB` (per eż. `512`) biex ir-runtimes ma jikkalibrax limitu akbar mill-VM. Ara `docs/reference/ENVIRONMENT.md`.
+- **L-ammessjoni ta' żmien twil tiskala awtomatikament mal-limitu tal-heap** -- ladarba `AGENTPROXY_MEMORY_MB` huwa issettjat 'il fuq, il-budget tal-byte għall-ingest (`AGENTPROXY_CHAT_MAX_INFLIGHT_BYTES`) jidderiv mill-istess limitu, għalhekk VM b'memorja mbiegħda diġà jirċievi budget ta' talba kkonkurrenti iżgħar mingħajr titjib ieħor; talbiet żejda jirċievu `503` li jista' jiġi ripetut b'`Retry-After` minfkom jitkaxkru għall-memorja. Issettja l-limitu tal-numru ta' talbiet antik `AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT` biss jekk għandek bżonn limitu iebes fuq dik.
 - **Evita `next build` fuq il-VPS** — ibni lokalment u deploja l-output standalone (`.next/standalone/`).
-- **Vġilizzja b'`top` / `free -m`** — OmniRoute ġeneralment juża 200-400 MB RSS waqt offline fuq VM ta' 1 GB.
+- **Vġilizzja b'`top` / `free -m`** — AgentProxy ġeneralment juża 200-400 MB RSS waqt offline fuq VM ta' 1 GB.

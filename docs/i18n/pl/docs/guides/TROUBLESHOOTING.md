@@ -10,17 +10,17 @@ lastUpdated: 2026-07-15
 
 🌐 **Languages:** 🇺🇸 [English](../../../../guides/TROUBLESHOOTING.md) · 🇸🇦 [ar](../../../ar/docs/guides/TROUBLESHOOTING.md) · 🇦🇿 [az](../../../az/docs/guides/TROUBLESHOOTING.md) · 🇧🇬 [bg](../../../bg/docs/guides/TROUBLESHOOTING.md) · 🇧🇩 [bn](../../../bn/docs/guides/TROUBLESHOOTING.md) · 🇨🇿 [cs](../../../cs/docs/guides/TROUBLESHOOTING.md) · 🇩🇰 [da](../../../da/docs/guides/TROUBLESHOOTING.md) · 🇩🇪 [de](../../../de/docs/guides/TROUBLESHOOTING.md) · 🇬🇷 [el](../../../el/docs/guides/TROUBLESHOOTING.md) · 🇪🇸 [es](../../../es/docs/guides/TROUBLESHOOTING.md) · 🇪🇪 [et](../../../et/docs/guides/TROUBLESHOOTING.md) · 🇮🇷 [fa](../../../fa/docs/guides/TROUBLESHOOTING.md) · 🇫🇮 [fi](../../../fi/docs/guides/TROUBLESHOOTING.md) · 🇫🇷 [fr](../../../fr/docs/guides/TROUBLESHOOTING.md) · 🇮🇪 [ga](../../../ga/docs/guides/TROUBLESHOOTING.md) · 🇮🇳 [gu](../../../gu/docs/guides/TROUBLESHOOTING.md) · 🇮🇱 [he](../../../he/docs/guides/TROUBLESHOOTING.md) · 🇮🇳 [hi](../../../hi/docs/guides/TROUBLESHOOTING.md) · 🇭🇷 [hr](../../../hr/docs/guides/TROUBLESHOOTING.md) · 🇭🇺 [hu](../../../hu/docs/guides/TROUBLESHOOTING.md) · 🇮🇩 [id](../../../id/docs/guides/TROUBLESHOOTING.md) · 🇮🇹 [it](../../../it/docs/guides/TROUBLESHOOTING.md) · 🇯🇵 [ja](../../../ja/docs/guides/TROUBLESHOOTING.md) · 🇰🇷 [ko](../../../ko/docs/guides/TROUBLESHOOTING.md) · 🇱🇹 [lt](../../../lt/docs/guides/TROUBLESHOOTING.md) · 🇱🇻 [lv](../../../lv/docs/guides/TROUBLESHOOTING.md) · 🇮🇳 [mr](../../../mr/docs/guides/TROUBLESHOOTING.md) · 🇲🇾 [ms](../../../ms/docs/guides/TROUBLESHOOTING.md) · 🇲🇹 [mt](../../../mt/docs/guides/TROUBLESHOOTING.md) · 🇳🇱 [nl](../../../nl/docs/guides/TROUBLESHOOTING.md) · 🇳🇴 [no](../../../no/docs/guides/TROUBLESHOOTING.md) · 🇵🇭 [phi](../../../phi/docs/guides/TROUBLESHOOTING.md) · 🇵🇹 [pt](../../../pt/docs/guides/TROUBLESHOOTING.md) · 🇧🇷 [pt-BR](../../../pt-BR/docs/guides/TROUBLESHOOTING.md) · 🇷🇴 [ro](../../../ro/docs/guides/TROUBLESHOOTING.md) · 🇷🇺 [ru](../../../ru/docs/guides/TROUBLESHOOTING.md) · 🇸🇰 [sk](../../../sk/docs/guides/TROUBLESHOOTING.md) · 🇸🇮 [sl](../../../sl/docs/guides/TROUBLESHOOTING.md) · 🇷🇸 [sr](../../../sr/docs/guides/TROUBLESHOOTING.md) · 🇸🇪 [sv](../../../sv/docs/guides/TROUBLESHOOTING.md) · 🇰🇪 [sw](../../../sw/docs/guides/TROUBLESHOOTING.md) · 🇮🇳 [ta](../../../ta/docs/guides/TROUBLESHOOTING.md) · 🇮🇳 [te](../../../te/docs/guides/TROUBLESHOOTING.md) · 🇹🇭 [th](../../../th/docs/guides/TROUBLESHOOTING.md) · 🇹🇷 [tr](../../../tr/docs/guides/TROUBLESHOOTING.md) · 🇺🇦 [uk-UA](../../../uk-UA/docs/guides/TROUBLESHOOTING.md) · 🇵🇰 [ur](../../../ur/docs/guides/TROUBLESHOOTING.md) · 🇻🇳 [vi](../../../vi/docs/guides/TROUBLESHOOTING.md) · 🇨🇳 [zh-CN](../../../zh-CN/docs/guides/TROUBLESHOOTING.md) · 🇹🇼 [zh-TW](../../../zh-TW/docs/guides/TROUBLESHOOTING.md)
 
-Typowe problemy i rozwiązania dla OmniRoute.
+Typowe problemy i rozwiązania dla AgentProxy.
 
 ---
 
 ## Szybki przewodnik
 
-**Nowy w OmniRoute?** Zacznij tutaj — te wskazówki rozwiązują 90% problemów:
+**Nowy w AgentProxy?** Zacznij tutaj — te wskazówki rozwiązują 90% problemów:
 
 | Widzę to                | Co to oznacza                      | Co zrobić                                                                             |
 | ----------------------- | ---------------------------------- | ------------------------------------------------------------------------------------- |
-| "Can't connect"         | OmniRoute nie działa               | Uruchom `omniroute` lub `docker restart omniroute`                                    |
+| "Can't connect"         | AgentProxy nie działa               | Uruchom `agentproxy` lub `docker restart agentproxy`                                    |
 | "Invalid API key"       | Klucz jest błędny lub wygasł       | Skopiuj ponownie klucz ze strony providera                                            |
 | "Rate limit exceeded"   | Wysyłasz zbyt wiele żądań          | Poczekaj 1 minutę albo użyj `model: "auto"` do automatycznego fallbacku               |
 | "Quota exceeded"        | Wykorzystałeś darmowy/płatny limit | Podłącz więcej providerów albo użyj darmowych (Kiro, Pollinations)                    |
@@ -45,10 +45,10 @@ Typowe problemy i rozwiązania dla OmniRoute.
 | Pierwsze logowanie nie działa                              | Ustaw `INITIAL_PASSWORD` w `.env` (brak wbudowanego domyślnego hasła)                                                                                                      |
 | Dashboard otwiera się na złym porcie                       | Ustaw `PORT=20128` i `NEXT_PUBLIC_BASE_URL=http://localhost:20128`                                                                                                         |
 | Brak logów na dysku                                        | Ustaw `APP_LOG_TO_FILE=true` i sprawdź, czy przechwytywanie call logów jest włączone                                                                                       |
-| EACCES: permission denied                                  | Ustaw `DATA_DIR=/path/to/writable/dir`, by nadpisać `~/.omniroute`                                                                                                         |
+| EACCES: permission denied                                  | Ustaw `DATA_DIR=/path/to/writable/dir`, by nadpisać `~/.agentproxy`                                                                                                         |
 | Strategia routingu się nie zapisuje                        | Zaktualizuj do najnowszej wersji v3.x (poprawka schematu Zod dla trwałości ustawień była w wcześniejszych wersjach)                                                        |
 | Crash logowania / pusta strona                             | Sprawdź wersję Node.js — zobacz [Kompatybilność Node.js](#nodejs-compatibility) poniżej                                                                                    |
-| `dlopen` / `slice is not valid mach-o file` (macOS)        | Uruchom `cd $(npm root -g)/omniroute/app && npm rebuild better-sqlite3 && omniroute` — zobacz [przebudowa natywnego modułu na macOS](#macos-native-module-rebuild) poniżej |
+| `dlopen` / `slice is not valid mach-o file` (macOS)        | Uruchom `cd $(npm root -g)/agentproxy/app && npm rebuild better-sqlite3 && agentproxy` — zobacz [przebudowa natywnego modułu na macOS](#macos-native-module-rebuild) poniżej |
 | Proxy "fetch failed"                                       | Upewnij się, że konfiguracja proxy jest na właściwym poziomie — zobacz [Problemy z proxy](#proxy-issues) poniżej                                                           |
 | Docker `curl: (56) Recv failure: Connection reset by peer` | Bindowanie portu Dockera może lądować na IPv6. Użyj `-p 127.0.0.1:20128:20128`, by wymusić IPv4, albo przetestuj `curl -4`. Zobacz [Docker IPv6](#docker-ipv6) poniżej     |
 | Antywirus kwarantannuje `README.md`                        | Fałszywy alarm — zobacz [Fałszywe alarmy antywirusa](#antivirus-false-positives) poniżej                                                                                   |
@@ -65,8 +65,8 @@ Typowe problemy i rozwiązania dla OmniRoute.
 **To fałszywy alarm. Nic nie jest zainfekowane i nie trzeba nic robić.**
 
 Avast i AVG używają heurystyki, która oznacza pliki plain-text/Markdown zawierające wiele
-linków wyglądających jak żądania HTTP. `README.md` OmniRoute jest w paczce npm (jest
-wymieniony w `package.json` → `files`), więc ląduje w `node_modules/omniroute/README.md` przy
+linków wyglądających jak żądania HTTP. `README.md` AgentProxy jest w paczce npm (jest
+wymieniony w `package.json` → `files`), więc ląduje w `node_modules/agentproxy/README.md` przy
 instalacji globalnej — i zawiera ok. 15 przykładów `http://localhost:20128/...` (endpointy MCP
 HTTP/SSE, URL A2A `.well-known` oraz snippety `curl`). Taka gęstość linków wystarcza,
 by uruchomić heurystykę.
@@ -82,7 +82,7 @@ z kwarantanny.
 
 1. **Zatrzymaj powiadomienia** — wyklucz katalog instalacji w antywirusie
    (Avast: Settings → Exceptions), dodając globalną ścieżkę `node_modules` i/lub katalog
-   danych OmniRoute (`~/.omniroute/`).
+   danych AgentProxy (`~/.agentproxy/`).
 2. **Zgłoś fałszywy alarm** — <https://www.avast.com/false-positive-file-form.php>,
    dołączając skwarantannowany `README.md`. To poprawka, która pomaga wszystkim, bo to
    heurystyka producenta nadmiernie reaguje na plik tekstowy.
@@ -112,24 +112,24 @@ spakowanych z aplikacją desktop, na przykład:
 **Dlaczego się odpala:** instalator Windows **nie jest jeszcze podpisany kodem**, więc niepodpisany
 instalator NSIS ma zerową reputację, a heurystyki behawioralne działają na maksymalnej agresji. W połączeniu
 z dołączonym natywnym DLL i setkami plików `.js` zapisywanych pod
-`%LOCALAPPDATA%\Programs\OmniRoute` (w tym katalogi paczek z sufiksem hasha z
+`%LOCALAPPDATA%\Programs\AgentProxy` (w tym katalogi paczek z sufiksem hasha z
 buildu standalone Next.js) to wystarcza, by uruchomić heurystykę. Podpis kodu jest planowany;
 dopóki nie wyląduje, nowe wydania mogą to powtarzać.
 
 **Co zrobić:**
 
 1. **Najpierw zweryfikuj pobranie** (wyklucza spreparowany plik). Każde wydanie publikuje
-   `latest.yml`, którego pole `sha512` (base64) obejmuje instalator `OmniRoute.Setup.<version>.exe`.
+   `latest.yml`, którego pole `sha512` (base64) obejmuje instalator `AgentProxy.Setup.<version>.exe`.
    W PowerShell, z folderu z instalatorem:
    ```powershell
    $b = [System.Security.Cryptography.SHA512]::Create().ComputeHash(
-     [System.IO.File]::ReadAllBytes("$PWD\OmniRoute.Setup.<version>.exe"))
+     [System.IO.File]::ReadAllBytes("$PWD\AgentProxy.Setup.<version>.exe"))
    [Convert]::ToBase64String($b)
    ```
    Wynik musi pasować do `latest.yml` → `sha512`. Jeśli nie, usuń plik i
-   pobierz ponownie wyłącznie ze [strony wydań GitHub](https://github.com/diegosouzapw/OmniRoute/releases).
+   pobierz ponownie wyłącznie ze [strony wydań GitHub](https://github.com/khanhkit/AgentProxy/releases).
 2. **Przywróć + wyklucz** — przywróć cofnięte elementy z kwarantanny i dodaj wykluczenie
-   dla `%LOCALAPPDATA%\Programs\OmniRoute` (Kaspersky → Settings → Threats and Exclusions),
+   dla `%LOCALAPPDATA%\Programs\AgentProxy` (Kaspersky → Settings → Threats and Exclusions),
    potem zainstaluj ponownie.
 3. **Zgłoś fałszywy alarm** — <https://opentip.kaspersky.com/>. Zgłoszenia FP od użytkowników
    realnie przyspieszają allowlisting.
@@ -142,7 +142,7 @@ dopóki nie wyląduje, nowe wydania mogą to powtarzać.
 
 ### Strona logowania się crashuje albo pokazuje błąd "Module self-registration"
 
-**Przyczyna:** Uruchamiasz wersję Node.js poza zatwierdzonym bezpiecznym progiem runtime OmniRoute. Najczęstszy przypadek to starszy patch Node 22 lub 24 poniżej wymaganego przez OmniRoute zabezpieczonego progu.
+**Przyczyna:** Uruchamiasz wersję Node.js poza zatwierdzonym bezpiecznym progiem runtime AgentProxy. Najczęstszy przypadek to starszy patch Node 22 lub 24 poniżej wymaganego przez AgentProxy zabezpieczonego progu.
 
 **Objawy:**
 
@@ -158,8 +158,8 @@ dopóki nie wyląduje, nowe wydania mogą to powtarzać.
    nvm use 24
    ```
 2. Sprawdź wersję: `node --version` powinno pokazać `v24.0.0` lub nowszą na linii LTS 24.x
-3. Zainstaluj ponownie OmniRoute: `npm install -g omniroute`
-4. Uruchom ponownie: `omniroute`
+3. Zainstaluj ponownie AgentProxy: `npm install -g agentproxy`
+4. Uruchom ponownie: `agentproxy`
 
 > **Wspierane bezpieczne wersje:** `>=22.22.2 <23` lub `>=24.0.0 <27`. Node.js 24.x LTS (Krypton) i Node.js 26 są w pełni wspierane.
 
@@ -167,7 +167,7 @@ dopóki nie wyląduje, nowe wydania mogą to powtarzać.
 
 <a name="macos-native-module-rebuild"></a>
 
-**Przyczyna:** Po globalnym `npm install -g omniroute` natywne binarium `better-sqlite3` w paczce mogło zostać skompilowane pod inną architekturę lub ABI Node.js niż lokalnie uruchomione. To częste na macOS (Apple Silicon i Intel), gdy prebuilt nie pasuje do środowiska.
+**Przyczyna:** Po globalnym `npm install -g agentproxy` natywne binarium `better-sqlite3` w paczce mogło zostać skompilowane pod inną architekturę lub ABI Node.js niż lokalnie uruchomione. To częste na macOS (Apple Silicon i Intel), gdy prebuilt nie pasuje do środowiska.
 
 **Objawy:**
 
@@ -176,15 +176,15 @@ dopóki nie wyląduje, nowe wydania mogą to powtarzać.
 - Pełny przykład:
 
 ```
-dlopen(/Users/<user>/.nvm/versions/node/v24.14.1/lib/node_modules/omniroute/app/node_modules/better-sqlite3/build/Release/better_sqlite3.node, 0x0001): tried: '...' (slice is not valid mach-o file)
+dlopen(/Users/<user>/.nvm/versions/node/v24.14.1/lib/node_modules/agentproxy/app/node_modules/better-sqlite3/build/Release/better_sqlite3.node, 0x0001): tried: '...' (slice is not valid mach-o file)
 ```
 
 **Naprawa — przebuduj pod lokalne środowisko (bez obniżania Node.js):**
 
 ```bash
-cd $(npm root -g)/omniroute/app
+cd $(npm root -g)/agentproxy/app
 npm rebuild better-sqlite3
-omniroute
+agentproxy
 ```
 
 > **Uwaga:** To rekompiluje natywny binding względem lokalnej wersji Node.js i architektury CPU, usuwając niedopasowanie binarium. Oficjalnie wspierany zakres runtime to **`>=22.22.2 <23` lub `>=24.0.0 <27`** (`SUPPORTED_NODE_RANGE` w `src/shared/utils/nodeRuntimeSupport.ts`, zgodny z polem `engines` w `package.json`). Node.js 24.x LTS (Krypton) i Node.js 26 są w pełni wspierane z `better-sqlite3` v12.x.
@@ -211,13 +211,13 @@ omniroute
 
 **Przyczyna:** Na Node.js 22 dispatcher undici@8 jest niekompatybilny z wbudowanym `fetch()` w Node.
 
-**Naprawa (v3.5.5+):** OmniRoute używa teraz własnego `fetch()` z undici, gdy aktywny jest dispatcher proxy, co daje spójne zachowanie. Zaktualizuj do v3.5.5+.
+**Naprawa (v3.5.5+):** AgentProxy używa teraz własnego `fetch()` z undici, gdy aktywny jest dispatcher proxy, co daje spójne zachowanie. Zaktualizuj do v3.5.5+.
 
 ### Proxy MITM pod WSL: aplikacje desktop na hoście Windows nie są przechwytywane
 
-**Przyczyna:** Proxy MITM i jego certyfikat CA instalują się w środowisku, w którym działa OmniRoute. Pod WSL to gość Linux, a aplikacje AI desktop (Kiro, Trae, Copilot, Zed, …) działają na hoście Windows. Aplikacje hosta nie ufają magazynowi certyfikatów gościa i nie idą przez systemowe proxy gościa, więc przechwytywanie desktop tam nie działa.
+**Przyczyna:** Proxy MITM i jego certyfikat CA instalują się w środowisku, w którym działa AgentProxy. Pod WSL to gość Linux, a aplikacje AI desktop (Kiro, Trae, Copilot, Zed, …) działają na hoście Windows. Aplikacje hosta nie ufają magazynowi certyfikatów gościa i nie idą przez systemowe proxy gościa, więc przechwytywanie desktop tam nie działa.
 
-**Rekomendacja:** Uruchamiaj OmniRoute natywnie na tym samym OS co aplikacje desktop, które chcesz przechwytywać (Windows dla aplikacji Windows; analogicznie macOS/Linux). Trzymanie OmniRoute w WSL przy celowaniu w aplikacje hosta wymaga ręcznego zaufania wygenerowanemu certyfikatowi CA na hoście Windows i wskazania ustawień sieci/proxy każdej aplikacji hosta na endpoint proxy WSL — to nieobsługiwana, krucha konfiguracja.
+**Rekomendacja:** Uruchamiaj AgentProxy natywnie na tym samym OS co aplikacje desktop, które chcesz przechwytywać (Windows dla aplikacji Windows; analogicznie macOS/Linux). Trzymanie AgentProxy w WSL przy celowaniu w aplikacje hosta wymaga ręcznego zaufania wygenerowanemu certyfikatowi CA na hoście Windows i wskazania ustawień sieci/proxy każdej aplikacji hosta na endpoint proxy WSL — to nieobsługiwana, krucha konfiguracja.
 
 ---
 
@@ -244,7 +244,7 @@ omniroute
 
 ### Wygasły token OAuth
 
-OmniRoute automatycznie odświeża tokeny. Jeśli problemy trwają:
+AgentProxy automatycznie odświeża tokeny. Jeśli problemy trwają:
 
 1. Dashboard → Provider → Reconnect
 2. Usuń i dodaj ponownie połączenie providera
@@ -276,7 +276,7 @@ Pełne szczegóły i instrukcja krok po kroku dodawania dwóch kont Kiro obok si
 ### Błędy Cloud Sync
 
 1. Sprawdź, czy `BASE_URL` wskazuje na działającą instancję (np. `http://localhost:20128`)
-2. Sprawdź, czy `CLOUD_URL` wskazuje na endpoint chmury (np. `https://omniroute.dev`)
+2. Sprawdź, czy `CLOUD_URL` wskazuje na endpoint chmury (np. `https://agentproxy.example.com`)
 3. Utrzymuj wartości `NEXT_PUBLIC_*` zgodne z wartościami po stronie serwera
 
 ### Cloud `stream=false` zwraca 500
@@ -310,8 +310,8 @@ Pełne szczegóły i instrukcja krok po kroku dodawania dwóch kont Kiro obok si
 1. **Szybka diagnostyka:** Uruchom `curl -4 http://localhost:20128/v1/models`. Jeśli działa z `-4`, a bez niego nie — masz niedopasowanie bindu IPv6.
 2. **Trwała poprawka:** Wymuś IPv4 przez `-p 127.0.0.1:20128:20128` w `docker run`:
    ```bash
-   docker run -d --name omniroute --restart unless-stopped --stop-timeout 40 \
-     -p 127.0.0.1:20128:20128 -v omniroute-data:/app/data diegosouzapw/omniroute:latest
+   docker run -d --name agentproxy --restart unless-stopped --stop-timeout 40 \
+     -p 127.0.0.1:20128:20128 -v agentproxy-data:/app/data khanhkit/agentproxy:latest
    ```
    To wymusza bind IPv4 i dodatkowo nie eksponuje proxy na wszystkich interfejsach hosta.
 
@@ -457,13 +457,13 @@ Profile providerów wspierają te ustawienia:
 
 ### Anti-thundering herd
 
-Gdy wiele równoległych żądań trafia w rate-limitowanego providera, OmniRoute używa mutex + auto rate-limiting, by serializować żądania i zapobiec kaskadowym awariom. To automatyczne dla providerów z kluczem API.
+Gdy wiele równoległych żądań trafia w rate-limitowanego providera, AgentProxy używa mutex + auto rate-limiting, by serializować żądania i zapobiec kaskadowym awariom. To automatyczne dla providerów z kluczem API.
 
 ---
 
 ## Opcjonalna taksonomia awarii RAG / LLM (16 problemów)
 
-Część użytkowników OmniRoute stawia gateway przed stackami RAG lub agentów. W takich setupach często widać dziwny wzorzec: OmniRoute wygląda na zdrowy (providerzy w górze, profile routingu OK, brak alertów rate limit), a końcowa odpowiedź i tak jest zła.
+Część użytkowników AgentProxy stawia gateway przed stackami RAG lub agentów. W takich setupach często widać dziwny wzorzec: AgentProxy wygląda na zdrowy (providerzy w górze, profile routingu OK, brak alertów rate limit), a końcowa odpowiedź i tak jest zła.
 
 W praktyce te incydenty zwykle pochodzą z downstream pipeline RAG, a nie z samego gatewaya.
 
@@ -482,17 +482,17 @@ Idea jest prosta:
 
 1. Przy badaniu złej odpowiedzi zbierz:
    - zadanie użytkownika i request
-   - route lub combo providera w OmniRoute
+   - route lub combo providera w AgentProxy
    - kontekst RAG użyty downstream (pobrane dokumenty, tool calls itd.)
 2. Zmapuj incydent na jeden lub dwa numery WFGY ProblemMap (`No.1` … `No.16`).
-3. Zapisz numer we własnym dashboardzie, runbooku lub trackerze incydentów obok logów OmniRoute.
+3. Zapisz numer we własnym dashboardzie, runbooku lub trackerze incydentów obok logów AgentProxy.
 4. Użyj odpowiadającej strony WFGY, by zdecydować, czy zmienić stack RAG, retriever, czy strategię routingu.
 
 Pełny tekst i konkretne recepty są tutaj (licencja MIT, sam tekst):
 
 [WFGY ProblemMap README](https://github.com/onestardao/WFGY/blob/main/ProblemMap/README.md)
 
-Możesz pominąć tę sekcję, jeśli nie uruchamiasz pipeline’ów RAG ani agentów za OmniRoute.
+Możesz pominąć tę sekcję, jeśli nie uruchamiasz pipeline’ów RAG ani agentów za AgentProxy.
 
 ---
 
@@ -516,7 +516,7 @@ Problemy specyficzne dla wydania v3.8.0 i aktualne obejścia. Gdy poprawka wylą
 
 1. Zainstaluj Devin CLI dla swojej platformy
 2. Ustaw `CLI_DEVIN_BIN=/usr/local/bin/devin` (lub rzeczywistą ścieżkę) w `.env`
-3. Zrestartuj OmniRoute i przetestuj ponownie z **Dashboard → CLI Tools**
+3. Zrestartuj AgentProxy i przetestuj ponownie z **Dashboard → CLI Tools**
 
 ### Cooldown modelu utknął (ręczny reset)
 
@@ -541,7 +541,7 @@ Problemy specyficzne dla wydania v3.8.0 i aktualne obejścia. Gdy poprawka wylą
 
 **Naprawa:**
 
-- Uruchom `omniroute providers` z CLI, by ponownie odpalić flow OAuth, albo
+- Uruchom `agentproxy providers` z CLI, by ponownie odpalić flow OAuth, albo
 - Ponów OAuth z **Dashboard → Providers → Command Code → Reconnect**
 
 ### ModelScope zwraca agresywne cooldowny 429
@@ -558,20 +558,20 @@ Problemy specyficzne dla wydania v3.8.0 i aktualne obejścia. Gdy poprawka wylą
 - Upewnij się, że jesteś na v3.8.0 lub nowszej
 - Sprawdź, czy przełącznik `useUpstream429BreakerHints` jest włączony w **Settings → Resilience**
 
-### Brak `OMNIROUTE_WS_BRIDGE_SECRET` w produkcji
+### Brak `AGENTPROXY_WS_BRIDGE_SECRET` w produkcji
 
 **Objawy:**
 
 - 401 na każdym żądaniu mostu WebSocket Codex/Responses na zdalnym hoście produkcyjnym
 - Handshake mostu WebSocket zamyka się zaraz po connect
 
-**Przyczyna:** Brak zmiennej env `OMNIROUTE_WS_BRIDGE_SECRET` w środowisku produkcyjnym.
+**Przyczyna:** Brak zmiennej env `AGENTPROXY_WS_BRIDGE_SECRET` w środowisku produkcyjnym.
 
 **Naprawa:**
 
 1. Wygeneruj losowy sekret: `openssl rand -hex 32`
-2. Ustaw `OMNIROUTE_WS_BRIDGE_SECRET=<random-secret>` w env serwera produkcyjnego (i każdego klienta łączącego się z mostem)
-3. Zrestartuj OmniRoute
+2. Ustaw `AGENTPROXY_WS_BRIDGE_SECRET=<random-secret>` w env serwera produkcyjnego (i każdego klienta łączącego się z mostem)
+3. Zrestartuj AgentProxy
 
 ### Responses API: tryb background zdegradowany do synchronicznego
 
@@ -591,7 +591,7 @@ Problemy specyficzne dla wydania v3.8.0 i aktualne obejścia. Gdy poprawka wylą
 
 ## Nadal utknąłeś?
 
-- **GitHub Issues**: [github.com/diegosouzapw/OmniRoute/issues](https://github.com/diegosouzapw/OmniRoute/issues)
+- **GitHub Issues**: [github.com/khanhkit/AgentProxy/issues](https://github.com/khanhkit/AgentProxy/issues)
 - **Architektura**: Zobacz [`docs/architecture/ARCHITECTURE.md`](../architecture/ARCHITECTURE.md) po szczegóły wewnętrzne
 - **API Reference**: Zobacz [`docs/reference/API_REFERENCE.md`](../reference/API_REFERENCE.md) po wszystkie endpointy
 - **Health Dashboard**: Sprawdź **Dashboard → Health** pod kątem statusu systemu na żywo

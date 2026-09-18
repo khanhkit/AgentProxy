@@ -15,7 +15,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-cmd-code-user-array-5166-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-cmd-code-user-array-5166-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const { getExecutor } = await import("../../open-sse/executors/index.ts");

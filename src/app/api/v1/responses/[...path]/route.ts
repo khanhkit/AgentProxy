@@ -1,5 +1,5 @@
 import { handleChat } from "@/sse/handlers/chat";
-import { initTranslators } from "@omniroute/open-sse/translator/index.ts";
+import { initTranslators } from "@agentproxy/open-sse/translator/index.ts";
 import { withChatAdmission } from "@/shared/middleware/withChatAdmission";
 
 let initialized = false;

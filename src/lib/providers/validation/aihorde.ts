@@ -8,7 +8,7 @@ import {
   AI_HORDE_ANONYMOUS_KEY,
   AI_HORDE_API_BASE,
   AI_HORDE_CLIENT_AGENT,
-} from "@omniroute/open-sse/services/aihordeImageCatalog.ts";
+} from "@agentproxy/open-sse/services/aihordeImageCatalog.ts";
 import { toValidationErrorResult, validationRead } from "./transport";
 
 type HordeFetch = typeof validationRead;

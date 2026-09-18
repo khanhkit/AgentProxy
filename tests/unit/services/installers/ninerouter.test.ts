@@ -5,8 +5,8 @@ import os from "node:os";
 import path from "node:path";
 import { execSync } from "node:child_process";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-installer-"));
-const FAKE_BIN_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-fake-bin-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-installer-"));
+const FAKE_BIN_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-fake-bin-"));
 const FAKE_NPM_LOG = path.join(FAKE_BIN_DIR, "npm.log");
 const MOCK_NINEROUTER_VERSION = "0.5.30";
 const KNOWN_BAD_NINEROUTER_VERSION = "0.5.75";
@@ -114,7 +114,7 @@ test("install creates package.json structure", async () => {
     name: string;
     private: boolean;
   };
-  assert.equal(parsedHost.name, "omniroute-9router-host");
+  assert.equal(parsedHost.name, "agentproxy-9router-host");
   assert.ok(parsedHost.private);
 
   assert.equal(result.installedVersion, MOCK_NINEROUTER_VERSION);

@@ -22,7 +22,7 @@ import {
 import { applyStackedCompression } from "../../../open-sse/services/compression/strategySelector.ts";
 import { headroomEngine } from "../../../open-sse/services/compression/engines/headroom/index.ts";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-headroom-minrows-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-headroom-minrows-"));
 const ORIGINAL_DATA_DIR = process.env.DATA_DIR;
 process.env.DATA_DIR = TEST_DATA_DIR;
 

@@ -522,7 +522,7 @@ test("provider asset provenance gate accepts an externally audited snapshot in a
     const snapshotDigest = sha256(`${assetPath}\0${sha256(SVG)}\n`);
     writeManifest(fixture.manifestPath, [unresolvedAsset(assetPath)], {
       auditedCommit: missingObject,
-      auditedRepository: "https://github.com/diegosouzapw/OmniRoute",
+      auditedRepository: "https://github.com/khanhkit/AgentProxy",
       auditedSnapshotSha256: `sha256:${snapshotDigest}`,
     });
 
@@ -542,7 +542,7 @@ test("provider asset provenance gate rejects an external snapshot digest that do
     writeFileSync(join(fixture.providersDir, "registered.svg"), SVG);
     writeManifest(fixture.manifestPath, [unresolvedAsset(assetPath)], {
       auditedCommit: missingObject,
-      auditedRepository: "https://github.com/diegosouzapw/OmniRoute",
+      auditedRepository: "https://github.com/khanhkit/AgentProxy",
       auditedSnapshotSha256: `sha256:${"0".repeat(64)}`,
     });
 

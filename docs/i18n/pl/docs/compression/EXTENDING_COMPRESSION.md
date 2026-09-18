@@ -6,7 +6,7 @@ lastUpdated: 2026-07-02
 
 # Rozszerzanie potoku kompresji
 
-> **TL;DR**: Silnik kompresji OmniRoute jest **podłączalny (pluggable)** — możesz rejestrować własne silniki, dostarczać language packi dla nowych języków i składać stacked pipelines. Ten przewodnik pokazuje jak.
+> **TL;DR**: Silnik kompresji AgentProxy jest **podłączalny (pluggable)** — możesz rejestrować własne silniki, dostarczać language packi dla nowych języków i składać stacked pipelines. Ten przewodnik pokazuje jak.
 
 **Powiązane przewodniki:**
 
@@ -85,8 +85,8 @@ interface CompressionEngine {
 Najprostszy możliwy silnik — usuwa nadmiarowe białe znaki z wiadomości.
 
 ````ts
-import type { CompressionEngine } from "omniroute/compression/engines/types";
-import { registerCompressionEngine } from "omniroute/compression/engines/registry";
+import type { CompressionEngine } from "agentproxy/compression/engines/types";
+import { registerCompressionEngine } from "agentproxy/compression/engines/registry";
 
 function preserveCodeBlocks(text: string): string {
   // Split by code block markers and preserve whitespace inside them
@@ -197,7 +197,7 @@ registerCompressionEngine(whitespaceEngine);
 ### Gdzie umieszczać własne silniki
 
 ```
-~/.omniroute/compression/engines/my-engine.ts    # User-level
+~/.agentproxy/compression/engines/my-engine.ts    # User-level
 <project>/compression-engines/my-engine.ts        # Project-level (loaded on startup)
 ```
 
@@ -208,7 +208,7 @@ Albo załaduj programowo z pluginu:
 import {
   registerCompressionEngine,
   unregisterCompressionEngine,
-} from "@omniroute/open-sse/services/compression/engines/registry";
+} from "@agentproxy/open-sse/services/compression/engines/registry";
 import { myEngine } from "./engines/my-engine";
 
 export default definePlugin({
@@ -233,7 +233,7 @@ Zarejestruj silnik w pluginie lub funkcji startowej. Po rejestracji będzie dost
 
 ## Tworzenie language packów
 
-Kompresja w stylu Caveman używa **pakietów reguł zależnych od języka**, aby obsługiwać wypełniacze (fillers), hedging i rozwlekłe wzorce w każdym języku naturalnym. OmniRoute dostarcza **6 language packów**: `en`, `es`, `fr`, `de`, `ja`, `pt-BR`.
+Kompresja w stylu Caveman używa **pakietów reguł zależnych od języka**, aby obsługiwać wypełniacze (fillers), hedging i rozwlekłe wzorce w każdym języku naturalnym. AgentProxy dostarcza **6 language packów**: `en`, `es`, `fr`, `de`, `ja`, `pt-BR`.
 
 ### Struktura pakietu
 
@@ -325,7 +325,7 @@ Walidacja uruchamia się automatycznie przy ładowaniu pakietu (względem `_sche
 ### Ładowanie własnego language packa
 
 ```ts
-import { loadRulePack } from "omniroute/compression/ruleLoader";
+import { loadRulePack } from "agentproxy/compression/ruleLoader";
 
 await loadRulePack("./my-custom-rules/hi/filler.json");
 ```
@@ -333,7 +333,7 @@ await loadRulePack("./my-custom-rules/hi/filler.json");
 Albo umieść w rozpoznawanej lokalizacji:
 
 ```
-~/.omniroute/compression/rules/hi/filler.json  # User-level
+~/.agentproxy/compression/rules/hi/filler.json  # User-level
 <project>/.compression/rules/hi/filler.json   # Project-level
 ```
 
@@ -390,7 +390,7 @@ Wyjście silnika N staje się wejściem silnika N+1.
 
 ### Tryby kompresji
 
-OmniRoute wybiera **JEDEN tryb na żądanie** na podstawie konfiguracji, progów auto-trigger i override'ów combo.
+AgentProxy wybiera **JEDEN tryb na żądanie** na podstawie konfiguracji, progów auto-trigger i override'ów combo.
 Dostępne tryby są zdefiniowane w `open-sse/services/compression/types.ts` (typ `CompressionMode`):
 
 | Mode         | Engines              | Use case                                                                                                                                                                                            |
@@ -478,10 +478,10 @@ Stacking nie zawsze jest lepszy:
 
 Nie ma rejestru nazwanych pipeline'ów. Stacked pipeline to po prostu **inline tablica
 kroków** przekazywana do `applyStackedCompression()` (eksport z
-`@omniroute/open-sse/services/compression/strategySelector`):
+`@agentproxy/open-sse/services/compression/strategySelector`):
 
 ```ts
-import { applyStackedCompression } from "@omniroute/open-sse/services/compression/strategySelector";
+import { applyStackedCompression } from "@agentproxy/open-sse/services/compression/strategySelector";
 
 const result = applyStackedCompression(body, [
   { engine: "rtk", intensity: "aggressive" },
@@ -510,9 +510,9 @@ Aby sterować z konfiguracji, ustaw `mode: "stacked"` i podaj tablicę kroków p
 
 ## Polityka synchronizacji z upstreamem
 
-Silniki kompresji OmniRoute w README przypisują zasługi kilku projektom upstream
+Silniki kompresji AgentProxy w README przypisują zasługi kilku projektom upstream
 („inspired by RTK, Caveman, LLMLingua-2, Troglodita”). Częste pytanie kontrybutorów:
-**gdy upstream RTK doda nowy filtr toola albo Caveman doda rule pack, jak to trafia do OmniRoute?**
+**gdy upstream RTK doda nowy filtr toola albo Caveman doda rule pack, jak to trafia do AgentProxy?**
 Ta sekcja jest autorytatywną odpowiedzią.
 
 ### Kopie vendored vs niezależne implementacje
@@ -534,7 +534,7 @@ kopii upstreamu, z której można zrobić `git pull` — właśnie dlatego READM
 **Nie ma automatycznego śledzenia wydań upstream ani etykiety `compression-sync`**
 — z założenia. Ponieważ silniki to reimplementacje, filtr upstream RTK
 lub rule pack Caveman nie jest mergowany jako kod; jest **wyrażany na nowo jako nowa
-reguła/filtr w formacie OmniRoute** (zob.
+reguła/filtr w formacie AgentProxy** (zob.
 [COMPRESSION_RULES_FORMAT.md](./COMPRESSION_RULES_FORMAT.md)) i trafia ad hoc przez
 zwykły PR. Punkty rozszerzeń powyżej (custom engine, language pack, filtr RTK)
 to sankcjonowany sposób na kontrybucję.
@@ -548,14 +548,14 @@ Niedawne przykłady dokładnie tego przepływu:
 ### Headroom (proxy kompresji wejścia)
 
 Headroom jest **w pełni wewnętrzny** — przypięty snapshot vendored kodeka `gcf` plus
-własne warstwy OmniRoute `smartcrusher` / `toon` / `tabular`. Nie ma żywego
+własne warstwy AgentProxy `smartcrusher` / `toon` / `tabular`. Nie ma żywego
 upstreamu do śledzenia poza kopią vendored; aktualizacje `gcf` odświeża się
 ręcznie przy zmianie kodeka i ponownie waliduje względem bramki budżetu kompresji
 (`check:compression-budget`).
 
 ### Proponowanie usprawnienia inspirowanego upstreamem
 
-1. **Nie vendoruj** — wyraź regułę/filtr upstream w formacie OmniRoute.
+1. **Nie vendoruj** — wyraź regułę/filtr upstream w formacie AgentProxy.
 2. Dodaj ją przez odpowiadający punkt rozszerzenia poniżej (language pack, filtr RTK albo
    custom engine).
 3. Odnieś się do projektu upstream w opisie PR (atrybucja), a nie przez

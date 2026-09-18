@@ -9,13 +9,13 @@ import { once } from "node:events";
 
 const CODEX_RESPONSES_URL = "https://chatgpt.com/backend-api/codex/responses";
 const ENCRYPTED_CONTENT_SENTINEL = "encrypted-codex-state:" + "A".repeat(910);
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-codex-chat-http-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-codex-chat-http-"));
 
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.DISABLE_SQLITE_AUTO_BACKUP = "true";
 process.env.API_KEY_SECRET = "codex-chat-http-e2e-secret-123456";
 process.env.REQUIRE_API_KEY = "false";
-process.env.OMNIROUTE_LOG_REQUEST_SHAPE = "0";
+process.env.AGENTPROXY_LOG_REQUEST_SHAPE = "0";
 
 const core = await import("../../src/lib/db/core.ts");
 const providersDb = await import("../../src/lib/db/providers.ts");
@@ -293,7 +293,7 @@ test("chat completions streams Codex Responses reasoning through real route HTTP
     assert.equal(reasoningContentDeltas.length, 0);
     const reasoningContent = reasoningContentDeltas.join("");
     assert.doesNotMatch(reasoningContent, /encrypted (?:state|private reasoning)/i);
-    assert.doesNotMatch(raw, /OmniRoute cannot recover|Codex is reasoning/i);
+    assert.doesNotMatch(raw, /AgentProxy cannot recover|Codex is reasoning/i);
     assert(!raw.includes(ENCRYPTED_CONTENT_SENTINEL), raw);
     assert(
       payloads.some((payload) => payload.choices?.[0]?.delta?.content === "The answer is 42.")

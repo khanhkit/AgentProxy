@@ -30,8 +30,8 @@ const SCRIPT_PATH = path.join(
 
 test("pickTarball extracts the filename from npm pack --json output", () => {
   assert.equal(
-    pickTarball('[{"filename":"omniroute-3.8.49.tgz","size":1}]'),
-    "omniroute-3.8.49.tgz"
+    pickTarball('[{"filename":"agentproxy-3.8.49.tgz","size":1}]'),
+    "agentproxy-3.8.49.tgz"
   );
 });
 
@@ -44,7 +44,7 @@ test("pickTarball throws on empty/odd npm output instead of booting garbage", ()
   assert.throws(() => pickTarball("{}"));
 });
 
-test("installed package root follows the package manifest name instead of the legacy OmniRoute name", () => {
+test("installed package root follows the package manifest name instead of the legacy AgentProxy name", () => {
   assert.equal(
     resolveInstalledPackageRoot("/prefix", "agentproxy"),
     path.join("/prefix", "lib", "node_modules", "agentproxy")
@@ -141,7 +141,7 @@ test("machine-token smoke requires no/invalid credentials to fail and the packag
       authenticatedStatus: 401,
     },
     {
-      cliToken: createHmac("sha256", "").update("omniroute-cli-auth-v1").digest("hex"),
+      cliToken: createHmac("sha256", "").update("agentproxy-cli-auth-v1").digest("hex"),
       unauthenticatedStatus: 401,
       invalidStatus: 401,
       authenticatedStatus: 200,
@@ -181,7 +181,7 @@ test("source guard: the gate polls the real health endpoint of the INSTALLED bin
   assert.ok(src.includes("/api/monitoring/health"), "must poll the health endpoint");
   assert.ok(src.includes("/api/settings"), "must verify a real application write and read");
   assert.ok(src.includes("/api/cli/whoami"), "must exercise the machine-token auth endpoint");
-  assert.ok(src.includes("x-omniroute-cli-token"), "must send the official machine-token header");
+  assert.ok(src.includes("x-agentproxy-cli-token"), "must send the official machine-token header");
   const postinstall = readFileSync(
     fileURLToPath(new URL("../../scripts/build/postinstall.mjs", import.meta.url)),
     "utf8"
@@ -189,7 +189,7 @@ test("source guard: the gate polls the real health endpoint of the INSTALLED bin
   assert.ok(postinstall.includes('["sql.js", "node-machine-id"]'));
   assert.ok(postinstall.includes('join(ROOT, "dist", "node_modules", packageName)'));
   assert.ok(
-    src.includes('OMNIROUTE_PACK_BOOT_FORCE_SQLJS: "1"'),
+    src.includes('AGENTPROXY_PACK_BOOT_FORCE_SQLJS: "1"'),
     "must force the packaged sql.js tier during this smoke"
   );
   assert.ok(src.includes("MAX_SERVER_OUTPUT_CHARS"));

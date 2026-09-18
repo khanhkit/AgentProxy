@@ -6,7 +6,7 @@ lastUpdated: 2026-06-28
 
 # Przewodnik po schemacie bazy danych i operacjach
 
-> **TL;DR**: OmniRoute używa **SQLite z journalingiem WAL** jako głównego magazynu, z szyfrowaniem **AES-256-GCM** w spoczynku dla wrażliwych pól. Ten przewodnik obejmuje schemat, migracje, kopie zapasowe/odzyskiwanie oraz runbooki operacyjne.
+> **TL;DR**: AgentProxy używa **SQLite z journalingiem WAL** jako głównego magazynu, z szyfrowaniem **AES-256-GCM** w spoczynku dla wrażliwych pól. Ten przewodnik obejmuje schemat, migracje, kopie zapasowe/odzyskiwanie oraz runbooki operacyjne.
 
 **Źródła:**
 
@@ -21,7 +21,7 @@ lastUpdated: 2026-06-28
 
 ## Dlaczego SQLite?
 
-OmniRoute wybrał SQLite zamiast PostgreSQL/MySQL z kilku powodów:
+AgentProxy wybrał SQLite zamiast PostgreSQL/MySQL z kilku powodów:
 
 | Czynnik              | SQLite                                    | PostgreSQL                                  |
 | -------------------- | ----------------------------------------- | ------------------------------------------- |
@@ -32,7 +32,7 @@ OmniRoute wybrał SQLite zamiast PostgreSQL/MySQL z kilku powodów:
 | **Kopia zapasowa**   | Kopia pojedynczego pliku                  | `pg_dump` lub snapshot systemu plików       |
 | **Przypadek użycia** | Instalacja per-użytkownik, osadzona       | Multi-tenant SaaS                           |
 
-Dla wdrożeń **jednoużytkownikowych, jednainstancyjnych** (główny przypadek użycia OmniRoute) SQLite jest prostszy i szybszy.
+Dla wdrożeń **jednoużytkownikowych, jednainstancyjnych** (główny przypadek użycia AgentProxy) SQLite jest prostszy i szybszy.
 
 ### Journaling WAL
 
@@ -57,9 +57,9 @@ Plik SQLite jest przechowywany w:
 
 | OS      | Ścieżka                                                      |
 | ------- | ------------------------------------------------------------ |
-| Linux   | `~/.omniroute/storage.sqlite`                                |
-| macOS   | `~/.omniroute/storage.sqlite`                                |
-| Windows | `%USERPROFILE%\.omniroute\storage.sqlite`                    |
+| Linux   | `~/.agentproxy/storage.sqlite`                                |
+| macOS   | `~/.agentproxy/storage.sqlite`                                |
+| Windows | `%USERPROFILE%\.agentproxy\storage.sqlite`                    |
 | Docker  | `/app/data/storage.sqlite` (konfigurowalne przez `DATA_DIR`) |
 
 Pliki towarzyszące:
@@ -71,14 +71,14 @@ Pliki towarzyszące:
 **Nadpisanie lokalizacji:**
 
 ```bash
-DATA_DIR=/custom/path omniroute
+DATA_DIR=/custom/path agentproxy
 ```
 
 ---
 
 ## Architektura modułów domenowych
 
-Baza OmniRoute ma **94 moduły domenowe** w `src/lib/db/`. Każdy moduł:
+Baza AgentProxy ma **94 moduły domenowe** w `src/lib/db/`. Każdy moduł:
 
 - Posiada jedną lub więcej konkretnych tabel
 - Eksportuje typowane funkcje CRUD
@@ -87,7 +87,7 @@ Baza OmniRoute ma **94 moduły domenowe** w `src/lib/db/`. Każdy moduł:
 
 ### 94 moduły DB
 
-OmniRoute ma **94 pliki modułów** w `src/lib/db/`. Poniżej próbka kluczowych modułów; pełna lista w listingu katalogu:
+AgentProxy ma **94 pliki modułów** w `src/lib/db/`. Poniżej próbka kluczowych modułów; pełna lista w listingu katalogu:
 
 | Moduł                   | Tabele                                                         | Odpowiedzialność                                                               |
 | ----------------------- | -------------------------------------------------------------- | ------------------------------------------------------------------------------ |
@@ -183,7 +183,7 @@ Pełna lista ~30+ tabel jest w `src/lib/db/migrations/`.
 
 ## Migracje
 
-OmniRoute używa **wersjonowanych, idempotentnych migracji** w `src/lib/db/migrations/`. Każda migracja to pojedynczy plik SQL o nazwie `NNN_description.sql`.
+AgentProxy używa **wersjonowanych, idempotentnych migracji** w `src/lib/db/migrations/`. Każda migracja to pojedynczy plik SQL o nazwie `NNN_description.sql`.
 
 ### Nazewnictwo migracji
 
@@ -199,7 +199,7 @@ OmniRoute używa **wersjonowanych, idempotentnych migracji** w `src/lib/db/migra
 
 Przy starcie `migrationRunner.ts`:
 
-1. Tworzy tabelę `_omniroute_migrations`, jeśli nie istnieje
+1. Tworzy tabelę `_agentproxy_migrations`, jeśli nie istnieje
 2. Odpytuje już zastosowane migracje
 3. Stosuje nowe migracje po kolei, każdą w transakcji
 4. Zapisuje każdą zastosowaną migrację ze znacznikiem czasu
@@ -253,7 +253,7 @@ UPDATE combos SET priority = 100 WHERE priority IS NULL;
 CREATE INDEX IF NOT EXISTS idx_combos_priority ON combos(priority);
 ```
 
-> **Zmiany niekompatybilne wstecz** (np. usuwanie kolumn) są trudne. OmniRoute NIE wspiera downgrade — po zastosowaniu migracji zmiana schematu jest trwała. Planuj odpowiednio.
+> **Zmiany niekompatybilne wstecz** (np. usuwanie kolumn) są trudne. AgentProxy NIE wspiera downgrade — po zastosowaniu migracji zmiana schematu jest trwała. Planuj odpowiednio.
 
 ---
 
@@ -307,7 +307,7 @@ Ze względów wydajnościowych w plaintexcie przechowywane są:
 
 ## Zastrzeżenia dotyczące szyfrowania (v3.8.16+)
 
-OmniRoute używa **`migrateLegacyEncryptedString()`**, aby przezroczyście obsługiwać dwa schematy szyfrowania:
+AgentProxy używa **`migrateLegacyEncryptedString()`**, aby przezroczyście obsługiwać dwa schematy szyfrowania:
 
 - **Legacy** (pre-v3.5.0): „szyfrowanie” oparte na XOR (nie prawdziwa kryptografia)
 - **Current**: AES-256-GCM z właściwym IV i auth tag
@@ -343,7 +343,7 @@ Cache jest unieważniany przy każdym zapisie do odpowiadającej tabeli.
 
 ```bash
 # Use the CLI to create a local backup
-omniroute backup create --name pre-migration
+agentproxy backup create --name pre-migration
 
 # Or via the API
 curl -X PUT http://localhost:20128/api/db-backups \
@@ -363,7 +363,7 @@ Plik kopii zapasowej obejmuje:
 
 ```bash
 # Via CLI
-omniroute restore pre-migration
+agentproxy restore pre-migration
 
 # Via API
 curl -X POST http://localhost:20128/api/db-backups/restore \
@@ -378,7 +378,7 @@ curl -X POST http://localhost:20128/api/db-backups/restore \
 
 ```bash
 # Enable automated daily backups via CLI
-omniroute backup auto enable --cron "0 2 * * *" --retention 7
+agentproxy backup auto enable --cron "0 2 * * *" --retention 7
 ```
 
 Harmonogram jest wykonywany po stronie serwera przez zadanie w tle, które tyka co 30 sekund
@@ -386,17 +386,17 @@ Harmonogram jest wykonywany po stronie serwera przez zadanie w tle, które tyka 
 
 | Zmienna                                     | Domyślnie | Opis                                                                                                         |
 | ------------------------------------------- | --------- | ------------------------------------------------------------------------------------------------------------ |
-| `OMNIROUTE_BACKUP_SCHEDULE_JOB_INTERVAL_MS` | `30000`   | Interwał ticka w ms (min `5000`). Musi być krótszy niż 60 s, aby niezawodnie trafiać w pasującą minutę cron. |
+| `AGENTPROXY_BACKUP_SCHEDULE_JOB_INTERVAL_MS` | `30000`   | Interwał ticka w ms (min `5000`). Musi być krótszy niż 60 s, aby niezawodnie trafiać w pasującą minutę cron. |
 
 ### Gorąca kopia SQLite
 
 Dla kopii na żywo bez przestoju:
 
 ```bash
-sqlite3 ~/.omniroute/storage.sqlite ".backup /backups/omniroute-hot.db"
+sqlite3 ~/.agentproxy/storage.sqlite ".backup /backups/agentproxy-hot.db"
 ```
 
-Używa online backup API SQLite — bezpieczne podczas działania OmniRoute.
+Używa online backup API SQLite — bezpieczne podczas działania AgentProxy.
 
 ---
 
@@ -439,10 +439,10 @@ PRAGMA mmap_size = 268435456;  -- 256MB
 
 ### Kompaktowanie
 
-Długo działające instancje OmniRoute zyskują na okazjonalnym `VACUUM`:
+Długo działające instancje AgentProxy zyskują na okazjonalnym `VACUUM`:
 
 ```bash
-sqlite3 ~/.omniroute/storage.sqlite "VACUUM;"
+sqlite3 ~/.agentproxy/storage.sqlite "VACUUM;"
 ```
 
 Uruchamiaj miesięcznie w oknach niskiego ruchu. (Tryb WAL zmniejsza potrzebę, ale jej nie eliminuje.)
@@ -477,7 +477,7 @@ Returns:
 Uruchom `PRAGMA integrity_check`, aby wykryć korupcję:
 
 ```bash
-sqlite3 ~/.omniroute/storage.sqlite "PRAGMA integrity_check;"
+sqlite3 ~/.agentproxy/storage.sqlite "PRAGMA integrity_check;"
 # Should print: ok
 ```
 
@@ -493,15 +493,15 @@ Brakuje pliku `-wal`, ale `-shm` i główna DB są nienaruszone:
 
 ```bash
 # Recovers automatically on next open
-omniroute
+agentproxy
 ```
 
 Jeśli SQLite nie może odzyskać automatycznie:
 
 ```bash
-sqlite3 ~/.omniroute/storage.sqlite ".recover" > recovered.sql
+sqlite3 ~/.agentproxy/storage.sqlite ".recover" > recovered.sql
 sqlite3 recovered.db < recovered.sql
-mv recovered.db ~/.omniroute/storage.sqlite
+mv recovered.db ~/.agentproxy/storage.sqlite
 ```
 
 ### Scenariusz 2: Uszkodzony główny plik DB
@@ -509,7 +509,7 @@ mv recovered.db ~/.omniroute/storage.sqlite
 Przywróć z kopii zapasowej:
 
 ```bash
-omniroute sync pull --merge   # or: omniroute backup restore <backup-id>
+agentproxy sync pull --merge   # or: agentproxy backup restore <backup-id>
 ```
 
 ### Scenariusz 3: Utracony klucz szyfrowania
@@ -524,7 +524,7 @@ SQLite zwróci błędy `SQLITE_FULL`. Zwolnij miejsce na dysku, potem:
 
 ```bash
 # Checkpoint WAL to free up space
-sqlite3 ~/.omniroute/storage.sqlite "PRAGMA wal_checkpoint(TRUNCATE);"
+sqlite3 ~/.agentproxy/storage.sqlite "PRAGMA wal_checkpoint(TRUNCATE);"
 ```
 
 ---
@@ -534,13 +534,13 @@ sqlite3 ~/.omniroute/storage.sqlite "PRAGMA wal_checkpoint(TRUNCATE);"
 ### Podgląd tabeli
 
 ```bash
-sqlite3 ~/.omniroute/storage.sqlite "SELECT * FROM api_keys LIMIT 5;"
+sqlite3 ~/.agentproxy/storage.sqlite "SELECT * FROM api_keys LIMIT 5;"
 ```
 
 ### Liczba wierszy we wszystkich tabelach
 
 ```bash
-sqlite3 ~/.omniroute/storage.sqlite <<EOF
+sqlite3 ~/.agentproxy/storage.sqlite <<EOF
 SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%';
 EOF
 ```
@@ -548,14 +548,14 @@ EOF
 ### Reset (wyczyszczenie) wszystkich danych
 
 ```bash
-# Stop OmniRoute first
-omniroute stop
+# Stop AgentProxy first
+agentproxy stop
 
 # Delete the DB file
-rm ~/.omniroute/storage.sqlite*
+rm ~/.agentproxy/storage.sqlite*
 
 # Restart (will recreate empty DB)
-omniroute
+agentproxy
 ```
 
 Dla **selektywnego** resetu (zachowaj providerów, wyczyść użycie):
@@ -569,7 +569,7 @@ DELETE FROM proxy_logs WHERE timestamp < datetime('now', '-30 day');
 ### Eksport pojedynczej tabeli
 
 ```bash
-sqlite3 ~/.omniroute/storage.sqlite <<EOF
+sqlite3 ~/.agentproxy/storage.sqlite <<EOF
 .mode csv
 .output api_keys.csv
 SELECT * FROM api_keys;
@@ -586,7 +586,7 @@ Inny proces trzyma blokadę zapisu. Albo:
 
 - Poczekaj, aż drugi proces skończy (sprawdź `lsof | grep storage.sqlite`)
 - Zabij drugi proces
-- Jeśli problem się utrzymuje, zrestartuj OmniRoute
+- Jeśli problem się utrzymuje, zrestartuj AgentProxy
 
 ### "Foreign key constraint failed"
 
@@ -616,10 +616,10 @@ PRAGMA mmap_size = 0;
 
 Migracja działała w transakcji, więc powinna się wycofać. Jeśli nie:
 
-1. **Zatrzymaj OmniRoute** (zapobiegaj dalszym próbom)
+1. **Zatrzymaj AgentProxy** (zapobiegaj dalszym próbom)
 2. **Sprawdź stan DB** przez `sqlite3`
 3. **Napraw ręcznie** częściową migrację
-4. **Uruchom ponownie** OmniRoute (migracja zostanie ponowiona)
+4. **Uruchom ponownie** AgentProxy (migracja zostanie ponowiona)
 
 Aby temu zapobiec, zawsze testuj migracje najpierw na kopii.
 

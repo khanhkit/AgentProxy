@@ -5,12 +5,12 @@ import path from "node:path";
 import test from "node:test";
 
 const TEST_DATA_DIR = fs.mkdtempSync(
-  path.join(os.tmpdir(), "omniroute-unsupported-probe-neutral-")
+  path.join(os.tmpdir(), "agentproxy-unsupported-probe-neutral-")
 );
 
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.DISABLE_SQLITE_AUTO_BACKUP = "true";
-process.env.OMNIROUTE_DISABLE_CREDENTIAL_HEALTH_CHECK = "true";
+process.env.AGENTPROXY_DISABLE_CREDENTIAL_HEALTH_CHECK = "true";
 
 const originalFetch = globalThis.fetch;
 
@@ -179,7 +179,7 @@ test("unsupported provider verification is neutral and does not poison stored co
 
   await credentialHealthScheduler.forceSweep();
 
-  const timing = globalThis.__omnirouteCredentialHC?.perConnTiming.get("unsupported-probe-test");
+  const timing = globalThis.__agentproxyCredentialHC?.perConnTiming.get("unsupported-probe-test");
 
   assert.ok(timing, "unsupported scheduler skip must still establish per-connection pacing");
 

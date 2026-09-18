@@ -7,10 +7,10 @@ const dispatchSourcePath = join(import.meta.dirname, "../../src/lib/batches/disp
 
 const originalFetch = globalThis.fetch;
 const originalEnv = {
-  OMNIROUTE_PORT: process.env.OMNIROUTE_PORT,
+  AGENTPROXY_PORT: process.env.AGENTPROXY_PORT,
   PORT: process.env.PORT,
   DASHBOARD_PORT: process.env.DASHBOARD_PORT,
-  OMNIROUTE_BASE_PATH: process.env.OMNIROUTE_BASE_PATH,
+  AGENTPROXY_BASE_PATH: process.env.AGENTPROXY_BASE_PATH,
 };
 
 function restoreEnv(): void {
@@ -37,10 +37,10 @@ test("batch dispatch does not pull API route modules into the instrumentation gr
 });
 
 test("batch dispatch posts to the active dashboard loopback listener", async () => {
-  process.env.OMNIROUTE_PORT = "24120";
+  process.env.AGENTPROXY_PORT = "24120";
   process.env.PORT = "24121";
   process.env.DASHBOARD_PORT = "24122";
-  process.env.OMNIROUTE_BASE_PATH = "/omniroute/";
+  process.env.AGENTPROXY_BASE_PATH = "/agentproxy/";
 
   const calls: Array<{ input: string; init?: RequestInit }> = [];
   const upstreamResponse = new Response("accepted", { status: 202 });
@@ -58,7 +58,7 @@ test("batch dispatch posts to the active dashboard loopback listener", async () 
 
   assert.strictEqual(response, upstreamResponse);
   assert.equal(calls.length, 1);
-  assert.equal(calls[0].input, "http://127.0.0.1:24122/omniroute/v1/chat/completions");
+  assert.equal(calls[0].input, "http://127.0.0.1:24122/agentproxy/v1/chat/completions");
   assert.equal(calls[0].init?.method, "POST");
   assert.equal(calls[0].init?.redirect, "error");
   assert.equal(new Headers(calls[0].init?.headers).get("authorization"), "Bearer batch-secret");

@@ -12,7 +12,7 @@ interface TestConnectionRecord {
   rateLimitedUntil?: string | null;
 }
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-test-search-432-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-test-search-432-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.API_KEY_SECRET = process.env.API_KEY_SECRET || "search-432-test-secret";
 process.env.DISABLE_SQLITE_AUTO_BACKUP = "true";

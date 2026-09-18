@@ -6,18 +6,18 @@ lastUpdated: 2026-09-06
 
 # OpenCode v2 plugin — install and configure
 
-`@omniroute/opencode-plugin-v2` puts your whole OmniRoute catalog — models, combos and
+`@agentproxy/opencode-plugin-v2` puts your whole AgentProxy catalog — models, combos and
 auto-combos — into OpenCode v2's model picker, with display names, pricing and free-tier
 budgets.
 
-It is a separate package from `@omniroute/opencode-plugin` because OpenCode v1 and v2 load
+It is a separate package from `@agentproxy/opencode-plugin` because OpenCode v1 and v2 load
 plugins through different contracts. Pick the one matching your OpenCode major; nothing is
 shared between them, so upgrading one never forces the other.
 
 ## Requirements
 
 - OpenCode v2.
-- A reachable OmniRoute gateway (`http://localhost:20128` by default).
+- A reachable AgentProxy gateway (`http://localhost:20128` by default).
 - Node.js 22 or 24.
 
 ## Install
@@ -28,9 +28,9 @@ Add the plugin to `opencode.json`:
 {
   "plugins": [
     {
-      "package": "@omniroute/opencode-plugin-v2",
+      "package": "@agentproxy/opencode-plugin-v2",
       "options": {
-        "providerId": "omniroute",
+        "providerId": "agentproxy",
         "baseURL": "http://localhost:20128"
       }
     }
@@ -38,7 +38,7 @@ Add the plugin to `opencode.json`:
 }
 ```
 
-Models then appear as `omniroute/<provider>/<model>`; `providerId` decides that prefix and
+Models then appear as `agentproxy/<provider>/<model>`; `providerId` decides that prefix and
 the id of the integration OpenCode stores the credential under.
 
 ## Credentials
@@ -49,7 +49,7 @@ The plugin looks for a gateway key in three places, in this order:
    OpenCode's own auth flow can store the key. Nothing lands in `opencode.json` — prefer this.
 2. `apiKey` in the plugin options, for a per-project override. It puts the key in a file you
    may be committing.
-3. `OMNIROUTE_API_KEY` in the environment.
+3. `AGENTPROXY_API_KEY` in the environment.
 
 With none of the three, the catalog is empty and the plugin says so once at startup instead of
 leaving you with a silent empty picker.
@@ -76,11 +76,11 @@ naming the endpoint and what was lost — so a degraded picker is never a myster
 
 | Key                              | Default                                        | Notes                                                                                                  |
 | -------------------------------- | ---------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
-| `providerId`                     | `"omniroute"`                                  | Provider id, integration id, and the prefix models appear under                                        |
+| `providerId`                     | `"agentproxy"`                                  | Provider id, integration id, and the prefix models appear under                                        |
 | `baseURL`                        | required                                       | Gateway root, `http(s)` only; the `/v1` suffix is added where needed                                   |
-| `apiKey`                         | connected credential, then `OMNIROUTE_API_KEY` | Chat key for `/v1/*`                                                                                   |
+| `apiKey`                         | connected credential, then `AGENTPROXY_API_KEY` | Chat key for `/v1/*`                                                                                   |
 | `managementReadToken`            | falls back to `apiKey`                         | Key for `/api/*` — usually **not** the same one                                                        |
-| `displayName`                    | `"OmniRoute"`                                  | Provider name in the picker                                                                            |
+| `displayName`                    | `"AgentProxy"`                                  | Provider name in the picker                                                                            |
 | `timeoutMs`                      | `10000`                                        | Per-endpoint fetch timeout (auto-combos use 5s)                                                        |
 | `modelCacheTtlMs`                | `300000`                                       | Catalog cache TTL; a disk snapshot warms cold starts                                                   |
 | `timeouts`                       | falls back to `timeoutMs`                      | Per-endpoint budgets in ms: `models`, `combos`, `autoCombos`, `enrichment`                             |
@@ -122,7 +122,7 @@ Set `"geminiSanitization": false` to turn it off.
 
 | Symptom                               | Cause                                                                                                    |
 | ------------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| Picker shows no OmniRoute model       | No key resolved (check the startup warning), or the gateway is unreachable                               |
+| Picker shows no AgentProxy model       | No key resolved (check the startup warning), or the gateway is unreachable                               |
 | Raw model ids, no combos, no pricing  | The management endpoints refused the token — set `managementReadToken`                                   |
 | A session pinned to `opencode-<id>/…` | The v1 plugin published `opencode-<id>`; v2 publishes `<id>` bare, so re-select the model under `<id>/…` |
 

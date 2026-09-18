@@ -11,7 +11,7 @@
 // surface where reasoning_effort is honored), and continues to be stripped on
 // Claude Haiku 4.5 and Claude Opus 4.7 (rejected upstream).
 //
-// Note: OmniRoute's openai→claude translator already maps reasoning_effort →
+// Note: AgentProxy's openai→claude translator already maps reasoning_effort →
 // thinking.budget_tokens far more richly than upstream's tiny effortToBudget
 // table (handles `max`, `xhigh`, adaptive models, and fits to max_tokens), so
 // only the github-executor half of upstream PR #791 needs porting.

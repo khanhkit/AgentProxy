@@ -55,7 +55,7 @@ test.afterEach(() => {
 // classification out of the no-registry fallback.
 
 test("lmarena has a registry entry — no longer the no-registry unsupported fallback", async () => {
-  const { getRegistryEntry } = await import("@omniroute/open-sse/config/providerRegistry.ts");
+  const { getRegistryEntry } = await import("@agentproxy/open-sse/config/providerRegistry.ts");
   const entry = getRegistryEntry("lmarena");
   assert.ok(entry, "lmarena must have a providerRegistry entry (#6280 Arena modernization)");
   assert.ok(entry.baseUrl, "the probe path requires a real baseUrl on the registry entry");

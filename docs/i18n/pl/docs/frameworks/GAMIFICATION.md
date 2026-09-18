@@ -9,7 +9,7 @@ lastUpdated: 2026-06-28
 > **Source of truth:** `src/lib/gamification/`, `src/lib/db/gamification.ts`, `src/app/api/gamification/`
 > **Last updated:** 2026-06-28 — v3.8.40
 
-OmniRoute zawiera lokalną warstwę grywalizacji, która nagradza użytkowników za
+AgentProxy zawiera lokalną warstwę grywalizacji, która nagradza użytkowników za
 aktywność na platformie — wysyłanie zapytań, przełączanie providerów, tworzenie
 combo, udostępnianie tokenów i wkład w społeczność. Cały stan żyje w
 SQLite; federacja z serwerami społecznościowymi jest opcjonalna i oparta na push.
@@ -38,7 +38,7 @@ tokenów, nagrody za zaproszenia).
 | Leaderboards      | Zakresy: globalny, tygodniowy, miesięczny, udostępnianie tokenów i wkład |
 | Token Sharing     | Transfer kredytów między użytkownikami przez księgę double-entry         |
 | Invite & Redeem   | Kody polecające z przechowywaniem hashowanym SHA-256                     |
-| Community Servers | Federacja z zewnętrznymi instancjami OmniRoute                           |
+| Community Servers | Federacja z zewnętrznymi instancjami AgentProxy                           |
 | Anti-Cheat        | Punktacja po stronie serwera, rate limiting, detekcja anomalii z-score   |
 
 ### Zasady projektowe
@@ -116,7 +116,7 @@ src/app/api/gamification/
 
 ### Tabele bazy danych
 
-Wszystkie tabele żyją w głównej bazie SQLite OmniRoute, tworzonej przez migrację
+Wszystkie tabele żyją w głównej bazie SQLite AgentProxy, tworzonej przez migrację
 `060_create_gamification.sql`. Journaling WAL jest dziedziczony z singletona
 `getDbInstance()` w `src/lib/db/core.ts`.
 
@@ -175,7 +175,7 @@ Wszystkie tabele żyją w głównej bazie SQLite OmniRoute, tworzonej przez migr
 
 ### Moduł domenowy: `src/lib/db/gamification.ts`
 
-Podąża za standardowym wzorcem OmniRoute — importuje `getDbInstance()` z
+Podąża za standardowym wzorcem AgentProxy — importuje `getDbInstance()` z
 `core.ts`, eksportuje typowane funkcje CRUD. Bez surowego SQL w handlerach tras.
 
 Kluczowe funkcje:
@@ -589,7 +589,7 @@ export async function transferTokens(
 | `code`       | `A3K9X7M2` (unique, indexed) |
 | `token_hash` | SHA-256(raw_token)           |
 
-Surowy token jest zwracany użytkownikowi dokładnie raz w momencie utworzenia. OmniRoute
+Surowy token jest zwracany użytkownikowi dokładnie raz w momencie utworzenia. AgentProxy
 nigdy go potem nie przechowuje ani nie wyświetla — pozostaje tylko hash.
 
 ### Zapobieganie self-referral
@@ -723,7 +723,7 @@ Admini mogą odpytać pełny ślad audytu przez `GET /api/gamification/anomalies
 
 ## Trasy API
 
-Wszystkie trasy podążają za standardowym wzorcem OmniRoute:
+Wszystkie trasy podążają za standardowym wzorcem AgentProxy:
 
 ```
 Route → CORS preflight → Body validation (Zod) → Auth (extractApiKey)

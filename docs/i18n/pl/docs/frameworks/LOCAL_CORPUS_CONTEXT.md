@@ -15,7 +15,7 @@ lastUpdated: 2026-07-20
 ## Czym to jest
 
 Local Corpus pozwala operatorowi udostępnić jeden jawnie zatwierdzony katalog plików
-tekstowych serwerowi MCP OmniRoute. Pliki pozostają w oryginalnym katalogu: OmniRoute
+tekstowych serwerowi MCP AgentProxy. Pliki pozostają w oryginalnym katalogu: AgentProxy
 zapisuje w SQLite wyłącznie kanoniczną ścieżkę root i utrzymuje indeks wyszukiwania
 w pamięci. Nie kopiuje zawartości korpusu do repozytorium ani bazy danych.
 
@@ -71,7 +71,7 @@ Przykładowe wejścia MCP:
 - Dowiązania symboliczne są pomijane. Ścieżki odczytu są kanonizowane i muszą pozostać
   wewnątrz skonfigurowanego root; ścieżki bezwzględne oraz próby path traversal są odrzucane.
 - Wykluczane są wrażliwe i generowane nazwy katalogów: `.build`, `.codex`, `.env`,
-  `.git`, `.next`, `.omniroute`, `.ssh`, `coverage`, `dist`, `node_modules` oraz
+  `.git`, `.next`, `.agentproxy`, `.ssh`, `coverage`, `dist`, `node_modules` oraz
   `secrets`.
 - Domyślne limity to 5000 plików, 1 MiB na plik, 64 MiB łącznie zindeksowanej zawartości,
   około 4000 znaków na fragment wyszukiwania oraz 400 linii na odczyt.

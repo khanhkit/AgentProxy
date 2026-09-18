@@ -5,7 +5,7 @@
 // ("GLIBC_2.29 not found"), so the native module fails to dlopen and any test that
 // reaches better-sqlite3 directly (or asserts stdout that the load-failure warning
 // would pollute) fails HERE while passing in CI. This is a known environment
-// limitation, not a defect in the code under test: the OmniRoute runtime itself
+// limitation, not a defect in the code under test: the AgentProxy runtime itself
 // cascades to node:sqlite/sql.js when better-sqlite3 is unavailable. See
 // tests/unit/_helpers/betterSqlite3Availability.ts for a guard helper.
 import test from "node:test";
@@ -17,7 +17,7 @@ import Database from "better-sqlite3";
 
 const ORIGINAL_DATA_DIR = process.env.DATA_DIR;
 const ORIGINAL_FETCH = globalThis.fetch;
-const ORIGINAL_API_KEY = process.env.OMNIROUTE_API_KEY;
+const ORIGINAL_API_KEY = process.env.AGENTPROXY_API_KEY;
 
 function jsonResponse(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
@@ -27,9 +27,9 @@ function jsonResponse(body: unknown, status = 200) {
 }
 
 async function withCliEnv(fn: (dataDir: string) => Promise<void>) {
-  const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-cli-routes-10570-"));
+  const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-cli-routes-10570-"));
   process.env.DATA_DIR = dataDir;
-  process.env.OMNIROUTE_API_KEY = "test-management-key";
+  process.env.AGENTPROXY_API_KEY = "test-management-key";
   delete process.env.STORAGE_ENCRYPTION_KEY;
   try {
     await fn(dataDir);
@@ -38,8 +38,8 @@ async function withCliEnv(fn: (dataDir: string) => Promise<void>) {
     fs.rmSync(dataDir, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
     if (ORIGINAL_DATA_DIR === undefined) delete process.env.DATA_DIR;
     else process.env.DATA_DIR = ORIGINAL_DATA_DIR;
-    if (ORIGINAL_API_KEY === undefined) delete process.env.OMNIROUTE_API_KEY;
-    else process.env.OMNIROUTE_API_KEY = ORIGINAL_API_KEY;
+    if (ORIGINAL_API_KEY === undefined) delete process.env.AGENTPROXY_API_KEY;
+    else process.env.AGENTPROXY_API_KEY = ORIGINAL_API_KEY;
   }
 }
 
@@ -60,7 +60,7 @@ async function createConnection(
   return connection;
 }
 
-test("omniroute test resolves a connection and calls its server-owned test route", async () => {
+test("agentproxy test resolves a connection and calls its server-owned test route", async () => {
   await withCliEnv(async () => {
     const requests: Array<{ path: string; method: string }> = [];
     globalThis.fetch = (async (input, init) => {
@@ -103,7 +103,7 @@ test("omniroute test resolves a connection and calls its server-owned test route
   });
 });
 
-test("omniroute test --all-providers consumes the current connections response shape", async () => {
+test("agentproxy test --all-providers consumes the current connections response shape", async () => {
   await withCliEnv(async () => {
     const requests: Array<{ path: string; method: string }> = [];
     globalThis.fetch = (async (input, init) => {

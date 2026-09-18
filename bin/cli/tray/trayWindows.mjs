@@ -3,20 +3,20 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { writeFileSync, unlinkSync, existsSync } from "node:fs";
 
-const OMNIROUTE_IPC_PORT_BASE = 29128;
+const AGENTPROXY_IPC_PORT_BASE = 29128;
 
 export function initWinTray({ port, onQuit, onOpenDashboard, onShowLogs }) {
   if (process.platform !== "win32") return null;
 
-  const ipcPort = OMNIROUTE_IPC_PORT_BASE + (port % 1000);
-  const scriptPath = join(tmpdir(), `omniroute-tray-${process.pid}.ps1`);
+  const ipcPort = AGENTPROXY_IPC_PORT_BASE + (port % 1000);
+  const scriptPath = join(tmpdir(), `agentproxy-tray-${process.pid}.ps1`);
 
   const ps1 = `
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
 
 $tray = New-Object System.Windows.Forms.NotifyIcon
-$tray.Text = "OmniRoute - Port ${port}"
+$tray.Text = "AgentProxy - Port ${port}"
 $tray.Icon = [System.Drawing.SystemIcons]::Application
 $tray.Visible = $true
 
@@ -31,7 +31,7 @@ $mLogs.add_Click({ Write-Host "LOGS" })
 $mAutostart = $menu.Items.Add("Enable Auto-start")
 $mAutostart.add_Click({ Write-Host "AUTOSTART" })
 
-$mQuit = $menu.Items.Add("Quit OmniRoute")
+$mQuit = $menu.Items.Add("Quit AgentProxy")
 $mQuit.add_Click({ Write-Host "QUIT"; [System.Windows.Forms.Application]::Exit() })
 
 $tray.ContextMenuStrip = $menu

@@ -14,9 +14,9 @@ import assert from "node:assert/strict";
 import path from "node:path";
 import { describeVolatileEnvWarning } from "../../bin/cli/utils/volatileEnvPath.mjs";
 
-const INSTALLED_ROOT = path.join("/usr", "lib", "node_modules", "omniroute");
-const CHECKOUT_ROOT = path.join("/home", "dev", "OmniRoute");
-const DURABLE = path.join("/home", "dev", ".omniroute", ".env");
+const INSTALLED_ROOT = path.join("/usr", "lib", "node_modules", "agentproxy");
+const CHECKOUT_ROOT = path.join("/home", "dev", "AgentProxy");
+const DURABLE = path.join("/home", "dev", ".agentproxy", ".env");
 
 test("an installed package .env that supplied keys is reported as volatile", () => {
   const message = describeVolatileEnvWarning({

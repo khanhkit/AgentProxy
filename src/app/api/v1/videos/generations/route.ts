@@ -1,13 +1,13 @@
-import { handleVideoGeneration } from "@omniroute/open-sse/handlers/videoGeneration.ts";
-import { resolveVideoCredentialProvider } from "@omniroute/open-sse/handlers/videoGeneration/googleFlow.ts";
+import { handleVideoGeneration } from "@agentproxy/open-sse/handlers/videoGeneration.ts";
+import { resolveVideoCredentialProvider } from "@agentproxy/open-sse/handlers/videoGeneration/googleFlow.ts";
 import { withInjectionGuard } from "@/middleware/promptInjectionGuard";
 import {
   getProviderCredentialsWithQuotaPreflight,
   clearRecoveredProviderState,
 } from "@/sse/services/auth";
-import { getVideoProvider } from "@omniroute/open-sse/config/videoRegistry.ts";
-import { errorResponse } from "@omniroute/open-sse/utils/error.ts";
-import { HTTP_STATUS } from "@omniroute/open-sse/config/constants.ts";
+import { getVideoProvider } from "@agentproxy/open-sse/config/videoRegistry.ts";
+import { errorResponse } from "@agentproxy/open-sse/utils/error.ts";
+import { HTTP_STATUS } from "@agentproxy/open-sse/config/constants.ts";
 import * as log from "@/sse/utils/logger";
 import { enforceApiKeyPolicy } from "@/shared/utils/apiKeyPolicy";
 import {
@@ -76,7 +76,7 @@ async function postHandler(request, _context) {
     const { getComboByName } = await import("@/lib/db/combos");
     const combo = await getComboByName(body.model);
     if (combo) {
-      const { executeVideoCombo } = await import("@omniroute/open-sse/services/videoCombo");
+      const { executeVideoCombo } = await import("@agentproxy/open-sse/services/videoCombo");
       return executeVideoCombo(body.model, body, { request, policy }, startTime, log);
     }
   }

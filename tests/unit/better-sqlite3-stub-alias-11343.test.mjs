@@ -23,16 +23,16 @@ describe("better-sqlite3 stub alias (#11343)", () => {
   it("only the exact opt-in value enables the stub", () => {
     for (const value of ["", "0", "true", "yes"]) {
       assert.equal(
-        shouldStubBetterSqlite3({ OMNIROUTE_BETTER_SQLITE3_STUB: value }),
+        shouldStubBetterSqlite3({ AGENTPROXY_BETTER_SQLITE3_STUB: value }),
         false,
-        `OMNIROUTE_BETTER_SQLITE3_STUB=${JSON.stringify(value)} must not enable the stub`
+        `AGENTPROXY_BETTER_SQLITE3_STUB=${JSON.stringify(value)} must not enable the stub`
       );
     }
   });
 
-  it("OMNIROUTE_BETTER_SQLITE3_STUB=1 opts into the stub (SIGABRT-prone build hosts, #10060)", () => {
-    assert.equal(shouldStubBetterSqlite3({ OMNIROUTE_BETTER_SQLITE3_STUB: "1" }), true);
-    assert.deepEqual(betterSqlite3AliasFor({ OMNIROUTE_BETTER_SQLITE3_STUB: "1" }), {
+  it("AGENTPROXY_BETTER_SQLITE3_STUB=1 opts into the stub (SIGABRT-prone build hosts, #10060)", () => {
+    assert.equal(shouldStubBetterSqlite3({ AGENTPROXY_BETTER_SQLITE3_STUB: "1" }), true);
+    assert.deepEqual(betterSqlite3AliasFor({ AGENTPROXY_BETTER_SQLITE3_STUB: "1" }), {
       "better-sqlite3": "./src/lib/db/better-sqlite3.stub.js",
     });
   });

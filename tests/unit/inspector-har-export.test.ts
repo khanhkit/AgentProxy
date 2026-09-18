@@ -27,7 +27,7 @@ function makeReq(overrides: Partial<InterceptedRequest> = {}): InterceptedReques
 test("produces HAR v1.2 with creator + entries", () => {
   const har = toHar([makeReq()]);
   assert.equal(har.log.version, "1.2");
-  assert.ok(har.log.creator.name.includes("OmniRoute"));
+  assert.ok(har.log.creator.name.includes("AgentProxy"));
   assert.equal(har.log.entries.length, 1);
 });
 
@@ -102,7 +102,7 @@ test("preserves _detectedKind / _contextKey / _agent / _sessionId / _note", () =
   assert.equal(e._contextKey, "abc123");
   assert.equal(e._sessionId, "00000000-0000-4000-8000-000000000099");
   assert.equal(e._note, "TLS tunnel");
-  assert.equal(e._omniRouteId, "00000000-0000-4000-8000-000000000001");
+  assert.equal(e._AgentProxyId, "00000000-0000-4000-8000-000000000001");
 });
 
 test("handles in-flight / error status without throwing", () => {

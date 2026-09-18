@@ -137,7 +137,7 @@ export function isLoopbackRequest(
   // remote, so Host/XFF can never promote it back to local.
   const peerStamp = requestHeaders?.get(PEER_IP_HEADER) ?? null;
   const viaProxyStamp = requestHeaders?.get(VIA_PROXY_HEADER) ?? null;
-  const stampToken = process.env.OMNIROUTE_PEER_STAMP_TOKEN;
+  const stampToken = process.env.AGENTPROXY_PEER_STAMP_TOKEN;
   const stampedPeer = resolveStampedPeer(peerStamp, stampToken);
   if (stampedPeer) {
     if (resolveStampedViaProxy(viaProxyStamp, stampToken)) return false;

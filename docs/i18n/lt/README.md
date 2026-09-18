@@ -6,14 +6,14 @@
 
 <div align="center">
 
-<img src="./docs/screenshots/MainOmniRoute.png" alt="OmniRoute valdymo skydelis" width="820"/>
+<img src="./docs/screenshots/MainAgentProxy.png" alt="AgentProxy valdymo skydelis" width="820"/>
 
 <br/>
 <br/>
 
-# 🚀 OmniRoute — nemokami AI vartai
+# 🚀 AgentProxy — nemokami AI vartai
 
-<img src="./docs/diagrams/readme-hero.svg" width="100%" alt="OmniRoute — niekada nenustokite programuoti. Kiekvienas AI įrankis → 355 teikėjai — daugiau nei 150 nemokamų — per vieną prieigos tašką. Claude Code, Codex, Cursor, Cline, Copilot ir Antigravity su NEMOKAMA prieiga prie Claude / GPT / Gemini bei automatiniu atsarginiu perjungimu. RTK + Caveman daugiasluoksnis glaudinimas sutaupo 15–95 % žetonų (vidutiniškai ~89 %) — niekada nepasieksite limitų. 355 AI teikėjai · daugiau nei 150 nemokamų planų · ~1,51 mlrd. nemokamų žetonų per mėn. · 19 maršruto parinkimo strategijų · pradėkite už $0."/>
+<img src="./docs/diagrams/readme-hero.svg" width="100%" alt="AgentProxy — niekada nenustokite programuoti. Kiekvienas AI įrankis → 355 teikėjai — daugiau nei 150 nemokamų — per vieną prieigos tašką. Claude Code, Codex, Cursor, Cline, Copilot ir Antigravity su NEMOKAMA prieiga prie Claude / GPT / Gemini bei automatiniu atsarginiu perjungimu. RTK + Caveman daugiasluoksnis glaudinimas sutaupo 15–95 % žetonų (vidutiniškai ~89 %) — niekada nepasieksite limitų. 355 AI teikėjai · daugiau nei 150 nemokamų planų · ~1,51 mlrd. nemokamų žetonų per mėn. · 19 maršruto parinkimo strategijų · pradėkite už $0."/>
 
 </div>
 
@@ -23,9 +23,9 @@
 
 </div>
 
-> Rankiniu būdu apjungti nemokamus planus yra sudėtinga — dešimtys SDK, dešimtys dažnio apribojimų ir jokio supratimo, kiek iš tikrųjų turite. OmniRoute kataloge pateikiami **446 nemokamų planų įrašai, suskirstyti pagal 38 pasikartojančių išteklių fondų raktus**, o antraštėje rodomas žetonų skaičius apskaičiuojamas pagal **20 fondų, kuriems paskelbtas teigiamas mėnesio biudžetas**, pašalinant bendrų fondų pasikartojimus. Rezultatas visada matomas valdymo skydelyje (`/dashboard/free-tiers`).
+> Rankiniu būdu apjungti nemokamus planus yra sudėtinga — dešimtys SDK, dešimtys dažnio apribojimų ir jokio supratimo, kiek iš tikrųjų turite. AgentProxy kataloge pateikiami **446 nemokamų planų įrašai, suskirstyti pagal 38 pasikartojančių išteklių fondų raktus**, o antraštėje rodomas žetonų skaičius apskaičiuojamas pagal **20 fondų, kuriems paskelbtas teigiamas mėnesio biudžetas**, pašalinant bendrų fondų pasikartojimus. Rezultatas visada matomas valdymo skydelyje (`/dashboard/free-tiers`).
 
-<img src="./docs/diagrams/free-tier-budget.svg" width="100%" alt="OmniRoute nemokamų planų biudžeto kortelė: nuolat ~1,51 mlrd. nemokamų žetonų per mėnesį ir iki ~2,13 mlrd. pirmąjį mėnesį su registracijos kreditais, gaunamais iš 38 dokumentuotų pasikartojančių išteklių fondų raktų, apimančių 446 kataloguotus nemokamų planų įrašus, pasiekiamus per vieną prieigos tašką. Sąžiningi skaičiavimai, pašalinantys fondų pasikartojimus — kiekvienas bendras fondas skaičiuojamas vieną kartą, įskaitant 20 pasikartojančių fondų, kuriems paskelbtas teigiamas mėnesinis žetonų biudžetas; 13 teikėjų naudojimo sąlygų rizikos kataloge pažymėti kaip vengtini, todėl sprendžiate jūs. Biudžeto juostoje pateikiami Mistral 1B, LLM7 150M, Nara 150M, Gemini 60M ir mažesni fondai, o pirmojo mėnesio registracijos kreditai ir visam laikui nemokami teikėjai be žetonų limito rodomi atskirai, kad niekada dirbtinai nepadidintų antraštėje pateikiamo skaičiaus. Tiesiogiai atnaujinami panaudoti ir likę kiekiai puslapyje /dashboard/free-tiers."/>
+<img src="./docs/diagrams/free-tier-budget.svg" width="100%" alt="AgentProxy nemokamų planų biudžeto kortelė: nuolat ~1,51 mlrd. nemokamų žetonų per mėnesį ir iki ~2,13 mlrd. pirmąjį mėnesį su registracijos kreditais, gaunamais iš 38 dokumentuotų pasikartojančių išteklių fondų raktų, apimančių 446 kataloguotus nemokamų planų įrašus, pasiekiamus per vieną prieigos tašką. Sąžiningi skaičiavimai, pašalinantys fondų pasikartojimus — kiekvienas bendras fondas skaičiuojamas vieną kartą, įskaitant 20 pasikartojančių fondų, kuriems paskelbtas teigiamas mėnesinis žetonų biudžetas; 13 teikėjų naudojimo sąlygų rizikos kataloge pažymėti kaip vengtini, todėl sprendžiate jūs. Biudžeto juostoje pateikiami Mistral 1B, LLM7 150M, Nara 150M, Gemini 60M ir mažesni fondai, o pirmojo mėnesio registracijos kreditai ir visam laikui nemokami teikėjai be žetonų limito rodomi atskirai, kad niekada dirbtinai nepadidintų antraštėje pateikiamo skaičiaus. Tiesiogiai atnaujinami panaudoti ir likę kiekiai puslapyje /dashboard/free-tiers."/>
 
 > Animacinė tiesiogiai atnaujinamo `/dashboard/free-tiers` puslapio santrauka. Visa metodika (fondų pasikartojimų šalinimas, kreditų lygiai, teikėjų sąlygos): **[docs/reference/FREE_TIERS.md](docs/reference/FREE_TIERS.md)**.
 >
@@ -37,14 +37,14 @@
 
 <h3>
 
-⭐ Pažymėkite saugyklą žvaigždute, jei OMNIROUTE padėjo jums sutaupyti pinigų ir palengvino darbą.
+⭐ Pažymėkite saugyklą žvaigždute, jei AGENTPROXY padėjo jums sutaupyti pinigų ir palengvino darbą.
 
 </h3>
 
-[![Žvaigždutės](https://img.shields.io/github/stars/diegosouzapw/OmniRoute?style=social)](https://github.com/diegosouzapw/OmniRoute)
-<a href="https://trendshift.io/repositories/23589" target="_blank"><img src="https://trendshift.io/api/badge/repositories/23589" alt="diegosouzapw%2FOmniRoute | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
-[![Žvaigždučių istorijos reitingas](https://api.star-history.com/badge?repo=diegosouzapw/OmniRoute&theme=dark)](https://www.star-history.com/diegosouzapw/omniroute)
-[![olud.ai](https://olud.ai/badge.php?tool=diegosouzapw-omniroute)](https://olud.ai/project/diegosouzapw-omniroute.html)
+[![Žvaigždutės](https://img.shields.io/github/stars/khanhkit/AgentProxy?style=social)](https://github.com/khanhkit/AgentProxy)
+<a href="https://trendshift.io/repositories/23589" target="_blank"><img src="https://trendshift.io/api/badge/repositories/23589" alt="diegosouzapw%2FAgentProxy | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
+[![Žvaigždučių istorijos reitingas](https://api.star-history.com/badge?repo=khanhkit/AgentProxy&theme=dark)](https://www.star-history.com/khanhkit/agentproxy)
+[![olud.ai](https://olud.ai/badge.php?tool=diegosouzapw-agentproxy)](https://olud.ai/project/diegosouzapw-agentproxy.html)
 
 ### 💬 Prisijunkite prie bendruomenės
 
@@ -54,12 +54,12 @@
 [![Sekite @diegosouzapw platformoje GitHub](https://img.shields.io/github/followers/diegosouzapw?style=for-the-badge&logo=github&logoColor=white&label=Follow%20on%20GitHub&color=181717)](https://github.com/diegosouzapw)
 
 [![Discord](https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/U47eFqAXCn)
-[![Telegram](https://img.shields.io/badge/Telegram-26A5E4?style=for-the-badge&logo=telegram&logoColor=white)](https://t.me/omnirouteOficial)
+[![Telegram](https://img.shields.io/badge/Telegram-26A5E4?style=for-the-badge&logo=telegram&logoColor=white)](https://github.com/khanhkit/AgentProxy/discussions)
 [![WhatsApp pasaulinė grupė](https://img.shields.io/badge/WhatsApp_Global-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://chat.whatsapp.com/FvuCbrpZmQ6I85n2vW5QIC?s=cl&p=a&mlu=4)
 [![WhatsApp Brazilijos grupė](https://img.shields.io/badge/WhatsApp_Brasil-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://chat.whatsapp.com/KWgatljAjmbELQory59Oti?s=cl&p=a&mlu=4)
-[![Svetainė](https://img.shields.io/badge/Website-omniroute.online-blue?logo=google-chrome&logoColor=white)](https://omniroute.online)
+[![Svetainė](https://img.shields.io/badge/Website-agentproxy.online-blue?logo=google-chrome&logoColor=white)](https://agentproxy.example.com)
 
-**Klausimai, patarimai apie teikėjus, plėtros planas ir pagalba → [Discord](https://discord.gg/U47eFqAXCn) · [Telegram](https://t.me/omnirouteOficial) · WhatsApp [🌍 pasaulinė grupė](https://chat.whatsapp.com/FvuCbrpZmQ6I85n2vW5QIC?s=cl&p=a&mlu=4) / [🇧🇷 Brazilija](https://chat.whatsapp.com/KWgatljAjmbELQory59Oti?s=cl&p=a&mlu=4) / [portalas](https://portal.sthub.com.br/communities/groups/st-hub/channels/Omniroute-World-8kRjmK)**
+**Klausimai, patarimai apie teikėjus, plėtros planas ir pagalba → [Discord](https://discord.gg/U47eFqAXCn) · [Telegram](https://github.com/khanhkit/AgentProxy/discussions) · WhatsApp [🌍 pasaulinė grupė](https://chat.whatsapp.com/FvuCbrpZmQ6I85n2vW5QIC?s=cl&p=a&mlu=4) / [🇧🇷 Brazilija](https://chat.whatsapp.com/KWgatljAjmbELQory59Oti?s=cl&p=a&mlu=4) / [portalas](https://portal.sthub.com.br/communities/groups/st-hub/channels/AgentProxy-World-8kRjmK)**
 
 <br/>
 
@@ -84,12 +84,12 @@
 
 ## 🧩 Pasiekiama
 
-[![npm versija](https://img.shields.io/npm/v/omniroute?color=cb3837&logo=npm)](https://www.npmjs.com/package/omniroute)
-![NPM per mėnesį](https://img.shields.io/npm/dm/omniroute?label=npm/month&color=cb3837&logo=npm)
-[![Docker Hub](https://img.shields.io/docker/v/diegosouzapw/omniroute?label=Docker%20Hub&logo=docker&color=2496ED)](https://hub.docker.com/r/diegosouzapw/omniroute)
+[![npm versija](https://img.shields.io/npm/v/agentproxy?color=cb3837&logo=npm)](https://www.npmjs.com/package/agentproxy)
+![NPM per mėnesį](https://img.shields.io/npm/dm/agentproxy?label=npm/month&color=cb3837&logo=npm)
+[![Docker Hub](https://img.shields.io/docker/v/khanhkit/agentproxy?label=Docker%20Hub&logo=docker&color=2496ED)](https://github.com/khanhkit/AgentProxy/pkgs/container/agentproxy)
 [![Licencija: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)
-![Docker atsisiuntimai](https://img.shields.io/docker/pulls/diegosouzapw/omniroute?label=docker%20pulls&logo=docker&color=2496ED)
-![Electron atsisiuntimai](https://img.shields.io/github/downloads/diegosouzapw/omniroute/total?style=flat&label=electron%20downloads&logo=electron&color=47848F)
+![Docker atsisiuntimai](https://img.shields.io/docker/pulls/khanhkit/agentproxy?label=docker%20pulls&logo=docker&color=2496ED)
+![Electron atsisiuntimai](https://img.shields.io/github/downloads/khanhkit/agentproxy/total?style=flat&label=electron%20downloads&logo=electron&color=47848F)
 
 <table>
   <tr>
@@ -101,8 +101,8 @@
   <tr>
     <td align="right"><b>💡 Sužinokite</b></td>
     <td align="center"><a href="#-the-promise">💥 Pažadas</a></td>
-    <td align="center"><a href="#-why-omniroute">🤔 Kodėl „OmniRoute“</a></td>
-    <td align="center"><a href="#-what-sets-omniroute-apart">🏆 Kuo išsiskiria</a></td>
+    <td align="center"><a href="#-why-agentproxy">🤔 Kodėl „AgentProxy“</a></td>
+    <td align="center"><a href="#-what-sets-agentproxy-apart">🏆 Kuo išsiskiria</a></td>
   </tr>
   <tr>
     <td align="right"><b>⚙️ Funkcijos</b></td>
@@ -113,18 +113,18 @@
   <tr>
     <td align="right"></td>
     <td align="center"><a href="#%EF%B8%8F-save-1595-tokens--automatically">🗜️ Glaudinimas</a></td>
-    <td align="center"><a href="#%EF%B8%8F-where-omniroute-runs--anywhere">🖥️ Kur veikia</a></td>
+    <td align="center"><a href="#%EF%B8%8F-where-agentproxy-runs--anywhere">🖥️ Kur veikia</a></td>
     <td align="center"><a href="#-private--local-first">🔒 Privatu</a></td>
   </tr>
   <tr>
     <td align="right"><b>👀 Pamatykite</b></td>
-    <td align="center"><a href="#-omniroute-in-action">🎬 Veikime</a></td>
+    <td align="center"><a href="#-agentproxy-in-action">🎬 Veikime</a></td>
     <td align="center"><a href="#-whats-new">✨ Kas naujo</a></td>
     <td align="center"><a href="#-compatible-clis--coding-agents">🤖 Suderinamos CLI</a></td>
   </tr>
   <tr>
     <td align="right"><b>💚 Palaikymas</b></td>
-    <td align="center"><a href="#-support-omniroute">💚 Palaikyti / paaukoti</a></td>
+    <td align="center"><a href="#-support-agentproxy">💚 Palaikyti / paaukoti</a></td>
     <td align="center"><a href="#-community--help">💬 Bendruomenė</a></td>
     <td align="center"><a href="#-sponsors">💖 Rėmėjai</a></td>
   </tr>
@@ -197,7 +197,7 @@
 
 </div>
 
-<img src="./docs/diagrams/works-zero-config.svg" width="100%" alt="Veikia iškart įdiegus — be jokios konfigūracijos. Trys žingsniai: 1. Įdiekite — npm i -g omniroute, serveris paleidžiamas adresu localhost:20128. 2. Nukreipkite savo įrankį į http://localhost:20128/v1 — tinka bet kuris su OpenAI suderinamas įrankis (Claude Code, Cursor, Cline). 3. Jis atsako — iškvieskite modelį auto ir akimirksniu gaukite atsakymą be API rakto, registracijos ar konfigūracijos. Rakto nereikalaujantis teikėjas OpenCode Free jau įtrauktas į auto derinį, todėl ką tik įdiegta sistema veikia iškart."/>
+<img src="./docs/diagrams/works-zero-config.svg" width="100%" alt="Veikia iškart įdiegus — be jokios konfigūracijos. Trys žingsniai: 1. Įdiekite — npm i -g agentproxy, serveris paleidžiamas adresu localhost:20128. 2. Nukreipkite savo įrankį į http://localhost:20128/v1 — tinka bet kuris su OpenAI suderinamas įrankis (Claude Code, Cursor, Cline). 3. Jis atsako — iškvieskite modelį auto ir akimirksniu gaukite atsakymą be API rakto, registracijos ar konfigūracijos. Rakto nereikalaujantis teikėjas OpenCode Free jau įtrauktas į auto derinį, todėl ką tik įdiegta sistema veikia iškart."/>
 
 ```bash
 # Naujas diegimas, jokių prisijungimo duomenų — `auto` jau veikia:
@@ -206,7 +206,7 @@ curl http://localhost:20128/v1/chat/completions \
   -d '{"model":"auto","messages":[{"role":"user","content":"Hello!"}]}'
 ```
 
-<sub>Pageidaujate konkrečios nemokamos galinės paslaugos? Iškvieskite `oc/…` (OpenCode Free) tiesiogiai. Vėliau pereikite prie `auto` ir leiskite OmniRoute pasirinkti.</sub>
+<sub>Pageidaujate konkrečios nemokamos galinės paslaugos? Iškvieskite `oc/…` (OpenCode Free) tiesiogiai. Vėliau pereikite prie `auto` ir leiskite AgentProxy pasirinkti.</sub>
 
 <sub>📦 Kopijuoti ir įklijuoti paruošti greitojo paleidimo scenarijai, skirti **Python, Node.js, PHP ir cURL** → [`examples/quickstart/`](examples/quickstart/)</sub>
 
@@ -225,15 +225,15 @@ curl http://localhost:20128/v1/chat/completions \
 
 <div align="center">
 
-# 🤔 Kodėl OmniRoute?
+# 🤔 Kodėl AgentProxy?
 
 </div>
 
-<img src="./docs/diagrams/why-pain-fix.svg" width="100%" alt="Kodėl OmniRoute — nebereikia blaškytis tarp 10 valdymo skydelių, neveikiančių API raktų ir netikėtų sąskaitų. Dešimt kasdienių problemų ir jų sprendimų: nepanaudota kvota baigia galioti → maksimaliai išnaudokite prenumeratas; programuojant pasiekiami užklausų dažnio apribojimai → 4 pakopų automatinis perjungimas (prenumerata → API → pigu → nemokama); įrankių išvestis eikvoja žetonus → RTK + Caveman glaudinimas (15–95 %); brangios API → pagal kainą optimizuotas maršrutizavimas; kiekvienam įrankiui reikia atskiros sąrankos → vienas galinis taškas, vienas valdymo skydelis; AI prieiga blokuojama → 3 lygių tarpinis serveris + TLS maskavimas; neveikiantys raktai → 3 sluoksnių atsparumas (grandinės pertraukikliai, raktų atvėsinimas, modelių blokavimas); komanda dalijasi viena prenumerata → raktų telkiniai su sąžiningo paskirstymo kvotomis; užklausos siunčiamos per kieno nors debesiją → pirmenybė vietiniam apdorojimui ir AES-256-GCM užšifruoti raktai; nėra išlaidų matomumo → tiesioginė analitika (naudojimas, kvota, sutaupymai, p95 delsa)."/>
+<img src="./docs/diagrams/why-pain-fix.svg" width="100%" alt="Kodėl AgentProxy — nebereikia blaškytis tarp 10 valdymo skydelių, neveikiančių API raktų ir netikėtų sąskaitų. Dešimt kasdienių problemų ir jų sprendimų: nepanaudota kvota baigia galioti → maksimaliai išnaudokite prenumeratas; programuojant pasiekiami užklausų dažnio apribojimai → 4 pakopų automatinis perjungimas (prenumerata → API → pigu → nemokama); įrankių išvestis eikvoja žetonus → RTK + Caveman glaudinimas (15–95 %); brangios API → pagal kainą optimizuotas maršrutizavimas; kiekvienam įrankiui reikia atskiros sąrankos → vienas galinis taškas, vienas valdymo skydelis; AI prieiga blokuojama → 3 lygių tarpinis serveris + TLS maskavimas; neveikiantys raktai → 3 sluoksnių atsparumas (grandinės pertraukikliai, raktų atvėsinimas, modelių blokavimas); komanda dalijasi viena prenumerata → raktų telkiniai su sąžiningo paskirstymo kvotomis; užklausos siunčiamos per kieno nors debesiją → pirmenybė vietiniam apdorojimui ir AES-256-GCM užšifruoti raktai; nėra išlaidų matomumo → tiesioginė analitika (naudojimas, kvota, sutaupymai, p95 delsa)."/>
 
 <div align="center">
 
-<img src="./docs/diagrams/tier-cascade.svg" width="100%" alt="OmniRoute užklausos eiga: jūsų IDE arba CLI (Claude Code, Cursor, Cline…) kreipiasi į vieną vietinį galinį tašką (http://localhost:20128/v1); OmniRoute išmanusis maršrutizatorius (RTK + Caveman glaudinimas, 19 maršrutizavimo strategijų, grandinės pertraukikliai, TLS maskavimas, MCP, A2A, apsauginiai apribojimai) gali persijungti tarp 4 teikėjų pakopų, kol lieka tinkamas ir veikiantis tikslas — 1 pakopa: prenumerata, 2 pakopa: API raktas, 3 pakopa: pigu ir 4 pakopa: nemokama."/>
+<img src="./docs/diagrams/tier-cascade.svg" width="100%" alt="AgentProxy užklausos eiga: jūsų IDE arba CLI (Claude Code, Cursor, Cline…) kreipiasi į vieną vietinį galinį tašką (http://localhost:20128/v1); AgentProxy išmanusis maršrutizatorius (RTK + Caveman glaudinimas, 19 maršrutizavimo strategijų, grandinės pertraukikliai, TLS maskavimas, MCP, A2A, apsauginiai apribojimai) gali persijungti tarp 4 teikėjų pakopų, kol lieka tinkamas ir veikiantis tikslas — 1 pakopa: prenumerata, 2 pakopa: API raktas, 3 pakopa: pigu ir 4 pakopa: nemokama."/>
 
 </div>
 
@@ -246,17 +246,17 @@ curl http://localhost:20128/v1/chat/completions \
 </div>
 
 <p align="center">
-  <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798&aff=omniroute">
+  <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798">
     <img src="public/sponsors/kimi-k3-banner.png" width="100%" alt="Kimi K3 — atviroji pažangiausio lygio dirbtinio intelekto sistema · 2.8T parametrų · 1M žetonų kontekstas"/>
   </a>
 </p>
 
-> **Norite tapti atvirojo kodo draugu?** Tai įmonės, kurios remia atvirąjį kodą ir padeda „OmniRoute“ judėti pirmyn — o mes viešai nurodome, kur panaudojamas kiekvienas jų suteiktas žetonas. Susisiekite: [diegosouza.pw@outlook.com](mailto:diegosouza.pw@outlook.com)
+> **Norite tapti atvirojo kodo draugu?** Tai įmonės, kurios remia atvirąjį kodą ir padeda „AgentProxy“ judėti pirmyn — o mes viešai nurodome, kur panaudojamas kiekvienas jų suteiktas žetonas. Susisiekite: [diegosouza.pw@outlook.com](mailto:diegosouza.pw@outlook.com)
 
 <table>
   <tr>
     <td align="center" width="150">
-      <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798&aff=omniroute">
+      <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798">
         <picture>
           <source media="(prefers-color-scheme: dark)" srcset="public/providers/kimi-logomark-dark.svg">
           <img src="public/providers/kimi-logomark-light.svg" width="64" alt="Kimi (Moonshot AI)"/>
@@ -266,35 +266,35 @@ curl http://localhost:20128/v1/chat/completions \
       <img src="https://img.shields.io/badge/Founding_Friend-1783FF?style=flat-square" alt="Atvirojo kodo draugas steigėjas"/>
     </td>
     <td>
-      Dėkojame <b>Kimi (Moonshot AI)</b>, mūsų atvirojo kodo draugui steigėjui, už šio projekto rėmimą! „Kimi“ yra DI laboratorija, sukūrusi atvirų svorių K2 ir K3 modelių šeimas — <b>Kimi K3</b> suteikia 1M žetonų konteksto langą, integruotą vaizdų apdorojimą ir pažangiausio lygio programavimo galimybes už gerokai mažesnę kainą nei uždarieji modeliai, taip pat iš karto veikia su „Claude Code“, „Codex“ ir visais programavimo įrankiais, kuriuos palaiko „OmniRoute“.
+      Dėkojame <b>Kimi (Moonshot AI)</b>, mūsų atvirojo kodo draugui steigėjui, už šio projekto rėmimą! „Kimi“ yra DI laboratorija, sukūrusi atvirų svorių K2 ir K3 modelių šeimas — <b>Kimi K3</b> suteikia 1M žetonų konteksto langą, integruotą vaizdų apdorojimą ir pažangiausio lygio programavimo galimybes už gerokai mažesnę kainą nei uždarieji modeliai, taip pat iš karto veikia su „Claude Code“, „Codex“ ir visais programavimo įrankiais, kuriuos palaiko „AgentProxy“.
       <br/><br/>
-      <b>Ką užtikrina „Kimi“ parama:</b> „Kimi“ API kreditai naudojami „OmniRoute“ DI patvirtinamo leidimų proceso etapui — <i>suliejimo patvirtinimui, kurį vykdo Kimi K3</i> ir kuris peržiūri kiekvieną pakeitimų užklausą prieš ją išleidžiant — bei kasdieniam funkcijų kūrimui. Visavertis „Kimi“ palaikymas teikiamas abiem kanalais: per tiesioginę <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798&aff=omniroute">Kimi API</a> (<code>kimi-k3</code>) ir <a href="https://www.kimi.com/code?aff=omniroute">Kimi Code programavimo planą</a> (OAuth ir API raktas). „OmniRoute“ taip pat yra pirmasis Brazilijos atvirojo kodo projektas „Kimi“ paramos programoje. <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798&aff=omniroute"><b>Gaukite „Kimi“ API raktą su 15 % papildomų kreditų →</b></a>
+      <b>Ką užtikrina „Kimi“ parama:</b> „Kimi“ API kreditai naudojami „AgentProxy“ DI patvirtinamo leidimų proceso etapui — <i>suliejimo patvirtinimui, kurį vykdo Kimi K3</i> ir kuris peržiūri kiekvieną pakeitimų užklausą prieš ją išleidžiant — bei kasdieniam funkcijų kūrimui. Visavertis „Kimi“ palaikymas teikiamas abiem kanalais: per tiesioginę <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798">Kimi API</a> (<code>kimi-k3</code>) ir <a href="https://www.kimi.com/code">Kimi Code programavimo planą</a> (OAuth ir API raktas). „AgentProxy“ taip pat yra pirmasis Brazilijos atvirojo kodo projektas „Kimi“ paramos programoje. <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798"><b>Gaukite „Kimi“ API raktą su 15 % papildomų kreditų →</b></a>
     </td>
   </tr>
   <tr>
     <td align="center" width="150">
-      <a href="https://cheaperinference.com/?utm_source=omniroute">
+      <a href="https://cheaperinference.com/">
         <img src="./public/providers/cli-generic.svg" width="64" alt="Cheaper Inference"/>
       </a>
       <br/><b>Cheaper Inference</b><br/><sub>cheaperinference.com</sub><br/><br/>
       <img src="https://img.shields.io/badge/Open_Source_Friend-31f889?style=flat-square&labelColor=04170d" alt="Atvirojo kodo draugas"/>
     </td>
     <td>
-      Dėkojame <b>Cheaper Inference</b>, „OmniRoute“ atvirojo kodo draugui, už šio projekto rėmimą! „Cheaper Inference“ yra pagal kainą optimizuotas šliuzas, per vieną su „OpenAI“ suderinamą galinį tašką perparduodantis 42 pažangiausius modelius — „Claude“, GPT-5.x, „Gemini“, Kimi K3, GLM, „DeepSeek“, „Grok“ ir „MiniMax“ — bei nukreipiantis kiekvieną užklausą pigiausiam tinkamam teikėjui, niekada netaikant didesnės kainos už modelio kūrėjo kataloginę kainą.
+      Dėkojame <b>Cheaper Inference</b>, „AgentProxy“ atvirojo kodo draugui, už šio projekto rėmimą! „Cheaper Inference“ yra pagal kainą optimizuotas šliuzas, per vieną su „OpenAI“ suderinamą galinį tašką perparduodantis 42 pažangiausius modelius — „Claude“, GPT-5.x, „Gemini“, Kimi K3, GLM, „DeepSeek“, „Grok“ ir „MiniMax“ — bei nukreipiantis kiekvieną užklausą pigiausiam tinkamam teikėjui, niekada netaikant didesnės kainos už modelio kūrėjo kataloginę kainą.
       <br/><br/>
-      <b>Visavertis palaikymas „OmniRoute“:</b> „Chat Completions“, savasis <code>/v1/responses</code> galinis taškas, vaizdų apdorojimas, įrankių iškvietimas ir 3 vaizdų modeliai (<code>grok-imagine</code>, <code>nano-banana-pro</code>, <code>nano-banana-2</code>, pasiekiami kaip <code>cheaperinference/&lt;model&gt;</code>). <a href="https://cheaperinference.com/?utm_source=omniroute"><b>Gaukite API raktą →</b></a>
+      <b>Visavertis palaikymas „AgentProxy“:</b> „Chat Completions“, savasis <code>/v1/responses</code> galinis taškas, vaizdų apdorojimas, įrankių iškvietimas ir 3 vaizdų modeliai (<code>grok-imagine</code>, <code>nano-banana-pro</code>, <code>nano-banana-2</code>, pasiekiami kaip <code>cheaperinference/&lt;model&gt;</code>). <a href="https://cheaperinference.com/"><b>Gaukite API raktą →</b></a>
     </td>
   </tr>
 </table>
 
-<sub>Nuorodos, pažymėtos <code>aff=omniroute</code>, yra partnerių nuorodos. Jos padeda finansuoti projektą jums nepatiriant jokių papildomų išlaidų.</sub>
+<sub>Nuorodos, pažymėtos <code>aff=agentproxy</code>, yra partnerių nuorodos. Jos padeda finansuoti projektą jums nepatiriant jokių papildomų išlaidų.</sub>
 
 <br/>
 
 <details open>
 <summary><sub><b>🎟️ Partnerių akcijos</b> — nemokami registracijos kuponai iš mūsų neremiamų teikėjų (spustelėkite, kad išskleistumėte)</sub></summary>
 
-<sub><i>Ši skiltis skirta tik rekomendacijų ir kuponų kodams. Remiamos partnerystės pateiktos pirmiau esančioje skiltyje <b>🤝 Remia mūsų atvirojo kodo draugai</b>. „OmniRoute“ nesieja jokie rėmimo ar partnerystės ryšiai su čia išvardytais teikėjais — tai vieši kuponai, kuriais gali pasinaudoti visi.</i></sub>
+<sub><i>Ši skiltis skirta tik rekomendacijų ir kuponų kodams. Remiamos partnerystės pateiktos pirmiau esančioje skiltyje <b>🤝 Remia mūsų atvirojo kodo draugai</b>. „AgentProxy“ nesieja jokie rėmimo ar partnerystės ryšiai su čia išvardytais teikėjais — tai vieši kuponai, kuriais gali pasinaudoti visi.</i></sub>
 
 <table>
   <tr>
@@ -305,14 +305,14 @@ curl http://localhost:20128/v1/chat/completions \
       <br/><sub><b>AgentRouter</b></sub><br/><sub>agentrouter.org</sub>
     </td>
     <td>
-      <sub><b><a href="https://agentrouter.org/register?aff=70LM">AgentRouter</a></b> — partnerių registracija · užsiregistravę gausite <b>$100 nemokamų kreditų</b> (nemokamas serveris, todėl tikėtina didesnė delsa — geriausiai tinka testavimui, o ne gamybinei aplinkai). Visavertis palaikymas „OmniRoute“ nuo <b>v3.8.50</b>: „Chat Completions“, su „Anthropic“ suderinamas duomenų perdavimo formatas ir su „OpenAI“ suderinamas kelias. Tarp galimų modelių yra <code>claude-opus-4-8</code>, <code>claude-opus-5</code>, <code>gpt-5.6-sol</code> ir kiti. <b><a href="https://agentrouter.org/register?aff=70LM">Pasiimkite savo $100 →</a></b></sub>
+      <sub><b><a href="https://agentrouter.org/register?aff=70LM">AgentRouter</a></b> — partnerių registracija · užsiregistravę gausite <b>$100 nemokamų kreditų</b> (nemokamas serveris, todėl tikėtina didesnė delsa — geriausiai tinka testavimui, o ne gamybinei aplinkai). Visavertis palaikymas „AgentProxy“ nuo <b>v3.8.50</b>: „Chat Completions“, su „Anthropic“ suderinamas duomenų perdavimo formatas ir su „OpenAI“ suderinamas kelias. Tarp galimų modelių yra <code>claude-opus-4-8</code>, <code>claude-opus-5</code>, <code>gpt-5.6-sol</code> ir kiti. <b><a href="https://agentrouter.org/register?aff=70LM">Pasiimkite savo $100 →</a></b></sub>
       <br/><br/>
-      <sub>⚠️ <i>Partnerio nuoroda — „OmniRoute“ nesieja jokie rėmimo ar partnerystės ryšiai su šiuo teikėju.</i></sub>
+      <sub>⚠️ <i>Partnerio nuoroda — „AgentProxy“ nesieja jokie rėmimo ar partnerystės ryšiai su šiuo teikėju.</i></sub>
     </td>
   </tr>
 </table>
 
-<sub>Žinote kitą teikėją, siūlantį dosnų nemokamą registracijos kuponą, kuris būtų naudingas „OmniRoute“ naudotojams? Sukurkite problemos įrašą, ir mes jį čia pridėsime.</sub>
+<sub>Žinote kitą teikėją, siūlantį dosnų nemokamą registracijos kuponą, kuris būtų naudingas „AgentProxy“ naudotojams? Sukurkite problemos įrašą, ir mes jį čia pridėsime.</sub>
 
 </details>
 
@@ -326,11 +326,11 @@ curl http://localhost:20128/v1/chat/completions \
 
 <img src="./docs/diagrams/strategies-grid.svg" width="100%" alt="Animuotos visos 19 kombinacijų maršruto parinkimo strategijų — po vieną plytelę kiekvienai strategijai: priority, fill-first, weighted, round-robin, p2c, least-used, random, strict-random, cost-optimized, headroom, reset-window, reset-aware, context-relay, context-optimized, cache-optimized, lkgp, auto, fusion, pipeline. Kiekvienos iš jų paskirtis aprašyta anksčiau pateiktoje lentelėje."/>
 
-> **Kombinacija** yra modelių grandinė, tarp kurių OmniRoute maršrutą parenka **automatiškai**. Jei išnaudojama kvota, sutrinka teikėjo veikimas arba išauga išlaidos, kombinacija gali pereiti prie kito tinkamo ir veikiančio modelio. 🛡️
+> **Kombinacija** yra modelių grandinė, tarp kurių AgentProxy maršrutą parenka **automatiškai**. Jei išnaudojama kvota, sutrinka teikėjo veikimas arba išauga išlaidos, kombinacija gali pereiti prie kito tinkamo ir veikiančio modelio. 🛡️
 
 ### ⚡ Nereikia jokios konfigūracijos — tiesiog naudokite `auto`
 
-Nereikia kurti kombinacijos. Nustatykite modelį į `auto` (arba jo variantą), ir OmniRoute iš prijungtų teikėjų sukurs virtualią kombinaciją, vertinamą realiuoju laiku:
+Nereikia kurti kombinacijos. Nustatykite modelį į `auto` (arba jo variantą), ir AgentProxy iš prijungtų teikėjų sukurs virtualią kombinaciją, vertinamą realiuoju laiku:
 
 <table>
   <tr><th align="left">Modelio ID</th><th align="left">Kam optimizuojama</th></tr>
@@ -459,7 +459,7 @@ Visos **19** strategijų — derinkite jas kiekviename kombinacijos žingsnyje:
 
 ### 🧱 Atsparumas integruotas iš anksto (3 nepriklausomi sluoksniai)
 
-<img src="./docs/diagrams/resilience-layers.svg" width="100%" alt="OmniRoute atsparumas — 3 nepriklausomi savaime atsikuriantys sluoksniai, tinkamas sluoksnis kiekvienam gedimui. 1 sluoksnis: teikėjo grandinės pertraukiklis (visam teikėjui) — suveikia tik gavus 408/5xx, slenksčiai: OAuth 8× / API-key 12× / vietinis 2×, po 60s/30s/15s pereina į HALF-OPEN bandomąją būseną, atkuriama pagal poreikį; kol būsena yra OPEN, kombinacija nukreipiama kitam teikėjui. 2 sluoksnis: ryšio atvėsimo laikotarpis (vienam raktui / paskyrai) — bazinė trukmė yra 5s OAuth / 3s API-key, eksponentinis ×2 laukimo trukmės didinimas su apsauga nuo vienalaikių užklausų antplūdžio, gavus 429 paisoma Retry-After, sėkminga užklausa išvalo visą klaidų būseną; atvėsinamas raktas praleidžiamas, o kiti tos pačios grupės raktai toliau aptarnauja užklausas. 3 sluoksnis: modelio blokavimas (vienam modeliui) — konkretaus modelio 429, vietinis 404 arba režimo draudimai užblokuoja tik tą modelį, o ne visą ryšį. Galutines būsenas (užblokuota, galiojimas pasibaigęs, kreditai išnaudoti) turi tvarkyti operatorius — joms atvėsimo laikotarpiai netaikomi."/>
+<img src="./docs/diagrams/resilience-layers.svg" width="100%" alt="AgentProxy atsparumas — 3 nepriklausomi savaime atsikuriantys sluoksniai, tinkamas sluoksnis kiekvienam gedimui. 1 sluoksnis: teikėjo grandinės pertraukiklis (visam teikėjui) — suveikia tik gavus 408/5xx, slenksčiai: OAuth 8× / API-key 12× / vietinis 2×, po 60s/30s/15s pereina į HALF-OPEN bandomąją būseną, atkuriama pagal poreikį; kol būsena yra OPEN, kombinacija nukreipiama kitam teikėjui. 2 sluoksnis: ryšio atvėsimo laikotarpis (vienam raktui / paskyrai) — bazinė trukmė yra 5s OAuth / 3s API-key, eksponentinis ×2 laukimo trukmės didinimas su apsauga nuo vienalaikių užklausų antplūdžio, gavus 429 paisoma Retry-After, sėkminga užklausa išvalo visą klaidų būseną; atvėsinamas raktas praleidžiamas, o kiti tos pačios grupės raktai toliau aptarnauja užklausas. 3 sluoksnis: modelio blokavimas (vienam modeliui) — konkretaus modelio 429, vietinis 404 arba režimo draudimai užblokuoja tik tą modelį, o ne visą ryšį. Galutines būsenas (užblokuota, galiojimas pasibaigęs, kreditai išnaudoti) turi tvarkyti operatorius — joms atvėsimo laikotarpiai netaikomi."/>
 
 <sub>📖 [Automatinių kombinacijų variklis](docs/routing/AUTO-COMBO.md) · [Atsparumo vadovas](docs/architecture/RESILIENCE_GUIDE.md)</sub>
 
@@ -467,22 +467,22 @@ Visos **19** strategijų — derinkite jas kiekviename kombinacijos žingsnyje:
 
 <div align="center">
 
-## 🏆 Kuo išsiskiria OmniRoute
+## 🏆 Kuo išsiskiria AgentProxy
 
 </div>
 
-<img src="./docs/diagrams/comparison-table.svg" width="100%" alt="Kuo išsiskiria OmniRoute — tam tikros datos 13 galimybių palyginimas su 9router, OpenRouter, CLIProxyAPI ir LiteLLM. OmniRoute: 355 teikėjai, daugiau nei 150 integruotų nemokamų planų, 19 maršruto parinkimo strategijų, 12 variklių žetonų glaudinimas, integruotas MCP serveris su 110 įrankių, A2A agentų protokolas, išliekamoji atmintis, apsaugos priemonės, debesijos agentai, TLS kontrolinio atspaudo maskavimas, Desktop/Termux/PWA ir 42 lokalizuotos naudotojo sąsajos kalbos. OmniRoute platinamas pagal MIT licenciją ir gali būti talpinamas savarankiškai. Konkurentų galimybės ir jų skaičius gali keistis; žr. pateiktą metodikos nuorodą."/>
+<img src="./docs/diagrams/comparison-table.svg" width="100%" alt="Kuo išsiskiria AgentProxy — tam tikros datos 13 galimybių palyginimas su 9router, OpenRouter, CLIProxyAPI ir LiteLLM. AgentProxy: 355 teikėjai, daugiau nei 150 integruotų nemokamų planų, 19 maršruto parinkimo strategijų, 12 variklių žetonų glaudinimas, integruotas MCP serveris su 110 įrankių, A2A agentų protokolas, išliekamoji atmintis, apsaugos priemonės, debesijos agentai, TLS kontrolinio atspaudo maskavimas, Desktop/Termux/PWA ir 42 lokalizuotos naudotojo sąsajos kalbos. AgentProxy platinamas pagal MIT licenciją ir gali būti talpinamas savarankiškai. Konkurentų galimybės ir jų skaičius gali keistis; žr. pateiktą metodikos nuorodą."/>
 
-<sub>📊 Visa metodika ir išsami informacija apie kiekvieną funkciją, palyginti su 9router, OpenRouter, CLIProxyAPI ir LiteLLM → [`docs/comparison/OMNIROUTE_VS_ALTERNATIVES.md`](docs/comparison/OMNIROUTE_VS_ALTERNATIVES.md)</sub>
+<sub>📊 Visa metodika ir išsami informacija apie kiekvieną funkciją, palyginti su 9router, OpenRouter, CLIProxyAPI ir LiteLLM → [`docs/comparison/AGENTPROXY_VS_ALTERNATIVES.md`](docs/comparison/AGENTPROXY_VS_ALTERNATIVES.md)</sub>
 
 <br/>
 
-## 💚 Paremkite OmniRoute
+## 💚 Paremkite AgentProxy
 
-OmniRoute platinamas pagal MIT licenciją ir yra atvirai prižiūrimas. Jei jis padeda sutaupyti laiko ar pinigų, štai kaip galite padėti jam išlikti nepriklausomam — rinkitės jums tinkamiausią būdą. Rėmimas niekada nedaro įtakos maršruto parinkimo prioritetui; jis suteikia matomumą, o ne aukštesnę vietą.
+AgentProxy platinamas pagal MIT licenciją ir yra atvirai prižiūrimas. Jei jis padeda sutaupyti laiko ar pinigų, štai kaip galite padėti jam išlikti nepriklausomam — rinkitės jums tinkamiausią būdą. Rėmimas niekada nedaro įtakos maršruto parinkimo prioritetui; jis suteikia matomumą, o ne aukštesnę vietą.
 
 <table>
-  <tr><td nowrap>⭐ <b>Pažymėkite saugyklą žvaigždute</b></td><td>Nemokama — iš tiesų padeda didinti matomumą</td><td><a href="https://github.com/diegosouzapw/OmniRoute">Pažymėkite OmniRoute žvaigždute</a></td></tr>
+  <tr><td nowrap>⭐ <b>Pažymėkite saugyklą žvaigždute</b></td><td>Nemokama — iš tiesų padeda didinti matomumą</td><td><a href="https://github.com/khanhkit/AgentProxy">Pažymėkite AgentProxy žvaigždute</a></td></tr>
   <tr><td nowrap>🐙 <b>GitHub Sponsors</b></td><td>Vienkartinė arba mėnesinė parama · jokio platformos mokesčio</td><td><a href="https://github.com/sponsors/diegosouzapw">github.com/sponsors/diegosouzapw</a></td></tr>
   <tr><td nowrap>☕ <b>Ko-fi</b></td><td>Greita vienkartinė parama, rėmėjui nereikia registruotis</td><td><a href="https://ko-fi.com/diegosouzapw">ko-fi.com/diegosouzapw</a></td></tr>
   <tr><td nowrap>🧋 <b>Buy Me a Coffee</b></td><td>Nedidelis, neformalus palaikymo gestas</td><td><a href="https://www.buymeacoffee.com/diegosouzapw">buymeacoffee.com/diegosouzapw</a></td></tr>
@@ -493,14 +493,14 @@ OmniRoute platinamas pagal MIT licenciją ir yra atvirai prižiūrimas. Jei jis 
 
 **🇧🇷 PIX** — akimirksniu, be mokesčių (Brazilija)
 
-<img src="docs/assets/pix-qr.png" width="140" align="right" alt="OmniRoute PIX QR kodas"/>
+<img src="docs/assets/pix-qr.png" width="140" align="right" alt="AgentProxy PIX QR kodas"/>
 
 Raktas (atsitiktinis): `5d865059-bc44-483a-962d-43ceb80126eb`
 
 Pix nukopijuokite ir įklijuokite:
 
 ```
-00020101021126580014br.gov.bcb.pix01365d865059-bc44-483a-962d-43ceb80126eb5204000053039865802BR5922OMNIROUTE CONTRIBUICAO6006BRASIL62070503***630475DD
+00020101021126580014br.gov.bcb.pix01365d865059-bc44-483a-962d-43ceb80126eb5204000053039865802BR5922AGENTPROXY CONTRIBUICAO6006BRASIL62070503***630475DD
 ```
 
 <br clear="right"/>
@@ -519,19 +519,19 @@ Pix nukopijuokite ir įklijuokite:
 
 </details>
 
-🐛 Radote klaidą ar turite atsiliepimų? Pradėkite [diskusiją](https://github.com/diegosouzapw/OmniRoute/discussions).
+🐛 Radote klaidą ar turite atsiliepimų? Pradėkite [diskusiją](https://github.com/khanhkit/AgentProxy/discussions).
 
 <br/>
 
 <p><strong>Pastabos kūrėjams:</strong> Kūrėjų patogumui projekto npm install/postinstall metu gali būti sugeneruotas vietinis <code>.env</code> failas. Šis failas sąmoningai ignoruojamas naudojant <code>.gitignore</code> (žr. <code>.gitignore</code>) ir jo niekada negalima įtraukti į saugyklą — jei jis buvo įtrauktas netyčia, pakeiskite visus atskleistus slaptuosius duomenis ir pašalinkite failą iš istorijos. Vietinių aplinkos failų ir slaptųjų duomenų valdymo rekomendacijas rasite faile <a href="docs/DEVELOPER-ENVIRONMENT.md">docs/DEVELOPER-ENVIRONMENT.md</a>.</p>
 
-## 📡 „OmniRoute Radar“
+## 📡 „AgentProxy Radar“
 
 Pagrindinis nemokamo plano rodiklis išlieka **~1.51B žetonų per mėnesį** pagal pirmiau aprašytą
 katalogą, kuriame pašalinti bendrų telkinių dublikatai. Laikini registracijos pas teikėjus kreditai
 pirmojo mėnesio limitą gali atskirai padidinti iki **~2.13B**. „Radar“ yra pasirenkamas pasirašytas
 katalogo papildinys žmonėms, norintiems gauti naujesnę informaciją apie nemokamų modelių
-prieinamumą tarp „OmniRoute“ leidimų; bendruomenės katalogas ir visos esamos nemokamos funkcijos
+prieinamumą tarp „AgentProxy“ leidimų; bendruomenės katalogas ir visos esamos nemokamos funkcijos
 lieka nemokami.
 
 Rėmėjai gali gauti tiesiogiai atnaujinamą katalogą ir papildomas teikėjų galimybes. Atskiros,
@@ -539,10 +539,10 @@ kintamos jo lubos yra **daugiausia maždaug 3B žetonų per mėnesį**, priklaus
 prieinamumo. Šios lubos nėra garantija: teikėjai gali bet kada pakeisti kvotas, tinkamumo
 reikalavimus, modelius ar regionus.
 
-„Radar“ naudojamas tik pasirinktinai ir palaiko tik GET. „OmniRoute“ klientas neįkelia užklausų,
+„Radar“ naudojamas tik pasirinktinai ir palaiko tik GET. „AgentProxy“ klientas neįkelia užklausų,
 srauto, teikėjų konfigūracijos, naudojimo telemetrijos ar vietinės pranešimų atmetimo būsenos.
 Apie tinkamumo reikalavimus ir dabartinį katalogą sužinokite adresu
-**[radar.omniroute.online/planos](https://radar.omniroute.online/planos)**.
+**[radar.agentproxy.online/planos](https://radar.agentproxy.example.com/planos)**.
 
 <br/>
 
@@ -560,19 +560,19 @@ Apie tinkamumo reikalavimus ir dabartinį katalogą sužinokite adresu
 - **🗜️ Sustiprintas glaudinimas** — pagal numatytuosius nustatymus įjungta išskleidimo apsauga, „Caveman“ paketai DE / FR / JA + kinų (wényán) kalboms, RTK filtrai, skirti „Gradle“ ir .NET. → [Glaudinimas](docs/compression/COMPRESSION_ENGINES.md)
 - **💸 Sąžiningai pateikiamos fiksuoto tarifo sąnaudos** — prenumeratos / programavimo planų teikėjų sąnaudų analizėje rodoma **$0**; biudžeto, kvotų ir maršruto parinkimo įverčiai skaičiuojami toliau. → [API žinynas](docs/reference/API_REFERENCE.md)
 - **⚖️ Maršruto parinkimas pagal kvotų dalis** — bendrinamos paskyros kvota sąžiningai padalijama telkinyje esantiems raktams, o nenaudojamos dalys paskolinamos, kad pajėgumai neliktų neišnaudoti. → [Atsparumo vadovas](docs/architecture/RESILIENCE_GUIDE.md)
-- **🤖 CLI / agentų sąranka viena komanda** — 13 registruotų `setup-*` komandų; `omniroute run` paleidžia 7 CLI („Claude Code“, „Codex“, „Aider“, „Goose“, „OpenCode“, „Qwen Code“, „Gemini CLI“); `omniroute configure` palaiko 10 tikslinių sistemų, interaktyvų teikėjo ir modelio parinkiklį bei kiekvienam kontekstui skirtus parankinius. → [CLI integracijos](docs/guides/CLI-INTEGRATIONS.md)
-- **🛰️ Nuotolinis režimas** — valdykite nuotolinį „OmniRoute“ naudodami ribotos apimties prieigos raktus (`connect` / `contexts` / `tokens`) ir `antigravity` OAuth pagalbinę priemonę, skirtą VPS diegimams. → [Nuotolinis režimas](docs/guides/REMOTE-MODE.md)
+- **🤖 CLI / agentų sąranka viena komanda** — 13 registruotų `setup-*` komandų; `agentproxy run` paleidžia 7 CLI („Claude Code“, „Codex“, „Aider“, „Goose“, „OpenCode“, „Qwen Code“, „Gemini CLI“); `agentproxy configure` palaiko 10 tikslinių sistemų, interaktyvų teikėjo ir modelio parinkiklį bei kiekvienam kontekstui skirtus parankinius. → [CLI integracijos](docs/guides/CLI-INTEGRATIONS.md)
+- **🛰️ Nuotolinis režimas** — valdykite nuotolinį „AgentProxy“ naudodami ribotos apimties prieigos raktus (`connect` / `contexts` / `tokens`) ir `antigravity` OAuth pagalbinę priemonę, skirtą VPS diegimams. → [Nuotolinis režimas](docs/guides/REMOTE-MODE.md)
 - **🧭 Išmanesnis automatinis maršruto parinkimas** — `auto/<category>:<tier>` deriniai, **Fusion** (modelių grupė + vertintojas), į užduotį atsižvelgiantis maršruto parinkimas, kiekvienos užklausos modelio / režimo / USD biudžeto perrašos. → [Automatiniai deriniai](docs/routing/AUTO-COMBO.md)
 - **🗜️ Modulinis glaudinimas** — 12 tarpusavyje derinamų variklių ir „Compression Studios“: „LLMLingua-2“, dviejų lygių „Ultra“, `omniglyph`, kiekvieno žingsnio tikslumo patikra, GCF v3.2, pertvarkymo velkant redaktorius. → [Glaudinimas](docs/compression/COMPRESSION_ENGINES.md)
 - **🕵️ Skaidrus MITM iššifravimas (TPROXY)** — perimkite CLI, ignoruojančias tarpinio serverio aplinkos kintamuosius, naudodami kiekvienam SNI skirtą CA ir patikimų sertifikatų saugyklos diegimo priemonę. → [MITM/TPROXY](docs/security/MITM-TPROXY-DECRYPT.md)
-- **💸 Sąnaudų telemetrija visur** — `X-OmniRoute-*` sąnaudų / naudojimo antraštės kiekviename galiniame taške, talpyklos HIT sutaupymo antraštė, kiekvienam raktui taikomos išlaidų USD kvotos. → [API žinynas](docs/reference/API_REFERENCE.md)
-- **🧠 Jūsų valdoma atmintis** — pagal numatytuosius nustatymus išjungta, pasirinktinai įjungiama int8 vektorių kvantizacija ir tipizuotas nykimas, kiekvienai užklausai skirtas `x-omniroute-no-memory`. → [Atmintis](docs/frameworks/MEMORY.md)
+- **💸 Sąnaudų telemetrija visur** — `X-AgentProxy-*` sąnaudų / naudojimo antraštės kiekviename galiniame taške, talpyklos HIT sutaupymo antraštė, kiekvienam raktui taikomos išlaidų USD kvotos. → [API žinynas](docs/reference/API_REFERENCE.md)
+- **🧠 Jūsų valdoma atmintis** — pagal numatytuosius nustatymus išjungta, pasirinktinai įjungiama int8 vektorių kvantizacija ir tipizuotas nykimas, kiekvienai užklausai skirtas `x-agentproxy-no-memory`. → [Atmintis](docs/frameworks/MEMORY.md)
 - **🛡️ Saugumas** — apsauga nuo raginimų injekcijų visuose LLM maršrutuose (raudonosios komandos testų rinkinys), pasirinktinai įjungiama prisijungimo duomenų maskavimo apsauga (abiem kryptimis užmaskuoja nutekintus API raktus / slaptus duomenis), nemokama paskutinės išeities „DuckDuckGo“ paieška žiniatinklyje ir pasirenkamas OIDC prisijungimo barjeras valdymo skydeliui (prisijungimas slaptažodžiu visada lieka prieinamas). → [Apsaugos priemonės](docs/security/GUARDRAILS.md)
 - **🖼️ Nauji galiniai taškai** — `/v1/ocr` („Mistral OCR“) ir `/v1/audio/translations` („Whisper“ stiliaus) papildo medijos API galimybes. → [API žinynas](docs/reference/API_REFERENCE.md)
 - **🎨 Vaizdų / vaizdo įrašų / garso generavimas** — viena API medijai: „xAI Grok Imagine“ ir „Novita AI“ vaizdo įrašai, „ComfyUI“, „Magnific“, „Adobe Firefly“, „Segmind“ ir kalbos teikėjai, tokie kaip „ElevenLabs“. → [API žinynas](docs/reference/API_REFERENCE.md)
 - **🌍 Diegimas ir eksploatavimas** — atvirkštinio tarpinio serverio `basePath`, automatinis naršyklės kalbos aptikimas, įrenginių stebėjimas pagal raktą, MITM patikimumo nustatymas be root teisių, zh-TW lokalizacija. → [Aplinka](docs/reference/ENVIRONMENT.md)
 - **🤝 Daugiau teikėjų ir agentų** — debesijos agentai („Codex Cloud“, „Cursor“, „Devin“, „Jules“), „Grok Build“ (xAI) su naršykle ir OAuth prisijungimu, visavertė „Ollama“ kortelė, „Claude Opus 5“ ir „Sonnet 5“, oficiali partnerystė su „Kimi“ („Code“ / „Web“ / „Moonshot“), „Zed“, „Requesty“, „SenseNova“, „Yuanbao“, „Agnes AI“… ir atnaujintas **352 teikėjų katalogas**. → [Teikėjai](docs/reference/PROVIDER_REFERENCE.md)
-- **📡 Maršruto parinkimo skaidrumas** — kiekviename atsakyme pateikiama `X-OmniRoute-Decision` antraštė, nurodanti jį aptarnavusią strategiją / teikėją / delsą; nauja `cache-optimized` derinių strategija ir automatinių derinių `cacheAffinity` veiksnys pakartotines užklausas nukreipia į ryšį, kuriame saugomas talpyklos prefiksas, o tik skaitymui skirtas `/v1/auto-combo/{channel}/candidates` galinis taškas atskleidžia tiesiogiai atnaujinamą `auto/*` kanalo kandidatų telkinį. → [Automatiniai deriniai](docs/routing/AUTO-COMBO.md)
+- **📡 Maršruto parinkimo skaidrumas** — kiekviename atsakyme pateikiama `X-AgentProxy-Decision` antraštė, nurodanti jį aptarnavusią strategiją / teikėją / delsą; nauja `cache-optimized` derinių strategija ir automatinių derinių `cacheAffinity` veiksnys pakartotines užklausas nukreipia į ryšį, kuriame saugomas talpyklos prefiksas, o tik skaitymui skirtas `/v1/auto-combo/{channel}/candidates` galinis taškas atskleidžia tiesiogiai atnaujinamą `auto/*` kanalo kandidatų telkinį. → [Automatiniai deriniai](docs/routing/AUTO-COMBO.md)
 - **⚡ Vietinis našumas ir infrastruktūra** — vienu spustelėjimu įdiegiamas vietinis „Redis“, „Cloudflare Workers“ / „Deno Deploy“ perdavimo serverių diegimo priemonės, „Bifrost“ ir „Mux“ kaip prižiūrimos įtaisytosios paslaugos. → [Įtaisytosios paslaugos](docs/frameworks/EMBEDDED-SERVICES.md)
 - **🧩 Taip pat įtraukta** — papildinių sistema ir prekyvietė, „Omni“ / agentų / „GitHub“ gebėjimų sistemos, „Obsidian“ saugyklos integracija (22 MCP įrankiai), su „OpenAI“ suderinamos „Batch“ ir „Files“ API, semantinė atsakymų talpykla, žaidybinimas su lyderių lentelėmis, ACP agentų aptikimas (15 integruotų agentų), suplanuotas žurnalų eksportas į „BigQuery“, `auto/chaos` gedimų imitavimas, „Telegram“ roboto tiltas, programoje integruota versijų tvarkytuvė ir nemokamų teikėjų „LMArena-ELO“ reitingai. → [Dokumentacija](docs/README.md)
 
@@ -625,29 +625,29 @@ Apie tinkamumo reikalavimus ir dabartinį katalogą sužinokite adresu
 <b>＋ taip pat veikia su</b> · Kiro · Command Code · Antigravity · Windsurf · AMP · <b>bet kuriuo su OpenAI suderinamu įrankiu</b>
 </div>
 
-<sub>📖 Visų 36 įrankių konfigūravimas pagal konkretų įrankį (26 CLI programavimo įrankiai ir 10 CLI agentų) → [`docs/reference/CLI-TOOLS.md`](docs/reference/CLI-TOOLS.md) · 🧩 OpenCode papildinys → [`@omniroute/opencode-provider`](https://www.npmjs.com/package/@omniroute/opencode-provider)</sub>
+<sub>📖 Visų 36 įrankių konfigūravimas pagal konkretų įrankį (26 CLI programavimo įrankiai ir 10 CLI agentų) → [`docs/reference/CLI-TOOLS.md`](docs/reference/CLI-TOOLS.md) · 🧩 OpenCode papildinys → [`@agentproxy/opencode-provider`](https://www.npmjs.com/package/@agentproxy/opencode-provider)</sub>
 
 </div>
 
 <br/>
 
-**Paleiskite bet kurią palaikomą CLI per OmniRoute viena komanda** — konfigūracijos failai neįrašomi,
+**Paleiskite bet kurią palaikomą CLI per AgentProxy viena komanda** — konfigūracijos failai neįrašomi,
 prisijungimo duomenys įterpiami kiekvienam procesui atskirai, o Qwen/Gemini gauna laikiną izoliuotą namų katalogą:
 
 ```bash
-omniroute run claude   --model openai/gpt-5.4          # Claude Code
-omniroute run codex    --model glm/glm-5.2             # OpenAI Codex CLI
-omniroute run aider    --model glm/glm-5.2 -- --message "reply OK"
-omniroute run goose    --model glm/glm-5.2
-omniroute run opencode --model glm/glm-5.2 -- run "reply OK"
-omniroute run qwen     --model glm/glm-5.2 -- -p "reply OK"
-omniroute run gemini   --model glm/glm-5.2 -- --skip-trust -p "reply OK"
+agentproxy run claude   --model openai/gpt-5.4          # Claude Code
+agentproxy run codex    --model glm/glm-5.2             # OpenAI Codex CLI
+agentproxy run aider    --model glm/glm-5.2 -- --message "reply OK"
+agentproxy run goose    --model glm/glm-5.2
+agentproxy run opencode --model glm/glm-5.2 -- run "reply OK"
+agentproxy run qwen     --model glm/glm-5.2 -- -p "reply OK"
+agentproxy run gemini   --model glm/glm-5.2 -- --skip-trust -p "reply OK"
 
 # Arba interaktyviai pasirinkite teikėją ir modelį bei įrašykite paties įrankio konfigūraciją:
-omniroute configure codex          # taip pat: claude opencode qwen aider goose gemini cline continue kilo
+agentproxy configure codex          # taip pat: claude opencode qwen aider goose gemini cline continue kilo
 ```
 
-Kiekviena komanda naudoja aktyvų nuotolinį kontekstą (`omniroute connect <host>`), `--dry-run`
+Kiekviena komanda naudoja aktyvų nuotolinį kontekstą (`agentproxy connect <host>`), `--dry-run`
 parodo tikslias aplinkos reikšmes ir argumentus nevykdydama komandos, o `--api-key-env NAME` neleidžia paslaptims
 patekti į jūsų apvalkalo istoriją. → [CLI integracijos](docs/guides/CLI-INTEGRATIONS.md)
 
@@ -724,7 +724,7 @@ patekti į jūsų apvalkalo istoriją. → [CLI integracijos](docs/guides/CLI-IN
 
 <div align="center">
 
-## 🖥️ Kur veikia „OmniRoute“ — bet kur
+## 🖥️ Kur veikia „AgentProxy“ — bet kur
 
 </div>
 
@@ -732,14 +732,14 @@ patekti į jūsų apvalkalo istoriją. → [CLI integracijos](docs/guides/CLI-IN
 
 <table>
   <tr><th align="left">Platforma</th><th align="left">Diegimas</th><th align="left">Svarbiausios ypatybės</th></tr>
-  <tr><td align="left" nowrap>📦 <b>npm (visuotinis)</b></td><td align="left" nowrap><code>npm install -g omniroute</code></td><td align="left">Viena komanda, bet kuri OS</td></tr>
-  <tr><td align="left" nowrap>🐳 <b>Docker</b></td><td align="left" nowrap><code>docker run … diegosouzapw/omniroute</code></td><td align="left">Kelių architektūrų: <b>AMD64 + ARM64</b></td></tr>
+  <tr><td align="left" nowrap>📦 <b>npm (visuotinis)</b></td><td align="left" nowrap><code>npm install -g agentproxy</code></td><td align="left">Viena komanda, bet kuri OS</td></tr>
+  <tr><td align="left" nowrap>🐳 <b>Docker</b></td><td align="left" nowrap><code>docker run … khanhkit/agentproxy</code></td><td align="left">Kelių architektūrų: <b>AMD64 + ARM64</b></td></tr>
   <tr><td align="left" nowrap>🖥️ <b>Darbalaukis (Electron)</b></td><td align="left" nowrap><code>npm run electron:build</code></td><td align="left">Savasis langas ir sistemos dėklas — <b>Windows / macOS / Linux</b></td></tr>
   <tr><td align="left" nowrap>💪 <b>ARM</b></td><td align="left" nowrap>savasis <code>arm64</code></td><td align="left">Raspberry Pi, ARM serveriai, Apple Silicon</td></tr>
-  <tr><td align="left" nowrap>📱 <b>Android (Termux)</b></td><td align="left" nowrap><code>pkg install nodejs && npx -y omniroute</code></td><td align="left">Veikia <b>jūsų telefone</b> visą parą, nereikia „root“ teisių</td></tr>
+  <tr><td align="left" nowrap>📱 <b>Android (Termux)</b></td><td align="left" nowrap><code>pkg install nodejs && npx -y agentproxy</code></td><td align="left">Veikia <b>jūsų telefone</b> visą parą, nereikia „root“ teisių</td></tr>
   <tr><td align="left" nowrap>📲 <b>PWA</b></td><td align="left" nowrap>„Pridėti prie pradžios ekrano“</td><td align="left">Viso ekrano režimas, veikia neprisijungus, galima įdiegti iš naršyklės</td></tr>
-  <tr><td align="left" nowrap>🧩 <b>OpenCode papildinys</b></td><td align="left" nowrap><code>@omniroute/opencode-provider</code></td><td align="left">Savoji „OpenCode“ integracija</td></tr>
-  <tr><td align="left" nowrap>🤖 <b>VS Code Copilot Chat</b></td><td align="left" nowrap>įdiekite <b>OmniCopilot</b> plėtinį</td><td align="left">Visi „OmniRoute“ modeliai savajame „Copilot Chat“ pasirinkimo sąraše — stabilioje ir „Insiders“ versijose</td></tr>
+  <tr><td align="left" nowrap>🧩 <b>OpenCode papildinys</b></td><td align="left" nowrap><code>@agentproxy/opencode-provider</code></td><td align="left">Savoji „OpenCode“ integracija</td></tr>
+  <tr><td align="left" nowrap>🤖 <b>VS Code Copilot Chat</b></td><td align="left" nowrap>įdiekite <b>OmniCopilot</b> plėtinį</td><td align="left">Visi „AgentProxy“ modeliai savajame „Copilot Chat“ pasirinkimo sąraše — stabilioje ir „Insiders“ versijose</td></tr>
   <tr><td align="left" nowrap>🛠️ <b>Iš pirminio kodo</b></td><td align="left" nowrap><code>npm install && npm run dev</code></td><td align="left">Modifikuokite, prisidėkite prie kūrimo</td></tr>
 </table>
 
@@ -749,18 +749,18 @@ patekti į jūsų apvalkalo istoriją. → [CLI integracijos](docs/guides/CLI-IN
 
 <div align="center">
 
-### 🧩 Naujiena: „OmniRoute“ savajame „VS Code Copilot Chat“
+### 🧩 Naujiena: „AgentProxy“ savajame „VS Code Copilot Chat“
 
 </div>
 
-> Jokios naujos šoninės juostos, jokios naujos pokalbių sąsajos — visi „OmniRoute“ pateikiami modeliai rodomi tiesiog
+> Jokios naujos šoninės juostos, jokios naujos pokalbių sąsajos — visi „AgentProxy“ pateikiami modeliai rodomi tiesiog
 > **jūsų jau naudojamame „Copilot Chat“ modelių pasirinkimo sąraše**. Nuo VS Code 1.122 teikėjų modeliai veikia
 > neprisijungus prie „GitHub“ ir be „Copilot“ prenumeratos — agento režimas, įrankių iškvietimas ir vaizdų apdorojimas,
 > nemokamai.
 
 Įdiekite **[OmniCopilot](https://github.com/diegosouzapw/OmniCopilot)** plėtinį, nukreipkite jį
-į savo „OmniRoute“ serverį (numatytoji reikšmė — `localhost:20128`), tada atverkite „Copilot Chat“ → modelių pasirinkimo sąrašą
-→ **Tvarkyti modelius…** → **OmniRoute**.
+į savo „AgentProxy“ serverį (numatytoji reikšmė — `localhost:20128`), tada atverkite „Copilot Chat“ → modelių pasirinkimo sąrašą
+→ **Tvarkyti modelius…** → **AgentProxy**.
 
 <table>
   <tr><th align="left">Parduotuvė</th><th align="left">Nuoroda</th><th align="left">Veikia su</th></tr>
@@ -768,7 +768,7 @@ patekti į jūsų apvalkalo istoriją. → [CLI integracijos](docs/guides/CLI-IN
   <tr><td align="left" nowrap>🔓 <b>Open VSX Registry</b></td><td align="left"><a href="https://open-vsx.org/extension/diegosouzapw/omnicopilot">Įdiegti →</a></td><td align="left">Cursor, Windsurf, VSCodium, Theia, code-server, Gitpod, Antigravity, Kiro…</td></tr>
 </table>
 
-Redaktoriuje atverkite **Plėtinių** rodinį, ieškokite **„OmniRoute“**, spustelėkite **Įdiegti**
+Redaktoriuje atverkite **Plėtinių** rodinį, ieškokite **„AgentProxy“**, spustelėkite **Įdiegti**
 — abiejose parduotuvėse veikia vienodai. Pirminį kodą, problemas ir publikavimo instrukcijas rasite
 [diegosouzapw/OmniCopilot](https://github.com/diegosouzapw/OmniCopilot).
 
@@ -782,7 +782,7 @@ Redaktoriuje atverkite **Plėtinių** rodinį, ieškokite **„OmniRoute“**, s
 
 </div>
 
-<img src="./docs/diagrams/privacy-local.svg" width="100%" alt="Privatu ir pirmiausia lokalu — „OmniRoute“ tinklų sietuvas ir valdymo plokštuma veikia jūsų kompiuteryje. Užklausos siunčiamos kiekvienai užklausai pasirinktam išoriniam teikėjui; „OmniRoute“ neprideda jokio debesijoje veikiančio užklausų apdorojimo tarpinio etapo, o telemetrija pagal numatytuosius nustatymus yra išjungta. Prisijungimo duomenys saugomi užšifruoti naudojant AES-256-GCM; apsaugos priemonės apima API raktų aprėpties ribojimą, IP filtravimą, dažnio apribojimus, apsaugą nuo užklausų injekcijų, išorinių teikėjų antraščių išvalymą, pasirinktinį asmens duomenų redagavimą, išvalytus klaidų pranešimus ir vietinį SQLite audito žurnalą. „OmniRoute“ platinamas pagal MIT licenciją ir gali būti talpinamas savarankiškai."/>
+<img src="./docs/diagrams/privacy-local.svg" width="100%" alt="Privatu ir pirmiausia lokalu — „AgentProxy“ tinklų sietuvas ir valdymo plokštuma veikia jūsų kompiuteryje. Užklausos siunčiamos kiekvienai užklausai pasirinktam išoriniam teikėjui; „AgentProxy“ neprideda jokio debesijoje veikiančio užklausų apdorojimo tarpinio etapo, o telemetrija pagal numatytuosius nustatymus yra išjungta. Prisijungimo duomenys saugomi užšifruoti naudojant AES-256-GCM; apsaugos priemonės apima API raktų aprėpties ribojimą, IP filtravimą, dažnio apribojimus, apsaugą nuo užklausų injekcijų, išorinių teikėjų antraščių išvalymą, pasirinktinį asmens duomenų redagavimą, išvalytus klaidų pranešimus ir vietinį SQLite audito žurnalą. „AgentProxy“ platinamas pagal MIT licenciją ir gali būti talpinamas savarankiškai."/>
 
 <sub>📖 [Autorizavimas](docs/architecture/AUTHZ_GUIDE.md) · [Apsaugos priemonės](docs/security/GUARDRAILS.md) · [Atitiktis](docs/security/COMPLIANCE.md)</sub>
 
@@ -794,28 +794,28 @@ Redaktoriuje atverkite **Plėtinių** rodinį, ieškokite **„OmniRoute“**, s
 
 </div>
 
-> Be serverio, „OmniRoute“ yra **visavertis komandų eilutės valdymo centras**, turintis **daugiau nei 80 komandų**, taip pat atviruosius agentų protokolus, todėl DI agentas gali jį valdyti **savarankiškai**.
+> Be serverio, „AgentProxy“ yra **visavertis komandų eilutės valdymo centras**, turintis **daugiau nei 80 komandų**, taip pat atviruosius agentų protokolus, todėl DI agentas gali jį valdyti **savarankiškai**.
 
 ### ⌨️ Tikra CLI (ne vien `start`)
 
 ```bash
-omniroute               # paleisti tinklų sietuvą ir valdymo skydelį (20128 prievadas)
-omniroute chat          # interaktyvus TUI pokalbių klientas (komandos su pasviruoju brūkšniu: /model /combo /skill /memory)
-omniroute setup         # vedlys, padedantis atlikti pradinę sąranką
-omniroute doctor        # diagnozuoti teikėjus, prievadus ir savąsias priklausomybes
+agentproxy               # paleisti tinklų sietuvą ir valdymo skydelį (20128 prievadas)
+agentproxy chat          # interaktyvus TUI pokalbių klientas (komandos su pasviruoju brūkšniu: /model /combo /skill /memory)
+agentproxy setup         # vedlys, padedantis atlikti pradinę sąranką
+agentproxy doctor        # diagnozuoti teikėjus, prievadus ir savąsias priklausomybes
 ```
 
-### 🛰️ Nuotolinis režimas — CLI paleiskite čia, o „OmniRoute“ — VPS serveryje
+### 🛰️ Nuotolinis režimas — CLI paleiskite čia, o „AgentProxy“ — VPS serveryje
 
-„OmniRoute“ veikia serveryje? Valdykite jį iš savo nešiojamojo kompiuterio naudodami **tą pačią CLI**. Vieną kartą prisijunkite
+„AgentProxy“ veikia serveryje? Valdykite jį iš savo nešiojamojo kompiuterio naudodami **tą pačią CLI**. Vieną kartą prisijunkite
 naudodami ribotos aprėpties prieigos prieigos raktą; tuomet kiekviena komanda bus vykdoma nuotoliniame serveryje.
 
 ```bash
-omniroute connect 192.168.0.15            # slaptažodis → ribotos aprėpties prieigos raktas, išsaugomas kaip kontekstas
-omniroute models list                     # ← vykdoma NUOTOLINIAME serveryje
-omniroute configure codex                 # ← pasirenkamas nuotolinis modelis, įrašomas vietinis Codex profilis
-omniroute tokens create --name ci --scope read   # sukurti siauresnės aprėpties prieigos raktus kitiems kompiuteriams
-omniroute contexts use default            # ← grįžti prie vietinio serverio
+agentproxy connect 192.168.0.15            # slaptažodis → ribotos aprėpties prieigos raktas, išsaugomas kaip kontekstas
+agentproxy models list                     # ← vykdoma NUOTOLINIAME serveryje
+agentproxy configure codex                 # ← pasirenkamas nuotolinis modelis, įrašomas vietinis Codex profilis
+agentproxy tokens create --name ci --scope read   # sukurti siauresnės aprėpties prieigos raktus kitiems kompiuteriams
+agentproxy contexts use default            # ← grįžti prie vietinio serverio
 ```
 
 Prieigos raktų aprėptys yra `read` / `write` / `admin`; procesus paleidžiantys maršrutai lieka pasiekiami tik per atgalinio ryšio sąsają.
@@ -823,28 +823,28 @@ Prieigos raktų aprėptys yra `read` / `write` / `admin`; procesus paleidžianty
 
 <div align="left">
 
-<img src="./docs/diagrams/cli-terminal.svg" width="50%" alt="Animuota terminalo demonstracija, rodanti „OmniRoute“ CLI — omniroute providers list, omniroute combo list ir omniroute health — cikliškai pereinanti per 86 aukščiausio lygio komandas: providers · oauth · keys · combo · nodes · models · cache · compression · cost · usage · quota · health · resilience · telemetry · logs · audit · mcp · a2a · cloud · memory · skills · eval · tunnel · backup · sync · webhooks · policy · pricing · translator · simulate …"/>
+<img src="./docs/diagrams/cli-terminal.svg" width="50%" alt="Animuota terminalo demonstracija, rodanti „AgentProxy“ CLI — agentproxy providers list, agentproxy combo list ir agentproxy health — cikliškai pereinanti per 86 aukščiausio lygio komandas: providers · oauth · keys · combo · nodes · models · cache · compression · cost · usage · quota · health · resilience · telemetry · logs · audit · mcp · a2a · cloud · memory · skills · eval · tunnel · backup · sync · webhooks · policy · pricing · translator · simulate …"/>
 
 </div>
 
-### 🤝 Prijunkite agentą — ir jis pats valdys „OmniRoute“
+### 🤝 Prijunkite agentą — ir jis pats valdys „AgentProxy“
 
-Suteikite prieigą prie „OmniRoute“ per **MCP**, **A2A**, **REST API**, **saityno įvykių pranešimus** arba **nuotolinę CLI** — bet kuris pajėgus agentas (ar jūsų pačių kodas) gaus viso tinklų sietuvo valdymo galimybes: maršrutizavimo, teikėjų, derinių, podėlio, glaudinimo ir atminties — visa tai galės valdyti savarankiškai. Toliau nurodyti HTTP galiniai taškai pasiekiami adresu `http://localhost:20128`.
+Suteikite prieigą prie „AgentProxy“ per **MCP**, **A2A**, **REST API**, **saityno įvykių pranešimus** arba **nuotolinę CLI** — bet kuris pajėgus agentas (ar jūsų pačių kodas) gaus viso tinklų sietuvo valdymo galimybes: maršrutizavimo, teikėjų, derinių, podėlio, glaudinimo ir atminties — visa tai galės valdyti savarankiškai. Toliau nurodyti HTTP galiniai taškai pasiekiami adresu `http://localhost:20128`.
 
 <table>
   <tr><th align="left">Sąsaja</th><th align="left">Galinis taškas / komanda</th><th align="left">Kam skirta</th></tr>
-  <tr><td align="left" nowrap>🧰 <b>MCP (stdio)</b></td><td align="left" nowrap><code>omniroute --mcp</code></td><td align="left">Prijungti prie Claude Desktop, Cursor ar bet kurio MCP kliento</td></tr>
+  <tr><td align="left" nowrap>🧰 <b>MCP (stdio)</b></td><td align="left" nowrap><code>agentproxy --mcp</code></td><td align="left">Prijungti prie Claude Desktop, Cursor ar bet kurio MCP kliento</td></tr>
   <tr><td align="left" nowrap>🌊 <b>MCP (HTTP)</b></td><td align="left" nowrap><code>/api/mcp/stream</code></td><td align="left">Nuotolinis MCP — <b>110 įrankių</b>, 33 aprėptys (jų vykdymo užtikrinimas pasirenkamas), išsamus audito žurnalas</td></tr>
   <tr><td align="left" nowrap>📡 <b>MCP (SSE)</b></td><td align="left" nowrap><code>/api/mcp/sse</code></td><td align="left">Srautinis MCP transportas</td></tr>
   <tr><td align="left" nowrap>🤝 <b>A2A</b></td><td align="left" nowrap><code>/.well-known/agent.json</code></td><td align="left">Ryšys tarp agentų, <b>JSON-RPC 2.0</b> + SSE, 6 gebėjimai</td></tr>
   <tr><td align="left" nowrap>🌐 <b>REST API</b></td><td align="left" nowrap><code>/v1/*</code></td><td align="left">Suderinama su OpenAI — pokalbiai, įterpiniai, vaizdai, garsas, OCR</td></tr>
   <tr><td align="left" nowrap>🔔 <b>Saityno įvykių pranešimai</b></td><td align="left" nowrap><code>/api/webhooks</code></td><td align="left">Siųsti užklausų / kvotų įvykius į Slack, Discord, Telegram arba bet kurį URL</td></tr>
-  <tr><td align="left" nowrap>🛰️ <b>Nuotolinė CLI</b></td><td align="left" nowrap><code>omniroute connect <host></code></td><td align="left">Valdyti nuotolinį egzempliorių naudojant ribotos aprėpties prieigos raktus</td></tr>
+  <tr><td align="left" nowrap>🛰️ <b>Nuotolinė CLI</b></td><td align="left" nowrap><code>agentproxy connect <host></code></td><td align="left">Valdyti nuotolinį egzempliorių naudojant ribotos aprėpties prieigos raktus</td></tr>
 </table>
 
 ```bash
-# Suteikti Claude Code visą „OmniRoute“ įrankių rinkinį per MCP:
-claude mcp add-server omniroute --type http --url http://localhost:20128/api/mcp/stream
+# Suteikti Claude Code visą „AgentProxy“ įrankių rinkinį per MCP:
+claude mcp add-server agentproxy --type http --url http://localhost:20128/api/mcp/stream
 ```
 
 <sub>📖 [MCP serveris](docs/frameworks/MCP-SERVER.md) · [A2A serveris](docs/frameworks/A2A-SERVER.md) · [Agentų protokolai](docs/frameworks/AGENT_PROTOCOLS_GUIDE.md)</sub>
@@ -859,7 +859,7 @@ claude mcp add-server omniroute --type http --url http://localhost:20128/api/mcp
 
 ### 📖 Kaip tai veikia — konvejeris, architektūra ir sutaupymo skaičiavimas
 
-<img src="./docs/diagrams/compression-pipeline.svg" width="100%" alt="OmniRoute glaudinimo konvejeris: iliustracinė 10 000 tokenų kliento užklausa pereina per 12 komponuojamų variklių — Session-Dedup, CCR, Lite, RTK, Responses Tool Output, Headroom, Relevance, Caveman, Aggressive, LLMLingua-2, Ultra ir OmniGlyph — ir dokumentuotame sudėtiniame pavyzdyje tiekėją gali pasiekti turėdama maždaug 1 080 tokenų. Struktūrinį turinį saugo išsaugojimo apsaugos ir kiekvieno etapo tikslumo vartai; aiškiai įjungti nuostolingi ar eksperimentiniai režimai gali transformuoti tinkamą turinį."/>
+<img src="./docs/diagrams/compression-pipeline.svg" width="100%" alt="AgentProxy glaudinimo konvejeris: iliustracinė 10 000 tokenų kliento užklausa pereina per 12 komponuojamų variklių — Session-Dedup, CCR, Lite, RTK, Responses Tool Output, Headroom, Relevance, Caveman, Aggressive, LLMLingua-2, Ultra ir OmniGlyph — ir dokumentuotame sudėtiniame pavyzdyje tiekėją gali pasiekti turėdama maždaug 1 080 tokenų. Struktūrinį turinį saugo išsaugojimo apsaugos ir kiekvieno etapo tikslumo vartai; aiškiai įjungti nuostolingi ar eksperimentiniai režimai gali transformuoti tinkamą turinį."/>
 
 Numatytasis sudėtinis derinys vykdo `RTK → Caveman`. Kai abu varikliai apdoroja tą pačią įrankio ar konteksto naudingąją apkrovą, sutaupymas dauginasi:
 
@@ -871,7 +871,7 @@ range    = 78.4 – 94.6%
 
 Kodo blokai, URL, JSON ir struktūriniai duomenys išsaugojimo variklio yra **visada apsaugomi**.
 
-> **Kam naudoti daug tokenų, kai pakanka kelių?** Kiekviena užklausa pereina per OmniRoute glaudinimo konvejerį **skaidriai** — kliento keisti nereikia. Dabar tai yra **12 komponuojamų variklių rinkinys**, kuris vykdomas nustatyta tvarka ir kurio komponentus galima derinti kiekviename maršruto parinkimo derinyje — remiantis [RTK](https://github.com/rtk-ai/rtk), [Caveman](https://github.com/JuliusBrussee/caveman) (⭐ 90K+), [LLMLingua-2](https://github.com/microsoft/LLMLingua) ir [Troglodita](https://github.com/leninejunior/troglodita) (PT-BR) idėjomis.
+> **Kam naudoti daug tokenų, kai pakanka kelių?** Kiekviena užklausa pereina per AgentProxy glaudinimo konvejerį **skaidriai** — kliento keisti nereikia. Dabar tai yra **12 komponuojamų variklių rinkinys**, kuris vykdomas nustatyta tvarka ir kurio komponentus galima derinti kiekviename maršruto parinkimo derinyje — remiantis [RTK](https://github.com/rtk-ai/rtk), [Caveman](https://github.com/JuliusBrussee/caveman) (⭐ 90K+), [LLMLingua-2](https://github.com/microsoft/LLMLingua) ir [Troglodita](https://github.com/leninejunior/troglodita) (PT-BR) idėjomis.
 
 ### 🧱 12 variklių rinkinys
 
@@ -934,7 +934,7 @@ Kodo blokai, URL ir struktūriniai duomenys **visada išsaugomi** baito tikslumu
   - **Turiu ADHD (pirmiausia veiksmas)** — pradėkite nuo kito veiksmo, sunumeruokite veiksmus, pateikite vieną konkretų kitą žingsnį, be įžangos.
   - **Glaustas CJK (文言)** — itin glaustas klasikinės kinų kalbos stilius (pagal lokalę apribotas iki `zh`).
 - **🎯 Adaptyvus konteksto biudžetas** _(reguliatorius)_ — užuot naudojus vieną įjungimo ar išjungimo tokenų slenkstį, pigiausi ir mažiausiai nuostolingi varikliai stiprinami tik tiek, kiek reikia, kad turinys **tilptų į modelio konteksto langą**. Strategija: `reserve-output` (numatytoji, atsižvelgianti į modelį) · `percentage` · `absolute`. Režimas: `floor` (garantuoti, kad tilps) · `replace-autotrigger` (jūsų aiškus pasirinkimas turi pirmenybę) · `off` (senasis slenkstis).
-- **🎛️ Kur priimamas sprendimas dėl glaudinimo** _(pirmenybė nuo aukščiausios iki žemiausios)_ — kiekvienos užklausos `x-omniroute-compression` antraštė › maršruto parinkimo derinio perrašymas › aktyvus įvardytasis profilis › adaptyvus arba automatinis suaktyvinimas › skydelio numatytoji nuostata › išjungta. Pritaikytas planas grąžinamas `X-OmniRoute-Compression: <mode>; source=<source>` atsakymo antraštėje.
+- **🎛️ Kur priimamas sprendimas dėl glaudinimo** _(pirmenybė nuo aukščiausios iki žemiausios)_ — kiekvienos užklausos `x-agentproxy-compression` antraštė › maršruto parinkimo derinio perrašymas › aktyvus įvardytasis profilis › adaptyvus arba automatinis suaktyvinimas › skydelio numatytoji nuostata › išjungta. Pritaikytas planas grąžinamas `X-AgentProxy-Compression: <mode>; source=<source>` atsakymo antraštėje.
 
 Nustatykite automatinį suaktyvinimą pagal tokenų slenkstį, įjunkite adaptyvų reguliatorių, prisekite įvardytąjį profilį, nustatykite vienkartinę parinktį konkrečiai užklausai arba priskirkite konvejerį kiekvienam maršruto parinkimo deriniui — rinkitės tai, kas geriausiai atitinka darbo krūvį. Pasirenkama autonominė **vertinimo sistema** (`npm run eval:compression`) prieš paskelbiant pakeitimą įvertina fiksuoto tekstyno tikslumo ir sutaupymo santykį.
 
@@ -951,8 +951,8 @@ Nustatykite automatinį suaktyvinimą pagal tokenų slenkstį, įjunkite adaptyv
 **1) Įdiekite ir paleiskite**
 
 ```bash
-npm install -g omniroute
-omniroute
+npm install -g agentproxy
+agentproxy
 ```
 
 > 💡 Matote `npm warn ERESOLVE` arba peer-dep įspėjimus? [Jie nepavojingi](docs/guides/TROUBLESHOOTING.md#npm-install-warnings-eresolve--peer--deprecated).
@@ -977,9 +977,9 @@ Model:    auto            (išmanusis maršruto parinkimas be konfigūracijos �
 curl http://localhost:20128/v1/models -H "Authorization: Bearer YOUR_KEY"
 ```
 
-Turėtumėte matyti prijungtų modelių sąrašą. 🎉 Štai ir viskas — pradėkite programuoti, o OmniRoute automatiškai parinks maršrutą ir prireikus persijungs į atsarginį variantą.
+Turėtumėte matyti prijungtų modelių sąrašą. 🎉 Štai ir viskas — pradėkite programuoti, o AgentProxy automatiškai parinks maršrutą ir prireikus persijungs į atsarginį variantą.
 
-Jei jūsų klientas negali siųsti pasirinktinių antraščių, OmniRoute taip pat pateikia su tokenu susietus suderinamumo alternatyviuosius adresus:
+Jei jūsų klientas negali siųsti pasirinktinių antraščių, AgentProxy taip pat pateikia su tokenu susietus suderinamumo alternatyviuosius adresus:
 
 ```txt
 OpenAI catalog:   http://localhost:20128/vscode/YOUR_KEY/
@@ -999,39 +999,39 @@ Juos naudokite tik klientams, kurie negali pridėti `Authorization: Bearer ...`.
 **🐳 Docker**
 
 ```bash
-docker run -d --name omniroute --restart unless-stopped --stop-timeout 40 \
-  -p 127.0.0.1:20128:20128 -v omniroute-data:/app/data diegosouzapw/omniroute:latest
+docker run -d --name agentproxy --restart unless-stopped --stop-timeout 40 \
+  -p 127.0.0.1:20128:20128 -v agentproxy-data:/app/data khanhkit/agentproxy:latest
 ```
 
-`:latest` nurodo aukščiausią **paskelbtą** stabilų SemVer leidimą. Jis neseka git `main` šakos. Naudodami GitOps, prisekite `:X.Y.Z`. Žr. [Docker leidimų kanalai](docs/guides/DOCKER_GUIDE.md#release-channels). Atvaizde nustatyta fiksuota **`OMNIROUTE_MEMORY_MB=1024`** reikšmė. Jos pakanka valdymo skydeliui ir lengvam pokalbiui. **Programavimo agentams** (`POST /v1/responses` iš Claude Code, Codex, Grok, …) reikia gerokai didesnės V8 krūvos, kitaip, persidengus dviem ilgiems kontekstams, procesas patiria `FATAL ERROR` ties ~12 GiB riba. Konteineriui skirkite daugiau atminties nei krūvai (vietiniai buferiai yra už V8 ribų):
+`:latest` nurodo aukščiausią **paskelbtą** stabilų SemVer leidimą. Jis neseka git `main` šakos. Naudodami GitOps, prisekite `:X.Y.Z`. Žr. [Docker leidimų kanalai](docs/guides/DOCKER_GUIDE.md#release-channels). Atvaizde nustatyta fiksuota **`AGENTPROXY_MEMORY_MB=1024`** reikšmė. Jos pakanka valdymo skydeliui ir lengvam pokalbiui. **Programavimo agentams** (`POST /v1/responses` iš Claude Code, Codex, Grok, …) reikia gerokai didesnės V8 krūvos, kitaip, persidengus dviem ilgiems kontekstams, procesas patiria `FATAL ERROR` ties ~12 GiB riba. Konteineriui skirkite daugiau atminties nei krūvai (vietiniai buferiai yra už V8 ribų):
 
-| Darbo krūvis                                     | Krūva (`-e OMNIROUTE_MEMORY_MB`)     | Konteineris (`--memory`) |
+| Darbo krūvis                                     | Krūva (`-e AGENTPROXY_MEMORY_MB`)     | Konteineris (`--memory`) |
 | ------------------------------------------------ | ------------------------------------ | ------------------------ |
 | Valdymo skydelis / lengvas pokalbis              | `1024` (numatytoji atvaizdo reikšmė) | ≥2 g                     |
 | Vienas programavimo agentas                      | `8192`                               | ≥10 g                    |
 | Dvi lygiagrečios ilgos `/v1/responses` užklausos | `10240`–`12288`                      | ≥12–16 g                 |
 
 ```bash
-docker run -d --name omniroute --restart unless-stopped --stop-timeout 40 \
-  -e OMNIROUTE_MEMORY_MB=8192 --memory=10g \
-  -p 127.0.0.1:20128:20128 -v omniroute-data:/app/data diegosouzapw/omniroute:latest
+docker run -d --name agentproxy --restart unless-stopped --stop-timeout 40 \
+  -e AGENTPROXY_MEMORY_MB=8192 --memory=10g \
+  -p 127.0.0.1:20128:20128 -v agentproxy-data:/app/data khanhkit/agentproxy:latest
 ```
 
 Visa lentelė: [Docker vadovas — vykdymo atmintis](docs/guides/DOCKER_GUIDE.md#runtime-ram-for-coding-agents).
 
-> **Išankstinių Docker leidimų kanalas:** `diegosouzapw/omniroute:next` ir
-> `diegosouzapw/omniroute:next-web` seka dabartinę numatytąją `release/v*`
+> **Išankstinių Docker leidimų kanalas:** `khanhkit/agentproxy:next` ir
+> `khanhkit/agentproxy:next-web` seka dabartinę numatytąją `release/v*`
 > šaką. Šios kintamos žymos skirtos tik dar neišleistoms pataisoms testuoti ir
 > **nėra palaikomos gamybinėje aplinkoje**. Žr.
 > [Docker leidimų kanalai](docs/guides/DOCKER_GUIDE.md#release-channels).
 
 **🥟 Bun**
 
-Standartinis `bun install` ir visuotinis diegimas (`bun install -g omniroute`) palaikomi aptinkant Bun vykdymo aplinką:
+Standartinis `bun install` ir visuotinis diegimas (`bun install -g agentproxy`) palaikomi aptinkant Bun vykdymo aplinką:
 
-- **Integruotas `bun:sqlite`**: veikdama Bun aplinkoje, OmniRoute naudoja integruotą Bun `bun:sqlite` tvarkyklę, o Node.js aplinkoje naudoja `better-sqlite3` arba `sql.js` kaip atsarginį variantą.
-- **Automatinis Webpack paketų kūrimo įrankio parinkimas kūrimo aplinkoje**: kūrimo režimas (`bun run dev`) automatiškai aptinka Bun ir vietoje Turbopack įjungia Webpack, kad būtų išvengta nesuderinamumo su vietinėmis V8 sąsajomis. Gamybiniai komponavimai (`bun run build`) tiksliai vadovaujasi `OMNIROUTE_USE_TURBOPACK`, kaip ir Node aplinkoje: pagal numatytąją parinktį naudojamas Turbopack, o `OMNIROUTE_USE_TURBOPACK=0` nurodo komponuoti naudojant Webpack (`Dockerfile.bun` pateikia jį kaip `--build-arg`).
-- **Specialus Bun Dockerfile**: kelių etapų `Dockerfile.bun`, skirtas vietiniams Bun gamybiniams diegimams (`docker build -f Dockerfile.bun -t omniroute:bun .`).
+- **Integruotas `bun:sqlite`**: veikdama Bun aplinkoje, AgentProxy naudoja integruotą Bun `bun:sqlite` tvarkyklę, o Node.js aplinkoje naudoja `better-sqlite3` arba `sql.js` kaip atsarginį variantą.
+- **Automatinis Webpack paketų kūrimo įrankio parinkimas kūrimo aplinkoje**: kūrimo režimas (`bun run dev`) automatiškai aptinka Bun ir vietoje Turbopack įjungia Webpack, kad būtų išvengta nesuderinamumo su vietinėmis V8 sąsajomis. Gamybiniai komponavimai (`bun run build`) tiksliai vadovaujasi `AGENTPROXY_USE_TURBOPACK`, kaip ir Node aplinkoje: pagal numatytąją parinktį naudojamas Turbopack, o `AGENTPROXY_USE_TURBOPACK=0` nurodo komponuoti naudojant Webpack (`Dockerfile.bun` pateikia jį kaip `--build-arg`).
+- **Specialus Bun Dockerfile**: kelių etapų `Dockerfile.bun`, skirtas vietiniams Bun gamybiniams diegimams (`docker build -f Dockerfile.bun -t agentproxy:bun .`).
 
 ```bash
 # Įdiekite ir paleiskite naudodami Bun
@@ -1049,13 +1049,13 @@ PORT=20128 npm run dev
 **📦 pnpm**
 
 ```bash
-pnpm add -g omniroute@latest --allow-build=better-sqlite3 --allow-build=@swc/core && omniroute
+pnpm add -g agentproxy@latest --allow-build=better-sqlite3 --allow-build=@swc/core && agentproxy
 ```
 
 **🐧 Arch Linux (AUR)**
 
 ```bash
-yay -S omniroute-bin && systemctl --user enable --now omniroute.service
+yay -S agentproxy-bin && systemctl --user enable --now agentproxy.service
 ```
 
 **🔧 Nix (Flake)**
@@ -1101,7 +1101,7 @@ prie grynojo JS variklio (`node:sqlite` Node 22+ aplinkoje, kitu atveju — prid
 Norėdami visiškai praleisti po įdiegimo atliekamą vietinį paruošimą (CI, aplinkose be grafinės sąsajos ar lėtuose įrenginiuose):
 
 ```bash
-OMNIROUTE_SKIP_POSTINSTALL=1 npm install -g omniroute   # CI=1 taip pat jį praleidžia
+AGENTPROXY_SKIP_POSTINSTALL=1 npm install -g agentproxy   # CI=1 taip pat jį praleidžia
 ```
 
 Sparčiausiam diegimui rinkitės **pnpm** (pagal turinį adresuojama saugykla ir standžiosios nuorodos — žr. pirmiau).
@@ -1113,7 +1113,7 @@ procesas per vieną prievadą, todėl šiuo metu atskiro tik CLI skirto paketo n
 
 <div align="center">
 
-# 🎬 Veikiantis OmniRoute
+# 🎬 Veikiantis AgentProxy
 
 </div>
 
@@ -1177,7 +1177,7 @@ procesas per vieną prievadą, todėl šiuo metu atskiro tik CLI skirto paketo n
 
 Kanoniniai rodikliai 2026-08-24: **1.029 unikalūs vaizdo įrašai** · **11.132.922 žinomos peržiūros** (`v > 0`) · **639 kanalai / profiliai pagal tinklą**. Neapdorotame skydelyje yra 1.070 eilučių; 41 pasikartojantis Instagram įrašas buvo normalizuotas pagal kanoninį URL, išlaikant didžiausią kiekvieno vaizdo įrašo peržiūrų skaičių.
 
-> 🎬 **Sukūrėte vaizdo įrašą apie OmniRoute?** Atidarykite [užklausą](https://github.com/diegosouzapw/OmniRoute/issues/new) arba [diskusiją](https://github.com/diegosouzapw/OmniRoute/discussions) ir pridėkite nuorodą — paskelbsime jį čia.
+> 🎬 **Sukūrėte vaizdo įrašą apie AgentProxy?** Atidarykite [užklausą](https://github.com/khanhkit/AgentProxy/issues/new) arba [diskusiją](https://github.com/khanhkit/AgentProxy/discussions) ir pridėkite nuorodą — paskelbsime jį čia.
 
 <br/>
 
@@ -1192,15 +1192,15 @@ Kanoniniai rodikliai 2026-08-24: **1.029 unikalūs vaizdo įrašai** · **11.132
 | 💼 **LinkedIn** — sekite prižiūrėtoją           | [linkedin.com/in/diegosouzapw](https://www.linkedin.com/in/diegosouzapw/)                                                    |
 | 🐙 **GitHub** — sekite naujinius ir patarimus   | [@diegosouzapw](https://github.com/diegosouzapw)                                                                             |
 | 💬 **Discord**                                  | [discord.gg/U47eFqAXCn](https://discord.gg/U47eFqAXCn)                                                                       |
-| ✈️ **Telegram**                                 | [t.me/omnirouteOficial](https://t.me/omnirouteOficial)                                                                       |
+| ✈️ **Telegram**                                 | [t.me/agentproxyOficial](https://github.com/khanhkit/AgentProxy/discussions)                                                                       |
 | 🟢 **WhatsApp — 🌍 pasaulinė grupė**            | [prisijungti prie grupės](https://chat.whatsapp.com/FvuCbrpZmQ6I85n2vW5QIC?s=cl&p=a&mlu=4)                                   |
 | 🟢 **WhatsApp — 🇧🇷 Brazilija**                  | [prisijungti prie grupės](https://chat.whatsapp.com/KWgatljAjmbELQory59Oti?s=cl&p=a&mlu=4)                                   |
-| 🌍 **Svetainė**                                 | [omniroute.online](https://omniroute.online)                                                                                 |
-| 🌍 **🌍StHub OmniRoute bendruomenė (nemokama)** | [StHub portalas](https://portal.sthub.com.br/communities/groups/st-hub/channels/Omniroute-World-8kRjmK)                      |
-| 📦 **Šaltinio kodas**                           | [github.com/diegosouzapw/OmniRoute](https://github.com/diegosouzapw/OmniRoute)                                               |
-| 🐛 **Pranešti apie klaidą**                     | [atidaryti užklausą](https://github.com/diegosouzapw/OmniRoute/issues) — pridėkite `npm run system-info` išvestį             |
+| 🌍 **Svetainė**                                 | [agentproxy.online](https://agentproxy.example.com)                                                                                 |
+| 🌍 **🌍StHub AgentProxy bendruomenė (nemokama)** | [StHub portalas](https://portal.sthub.com.br/communities/groups/st-hub/channels/AgentProxy-World-8kRjmK)                      |
+| 📦 **Šaltinio kodas**                           | [github.com/khanhkit/AgentProxy](https://github.com/khanhkit/AgentProxy)                                               |
+| 🐛 **Pranešti apie klaidą**                     | [atidaryti užklausą](https://github.com/khanhkit/AgentProxy/issues) — pridėkite `npm run system-info` išvestį             |
 | 🤝 **Prisidėti**                                | [CONTRIBUTING.md](CONTRIBUTING.md) · [Šakų ir leidimų modelis](docs/ops/BRANCHING_MODEL.md) · pasirinkite `good first issue` |
-| 💚 **Paremti projektą**                         | [Paramos būdai ↑](#-support-omniroute) · [GitHub Sponsors](https://github.com/sponsors/diegosouzapw)                         |
+| 💚 **Paremti projektą**                         | [Paramos būdai ↑](#-support-agentproxy) · [GitHub Sponsors](https://github.com/sponsors/diegosouzapw)                         |
 
 </div>
 
@@ -1231,7 +1231,7 @@ Kanoniniai rodikliai 2026-08-24: **1.029 unikalūs vaizdo įrašai** · **11.132
   <tr><td nowrap><b>Testavimas</b></td><td>Node.js testų vykdyklė + Vitest — <b>39 000+ statinių testų deklaracijų</b> daugiau nei 5 100 sekamų testų failų (modulių, integraciniai, E2E, saugumo, ekosistemos)</td></tr>
   <tr><td nowrap><b>Platformos</b></td><td>Darbalaukis (Electron) · Android (Termux) · PWA (bet kuri naršyklė)</td></tr>
   <tr><td nowrap><b>CI/CD</b></td><td>GitHub Actions — automatinis paskelbimas npm ir Docker Hub išleidžiant versiją</td></tr>
-  <tr><td nowrap><b>Nuorodos</b></td><td><a href="https://omniroute.online">Svetainė</a> · <a href="https://www.npmjs.com/package/omniroute">npm</a> · <a href="https://hub.docker.com/r/diegosouzapw/omniroute">Docker Hub</a></td></tr>
+  <tr><td nowrap><b>Nuorodos</b></td><td><a href="https://agentproxy.example.com">Svetainė</a> · <a href="https://www.npmjs.com/package/agentproxy">npm</a> · <a href="https://github.com/khanhkit/AgentProxy/pkgs/container/agentproxy">Docker Hub</a></td></tr>
 </table>
 
 <div align="center">
@@ -1249,8 +1249,8 @@ Kanoniniai rodikliai 2026-08-24: **1.029 unikalūs vaizdo įrašai** · **11.132
   <tr><td nowrap><b><a href="docs/guides/USER_GUIDE.md">Naudotojo vadovas</a></b></td><td>Teikėjai, deriniai, CLI integravimas, diegimas</td></tr>
   <tr><td nowrap><b><a href="docs/guides/SETUP_GUIDE.md">Sąrankos vadovas</a></b></td><td>Visi diegimo būdai, CLI įrankių konfigūracijos, protokolų sąranka, skirtojo laiko derinimas</td></tr>
   <tr><td nowrap><b><a href="docs/reference/CLI-TOOLS.md">CLI įrankių vadovas</a></b></td><td>Kiekvieno įrankio sąranka: Claude Code, Codex, Cursor, Cline, OpenClaw, Kilo, Copilot</td></tr>
-  <tr><td nowrap><b><a href="docs/guides/REMOTE-MODE.md">Nuotolinis režimas</a></b></td><td>Valdykite nuotolinį OmniRoute (VPS) iš savo nešiojamojo kompiuterio CLI naudodami aprėptimi ribojamus prieigos prieigos raktus</td></tr>
-  <tr><td nowrap><b><a href="docs/guides/CLAUDE-CODE-CONFIGURATION.md">Claude Code konfigūracija</a></b></td><td>Nukreipkite Claude Code į OmniRoute (vietinį / nuotolinį) naudodami <code>launch</code> ir kiekvienam modeliui skirtus profilius</td></tr>
+  <tr><td nowrap><b><a href="docs/guides/REMOTE-MODE.md">Nuotolinis režimas</a></b></td><td>Valdykite nuotolinį AgentProxy (VPS) iš savo nešiojamojo kompiuterio CLI naudodami aprėptimi ribojamus prieigos prieigos raktus</td></tr>
+  <tr><td nowrap><b><a href="docs/guides/CLAUDE-CODE-CONFIGURATION.md">Claude Code konfigūracija</a></b></td><td>Nukreipkite Claude Code į AgentProxy (vietinį / nuotolinį) naudodami <code>launch</code> ir kiekvienam modeliui skirtus profilius</td></tr>
   <tr><td nowrap><b><a href="README.md#-quick-start">Greitoji pradžia</a></b></td><td>3 žingsniai: įdiegti → prijungti → sukonfigūruoti</td></tr>
 </table>
 
@@ -1262,7 +1262,7 @@ Kanoniniai rodikliai 2026-08-24: **1.029 unikalūs vaizdo įrašai** · **11.132
   <tr><td nowrap><b><a href="contrib/podman/README.md">Podman vadovas</a></b></td><td>Quadlet systemd integravimas, podman-compose, SELinux</td></tr>
   <tr><td nowrap><b><a href="docs/ops/VM_DEPLOYMENT_GUIDE.md">Diegimas virtualiojoje mašinoje</a></b></td><td>Išsamus vadovas: virtualiosios mašinos + nginx + Cloudflare sąranka</td></tr>
   <tr><td nowrap><b><a href="docs/ops/FLY_IO_DEPLOYMENT_GUIDE.md">Diegimas Fly.io</a></b></td><td>Diegimas Fly.io su nuolatine saugykla</td></tr>
-  <tr><td nowrap><b><a href="docs/guides/TERMUX_GUIDE.md">Termux vadovas</a></b></td><td>Paleiskite OmniRoute sistemoje Android per Termux</td></tr>
+  <tr><td nowrap><b><a href="docs/guides/TERMUX_GUIDE.md">Termux vadovas</a></b></td><td>Paleiskite AgentProxy sistemoje Android per Termux</td></tr>
   <tr><td nowrap><b><a href="docs/guides/PWA_GUIDE.md">PWA vadovas</a></b></td><td>Progresyviosios žiniatinklio programos diegimas, kaupimas podėlyje, architektūra</td></tr>
   <tr><td nowrap><b><a href="docs/guides/UNINSTALL.md">Šalinimo vadovas</a></b></td><td>Švarus pašalinimas taikant visus diegimo būdus</td></tr>
   <tr><td nowrap><b><a href="docs/reference/ENVIRONMENT.md">Aplinkos konfigūracija</a></b></td><td>Visi <code>.env</code> kintamieji ir nuorodos</td></tr>
@@ -1317,7 +1317,7 @@ Kanoniniai rodikliai 2026-08-24: **1.029 unikalūs vaizdo įrašai** · **11.132
 
 # ⭐ Daugiausia prisidėję dalyviai
 
-> OmniRoute kuria entuziastinga atvirojo kodo bendruomenė. Šie žmonės išskirtinai prisidėjo ir tiesiogiai veikia projekto kokybę, stabilumą bei pasiekiamumą. **Ačiū.**
+> AgentProxy kuria entuziastinga atvirojo kodo bendruomenė. Šie žmonės išskirtinai prisidėjo ir tiesiogiai veikia projekto kokybę, stabilumą bei pasiekiamumą. **Ačiū.**
 
 ### Išorės dalyviai pagal sulietas ištraukimo užklausas
 
@@ -1436,7 +1436,7 @@ Kanoniniai rodikliai 2026-08-24: **1.029 unikalūs vaizdo įrašai** · **11.132
 
 <sub>Pakartotinai patikrinta 2026-08-24 06:14:31 UTC: GitHub priskirti įrašai, kuriuos saugyklos Contributors API pateikė numatytajai <code>release/v3.8.50</code> šakai. API grąžino 525 tapatybes (415 naudotojų, 2 robotus, 108 anoniminius dalyvius); šioje lentelėje neįtrauktas prižiūrėtojas, robotai ir anoniminės tapatybės, o vienodi rezultatai išlaikyti. Šis sąrašas skiriasi ir nuo pirmiau pateikto sulietų PR reitingo, ir nuo toliau pateikto 639 asmenų Git metaduomenų surašymo.</sub>
 
-> 🙏 Šių dalyvių sukurtos funkcijos, klaidų pataisymai ir infrastruktūros patobulinimai yra **esminė dalis** to, kas daro OmniRoute patikimą ir funkcionalų. Svarbi kiekviena ištraukimo užklausa, kiekvienas testavimo atvejis ir kiekvienas i18n vertimo failas. Atvirąjį kodą kuria tokie žmonės kaip jie.
+> 🙏 Šių dalyvių sukurtos funkcijos, klaidų pataisymai ir infrastruktūros patobulinimai yra **esminė dalis** to, kas daro AgentProxy patikimą ir funkcionalų. Svarbi kiekviena ištraukimo užklausa, kiekvienas testavimo atvejis ir kiekvienas i18n vertimo failas. Atvirąjį kodą kuria tokie žmonės kaip jie.
 
 </div>
 
@@ -1448,7 +1448,7 @@ Kanoniniai rodikliai 2026-08-24: **1.029 unikalūs vaizdo įrašai** · **11.132
 
 <div align="center">
 
-Nuoširdžiai dėkojame žmonėms, kurie finansuoja „OmniRoute“ iš savo kišenės — kiekvienas įnašas padeda projektui išlikti nemokamam, nepriklausomam ir judėti pirmyn.
+Nuoširdžiai dėkojame žmonėms, kurie finansuoja „AgentProxy“ iš savo kišenės — kiekvienas įnašas padeda projektui išlikti nemokamam, nepriklausomam ir judėti pirmyn.
 
 <table>
   <tr>
@@ -1494,7 +1494,7 @@ Nuoširdžiai dėkojame žmonėms, kurie finansuoja „OmniRoute“ iš savo ki�
 
 <sub>Vieši „GitHub Sponsors“ rėmėjai pakartotinai patikrinti 2026-08-24. Anksčiau pateiktas aktyvumo žymas nustato „GitHub“ būsena <code>activeOnly</code>; anksčiau paviešintiems vienkartiniams rėmėjams ir toliau dėkojama, o privatūs rėmėjai išlieka anonimiški.</sub>
 
-<b><a href="https://github.com/sponsors/diegosouzapw">💖 Tapkite rėmėju →</a></b> — kiekvienas doleris padeda „OmniRoute“ išlikti nemokamam ir nepriklausomam.
+<b><a href="https://github.com/sponsors/diegosouzapw">💖 Tapkite rėmėju →</a></b> — kiekvienas doleris padeda „AgentProxy“ išlikti nemokamam ir nepriklausomam.
 
 </div>
 
@@ -1506,7 +1506,7 @@ Nuoširdžiai dėkojame žmonėms, kurie finansuoja „OmniRoute“ iš savo ki�
 
 </div>
 
-[![Prisidėjusieji](https://contrib.rocks/image?repo=diegosouzapw/OmniRoute&max=639&columns=20&anon=1)](https://github.com/diegosouzapw/OmniRoute/graphs/contributors)
+[![Prisidėjusieji](https://contrib.rocks/image?repo=khanhkit/AgentProxy&max=639&columns=20&anon=1)](https://github.com/khanhkit/AgentProxy/graphs/contributors)
 
 <sub>Auditas atliktas 2026-08-24 naudojant fiksuotą bazę <code>ac02c5b42f</code> ir pakartotinai patikrintas tiesioginės <code>release/v3.8.50</code> šakos viršūnėje <code>dafb4ae808</code>: <b>639 normalizuotos žmonių „Git“ tapatybės</b> — 407 nurodyti kaip įsipareigojimų autoriai (įskaitant prižiūrėtoją), o 232 nurodyti tik aiškiose <code>Co-authored-by</code> pabaigos eilutėse. Atliekant apskaitą normalizuojamos „GitHub“ noreply paskyros, neįtraukiamos 26 robotų, agentų, paslaugų ir vietaženklių tapatybės, o įprasti el. pašto adresai nesujungiami vien todėl, kad sutampa jų rodomi vardai.</sub>
 
@@ -1535,11 +1535,11 @@ gh release create "v${VERSION}" --title "v${VERSION}" --generate-notes
 
 ## 📊 Žvaigždutės
 
-<a href="https://www.star-history.com/?repos=diegosouzapw%2FOmniRoute&type=date&legend=top-left">
+<a href="https://www.star-history.com/?repos=diegosouzapw%2FAgentProxy&type=date&legend=top-left">
  <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=diegosouzapw/OmniRoute&type=date&theme=dark&legend=top-left&sealed_token=XP_ycEjv7s31p1edvhsMOXry51OWYsUjDRWjflSG7jQKRpO9hPGg7i_EHvwhI6QtrARTMH-YGjJhi8sumRYflEJD0DPlH_MMHjizhBYCX8fbHFrHEiNvVA" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=diegosouzapw/OmniRoute&type=date&legend=top-left&sealed_token=XP_ycEjv7s31p1edvhsMOXry51OWYsUjDRWjflSG7jQKRpO9hPGg7i_EHvwhI6QtrARTMH-YGjJhi8sumRYflEJD0DPlH_MMHjizhBYCX8fbHFrHEiNvVA" />
-   <img alt="Žvaigždučių istorijos diagrama" src="https://api.star-history.com/chart?repos=diegosouzapw/OmniRoute&type=date&legend=top-left&sealed_token=XP_ycEjv7s31p1edvhsMOXry51OWYsUjDRWjflSG7jQKRpO9hPGg7i_EHvwhI6QtrARTMH-YGjJhi8sumRYflEJD0DPlH_MMHjizhBYCX8fbHFrHEiNvVA" />
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=khanhkit/AgentProxy&type=date&theme=dark&legend=top-left&sealed_token=XP_ycEjv7s31p1edvhsMOXry51OWYsUjDRWjflSG7jQKRpO9hPGg7i_EHvwhI6QtrARTMH-YGjJhi8sumRYflEJD0DPlH_MMHjizhBYCX8fbHFrHEiNvVA" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=khanhkit/AgentProxy&type=date&legend=top-left&sealed_token=XP_ycEjv7s31p1edvhsMOXry51OWYsUjDRWjflSG7jQKRpO9hPGg7i_EHvwhI6QtrARTMH-YGjJhi8sumRYflEJD0DPlH_MMHjizhBYCX8fbHFrHEiNvVA" />
+   <img alt="Žvaigždučių istorijos diagrama" src="https://api.star-history.com/chart?repos=khanhkit/AgentProxy&type=date&legend=top-left&sealed_token=XP_ycEjv7s31p1edvhsMOXry51OWYsUjDRWjflSG7jQKRpO9hPGg7i_EHvwhI6QtrARTMH-YGjJhi8sumRYflEJD0DPlH_MMHjizhBYCX8fbHFrHEiNvVA" />
  </picture>
 </a>
 
@@ -1549,11 +1549,11 @@ gh release create "v${VERSION}" --title "v${VERSION}" --generate-notes
 
 ## 🌍 StarMapper
 
-<a href="https://starmapper.bruniaux.com/diegosouzapw/omniroute">
+<a href="https://starmapper.bruniaux.com/khanhkit/agentproxy">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://starmapper.bruniaux.com/api/map-image/diegosouzapw/omniroute?theme=dark" />
-    <source media="(prefers-color-scheme: light)" srcset="https://starmapper.bruniaux.com/api/map-image/diegosouzapw/omniroute?theme=light" />
-    <img alt="StarMapper" src="https://starmapper.bruniaux.com/api/map-image/diegosouzapw/omniroute" />
+    <source media="(prefers-color-scheme: dark)" srcset="https://starmapper.bruniaux.com/api/map-image/khanhkit/agentproxy?theme=dark" />
+    <source media="(prefers-color-scheme: light)" srcset="https://starmapper.bruniaux.com/api/map-image/khanhkit/agentproxy?theme=light" />
+    <img alt="StarMapper" src="https://starmapper.bruniaux.com/api/map-image/khanhkit/agentproxy" />
   </picture>
 </a>
 </div>
@@ -1566,14 +1566,14 @@ gh release create "v${VERSION}" --title "v${VERSION}" --generate-notes
 
 </div>
 
-OmniRoute remiasi milžinų pasiekimais. Projektas prasidėjo kaip **[9router](https://github.com/decolua/9router)** atšaka ir Go projekto **[CLIProxyAPI](https://github.com/router-for-me/CLIProxyAPI)** perkėlimas į TypeScript, o nuo tada kiekvieną toliau nurodytą posistemę įkvėpė atvirojo kodo projektas, pirmasis įgyvendinęs atitinkamą idėją. Kiekvienas jų prisidėjo prie konkrečios OmniRoute dalies. Taip jiems visiems dėkojame. 🙏
+AgentProxy remiasi milžinų pasiekimais. Projektas prasidėjo kaip **[9router](https://github.com/decolua/9router)** atšaka ir Go projekto **[CLIProxyAPI](https://github.com/router-for-me/CLIProxyAPI)** perkėlimas į TypeScript, o nuo tada kiekvieną toliau nurodytą posistemę įkvėpė atvirojo kodo projektas, pirmasis įgyvendinęs atitinkamą idėją. Kiekvienas jų prisidėjo prie konkrečios AgentProxy dalies. Taip jiems visiems dėkojame. 🙏
 
 > ⭐ žvaigždučių skaičius patikrintas naudojant GitHub REST API 2026 m. rugpjūčio 24 d. — suteikite šiems projektams po žvaigždutę. Skaičiai yra tiksli konkrečios datos momentinė kopija ir laikui bėgant natūraliai keisis.
 
 ### 🧬 Kilmė ir šliuzas
 
 <table>
-  <tr><th align="left">Projektas</th><th align="center">⭐</th><th align="left">Kaip jis įkvėpė OmniRoute</th></tr>
+  <tr><th align="left">Projektas</th><th align="center">⭐</th><th align="left">Kaip jis įkvėpė AgentProxy</th></tr>
   <tr><td nowrap><b><a href="https://github.com/decolua/9router">9router</a></b></td><td align="center">26,161</td><td>Pradinis projektas, kuriuo pagrįsta ši atšaka — čia jis išplėstas daugiarūšėmis API ir visiškai perrašytas naudojant TypeScript.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/router-for-me/CLIProxyAPI">CLIProxyAPI</a></b></td><td align="center">48,497</td><td>Go realizacija, įkvėpusi šį perkėlimą į JavaScript / TypeScript.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/BerriAI/litellm">LiteLLM</a></b></td><td align="center">57,100</td><td>DI šliuzas, kurio viešas kainų duomenų rinkinys naudojamas mūsų išlaidų stebėjimo sinchronizavimui, o paslaugų teikėjų normalizavimo modelis padėjo suformuoti mūsų maršrutizavimą.</td></tr>
@@ -1581,20 +1581,20 @@ OmniRoute remiasi milžinų pasiekimais. Projektas prasidėjo kaip **[9router](h
   <tr><td nowrap><b><a href="https://github.com/Alishahryar1/free-claude-code">free-claude-code</a></b></td><td align="center">48,112</td><td>Šablonai perkelti į srauto atkūrimą, nemąstymo alternatyviuosius pavadinimus, atsarginę žiniatinklio paiešką, slankiojo lango apribojimus, žurnalų neskelbtinų duomenų maskavimą ir sustiprintus paleidimo procesus.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/standardagents/composer-api">composer-api</a></b></td><td align="center">322</td><td>Cursor Composer įrankio pasirinkimo, išvesties apribojimų ir įrankio patvirtinimo šablonai pritaikyti vietiniame Cursor vykdymo modulyje.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/ndycode/codex-multi-auth">codex-multi-auth</a></b></td><td align="center">457</td><td>Naujo prisijungimo ir atnaujinimo prieigos raktų rotacijos šablonai perkelti į Codex OAuth pakartotinį autentifikavimą.</td></tr>
-  <tr><td nowrap><b><a href="https://github.com/ex-machina-co/opencode-anthropic-auth">opencode-anthropic-auth</a></b></td><td align="center">510</td><td>Su Claude Code suderinamos numatytosios transformavimo nuostatos ir atsiskaitymo antraščių elgsena apibendrintos konfigūracija valdomame OmniRoute tilte.</td></tr>
-  <tr><td nowrap><b><a href="https://github.com/520mmxx/grok2api-merged">grok2api-merged</a></b></td><td align="center">2</td><td>Jo Grok modelių susiejimai, netikrą TypeError generuojantis Statsig generatorius, numatytosios užklausų ir įrenginių nuostatos bei NDJSON atsakymų apdorojimo modulis buvo reikšmingai pritaikyti OmniRoute Grok Web vykdymo modulyje.</td></tr>
+  <tr><td nowrap><b><a href="https://github.com/ex-machina-co/opencode-anthropic-auth">opencode-anthropic-auth</a></b></td><td align="center">510</td><td>Su Claude Code suderinamos numatytosios transformavimo nuostatos ir atsiskaitymo antraščių elgsena apibendrintos konfigūracija valdomame AgentProxy tilte.</td></tr>
+  <tr><td nowrap><b><a href="https://github.com/520mmxx/grok2api-merged">grok2api-merged</a></b></td><td align="center">2</td><td>Jo Grok modelių susiejimai, netikrą TypeError generuojantis Statsig generatorius, numatytosios užklausų ir įrenginių nuostatos bei NDJSON atsakymų apdorojimo modulis buvo reikšmingai pritaikyti AgentProxy Grok Web vykdymo modulyje.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/TQZHR/grok2api">TQZHR/grok2api</a></b></td><td align="center">705</td><td>Pagrindinis netiesioginis grok2api-merged kodo šaltinis; jo modelių, antraščių, naudingųjų duomenų, Statsig ir apdorojimo modulių realizacijos išsaugotos Grok Web kilmės grandinėje.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/chenyme/grok2api">chenyme/grok2api</a></b></td><td align="center">7,520</td><td>Pirminis MIT šaltinis, skirtas Grok naudingųjų duomenų ir įrenginių numatytosioms nuostatoms, Statsig generatoriui bei <code>result.response</code> apdorojimo moduliui, perduotam per TQZHR ir grok2api-merged.</td></tr>
-  <tr><td nowrap><b><a href="https://github.com/miuzhaii/grok2api-pro">grok2api-pro</a></b></td><td align="center">27</td><td>Netiesioginis šaltinis, kurį grok2api-merged nurodo kaip savo tarpinių serverių telkinio sluoksnio šaltinį; OmniRoute išsaugo šią kilmės nuorodą, tačiau neteigia, kad į ribotos apimties Grok Web vykdymo modulį buvo perkeltas tarpinių serverių telkinys.</td></tr>
-  <tr><td nowrap><b><a href="https://github.com/CNFlyCat/GrokProxy">GrokProxy</a></b></td><td align="center">50</td><td>Jo slapukais autentifikuojamas Grok tarpinis serveris ir <code>result.response.token</code> srautinio perdavimo šablonas padėjo suformuoti OmniRoute Grok Web perdavimo sluoksnį.</td></tr>
+  <tr><td nowrap><b><a href="https://github.com/miuzhaii/grok2api-pro">grok2api-pro</a></b></td><td align="center">27</td><td>Netiesioginis šaltinis, kurį grok2api-merged nurodo kaip savo tarpinių serverių telkinio sluoksnio šaltinį; AgentProxy išsaugo šią kilmės nuorodą, tačiau neteigia, kad į ribotos apimties Grok Web vykdymo modulį buvo perkeltas tarpinių serverių telkinys.</td></tr>
+  <tr><td nowrap><b><a href="https://github.com/CNFlyCat/GrokProxy">GrokProxy</a></b></td><td align="center">50</td><td>Jo slapukais autentifikuojamas Grok tarpinis serveris ir <code>result.response.token</code> srautinio perdavimo šablonas padėjo suformuoti AgentProxy Grok Web perdavimo sluoksnį.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/lianying1716/GrokBridge">GrokBridge</a></b></td><td align="center">5</td><td>Kuriant pradinę Grok Web realizaciją remtasi jo HTTP / naršyklės aukštesniojo lygio serverio architektūra; jo tiesioginis HTTP kelias kilęs iš GrokProxy, todėl neteigiama, kad kodas buvo perkeltas savarankiškai.</td></tr>
-  <tr><td nowrap><b><a href="https://github.com/imjustprism/grok-web-api">grok-web-api</a></b></td><td align="center">14</td><td>Jo Rust <code>ChatOptions</code> ir atsakymo apvalkalo schemos padėjo suformuoti OmniRoute TypeScript Grok užklausų ir srautinių atsakymų tipus.</td></tr>
+  <tr><td nowrap><b><a href="https://github.com/imjustprism/grok-web-api">grok-web-api</a></b></td><td align="center">14</td><td>Jo Rust <code>ChatOptions</code> ir atsakymo apvalkalo schemos padėjo suformuoti AgentProxy TypeScript Grok užklausų ir srautinių atsakymų tipus.</td></tr>
 </table>
 
 ### 🗜️ Konteksto ir prieigos raktų glaudinimas — varikliai
 
 <table>
-  <tr><th align="left">Projektas</th><th align="center">⭐</th><th align="left">Kaip jis įkvėpė OmniRoute</th></tr>
+  <tr><th align="left">Projektas</th><th align="center">⭐</th><th align="left">Kaip jis įkvėpė AgentProxy</th></tr>
   <tr><td nowrap><b><a href="https://github.com/JuliusBrussee/caveman">Caveman</a></b></td><td align="center">100,538</td><td>Virusiniu tapęs projektas „kam naudoti daug žodžių, kai pakanka kelių“ — jo urvinio žmogaus kalbos filosofija užtikrina mūsų standartinio glaudinimo režimo ir daugiau nei 30 perteklinių žodžių šalinimo bei sutraukimo taisyklių veikimą.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/rtk-ai/rtk">RTK – Rust Token Killer</a></b></td><td align="center">77,185</td><td>Didelio našumo komandų išvesties glaudinimas — įkvėpė mūsų RTK variklį, JSON filtrų DSL, neapdorotos išvesties atkūrimą ir pakopinį RTK → Caveman konvejerį.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/headroomlabs-ai/headroom">headroom</a></b></td><td align="center">67,310</td><td>Grįžtamasis konteksto glaudinimas (SmartCrusher) — įkvėpė mūsų <code>headroom</code> variklį ir <code>ccr</code> gavimo žymeklio šabloną.</td></tr>
@@ -1602,15 +1602,15 @@ OmniRoute remiasi milžinų pasiekimais. Projektas prasidėjo kaip **[9router](h
   <tr><td nowrap><b><a href="https://github.com/atjsh/llmlingua-2-js">llmlingua-2-js</a></b></td><td align="center">31</td><td>JS / ONNX perkėlimas (MobileBERT / XLM-RoBERTa), naudojamas kaip mūsų LLMLingua variklio foninės gijos posistemė.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/leninejunior/troglodita">Troglodita</a></b></td><td align="center">40</td><td>PT-BR prieigos raktų glaudinimas — užtikrina mūsų pt-BR kalbos paketo veikimą: pleonazmų mažinimą ir perteklinių žodžių šalinimą, pritaikytą Brazilijos portugalų kalbos gramatikai.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/DietrichGebert/ponytail">ponytail</a></b></td><td align="center">108,957</td><td>Virusiniu tapęs „tingaus vyresniojo programuotojo“ YAGNI kodavimo įgūdis — įkvėpė mūsų <b>mažiau kodo</b> išvesties stilių: orientavimą į mažiausią veikiantį pakeitimą, sumažinantį _sugeneruoto_ kodo kiekį (išvesties ašies atitikmenį glaustai Caveman prozai).</td></tr>
-  <tr><td nowrap><b><a href="https://github.com/ayghri/i-have-adhd">i-have-adhd</a></b></td><td align="center">23,526</td><td>Jo į veiksmą orientuotas, ADHD turintiems žmonėms pritaikytas atsakymų stilius buvo pritaikytas glaustam OmniRoute išvesties stiliui penkiomis kalbomis.</td></tr>
+  <tr><td nowrap><b><a href="https://github.com/ayghri/i-have-adhd">i-have-adhd</a></b></td><td align="center">23,526</td><td>Jo į veiksmą orientuotas, ADHD turintiems žmonėms pritaikytas atsakymų stilius buvo pritaikytas glaustam AgentProxy išvesties stiliui penkiomis kalbomis.</td></tr>
 </table>
 
 ### 🧩 Kompaktiški formatai, prieigos raktų tyrimai ir kodą išmanantys įrankiai
 
 <table>
-  <tr><th align="left">Projektas</th><th align="center">⭐</th><th align="left">Kaip jis įkvėpė OmniRoute</th></tr>
+  <tr><th align="left">Projektas</th><th align="center">⭐</th><th align="left">Kaip jis įkvėpė AgentProxy</th></tr>
   <tr><td nowrap><b><a href="https://github.com/toon-format/toon">TOON</a></b></td><td align="center">25,233</td><td>Į prieigos raktus orientuotas objektų žymėjimas — jo stulpelinis, antrašte ir eilutėmis pagrįstas modelis suformavo mūsų lentelinio sutankinimo etapą.</td></tr>
-  <tr><td nowrap><b><a href="https://github.com/blackwell-systems/gcf">GCF – Graph Compact Format</a></b></td><td align="center">41</td><td>Jo kompaktiškas grafų formatas ir bendrojo profilio architektūra padėjo suformuoti OmniRoute lentelinį sutankinimą ir Headroom kodeko formatą.</td></tr>
+  <tr><td nowrap><b><a href="https://github.com/blackwell-systems/gcf">GCF – Graph Compact Format</a></b></td><td align="center">41</td><td>Jo kompaktiškas grafų formatas ir bendrojo profilio architektūra padėjo suformuoti AgentProxy lentelinį sutankinimą ir Headroom kodeko formatą.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/blackwell-systems/gcf-typescript">gcf-typescript</a></b></td><td align="center">4</td><td>MIT TypeScript realizacija, tiesiogiai įtraukta į projektą ir išplėsta kaip Headroom bendrojo profilio kodekas.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/ooples/token-optimizer-mcp">token-optimizer-mcp</a></b></td><td align="center">494</td><td>Brotli / SQLite podėlis ir kiekvieno seanso konteksto skirtumas — įkvėpė mūsų <code>session-dedup</code> variklį.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/Mibayy/token-savior">token-savior</a></b></td><td align="center">1,122</td><td>Bash išvesties sutankinimas ir MCP profiliai — įkvėpė mūsų drausmingą glaudinimo atsisakymą bei MCP įrankių deklaracijų mažinimą.</td></tr>
@@ -1627,7 +1627,7 @@ OmniRoute remiasi milžinų pasiekimais. Projektas prasidėjo kaip **[9router](h
 ### 🧠 Atmintis ir RAG
 
 <table>
-  <tr><th align="left">Projektas</th><th align="center">⭐</th><th align="left">Kaip jis įkvėpė OmniRoute</th></tr>
+  <tr><th align="left">Projektas</th><th align="center">⭐</th><th align="left">Kaip jis įkvėpė AgentProxy</th></tr>
   <tr><td nowrap><b><a href="https://github.com/mem0ai/mem0">Mem0</a></b></td><td align="center">63,902</td><td>Universalus atminties sluoksnis — jo tarpinio serverio kaip rašymo ir skaitymo ribos modelis suformavo mūsų atminties architektūrą.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/letta-ai/letta">Letta (MemGPT)</a></b></td><td align="center">24,382</td><td>Būseną išlaikantys agentai su pakopine atmintimi — įkvėpė mūsų pakopinį konteksto valdymo ir atkūrimo (CCR) modelį.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/onestardao/WFGY">WFGY</a></b></td><td align="center">1,781</td><td>16 pasikartojančių RAG / LLM trikčių tipų ProblemMap taksonomija — bendras mūsų trikčių šalinimo vadove vartojamas žodynas.</td></tr>
@@ -1636,15 +1636,15 @@ OmniRoute remiasi milžinų pasiekimais. Projektas prasidėjo kaip **[9router](h
 ### 🛰️ Srauto tikrinimas, MITM ir skaidrusis tarpinis serveris
 
 <table>
-  <tr><th align="left">Projektas</th><th align="center">⭐</th><th align="left">Kaip jis įkvėpė OmniRoute</th></tr>
-  <tr><td nowrap><b><a href="https://github.com/chouzz/llm-interceptor">llm-interceptor</a></b></td><td align="center">66</td><td>Kodavimo asistento ↔ LLM srauto MITM perėmimas ir analizė padėjo suformuoti ankstyvuosius Traffic Inspector reikalavimus. Keturi anksčiau išvestiniai moduliai — SSE sujungimas, pokalbių normalizavimas, slaptų duomenų maskavimas ir antraščių valymas — pakeisti nepriklausomomis švariojo kambario realizacijomis, pagrįstomis viešais protokolų standartais. Dvi pagrindinio kompiuterio tiesioginio perdavimo sąsajos (<code>passthrough.ts</code> ir <code>_internal/bypass.cjs</code>) tebėra atskirai klasifikuojamos vidinės OmniRoute realizacijos; atliekant šį pakeitimą jos nebuvo perrašytos.</td></tr>
+  <tr><th align="left">Projektas</th><th align="center">⭐</th><th align="left">Kaip jis įkvėpė AgentProxy</th></tr>
+  <tr><td nowrap><b><a href="https://github.com/chouzz/llm-interceptor">llm-interceptor</a></b></td><td align="center">66</td><td>Kodavimo asistento ↔ LLM srauto MITM perėmimas ir analizė padėjo suformuoti ankstyvuosius Traffic Inspector reikalavimus. Keturi anksčiau išvestiniai moduliai — SSE sujungimas, pokalbių normalizavimas, slaptų duomenų maskavimas ir antraščių valymas — pakeisti nepriklausomomis švariojo kambario realizacijomis, pagrįstomis viešais protokolų standartais. Dvi pagrindinio kompiuterio tiesioginio perdavimo sąsajos (<code>passthrough.ts</code> ir <code>_internal/bypass.cjs</code>) tebėra atskirai klasifikuojamos vidinės AgentProxy realizacijos; atliekant šį pakeitimą jos nebuvo perrašytos.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/InterceptSuite/ProxyBridge">ProxyBridge</a></b></td><td align="center">5,995</td><td>Skaidrusis kiekvieno proceso tarpinio serverio maršrutizavimas — įkvėpė mūsų gedimams atsparų MITM išjungimą, lizdų neveiklumo skirtąjį laiką, <code>/proc</code> procesų priskyrimą ir TPROXY perėmimą.</td></tr>
 </table>
 
 ### 📚 Modelių duomenys, stebimumas ir naudotojo sąsaja
 
 <table>
-  <tr><th align="left">Projektas</th><th align="center">⭐</th><th align="left">Kaip jis įkvėpė OmniRoute</th></tr>
+  <tr><th align="left">Projektas</th><th align="center">⭐</th><th align="left">Kaip jis įkvėpė AgentProxy</th></tr>
   <tr><td nowrap><b><a href="https://github.com/anomalyco/models.dev">models.dev</a></b></td><td align="center">6,555</td><td>Atvira DI modelių specifikacijų, kainų ir galimybių duomenų bazė — savaiminiu būdu sinchronizuojama su mūsų modelių katalogu.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/xyflow/xyflow">React Flow / xyflow</a></b></td><td align="center">38,108</td><td>Mazgais pagrįsta grafų biblioteka, užtikrinanti mūsų tikralaikių Compression Studio ir Combo / Routing Studio veikimą.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/langchain-ai/langgraph">LangGraph</a></b></td><td align="center">40,314</td><td>LangGraph Studio tiesioginis darbo eigos grafo vizualizavimas įkvėpė mūsų Studios tikralaikį pakopų rodinį.</td></tr>
@@ -1657,19 +1657,19 @@ OmniRoute remiasi milžinų pasiekimais. Projektas prasidėjo kaip **[9router](h
 ### 🛡️ Saugumas
 
 <table>
-  <tr><th align="left">Projektas</th><th align="center">⭐</th><th align="left">Kaip jis įkvėpė OmniRoute</th></tr>
+  <tr><th align="left">Projektas</th><th align="center">⭐</th><th align="left">Kaip jis įkvėpė AgentProxy</th></tr>
   <tr><td nowrap><b><a href="https://github.com/tldrsec/awesome-secure-defaults">awesome-secure-defaults</a></b></td><td align="center">721</td><td>Atrinktas pagal numatytąsias nuostatas saugių bibliotekų sąrašas, kuriuo vadovaujamės priimdami saugumo sprendimus (Helmet.js, DOMPurify, ssrf-req-filter, safe-regex, Google Tink).</td></tr>
 </table>
 
 ### 🧭 Papildomi įrankiai
 
 <table>
-  <tr><th align="left">Projektas</th><th align="center">⭐</th><th align="left">Kaip jis įkvėpė OmniRoute</th></tr>
+  <tr><th align="left">Projektas</th><th align="center">⭐</th><th align="left">Kaip jis įkvėpė AgentProxy</th></tr>
   <tr><td nowrap><b><a href="https://github.com/BlockRunAI/ClawRouter">ClawRouter</a></b></td><td align="center">6,564</td><td>Įkvėpė užklausų pasikartojimų šalinimą, avarinį nulinės kainos atsarginį variantą, prijungiamas Auto-Combo strategijas ir daugiakalbį ketinimų klasifikavimą.</td></tr>
-  <tr><td nowrap><b><a href="https://github.com/lbjlaq/Antigravity-Manager">Antigravity-Manager</a></b></td><td align="center">30,652</td><td>Jo paskyras atpažįstantis modelių persiejimas, vykdomųjų failų kelių tikrinimas ir planų žymų elgsena padėjo formuoti OmniRoute Antigravity vykdymo aplinką.</td></tr>
-  <tr><td nowrap><b><a href="https://github.com/jlcodes99/vscode-antigravity-cockpit">vscode-antigravity-cockpit</a></b></td><td align="center">4,817</td><td>Jo kompaktiškas kvotos nustatymo iš naujo atgalinės atskaitos formatas įkvėpė atitinkamą paslaugų teikėjo apribojimų rodinį OmniRoute.</td></tr>
-  <tr><td nowrap><b><a href="https://github.com/iOfficeAI/AionUi">AionUi</a></b></td><td align="center">32,230</td><td>Jo ACP integracijos įkvėpė OmniRoute automatinį įdiegtų CLI agentų aptikimą.</td></tr>
-  <tr><td nowrap><b><a href="https://github.com/steipete/CodexBar">CodexBar</a></b></td><td align="center">20,507</td><td>Nustatė Grok Build kvotos sąsają; vėliau OmniRoute savarankiškai patikrino ir pataisė tiesiogiai perduodamų duomenų formatą.</td></tr>
+  <tr><td nowrap><b><a href="https://github.com/lbjlaq/Antigravity-Manager">Antigravity-Manager</a></b></td><td align="center">30,652</td><td>Jo paskyras atpažįstantis modelių persiejimas, vykdomųjų failų kelių tikrinimas ir planų žymų elgsena padėjo formuoti AgentProxy Antigravity vykdymo aplinką.</td></tr>
+  <tr><td nowrap><b><a href="https://github.com/jlcodes99/vscode-antigravity-cockpit">vscode-antigravity-cockpit</a></b></td><td align="center">4,817</td><td>Jo kompaktiškas kvotos nustatymo iš naujo atgalinės atskaitos formatas įkvėpė atitinkamą paslaugų teikėjo apribojimų rodinį AgentProxy.</td></tr>
+  <tr><td nowrap><b><a href="https://github.com/iOfficeAI/AionUi">AionUi</a></b></td><td align="center">32,230</td><td>Jo ACP integracijos įkvėpė AgentProxy automatinį įdiegtų CLI agentų aptikimą.</td></tr>
+  <tr><td nowrap><b><a href="https://github.com/steipete/CodexBar">CodexBar</a></b></td><td align="center">20,507</td><td>Nustatė Grok Build kvotos sąsają; vėliau AgentProxy savarankiškai patikrino ir pataisė tiesiogiai perduodamų duomenų formatą.</td></tr>
 </table>
 
 ## 📄 Licencija
@@ -1680,9 +1680,9 @@ MIT licencija – išsamią informaciją žr. [LICENSE](LICENSE).
 
 <div align="center">
 
-**[⬆ Atgal į viršų](#-omniroute)** · Sukurta su ❤️ atvirojo kodo DI bendruomenei.
+**[⬆ Atgal į viršų](#-agentproxy)** · Sukurta su ❤️ atvirojo kodo DI bendruomenei.
 
-<sub>OmniRoute v3.8.51 · Node ≥22.22.2 · MIT licencija · <a href="https://omniroute.online">omniroute.online</a></sub>
+<sub>AgentProxy v3.8.51 · Node ≥22.22.2 · MIT licencija · <a href="https://agentproxy.example.com">agentproxy.online</a></sub>
 
 </div>
 <!-- GitHub Discussions įjungtos bendruomenės klausimams ir atsakymams -->

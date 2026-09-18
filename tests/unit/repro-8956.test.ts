@@ -22,7 +22,7 @@ test("repro-8956: resolveProjectRoot skips synthetic .build/next/package.json (n
     fs.mkdirSync(chunksDir, { recursive: true });
 
     // Real root package.json with a name
-    fs.writeFileSync(path.join(repoRoot, "package.json"), JSON.stringify({ name: "omniroute" }));
+    fs.writeFileSync(path.join(repoRoot, "package.json"), JSON.stringify({ name: "agentproxy" }));
     // Synthetic Next.js standalone build marker — no "name" field
     fs.writeFileSync(path.join(buildPkgDir, "package.json"), JSON.stringify({ type: "commonjs" }));
 

@@ -5,7 +5,7 @@ import http from "node:http";
 import os from "node:os";
 import path from "node:path";
 
-const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-9201-search-proxy-"));
+const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-9201-search-proxy-"));
 process.env.DATA_DIR = dataDir;
 process.env.REQUIRE_API_KEY = "false";
 process.env.DASHBOARD_PASSWORD = "";

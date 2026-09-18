@@ -20,7 +20,7 @@ test(
   "loadPlugin forwards the plugin child process's stdout to an observable channel",
   { timeout: 10_000 },
   async (t) => {
-    const pluginDir = await mkdtemp(join(tmpdir(), "omniroute-plugin-8395-"));
+    const pluginDir = await mkdtemp(join(tmpdir(), "agentproxy-plugin-8395-"));
     const entryPoint = join(pluginDir, "index.mjs");
     let loaded: LoadedPlugin | undefined;
 

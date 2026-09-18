@@ -2,7 +2,7 @@ import { KIRO_CONFIG, assertValidAwsRegion } from "../constants/oauth";
 import {
   buildExternalIdpRefreshParams,
   isExternalIdpAuthMethod,
-} from "@omniroute/open-sse/services/kiroExternalIdp.ts";
+} from "@agentproxy/open-sse/services/kiroExternalIdp.ts";
 
 /**
  * Kiro OAuth Service

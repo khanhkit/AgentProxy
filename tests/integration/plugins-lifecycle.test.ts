@@ -6,7 +6,7 @@ import path from "node:path";
 
 // ── Temp dirs ──
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-plugins-lifecycle-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-plugins-lifecycle-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 // ── Dynamic imports (after DATA_DIR set) ──
@@ -30,7 +30,7 @@ function writeTestPlugin(opts?: {
   const enabledByDefault = opts?.enabledByDefault ?? false;
 
   // Create a fresh source dir for this plugin (scanner scans for subdirs)
-  const sourceDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-plugin-src-"));
+  const sourceDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-plugin-src-"));
   const pluginDir = path.join(sourceDir, name);
   fs.mkdirSync(pluginDir, { recursive: true });
 
@@ -127,7 +127,7 @@ test("install: throws on duplicate install", async () => {
 });
 
 test("install: throws on invalid source directory", async () => {
-  const emptyDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-empty-"));
+  const emptyDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-empty-"));
   activeSourceDirs.push(emptyDir);
   await assert.rejects(() => pluginManager.install(emptyDir), /No valid plugin found/);
 });

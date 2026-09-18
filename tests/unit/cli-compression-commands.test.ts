@@ -34,7 +34,7 @@ function makeCmd(output = "json") {
   return { optsWithGlobals: () => ({ output, quiet: output !== "table" }) };
 }
 
-test("compression status chama omniroute_compression_status via mcp", async () => {
+test("compression status chama agentproxy_compression_status via mcp", async () => {
   const calls: unknown[] = [];
   const origFetch = globalThis.fetch;
   globalThis.fetch = makeMcpStreamFetch({ toolResult: { engine: "caveman", enabled: true } });
@@ -50,7 +50,7 @@ test("compression status chama omniroute_compression_status via mcp", async () =
   globalThis.fetch = origFetch;
   const body = JSON.parse(calls.find((x) => String(x.init?.body || "").includes("tools/call"))?.init?.body || "{}");
   assert.equal(body.method, "tools/call");
-  assert.equal(body.params.name, "omniroute_compression_status");
+  assert.equal(body.params.name, "agentproxy_compression_status");
 });
 
 test("compression configure envia configuração via mcp", async () => {
@@ -71,13 +71,13 @@ test("compression configure envia configuração via mcp", async () => {
   globalThis.fetch = origFetch;
   const body = JSON.parse(calls.find((x) => String(x.init?.body || "").includes("tools/call"))?.init?.body || "{}");
   assert.equal(body.method, "tools/call");
-  assert.equal(body.params.name, "omniroute_compression_configure");
+  assert.equal(body.params.name, "agentproxy_compression_configure");
   // #6571: the configure command now sends the canonical `strategy` field
   assert.equal(body.params.arguments.strategy, "caveman");
   assert.ok(body.params.arguments.caveman?.aggressiveness === 0.8);
 });
 
-test("compression engine set chama omniroute_set_compression_engine", async () => {
+test("compression engine set chama agentproxy_set_compression_engine", async () => {
   const calls: unknown[] = [];
   const origFetch = globalThis.fetch;
   globalThis.fetch = makeMcpStreamFetch({ toolResult: {} });
@@ -95,7 +95,7 @@ test("compression engine set chama omniroute_set_compression_engine", async () =
   globalThis.fetch = origFetch;
   const body = JSON.parse(calls.find((x) => String(x.init?.body || "").includes("tools/call"))?.init?.body || "{}");
   assert.equal(body.method, "tools/call");
-  assert.equal(body.params.name, "omniroute_set_compression_engine");
+  assert.equal(body.params.name, "agentproxy_set_compression_engine");
   assert.equal(body.params.arguments.engine, "rtk");
   assert.ok(out.includes("rtk"));
 });

@@ -10,7 +10,7 @@ const HERE = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = join(HERE, "..", "..");
 
 test("config-generator/opencode.ts imports cleanly with no tsconfig.json in scope (repro #7682)", () => {
-  const stage = mkdtempSync(join(tmpdir(), "omniroute-pkg-stage-7682-"));
+  const stage = mkdtempSync(join(tmpdir(), "agentproxy-pkg-stage-7682-"));
   try {
     for (const rel of ["bin", "src/lib", "src/shared"]) {
       cpSync(join(REPO_ROOT, rel), join(stage, rel), { recursive: true });

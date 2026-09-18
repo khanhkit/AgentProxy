@@ -1,14 +1,14 @@
 ---
-title: "OmniRoute — VM 部署指南（搭配 Cloudflare）"
+title: "AgentProxy — VM 部署指南（搭配 Cloudflare）"
 version: 3.8.40
 lastUpdated: 2026-06-28
 ---
 
-# OmniRoute — VM 部署指南（搭配 Cloudflare）
+# AgentProxy — VM 部署指南（搭配 Cloudflare）
 
 🌐 **Languages:** 🇺🇸 [English](../../../../ops/VM_DEPLOYMENT_GUIDE.md) · 🇸🇦 [ar](../../../ar/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇦🇿 [az](../../../az/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇧🇬 [bg](../../../bg/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇧🇩 [bn](../../../bn/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇨🇿 [cs](../../../cs/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇩🇰 [da](../../../da/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇩🇪 [de](../../../de/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇬🇷 [el](../../../el/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇪🇸 [es](../../../es/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇪🇪 [et](../../../et/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇷 [fa](../../../fa/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇫🇮 [fi](../../../fi/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇫🇷 [fr](../../../fr/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇪 [ga](../../../ga/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇳 [gu](../../../gu/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇱 [he](../../../he/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇳 [hi](../../../hi/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇭🇷 [hr](../../../hr/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇭🇺 [hu](../../../hu/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇩 [id](../../../id/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇹 [it](../../../it/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇯🇵 [ja](../../../ja/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇰🇷 [ko](../../../ko/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇱🇹 [lt](../../../lt/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇱🇻 [lv](../../../lv/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇳 [mr](../../../mr/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇲🇾 [ms](../../../ms/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇲🇹 [mt](../../../mt/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇳🇱 [nl](../../../nl/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇳🇴 [no](../../../no/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇵🇭 [phi](../../../phi/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇵🇱 [pl](../../../pl/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇵🇹 [pt](../../../pt/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇧🇷 [pt-BR](../../../pt-BR/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇷🇴 [ro](../../../ro/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇷🇺 [ru](../../../ru/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇸🇰 [sk](../../../sk/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇸🇮 [sl](../../../sl/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇷🇸 [sr](../../../sr/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇸🇪 [sv](../../../sv/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇰🇪 [sw](../../../sw/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇳 [ta](../../../ta/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇳 [te](../../../te/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇹🇭 [th](../../../th/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇹🇷 [tr](../../../tr/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇺🇦 [uk-UA](../../../uk-UA/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇵🇰 [ur](../../../ur/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇻🇳 [vi](../../../vi/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇨🇳 [zh-CN](../../../zh-CN/docs/ops/VM_DEPLOYMENT_GUIDE.md)
 
-在 VM（VPS）上安裝並設定 OmniRoute 的完整指南，搭配經由 Cloudflare 管理的網域。
+在 VM（VPS）上安裝並設定 AgentProxy 的完整指南，搭配經由 Cloudflare 管理的網域。
 
 ---
 
@@ -86,18 +86,18 @@ ufw enable
 
 ---
 
-## 2. 安裝 OmniRoute
+## 2. 安裝 AgentProxy
 
 ### 2.1 建立設定目錄
 
 ```bash
-mkdir -p /opt/omniroute
+mkdir -p /opt/agentproxy
 ```
 
 ### 2.2 建立環境變數檔
 
 ```bash
-cat > /opt/omniroute/.env << 'EOF'
+cat > /opt/agentproxy/.env << 'EOF'
 # === 安全性 ===
 JWT_SECRET=CHANGE-TO-A-UNIQUE-64-CHAR-SECRET-KEY
 INITIAL_PASSWORD=YourSecurePassword123!
@@ -105,7 +105,7 @@ API_KEY_SECRET=REPLACE-WITH-ANOTHER-SECRET-KEY
 STORAGE_ENCRYPTION_KEY=REPLACE-WITH-THIRD-SECRET-KEY
 STORAGE_ENCRYPTION_KEY_VERSION=v1
 MACHINE_ID_SALT=CHANGE-TO-A-UNIQUE-SALT
-OMNIROUTE_WS_BRIDGE_SECRET=REPLACE-WITH-WS-BRIDGE-SECRET  # 生產環境必填：Codex Responses WS bridge 使用
+AGENTPROXY_WS_BRIDGE_SECRET=REPLACE-WITH-WS-BRIDGE-SECRET  # 生產環境必填：Codex Responses WS bridge 使用
 
 # === 應用程式 ===
 PORT=20128
@@ -122,11 +122,11 @@ BASE_URL=http://127.0.0.1:20128
 # 瀏覽器端使用的 URL，用於 OAuth 回呼、儀表板連結和產生的公開 URL
 NEXT_PUBLIC_BASE_URL=https://llms.seudominio.com
 # 選擇性：產生的公開資源 URL 的明確公開來源覆寫
-# OMNIROUTE_PUBLIC_BASE_URL=https://llms.seudominio.com
+# AGENTPROXY_PUBLIC_BASE_URL=https://llms.seudominio.com
 
 # === Cloud 同步（選擇性）===
-# CLOUD_URL=https://cloud.omniroute.online
-# NEXT_PUBLIC_CLOUD_URL=https://cloud.omniroute.online
+# CLOUD_URL=https://cloud.agentproxy.example.com
+# NEXT_PUBLIC_CLOUD_URL=https://cloud.agentproxy.example.com
 EOF
 ```
 
@@ -135,22 +135,22 @@ EOF
 ### 2.3 啟動容器
 
 ```bash
-docker pull diegosouzapw/omniroute:latest
+docker pull khanhkit/agentproxy:latest
 
 docker run -d \
-  --name omniroute \
+  --name agentproxy \
   --restart unless-stopped \
-  --env-file /opt/omniroute/.env \
+  --env-file /opt/agentproxy/.env \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
-  diegosouzapw/omniroute:latest
+  -v agentproxy-data:/app/data \
+  khanhkit/agentproxy:latest
 ```
 
 ### 2.4 確認運作中
 
 ```bash
-docker ps | grep omniroute
-docker logs omniroute --tail 20
+docker ps | grep agentproxy
+docker logs agentproxy --tail 20
 ```
 
 應顯示：`[DB] SQLite database ready` 和 `listening on port 20128`。
@@ -183,7 +183,7 @@ chmod 600 /etc/nginx/ssl/origin.key
 ### 3.2 Nginx 設定
 
 ```bash
-cat > /etc/nginx/sites-available/omniroute << 'NGINX'
+cat > /etc/nginx/sites-available/agentproxy << 'NGINX'
 # 預設伺服器 — 封鎖直接透過 IP 存取
 server {
     listen 80 default_server;
@@ -196,7 +196,7 @@ server {
     return 444;
 }
 
-# OmniRoute — HTTPS
+# AgentProxy — HTTPS
 server {
     listen 443 ssl;
     listen [::]:443 ssl;
@@ -239,15 +239,15 @@ server {
 NGINX
 ```
 
-請確保反向代理串流超時時間與你的 OmniRoute 超時環境變數保持一致。如果你調高了
+請確保反向代理串流超時時間與你的 AgentProxy 超時環境變數保持一致。如果你調高了
 `FETCH_TIMEOUT_MS`／`STREAM_IDLE_TIMEOUT_MS`，請同步調高 `proxy_read_timeout`／`proxy_send_timeout`
 至相同閾值以上。
 
-OmniRoute 使用 `NEXT_PUBLIC_BASE_URL` 作為 OAuth 回呼和產生公開連結的標準瀏覽器端來源。
+AgentProxy 使用 `NEXT_PUBLIC_BASE_URL` 作為 OAuth 回呼和產生公開連結的標準瀏覽器端來源。
 已驗證的儀表板寫入操作使用同源請求加上綁定 session 的 CSRF 保護，因此不需要靜態公開基礎 URL。
 上述的 `X-Forwarded-*` 標頭依然是實用的路由後設資料，但在 OAuth 或產生的瀏覽器連結需要公開 URL
-時，它們不能取代明確設定公開 URL。僅在 OmniRoute 無法被用戶端直接存取且你的代理伺服器
-會移除／重建傳入的轉發標頭時，才啟用 `OMNIROUTE_TRUST_PROXY`。
+時，它們不能取代明確設定公開 URL。僅在 AgentProxy 無法被用戶端直接存取且你的代理伺服器
+會移除／重建傳入的轉發標頭時，才啟用 `AGENTPROXY_TRUST_PROXY`。
 
 ### 3.3 啟用並測試
 
@@ -255,8 +255,8 @@ OmniRoute 使用 `NEXT_PUBLIC_BASE_URL` 作為 OAuth 回呼和產生公開連結
 # 移除預設設定
 rm -f /etc/nginx/sites-enabled/default
 
-# 啟用 OmniRoute
-ln -sf /etc/nginx/sites-available/omniroute /etc/nginx/sites-enabled/omniroute
+# 啟用 AgentProxy
+ln -sf /etc/nginx/sites-available/agentproxy /etc/nginx/sites-enabled/agentproxy
 
 # 測試並重新載入
 nginx -t && systemctl reload nginx
@@ -300,40 +300,40 @@ curl -sI https://llms.seudominio.com/health
 ### 升級至新版本
 
 ```bash
-docker pull diegosouzapw/omniroute:latest
-docker stop omniroute && docker rm omniroute
-docker run -d --name omniroute --restart unless-stopped \
-  --env-file /opt/omniroute/.env \
+docker pull khanhkit/agentproxy:latest
+docker stop agentproxy && docker rm agentproxy
+docker run -d --name agentproxy --restart unless-stopped \
+  --env-file /opt/agentproxy/.env \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
-  diegosouzapw/omniroute:latest
+  -v agentproxy-data:/app/data \
+  khanhkit/agentproxy:latest
 ```
 
 ### 檢視日誌
 
 ```bash
-docker logs -f omniroute          # 即時串流
-docker logs omniroute --tail 50   # 最後 50 行
+docker logs -f agentproxy          # 即時串流
+docker logs agentproxy --tail 50   # 最後 50 行
 ```
 
 ### 手動資料庫備份
 
 ```bash
 # 從容器複製資料到主機
-docker cp omniroute:/app/data ./backup-$(date +%F)
+docker cp agentproxy:/app/data ./backup-$(date +%F)
 
 # 或壓縮整個磁碟區
-docker run --rm -v omniroute-data:/data -v $(pwd):/backup \
-  alpine tar czf /backup/omniroute-data-$(date +%F).tar.gz /data
+docker run --rm -v agentproxy-data:/data -v $(pwd):/backup \
+  alpine tar czf /backup/agentproxy-data-$(date +%F).tar.gz /data
 ```
 
 ### 從備份還原
 
 ```bash
-docker stop omniroute
-docker run --rm -v omniroute-data:/data -v $(pwd):/backup \
-  alpine sh -c "rm -rf /data/* && tar xzf /backup/omniroute-data-YYYY-MM-DD.tar.gz -C /"
-docker start omniroute
+docker stop agentproxy
+docker run --rm -v agentproxy-data:/data -v $(pwd):/backup \
+  alpine sh -c "rm -rf /data/* && tar xzf /backup/agentproxy-data-YYYY-MM-DD.tar.gz -C /"
+docker start agentproxy
 ```
 
 ---
@@ -402,13 +402,13 @@ netfilter-persistent save
 
 ```bash
 # 在本機儲存庫中
-cd omnirouteCloud
+cd agentproxyCloud
 npm install
 npx wrangler login
 npx wrangler deploy
 ```
 
-另請參閱 [TUNNELS_GUIDE.md](./TUNNELS_GUIDE.md) 以了解儲存庫內的 Cloudflare Tunnel 逐步說明。獨立的 `omnirouteCloud/` worker 位於另一個配套儲存庫中。
+另請參閱 [TUNNELS_GUIDE.md](./TUNNELS_GUIDE.md) 以了解儲存庫內的 Cloudflare Tunnel 逐步說明。獨立的 `agentproxyCloud/` worker 位於另一個配套儲存庫中。
 
 ---
 
@@ -419,4 +419,4 @@ npx wrangler deploy
 | 22     | SSH         | 公開（搭配 fail2ban）  |
 | 80     | nginx HTTP  | 重新導向 → HTTPS       |
 | 443    | nginx HTTPS | 經由 Cloudflare Proxy  |
-| 20128  | OmniRoute   | 僅限本機（經由 nginx） |
+| 20128  | AgentProxy   | 僅限本機（經由 nginx） |

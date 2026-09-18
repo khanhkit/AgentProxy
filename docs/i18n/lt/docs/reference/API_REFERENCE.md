@@ -15,7 +15,7 @@ lastUpdated: 2026-08-31
 
 🌐 **Languages:** 🇺🇸 [English](../../../../reference/API_REFERENCE.md) · 🇸🇦 [ar](../../../ar/docs/reference/API_REFERENCE.md) · 🇦🇿 [az](../../../az/docs/reference/API_REFERENCE.md) · 🇧🇬 [bg](../../../bg/docs/reference/API_REFERENCE.md) · 🇧🇩 [bn](../../../bn/docs/reference/API_REFERENCE.md) · 🇨🇿 [cs](../../../cs/docs/reference/API_REFERENCE.md) · 🇩🇰 [da](../../../da/docs/reference/API_REFERENCE.md) · 🇩🇪 [de](../../../de/docs/reference/API_REFERENCE.md) · 🇬🇷 [el](../../../el/docs/reference/API_REFERENCE.md) · 🇪🇸 [es](../../../es/docs/reference/API_REFERENCE.md) · 🇪🇪 [et](../../../et/docs/reference/API_REFERENCE.md) · 🇮🇷 [fa](../../../fa/docs/reference/API_REFERENCE.md) · 🇫🇮 [fi](../../../fi/docs/reference/API_REFERENCE.md) · 🇫🇷 [fr](../../../fr/docs/reference/API_REFERENCE.md) · 🇮🇪 [ga](../../../ga/docs/reference/API_REFERENCE.md) · 🇮🇳 [gu](../../../gu/docs/reference/API_REFERENCE.md) · 🇮🇱 [he](../../../he/docs/reference/API_REFERENCE.md) · 🇮🇳 [hi](../../../hi/docs/reference/API_REFERENCE.md) · 🇭🇷 [hr](../../../hr/docs/reference/API_REFERENCE.md) · 🇭🇺 [hu](../../../hu/docs/reference/API_REFERENCE.md) · 🇮🇩 [id](../../../id/docs/reference/API_REFERENCE.md) · 🇮🇹 [it](../../../it/docs/reference/API_REFERENCE.md) · 🇯🇵 [ja](../../../ja/docs/reference/API_REFERENCE.md) · 🇰🇷 [ko](../../../ko/docs/reference/API_REFERENCE.md) · 🇱🇻 [lv](../../../lv/docs/reference/API_REFERENCE.md) · 🇮🇳 [mr](../../../mr/docs/reference/API_REFERENCE.md) · 🇲🇾 [ms](../../../ms/docs/reference/API_REFERENCE.md) · 🇲🇹 [mt](../../../mt/docs/reference/API_REFERENCE.md) · 🇳🇱 [nl](../../../nl/docs/reference/API_REFERENCE.md) · 🇳🇴 [no](../../../no/docs/reference/API_REFERENCE.md) · 🇵🇭 [phi](../../../phi/docs/reference/API_REFERENCE.md) · 🇵🇱 [pl](../../../pl/docs/reference/API_REFERENCE.md) · 🇵🇹 [pt](../../../pt/docs/reference/API_REFERENCE.md) · 🇧🇷 [pt-BR](../../../pt-BR/docs/reference/API_REFERENCE.md) · 🇷🇴 [ro](../../../ro/docs/reference/API_REFERENCE.md) · 🇷🇺 [ru](../../../ru/docs/reference/API_REFERENCE.md) · 🇸🇰 [sk](../../../sk/docs/reference/API_REFERENCE.md) · 🇸🇮 [sl](../../../sl/docs/reference/API_REFERENCE.md) · 🇷🇸 [sr](../../../sr/docs/reference/API_REFERENCE.md) · 🇸🇪 [sv](../../../sv/docs/reference/API_REFERENCE.md) · 🇰🇪 [sw](../../../sw/docs/reference/API_REFERENCE.md) · 🇮🇳 [ta](../../../ta/docs/reference/API_REFERENCE.md) · 🇮🇳 [te](../../../te/docs/reference/API_REFERENCE.md) · 🇹🇭 [th](../../../th/docs/reference/API_REFERENCE.md) · 🇹🇷 [tr](../../../tr/docs/reference/API_REFERENCE.md) · 🇺🇦 [uk-UA](../../../uk-UA/docs/reference/API_REFERENCE.md) · 🇵🇰 [ur](../../../ur/docs/reference/API_REFERENCE.md) · 🇻🇳 [vi](../../../vi/docs/reference/API_REFERENCE.md) · 🇨🇳 [zh-CN](../../../zh-CN/docs/reference/API_REFERENCE.md) · 🇹🇼 [zh-TW](../../../zh-TW/docs/reference/API_REFERENCE.md)
 
-Pagrindinis „OmniRoute“ API žinynas. Jame aprašoma viešoji `/v1` sąsaja ir dažniausiai naudojami valdymo galiniai taškai; išsamiausi šaltiniai yra mašininiu būdu nuskaitomas failas [`docs/openapi.yaml`](../openapi.yaml) ir maršrutų medis kataloge `src/app/api/`.
+Pagrindinis „AgentProxy“ API žinynas. Jame aprašoma viešoji `/v1` sąsaja ir dažniausiai naudojami valdymo galiniai taškai; išsamiausi šaltiniai yra mašininiu būdu nuskaitomas failas [`docs/openapi.yaml`](../openapi.yaml) ir maršrutų medis kataloge `src/app/api/`.
 
 ---
 
@@ -72,33 +72,33 @@ Content-Type: application/json
 
 | Antraštė                 | Kryptis   | Aprašymas                                                                                                                                                                                                                                     |
 | ------------------------ | --------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `X-OmniRoute-No-Cache`   | Užklausa  | Nustatykite `true`, kad apeitumėte podėlį                                                                                                                                                                                                     |
-| `x-omniroute-no-memory`  | Užklausa  | Nustatykite `true`, kad šiai užklausai nebūtų įterpiama atmintis ir įgūdžiai (atitinka podėlio išjungimą; išvengiama kiekvieno iškvietimo žetonų ir sąnaudų pridėtinės išlaidos)                                                              |
-| `X-OmniRoute-Progress`   | Užklausa  | Nustatykite `true`, kad gautumėte eigos įvykius                                                                                                                                                                                               |
+| `X-AgentProxy-No-Cache`   | Užklausa  | Nustatykite `true`, kad apeitumėte podėlį                                                                                                                                                                                                     |
+| `x-agentproxy-no-memory`  | Užklausa  | Nustatykite `true`, kad šiai užklausai nebūtų įterpiama atmintis ir įgūdžiai (atitinka podėlio išjungimą; išvengiama kiekvieno iškvietimo žetonų ir sąnaudų pridėtinės išlaidos)                                                              |
+| `X-AgentProxy-Progress`   | Užklausa  | Nustatykite `true`, kad gautumėte eigos įvykius                                                                                                                                                                                               |
 | `X-Session-Id`           | Užklausa  | Pastovus sesijos raktas išoriniam sesijos susiejimui                                                                                                                                                                                          |
 | `x_session_id`           | Užklausa  | Taip pat priimamas variantas su pabraukimo brūkšniais (tiesioginis HTTP)                                                                                                                                                                      |
-| `X-OmniRoute-Session-Id` | Užklausa  | Skambinančiojo pateikta sesijos / pokalbio žyma (taip pat naudojama atminčiai). Jei ji pateikta, pažodžiui išsaugoma `call_logs.session_tag`, kad būtų galima priskirti sąnaudas sesijai (#8249) — jei nepateikta, ji niekada nesugeneruojama |
+| `X-AgentProxy-Session-Id` | Užklausa  | Skambinančiojo pateikta sesijos / pokalbio žyma (taip pat naudojama atminčiai). Jei ji pateikta, pažodžiui išsaugoma `call_logs.session_tag`, kad būtų galima priskirti sąnaudas sesijai (#8249) — jei nepateikta, ji niekada nesugeneruojama |
 | `Idempotency-Key`        | Užklausa  | Dubliavimo šalinimo raktas (5 s intervalas)                                                                                                                                                                                                   |
 | `X-Request-Id`           | Užklausa  | Alternatyvus dubliavimo šalinimo raktas                                                                                                                                                                                                       |
-| `X-OmniRoute-Cache`      | Atsakymas | `HIT` arba `MISS` (ne srautiniu režimu)                                                                                                                                                                                                       |
-| `X-OmniRoute-Idempotent` | Atsakymas | `true`, jei dublikatas pašalintas                                                                                                                                                                                                             |
-| `X-OmniRoute-Progress`   | Atsakymas | `enabled`, jei įjungtas eigos stebėjimas                                                                                                                                                                                                      |
-| `X-OmniRoute-Session-Id` | Atsakymas | Faktinis sesijos ID, kurį naudoja OmniRoute                                                                                                                                                                                                   |
-| `X-OmniRoute-Request-Id` | Atsakymas | Užklausos koreliacijos ID (kai žinomas)                                                                                                                                                                                                       |
-| `X-OmniRoute-Version`    | Atsakymas | OmniRoute komponavimo versija (visada pateikiama)                                                                                                                                                                                             |
-| `X-OmniRoute-Cost-Saved` | Atsakymas | USD suma, kurios išvengta dėl podėlio `HIT` (tik podėlio pataikymų atveju)                                                                                                                                                                    |
-| `X-OmniRoute-Decision`   | Atsakymas | Maršruto parinkimo seka: `strategy=<name>; provider=<alias>; latency_ms=<n>` (`<name>` yra derinio strategija arba `single`, jei užklausa nėra derinys) — visada pateikiama užbaigimo atsakymuose                                             |
+| `X-AgentProxy-Cache`      | Atsakymas | `HIT` arba `MISS` (ne srautiniu režimu)                                                                                                                                                                                                       |
+| `X-AgentProxy-Idempotent` | Atsakymas | `true`, jei dublikatas pašalintas                                                                                                                                                                                                             |
+| `X-AgentProxy-Progress`   | Atsakymas | `enabled`, jei įjungtas eigos stebėjimas                                                                                                                                                                                                      |
+| `X-AgentProxy-Session-Id` | Atsakymas | Faktinis sesijos ID, kurį naudoja AgentProxy                                                                                                                                                                                                   |
+| `X-AgentProxy-Request-Id` | Atsakymas | Užklausos koreliacijos ID (kai žinomas)                                                                                                                                                                                                       |
+| `X-AgentProxy-Version`    | Atsakymas | AgentProxy komponavimo versija (visada pateikiama)                                                                                                                                                                                             |
+| `X-AgentProxy-Cost-Saved` | Atsakymas | USD suma, kurios išvengta dėl podėlio `HIT` (tik podėlio pataikymų atveju)                                                                                                                                                                    |
+| `X-AgentProxy-Decision`   | Atsakymas | Maršruto parinkimo seka: `strategy=<name>; provider=<alias>; latency_ms=<n>` (`<name>` yra derinio strategija arba `single`, jei užklausa nėra derinys) — visada pateikiama užbaigimo atsakymuose                                             |
 
 > Pastaba dėl Nginx: jei naudojate antraštes su pabraukimo brūkšniais (pavyzdžiui, `x_session_id`), įjunkite `underscores_in_headers on;`.
 
-> **Sąnaudų telemetrijos antraštės:** sėkminguose ne srautiniu režimu pateikiamuose atsakymuose taip pat yra `X-OmniRoute-*` sąnaudų telemetrijos rinkinys — `X-OmniRoute-Response-Cost` (USD, fiksuota 10 dešimtainių skilčių; `0.0000000000`, jei nemokama arba neįkainota), `X-OmniRoute-Tokens-In` / `X-OmniRoute-Tokens-Out`, `X-OmniRoute-Model`, `X-OmniRoute-Provider`, `X-OmniRoute-Latency-Ms`, `X-OmniRoute-Cache-Hit` ir `X-OmniRoute-Fallback-Attempts` (tik kai > 0), taip pat `X-OmniRoute-Request-Id` ir `X-OmniRoute-Version`. Jas pateikia pokalbių užbaigimai, `/v1/responses`, `/v1/messages` **ir medijos galiniai taškai** — `/v1/embeddings`, `/v1/images/generations`, `/v1/audio/speech`, `/v1/audio/transcriptions`, `/v1/rerank`, `/v1/videos/generations`, `/v1/music/generations` ir `/v1/moderations` (sąnaudos visada `0`). Kai prieinamos kainos, medijos sąnaudos apskaičiuojamos pagal modalumą (už vaizdą, sekundę, simbolį ar paieškos vienetą), kitu atveju jos yra `0` (klaidos atveju veikimas tęsiamas).
+> **Sąnaudų telemetrijos antraštės:** sėkminguose ne srautiniu režimu pateikiamuose atsakymuose taip pat yra `X-AgentProxy-*` sąnaudų telemetrijos rinkinys — `X-AgentProxy-Response-Cost` (USD, fiksuota 10 dešimtainių skilčių; `0.0000000000`, jei nemokama arba neįkainota), `X-AgentProxy-Tokens-In` / `X-AgentProxy-Tokens-Out`, `X-AgentProxy-Model`, `X-AgentProxy-Provider`, `X-AgentProxy-Latency-Ms`, `X-AgentProxy-Cache-Hit` ir `X-AgentProxy-Fallback-Attempts` (tik kai > 0), taip pat `X-AgentProxy-Request-Id` ir `X-AgentProxy-Version`. Jas pateikia pokalbių užbaigimai, `/v1/responses`, `/v1/messages` **ir medijos galiniai taškai** — `/v1/embeddings`, `/v1/images/generations`, `/v1/audio/speech`, `/v1/audio/transcriptions`, `/v1/rerank`, `/v1/videos/generations`, `/v1/music/generations` ir `/v1/moderations` (sąnaudos visada `0`). Kai prieinamos kainos, medijos sąnaudos apskaičiuojamos pagal modalumą (už vaizdą, sekundę, simbolį ar paieškos vienetą), kitu atveju jos yra `0` (klaidos atveju veikimas tęsiamas).
 
-> **Podėlio pataikymo sąnaudų semantika:** semantinio podėlio `HIT` (`X-OmniRoute-Cache-Hit: true`) atveju išorinis iškvietimas neatliekamas, todėl `X-OmniRoute-Response-Cost` yra `0.0000000000` (pataikymo aptarnavimo **prieauginės** sąnaudos). Pradinės arba galėjusios susidaryti sąnaudos atskirai pateikiamos `X-OmniRoute-Cost-Saved`. Atsiskaitymo sistemų naudotojai turėtų sumuoti `X-OmniRoute-Response-Cost` (pataikymai nieko nekainuoja); podėlio analizė gali agreguoti `X-OmniRoute-Cost-Saved`.
+> **Podėlio pataikymo sąnaudų semantika:** semantinio podėlio `HIT` (`X-AgentProxy-Cache-Hit: true`) atveju išorinis iškvietimas neatliekamas, todėl `X-AgentProxy-Response-Cost` yra `0.0000000000` (pataikymo aptarnavimo **prieauginės** sąnaudos). Pradinės arba galėjusios susidaryti sąnaudos atskirai pateikiamos `X-AgentProxy-Cost-Saved`. Atsiskaitymo sistemų naudotojai turėtų sumuoti `X-AgentProxy-Response-Cost` (pataikymai nieko nekainuoja); podėlio analizė gali agreguoti `X-AgentProxy-Cost-Saved`.
 
 ## Išskirtinės valdomų seansų nuomos
 
 Išskirtinė valdomų seansų nuoma yra pasirenkama, nuo kliento nepriklausoma maršruto parinkimo sutartis: vienas aktyvus savininkas
-valdo vieną tinkamą „OmniRoute“ ryšį. Ji nenuomoja modelio, nereikalauja „OAuth“, neidentifikuoja
+valdo vieną tinkamą „AgentProxy“ ryšį. Ji nenuomoja modelio, nereikalauja „OAuth“, neidentifikuoja
 konkretaus kliento ir nereikalauja konkretaus teikėjo.
 
 Autentifikavimui naudojamas API raktas turi turėti sritį `lease:exclusive` ir aiškiai nurodytą netuščią
@@ -109,7 +109,7 @@ kuriant raktą ir atliekant dalinius atnaujinimus.
 POST /api/v1/session-leases
 Authorization: Bearer <managed-api-key>
 Content-Type: application/json
-X-OmniRoute-Lease-Owner: vlo_<43-base64url-characters>
+X-AgentProxy-Lease-Owner: vlo_<43-base64url-characters>
 
 {"action":"acquire","model":"glm/glm-4.6"}
 ```
@@ -148,7 +148,7 @@ Aktyvios nuomos savininkas gali aiškiai paprašyti privatumą išsaugančių da
 
 Šis pasirenkamas būsenos veiksmas vienoje duomenų bazės operacijoje apsaugomas neskaidriu savininko identifikatoriumi, autentifikuotu valdomu API raktu ir tikslia
 aktyvia generacija. `displayName` yra tik apkarpytas sukonfigūruoto
-ryšio pavadinimas; kai saugaus sukonfigūruoto pavadinimo nėra, jo reikšmė yra `null`. „OmniRoute“ niekada jo nepakeičia
+ryšio pavadinimas; kai saugaus sukonfigūruoto pavadinimo nėra, jo reikšmė yra `null`. „AgentProxy“ niekada jo nepakeičia
 el. pašto adresu ar sugeneruota paskyros tapatybe. Teikėjo reikšmė yra nejautri rodymo žyma ir niekada nėra
 sugeneruotas suderinamo teikėjo identifikatorius. Prisijungimo duomenys, prieigos raktai, slapukai, neapdoroti ryšio ar API
 rakto identifikatoriai, savininko maišos, apsaugos paslaptys ir vidiniai maršruto parinkimo duomenys neįtraukiami.
@@ -167,8 +167,8 @@ rodyti `connection.displayName`.
 Tada kiekvienoje valdomoje išvedimo užklausoje pateikiamos abi valdymo antraštės:
 
 ```http
-X-OmniRoute-Lease-Owner: vlo_<43-base64url-characters>
-X-OmniRoute-Lease-Generation: 1
+X-AgentProxy-Lease-Owner: vlo_<43-base64url-characters>
+X-AgentProxy-Lease-Generation: 1
 ```
 
 Tikslaus savininko, generacijos, aktyvaus ryšio ir autentifikuoto API rakto atitiktis patikrinama prieš pat
@@ -189,9 +189,9 @@ Laikinas užimtumas grąžina HTTP `429` su `Retry-After` ir:
 
 Šis atsakymas reiškia tik tai, kad įprastas tinkamų ryšių rinkinys nebuvo tuščias, o kiekvienas laisvas kandidatas buvo
 užimtas kitos aktyvios nuomos. Nepalaikomi modeliai ar teikėjai, strategijos neatitiktis, laukimo laikotarpis, kvota,
-būklė ir kitos įprastos tinkamumo klaidos išlaiko esamus „OmniRoute“ atsakymus.
+būklė ir kitos įprastos tinkamumo klaidos išlaiko esamus „AgentProxy“ atsakymus.
 
-### `x-omniroute-compression`
+### `x-agentproxy-compression`
 
 Suspaudimo plano pakeitimas konkrečiai užklausai. Turi aukščiausią prioritetą — yra viršesnis už maršruto parinkimo derinio
 pakeitimą, aktyvų profilį, automatinį paleidiklį ir skydelio numatytąją nuostatą. Reikšmės:
@@ -213,7 +213,7 @@ Pastabos:
 Pritaikytas planas pakartojamas atsakymo antraštėje:
 
 ```
-X-OmniRoute-Compression: <mode>; source=<source>
+X-AgentProxy-Compression: <mode>; source=<source>
 ```
 
 kur `<source>` yra viena iš šių reikšmių: `request-header`, `routing-override`, `active-profile`, `auto-trigger`, `default` arba `off`.
@@ -262,7 +262,7 @@ EmbeddingsV5Request formato dokumentus ir **persiunčia juos nepakeistus** į `h
 ```
 
 Vietinio formato `{ image | audio | video | pdf }` reikšmė gali būti viešas HTTPS URL, `data:` URI arba neapdorotas
-base64. OmniRoute nekonvertuoja šių objektų į eilutes ir neatsisiunčia vietinio formato vaizdų URL — Jina pati gauna
+base64. AgentProxy nekonvertuoja šių objektų į eilutes ir neatsisiunčia vietinio formato vaizdų URL — Jina pati gauna
 viešai pasiekiamą mediją. Papildomi Jina laukai (`task`, `normalized`, `truncate`, `embedding_type`) yra
 persiunčiami. Tik tekstui skirti Jina variantai ir toliau atmeta netekstinius dokumentus.
 
@@ -379,7 +379,7 @@ atskirai apdoroti kiekvieno teikėjo.
 
 ### Vertex AI DeepSeek OCR autentifikavimas ir galinio taško nustatymas
 
-`vertex-deepseek-ocr` pakartotinai naudoja tą patį Vertex AI autentifikavimą, kurį OmniRoute jau palaiko
+`vertex-deepseek-ocr` pakartotinai naudoja tą patį Vertex AI autentifikavimą, kurį AgentProxy jau palaiko
 pokalbių ir vaizdų srautui (`open-sse/executors/vertex.ts`): ryšio API raktas yra arba
 paslaugos paskyros JSON kredencialas (naudojant JWT nešėjo prieigos rakto gavimo eigą pakeičiamas į
 trumpalaikį OAuth prieigos raktą), arba jau išduotas OAuth prieigos raktas, naudojamas toks, koks yra.
@@ -429,10 +429,10 @@ Klientai, rodantys modelio pasirinkimo sąrašą, turėtų pateikti užklausą s
 
 ### Modelių variantai be mąstymo
 
-Mąstymą palaikantiems Claude modeliams `/v1/models` taip pat pateikia **nemąstantį** variantą, kurio ID prasideda prefiksu `claude-3-omniroute-no-thinking/`:
+Mąstymą palaikantiems Claude modeliams `/v1/models` taip pat pateikia **nemąstantį** variantą, kurio ID prasideda prefiksu `claude-3-agentproxy-no-thinking/`:
 
 ```
-claude-3-omniroute-no-thinking/<provider>/<model>
+claude-3-agentproxy-no-thinking/<provider>/<model>
 ```
 
 Pasirinkus šį ID (pvz., Claude Code konfigūracijoje, kuri visada prideda `thinking` bloką), jis nukreipiamas atgal į tikrąjį `<provider>/<model>`, išjungus samprotavimą — `/v1/messages` kelyje naudojama `thinking:{type:"disabled"}`, o `/v1/chat/completions` kelyje pašalinami `reasoning` / `reasoning_effort` laukai. Šis variantas pateikiamas tik tiems Claude šeimos modeliams, kurie palaiko mąstymą **ir** priima `disabled` (todėl, pvz., tik adaptyvųjį režimą palaikantys modeliai, atmetantys `disabled`, neįtraukiami). Operatoriai gali priverstinai įjungti arba išjungti šį variantą kiekvienam modeliui naudodami `ModelSpec.noThinkingAlias`.
@@ -487,7 +487,7 @@ Naudokite šį galinį tašką, kai pagalbinis procesas vykdomas atskirai ir neg
 
 Visų POST maršrutų struktūra yra vienoda: `Bearer your-api-key` + Zod patikrintas JSON turinys (`v1RerankSchema`, `v1ModerationSchema`, `v1AudioSpeechSchema` ir kt.; žr. `src/shared/validation/schemas.ts`). Nepavykus schemos patikrai, grąžinamas 4xx.
 
-Klientams, kurie negali pridėti `Authorization: Bearer ...`, OmniRoute taip pat priima API raktus URL adrese: naudodama užklausos eilutės suderinamumo parametrus (`?token=...`, `?apiKey=...`, `?api_key=...`, `?key=...`) arba toliau aprašytus specialiuosius `/api/v1/vscode/{token}/...` galinius taškus.
+Klientams, kurie negali pridėti `Authorization: Bearer ...`, AgentProxy taip pat priima API raktus URL adrese: naudodama užklausos eilutės suderinamumo parametrus (`?token=...`, `?apiKey=...`, `?api_key=...`, `?key=...`) arba toliau aprašytus specialiuosius `/api/v1/vscode/{token}/...` galinius taškus.
 
 ```bash
 # Perrikiavimas
@@ -614,8 +614,8 @@ Patikrina WebSocket protokolo pakeitimo užmezgimo užklausą ir grąžina perda
 
 ```bash
 # Tas pats pagrindinis kompiuteris ir prievadas kaip HTTP API (numatytasis 20128); pakeiskite ryšio protokolą:
-wscat -c "ws://localhost:20128/v1/responses?api_key=<OMNIROUTE_API_KEY>"
-# (arba: -H "Authorization: Bearer <OMNIROUTE_API_KEY>")
+wscat -c "ws://localhost:20128/v1/responses?api_key=<AGENTPROXY_API_KEY>"
+# (arba: -H "Authorization: Bearer <AGENTPROXY_API_KEY>")
 
 # Pirmasis kadras PRIVALO būti response.create:
 { "type": "response.create", "model": "gpt-5.5", "input": [ { "role": "user", "content": "hi" } ] }
@@ -638,35 +638,35 @@ turi būti aktyvus įėjimo taškas (pagal numatytuosius nustatymus taip ir yra,
 OpenAI **Codex CLI** tikrina modelio pavadinimą kliento pusėje, kai
 `supports_websockets = true`, ir **atmeta teikėjo prefiksą turinčius ID**, pvz.,
 `codex/gpt-5.5` (`The 'codex/gpt-5.5' model is not supported when using Codex with
-a ChatGPT account`). Siųskite **nepapildytą** ID (pvz., `gpt-5.5`). OmniRoute tiltas
+a ChatGPT account`). Siųskite **nepapildytą** ID (pvz., `gpt-5.5`). AgentProxy tiltas
 skirtas tik codex, todėl prieš tuneliuojant į aukštesnio lygmens paslaugą nepapildytas ID iš naujo susiejamas su codex modeliu
 (`resolveCodexWsModelInfo`) — nors nepapildytas
 `gpt-5.5` naudojant HTTP kitu atveju būtų nukreiptas kitam teikėjui.
 
 #### OpenAI Codex CLI konfigūravimas
 
-Nukreipkite Codex CLI į OmniRoute, į `~/.codex/config.toml` pridėdami pasirinktinį teikėją, palaikantį WebSocket
+Nukreipkite Codex CLI į AgentProxy, į `~/.codex/config.toml` pridėdami pasirinktinį teikėją, palaikantį WebSocket
 (naudokite atskirą `CODEX_HOME`, kad nepakeistumėte
 esamos konfigūracijos):
 
 ```toml
 model = "gpt-5.5"                 # nepapildytas ID — NE "codex/gpt-5.5"
-model_provider = "omniroute"
+model_provider = "agentproxy"
 
-[model_providers.omniroute]
-name = "OmniRoute (WS)"
+[model_providers.agentproxy]
+name = "AgentProxy (WS)"
 base_url = "http://localhost:20128/v1"   # be baigiamojo pasvirojo brūkšnio; WS URL išvedamas automatiškai (gamybinėje aplinkoje naudokite https/wss)
 wire_api = "responses"                    # vienintelė palaikoma reikšmė nuo 2026 m. vasario
 supports_websockets = true                # įjungia Responses per WS transportą
-env_key = "OMNIROUTE_API_KEY"             # saugo OmniRoute API raktą („Bearer“)
+env_key = "AGENTPROXY_API_KEY"             # saugo AgentProxy API raktą („Bearer“)
 ```
 
 ```bash
-export OMNIROUTE_API_KEY=sk-...           # OmniRoute API raktas (bet kuris raktas, jei REQUIRE_API_KEY=false)
+export AGENTPROXY_API_KEY=sk-...           # AgentProxy API raktas (bet kuris raktas, jei REQUIRE_API_KEY=false)
 codex exec "Responda apenas: PONG"
 ```
 
-CLI pakeičia `base_url + /responses` ryšį į WebSocket, o OmniRoute tuneliuoja jį
+CLI pakeičia `base_url + /responses` ryšį į WebSocket, o AgentProxy tuneliuoja jį
 į pasirinktą codex OAuth ryšį. Visas procesas patikrintas naudojant vietinį
 serverį: ChatGPT grąžina `codex.rate_limits` + `response.created` ir srautiniu būdu perduoda
 užbaigtą atsakymą.
@@ -771,10 +771,10 @@ Atsakymo pavyzdys:
 ### Poveikis delsai
 
 Semantinės talpyklos PATAIKYMO atveju atsakymas pateikiamas iš talpyklos **be iškvietimo į pirminę paslaugą**,
-todėl nurodyta `X-OmniRoute-Response-Latency` reikšmė yra artima nuliui
+todėl nurodyta `X-AgentProxy-Response-Latency` reikšmė yra artima nuliui
 (nepriklausomai nuo pradinės pirminės paslaugos delsos). Delsai jautrūs klientai
 (našumo testavimas, p50 / p99 stebėjimas) turėtų tikrinti
-`X-OmniRoute-Cache-Latency` atsakymo antraštę:
+`X-AgentProxy-Cache-Latency` atsakymo antraštę:
 
 | Reikšmė     | Reikšmė                                                                         |
 | ----------- | ------------------------------------------------------------------------------- |
@@ -801,7 +801,7 @@ Nustatoma kuriant raktą (`POST /api/keys`) arba atnaujinant (`PATCH /api/keys/[
 Bet kuri užklausa gali apeiti talpyklą neatsižvelgiant į rakto nustatymus:
 
 ```
-X-OmniRoute-No-Cache: true
+X-AgentProxy-No-Cache: true
 ```
 
 ---
@@ -1023,7 +1023,7 @@ Pataiso trūkstamus arba sugadintus konkretaus teikėjo OAuth aplinkos kintamuos
 {
   "success": true,
   "repaired": ["CLAUDE_CODE_OAUTH_CLIENT_ID", "CLAUDE_CODE_OAUTH_CLIENT_SECRET"],
-  "backupPath": "/home/user/.omniroute/backups/env-repair-2026-04-11.bak"
+  "backupPath": "/home/user/.agentproxy/backups/env-repair-2026-04-11.bak"
 }
 ```
 
@@ -1116,7 +1116,7 @@ Pastabos:
 
 - Žetoniniai alternatyvūs adresai pakartotinai naudoja tas pačias apdorojimo funkcijas kaip `/v1/*` ir `/api/tags`; atsakymų struktūra išlieka tokia pati.
 - Kai klientas palaiko pasirinktines antraštes, pirmenybę teikite `Authorization: Bearer ...`.
-- URL esantys žetonai gali būti matomi atvirkštinio tarpinio serverio žurnaluose, naršyklės istorijoje ir telemetrijoje už OmniRoute ribų. Laikykite juos suderinamumo parinktimi, o ne numatytuoju autentifikavimo režimu.
+- URL esantys žetonai gali būti matomi atvirkštinio tarpinio serverio žurnaluose, naršyklės istorijoje ir telemetrijoje už AgentProxy ribų. Laikykite juos suderinamumo parinktimi, o ne numatytuoju autentifikavimo režimu.
 
 ---
 
@@ -1224,7 +1224,7 @@ Aukštesnio lygio maršruto parinkimo deriniai (jau apibendrinti skiltyje `/api/
 
 ## Webhook’ai
 
-Siunčiamų „OmniRoute“ įvykių (užklausos užbaigimo, kvotos išnaudojimo, rakto pasukimo ir kt.) webhook prenumeratos.
+Siunčiamų „AgentProxy“ įvykių (užklausos užbaigimo, kvotos išnaudojimo, rakto pasukimo ir kt.) webhook prenumeratos.
 
 | Metodas | Kelias                    | Aprašymas                                                                         |
 | ------- | ------------------------- | --------------------------------------------------------------------------------- |
@@ -1257,7 +1257,7 @@ Naudojama automatinio raktų valdymo posistemėje, kad būtų išduodami ir pasu
 
 ## Agentų protokolas
 
-Debesijos agentų užduotys („Claude Code“, „Codex Cloud“, „OpenHands“ ir kt.), nuotoliniu būdu vykdomos „OmniRoute“ naudotojų vardu.
+Debesijos agentų užduotys („Claude Code“, „Codex Cloud“, „OpenHands“ ir kt.), nuotoliniu būdu vykdomos „AgentProxy“ naudotojų vardu.
 
 | Metodas | Kelias                        | Aprašymas                                                                                                                                            |
 | ------- | ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -1303,7 +1303,7 @@ Išeinantiems HTTP(S)/SOCKS ryšiams skirti tarpiniai serveriai, kuriuos galima 
 
 ## Atsparumas (išplėstinis)
 
-„OmniRoute“ suteikia tris nepriklausomus laikinųjų trikčių valdymo mechanizmus; toliau nurodyti valdymo galiniai taškai leidžia operatoriams peržiūrėti ir pakeisti jų būseną:
+„AgentProxy“ suteikia tris nepriklausomus laikinųjų trikčių valdymo mechanizmus; toliau nurodyti valdymo galiniai taškai leidžia operatoriams peržiūrėti ir pakeisti jų būseną:
 
 | Apimtis                         | Būsenos saugojimo vieta                          | Peržiūra                                  | Nustatymas iš naujo / išvalymas                     |
 | ------------------------------- | ------------------------------------------------ | ----------------------------------------- | --------------------------------------------------- |
@@ -1332,7 +1332,7 @@ Išsamią koncepcinę informaciją ir numatytąsias grandinės pertraukiklio rei
 
 ## Įgūdžiai
 
-Sistema, skirta „OmniRoute“ plėsti pasirinktinėmis vykdomosiomis apdorojimo programomis, taip pat integracijomis su prekyvietėmis.
+Sistema, skirta „AgentProxy“ plėsti pasirinktinėmis vykdomosiomis apdorojimo programomis, taip pat integracijomis su prekyvietėmis.
 
 | Metodas | Kelias                            | Aprašymas                                                                                                                                            |
 | ------- | --------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -1369,7 +1369,7 @@ Nuolatinė pokalbių / faktinės atminties saugykla, kurios apimtis nustatoma pa
 
 ## MCP serveris
 
-OmniRoute pateikiamas su integruotu Model Context Protocol serveriu, turinčiu 3 transportus (stdio, SSE, streamable-http) ir pagal apimtis apribotus įrankius. Toliau nurodyti valdymo skydelio galiniai taškai nuskaito būsenos / audito duomenis ir veikia kaip HTTP transportų tarpinis serveris.
+AgentProxy pateikiamas su integruotu Model Context Protocol serveriu, turinčiu 3 transportus (stdio, SSE, streamable-http) ir pagal apimtis apribotus įrankius. Toliau nurodyti valdymo skydelio galiniai taškai nuskaito būsenos / audito duomenis ir veikia kaip HTTP transportų tarpinis serveris.
 
 | Metodas | Kelias | Aprašymas |
 | ------ | ---------------------- | ------------------------------------------------------------------------------------------------ | -------------------- |
@@ -1391,13 +1391,13 @@ OmniRoute pateikiamas su integruotu Model Context Protocol serveriu, turinčiu 3
 
 ## A2A serveris
 
-OmniRoute pateikia A2A (agentų tarpusavio sąveikos) JSON-RPC 2.0 galinį tašką ir REST sąsają, skirtą tikrinimui bei valdymo skydui.
+AgentProxy pateikia A2A (agentų tarpusavio sąveikos) JSON-RPC 2.0 galinį tašką ir REST sąsają, skirtą tikrinimui bei valdymo skydui.
 
 ### JSON-RPC
 
 ```bash
 POST /a2a
-Authorization: Bearer your-api-key   # neprivaloma, nebent nustatytas OMNIROUTE_API_KEY
+Authorization: Bearer your-api-key   # neprivaloma, nebent nustatytas AGENTPROXY_API_KEY
 Content-Type: application/json
 
 {
@@ -1440,7 +1440,7 @@ Grąžina viešą A2A agento kortelę (pavadinimą, aprašymą, galimybes, gebė
 | GET     | `/api/a2a/tasks/[id]`        | Gauti vieną užduotį                                                                                                   |
 | POST    | `/api/a2a/tasks/[id]/cancel` | Atšaukti užduotį                                                                                                      |
 
-**Autentifikavimas:** REST pagalbinės sąsajos veikia be valdymo autentifikavimo (jas gali skaityti valdymo skydas); JSON-RPC maršrutas `/a2a` naudoja Bearer `OMNIROUTE_API_KEY`, jei jis sukonfigūruotas.
+**Autentifikavimas:** REST pagalbinės sąsajos veikia be valdymo autentifikavimo (jas gali skaityti valdymo skydas); JSON-RPC maršrutas `/a2a` naudoja Bearer `AGENTPROXY_API_KEY`, jei jis sukonfigūruotas.
 
 ---
 
@@ -1620,7 +1620,7 @@ Tik administratoriams skirti operacinio valdymo galiniai taškai.
 
 ## CLI įrankių valdymas
 
-Valdykite CLI įrankius, integruojamus su „OmniRoute“ (antigravity, chipotle, commandCode,
+Valdykite CLI įrankius, integruojamus su „AgentProxy“ (antigravity, chipotle, commandCode,
 devin-cli ir kt.). Visą sąrašą rasite [Teikėjų žinyne](./PROVIDER_REFERENCE.md).
 
 | Metodas | Kelias                                  | Aprašymas                                                                                                                                                                           |
@@ -1731,7 +1731,7 @@ Išsamią informaciją žr. [Įgūdžių sistema](../frameworks/SKILLS.md).
 
 ## Papildiniai
 
-Valdykite OmniRoute papildinius (trečiųjų šalių plėtinius).
+Valdykite AgentProxy papildinius (trečiųjų šalių plėtinius).
 
 | Metodas | Kelias                             | Aprašymas                           |
 | ------- | ---------------------------------- | ----------------------------------- |
@@ -1757,7 +1757,7 @@ Išsamią informaciją žr. [Papildinių sistema](../frameworks/PLUGIN_SDK.md).
 
 ## Apsaugos priemonės
 
-Peržiūrėkite vykdymo aplinkos apsaugos priemones (PII aptikimą, užklausų injekcijų aptikimą, vaizdinio turinio susiejimą). Apsaugos priemonės vykdomos kiekvienai užklausai; jų galima atsisakyti atskirai kiekvienam iškvietimui naudojant užklausos antraštę `x-omniroute-disabled-guardrails` — nėra išsaugomos įjungimo ar išjungimo sąsajos.
+Peržiūrėkite vykdymo aplinkos apsaugos priemones (PII aptikimą, užklausų injekcijų aptikimą, vaizdinio turinio susiejimą). Apsaugos priemonės vykdomos kiekvienai užklausai; jų galima atsisakyti atskirai kiekvienam iškvietimui naudojant užklausos antraštę `x-agentproxy-disabled-guardrails` — nėra išsaugomos įjungimo ar išjungimo sąsajos.
 
 | Metodas | Kelias                 | Aprašymas                                                                                                                            |
 | ------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |

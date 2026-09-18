@@ -1,4 +1,4 @@
-# Contributing to OmniRoute (Latviešu)
+# Contributing to AgentProxy (Latviešu)
 
 🌐 **Languages:** 🇺🇸 [English](../../../CONTRIBUTING.md) · 🇸🇦 [ar](../ar/CONTRIBUTING.md) · 🇦🇿 [az](../az/CONTRIBUTING.md) · 🇧🇬 [bg](../bg/CONTRIBUTING.md) · 🇧🇩 [bn](../bn/CONTRIBUTING.md) · 🇨🇿 [cs](../cs/CONTRIBUTING.md) · 🇩🇰 [da](../da/CONTRIBUTING.md) · 🇩🇪 [de](../de/CONTRIBUTING.md) · 🇬🇷 [el](../el/CONTRIBUTING.md) · 🇪🇸 [es](../es/CONTRIBUTING.md) · 🇪🇪 [et](../et/CONTRIBUTING.md) · 🇮🇷 [fa](../fa/CONTRIBUTING.md) · 🇫🇮 [fi](../fi/CONTRIBUTING.md) · 🇫🇷 [fr](../fr/CONTRIBUTING.md) · 🇮🇪 [ga](../ga/CONTRIBUTING.md) · 🇮🇳 [gu](../gu/CONTRIBUTING.md) · 🇮🇱 [he](../he/CONTRIBUTING.md) · 🇮🇳 [hi](../hi/CONTRIBUTING.md) · 🇭🇷 [hr](../hr/CONTRIBUTING.md) · 🇭🇺 [hu](../hu/CONTRIBUTING.md) · 🇮🇩 [id](../id/CONTRIBUTING.md) · 🇮🇹 [it](../it/CONTRIBUTING.md) · 🇯🇵 [ja](../ja/CONTRIBUTING.md) · 🇰🇷 [ko](../ko/CONTRIBUTING.md) · 🇱🇹 [lt](../lt/CONTRIBUTING.md) · 🇮🇳 [mr](../mr/CONTRIBUTING.md) · 🇲🇾 [ms](../ms/CONTRIBUTING.md) · 🇲🇹 [mt](../mt/CONTRIBUTING.md) · 🇳🇱 [nl](../nl/CONTRIBUTING.md) · 🇳🇴 [no](../no/CONTRIBUTING.md) · 🇵🇭 [phi](../phi/CONTRIBUTING.md) · 🇵🇱 [pl](../pl/CONTRIBUTING.md) · 🇵🇹 [pt](../pt/CONTRIBUTING.md) · 🇧🇷 [pt-BR](../pt-BR/CONTRIBUTING.md) · 🇷🇴 [ro](../ro/CONTRIBUTING.md) · 🇷🇺 [ru](../ru/CONTRIBUTING.md) · 🇸🇰 [sk](../sk/CONTRIBUTING.md) · 🇸🇮 [sl](../sl/CONTRIBUTING.md) · 🇷🇸 [sr](../sr/CONTRIBUTING.md) · 🇸🇪 [sv](../sv/CONTRIBUTING.md) · 🇰🇪 [sw](../sw/CONTRIBUTING.md) · 🇮🇳 [ta](../ta/CONTRIBUTING.md) · 🇮🇳 [te](../te/CONTRIBUTING.md) · 🇹🇭 [th](../th/CONTRIBUTING.md) · 🇹🇷 [tr](../tr/CONTRIBUTING.md) · 🇺🇦 [uk-UA](../uk-UA/CONTRIBUTING.md) · 🇵🇰 [ur](../ur/CONTRIBUTING.md) · 🇻🇳 [vi](../vi/CONTRIBUTING.md) · 🇨🇳 [zh-CN](../zh-CN/CONTRIBUTING.md) · 🇹🇼 [zh-TW](../zh-TW/CONTRIBUTING.md)
 
@@ -30,8 +30,8 @@ ar to līgumiem, mērķētiem testiem, CI pārklājumu un saskaņošanas darbīb
 ### Klonēšana un instalēšana
 
 ```bash
-git clone https://github.com/diegosouzapw/OmniRoute.git
-cd OmniRoute
+git clone https://github.com/khanhkit/AgentProxy.git
+cd AgentProxy
 npm install
 ```
 
@@ -111,7 +111,7 @@ npm run build
 
 `npm run build:contributor` izmanto tikai backend paredzēto būvējuma profilu. Būvēšanas laikā tas īslaicīgi aizstāj informācijas paneļa UI failus, saglabā API maršrutu apstrādātājus un pēc būvēšanas atjauno sākotnējos failus. Izmantojiet `npm run build`, lai pārbaudītu izmaiņas, kas ietekmē informācijas paneļa UI, vai veiktu pilnu izlaiduma validāciju; ieguldītāja profils neaizstāj izlaiduma būvējumu.
 
-> **Piezīme par izvietošanu VPS:** attālā attēla direktorija `/usr/lib/node_modules/omniroute/app/`
+> **Piezīme par izvietošanu VPS:** attālā attēla direktorija `/usr/lib/node_modules/agentproxy/app/`
 > netiek mainīta. Izvietošanas prasmes tajā sinhronizē `dist/` saturu, izmantojot rsync.
 > Mainījies ir tikai repozitorijā esošais būvējuma izvades ceļš (`app/` → `dist/`).
 
@@ -311,7 +311,7 @@ src/                        # TypeScript (.ts / .tsx)
 │   └── validation/         # Zod v4 shēmas
 └── sse/                    # SSE starpniekservera konveijers
 
-open-sse/                   # @omniroute/open-sse workspace
+open-sse/                   # @agentproxy/open-sse workspace
 ├── executors/              # 89 izpildītāju ieviešanas moduļi
 ├── handlers/               # 11 pieprasījumu apstrādātāji (chat, responses, embeddings, images u.c.)
 ├── mcp-server/             # MCP serveris (110 unikāli rīki, 3 transporti, 33 tvērumi)
@@ -333,7 +333,7 @@ tests/
 docs/
 ├── adr/                     # Arhitektūras lēmumu ieraksti
 ├── architecture/            # Sistēmas arhitektūra un noturība
-├── comparison/              # OmniRoute salīdzinājumā ar alternatīvām
+├── comparison/              # AgentProxy salīdzinājumā ar alternatīvām
 ├── compression/             # Saspiešanas ceļveži un noteikumi
 ├── dev/                     # Izstrādes ceļveži
 ├── diagrams/                # Arhitektūras diagrammas
@@ -424,5 +424,5 @@ Pēc tam izmantojiet `/deploy-vps-*-cc` prasmes, kas ar rsync sinhronizē `dist/
 - **API atsauce**: skatiet [`docs/reference/API_REFERENCE.md`](docs/reference/API_REFERENCE.md)
 - **Drošības dokumentācija**: [`docs/security/CLI_TOKEN.md`](docs/security/CLI_TOKEN.md), [`docs/security/ROUTE_GUARD_TIERS.md`](docs/security/ROUTE_GUARD_TIERS.md), [`docs/security/ERROR_SANITIZATION.md`](docs/security/ERROR_SANITIZATION.md), [`docs/security/PUBLIC_CREDS.md`](docs/security/PUBLIC_CREDS.md)
 - **Operāciju dokumentācija**: [`docs/ops/SQLITE_RUNTIME.md`](docs/ops/SQLITE_RUNTIME.md)
-- **Problēmas**: [github.com/diegosouzapw/OmniRoute/issues](https://github.com/diegosouzapw/OmniRoute/issues)
+- **Problēmas**: [github.com/khanhkit/AgentProxy/issues](https://github.com/khanhkit/AgentProxy/issues)
 - **ADR**: skatiet `docs/adr/`, lai iepazītos ar arhitektūras lēmumu ierakstiem

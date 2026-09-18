@@ -3,8 +3,8 @@ import test from "node:test";
 
 assert.ok(process.env.DATA_DIR, "the parent harness must provide an isolated DATA_DIR");
 assert.ok(
-  process.env.OMNIROUTE_PLUGINS_DIR,
-  "the parent harness must provide an isolated OMNIROUTE_PLUGINS_DIR"
+  process.env.AGENTPROXY_PLUGINS_DIR,
+  "the parent harness must provide an isolated AGENTPROXY_PLUGINS_DIR"
 );
 
 const [
@@ -131,7 +131,7 @@ async function invokeStreamingChatCore(
       body: structuredClone(body),
       headers: new Headers({
         accept: "text/event-stream",
-        "x-omniroute-session-id": identity.connectionId,
+        "x-agentproxy-session-id": identity.connectionId,
       }),
     },
     userAgent: identity.connectionId,
@@ -239,8 +239,8 @@ test.after(async () => {
 
 test("1min.ai pre-content stream errors stay errors and permit readiness fallback", async () => {
   const rawMessage =
-    "quota lookup failed at /srv/omniroute/open-sse/executors/oneminai.ts:170\n" +
-    "    at translateSseStream (/srv/omniroute/open-sse/executors/oneminai.ts:99:5)";
+    "quota lookup failed at /srv/agentproxy/open-sse/executors/oneminai.ts:170\n" +
+    "    at translateSseStream (/srv/agentproxy/open-sse/executors/oneminai.ts:99:5)";
   const response = await executeStreaming([
     `event: error\ndata: ${JSON.stringify({ error: { message: rawMessage } })}\n\n`,
   ]);
@@ -256,7 +256,7 @@ test("1min.ai pre-content stream errors stay errors and permit readiness fallbac
   assert.equal(readiness.response.status, 502);
   const fallbackBody = await readiness.response.text();
   assert.match(fallbackBody, /STREAM_EARLY_EOF/);
-  assert.doesNotMatch(fallbackBody, /\/srv\/omniroute/);
+  assert.doesNotMatch(fallbackBody, /\/srv\/agentproxy/);
   assert.doesNotMatch(fallbackBody, /translateSseStream/);
 
   const clientText = await clientCopy.text();
@@ -265,7 +265,7 @@ test("1min.ai pre-content stream errors stay errors and permit readiness fallbac
   assert.match(clientText, /data: \[DONE\]/);
   assert.doesNotMatch(clientText, /"role":"assistant"/);
   assert.doesNotMatch(clientText, /"finish_reason":"stop"/);
-  assert.doesNotMatch(clientText, /\/srv\/omniroute/);
+  assert.doesNotMatch(clientText, /\/srv\/agentproxy/);
   assert.doesNotMatch(clientText, /translateSseStream/);
 });
 
@@ -275,7 +275,7 @@ test("chatCore turns a pre-content 1min.ai stream error into persisted HTTP 502"
     `event: error\ndata: ${JSON.stringify({
       error: {
         message:
-          "quota lookup failed at /srv/omniroute/open-sse/executors/oneminai.ts:230 api_key=pre-content-secret\nstack tail",
+          "quota lookup failed at /srv/agentproxy/open-sse/executors/oneminai.ts:230 api_key=pre-content-secret\nstack tail",
       },
     })}\n\n`,
   ]);
@@ -288,7 +288,7 @@ test("chatCore turns a pre-content 1min.ai stream error into persisted HTTP 502"
   const clientBody = await result.response.text();
   assert.match(clientBody, /STREAM_EARLY_EOF/);
   assert.doesNotMatch(clientBody, /pre-content-secret/);
-  assert.doesNotMatch(clientBody, /\/srv\/omniroute/);
+  assert.doesNotMatch(clientBody, /\/srv\/agentproxy/);
   assert.doesNotMatch(clientBody, /stack tail/);
 
   const detail = await waitFor(() => getOneMinCallLog(PRE_CONTENT_IDENTITY));
@@ -296,7 +296,7 @@ test("chatCore turns a pre-content 1min.ai stream error into persisted HTTP 502"
   assert.equal(detail.status, 502);
   const persisted = JSON.stringify(detail);
   assert.doesNotMatch(persisted, /pre-content-secret/);
-  assert.doesNotMatch(persisted, /\/srv\/omniroute/);
+  assert.doesNotMatch(persisted, /\/srv\/agentproxy/);
   assert.doesNotMatch(persisted, /stack tail/);
 
   const usage = await waitFor(() => getOneMinUsage(PRE_CONTENT_IDENTITY));
@@ -313,7 +313,7 @@ test("chatCore preserves batched 1min.ai content before its terminal stream erro
       'event: content\ndata: {"content":"batched partial two"}\n\n' +
       `event: error\ndata: ${JSON.stringify({
         message:
-          "provider failed at /srv/omniroute/open-sse/executors/oneminai.ts:230 api_key=batched-secret",
+          "provider failed at /srv/agentproxy/open-sse/executors/oneminai.ts:230 api_key=batched-secret",
       })}\n\n`,
   ]);
   const failures: Array<{
@@ -354,7 +354,7 @@ test("chatCore preserves batched 1min.ai content before its terminal stream erro
   assert.doesNotMatch(clientText, /"finish_reason":"stop"/);
   assert.doesNotMatch(clientText, /response\.failed/);
   assert.doesNotMatch(clientText, /batched-secret/);
-  assert.doesNotMatch(clientText, /\/srv\/omniroute/);
+  assert.doesNotMatch(clientText, /\/srv\/agentproxy/);
   assert.deepEqual(failures, [
     {
       status: 502,
@@ -380,7 +380,7 @@ test("chatCore preserves batched 1min.ai content before its terminal stream erro
   assert.equal(detail.error, "1min.ai upstream stream failed");
   const persisted = JSON.stringify(detail);
   assert.doesNotMatch(persisted, /batched-secret/);
-  assert.doesNotMatch(persisted, /\/srv\/omniroute/);
+  assert.doesNotMatch(persisted, /\/srv\/agentproxy/);
 
   const usage = await waitFor(() => getOneMinUsage(BATCHED_IDENTITY));
   assert.ok(usage, "the batched terminal failure usage record must be persisted");
@@ -431,7 +431,7 @@ test("chatCore preserves partial 1min.ai content then finalizes and persists a s
     encoder.encode(
       `event: error\ndata: ${JSON.stringify({
         message:
-          "provider failed at /srv/omniroute/open-sse/executors/oneminai.ts:230 api_key=post-content-secret\nstack tail",
+          "provider failed at /srv/agentproxy/open-sse/executors/oneminai.ts:230 api_key=post-content-secret\nstack tail",
       })}\n\n`
     )
   );
@@ -451,7 +451,7 @@ test("chatCore preserves partial 1min.ai content then finalizes and persists a s
   assert.doesNotMatch(clientText, /"finish_reason":"stop"/);
   assert.doesNotMatch(clientText, /response\.failed/);
   assert.doesNotMatch(clientText, /post-content-secret/);
-  assert.doesNotMatch(clientText, /\/srv\/omniroute/);
+  assert.doesNotMatch(clientText, /\/srv\/agentproxy/);
   assert.doesNotMatch(clientText, /stack tail/);
 
   assert.equal(cancelCalls, 1, "the upstream source must be cancelled after its terminal error");
@@ -479,7 +479,7 @@ test("chatCore preserves partial 1min.ai content then finalizes and persists a s
   const persisted = JSON.stringify(detail);
   assert.match(persisted, /1min\.ai upstream stream failed/);
   assert.doesNotMatch(persisted, /post-content-secret/);
-  assert.doesNotMatch(persisted, /\/srv\/omniroute/);
+  assert.doesNotMatch(persisted, /\/srv\/agentproxy/);
   assert.doesNotMatch(persisted, /stack tail/);
 
   const usage = await waitFor(() => getOneMinUsage(PARTIAL_IDENTITY));

@@ -8,7 +8,7 @@ import path from "node:path";
 // login protection is ON — on a fresh DB (CI) isAuthRequired() is false and the
 // policy anonymous-allows before any token check. Locally this only passed
 // because the dev DATA_DIR had a real password. Isolate + enable protection.
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-mgmt-cli-token-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-mgmt-cli-token-"));
 const originalDataDir = process.env.DATA_DIR;
 process.env.DATA_DIR = TEST_DATA_DIR;
 
@@ -107,21 +107,21 @@ test("management policy rejects wrong CLI token from localhost", async () => {
 test("route-level auth trusts only the central local-CLI subject stamp", async () => {
   const request = new Request("http://localhost/api/cli/whoami", {
     headers: {
-      "x-omniroute-auth-kind": "management_key",
-      "x-omniroute-auth-label": "local-cli-token",
+      "x-agentproxy-auth-kind": "management_key",
+      "x-agentproxy-auth-label": "local-cli-token",
     },
   });
   assert.equal(await requireManagementAuth(request, { alwaysRequireAuth: true }), null);
 
   const spoofedLabelOnly = new Request("http://localhost/api/cli/whoami", {
-    headers: { "x-omniroute-auth-label": "local-cli-token" },
+    headers: { "x-agentproxy-auth-label": "local-cli-token" },
   });
   assert.notEqual(await requireManagementAuth(spoofedLabelOnly, { alwaysRequireAuth: true }), null);
 });
 
 test("management policy rejects machine tokens when CLI-token auth is disabled", async () => {
-  const previous = process.env.OMNIROUTE_DISABLE_CLI_TOKEN;
-  process.env.OMNIROUTE_DISABLE_CLI_TOKEN = "true";
+  const previous = process.env.AGENTPROXY_DISABLE_CLI_TOKEN;
+  process.env.AGENTPROXY_DISABLE_CLI_TOKEN = "true";
   try {
     const ctx = makeCtx(
       { host: "localhost", [CLI_TOKEN_HEADER]: getMachineTokenSync() },
@@ -130,7 +130,7 @@ test("management policy rejects machine tokens when CLI-token auth is disabled",
     const outcome = await managementPolicy.evaluate(ctx);
     assert.equal(outcome.allow, false);
   } finally {
-    if (previous === undefined) delete process.env.OMNIROUTE_DISABLE_CLI_TOKEN;
-    else process.env.OMNIROUTE_DISABLE_CLI_TOKEN = previous;
+    if (previous === undefined) delete process.env.AGENTPROXY_DISABLE_CLI_TOKEN;
+    else process.env.AGENTPROXY_DISABLE_CLI_TOKEN = previous;
   }
 });

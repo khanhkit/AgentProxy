@@ -6,11 +6,11 @@ title: "Token Machine-ID CLI"
 
 ## Przegląd
 
-Komendy CLI OmniRoute uwierzytelniają się względem lokalnego management API za pomocą
+Komendy CLI AgentProxy uwierzytelniają się względem lokalnego management API za pomocą
 tokenu `HMAC-SHA256(machine-id, salt)` wysyłanego w nagłówku żądania
-`x-omniroute-cli-token`.
+`x-agentproxy-cli-token`.
 
-Dzięki temu podkomendy CLI (`omniroute status`, `omniroute providers` itd.)
+Dzięki temu podkomendy CLI (`agentproxy status`, `agentproxy providers` itd.)
 mogą wywoływać endpointy management bez konieczności podawania przez użytkownika JWT lub
 hasła przy każdym wywołaniu.
 
@@ -20,7 +20,7 @@ hasła przy każdym wywołaniu.
    (w razie niepowodzenia wraca do pustego stringa, wyłączając auth CLI).
 2. Oblicza `HMAC-SHA256(machine_id, salt)` i zwraca pełny 64-znakowy
    hex digest — deterministyczny, nieodwracalny token powiązany z tą maszyną.
-3. CLI wysyła token jako `x-omniroute-cli-token` w każdym żądaniu do
+3. CLI wysyła token jako `x-agentproxy-cli-token` w każdym żądaniu do
    `http://localhost:<port>/api/...`.
 4. Serwer (`src/server/authz/policies/management.ts`) ponownie oblicza
    oczekiwany token z tą samą solą i porównuje przez `timingSafeEqual`, aby
@@ -38,20 +38,20 @@ hasła przy każdym wywołaniu.
 
 ## Rotacja soli
 
-Ustaw `OMNIROUTE_CLI_SALT`, aby obrócić wyprowadzony token bez zmian w kodzie.
+Ustaw `AGENTPROXY_CLI_SALT`, aby obrócić wyprowadzony token bez zmian w kodzie.
 Po rotacji wszystkie procesy CLI na tej maszynie automatycznie użyją nowego tokenu.
 Przydatne po wycieku z listy procesów, który mógł ujawnić
 poprzednią wyprowadzoną wartość.
 
 ```bash
 # Persistent rotation (add to shell profile)
-export OMNIROUTE_CLI_SALT="my-secret-salt-2026"
+export AGENTPROXY_CLI_SALT="my-secret-salt-2026"
 
 # Verify new token is in use
-omniroute status
+agentproxy status
 ```
 
-Domyślna sól: `omniroute-cli-auth-v1`
+Domyślna sól: `agentproxy-cli-auth-v1`
 
 ## Format legacy (SHA-256, 32-znakowy) — nadal akceptowany
 
@@ -66,7 +66,7 @@ nadchodzący nagłówek z każdym przez `timingSafeEqual`
 Token jest więc ważny, jeśli pasuje do **albo** 64-znakowego digestu HMAC, **albo** 32-znakowego
 legacy prefiksu SHA-256.
 
-**Opt-out:** ustaw `OMNIROUTE_DISABLE_CLI_TOKEN=true` (env lub `.env`), aby całkowicie wyłączyć
+**Opt-out:** ustaw `AGENTPROXY_DISABLE_CLI_TOKEN=true` (env lub `.env`), aby całkowicie wyłączyć
 mechanizm tokenu CLI; cały dostęp wymaga wtedy jawnego klucza API. Na hostach wieloużytkownikowych
 jest to zalecane, ponieważ `machine-id` jest per-urządzenie (nie per-użytkownik) i inny
 użytkownik na tym samym hoście mógłby obliczyć ten sam token.

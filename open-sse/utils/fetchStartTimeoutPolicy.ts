@@ -2,9 +2,9 @@
 // real client's patience for STREAMING requests — it inherited the flat,
 // non-adaptive FETCH_TIMEOUT_MS (default 600_000ms / 10 minutes), five times
 // longer than Codex's own ~120s hard client-abort window. When an upstream
-// never returns a response at all (not even headers), OmniRoute kept the
+// never returns a response at all (not even headers), AgentProxy kept the
 // connection open with nothing but keepalives, guaranteeing the client gave
-// up first with an opaque 499 instead of OmniRoute detecting the stall and
+// up first with an opaque 499 instead of AgentProxy detecting the stall and
 // failing fast/over within a client-realistic window.
 //
 // This mirrors the adaptive philosophy of streamReadinessPolicy.ts's
@@ -30,7 +30,7 @@ export type FetchStartTimeoutPolicyResult = {
 };
 
 // Codex's documented hard client-abort window for a stalled turn (nothing but
-// keepalives in flight) is ~120s. Keep the cap safely under that so OmniRoute's
+// keepalives in flight) is ~120s. Keep the cap safely under that so AgentProxy's
 // own headers-phase watchdog always fires before the client gives up on its own.
 export const CODEX_CLIENT_ABORT_MS = 120_000;
 export const DEFAULT_FETCH_START_TIMEOUT_CAP_MS = 110_000;

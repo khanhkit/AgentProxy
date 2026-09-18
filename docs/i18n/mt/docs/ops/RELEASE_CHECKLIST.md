@@ -53,8 +53,8 @@ prompt ta' 2FA, il-provenjenza marbuta. Dan huwa l-bypass li s-sanzjonijiet npm 
 jgħaddu 2FA qed jitwarrbu; jerġa' jinstalla l-flow awtomatiku kollu li l-proġett kien qed joħroġ
 sa v3.8.48 filwaqt li jżomm il-garanzija WS1.3 (token mxerred ma jistax jippubblika waħdu — m'hawnx token).
 
-**Twaqqif wieħed (proprietarju):** npmjs.com → il-pakkett `omniroute` → Settings → _Trusted
-Publisher_ → GitHub: proprietor `diegosouzapw`, repo `OmniRoute`, workflow `npm-publish.yml`
+**Twaqqif wieħed (proprietarju):** npmjs.com → il-pakkett `agentproxy` → Settings → _Trusted
+Publisher_ → GitHub: proprietor `diegosouzapw`, repo `AgentProxy`, workflow `npm-publish.yml`
 (madwar: xejn). Sakemm dan ma jkunx hemm, l-pass awtomatiku falli b'`ENEEDAUTH`: terġa' tibgħat
 b'`publish_mode=staged` (hawn taħt) jew `direct`.
 
@@ -67,7 +67,7 @@ mexa wara l-prova, mhux qabilha.
 
 **Flow tal-Proprietarju wara li l-workflow jisfar:**
 
-1. `npm stage list omniroute` — sib l-identifikatur tal-iskedament (jintprinta wkoll fil-wiri tal-workflow).
+1. `npm stage list agentproxy` — sib l-identifikatur tal-iskedament (jintprinta wkoll fil-wiri tal-workflow).
 2. Verifika l-bajt skedat (irakkomandat): `npm stage download <id>`, imbagħad installa t-tarball
    ttellgħa f'prefiss temporanju u startjaha (`npm run check:pack-boot` jautomatizza l-istess
    verdict impakkjat→installat→startjat fl-CI).
@@ -79,10 +79,10 @@ mexa wara l-prova, mhux qabilha.
 `npm publish` immedjat leġiżlu (użu biss jekk l-iskedament innusu m'għadux jiġri; irrekordja għaliex).
 
 **Waħda ta' tweġiba (proprietarju, npmjs.com):** IConfiguration il-Trusted Publisher għal
-`omniroute` b'modu skedat biss biex token mxerred li ħajjitha twila ma jistax `npm publish`
+`agentproxy` b'modu skedat biss biex token mxerred li ħajjitha twila ma jistax `npm publish`
 direttament minn mkien — CI tista' tiskeda biss; biss il-2FA tal-proprietarju tista' tnaddaf.
 
-**Playbook ta' l-affarijiet miksura (bla tibdil):** `npm deprecate omniroute@<ħażin> "<raġun> — uża <saħħa>`
+**Playbook ta' l-affarijiet miksura (bla tibdil):** `npm deprecate agentproxy@<ħażin> "<raġun> — uża <saħħa>`
 bħala riflessu preżunt (minuti, reversibbli); `npm unpublish` biss fi ħdan it-tieqa ta' 72s/ebda-dipendenti
 u qatt bħala l-ewwel mossa. Docker: qatt terġa' tagħmel tag tag tag verżjoni — il-rollback huwa
 terġa' tpoġġi `latest` fuq l-aħħar diġest tajjeb.
@@ -201,7 +201,7 @@ Bidliet li jkissru: żid footer `BREAKING CHANGE:` jew `!` wara l-iskop (eż. `f
 - [ ] `npm run i18n:check` joħroġ 0 — l-istat tat-traduzzjoni (`.i18n-state.json`) sinkronizzat mad-dokumenti sorsi (l-ebda sorsi driftati fil-modalità stretta; il-mod ta' twissija huwa aċċettabbli għal touch-ups tal-aħħar minuta, iżda għandu jkun 0 qabel it-tagging)
 - [ ] `npm run i18n:check-ui-coverage` joħroġ 0 — kull locale tal-UI għall-inqas fil-livell ta' kopertura ta' 80%
 - [ ] `npm run i18n:sync-ui:dry` jirrapporta 0 ċwievet nieqsa fil-42 locale kollha
-- [ ] Jekk id-dokumenti sorsi bl-Ingliż inbidlu, mexxi `npm run i18n:run` (jeħtieġ `OMNIROUTE_TRANSLATION_API_KEY` f'`.env`) qabel it-tagging
+- [ ] Jekk id-dokumenti sorsi bl-Ingliż inbidlu, mexxi `npm run i18n:run` (jeħtieġ `AGENTPROXY_TRANSLATION_API_KEY` f'`.env`) qabel it-tagging
 - [ ] Kontribuzzjonijiet ta' traduzzjoni jistgħu jiġu differiti għar-rilaxx li jmiss jekk minuri (ittraċċa fil-CHANGELOG)
 
 ### Migrazzjonijiet tad-Database
@@ -210,7 +210,7 @@ Bidliet li jkissru: żid footer `BREAKING CHANGE:` jew `!` wara l-iskop (eż. `f
   - [ ] Kull migrazzjoni hija idempotenti (`CREATE TABLE IF NOT EXISTS`, eċċ.)
   - [ ] Il-migrazzjonijiet imgeżwra fi transazzjonijiet
   - [ ] In-numri korretti (l-ebda vojt fis-sekwenza)
-- [ ] Ittestja fuq installazzjoni friska: ħassar `~/.omniroute/omniroute.db` u mexxi `npm run dev`
+- [ ] Ittestja fuq installazzjoni friska: ħassar `~/.agentproxy/agentproxy.db` u mexxi `npm run dev`
 - [ ] Ittestja fuq installazzjoni eżistenti: backup tad-DB, mexxi l-migrazzjoni, ivverifika l-iskema
 - [ ] Il-fajls WAL (`-wal`, `-shm`) immaniġġjati b'mod korrett jekk il-migrazzjoni tikteb mill-ġdid it-tabelli
 
@@ -245,7 +245,7 @@ Ir-repo juża tliet direttorji ta' output distinti — qatt tħallathom:
 | `.build/`  | Intermedji tal-build — output ta' `next build` (`distDir`)           | Le (gitignored) |
 | `dist/`    | Bundle npm li jista' jintbagħat — immuntat minn `assembleStandalone` | Le (gitignored) |
 
-> **Nota tal-operatur:** id-direttorju tal-immaġni tal-VPS remota jibqa' `/usr/lib/node_modules/omniroute/app/`.
+> **Nota tal-operatur:** id-direttorju tal-immaġni tal-VPS remota jibqa' `/usr/lib/node_modules/agentproxy/app/`.
 > Biss l-output tal-build **fir-repo** ċċaqlaq (`app/` → `dist/`). Il-ħiliet ta' deploy rsync
 > il-kontenut ta' `dist/` fid-direttorju `app/` remot — l-ebda bidla fil-paths tal-VPS meħtieġa.
 
@@ -365,12 +365,12 @@ Qabel tibgħat xi rilaxx li jinkludi bidliet fis-servizzi integrati, ivverifika:
 
 Qabel tibgħat xi rilaxx v3.8.x, ivverifika l-oġġetti addizzjonali li ġejjin:
 
-- [ ] `omniroute --tray` jitfi fuq macOS (systray2 installat f'`~/.omniroute/runtime/`)
-- [ ] `omniroute --tray` jitfi fuq Linux (jeħtieġ DISPLAY; żball ħafif jekk mhuwiex impost)
-- [ ] `omniroute --tray` jitfi fuq Windows (PowerShell NotifyIcon, ebda binarji żejda)
-- [ ] `omniroute config tray enable` joħloq dħul għat-tifi awtomatiku; disable neħħih
-- [ ] `npm install -g omniroute@<din-il-verżjoni>` jgħaddi postinstall bla mtela fataali
-- [ ] It-triq ta' aġġornament iżżomm id-deps fakultattivi: `omniroute update --apply` u l-aġġornatur awtomatiku
+- [ ] `agentproxy --tray` jitfi fuq macOS (systray2 installat f'`~/.agentproxy/runtime/`)
+- [ ] `agentproxy --tray` jitfi fuq Linux (jeħtieġ DISPLAY; żball ħafif jekk mhuwiex impost)
+- [ ] `agentproxy --tray` jitfi fuq Windows (PowerShell NotifyIcon, ebda binarji żejda)
+- [ ] `agentproxy config tray enable` joħloq dħul għat-tifi awtomatiku; disable neħħih
+- [ ] `npm install -g agentproxy@<din-il-verżjoni>` jgħaddi postinstall bla mtela fataali
+- [ ] It-triq ta' aġġornament iżżomm id-deps fakultattivi: `agentproxy update --apply` u l-aġġornatur awtomatiku
       jwettaq `npm install -g … --include=optional` sabiex `optionalDependencies` (better-sqlite3,
       keytar, tls-client, u l-API tal-llmlingua SLM: `@atjsh/llmlingua-2@2.0.5`,
       `js-tiktoken`) jżommuhomhom waqt aġġornament. It-tier SLM "ultra `modelPath`" jeħtieġ ukoll il-mudell
@@ -380,13 +380,13 @@ Qabel tibgħat xi rilaxx v3.8.x, ivverifika l-oġġetti addizzjonali li ġejjin:
       — it-traccji stand-alone jinkludu biss transformers, mhux l-għażliet b'mod dinamiku importat,
       għalhekk mingħajr dan il-ħaddiem jkun qed jitfa' llmlingua-2 mal-transformers tal-għerq
       u t-tier SLM ikun qed ifalli b'sikrit lejn il-fażi ta' fejqan.
-- [ ] `omniroute status` jaħdem bla `.env` (token CLI, biss loopback)
+- [ ] `agentproxy status` jaħdem bla `.env` (token CLI, biss loopback)
 - [ ] `curl http://localhost:20128/api/shutdown` jirritorna 401 (rotta protetta dejjem)
 - [ ] `curl -H "host: evil.com" http://localhost:20128/api/mcp/sse` jirritorna 401 (gwardja loopback)
 - [ ] Il-lok ħarir ta' SQLite jirżolvi għal `running` fl-ewwel darba (binarju mżomm valida għall-pjan)
 - [ ] Il-lok ħarir ta' SQLite jirrikorri għal `runtime` meta `node_modules/better-sqlite3` jitneħħa
 - [ ] Filtru intelliġenti MCP jimmarka l-output veru ta' `playwright-mcp browser_snapshot` (tnaqqis ≥50%)
-- [ ] L-10 fajls `skills/omniroute*/SKILL.md` kollha jistgħu jitnġabru b'mod pubbliku permezz tal-URL bruta ta' GitHub
+- [ ] L-10 fajls `skills/agentproxy*/SKILL.md` kollha jistgħu jitnġabru b'mod pubbliku permezz tal-URL bruta ta' GitHub
 - [ ] Wizard ta' l-onboarding juri t-turija "Kif Taħdem" ta' l-iskala waqt twaqqif ġdid
 - [ ] Widget ta' l-għotjien tal-iskala fuq il-pagna d-dar juri l-kontijiet ffukati/mibdula
 

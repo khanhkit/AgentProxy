@@ -22,7 +22,7 @@ function tokensMatch(provided: string, expected: string): boolean {
 
 /**
  * Whether the request may use the A2A surface at all. Mirrors the JSON-RPC
- * posture: when a client key is required, demand a valid OmniRoute key;
+ * posture: when a client key is required, demand a valid AgentProxy key;
  * otherwise honor the legacy explicit A2A key; otherwise stay keyless (the
  * same local-first default as /v1).
  */
@@ -32,7 +32,7 @@ export async function authenticateA2ARequest(req: NextRequest | Request): Promis
     return apiKey ? await isValidApiKey(apiKey) : false;
   }
 
-  const configuredKey = process.env.AGENTPROXY_API_KEY || process.env.OMNIROUTE_API_KEY;
+  const configuredKey = process.env.AGENTPROXY_API_KEY;
   if (configuredKey) {
     return apiKey ? tokensMatch(apiKey, configuredKey) : false;
   }

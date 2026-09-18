@@ -17,17 +17,17 @@ lastUpdated: 2026-07-15
 
 🌐 **Languages:** 🇺🇸 [English](../../../../guides/TROUBLESHOOTING.md) · 🇸🇦 [ar](../../../ar/docs/guides/TROUBLESHOOTING.md) · 🇦🇿 [az](../../../az/docs/guides/TROUBLESHOOTING.md) · 🇧🇬 [bg](../../../bg/docs/guides/TROUBLESHOOTING.md) · 🇧🇩 [bn](../../../bn/docs/guides/TROUBLESHOOTING.md) · 🇨🇿 [cs](../../../cs/docs/guides/TROUBLESHOOTING.md) · 🇩🇰 [da](../../../da/docs/guides/TROUBLESHOOTING.md) · 🇩🇪 [de](../../../de/docs/guides/TROUBLESHOOTING.md) · 🇬🇷 [el](../../../el/docs/guides/TROUBLESHOOTING.md) · 🇪🇸 [es](../../../es/docs/guides/TROUBLESHOOTING.md) · 🇪🇪 [et](../../../et/docs/guides/TROUBLESHOOTING.md) · 🇮🇷 [fa](../../../fa/docs/guides/TROUBLESHOOTING.md) · 🇫🇮 [fi](../../../fi/docs/guides/TROUBLESHOOTING.md) · 🇫🇷 [fr](../../../fr/docs/guides/TROUBLESHOOTING.md) · 🇮🇪 [ga](../../../ga/docs/guides/TROUBLESHOOTING.md) · 🇮🇳 [gu](../../../gu/docs/guides/TROUBLESHOOTING.md) · 🇮🇱 [he](../../../he/docs/guides/TROUBLESHOOTING.md) · 🇮🇳 [hi](../../../hi/docs/guides/TROUBLESHOOTING.md) · 🇭🇷 [hr](../../../hr/docs/guides/TROUBLESHOOTING.md) · 🇭🇺 [hu](../../../hu/docs/guides/TROUBLESHOOTING.md) · 🇮🇩 [id](../../../id/docs/guides/TROUBLESHOOTING.md) · 🇮🇹 [it](../../../it/docs/guides/TROUBLESHOOTING.md) · 🇯🇵 [ja](../../../ja/docs/guides/TROUBLESHOOTING.md) · 🇰🇷 [ko](../../../ko/docs/guides/TROUBLESHOOTING.md) · 🇱🇹 [lt](../../../lt/docs/guides/TROUBLESHOOTING.md) · 🇱🇻 [lv](../../../lv/docs/guides/TROUBLESHOOTING.md) · 🇮🇳 [mr](../../../mr/docs/guides/TROUBLESHOOTING.md) · 🇲🇾 [ms](../../../ms/docs/guides/TROUBLESHOOTING.md) · 🇳🇱 [nl](../../../nl/docs/guides/TROUBLESHOOTING.md) · 🇳🇴 [no](../../../no/docs/guides/TROUBLESHOOTING.md) · 🇵🇭 [phi](../../../phi/docs/guides/TROUBLESHOOTING.md) · 🇵🇱 [pl](../../../pl/docs/guides/TROUBLESHOOTING.md) · 🇵🇹 [pt](../../../pt/docs/guides/TROUBLESHOOTING.md) · 🇧🇷 [pt-BR](../../../pt-BR/docs/guides/TROUBLESHOOTING.md) · 🇷🇴 [ro](../../../ro/docs/guides/TROUBLESHOOTING.md) · 🇷🇺 [ru](../../../ru/docs/guides/TROUBLESHOOTING.md) · 🇸🇰 [sk](../../../sk/docs/guides/TROUBLESHOOTING.md) · 🇸🇮 [sl](../../../sl/docs/guides/TROUBLESHOOTING.md) · 🇷🇸 [sr](../../../sr/docs/guides/TROUBLESHOOTING.md) · 🇸🇪 [sv](../../../sv/docs/guides/TROUBLESHOOTING.md) · 🇰🇪 [sw](../../../sw/docs/guides/TROUBLESHOOTING.md) · 🇮🇳 [ta](../../../ta/docs/guides/TROUBLESHOOTING.md) · 🇮🇳 [te](../../../te/docs/guides/TROUBLESHOOTING.md) · 🇹🇭 [th](../../../th/docs/guides/TROUBLESHOOTING.md) · 🇹🇷 [tr](../../../tr/docs/guides/TROUBLESHOOTING.md) · 🇺🇦 [uk-UA](../../../uk-UA/docs/guides/TROUBLESHOOTING.md) · 🇵🇰 [ur](../../../ur/docs/guides/TROUBLESHOOTING.md) · 🇻🇳 [vi](../../../vi/docs/guides/TROUBLESHOOTING.md) · 🇨🇳 [zh-CN](../../../zh-CN/docs/guides/TROUBLESHOOTING.md) · 🇹🇼 [zh-TW](../../../zh-TW/docs/guides/TROUBLESHOOTING.md)
 
-Problemi komuni u soluzzjonijiet għal OmniRoute.
+Problemi komuni u soluzzjonijiet għal AgentProxy.
 
 ---
 
 ## Referenza Rapida
 
-**Qed tibda ma' OmniRoute?** Irreferi hawn — dawn isolvu 90% tal-problemi:
+**Qed tibda ma' AgentProxy?** Irreferi hawn — dawn isolvu 90% tal-problemi:
 
 | Naraha dan                        | Xi jfisser                              | Xi tagħmel                                                                                        |
 | --------------------------------- | --------------------------------------- | ------------------------------------------------------------------------------------------------- |
-| "Ma nistgħħin nilħqu"             | OmniRoute mhux qed jilgħab              | Esegwix `omniroute` jew `docker restart omniroute`                                                |
+| "Ma nistgħħin nilħqu"             | AgentProxy mhux qed jilgħab              | Esegwix `agentproxy` jew `docker restart agentproxy`                                                |
 | "API key mhix valida"             | T-tastiera tiegħek hija ħażina skaduta  | Ikri mill-ġdid il-miftuħ mill-websajt tal-fornitur                                                |
 | "Limitu tar-rata m'għadx għandek" | Qed tibgħat wisq talba                  | Stenna minuta, jew uża `model: "auto"` għal fallback awtomatiku                                   |
 | "Kwota eżawriti"                  | Intkompletajt il-kwota ħaiera/pagamenta | Għaqqad aktar fornituri, jew uża fornituri ħaiera (Kiro, Pollinations)                            |
@@ -58,26 +58,26 @@ Problemi komuni u soluzzjonijiet għal OmniRoute.
 **Fejn il-komunità għarrfet is-soluzzjoni (2026-08-10)**: Aġġusta tliet varjali tal-ambjent biex ir-rota, il-kunċurrenti, u l-fallback jassorbu l-bidla costant tal-tier ħaiera minflok jinqatgħu f'dan:
 
 ```bash
-export OMNIROUTE_ROTATE_ON_400=true           # seffa taħt model/fornitur ieħor fuq 400/401 (jinżil minn mudelli pass-through eżati)
-export OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT=4   # limitu ta' ammissjoni għal heavyweight awtomatikament (m'huwiex stabbilit minn qabel: ebda limitu ta' numru tal-talbiet, ara l-ittra taħt)
-export OMNIROUTE_CHAT_ADMISSION_QUEUE_MS=5000 # intestizzjoni itwal u marbuta għall-kapaċità heavyweight minflok retry immedjat 503
+export AGENTPROXY_ROTATE_ON_400=true           # seffa taħt model/fornitur ieħor fuq 400/401 (jinżil minn mudelli pass-through eżati)
+export AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT=4   # limitu ta' ammissjoni għal heavyweight awtomatikament (m'huwiex stabbilit minn qabel: ebda limitu ta' numru tal-talbiet, ara l-ittra taħt)
+export AGENTPROXY_CHAT_ADMISSION_QUEUE_MS=5000 # intestizzjoni itwal u marbuta għall-kapaċità heavyweight minflok retry immedjat 503
 ```
 
-Stabbilixxi dawn fil-proċess ambjent ta' OmniRoute (id-dimon, p.e. permezz tal-polist LaunchAgent jew `systemctl edit`), imbagħad irriżartjaha. Il-biljett ta' rota hija l-għodda waħda b'isfel l-akbar enerġija: tibdel falliment iebes fi retry trasparenti kontra fornitur tajjeb fil-pool.
+Stabbilixxi dawn fil-proċess ambjent ta' AgentProxy (id-dimon, p.e. permezz tal-polist LaunchAgent jew `systemctl edit`), imbagħad irriżartjaha. Il-biljett ta' rota hija l-għodda waħda b'isfel l-akbar enerġija: tibdel falliment iebes fi retry trasparenti kontra fornitur tajjeb fil-pool.
 
-**Nota**: `OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT` jillimita kemm talbiet heavyweight — kkontestwali twal — jistgħu jaqdu fl-istess ħin; il-limitu huwa bieb ta' ammissjoni, mhux limitur tar-rata tal-fornitur. **Aġġornament #503-fanout:** din il-varjala m'għadhix stabbilita minn qabel issa (tissiżjona biss meta tittieħed b'mod espliċitu, kif hawn taħt) — l-ammissjoni heavyweight issa hija kontrollata minn baġit bajt li jirriżulta awtomatikament (`OMNIROUTE_CHAT_MAX_INFLIGHT_BYTES`) li jiġi skur minn l-limitu reali tal-memorja tal-host, hekk li distribuzzjoni ġdida għandha tara ħafna inqas irrefjut `503 chat_admission_busy` mingħajr ma jistabbilixxi din il-varjala; l-istabbiliment espliċitu hawn xorta jaħdem eżattament kif iddokumentat. Limiti espliċiti tal-baġit bajt jistgħu jillimitaw għal 8 MiB–2 GiB. `413 body_exceeds_budget` m'huwiex transitorju: żid dak il-baġit bajt, niżżel `OMNIROUTE_CHAT_HARD_MAX_BODY_BYTES`, jew żid il-limitu tal-memorja tal-proċess. `inflight_bytes_budget` sheds huma kontenzjonijiet temporanji u jistgħu jerġgħu jippruvaw. Ir-limiti tar-rata tal-fornitur (`open-sse/services/rateLimitManager.ts`) huma regolati b'mod separat b'`RATE_LIMIT_MAX_WAIT_MS`, `RATE_LIMIT_MAX_QUEUE_DEPTH`, u `RATE_LIMIT_AUTO_ENABLE` — ara `.env.example`.
+**Nota**: `AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT` jillimita kemm talbiet heavyweight — kkontestwali twal — jistgħu jaqdu fl-istess ħin; il-limitu huwa bieb ta' ammissjoni, mhux limitur tar-rata tal-fornitur. **Aġġornament #503-fanout:** din il-varjala m'għadhix stabbilita minn qabel issa (tissiżjona biss meta tittieħed b'mod espliċitu, kif hawn taħt) — l-ammissjoni heavyweight issa hija kontrollata minn baġit bajt li jirriżulta awtomatikament (`AGENTPROXY_CHAT_MAX_INFLIGHT_BYTES`) li jiġi skur minn l-limitu reali tal-memorja tal-host, hekk li distribuzzjoni ġdida għandha tara ħafna inqas irrefjut `503 chat_admission_busy` mingħajr ma jistabbilixxi din il-varjala; l-istabbiliment espliċitu hawn xorta jaħdem eżattament kif iddokumentat. Limiti espliċiti tal-baġit bajt jistgħu jillimitaw għal 8 MiB–2 GiB. `413 body_exceeds_budget` m'huwiex transitorju: żid dak il-baġit bajt, niżżel `AGENTPROXY_CHAT_HARD_MAX_BODY_BYTES`, jew żid il-limitu tal-memorja tal-proċess. `inflight_bytes_budget` sheds huma kontenzjonijiet temporanji u jistgħu jerġgħu jippruvaw. Ir-limiti tar-rata tal-fornitur (`open-sse/services/rateLimitManager.ts`) huma regolati b'mod separat b'`RATE_LIMIT_MAX_WAIT_MS`, `RATE_LIMIT_MAX_QUEUE_DEPTH`, u `RATE_LIMIT_AUTO_ENABLE` — ara `.env.example`.
 
 **Kif tiġverifika li ħadmet**: ġeddid l-aġent/cron tiegħek f'ritmiq malajr u ikkonferma li rebbieħa li kollha rnexxielu. Qabel is-soluzzjoni, it-tieni tensjoni ġeneralment ttaħtaq `429`/`401`. Wara s-soluzzjoni, il-fallimenti (jekk ikun hemm) jerġgħu jippruvaw b'trasparenza u s-sejħa tintemm. Tista' wkoll `curl /monitoring/health` u ħares lejn il-qasam `rateLimitedUntil` fil-konnessjonijiet tal-fornitur u `circuitBreakers.providerBreakers[].state` għall-fornituri affettwati — l-istat huwa wieħed minn `CLOSED`, `DEGRADED`, `OPEN`, jew `HALF_OPEN` (ara `src/shared/utils/circuitBreaker.ts`), u fornitur li jkompli jfalli se jinbidel `CLOSED → DEGRADED → OPEN` qabel ma jħallilhom l-perjodu ta' reset jgħaddi timbut (`HALF_OPEN`).
 
-**Jekk għad tara 429**: l-kont attiv għal dak il-fornitur għandu b'mod veru eżawrit il-kwota tiegħu (mhux biss ir-rata). Żid it-tieni kont għall-istess fornitur fil-dashboard ta' OmniRoute → Fornituri → Konti, jew ħallat fornitur ħaiera ieħor (p.e. `routeway`, `auggie`). Ir-rotazzjoni tgħin biss mal-rate transitorja/400/401; eżawrizzjoni ta' kwota iebes teħtieġ tieni kredenzjal jew fornitur differenti.
+**Jekk għad tara 429**: l-kont attiv għal dak il-fornitur għandu b'mod veru eżawrit il-kwota tiegħu (mhux biss ir-rata). Żid it-tieni kont għall-istess fornitur fil-dashboard ta' AgentProxy → Fornituri → Konti, jew ħallat fornitur ħaiera ieħor (p.e. `routeway`, `auggie`). Ir-rotazzjoni tgħin biss mal-rate transitorja/400/401; eżawrizzjoni ta' kwota iebes teħtieġ tieni kredenzjal jew fornitur differenti.
 
 **Jekk tara 403 fuq mudelli tar-rieda (`auto/vision`, `bazaarlink/*`)**: il-kont m'għandux pjan li jinkludi r-rieda, jew l-API key m'għandhiex permessijiet suffiċenti. Verifika fil-dashboard tal-fornitur li skopert il-miftuħ jinkludi r-rieda/multimedja, jew għaqqad kont tal-pjan imħallas u żommu bħala l-mira tar-rieda.
 
 ## Avviżi tal-npm install (ERESOLVE / peer / deprecated)
 
-Meta tħaddem `npm install -g omniroute`, tista' tara ħajt ta' avviżi bħal `npm warn ERESOLVE`, avviżi ta' peer-dependency, u messaġġi ta' `deprecated`. **Dawn huma mistennija u ħadd ma jagħmilhom ħsara.** L-installazzjoni rnexxiela jekk tara `added <N> packages` fl-output.
+Meta tħaddem `npm install -g agentproxy`, tista' tara ħajt ta' avviżi bħal `npm warn ERESOLVE`, avviżi ta' peer-dependency, u messaġġi ta' `deprecated`. **Dawn huma mistennija u ħadd ma jagħmilhom ħsara.** L-installazzjoni rnexxiela jekk tara `added <N> packages` fl-output.
 
-L-avviżi ġejjin minn medji ta' peer-dependency ferm fi fowkijiet ta' partijiet terzi li OmniRoute ma jiġrix:
+L-avviżi ġejjin minn medji ta' peer-dependency ferm fi fowkijiet ta' partijiet terzi li AgentProxy ma jiġrix:
 
 1. **`marked-terminal` jixtieq `marked >=1 <16`, sab `marked@18`** — jaħdem tajjeb fil-prattika; il-medja ta' l-upstream huwa sempliċiment ferm.
 2. **`deprecated prebuild-install@7.1.3`** — għajnuna transittiva biex tniżżel il-binarju nattiv. Ma jintużax biex jinstalla l-binding tal-ispeditur `wreq-js` maħtur u ma jindikax li l-issettar tas-sors tal-ispeditur tal-web-cookie falla.
@@ -93,10 +93,10 @@ L-avviżi ġejjin minn medji ta' peer-dependency ferm fi fowkijiet ta' partijiet
 | L-ewwel login ma jaħdimx                                   | Issettja `INITIAL_PASSWORD` f'`.env` (ebda default immankinat)                                                                                                                                         |
 | L-dashboard jiftaħ fuq il-port ħażin                       | Issettja `PORT=20128` u `NEXT_PUBLIC_BASE_URL=http://localhost:20128`                                                                                                                                  |
 | Ebda logs ma jinkitbu fuq il-diska                         | Issettja `APP_LOG_TO_FILE=true` u ivverifika li t-tar_config tal-call log hija attiva                                                                                                                  |
-| EACCES: permess miċħud                                     | Issettja `DATA_DIR=/path/to/writable/dir` biex terfa' `~/.omniroute`                                                                                                                                   |
+| EACCES: permess miċħud                                     | Issettja `DATA_DIR=/path/to/writable/dir` biex terfa' `~/.agentproxy`                                                                                                                                   |
 | L-istrateġija tal-irfigħ mhijiex qed tinżamm               | Ġdid għar-rilaxx tal-aħħar tal-v3.x (tiswija ta' l-isema Zod għall-ħażna tal-issettariet irnexxiha fl-għadd tal-verżjonijiet)                                                                          |
 | It-taqlib tal-login / il-paġna vojta                       | Iċċekkja l-verżjoni ta' Node.js — ara [Kompatibilità ta' Node.js](#kompatibilità-ta-nodejs) hawn taħt                                                                                                  |
-| `dlopen` / `slice is not valid mach-o file` (macOS)        | Ġar `cd $(npm root -g)/omniroute/app && npm rebuild better-sqlite3 && omniroute` — ara [It-tħaffif mill-ġdid tal-modulu nattiv tal-macOS](#it-tħaffif-mill-ġdid-tal-modulu-nattiv-tal-macos) hawn taħt |
+| `dlopen` / `slice is not valid mach-o file` (macOS)        | Ġar `cd $(npm root -g)/agentproxy/app && npm rebuild better-sqlite3 && agentproxy` — ara [It-tħaffif mill-ġdid tal-modulu nattiv tal-macOS](#it-tħaffif-mill-ġdid-tal-modulu-nattiv-tal-macos) hawn taħt |
 | Il-proxy "fetch failed"                                    | Ensure li l-konfigurazzjoni tal-proxy tinsab fil-livell korrett — ara [Problemi tal-Proxy](#problemi-tal-proxy) hawn taħt                                                                              |
 | Docker `curl: (56) Recv failure: Connection reset by peer` | Il-port ta' l-għafis tal-Docker jista' jkun qed jinżel fuq l-IPv6. Uża `-p 127.0.0.1:20128:20128` biex tipprova l-IPv4, jew ittestja b'`curl -4`. Ara [IPv6 tal-Docker](#ipv6-tal-docker) hawn taħt    |
 | L-antivirus jikkwarantina `README.md`                      | Falz pożittiv — ara [Falz pożittivi tal-antivirus](#falz-pożittivi-tal-antivirus) hawn taħt                                                                                                            |
@@ -113,8 +113,8 @@ L-avviżi ġejjin minn medji ta' peer-dependency ferm fi fowkijiet ta' partijiet
 **Dan huwa pożittiv falz. Xejn mhu infettat, u m'hemmx bżonn ta' ebda azzjoni.**
 
 Avast u AVG jużaw euristika li timmarka fajls plain-text/Markdown li fihom ħafna
-links li jixbhu HTTP-request. Il-`README.md` ta' OmniRoute jidħol fil-pakkett npm (huwa
-elenkat fil-`package.json` → `files`), għalhekk jispiċċa f'`node_modules/omniroute/README.md`
+links li jixbhu HTTP-request. Il-`README.md` ta' AgentProxy jidħol fil-pakkett npm (huwa
+elenkat fil-`package.json` → `files`), għalhekk jispiċċa f'`node_modules/agentproxy/README.md`
 f'installazzjoni globali — u fih madwar 15-il eżempju ta' `http://localhost:20128/...` (l-endpoints
 MCP HTTP/SSE, l-URL `.well-known` ta' A2A, u snippets ta' `curl`). Dik id-densità ta' links
 hija biżżejjed biex tattiva l-euristika.
@@ -130,7 +130,7 @@ b'mod sikur mill-kwarantina.
 
 1. **Ieqaf in-notifiki** — eskludi d-direttorju tal-installazzjoni fl-antivirus tiegħek
    (Avast: Settings → Exceptions), billi żżid il-passaġġ globali ta' `node_modules` u/jew
-   id-direttorju tad-dejta ta' OmniRoute (`~/.omniroute/`).
+   id-direttorju tad-dejta ta' AgentProxy (`~/.agentproxy/`).
 2. **Irrapporta l-pożittiv falz** — <https://www.avast.com/false-positive-file-form.php>,
    billi tehmeż il-`README.md` fil-kwarantina. Dan huwa l-fix li jgħin lil kulħadd, peress li
    hija l-euristika tal-fornitur li qed tirreaġixxi żżejjed għal fajl ta' test.
@@ -161,7 +161,7 @@ mal-app desktop, pereżempju:
 **Għaliex jispara:** l-installer tal-Windows **għadu mhux code-signed**, għalhekk installer
 NSIS mhux iffirmat m'għandu l-ebda reputazzjoni u l-euristika komportamentali taħdem bl-ogħla
 aggressività. Flimkien ma' DLL nattiv miġbur u mijiet ta' fajls `.js` miktuba taħt
-`%LOCALAPPDATA%\Programs\OmniRoute` (inklużi direttorji ta' pakketti b'suffiss hash mill-
+`%LOCALAPPDATA%\Programs\AgentProxy` (inklużi direttorji ta' pakketti b'suffiss hash mill-
 build standalone ta' Next.js), dan huwa biżżejjed biex jattiva l-euristika. L-iffirmar
 tal-kodiċi huwa ppjanat; sakemm jitwettaq, rilaxxi ġodda jistgħu jirrepetu dan.
 
@@ -169,16 +169,16 @@ tal-kodiċi huwa ppjanat; sakemm jitwettaq, rilaxxi ġodda jistgħu jirrepetu da
 
 1. **Ivverifika l-download tiegħek l-ewwel** (jirregola barra fajl imbagħbas). Kull rilaxx
    jippubblika `latest.yml`, li l-qasam `sha512` tiegħu (base64) ikopri l-installer
-   `OmniRoute.Setup.<version>.exe`. Fil-PowerShell, mill-folder li fih l-installer:
+   `AgentProxy.Setup.<version>.exe`. Fil-PowerShell, mill-folder li fih l-installer:
    ```powershell
    $b = [System.Security.Cryptography.SHA512]::Create().ComputeHash(
-     [System.IO.File]::ReadAllBytes("$PWD\OmniRoute.Setup.<version>.exe"))
+     [System.IO.File]::ReadAllBytes("$PWD\AgentProxy.Setup.<version>.exe"))
    [Convert]::ToBase64String($b)
    ```
    L-output irid jaqbel ma' `latest.yml` → `sha512`. Jekk ma jaqbilx, ħassar il-fajl u
-   erġa' niżżel biss mill-[paġna tar-rilaxxi ta' GitHub](https://github.com/diegosouzapw/OmniRoute/releases).
+   erġa' niżżel biss mill-[paġna tar-rilaxxi ta' GitHub](https://github.com/khanhkit/AgentProxy/releases).
 2. **Irrestawra + eskludi** — irrestawra l-oġġetti rrolljati lura mill-kwarantina u żid esklużjoni
-   għal `%LOCALAPPDATA%\Programs\OmniRoute` (Kaspersky → Settings → Threats and Exclusions),
+   għal `%LOCALAPPDATA%\Programs\AgentProxy` (Kaspersky → Settings → Threats and Exclusions),
    imbagħad erġa' installa.
 3. **Irrapporta l-pożittiv falz** — <https://opentip.kaspersky.com/>. Rapporti ta' FP
    sottomessi mill-utenti verament iħaffu l-allowlisting.
@@ -191,7 +191,7 @@ tal-kodiċi huwa ppjanat; sakemm jitwettaq, rilaxxi ġodda jistgħu jirrepetu da
 
 ### Il-paġna tal-login tista' tħob jew turi żball "Modulu ta' reġistrazzjoni personali"
 
-**Kawża:** Qiegħed/togħdux taħdem verżjoni ta' Node.js li tinsab barra mill-fond sigur approvat ta' OmniRoute. L-każ l-aktar komuni huwa li tkun qed tuża verżjoni aktar antika ta' Node 22 jew 24 li taqa' taħt il-patch tas-sigurtà li jeħtieġ OmniRoute.
+**Kawża:** Qiegħed/togħdux taħdem verżjoni ta' Node.js li tinsab barra mill-fond sigur approvat ta' AgentProxy. L-każ l-aktar komuni huwa li tkun qed tuża verżjoni aktar antika ta' Node 22 jew 24 li taqa' taħt il-patch tas-sigurtà li jeħtieġ AgentProxy.
 
 **Sintomi:**
 
@@ -207,8 +207,8 @@ tal-kodiċi huwa ppjanat; sakemm jitwettaq, rilaxxi ġodda jistgħu jirrepetu da
    nvm use 24
    ```
 2. Ċċekkja l-verżjoni tiegħek: `node --version` għandha turi `v24.0.0` jew aktar ġdid fuq il-linja 24.x LTS
-3. Reinstalla OmniRoute: `npm install -g omniroute`
-4. Irriparti: `omniroute`
+3. Reinstalla AgentProxy: `npm install -g agentproxy`
+4. Irriparti: `agentproxy`
 
 > **Verżjonijiet siguri appoġġjati:** `>=22.22.2 <23` jew `>=24.0.0 <27`. Node.js 24.x LTS (Krypton) u Node.js 26 huma kompletament appoġġjati.
 
@@ -244,7 +244,7 @@ tal-kodiċi huwa ppjanat; sakemm jitwettaq, rilaxxi ġodda jistgħu jirrepetu da
 
 <a name="macos-native-module-rebuild"></a>
 
-**Kawża:** Wara `npm install -g omniroute` globali, il-binarju nattiv `better-sqlite3` fil-pakkett jista' jkun ġie kompilat għar-arkitettura jew ABI differenti minn dik li qed taħdem lokalment. Dan huwa komuni fuq macOS (sakemm Apple Silicon u Intel) meta l-binarju pre-mibni ma jkunx jaqbel mal-ambjent tiegħek.
+**Kawża:** Wara `npm install -g agentproxy` globali, il-binarju nattiv `better-sqlite3` fil-pakkett jista' jkun ġie kompilat għar-arkitettura jew ABI differenti minn dik li qed taħdem lokalment. Dan huwa komuni fuq macOS (sakemm Apple Silicon u Intel) meta l-binarju pre-mibni ma jkunx jaqbel mal-ambjent tiegħek.
 
 **Sintomi:**
 
@@ -253,15 +253,15 @@ tal-kodiċi huwa ppjanat; sakemm jitwettaq, rilaxxi ġodda jistgħu jirrepetu da
 - Eżempju sħiħ:
 
 ```
-dlopen(/Users/<user>/.nvm/versions/node/v24.14.1/lib/node_modules/omniroute/app/node_modules/better-sqlite3/build/Release/better_sqlite3.node, 0x0001): tried: '...' (slice is not valid mach-o file)
+dlopen(/Users/<user>/.nvm/versions/node/v24.14.1/lib/node_modules/agentproxy/app/node_modules/better-sqlite3/build/Release/better_sqlite3.node, 0x0001): tried: '...' (slice is not valid mach-o file)
 ```
 
 **Tiswija — terġa' tibni għall-ambjent lokali tiegħek (mhux meħtieġ tnaqqas il-verżjoni ta' Node.js):**
 
 ```bash
-cd $(npm root -g)/omniroute/app
+cd $(npm root -g)/agentproxy/app
 npm rebuild better-sqlite3
-omniroute
+agentproxy
 ```
 
 > **Nota:** Dan terġa' tikkompila l-binding nattiva kontra l-verżjoni lokali ta' Node.js u l-arkitettura tal-CPU, u tissolva l-inċoerenza tal-binarju. Il-firxa tal-ambjent officially supported hija **`>=22.22.2 <23` jew `>=24.0.0 <27`** (`SUPPORTED_NODE_RANGE` f'`src/shared/utils/nodeRuntimeSupport.ts`, allinjat mal-kamp `engines` tal-`package.json`). Node.js 24.x LTS (Krypton) u Node.js 26 huma kompletament appoġġjati b'`better-sqlite3` v12.x.
@@ -286,13 +286,13 @@ omniroute
 
 **Kawża:** Fuq Node.js 22, id-dixpatcher undici@8 ma hux kompatibbli mal-implimentazzjoni interna ta' `fetch()` ta' Node.
 
-**Soluzzjoni (v3.5.5+):** OmniRoute issa tuża l-funzjoni propja `fetch()` ta' undici meta d-dixpatcher tal-proxy ikun attiv, biex tiżgura konducta konsistenti. Aġġorna għal v3.5.5+.
+**Soluzzjoni (v3.5.5+):** AgentProxy issa tuża l-funzjoni propja `fetch()` ta' undici meta d-dixpatcher tal-proxy ikun attiv, biex tiżgura konducta konsistenti. Aġġorna għal v3.5.5+.
 
 ### MITM proxy taħt WSL: l-apps desktop fil-host Windows mhumiex interċettati
 
-**Kawża:** Il-MITM proxy u l-ċertifikat CA tiegħu jinstallaw fl-ambjent fejn jidħol OmniRoute. Taħt WSL, dik l-ambjent hija l-guest Linux, filwaqt li l-apps desktop tal-AI (Kiro, Trae, Copilot, Zed, …) jaħdmu fil-host Windows. L-apps tal-host ma jafux bil-ħżen tal-ċertifikati tal-guest u ma jgħaddux permezz tal-proxy tal-sistema tal-guest, għalhekk l-interċezzjoni desktop ma tinfedaħx hemm.
+**Kawża:** Il-MITM proxy u l-ċertifikat CA tiegħu jinstallaw fl-ambjent fejn jidħol AgentProxy. Taħt WSL, dik l-ambjent hija l-guest Linux, filwaqt li l-apps desktop tal-AI (Kiro, Trae, Copilot, Zed, …) jaħdmu fil-host Windows. L-apps tal-host ma jafux bil-ħżen tal-ċertifikati tal-guest u ma jgħaddux permezz tal-proxy tal-sistema tal-guest, għalhekk l-interċezzjoni desktop ma tinfedaħx hemm.
 
-**Rakkomandazzjoni:** Ħalli OmniRoute jidħol b'mod nattiv fl-istess OS mal-apps desktop li trid interċetta (għal apps ta' Windows; għal macOS/Likewise). Iżżomm OmniRoute filwaqt li mmirat lejn apps tal-host jeħtieġ li inti tafda manwalment iċ-ċertifikat ġenerat CA fil-host Windows u tiddirezzjonja l-settings tal-在网络/ proxy ta' kull app tal-host lejn il-punt tal-proxy WSL — waħda li ma humiex appoġġjata u frak.
+**Rakkomandazzjoni:** Ħalli AgentProxy jidħol b'mod nattiv fl-istess OS mal-apps desktop li trid interċetta (għal apps ta' Windows; għal macOS/Likewise). Iżżomm AgentProxy filwaqt li mmirat lejn apps tal-host jeħtieġ li inti tafda manwalment iċ-ċertifikat ġenerat CA fil-host Windows u tiddirezzjonja l-settings tal-在网络/ proxy ta' kull app tal-host lejn il-punt tal-proxy WSL — waħda li ma humiex appoġġjata u frak.
 
 ---
 
@@ -319,7 +319,7 @@ omniroute
 
 ### Token tal-Oxnowa skadew
 
-OmniRoute jiġġeddid it-token awtomatikament. Jekk il-problemi jkomplu:
+AgentProxy jiġġeddid it-token awtomatikament. Jekk il-problemi jkomplu:
 
 1. Dashboard → Provider → Ġedded il-konnessjoni
 2. ħassar u erġa' żid il-konnessjoni tal-Provider
@@ -349,7 +349,7 @@ ara [`docs/guides/KIRO_SETUP.md`](./KIRO_SETUP.md).
 ### Żbalji ta' Sinkronizzazzjoni Cloud
 
 1. Ivverifika li `BASE_URL` jindika lejn l-instanza tiegħek li qed taħdem (eż., `http://localhost:20128`)
-2. Ivverifika li `CLOUD_URL` jindika lejn l-endpoint cloud tiegħek (eż., `https://omniroute.dev`)
+2. Ivverifika li `CLOUD_URL` jindika lejn l-endpoint cloud tiegħek (eż., `https://agentproxy.example.com`)
 3. Żomm il-valuri `NEXT_PUBLIC_*` allinjati mal-valuri fuq in-naħa tas-server
 
 ### Cloud `stream=false` Jirritorna 500
@@ -383,8 +383,8 @@ ara [`docs/guides/KIRO_SETUP.md`](./KIRO_SETUP.md).
 1. **Dijanjosi rapida:** Mexxi `curl -4 http://localhost:20128/v1/models`. Jekk jaħdem b'`-4` iżda jfalli mingħajru, għandek mismatch ta' bind IPv6.
 2. **Soluzzjoni permanenti:** Irbata espliċitament ma' IPv4 billi tuża `-p 127.0.0.1:20128:20128` fil-kmand `docker run` tiegħek:
    ```bash
-   docker run -d --name omniroute --restart unless-stopped --stop-timeout 40 \
-     -p 127.0.0.1:20128:20128 -v omniroute-data:/app/data diegosouzapw/omniroute:latest
+   docker run -d --name agentproxy --restart unless-stopped --stop-timeout 40 \
+     -p 127.0.0.1:20128:20128 -v agentproxy-data:/app/data khanhkit/agentproxy:latest
    ```
    Dan jimbotta l-bind IPv4 u jevita wkoll li jesponi l-proxy fuq l-interfaces kollha tal-host.
 
@@ -528,7 +528,7 @@ Il-profili tal-fornituri jappoġġjaw dawn is-settings:
 
 ### Anti-thundering herd
 
-Meta ħafna talbiet konkorrenti jolqtu fornitur b'rate-limit, OmniRoute juża mutex + auto rate-limiting biex jisserializza t-talbiet u jipprevjeni fallimenti kaskata. Dan huwa awtomatiku għal fornituri ta' API key.
+Meta ħafna talbiet konkorrenti jolqtu fornitur b'rate-limit, AgentProxy juża mutex + auto rate-limiting biex jisserializza t-talbiet u jipprevjeni fallimenti kaskata. Dan huwa awtomatiku għal fornituri ta' API key.
 
 ### Talbiet ta' chat ifallu b'503 / chat_admission_busy
 
@@ -537,7 +537,7 @@ Meta ħafna talbiet konkorrenti jolqtu fornitur b'rate-limit, OmniRoute juża mu
 - L-endpoint tal-chat completions jirritorna rispons retryable `503` li l-kodiċi tal-iżball tiegħu huwa
   `chat_admission_busy`.
 - Ir-rispons jinkludi `Retry-After`. Minn #12135 il-valur huwa derivat mill-okkupanza osservata
-  — l-akbar bejn it-tieqa `OMNIROUTE_CHAT_ADMISSION_QUEUE_MS` li t-talba diġà stenna u l-ħin li
+  — l-akbar bejn it-tieqa `AGENTPROXY_CHAT_ADMISSION_QUEUE_MS` li t-talba diġà stenna u l-ħin li
   ż-żmienijiet tal-heavyweight leases attwali ilhom miżmuma — arrotondat 'il fuq għal sekondi
   sħaħ u limitat għal 60. Fuq gate idle iżomm il-floors storiċi: 2 sekondi fuq il-
   byte-based path, sekonda 1 fuq il-structure-based path (li jinkludi wkoll
@@ -564,22 +564,22 @@ Fil-limiti default, talba hija strutturalment tqila meta jkollha mill-inqas `200
 mill-inqas `64` għodod, jew mill-inqas `32,000` tokens stmati, jew meta l-istima strutturali limitata
 tispiċċa l-limiti tagħha ta' `10,000` nodes miżjura jew fond `12`.
 
-**Kawża:** Dan huwa load shedding intenzjonat ġewwa OmniRoute, mhux falliment tal-fornitur upstream.
+**Kawża:** Dan huwa load shedding intenzjonat ġewwa AgentProxy, mhux falliment tal-fornitur upstream.
 Kull proċess juża guard lokali għall-proċess biex jirriżerva kapaċità limitata ta' heavyweight qabel ma
 iżomm u jipparsa korp ta' talba kbir. Heavyweight lease jibqa' miżmum għall-ħajja ta' rispons SSE.
 
 **#503-fanout:** qabel din il-fissazzjoni, il-guard kien jillimita l-konkorrenza għal numru fiss ta' talbiet
-(`OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT`, default `1`) irrispettivament mill-memorja tal-host, għalhekk il-
+(`AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT`, default `1`) irrispettivament mill-memorja tal-host, għalhekk il-
 fan-out tal-coding-agent (subagents/CLIs multipli, korpi ta' rutina > 256 KB) kien jikkollassa għal
 konkorrenza effettiva ta' ~1 u jirritorna 503 taħt tagħbija kompletament normali. Il-guard issa jirregola
-ruħu: huwa ggvernat minn baġit ta' BYTES ta' ingest derivat awtomatikament (`OMNIROUTE_CHAT_MAX_INFLIGHT_BYTES`)
+ruħu: huwa ggvernat minn baġit ta' BYTES ta' ingest derivat awtomatikament (`AGENTPROXY_CHAT_MAX_INFLIGHT_BYTES`)
 daqs il-limitu reali tal-memorja tal-proċess, u jikkonsulta wkoll sinjal ta' pressjoni fuq ir-riżorsi live — għalhekk
 jagħmel shed biss meta l-host ikun verament taħt pressjoni ta' memorja, mhux sempliċement għax aktar minn talba
-tqila waħda waslet fl-istess ħin. Il-limitu l-antik tan-numru (`OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT`) għadu
+tqila waħda waslet fl-istess ħin. Il-limitu l-antik tan-numru (`AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT`) għadu
 rispettat, iżda biss jekk inti tistabbilixxu espliċitament.
 
 Meta l-kapaċità tkun busy, talba heavyweight l-ewwel tistenna sa
-`OMNIROUTE_CHAT_ADMISSION_QUEUE_MS` (default `2000`, `0` jiddiżattiva l-istennija) għal slot li jeħles
+`AGENTPROXY_CHAT_ADMISSION_QUEUE_MS` (default `2000`, `0` jiddiżattiva l-istennija) għal slot li jeħles
 qabel ma twieġeb il-`503` retryable. L-istennija limitata teżisti biex klijenti ta' tip agent
 (OpenCode, Claude Code, Cursor) li jxerrdu sub-talbiet tqal b'mod konkorrenti jisserializzaw il-burst
 minflok jaħarqu l-baġit kollu ta' retry fuq rifjuti immedjati u jmutu f'nofs il-kompitu.
@@ -600,7 +600,7 @@ false` u `maxInflightBytes` ġeneruż ifissru li l-baġit derivat awtomatikament
    tagħbija iżgħar.
 3. Biss jekk `/api/monitoring/health` juri li l-baġit derivat awtomatikament huwa verament żgħir wisq għal
    host tiegħek (rari — diġà jiskala minn container għal bare-metal), aqbeżha direttament ma'
-   `OMNIROUTE_CHAT_MAX_INFLIGHT_BYTES` minflok ma terġa' lura għal-limitu l-antik tan-numru ta' talbiet.
+   `AGENTPROXY_CHAT_MAX_INFLIGHT_BYTES` minflok ma terġa' lura għal-limitu l-antik tan-numru ta' talbiet.
 
 Ara r-[referenza tal-varjabbli ambjentali](../reference/ENVIRONMENT.md#4-security--authentication)
 għas-settings awtoritattivi ta' ammissjoni.
@@ -609,7 +609,7 @@ għas-settings awtoritattivi ta' ammissjoni.
 
 ## Tassonomija fakultattiva ta' fallimenti RAG / LLM (16 problema)
 
-Xi utenti ta' OmniRoute jpoġġu l-gateway quddiem stacks RAG jew agent. F'dawk is-setups huwa komuni li wieħed jara mudell stramb: OmniRoute jidher b'saħħtu (providers up, routing profiles ok, l-ebda allerti ta' rate limit) iżda t-tweġiba finali xorta waħda tkun ħażina.
+Xi utenti ta' AgentProxy jpoġġu l-gateway quddiem stacks RAG jew agent. F'dawk is-setups huwa komuni li wieħed jara mudell stramb: AgentProxy jidher b'saħħtu (providers up, routing profiles ok, l-ebda allerti ta' rate limit) iżda t-tweġiba finali xorta waħda tkun ħażina.
 
 Fil-prattika dawn l-inċidenti normalment jiġu mill-pipeline RAG downstream, mhux mill-gateway innifsu.
 
@@ -628,17 +628,17 @@ L-idea hija sempliċi:
 
 1. Meta tinvestiga tweġiba ħażina, ikseb:
    - il-kompitu u t-talba tal-utent
-   - il-kombinazzjoni ta' rotta jew provider f'OmniRoute
+   - il-kombinazzjoni ta' rotta jew provider f'AgentProxy
    - kwalunkwe kuntest RAG użat downstream (dokumenti rkuprati, sejħiet ta' għodod, eċċ.)
 2. Ibbaża l-inċident fuq numru wieħed jew tnejn tal-WFGY ProblemMap (`No.1` … `No.16`).
-3. Aħżen in-numru fid-dashboard tiegħek, runbook, jew tracker tal-inċidenti ħdejn il-logs ta' OmniRoute.
+3. Aħżen in-numru fid-dashboard tiegħek, runbook, jew tracker tal-inċidenti ħdejn il-logs ta' AgentProxy.
 4. Uża l-paġna korrispondenti tal-WFGY biex tiddeċiedi jekk għandekx bżonn tibdel l-istack RAG tiegħek, ir-retriever, jew l-istrateġija tar-routing.
 
 It-test sħiħ u riċetti konkreti jinsabu hawn (liċenzja MIT, test biss):
 
 [WFGY ProblemMap README](https://github.com/onestardao/WFGY/blob/main/ProblemMap/README.md)
 
-Tista' tinjora din it-taqsima jekk ma tmexxix pipelines RAG jew agent wara OmniRoute.
+Tista' tinjora din it-taqsima jekk ma tmexxix pipelines RAG jew agent wara AgentProxy.
 
 ---
 
@@ -662,7 +662,7 @@ Kwistjonijiet speċifiċi għar-rilaxx v3.8.0 u l-workarounds attwali tagħhom. 
 
 1. Installa l-Devin CLI għall-pjattaforma tiegħek
 2. Issettja `CLI_DEVIN_BIN=/usr/local/bin/devin` (jew it-triq reali) fil-`.env`
-3. Erġa' ibda OmniRoute u erġa' ttestja minn **Dashboard → CLI Tools**
+3. Erġa' ibda AgentProxy u erġa' ttestja minn **Dashboard → CLI Tools**
 
 ### Cooldown tal-mudell mwaħħal (reset manwali)
 
@@ -687,7 +687,7 @@ Kwistjonijiet speċifiċi għar-rilaxx v3.8.0 u l-workarounds attwali tagħhom. 
 
 **Soluzzjoni:**
 
-- Mexxi `omniroute providers` mill-CLI biex terġa' tiskatta l-fluss OAuth, jew
+- Mexxi `agentproxy providers` mill-CLI biex terġa' tiskatta l-fluss OAuth, jew
 - Erġa' mexxi l-OAuth minn **Dashboard → Providers → Command Code → Reconnect**
 
 ### ModelScope jirritorna cooldowns aggressivi ta' 429
@@ -704,20 +704,20 @@ Kwistjonijiet speċifiċi għar-rilaxx v3.8.0 u l-workarounds attwali tagħhom. 
 - Kun żgur li qiegħed fuq v3.8.0 jew aktar tard
 - Ivverifika li t-toggle `useUpstream429BreakerHints` huwa attivat taħt **Settings → Resilience**
 
-### OMNIROUTE_WS_BRIDGE_SECRET nieqes fil-produzzjoni
+### AGENTPROXY_WS_BRIDGE_SECRET nieqes fil-produzzjoni
 
 **Sintomi:**
 
 - 401 fuq kull talba ta' bridge WebSocket Codex/Responses meta taħdem fuq host ta' produzzjoni remot
 - L-handshake tal-bridge WebSocket jagħlaq immedjatament wara l-konnessjoni
 
-**Kawża:** Il-varjabbli tal-ambjent `OMNIROUTE_WS_BRIDGE_SECRET` hija nieqsa mill-ambjent ta' produzzjoni.
+**Kawża:** Il-varjabbli tal-ambjent `AGENTPROXY_WS_BRIDGE_SECRET` hija nieqsa mill-ambjent ta' produzzjoni.
 
 **Soluzzjoni:**
 
 1. Iġġenera sigriet każwali: `openssl rand -hex 32`
-2. Issettja `OMNIROUTE_WS_BRIDGE_SECRET=<sigriet-każwali>` fl-env tas-server ta' produzzjoni (u fi kwalunkwe klijent li jikkomunika mal-bridge)
-3. Erġa' ibda OmniRoute
+2. Issettja `AGENTPROXY_WS_BRIDGE_SECRET=<sigriet-każwali>` fl-env tas-server ta' produzzjoni (u fi kwalunkwe klijent li jikkomunika mal-bridge)
+3. Erġa' ibda AgentProxy
 
 ### Responses API: modalità ta' sfond degradata għal sinkronika
 
@@ -737,7 +737,7 @@ Kwistjonijiet speċifiċi għar-rilaxx v3.8.0 u l-workarounds attwali tagħhom. 
 
 ## Għadek Imwaqqaf?
 
-- **Kwistjonijiet ta' GitHub**: [github.com/diegosouzapw/OmniRoute/issues](https://github.com/diegosouzapw/OmniRoute/issues)
+- **Kwistjonijiet ta' GitHub**: [github.com/khanhkit/AgentProxy/issues](https://github.com/khanhkit/AgentProxy/issues)
 - **Arkitettura**: Ara [`docs/architecture/ARCHITECTURE.md`](../architecture/ARCHITECTURE.md) għad-dettalji interni
 - **Referenza tal-API**: Ara [`docs/reference/API_REFERENCE.md`](../reference/API_REFERENCE.md) għall-endpoints kollha
 - **Dashboard tas-Saħħa**: Iċċekkja **Dashboard → Saħħa** għall-istatus tas-sistema f'ħin reali

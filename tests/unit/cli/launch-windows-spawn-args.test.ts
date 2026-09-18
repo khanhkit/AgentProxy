@@ -87,7 +87,7 @@ test(
   "quoteClaudeArgs survives a real cmd.exe round-trip",
   { skip: isWindows ? false : "windows-only: exercises the cmd.exe shell path" },
   async () => {
-    const dir = mkdtempSync(join(tmpdir(), "omniroute-argv-"));
+    const dir = mkdtempSync(join(tmpdir(), "agentproxy-argv-"));
     try {
       // Mirror the real shape of `claude.cmd`: an npm .cmd shim forwarding %*
       // to a node script. Printing argv as JSON keeps the oracle exact.

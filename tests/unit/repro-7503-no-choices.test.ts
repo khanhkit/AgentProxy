@@ -1,9 +1,9 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-const { hasStreamReadinessSignal } = await import("@omniroute/open-sse/utils/streamReadiness");
-const { buildErrorBody } = await import("@omniroute/open-sse/utils/error");
-const { AuggieExecutor } = await import("@omniroute/open-sse/executors/auggie");
+const { hasStreamReadinessSignal } = await import("@agentproxy/open-sse/utils/streamReadiness");
+const { buildErrorBody } = await import("@agentproxy/open-sse/utils/error");
+const { AuggieExecutor } = await import("@agentproxy/open-sse/executors/auggie");
 
 test("hasStreamReadinessSignal wrongly reports readiness for a choices-less mid-stream error frame", () => {
   const errorBody = buildErrorBody(502, "Auggie CLI not found: auggie.cmd");

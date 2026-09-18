@@ -20,7 +20,7 @@ import path from "node:path";
 // module instance — i.e. sync status must be derived from persisted state,
 // not from in-memory module-level variables.
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-pricing-sync-xinst-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-pricing-sync-xinst-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../src/lib/db/core.ts");

@@ -83,7 +83,7 @@ describe("ccrEngine.apply — retrieval-aware compression (H8)", () => {
       // skips the engine entirely.
       {
         messages: [{ role: "user", content }],
-        tools: [{ type: "function", function: { name: "omniroute_ccr_retrieve" } }],
+        tools: [{ type: "function", function: { name: "agentproxy_ccr_retrieve" } }],
       },
       { stepConfig: { minChars: BASE, retrievalRampFactor }, principalId: P }
     );

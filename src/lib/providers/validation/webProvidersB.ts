@@ -11,7 +11,7 @@ import {
 } from "./transport";
 import { SafeOutboundFetchError } from "@/shared/network/safeOutboundFetch";
 import { normalizeSessionCookieHeader } from "@/lib/providers/webCookieAuth";
-import { normalizeGeminiCookieInput } from "@omniroute/open-sse/utils/geminiCookies.ts";
+import { normalizeGeminiCookieInput } from "@agentproxy/open-sse/utils/geminiCookies.ts";
 import { buildJulesApiUrl } from "@/lib/cloudAgent/julesApi.ts";
 import {
   META_AI_ASBD_ID,
@@ -141,7 +141,7 @@ export async function validateClaudeWebProvider({ apiKey, providerSpecificData =
     }
 
     const { tlsFetchClaude, TlsClientUnavailableError } =
-      await import("@omniroute/open-sse/services/claudeTlsClient.ts");
+      await import("@agentproxy/open-sse/services/claudeTlsClient.ts");
 
     let response: { status: number; text: string | null };
     try {
@@ -298,7 +298,7 @@ export async function validateCopilotWebProvider({ apiKey, providerSpecificData 
     }
 
     // Extract token — may be bare JWT, cookie string with access_token=, or Bearer prefix
-    const { extractAccessToken } = await import("@omniroute/open-sse/executors/copilot-web.ts");
+    const { extractAccessToken } = await import("@agentproxy/open-sse/executors/copilot-web.ts");
     const token = extractAccessToken(raw);
     if (!token) {
       return { valid: false, error: "Could not extract access_token from input" };
@@ -358,7 +358,7 @@ export function extractM365CredentialParts(
   // Accept the current M365 web endpoint (m365.cloud.microsoft, including
   // regional subdomains) plus the two legacy hosts (substrate.office.com,
   // copilot.microsoft.com). The path still carries /m365Copilot/Chathub/<tenant>,
-  // so extraction is unchanged. (OmniRoute issue #7078)
+  // so extraction is unchanged. (AgentProxy issue #7078)
   if (/^wss:\/\//i.test(text)) {
     try {
       const url = new URL(text);

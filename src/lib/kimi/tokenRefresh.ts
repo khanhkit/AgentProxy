@@ -1,7 +1,7 @@
 import { getProviderConnectionById, updateProviderConnection } from "@/lib/db/providers";
-import { getKimiWebBaseUrl } from "@omniroute/open-sse/executors/kimi-web.ts";
-import { parseKimiJwt } from "@omniroute/open-sse/utils/kimiJwt.ts";
-import { sanitizeErrorMessage } from "@omniroute/open-sse/utils/error.ts";
+import { getKimiWebBaseUrl } from "@agentproxy/open-sse/executors/kimi-web.ts";
+import { parseKimiJwt } from "@agentproxy/open-sse/utils/kimiJwt.ts";
+import { sanitizeErrorMessage } from "@agentproxy/open-sse/utils/error.ts";
 
 export interface KimiRefreshResult {
   success: boolean;

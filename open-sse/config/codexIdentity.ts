@@ -3,17 +3,17 @@ import { createHash, randomUUID } from "node:crypto";
 import { normalizeCodexSessionId } from "./codexClient.ts";
 import { isCrossAccountCodexTurnState, readCodexTurnStateHeader } from "./codexTurnState.ts";
 
-const CODEX_INSTALLATION_SALT = "omniroute-codex-installation";
-const CODEX_SESSION_SEED_PREFIX = "omniroute:codex-session-id:v1:";
-const CODEX_THREAD_SEED_PREFIX = "omniroute:codex-thread-id:v1:";
+const CODEX_INSTALLATION_SALT = "agentproxy-codex-installation";
+const CODEX_SESSION_SEED_PREFIX = "agentproxy:codex-session-id:v1:";
+const CODEX_THREAD_SEED_PREFIX = "agentproxy:codex-thread-id:v1:";
 // v2 derivations are keyed by the persisted per-connection random seed
 // (codexFingerprintSeed) instead of the connection-id chain, mirroring
 // sub2api v0.1.178 (#5696): deterministic derivation stays stable, but the
 // seed is generated per connection so identities never collide across
 // deployments and survive connection export/import.
-const CODEX_INSTALLATION_SEED_PREFIX_V2 = "omniroute:codex-installation:v2:";
-const CODEX_SESSION_SEED_PREFIX_V2 = "omniroute:codex-session-id:v2:";
-const CODEX_THREAD_SEED_PREFIX_V2 = "omniroute:codex-thread-id:v2:";
+const CODEX_INSTALLATION_SEED_PREFIX_V2 = "agentproxy:codex-installation:v2:";
+const CODEX_SESSION_SEED_PREFIX_V2 = "agentproxy:codex-session-id:v2:";
+const CODEX_THREAD_SEED_PREFIX_V2 = "agentproxy:codex-thread-id:v2:";
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 export const CODEX_FINGERPRINT_MODES = ["off", "device", "session", "full"] as const;
@@ -110,7 +110,7 @@ export function codexFingerprintModeRequiresSeed(mode: CodexFingerprintMode): bo
  * - an existing valid seed is ALWAYS carried forward (even when the new mode
  *   is `off` — it stays dormant, ready if convergence is re-enabled later);
  * - otherwise a fresh seed is created only when the mode requires one
- *   (device/session/full; the OmniRoute default is session).
+ *   (device/session/full; the AgentProxy default is session).
  *
  * Returns the (possibly new) providerSpecificData, or undefined when there is
  * nothing to store. Pre-seed connections keep their legacy connection-id
@@ -268,7 +268,7 @@ export function resolveCodexTurnStateEcho(
 
 /**
  * One identity object for every carrier in one upstream turn.
- * accountKey may be the OmniRoute connection id; it is never sent upstream.
+ * accountKey may be the AgentProxy connection id; it is never sent upstream.
  */
 export function createCodexClientIdentity(
   clientSessionId: string | null,

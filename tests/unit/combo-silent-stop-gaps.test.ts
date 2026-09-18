@@ -6,7 +6,7 @@ import path from "node:path";
 
 // Isolate DATA_DIR before any DB-touching import (combo.ts pulls in the
 // SQLite layer) — mirrors tests/unit/combo-routing-engine.test.ts.
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-silent-stop-gaps-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-silent-stop-gaps-"));
 const ORIGINAL_DATA_DIR = process.env.DATA_DIR;
 process.env.DATA_DIR = TEST_DATA_DIR;
 

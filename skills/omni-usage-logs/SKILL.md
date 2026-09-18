@@ -20,7 +20,7 @@ Get usage analytics
 
 ```bash
 curl https://localhost:20128/api/usage/analytics \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### GET /api/usage/call-logs
@@ -29,7 +29,7 @@ Get call logs
 
 ```bash
 curl https://localhost:20128/api/usage/call-logs \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### GET /api/usage/call-logs/{id}
@@ -38,7 +38,7 @@ Get a specific call log
 
 ```bash
 curl https://localhost:20128/api/usage/call-logs/{id} \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### GET /api/usage/{connectionId}
@@ -47,7 +47,7 @@ Get usage for a specific connection
 
 ```bash
 curl https://localhost:20128/api/usage/{connectionId} \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### GET /api/usage/history
@@ -56,7 +56,7 @@ Get usage history
 
 ```bash
 curl https://localhost:20128/api/usage/history \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### GET /api/usage/logs
@@ -65,7 +65,7 @@ Get usage logs
 
 ```bash
 curl https://localhost:20128/api/usage/logs \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### GET /api/usage/proxy-logs
@@ -74,7 +74,7 @@ Get proxy logs
 
 ```bash
 curl https://localhost:20128/api/usage/proxy-logs \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### GET /api/usage/request-logs
@@ -83,7 +83,7 @@ Get request logs
 
 ```bash
 curl https://localhost:20128/api/usage/request-logs \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### GET /api/usage/budget
@@ -94,7 +94,7 @@ Returns current budget limits and consumption.
 
 ```bash
 curl https://localhost:20128/api/usage/budget \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### POST /api/usage/budget
@@ -105,7 +105,7 @@ Set or update budget limits for usage tracking.
 
 ```bash
 curl -X POST https://localhost:20128/api/usage/budget \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN" \
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -123,7 +123,7 @@ Only successful (`status = 200`) calls with a non-null cache column are counted.
 
 ```bash
 curl https://localhost:20128/api/usage/cache-health \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### GET /api/usage/model-latency-stats
@@ -134,7 +134,7 @@ Aggregates `usage_history` rows into per-(provider, model) latency stats (avg/p5
 
 ```bash
 curl https://localhost:20128/api/usage/model-latency-stats \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### GET /api/usage/budget/bulk
@@ -143,7 +143,7 @@ GET usage › budget › bulk
 
 ```bash
 curl https://localhost:20128/api/usage/budget/bulk \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### GET /api/usage/codex-reset-credit
@@ -152,7 +152,7 @@ GET usage › codex reset credit
 
 ```bash
 curl https://localhost:20128/api/usage/codex-reset-credit \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### POST /api/usage/codex-reset-credit
@@ -161,7 +161,7 @@ POST usage › codex reset credit
 
 ```bash
 curl -X POST https://localhost:20128/api/usage/codex-reset-credit \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN" \
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -172,7 +172,7 @@ GET usage › combo forecast
 
 ```bash
 curl https://localhost:20128/api/usage/combo-forecast \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### GET /api/usage/combo-health
@@ -181,7 +181,7 @@ GET usage › combo health
 
 ```bash
 curl https://localhost:20128/api/usage/combo-health \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### GET /api/usage/combo-health-autopilot
@@ -190,7 +190,7 @@ GET usage › combo health autopilot
 
 ```bash
 curl https://localhost:20128/api/usage/combo-health-autopilot \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### GET /api/usage/combo-health-dashboard
@@ -199,7 +199,7 @@ GET usage › combo health dashboard
 
 ```bash
 curl https://localhost:20128/api/usage/combo-health-dashboard \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### GET /api/usage/combo-scoring-inspector
@@ -208,7 +208,7 @@ GET usage › combo scoring inspector
 
 ```bash
 curl https://localhost:20128/api/usage/combo-scoring-inspector \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### GET /api/usage/combo-trace/{id}
@@ -217,7 +217,7 @@ GET usage › combo trace › <id>
 
 ```bash
 curl https://localhost:20128/api/usage/combo-trace/{id} \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### GET /api/usage/om-usage
@@ -226,7 +226,7 @@ GET usage › om usage
 
 ```bash
 curl https://localhost:20128/api/usage/om-usage \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### GET /api/usage/provider-limits
@@ -235,7 +235,7 @@ GET usage › provider limits
 
 ```bash
 curl https://localhost:20128/api/usage/provider-limits \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### POST /api/usage/provider-limits
@@ -244,7 +244,7 @@ POST usage › provider limits
 
 ```bash
 curl -X POST https://localhost:20128/api/usage/provider-limits \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN" \
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -255,7 +255,7 @@ GET usage › provider window costs
 
 ```bash
 curl https://localhost:20128/api/usage/provider-window-costs \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### GET /api/usage/quota
@@ -264,7 +264,7 @@ GET usage › quota
 
 ```bash
 curl https://localhost:20128/api/usage/quota \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### GET /api/usage/requests-by-provider-date
@@ -273,7 +273,7 @@ GET usage › requests by provider date
 
 ```bash
 curl https://localhost:20128/api/usage/requests-by-provider-date \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### GET /api/usage/route-explain/{id}
@@ -282,7 +282,7 @@ GET usage › route explain › <id>
 
 ```bash
 curl https://localhost:20128/api/usage/route-explain/{id} \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### GET /api/usage/token-limits
@@ -291,7 +291,7 @@ GET usage › token limits
 
 ```bash
 curl https://localhost:20128/api/usage/token-limits \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### POST /api/usage/token-limits
@@ -300,7 +300,7 @@ POST usage › token limits
 
 ```bash
 curl -X POST https://localhost:20128/api/usage/token-limits \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN" \
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -311,7 +311,7 @@ DELETE usage › token limits
 
 ```bash
 curl -X DELETE https://localhost:20128/api/usage/token-limits \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### GET /api/usage/utilization
@@ -320,7 +320,7 @@ GET usage › utilization
 
 ```bash
 curl https://localhost:20128/api/usage/utilization \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ## Payloads

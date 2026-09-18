@@ -10,7 +10,7 @@ import {
   getLegacyProxyLogExportPage,
   type LegacyProxyLogExportCursor,
 } from "@/lib/db/proxyLogs";
-import { sanitizeErrorMessage } from "@omniroute/open-sse/utils/error";
+import { sanitizeErrorMessage } from "@agentproxy/open-sse/utils/error";
 
 const LEGACY_EXPORT_PAGE_SIZE = 100;
 const encoder = new TextEncoder();
@@ -126,7 +126,7 @@ export async function GET(request: Request) {
       logs = iterateProxyLogs(since, maxRowId);
     }
 
-    const filename = `omniroute-${tableName}-${hours}h-${new Date().toISOString().slice(0, 10)}.json`;
+    const filename = `agentproxy-${tableName}-${hours}h-${new Date().toISOString().slice(0, 10)}.json`;
     const body = streamFrom(generateExportJson(logs, hours, logType));
 
     return new Response(body, {

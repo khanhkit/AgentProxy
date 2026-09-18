@@ -1,6 +1,6 @@
 /**
  * Rewrites Next.js standalone manifests and embedded basePath literals so a bundle
- * built for the domain root can serve under OMNIROUTE_BASE_PATH at container start.
+ * built for the domain root can serve under AGENTPROXY_BASE_PATH at container start.
  */
 
 import fs from "node:fs";
@@ -67,7 +67,7 @@ export function patchJsonManifestFile(filePath, basePath) {
 }
 
 const BASE_PATH_LITERAL_RE =
-  /(?:basePath|assetPrefix)\s*:\s*(?:""|''|``)|(?:basePath|assetPrefix)\s*:\s*void 0|"(?:basePath|assetPrefix)"\s*:\s*""|"NEXT_PUBLIC_OMNIROUTE_BASE_PATH"\s*:\s*""|NEXT_PUBLIC_OMNIROUTE_BASE_PATH\s*:\s*""/g;
+  /(?:basePath|assetPrefix)\s*:\s*(?:""|''|``)|(?:basePath|assetPrefix)\s*:\s*void 0|"(?:basePath|assetPrefix)"\s*:\s*""|"NEXT_PUBLIC_AGENTPROXY_BASE_PATH"\s*:\s*""|NEXT_PUBLIC_AGENTPROXY_BASE_PATH\s*:\s*""/g;
 
 /**
  * Rewrite the bare config literals Next bakes into the standalone output:
@@ -75,7 +75,7 @@ const BASE_PATH_LITERAL_RE =
  *   - `assetPrefix` (Next 16 app-router renders SSR asset URLs from
  *     `assetPrefix` ALONE — basePath only affects routing, so a subpath
  *     deploy must mirror it or every `/_next/static` shell reference 404s);
- *   - the `NEXT_PUBLIC_OMNIROUTE_BASE_PATH` env mirror in the inline
+ *   - the `NEXT_PUBLIC_AGENTPROXY_BASE_PATH` env mirror in the inline
  *     nextConfig (server.js) so server-side env reads stay consistent.
  *
  * @param {string} content
@@ -84,11 +84,11 @@ const BASE_PATH_LITERAL_RE =
 export function patchBasePathLiterals(content, basePath) {
   const escaped = basePath.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
   return content.replace(BASE_PATH_LITERAL_RE, (match) => {
-    if (match.startsWith('"NEXT_PUBLIC_OMNIROUTE_BASE_PATH"')) {
-      return `"NEXT_PUBLIC_OMNIROUTE_BASE_PATH":"${escaped}"`;
+    if (match.startsWith('"NEXT_PUBLIC_AGENTPROXY_BASE_PATH"')) {
+      return `"NEXT_PUBLIC_AGENTPROXY_BASE_PATH":"${escaped}"`;
     }
-    if (match.startsWith("NEXT_PUBLIC_OMNIROUTE_BASE_PATH")) {
-      return `NEXT_PUBLIC_OMNIROUTE_BASE_PATH:"${escaped}"`;
+    if (match.startsWith("NEXT_PUBLIC_AGENTPROXY_BASE_PATH")) {
+      return `NEXT_PUBLIC_AGENTPROXY_BASE_PATH:"${escaped}"`;
     }
     if (match.startsWith('"')) {
       // `"basePath":""` / `"assetPrefix":""` (JSON-ish inline config)
@@ -103,7 +103,7 @@ export function patchBasePathLiterals(content, basePath) {
 
 /**
  * Turbopack's client `process` shim ships an empty env object (`.env={}`).
- * Next 16's client code reads NEXT_PUBLIC_* / OMNIROUTE_BASE_PATH from it at
+ * Next 16's client code reads NEXT_PUBLIC_* / AGENTPROXY_BASE_PATH from it at
  * runtime, so without this the client never learns the subpath and the
  * dashboard's fetch/EventSource rewriting (basePathFetch) silently stays on
  * the root path. Populate the two keys the app reads.
@@ -114,7 +114,7 @@ export function patchBasePathLiterals(content, basePath) {
 export function patchProcessEnvShim(content, basePath) {
   const escaped = basePath.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
   return content.replace(/\.env=\{\}/g, () => {
-    const keys = `OMNIROUTE_BASE_PATH:"${escaped}",NEXT_PUBLIC_OMNIROUTE_BASE_PATH:"${escaped}"`;
+    const keys = `AGENTPROXY_BASE_PATH:"${escaped}",NEXT_PUBLIC_AGENTPROXY_BASE_PATH:"${escaped}"`;
     return `.env={${keys}}`;
   });
 }
@@ -182,8 +182,8 @@ export function patchStandaloneBasePath({ appRoot, fromBasePath, toBasePath }) {
   }
   if (from) {
     throw new Error(
-      `runtime OMNIROUTE_BASE_PATH (${to || "(root)"}) does not match the image build ` +
-        `(${from}). Rebuild with --build-arg OMNIROUTE_BASE_PATH=${to || '""'}.`
+      `runtime AGENTPROXY_BASE_PATH (${to || "(root)"}) does not match the image build ` +
+        `(${from}). Rebuild with --build-arg AGENTPROXY_BASE_PATH=${to || '""'}.`
     );
   }
   if (!to) {

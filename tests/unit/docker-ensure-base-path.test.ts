@@ -6,7 +6,7 @@ import path from "node:path";
 import { ensureDockerBasePath } from "../../scripts/docker/ensure-docker-base-path.mjs";
 
 function makeStandaloneRoot(basePath = "") {
-  const appRoot = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-docker-base-"));
+  const appRoot = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-docker-base-"));
   const distRoot = path.join(appRoot, ".build", "next");
   fs.mkdirSync(path.join(distRoot, "server"), { recursive: true });
   fs.writeFileSync(
@@ -17,29 +17,29 @@ function makeStandaloneRoot(basePath = "") {
     path.join(distRoot, "server", "chunk.js"),
     `export const config={basePath:"${basePath}"};`
   );
-  fs.writeFileSync(path.join(appRoot, "BUILD_OMNIROUTE_BASE_PATH"), `${basePath}\n`);
+  fs.writeFileSync(path.join(appRoot, "BUILD_AGENTPROXY_BASE_PATH"), `${basePath}\n`);
   return appRoot;
 }
 
 test("ensureDockerBasePath is a no-op when runtime matches the baked sentinel", () => {
   const appRoot = makeStandaloneRoot("");
-  const result = ensureDockerBasePath({ appRoot, env: { OMNIROUTE_BASE_PATH: "" } });
+  const result = ensureDockerBasePath({ appRoot, env: { AGENTPROXY_BASE_PATH: "" } });
   assert.equal(result.action, "noop");
 });
 
 test("ensureDockerBasePath patches a root image when a subpath is configured", () => {
   const appRoot = makeStandaloneRoot("");
-  const result = ensureDockerBasePath({ appRoot, env: { OMNIROUTE_BASE_PATH: "/omniroute" } });
+  const result = ensureDockerBasePath({ appRoot, env: { AGENTPROXY_BASE_PATH: "/agentproxy" } });
   assert.equal(result.action, "patched");
-  assert.equal(fs.readFileSync(path.join(appRoot, "BUILD_OMNIROUTE_BASE_PATH"), "utf8"), "/omniroute\n");
+  assert.equal(fs.readFileSync(path.join(appRoot, "BUILD_AGENTPROXY_BASE_PATH"), "utf8"), "/agentproxy\n");
   const manifest = JSON.parse(
     fs.readFileSync(path.join(appRoot, ".build", "next", "routes-manifest.json"), "utf8")
   );
-  assert.equal(manifest.basePath, "/omniroute");
+  assert.equal(manifest.basePath, "/agentproxy");
 });
 
 test("ensureDockerBasePath rejects unset runtime on subpath images", () => {
-  const appRoot = makeStandaloneRoot("/omniroute");
+  const appRoot = makeStandaloneRoot("/agentproxy");
   assert.throws(
     () => ensureDockerBasePath({ appRoot, env: {} }),
     /built for subpath/

@@ -16,16 +16,16 @@ import { shouldShowKimiSponsorBanner } from "./kimiSponsorBannerGate";
 // bonus campaign (offer valid through 2026-09-30 — revisit the 15% copy in the
 // i18n `kimiSponsorBanner.description` strings after that date if not renewed).
 const KIMI_PLATFORM_AFF_URL =
-  "https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798&aff=omniroute";
+  "https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798";
 
 // Versioned dismissal key — bump the suffix (e.g. `-v3`) if the banner's
 // offer/copy ever changes materially enough to warrant re-showing it to
 // users who already dismissed the previous version. `-v2` = the 2026-08 CTA
 // retarget to the API platform (new destination + new copy).
-const DISMISS_STORAGE_KEY = "omniroute-kimi-sponsor-banner-dismissed-v2";
+const DISMISS_STORAGE_KEY = "agentproxy-kimi-sponsor-banner-dismissed-v2";
 // Same-tab signal for the dismiss button, since writing localStorage doesn't
 // fire a "storage" event in the tab that wrote it.
-const DISMISS_EVENT = "omniroute:kimi-sponsor-banner-dismissed";
+const DISMISS_EVENT = "agentproxy:kimi-sponsor-banner-dismissed";
 
 function isNotDismissed(): boolean {
   try {
@@ -49,7 +49,7 @@ function getServerSnapshot() {
 }
 
 /**
- * Dismissable banner announcing the Kimi (Moonshot AI) official OmniRoute
+ * Dismissable banner announcing the Kimi (Moonshot AI) official AgentProxy
  * partnership on the dashboard home page. Self-contained: reads the app's own
  * version (APP_CONFIG.version) to decide whether it is still inside the
  * agreed display window (see kimiSponsorBannerGate.ts) and persists dismissal via

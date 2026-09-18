@@ -1,7 +1,7 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import {
-  OMNIROUTE_WEB_FETCH_FALLBACK_TOOL_NAME,
+  AGENTPROXY_WEB_FETCH_FALLBACK_TOOL_NAME,
   prepareWebFetchFallbackBody,
   supportsNativeWebFetchFallbackBypass,
 } from "../../open-sse/services/webFetchInterception.ts";
@@ -34,19 +34,19 @@ describe("services/webFetchInterception — prepareWebFetchFallbackBody (#7339)"
     assert.equal(fallback.convertedToolCount, 0);
   });
 
-  it("converts a native web_fetch tool into the synthetic omniroute_web_fetch tool when interceptFetchOverride is true", () => {
+  it("converts a native web_fetch tool into the synthetic agentproxy_web_fetch tool when interceptFetchOverride is true", () => {
     const body = { tools: [{ type: "web_fetch" }] };
     const { body: nextBody, fallback } = prepareWebFetchFallbackBody(body, {
       ...baseOptions,
       interceptFetchOverride: true,
     });
     assert.equal(fallback.enabled, true);
-    assert.equal(fallback.toolName, OMNIROUTE_WEB_FETCH_FALLBACK_TOOL_NAME);
+    assert.equal(fallback.toolName, AGENTPROXY_WEB_FETCH_FALLBACK_TOOL_NAME);
     assert.equal(fallback.convertedToolCount, 1);
     assert.equal(nextBody.tools.length, 1);
     assert.equal(
       (nextBody.tools[0] as { function: { name: string } }).function.name,
-      OMNIROUTE_WEB_FETCH_FALLBACK_TOOL_NAME
+      AGENTPROXY_WEB_FETCH_FALLBACK_TOOL_NAME
     );
   });
 
@@ -59,7 +59,7 @@ describe("services/webFetchInterception — prepareWebFetchFallbackBody (#7339)"
     });
     const tool = nextBody.tools[0] as { type: string; name: string; function?: unknown };
     assert.equal(tool.type, "function");
-    assert.equal(tool.name, OMNIROUTE_WEB_FETCH_FALLBACK_TOOL_NAME);
+    assert.equal(tool.name, AGENTPROXY_WEB_FETCH_FALLBACK_TOOL_NAME);
     assert.equal(tool.function, undefined);
   });
 
@@ -86,7 +86,7 @@ describe("services/webFetchInterception — prepareWebFetchFallbackBody (#7339)"
     const names = (nextBody.tools as Array<{ function?: { name: string } }>).map(
       (tool) => tool.function?.name
     );
-    assert.ok(names.includes(OMNIROUTE_WEB_FETCH_FALLBACK_TOOL_NAME));
+    assert.ok(names.includes(AGENTPROXY_WEB_FETCH_FALLBACK_TOOL_NAME));
     assert.ok(names.includes("get_weather"));
   });
 });

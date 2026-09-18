@@ -11,7 +11,7 @@ import { stripUnsupportedParams } from "../../open-sse/translator/paramSupport.t
  *     -> 400 "max_tokens is too large: 32000. This model supports at most
  *            16384 completion tokens, whereas you provided 32000."
  *
- * The 32000 is OmniRoute's own doing: `adjustMaxTokens` raises any smaller
+ * The 32000 is AgentProxy's own doing: `adjustMaxTokens` raises any smaller
  * max_tokens to DEFAULT_MIN_TOKENS (32000) whenever tools are present, so an
  * agentic client trips this on its first turn even when it asked for far less.
  */

@@ -12,8 +12,8 @@
  */
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { encodeGeneric } from "@omniroute/open-sse/services/compression/engines/headroom/gcf/generic.ts";
-import { decodeGeneric } from "@omniroute/open-sse/services/compression/engines/headroom/gcf/decode_generic.ts";
+import { encodeGeneric } from "@agentproxy/open-sse/services/compression/engines/headroom/gcf/generic.ts";
+import { decodeGeneric } from "@agentproxy/open-sse/services/compression/engines/headroom/gcf/decode_generic.ts";
 
 test("a double >= 2^53 renders in exponent form, not a bare integer (SPEC 2.3.1)", () => {
   const wire = encodeGeneric([{ v: 1e18 }]);

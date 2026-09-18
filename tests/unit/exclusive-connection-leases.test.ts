@@ -5,7 +5,7 @@ import os from "node:os";
 import path from "node:path";
 import test from "node:test";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-hard-lease-v2-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-hard-lease-v2-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../src/lib/db/core.ts");
@@ -395,7 +395,7 @@ test("migration exposes exactly global ACTIVE uniqueness indexes", () => {
 });
 
 test("cross-process contenders never both acquire the same connection", async () => {
-  const raceDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-hard-lease-race-"));
+  const raceDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-hard-lease-race-"));
   const barrier = path.join(raceDir, "go");
   const coreUrl = new URL("../../src/lib/db/core.ts", import.meta.url).href;
   const moduleUrl = new URL("../../src/lib/db/exclusiveConnectionLeases.ts", import.meta.url).href;

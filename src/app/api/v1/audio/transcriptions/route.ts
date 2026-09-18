@@ -1,6 +1,6 @@
 // Allow large audio/video file uploads — 5min for processing large files (up to 2GB)
 export const maxDuration = 300;
-import { handleAudioTranscription } from "@omniroute/open-sse/handlers/audioTranscription.ts";
+import { handleAudioTranscription } from "@agentproxy/open-sse/handlers/audioTranscription.ts";
 import {
   getProviderCredentialsWithQuotaPreflight,
   clearRecoveredProviderState,
@@ -13,16 +13,16 @@ import {
   listAlternateAudioModelIds,
   missingAudioProviderCredentialsMessage,
   AUDIO_TRANSCRIPTION_PROVIDERS,
-} from "@omniroute/open-sse/config/audioRegistry.ts";
+} from "@agentproxy/open-sse/config/audioRegistry.ts";
 import { resolveDynamicAudioProviders } from "@/app/api/v1/_shared/audioProviderNodes";
-import { errorResponse } from "@omniroute/open-sse/utils/error.ts";
-import { HTTP_STATUS } from "@omniroute/open-sse/config/constants.ts";
+import { errorResponse } from "@agentproxy/open-sse/utils/error.ts";
+import { HTTP_STATUS } from "@agentproxy/open-sse/config/constants.ts";
 import { enforceApiKeyPolicy, type ApiKeyMetadata } from "@/shared/utils/apiKeyPolicy";
 import {
   isAllRateLimitedCredentials,
   rateLimitedProviderResponse,
 } from "@/app/api/v1/_shared/rateLimit";
-import { attachOmniRouteMetaToResponse } from "@/domain/omnirouteResponseMeta";
+import { attachAgentProxyMetaToResponse } from "@/domain/agentproxyResponseMeta";
 import { generateRequestId } from "@/shared/utils/requestId";
 import { calculateModalCost } from "@/lib/usage/costCalculator";
 import { saveCallLog } from "@/lib/usage/callLogs";
@@ -31,8 +31,8 @@ import { resolveUploadedAudioDurationSeconds } from "@/lib/usage/audioDuration";
 import { recordCost } from "@/domain/costRules";
 import { getComboByName, getCombos } from "@/lib/db/combos";
 import { getDatabaseSettings } from "@/lib/db/databaseSettings";
-import { handleComboChat } from "@omniroute/open-sse/services/combo.ts";
-import { log } from "@omniroute/open-sse/utils/logger.ts";
+import { handleComboChat } from "@agentproxy/open-sse/services/combo.ts";
+import { log } from "@agentproxy/open-sse/utils/logger.ts";
 
 /**
  * Copy a multipart body, swapping only the `model` field. Combo fan-out needs one
@@ -136,7 +136,7 @@ async function finalizeTranscriptionResponse({
   if (!response.ok) return response;
 
   await clearRecoveredProviderState(credentials);
-  return attachOmniRouteMetaToResponse(response, {
+  return attachAgentProxyMetaToResponse(response, {
     provider,
     model,
     costUsd,

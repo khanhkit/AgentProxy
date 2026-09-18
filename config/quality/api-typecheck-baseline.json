@@ -115,7 +115,7 @@
   "src/app/api/oauth/kiro/auto-import/route.ts": {
     "TS2345": 1
   },
-  "src/app/api/omniroute/route/preview/route.ts": {
+  "src/app/api/agentproxy/route/preview/route.ts": {
     "TS2345": 1
   },
   "src/app/api/playground/presets/[id]/route.ts": {
@@ -350,7 +350,7 @@
   "src/lib/monitoring/providerHealthAutopilot.ts": {
     "TS2352": 4
   },
-  "src/lib/omnirouteStatus.ts": {
+  "src/lib/agentproxyStatus.ts": {
     "TS2322": 1,
     "TS2558": 1
   },

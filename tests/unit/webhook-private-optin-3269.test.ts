@@ -2,7 +2,7 @@
  * #3269: webhooks could not target a private/internal address (10.x, 192.168.x, a
  * docker-internal host) — common for self-hosted automation (n8n, Home Assistant).
  * The webhook URL guard now allows private targets only when the operator opts in via
- * the existing `OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS` flag (default OFF). Protocol and
+ * the existing `AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS` flag (default OFF). Protocol and
  * embedded-credential checks stay unconditional.
  */
 
@@ -19,7 +19,7 @@ const { parseAndValidateWebhookUrl } =
   await import("../../src/shared/network/outboundUrlGuardPolicy.ts");
 const { resetDbInstance } = await import("../../src/lib/db/core.ts");
 
-const FLAG = "OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS";
+const FLAG = "AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS";
 
 describe("parseAndValidateWebhookUrl — private target opt-in (#3269)", () => {
   it("blocks a private webhook URL when the opt-in is off (default)", () => {
@@ -30,7 +30,7 @@ describe("parseAndValidateWebhookUrl — private target opt-in (#3269)", () => {
     );
   });
 
-  it("allows a private webhook URL when OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS=true", () => {
+  it("allows a private webhook URL when AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS=true", () => {
     process.env[FLAG] = "true";
     try {
       const url = parseAndValidateWebhookUrl("http://192.168.0.10/hook");

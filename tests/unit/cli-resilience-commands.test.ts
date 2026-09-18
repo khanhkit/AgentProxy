@@ -106,11 +106,11 @@ test("resilience profile set usa JSON-RPC tools/call", async () => {
   }) as any;
 
   const { mcpCallTool } = await import("../../bin/cli/mcpClient.mjs");
-  await mcpCallTool("omniroute_set_resilience_profile", { profile: "balanced" });
+  await mcpCallTool("agentproxy_set_resilience_profile", { profile: "balanced" });
 
   globalThis.fetch = origFetch;
   assert.equal(capturedCall.method, "tools/call");
-  assert.equal(capturedCall.params.name, "omniroute_set_resilience_profile");
+  assert.equal(capturedCall.params.name, "agentproxy_set_resilience_profile");
   assert.equal(capturedCall.params.arguments.profile, "balanced");
 });
 

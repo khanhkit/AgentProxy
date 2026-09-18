@@ -27,7 +27,7 @@ test("DOCKER_GUIDE documents N independent DATA_DIRs as the large-job scale-out 
 test("ENVIRONMENT.md points CHAT_MAX_HEAVY_IN_FLIGHT at per-process V8, not host RAM (#11024)", () => {
   const row = envDoc
     .split("\n")
-    .find((line) => line.includes("`OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT`"));
+    .find((line) => line.includes("`AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT`"));
   assert.ok(row);
   assert.match(row, /one process|per process|V8/i);
   assert.match(row, /DATA_DIR|#11024/);
@@ -36,7 +36,7 @@ test("ENVIRONMENT.md points CHAT_MAX_HEAVY_IN_FLIGHT at per-process V8, not host
 test("DOCKER_GUIDE documents the one-process long /v1/responses recipe (healthy-headroom, not max 2)", () => {
   assert.match(dockerGuide, /One-process: more than two long/);
   assert.match(dockerGuide, /tryAcquireHealthyHeadroom/);
-  assert.match(dockerGuide, /OMNIROUTE_CHAT_LARGE_BODY_BYTES/);
+  assert.match(dockerGuide, /AGENTPROXY_CHAT_LARGE_BODY_BYTES/);
   assert.match(dockerGuide, /40–50|40-50/);
   assert.match(dockerGuide, /memory-budget/);
   assert.match(dockerGuide, /#10110|#10437/);
@@ -46,13 +46,13 @@ test("DOCKER_GUIDE documents the one-process long /v1/responses recipe (healthy-
 test("ENVIRONMENT.md documents LARGE_BODY_BYTES healthy-headroom and no hard max-2", () => {
   const large = envDoc
     .split("\n")
-    .find((line) => line.startsWith("| `OMNIROUTE_CHAT_LARGE_BODY_BYTES`"));
+    .find((line) => line.startsWith("| `AGENTPROXY_CHAT_LARGE_BODY_BYTES`"));
   const heavy = envDoc
     .split("\n")
-    .find((line) => line.startsWith("| `OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT`"));
+    .find((line) => line.startsWith("| `AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT`"));
   const headroom = envDoc
     .split("\n")
-    .find((line) => line.startsWith("| `OMNIROUTE_CHAT_ADMISSION_HEALTHY_HEADROOM`"));
+    .find((line) => line.startsWith("| `AGENTPROXY_CHAT_ADMISSION_HEALTHY_HEADROOM`"));
   assert.ok(large);
   assert.ok(heavy);
   assert.ok(headroom);

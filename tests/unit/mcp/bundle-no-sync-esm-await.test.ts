@@ -145,7 +145,7 @@ function assertNoSyncEsmAwait(outputFile: string): void {
 }
 
 test("MCP bundle never emits await inside a synchronous __esm initializer", () => {
-  const outputDir = mkdtempSync(join(tmpdir(), "omniroute-mcp-bundle-"));
+  const outputDir = mkdtempSync(join(tmpdir(), "agentproxy-mcp-bundle-"));
   const outputFile = join(outputDir, "server.mjs");
 
   try {
@@ -160,7 +160,7 @@ test("MCP bundle never emits await inside a synchronous __esm initializer", () =
 });
 
 test("esbuild propagates async initialization through wrapped import cycles", () => {
-  const fixtureDir = mkdtempSync(join(tmpdir(), "omniroute-esbuild-async-cycle-"));
+  const fixtureDir = mkdtempSync(join(tmpdir(), "agentproxy-esbuild-async-cycle-"));
   const outputFile = join(fixtureDir, "out.mjs");
 
   try {

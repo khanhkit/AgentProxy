@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 
-import { DefaultExecutor } from "@omniroute/open-sse/executors/default.ts";
+import { DefaultExecutor } from "@agentproxy/open-sse/executors/default.ts";
 
 // Regression for issue #3136: a `llama-cpp` local provider connection must send
 // requests to the user's configured local baseUrl, not OpenAI's API. Before the

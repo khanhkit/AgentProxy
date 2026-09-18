@@ -12,7 +12,7 @@
  */
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
-import { EMBEDDING_PROVIDERS } from "@omniroute/open-sse/config/embeddingRegistry.ts";
+import { EMBEDDING_PROVIDERS } from "@agentproxy/open-sse/config/embeddingRegistry.ts";
 import {
   buildRegistryEmbeddingOptions,
   mergeEmbeddingOptions,

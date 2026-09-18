@@ -1,23 +1,23 @@
 export type ServerLifecyclePhase = "starting" | "ready" | "stopping";
 
 declare global {
-  var __omnirouteServerLifecycle: ServerLifecyclePhase | undefined;
+  var __agentproxyServerLifecycle: ServerLifecyclePhase | undefined;
 }
 
 export function getServerLifecyclePhase(): ServerLifecyclePhase {
-  return globalThis.__omnirouteServerLifecycle ?? "starting";
+  return globalThis.__agentproxyServerLifecycle ?? "starting";
 }
 
 export function markServerStarting(): void {
-  globalThis.__omnirouteServerLifecycle = "starting";
+  globalThis.__agentproxyServerLifecycle = "starting";
 }
 
 export function markServerReady(): void {
   if (getServerLifecyclePhase() !== "stopping") {
-    globalThis.__omnirouteServerLifecycle = "ready";
+    globalThis.__agentproxyServerLifecycle = "ready";
   }
 }
 
 export function markServerStopping(): void {
-  globalThis.__omnirouteServerLifecycle = "stopping";
+  globalThis.__agentproxyServerLifecycle = "stopping";
 }

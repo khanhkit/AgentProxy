@@ -9,24 +9,24 @@ const { MCP_TOOL_MAP } = await import("../../open-sse/mcp-server/schemas/tools.t
 
 // ─── Schema registration in MCP_TOOL_MAP ──────────────────────────────────
 
-test("omniroute_agent_skills_list is registered in MCP_TOOL_MAP", () => {
-  const tool = MCP_TOOL_MAP["omniroute_agent_skills_list"];
+test("agentproxy_agent_skills_list is registered in MCP_TOOL_MAP", () => {
+  const tool = MCP_TOOL_MAP["agentproxy_agent_skills_list"];
   assert.ok(tool, "Tool should exist in MCP_TOOL_MAP");
-  assert.equal(tool.name, "omniroute_agent_skills_list");
+  assert.equal(tool.name, "agentproxy_agent_skills_list");
   assert.deepEqual(tool.scopes, ["read:catalog"]);
 });
 
-test("omniroute_agent_skills_get is registered in MCP_TOOL_MAP", () => {
-  const tool = MCP_TOOL_MAP["omniroute_agent_skills_get"];
+test("agentproxy_agent_skills_get is registered in MCP_TOOL_MAP", () => {
+  const tool = MCP_TOOL_MAP["agentproxy_agent_skills_get"];
   assert.ok(tool, "Tool should exist in MCP_TOOL_MAP");
-  assert.equal(tool.name, "omniroute_agent_skills_get");
+  assert.equal(tool.name, "agentproxy_agent_skills_get");
   assert.deepEqual(tool.scopes, ["read:catalog"]);
 });
 
-test("omniroute_agent_skills_coverage is registered in MCP_TOOL_MAP", () => {
-  const tool = MCP_TOOL_MAP["omniroute_agent_skills_coverage"];
+test("agentproxy_agent_skills_coverage is registered in MCP_TOOL_MAP", () => {
+  const tool = MCP_TOOL_MAP["agentproxy_agent_skills_coverage"];
   assert.ok(tool, "Tool should exist in MCP_TOOL_MAP");
-  assert.equal(tool.name, "omniroute_agent_skills_coverage");
+  assert.equal(tool.name, "agentproxy_agent_skills_coverage");
   assert.deepEqual(tool.scopes, ["read:catalog"]);
 });
 
@@ -35,9 +35,9 @@ test("omniroute_agent_skills_coverage is registered in MCP_TOOL_MAP", () => {
 test("agentSkillTools exports exactly 3 tools", () => {
   const keys = Object.keys(agentSkillTools);
   assert.deepEqual(keys.sort(), [
-    "omniroute_agent_skills_coverage",
-    "omniroute_agent_skills_get",
-    "omniroute_agent_skills_list",
+    "agentproxy_agent_skills_coverage",
+    "agentproxy_agent_skills_get",
+    "agentproxy_agent_skills_list",
   ]);
 });
 
@@ -56,36 +56,36 @@ test("each agentSkillTool has name, description, inputSchema, and handler", () =
   }
 });
 
-// ─── omniroute_agent_skills_list ────────────────────────────────────────────
+// ─── agentproxy_agent_skills_list ────────────────────────────────────────────
 
 // 46 since #9058 added the ponytail external entry (45 canonical + 1 external).
-test("omniroute_agent_skills_list with no filters returns all 46 skills", async () => {
-  const result = await agentSkillTools.omniroute_agent_skills_list.handler({});
+test("agentproxy_agent_skills_list with no filters returns all 46 skills", async () => {
+  const result = await agentSkillTools.agentproxy_agent_skills_list.handler({});
   assert.equal(result.count, 46, `Expected 46 but got ${result.count}`);
   assert.ok(Array.isArray(result.skills));
   assert.equal(result.skills.length, 46);
 });
 
-test("omniroute_agent_skills_list({category:'api'}) returns exactly 23 entries", async () => {
-  const result = await agentSkillTools.omniroute_agent_skills_list.handler({ category: "api" });
+test("agentproxy_agent_skills_list({category:'api'}) returns exactly 23 entries", async () => {
+  const result = await agentSkillTools.agentproxy_agent_skills_list.handler({ category: "api" });
   assert.equal(result.count, 23, `Expected 23 api skills but got ${result.count}`);
   assert.ok(result.skills.every((s: { category: string }) => s.category === "api"));
 });
 
-test("omniroute_agent_skills_list({category:'cli'}) returns exactly 21 entries", async () => {
-  const result = await agentSkillTools.omniroute_agent_skills_list.handler({ category: "cli" });
+test("agentproxy_agent_skills_list({category:'cli'}) returns exactly 21 entries", async () => {
+  const result = await agentSkillTools.agentproxy_agent_skills_list.handler({ category: "cli" });
   assert.equal(result.count, 21, `Expected 21 cli skills but got ${result.count}`);
   assert.ok(result.skills.every((s: { category: string }) => s.category === "cli"));
 });
 
-test("omniroute_agent_skills_list({category:'config'}) returns exactly 1 entry", async () => {
-  const result = await agentSkillTools.omniroute_agent_skills_list.handler({ category: "config" });
+test("agentproxy_agent_skills_list({category:'config'}) returns exactly 1 entry", async () => {
+  const result = await agentSkillTools.agentproxy_agent_skills_list.handler({ category: "config" });
   assert.equal(result.count, 1, `Expected 1 config skill but got ${result.count}`);
   assert.ok(result.skills.every((s: { category: string }) => s.category === "config"));
 });
 
-test("omniroute_agent_skills_list result includes coverage shape", async () => {
-  const result = await agentSkillTools.omniroute_agent_skills_list.handler({});
+test("agentproxy_agent_skills_list result includes coverage shape", async () => {
+  const result = await agentSkillTools.agentproxy_agent_skills_list.handler({});
   assert.ok(result.coverage != null, "coverage should be present");
   assert.ok(typeof result.coverage.api === "object");
   assert.ok(typeof result.coverage.cli === "object");
@@ -97,8 +97,8 @@ test("omniroute_agent_skills_list result includes coverage shape", async () => {
   assert.ok(typeof result.coverage.generatedAt === "string");
 });
 
-test("omniroute_agent_skills_list skill entries have required fields", async () => {
-  const result = await agentSkillTools.omniroute_agent_skills_list.handler({});
+test("agentproxy_agent_skills_list skill entries have required fields", async () => {
+  const result = await agentSkillTools.agentproxy_agent_skills_list.handler({});
   const first = result.skills[0];
   assert.ok(typeof first.id === "string" && first.id.length > 0);
   assert.ok(typeof first.name === "string" && first.name.length > 0);
@@ -123,9 +123,9 @@ test("AgentSkillsListSchema rejects invalid category", () => {
   assert.throws(() => AgentSkillsListSchema.parse({ category: "unknown" }));
 });
 
-// ─── omniroute_agent_skills_get ─────────────────────────────────────────────
+// ─── agentproxy_agent_skills_get ─────────────────────────────────────────────
 
-// NOTE: omniroute_agent_skills_get calls fetchSkillMarkdown which tries:
+// NOTE: agentproxy_agent_skills_get calls fetchSkillMarkdown which tries:
 //   1. local filesystem skills/{id}/SKILL.md
 //   2. GitHub raw URL
 // In unit test environment, SKILL.md files are not yet generated and GitHub
@@ -134,7 +134,7 @@ test("AgentSkillsListSchema rejects invalid category", () => {
 // (main branch) resolves, or (c) a skill not found throws correctly.
 // The deep integration (fetch round-trip) is covered by e2e/ecosystem tests.
 
-test("omniroute_agent_skills_get({id:'omni-providers'}) returns correct skill metadata before markdown fetch", async () => {
+test("agentproxy_agent_skills_get({id:'omni-providers'}) returns correct skill metadata before markdown fetch", async () => {
   const { getSkillById } = await import("../../src/lib/agentSkills/catalog.ts");
   const skill = getSkillById("omni-providers");
   assert.ok(skill != null, "omni-providers should exist in catalog");
@@ -145,7 +145,7 @@ test("omniroute_agent_skills_get({id:'omni-providers'}) returns correct skill me
   assert.ok(typeof skill!.githubUrl === "string");
 });
 
-test("omniroute_agent_skills_get({id:'cli-serve'}) resolves correct cli skill metadata", async () => {
+test("agentproxy_agent_skills_get({id:'cli-serve'}) resolves correct cli skill metadata", async () => {
   const { getSkillById } = await import("../../src/lib/agentSkills/catalog.ts");
   const skill = getSkillById("cli-serve");
   assert.ok(skill != null, "cli-serve should exist in catalog");
@@ -154,7 +154,7 @@ test("omniroute_agent_skills_get({id:'cli-serve'}) resolves correct cli skill me
   assert.ok(typeof skill!.name === "string" && skill!.name.length > 0);
 });
 
-test("omniroute_agent_skills_get({id:'config-codex-cli'}) resolves config skill metadata", async () => {
+test("agentproxy_agent_skills_get({id:'config-codex-cli'}) resolves config skill metadata", async () => {
   const { getSkillById } = await import("../../src/lib/agentSkills/catalog.ts");
   const skill = getSkillById("config-codex-cli");
   assert.ok(skill != null, "config-codex-cli should exist in catalog");
@@ -162,9 +162,9 @@ test("omniroute_agent_skills_get({id:'config-codex-cli'}) resolves config skill 
   assert.equal(skill!.category, "config");
 });
 
-test("omniroute_agent_skills_get with invalid id throws Error", async () => {
+test("agentproxy_agent_skills_get with invalid id throws Error", async () => {
   await assert.rejects(
-    () => agentSkillTools.omniroute_agent_skills_get.handler({ id: "non-existent-skill-xyz" }),
+    () => agentSkillTools.agentproxy_agent_skills_get.handler({ id: "non-existent-skill-xyz" }),
     (err: unknown) => {
       assert.ok(err instanceof Error);
       assert.ok(err.message.includes("non-existent-skill-xyz"));
@@ -182,10 +182,10 @@ test("AgentSkillsGetSchema parses valid id", () => {
   assert.equal(parsed.id, "omni-providers");
 });
 
-// ─── omniroute_agent_skills_coverage ────────────────────────────────────────
+// ─── agentproxy_agent_skills_coverage ────────────────────────────────────────
 
-test("omniroute_agent_skills_coverage({}) returns coverage shape", async () => {
-  const result = await agentSkillTools.omniroute_agent_skills_coverage.handler({});
+test("agentproxy_agent_skills_coverage({}) returns coverage shape", async () => {
+  const result = await agentSkillTools.agentproxy_agent_skills_coverage.handler({});
   assert.ok(result != null);
   assert.ok(typeof result.api === "object");
   assert.ok(typeof result.cli === "object");

@@ -9,7 +9,7 @@ import { join } from "node:path";
 import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 
-// Isolate the preview-route call below from the operator's real ~/.omniroute DB:
+// Isolate the preview-route call below from the operator's real ~/.agentproxy DB:
 // a fresh empty DATA_DIR with no INITIAL_PASSWORD means isAuthRequired() is false,
 // so the management-auth gate lets the request through (matches previewRouteFidelity).
 process.env.DATA_DIR = mkdtempSync(join(tmpdir(), "preview-riskgate-"));

@@ -11,7 +11,7 @@ import {
   setObsidianVaultPath,
 } from "@/lib/db/obsidian";
 import { createObsidianClient } from "@/lib/obsidian/api";
-import { sanitizeErrorMessage } from "@omniroute/open-sse/utils/error";
+import { sanitizeErrorMessage } from "@agentproxy/open-sse/utils/error";
 
 const setTokenSchema = z.object({
   token: z.string().min(1).max(5000),

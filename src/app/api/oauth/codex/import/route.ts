@@ -7,11 +7,11 @@ import {
 } from "@/lib/oauth/services/codexImport";
 import { createProviderConnection, getProviderConnections } from "@/models";
 import { requireManagementAuth } from "@/lib/api/requireManagementAuth";
-import { sanitizeErrorMessage } from "@omniroute/open-sse/utils/error.ts";
+import { sanitizeErrorMessage } from "@agentproxy/open-sse/utils/error.ts";
 import {
   refreshCodexToken,
   isUnrecoverableRefreshError,
-} from "@omniroute/open-sse/services/tokenRefresh.ts";
+} from "@agentproxy/open-sse/services/tokenRefresh.ts";
 
 /**
  * Message returned when the imported record's refresh_token is already dead

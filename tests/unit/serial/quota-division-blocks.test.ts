@@ -38,7 +38,7 @@ import os from "node:os";
 import path from "node:path";
 
 // ── Set DATA_DIR BEFORE any DB import (resolved as module-level constant) ───
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-division-blocks-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-division-blocks-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 // ── Imports ──────────────────────────────────────────────────────────────────

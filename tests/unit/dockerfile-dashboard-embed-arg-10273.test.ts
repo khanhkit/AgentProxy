@@ -8,7 +8,7 @@
  * The Dockerfile therefore has to expose it as a build argument. Without an
  * `ARG`, `docker build --build-arg DASHBOARD_ALLOW_EMBED=vscode` is silently
  * dropped by Docker and the operator gets the default (unframable) image with
- * no error — the same class of failure #6700's `OMNIROUTE_USE_TURBOPACK` note
+ * no error — the same class of failure #6700's `AGENTPROXY_USE_TURBOPACK` note
  * documents for a bare `ENV`.
  *
  * Guarded here rather than in a real `docker build`, which this sandbox cannot

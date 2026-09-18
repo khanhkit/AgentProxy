@@ -9,7 +9,7 @@ lastUpdated: 2026-06-28
 > **Source of truth:** `electron/` workspace
 > **Last updated:** 2026-06-28 — v3.8.40
 
-OmniRoute ships a cross-platform desktop app (Windows / macOS / Linux) built on
+AgentProxy ships a cross-platform desktop app (Windows / macOS / Linux) built on
 **Electron 41** + **electron-builder 26.10**. The desktop app spawns the Next.js
 standalone server as a child process, points a `BrowserWindow` at it, and adds a
 system tray, auto-updater, IPC bridge, and zero-config secret bootstrap.
@@ -46,8 +46,8 @@ Confirmed from `electron/package.json`:
 | `electron-updater` | `^6.8.9`                                                  |
 | `better-sqlite3`   | root `^13.0.2` (Node-API prebuilds — no Electron rebuild) |
 | App version        | `3.8.0`                                                   |
-| App id             | `online.omniroute.desktop`                                |
-| Product name       | `OmniRoute`                                               |
+| App id             | `online.agentproxy.desktop`                                |
+| Product name       | `AgentProxy`                                               |
 
 ## Scripts (root `package.json`)
 
@@ -159,28 +159,28 @@ On first launch, the main process auto-generates and persists missing secrets:
 
 Persisted to `<DATA_DIR>/server.env`. `DATA_DIR` resolves to:
 
-- Windows: `%APPDATA%\omniroute`
-- Linux: `$XDG_CONFIG_HOME/omniroute` or `~/.omniroute`
-- macOS: `~/.omniroute`
+- Windows: `%APPDATA%\agentproxy`
+- Linux: `$XDG_CONFIG_HOME/agentproxy` or `~/.agentproxy`
+- macOS: `~/.agentproxy`
 
 ## Window & Tray
 
 - `BrowserWindow`: 1400×900 (min 1024×700), `backgroundColor: "#0a0a0a"`.
 - macOS: `titleBarStyle: "hiddenInset"`, traffic-light at `{ x: 16, y: 16 }`.
 - Windows/Linux: native title bar.
-- Close button minimizes to tray; the tray menu has **Open OmniRoute**, **Open Dashboard** (external browser), **Server Port** submenu, **Check for Updates**, **Quit**.
+- Close button minimizes to tray; the tray menu has **Open AgentProxy**, **Open Dashboard** (external browser), **Server Port** submenu, **Check for Updates**, **Quit**.
 
 ## Content Security Policy
 
 Set via `session.defaultSession.webRequest.onHeadersReceived`. Notable directives:
 
 - `frame-ancestors 'none'`, `object-src 'none'`, `child-src 'none'`
-- `connect-src 'self' http://localhost:* http://127.0.0.1:* ws://localhost:* ws://127.0.0.1:* https://*.omniroute.online https://*.omniroute.dev`
+- `connect-src 'self' http://localhost:* http://127.0.0.1:* ws://localhost:* ws://127.0.0.1:* https://*.agentproxy.online https://*.agentproxy.dev`
 - Dev mode adds `'unsafe-eval'` to `script-src` only
 
 ## Auto-update
 
-Uses `electron-updater` with the GitHub provider (`diegosouzapw/OmniRoute`).
+Uses `electron-updater` with the GitHub provider (`khanhkit/AgentProxy`).
 
 - `autoDownload = false`, `autoInstallOnAppQuit = true`
 - Events forwarded to renderer via `update-status` IPC:
@@ -252,11 +252,11 @@ AppImage signing is optional — set `LINUX_GPG_KEY` if signing.
 
 Artifacts land in `electron/dist-electron/`:
 
-- `OmniRoute.Setup.X.Y.Z.exe`, `OmniRoute X.Y.Z.exe` (Windows)
-- `OmniRoute-X.Y.Z-mac.dmg`, `OmniRoute-X.Y.Z-arm64-mac.dmg` (macOS)
-- `OmniRoute-X.Y.Z.AppImage`, `omniroute-desktop_X.Y.Z_amd64.deb` (Linux)
+- `AgentProxy.Setup.X.Y.Z.exe`, `AgentProxy X.Y.Z.exe` (Windows)
+- `AgentProxy-X.Y.Z-mac.dmg`, `AgentProxy-X.Y.Z-arm64-mac.dmg` (macOS)
+- `AgentProxy-X.Y.Z.AppImage`, `agentproxy-desktop_X.Y.Z_amd64.deb` (Linux)
 
-Releases are published to GitHub Releases (`diegosouzapw/OmniRoute`), which is also where `electron-updater` checks for new versions.
+Releases are published to GitHub Releases (`khanhkit/AgentProxy`), which is also where `electron-updater` checks for new versions.
 
 ## Troubleshooting
 

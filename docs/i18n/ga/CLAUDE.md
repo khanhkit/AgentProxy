@@ -38,7 +38,7 @@ Cuir na gníomhairí seo i bhfeidhm taobh istigh de stóras `_tasks/` (`git -C _
 
 ## Comhaid sealadacha /试点工作 — úsáid `_artifacts/`, ná úsáid `/tmp`
 
-Athraíonn an tionscadal seo an leabhar sealadach réamhshocraithe den stuáil (`/tmp/claude-*/…`). Scríobh comhaid sealadacha/oibre — easpórtáil, zipanna ginte, aschur idirghabhála aon-uaire, aon rud eile a chuirfeá i `/tmp` — go `/home/diegosouzapw/dev/proxys/OmniRoute/_artifacts/` ina ionad.
+Athraíonn an tionscadal seo an leabhar sealadach réamhshocraithe den stuáil (`/tmp/claude-*/…`). Scríobh comhaid sealadacha/oibre — easpórtáil, zipanna ginte, aschur idirghabhála aon-uaire, aon rud eile a chuirfeá i `/tmp` — go `/home/diegosouzapw/dev/proxys/AgentProxy/_artifacts/` ina ionad.
 
 - Is cosán root é `_artifacts/`: tá sé faoin amhrán cheana féin (`AGENTS.md` → "Root `_*` paths"), maireann sé ar an diosca amháin, gan riamh a rianú.
 - Fáth: tá sé éasca don oibreoir comhaid sealadacha uile a aimsú agus a scriosadh in aon áit amháin má choinnítear iad laistigh den tionscadal (i gcomparáid le `/tmp`), seachas iad a lorg i bhfillteáin seisiún-bhunaithe sealadacha a dhúnann nó a bhailíonn comhaid gan rianú.

@@ -360,7 +360,7 @@ test("maxVideos preserves excess raw video only when target video support is unk
 test("empty Video and Vision model settings use the Vision auto-router and report the effective model", async () => {
   let selectedFixedModel: string | undefined;
   let calledModel = "";
-  let routedThroughOmniRoute = false;
+  let routedThroughAgentProxy = false;
   let injectedFetch = false;
   const bridge = new VideoBridgeGuardrail({
     deps: {
@@ -381,7 +381,7 @@ test("empty Video and Vision model settings use the Vision auto-router and repor
       }),
       callVisionModel: async (_image, config) => {
         calledModel = config.model;
-        routedThroughOmniRoute = config.routeThroughOmniRoute === true;
+        routedThroughAgentProxy = config.routeThroughAgentProxy === true;
         injectedFetch = typeof config.fetchImpl === "function";
         return "a safe observation";
       },
@@ -390,7 +390,7 @@ test("empty Video and Vision model settings use the Vision auto-router and repor
   const result = await bridge.preCall(payload(), {});
   assert.equal(selectedFixedModel, undefined);
   assert.equal(calledModel, "google/gemini-2.5-flash");
-  assert.equal(routedThroughOmniRoute, true);
+  assert.equal(routedThroughAgentProxy, true);
   assert.equal(injectedFetch, true);
   assert.equal(result.meta?.videoModel, "google/gemini-2.5-flash");
   assert.ok(result.modifiedPayload);

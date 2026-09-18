@@ -14,7 +14,7 @@ User-Agent, flagi `anthropic-beta`, nagłówki Stainless SDK itd.).
 
 ## Szybki start — użyj natywnego providera `agentrouter` (zalecane)
 
-Dla większości użytkowników **nie jest wymagana żadna specjalna konfiguracja**. OmniRoute dostarcza wbudowany
+Dla większości użytkowników **nie jest wymagana żadna specjalna konfiguracja**. AgentProxy dostarcza wbudowany
 provider `agentrouter` z pełnym obrazem sieciowym Claude Code już wbudowanym (zob.
 `open-sse/config/providerRegistry.ts` → `agentrouter`). Aby go użyć:
 
@@ -36,7 +36,7 @@ base URL, ścieżki chatu lub zestawu nagłówków.
 
 ## Zaawansowane: połączenie przez typ providera zgodny z Claude Code
 
-OmniRoute obsługuje też AgentRouter (i podobne przekaźniki) przez typ providera **Claude Code
+AgentProxy obsługuje też AgentRouter (i podobne przekaźniki) przez typ providera **Claude Code
 compatible** (`anthropic-compatible-cc-*`), który mówi językiem
 Anthropic Messages API z prawidłowym obrazem sieciowym. Generyczny provider
 `openai-compatible-chat` wskazujący na `https://agentrouter.org`
@@ -49,14 +49,14 @@ Code.
 
 - Konto AgentRouter i klucz API. Nowi użytkownicy otrzymują darmowe kredyty przez link
   afiliacyjny w [README](../README.md) projektu.
-- OmniRoute uruchomione z włączoną flagą funkcji `ENABLE_CC_COMPATIBLE_PROVIDER`
+- AgentProxy uruchomione z włączoną flagą funkcji `ENABLE_CC_COMPATIBLE_PROVIDER`
   (patrz poniżej).
 
 ## 1. Włącz typ providera CC-compatible
 
 Typ providera zgodny z Claude Code jest za flagą funkcji, ponieważ
 wysyła ruch bardzo zbliżony do oficjalnego klienta Claude Code. Włącz go,
-ustawiając zmienną środowiskową przed uruchomieniem OmniRoute:
+ustawiając zmienną środowiskową przed uruchomieniem AgentProxy:
 
 ```bash
 ENABLE_CC_COMPATIBLE_PROVIDER=true
@@ -65,12 +65,12 @@ ENABLE_CC_COMPATIBLE_PROVIDER=true
 Przykład Docker:
 
 ```bash
-docker run -d --name omniroute \
+docker run -d --name agentproxy \
   --restart unless-stopped \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
+  -v agentproxy-data:/app/data \
   -e ENABLE_CC_COMPATIBLE_PROVIDER=true \
-  diegosouzapw/omniroute:latest
+  khanhkit/agentproxy:latest
 ```
 
 Po restarcie dashboard udostępnia opcję **Add Claude Code Compatible**
@@ -164,7 +164,7 @@ zezwala tylko na podzbiór modeli (np. `claude-opus-4-6`). Inne ID modeli zwraca
 `unauthorized_client_error`, mimo że klucz jest ważny. Sprawdź w dashboardzie AgentRouter,
 które modele obejmuje Twój plan.
 
-**`Invalid JSON response from provider (reset after Ns)` w logach omniroute** —
+**`Invalid JSON response from provider (reset after Ns)` w logach agentproxy** —
 Upstream zwrócił ciało nie-JSON (zazwyczaj stronę błędu HTML z WAF).
 Zwykle oznacza to, że żądanie w ogóle nie dotarło do backendu AgentRouter — sprawdź ponownie, że
 ID providera zaczyna się od `anthropic-compatible-cc-` (zwróć uwagę na końcowy myślnik —
@@ -178,7 +178,7 @@ i żądanie trafia do niewłaściwego. Jeśli pozostał ręcznie utworzony provi
 z prefiksem `agentrouter`, może on przejąć ID modeli `agentrouter/<model>`
 (a combo mogą się do niego odwoływać po node ID), więc ruch idzie do tego providera —
 który wysyła generyczny User-Agent i jest odrzucany — zamiast do wbudowanego
-providera `agentrouter`, który już ma poprawny obraz sieciowy. Sprawdź w logach omniroute,
+providera `agentrouter`, który już ma poprawny obraz sieciowy. Sprawdź w logach agentproxy,
 gdzie model faktycznie się rozwiązuje (tag `ROUTING` pokazuje
 `agentrouter/<model> → <providerId>/<model>`); jeśli `<providerId>` to nie
 `agentrouter`, scentralizuj na natywnym providerze: skieruj combo na

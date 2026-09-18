@@ -47,8 +47,8 @@ function fixture() {
     base,
     staleTar: mk("e2e-build.tar.gz", false, old), // fixed-name artefact ci.yml/npm-publish leave behind
     staleBuild: mk("next-build-abc", true, old),
-    staleUpgrade: mk("omniroute-install-upgrade-xyz", true, old),
-    fresh: mk("omniroute-batch-api-fresh", true, null), // in use right now
+    staleUpgrade: mk("agentproxy-install-upgrade-xyz", true, old),
+    fresh: mk("agentproxy-batch-api-fresh", true, null), // in use right now
     unrelated: mk("somebody-elses.log", false, old), // not ours — never touched
   };
 }
@@ -123,7 +123,7 @@ describe("runner-janitor.sh", () => {
       }
       assert.doesNotMatch(
         r.stdout,
-        /omniroute-batch-api-fresh/,
+        /agentproxy-batch-api-fresh/,
         "a fresh dir is never a candidate"
       );
       assert.doesNotMatch(r.stdout, /somebody-elses\.log/, "only names our tooling creates");

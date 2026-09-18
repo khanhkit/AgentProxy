@@ -5,7 +5,7 @@ import os from "node:os";
 import path from "node:path";
 import { SignJWT } from "jose";
 
-const TEST_HOME = path.join(os.tmpdir(), `omniroute-qwen-route-${process.pid}-${Date.now()}`);
+const TEST_HOME = path.join(os.tmpdir(), `agentproxy-qwen-route-${process.pid}-${Date.now()}`);
 const SETTINGS_PATH = path.join(TEST_HOME, ".qwen", "settings.json");
 const ENV_PATH = path.join(TEST_HOME, ".qwen", ".env");
 const originalHome = os.homedir;
@@ -83,8 +83,8 @@ test("POST writes the shared V4 contract and preserves unrelated credentials", a
   assert.equal(settings.modelProviders.openai.length, 2);
   assert.deepEqual(settings.modelProviders.openai[1], {
     id: "qwen/qwen3.8-max-preview",
-    name: "qwen/qwen3.8-max-preview (OmniRoute)",
-    envKey: "OMNIROUTE_API_KEY",
+    name: "qwen/qwen3.8-max-preview (AgentProxy)",
+    envKey: "AGENTPROXY_API_KEY",
     baseUrl: "http://localhost:20128/v1",
   });
   assert.equal(JSON.stringify(settings).includes("sk-route-secret"), false);
@@ -92,10 +92,10 @@ test("POST writes the shared V4 contract and preserves unrelated credentials", a
   const env = await fs.readFile(ENV_PATH, "utf8");
   assert.match(env, /^OPENAI_API_KEY=keep-openai$/m);
   assert.match(env, /^GEMINI_API_KEY=keep-gemini$/m);
-  assert.match(env, /^OMNIROUTE_API_KEY="sk-route-secret"$/m);
+  assert.match(env, /^AGENTPROXY_API_KEY="sk-route-secret"$/m);
 });
 
-test("DELETE removes only OmniRoute-owned settings and env lines", async () => {
+test("DELETE removes only AgentProxy-owned settings and env lines", async () => {
   const configured = {
     ui: { theme: "dark" },
     security: { auth: { selectedType: "openai" } },
@@ -109,15 +109,15 @@ test("DELETE removes only OmniRoute-owned settings and env lines", async () => {
         },
         {
           id: "managed",
-          name: "managed (OmniRoute)",
-          envKey: "OMNIROUTE_API_KEY",
+          name: "managed (AgentProxy)",
+          envKey: "AGENTPROXY_API_KEY",
           baseUrl: "http://localhost:20128/v1",
         },
       ],
     },
   };
   await fs.writeFile(SETTINGS_PATH, JSON.stringify(configured));
-  await fs.writeFile(ENV_PATH, "OPENAI_API_KEY=keep\nOMNIROUTE_API_KEY=remove\n");
+  await fs.writeFile(ENV_PATH, "OPENAI_API_KEY=keep\nAGENTPROXY_API_KEY=remove\n");
 
   const response = await route.DELETE(await request("DELETE"));
   assert.equal(response.status, 200);

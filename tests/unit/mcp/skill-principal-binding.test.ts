@@ -85,16 +85,16 @@ function installRecorders(subjects: unknown[]) {
 }
 
 async function exerciseAll(requestedId: string, extra?: ToolExtra) {
-  await handler("omniroute_skills_list")({ apiKeyId: requestedId }, extra);
-  await handler("omniroute_skills_enable")(
+  await handler("agentproxy_skills_list")({ apiKeyId: requestedId }, extra);
+  await handler("agentproxy_skills_enable")(
     { apiKeyId: requestedId, skillId: "skill-1", enabled: true },
     extra
   );
-  await handler("omniroute_skills_execute")(
+  await handler("agentproxy_skills_execute")(
     { apiKeyId: requestedId, skillName: "fixture-skill", input: {} },
     extra
   );
-  await handler("omniroute_skills_executions")({ apiKeyId: requestedId }, extra);
+  await handler("agentproxy_skills_executions")({ apiKeyId: requestedId }, extra);
 }
 
 test.afterEach(() => {

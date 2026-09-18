@@ -108,7 +108,7 @@ test("mcp call sends JSON-RPC initialize then tools/call", async () => {
       "../../bin/cli/commands/mcp.mjs"
     );
     const exitCode = await runMcpCallCommand(
-      "omniroute_get_health",
+      "agentproxy_get_health",
       {},
       { stream: false },
       { baseUrl: "http://localhost:20128" },
@@ -118,7 +118,7 @@ test("mcp call sends JSON-RPC initialize then tools/call", async () => {
     assert.equal(calls.length, 2);
     assert.equal(calls[0].body.method, "initialize");
     assert.equal(calls[1].body.method, "tools/call");
-    assert.equal(calls[1].body.params.name, "omniroute_get_health");
+    assert.equal(calls[1].body.params.name, "agentproxy_get_health");
     assert.deepEqual(calls[1].body.params.arguments, {});
   } finally {
     globalThis.fetch = origFetch;

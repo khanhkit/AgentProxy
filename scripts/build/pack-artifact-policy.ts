@@ -1,5 +1,5 @@
 /**
- * Shared policy for OmniRoute npm publish artifact hygiene.
+ * Shared policy for AgentProxy npm publish artifact hygiene.
  *
  * The package publishes the standalone runtime under dist/ (Layer 1: renamed from app/).
  * This policy keeps local backups, QA scratch files, and development-only
@@ -36,7 +36,7 @@ export const APP_STAGING_ALLOWED_EXACT_PATHS: string[] = [
   "BUILD_SHA",
   "docs/openapi.yaml",
   // #7065: imported by dist/server-ws.mjs; assembleStandalone copies it but without
-  // this bare entry the prepublish prune deleted it → every `omniroute` boot of the
+  // this bare entry the prepublish prune deleted it → every `agentproxy` boot of the
   // published 3.8.47 crashed with ERR_MODULE_NOT_FOUND (same class as tls-options/3.8.41).
   "head-response-guard.cjs",
   "http-method-guard.cjs",
@@ -61,7 +61,7 @@ export const APP_STAGING_ALLOWED_EXACT_PATHS: string[] = [
   "server-ws.mjs",
   // #5452: dist/tls-options.mjs is copied by assembleStandalone (EXTRA_MODULE_ENTRIES)
   // and imported by dist/server-ws.mjs for opt-in native HTTPS/TLS (#5361). Without
-  // this bare entry the prepublish prune (Step 10.7) deletes it → `omniroute serve`
+  // this bare entry the prepublish prune (Step 10.7) deletes it → `agentproxy serve`
   // crashes with ERR_MODULE_NOT_FOUND (regressed in the published 3.8.41 tarball).
   "tls-options.mjs",
   "webdav-handler.mjs",
@@ -107,10 +107,10 @@ export const PACK_ARTIFACT_ROOT_ALLOWED_EXACT_PATHS: string[] = [
   "bin/mcp-server.mjs",
   // #9281: stdout/stderr console guard preloaded via `node --import` by
   // bin/mcp-server.mjs before the MCP entry's module graph evaluates — without it
-  // the published CLI's `omniroute --mcp` crashes on the pathToFileURL() import.
+  // the published CLI's `agentproxy --mcp` crashes on the pathToFileURL() import.
   "bin/mcpStdioConsoleGuard.mjs",
   "bin/nodeRuntimeSupport.mjs",
-  "bin/omniroute.mjs",
+  "bin/agentproxy.mjs",
   "bin/reset-password.mjs",
   // Operator incident-recovery / cold-start shell tooling (rollback, snapshot,
   // restore, cold-start bench) shipped in bin/ for self-hosters — not imported by
@@ -122,7 +122,7 @@ export const PACK_ARTIFACT_ROOT_ALLOWED_EXACT_PATHS: string[] = [
   "bin/restore-policies.sh",
   "bin/rollback.sh",
   "bin/snapshot-data.sh",
-  // Locale source of truth read at runtime by bin/cli/i18n.mjs (OMNIROUTE_LANG alias
+  // Locale source of truth read at runtime by bin/cli/i18n.mjs (AGENTPROXY_LANG alias
   // resolution: uk → uk-UA, fil/tl → phi, zh-hk/zh-mo/zh-hant → zh-TW) and by
   // bin/cli/commands/config.mjs (`config lang list`). Shipped via package.json "files";
   // without it the published CLI cannot resolve aliases and `config lang list` is empty.
@@ -134,7 +134,7 @@ export const PACK_ARTIFACT_ROOT_ALLOWED_EXACT_PATHS: string[] = [
   "open-sse/mcp-server/runtimeHeartbeat.ts",
   "open-sse/mcp-server/scopeEnforcement.ts",
   "open-sse/mcp-server/server.ts",
-  // Runtime polyfill eagerly imported by bin/omniroute.mjs (Node <22 compat);
+  // Runtime polyfill eagerly imported by bin/agentproxy.mjs (Node <22 compat);
   // shipped via package.json "files", so it must be allowed in the tarball.
   "open-sse/utils/setupPolyfill.ts",
   "package.json",
@@ -168,8 +168,8 @@ export const PACK_ARTIFACT_ROOT_ALLOWED_EXACT_PATHS: string[] = [
 ];
 
 export const PACK_ARTIFACT_ROOT_ALLOWED_PATH_PREFIXES: string[] = [
-  "@omniroute/opencode-plugin/",
-  "@omniroute/opencode-provider/",
+  "@agentproxy/opencode-plugin/",
+  "@agentproxy/opencode-provider/",
   "bin/cli/",
   // Broad open-sse + src source dirs added to package.json "files" in v3.8.21
   // to allow TypeScript-first imports from the published package.
@@ -204,7 +204,7 @@ export const PACK_ARTIFACT_REQUIRED_PATHS: string[] = [
   "dist/head-response-guard.cjs",
   "dist/webdav-handler.mjs",
   "bin/cli/program.mjs",
-  // Direct imports of bin/omniroute.mjs — bin/cli/ is only an allowlist PREFIX, so a
+  // Direct imports of bin/agentproxy.mjs — bin/cli/ is only an allowlist PREFIX, so a
   // file vanishing from the tarball never fails the unexpected-paths check; only these
   // required entries make its absence loud (#7065 class; derived + enforced by
   // tests/unit/pack-artifact-entrypoint-closures.test.ts).
@@ -218,11 +218,11 @@ export const PACK_ARTIFACT_REQUIRED_PATHS: string[] = [
   "bin/mcp-server.mjs",
   // #9281: stdout/stderr console guard preloaded via `node --import` by
   // bin/mcp-server.mjs before the MCP entry's module graph evaluates — without it
-  // the published CLI's `omniroute --mcp` crashes on the pathToFileURL() import.
+  // the published CLI's `agentproxy --mcp` crashes on the pathToFileURL() import.
   "bin/mcpStdioConsoleGuard.mjs",
   "bin/nodeRuntimeSupport.mjs",
-  "bin/omniroute.mjs",
-  // #7808: aliasResolver + its hook file. bin/omniroute.mjs imports
+  "bin/agentproxy.mjs",
+  // #7808: aliasResolver + its hook file. bin/agentproxy.mjs imports
   // bin/aliasResolver.mjs at startup, which in turn registers
   // bin/aliasResolverHook.mjs as the ESM loader. Both must ship in the tarball
   // or the CLI fails to boot — list them REQUIRED so a regression is loud.
@@ -317,7 +317,7 @@ export function parseJsonArrayOutput(
  * Paths that are NEVER publishable, whatever the allowlist says.
  *
  * Existence reason: the allowlist grants whole prefixes (e.g.
- * `@omniroute/opencode-provider/`), so a nested `node_modules` inside an allowed
+ * `@agentproxy/opencode-provider/`), so a nested `node_modules` inside an allowed
  * prefix used to be authorized by it. That shipped 79 MB of devDependencies
  * (tsup/esbuild/typescript) — 80% of the tarball — whenever the publish ran from
  * a machine where someone had installed inside that subpackage. `files[]` in

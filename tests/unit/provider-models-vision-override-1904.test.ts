@@ -20,7 +20,7 @@ import path from "node:path";
 // (what the /v1/models catalog calls) honours the explicit override.
 
 const TEST_DATA_DIR = fs.mkdtempSync(
-  path.join(os.tmpdir(), "omniroute-provider-model-vision-override-1904-")
+  path.join(os.tmpdir(), "agentproxy-provider-model-vision-override-1904-")
 );
 process.env.DATA_DIR = TEST_DATA_DIR;
 

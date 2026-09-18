@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * assembleStandalone.mjs - Shared standalone bundle assembler for OmniRoute.
+ * assembleStandalone.mjs - Shared standalone bundle assembler for AgentProxy.
  *
  * Task 0.1 Inventory: Copy/sync operations across the three build scripts
  * -----------------------------------------------------------------------
@@ -34,7 +34,7 @@
  * --- npm-UNIQUE ---
  * MITM tsc compile -> app/src/mitm/                           -               Y           -    UNIQUE (prepublish)
  * MCP server esbuild -> dist/open-sse/mcp-server/server.js    -               Y           -    UNIQUE (prepublish)
- * CLI esbuild -> bin/omniroute.mjs                            -               Y           -    UNIQUE (prepublish)
+ * CLI esbuild -> bin/agentproxy.mjs                            -               Y           -    UNIQUE (prepublish)
  * sidecar/doc copies (.env.example, docs/, sync-env, etc.)    -               Y           -    UNIQUE (prepublish)
  * prune + validate (pack-artifact-policy)                      -               Y           -    UNIQUE (prepublish)
  * data/ dir creation                                           -               Y           -    UNIQUE (prepublish)
@@ -292,7 +292,7 @@ const EXTRA_MODULE_ENTRIES = [
     // resolved at module-link time. Next.js's standalone output-file tracer (nft)
     // sometimes emits a hollow dist/node_modules/undici/ (package.json only), which
     // SHADOWS the fully-populated sibling node_modules/undici and crashes
-    // `omniroute --mcp` at startup. See #7701.
+    // `agentproxy --mcp` at startup. See #7701.
     label: "undici (MCP server static import — #7701)",
     src: ["node_modules", "undici"],
     dest: ["node_modules", "undici"],
@@ -301,7 +301,7 @@ const EXTRA_MODULE_ENTRIES = [
     // Turbopack's standalone tracer can emit a hollow node_modules/ws/ directory
     // for the externalized `ws` package (no package.json / index.js), which then
     // shadows the real install at runtime and crashes instrumentation with:
-    // "Cannot find package '<bundle>/node_modules/ws/index.js'" (#OmniRoute v3.8.50 live bug).
+    // "Cannot find package '<bundle>/node_modules/ws/index.js'" (#AgentProxy v3.8.50 live bug).
     // Overlay the full source package so the bundled server resolves the real entrypoint.
     label: "ws (externalized runtime package shadow fix)",
     src: ["node_modules", "ws"],
@@ -588,11 +588,11 @@ function stampServiceWorkerBuildId(resolvedOutDir) {
   const swDest = path.join(resolvedOutDir, "public", "sw.js");
   if (!fsSync.existsSync(swDest)) return;
   const buildId =
-    process.env.OMNIROUTE_SW_BUILD_ID || process.env.SOURCE_VERSION || String(Date.now());
+    process.env.AGENTPROXY_SW_BUILD_ID || process.env.SOURCE_VERSION || String(Date.now());
   let sw = fsSync.readFileSync(swDest, "utf8");
   sw = sw.replace(
-    /^const CACHE_NAME = "omniroute-pwa-v3";$/m,
-    `const CACHE_NAME = "omniroute-pwa-v3-${buildId}"; // build ${buildId}`
+    /^const CACHE_NAME = "agentproxy-pwa-v3";$/m,
+    `const CACHE_NAME = "agentproxy-pwa-v3-${buildId}"; // build ${buildId}`
   );
   fsSync.writeFileSync(swDest, sw);
 }

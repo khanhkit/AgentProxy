@@ -8,7 +8,7 @@ import { PEER_IP_HEADER } from "@/server/authz/headers";
 // NOTE: Dynamic imports below are used (with comment) solely because the modules read process.env at evaluation time.
 // The specifiers are literals. This is the established pattern in this repo's auth tests for env-controlled DB setup.
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-oidc-login-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-oidc-login-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.JWT_SECRET = "test-jwt-secret-for-oidc-login";
 
@@ -161,11 +161,11 @@ test("AP-ISS-0005: configured HTTPS origin resists spoofed Host/XFP for OIDC red
 
 test("AP-ISS-0005: trusted stamped proxy origin is honored for OIDC redirect and cookie", async () => {
   await setupFullOidcSettings();
-  delete process.env.OMNIROUTE_PUBLIC_BASE_URL;
+  delete process.env.AGENTPROXY_PUBLIC_BASE_URL;
   delete process.env.NEXT_PUBLIC_BASE_URL;
   delete process.env.NEXT_PUBLIC_APP_URL;
-  process.env.OMNIROUTE_TRUST_PROXY = "true";
-  process.env.OMNIROUTE_PEER_STAMP_TOKEN = "oidc-login-test-peer-stamp";
+  process.env.AGENTPROXY_TRUST_PROXY = "true";
+  process.env.AGENTPROXY_PEER_STAMP_TOKEN = "oidc-login-test-peer-stamp";
 
   const originalFetch = globalThis.fetch;
   globalThis.fetch = (async (input: RequestInfo | URL) => {
@@ -197,7 +197,7 @@ test("AP-ISS-0005: trusted stamped proxy origin is honored for OIDC redirect and
     assert.match(response.headers.get("set-cookie") || "", /;\s*Secure(?:;|$)/i);
   } finally {
     globalThis.fetch = originalFetch;
-    delete process.env.OMNIROUTE_TRUST_PROXY;
-    delete process.env.OMNIROUTE_PEER_STAMP_TOKEN;
+    delete process.env.AGENTPROXY_TRUST_PROXY;
+    delete process.env.AGENTPROXY_PEER_STAMP_TOKEN;
   }
 });

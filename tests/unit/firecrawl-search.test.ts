@@ -112,7 +112,7 @@ test("handleSearch firecrawl hits /v2/search with sources web and normalizes dat
 
   try {
     const result = await handleSearch({
-      query: "omniroute search",
+      query: "agentproxy search",
       provider: "firecrawl",
       maxResults: 5,
       searchType: "web",
@@ -125,7 +125,7 @@ test("handleSearch firecrawl hits /v2/search with sources web and normalizes dat
     const headers = capturedInit?.headers as Record<string, string>;
     assert.equal(headers.Authorization, "Bearer fc-test-key");
     const body = JSON.parse(String(capturedInit?.body || "{}"));
-    assert.equal(body.query, "omniroute search");
+    assert.equal(body.query, "agentproxy search");
     assert.equal(body.limit, 5);
     assert.deepEqual(body.sources, ["web"]);
 

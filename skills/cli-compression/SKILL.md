@@ -11,8 +11,8 @@ Configure and test prompt compression from the CLI. Manage RTK filters, Caveman 
 ## Quick install
 
 ```bash
-npm install -g omniroute   # or: npx omniroute
-omniroute --version
+npm install -g agentproxy   # or: npx agentproxy
+agentproxy --version
 ```
 
 ## Subcommands
@@ -22,7 +22,7 @@ omniroute --version
 **Example:**
 
 ```bash
-omniroute compression
+agentproxy compression
 ```
 
 ### `compression status`
@@ -30,7 +30,7 @@ omniroute compression
 **Example:**
 
 ```bash
-omniroute compression status
+agentproxy compression status
 ```
 
 ### `compression configure`
@@ -45,7 +45,7 @@ omniroute compression status
 **Example:**
 
 ```bash
-omniroute compression configure
+agentproxy compression configure
 ```
 
 ### `compression engine`
@@ -53,7 +53,7 @@ omniroute compression configure
 **Example:**
 
 ```bash
-omniroute compression engine
+agentproxy compression engine
 ```
 
 ### `compression set <name>`
@@ -61,7 +61,7 @@ omniroute compression engine
 **Example:**
 
 ```bash
-omniroute compression set <name>
+agentproxy compression set <name>
 ```
 
 ### `compression get`
@@ -69,7 +69,7 @@ omniroute compression set <name>
 **Example:**
 
 ```bash
-omniroute compression get
+agentproxy compression get
 ```
 
 ### `compression combos`
@@ -77,7 +77,7 @@ omniroute compression get
 **Example:**
 
 ```bash
-omniroute compression combos
+agentproxy compression combos
 ```
 
 ### `compression list`
@@ -85,7 +85,7 @@ omniroute compression combos
 **Example:**
 
 ```bash
-omniroute compression list
+agentproxy compression list
 ```
 
 ### `compression stats`
@@ -97,7 +97,7 @@ omniroute compression list
 **Example:**
 
 ```bash
-omniroute compression stats
+agentproxy compression stats
 ```
 
 ### `compression rules`
@@ -105,7 +105,7 @@ omniroute compression stats
 **Example:**
 
 ```bash
-omniroute compression rules
+agentproxy compression rules
 ```
 
 ### `compression list`
@@ -113,7 +113,7 @@ omniroute compression rules
 **Example:**
 
 ```bash
-omniroute compression list
+agentproxy compression list
 ```
 
 ### `compression add`
@@ -125,7 +125,7 @@ omniroute compression list
 **Example:**
 
 ```bash
-omniroute compression add
+agentproxy compression add
 ```
 
 ### `compression remove <id>`
@@ -137,7 +137,7 @@ omniroute compression add
 **Example:**
 
 ```bash
-omniroute compression remove <id>
+agentproxy compression remove <id>
 ```
 
 ### `compression language-packs`
@@ -145,7 +145,7 @@ omniroute compression remove <id>
 **Example:**
 
 ```bash
-omniroute compression language-packs
+agentproxy compression language-packs
 ```
 
 ### `compression preview`
@@ -153,5 +153,5 @@ omniroute compression language-packs
 **Example:**
 
 ```bash
-omniroute compression preview
+agentproxy compression preview
 ```

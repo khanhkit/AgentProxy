@@ -5,7 +5,7 @@ import { once } from "node:events";
 process.env.DISABLE_SQLITE_AUTO_BACKUP = "true";
 process.env.API_KEY_SECRET = "codex-pool-http-e2e-secret-123456";
 process.env.REQUIRE_API_KEY = "false";
-process.env.OMNIROUTE_LOG_REQUEST_SHAPE = "0";
+process.env.AGENTPROXY_LOG_REQUEST_SHAPE = "0";
 
 const providersDb = await import("../../../src/lib/db/providers.ts");
 const chatRoute = await import("../../../src/app/api/v1/chat/completions/route.ts");

@@ -89,7 +89,7 @@ let core: typeof import("../../src/lib/db/core.ts");
 let TEST_DATA_DIR: string;
 
 test.before(async () => {
-  TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-perf-waterfall-"));
+  TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-perf-waterfall-"));
   process.env.DATA_DIR = TEST_DATA_DIR;
   process.env.DISABLE_SQLITE_AUTO_BACKUP = "true";
   core = await import("../../src/lib/db/core.ts");

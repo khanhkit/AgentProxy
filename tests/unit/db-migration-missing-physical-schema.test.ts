@@ -12,22 +12,22 @@ import { fileURLToPath } from "node:url";
 
 import Database from "better-sqlite3";
 
-const isIsolatedChild = process.env.OMNIROUTE_DB_MIGRATION_SAFETY_CHILD === "1";
+const isIsolatedChild = process.env.AGENTPROXY_DB_MIGRATION_SAFETY_CHILD === "1";
 
 if (!isIsolatedChild) {
   test("historical migration repair scenarios pass in an isolated process", () => {
-    const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-schema-repair-data-"));
+    const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-schema-repair-data-"));
     const migrationsDir = fs.mkdtempSync(
-      path.join(os.tmpdir(), "omniroute-schema-repair-migrations-")
+      path.join(os.tmpdir(), "agentproxy-schema-repair-migrations-")
     );
 
     try {
       const childEnv = {
         ...process.env,
         DATA_DIR: dataDir,
-        OMNIROUTE_DB_MIGRATION_SAFETY_CHILD: "1",
-        OMNIROUTE_MAX_PENDING_MIGRATIONS: "",
-        OMNIROUTE_MIGRATIONS_DIR: migrationsDir,
+        AGENTPROXY_DB_MIGRATION_SAFETY_CHILD: "1",
+        AGENTPROXY_MAX_PENDING_MIGRATIONS: "",
+        AGENTPROXY_MIGRATIONS_DIR: migrationsDir,
       };
       // Node's test runner exports this only to the current test worker. Passing it into
       // another `node --test` process makes Node classify the nested file as recursive and
@@ -58,7 +58,7 @@ if (!isIsolatedChild) {
   });
 } else {
   const dataDir = process.env.DATA_DIR;
-  const migrationsDir = process.env.OMNIROUTE_MIGRATIONS_DIR;
+  const migrationsDir = process.env.AGENTPROXY_MIGRATIONS_DIR;
   assert.ok(dataDir, "isolated child requires an explicit DATA_DIR");
   assert.ok(migrationsDir, "isolated child requires an explicit migrations directory");
   const discoveryMigrationSql = fs.readFileSync(
@@ -138,7 +138,7 @@ if (!isIsolatedChild) {
 
     try {
       db.exec(`
-      CREATE TABLE _omniroute_migrations (
+      CREATE TABLE _agentproxy_migrations (
         version TEXT PRIMARY KEY,
         name TEXT NOT NULL,
         applied_at TEXT NOT NULL DEFAULT (datetime('now'))
@@ -149,7 +149,7 @@ if (!isIsolatedChild) {
       );
       INSERT INTO inspector_custom_hosts (host, enabled)
       VALUES ('api.example.test', 1);
-      INSERT INTO _omniroute_migrations (version, name)
+      INSERT INTO _agentproxy_migrations (version, name)
       VALUES ('074', 'inspector_custom_hosts');
     `);
 
@@ -174,7 +174,7 @@ if (!isIsolatedChild) {
         "074 must be replayed before migrations 151 and 152 reference discovery_results"
       );
       assert.deepEqual(
-        db.prepare("SELECT version, name FROM _omniroute_migrations ORDER BY version").all(),
+        db.prepare("SELECT version, name FROM _agentproxy_migrations ORDER BY version").all(),
         [
           { version: "074", name: "discovery_results" },
           { version: "081", name: "inspector_custom_hosts" },
@@ -199,7 +199,7 @@ if (!isIsolatedChild) {
     try {
       db.exec(discoveryMigrationSql);
       db.exec(`
-      CREATE TABLE _omniroute_migrations (
+      CREATE TABLE _agentproxy_migrations (
         version TEXT PRIMARY KEY,
         name TEXT NOT NULL,
         applied_at TEXT NOT NULL DEFAULT (datetime('now'))
@@ -210,13 +210,13 @@ if (!isIsolatedChild) {
       );
       INSERT INTO inspector_custom_hosts (host, enabled)
       VALUES ('api.example.test', 1);
-      INSERT INTO _omniroute_migrations (version, name)
+      INSERT INTO _agentproxy_migrations (version, name)
       VALUES ('074', 'inspector_custom_hosts');
     `);
 
       assert.equal(runMigrations(db as never), 3);
       assert.deepEqual(
-        db.prepare("SELECT version, name FROM _omniroute_migrations ORDER BY version").all(),
+        db.prepare("SELECT version, name FROM _agentproxy_migrations ORDER BY version").all(),
         [
           { version: "074", name: "discovery_results" },
           { version: "081", name: "inspector_custom_hosts" },
@@ -238,12 +238,12 @@ if (!isIsolatedChild) {
 
     try {
       db.exec(`
-      CREATE TABLE _omniroute_migrations (
+      CREATE TABLE _agentproxy_migrations (
         version TEXT PRIMARY KEY,
         name TEXT NOT NULL,
         applied_at TEXT NOT NULL DEFAULT (datetime('now'))
       );
-      INSERT INTO _omniroute_migrations (version, name)
+      INSERT INTO _agentproxy_migrations (version, name)
       VALUES ('074', 'inspector_custom_hosts');
     `);
 
@@ -265,7 +265,7 @@ if (!isIsolatedChild) {
         "the rehomed 081 marker must not hide a missing inspector table"
       );
       assert.deepEqual(
-        db.prepare("SELECT version, name FROM _omniroute_migrations ORDER BY version").all(),
+        db.prepare("SELECT version, name FROM _agentproxy_migrations ORDER BY version").all(),
         [
           { version: "074", name: "discovery_results" },
           { version: "081", name: "inspector_custom_hosts" },
@@ -284,14 +284,14 @@ if (!isIsolatedChild) {
     try {
       db.exec(discoveryMigrationSql);
       db.exec(`
-      CREATE TABLE _omniroute_migrations (
+      CREATE TABLE _agentproxy_migrations (
         version TEXT PRIMARY KEY,
         name TEXT NOT NULL,
         applied_at TEXT NOT NULL DEFAULT (datetime('now'))
       );
-      INSERT INTO _omniroute_migrations (version, name)
+      INSERT INTO _agentproxy_migrations (version, name)
       VALUES ('074', 'discovery_results');
-      INSERT INTO _omniroute_migrations (version, name)
+      INSERT INTO _agentproxy_migrations (version, name)
       VALUES ('081', 'inspector_custom_hosts');
     `);
 
@@ -305,7 +305,7 @@ if (!isIsolatedChild) {
         "a valid 081 marker must be replayed when its physical table is absent"
       );
       assert.deepEqual(
-        db.prepare("SELECT version, name FROM _omniroute_migrations ORDER BY version").all(),
+        db.prepare("SELECT version, name FROM _agentproxy_migrations ORDER BY version").all(),
         [
           { version: "074", name: "discovery_results" },
           { version: "081", name: "inspector_custom_hosts" },
@@ -327,14 +327,14 @@ if (!isIsolatedChild) {
         host TEXT PRIMARY KEY,
         enabled INTEGER NOT NULL DEFAULT 1
       );
-      CREATE TABLE _omniroute_migrations (
+      CREATE TABLE _agentproxy_migrations (
         version TEXT PRIMARY KEY,
         name TEXT NOT NULL,
         applied_at TEXT NOT NULL DEFAULT (datetime('now'))
       );
-      INSERT INTO _omniroute_migrations (version, name)
+      INSERT INTO _agentproxy_migrations (version, name)
       VALUES ('074', 'inspector_custom_hosts');
-      INSERT INTO _omniroute_migrations (version, name)
+      INSERT INTO _agentproxy_migrations (version, name)
       VALUES ('081', 'unknown_historical_migration');
     `);
 
@@ -343,7 +343,7 @@ if (!isIsolatedChild) {
         /target version 081 is occupied by unknown migration/i
       );
       assert.deepEqual(
-        db.prepare("SELECT version, name FROM _omniroute_migrations ORDER BY version").all(),
+        db.prepare("SELECT version, name FROM _agentproxy_migrations ORDER BY version").all(),
         [
           { version: "074", name: "inspector_custom_hosts" },
           { version: "081", name: "unknown_historical_migration" },
@@ -360,18 +360,18 @@ if (!isIsolatedChild) {
 
     try {
       db.exec(`
-      CREATE TABLE _omniroute_migrations (
+      CREATE TABLE _agentproxy_migrations (
         version TEXT PRIMARY KEY,
         name TEXT NOT NULL,
         applied_at TEXT NOT NULL DEFAULT (datetime('now'))
       );
-      INSERT INTO _omniroute_migrations (version, name)
+      INSERT INTO _agentproxy_migrations (version, name)
       VALUES ('074', 'unknown_historical_migration');
-      INSERT INTO _omniroute_migrations (version, name)
+      INSERT INTO _agentproxy_migrations (version, name)
       VALUES ('081', 'inspector_custom_hosts');
-      INSERT INTO _omniroute_migrations (version, name)
+      INSERT INTO _agentproxy_migrations (version, name)
       VALUES ('151', 'windsurf_to_devin_desktop');
-      INSERT INTO _omniroute_migrations (version, name)
+      INSERT INTO _agentproxy_migrations (version, name)
       VALUES ('152', 'remove_puter_provider');
     `);
 
@@ -381,7 +381,7 @@ if (!isIsolatedChild) {
         "unknown provenance must fail closed instead of being silently rewritten"
       );
       assert.deepEqual(
-        db.prepare("SELECT version, name FROM _omniroute_migrations ORDER BY version").all(),
+        db.prepare("SELECT version, name FROM _agentproxy_migrations ORDER BY version").all(),
         [
           { version: "074", name: "unknown_historical_migration" },
           { version: "081", name: "inspector_custom_hosts" },
@@ -403,13 +403,13 @@ if (!isIsolatedChild) {
       delete process.env.DISABLE_SQLITE_AUTO_BACKUP;
       db.exec(`
       CREATE TABLE provider_connections (id TEXT PRIMARY KEY);
-      CREATE TABLE _omniroute_migrations (
+      CREATE TABLE _agentproxy_migrations (
         version TEXT PRIMARY KEY,
         name TEXT NOT NULL,
         applied_at TEXT NOT NULL DEFAULT (datetime('now'))
       );
       INSERT INTO provider_connections (id) VALUES ('existing-data');
-      INSERT INTO _omniroute_migrations (version, name)
+      INSERT INTO _agentproxy_migrations (version, name)
       VALUES ('074', 'discovery_results');
     `);
 
@@ -441,12 +441,12 @@ if (!isIsolatedChild) {
     try {
       delete process.env.DISABLE_SQLITE_AUTO_BACKUP;
       db.exec(`
-        CREATE TABLE _omniroute_migrations (
+        CREATE TABLE _agentproxy_migrations (
           version TEXT PRIMARY KEY,
           name TEXT NOT NULL,
           applied_at TEXT NOT NULL DEFAULT (datetime('now'))
         );
-        INSERT INTO _omniroute_migrations (version, name)
+        INSERT INTO _agentproxy_migrations (version, name)
         VALUES ('074', 'discovery_results');
       `);
 
@@ -467,7 +467,7 @@ if (!isIsolatedChild) {
         "third-party-sentinel",
         "snapshot failure cleanup must never unlink another actor's final path"
       );
-      assert.deepEqual(db.prepare("SELECT version, name FROM _omniroute_migrations").all(), [
+      assert.deepEqual(db.prepare("SELECT version, name FROM _agentproxy_migrations").all(), [
         { version: "074", name: "discovery_results" },
       ]);
     } finally {
@@ -489,12 +489,12 @@ if (!isIsolatedChild) {
     try {
       delete process.env.DISABLE_SQLITE_AUTO_BACKUP;
       db.exec(`
-        CREATE TABLE _omniroute_migrations (
+        CREATE TABLE _agentproxy_migrations (
           version TEXT PRIMARY KEY,
           name TEXT NOT NULL,
           applied_at TEXT NOT NULL DEFAULT (datetime('now'))
         );
-        INSERT INTO _omniroute_migrations (version, name)
+        INSERT INTO _agentproxy_migrations (version, name)
         VALUES ('074', 'discovery_results');
       `);
       fs.linkSync = (() => {
@@ -505,7 +505,7 @@ if (!isIsolatedChild) {
         () => runMigrations(db as never),
         /durable snapshot.*hard links unsupported.*hard links.*synchronization/is
       );
-      assert.deepEqual(db.prepare("SELECT version, name FROM _omniroute_migrations").all(), [
+      assert.deepEqual(db.prepare("SELECT version, name FROM _agentproxy_migrations").all(), [
         { version: "074", name: "discovery_results" },
       ]);
       assert.equal(
@@ -529,24 +529,24 @@ if (!isIsolatedChild) {
     const sqlitePath = path.join(dataDir, "only-marker-mass-safety.sqlite");
     const db = new Database(sqlitePath);
     const previousDisableBackup = process.env.DISABLE_SQLITE_AUTO_BACKUP;
-    const previousMaxPending = process.env.OMNIROUTE_MAX_PENDING_MIGRATIONS;
+    const previousMaxPending = process.env.AGENTPROXY_MAX_PENDING_MIGRATIONS;
 
     try {
       process.env.DISABLE_SQLITE_AUTO_BACKUP = "true";
-      process.env.OMNIROUTE_MAX_PENDING_MIGRATIONS = "1";
+      process.env.AGENTPROXY_MAX_PENDING_MIGRATIONS = "1";
       db.exec(`
       CREATE TABLE provider_connections (id TEXT PRIMARY KEY);
       CREATE TABLE inspector_custom_hosts (
         host TEXT PRIMARY KEY,
         enabled INTEGER NOT NULL DEFAULT 1
       );
-      CREATE TABLE _omniroute_migrations (
+      CREATE TABLE _agentproxy_migrations (
         version TEXT PRIMARY KEY,
         name TEXT NOT NULL,
         applied_at TEXT NOT NULL DEFAULT (datetime('now'))
       );
       INSERT INTO provider_connections (id) VALUES ('existing-data');
-      INSERT INTO _omniroute_migrations (version, name)
+      INSERT INTO _agentproxy_migrations (version, name)
       VALUES ('074', 'inspector_custom_hosts');
     `);
 
@@ -555,7 +555,7 @@ if (!isIsolatedChild) {
 
       assert.throws(runOnce, /threshold is 1/i);
       assert.deepEqual(
-        db.prepare("SELECT version, name FROM _omniroute_migrations").all(),
+        db.prepare("SELECT version, name FROM _agentproxy_migrations").all(),
         [{ version: "074", name: "inspector_custom_hosts" }],
         "an abort must restore the marker that was rehomed to calculate the real pending set"
       );
@@ -566,7 +566,7 @@ if (!isIsolatedChild) {
 
       assert.throws(runOnce, /threshold is 1/i);
       assert.deepEqual(
-        db.prepare("SELECT version, name FROM _omniroute_migrations").all(),
+        db.prepare("SELECT version, name FROM _agentproxy_migrations").all(),
         [{ version: "074", name: "inspector_custom_hosts" }],
         "the second startup must hit the same barrier instead of treating the DB as fresh"
       );
@@ -579,8 +579,8 @@ if (!isIsolatedChild) {
       db.close();
       if (previousDisableBackup === undefined) delete process.env.DISABLE_SQLITE_AUTO_BACKUP;
       else process.env.DISABLE_SQLITE_AUTO_BACKUP = previousDisableBackup;
-      if (previousMaxPending === undefined) delete process.env.OMNIROUTE_MAX_PENDING_MIGRATIONS;
-      else process.env.OMNIROUTE_MAX_PENDING_MIGRATIONS = previousMaxPending;
+      if (previousMaxPending === undefined) delete process.env.AGENTPROXY_MAX_PENDING_MIGRATIONS;
+      else process.env.AGENTPROXY_MAX_PENDING_MIGRATIONS = previousMaxPending;
     }
   });
 
@@ -592,15 +592,15 @@ if (!isIsolatedChild) {
     try {
       delete process.env.DISABLE_SQLITE_AUTO_BACKUP;
       db.exec(`
-      CREATE TABLE _omniroute_migrations (
+      CREATE TABLE _agentproxy_migrations (
         version TEXT PRIMARY KEY,
         name TEXT NOT NULL,
         applied_at TEXT NOT NULL DEFAULT (datetime('now'))
       );
-      INSERT INTO _omniroute_migrations (version, name)
+      INSERT INTO _agentproxy_migrations (version, name)
       VALUES ('074', 'discovery_results');
       CREATE TRIGGER block_migration_ledger_replay
-      BEFORE INSERT ON _omniroute_migrations
+      BEFORE INSERT ON _agentproxy_migrations
       WHEN NEW.version = '074'
       BEGIN
         SELECT RAISE(ABORT, 'ledger replay blocked');
@@ -611,7 +611,7 @@ if (!isIsolatedChild) {
       const backupsBefore = listPreMigrationBackups();
 
       assert.throws(runOnce, /ledger replay blocked/);
-      assert.deepEqual(db.prepare("SELECT version, name FROM _omniroute_migrations").all(), [
+      assert.deepEqual(db.prepare("SELECT version, name FROM _agentproxy_migrations").all(), [
         { version: "074", name: "discovery_results" },
       ]);
       assert.equal(
@@ -645,25 +645,25 @@ if (!isIsolatedChild) {
     const sqlitePath = path.join(dataDir, "sqljs-mass-safety.sqlite");
     const { createSqlJsAdapter } = await import("../../src/lib/db/adapters/sqljsAdapter.ts");
     const db = await createSqlJsAdapter(sqlitePath);
-    const previousMaxPending = process.env.OMNIROUTE_MAX_PENDING_MIGRATIONS;
+    const previousMaxPending = process.env.AGENTPROXY_MAX_PENDING_MIGRATIONS;
     const backupsBefore = listPreMigrationBackups();
 
     try {
-      process.env.OMNIROUTE_MAX_PENDING_MIGRATIONS = "1";
+      process.env.AGENTPROXY_MAX_PENDING_MIGRATIONS = "1";
       db.exec(`
         CREATE TABLE provider_connections (id TEXT PRIMARY KEY);
         CREATE TABLE inspector_custom_hosts (
           host TEXT PRIMARY KEY,
           enabled INTEGER NOT NULL DEFAULT 1
         );
-        CREATE TABLE _omniroute_migrations (
+        CREATE TABLE _agentproxy_migrations (
           version TEXT PRIMARY KEY,
           name TEXT NOT NULL,
           applied_at TEXT NOT NULL DEFAULT (datetime('now'))
         );
         INSERT INTO provider_connections (id) VALUES ('existing-data');
         INSERT INTO inspector_custom_hosts (host) VALUES ('api.example.test');
-        INSERT INTO _omniroute_migrations (version, name)
+        INSERT INTO _agentproxy_migrations (version, name)
         VALUES ('074', 'inspector_custom_hosts');
       `);
 
@@ -672,7 +672,7 @@ if (!isIsolatedChild) {
 
       assert.throws(runOnce, /threshold is 1/i);
       assert.deepEqual(
-        db.prepare("SELECT version, name FROM _omniroute_migrations ORDER BY version").all(),
+        db.prepare("SELECT version, name FROM _agentproxy_migrations ORDER BY version").all(),
         expectedLedger,
         "sql.js must roll the compatibility repair back with the safety savepoint"
       );
@@ -683,7 +683,7 @@ if (!isIsolatedChild) {
 
       assert.throws(runOnce, /threshold is 1/i);
       assert.deepEqual(
-        db.prepare("SELECT version, name FROM _omniroute_migrations ORDER BY version").all(),
+        db.prepare("SELECT version, name FROM _agentproxy_migrations ORDER BY version").all(),
         expectedLedger,
         "a retry must see the same original ledger rather than committed repair residue"
       );
@@ -694,8 +694,8 @@ if (!isIsolatedChild) {
       );
     } finally {
       db.close();
-      if (previousMaxPending === undefined) delete process.env.OMNIROUTE_MAX_PENDING_MIGRATIONS;
-      else process.env.OMNIROUTE_MAX_PENDING_MIGRATIONS = previousMaxPending;
+      if (previousMaxPending === undefined) delete process.env.AGENTPROXY_MAX_PENDING_MIGRATIONS;
+      else process.env.AGENTPROXY_MAX_PENDING_MIGRATIONS = previousMaxPending;
     }
   });
 
@@ -711,15 +711,15 @@ if (!isIsolatedChild) {
       db.exec(`
       PRAGMA user_version = 42;
       PRAGMA application_id = 1337;
-      CREATE TABLE _omniroute_migrations (
+      CREATE TABLE _agentproxy_migrations (
         version TEXT PRIMARY KEY,
         name TEXT NOT NULL,
         applied_at TEXT NOT NULL DEFAULT (datetime('now'))
       );
-      INSERT INTO _omniroute_migrations (version, name)
+      INSERT INTO _agentproxy_migrations (version, name)
       VALUES ('074', 'discovery_results');
       CREATE TRIGGER block_sqljs_ledger_replay
-      BEFORE INSERT ON _omniroute_migrations
+      BEFORE INSERT ON _agentproxy_migrations
       WHEN NEW.version = '074'
       BEGIN
         SELECT RAISE(ABORT, 'sqljs ledger replay blocked');
@@ -727,7 +727,7 @@ if (!isIsolatedChild) {
     `);
 
       assert.throws(() => runMigrations(db), /sqljs ledger replay blocked/);
-      assert.deepEqual(db.prepare("SELECT version, name FROM _omniroute_migrations").all(), [
+      assert.deepEqual(db.prepare("SELECT version, name FROM _agentproxy_migrations").all(), [
         { version: "074", name: "discovery_results" },
       ]);
       assert.equal(
@@ -775,7 +775,7 @@ if (!isIsolatedChild) {
           "the normalized SQLite change counter and version-valid-for fields must agree"
         );
         assert.deepEqual(
-          snapshot.prepare("SELECT version, name FROM _omniroute_migrations").all(),
+          snapshot.prepare("SELECT version, name FROM _agentproxy_migrations").all(),
           [{ version: "074", name: "discovery_results" }]
         );
         assert.equal(
@@ -804,7 +804,7 @@ if (!isIsolatedChild) {
       try {
         assert.deepEqual(
           reopened
-            .prepare("SELECT version, name FROM _omniroute_migrations ORDER BY version")
+            .prepare("SELECT version, name FROM _agentproxy_migrations ORDER BY version")
             .all(),
           [
             { version: "074", name: "discovery_results" },

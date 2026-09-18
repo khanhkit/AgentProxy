@@ -6,7 +6,7 @@ import {
   isNextMiddlewareControlHeader,
   MAX_FORWARDED_UPSTREAM_RESPONSE_HEADER_BYTES,
   stripNextMiddlewareControlHeaders,
-} from "@omniroute/open-sse/handlers/chatCore/responseHeaders.ts";
+} from "@agentproxy/open-sse/handlers/chatCore/responseHeaders.ts";
 
 // Regression guard for issue #5849:
 // Providers hosted behind a Next.js middleware (e.g. synthetic.new) leak Next's
@@ -138,13 +138,13 @@ test("streaming path prioritizes request and rate-limit headers over diagnostics
   assert.equal(getHeaderValue(out, "x-ratelimit-remaining-requests"), "12");
 });
 
-test("streaming path strips hop-by-hop and spoofed OmniRoute headers", () => {
+test("streaming path strips hop-by-hop and spoofed AgentProxy headers", () => {
   const upstream = new Headers({
     connection: "keep-alive, x-remove-me",
     "keep-alive": "timeout=5",
     "proxy-authenticate": "Basic realm=upstream",
     "x-remove-me": "connection-scoped",
-    "x-omniroute-provider": "spoofed-provider",
+    "x-agentproxy-provider": "spoofed-provider",
     "x-request-id": "req-safe",
   });
 

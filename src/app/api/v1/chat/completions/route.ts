@@ -4,17 +4,17 @@ import { callCloudWithMachineId } from "@/shared/utils/cloud";
 import { handleChat } from "@/sse/handlers/chat";
 import { generateRequestId } from "@/shared/utils/requestId";
 import { resolveIncomingCorrelationId } from "@/shared/utils/correlationPreserve.ts";
-import { errorResponse } from "@omniroute/open-sse/utils/error.ts";
-import { initTranslators } from "@omniroute/open-sse/translator/index.ts";
+import { errorResponse } from "@agentproxy/open-sse/utils/error.ts";
+import { initTranslators } from "@agentproxy/open-sse/translator/index.ts";
 import { createInjectionGuard } from "@/middleware/promptInjectionGuard";
-import { acceptHeaderForcesStream } from "@omniroute/open-sse/utils/aiSdkCompat.ts";
+import { acceptHeaderForcesStream } from "@agentproxy/open-sse/utils/aiSdkCompat.ts";
 import {
   OPENAI_CHAT_ERROR_FRAME,
   OPENAI_KEEPALIVE_FRAME,
   OPENAI_STARTUP_FRAME,
   withEarlyStreamKeepalive,
-} from "@omniroute/open-sse/utils/earlyStreamKeepalive";
-import { resolveKeepaliveThreshold } from "@omniroute/open-sse/utils/keepaliveThreshold";
+} from "@agentproxy/open-sse/utils/earlyStreamKeepalive";
+import { resolveKeepaliveThreshold } from "@agentproxy/open-sse/utils/keepaliveThreshold";
 import {
   admitChatRequest,
   admitChatStructure,
@@ -126,8 +126,8 @@ export async function POST(request) {
   try {
     // One-line marker for diagnosing 413 / Server-Action interceptions.
     // Logs only when Content-Length is present so debug noise stays low for
-    // typical chat payloads. Opt-in via OMNIROUTE_LOG_REQUEST_SHAPE=1.
-    if (process.env.OMNIROUTE_LOG_REQUEST_SHAPE === "1") {
+    // typical chat payloads. Opt-in via AGENTPROXY_LOG_REQUEST_SHAPE=1.
+    if (process.env.AGENTPROXY_LOG_REQUEST_SHAPE === "1") {
       const ct = contentType;
       const cl = requestContentLengthHeader;
       if (cl && Number(cl) > 256 * 1024) {

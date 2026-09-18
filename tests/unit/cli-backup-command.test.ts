@@ -5,7 +5,7 @@
 // ("GLIBC_2.29 not found"), so the native module fails to dlopen and any test that
 // reaches better-sqlite3 directly (or asserts stdout that the load-failure warning
 // would pollute) fails HERE while passing in CI. This is a known environment
-// limitation, not a defect in the code under test: the OmniRoute runtime itself
+// limitation, not a defect in the code under test: the AgentProxy runtime itself
 // cascades to node:sqlite/sql.js when better-sqlite3 is unavailable. See
 // tests/unit/_helpers/betterSqlite3Availability.ts for a guard helper.
 import test from "node:test";
@@ -17,7 +17,7 @@ import path from "node:path";
 const ORIGINAL_DATA_DIR = process.env.DATA_DIR;
 
 function createTempDataDir() {
-  return fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-cli-backup-"));
+  return fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-cli-backup-"));
 }
 
 async function withBackupEnv(fn: (dataDir: string) => Promise<void>) {
@@ -57,7 +57,7 @@ test("backup creates backup-info.json when storage.sqlite exists", async () => {
 
     const backupDir = path.join(dataDir, "backups");
     assert.ok(fs.existsSync(backupDir));
-    const entries = fs.readdirSync(backupDir).filter((d) => d.startsWith("omniroute-backup-"));
+    const entries = fs.readdirSync(backupDir).filter((d) => d.startsWith("agentproxy-backup-"));
     assert.ok(entries.length > 0);
     const infoPath = path.join(backupDir, entries[0], "backup-info.json");
     assert.ok(fs.existsSync(infoPath));
@@ -78,7 +78,7 @@ test("encrypted backup removes temporary ciphertext files", async () => {
     assert.equal(result, 0);
 
     const backupDir = path.join(dataDir, "backups");
-    const entries = fs.readdirSync(backupDir).filter((d) => d.startsWith("omniroute-backup-"));
+    const entries = fs.readdirSync(backupDir).filter((d) => d.startsWith("agentproxy-backup-"));
     assert.ok(entries.length > 0);
     const backupPath = path.join(backupDir, entries[0]);
     assert.deepEqual(

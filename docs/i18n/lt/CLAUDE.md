@@ -55,7 +55,7 @@ Komituokite šiuos artefaktus `_tasks/` saugykloje (`git -C _tasks …`), niekad
 
 Šiame projekte perrašoma vykdymo aplinkos numatytoji sesijos juodraščių vieta (`/tmp/claude-*/…`). Laikinuosius / darbinius
 failus — eksportuotus duomenis, sugeneruotus zip archyvus, vienkartinius tarpinius rezultatus ir viską, ką kitu atveju
-įrašytumėte į `/tmp` — rašykite į `/home/diegosouzapw/dev/proxys/OmniRoute/_artifacts/`.
+įrašytumėte į `/tmp` — rašykite į `/home/diegosouzapw/dev/proxys/AgentProxy/_artifacts/`.
 
 - `_artifacts/` yra šakninio lygmens `_*` kelias: jo git jau nepaiso (`AGENTS.md` → „Šakninio lygmens `_*` keliai“), jis egzistuoja
   tik diske ir niekada nėra sekamas.

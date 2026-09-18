@@ -4,7 +4,7 @@
  * Two defects, one symptom (`tests/unit/batch_api.test.ts` hanging forever):
  *
  * 1. CROSS-REALM FALSE POSITIVE. The guard added in #10256 used a bare
- *    `result.response instanceof Response`. OmniRoute's default egress
+ *    `result.response instanceof Response`. AgentProxy's default egress
  *    (`open-sse/utils/proxyFetch.ts`) is the npm `undici` package's `fetch`,
  *    whose `Response` class is NOT `globalThis.Response` — so every ordinary
  *    upstream response arrived as a "contract violation". The guard must

@@ -6,12 +6,12 @@
 
 ---
 
-title: "Arkitettura ta’ OmniRoute"
+title: "Arkitettura ta’ AgentProxy"
 version: 3.8.40
 lastUpdated: 2026-06-28
 ---
 
-# Arkitettura ta’ OmniRoute
+# Arkitettura ta’ AgentProxy
 
 🌐 **Languages:** 🇺🇸 [English](../../../../architecture/ARCHITECTURE.md) · 🇸🇦 [ar](../../../ar/docs/architecture/ARCHITECTURE.md) · 🇦🇿 [az](../../../az/docs/architecture/ARCHITECTURE.md) · 🇧🇬 [bg](../../../bg/docs/architecture/ARCHITECTURE.md) · 🇧🇩 [bn](../../../bn/docs/architecture/ARCHITECTURE.md) · 🇨🇿 [cs](../../../cs/docs/architecture/ARCHITECTURE.md) · 🇩🇰 [da](../../../da/docs/architecture/ARCHITECTURE.md) · 🇩🇪 [de](../../../de/docs/architecture/ARCHITECTURE.md) · 🇬🇷 [el](../../../el/docs/architecture/ARCHITECTURE.md) · 🇪🇸 [es](../../../es/docs/architecture/ARCHITECTURE.md) · 🇪🇪 [et](../../../et/docs/architecture/ARCHITECTURE.md) · 🇮🇷 [fa](../../../fa/docs/architecture/ARCHITECTURE.md) · 🇫🇮 [fi](../../../fi/docs/architecture/ARCHITECTURE.md) · 🇫🇷 [fr](../../../fr/docs/architecture/ARCHITECTURE.md) · 🇮🇪 [ga](../../../ga/docs/architecture/ARCHITECTURE.md) · 🇮🇳 [gu](../../../gu/docs/architecture/ARCHITECTURE.md) · 🇮🇱 [he](../../../he/docs/architecture/ARCHITECTURE.md) · 🇮🇳 [hi](../../../hi/docs/architecture/ARCHITECTURE.md) · 🇭🇷 [hr](../../../hr/docs/architecture/ARCHITECTURE.md) · 🇭🇺 [hu](../../../hu/docs/architecture/ARCHITECTURE.md) · 🇮🇩 [id](../../../id/docs/architecture/ARCHITECTURE.md) · 🇮🇹 [it](../../../it/docs/architecture/ARCHITECTURE.md) · 🇯🇵 [ja](../../../ja/docs/architecture/ARCHITECTURE.md) · 🇰🇷 [ko](../../../ko/docs/architecture/ARCHITECTURE.md) · 🇱🇹 [lt](../../../lt/docs/architecture/ARCHITECTURE.md) · 🇱🇻 [lv](../../../lv/docs/architecture/ARCHITECTURE.md) · 🇮🇳 [mr](../../../mr/docs/architecture/ARCHITECTURE.md) · 🇲🇾 [ms](../../../ms/docs/architecture/ARCHITECTURE.md) · 🇳🇱 [nl](../../../nl/docs/architecture/ARCHITECTURE.md) · 🇳🇴 [no](../../../no/docs/architecture/ARCHITECTURE.md) · 🇵🇭 [phi](../../../phi/docs/architecture/ARCHITECTURE.md) · 🇵🇱 [pl](../../../pl/docs/architecture/ARCHITECTURE.md) · 🇵🇹 [pt](../../../pt/docs/architecture/ARCHITECTURE.md) · 🇧🇷 [pt-BR](../../../pt-BR/docs/architecture/ARCHITECTURE.md) · 🇷🇴 [ro](../../../ro/docs/architecture/ARCHITECTURE.md) · 🇷🇺 [ru](../../../ru/docs/architecture/ARCHITECTURE.md) · 🇸🇰 [sk](../../../sk/docs/architecture/ARCHITECTURE.md) · 🇸🇮 [sl](../../../sl/docs/architecture/ARCHITECTURE.md) · 🇷🇸 [sr](../../../sr/docs/architecture/ARCHITECTURE.md) · 🇸🇪 [sv](../../../sv/docs/architecture/ARCHITECTURE.md) · 🇰🇪 [sw](../../../sw/docs/architecture/ARCHITECTURE.md) · 🇮🇳 [ta](../../../ta/docs/architecture/ARCHITECTURE.md) · 🇮🇳 [te](../../../te/docs/architecture/ARCHITECTURE.md) · 🇹🇭 [th](../../../th/docs/architecture/ARCHITECTURE.md) · 🇹🇷 [tr](../../../tr/docs/architecture/ARCHITECTURE.md) · 🇺🇦 [uk-UA](../../../uk-UA/docs/architecture/ARCHITECTURE.md) · 🇵🇰 [ur](../../../ur/docs/architecture/ARCHITECTURE.md) · 🇻🇳 [vi](../../../vi/docs/architecture/ARCHITECTURE.md) · 🇨🇳 [zh-CN](../../../zh-CN/docs/architecture/ARCHITECTURE.md) · 🇹🇼 [zh-TW](../../../zh-TW/docs/architecture/ARCHITECTURE.md)
 
@@ -19,7 +19,7 @@ _Aġġornat l-aħħar: 2026-06-28_
 
 ## Sommarju Eżekuttiv
 
-OmniRoute huwa gateway u dashboard ta' routing AI lokali mibni fuq Next.js.
+AgentProxy huwa gateway u dashboard ta' routing AI lokali mibni fuq Next.js.
 Jipprovdi endpoint waħda kompatibbli ma' OpenAI (`/v1/*`) u jirrotta t-traffik madwar fornitori multipli upstream b'traduzzjoni, fallback, refresh tat-token, u tracking tal-użu.
 
 Kapacitajiet prinċipali:
@@ -173,7 +173,7 @@ flowchart LR
         BROWSER[Dashboard fil-Browser]
     end
 
-    subgraph Router[Proċess Lokali OmniRoute]
+    subgraph Router[Proċess Lokali AgentProxy]
         API[API tal-Kompatibilità V1\n/v1/*]
         DASH[Dashboard + API tal-Ġestjoni\n/api/*]
         CORE[Kernel SSE + Taljum\nopen-sse + src/sse]
@@ -335,7 +335,7 @@ Moduli tal-fornitur OAuth (22 fajls individwali taħt `src/lib/oauth/providers/`
 
 ## 5) Servizzi Embedditi (v3.8.4)
 
-OmniRoute jista' jinstalla, jissorvelja, u jirrotta lejn proċessi ta' għodda AI li qed jigu ejkolluwati lokally, magħrufa bħala **servizzi embedditi**. Huma n슴ell u jaslu mill-fiduċja: 9Router, CLIProxyAPI, Bifrost, u Dario.
+AgentProxy jista' jinstalla, jissorvelja, u jirrotta lejn proċessi ta' għodda AI li qed jigu ejkolluwati lokally, magħrufa bħala **servizzi embedditi**. Huma n슴ell u jaslu mill-fiduċja: 9Router, CLIProxyAPI, Bifrost, u Dario.
 
 Għal ħarsa ħafif ta' l-arkitettura, ara [`docs/ARCHITECTURE.md`](../ARCHITECTURE.md).
 
@@ -445,7 +445,7 @@ għalfejn jiġbru loġika ta' blokka/baġit/waraf huma stess.
 - Ħażna tal-kwota: `src/domain/quotaCache.ts`
 - Stat ta' degradazzjoni: `src/domain/degradation.ts`
 - Verifika tal-konfigurazzjoni: `src/domain/configAudit.ts`
-- Binju tal-metadati tat-tweġib ta' OmniRoute: `src/domain/omnirouteResponseMeta.ts`
+- Binju tal-metadati tat-tweġib ta' AgentProxy: `src/domain/agentproxyResponseMeta.ts`
 - Sotto-sistema tal-ispjegar: `src/domain/assessment/` — ħatriet ta' evalwazzjoni periodiċi
 
 ### E. Pipeline tal-Awtorizzazzjoni
@@ -526,7 +526,7 @@ DB prinċipali tal-istat (SQLite):
 
 - Infrastruttura ċentrali: `src/lib/db/core.ts` (better-sqlite3, migrazzjonijiet, WAL)
 - Aċċess lejn id-DB: importa moduli speċifiċi ta' `src/lib/db/*` direttament (il-barrel qodim `localDb.ts` ġiet mneħħija)
-- Fajl: `${DATA_DIR}/storage.sqlite` (jew `$XDG_CONFIG_HOME/omniroute/storage.sqlite` meta jkun stabbilit, inkella `~/.omniroute/storage.sqlite`)
+- Fajl: `${DATA_DIR}/storage.sqlite` (jew `$XDG_CONFIG_HOME/agentproxy/storage.sqlite` meta jkun stabbilit, inkella `~/.agentproxy/storage.sqlite`)
 - Entitajiet (tabelli + namespaces KV): providerConnections, providerNodes, modelAliases, combos, apiKeys, settings, pricing, **customModels**, **proxyConfig**, **ipFilter**, **thinkingBudget**, **systemPrompt**
 
 Persistenza tal-użu:
@@ -822,7 +822,7 @@ flowchart LR
         Browser[Brawżer tal-Panorama tal-Amministrazzjoni]
     end
 
-    subgraph ContainerOrProcess[Ħin Real OmniRoute]
+    subgraph ContainerOrProcess[Ħin Real AgentProxy]
         Next[Next.js Server\nPORT=20128]
         Core[SSE Core + Eżekutturi]
         MainDB[(storage.sqlite)]
@@ -940,7 +940,7 @@ Il-bqija tal-provajers (inklużi n-nodi kompatibbli personalizzati) jużaw l-`De
 ## Kompatibilità tal-Fornitur
 
 > **Nota:** It-tabella hawn taħtu hija kampjun rappreżentattiv tal-351 fornitur irreġistrati fi
-> OmniRoute v3.8.0. Għal lista kanonika u aġġornata kontinwament, irreferi lejn
+> AgentProxy v3.8.0. Għal lista kanonika u aġġornata kontinwament, irreferi lejn
 > [`docs/reference/PROVIDER_REFERENCE.md`](../reference/PROVIDER_REFERENCE.md) (ġenerat awtomatikament) jew is-sors tal-
 > verità f'`src/shared/constants/providers.ts` (validat b'Zod fil-miftuħ).
 
@@ -1121,7 +1121,7 @@ Id-dettalji tal-pajp tal-talba jaħżnu sa erba' stadji JSON tal-pajp għal kull
 - talba ħarxa rċevuta mill-klijent
 - talba tħarrix attwalment mibgħuta lill-maġenb
 - rispons tal-fornitur rikostruwit bħala JSON; risponsi mistednin jidħlu fil-kumpriża fl-aħħar ħarxa flimkien ma' metadata tal-misterednin
-- rispons finali tal-klijent ritornata minn OmniRoute; risponsi mistednin jiġu maħżuna fil-forma tal-kumpriża fl-aħħar ħarxa
+- rispons finali tal-klijent ritornata minn AgentProxy; risponsi mistednin jiġu maħżuna fil-forma tal-kumpriża fl-aħħar ħarxa
 
 ## Limiti Sensittivi għas-Sigurtà
 
@@ -1147,11 +1147,11 @@ Variabli tal-ambjent użati b'mod attiv mill-kodice:
 
 ## Noti Arkitettoni Magħrufa
 
-1. `usageDb` u `localDb` jistaqsu l-istess politika tad-direttorija bażi (`DATA_DIR` -> `XDG_CONFIG_HOME/omniroute` -> `~/.omniroute`) bi qiegħed ta' migrazzjoni tal-fajls qodma.
+1. `usageDb` u `localDb` jistaqsu l-istess politika tad-direttorija bażi (`DATA_DIR` -> `XDG_CONFIG_HOME/agentproxy` -> `~/.agentproxy`) bi qiegħed ta' migrazzjoni tal-fajls qodma.
 2. `/api/v1/route.ts` jiddelega lill-istess binar tal-katalgu unifikat użat minn `/api/v1/models` (`src/app/api/v1/models/catalog.ts`) biex jevita d-drixxa semantika.
 3. Il-logger tal-ħtiġijiet jikteb s-samenti sħiħ/meta jkun attiv; ittratta d-direttorija tal-logs bħala sensittiva.
 4. L-imġiba tal-cloud tiddependi minn `NEXT_PUBLIC_BASE_URL` korrett u mill-aċċessibbiltà tal-endpoint tal-cloud.
-5. Id-direttorija `open-sse/` hija ppubblikata bħala l-pakkett tal-**workspace npm** `@omniroute/open-sse`. Il-kodice sors jimportaha permezz ta' `@omniroute/open-sse/...` (soluzzjonat minn `transpilePackages` ta' Next.js). L-isħab tal-fajls f'dan id-dokument għadhom jużaw l-isem tad-direttorija `open-sse/` għall-konsistenza.
+5. Id-direttorija `open-sse/` hija ppubblikata bħala l-pakkett tal-**workspace npm** `@agentproxy/open-sse`. Il-kodice sors jimportaha permezz ta' `@agentproxy/open-sse/...` (soluzzjonat minn `transpilePackages` ta' Next.js). L-isħab tal-fajls f'dan id-dokument għadhom jużaw l-isem tad-direttorija `open-sse/` għall-konsistenza.
 6. Charts fid-dashboard jużaw **Recharts** (bbażat fuq SVG) għal analiżi interattivi u aċċessibbli (charts tal-użu tal-mudelli, tabelli tal-iskop tal-fornituri b'rati ta' suċċess).
 7. Tests E2E jużaw **Playwright** (`tests/e2e/`), imħaddma permezz ta' `npm run test:e2e`. Tests unitarji jużaw it-**test runner ta' Node.js** (`tests/unit/`), imħaddma permezz ta' `npm run test:unit`. Is-sors taħt `src/` huwa **TypeScript** (`.ts`/`.tsx`); il-workspace `open-sse/` jibqa' JavaScript (`.js`).
 8. Il-paġna tas-Settings hija organizzata f'7 tabs: Ġenerali, Dehra, AI, Sigurtà, Routing, Reżiljenza, Avvanzata. Il-paġna Reżiljenza tikkonfigura biss il-queue tal-ħtiġijiet, il-cooldown tal-konnessjoni, il-breaker tal-fornitur, u l-imġiba ta' wait-for-cooldown; l-istat live tal-breaker jitwera fil-paġna tal-Health.
@@ -1162,7 +1162,7 @@ Variabli tal-ambjent użati b'mod attiv mill-kodice:
 ## Il-Kontroll tal-Verifika Operazzjonali
 
 - Bni mill-kodiċi sors: `npm run build`
-- Bni stampa ta' Docker: `docker build -t omniroute .`
+- Bni stampa ta' Docker: `docker build -t agentproxy .`
 - Bda s-servizz uivverifika:
 - `GET /api/settings`
 - `GET /api/v1/models`

@@ -1,4 +1,4 @@
-# Contributing to OmniRoute (Hrvatski)
+# Contributing to AgentProxy (Hrvatski)
 
 🌐 **Languages:** 🇺🇸 [English](../../../CONTRIBUTING.md) · 🇸🇦 [ar](../ar/CONTRIBUTING.md) · 🇦🇿 [az](../az/CONTRIBUTING.md) · 🇧🇬 [bg](../bg/CONTRIBUTING.md) · 🇧🇩 [bn](../bn/CONTRIBUTING.md) · 🇨🇿 [cs](../cs/CONTRIBUTING.md) · 🇩🇰 [da](../da/CONTRIBUTING.md) · 🇩🇪 [de](../de/CONTRIBUTING.md) · 🇬🇷 [el](../el/CONTRIBUTING.md) · 🇪🇸 [es](../es/CONTRIBUTING.md) · 🇪🇪 [et](../et/CONTRIBUTING.md) · 🇮🇷 [fa](../fa/CONTRIBUTING.md) · 🇫🇮 [fi](../fi/CONTRIBUTING.md) · 🇫🇷 [fr](../fr/CONTRIBUTING.md) · 🇮🇪 [ga](../ga/CONTRIBUTING.md) · 🇮🇳 [gu](../gu/CONTRIBUTING.md) · 🇮🇱 [he](../he/CONTRIBUTING.md) · 🇮🇳 [hi](../hi/CONTRIBUTING.md) · 🇭🇺 [hu](../hu/CONTRIBUTING.md) · 🇮🇩 [id](../id/CONTRIBUTING.md) · 🇮🇹 [it](../it/CONTRIBUTING.md) · 🇯🇵 [ja](../ja/CONTRIBUTING.md) · 🇰🇷 [ko](../ko/CONTRIBUTING.md) · 🇱🇹 [lt](../lt/CONTRIBUTING.md) · 🇱🇻 [lv](../lv/CONTRIBUTING.md) · 🇮🇳 [mr](../mr/CONTRIBUTING.md) · 🇲🇾 [ms](../ms/CONTRIBUTING.md) · 🇲🇹 [mt](../mt/CONTRIBUTING.md) · 🇳🇱 [nl](../nl/CONTRIBUTING.md) · 🇳🇴 [no](../no/CONTRIBUTING.md) · 🇵🇭 [phi](../phi/CONTRIBUTING.md) · 🇵🇱 [pl](../pl/CONTRIBUTING.md) · 🇵🇹 [pt](../pt/CONTRIBUTING.md) · 🇧🇷 [pt-BR](../pt-BR/CONTRIBUTING.md) · 🇷🇴 [ro](../ro/CONTRIBUTING.md) · 🇷🇺 [ru](../ru/CONTRIBUTING.md) · 🇸🇰 [sk](../sk/CONTRIBUTING.md) · 🇸🇮 [sl](../sl/CONTRIBUTING.md) · 🇷🇸 [sr](../sr/CONTRIBUTING.md) · 🇸🇪 [sv](../sv/CONTRIBUTING.md) · 🇰🇪 [sw](../sw/CONTRIBUTING.md) · 🇮🇳 [ta](../ta/CONTRIBUTING.md) · 🇮🇳 [te](../te/CONTRIBUTING.md) · 🇹🇭 [th](../th/CONTRIBUTING.md) · 🇹🇷 [tr](../tr/CONTRIBUTING.md) · 🇺🇦 [uk-UA](../uk-UA/CONTRIBUTING.md) · 🇵🇰 [ur](../ur/CONTRIBUTING.md) · 🇻🇳 [vi](../vi/CONTRIBUTING.md) · 🇨🇳 [zh-CN](../zh-CN/CONTRIBUTING.md) · 🇹🇼 [zh-TW](../zh-TW/CONTRIBUTING.md)
 
@@ -30,8 +30,8 @@ pokrivenost i korake usklađivanja.
 ### Kloniranje i instalacija
 
 ```bash
-git clone https://github.com/diegosouzapw/OmniRoute.git
-cd OmniRoute
+git clone https://github.com/khanhkit/AgentProxy.git
+cd AgentProxy
 npm install
 ```
 
@@ -116,7 +116,7 @@ datoteke UI nadzorne ploče stub datotekama tijekom izgradnje, zadržava upravlj
 nakon izgradnje. Koristite `npm run build` za promjene koje utječu na UI nadzorne ploče ili za potpunu
 provjeru objave; profil za suradnike nije zamjena za izgradnju objave.
 
-> **Napomena za postavljanje na VPS:** udaljeni direktorij slike `/usr/lib/node_modules/omniroute/app/`
+> **Napomena za postavljanje na VPS:** udaljeni direktorij slike `/usr/lib/node_modules/agentproxy/app/`
 > ostaje nepromijenjen. Vještine postavljanja sinkroniziraju sadržaj `dist/` u njega.
 > Samo je putanja izlaza izgradnje u repozitoriju premještena (`app/` → `dist/`).
 
@@ -319,7 +319,7 @@ src/                        # TypeScript (.ts / .tsx)
 │   └── validation/         # Zod v4 sheme
 └── sse/                    # SSE proxy cjevovod
 
-open-sse/                   # @omniroute/open-sse radni prostor
+open-sse/                   # @agentproxy/open-sse radni prostor
 ├── executors/              # 89 modula implementacije executora
 ├── handlers/               # 11 rukovatelja zahtjevima (chat, responses, embeddings, images, itd.)
 ├── mcp-server/             # MCP server (110 jedinstvenih alata, 3 transporta, 33 opsega)
@@ -341,7 +341,7 @@ tests/
 docs/
 ├── adr/                     # Zapisi o arhitektonskim odlukama
 ├── architecture/            # Arhitektura sustava i otpornost
-├── comparison/              # OmniRoute vs alternative
+├── comparison/              # AgentProxy vs alternative
 ├── compression/             # Vodiči i pravila kompresije
 ├── dev/                     # Vodiči za razvoj
 ├── diagrams/                # Dijagrami arhitekture
@@ -430,5 +430,5 @@ Zatim koristite vještine `/deploy-vps-*-cc` koje rsync-aju `dist/` u udaljeni d
 - **API referenca**: Pogledajte [`docs/reference/API_REFERENCE.md`](docs/reference/API_REFERENCE.md)
 - **Sigurnosna dokumentacija**: [`docs/security/CLI_TOKEN.md`](docs/security/CLI_TOKEN.md), [`docs/security/ROUTE_GUARD_TIERS.md`](docs/security/ROUTE_GUARD_TIERS.md), [`docs/security/ERROR_SANITIZATION.md`](docs/security/ERROR_SANITIZATION.md), [`docs/security/PUBLIC_CREDS.md`](docs/security/PUBLIC_CREDS.md)
 - **Operativna dokumentacija**: [`docs/ops/SQLITE_RUNTIME.md`](docs/ops/SQLITE_RUNTIME.md)
-- **Problemi**: [github.com/diegosouzapw/OmniRoute/issues](https://github.com/diegosouzapw/OmniRoute/issues)
+- **Problemi**: [github.com/khanhkit/AgentProxy/issues](https://github.com/khanhkit/AgentProxy/issues)
 - **ADR-ovi**: Pogledajte `docs/adr/` za zapise o arhitektonskim odlukama

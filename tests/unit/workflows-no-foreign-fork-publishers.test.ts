@@ -6,14 +6,14 @@
  * unrelated extra file in an otherwise on-topic PR:
  *
  *   .github/workflows/build-fork.yml           added by #1528 (scope: SSE translator)
- *     env: IMAGE_NAME: ghcr.io/kang-heewon/omniroute
- *     if:  github.repository == 'kang-heewon/OmniRoute'
+ *     env: IMAGE_NAME: ghcr.io/kang-heewon/agentproxy
+ *     if:  github.repository == 'kang-heewon/AgentProxy'
  *     → the guard sits on the JOB, not the workflow, so GitHub instantiated a run on
  *       every push to main and every v* tag and skipped the job: 100+ runs, zero
  *       runner cost, and a permanently noisy check board on every release.
  *
  *   .github/workflows/build-rinseaid-image.yml added by #8729 (scope: SSE reasoning)
- *     tags: ghcr.io/rinseaid/omniroute:...
+ *     tags: ghcr.io/rinseaid/agentproxy:...
  *     → no repository guard at all; it simply never fires because its trigger branch
  *       (`build-k3-reasoning-image`) does not exist here. 0 runs.
  *

@@ -37,9 +37,9 @@ function runFixture(testRoot: string): Promise<ChildResult> {
     FORCE_COLOR: "0",
     LANG: "C.UTF-8",
     NODE_ENV: "test",
-    OMNIROUTE_HUGGINGCHAT_TEST_ROOT: testRoot,
-    OMNIROUTE_HUGGINGCHAT_TEST_RUN_ID: basename(testRoot),
-    OMNIROUTE_PLUGINS_DIR: pluginsDir,
+    AGENTPROXY_HUGGINGCHAT_TEST_ROOT: testRoot,
+    AGENTPROXY_HUGGINGCHAT_TEST_RUN_ID: basename(testRoot),
+    AGENTPROXY_PLUGINS_DIR: pluginsDir,
     TZ: "UTC",
     XDG_CONFIG_HOME: xdgConfigDir,
   };
@@ -71,7 +71,7 @@ function childDiagnostics(result: ChildResult): string {
 }
 
 test("HuggingChat stream error boundaries stay isolated from shared DB and usage state", async () => {
-  const testRoot = mkdtempSync(join(tmpdir(), "omniroute-huggingchat-boundary-child-"));
+  const testRoot = mkdtempSync(join(tmpdir(), "agentproxy-huggingchat-boundary-child-"));
   try {
     const result = await runFixture(testRoot);
     assert.equal(result.signal, null, childDiagnostics(result));

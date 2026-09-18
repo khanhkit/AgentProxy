@@ -97,7 +97,7 @@ const SYNC_SOURCES = (process.env.PRICING_SYNC_SOURCES || "litellm")
 const LITELLM_PRICING_URL =
   "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json";
 
-// ─── Provider mapping: LiteLLM provider → OmniRoute aliases ─────
+// ─── Provider mapping: LiteLLM provider → AgentProxy aliases ─────
 
 const LITELLM_PROVIDER_MAP: Record<string, string[]> = {
   openai: ["openai", "cx"],
@@ -164,15 +164,15 @@ export async function fetchLiteLLMPricing(): Promise<Record<string, LiteLLMModel
 }
 
 /**
- * Transform LiteLLM raw data → OmniRoute PricingByProvider format.
+ * Transform LiteLLM raw data → AgentProxy PricingByProvider format.
  *
- * Conversion: cost_per_token × 1_000_000 → $/1M tokens (OmniRoute format).
+ * Conversion: cost_per_token × 1_000_000 → $/1M tokens (AgentProxy format).
  * Ingests both chat (token) AND non-token modes (image / audio / rerank /
  * video / embedding). Token pricing is scaled to $/1M; non-token fields
  * (per-image, per-second, per-character, search-unit, …) are carried through
  * verbatim as absolute USD.
  */
-export function transformToOmniRoute(raw: Record<string, LiteLLMModelInfo>): PricingByProvider {
+export function transformToAgentProxy(raw: Record<string, LiteLLMModelInfo>): PricingByProvider {
   const result: PricingByProvider = {};
 
   for (const [modelKey, info] of Object.entries(raw)) {
@@ -222,12 +222,12 @@ export function transformToOmniRoute(raw: Record<string, LiteLLMModelInfo>): Pri
     const slashIdx = modelKey.indexOf("/");
     const modelName = slashIdx >= 0 ? modelKey.slice(slashIdx + 1) : modelKey;
 
-    // Map to OmniRoute providers
+    // Map to AgentProxy providers
     const litellmProvider = info.litellm_provider || "";
-    const omniRouteProviders = LITELLM_PROVIDER_MAP[litellmProvider];
+    const AgentProxyProviders = LITELLM_PROVIDER_MAP[litellmProvider];
 
-    if (omniRouteProviders) {
-      for (const provider of omniRouteProviders) {
+    if (AgentProxyProviders) {
+      for (const provider of AgentProxyProviders) {
         if (!result[provider]) result[provider] = {};
         result[provider][modelName] = entry;
       }
@@ -402,7 +402,7 @@ export async function syncPricingFromSources(opts?: {
     for (const source of validSources) {
       if (source === "litellm") {
         const raw = await fetchLiteLLMPricing();
-        const transformed = transformToOmniRoute(raw);
+        const transformed = transformToAgentProxy(raw);
         for (const [provider, models] of Object.entries(transformed)) {
           if (!aggregated[provider]) aggregated[provider] = {};
           Object.assign(aggregated[provider], models);

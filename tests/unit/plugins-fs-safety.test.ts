@@ -22,7 +22,7 @@ import { readFileSync } from "node:fs";
 import { resolve as pathResolve } from "node:path";
 
 // ── Temp DB — must be set BEFORE any DB-touching import ──────────────────────
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-plugins-fs-safety-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-plugins-fs-safety-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../src/lib/plugins/../db/core.ts");
@@ -84,11 +84,11 @@ function writePluginWithMain(opts: {
 
 const activeDirs: string[] = [];
 
-// The manager writes installed plugins to getDefaultPluginDir() = ~/.omniroute/plugins/.
+// The manager writes installed plugins to getDefaultPluginDir() = ~/.agentproxy/plugins/.
 // We must clean those dirs between tests to avoid ENOTEMPTY / stale state.
 const DEFAULT_PLUGIN_DIR = path.join(
   process.env.HOME || process.env.USERPROFILE || "/tmp",
-  ".omniroute",
+  ".agentproxy",
   "plugins"
 );
 

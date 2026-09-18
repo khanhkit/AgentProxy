@@ -6,7 +6,7 @@ import path from "node:path";
 
 import { makeManagementSessionRequest } from "../helpers/managementSession.ts";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-codex-provider-route-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-codex-provider-route-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.ALLOW_API_KEY_REVEAL = "false";
 

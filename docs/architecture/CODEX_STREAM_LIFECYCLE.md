@@ -1,3 +1,7 @@
+---
+title: "Native Codex Stream Lifecycle"
+---
+
 # Native Codex Stream Lifecycle
 
 AP-ISS-0084 defines the Rust native Codex request lifecycle as two separate scopes: **request outcome** and **attempt outcome**. The gateway must not infer request success from HTTP 200 or the first committed SSE event.

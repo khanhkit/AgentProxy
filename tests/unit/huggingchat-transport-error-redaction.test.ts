@@ -59,7 +59,7 @@ function assertPublicFailureIsSanitized(result: TransportFailureResult): void {
 
   const publicText = JSON.stringify({ payload: result.payload, errorLogs: result.errorLogs });
   assert.doesNotMatch(publicText, /transport-secret/);
-  assert.doesNotMatch(publicText, /\/srv\/omniroute/);
+  assert.doesNotMatch(publicText, /\/srv\/agentproxy/);
   assert.doesNotMatch(publicText, /sendRequest/);
   assert.doesNotMatch(publicText, /\n\s*at /);
 }

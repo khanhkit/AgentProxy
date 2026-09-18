@@ -24,13 +24,13 @@ const core = await import("../../../src/lib/db/core.ts");
 const ipFilter = await import("../../../open-sse/services/ipFilter.ts");
 const pipeline = await import("../../../src/server/authz/pipeline.ts");
 
-const ORIGINAL_STAMP_TOKEN = process.env.OMNIROUTE_PEER_STAMP_TOKEN;
+const ORIGINAL_STAMP_TOKEN = process.env.AGENTPROXY_PEER_STAMP_TOKEN;
 
 test.after(() => {
   core.resetDbInstance();
   fs.rmSync(TEST_DATA_DIR, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
-  if (ORIGINAL_STAMP_TOKEN === undefined) delete process.env.OMNIROUTE_PEER_STAMP_TOKEN;
-  else process.env.OMNIROUTE_PEER_STAMP_TOKEN = ORIGINAL_STAMP_TOKEN;
+  if (ORIGINAL_STAMP_TOKEN === undefined) delete process.env.AGENTPROXY_PEER_STAMP_TOKEN;
+  else process.env.AGENTPROXY_PEER_STAMP_TOKEN = ORIGINAL_STAMP_TOKEN;
 });
 
 test.beforeEach(() => {
@@ -38,7 +38,7 @@ test.beforeEach(() => {
   fs.rmSync(TEST_DATA_DIR, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
   fs.mkdirSync(TEST_DATA_DIR, { recursive: true });
   ipFilter.resetIPFilter();
-  delete process.env.OMNIROUTE_PEER_STAMP_TOKEN;
+  delete process.env.AGENTPROXY_PEER_STAMP_TOKEN;
 });
 
 const BLOCKED = "203.0.113.99";
@@ -50,14 +50,14 @@ function makeRequest(extraHeaders: Record<string, string> = {}) {
 }
 
 test("D1: blacklisted IP is blocked on a DIRECT connection (trusted peer stamp, no XFF)", async () => {
-  process.env.OMNIROUTE_PEER_STAMP_TOKEN = "stamp-tok";
+  process.env.AGENTPROXY_PEER_STAMP_TOKEN = "stamp-tok";
   ipFilter.configureIPFilter({ enabled: true, mode: "blacklist" });
   ipFilter.addToBlacklist(BLOCKED);
 
   // Simulate a direct connection: the peer stamp says the client is BLOCKED,
   // and there is no x-forwarded-for header (direct connection, not via proxy).
   const res = await pipeline.runAuthzPipeline(
-    makeRequest({ "x-omniroute-peer-ip": "stamp-tok|203.0.113.99" }),
+    makeRequest({ "x-agentproxy-peer-ip": "stamp-tok|203.0.113.99" }),
     { enforce: true }
   );
 
@@ -93,7 +93,7 @@ test("D2: persisted config written after first load is honored WITHOUT restart",
 });
 
 test("D3: behind reverse proxy (peer stamp=loopback + via-proxy marker + XFF=blacklisted IP) still blocks", async () => {
-  process.env.OMNIROUTE_PEER_STAMP_TOKEN = "stamp-tok";
+  process.env.AGENTPROXY_PEER_STAMP_TOKEN = "stamp-tok";
   ipFilter.configureIPFilter({ enabled: true, mode: "blacklist" });
   ipFilter.addToBlacklist(BLOCKED);
 
@@ -101,8 +101,8 @@ test("D3: behind reverse proxy (peer stamp=loopback + via-proxy marker + XFF=bla
   // the via-proxy marker is set, and the real client IP is in x-forwarded-for.
   const res = await pipeline.runAuthzPipeline(
     makeRequest({
-      "x-omniroute-peer-ip": "stamp-tok|127.0.0.1",
-      "x-omniroute-via-proxy": "stamp-tok|1",
+      "x-agentproxy-peer-ip": "stamp-tok|127.0.0.1",
+      "x-agentproxy-via-proxy": "stamp-tok|1",
       "x-forwarded-for": BLOCKED,
     }),
     { enforce: true }
@@ -116,7 +116,7 @@ test("D3: behind reverse proxy (peer stamp=loopback + via-proxy marker + XFF=bla
 });
 
 test("D4: behind Cloudflare (cf-connecting-ip + via-proxy marker, no XFF) blocks the client IP", async () => {
-  process.env.OMNIROUTE_PEER_STAMP_TOKEN = "stamp-tok";
+  process.env.AGENTPROXY_PEER_STAMP_TOKEN = "stamp-tok";
   ipFilter.configureIPFilter({ enabled: true, mode: "blacklist" });
   ipFilter.addToBlacklist(BLOCKED);
 
@@ -137,12 +137,12 @@ test("D4: behind Cloudflare (cf-connecting-ip + via-proxy marker, no XFF) blocks
   );
 
   assert.equal(
-    stampedHeaders["x-omniroute-via-proxy"],
+    stampedHeaders["x-agentproxy-via-proxy"],
     "stamp-tok|1",
     "Cloudflare request must be stamped as via-proxy"
   );
   assert.equal(
-    stampedHeaders["x-omniroute-peer-ip"],
+    stampedHeaders["x-agentproxy-peer-ip"],
     "stamp-tok|172.71.150.1",
     "Cloudflare request must have the edge IP stamped"
   );

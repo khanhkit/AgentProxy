@@ -1,5 +1,5 @@
 /**
- * @omniroute/browser-pool — Optional browser pool for Playwright-backed
+ * @agentproxy/browser-pool — Optional browser pool for Playwright-backed
  * executor support (claude-web, duckduckgo-web, grok).
  *
  * Core stubs dynamically import this package at runtime. When the package

@@ -5,7 +5,7 @@ import path from "node:path";
 import test from "node:test";
 
 const TEST_DATA_DIR = fs.mkdtempSync(
-  path.join(os.tmpdir(), "omniroute-chatgpt-web-cleanroom-restore-")
+  path.join(os.tmpdir(), "agentproxy-chatgpt-web-cleanroom-restore-")
 );
 process.env.DATA_DIR = TEST_DATA_DIR;
 
@@ -19,7 +19,7 @@ test.after(() => {
 test("migration 171 restores chatgpt-web writes while cgpt-web remains fail-closed", () => {
   const db = core.getDbInstance();
   const applied = db
-    .prepare("SELECT version, name FROM _omniroute_migrations WHERE version = 171")
+    .prepare("SELECT version, name FROM _agentproxy_migrations WHERE version = 171")
     .get() as { version: string; name: string } | undefined;
   assert.deepEqual(applied, { version: "171", name: "restore_chatgpt_web_cleanroom" });
 

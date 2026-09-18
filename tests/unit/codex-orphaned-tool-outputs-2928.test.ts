@@ -4,7 +4,7 @@ import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-const TEST_DATA_DIR = mkdtempSync(join(tmpdir(), "omniroute-codex-orphaned-2928-"));
+const TEST_DATA_DIR = mkdtempSync(join(tmpdir(), "agentproxy-codex-orphaned-2928-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../src/lib/db/core.ts");

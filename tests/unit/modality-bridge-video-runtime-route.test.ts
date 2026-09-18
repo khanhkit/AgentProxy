@@ -7,7 +7,7 @@ import test from "node:test";
 import { makeManagementSessionRequest } from "../helpers/managementSession.ts";
 import { AUTHZ_HEADER_PEER_LOCALITY } from "../../src/server/authz/headers.ts";
 
-const dataDirectory = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-video-runtime-route-"));
+const dataDirectory = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-video-runtime-route-"));
 const originalDataDirectory = process.env.DATA_DIR;
 const originalInitialPassword = process.env.INITIAL_PASSWORD;
 const originalJwtSecret = process.env.JWT_SECRET;

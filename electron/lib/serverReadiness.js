@@ -1,5 +1,5 @@
 /**
- * Pure helpers for polling the embedded or remote OmniRoute server without
+ * Pure helpers for polling the embedded or remote AgentProxy server without
  * importing the Electron main process.
  */
 

@@ -1,5 +1,5 @@
-import { getModelEndpointDecision } from "@omniroute/open-sse/services/modelEndpointPolicy";
-import { isModelSelectable } from "@omniroute/open-sse/services/modelLifecycle";
+import { getModelEndpointDecision } from "@agentproxy/open-sse/services/modelEndpointPolicy";
+import { isModelSelectable } from "@agentproxy/open-sse/services/modelLifecycle";
 
 type CatalogModelPolicyInput = {
   id: string;

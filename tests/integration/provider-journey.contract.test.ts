@@ -48,7 +48,7 @@ import { makeManagementSessionRequest } from "../helpers/managementSession.ts";
 // ---------------------------------------------------------------------------
 // Isolated storage + env — must be set BEFORE importing any DB-backed module.
 // ---------------------------------------------------------------------------
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-provider-journey-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-provider-journey-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.API_KEY_SECRET = "provider-journey-contract-secret";
 process.env.DISABLE_SQLITE_AUTO_BACKUP = "true";
@@ -361,7 +361,7 @@ test.describe("provider journey — in-process contract (#8330)", () => {
 // ---------------------------------------------------------------------------
 // Opt-in: the same journey over HTTP against a live server.
 //
-//   RUN_CONTRACT_INT=1 OMNIROUTE_TEST_URL=http://localhost:20128 \
+//   RUN_CONTRACT_INT=1 AGENTPROXY_TEST_URL=http://localhost:20128 \
 //     node --import tsx/esm --test tests/integration/provider-journey.contract.test.ts
 //
 // Self-skips unless RUN_CONTRACT_INT=1 (same convention as the RUN_SERVICES_INT
@@ -371,7 +371,7 @@ test.describe("provider journey — in-process contract (#8330)", () => {
 // ---------------------------------------------------------------------------
 const LIVE_ENABLED = process.env.RUN_CONTRACT_INT === "1";
 const LIVE_SKIP_REASON = "Set RUN_CONTRACT_INT=1 to run the live over-the-wire contract journey";
-const LIVE_BASE_URL = process.env.OMNIROUTE_TEST_URL ?? "http://localhost:20128";
+const LIVE_BASE_URL = process.env.AGENTPROXY_TEST_URL ?? "http://localhost:20128";
 
 function liveMaybeSkip(t: { skip: (reason?: string) => void }): boolean {
   if (!LIVE_ENABLED) {

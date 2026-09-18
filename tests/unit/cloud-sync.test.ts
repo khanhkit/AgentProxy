@@ -6,14 +6,14 @@ import path from "node:path";
 import crypto from "node:crypto";
 import { pathToFileURL } from "node:url";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-cloud-sync-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-cloud-sync-"));
 const ORIGINAL_DATA_DIR = process.env.DATA_DIR;
 const ORIGINAL_CLOUD_URL = process.env.CLOUD_URL;
 const ORIGINAL_PUBLIC_CLOUD_URL = process.env.NEXT_PUBLIC_CLOUD_URL;
 const ORIGINAL_TIMEOUT = process.env.CLOUD_SYNC_TIMEOUT_MS;
-const ORIGINAL_CLOUD_SECRETS = process.env.OMNIROUTE_CLOUD_SYNC_SECRETS;
-const ORIGINAL_SYNC_SECRET = process.env.OMNIROUTE_CLOUD_SYNC_SECRET;
-const TEST_HMAC_KEY = crypto.createHash("sha256").update("omniroute-cloud-sync-test").digest("hex");
+const ORIGINAL_CLOUD_SECRETS = process.env.AGENTPROXY_CLOUD_SYNC_SECRETS;
+const ORIGINAL_SYNC_SECRET = process.env.AGENTPROXY_CLOUD_SYNC_SECRET;
+const TEST_HMAC_KEY = crypto.createHash("sha256").update("agentproxy-cloud-sync-test").digest("hex");
 const ORIGINAL_FETCH = globalThis.fetch;
 const cloudSyncModuleUrl = pathToFileURL(path.join(process.cwd(), "src/lib/cloudSync.ts")).href;
 const initCloudSyncModuleUrl = pathToFileURL(
@@ -49,8 +49,8 @@ async function resetStorage() {
   delete process.env.CLOUD_URL;
   delete process.env.NEXT_PUBLIC_CLOUD_URL;
   delete process.env.CLOUD_SYNC_TIMEOUT_MS;
-  delete process.env.OMNIROUTE_CLOUD_SYNC_SECRETS;
-  delete process.env.OMNIROUTE_CLOUD_SYNC_SECRET;
+  delete process.env.AGENTPROXY_CLOUD_SYNC_SECRETS;
+  delete process.env.AGENTPROXY_CLOUD_SYNC_SECRET;
 }
 
 test.beforeEach(async () => {
@@ -83,14 +83,14 @@ test.after(() => {
     process.env.CLOUD_SYNC_TIMEOUT_MS = ORIGINAL_TIMEOUT;
   }
   if (ORIGINAL_CLOUD_SECRETS === undefined) {
-    delete process.env.OMNIROUTE_CLOUD_SYNC_SECRETS;
+    delete process.env.AGENTPROXY_CLOUD_SYNC_SECRETS;
   } else {
-    process.env.OMNIROUTE_CLOUD_SYNC_SECRETS = ORIGINAL_CLOUD_SECRETS;
+    process.env.AGENTPROXY_CLOUD_SYNC_SECRETS = ORIGINAL_CLOUD_SECRETS;
   }
   if (ORIGINAL_SYNC_SECRET === undefined) {
-    delete process.env.OMNIROUTE_CLOUD_SYNC_SECRET;
+    delete process.env.AGENTPROXY_CLOUD_SYNC_SECRET;
   } else {
-    process.env.OMNIROUTE_CLOUD_SYNC_SECRET = ORIGINAL_SYNC_SECRET;
+    process.env.AGENTPROXY_CLOUD_SYNC_SECRET = ORIGINAL_SYNC_SECRET;
   }
 });
 
@@ -103,7 +103,7 @@ test("cloudSync returns a configuration error when the cloud URL is missing", as
 });
 
 test("initializeCloudSync rejects enabled cloud sync when integrity secret is missing", async () => {
-  delete process.env.OMNIROUTE_CLOUD_SYNC_SECRET;
+  delete process.env.AGENTPROXY_CLOUD_SYNC_SECRET;
   const settingsDb = await import("../../src/lib/db/settings.ts");
   await settingsDb.updateSettings({ cloudEnabled: true });
 
@@ -113,7 +113,7 @@ test("initializeCloudSync rejects enabled cloud sync when integrity secret is mi
 
   await assert.rejects(
     initCloudSync.initializeCloudSync(),
-    /OMNIROUTE_CLOUD_SYNC_SECRET is required before enabled cloud sync can start/
+    /AGENTPROXY_CLOUD_SYNC_SECRET is required before enabled cloud sync can start/
   );
 });
 
@@ -134,7 +134,7 @@ test("fetchWithTimeout aborts when the timeout elapses", async () => {
 test("cloudSync maps timeout and transport failures to stable error messages", async () => {
   process.env.NEXT_PUBLIC_CLOUD_URL = "https://cloud.example";
   process.env.CLOUD_SYNC_TIMEOUT_MS = "5";
-  process.env.OMNIROUTE_CLOUD_SYNC_SECRET = TEST_HMAC_KEY;
+  process.env.AGENTPROXY_CLOUD_SYNC_SECRET = TEST_HMAC_KEY;
 
   globalThis.fetch = (_url, options) =>
     new Promise((_, reject) => {
@@ -155,7 +155,7 @@ test("cloudSync maps timeout and transport failures to stable error messages", a
 
 test("cloudSync returns a generic error when the API responds with a non-OK status", async () => {
   process.env.CLOUD_URL = "https://cloud.example";
-  process.env.OMNIROUTE_CLOUD_SYNC_SECRET = TEST_HMAC_KEY;
+  process.env.AGENTPROXY_CLOUD_SYNC_SECRET = TEST_HMAC_KEY;
 
   const originalConsoleLog = console.log;
   const logged = [];
@@ -183,8 +183,8 @@ test("cloudSync returns a generic error when the API responds with a non-OK stat
 
 test("cloudSync syncs data upstream and refreshes only locally stale provider tokens", async () => {
   process.env.NEXT_PUBLIC_CLOUD_URL = "https://cloud.example";
-  process.env.OMNIROUTE_CLOUD_SYNC_SECRETS = "true";
-  process.env.OMNIROUTE_CLOUD_SYNC_SECRET = TEST_HMAC_KEY;
+  process.env.AGENTPROXY_CLOUD_SYNC_SECRETS = "true";
+  process.env.AGENTPROXY_CLOUD_SYNC_SECRET = TEST_HMAC_KEY;
 
   const stale = await providersDb.createProviderConnection({
     provider: "openai",

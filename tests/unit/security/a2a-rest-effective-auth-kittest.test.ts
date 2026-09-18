@@ -17,7 +17,7 @@ const tasksRoute = await import("../../../src/app/api/a2a/tasks/route.ts");
 const ENV_KEYS = [
   "REQUIRE_API_KEY",
   "AGENTPROXY_API_KEY",
-  "OMNIROUTE_API_KEY",
+  "AGENTPROXY_API_KEY",
   "CONDUCTOR_HUB_URL",
   "CONDUCTOR_HUB_TOKEN",
   "CONDUCTOR_ORCHESTRATOR_TOKEN",
@@ -50,7 +50,7 @@ async function resetStorageAndPolicy() {
   fs.mkdirSync(TEST_DATA_DIR, { recursive: true });
 
   delete process.env.AGENTPROXY_API_KEY;
-  delete process.env.OMNIROUTE_API_KEY;
+  delete process.env.AGENTPROXY_API_KEY;
   delete process.env.REQUIRE_API_KEY;
   process.env.CONDUCTOR_HUB_URL = "https://conductor.invalid";
   process.env.CONDUCTOR_HUB_TOKEN = "hub-token-must-not-egress-before-client-auth";

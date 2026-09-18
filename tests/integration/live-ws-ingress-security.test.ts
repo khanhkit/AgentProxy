@@ -140,7 +140,7 @@ test(
       env: {
         ...process.env,
         NODE_ENV: "test",
-        OMNIROUTE_API_KEY: apiKey,
+        AGENTPROXY_API_KEY: apiKey,
         JWT_SECRET: jwtSecret,
         LIVE_WS_HOST: "127.0.0.1",
         LIVE_WS_PORT: String(port),

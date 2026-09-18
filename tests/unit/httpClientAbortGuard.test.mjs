@@ -118,7 +118,7 @@ test("shouldSwallowUncaught preserves crash semantics for genuine errors", () =>
 test("installProcessCrashGuard does not throw on import and is idempotent", () => {
   assert.doesNotThrow(() => installProcessCrashGuard(() => {}));
 });
-test("isClientAbortError matches OmniRoute SSE AbortError shapes (#fix-crash-guard-logger-7)", () => {
+test("isClientAbortError matches AgentProxy SSE AbortError shapes (#fix-crash-guard-logger-7)", () => {
   // Exact production shape from the 2026-08-31 crash log:
   //   ⨯ unhandledRejection: Error [AbortError]: request_signal_aborted
   const sseAbort = Object.assign(new Error("request_signal_aborted"), { name: "AbortError" });

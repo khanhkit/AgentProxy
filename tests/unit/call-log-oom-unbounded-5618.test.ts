@@ -14,7 +14,7 @@ useDecollidedMigrationsDir();
 // binding. The two startup queries must page with LIMIT instead of loading the
 // whole table at once.
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-calllogs-oom-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-calllogs-oom-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.CALL_LOG_RETENTION_DAYS = "3650";
 

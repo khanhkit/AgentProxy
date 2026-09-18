@@ -4,7 +4,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-reqlogger-ep-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-reqlogger-ep-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../src/lib/db/core.ts");
@@ -710,15 +710,15 @@ test("request logging never persists a raw hard-lease owner", async () => {
     "/v1/chat/completions",
     {},
     {
-      "X-OmniRoute-Lease-Owner": rawOwner,
-      "X-OmniRoute-Lease-Generation": "7",
+      "X-AgentProxy-Lease-Owner": rawOwner,
+      "X-AgentProxy-Lease-Generation": "7",
     }
   );
 
   const payload = logger.getPipelinePayloads()?.clientRawRequest;
   assert.deepEqual(payload?.headers, {
-    "X-OmniRoute-Lease-Owner": "[REDACTED]",
-    "X-OmniRoute-Lease-Generation": "7",
+    "X-AgentProxy-Lease-Owner": "[REDACTED]",
+    "X-AgentProxy-Lease-Generation": "7",
   });
   assert.doesNotMatch(JSON.stringify(payload), new RegExp(rawOwner));
 });
@@ -727,15 +727,15 @@ test("generic client snapshots exclude hard-lease control headers", async () => 
   const { buildClientRawRequest } = await import("../../src/sse/handlers/chat/clientRawRequest.ts");
   const request = new Request("http://x/v1/chat/completions", {
     headers: {
-      "X-OmniRoute-Lease-Owner": `vlo_${"A".repeat(43)}`,
-      "X-OmniRoute-Lease-Generation": "7",
+      "X-AgentProxy-Lease-Owner": `vlo_${"A".repeat(43)}`,
+      "X-AgentProxy-Lease-Generation": "7",
       "X-Session-Id": "independent-routing-session",
     },
   });
   const out = buildClientRawRequest(request, { model: "m" });
 
-  assert.equal(out.headers["x-omniroute-lease-owner"], undefined);
-  assert.equal(out.headers["x-omniroute-lease-generation"], undefined);
+  assert.equal(out.headers["x-agentproxy-lease-owner"], undefined);
+  assert.equal(out.headers["x-agentproxy-lease-generation"], undefined);
   assert.equal(out.headers["x-session-id"], "independent-routing-session");
 });
 

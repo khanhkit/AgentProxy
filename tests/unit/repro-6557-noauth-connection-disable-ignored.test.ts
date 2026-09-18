@@ -1,7 +1,7 @@
 /**
  * Repro for #6557 — "disabled provider still used by router (opencode/big-pickle)"
  *
- * Root-cause hypothesis: OmniRoute exposes TWO different "disable this no-auth
+ * Root-cause hypothesis: AgentProxy exposes TWO different "disable this no-auth
  * provider" affordances that write to two DISCONNECTED places:
  *
  *  1. Main Providers grid page toggle (ProviderCard inside NoAuthProvidersSection)
@@ -26,7 +26,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-repro-6557-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-repro-6557-"));
 const ORIGINAL_DATA_DIR = process.env.DATA_DIR;
 
 process.env.DATA_DIR = TEST_DATA_DIR;

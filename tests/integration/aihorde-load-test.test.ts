@@ -25,8 +25,8 @@
  * slow is data for the "is this viable" question, not a regression.
  *
  * Environment:
- *   OMNIROUTE_API_KEY  — required (else test skips)
- *   OMNIROUTE_URL      — defaults to http://localhost:3000
+ *   AGENTPROXY_API_KEY  — required (else test skips)
+ *   AGENTPROXY_URL      — defaults to http://localhost:3000
  */
 import test from "node:test";
 import assert from "node:assert/strict";
@@ -198,7 +198,7 @@ test(
 // #note: a live smoke test showed aihorde/google/gemma-4-31b narrates tool
 // calls in plain text ("`write_file` with `path=...`") instead of emitting a
 // real tool_calls array, finish_reason "stop" — no native/emulated
-// tool-calling support for this model through OmniRoute today. A genuine
+// tool-calling support for this model through AgentProxy today. A genuine
 // tool-calling "agentic loop" (like live-gemini-agentic-loop.test.ts) isn't
 // viable here, so this asks the underlying question directly instead: can
 // AI Horde sustain ~60k tokens/minute of large-context throughput, the kind

@@ -251,16 +251,16 @@ test("getCloudflaredStartArgs runs a named tunnel from a config file instead of 
 
 test("normalizeCloudflaredHostname coerces bare hosts and full URLs to an https origin", () => {
   assert.equal(
-    normalizeCloudflaredHostname("omniroute.example.com"),
-    "https://omniroute.example.com"
+    normalizeCloudflaredHostname("agentproxy.example.com"),
+    "https://agentproxy.example.com"
   );
   assert.equal(
-    normalizeCloudflaredHostname("https://omniroute.example.com/"),
-    "https://omniroute.example.com"
+    normalizeCloudflaredHostname("https://agentproxy.example.com/"),
+    "https://agentproxy.example.com"
   );
   assert.equal(
-    normalizeCloudflaredHostname("http://omniroute.example.com:8443/ignored/path"),
-    "http://omniroute.example.com:8443"
+    normalizeCloudflaredHostname("http://agentproxy.example.com:8443/ignored/path"),
+    "http://agentproxy.example.com:8443"
   );
   assert.equal(normalizeCloudflaredHostname("  edge.example.com  "), "https://edge.example.com");
 });
@@ -338,7 +338,7 @@ test("extractCloudflaredConnectionReady matches registered edge connections", ()
 test("getCloudflaredTunnelStatus resets stale runtime state from a previous server process", async () => {
   const originalDataDir = process.env.DATA_DIR;
   const originalBinary = process.env.CLOUDFLARED_BIN;
-  const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "omniroute-cloudflared-"));
+  const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "agentproxy-cloudflared-"));
   const binDir = path.join(tempDir, "bin");
   const binaryPath = path.join(binDir, "cloudflared");
   const stateDir = path.join(tempDir, "cloudflared");

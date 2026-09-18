@@ -101,7 +101,7 @@ describe("activate() refreshes the stored manifest from disk (pre-#11934 install
 
   test("a hook field the old schema stripped registers after activate()", async (t) => {
     const NAME = "sc-manifest-refresh";
-    const outFile = join(tmpdir(), `omniroute-manifest-refresh-${process.pid}.json`);
+    const outFile = join(tmpdir(), `agentproxy-manifest-refresh-${process.pid}.json`);
     rmSync(outFile, { force: true });
     const { tmp, pluginDir } = makePluginDir(NAME);
 

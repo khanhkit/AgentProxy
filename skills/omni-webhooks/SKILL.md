@@ -20,7 +20,7 @@ GET webhooks
 
 ```bash
 curl https://localhost:20128/api/webhooks \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### POST /api/webhooks
@@ -29,7 +29,7 @@ POST webhooks
 
 ```bash
 curl -X POST https://localhost:20128/api/webhooks \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN" \
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -40,7 +40,7 @@ GET webhooks › <id>
 
 ```bash
 curl https://localhost:20128/api/webhooks/{id} \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### PUT /api/webhooks/{id}
@@ -49,7 +49,7 @@ PUT webhooks › <id>
 
 ```bash
 curl -X PUT https://localhost:20128/api/webhooks/{id} \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN" \
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -60,7 +60,7 @@ DELETE webhooks › <id>
 
 ```bash
 curl -X DELETE https://localhost:20128/api/webhooks/{id} \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### GET /api/webhooks/{id}/deliveries
@@ -69,7 +69,7 @@ GET webhooks › <id> › deliveries
 
 ```bash
 curl https://localhost:20128/api/webhooks/{id}/deliveries \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN"
 ```
 
 ### POST /api/webhooks/{id}/test
@@ -78,7 +78,7 @@ POST webhooks › <id> › test
 
 ```bash
 curl -X POST https://localhost:20128/api/webhooks/{id}/test \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN" \
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -89,7 +89,7 @@ POST webhooks › validate url
 
 ```bash
 curl -X POST https://localhost:20128/api/webhooks/validate-url \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN" \
+  -H "Authorization: Bearer $AGENTPROXY_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{}'
 ```

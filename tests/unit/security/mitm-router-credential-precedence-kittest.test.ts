@@ -24,7 +24,7 @@ interface CapturedFetch {
 
 const ORIGINAL_FETCH = globalThis.fetch;
 const ORIGINAL_ROUTER_API_KEY = process.env.ROUTER_API_KEY;
-const ORIGINAL_BASE_URL = process.env.OMNIROUTE_BASE_URL;
+const ORIGINAL_BASE_URL = process.env.AGENTPROXY_BASE_URL;
 
 async function captureRouterFetch(
   clientHeaders: IncomingHttpHeaders,
@@ -32,7 +32,7 @@ async function captureRouterFetch(
   path = "/v1/chat/completions"
 ): Promise<CapturedFetch> {
   process.env.ROUTER_API_KEY = "router-owned-secret";
-  process.env.OMNIROUTE_BASE_URL = "http://router.internal:20128/";
+  process.env.AGENTPROXY_BASE_URL = "http://router.internal:20128/";
 
   let captured: CapturedFetch | null = null;
   globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
@@ -53,8 +53,8 @@ async function captureRouterFetch(
     globalThis.fetch = ORIGINAL_FETCH;
     if (ORIGINAL_ROUTER_API_KEY === undefined) delete process.env.ROUTER_API_KEY;
     else process.env.ROUTER_API_KEY = ORIGINAL_ROUTER_API_KEY;
-    if (ORIGINAL_BASE_URL === undefined) delete process.env.OMNIROUTE_BASE_URL;
-    else process.env.OMNIROUTE_BASE_URL = ORIGINAL_BASE_URL;
+    if (ORIGINAL_BASE_URL === undefined) delete process.env.AGENTPROXY_BASE_URL;
+    else process.env.AGENTPROXY_BASE_URL = ORIGINAL_BASE_URL;
   }
 
   assert.ok(captured, "fetchRouter must invoke fetch");
@@ -127,7 +127,7 @@ test("TC-MITM-ROUTER-REG-003 no-client-auth request preserves router credential 
   assert.equal(captured.init.method, "POST");
   assert.equal(captured.init.body, JSON.stringify(body));
   assert.equal(effective.get("authorization"), "Bearer router-owned-secret");
-  assert.equal(effective.get("x-omniroute-source"), "agent-bridge");
-  assert.equal(effective.get("x-omniroute-agent"), "antigravity");
+  assert.equal(effective.get("x-agentproxy-source"), "agent-bridge");
+  assert.equal(effective.get("x-agentproxy-agent"), "antigravity");
   assert.equal(effective.get("x-request-id"), "req-control");
 });

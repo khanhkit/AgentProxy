@@ -12,7 +12,7 @@
 import { NextResponse } from "next/server";
 import { setTokenLimitSchema } from "@/shared/validation/schemas";
 import { isValidationFailure, validateBody } from "@/shared/validation/helpers";
-import { buildErrorBody, sanitizeErrorMessage } from "@omniroute/open-sse/utils/error";
+import { buildErrorBody, sanitizeErrorMessage } from "@agentproxy/open-sse/utils/error";
 
 import {
   TokenLimit,

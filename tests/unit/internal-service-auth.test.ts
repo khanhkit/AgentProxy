@@ -12,26 +12,26 @@ import {
 } from "../../src/lib/api/internalServiceAuth.ts";
 import { AUTHZ_HEADER_PEER_LOCALITY } from "../../src/server/authz/headers.ts";
 
-const originalInline = process.env.OMNIROUTE_INTERNAL_SERVICE_TOKEN;
-const originalFile = process.env.OMNIROUTE_INTERNAL_SERVICE_TOKEN_FILE;
+const originalInline = process.env.AGENTPROXY_INTERNAL_SERVICE_TOKEN;
+const originalFile = process.env.AGENTPROXY_INTERNAL_SERVICE_TOKEN_FILE;
 
 test.afterEach(() => {
-  if (originalInline === undefined) delete process.env.OMNIROUTE_INTERNAL_SERVICE_TOKEN;
-  else process.env.OMNIROUTE_INTERNAL_SERVICE_TOKEN = originalInline;
-  if (originalFile === undefined) delete process.env.OMNIROUTE_INTERNAL_SERVICE_TOKEN_FILE;
-  else process.env.OMNIROUTE_INTERNAL_SERVICE_TOKEN_FILE = originalFile;
+  if (originalInline === undefined) delete process.env.AGENTPROXY_INTERNAL_SERVICE_TOKEN;
+  else process.env.AGENTPROXY_INTERNAL_SERVICE_TOKEN = originalInline;
+  if (originalFile === undefined) delete process.env.AGENTPROXY_INTERNAL_SERVICE_TOKEN_FILE;
+  else process.env.AGENTPROXY_INTERNAL_SERVICE_TOKEN_FILE = originalFile;
 });
 
 test("internal service auth is disabled when no token is configured", () => {
-  delete process.env.OMNIROUTE_INTERNAL_SERVICE_TOKEN;
-  delete process.env.OMNIROUTE_INTERNAL_SERVICE_TOKEN_FILE;
+  delete process.env.AGENTPROXY_INTERNAL_SERVICE_TOKEN;
+  delete process.env.AGENTPROXY_INTERNAL_SERVICE_TOKEN_FILE;
   assert.deepEqual(getInternalServiceAuthHeaders(), {});
   assert.equal(isInternalServiceRequest(new Request("http://localhost")), false);
 });
 
 test("internal service auth preserves a separate constant-time token channel", () => {
-  process.env.OMNIROUTE_INTERNAL_SERVICE_TOKEN = "test-internal-token-0123456789";
-  delete process.env.OMNIROUTE_INTERNAL_SERVICE_TOKEN_FILE;
+  process.env.AGENTPROXY_INTERNAL_SERVICE_TOKEN = "test-internal-token-0123456789";
+  delete process.env.AGENTPROXY_INTERNAL_SERVICE_TOKEN_FILE;
   const headers = new Headers({
     ...getInternalServiceAuthHeaders(),
     [AUTHZ_HEADER_PEER_LOCALITY]: "loopback",
@@ -55,8 +55,8 @@ test("internal service token file is read without exposing it to process env", (
   const tokenFile = path.join(directory, "token");
   try {
     fs.writeFileSync(tokenFile, "file-backed-token-0123456789\n", { mode: 0o600 });
-    delete process.env.OMNIROUTE_INTERNAL_SERVICE_TOKEN;
-    process.env.OMNIROUTE_INTERNAL_SERVICE_TOKEN_FILE = tokenFile;
+    delete process.env.AGENTPROXY_INTERNAL_SERVICE_TOKEN;
+    process.env.AGENTPROXY_INTERNAL_SERVICE_TOKEN_FILE = tokenFile;
     assert.deepEqual(getInternalServiceAuthHeaders(), {
       [INTERNAL_SERVICE_AUTH_HEADER]: "file-backed-token-0123456789",
     });

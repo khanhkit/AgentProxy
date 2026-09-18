@@ -5,7 +5,7 @@ import net from "node:net";
 import { getMainServerTimeoutConfig } from "../../src/shared/utils/runtimeTimeouts.ts";
 
 // #7003 — JetBrains AI Assistant ("Test Connection" / completions) reported
-// "HTTP/1.1 header parser received no bytes". The main OmniRoute server
+// "HTTP/1.1 header parser received no bytes". The main AgentProxy server
 // (scripts/dev/run-next.mjs) boots a bare `http.createServer(...)` and never
 // configures `keepAliveTimeout`/`headersTimeout`, leaving Node's http.Server
 // default of keepAliveTimeout=5_000ms with no `Keep-Alive: timeout=N` response

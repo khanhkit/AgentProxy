@@ -159,8 +159,8 @@ test("broker route accepts finite focus bounds and forwards them to the isolated
 });
 
 test("configured base path preserves the exact self-hop without widening broker authentication", async () => {
-  const previousBasePath = process.env.OMNIROUTE_BASE_PATH;
-  process.env.OMNIROUTE_BASE_PATH = "/omniroute";
+  const previousBasePath = process.env.AGENTPROXY_BASE_PATH;
+  process.env.AGENTPROXY_BASE_PATH = "/agentproxy";
   try {
     const headers = new Headers({
       ...buildVideoBridgeBrokerHeaders(),
@@ -168,7 +168,7 @@ test("configured base path preserves the exact self-hop without widening broker 
       "Content-Type": "text/plain",
     });
     const response = await POST(
-      new Request(`http://localhost/omniroute${EXTRACT_PATH}?frames=1`, {
+      new Request(`http://localhost/agentproxy${EXTRACT_PATH}?frames=1`, {
         method: "POST",
         headers,
         body: "video",
@@ -177,7 +177,7 @@ test("configured base path preserves the exact self-hop without widening broker 
     assert.equal(response.status, 400, "the exact base-path route must pass path and broker auth");
 
     const adjacent = await POST(
-      new Request(`http://localhost/omniroute${PREFIX}runtime?frames=1`, {
+      new Request(`http://localhost/agentproxy${PREFIX}runtime?frames=1`, {
         method: "POST",
         headers,
         body: "video",
@@ -190,8 +190,8 @@ test("configured base path preserves the exact self-hop without widening broker 
         method: "POST",
         headers,
         ip: "127.0.0.1",
-        url: `http://localhost/omniroute${EXTRACT_PATH}`,
-        nextUrl: { pathname: `/omniroute${EXTRACT_PATH}` },
+        url: `http://localhost/agentproxy${EXTRACT_PATH}`,
+        nextUrl: { pathname: `/agentproxy${EXTRACT_PATH}` },
       },
       classification: {
         routeClass: "MANAGEMENT",
@@ -202,8 +202,8 @@ test("configured base path preserves the exact self-hop without widening broker 
     } as unknown as Parameters<typeof managementPolicy.evaluate>[0]);
     assert.equal(policyOutcome.allow, true);
   } finally {
-    if (previousBasePath === undefined) delete process.env.OMNIROUTE_BASE_PATH;
-    else process.env.OMNIROUTE_BASE_PATH = previousBasePath;
+    if (previousBasePath === undefined) delete process.env.AGENTPROXY_BASE_PATH;
+    else process.env.AGENTPROXY_BASE_PATH = previousBasePath;
   }
 });
 

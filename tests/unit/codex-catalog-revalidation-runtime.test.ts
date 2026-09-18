@@ -4,7 +4,7 @@ import os from "node:os";
 import path from "node:path";
 import test from "node:test";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-codex-revalidation-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-codex-revalidation-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../src/lib/db/core.ts");
@@ -13,13 +13,13 @@ const revalidation = await import("../../src/shared/services/codexCatalogRevalid
 
 const originalFetch = globalThis.fetch;
 const originalEnv = {
-  OMNIROUTE_PORT: process.env.OMNIROUTE_PORT,
+  AGENTPROXY_PORT: process.env.AGENTPROXY_PORT,
   PORT: process.env.PORT,
   DASHBOARD_PORT: process.env.DASHBOARD_PORT,
   BASE_URL: process.env.BASE_URL,
   NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL,
   NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
-  OMNIROUTE_INTERNAL_SCHEME: process.env.OMNIROUTE_INTERNAL_SCHEME,
+  AGENTPROXY_INTERNAL_SCHEME: process.env.AGENTPROXY_INTERNAL_SCHEME,
 };
 
 async function resetStorage() {
@@ -31,13 +31,13 @@ async function resetStorage() {
 
 test.beforeEach(async () => {
   await resetStorage();
-  process.env.OMNIROUTE_PORT = "20128";
+  process.env.AGENTPROXY_PORT = "20128";
   process.env.PORT = "22128";
   process.env.DASHBOARD_PORT = "22128";
   process.env.BASE_URL = "https://attacker.example";
   delete process.env.NEXT_PUBLIC_BASE_URL;
   delete process.env.NEXT_PUBLIC_APP_URL;
-  delete process.env.OMNIROUTE_INTERNAL_SCHEME;
+  delete process.env.AGENTPROXY_INTERNAL_SCHEME;
 });
 
 test.after(() => {

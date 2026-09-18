@@ -9,7 +9,7 @@ import { readFileSync } from "node:fs";
  *
  * These two routes wrap DB writes + registry `registerHook`, whose
  * SQLite failures can surface with internal path fragments (e.g.
- * "SQLITE_ERROR: near /var/lib/omniroute/..."). Guard against
+ * "SQLITE_ERROR: near /var/lib/agentproxy/..."). Guard against
  * regression by asserting the raw `error?.message ||` pattern is
  * absent and `sanitizeErrorMessage` is imported.
  */
@@ -23,10 +23,10 @@ for (const path of ROUTES) {
   test(`${path} imports sanitizeErrorMessage from open-sse/utils/error`, () => {
     const source = readFileSync(path, "utf8");
     assert.ok(
-      /import\s*\{[^}]*\bsanitizeErrorMessage\b[^}]*\}\s*from\s*["']@omniroute\/open-sse\/utils\/error["']/.test(
+      /import\s*\{[^}]*\bsanitizeErrorMessage\b[^}]*\}\s*from\s*["']@agentproxy\/open-sse\/utils\/error["']/.test(
         source
       ),
-      `expected ${path} to import sanitizeErrorMessage from "@omniroute/open-sse/utils/error"`
+      `expected ${path} to import sanitizeErrorMessage from "@agentproxy/open-sse/utils/error"`
     );
   });
 

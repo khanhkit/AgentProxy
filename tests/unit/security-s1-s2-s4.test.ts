@@ -1,7 +1,7 @@
 /**
  * Security compliance tickets S1, S2, S4 — unit tests.
  *
- * S1 — Login rate-limit key uses anti-spoofed peer IP (x-omniroute-trusted-peer-ip)
+ * S1 — Login rate-limit key uses anti-spoofed peer IP (x-agentproxy-trusted-peer-ip)
  * S2 — A2A agent-card topology sanitisation (no hardcoded localhost:20128)
  * S4 — 429 Retry-After header always present on lockout responses
  */
@@ -15,21 +15,21 @@ import type { NextRequest } from "next/server";
 // ── S2: agent-card route tests (no heavy mocking needed) ──────────────
 
 describe("S2 — agent-card topology sanitisation", () => {
-  const BASE_URL_SAVED = process.env.OMNIROUTE_BASE_URL;
+  const BASE_URL_SAVED = process.env.AGENTPROXY_BASE_URL;
 
   beforeEach(() => {
-    delete process.env.OMNIROUTE_BASE_URL;
+    delete process.env.AGENTPROXY_BASE_URL;
   });
 
   after(() => {
     if (BASE_URL_SAVED !== undefined) {
-      process.env.OMNIROUTE_BASE_URL = BASE_URL_SAVED;
+      process.env.AGENTPROXY_BASE_URL = BASE_URL_SAVED;
     } else {
-      delete process.env.OMNIROUTE_BASE_URL;
+      delete process.env.AGENTPROXY_BASE_URL;
     }
   });
 
-  it("agent-card.json derives URL from request.nextUrl.origin when OMNIROUTE_BASE_URL is unset", async () => {
+  it("agent-card.json derives URL from request.nextUrl.origin when AGENTPROXY_BASE_URL is unset", async () => {
     const mod = await import("../../src/app/.well-known/agent-card.json/route.ts");
     const request = new Request(
       "https://gateway.example.com/.well-known/agent-card.json"
@@ -58,8 +58,8 @@ describe("S2 — agent-card topology sanitisation", () => {
     }
   });
 
-  it("agent-card.json uses OMNIROUTE_BASE_URL when set", async () => {
-    process.env.OMNIROUTE_BASE_URL = "https://custom.example.com";
+  it("agent-card.json uses AGENTPROXY_BASE_URL when set", async () => {
+    process.env.AGENTPROXY_BASE_URL = "https://custom.example.com";
     const mod = await import("../../src/app/.well-known/agent-card.json/route.ts");
     const request = new Request(
       "http://localhost:20128/.well-known/agent-card.json"
@@ -80,7 +80,7 @@ describe("S2 — agent-card topology sanitisation", () => {
     );
   });
 
-  it("agent.json derives URL from request.nextUrl.origin when OMNIROUTE_BASE_URL is unset", async () => {
+  it("agent.json derives URL from request.nextUrl.origin when AGENTPROXY_BASE_URL is unset", async () => {
     const mod = await import("../../src/app/.well-known/agent.json/route.ts");
     const request = new Request(
       "https://gateway.example.com/.well-known/agent.json"
@@ -177,10 +177,10 @@ describe("S4 — 429 Retry-After header", () => {
 // ── S1: login route uses trusted peer IP for rate-limit key ───────────
 // Integration test: sets up the real DB, management password, and settings,
 // then calls the login route POST function to verify the clientIp derivation.
-// The route uses: clientIp = request.headers.get("x-omniroute-trusted-peer-ip") || auditContext.ipAddress || null
+// The route uses: clientIp = request.headers.get("x-agentproxy-trusted-peer-ip") || auditContext.ipAddress || null
 
 describe("S1 — login rate-limit key uses anti-spoofed peer IP", () => {
-  const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-security-s1-s2-s4-"));
+  const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-security-s1-s2-s4-"));
   const JWT_SAVED = process.env.JWT_SECRET;
   const INITIAL_PASSWORD_SAVED = process.env.INITIAL_PASSWORD;
 
@@ -195,8 +195,8 @@ describe("S1 — login rate-limit key uses anti-spoofed peer IP", () => {
     // Use a bcrypt hash of "test-password" as the initial password so the
     // login route already has a valid hash in the DB settings.
     process.env.INITIAL_PASSWORD = "test-password";
-    delete process.env.OMNIROUTE_PEER_STAMP_TOKEN;
-    delete process.env.OMNIROUTE_BASE_URL;
+    delete process.env.AGENTPROXY_PEER_STAMP_TOKEN;
+    delete process.env.AGENTPROXY_BASE_URL;
 
     // Create data dir
     fs.mkdirSync(TEST_DATA_DIR, { recursive: true });
@@ -230,15 +230,15 @@ describe("S1 — login rate-limit key uses anti-spoofed peer IP", () => {
     }
   });
 
-  it("uses x-omniroute-trusted-peer-ip for rate-limit key when header is present", async () => {
+  it("uses x-agentproxy-trusted-peer-ip for rate-limit key when header is present", async () => {
     // The login route derives clientIp from the trusted peer IP header.
     // We make multiple requests with the same trusted peer IP but different
     // forged XFF headers to verify they share the same rate-limit bucket.
     //
-    // The route only trusts the header when OMNIROUTE_PEER_STAMP_TOKEN is set.
+    // The route only trusts the header when AGENTPROXY_PEER_STAMP_TOKEN is set.
     // Without the token, spoofed headers are rejected (tested separately below).
 
-    process.env.OMNIROUTE_PEER_STAMP_TOKEN = "test-stamp-token";
+    process.env.AGENTPROXY_PEER_STAMP_TOKEN = "test-stamp-token";
 
     const TRUSTED_IP = "203.0.113.42";
     const FORGED_XFF = "192.168.1.1, 10.0.0.1";
@@ -249,7 +249,7 @@ describe("S1 — login rate-limit key uses anti-spoofed peer IP", () => {
         method: "POST",
         headers: {
           "content-type": "application/json",
-          "x-omniroute-trusted-peer-ip": TRUSTED_IP,
+          "x-agentproxy-trusted-peer-ip": TRUSTED_IP,
           "x-forwarded-for": i === 0 ? FORGED_XFF : `10.0.0.${i}, 172.16.0.1`,
         },
         body: JSON.stringify({ password: "wrong-password" }),
@@ -278,17 +278,17 @@ describe("S1 — login rate-limit key uses anti-spoofed peer IP", () => {
     );
   });
 
-  it("ignores spoofed x-omniroute-trusted-peer-ip when OMNIROUTE_PEER_STAMP_TOKEN is not set", async () => {
+  it("ignores spoofed x-agentproxy-trusted-peer-ip when AGENTPROXY_PEER_STAMP_TOKEN is not set", async () => {
     loginGuardModRef.resetLoginGuardForTests();
 
-    // OMNIROUTE_PEER_STAMP_TOKEN is already deleted in beforeEach.
+    // AGENTPROXY_PEER_STAMP_TOKEN is already deleted in beforeEach.
     // The route should NOT trust the spoofed header and fall back to
     // auditContext.ipAddress (derived from X-Forwarded-For).
     //
     // TDD: each iteration uses a DIFFERENT spoofed IP. With the bug
     // (unconditional trust), each request goes to a different rate-limit
     // bucket — no bucket reaches the threshold → test FAILS (RED).
-    // With the fix (gate on OMNIROUTE_PEER_STAMP_TOKEN), all requests
+    // With the fix (gate on AGENTPROXY_PEER_STAMP_TOKEN), all requests
     // share the REAL_IP bucket → threshold hit → test PASSES (GREEN).
 
     const REAL_IP = "10.0.0.200";
@@ -299,7 +299,7 @@ describe("S1 — login rate-limit key uses anti-spoofed peer IP", () => {
         method: "POST",
         headers: {
           "content-type": "application/json",
-          "x-omniroute-trusted-peer-ip": SPOOFED_IP,
+          "x-agentproxy-trusted-peer-ip": SPOOFED_IP,
           "x-forwarded-for": REAL_IP,
         },
         body: JSON.stringify({ password: "wrong-password" }),
@@ -369,7 +369,7 @@ describe("S1 — login rate-limit key uses anti-spoofed peer IP", () => {
         method: "POST",
         headers: {
           "content-type": "application/json",
-          "x-omniroute-trusted-peer-ip": "203.0.113.99",
+          "x-agentproxy-trusted-peer-ip": "203.0.113.99",
         },
         body: JSON.stringify({ password: "wrong-password" }),
       }) as unknown as NextRequest;

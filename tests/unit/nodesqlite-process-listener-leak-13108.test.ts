@@ -17,7 +17,7 @@ function delta(before: Record<string, number>, after: Record<string, number>) {
 }
 
 test("closing a node:sqlite adapter releases its process listeners (#13108)", async () => {
-  const dir = mkdtempSync(join(tmpdir(), "omniroute-dbleak-"));
+  const dir = mkdtempSync(join(tmpdir(), "agentproxy-dbleak-"));
   const before = counts();
 
   try {
@@ -43,7 +43,7 @@ test("closing a node:sqlite adapter releases its process listeners (#13108)", as
 });
 
 test("an open node:sqlite adapter keeps its shutdown listeners registered (#13108)", async () => {
-  const dir = mkdtempSync(join(tmpdir(), "omniroute-dbleak-open-"));
+  const dir = mkdtempSync(join(tmpdir(), "agentproxy-dbleak-open-"));
   const before = counts();
   let adapter: Awaited<ReturnType<typeof createNodeSqliteAdapter>> | null = null;
 

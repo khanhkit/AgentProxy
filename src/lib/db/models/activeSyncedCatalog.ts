@@ -1,5 +1,5 @@
-import { providerUsesAuthoritativeLiveCatalog } from "@omniroute/open-sse/config/providerRegistry";
-import { PROVIDER_ID_TO_ALIAS } from "@omniroute/open-sse/config/providerModels.ts";
+import { providerUsesAuthoritativeLiveCatalog } from "@agentproxy/open-sse/config/providerRegistry";
+import { PROVIDER_ID_TO_ALIAS } from "@agentproxy/open-sse/config/providerModels.ts";
 import { ensureCursorAutoCatalogEntry } from "@/lib/providerModels/cursorAutoCatalog";
 import {
   getCustomModels,

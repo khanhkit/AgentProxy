@@ -33,8 +33,8 @@ export const SkillExecuteSchema = z.object({
 });
 
 export const skillTools = {
-  omniroute_skills_list: {
-    name: "omniroute_skills_list",
+  agentproxy_skills_list: {
+    name: "agentproxy_skills_list",
     description: "List all registered skills with optional filtering by API key or name",
     scopes: ["read:skills"],
     inputSchema: SkillListSchema,
@@ -65,8 +65,8 @@ export const skillTools = {
     },
   },
 
-  omniroute_skills_enable: {
-    name: "omniroute_skills_enable",
+  agentproxy_skills_enable: {
+    name: "agentproxy_skills_enable",
     description: "Enable or disable a specific skill by ID",
     scopes: ["write:skills"],
     inputSchema: SkillEnableSchema,
@@ -82,8 +82,8 @@ export const skillTools = {
     },
   },
 
-  omniroute_skills_execute: {
-    name: "omniroute_skills_execute",
+  agentproxy_skills_execute: {
+    name: "agentproxy_skills_execute",
     description: "Execute a skill with provided input and return the result",
     scopes: ["execute:skills"],
     inputSchema: SkillExecuteSchema,
@@ -106,8 +106,8 @@ export const skillTools = {
     },
   },
 
-  omniroute_skills_executions: {
-    name: "omniroute_skills_executions",
+  agentproxy_skills_executions: {
+    name: "agentproxy_skills_executions",
     description: "List recent skill execution history",
     scopes: ["read:skills"],
     inputSchema: z.object({

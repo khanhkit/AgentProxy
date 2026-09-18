@@ -50,7 +50,7 @@ test("no API route statically imports better-sqlite3 (must use the resilient dri
 });
 
 test("openDatabaseAsync validates a real sqlite file with the integrity_check shape the route expects", async () => {
-  const tmp = path.join(os.tmpdir(), `omniroute-3025-${process.pid}-${process.hrtime.bigint()}.sqlite`);
+  const tmp = path.join(os.tmpdir(), `agentproxy-3025-${process.pid}-${process.hrtime.bigint()}.sqlite`);
   // Seed a valid sqlite file through the same resilient adapter the route will now use.
   const seed = await openDatabaseAsync(tmp);
   seed.exec("CREATE TABLE api_keys (id INTEGER PRIMARY KEY)");

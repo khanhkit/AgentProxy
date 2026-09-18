@@ -9,9 +9,9 @@ import { createRecordedTriageRun } from "../../src/lib/issueAgent/recordedTriage
 
 test("recorded triage invokes the normal chat-completions seam with configured routing", async () => {
   const run = createRecordedTriageRun({
-    issueUrl: "https://github.com/KooshaPari/OmniRoute/issues/5980",
+    issueUrl: "https://github.com/KooshaPari/AgentProxy/issues/5980",
     recordedContext: {
-      title: "Execute issue-agent runs through OmniRoute routing",
+      title: "Execute issue-agent runs through AgentProxy routing",
       body: "Use the configured provider and model.",
     },
   });
@@ -35,7 +35,7 @@ test("recorded triage invokes the normal chat-completions seam with configured r
 
   assert.equal(received?.url, "http://localhost/api/v1/chat/completions");
   assert.equal(received?.method, "POST");
-  assert.equal(received?.headers.get("X-OmniRoute-Mode"), "quality");
+  assert.equal(received?.headers.get("X-AgentProxy-Mode"), "quality");
   assert.ok(received?.signal, "the chat request must carry the timeout AbortSignal");
 
   const body = (await received!.json()) as Record<string, unknown>;
@@ -50,7 +50,7 @@ test("recorded triage invokes the normal chat-completions seam with configured r
 
 test("recorded triage reports an aborted chat invocation as a timeout", async () => {
   const run = createRecordedTriageRun({
-    issueUrl: "https://github.com/KooshaPari/OmniRoute/issues/5980",
+    issueUrl: "https://github.com/KooshaPari/AgentProxy/issues/5980",
   });
 
   await assert.rejects(

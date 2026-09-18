@@ -5,7 +5,7 @@
 // ("GLIBC_2.29 not found"), so the native module fails to dlopen and any test that
 // reaches better-sqlite3 directly (or asserts stdout that the load-failure warning
 // would pollute) fails HERE while passing in CI. This is a known environment
-// limitation, not a defect in the code under test: the OmniRoute runtime itself
+// limitation, not a defect in the code under test: the AgentProxy runtime itself
 // cascades to node:sqlite/sql.js when better-sqlite3 is unavailable. See
 // tests/unit/_helpers/betterSqlite3Availability.ts for a guard helper.
 import test from "node:test";
@@ -20,7 +20,7 @@ import { bootstrapEnv } from "../../scripts/build/bootstrap-env.mjs";
 function withTempEnv(fn) {
   const originalCwd = process.cwd();
   const originalEnv = { ...process.env };
-  const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-bootstrap-test-"));
+  const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-bootstrap-test-"));
   const tempCwd = path.join(tempRoot, "cwd");
   const tempHome = path.join(tempRoot, "home");
 
@@ -39,7 +39,7 @@ function withTempEnv(fn) {
   process.chdir(tempCwd);
 
   try {
-    fn({ tempRoot, tempCwd, tempHome, dataDir: path.join(tempHome, ".omniroute") });
+    fn({ tempRoot, tempCwd, tempHome, dataDir: path.join(tempHome, ".agentproxy") });
   } finally {
     process.chdir(originalCwd);
     for (const key of Object.keys(process.env)) {
@@ -52,7 +52,7 @@ function withTempEnv(fn) {
   }
 }
 
-test("bootstrapEnv prefers ~/.omniroute/.env over server.env", () => {
+test("bootstrapEnv prefers ~/.agentproxy/.env over server.env", () => {
   withTempEnv(({ dataDir }) => {
     process.env.DATA_DIR = dataDir;
     fs.mkdirSync(dataDir, { recursive: true });

@@ -23,13 +23,13 @@ const defaultExecutorResolverPath = path.join(
 
 test("node instrumentation loads the proxy patch leaf before quota registration", () => {
   const source = fs.readFileSync(instrumentationPath, "utf8");
-  const proxyPatchImport = 'await import("@omniroute/open-sse/utils/proxyFetch.ts")';
+  const proxyPatchImport = 'await import("@agentproxy/open-sse/utils/proxyFetch.ts")';
   const proxyPatchIndex = source.indexOf(proxyPatchImport);
   const quotaRegistrationIndex = source.indexOf("await registerQuotaFetchers()");
 
   assert.ok(proxyPatchIndex >= 0, "startup must load the proxyFetch side-effect leaf");
   assert.ok(quotaRegistrationIndex > proxyPatchIndex, "proxy patch must run before quota setup");
-  assert.doesNotMatch(source, /import\("@omniroute\/open-sse\/index\.ts"\)/);
+  assert.doesNotMatch(source, /import\("@agentproxy\/open-sse\/index\.ts"\)/);
 });
 
 test("quota auto-ping lazily loads only the Codex executor", () => {
@@ -38,7 +38,7 @@ test("quota auto-ping lazily loads only the Codex executor", () => {
 
   assert.doesNotMatch(source, /open-sse\/executors\/index(?:\.ts)?/);
   assert.doesNotMatch(source, /@\/lib\/usage\/providerLimits["']/);
-  assert.match(source, /import\("@omniroute\/open-sse\/executors\/codex\.ts"\)/);
+  assert.match(source, /import\("@agentproxy\/open-sse\/executors\/codex\.ts"\)/);
   assert.match(source, /@\/lib\/usage\/providerLimits\/credentialRefresh/);
   assert.match(source, /getExecutor: loadQuotaAutoPingExecutor/);
   assert.doesNotMatch(credentialRefreshSource, /open-sse\/executors\/index(?:\.ts)?/);

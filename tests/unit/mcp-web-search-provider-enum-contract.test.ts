@@ -1,4 +1,4 @@
-// #10209 — contract test: the MCP `omniroute_web_search` `provider` enum is now
+// #10209 — contract test: the MCP `agentproxy_web_search` `provider` enum is now
 // generated dynamically from the search registry (`getActiveSearchProviders`).
 // This pins the invariant that the dynamic enum does not silently break the Zod
 // schema exposed to MCP clients (or the tool's scope), regardless of future
@@ -68,7 +68,7 @@ test("unknown provider values are rejected (contract stays tight)", () => {
 });
 
 test("tool registration + scope are unaffected by the dynamic enum", () => {
-  assert.equal(webSearchTool.name, "omniroute_web_search");
+  assert.equal(webSearchTool.name, "agentproxy_web_search");
   assert.equal(webSearchTool.inputSchema, webSearchInput);
   assert.ok(webSearchTool.scopes.includes("execute:search"), "web search tool scope must be retained");
 });

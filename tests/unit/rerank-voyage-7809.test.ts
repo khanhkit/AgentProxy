@@ -7,7 +7,7 @@ import path from "node:path";
 // Isolated DATA_DIR before any module that may open the SQLite singleton
 // (open-sse/handlers/rerank.ts pulls in @/lib/usageDb, which triggers
 // migrations on import) — never touch the shared/real DB (#7809/#7811).
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-rerank-voyage-7809-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-rerank-voyage-7809-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../src/lib/db/core.ts");

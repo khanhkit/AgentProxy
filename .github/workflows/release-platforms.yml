@@ -95,8 +95,8 @@ jobs:
         env:
           JWT_SECRET: ci-build-secret-with-sufficient-length-for-validation
           NODE_OPTIONS: "--max-old-space-size=12288"
-          OMNIROUTE_USE_TURBOPACK: "0"
-          OMNIROUTE_NEXT_BUILD_CPUS: "1"
+          AGENTPROXY_USE_TURBOPACK: "0"
+          AGENTPROXY_NEXT_BUILD_CPUS: "1"
         run: npm run build
 
       - name: Pack shared standalone bundle

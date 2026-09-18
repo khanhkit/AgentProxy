@@ -10,7 +10,7 @@ import { join } from "node:path";
 
 let dataDir: string;
 before(() => {
-  dataDir = mkdtempSync(join(tmpdir(), "omniroute-typed-decay-"));
+  dataDir = mkdtempSync(join(tmpdir(), "agentproxy-typed-decay-"));
   process.env.DATA_DIR = dataDir;
 });
 

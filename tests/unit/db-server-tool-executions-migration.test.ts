@@ -63,7 +63,7 @@ function makeTempDb(): {
   raw.pragma("busy_timeout = 2000");
   // Create migrations tracking table
   raw.exec(`
-    CREATE TABLE IF NOT EXISTS _omniroute_migrations (
+    CREATE TABLE IF NOT EXISTS _agentproxy_migrations (
       version TEXT PRIMARY KEY,
       name TEXT NOT NULL,
       applied_at TEXT NOT NULL DEFAULT (datetime('now'))

@@ -9,7 +9,7 @@
  */
 import { getMitmStatus, getAllAgentsStatus, getCachedPassword } from "@/mitm/manager";
 import { isSudoPasswordRequired, checkDNSEntryForAgent } from "@/mitm/dns/dnsConfig";
-import { sanitizeErrorMessage } from "@omniroute/open-sse/utils/error";
+import { sanitizeErrorMessage } from "@agentproxy/open-sse/utils/error";
 import { createErrorResponse } from "@/lib/api/errorResponse";
 import { getAllAgentBridgeStates } from "@/lib/db/agentBridgeState";
 import { getAllBypassPatterns } from "@/lib/db/agentBridgeBypass";

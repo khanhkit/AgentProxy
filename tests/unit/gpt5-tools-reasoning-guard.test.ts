@@ -5,7 +5,7 @@
  * request that carries BOTH function tools and an active `reasoning_effort` with
  * HTTP 400: "Function tools with reasoning_effort are not supported for
  * <model> in /v1/chat/completions. Please use /v1/responses instead."
- * (port of 9router#2540). OmniRoute's `forceResponsesUpstream` guard only fires
+ * (port of 9router#2540). AgentProxy's `forceResponsesUpstream` guard only fires
  * for `openai-compatible-*` connections carrying MCP/tool_search tool shapes —
  * the plain `openai` provider has no equivalent guard, so this scenario still
  * reaches the upstream 400 today. Strip `reasoning_effort`/`reasoning` when

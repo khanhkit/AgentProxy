@@ -3,13 +3,13 @@ import { requireManagementAuth } from "@/lib/api/requireManagementAuth";
 import {
   VALID_VARIANTS,
   type AutoVariant,
-} from "@omniroute/open-sse/services/autoCombo/autoPrefix";
+} from "@agentproxy/open-sse/services/autoCombo/autoPrefix";
 import {
   AUTO_SUFFIX_VARIANTS,
   AUTO_TEMPLATE_VARIANTS,
   AUTO_FAMILY_IDS,
-} from "@omniroute/open-sse/services/autoCombo/builtinCatalog";
-import { parseAutoSuffix } from "@omniroute/open-sse/services/autoCombo/suffixComposition";
+} from "@agentproxy/open-sse/services/autoCombo/builtinCatalog";
+import { parseAutoSuffix } from "@agentproxy/open-sse/services/autoCombo/suffixComposition";
 
 const ALL_VARIANTS: Array<{ variant: AutoVariant | undefined; name: string }> = [
   { variant: undefined, name: "Auto" },
@@ -26,7 +26,7 @@ export async function GET(request: Request) {
 
   try {
     const { createVirtualAutoCombo } =
-      await import("@omniroute/open-sse/services/autoCombo/virtualFactory");
+      await import("@agentproxy/open-sse/services/autoCombo/virtualFactory");
 
     const combos = [];
     const seenIds = new Set<string>();

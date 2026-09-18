@@ -9,7 +9,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-free-proxy-autosync-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-free-proxy-autosync-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.DISABLE_SQLITE_AUTO_BACKUP = "true";
 // The module auto-initializes on import (matches `proxyHealth/scheduler.ts`);
@@ -25,7 +25,7 @@ const ENV_KEYS = [
   "FREE_PROXY_AUTO_SYNC_ENABLED",
   "FREE_PROXY_AUTO_SYNC_INTERVAL_MS",
   "NEXT_PHASE",
-  "OMNIROUTE_DISABLE_BACKGROUND_SERVICES",
+  "AGENTPROXY_DISABLE_BACKGROUND_SERVICES",
   "FREE_PROXY_1PROXY_ENABLED",
   "FREE_PROXY_PROXIFLY_ENABLED",
 ] as const;
@@ -130,9 +130,9 @@ test("isBuildProcess() (NEXT_PHASE=phase-production-build) suppresses scheduling
   assert.equal(globalThis.__freeProxyAutoSyncStartupTimer, undefined);
 });
 
-test("OMNIROUTE_DISABLE_BACKGROUND_SERVICES=true suppresses scheduling", () => {
+test("AGENTPROXY_DISABLE_BACKGROUND_SERVICES=true suppresses scheduling", () => {
   process.env.FREE_PROXY_AUTO_SYNC_ENABLED = "true";
-  process.env.OMNIROUTE_DISABLE_BACKGROUND_SERVICES = "true";
+  process.env.AGENTPROXY_DISABLE_BACKGROUND_SERVICES = "true";
 
   scheduler.initFreeProxyAutoSync();
 

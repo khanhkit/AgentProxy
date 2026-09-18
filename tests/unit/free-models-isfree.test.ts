@@ -4,7 +4,7 @@ import { isFreeModel, providerHasFreeModels } from "../../src/shared/utils/freeM
 
 describe("isFreeModel isFree opt-in", () => {
   it("isFree:true fetched → free only for a provider with a documented free tier", async () => {
-    const { FREE_MODEL_BUDGETS } = await import("@omniroute/open-sse/config/freeModelCatalog");
+    const { FREE_MODEL_BUDGETS } = await import("@agentproxy/open-sse/config/freeModelCatalog");
     const freeProvider = FREE_MODEL_BUDGETS[0].provider;
     assert.equal(isFreeModel("any", { id: "x", isFree: true }), false);
     assert.equal(isFreeModel("local", { id: "my-model", isFree: true }), false);
@@ -25,7 +25,7 @@ describe("isFreeModel isFree opt-in", () => {
     assert.equal(providerHasFreeModels("openai"), providerHasFreeModels("openai"));
   });
   it(":free and pricing 0 still work when isFree absent — only for free-tier providers", async () => {
-    const { FREE_MODEL_BUDGETS } = await import("@omniroute/open-sse/config/freeModelCatalog");
+    const { FREE_MODEL_BUDGETS } = await import("@agentproxy/open-sse/config/freeModelCatalog");
     const freeProvider = FREE_MODEL_BUDGETS[0].provider;
     assert.equal(isFreeModel("any", { id: "foo:free" }), false);
     assert.equal(isFreeModel("local", { id: "foo", pricing: { prompt: 0, completion: 0 } }), false);
@@ -39,7 +39,7 @@ describe("isFreeModel isFree opt-in", () => {
   it("selectModelsForImport matches isFreeForProvider on every catalogued free model", async () => {
     // FREE_MODEL_IDS_BY_PROVIDER is module-private, so rebuild (provider, id) pairs from the
     // exported FREE_MODEL_BUDGETS: every budgeted provider has a documented free tier.
-    const { FREE_MODEL_BUDGETS } = await import("@omniroute/open-sse/config/freeModelCatalog");
+    const { FREE_MODEL_BUDGETS } = await import("@agentproxy/open-sse/config/freeModelCatalog");
     const { selectModelsForImport, isFreeForProvider } =
       await import("../../src/shared/utils/freeModels.ts");
     for (const { provider } of FREE_MODEL_BUDGETS) {

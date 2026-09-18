@@ -27,11 +27,11 @@ function upstreamCompress(text: string): string {
   return upstream.compress(text).compressed;
 }
 
-function omnirouteCompress(text: string): string {
-  return omniroutePromptCompression(text).text;
+function agentproxyCompress(text: string): string {
+  return agentproxyPromptCompression(text).text;
 }
 
-function omniroutePromptCompression(text: string): { text: string; fallbackApplied: boolean } {
+function agentproxyPromptCompression(text: string): { text: string; fallbackApplied: boolean } {
   const result = cavemanCompress(
     { messages: [{ role: "user", content: text }] },
     {
@@ -62,9 +62,9 @@ describe(
   () => {
     it("matches core upstream shrink protections and savings direction", () => {
       for (const input of parityCases) {
-        const ours = omnirouteCompress(input);
+        const ours = agentproxyCompress(input);
         const theirs = upstreamCompress(input);
-        assert.ok(ours.length <= input.length, `OmniRoute did not reduce: ${input}`);
+        assert.ok(ours.length <= input.length, `AgentProxy did not reduce: ${input}`);
         assert.ok(theirs.length <= input.length, `Upstream did not reduce: ${input}`);
         for (const protectedToken of [
           "config.api.endpoint()",
@@ -83,11 +83,11 @@ describe(
     it("stays within upstream token budget on representative prose", () => {
       const input =
         "Sure, I will make sure to return the current weather for a given location and the temperature in Fahrenheit.";
-      const ours = omnirouteCompress(input);
+      const ours = agentproxyCompress(input);
       const theirs = upstreamCompress(input);
       assert.ok(
         ours.length <= Math.ceil(theirs.length * 1.2),
-        `Expected OmniRoute within 20% of upstream shrink length. ours=${ours.length}, upstream=${theirs.length}`
+        `Expected AgentProxy within 20% of upstream shrink length. ours=${ours.length}, upstream=${theirs.length}`
       );
     });
 
@@ -128,7 +128,7 @@ describe(
       for (const fixture of fixturePairs) {
         const original = readFileSync(fixture.originalPath, "utf8");
         const expected = readFileSync(fixture.compressedPath, "utf8");
-        const ours = omniroutePromptCompression(original);
+        const ours = agentproxyPromptCompression(original);
         const upstreamShrink = upstreamCompress(original);
 
         assert.ok(
@@ -144,11 +144,11 @@ describe(
         } else {
           assert.ok(
             ours.text.length < original.length,
-            `${fixture.name}: OmniRoute did not reduce`
+            `${fixture.name}: AgentProxy did not reduce`
           );
           assert.ok(
             ours.text.length <= Math.ceil(Math.max(expected.length, upstreamShrink.length) * 1.35),
-            `${fixture.name}: OmniRoute drifted too far from upstream fixture budget`
+            `${fixture.name}: AgentProxy drifted too far from upstream fixture budget`
           );
         }
 

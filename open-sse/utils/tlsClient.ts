@@ -77,8 +77,8 @@ function getWreqRuntimeModule(): Record<string, unknown> {
   throw wreqRuntimeModuleError ?? new Error("wreq-js runtime unavailable");
 }
 
-const TRANSPORT_POOL_KEY = Symbol.for("omniroute.wreqTransportPool.instance");
-const TRANSPORT_POOL_LIFECYCLE_KEY = Symbol.for("omniroute.wreqTransportPool.lifecycle");
+const TRANSPORT_POOL_KEY = Symbol.for("agentproxy.wreqTransportPool.instance");
+const TRANSPORT_POOL_LIFECYCLE_KEY = Symbol.for("agentproxy.wreqTransportPool.lifecycle");
 type WreqLifecycleResource = {
   closeAll: () => Promise<void> | void;
 };
@@ -1025,7 +1025,7 @@ export class TlsClient {
   }
 }
 
-const TLS_CLIENT_KEY = Symbol.for("omniroute.tlsClient.instance");
+const TLS_CLIENT_KEY = Symbol.for("agentproxy.tlsClient.instance");
 const scopedGlobal = globalThis as typeof globalThis & {
   [TLS_CLIENT_KEY]?: TlsClient;
 };

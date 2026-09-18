@@ -53,8 +53,8 @@ Tas ir apiet npm sankcijas tagad, kad tokeni, kas izlaiž 2FA, tiek atcelti;
 atjauno pilnībā automātisko plūsmu, kāda projektam bija līdz v3.8.48, vienlaikus saglabājot
 WS1.3 garantiju (noplūdis tokens nevar publicēt viens — tāda nav).
 
-**Vienreizēja iestatīšana (īpašnieks):** npmjs.com → pakete `omniroute` → Settings → _Trusted
-Publisher_ → GitHub: īpašnieks `diegosouzapw`, repo `OmniRoute`, darbplūsma `npm-publish.yml`
+**Vienreizēja iestatīšana (īpašnieks):** npmjs.com → pakete `agentproxy` → Settings → _Trusted
+Publisher_ → GitHub: īpašnieks `diegosouzapw`, repo `AgentProxy`, darbplūsma `npm-publish.yml`
 (vides: nav). Kamēr tas nepastāv, automātiskais solis neizdodas ar `ENEEDAUTH`:
 atkārtoti izsūta ar `publish_mode=staged` (tālāk) vai `direct`.
 
@@ -66,7 +66,7 @@ npm-publish darbplūsma vairs nepublicē tieši: tā ielādē saspiestu tarball
 
 **Īpašnieka plūsma pēc tam, kad darbplūsma kļūst zaļa:**
 
-1. `npm stage list omniroute` — atrodiet pakāpes id (arī izdrukāts darbplūsmas kopsavilkumā).
+1. `npm stage list agentproxy` — atrodiet pakāpes id (arī izdrukāts darbplūsmas kopsavilkumā).
 2. Pārbaudiet pakāpeniskos baitus (ieteicams): `npm stage download <id>`, tad instalējiet
    lejupielādēto tarball pagaidu prefiksā un ielādiet to (`npm run check:pack-boot` automatizē
    to pašu pack→install→boot spriedumu CI).
@@ -78,10 +78,10 @@ npm-publish darbplūsma vairs nepublicē tieši: tā ielādē saspiestu tarball
 mantoto tūlītējo `npm publish` (lietojiet tikai, ja pati pakāpeniskā publicēšana nedarbojas; ierakstiet kāpēc).
 
 **Vienreizēja nostiprināšana (īpašnieks, npmjs.com):** konfigurējiet Uzticamo publicētāju
-`omniroute` tikai pakāpeniskajā režīmā, lai noplūdis ilgtermiņa tokens nevarētu `npm publish`
+`agentproxy` tikai pakāpeniskajā režīmā, lai noplūdis ilgtermiņa tokens nevarētu `npm publish`
 tieši no jebkurienes — CI var tikai pakāpeniski; tikai īpašnieka 2FA izlaiž.
 
-**Bojāta artefakta rokasgrāmata (nemainīta):** `npm deprecate omniroute@<bad> "<iemesls> — lietojiet <labots>"`
+**Bojāta artefakta rokasgrāmata (nemainīta):** `npm deprecate agentproxy@<bad> "<iemesls> — lietojiet <labots>"`
 kā noklusējuma refleksu (minūtēs, atgriezenisks); `npm unpublish` tikai 72h/atkarību
 loga ietvaros un nekad kā pirmo soli. Docker: nekad nepārrakstiet versijas tagu — atgriešana ir
 `latest` pārvēršana uz pēdējo labo sastāvu.
@@ -197,7 +197,7 @@ Lauztas izmaiņas: pievienojiet `BREAKING CHANGE:` kājeredi vai `!` pēc mērog
 - [ ] `npm run i18n:check` iziet 0 — tulkojuma stāvoklis (`.i18n-state.json`) sinhronizēts ar avota dokumentiem (strikta režīmā nav novirzījušos avotu; brīdinājuma režīma konsultatīvā piezīme ir pieņemama pēdējā brīža dokumenta pielāgojumiem, bet pirms tagošanas tai jābūt 0)
 - [ ] `npm run i18n:check-ui-coverage` iziet 0 — katra UI locale ir vai nu 80% seguma grīdā, vai virs tās
 - [ ] `npm run i18n:sync-ui:dry` ziņo 0 trūkstošus atslēgas visās 42 locales
-- [ ] Ja avota angļu dokumenti mainīti, pirms tagošanas palaist `npm run i18n:run` (prasa `OMNIROUTE_TRANSLATION_API_KEY` `.env`)
+- [ ] Ja avota angļu dokumenti mainīti, pirms tagošanas palaist `npm run i18n:run` (prasa `AGENTPROXY_TRANSLATION_API_KEY` `.env`)
 - [ ] Tulkojumu ieguldījumus var atlikt uz nākamo izlaidumu, ja tie ir niecīgi (izsekot CHANGELOG)
 
 ### DB migrācijas
@@ -206,7 +206,7 @@ Lauztas izmaiņas: pievienojiet `BREAKING CHANGE:` kājeredi vai `!` pēc mērog
   - [ ] Katra migrācija ir idempotenta (`CREATE TABLE IF NOT EXISTS` utt.)
   - [ ] Migrācijas ietītas transakcijās
   - [ ] Pareizi numurētas (nav caurumu secībā)
-- [ ] Testēt uz jaunas instalācijas: izdzēst `~/.omniroute/omniroute.db` un palaist `npm run dev`
+- [ ] Testēt uz jaunas instalācijas: izdzēst `~/.agentproxy/agentproxy.db` un palaist `npm run dev`
 - [ ] Testēt uz esošas instalācijas: rezerves kopēt DB, palaist migrāciju, pārbaudīt shēmu
 - [ ] WAL failus (`-wal`, `-shm`) apstrādāt pareizi, ja migrācija pārraksta tabulas
 
@@ -241,7 +241,7 @@ Repozitorijam ir trīs atšķirīgi izvades direktoriji — nekad tos nesajaucie
 | `.build/`   | Būvējuma starpnieki — `next build` izvade (`distDir`) | Nē (gitignore) |
 | `dist/`     | Sūtāms npm saišķis — salikts ar `assembleStandalone`  | Nē (gitignore) |
 
-> **Operators piezīme:** attālā VPS attēla direktorijs paliek `/usr/lib/node_modules/omniroute/app/`.
+> **Operators piezīme:** attālā VPS attēla direktorijs paliek `/usr/lib/node_modules/agentproxy/app/`.
 > Tikai **repozitorijā** esošā būvējuma izvade ir pārvietota (`app/` → `dist/`). Izpildīšanas prasmes rsync
 > `dist/` saturu uz attālo `app/` direktoriju — nav nepieciešami VPS ceļu maiņas.
 
@@ -361,12 +361,12 @@ Pirms jebkura laišanas, kas ietver iegulto pakalpojumu izmaiņas, pārbaudiet:
 
 Pirms jebkuras v3.8.x laišanas, pārbaudiet šos papildu vienumus:
 
-- [ ] `omniroute --tray` sāknējas macOS (systray2 instalēts `~/.omniroute/runtime/`)
-- [ ] `omniroute --tray` sāknējas Linux (nepieciešams DISPLAY; elegantu kļūdu, ja nav iestatīts)
-- [ ] `omniroute --tray` sāknējas Windows (PowerShell NotifyIcon, nav papildu bināro failu)
-- [ ] `omniroute config tray enable` izveido automātiskās startēšanas ierakstu; disable to noņem
-- [ ] `npm install -g omniroute@<this-version>` izpilda postinstall bez fatālas izejas
-- [ ] Atjaunināšanas ceļš saglabā izvēles atkarības: `omniroute update --apply` un automātiskais atjauninātājs
+- [ ] `agentproxy --tray` sāknējas macOS (systray2 instalēts `~/.agentproxy/runtime/`)
+- [ ] `agentproxy --tray` sāknējas Linux (nepieciešams DISPLAY; elegantu kļūdu, ja nav iestatīts)
+- [ ] `agentproxy --tray` sāknējas Windows (PowerShell NotifyIcon, nav papildu bināro failu)
+- [ ] `agentproxy config tray enable` izveido automātiskās startēšanas ierakstu; disable to noņem
+- [ ] `npm install -g agentproxy@<this-version>` izpilda postinstall bez fatālas izejas
+- [ ] Atjaunināšanas ceļš saglabā izvēles atkarības: `agentproxy update --apply` un automātiskais atjauninātājs
       izpilda `npm install -g … --include=optional`, lai `optionalDependencies` (better-sqlite3,
       keytar, tls-client un llmlingua SLM kaudze: `@atjsh/llmlingua-2@2.0.5`,
       `js-tiktoken`) izdzīvo atjaunināšanu. Ultra `modelPath` SLM līmenim nepieciešams arī
@@ -376,13 +376,13 @@ Pirms jebkuras v3.8.x laišanas, pārbaudiet šos papildu vienumus:
       instanci — patstāvīgais trace bundle satur tikai transformers, nevis dinamiski importētās
       izvēles, tāpēc bez tā darbinieks ielādētu llmlingua-2 pret saknes transformers
       un SLM līmenis klusi kļūtu par atvērtu.
-- [ ] `omniroute status` strādā bez `.env` (CLI token ceļš, tikai atpakaļsaite)
+- [ ] `agentproxy status` strādā bez `.env` (CLI token ceļš, tikai atpakaļsaite)
 - [ ] `curl http://localhost:20128/api/shutdown` atgriež 401 (vienmēr aizsargāts maršruts)
 - [ ] `curl -H "host: evil.com" http://localhost:20128/api/mcp/sse` atgriež 401 (atpakaļsaistes aizsargs)
 - [ ] SQLite runtime pirmajā palaišanas reizē nosaka `bundled` (bundled binārais derīgs platformai)
 - [ ] SQLite runtime atgriežas uz `runtime`, kad `node_modules/better-sqlite3` ir dzēsts
 - [ ] Viedais MCP filtrs saspiež reālo `playwright-mcp browser_snapshot` izvadi (≥50% samazinājums)
-- [ ] Visi 10 `skills/omniroute*/SKILL.md` faili ir publiski pieejami caur raw GitHub URL
+- [ ] Visi 10 `skills/agentproxy*/SKILL.md` faili ir publiski pieejami caur raw GitHub URL
 - [ ] Iepazīšanās vednis svaigā iestatīšanā rāda "Kā tas darbojas" līmeņu tūres soli
 - [ ] Galvenā informācijas panela līmeņu pārklājuma logrādis rāda konfigurēto/aktīvo skaitu
 

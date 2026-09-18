@@ -3,7 +3,7 @@ import * as log from "../utils/logger";
 import { updateProviderConnection } from "@/lib/db/providers";
 import { resolveProxyForConnection } from "@/lib/db/settings";
 import { hasBlockingAccountProxyAssignment, resolveProxyForProvider } from "@/lib/db/proxies";
-import { stripTrailingSlashes } from "@omniroute/open-sse/utils/urlSanitize.ts";
+import { stripTrailingSlashes } from "@agentproxy/open-sse/utils/urlSanitize.ts";
 import {
   TOKEN_EXPIRY_BUFFER_MS as BUFFER_MS,
   getRefreshLeadMs as _getRefreshLeadMs,
@@ -18,7 +18,7 @@ import {
   refreshTokenByProvider as _refreshTokenByProvider,
   formatProviderCredentials as _formatProviderCredentials,
   getAllAccessTokens as _getAllAccessTokens,
-} from "@omniroute/open-sse/services/tokenRefresh.ts";
+} from "@agentproxy/open-sse/services/tokenRefresh.ts";
 
 // DEPRECATED: withConnectionRefreshMutex was removed. The per-connection mutex
 // is now consolidated in open-sse/services/tokenRefresh.ts and protected by

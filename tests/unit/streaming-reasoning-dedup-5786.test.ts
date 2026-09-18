@@ -1,8 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { createSSETransformStreamWithLogger } from "@omniroute/open-sse/utils/stream.ts";
-import { FORMATS } from "@omniroute/open-sse/translator/formats.ts";
+import { createSSETransformStreamWithLogger } from "@agentproxy/open-sse/utils/stream.ts";
+import { FORMATS } from "@agentproxy/open-sse/translator/formats.ts";
 
 /**
  * Regression guards for #5786 — streaming claude→codex.

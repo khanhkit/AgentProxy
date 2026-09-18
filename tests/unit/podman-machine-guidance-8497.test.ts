@@ -42,13 +42,13 @@ test("#8497 Podman guide separates local engines from Podman Machine", () => {
   assert.match(localGuidance, /podman unshare chown 1000:1000 \.\/data/);
   assert.doesNotMatch(machineGuidance, /podman unshare chown/);
   assert.match(machineGuidance, /remote client/);
-  assert.match(machineGuidance, /docker\.io\/diegosouzapw\/omniroute:latest/);
+  assert.match(machineGuidance, /docker\.io\/diegosouzapw\/agentproxy:latest/);
 });
 
 test("#8497 Quadlet is Linux/systemd-only and generated units are not enabled", () => {
   const guide = read("contrib/podman/README.md");
-  const appUnit = read("contrib/podman/omniroute.container");
-  const redisUnit = read("contrib/podman/omniroute-redis.container");
+  const appUnit = read("contrib/podman/agentproxy.container");
+  const redisUnit = read("contrib/podman/agentproxy-redis.container");
 
   assert.match(guide, /Option A: Quadlet \(Linux \+ systemd only\)/);
   assert.doesNotMatch(guide, /systemctl --user enable/);
@@ -65,13 +65,13 @@ test("#8497 Compose either builds or explicitly reuses the matching local image"
   assert.match(guide, /podman compose --profile base up -d --build/);
   assert.match(
     guide,
-    /podman build --target runner-base -t omniroute:base \.[\s\S]*podman compose --profile base up -d --no-build/
+    /podman build --target runner-base -t agentproxy:base \.[\s\S]*podman compose --profile base up -d --no-build/
   );
   for (const [service, target, image] of [
-    ["omniroute-base", "runner-base", "omniroute:base"],
-    ["omniroute-web", "runner-web", "omniroute:web"],
-    ["omniroute-cli", "runner-cli", "omniroute:cli"],
-    ["omniroute-host", "runner-base", "omniroute:base"],
+    ["agentproxy-base", "runner-base", "agentproxy:base"],
+    ["agentproxy-web", "runner-web", "agentproxy:web"],
+    ["agentproxy-cli", "runner-cli", "agentproxy:cli"],
+    ["agentproxy-host", "runner-base", "agentproxy:base"],
   ]) {
     const serviceStart = compose.indexOf(`  ${service}:`);
     const serviceEnd = compose.indexOf("\n  # ── Profile:", serviceStart + 1);
@@ -94,12 +94,12 @@ test("#8497 entrypoint emits a topology-neutral Podman hint", () => {
 });
 
 test("#8497 pull example and environment hints stay topology-safe", () => {
-  const quadlet = read("contrib/podman/omniroute.container");
+  const quadlet = read("contrib/podman/agentproxy.container");
   const envExample = read(".env.example");
   const envReference = read("docs/reference/ENVIRONMENT.md");
 
-  assert.match(quadlet, /Image=docker\.io\/diegosouzapw\/omniroute:latest/);
-  assert.doesNotMatch(quadlet, /diegosouzapw\/omniroute:base/);
+  assert.match(quadlet, /Image=docker\.io\/diegosouzapw\/agentproxy:latest/);
+  assert.doesNotMatch(quadlet, /diegosouzapw\/agentproxy:base/);
 
   for (const source of [envExample, envReference]) {
     assert.match(source, /any Podman topology/);

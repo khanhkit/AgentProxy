@@ -4,6 +4,7 @@ import { readFile } from "node:fs/promises";
 import test from "node:test";
 
 const { publicKey, privateKey } = crypto.generateKeyPairSync("ed25519");
+process.env.RADAR_FEED_URL = "https://radar.test.example";
 process.env.RADAR_FEED_PUBKEY = publicKey
   .export({ type: "spki", format: "der" })
   .toString("base64");
@@ -66,15 +67,15 @@ test("valid live offer feed sends Bearer server-side and caches exact signed byt
       requestUrl = String(input);
       authorization = new Headers(init?.headers).get("authorization") ?? "";
       return response(bytes, {
-        "x-omniroute-feed-signature": signature,
-        "x-omniroute-feed-tier": "live",
+        "x-agentproxy-feed-signature": signature,
+        "x-agentproxy-feed-tier": "live",
       });
     }) as typeof fetch,
     now: () => new Date("2026-08-09T12:05:00.000Z"),
   });
 
   assert.deepEqual(result, { status: "updated", version: "2026.08.09.1" });
-  assert.equal(requestUrl, "https://radar.omniroute.online/v1/offers/latest");
+  assert.equal(requestUrl, "https://radar.test.example/v1/offers/latest");
   assert.equal(authorization, `Bearer omr_${"a".repeat(40)}`);
   assert.equal(writes[0]!.payload, bytes.toString("utf8"));
   assert.equal(writes[0]!.signature, signature);
@@ -114,8 +115,8 @@ test("signature, schema, and live-tier failures preserve the last good cache", a
       },
       fetch: (async () =>
         response(item.bytes, {
-          "x-omniroute-feed-signature": item.signature,
-          ...(item.tier ? { "x-omniroute-feed-tier": item.tier } : {}),
+          "x-agentproxy-feed-signature": item.signature,
+          ...(item.tier ? { "x-agentproxy-feed-tier": item.tier } : {}),
         })) as typeof fetch,
     });
     assert.equal(result.status, item.expected);
@@ -141,8 +142,8 @@ test("same or older signed offer versions are rejected as stale", async () => {
     },
     fetch: (async () =>
       response(bytes, {
-        "x-omniroute-feed-signature": sign(bytes),
-        "x-omniroute-feed-tier": "live",
+        "x-agentproxy-feed-signature": sign(bytes),
+        "x-agentproxy-feed-tier": "live",
       })) as typeof fetch,
   });
 

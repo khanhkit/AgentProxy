@@ -17,7 +17,7 @@ Silnik współdzielenia quota (Quota Sharing Engine) sprawiedliwie rozdziela
 quota providera opartą na czasie (np. okno 5-godzinne Codex, Kimi 1500 req/h)
 pomiędzy wiele kluczy API współdzielących to samo połączenie.
 
-**Problem, który rozwiązuje:** OmniRoute proxy’uje wiele kluczy API względem
+**Problem, który rozwiązuje:** AgentProxy proxy’uje wiele kluczy API względem
 tego samego konta upstream providera. Bez logiki współdzielenia burst z klucza A
 może wyczerpać quota providera na godzinę, blokując klucze B i C do resetu okna.
 Silnik temu zapobiega przez:
@@ -121,7 +121,7 @@ Sterownik Redis: skrypt Lua EVAL do atomowego inkrementu — jako pojedyncza kom
 
 - Tabela: `quota_consumption` (zob. migracje `073_quota_pools.sql` / `074_quota_consumption.sql`).
 - Najlepszy do wdrożeń single-instance.
-- Cała persystencja w istniejącej bazie SQLite OmniRoute (`DATA_DIR/storage.sqlite`).
+- Cała persystencja w istniejącej bazie SQLite AgentProxy (`DATA_DIR/storage.sqlite`).
 
 ### Redis (opcjonalny, multi-instance)
 
@@ -326,7 +326,7 @@ wywołań `consume` pokażą `tokensPerSecond: 0` oraz `timeToExhaustionMs: null
 Gdy `/dashboard/costs/quota-share` ładuje się po raz pierwszy, hook `useLocalStoragePoolMigration`
 sprawdza:
 
-1. `localStorage.getItem("omniroute:quota-share:pools")` jest niepuste.
+1. `localStorage.getItem("agentproxy:quota-share:pools")` jest niepuste.
 2. `GET /api/quota/pools` zwraca `[]` (DB jest pusta).
 
 Jeśli oba warunki są spełnione, wysyła każdą legacy pulę do `POST /api/quota/pools` wsadowo,

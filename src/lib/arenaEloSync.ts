@@ -10,7 +10,7 @@
  * On by default; opt out via Dashboard Feature Flags or ARENA_ELO_SYNC_ENABLED=false.
  */
 
-import { resolveScoresAs } from "@omniroute/open-sse/services/autoCombo/scoresAs.ts";
+import { resolveScoresAs } from "@agentproxy/open-sse/services/autoCombo/scoresAs.ts";
 
 import { isArenaEloSyncEnabled } from "@/shared/utils/featureFlags";
 
@@ -106,7 +106,7 @@ const ARENA_ELO_API_BASE = "https://api.wulong.dev/arena-ai-leaderboards/v1/lead
 const FETCH_CATEGORIES = ["text", "code"] as const;
 
 /**
- * Maps Arena leaderboard categories to OmniRoute task-type categories.
+ * Maps Arena leaderboard categories to AgentProxy task-type categories.
  *
  * - "text" leaderboard → default, review, documentation, debugging
  * - "code" leaderboard → coding
@@ -313,7 +313,7 @@ function computeConfidence(votes: number): "high" | "medium" | "low" {
  * This ensures scores never reach 0 or 1, leaving room for user overrides.
  * Models with fewer than 100 votes are marked as confidence="low".
  *
- * Leaderboard categories are mapped to OmniRoute task types:
+ * Leaderboard categories are mapped to AgentProxy task types:
  * - "text" → default, review, documentation, debugging
  * - "code" → coding
  *

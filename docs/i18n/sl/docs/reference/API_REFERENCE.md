@@ -15,7 +15,7 @@ lastUpdated: 2026-08-31
 
 🌐 **Languages:** 🇺🇸 [English](../../../../reference/API_REFERENCE.md) · 🇸🇦 [ar](../../../ar/docs/reference/API_REFERENCE.md) · 🇦🇿 [az](../../../az/docs/reference/API_REFERENCE.md) · 🇧🇬 [bg](../../../bg/docs/reference/API_REFERENCE.md) · 🇧🇩 [bn](../../../bn/docs/reference/API_REFERENCE.md) · 🇨🇿 [cs](../../../cs/docs/reference/API_REFERENCE.md) · 🇩🇰 [da](../../../da/docs/reference/API_REFERENCE.md) · 🇩🇪 [de](../../../de/docs/reference/API_REFERENCE.md) · 🇬🇷 [el](../../../el/docs/reference/API_REFERENCE.md) · 🇪🇸 [es](../../../es/docs/reference/API_REFERENCE.md) · 🇪🇪 [et](../../../et/docs/reference/API_REFERENCE.md) · 🇮🇷 [fa](../../../fa/docs/reference/API_REFERENCE.md) · 🇫🇮 [fi](../../../fi/docs/reference/API_REFERENCE.md) · 🇫🇷 [fr](../../../fr/docs/reference/API_REFERENCE.md) · 🇮🇪 [ga](../../../ga/docs/reference/API_REFERENCE.md) · 🇮🇳 [gu](../../../gu/docs/reference/API_REFERENCE.md) · 🇮🇱 [he](../../../he/docs/reference/API_REFERENCE.md) · 🇮🇳 [hi](../../../hi/docs/reference/API_REFERENCE.md) · 🇭🇷 [hr](../../../hr/docs/reference/API_REFERENCE.md) · 🇭🇺 [hu](../../../hu/docs/reference/API_REFERENCE.md) · 🇮🇩 [id](../../../id/docs/reference/API_REFERENCE.md) · 🇮🇹 [it](../../../it/docs/reference/API_REFERENCE.md) · 🇯🇵 [ja](../../../ja/docs/reference/API_REFERENCE.md) · 🇰🇷 [ko](../../../ko/docs/reference/API_REFERENCE.md) · 🇱🇹 [lt](../../../lt/docs/reference/API_REFERENCE.md) · 🇱🇻 [lv](../../../lv/docs/reference/API_REFERENCE.md) · 🇮🇳 [mr](../../../mr/docs/reference/API_REFERENCE.md) · 🇲🇾 [ms](../../../ms/docs/reference/API_REFERENCE.md) · 🇲🇹 [mt](../../../mt/docs/reference/API_REFERENCE.md) · 🇳🇱 [nl](../../../nl/docs/reference/API_REFERENCE.md) · 🇳🇴 [no](../../../no/docs/reference/API_REFERENCE.md) · 🇵🇭 [phi](../../../phi/docs/reference/API_REFERENCE.md) · 🇵🇱 [pl](../../../pl/docs/reference/API_REFERENCE.md) · 🇵🇹 [pt](../../../pt/docs/reference/API_REFERENCE.md) · 🇧🇷 [pt-BR](../../../pt-BR/docs/reference/API_REFERENCE.md) · 🇷🇴 [ro](../../../ro/docs/reference/API_REFERENCE.md) · 🇷🇺 [ru](../../../ru/docs/reference/API_REFERENCE.md) · 🇸🇰 [sk](../../../sk/docs/reference/API_REFERENCE.md) · 🇷🇸 [sr](../../../sr/docs/reference/API_REFERENCE.md) · 🇸🇪 [sv](../../../sv/docs/reference/API_REFERENCE.md) · 🇰🇪 [sw](../../../sw/docs/reference/API_REFERENCE.md) · 🇮🇳 [ta](../../../ta/docs/reference/API_REFERENCE.md) · 🇮🇳 [te](../../../te/docs/reference/API_REFERENCE.md) · 🇹🇭 [th](../../../th/docs/reference/API_REFERENCE.md) · 🇹🇷 [tr](../../../tr/docs/reference/API_REFERENCE.md) · 🇺🇦 [uk-UA](../../../uk-UA/docs/reference/API_REFERENCE.md) · 🇵🇰 [ur](../../../ur/docs/reference/API_REFERENCE.md) · 🇻🇳 [vi](../../../vi/docs/reference/API_REFERENCE.md) · 🇨🇳 [zh-CN](../../../zh-CN/docs/reference/API_REFERENCE.md) · 🇹🇼 [zh-TW](../../../zh-TW/docs/reference/API_REFERENCE.md)
 
-Temeljna referenca za API OmniRoute. Zajema javni vmesnik `/v1` in najpogosteje uporabljene končne točke za upravljanje; strojno berljiva datoteka [`docs/openapi.yaml`](../openapi.yaml) in drevo poti v `src/app/api/` sta izčrpna vira.
+Temeljna referenca za API AgentProxy. Zajema javni vmesnik `/v1` in najpogosteje uporabljene končne točke za upravljanje; strojno berljiva datoteka [`docs/openapi.yaml`](../openapi.yaml) in drevo poti v `src/app/api/` sta izčrpna vira.
 
 ---
 
@@ -72,33 +72,33 @@ Content-Type: application/json
 
 | Glava                    | Smer    | Opis                                                                                                                                                                                                                               |
 | ------------------------ | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `X-OmniRoute-No-Cache`   | Zahteva | Nastavite na `true`, da zaobidete predpomnilnik                                                                                                                                                                                    |
-| `x-omniroute-no-memory`  | Zahteva | Nastavite na `true`, da za to zahtevo preskočite vstavljanje pomnilnika in veščin (enako kot brez predpomnilnika; s tem se izognete režijskim žetonom in stroškom na posamezen klic)                                               |
-| `X-OmniRoute-Progress`   | Zahteva | Nastavite na `true` za dogodke napredka                                                                                                                                                                                            |
+| `X-AgentProxy-No-Cache`   | Zahteva | Nastavite na `true`, da zaobidete predpomnilnik                                                                                                                                                                                    |
+| `x-agentproxy-no-memory`  | Zahteva | Nastavite na `true`, da za to zahtevo preskočite vstavljanje pomnilnika in veščin (enako kot brez predpomnilnika; s tem se izognete režijskim žetonom in stroškom na posamezen klic)                                               |
+| `X-AgentProxy-Progress`   | Zahteva | Nastavite na `true` za dogodke napredka                                                                                                                                                                                            |
 | `X-Session-Id`           | Zahteva | Ključ lepljive seje za zunanjo afiniteto sej                                                                                                                                                                                       |
 | `x_session_id`           | Zahteva | Sprejeta je tudi različica s podčrtajem (neposredni HTTP)                                                                                                                                                                          |
-| `X-OmniRoute-Session-Id` | Zahteva | Oznaka seje/pogovora, ki jo poda klicatelj (uporablja jo tudi pomnilnik). Ko je prisotna, se dobesedno shrani v `call_logs.session_tag` za pripisovanje stroškov po sejah (#8249) — če ni prisotna, se nikoli ne ustvari samodejno |
+| `X-AgentProxy-Session-Id` | Zahteva | Oznaka seje/pogovora, ki jo poda klicatelj (uporablja jo tudi pomnilnik). Ko je prisotna, se dobesedno shrani v `call_logs.session_tag` za pripisovanje stroškov po sejah (#8249) — če ni prisotna, se nikoli ne ustvari samodejno |
 | `Idempotency-Key`        | Zahteva | Ključ za odstranjevanje dvojnikov (5-sekundno okno)                                                                                                                                                                                |
 | `X-Request-Id`           | Zahteva | Alternativni ključ za odstranjevanje dvojnikov                                                                                                                                                                                     |
-| `X-OmniRoute-Cache`      | Odgovor | `HIT` ali `MISS` (brez pretakanja)                                                                                                                                                                                                 |
-| `X-OmniRoute-Idempotent` | Odgovor | `true`, če je bil dvojnik odstranjen                                                                                                                                                                                               |
-| `X-OmniRoute-Progress`   | Odgovor | `enabled`, če je sledenje napredku vklopljeno                                                                                                                                                                                      |
-| `X-OmniRoute-Session-Id` | Odgovor | Dejanski ID seje, ki ga uporablja OmniRoute                                                                                                                                                                                        |
-| `X-OmniRoute-Request-Id` | Odgovor | Korelacijski ID zahteve (če je znan)                                                                                                                                                                                               |
-| `X-OmniRoute-Version`    | Odgovor | Različica graditve OmniRoute (vedno prisotna)                                                                                                                                                                                      |
-| `X-OmniRoute-Cost-Saved` | Odgovor | Znesek v USD, ki ga je predpomnilnik pri zadetku `HIT` prihranil (samo zadetki predpomnilnika)                                                                                                                                     |
-| `X-OmniRoute-Decision`   | Odgovor | Sled usmerjanja: `strategy=<name>; provider=<alias>; latency_ms=<n>` (`<name>` je strategija kombinacije oziroma `single` za zahtevo brez kombinacije) — vedno prisotna v odgovorih ob dokončanju                                  |
+| `X-AgentProxy-Cache`      | Odgovor | `HIT` ali `MISS` (brez pretakanja)                                                                                                                                                                                                 |
+| `X-AgentProxy-Idempotent` | Odgovor | `true`, če je bil dvojnik odstranjen                                                                                                                                                                                               |
+| `X-AgentProxy-Progress`   | Odgovor | `enabled`, če je sledenje napredku vklopljeno                                                                                                                                                                                      |
+| `X-AgentProxy-Session-Id` | Odgovor | Dejanski ID seje, ki ga uporablja AgentProxy                                                                                                                                                                                        |
+| `X-AgentProxy-Request-Id` | Odgovor | Korelacijski ID zahteve (če je znan)                                                                                                                                                                                               |
+| `X-AgentProxy-Version`    | Odgovor | Različica graditve AgentProxy (vedno prisotna)                                                                                                                                                                                      |
+| `X-AgentProxy-Cost-Saved` | Odgovor | Znesek v USD, ki ga je predpomnilnik pri zadetku `HIT` prihranil (samo zadetki predpomnilnika)                                                                                                                                     |
+| `X-AgentProxy-Decision`   | Odgovor | Sled usmerjanja: `strategy=<name>; provider=<alias>; latency_ms=<n>` (`<name>` je strategija kombinacije oziroma `single` za zahtevo brez kombinacije) — vedno prisotna v odgovorih ob dokončanju                                  |
 
 > Opomba za Nginx: če uporabljate glave s podčrtaji (na primer `x_session_id`), omogočite `underscores_in_headers on;`.
 
-> **Glave telemetrije stroškov:** uspešni odgovori brez pretakanja vsebujejo tudi nabor telemetrije stroškov `X-OmniRoute-*` — `X-OmniRoute-Response-Cost` (USD, fiksno 10 decimalnih mest; `0.0000000000` za brezplačne postavke oziroma postavke brez določene cene), `X-OmniRoute-Tokens-In` / `X-OmniRoute-Tokens-Out`, `X-OmniRoute-Model`, `X-OmniRoute-Provider`, `X-OmniRoute-Latency-Ms`, `X-OmniRoute-Cache-Hit` in `X-OmniRoute-Fallback-Attempts` (samo kadar je > 0), skupaj z `X-OmniRoute-Request-Id` in `X-OmniRoute-Version`. Te glave ustvarjajo dokončanja klepeta, `/v1/responses`, `/v1/messages` **in končne točke za predstavnostne vsebine** — `/v1/embeddings`, `/v1/images/generations`, `/v1/audio/speech`, `/v1/audio/transcriptions`, `/v1/rerank`, `/v1/videos/generations`, `/v1/music/generations` in `/v1/moderations` (strošek je vedno `0`). Strošek predstavnostnih vsebin se izračuna glede na modalnost (na sliko, sekundo, znak oziroma iskalno enoto), kadar so cene na voljo, sicer je `0` (odprto delovanje ob napaki).
+> **Glave telemetrije stroškov:** uspešni odgovori brez pretakanja vsebujejo tudi nabor telemetrije stroškov `X-AgentProxy-*` — `X-AgentProxy-Response-Cost` (USD, fiksno 10 decimalnih mest; `0.0000000000` za brezplačne postavke oziroma postavke brez določene cene), `X-AgentProxy-Tokens-In` / `X-AgentProxy-Tokens-Out`, `X-AgentProxy-Model`, `X-AgentProxy-Provider`, `X-AgentProxy-Latency-Ms`, `X-AgentProxy-Cache-Hit` in `X-AgentProxy-Fallback-Attempts` (samo kadar je > 0), skupaj z `X-AgentProxy-Request-Id` in `X-AgentProxy-Version`. Te glave ustvarjajo dokončanja klepeta, `/v1/responses`, `/v1/messages` **in končne točke za predstavnostne vsebine** — `/v1/embeddings`, `/v1/images/generations`, `/v1/audio/speech`, `/v1/audio/transcriptions`, `/v1/rerank`, `/v1/videos/generations`, `/v1/music/generations` in `/v1/moderations` (strošek je vedno `0`). Strošek predstavnostnih vsebin se izračuna glede na modalnost (na sliko, sekundo, znak oziroma iskalno enoto), kadar so cene na voljo, sicer je `0` (odprto delovanje ob napaki).
 
-> **Semantika stroškov zadetka predpomnilnika:** pri zadetku semantičnega predpomnilnika `HIT` (`X-OmniRoute-Cache-Hit: true`) se nadrejeni klic ne izvede, zato je `X-OmniRoute-Response-Cost` enak `0.0000000000` (**inkrementalni** strošek posredovanja zadetka). Izvirni oziroma predvideni strošek je naveden ločeno v `X-OmniRoute-Cost-Saved`. Odjemalci obračunavanja morajo seštevati `X-OmniRoute-Response-Cost` (zadetki ne stanejo nič); analitika predpomnilnika lahko združuje `X-OmniRoute-Cost-Saved`.
+> **Semantika stroškov zadetka predpomnilnika:** pri zadetku semantičnega predpomnilnika `HIT` (`X-AgentProxy-Cache-Hit: true`) se nadrejeni klic ne izvede, zato je `X-AgentProxy-Response-Cost` enak `0.0000000000` (**inkrementalni** strošek posredovanja zadetka). Izvirni oziroma predvideni strošek je naveden ločeno v `X-AgentProxy-Cost-Saved`. Odjemalci obračunavanja morajo seštevati `X-AgentProxy-Response-Cost` (zadetki ne stanejo nič); analitika predpomnilnika lahko združuje `X-AgentProxy-Cost-Saved`.
 
 ## Ekskluzivni upravljani zakupi sej
 
 Ekskluzivni upravljani zakup sej je izbirna pogodba o usmerjanju, neodvisna od odjemalca: en aktiven lastnik
-ima v zakupu eno ustrezno povezavo OmniRoute. Ne daje v zakup modela, ne zahteva OAuth, ne identificira
+ima v zakupu eno ustrezno povezavo AgentProxy. Ne daje v zakup modela, ne zahteva OAuth, ne identificira
 določenega odjemalca in ne zahteva določenega ponudnika.
 
 API-ključ za preverjanje pristnosti mora imeti obseg `lease:exclusive` in izrecen neprazen seznam
@@ -109,7 +109,7 @@ in delnih posodobitvah.
 POST /api/v1/session-leases
 Authorization: Bearer <managed-api-key>
 Content-Type: application/json
-X-OmniRoute-Lease-Owner: vlo_<43-base64url-characters>
+X-AgentProxy-Lease-Owner: vlo_<43-base64url-characters>
 
 {"action":"acquire","model":"glm/glm-4.6"}
 ```
@@ -148,7 +148,7 @@ Lastnik aktivnega zakupa lahko izrecno zahteva prikazne metapodatke svoje trenut
 
 To izbirno dejanje za stanje je v eni transakciji zbirke podatkov zavarovano z neprozornim lastnikom, overjenim upravljanim API-ključem in natančno
 aktivno vrednostjo generation. `displayName` je samo obrezano konfigurirano
-ime povezave; če varno konfigurirano ime ne obstaja, je njegova vrednost `null`. OmniRoute ga nikoli ne nadomesti z
+ime povezave; če varno konfigurirano ime ne obstaja, je njegova vrednost `null`. AgentProxy ga nikoli ne nadomesti z
 e-poštnim naslovom ali ustvarjeno identiteto računa. Vrednost ponudnika je neobčutljiva prikazna oznaka in nikoli
 ustvarjen identifikator združljivega ponudnika. Poverilnice, žetoni, piškotki, neobdelani identifikatorji povezav ali
 API-ključev, zgoščene vrednosti lastnikov, skrivnosti za zavarovanje in notranji podatki o usmerjanju so izključeni.
@@ -167,8 +167,8 @@ prikazati `connection.displayName`.
 Vsaka upravljana zahteva za sklepanje nato navede obe nadzorni glavi:
 
 ```http
-X-OmniRoute-Lease-Owner: vlo_<43-base64url-characters>
-X-OmniRoute-Lease-Generation: 1
+X-AgentProxy-Lease-Owner: vlo_<43-base64url-characters>
+X-AgentProxy-Lease-Generation: 1
 ```
 
 Natančen lastnik, vrednost generation, aktivna povezava in overjeni API-ključ so zavarovani neposredno
@@ -189,9 +189,9 @@ Začasna prezasedenost vrne HTTP `429` z `Retry-After` in:
 
 Ta odgovor pomeni samo, da običajna množica ustreznih povezav ni bila prazna in da je vsak prosti kandidat
 pripadal tujemu aktivnemu zakupu. Nepodprti modeli/ponudniki, neujemanje pravilnikov, obdobje ohlajanja, kvota,
-stanje ustreznosti in druge običajne napake pri preverjanju ustreznosti ohranijo obstoječe odgovore OmniRoute.
+stanje ustreznosti in druge običajne napake pri preverjanju ustreznosti ohranijo obstoječe odgovore AgentProxy.
 
-### `x-omniroute-compression`
+### `x-agentproxy-compression`
 
 Preglasitev načrta stiskanja za posamezno zahtevo. Ima najvišjo prednost — preglasi preglasitev usmerjevalne kombinacije,
 aktivni profil, samodejni sprožilec in privzeto nastavitev na plošči. Vrednosti:
@@ -213,7 +213,7 @@ Opombe:
 Uporabljeni načrt se ponovi v glavi odgovora:
 
 ```
-X-OmniRoute-Compression: <mode>; source=<source>
+X-AgentProxy-Compression: <mode>; source=<source>
 ```
 
 kjer je `<source>` ena od vrednosti `request-header`, `routing-override`, `active-profile`, `auto-trigger`, `default` ali `off`.
@@ -262,7 +262,7 @@ dokumente EmbeddingsV5Request ter jih **nespremenjene posreduje** na `https://ap
 ```
 
 Izvorne vrednosti `{ image | audio | video | pdf }` so lahko javni URL HTTPS, URI `data:` ali neobdelan
-base64. OmniRoute teh objektov ne pretvori v nize in ne pridobiva izvornih URL-jev slik — Jina javne
+base64. AgentProxy teh objektov ne pretvori v nize in ne pridobiva izvornih URL-jev slik — Jina javne
 predstavnostne vsebine pridobi sama. Dodatna polja Jina (`task`, `normalized`, `truncate`, `embedding_type`) se
 posredujejo naprej. SKU-ji Jina, namenjeni samo besedilu, še vedno zavrnejo nebesedilne dokumente.
 
@@ -379,7 +379,7 @@ uporablja Mistral, zato odjemalski kodi ni treba posebej obravnavati posameznega
 
 ### Overjanje in razreševanje končne točke za Vertex AI DeepSeek OCR
 
-`vertex-deepseek-ocr` ponovno uporabi isto overjanje Vertex AI, ki ga OmniRoute že podpira za
+`vertex-deepseek-ocr` ponovno uporabi isto overjanje Vertex AI, ki ga AgentProxy že podpira za
 promet klepeta/slik (`open-sse/executors/vertex.ts`): ključ API povezave je bodisi poverilnica
 Service Account JSON (ki se prek poteka JWT-bearer zamenja za kratkotrajni žeton za dostop OAuth)
 bodisi že izdan žeton za dostop OAuth, ki se uporabi neposredno. URL nadrejene končne točke je
@@ -428,10 +428,10 @@ Odjemalci, ki prikazujejo izbirnik modelov, naj zahtevajo `?prefix=alias` — ta
 
 ### Različice modelov brez razmišljanja
 
-Za modele Claude, ki podpirajo razmišljanje, `/v1/models` objavi tudi različico **brez razmišljanja**, katere ID ima predpono `claude-3-omniroute-no-thinking/`:
+Za modele Claude, ki podpirajo razmišljanje, `/v1/models` objavi tudi različico **brez razmišljanja**, katere ID ima predpono `claude-3-agentproxy-no-thinking/`:
 
 ```
-claude-3-omniroute-no-thinking/<provider>/<model>
+claude-3-agentproxy-no-thinking/<provider>/<model>
 ```
 
 Izbira tega ID-ja (npr. v konfiguraciji Claude Code, ki vedno doda blok `thinking`) se razreši nazaj v dejanski `<provider>/<model>` z onemogočenim sklepanjem — `thinking:{type:"disabled"}` na poti `/v1/messages` oziroma z opuščenimi polji `reasoning`/`reasoning_effort` na poti `/v1/chat/completions`. Različica je navedena samo za modele družine Claude, ki podpirajo razmišljanje **in** upoštevajo `disabled` (zato so npr. izključeni modeli, ki podpirajo samo prilagodljivi način in zavrnejo `disabled`). Upravljavci lahko različico za posamezen model prisilno omogočijo ali onemogočijo prek `ModelSpec.noThinkingAlias`.
@@ -482,7 +482,7 @@ To končno točko uporabite, ko se stranski proces izvaja zunaj glavnega procesa
 
 Vse poti POST imajo enako obliko: `Bearer your-api-key` + telo JSON, preverjeno z Zod (`v1RerankSchema`, `v1ModerationSchema`, `v1AudioSpeechSchema` itd.; glejte `src/shared/validation/schemas.ts`). Ob neuspešnem preverjanju sheme se vrne 4xx.
 
-Za odjemalce, ki ne morejo priložiti `Authorization: Bearer ...`, OmniRoute sprejema tudi ključe API v URL-ju, bodisi prek združljivostnih parametrov poizvedbenega niza (`?token=...`, `?apiKey=...`, `?api_key=...`, `?key=...`) bodisi prek namenskih končnih točk `/api/v1/vscode/{token}/...`, dokumentiranih spodaj.
+Za odjemalce, ki ne morejo priložiti `Authorization: Bearer ...`, AgentProxy sprejema tudi ključe API v URL-ju, bodisi prek združljivostnih parametrov poizvedbenega niza (`?token=...`, `?apiKey=...`, `?api_key=...`, `?key=...`) bodisi prek namenskih končnih točk `/api/v1/vscode/{token}/...`, dokumentiranih spodaj.
 
 ```bash
 # Prerazvrščanje
@@ -610,8 +610,8 @@ Preveri rokovanje za nadgradnjo na WebSocket in vrne primere sporočil žičnega
 
 ```bash
 # Isti gostitelj:vrata kot API HTTP (privzeto 20128); nadgradite povezavo:
-wscat -c "ws://localhost:20128/v1/responses?api_key=<OMNIROUTE_API_KEY>"
-# (ali: -H "Authorization: Bearer <OMNIROUTE_API_KEY>")
+wscat -c "ws://localhost:20128/v1/responses?api_key=<AGENTPROXY_API_KEY>"
+# (ali: -H "Authorization: Bearer <AGENTPROXY_API_KEY>")
 
 # Prvi okvir MORA biti response.create:
 { "type": "response.create", "model": "gpt-5.5", "input": [ { "role": "user", "content": "hi" } ] }
@@ -634,35 +634,35 @@ mora biti aktivna vstopna točka (kar je privzeto, kadar obstaja `app/server-ws.
 OpenAI **Codex CLI** preveri ime modela na strani odjemalca, kadar je
 `supports_websockets = true`, in **zavrne ID-je s predpono ponudnika**, kot je
 `codex/gpt-5.5` (`The 'codex/gpt-5.5' model is not supported when using Codex with
-a ChatGPT account`). Pošljite **osnovni** ID (npr. `gpt-5.5`). Most OmniRoute je
+a ChatGPT account`). Pošljite **osnovni** ID (npr. `gpt-5.5`). Most AgentProxy je
 namenjen samo za codex, zato osnovni ID pred tuneliranjem do ponudnika višje ravni
 znova razreši kot model codex (`resolveCodexWsModelInfo`) — čeprav bi bil osnovni
 `gpt-5.5` prek HTTP sicer usmerjen k drugemu ponudniku.
 
 #### Nastavitev OpenAI Codex CLI
 
-Usmerite Codex CLI na OmniRoute tako, da v `~/.codex/config.toml` dodate ponudnika po meri
+Usmerite Codex CLI na AgentProxy tako, da v `~/.codex/config.toml` dodate ponudnika po meri
 s podporo za WebSocket (uporabite ločen `CODEX_HOME`, da ne spremenite
 obstoječe konfiguracije):
 
 ```toml
 model = "gpt-5.5"                 # osnovni ID — NE "codex/gpt-5.5"
-model_provider = "omniroute"
+model_provider = "agentproxy"
 
-[model_providers.omniroute]
-name = "OmniRoute (WS)"
+[model_providers.agentproxy]
+name = "AgentProxy (WS)"
 base_url = "http://localhost:20128/v1"   # brez končne poševnice; URL za WS se izpelje samodejno (v produkciji uporabite https/wss)
 wire_api = "responses"                    # edina podprta vrednost od februarja 2026
 supports_websockets = true                # omogoči transport Responses prek WS
-env_key = "OMNIROUTE_API_KEY"             # vsebuje ključ API OmniRoute (Bearer)
+env_key = "AGENTPROXY_API_KEY"             # vsebuje ključ API AgentProxy (Bearer)
 ```
 
 ```bash
-export OMNIROUTE_API_KEY=sk-...           # ključ API OmniRoute (kateri koli ključ, če je REQUIRE_API_KEY=false)
+export AGENTPROXY_API_KEY=sk-...           # ključ API AgentProxy (kateri koli ključ, če je REQUIRE_API_KEY=false)
 codex exec "Responda apenas: PONG"
 ```
 
-CLI nadgradi `base_url + /responses` na WebSocket, OmniRoute pa povezavo tunelira
+CLI nadgradi `base_url + /responses` na WebSocket, AgentProxy pa povezavo tunelira
 do izbrane povezave OAuth za codex. Preverjeno od začetka do konca z lokalnim
 strežnikom: ChatGPT vrne `codex.rate_limits` + `response.created` in pretočno pošlje
 dokončanje.
@@ -768,10 +768,10 @@ Primer odgovora:
 ### Vpliv na zakasnitev
 
 Zadetek v semantičnem predpomnilniku vrne odgovor iz predpomnilnika **brez klica
-zunanje storitve**, zato je sporočena vrednost `X-OmniRoute-Response-Latency` skoraj ničelna
+zunanje storitve**, zato je sporočena vrednost `X-AgentProxy-Response-Latency` skoraj ničelna
 (ne glede na prvotno zakasnitev zunanje storitve). Odjemalci, občutljivi na zakasnitev
 (primerjalno preskušanje, spremljanje p50/p99), naj preverijo odzivno glavo
-`X-OmniRoute-Cache-Latency`:
+`X-AgentProxy-Cache-Latency`:
 
 | Vrednost    | Pomen                                                                                |
 | ----------- | ------------------------------------------------------------------------------------ |
@@ -798,7 +798,7 @@ Nastavite ob ustvarjanju ključa (`POST /api/keys`) ali posodobitvi (`PATCH /api
 Vsaka zahteva lahko obide predpomnilnik ne glede na nastavitve ključa:
 
 ```
-X-OmniRoute-No-Cache: true
+X-AgentProxy-No-Cache: true
 ```
 
 ---
@@ -1020,7 +1020,7 @@ Popravi manjkajoče ali poškodovane okoljske spremenljivke OAuth za določenega
 {
   "success": true,
   "repaired": ["CLAUDE_CODE_OAUTH_CLIENT_ID", "CLAUDE_CODE_OAUTH_CLIENT_SECRET"],
-  "backupPath": "/home/user/.omniroute/backups/env-repair-2026-04-11.bak"
+  "backupPath": "/home/user/.agentproxy/backups/env-repair-2026-04-11.bak"
 }
 ```
 
@@ -1113,7 +1113,7 @@ Opombe:
 
 - Vzdevki z žetonom znova uporabljajo iste obdelovalnike kot `/v1/*` in `/api/tags`; oblike odgovorov ostanejo enake.
 - Kadar odjemalec podpira glave po meri, dajte prednost `Authorization: Bearer ...`.
-- Žetoni v URL-jih se lahko pojavijo v dnevnikih povratnega posredniškega strežnika, zgodovini brskalnika in telemetriji zunaj OmniRoute. Obravnavajte jih kot možnost za zagotavljanje združljivosti in ne kot privzeti način preverjanja pristnosti.
+- Žetoni v URL-jih se lahko pojavijo v dnevnikih povratnega posredniškega strežnika, zgodovini brskalnika in telemetriji zunaj AgentProxy. Obravnavajte jih kot možnost za zagotavljanje združljivosti in ne kot privzeti način preverjanja pristnosti.
 
 ---
 
@@ -1221,7 +1221,7 @@ Kombinacije usmerjanja višje ravni (že povzete pod `/api/combos*`) je mogoče 
 
 ## Spletni kavlji
 
-Naročnine na odhodne spletne kavlje za dogodke OmniRoute (dokončanje zahteve, izčrpanje kvote, rotacija ključa itd.).
+Naročnine na odhodne spletne kavlje za dogodke AgentProxy (dokončanje zahteve, izčrpanje kvote, rotacija ključa itd.).
 
 | Metoda | Pot                       | Opis                                                                             |
 | ------ | ------------------------- | -------------------------------------------------------------------------------- |
@@ -1254,7 +1254,7 @@ Podsistem za samodejno upravljanje ključev jih uporablja za izdajanje in rotaci
 
 ## Protokol agentov
 
-Opravila agentov v oblaku (Claude Code, Codex Cloud, OpenHands itd.), izvedena na daljavo v imenu uporabnikov OmniRoute.
+Opravila agentov v oblaku (Claude Code, Codex Cloud, OpenHands itd.), izvedena na daljavo v imenu uporabnikov AgentProxy.
 
 | Metoda | Pot                           | Opis                                                                                                                                                |
 | ------ | ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -1300,7 +1300,7 @@ Izhodni posredniški strežniki HTTP(S)/SOCKS, ki jih je mogoče dodeliti ponudn
 
 ## Odpornost (razširjeno)
 
-OmniRoute ponuja tri neodvisne mehanizme za začasne napake; spodnje upravljalske končne točke operaterjem omogočajo njihov pregled in preglasitev:
+AgentProxy ponuja tri neodvisne mehanizme za začasne napake; spodnje upravljalske končne točke operaterjem omogočajo njihov pregled in preglasitev:
 
 | Obseg               | Shramba stanja                                 | Branje                                    | Ponastavitev / čiščenje                                               |
 | ------------------- | ---------------------------------------------- | ----------------------------------------- | --------------------------------------------------------------------- |
@@ -1329,7 +1329,7 @@ Celoten konceptualni opis in privzete vrednosti odklopnikov: glejte [`CLAUDE.md`
 
 ## Veščine
 
-Ogrodje veščin za razširjanje OmniRoute z izvedljivimi obravnavalniki po meri ter integracijami s tržnicami.
+Ogrodje veščin za razširjanje AgentProxy z izvedljivimi obravnavalniki po meri ter integracijami s tržnicami.
 
 | Metoda | Pot                               | Opis                                                                                                                             |
 | ------ | --------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
@@ -1366,7 +1366,7 @@ Trajna shramba pogovornega oziroma dejstvenega pomnilnika, omejena na ključ API
 
 ## Strežnik MCP
 
-OmniRoute vključuje vdelan strežnik Model Context Protocol s 3 prenosi (stdio, SSE, streamable-http) in orodji z omejenim obsegom. Spodnje končne točke nadzorne plošče berejo podatke o stanju/reviziji in posredujejo prenose HTTP.
+AgentProxy vključuje vdelan strežnik Model Context Protocol s 3 prenosi (stdio, SSE, streamable-http) in orodji z omejenim obsegom. Spodnje končne točke nadzorne plošče berejo podatke o stanju/reviziji in posredujejo prenose HTTP.
 
 | Metoda | Pot | Opis |
 | ------ | ---------------------- | ------------------------------------------------------------------------------------------------ | -------------------- |
@@ -1388,13 +1388,13 @@ OmniRoute vključuje vdelan strežnik Model Context Protocol s 3 prenosi (stdio,
 
 ## Strežnik A2A
 
-OmniRoute ponuja končno točko A2A (agent-agent) JSON-RPC 2.0 in ovoj REST za pregledovanje oziroma uporabo na nadzorni plošči.
+AgentProxy ponuja končno točko A2A (agent-agent) JSON-RPC 2.0 in ovoj REST za pregledovanje oziroma uporabo na nadzorni plošči.
 
 ### JSON-RPC
 
 ```bash
 POST /a2a
-Authorization: Bearer your-api-key   # izbirno, razen če je nastavljen OMNIROUTE_API_KEY
+Authorization: Bearer your-api-key   # izbirno, razen če je nastavljen AGENTPROXY_API_KEY
 Content-Type: application/json
 
 {
@@ -1437,7 +1437,7 @@ Vrne javno kartico agenta A2A (ime, opis, zmogljivosti, katalog veščin, shemo 
 | GET    | `/api/a2a/tasks/[id]`        | Pridobi posamezno opravilo                                                                                          |
 | POST   | `/api/a2a/tasks/[id]/cancel` | Prekliče opravilo                                                                                                   |
 
-**Preverjanje pristnosti:** pomožne poti REST delujejo brez skrbniškega preverjanja pristnosti (berljive za nadzorno ploščo); pot JSON-RPC `/a2a` uporablja Bearer `OMNIROUTE_API_KEY`, če je konfiguriran.
+**Preverjanje pristnosti:** pomožne poti REST delujejo brez skrbniškega preverjanja pristnosti (berljive za nadzorno ploščo); pot JSON-RPC `/a2a` uporablja Bearer `AGENTPROXY_API_KEY`, če je konfiguriran.
 
 ---
 
@@ -1617,7 +1617,7 @@ Končne točke, namenjene izključno skrbnikom, za operativno upravljanje.
 
 ## Upravljanje orodij CLI
 
-Upravljajte orodja CLI, ki se integrirajo z OmniRoute (antigravity, chipotle, commandCode,
+Upravljajte orodja CLI, ki se integrirajo z AgentProxy (antigravity, chipotle, commandCode,
 devin-cli itd.). Za celoten seznam glejte [Referenco ponudnikov](./PROVIDER_REFERENCE.md).
 
 | Metoda | Pot                                     | Opis                                                                                                                                                                           |
@@ -1728,7 +1728,7 @@ Za vse podrobnosti glejte [Ogrodje veščin](../frameworks/SKILLS.md).
 
 ## Vtičniki
 
-Upravljajte vtičnike OmniRoute (razširitve tretjih oseb).
+Upravljajte vtičnike AgentProxy (razširitve tretjih oseb).
 
 | Metoda | Pot                                | Opis                            |
 | ------ | ---------------------------------- | ------------------------------- |
@@ -1754,7 +1754,7 @@ Senčna primerjava oziroma primerjava A/B ponudnikov **ni samostojen vmesnik RES
 
 ## Zaščitni mehanizmi
 
-Preglejte zaščitne mehanizme med izvajanjem (zaznavanje osebno določljivih podatkov, zaznavanje vbrizgavanja pozivov, premoščanje za vidne modele). Zaščitni mehanizmi se izvajajo pri vsaki zahtevi; posamezen klic jih lahko izključi z glavo zahteve `x-omniroute-disabled-guardrails` — trajna možnost za omogočanje ali onemogočanje ne obstaja.
+Preglejte zaščitne mehanizme med izvajanjem (zaznavanje osebno določljivih podatkov, zaznavanje vbrizgavanja pozivov, premoščanje za vidne modele). Zaščitni mehanizmi se izvajajo pri vsaki zahtevi; posamezen klic jih lahko izključi z glavo zahteve `x-agentproxy-disabled-guardrails` — trajna možnost za omogočanje ali onemogočanje ne obstaja.
 
 | Metoda | Pot                    | Opis                                                                                           |
 | ------ | ---------------------- | ---------------------------------------------------------------------------------------------- |

@@ -49,9 +49,9 @@ test("parseEnvDocVars: extracts SHOUTY_NAMES from inline backticks", () => {
 });
 
 test("parseEnvDocVars: ignores values like `7s` or two-letter codes", () => {
-  const md = "TTL is `60s` and the type is `JSON`. Real var: `OMNIROUTE_TTL_MS`.";
+  const md = "TTL is `60s` and the type is `JSON`. Real var: `AGENTPROXY_TTL_MS`.";
   const vars = parseEnvDocVars(md);
-  assert.deepEqual([...vars].sort(), ["JSON", "OMNIROUTE_TTL_MS"]);
+  assert.deepEqual([...vars].sort(), ["JSON", "AGENTPROXY_TTL_MS"]);
 });
 
 test("runEnvDocSync: matched fixture passes", () => {

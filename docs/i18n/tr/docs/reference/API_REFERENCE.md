@@ -10,7 +10,7 @@ lastUpdated: 2026-08-23
 
 ---
 
-Tüm OmniRoute API uç noktaları için eksiksiz referans dokümantasyonu.
+Tüm AgentProxy API uç noktaları için eksiksiz referans dokümantasyonu.
 
 ---
 
@@ -56,15 +56,15 @@ Content-Type: application/json
 
 | Başlık                   | Yön   | Açıklama                                                                    |
 | ------------------------ | ----- | --------------------------------------------------------------------------- |
-| `X-OmniRoute-No-Cache`   | İstek | Önbelleği atlamak için `true` ayarlayın                                     |
-| `x-omniroute-no-memory`  | İstek | Bu istek için bellek ve yetenek enjeksiyonunu atlamak için `true` ayarlayın |
-| `X-OmniRoute-Progress`   | İstek | İlerleme olayları için `true` ayarlayın                                     |
+| `X-AgentProxy-No-Cache`   | İstek | Önbelleği atlamak için `true` ayarlayın                                     |
+| `x-agentproxy-no-memory`  | İstek | Bu istek için bellek ve yetenek enjeksiyonunu atlamak için `true` ayarlayın |
+| `X-AgentProxy-Progress`   | İstek | İlerleme olayları için `true` ayarlayın                                     |
 | `X-Session-Id`           | İstek | Harici oturum yakınlığı için yapışkan oturum anahtarı                       |
 | `Idempotency-Key`        | İstek | Tekilleştirme anahtarı (5 saniyelik pencere)                                |
-| `X-OmniRoute-Cache`      | Yanıt | `HIT` veya `MISS` (akışsız modda)                                           |
-| `X-OmniRoute-Idempotent` | Yanıt | İstek tekilleştirilmişse `true`                                             |
-| `X-OmniRoute-Version`    | Yanıt | OmniRoute derleme sürümü (her zaman bulunur)                                |
-| `X-OmniRoute-Decision`   | Yanıt | Yönlendirme izi: `strategy=<ad>; provider=<alias>; latency_ms=<n>`          |
+| `X-AgentProxy-Cache`      | Yanıt | `HIT` veya `MISS` (akışsız modda)                                           |
+| `X-AgentProxy-Idempotent` | Yanıt | İstek tekilleştirilmişse `true`                                             |
+| `X-AgentProxy-Version`    | Yanıt | AgentProxy derleme sürümü (her zaman bulunur)                                |
+| `X-AgentProxy-Decision`   | Yanıt | Yönlendirme izi: `strategy=<ad>; provider=<alias>; latency_ms=<n>`          |
 
 ---
 
@@ -107,7 +107,7 @@ Authorization: Bearer your-api-key
 Content-Type: application/json
 
 {
-  "query": "OmniRoute AI gateway nedir?",
+  "query": "AgentProxy AI gateway nedir?",
   "provider": "perplexity"
 }
 ```

@@ -55,7 +55,7 @@ Agħmel commit ta’ dawk l-artefatti fir-repo `_tasks/` (`git -C _tasks …`), 
 
 Dan il-proġett jissostitwixxi l-iscratchpad predefinit tas-sessjoni tal-harness (`/tmp/claude-*/…`). Ikteb
 fajls temporanji/tax-xogħol — esportazzjonijiet, zips iġġenerati, outputs intermedji ta’ darba, kull ħaġa li
-normalment tqiegħed f’`/tmp` — f’`/home/diegosouzapw/dev/proxys/OmniRoute/_artifacts/` minflok.
+normalment tqiegħed f’`/tmp` — f’`/home/diegosouzapw/dev/proxys/AgentProxy/_artifacts/` minflok.
 
 - `_artifacts/` huwa path `_*` fl-għerq: diġà huwa gitignored (`AGENTS.md` → "Root `_*` paths"), u jinsab
   biss fuq id-diska, qatt ma jiġi tracked.

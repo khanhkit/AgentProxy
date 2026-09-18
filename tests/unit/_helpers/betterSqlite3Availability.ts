@@ -4,7 +4,7 @@
 // it fine, but some sandboxes/dev boxes ship a system glibc older than the
 // prebuilt binary requires (e.g. "GLIBC_2.29 not found"), so `new Database(...)`
 // throws ERR_DLOPEN_FAILED at fixture-construction time. That is an environment
-// limitation, NOT a defect in the code under test — the OmniRoute runtime itself
+// limitation, NOT a defect in the code under test — the AgentProxy runtime itself
 // cascades to node:sqlite/sql.js when better-sqlite3 can't load, so the app keeps
 // working; only tests that reach for better-sqlite3 DIRECTLY (to build a
 // driver-specific fixture) are affected.
