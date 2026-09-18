@@ -297,7 +297,7 @@ CMD ["node", "dev/run-standalone.mjs"]
 # artifacts remain ABI-compatible. The dev image intentionally retains npm and
 # a POSIX shell because AgentProxy invokes npm at runtime and has a shell
 # entrypoint. Trivy v0.69.3 reports 0 HIGH/CRITICAL on this exact index digest.
-FROM cgr.dev/chainguard/node@sha256:1f903d44fc11a6f6e74447fc2c6a3c141f112217576be5d96c283210116b5d25 AS runner-base
+FROM cgr.dev/chainguard/node@sha256:37ea42c0860729767b090a7c700c836eac660eb4bcfee3b5fe63eb85acd63df4 AS runner-base
 USER root
 WORKDIR /app
 # Chainguard Node already provides the non-root node user/group.
