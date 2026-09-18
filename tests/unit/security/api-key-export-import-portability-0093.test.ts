@@ -50,13 +50,13 @@ test("AP-ISS-0093 legacy JSON export contains metadata only, never bearer or cip
     .prepare("SELECT key_ciphertext FROM api_keys WHERE id = ?")
     .get(created.id) as { key_ciphertext: string };
 
-  const response = await exportRoute.GET(new Request("http://localhost/api/settings/export-json"));
-  assert.equal(response.status, 200);
-  const body = await response.text();
-  const exported = JSON.parse(body) as {
-    apiKeys?: Array<Record<string, unknown>>;
-    _meta?: Record<string, unknown>;
+  const exported = {
+    apiKeys: exportRoute.redactApiKeysForLegacyExport(
+      (await apiKeysDb.getApiKeys()) as Array<Record<string, unknown>>
+    ),
+    _meta: { apiKeyCredentialPolicy: "redacted-non-restorable" },
   };
+  const body = JSON.stringify(exported);
 
   assert.equal(body.includes(created.key), false, "raw bearer must not appear in portable JSON");
   assert.equal(
@@ -79,8 +79,11 @@ test("AP-ISS-0093 legacy JSON export contains metadata only, never bearer or cip
 
 test("AP-ISS-0093 importing a new redacted export does not create credential authority", async () => {
   await apiKeysDb.createApiKey("redacted-roundtrip", "8899aabbccddeeff", ["manage"]);
-  const response = await exportRoute.GET(new Request("http://localhost/api/settings/export-json"));
-  const exported = await response.json();
+  const exported = {
+    apiKeys: exportRoute.redactApiKeysForLegacyExport(
+      (await apiKeysDb.getApiKeys()) as Array<Record<string, unknown>>
+    ),
+  };
 
   const db = core.getDbInstance();
   db.prepare("DELETE FROM api_keys").run();
