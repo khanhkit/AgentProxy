@@ -8,10 +8,12 @@ const log = logger("A2A_TASKS");
 type TaskManagerLike = {
   updateTask: (
     taskId: string,
-    state: "completed" | "failed",
+    state: "completed" | "failed" | "cancelled",
     artifacts?: Array<{ type: string; content: string }>,
     message?: string
   ) => unknown;
+  beginExecution?: (taskId: string) => AbortSignal;
+  endExecution?: (taskId: string, signal?: AbortSignal) => void;
 };
 
 type StreamTaskResult = {
@@ -133,42 +135,52 @@ export async function collectMemoryHits(
   }
 }
 
-export type A2ASkillHandler = (task: A2ATask) => Promise<StreamTaskResult>;
+export type A2ASkillHandler = (task: A2ATask, signal?: AbortSignal) => Promise<StreamTaskResult>;
 
 export const A2A_SKILL_HANDLERS: Record<string, A2ASkillHandler> = {
-  "smart-routing": async (task) => {
+  "smart-routing": async (task, signal) => {
     const skillModule = await import("./skills/smartRouting");
-    return skillModule.executeSmartRouting(task);
+    return skillModule.executeSmartRouting(task, signal);
   },
-  "quota-management": async (task) => {
+  "quota-management": async (task, signal) => {
     const skillModule = await import("./skills/quotaManagement");
-    return skillModule.executeQuotaManagement(task);
+    return skillModule.executeQuotaManagement(task, signal);
   },
-  "provider-discovery": async (task) => {
+  "provider-discovery": async (task, signal) => {
     const skillModule = await import("./skills/providerDiscovery");
-    return skillModule.executeProviderDiscovery(task);
+    return skillModule.executeProviderDiscovery(task, signal);
   },
-  "cost-analysis": async (task) => {
+  "cost-analysis": async (task, signal) => {
     const skillModule = await import("./skills/costAnalysis");
-    return skillModule.executeCostAnalysis(task);
+    return skillModule.executeCostAnalysis(task, signal);
   },
-  "health-report": async (task) => {
+  "health-report": async (task, signal) => {
     const skillModule = await import("./skills/healthReport");
-    return skillModule.executeHealthReport(task);
+    return skillModule.executeHealthReport(task, signal);
   },
-  "list-capabilities": async (task) => {
+  "list-capabilities": async (task, signal) => {
     const skillModule = await import("./skills/listCapabilities");
-    return skillModule.executeListCapabilities(task);
+    return skillModule.executeListCapabilities(task, signal);
   },
 };
 
 export async function executeA2ATaskWithState(
   tm: TaskManagerLike,
   task: A2ATask,
-  handler: (task: A2ATask) => Promise<StreamTaskResult>,
-  deps?: MemoryHitsDeps
+  handler: A2ASkillHandler,
+  deps?: MemoryHitsDeps,
+  externalSignal?: AbortSignal
 ) {
+  const taskSignal = tm.beginExecution?.(task.id);
+  const signal =
+    taskSignal && externalSignal
+      ? AbortSignal.any([taskSignal, externalSignal])
+      : (taskSignal ?? externalSignal);
   try {
+    if (signal?.aborted) {
+      throw signal.reason ?? new Error(`Task ${task.id} cancelled`);
+    }
+
     const hits = await collectMemoryHits(task, deps);
     if (hits.length) {
       task.metadata.memoryHits = hits;
@@ -179,16 +191,31 @@ export async function executeA2ATaskWithState(
       }
     }
 
-    const result = await handler(task);
+    if (signal?.aborted) {
+      throw signal.reason ?? new Error(`Task ${task.id} cancelled`);
+    }
+
+    const result = await handler(task, signal);
+    if (signal?.aborted) {
+      throw signal.reason ?? new Error(`Task ${task.id} cancelled`);
+    }
     tm.updateTask(task.id, "completed", result.artifacts);
     return result;
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     try {
-      tm.updateTask(task.id, "failed", [{ type: "error", content: msg }], msg);
+      if (signal?.aborted) {
+        if (task.state !== "cancelled") {
+          tm.updateTask(task.id, "cancelled", undefined, "Execution cancelled");
+        }
+      } else {
+        tm.updateTask(task.id, "failed", [{ type: "error", content: msg }], msg);
+      }
     } catch {
       // Task may already be terminal (e.g., cancelled). Preserve original error.
     }
     throw err;
+  } finally {
+    tm.endExecution?.(task.id, taskSignal);
   }
 }

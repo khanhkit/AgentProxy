@@ -1,48 +1,37 @@
 #!/usr/bin/env node
 // scripts/check/check-codeql-ratchet.mjs
-// Catraca de alertas CodeQL (Task 7.3 — Fase 7).
+// AP-ISS-0107 CodeQL freshness / PR-regression gate.
 //
-// Usa a GitHub API via `gh` CLI para buscar alertas de code-scanning abertos e
-// não-dismissed (respeita Hard Rule #14: alertas dismissed não contam).
+// Default mode is repository-wide TELEMETRY only: it reports open, non-dismissed
+// CodeQL debt but never treats the historical global count as a merge threshold.
 //
-// Saída (stdout):
-//   codeqlAlerts=N        — contagem de alertas CodeQL abertos, não-dismissed
-//   codeqlAlerts=SKIP reason=binary-absent   — `gh` não está no PATH
-//   codeqlAlerts=SKIP reason=no-auth         — `gh` presente mas sem autenticação
-//   codeqlAlerts=SKIP reason=api-error:<code>  — erro da API GitHub
+// Authoritative enforcement is enabled only with CODEQL_RATCHET_ENFORCE=1 and is
+// intended to run immediately after github/codeql-action/analyze in codeql.yml.
+// It fails closed unless a CodeQL analysis matches CODEQL_EXPECTED_SHA +
+// CODEQL_EXPECTED_REF exactly. On pull requests it additionally blocks any open
+// CodeQL alerts associated with CODEQL_PR_NUMBER via GitHub's `pr=` API filter.
 //
-// RATCHET BLOQUEANTE (default): lê metrics.codeqlAlerts.value de
-// config/quality/quality-baseline.json e SAI 1 SE — E SOMENTE SE — a contagem
-// MEDIDA for MAIOR que o baseline (regressão real, mais alertas CodeQL abertos).
-// Qualquer falha de MEDIÇÃO (gh ausente / sem auth / sem repo / erro de API) é um
-// SKIP gracioso que SAI 0 — nunca bloqueia o build por falta de infraestrutura.
-// Direction: down (a contagem só pode CAIR). Suporta --update para ratchetar.
+// Output examples:
+//   codeqlAlerts=132
+//   codeqlGate=ADVISORY reason=repository-telemetry
+//   codeqlFreshness=FRESH expectedSha=<sha> expectedRef=<ref>
+//   codeqlPrAlerts=0 pr=42
+//   codeqlGate=PASS reason=ok
 //
-// Uso:
+// Usage:
 //   node scripts/check/check-codeql-ratchet.mjs
-//   node scripts/check/check-codeql-ratchet.mjs --json    # imprime array de alertas
-//   node scripts/check/check-codeql-ratchet.mjs --quiet   # suprime logs de diagnóstico
-//   node scripts/check/check-codeql-ratchet.mjs --update  # ratcheta o baseline (queda)
-//   node scripts/check/check-codeql-ratchet.mjs --advisory  # nunca falha (modo coletor)
+//   node scripts/check/check-codeql-ratchet.mjs --json
+//   CODEQL_RATCHET_ENFORCE=1 CODEQL_EXPECTED_SHA=... CODEQL_EXPECTED_REF=... node scripts/check/check-codeql-ratchet.mjs
 
 import { execFileSync, spawnSync } from "node:child_process";
-import fs from "node:fs";
-import path from "node:path";
 import { pathToFileURL } from "node:url";
 
 const QUIET = process.argv.includes("--quiet");
 const PRINT_JSON = process.argv.includes("--json");
-const UPDATE = process.argv.includes("--update");
-// --advisory: nunca falha pela contagem (modo coletor legado). Sem esta flag o
-// gate é BLOQUEANTE: sai 1 numa regressão real (medida > baseline).
-const ADVISORY = process.argv.includes("--advisory");
-
-const ROOT = process.cwd();
-const BASELINE_PATH = path.resolve(
-  process.argv.includes("--baseline")
-    ? process.argv[process.argv.indexOf("--baseline") + 1]
-    : path.join(ROOT, "config/quality/quality-baseline.json")
-);
+const ENFORCE = process.env.CODEQL_RATCHET_ENFORCE === "1";
+const EXPECTED_SHA = process.env.CODEQL_EXPECTED_SHA?.trim() || null;
+const EXPECTED_REF = process.env.CODEQL_EXPECTED_REF?.trim() || null;
+const PULL_REQUEST_NUMBER = parsePullRequestNumber(process.env.CODEQL_PR_NUMBER);
 
 // ---------------------------------------------------------------------------
 // Pure parsing function (exported for tests)
@@ -108,20 +97,51 @@ export function parseCodeQLAlerts(alerts) {
 }
 
 /**
- * Avalia a contagem MEDIDA de alertas CodeQL contra o baseline.
- * Direction: down (a contagem só pode CAIR — mais alertas = regressão).
+ * Return the exact CodeQL analysis proving the current workflow ref/SHA was scanned.
+ * Repository-wide "latest" analysis is not sufficient because it can be stale.
  *
- * Exported for unit testing — espelha evaluateDeadCode em check-dead-code.mjs.
- *
- * @param {number} current  - Contagem de alertas medida agora.
- * @param {number} baseline - Contagem congelada em quality-baseline.json.
- * @returns {{ regressed: boolean, improved: boolean }}
+ * @param {Array|null} analyses
+ * @param {string|null} expectedSha
+ * @param {string|null} expectedRef
+ * @returns {object|null}
  */
-export function evaluateCodeqlRatchet(current, baseline) {
-  return {
-    regressed: current > baseline,
-    improved: current < baseline,
-  };
+export function findFreshCodeqlAnalysis(analyses, expectedSha, expectedRef) {
+  if (!Array.isArray(analyses) || !expectedSha || !expectedRef) return null;
+  return (
+    analyses.find((analysis) => {
+      const toolName = analysis?.tool?.name ?? "";
+      return (
+        toolName.toLowerCase().includes("codeql") &&
+        analysis?.commit_sha === expectedSha &&
+        analysis?.ref === expectedRef
+      );
+    }) ?? null
+  );
+}
+
+/**
+ * Evaluate the authoritative post-analysis gate.
+ * Historical repository-wide alerts are intentionally excluded from blocking.
+ *
+ * @param {{
+ *   freshAnalysis: boolean,
+ *   pullRequestNumber: number|null,
+ *   pullRequestAlertCount: number|null
+ * }} input
+ * @returns {{blocked: boolean, reason: "ok"|"stale-analysis"|"pr-alerts"}}
+ */
+export function evaluateCodeqlGate({ freshAnalysis, pullRequestNumber, pullRequestAlertCount }) {
+  if (!freshAnalysis) return { blocked: true, reason: "stale-analysis" };
+  if (pullRequestNumber !== null && (pullRequestAlertCount ?? 0) > 0) {
+    return { blocked: true, reason: "pr-alerts" };
+  }
+  return { blocked: false, reason: "ok" };
+}
+
+function parsePullRequestNumber(value) {
+  if (!value) return null;
+  const parsed = Number.parseInt(value, 10);
+  return Number.isSafeInteger(parsed) && parsed > 0 ? parsed : null;
 }
 
 // ---------------------------------------------------------------------------
@@ -201,16 +221,18 @@ export function findGhCli() {
  * @param {string} repo  - "owner/repo"
  * @returns {Array} Array de alertas
  */
-function fetchCodeQLAlerts(ghBin, repo) {
+function fetchCodeQLAlerts(ghBin, repo, pullRequestNumber = null) {
   const allAlerts = [];
   let page = 1;
   const perPage = 100;
+  const prFilter = pullRequestNumber === null ? "" : `&pr=${pullRequestNumber}`;
 
   while (true) {
-    const endpoint = `/repos/${repo}/code-scanning/alerts?state=open&tool_name=CodeQL&per_page=${perPage}&page=${page}`;
+    const endpoint = `/repos/${repo}/code-scanning/alerts?state=open&tool_name=CodeQL${prFilter}&per_page=${perPage}&page=${page}`;
 
     if (!QUIET) {
-      process.stderr.write(`[codeql-ratchet] Buscando alertas: página ${page} ...\n`);
+      const scope = pullRequestNumber === null ? "repository" : `PR #${pullRequestNumber}`;
+      process.stderr.write(`[codeql-ratchet] Fetching ${scope} alerts: page ${page} ...\n`);
     }
 
     let stdout;
@@ -222,8 +244,6 @@ function fetchCodeQLAlerts(ghBin, repo) {
       });
     } catch (err) {
       const errMsg = String(err.stderr ?? err.message ?? "");
-
-      // Sem autenticação
       if (
         errMsg.includes("authentication") ||
         errMsg.includes("401") ||
@@ -231,110 +251,108 @@ function fetchCodeQLAlerts(ghBin, repo) {
       ) {
         return { error: "no-auth", message: errMsg };
       }
-
-      // Rate limit ou outro erro HTTP
       const codeMatch = /HTTP (\d{3})/.exec(errMsg);
       const code = codeMatch ? codeMatch[1] : "unknown";
       return { error: `api-error:${code}`, message: errMsg };
     }
 
-    let page_alerts;
+    let pageAlerts;
     try {
-      page_alerts = JSON.parse(stdout);
+      pageAlerts = JSON.parse(stdout);
     } catch (parseErr) {
-      // A malformed (but HTTP-200) API response is a MEASUREMENT failure, not a
-      // regression. A blocking gate must never red on it — return the same
-      // {error,message} shape the caller already maps to a graceful SKIP (exit 0).
       return { error: "parse-error", message: String(parseErr.message ?? parseErr) };
     }
 
-    // A API retorna null quando não há mais páginas (ou array vazio)
-    if (!Array.isArray(page_alerts) || page_alerts.length === 0) break;
-
-    allAlerts.push(...page_alerts);
-
-    // Se retornou menos que perPage, chegamos à última página
-    if (page_alerts.length < perPage) break;
-
+    if (!Array.isArray(pageAlerts) || pageAlerts.length === 0) break;
+    allAlerts.push(...pageAlerts);
+    if (pageAlerts.length < perPage) break;
     page++;
   }
 
   return allAlerts;
 }
 
-// ---------------------------------------------------------------------------
-// Baseline
-// ---------------------------------------------------------------------------
-
-/**
- * Lê metrics.codeqlAlerts.value do quality-baseline.json.
- * Retorna null se o arquivo ou a métrica estiverem ausentes (modo coletor puro:
- * sem baseline não há ratchet, só emissão da contagem).
- *
- * @returns {number|null}
- */
-function readBaselineCodeqlValue() {
-  if (!fs.existsSync(BASELINE_PATH)) return null;
-  let baselineJson;
+function fetchCodeQLAnalyses(ghBin, repo, expectedRef) {
+  const endpoint = `/repos/${repo}/code-scanning/analyses?tool_name=CodeQL&ref=${encodeURIComponent(expectedRef)}&per_page=100`;
+  let stdout;
   try {
-    baselineJson = JSON.parse(fs.readFileSync(BASELINE_PATH, "utf8"));
-  } catch {
-    return null;
+    stdout = execFileSync(ghBin, ["api", endpoint], {
+      encoding: "utf8",
+      timeout: 30_000,
+      maxBuffer: 16 * 1024 * 1024,
+    });
+  } catch (err) {
+    const errMsg = String(err.stderr ?? err.message ?? "");
+    const codeMatch = /HTTP (\d{3})/.exec(errMsg);
+    const code = codeMatch ? codeMatch[1] : "unknown";
+    return { error: `api-error:${code}`, message: errMsg };
   }
-  const metric = baselineJson?.metrics?.codeqlAlerts;
-  if (!metric || typeof metric.value !== "number") return null;
-  return metric.value;
+
+  try {
+    const analyses = JSON.parse(stdout);
+    return Array.isArray(analyses)
+      ? analyses
+      : { error: "parse-error", message: "analyses response was not an array" };
+  } catch (parseErr) {
+    return { error: "parse-error", message: String(parseErr.message ?? parseErr) };
+  }
 }
 
-/**
- * Aplica o ratchet (direction:down) sobre a contagem medida vs o baseline.
- * Define process.exitCode = 1 numa regressão real (medida > baseline) salvo
- * --advisory. Ratcheta o baseline com --update quando a contagem cai.
- *
- * Exported for unit testing (drives o efeito em process.exitCode).
- *
- * @param {number} alertCount - Contagem MEDIDA (medição bem-sucedida).
- */
-export function applyRatchet(alertCount) {
-  const baselineValue = readBaselineCodeqlValue();
+// ---------------------------------------------------------------------------
+// Authoritative freshness / PR-relative enforcement
+// ---------------------------------------------------------------------------
 
-  // Sem baseline → modo coletor puro (emite a contagem, não falha).
-  if (baselineValue === null) {
-    if (!QUIET) {
-      process.stderr.write(
-        "[codeql-ratchet] baseline ausente (metrics.codeqlAlerts) — modo coletor, sem ratchet.\n"
-      );
+function emitAlertSummary(alertCount, bySeverity, byRule, label) {
+  if (QUIET) return;
+  const severitySummary =
+    Object.entries(bySeverity)
+      .map(([key, value]) => `${key}=${value}`)
+      .join(", ") || "none";
+  const topRules =
+    Object.entries(byRule)
+      .sort(([, left], [, right]) => right - left)
+      .slice(0, 5)
+      .map(([rule, count]) => `${rule}(${count})`)
+      .join(", ") || "none";
+
+  process.stderr.write(`[codeql-ratchet] ${label}: ${alertCount}\n`);
+  if (alertCount > 0) {
+    process.stderr.write(`[codeql-ratchet]   severity: ${severitySummary}\n`);
+    process.stderr.write(`[codeql-ratchet]   top rules: ${topRules}\n`);
+  }
+}
+
+function failEnforcement(reason, message) {
+  console.log(`codeqlGate=FAIL reason=${reason}`);
+  if (!QUIET && message) {
+    process.stderr.write(`[codeql-ratchet] FAIL — ${message}\n`);
+  }
+  process.exitCode = 1;
+}
+
+function sleepSync(milliseconds) {
+  Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, milliseconds);
+}
+
+function pollFreshCodeqlAnalysis(ghBin, repo, expectedSha, expectedRef) {
+  const attempts = 6;
+  for (let attempt = 1; attempt <= attempts; attempt++) {
+    const result = fetchCodeQLAnalyses(ghBin, repo, expectedRef);
+    if (!Array.isArray(result)) return result;
+
+    const fresh = findFreshCodeqlAnalysis(result, expectedSha, expectedRef);
+    if (fresh) return fresh;
+
+    if (attempt < attempts) {
+      if (!QUIET) {
+        process.stderr.write(
+          `[codeql-ratchet] waiting for analysis visibility (${attempt}/${attempts}) ...\n`
+        );
+      }
+      sleepSync(5_000);
     }
-    process.exitCode = 0;
-    return;
   }
-
-  const { regressed, improved } = evaluateCodeqlRatchet(alertCount, baselineValue);
-
-  if (UPDATE && improved) {
-    const baselineJson = JSON.parse(fs.readFileSync(BASELINE_PATH, "utf8"));
-    baselineJson.metrics.codeqlAlerts.value = alertCount;
-    fs.writeFileSync(BASELINE_PATH, JSON.stringify(baselineJson, null, 2) + "\n");
-    console.log(`[codeql-ratchet] baseline ratcheado: ${alertCount} (era ${baselineValue})`);
-  }
-
-  if (regressed && !ADVISORY) {
-    process.stderr.write(
-      `[codeql-ratchet] REGRESSÃO — ${alertCount} alertas CodeQL abertos > baseline ${baselineValue}\n` +
-        "  → Corrija os novos alertas em Security → Code scanning, ou rode\n" +
-        "    'node scripts/check/check-codeql-ratchet.mjs --update' se a contagem caiu legitimamente.\n"
-    );
-    process.exitCode = 1;
-    return;
-  }
-
-  if (!QUIET) {
-    const verdict = regressed ? "ADVISORY — regressão ignorada (--advisory)" : "OK — sem regressão";
-    process.stderr.write(
-      `[codeql-ratchet] ${verdict} — ${alertCount} alertas (baseline ${baselineValue})\n`
-    );
-  }
-  process.exitCode = 0;
+  return null;
 }
 
 // ---------------------------------------------------------------------------
@@ -346,45 +364,129 @@ function main() {
 
   if (!ghBin) {
     console.log("codeqlAlerts=SKIP reason=binary-absent");
-    if (!QUIET) {
-      process.stderr.write(
-        "[codeql-ratchet] SKIP — `gh` CLI não encontrado no PATH.\n" +
-          "[codeql-ratchet] Instale via: https://cli.github.com/\n" +
-          "[codeql-ratchet] ADVISORY — este gate sai 0 (ratchet entra no CI da Fase 7 INT).\n"
+    if (ENFORCE) {
+      failEnforcement(
+        "binary-absent",
+        "gh CLI is required in authoritative CodeQL enforcement mode"
       );
+    } else {
+      if (!QUIET) {
+        process.stderr.write(
+          "[codeql-ratchet] SKIP — gh CLI is unavailable; repository-wide telemetry is advisory.\n"
+        );
+      }
+      process.exitCode = 0;
     }
-    process.exitCode = 0;
     return;
   }
 
-  // Detectar repositório
   const repo = detectRepo(ghBin);
   if (!repo) {
     console.log("codeqlAlerts=SKIP reason=no-repo");
-    if (!QUIET) {
-      process.stderr.write(
-        "[codeql-ratchet] SKIP — não foi possível detectar o repositório GitHub.\n" +
-          "[codeql-ratchet] Execute dentro de um repositório GitHub com `gh` autenticado.\n"
+    if (ENFORCE) {
+      failEnforcement(
+        "no-repo",
+        "repository identity is required in authoritative CodeQL enforcement mode"
       );
+    } else {
+      process.exitCode = 0;
     }
-    process.exitCode = 0;
     return;
   }
 
   if (!QUIET) {
-    process.stderr.write(`[codeql-ratchet] Repositório detectado: ${repo}\n`);
+    process.stderr.write(`[codeql-ratchet] repository: ${repo}\n`);
   }
 
-  // Buscar alertas
-  const result = fetchCodeQLAlerts(ghBin, repo);
+  if (ENFORCE) {
+    if (!EXPECTED_SHA || !EXPECTED_REF) {
+      failEnforcement(
+        "missing-freshness-context",
+        "CODEQL_EXPECTED_SHA and CODEQL_EXPECTED_REF are required"
+      );
+      return;
+    }
 
-  // Tratar erros da API com skip gracioso
+    const fresh = pollFreshCodeqlAnalysis(ghBin, repo, EXPECTED_SHA, EXPECTED_REF);
+    if (fresh && !Array.isArray(fresh) && fresh.error) {
+      failEnforcement(
+        fresh.error,
+        `unable to read CodeQL analyses: ${String(fresh.message ?? "").slice(0, 200)}`
+      );
+      return;
+    }
+
+    const isFresh = Boolean(fresh);
+    console.log(
+      `codeqlFreshness=${isFresh ? "FRESH" : "STALE"} expectedSha=${EXPECTED_SHA} expectedRef=${EXPECTED_REF}`
+    );
+
+    if (!isFresh) {
+      failEnforcement(
+        "stale-analysis",
+        `no CodeQL analysis matches ${EXPECTED_REF}@${EXPECTED_SHA}`
+      );
+      return;
+    }
+
+    let pullRequestAlertCount = null;
+    if (PULL_REQUEST_NUMBER !== null) {
+      const result = fetchCodeQLAlerts(ghBin, repo, PULL_REQUEST_NUMBER);
+      if (!Array.isArray(result)) {
+        failEnforcement(
+          result.error,
+          `unable to read PR CodeQL alerts: ${String(result.message ?? "").slice(0, 200)}`
+        );
+        return;
+      }
+
+      if (PRINT_JSON) {
+        process.stdout.write(JSON.stringify(result, null, 2) + "\n");
+      }
+
+      const { alertCount, bySeverity, byRule } = parseCodeQLAlerts(result);
+      pullRequestAlertCount = alertCount;
+      console.log(`codeqlPrAlerts=${alertCount} pr=${PULL_REQUEST_NUMBER}`);
+      emitAlertSummary(
+        alertCount,
+        bySeverity,
+        byRule,
+        `open CodeQL alerts associated with PR #${PULL_REQUEST_NUMBER}`
+      );
+    } else {
+      console.log("codeqlPrAlerts=SKIP reason=no-pr");
+    }
+
+    const verdict = evaluateCodeqlGate({
+      freshAnalysis: true,
+      pullRequestNumber: PULL_REQUEST_NUMBER,
+      pullRequestAlertCount,
+    });
+
+    if (verdict.blocked) {
+      failEnforcement(
+        verdict.reason,
+        verdict.reason === "pr-alerts"
+          ? `PR #${PULL_REQUEST_NUMBER} introduces open CodeQL alerts`
+          : "CodeQL analysis is not fresh"
+      );
+      return;
+    }
+
+    console.log("codeqlGate=PASS reason=ok");
+    process.exitCode = 0;
+    return;
+  }
+
+  // Advisory/metrics mode used by legacy quality collectors. The global open
+  // alert count remains visible debt inventory, but it is NOT a merge threshold.
+  const result = fetchCodeQLAlerts(ghBin, repo);
   if (!Array.isArray(result)) {
     const { error, message } = result;
     console.log(`codeqlAlerts=SKIP reason=${error}`);
     if (!QUIET) {
       process.stderr.write(
-        `[codeql-ratchet] SKIP — erro ao consultar API GitHub: ${message.slice(0, 200)}\n`
+        `[codeql-ratchet] SKIP — unable to measure repository CodeQL debt: ${String(message).slice(0, 200)}\n`
       );
     }
     process.exitCode = 0;
@@ -397,34 +499,9 @@ function main() {
   }
 
   const { alertCount, bySeverity, byRule } = parseCodeQLAlerts(result);
-
-  // Emitir em formato KEY=VALUE para o coletor de métricas (collect-metrics.mjs)
   console.log(`codeqlAlerts=${alertCount}`);
-
-  if (!QUIET) {
-    const severitySummary =
-      Object.entries(bySeverity)
-        .map(([k, v]) => `${k}=${v}`)
-        .join(", ") || "nenhum";
-    const topRules =
-      Object.entries(byRule)
-        .sort(([, a], [, b]) => b - a)
-        .slice(0, 5)
-        .map(([r, n]) => `${r}(${n})`)
-        .join(", ") || "nenhum";
-
-    process.stderr.write(
-      `[codeql-ratchet] Alertas CodeQL abertos (não-dismissed): ${alertCount}\n`
-    );
-    if (alertCount > 0) {
-      process.stderr.write(`[codeql-ratchet]   Por severidade: ${severitySummary}\n`);
-      process.stderr.write(`[codeql-ratchet]   Top regras: ${topRules}\n`);
-    }
-  }
-
-  // Medição bem-sucedida → aplica o ratchet (bloqueante salvo --advisory).
-  // Qualquer falha de MEDIÇÃO acima já retornou com exit 0 (skip gracioso).
-  applyRatchet(alertCount);
+  console.log("codeqlGate=ADVISORY reason=repository-telemetry");
+  emitAlertSummary(alertCount, bySeverity, byRule, "repository-wide open CodeQL telemetry");
+  process.exitCode = 0;
 }
-
 if (import.meta.url === pathToFileURL(process.argv[1] || "").href) main();

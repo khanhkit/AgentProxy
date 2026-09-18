@@ -1,6 +1,7 @@
 import { createHash, randomUUID } from "node:crypto";
 import { createRequire } from "node:module";
 import { STATUS_CODES } from "node:http";
+import { PEER_IP_HEADER, stampPeerIp } from "./peer-stamp.mjs";
 
 const _wreqRequire = createRequire(import.meta.url);
 
@@ -314,8 +315,11 @@ function getAuthHeaders(requestUrl, requestHeaders) {
 
   if (isText(requestHeaders.cookie)) headers.cookie = requestHeaders.cookie;
   if (isText(requestHeaders.origin)) headers.origin = requestHeaders.origin;
-  if (isText(requestHeaders["x-forwarded-for"])) {
-    headers["x-forwarded-for"] = requestHeaders["x-forwarded-for"];
+  if (isText(requestHeaders.host)) headers.host = requestHeaders.host;
+  if (isText(requestHeaders[PEER_IP_HEADER]))
+    headers[PEER_IP_HEADER] = requestHeaders[PEER_IP_HEADER];
+  for (const key of ["forwarded", "x-forwarded-for", "x-forwarded-host", "x-forwarded-proto"]) {
+    if (isText(requestHeaders[key])) headers[key] = requestHeaders[key];
   }
   for (const key of [
     "session-id",
@@ -912,6 +916,12 @@ export function createResponsesWsProxy({
         );
         return true;
       }
+
+      // The auth route runs behind an internal loopback fetch, so preserve a
+      // token-authenticated copy of the REAL upgrade peer before bridging the
+      // browser Origin/Host context. stampPeerIp() deletes any client-supplied
+      // peer stamp before writing the trusted process stamp.
+      stampPeerIp(req);
 
       try {
         const auth = await callInternal(fetchImpl, baseUrl, bridgeSecret, "authenticate", {

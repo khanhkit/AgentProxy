@@ -31,6 +31,7 @@ import {
   attachRequestStreamGuards,
   installProcessCrashGuard,
 } from "@/shared/utils/httpClientAbortGuard.mjs";
+import { applyCustomHttpServerTimeouts } from "@/shared/utils/runtimeTimeouts";
 import {
   connectionHeaderTokens,
   isForbiddenProxyBoundaryHeaderName,
@@ -292,6 +293,7 @@ export function initEmbedWsProxy(): void {
     res.writeHead(426, "Upgrade Required", { "content-type": "application/json" });
     res.end(JSON.stringify({ error: "upgrade_required", message: "Use WebSocket." }));
   });
+  applyCustomHttpServerTimeouts(server);
 
   server.on("upgrade", (req: IncomingMessage, socket: net.Socket, head: Buffer) => {
     proxyUpgrade(req, socket, head).catch((err: unknown) => {

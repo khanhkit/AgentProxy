@@ -16,6 +16,7 @@ const {
   createStructuredSSECollector,
 } = await import("../../open-sse/utils/streamPayloadCollector.ts");
 const { FORMATS } = await import("../../open-sse/translator/formats.ts");
+const { isKnownNonClaudeStreamPayload } = await import("../../open-sse/utils/streamHelpers.ts");
 const { createRequestLogger } = await import("../../open-sse/utils/requestLogger.ts");
 
 // Retained stream chunks are prefixed with a fixed-width per-chunk arrival timestamp
@@ -92,6 +93,20 @@ function parseSillyTavernCustomOpenAIStream(text) {
 
   return { reasoning, content, events };
 }
+
+test("AP-ISS-0065 OpenAI delta.reasoning establishes semantic stream readiness", () => {
+  const reasoningChunk = {
+    object: "chat.completion.chunk",
+    choices: [{ index: 0, delta: { reasoning: "thinking" }, finish_reason: null }],
+  };
+  const emptyReasoningChunk = {
+    object: "chat.completion.chunk",
+    choices: [{ index: 0, delta: { reasoning: "" }, finish_reason: null }],
+  };
+
+  assert.equal(isKnownNonClaudeStreamPayload(reasoningChunk), true);
+  assert.equal(isKnownNonClaudeStreamPayload(emptyReasoningChunk), false);
+});
 
 test("createSSEStream leaves successful pending requests for onComplete finalization", async () => {
   const usageHistory = await import("../../src/lib/usage/usageHistory.ts");

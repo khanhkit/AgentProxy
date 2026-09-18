@@ -53,11 +53,11 @@ describe("ipUtils — loopback-gated forwarding headers", () => {
     assert.equal(getClientIpFromRequest(req), "198.51.100.7");
   });
 
-  it("falls back to forwarding headers when no socket peer is known", () => {
-    // Edge runtime / fetch path where req.socket is absent — preserve prior
-    // behavior, otherwise we'd lose all IPs in that path.
+  it("fails closed when forwarding headers exist but no socket peer is known", () => {
+    // A runtime without a real peer cannot authenticate XFF/X-Real-IP. Security-
+    // sensitive callers must consume the authz pipeline's trusted peer stamp.
     const req = makeReq({ "x-forwarded-for": "203.0.113.20" });
-    assert.equal(getClientIpFromRequest(req), "203.0.113.20");
+    assert.equal(getClientIpFromRequest(req), "unknown");
   });
 
   it("returns loopback peer when no forwarding headers are present", () => {

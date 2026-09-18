@@ -200,8 +200,9 @@ test("runAuthzPipeline allows onboarding when login is required but no password 
   assert.equal(response.headers.get("x-omniroute-route-class"), "PUBLIC");
 });
 
-test("runAuthzPipeline allows first password writes when login is required but no password exists", async () => {
+test("runAuthzPipeline allows loopback first password writes when login is required but no password exists", async () => {
   delete process.env.INITIAL_PASSWORD;
+  process.env.OMNIROUTE_PEER_STAMP_TOKEN = "pipeline-peer-stamp";
   await settingsDb.updateSettings({
     requireLogin: true,
     setupComplete: true,
@@ -209,12 +210,43 @@ test("runAuthzPipeline allows first password writes when login is required but n
   });
 
   const response = await pipeline.runAuthzPipeline(
-    request("https://example.com/api/settings/require-login", { method: "POST" }),
+    request("https://example.com/api/settings/require-login", {
+      method: "POST",
+      headers: {
+        "x-omniroute-peer-ip": "pipeline-peer-stamp|127.0.0.1",
+        "x-omniroute-via-proxy": "pipeline-peer-stamp|0",
+      },
+    }),
     { enforce: true }
   );
 
   assert.equal(response.status, 200);
   assert.equal(response.headers.get("x-omniroute-route-class"), "MANAGEMENT");
+});
+
+test("runAuthzPipeline rejects remote first password writes before the route", async () => {
+  delete process.env.INITIAL_PASSWORD;
+  process.env.OMNIROUTE_PEER_STAMP_TOKEN = "pipeline-peer-stamp";
+  await settingsDb.updateSettings({
+    requireLogin: true,
+    setupComplete: true,
+    password: "",
+  });
+
+  const response = await pipeline.runAuthzPipeline(
+    request("https://example.com/api/settings/require-login", {
+      method: "POST",
+      headers: {
+        "x-omniroute-peer-ip": "pipeline-peer-stamp|203.0.113.10",
+        "x-omniroute-via-proxy": "pipeline-peer-stamp|0",
+      },
+    }),
+    { enforce: true }
+  );
+  const body = await response.json();
+
+  assert.equal(response.status, 403);
+  assert.equal(body.error.code, "LOCAL_ONLY");
 });
 
 test("runAuthzPipeline keeps management API rejections as JSON", async () => {
@@ -600,5 +632,57 @@ test("runAuthzPipeline clears stale dashboard JWTs without error-stack noise", a
   } finally {
     console.error = originalError;
     console.warn = originalWarn;
+  }
+});
+
+test("runAuthzPipeline applies canonical management auth to root rewrite aliases (AP-ISS-0009)", async () => {
+  await forceAuthRequired();
+
+  for (const [alias, canonical, method] of [
+    ["/anthropic/messages", "/api/anthropic/messages", "POST"],
+    ["/openai/chat/completions", "/api/openai/chat/completions", "POST"],
+    ["/metrics", "/api/metrics", "GET"],
+    ["/debug", "/api/debug", "GET"],
+  ] as const) {
+    const aliasResponse = await pipeline.runAuthzPipeline(
+      request(`http://localhost${alias}`, { method }),
+      { enforce: true }
+    );
+    const canonicalResponse = await pipeline.runAuthzPipeline(
+      request(`http://localhost${canonical}`, { method }),
+      { enforce: true }
+    );
+
+    assert.equal(aliasResponse.status, canonicalResponse.status, `${alias} status parity`);
+    assert.equal(
+      aliasResponse.status,
+      401,
+      `${alias} must reject unauthenticated management access`
+    );
+    assert.equal(aliasResponse.headers.get("x-omniroute-route-class"), "MANAGEMENT");
+    assert.equal(
+      canonicalResponse.headers.get("x-omniroute-route-class"),
+      "MANAGEMENT",
+      `${canonical} canonical route class`
+    );
+  }
+});
+
+test("runAuthzPipeline applies /api drain policy to root rewrite aliases before rewrite (AP-ISS-0009)", async () => {
+  globalThis.__omnirouteShutdown = { init: true, shuttingDown: true, activeRequests: 0 };
+
+  for (const [alias, method] of [
+    ["/anthropic/messages", "POST"],
+    ["/openai/chat/completions", "POST"],
+    ["/metrics", "GET"],
+    ["/debug", "GET"],
+  ] as const) {
+    const response = await pipeline.runAuthzPipeline(
+      request(`http://localhost${alias}`, { method }),
+      { enforce: true }
+    );
+    const body = await response.json();
+    assert.equal(response.status, 503, `${alias} should be drained as canonical /api traffic`);
+    assert.equal(body.error.code, "SERVICE_UNAVAILABLE");
   }
 });

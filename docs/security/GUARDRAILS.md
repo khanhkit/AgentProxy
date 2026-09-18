@@ -162,6 +162,17 @@ scoped to images the bridge fetches for its own self-call — it is never
 applied to the caller's raw passthrough payload, consistent with the
 opt-in-only mutation principle (Hard Rule #20).
 
+Remote media fetched from a **client-controlled URL** uses the shared
+`fetchRemoteMedia()` / `fetchRemoteImage()` client-safe contract by default:
+`public-only` destination validation is re-applied at every redirect hop, DNS
+answers are validated and the connection is pinned to the validated address,
+and the response is subject to finite timeout/byte limits. Operator-controlled
+provider endpoints or provider-result URLs that intentionally need local/LAN
+compatibility must opt into `getProviderOutboundGuard()` explicitly at that
+call site instead of inheriting it as the remote-media default. Test-only
+`fetchImpl` injection remains an explicit dependency seam; production client
+paths leave it unset so connection-bound DNS pinning owns the socket.
+
 #### Settings schema + migration
 
 The new `modalityBridge*` keys are Zod-validated in `updateSettingsSchema`
@@ -915,3 +926,24 @@ Coverage of the guard helper (`createInjectionGuard` / `withInjectionGuard`)
 spans every prompt-bearing `/v1` route; prompt text is pulled from
 `messages`/`input`/`prompt`/`query`+`documents`/`instructions`/`system` by
 `extractMessageContents()` in `src/shared/utils/inputSanitizer.ts`.
+
+## GHE Copilot operator-controlled egress
+
+GitHub Enterprise Copilot connection setup is a management-owned boundary even
+when dashboard login is globally disabled. The `/api/oauth/ghe-copilot/*`
+setup/poll actions therefore require an authenticated management principal
+before a caller-controlled `gheUrl` can trigger outbound traffic.
+
+Configurable GHE OAuth, token-refresh, health, and live-model discovery requests
+use `safeOutboundFetch()` with the `block-metadata` guard, DNS validation/pinning,
+and redirects disabled. This deliberately keeps RFC1918/private enterprise hosts
+compatible while rejecting cloud-metadata and link-local destinations before a
+secret-bearing request is sent. Token-derived Copilot API endpoints receive the
+same guard before the Copilot bearer token is used.
+
+For direct egress, the connection is pinned to the DNS answer that passed the
+guard, closing the validation/connect DNS-rebinding gap. If an account/provider
+proxy is assigned, the proxy route is preserved and is **not** silently bypassed
+to obtain direct pinning; OmniRoute performs local DNS pre-validation first, but
+the proxy may perform its own DNS resolution. Operators using remote-DNS proxies
+must enforce equivalent metadata/link-local protections at that proxy boundary.

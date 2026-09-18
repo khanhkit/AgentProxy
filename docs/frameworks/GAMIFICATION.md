@@ -821,6 +821,11 @@ the `gamification` permission scope.
 | `gamification_servers`     | List or connect community servers     | `{ action, token? }`         |
 | `gamification_anomalies`   | View anomaly reports (admin scope)    | `{ limit?, since? }`         |
 
+For authenticated HTTP/SSE MCP callers, `gamification_anomalies` requires the
+`read:gamification` resource scope plus explicit `manage` or `admin` authority; full-access
+`*` also satisfies the administrative capability. A read-only `read:gamification` or `read:*`
+key cannot access population-wide anomaly data. stdio remains an operator-local interface.
+
 ---
 
 ## Dashboard Pages

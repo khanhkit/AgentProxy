@@ -15,6 +15,12 @@ import { enforceClientApiRouteAuth } from "@/shared/utils/clientApiRouteAuth";
 import { runWithCallLogApiKeyContext } from "@/lib/usage/callLogApiKeyContext";
 import { executeImageWithCredentialFallback } from "@/sse/services/imageCredentialRetry";
 import { rejectRetiredCommonChatGptWebProvider } from "@/lib/providers/chatgptWebRetirementResponse";
+import {
+  MAX_BODY_BYTES_MEDIA,
+  readRequestBodyWithLimit,
+  requestBodyTooLargeResponse,
+  RequestBodyTooLargeError,
+} from "@/shared/middleware/bodySizeGuard";
 
 /**
  * Handle CORS preflight
@@ -44,8 +50,12 @@ export async function POST(request, { params }) {
 
   let rawBody;
   try {
-    rawBody = await request.json();
-  } catch {
+    const bytes = await readRequestBodyWithLimit(request, MAX_BODY_BYTES_MEDIA);
+    rawBody = JSON.parse(new TextDecoder().decode(bytes));
+  } catch (error) {
+    if (error instanceof RequestBodyTooLargeError) {
+      return requestBodyTooLargeResponse(error.limit);
+    }
     return errorResponse(HTTP_STATUS.BAD_REQUEST, "Invalid JSON body");
   }
   const validation = validateBody(v1ImageGenerationSchema, rawBody);

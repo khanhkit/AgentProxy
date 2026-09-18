@@ -4,6 +4,7 @@ import { z } from "zod";
 import { CodexExecutor } from "@omniroute/open-sse/executors/codex.ts";
 import { getApiKeyMetadata } from "@/lib/db/apiKeys";
 import { authorizeWebSocketHandshake, extractWsTokenFromRequest } from "@/lib/ws/handshake";
+import { validateBrowserMutationOrigin } from "@/server/origin/publicOrigin";
 import { getModelInfo } from "@/sse/services/model";
 import { resolveCcDiscoveryAliasStrip } from "@/lib/ccDiscoveryAliasResolve";
 import { getProviderCredentialsWithQuotaPreflight } from "@/sse/services/auth";
@@ -288,6 +289,13 @@ async function authenticate(body: JsonRecord) {
       auth.hasCredential ? "ws_auth_invalid" : "ws_auth_required",
       auth.hasCredential ? "Invalid WebSocket credential" : "WebSocket auth required"
     );
+  }
+
+  if (auth.authType === "session") {
+    const originVerdict = validateBrowserMutationOrigin(authRequest);
+    if (!originVerdict.ok) {
+      return jsonError(403, "ws_origin_forbidden", "Untrusted WebSocket Origin");
+    }
   }
 
   return NextResponse.json({

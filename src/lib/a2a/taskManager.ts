@@ -135,6 +135,7 @@ export class A2ATaskManager {
   private cleanupInterval: ReturnType<typeof setInterval>;
   private activeStreams = 0;
   private lastPurgeAt = 0;
+  private executionControllers = new Map<string, AbortController>();
 
   constructor(ttlMinutes: number = 5, persistence: A2APersistence = defaultPersistence) {
     this.ttlMs = ttlMinutes * 60 * 1000;
@@ -265,6 +266,32 @@ export class A2ATaskManager {
     return task;
   }
 
+  beginExecution(taskId: string): AbortSignal {
+    const task = this.tasks.get(taskId);
+    if (!task) throw new Error(`Task ${taskId} not found`);
+
+    const existing = this.executionControllers.get(taskId);
+    if (existing && !existing.signal.aborted) return existing.signal;
+
+    const controller = new AbortController();
+    if (task.state === "cancelled") {
+      const reason = new Error(`Task ${taskId} cancelled`);
+      reason.name = "AbortError";
+      controller.abort(reason);
+    } else if (TERMINAL.has(task.state)) {
+      throw new Error(`Cannot execute terminal task ${taskId} in state ${task.state}`);
+    }
+    this.executionControllers.set(taskId, controller);
+    return controller.signal;
+  }
+
+  endExecution(taskId: string, signal?: AbortSignal): void {
+    const current = this.executionControllers.get(taskId);
+    if (!current) return;
+    if (signal && current.signal !== signal) return;
+    this.executionControllers.delete(taskId);
+  }
+
   cancelTask(taskId: string, owner?: string): A2ATask {
     // Owner check BEFORE the mutation (GHSA-jcm5-6wpp-wjj8): a caller must not
     // cancel another principal's task by id. Uses the same not-found error as
@@ -274,11 +301,19 @@ export class A2ATaskManager {
     if (!task || !this.isVisibleTo(task, owner)) {
       throw new Error(`Task ${taskId} not found`);
     }
-    return this.updateTask(taskId, "cancelled", undefined, "Cancelled by client");
+    const cancelled = this.updateTask(taskId, "cancelled", undefined, "Cancelled by client");
+    const controller = this.executionControllers.get(taskId);
+    if (controller && !controller.signal.aborted) {
+      const reason = new Error(`Task ${taskId} cancelled by client`);
+      reason.name = "AbortError";
+      controller.abort(reason);
+    }
+    return cancelled;
   }
 
-  countTasks(filter?: Pick<TaskListFilter, "state" | "skill">): number {
+  countTasks(filter?: Pick<TaskListFilter, "state" | "skill">, owner?: string): number {
     let tasks = [...this.tasks.values()];
+    if (owner !== undefined) tasks = tasks.filter((t) => this.isVisibleTo(t, owner));
     if (filter?.state) tasks = tasks.filter((t) => t.state === filter.state);
     if (filter?.skill) tasks = tasks.filter((t) => t.skill === filter.skill);
     return tasks.length;
@@ -363,6 +398,10 @@ export class A2ATaskManager {
 
   destroy() {
     clearInterval(this.cleanupInterval);
+    for (const controller of this.executionControllers.values()) {
+      if (!controller.signal.aborted) controller.abort(new Error("A2A task manager destroyed"));
+    }
+    this.executionControllers.clear();
   }
 }
 

@@ -2,61 +2,42 @@ import {
   isPublicApiRoute,
   isPublicReadonlyCorsRoute,
 } from "../../shared/constants/publicApiRoutes";
-import type { ClassificationReason, RouteClassification } from "./types";
+import { normalizeClientApiPathname } from "../../shared/utils/clientApiPath";
+import type { RouteClassification } from "./types";
 
-const CLIENT_API_ALIAS_PREFIXES: ReadonlyArray<{ alias: string; canonical: string }> = [
-  { alias: "/chat/completions", canonical: "/api/v1/chat/completions" },
-  { alias: "/responses", canonical: "/api/v1/responses" },
-  { alias: "/models", canonical: "/api/v1/models" },
+const MANAGEMENT_REWRITE_ALIAS_PREFIXES: ReadonlyArray<{ alias: string; canonical: string }> = [
+  { alias: "/anthropic", canonical: "/api/anthropic" },
+  { alias: "/openai", canonical: "/api/openai" },
 ];
 
-function normalizePathname(rawPath: string): { path: string; reason?: ClassificationReason } {
+const MANAGEMENT_REWRITE_ALIAS_EXACT = new Map([
+  ["/metrics", "/api/metrics"],
+  ["/debug", "/api/debug"],
+]);
+
+function normalizeManagementRewriteAlias(rawPath: string): string {
   let path = rawPath || "/";
   if (!path.startsWith("/")) path = "/" + path;
   if (path.length > 1 && path.endsWith("/")) path = path.slice(0, -1);
 
-  // Client-API aliases are matched case-insensitively on the control segment.
-  // Next's rewrite layer accepts `/V1/...`, `/CODEX`, etc. and routes them to
-  // the client handler, so the classifier must recognize the same casing —
-  // otherwise an uppercase alias falls through to the management fallback and
-  // the request is treated as a different route class than it is actually
-  // dispatched to (GHSA-jvqc-mp9f-q936). Only the leading control segment is
-  // lowercased for detection; the original-case tail is preserved.
   const lower = path.toLowerCase();
+  const exact = MANAGEMENT_REWRITE_ALIAS_EXACT.get(lower);
+  if (exact) return exact;
 
-  if (lower === "/codex" || lower.startsWith("/codex/")) {
-    return { path: "/api/v1/responses", reason: "client_api_codex_alias" };
-  }
-
-  if (lower === "/v1/v1" || lower.startsWith("/v1/v1/")) {
-    const tail = path.slice("/v1/v1".length) || "";
-    return { path: "/api/v1" + tail, reason: "client_api_double_prefix" };
-  }
-
-  if (lower === "/v1beta" || lower.startsWith("/v1beta/")) {
-    const tail = path.slice("/v1beta".length) || "";
-    return { path: "/api/v1beta" + tail, reason: "client_api_alias" };
-  }
-
-  if (lower === "/v1" || lower.startsWith("/v1/")) {
-    const tail = path.slice("/v1".length) || "";
-    return { path: "/api/v1" + tail, reason: "client_api_alias" };
-  }
-
-  for (const { alias, canonical } of CLIENT_API_ALIAS_PREFIXES) {
-    if (lower === alias) {
-      return { path: canonical, reason: "client_api_alias" };
-    }
+  for (const { alias, canonical } of MANAGEMENT_REWRITE_ALIAS_PREFIXES) {
+    if (lower === alias) return canonical;
     if (lower.startsWith(alias + "/")) {
-      return { path: canonical + path.slice(alias.length), reason: "client_api_alias" };
+      return canonical + path.slice(alias.length);
     }
   }
 
-  return { path };
+  return path;
 }
 
 export function classifyRoute(rawPath: string, method: string = "GET"): RouteClassification {
-  const { path: normalizedPath, reason: aliasReason } = normalizePathname(rawPath);
+  const rewriteNormalizedPath = normalizeManagementRewriteAlias(rawPath);
+  const { path: normalizedPath, reason: aliasReason } =
+    normalizeClientApiPathname(rewriteNormalizedPath);
 
   if (normalizedPath === "/" || normalizedPath === "") {
     return {

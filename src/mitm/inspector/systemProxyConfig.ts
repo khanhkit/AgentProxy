@@ -48,6 +48,14 @@ export interface ApplyResult {
   previousState: PreviousState;
 }
 
+/**
+ * Hook invoked after the previous OS proxy state has been captured but before
+ * the first proxy mutation. Crash-recovery persistence uses this to eliminate
+ * the otherwise-unrecoverable window between mutating the OS and saving the
+ * prior state.
+ */
+export type BeforeSystemProxyMutation = (result: ApplyResult) => void | Promise<void>;
+
 // Injection seam for tests. Default implementation wraps node:child_process
 // `execFile` so call-sites use array args (Hard Rule #13).
 export type ExecFileFn = (
@@ -96,6 +104,56 @@ function detectPlatform(): Platform {
   return "linux";
 }
 
+function isBoundedString(value: unknown, max = 4096, allowNewlines = false): value is string {
+  if (typeof value !== "string" || value.length > max || value.includes("\0")) return false;
+  return allowNewlines || !/[\r\n]/.test(value);
+}
+
+export function isPreviousStateValid(
+  value: unknown,
+  expectedPlatform?: Platform
+): value is PreviousState {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+  const state = value as Record<string, unknown>;
+  const platform = state.platform;
+  if (platform !== "linux" && platform !== "macos" && platform !== "windows") return false;
+  if (expectedPlatform && platform !== expectedPlatform) return false;
+
+  if (platform === "macos") {
+    const http = state.http;
+    const https = state.https;
+    if (!http || typeof http !== "object" || Array.isArray(http)) return false;
+    if (!https || typeof https !== "object" || Array.isArray(https)) return false;
+    const httpState = http as Record<string, unknown>;
+    const httpsState = https as Record<string, unknown>;
+    return (
+      isBoundedString(state.service, 256) &&
+      typeof httpState.enabled === "boolean" &&
+      isBoundedString(httpState.host, 2048) &&
+      isBoundedString(httpState.port, 32) &&
+      typeof httpsState.enabled === "boolean" &&
+      isBoundedString(httpsState.host, 2048) &&
+      isBoundedString(httpsState.port, 32)
+    );
+  }
+
+  if (platform === "linux") {
+    return (
+      isBoundedString(state.gnomeMode) &&
+      isBoundedString(state.httpHost) &&
+      isBoundedString(state.httpPort, 64) &&
+      isBoundedString(state.httpsHost) &&
+      isBoundedString(state.httpsPort, 64)
+    );
+  }
+
+  return isBoundedString(state.netshOutput, 64 * 1024, true);
+}
+
+export function isPreviousStateValidForCurrentPlatform(value: unknown): value is PreviousState {
+  return isPreviousStateValid(value, detectPlatform());
+}
+
 // ────────────────────────────────────────────────────────────────────────────
 // macOS — networksetup
 // ────────────────────────────────────────────────────────────────────────────
@@ -130,7 +188,10 @@ function parseNetworksetupGet(output: string): NetworksetupRead {
   return { enabled, host, port };
 }
 
-async function macosApply(port: number): Promise<MacOsPreviousState> {
+async function macosApply(
+  port: number,
+  beforeMutation?: BeforeSystemProxyMutation
+): Promise<MacOsPreviousState> {
   const service = MAC_DEFAULT_SERVICE;
   const httpGet = await execImpl("networksetup", ["-getwebproxy", service]);
   const httpsGet = await execImpl("networksetup", ["-getsecurewebproxy", service]);
@@ -141,6 +202,7 @@ async function macosApply(port: number): Promise<MacOsPreviousState> {
     https: parseNetworksetupGet(httpsGet.stdout),
   };
 
+  await beforeMutation?.({ platform: "macos", previousState });
   await execImpl("networksetup", ["-setwebproxy", service, "127.0.0.1", String(port)]);
   await execImpl("networksetup", ["-setsecurewebproxy", service, "127.0.0.1", String(port)]);
   return previousState;
@@ -192,7 +254,10 @@ async function readGsubsetting(scheme: string, key: string): Promise<string> {
   }
 }
 
-async function linuxApply(port: number): Promise<LinuxPreviousState> {
+async function linuxApply(
+  port: number,
+  beforeMutation?: BeforeSystemProxyMutation
+): Promise<LinuxPreviousState> {
   const previousState: LinuxPreviousState = {
     platform: "linux",
     gnomeMode: await readGsetting("mode"),
@@ -202,6 +267,7 @@ async function linuxApply(port: number): Promise<LinuxPreviousState> {
     httpsPort: await readGsubsetting("https", "port"),
   };
 
+  await beforeMutation?.({ platform: "linux", previousState });
   const portStr = String(port);
   await execImpl("gsettings", ["set", "org.gnome.system.proxy", "mode", "manual"]);
   await execImpl("gsettings", ["set", "org.gnome.system.proxy.http", "host", "127.0.0.1"]);
@@ -232,24 +298,54 @@ async function linuxRevert(state: LinuxPreviousState): Promise<void> {
 // Windows — netsh winhttp
 // ────────────────────────────────────────────────────────────────────────────
 
-async function windowsApply(port: number): Promise<WindowsPreviousState> {
+async function windowsApply(
+  port: number,
+  beforeMutation?: BeforeSystemProxyMutation
+): Promise<WindowsPreviousState> {
   const showRes = await execImpl("netsh", ["winhttp", "show", "proxy"]);
   const previousState: WindowsPreviousState = {
     platform: "windows",
     netshOutput: showRes.stdout,
   };
+  await beforeMutation?.({ platform: "windows", previousState });
   // HR#13: concat (not template) — port is Zod-validated number (z.number().int().positive().max(65535)).
   const proxyArg = "127.0.0.1:" + String(port);
   await execImpl("netsh", ["winhttp", "set", "proxy", proxyArg]);
   return previousState;
 }
 
-async function windowsRevert(_state: WindowsPreviousState): Promise<void> {
-  // netsh has no idempotent restore; the safe default is "reset".
-  // The previousState is preserved so the UI can show the operator what was
-  // configured before, but actual reapply of obscure netsh state is out of
-  // scope.
-  await execImpl("netsh", ["winhttp", "reset", "proxy"]);
+function parseWindowsProxyState(
+  output: string
+): { proxyServer: string; bypassList: string } | null {
+  if (/Direct access \(no proxy server\)\./i.test(output)) return null;
+
+  let proxyServer = "";
+  let bypassList = "";
+  for (const line of output.split(/\r?\n/)) {
+    const match = line.match(/^\s*([^:]+?)\s*:\s*(.*?)\s*$/);
+    if (!match) continue;
+    const label = match[1].trim().toLowerCase();
+    const value = match[2].trim();
+    if (label === "proxy server(s)") proxyServer = value;
+    else if (label === "bypass list") bypassList = value;
+  }
+
+  if (!proxyServer || !isBoundedString(proxyServer, 4096)) return null;
+  if (/^(?:none|\(none\))$/i.test(bypassList)) bypassList = "";
+  if (bypassList && !isBoundedString(bypassList, 4096)) return null;
+  return { proxyServer, bypassList };
+}
+
+async function windowsRevert(state: WindowsPreviousState): Promise<void> {
+  const previous = parseWindowsProxyState(state.netshOutput);
+  if (!previous) {
+    await execImpl("netsh", ["winhttp", "reset", "proxy"]);
+    return;
+  }
+
+  const args = ["winhttp", "set", "proxy", `proxy-server=${previous.proxyServer}`];
+  if (previous.bypassList) args.push(`bypass-list=${previous.bypassList}`);
+  await execImpl("netsh", args);
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -263,13 +359,16 @@ async function windowsRevert(_state: WindowsPreviousState): Promise<void> {
  * Throws a sanitized `Error` if the underlying command fails (no stack/path
  * leakage — see Hard Rule #12).
  */
-export async function apply(port: number): Promise<ApplyResult> {
+export async function apply(
+  port: number,
+  beforeMutation?: BeforeSystemProxyMutation
+): Promise<ApplyResult> {
   const platform = detectPlatform();
   try {
     let previousState: PreviousState;
-    if (platform === "macos") previousState = await macosApply(port);
-    else if (platform === "windows") previousState = await windowsApply(port);
-    else previousState = await linuxApply(port);
+    if (platform === "macos") previousState = await macosApply(port, beforeMutation);
+    else if (platform === "windows") previousState = await windowsApply(port, beforeMutation);
+    else previousState = await linuxApply(port, beforeMutation);
     return { platform, previousState };
   } catch (err) {
     throw new Error(sanitizeErrorMessage(err) || "system proxy apply failed");

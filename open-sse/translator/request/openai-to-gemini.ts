@@ -363,26 +363,9 @@ function openaiToGeminiBase(
         }
       } else if (role === "assistant") {
         const parts: GeminiPart[] = [];
-
-        // Thinking/reasoning → thought part with signature
-        if (msg.reasoning_content) {
-          parts.push({
-            thought: true,
-            text: msg.reasoning_content,
-          });
-        }
-
-        if (content) {
-          const text = typeof content === "string" ? content : extractTextContent(content);
-          if (text) {
-            parts.push({ text });
-          }
-        }
-
         const toolCalls = msg.tool_calls as Array<Record<string, unknown>> | undefined;
+        const resolvedSignatures = new Map<string, string>();
         if (toolCalls && Array.isArray(toolCalls)) {
-          const toolCallIds: string[] = [];
-          const resolvedSignatures = new Map<string, string>();
           for (const tc of toolCalls) {
             const id = tc.id as string;
             const resolved = resolveGeminiThoughtSignature(
@@ -393,6 +376,43 @@ function openaiToGeminiBase(
               resolvedSignatures.set(id, resolved);
             }
           }
+        }
+
+        // Gemini 2.5+/3.x thinking turns require the authentic thoughtSignature from
+        // the prior provider response. The response translator binds that signature to
+        // the following tool-call id, so resolve it before materializing reasoning history.
+        // Older/non-strict Gemini variants retain their historical unsigned replay behavior.
+        const modelLower = model.toLowerCase();
+        const requiresSignedReasoning =
+          modelLower.includes("gemini") &&
+          (modelLower.includes("thinking") ||
+            modelLower.includes("gemini-3") ||
+            modelLower.includes("gemini-2.5") ||
+            modelLower.includes("gemini-pro"));
+        const reasoningSignature =
+          toolCalls && Array.isArray(toolCalls)
+            ? toolCalls
+                .map((tc) => resolvedSignatures.get(tc.id as string))
+                .find((signature): signature is string => Boolean(signature))
+            : undefined;
+
+        if (msg.reasoning_content && (!requiresSignedReasoning || reasoningSignature)) {
+          parts.push({
+            thought: true,
+            text: msg.reasoning_content,
+            ...(reasoningSignature ? { thoughtSignature: reasoningSignature } : {}),
+          });
+        }
+
+        if (content) {
+          const text = typeof content === "string" ? content : extractTextContent(content);
+          if (text) {
+            parts.push({ text });
+          }
+        }
+
+        if (toolCalls && Array.isArray(toolCalls)) {
+          const toolCallIds: string[] = [];
 
           const signaturelessToolCallMode = toolNameOptions.signaturelessToolCallMode;
           const stringifySignaturelessToolCalls = signaturelessToolCallMode === "text";

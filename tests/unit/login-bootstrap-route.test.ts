@@ -244,6 +244,70 @@ test("login bootstrap route POST allows first password creation after setup comp
   assert.equal(await bcrypt.compare("first-secret", settings.password), true);
 });
 
+test("TC-AUTH-SEC-001: remote peer cannot mutate a fresh passwordless bootstrap state", async () => {
+  await settingsDb.updateSettings({
+    requireLogin: true,
+    setupComplete: false,
+  });
+
+  const request = new Request("https://dashboard.example/api/settings/require-login", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      "x-omniroute-peer-locality": "remote",
+    },
+    body: JSON.stringify({
+      requireLogin: false,
+      password: "remote-first-writer-secret",
+    }),
+  });
+
+  const response = await route.POST(request);
+  const settings = await settingsDb.getSettings();
+
+  assert.deepEqual(
+    {
+      rejected: response.status === 401 || response.status === 403,
+      requireLogin: settings.requireLogin,
+      hasPassword: Boolean(settings.password),
+    },
+    { rejected: true, requireLogin: true, hasPassword: false }
+  );
+});
+
+test("TC-AUTH-SEC-002: remote peer cannot mutate passwordless setupComplete state", async () => {
+  await settingsDb.updateSettings({
+    requireLogin: true,
+    password: "",
+    setupComplete: true,
+  });
+
+  const request = new Request("https://dashboard.example/api/settings/require-login", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      "x-omniroute-peer-locality": "remote",
+    },
+    body: JSON.stringify({
+      requireLogin: true,
+      password: "remote-after-setup-secret",
+    }),
+  });
+
+  const response = await route.POST(request);
+  const settings = await settingsDb.getSettings();
+
+  assert.deepEqual(
+    {
+      rejected: response.status === 401 || response.status === 403,
+      requireLogin: settings.requireLogin,
+      hasPassword: Boolean(settings.password),
+      setupComplete: settings.setupComplete,
+    },
+    { rejected: true, requireLogin: true, hasPassword: false, setupComplete: true }
+  );
+});
+
 test("public login bootstrap route POST returns 500 when hashing fails", async () => {
   bcrypt.hash = async () => {
     throw new Error("hash failed");

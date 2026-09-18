@@ -177,7 +177,11 @@ environment that launches the packaged app). The env var always wins over the pe
 preference and is session-scoped — it doesn't get written to the prefs file.
 
 Only `http://` and `https://` URLs are accepted; anything else is rejected before the
-window loads.
+window loads. The configured URL's exact origin (scheme + host + port) is the trust
+boundary for the privileged Electron bridge: IPC calls are accepted only from the
+approved top-level renderer origin, and cross-origin top-level navigation/redirects are
+blocked. Same-origin paths remain supported. If the server intentionally redirects to a
+different origin (for example HTTP to HTTPS), configure the final origin directly.
 
 ## Configuration
 

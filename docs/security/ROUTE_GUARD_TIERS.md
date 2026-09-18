@@ -10,6 +10,27 @@ All OmniRoute management API routes are classified into one of three protection
 tiers. Classification is static, defined in `src/server/authz/routeGuard.ts`,
 and evaluated before any other auth branch runs.
 
+### Pre-rewrite compatibility aliases
+
+Next.js rewrite aliases must enter the central authorization pipeline **before**
+the rewrite occurs. `src/proxy.ts` therefore matches the root compatibility
+aliases explicitly, and `classifyRoute()` canonicalizes them to the same path
+used by `next.config.mjs` before policy, drain, body-size, or route-guard logic
+runs:
+
+| External alias        | Canonical authz path       |
+| --------------------- | -------------------------- |
+| `/anthropic/:path*`   | `/api/anthropic/:path*`    |
+| `/openai/:path*`      | `/api/openai/:path*`       |
+| `/metrics`            | `/api/metrics`             |
+| `/debug`              | `/api/debug`               |
+
+The matcher uses explicit case-stable character groups because Next compiles
+proxy matcher regex sources without preserving path-to-regexp's implicit
+case-insensitive flag. This keeps mixed-case spellings subject to the same
+pre-handler authorization as their canonical `/api/*` destinations and avoids
+security depending on rewrite ordering.
+
 ## Tiers
 
 ### Tier 1 — LOCAL_ONLY

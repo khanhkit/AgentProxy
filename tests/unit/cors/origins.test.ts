@@ -249,7 +249,7 @@ describe("cors/origins.applyCorsHeaders", () => {
     assert.match(res.headers.get("Vary") || "", /Accept-Encoding/);
   });
 
-  it("reflects requested headers from Access-Control-Request-Headers preflight", () => {
+  it("AP-ISS-0011 returns only the canonical supported intersection for requested preflight headers", () => {
     process.env.CORS_ALLOWED_ORIGINS = "https://app.example.com";
     const res = NextResponse.json({ ok: true });
     const req = new Request("https://server.example.com/api/v1/chat/completions", {
@@ -260,7 +260,39 @@ describe("cors/origins.applyCorsHeaders", () => {
       },
     });
     applyCorsHeaders(res, req);
-    assert.equal(res.headers.get("Access-Control-Allow-Headers"), "x-custom-header, authorization");
+    assert.equal(res.headers.get("Access-Control-Allow-Headers"), "Authorization");
+  });
+
+  it("AP-ISS-0011 canonicalizes case/order, removes duplicates, and ignores malformed or unsupported names", () => {
+    process.env.CORS_ALLOWED_ORIGINS = "https://app.example.com";
+    const res = NextResponse.json({ ok: true });
+    const req = new Request("https://server.example.com/api/v1/chat/completions", {
+      method: "OPTIONS",
+      headers: {
+        Origin: "https://app.example.com",
+        "Access-Control-Request-Headers":
+          " X-API-KEY, authorization, x-api-key, bad header, x-not-supported, CONTENT-TYPE ",
+      },
+    });
+    applyCorsHeaders(res, req);
+    assert.equal(
+      res.headers.get("Access-Control-Allow-Headers"),
+      "Content-Type, Authorization, x-api-key"
+    );
+  });
+
+  it("AP-ISS-0011 omits Allow-Headers when a preflight requests no supported header names", () => {
+    process.env.CORS_ALLOWED_ORIGINS = "https://app.example.com";
+    const res = NextResponse.json({ ok: true });
+    const req = new Request("https://server.example.com/api/v1/chat/completions", {
+      method: "OPTIONS",
+      headers: {
+        Origin: "https://app.example.com",
+        "Access-Control-Request-Headers": "x-custom-header, bad header, , x-other",
+      },
+    });
+    applyCorsHeaders(res, req);
+    assert.equal(res.headers.get("Access-Control-Allow-Headers"), null);
   });
 });
 

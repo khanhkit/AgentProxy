@@ -26,12 +26,19 @@ const shim = requireCjs("../../src/mitm/_internal/bypass.cjs") as {
     userPatterns: string[]
   ) => "bypass" | "target" | "passthrough";
   parseBypassJson: (raw: string) => string[];
+  parseConnectAuthorityStrict: (authority: string) => { host: string; port: number } | null;
+  isBlockedConnectAddress: (address: string) => boolean;
+  resolveConnectDestination: (
+    host: string,
+    port: number,
+    lookup?: (
+      hostname: string,
+      options: { all: true; verbatim: true }
+    ) => Promise<Array<{ address: string; family: number }>>
+  ) => Promise<{ host: string; port: number; address: string; family: number }>;
 };
 
-const TARGETS = new Set([
-  "daily-cloudcode-pa.googleapis.com",
-  "api.githubcopilot.com",
-]);
+const TARGETS = new Set(["daily-cloudcode-pa.googleapis.com", "api.githubcopilot.com"]);
 
 test("DEFAULT_BYPASS_PATTERNS — at least the 4 mandatory regexes", () => {
   assert.ok(shim.DEFAULT_BYPASS_PATTERNS.length >= 4);
@@ -66,10 +73,7 @@ test("routeBypass — bypass beats target match (precedence)", () => {
 });
 
 test("routeBypass — known target hostname → target", () => {
-  assert.equal(
-    shim.routeBypass("daily-cloudcode-pa.googleapis.com", TARGETS, []),
-    "target"
-  );
+  assert.equal(shim.routeBypass("daily-cloudcode-pa.googleapis.com", TARGETS, []), "target");
   assert.equal(shim.routeBypass("api.githubcopilot.com", TARGETS, []), "target");
 });
 
@@ -80,44 +84,25 @@ test("routeBypass — unknown hostname → passthrough", () => {
 
 test("routeBypass — user glob pattern → bypass", () => {
   const userPatterns = ["*.internal.example.com"];
-  assert.equal(
-    shim.routeBypass("admin.internal.example.com", TARGETS, userPatterns),
-    "bypass"
-  );
-  assert.equal(
-    shim.routeBypass("external.example.com", TARGETS, userPatterns),
-    "passthrough"
-  );
+  assert.equal(shim.routeBypass("admin.internal.example.com", TARGETS, userPatterns), "bypass");
+  assert.equal(shim.routeBypass("external.example.com", TARGETS, userPatterns), "passthrough");
 });
 
 test("routeBypass — empty hostname → passthrough", () => {
   assert.equal(shim.routeBypass("", TARGETS, []), "passthrough");
-  assert.equal(
-    shim.routeBypass(undefined as unknown as string, TARGETS, []),
-    "passthrough"
-  );
+  assert.equal(shim.routeBypass(undefined as unknown as string, TARGETS, []), "passthrough");
 });
 
 test("routeBypass — targetHosts may be an array (not just Set)", () => {
-  const targetsArr = [
-    "daily-cloudcode-pa.googleapis.com",
-    "api.githubcopilot.com",
-  ];
-  assert.equal(
-    shim.routeBypass("api.githubcopilot.com", targetsArr, []),
-    "target"
-  );
+  const targetsArr = ["daily-cloudcode-pa.googleapis.com", "api.githubcopilot.com"];
+  assert.equal(shim.routeBypass("api.githubcopilot.com", targetsArr, []), "target");
   assert.equal(shim.routeBypass("example.com", targetsArr, []), "passthrough");
 });
 
 test("routeBypass — case-insensitive on hostname", () => {
   assert.equal(shim.routeBypass("MyApp.Okta.COM", TARGETS, []), "bypass");
   assert.equal(
-    shim.routeBypass(
-      "DAILY-cloudcode-pa.googleapis.com".toLowerCase(),
-      TARGETS,
-      []
-    ),
+    shim.routeBypass("DAILY-cloudcode-pa.googleapis.com".toLowerCase(), TARGETS, []),
     "target"
   );
 });
@@ -175,10 +160,7 @@ test("parseBypassJson — missing patterns property → []", () => {
 });
 
 test("parseBypassJson — patterns not an array → []", () => {
-  assert.deepEqual(
-    shim.parseBypassJson(JSON.stringify({ patterns: "foo" })),
-    []
-  );
+  assert.deepEqual(shim.parseBypassJson(JSON.stringify({ patterns: "foo" })), []);
 });
 
 test("parseBypassJson — filters out non-string and empty entries", () => {
@@ -187,6 +169,71 @@ test("parseBypassJson — filters out non-string and empty entries", () => {
   });
   const parsed = shim.parseBypassJson(raw);
   assert.deepEqual(parsed, ["valid.com", "another.com"]);
+});
+
+test("AP-ISS-0038 — CONNECT authority parsing is strict and IPv6-safe", () => {
+  assert.deepEqual(shim.parseConnectAuthorityStrict("example.com:443"), {
+    host: "example.com",
+    port: 443,
+  });
+  assert.deepEqual(shim.parseConnectAuthorityStrict("[2001:4860:4860::8888]:443"), {
+    host: "2001:4860:4860::8888",
+    port: 443,
+  });
+  assert.equal(shim.parseConnectAuthorityStrict("example.com:not-a-port"), null);
+  assert.equal(shim.parseConnectAuthorityStrict("example.com:0"), null);
+  assert.equal(shim.parseConnectAuthorityStrict("user@example.com:443"), null);
+  assert.equal(shim.parseConnectAuthorityStrict("example.com:443/path"), null);
+});
+
+test("AP-ISS-0038 — CONNECT blocks loopback, RFC1918, link-local, metadata and private IPv6", () => {
+  for (const address of [
+    "127.0.0.1",
+    "10.0.0.8",
+    "172.16.4.5",
+    "192.168.1.2",
+    "169.254.169.254",
+    "100.100.100.200",
+    "::1",
+    "fd00::1",
+    "fe80::1",
+  ]) {
+    assert.equal(shim.isBlockedConnectAddress(address), true, address);
+  }
+  assert.equal(shim.isBlockedConnectAddress("1.1.1.1"), false);
+  assert.equal(shim.isBlockedConnectAddress("2606:4700:4700::1111"), false);
+});
+
+test("AP-ISS-0038 — disallowed CONNECT ports fail before DNS resolution", async () => {
+  let lookups = 0;
+  await assert.rejects(
+    shim.resolveConnectDestination("example.com", 22, async () => {
+      lookups++;
+      return [{ address: "93.184.216.34", family: 4 }];
+    }),
+    /CONNECT port 22 is not allowed/
+  );
+  assert.equal(lookups, 0);
+});
+
+test("AP-ISS-0038 — DNS answers are fail-closed and pinned to a public address", async () => {
+  await assert.rejects(
+    shim.resolveConnectDestination("mixed.example", 443, async () => [
+      { address: "93.184.216.34", family: 4 },
+      { address: "127.0.0.1", family: 4 },
+    ]),
+    /blocked private or special address/i
+  );
+
+  const resolved = await shim.resolveConnectDestination("public.example", 443, async () => [
+    { address: "93.184.216.34", family: 4 },
+  ]);
+  assert.deepEqual(resolved, {
+    host: "public.example",
+    port: 443,
+    address: "93.184.216.34",
+    family: 4,
+  });
 });
 
 test("C2 header contract — server.cjs intercept must inject x-omniroute-source and x-omniroute-agent", async () => {
@@ -257,11 +304,7 @@ test("C1 contract — server.cjs registers a CONNECT handler", async () => {
   const here = path.dirname(url.fileURLToPath(import.meta.url));
   const serverPath = path.resolve(here, "../../src/mitm/server.cjs");
   const src = fs.readFileSync(serverPath, "utf-8");
-  assert.match(
-    src,
-    /server\.on\(\s*"connect"/,
-    "server.cjs must register a CONNECT handler"
-  );
+  assert.match(src, /server\.on\(\s*"connect"/, "server.cjs must register a CONNECT handler");
   assert.match(
     src,
     /net\.connect\(/,
@@ -271,6 +314,26 @@ test("C1 contract — server.cjs registers a CONNECT handler", async () => {
     src,
     /HTTP\/1\.1\s+200\s+Connection Established/,
     "server.cjs CONNECT path must reply with 200 Connection Established"
+  );
+});
+
+test("AP-ISS-0037 — default MITM listener is explicitly loopback-bound", async () => {
+  const fs = await import("node:fs");
+  const path = await import("node:path");
+  const url = await import("node:url");
+  const here = path.dirname(url.fileURLToPath(import.meta.url));
+  const serverPath = path.resolve(here, "../../src/mitm/server.cjs");
+  const src = fs.readFileSync(serverPath, "utf-8");
+
+  assert.match(
+    src,
+    /const\s+MITM_BIND_HOST\s*=\s*["']127\.0\.0\.1["']/,
+    "server.cjs must define the default MITM bind host as IPv4 loopback"
+  );
+  assert.match(
+    src,
+    /server\.listen\(\s*LOCAL_PORT\s*,\s*MITM_BIND_HOST\s*,/,
+    "server.cjs must pass the explicit loopback host to server.listen"
   );
 });
 

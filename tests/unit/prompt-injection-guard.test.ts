@@ -6,7 +6,10 @@ import {
   withInjectionGuard,
 } from "../../src/middleware/promptInjectionGuard.ts";
 
-async function withEnv(overrides: Record<string, string | undefined>, fn: any) {
+async function withEnv(
+  overrides: Record<string, string | undefined>,
+  fn: () => Promise<void> | void
+) {
   const originals: Record<string, string | undefined> = {};
 
   for (const [key, value] of Object.entries(overrides)) {
@@ -238,12 +241,44 @@ test("promptInjectionGuard: withInjectionGuard blocks suspicious POST bodies", a
     });
 
     const response = await wrapped(request, {});
-    const payload = (await response.json()) as any;
+    const payload = (await response.json()) as {
+      error: { type: string; detections: number };
+    };
 
     assert.equal(response.status, 400);
     assert.equal(payload.error.type, "injection_detected");
     assert.ok(payload.error.detections >= 1);
   });
+});
+
+test("promptInjectionGuard: optional body budget rejects chunked oversize before downstream handler", async () => {
+  let handlerCalls = 0;
+  const wrapped = withInjectionGuard(
+    async () => {
+      handlerCalls += 1;
+      return new Response("unexpected", { status: 200 });
+    },
+    { mode: "warn", bodySizeLimit: 5 }
+  );
+  const request = new Request("http://localhost/api/v1/images/generations", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: new ReadableStream({
+      start(controller) {
+        controller.enqueue(new TextEncoder().encode('{"a":'));
+        controller.enqueue(new TextEncoder().encode('"123456"}'));
+        controller.close();
+      },
+    }),
+    duplex: "half",
+  } as RequestInit & { duplex: "half" });
+
+  const response = await wrapped(request, {});
+
+  assert.equal(response.status, 413);
+  const payload = (await response.json()) as { error?: { code?: string } };
+  assert.equal(payload.error?.code, "PAYLOAD_TOO_LARGE");
+  assert.equal(handlerCalls, 0);
 });
 
 test("promptInjectionGuard: withInjectionGuard annotates downstream headers in warn mode", async () => {
@@ -268,7 +303,10 @@ test("promptInjectionGuard: withInjectionGuard annotates downstream headers in w
     });
 
     const response = await wrapped(request, {});
-    const payload = (await response.json()) as any;
+    const payload = (await response.json()) as {
+      flagged: string | null;
+      detections: string | null;
+    };
 
     assert.equal(response.status, 200);
     assert.equal(payload.flagged, "true");

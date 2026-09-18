@@ -13,6 +13,7 @@ import assert from "node:assert/strict";
 
 import { registerSupervisor, unregisterSupervisor } from "../../../src/lib/services/registry.ts";
 import type { ServiceSupervisor } from "../../../src/lib/services/ServiceSupervisor.ts";
+import { MAX_HTML_REWRITE_BYTES } from "../../../src/lib/services/reverseProxy.ts";
 import {
   GET,
   POST,
@@ -344,6 +345,53 @@ describe("embed proxy route", () => {
       body.includes('href="/dashboard/providers/services/9router/embed/ui/page"'),
       `Expected rewritten href. Got: ${body.substring(0, 300)}`
     );
+  });
+
+  it("rejects declared oversized HTML before buffering the upstream body", async () => {
+    registerFake("running", 20130);
+    globalThis.fetch = async () =>
+      new Response("small-body", {
+        status: 200,
+        headers: {
+          "content-type": "text/html",
+          "content-length": String(MAX_HTML_REWRITE_BYTES + 1),
+        },
+      });
+
+    const resp = await GET(
+      new Request("http://localhost/dashboard/providers/services/9router/embed/"),
+      makeFakeParams("9router", [])
+    );
+    assert.equal(resp.status, 502);
+    assert.match(await resp.text(), /HTML response exceeds/);
+  });
+
+  it("rejects chunked oversized HTML once streamed bytes cross the rewrite cap", async () => {
+    registerFake("running", 20130);
+    const chunk = new Uint8Array(1024 * 1024);
+    let emitted = 0;
+    globalThis.fetch = async () =>
+      new Response(
+        new ReadableStream<Uint8Array>({
+          pull(controller) {
+            if (emitted >= 9) {
+              controller.close();
+              return;
+            }
+            emitted += 1;
+            controller.enqueue(chunk);
+          },
+        }),
+        { status: 200, headers: { "content-type": "text/html" } }
+      );
+
+    const resp = await GET(
+      new Request("http://localhost/dashboard/providers/services/9router/embed/"),
+      makeFakeParams("9router", [])
+    );
+    assert.equal(resp.status, 502);
+    assert.match(await resp.text(), /HTML response exceeds/);
+    assert.equal(emitted, 9, "proxy should stop immediately after crossing the 8 MiB cap");
   });
 
   it("G-05: JSON response is NOT rewritten (streaming pass-through)", async () => {

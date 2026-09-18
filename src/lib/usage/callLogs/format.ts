@@ -143,10 +143,24 @@ export function buildRequestSummary(
   requestType: string | null,
   requestBody: unknown
 ): string | null {
-  if (requestType !== "search") return null;
-
   const body = asRecord(requestBody);
   if (Object.keys(body).length === 0) return null;
+
+  if (requestType === "audio_transcription") {
+    const summary: JsonRecord = {};
+    if (typeof body.audioDurationSeconds === "number" && Number.isFinite(body.audioDurationSeconds)) {
+      summary.audioDurationSeconds = body.audioDurationSeconds;
+    }
+    if (typeof body.contentType === "string" && body.contentType.trim().length > 0) {
+      summary.contentType = body.contentType;
+    }
+    if (typeof body.sizeBytes === "number" && Number.isFinite(body.sizeBytes) && body.sizeBytes >= 0) {
+      summary.sizeBytes = body.sizeBytes;
+    }
+    return Object.keys(summary).length > 0 ? JSON.stringify(summary) : null;
+  }
+
+  if (requestType !== "search") return null;
 
   const summary: JsonRecord = {};
   if (typeof body.query === "string" && body.query.trim().length > 0) {

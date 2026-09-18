@@ -11,7 +11,13 @@ test("runUpdateCommand claims success without verifying the running binary versi
   writeFileSync(
     path.join(fakeBin, "npm"),
     `#!/usr/bin/env bash
-if [ "$1" = "view" ]; then echo "3.8.99"; exit 0; fi
+if [ "$1" = "view" ]; then
+  case "$*" in
+    *dist.integrity*) echo '[{"version":"3.8.99","dist.integrity":"sha512-YWJjZA=="}]' ;;
+    *) echo "3.8.99" ;;
+  esac
+  exit 0
+fi
 if [ "$1" = "install" ]; then echo "added 1 package"; exit 0; fi
 exit 0
 `,

@@ -7,6 +7,8 @@ type McpHttpAuthContext = {
   cookie?: string;
   xApiKey?: string;
   anthropicVersion?: string;
+  /** Resolved non-secret api_keys.id for request-scoped audit attribution. */
+  apiKeyId?: string;
 };
 
 /**
@@ -41,6 +43,20 @@ export function getMcpHttpAuthHeadersForInternalFetch(): Record<string, string> 
   return headers;
 }
 
+/** Resolved non-secret caller id for the current HTTP MCP request, if any. */
+export function getMcpHttpAuditApiKeyId(): string | undefined {
+  return mcpHttpAuthContext.getStore()?.apiKeyId;
+}
+
+/**
+ * Bind the already-authenticated `api_keys.id` to the current request context.
+ * The raw bearer token is intentionally never copied into audit identity state.
+ */
+export function setMcpHttpAuditApiKeyId(apiKeyId: string): void {
+  const context = mcpHttpAuthContext.getStore();
+  if (context && apiKeyId.trim()) context.apiKeyId = apiKeyId.trim();
+}
+
 /**
  * Resolve the caller's real per-key `api_keys.scopes` for one HTTP/SSE MCP
  * request, for #7895's per-key scope binding. Returns `undefined` when the
@@ -61,7 +77,9 @@ export async function resolveMcpCallerAuthInfo(
     if (!(await isValidApiKey(rawKey))) return undefined;
     const meta = await getApiKeyMetadata(rawKey);
     if (!meta || !meta.id) return undefined;
-    return { token: rawKey, clientId: String(meta.id), scopes: meta.scopes ?? [] };
+    const clientId = String(meta.id);
+    setMcpHttpAuditApiKeyId(clientId);
+    return { token: rawKey, clientId, scopes: meta.scopes ?? [] };
   } catch {
     // Fail closed: an unresolved caller falls through to the meta/env scope
     // chain rather than ever synthesizing a false per-key scope grant.

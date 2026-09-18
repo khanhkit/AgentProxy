@@ -118,15 +118,21 @@ export interface ProviderDiscoveryResult {
   };
 }
 
-export async function executeProviderDiscovery(task: A2ATask): Promise<ProviderDiscoveryResult> {
+export async function executeProviderDiscovery(
+  task: A2ATask,
+  signal?: AbortSignal
+): Promise<ProviderDiscoveryResult> {
+  signal?.throwIfAborted();
   const [{ getProviderConnections }, { getAllCircuitBreakerStatuses }] = await Promise.all([
     import("@/lib/db/providers"),
     import("@/shared/utils/circuitBreaker"),
   ]);
 
+  signal?.throwIfAborted();
   const requestedCapability = detectCapability(task);
   const connections = ((await getProviderConnections().catch(() => [])) ||
     []) as ProviderConnectionLike[];
+  signal?.throwIfAborted();
   const activeProviders = new Set(
     connections
       .filter((connection) => connection.provider && connection.isActive !== false)

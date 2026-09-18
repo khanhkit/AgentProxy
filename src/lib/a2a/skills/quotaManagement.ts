@@ -12,13 +12,15 @@ import { resolveOmniRouteBaseUrl } from "@/shared/utils/resolveOmniRouteBaseUrl"
 const OMNIROUTE_BASE_URL = resolveOmniRouteBaseUrl();
 const OMNIROUTE_API_KEY = process.env.OMNIROUTE_API_KEY || "";
 
-async function quotaFetch(path: string): Promise<any> {
+async function quotaFetch(path: string, signal?: AbortSignal): Promise<any> {
   const url = `${OMNIROUTE_BASE_URL}${path}`;
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
     ...(OMNIROUTE_API_KEY ? { Authorization: `Bearer ${OMNIROUTE_API_KEY}` } : {}),
   };
-  const res = await fetch(url, { headers, signal: AbortSignal.timeout(10000) });
+  const timeoutSignal = AbortSignal.timeout(10000);
+  const requestSignal = signal ? AbortSignal.any([signal, timeoutSignal]) : timeoutSignal;
+  const res = await fetch(url, { headers, signal: requestSignal });
   if (!res.ok) throw new Error(`API [${res.status}]`);
   return res.json();
 }
@@ -28,12 +30,15 @@ export interface QuotaManagementResult {
   metadata: Record<string, unknown>;
 }
 
-export async function executeQuotaManagement(task: A2ATask): Promise<QuotaManagementResult> {
+export async function executeQuotaManagement(
+  task: A2ATask,
+  signal?: AbortSignal
+): Promise<QuotaManagementResult> {
   const query = task.input.messages[task.input.messages.length - 1]?.content?.toLowerCase() || "";
 
   const [quotaRaw, combosRaw] = await Promise.allSettled([
-    quotaFetch("/api/usage/quota"),
-    quotaFetch("/api/combos"),
+    quotaFetch("/api/usage/quota", signal),
+    quotaFetch("/api/combos", signal),
   ]);
 
   const quota =

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Badge } from "@/shared/components";
 import Editor from "@/shared/components/MonacoEditor";
+import { safeHttpHref } from "@/shared/utils/linkify";
 
 interface SearchResult {
   title: string;
@@ -166,34 +167,41 @@ export default function ResultsPanel({
           </div>
 
           {/* Results list */}
-          {response.results.map((r, i) => (
-            <div
-              key={i}
-              className="border-l-[3px] border-l-primary p-3 bg-surface rounded-r-lg border border-border"
-            >
-              <div className="flex justify-between items-start">
-                <span className="text-sm font-medium text-text-main">
-                  {i + 1}. {r.title}
-                </span>
-                {r.score != null && (
-                  <span
-                    className={`text-[10px] px-2 py-0.5 rounded-md ml-2 whitespace-nowrap ${getScoreBg(r.score)} ${getScoreColor(r.score)}`}
-                  >
-                    {r.score.toFixed(2)}
-                  </span>
-                )}
-              </div>
-              <a
-                href={r.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-accent text-[11px] block mt-0.5"
+          {response.results.map((r, i) => {
+            const safeHref = safeHttpHref(r.url);
+            return (
+              <div
+                key={i}
+                className="border-l-[3px] border-l-primary p-3 bg-surface rounded-r-lg border border-border"
               >
-                {r.url}
-              </a>
-              <p className="text-xs text-text-muted mt-1 leading-relaxed">{r.snippet}</p>
-            </div>
-          ))}
+                <div className="flex justify-between items-start">
+                  <span className="text-sm font-medium text-text-main">
+                    {i + 1}. {r.title}
+                  </span>
+                  {r.score != null && (
+                    <span
+                      className={`text-[10px] px-2 py-0.5 rounded-md ml-2 whitespace-nowrap ${getScoreBg(r.score)} ${getScoreColor(r.score)}`}
+                    >
+                      {r.score.toFixed(2)}
+                    </span>
+                  )}
+                </div>
+                {safeHref ? (
+                  <a
+                    href={safeHref}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-accent text-[11px] block mt-0.5"
+                  >
+                    {r.url}
+                  </a>
+                ) : (
+                  <span className="text-accent text-[11px] block mt-0.5">{r.url}</span>
+                )}
+                <p className="text-xs text-text-muted mt-1 leading-relaxed">{r.snippet}</p>
+              </div>
+            );
+          })}
         </div>
       )}
 

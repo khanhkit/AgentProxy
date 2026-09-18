@@ -214,8 +214,7 @@ export async function POST(req: NextRequest) {
       const task = tm.createTask({ skill, messages, metadata: params?.metadata }, callerOwner);
       try {
         tm.updateTask(task.id, "working");
-        const result = await handler(task);
-        tm.updateTask(task.id, "completed", result.artifacts);
+        const result = await executeA2ATaskWithState(tm, task, handler, undefined, req.signal);
 
         // Log routing decision
         if (skill === "smart-routing" && result.metadata) {
@@ -255,7 +254,6 @@ export async function POST(req: NextRequest) {
       } catch (err) {
         console.error("A2A ERROR TRACE:", err);
         const msg = err instanceof Error ? err.message : String(err);
-        tm.updateTask(task.id, "failed", [{ type: "error", content: msg }], msg);
         return jsonRpcError(id, -32603, `Skill execution failed: ${msg}`);
       }
     }
@@ -282,7 +280,7 @@ export async function POST(req: NextRequest) {
 
       const stream = createA2AStream(
         task,
-        async (t) => executeA2ATaskWithState(tm, t, handler),
+        async (t) => executeA2ATaskWithState(tm, t, handler, undefined, req.signal),
         req.signal,
         {
           onStart: () => tm.beginStream(),

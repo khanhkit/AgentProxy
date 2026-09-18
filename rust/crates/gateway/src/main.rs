@@ -6,13 +6,17 @@ use std::{
 };
 
 use agentproxy_gateway::{
-    app, snapshot_poll::SnapshotPollPolicy, sync_snapshot_once_conditional, AppState,
-    SnapshotConditionalOutcome, SnapshotSyncOutcome,
+    app,
+    shutdown::{await_bounded_shutdown, ShutdownOutcome},
+    snapshot_poll::SnapshotPollPolicy,
+    sync_snapshot_once_conditional, AppState, SnapshotConditionalOutcome, SnapshotSyncOutcome,
 };
-use tokio::{net::TcpListener, task::JoinHandle, time::sleep};
+use tokio::{net::TcpListener, sync::oneshot, task::JoinHandle, time::sleep};
 
 const DEFAULT_API_PORT: u16 = 20128;
 const DEFAULT_DASHBOARD_PORT: u16 = 20129;
+const DEFAULT_SHUTDOWN_DRAIN_MS: u64 = 15_000;
+const FORCE_SHUTDOWN_SETTLE_MS: u64 = 2_000;
 
 #[tokio::main(flavor = "multi_thread")]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -26,10 +30,54 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         config.listen_addr
     );
 
-    let server = axum::serve(listener, app(state)).with_graceful_shutdown(shutdown_signal());
-    let result = server.await;
+    let (graceful_tx, graceful_rx) = oneshot::channel::<()>();
+    let server = axum::serve(listener, app(state.clone())).with_graceful_shutdown(async move {
+        let _ = graceful_rx.await;
+    });
+    let drain_state = state.clone();
+    let force_state = state.clone();
+    let poller_abort = poller.abort_handle();
+    let drain_timeout = config.shutdown_drain_timeout;
+
+    let outcome = await_bounded_shutdown(
+        server,
+        shutdown_signal(),
+        drain_timeout,
+        Duration::from_millis(FORCE_SHUTDOWN_SETTLE_MS),
+        move || {
+            drain_state.begin_shutdown();
+            poller_abort.abort();
+            eprintln!(
+                "[agentproxy-rust] shutdown signal received; draining for up to {} ms",
+                drain_timeout.as_millis()
+            );
+            let _ = graceful_tx.send(());
+        },
+        move || {
+            eprintln!(
+                "[agentproxy-rust] shutdown drain deadline exceeded; terminating long-lived sessions"
+            );
+            force_state.force_shutdown();
+        },
+    )
+    .await?;
+
     poller.abort();
-    result?;
+    match outcome {
+        ShutdownOutcome::ServerExited => {}
+        ShutdownOutcome::Drained => {
+            eprintln!("[agentproxy-rust] graceful shutdown completed within drain deadline");
+        }
+        ShutdownOutcome::DeadlineExceeded => {
+            eprintln!("[agentproxy-rust] forced long-lived sessions closed after drain deadline");
+        }
+        ShutdownOutcome::HardDeadlineExceeded => {
+            eprintln!(
+                "[agentproxy-rust] forced shutdown settle deadline exceeded; exiting process"
+            );
+            process::exit(0);
+        }
+    }
     Ok(())
 }
 
@@ -38,6 +86,7 @@ struct RuntimeConfig {
     snapshot_url: String,
     legacy_base_url: String,
     token: String,
+    shutdown_drain_timeout: Duration,
 }
 
 impl RuntimeConfig {
@@ -71,12 +120,18 @@ impl RuntimeConfig {
             .ok()
             .filter(|value| !value.trim().is_empty())
             .ok_or("AGENTPROXY_INTERNAL_SERVICE_TOKEN (or legacy OMNIROUTE_INTERNAL_SERVICE_TOKEN) is required")?;
+        let shutdown_drain_timeout = env_duration_ms(
+            "AGENTPROXY_RUST_CORE_SHUTDOWN_DRAIN_MS",
+            "OMNIROUTE_RUST_CORE_SHUTDOWN_DRAIN_MS",
+            DEFAULT_SHUTDOWN_DRAIN_MS,
+        )?;
 
         Ok(Self {
             listen_addr,
             snapshot_url,
             legacy_base_url,
             token,
+            shutdown_drain_timeout,
         })
     }
 }
@@ -86,6 +141,37 @@ fn env_port(name: &str, default: u16) -> Result<u16, Box<dyn std::error::Error>>
         Ok(value) if !value.trim().is_empty() => Ok(value.parse::<u16>()?),
         _ => Ok(default),
     }
+}
+
+fn env_duration_ms(
+    primary: &str,
+    legacy: &str,
+    default_ms: u64,
+) -> Result<Duration, Box<dyn std::error::Error>> {
+    let configured = env::var(primary)
+        .or_else(|_| env::var(legacy))
+        .ok()
+        .filter(|value| !value.trim().is_empty());
+    let Some(value) = configured else {
+        return Ok(Duration::from_millis(default_ms));
+    };
+    Ok(parse_duration_ms(primary, &value)?)
+}
+
+fn parse_duration_ms(name: &str, value: &str) -> Result<Duration, std::io::Error> {
+    let millis = value.trim().parse::<u64>().map_err(|_| {
+        std::io::Error::new(
+            std::io::ErrorKind::InvalidInput,
+            format!("{name} must be a positive integer number of milliseconds"),
+        )
+    })?;
+    if millis == 0 {
+        return Err(std::io::Error::new(
+            std::io::ErrorKind::InvalidInput,
+            format!("{name} must be greater than zero"),
+        ));
+    }
+    Ok(Duration::from_millis(millis))
 }
 
 fn snapshot_poll_seed() -> u64 {
@@ -99,6 +185,7 @@ fn snapshot_poll_seed() -> u64 {
 fn spawn_snapshot_poller(state: AppState, url: String, token: String) -> JoinHandle<()> {
     tokio::spawn(async move {
         let client = match reqwest::Client::builder()
+            .redirect(reqwest::redirect::Policy::none())
             .connect_timeout(Duration::from_secs(3))
             .read_timeout(Duration::from_secs(10))
             .pool_idle_timeout(Duration::from_secs(30))
@@ -176,5 +263,21 @@ async fn shutdown_signal() {
     #[cfg(not(unix))]
     {
         let _ = tokio::signal::ctrl_c().await;
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn shutdown_drain_duration_requires_positive_integer_milliseconds() {
+        assert_eq!(
+            parse_duration_ms("TEST_SHUTDOWN_DRAIN_MS", "250")
+                .expect("valid duration should parse"),
+            Duration::from_millis(250)
+        );
+        assert!(parse_duration_ms("TEST_SHUTDOWN_DRAIN_MS", "0").is_err());
+        assert!(parse_duration_ms("TEST_SHUTDOWN_DRAIN_MS", "not-a-number").is_err());
     }
 }

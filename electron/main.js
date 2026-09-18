@@ -37,7 +37,12 @@ const { loginManager } = require("./loginManager");
 const { killProcessTree } = require("./processTree");
 const { resolveServerEntry } = require("./lib/resolveServerEntry");
 const { resolveDarwinHelperExecutable } = require("./lib/resolveNodeHelper");
-const { resolveRemoteServerUrl, isValidHttpUrl } = require("./lib/resolveRemoteServerUrl");
+const {
+  resolveRemoteServerUrl,
+  isValidHttpUrl,
+  isTrustedRendererUrl,
+  isTrustedRendererEvent,
+} = require("./lib/resolveRemoteServerUrl");
 const {
   readPreferences,
   writeRemoteServerUrl,
@@ -413,7 +418,15 @@ function createWindow({ showWhenReady = true } = {}) {
   });
   mainWindow = window;
 
-  // Load the Next.js app
+  const guardTrustedNavigation = (event, url) => {
+    if (isTrustedRendererUrl(url, getServerUrl())) return;
+    event.preventDefault();
+    console.warn("[Electron] Blocked privileged window navigation to untrusted origin:", url);
+  };
+  window.webContents.on("will-navigate", guardTrustedNavigation);
+  window.webContents.on("will-redirect", guardTrustedNavigation);
+
+  // Load the Next.js app only after navigation guards are installed.
   window.loadURL(resolveRendererUrl(lastRendererUrl, getServerUrl()));
   if (isDev) {
     window.webContents.openDevTools({ mode: "detach" });
@@ -981,8 +994,31 @@ function isLinuxDesktopAutostartEnabled() {
 }
 
 // ── IPC Handlers ───────────────────────────────────────────
+function assertTrustedMainRenderer(event, channel) {
+  if (isTrustedRendererEvent(event, getServerUrl())) return;
+  console.warn(`[Electron] Blocked privileged IPC from untrusted renderer: ${channel}`);
+  throw new Error("Blocked privileged IPC from untrusted renderer");
+}
+
+function handleTrustedMainIpc(channel, handler) {
+  ipcMain.handle(channel, (event, ...args) => {
+    assertTrustedMainRenderer(event, channel);
+    return handler(event, ...args);
+  });
+}
+
+function onTrustedMainIpc(channel, listener) {
+  ipcMain.on(channel, (event, ...args) => {
+    if (!isTrustedRendererEvent(event, getServerUrl())) {
+      console.warn(`[Electron] Blocked privileged IPC from untrusted renderer: ${channel}`);
+      return;
+    }
+    return listener(event, ...args);
+  });
+}
+
 function setupIpcHandlers() {
-  ipcMain.handle("get-app-info", () => ({
+  handleTrustedMainIpc("get-app-info", () => ({
     name: app.getName(),
     version: app.getVersion(),
     platform: process.platform,
@@ -1004,7 +1040,7 @@ function setupIpcHandlers() {
     remoteServerPromptWindow?.close();
   });
 
-  ipcMain.handle("open-external", (_event, url) => {
+  handleTrustedMainIpc("open-external", (_event, url) => {
     try {
       const parsedUrl = new URL(url);
       if (["http:", "https:"].includes(parsedUrl.protocol)) {
@@ -1015,10 +1051,10 @@ function setupIpcHandlers() {
     }
   });
 
-  ipcMain.handle("get-data-dir", () => app.getPath("userData"));
+  handleTrustedMainIpc("get-data-dir", () => app.getPath("userData"));
 
   // Fix #2: Add timeout to restart
-  ipcMain.handle("restart-server", async () => {
+  handleTrustedMainIpc("restart-server", async () => {
     const serverToStop = nextServer;
     stopNextServer();
     await waitForServerExit(serverToStop);
@@ -1028,18 +1064,18 @@ function setupIpcHandlers() {
   });
 
   // Window controls
-  ipcMain.on("window-minimize", () => mainWindow?.minimize());
+  onTrustedMainIpc("window-minimize", () => mainWindow?.minimize());
 
-  ipcMain.on("window-maximize", () => {
+  onTrustedMainIpc("window-maximize", () => {
     if (mainWindow) {
       mainWindow.isMaximized() ? mainWindow.unmaximize() : mainWindow.maximize();
     }
   });
 
-  ipcMain.on("window-close", () => mainWindow?.close());
+  onTrustedMainIpc("window-close", () => mainWindow?.close());
 
   // Auto-update IPC handlers
-  ipcMain.handle("check-for-updates", async () => {
+  handleTrustedMainIpc("check-for-updates", async () => {
     try {
       await checkForUpdates(false);
       return { success: true };
@@ -1050,7 +1086,7 @@ function setupIpcHandlers() {
     }
   });
 
-  ipcMain.handle("download-update", async () => {
+  handleTrustedMainIpc("download-update", async () => {
     try {
       await downloadUpdate();
       return { success: true };
@@ -1061,12 +1097,12 @@ function setupIpcHandlers() {
     }
   });
 
-  ipcMain.handle("install-update", () => {
+  handleTrustedMainIpc("install-update", () => {
     installUpdate();
     // No return value — app will quit and restart
   });
 
-  ipcMain.handle("get-app-version", () => app.getVersion());
+  handleTrustedMainIpc("get-app-version", () => app.getVersion());
 
   // ── Web-Cookie Login IPC Handlers ──────────────────────────
   // Forward login status events to the renderer. Registered ONCE here — never
@@ -1076,7 +1112,7 @@ function setupIpcHandlers() {
     sendToRenderer("login:status", status);
   });
 
-  ipcMain.handle("login:start", async (_event, providerId, options) => {
+  handleTrustedMainIpc("login:start", async (_event, providerId, options) => {
     const result = await loginManager.startLogin(providerId, options);
 
     // Persist extracted credentials
@@ -1101,24 +1137,24 @@ function setupIpcHandlers() {
     return result;
   });
 
-  ipcMain.handle("login:cancel", async () => {
+  handleTrustedMainIpc("login:cancel", async () => {
     loginManager.cancel();
     return { success: true };
   });
 
-  ipcMain.handle("login:status", async () => {
+  handleTrustedMainIpc("login:status", async () => {
     return { active: loginManager.getActiveProvider() !== null };
   });
 
   // Autostart management handlers
-  ipcMain.handle("get-autostart-status", () => {
+  handleTrustedMainIpc("get-autostart-status", () => {
     if (process.platform === "linux") {
       return isLinuxDesktopAutostartEnabled();
     }
     return app.getLoginItemSettings().openAtLogin;
   });
 
-  ipcMain.handle("enable-autostart", () => {
+  handleTrustedMainIpc("enable-autostart", () => {
     if (process.platform === "linux") {
       return enableLinuxDesktopAutostart();
     }
@@ -1134,7 +1170,7 @@ function setupIpcHandlers() {
     }
   });
 
-  ipcMain.handle("disable-autostart", () => {
+  handleTrustedMainIpc("disable-autostart", () => {
     if (process.platform === "linux") {
       return disableLinuxDesktopAutostart();
     }

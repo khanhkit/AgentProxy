@@ -84,6 +84,8 @@ impl ConfigSnapshot {
 pub enum SnapshotError {
     UnsupportedSchema { received: u32, supported: u32 },
     StaleGeneration { current: u64, received: u64 },
+    DuplicateCodexConnectionId { id: String },
+    DuplicateApiKeyHash,
 }
 
 #[derive(Debug, Default, Clone, PartialEq, Eq)]

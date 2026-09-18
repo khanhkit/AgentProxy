@@ -490,6 +490,64 @@ test("OAuth refresh fails closed instead of falling through a dead account proxy
   );
 });
 
+test("normalizeOAuthExpiryMs accepts ISO, epoch ms/seconds, decimal ms strings, and rejects invalid values", () => {
+  const expiresAtMs = 1_768_527_451_123;
+  const expiresAtSeconds = Math.floor(expiresAtMs / 1000);
+
+  assert.equal(
+    tokenRefresh.normalizeOAuthExpiryMs(new Date(expiresAtMs).toISOString()),
+    expiresAtMs
+  );
+  assert.equal(tokenRefresh.normalizeOAuthExpiryMs(expiresAtMs), expiresAtMs);
+  assert.equal(tokenRefresh.normalizeOAuthExpiryMs(String(expiresAtMs)), expiresAtMs);
+  assert.equal(tokenRefresh.normalizeOAuthExpiryMs(`${expiresAtMs}.0`), expiresAtMs);
+  assert.equal(
+    tokenRefresh.normalizeOAuthExpiryMs(expiresAtSeconds),
+    expiresAtSeconds * 1000
+  );
+  assert.equal(
+    tokenRefresh.normalizeOAuthExpiryMs(String(expiresAtSeconds)),
+    expiresAtSeconds * 1000
+  );
+
+  assert.equal(tokenRefresh.normalizeOAuthExpiryMs(""), null);
+  assert.equal(tokenRefresh.normalizeOAuthExpiryMs("not-a-date"), null);
+  assert.equal(tokenRefresh.normalizeOAuthExpiryMs(Number.POSITIVE_INFINITY), null);
+  assert.equal(tokenRefresh.normalizeOAuthExpiryMs("999999999999999999999999"), null);
+});
+
+test("checkAndRefreshToken refreshes a near-expiry numeric epoch string", async () => {
+  const now = 1_700_000_000_000;
+  const connection = await providersDb.createProviderConnection({
+    provider: "claude",
+    authType: "oauth",
+    name: "Claude numeric expiry OAuth",
+    accessToken: "claude-old-numeric",
+    refreshToken: "claude-refresh-numeric",
+    expiresAt: String(now + tokenRefresh.TOKEN_EXPIRY_BUFFER_MS - 1_000),
+  });
+
+  await withMockedNow(now, async () => {
+    await withMockedFetch(
+      async (url) => {
+        assert.equal(String(url), OAUTH_ENDPOINTS.anthropic.token);
+        return jsonResponse({
+          access_token: "claude-access-numeric-fresh",
+          refresh_token: "claude-refresh-numeric-fresh",
+          expires_in: 900,
+        });
+      },
+      async () => {
+        const refreshed = await tokenRefresh.checkAndRefreshToken("claude", {
+          ...connection,
+          connectionId: connection.id,
+        });
+        assert.equal(refreshed.accessToken, "claude-access-numeric-fresh");
+      }
+    );
+  });
+});
+
 test("checkAndRefreshToken refreshes expiring OAuth access tokens and updates the connection", async () => {
   const now = 1_700_000_000_000;
   const connection = await providersDb.createProviderConnection({

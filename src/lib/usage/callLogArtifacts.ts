@@ -331,13 +331,21 @@ export function readCallArtifact(relativePath: string | null): {
   }
 }
 
-export function deleteCallArtifact(relativePath: string | null, baseDir = CALL_LOGS_DIR): boolean {
-  if (!baseDir || !relativePath) return false;
+export type DeleteCallArtifactOutcome =
+  | { state: "deleted" }
+  | { state: "missing" }
+  | { state: "error"; error: string };
+
+export function deleteCallArtifact(
+  relativePath: string | null,
+  baseDir = CALL_LOGS_DIR
+): DeleteCallArtifactOutcome {
+  if (!baseDir || !relativePath) return { state: "missing" };
 
   try {
     const resolvedBaseDir = path.resolve(baseDir);
     const absPath = path.join(resolvedBaseDir, relativePath);
-    if (!fs.existsSync(absPath)) return false;
+    if (!fs.existsSync(absPath)) return { state: "missing" };
     fs.rmSync(absPath, { force: true });
     const parentDir = path.dirname(absPath);
     if (parentDir !== resolvedBaseDir) {
@@ -347,9 +355,12 @@ export function deleteCallArtifact(relativePath: string | null, baseDir = CALL_L
         // Directory is non-empty or already gone.
       }
     }
-    return true;
-  } catch {
-    return false;
+    return { state: "deleted" };
+  } catch (error) {
+    return {
+      state: "error",
+      error: error instanceof Error ? error.message : String(error),
+    };
   }
 }
 

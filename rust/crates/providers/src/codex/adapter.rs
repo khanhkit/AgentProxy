@@ -3,15 +3,62 @@ use std::collections::BTreeMap;
 use agentproxy_control_protocol::snapshot::CodexConnectionConfig;
 use serde_json::{Map, Value};
 
+pub const CODEX_NATIVE_WIRE_CONTRACT_VERSION: u32 = 1;
+pub const SAFE_CODEX_CLIENT_HEADER_NAMES: [&str; 12] = [
+    "version",
+    "openai-beta",
+    "x-codex-beta-features",
+    "user-agent",
+    "x-codex-session-id",
+    "session-id",
+    "thread-id",
+    "thread_id",
+    "x-client-request-id",
+    "x-codex-installation-id",
+    "x-codex-window-id",
+    "x-codex-turn-metadata",
+];
+pub const MANDATORY_CODEX_GATEWAY_HEADER_NAMES: [&str; 6] = [
+    "content-type",
+    "authorization",
+    "accept",
+    "originator",
+    "chatgpt-account-id",
+    "session_id",
+];
+pub const FORBIDDEN_CODEX_CLIENT_HEADER_NAMES: [&str; 18] = [
+    "authorization",
+    "content-type",
+    "accept",
+    "host",
+    "content-length",
+    "connection",
+    "proxy-authorization",
+    "proxy-connection",
+    "transfer-encoding",
+    "te",
+    "upgrade",
+    "originator",
+    "chatgpt-account-id",
+    "session_id",
+    "cookie",
+    "set-cookie",
+    "x-api-key",
+    "x-codex-turn-state",
+];
+
 const DEFAULT_CODEX_CLIENT_VERSION: &str = "0.153.2";
 const CODEX_ORIGINATOR: &str = "codex_cli_rs";
 const DEFAULT_CODEX_INSTRUCTIONS: &str = "Follow the developer instructions in the conversation.";
+const MAX_PRESERVED_CLIENT_HEADERS_BYTES: usize = 8 * 1024;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum PrepareError {
     InvalidBody,
     UnsupportedEndpoint,
     MissingAccessToken,
+    InvalidClientHeader(String),
+    UnsupportedCapabilities(Vec<String>),
 }
 
 #[derive(Clone, PartialEq)]
@@ -27,8 +74,17 @@ pub struct CodexAdapter;
 impl CodexAdapter {
     pub fn prepare(
         endpoint_path: &str,
+        body: Value,
+        account: &CodexConnectionConfig,
+    ) -> Result<PreparedRequest, PrepareError> {
+        Self::prepare_with_client_headers(endpoint_path, body, account, &BTreeMap::new())
+    }
+
+    pub fn prepare_with_client_headers(
+        endpoint_path: &str,
         mut body: Value,
         account: &CodexConnectionConfig,
+        client_headers: &BTreeMap<String, String>,
     ) -> Result<PreparedRequest, PrepareError> {
         if account.access_token.trim().is_empty() {
             return Err(PrepareError::MissingAccessToken);
@@ -61,6 +117,12 @@ impl CodexAdapter {
         normalize_messages(record);
         convert_system_to_developer(record);
         normalize_reasoning_alias(record);
+        normalize_reasoning_effort_field(record);
+
+        let unsupported = unsupported_capabilities(record);
+        if !unsupported.is_empty() {
+            return Err(PrepareError::UnsupportedCapabilities(unsupported));
+        }
 
         for key in [
             "messages",
@@ -136,6 +198,8 @@ impl CodexAdapter {
             headers.insert("session_id".to_owned(), session_id);
         }
 
+        apply_safe_client_headers(&mut headers, client_headers)?;
+
         Ok(PreparedRequest {
             url,
             headers,
@@ -145,19 +209,73 @@ impl CodexAdapter {
     }
 }
 
+fn apply_safe_client_headers(
+    headers: &mut BTreeMap<String, String>,
+    client_headers: &BTreeMap<String, String>,
+) -> Result<(), PrepareError> {
+    let mut preserved = BTreeMap::<&'static str, &str>::new();
+    let mut total_bytes = 0usize;
+
+    for (name, value) in client_headers {
+        let Some(canonical) = canonical_safe_client_header_name(name) else {
+            continue;
+        };
+
+        if preserved.insert(canonical, value.as_str()).is_some() {
+            return Err(PrepareError::InvalidClientHeader(name.clone()));
+        }
+
+        if value.is_empty()
+            || !value
+                .bytes()
+                .all(|byte| byte == b'\t' || (b' '..=b'~').contains(&byte))
+        {
+            return Err(PrepareError::InvalidClientHeader(name.clone()));
+        }
+
+        total_bytes = total_bytes
+            .saturating_add(canonical.len())
+            .saturating_add(value.len());
+        if total_bytes > MAX_PRESERVED_CLIENT_HEADERS_BYTES {
+            return Err(PrepareError::InvalidClientHeader(name.clone()));
+        }
+    }
+
+    for (name, value) in preserved {
+        headers.insert(name.to_owned(), value.to_owned());
+    }
+
+    Ok(())
+}
+
+fn canonical_safe_client_header_name(name: &str) -> Option<&'static str> {
+    match name.to_ascii_lowercase().as_str() {
+        "version" => Some("Version"),
+        "openai-beta" => Some("Openai-Beta"),
+        "x-codex-beta-features" => Some("X-Codex-Beta-Features"),
+        "user-agent" => Some("User-Agent"),
+        "x-codex-session-id" => Some("X-Codex-Session-Id"),
+        "session-id" => Some("Session-Id"),
+        "thread-id" => Some("Thread-Id"),
+        "thread_id" => Some("thread_id"),
+        "x-client-request-id" => Some("X-Client-Request-Id"),
+        "x-codex-installation-id" => Some("X-Codex-Installation-Id"),
+        "x-codex-window-id" => Some("X-Codex-Window-Id"),
+        "x-codex-turn-metadata" => Some("X-Codex-Turn-Metadata"),
+        _ => None,
+    }
+}
+
 fn responses_subpath(endpoint_path: &str) -> Option<String> {
-    let normalized = endpoint_path.trim_end_matches('/');
+    let normalized = endpoint_path.trim().trim_end_matches('/');
     let lower = normalized.to_ascii_lowercase();
+
     if lower == "responses" || lower.ends_with("/responses") {
         return Some(String::new());
     }
 
-    if let Some(index) = lower.rfind("/responses/") {
-        return Some(normalized[index + "/responses".len()..].to_owned());
-    }
-
-    if lower.starts_with("responses/") {
-        return Some(normalized["responses".len()..].to_owned());
+    if lower == "responses/compact" || lower.ends_with("/responses/compact") {
+        return Some("/compact".to_owned());
     }
 
     None
@@ -279,6 +397,52 @@ fn normalize_reasoning_alias(record: &mut Map<String, Value>) {
     }
 }
 
+fn normalize_reasoning_effort_field(record: &mut Map<String, Value>) {
+    let Some(effort) = record
+        .get("reasoning_effort")
+        .and_then(Value::as_str)
+        .map(str::trim)
+        .filter(|value| !value.is_empty())
+        .map(str::to_owned)
+    else {
+        return;
+    };
+
+    let reasoning = record
+        .entry("reasoning".to_owned())
+        .or_insert_with(|| Value::Object(Map::new()));
+    if !reasoning.is_object() {
+        *reasoning = Value::Object(Map::new());
+    }
+    if let Some(reasoning) = reasoning.as_object_mut() {
+        reasoning.insert("effort".to_owned(), Value::String(effort));
+    }
+}
+
+fn unsupported_capabilities(record: &Map<String, Value>) -> Vec<String> {
+    let mut unsupported = [
+        "max_tokens",
+        "max_output_tokens",
+        "truncation",
+        "background",
+        "prompt_cache_retention",
+        "safety_identifier",
+        "user",
+    ]
+    .into_iter()
+    .filter(|key| record.get(*key).is_some_and(|value| !value.is_null()))
+    .map(str::to_owned)
+    .collect::<Vec<_>>();
+
+    if record.get("reasoning_effort").is_some_and(|value| {
+        !value.is_null() && value.as_str().is_none_or(|effort| effort.trim().is_empty())
+    }) {
+        unsupported.push("reasoning_effort".to_owned());
+    }
+
+    unsupported
+}
+
 fn split_reasoning_suffix(model: &str) -> Option<(String, &'static str)> {
     for (suffix, effort) in [
         ("-ultra", "ultra"),
@@ -322,5 +486,67 @@ fn normalize_session_id(value: &str) -> Option<String> {
         Some(normalized.to_owned())
     } else {
         None
+    }
+}
+
+#[cfg(test)]
+mod capability_tests {
+    use super::*;
+
+    fn account() -> CodexConnectionConfig {
+        CodexConnectionConfig {
+            id: "capability-test".to_owned(),
+            access_token: "token".to_owned(),
+            workspace_id: None,
+            base_url: "https://example.invalid/v1".to_owned(),
+            max_concurrent: None,
+            credential_version: 1,
+        }
+    }
+
+    #[test]
+    fn unsupported_requested_capabilities_are_not_silently_stripped() {
+        let unsupported = [
+            ("max_tokens", serde_json::json!(100)),
+            ("max_output_tokens", serde_json::json!(100)),
+            ("truncation", serde_json::json!("auto")),
+            ("background", serde_json::json!(true)),
+            ("prompt_cache_retention", serde_json::json!("24h")),
+            ("safety_identifier", serde_json::json!("user-123")),
+            ("user", serde_json::json!("user-123")),
+        ];
+
+        for (field, value) in unsupported {
+            let mut body = serde_json::json!({"model":"gpt-test","input":"hello"});
+            body.as_object_mut()
+                .unwrap()
+                .insert(field.to_owned(), value);
+            assert!(
+                CodexAdapter::prepare("/v1/responses", body, &account()).is_err(),
+                "{field} must not be silently stripped"
+            );
+        }
+
+        let body = serde_json::json!({
+            "model":"gpt-test",
+            "input":"hello",
+            "background": true,
+            "max_output_tokens": 42,
+            "user": "user-123"
+        });
+        assert!(CodexAdapter::prepare("/v1/responses", body, &account()).is_err());
+    }
+
+    #[test]
+    fn reasoning_effort_alias_is_preserved_as_reasoning_effort() {
+        let body = serde_json::json!({
+            "model":"gpt-test",
+            "input":"hello",
+            "reasoning_effort":"high"
+        });
+        let prepared = CodexAdapter::prepare("/v1/responses", body, &account())
+            .expect("reasoning_effort is a supported translatable alias");
+        assert_eq!(prepared.body["reasoning"]["effort"], "high");
+        assert!(prepared.body.get("reasoning_effort").is_none());
     }
 }

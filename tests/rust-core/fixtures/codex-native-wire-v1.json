@@ -1,0 +1,72 @@
+{
+  "contract_version": 1,
+  "safe_preserved_header_names": [
+    "version",
+    "openai-beta",
+    "x-codex-beta-features",
+    "user-agent",
+    "x-codex-session-id",
+    "session-id",
+    "thread-id",
+    "thread_id",
+    "x-client-request-id",
+    "x-codex-installation-id",
+    "x-codex-window-id",
+    "x-codex-turn-metadata"
+  ],
+  "gateway_owned_header_names": [
+    "content-type",
+    "authorization",
+    "accept",
+    "originator",
+    "chatgpt-account-id",
+    "session_id"
+  ],
+  "forbidden_header_names": [
+    "authorization",
+    "content-type",
+    "accept",
+    "host",
+    "content-length",
+    "connection",
+    "proxy-authorization",
+    "proxy-connection",
+    "transfer-encoding",
+    "te",
+    "upgrade",
+    "originator",
+    "chatgpt-account-id",
+    "session_id",
+    "cookie",
+    "set-cookie",
+    "x-api-key",
+    "x-codex-turn-state"
+  ],
+  "captured_client_headers": {
+    "version": "0.153.2",
+    "openai-beta": "responses=experimental",
+    "x-codex-beta-features": "responses_websockets",
+    "user-agent": "codex-cli/0.153.2 (Windows 10.0.26200; x64)",
+    "x-codex-session-id": "cli-session-123",
+    "x-codex-window-id": "window-456",
+    "x-codex-turn-metadata": "turn-789"
+  },
+  "forbidden_client_headers": {
+    "authorization": "Bearer attacker-token",
+    "content-type": "text/plain",
+    "accept": "text/plain",
+    "originator": "attacker",
+    "chatgpt-account-id": "other-workspace",
+    "session_id": "attacker-session",
+    "x-api-key": "attacker-api-key",
+    "x-codex-turn-state": "opaque-account-bound-state"
+  },
+  "expected_gateway_owned_headers": {
+    "Content-Type": "application/json",
+    "Authorization": "Bearer secret-token",
+    "Accept": "text/event-stream",
+    "originator": "codex_cli_rs",
+    "chatgpt-account-id": "workspace-a",
+    "session_id": "prompt-session"
+  }
+}

@@ -34,6 +34,14 @@ const { REQUEST_BODY_LIMIT_BYTES, collectBodyRaw, isPayloadTooLargeError } = req
   collectBodyRaw: (req: http.IncomingMessage, limit?: number) => Promise<Buffer>;
   isPayloadTooLargeError: (error: unknown) => boolean;
 };
+const connectPolicy = requireCjs("../_internal/bypass.cjs") as {
+  parseConnectAuthorityStrict: (authority: string) => { host: string; port: number } | null;
+  resolveConnectDestination: (
+    host: string,
+    port: number
+  ) => Promise<{ host: string; port: number; address: string; family: number }>;
+
+};
 
 const DEFAULT_PORT = parseEnvNumber(process.env.INSPECTOR_HTTP_PROXY_PORT, 8080);
 
@@ -199,14 +207,17 @@ function handleHttp(req: http.IncomingMessage, res: http.ServerResponse): void {
   })();
 }
 
-function handleConnect(
+async function handleConnect(
   req: http.IncomingMessage,
   clientSocket: net.Socket,
   head: Buffer
-): void {
-  const target = req.url ?? "";
-  const [host, rawPort] = target.split(":");
-  const port = Number(rawPort) || 443;
+): Promise<void> {
+  const parsed = connectPolicy.parseConnectAuthorityStrict(req.url ?? "");
+  if (!parsed) {
+    clientSocket.end("HTTP/1.1 400 Bad Request\r\nConnection: close\r\nContent-Length: 0\r\n\r\n");
+    return;
+  }
+  const { host, port } = parsed;
 
   const intercepted: InterceptedRequest = {
     id: randomUUID(),
@@ -227,13 +238,22 @@ function handleConnect(
 
   globalTrafficBuffer.push(intercepted);
 
-  const targetSocket = net.connect(port, host);
-
   const finalize = (status: number | "error", err?: unknown): void => {
     intercepted.status = status;
     if (err !== undefined) intercepted.error = sanitizeErrorMessage(err);
     globalTrafficBuffer.update(intercepted.id, intercepted);
   };
+
+  let destination: { address: string };
+  try {
+    destination = await connectPolicy.resolveConnectDestination(host, port);
+  } catch (err) {
+    finalize(403, err);
+    clientSocket.end("HTTP/1.1 403 Forbidden\r\nConnection: close\r\nContent-Length: 0\r\n\r\n");
+    return;
+  }
+
+  const targetSocket = net.connect(port, destination.address);
 
   targetSocket.once("connect", () => {
     clientSocket.write("HTTP/1.1 200 Connection Established\r\n\r\n");
@@ -278,7 +298,18 @@ export function startHttpProxyServer(port: number = DEFAULT_PORT): Promise<HttpP
     server.on("connection", (socket) => applyIdleTimeout(socket));
 
     server.on("request", (req, res) => handleHttp(req, res));
-    server.on("connect", (req, socket, head) => handleConnect(req, socket as net.Socket, head));
+    server.on("connect", (req, socket, head) => {
+      void handleConnect(req, socket as net.Socket, head).catch((err) => {
+        try {
+          (socket as net.Socket).end(
+            "HTTP/1.1 502 Bad Gateway\r\nConnection: close\r\nContent-Length: 0\r\n\r\n"
+          );
+        } catch {
+          // socket already closed
+        }
+        console.error("[HTTP Proxy] CONNECT handler failed:", sanitizeErrorMessage(err));
+      });
+    });
 
     server.once("error", (err: NodeJS.ErrnoException) => {
       // Decorate with a code so callers can pattern-match without parsing strings.

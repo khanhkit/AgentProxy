@@ -3326,7 +3326,9 @@ paths:
       description: >-
         Creates a subscription record. If `mode` is `rule`, at least one entry in
         `ruleProviders` is required. `updateIntervalMinutes` defaults to 60 and
-        `enabled` defaults to `false` when omitted or not exactly `true`.
+        accepts 1..525600 minutes; `enabled` defaults to `false` when omitted or
+        not exactly `true`. Subscription fetches are limited to 2 MiB and parsing
+        is limited to 5000 candidate nodes.
       security:
         - ManagementSessionAuth: []
       requestBody:
@@ -3357,6 +3359,8 @@ paths:
                   nullable: true
                 updateIntervalMinutes:
                   type: integer
+                  minimum: 1
+                  maximum: 525600
                   default: 60
                 enabled:
                   type: boolean
@@ -3429,6 +3433,8 @@ paths:
                   nullable: true
                 updateIntervalMinutes:
                   type: integer
+                  minimum: 1
+                  maximum: 525600
                 enabled:
                   type: boolean
       responses:
@@ -14777,6 +14783,8 @@ components:
           nullable: true
         updateIntervalMinutes:
           type: integer
+          minimum: 1
+          maximum: 525600
         lastFetchedAt:
           type: string
           format: date-time

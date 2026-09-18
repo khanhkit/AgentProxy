@@ -86,8 +86,16 @@ export const COLLECTORS = [
       ".github/workflows/quality.yml": "test:unit:ci:shard",
     },
   },
-  // Node native runner — test:integration (top-level only; tests/integration/services/ NÃO roda)
+  // Node native runner — test:integration (top-level only; tests/integration/services/ remain explicit/non-default)
   { glob: "tests/integration/*.test.ts", sources: ["package.json"] },
+  // AP-ISS-0105 explicit non-default collectors. These runners exist so historically frozen
+  // tests are runnable/discoverable without inflating ordinary CI. The service lifecycle test
+  // self-skips unless RUN_SERVICES_INT=1; the DeepSeek live test self-skips without its cookie;
+  // the pipeline benchmark requires DEEPSEEK_API_KEY and is intentionally manual/live-cost.
+  { glob: "tests/golden-set/*.test.ts", sources: ["package.json"] },
+  { glob: "tests/benchmarks/pipeline-accuracy.test.ts", sources: ["package.json"] },
+  { glob: "tests/integration/services/*.test.ts", sources: ["package.json"] },
+  { glob: "tests/live/deepseek-web-live.test.ts", sources: ["package.json"] },
   // Node native runner — test:combo:matrix / test:integration (combo strategy decision matrix, 17 strategies)
   { glob: "tests/integration/combo-matrix/*.test.ts", sources: ["package.json"] },
   // Node native runner — test:combo:live (gated real-upstream smoke; RUN_COMBO_LIVE=1 + VPS creds)

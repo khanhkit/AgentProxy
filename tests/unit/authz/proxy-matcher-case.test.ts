@@ -74,3 +74,23 @@ test("classifyRoute treats uppercase client aliases as CLIENT_API, not managemen
   // Lowercase behavior is unchanged.
   assert.equal(classifyRoute("/v1/chat/completions", "POST").routeClass, "CLIENT_API");
 });
+
+test("proxy matcher covers root compatibility aliases before Next rewrites (AP-ISS-0009)", () => {
+  for (const p of ["/anthropic/messages", "/openai/chat/completions", "/metrics", "/debug"]) {
+    assert.equal(
+      isMatchedByProxy(p),
+      true,
+      `rewrite alias ${p} must reach the authz pipeline before Next rewrites it`
+    );
+  }
+});
+
+test("proxy matcher covers mixed-case compatibility aliases before Next rewrites (AP-ISS-0009)", () => {
+  for (const p of ["/Anthropic/messages", "/OPENAI/chat/completions", "/MeTrIcS", "/DeBuG"]) {
+    assert.equal(
+      isMatchedByProxy(p),
+      true,
+      `mixed-case rewrite alias ${p} must reach the authz pipeline before Next rewrites it`
+    );
+  }
+});

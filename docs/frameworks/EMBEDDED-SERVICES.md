@@ -60,6 +60,21 @@ All five follow the same supervisory model:
 | Dashboard location                    | `/dashboard/providers/services` (three tabs)                             |
 | Auto-start                            | Toggle per service, default OFF                                          |
 
+### Managed update admission
+
+Embedded-service updates treat mutable selectors such as `latest` only as discovery inputs. Before
+promotion, npm-managed services resolve the selector to an exact version and require npm SRI
+(`dist.integrity`); CLIProxyAPI resolves an exact GitHub release and requires a matching SHA-256
+entry from `checksums.txt` before extraction. Missing or malformed verification metadata fails the
+update before install/extraction.
+
+Compatibility admission uses the existing `version_manager` row. `pinnedVersion` rejects any other
+candidate. Operators may additionally set `configOverrides.managedUpdate.allowedVersions` or
+`blockedVersions` to maintain an explicit last-known-good/known-bad policy. Successful managed
+updates preserve that policy and record `managedUpdate.version`, verification metadata,
+`lastKnownGoodVersion`, `rollbackVersion`, and `verifiedAt` in `configOverrides`. The prior installed
+version therefore remains an explicit rollback target instead of being inferred from a mutable tag.
+
 ---
 
 ## 2. Architecture — 4 layers
@@ -318,7 +333,18 @@ service is restarted.
 | ------ | --------------------------------------------------------------- |
 | `200`  | `{ ok: true, previousVersion: "...", installedVersion: "..." }` |
 | `400`  | Invalid body                                                    |
+| `409`  | Resolved version is blocked by compatibility/known-bad policy   |
 | `500`  | npm update failed                                               |
+
+Managed updates resolve `latest`/other selectors to an immutable version plus npm
+integrity metadata before admission. 9Router `0.5.75` is currently blocked at that
+admission boundary because upstream issue #4020 reports rapid heap growth and fatal
+OOM under sustained workload. AgentProxy deliberately does **not** raise the existing
+6144 MiB V8 heap cap as a workaround: upstream reports show the failure can recur even
+with 8–16 GiB heaps. A short exact-version health-only soak remained roughly 108–144
+MiB RSS, so the regression is treated as workload-dependent rather than an unconditional
+startup leak. Admit a newer release only after the compatibility block is updated with
+new verification evidence.
 
 ---
 

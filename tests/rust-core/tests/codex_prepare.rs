@@ -1,5 +1,5 @@
 use agentproxy_control_protocol::snapshot::CodexConnectionConfig;
-use agentproxy_providers::codex::adapter::CodexAdapter;
+use agentproxy_providers::codex::adapter::{CodexAdapter, PrepareError};
 use serde_json::json;
 
 fn account() -> CodexConnectionConfig {
@@ -20,9 +20,6 @@ fn prepares_native_responses_with_codex_identity_and_compatibility_rules() {
         "service_tier": "fast",
         "stream": false,
         "store": true,
-        "max_output_tokens": 1234,
-        "truncation": "auto",
-        "user": "client-only",
         "prompt_cache_key": "session-123",
         "input": [
             {"type":"message","role":"system","content":[{"type":"input_text","text":"policy"}]},
@@ -54,9 +51,31 @@ fn prepares_native_responses_with_codex_identity_and_compatibility_rules() {
     assert_eq!(prepared.body["stream"], true);
     assert_eq!(prepared.body["store"], false);
     assert_eq!(prepared.body["input"][0]["role"], "developer");
-    assert!(prepared.body.get("max_output_tokens").is_none());
-    assert!(prepared.body.get("truncation").is_none());
-    assert!(prepared.body.get("user").is_none());
+}
+
+#[test]
+fn unsupported_native_capabilities_are_rejected_instead_of_silently_stripped() {
+    let input = json!({
+        "model": "gpt-5.6-sol-ultra",
+        "max_output_tokens": 1234,
+        "truncation": "auto",
+        "user": "client-only",
+        "input": []
+    });
+
+    let error = match CodexAdapter::prepare("/v1/responses", input, &account()) {
+        Ok(_) => panic!("unsupported native capabilities must be rejected"),
+        Err(error) => error,
+    };
+
+    assert_eq!(
+        error,
+        PrepareError::UnsupportedCapabilities(vec![
+            "max_output_tokens".to_owned(),
+            "truncation".to_owned(),
+            "user".to_owned(),
+        ])
+    );
 }
 
 #[test]

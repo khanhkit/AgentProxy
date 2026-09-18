@@ -15,6 +15,7 @@
  * Source: operator-supplied subscription feature (Karing-style proxy).
  */
 import * as yaml from "js-yaml";
+import { MAX_SUBSCRIPTION_NODES } from "./limits";
 
 export type DirectProxyType = "http" | "https" | "socks5";
 export type RawProxyProtocol =
@@ -67,13 +68,7 @@ export interface ParsedSubscription {
   nodes: SubscriptionNode[];
   needsCore: NeedsCoreNode[];
   format:
-    | "clash-yaml"
-    | "clash-json"
-    | "v2ray-json"
-    | "lines"
-    | "base64-lines"
-    | "empty"
-    | "unknown";
+    "clash-yaml" | "clash-json" | "v2ray-json" | "lines" | "base64-lines" | "empty" | "unknown";
 }
 
 function looksLikeBase64(s: string): boolean {
@@ -108,7 +103,9 @@ function asProtocol(raw: unknown): RawProxyProtocol {
   return "unknown";
 }
 
-function nodeFromClashObject(obj: Record<string, unknown>): SubscriptionNode | NeedsCoreNode | null {
+function nodeFromClashObject(
+  obj: Record<string, unknown>
+): SubscriptionNode | NeedsCoreNode | null {
   if (!obj || typeof obj !== "object") return null;
   const name = typeof obj.name === "string" ? obj.name : "";
   const type = asProtocol(obj.type);
@@ -219,7 +216,21 @@ function nodeFromUri(uri: string): SubscriptionNode | NeedsCoreNode | null {
   return null;
 }
 
-function collectFromArray(items: unknown[], format: ParsedSubscription["format"]): ParsedSubscription {
+class SubscriptionNodeLimitError extends Error {}
+
+function assertSubscriptionNodeCount(count: number): void {
+  if (count > MAX_SUBSCRIPTION_NODES) {
+    throw new SubscriptionNodeLimitError(
+      `Subscription node count exceeds ${MAX_SUBSCRIPTION_NODES}`
+    );
+  }
+}
+
+function collectFromArray(
+  items: unknown[],
+  format: ParsedSubscription["format"]
+): ParsedSubscription {
+  assertSubscriptionNodeCount(items.length);
   const nodes: SubscriptionNode[] = [];
   const needsCore: NeedsCoreNode[] = [];
   for (const item of items) {
@@ -247,15 +258,20 @@ function parseClashYaml(content: string): ParsedSubscription {
       return collectFromArray(doc.proxies, "clash-yaml");
     }
     if (doc && Array.isArray((doc as Record<string, unknown>).outbounds)) {
-      return collectFromArray((doc as Record<string, unknown>).outbounds as unknown[], "clash-yaml");
+      return collectFromArray(
+        (doc as Record<string, unknown>).outbounds as unknown[],
+        "clash-yaml"
+      );
     }
-  } catch {
+  } catch (error) {
+    if (error instanceof SubscriptionNodeLimitError) throw error;
     // fall through to unknown
   }
   return { nodes: [], needsCore: [], format: "unknown" };
 }
 
 function parseLineList(lines: string[]): ParsedSubscription {
+  assertSubscriptionNodeCount(lines.length);
   const nodes: SubscriptionNode[] = [];
   const needsCore: NeedsCoreNode[] = [];
   for (const line of lines) {
@@ -288,13 +304,18 @@ export function parseSubscription(body: string): ParsedSubscription {
       const json = JSON.parse(content);
       if (Array.isArray(json)) return collectFromArray(json, "v2ray-json");
       if (json && Array.isArray(json.proxies)) return collectFromArray(json.proxies, "clash-json");
-      if (json && Array.isArray(json.outbounds)) return collectFromArray(json.outbounds, "v2ray-json");
-    } catch {
+      if (json && Array.isArray(json.outbounds))
+        return collectFromArray(json.outbounds, "v2ray-json");
+    } catch (error) {
+      if (error instanceof SubscriptionNodeLimitError) throw error;
       // fall through
     }
   }
 
-  const lines = content.split(/\r?\n/).map((s) => s.trim()).filter(Boolean);
+  const lines = content
+    .split(/\r?\n/)
+    .map((s) => s.trim())
+    .filter(Boolean);
   if (lines.length > 0 && lines.some((l) => /^[a-zA-Z][a-zA-Z0-9+.\-]*:\/\//.test(l))) {
     const res = parseLineList(lines);
     return base64Used ? { ...res, format: "base64-lines" } : res;
@@ -304,9 +325,7 @@ export function parseSubscription(body: string): ParsedSubscription {
 }
 
 /** Redacted node summary for storage/display (no secrets). */
-export function redactedNodeSummary(parsed: ParsedSubscription): Array<
-  Record<string, unknown>
-> {
+export function redactedNodeSummary(parsed: ParsedSubscription): Array<Record<string, unknown>> {
   const direct = parsed.nodes.map((n) => ({
     name: n.name,
     type: n.type,

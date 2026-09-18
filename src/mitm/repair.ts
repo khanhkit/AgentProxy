@@ -54,12 +54,11 @@ export function buildRepairPlan(): RepairPlan {
 }
 
 /**
- * Best-effort revert of an applied system proxy. The applied state lives
- * in-memory (captureState), so this only succeeds within the same process that
- * applied it; after a crash the previousState is gone and this is a no-op. DNS
- * + cert teardown are always reversible because they read on-disk state.
+ * Best-effort revert of an applied system proxy. captureState hydrates its
+ * authenticated crash-recovery record on demand, so this works both in-process
+ * and after a restart. The durable record is consumed only after revert succeeds.
  */
-async function revertSystemProxyIfApplied(): Promise<boolean> {
+export async function revertSystemProxyIfApplied(): Promise<boolean> {
   try {
     const { getSystemProxyState, clearSystemProxy } = await import("@/lib/inspector/captureState");
     const state = getSystemProxyState();

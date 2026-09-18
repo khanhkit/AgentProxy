@@ -33,10 +33,7 @@ proxies:
   assert.deepEqual(res.nodes.map((n) => n.type).sort(), ["http", "socks5"]);
   // ss + vmess need a local core
   assert.equal(res.needsCore.length, 2);
-  assert.deepEqual(
-    res.needsCore.map((n) => n.rawProtocol).sort(),
-    ["ss", "vmess"]
-  );
+  assert.deepEqual(res.needsCore.map((n) => n.rawProtocol).sort(), ["ss", "vmess"]);
 });
 
 test("decodes a base64-wrapped Clash YAML subscription", () => {
@@ -110,6 +107,14 @@ test("returns empty for blank / unrecognized input", () => {
   assert.equal(res.format, "unknown");
   assert.equal(res.nodes.length, 0);
   assert.equal(res.needsCore.length, 0);
+});
+
+test("rejects more than 5000 parsed subscription nodes", () => {
+  const nodes = Array.from({ length: 5001 }, (_, i) => `http://127.0.0.1:${10_000 + (i % 1000)}`);
+  assert.throws(
+    () => parseSubscription(JSON.stringify(nodes)),
+    /Subscription node count exceeds 5000/
+  );
 });
 
 test("redactedNodeSummary excludes secrets for direct nodes", () => {
