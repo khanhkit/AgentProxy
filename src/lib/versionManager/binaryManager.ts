@@ -11,6 +11,9 @@ import { getChecksums, getReleaseByVersion } from "./releaseChecker.ts";
 
 const execFileAsync = promisify(execFile);
 const DEFAULT_DATA_DIR = process.env.DATA_DIR || path.join(os.homedir(), ".omniroute");
+const IMMUTABLE_RELEASE_VERSION_PATTERN =
+  /^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$/;
+const SHA256_HEX_PATTERN = /^[0-9a-fA-F]{64}$/;
 
 type Platform = "linux" | "darwin" | "windows" | "freebsd";
 type Arch = "amd64" | "arm64";
@@ -141,6 +144,10 @@ export async function downloadRelease(
   // this function independently re-reading os.platform()/os.arch() (#10244/#10293).
   target?: { platform: Platform; arch: Arch }
 ): Promise<string> {
+  if (!IMMUTABLE_RELEASE_VERSION_PATTERN.test(version)) {
+    throw new Error(`Managed binary install requires an immutable version, got: ${version}`);
+  }
+
   const release = await getReleaseByVersion(version);
   if (!release) throw new Error(`Version ${version} not found`);
 
@@ -157,15 +164,16 @@ export async function downloadRelease(
   await downloadFile(asset.url, archivePath, signal);
 
   const checksums = await getChecksums(version);
-  if (checksums.size > 0) {
-    const expected = checksums.get(assetName);
-    if (expected) {
-      const valid = await verifyChecksum(archivePath, expected);
-      if (!valid) {
-        await fs.unlink(archivePath);
-        throw new Error(`SHA256 checksum mismatch for ${assetName}`);
-      }
-    }
+  const expected = checksums.get(assetName);
+  if (!expected || !SHA256_HEX_PATTERN.test(expected)) {
+    await fs.unlink(archivePath).catch(() => {});
+    throw new Error(`Missing or invalid SHA256 checksum metadata for ${assetName}`);
+  }
+
+  const valid = await verifyChecksum(archivePath, expected);
+  if (!valid) {
+    await fs.unlink(archivePath).catch(() => {});
+    throw new Error(`SHA256 checksum mismatch for ${assetName}`);
   }
 
   if (platform === "windows") {

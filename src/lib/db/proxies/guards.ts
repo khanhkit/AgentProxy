@@ -1,3 +1,4 @@
+import { getComboModelProvider } from "@/lib/combos/steps";
 import { getDbInstance } from "../core";
 
 export const PROXY_ALIVE_PREDICATE =
@@ -43,9 +44,44 @@ export function hasBlockingProxyAssignment(connectionId: string, providerId?: st
            LIMIT 1`
       )
       .get(connectionId, provider);
-    return !!dead;
-  } catch {
+    if (dead) return true;
+
+    if (provider) {
+      const comboRows = db.prepare("SELECT id, data FROM combos").all() as Array<{
+        id?: string;
+        data?: string;
+      }>;
+      const relevantComboIds = comboRows.flatMap((row) => {
+        if (typeof row.id !== "string" || typeof row.data !== "string") return [];
+        try {
+          const parsed = JSON.parse(row.data) as { models?: unknown[] };
+          return Array.isArray(parsed.models) &&
+            parsed.models.some((entry) => getComboModelProvider(entry) === provider)
+            ? [row.id]
+            : [];
+        } catch {
+          return [];
+        }
+      });
+
+      if (relevantComboIds.length > 0) {
+        const placeholders = relevantComboIds.map(() => "?").join(",");
+        const deadCombo = db
+          .prepare(
+            `SELECT 1 FROM proxy_assignments a JOIN proxy_registry p ON p.id = a.proxy_id
+               WHERE a.scope = 'combo'
+                 AND a.scope_id IN (${placeholders})
+                 AND NOT ${PROXY_ALIVE_PREDICATE}
+               LIMIT 1`
+          )
+          .get(...relevantComboIds);
+        if (deadCombo) return true;
+      }
+    }
+
     return false;
+  } catch {
+    return true;
   }
 }
 

@@ -1,8 +1,13 @@
 import fs from "node:fs";
 import path from "node:path";
 import { DATA_DIR } from "@/lib/db/core";
-import { upsertVersionManagerTool } from "@/lib/db/versionManager";
+import { getVersionManagerTool, upsertVersionManagerTool } from "@/lib/db/versionManager";
 import { runNpm, InstallError } from "./utils";
+import {
+  assertManagedUpdateCompatibility,
+  mergeManagedUpdateMetadata,
+  resolveVerifiedNpmArtifact,
+} from "./managedUpdatePolicy";
 
 export const BIFROST_PACKAGE = "@maximhq/bifrost";
 export const BIFROST_DEFAULT_PORT = 8080;
@@ -74,6 +79,13 @@ export async function getLatestVersion(): Promise<string | null> {
 
 export async function install(version = "latest"): Promise<InstallResult> {
   const startMs = Date.now();
+  const existingState = await getVersionManagerTool("bifrost");
+  const previousVersion = await getInstalledVersion();
+  const artifact = await resolveVerifiedNpmArtifact(BIFROST_PACKAGE, version);
+  assertManagedUpdateCompatibility("bifrost", artifact.version, {
+    pinnedVersion: existingState?.pinnedVersion ?? null,
+    configOverrides: existingState?.configOverrides ?? null,
+  });
 
   // Create install dir + minimal package.json (idempotent)
   fs.mkdirSync(BIFROST_INSTALL_DIR, { recursive: true });
@@ -91,7 +103,7 @@ export async function install(version = "latest"): Promise<InstallResult> {
   }
 
   await runNpm(
-    ["install", `${BIFROST_PACKAGE}@${version}`, "--omit=dev", "--no-audit", "--no-fund"],
+    ["install", `${BIFROST_PACKAGE}@${artifact.version}`, "--omit=dev", "--no-audit", "--no-fund"],
     // `--prefix` via `prefix` (→ npm_config_prefix env) so paths with spaces survive Windows shell
     { cwd: BIFROST_INSTALL_DIR, prefix: BIFROST_INSTALL_DIR }
   );
@@ -104,13 +116,26 @@ export async function install(version = "latest"): Promise<InstallResult> {
       500
     );
   }
+  if (installedVersion !== artifact.version) {
+    throw new InstallError(
+      `Installed Bifrost version ${installedVersion} does not match admitted version ${artifact.version}`,
+      "A versão instalada do Bifrost não corresponde ao artefato verificado.",
+      502
+    );
+  }
 
   await upsertVersionManagerTool({
     tool: "bifrost",
     installedVersion,
+    pinnedVersion: existingState?.pinnedVersion ?? null,
     binaryPath: getBinPath(),
     status: "stopped",
     port: BIFROST_DEFAULT_PORT,
+    configOverrides: mergeManagedUpdateMetadata(existingState?.configOverrides, {
+      version: artifact.version,
+      integrity: artifact.integrity,
+      previousVersion,
+    }),
   });
 
   // Invalidate cache so next getLatestVersion() re-fetches
@@ -124,7 +149,15 @@ export async function install(version = "latest"): Promise<InstallResult> {
 }
 
 export async function update(): Promise<InstallResult> {
-  return install("latest");
+  const latest = await getLatestVersion();
+  if (!latest) {
+    throw new InstallError(
+      "Could not resolve latest Bifrost version",
+      "Não foi possível resolver a versão mais recente do Bifrost.",
+      502
+    );
+  }
+  return install(latest);
 }
 
 /**

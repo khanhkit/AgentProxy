@@ -25,7 +25,13 @@ export async function DELETE(request: Request) {
   const result = deleteCompletedBatches(scope.isSessionAuth ? undefined : scope.apiKeyId);
 
   return NextResponse.json(
-    { deleted: true, deletedBatches: result.deletedBatches, deletedFiles: result.deletedFiles },
+    {
+      deleted: true,
+      deletedBatches: result.deletedBatches,
+      deletedFiles: result.deletedFiles,
+      hasMore: result.hasMore,
+      pageSize: result.pageSize,
+    },
     { headers: CORS_HEADERS }
   );
 }

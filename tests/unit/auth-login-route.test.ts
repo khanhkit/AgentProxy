@@ -154,3 +154,70 @@ test("auth login route returns 403 when OIDC password login is disabled", async 
   const body = (await response.json()) as { error?: string };
   assert.match(body.error || "", /Password login is disabled when OIDC is active/);
 });
+
+
+test("AP-ISS-0005: password auth cookie follows configured HTTPS origin, not spoofed XFP", async () => {
+  process.env.INITIAL_PASSWORD = "bootstrap-secret";
+  process.env.NEXT_PUBLIC_BASE_URL = "https://trusted.example.test";
+  delete process.env.AUTH_COOKIE_SECURE;
+  const setCalls: unknown[][] = [];
+  loginRoute.authRouteInternals.getCookieStore = async () => ({
+    set: (...args: unknown[]) => setCalls.push(args),
+  });
+
+  try {
+    const response = await loginRoute.POST(
+      new Request("http://internal.local/api/auth/login", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          host: "attacker.example.test",
+          "x-forwarded-proto": "http",
+        },
+        body: JSON.stringify({ password: "bootstrap-secret" }),
+      })
+    );
+
+    assert.equal(response.status, 200);
+    const [cookieName, , options] = setCalls[0] as [string, string, Record<string, unknown>];
+    assert.equal(cookieName, "auth_token");
+    assert.equal(options.secure, true);
+  } finally {
+    delete process.env.NEXT_PUBLIC_BASE_URL;
+  }
+});
+
+test("AP-ISS-0005: direct HTTP password login stays non-Secure unless override forces it", async () => {
+  process.env.INITIAL_PASSWORD = "bootstrap-secret";
+  delete process.env.NEXT_PUBLIC_BASE_URL;
+  delete process.env.OMNIROUTE_PUBLIC_BASE_URL;
+  delete process.env.NEXT_PUBLIC_APP_URL;
+  delete process.env.AUTH_COOKIE_SECURE;
+  const setCalls: unknown[][] = [];
+  loginRoute.authRouteInternals.getCookieStore = async () => ({
+    set: (...args: unknown[]) => setCalls.push(args),
+  });
+
+  const direct = await loginRoute.POST(
+    new Request("http://localhost/api/auth/login", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ password: "bootstrap-secret" }),
+    })
+  );
+  assert.equal(direct.status, 200);
+  assert.equal((setCalls[0]?.[2] as Record<string, unknown>)?.secure, false);
+
+  process.env.AUTH_COOKIE_SECURE = "true";
+  setCalls.length = 0;
+  const forced = await loginRoute.POST(
+    new Request("http://localhost/api/auth/login", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ password: "bootstrap-secret" }),
+    })
+  );
+  assert.equal(forced.status, 200);
+  assert.equal((setCalls[0]?.[2] as Record<string, unknown>)?.secure, true);
+  delete process.env.AUTH_COOKIE_SECURE;
+});

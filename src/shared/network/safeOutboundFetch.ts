@@ -33,7 +33,11 @@ const PROVIDER_PROBE_TIMEOUT_MS = resolveProbeTimeoutMs();
 
 export type SafeOutboundFetchGuard = OutboundUrlGuardMode;
 export type SafeOutboundFetchErrorCode =
-  "INVALID_URL" | "URL_GUARD_BLOCKED" | "TIMEOUT" | "REDIRECT_BLOCKED" | "NETWORK_ERROR";
+  | "INVALID_URL"
+  | "URL_GUARD_BLOCKED"
+  | "TIMEOUT"
+  | "REDIRECT_BLOCKED"
+  | "NETWORK_ERROR";
 
 export interface SafeOutboundFetchRetryOptions {
   attempts?: number;
@@ -214,12 +218,7 @@ const defaultDnsLookup: SafeOutboundDnsLookup = (hostname) =>
   dns.promises.lookup(hostname, { all: true });
 
 function isIpv6LinkLocal(address: string): boolean {
-  const normalized = address
-    .trim()
-    .toLowerCase()
-    .replace(/^\[/, "")
-    .replace(/\]$/, "")
-    .split("%")[0];
+  const normalized = address.trim().toLowerCase().replace(/^\[/, "").replace(/\]$/, "").split("%")[0];
   if (isIP(normalized) !== 6) return false;
   const first = Number.parseInt(normalized.split(":", 1)[0] || "0", 16);
   return Number.isFinite(first) && (first & 0xffc0) === 0xfe80;
@@ -241,10 +240,9 @@ async function resolveValidatedDns(
 ): Promise<Array<{ address: string; family: number }>> {
   if (guard === "none") return [];
 
-  const hostname =
-    targetUrl.hostname.startsWith("[") && targetUrl.hostname.endsWith("]")
-      ? targetUrl.hostname.slice(1, -1)
-      : targetUrl.hostname;
+  const hostname = targetUrl.hostname.startsWith("[") && targetUrl.hostname.endsWith("]")
+    ? targetUrl.hostname.slice(1, -1)
+    : targetUrl.hostname;
   if (!hostname) return [];
 
   let resolved: Array<{ address: string; family: number }>;
@@ -426,12 +424,11 @@ export async function safeOutboundFetch(url: string | URL, options: SafeOutbound
         });
       };
 
-      const response =
-        bypassProxyPatch && !proxyConfig
-          ? await executeFetch()
-          : proxyConfig
-            ? await runWithProxyContext(proxyConfig, executeFetch)
-            : await executeFetch();
+      const response = bypassProxyPatch && !proxyConfig
+        ? await executeFetch()
+        : proxyConfig
+          ? await runWithProxyContext(proxyConfig, executeFetch)
+          : await executeFetch();
 
       if (!allowRedirect && response.status >= 300 && response.status < 400) {
         const location = response.headers.get("location");

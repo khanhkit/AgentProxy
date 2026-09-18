@@ -10,6 +10,8 @@
  * @module shared/constants/endpointCategories
  */
 
+import { normalizeClientApiPathname } from "../utils/clientApiPath";
+
 export interface EndpointCategory {
   id: string;
   label: string;
@@ -124,8 +126,14 @@ const SORTED_PREFIXES: readonly { prefix: string; categoryId: string }[] =
  * Returns `null` if the path doesn't match any category (e.g. management routes).
  */
 export function resolveEndpointCategory(pathname: string): string | null {
+  const { path: canonicalPath } = normalizeClientApiPathname(pathname);
+  const policyPath =
+    canonicalPath === "/api/v1" || canonicalPath.startsWith("/api/v1/")
+      ? canonicalPath.slice("/api".length)
+      : canonicalPath;
+
   for (const { prefix, categoryId } of SORTED_PREFIXES) {
-    if (pathname === prefix || pathname.startsWith(prefix + "/")) {
+    if (policyPath === prefix || policyPath.startsWith(prefix + "/")) {
       return categoryId;
     }
   }

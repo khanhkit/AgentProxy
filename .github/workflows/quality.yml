@@ -18,7 +18,7 @@ env:
   # test installed a fake PEM on a persistent self-hosted runner and broke all
   # system TLS). Belt-and-suspenders with tests/_setup/isolateDataDir.ts.
   OMNIROUTE_SKIP_SYSTEM_TRUST: "1"
-  CI_NODE_VERSION: "24.14.1"
+  CI_NODE_VERSION: "24.15.0"
 
 jobs:
   # Same classifier as ci.yml (scripts/quality/classify-pr-changes.mjs) so PR→release
@@ -454,10 +454,10 @@ jobs:
         run: node scripts/quality/check-quality-ratchet.mjs --allow-missing --summary .artifacts/quality-ratchet.md
       - name: Require-tighten (blocking)
         run: node scripts/quality/check-quality-ratchet.mjs --allow-missing --require-tighten
-      # CodeQL alerts ratchet — same semantics as ci.yml quality-gate: exits 1 ONLY
-      # on a real regression (open alerts > baseline in quality-baseline.json);
-      # a measurement failure (gh/auth/api) self-skips with exit 0.
-      - name: CodeQL alerts ratchet (blocking)
+      # Repository-wide CodeQL debt telemetry. AP-ISS-0107 moved blocking
+      # semantics into codeql.yml after analyze, where exact SHA/ref freshness and
+      # PR-associated findings can be evaluated without freezing historical debt.
+      - name: CodeQL alerts telemetry (advisory)
         run: npm run check:codeql-ratchet
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

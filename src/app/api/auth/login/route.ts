@@ -15,6 +15,7 @@ import { loginSchema } from "@/shared/validation/schemas";
 import { isValidationFailure, validateBody } from "@/shared/validation/helpers";
 import { checkLoginGuard, clearLoginAttempts, recordLoginFailure } from "@/server/auth/loginGuard";
 import { AUTHZ_HEADER_TRUSTED_PEER_IP } from "@/server/authz/headers";
+import { resolvePublicOrigin } from "@/server/origin/publicOrigin";
 
 // SECURITY: No hardcoded fallback — JWT_SECRET must be configured.
 if (!process.env.JWT_SECRET) {
@@ -155,9 +156,8 @@ export async function POST(request: NextRequest) {
 
     if (isValid) {
       const forceSecureCookie = process.env.AUTH_COOKIE_SECURE === "true";
-      const forwardedProtoHeader = request.headers.get("x-forwarded-proto") || "";
-      const forwardedProto = forwardedProtoHeader.split(",")[0].trim().toLowerCase();
-      const isHttpsRequest = forwardedProto === "https" || request.nextUrl?.protocol === "https:";
+      const publicOrigin = resolvePublicOrigin(request).origin;
+      const isHttpsRequest = new URL(publicOrigin).protocol === "https:";
       const useSecureCookie = forceSecureCookie || isHttpsRequest;
 
       const token = await new SignJWT({ authenticated: true })

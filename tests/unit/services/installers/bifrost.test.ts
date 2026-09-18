@@ -33,7 +33,10 @@ if [ "$CMD" = "install" ]; then
   exit 0
 fi
 if [ "$CMD" = "view" ]; then
-  echo "1.6.3"
+  case "$*" in
+    *dist.integrity*) echo "sha512-YWJjZA==" ;;
+    *) echo "1.6.3" ;;
+  esac
   exit 0
 fi
 exit 0

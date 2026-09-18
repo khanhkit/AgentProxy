@@ -22,6 +22,9 @@ const LEGACY_ENV_SINGLE = "CORS_ORIGIN";
 
 const STANDARD_ALLOW_HEADERS =
   "Content-Type, Authorization, x-api-key, anthropic-version, x-omniroute-connection, X-OmniRoute-Lease-Owner, X-OmniRoute-Lease-Generation, x-internal-test, accept";
+const STANDARD_ALLOW_HEADER_NAMES = Object.freeze(
+  STANDARD_ALLOW_HEADERS.split(",").map((header) => header.trim())
+);
 const STANDARD_ALLOW_METHODS = "GET, POST, PUT, DELETE, PATCH, OPTIONS";
 
 let runtimeAllowedOrigins: ReadonlySet<string> = new Set();
@@ -144,6 +147,19 @@ export function getCorsStatus(): CorsStatus {
  * compression middleware only appends it conditionally, so shared caches can't
  * otherwise reliably tell compressed vs uncompressed variants apart.
  */
+function canonicalRequestedAllowHeaders(requestedHeaders: string): string | null {
+  const requested = new Set(
+    requestedHeaders
+      .split(",")
+      .map((header) => header.trim().toLowerCase())
+      .filter(Boolean)
+  );
+  const allowed = STANDARD_ALLOW_HEADER_NAMES.filter((header) =>
+    requested.has(header.toLowerCase())
+  );
+  return allowed.length > 0 ? allowed.join(", ") : null;
+}
+
 function requestCarriesTokenOrPreflight(request: Request): boolean {
   // Preflight (OPTIONS) never carries the Authorization / x-api-key header, so it
   // must be allowed through — the actual request that follows is re-evaluated by
@@ -199,8 +215,13 @@ export function applyCorsHeaders(
   response.headers.set("Access-Control-Allow-Methods", STANDARD_ALLOW_METHODS);
   response.headers.set("Access-Control-Allow-Headers", STANDARD_ALLOW_HEADERS);
   const requestedHeaders = request.headers.get("access-control-request-headers");
-  if (requestedHeaders) {
-    response.headers.set("Access-Control-Allow-Headers", requestedHeaders);
+  if (requestedHeaders !== null) {
+    const allowedRequestedHeaders = canonicalRequestedAllowHeaders(requestedHeaders);
+    if (allowedRequestedHeaders === null) {
+      response.headers.delete("Access-Control-Allow-Headers");
+    } else {
+      response.headers.set("Access-Control-Allow-Headers", allowedRequestedHeaders);
+    }
   }
 }
 

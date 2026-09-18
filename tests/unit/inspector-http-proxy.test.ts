@@ -104,20 +104,21 @@ test("HTTP direct rejects a private target and records the blocked buffer entry"
   }
 });
 
-test("CONNECT tunnel returns 200 and records metadata-only entry", async () => {
+test("CONNECT tunnel rejects private/disallowed destination and records metadata-only entry", async () => {
   globalTrafficBuffer.clear();
   const tcp = await withTcpServer();
   const proxy = await startHttpProxyServer(0);
   try {
     const sizeBefore = globalTrafficBuffer.size();
     const status = await sendConnect(proxy.port, `127.0.0.1:${tcp.port}`);
-    assert.equal(status, 200);
+    assert.equal(status, 403);
     await new Promise((r) => setTimeout(r, 30));
     assert.ok(globalTrafficBuffer.size() > sizeBefore);
     const entry = globalTrafficBuffer.list().at(-1);
     assert.ok(entry);
     assert.equal(entry.method, "CONNECT");
     assert.equal(entry.source, "http-proxy");
+    assert.equal(entry.status, 403);
     assert.equal(entry.responseBody, null);
     assert.match(entry.note ?? "", /TLS tunnel/);
   } finally {

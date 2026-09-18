@@ -82,7 +82,7 @@ export HTTPS_PROXY=http://127.0.0.1:8080
 
 **TLS limitation:** HTTPS `CONNECT` tunnels are captured as metadata only (host, port, timing) — TLS body is not decrypted by default. Enable "Decrypt HTTPS in proxy mode" toggle (opt-in, requires AgentBridge cert to be trusted) for full body inspection.
 
-**Direct HTTP egress policy:** direct HTTP forwarding uses the shared public-only outbound guard. Loopback/private/link-local/cloud-metadata destinations and mixed public/private DNS answers are rejected before upstream I/O; every DNS answer is validated and direct connections are pinned to the accepted address so rebinding cannot change the destination after validation. The request runs in an explicit direct-fetch context so ambient proxy configuration cannot recurse into the Traffic Inspector or bypass DNS pinning. Direct HTTP keeps normal public HTTP/HTTPS port compatibility; raw CONNECT keeps its separate stricter port-443 policy.
+**Egress policy:** raw `CONNECT` tunneling is limited to port `443` and public destination addresses. Malformed authorities return `400`; loopback, RFC1918/private, link-local/cloud-metadata/special destinations, mixed public/private DNS answers, and disallowed ports return `403` before an upstream socket is opened. Hostnames are resolved once, every returned address is validated, and the accepted address is pinned for the TCP dial so DNS rebinding cannot change the destination after validation. AgentBridge bypass globs control TLS inspection only; they do not bypass this egress admission policy. Direct HTTP forwarding uses the shared public-only outbound guard with the same all-answer DNS validation and pinned direct connection, while preserving normal HTTP/HTTPS port compatibility rather than the raw-`CONNECT` port-443 restriction.
 
 **Port conflict:** If port 8080 is in use, AgentBridge returns a 409 with a structured error. Change the port via `INSPECTOR_HTTP_PROXY_PORT` env var.
 
@@ -99,10 +99,13 @@ export HTTPS_PROXY=http://127.0.0.1:8080
 
 **Safety mechanisms:**
 
-- Auto-disable timer (default 30 min, configurable via `INSPECTOR_SYSTEM_PROXY_GUARD_MINUTES`)
-- Previous system proxy state is saved in DB and restored on revert
-- Dashboard shows "Reverting system proxy" prompt if user navigates away while active
-- UI shows `⚠ Advanced` badge + explicit confirmation checkbox
+- Auto-disable timer (default 30 min, configurable via `INSPECTOR_SYSTEM_PROXY_GUARD_MINUTES`).
+- Before the first OS proxy mutation, OmniRoute writes the previous proxy state to an atomic, HMAC-authenticated recovery record under `DATA_DIR/mitm/`. The record and its authentication key use the repository's owner-only file policy (POSIX `0600`; Windows ACL).
+- A restart lazily reloads only a valid record for the current platform. Tampered, malformed, cross-platform, or unverifiable recovery data is rejected and is not overwritten by a new apply.
+- Revert/Repair consumes the recovery record only after the previous proxy state has been restored successfully, so a failed restore stays retryable. A pending record blocks another system-proxy apply until it is resolved.
+- On Windows, DIRECT state is restored with `netsh winhttp reset proxy`; a previously configured WinHTTP proxy server/bypass list is reapplied from the captured state.
+- Dashboard shows "Reverting system proxy" prompt if user navigates away while active.
+- UI shows `⚠ Advanced` badge + explicit confirmation checkbox.
 
 ### Mode 5 — TPROXY transparent decrypt (Linux, root, opt-in)
 
@@ -419,7 +422,7 @@ gsettings set org.gnome.system.proxy mode 'none'
 netsh winhttp reset proxy
 ```
 
-The dashboard will also offer "Revert system proxy" on next load if it detects the DB state indicates proxy was active.
+The dashboard will also offer recovery when the persisted system-proxy record indicates proxy state is still pending after restart. Use the normal **Revert system proxy** / AgentBridge **Repair** action first: a valid authenticated record restores the captured prior state exactly once. If the recovery record is malformed or fails authentication, OmniRoute fails closed rather than deleting or replacing it; inspect the local `DATA_DIR/mitm/` state before performing manual OS recovery.
 
 ### Buffer full
 

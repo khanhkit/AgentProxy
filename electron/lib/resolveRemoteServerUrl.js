@@ -72,8 +72,36 @@ function isValidHttpUrl(candidate) {
   }
 }
 
+function resolveHttpOrigin(candidate) {
+  if (!isValidHttpUrl(candidate)) return null;
+  try {
+    return new URL(candidate).origin;
+  } catch {
+    return null;
+  }
+}
+
+function isTrustedRendererUrl(candidateUrl, trustedRendererUrl) {
+  const candidateOrigin = resolveHttpOrigin(candidateUrl);
+  const trustedOrigin = resolveHttpOrigin(trustedRendererUrl);
+  return candidateOrigin !== null && trustedOrigin !== null && candidateOrigin === trustedOrigin;
+}
+
+function isTrustedRendererEvent(event, trustedRendererUrl) {
+  const sender = event?.sender;
+  const senderFrame = event?.senderFrame;
+  if (!sender || !senderFrame || !sender.mainFrame || senderFrame !== sender.mainFrame)
+    return false;
+  return isTrustedRendererUrl(senderFrame.url, trustedRendererUrl);
+}
+
 function stripTrailingSlash(url) {
   return url.replace(/\/+$/, "");
 }
 
-module.exports = { resolveRemoteServerUrl, isValidHttpUrl };
+module.exports = {
+  resolveRemoteServerUrl,
+  isValidHttpUrl,
+  isTrustedRendererUrl,
+  isTrustedRendererEvent,
+};

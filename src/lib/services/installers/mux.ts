@@ -16,8 +16,13 @@
 import fs from "node:fs";
 import path from "node:path";
 import { DATA_DIR } from "@/lib/db/core";
-import { upsertVersionManagerTool } from "@/lib/db/versionManager";
+import { getVersionManagerTool, upsertVersionManagerTool } from "@/lib/db/versionManager";
 import { runNpm, InstallError } from "./utils";
+import {
+  assertManagedUpdateCompatibility,
+  mergeManagedUpdateMetadata,
+  resolveVerifiedNpmArtifact,
+} from "./managedUpdatePolicy";
 
 export const MUX_PACKAGE = "mux";
 export const MUX_DEFAULT_PORT = 8322;
@@ -80,6 +85,13 @@ export async function getLatestVersion(): Promise<string | null> {
  */
 export async function install(version = "latest"): Promise<InstallResult> {
   const startMs = Date.now();
+  const existingState = await getVersionManagerTool("mux");
+  const previousVersion = await getInstalledVersion();
+  const artifact = await resolveVerifiedNpmArtifact(MUX_PACKAGE, version);
+  assertManagedUpdateCompatibility("mux", artifact.version, {
+    pinnedVersion: existingState?.pinnedVersion ?? null,
+    configOverrides: existingState?.configOverrides ?? null,
+  });
 
   // Create install dir + minimal package.json (idempotent) — same shape as ninerouter.ts.
   fs.mkdirSync(MUX_INSTALL_DIR, { recursive: true });
@@ -97,7 +109,7 @@ export async function install(version = "latest"): Promise<InstallResult> {
   }
 
   await runNpm(
-    ["install", `${MUX_PACKAGE}@${version}`, "--omit=dev", "--no-audit", "--no-fund"],
+    ["install", `${MUX_PACKAGE}@${artifact.version}`, "--omit=dev", "--no-audit", "--no-fund"],
     // `--prefix` is passed via `prefix` (→ npm_config_prefix env) instead of an
     // argv path so an install dir with spaces survives the Windows shell (#5379).
     { cwd: MUX_INSTALL_DIR, prefix: MUX_INSTALL_DIR }
@@ -111,13 +123,26 @@ export async function install(version = "latest"): Promise<InstallResult> {
       500
     );
   }
+  if (installedVersion !== artifact.version) {
+    throw new InstallError(
+      `Installed Mux version ${installedVersion} does not match admitted version ${artifact.version}`,
+      "A versão instalada do Mux não corresponde ao artefato verificado.",
+      502
+    );
+  }
 
   await upsertVersionManagerTool({
     tool: "mux",
     installedVersion,
+    pinnedVersion: existingState?.pinnedVersion ?? null,
     binaryPath: getServerPath(),
     status: "stopped",
     port: MUX_DEFAULT_PORT,
+    configOverrides: mergeManagedUpdateMetadata(existingState?.configOverrides, {
+      version: artifact.version,
+      integrity: artifact.integrity,
+      previousVersion,
+    }),
   });
 
   // Invalidate cache so next getLatestVersion() re-fetches
@@ -131,7 +156,15 @@ export async function install(version = "latest"): Promise<InstallResult> {
 }
 
 export async function update(): Promise<InstallResult> {
-  return install("latest");
+  const latest = await getLatestVersion();
+  if (!latest) {
+    throw new InstallError(
+      "Could not resolve latest Mux version",
+      "Não foi possível resolver a versão mais recente do Mux.",
+      502
+    );
+  }
+  return install(latest);
 }
 
 export async function uninstall(): Promise<void> {

@@ -2,6 +2,10 @@
 
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
+import {
+  getOAuthCallbackChannelName,
+  LEGACY_OAUTH_CALLBACK_STORAGE_KEY,
+} from "@/shared/utils/oauthCallbackHandoff";
 
 /**
  * OAuth Callback Page
@@ -9,10 +13,10 @@ import { useEffect, useState } from "react";
  * Reads URL params via window.location.search (not useSearchParams) to avoid
  * the Next.js Suspense boundary requirement, which can delay hydration in popup
  * windows that navigate back from a cross-origin OAuth page (e.g. Google).
- * Sends the callback data back via three methods in order of reliability:
+ * Sends callback data through ephemeral transports only:
  *   1. postMessage to window.opener (may be null after COOP cross-origin nav)
- *   2. BroadcastChannel (same-origin, works across browsing context groups)
- *   3. localStorage storage event (works across browsing context groups)
+ *   2. a state-scoped BroadcastChannel for same-origin COOP fallback
+ * Legacy oauth_callback localStorage is purged but never written.
  */
 export default function CallbackPage() {
   const [status, setStatus] = useState<"processing" | "success" | "done" | "manual">("processing");
@@ -43,8 +47,13 @@ export default function CallbackPage() {
       state,
       error,
       errorDescription,
-      fullUrl: window.location.href,
     };
+
+    try {
+      localStorage.removeItem(LEGACY_OAUTH_CALLBACK_STORAGE_KEY);
+    } catch {
+      // Storage may be disabled; callback delivery remains ephemeral.
+    }
 
     let sent = false;
     let openerSameOrigin = false;
@@ -97,26 +106,18 @@ export default function CallbackPage() {
       }
     }
 
-    // Method 2: BroadcastChannel — works across browsing context groups for same origin.
-    try {
-      const channel = new BroadcastChannel("oauth_callback");
-      channel.postMessage(callbackData);
-      channel.close();
-      sent = true;
-    } catch (e) {
-      console.log("BroadcastChannel failed:", e);
-    }
-
-    // Method 3: localStorage — triggers storage event in all same-origin windows,
-    // regardless of browsing context group isolation from COOP.
-    try {
-      localStorage.setItem(
-        "oauth_callback",
-        JSON.stringify({ ...callbackData, timestamp: Date.now() })
-      );
-      sent = true;
-    } catch (e) {
-      console.log("localStorage failed:", e);
+    // Method 2: state-scoped BroadcastChannel — works across browsing context
+    // groups for same origin without exposing credentials on a generic channel.
+    const callbackChannelName = getOAuthCallbackChannelName(state);
+    if (callbackChannelName) {
+      try {
+        const channel = new BroadcastChannel(callbackChannelName);
+        channel.postMessage(callbackData);
+        channel.close();
+        sent = true;
+      } catch (e) {
+        console.log("BroadcastChannel failed:", e);
+      }
     }
 
     if (sent && (code || error)) {

@@ -308,11 +308,19 @@ test("isAuthRequired is disabled while no password exists", async () => {
   assert.equal(result, false);
 });
 
-test("isAuthRequired keeps fresh bootstrap open only on loopback", async () => {
+test("isAuthRequired keeps fresh bootstrap open only for a real loopback peer", async () => {
   await localDb.updateSettings({ requireLogin: true, password: "" });
 
-  assert.equal(await apiAuth.isAuthRequired(new Request("http://localhost/api/providers")), false);
-  assert.equal(await apiAuth.isAuthRequired(new Request("http://127.0.0.1/api/providers")), false);
+  const directLoopback = (remoteAddress: string) => ({
+    method: "GET",
+    headers: new Headers(),
+    url: "http://localhost/api/providers",
+    nextUrl: { pathname: "/api/providers" },
+    socket: { remoteAddress },
+  });
+
+  assert.equal(await apiAuth.isAuthRequired(directLoopback("127.0.0.1")), false);
+  assert.equal(await apiAuth.isAuthRequired(directLoopback("::1")), false);
   assert.equal(
     await apiAuth.isAuthRequired(new Request("https://example.com/api/providers")),
     true
@@ -368,8 +376,17 @@ test("isAuthRequired treats partial OIDC config as not configured (bootstrap beh
     // missing clientId + clientSecret
   });
 
-  // On loopback without full config → bootstrap allowed
-  assert.equal(await apiAuth.isAuthRequired(new Request("http://localhost/api/providers")), false);
+  // A real loopback peer without full config → bootstrap allowed.
+  assert.equal(
+    await apiAuth.isAuthRequired({
+      method: "GET",
+      headers: new Headers(),
+      url: "http://localhost/api/providers",
+      nextUrl: { pathname: "/api/providers" },
+      socket: { remoteAddress: "127.0.0.1" },
+    }),
+    false
+  );
   // Remote still requires auth
   assert.equal(
     await apiAuth.isAuthRequired(new Request("https://example.com/api/providers")),

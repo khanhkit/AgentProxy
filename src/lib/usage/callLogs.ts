@@ -892,17 +892,85 @@ export async function getCallLogById(id: string) {
   };
 }
 
-export async function exportCallLogsSince(since: string) {
-  const db = getDbInstance();
-  const ids = db
-    .prepare("SELECT id FROM call_logs WHERE timestamp >= ? ORDER BY timestamp DESC")
-    .all(since)
-    .map((row) => String((row as { id: string }).id));
+export interface LegacyCallLogExportCursor {
+  timestamp: string;
+  rowId: number;
+}
 
+export interface LegacyCallLogExportIdRow extends LegacyCallLogExportCursor {
+  id: string;
+}
+
+export function getLegacyCallLogExportMaxRowId(since: string): number {
+  const db = getDbInstance();
+  const row = db
+    .prepare("SELECT COALESCE(MAX(rowid), 0) AS max_row_id FROM call_logs WHERE timestamp >= ?")
+    .get(since) as { max_row_id?: number } | undefined;
+  return Number(row?.max_row_id ?? 0);
+}
+
+export function getLegacyCallLogExportIdPage(
+  since: string,
+  maxRowId: number,
+  cursor: LegacyCallLogExportCursor | null,
+  limit: number
+): LegacyCallLogExportIdRow[] {
+  const db = getDbInstance();
+  const boundedLimit = Math.max(1, Math.min(Math.trunc(limit), 100));
+  const rows = cursor
+    ? db
+        .prepare(
+          `SELECT rowid AS row_id, id, timestamp
+             FROM call_logs
+            WHERE timestamp >= @since
+              AND rowid <= @maxRowId
+              AND (timestamp < @cursorTimestamp
+                   OR (timestamp = @cursorTimestamp AND rowid < @cursorRowId))
+            ORDER BY timestamp DESC, rowid DESC
+            LIMIT @limit`
+        )
+        .all({
+          since,
+          maxRowId,
+          cursorTimestamp: cursor.timestamp,
+          cursorRowId: cursor.rowId,
+          limit: boundedLimit,
+        })
+    : db
+        .prepare(
+          `SELECT rowid AS row_id, id, timestamp
+             FROM call_logs
+            WHERE timestamp >= @since
+              AND rowid <= @maxRowId
+            ORDER BY timestamp DESC, rowid DESC
+            LIMIT @limit`
+        )
+        .all({ since, maxRowId, limit: boundedLimit });
+
+  return (rows as Array<{ row_id: number; id: string; timestamp: string }>).map((row) => ({
+    id: String(row.id),
+    timestamp: String(row.timestamp),
+    rowId: Number(row.row_id),
+  }));
+}
+
+export async function exportCallLogsSince(since: string) {
+  const maxRowId = getLegacyCallLogExportMaxRowId(since);
   const logs: unknown[] = [];
-  for (const id of ids) {
-    const log = await getCallLogById(id);
-    if (log) logs.push(log);
+  let cursor: LegacyCallLogExportCursor | null = null;
+
+  while (true) {
+    const page = getLegacyCallLogExportIdPage(since, maxRowId, cursor, 100);
+    if (page.length === 0) break;
+
+    for (const row of page) {
+      const log = await getCallLogById(row.id);
+      if (log) logs.push(log);
+    }
+
+    const last = page[page.length - 1];
+    cursor = { timestamp: last.timestamp, rowId: last.rowId };
   }
+
   return logs;
 }

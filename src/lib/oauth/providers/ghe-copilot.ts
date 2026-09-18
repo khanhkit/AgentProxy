@@ -1,6 +1,8 @@
 import { getGitHubCopilotChatUserAgent } from "@omniroute/open-sse/config/providerHeaderProfiles.ts";
 import { GHE_COPILOT_CONFIG } from "../constants/oauth";
 import { sanitizeErrorMessage } from "@omniroute/open-sse/utils/error";
+import { stripTrailingSlashes } from "@omniroute/open-sse/utils/urlSanitize.ts";
+import { safeOutboundFetch } from "@/shared/network/safeOutboundFetch";
 
 /**
  * GHE Copilot OAuth provider.
@@ -15,7 +17,7 @@ function normalizeGheUrl(value: unknown): string {
   if (typeof value !== "string" || !value.trim()) {
     throw new Error("gheUrl is required for GHE Copilot OAuth");
   }
-  return value.trim().replace(/\/+$/, "");
+  return stripTrailingSlashes(value.trim());
 }
 
 export const gheCopilot = {
@@ -23,7 +25,7 @@ export const gheCopilot = {
   flowType: "device_code" as const,
   requestDeviceCode: async (config: any) => {
     const gheUrl = normalizeGheUrl(config.gheUrl);
-    const response = await fetch(`${gheUrl}/login/device/code`, {
+    const response = await safeOutboundFetch(`${gheUrl}/login/device/code`, {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
@@ -33,6 +35,10 @@ export const gheCopilot = {
         client_id: config.clientId,
         scope: config.scopes,
       }),
+      guard: "block-metadata",
+      pinDns: true,
+      allowRedirect: false,
+      retry: false,
     });
     if (!response.ok) {
       const error = await response.text();
@@ -42,7 +48,7 @@ export const gheCopilot = {
   },
   pollToken: async (config: any, deviceCode: string, _codeVerifier?: string, extraData?: any) => {
     const gheUrl = normalizeGheUrl(extraData?.gheUrl || config.gheUrl);
-    const response = await fetch(`${gheUrl}/login/oauth/access_token`, {
+    const response = await safeOutboundFetch(`${gheUrl}/login/oauth/access_token`, {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
@@ -53,11 +59,15 @@ export const gheCopilot = {
         device_code: deviceCode,
         grant_type: "urn:ietf:params:oauth:grant-type:device_code",
       }),
+      guard: "block-metadata",
+      pinDns: true,
+      allowRedirect: false,
+      retry: false,
     });
     let data;
     try {
       data = await response.json();
-    } catch (e) {
+    } catch {
       const text = await response.text();
       data = { error: "invalid_response", error_description: sanitizeErrorMessage(text) };
     }
@@ -68,22 +78,30 @@ export const gheCopilot = {
   },
   postExchange: async (tokens: any, extra?: any) => {
     const gheUrl = normalizeGheUrl(extra?.gheUrl);
-    const copilotRes = await fetch(`${gheUrl}/api/v3/copilot_internal/v2/token`, {
+    const copilotRes = await safeOutboundFetch(`${gheUrl}/api/v3/copilot_internal/v2/token`, {
       headers: {
         Authorization: `Bearer ${tokens.access_token}`,
         Accept: "application/json",
         "X-GitHub-Api-Version": GHE_COPILOT_CONFIG.apiVersion,
         "User-Agent": getGitHubCopilotChatUserAgent(),
       },
+      guard: "block-metadata",
+      pinDns: true,
+      allowRedirect: false,
+      retry: false,
     });
     const copilotToken = copilotRes.ok ? await copilotRes.json() : {};
-    const userRes = await fetch(`${gheUrl}/api/v3/user`, {
+    const userRes = await safeOutboundFetch(`${gheUrl}/api/v3/user`, {
       headers: {
         Authorization: `Bearer ${tokens.access_token}`,
         Accept: "application/json",
         "X-GitHub-Api-Version": GHE_COPILOT_CONFIG.apiVersion,
         "User-Agent": getGitHubCopilotChatUserAgent(),
       },
+      guard: "block-metadata",
+      pinDns: true,
+      allowRedirect: false,
+      retry: false,
     });
     const userInfo = userRes.ok ? await userRes.json() : {};
     return {

@@ -54,13 +54,16 @@ Request → CORS → Authz pipeline (classify → policies → enforce)
 
 All sensitive data stored in SQLite is encrypted using **AES-256-GCM** with scrypt key derivation:
 
-- API keys, access tokens, refresh tokens, and ID tokens
-- Versioned format: `enc:v1:<iv>:<ciphertext>:<authTag>`
-- Passthrough mode (plaintext) when `STORAGE_ENCRYPTION_KEY` is not set
+- Provider API keys, access tokens, refresh tokens, and ID tokens use the versioned format `enc:v1:<iv>:<ciphertext>:<authTag>`.
+- Production provider-credential writes fail closed when `STORAGE_ENCRYPTION_KEY` is missing, blank, unusable, or encryption fails; they never silently downgrade to plaintext.
+- Plaintext provider credentials are limited to automated test harnesses or explicit non-production development with `ALLOW_PLAINTEXT_PROVIDER_CREDENTIALS=1`.
 
 ```bash
-# Generate encryption key:
+# Generate the production encryption key:
 STORAGE_ENCRYPTION_KEY=$(openssl rand -hex 32)
+
+# Development only; never enable in production:
+ALLOW_PLAINTEXT_PROVIDER_CREDENTIALS=1
 ```
 
 ### 🛡️ Guardrails Framework

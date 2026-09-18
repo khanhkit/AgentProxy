@@ -22,6 +22,9 @@
 
 "use strict";
 
+const dns = require("node:dns");
+const net = require("node:net");
+
 // Default bypass patterns — banks, governments, SSO providers. Must stay in
 // sync with src/mitm/passthrough.ts::DEFAULT_BYPASS_PATTERNS.
 const DEFAULT_BYPASS_PATTERNS = [
@@ -146,6 +149,174 @@ function isSelfLoopDestination(targetIp, destPort, localPort) {
   return isLoopbackIp(targetIp) && Number(destPort) === Number(localPort);
 }
 
+const CONNECT_ALLOWED_PORTS = new Set([443]);
+const CONNECT_BLOCKLIST = new net.BlockList();
+for (const [network, prefix] of [
+  ["0.0.0.0", 8],
+  ["10.0.0.0", 8],
+  ["100.64.0.0", 10],
+  ["127.0.0.0", 8],
+  ["169.254.0.0", 16],
+  ["172.16.0.0", 12],
+  ["192.0.0.0", 24],
+  ["192.168.0.0", 16],
+  ["198.18.0.0", 15],
+  ["224.0.0.0", 4],
+  ["240.0.0.0", 4],
+]) {
+  CONNECT_BLOCKLIST.addSubnet(network, prefix, "ipv4");
+}
+for (const [network, prefix] of [
+  ["::", 128],
+  ["::1", 128],
+  ["fc00::", 7],
+  ["fe80::", 10],
+  ["ff00::", 8],
+]) {
+  CONNECT_BLOCKLIST.addSubnet(network, prefix, "ipv6");
+}
+
+function normalizeConnectHost(host) {
+  return String(host || "")
+    .trim()
+    .toLowerCase()
+    .replace(/\.+$/, "");
+}
+
+/**
+ * Strictly parse a CONNECT authority without silently repairing malformed ports.
+ * A missing port keeps the historical HTTPS default (443); malformed explicit
+ * ports are rejected instead of falling back to 443.
+ *
+ * @param {string} authority
+ * @returns {{host:string, port:number}|null}
+ */
+function parseConnectAuthorityStrict(authority) {
+  if (typeof authority !== "string") return null;
+  const raw = authority.trim();
+  if (!raw || raw.length > 512 || /[\s/@?#]/.test(raw)) return null;
+
+  let host = "";
+  let rawPort = "";
+  if (raw.startsWith("[")) {
+    const end = raw.indexOf("]");
+    if (end <= 1) return null;
+    host = raw.slice(1, end);
+    const suffix = raw.slice(end + 1);
+    if (!suffix.startsWith(":")) return null;
+    rawPort = suffix.slice(1);
+    if (!rawPort || rawPort.includes(":")) return null;
+  } else {
+    const firstColon = raw.indexOf(":");
+    const lastColon = raw.lastIndexOf(":");
+    if (firstColon !== lastColon) return null;
+    if (firstColon === -1) {
+      host = raw;
+      rawPort = "443";
+    } else {
+      host = raw.slice(0, firstColon);
+      rawPort = raw.slice(firstColon + 1);
+    }
+  }
+
+  host = normalizeConnectHost(host);
+  if (!host || host.length > 253 || /[\[\]]/.test(host)) return null;
+  if (!/^\d+$/.test(rawPort)) return null;
+  const port = Number(rawPort);
+  if (!Number.isInteger(port) || port < 1 || port > 65535) return null;
+  return { host, port };
+}
+
+function isBlockedConnectHostname(hostname) {
+  const host = normalizeConnectHost(hostname);
+  return (
+    !host ||
+    host === "localhost" ||
+    host.endsWith(".localhost") ||
+    host.endsWith(".local") ||
+    host.endsWith(".internal") ||
+    host === "metadata.goog" ||
+    host === "metadata.google.internal"
+  );
+}
+
+/** Public-only verdict for a resolved CONNECT destination address. */
+function isBlockedConnectAddress(address) {
+  const value = String(address || "").trim();
+  if (/^::ffff:/i.test(value)) return true;
+  const family = net.isIP(value);
+  if (family === 4) return CONNECT_BLOCKLIST.check(value, "ipv4");
+  if (family === 6) return CONNECT_BLOCKLIST.check(value, "ipv6");
+  return true;
+}
+
+/**
+ * Resolve and pin a raw CONNECT destination before any upstream socket exists.
+ * Every DNS answer must be public. Rejecting mixed public/private answer sets
+ * prevents an attacker-controlled hostname from using DNS ordering/rebinding to
+ * steer the later TCP dial onto an internal address.
+ *
+ * @param {string} host
+ * @param {number} port
+ * @param {(hostname:string, options:{all:true,verbatim:true}) => Promise<Array<{address:string,family:number}>>} [lookup]
+ */
+async function resolveConnectDestination(
+  host,
+  port,
+  lookup = (hostname, options) => dns.promises.lookup(hostname, options)
+) {
+  const normalizedHost = normalizeConnectHost(host);
+  if (!CONNECT_ALLOWED_PORTS.has(Number(port))) {
+    throw new Error(`CONNECT port ${port} is not allowed`);
+  }
+  if (isBlockedConnectHostname(normalizedHost)) {
+    throw new Error(`CONNECT destination ${normalizedHost || "<empty>"} is blocked`);
+  }
+
+  const literalFamily = net.isIP(normalizedHost);
+  if (literalFamily !== 0) {
+    if (isBlockedConnectAddress(normalizedHost)) {
+      throw new Error(
+        `CONNECT destination resolved to blocked private or special address: ${normalizedHost}`
+      );
+    }
+    return {
+      host: normalizedHost,
+      port: Number(port),
+      address: normalizedHost,
+      family: literalFamily,
+    };
+  }
+
+  let answers;
+  try {
+    answers = await lookup(normalizedHost, { all: true, verbatim: true });
+  } catch (error) {
+    throw new Error(
+      `CONNECT destination DNS lookup failed: ${error && error.message ? error.message : error}`
+    );
+  }
+  if (!Array.isArray(answers) || answers.length === 0) {
+    throw new Error("CONNECT destination DNS lookup returned no addresses");
+  }
+
+  for (const answer of answers) {
+    if (!answer || !answer.address || isBlockedConnectAddress(answer.address)) {
+      throw new Error(
+        `CONNECT destination resolved to blocked private or special address: ${answer && answer.address ? answer.address : "<invalid>"}`
+      );
+    }
+  }
+
+  const first = answers[0];
+  return {
+    host: normalizedHost,
+    port: Number(port),
+    address: first.address,
+    family: Number(first.family) || net.isIP(first.address),
+  };
+}
+
 /**
  * Parse the MITM_VERBOSE env var into a routing-decision log level (Gap 15).
  * Default 1 (log decisions) preserves existing behavior; 0 silences; higher
@@ -166,5 +337,8 @@ module.exports = {
   parseBypassJson,
   isLoopbackIp,
   isSelfLoopDestination,
+  parseConnectAuthorityStrict,
+  isBlockedConnectAddress,
+  resolveConnectDestination,
   parseVerboseLevel,
 };

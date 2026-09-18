@@ -7,7 +7,9 @@ import { execSync } from "node:child_process";
 
 const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-installer-"));
 const FAKE_BIN_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-fake-bin-"));
+const FAKE_NPM_LOG = path.join(FAKE_BIN_DIR, "npm.log");
 const MOCK_NINEROUTER_VERSION = "0.5.30";
+const KNOWN_BAD_NINEROUTER_VERSION = "0.5.75";
 
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.NODE_ENV = "test";
@@ -24,6 +26,7 @@ const fakeNpmScript = `#!/bin/sh
 set -e
 CMD="$1"
 shift
+printf '%s %s\n' "$CMD" "$*" >> "${FAKE_NPM_LOG}"
 if [ "$CMD" = "install" ]; then
   # Resolve the install prefix like real npm: an explicit --prefix arg wins,
   # otherwise fall back to the npm_config_prefix env var (#5379 passes the
@@ -40,7 +43,11 @@ if [ "$CMD" = "install" ]; then
   exit 0
 fi
 if [ "$CMD" = "view" ]; then
-  echo "${MOCK_NINEROUTER_VERSION}"
+  case "$*" in
+    *dist.integrity*) echo "sha512-YWJjZA==" ;;
+    *9router@${KNOWN_BAD_NINEROUTER_VERSION}*) echo "${KNOWN_BAD_NINEROUTER_VERSION}" ;;
+    *) echo "${MOCK_NINEROUTER_VERSION}" ;;
+  esac
   exit 0
 fi
 exit 0
@@ -74,6 +81,27 @@ test.after(() => {
   core.resetDbInstance();
   fs.rmSync(TEST_DATA_DIR, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
   fs.rmSync(FAKE_BIN_DIR, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
+});
+
+test("known-bad 0.5.75 is rejected before npm install", async () => {
+  fs.writeFileSync(FAKE_NPM_LOG, "", "utf8");
+
+  await assert.rejects(
+    () => install(KNOWN_BAD_NINEROUTER_VERSION),
+    (error: unknown) => {
+      assert.ok(error instanceof Error);
+      assert.match(error.message, /0\.5\.75/);
+      assert.equal((error as { httpStatus?: number }).httpStatus, 409);
+      return true;
+    }
+  );
+
+  const npmCalls = fs.readFileSync(FAKE_NPM_LOG, "utf8");
+  assert.doesNotMatch(
+    npmCalls,
+    /^install\b/m,
+    "known-bad release must be rejected before npm install"
+  );
 });
 
 test("install creates package.json structure", async () => {

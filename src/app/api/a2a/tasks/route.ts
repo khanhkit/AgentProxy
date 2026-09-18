@@ -41,7 +41,7 @@ export async function GET(request: Request) {
         : undefined;
 
     const tm = getTaskManager();
-    const total = tm.countTasks({ state, skill });
+    const total = tm.countTasks({ state, skill }, auth.owner);
     const tasks = tm.listTasks({ state, skill, limit, offset }, auth.owner);
 
     return NextResponse.json({
@@ -92,9 +92,11 @@ export function tokensMatch(provided: string, expected: string): boolean {
 }
 
 /**
- * Mesma semântica de auth do JSON-RPC A2A (src/app/a2a/route.ts): Bearer vs OMNIROUTE_API_KEY; aberto se não configurada.
+ * Legacy static-key comparator retained only for compatibility/timing tests.
  *
- * Exported as a test seam only — not part of the route contract.
+ * IMPORTANT: this is NOT the production authorization contract for POST. It
+ * intentionally ignores REQUIRE_API_KEY and therefore must not guard delegation;
+ * POST uses authorizeA2ATaskRoute() above the Conductor boundary instead.
  */
 export function authenticateA2A(request: Request): boolean {
   const configuredKey = process.env.AGENTPROXY_API_KEY || process.env.OMNIROUTE_API_KEY;
@@ -109,12 +111,9 @@ export function authenticateA2A(request: Request): boolean {
  * Agent Card) são delegáveis; os estados voltam pelo espelho SSE→A2A (RF1).
  */
 export async function POST(request: Request) {
-  if (!authenticateA2A(request)) {
-    return NextResponse.json(
-      { error: "Unauthorized: missing or invalid API key" },
-      { status: 401 }
-    );
-  }
+  const auth = await authorizeA2ATaskRoute(request);
+  if (auth instanceof Response) return auth;
+
   const settings = await getSettings();
   if (settings.a2aEnabled !== true) {
     return NextResponse.json(

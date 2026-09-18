@@ -9,6 +9,9 @@ import { npmBin, npmExecOptions } from "../npm-exec.mjs";
 import { readPidFile, isPidRunning } from "../utils/pid.mjs";
 
 const execFileAsync = promisify(execFile);
+const IMMUTABLE_VERSION_PATTERN = /^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$/;
+const NPM_INTEGRITY_PATTERN =
+  /^sha(?:256|384|512)-[A-Za-z0-9+/=]+(?:\s+sha(?:256|384|512)-[A-Za-z0-9+/=]+)*$/;
 
 // This file lives at <pkgRoot>/bin/cli/commands/update.mjs — resolve package
 // paths relative to the script, NOT process.cwd(). On a global npm/brew install
@@ -41,6 +44,31 @@ export async function getLatestVersion(execFn = execFileAsync) {
       npmExecOptions(process.platform, { timeoutMs: 15000 })
     );
     return stdout.trim();
+  } catch {
+    return null;
+  }
+}
+
+export async function getLatestArtifact(execFn = execFileAsync) {
+  try {
+    // Keep every argument literal: npm.cmd requires a shell on Windows. Asking
+    // for version + integrity in one registry query also makes the mutable
+    // `latest` dist-tag a discovery input only — both fields describe the same
+    // resolved packument snapshot.
+    const { stdout } = await execFn(
+      npmBin(),
+      ["view", "omniroute", "version", "dist.integrity", "--json", "--prefer-online"],
+      npmExecOptions(process.platform, { timeoutMs: 15000 })
+    );
+    const parsed = JSON.parse(stdout);
+    const record = Array.isArray(parsed) ? parsed.at(-1) : parsed;
+    const version = typeof record?.version === "string" ? record.version.trim() : "";
+    const integrity =
+      typeof record?.["dist.integrity"] === "string" ? record["dist.integrity"].trim() : "";
+    if (!IMMUTABLE_VERSION_PATTERN.test(version) || !NPM_INTEGRITY_PATTERN.test(integrity)) {
+      return null;
+    }
+    return { version, integrity };
   } catch {
     return null;
   }
@@ -108,9 +136,13 @@ export async function printPostApplyGuidance(latest, deps = { readPidFile, isPid
     printInfo("  Run `omniroute restart` now to apply this update.");
   } else {
     printInfo(`No running OmniRoute server was detected via the CLI's PID file.`);
-    printInfo(`  Start it with \`omniroute serve\` (or restart your existing process) to run ${latest}.`);
+    printInfo(
+      `  Start it with \`omniroute serve\` (or restart your existing process) to run ${latest}.`
+    );
   }
-  printInfo("`omniroute --version` will keep reporting the old version until the process restarts.");
+  printInfo(
+    "`omniroute --version` will keep reporting the old version until the process restarts."
+  );
 }
 
 export function registerUpdate(program) {
@@ -139,7 +171,9 @@ export async function runUpdateCommand(opts = {}) {
   const skipConfirm = opts.yes ?? applyNow;
 
   const current = await getCurrentVersion();
-  const latest = await getLatestVersion();
+  const artifact = await getLatestArtifact();
+  const latest = artifact?.version ?? null;
+  const integrity = artifact?.integrity ?? null;
 
   if (!current) {
     printError("Could not determine current version");
@@ -148,6 +182,10 @@ export async function runUpdateCommand(opts = {}) {
 
   if (!latest) {
     printError("Could not check latest version. Is npm available?");
+    return 1;
+  }
+  if (!IMMUTABLE_VERSION_PATTERN.test(latest)) {
+    printError(`Registry returned a non-immutable update version: ${latest}`);
     return 1;
   }
 
@@ -186,8 +224,16 @@ export async function runUpdateCommand(opts = {}) {
     return 1; // exit 1 = outdated (useful for scripts)
   }
 
+  if (!integrity) {
+    printError(
+      `Missing or invalid npm integrity metadata for omniroute@${latest}. Aborting update.`
+    );
+    return 1;
+  }
+
   if (dryRun) {
-    console.log("\n  [DRY RUN] Would run: npm install -g omniroute@latest --include=optional");
+    console.log(`\n  [DRY RUN] Would run: npm install -g omniroute@${latest} --include=optional`);
+    console.log(`  [DRY RUN] Verified registry integrity metadata: ${integrity.split("-")[0]}`);
     if (!skipBackup) console.log("  [DRY RUN] Would create backup in ~/.omniroute/backups/");
     return 0;
   }
@@ -218,10 +264,12 @@ export async function runUpdateCommand(opts = {}) {
 
   printInfo("Updating OmniRoute...");
   try {
-    const { execSync } = await import("child_process");
-    // --include=optional keeps the optionalDependencies (better-sqlite3, keytar,
-    // tls-client, llmlingua SLM stack) on update so an omit=optional config can't drop them.
-    execSync("npm install -g omniroute@latest --include=optional", { stdio: "inherit" });
+    const { execFileSync } = await import("child_process");
+    // Resolve `latest` only for discovery; promotion always uses the exact version
+    // whose registry integrity metadata was validated above. `latest` can move
+    // after discovery without changing the artifact this update installs.
+    const installArgs = ["install", "-g", `omniroute@${latest}`, "--include=optional"];
+    execFileSync(npmBin(), installArgs, npmExecOptions(process.platform, { stdio: "inherit" }));
     // Trust-but-verify: `npm install -g` exits 0 even when a shadowing local install
     // (e.g. ~/node_modules/omniroute ahead of the global prefix on PATH) means the
     // binary the user actually runs was not touched. Re-read the running binary's

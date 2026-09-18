@@ -212,42 +212,36 @@ test("/api/v1/files route guard allows 15 MB (10 MB+ real-world scenario)", () =
   assert.equal(checkBodySize(request, getBodySizeLimit("/api/v1/files")), null);
 });
 
-test("media routes bypass OmniRoute's configured body-size limit", () => {
-  assert.equal(MAX_BODY_BYTES_MEDIA, Number.POSITIVE_INFINITY);
+test("media routes resolve a finite positive application body budget", () => {
+  assert.equal(Number.isFinite(MAX_BODY_BYTES_MEDIA), true);
+  assert.ok(MAX_BODY_BYTES_MEDIA > 0);
   assert.equal(MAX_BODY_BYTES_IMAGE_EDIT, MAX_BODY_BYTES_MEDIA);
-  assert.equal(
-    getBodySizeLimit("/api/v1/images/generations", { maxBodySizeMb: 10 }),
-    MAX_BODY_BYTES_MEDIA
-  );
-  assert.equal(
-    getBodySizeLimit("/api/v1/images/edits", { maxBodySizeMb: 10 }),
-    MAX_BODY_BYTES_MEDIA
-  );
-  assert.equal(
-    getBodySizeLimit("/api/v1/images/upscale", { maxBodySizeMb: 10 }),
-    MAX_BODY_BYTES_MEDIA
-  );
-  assert.equal(
-    getBodySizeLimit("/api/v1/videos/generations", { maxBodySizeMb: 10 }),
-    MAX_BODY_BYTES_MEDIA
-  );
-  assert.equal(
-    getBodySizeLimit("/api/v1/providers/openai/images/generations", { maxBodySizeMb: 10 }),
-    MAX_BODY_BYTES_MEDIA
-  );
+  for (const pathname of [
+    "/api/v1/images/generations",
+    "/api/v1/images/edits",
+    "/api/v1/images/upscale",
+    "/api/v1/videos/generations",
+    "/api/v1/providers/openai/images/generations",
+  ]) {
+    assert.equal(getBodySizeLimit(pathname, { maxBodySizeMb: 10 }), MAX_BODY_BYTES_MEDIA);
+  }
 });
 
-test("media routes never return OmniRoute's PAYLOAD_TOO_LARGE response", () => {
+test("media routes reject declared bodies above the resolved finite budget", async () => {
   for (const pathname of [
     "/api/v1/images/generations",
     "/api/v1/videos/generations",
     "/api/v1/providers/openai/images/generations",
   ]) {
+    const limit = getBodySizeLimit(pathname, { maxBodySizeMb: 10 });
     const request = new Request(`http://localhost${pathname}`, {
       method: "POST",
-      headers: { "content-length": String(Number.MAX_SAFE_INTEGER) },
+      headers: { "content-length": String(limit + 1) },
     });
-    assert.equal(checkBodySize(request, getBodySizeLimit(pathname, { maxBodySizeMb: 10 })), null);
+    const rejection = checkBodySize(request, limit);
+    assert.ok(rejection);
+    assert.equal(rejection.status, 413);
+    assert.equal((await rejection.json()).error.code, "PAYLOAD_TOO_LARGE");
   }
 });
 
@@ -262,10 +256,9 @@ test("provider media matching does not unbound adjacent provider routes", () => 
   }
 });
 
-test("image edit body reader does not enforce an OmniRoute media limit", async () => {
+test("media body reader accepts under-budget bodies using the resolved finite limit", async () => {
   const request = new Request("http://localhost/api/v1/images/edits", {
     method: "POST",
-    headers: { "content-length": String(Number.MAX_SAFE_INTEGER) },
     body: new Uint8Array([1, 2, 3, 4]),
   });
 

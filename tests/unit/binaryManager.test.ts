@@ -198,7 +198,12 @@ describe("binaryManager", () => {
             { status: 200, headers: { "content-type": "application/json" } }
           );
         }
-        if (url.endsWith("checksums.txt")) return new Response("", { status: 404 });
+        if (url.endsWith("checksums.txt")) {
+          return new Response(
+            "4a70fe9aa6436e02c2dea340fbd1e352e4ef2d8ce6ca52ad25d4b95471fc8bf2  CLIProxyAPI_1.0.0_windows_amd64.zip\n",
+            { status: 200 }
+          );
+        }
         return new Response("zip", { status: 200 });
       };
 
@@ -304,7 +309,12 @@ describe("binaryManager", () => {
             { status: 200, headers: { "content-type": "application/json" } }
           );
         }
-        if (url.endsWith("checksums.txt")) return new Response("", { status: 404 });
+        if (url.endsWith("checksums.txt")) {
+          return new Response(
+            "4a70fe9aa6436e02c2dea340fbd1e352e4ef2d8ce6ca52ad25d4b95471fc8bf2  CLIProxyAPI_1.0.0_windows_amd64.zip\n",
+            { status: 200 }
+          );
+        }
         return new Response("zip", { status: 200 });
       };
 

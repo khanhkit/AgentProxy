@@ -3,6 +3,7 @@
 import { useState, lazy, Suspense } from "react";
 import { useTranslations } from "next-intl";
 import type { ScrapeResult as ScrapeResultType } from "@/shared/schemas/searchTools";
+import { safeHttpHref } from "@/shared/utils/linkify";
 
 /** D21 — cap at 256 KB to avoid freezing the renderer */
 const CONTENT_CAP_BYTES = 256 * 1024;
@@ -31,6 +32,7 @@ export default function ScrapeResult({ result, latencyMs }: ScrapeResultProps) {
   const contentSize = new TextEncoder().encode(result.content).length;
   const isTruncated = contentSize > CONTENT_CAP_BYTES;
   const displayContent = isTruncated ? result.content.slice(0, CONTENT_CAP_BYTES) : result.content;
+  const safeResultHref = safeHttpHref(result.url);
 
   return (
     <div className="space-y-3" data-testid="scrape-result">
@@ -99,14 +101,18 @@ export default function ScrapeResult({ result, latencyMs }: ScrapeResultProps) {
           {result.metadata.description && (
             <div className="text-text-muted">{result.metadata.description}</div>
           )}
-          <a
-            href={result.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-accent hover:underline block mt-1 truncate"
-          >
-            {result.url}
-          </a>
+          {safeResultHref ? (
+            <a
+              href={safeResultHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-accent hover:underline block mt-1 truncate"
+            >
+              {result.url}
+            </a>
+          ) : (
+            <span className="text-accent block mt-1 truncate">{result.url}</span>
+          )}
         </div>
       )}
 

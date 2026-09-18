@@ -1,0 +1,275 @@
+{
+  "schemaVersion": 1,
+  "routeFamily": "responses",
+  "canonicalPath": "/v1/responses",
+  "aliases": ["/v1/responses", "/responses", "/codex", "/codex/*"],
+  "requiredControls": [
+    "authentication",
+    "endpoint_scope",
+    "request_body",
+    "redirects_headers",
+    "errors",
+    "rate_cooldown",
+    "logging"
+  ],
+  "controls": [
+    {
+      "id": "authentication",
+      "disposition": "equivalent",
+      "rationale": "Both routes fail closed for unauthorized callers, but native Rust validates the API key before native account dispatch while legacy fallback delegates client API authentication to the Next authz/API-key policy stack.",
+      "native": {
+        "owner": "rust/crates/gateway/src/routes/codex.rs",
+        "contract": "A request resolved to a native Codex model requires a valid API key before native account selection; a non-native model may continue to explicit legacy fallback without being pre-empted by native auth.",
+        "evidence": [
+          {
+            "path": "rust/crates/gateway/tests/ingress_admission_kittest.rs",
+            "needle": "tc_rust_ingress_reg_004_native_and_legacy_under_cap_contracts_remain_distinct",
+            "runner": "cargo test --manifest-path rust/Cargo.toml -p agentproxy-gateway --test ingress_admission_kittest tc_rust_ingress_reg_004_native_and_legacy_under_cap_contracts_remain_distinct"
+          }
+        ]
+      },
+      "legacy": {
+        "owner": "src/server/authz + src/shared/utils/apiKeyPolicy.ts",
+        "contract": "Responses aliases entering the Next fallback classify as CLIENT_API and keyless/valid-key outcomes remain invariant across canonical and rewritten route forms.",
+        "evidence": [
+          {
+            "path": "tests/unit/security/authz-route-canonicalization-kittest.test.ts",
+            "needle": "TC-AUTHZ-CANON-SEC-003 keyless and valid-key auth outcomes are invariant across route forms",
+            "runner": "npx tsx --test tests/unit/security/authz-route-canonicalization-kittest.test.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "endpoint_scope",
+      "disposition": "equivalent",
+      "rationale": "Both surfaces enforce the caller's client-API scope before provider execution. The native route resolves the fixed chat endpoint category in Rust; the legacy route uses the canonical Next endpoint allowlist/API-key policy.",
+      "native": {
+        "owner": "rust/crates/gateway/src/routes/codex.rs + state.rs",
+        "contract": "Native Responses admission calls authorize_api_key for the chat endpoint and rejects EndpointDenied before sending upstream.",
+        "evidence": [
+          {
+            "path": "rust/crates/gateway/src/routes/codex.rs",
+            "needle": "state.authorize_api_key(key, \"chat\")",
+            "runner": "cargo test --manifest-path rust/Cargo.toml -p agentproxy-gateway routes::codex::tests::under_cap_native_request_preserves_native_auth_contract"
+          }
+        ]
+      },
+      "legacy": {
+        "owner": "src/server/authz + src/shared/utils/apiKeyPolicy.ts",
+        "contract": "Equivalent Responses route forms cannot weaken endpoint allowlist denial.",
+        "evidence": [
+          {
+            "path": "tests/unit/security/authz-route-canonicalization-kittest.test.ts",
+            "needle": "TC-AUTHZ-CANON-SEC-002 endpoint allowlist denial is invariant across equivalent route forms",
+            "runner": "npx tsx --test tests/unit/security/authz-route-canonicalization-kittest.test.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "request_body",
+      "disposition": "intentional_difference",
+      "rationale": "The native Rust route uses a stricter route-local cap to bound pre-dispatch work; the legacy Next client API retains the product LLM floor for compatibility. Both caps are finite and enforced before unbounded downstream work.",
+      "native": {
+        "owner": "rust/crates/gateway/src/routes/codex.rs",
+        "contract": "Native Responses request bodies are capped at 16 MiB, including streamed/chunked input and malformed Content-Length handling.",
+        "evidence": [
+          {
+            "path": "rust/crates/gateway/tests/ingress_admission_kittest.rs",
+            "needle": "tc_rust_ingress_sec_002_streamed_body_over_16_mib_returns_413",
+            "runner": "cargo test --manifest-path rust/Cargo.toml -p agentproxy-gateway --test ingress_admission_kittest tc_rust_ingress_sec_002_streamed_body_over_16_mib_returns_413"
+          }
+        ]
+      },
+      "legacy": {
+        "owner": "src/shared/middleware/bodySizeGuard.ts + authz pipeline",
+        "contract": "Legacy /api/v1/responses admission uses the finite 50 MiB LLM API floor and returns PAYLOAD_TOO_LARGE above it.",
+        "evidence": [
+          {
+            "path": "tests/unit/body-size-guard.test.ts",
+            "needle": "/api/v1/responses route guard rejects payloads above the LLM API floor",
+            "runner": "npx tsx --test tests/unit/body-size-guard.test.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "redirects_headers",
+      "disposition": "delegated",
+      "rationale": "Native provider transport and Rust legacy-control-plane forwarding own different hops. The shared contract is fail-closed redirect behavior and no caller-controlled credential/provenance widening; exact header sets are hop-specific.",
+      "native": {
+        "owner": "rust gateway reqwest clients + Codex adapter",
+        "contract": "Rust HTTP clients disable automatic redirects and native provider authorization is adapter-owned rather than copied from the caller.",
+        "evidence": [
+          {
+            "path": "rust/crates/gateway/tests/secret_transport_confinement.rs",
+            "needle": "tc_rust_sec_001_cross_origin_redirect_cannot_receive_internal_service_token",
+            "runner": "cargo test --manifest-path rust/Cargo.toml -p agentproxy-gateway --test secret_transport_confinement"
+          }
+        ]
+      },
+      "legacy": {
+        "owner": "rust/crates/gateway/src/routes/legacy.rs + Next routing stack",
+        "contract": "Legacy forwarding is limited to explicit API paths, strips hop-by-hop/connection-nominated headers, and reaches canonical Next rewrites without automatic redirect credential propagation.",
+        "evidence": [
+          {
+            "path": "rust/crates/gateway/src/routes/legacy.rs",
+            "needle": "connection_nominated_headers",
+            "runner": "cargo test --manifest-path rust/Cargo.toml -p agentproxy-gateway routes::legacy::tests"
+          }
+        ]
+      }
+    },
+    {
+      "id": "errors",
+      "disposition": "intentional_difference",
+      "rationale": "Both paths fail closed and sanitize local gateway failures, but their public envelopes are intentionally not byte-identical: Rust uses agentproxy_gateway_error while Next/open-sse preserves protocol-specific OpenAI/Responses errors.",
+      "native": {
+        "owner": "rust/crates/gateway/src/routes/codex.rs",
+        "contract": "Native gateway-local failures return bounded JSON error responses and do not transparently replay ambiguous delivery/postcommit failures.",
+        "evidence": [
+          {
+            "path": "rust/crates/gateway/src/routes/codex.rs",
+            "needle": "agentproxy_gateway_error",
+            "runner": "cargo test --manifest-path rust/Cargo.toml -p agentproxy-gateway routes::codex::tests"
+          }
+        ]
+      },
+      "legacy": {
+        "owner": "src/app/api/v1/responses/route.ts + open-sse error utilities",
+        "contract": "Legacy Responses parsing/admission errors use the Next/open-sse Responses error contract and provider failures map to stable HTTP statuses.",
+        "evidence": [
+          {
+            "path": "tests/unit/chat-route-coverage.test.ts",
+            "needle": "handleChat maps upstream timeouts to HTTP 504",
+            "runner": "npx tsx --test tests/unit/chat-route-coverage.test.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "rate_cooldown",
+      "disposition": "intentional_difference",
+      "rationale": "Native Rust uses account health, model/account cooldown and a request-wide retry amplification budget; legacy Next combines API-key request limits with provider cooldown/retry policy. Both are bounded but the state machines are deliberately separate today.",
+      "native": {
+        "owner": "rust/crates/gateway/src/routes/codex.rs + state.rs",
+        "contract": "429 records model-scoped cooldown and one request is capped by the native retry budget.",
+        "evidence": [
+          {
+            "path": "rust/crates/gateway/src/routes/codex.rs",
+            "needle": "route_429_records_model_scoped_cooldown",
+            "runner": "cargo test --manifest-path rust/Cargo.toml -p agentproxy-gateway routes::codex::tests"
+          }
+        ]
+      },
+      "legacy": {
+        "owner": "src/shared/utils/apiKeyPolicy.ts + open-sse chat routing",
+        "contract": "Legacy callers are subject to configured API-key rate windows and provider cooldown-aware retry that is cancellation-aware and bounded.",
+        "evidence": [
+          {
+            "path": "tests/unit/chat-cooldown-aware-retry.test.ts",
+            "needle": "handleChat aborts the pending cooldown wait when the client disconnects",
+            "runner": "npx tsx --test tests/unit/chat-cooldown-aware-retry.test.ts"
+          },
+          {
+            "path": "tests/unit/api-key-policy.test.ts",
+            "needle": "enforceApiKeyPolicy enforces custom multi-window rate limits",
+            "runner": "npx tsx --test tests/unit/api-key-policy.test.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "logging",
+      "disposition": "intentional_difference",
+      "rationale": "The inherited Next/open-sse execution path persists request/usage telemetry. The native Rust Responses path currently does not persist equivalent call_logs or usage_history rows, so this remains an explicit migration gap rather than being treated as parity.",
+      "native": {
+        "owner": "rust/crates/gateway/src/routes/codex.rs",
+        "contract": "The native Rust Responses path currently does not persist durable call_logs/usage_history request telemetry; only operational stderr messages exist for exceptional lifecycle events.",
+        "evidence": [
+          {
+            "path": "rust/crates/gateway/src/routes/codex.rs",
+            "needle": "pub async fn responses(",
+            "runner": "cargo test --manifest-path rust/Cargo.toml -p agentproxy-gateway routes::codex::tests"
+          }
+        ]
+      },
+      "legacy": {
+        "owner": "open-sse/handlers/chatCore + src/lib/usage",
+        "contract": "Legacy Next/open-sse execution persists call_logs and usage_history through the shared usage pipeline with payload/error redaction.",
+        "evidence": [
+          {
+            "path": "open-sse/handlers/chatCore/attemptLogging.ts",
+            "needle": "saveCallLog({",
+            "runner": "npx tsx --test tests/unit/save-call-log-persistence.test.ts tests/unit/request-log-payloads.test.ts"
+          }
+        ]
+      }
+    }
+  ],
+  "protectedInvariants": [
+    {
+      "id": "routing_selector_authority",
+      "contract": "Caller-visible route/model/account selectors remain authorization objects: native Codex account selection is constrained by the authenticated API key's allowed_connections and legacy equivalent routes preserve canonical endpoint-scope enforcement.",
+      "evidence": [
+        {
+          "path": "rust/crates/gateway/src/routes/codex.rs",
+          "needle": "&authorized.allowed_connections",
+          "runner": "cargo test --manifest-path rust/Cargo.toml -p agentproxy-gateway routes::codex::tests"
+        },
+        {
+          "path": "tests/unit/security/authz-route-canonicalization-kittest.test.ts",
+          "needle": "TC-AUTHZ-CANON-SEC-002 endpoint allowlist denial is invariant across equivalent route forms",
+          "runner": "npx tsx --test tests/unit/security/authz-route-canonicalization-kittest.test.ts"
+        }
+      ]
+    },
+    {
+      "id": "trusted_locality",
+      "contract": "Security-sensitive local/trusted decisions are derived from trusted peer context rather than caller-controlled Host or raw X-Forwarded-For values; Responses parity work must not reintroduce locality inference from request headers.",
+      "evidence": [
+        {
+          "path": "tests/unit/security/peer-identity-contract-ap0006.test.ts",
+          "needle": "AP-ISS-0006: forged localhost authority is not loopback without trusted peer context",
+          "runner": "npx tsx --test tests/unit/security/peer-identity-contract-ap0006.test.ts"
+        },
+        {
+          "path": "tests/unit/security/peer-identity-contract-ap0006.test.ts",
+          "needle": "AP-ISS-0006: no peer means XFF cannot become the client identity",
+          "runner": "npx tsx --test tests/unit/security/peer-identity-contract-ap0006.test.ts"
+        }
+      ]
+    }
+  ],
+  "sourceGuards": [
+    {
+      "path": "rust/crates/gateway/src/routes/codex.rs",
+      "needle": "state.resolve_native_codex_model"
+    },
+    {
+      "path": "rust/crates/gateway/src/routes/codex.rs",
+      "needle": "legacy::proxy_request(&state, Method::POST, &uri, headers, body).await"
+    },
+    {
+      "path": "rust/crates/gateway/src/routes/legacy.rs",
+      "needle": "path == \"/responses\""
+    },
+    {
+      "path": "rust/crates/gateway/src/routes/legacy.rs",
+      "needle": "path == \"/codex\""
+    },
+    {
+      "path": "next.config.mjs",
+      "needle": "source: \"/responses\""
+    },
+    {
+      "path": "next.config.mjs",
+      "needle": "source: \"/codex/:path*\""
+    },
+    {
+      "path": "src/app/api/v1/responses/route.ts",
+      "needle": "handleChat(resolved, null, resolvedBody"
+    }
+  ]
+}

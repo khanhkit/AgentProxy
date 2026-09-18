@@ -10,6 +10,7 @@ import { getLatestRelease, clearCache as clearReleaseCache } from "./releaseChec
 import { installVersion, getCurrentBinaryPath, rollbackVersion } from "./binaryManager.ts";
 import { startProcess, stopProcess, restartProcess, isProcessRunning } from "./processManager.ts";
 import { checkHealth, startMonitoring, stopMonitoring, isMonitoring } from "./healthMonitor.ts";
+import { assertManagedUpdateCompatible } from "../services/installers/managedUpdatePolicy.ts";
 
 export { getVersionManagerStatus, getVersionManagerTool } from "@/lib/db/versionManager";
 
@@ -23,6 +24,7 @@ export async function installTool(
   binaryPath: string;
 }> {
   const targetVersion = version || (await getLatestRelease()).version;
+  await assertManagedUpdateCompatible(tool, targetVersion);
   const binaryPath = await installVersion(targetVersion);
 
   await upsertVersionManagerTool({

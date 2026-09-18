@@ -4,6 +4,7 @@ import { useState, useCallback } from "react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import type { SearchProviderCatalogItem } from "@/shared/schemas/searchTools";
+import { safeHttpHref } from "@/shared/utils/linkify";
 
 const MAX_COMPARE_PROVIDERS = 4; // D22: cap at 4 providers running in parallel
 
@@ -355,6 +356,8 @@ export default function CompareTab({ providers, onMetrics }: CompareTabProps) {
                       ) : (
                         cr.results.map((r, idx) => {
                           const isShared = (urlCountMap.get(r.url) ?? 0) > 1;
+                          const safeHref = safeHttpHref(r.url);
+                          const resultLabel = r.title || r.url;
                           return (
                             <div key={idx} className="p-3 space-y-0.5">
                               <div className="flex items-start gap-1">
@@ -367,14 +370,20 @@ export default function CompareTab({ providers, onMetrics }: CompareTabProps) {
                                     ⭐
                                   </span>
                                 )}
-                                <a
-                                  href={r.url}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="font-medium text-sm text-text-main hover:text-primary leading-snug"
-                                >
-                                  {r.title || r.url}
-                                </a>
+                                {safeHref ? (
+                                  <a
+                                    href={safeHref}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="font-medium text-sm text-text-main hover:text-primary leading-snug"
+                                  >
+                                    {resultLabel}
+                                  </a>
+                                ) : (
+                                  <span className="font-medium text-sm text-text-main leading-snug">
+                                    {resultLabel}
+                                  </span>
+                                )}
                               </div>
                               {r.snippet && (
                                 <p className="text-xs text-text-muted line-clamp-2 leading-relaxed">

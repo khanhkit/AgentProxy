@@ -3,6 +3,10 @@
 # ──────────────────────────────────────────────────────────────────────
 #
 #  Isolated production instance running on port 20130.
+#  Host-published dashboard/API/WS ports bind to 127.0.0.1 by default.
+#  Set PROD_BIND_HOST only when an authenticated TLS perimeter must reach
+#  these ports from another interface; never expose the plain HTTP/WS ports
+#  directly to an untrusted network. See docs/security/PRODUCTION_EXPOSURE.md.
 #  Keeps the app running while you continue developing locally.
 #
 #  Usage:
@@ -71,9 +75,9 @@ services:
       - OMNIROUTE_BASE_PATH=${OMNIROUTE_BASE_PATH:-}
       - CHATGPT_WEB_CODEX_CDP_URL=http://chatgpt-web-codex-browser:9223
     ports:
-      - "${PROD_DASHBOARD_PORT:-20130}:${DASHBOARD_PORT:-${PORT:-20128}}"
-      - "${PROD_API_PORT:-20131}:${API_PORT:-20129}"
-      - "${PROD_LIVE_WS_PORT:-20132}:${LIVE_WS_PORT:-20132}"
+      - "${PROD_BIND_HOST:-127.0.0.1}:${PROD_DASHBOARD_PORT:-20130}:${DASHBOARD_PORT:-${PORT:-20128}}"
+      - "${PROD_BIND_HOST:-127.0.0.1}:${PROD_API_PORT:-20131}:${API_PORT:-20129}"
+      - "${PROD_BIND_HOST:-127.0.0.1}:${PROD_LIVE_WS_PORT:-20132}:${LIVE_WS_PORT:-20132}"
     volumes:
       - omniroute-prod-data:/app/data
     healthcheck:

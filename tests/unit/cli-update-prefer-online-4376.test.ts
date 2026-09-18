@@ -34,3 +34,30 @@ test("getLatestVersion returns null when npm is unavailable (#4376)", async () =
   });
   assert.equal(latest, null);
 });
+
+test("getLatestArtifact resolves version and SRI in one literal npm query", async () => {
+  let capturedArgs: string[] | null = null;
+  const artifact = await update.getLatestArtifact(async (_cmd: string, args: string[]) => {
+    capturedArgs = args;
+    return {
+      stdout: '[{"version":"3.8.51","dist.integrity":"sha512-YWJjZA=="}]\n',
+    };
+  });
+
+  assert.deepEqual(artifact, { version: "3.8.51", integrity: "sha512-YWJjZA==" });
+  assert.deepEqual(capturedArgs, [
+    "view",
+    "omniroute",
+    "version",
+    "dist.integrity",
+    "--json",
+    "--prefer-online",
+  ]);
+});
+
+test("getLatestArtifact fails closed when integrity metadata is missing", async () => {
+  const artifact = await update.getLatestArtifact(async () => ({
+    stdout: '[{"version":"3.8.51"}]\n',
+  }));
+  assert.equal(artifact, null);
+});

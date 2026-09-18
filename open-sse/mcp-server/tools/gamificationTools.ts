@@ -5,6 +5,24 @@
  */
 
 import { z } from "zod";
+import { hasManageScope } from "../../../src/shared/constants/managementScopes";
+import type { McpToolExtraLike } from "../scopeEnforcement.ts";
+
+function resolveGamificationSubject(requestedId: string, extra?: McpToolExtraLike): string {
+  const callerId = extra?.authInfo?.clientId?.trim();
+  if (!callerId || hasManageScope(extra?.authInfo?.scopes ?? [])) return requestedId;
+  return callerId;
+}
+
+function requireGamificationAnomalyAuthority(extra?: McpToolExtraLike): void {
+  const authInfo = extra?.authInfo;
+  if (!authInfo) return;
+
+  const scopes = authInfo.scopes ?? [];
+  if (hasManageScope(scopes) || scopes.includes("*")) return;
+
+  throw new Error("gamification_anomalies requires manage or admin authority");
+}
 
 export const gamificationTools = [
   {
@@ -29,9 +47,12 @@ export const gamificationTools = [
       apiKeyId: z.string(),
       scope: z.enum(["global", "weekly", "monthly", "tokens_shared"]).default("global"),
     }),
-    handler: async (args: { apiKeyId: string; scope: string }) => {
+    handler: async (args: { apiKeyId: string; scope: string }, extra?: McpToolExtraLike) => {
       const { getRank } = await import("../../../src/lib/gamification/leaderboard");
-      const rank = await getRank(args.apiKeyId, args.scope as any);
+      const rank = await getRank(
+        resolveGamificationSubject(args.apiKeyId, extra),
+        args.scope as any
+      );
       return { rank };
     },
   },
@@ -42,15 +63,16 @@ export const gamificationTools = [
     inputSchema: z.object({
       apiKeyId: z.string(),
     }),
-    handler: async (args: { apiKeyId: string }) => {
+    handler: async (args: { apiKeyId: string }, extra?: McpToolExtraLike) => {
+      const apiKeyId = resolveGamificationSubject(args.apiKeyId, extra);
       const { getXp, getBadges } = await import("../../../src/lib/db/gamification");
       const { calculateLevel, getLevelTitle, getLevelTier } =
         await import("../../../src/lib/gamification/xp");
       const { getStreak } = await import("../../../src/lib/gamification/streaks");
 
-      const xp = getXp(args.apiKeyId);
-      const badges = getBadges(args.apiKeyId);
-      const streak = await getStreak(args.apiKeyId);
+      const xp = getXp(apiKeyId);
+      const badges = getBadges(apiKeyId);
+      const streak = await getStreak(apiKeyId);
       const level = xp ? calculateLevel(xp.totalXp) : 1;
 
       return {
@@ -72,11 +94,11 @@ export const gamificationTools = [
       apiKeyId: z.string().optional(),
       category: z.string().optional(),
     }),
-    handler: async (args: { apiKeyId?: string; category?: string }) => {
+    handler: async (args: { apiKeyId?: string; category?: string }, extra?: McpToolExtraLike) => {
       const { getBadgeDefinitions, getBadges } = await import("../../../src/lib/db/gamification");
 
       if (args.apiKeyId) {
-        const badges = getBadges(args.apiKeyId);
+        const badges = getBadges(resolveGamificationSubject(args.apiKeyId, extra));
         return { earned: badges };
       }
 
@@ -94,15 +116,18 @@ export const gamificationTools = [
       amount: z.number().positive(),
       reason: z.string().optional(),
     }),
-    handler: async (args: {
-      fromApiKeyId: string;
-      toApiKeyId: string;
-      amount: number;
-      reason?: string;
-    }) => {
+    handler: async (
+      args: {
+        fromApiKeyId: string;
+        toApiKeyId: string;
+        amount: number;
+        reason?: string;
+      },
+      extra?: McpToolExtraLike
+    ) => {
       const { transferTokens } = await import("../../../src/lib/gamification/sharing");
       const result = await transferTokens(
-        args.fromApiKeyId,
+        resolveGamificationSubject(args.fromApiKeyId, extra),
         args.toApiKeyId,
         args.amount,
         args.reason
@@ -119,9 +144,16 @@ export const gamificationTools = [
       serverUrl: z.string().optional(),
       maxUses: z.number().positive().default(1),
     }),
-    handler: async (args: { apiKeyId: string; serverUrl?: string; maxUses: number }) => {
+    handler: async (
+      args: { apiKeyId: string; serverUrl?: string; maxUses: number },
+      extra?: McpToolExtraLike
+    ) => {
       const { createInvite } = await import("../../../src/lib/gamification/invites");
-      const result = await createInvite(args.apiKeyId, args.serverUrl, args.maxUses);
+      const result = await createInvite(
+        resolveGamificationSubject(args.apiKeyId, extra),
+        args.serverUrl,
+        args.maxUses
+      );
       return result;
     },
   },
@@ -140,7 +172,8 @@ export const gamificationTools = [
     description: "Get flagged anomalous XP activity (admin only).",
     scopes: ["read:gamification"],
     inputSchema: z.object({}),
-    handler: async () => {
+    handler: async (_args: Record<string, never>, extra?: McpToolExtraLike) => {
+      requireGamificationAnomalyAuthority(extra);
       const { getAnomalies } = await import("../../../src/lib/gamification/antiCheat");
       return { anomalies: await getAnomalies() };
     },

@@ -6,6 +6,8 @@
  * full Next.js / better-sqlite3 stack.
  */
 
+import { normalizeLegacySubscriptionIntervalMinutes } from "./limits";
+
 export interface DueCheckInput {
   enabled: boolean;
   lastFetchedAt: string | null;
@@ -20,12 +22,13 @@ export interface DueCheckInput {
  *  - A subscription that has never been fetched (or has an unparseable
  *    `lastFetchedAt`) is immediately due.
  *  - Otherwise it is due once the elapsed time since the last fetch is at
- *    least `updateIntervalMinutes` (clamped to >= 0).
+ *    least the validated interval. Legacy out-of-range rows are normalized to
+ *    the supported interval bounds so a bad value cannot create a hot loop.
  */
 export function isSubscriptionDue(sub: DueCheckInput, now: number = Date.now()): boolean {
   if (!sub.enabled) return false;
   const last = sub.lastFetchedAt ? Date.parse(sub.lastFetchedAt) : NaN;
   if (!Number.isFinite(last)) return true;
-  const intervalMs = Math.max(0, sub.updateIntervalMinutes) * 60_000;
+  const intervalMs = normalizeLegacySubscriptionIntervalMinutes(sub.updateIntervalMinutes) * 60_000;
   return now - last >= intervalMs;
 }

@@ -20,10 +20,10 @@ env:
   # test installed a fake PEM on a persistent self-hosted runner and broke all
   # system TLS). Belt-and-suspenders with tests/_setup/isolateDataDir.ts.
   OMNIROUTE_SKIP_SYSTEM_TRUST: "1"
-  CI_NODE_VERSION: "24.14.1"
+  CI_NODE_VERSION: "24.15.0"
   CI_NODE_22_VERSION: "22.22.2"
   CI_NODE_25_VERSION: "25.0.0"
-  CI_NODE_24_VERSION: "24.14.1"
+  CI_NODE_24_VERSION: "24.15.0"
   CI_NODE_26_VERSION: "26.0.0"
 
 jobs:
@@ -473,7 +473,7 @@ jobs:
           node-version: ${{ env.CI_NODE_VERSION }}
           cache: npm
       - name: markdownlint (docs + root, advisory)
-        run: npx --yes markdownlint-cli2 "docs/**/*.md" "*.md" "!docs/i18n" "!docs/research" || true
+        run: npx --yes markdownlint-cli2@0.23.2 "docs/**/*.md" "*.md" "!docs/i18n" "!docs/research" || true
       - name: Vale prose lint (Microsoft style, advisory)
         # Non-fatal: a Vale/reviewdog setup error must not turn this advisory job red.
         continue-on-error: true

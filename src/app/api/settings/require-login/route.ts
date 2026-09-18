@@ -8,6 +8,7 @@ import {
   hashManagementPassword,
 } from "@/lib/auth/managementPassword";
 import { isAuthenticated } from "@/shared/utils/apiAuth";
+import { AUTHZ_HEADER_PEER_LOCALITY } from "@/server/authz/headers";
 import { getNodeRuntimeSupport } from "@/shared/utils/nodeRuntimeSupport.ts";
 import { updateRequireLoginSchema } from "@/shared/validation/schemas";
 import { isValidationFailure, validateBody } from "@/shared/validation/helpers";
@@ -91,7 +92,15 @@ export async function GET() {
  */
 export async function POST(request: Request) {
   const settings = await getSettings();
-  if (!isBootstrapSecurityWindow(settings) && !(await isAuthenticated(request))) {
+  if (isBootstrapSecurityWindow(settings)) {
+    const peerLocality = request.headers.get(AUTHZ_HEADER_PEER_LOCALITY);
+    // In production this header is stripped from client input and re-stamped by
+    // the authz pipeline from the authenticated TCP-peer stamp. Reject any
+    // explicitly non-loopback verdict before parsing or persisting the body.
+    if (peerLocality && peerLocality !== "loopback") {
+      return NextResponse.json({ error: "Local bootstrap required" }, { status: 403 });
+    }
+  } else if (!(await isAuthenticated(request))) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

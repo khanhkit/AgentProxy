@@ -17,6 +17,7 @@
  */
 
 import { Buffer } from "node:buffer";
+import { randomUUID } from "node:crypto";
 import {
   acquireBrowserContext,
   openPage,
@@ -171,17 +172,32 @@ async function uploadBrowserAttachments(
   }
 }
 
+let freshContextSequence = 0;
+
+export function deriveBrowserContextPoolKey(
+  requestedKey: string,
+  reuseContext: boolean,
+  secureId: () => string = randomUUID
+): { key: string; acquired: boolean } {
+  if (reuseContext) return { key: requestedKey, acquired: true };
+
+  // A cryptographically strong identifier provides collision resistance across
+  // independent callers/processes. The monotonic suffix keeps same-process
+  // fresh requests unique even if a test double returns the same identifier.
+  freshContextSequence =
+    freshContextSequence >= Number.MAX_SAFE_INTEGER ? 1 : freshContextSequence + 1;
+
+  return {
+    key: `${requestedKey}:${secureId()}:${freshContextSequence.toString(36)}`,
+    acquired: false,
+  };
+}
+
 async function settlePoolKey(
   requestedKey: string,
   reuseContext: boolean
 ): Promise<{ key: string; acquired: boolean }> {
-  if (reuseContext) return { key: requestedKey, acquired: true };
-  // Use a unique key per non-reuse call so the pool always creates a
-  // fresh context. Slower but isolates state.
-  return {
-    key: `${requestedKey}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-    acquired: false,
-  };
+  return deriveBrowserContextPoolKey(requestedKey, reuseContext);
 }
 
 // Match by stable path prefix and stable trailing suffix, allowing a

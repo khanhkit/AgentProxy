@@ -49,10 +49,9 @@ export function ipVersion(host: string): 0 | 4 | 6 {
 
 export function normalizeHost(hostname: string) {
   const normalized = hostname.trim().toLowerCase();
-  if (normalized.startsWith("[") && normalized.endsWith("]")) {
-    return normalized.slice(1, -1);
-  }
-  return normalized;
+  const unwrapped =
+    normalized.startsWith("[") && normalized.endsWith("]") ? normalized.slice(1, -1) : normalized;
+  return unwrapped.replace(/\.+$/, "");
 }
 
 export function isPrivateHost(hostname: string) {

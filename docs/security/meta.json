@@ -2,6 +2,7 @@
   "title": "Security",
   "pages": [
     "GUARDRAILS",
+    "PRODUCTION_EXPOSURE",
     "PUBLIC_CREDS",
     "ERROR_SANITIZATION",
     "ROUTE_GUARD_TIERS",

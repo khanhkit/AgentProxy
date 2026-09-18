@@ -21,8 +21,13 @@
 import fs from "node:fs";
 import path from "node:path";
 import { DATA_DIR } from "@/lib/db/core";
-import { upsertVersionManagerTool } from "@/lib/db/versionManager";
+import { getVersionManagerTool, upsertVersionManagerTool } from "@/lib/db/versionManager";
 import { runNpm, InstallError } from "./utils";
+import {
+  assertManagedUpdateCompatibility,
+  mergeManagedUpdateMetadata,
+  resolveVerifiedNpmArtifact,
+} from "./managedUpdatePolicy";
 
 export const DARIO_PACKAGE = "@askalf/dario";
 export const DARIO_DEFAULT_PORT = 3456;
@@ -114,6 +119,13 @@ export async function getLatestVersion(): Promise<string | null> {
 export async function install(version = "latest"): Promise<InstallResult> {
   const startMs = Date.now();
   const installDir = getDarioInstallDir();
+  const existingState = await getVersionManagerTool("dario");
+  const previousVersion = await getInstalledVersion();
+  const artifact = await resolveVerifiedNpmArtifact(DARIO_PACKAGE, version);
+  assertManagedUpdateCompatibility("dario", artifact.version, {
+    pinnedVersion: existingState?.pinnedVersion ?? null,
+    configOverrides: existingState?.configOverrides ?? null,
+  });
 
   // Create install dir + minimal package.json (idempotent) — same shape as mux/bifrost.
   fs.mkdirSync(installDir, { recursive: true });
@@ -131,7 +143,7 @@ export async function install(version = "latest"): Promise<InstallResult> {
   }
 
   await runNpm(
-    ["install", `${DARIO_PACKAGE}@${version}`, "--omit=dev", "--no-audit", "--no-fund"],
+    ["install", `${DARIO_PACKAGE}@${artifact.version}`, "--omit=dev", "--no-audit", "--no-fund"],
     // `--prefix` is passed via `prefix` (→ npm_config_prefix env) instead of an
     // argv path so an install dir with spaces survives the Windows shell (#5379).
     { cwd: installDir, prefix: installDir }
@@ -145,13 +157,26 @@ export async function install(version = "latest"): Promise<InstallResult> {
       500
     );
   }
+  if (installedVersion !== artifact.version) {
+    throw new InstallError(
+      `Installed Dario version ${installedVersion} does not match admitted version ${artifact.version}`,
+      "A versão instalada do Dario não corresponde ao artefato verificado.",
+      502
+    );
+  }
 
   await upsertVersionManagerTool({
     tool: "dario",
     installedVersion,
+    pinnedVersion: existingState?.pinnedVersion ?? null,
     binaryPath: getCliPath(),
     status: "stopped",
     port: DARIO_DEFAULT_PORT,
+    configOverrides: mergeManagedUpdateMetadata(existingState?.configOverrides, {
+      version: artifact.version,
+      integrity: artifact.integrity,
+      previousVersion,
+    }),
   });
 
   // Invalidate cache so next getLatestVersion() re-fetches
@@ -165,7 +190,15 @@ export async function install(version = "latest"): Promise<InstallResult> {
 }
 
 export async function update(): Promise<InstallResult> {
-  return install("latest");
+  const latest = await getLatestVersion();
+  if (!latest) {
+    throw new InstallError(
+      "Could not resolve latest Dario version",
+      "Não foi possível resolver a versão mais recente do Dario.",
+      502
+    );
+  }
+  return install(latest);
 }
 
 /**

@@ -520,6 +520,7 @@ export async function cleanupExpiredLogs() {
   let deletedMcpAuditLogs = 0;
   let trimmedCallLogs = 0;
   let trimmedProxyLogs = 0;
+  let callLogCleanupErrors = 0;
 
   try {
     const r1 = db.prepare("DELETE FROM usage_history WHERE timestamp < ?").run(usageCutoff);
@@ -532,6 +533,7 @@ export async function cleanupExpiredLogs() {
     const { deleteCallLogsBefore } = await import("../usage/callLogs");
     const r2 = deleteCallLogsBefore(callCutoff);
     deletedCallLogs = r2.deletedRows;
+    callLogCleanupErrors += r2.errors;
   } catch {
     /* table may not exist */
   }
@@ -571,6 +573,7 @@ export async function cleanupExpiredLogs() {
       const { trimCallLogsToMaxRows } = await import("../usage/callLogs");
       const trimmed = trimCallLogsToMaxRows(callLogsMaxRows);
       trimmedCallLogs = trimmed.deletedRows;
+      callLogCleanupErrors += trimmed.errors;
     } catch {
       /* best effort */
     }
@@ -604,7 +607,7 @@ export async function cleanupExpiredLogs() {
     actor: "system",
     target: "log-retention",
     resourceType: "maintenance",
-    status: "success",
+    status: callLogCleanupErrors > 0 ? "error" : "success",
     details: {
       deletedUsage,
       deletedCallLogs,
@@ -614,6 +617,7 @@ export async function cleanupExpiredLogs() {
       deletedMcpAuditLogs,
       trimmedCallLogs,
       trimmedProxyLogs,
+      callLogCleanupErrors,
       appRetentionDays,
       callRetentionDays,
       callLogsMaxRows,

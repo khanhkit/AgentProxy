@@ -20,18 +20,19 @@
 import { WebSocketServer, WebSocket } from "ws";
 import { jwtVerify } from "jose";
 import { createServer, type IncomingMessage, type ServerResponse } from "http";
-import { randomUUID } from "crypto";
+import { createHash, randomUUID } from "crypto";
 
 // ── Types ─────────────────────────────────────────────────────────────────
 
 import type { WsClientMessage, WsServerMessage, WsEventMessage, WsAuthResult } from "./types";
 
-import { emit, on, onAny, getEventHistory, type HistoryEntry } from "@/lib/events/eventBus";
+import { onAny, type HistoryEntry } from "@/lib/events/eventBus";
 
-import type { DashboardEventName, DashboardEventMap, DashboardChannel } from "@/lib/events/types";
+import type { DashboardEventName, DashboardChannel } from "@/lib/events/types";
 
 import { CHANNEL_EVENTS, getChannelForEvent } from "@/lib/events/types";
 import { isAutomatedTestProcess, isBuildProcess } from "@/shared/utils/testProcess";
+import { applyCustomHttpServerTimeouts } from "@/shared/utils/runtimeTimeouts";
 
 import {
   attachRequestStreamGuards,
@@ -54,9 +55,17 @@ const DEFAULT_HOST = "127.0.0.1";
 const HEARTBEAT_INTERVAL_MS = 15_000;
 const HEARTBEAT_TIMEOUT_MS = 35_000;
 const MAX_CLIENTS = 500;
+const MAX_CONNECTIONS_PER_PRINCIPAL = 20;
 const MAX_EVENTS_PER_SECOND = 100;
-const MAX_PENDING_MESSAGES_PER_CLIENT = 32;
-const MAX_PENDING_MESSAGE_BYTES = 16_384;
+const MAX_MESSAGE_BYTES = 16_384;
+const MAX_OUTBOUND_BUFFER_BYTES = 1_048_576;
+const ALLOWED_CLIENT_CHANNELS = new Set<DashboardChannel>([
+  "requests",
+  "combo",
+  "credentials",
+  "compression",
+  "agents",
+]);
 
 const ALLOWED_ORIGINS = buildAllowedOrigins();
 const ALLOWED_HOSTS = buildAllowedHosts();
@@ -87,27 +96,26 @@ interface ClientState {
   eventCounterReset: number;
   /** Current IP for rate limiting */
   remoteAddress: string;
+  /** Stable authenticated caller bucket for connection admission. */
+  principalKey: string;
 }
 
 const clients = new Map<string, ClientState>();
+
+function countClientsForPrincipal(principalKey: string): number {
+  let count = 0;
+  for (const client of clients.values()) {
+    if (client.principalKey === principalKey && client.ws.readyState === WebSocket.OPEN) {
+      count++;
+    }
+  }
+  return count;
+}
+
 let eventHistoryBacklog: HistoryEntry[] = [];
 const BACKLOG_MAX = 500;
 
 // ── Auth ──────────────────────────────────────────────────────────────────
-
-function toWebHeaders(headers: import("http").IncomingMessage["headers"]): Headers {
-  const webHeaders = new Headers();
-
-  for (const [name, value] of Object.entries(headers)) {
-    if (typeof value === "string") {
-      webHeaders.set(name, value);
-    } else if (Array.isArray(value)) {
-      webHeaders.set(name, name.toLowerCase() === "cookie" ? value.join("; ") : value.join(", "));
-    }
-  }
-
-  return webHeaders;
-}
 
 // Auth-module warmer. The SSE auth graph is large (hundreds of transitive
 // modules); a cold dynamic import takes several seconds and runs synchronously
@@ -127,7 +135,15 @@ function loadAuthModule(): Promise<typeof import("../../sse/services/auth.ts")> 
   return authModulePromise;
 }
 
-async function authorizeConnection(request: import("http").IncomingMessage): Promise<WsAuthResult> {
+type AuthorizedConnection = WsAuthResult & { principalKey?: string };
+
+function hashPrincipal(kind: string, value: string): string {
+  return `${kind}:${createHash("sha256").update(value).digest("hex")}`;
+}
+
+async function authorizeConnection(
+  request: import("http").IncomingMessage
+): Promise<AuthorizedConnection> {
   const sessionId = randomUUID().slice(0, 8);
 
   // Token MUST come from the Authorization header (or X-Live-WS-Token).
@@ -140,8 +156,9 @@ async function authorizeConnection(request: import("http").IncomingMessage): Pro
   // dashboard session cookie before falling back to API-key authentication. Keep
   // the check local to this sidecar so it does not import Next.js-only modules.
   if (!token) {
-    if (await isDashboardCookieAuthenticated(request)) {
-      return { authorized: true, sessionId };
+    const cookiePrincipal = await getDashboardCookiePrincipal(request);
+    if (cookiePrincipal) {
+      return { authorized: true, sessionId, principalKey: cookiePrincipal };
     }
     return { authorized: false, sessionId, error: "Missing token" };
   }
@@ -157,7 +174,11 @@ async function authorizeConnection(request: import("http").IncomingMessage): Pro
       return { authorized: false, sessionId, error: "Invalid API key" };
     }
 
-    return { authorized: true, sessionId };
+    return {
+      authorized: true,
+      sessionId,
+      principalKey: hashPrincipal("api-key", token),
+    };
   } catch {
     return { authorized: false, sessionId, error: "Auth system unavailable" };
   }
@@ -185,17 +206,19 @@ export function getCookieValueFromHeader(
   return match ? decodeURIComponent(match[1]) : null;
 }
 
-async function isDashboardCookieAuthenticated(
+async function getDashboardCookiePrincipal(
   request: import("http").IncomingMessage
-): Promise<boolean> {
+): Promise<string | null> {
   const token = getCookieValueFromHeader(request.headers, "auth_token");
-  if (!token || !process.env.JWT_SECRET) return false;
+  if (!token || !process.env.JWT_SECRET) return null;
   try {
     const secret = new TextEncoder().encode(process.env.JWT_SECRET);
-    await jwtVerify(token, secret);
-    return true;
+    const { payload } = await jwtVerify(token, secret);
+    const subject = typeof payload.sub === "string" ? payload.sub.trim() : "";
+    const remoteAddress = request.socket?.remoteAddress || "unknown";
+    return subject ? `dashboard:${subject}` : `ip:${remoteAddress}`;
   } catch {
-    return false;
+    return null;
   }
 }
 
@@ -204,6 +227,50 @@ function extractBearerToken(request: import("http").IncomingMessage): string | n
   if (!auth || typeof auth !== "string") return null;
   const match = auth.match(/^Bearer\s+(.+)$/i);
   return match?.[1] || null;
+}
+
+type ClientMessageParseResult =
+  { ok: true; message: WsClientMessage } | { ok: false; code: string; message: string };
+
+function parseClientMessage(raw: string): ClientMessageParseResult {
+  let value: unknown;
+  try {
+    value = JSON.parse(raw);
+  } catch {
+    return { ok: false, code: "PARSE_ERROR", message: "Invalid JSON" };
+  }
+
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return { ok: false, code: "INVALID_MESSAGE", message: "Message must be an object" };
+  }
+
+  const candidate = value as Record<string, unknown>;
+  if (candidate.type === "ping") {
+    return { ok: true, message: { type: "ping" } };
+  }
+
+  if (candidate.type !== "subscribe") {
+    return { ok: false, code: "INVALID_MESSAGE", message: "Unsupported message type" };
+  }
+
+  if (!Array.isArray(candidate.channels)) {
+    return { ok: false, code: "INVALID_CHANNELS", message: "channels must be an array" };
+  }
+
+  const channels: DashboardChannel[] = [];
+  for (const channel of candidate.channels) {
+    if (typeof channel !== "string" || !ALLOWED_CLIENT_CHANNELS.has(channel as DashboardChannel)) {
+      return { ok: false, code: "INVALID_CHANNELS", message: "Unsupported channel" };
+    }
+    channels.push(channel as DashboardChannel);
+  }
+
+  return { ok: true, message: { type: "subscribe", channels } };
+}
+
+function closeForInvalidMessage(client: ClientState, code: string, message: string): void {
+  sendTo(client.ws, { type: "error", code, message });
+  client.ws.close(1008, "Invalid client message");
 }
 
 // ── Protocol Handler ──────────────────────────────────────────────────────
@@ -224,13 +291,12 @@ function handleMessage(clientId: string, raw: string): void {
     return;
   }
 
-  let msg: WsClientMessage;
-  try {
-    msg = JSON.parse(raw);
-  } catch {
-    sendTo(client.ws, { type: "error", code: "PARSE_ERROR", message: "Invalid JSON" });
+  const parsed = parseClientMessage(raw);
+  if (!parsed.ok) {
+    closeForInvalidMessage(client, parsed.code, parsed.message);
     return;
   }
+  const msg = parsed.message;
 
   client.lastActivity = now;
 
@@ -269,10 +335,25 @@ function handleMessage(clientId: string, raw: string): void {
 
 // ── Send ──────────────────────────────────────────────────────────────────
 
-function sendTo(ws: WebSocket, msg: WsServerMessage | Record<string, unknown>): void {
-  if (ws.readyState === WebSocket.OPEN) {
-    ws.send(JSON.stringify(msg));
+export function sendLiveWsMessage(
+  ws: WebSocket,
+  msg: WsServerMessage | Record<string, unknown>
+): boolean {
+  if (ws.readyState !== WebSocket.OPEN) return false;
+
+  const payload = JSON.stringify(msg);
+  const queuedBytes = ws.bufferedAmount + Buffer.byteLength(payload, "utf8");
+  if (queuedBytes > MAX_OUTBOUND_BUFFER_BYTES) {
+    ws.terminate();
+    return false;
   }
+
+  ws.send(payload);
+  return true;
+}
+
+function sendTo(ws: WebSocket, msg: WsServerMessage | Record<string, unknown>): boolean {
+  return sendLiveWsMessage(ws, msg);
 }
 
 // ── Event Bus → WebSocket Bridge ──────────────────────────────────────────
@@ -303,8 +384,8 @@ function publishDashboardEvent(
       clients.delete(clientId);
       continue;
     }
-    if (client.subscribedChannels.has(channel)) {
-      sendTo(client.ws, msg);
+    if (client.subscribedChannels.has(channel) && !sendTo(client.ws, msg)) {
+      clients.delete(clientId);
     }
   }
 
@@ -438,7 +519,12 @@ function startHeartbeat(server: WebSocketServer): void {
         continue;
       }
       // Send the application-level heartbeat response for clients that still rely on it.
-      sendTo(client.ws, { type: "pong" } as WsServerMessage);
+      // If the peer is already over the outbound budget, shed it and do not enqueue a
+      // protocol ping behind the same slow consumer.
+      if (!sendTo(client.ws, { type: "pong" } as WsServerMessage)) {
+        clients.delete(clientId);
+        continue;
+      }
       // Protocol-level ping: the client's automatic pong reply is what keeps a
       // silent-but-alive subscriber alive, while a half-open socket stays silent and is
       // still reaped. Nothing here refreshes lastActivity — only a received pong does,
@@ -485,7 +571,35 @@ export async function startLiveDashboardServer(
     attachRequestStreamGuards(req, res);
     handleInternalEventRequest(req, res);
   });
-  const wss = new WebSocketServer({ server });
+  applyCustomHttpServerTimeouts(server);
+  const authorizedUpgrades = new WeakMap<IncomingMessage, AuthorizedConnection>();
+  const wss = new WebSocketServer({
+    server,
+    // Enforced by `ws` while frames are being assembled, before the application
+    // receives RawData or calls toString()/JSON.parse().
+    maxPayload: MAX_MESSAGE_BYTES,
+    verifyClient(info, done) {
+      const request = info.req;
+      const origin = request.headers["origin"];
+      const originStr = Array.isArray(origin) ? origin[0] : origin;
+
+      if (!isOriginAllowed(originStr)) {
+        done(false, 403, "Forbidden origin");
+        return;
+      }
+
+      void authorizeConnection(request)
+        .then((auth) => {
+          if (!auth.authorized) {
+            done(false, 401, "Unauthorized");
+            return;
+          }
+          authorizedUpgrades.set(request, auth);
+          done(true);
+        })
+        .catch(() => done(false, 503, "Authentication unavailable"));
+    },
+  });
 
   // Subscribe to EventBus
   const unsubscribe = subscribeToEventBus();
@@ -497,59 +611,40 @@ export async function startLiveDashboardServer(
   // handler retries the import lazily.
   await loadAuthModule().catch(() => {});
 
-  wss.on("connection", async (ws, request) => {
-    const pendingMessages: string[] = [];
-    let activeClientId: string | null = null;
-
-    // Clients can send the subscribe frame immediately after the WS open event,
-    // while dashboard cookie/API-key auth is still resolving. Queue those early
-    // messages so the first subscribe is not dropped.
-    ws.on("message", (data) => {
-      const raw = data.toString();
-      if (!activeClientId) {
-        if (
-          pendingMessages.length >= MAX_PENDING_MESSAGES_PER_CLIENT ||
-          raw.length > MAX_PENDING_MESSAGE_BYTES
-        ) {
-          sendTo(ws, { type: "error", code: "RATE_LIMITED", message: "Too many early messages" });
-          ws.close(4008, "Too many early messages");
-          return;
-        }
-        pendingMessages.push(raw);
-        return;
-      }
-      handleMessage(activeClientId, raw);
-    });
-
-    // Origin check — browsers always send Origin on the WS upgrade; reject
-    // unknown origins to stop drive-by cross-origin WebSocket from a victim
-    // page. Non-browser clients (CLI / MCP) omit Origin and are accepted
-    // only when bound to loopback (see isOriginAllowed).
-    const origin = request.headers["origin"];
-    const originStr = Array.isArray(origin) ? origin[0] : origin;
-    if (!isOriginAllowed(originStr)) {
-      sendTo(ws, { type: "error", code: "FORBIDDEN_ORIGIN", message: "Origin not allowed" });
-      ws.close(4003, "Forbidden origin");
+  wss.on("connection", (ws, request) => {
+    const auth = authorizedUpgrades.get(request);
+    authorizedUpgrades.delete(request);
+    if (!auth?.authorized) {
+      // Defensive invariant: externally reachable upgrades must have passed
+      // verifyClient. If that contract is ever violated, fail this socket closed.
+      ws.close(1011, "Upgrade authorization state missing");
       return;
     }
 
-    // Enforce max clients
+    const remoteAddress = request.socket?.remoteAddress || "unknown";
+    const principalKey = auth.principalKey || `ip:${remoteAddress}`;
+
+    // Admission is bounded per authenticated principal before the global cap so
+    // one caller cannot monopolize every available dashboard slot.
+    if (countClientsForPrincipal(principalKey) >= MAX_CONNECTIONS_PER_PRINCIPAL) {
+      sendTo(ws, {
+        type: "error",
+        code: "PRINCIPAL_LIMIT",
+        message: "Too many live WebSocket connections for this principal",
+      });
+      ws.close(1013, "Principal connection limit reached");
+      return;
+    }
+
+    // Enforce max clients. Origin and authentication have already been admitted
+    // at the HTTP upgrade boundary; this remains a post-upgrade capacity guard.
     if (clients.size >= MAX_CLIENTS) {
       sendTo(ws, { type: "error", code: "SERVER_FULL", message: "Max clients reached" });
       ws.close(1013, "Server full");
       return;
     }
 
-    // Authorize
-    const auth = await authorizeConnection(request);
-    if (!auth.authorized) {
-      sendTo(ws, { type: "error", code: "UNAUTHORIZED", message: auth.error || "Unauthorized" });
-      ws.close(4001, "Unauthorized");
-      return;
-    }
-
     const clientId = auth.sessionId;
-    activeClientId = clientId;
     const client: ClientState = {
       ws,
       sessionId: clientId,
@@ -557,10 +652,20 @@ export async function startLiveDashboardServer(
       lastActivity: Date.now(),
       eventCounter: 0,
       eventCounterReset: Date.now(),
-      remoteAddress: request.socket?.remoteAddress || "unknown",
+      remoteAddress,
+      principalKey,
     };
 
     clients.set(clientId, client);
+
+    ws.on("message", (data, isBinary) => {
+      if (isBinary) {
+        closeForInvalidMessage(client, "INVALID_MESSAGE", "Binary messages are not supported");
+        return;
+      }
+      // maxPayload has already enforced MAX_MESSAGE_BYTES before this callback.
+      handleMessage(clientId, data.toString());
+    });
 
     // Constant format string + %s args — keeps clientId / remoteAddress out
     // of the format slot so a malicious value cannot forge log lines via
@@ -571,11 +676,6 @@ export async function startLiveDashboardServer(
       client.remoteAddress,
       clients.size
     );
-
-    // Replay any subscribe/ping frames sent while auth was still pending.
-    for (const raw of pendingMessages.splice(0)) {
-      handleMessage(clientId, raw);
-    }
 
     // Handle close
     ws.on("close", () => {

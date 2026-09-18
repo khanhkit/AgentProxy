@@ -29,6 +29,7 @@ import {
   resolveLocalOverrideCredentials,
   resolveVideoModelTarget,
 } from "@/app/api/v1/_shared/videoModelResolution";
+import { MAX_BODY_BYTES_MEDIA } from "@/shared/middleware/bodySizeGuard";
 
 export const dynamic = "force-dynamic";
 
@@ -53,7 +54,7 @@ export async function GET(request?: Request) {
 /**
  * POST /v1/videos/generations — generate videos
  */
-async function postHandler(request, context) {
+async function postHandler(request, _context) {
   const parsed = await readMediaGenerationBody(request, log, "VIDEO");
   if (parsed.state === "invalid") {
     return parsed.response;
@@ -158,4 +159,4 @@ async function postHandler(request, context) {
   });
 }
 
-export const POST = withInjectionGuard(postHandler);
+export const POST = withInjectionGuard(postHandler, { bodySizeLimit: MAX_BODY_BYTES_MEDIA });
