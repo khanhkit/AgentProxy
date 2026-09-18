@@ -10,11 +10,33 @@ updates:
     commit-message:
       prefix: "deps"
     open-pull-requests-limit: 10
+    # Keep bot PRs current with main; make the GitHub default explicit so this
+    # policy is reviewable and guarded by TC-DEPBOT-POLICY-0112.
+    rebase-strategy: "auto"
     groups:
+      # Fumadocs UI and core move together, but UI 16.15.8+ introduces the
+      # transitive `cn` executable. Keep that behavioral change isolated from
+      # unrelated production bumps so its CLI-runtime regression is actionable.
+      fumadocs:
+        patterns:
+          - "fumadocs-core"
+          - "fumadocs-ui"
+        update-types:
+          - "minor"
+          - "patch"
       production:
         dependency-type: "production"
+        update-types:
+          - "minor"
+          - "patch"
+        exclude-patterns:
+          - "fumadocs-core"
+          - "fumadocs-ui"
       development:
         dependency-type: "development"
+        update-types:
+          - "minor"
+          - "patch"
     ignore:
       - dependency-name: "react"
         update-types: ["version-update:semver-major"]
@@ -25,6 +47,13 @@ updates:
       - dependency-name: "eslint"
         update-types: ["version-update:semver-major"]
       - dependency-name: "eslint-config-next"
+        update-types: ["version-update:semver-major"]
+      # Vitest 5 no longer installs Vite as a regular dependency; it exposes Vite
+      # only as a peer. This repository currently relies on Vitest 4 to bring Vite
+      # for @vitejs/plugin-react, so #13/#19 lose node_modules/vite on a 4 -> 5 bump.
+      # Keep majors intentional until the root manifest directly owns a compatible
+      # Vite dependency and the migration is verified as a dedicated change.
+      - dependency-name: "vitest"
         update-types: ["version-update:semver-major"]
       # typescript majors are peer-blocked by typescript-eslint, which pins a hard
       # upper bound (8.64.0 → peerDependencies.typescript ">=4.8.4 <6.1.0"). A TS 7
