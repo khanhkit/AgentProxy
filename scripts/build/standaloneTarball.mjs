@@ -19,6 +19,7 @@
 import { createReadStream, createWriteStream } from "node:fs";
 import fs from "node:fs";
 import path from "node:path";
+import { portableSymlinkTarget } from "./portableSymlink.mjs";
 import { once } from "node:events";
 import { createGunzip, createGzip } from "node:zlib";
 
@@ -80,7 +81,7 @@ function entryHeader(relPath, size, typeflag, linkname, mode) {
   return Buffer.concat(out);
 }
 
-function* walkFiles(root, current = root) {
+function* walkFiles(root, current = root, portableRoot = process.cwd()) {
   const children = fs
     .readdirSync(current, { withFileTypes: true })
     .sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
@@ -88,9 +89,9 @@ function* walkFiles(root, current = root) {
     const abs = path.join(current, child.name);
     const rel = path.relative(root, abs).split(path.sep).join("/");
     if (child.isSymbolicLink()) {
-      yield { rel, symlink: fs.readlinkSync(abs) };
+      yield { rel, symlink: portableSymlinkTarget(abs, fs.readlinkSync(abs), portableRoot) };
     } else if (child.isDirectory()) {
-      yield* walkFiles(root, abs);
+      yield* walkFiles(root, abs, portableRoot);
     } else if (child.isFile()) {
       yield { rel, abs };
     }
@@ -124,7 +125,7 @@ function pipeFileInto(gz, failure, abs) {
 }
 
 /** Pack `srcDir` into a deterministic gzipped tarball at `outFile`. */
-export async function createTarGz(srcDir, outFile) {
+export async function createTarGz(srcDir, outFile, { portableRoot = process.cwd() } = {}) {
   const out = createWriteStream(outFile);
   const gz = createGzip({ level: 1 });
   gz.pipe(out);
@@ -135,7 +136,7 @@ export async function createTarGz(srcDir, outFile) {
   });
 
   try {
-    for (const entry of walkFiles(srcDir)) {
+    for (const entry of walkFiles(srcDir, srcDir, portableRoot)) {
       if (entry.symlink !== undefined) {
         if (entry.symlink.length > 100) {
           throw new Error(`symlink target too long for ustar: ${entry.rel} -> ${entry.symlink}`);
