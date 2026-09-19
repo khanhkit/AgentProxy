@@ -33,7 +33,7 @@
 // orchestration lives in the /green-prs + review-prs flows that call it.
 //
 // Usage:
-//   node scripts/quality/validate-release-green.mjs [--json] [--with-build] [--quick] [--full-ci] [--hermetic]
+//   node scripts/quality/validate-release-green.mjs [--json] [--with-build] [--quick] [--full-ci] [--hermetic] [--serial-slow]
 //     --json        emit machine-readable JSON to stdout (report goes to stderr)
 //     --with-build  also run check:pack-artifact (needs a dist/ build — slow)
 //     --quick       skip the slow unit + vitest + integration suites (drift + fast
@@ -46,6 +46,10 @@
 //     --hermetic    scrub AGENTPROXY_API_KEY/AGENTPROXY_URL from gate env so live
 //                   tests self-skip exactly like CI (dev machines otherwise run
 //                   them against localhost and produce false-positive reds)
+//     --serial-slow run unit/vitest/integration/package-artifact one at a time.
+//                   This runs the same HARD gates with the same ceilings; use it on
+//                   resource-constrained release hosts where parallel execution can
+//                   fabricate timeout reds through CPU/RAM contention.
 //
 // Per-gate output is saved to _artifacts/release-green/<gate>.log (gitignored) —
 // diagnose a red from the file instead of re-running the gate.
@@ -451,6 +455,7 @@ async function main() {
   const WITH_BUILD = args.has("--with-build");
   const QUICK = args.has("--quick");
   const FULL_CI = args.has("--full-ci");
+  const SERIAL_SLOW = args.has("--serial-slow");
   hermetic = args.has("--hermetic");
 
   const results = [];
@@ -701,10 +706,19 @@ async function main() {
         timeout: 20 * 60 * 1000,
       });
     }
-    slow.forEach((g) => announce(`${g.label} [parallel]`));
-    const slowResults = await Promise.all(
-      slow.map((g) => runAsync(npmCmd, g.args, { timeout: g.timeout }))
-    );
+    const slowMode = SERIAL_SLOW ? "serial" : "parallel";
+    slow.forEach((g) => announce(`${g.label} [${slowMode}]`));
+    let slowResults;
+    if (SERIAL_SLOW) {
+      slowResults = [];
+      for (const g of slow) {
+        slowResults.push(await runAsync(npmCmd, g.args, { timeout: g.timeout }));
+      }
+    } else {
+      slowResults = await Promise.all(
+        slow.map((g) => runAsync(npmCmd, g.args, { timeout: g.timeout }))
+      );
+    }
     slow.forEach((g, i) => {
       const { code, out } = slowResults[i];
       saveGateLog(g.id, out);
