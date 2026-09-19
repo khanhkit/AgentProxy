@@ -300,7 +300,7 @@ curl https://localhost:20128/api/v1/management/proxy-subscriptions \
 
 Create a proxy subscription
 
-Creates a subscription record. If `mode` is `rule`, at least one entry in `ruleProviders` is required. `updateIntervalMinutes` defaults to 60 and `enabled` defaults to `false` when omitted or not exactly `true`.
+Creates a subscription record. If `mode` is `rule`, at least one entry in `ruleProviders` is required. `updateIntervalMinutes` defaults to 60 and accepts 1..525600 minutes; `enabled` defaults to `false` when omitted or not exactly `true`. Subscription fetches are limited to 2 MiB and parsing is limited to 5000 candidate nodes.
 
 ```bash
 curl -X POST https://localhost:20128/api/v1/management/proxy-subscriptions \
