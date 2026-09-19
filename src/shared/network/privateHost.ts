@@ -51,7 +51,12 @@ export function normalizeHost(hostname: string) {
   const normalized = hostname.trim().toLowerCase();
   const unwrapped =
     normalized.startsWith("[") && normalized.endsWith("]") ? normalized.slice(1, -1) : normalized;
-  return unwrapped.replace(/\.+$/, "");
+
+  // CodeQL #482: avoid the end-anchored /\.+$/ shape. Scan once from the end and
+  // slice once so a hostile hostname containing a very long trailing dot run stays O(n).
+  let end = unwrapped.length;
+  while (end > 0 && unwrapped.charCodeAt(end - 1) === 46) end -= 1;
+  return end === unwrapped.length ? unwrapped : unwrapped.slice(0, end);
 }
 
 export function isPrivateHost(hostname: string) {
