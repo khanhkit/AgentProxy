@@ -1,5 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { EventEmitter } from "node:events";
 
 // Pure helpers of the release-green validator (Solution C). The orchestration is
 // guarded behind a direct-run check, so importing the module here is side-effect-free.
@@ -13,6 +14,8 @@ const {
   isDrift,
   computeVerdict,
   classifyRunError,
+  terminateProcessTree,
+  runAsync,
   extractCiGates,
   FULL_CI_SKIP,
   fullCiTimeoutFor,
@@ -192,6 +195,93 @@ test("classifyRunError: a kill WITHOUT a configured timeout is not misreported a
   assert.doesNotMatch(r.out, /ceiling/);
 });
 
+test("terminateProcessTree: POSIX signals the detached process group, then SIGKILLs surviving descendants", async () => {
+  const calls: Array<[number, NodeJS.Signals | 0]> = [];
+  const processKill = (pid: number, signal: NodeJS.Signals | 0) => {
+    calls.push([pid, signal]);
+  };
+
+  await terminateProcessTree(4321, {
+    platform: "linux",
+    processKill,
+    sleepFn: async () => {},
+    graceMs: 0,
+  });
+
+  assert.deepEqual(calls, [
+    [-4321, "SIGTERM"],
+    [-4321, 0],
+    [-4321, "SIGKILL"],
+  ]);
+});
+
+test("terminateProcessTree: Windows uses taskkill /T /F for descendants", async () => {
+  const calls: Array<{ cmd: string; args: string[]; options: Record<string, unknown> }> = [];
+  const killer = new EventEmitter();
+  const spawnFn = (cmd: string, args: string[], options: Record<string, unknown>) => {
+    calls.push({ cmd, args, options });
+    queueMicrotask(() => killer.emit("close", 0));
+    return killer;
+  };
+  const processKill = () => {
+    throw new Error("fallback processKill should not run when taskkill succeeds");
+  };
+
+  await terminateProcessTree(7654, {
+    platform: "win32",
+    processKill,
+    spawnFn,
+  });
+
+  assert.equal(calls.length, 1);
+  assert.equal(calls[0].cmd, "taskkill");
+  assert.deepEqual(calls[0].args, ["/PID", "7654", "/T", "/F"]);
+  assert.equal(calls[0].options.windowsHide, true);
+});
+
+test("release-green async timeout runner owns a process tree and reaps it before returning", async () => {
+  const fs = await import("node:fs");
+  const src = fs.readFileSync(
+    new URL("../../scripts/quality/validate-release-green.mjs", import.meta.url),
+    "utf8"
+  );
+
+  assert.match(src, /child = spawn\(cmd, cmdArgs,/);
+  assert.match(src, /detached:\s*process\.platform !== "win32"/);
+  assert.match(src, /await terminateProcessTree\(child\.pid\)/);
+  assert.match(src, /taskkill", \["\/PID", String\(pid\), "\/T", "\/F"\]/);
+});
+
+test("runAsync timeout leaves no spawned grandchild behind", async () => {
+  const { mkdtemp, readFile, rm } = await import("node:fs/promises");
+  const { tmpdir } = await import("node:os");
+  const { join } = await import("node:path");
+  const dir = await mkdtemp(join(tmpdir(), "release-green-tree-"));
+  const pidFile = join(dir, "grandchild.pid");
+  const script = [
+    'const { spawn } = require("node:child_process");',
+    'const fs = require("node:fs");',
+    'const child = spawn(process.execPath, ["-e", "setInterval(() => {}, 1000)"], { stdio: "ignore" });',
+    "fs.writeFileSync(" + JSON.stringify(pidFile) + ", String(child.pid));",
+    "setInterval(() => {}, 1000);",
+  ].join("\n");
+
+  try {
+    const result = await runAsync(process.execPath, ["-e", script], { timeout: 1000 });
+    assert.equal(result.code, 124);
+
+    const grandchildPid = Number(await readFile(pidFile, "utf8"));
+    assert.ok(Number.isInteger(grandchildPid) && grandchildPid > 0);
+    assert.throws(
+      () => process.kill(grandchildPid, 0),
+      (err: NodeJS.ErrnoException) => err?.code === "ESRCH",
+      "timed-out gate must not leave its grandchild alive"
+    );
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+});
+
 test("pre-flight wires the test-masking PR-context gate against origin/main (v3.8.43 gap fix)", async () => {
   const fs = await import("node:fs");
   const src = fs.readFileSync(
@@ -246,7 +336,12 @@ test("pre-flight runs the slow suites CONCURRENTLY (v3.8.45 perf — was ~1h ser
   // main() must be async and the slow suites (unit/vitest/integration/pack-artifact)
   // must run via a single Promise.all over runAsync — not four sequential hardCmd calls.
   assert.match(src, /async function main\(\)/, "main must be async to await the parallel wave");
-  assert.match(src, /const execFileAsync = promisify\(execFile\)/, "async runner must exist");
+  assert.match(src, /export async function runAsync\(/, "async runner must exist");
+  assert.match(
+    src,
+    /child = spawn\(cmd, cmdArgs,/,
+    "async runner must retain a ChildProcess handle"
+  );
   assert.match(src, /await Promise\.all\(\s*slow\.map\(/, "slow suites must run concurrently");
   // The four slow-gate ids must all be present in the parallel wave.
   for (const id of ["unit", "vitest", "integration", "pack-artifact"]) {

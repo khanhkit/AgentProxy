@@ -54,8 +54,7 @@
 // Per-gate output is saved to _artifacts/release-green/<gate>.log (gitignored) —
 // diagnose a red from the file instead of re-running the gate.
 
-import { execFile, execFileSync } from "node:child_process";
-import { promisify } from "node:util";
+import { execFileSync, spawn } from "node:child_process";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -427,26 +426,191 @@ function run(cmd, cmdArgs, opts = {}) {
   }
 }
 
-const execFileAsync = promisify(execFile);
+const ASYNC_MAX_BUFFER = 256 * 1024 * 1024;
+const TREE_KILL_GRACE_MS = 2_000;
 
-// Async twin of run() — same {code, out} contract, so the slow suites (unit /
-// vitest / integration / pack-artifact) can run CONCURRENTLY instead of in
-// series. Sequentially they dominate the pre-flight wall time (~2h in the
-// v3.8.45 run); they are independent processes with per-process DATA_DIR
-// isolation, so overlapping them cuts the pre-flight to ~the slowest single one.
-async function runAsync(cmd, cmdArgs, opts = {}) {
-  try {
-    const { stdout, stderr } = await execFileAsync(cmd, cmdArgs, {
-      cwd: ROOT,
-      encoding: "utf8",
-      maxBuffer: 256 * 1024 * 1024,
-      env: buildGateEnv(opts.env),
-      ...(opts.timeout ? { timeout: opts.timeout } : {}),
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+/**
+ * Terminate a whole gate subprocess tree.
+ *
+ * POSIX children are spawned detached, making the launcher the process-group leader;
+ * signalling -pid therefore reaches npm/sh/node grandchildren too. Windows has no
+ * equivalent negative-pid group signal, so use taskkill /T /F.
+ */
+export async function terminateProcessTree(
+  pid,
+  {
+    platform = process.platform,
+    processKill = process.kill.bind(process),
+    spawnFn = spawn,
+    sleepFn = sleep,
+    graceMs = TREE_KILL_GRACE_MS,
+  } = {}
+) {
+  if (!Number.isInteger(pid) || pid <= 0) return;
+
+  if (platform === "win32") {
+    await new Promise((resolve) => {
+      let settled = false;
+      const finish = () => {
+        if (settled) return;
+        settled = true;
+        resolve();
+      };
+      const fallback = () => {
+        try {
+          processKill(pid, "SIGKILL");
+        } catch {
+          /* already gone */
+        }
+        finish();
+      };
+
+      try {
+        const killer = spawnFn("taskkill", ["/PID", String(pid), "/T", "/F"], {
+          stdio: "ignore",
+          windowsHide: true,
+        });
+        killer.once("close", finish);
+        killer.once("error", fallback);
+      } catch {
+        fallback();
+      }
     });
-    return { code: 0, out: `${stdout || ""}${stderr || ""}` };
-  } catch (err) {
-    return classifyRunError(err, opts.timeout);
+    return;
   }
+
+  const signalGroupOrChild = (signal) => {
+    try {
+      processKill(-pid, signal);
+      return true;
+    } catch {
+      try {
+        processKill(pid, signal);
+        return true;
+      } catch {
+        return false;
+      }
+    }
+  };
+
+  signalGroupOrChild("SIGTERM");
+  await sleepFn(graceMs);
+
+  try {
+    processKill(-pid, 0);
+    signalGroupOrChild("SIGKILL");
+    return;
+  } catch {
+    /* group gone or platform does not expose negative-pid probing */
+  }
+
+  try {
+    processKill(pid, 0);
+    processKill(pid, "SIGKILL");
+  } catch {
+    /* already gone */
+  }
+}
+
+// Async twin of run() — same {code, out} contract, but it keeps the ChildProcess
+// handle so timeout cleanup can reap the ENTIRE process tree before the next slow
+// gate starts. This prevents a timed-out unit/pack launcher from continuing under
+// PID 1 and stealing CPU/RAM from Vitest/integration/package-artifact.
+export async function runAsync(cmd, cmdArgs, opts = {}) {
+  return await new Promise((resolve) => {
+    let child;
+    try {
+      child = spawn(cmd, cmdArgs, {
+        cwd: ROOT,
+        env: buildGateEnv(opts.env),
+        stdio: ["ignore", "pipe", "pipe"],
+        windowsHide: true,
+        detached: process.platform !== "win32",
+      });
+    } catch (err) {
+      resolve(classifyRunError(err, opts.timeout));
+      return;
+    }
+
+    let stdout = "";
+    let stderr = "";
+    let captured = 0;
+    let settled = false;
+    let cleanupStarted = false;
+    let timer;
+
+    const finish = (result) => {
+      if (settled) return;
+      settled = true;
+      if (timer) clearTimeout(timer);
+      resolve(result);
+    };
+
+    const cleanupAndFinish = async (resultFactory) => {
+      if (cleanupStarted || settled) return;
+      cleanupStarted = true;
+      await terminateProcessTree(child.pid);
+      finish(resultFactory());
+    };
+
+    const capture = (which, chunk) => {
+      if (settled || cleanupStarted) return;
+      const text = String(chunk);
+      captured += Buffer.byteLength(text);
+      if (captured > ASYNC_MAX_BUFFER) {
+        void cleanupAndFinish(() => ({
+          code: 1,
+          out: stdout + stderr + "\ngate output exceeded " + ASYNC_MAX_BUFFER + " bytes",
+        }));
+        return;
+      }
+      if (which === "stdout") stdout += text;
+      else stderr += text;
+    };
+
+    child.stdout?.setEncoding("utf8");
+    child.stderr?.setEncoding("utf8");
+    child.stdout?.on("data", (chunk) => capture("stdout", chunk));
+    child.stderr?.on("data", (chunk) => capture("stderr", chunk));
+
+    child.once("error", (err) => {
+      if (cleanupStarted) return;
+      finish(classifyRunError({ ...err, stdout, stderr }, opts.timeout));
+    });
+
+    child.once("close", (code, signal) => {
+      if (cleanupStarted) return;
+      if (code === 0) {
+        finish({ code: 0, out: stdout + stderr });
+        return;
+      }
+      finish(
+        classifyRunError(
+          { status: typeof code === "number" ? code : 1, signal, stdout, stderr },
+          opts.timeout
+        )
+      );
+    });
+
+    if (opts.timeout) {
+      timer = setTimeout(() => {
+        void cleanupAndFinish(() =>
+          classifyRunError(
+            {
+              killed: true,
+              code: "ETIMEDOUT",
+              signal: "SIGTERM",
+              stdout,
+              stderr,
+            },
+            opts.timeout
+          )
+        );
+      }, opts.timeout);
+    }
+  });
 }
 
 async function main() {
