@@ -982,12 +982,13 @@ export function createResponsesWsProxy({
         });
         return true;
       } catch (error) {
+        console.error("[responses-ws-proxy] WebSocket upgrade failed", error);
         writeHttpError(
           socket,
           500,
           JSON.stringify({
             error: {
-              message: error instanceof Error ? error.message : String(error),
+              message: "Responses WebSocket proxy failed",
               code: "responses_websocket_proxy_failed",
             },
           })

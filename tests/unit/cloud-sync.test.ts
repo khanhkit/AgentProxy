@@ -13,7 +13,7 @@ const ORIGINAL_PUBLIC_CLOUD_URL = process.env.NEXT_PUBLIC_CLOUD_URL;
 const ORIGINAL_TIMEOUT = process.env.CLOUD_SYNC_TIMEOUT_MS;
 const ORIGINAL_CLOUD_SECRETS = process.env.AGENTPROXY_CLOUD_SYNC_SECRETS;
 const ORIGINAL_SYNC_SECRET = process.env.AGENTPROXY_CLOUD_SYNC_SECRET;
-const TEST_HMAC_KEY = crypto.createHash("sha256").update("agentproxy-cloud-sync-test").digest("hex");
+const TEST_HMAC_KEY = "ab".repeat(32);
 const ORIGINAL_FETCH = globalThis.fetch;
 const cloudSyncModuleUrl = pathToFileURL(path.join(process.cwd(), "src/lib/cloudSync.ts")).href;
 const initCloudSyncModuleUrl = pathToFileURL(
@@ -34,6 +34,18 @@ function createAbortError(message = "aborted") {
   const error = new Error(message);
   error.name = "AbortError";
   return error;
+}
+
+async function signCloudBody(rawBody) {
+  const key = await crypto.webcrypto.subtle.importKey(
+    "raw",
+    Buffer.from(TEST_HMAC_KEY, "utf8"),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"]
+  );
+  const signature = await crypto.webcrypto.subtle.sign("HMAC", key, Buffer.from(rawBody, "utf8"));
+  return Buffer.from(signature).toString("hex");
 }
 
 async function loadCloudSync(label) {
@@ -243,7 +255,7 @@ test("cloudSync syncs data upstream and refreshes only locally stale provider to
       },
     };
     const rawBody = JSON.stringify(responseData);
-    const signature = crypto.createHmac("sha256", TEST_HMAC_KEY).update(rawBody).digest("hex");
+    const signature = await signCloudBody(rawBody);
     return new Response(rawBody, {
       status: 200,
       headers: { "Content-Type": "application/json", "X-Cloud-Sig": signature },

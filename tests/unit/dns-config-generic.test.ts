@@ -177,7 +177,10 @@ test("resolveHostsForAgent returns Antigravity hosts when agentId is undefined",
   // Codex target
   const codexTarget = ALL_TARGETS.find((t) => t.id === "codex");
   assert.ok(codexTarget, "codex target must exist in ALL_TARGETS");
-  assert.ok(codexTarget.hosts.includes("chatgpt.com"), "codex target must include chatgpt.com");
+  assert.ok(
+    codexTarget.hosts.some((host) => host === "chatgpt.com"),
+    "codex target must include chatgpt.com"
+  );
 });
 
 test("addDNSEntries batches missing entries with no-op on empty list", async () => {
