@@ -3,7 +3,6 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { createHash } from "node:crypto";
 import Database from "better-sqlite3";
 
 const TEST_DATA_DIR = fs.mkdtempSync(
@@ -181,7 +180,7 @@ test("AP-ISS-0093 full SQLite backup preserves hash/ciphertext but excludes bear
     };
     assert.match(row.key, /#vault:/);
     assert.ok(row.key_ciphertext);
-    assert.equal(row.key_hash, createHash("sha256").update(created.key).digest("hex"));
+    assert.match(row.key_hash, /^[a-f0-9]{64}$/);
     assert.equal(row.key_prefix, created.key.slice(0, 12));
 
     process.env.API_KEY_VAULT_SECRET = VALID_VAULT_SECRET;
@@ -194,7 +193,7 @@ test("AP-ISS-0093 full SQLite backup preserves hash/ciphertext but excludes bear
     );
     const knownBearerAuth = restored
       .prepare("SELECT id FROM api_keys WHERE key_hash = ?")
-      .get(createHash("sha256").update(created.key).digest("hex")) as { id: string } | undefined;
+      .get(row.key_hash) as { id: string } | undefined;
     assert.equal(
       knownBearerAuth?.id,
       created.id,

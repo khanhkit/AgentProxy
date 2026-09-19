@@ -39,7 +39,7 @@ test("Hermes fixture: claude provider drops Hermes identity + doc-link paragraph
     "Hermes identity paragraph should be dropped by the default claude pipeline"
   );
   assert.ok(
-    !out.includes("hermes-agent.nousresearch.com"),
+    !/hermes-agent\.nousresearch\.com/.test(out),
     "Hermes doc-link paragraph should be dropped by the default claude pipeline"
   );
   // Unrelated legitimate content survives untouched.

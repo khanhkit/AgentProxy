@@ -802,7 +802,10 @@ test("web_search fallback converts built-in tools for unsupported providers and 
     const urlStr = String(url);
     const body = init.body ? JSON.parse(String(init.body)) : null;
 
-    if (urlStr.includes("google.serper.dev/search")) {
+    if (
+      new URL(urlStr).hostname === "google.serper.dev" &&
+      new URL(urlStr).pathname === "/search"
+    ) {
       searchCalls.push({ url: urlStr, init, body });
       return new Response(
         JSON.stringify({
@@ -864,7 +867,10 @@ test("web_search fallback preserves Responses API output by appending function_c
 
   globalThis.fetch = async (url, _init = {}) => {
     const urlStr = String(url);
-    if (urlStr.includes("google.serper.dev/search")) {
+    if (
+      new URL(urlStr).hostname === "google.serper.dev" &&
+      new URL(urlStr).pathname === "/search"
+    ) {
       return new Response(
         JSON.stringify({
           organic: [
@@ -935,7 +941,10 @@ test("web_search fallback emits a native web_search_call output item with source
 
   globalThis.fetch = async (url, _init = {}) => {
     const urlStr = String(url);
-    if (urlStr.includes("google.serper.dev/search")) {
+    if (
+      new URL(urlStr).hostname === "google.serper.dev" &&
+      new URL(urlStr).pathname === "/search"
+    ) {
       return new Response(
         JSON.stringify({
           organic: [
@@ -1014,7 +1023,10 @@ test("web_search fallback executes stream:true responses requests non-streaming 
   globalThis.fetch = async (url, init = {}) => {
     const urlStr = String(url);
     const body = init.body ? JSON.parse(String(init.body)) : null;
-    if (urlStr.includes("google.serper.dev/search")) {
+    if (
+      new URL(urlStr).hostname === "google.serper.dev" &&
+      new URL(urlStr).pathname === "/search"
+    ) {
       return new Response(
         JSON.stringify({
           organic: [
@@ -1087,7 +1099,10 @@ test("web_search fallback auto-selects a configured paid provider over duckduckg
 
   globalThis.fetch = async (url, _init = {}) => {
     const urlStr = String(url);
-    if (urlStr.includes("google.serper.dev/search")) {
+    if (
+      new URL(urlStr).hostname === "google.serper.dev" &&
+      new URL(urlStr).pathname === "/search"
+    ) {
       return new Response(
         JSON.stringify({
           organic: [
@@ -1101,7 +1116,7 @@ test("web_search fallback auto-selects a configured paid provider over duckduckg
         { status: 200, headers: { "Content-Type": "application/json" } }
       );
     }
-    if (urlStr.includes("lite.duckduckgo.com")) {
+    if (new URL(urlStr).hostname === "lite.duckduckgo.com") {
       // Return empty HTML success -- without the fix this is what gets selected
       // and no failover to the paid provider occurs.
       return new Response("<html></html>", {
