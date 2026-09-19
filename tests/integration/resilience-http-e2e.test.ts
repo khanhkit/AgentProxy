@@ -8,6 +8,7 @@ import http from "node:http";
 import net from "node:net";
 import { spawn } from "node:child_process";
 import { fileURLToPath } from "node:url";
+import { fetch as nativeFetch } from "undici";
 
 const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-resilience-http-e2e-"));
 const DASHBOARD_PORT = await getFreePort();
@@ -184,7 +185,7 @@ function createServerProcess(dataDir: string, port: number) {
   const stdoutLines: string[] = [];
   const stderrLines: string[] = [];
   let exitInfo: { code: number | null; signal: NodeJS.Signals | null } | null = null;
-  const child = spawn(process.execPath, ["scripts/dev/run-next-playwright.mjs", "dev"], {
+  const child = spawn(process.execPath, ["scripts/dev/run-next.mjs", "dev"], {
     cwd: REPO_ROOT,
     env: {
       ...process.env,
@@ -193,6 +194,7 @@ function createServerProcess(dataDir: string, port: number) {
       DASHBOARD_PORT: String(port),
       API_PORT: String(port),
       HOST: "127.0.0.1",
+      AGENTPROXY_BASE_URL: "http://127.0.0.1:" + port,
       REQUIRE_API_KEY: "false",
       API_KEY_SECRET: process.env.API_KEY_SECRET || "resilience-http-e2e-secret-123456",
       DISABLE_SQLITE_AUTO_BACKUP: "true",
@@ -200,6 +202,7 @@ function createServerProcess(dataDir: string, port: number) {
       NEXT_TELEMETRY_DISABLED: "1",
       AGENTPROXY_DISABLE_BACKGROUND_SERVICES: "true",
       AGENTPROXY_DISABLE_TOKEN_HEALTHCHECK: "true",
+      AGENTPROXY_DISABLE_CREDENTIAL_HEALTH_CHECK: "true",
       AGENTPROXY_DISABLE_LOCAL_HEALTHCHECK: "true",
       AGENTPROXY_HIDE_HEALTHCHECK_LOGS: "true",
       AGENTPROXY_E2E_BOOTSTRAP_MODE: "open",
@@ -241,12 +244,18 @@ async function waitForServer(
   }
 ) {
   const startedAt = Date.now();
-  let lastError = "";
+  const { hostname, port } = new URL(baseUrl);
+  const targetPort = Number(port);
+
   while (Date.now() - startedAt < 120_000) {
     if (logs.exitInfo) {
       throw new Error(
         [
-          `AgentProxy exited before it became ready (code=${logs.exitInfo.code}, signal=${logs.exitInfo.signal})`,
+          "AgentProxy exited before it became ready (code=" +
+            logs.exitInfo.code +
+            ", signal=" +
+            logs.exitInfo.signal +
+            ")",
           "--- stdout ---",
           ...logs.stdoutLines.slice(-40),
           "--- stderr ---",
@@ -255,27 +264,38 @@ async function waitForServer(
       );
     }
 
-    try {
-      const response = await fetch(`${baseUrl}/api/monitoring/health`, {
-        signal: AbortSignal.timeout(5_000),
-      });
-      if (response.ok) return;
-      lastError = `HTTP ${response.status}`;
-    } catch (error: any) {
-      lastError = error instanceof Error ? error.message : String(error);
-    }
-    await sleep(500);
+    const connected = await new Promise<boolean>((resolve) => {
+      const socket = net.createConnection({ host: hostname, port: targetPort });
+      const finish = (ok: boolean) => {
+        socket.removeAllListeners();
+        socket.destroy();
+        resolve(ok);
+      };
+      socket.once("connect", () => finish(true));
+      socket.once("error", () => finish(false));
+      socket.setTimeout(1_000, () => finish(false));
+    });
+    if (connected) return;
+    await sleep(250);
   }
 
   throw new Error(
     [
-      `Timed out waiting for AgentProxy to start: ${lastError}`,
+      "Timed out waiting for AgentProxy TCP listener",
       "--- stdout ---",
       ...logs.stdoutLines.slice(-40),
       "--- stderr ---",
       ...logs.stderrLines.slice(-40),
     ].join("\n")
   );
+}
+
+async function warmRoute(baseUrl: string, pathname: string) {
+  const response = await nativeFetch(baseUrl + pathname, {
+    signal: AbortSignal.timeout(180_000),
+  });
+  assert.equal(response.status, 200, "failed to prewarm " + pathname + ": HTTP " + response.status);
+  await response.arrayBuffer();
 }
 
 async function stopProcess(child: ReturnType<typeof spawn>) {
@@ -403,7 +423,7 @@ function buildResilienceConfig(overrides: Record<string, unknown> = {}) {
 }
 
 async function patchResilience(baseUrl: string, config: Record<string, unknown>) {
-  const response = await fetch(`${baseUrl}/api/resilience`, {
+  const response = await nativeFetch(`${baseUrl}/api/resilience`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(config),
@@ -415,13 +435,13 @@ async function patchResilience(baseUrl: string, config: Record<string, unknown>)
 }
 
 async function getJson(url: string) {
-  const response = await fetch(url, { signal: AbortSignal.timeout(10_000) });
+  const response = await nativeFetch(url, { signal: AbortSignal.timeout(10_000) });
   const json = (await response.json()) as any;
   return { response, json };
 }
 
-async function postChat(baseUrl: string, model: string, content: string) {
-  const response = await fetch(`${baseUrl}/api/v1/chat/completions`, {
+async function postChat(baseUrl: string, model: string, content: string, timeoutMs = 20_000) {
+  const response = await nativeFetch(`${baseUrl}/api/v1/chat/completions`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -429,7 +449,7 @@ async function postChat(baseUrl: string, model: string, content: string) {
       stream: false,
       messages: [{ role: "user", content }],
     }),
-    signal: AbortSignal.timeout(20_000),
+    signal: AbortSignal.timeout(timeoutMs),
   });
   const text = await response.text();
   const json = text ? JSON.parse(text) : {};
@@ -533,10 +553,11 @@ test.before(async () => {
 
   app = createServerProcess(TEST_DATA_DIR, DASHBOARD_PORT);
   await waitForServer(app.baseUrl, app);
+  await warmRoute(app.baseUrl, "/api/resilience");
 
   await patchResilience(app.baseUrl, buildResilienceConfig());
 
-  const warmup = await postChat(app.baseUrl, "p2/test-model", "warm up chat route");
+  const warmup = await postChat(app.baseUrl, "p2/test-model", "warm up chat route", 180_000);
   assert.equal(warmup.response.status, 200, JSON.stringify(warmup.json));
   relay.resetState(TOKENS.p2);
 });

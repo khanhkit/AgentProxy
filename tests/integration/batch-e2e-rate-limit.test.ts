@@ -165,7 +165,7 @@ function createServerProcess() {
   const stderrLines: string[] = [];
   let exitInfo: { code: number | null; signal: NodeJS.Signals | null } | null = null;
 
-  const child = spawn(process.execPath, ["scripts/dev/run-next-playwright.mjs", "dev"], {
+  const child = spawn(process.execPath, ["scripts/dev/run-next.mjs", "dev"], {
     cwd: REPO_ROOT,
     env: {
       ...process.env,
@@ -174,6 +174,7 @@ function createServerProcess() {
       DASHBOARD_PORT: String(SERVER_PORT),
       API_PORT: String(SERVER_PORT),
       HOST: "127.0.0.1",
+      AGENTPROXY_BASE_URL: "http://127.0.0.1:" + SERVER_PORT,
       REQUIRE_API_KEY: "false",
       API_KEY_SECRET: "batch-e2e-rl-secret",
       DISABLE_SQLITE_AUTO_BACKUP: "true",
@@ -182,6 +183,7 @@ function createServerProcess() {
       AGENTPROXY_E2E_BOOTSTRAP_MODE: "open",
       AGENTPROXY_DISABLE_BACKGROUND_SERVICES: "false",
       AGENTPROXY_DISABLE_TOKEN_HEALTHCHECK: "true",
+      AGENTPROXY_DISABLE_CREDENTIAL_HEALTH_CHECK: "true",
       AGENTPROXY_DISABLE_LOCAL_HEALTHCHECK: "true",
       AGENTPROXY_HIDE_HEALTHCHECK_LOGS: "true",
       PATH: process.env.PATH,
