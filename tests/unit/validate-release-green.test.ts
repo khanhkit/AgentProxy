@@ -262,7 +262,7 @@ test("pre-flight runs tarball boot only after the package artifact builder compl
     new URL("../../scripts/quality/validate-release-green.mjs", import.meta.url),
     "utf8"
   );
-  const parallelWave = src.indexOf("const slowResults = await Promise.all");
+  const parallelWave = src.indexOf("slowResults = await Promise.all");
   const packBoot = src.indexOf('id: "pack-boot"');
 
   assert.ok(parallelWave >= 0, "the parallel slow-gate wave must exist");
@@ -494,4 +494,27 @@ test("the --full-ci loop classifies from the curated results, not a hardcoded ki
     /kind:\s*fullCiKindFor\(g\.id,\s*results\)/,
     "--full-ci must classify each ci.yml gate through fullCiKindFor()"
   );
+});
+
+test("pre-flight --serial-slow preserves the same slow hard gates but runs them one at a time", async () => {
+  const fs = await import("node:fs");
+  const src = fs.readFileSync(
+    new URL("../../scripts/quality/validate-release-green.mjs", import.meta.url),
+    "utf8"
+  );
+
+  assert.match(src, /args\.has\("--serial-slow"\)/, "--serial-slow flag must be parsed");
+  assert.match(
+    src,
+    /if \(SERIAL_SLOW\)[\s\S]*?for \(const g of slow\)/,
+    "serial mode must iterate the same slow gate list"
+  );
+  assert.match(
+    src,
+    /slowResults\.push\(await runAsync\(npmCmd, g\.args, \{ timeout: g\.timeout \}\)\)/,
+    "serial mode must keep each gate's existing timeout and runner"
+  );
+  for (const id of ["unit", "vitest", "integration", "pack-artifact"]) {
+    assert.ok(src.includes(`id: "${id}"`), `serial mode must retain slow gate ${id}`);
+  }
 });
