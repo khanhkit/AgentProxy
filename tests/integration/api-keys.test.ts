@@ -9,6 +9,7 @@ const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-api-keys
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.API_KEY_SECRET = "test-api-key-secret";
 process.env.CLOUD_URL = "http://cloud.example";
+process.env.AGENTPROXY_CLOUD_SYNC_SECRET = "integration-cloud-sync-secret";
 
 const core = await import("../../src/lib/db/core.ts");
 const apiKeysDb = await import("../../src/lib/db/apiKeys.ts");
@@ -41,6 +42,15 @@ async function enableManagementAuth() {
 
 async function createManagementKey() {
   return apiKeysDb.createApiKey("management", MACHINE_ID);
+}
+
+async function waitForCondition(predicate: () => boolean, timeoutMs = 2_000) {
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    if (predicate()) return;
+    await new Promise((resolve) => setTimeout(resolve, 20));
+  }
+  assert.ok(predicate(), "condition was not met within " + timeoutMs + "ms");
 }
 
 function makeRequest(
@@ -468,7 +478,7 @@ test("POST /api/keys triggers cloud sync when cloud mode is enabled", async () =
     // #6570: cloud sync is fire-and-forget so it no longer blocks the
     // response — give the background task a moment to run before asserting
     // it happened.
-    await new Promise((resolve) => setTimeout(resolve, 50));
+    await waitForCondition(() => calls.length === 1);
     const syncPayload = JSON.parse(calls[0].options.body);
     assert.equal(calls.length, 1);
     assert.match(String(calls[0].url), /^http:\/\/cloud\.example\/sync\//);
@@ -541,7 +551,7 @@ test("POST /api/keys still succeeds when cloud sync fails after creation", async
     // #6570: cloud sync is fire-and-forget so it no longer blocks the
     // response — give the background task a moment to run before asserting
     // the (failed) sync attempt happened and was tolerated.
-    await new Promise((resolve) => setTimeout(resolve, 50));
+    await waitForCondition(() => syncAttempts === 1);
     assert.equal(syncAttempts, 1);
   } finally {
     globalThis.fetch = originalFetch;

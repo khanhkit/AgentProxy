@@ -15,11 +15,11 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
 
-const { API_SKILL_IDS, CLI_SKILL_IDS, CONFIG_SKILL_IDS, getCatalog } =
-  await import("../../src/lib/agentSkills/catalog.ts");
+const { getCatalog } = await import("../../src/lib/agentSkills/catalog.ts");
 
 const SKILLS_DIR = path.resolve(process.cwd(), "skills");
 const ALL_IDS = getCatalog().map((skill) => skill.id);
+const APPROVED_PROJECT_TOOLING_SKILL_DIRS = new Set(["typesafe-ai"]);
 
 // IDs that must have a custom block
 const CUSTOM_BLOCK_IDS = [
@@ -82,12 +82,14 @@ test("skills/ has zero agentproxy-* directories (all pruned)", () => {
   );
 });
 
-test("skills/ directory only contains expected catalog IDs plus README", () => {
+test("skills/ directory only contains expected catalog IDs plus approved project tooling", () => {
   if (!fs.existsSync(SKILLS_DIR)) return;
   const entries = fs.readdirSync(SKILLS_DIR, { withFileTypes: true });
   const dirs = entries.filter((e) => e.isDirectory()).map((e) => e.name);
   const expectedSet = new Set(ALL_IDS);
-  const unexpected = dirs.filter((d) => !expectedSet.has(d));
+  const unexpected = dirs.filter(
+    (d) => !expectedSet.has(d) && !APPROVED_PROJECT_TOOLING_SKILL_DIRS.has(d)
+  );
   assert.deepEqual(unexpected, [], `Unexpected directories in skills/: ${unexpected.join(", ")}`);
 });
 
