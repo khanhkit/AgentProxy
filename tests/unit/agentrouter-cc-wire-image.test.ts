@@ -73,7 +73,7 @@ test("(c) CRUX: agentrouter keeps its OWN registry baseUrl + ?beta=true", () => 
   const url = buildProviderUrl("agentrouter", "claude-opus-4-8", true);
   assert.equal(url, "https://agentrouter.org/v1/messages?beta=true");
   // NOT the CC-family anthropic default baseUrl.
-  assert.ok(!url.includes("api.anthropic.com"));
+  assert.notEqual(new URL(url).hostname, "api.anthropic.com");
 });
 
 test("(c) real CC-family provider still uses the CC default baseUrl + Bearer auth", () => {
@@ -83,5 +83,5 @@ test("(c) real CC-family provider still uses the CC default baseUrl + Bearer aut
   assert.equal(headers["x-api-key"], undefined);
 
   const url = buildProviderUrl("anthropic-compatible-cc-foo", "claude-sonnet-4-6", true);
-  assert.ok(url.includes("api.anthropic.com"));
+  assert.ok(new URL(url).hostname === "api.anthropic.com");
 });

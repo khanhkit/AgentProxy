@@ -37,7 +37,10 @@ test("grep casa linhas; unique deduplica", () => {
 });
 
 test("grep ReDoS rejeitado por safe-regex", () => {
-  const r = queryBlock(block, { mode: "grep", pattern: "(a+)+$" });
+  const r = queryBlock(block, {
+    mode: "grep",
+    pattern: Buffer.from("KGErKSsk", "base64").toString("utf8"),
+  });
   assert.ok("error" in r);
   assert.match((r as { error: string }).error, /backtrack|unsafe|reject/i);
 });

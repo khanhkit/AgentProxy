@@ -59,7 +59,7 @@ test("auto-selects credentialed provider before duckduckgo-free fallback (#11524
     const urlStr = String(url);
     fetchCalls.push(urlStr);
 
-    if (urlStr.includes("api.search.brave.com")) {
+    if (new URL(urlStr).hostname === "api.search.brave.com") {
       return new Response(
         JSON.stringify({
           web: {
@@ -89,11 +89,11 @@ test("auto-selects credentialed provider before duckduckgo-free fallback (#11524
       "must use the configured credentialed provider, not duckduckgo-free"
     );
     assert.ok(
-      fetchCalls.some((url) => url.includes("api.search.brave.com")),
+      fetchCalls.some((url) => new URL(url).hostname === "api.search.brave.com"),
       "must call the Brave Search endpoint"
     );
     assert.ok(
-      !fetchCalls.some((url) => url.includes("duckduckgo.com")),
+      !fetchCalls.some((url) => new URL(url).hostname === "duckduckgo.com"),
       "duckduckgo-free must NOT be invoked when a credentialed provider is available (#11524)"
     );
     assert.equal(result.data.results.length, 1);

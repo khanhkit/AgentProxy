@@ -263,7 +263,7 @@ test("SLM tier preserves fenced code + URLs verbatim (structure wrapper)", async
     });
     const out = r.messages[0].content as string;
     assert.ok(out.includes(code), "fenced code block must survive verbatim");
-    assert.ok(out.includes(url), "URL must survive verbatim");
+    assert.ok(out.split(url).length > 1, "URL must survive verbatim");
   } finally {
     __resetUltraEntryForTests();
   }

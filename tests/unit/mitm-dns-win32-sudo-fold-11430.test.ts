@@ -156,7 +156,7 @@ test("addDNSEntries on win32 uses elevated PowerShell and never POSIX sudo -S (#
       `must use elevated PowerShell Add-Content, got: ${powershellScript.slice(0, 200)}`
     );
     assert.ok(
-      powershellScript.includes("fold-test-11430.example.com"),
+      /fold-test-11430\.example\.com/.test(powershellScript),
       "PowerShell payload must include the missing host entry"
     );
   } finally {

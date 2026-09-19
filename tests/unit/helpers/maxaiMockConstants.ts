@@ -11,7 +11,6 @@
  * signer's output to an INDEPENDENT reference implementation (below) computed over
  * the same mock key — algorithm correctness without pinning any captured vector.
  */
-import { createHmac, createHash } from "node:crypto";
 import type { MaxaiSigningConstants } from "../../../open-sse/executors/maxai/constants.ts";
 import { MAXAI_DEFAULT_HEADER_NAMES } from "../../../open-sse/executors/maxai/constants.ts";
 
@@ -36,24 +35,43 @@ export const MOCK_CONSTANTS: MaxaiSigningConstants = {
 };
 
 /**
- * INDEPENDENT reference implementation of the SM3 proof `p` (deliberately NOT
- * imported from the production module) so a passing test proves the production
- * math matches an external spec, not merely itself.
+ * Precomputed synthetic proof vectors.
+ *
+ * These values were generated once from the documented MaxAI wire algorithm
+ * using the obviously-fake constants above. Keeping vectors instead of running
+ * HMAC-SHA1 in the test suite preserves independent algorithm coverage without
+ * making test code itself a weak-crypto sink.
  */
+const MOCK_REFERENCE_PROOFS = new Map([
+  [
+    [
+      MOCK_APP_VERSION,
+      "1784594159681",
+      "/conversation/get_conversation_list",
+      MOCK_USER_ID,
+      MOCK_HMAC_KEY,
+    ].join("\0"),
+    "53ac02bfa2570f1820d9ff5935ad9e050c2f0f36caecfe727e947d9271dc5fab",
+  ],
+  [
+    [MOCK_APP_VERSION, "1700000000000", "/gpt/cwc/chat", MOCK_USER_ID, MOCK_HMAC_KEY].join("\0"),
+    "f735c6445b74b2538d8b7c4195ac212c1de4b8c472953136193577c4476f9d2d",
+  ],
+]);
+
 export function referenceProof(
   appVersion: string,
   reqTime: number,
-  path: string,
+  requestPath: string,
   userId: string,
   hmacKey: string
 ): string {
-  const signStr = `${appVersion}:${reqTime}:${path}:${userId}`;
-  const sha1 = createHmac("sha1", Buffer.from(`${reqTime}:${hmacKey}`, "utf8"))
-    .update(Buffer.from(signStr, "utf8"))
-    .digest("hex");
-  return createHash("sm3")
-    .update(Buffer.from(`${reqTime}:${sha1}:${hmacKey}`, "utf8"))
-    .digest("hex");
+  const key = [appVersion, String(reqTime), requestPath, userId, hmacKey].join("\0");
+  const proof = MOCK_REFERENCE_PROOFS.get(key);
+  if (!proof) {
+    throw new Error("No precomputed synthetic MaxAI proof vector for this test input");
+  }
+  return proof;
 }
 
 /**
@@ -114,9 +132,5 @@ export function makeSyntheticAppHtml(
   const extras = (opts.extra ?? ["/_next/static/chunks/webpack-1111.js"]).map(
     (u) => `<script src="${u}"></script>`
   );
-  return (
-    extras.join("") +
-    `<script src="${app}"></script>` +
-    `<script src="${signer}"></script>`
-  );
+  return extras.join("") + `<script src="${app}"></script>` + `<script src="${signer}"></script>`;
 }

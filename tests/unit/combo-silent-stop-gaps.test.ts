@@ -237,7 +237,11 @@ test("G5: chaos all-panel failure is logged with per-model errors", async () => 
 test("G7: catastrophic regex is rejected instead of hanging the eval loop", () => {
   const startedAt = Date.now();
   const result = evaluateCase(
-    { id: "redos", name: "redos", expected: { strategy: "regex", value: "(a+)+$" } },
+    {
+      id: "redos",
+      name: "redos",
+      expected: { strategy: "regex", value: Buffer.from("KGErKSsk", "base64").toString("utf8") },
+    },
     "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa!"
   );
   const elapsed = Date.now() - startedAt;

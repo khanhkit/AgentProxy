@@ -10,14 +10,16 @@ const { VERTEX_OAUTH_SCOPES } = await import("../../open-sse/executors/vertex.ts
 
 test("Vertex OAuth scopes include cloud-platform (execution)", () => {
   assert.ok(
-    VERTEX_OAUTH_SCOPES.includes("https://www.googleapis.com/auth/cloud-platform"),
+    VERTEX_OAUTH_SCOPES.some((scope) => scope === "https://www.googleapis.com/auth/cloud-platform"),
     "cloud-platform scope is required for Vertex AI execution"
   );
 });
 
 test("Vertex OAuth scopes include generative-language.retriever (discovery)", () => {
   assert.ok(
-    VERTEX_OAUTH_SCOPES.includes("https://www.googleapis.com/auth/generative-language.retriever"),
+    VERTEX_OAUTH_SCOPES.some(
+      (scope) => scope === "https://www.googleapis.com/auth/generative-language.retriever"
+    ),
     "generative-language.retriever scope is required for live model discovery"
   );
 });

@@ -2,7 +2,11 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { X509Certificate } from "node:crypto";
 
-import { generateMitmCa, issueLeafCert, DynamicCertStore } from "../../src/mitm/tproxy/dynamicCert.ts";
+import {
+  generateMitmCa,
+  issueLeafCert,
+  DynamicCertStore,
+} from "../../src/mitm/tproxy/dynamicCert.ts";
 import { MITM_TOOL_HOSTS } from "../../src/shared/constants/mitmToolHosts.ts";
 
 // #6684: leaf issuance for the full MITM_TOOL_HOSTS host set, reusing the CA
@@ -72,7 +76,7 @@ test("drift guard: a host added to mitmToolHosts.ts needs no matching entry in g
   const ca = await generateMitmCa("Test MITM CA");
   const store = new DynamicCertStore("Test MITM CA", ca);
   const neverRegisteredHost = "some-brand-new-tool-host.example.com";
-  assert.ok(!allHosts().includes(neverRegisteredHost));
+  assert.ok(!allHosts().some((host) => host === neverRegisteredHost));
   const ctx = await store.getSecureContext(neverRegisteredHost);
   assert.ok(ctx);
 });

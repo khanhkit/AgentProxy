@@ -61,11 +61,11 @@ test("#5899 openai gateway baseUrl ending in /v1/chat/completions never probes /
   }
 
   assert.ok(
-    requestedUrls.includes("https://api.airforce/v1/models"),
+    requestedUrls.some((url) => url === "https://api.airforce/v1/models"),
     `expected a request to the correctly-stripped /v1/models URL; got: ${JSON.stringify(requestedUrls)}`
   );
   assert.ok(
-    !requestedUrls.includes("https://api.airforce/v1/v1/models"),
+    !requestedUrls.some((url) => url === "https://api.airforce/v1/v1/models"),
     `must never probe the double-prefixed /v1/v1/models URL; got: ${JSON.stringify(requestedUrls)}`
   );
 });

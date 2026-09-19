@@ -21,7 +21,15 @@ describe("compression harness — measure (C1)", () => {
     const entities = extractEntities(SAMPLE);
     assert.ok(entities.length >= 3, `expected >=3 entities, got ${entities.length}`);
     assert.ok(
-      entities.some((e) => e.includes("api.example.com")),
+      entities.some((e) =>
+        (() => {
+          try {
+            return new URL(e).hostname === "api.example.com";
+          } catch {
+            return false;
+          }
+        })()
+      ),
       "url entity missing"
     );
     assert.ok(
@@ -43,7 +51,15 @@ describe("compression harness — measure (C1)", () => {
     const r = computeRetention(SAMPLE, degraded);
     assert.ok(r.score < 1, "retention should drop when the URL is dropped");
     assert.ok(
-      r.lost.some((e) => e.includes("api.example.com")),
+      r.lost.some((e) =>
+        (() => {
+          try {
+            return new URL(e).hostname === "api.example.com";
+          } catch {
+            return false;
+          }
+        })()
+      ),
       "lost list must name the URL"
     );
   });

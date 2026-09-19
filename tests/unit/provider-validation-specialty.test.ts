@@ -454,7 +454,10 @@ test("web-cookie provider validators accept valid Grok, Perplexity, Blackbox and
     const target = String(url);
     calls.push({ url: target, init });
 
-    if (target.includes("app.blackbox.ai/api/auth/session")) {
+    if (
+      new URL(target).hostname === "app.blackbox.ai" &&
+      new URL(target).pathname === "/api/auth/session"
+    ) {
       return new Response(
         JSON.stringify({
           user: { id: "bb-user-1", email: "premium@example.com" },
@@ -462,7 +465,10 @@ test("web-cookie provider validators accept valid Grok, Perplexity, Blackbox and
         { status: 200 }
       );
     }
-    if (target.includes("app.blackbox.ai/api/check-subscription")) {
+    if (
+      new URL(target).hostname === "app.blackbox.ai" &&
+      new URL(target).pathname === "/api/check-subscription"
+    ) {
       return new Response(
         JSON.stringify({
           hasActiveSubscription: true,
@@ -472,7 +478,7 @@ test("web-cookie provider validators accept valid Grok, Perplexity, Blackbox and
         { status: 200 }
       );
     }
-    if (target.includes("meta.ai/api/graphql")) {
+    if (new URL(target).hostname === "meta.ai" && new URL(target).pathname === "/api/graphql") {
       return new Response(metaAiSseText("Muse Spark says hello"), {
         status: 200,
         headers: { "Content-Type": "text/event-stream" },
@@ -501,17 +507,27 @@ test("web-cookie provider validators accept valid Grok, Perplexity, Blackbox and
   assert.equal(blackbox.valid, true);
   assert.equal(museSpark.valid, true);
 
-  const blackboxSessionCall = calls.find((call) =>
-    call.url.includes("app.blackbox.ai/api/auth/session")
+  const blackboxSessionCall = calls.find(
+    (call) =>
+      new URL(call.url).hostname === "app.blackbox.ai" &&
+      new URL(call.url).pathname === "/api/auth/session"
   );
-  const blackboxSubscriptionCall = calls.find((call) =>
-    call.url.includes("app.blackbox.ai/api/check-subscription")
+  const blackboxSubscriptionCall = calls.find(
+    (call) =>
+      new URL(call.url).hostname === "app.blackbox.ai" &&
+      new URL(call.url).pathname === "/api/check-subscription"
   );
-  const museSparkCall = calls.find((call) => call.url.includes("meta.ai/api/graphql"));
+  const museSparkCall = calls.find(
+    (call) =>
+      new URL(call.url).hostname === "meta.ai" && new URL(call.url).pathname === "/api/graphql"
+  );
 
   // Grok goes through tlsFetchGrok (TLS override), not globalThis.fetch.
   assert.ok(grokTlsCall, "grok TLS override was called");
-  assert.ok(grokTlsCall!.url.includes("grok.com/rest/app-chat/conversations/new"));
+  assert.ok(
+    new URL(grokTlsCall!.url).hostname === "grok.com" &&
+      new URL(grokTlsCall!.url).pathname === "/rest/app-chat/conversations/new"
+  );
   assert.equal(
     (grokTlsCall!.options.headers as Record<string, string>)["Cookie"],
     "sso=grok-cookie"
@@ -523,7 +539,10 @@ test("web-cookie provider validators accept valid Grok, Perplexity, Blackbox and
   // Perplexity goes through tlsFetchPerplexity (TLS override), not globalThis.fetch.
   // options.headers is a plain object; the validator sets Cookie from the session token.
   assert.ok(pplxTlsCall, "perplexity TLS override was called");
-  assert.ok(pplxTlsCall!.url.includes("perplexity.ai/rest/sse/perplexity_ask"));
+  assert.ok(
+    new URL(pplxTlsCall!.url).hostname === "perplexity.ai" &&
+      new URL(pplxTlsCall!.url).pathname === "/rest/sse/perplexity_ask"
+  );
   assert.equal(
     (pplxTlsCall!.options.headers as Record<string, string>)["Cookie"],
     "__Secure-next-auth.session-token=pplx-cookie"
@@ -549,7 +568,10 @@ test("web-cookie provider validators surface auth and subscription failures", as
 
   globalThis.fetch = async (url, init = {}) => {
     const target = String(url);
-    if (target.includes("app.blackbox.ai/api/auth/session")) {
+    if (
+      new URL(target).hostname === "app.blackbox.ai" &&
+      new URL(target).pathname === "/api/auth/session"
+    ) {
       const cookie = (init.headers as Record<string, string>)?.Cookie || "";
       if (cookie.includes("expired-cookie")) {
         return new Response("null", { status: 200 });
@@ -561,7 +583,10 @@ test("web-cookie provider validators surface auth and subscription failures", as
         { status: 200 }
       );
     }
-    if (target.includes("app.blackbox.ai/api/check-subscription")) {
+    if (
+      new URL(target).hostname === "app.blackbox.ai" &&
+      new URL(target).pathname === "/api/check-subscription"
+    ) {
       return new Response(
         JSON.stringify({
           hasActiveSubscription: false,
@@ -572,7 +597,7 @@ test("web-cookie provider validators surface auth and subscription failures", as
         { status: 200 }
       );
     }
-    if (target.includes("meta.ai/api/graphql")) {
+    if (new URL(target).hostname === "meta.ai" && new URL(target).pathname === "/api/graphql") {
       return new Response(metaAiSseText("Authentication required to send messages", "ERROR"), {
         status: 200,
         headers: { "Content-Type": "text/event-stream" },
@@ -2388,7 +2413,7 @@ test("gemini-web validator: 200 from gemini.google.com → valid", async () => {
   globalThis.fetch = async (url, init = {}) => {
     const target = String(url);
     const headers = init.headers || {};
-    if (target.includes("gemini.google.com/app")) {
+    if (new URL(target).hostname === "gemini.google.com" && new URL(target).pathname === "/app") {
       assert.match((headers as Record<string, string>).Cookie || "", /__Secure-1PSID=eyJPSID/);
       return new Response("ok", { status: 200 });
     }
@@ -2407,7 +2432,7 @@ test("gemini-web validator: 200 from gemini.google.com → valid", async () => {
 test("gemini-web validator: bare value gets __Secure-1PSID prefix", async () => {
   let capturedCookie = "";
   globalThis.fetch = async (url, init = {}) => {
-    if (String(url).includes("gemini.google.com")) {
+    if (new URL(String(url)).hostname === "gemini.google.com") {
       capturedCookie = ((init.headers as Record<string, string>) || {}).Cookie || "";
       return new Response("ok", { status: 200 });
     }
@@ -2421,7 +2446,7 @@ test("gemini-web validator: bare value gets __Secure-1PSID prefix", async () => 
 test("gemini-web validator: accepts cookies JSON exported by browser tools", async () => {
   let capturedCookie = "";
   globalThis.fetch = async (url, init = {}) => {
-    if (String(url).includes("gemini.google.com")) {
+    if (new URL(String(url)).hostname === "gemini.google.com") {
       capturedCookie = ((init.headers as Record<string, string>) || {}).Cookie || "";
       return new Response("ok", { status: 200 });
     }
@@ -2470,7 +2495,10 @@ test("gemini-web validator: 500 → unavailable", async () => {
 test("copilot-web validator: valid access_token → 200", async () => {
   globalThis.fetch = async (url, init = {}) => {
     const target = String(url);
-    if (target.includes("copilot.microsoft.com/c/api/conversations")) {
+    if (
+      new URL(target).hostname === "copilot.microsoft.com" &&
+      new URL(target).pathname === "/c/api/conversations"
+    ) {
       assert.match(
         ((init.headers as Record<string, string>) || {}).Authorization || "",
         /Bearer eyJhbGci/
@@ -2492,7 +2520,7 @@ test("copilot-web validator: valid access_token → 200", async () => {
 test("copilot-web validator: cookie with access_token= is extracted", async () => {
   let capturedAuth = "";
   globalThis.fetch = async (url, init = {}) => {
-    if (String(url).includes("copilot.microsoft.com")) {
+    if (new URL(String(url)).hostname === "copilot.microsoft.com") {
       capturedAuth = ((init.headers as Record<string, string>) || {}).Authorization || "";
       return new Response(JSON.stringify({}), { status: 200 });
     }

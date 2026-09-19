@@ -55,8 +55,10 @@ test("defaults: obfuscate_words list includes legacy + OpenWebUI words", () => {
 });
 
 test("defaults: OpenWebUI anchors include canonical URLs", () => {
-  assert.ok(OPENWEBUI_PARAGRAPH_ANCHORS.includes("github.com/open-webui/open-webui"));
-  assert.ok(OPENWEBUI_PARAGRAPH_ANCHORS.includes("openwebui.com"));
+  assert.ok(
+    OPENWEBUI_PARAGRAPH_ANCHORS.some((anchor) => anchor === "github.com/open-webui/open-webui")
+  );
+  assert.ok(OPENWEBUI_PARAGRAPH_ANCHORS.some((anchor) => anchor === "openwebui.com"));
   assert.ok(OPENWEBUI_IDENTITY_PREFIXES.includes("You are Open WebUI"));
 });
 
@@ -186,7 +188,7 @@ test("pipeline ordering: drop_paragraph_if_contains runs before obfuscate_words"
     { kind: "obfuscate_words", words: ["openwebui", "opencode"], targets: ["system"] },
   ]);
   const out = (body.system[0] as { text: string }).text;
-  assert.ok(!out.includes("github.com/open-webui/open-webui"));
+  assert.ok(!/github\.com\/open-webui\/open-webui/.test(out));
   assert.ok(out.includes(`o${ZWJ}penwebui`));
   assert.ok(out.includes(`o${ZWJ}pencode`));
 });
@@ -235,7 +237,7 @@ test("applySystemTransformPipeline: claude provider runs its default pipeline", 
   assert.ok(blocks.length >= 1);
   const out = blocks[0].text;
   // Open WebUI anchor paragraph dropped
-  assert.ok(!out.includes("github.com/open-webui/open-webui"));
+  assert.ok(!/github\.com\/open-webui\/open-webui/.test(out));
   // ZWJ inserted on opencode
   assert.ok(out.includes(`o${ZWJ}pencode`));
   // No billing header injected (native does that)
@@ -310,7 +312,7 @@ test("OpenWebUI fixture: claude provider drops anchor + obfuscates 'openwebui' w
   // "You are Open WebUI" identity paragraph dropped
   assert.ok(!sysText.includes("You are Open WebUI assistant"));
   // github.com/open-webui/open-webui anchor paragraph dropped
-  assert.ok(!sysText.includes("github.com/open-webui/open-webui"));
+  assert.ok(!/github\.com\/open-webui\/open-webui/.test(sysText));
   // remaining word "openwebui" ZWJ-obfuscated
   assert.ok(sysText.includes(`o${ZWJ}penwebui`));
   // Messages also obfuscated by default targets

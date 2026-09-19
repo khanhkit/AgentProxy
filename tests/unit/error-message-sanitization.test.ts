@@ -410,7 +410,7 @@ test("createErrorResult — rawMessage preserves the full multi-line message unt
     "error (client-facing) must still be truncated to the first line"
   );
   assert.ok(
-    !result.error.includes("generativelanguage.googleapis.com"),
+    !/generativelanguage\.googleapis\.com/.test(result.error),
     "sanitized error must not include the metric name (line 2)"
   );
 });
@@ -424,7 +424,7 @@ test("createErrorResult — rawMessage never appears in the serialized response 
   const bodyText = await result.response.clone().text();
 
   assert.ok(
-    !bodyText.includes("generativelanguage.googleapis.com"),
+    !/generativelanguage\.googleapis\.com/.test(bodyText),
     "the raw multi-line metric text must never reach the HTTP response body"
   );
 });
