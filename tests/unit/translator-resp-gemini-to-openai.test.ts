@@ -504,7 +504,7 @@ test("Gemini stream: converts prefixed textual Tool call block with zero-width c
           content: {
             parts: [
               {
-                text: '(empty)[Tool call: terminal]\nArguments: {"command":"sqlite3 ~/.o\u200dmniroute/storage.sqlite"}',
+                text: '(empty)[Tool call: terminal]\nArguments: {"command":"sqlite3 ~/.a\u200dgentproxy/storage.sqlite"}',
               },
             ],
           },
@@ -1174,7 +1174,10 @@ test("Gemini stream: open textual reasoning is flushed before a signed native to
     "buffered textual reasoning must be flushed, not dropped, when a tool call arrives"
   );
   assert.equal(r2[toolIdx]?.choices[0].delta.tool_calls[0].id, "call-flush-1");
-  assert.ok(reasoningIdx >= 0 && toolIdx > reasoningIdx, "reasoning is emitted before the tool call");
+  assert.ok(
+    reasoningIdx >= 0 && toolIdx > reasoningIdx,
+    "reasoning is emitted before the tool call"
+  );
 });
 
 // #3821-review LEDGER-15 — a reasoning-only chunk interrupting a partially-buffered
