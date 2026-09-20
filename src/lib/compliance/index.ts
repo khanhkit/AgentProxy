@@ -23,6 +23,7 @@ import {
 import { getUserDatabaseSettings } from "../db/databaseSettings";
 import { generateRequestId, getRequestId } from "@/shared/utils/requestId";
 import { HIGH_LEVEL_ACTIONS } from "@/lib/audit/highLevelActions";
+import { AUTHZ_HEADER_TRUSTED_PEER_IP } from "@/server/authz/headers";
 
 /** @returns {SqliteAdapter | null} */
 function getDb() {
@@ -302,8 +303,18 @@ export function getAuditRequestContext(request?: {
   socket?: { remoteAddress?: string };
   ip?: string;
 }) {
+  // The authz pipeline strips client-supplied trusted headers, verifies the
+  // token-stamped TCP peer, then forwards this resolved peer IP to route
+  // handlers. Only consume that header while peer-stamp mode is active;
+  // otherwise a direct/raw caller must continue through the fail-closed
+  // getClientIpFromRequest path and cannot spoof identity with forwarding or
+  // trusted-looking headers.
+  const trustedPeerIp = process.env.AGENTPROXY_PEER_STAMP_TOKEN
+    ? request?.headers?.get?.(AUTHZ_HEADER_TRUSTED_PEER_IP)?.trim() || null
+    : null;
+
   return {
-    ipAddress: request ? getClientIpFromRequest(request) : null,
+    ipAddress: trustedPeerIp || (request ? getClientIpFromRequest(request) : null),
     requestId: getRequestId() || request?.headers?.get?.("x-request-id") || generateRequestId(),
   };
 }
@@ -421,8 +432,7 @@ export function countAuditLog(filter: AuditLogFilter = {}) {
   ensureAuditLogSchema(db);
   const { where, params } = buildAuditLogQuery(filter);
   const row = db.prepare(`SELECT COUNT(*) as count FROM audit_log ${where}`).get(...params) as
-    | { count?: number }
-    | undefined;
+    { count?: number } | undefined;
   return Number(row?.count || 0);
 }
 

@@ -26,6 +26,7 @@ process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.JWT_SECRET = "test-jwt-secret-8336";
 
 const ORIGINAL_INITIAL_PASSWORD = process.env.INITIAL_PASSWORD;
+const ORIGINAL_PEER_STAMP_TOKEN = process.env.AGENTPROXY_PEER_STAMP_TOKEN;
 
 const ipUtils = await import("../../src/lib/ipUtils.ts");
 const core = await import("../../src/lib/db/core.ts");
@@ -39,6 +40,7 @@ async function resetStorage() {
   fs.rmSync(TEST_DATA_DIR, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
   fs.mkdirSync(TEST_DATA_DIR, { recursive: true });
   process.env.INITIAL_PASSWORD = "correct-secret-8336";
+  process.env.AGENTPROXY_PEER_STAMP_TOKEN = "test-peer-stamp-8336";
 }
 
 test.beforeEach(async () => {
@@ -57,6 +59,11 @@ test.after(() => {
     delete process.env.INITIAL_PASSWORD;
   } else {
     process.env.INITIAL_PASSWORD = ORIGINAL_INITIAL_PASSWORD;
+  }
+  if (ORIGINAL_PEER_STAMP_TOKEN === undefined) {
+    delete process.env.AGENTPROXY_PEER_STAMP_TOKEN;
+  } else {
+    process.env.AGENTPROXY_PEER_STAMP_TOKEN = ORIGINAL_PEER_STAMP_TOKEN;
   }
 });
 
@@ -78,15 +85,15 @@ test("classifyIpScope distinguishes loopback / private / public / unknown", () =
   assert.equal(ipUtils.classifyIpScope(null), "unknown");
 });
 
-async function postWrongPassword(forwardedFor: string) {
+async function postWrongPassword(trustedPeerIp: string) {
   return loginRoute.POST(
     new Request("http://localhost/api/auth/login", {
       method: "POST",
       headers: {
         "content-type": "application/json",
-        // No socket peer in this fetch-style path → forwarding headers are
-        // trusted, so this stands in for the recorded client IP.
-        "x-forwarded-for": forwardedFor,
+        // Model the real authz pipeline: raw forwarding evidence is untrusted;
+        // the route consumes only the verified peer IP stamped by the pipeline.
+        "x-agentproxy-trusted-peer-ip": trustedPeerIp,
       },
       body: JSON.stringify({ password: "wrong-password" }),
     })

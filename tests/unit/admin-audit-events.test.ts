@@ -10,6 +10,8 @@ process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.APP_LOG_TO_FILE = "false";
 process.env.JWT_SECRET = "test-jwt-secret-for-audit-events";
 process.env.INITIAL_PASSWORD = "admin-secret";
+const ORIGINAL_PEER_STAMP_TOKEN = process.env.AGENTPROXY_PEER_STAMP_TOKEN;
+process.env.AGENTPROXY_PEER_STAMP_TOKEN = "test-peer-stamp-admin-audit";
 
 const core = await import("../../src/lib/db/core.ts");
 const compliance = await import("../../src/lib/compliance/index.ts");
@@ -40,6 +42,11 @@ test.afterEach(() => {
 test.after(() => {
   core.resetDbInstance();
   fs.rmSync(TEST_DATA_DIR, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
+  if (ORIGINAL_PEER_STAMP_TOKEN === undefined) {
+    delete process.env.AGENTPROXY_PEER_STAMP_TOKEN;
+  } else {
+    process.env.AGENTPROXY_PEER_STAMP_TOKEN = ORIGINAL_PEER_STAMP_TOKEN;
+  }
 });
 
 test("auth login/logout routes emit structured audit events with ip and request id", async () => {
@@ -58,7 +65,7 @@ test("auth login/logout routes emit structured audit events with ip and request 
       method: "POST",
       headers: {
         "content-type": "application/json",
-        "x-forwarded-for": "198.51.100.10",
+        "x-agentproxy-trusted-peer-ip": "198.51.100.10",
         "x-request-id": "req-auth-login",
       },
       body: JSON.stringify({ password: "admin-secret" }),
@@ -73,7 +80,7 @@ test("auth login/logout routes emit structured audit events with ip and request 
     new Request("http://localhost/api/auth/logout", {
       method: "POST",
       headers: {
-        "x-forwarded-for": "198.51.100.10",
+        "x-agentproxy-trusted-peer-ip": "198.51.100.10",
         "x-request-id": "req-auth-logout",
       },
     })
@@ -107,7 +114,7 @@ test("auth login route records failed password attempts", async () => {
       method: "POST",
       headers: {
         "content-type": "application/json",
-        "x-forwarded-for": "198.51.100.22",
+        "x-agentproxy-trusted-peer-ip": "198.51.100.22",
         "x-request-id": "req-auth-failed",
       },
       body: JSON.stringify({ password: "wrong-password" }),
@@ -121,8 +128,8 @@ test("auth login route records failed password attempts", async () => {
   assert.equal(event.actor, "anonymous");
   assert.equal(event.status, "failed");
   assert.equal(event.requestId, "req-auth-failed");
-  // The request above carries a public x-forwarded-for (198.51.100.22), so the
-  // origin tagging added here must classify it as public / non-internal.
+  // The request models the pipeline-stamped public peer IP, so origin tagging
+  // must classify it as public / non-internal without trusting raw XFF.
   assert.deepEqual(event.metadata, {
     reason: "invalid_password",
     lockedOut: false,
