@@ -841,21 +841,17 @@ async function main() {
     // release — that is why it is a HARD pre-flight gate.
     const slow = [
       {
-        // Raised 45→100min 2026-08-05: a hermetic-env run on the loaded devbox
-        // (load 7-26) was still inside invocation 1 of 3 at 76min when killed;
-        // contention factor 2-3× was measured against idle windows, and no idle
-        // measurement exists yet. The pre-flight's REAL condition is exactly
-        // this contended one (unit runs in Promise.all with integration+vitest
-        // plus whatever else the devbox carries), and there 45min provably
-        // killed a healthy suite and fabricated a false base-red. The ceiling's
-        // purpose — turning a genuine hang (stuck SQLite handle = zero progress
-        // forever) into a visible failure — survives at 100min.
-        // Measured on idle .113: unavailable (checkout not found). Tightened to 80min from 100min as a conservative step. TODO: re-measure on idle .113 and tighten to ~1.8× measured.
+        // AP-ISS-0113 authority measurements on this constrained ARM host show
+        // the full CI unit command needs ~2h16m (v7) to ~2h24m (v8) while still
+        // making progress. The old 80m ceiling therefore killed healthy work.
+        // Keep a finite three-hour ceiling: it gives ~25% headroom over the
+        // measured v8 runtime while the process-tree cleanup in runAsync still
+        // converts a genuine hang into a hard failure without orphaning children.
         id: "unit",
         label:
-          "Unit tests (full suite, CI concurrency — ~30-50min idle, up to ~80min under load (awaiting idle .113 measurement, #9532))",
+          "Unit tests (full suite, CI concurrency — measured ~2h16-2h24 on release authority host)",
         args: ["run", "test:unit:ci"],
-        timeout: 80 * 60 * 1000,
+        timeout: 3 * 60 * 60 * 1000,
       },
       {
         id: "vitest",
