@@ -10,6 +10,7 @@ const originalPluginsDir = process.env.AGENTPROXY_PLUGINS_DIR;
 const originalApiKeySecret = process.env.API_KEY_SECRET;
 const originalDisableBackup = process.env.DISABLE_SQLITE_AUTO_BACKUP;
 const originalDisableHealthCheck = process.env.AGENTPROXY_DISABLE_CREDENTIAL_HEALTH_CHECK;
+const originalStorageEncryptionKey = process.env.STORAGE_ENCRYPTION_KEY;
 const pluginsDir = path.join(testRoot, "plugins");
 const testDataDir = path.join(testRoot, "data");
 fs.mkdirSync(pluginsDir, { recursive: true });
@@ -20,6 +21,7 @@ assert.notEqual(fs.realpathSync(testDataDir), "/home/diegosouzapw/.agentproxy");
 assert.notEqual(fs.realpathSync(pluginsDir), "/home/diegosouzapw/.agentproxy/plugins");
 
 process.env.API_KEY_SECRET = "provider-error-boundary-test-secret";
+process.env.STORAGE_ENCRYPTION_KEY = "provider-error-boundary-storage-key-32-bytes-minimum";
 process.env.DISABLE_SQLITE_AUTO_BACKUP = "true";
 process.env.AGENTPROXY_DISABLE_CREDENTIAL_HEALTH_CHECK = "true";
 
@@ -101,6 +103,8 @@ test.after(async () => {
   } else {
     process.env.AGENTPROXY_DISABLE_CREDENTIAL_HEALTH_CHECK = originalDisableHealthCheck;
   }
+  if (originalStorageEncryptionKey === undefined) delete process.env.STORAGE_ENCRYPTION_KEY;
+  else process.env.STORAGE_ENCRYPTION_KEY = originalStorageEncryptionKey;
   fs.rmSync(testRoot, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
 });
 

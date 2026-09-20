@@ -46,7 +46,7 @@ test("mergeOpenCodeConfig still preserves sibling providers", () => {
     INPUT
   );
 
-  assert.deepEqual(Object.keys(merged.provider).sort(), ["custom", "agentproxy", "other"]);
+  assert.deepEqual(Object.keys(merged.provider).sort(), ["agentproxy", "custom", "other"]);
   assert.equal(merged.provider.custom.name, "Custom Provider");
 });
 

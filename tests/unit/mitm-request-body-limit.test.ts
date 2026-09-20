@@ -101,14 +101,14 @@ test("inspector HTTP proxy rejects chunked bodies once streamed bytes exceed the
   }
 });
 
-test("inspector HTTP proxy preserves under-limit request forwarding", async () => {
+test("inspector HTTP proxy keeps egress admission for under-limit loopback requests", async () => {
   const upstream = await withUpstream();
   const proxy = await startHttpProxyServer(0);
   try {
     const response = await postThroughProxy(proxy.port, upstream.port, Buffer.alloc(32, 0x61));
-    assert.equal(response.status, 200);
-    assert.equal(response.body, "upstream");
-    assert.equal(upstream.hits(), 1);
+    assert.equal(response.status, 502);
+    assert.match(response.body, /Bad Gateway/i);
+    assert.equal(upstream.hits(), 0, "public-only egress guard must block loopback");
   } finally {
     await proxy.stop();
     await upstream.close();

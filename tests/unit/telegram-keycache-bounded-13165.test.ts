@@ -38,6 +38,7 @@ before(async () => {
     "isModelAllowedForKey",
     "pickApiKeyForInternalUse",
     "regenerateApiKey",
+    "recoverApiKeyById",
     "resetApiKeyState",
     "revokeApiKey",
     "setApiKeyExpiry",
