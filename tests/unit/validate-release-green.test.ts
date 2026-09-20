@@ -22,6 +22,8 @@ const {
   curatedEquivalentId,
   fullCiKindFor,
   ESLINT_TIMEOUT_MS,
+  PACK_ARTIFACT_TIMEOUT_MS,
+  PACK_ARTIFACT_ENV,
 } = mod;
 
 const extract = extractCiGates as (
@@ -606,10 +608,40 @@ test("pre-flight --serial-slow preserves the same slow hard gates but runs them 
   );
   assert.match(
     src,
-    /slowResults\.push\(await runAsync\(npmCmd, g\.args, \{ timeout: g\.timeout \}\)\)/,
-    "serial mode must keep each gate's existing timeout and runner"
+    /slowResults\.push\(await runAsync\(npmCmd, g\.args, \{ timeout: g\.timeout, env: g\.env \}\)\)/,
+    "serial mode must keep each gate's timeout, env, and runner"
   );
   for (const id of ["unit", "vitest", "integration", "pack-artifact"]) {
     assert.ok(src.includes(`id: "${id}"`), `serial mode must retain slow gate ${id}`);
   }
+});
+
+test("package-artifact mirrors CI build env and uses the measured ARM authority ceiling", async () => {
+  assert.equal(PACK_ARTIFACT_TIMEOUT_MS, 3 * 60 * 60 * 1000);
+  assert.deepEqual(PACK_ARTIFACT_ENV, {
+    AGENTPROXY_USE_TURBOPACK: "0",
+    AGENTPROXY_NEXT_BUILD_CPUS: "1",
+  });
+
+  const fs = await import("node:fs");
+  const src = fs.readFileSync(
+    new URL("../../scripts/quality/validate-release-green.mjs", import.meta.url),
+    "utf8"
+  );
+
+  assert.match(
+    src,
+    /id: "pack-artifact"[\s\S]*?timeout: PACK_ARTIFACT_TIMEOUT_MS,[\s\S]*?env: PACK_ARTIFACT_ENV/,
+    "full slow-wave Pack gate must use the shared measured timeout and CI-equivalent env"
+  );
+  assert.match(
+    src,
+    /slow\.map\(\(g\) => runAsync\(npmCmd, g\.args, \{ timeout: g\.timeout, env: g\.env \}\)\)/,
+    "parallel slow-wave must propagate per-gate env"
+  );
+  assert.match(
+    src,
+    /runAsync\(npmCmd, \["run", "check:pack-artifact"\], \{[\s\S]*?timeout: PACK_ARTIFACT_TIMEOUT_MS,[\s\S]*?env: PACK_ARTIFACT_ENV/,
+    "--quick --with-build Pack path must use the same timeout/env contract"
+  );
 });
