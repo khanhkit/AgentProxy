@@ -242,7 +242,7 @@ test("createSSEStream passthrough normalizes tool-call finishes and reports the 
 test("createSSEStream passthrough converts textual tool-call content into structured call log tool_calls", async () => {
   let onCompletePayload = null;
   const toolArgs = JSON.stringify({
-    command: 'sqlite3 /root/.o\u200dmniroute/agentproxy.db ".tables"',
+    command: 'sqlite3 /root/.a\u200dgentproxy/agentproxy.db ".tables"',
   });
   const toolText = `[Tool call: terminal]\nArguments: ${toolArgs}`;
 
@@ -294,7 +294,7 @@ test("createSSEStream passthrough converts textual tool-call content into struct
 test("createSSEStream passthrough converts split textual tool-call content at completion", async () => {
   let onCompletePayload = null;
   const splitToolArgs = JSON.stringify({
-    command: 'sqlite3 ~/.o\u200dmniroute/o\u200dmniroute.db ".tables"',
+    command: 'sqlite3 ~/.a\u200dgentproxy/agentproxy.db ".tables"',
   });
   const chunks = ["[Tool call: terminal]\n", `Arguments: ${splitToolArgs}`];
 

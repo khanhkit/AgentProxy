@@ -493,7 +493,7 @@ test("AntigravityExecutor.collectStreamToResponse converts textual tool call SSE
               content: {
                 parts: [
                   {
-                    text: '[Tool call: search_files]\nArguments: {"file_glob":"*gemini*","output_mode":"files_only","path":"/opt/O\\u200dmniRoute","target":"files"}',
+                    text: '[Tool call: search_files]\nArguments: {"file_glob":"*gemini*","output_mode":"files_only","path":"/opt/A\\u200dgentProxy","target":"files"}',
                   },
                 ],
               },
