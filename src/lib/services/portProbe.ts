@@ -15,6 +15,7 @@
 
 import { createConnection } from "node:net";
 import { spawn } from "node:child_process";
+import { readdir, readFile, readlink } from "node:fs/promises";
 import os from "node:os";
 
 /** Result of probing the service before spawning. */
@@ -217,6 +218,96 @@ export function parseWindowsNetstatPid(stdout: string, port: number): number | n
 }
 
 /**
+ * Parse Linux /proc/net/tcp{,6} rows and return socket inodes listening on the
+ * requested TCP port. Linux reports LISTEN as state 0A and stores the local
+ * port in hexadecimal.
+ */
+export function parseProcNetListenInodes(stdout: string, port: number): string[] {
+  const inodes = new Set<string>();
+  for (const line of stdout.split("\n")) {
+    const columns = line.trim().split(/\s+/);
+    if (columns.length < 10 || columns[3] !== "0A") continue;
+    const localAddress = columns[1];
+    const separator = localAddress.lastIndexOf(":");
+    if (separator < 0) continue;
+    const parsedPort = Number.parseInt(localAddress.slice(separator + 1), 16);
+    if (parsedPort !== port) continue;
+    const inode = columns[9];
+    if (/^\d+$/.test(inode) && inode !== "0") inodes.add(inode);
+  }
+  return [...inodes];
+}
+
+async function readProcSocketInodes(port: number): Promise<Set<string>> {
+  const tables = await Promise.all(
+    ["/proc/net/tcp", "/proc/net/tcp6"].map(async (file) => {
+      try {
+        return await readFile(file, "utf8");
+      } catch {
+        return "";
+      }
+    })
+  );
+  return new Set(tables.flatMap((table) => parseProcNetListenInodes(table, port)));
+}
+
+async function findPidBySocketInodes(
+  socketInodes: Set<string>,
+  deadline: number
+): Promise<number | null> {
+  let entries;
+  try {
+    entries = await readdir("/proc", { withFileTypes: true });
+  } catch {
+    return null;
+  }
+
+  for (const entry of entries) {
+    if (Date.now() >= deadline) return null;
+    if (!/^\d+$/.test(entry.name)) continue;
+
+    let fds: string[];
+    try {
+      fds = await readdir("/proc/" + entry.name + "/fd");
+    } catch {
+      continue;
+    }
+
+    for (const fd of fds) {
+      if (Date.now() >= deadline) return null;
+      let target: string;
+      try {
+        target = await readlink("/proc/" + entry.name + "/fd/" + fd);
+      } catch {
+        continue;
+      }
+      const match = /^socket:\[(\d+)\]$/.exec(target);
+      if (match && socketInodes.has(match[1])) {
+        const pid = Number.parseInt(entry.name, 10);
+        return Number.isFinite(pid) ? pid : null;
+      }
+    }
+  }
+  return null;
+}
+
+/**
+ * Linux fallback for slim/minimal images that intentionally ship without
+ * lsof, ss or netstat. /proc is kernel-owned and requires no helper binary.
+ * Best-effort only: hidepid/permission races return null, preserving the
+ * supervisor's existing non-fatal adoption semantics.
+ */
+export async function resolveLinuxProcPortPid(
+  port: number,
+  deadline: number = Date.now() + PID_RESOLVE_TIMEOUT_MS
+): Promise<number | null> {
+  if (os.platform() !== "linux" || Date.now() >= deadline) return null;
+  const socketInodes = await readProcSocketInodes(port);
+  if (socketInodes.size === 0 || Date.now() >= deadline) return null;
+  return findPidBySocketInodes(socketInodes, deadline);
+}
+
+/**
  * Ways to ask the OS which process holds a port, in preference order.
  *
  * `lsof` stays first because it is the most direct, but it is absent from slim
@@ -304,11 +395,10 @@ function runPidProbe(
  * way they trust a freshly-spawned one. Returns null if nothing is found or
  * the lookup fails/times out (best-effort; never blocks adoption on this).
  *
- * Tries `lsof`, then `ss`, then `netstat`, then the Windows `netstat -ano`
- * shape, so a host missing any one of them — including a stock Windows host
- * with none of the Unix tools — still reports a real pid instead of a silent
- * null (#10431, #11236). The probes share one deadline, so the whole lookup
- * still costs at most `PID_RESOLVE_TIMEOUT_MS`.
+ * Tries the existing external pid helpers first. On Linux it then falls back
+ * to /proc/net/tcp{,6} plus /proc/<pid>/fd, so slim images without lsof,
+ * ss or netstat can still identify adopted listeners. All strategies share one
+ * deadline, so the lookup remains best-effort and bounded.
  */
 export async function resolvePortPid(port: number): Promise<number | null> {
   const deadline = Date.now() + PID_RESOLVE_TIMEOUT_MS;
@@ -318,5 +408,5 @@ export async function resolvePortPid(port: number): Promise<number | null> {
     if (pid !== null) return pid;
   }
 
-  return null;
+  return resolveLinuxProcPortPid(port, deadline);
 }
