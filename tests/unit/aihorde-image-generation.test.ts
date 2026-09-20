@@ -202,6 +202,7 @@ test("an oversized R2 image download is rejected instead of buffered whole", asy
       provider: "aihorde",
       body: { model: "aihorde/FLUX.1-schnell", prompt: "a red fox in snow" },
       credentials: { apiKey: "horde-key" },
+      remoteMediaFetchImpl: globalThis.fetch,
     });
 
     assert.equal(result.success, false);
