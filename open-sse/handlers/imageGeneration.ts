@@ -505,6 +505,7 @@ export async function handleImageGeneration({
       credentials,
       log,
       signal,
+      remoteMediaFetchImpl,
     });
   }
 

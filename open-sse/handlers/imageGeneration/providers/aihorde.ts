@@ -101,7 +101,7 @@ async function cancelHordeJob(jobId: string, apiKey: string): Promise<void> {
 
 async function fetchHordeImageBytes(
   img: string,
-  options: { signal?: AbortSignal | null; timeoutMs: number }
+  options: { signal?: AbortSignal | null; timeoutMs: number; fetchImpl?: typeof fetch }
 ): Promise<string> {
   const value = img.trim();
   if (value.startsWith("http://") || value.startsWith("https://")) {
@@ -116,6 +116,7 @@ async function fetchHordeImageBytes(
       timeoutMs: options.timeoutMs,
       signal: options.signal ?? undefined,
       maxBytes: MAX_HORDE_IMAGE_BYTES,
+      fetchImpl: options.fetchImpl,
     });
     if (remote.buffer.length === 0) throw new Error("Horde R2 download returned an empty image");
     return remote.buffer.toString("base64");
@@ -136,6 +137,7 @@ export async function handleAiHordeImageGeneration({
   log,
   signal = null,
   timeoutMs = GENERATE_TIMEOUT_MS,
+  remoteMediaFetchImpl = undefined,
 }: {
   model: string;
   provider: string;
@@ -147,6 +149,8 @@ export async function handleAiHordeImageGeneration({
     error: (scope: string, message: string) => void;
   } | null;
   signal?: AbortSignal | null;
+  /** Internal/test transport seam for public-only image downloads. Production leaves this unset. */
+  remoteMediaFetchImpl?: typeof fetch;
   /** Overridable for tests; production callers should rely on the default. */
   timeoutMs?: number;
 }) {
@@ -330,6 +334,7 @@ export async function handleAiHordeImageGeneration({
             b64_json: await fetchHordeImageBytes(img, {
               signal,
               timeoutMs: boundedTimeoutMs(deadline, HORDE_IMAGE_DOWNLOAD_TIMEOUT_MS),
+              fetchImpl: remoteMediaFetchImpl,
             }),
             revised_prompt: prompt,
           });
