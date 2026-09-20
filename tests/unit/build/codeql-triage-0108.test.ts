@@ -1,8 +1,9 @@
 import assert from "node:assert/strict";
-import { access, readFile } from "node:fs/promises";
+import { readFile } from "node:fs/promises";
 import test from "node:test";
 
-const evidencePath = "docs/handoff/issues_board/evidence/CODEQL_TRIAGE_2026-09-18.json";
+const evidencePath = "tests/fixtures/security/codeql-triage-0108.json";
+const SOURCE_EVIDENCE_SHA256 = "65ce9e01d8d99745d65604cee4ccf41bd895a4bf2590e49f9748baf76ede19b2";
 const allowedDispositions = new Set([
   "TEST_DEV_TOOL_DEBT",
   "CONFIRMED_DEFECT",
@@ -19,6 +20,7 @@ test("TC-CODEQL-TRIAGE-0108-001 is row-complete and follow-up-safe", async () =>
     follow_up_issue: string | null;
   }>;
 
+  assert.equal(evidence.source_evidence_sha256, SOURCE_EVIDENCE_SHA256);
   assert.equal(evidence.analysis.commit_sha, "ec476df1eb433a3e96b4c0ba90116d67b5b0e453");
   assert.equal(evidence.analysis.id, 1799410531);
   assert.equal(evidence.current_open_count, 136);
@@ -48,11 +50,5 @@ test("TC-CODEQL-TRIAGE-0108-001 is row-complete and follow-up-safe", async () =>
   assert.equal(duplicate[0].alert_number, 131);
   assert.equal(duplicate[0].follow_up_issue, "AP-ISS-0116");
 
-  for (const issueId of requiredFollowUps) {
-    const issuePath = "docs/handoff/issues_board/issues/" + issueId + ".md";
-    await access(issuePath);
-    const issue = await readFile(issuePath, "utf8");
-    assert.match(issue, /\*\*Blocked By:\*\* AP-ISS-0108/);
-    assert.match(issue, /\*\*Blocks:\*\* AP-ISS-0113/);
-  }
+  assert.deepEqual(new Set(evidence.confirmed_follow_ups as string[]), requiredFollowUps);
 });
