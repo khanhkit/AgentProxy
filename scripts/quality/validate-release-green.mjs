@@ -401,6 +401,20 @@ export function classifyRunError(err, timeoutMs) {
 // (a dev machine with AGENTPROXY_API_KEY set runs 17+ live tests that CI skips —
 // every one a false-positive red against the release branch).
 const HERMETIC_SCRUB = ["AGENTPROXY_API_KEY", "AGENTPROXY_URL"];
+
+// Package-artifact must mirror the authoritative hosted Build lane. The ARM
+// release-authority host is constrained to 8 GiB / ~1.9 CPUs; AP-ISS-0113
+// measured a successful webpack build at ~31m50s followed by npm pack
+// remaining CPU-active beyond another 1h19m before the external session
+// lifecycle removed the process tree without a terminal rc. The old 20m
+// ceiling provably killed healthy progress. Three hours keeps a finite hang
+// ceiling while providing >60% headroom over the observed >1h51 lower bound.
+export const PACK_ARTIFACT_TIMEOUT_MS = 3 * 60 * 60 * 1000;
+export const PACK_ARTIFACT_ENV = Object.freeze({
+  AGENTPROXY_USE_TURBOPACK: "0",
+  AGENTPROXY_NEXT_BUILD_CPUS: "1",
+});
+
 let hermetic = false;
 function buildGateEnv(extra) {
   const env = { ...process.env, FORCE_COLOR: "0", ...(extra || {}) };
@@ -867,7 +881,8 @@ async function main() {
         id: "pack-artifact",
         label: "Package artifact (npm pack policy)",
         args: ["run", "check:pack-artifact"],
-        timeout: 20 * 60 * 1000,
+        timeout: PACK_ARTIFACT_TIMEOUT_MS,
+        env: PACK_ARTIFACT_ENV,
       });
     }
     const slowMode = SERIAL_SLOW ? "serial" : "parallel";
@@ -876,11 +891,11 @@ async function main() {
     if (SERIAL_SLOW) {
       slowResults = [];
       for (const g of slow) {
-        slowResults.push(await runAsync(npmCmd, g.args, { timeout: g.timeout }));
+        slowResults.push(await runAsync(npmCmd, g.args, { timeout: g.timeout, env: g.env }));
       }
     } else {
       slowResults = await Promise.all(
-        slow.map((g) => runAsync(npmCmd, g.args, { timeout: g.timeout }))
+        slow.map((g) => runAsync(npmCmd, g.args, { timeout: g.timeout, env: g.env }))
       );
     }
     slow.forEach((g, i) => {
@@ -932,7 +947,8 @@ async function main() {
   } else if (WITH_BUILD) {
     // --with-build without the suites (--quick): still verify the package artifact.
     const { code, out } = await runAsync(npmCmd, ["run", "check:pack-artifact"], {
-      timeout: 20 * 60 * 1000,
+      timeout: PACK_ARTIFACT_TIMEOUT_MS,
+      env: PACK_ARTIFACT_ENV,
     });
     saveGateLog("pack-artifact", out);
     record({
