@@ -8,6 +8,8 @@ const { publicKey, privateKey } = crypto.generateKeyPairSync("ed25519");
 const publicKeyDer = publicKey.export({ type: "spki", format: "der" });
 process.env.RADAR_FEED_PUBKEY = publicKeyDer.toString("base64");
 
+const ORIGINAL_RADAR_FEED_URL = process.env.RADAR_FEED_URL;
+process.env.RADAR_FEED_URL = "https://radar.test";
 const fixturePath = path.resolve(import.meta.dirname!, "../fixtures/radar-feed-canonical.json");
 const fixtureBytes = fs.readFileSync(fixturePath);
 
@@ -87,4 +89,9 @@ test("FIX6: body within the 10MB cap proceeds normally", async () => {
   });
 
   assert.notEqual(result.status, "too_large");
+});
+
+test.after(() => {
+  if (ORIGINAL_RADAR_FEED_URL === undefined) delete process.env.RADAR_FEED_URL;
+  else process.env.RADAR_FEED_URL = ORIGINAL_RADAR_FEED_URL;
 });

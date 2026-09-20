@@ -50,7 +50,10 @@ test("broker authentication is exact-path, token-bound, and trusted-loopback onl
 
   const remote = new Request(`http://localhost${VIDEO_BRIDGE_BROKER_PATH}`, {
     method: "POST",
-    headers: buildVideoBridgeBrokerHeaders(),
+    headers: {
+      ...buildVideoBridgeBrokerHeaders(),
+      host: "localhost",
+    },
   });
   assert.equal(isVideoBridgeBrokerInternalRequest(remote, VIDEO_BRIDGE_BROKER_PATH), false);
   assert.equal(
