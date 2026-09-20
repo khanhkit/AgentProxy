@@ -18,6 +18,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { makeManagementSessionRequest } from "../helpers/managementSession.ts";
 
 const repoRoot = path.join(path.dirname(fileURLToPath(import.meta.url)), "../..");
 
@@ -199,10 +200,7 @@ test("F1: cache GET returns correct shapes + trend window after batching (#11396
     iso(now - 300_000)
   );
 
-  const req = new Request("http://localhost/api/cache?trendHours=48", {
-    method: "GET",
-    headers: { "x-forwarded-for": "127.0.0.1" },
-  });
+  const req = await makeManagementSessionRequest("http://localhost/api/cache?trendHours=48");
   const resp = await route.GET(req as never);
   assert.equal(resp.status, 200);
   const body = await resp.json();
@@ -229,9 +227,7 @@ test("F1: cache GET returns correct shapes + trend window after batching (#11396
 
   // trendHours clamping still applies after batching
   const clamped = await route.GET(
-    new Request("http://localhost/api/cache?trendHours=99999", {
-      headers: { "x-forwarded-for": "127.0.0.1" },
-    }) as never
+    (await makeManagementSessionRequest("http://localhost/api/cache?trendHours=99999")) as never
   );
   assert.equal(clamped.status, 200);
   const clampedBody = await clamped.json();
