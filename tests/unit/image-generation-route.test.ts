@@ -236,13 +236,6 @@ test("v1 image generation POST accepts promptless requests for image-only models
 
   globalThis.fetch = async (url, options: RequestInit = {}) => {
     const stringUrl = String(url);
-    if (stringUrl === "https://example.com/topaz-input.png") {
-      return new Response(new Uint8Array([1, 2, 3]), {
-        status: 200,
-        headers: { "content-type": "image/png" },
-      });
-    }
-
     if (stringUrl === "https://api.topazlabs.com/image/v1/enhance") {
       const formData = options.body as FormData;
       assert.ok(formData.get("image") instanceof File);
@@ -261,7 +254,7 @@ test("v1 image generation POST accepts promptless requests for image-only models
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         model: "topaz/topaz-enhance",
-        image_url: "https://example.com/topaz-input.png",
+        image_url: "data:image/png;base64," + Buffer.from(VALID_PNG_BYTES).toString("base64"),
         size: "2048x2048",
         response_format: "b64_json",
       }),

@@ -18,7 +18,7 @@
       "disposition": "equivalent",
       "rationale": "Both routes fail closed for unauthorized callers, but native Rust validates the API key before native account dispatch while legacy fallback delegates client API authentication to the Next authz/API-key policy stack.",
       "native": {
-        "owner": "rust/crates/gateway/src/routes/codex.rs",
+        "owner": "rust/crates/gateway/src/error_boundary.rs + routes/codex.rs",
         "contract": "A request resolved to a native Codex model requires a valid API key before native account selection; a non-native model may continue to explicit legacy fallback without being pre-empted by native auth.",
         "evidence": [
           {
@@ -130,7 +130,7 @@
         "contract": "Native gateway-local failures return bounded JSON error responses and do not transparently replay ambiguous delivery/postcommit failures.",
         "evidence": [
           {
-            "path": "rust/crates/gateway/src/routes/codex.rs",
+            "path": "rust/crates/gateway/src/error_boundary.rs",
             "needle": "agentproxy_gateway_error",
             "runner": "cargo test --manifest-path rust/Cargo.toml -p agentproxy-gateway routes::codex::tests"
           }
