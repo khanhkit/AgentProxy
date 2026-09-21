@@ -101,8 +101,7 @@ export async function resolveCursorAgentUrl(
   if (!accessToken) throw new Error("Cursor access token is required");
   const tokenCacheHasher = createHmac("sha256", "agentproxy-cursor-agent-url-cache-v1");
   // Deterministic in-memory cache partition key for an access token, not a password verifier.
-  // codeql[js/insufficient-password-hash]
-  const tokenFingerprint = tokenCacheHasher.update(accessToken).digest("hex");
+  const tokenFingerprint = tokenCacheHasher.update(accessToken).digest("hex"); // lgtm[js/insufficient-password-hash]
   const cacheKey = `${credentials.connectionId || "anonymous"}:${tokenFingerprint}`;
   const now = Date.now();
   let urls = cursorAgentUrlCache.get(cacheKey);
