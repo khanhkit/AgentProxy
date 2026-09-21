@@ -46,9 +46,17 @@ export const REQUIRED_MACHINE_TOKEN_RUNTIME_FILES = Object.freeze([
 /** Parse `npm pack --json` output into the generated tarball filename. */
 export function pickTarball(packJsonOutput) {
   const parsed = JSON.parse(packJsonOutput);
-  const filename = Array.isArray(parsed) ? parsed[0]?.filename : undefined;
+  const entries = Array.isArray(parsed)
+    ? parsed
+    : parsed && typeof parsed === "object"
+      ? Object.values(parsed)
+      : [];
+  const filename = entries.find(
+    (entry) => entry && typeof entry === "object" && typeof entry.filename === "string"
+  )?.filename;
   if (!filename) throw new Error("npm pack --json returned no filename");
-  // npm >=9 may emit scoped names with "/" — normalize to the on-disk file name.
+  // npm <=11 emits an array; npm 12+ emits an object keyed by package name.
+  // Scoped package filenames may still contain "/" and need normalization on disk.
   return filename.replace(/\//g, "-");
 }
 

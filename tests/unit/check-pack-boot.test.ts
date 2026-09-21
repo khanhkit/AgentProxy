@@ -35,6 +35,21 @@ test("pickTarball extracts the filename from npm pack --json output", () => {
   );
 });
 
+test("pickTarball accepts npm 12 object-keyed pack --json output", () => {
+  assert.equal(
+    pickTarball(
+      JSON.stringify({
+        agentproxy: {
+          id: "agentproxy@0.1.0",
+          filename: "agentproxy-0.1.0.tgz",
+          size: 1,
+        },
+      })
+    ),
+    "agentproxy-0.1.0.tgz"
+  );
+});
+
 test("pickTarball normalizes scoped slashes to the on-disk dash form", () => {
   assert.equal(pickTarball('[{"filename":"@scope/pkg-1.0.0.tgz"}]'), "@scope-pkg-1.0.0.tgz");
 });
