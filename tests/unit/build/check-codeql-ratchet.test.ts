@@ -390,7 +390,7 @@ test("advanced CodeQL workflow auto-runs and enforces post-analysis freshness/PR
   assert.match(workflow, /check:codeql-ratchet/);
   assert.match(
     workflow,
-    /uses:\s*codeql\/javascript-queries@\*:AlertSuppression\.ql/,
+    /packs:\s*codeql\/javascript-queries@\*:AlertSuppression\.ql/,
     "advanced CodeQL must execute the bundled alert-suppression query so source suppressions are honored"
   );
   assert.doesNotMatch(
