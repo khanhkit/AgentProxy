@@ -41,6 +41,21 @@ jobs:
       - uses: github/codeql-action/analyze@cdf488f595d80d6e07e03d4674febd5ab45fa938 # v4.37.9
         with:
           category: "/language:javascript-typescript"
+          # Keep failed-run diagnostics, but route successful SARIF through the generic
+          # in-source suppression filter before the authoritative upload.
+          upload: failure-only
+          post-processed-sarif-path: ../results-post-processed
+
+      - name: Honor CodeQL in-source suppressions
+        run: >-
+          node scripts/check/filter-codeql-in-source-suppressions.mjs
+          ../results-post-processed
+          ../results-filtered
+
+      - uses: github/codeql-action/upload-sarif@cdf488f595d80d6e07e03d4674febd5ab45fa938 # v4.37.9
+        with:
+          sarif_file: ../results-filtered
+          category: "/language:javascript-typescript"
 
       - name: Verify fresh CodeQL analysis and PR-local regression
         env:

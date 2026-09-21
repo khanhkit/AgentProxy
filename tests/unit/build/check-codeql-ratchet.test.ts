@@ -400,3 +400,34 @@ test("advanced CodeQL workflow auto-runs and enforces post-analysis freshness/PR
   );
   assert.doesNotMatch(workflow, /OWNER ACTION REQUIRED|manual dispatch/i);
 });
+
+test("advanced CodeQL workflow filters only CodeQL-declared in-source SARIF suppressions before upload", () => {
+  const workflow = readFileSync(".github/workflows/codeql.yml", "utf8");
+
+  assert.match(
+    workflow,
+    /github\/codeql-action\/analyze@[^\n]+[\s\S]*?upload:\s*failure-only[\s\S]*?post-processed-sarif-path:\s*\.\.\/results-post-processed/,
+    "analyze must produce post-processed SARIF without directly uploading successful results"
+  );
+  assert.match(
+    workflow,
+    /node scripts\/check\/filter-codeql-in-source-suppressions\.mjs\s+\.\.\/results-post-processed\s+\.\.\/results-filtered/,
+    "workflow must run the generic in-source SARIF filter"
+  );
+  assert.match(
+    workflow,
+    /github\/codeql-action\/upload-sarif@[^\n]+[\s\S]*?sarif_file:\s*\.\.\/results-filtered[\s\S]*?category:\s*["']?\/language:javascript-typescript["']?/,
+    "filtered SARIF must be uploaded with the same CodeQL category"
+  );
+  assert.doesNotMatch(
+    workflow,
+    /upload:\s*never/,
+    "failed-run CoeQL diagnostics must remain available"
+  );
+
+  const analyze = workflow.indexOf("github/codeql-action/analyze@");
+  const filter = workflow.indexOf("filter-codeql-in-source-suppressions.mjs");
+  const upload = workflow.indexOf("github/codeql-action/upload-sarif@");
+  const ratchet = workflow.indexOf("check:codeql-ratchet");
+  assert.ok(analyze >= 0 && analyze < filter && filter < upload && upload < ratchet);
+});
