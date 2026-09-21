@@ -3078,13 +3078,9 @@ export function buildComboKey(
  * keys, and serving one's catalog from the other's cache would be a
  * correctness bug, not just a privacy one.
  */
-// codeql[js/insufficient-password-hash]: the input here is an API-key
-// identifier we use solely to derive an in-memory cache lookup key — it is
-// never stored, transmitted, compared against a hash, or used as a password.
-// SHA-256 is intentional: cheap + deterministic, prevents the raw secret
-// from sitting in memory dumps alongside the cache map. Slow KDFs (bcrypt/
-// argon2) would defeat the purpose (sub-ms lookups on every request).
+// The input is an API-key identifier used solely for an in-memory cache lookup key, not password verification.
 function modelsCacheKey(baseURL: string, credentialId: string): string {
+  // codeql[js/insufficient-password-hash]
   const h = createHash("sha256").update(credentialId).digest("hex");
   return `${baseURL}::${h}`;
 }
@@ -4842,9 +4838,10 @@ function diskSnapshotIdentityFingerprint(
   } catch {
     normalizedBaseURL = trimTrailingSlashes(baseURL);
   }
-  return createHash("sha256")
-    .update(JSON.stringify([normalizedBaseURL, apiKey, managementReadToken]))
-    .digest("hex");
+  const identityInput = JSON.stringify([normalizedBaseURL, apiKey, managementReadToken]);
+  // Deterministic snapshot identity for equality/isolation, not a password verifier.
+  // codeql[js/insufficient-password-hash]
+  return createHash("sha256").update(identityInput).digest("hex");
 }
 
 /** Best-effort disk write. Soft-fails on any I/O error (no exception thrown). */

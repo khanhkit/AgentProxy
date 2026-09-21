@@ -203,7 +203,9 @@ export function extractCanonicalTurns(body: JsonRecord | null | undefined): Cano
 // Content fingerprint for conversation identity, not a password/credential hash — keyed with a
 // fixed context label so it reads as a domain-separated digest rather than a bare password hash.
 function hashHex(text: string): string {
-  return createHmac("sha256", "agentproxy-conversation-fingerprint-v1").update(text).digest("hex");
+  const fingerprintHasher = createHmac("sha256", "agentproxy-conversation-fingerprint-v1");
+  // codeql[js/insufficient-password-hash]
+  return fingerprintHasher.update(text).digest("hex");
 }
 
 function extractToolNames(body: JsonRecord | null | undefined): string[] {
