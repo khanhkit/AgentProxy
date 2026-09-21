@@ -388,5 +388,15 @@ test("advanced CodeQL workflow auto-runs and enforces post-analysis freshness/PR
   assert.match(workflow, /CODEQL_EXPECTED_REF:/);
   assert.match(workflow, /CODEQL_PR_NUMBER:/);
   assert.match(workflow, /check:codeql-ratchet/);
+  assert.match(
+    workflow,
+    /uses:\s*codeql\/javascript-queries:AlertSuppression\.ql/,
+    "advanced CodeQL must execute the bundled alert-suppression query so source suppressions are honored"
+  );
+  assert.doesNotMatch(
+    workflow,
+    /disable-default-queries:\s*true/,
+    "enabling source suppressions must not replace or weaken the default CodeQL query suite"
+  );
   assert.doesNotMatch(workflow, /OWNER ACTION REQUIRED|manual dispatch/i);
 });
