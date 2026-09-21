@@ -99,6 +99,8 @@ function normalizeBaseURL(baseURL: string): string {
 }
 
 export function memoryCacheKey(baseURL: string, credentialId: string): string {
+  // Deterministic cache partition key, not a password verifier; a slow KDF would break hot-path lookup.
+  // codeql[js/insufficient-password-hash]
   return `${baseURL}::${createHash("sha256").update(credentialId).digest("hex")}`;
 }
 
@@ -107,9 +109,10 @@ export function snapshotIdentityFingerprint(
   apiKey: string,
   managementReadToken: string
 ): string {
-  return createHash("sha256")
-    .update(JSON.stringify([normalizeBaseURL(baseURL), apiKey, managementReadToken]))
-    .digest("hex");
+  const identityInput = JSON.stringify([normalizeBaseURL(baseURL), apiKey, managementReadToken]);
+  // Deterministic snapshot identity for equality/isolation, not a password verifier.
+  // codeql[js/insufficient-password-hash]
+  return createHash("sha256").update(identityInput).digest("hex");
 }
 
 export function diskSnapshotPath(providerId: string): string {
