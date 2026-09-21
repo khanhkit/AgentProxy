@@ -402,14 +402,14 @@ export function classifyRunError(err, timeoutMs) {
 // every one a false-positive red against the release branch).
 const HERMETIC_SCRUB = ["AGENTPROXY_API_KEY", "AGENTPROXY_URL"];
 
-// Package-artifact must mirror the authoritative hosted Build lane. The ARM
-// release-authority host is constrained to 8 GiB / ~1.9 CPUs; AP-ISS-0113
-// measured a successful webpack build at ~31m50s followed by npm pack
-// remaining CPU-active beyond another 1h19m before the external session
-// lifecycle removed the process tree without a terminal rc. The old 20m
-// ceiling provably killed healthy progress. Three hours keeps a finite hang
-// ceiling while providing >60% headroom over the observed >1h51 lower bound.
-export const PACK_ARTIFACT_TIMEOUT_MS = 3 * 60 * 60 * 1000;
+// Package gates must stay finite, but their ceilings must reflect measured
+// authority-host runtime. On the constrained ARM release host (~1.9 CPUs),
+// AP-ISS-0113 measured a green package-artifact npm-pack phase at ~4h27m and
+// a standalone pack-boot npm-pack phase at ~5h25m. The former 3h artifact
+// ceiling and 15m boot ceiling would kill healthy work. Seven hours retains a
+// hard hang ceiling while leaving ~29% headroom over the slowest measured pack.
+export const PACK_ARTIFACT_TIMEOUT_MS = 7 * 60 * 60 * 1000;
+export const PACK_BOOT_TIMEOUT_MS = 7 * 60 * 60 * 1000;
 export const PACK_ARTIFACT_ENV = Object.freeze({
   AGENTPROXY_USE_TURBOPACK: "0",
   AGENTPROXY_NEXT_BUILD_CPUS: "1",
@@ -928,7 +928,7 @@ async function main() {
       } else {
         announce(bootLabel);
         const { code, out } = await runAsync(npmCmd, ["run", "check:pack-boot"], {
-          timeout: 15 * 60 * 1000,
+          timeout: PACK_BOOT_TIMEOUT_MS,
         });
         saveGateLog("pack-boot", out);
         record({
