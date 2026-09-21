@@ -45,13 +45,13 @@ rewrite it to the `_tasks/…` equivalent before writing:
 | Research (`deep-research`, ad-hoc) | `docs/research/`          | `_tasks/research/…`                                           |
 | Hand-offs (`/handoff`)             | —                         | `_tasks/hands-off/<YYYY-MM-DD>_<branch>_v<versão>_sess-<id>/` |
 
-Commit those artifacts inside the `_tasks/` repo (`git -C _tasks …`), never in the main repo.
+Keep those artifacts in `_tasks/`; if your environment backs it with a separate repository, version them there. Never add them to the main repo.
 
 ## Scratch / temporary files — use `_artifacts/`, not `/tmp`
 
 This project overrides the harness's default session scratchpad (`/tmp/claude-*/…`). Write
 temporary/working files — exports, generated zips, one-off intermediate outputs, anything you'd
-otherwise put in `/tmp` — to `/home/diegosouzapw/dev/proxys/AgentProxy/_artifacts/` instead.
+otherwise put in `/tmp` — to the repository-local `./_artifacts/` directory instead.
 
 - `_artifacts/` is a root `_*` path: already gitignored (`AGENTS.md` → "Root `_*` paths"), lives
   on disk only, never tracked.
