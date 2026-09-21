@@ -23,6 +23,7 @@ const {
   fullCiKindFor,
   ESLINT_TIMEOUT_MS,
   PACK_ARTIFACT_TIMEOUT_MS,
+  PACK_BOOT_TIMEOUT_MS,
   PACK_ARTIFACT_ENV,
 } = mod;
 
@@ -616,8 +617,9 @@ test("pre-flight --serial-slow preserves the same slow hard gates but runs them 
   }
 });
 
-test("package-artifact mirrors CI build env and uses the measured ARM authority ceiling", async () => {
-  assert.equal(PACK_ARTIFACT_TIMEOUT_MS, 3 * 60 * 60 * 1000);
+test("package gates use finite ceilings backed by ARM authority measurements", async () => {
+  assert.equal(PACK_ARTIFACT_TIMEOUT_MS, 7 * 60 * 60 * 1000);
+  assert.equal(PACK_BOOT_TIMEOUT_MS, 7 * 60 * 60 * 1000);
   assert.deepEqual(PACK_ARTIFACT_ENV, {
     AGENTPROXY_USE_TURBOPACK: "0",
     AGENTPROXY_NEXT_BUILD_CPUS: "1",
@@ -643,5 +645,10 @@ test("package-artifact mirrors CI build env and uses the measured ARM authority 
     src,
     /runAsync\(npmCmd, \["run", "check:pack-artifact"\], \{[\s\S]*?timeout: PACK_ARTIFACT_TIMEOUT_MS,[\s\S]*?env: PACK_ARTIFACT_ENV/,
     "--quick --with-build Pack path must use the same timeout/env contract"
+  );
+  assert.match(
+    src,
+    /runAsync\(npmCmd, \["run", "check:pack-boot"\], \{[\s\S]*?timeout: PACK_BOOT_TIMEOUT_MS/,
+    "tarball boot-smoke must use the measured finite timeout"
   );
 });
