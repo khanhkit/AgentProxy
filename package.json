@@ -438,7 +438,7 @@
     "lint-staged": "^17.5.1",
     "lockfile-lint": "^5.0.1",
     "markdownlint-cli2": "0.23.2",
-    "node-gyp": "12.4.0",
+    "node-gyp": "13.0.2",
     "node-loader": "^2.1.0",
     "opencode-ai": "1.18.30",
     "playwright-ctrf-json-reporter": "^0.0.29",
