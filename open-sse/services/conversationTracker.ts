@@ -204,8 +204,7 @@ export function extractCanonicalTurns(body: JsonRecord | null | undefined): Cano
 // fixed context label so it reads as a domain-separated digest rather than a bare password hash.
 function hashHex(text: string): string {
   const fingerprintHasher = createHmac("sha256", "agentproxy-conversation-fingerprint-v1");
-  // codeql[js/insufficient-password-hash]
-  return fingerprintHasher.update(text).digest("hex");
+  return fingerprintHasher.update(text).digest("hex"); // lgtm[js/insufficient-password-hash]
 }
 
 function extractToolNames(body: JsonRecord | null | undefined): string[] {

@@ -3080,8 +3080,7 @@ export function buildComboKey(
  */
 // The input is an API-key identifier used solely for an in-memory cache lookup key, not password verification.
 function modelsCacheKey(baseURL: string, credentialId: string): string {
-  // codeql[js/insufficient-password-hash]
-  const h = createHash("sha256").update(credentialId).digest("hex");
+  const h = createHash("sha256").update(credentialId).digest("hex"); // lgtm[js/insufficient-password-hash]
   return `${baseURL}::${h}`;
 }
 
@@ -4840,8 +4839,7 @@ function diskSnapshotIdentityFingerprint(
   }
   const identityInput = JSON.stringify([normalizedBaseURL, apiKey, managementReadToken]);
   // Deterministic snapshot identity for equality/isolation, not a password verifier.
-  // codeql[js/insufficient-password-hash]
-  return createHash("sha256").update(identityInput).digest("hex");
+  return createHash("sha256").update(identityInput).digest("hex"); // lgtm[js/insufficient-password-hash]
 }
 
 /** Best-effort disk write. Soft-fails on any I/O error (no exception thrown). */
