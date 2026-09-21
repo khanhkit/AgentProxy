@@ -35,6 +35,12 @@ jobs:
         with:
           # Keep the default query suite so results remain comparable across scans.
           languages: javascript-typescript
+          # The default JS code-scanning suite does not select @kind alert-suppression.
+          # Add only the bundled suppression query so narrow in-source codeql[...] comments
+          # are interpreted without changing the security query universe or ratchet baseline.
+          config: |
+            queries:
+              - uses: codeql/javascript-queries:AlertSuppression.ql
 
       - uses: github/codeql-action/analyze@cdf488f595d80d6e07e03d4674febd5ab45fa938 # v4.37.9
         with:
