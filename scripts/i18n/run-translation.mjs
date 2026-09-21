@@ -111,19 +111,11 @@ const DOCS_DIR = path.join(ROOT, "docs");
 
 // ----- Source set ----------------------------------------------------------
 //
-// Root-level markdown files that should be translated as `docs/i18n/<loc>/<name>`.
+// Root-level user-facing markdown files translated as `docs/i18n/<loc>/<name>`.
 // Strict-mirror files (`llm.txt`, `CHANGELOG.md`) are intentionally NOT in this
 // list — they are handled by `scripts/check-docs-sync.mjs` rules and are kept
 // in sync by other tooling. Adding them here would conflict with that script.
-const ROOT_DOC_SOURCES = [
-  "CLAUDE.md",
-  "GEMINI.md",
-  "AGENTS.md",
-  "CONTRIBUTING.md",
-  "SECURITY.md",
-  "CODE_OF_CONDUCT.md",
-  "README.md",
-];
+const ROOT_DOC_SOURCES = ["CONTRIBUTING.md", "SECURITY.md", "CODE_OF_CONDUCT.md", "README.md"];
 
 // File names inside `docs/` that should NOT be translated. Anything else with
 // a `.md` extension at the top of `docs/` is treated as a source.

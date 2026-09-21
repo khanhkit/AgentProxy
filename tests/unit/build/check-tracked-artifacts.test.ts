@@ -103,6 +103,36 @@ test("checkTrackedArtifacts: root underscore FILE is flagged; nested underscore 
   assert.deepEqual(nested, []);
 });
 
+test("checkTrackedArtifacts: root task reports are flagged", () => {
+  const result = checkTrackedArtifacts([
+    "task-c1-report.md",
+    "task-worker42-report.json",
+    "task-green-release-report.txt",
+  ]);
+  assert.equal(result.length, 3);
+  assert.ok(result.every((entry) => entry.includes("root task report")));
+});
+
+test("checkTrackedArtifacts: docs planning and handoff artifacts are flagged", () => {
+  const result = checkTrackedArtifacts([
+    "docs/plans/internal-implementation.md",
+    "docs/AGENTPROXY_ALLOCATION_HANDOFF.md",
+    "docs/internal/release-handoff.json",
+  ]);
+  assert.equal(result.length, 3);
+});
+
+test("checkTrackedArtifacts: user-facing reference docs and nested report APIs still pass", () => {
+  const result = checkTrackedArtifacts([
+    "docs/reference/ALLOCATION.md",
+    "docs/reference/API_REFERENCE.md",
+    "src/app/api/reports/route.ts",
+    "src/lib/reportBuilder.ts",
+    "tests/unit/reporting.test.ts",
+  ]);
+  assert.deepEqual(result, []);
+});
+
 test("checkTrackedArtifacts: .claude/worktrees/ prefix is flagged", () => {
   const result = checkTrackedArtifacts([".claude/worktrees/fix-123/src/app.ts"]);
   assert.equal(result.length, 1);
@@ -114,7 +144,11 @@ test("checkTrackedArtifacts: docs/superpowers/ prefix is flagged", () => {
 });
 
 test("checkTrackedArtifacts: .eslintcache family is flagged", () => {
-  const result = checkTrackedArtifacts([".eslintcache", ".eslintcache-complexity", ".eslintcache-probe"]);
+  const result = checkTrackedArtifacts([
+    ".eslintcache",
+    ".eslintcache-complexity",
+    ".eslintcache-probe",
+  ]);
   assert.equal(result.length, 3);
 });
 

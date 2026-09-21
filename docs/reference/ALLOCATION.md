@@ -1,4 +1,10 @@
-# AgentProxy Allocation Handoff
+---
+title: "Allocation"
+version: 0.1.0
+lastUpdated: 2026-09-21
+---
+
+# AgentProxy Allocation
 
 Allocation is not provider quota.
 
