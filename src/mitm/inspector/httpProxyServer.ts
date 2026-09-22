@@ -40,7 +40,6 @@ const connectPolicy = requireCjs("../_internal/bypass.cjs") as {
     host: string,
     port: number
   ) => Promise<{ host: string; port: number; address: string; family: number }>;
-
 };
 
 const DEFAULT_PORT = parseEnvNumber(process.env.INSPECTOR_HTTP_PROXY_PORT, 8080);
@@ -139,7 +138,7 @@ function handleHttp(req: http.IncomingMessage, res: http.ServerResponse): void {
         safeOutboundFetch(target, {
           method: req.method ?? "GET",
           headers: upstreamHeaders,
-          body: body.length > 0 ? body : undefined,
+          body: body.length > 0 ? new Uint8Array(body) : undefined,
           allowRedirect: false,
           retry: false,
           guard: "public-only",
