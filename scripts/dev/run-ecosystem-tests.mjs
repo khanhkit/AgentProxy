@@ -61,10 +61,11 @@ async function main() {
     AGENTPROXY_E2E_BOOTSTRAP_MODE: process.env.AGENTPROXY_E2E_BOOTSTRAP_MODE || "open",
     REQUIRE_API_KEY: explicitBaseUrl ? process.env.REQUIRE_API_KEY : "false",
     ENABLE_CLI_TOOLS: "true",
+    HOST: process.env.HOST || "127.0.0.1",
   };
 
   if (!(await isServerReady())) {
-    serverProcess = spawn(process.execPath, ["scripts/dev/run-next-playwright.mjs", "dev"], {
+    serverProcess = spawn(process.execPath, ["scripts/dev/run-next.mjs", "dev"], {
       stdio: "inherit",
       env: testEnv,
     });
