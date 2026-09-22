@@ -21,24 +21,30 @@ function toPlainRow<T>(row: T): T {
 
 let _sqlJsLib: Awaited<ReturnType<(typeof import("sql.js"))["default"]>> | null = null;
 
-function resolveSqlJsWasmPath(): string {
-  // The standalone assembler copies the complete sql.js package into
-  // <bundle>/node_modules/sql.js. Every packaged server launcher sets cwd to that
-  // bundle directory, so the JavaScript entrypoint and its sibling WASM share one
-  // explicit runtime contract instead of relying on a require.resolve call that
-  // webpack can rewrite. The second path retains direct-source compatibility.
+export function sqlJsWasmCandidatePaths(cwd = process.cwd()): string[] {
   const candidatePaths = [
-    path.join(process.cwd(), "node_modules", "sql.js", "dist", "sql-wasm.wasm"),
-    path.join(
-      process.cwd(),
-      ".next",
-      "standalone",
-      "node_modules",
-      "sql.js",
-      "dist",
-      "sql-wasm.wasm"
-    ),
+    path.join(cwd, "node_modules", "sql.js", "dist", "sql-wasm.wasm"),
+    path.join(cwd, ".next", "standalone", "node_modules", "sql.js", "dist", "sql-wasm.wasm"),
   ];
+
+  // The installed CLI starts the server from <packageRoot>/dist, while npm installs
+  // declared dependencies at <packageRoot>/node_modules. Mirror Node's ancestor
+  // lookup so the packaged runtime can find sql.js without require.resolve(), which
+  // bundlers may rewrite at build time.
+  let current = path.resolve(cwd);
+  while (true) {
+    const candidate = path.join(current, "node_modules", "sql.js", "dist", "sql-wasm.wasm");
+    if (!candidatePaths.includes(candidate)) candidatePaths.push(candidate);
+    const parent = path.dirname(current);
+    if (parent === current) break;
+    current = parent;
+  }
+
+  return candidatePaths;
+}
+
+function resolveSqlJsWasmPath(): string {
+  const candidatePaths = sqlJsWasmCandidatePaths();
 
   for (const candidatePath of candidatePaths) {
     if (fs.existsSync(candidatePath)) {
