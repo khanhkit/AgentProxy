@@ -34,6 +34,7 @@ type MockCodexWebSocket = {
   onerror: ((event: { message?: string }) => void) | null;
   onclose: (() => void) | null;
 };
+const UUID_V4_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 function getRecord(value: unknown): Record<string, unknown> {
   assert.equal(typeof value, "object");
@@ -41,12 +42,10 @@ function getRecord(value: unknown): Record<string, unknown> {
   assert.equal(Array.isArray(value), false);
   return value as Record<string, unknown>;
 }
-
 test.afterEach(() => {
   setThinkingBudgetConfig(DEFAULT_THINKING_CONFIG);
   __setCodexWebSocketTransportForTesting(undefined);
 });
-
 async function withEnv<T>(entries: Record<string, string | undefined>, fn: () => T | Promise<T>) {
   const previous = new Map();
   for (const [key, value] of Object.entries(entries)) {
@@ -1078,12 +1077,8 @@ test("CodexExecutor.execute adds CLI-like session identity headers without chang
     assert.equal(turnMetadata.sandbox, "none");
     assert.equal(typeof turnMetadata.turn_id, "string");
     assert.equal(capturedBody?.prompt_cache_key, "conversation-1");
-    const installationId = capturedHeaders?.get("x-codex-installation-id");
-    assert.match(
-      String(installationId),
-      /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
-    );
-    assert.equal(meta["x-codex-installation-id"], installationId);
+    assert.match(String(capturedHeaders?.get("x-codex-installation-id")), UUID_V4_RE);
+    assert.equal(meta["x-codex-installation-id"], capturedHeaders?.get("x-codex-installation-id"));
   } finally {
     globalThis.fetch = originalFetch;
   }

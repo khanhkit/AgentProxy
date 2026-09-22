@@ -3072,7 +3072,7 @@
       }
     },
     "autoConfiguredTab": "Auto Configured Tab",
-    "toolCategoriesDesc": "Tool Categories Desc",
+    "toolCategoriesDesc": "__MISSING__:Configure AI coding assistants to route through AgentProxy",
     "allToolsTab": "All Tools Tab",
     "guidedClientsTab": "Guided Clients Tab",
     "mitmClientsTab": "Mitm Clients Tab",
@@ -5797,7 +5797,7 @@
     "ccCompatibleNamePlaceholder": "Cc Compatible Name Placeholder",
     "ccCompatiblePrefixHint": "Cc Compatible Prefix Hint",
     "ccCompatiblePrefixPlaceholder": "Cc Compatible Prefix Placeholder",
-    "ccCompatibleValidationHint": "Cc Compatible Validation Hint",
+    "ccCompatibleValidationHint": "__MISSING__:Use this provider only for relays that serve Claude Code clients exclusively. AgentProxy rewrites any incoming request into the Claude Code-compatible wire format so those relays accept it. If you only want to use Claude Code CLI, or you are not sure what this relay type means, use a regular Anthropic-compatible provider instead.",
     "claudeExtraUsageShort": "Claude Extra Usage Short",
     "claudeExtraUsageToggleTitle": "Claude Extra Usage Toggle Title",
     "codex5hToggleTitle": "Codex5H Toggle Title",
@@ -6971,7 +6971,7 @@
     "afterPromptPlaceholder": "Ajan/sağlayıcı isteminden sonra eklenen talimatlar...",
     "chars": "{count} karakter",
     "thinkingBudgetTitle": "Düşünme Bütçesi",
-    "thinkingBudgetDesc": "Tüm isteklerde yapay zeka akıl yürütme jetonu kullanımını kontrol edin",
+    "thinkingBudgetDesc": "__MISSING__:Controls whether AgentProxy rewrites client thinking/reasoning parameters before requests go upstream. This is separate from compression, prompt cache, and API-key token limits.",
     "thinkingBudgetIndependenceHint": "Sıkıştırma, yönlendirme ve token-limit özellikleri her modda çalışmaya devam eder. Otomatik, “otomatik-göster düşüncesi” anlamına gelmez — istemci akıl yürütme alanlarını kaldırır.",
     "passthrough": "Passthrough Modu",
     "passthroughDesc": "Değişiklik yapma — düşünme bütçesini istemci kontrol etsin",
@@ -8730,7 +8730,7 @@
   },
   "omniglyph": {
     "preview": "Önizleme",
-    "description": "Görsel formatında bağlam sıkıştırması. Sistem istemini, araç belgelerini ve yoğun geçmişi, Claude Fable 5'in metin yerine okuduğu kompakt PNG sayfaları olarak işler. Görsel token'ları karakterler yerine boyutlara göre faturalandırılır, bu nedenle dönüştürülen blok yaklaşık 10 kat daha az maliyetlidir. Yalnızca doğrudan Anthropic rotası.",
+    "description": "__MISSING__:Context-as-image compression. Renders the system prompt, tool documentation, and dense history as compact PNG pages for the measured Claude Fable 5 path. The published OmniGlyph package also exposes native GPT 5.6 transformers, but AgentProxy keeps those routes fail-closed until provider fidelity and reading receipts exist.",
     "economicsTitle": "Ekonomi",
     "economics": {
       "fewerTokens": "dönüştürülen blokta daha az token",
@@ -8750,7 +8750,7 @@
       "model": {
         "label": "Model",
         "pass": "claude-fable-5",
-        "why": "Yalnızca Fable 5 yoğun sayfaları %100 doğrulukla okur (ölçülen, n=30). GPT-5.5 ve Gemini 2.5 Flash engellenir."
+        "why": "__MISSING__:Only the measured Fable 5 path is enabled in AgentProxy. GPT 5.6 is structurally supported by the package but remains blocked until its provider receipt; unverified families such as Grok stay text-only."
       },
       "transport": {
         "label": "Aktarım",
@@ -10349,7 +10349,7 @@
     "setupGuideCommandMissingTitle": "'Komut bulunamadı' sorununu düzeltin",
     "setupGuideCommandMissingDesc": "PATH'de CLI komutunun mevcut olduğundan emin olun, yeni bir terminal oturumu açın ve Yenile'yi yeniden çalıştırın.",
     "cliToolsRedirectTitle": "Cli Tools Redirect Title",
-    "cliToolsRedirectDesc": "Cli Tools Redirect Desc",
+    "cliToolsRedirectDesc": "__MISSING__:If you want to point Claude Code, Cursor, Codex, or any IDE at AgentProxy as a proxy, go to CLI Tools instead. This page is for the reverse — using local CLI binaries as execution targets that AgentProxy can spawn and route requests through.",
     "spawnArgsPlaceholder": "Spawn Args Placeholder",
     "binaryNamePlaceholder": "Binary Name Placeholder",
     "versionCommandPlaceholder": "Version Command Placeholder",
@@ -10357,9 +10357,9 @@
     "flowLocalBinary": "Flow Local Binary",
     "flowAgentProxy": "Flow Omni Route",
     "agentNamePlaceholder": "Agent Name Placeholder",
-    "architectureDescription": "Architecture Description",
+    "architectureDescription": "__MISSING__:When a request arrives, AgentProxy can spawn a local CLI binary (e.g., claude, codex, goose) and pipe the request through it. The CLI processes the request using its own credentials and returns the result back through AgentProxy.",
     "flowExecute": "Flow Execute",
-    "flowSpawn": "Flow Spawn",
+    "flowSpawn": "__MISSING__:2 · AgentProxy spawns local binary",
     "cliToolsRedirectCta": "Cli Tools Redirect Cta",
     "comparisonTitle": "CLI Araçları ve Aracı Hedefleri — Fark Nedir?",
     "comparisonCliToolsLabel": "CLI Araçları sayfası",

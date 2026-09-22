@@ -92,6 +92,8 @@ jobs:
       JWT_SECRET: ci-lint-secret-with-sufficient-length-for-validation
       API_KEY_SECRET: ci-lint-api-key-secret-long
       DISABLE_SQLITE_AUTO_BACKUP: "true"
+      EVENT_NAME: ${{ github.event_name }}
+      PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -137,7 +139,13 @@ jobs:
       - run: npm run check:provider-asset-provenance
       - run: npm run check:fetch-targets
       - run: npm run check:deps
-      - run: npm run check:file-size
+      - name: File-size ratchet
+        run: |
+          if [ "$EVENT_NAME" = "pull_request" ] && [ -n "$PR_BASE_SHA" ]; then
+            npm run check:file-size -- --base-ref "$PR_BASE_SHA"
+          else
+            npm run check:file-size
+          fi
       - run: npm run check:error-helper
       - run: npm run check:migration-numbering
       - run: npm run check:public-creds

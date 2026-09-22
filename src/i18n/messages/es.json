@@ -3072,7 +3072,7 @@
       }
     },
     "autoConfiguredTab": "Auto Configured Tab",
-    "toolCategoriesDesc": "Tool Categories Desc",
+    "toolCategoriesDesc": "__MISSING__:Configure AI coding assistants to route through AgentProxy",
     "allToolsTab": "All Tools Tab",
     "guidedClientsTab": "Guided Clients Tab",
     "mitmClientsTab": "Mitm Clients Tab",
@@ -5797,7 +5797,7 @@
     "ccCompatibleNamePlaceholder": "Cc Compatible Name Placeholder",
     "ccCompatiblePrefixHint": "Cc Compatible Prefix Hint",
     "ccCompatiblePrefixPlaceholder": "Cc Compatible Prefix Placeholder",
-    "ccCompatibleValidationHint": "Cc Compatible Validation Hint",
+    "ccCompatibleValidationHint": "__MISSING__:Use this provider only for relays that serve Claude Code clients exclusively. AgentProxy rewrites any incoming request into the Claude Code-compatible wire format so those relays accept it. If you only want to use Claude Code CLI, or you are not sure what this relay type means, use a regular Anthropic-compatible provider instead.",
     "claudeExtraUsageShort": "Claude Extra Usage Short",
     "claudeExtraUsageToggleTitle": "Claude Extra Usage Toggle Title",
     "codex5hToggleTitle": "Codex5H Toggle Title",
@@ -6971,7 +6971,7 @@
     "afterPromptPlaceholder": "Instructions inserted after agent/provider prompt...",
     "chars": "{count} caracteres",
     "thinkingBudgetTitle": "Pensando en el presupuesto",
-    "thinkingBudgetDesc": "Controle el uso del token de razonamiento de IA en todas las solicitudes",
+    "thinkingBudgetDesc": "__MISSING__:Controls whether AgentProxy rewrites client thinking/reasoning parameters before requests go upstream. This is separate from compression, prompt cache, and API-key token limits.",
     "thinkingBudgetIndependenceHint": "Las funciones de compresión, enrutamiento y límite de tokens siguen funcionando en todos los modos. Auto no significa \"auto-mostrar pensamiento\": elimina los campos de razonamiento del cliente.",
     "passthrough": "Paso a través",
     "passthroughDesc": "Sin cambios: el cliente controla el presupuesto pensando en",
@@ -8730,7 +8730,7 @@
   },
   "omniglyph": {
     "preview": "Preview",
-    "description": "Context-as-image compression. Renders the system prompt, tool documentation, and dense history as compact PNG pages that Claude Fable 5 reads instead of text. Image tokens are billed by dimensions rather than characters, so the converted block costs about 10× less. Direct Anthropic route only.",
+    "description": "__MISSING__:Context-as-image compression. Renders the system prompt, tool documentation, and dense history as compact PNG pages for the measured Claude Fable 5 path. The published OmniGlyph package also exposes native GPT 5.6 transformers, but AgentProxy keeps those routes fail-closed until provider fidelity and reading receipts exist.",
     "economicsTitle": "The economics",
     "economics": {
       "fewerTokens": "fewer tokens on the converted block",
@@ -8750,7 +8750,7 @@
       "model": {
         "label": "Model",
         "pass": "claude-fable-5",
-        "why": "Only Fable 5 reads dense pages at 100% accuracy (measured, n=30). GPT-5.5 and Gemini 2.5 Flash are blocked."
+        "why": "__MISSING__:Only the measured Fable 5 path is enabled in AgentProxy. GPT 5.6 is structurally supported by the package but remains blocked until its provider receipt; unverified families such as Grok stay text-only."
       },
       "transport": {
         "label": "Transport",
@@ -8941,7 +8941,7 @@
   },
   "translator": {
     "title": "Traductor",
-    "metaTitle": "Patio de juegos del traductor | OmniRuta",
+    "metaTitle": "__MISSING__:Translator Playground | AgentProxy",
     "metaDescription": "Depurar, probar y visualizar traducciones de formatos API entre proveedores",
     "playgroundTitle": "Patio de juegos del traductor",
     "playground": "Zona de juegos",
@@ -9912,7 +9912,7 @@
     "relaunchApp": "Reinicia la aplicación de escritorio AgentProxy"
   },
   "landing": {
-    "brandName": "OmniRuta",
+    "brandName": "__MISSING__:AgentProxy",
     "navigateHome": "Navegar a casa",
     "toggleMenu": "Alternar menú",
     "featuresLink": "Características",
@@ -10269,9 +10269,9 @@
     "clearHistory": "Borrar el historial de uso en cualquier momento",
     "configureRetention": "Configurar políticas de retención de registros",
     "backupRestore": "Haga una copia de seguridad y restaure su base de datos",
-    "privacyMetadataTitle": "Política de privacidad | OmniRuta",
+    "privacyMetadataTitle": "__MISSING__:Privacy Policy | AgentProxy",
     "privacyMetadataDescription": "Política de privacidad para el enrutador proxy API AgentProxy AI.",
-    "termsMetadataTitle": "Términos de servicio | OmniRuta",
+    "termsMetadataTitle": "__MISSING__:Terms of Service | AgentProxy",
     "termsMetadataDescription": "Términos de servicio para el enrutador proxy API AgentProxy AI.",
     "backToHome": "De vuelta a casa",
     "lastUpdated": "Última actualización: {date}",
@@ -10349,7 +10349,7 @@
     "setupGuideCommandMissingTitle": "Fix 'command not found'",
     "setupGuideCommandMissingDesc": "Ensure the CLI command exists in PATH, open a new terminal session, and rerun Refresh.",
     "cliToolsRedirectTitle": "Cli Tools Redirect Title",
-    "cliToolsRedirectDesc": "Cli Tools Redirect Desc",
+    "cliToolsRedirectDesc": "__MISSING__:If you want to point Claude Code, Cursor, Codex, or any IDE at AgentProxy as a proxy, go to CLI Tools instead. This page is for the reverse — using local CLI binaries as execution targets that AgentProxy can spawn and route requests through.",
     "spawnArgsPlaceholder": "Spawn Args Placeholder",
     "binaryNamePlaceholder": "Binary Name Placeholder",
     "versionCommandPlaceholder": "Version Command Placeholder",
@@ -10357,9 +10357,9 @@
     "flowLocalBinary": "Flow Local Binary",
     "flowAgentProxy": "Flow Omni Route",
     "agentNamePlaceholder": "Agent Name Placeholder",
-    "architectureDescription": "Architecture Description",
+    "architectureDescription": "__MISSING__:When a request arrives, AgentProxy can spawn a local CLI binary (e.g., claude, codex, goose) and pipe the request through it. The CLI processes the request using its own credentials and returns the result back through AgentProxy.",
     "flowExecute": "Flow Execute",
-    "flowSpawn": "Flow Spawn",
+    "flowSpawn": "__MISSING__:2 · AgentProxy spawns local binary",
     "cliToolsRedirectCta": "Cli Tools Redirect Cta",
     "comparisonTitle": "Herramientas CLI frente a objetivos de agentes: ¿cuál es la diferencia?",
     "comparisonCliToolsLabel": "Página de herramientas CLI",

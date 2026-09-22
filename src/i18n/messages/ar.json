@@ -3072,7 +3072,7 @@
       }
     },
     "autoConfiguredTab": "علامة تبويب المكوّن تلقائيًا",
-    "toolCategoriesDesc": "وصف فئات الأدوات",
+    "toolCategoriesDesc": "__MISSING__:Configure AI coding assistants to route through AgentProxy",
     "allToolsTab": "علامة تبويب جميع الأدوات",
     "guidedClientsTab": "علامة تبويب العملاء الموجّهين",
     "mitmClientsTab": "علامة تبويب عملاء MITM",
@@ -5774,7 +5774,7 @@
     "t3ChatWebCookieHint": "افتح t3.chat ← DevTools ← Application ← Local Storage ← https://t3.chat، ثم انسخ \"convex-session-id\". بعد ذلك افتح DevTools ← Network وانسخ ترويسة Cookie كاملة من أي طلب دردشة. ألصق القيمتين في الحقلين أدناه.",
     "t3ChatWebCookiePlaceholder": "convex-session-id=abc123...",
     "grokWebCookieHint": "ألصق ملف تعريف ارتباط جلسة Grok",
-    "blockClaudeExtraUsageDescription": "امنع استخدام رصيد Claude الإضافي بعد استنفاد الحصة المضمّنة",
+    "blockClaudeExtraUsageDescription": "__MISSING__:When enabled, AgentProxy marks this Claude connection unavailable as soon as the usage API reports queued extra usage, so fallback switches to another connection instead of continuing on pay-as-you-go extra billing.",
     "blockClaudeExtraUsageLabel": "حظر استخدام Claude الإضافي",
     "disableCoolingDescription": "تخطي فترة التهدئة المؤقتة حتى يظل هذا الاتصال مؤهلاً حتى بعد الأخطاء القابلة للاسترداد (لا تزال الحالات النهائية مثل banned/expired سارية).",
     "disableCoolingLabel": "تعطيل فترة التهدئة لهذا الاتصال",
@@ -5797,7 +5797,7 @@
     "ccCompatibleNamePlaceholder": "مثال: Claude Code Production",
     "ccCompatiblePrefixHint": "بادئة فريدة لأسماء النماذج",
     "ccCompatiblePrefixPlaceholder": "cc-prod",
-    "ccCompatibleValidationHint": "يُتحقق من الاتصال باستخدام عنوان URL والمفتاح المحددين",
+    "ccCompatibleValidationHint": "__MISSING__:Use this provider only for relays that serve Claude Code clients exclusively. AgentProxy rewrites any incoming request into the Claude Code-compatible wire format so those relays accept it. If you only want to use Claude Code CLI, or you are not sure what this relay type means, use a regular Anthropic-compatible provider instead.",
     "claudeExtraUsageShort": "استخدام Claude الإضافي",
     "claudeExtraUsageToggleTitle": "تبديل استخدام Claude الإضافي",
     "codex5hToggleTitle": "تبديل حصة Codex لخمس ساعات",
@@ -6971,7 +6971,7 @@
     "afterPromptPlaceholder": "تعليمات تُدرج بعد موجه الوكيل أو المزوّد...",
     "chars": "{count} حرف",
     "thinkingBudgetTitle": "ميزانية التفكير",
-    "thinkingBudgetDesc": "التحكم في استخدام الرمز المميز لاستدلال الذكاء الاصطناعي عبر جميع الطلبات",
+    "thinkingBudgetDesc": "__MISSING__:Controls whether AgentProxy rewrites client thinking/reasoning parameters before requests go upstream. This is separate from compression, prompt cache, and API-key token limits.",
     "thinkingBudgetIndependenceHint": "تستمر ميزات الضغط والتوجيه وحدود الرموز في العمل في كل وضع. الوضع التلقائي لا يعني \"إظهار التفكير تلقائيًا\" - بل يقوم بإزالة حقول تفكير العميل.",
     "passthrough": "العبور",
     "passthroughDesc": "لا توجد تغييرات - يتحكم العميل في ميزانية التفكير",
@@ -8730,7 +8730,7 @@
   },
   "omniglyph": {
     "preview": "معاينة",
-    "description": "ضغط السياق كصورة. يعرض توجيه النظام، وتوثيق الأدوات، والسجل الكثيف كصفحات PNG مضغوطة يقرأها Claude Fable 5 بدلاً من النص. يتم احتساب رموز الصور بناءً على الأبعاد بدلاً من الأحرف، لذا فإن الكتلة المحولة تكلف أقل بحوالي 10 مرات. مسار Anthropic المباشر فقط.",
+    "description": "__MISSING__:Context-as-image compression. Renders the system prompt, tool documentation, and dense history as compact PNG pages for the measured Claude Fable 5 path. The published OmniGlyph package also exposes native GPT 5.6 transformers, but AgentProxy keeps those routes fail-closed until provider fidelity and reading receipts exist.",
     "economicsTitle": "الجانب الاقتصادي",
     "economics": {
       "fewerTokens": "رموز أقل في الكتلة المحولة",
@@ -8750,7 +8750,7 @@
       "model": {
         "label": "النموذج",
         "pass": "claude-fable-5",
-        "why": "يقرأ Fable 5 فقط الصفحات الكثيفة بدقة 100% (مقاسة، العدد=30). تم حظر GPT-5.5 وGemini 2.5 Flash."
+        "why": "__MISSING__:Only the measured Fable 5 path is enabled in AgentProxy. GPT 5.6 is structurally supported by the package but remains blocked until its provider receipt; unverified families such as Grok stay text-only."
       },
       "transport": {
         "label": "النقل",
@@ -9978,7 +9978,7 @@
     "legal": "قانوني",
     "mitLicense": "رخصة معهد ماساتشوستس للتكنولوجيا",
     "footerTagline": "نقطة النهاية الموحدة لتوليد الذكاء الاصطناعي. يمكنك الاتصال بموفري خدمات الذكاء الاصطناعي وتوجيههم وإدارتهم بسهولة.",
-    "copyright": "© {year} أومنيروتي. جميع الحقوق محفوظة.",
+    "copyright": "__MISSING__:© {year} AgentProxy. All rights reserved.",
     "flowToolClaudeCode": "Claude كود",
     "flowToolOpenAICodex": "مخطوطة OpenAI",
     "flowToolCline": "كلاين",
@@ -10234,7 +10234,7 @@
     "nonTechUsersSubtitle": "ابدأ بسرعة — لا حاجة لخلفية تقنية",
     "techUsersTitle": "للمستخدمين التقنيين",
     "techUsersSubtitle": "غوص عميق في الهندسة المعمارية وواجهات برمجة التطبيقات والداخلية",
-    "apiExplorerMetadataTitle": "مستكشف واجهة برمجة التطبيقات — وثائق أومني روت",
+    "apiExplorerMetadataTitle": "__MISSING__:API Explorer — AgentProxy Docs",
     "apiExplorerMetadataDescription": "مستكشف واجهة برمجة التطبيقات التفاعلي - جرب نقاط نهاية AgentProxy مباشرة مع استجابات في الوقت الحقيقي",
     "apiExplorerTitle": "مستكشف واجهة برمجة التطبيقات",
     "apiExplorerDescription": "جرّب نقاط نهاية AgentProxy مباشرة. اختر نقطة نهاية، قم بتكوين طلبك، وشاهد الاستجابة في الوقت الفعلي.",
@@ -10349,7 +10349,7 @@
     "setupGuideCommandMissingTitle": "إصلاح \"لم يتم العثور على الأمر\"",
     "setupGuideCommandMissingDesc": "تأكد من وجود أمر CLI في PATH، وافتح جلسة طرفية جديدة، وأعد تشغيل التحديث.",
     "cliToolsRedirectTitle": "إعداد أدوات CLI",
-    "cliToolsRedirectDesc": "انتقل إلى صفحة أدوات CLI لإعداد التكامل.",
+    "cliToolsRedirectDesc": "__MISSING__:If you want to point Claude Code, Cursor, Codex, or any IDE at AgentProxy as a proxy, go to CLI Tools instead. This page is for the reverse — using local CLI binaries as execution targets that AgentProxy can spawn and route requests through.",
     "spawnArgsPlaceholder": "مثال: --model gpt-4o",
     "binaryNamePlaceholder": "مثال: codex",
     "versionCommandPlaceholder": "مثال: --version",
@@ -10359,7 +10359,7 @@
     "agentNamePlaceholder": "مثال: وكيل مخصص",
     "architectureDescription": "مسار التنفيذ بين AgentProxy ووكلاء CLI المحليين",
     "flowExecute": "تنفيذ",
-    "flowSpawn": "تشغيل العملية",
+    "flowSpawn": "__MISSING__:2 · AgentProxy spawns local binary",
     "cliToolsRedirectCta": "الانتقال إلى أدوات CLI",
     "comparisonTitle": "أدوات CLI مقابل أهداف الوكيل - ما الفرق؟",
     "comparisonCliToolsLabel": "صفحة أدوات CLI",
@@ -11348,7 +11348,7 @@
       "payloadMissing": "لا يتوفر حِمل البيانات التفصيلي بعد الآن لهذه السجل.",
       "payloadCorrupt": "تعذر تحليل الحمولة التفصيلية.",
       "notAvailable": "غير متوفر",
-      "semanticCache": "سيمانتك (أومني روت)",
+      "semanticCache": "__MISSING__:Semantic (AgentProxy)",
       "upstreamCache": "المصدر (المزود)",
       "ariaLabel": "تفاصيل سجل الطلب",
       "completed": "مكتمل",
@@ -13923,7 +13923,7 @@
     "compressionDescription": "قم بتكوين إعدادات ضغط السياق لتقليل استخدام الرموز والتكاليف.",
     "relayTitle": "AgentProxy — بروكسيات الريلاي",
     "relayDescription": "نقاط نهاية وكيل Relay بدون خادم لبنيتك التحتية للذكاء الاصطناعي",
-    "trafficInspectorTitle": "مفتش المرور — أومني روت",
+    "trafficInspectorTitle": "__MISSING__:Traffic Inspector — AgentProxy",
     "trafficInspectorDescription": "راقب مكالمات LLM + قم بتصحيح أي حركة مرور HTTPS لتطبيق ما"
   },
   "conductor": {

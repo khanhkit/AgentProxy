@@ -5801,7 +5801,7 @@
     "ccCompatibleNamePlaceholder": "Produção CC Compatível",
     "ccCompatiblePrefixHint": "Usado para aliases como prefix/model-id.",
     "ccCompatiblePrefixPlaceholder": "cc",
-    "ccCompatibleValidationHint": "A validação usa a bridge estrita compatível com Claude Code para este provedor.",
+    "ccCompatibleValidationHint": "__MISSING__:Use this provider only for relays that serve Claude Code clients exclusively. AgentProxy rewrites any incoming request into the Claude Code-compatible wire format so those relays accept it. If you only want to use Claude Code CLI, or you are not sure what this relay type means, use a regular Anthropic-compatible provider instead.",
     "claudeExtraUsageShort": "Bloquear Extra",
     "claudeExtraUsageToggleTitle": "Alternar bloqueio de extra usage do Claude",
     "codex5hToggleTitle": "Alternar política de limite 5h do Codex",
@@ -6503,7 +6503,7 @@
     "routingOpDropBlockContainsDesc": "Remove blocos de sistema INTEIROS (não apenas parágrafos) cujo texto contenha qualquer uma das substrings listadas.",
     "routingOpPrependSystemBlockDesc": "Insere um novo bloco de texto no INÍCIO do array de sistema. Use para adicionar a identidade de SDK que o classificador da Anthropic espera.",
     "routingOpAppendSystemBlockDesc": "Insere um novo bloco de texto no FINAL do array de sistema. Use para adições cosméticas que não precisam estar na posição [0].",
-    "routingOpInjectBillingHeaderDesc": "Prepend o bloco de texto especial 'x-anthropic-billing-header' que o classificador da Anthropic valida. Obrigatório para endpoints de relay do Claude-Code Bridge.",
+    "routingOpInjectBillingHeaderDesc": "__MISSING__:Prepends the special 'x-anthropic-billing-header: cc_version=...; cc_entrypoint=...; cch=...;' text block that Anthropic's classifier validates. Required for CC bridge relay endpoints; for the native claude provider AgentProxy already injects its own billing line so this op is usually redundant there.",
     "routingOpObfuscateWordsDesc": "Insere um caractere Zero-Width-Joiner após a primeira letra de cada palavra listada. Permanece idêntico para humanos, mas ignora correspondências exatas de classificadores.",
     "routingNeedlesHint": "Lista de substrings. Um parágrafo corresponde se contiver QUALQUER uma delas. Adicione uma por linha via 'Adicionar entrada'.",
     "routingPrefixesHint": "Lista de strings. Um parágrafo corresponde se começar com qualquer uma delas.",
@@ -6593,7 +6593,7 @@
     "memoryTitle": "Memória",
     "memoryDesc": "Memória conversacional persistente entre sessões",
     "memoryEnabled": "Ativar Memória",
-    "memoryEnabledDesc": "Quando ativado, injetará o contexto passado relevante de forma dinâmica.",
+    "memoryEnabledDesc": "__MISSING__:When enabled, AgentProxy will inject relevant past context.",
     "memoryTokenCostWarning": "Atenção: com a memória ativada, o AgentProxy injeta até {tokens} tokens de contexto recuperado em cada solicitação de chat — isso aumenta o uso de tokens e o custo. Para pular a injeção para uma solicitação específica, envie o cabeçalho \"x-agentproxy-no-memory: true\".",
     "maxTokens": "Tokens Máximos",
     "retentionDays": "Retenção",
@@ -10370,7 +10370,7 @@
     "agentNamePlaceholder": "ex.: Meu Worker Customizado",
     "architectureDescription": "Esta tela é para binários que o AgentProxy inicia localmente como workers. O AgentProxy detecta o binário, faz o spawn e o usa como endpoint final de execução.",
     "flowExecute": "Executa tarefa",
-    "flowSpawn": "Inicia worker",
+    "flowSpawn": "__MISSING__:2 · AgentProxy spawns local binary",
     "cliToolsRedirectCta": "Ir para CLI Tools",
     "comparisonTitle": "Ferramentas CLI versus alvos de agente – Qual é a diferença?",
     "comparisonCliToolsLabel": "Página de ferramentas CLI",
@@ -12492,17 +12492,17 @@
         "whatIs": {
           "label": "O que é",
           "agent": "Documentação (SKILL.md) que ensina um agente externo a operar o AgentProxy",
-          "omni": "Ferramentas executáveis que o Omni injeta como tools nos requests LLM"
+          "omni": "__MISSING__:Executable tools that AgentProxy injects as tools into LLM requests"
         },
         "direction": {
           "label": "Direção",
-          "agent": "Outbound — externo aprende a controlar o Omni",
-          "omni": "Inbound — Omni dá tools aos modelos que passam por ele"
+          "agent": "__MISSING__:Outbound — external agent learns to control AgentProxy",
+          "omni": "__MISSING__:Inbound — AgentProxy gives tools to models passing through it"
         },
         "executor": {
           "label": "Executor",
           "agent": "Agente externo (lê markdown → age via API/CLI)",
-          "omni": "O próprio Omni (intercepta tool_calls, sandbox Docker)"
+          "omni": "__MISSING__:AgentProxy itself (intercepts tool_calls, Docker sandbox)"
         },
         "storage": {
           "label": "Storage",

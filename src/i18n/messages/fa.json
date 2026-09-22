@@ -5797,7 +5797,7 @@
     "ccCompatibleNamePlaceholder": "Cc Compatible Name Placeholder",
     "ccCompatiblePrefixHint": "Cc Compatible Prefix Hint",
     "ccCompatiblePrefixPlaceholder": "Cc Compatible Prefix Placeholder",
-    "ccCompatibleValidationHint": "Cc Compatible Validation Hint",
+    "ccCompatibleValidationHint": "__MISSING__:Use this provider only for relays that serve Claude Code clients exclusively. AgentProxy rewrites any incoming request into the Claude Code-compatible wire format so those relays accept it. If you only want to use Claude Code CLI, or you are not sure what this relay type means, use a regular Anthropic-compatible provider instead.",
     "claudeExtraUsageShort": "Claude Extra Usage Short",
     "claudeExtraUsageToggleTitle": "Claude Extra Usage Toggle Title",
     "codex5hToggleTitle": "Codex5H Toggle Title",
@@ -6971,7 +6971,7 @@
     "afterPromptPlaceholder": "دستورالعمل‌های درج‌شده بعد از پرامپت عامل/ارائه‌دهنده...",
     "chars": "{count} chars",
     "thinkingBudgetTitle": "Thinking Budget",
-    "thinkingBudgetDesc": "Control AI reasoning token usage across all requests",
+    "thinkingBudgetDesc": "__MISSING__:Controls whether AgentProxy rewrites client thinking/reasoning parameters before requests go upstream. This is separate from compression, prompt cache, and API-key token limits.",
     "thinkingBudgetIndependenceHint": "ویژگی‌های فشرده‌سازی، مسیریابی و محدودیت توکن در هر حالت کار می‌کنند. حالت خودکار به معنای \"نمایش خودکار تفکر\" نیست - این حالت فیلدهای استدلال کلاینت را حذف می‌کند.",
     "passthrough": "Passthrough",
     "passthroughDesc": "No changes — client controls thinking budget",
@@ -8730,7 +8730,7 @@
   },
   "omniglyph": {
     "preview": "پیش‌نمایش",
-    "description": "فشرده‌سازی زمینه به‌صورت تصویر. پرامپت سیستم، مستندات ابزار و تاریخچه متراکم را به‌صورت صفحات فشرده PNG رندر می‌کند که Claude Fable 5 به‌جای متن آن‌ها را می‌خواند. توکن‌های تصویر بر اساس ابعاد محاسبه می‌شوند نه کاراکترها، بنابراین هزینه بلوک تبدیل‌شده حدود 10× کمتر است. فقط مسیر مستقیم Anthropic.",
+    "description": "__MISSING__:Context-as-image compression. Renders the system prompt, tool documentation, and dense history as compact PNG pages for the measured Claude Fable 5 path. The published OmniGlyph package also exposes native GPT 5.6 transformers, but AgentProxy keeps those routes fail-closed until provider fidelity and reading receipts exist.",
     "economicsTitle": "جنبه‌های اقتصادی",
     "economics": {
       "fewerTokens": "توکن‌های کمتر در بلوک تبدیل‌شده",
@@ -8750,7 +8750,7 @@
       "model": {
         "label": "مدل",
         "pass": "claude-fable-5",
-        "why": "فقط Fable 5 صفحات متراکم را با دقت 100% می‌خواند (اندازه‌گیری‌شده، n=30). GPT-5.5 و Gemini 2.5 Flash مسدود هستند."
+        "why": "__MISSING__:Only the measured Fable 5 path is enabled in AgentProxy. GPT 5.6 is structurally supported by the package but remains blocked until its provider receipt; unverified families such as Grok stay text-only."
       },
       "transport": {
         "label": "انتقال",
@@ -10349,7 +10349,7 @@
     "setupGuideCommandMissingTitle": "Fix 'command not found'",
     "setupGuideCommandMissingDesc": "Ensure the CLI command exists in PATH, open a new terminal session, and rerun Refresh.",
     "cliToolsRedirectTitle": "Cli Tools Redirect Title",
-    "cliToolsRedirectDesc": "Cli Tools Redirect Desc",
+    "cliToolsRedirectDesc": "__MISSING__:If you want to point Claude Code, Cursor, Codex, or any IDE at AgentProxy as a proxy, go to CLI Tools instead. This page is for the reverse — using local CLI binaries as execution targets that AgentProxy can spawn and route requests through.",
     "spawnArgsPlaceholder": "Spawn Args Placeholder",
     "binaryNamePlaceholder": "Binary Name Placeholder",
     "versionCommandPlaceholder": "Version Command Placeholder",
@@ -10357,9 +10357,9 @@
     "flowLocalBinary": "Flow Local Binary",
     "flowAgentProxy": "Flow Omni Route",
     "agentNamePlaceholder": "Agent Name Placeholder",
-    "architectureDescription": "Architecture Description",
+    "architectureDescription": "__MISSING__:When a request arrives, AgentProxy can spawn a local CLI binary (e.g., claude, codex, goose) and pipe the request through it. The CLI processes the request using its own credentials and returns the result back through AgentProxy.",
     "flowExecute": "Flow Execute",
-    "flowSpawn": "Flow Spawn",
+    "flowSpawn": "__MISSING__:2 · AgentProxy spawns local binary",
     "cliToolsRedirectCta": "Cli Tools Redirect Cta",
     "comparisonTitle": "ابزارهای CLI در مقابل اهداف عامل - تفاوت چیست؟",
     "comparisonCliToolsLabel": "صفحه ابزار CLI",

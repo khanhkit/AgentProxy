@@ -93,7 +93,6 @@ interface KieImageOptions {
     error: (scope: string, message: string) => void;
   } | null;
 }
-
 // KIE Market catalog ids are namespaced for AgentProxy's catalog
 // (`<vendor>/<model>`), but the KIE Market createTask API expects
 // vendor-specific upstream ids that do not follow a single consistent

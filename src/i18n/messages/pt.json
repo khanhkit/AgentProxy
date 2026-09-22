@@ -3072,7 +3072,7 @@
       }
     },
     "autoConfiguredTab": "Auto Configured Tab",
-    "toolCategoriesDesc": "Tool Categories Desc",
+    "toolCategoriesDesc": "__MISSING__:Configure AI coding assistants to route through AgentProxy",
     "allToolsTab": "All Tools Tab",
     "guidedClientsTab": "Guided Clients Tab",
     "mitmClientsTab": "Mitm Clients Tab",
@@ -5540,7 +5540,7 @@
     "ccAliasLoadError": "Failed to load discovery-alias settings: {error}",
     "ccAliasSaveError": "Failed to save discovery-alias setting: {error}",
     "compatUpstreamHeadersLabel": "Cabeçalhos upstream extra",
-    "compatUpstreamHeadersHint": "Definição de alto privilégio — mesmo nível de confiança que editar credenciais de API do fornecedor; só admins de confiança devem usar.",
+    "compatUpstreamHeadersHint": "__MISSING__:High-privilege setting — same trust level as editing provider API credentials; only trusted admins should use it. Merged after AgentProxy adds auth from the provider API key. If a custom header uses the same name as an existing one (e.g. Authorization), your value fully replaces the auto-generated header (including the Bearer token) — the upstream only sees what you typed, not the key from settings. Misconfiguration can cause 401 or broken upstream auth. One row per header (e.g. extra Authentication for some gateways). Hover or focus the value to preview. Saves on blur, outside click, or closing this panel.",
     "compatUpstreamHeaderName": "Nome do cabeçalho",
     "compatUpstreamHeaderValue": "Valor",
     "compatUpstreamAddRow": "Adicionar cabeçalho",
@@ -5797,7 +5797,7 @@
     "ccCompatibleNamePlaceholder": "Cc Compatible Name Placeholder",
     "ccCompatiblePrefixHint": "Cc Compatible Prefix Hint",
     "ccCompatiblePrefixPlaceholder": "Cc Compatible Prefix Placeholder",
-    "ccCompatibleValidationHint": "Cc Compatible Validation Hint",
+    "ccCompatibleValidationHint": "__MISSING__:Use this provider only for relays that serve Claude Code clients exclusively. AgentProxy rewrites any incoming request into the Claude Code-compatible wire format so those relays accept it. If you only want to use Claude Code CLI, or you are not sure what this relay type means, use a regular Anthropic-compatible provider instead.",
     "claudeExtraUsageShort": "Claude Extra Usage Short",
     "claudeExtraUsageToggleTitle": "Claude Extra Usage Toggle Title",
     "codex5hToggleTitle": "Codex5H Toggle Title",
@@ -6589,7 +6589,7 @@
     "memoryTitle": "Memória",
     "memoryDesc": "Memória conversacional persistente entre sessões",
     "memoryEnabled": "Ativar Memória",
-    "memoryEnabledDesc": "Quando ativado, injetará o contexto passado relevante de forma dinâmica.",
+    "memoryEnabledDesc": "__MISSING__:When enabled, AgentProxy will inject relevant past context.",
     "memoryTokenCostWarning": "Atenção: com a memória ativada, o AgentProxy injeta até {tokens} tokens de contexto recuperado em cada pedido de chat — isto aumenta o uso de tokens e o custo. Para ignorar a injeção num pedido específico, envie o cabeçalho \"x-agentproxy-no-memory: true\".",
     "maxTokens": "Tokens Máximos",
     "retentionDays": "Retenção",
@@ -6971,7 +6971,7 @@
     "afterPromptPlaceholder": "Instruções inseridas após o prompt do agente/provedor...",
     "chars": "{count} caracteres",
     "thinkingBudgetTitle": "Pensando no orçamento",
-    "thinkingBudgetDesc": "Controle o uso do token de raciocínio de IA em todas as solicitações",
+    "thinkingBudgetDesc": "__MISSING__:Controls whether AgentProxy rewrites client thinking/reasoning parameters before requests go upstream. This is separate from compression, prompt cache, and API-key token limits.",
     "thinkingBudgetIndependenceHint": "Os recursos de compressão, roteamento e limite de tokens continuam a funcionar em todos os modos. Auto não significa \"auto-exibir raciocínio\" — remove os campos de raciocínio do cliente.",
     "passthrough": "Passagem",
     "passthroughDesc": "Sem alterações – o cliente controla o orçamento pensado",
@@ -8730,7 +8730,7 @@
   },
   "omniglyph": {
     "preview": "Pré-visualização",
-    "description": "Compressão de contexto como imagem. Renderiza a instrução do sistema, a documentação das ferramentas e o histórico denso como páginas PNG compactas que o Claude Fable 5 lê em vez de texto. Os tokens de imagem são faturados pelas dimensões e não pelos carateres, pelo que o bloco convertido custa cerca de 10× menos. Apenas rota direta da Anthropic.",
+    "description": "__MISSING__:Context-as-image compression. Renders the system prompt, tool documentation, and dense history as compact PNG pages for the measured Claude Fable 5 path. The published OmniGlyph package also exposes native GPT 5.6 transformers, but AgentProxy keeps those routes fail-closed until provider fidelity and reading receipts exist.",
     "economicsTitle": "A economia",
     "economics": {
       "fewerTokens": "menos tokens no bloco convertido",
@@ -8750,7 +8750,7 @@
       "model": {
         "label": "Modelo",
         "pass": "claude-fable-5",
-        "why": "Apenas o Fable 5 lê páginas densas com 100% de precisão (medido, n=30). O GPT-5.5 e o Gemini 2.5 Flash estão bloqueados."
+        "why": "__MISSING__:Only the measured Fable 5 path is enabled in AgentProxy. GPT 5.6 is structurally supported by the package but remains blocked until its provider receipt; unverified families such as Grok stay text-only."
       },
       "transport": {
         "label": "Transporte",
@@ -10349,7 +10349,7 @@
     "setupGuideCommandMissingTitle": "Corrigir erro 'comando não encontrado'",
     "setupGuideCommandMissingDesc": "Certifica-te de que o comando CLI existe no PATH, abre uma nova sessão de terminal e volta a correr Atualizar.",
     "cliToolsRedirectTitle": "Cli Tools Redirect Title",
-    "cliToolsRedirectDesc": "Cli Tools Redirect Desc",
+    "cliToolsRedirectDesc": "__MISSING__:If you want to point Claude Code, Cursor, Codex, or any IDE at AgentProxy as a proxy, go to CLI Tools instead. This page is for the reverse — using local CLI binaries as execution targets that AgentProxy can spawn and route requests through.",
     "spawnArgsPlaceholder": "Spawn Args Placeholder",
     "binaryNamePlaceholder": "Binary Name Placeholder",
     "versionCommandPlaceholder": "Version Command Placeholder",
@@ -10357,9 +10357,9 @@
     "flowLocalBinary": "Flow Local Binary",
     "flowAgentProxy": "Flow Omni Route",
     "agentNamePlaceholder": "Agent Name Placeholder",
-    "architectureDescription": "Architecture Description",
+    "architectureDescription": "__MISSING__:When a request arrives, AgentProxy can spawn a local CLI binary (e.g., claude, codex, goose) and pipe the request through it. The CLI processes the request using its own credentials and returns the result back through AgentProxy.",
     "flowExecute": "Flow Execute",
-    "flowSpawn": "Flow Spawn",
+    "flowSpawn": "__MISSING__:2 · AgentProxy spawns local binary",
     "cliToolsRedirectCta": "Cli Tools Redirect Cta",
     "comparisonTitle": "Ferramentas CLI versus alvos de agente – Qual é a diferença?",
     "comparisonCliToolsLabel": "Página de ferramentas CLI",
@@ -10596,7 +10596,7 @@
     "tableProvider": "Fornecedor",
     "tableModel": "Modelo",
     "performanceTitle": "Desempenho",
-    "semanticCacheSectionDesc": "Secção de cache semântica",
+    "semanticCacheSectionDesc": "__MISSING__:AgentProxy's own deterministic response cache. When enabled, repeated non-streaming temperature=0 requests can be served locally without hitting the upstream provider.",
     "semanticCacheDisabledDesc": "A cache semântica está desativada. O AgentProxy vai saltar a reutilização local de respostas até a reativares nas Definições.",
     "semanticEntriesDesc": "Registos de cache semântica persistidos atualmente armazenados em SQLite. A atividade de cache de prompt do lado do fornecedor não está listada aqui.",
     "searchEntries": "Pesquisar entradas...",
@@ -12371,7 +12371,7 @@
       },
       "cli-serve": {
         "name": "CLI: Serve",
-        "description": "Serve o agente localmente"
+        "description": "__MISSING__:Start, stop, and restart the AgentProxy server from the CLI. Manage daemon mode, port configuration, auto-recovery, system tray integration, and the dashboard open shortcut."
       },
       "cli-health": {
         "name": "CLI: Saúde",
@@ -12391,7 +12391,7 @@
       },
       "cli-chat": {
         "name": "CLI: Chat",
-        "description": "Cliente de chat em linha de comandos"
+        "description": "__MISSING__:Send chat completions, stream responses, and start an interactive REPL session from the CLI. Supports all AgentProxy providers, combo routing, and system prompt configuration."
       },
       "cli-routing": {
         "name": "CLI: Encaminhamento e Combos",
