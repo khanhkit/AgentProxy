@@ -96,5 +96,9 @@
       # eb5797370). Same UI-identifier pattern as the kimi banner above, not a
       # credential; the generic-api-key rule flags the long hyphenated string.
       '''agentproxy-cheaperinference-sponsor-banner-dismissed-v\d+''',
+      # AP-ISS-0113 Green Release (2026-09-22): deterministic local vault filename.
+      # This literal names the owner-only file that stores encrypted vault key material;
+      # it is not itself a credential, token, or secret value.
+      '''api-key-vault-v\d+\.secret''',
       '''SunbreakWebUI1''',
     ]

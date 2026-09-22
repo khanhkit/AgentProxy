@@ -3072,7 +3072,7 @@
       }
     },
     "autoConfiguredTab": "Auto Configured Tab",
-    "toolCategoriesDesc": "Tool Categories Desc",
+    "toolCategoriesDesc": "__MISSING__:Configure AI coding assistants to route through AgentProxy",
     "allToolsTab": "All Tools Tab",
     "guidedClientsTab": "Guided Clients Tab",
     "mitmClientsTab": "Mitm Clients Tab",
@@ -5797,7 +5797,7 @@
     "ccCompatibleNamePlaceholder": "Cc Compatible Name Placeholder",
     "ccCompatiblePrefixHint": "Cc Compatible Prefix Hint",
     "ccCompatiblePrefixPlaceholder": "Cc Compatible Prefix Placeholder",
-    "ccCompatibleValidationHint": "Cc Compatible Validation Hint",
+    "ccCompatibleValidationHint": "__MISSING__:Use this provider only for relays that serve Claude Code clients exclusively. AgentProxy rewrites any incoming request into the Claude Code-compatible wire format so those relays accept it. If you only want to use Claude Code CLI, or you are not sure what this relay type means, use a regular Anthropic-compatible provider instead.",
     "claudeExtraUsageShort": "Claude Extra Usage Short",
     "claudeExtraUsageToggleTitle": "Claude Extra Usage Toggle Title",
     "codex5hToggleTitle": "Codex5H Toggle Title",
@@ -6971,7 +6971,7 @@
     "afterPromptPlaceholder": "Mga tagubiling isiningit pagkatapos ng prompt ng agent/provider...",
     "chars": "{count} character",
     "thinkingBudgetTitle": "Pag-iisip na Badyet",
-    "thinkingBudgetDesc": "Kontrolin ang paggamit ng token ng pangangatwiran ng AI sa lahat ng kahilingan",
+    "thinkingBudgetDesc": "__MISSING__:Controls whether AgentProxy rewrites client thinking/reasoning parameters before requests go upstream. This is separate from compression, prompt cache, and API-key token limits.",
     "thinkingBudgetIndependenceHint": "Ang mga tampok ng compression, routing, at token-limit ay patuloy na gumagana sa bawat mode. Ang Auto ay hindi nangangahulugang \"auto-show thinking\" — inaalis nito ang mga field ng pag-iisip ng kliyente.",
     "passthrough": "Passthrough",
     "passthroughDesc": "Walang pagbabago — kinokontrol ng kliyente ang pag-iisip na badyet",
@@ -8730,7 +8730,7 @@
   },
   "omniglyph": {
     "preview": "Preview",
-    "description": "Context-as-image compression. Nire-render ang system prompt, dokumentasyon ng tool, at siksik na history bilang mga compact na PNG page na binabasa ng Claude Fable 5 sa halip na text. Ang mga image token ay sinisingil ayon sa mga dimensyon sa halip na mga character, kaya ang na-convert na block ay nagkakahalaga ng humigit-kumulang 10× na mas mababa. Direktang Anthropic route lamang.",
+    "description": "__MISSING__:Context-as-image compression. Renders the system prompt, tool documentation, and dense history as compact PNG pages for the measured Claude Fable 5 path. The published OmniGlyph package also exposes native GPT 5.6 transformers, but AgentProxy keeps those routes fail-closed until provider fidelity and reading receipts exist.",
     "economicsTitle": "Ang ekonomiks",
     "economics": {
       "fewerTokens": "mas kaunting mga token sa na-convert na block",
@@ -8750,7 +8750,7 @@
       "model": {
         "label": "Modelo",
         "pass": "claude-fable-5",
-        "why": "Tanging Fable 5 lamang ang nagbabasa ng mga siksik na page sa 100% katumpakan (nasukat, n=30). Naka-block ang GPT-5.5 at Gemini 2.5 Flash."
+        "why": "__MISSING__:Only the measured Fable 5 path is enabled in AgentProxy. GPT 5.6 is structurally supported by the package but remains blocked until its provider receipt; unverified families such as Grok stay text-only."
       },
       "transport": {
         "label": "Transport",
@@ -10349,7 +10349,7 @@
     "setupGuideCommandMissingTitle": "Fix 'command not found'",
     "setupGuideCommandMissingDesc": "Ensure the CLI command exists in PATH, open a new terminal session, and rerun Refresh.",
     "cliToolsRedirectTitle": "Cli Tools Redirect Title",
-    "cliToolsRedirectDesc": "Cli Tools Redirect Desc",
+    "cliToolsRedirectDesc": "__MISSING__:If you want to point Claude Code, Cursor, Codex, or any IDE at AgentProxy as a proxy, go to CLI Tools instead. This page is for the reverse — using local CLI binaries as execution targets that AgentProxy can spawn and route requests through.",
     "spawnArgsPlaceholder": "Spawn Args Placeholder",
     "binaryNamePlaceholder": "Binary Name Placeholder",
     "versionCommandPlaceholder": "Version Command Placeholder",
@@ -10357,9 +10357,9 @@
     "flowLocalBinary": "Flow Local Binary",
     "flowAgentProxy": "Flow Omni Route",
     "agentNamePlaceholder": "Agent Name Placeholder",
-    "architectureDescription": "Architecture Description",
+    "architectureDescription": "__MISSING__:When a request arrives, AgentProxy can spawn a local CLI binary (e.g., claude, codex, goose) and pipe the request through it. The CLI processes the request using its own credentials and returns the result back through AgentProxy.",
     "flowExecute": "Flow Execute",
-    "flowSpawn": "Flow Spawn",
+    "flowSpawn": "__MISSING__:2 · AgentProxy spawns local binary",
     "cliToolsRedirectCta": "Cli Tools Redirect Cta",
     "comparisonTitle": "CLI Tools vs Agent Targets — Ano ang Pagkakaiba?",
     "comparisonCliToolsLabel": "Pahina ng CLI Tools",

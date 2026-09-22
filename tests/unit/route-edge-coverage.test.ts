@@ -4,7 +4,6 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { makeManagementSessionRequest } from "../helpers/managementSession.ts";
-
 const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-route-edges-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.API_KEY_SECRET = "test-api-key-secret";
@@ -38,11 +37,11 @@ async function resetStorage() {
   delete process.env.INITIAL_PASSWORD;
   delete process.env.REQUIRE_API_KEY;
   delete process.env.ENABLE_SOCKS5_PROXY;
-
   core.resetDbInstance();
   apiKeysDb.resetApiKeyState();
   fs.rmSync(TEST_DATA_DIR, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
   fs.mkdirSync(TEST_DATA_DIR, { recursive: true });
+  await localDb.updateSettings({ requireLogin: false, password: "" });
 }
 
 async function enableManagementAuth() {
