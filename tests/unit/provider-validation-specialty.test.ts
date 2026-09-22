@@ -478,7 +478,7 @@ test("web-cookie provider validators accept valid Grok, Perplexity, Blackbox and
         { status: 200 }
       );
     }
-    if (new URL(target).hostname === "meta.ai" && new URL(target).pathname === "/api/graphql") {
+    if (new URL(target).hostname === "www.meta.ai" && new URL(target).pathname === "/api/graphql") {
       return new Response(metaAiSseText("Muse Spark says hello"), {
         status: 200,
         headers: { "Content-Type": "text/event-stream" },
@@ -519,7 +519,7 @@ test("web-cookie provider validators accept valid Grok, Perplexity, Blackbox and
   );
   const museSparkCall = calls.find(
     (call) =>
-      new URL(call.url).hostname === "meta.ai" && new URL(call.url).pathname === "/api/graphql"
+      new URL(call.url).hostname === "www.meta.ai" && new URL(call.url).pathname === "/api/graphql"
   );
 
   // Grok goes through tlsFetchGrok (TLS override), not globalThis.fetch.
@@ -540,7 +540,7 @@ test("web-cookie provider validators accept valid Grok, Perplexity, Blackbox and
   // options.headers is a plain object; the validator sets Cookie from the session token.
   assert.ok(pplxTlsCall, "perplexity TLS override was called");
   assert.ok(
-    new URL(pplxTlsCall!.url).hostname === "perplexity.ai" &&
+    new URL(pplxTlsCall!.url).hostname === "www.perplexity.ai" &&
       new URL(pplxTlsCall!.url).pathname === "/rest/sse/perplexity_ask"
   );
   assert.equal(
@@ -597,7 +597,7 @@ test("web-cookie provider validators surface auth and subscription failures", as
         { status: 200 }
       );
     }
-    if (new URL(target).hostname === "meta.ai" && new URL(target).pathname === "/api/graphql") {
+    if (new URL(target).hostname === "www.meta.ai" && new URL(target).pathname === "/api/graphql") {
       return new Response(metaAiSseText("Authentication required to send messages", "ERROR"), {
         status: 200,
         headers: { "Content-Type": "text/event-stream" },
