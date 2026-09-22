@@ -478,7 +478,9 @@
     "@parcel/watcher": true,
     "keytar": true,
     "protobufjs": true,
-    "unrs-resolver": true
+    "unrs-resolver": true,
+    "bun": true,
+    "opencode-ai": true
   },
   "overrides": {
     "browserslist": "^4.28.8",
