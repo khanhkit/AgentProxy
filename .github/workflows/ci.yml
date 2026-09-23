@@ -719,6 +719,7 @@ jobs:
           stage_started=$(date +%s)
           node scripts/build/stage-npm-package.mjs --output "$stage" > "$RUNNER_TEMP/npm-stage.json"
           stage_elapsed=$(( $(date +%s) - stage_started ))
+          echo "bounded staging elapsed: ${stage_elapsed}s"
           started=$(date +%s)
           (
             cd "$stage"
@@ -732,6 +733,7 @@ jobs:
           package="${packages[0]}"
           (cd "$out" && sha256sum "$(basename "$package")" > SHA256SUMS)
           elapsed=$(( $(date +%s) - started ))
+          echo "npm pack elapsed: ${elapsed}s"
           echo "elapsed=$elapsed" >> "$GITHUB_OUTPUT"
           echo "tarball=$(basename "$package")" >> "$GITHUB_OUTPUT"
           {
