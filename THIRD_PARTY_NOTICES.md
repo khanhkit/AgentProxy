@@ -1,5 +1,19 @@
 # Third-Party Notices
 
+## elkjs 0.9.3
+
+AgentProxy receives `elkjs@0.9.3` transitively through `mermaid@12.0.0` for diagram layout.
+AgentProxy does not modify elkjs.
+
+- Upstream source: <https://github.com/kieler/elkjs>
+- npm package: `elkjs@0.9.3`
+- License: Eclipse Public License 2.0 (EPL-2.0)
+- The upstream npm tarball includes `LICENSE.md`; recipients can obtain the corresponding source from
+  the upstream repository above.
+
+The elkjs package remains subject to EPL-2.0. This notice does not relicense elkjs under AgentProxy's
+MIT license.
+
 ## wreq-js 3.2.0 native transport
 
 AgentProxy ships `wreq-js@3.2.0` and its platform-specific native bindings for browser-
