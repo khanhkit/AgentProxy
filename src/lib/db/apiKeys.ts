@@ -49,6 +49,8 @@ import {
   parseStringList,
   parseNullableTimestamp,
   parseIsBanned,
+  parseStreamDefaultMode,
+  parseCacheDefaultMode,
   parseChaosModeEnabled,
   parseCompressionEnabled,
   parseModelAccessMode,
