@@ -16,6 +16,8 @@ import {
   evaluateMachineTokenAuth,
   evaluateSqlJsRoundTrip,
   evaluateRestartPersistence,
+  resolvePackageArg,
+  selectPackageTarball,
 } from "../../scripts/check/check-pack-boot.mjs";
 
 // WS1.2 (T1, v3.8.49 quality plan) — pure-function guards for the tarball boot-smoke
@@ -57,6 +59,33 @@ test("pickTarball normalizes scoped slashes to the on-disk dash form", () => {
 test("pickTarball throws on empty/odd npm output instead of booting garbage", () => {
   assert.throws(() => pickTarball("[]"));
   assert.throws(() => pickTarball("{}"));
+});
+
+test("resolvePackageArg resolves an existing --package path and rejects invalid input", () => {
+  const exists = (candidate) => candidate === path.resolve("/repo", "artifact.tgz");
+  assert.equal(
+    resolvePackageArg(["--package", "artifact.tgz"], "/repo", exists),
+    path.resolve("/repo", "artifact.tgz")
+  );
+  assert.throws(() => resolvePackageArg(["--package"], "/repo", exists), /requires a path/);
+  assert.throws(
+    () => resolvePackageArg(["--package", "missing.tgz"], "/repo", exists),
+    /does not exist/
+  );
+});
+
+test("selectPackageTarball reuses a supplied canonical package without repacking", () => {
+  let packCalls = 0;
+  const pack = () => {
+    packCalls++;
+    return "/tmp/repacked.tgz";
+  };
+
+  assert.equal(selectPackageTarball("/tmp/canonical.tgz", pack), "/tmp/canonical.tgz");
+  assert.equal(packCalls, 0, "supplying --package must bypass npm pack entirely");
+
+  assert.equal(selectPackageTarball(null, pack), "/tmp/repacked.tgz");
+  assert.equal(packCalls, 1);
 });
 
 test("installed package root follows the package manifest name instead of the legacy AgentProxy name", () => {
@@ -210,6 +239,35 @@ test("source guard: the gate polls the real health endpoint of the INSTALLED bin
   assert.ok(src.includes("MAX_SERVER_OUTPUT_CHARS"));
   assert.ok(!src.includes("while (tail.length > 80)"), "must not discard early startup proof");
   assert.ok(src.indexOf("npm") < src.indexOf("spawn"), "pack+install must precede the boot spawn");
+});
+
+test("CI packs once, then fans out the exact canonical tarball to policy and boot", () => {
+  const workflow = readFileSync(
+    fileURLToPath(new URL("../../.github/workflows/ci.yml", import.meta.url)),
+    "utf8"
+  );
+  const start = workflow.indexOf("  package-canonical:");
+  const end = workflow.indexOf("  electron-package-smoke:", start);
+  assert.ok(start >= 0 && end > start, "package pipeline jobs must exist");
+  const packagePipeline = workflow.slice(start, end);
+
+  assert.equal(
+    (packagePipeline.match(/npm pack --json/g) || []).length,
+    1,
+    "the package pipeline must execute npm pack exactly once"
+  );
+  assert.match(packagePipeline, /npm run check:pack-artifact -- --package/);
+  assert.match(packagePipeline, /check-pack-boot\.mjs --package/);
+  assert.match(
+    packagePipeline,
+    /needs: \[package-canonical, package-policy, package-boot\]/,
+    "Package Artifact must aggregate both parallel consumers"
+  );
+  assert.match(
+    packagePipeline,
+    /needs\.package-canonical\.result != 'skipped'/,
+    "docs-only/build-skip flows must keep Package Artifact skipped instead of false-failing"
+  );
 });
 
 test("restart persistence requires the reboot value to match the boot #1 written value", () => {

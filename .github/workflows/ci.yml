@@ -672,10 +672,13 @@ jobs:
           path: ${{ runner.temp }}/e2e-build.tar.gz
           retention-days: 1
 
-  package-artifact:
-    name: Package Artifact
+  package-canonical:
+    name: Package Canonical Pack
     runs-on: ubuntu-latest
     needs: build
+    outputs:
+      pack-seconds: ${{ steps.pack.outputs.elapsed }}
+      tarball: ${{ steps.pack.outputs.tarball }}
     env:
       JWT_SECRET: ci-build-secret-with-sufficient-length-for-validation
     steps:
@@ -686,52 +689,78 @@ jobs:
         with:
           node-version: ${{ env.CI_NODE_VERSION }}
           cache: npm
-      - uses: $/.github/actions/npm-ci-retry
+      - uses: ./.github/actions/npm-ci-retry
       - run: npm run check:node-runtime
       - name: Download Next.js build artifact
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: next-build
-          # Workspace-relative on purpose: the matrix below includes windows-latest, whose
-          # default shell is pwsh, where $RUNNER_TEMP is empty (it is $env:RUNNER_TEMP) —
-          # #11896's first cut broke the Electron smoke on exactly that. A relative path
-          # works in bash and pwsh alike; hosted workspaces are ephemeral.
           path: next-build-artifact
       - name: Extract Next.js build artifact
-        run: |
-          tar -xzf next-build-artifact/e2e-build.tar.gz
-      # build:cli consumes the downloaded .build/next standalone artifact and assembles dist/;
-      # it only rebuilds if the downloaded standalone artifact is missing.
+        run: tar -xzf next-build-artifact/e2e-build.tar.gz
       - run: npm run build:cli
       - name: Assert dist/server.js exists
         run: test -f dist/server.js || (echo "dist/server.js missing — build:cli did not assemble correctly" && exit 1)
-      # `build:cli` monta dist/ mas NAO grava dist/BUILD_SHA — so `build:release` faz
-      # isso, chamando write-build-sha.mjs. O guard de proveniencia do #10427, dentro
-      # de check:pack-artifact, rejeita um artefato sem SHA (e rejeita mesmo com
-      # AGENTPROXY_ALLOW_CANARY_BUILD=1: o que nao da para identificar nao da para
-      # vouchear). Sem este passo o par build+validate deste job e estruturalmente
-      # incompativel e falha 100% das vezes.
       - name: Stamp dist/BUILD_SHA for the provenance guard (#10427)
-        # O SHA TEM de vir do head da PR, nao de `git rev-parse HEAD`. Este workflow
-        # roda em `pull_request`, entao o checkout e o MERGE COMMIT efemero que o
-        # GitHub cria — um commit que nao existe em branch nenhuma e portanto nunca e
-        # ancestral da release. O guard de proveniencia (#10427) rejeita exatamente
-        # isso, e com razao: um artefato carimbado com o merge commit nao pode ser
-        # rastreado ate codigo que passou pelos gates.
         env:
           AGENTPROXY_BUILD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
         run: |
           export AGENTPROXY_BUILD_SHA="${AGENTPROXY_BUILD_SHA:0:7}"
           node scripts/build/write-build-sha.mjs
-      # O guard de proveniencia checa ancestralidade contra `origin/main` por padrao.
-      # Esse e o ref certo na PUBLICACAO (npm-publish.yml roda em main), mas em
-      # `pull_request` e estruturalmente impossivel: enquanto a PR esta aberta o head
-      # dela NUNCA e ancestral de main — e o checkout raso nem traz `origin/main` para
-      # o grafo local, entao a sonda responde `false` de qualquer jeito. Resultado: o
-      # gate falhava 100% das vezes em PR. Pre-merge o unico invariante checavel e "o
-      # stamp corresponde a branch sob teste", entao apontamos o ref para o head da PR.
-      # Usamos `refs/pull/<N>/head` e nao `head.ref` porque aquele existe no PROPRIO
-      # origin mesmo quando a PR vem de um fork; `head.ref` so existe no repo do autor.
+      - name: Pack canonical npm artifact once
+        id: pack
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/canonical-package"
+          rm -rf "$out"
+          mkdir -p "$out"
+          started=$(date +%s)
+          npm pack --json --pack-destination "$out" > "$RUNNER_TEMP/npm-pack.json"
+          mapfile -t packages < <(find "$out" -maxdepth 1 -type f -name '*.tgz' -print)
+          if [ "${#packages[@]}" -ne 1 ]; then
+            printf 'expected exactly one .tgz, found %s\n' "${#packages[@]}" >&2
+            exit 1
+          fi
+          package="${packages[0]}"
+          (cd "$out" && sha256sum "$(basename "$package")" > SHA256SUMS)
+          elapsed=$(( $(date +%s) - started ))
+          echo "elapsed=$elapsed" >> "$GITHUB_OUTPUT"
+          echo "tarball=$(basename "$package")" >> "$GITHUB_OUTPUT"
+          {
+            echo "### Canonical npm package"
+            echo "- tarball: \`$(basename "$package")\`"
+            echo "- npm pack: ${elapsed}s"
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload canonical npm package
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: canonical-npm-package
+          path: ${{ runner.temp }}/canonical-package
+          retention-days: 1
+          compression-level: 0
+
+  package-policy:
+    name: Package Policy
+    runs-on: ubuntu-latest
+    needs: package-canonical
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: ${{ env.CI_NODE_VERSION }}
+          cache: npm
+      - uses: ./.github/actions/npm-ci-retry
+      - run: npm run check:node-runtime
+      - name: Download canonical npm package
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: canonical-npm-package
+          path: canonical-package
+      - name: Verify canonical package checksum
+        run: (cd canonical-package && sha256sum -c SHA256SUMS)
       - name: Resolve the provenance ref for the pack gate (#10427)
         id: provenance-ref
         env:
@@ -746,14 +775,68 @@ jobs:
               "+refs/heads/$GITHUB_REF_NAME:refs/remotes/origin/$GITHUB_REF_NAME"
             echo "ref=origin/$GITHUB_REF_NAME" >> "$GITHUB_OUTPUT"
           fi
-      - run: npm run check:pack-artifact
+      - name: Validate the canonical npm package
         env:
           AGENTPROXY_RELEASE_REF: ${{ steps.provenance-ref.outputs.ref }}
-      # WS1.2 (#7065 class): pack the real tarball, install it into a clean prefix and
-      # BOOT it to a healthy /api/monitoring/health — the gate that structure checks
-      # cannot provide (3 releases shipped boot-crashing tarballs with green lists).
-      - name: Boot-smoke the packed tarball
-        run: npm run check:pack-boot
+        shell: bash
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          packages=(canonical-package/*.tgz)
+          [ "${#packages[@]}" -eq 1 ] || { echo "expected exactly one canonical .tgz" >&2; exit 1; }
+          npm run check:pack-artifact -- --package "${packages[0]}"
+
+  package-boot:
+    name: Package Boot Smoke
+    runs-on: ubuntu-latest
+    needs: package-canonical
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: ${{ env.CI_NODE_VERSION }}
+      - name: Pin authoritative npm
+        run: npm install -g npm@12.0.2 --no-audit --no-fund
+      - name: Download canonical npm package
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: canonical-npm-package
+          path: canonical-package
+      - name: Verify canonical package checksum
+        run: (cd canonical-package && sha256sum -c SHA256SUMS)
+      - name: Boot-smoke the exact canonical tarball
+        shell: bash
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          packages=(canonical-package/*.tgz)
+          [ "${#packages[@]}" -eq 1 ] || { echo "expected exactly one canonical .tgz" >&2; exit 1; }
+          node scripts/check/check-pack-boot.mjs --package "${packages[0]}"
+
+  package-artifact:
+    name: Package Artifact
+    runs-on: ubuntu-latest
+    if: ${{ always() && !cancelled() && needs.package-canonical.result != 'skipped' }}
+    needs: [package-canonical, package-policy, package-boot]
+    steps:
+      - name: Aggregate package verdict
+        env:
+          CANONICAL: ${{ needs.package-canonical.result }}
+          POLICY: ${{ needs.package-policy.result }}
+          BOOT: ${{ needs.package-boot.result }}
+          PACK_SECONDS: ${{ needs.package-canonical.outputs.pack-seconds }}
+          TARBALL: ${{ needs.package-canonical.outputs.tarball }}
+        run: |
+          {
+            echo "### Package Artifact"
+            echo "- canonical pack: $CANONICAL (${PACK_SECONDS:-n/a}s)"
+            echo "- policy: $POLICY"
+            echo "- boot smoke: $BOOT"
+            echo "- tarball: ${TARBALL:-n/a}"
+          } >> "$GITHUB_STEP_SUMMARY"
+          [ "$CANONICAL" = success ] && [ "$POLICY" = success ] && [ "$BOOT" = success ]
 
   electron-package-smoke:
     name: Electron Package Smoke (${{ matrix.os }})
@@ -825,7 +908,7 @@ jobs:
     timeout-minutes: 25
     # needs: changes (not build) — this job never downloads the next-build artifact;
     # gating it on Build only serialized ~20min of wall-clock for nothing. Jobs that
-    # DO consume the artifact (e2e, package-artifact, electron-package-smoke) keep
+    # DO consume the artifact (e2e, package-canonical, electron-package-smoke) keep
     # needs: build. The `if` mirrors Build's own skip condition so docs-only PRs
     # still skip the suite.
     needs: changes

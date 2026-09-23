@@ -260,6 +260,21 @@ export function normalizeArtifactPath(filePath: string): string {
     .replace(/\/{2,}/g, "/");
 }
 
+export function parseTarballListOutput(output: string): string[] {
+  const paths: string[] = [];
+  for (const rawLine of String(output || "").split(/\r?\n/)) {
+    const entry = normalizeArtifactPath(rawLine.trim());
+    if (!entry) continue;
+    if (!entry.startsWith("package/")) {
+      throw new Error(`tarball entry is outside package/: ${entry}`);
+    }
+    const relativePath = entry.slice("package/".length);
+    if (!relativePath || relativePath.endsWith("/")) continue;
+    paths.push(relativePath);
+  }
+  return paths;
+}
+
 /** Extract complete JSON values from npm's mixed stdout/stderr-style output. */
 export function parseJsonValuesOutput(output: string): unknown[] {
   const values: unknown[] = [];

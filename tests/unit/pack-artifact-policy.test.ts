@@ -13,6 +13,7 @@ import {
   normalizeArtifactPath,
   parseJsonArrayOutput,
   parseJsonValuesOutput,
+  parseTarballListOutput,
 } from "../../scripts/build/pack-artifact-policy.ts";
 
 test("artifact path policy arrays contain no duplicate entries", () => {
@@ -68,6 +69,41 @@ test("parseJsonValuesOutput extracts object reports as well as arrays", () => {
   assert.deepEqual(parseJsonValuesOutput('notice\n{"files":[{"path":"src/index.ts"}]}'), [
     { files: [{ path: "src/index.ts" }] },
   ]);
+});
+
+test("parseTarballListOutput strips npm's package/ prefix and ignores directory entries", () => {
+  assert.deepEqual(
+    parseTarballListOutput(
+      [
+        "package/",
+        "package/dist/",
+        "package/dist/server.js",
+        "package/bin/agentproxy.mjs",
+        "",
+      ].join("\n")
+    ),
+    ["dist/server.js", "bin/agentproxy.mjs"]
+  );
+});
+
+test("parseTarballListOutput rejects entries outside npm's package/ root", () => {
+  assert.throws(
+    () => parseTarballListOutput("package/dist/server.js\n../escape.txt\n"),
+    /outside package\//
+  );
+});
+
+test("canonical-package validation reads file list and BUILD_SHA from the supplied tarball", () => {
+  const validator = readFileSync(
+    new URL("../../scripts/build/validate-pack-artifact.ts", import.meta.url),
+    "utf8"
+  );
+  assert.match(validator, /execFileSync\("tar", \["-tzf", tarballPath\]/);
+  assert.match(
+    validator,
+    /execFileSync\("tar", \["-xOzf", tarballPath, "package\/dist\/BUILD_SHA"\]/
+  );
+  assert.match(validator, /packagePath \? runTarballReport\(packagePath\) : runPackDryRun\(\)/);
 });
 
 test("findUnexpectedArtifactPaths flags staged app files outside the allowlist", () => {

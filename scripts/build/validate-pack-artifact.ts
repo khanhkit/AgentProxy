@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 import { execFileSync, spawnSync } from "node:child_process";
-import { existsSync } from "node:fs";
-import { dirname, join } from "node:path";
+import { existsSync, statSync } from "node:fs";
+import { basename, dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
   makeGitAncestryProbe,
@@ -23,6 +23,7 @@ import {
   findMissingArtifactPaths,
   findUnexpectedArtifactPaths,
   parseJsonValuesOutput,
+  parseTarballListOutput,
 } from "./pack-artifact-policy.ts";
 
 const __filename: string = fileURLToPath(import.meta.url);
@@ -112,6 +113,37 @@ function runPackDryRun(): PackReport {
 
   return packReport;
 }
+function getArgValue(flag: string): string | null {
+  const index = process.argv.indexOf(flag);
+  if (index < 0) return null;
+  const value = process.argv[index + 1];
+  if (!value || value.startsWith("--")) throw new Error(`${flag} requires a path`);
+  return resolve(ROOT, value);
+}
+
+function runTarballReport(tarballPath: string): PackReport {
+  if (!existsSync(tarballPath)) throw new Error(`package tarball not found: ${tarballPath}`);
+  const output = execFileSync("tar", ["-tzf", tarballPath], {
+    cwd: ROOT,
+    encoding: "utf8",
+    maxBuffer: 64 * 1024 * 1024,
+  });
+  const paths = parseTarballListOutput(output);
+  return {
+    filename: basename(tarballPath),
+    entryCount: paths.length,
+    size: statSync(tarballPath).size,
+    files: paths.map((path) => ({ path })),
+  };
+}
+
+function readTarballBuildSha(tarballPath: string): string {
+  return execFileSync("tar", ["-xOzf", tarballPath, "package/dist/BUILD_SHA"], {
+    cwd: ROOT,
+    encoding: "utf8",
+    maxBuffer: 1024 * 1024,
+  }).trim();
+}
 
 function formatBytes(bytes: number): string {
   if (!Number.isFinite(bytes) || bytes < 1024) {
@@ -139,8 +171,9 @@ function formatBytes(bytes: number): string {
 const POLICY_ONLY = process.argv.includes("--policy-only");
 
 try {
-  if (!POLICY_ONLY) ensureAppStagingReady();
-  const packReport = runPackDryRun();
+  const packagePath = getArgValue("--package");
+  if (!POLICY_ONLY && !packagePath) ensureAppStagingReady();
+  const packReport = packagePath ? runTarballReport(packagePath) : runPackDryRun();
   const artifactPaths: string[] = packReport.files.map((file) => file.path);
   const unexpectedPaths: string[] = findUnexpectedArtifactPaths(artifactPaths, {
     exactPaths: PACK_ARTIFACT_ALLOWED_EXACT_PATHS,
@@ -162,7 +195,9 @@ try {
   console.log(`   File:          ${packReport.filename}`);
   console.log(`   Entry count:   ${packReport.entryCount}`);
   console.log(`   Packed size:   ${formatBytes(packReport.size)}`);
-  console.log(`   Unpacked size: ${formatBytes(packReport.unpackedSize)}`);
+  if (packReport.unpackedSize !== undefined) {
+    console.log(`   Unpacked size: ${formatBytes(packReport.unpackedSize)}`);
+  }
   console.log(`   MCP closure:   ${mcpClosure.length} source files checked`);
 
   if (unexpectedPaths.length > 0) {
@@ -215,7 +250,7 @@ try {
   // --policy-only, which deliberately runs without a build (no dist/BUILD_SHA to check).
   if (!POLICY_ONLY) {
     const provenance = resolveBuildProvenance({
-      buildSha: readBuildSha(process.cwd()),
+      buildSha: packagePath ? readTarballBuildSha(packagePath) : readBuildSha(process.cwd()),
       isAncestorOfRelease: makeGitAncestryProbe(
         process.env.AGENTPROXY_RELEASE_REF || "origin/main",
         process.cwd()
