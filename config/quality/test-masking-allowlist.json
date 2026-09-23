@@ -25,6 +25,10 @@
   "tests/unit/errorClassifier-noauth-403-6315.test.ts": "v3.8.50 #11754: the two terminal SENTINEL_BLOCKED assertions covered only the retired common ChatGPT Web executor and its removed sentinel path (4→2). The remaining no-auth/apikey 403 controls are unchanged; retirement behavior is now covered by deterministic 410/no-network regression tests. Provider surface removed, not weakened.",
   "tests/unit/live-model-catalog-reconciliation-8926.test.ts": "v3.8.50 #11754: six static assertions for curated common ChatGPT Web variants were removed with that provider's catalog (41→35). The remaining live-catalog reconciliation matrix is unchanged; dedicated retirement tests now assert the common ids are absent and fail closed while Codex Web controls remain. Provider surface removed, not weakened.",
   "tests/unit/provider-validation-specialty.test.ts": "v3.8.50 #11754: seventeen assertions exercised the removed common ChatGPT Web TLS/session validator (425→408). The validator and exclusive TLS implementation no longer ship; management retirement regressions now prove both ids return sanitized 410 without network, while other specialty validators remain covered. Provider surface removed, not weakened.",
+  "tests/unit/image-generation-handler.test.ts": "PR #38: file-size-only refactor moved the final ordinary Codex 400/retryability test, including all 3 assertions verbatim, to tests/unit/image-generation-handler-codex-errors.test.ts. Coverage relocated, not weakened; prune after #38 merges to main.",
+  "tests/unit/stream-utils.test.ts": "PR #38: file-size-only refactor moved the two final textual-tool passthrough tests, including all 8 assertions verbatim, to tests/unit/stream-utils-textual-tool.test.ts. Coverage relocated, not weakened; prune after #38 merges to main.",
+  "tests/unit/token-refresh-service.test.ts": "PR #38: file-size-only refactor moved the final mutex/retry/OAuth error block, including all 13 assertions verbatim, to tests/unit/token-refresh-service-final.test.ts. Coverage relocated, not weakened; prune after #38 merges to main.",
+  "tests/unit/translator-openai-to-gemini.test.ts": "PR #38: file-size-only refactor moved the thinking-budget tail, including all 11 assertions verbatim, to tests/unit/translator-openai-to-gemini-thinking-budget.test.ts. Coverage relocated, not weakened; prune after #38 merges to main.",
   "_deletedWithReplacement": {
     "_comment": "Deleções de arquivo de teste com SUBSTITUTO verificado (o gate exige que o replacement exista no HEAD e seja arquivo de teste). Uso restrito ao caso 'reescrito em outro path sem rename detectável pelo -M do git'. Cada entrada precisa de reason com PR ref e passa por revisão humana no release PR. Prune após o release mergear para main.",
     "tests/unit/gemini-web-image-account-fallback.test.ts": {
@@ -174,9 +178,7 @@
       "reason": "v3.8.50 #9126 (commit 8fac6bcd48): pluginWorker.ts, sandbox.ts e signing.ts foram removidos por completo (\"zero importers confirmed\") — o subsistema de sandbox de plugins com worker-thread nunca foi ligado a nenhum consumidor. O teste era source-scan sobre pluginWorker.ts (ver docstring do arquivo deletado); sem o arquivo-fonte não há mais o que testar. AGENTPROXY_PLUGINS_ALLOW_EXEC também foi removido de .env.example e da doc na mesma release. Sem substituto porque a feature foi extinta, não migrada."
     },
     "tests/unit/plugins-sandbox.test.ts": {
-      "sourceRemoved": [
-        "src/lib/plugins/sandbox.ts"
-      ],
+      "sourceRemoved": ["src/lib/plugins/sandbox.ts"],
       "reason": "v3.8.50 #9126 (commit 8fac6bcd48): sandbox.ts foi removido por completo junto com pluginWorker.ts e signing.ts (\"zero importers confirmed\", subsistema de sandbox de plugins nunca ligado a nenhum consumidor). O teste cobria SandboxLevel/getSandboxLabel exportados por sandbox.ts; sem o arquivo-fonte não há mais símbolo a testar. Mesma causa-raiz de tests/unit/plugin-sandbox-permissions.test.ts nesta entrada."
     },
     "tests/unit/gemini-3-5-flash-thinking.test.ts": {
