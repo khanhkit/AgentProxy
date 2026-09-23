@@ -35,6 +35,7 @@ jobs:
       docs: ${{ steps.classify.outputs.docs }}
       i18n: ${{ steps.classify.outputs.i18n }}
       workflow: ${{ steps.classify.outputs.workflow }}
+      rust: ${{ steps.classify.outputs.rust }}
       testsOnly: ${{ steps.classify.outputs.testsOnly }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -70,12 +71,58 @@ jobs:
               echo "docs=true"
               echo "i18n=true"
               echo "workflow=true"
+              echo "rust=true"
+              echo "testsOnly=false"
             } >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
           git diff --name-only "$BASE_SHA" "$HEAD_SHA" > changed-files.txt
           node scripts/quality/classify-pr-changes.mjs changed-files.txt >> "$GITHUB_OUTPUT"
+
+  dependency-review:
+    name: Dependency Review
+    runs-on: ubuntu-latest
+    needs: changes
+    if: ${{ github.event_name == 'pull_request' && github.event.pull_request.draft == false }}
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Review dependency delta
+        uses: actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294 # v5.0.0
+        with:
+          fail-on-severity: high
+
+  rust-quality:
+    name: Rust Quality
+    runs-on: ubuntu-latest
+    needs: changes
+    if: ${{ github.event_name != 'pull_request' || (github.event.pull_request.draft == false && needs.changes.outputs.rust == 'true') }}
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install release Rust toolchain
+        uses: dtolnay/rust-toolchain@02cb101ec7c40f2c49e1d9714d64511d8e1b74de # master @ 2026-09-23
+        with:
+          toolchain: 1.98.0
+          components: rustfmt, clippy
+      - name: Verify Rust formatting, lints, workspace and contract tests
+        run: npm run rust-core:verify
+      - name: Audit Rust advisories, licenses, bans and sources
+        uses: EmbarkStudios/cargo-deny-action@3c6349835b2b7b196a839186cb8b78e02f7b5f25 # v2.1.1
+        with:
+          manifest-path: rust/Cargo.toml
+          rust-version: 1.98.0
+          command: check advisories bans licenses sources
 
   lint:
     name: Lint
@@ -724,8 +771,8 @@ jobs:
           export AGENTPROXY_BUILD_SHA="${AGENTPROXY_BUILD_SHA:0:7}"
           node scripts/build/write-build-sha.mjs
       # O guard de proveniencia checa ancestralidade contra `origin/main` por padrao.
-      # Esse e o ref certo na PUBLICACAO (npm-publish.yml roda em main), mas em
-      # `pull_request` e estruturalmente impossivel: enquanto a PR esta aberta o head
+      # A publicacao deve validar contra uma ref imutavel de release/main; em
+      # `pull_request` isso e estruturalmente impossivel: enquanto a PR esta aberta o head
       # dela NUNCA e ancestral de main — e o checkout raso nem traz `origin/main` para
       # o grafo local, entao a sonda responde `false` de qualquer jeito. Resultado: o
       # gate falhava 100% das vezes em PR. Pre-merge o unico invariante checavel e "o
@@ -1298,14 +1345,40 @@ jobs:
   test-security:
     name: Security Tests
     runs-on: ubuntu-latest
-    # needs: changes (not build) — no artifact consumed; see test-unit note.
-    needs: changes
-    if: ${{ github.event_name != 'pull_request' || (needs.changes.outputs.code == 'true' && github.event.pull_request.draft == false) }}
+    # This is an existing required branch-protection context. Keep the new dependency
+    # and native-Rust gates in its dependency chain so they fail closed without
+    # introducing an unobserved required context that could deadlock main.
+    needs: [changes, dependency-review, rust-quality]
+    if: ${{ always() && !cancelled() && (github.event_name != 'pull_request' || (github.event.pull_request.draft == false && (needs.changes.result != 'success' || needs.changes.outputs.code == 'true'))) }}
     env:
       JWT_SECRET: ci-test-secret-with-sufficient-length-for-validation
       API_KEY_SECRET: ci-test-api-key-secret-long
       DISABLE_SQLITE_AUTO_BACKUP: "true"
     steps:
+      - name: Enforce prerequisite security gates
+        shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          CHANGES_RESULT: ${{ needs.changes.result }}
+          RUST_CHANGED: ${{ needs.changes.outputs.rust }}
+          DEPENDENCY_REVIEW_RESULT: ${{ needs.dependency-review.result }}
+          RUST_QUALITY_RESULT: ${{ needs.rust-quality.result }}
+        run: |
+          set -euo pipefail
+          if [ "$CHANGES_RESULT" != "success" ]; then
+            echo "::error::Change Classification did not pass: $CHANGES_RESULT"
+            exit 1
+          fi
+          if [ "$EVENT_NAME" = "pull_request" ] && [ "$DEPENDENCY_REVIEW_RESULT" != "success" ]; then
+            echo "::error::Dependency Review did not pass: $DEPENDENCY_REVIEW_RESULT"
+            exit 1
+          fi
+          if [ "$EVENT_NAME" != "pull_request" ] || [ "$RUST_CHANGED" = "true" ]; then
+            if [ "$RUST_QUALITY_RESULT" != "success" ]; then
+              echo "::error::Rust Quality did not pass: $RUST_QUALITY_RESULT"
+              exit 1
+            fi
+          fi
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
@@ -1380,6 +1453,8 @@ jobs:
     if: ${{ !cancelled() }}
     needs:
       - changes
+      - dependency-review
+      - rust-quality
       - lint
       - docs-sync-strict
       - i18n-ui-coverage
@@ -1459,6 +1534,8 @@ jobs:
           echo "| Job | Status |" >> "$GITHUB_STEP_SUMMARY"
           echo "|-----|--------|" >> "$GITHUB_STEP_SUMMARY"
           echo "| Change Classification | $(status_job changes) |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Dependency Review | $(status_job dependency-review) |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Rust Quality | $(status_job rust-quality) |" >> "$GITHUB_STEP_SUMMARY"
           echo "| Lint | $(status_job lint) |" >> "$GITHUB_STEP_SUMMARY"
           echo "| Docs Sync (Strict) | $(status_job docs-sync-strict) |" >> "$GITHUB_STEP_SUMMARY"
           echo "| i18n UI Coverage | $(status_job i18n-ui-coverage) |" >> "$GITHUB_STEP_SUMMARY"
