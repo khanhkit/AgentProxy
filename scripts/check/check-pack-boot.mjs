@@ -10,7 +10,8 @@
  * starts — regardless of WHICH packaging list drifted.
  *
  * Requires a built dist/ (run after `npm run build:cli`, e.g. in the CI
- * package-artifact job or `check:release-green --with-build`). Exit codes:
+ * package-artifact job or `check:release-green --with-build`). Pass `--package <tgz>` to
+ * boot an already-created canonical tarball without repacking the source tree. Exit codes:
  * 0 = boots and reports the right version · 1 = boot failed · 2 = missing build.
  */
 import { execFileSync, spawn } from "node:child_process";
@@ -58,6 +59,27 @@ export function pickTarball(packJsonOutput) {
   // npm <=11 emits an array; npm 12+ emits an object keyed by package name.
   // Scoped package filenames may still contain "/" and need normalization on disk.
   return filename.replace(/\//g, "-");
+}
+export function resolvePackageArg(
+  args = process.argv.slice(2),
+  cwd = process.cwd(),
+  exists = fs.existsSync
+) {
+  const index = args.indexOf("--package");
+  if (index < 0) return null;
+  const value = args[index + 1];
+  if (!value || value.startsWith("--")) {
+    throw new Error("--package requires a path");
+  }
+  const resolved = path.resolve(cwd, value);
+  if (!exists(resolved)) {
+    throw new Error(`--package path does not exist: ${resolved}`);
+  }
+  return resolved;
+}
+
+export function selectPackageTarball(suppliedPackage, packCurrentTree) {
+  return suppliedPackage || packCurrentTree();
 }
 
 /** Resolve the globally-installed package root from the manifest being packed. */
@@ -420,7 +442,8 @@ async function readSettingsDebugMode(baseUrl, cliToken) {
 
 async function main() {
   const ROOT = process.cwd();
-  if (!fs.existsSync(path.join(ROOT, "dist", "server.js"))) {
+  const suppliedPackage = resolvePackageArg();
+  if (!suppliedPackage && !fs.existsSync(path.join(ROOT, "dist", "server.js"))) {
     console.error(
       "[pack-boot] dist/server.js missing — run `npm run build:cli` first (this is a --with-build gate)"
     );
@@ -437,13 +460,18 @@ async function main() {
   let cleanupError = null; // recorded ONLY in finally, ONLY for a final stopChild failure
   let shutdownConfirmed = false; // process group confirmed stopped → safe to rm the workspace
   try {
-    log(`packing v${expectedVersion}…`);
-    const packOut = execFileSync("npm", ["pack", "--json", "--pack-destination", tmp], {
-      cwd: ROOT,
-      encoding: "utf8",
-      maxBuffer: 64 * 1024 * 1024,
+    const tarball = selectPackageTarball(suppliedPackage, () => {
+      log(`packing v${expectedVersion}…`);
+      const packOut = execFileSync("npm", ["pack", "--json", "--pack-destination", tmp], {
+        cwd: ROOT,
+        encoding: "utf8",
+        maxBuffer: 64 * 1024 * 1024,
+      });
+      return path.join(tmp, pickTarball(packOut));
     });
-    const tarball = path.join(tmp, pickTarball(packOut));
+    if (suppliedPackage) {
+      log(`using canonical package ${path.basename(tarball)} (no repack)`);
+    }
     log(`installing ${path.basename(tarball)} into a clean prefix (postinstall runs for real)…`);
     const prefix = path.join(tmp, "prefix");
     execFileSync("npm", ["install", "-g", "--prefix", prefix, tarball], {
