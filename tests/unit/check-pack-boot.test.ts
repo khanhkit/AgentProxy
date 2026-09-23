@@ -256,6 +256,16 @@ test("CI packs once, then fans out the exact canonical tarball to policy and boo
     1,
     "the package pipeline must execute npm pack exactly once"
   );
+  assert.match(
+    packagePipeline,
+    /node scripts\/build\/stage-npm-package\.mjs --output "\$stage"/,
+    "canonical packaging must construct a bounded publish staging tree first"
+  );
+  assert.match(
+    packagePipeline,
+    /cd "\$stage"[\s\S]*npm pack --json --pack-destination "\$out"/,
+    "the single canonical npm pack must run from the bounded staging tree"
+  );
   assert.match(packagePipeline, /npm run check:pack-artifact -- --package/);
   assert.match(packagePipeline, /check-pack-boot\.mjs --package/);
   assert.match(
