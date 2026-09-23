@@ -713,10 +713,17 @@ jobs:
         run: |
           set -euo pipefail
           out="$RUNNER_TEMP/canonical-package"
-          rm -rf "$out"
+          stage="$RUNNER_TEMP/canonical-package-stage"
+          rm -rf "$out" "$stage"
           mkdir -p "$out"
+          stage_started=$(date +%s)
+          node scripts/build/stage-npm-package.mjs --output "$stage" > "$RUNNER_TEMP/npm-stage.json"
+          stage_elapsed=$(( $(date +%s) - stage_started ))
           started=$(date +%s)
-          npm pack --json --pack-destination "$out" > "$RUNNER_TEMP/npm-pack.json"
+          (
+            cd "$stage"
+            npm pack --json --pack-destination "$out" > "$RUNNER_TEMP/npm-pack.json"
+          )
           mapfile -t packages < <(find "$out" -maxdepth 1 -type f -name '*.tgz' -print)
           if [ "${#packages[@]}" -ne 1 ]; then
             printf 'expected exactly one .tgz, found %s\n' "${#packages[@]}" >&2
@@ -730,6 +737,7 @@ jobs:
           {
             echo "### Canonical npm package"
             echo "- tarball: \`$(basename "$package")\`"
+            echo "- bounded staging: ${stage_elapsed}s"
             echo "- npm pack: ${elapsed}s"
           } >> "$GITHUB_STEP_SUMMARY"
       - name: Upload canonical npm package
