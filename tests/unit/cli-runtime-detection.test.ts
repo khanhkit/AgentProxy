@@ -247,7 +247,9 @@ describe("Continue CLI detection", () => {
     const previousPath = process.env.PATH;
     const previousOverride = process.env.CLI_CONTINUE_BIN;
     process.env.PATH = "";
-    delete process.env.CLI_CONTINUE_BIN;
+    // Force an explicit missing binary so host/runner installations in known
+    // global paths cannot make this absence test environment-dependent.
+    process.env.CLI_CONTINUE_BIN = path.join(createTempDir(), "missing-cn");
 
     try {
       const result = await getCliRuntimeStatus("continue");
