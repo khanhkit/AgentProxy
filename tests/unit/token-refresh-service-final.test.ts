@@ -23,10 +23,6 @@ type MockLogger = {
 };
 
 type TestFetch = typeof fetch;
-type FastSetTimeout = typeof globalThis.setTimeout & {
-  __promisify__?: typeof globalThis.setTimeout.__promisify__;
-};
-
 function createLog(): MockLogger {
   const entries: LogEntry[] = [];
   const push = (level: LogLevel, args: [unknown?, unknown?, unknown?]) => {
@@ -43,7 +39,7 @@ function createLog(): MockLogger {
   };
 }
 
-function jsonResponse(body: any, status = 200) {
+function jsonResponse(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
     status,
     headers: { "content-type": "application/json" },
@@ -186,8 +182,9 @@ test("refreshClaudeOAuthToken returns error object for invalid_grant (expired re
       const result = await refreshClaudeOAuthToken("expired-token", log);
       assert.ok(result && typeof result === "object", "should return error object, not null");
       // Normalized to unrecoverable_refresh_error sentinel (Fix 6)
-      assert.equal((result as any).error, "unrecoverable_refresh_error");
-      assert.equal((result as any).code, "invalid_grant");
+      const failure = result as { error?: unknown; code?: unknown };
+      assert.equal(failure.error, "unrecoverable_refresh_error");
+      assert.equal(failure.code, "invalid_grant");
       assert.ok(isUnrecoverableRefreshError(result), "should be detected as unrecoverable");
     }
   );
