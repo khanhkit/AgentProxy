@@ -19,6 +19,10 @@
   "requiredLinearHistory": true,
   "allowForcePushes": false,
   "allowDeletions": false,
+  "codeOwners": {
+    "mode": "absent",
+    "rationale": "Single-maintainer steady state uses protected-branch review plus audited owner-authorized break-glass; a CODEOWNERS entry cannot supply the required independent approval and stale ownership metadata is misleading."
+  },
   "breakGlass": {
     "enabled": true,
     "authorization": "repository-owner-explicit",

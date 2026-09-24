@@ -23,6 +23,24 @@ export function normalizeRequiredChecks(checks) {
     );
 }
 
+export function evaluateCodeOwners(root, policy) {
+  const mode = policy?.codeOwners?.mode;
+  if (!mode) return { ok: true, failures: [] };
+
+  if (mode !== "absent") {
+    return { ok: false, failures: ["codeowners_policy_mode"] };
+  }
+
+  const candidates = [
+    path.join(root, ".github", "CODEOWNERS"),
+    path.join(root, "CODEOWNERS"),
+    path.join(root, "docs", "CODEOWNERS"),
+  ];
+  const present = candidates.some((candidate) => fs.existsSync(candidate));
+  const failures = present ? ["codeowners_should_be_absent"] : [];
+  return { ok: failures.length === 0, failures };
+}
+
 export function evaluateGithubGovernance(protection, policy) {
   const failures = [];
 
@@ -122,7 +140,10 @@ function main() {
   const policy = readPolicy(policyPath);
   const repo = detectRepo();
   const protection = readProtection(repo, policy.branch);
-  const verdict = evaluateGithubGovernance(protection, policy);
+  const protectionVerdict = evaluateGithubGovernance(protection, policy);
+  const codeOwnersVerdict = evaluateCodeOwners(ROOT, policy);
+  const failures = [...protectionVerdict.failures, ...codeOwnersVerdict.failures];
+  const verdict = { ok: failures.length === 0, failures };
 
   if (process.argv.includes("--json")) {
     process.stdout.write(

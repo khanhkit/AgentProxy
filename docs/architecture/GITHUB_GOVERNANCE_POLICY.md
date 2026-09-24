@@ -44,6 +44,12 @@ The AP-ISS-0107 automatic PR CodeQL context is not required until that automatic
 
 Likewise, `Fast Quality Gates` is not required until it is consistently emitted on PRs targeting `main`.
 
+## CODEOWNERS
+
+The steady-state repository intentionally has no CODEOWNERS file. The current collaborator topology has one maintainer, so mapping ownership to that same maintainer would not make the required independent review satisfiable, while mapping ownership to a non-collaborator would misroute review expectations.
+
+Branch protection remains the merge authority: one approval, latest-push approval, strict required checks, conversation resolution, linear history, and administrator enforcement stay enabled. The absence of CODEOWNERS does not relax those controls. The local governance checker enforces the committed codeOwners.mode = absent contract so stale ownership metadata cannot silently return.
+
 ## Break-Glass Process
 
 There is no routine administrator bypass. `enforce_admins=true` is the normal state.
