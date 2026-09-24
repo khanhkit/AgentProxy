@@ -45,19 +45,41 @@ const PORTABLE_JSON_KEYS = new Set([
 ]);
 
 const RUNTIME_JSON_KEYS = ["usageHistory", "domainCostHistory", "domainBudgets"] as const;
-const REQUIRED_SQLITE_TABLES = [
-  "provider_connections",
-  "provider_nodes",
-  "combos",
-  "api_keys",
+
+const SQLITE_SOURCE_SCHEMAS = [
+  {
+    family: "omniroute" as const,
+    tables: {
+      providerConnections: "provider_connections",
+      providerNodes: "provider_nodes",
+      combos: "combos",
+      apiKeys: "api_keys",
+    },
+    runtimeTables: [
+      "usage_history",
+      "quota_snapshots",
+      "call_logs",
+      "detailed_request_logs",
+      "provider_quota_reset_events",
+    ],
+  },
+  {
+    family: "9router" as const,
+    tables: {
+      providerConnections: "providerConnections",
+      providerNodes: "providerNodes",
+      combos: "combos",
+      apiKeys: "apiKeys",
+    },
+    runtimeTables: [
+      "usageHistory",
+      "requestDetails",
+      "compressionStats",
+      "domainCostHistory",
+      "domainBudgets",
+    ],
+  },
 ] as const;
-const RUNTIME_SQLITE_TABLES = new Set([
-  "usage_history",
-  "quota_snapshots",
-  "call_logs",
-  "detailed_request_logs",
-  "provider_quota_reset_events",
-]);
 
 function asRecord(value: unknown): JsonRecord | null {
   return value !== null && typeof value === "object" && !Array.isArray(value)
@@ -66,7 +88,9 @@ function asRecord(value: unknown): JsonRecord | null {
 }
 
 function asRecords(value: unknown): JsonRecord[] {
-  return Array.isArray(value) ? value.filter((entry): entry is JsonRecord => asRecord(entry) !== null) : [];
+  return Array.isArray(value)
+    ? value.filter((entry): entry is JsonRecord => asRecord(entry) !== null)
+    : [];
 }
 
 function stringField(record: JsonRecord, ...keys: string[]): string | undefined {
@@ -85,7 +109,9 @@ function itemFromRecord(
 ): MigrationPreviewItem {
   return {
     id: stringField(record, "id", "name") ?? category + "-" + String(index + 1),
-    label: stringField(record, "name", "displayName", "provider", "id") ?? category + " " + String(index + 1),
+    label:
+      stringField(record, "name", "displayName", "provider", "id") ??
+      category + " " + String(index + 1),
     disposition,
   };
 }
@@ -102,9 +128,13 @@ export function previewJsonMigrationSource(input: unknown): MigrationPreviewPlan
 
   const meta = asRecord(data._meta);
   const sourceMarker = String(meta?.source ?? meta?.product ?? "").toLowerCase();
-  const hasPortableShape = ["providerConnections", "providerNodes", "combos", "apiKeys", "settings"].some(
-    (key) => key in data
-  );
+  const hasPortableShape = [
+    "providerConnections",
+    "providerNodes",
+    "combos",
+    "apiKeys",
+    "settings",
+  ].some((key) => key in data);
   if (!hasPortableShape || (sourceMarker && !sourceMarker.includes("9router"))) {
     throw new Error("Unsupported migration JSON source");
   }
@@ -122,7 +152,12 @@ export function previewJsonMigrationSource(input: unknown): MigrationPreviewPlan
     if (count > 0) unsupported.push({ category: key, count, disposition: "UNSUPPORTED" });
   }
   for (const key of Object.keys(data)) {
-    if (PORTABLE_JSON_KEYS.has(key) || RUNTIME_JSON_KEYS.includes(key as (typeof RUNTIME_JSON_KEYS)[number])) continue;
+    if (
+      PORTABLE_JSON_KEYS.has(key) ||
+      RUNTIME_JSON_KEYS.includes(key as (typeof RUNTIME_JSON_KEYS)[number])
+    ) {
+      continue;
+    }
     unsupported.push({ category: key, count: 1, disposition: "UNSUPPORTED" });
   }
 
@@ -138,8 +173,12 @@ export function previewJsonMigrationSource(input: unknown): MigrationPreviewPlan
       ),
       providerNodes: nodes.map((row, i) => itemFromRecord(row, i, "node", "CREATE")),
       combos: combos.map((row, i) => itemFromRecord(row, i, "combo", "CREATE")),
-      apiKeys: apiKeys.map((row, i) => itemFromRecord(row, i, "api-key", "REQUIRES_REAUTH")),
-      settings: settings ? [{ id: "settings", label: "Portable settings", disposition: "MERGE" }] : [],
+      apiKeys: apiKeys.map((row, i) =>
+        itemFromRecord(row, i, "api-key", "REQUIRES_REAUTH")
+      ),
+      settings: settings
+        ? [{ id: "settings", label: "Portable settings", disposition: "MERGE" }]
+        : [],
     },
     unsupported,
   };
@@ -159,7 +198,11 @@ function countRows(adapter: SelectOnlyAdapter, table: string): number {
   return typeof row?.count === "number" && Number.isFinite(row.count) ? row.count : 0;
 }
 
-function countItems(count: number, category: string, disposition: MigrationDisposition): MigrationPreviewItem[] {
+function countItems(
+  count: number,
+  category: string,
+  disposition: MigrationDisposition
+): MigrationPreviewItem[] {
   return Array.from({ length: count }, (_, index) => ({
     id: category + "-" + String(index + 1),
     label: category + " " + String(index + 1),
@@ -172,25 +215,38 @@ export function previewSqliteMigrationSource(adapter: SelectOnlyAdapter): Migrat
     .prepare("SELECT name FROM sqlite_master WHERE type='table'")
     .all?.() as Array<{ name?: unknown }> | undefined;
   const tables = new Set((rows ?? []).map((row) => String(row.name ?? "")));
-  if (!REQUIRED_SQLITE_TABLES.every((table) => tables.has(table))) {
+
+  const schema = SQLITE_SOURCE_SCHEMAS.find((candidate) =>
+    Object.values(candidate.tables).every((table) => tables.has(table))
+  );
+  if (!schema) {
     throw new Error("Unsupported migration SQLite source");
   }
 
   const counts = {
-    providerConnections: countRows(adapter, "provider_connections"),
-    providerNodes: countRows(adapter, "provider_nodes"),
-    combos: countRows(adapter, "combos"),
-    apiKeys: countRows(adapter, "api_keys"),
+    providerConnections: countRows(adapter, schema.tables.providerConnections),
+    providerNodes: countRows(adapter, schema.tables.providerNodes),
+    combos: countRows(adapter, schema.tables.combos),
+    apiKeys: countRows(adapter, schema.tables.apiKeys),
   };
+  const runtimeTables = new Set<string>(schema.runtimeTables);
   const unsupported = [...tables]
-    .filter((table) => RUNTIME_SQLITE_TABLES.has(table))
+    .filter((table) => runtimeTables.has(table))
     .sort()
-    .map((table) => ({ category: table, count: countRows(adapter, table), disposition: "UNSUPPORTED" as const }));
+    .map((table) => ({
+      category: table,
+      count: countRows(adapter, table),
+      disposition: "UNSUPPORTED" as const,
+    }));
 
   return {
-    source: { family: "omniroute", format: "sqlite" },
+    source: { family: schema.family, format: "sqlite" },
     inventory: {
-      providerConnections: countItems(counts.providerConnections, "connection", "REQUIRES_REAUTH"),
+      providerConnections: countItems(
+        counts.providerConnections,
+        "connection",
+        "REQUIRES_REAUTH"
+      ),
       providerNodes: countItems(counts.providerNodes, "node", "CREATE"),
       combos: countItems(counts.combos, "combo", "CREATE"),
       apiKeys: countItems(counts.apiKeys, "api-key", "REQUIRES_REAUTH"),

@@ -87,3 +87,48 @@ test("TC-MIG-PREVIEW-003 rejects unrelated JSON and SQLite sources", () => {
     /unsupported/i
   );
 });
+
+test("TC-MIG-PREVIEW-009 detects current 9Router SQLite table naming without reading target state", () => {
+  const tables = [
+    "providerConnections",
+    "providerNodes",
+    "combos",
+    "apiKeys",
+    "usageHistory",
+    "requestDetails",
+  ];
+  const counts: Record<string, number> = {
+    providerConnections: 2,
+    providerNodes: 3,
+    combos: 1,
+    apiKeys: 4,
+    usageHistory: 12,
+    requestDetails: 7,
+  };
+  const sqlSeen: string[] = [];
+  const adapter = {
+    prepare(sql: string) {
+      sqlSeen.push(sql);
+      if (sql.includes("sqlite_master")) {
+        return { all: () => tables.map((name) => ({ name })) };
+      }
+      const match = sql.match(/FROM\s+([A-Za-z_]+)/);
+      const table = match?.[1] ?? "";
+      return { get: () => ({ count: counts[table] ?? 0 }) };
+    },
+  };
+
+  const plan = previewSqliteMigrationSource(adapter);
+
+  assert.equal(plan.source.family, "9router");
+  assert.equal(plan.source.format, "sqlite");
+  assert.equal(plan.inventory.providerConnections.length, 2);
+  assert.equal(plan.inventory.providerNodes.length, 3);
+  assert.equal(plan.inventory.combos.length, 1);
+  assert.equal(plan.inventory.apiKeys.length, 4);
+  assert.deepEqual(
+    plan.unsupported.map((entry) => entry.category).sort(),
+    ["requestDetails", "usageHistory"]
+  );
+  assert.ok(sqlSeen.every((sql) => /^SELECT\b/i.test(sql.trim())));
+});
