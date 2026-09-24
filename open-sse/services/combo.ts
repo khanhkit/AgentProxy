@@ -890,7 +890,7 @@ async function handleComboChatInner({
         quotaCutoffResetWindowConfig,
         isModelAvailable,
       });
-      if (resume.eligible) {
+      if (resume.eligible === true) {
         orderedTargets = orderedTargets.filter(
           (target) =>
             target.modelStr === resume.selectedTarget.modelStr &&
