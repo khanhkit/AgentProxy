@@ -5,7 +5,6 @@ import { Card, Button, Badge, ConfirmModal } from "@/shared/components";
 import { useLocale, useTranslations } from "next-intl";
 import DatabaseBackupRetentionCard from "./DatabaseBackupRetentionCard";
 import SelectiveMigrationPanel from "./SelectiveMigrationPanel";
-
 // Whitelist mirrored from src/lib/db/cleanup.ts::RESET_USAGE_HISTORY_PERIODS.
 const RESET_USAGE_PERIOD_VALUES = [
   "5m",
@@ -1375,9 +1374,7 @@ export default function SystemStorageTab() {
             onChange={handleJsonSelected}
           />
         </div>
-
         <SelectiveMigrationPanel />
-
         {confirmImport && pendingImportFile && (
           <div className="p-4 rounded-lg mt-3 bg-amber-500/10 border border-amber-500/30">
             <div className="flex items-start gap-3">
