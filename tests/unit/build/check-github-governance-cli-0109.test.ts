@@ -19,12 +19,7 @@ function baseProtection() {
         { context: "Security Tests", app_id: 15368 },
       ],
     },
-    required_pull_request_reviews: {
-      dismiss_stale_reviews: true,
-      require_code_owner_reviews: false,
-      require_last_push_approval: true,
-      required_approving_review_count: 1,
-    },
+    required_pull_request_reviews: null,
     required_conversation_resolution: { enabled: true },
     required_linear_history: { enabled: true },
     allow_force_pushes: { enabled: false },

@@ -13,9 +13,9 @@ const policy = {
     { context: "Quality Ratchet", appId: 15368 },
     { context: "Security Tests", appId: 15368 },
   ],
-  requiredApprovingReviewCount: 1,
-  dismissStaleReviews: true,
-  requireLastPushApproval: true,
+  requiredApprovingReviewCount: 0,
+  dismissStaleReviews: false,
+  requireLastPushApproval: false,
   requireConversationResolution: true,
   requiredLinearHistory: true,
   allowForcePushes: false,
@@ -32,11 +32,7 @@ function protectedState(overrides: Record<string, unknown> = {}) {
         { context: "Security Tests", app_id: 15368 },
       ],
     },
-    required_pull_request_reviews: {
-      dismiss_stale_reviews: true,
-      require_last_push_approval: true,
-      required_approving_review_count: 1,
-    },
+    required_pull_request_reviews: null,
     required_conversation_resolution: { enabled: true },
     required_linear_history: { enabled: true },
     allow_force_pushes: { enabled: false },
@@ -98,13 +94,13 @@ test("AP-0109 governance: wrong app id cannot satisfy a required context", () =>
   assert.ok(verdict.failures.includes("required_checks"));
 });
 
-test("AP-0109 governance: weakening review protections fails", () => {
+test("AP-0109 governance: reintroducing mandatory reviews fails solo-dev policy", () => {
   const verdict = evaluateGithubGovernance(
     protectedState({
       required_pull_request_reviews: {
-        dismiss_stale_reviews: false,
-        require_last_push_approval: false,
-        required_approving_review_count: 0,
+        dismiss_stale_reviews: true,
+        require_last_push_approval: true,
+        required_approving_review_count: 1,
       },
     }),
     policy

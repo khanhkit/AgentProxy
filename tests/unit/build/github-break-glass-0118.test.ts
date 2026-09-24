@@ -29,9 +29,9 @@ const policy = JSON.parse(
 
 test("TC-GITHUB-BREAKGLASS-0118 preserves fail-closed steady state and bounds the owner exception", () => {
   assert.equal(policy.enforceAdmins, true);
-  assert.equal(policy.requiredApprovingReviewCount, 1);
-  assert.equal(policy.dismissStaleReviews, true);
-  assert.equal(policy.requireLastPushApproval, true);
+  assert.equal(policy.requiredApprovingReviewCount, 0);
+  assert.equal(policy.dismissStaleReviews, false);
+  assert.equal(policy.requireLastPushApproval, false);
   assert.equal(policy.strictRequiredChecks, true);
   assert.deepEqual((policy.requiredChecks ?? []).map((check) => check.context).sort(), [
     "Quality Ratchet",
