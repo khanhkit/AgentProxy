@@ -1,5 +1,10 @@
+import { z } from "zod";
 import type { RequestPipelinePayloads } from "@agentproxy/open-sse/utils/requestLogger.ts";
-import { classifyProviderError } from "@agentproxy/open-sse/services/errorClassifier.ts";
+import {
+  classifyProviderError,
+  ERROR_TYPE_CONTRACT,
+  type ErrorTypeContract,
+} from "@agentproxy/open-sse/services/errorClassifier.ts";
 import {
   sanitizeErrorMessage,
   sanitizeUpstreamDetails,
@@ -191,8 +196,25 @@ export function classifyCallLogError(
   status: number,
   error: unknown,
   provider?: string | null
-): string | null {
+): ErrorTypeContract | null {
   const errorText = typeof error === "string" ? error : error instanceof Error ? error.message : "";
-  if (status < 400 && errorText.length === 0) return null;
-  return classifyProviderError(status, errorText, provider);
+  if (status === 0 ? errorText.length === 0 : status < 400) return null;
+  return classifyProviderError(status, errorText, provider) ?? "unknown";
+}
+
+let storedErrorTypeSchema: z.ZodEnum<Record<ErrorTypeContract, ErrorTypeContract>> | null = null;
+
+function getStoredErrorTypeSchema() {
+  if (storedErrorTypeSchema === null) {
+    storedErrorTypeSchema = z.enum(
+      ERROR_TYPE_CONTRACT as readonly [ErrorTypeContract, ...ErrorTypeContract[]]
+    );
+  }
+  return storedErrorTypeSchema;
+}
+
+export function toStoredErrorType(value: unknown): ErrorTypeContract | null {
+  if (value === null || value === undefined) return null;
+  const parsed = getStoredErrorTypeSchema().safeParse(value);
+  return parsed.success ? parsed.data : "unknown";
 }
