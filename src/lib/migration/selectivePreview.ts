@@ -45,6 +45,13 @@ const PORTABLE_JSON_KEYS = new Set([
 ]);
 
 const RUNTIME_JSON_KEYS = ["usageHistory", "domainCostHistory", "domainBudgets"] as const;
+const DEFERRED_JSON_KEYS = [
+  "modelAliases",
+  "customModels",
+  "pricing",
+  "proxyConfig",
+  "mitmAlias",
+] as const;
 
 const SQLITE_SOURCE_SCHEMAS = [
   {
@@ -149,6 +156,17 @@ export function previewJsonMigrationSource(input: unknown): MigrationPreviewPlan
   for (const key of RUNTIME_JSON_KEYS) {
     const value = data[key];
     const count = Array.isArray(value) ? value.length : value === undefined ? 0 : 1;
+    if (count > 0) unsupported.push({ category: key, count, disposition: "UNSUPPORTED" });
+  }
+  for (const key of DEFERRED_JSON_KEYS) {
+    const value = data[key];
+    const count = Array.isArray(value)
+      ? value.length
+      : value && typeof value === "object"
+        ? Object.keys(value as Record<string, unknown>).length
+        : value === undefined
+          ? 0
+          : 1;
     if (count > 0) unsupported.push({ category: key, count, disposition: "UNSUPPORTED" });
   }
   for (const key of Object.keys(data)) {

@@ -132,3 +132,20 @@ test("TC-MIG-PREVIEW-009 detects current 9Router SQLite table naming without rea
   );
   assert.ok(sqlSeen.every((sql) => /^SELECT\b/i.test(sql.trim())));
 });
+
+test("TC-MIG-PREVIEW-045 deferred portable families are reported explicitly instead of silently dropped", () => {
+  const plan = previewJsonMigrationSource({
+    _meta: { source: "9router", version: "0.5.86" },
+    providerConnections: [{ id: "c1", provider: "openai", name: "Primary" }],
+    modelAliases: { fast: "openai/gpt-example" },
+    customModels: [{ providerAlias: "openai", id: "custom-1" }],
+    pricing: { openai: { "gpt-example": { input: 1, output: 2 } } },
+    proxyConfig: { global: "http://host-specific.invalid:3128" },
+    mitmAlias: { cursor: { "gpt-example": "other-model" } },
+  });
+
+  assert.deepEqual(
+    plan.unsupported.map((entry) => entry.category).sort(),
+    ["customModels", "mitmAlias", "modelAliases", "pricing", "proxyConfig"]
+  );
+});
