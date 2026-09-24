@@ -49,7 +49,9 @@ export async function applyApiKeyPermissionsUpdate(
     normalized.allowedCombos !== undefined ||
     normalized.allowedConnections !== undefined ||
     normalized.allowedQuotas !== undefined ||
-    normalized.disableNonPublicModels !== undefined;
+    normalized.disableNonPublicModels !== undefined ||
+    normalized.allowAutoCombos !== undefined ||
+    normalized.catalogScope !== undefined;
 
   if (
     normalized.name === undefined &&
@@ -79,6 +81,8 @@ export async function applyApiKeyPermissionsUpdate(
     normalized.allowUsageCommand === undefined &&
     normalized.chaosModeEnabled === undefined &&
     normalized.compressionEnabled === undefined &&
+    normalized.allowAutoCombos === undefined &&
+    normalized.catalogScope === undefined &&
     !hasUsageLimitUpdate(normalized as Record<string, unknown>)
   ) {
     return false;
@@ -116,6 +120,8 @@ export async function applyApiKeyPermissionsUpdate(
     weeklyUsageLimitUsd?: number | null;
     chaosModeEnabled?: number;
     compressionEnabled?: number;
+    allowAutoCombos?: number;
+    catalogScope?: "all" | "combos" | "models";
   } = { id };
 
   if (normalized.name !== undefined) {
@@ -230,6 +236,16 @@ export async function applyApiKeyPermissionsUpdate(
   if (normalized.compressionEnabled !== undefined) {
     updates.push("compression_enabled = @compressionEnabled");
     params.compressionEnabled = normalized.compressionEnabled ? 1 : 0;
+  }
+
+  if (normalized.allowAutoCombos !== undefined) {
+    updates.push("allow_auto_combos = @allowAutoCombos");
+    params.allowAutoCombos = normalized.allowAutoCombos ? 1 : 0;
+  }
+
+  if (normalized.catalogScope !== undefined) {
+    updates.push("catalog_scope = @catalogScope");
+    params.catalogScope = normalized.catalogScope;
   }
 
   appendUsageLimitUpdates(normalized as Record<string, unknown>, updates, params);
