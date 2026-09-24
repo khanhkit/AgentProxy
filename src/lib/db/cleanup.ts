@@ -438,6 +438,91 @@ export async function cleanupCcrBlocks(): Promise<CleanupResult> {
 }
 
 /**
+ * Clean up conversation_turn_nodes older than their independent retention window.
+ * The index added by migration 186 keeps each bounded batch from scanning the full table.
+ */
+export async function cleanupConversationTurnNodes(): Promise<CleanupResult> {
+  const db = getDbInstance();
+  const retention = getRetentionSettings();
+  const retentionDays = retention.conversationTurnNodes;
+  const cutoffDate = new Date();
+  cutoffDate.setDate(cutoffDate.getDate() - retentionDays);
+  const cutoffISO = cutoffDate.toISOString();
+  const result: CleanupResult = { deleted: 0, errors: 0 };
+
+  try {
+    if (!tableExists("conversation_turn_nodes")) return result;
+    const stmt = db.prepare(
+      `DELETE FROM conversation_turn_nodes
+       WHERE rowid IN (
+         SELECT rowid FROM conversation_turn_nodes
+         WHERE last_seen_at < ?
+         LIMIT 10000
+       )`
+    );
+    while (true) {
+      const batch = stmt.run(cutoffISO).changes;
+      result.deleted += batch;
+      if (batch < 10_000) break;
+      await new Promise<void>((resolve) => setImmediate(resolve));
+    }
+    console.log(
+      `[Cleanup] Deleted ${result.deleted} conversation_turn_nodes older than ${retentionDays} days`
+    );
+  } catch (err: unknown) {
+    console.error("[Cleanup] Error cleaning conversation_turn_nodes:", err);
+    result.errors++;
+  }
+
+  return result;
+}
+
+/**
+ * Remove expired agentic conversation roots after their turn-node chains are gone.
+ */
+export async function cleanupAgenticConversations(): Promise<CleanupResult> {
+  const db = getDbInstance();
+  const retention = getRetentionSettings();
+  const retentionDays = retention.conversationTurnNodes;
+  const cutoffDate = new Date();
+  cutoffDate.setDate(cutoffDate.getDate() - retentionDays);
+  const cutoffISO = cutoffDate.toISOString();
+  const result: CleanupResult = { deleted: 0, errors: 0 };
+
+  try {
+    if (!tableExists("agentic_conversations") || !tableExists("conversation_turn_nodes")) {
+      return result;
+    }
+    const stmt = db.prepare(
+      `DELETE FROM agentic_conversations
+       WHERE rowid IN (
+         SELECT rowid FROM agentic_conversations
+         WHERE last_seen_at < ?
+           AND NOT EXISTS (
+             SELECT 1 FROM conversation_turn_nodes n
+             WHERE n.conversation_id = agentic_conversations.id
+           )
+         LIMIT 10000
+       )`
+    );
+    while (true) {
+      const batch = stmt.run(cutoffISO).changes;
+      result.deleted += batch;
+      if (batch < 10_000) break;
+      await new Promise<void>((resolve) => setImmediate(resolve));
+    }
+    console.log(
+      `[Cleanup] Deleted ${result.deleted} orphaned agentic_conversations older than ${retentionDays} days`
+    );
+  } catch (err: unknown) {
+    console.error("[Cleanup] Error cleaning agentic_conversations:", err);
+    result.errors++;
+  }
+
+  return result;
+}
+
+/**
  * Run all cleanup functions if auto-cleanup is enabled.
  */
 export async function runAutoCleanup(): Promise<{
@@ -470,6 +555,8 @@ export async function runAutoCleanup(): Promise<{
     compressionRunTelemetry: await cleanupCompressionRunTelemetry(),
     proxyLogs: await cleanupProxyLogs(),
     ccrBlocks: await cleanupCcrBlocks(),
+    conversationTurnNodes: await cleanupConversationTurnNodes(),
+    agenticConversations: await cleanupAgenticConversations(),
   };
 
   const totalDeleted = Object.values(results).reduce((sum, r) => sum + r.deleted, 0);
