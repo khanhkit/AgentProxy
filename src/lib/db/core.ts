@@ -38,6 +38,7 @@ import {
   type CallLogArtifact,
 } from "../usage/callLogArtifacts";
 import { migrateLegacyEncryptedString } from "./encryption";
+import { serializeJsonField } from "./providers/columns";
 import { invalidateDbCache } from "./readCache";
 import { rowToCamel } from "./caseMapping";
 import { isAutomatedTestProcess } from "@/shared/utils/testProcess";
@@ -1594,7 +1595,8 @@ function migrateFromJson(db: SqliteDatabase, jsonPath: string) {
           rate_limited_until, health_check_interval, last_health_check_at,
           last_tested, api_key, id_token, provider_specific_data,
           expires_in, display_name, global_priority, default_model,
-          token_type, consecutive_use_count, rate_limit_protection, last_used_at, created_at, updated_at
+          token_type, consecutive_use_count, rate_limit_protection, last_used_at,
+          rate_limit_overrides_json, created_at, updated_at
         ) VALUES (
           @id, @provider, @authType, @name, @email, @priority, @isActive,
           @accessToken, @refreshToken, @expiresAt, @tokenExpiresAt,
@@ -1603,11 +1605,23 @@ function migrateFromJson(db: SqliteDatabase, jsonPath: string) {
           @rateLimitedUntil, @healthCheckInterval, @lastHealthCheckAt,
           @lastTested, @apiKey, @idToken, @providerSpecificData,
           @expiresIn, @displayName, @globalPriority, @defaultModel,
-          @tokenType, @consecutiveUseCount, @rateLimitProtection, @lastUsedAt, @createdAt, @updatedAt
+          @tokenType, @consecutiveUseCount, @rateLimitProtection, @lastUsedAt,
+          @rateLimitOverridesJson, @createdAt, @updatedAt
         )
       `);
+      const selectExistingOverrides = db.prepare(
+        "SELECT rate_limit_overrides_json FROM provider_connections WHERE id = ?"
+      );
 
       for (const conn of data.providerConnections || []) {
+        const hasOverrides = conn.rateLimitOverrides != null;
+        let rateLimitOverridesJson = serializeJsonField(conn.rateLimitOverrides);
+        if (!hasOverrides && typeof conn.id === "string") {
+          const existing = selectExistingOverrides.get(conn.id) as
+            | { rate_limit_overrides_json: string | null }
+            | undefined;
+          if (existing) rateLimitOverridesJson = existing.rate_limit_overrides_json;
+        }
         insertConn.run({
           id: conn.id,
           provider: conn.provider,
@@ -1647,6 +1661,7 @@ function migrateFromJson(db: SqliteDatabase, jsonPath: string) {
           lastUsedAt: conn.lastUsedAt || null,
           rateLimitProtection:
             conn.rateLimitProtection === true || conn.rateLimitProtection === 1 ? 1 : 0,
+          rateLimitOverridesJson,
           createdAt: conn.createdAt || new Date().toISOString(),
           updatedAt: conn.updatedAt || new Date().toISOString(),
         });
