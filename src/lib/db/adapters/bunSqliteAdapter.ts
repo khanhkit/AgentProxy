@@ -81,7 +81,7 @@ export function createBunSqliteAdapter(db: BunSqliteDatabaseLike, filePath: stri
           return normalizeRunResult(statement.run(...normalizeParams(params)));
         },
         get(...params: unknown[]): unknown {
-          return statement.get(...normalizeParams(params));
+          return statement.get(...normalizeParams(params)) ?? undefined;
         },
         all(...params: unknown[]): unknown[] {
           return statement.all(...normalizeParams(params));
