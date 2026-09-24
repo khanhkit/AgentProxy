@@ -114,6 +114,42 @@ export function exportProxyLogsSince(since: string): Record<string, unknown>[] {
   return logs;
 }
 
+export function countProxyLogsSince(since: string): number {
+  const db = getDbInstance();
+  const row = db
+    .prepare("SELECT COUNT(*) AS count FROM proxy_logs WHERE timestamp >= @since")
+    .get({ since }) as { count?: number } | undefined;
+  return Number(row?.count ?? 0);
+}
+
+export function* iterateProxyLogsSince(
+  since: string,
+  limit: number
+): Generator<Record<string, unknown>, void, void> {
+  const maxRows = Math.max(0, Math.trunc(limit));
+  if (maxRows === 0) return;
+
+  const maxRowId = getLegacyProxyLogExportMaxRowId(since);
+  let cursor: LegacyProxyLogExportCursor | null = null;
+  let processed = 0;
+
+  while (processed < maxRows) {
+    const pageLimit = Math.min(100, maxRows - processed);
+    const page = getLegacyProxyLogExportPage(since, maxRowId, cursor, pageLimit);
+    if (page.length === 0) break;
+
+    for (const row of page) {
+      yield row.record;
+      processed++;
+      if (processed >= maxRows) break;
+    }
+
+    const last = page[page.length - 1];
+    cursor = { timestamp: last.timestamp, rowId: last.rowId };
+    if (page.length < pageLimit) break;
+  }
+}
+
 // 24h window for "last known egress IP" lookups. This helper answers a
 // different question from proxyEgress.ts (#10677): that module reports which
 // connections share an egress IP *right now*, derived from their proxy config
