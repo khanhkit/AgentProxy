@@ -981,10 +981,14 @@ function startDbHealthCheckScheduler(db: SqliteDatabase) {
 // the shared wal-index under handles that hold it mapped and can SIGBUS the event loop.
 // Runtime maintenance lives in ./walMaintenance (PASSIVE + busy warn + RESTART size guard).
 
-export function runManagedDbHealthCheck(options?: { autoRepair?: boolean }) {
+export function runManagedDbHealthCheck(options?: {
+  autoRepair?: boolean;
+  skipIntegrityCheck?: boolean;
+}) {
   const db = getDbInstance();
   return runDbHealthCheck(db, {
     autoRepair: options?.autoRepair === true,
+    skipIntegrityCheck: options?.skipIntegrityCheck === true,
     expectedSchemaVersion: "1",
     createBackupBeforeRepair: () => createHealthCheckBackup(db),
   });
