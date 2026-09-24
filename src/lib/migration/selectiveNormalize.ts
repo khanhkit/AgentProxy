@@ -365,3 +365,63 @@ export function normalizeOmniRouteSqliteRows(input: unknown): MigrationSourceEnt
 
   return entities;
 }
+
+
+interface SelectRowsAdapter {
+  prepare(sql: string): {
+    all?: () => unknown[];
+  };
+}
+
+function rows(adapter: SelectRowsAdapter, sql: string): unknown[] {
+  return adapter.prepare(sql).all?.() ?? [];
+}
+
+export function readSqliteMigrationEntities(
+  adapter: SelectRowsAdapter,
+  family: "9router" | "omniroute"
+): MigrationSourceEntity[] {
+  if (family === "9router") {
+    return normalize9RouterSqliteRows({
+      providerConnections: rows(
+        adapter,
+        "SELECT id, provider, authType, name, email, priority, isActive, data FROM providerConnections"
+      ),
+      providerNodes: rows(
+        adapter,
+        "SELECT id, type, name, data FROM providerNodes"
+      ),
+      combos: rows(
+        adapter,
+        "SELECT id, name, kind, models FROM combos"
+      ),
+      apiKeys: rows(
+        adapter,
+        "SELECT id, name FROM apiKeys"
+      ),
+      settings: rows(
+        adapter,
+        "SELECT id, data FROM settings WHERE id = 1"
+      ),
+    });
+  }
+
+  return normalizeOmniRouteSqliteRows({
+    providerConnections: rows(
+      adapter,
+      "SELECT id, provider, auth_type, name, email, priority, is_active, display_name, default_model FROM provider_connections"
+    ),
+    providerNodes: rows(
+      adapter,
+      "SELECT id, type, name, prefix, api_type, base_url, chat_path, models_path, custom_headers_json FROM provider_nodes"
+    ),
+    combos: rows(
+      adapter,
+      "SELECT id, name, data FROM combos"
+    ),
+    apiKeys: rows(
+      adapter,
+      "SELECT id, name, allowed_models, no_log FROM api_keys"
+    ),
+  });
+}

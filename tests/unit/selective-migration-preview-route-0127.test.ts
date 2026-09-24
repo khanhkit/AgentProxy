@@ -169,3 +169,125 @@ test("TC-MIG-API-008 previews 9Router JSON without creating a temp database", as
   assert.equal(payload.source?.version, "0.4.41");
   assert.equal(opened, false);
 });
+
+test("TC-MIG-API-020 preview returns normalized JSON entities for item-level selection", async () => {
+  const response = await handleSelectiveMigrationPreview(
+    new Request("http://localhost/api/settings/migration/preview", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        _meta: { source: "9router", version: "0.5.86" },
+        providerConnections: [
+          {
+            id: "json-conn-1",
+            provider: "openai",
+            authType: "apikey",
+            name: "Primary",
+            apiKey: "fixture-secret-must-not-leak",
+          },
+        ],
+      }),
+    }),
+    authDeps()
+  );
+
+  assert.equal(response.status, 200);
+  const payload = (await response.json()) as {
+    entities?: Array<{
+      sourceId?: string;
+      disposition?: string;
+      data?: Record<string, unknown>;
+    }>;
+  };
+  assert.equal(payload.entities?.[0]?.sourceId, "json-conn-1");
+  assert.equal(payload.entities?.[0]?.disposition, "REQUIRES_REAUTH");
+  assert.equal(JSON.stringify(payload.entities).includes("fixture-secret"), false);
+});
+
+test("TC-MIG-API-021 SQLite preview returns real normalized source ids using SELECT-only reads", async () => {
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "ap0127-preview-rows-"));
+  const sqlSeen: string[] = [];
+
+  try {
+    const form = new FormData();
+    const sqliteBytes = Buffer.concat([Buffer.from("SQLite format 3\0"), Buffer.alloc(64)]);
+    form.set("file", new File([sqliteBytes], "source.sqlite"));
+
+    const response = await handleSelectiveMigrationPreview(
+      new Request("http://localhost/api/settings/migration/preview", {
+        method: "POST",
+        body: form,
+      }),
+      authDeps({
+        tempDir,
+        openDatabase: async () => ({
+          pragma: () => [{ integrity_check: "ok" }],
+          prepare(sql: string) {
+            sqlSeen.push(sql);
+            if (sql.includes("sqlite_master")) {
+              return {
+                all: () =>
+                  ["provider_connections", "provider_nodes", "combos", "api_keys"].map(
+                    (name) => ({ name })
+                  ),
+              };
+            }
+            if (/COUNT\(\*\).*provider_connections/i.test(sql)) return { get: () => ({ count: 1 }) };
+            if (/COUNT\(\*\).*provider_nodes/i.test(sql)) return { get: () => ({ count: 0 }) };
+            if (/COUNT\(\*\).*combos/i.test(sql)) return { get: () => ({ count: 1 }) };
+            if (/COUNT\(\*\).*api_keys/i.test(sql)) return { get: () => ({ count: 0 }) };
+            if (/FROM\s+provider_connections/i.test(sql)) {
+              return {
+                all: () => [
+                  {
+                    id: "omni-row-conn-1",
+                    provider: "openai",
+                    auth_type: "oauth",
+                    name: "Primary",
+                    email: "row@example.invalid",
+                    access_token: "fixture-secret-must-not-leak",
+                  },
+                ],
+              };
+            }
+            if (/FROM\s+provider_nodes/i.test(sql)) return { all: () => [] };
+            if (/FROM\s+combos/i.test(sql)) {
+              return {
+                all: () => [
+                  {
+                    id: "omni-row-combo-1",
+                    name: "Fallback",
+                    data: JSON.stringify({
+                      models: [{ connectionId: "omni-row-conn-1", model: "gpt-example" }],
+                    }),
+                  },
+                ],
+              };
+            }
+            if (/FROM\s+api_keys/i.test(sql)) return { all: () => [] };
+            return { all: () => [], get: () => ({ count: 0 }) };
+          },
+          close() {},
+        }),
+      })
+    );
+
+    assert.equal(response.status, 200);
+    const payload = (await response.json()) as {
+      entities?: Array<{
+        sourceId?: string;
+        dependencies?: Array<{ sourceId?: string }>;
+      }>;
+    };
+    const ids = payload.entities?.map((entity) => entity.sourceId) ?? [];
+    assert.deepEqual(ids.sort(), ["omni-row-combo-1", "omni-row-conn-1"]);
+    const combo = payload.entities?.find((entity) => entity.sourceId === "omni-row-combo-1");
+    assert.deepEqual(combo?.dependencies, [
+      { category: "providerConnections", sourceId: "omni-row-conn-1" },
+    ]);
+    assert.equal(JSON.stringify(payload.entities).includes("fixture-secret"), false);
+    assert.ok(sqlSeen.every((sql) => /^SELECT\b/i.test(sql.trim())));
+  } finally {
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  }
+});

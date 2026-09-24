@@ -8,6 +8,10 @@ import {
   previewSqliteMigrationSource,
   type MigrationPreviewPlan,
 } from "./selectivePreview.ts";
+import {
+  normalize9RouterJsonSource,
+  readSqliteMigrationEntities,
+} from "./selectiveNormalize.ts";
 
 const DEFAULT_MAX_UPLOAD_BYTES = 100 * 1024 * 1024;
 
@@ -59,8 +63,10 @@ function previewJson(rawText: string): Response {
   if (!rawText.trim()) return json({ error: "Empty request payload" }, 400);
 
   try {
-    const plan = previewJsonMigrationSource(JSON.parse(rawText));
-    return json(plan);
+    const source = JSON.parse(rawText);
+    const plan = previewJsonMigrationSource(source);
+    const entities = normalize9RouterJsonSource(source);
+    return json({ ...plan, entities });
   } catch {
     return json({ error: "Unsupported or invalid migration JSON source" }, 400);
   }
@@ -158,7 +164,9 @@ export async function handleSelectiveMigrationPreview(
     } catch {
       return json({ error: "Unsupported SQLite migration source" }, 400);
     }
-    return json(plan);
+
+    const entities = readSqliteMigrationEntities(sourceDb, plan.source.family);
+    return json({ ...plan, entities });
   } catch {
     return json({ error: "Unable to preview migration source" }, 400);
   } finally {
