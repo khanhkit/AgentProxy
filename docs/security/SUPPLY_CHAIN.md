@@ -2,73 +2,95 @@
 title: "Supply-Chain Gates"
 ---
 
-# Supply-Chain Gates (Phase 8 · Block A)
+# Supply-Chain Gates
 
-AgentProxy publishes npm + Docker artifacts. These gates provide provenance,
-inventory (SBOM) and CVE scanning, all OSS, plugged into release workflows.
-**Advisory-first** posture — they report now, promote to blocking after the 1st
-green release.
+AgentProxy protects source dependencies, native Rust code, container releases, and
+native release assets with fail-closed CI/release controls. Third-party GitHub
+Actions are SHA-pinned; Dependabot owns version refreshes.
 
-| Gate                  | Tool                                           | Where                         | Blocks?                  | Output                                        |
-| --------------------- | ---------------------------------------------- | ----------------------------- | ------------------------ | --------------------------------------------- |
-| SLSA provenance (npm) | `npm --provenance` (OIDC)                      | `npm-publish.yml`             | only if publish fails    | badge npmjs / `npm audit signatures`          |
-| SBOM npm              | `@cyclonedx/cyclonedx-npm`                     | `npm-publish.yml`             | only if generation fails | Release asset + artifact                      |
-| SBOM image            | `anchore/sbom-action` (syft)                   | `docker-publish.yml` (merge)  | advisory                 | CycloneDX artifact                            |
-| Trivy CVE (SARIF)     | `aquasecurity/trivy-action`                    | `docker-publish.yml` (merge)  | advisory                 | SARIF (HIGH+CRITICAL) → Security tab          |
-| Trivy CRITICAL gate   | `aquasecurity/trivy-action`                    | `docker-publish.yml` (merge)  | **blocking**             | `exit-code: '1'` on fixable CRITICAL          |
-| osv vulnCount         | `osv-scanner` (`check:vuln-ratchet --ratchet`) | `ci.yml` (`quality-extended`) | **blocking**             | ratchets `metrics.vulnCount` (direction:down) |
-| OpenSSF Scorecard     | `ossf/scorecard-action`                        | `scorecard.yml` (cron)        | advisory                 | SARIF → Security + badge                      |
+> **npm status:** the legacy `.github/workflows/npm-publish.yml` was deliberately
+> removed by the 2026-09-13 release-pipeline hardening change. Packaging and
+> post-publish verification code still exists, but there is currently no active npm
+> publication workflow. This document therefore makes no npm provenance/SBOM claim.
 
-The image CVE ratchet uses **two steps** in `docker-publish.yml`: the SARIF step
-(`HIGH,CRITICAL`, `exit-code: 0`) keeps HIGH+CRITICAL visible in the Security tab
-without blocking; the _CRITICAL gate_ step (`severity: CRITICAL`, `ignore-unfixed: true`,
-`exit-code: 1`) fails the release on a CRITICAL CVE **with a fix available**. `ignore-unfixed`
-prevents blocking the release for a base-image CVE without an upstream patch.
+## Active controls
 
-## ⚠️ CVE Variance (blocking osv/Trivy gates)
+| Surface | Control | Workflow | Enforcement |
+| --- | --- | --- | --- |
+| PR dependency delta | `actions/dependency-review-action` | `ci.yml` → `Dependency Review` | **Blocking** through the required `Security Tests` context |
+| Rust correctness | rustfmt + Clippy `-D warnings` + workspace/contract tests | `ci.yml` → `Rust Quality` | **Blocking** for Rust/workflow changes through `Security Tests` |
+| Rust dependency security | `cargo-deny` advisories/licenses/bans/sources | `ci.yml` → `Rust Quality` | **Blocking** for Rust/workflow changes through `Security Tests` |
+| JS dependency CVEs | `osv-scanner` vulnerability ratchet | `ci.yml` → extended quality gates | **Blocking on a measured regression**; measurement failures self-skip |
+| Secrets | Gitleaks ratchet | `ci.yml` → extended quality gates | **Blocking on a measured regression** |
+| Workflow security | actionlint + zizmor ratchet | `ci.yml` → extended quality gates | **Blocking on configured hard rules/regressions** |
+| Container provenance | BuildKit `provenance: mode=max` | `docker-publish.yml` | **Blocking** as part of image build/push |
+| Container SBOM | BuildKit `sbom: true` | `docker-publish.yml` | **Blocking** as part of image build/push |
+| Container CVEs | Trivy OS + library scan, HIGH/CRITICAL | `docker-publish.yml` | **Blocking** for every platform image |
+| OCI manifest attestation | GitHub `actions/attest` + registry publication | `docker-publish.yml` | **Blocking** before signature |
+| OCI signature | Cosign keyless OIDC sign + verify | `docker-publish.yml` | **Blocking** |
+| Native release provenance | GitHub `actions/attest` over collected native assets | `release-platforms.yml` | **Blocking** before GitHub Release upload |
+| Privileged release runner visibility | StepSecurity Harden-Runner, `egress-policy: audit` | container/native publish jobs | Observability/hardening on the high-privilege jobs |
+| Repository posture | OpenSSF Scorecard → SARIF + published result | `scorecard.yml` | Advisory, weekly + branch-protection changes |
+| Documentation links | Lychee | `links.yml` | Advisory, weekly |
 
-osv and Trivy compare deps against CVE databases that **continuously grow**. A PR
-that **touches no dependencies** can suddenly turn red because a new CVE was
-disclosed in an existing dep (osv: measured `vulnCount` > baseline; Trivy: a new
-fixable CRITICAL in the image). **This is EXPECTED operational behavior of a blocking
-CVE gate, not a product regression.**
+## Required merge-path design
 
-When osv or Trivy go red due to a newly disclosed CVE, the remedy is:
+The protected `main` branch already requires the stable `Security Tests`
+GitHub Actions context. New PR dependency and Rust gates are intentionally wired
+as prerequisites of that existing context rather than being added immediately as
+new branch-protection contexts.
 
-1. **Bump the affected dep** (preferred) — upgrade to the patched version via `package.json`
-   `overrides` (transitive deps) or rebuild the image on a patched base.
-2. **If there is no upstream fix:**
-   - **osv:** re-baseline `metrics.vulnCount` in `config/quality/quality-baseline.json`
-     (`npm run quality:ratchet -- --update` does not cover dedicated gates — edit the value by
-     hand, `direction:down`) with a justification note + tracking issue.
-   - **Trivy:** add an entry in `.trivyignore` (CVE-ID per line) with a justification
-     comment + tracking issue. `ignore-unfixed: true` already covers CVEs without
-     patches automatically.
+This preserves fail-closed behavior without creating an unobserved required
+context that could deadlock merges. Any future required-check migration must
+follow `docs/architecture/GITHUB_GOVERNANCE_POLICY.md` and
+`config/quality/github-governance-policy.json`.
 
-Both gates **gracefully SKIP** (exit 0) when the tool is absent or the measurement
-fails (osv-scanner not in PATH, osv.dev/network unreachable, invalid JSON) — a
-**measurement** failure never blocks, only a **measured** regression blocks.
+## Rust dependency policy
 
-## Backlog: Scorecard advisory → blocking
+`deny.toml` is the committed Rust supply-chain policy. It evaluates the native
+release targets:
 
-After the 1st green release with Scorecard reporting:
+- Linux x64 and ARM64
+- Windows x64 and ARM64
+- macOS x64 and ARM64
 
-- Scorecard: score ratchet (freezes the measured score; cannot decrease).
+The policy blocks RustSec advisories, unapproved licenses, unknown registries,
+and unknown Git sources. Duplicate transitive versions and existing internal
+path-dependency wildcards are warnings so the gate can ratchet real dependency
+risk without forcing unrelated dependency-graph churn.
 
-Complements the Phase 7 gates (osv-scanner, gitleaks, actionlint+zizmor): zizmor
-audits the workflows themselves; Scorecard measures the repo posture in aggregate.
+A Rust or `deny.toml` change activates the Rust CI lane. Workflow changes also
+activate it so edits to the gate cannot merge without exercising the gate itself.
 
-## Runtime managed-update integrity
+## CVE variance and remediation
 
-Release-time gates are complemented by fail-closed admission for operator-triggered updates.
-AgentProxy's CLI updater resolves the current npm release version and SRI together, then promotes the
-exact version rather than `@latest`. npm-managed embedded services similarly resolve an exact
-version plus `dist.integrity` before installation. CLIProxyAPI release installs require a matching
-SHA-256 entry in upstream `checksums.txt` before extraction; absent or malformed checksum metadata
-is an install failure.
+Security databases change independently of source changes. A previously green
+dependency or image can therefore become red after a new advisory is published.
 
-Embedded-service compatibility policy is stored in the existing `version_manager` state:
-`pinnedVersion` pins one candidate, while `configOverrides.managedUpdate.allowedVersions` and
-`blockedVersions` provide explicit allow/deny admission. Successful installs record the verified
-candidate, last-known-good version, previous rollback version, verification metadata, and timestamp
-under `configOverrides.managedUpdate` so rollback state survives process restart.
+Preferred remediation order:
+
+1. Upgrade the affected dependency or base image to a fixed release.
+2. Verify tests and release contracts after the upgrade.
+3. Only when no fix exists, document an explicit, narrowly scoped exception with
+   a tracking issue and review date. Do not suppress a new advisory merely to
+   restore a green dashboard.
+
+The Rust advisory gate is fail-closed. The JS OSV ratchet distinguishes a real
+measured regression from a scanner/network measurement failure. Container Trivy
+scans use `ignore-unfixed: false`, so HIGH/CRITICAL findings remain visible and
+blocking regardless of fix availability.
+
+## Release attestations
+
+Native files are attested before they are attached to a GitHub Release. The final
+multi-architecture container manifest is attested by immutable digest and pushed
+to the OCI registry, then independently signed and verified with Cosign.
+
+This gives release consumers two complementary verification paths:
+
+- GitHub artifact attestations for build provenance
+- Sigstore/Cosign verification for the published OCI manifest
+
+Harden-Runner is deliberately limited to the privileged publish jobs first. Its
+egress policy starts in audit mode so normal release traffic can be observed
+before any deny-list/allow-list enforcement is introduced.

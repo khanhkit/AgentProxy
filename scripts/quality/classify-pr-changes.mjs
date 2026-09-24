@@ -6,7 +6,8 @@
  * - code  → typecheck, unit/vitest, lint bag, quality ratchets (code regressions)
  * - docs  → docs-sync / prose (doc/API contract regressions)
  * - i18n  → message/UI-key validation (translation regressions)
- * - workflow → CI definition changes (always treat as code — gates protect the gates)
+ * - workflow → CI definition changes (always code + Rust; gates protect the gates)
+ * - rust → native gateway source/tests plus deny.toml dependency policy
  *
  * Pure docs or pure message-catalog PRs should NOT pay full unit/lint wall time.
  * Unknown paths default to code (fail-safe: better over-run than under-protect).
@@ -17,13 +18,14 @@ import { fileURLToPath } from "node:url";
 
 /**
  * @param {string[]} files relative paths from git diff
- * @returns {{ code: boolean, docs: boolean, i18n: boolean, workflow: boolean, testsOnly: boolean }}
+ * @returns {{ code: boolean, docs: boolean, i18n: boolean, workflow: boolean, rust: boolean, testsOnly: boolean }}
  */
 export function classifyPaths(files) {
   let code = false;
   let docs = false;
   let i18n = false;
   let workflow = false;
+  let rust = false;
   // testsOnly (WS3.1 fast lane): every file lives under tests/ AND none is an e2e
   // spec — such a diff cannot change the served app, so the E2E matrix may skip.
   // Changing tests/e2e/** REQUIRES running e2e, so it is excluded from the shortcut.
@@ -42,7 +44,15 @@ export function classifyPaths(files) {
 
     if (f.startsWith(".github/workflows/") || f === ".zizmor.yml") {
       workflow = true;
-      // Workflow edits can weaken or remove gates — treat as code.
+      // Workflow edits can weaken or remove gates — treat as code and exercise
+      // the native Rust lane so changes to that gate cannot merge untested.
+      code = true;
+      rust = true;
+      continue;
+    }
+
+    if (f === "deny.toml" || f.startsWith("rust/") || f.startsWith("tests/rust-core/")) {
+      rust = true;
       code = true;
       continue;
     }
@@ -93,7 +103,7 @@ export function classifyPaths(files) {
     code = true;
   }
 
-  return { code, docs, i18n, workflow, testsOnly: sawAnyFile && !sawNonTest && !sawE2eTest };
+  return { code, docs, i18n, workflow, rust, testsOnly: sawAnyFile && !sawNonTest && !sawE2eTest };
 }
 
 function main() {
@@ -124,7 +134,7 @@ function main() {
   const c = classifyPaths(files);
   // GitHub Actions output format (also human-readable key=value).
   process.stdout.write(
-    `code=${c.code}\ndocs=${c.docs}\ni18n=${c.i18n}\nworkflow=${c.workflow}\ntestsOnly=${c.testsOnly}\n`
+    `code=${c.code}\ndocs=${c.docs}\ni18n=${c.i18n}\nworkflow=${c.workflow}\nrust=${c.rust}\ntestsOnly=${c.testsOnly}\n`
   );
 }
 
