@@ -69,3 +69,15 @@ test("AP-0117 default/recommended active pins no longer contain 24.14.1", () => 
     );
   }
 });
+
+test("AP-0128 Node 22.22.2 bootstraps authoritative npm without npm 10.9.7 self-upgrade", () => {
+  const action = readFileSync(".github/actions/npm-ci-retry/action.yml", "utf8");
+
+  assert.match(action, /node_version=.*node --version/);
+  assert.match(action, /\$node_version" == "v22\.22\.2"/);
+  assert.match(action, /corepack install --global npm@12\.0\.2/);
+  assert.match(action, /corepack enable --install-directory "\$corepack_bin" npm/);
+  assert.match(action, /GITHUB_PATH/);
+  assert.match(action, /corepack npm --version/);
+  assert.match(action, /test "\$\(npm --version\)" = "12\.0\.2"/);
+});

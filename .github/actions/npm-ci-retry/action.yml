@@ -21,7 +21,27 @@ runs:
     - name: Pin authoritative npm
       if: inputs.pin_authoritative_npm == 'true'
       shell: bash
-      run: npm install -g npm@12.0.2 --no-audit --no-fund
+      run: |
+        set -euo pipefail
+
+        node_version="$(node --version)"
+        if [[ "$node_version" == "v22.22.2" ]]; then
+          # Node 22.22.2 bundles npm 10.9.7, whose in-place global self-upgrade
+          # can fail with MODULE_NOT_FOUND: promise-retry. Corepack is bundled
+          # with Node 22 and can fetch/run the project-pinned npm without asking
+          # npm 10.9.7 to overwrite itself.
+          corepack install --global npm@12.0.2
+          corepack_bin="$RUNNER_TEMP/agentproxy-corepack-npm"
+          mkdir -p "$corepack_bin"
+          corepack enable --install-directory "$corepack_bin" npm
+          echo "$corepack_bin" >> "$GITHUB_PATH"
+          export PATH="$corepack_bin:$PATH"
+          test "$(corepack npm --version)" = "12.0.2"
+        else
+          npm install -g npm@12.0.2 --no-audit --no-fund
+        fi
+
+        test "$(npm --version)" = "12.0.2"
 
     - name: Resolve Node version for the cache key
       id: node
