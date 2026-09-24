@@ -32,6 +32,18 @@ export interface DatabaseSettings {
     semanticCacheEnabled: boolean;
     semanticCacheMaxSize: number;
     semanticCacheTTL: number;
+    /** Opt-in vector similarity layer. Legacy exact-match caching stays unchanged when false. */
+    semanticCacheVectorEnabled?: boolean;
+    semanticCacheBackend?: "memory" | "redis";
+    semanticCacheThreshold?: number;
+    semanticCacheEmbeddingProvider?: string;
+    semanticCacheEmbeddingModel?: string;
+    semanticCacheEmbeddingDimension?: number;
+    semanticCacheEmbeddingBaseUrl?: string;
+    semanticCacheEmbeddingApiKey?: string;
+    semanticCacheRedisUrl?: string;
+    semanticCacheRedisPrefix?: string;
+    semanticCacheRequireZeroTemp?: boolean;
     promptCacheEnabled: boolean;
     promptCacheStrategy: "auto" | "system-only" | "manual";
     alwaysPreserveClientCache: "auto" | "always" | "never";
@@ -102,8 +114,19 @@ export const DEFAULT_DATABASE_SETTINGS: Omit<DatabaseSettings, "location" | "sta
   },
   cache: {
     semanticCacheEnabled: true,
-    semanticCacheMaxSize: 100,
+    semanticCacheMaxSize: 1000,
     semanticCacheTTL: 1800000,
+    semanticCacheVectorEnabled: false,
+    semanticCacheBackend: "memory",
+    semanticCacheThreshold: 0.8,
+    semanticCacheEmbeddingProvider: "lemonade",
+    semanticCacheEmbeddingModel: "harrier-oss-v1-0.6b",
+    semanticCacheEmbeddingDimension: 1024,
+    semanticCacheEmbeddingBaseUrl: "",
+    semanticCacheEmbeddingApiKey: "",
+    semanticCacheRedisUrl: "",
+    semanticCacheRedisPrefix: "omniroute:semcache:",
+    semanticCacheRequireZeroTemp: true,
     promptCacheEnabled: true,
     promptCacheStrategy: "auto",
     alwaysPreserveClientCache: "auto",
