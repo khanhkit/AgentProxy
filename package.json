@@ -506,6 +506,15 @@
     "@openai/codex-security": {
       "smol-toml": "^1.8.0"
     },
+    "chevrotain": {
+      "lodash-es": "4.18.1"
+    },
+    "@chevrotain/gast": {
+      "lodash-es": "4.18.1"
+    },
+    "@chevrotain/cst-dts-gen": {
+      "lodash-es": "4.18.1"
+    },
     "jsdom": {
       "undici": "^7.29.0"
     },

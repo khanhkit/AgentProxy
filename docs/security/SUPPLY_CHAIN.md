@@ -94,3 +94,22 @@ This gives release consumers two complementary verification paths:
 Harden-Runner is deliberately limited to the privileged publish jobs first. Its
 egress policy starts in audit mode so normal release traffic can be observed
 before any deny-list/allow-list enforcement is introduced.
+
+## Known accepted risk: extract-zip 2.0.1
+
+extract-zip 2.0.1 currently carries unpatched symlink-traversal advisories
+GHSA-7pqw-9j4j-h8q3 and GHSA-jmr9-qjv8-65gv. No fixed npm release exists.
+
+AgentProxy accepts this narrowly because the dependency is confined to the
+development-only chain promptfoo -> @openai/codex-security -> extract-zip.
+promptfoo is a devDependency, and production/runtime code under src/,
+open-sse/, and bin/ does not import extract-zip.
+
+Do not replace extract-zip with an arbitrary override: @openai/codex-security
+layers its own archive-entry checks on that API, so an API-incompatible replacement
+could weaken the security tooling itself. tests/unit/extract-zip-ap0128-exposure.test.ts
+is the regression guard: it must fail if the chain becomes production-reachable or
+if runtime code starts importing extract-zip.
+
+This variance must be re-evaluated when @openai/codex-security or extract-zip
+publishes a fixed compatible release.
