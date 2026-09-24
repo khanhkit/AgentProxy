@@ -18,8 +18,9 @@ import fs from "fs";
 import { resolveWritableDataDir, getLegacyDotDataDir } from "../dataPaths";
 import { isNextBuildPhase } from "../buildPhase";
 import { runMigrations } from "./migrationRunner";
-import { runDbHealthCheck } from "./healthCheck";
+import { runDbHealthCheck, getPagerCorruption } from "./healthCheck";
 import { createManagedDbBackup as writeManagedDbBackup } from "./managedBackup";
+import { createDbHealthCoordinator, runDbHealthInChild } from "./healthCheckRunner";
 import { resetAllDbModuleState } from "./stateReset";
 import { parseStoredPayload } from "../logPayloads";
 import { DEFAULT_DATABASE_SETTINGS, type DatabaseSettings } from "@/types/databaseSettings";
@@ -907,6 +908,7 @@ function autoMigrateLegacyEncryptedConnections(db: SqliteDatabase): number {
 }
 
 let dbHealthCheckTimer: NodeJS.Timeout | null = null;
+let periodicHealthAbort: AbortController | null = null;
 
 function getDbHealthCheckIntervalMs(): number {
   const rawValue = process.env.AGENTPROXY_DB_HEALTHCHECK_INTERVAL_MS;
@@ -924,6 +926,8 @@ function clearDbHealthCheckScheduler() {
     clearInterval(dbHealthCheckTimer);
     dbHealthCheckTimer = null;
   }
+  periodicHealthAbort?.abort();
+  periodicHealthAbort = null;
 }
 
 function startDbHealthCheckScheduler(db: SqliteDatabase) {
@@ -934,18 +938,20 @@ function startDbHealthCheckScheduler(db: SqliteDatabase) {
   if (intervalMs <= 0) return;
 
   dbHealthCheckTimer = setInterval(() => {
-    try {
-      if (!db.open) return;
-      runDbHealthCheck(db, {
-        autoRepair: true,
-        skipIntegrityCheck: process.env.AGENTPROXY_SKIP_DB_HEALTHCHECK === "1",
-        expectedSchemaVersion: "1",
-        createBackupBeforeRepair: () => createHealthCheckBackup(db),
+    if (!db.open || periodicHealthAbort) return;
+    const controller = new AbortController();
+    periodicHealthAbort = controller;
+    void runIsolatedManagedDbHealthCheck({
+      autoRepair: true,
+      skipIntegrityCheck: process.env.AGENTPROXY_SKIP_DB_HEALTHCHECK === "1",
+    })
+      .catch((error: unknown) => {
+        const message = error instanceof Error ? error.message : String(error);
+        console.warn("[DB] Periodic health-check failed:", message);
+      })
+      .finally(() => {
+        if (periodicHealthAbort === controller) periodicHealthAbort = null;
       });
-    } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : String(error);
-      console.warn("[DB] Periodic health-check failed:", message);
-    }
   }, intervalMs);
   dbHealthCheckTimer.unref?.();
 }
@@ -956,10 +962,71 @@ function startDbHealthCheckScheduler(db: SqliteDatabase) {
 // the shared wal-index under handles that hold it mapped and can SIGBUS the event loop.
 // Runtime maintenance lives in ./walMaintenance (PASSIVE + busy warn + RESTART size guard).
 
-export function runManagedDbHealthCheck(options?: {
+type ManagedHealthCheckOptions = {
   autoRepair?: boolean;
   skipIntegrityCheck?: boolean;
-}) {
+};
+
+const managedHealth = createDbHealthCoordinator(async (autoRepair, skipIntegrity) => {
+  const db = getDbInstance();
+  const skipIntegrityCheck =
+    skipIntegrity || process.env.AGENTPROXY_SKIP_DB_HEALTHCHECK === "1";
+  const backupDir = DB_BACKUPS_DIR || path.join(DATA_DIR, "db_backups");
+
+  const runDirect = () =>
+    runDbHealthCheck(db, {
+      autoRepair,
+      skipIntegrityCheck,
+      expectedSchemaVersion: "1",
+      createBackupBeforeRepair: () =>
+        writeManagedDbBackup(db, "health-check-repair", backupDir),
+    });
+
+  let result: ReturnType<typeof runDbHealthCheck>;
+  if (db.driver === "sql.js" || db.name === ":memory:" || !db.name) {
+    result = runDirect();
+  } else {
+    try {
+      result = await runDbHealthInChild(
+        {
+          filePath: db.name,
+          autoRepair,
+          skipIntegrityCheck,
+          backupDir,
+          pagerCorruption: getPagerCorruption(),
+        },
+        { signal: periodicHealthAbort?.signal }
+      );
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      const packagingUnavailable =
+        message === "Database health worker is missing" ||
+        message === "Database health worker failed to start";
+      if (!packagingUnavailable) throw error;
+      console.warn(
+        `[DB] Isolated health worker unavailable; using in-process compatibility path: ${message}`
+      );
+      result = runDirect();
+    }
+  }
+
+  if (result.repairedCount > 0) invalidateDbCache();
+  return result;
+});
+
+export function runIsolatedManagedDbHealthCheck(options?: ManagedHealthCheckOptions) {
+  if (getPagerCorruption()) managedHealth.invalidate();
+  return managedHealth.run(
+    options?.autoRepair === true,
+    options?.skipIntegrityCheck === true
+  );
+}
+
+/**
+ * Synchronous compatibility wrapper retained until PHASE-20 rewires API/MCP
+ * callers to the isolated async contract.
+ */
+export function runManagedDbHealthCheck(options?: ManagedHealthCheckOptions) {
   const db = getDbInstance();
   return runDbHealthCheck(db, {
     autoRepair: options?.autoRepair === true,

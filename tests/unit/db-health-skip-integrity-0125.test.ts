@@ -11,8 +11,9 @@ const health=fs.readFileSync(path.join(root,"src/lib/db/healthCheck.ts"),"utf8")
 test("TC-OMNIDB-HEALTH-024A: managed DB health API can waive integrity scans",()=>{
   assert.match(
     core,
-    /runManagedDbHealthCheck\(options\?:\s*\{[\s\S]{0,140}?autoRepair\?: boolean;[\s\S]{0,140}?skipIntegrityCheck\?: boolean;[\s\S]{0,80}?\}\)/
+    /type ManagedHealthCheckOptions = \{[\s\S]{0,140}?autoRepair\?: boolean;[\s\S]{0,140}?skipIntegrityCheck\?: boolean;[\s\S]{0,80}?\};/
   );
+  assert.match(core,/runManagedDbHealthCheck\(options\?: ManagedHealthCheckOptions\)/);
   assert.match(
     core,
     /runManagedDbHealthCheck[\s\S]{0,420}?skipIntegrityCheck:\s*options\?\.skipIntegrityCheck === true/
