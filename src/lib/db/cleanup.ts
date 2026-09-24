@@ -463,6 +463,49 @@ export async function cleanupCcrBlocks(): Promise<CleanupResult> {
   return result;
 }
 
+const BATCH_RETENTION_DAYS_DEFAULT = 30;
+
+function getBatchRetentionDays(): number {
+  const raw =
+    process.env.AGENTPROXY_BATCH_RETENTION_DAYS ?? process.env.OMNIROUTE_BATCH_RETENTION_DAYS;
+  if (!raw) return BATCH_RETENTION_DAYS_DEFAULT;
+  const parsed = Number.parseInt(raw, 10);
+  return Number.isInteger(parsed) && parsed >= 0 ? parsed : BATCH_RETENTION_DAYS_DEFAULT;
+}
+
+export async function cleanupOldBatches(): Promise<CleanupResult> {
+  const result: CleanupResult = { deleted: 0, errors: 0 };
+  if (process.env.BATCH_AND_FILE_AUTO_CLEANUP_ENABLED !== "true") {
+    return result;
+  }
+
+  try {
+    const { deleteTerminalBatchesOlderThan } = await import("./batches");
+    const { deletedBatches } = deleteTerminalBatchesOlderThan(getBatchRetentionDays());
+    result.deleted = deletedBatches;
+  } catch (err: unknown) {
+    console.error("[Cleanup] Error cleaning old terminal batches:", err);
+    result.errors++;
+  }
+  return result;
+}
+
+export async function cleanupExpiredFiles(): Promise<CleanupResult> {
+  const result: CleanupResult = { deleted: 0, errors: 0 };
+  if (process.env.BATCH_AND_FILE_AUTO_CLEANUP_ENABLED !== "true") {
+    return result;
+  }
+
+  try {
+    const { pruneExpiredFiles } = await import("./files");
+    result.deleted = pruneExpiredFiles(Math.floor(Date.now() / 1000));
+  } catch (err: unknown) {
+    console.error("[Cleanup] Error cleaning expired files:", err);
+    result.errors++;
+  }
+  return result;
+}
+
 /**
  * Clean up conversation_turn_nodes older than their independent retention window.
  * The index added by migration 186 keeps each bounded batch from scanning the full table.
@@ -582,6 +625,8 @@ export async function runAutoCleanup(): Promise<{
     compressionRunTelemetry: await cleanupCompressionRunTelemetry(),
     proxyLogs: await cleanupProxyLogs(),
     ccrBlocks: await cleanupCcrBlocks(),
+    oldBatches: await cleanupOldBatches(),
+    expiredFiles: await cleanupExpiredFiles(),
     conversationTurnNodes: await cleanupConversationTurnNodes(),
     agenticConversations: await cleanupAgenticConversations(),
   };
