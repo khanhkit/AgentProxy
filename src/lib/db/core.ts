@@ -976,8 +976,10 @@ function startDbHealthCheckScheduler(db: SqliteDatabase) {
 }
 
 // Auto-checkpoint moves WAL pages back into the main DB file but never shrinks the WAL
-// file itself; only wal_checkpoint(TRUNCATE) does, and a long-running server never closes its DB.
-// The scheduler lives in ./walMaintenance (periodic TRUNCATE + busy warn + PASSIVE retry).
+// file itself; only wal_checkpoint(TRUNCATE) does. TRUNCATE runs at shutdown
+// (closeDbInstance) and never on a live timer: truncating a live process's WAL rewrites
+// the shared wal-index under handles that hold it mapped and can SIGBUS the event loop.
+// Runtime maintenance lives in ./walMaintenance (PASSIVE + busy warn + RESTART size guard).
 
 export function runManagedDbHealthCheck(options?: { autoRepair?: boolean }) {
   const db = getDbInstance();
