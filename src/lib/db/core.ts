@@ -1146,8 +1146,9 @@ export function getDbInstance(): SqliteDatabase {
   // Detect and handle old schema format — preserve data when possible (#146)
   // Uses a single probe connection that becomes the real connection when possible.
   if (fs.existsSync(sqliteFile)) {
+    let probe: SqliteDatabase | null = null;
     try {
-      const probe = openSqliteDatabase(sqliteFile, { readonly: true });
+      probe = openSqliteDatabase(sqliteFile, { readonly: true });
       // #9934: init asymmetry — bin/cli/sqlite.mjs::openAgentProxyDb (used by
       // `agentproxy setup`) creates storage.sqlite with only the partial inline
       // schema (key_value + provider_connections) and never runs migrations.
@@ -1214,6 +1215,12 @@ export function getDbInstance(): SqliteDatabase {
         closeProbeIfSafe(probe);
       }
     } catch (e: unknown) {
+      try {
+        closeProbeIfSafe(probe);
+        probe = null;
+      } catch {
+        /* preserve the probe failure */
+      }
       const message = e instanceof Error ? e.message : String(e);
       console.warn("[DB] Could not probe existing DB:", message);
 
@@ -1271,6 +1278,12 @@ export function getDbInstance(): SqliteDatabase {
         } catch {
           /* ok */
         }
+      }
+    } finally {
+      try {
+        closeProbeIfSafe(probe);
+      } catch {
+        /* ignore probe cleanup failure */
       }
     }
   }
