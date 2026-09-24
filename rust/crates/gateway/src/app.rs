@@ -21,6 +21,8 @@ pub fn app(state: AppState) -> Router {
         .route("/healthz", get(healthz))
         .route("/readyz", get(readyz))
         .route("/v1/responses", post(responses).get(proxy_ws))
+        // Local token counting belongs to the legacy control plane; never forward it to Codex upstream.
+        .route("/v1/responses/input_tokens", post(legacy_proxy))
         .route("/v1/responses/{*rest}", post(responses).get(proxy_ws))
         .route("/responses", get(proxy_ws))
         .route("/api/v1/responses", get(proxy_ws))

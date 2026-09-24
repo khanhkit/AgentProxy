@@ -558,6 +558,19 @@ export const v1CountTokensSchema = z
   })
   .catchall(z.unknown());
 
+/** Local Responses token-count wire contract. Unknown fields pass through because they are counted, never forwarded. */
+export const v1ResponsesInputTokensSchema = z
+  .object({
+    model: z.string().optional(),
+    instructions: z.string().optional(),
+    input: z.union([z.string(), z.array(z.unknown())]).optional(),
+    tools: z.array(z.unknown()).optional(),
+    tool_choice: z.unknown().optional(),
+    text: z.unknown().optional(),
+    reasoning: z.unknown().optional(),
+  })
+  .catchall(z.unknown());
+
 // ── Search Schemas ─────────────────────────────────────────────────────
 // Unified search request/response schemas. Final contract — all fields optional
 // with defaults. New features add implementations, not new fields.

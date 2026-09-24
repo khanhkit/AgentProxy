@@ -146,3 +146,69 @@ async fn unknown_native_suffix_is_rejected_without_upstream_attempt() {
         "unknown native suffix must not reach provider upstream"
     );
 }
+
+async fn spawn_input_tokens_legacy(hits: Arc<AtomicUsize>) -> String {
+    async fn input_tokens(State(hits): State<Arc<AtomicUsize>>) -> Response {
+        hits.fetch_add(1, Ordering::SeqCst);
+        Response::builder()
+            .status(StatusCode::OK)
+            .header("content-type", "application/json")
+            .body(Body::from(
+                r#"{"object":"response.input_tokens","input_tokens":7}"#,
+            ))
+            .unwrap()
+    }
+
+    let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
+    let address = listener.local_addr().unwrap();
+    tokio::spawn(async move {
+        axum::serve(
+            listener,
+            Router::new()
+                .route("/v1/responses/input_tokens", post(input_tokens))
+                .with_state(hits),
+        )
+        .await
+        .unwrap();
+    });
+    format!("http://{address}")
+}
+
+#[tokio::test]
+async fn input_tokens_bypasses_native_provider_and_uses_legacy_local_route() {
+    let provider_hits = Arc::new(AtomicUsize::new(0));
+    let provider_url = spawn_counting_upstream(Arc::clone(&provider_hits)).await;
+    let legacy_hits = Arc::new(AtomicUsize::new(0));
+    let legacy_url = spawn_input_tokens_legacy(Arc::clone(&legacy_hits)).await;
+
+    let state = AppState::new_with_legacy_base_url(legacy_url);
+    state
+        .install_snapshot(
+            ConfigSnapshot {
+                schema_version: SUPPORTED_SCHEMA_VERSION,
+                source_id: "input-tokens-v1".to_owned(),
+                generation: 1,
+                api_keys: vec![api_key("client-secret")],
+                codex_connections: vec![account(provider_url)],
+                codex_catalog_models: vec!["gpt-5.6-sol".to_owned()],
+                codex_native_models: vec!["gpt-5.6-sol".to_owned()],
+            },
+            false,
+        )
+        .unwrap();
+
+    let request = Request::builder()
+        .method("POST")
+        .uri("/v1/responses/input_tokens")
+        .header("content-type", "application/json")
+        .header("authorization", "Bearer client-secret")
+        .body(Body::from(r#"{"model":"gpt-5.6-sol","input":"hello"}"#))
+        .unwrap();
+
+    let response = app(state).oneshot(request).await.unwrap();
+    assert_eq!(response.status(), StatusCode::OK);
+    let body = response.into_body().collect().await.unwrap().to_bytes();
+    assert!(String::from_utf8_lossy(&body).contains("response.input_tokens"));
+    assert_eq!(legacy_hits.load(Ordering::SeqCst), 1);
+    assert_eq!(provider_hits.load(Ordering::SeqCst), 0);
+}
