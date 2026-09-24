@@ -169,6 +169,17 @@ export function deleteFile(id: string): boolean {
   return result.changes > 0;
 }
 
+export function deleteFileOwnedBy(id: string, apiKeyId: string): boolean {
+  if (typeof apiKeyId !== "string" || apiKeyId.trim() === "") {
+    throw new Error("deleteFileOwnedBy: apiKeyId is required");
+  }
+  const db = getDbInstance();
+  const result = db
+    .prepare("UPDATE files SET deleted_at = ?, content = NULL WHERE id = ? AND api_key_id = ?")
+    .run(Math.floor(Date.now() / 1000), id, apiKeyId);
+  return result.changes > 0;
+}
+
 /**
  * Clear expired file content while retaining metadata/audit rows.
  */

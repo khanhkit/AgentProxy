@@ -1,5 +1,5 @@
 import { getDbInstance, rowToCamel, objToSnake } from "./core";
-import { deleteFile } from "./files";
+import { deleteFile, deleteFileOwnedBy } from "./files";
 import { v4 as uuidv4 } from "uuid";
 
 function parseBatchRow(row: any): BatchRecord {
@@ -497,7 +497,8 @@ export function deleteCompletedBatches(apiKeyId?: string | null): {
     for (const fileId of fileIds) {
       if (stillReferenced.get(fileId, fileId, fileId)) continue;
       try {
-        if (deleteFile(fileId)) deletedFiles++;
+        const removed = scoped ? deleteFileOwnedBy(fileId, apiKeyId as string) : deleteFile(fileId);
+        if (removed) deletedFiles++;
       } catch {
         // A file cleanup failure is safe to leave as an orphan. Do not turn it
         // into a dangling surviving-batch reference by partially undoing rows.
