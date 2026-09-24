@@ -48,6 +48,7 @@ export default function SelectiveMigrationPanel() {
   } | null>(null);
 
   const entities = preview?.entities ?? [];
+  const categories = Array.from(new Set(entities.map((entity) => entity.category))).sort();
   const selectedCount = selected.size;
   const reauthCount = entities.filter(
     (entity) =>
@@ -126,6 +127,19 @@ export default function SelectiveMigrationPanel() {
     setSelected(new Set());
   };
 
+  const setCategorySelection = (category: string, checked: boolean) => {
+    setSelected((current) => {
+      const next = new Set(current);
+      for (const entity of entities) {
+        if (entity.category !== category) continue;
+        const key = entityKey(entity);
+        if (checked) next.add(key);
+        else next.delete(key);
+      }
+      return next;
+    });
+  };
+
   const apply = async () => {
     if (!sourceFile || selectedCount === 0) return;
 
@@ -148,6 +162,15 @@ export default function SelectiveMigrationPanel() {
         error?: string;
         restorePointId?: string | null;
         rolledBack?: boolean;
+        plan?: {
+          items?: Array<{
+            category?: string;
+            sourceId?: string;
+            label?: string;
+            disposition?: string;
+            unresolvedDependencies?: Array<{ category?: string; sourceId?: string }>;
+          }>;
+        };
         result?: {
           restorePointId?: string | null;
           items?: Array<{ status?: string }>;
@@ -156,8 +179,29 @@ export default function SelectiveMigrationPanel() {
 
       if (!response.ok) {
         if (response.status === 409) {
+          const blockers =
+            data.plan?.items
+              ?.filter(
+                (item) =>
+                  item.disposition === "CONFLICT" ||
+                  (item.unresolvedDependencies?.length ?? 0) > 0
+              )
+              .map((item) => {
+                const name = item.label || item.sourceId || item.category || "item";
+                const deps =
+                  item.unresolvedDependencies
+                    ?.map(
+                      (dependency) =>
+                        `${dependency.category || "dependency"}:${dependency.sourceId || "unknown"}`
+                    )
+                    .join(", ") || "";
+                return deps ? `${name} → missing ${deps}` : name;
+              })
+              .slice(0, 4) ?? [];
           throw new Error(
-            "Migration has unresolved dependencies or target conflicts. Adjust the selection and preview again."
+            "Migration has unresolved dependencies or target conflicts." +
+              (blockers.length > 0 ? ` Blockers: ${blockers.join("; ")}.` : "") +
+              " Adjust the category/item selection before applying."
           );
         }
         const rollbackSuffix =
@@ -263,6 +307,29 @@ export default function SelectiveMigrationPanel() {
                 >
                   Clear selection
                 </button>
+              </div>
+
+              <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1">
+                {categories.map((category) => {
+                  const categoryEntities = entities.filter(
+                    (entity) => entity.category === category
+                  );
+                  const allSelected = categoryEntities.every((entity) =>
+                    selected.has(entityKey(entity))
+                  );
+                  return (
+                    <span key={category} className="text-[11px] text-text-muted">
+                      <span className="font-medium text-text-main">{category}</span>{" "}
+                      <button
+                        type="button"
+                        className="text-primary hover:underline"
+                        onClick={() => setCategorySelection(category, !allSelected)}
+                      >
+                        {allSelected ? "clear" : "select"}
+                      </button>
+                    </span>
+                  );
+                })}
               </div>
 
               <div className="mt-2 max-h-64 space-y-1 overflow-auto rounded-md border border-border/60 p-2">

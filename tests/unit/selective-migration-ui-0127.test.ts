@@ -45,3 +45,13 @@ test("TC-MIG-UI-044 UI selection transmits only category and sourceId", () => {
   assert.match(panel, /require re-auth/i);
   assert.match(panel, /stable restore point/i);
 });
+
+test("TC-MIG-UI-055 category-level selection and conflict details are visible before mutation", () => {
+  const panel = fs.readFileSync(panelPath, "utf8");
+
+  assert.match(panel, /setCategorySelection\(category, !allSelected\)/);
+  assert.match(panel, /categories\.map\(\(category\)/);
+  assert.match(panel, /Migration has unresolved dependencies or target conflicts/);
+  assert.match(panel, /Blockers:/);
+  assert.match(panel, /unresolvedDependencies/);
+});
