@@ -20,7 +20,7 @@ fn account() -> CodexConnectionConfig {
 }
 
 fn fixture() -> Value {
-    serde_json::from_str(include_str!("../fixtures/codex-native-wire-v1.json"))
+    serde_json::from_str(include_str!("../fixtures/codex-native-wire-v2.json"))
         .expect("wire fixture JSON")
 }
 
@@ -61,7 +61,7 @@ where
 }
 
 #[test]
-fn v1_fixture_header_sets_are_explicit_and_exhaustive() {
+fn v2_fixture_header_sets_are_explicit_and_exhaustive() {
     let fixture = fixture();
     assert_eq!(
         fixture["contract_version"].as_u64(),
@@ -93,13 +93,13 @@ fn v1_fixture_header_sets_are_explicit_and_exhaustive() {
             SAFE_CODEX_CLIENT_HEADER_NAMES
                 .iter()
                 .any(|allowed| allowed.eq_ignore_ascii_case(header)),
-            "captured required client header {header} is not represented in the v1 safe-preserve contract"
+            "captured required client header {header} is not represented in the v2 safe-preserve contract"
         );
     }
 }
 
 #[test]
-fn v1_fixture_preserves_safe_headers_and_rejects_forbidden_overrides() {
+fn v2_fixture_preserves_safe_headers_and_rejects_forbidden_overrides() {
     let fixture = fixture();
     let mut client_headers = string_map(&fixture["captured_client_headers"]);
     client_headers.extend(string_map(&fixture["forbidden_client_headers"]));

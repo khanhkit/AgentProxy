@@ -3,7 +3,7 @@ use std::collections::BTreeMap;
 use agentproxy_control_protocol::snapshot::CodexConnectionConfig;
 use serde_json::{Map, Value};
 
-pub const CODEX_NATIVE_WIRE_CONTRACT_VERSION: u32 = 1;
+pub const CODEX_NATIVE_WIRE_CONTRACT_VERSION: u32 = 2;
 pub const SAFE_CODEX_CLIENT_HEADER_NAMES: [&str; 12] = [
     "version",
     "openai-beta",
@@ -118,6 +118,7 @@ impl CodexAdapter {
         convert_system_to_developer(record);
         normalize_reasoning_alias(record);
         normalize_reasoning_effort_field(record);
+        normalize_reasoning_wire(record);
 
         let unsupported = unsupported_capabilities(record);
         if !unsupported.is_empty() {
@@ -134,6 +135,8 @@ impl CodexAdapter {
             "prompt_cache_retention",
             "safety_identifier",
             "user",
+            "temperature",
+            "top_p",
             "reasoning_effort",
             "_nativeCodexPassthrough",
         ] {
@@ -416,6 +419,28 @@ fn normalize_reasoning_effort_field(record: &mut Map<String, Value>) {
     }
     if let Some(reasoning) = reasoning.as_object_mut() {
         reasoning.insert("effort".to_owned(), Value::String(effort));
+    }
+}
+
+fn normalize_reasoning_wire(record: &mut Map<String, Value>) {
+    let Some(reasoning) = record.get_mut("reasoning") else {
+        return;
+    };
+    let Some(reasoning) = reasoning.as_object_mut() else {
+        return;
+    };
+
+    let client_disabled = reasoning.get("enabled") == Some(&Value::Bool(false));
+    let has_explicit_effort = reasoning
+        .get("effort")
+        .is_some_and(|value| !value.is_null());
+    if client_disabled && !has_explicit_effort {
+        reasoning.insert("effort".to_owned(), Value::String("none".to_owned()));
+    }
+
+    reasoning.retain(|key, _| key == "effort" || key == "summary");
+    if reasoning.is_empty() {
+        record.remove("reasoning");
     }
 }
 

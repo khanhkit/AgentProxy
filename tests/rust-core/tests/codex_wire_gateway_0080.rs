@@ -66,7 +66,7 @@ fn api_key(secret: &str) -> ApiKeyConfig {
 }
 
 #[tokio::test]
-async fn native_route_preserves_only_v1_safe_client_headers() {
+async fn native_route_preserves_only_v2_safe_client_headers() {
     let upstream = spawn_header_echo_upstream().await;
     let state = AppState::new();
     state
