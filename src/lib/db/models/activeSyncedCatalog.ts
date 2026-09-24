@@ -312,10 +312,7 @@ export async function getAllActiveSyncedModels(): Promise<Record<string, SyncedA
 
         const models = enrichCursorCatalog(
           providerId,
-          await unionCustomModels(
-            providerId,
-            collectModelsForConnections(modelsByConnection, connectionIds)
-          )
+          collectModelsForConnections(modelsByConnection, connectionIds)
         );
 
         if (models.length > 0) {
