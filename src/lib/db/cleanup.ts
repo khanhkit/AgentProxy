@@ -270,6 +270,14 @@ export async function cleanupMemoryEntries(): Promise<CleanupResult> {
     const runResult = stmt.run(cutoffISO);
     result.deleted = runResult.changes;
 
+    if (result.deleted > 0) {
+      try {
+        db.prepare("INSERT INTO memory_fts(memory_fts) VALUES('optimize')").run();
+      } catch {
+        // Best-effort: cleanup remains successful when FTS5 is unavailable.
+      }
+    }
+
     console.log(
       `[Cleanup] Deleted ${result.deleted} memory_entries older than ${retentionDays} days`
     );
