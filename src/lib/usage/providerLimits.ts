@@ -1,3 +1,4 @@
+import { syncCodexQuotaObservation } from "@/lib/db/providers/codexAccountRecovery";
 import {
   getProviderConnectionById,
   getProviderConnections,
@@ -862,6 +863,15 @@ async function fetchLiveProviderLimitsWithOptions(
       result.usage.message
     );
     result = await fetchUsageWithContext(null);
+  }
+
+  if (connection.provider === "codex") {
+    const data = await syncCodexQuotaObservation(
+      connection.id,
+      result.usage,
+      connection.providerSpecificData
+    );
+    if (data) connection = { ...connection, providerSpecificData: data };
   }
 
   if (isRecord(result.usage.quotas)) {
