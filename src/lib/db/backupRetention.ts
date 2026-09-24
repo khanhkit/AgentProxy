@@ -12,8 +12,13 @@
 import fs from "fs";
 import path from "path";
 
+import type { SqliteAdapter } from "./adapters/types";
+
 export const MAX_DB_BACKUPS = 20;
 export const DEFAULT_DB_BACKUP_RETENTION_DAYS = 0;
+export const DB_BACKUP_SETTINGS_NAMESPACE = "dbBackup";
+export const DB_BACKUP_MAX_FILES_KEY = "maxFiles";
+export const DB_BACKUP_RETENTION_DAYS_KEY = "retentionDays";
 
 export function parsePositiveInt(value: string | undefined, fallback: number) {
   if (!value) return fallback;
@@ -25,6 +30,38 @@ export function parseNonNegativeInt(value: string | undefined, fallback: number)
   if (value === undefined) return fallback;
   const parsed = Number.parseInt(value, 10);
   return Number.isInteger(parsed) && parsed >= 0 ? parsed : fallback;
+}
+
+function getStoredInteger(
+  db: Pick<SqliteAdapter, "prepare">,
+  key: string,
+  min: number
+): number | undefined {
+  try {
+    const row = db
+      .prepare("SELECT value FROM key_value WHERE namespace = ? AND key = ?")
+      .get(DB_BACKUP_SETTINGS_NAMESPACE, key) as { value?: string } | undefined;
+    if (!row?.value) return undefined;
+    const parsed = JSON.parse(row.value);
+    return Number.isInteger(parsed) && parsed >= min ? parsed : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+export function resolveDbBackupRetention(
+  db: Pick<SqliteAdapter, "prepare">,
+  env: NodeJS.ProcessEnv = process.env
+): { maxFiles: number; retentionDays: number } {
+  return {
+    maxFiles: env.DB_BACKUP_MAX_FILES
+      ? parsePositiveInt(env.DB_BACKUP_MAX_FILES, MAX_DB_BACKUPS)
+      : (getStoredInteger(db, DB_BACKUP_MAX_FILES_KEY, 1) ?? MAX_DB_BACKUPS),
+    retentionDays: env.DB_BACKUP_RETENTION_DAYS
+      ? parseNonNegativeInt(env.DB_BACKUP_RETENTION_DAYS, DEFAULT_DB_BACKUP_RETENTION_DAYS)
+      : (getStoredInteger(db, DB_BACKUP_RETENTION_DAYS_KEY, 0) ??
+        DEFAULT_DB_BACKUP_RETENTION_DAYS),
+  };
 }
 
 /**

@@ -19,6 +19,7 @@ import { resolveWritableDataDir, getLegacyDotDataDir } from "../dataPaths";
 import { isNextBuildPhase } from "../buildPhase";
 import { runMigrations } from "./migrationRunner";
 import { runDbHealthCheck } from "./healthCheck";
+import { pruneBackupDirectory, resolveDbBackupRetention } from "./backupRetention";
 import { resetAllDbModuleState } from "./stateReset";
 import { parseStoredPayload } from "../logPayloads";
 import { DEFAULT_DATABASE_SETTINGS, type DatabaseSettings } from "@/types/databaseSettings";
@@ -860,6 +861,13 @@ function createManagedDbBackup(db: SqliteDatabase, reason: string): boolean {
 
     db.exec(`VACUUM INTO '${escapedBackupPath}'`);
     console.log(`[DB] Backup created (${reason}): ${backupPath}`);
+
+    try {
+      pruneBackupDirectory({ backupDir, ...resolveDbBackupRetention(db) });
+    } catch {
+      // Retention is best-effort; never hide a successful safety backup.
+    }
+
     return true;
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : String(error);
