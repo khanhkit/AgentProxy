@@ -379,6 +379,29 @@ curl -X POST http://localhost:20128/api/db-backups/restore \
 
 > **Warning**: Restore overwrites the entire DB. Stop all clients first.
 
+### Selective migration from 9Router or OmniRoute
+
+Use **Settings → System Storage → Selective migration** when moving configuration from a supported legacy installation without replacing the current AgentProxy database.
+
+Compatibility is fixture-verified against:
+
+- 9Router \`v0.5.86\` (\`decolua/9router@39e36d3d0c849e0e01dfeacddf111edf892448fc\`) for legacy JSON and current SQLite storage.
+- OmniRoute \`release/v3.8.51\` at \`7d23bcf8ecb3b43c00c024e317af9c39384a1bee\` for SQLite storage.
+
+The flow is **preview → select items → revalidate against the current target → create a stable restore point → apply through AgentProxy-owned writers**. It does not replace tables or reuse foreign primary keys.
+
+Supported portable data includes provider connection metadata, provider nodes/custom endpoints, combos/routing references, safe application settings, model aliases, and user pricing overrides. Existing target aliases/pricing/connections are preserved by default (\`KEEP_TARGET\`) instead of being overwritten silently.
+
+Credential behavior is intentionally conservative:
+
+- foreign connection credentials that cannot be safely re-persisted are imported as inactive metadata and marked \`REQUIRES_REAUTH\`;
+- foreign API-key bearer/ciphertext material is not imported as AgentProxy credential authority;
+- source primary keys, encryption keys, machine identity, sessions, runtime health/backoff state, request logs, and usage history are not copied.
+
+The preview reports intentionally unsupported source categories instead of silently dropping them. Current pinned-source support leaves \`customModels\`, \`proxyConfig\`, and \`mitmAlias\` unsupported because their source semantics do not map 1:1 to the current target contract without inventing API-format, endpoint, host-specific, or credential behavior.
+
+If apply fails after target mutation starts, AgentProxy restores the pre-migration restore point. Full-database backup/import remains a separate operation for whole-database replacement.
+
 ### API-key vault portability
 
 API-key credentials have two different backup contracts:

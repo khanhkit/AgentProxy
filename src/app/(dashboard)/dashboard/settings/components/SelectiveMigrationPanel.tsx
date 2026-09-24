@@ -322,7 +322,7 @@ export default function SelectiveMigrationPanel() {
 
           {(preview.unsupported?.length ?? 0) > 0 && (
             <p className="mt-2 text-[11px] text-text-muted">
-              Runtime/history data excluded:{" "}
+              Unsupported or intentionally excluded source data:{" "}
               {preview.unsupported
                 ?.map((entry) => `${entry.category || "unknown"} (${entry.count ?? 0})`)
                 .join(", ")}
