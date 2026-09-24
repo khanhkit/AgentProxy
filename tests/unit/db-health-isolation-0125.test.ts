@@ -11,8 +11,9 @@ const read=(p:string)=>fs.readFileSync(path.join(root,p),"utf8");
 test("TC-OMNIDB-HEALTH-027A: coordinator preserves skip-integrity job/cache identity", async()=>{
   const mod=await import(pathToFileURL(path.join(root,"src/lib/db/healthCheckRunner.ts")).href);
   const calls:Array<{autoRepair:boolean;skip:boolean}>=[];
-  let resolveFirst:(value:any)=>void=()=>{};
-  const first=new Promise((resolve)=>{resolveFirst=resolve;});
+  const firstResult={isHealthy:true,issues:[],repairedCount:0,backupCreated:false,autoRepair:false,checkedAt:"x",driver:{name:"better-sqlite3",degraded:false}};
+  let resolveFirst:(value:typeof firstResult)=>void=()=>{};
+  const first=new Promise<typeof firstResult>((resolve)=>{resolveFirst=resolve;});
   const coordinator=mod.createDbHealthCoordinator(
     (autoRepair:boolean,skip:boolean)=>{
       calls.push({autoRepair,skip});
@@ -24,13 +25,13 @@ test("TC-OMNIDB-HEALTH-027A: coordinator preserves skip-integrity job/cache iden
   const active=coordinator.run(false,false);
   assert.equal(coordinator.run(false,true),active);
   await assert.rejects(coordinator.run(true,false),/already in progress/);
-  resolveFirst({isHealthy:true,issues:[],repairedCount:0,backupCreated:false,autoRepair:false,checkedAt:"x",driver:{name:"better-sqlite3",degraded:false}});
+  resolveFirst(firstResult);
   await active;
   await coordinator.run(false,false);
   assert.equal(calls.length,1,"full non-repair diagnosis should be cached");
 
   let skippedCalls=0;
-  const skipped=mod.createDbHealthCoordinator(async(autoRepair:boolean,skip:boolean)=>{
+  const skipped=mod.createDbHealthCoordinator(async(autoRepair:boolean,_skip:boolean)=>{
     skippedCalls++;
     return {isHealthy:true,issues:[],repairedCount:0,backupCreated:false,autoRepair,checkedAt:"x",driver:{name:"better-sqlite3",degraded:false}};
   },{now:()=>1000,cacheMs:60_000});

@@ -20,7 +20,7 @@ test("TC-OMNIDB-QUOTA-008A: migration 182 creates ledger/quota tables and indexe
     const objects = db
       .prepare("SELECT type, name FROM sqlite_master WHERE type IN ('table','index')")
       .all()
-      .map((r: any) => String(r.name));
+      .map((r) => String((r as { name: unknown }).name));
     for (const name of [
       "request_cost_ledger",
       "api_key_quota_limits",

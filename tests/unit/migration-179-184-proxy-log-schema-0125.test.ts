@@ -23,13 +23,13 @@ test("TC-OMNIDB-MIG-001: proxy-log migrations add all attribution columns", () =
     for (const [file] of migrations) {
       db.exec(fs.readFileSync(path.join(migrationsDir, file), "utf8"));
     }
-    const columns = db.prepare("PRAGMA table_info(proxy_logs)").all().map((row: any) => row.name);
+    const columns = db.prepare("PRAGMA table_info(proxy_logs)").all().map((row) => (row as { name: unknown }).name);
     for (const [, column] of migrations) assert.ok(columns.includes(column), `missing ${column}`);
 
     const indexes = db
       .prepare("SELECT sql FROM sqlite_master WHERE type='index' AND tbl_name='proxy_logs'")
       .all()
-      .map((row: any) => String(row.sql ?? ""))
+      .map((row) => String((row as { sql?: unknown }).sql ?? ""))
       .join("\n");
     assert.ok(!indexes.includes("correlation_id"), "correlation join must not add a proxy_logs index");
   } finally {

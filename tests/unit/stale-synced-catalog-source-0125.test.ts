@@ -14,7 +14,7 @@ test("TC-OMNIDB-CATALOG-003A: migration 177 adds synced_models_at", () => {
   try {
     db.exec("CREATE TABLE provider_connections (id TEXT PRIMARY KEY)");
     db.exec(sql);
-    const columns = db.prepare("PRAGMA table_info(provider_connections)").all().map((r: any) => r.name);
+    const columns = db.prepare("PRAGMA table_info(provider_connections)").all().map((r) => (r as { name: unknown }).name);
     assert.ok(columns.includes("synced_models_at"));
   } finally {
     db.close();
