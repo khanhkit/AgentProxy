@@ -56,6 +56,13 @@ export {
 } from "./models/aliases";
 export { getMitmAlias, setMitmAliasAll } from "./models/mitmAlias";
 export type { SyncedAvailableModel } from "./models/synced";
+export {
+  getSyncedAvailableModelVision,
+  listSyncedAvailableModelVision,
+  type SyncedAvailableModelVisionMap,
+  type SyncedAvailableModelVisionDatabase,
+  type SyncedAvailableModelVisionReadOptions,
+} from "./models/syncedAvailableModelVision";
 
 // ──────────────── Custom Models ────────────────
 
