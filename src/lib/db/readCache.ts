@@ -279,7 +279,8 @@ export function invalidateModelCatalogCache(): void {
  */
 export function invalidateDbCache(
   scope?: "settings" | "pricing" | "connections" | "combos" | "nodes" | "model-capabilities",
-  id?: string
+  id?: string,
+  opts?: { skipModelCatalog?: boolean }
 ): void {
   if (!scope || scope === "settings") settingsCache.invalidate();
   if (!scope || scope === "pricing") pricingCache.invalidate();
@@ -294,6 +295,7 @@ export function invalidateDbCache(
   }
   if (!scope || scope === "nodes") nodesCache.invalidate();
   if (!scope || scope === "combos") combosCacheVersion++;
+  if (opts?.skipModelCatalog) return;
   // Settings/connections/combos all feed the unified model catalog builder
   // (blockedProviders + hidePaidModels, provider connections + excludedModels,
   // combo definitions, respectively) — pricing does too, via isFreeModel().

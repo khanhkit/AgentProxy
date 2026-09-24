@@ -1107,7 +1107,7 @@ export async function resetConnectionBackoff(id: string): Promise<void> {
     updatedAt: now,
     id,
   });
-  invalidateDbCache("connections");
+  invalidateDbCache("connections", id, { skipModelCatalog: true });
   bumpProxyConfigGeneration();
 }
 
