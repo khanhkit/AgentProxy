@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Button } from "@/shared/components";
 
 interface PreviewEntity {
@@ -49,14 +49,10 @@ export default function SelectiveMigrationPanel() {
 
   const entities = preview?.entities ?? [];
   const selectedCount = selected.size;
-  const reauthCount = useMemo(
-    () =>
-      entities.filter(
-        (entity) =>
-          selected.has(entityKey(entity)) && entity.disposition === "REQUIRES_REAUTH"
-      ).length,
-    [entities, selected]
-  );
+  const reauthCount = entities.filter(
+    (entity) =>
+      selected.has(entityKey(entity)) && entity.disposition === "REQUIRES_REAUTH"
+  ).length;
 
   const clear = () => {
     setSourceFile(null);
