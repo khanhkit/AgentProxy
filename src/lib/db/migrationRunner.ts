@@ -593,6 +593,8 @@ function isSchemaAlreadyApplied(
         hasColumn(db, "provider_nodes", "daily_quota_reset_timezone") &&
         hasColumn(db, "provider_nodes", "daily_quota_reset_hour")
       );
+    case "177":
+      return hasColumn(db, "provider_connections", "synced_models_at");
     case "179":
       return hasColumn(db, "proxy_logs", "upstream_status");
     case "181":

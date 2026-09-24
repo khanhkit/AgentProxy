@@ -8,7 +8,7 @@ import { isRetiredGitHubCopilotModelId } from "@agentproxy/open-sse/config/provi
 
 import type { SqliteAdapter } from "./adapters/types";
 import { getDbInstance } from "./core";
-import { getProviderConnectionsCount } from "./providers";
+import { getProviderConnectionsCount, touchConnectionSyncedModelsAt } from "./providers";
 import { type JsonRecord, getKeyValue } from "./models/shared";
 import {
   normalizeSyncedAvailableModels,
@@ -615,6 +615,7 @@ export async function replaceSyncedAvailableModelsForConnection(
   const key = `${providerId}:${connectionId}`;
   const normalizedModels = normalizeSyncedAvailableModels(models, providerId);
   persistCanonicalSyncedAvailableModels(key, normalizedModels, normalizeSyncedAvailableModels);
+  if (connectionId) await touchConnectionSyncedModelsAt(connectionId);
   // Return the full unioned list for the provider
   return getSyncedAvailableModels(providerId);
 }
