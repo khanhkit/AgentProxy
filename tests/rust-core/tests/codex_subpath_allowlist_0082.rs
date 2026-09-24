@@ -205,7 +205,7 @@ async fn input_tokens_bypasses_native_provider_and_uses_legacy_local_route() {
         .body(Body::from(r#"{"model":"gpt-5.6-sol","input":"hello"}"#))
         .unwrap();
 
-    let response = app(state).oneshot(request).await.unwrap();
+    let response = app(state.clone()).oneshot(request).await.unwrap();
     assert_eq!(response.status(), StatusCode::OK);
     let body = response.into_body().collect().await.unwrap().to_bytes();
     assert!(String::from_utf8_lossy(&body).contains("response.input_tokens"));
