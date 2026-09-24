@@ -162,6 +162,16 @@ export function addXp(apiKeyId: string, action: string, amount: number, metadata
     )
     .run(apiKeyId, action, amount, metadata ?? null);
 
+  // Keep lifetime action counts outside the retention-pruned XP audit log.
+  db()
+    .prepare(
+      `INSERT INTO xp_action_counts (api_key_id, action, count, updated_at)
+     VALUES (?, ?, COALESCE(CAST(json_extract(?, '$.amount') AS INTEGER), 1), datetime('now'))
+     ON CONFLICT(api_key_id, action)
+     DO UPDATE SET count = count + excluded.count, updated_at = datetime('now')`
+    )
+    .run(apiKeyId, action, metadata ?? null);
+
   db()
     .prepare(
       `INSERT INTO user_levels (api_key_id, total_xp, current_level, updated_at)
