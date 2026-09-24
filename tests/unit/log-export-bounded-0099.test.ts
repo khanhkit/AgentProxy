@@ -23,8 +23,9 @@ function seedCallLogs(count: number) {
     `INSERT INTO call_logs (id, timestamp, method, path, status, provider, detail_state)
      VALUES (?, ?, 'POST', '/v1/responses', 200, 'openai', 'none')`
   );
+  const baseMs = Date.now() - 10 * 60 * 1000;
   for (let i = 0; i < count; i += 1) {
-    insert.run(`call-${i}`, new Date(Date.UTC(2026, 8, 17, 4, 0, i)).toISOString());
+    insert.run(`call-${i}`, new Date(baseMs + i * 1000).toISOString());
   }
 }
 
@@ -34,8 +35,9 @@ function seedProxyLogs(count: number) {
     `INSERT INTO proxy_logs (id, timestamp, provider, status, proxy_type, public_ip)
      VALUES (?, ?, 'openai', 'ok', 'http', '203.0.113.10')`
   );
+  const baseMs = Date.now() - 10 * 60 * 1000;
   for (let i = 0; i < count; i += 1) {
-    insert.run(`proxy-${i}`, new Date(Date.UTC(2026, 8, 17, 4, 0, i)).toISOString());
+    insert.run(`proxy-${i}`, new Date(baseMs + i * 1000).toISOString());
   }
 }
 
