@@ -47,14 +47,14 @@ test("TC-OMNIDB-BACKUP-014A: resolver honors env -> persisted -> default precede
 
 test("TC-OMNIDB-BACKUP-014B: all backup paths share the same retention resolver", () => {
   const backup = read("src/lib/db/backup.ts");
-  const core = read("src/lib/db/core.ts");
+  const managedBackup = read("src/lib/db/managedBackup.ts");
 
   assert.match(backup, /resolveDbBackupRetention\(getDbInstance\(\)\)\.maxFiles/);
   assert.match(backup, /resolveDbBackupRetention\(getDbInstance\(\)\)\.retentionDays/);
 
-  assert.match(core, /resolveDbBackupRetention/);
+  assert.match(managedBackup, /resolveDbBackupRetention\(db\)/);
   assert.match(
-    core,
-    /Backup created[\s\S]{0,900}?pruneBackupDirectory\([\s\S]{0,300}?resolveDbBackupRetention\(db\)/
+    managedBackup,
+    /pruneBackupDirectory\(\{ backupDir, \.\.\.resolveDbBackupRetention\(db\) \}\)/
   );
 });

@@ -19,7 +19,7 @@ import { resolveWritableDataDir, getLegacyDotDataDir } from "../dataPaths";
 import { isNextBuildPhase } from "../buildPhase";
 import { runMigrations } from "./migrationRunner";
 import { runDbHealthCheck } from "./healthCheck";
-import { pruneBackupDirectory, resolveDbBackupRetention } from "./backupRetention";
+import { createManagedDbBackup as writeManagedDbBackup } from "./managedBackup";
 import { resetAllDbModuleState } from "./stateReset";
 import { parseStoredPayload } from "../logPayloads";
 import { DEFAULT_DATABASE_SETTINGS, type DatabaseSettings } from "@/types/databaseSettings";
@@ -848,34 +848,9 @@ function shouldRunStartupDbHealthCheck(): boolean {
 }
 
 function createManagedDbBackup(db: SqliteDatabase, reason: string): boolean {
-  const isTest = isAutomatedTestProcess();
-  if (isTest) return false;
-
-  try {
-    const backupDir = DB_BACKUPS_DIR || path.join(DATA_DIR, "db_backups");
-    if (!fs.existsSync(backupDir)) {
-      fs.mkdirSync(backupDir, { recursive: true });
-    }
-
-    const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
-    const backupPath = path.join(backupDir, `db_${timestamp}_${reason}.sqlite`);
-    const escapedBackupPath = backupPath.replace(/'/g, "''");
-
-    db.exec(`VACUUM INTO '${escapedBackupPath}'`);
-    console.log(`[DB] Backup created (${reason}): ${backupPath}`);
-
-    try {
-      pruneBackupDirectory({ backupDir, ...resolveDbBackupRetention(db) });
-    } catch {
-      // Retention is best-effort; never hide a successful safety backup.
-    }
-
-    return true;
-  } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : String(error);
-    console.warn(`[DB] Failed to create ${reason} backup:`, message);
-    return false;
-  }
+  if (isAutomatedTestProcess()) return false;
+  const backupDir = DB_BACKUPS_DIR || path.join(DATA_DIR, "db_backups");
+  return writeManagedDbBackup(db, reason, backupDir);
 }
 
 function createHealthCheckBackup(db: SqliteDatabase): boolean {
