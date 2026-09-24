@@ -82,6 +82,8 @@ export interface DatabaseSettings {
     lastVacuumAt: string | null;
     lastOptimizationAt: string | null;
     integrityCheck: "ok" | "error" | null;
+    autoVacuumDrift: { configured: string; live: string } | null;
+    lastReclaimedPages: number | null;
   };
 }
 

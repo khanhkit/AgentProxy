@@ -1,7 +1,13 @@
 import { DEFAULT_DATABASE_SETTINGS } from "@/types/databaseSettings";
 import { MAX_TIMER_TIMEOUT_MS } from "@/shared/utils/runtimeTimeouts";
 
+import type { SqliteAdapter } from "./adapters/types";
 import { getDbInstance } from "./core";
+import {
+  getAutoVacuumModeForDb,
+  setAutoVacuumForDb,
+  type AutoVacuumDrift,
+} from "./optimizationSettings";
 // Direct `key_value` access — the existing `keyValueStore` helpers only exist
 // in test fixtures; the 3 production call sites (pricingSync, jsonMigration,
 // serviceModels) all use `getDbInstance().prepare(...).run()` directly. We
@@ -48,6 +54,8 @@ export interface VacuumSchedulerState {
   nextRunAt: number | null;
   fullVacuumRequestedAt: number | null;
   fullVacuumRequestReason: string | null;
+  autoVacuumDrift: AutoVacuumDrift | null;
+  lastReclaimedPages: number | null;
 }
 
 export type ScheduledVacuum = (typeof DEFAULT_DATABASE_SETTINGS)["optimization"]["scheduledVacuum"];
@@ -77,7 +85,13 @@ const STATE_DEFAULTS: VacuumSchedulerState = {
   nextRunAt: null,
   fullVacuumRequestedAt: null,
   fullVacuumRequestReason: null,
+  autoVacuumDrift: null,
+  lastReclaimedPages: null,
 };
+
+const AUTO_VACUUM_DRIFT_NAMESPACE = "scheduler";
+const AUTO_VACUUM_DRIFT_KEY = "vacuumDrift";
+const INCREMENTAL_VACUUM_BATCH_PAGES = 2000;
 
 let timer: ReturnType<typeof setTimeout> | null = null;
 let hydrated = false;
@@ -235,6 +249,28 @@ function persistState(): void {
   setKeyValue(KEY_VALUE_NAMESPACE, KEY_VALUE_KEY, JSON.stringify(currentState));
 }
 
+function isAutoVacuumDrift(value: unknown): value is AutoVacuumDrift {
+  return isRecord(value) && typeof value.configured === "string" && typeof value.live === "string";
+}
+
+function loadAutoVacuumDrift(): AutoVacuumDrift | null {
+  const raw = getKeyValue(AUTO_VACUUM_DRIFT_NAMESPACE, AUTO_VACUUM_DRIFT_KEY);
+  if (!raw) return null;
+  const parsed = parseJsonSafe(raw);
+  return isAutoVacuumDrift(parsed) ? parsed : null;
+}
+
+function clearAutoVacuumDrift(): void {
+  setKeyValue(AUTO_VACUUM_DRIFT_NAMESPACE, AUTO_VACUUM_DRIFT_KEY, JSON.stringify(null));
+}
+
+function runBoundedIncrementalVacuum(db: SqliteAdapter): number {
+  const before = Number(db.pragma("freelist_count", { simple: true }) ?? 0);
+  db.pragma(`incremental_vacuum(${INCREMENTAL_VACUUM_BATCH_PAGES})`);
+  const after = Number(db.pragma("freelist_count", { simple: true }) ?? 0);
+  return Math.max(0, before - after);
+}
+
 function loadPersistedState(): Partial<VacuumSchedulerState> {
   const raw = getKeyValue(KEY_VALUE_NAMESPACE, KEY_VALUE_KEY);
   if (!raw) return {};
@@ -257,7 +293,12 @@ export function refresh(): VacuumSchedulerState {
   return getState();
 }
 
-export async function runNow(): Promise<{ success: boolean; durationMs: number; error?: string }> {
+export async function runNow(): Promise<{
+  success: boolean;
+  durationMs: number;
+  error?: string;
+  reclaimedPages?: number;
+}> {
   if (currentState.isRunning) {
     return { success: false, durationMs: 0, error: "already_running" };
   }
@@ -267,16 +308,32 @@ export async function runNow(): Promise<{ success: boolean; durationMs: number; 
   const start = Date.now();
   try {
     const db = getDbInstance();
-    db.exec("VACUUM");
+    let reclaimedPages: number | null = null;
+
+    const drift = loadAutoVacuumDrift();
+    if (drift) {
+      console.log(
+        `[DB] Reconciling auto_vacuum drift (configured=${drift.configured}, live=${drift.live})`
+      );
+      setAutoVacuumForDb(db, drift.configured);
+      clearAutoVacuumDrift();
+    } else if (getAutoVacuumModeForDb(db) === "INCREMENTAL") {
+      reclaimedPages = runBoundedIncrementalVacuum(db);
+    } else {
+      db.exec("VACUUM");
+    }
+
     const duration = Date.now() - start;
     currentState.lastRunAt = start;
     currentState.lastError = null;
     currentState.lastDurationMs = duration;
+    currentState.lastReclaimedPages = reclaimedPages;
+    currentState.autoVacuumDrift = loadAutoVacuumDrift();
     currentState.isRunning = false;
     currentState.fullVacuumRequestedAt = null;
     currentState.fullVacuumRequestReason = null;
     refresh(); // reset the next-run clock from this successful run
-    return { success: true, durationMs: duration };
+    return { success: true, durationMs: duration, reclaimedPages: reclaimedPages ?? undefined };
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     currentState.lastError = message;
@@ -298,6 +355,7 @@ function hydrateFromPersistedState(): void {
     ...persisted,
     isRunning: false,
     nextRunAt: null,
+    autoVacuumDrift: loadAutoVacuumDrift(),
   };
 }
 
