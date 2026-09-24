@@ -278,11 +278,7 @@ function isConfiguredEnvApiKey(key: string): boolean {
 }
 
 function isRedisAuthCacheEnabled(): boolean {
-  return (
-    process.env.AGENTPROXY_DISABLE_REDIS_AUTH_CACHE !== "1" &&
-    process.env.NODE_ENV !== "test" &&
-    process.env.DISABLE_SQLITE_AUTO_BACKUP !== "true"
-  );
+  return process.env.AGENTPROXY_DISABLE_REDIS_AUTH_CACHE !== "1" && process.env.NODE_ENV !== "test";
 }
 
 async function deleteRedisAuthCacheEntry(keyHash: unknown): Promise<void> {
