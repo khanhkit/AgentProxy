@@ -456,6 +456,7 @@ export async function executeTargetAttempt(opts: {
           comboName: deps.combo.name,
           target,
           connectionId: effectiveConnectionId,
+          autoResume: Boolean(deps.nativeCodexAutoResume),
         });
       }
 

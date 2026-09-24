@@ -20,11 +20,7 @@ import {
 
 import { getHiddenModelsByProvider } from "@/models";
 
-import {
-  evaluateQuotaCutoff,
-  getQuotaFetcher,
-  type QuotaInfo,
-} from "./quotaPreflight.ts";
+import { evaluateQuotaCutoff, getQuotaFetcher, type QuotaInfo } from "./quotaPreflight.ts";
 import { resolveProviderId } from "../../src/shared/constants/providers.ts";
 import { getQuotaFetchScope } from "./antigravityQuotaFamily.ts";
 import { getCircuitBreaker } from "../../src/shared/utils/circuitBreaker";
@@ -37,10 +33,7 @@ import { projectAccountTier, type ProviderCandidate } from "./autoCombo/scoring.
 
 import { getSessionConnection } from "./sessionManager.ts";
 import { getOAuthSessionAvailability } from "./oauthSessionOccupancy.ts";
-import {
-  clearStickyBinding,
-  peekStickyConnectionId,
-} from "./combo/sessionStickiness.ts";
+import { clearStickyBinding, peekStickyConnectionId } from "./combo/sessionStickiness.ts";
 
 import { lookupPositiveCap } from "./combo/concurrencyCaps.ts";
 import { acquireQuotaShareConcurrencySlot } from "./combo/quotaShareConcurrency.ts";
@@ -97,6 +90,7 @@ export {
 import {
   applyNativeCodexTurnPin,
   areAllPinnedTargetsModelScopedUnusable,
+  canAutoResumeNativeCodexTurn,
   createPinnedModelUnavailableResponse,
   getNativeCodexTurnPin,
 } from "./combo/nativeCodexTurnPin.ts";
@@ -107,20 +101,13 @@ import {
   tryPipelineDispatch,
   tryRuntimeUnitDispatch,
 } from "./combo/dispatchPrelude.ts";
-import {
-  resolveShadowTargets,
-  scheduleShadowRouting,
-} from "./combo/shadowRouting.ts";
+import { resolveShadowTargets, scheduleShadowRouting } from "./combo/shadowRouting.ts";
 import {
   filterTargetsByRequestCompatibility,
   resolveComboRuntimeUnits,
   resolveComboTargets,
 } from "./combo/comboStructure.ts";
-import {
-  createInvocationId,
-  getComboTrace,
-  startComboTrace,
-} from "./combo/decisionTrace.ts";
+import { createInvocationId, getComboTrace, startComboTrace } from "./combo/decisionTrace.ts";
 import {
   QUOTA_SOFT_DEPRIORITIZE_FACTOR,
   setCandidateQuotaSoftPenalty,
@@ -135,20 +122,14 @@ import {
   calculateResetWindowAffinity,
   type ResetWindowConfig,
 } from "./combo/quotaScoring.ts";
-import {
-  fetchResetAwareQuotaWithCache,
-  preScreenTargets,
-} from "./combo/quotaStrategies.ts";
+import { fetchResetAwareQuotaWithCache, preScreenTargets } from "./combo/quotaStrategies.ts";
 import { buildAutoQuotaThresholds } from "./combo/quotaExhaustionCutoff.ts";
 import { expandTargetsByFingerprints } from "./combo/fingerprintExpansion.ts";
 import { resolveComboTargetPipeline } from "./combo/targetResolution.ts";
 import { dispatchWithCooldownRetry } from "./combo/comboAttemptLoop.ts";
 import { evaluateExecuteTargetGates } from "./combo/executeTargetGates.ts";
 import { executeTargetAttempt } from "./combo/executeTargetAttempt.ts";
-import type {
-  AttemptLoopDeps,
-  AttemptLoopState,
-} from "./combo/attemptLoopTypes.ts";
+import type { AttemptLoopDeps, AttemptLoopState } from "./combo/attemptLoopTypes.ts";
 
 export { RESET_WINDOW_NAMES, QUOTA_SOFT_DEPRIORITIZE_FACTOR, setCandidateQuotaSoftPenalty };
 export { scoreAutoTargets, expandAutoComboCandidatePool };
@@ -822,6 +803,7 @@ async function handleComboChatInner({
   const activeNativeTurnPin = clientManagedResponsesContext
     ? getNativeCodexTurnPin(body, combo.name)
     : null;
+  let nativeCodexAutoResume = false;
 
   // Route new round-robin turns to the specialized handler. A native Codex
   // continuation with an established provider/account pin must use the common
@@ -899,12 +881,34 @@ async function handleComboChatInner({
       isModelAvailable,
     });
     if (allPinnedUnusable) {
-      targetResolution.quotaShareRelease?.();
-      log.warn(
-        "COMBO",
-        `Native Codex turn cannot continue: pinned model ${activeNativeTurnPin.modelStr} is unavailable (model-scoped); preserving turn pin and terminating turn`
-      );
-      return createPinnedModelUnavailableResponse();
+      const resume = await canAutoResumeNativeCodexTurn({
+        body: body as Record<string, unknown>,
+        comboName: combo.name,
+        activePin: activeNativeTurnPin,
+        allTargets: orderedTargets,
+        resilienceSettings,
+        quotaCutoffResetWindowConfig,
+        isModelAvailable,
+      });
+      if (resume.eligible) {
+        orderedTargets = orderedTargets.filter(
+          (target) =>
+            target.modelStr === resume.selectedTarget.modelStr &&
+            target.provider === resume.selectedTarget.provider
+        );
+        nativeCodexAutoResume = true;
+        log.info(
+          "COMBO",
+          `Native Codex auto-resume: ${activeNativeTurnPin.provider}/${activeNativeTurnPin.modelStr} -> ${resume.selectedTarget.provider}/${resume.selectedTarget.modelStr}`
+        );
+      } else {
+        targetResolution.quotaShareRelease?.();
+        log.warn(
+          "COMBO",
+          `Native Codex turn cannot continue: pinned model ${activeNativeTurnPin.modelStr} is unavailable (model-scoped); auto-resume rejected (${resume.reason}); preserving turn pin and terminating turn`
+        );
+        return createPinnedModelUnavailableResponse();
+      }
     } else {
       orderedTargets = pinnedTargets;
       log.info(
@@ -1026,6 +1030,7 @@ async function handleComboChatInner({
     releaseStickyPinOnFailure,
     clearStaleLKGP,
     clientManagedResponsesContext,
+    nativeCodexAutoResume,
     reasoningTokenBufferEnabled,
     stickyWeightedLimit,
     getWeightedStepKeyForTarget,
@@ -1081,4 +1086,3 @@ async function handleComboChatInner({
     _unregisterExecutionCandidates(_registeredExecutionKeys);
   }
 }
-
