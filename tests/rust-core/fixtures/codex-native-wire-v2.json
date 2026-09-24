@@ -1,5 +1,5 @@
 {
-  "contract_version": 1,
+  "contract_version": 2,
   "safe_preserved_header_names": [
     "version",
     "openai-beta",
@@ -68,5 +68,11 @@
     "originator": "codex_cli_rs",
     "chatgpt-account-id": "workspace-a",
     "session_id": "prompt-session"
+  },
+  "body_normalization": {
+    "strip_fields": ["temperature", "top_p"],
+    "reasoning_allowed_keys": ["effort", "summary"],
+    "reasoning_enabled_false_effort": "none",
+    "preserve_native_tools": true
   }
 }

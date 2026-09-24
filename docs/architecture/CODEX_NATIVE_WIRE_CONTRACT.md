@@ -1,16 +1,16 @@
 ---
-title: "Native Codex Wire Contract v1"
+title: "Native Codex Wire Contract v2"
 ---
 
-# Native Codex Wire Contract v1
+# Native Codex Wire Contract v2
 
 AP-ISS-0080 defines the Rust native Codex route as a **normalized compatibility boundary**, not transparent header passthrough.
 
-The executable source of truth is CODEX_NATIVE_WIRE_CONTRACT_VERSION plus the header policy constants in rust/crates/providers/src/codex/adapter.rs. The captured regression manifest is tests/rust-core/fixtures/codex-native-wire-v1.json.
+The executable source of truth is CODEX_NATIVE_WIRE_CONTRACT_VERSION plus the header policy constants in rust/crates/providers/src/codex/adapter.rs. The captured regression manifest is tests/rust-core/fixtures/codex-native-wire-v2.json.
 
 ## Contract version
 
-Current contract version: **1**.
+Current contract version: **2**.
 
 Increment the contract version when a change modifies any of these externally relevant wire rules:
 
@@ -73,6 +73,17 @@ The Rust native Responses path is an explicit allowlist:
 Equivalent routed prefixes such as /v1/responses resolve to the same two endpoint semantics. Trailing slashes are normalized.
 
 Any other suffix is unsupported by the native adapter and fails closed before execute_attempt, so it cannot inherit base Responses mutations or contact a provider upstream. New provider endpoints require an explicit contract change, endpoint-specific authorization/capability review, and regression coverage before being added to this allowlist.
+
+## Native request-body normalization
+
+The v2 contract also pins Codex Responses body normalization:
+
+- `temperature` and `top_p` are removed before native upstream dispatch because Codex Responses rejects those sampling parameters.
+- a structured `reasoning` object is default-deny and may carry only `effort` and `summary` upstream; OpenRouter-style keys such as `enabled`, `max_tokens`, and `exclude` are never forwarded.
+- `reasoning.enabled: false` maps to `reasoning.effort: "none"` only when no more specific effort was selected; explicit/model-suffix effort keeps precedence.
+- native `tools` / `tool_choice`, including custom tools, remain request data and are preserved.
+
+These rules are executable in `tests/rust-core/tests/codex_prepare.rs`.
 
 ## Verification
 

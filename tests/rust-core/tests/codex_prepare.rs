@@ -109,3 +109,93 @@ fn compact_preserves_subpath_and_removes_stream_only_fields() {
         );
     }
 }
+
+#[test]
+fn strips_sampling_params_rejected_by_native_codex_responses() {
+    let input = json!({
+        "model": "gpt-5.6-sol",
+        "input": [],
+        "temperature": 0.7,
+        "top_p": 0.9
+    });
+
+    let prepared = CodexAdapter::prepare("/v1/responses", input, &account()).unwrap();
+
+    assert!(prepared.body.get("temperature").is_none());
+    assert!(prepared.body.get("top_p").is_none());
+}
+
+#[test]
+fn reasoning_wire_object_is_allowlisted_and_disable_maps_to_none() {
+    let input = json!({
+        "model": "gpt-5.6-sol",
+        "input": [],
+        "reasoning": {
+            "enabled": false,
+            "max_tokens": 2048,
+            "exclude": true,
+            "summary": "detailed"
+        }
+    });
+
+    let prepared = CodexAdapter::prepare("/v1/responses", input, &account()).unwrap();
+    let reasoning = prepared.body["reasoning"]
+        .as_object()
+        .expect("reasoning object");
+
+    assert_eq!(reasoning.get("effort"), Some(&json!("none")));
+    assert_eq!(reasoning.get("summary"), Some(&json!("detailed")));
+    assert_eq!(
+        reasoning.len(),
+        2,
+        "only effort/summary may reach native Codex"
+    );
+}
+
+#[test]
+fn explicit_reasoning_effort_beats_enabled_false_and_extra_keys_are_stripped() {
+    let input = json!({
+        "model": "gpt-5.6-sol-high",
+        "input": [],
+        "reasoning": {
+            "enabled": false,
+            "effort": "low",
+            "max_tokens": 1024
+        }
+    });
+
+    let prepared = CodexAdapter::prepare("/v1/responses", input, &account()).unwrap();
+    let reasoning = prepared.body["reasoning"]
+        .as_object()
+        .expect("reasoning object");
+
+    assert_eq!(reasoning.get("effort"), Some(&json!("high")));
+    assert_eq!(reasoning.len(), 1);
+}
+
+#[test]
+fn native_custom_tools_and_tool_choice_are_preserved() {
+    let tools = json!([
+        {
+            "type": "custom",
+            "name": "apply_patch",
+            "format": {"type": "grammar", "syntax": "lark", "definition": "start: \"patch\""}
+        },
+        {
+            "type": "function",
+            "name": "read_file",
+            "parameters": {"type": "object", "properties": {}}
+        }
+    ]);
+    let input = json!({
+        "model": "gpt-5.6-sol",
+        "input": [],
+        "tools": tools,
+        "tool_choice": "required"
+    });
+
+    let prepared = CodexAdapter::prepare("/v1/responses", input, &account()).unwrap();
+
+    assert_eq!(prepared.body["tools"], tools);
+    assert_eq!(prepared.body["tool_choice"], "required");
+}
