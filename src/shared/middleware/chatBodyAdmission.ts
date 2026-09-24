@@ -38,6 +38,7 @@ import {
   type IngestBudgetAcquireResult,
 } from "./ingestByteAdmission";
 import {
+  checkResourcePressureGuard,
   getResourcePressureObservation,
   type PressureSeverity,
 } from "@agentproxy/open-sse/utils/resourcePressure.ts";
@@ -217,10 +218,24 @@ export type ChatAdmissionShedReason =
   | "inflight_bytes_budget"
   | "resource_pressure";
 
-/** Read cached pressure severity; sampling failures must not cause false sheds. */
+/**
+ * Read pressure severity for admission decisions.
+ *
+ * This gate runs before the downstream paths that also drive the resource-pressure
+ * runtime. It must therefore call checkResourcePressureGuard() itself; a passive
+ * cached read can latch the admission path at critical forever and starve the
+ * resample that would observe recovery.
+ *
+ * A non-null guard is the authoritative synchronous shed decision. When the guard
+ * is clear but the cached observation still says critical while an async refresh
+ * settles, report high rather than re-latching the structural shed.
+ */
 export function defaultPressureSeverity(): PressureSeverity {
   try {
-    return getResourcePressureObservation().state.severity;
+    const guard = checkResourcePressureGuard();
+    if (guard) return "critical";
+    const severity = getResourcePressureObservation().state.severity;
+    return severity === "critical" ? "high" : severity;
   } catch {
     return "normal";
   }
