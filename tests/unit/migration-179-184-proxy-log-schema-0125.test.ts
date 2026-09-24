@@ -51,3 +51,13 @@ test("TC-OMNIDB-MIG-002: migration runner skips columns already added by boot re
     assert.match(source, pattern, `runner must guard migration ${version} with proxy_logs.${column}`);
   }
 });
+
+test("TC-OMNIDB-MIG-003: proxy-log boot repair can add all guarded attribution columns", () => {
+  const source = fs.readFileSync(path.join(repoRoot, "src/lib/db/schemaColumns.ts"), "utf8");
+  for (const [, column] of migrations) {
+    const pattern = new RegExp(
+      `if \\(!columnNames\\.has\\(["']${column}["']\\)\\)[\\s\\S]{0,260}?ALTER TABLE proxy_logs ADD COLUMN ${column} `
+    );
+    assert.match(source, pattern, `boot repair must add proxy_logs.${column}`);
+  }
+});
