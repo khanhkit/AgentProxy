@@ -1,0 +1,67 @@
+{
+  "_meta": {
+    "source": "9router",
+    "version": "0.5.86"
+  },
+  "settings": {
+    "comboStrategy": "fallback",
+    "comboStickyRoundRobinLimit": 2,
+    "providerStrategies": {
+      "openai": "round-robin"
+    },
+    "requireLogin": true,
+    "oidcClientSecret": "fixture-secret-must-not-migrate"
+  },
+  "providerConnections": [
+    {
+      "id": "9r-conn-1",
+      "provider": "openai",
+      "authType": "apikey",
+      "name": "Primary",
+      "email": "owner@example.invalid",
+      "priority": 1,
+      "isActive": true,
+      "apiKey": "fixture-secret-must-not-migrate",
+      "testStatus": "active",
+      "rateLimitedUntil": "2099-01-01T00:00:00.000Z"
+    }
+  ],
+  "providerNodes": [
+    {
+      "id": "9r-node-1",
+      "type": "openai",
+      "name": "Custom endpoint",
+      "baseUrl": "https://api.example.invalid",
+      "apiType": "openai",
+      "createdAt": "2026-09-23T00:00:00.000Z",
+      "updatedAt": "2026-09-23T00:00:00.000Z"
+    }
+  ],
+  "combos": [
+    {
+      "id": "9r-combo-1",
+      "name": "Fast",
+      "kind": "fallback",
+      "models": [
+        {
+          "model": "gpt-example",
+          "connectionId": "9r-conn-1"
+        }
+      ]
+    }
+  ],
+  "apiKeys": [
+    {
+      "id": "9r-key-1",
+      "key": "fixture-api-key-must-not-migrate",
+      "name": "Legacy client",
+      "machineId": "source-machine-id",
+      "isActive": true
+    }
+  ],
+  "usageHistory": [
+    {
+      "id": 1
+    }
+  ]
+}

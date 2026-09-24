@@ -21,6 +21,7 @@ export interface MigrationSourceEntity extends MigrationEntityRef {
   label: string;
   disposition: MigrationDisposition;
   dependencies?: MigrationEntityRef[];
+  data?: Record<string, unknown>;
 }
 
 export interface MigrationTargetEntity {

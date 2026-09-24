@@ -1,0 +1,55 @@
+{
+  "source": {
+    "family": "omniroute",
+    "commit": "7d23bcf8ecb3b43c00c024e317af9c39384a1bee"
+  },
+  "providerConnections": [
+    {
+      "id": "omni-conn-1",
+      "provider": "openai",
+      "auth_type": "oauth",
+      "name": "Primary",
+      "email": "primary@example.invalid",
+      "priority": 1,
+      "is_active": 1,
+      "access_token": "fixture-secret-must-not-migrate",
+      "refresh_token": "fixture-secret-must-not-migrate",
+      "display_name": "Primary account",
+      "default_model": "gpt-example",
+      "test_status": "active",
+      "rate_limited_until": "2099-01-01T00:00:00.000Z",
+      "provider_specific_data": "{\"tenant\":\"portable-metadata\"}"
+    }
+  ],
+  "providerNodes": [
+    {
+      "id": "omni-node-1",
+      "type": "openai",
+      "name": "Custom",
+      "prefix": "custom",
+      "api_type": "openai",
+      "base_url": "https://omni.example.invalid",
+      "chat_path": "/v1/chat/completions",
+      "models_path": "/v1/models",
+      "custom_headers_json": "{}"
+    }
+  ],
+  "combos": [
+    {
+      "id": "omni-combo-1",
+      "name": "Fallback",
+      "data": "{\"name\":\"Fallback\",\"models\":[{\"model\":\"gpt-example\",\"connectionId\":\"omni-conn-1\"}]}",
+      "sort_order": 0
+    }
+  ],
+  "apiKeys": [
+    {
+      "id": "omni-key-1",
+      "name": "Client",
+      "key": "fixture-key-must-not-migrate",
+      "machine_id": "source-machine",
+      "allowed_models": "[\"gpt-example\"]",
+      "no_log": 0
+    }
+  ]
+}
