@@ -9,19 +9,22 @@ const ORIGINAL_DATA_DIR = process.env.DATA_DIR;
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const { handleComboChat } = await import("../../open-sse/services/combo.ts");
-const { lockExactModel, clearAllModelLockouts } =
-  await import("../../open-sse/services/accountFallback.ts");
+const { lockExactModel, clearAllModelLockouts } = await import(
+  "../../open-sse/services/accountFallback.ts"
+);
 const {
   getNativeCodexTurnPin,
   clearNativeCodexTurnPinsForTests,
   NATIVE_CODEX_PINNED_MODEL_UNAVAILABLE_CODE,
   NATIVE_CODEX_PINNED_MODEL_UNAVAILABLE_MESSAGE,
 } = await import("../../open-sse/services/combo/nativeCodexTurnPin.ts");
-const { recordProviderCooldown, isProviderInCooldown, clearCooldownState } =
-  await import("../../open-sse/services/providerCooldownTracker.ts");
+const { recordProviderCooldown, isProviderInCooldown, clearCooldownState } = await import(
+  "../../open-sse/services/providerCooldownTracker.ts"
+);
 const { PROVIDER_PROFILES } = await import("../../open-sse/config/constants.ts");
-const { getCircuitBreaker, resetAllCircuitBreakers } =
-  await import("../../src/shared/utils/circuitBreaker.ts");
+const { getCircuitBreaker, resetAllCircuitBreakers } = await import(
+  "../../src/shared/utils/circuitBreaker.ts"
+);
 const { resolveResilienceSettings } = await import("../../src/lib/resilience/settings.ts");
 const core = await import("../../src/lib/db/core.ts");
 const providersDb = await import("../../src/lib/db/providers.ts");
@@ -535,5 +538,78 @@ describe("Native Codex Turn Pin model-scoped fallback", () => {
       assert.equal(result.status, 400);
       assert.equal(attempted.length, 0);
     }
+  });
+  test("safe native turn auto-resumes once to the next healthy model", async () => {
+    const conn = await providersDb.createProviderConnection({
+      provider: "antigravity",
+      authType: "oauth",
+      name: "Antigravity auto-resume account",
+    });
+    const body = {
+      ...nativeTurnBody,
+      input: [{ type: "message", role: "user", content: "continue safely" }],
+    };
+
+    const first = await handleComboChat({
+      body,
+      combo: comboConfig,
+      clientManagedResponsesContext: true,
+      handleSingleModel: async (_b, modelStr) =>
+        new Response(JSON.stringify({ choices: [{ message: { content: modelStr } }] }), {
+          status: 200,
+          headers: { "x-agentproxy-selected-connection-id": conn.id },
+        }),
+      isModelAvailable: async () => true,
+      log: createLog(),
+      settings: testSettings,
+      allCombos: null,
+    });
+    assert.equal(first.ok, true);
+    assert.equal(getNativeCodexTurnPin(body, comboName)?.modelStr, opusModel);
+
+    lockExactModel("antigravity", conn.id, "claude-opus-4-6-thinking", "quota_exhausted", 60_000);
+    lockExactModel("antigravity", "", "claude-opus-4-6-thinking", "quota_exhausted", 60_000);
+
+    const attempted: string[] = [];
+    const resumed = await handleComboChat({
+      body,
+      combo: comboConfig,
+      clientManagedResponsesContext: true,
+      handleSingleModel: async (_b, modelStr) => {
+        attempted.push(modelStr);
+        return new Response(JSON.stringify({ choices: [{ message: { content: modelStr } }] }), {
+          status: 200,
+          headers: { "x-agentproxy-selected-connection-id": conn.id },
+        });
+      },
+      isModelAvailable: async () => true,
+      log: createLog(),
+      settings: testSettings,
+      allCombos: null,
+    });
+    assert.equal(resumed.ok, true);
+    assert.deepEqual(attempted, [geminiModel]);
+    const pin = getNativeCodexTurnPin(body, comboName);
+    assert.equal(pin?.modelStr, geminiModel);
+    assert.equal(pin?.autoResumes, 1);
+
+    lockExactModel("antigravity", conn.id, "gemini-3.7-flash-high", "quota_exhausted", 60_000);
+    lockExactModel("antigravity", "", "gemini-3.7-flash-high", "quota_exhausted", 60_000);
+    attempted.length = 0;
+    const secondResume = await handleComboChat({
+      body,
+      combo: comboConfig,
+      clientManagedResponsesContext: true,
+      handleSingleModel: async (_b, modelStr) => {
+        attempted.push(modelStr);
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      },
+      isModelAvailable: async () => true,
+      log: createLog(),
+      settings: testSettings,
+      allCombos: null,
+    });
+    assert.equal(secondResume.status, 400);
+    assert.deepEqual(attempted, []);
   });
 });

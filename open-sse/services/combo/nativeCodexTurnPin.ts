@@ -13,15 +13,17 @@ import type { ComboLogger, IsModelAvailable } from "./types.ts";
 
 import type { ResolvedComboTarget } from "./types.ts";
 
-type NativeTurnPin = {
+export type NativeTurnPin = {
   comboName: string;
   modelStr: string;
   provider: string;
   connectionId: string;
   createdAt: number;
   expiresAt: number;
+  autoResumes: number;
 };
 
+export const MAX_AUTORESUMES_PER_TURN = 1;
 const TTL_MS = 45 * 60_000;
 const MAX_PINS = 1_000;
 const pins = new Map<string, NativeTurnPin>();
@@ -79,18 +81,20 @@ export function pinNativeCodexTurn(args: {
   comboName: string;
   target: ResolvedComboTarget;
   connectionId: string;
+  autoResume?: boolean;
 }): void {
   const key = nativeCodexTurnKey(args.body, args.comboName);
   if (!key || !args.connectionId) return;
   const existing = pins.get(key);
-  if (
+  const modelChanged = Boolean(
     existing &&
-    (existing.modelStr !== args.target.modelStr || existing.provider !== args.target.provider)
-  ) {
+      (existing.modelStr !== args.target.modelStr || existing.provider !== args.target.provider)
+  );
+  if (modelChanged && (!args.autoResume || existing!.autoResumes >= MAX_AUTORESUMES_PER_TURN)) {
     throw new Error("Native Codex turn target changed after output was emitted");
   }
-  // ConnectionId changes are allowed (failover to sibling connection)
-  // as long as provider + model stay the same.
+  // Connection failover on the same provider/model is always allowed. A model/provider
+  // change is allowed exactly once and only for the guarded auto-resume path.
   const now = Date.now();
   pins.set(key, {
     comboName: args.comboName,
@@ -99,6 +103,7 @@ export function pinNativeCodexTurn(args: {
     connectionId: args.connectionId,
     createdAt: existing?.createdAt ?? now,
     expiresAt: now + TTL_MS,
+    autoResumes: (existing?.autoResumes ?? 0) + (modelChanged ? 1 : 0),
   });
   prune(now);
 }
@@ -278,6 +283,371 @@ export async function areAllPinnedTargetsModelScopedUnusable(
     }
   }
   return true;
+}
+
+export function hasUnresolvedToolCalls(body: Record<string, unknown>): boolean {
+  const input: unknown[] = Array.isArray(body.input)
+    ? body.input
+    : Array.isArray(body.messages)
+      ? body.messages
+      : [];
+  if (input.length === 0) return false;
+
+  const callCounts = new Map<string, number>();
+  const outputCounts = new Map<string, number>();
+
+  const processPart = (part: unknown): boolean => {
+    if (!part || typeof part !== "object") return true;
+    const rec = part as Record<string, unknown>;
+    const type = typeof rec.type === "string" ? rec.type : "";
+
+    if (type === "function_call" || type === "custom_tool_call") {
+      const callId =
+        (typeof rec.call_id === "string" && rec.call_id.trim() ? rec.call_id.trim() : "") ||
+        (typeof rec.id === "string" && rec.id.trim() ? rec.id.trim() : "");
+      if (!callId) return false;
+      callCounts.set(callId, (callCounts.get(callId) ?? 0) + 1);
+    } else if (type === "function_call_output" || type === "custom_tool_call_output") {
+      const callId =
+        (typeof rec.call_id === "string" && rec.call_id.trim() ? rec.call_id.trim() : "") ||
+        (typeof rec.id === "string" && rec.id.trim() ? rec.id.trim() : "");
+      if (!callId) return false;
+      outputCounts.set(callId, (outputCounts.get(callId) ?? 0) + 1);
+    } else if (type === "tool_use") {
+      const callId = typeof rec.id === "string" && rec.id.trim() ? rec.id.trim() : "";
+      if (!callId) return false;
+      callCounts.set(callId, (callCounts.get(callId) ?? 0) + 1);
+    } else if (type === "tool_result") {
+      const callId =
+        (typeof rec.tool_use_id === "string" && rec.tool_use_id.trim()
+          ? rec.tool_use_id.trim()
+          : "") || (typeof rec.id === "string" && rec.id.trim() ? rec.id.trim() : "");
+      if (!callId) return false;
+      outputCounts.set(callId, (outputCounts.get(callId) ?? 0) + 1);
+    }
+    return true;
+  };
+
+  for (const item of input) {
+    if (!item || typeof item !== "object") continue;
+    const rec = item as Record<string, unknown>;
+    const role = typeof rec.role === "string" ? rec.role : "";
+
+    if (rec.function_call && typeof rec.function_call === "object" && role === "assistant") {
+      return true;
+    }
+    if (role === "function") {
+      return true;
+    }
+
+    if (!processPart(rec)) return true;
+
+    if (role === "assistant" && Array.isArray(rec.tool_calls)) {
+      for (const tc of rec.tool_calls) {
+        if (!tc || typeof tc !== "object") return true;
+        const id =
+          typeof (tc as Record<string, unknown>).id === "string"
+            ? ((tc as Record<string, unknown>).id as string).trim()
+            : "";
+        if (!id) return true;
+        callCounts.set(id, (callCounts.get(id) ?? 0) + 1);
+      }
+    } else if (role === "tool") {
+      const toolCallId =
+        (typeof rec.tool_call_id === "string" && rec.tool_call_id.trim()
+          ? rec.tool_call_id.trim()
+          : "") ||
+        (typeof rec.call_id === "string" && rec.call_id.trim() ? rec.call_id.trim() : "") ||
+        (typeof rec.id === "string" && rec.id.trim() ? rec.id.trim() : "");
+      if (!toolCallId) return true;
+      outputCounts.set(toolCallId, (outputCounts.get(toolCallId) ?? 0) + 1);
+    }
+
+    if (Array.isArray(rec.content)) {
+      for (const part of rec.content) {
+        if (!processPart(part)) return true;
+      }
+    }
+    if (Array.isArray(rec.output)) {
+      for (const part of rec.output) {
+        if (!processPart(part)) return true;
+      }
+    }
+  }
+
+  if (callCounts.size === 0 && outputCounts.size === 0) return false;
+  if (callCounts.size !== outputCounts.size) return true;
+  for (const [id, count] of callCounts) {
+    if (count !== 1) return true;
+    if (outputCounts.get(id) !== 1) return true;
+  }
+  for (const [id, count] of outputCounts) {
+    if (count !== 1) return true;
+    if (!callCounts.has(id)) return true;
+  }
+
+  return false;
+}
+
+function isUnsafeItemOrPart(rec: Record<string, unknown>): boolean {
+  const type = typeof rec.type === "string" ? rec.type : "";
+  if (type === "item_reference" || type === "redacted_thinking") return true;
+  if (type === "encrypted_content") return true;
+  if (typeof rec.previous_response_id === "string" && rec.previous_response_id.trim() !== "")
+    return true;
+  if (typeof rec.previousResponseId === "string" && rec.previousResponseId.trim() !== "")
+    return true;
+  if (typeof rec.continuation_token === "string" && rec.continuation_token.trim() !== "")
+    return true;
+  if (typeof rec.continuationToken === "string" && rec.continuationToken.trim() !== "") return true;
+  if (typeof rec.encrypted_content === "string" && rec.encrypted_content.trim() !== "") return true;
+  if (typeof rec.encryptedContent === "string" && rec.encryptedContent.trim() !== "") return true;
+  if (typeof rec.encrypted_reasoning === "string" && rec.encrypted_reasoning.trim() !== "")
+    return true;
+  if (typeof rec.encryptedReasoning === "string" && rec.encryptedReasoning.trim() !== "")
+    return true;
+  if (typeof rec.thought_signature === "string" && rec.thought_signature.trim() !== "") return true;
+  if (typeof rec.thoughtSignature === "string" && rec.thoughtSignature.trim() !== "") return true;
+  if (typeof rec.signature === "string" && rec.signature.trim() !== "") return true;
+  if (
+    rec.provider_metadata &&
+    typeof rec.provider_metadata === "object" &&
+    Object.keys(rec.provider_metadata as object).length > 0
+  ) {
+    return true;
+  }
+  if (
+    rec.providerMetadata &&
+    typeof rec.providerMetadata === "object" &&
+    Object.keys(rec.providerMetadata as object).length > 0
+  ) {
+    return true;
+  }
+  if (
+    rec.provider_data &&
+    typeof rec.provider_data === "object" &&
+    Object.keys(rec.provider_data as object).length > 0
+  ) {
+    return true;
+  }
+  if (
+    rec.providerData &&
+    typeof rec.providerData === "object" &&
+    Object.keys(rec.providerData as object).length > 0
+  ) {
+    return true;
+  }
+  return false;
+}
+
+export function hasProviderSpecificUnsafeContinuationState(
+  body: Record<string, unknown>,
+  _activePin?: NativeTurnPin
+): boolean {
+  if (typeof body.previous_response_id === "string" && body.previous_response_id.trim() !== "") {
+    return true;
+  }
+  if (typeof body.previousResponseId === "string" && body.previousResponseId.trim() !== "") {
+    return true;
+  }
+  if (typeof body.continuation_token === "string" && body.continuation_token.trim() !== "") {
+    return true;
+  }
+  if (typeof body.continuationToken === "string" && body.continuationToken.trim() !== "") {
+    return true;
+  }
+  if (typeof body.response_id === "string" && body.response_id.trim() !== "") {
+    return true;
+  }
+  if (typeof body.responseId === "string" && body.responseId.trim() !== "") {
+    return true;
+  }
+  if (typeof body.parent_response_id === "string" && body.parent_response_id.trim() !== "") {
+    return true;
+  }
+  if (typeof body.parentResponseId === "string" && body.parentResponseId.trim() !== "") {
+    return true;
+  }
+  if (typeof body.thought_signature === "string" && body.thought_signature.trim() !== "") {
+    return true;
+  }
+  if (typeof body.thoughtSignature === "string" && body.thoughtSignature.trim() !== "") {
+    return true;
+  }
+  if (typeof body.signature === "string" && body.signature.trim() !== "") {
+    return true;
+  }
+  if (typeof body.conversation_id === "string" && body.conversation_id.trim() !== "") {
+    return true;
+  }
+  if (typeof body.conversationId === "string" && body.conversationId.trim() !== "") {
+    return true;
+  }
+  if (
+    body.conversation &&
+    typeof body.conversation === "object" &&
+    Object.keys(body.conversation as object).length > 0
+  ) {
+    return true;
+  }
+  if (
+    body.provider_metadata &&
+    typeof body.provider_metadata === "object" &&
+    Object.keys(body.provider_metadata as object).length > 0
+  ) {
+    return true;
+  }
+  if (
+    body.providerMetadata &&
+    typeof body.providerMetadata === "object" &&
+    Object.keys(body.providerMetadata as object).length > 0
+  ) {
+    return true;
+  }
+  if (
+    body.provider_data &&
+    typeof body.provider_data === "object" &&
+    Object.keys(body.provider_data as object).length > 0
+  ) {
+    return true;
+  }
+  if (
+    body.providerData &&
+    typeof body.providerData === "object" &&
+    Object.keys(body.providerData as object).length > 0
+  ) {
+    return true;
+  }
+
+  const input: unknown[] = Array.isArray(body.input)
+    ? body.input
+    : Array.isArray(body.messages)
+      ? body.messages
+      : [];
+
+  for (const item of input) {
+    if (!item || typeof item !== "object") continue;
+    const rec = item as Record<string, unknown>;
+    if (isUnsafeItemOrPart(rec)) return true;
+
+    if (Array.isArray(rec.content)) {
+      for (const part of rec.content) {
+        if (
+          part &&
+          typeof part === "object" &&
+          isUnsafeItemOrPart(part as Record<string, unknown>)
+        ) {
+          return true;
+        }
+      }
+    }
+    if (Array.isArray(rec.output)) {
+      for (const outItem of rec.output) {
+        if (
+          outItem &&
+          typeof outItem === "object" &&
+          isUnsafeItemOrPart(outItem as Record<string, unknown>)
+        ) {
+          return true;
+        }
+      }
+    }
+    if (Array.isArray(rec.summary)) {
+      for (const sumItem of rec.summary) {
+        if (
+          sumItem &&
+          typeof sumItem === "object" &&
+          isUnsafeItemOrPart(sumItem as Record<string, unknown>)
+        ) {
+          return true;
+        }
+      }
+    }
+    if (Array.isArray(rec.tool_calls)) {
+      for (const tc of rec.tool_calls) {
+        if (tc && typeof tc === "object" && isUnsafeItemOrPart(tc as Record<string, unknown>)) {
+          return true;
+        }
+      }
+    }
+  }
+
+  return false;
+}
+
+export interface CanAutoResumeNativeCodexTurnOptions {
+  body: Record<string, unknown>;
+  comboName: string;
+  activePin: NativeTurnPin;
+  allTargets: ResolvedComboTarget[];
+  resilienceSettings?: ResilienceSettings | null;
+  quotaCutoffResetWindowConfig?: ResetWindowConfig;
+  isModelAvailable?: IsModelAvailable;
+}
+
+export type AutoResumeDecision =
+  | { eligible: true; selectedTarget: ResolvedComboTarget }
+  | { eligible: false; reason: string };
+
+export async function canAutoResumeNativeCodexTurn(
+  options: CanAutoResumeNativeCodexTurnOptions
+): Promise<AutoResumeDecision> {
+  const {
+    body,
+    comboName,
+    activePin,
+    allTargets,
+    resilienceSettings,
+    quotaCutoffResetWindowConfig,
+    isModelAvailable,
+  } = options;
+
+  if (!nativeCodexTurnKey(body, comboName)) return { eligible: false, reason: "invalid_turn_key" };
+  if (activePin.autoResumes >= MAX_AUTORESUMES_PER_TURN) {
+    return { eligible: false, reason: "max_resumes_exceeded" };
+  }
+  const input = Array.isArray(body.input)
+    ? body.input
+    : Array.isArray(body.messages)
+      ? body.messages
+      : null;
+  if (!input?.length) return { eligible: false, reason: "missing_or_empty_input" };
+  if (hasUnresolvedToolCalls(body)) return { eligible: false, reason: "pending_tool_call" };
+  if (hasProviderSpecificUnsafeContinuationState(body, activePin)) {
+    return { eligible: false, reason: "unsafe_provider_state" };
+  }
+
+  const alternates = allTargets.filter(
+    (target) => target.modelStr !== activePin.modelStr || target.provider !== activePin.provider
+  );
+  if (!alternates.length) return { eligible: false, reason: "no_alternate_target" };
+
+  for (const target of alternates) {
+    if (target.provider && target.provider !== "unknown") {
+      if (getCircuitBreaker(target.provider).getStatus().state === "OPEN") continue;
+      if (
+        resilienceSettings?.providerCooldown?.enabled &&
+        (isProviderInCooldown(
+          target.provider,
+          target.connectionId || undefined,
+          resilienceSettings
+        ) ||
+          isProviderInCooldown(target.provider, undefined, resilienceSettings))
+      ) {
+        continue;
+      }
+    }
+    const unusable = await isPinnedTargetModelScopedUnusable({
+      target,
+      resilienceSettings,
+      quotaCutoffResetWindowConfig,
+      comboName,
+      body,
+      isModelAvailable,
+    });
+    if (!unusable) return { eligible: true, selectedTarget: target };
+  }
+  return { eligible: false, reason: "no_healthy_alternate_target" };
 }
 
 export function clearNativeCodexTurnPinsForTests(): void {
