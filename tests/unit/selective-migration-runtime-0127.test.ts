@@ -137,3 +137,65 @@ test("TC-MIG-RUNTIME-036 runtime delegates restore and domain writers without ra
     "settings",
   ]);
 });
+
+test("TC-MIG-RUNTIME-053 runtime reads user-owned aliases/pricing and delegates their writers", async () => {
+  const events: string[] = [];
+  const runtime = createSelectiveMigrationRuntime({
+    getProviderConnections: async () => [],
+    getProviderNodes: async () => [],
+    getCombos: async () => [],
+    getModelAliases: async () => ({ fast: "openai/gpt-target" }),
+    getPricingWithSources: async () => ({
+      pricing: {
+        openai: {
+          "gpt-example": { input: 9, output: 9 },
+          "default-model": { input: 3, output: 4 },
+        },
+      },
+      sourceMap: {
+        openai: {
+          "gpt-example": "user",
+          "default-model": "default",
+        },
+      },
+    }),
+    backupDbFile: () => ({ filename: "db_manual.sqlite", size: 8192 }),
+    listDbBackups: async () => [],
+    restoreDbBackup: async () => ({ restored: true }),
+    createProviderConnection: async (data) => ({ ...data, id: "created-conn" }),
+    createProviderNode: async (data) => ({ ...data, id: "created-node" }),
+    createCombo: async (data) => ({ ...data, id: "created-combo" }),
+    updateSettings: async (data) => data,
+    setModelAlias: async (alias, model) => {
+      events.push("alias:" + alias + "=" + String(model));
+    },
+    updatePricing: async (pricing) => {
+      events.push("pricing:" + JSON.stringify(pricing));
+      return pricing;
+    },
+  });
+
+  const target = await runtime.readTargetEntities();
+  assert.deepEqual(target, [
+    {
+      category: "modelAliases",
+      targetId: "modelAlias:fast",
+      identity: "model-alias|fast",
+    },
+    {
+      category: "pricing",
+      targetId: "pricing:openai:gpt-example",
+      identity: "pricing|openai|gpt-example",
+    },
+  ]);
+
+  await runtime.applyDeps.setModelAlias?.("new-alias", "openai/gpt-example");
+  await runtime.applyDeps.updatePricing?.({
+    openai: { "gpt-example": { input: 1, output: 2 } },
+  });
+
+  assert.deepEqual(events, [
+    "alias:new-alias=openai/gpt-example",
+    'pricing:{"openai":{"gpt-example":{"input":1,"output":2}}}',
+  ]);
+});

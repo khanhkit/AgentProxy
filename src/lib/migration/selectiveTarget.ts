@@ -6,6 +6,9 @@ interface TargetSnapshot {
   providerConnections?: unknown;
   providerNodes?: unknown;
   combos?: unknown;
+  modelAliases?: unknown;
+  pricing?: unknown;
+  pricingSourceMap?: unknown;
 }
 
 function asRecord(value: unknown): JsonRecord | null {
@@ -70,6 +73,38 @@ export function normalizeTargetEntities(input: TargetSnapshot): MigrationTargetE
       targetId,
       identity: "combo|" + name,
     });
+  }
+
+  const aliases = asRecord(input.modelAliases);
+  if (aliases) {
+    for (const alias of Object.keys(aliases)) {
+      const cleanAlias = text(alias);
+      if (!cleanAlias) continue;
+      result.push({
+        category: "modelAliases",
+        targetId: "modelAlias:" + cleanAlias,
+        identity: "model-alias|" + cleanAlias.toLowerCase(),
+      });
+    }
+  }
+
+  const pricing = asRecord(input.pricing);
+  const pricingSourceMap = asRecord(input.pricingSourceMap);
+  if (pricing && pricingSourceMap) {
+    for (const [provider, providerSourcesValue] of Object.entries(pricingSourceMap)) {
+      const providerSources = asRecord(providerSourcesValue);
+      const providerPricing = asRecord(pricing[provider]);
+      if (!providerSources || !providerPricing) continue;
+      for (const [model, source] of Object.entries(providerSources)) {
+        if (source !== "user" || !(model in providerPricing)) continue;
+        result.push({
+          category: "pricing",
+          targetId: "pricing:" + provider + ":" + model,
+          identity:
+            "pricing|" + provider.toLowerCase() + "|" + model.toLowerCase(),
+        });
+      }
+    }
   }
 
   return result;

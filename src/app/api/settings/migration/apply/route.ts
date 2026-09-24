@@ -1,6 +1,8 @@
 import { backupDbFile, listDbBackups, restoreDbBackup } from "@/lib/db/backup";
 import { openDatabaseAsync } from "@/lib/db/adapters/driverFactory";
 import { createCombo, getCombos } from "@/lib/db/combos";
+import { getModelAliases, setModelAlias } from "@/lib/db/models";
+import { getPricingWithSources, updatePricing } from "@/lib/db/settings/pricing";
 import {
   createProviderConnection,
   getProviderConnections,
@@ -25,6 +27,10 @@ const runtime = createSelectiveMigrationRuntime({
   createProviderNode,
   createCombo,
   updateSettings,
+  getModelAliases,
+  getPricingWithSources,
+  setModelAlias,
+  updatePricing,
 });
 
 export async function POST(request: Request) {

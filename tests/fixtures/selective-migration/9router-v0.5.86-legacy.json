@@ -63,5 +63,30 @@
     {
       "id": 1
     }
-  ]
+  ],
+  "modelAliases": {
+    "fast-alias": "openai/gpt-example"
+  },
+  "pricing": {
+    "openai": {
+      "gpt-example": {
+        "input": 1,
+        "output": 2
+      }
+    }
+  },
+  "customModels": [
+    {
+      "providerAlias": "openai",
+      "id": "custom-legacy",
+      "type": "llm",
+      "name": "Legacy Custom",
+      "caps": {
+        "vision": true
+      }
+    }
+  ],
+  "proxyConfig": {
+    "global": "http://fixture-host-specific.invalid:3128"
+  }
 }

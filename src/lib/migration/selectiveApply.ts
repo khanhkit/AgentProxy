@@ -14,6 +14,8 @@ export interface SelectiveMigrationApplyDeps {
   createProviderNode(data: Record<string, unknown>): Promise<Record<string, unknown>>;
   createCombo(data: Record<string, unknown>): Promise<Record<string, unknown>>;
   updateSettings(data: Record<string, unknown>): Promise<Record<string, unknown>>;
+  setModelAlias?(alias: string, model: unknown): Promise<unknown>;
+  updatePricing?(pricing: Record<string, unknown>): Promise<unknown>;
 }
 
 export interface SelectiveMigrationApplyItemResult {
@@ -199,6 +201,43 @@ async function applyItem(
       sourceId: item.sourceId,
       status: "MERGED",
       targetId: "settings",
+    };
+  }
+
+  if (item.category === "modelAliases") {
+    const alias = typeof data.alias === "string" ? data.alias.trim() : "";
+    if (!alias || typeof data.model !== "string" || !data.model.trim() || !deps.setModelAlias) {
+      throw new Error("Model alias migration writer is unavailable");
+    }
+    await deps.setModelAlias(alias, data.model.trim());
+    const targetId = "modelAlias:" + alias;
+    idMap[key] = targetId;
+    return {
+      category: item.category,
+      sourceId: item.sourceId,
+      status: "CREATED",
+      targetId,
+    };
+  }
+
+  if (item.category === "pricing") {
+    const provider = typeof data.provider === "string" ? data.provider.trim() : "";
+    const model = typeof data.model === "string" ? data.model.trim() : "";
+    const pricing =
+      data.pricing !== null && typeof data.pricing === "object" && !Array.isArray(data.pricing)
+        ? (data.pricing as Record<string, unknown>)
+        : null;
+    if (!provider || !model || !pricing || !deps.updatePricing) {
+      throw new Error("Pricing migration writer is unavailable");
+    }
+    await deps.updatePricing({ [provider]: { [model]: pricing } });
+    const targetId = "pricing:" + provider + ":" + model;
+    idMap[key] = targetId;
+    return {
+      category: item.category,
+      sourceId: item.sourceId,
+      status: "CREATED",
+      targetId,
     };
   }
 

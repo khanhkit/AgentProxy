@@ -132,3 +132,93 @@ test("TC-MIG-NORM-019 source primary keys survive only as source refs, never tar
   assert.ok(entities.every((item) => !("targetId" in item)));
   assert.ok(entities.every((item) => item.data?.id === undefined));
 });
+
+test("TC-MIG-NORM-049 normalizes 9Router JSON model aliases and pricing overrides", () => {
+  const source = {
+    _meta: { source: "9router", version: "0.5.86" },
+    modelAliases: {
+      fast: "openai/gpt-example",
+      ignoredObject: { unexpected: true },
+    },
+    pricing: {
+      openai: {
+        "gpt-example": { input: 1, output: 2 },
+      },
+    },
+  };
+
+  const entities = normalize9RouterJsonSource(source);
+  const alias = entities.find(
+    (item) => item.category === "modelAliases" && item.sourceId === "fast"
+  );
+  assert.deepEqual(alias, {
+    category: "modelAliases",
+    sourceId: "fast",
+    identity: "model-alias|fast",
+    label: "fast",
+    disposition: "CREATE",
+    data: { alias: "fast", model: "openai/gpt-example" },
+  });
+
+  const pricing = entities.find(
+    (item) =>
+      item.category === "pricing" &&
+      item.sourceId === "openai:gpt-example"
+  );
+  assert.deepEqual(pricing, {
+    category: "pricing",
+    sourceId: "openai:gpt-example",
+    identity: "pricing|openai|gpt-example",
+    label: "openai / gpt-example",
+    disposition: "CREATE",
+    data: {
+      provider: "openai",
+      model: "gpt-example",
+      pricing: { input: 1, output: 2 },
+    },
+  });
+
+  assert.equal(
+    entities.some(
+      (item) =>
+        item.category === "modelAliases" &&
+        item.sourceId === "ignoredObject"
+    ),
+    false
+  );
+});
+
+test("TC-MIG-NORM-050 normalizes 9Router and OmniRoute SQLite KV aliases/pricing equally", () => {
+  const nineRouter = normalize9RouterSqliteRows({
+    modelAliases: [{ key: "fast", value: JSON.stringify("openai/gpt-example") }],
+    pricing: [
+      {
+        key: "openai",
+        value: JSON.stringify({
+          "gpt-example": { input: 1, output: 2 },
+        }),
+      },
+    ],
+  });
+
+  const omniRoute = normalizeOmniRouteSqliteRows({
+    modelAliases: [{ key: "fast", value: JSON.stringify("openai/gpt-example") }],
+    pricing: [
+      {
+        key: "openai",
+        value: JSON.stringify({
+          "gpt-example": { input: 1, output: 2 },
+        }),
+      },
+    ],
+  });
+
+  assert.deepEqual(
+    nineRouter.filter((item) =>
+      ["modelAliases", "pricing"].includes(item.category)
+    ),
+    omniRoute.filter((item) =>
+      ["modelAliases", "pricing"].includes(item.category)
+    )
+  );
+});

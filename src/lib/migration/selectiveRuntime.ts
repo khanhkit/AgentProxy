@@ -31,6 +31,10 @@ export interface SelectiveMigrationRuntimeDeps {
   createProviderNode(data: JsonRecord): Promise<JsonRecord>;
   createCombo(data: JsonRecord): Promise<JsonRecord>;
   updateSettings(data: JsonRecord): Promise<JsonRecord>;
+  getModelAliases?(): Promise<unknown>;
+  getPricingWithSources?(): Promise<{ pricing?: unknown; sourceMap?: unknown }>;
+  setModelAlias?(alias: string, model: unknown): Promise<unknown>;
+  updatePricing?(pricing: Record<string, unknown>): Promise<unknown>;
   sleep?(ms: number): Promise<void>;
 }
 
@@ -52,21 +56,29 @@ export function createSelectiveMigrationRuntime(
 ): SelectiveMigrationRuntime {
   return {
     async readTargetEntities() {
-      const [providerConnections, providerNodes, combos] = await Promise.all([
-        deps.getProviderConnections(
-          {},
-          undefined,
-          undefined,
-          [...TARGET_PROVIDER_COLUMNS]
-        ),
-        deps.getProviderNodes(),
-        deps.getCombos(),
-      ]);
+      const [providerConnections, providerNodes, combos, modelAliases, pricingWithSources] =
+        await Promise.all([
+          deps.getProviderConnections(
+            {},
+            undefined,
+            undefined,
+            [...TARGET_PROVIDER_COLUMNS]
+          ),
+          deps.getProviderNodes(),
+          deps.getCombos(),
+          deps.getModelAliases ? deps.getModelAliases() : Promise.resolve(undefined),
+          deps.getPricingWithSources
+            ? deps.getPricingWithSources()
+            : Promise.resolve(undefined),
+        ]);
 
       return normalizeTargetEntities({
         providerConnections,
         providerNodes,
         combos,
+        modelAliases,
+        pricing: pricingWithSources?.pricing,
+        pricingSourceMap: pricingWithSources?.sourceMap,
       });
     },
 
@@ -88,6 +100,8 @@ export function createSelectiveMigrationRuntime(
       createProviderNode: deps.createProviderNode,
       createCombo: deps.createCombo,
       updateSettings: deps.updateSettings,
+      ...(deps.setModelAlias ? { setModelAlias: deps.setModelAlias } : {}),
+      ...(deps.updatePricing ? { updatePricing: deps.updatePricing } : {}),
     },
   };
 }

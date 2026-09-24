@@ -201,3 +201,63 @@ test("TC-MIG-APPLY-027 writer failure restores the pre-migration restore point",
     "restore:db_fixture_manual.sqlite",
   ]);
 });
+
+test("TC-MIG-APPLY-052 model alias and pricing items use target writers behind restore point", async () => {
+  const events: string[] = [];
+  const plan: SelectiveMigrationPlan = {
+    canApply: true,
+    idMap: {
+      "modelAliases:fast": null,
+      "pricing:openai:gpt-example": null,
+    },
+    items: [
+      {
+        category: "modelAliases",
+        sourceId: "fast",
+        identity: "model-alias|fast",
+        label: "fast",
+        disposition: "CREATE",
+        unresolvedDependencies: [],
+        data: { alias: "fast", model: "openai/gpt-example" },
+      },
+      {
+        category: "pricing",
+        sourceId: "openai:gpt-example",
+        identity: "pricing|openai|gpt-example",
+        label: "openai / gpt-example",
+        disposition: "CREATE",
+        unresolvedDependencies: [],
+        data: {
+          provider: "openai",
+          model: "gpt-example",
+          pricing: { input: 1, output: 2 },
+        },
+      },
+    ],
+  };
+
+  const d = {
+    ...deps(events),
+    setModelAlias: async (alias: string, model: unknown) => {
+      events.push("alias:" + alias + "=" + String(model));
+    },
+    updatePricing: async (pricing: Record<string, unknown>) => {
+      events.push("pricing:" + JSON.stringify(pricing));
+      return pricing;
+    },
+  };
+
+  const result = await applySelectiveMigrationPlan(plan, d);
+
+  assert.equal(result.restorePointId, "db_fixture_manual.sqlite");
+  assert.deepEqual(events, [
+    "restore-point",
+    "alias:fast=openai/gpt-example",
+    'pricing:{"openai":{"gpt-example":{"input":1,"output":2}}}',
+  ]);
+  assert.equal(result.idMap["modelAliases:fast"], "modelAlias:fast");
+  assert.equal(
+    result.idMap["pricing:openai:gpt-example"],
+    "pricing:openai:gpt-example"
+  );
+});

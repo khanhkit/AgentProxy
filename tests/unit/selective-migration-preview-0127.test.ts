@@ -146,6 +146,40 @@ test("TC-MIG-PREVIEW-045 deferred portable families are reported explicitly inst
 
   assert.deepEqual(
     plan.unsupported.map((entry) => entry.category).sort(),
-    ["customModels", "mitmAlias", "modelAliases", "pricing", "proxyConfig"]
+    ["customModels", "mitmAlias", "proxyConfig"]
+  );
+});
+
+test("TC-MIG-PREVIEW-054 SQLite deferred KV scopes are reported unsupported", () => {
+  const adapter = {
+    prepare(sql: string) {
+      if (sql.includes("sqlite_master")) {
+        return {
+          all: () =>
+            ["providerConnections", "providerNodes", "combos", "apiKeys", "kv"].map(
+              (name) => ({ name })
+            ),
+        };
+      }
+      if (/COUNT\(\*\).*FROM\s+kv.*customModels/i.test(sql)) {
+        return { get: () => ({ count: 2 }) };
+      }
+      if (/COUNT\(\*\).*FROM\s+kv.*mitmAlias/i.test(sql)) {
+        return { get: () => ({ count: 1 }) };
+      }
+      if (/COUNT\(\*\).*FROM\s+kv.*proxyConfig/i.test(sql)) {
+        return { get: () => ({ count: 0 }) };
+      }
+      return { get: () => ({ count: 0 }) };
+    },
+  };
+
+  const plan = previewSqliteMigrationSource(adapter);
+  assert.deepEqual(
+    plan.unsupported.map((entry) => [entry.category, entry.count]),
+    [
+      ["customModels", 2],
+      ["mitmAlias", 1],
+    ]
   );
 });

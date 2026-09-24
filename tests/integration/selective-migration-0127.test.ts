@@ -45,6 +45,13 @@ function applyDeps(events: string[], failCombo = false) {
       return { ...data, id: "target-combo-created" };
     },
     updateSettings: async (data: Record<string, unknown>) => data,
+    setModelAlias: async (alias: string, model: unknown) => {
+      events.push("alias:" + alias + "=" + String(model));
+    },
+    updatePricing: async (pricing: Record<string, unknown>) => {
+      events.push("pricing:" + JSON.stringify(pricing));
+      return pricing;
+    },
   };
 }
 
@@ -56,6 +63,8 @@ test("TC-MIG-INT-046 pinned 9Router JSON fixture applies selected items with rea
     { category: "providerConnections" as const, sourceId: "9r-conn-1" },
     { category: "combos" as const, sourceId: "9r-combo-1" },
     { category: "apiKeys" as const, sourceId: "9r-key-1" },
+    { category: "modelAliases" as const, sourceId: "fast-alias" },
+    { category: "pricing" as const, sourceId: "openai:gpt-example" },
   ];
   const plan = buildSelectiveMigrationPlan({ entities, selected, target: [] });
   assert.equal(plan.canApply, true);
@@ -80,6 +89,12 @@ test("TC-MIG-INT-046 pinned 9Router JSON fixture applies selected items with rea
   assert.match(connectionEvent, /"isActive":false/);
   const comboEvent = events.find((event) => event.startsWith("combo:")) ?? "";
   assert.match(comboEvent, /"connectionId":"target-conn-created"/);
+  assert.ok(events.includes("alias:fast-alias=openai/gpt-example"));
+  assert.ok(
+    events.includes(
+      'pricing:{"openai":{"gpt-example":{"input":1,"output":2}}}'
+    )
+  );
 });
 
 test("TC-MIG-INT-047 pinned OmniRoute fixture supports partial selection through existing target identity", async () => {

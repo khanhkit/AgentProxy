@@ -51,5 +51,17 @@
       "allowed_models": "[\"gpt-example\"]",
       "no_log": 0
     }
+  ],
+  "modelAliases": [
+    {
+      "key": "fast-alias",
+      "value": "\"openai/gpt-example\""
+    }
+  ],
+  "pricing": [
+    {
+      "key": "openai",
+      "value": "{\"gpt-example\": {\"input\": 1, \"output\": 2}}"
+    }
   ]
 }

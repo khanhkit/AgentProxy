@@ -251,6 +251,62 @@ function settingsEntity(input: unknown): MigrationSourceEntity | null {
   };
 }
 
+function modelAliasEntity(alias: string, model: unknown): MigrationSourceEntity | null {
+  if (typeof model !== "string" || !model.trim()) return null;
+  const cleanAlias = alias.trim();
+  if (!cleanAlias) return null;
+  return {
+    category: "modelAliases",
+    sourceId: cleanAlias,
+    identity: "model-alias|" + cleanAlias.toLowerCase(),
+    label: cleanAlias,
+    disposition: "CREATE",
+    data: { alias: cleanAlias, model: model.trim() },
+  };
+}
+
+function pricingEntities(input: unknown): MigrationSourceEntity[] {
+  const root = asRecord(input);
+  if (!root) return [];
+  const entities: MigrationSourceEntity[] = [];
+  for (const [provider, modelsValue] of Object.entries(root)) {
+    const models = asRecord(modelsValue);
+    if (!provider.trim() || !models) continue;
+    for (const [model, pricingValue] of Object.entries(models)) {
+      const pricing = asRecord(pricingValue);
+      if (!model.trim() || !pricing) continue;
+      entities.push({
+        category: "pricing",
+        sourceId: provider + ":" + model,
+        identity:
+          "pricing|" + provider.trim().toLowerCase() + "|" + model.trim().toLowerCase(),
+        label: provider + " / " + model,
+        disposition: "CREATE",
+        data: {
+          provider,
+          model,
+          pricing,
+        },
+      });
+    }
+  }
+  return entities;
+}
+
+function parseKvRecordRows(input: unknown): JsonRecord {
+  const result: JsonRecord = {};
+  for (const row of asRecords(input)) {
+    const key = stringField(row, "key");
+    if (!key || typeof row.value !== "string") continue;
+    try {
+      result[key] = JSON.parse(row.value);
+    } catch {
+      // malformed source KV entries are intentionally ignored
+    }
+  }
+  return result;
+}
+
 export function normalize9RouterJsonSource(input: unknown): MigrationSourceEntity[] {
   const root = asRecord(input);
   if (!root) throw new Error("Unsupported 9Router JSON source");
@@ -284,6 +340,16 @@ export function normalize9RouterJsonSource(input: unknown): MigrationSourceEntit
   const settings = settingsEntity(root.settings);
   if (settings) entities.push(settings);
 
+  const aliases = asRecord(root.modelAliases);
+  if (aliases) {
+    for (const [alias, model] of Object.entries(aliases)) {
+      const entity = modelAliasEntity(alias, model);
+      if (entity) entities.push(entity);
+    }
+  }
+
+  entities.push(...pricingEntities(root.pricing));
+
   return entities;
 }
 
@@ -293,6 +359,8 @@ interface FixtureRows {
   combos?: unknown;
   apiKeys?: unknown;
   settings?: unknown;
+  modelAliases?: unknown;
+  pricing?: unknown;
 }
 
 export function normalize9RouterSqliteRows(input: unknown): MigrationSourceEntity[] {
@@ -329,6 +397,13 @@ export function normalize9RouterSqliteRows(input: unknown): MigrationSourceEntit
   const settings = settingsEntity(settingsRow ? parseRecord(settingsRow.data) : null);
   if (settings) entities.push(settings);
 
+  const aliases = parseKvRecordRows(root.modelAliases);
+  for (const [alias, model] of Object.entries(aliases)) {
+    const entity = modelAliasEntity(alias, model);
+    if (entity) entities.push(entity);
+  }
+  entities.push(...pricingEntities(parseKvRecordRows(root.pricing)));
+
   return entities;
 }
 
@@ -362,6 +437,13 @@ export function normalizeOmniRouteSqliteRows(input: unknown): MigrationSourceEnt
     if (!id) continue;
     entities.push(apiKeyEntity(id, row));
   }
+
+  const aliases = parseKvRecordRows(root.modelAliases);
+  for (const [alias, model] of Object.entries(aliases)) {
+    const entity = modelAliasEntity(alias, model);
+    if (entity) entities.push(entity);
+  }
+  entities.push(...pricingEntities(parseKvRecordRows(root.pricing)));
 
   return entities;
 }
@@ -403,6 +485,14 @@ export function readSqliteMigrationEntities(
         adapter,
         "SELECT id, data FROM settings WHERE id = 1"
       ),
+      modelAliases: rows(
+        adapter,
+        "SELECT key, value FROM kv WHERE scope = 'modelAliases'"
+      ),
+      pricing: rows(
+        adapter,
+        "SELECT key, value FROM kv WHERE scope = 'pricing'"
+      ),
     });
   }
 
@@ -422,6 +512,14 @@ export function readSqliteMigrationEntities(
     apiKeys: rows(
       adapter,
       "SELECT id, name, allowed_models, no_log FROM api_keys"
+    ),
+    modelAliases: rows(
+      adapter,
+      "SELECT key, value FROM key_value WHERE namespace = 'modelAliases'"
+    ),
+    pricing: rows(
+      adapter,
+      "SELECT key, value FROM key_value WHERE namespace = 'pricing'"
     ),
   });
 }

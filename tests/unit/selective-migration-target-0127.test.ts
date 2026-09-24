@@ -61,3 +61,35 @@ test("TC-MIG-TARGET-033 malformed target rows are ignored rather than becoming c
 
   assert.deepEqual(target, []);
 });
+
+test("TC-MIG-TARGET-051 target aliases and user pricing become conservative conflict identities", () => {
+  const target = normalizeTargetEntities({
+    modelAliases: {
+      fast: "openai/gpt-target",
+    },
+    pricing: {
+      openai: {
+        "gpt-example": { input: 9, output: 9 },
+      },
+    },
+    pricingSourceMap: {
+      openai: {
+        "gpt-example": "user",
+        "default-model": "default",
+      },
+    },
+  });
+
+  assert.deepEqual(target, [
+    {
+      category: "modelAliases",
+      targetId: "modelAlias:fast",
+      identity: "model-alias|fast",
+    },
+    {
+      category: "pricing",
+      targetId: "pricing:openai:gpt-example",
+      identity: "pricing|openai|gpt-example",
+    },
+  ]);
+});

@@ -46,9 +46,7 @@ const PORTABLE_JSON_KEYS = new Set([
 
 const RUNTIME_JSON_KEYS = ["usageHistory", "domainCostHistory", "domainBudgets"] as const;
 const DEFERRED_JSON_KEYS = [
-  "modelAliases",
   "customModels",
-  "pricing",
   "proxyConfig",
   "mitmAlias",
 ] as const;
@@ -69,6 +67,7 @@ const SQLITE_SOURCE_SCHEMAS = [
       "detailed_request_logs",
       "provider_quota_reset_events",
     ],
+    kv: { table: "key_value", scopeColumn: "namespace" },
   },
   {
     family: "9router" as const,
@@ -85,6 +84,7 @@ const SQLITE_SOURCE_SCHEMAS = [
       "domainCostHistory",
       "domainBudgets",
     ],
+    kv: { table: "kv", scopeColumn: "scope" },
   },
 ] as const;
 
@@ -141,6 +141,8 @@ export function previewJsonMigrationSource(input: unknown): MigrationPreviewPlan
     "combos",
     "apiKeys",
     "settings",
+    "modelAliases",
+    "pricing",
   ].some((key) => key in data);
   if (!hasPortableShape || (sourceMarker && !sourceMarker.includes("9router"))) {
     throw new Error("Unsupported migration JSON source");
@@ -216,6 +218,24 @@ function countRows(adapter: SelectOnlyAdapter, table: string): number {
   return typeof row?.count === "number" && Number.isFinite(row.count) ? row.count : 0;
 }
 
+function countKvScope(
+  adapter: SelectOnlyAdapter,
+  table: string,
+  scopeColumn: string,
+  scope: string
+): number {
+  const sql =
+    "SELECT COUNT(*) AS count FROM " +
+    table +
+    " WHERE " +
+    scopeColumn +
+    " = '" +
+    scope +
+    "'";
+  const row = adapter.prepare(sql).get?.() as { count?: unknown } | undefined;
+  return typeof row?.count === "number" && Number.isFinite(row.count) ? row.count : 0;
+}
+
 function countItems(
   count: number,
   category: string,
@@ -256,6 +276,24 @@ export function previewSqliteMigrationSource(adapter: SelectOnlyAdapter): Migrat
       count: countRows(adapter, table),
       disposition: "UNSUPPORTED" as const,
     }));
+
+  if (tables.has(schema.kv.table)) {
+    for (const scope of ["customModels", "mitmAlias", "proxyConfig"]) {
+      const count = countKvScope(
+        adapter,
+        schema.kv.table,
+        schema.kv.scopeColumn,
+        scope
+      );
+      if (count > 0) {
+        unsupported.push({
+          category: scope,
+          count,
+          disposition: "UNSUPPORTED",
+        });
+      }
+    }
+  }
 
   return {
     source: { family: schema.family, format: "sqlite" },
