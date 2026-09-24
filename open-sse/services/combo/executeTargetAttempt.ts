@@ -459,7 +459,6 @@ export async function executeTargetAttempt(opts: {
           autoResume: Boolean(deps.nativeCodexAutoResume),
         });
       }
-
       // Success decay: a healthy response walks the model's lockout failure
       // count back down (and eventually clears an expired lockout entirely).
       if (provider && rawModel) {
