@@ -169,6 +169,10 @@ function omitOversizedPipeline(artifact: CallLogArtifact): CallLogArtifact {
   };
 }
 
+export function getArtifactMaxBytesForTest(artifact: CallLogArtifact): number {
+  return getArtifactMaxBytes(artifact);
+}
+
 function getArtifactMaxBytes(artifact: CallLogArtifact): number {
   return artifact.pipeline ? getCallLogPipelineMaxSizeBytes() : MAX_CALL_LOG_ARTIFACT_BYTES;
 }
@@ -217,15 +221,18 @@ function buildMinimalArtifactForSizeLimit(artifact: CallLogArtifact) {
  * `pipeline.providerResponse` in preference to `responseBody`.
  */
 function buildSizeLimitStages(artifact: CallLogArtifact): Array<() => unknown> {
-  const omitBodies = <T extends object>(value: T) => ({
+  const omitBodies = <T extends object>(value: T, keepResponse = false) => ({
     ...value,
     requestBody: OMITTED_FOR_SIZE_LIMIT,
-    responseBody: OMITTED_FOR_SIZE_LIMIT,
+    responseBody: keepResponse
+      ? (value as { responseBody: unknown }).responseBody
+      : OMITTED_FOR_SIZE_LIMIT,
     error: preserveErrorForSizeLimit(artifact.error),
   });
 
   return [
     () => truncateArtifactForStorage(artifact),
+    ...(artifact.pipeline ? [() => omitBodies(artifact, true)] : []),
     // Bodies alone: worth a stage only when there is a pipeline to keep in
     // exchange. Without one it produces the same bytes as the stage two lines
     // below, so it is left out rather than costing a redundant stringify.
