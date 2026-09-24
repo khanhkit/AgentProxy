@@ -48,11 +48,25 @@ export function evaluateGithubGovernance(protection, policy) {
   }
 
   const reviews = protection?.required_pull_request_reviews;
-  if (
-    !reviews ||
-    reviews.required_approving_review_count < policy.requiredApprovingReviewCount ||
-    reviews.dismiss_stale_reviews !== policy.dismissStaleReviews ||
-    reviews.require_last_push_approval !== policy.requireLastPushApproval
+  const reviewProtectionRequired =
+    policy.requiredApprovingReviewCount > 0 ||
+    policy.dismissStaleReviews ||
+    policy.requireLastPushApproval;
+
+  if (reviewProtectionRequired) {
+    if (
+      !reviews ||
+      reviews.required_approving_review_count < policy.requiredApprovingReviewCount ||
+      reviews.dismiss_stale_reviews !== policy.dismissStaleReviews ||
+      reviews.require_last_push_approval !== policy.requireLastPushApproval
+    ) {
+      failures.push("required_pull_request_reviews");
+    }
+  } else if (
+    reviews &&
+    (reviews.required_approving_review_count > 0 ||
+      reviews.dismiss_stale_reviews ||
+      reviews.require_last_push_approval)
   ) {
     failures.push("required_pull_request_reviews");
   }
