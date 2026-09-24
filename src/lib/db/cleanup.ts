@@ -16,6 +16,7 @@ import {
 } from "./cleanup/usagePurge";
 import { deleteCallLogsBefore } from "@/lib/usage/callLogs";
 import { ensureCompressionRunTelemetryTable } from "./compressionRunTelemetry";
+import { describeReclaim, reclaimFreedPages } from "./reclaimFreedPages";
 
 interface CleanupResult {
   deleted: number;
@@ -865,59 +866,57 @@ const CLEANUP_INTERVAL_MS = 6 * 60 * 60 * 1000; // 6 hours
 let _cleanupSchedulerTimer: ReturnType<typeof setInterval> | null = null;
 
 /**
- * Start the background cleanup scheduler. Runs cleanup on startup
- * and then every 6 hours. Runs VACUUM after deletes to reclaim disk space.
- *
- * Without this, tables grow unboundedly (compression_analytics 600K+ rows,
- * usage_history 250K+ rows) causing 1.4GB+ SQLite files and 3-8GB RSS
- * from better-sqlite3 memory mapping.
+ * One scheduled pass: run retention cleanup, then reclaim freed pages without
+ * a synchronous full-database VACUUM on the request-serving event loop.
+ */
+export async function runScheduledCleanupPass(phase: "startup" | "periodic"): Promise<void> {
+  const label = phase === "startup" ? "Startup" : "Periodic";
+  const result = await runAutoCleanup();
+  if (result.totalDeleted > 0) {
+    console.log(`[Cleanup] ${label} cleanup freed ${result.totalDeleted} rows.`);
+  }
+
+  try {
+    const reclaim = await reclaimFreedPages();
+    if (reclaim.stopReason === "error") {
+      console.error(
+        `[Cleanup] Space reclamation after ${phase} cleanup stopped early ` +
+          `(${describeReclaim(reclaim)}): ${reclaim.error}`
+      );
+    } else if (reclaim.mode !== "skipped") {
+      console.log(
+        `[Cleanup] Space reclamation after ${phase} cleanup: ${describeReclaim(reclaim)}.`
+      );
+    }
+  } catch (reclaimErr) {
+    console.error(`[Cleanup] Space reclamation after ${phase} cleanup failed:`, reclaimErr);
+  }
+}
+
+/**
+ * Start the background cleanup scheduler. Runs cleanup on startup and every
+ * 6 hours, then performs bounded incremental page reclamation. Full VACUUMs
+ * are deferred to vacuumScheduler according to operator settings.
  */
 export function startCleanupScheduler(): void {
   if (_cleanupSchedulerTimer) return;
 
-  // Run cleanup 30s after startup (let the server initialize first).
   setTimeout(async () => {
     try {
-      const result = await runAutoCleanup();
-      const proxyResult = await cleanupProxyLogs();
-      const totalDeleted = result.totalDeleted + proxyResult.deleted;
-      if (totalDeleted > 0) {
-        console.log(`[Cleanup] Startup cleanup freed ${totalDeleted} rows. Running VACUUM...`);
-        try {
-          const db = getDbInstance();
-          db.exec("VACUUM");
-          console.log("[Cleanup] VACUUM completed after startup cleanup.");
-        } catch (vacErr) {
-          console.error("[Cleanup] VACUUM after cleanup failed:", vacErr);
-        }
-      }
+      await runScheduledCleanupPass("startup");
     } catch (err) {
       console.error("[Cleanup] Startup cleanup failed:", err);
     }
   }, 30_000);
 
-  // Schedule periodic cleanup every 6 hours.
   _cleanupSchedulerTimer = setInterval(async () => {
     try {
-      const result = await runAutoCleanup();
-      const proxyResult = await cleanupProxyLogs();
-      const totalDeleted = result.totalDeleted + proxyResult.deleted;
-      if (totalDeleted > 0) {
-        console.log(`[Cleanup] Periodic cleanup freed ${totalDeleted} rows. Running VACUUM...`);
-        try {
-          const db = getDbInstance();
-          db.exec("VACUUM");
-          console.log("[Cleanup] VACUUM completed after periodic cleanup.");
-        } catch (vacErr) {
-          console.error("[Cleanup] VACUUM after cleanup failed:", vacErr);
-        }
-      }
+      await runScheduledCleanupPass("periodic");
     } catch (err) {
       console.error("[Cleanup] Periodic cleanup failed:", err);
     }
   }, CLEANUP_INTERVAL_MS);
 
-  // Don't keep the process alive solely for cleanup.
   if (_cleanupSchedulerTimer && typeof _cleanupSchedulerTimer.unref === "function") {
     _cleanupSchedulerTimer.unref();
   }

@@ -46,6 +46,8 @@ export interface VacuumSchedulerState {
   lastDurationMs: number | null;
   isRunning: boolean;
   nextRunAt: number | null;
+  fullVacuumRequestedAt: number | null;
+  fullVacuumRequestReason: string | null;
 }
 
 export type ScheduledVacuum = (typeof DEFAULT_DATABASE_SETTINGS)["optimization"]["scheduledVacuum"];
@@ -73,9 +75,12 @@ const STATE_DEFAULTS: VacuumSchedulerState = {
   lastDurationMs: null,
   isRunning: false,
   nextRunAt: null,
+  fullVacuumRequestedAt: null,
+  fullVacuumRequestReason: null,
 };
 
 let timer: ReturnType<typeof setTimeout> | null = null;
+let hydrated = false;
 let currentState: VacuumSchedulerState = { ...STATE_DEFAULTS };
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -268,6 +273,8 @@ export async function runNow(): Promise<{ success: boolean; durationMs: number; 
     currentState.lastError = null;
     currentState.lastDurationMs = duration;
     currentState.isRunning = false;
+    currentState.fullVacuumRequestedAt = null;
+    currentState.fullVacuumRequestReason = null;
     refresh(); // reset the next-run clock from this successful run
     return { success: true, durationMs: duration };
   } catch (err) {
@@ -282,6 +289,42 @@ export async function runNow(): Promise<{ success: boolean; durationMs: number; 
   }
 }
 
+function hydrateFromPersistedState(): void {
+  if (hydrated) return;
+  hydrated = true;
+  const persisted = loadPersistedState();
+  currentState = {
+    ...STATE_DEFAULTS,
+    ...persisted,
+    isRunning: false,
+    nextRunAt: null,
+  };
+}
+
+/**
+ * Record that a full VACUUM is warranted without running it inline.
+ * The request survives restart and is cleared by the next successful runNow().
+ */
+export function requestFullVacuum(reason: string): VacuumSchedulerState {
+  hydrateFromPersistedState();
+  const firstRequest = currentState.fullVacuumRequestedAt === null;
+  if (firstRequest) currentState.fullVacuumRequestedAt = Date.now();
+  currentState.fullVacuumRequestReason = reason;
+  persistState();
+
+  if (firstRequest) {
+    const schedule = readScheduleSettings().scheduledVacuum;
+    const when =
+      schedule === "never"
+        ? "scheduledVacuum is 'never' — run manually when convenient"
+        : currentState.nextRunAt !== null
+          ? `deferred to ${new Date(currentState.nextRunAt).toISOString()}`
+          : "deferred to the next scheduled run";
+    console.log(`[VacuumScheduler] Full VACUUM requested (${reason}); ${when}.`);
+  }
+  return getState();
+}
+
 /**
  * Initialize the scheduler. Called once from the Next.js
  * `instrumentation-node.ts` register() hook. Safe to call multiple
@@ -290,13 +333,8 @@ export async function runNow(): Promise<{ success: boolean; durationMs: number; 
 export function init(): VacuumSchedulerState {
   if (timer) return getState();
 
-  const persisted = loadPersistedState();
-  currentState = {
-    ...STATE_DEFAULTS,
-    ...persisted,
-    isRunning: false, // never resume a "running" state across restarts
-    nextRunAt: null, // recompute below
-  };
+  hydrated = false;
+  hydrateFromPersistedState();
   return refresh();
 }
 
@@ -322,5 +360,6 @@ export function stop(): void {
  */
 export function __resetForTests(): void {
   stop();
+  hydrated = false;
   currentState = { ...STATE_DEFAULTS };
 }
