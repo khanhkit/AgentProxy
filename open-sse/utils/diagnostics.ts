@@ -10,6 +10,7 @@
  */
 
 import { sanitizeErrorMessage } from "./error.ts";
+import { SYNTHETIC_RESPONSES_SEQUENCE_NUMBER } from "./responsesSequence.ts";
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -140,6 +141,10 @@ export function synthResponsesFailure(reason?: MalformedReason): string {
   );
   const event = {
     type: "response.failed",
+    // #14330: this frame is synthesized outside the real per-stream sequence
+    // counter, so it uses the shared synthetic seed instead of omitting the
+    // required field — a strict Responses decoder aborts without it.
+    sequence_number: SYNTHETIC_RESPONSES_SEQUENCE_NUMBER,
     response: {
       id: null,
       status: "failed",

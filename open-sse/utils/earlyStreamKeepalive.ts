@@ -32,6 +32,7 @@
  */
 
 import { recordEarlyKeepaliveBytes } from "./earlyKeepaliveByteBuffer.ts";
+import { SYNTHETIC_RESPONSES_SEQUENCE_NUMBER } from "./responsesSequence.ts";
 
 const ENCODER = new TextEncoder();
 const KEEPALIVE_FRAME = ENCODER.encode(": keepalive\n\n");
@@ -86,6 +87,9 @@ export const OPENAI_RESPONSES_ERROR_FRAME = ENCODER.encode(
     code: null,
     message: "Upstream stream failed before completion.",
     param: null,
+    // #14330: synthesized outside the real per-stream counter; use a shared
+    // non-zero seed instead of colliding with the stream's first event.
+    sequence_number: SYNTHETIC_RESPONSES_SEQUENCE_NUMBER,
   })}\n\n`
 );
 
