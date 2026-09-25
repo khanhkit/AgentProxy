@@ -177,46 +177,11 @@ export function releaseStickyPinOnFailure(
   clearStickyBinding(messageHash);
 }
 
-/**
- * Clear persisted LKGP pins when a target fails or is skipped due to
- * exhaustion, cooldown, or unavailability (#11911 #919).
- */
-export function clearStaleLKGP(
-  comboName: string,
-  executionKey?: string | null,
-  comboId?: string | null,
-  log?: { warn?: (tag: string, msg: string, data?: unknown) => void } | null,
-  tag: string = "COMBO",
-  clearLKGP?: (comboName: string, modelKey: string) => Promise<void>,
-  failed?: { provider?: string | null; connectionId?: string | null } | null
-): Promise<void> {
-  return (async () => {
-    const settings = clearLKGP ? null : await import("@/lib/db/settings");
-    const clear = clearLKGP ?? settings!.clearLKGP;
-    const comboKey = comboId || comboName;
-    const promises: Promise<void>[] = executionKey ? [clear(comboName, executionKey)] : [];
-
-    if (!failed?.provider) {
-      promises.push(clear(comboName, comboKey));
-    } else {
-      const getLKGP = settings?.getLKGP ?? (await import("@/lib/db/settings")).getLKGP;
-      const pin = await getLKGP(comboName, comboKey);
-      const namesFailedTarget =
-        pin?.provider === failed.provider &&
-        (!pin?.connectionId || !failed.connectionId || pin.connectionId === failed.connectionId);
-      if (namesFailedTarget) promises.push(clear(comboName, comboKey));
-    }
-
-    await Promise.all(promises);
-  })().catch((err) => {
-    log?.warn?.(tag, "Failed to clear Last Known Good Provider. This is non-fatal.", {
-      combo: comboName,
-      comboId: comboId ?? null,
-      executionKey: executionKey ?? null,
-      err,
-    });
-  });
-}
+// #11911 #919/#13614: non-blocking stale-pin clear whose failures log with
+// combo context. The implementation lives in a leaf so tests can await it
+// without importing the full combo runtime.
+export { clearStaleLKGP } from "./combo/staleLkgpClear.ts";
+import { clearStaleLKGP } from "./combo/staleLkgpClear.ts";
 
 const DEFAULT_MODEL_P95_MS: Record<string, number> = {
   "grok-4-fast-non-reasoning": 1143,

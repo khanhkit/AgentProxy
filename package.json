@@ -294,7 +294,8 @@
     "alibaba:sync-allowlist": "node --import tsx/esm scripts/ops/sync-alibaba-allowlist.mjs",
     "agentproxy:verify": "node scripts/check/agentproxy-verify.mjs",
     "check:toolchain-contract": "node scripts/check/check-toolchain-contract.mjs",
-    "check:agentproxy-identity": "node scripts/check/check-agentproxy-identity.mjs"
+    "check:agentproxy-identity": "node scripts/check/check-agentproxy-identity.mjs",
+    "check:routing-error-guard": "node scripts/check/check-routing-error-guard.mjs"
   },
   "dependencies": {
     "@aws-sdk/client-bedrock-runtime": "^3.1130.0",
