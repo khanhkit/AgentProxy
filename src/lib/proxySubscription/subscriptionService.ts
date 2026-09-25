@@ -19,6 +19,7 @@
  *     protocol translation + node selection). Without it, those nodes are
  *     reported but not routed.
  */
+import { decodeUserinfo } from "@/shared/utils/decodeUserinfo";
 import { randomUUID } from "crypto";
 import { getDbInstance } from "../db/core";
 import { backupDbFile } from "../db/backup";
@@ -561,8 +562,8 @@ async function syncSubscriptionUnsafe(id: string): Promise<SyncResult> {
             type: coreType,
             host: coreUrl.hostname,
             port: Number(coreUrl.port) || (coreType === "https" ? 443 : 8080),
-            username: coreUrl.username ? decodeURIComponent(coreUrl.username) : undefined,
-            password: coreUrl.password ? decodeURIComponent(coreUrl.password) : undefined,
+            username: coreUrl.username ? decodeUserinfo(coreUrl.username) : undefined,
+            password: coreUrl.password ? decodeUserinfo(coreUrl.password) : undefined,
             source: "subscription",
             subscriptionId: id,
             status: "active",
