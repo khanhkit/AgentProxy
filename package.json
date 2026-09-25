@@ -354,6 +354,7 @@
     "react-dom": "19.2.8",
     "react-is": "^19.2.6",
     "react-markdown": "^10.1.0",
+    "remark-gfm": "^4.0.1",
     "react-reconciler": "^0.33.0",
     "react18-json-view": "0.2.10",
     "recharts": "^3.8.1",
@@ -380,7 +381,7 @@
   "optionalDependencies": {
     "@atjsh/llmlingua-2": "3.0.0",
     "@huggingface/transformers": "^4.2.0",
-    "better-sqlite3": "^13.0.2",
+    "better-sqlite3": "^13.0.3",
     "js-tiktoken": "^1.0.20",
     "keytar": "^7.9.0",
     "onnxruntime-node": "1.24.3",
@@ -477,6 +478,7 @@
   },
   "overrides": {
     "browserslist": "^4.28.8",
+    "joi": "^18.2.8",
     "onnxruntime-node": "1.24.3",
     "eslint-plugin-react-hooks": "7.1.1",
     "fast-xml-parser": "^5.10.1",
@@ -489,7 +491,7 @@
     "vite": "^8.0.16",
     "protobufjs": "^7.6.5",
     "@babel/core": "^7.29.6",
-    "hono": "^4.12.34",
+    "hono": "^4.13.7",
     "@hono/node-server": "^2.0.5",
     "fast-uri": "^3.1.7",
     "body-parser": "^2.3.0",
@@ -508,7 +510,7 @@
     "concurrently": {
       "shell-quote": "^1.9.0"
     },
-    "adm-zip": "0.6.1",
+    "adm-zip": "^0.6.1",
     "promptfoo": {
       "js-yaml": "^5.2.2",
       "undici": "^7.29.0"
@@ -540,7 +542,8 @@
     "nanoid": "^3.3.17",
     "monaco-editor": {
       "dompurify": "^3.4.14"
-    }
+    },
+    "csv-parse": "^7.0.2"
   },
   "packageManager": "npm@12.0.2"
 }
