@@ -108,8 +108,9 @@ describe("the route passes the caller's key through", () => {
       "the route still calls deleteCompletedBatches() with no owner — every tenant's batches go"
     );
     assert.ok(
-      /deleteCompletedBatches\(\s*scope\./.test(src),
-      "the route must pass the caller's scope into the helper"
+      /ownerFilter\s*=\s*scope\.apiKeyId/.test(src) &&
+        /deleteCompletedBatches\(\s*ownerFilter\s*\)/.test(src),
+      "the route must derive the bounded owner filter from the caller scope and pass it into the helper"
     );
   });
 });
