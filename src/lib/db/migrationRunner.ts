@@ -593,6 +593,18 @@ function isSchemaAlreadyApplied(
         hasColumn(db, "provider_nodes", "daily_quota_reset_timezone") &&
         hasColumn(db, "provider_nodes", "daily_quota_reset_hour")
       );
+    case "177":
+      return hasColumn(db, "provider_connections", "synced_models_at");
+    case "179":
+      return hasColumn(db, "proxy_logs", "upstream_status");
+    // AP-ISS-0125 preserves the frozen upstream numbering: version 180 is intentionally
+    // absent, so 181 follows 179 without inventing a synthetic AgentProxy migration.
+    case "181":
+      return hasColumn(db, "proxy_logs", "proxy_name");
+    case "183":
+      return hasColumn(db, "proxy_logs", "rotation_account");
+    case "184":
+      return hasColumn(db, "proxy_logs", "correlation_id");
     default:
       return false;
   }

@@ -83,30 +83,19 @@ test("Fix #1: normalizePipeline passes through new engine IDs (headroom, session
 });
 
 test("enabling headroom adds it to the pipeline sorted by stackPriority", () => {
-  // Default pipeline is [rtk(10), caveman(20)].
-  // headroom has stackPriority=15 so it should be inserted between rtk and caveman.
+  // Default lossless pipeline is [session-dedup(3), lite(5)].
+  // headroom(15) should be appended after both by stackPriority.
   const result = setEngineInDefaultCombo("headroom", true);
   assert.ok(result, "should return the updated combo");
 
   const engineIds = result.pipeline.map((s) => s.engine);
   assert.ok(engineIds.includes("headroom"), "headroom should be in the pipeline");
 
-  const rtkIdx = engineIds.indexOf("rtk");
-  const headroomIdx = engineIds.indexOf("headroom");
-  const cavemanIdx = engineIds.indexOf("caveman");
-
-  assert.ok(rtkIdx >= 0, "rtk should be in the pipeline");
-  assert.ok(headroomIdx >= 0, "headroom should be in the pipeline");
-  assert.ok(cavemanIdx >= 0, "caveman should be in the pipeline");
-
-  assert.ok(
-    rtkIdx < headroomIdx,
-    `rtk(10) should come before headroom(15), got order: ${engineIds}`
-  );
-  assert.ok(
-    headroomIdx < cavemanIdx,
-    `headroom(15) should come before caveman(20), got order: ${engineIds}`
-  );
+  assert.equal(engineIds.length, 3, "lossless default plus headroom should have exactly 3 steps");
+  assert.equal(engineIds[0], "session-dedup", "session-dedup should retain highest priority");
+  assert.equal(engineIds[1], "lite", "lite should remain between dedup and headroom");
+  assert.equal(engineIds[2], "headroom", "headroom should sort after the lossless defaults");
+  assert.deepEqual(engineIds, ["session-dedup", "lite", "headroom"]);
 });
 
 test("enabling an engine with config persists the config", () => {

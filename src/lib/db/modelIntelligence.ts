@@ -193,6 +193,55 @@ export function getResolvedTaskFitness(model: string, category: string): number 
   return entry ? entry.score : null;
 }
 
+export function getLatestSyncedAt(source: string): string | null {
+  const db = getDbInstance();
+  const row = db
+    .prepare(`SELECT MAX(synced_at) as latest FROM model_intelligence WHERE source = ?`)
+    .get(source) as { latest: string | null } | undefined;
+  return row?.latest ?? null;
+}
+
+export function applyArenaEloRefresh(
+  entries: Array<Omit<ModelIntelligenceEntry, "syncedAt">>,
+  source = "arena_elo"
+): { upserted: number; pruned: number } {
+  const db = getDbInstance();
+  const upsertStmt = db.prepare(
+    `INSERT OR REPLACE INTO model_intelligence
+       (model, source, category, score, elo_raw, confidence, synced_at, expires_at)
+     VALUES (?, ?, ?, ?, ?, ?, datetime('now'), ?)`
+  );
+
+  const refresh = db.transaction(() => {
+    let upserted = 0;
+    for (const entry of entries) {
+      upsertStmt.run(
+        entry.model,
+        entry.source,
+        entry.category,
+        entry.score,
+        entry.eloRaw ?? null,
+        entry.confidence ?? null,
+        entry.expiresAt ?? null
+      );
+      upserted++;
+    }
+
+    const refreshedPairs = JSON.stringify(entries.map((e) => `${e.model}\u0000${e.category}`));
+    const pruneByPair = db.prepare(
+      `DELETE FROM model_intelligence
+       WHERE source = ?
+         AND model || char(0) || category NOT IN (
+           SELECT value FROM json_each(?)
+         )`
+    );
+    const pruneResult = pruneByPair.run(source, refreshedPairs);
+    return { upserted, pruned: pruneResult.changes ?? 0 };
+  });
+
+  return refresh();
+}
+
 /**
  * Write a user_override entry for a model × category combination.
  * Used by taskFitness.ts resolution chain as Layer 1 (highest priority).

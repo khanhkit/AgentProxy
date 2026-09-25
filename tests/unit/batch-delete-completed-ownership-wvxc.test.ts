@@ -34,6 +34,7 @@ function seedCompletedBatch(apiKeyId: string | null, tag: string) {
     filename: `wvxc-${tag}.jsonl`,
     purpose: "batch",
     content: Buffer.from("{}"),
+    apiKeyId,
   });
   const batch = createBatch({
     endpoint: "/v1/chat/completions",

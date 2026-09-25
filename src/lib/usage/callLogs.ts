@@ -50,6 +50,7 @@ import {
   protectPipelinePayloads,
   buildRequestSummary,
   classifyCallLogError,
+  toStoredErrorType,
 } from "./callLogs/format";
 import {
   clearArtifactReference,
@@ -451,6 +452,7 @@ function getLegacyInlineDetail(id: string) {
 
 async function saveCallLogOperation(entry: any): Promise<void> {
   try {
+    const db = getDbInstance();
     const apiKeyContext = getCallLogApiKeyContext();
     // `||` (not `??`): an empty-string apiKeyId/apiKeyName is "unattributed",
     // same as before this fallback existed — it must not be persisted verbatim
@@ -507,7 +509,9 @@ async function saveCallLogOperation(entry: any): Promise<void> {
     // while reasoning source/char-count are recorded separately for observability.
     const tokensReasoning = getReasoningTokensOrNull(entry.tokens);
     const reasoningObservation = resolveReasoningObservation(tokensReasoning, entry.responseBody);
-    const errorType = classifyCallLogError(entry.status, entry.error, entry.provider);
+    const errorType = toStoredErrorType(
+      classifyCallLogError(entry.status, entry.error, entry.provider)
+    );
     const logEntry = {
       id: typeof entry.id === "string" && entry.id.length > 0 ? entry.id : generateLogId(),
       timestamp: typeof entry.timestamp === "string" ? entry.timestamp : new Date().toISOString(),
@@ -588,7 +592,6 @@ async function saveCallLogOperation(entry: any): Promise<void> {
       }
     }
 
-    const db = getDbInstance();
     db.prepare(
       `
       INSERT INTO call_logs (
@@ -973,4 +976,41 @@ export async function exportCallLogsSince(since: string) {
   }
 
   return logs;
+}
+
+export function countCallLogsSince(since: string): number {
+  const db = getDbInstance();
+  const row = db
+    .prepare("SELECT COUNT(*) AS count FROM call_logs WHERE timestamp >= ?")
+    .get(since) as { count?: number } | undefined;
+  return Number(row?.count ?? 0);
+}
+
+export async function* iterateCallLogsSince(
+  since: string,
+  limit: number
+): AsyncGenerator<unknown, void, void> {
+  const maxRows = Math.max(0, Math.trunc(limit));
+  if (maxRows === 0) return;
+
+  const maxRowId = getLegacyCallLogExportMaxRowId(since);
+  let cursor: LegacyCallLogExportCursor | null = null;
+  let processed = 0;
+
+  while (processed < maxRows) {
+    const pageLimit = Math.min(100, maxRows - processed);
+    const page = getLegacyCallLogExportIdPage(since, maxRowId, cursor, pageLimit);
+    if (page.length === 0) break;
+
+    for (const row of page) {
+      const log = await getCallLogById(row.id);
+      if (log) yield log;
+      processed++;
+      if (processed >= maxRows) break;
+    }
+
+    const last = page[page.length - 1];
+    cursor = { timestamp: last.timestamp, rowId: last.rowId };
+    if (page.length < pageLimit) break;
+  }
 }

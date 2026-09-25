@@ -88,7 +88,16 @@ export const PROVIDER_ERROR_TYPES = {
   // Google account must Bring Its Own GCP Project. Account-specific and
   // fixable by entering a Project ID — never a model lockout and never a ban.
   GCP_PROJECT_REQUIRED: "gcp_project_required",
-};
+} as const;
+
+export type ProviderErrorType = (typeof PROVIDER_ERROR_TYPES)[keyof typeof PROVIDER_ERROR_TYPES];
+
+export type ErrorTypeContract = ProviderErrorType | "unknown";
+export const ERROR_TYPE_CONTRACT: readonly ErrorTypeContract[] = Object.freeze([
+  ...Object.values(PROVIDER_ERROR_TYPES),
+  "unknown",
+]);
+export const ERROR_TYPE_CONTRACT_VERSION = 1;
 
 export const CONTEXT_OVERFLOW_SIGNALS = [
   "context overflow",
@@ -248,7 +257,7 @@ export function classifyProviderError(
   statusCode: number,
   responseBody: unknown,
   provider?: string | null
-): string | null {
+): ProviderErrorType | null {
   const bodyStr = responseBodyToString(responseBody);
   const creditsExhausted = isCreditsExhausted(bodyStr);
   const subscriptionQuotaExhausted = isSubscriptionQuotaText(bodyStr.toLowerCase());

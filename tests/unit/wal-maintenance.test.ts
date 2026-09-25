@@ -105,23 +105,19 @@ test("guarded ctx skips without calling pragma", () => {
   assert.equal(called, 0);
 });
 
-test("interval defaults to 6h, rejects garbage, honors 0", async () => {
-  const { getWalMaintenanceIntervalMs } = await import("../../src/lib/db/walMaintenance.ts");
-  assert.equal(getWalMaintenanceIntervalMs({} as NodeJS.ProcessEnv), 6 * 60 * 60 * 1000);
+test("passive interval defaults to 5m, rejects garbage, honors 0", async () => {
+  const { getWalPassiveIntervalMs } = await import("../../src/lib/db/walMaintenance.ts");
+  assert.equal(getWalPassiveIntervalMs({} as NodeJS.ProcessEnv), 5 * 60 * 1000);
   assert.equal(
-    getWalMaintenanceIntervalMs({
-      AGENTPROXY_WAL_TRUNCATE_INTERVAL_MS: "nope",
-    } as NodeJS.ProcessEnv),
-    6 * 60 * 60 * 1000
+    getWalPassiveIntervalMs({ AGENTPROXY_WAL_PASSIVE_INTERVAL_MS: "nope" } as NodeJS.ProcessEnv),
+    5 * 60 * 1000
   );
   assert.equal(
-    getWalMaintenanceIntervalMs({
-      AGENTPROXY_WAL_TRUNCATE_INTERVAL_MS: "60000",
-    } as NodeJS.ProcessEnv),
+    getWalPassiveIntervalMs({ AGENTPROXY_WAL_PASSIVE_INTERVAL_MS: "60000" } as NodeJS.ProcessEnv),
     60000
   );
   assert.equal(
-    getWalMaintenanceIntervalMs({ AGENTPROXY_WAL_TRUNCATE_INTERVAL_MS: "0" } as NodeJS.ProcessEnv),
+    getWalPassiveIntervalMs({ AGENTPROXY_WAL_PASSIVE_INTERVAL_MS: "0" } as NodeJS.ProcessEnv),
     0
   );
 });

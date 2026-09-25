@@ -656,9 +656,24 @@ export async function getCompressionSettings(): Promise<CompressionConfig> {
     const record = toRecord(row);
     const key = typeof record.key === "string" ? record.key : null;
     const rawValue = typeof record.value === "string" ? record.value : null;
-    if (!key || rawValue === null) continue;
+    if (!key || rawValue === null) {
+      if (key && typeof record.value !== "string" && record.value !== null) {
+        console.warn(
+          `[COMPRESSION] Settings row '${key}' has non-string value type ` +
+            `(${typeof record.value}); skipping. This may indicate a backup/restore ` +
+            `issue — re-save the setting from the Storage panel to fix.`
+        );
+      }
+      continue;
+    }
     const parsed = parseJsonSafe(rawValue);
-    if (parsed === undefined) continue;
+    if (parsed === undefined) {
+      console.warn(
+        `[COMPRESSION] Settings row '${key}' has unparseable JSON value; skipping. ` +
+          `Re-save the setting from the Storage panel to fix.`
+      );
+      continue;
+    }
 
     switch (key) {
       case "enabled":
@@ -768,6 +783,13 @@ export async function getCompressionSettings(): Promise<CompressionConfig> {
         break;
       case "engines":
         storedEngines = parseStoredEnginesMap(parsed);
+        if (storedEngines === null && (!parsed || typeof parsed !== "object")) {
+          console.warn(
+            `[COMPRESSION] 'engines' settings row is present but unreadable; ` +
+              `falling back to legacy settings. Re-save the engines map from the ` +
+              `Storage panel to fix.`
+          );
+        }
         break;
       case "activeComboId":
         config.activeComboId = typeof parsed === "string" && parsed.trim() ? parsed.trim() : null;

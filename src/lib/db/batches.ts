@@ -1,5 +1,5 @@
 import { getDbInstance, rowToCamel, objToSnake } from "./core";
-import { deleteFile } from "./files";
+import { deleteFile, deleteFileOwnedBy } from "./files";
 import { v4 as uuidv4 } from "uuid";
 
 function parseBatchRow(row: any): BatchRecord {
@@ -497,7 +497,8 @@ export function deleteCompletedBatches(apiKeyId?: string | null): {
     for (const fileId of fileIds) {
       if (stillReferenced.get(fileId, fileId, fileId)) continue;
       try {
-        if (deleteFile(fileId)) deletedFiles++;
+        const removed = scoped ? deleteFileOwnedBy(fileId, apiKeyId as string) : deleteFile(fileId);
+        if (removed) deletedFiles++;
       } catch {
         // A file cleanup failure is safe to leave as an orphan. Do not turn it
         // into a dangling surviving-batch reference by partially undoing rows.
@@ -512,6 +513,95 @@ export function deleteCompletedBatches(apiKeyId?: string | null): {
         )
       : Boolean(db.prepare("SELECT 1 FROM batches WHERE status = 'completed' LIMIT 1").get());
 
+    return {
+      deletedBatches: batchResult.changes,
+      deletedFiles,
+      hasMore,
+      pageSize: DELETE_COMPLETED_BATCHES_PAGE_SIZE,
+    };
+  });
+
+  return cleanupPage();
+}
+
+/**
+ * Delete one bounded page of terminal batches older than the retention window.
+ * This reuses the same one-page safety model as deleteCompletedBatches so the
+ * automatic cleanup never monopolizes the synchronous SQLite writer.
+ */
+export function deleteTerminalBatchesOlderThan(days: number): {
+  deletedBatches: number;
+  deletedFiles: number;
+  hasMore: boolean;
+  pageSize: number;
+} {
+  const db = getDbInstance();
+  const retentionDays = Number.isFinite(days) && days >= 0 ? Math.floor(days) : 30;
+  const cutoff = Math.floor(Date.now() / 1000) - retentionDays * 24 * 60 * 60;
+  const terminalWhere =
+    "status IN ('completed', 'failed', 'cancelled', 'expired') AND " +
+    "COALESCE(completed_at, failed_at, cancelled_at, expired_at, created_at) < ?";
+
+  const cleanupPage = db.transaction(() => {
+    const rows = db
+      .prepare(
+        `SELECT id, input_file_id, output_file_id, error_file_id
+         FROM batches
+         WHERE ${terminalWhere}
+         ORDER BY COALESCE(completed_at, failed_at, cancelled_at, expired_at, created_at) ASC, id ASC
+         LIMIT ?`
+      )
+      .all(cutoff, DELETE_COMPLETED_BATCHES_PAGE_SIZE) as Array<{
+      id: string;
+      input_file_id: string | null;
+      output_file_id: string | null;
+      error_file_id: string | null;
+    }>;
+
+    if (rows.length === 0) {
+      return {
+        deletedBatches: 0,
+        deletedFiles: 0,
+        hasMore: false,
+        pageSize: DELETE_COMPLETED_BATCHES_PAGE_SIZE,
+      };
+    }
+
+    const batchIds = rows.map((row) => row.id);
+    const placeholders = batchIds.map(() => "?").join(", ");
+    const fileIds = new Set<string>();
+    for (const row of rows) {
+      if (row.input_file_id) fileIds.add(row.input_file_id);
+      if (row.output_file_id) fileIds.add(row.output_file_id);
+      if (row.error_file_id) fileIds.add(row.error_file_id);
+    }
+
+    db.prepare(`DELETE FROM batch_item_checkpoints WHERE batch_id IN (${placeholders})`).run(
+      ...batchIds
+    );
+    const batchResult = db
+      .prepare(`DELETE FROM batches WHERE id IN (${placeholders})`)
+      .run(...batchIds);
+
+    const stillReferenced = db.prepare(
+      `SELECT 1
+       FROM batches
+       WHERE input_file_id = ? OR output_file_id = ? OR error_file_id = ?
+       LIMIT 1`
+    );
+
+    let deletedFiles = 0;
+    for (const fileId of fileIds) {
+      if (stillReferenced.get(fileId, fileId, fileId)) continue;
+      try {
+        if (deleteFile(fileId)) deletedFiles++;
+      } catch {
+        // File cleanup is best-effort; leaving orphaned content is safer than
+        // risking a surviving batch reference to nulled content.
+      }
+    }
+
+    const hasMore = Boolean(db.prepare(`SELECT 1 FROM batches WHERE ${terminalWhere} LIMIT 1`).get(cutoff));
     return {
       deletedBatches: batchResult.changes,
       deletedFiles,

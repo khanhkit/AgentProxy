@@ -28,13 +28,15 @@ test("a periodic WAL truncate scheduler is started when the DB instance boots", 
   );
 });
 
-test("the WAL truncate scheduler runs wal_checkpoint(TRUNCATE), not a lighter mode", () => {
+test("live WAL maintenance uses PASSIVE with a RESTART size guard, never TRUNCATE", () => {
   const source = readSource(MAINTENANCE_PATH);
-  assert.match(
-    source,
-    /wal_checkpoint\(TRUNCATE\)/,
-    "the scheduled checkpoint must request TRUNCATE mode — a lighter mode would not shrink the WAL file"
+  const live = source.slice(
+    source.indexOf("function startWalPassiveScheduler"),
+    source.indexOf("export function startWalMaintenance")
   );
+  assert.match(live, /runCheckpointNow\(db, "PASSIVE"/);
+  assert.match(live, /runCheckpointNow\(db, "RESTART"/);
+  assert.doesNotMatch(live, /runCheckpointNow\(db, "TRUNCATE"/);
 });
 
 test("the WAL truncate scheduler is cleared on close, like the health-check scheduler", () => {
@@ -50,13 +52,9 @@ test("the WAL truncate scheduler is cleared on close, like the health-check sche
   );
 });
 
-test("the truncate interval is overridable via AGENTPROXY_WAL_TRUNCATE_INTERVAL_MS", () => {
+test("the passive interval is overridable via AGENTPROXY_WAL_PASSIVE_INTERVAL_MS", () => {
   const source = readSource(MAINTENANCE_PATH);
-  assert.match(
-    source,
-    /AGENTPROXY_WAL_TRUNCATE_INTERVAL_MS/,
-    "the interval must be operator-configurable, matching AGENTPROXY_DB_HEALTHCHECK_INTERVAL_MS"
-  );
+  assert.match(source, /AGENTPROXY_WAL_PASSIVE_INTERVAL_MS/);
 });
 
 test("the scheduler self-gates the same way the DB health-check scheduler does", () => {
@@ -88,20 +86,14 @@ test("close carries the busy streak into the checkpoint log", () => {
 test("periodic schedulers log the error path (ok:false, busy:false)", () => {
   const source = readSource(MAINTENANCE_PATH);
   const periodic = source.slice(source.indexOf("function schedulePassiveRetry"));
-  const truncateLogs = (
-    periodic.match(/logCheckpointOutcome\(outcome, "TRUNCATE", busyStreak\)/g) ?? []
-  ).length;
   const passiveLogs = (
     periodic.match(/logCheckpointOutcome\(outcome, "PASSIVE", busyStreak\)/g) ?? []
   ).length;
   assert.ok(
-    truncateLogs >= 2,
-    `periodic TRUNCATE scheduler must log busy AND error outcomes (found ${truncateLogs} log calls)`
-  );
-  assert.ok(
     passiveLogs >= 2,
     `PASSIVE retry scheduler must log busy AND error outcomes (found ${passiveLogs} log calls)`
   );
+  assert.doesNotMatch(periodic, /logCheckpointOutcome\(outcome, "TRUNCATE", busyStreak\)/);
 });
 
 test("close reads the busy streak BEFORE stopping maintenance (streak otherwise always 0)", () => {

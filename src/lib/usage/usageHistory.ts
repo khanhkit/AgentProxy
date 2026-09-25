@@ -8,6 +8,7 @@
  */
 
 import { getDbInstance } from "../db/core";
+import { resolveProviderId } from "@/shared/constants/providers";
 import { protectPayloadForLog } from "../logPayloads";
 import { sanitizeErrorMessage } from "@agentproxy/open-sse/utils/errorSanitization.ts";
 import {
@@ -630,6 +631,7 @@ export async function getUsageDb(sinceIso?: string | null, limit?: number, curso
       latencyMs: toNumber(r.latency_ms),
       timeToFirstTokenMs: toNumber(r.ttft_ms),
       errorCode: toStringOrNull(r.error_code),
+      cpaAuthIndex: toStringOrNull(r.cpa_auth_index),
       timestamp: toStringOrNull(r.timestamp),
     };
   });
@@ -681,6 +683,8 @@ export interface UsageEntry {
   /** @deprecated legacy snake_case fallback, read only if `comboStrategy` is unset. */
   combo_strategy?: string | null;
   endpoint?: string | null;
+  /** Opaque CLIProxyAPI auth index; never a label, path, token, or email. */
+  cpaAuthIndex?: string | null;
 }
 
 /**
@@ -716,7 +720,7 @@ export async function saveRequestUsage(entry: UsageEntry) {
     db.transaction(() => {
       const existing = db
         .prepare(
-          `SELECT id, endpoint FROM usage_history
+          `SELECT id, endpoint, cpa_auth_index FROM usage_history
            WHERE timestamp = ?
              AND COALESCE(provider, '')     = COALESCE(?, '')
              AND COALESCE(model, '')        = COALESCE(?, '')
@@ -728,19 +732,25 @@ export async function saveRequestUsage(entry: UsageEntry) {
         )
         .get(
           timestamp,
-          entry.provider || null,
+          entry.provider ? resolveProviderId(entry.provider) : null,
           entry.model || null,
           entry.connectionId || null,
           entry.apiKeyId || null,
           tokensInput,
           tokensOutput
-        ) as { id: number; endpoint: string | null } | undefined;
+        ) as { id: number; endpoint: string | null; cpa_auth_index: string | null } | undefined;
 
       if (existing) {
         // Back-fill endpoint if the original row missed it.
         if (!existing.endpoint && entry.endpoint) {
           db.prepare(`UPDATE usage_history SET endpoint = ? WHERE id = ?`).run(
             entry.endpoint,
+            existing.id
+          );
+        }
+        if (!existing.cpa_auth_index && entry.cpaAuthIndex) {
+          db.prepare(`UPDATE usage_history SET cpa_auth_index = ? WHERE id = ?`).run(
+            entry.cpaAuthIndex,
             existing.id
           );
         }
@@ -752,11 +762,11 @@ export async function saveRequestUsage(entry: UsageEntry) {
         INSERT INTO usage_history (provider, model, connection_id, account_key, account_label,
           account_label_priority, api_key_id, api_key_name, tokens_input, tokens_output,
           tokens_cache_read, tokens_cache_creation, tokens_reasoning, service_tier, status, success,
-          latency_ms, ttft_ms, error_code, combo_strategy, endpoint, timestamp)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          latency_ms, ttft_ms, error_code, combo_strategy, endpoint, cpa_auth_index, timestamp)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `
       ).run(
-        entry.provider || null,
+        entry.provider ? resolveProviderId(entry.provider) : null,
         entry.model || null,
         entry.connectionId || null,
         accountIdentity.accountKey,
@@ -781,6 +791,7 @@ export async function saveRequestUsage(entry: UsageEntry) {
         entry.errorCode || null,
         entry.comboStrategy || entry.combo_strategy || null,
         entry.endpoint || null,
+        entry.cpaAuthIndex || null,
         timestamp
       );
 
@@ -860,6 +871,7 @@ export async function getUsageHistory(filter: UsageHistoryFilter = {}) {
       latencyMs: toNumber(r.latency_ms),
       timeToFirstTokenMs: toNumber(r.ttft_ms),
       errorCode: toStringOrNull(r.error_code),
+      cpaAuthIndex: toStringOrNull(r.cpa_auth_index),
       timestamp: toStringOrNull(r.timestamp),
     };
   });

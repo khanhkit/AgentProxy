@@ -2,15 +2,15 @@
 
 **Purpose**: Domain-driven SQLite persistence. Each module owns a specific table set. Schema migrations are versioned and idempotent. No raw SQL in routes — all ops go through `src/lib/db/` modules.
 
-Live count: `ls src/lib/db/*.ts | wc -l` (currently 117). Migrations: `ls src/lib/db/migrations/*.sql | wc -l` (currently 148).
+Live count: `ls src/lib/db/*.ts | wc -l` (currently 134). Migrations: `ls src/lib/db/migrations/*.sql | wc -l` (currently 182).
 
 ---
 
 ## Core Infrastructure
 
-- **`core.ts`** — `getDbInstance()` returns singleton `better-sqlite3` with WAL journaling. Exports `rowToCamel()` (snake_case → camelCase), `encryptConnectionFields()` for provider credentials at rest. `SCHEMA_SQL` defines **17 base tables** (verify: `grep -c "CREATE TABLE" src/lib/db/core.ts` minus 1 for `_agentproxy_migrations`).
+- **`core.ts`** — `getDbInstance()` returns the SQLite singleton with WAL journaling. Exports `rowToCamel()` (snake_case → camelCase); native-load / missing-driver classification remains inline here and is re-exported for existing callers. `SCHEMA_SQL` defines the base tables; verify the live schema instead of relying on a frozen count.
 - **`migrationRunner.ts`** — Applies versioned SQL files from `db/migrations/` inside transactions. Tracks applied migrations in `_agentproxy_migrations`. Each migration is idempotent.
-- **`db/migrations/`** — 148 SQL files (`001_initial_schema.sql` → `153_radar_local_model_state.sql`; numbering has intentional gaps). Each runs in a transaction, never fails partially.
+- **`db/migrations/`** — 182 SQL files through migration 186 (numbering has intentional gaps). Each runs through the migration runner's guarded/idempotent path.
 - The old `localDb.ts` barrel has been removed — consumers must import from the owning named module below.
 
 ## Key Domain Modules
@@ -44,7 +44,7 @@ Live count: `ls src/lib/db/*.ts | wc -l` (currently 117). Migrations: `ls src/li
 | `healthCheck.ts`       | health ops                | DB health monitoring                                |
 | `databaseSettings.ts`  | database settings         | DB-level configuration                              |
 
-Full list: `ls src/lib/db/*.ts | wc -l` (115 files). Drift detection: `npm run check:docs-counts`.
+Full list: `ls src/lib/db/*.ts | wc -l` (134 files). Drift detection: `npm run check:docs-counts`.
 
 ## Encryption & Security
 

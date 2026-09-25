@@ -1,3 +1,4 @@
+import { syncCodexQuotaObservation } from "@/lib/db/providers/codexAccountRecovery";
 import {
   getProviderConnectionById,
   getProviderConnections,
@@ -864,6 +865,15 @@ async function fetchLiveProviderLimitsWithOptions(
     result = await fetchUsageWithContext(null);
   }
 
+  if (connection.provider === "codex") {
+    const data = await syncCodexQuotaObservation(
+      connection.id,
+      result.usage,
+      connection.providerSpecificData
+    );
+    if (data) connection = { ...connection, providerSpecificData: data };
+  }
+
   if (isRecord(result.usage.quotas)) {
     setQuotaCache(connectionId, connection.provider, result.usage.quotas);
   }
@@ -902,6 +912,7 @@ export async function fetchAndPersistProviderLimits(
     const staleUsage: JsonRecord = {
       ...usage,
       quotas: previous.quotas,
+      modelQuotas: previous.modelQuotas,
       plan: previous.plan ?? usage.plan ?? null,
       bankedResetCredits: previous.bankedResetCredits,
       billing: previous.billing,
