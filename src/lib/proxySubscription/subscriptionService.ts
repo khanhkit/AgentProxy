@@ -27,6 +27,7 @@ import {
   addProxiesToScopePool,
   bumpProxyRegistryGeneration,
   deleteProxyById,
+  updateProxy,
   upsertProxy,
 } from "../db/proxies";
 import { bumpProxyConfigGeneration } from "../db/settings";
@@ -454,6 +455,23 @@ async function fetchSubscriptionContent(url: string): Promise<string> {
   });
 }
 
+/**
+ * Keep a synced node only when this subscription owns its registry row. A row created
+ * by hand, or owned by another subscription, comes back as "skipped" and stays out of
+ * this pool. An owned row that pool validation flagged `error` is healed, since the feed
+ * just listed it again; `inactive` and `dead` are operator or health decisions and stay.
+ */
+async function keepOwnedSyncedRow(
+  upserted: Awaited<ReturnType<typeof upsertProxy>>,
+  keptIds: string[]
+): Promise<void> {
+  if (upserted.action === "skipped" || !upserted.proxy?.id) return;
+  keptIds.push(upserted.proxy.id);
+  if (upserted.proxy.status === "error") {
+    await updateProxy(upserted.proxy.id, { status: "active" });
+  }
+}
+
 /** Fetch + parse + sync nodes into proxy_registry, then (if enabled) (re)bind. */
 async function syncSubscriptionUnsafe(id: string): Promise<SyncResult> {
   const sub = await getSubscriptionById(id);
@@ -532,18 +550,21 @@ async function syncSubscriptionUnsafe(id: string): Promise<SyncResult> {
   try {
     // Directly-usable nodes → upsert into the registry as a pool.
     for (const node of parsed.nodes) {
-      const upserted = await upsertProxy({
-        name: node.name || `${sub.name} (${node.host}:${node.port})`,
-        type: node.type,
-        host: node.host,
-        port: node.port,
-        username: node.username,
-        password: node.password,
-        source: "subscription",
-        subscriptionId: id,
-        status: "active",
-      });
-      if (upserted.proxy?.id) keptIds.push(upserted.proxy.id);
+      // No status: refresh must not revive a node disabled by the operator or health logic.
+      const upserted = await upsertProxy(
+        {
+          name: node.name || sub.name + " (" + node.host + ":" + node.port + ")",
+          type: node.type,
+          host: node.host,
+          port: node.port,
+          username: node.username,
+          password: node.password,
+          source: "subscription",
+          subscriptionId: id,
+        },
+        { claimOwnership: false }
+      );
+      await keepOwnedSyncedRow(upserted, keptIds);
     }
 
     // needsCore nodes → bind the operator-supplied local core endpoint (single).
@@ -557,24 +578,26 @@ async function syncSubscriptionUnsafe(id: string): Promise<SyncResult> {
               : coreUrl.protocol === "socks5:"
                 ? "socks5"
                 : "http";
-          const upserted = await upsertProxy({
-            name: `${sub.name} (local core)`,
-            type: coreType,
-            host: coreUrl.hostname,
-            port: Number(coreUrl.port) || (coreType === "https" ? 443 : 8080),
-            username: coreUrl.username ? decodeUserinfo(coreUrl.username) : undefined,
-            password: coreUrl.password ? decodeUserinfo(coreUrl.password) : undefined,
-            source: "subscription",
-            subscriptionId: id,
-            status: "active",
-          });
-          if (upserted.proxy?.id) keptIds.push(upserted.proxy.id);
+          const upserted = await upsertProxy(
+            {
+              name: sub.name + " (local core)",
+              type: coreType,
+              host: coreUrl.hostname,
+              port: Number(coreUrl.port) || (coreType === "https" ? 443 : 8080),
+              username: coreUrl.username ? decodeUserinfo(coreUrl.username) : undefined,
+              password: coreUrl.password ? decodeUserinfo(coreUrl.password) : undefined,
+              source: "subscription",
+              subscriptionId: id,
+            },
+            { claimOwnership: false }
+          );
+          await keepOwnedSyncedRow(upserted, keptIds);
         } catch {
           warning = subscriptionErrorCode("LOCAL_CORE_ENDPOINT_INVALID");
         }
       } else {
         const nodes = parsed.needsCore
-          .map((n) => `${n.rawProtocol}://${n.host ?? ""}${n.port ? ":" + n.port : ""}`)
+          .map((n) => n.rawProtocol + "://" + (n.host ?? "") + (n.port ? ":" + n.port : ""))
           .join(", ");
         warning = subscriptionErrorCode("NEEDS_CORE_NOT_CONFIGURED", nodes);
       }
