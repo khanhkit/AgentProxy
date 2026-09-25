@@ -32,6 +32,19 @@ jobs:
       publish_assets: ${{ steps.meta.outputs.publish_assets }}
       source_ref: ${{ steps.meta.outputs.source_ref }}
     steps:
+      - name: Checkout release policy
+        if: ${{ github.event_name == 'release' || inputs.publish_assets == true }}
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: main
+          persist-credentials: false
+
+      - name: Enforce main-only release branch invariant
+        if: ${{ github.event_name == 'release' || inputs.publish_assets == true }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/check/check-release-branch-hygiene.mjs
+
       - id: meta
         name: Validate release tag
         shell: bash

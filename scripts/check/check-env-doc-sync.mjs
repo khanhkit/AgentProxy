@@ -50,6 +50,10 @@ const IGNORE_FROM_CODE = new Set([
   "LC_MESSAGES",
   "CI",
   "GITHUB_ACTIONS",
+  // GitHub Actions repository identity + gh CLI auth, injected by the runner for
+  // release branch-hygiene checks; CI control-plane context, not product config.
+  "GITHUB_REPOSITORY",
+  "GH_TOKEN",
   "RUNNER_OS",
   // Quality-gate harness knobs (optional cache/report paths for CI scripts — not product config).
   "ESLINT_RESULTS_JSON",
