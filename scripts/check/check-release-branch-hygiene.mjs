@@ -71,7 +71,7 @@ function listBranchesWithGitHubApi(repository, token) {
 }
 
 export function listReleaseBranches({
-  remote = process.env.AGENTPROXY_RELEASE_REMOTE || DEFAULT_REMOTE,
+  remote = DEFAULT_REMOTE,
   repository = process.env.GITHUB_REPOSITORY,
   token = process.env.GH_TOKEN || process.env.GITHUB_TOKEN,
 } = {}) {
