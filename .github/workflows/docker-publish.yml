@@ -31,6 +31,17 @@ jobs:
       version: ${{ steps.meta.outputs.version }}
       promote_latest: ${{ steps.meta.outputs.promote_latest }}
     steps:
+      - name: Checkout release policy
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: main
+          persist-credentials: false
+
+      - name: Enforce main-only release branch invariant
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/check/check-release-branch-hygiene.mjs
+
       - id: meta
         name: Resolve version
         shell: bash

@@ -69,6 +69,14 @@ The permitted exception is intentionally narrow:
 
 This procedure is a documented owner-authorized exception for an otherwise-unsatisfiable sole-maintainer review topology. It is not a routine merge path and must not be used to hide an issue-local failing check. The default branch-protection policy remains fail-closed outside the bounded break-glass window.
 
+## Release Branch Hygiene
+
+A release has one additional hard repository invariant: **the remote branch set must be exactly `{main}` before any release artifact is published**. Development branches may exist while work is active, but every merged, closed, superseded, or abandoned branch must be deleted before release.
+
+Enforcement is fail-closed through `scripts/check/check-release-branch-hygiene.mjs`. The same checker is wired into release-green validation, npm `prepublishOnly`, container publication, and native release-asset publication. GitHub `delete_branch_on_merge` is enabled to remove merged head branches automatically; the release gate still catches closed-unmerged or otherwise stale branches.
+
+If the checker cannot enumerate GitHub branches, release is blocked. There is no allowlist beyond `main` and no release-time bypass for worker, Dependabot, maintenance, or archived feature branches.
+
 ## Verification
 
 The committed contract is:

@@ -681,6 +681,13 @@ async function main() {
 
   process.stderr.write("🔎 Release-green validation (current working tree)\n\n");
 
+  hardCmd(
+    "release-branch-hygiene",
+    "Release branch hygiene (remote must contain only main)",
+    npmCmd,
+    ["run", "check:release-branch-hygiene"]
+  );
+
   hardCmd("typecheck", "Typecheck (core)", npmCmd, ["run", "typecheck:core"]);
 
   // ESLint: ONE pass → errors (hard) + warnings (drift)
