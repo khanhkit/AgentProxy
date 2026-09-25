@@ -3,16 +3,22 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { applyArenaEloRefresh, getLatestSyncedAt } from "../../src/lib/db/modelIntelligence.ts";
 
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const source = fs.readFileSync(path.join(root, "src/lib/db/modelIntelligence.ts"), "utf8");
 
 test("TC-OMNIDB-ELO-041A: repository exposes source freshness lookup", () => {
+  assert.equal(typeof getLatestSyncedAt, "function");
   assert.match(source, /export function getLatestSyncedAt\(source: string\): string \| null/);
-  assert.match(source, /SELECT MAX\(synced_at\) as latest FROM model_intelligence WHERE source = \?/);
+  assert.match(
+    source,
+    /SELECT MAX\(synced_at\) as latest FROM model_intelligence WHERE source = \?/
+  );
 });
 
 test("TC-OMNIDB-ELO-041B: Arena refresh upsert and membership prune share one transaction", () => {
+  assert.equal(typeof applyArenaEloRefresh, "function");
   assert.match(source, /export function applyArenaEloRefresh/);
   assert.match(source, /const refresh = db\.transaction\(\(\) => \{/);
   assert.match(source, /INSERT OR REPLACE INTO model_intelligence/);

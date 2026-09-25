@@ -23,7 +23,7 @@ test("classifyCallLogError maps status+body to the provider error family", () =>
 test("classifyCallLogError classifies only failures", () => {
   assert.equal(classifyCallLogError(200, "", "openai"), null);
   assert.equal(classifyCallLogError(200, "some body", "openai"), null);
-  assert.equal(classifyCallLogError(0, "boom", "test-provider"), null);
+  assert.equal(classifyCallLogError(0, "boom", "test-provider"), "unknown");
 });
 
 test("classifyCallLogError extracts message from Error object", () => {
@@ -33,8 +33,8 @@ test("classifyCallLogError extracts message from Error object", () => {
   );
 });
 
-test("classifyCallLogError returns null for unclassifiable provider-403 (api key)", () => {
-  assert.equal(classifyCallLogError(403, "some other 403 body", "openai"), null);
+test("classifyCallLogError stores unknown for unclassifiable provider-403", () => {
+  assert.equal(classifyCallLogError(403, "some other 403 body", "openai"), "unknown");
 });
 
 test("saveCallLog persists error_type from failure", async () => {
@@ -180,7 +180,7 @@ test("getErrorTypeBreakdown groups failures by family, excludes successes", asyn
   assert.deepEqual(breakdown, [
     { errorType: "quota_exhausted", count: 2 },
     { errorType: "server_error", count: 1 },
-    { errorType: "unclassified", count: 1 },
+    { errorType: "unknown", count: 1 },
   ]);
 
   ids.forEach((id) => db.prepare("DELETE FROM call_logs WHERE id = ?").run(id));

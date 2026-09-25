@@ -848,7 +848,9 @@ function shouldRunStartupDbHealthCheck(): boolean {
 }
 
 function createManagedDbBackup(db: SqliteDatabase, reason: string): boolean {
-  if (isAutomatedTestProcess()) return false;
+  // File-backed test databases should exercise the same fail-closed backup path as
+  // production. Only unnamed/in-memory test adapters skip durable backups.
+  if (isAutomatedTestProcess() && (!db.name || db.name === ":memory:")) return false;
   const backupDir = DB_BACKUPS_DIR || path.join(DATA_DIR, "db_backups");
   return writeManagedDbBackup(db, reason, backupDir);
 }

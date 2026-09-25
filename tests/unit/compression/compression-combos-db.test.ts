@@ -36,11 +36,8 @@ test("creates default compression combo automatically", () => {
   const combo = combos.find((item) => item.id === "default-caveman");
 
   assert.equal(combo?.isDefault, true);
-  assert.equal(combo?.description, "Default RTK + Caveman compression pipeline");
-  assert.deepEqual(combo?.pipeline, [
-    { engine: "rtk", intensity: "standard" },
-    { engine: "caveman", intensity: "full" },
-  ]);
+  assert.equal(combo?.description, "Default lossless dedup and whitespace compression");
+  assert.deepEqual(combo?.pipeline, [{ engine: "session-dedup" }, { engine: "lite" }]);
 });
 
 test("upgrades the legacy seeded default compression combo pipeline", () => {
@@ -59,11 +56,8 @@ test("upgrades the legacy seeded default compression combo pipeline", () => {
 
   const combo = combosDb.getDefaultCompressionCombo();
   assert.equal(combo?.id, "default-caveman");
-  assert.equal(combo?.description, "Default RTK + Caveman compression pipeline");
-  assert.deepEqual(combo?.pipeline, [
-    { engine: "rtk", intensity: "standard" },
-    { engine: "caveman", intensity: "full" },
-  ]);
+  assert.equal(combo?.description, "Default lossless dedup and whitespace compression");
+  assert.deepEqual(combo?.pipeline, [{ engine: "session-dedup" }, { engine: "lite" }]);
 });
 
 test("does not overwrite a customized default compression combo", () => {

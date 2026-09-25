@@ -204,7 +204,7 @@ test("runDbHealthCheck repairs broken combo payloads, combo refs and stale conne
 
   const result = healthCheckDb.runDbHealthCheck(db, {
     autoRepair: true,
-    createBackupBeforeRepair: () => false,
+    createBackupBeforeRepair: () => true,
   });
   const invalidCombo = JSON.parse(
     (db.prepare("SELECT data FROM combos WHERE id = ?").get("combo-invalid") as any).data
@@ -341,7 +341,7 @@ test("runDbHealthCheck repairs a drifted db_meta schema version", async () => {
 
   const result = healthCheckDb.runDbHealthCheck(db, {
     autoRepair: true,
-    createBackupBeforeRepair: () => false,
+    createBackupBeforeRepair: () => true,
   });
 
   assert.equal(

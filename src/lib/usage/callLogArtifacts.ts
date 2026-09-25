@@ -54,7 +54,7 @@ function preserveErrorForSizeLimit(error: unknown): unknown {
   if (error === null || error === undefined) return null;
   let serialized: string;
   try {
-    serialized = typeof error === "string" ? error : JSON.stringify(error) ?? String(error);
+    serialized = typeof error === "string" ? error : (JSON.stringify(error) ?? String(error));
   } catch {
     // A circular or unserializable error must not take the whole artifact down.
     serialized = String(error);
@@ -167,10 +167,6 @@ function omitOversizedPipeline(artifact: CallLogArtifact): CallLogArtifact {
       },
     },
   };
-}
-
-export function getArtifactMaxBytesForTest(artifact: CallLogArtifact): number {
-  return getArtifactMaxBytes(artifact);
 }
 
 function getArtifactMaxBytes(artifact: CallLogArtifact): number {
@@ -339,9 +335,7 @@ export function readCallArtifact(relativePath: string | null): {
 }
 
 export type DeleteCallArtifactOutcome =
-  | { state: "deleted" }
-  | { state: "missing" }
-  | { state: "error"; error: string };
+  { state: "deleted" } | { state: "missing" } | { state: "error"; error: string };
 
 export function deleteCallArtifact(
   relativePath: string | null,

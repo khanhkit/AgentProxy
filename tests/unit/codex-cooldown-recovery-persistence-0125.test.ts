@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { clearCodexAccountCooldown } from "../../src/lib/db/providers/codexAccountRecovery.ts";
 
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const recoveryPath = path.join(root, "src/lib/db/providers/codexAccountRecovery.ts");
@@ -14,14 +15,21 @@ test("TC-OMNIDB-CODEX-055A: recovery mutation is account-scoped atomic and backu
   assert.match(src, /db\.transaction\(\(\) => \{/);
   assert.match(src, /if \(connection\.provider !== "codex"\) return null/);
   assert.match(src, /backupDbFile\("pre-write"\)/);
-  assert.match(src, /UPDATE provider_connections SET provider_specific_data = \?, updated_at = \? WHERE id = \?/);
+  assert.match(
+    src,
+    /UPDATE provider_connections SET provider_specific_data = \?, updated_at = \? WHERE id = \?/
+  );
   assert.match(src, /invalidateDbCache\("connections"\)/);
 });
 
 test("TC-OMNIDB-CODEX-055B: manual release clears only one Codex child scope", () => {
+  assert.equal(typeof clearCodexAccountCooldown, "function");
   assert.ok(fs.existsSync(recoveryPath));
   const src = fs.readFileSync(recoveryPath, "utf8");
-  assert.match(src, /export async function clearCodexAccountCooldown\(id: string, scope: Scope = "codex"\)/);
+  assert.match(
+    src,
+    /export async function clearCodexAccountCooldown\(id: string, scope: Scope = "codex"\)/
+  );
   assert.match(src, /delete values\[scope\]/);
   assert.match(src, /"codexScopeRateLimitedUntil"/);
   assert.match(src, /"codexScopeRateLimitSource"/);
@@ -51,9 +59,15 @@ test("TC-OMNIDB-CODEX-055D: quota snapshots hydrate both Codex and Spark project
 });
 
 test("TC-OMNIDB-CODEX-055E: provider-limits live fetch persists observation before downstream recovery", () => {
-  assert.match(limits, /import \{ syncCodexQuotaObservation \} from "@\/lib\/db\/providers\/codexAccountRecovery"/);
+  assert.match(
+    limits,
+    /import \{ syncCodexQuotaObservation \} from "@\/lib\/db\/providers\/codexAccountRecovery"/
+  );
   assert.match(limits, /if \(connection\.provider === "codex"\) \{/);
-  assert.match(limits, /syncCodexQuotaObservation\(\s*connection\.id,\s*result\.usage,\s*connection\.providerSpecificData/s);
+  assert.match(
+    limits,
+    /syncCodexQuotaObservation\(\s*connection\.id,\s*result\.usage,\s*connection\.providerSpecificData/s
+  );
   const syncPos = limits.indexOf("syncCodexQuotaObservation(");
   const clearPos = limits.indexOf("maybeClearRecoveredQuotaState(connection, result.usage)");
   assert.ok(syncPos >= 0 && clearPos > syncPos);

@@ -13,7 +13,10 @@ test("TC-OMNIDB-LOG-036A: size fallback has request-only omission stage before b
     source,
     /responseBody:\s*keepResponse\s*\?\s*\(value as \{ responseBody: unknown \}\)\.responseBody\s*:\s*OMITTED_FOR_SIZE_LIMIT/
   );
-  assert.match(source, /\.\.\.\(artifact\.pipeline \? \[\(\) => omitBodies\(artifact, true\)\] : \[\]\)/);
+  assert.match(
+    source,
+    /\.\.\.\(artifact\.pipeline \? \[\(\) => omitBodies\(artifact, true\)\] : \[\]\)/
+  );
   assert.match(source, /\.\.\.\(artifact\.pipeline \? \[\(\) => omitBodies\(artifact\)\] : \[\]\)/);
 });
 
@@ -22,8 +25,4 @@ test("TC-OMNIDB-LOG-036B: pipeline is omitted only after body-preserving stages"
   const bothBodies = source.indexOf("omitBodies(artifact)]");
   const dropPipeline = source.indexOf("() => omitOversizedPipeline(artifact)");
   assert.ok(requestOnly >= 0 && bothBodies > requestOnly && dropPipeline > bothBodies);
-});
-
-test("TC-OMNIDB-LOG-036C: artifact byte-budget helper is exported for contract tests", () => {
-  assert.match(source, /export function getArtifactMaxBytesForTest\(artifact: CallLogArtifact\): number/);
 });
