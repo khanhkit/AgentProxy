@@ -91,6 +91,10 @@ test("enabling headroom adds it to the pipeline sorted by stackPriority", () => 
   const engineIds = result.pipeline.map((s) => s.engine);
   assert.ok(engineIds.includes("headroom"), "headroom should be in the pipeline");
 
+  assert.equal(engineIds.length, 3, "lossless default plus headroom should have exactly 3 steps");
+  assert.equal(engineIds[0], "session-dedup", "session-dedup should retain highest priority");
+  assert.equal(engineIds[1], "lite", "lite should remain between dedup and headroom");
+  assert.equal(engineIds[2], "headroom", "headroom should sort after the lossless defaults");
   assert.deepEqual(engineIds, ["session-dedup", "lite", "headroom"]);
 });
 
