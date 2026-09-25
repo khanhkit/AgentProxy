@@ -25,6 +25,7 @@ import { logger } from "@agentproxy/open-sse/utils/logger.ts";
 import { resolveProxy } from "@agentproxy/open-sse/utils/networkProxy.ts";
 import { withCodexFingerprintCredentials } from "@agentproxy/open-sse/config/codexIdentity.ts";
 import { proxyConfigToUrl } from "@agentproxy/open-sse/utils/proxyDispatcher.ts";
+import { withReasoningRuleContext } from "@agentproxy/open-sse/utils/reasoningRuleContext.ts";
 import {
   attachReasoningRuleDirective,
   applyReasoningRuleDirective,
@@ -658,16 +659,21 @@ async function prepare(body: JsonRecord) {
 
   let responseBodyWithMemory: JsonRecord;
   let reasoningRouting: JsonRecord | null = null;
+  let reasoningRuleDirective: unknown;
   let transformed: JsonRecord;
   let credentialsWithFingerprint: typeof refreshedCredentials;
   try {
     responseBodyWithMemory = await maybeInjectResponsesWsMemory(responseBody, metadata);
     if (reasoningDecision) {
       const withDirective = attachReasoningRuleDirective(responseBodyWithMemory, reasoningDecision);
+      reasoningRuleDirective = withDirective._agentproxyReasoningRule;
       reasoningRouting = isRecord(withDirective._agentproxyReasoningRouteTrace)
         ? withDirective._agentproxyReasoningRouteTrace
         : null;
-      responseBodyWithMemory = applyReasoningRuleDirective(withDirective) as JsonRecord;
+      responseBodyWithMemory = applyReasoningRuleDirective(
+        withDirective,
+        "openai-responses"
+      ) as JsonRecord;
       delete responseBodyWithMemory._agentproxyReasoningRouteTrace;
     }
     responseBodyWithMemory = await applyResponsesWsCompression(responseBodyWithMemory, {
@@ -676,7 +682,7 @@ async function prepare(body: JsonRecord) {
       requestId: randomUUID(),
     });
     credentialsWithFingerprint = withCodexFingerprintCredentials(
-      refreshedCredentials,
+      withReasoningRuleContext(refreshedCredentials, reasoningRuleDirective),
       context.clientHeaders,
       responseBodyWithMemory
     );
