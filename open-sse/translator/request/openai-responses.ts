@@ -712,7 +712,7 @@ export function openaiResponsesToOpenAIRequest(
   ) {
     const tc = toRecord(result.tool_choice);
     const tcType = toString(tc.type);
-    if (tcType === "function" && tc.name !== undefined && !tc.function) {
+    if ((tcType === "function" || tcType === "custom") && tc.name !== undefined && !tc.function) {
       result.tool_choice = { type: "function", function: { name: tc.name } };
     } else if (tcType === "local_shell") {
       result.tool_choice = { type: "function", function: { name: "shell" } };
