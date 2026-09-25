@@ -10,17 +10,16 @@ import {
   getSqlJsAdapter,
   preInitSqlJs,
   getSqlJsPreInitError,
-  openDatabaseAsync,
 } from "./adapters/driverFactory";
 import path from "path";
 import { retryProbeIfTransient } from "./probeUtils";
 import fs from "fs";
-import { resolveWritableDataDir, getLegacyDotDataDir } from "../dataPaths";
+import { resolveWritableDataDir } from "../dataPaths";
 import { isNextBuildPhase } from "../buildPhase";
 import { runMigrations } from "./migrationRunner";
-import { runDbHealthCheck, getPagerCorruption } from "./healthCheck";
+import { runDbHealthCheck } from "./healthCheck";
 import { createManagedDbBackup as writeManagedDbBackup } from "./managedBackup";
-import { createDbHealthCoordinator, runDbHealthInChild } from "./healthCheckRunner";
+import { createManagedHealthRuntime } from "./managedHealthRuntime";
 import { resetAllDbModuleState } from "./stateReset";
 import { parseStoredPayload } from "../logPayloads";
 import { DEFAULT_DATABASE_SETTINGS, type DatabaseSettings } from "@/types/databaseSettings";
@@ -112,7 +111,6 @@ export const isBuildPhase = isNextBuildPhase();
 // ──────────────── Paths ────────────────
 
 export const DATA_DIR = resolveWritableDataDir({ isCloud });
-const LEGACY_DATA_DIR = isCloud ? null : getLegacyDotDataDir();
 export const SQLITE_FILE = isCloud ? null : path.join(DATA_DIR, "storage.sqlite");
 const JSON_DB_FILE = isCloud ? null : path.join(DATA_DIR, "db.json");
 export const DB_BACKUPS_DIR = isCloud ? null : path.join(DATA_DIR, "db_backups");
@@ -957,85 +955,18 @@ function startDbHealthCheckScheduler(db: SqliteDatabase) {
   dbHealthCheckTimer.unref?.();
 }
 
-// Auto-checkpoint moves WAL pages back into the main DB file but never shrinks the WAL
-// file itself; only wal_checkpoint(TRUNCATE) does. TRUNCATE runs at shutdown
-// (closeDbInstance) and never on a live timer: truncating a live process's WAL rewrites
-// the shared wal-index under handles that hold it mapped and can SIGBUS the event loop.
-// Runtime maintenance lives in ./walMaintenance (PASSIVE + busy warn + RESTART size guard).
+// Live WAL maintenance is PASSIVE/RESTART only; TRUNCATE is reserved for shutdown
+// because rewriting a live wal-index can SIGBUS handles that still map it.
 
-type ManagedHealthCheckOptions = {
-  autoRepair?: boolean;
-  skipIntegrityCheck?: boolean;
-};
-
-const managedHealth = createDbHealthCoordinator(async (autoRepair, skipIntegrity) => {
-  const db = getDbInstance();
-  const skipIntegrityCheck =
-    skipIntegrity || process.env.AGENTPROXY_SKIP_DB_HEALTHCHECK === "1";
-  const backupDir = DB_BACKUPS_DIR || path.join(DATA_DIR, "db_backups");
-
-  const runDirect = () =>
-    runDbHealthCheck(db, {
-      autoRepair,
-      skipIntegrityCheck,
-      expectedSchemaVersion: "1",
-      createBackupBeforeRepair: () =>
-        writeManagedDbBackup(db, "health-check-repair", backupDir),
-    });
-
-  let result: ReturnType<typeof runDbHealthCheck>;
-  if (db.driver === "sql.js" || db.name === ":memory:" || !db.name) {
-    result = runDirect();
-  } else {
-    try {
-      result = await runDbHealthInChild(
-        {
-          filePath: db.name,
-          autoRepair,
-          skipIntegrityCheck,
-          backupDir,
-          pagerCorruption: getPagerCorruption(),
-        },
-        { signal: periodicHealthAbort?.signal }
-      );
-    } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : String(error);
-      const packagingUnavailable =
-        message === "Database health worker is missing" ||
-        message === "Database health worker failed to start";
-      if (!packagingUnavailable) throw error;
-      console.warn(
-        `[DB] Isolated health worker unavailable; using in-process compatibility path: ${message}`
-      );
-      result = runDirect();
-    }
-  }
-
-  if (result.repairedCount > 0) invalidateDbCache();
-  return result;
+const managedHealth = createManagedHealthRuntime({
+  getDb: getDbInstance,
+  getBackupDir: () => DB_BACKUPS_DIR || path.join(DATA_DIR, "db_backups"),
+  getSignal: () => periodicHealthAbort?.signal,
+  createDirectBackup: createHealthCheckBackup,
 });
 
-export function runIsolatedManagedDbHealthCheck(options?: ManagedHealthCheckOptions) {
-  if (getPagerCorruption()) managedHealth.invalidate();
-  return managedHealth.run(
-    options?.autoRepair === true,
-    options?.skipIntegrityCheck === true
-  );
-}
-
-/**
- * Synchronous compatibility wrapper retained until PHASE-20 rewires API/MCP
- * callers to the isolated async contract.
- */
-export function runManagedDbHealthCheck(options?: ManagedHealthCheckOptions) {
-  const db = getDbInstance();
-  return runDbHealthCheck(db, {
-    autoRepair: options?.autoRepair === true,
-    skipIntegrityCheck: options?.skipIntegrityCheck === true,
-    expectedSchemaVersion: "1",
-    createBackupBeforeRepair: () => createHealthCheckBackup(db),
-  });
-}
+export const runIsolatedManagedDbHealthCheck = managedHealth.runIsolated;
+export const runManagedDbHealthCheck = managedHealth.runDirect;
 
 export function getDbInstance(): SqliteDatabase {
   const existing = getDb();
@@ -1307,35 +1238,35 @@ export function getDbInstance(): SqliteDatabase {
 
   const db = openSqliteDatabase(sqliteFile);
   try {
-  // Emit the same "[DB] Driver: ..." line openDatabaseAsync() prints so the
-  // packaged-app smoke guard (#7592) can assert the native driver was
-  // selected on the server's primary DB path too, not only the backup-import
-  // route.
-  console.log(`[DB] Driver: ${db.driver} | file: ${sqliteFile}`);
-  // better-sqlite3 is synchronous, so a contended write parks the Node event loop for up to
-  // busy_timeout ms (a 0-CPU freeze that stacks under load → /health stops responding). The
-  // hot-path writers here (usage_history, call_logs) are best-effort and the WinUI host opens
-  // the same DB, so cap the block at 2s instead of 5s: normal writes complete in <1ms, and a
-  // contended op can no longer freeze the loop past the host watchdog's 6s liveness probe.
-  //
-  // Install the busy handler before the connection's first statement. `journal_mode = WAL`
-  // needs a SHARED lock, and another process closing its WAL connection briefly holds the
-  // file EXCLUSIVE (checkpoint + WAL delete); node:sqlite opens with busy timeout 0, so with
-  // the pragmas in the other order that window surfaced as `database is locked` at startup.
-  db.pragma("busy_timeout = 2000");
-  db.pragma("journal_mode = WAL");
-  db.pragma("synchronous = NORMAL");
-  db.pragma(`cache_size = -${DEFAULT_DATABASE_SETTINGS.optimization.cacheSize}`);
-  db.pragma("temp_store = MEMORY");
-  db.exec(SCHEMA_SQL);
-  ensureProviderConnectionsColumns(db);
-  ensureUsageHistoryColumns(db);
-  ensureCallLogsColumns(db);
+    // Emit the same "[DB] Driver: ..." line openDatabaseAsync() prints so the
+    // packaged-app smoke guard (#7592) can assert the native driver was
+    // selected on the server's primary DB path too, not only the backup-import
+    // route.
+    console.log(`[DB] Driver: ${db.driver} | file: ${sqliteFile}`);
+    // better-sqlite3 is synchronous, so a contended write parks the Node event loop for up to
+    // busy_timeout ms (a 0-CPU freeze that stacks under load → /health stops responding). The
+    // hot-path writers here (usage_history, call_logs) are best-effort and the WinUI host opens
+    // the same DB, so cap the block at 2s instead of 5s: normal writes complete in <1ms, and a
+    // contended op can no longer freeze the loop past the host watchdog's 6s liveness probe.
+    //
+    // Install the busy handler before the connection's first statement. `journal_mode = WAL`
+    // needs a SHARED lock, and another process closing its WAL connection briefly holds the
+    // file EXCLUSIVE (checkpoint + WAL delete); node:sqlite opens with busy timeout 0, so with
+    // the pragmas in the other order that window surfaced as `database is locked` at startup.
+    db.pragma("busy_timeout = 2000");
+    db.pragma("journal_mode = WAL");
+    db.pragma("synchronous = NORMAL");
+    db.pragma(`cache_size = -${DEFAULT_DATABASE_SETTINGS.optimization.cacheSize}`);
+    db.pragma("temp_store = MEMORY");
+    db.exec(SCHEMA_SQL);
+    ensureProviderConnectionsColumns(db);
+    ensureUsageHistoryColumns(db);
+    ensureCallLogsColumns(db);
 
-  // ── Versioned Migrations ──
-  // Auto-seed 001 as applied (the inline SCHEMA_SQL already created these tables)
-  // then run any new migrations (002+)
-  db.exec(`
+    // ── Versioned Migrations ──
+    // Auto-seed 001 as applied (the inline SCHEMA_SQL already created these tables)
+    // then run any new migrations (002+)
+    db.exec(`
     CREATE TABLE IF NOT EXISTS _agentproxy_migrations (
       version TEXT PRIMARY KEY,
       name TEXT NOT NULL,
@@ -1345,76 +1276,76 @@ export function getDbInstance(): SqliteDatabase {
     VALUES ('001', 'initial_schema');
   `);
 
-  runMigrations(db, { isNewDb, databaseExistedBeforeInitialization });
-  // Fresh installs need the same post-migration index guarantee as upgraded
-  // databases, including recovery from an interrupted migration 127 attempt.
-  ensureUsageHistoryAccountIndex(db);
+    runMigrations(db, { isNewDb, databaseExistedBeforeInitialization });
+    // Fresh installs need the same post-migration index guarantee as upgraded
+    // databases, including recovery from an interrupted migration 127 attempt.
+    ensureUsageHistoryAccountIndex(db);
 
-  applyStoredDatabaseOptimizationSettings(db);
+    applyStoredDatabaseOptimizationSettings(db);
 
-  // Apply mmap_size from stored settings (migration 046), fallback to 256MiB
-  try {
-    const mmapRow = db
-      .prepare("SELECT value FROM key_value WHERE namespace = ? AND key = ?")
-      .get("databaseSettings", "mmapSize") as { value: string } | undefined;
-    const mmapSize = mmapRow ? Math.max(0, parseInt(mmapRow.value, 10) || 0) : 268435456;
-    if (mmapSize > 0) {
-      db.pragma(`mmap_size = ${mmapSize}`);
-    }
-  } catch {
-    // mmap_size is best-effort; not available in all runtimes (e.g. web)
-  }
-
-  offloadLegacyCallLogDetails(db);
-
-  // Auto-migrate from db.json if exists
-  if (jsonDbFile && fs.existsSync(jsonDbFile)) {
-    migrateFromJson(db, jsonDbFile);
-  }
-
-  if (failedProbePath && preservedCriticalState.preservedTables.length > 0) {
+    // Apply mmap_size from stored settings (migration 046), fallback to 256MiB
     try {
-      const restoredTables = restoreCriticalDbState(db, preservedCriticalState);
-      console.log(
-        `[DB] Restored preserved critical DB state after probe failure: ${summarizePreservedTables(
-          restoredTables
-        )}`
-      );
-    } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : String(error);
-      try {
-        closeProbeIfSafe(db);
-      } catch {
-        /* ignore */
+      const mmapRow = db
+        .prepare("SELECT value FROM key_value WHERE namespace = ? AND key = ?")
+        .get("databaseSettings", "mmapSize") as { value: string } | undefined;
+      const mmapSize = mmapRow ? Math.max(0, parseInt(mmapRow.value, 10) || 0) : 268435456;
+      if (mmapSize > 0) {
+        db.pragma(`mmap_size = ${mmapSize}`);
       }
-      cleanupRecreatedSqliteFiles(sqliteFile);
-      throw new Error(
-        `[DB] Automatic recovery aborted after probe failure. ` +
-          `Preserved database: ${failedProbePath}. ` +
-          `Restore failure: ${message}.`
-      );
+    } catch {
+      // mmap_size is best-effort; not available in all runtimes (e.g. web)
     }
-  }
 
-  // Store schema version
-  const versionStmt = db.prepare(
-    "INSERT OR REPLACE INTO db_meta (key, value) VALUES ('schema_version', '1')"
-  );
-  versionStmt.run();
-  if (shouldRunStartupDbHealthCheck()) {
-    const skipIntegrityCheck = process.env.AGENTPROXY_SKIP_DB_HEALTHCHECK === "1";
-    if (skipIntegrityCheck) {
-      console.log("[DB] Health check skipped (AGENTPROXY_SKIP_DB_HEALTHCHECK=1)");
+    offloadLegacyCallLogDetails(db);
+
+    // Auto-migrate from db.json if exists
+    if (jsonDbFile && fs.existsSync(jsonDbFile)) {
+      migrateFromJson(db, jsonDbFile);
     }
-    runDbHealthCheck(db, {
-      autoRepair: true,
-      expectedSchemaVersion: "1",
-      skipIntegrityCheck,
-      createBackupBeforeRepair: () => createHealthCheckBackup(db),
-    });
-  }
 
-  setDb(db);
+    if (failedProbePath && preservedCriticalState.preservedTables.length > 0) {
+      try {
+        const restoredTables = restoreCriticalDbState(db, preservedCriticalState);
+        console.log(
+          `[DB] Restored preserved critical DB state after probe failure: ${summarizePreservedTables(
+            restoredTables
+          )}`
+        );
+      } catch (error: unknown) {
+        const message = error instanceof Error ? error.message : String(error);
+        try {
+          closeProbeIfSafe(db);
+        } catch {
+          /* ignore */
+        }
+        cleanupRecreatedSqliteFiles(sqliteFile);
+        throw new Error(
+          `[DB] Automatic recovery aborted after probe failure. ` +
+            `Preserved database: ${failedProbePath}. ` +
+            `Restore failure: ${message}.`
+        );
+      }
+    }
+
+    // Store schema version
+    const versionStmt = db.prepare(
+      "INSERT OR REPLACE INTO db_meta (key, value) VALUES ('schema_version', '1')"
+    );
+    versionStmt.run();
+    if (shouldRunStartupDbHealthCheck()) {
+      const skipIntegrityCheck = process.env.AGENTPROXY_SKIP_DB_HEALTHCHECK === "1";
+      if (skipIntegrityCheck) {
+        console.log("[DB] Health check skipped (AGENTPROXY_SKIP_DB_HEALTHCHECK=1)");
+      }
+      runDbHealthCheck(db, {
+        autoRepair: true,
+        expectedSchemaVersion: "1",
+        skipIntegrityCheck,
+        createBackupBeforeRepair: () => createHealthCheckBackup(db),
+      });
+    }
+
+    setDb(db);
   } catch (error) {
     // The primary adapter is not owned by the singleton until setDb(db) succeeds.
     // Close only per-open native adapters here: sql.js reuses one module-global
@@ -1520,10 +1451,6 @@ export function resetDbInstance() {
 type DbDriverInfo = { source: string; kind: string };
 let driverInfoCached: DbDriverInfo | null = null;
 
-function setDriverInfo(info: DbDriverInfo) {
-  driverInfoCached = info;
-}
-
 /** Returns how better-sqlite3 was resolved (bundled / runtime / etc.). Null if not yet init. */
 export function getDriverInfo(): DbDriverInfo | null {
   return driverInfoCached;
@@ -1618,8 +1545,7 @@ function migrateFromJson(db: SqliteDatabase, jsonPath: string) {
         let rateLimitOverridesJson = serializeJsonField(conn.rateLimitOverrides);
         if (!hasOverrides && typeof conn.id === "string") {
           const existing = selectExistingOverrides.get(conn.id) as
-            | { rate_limit_overrides_json: string | null }
-            | undefined;
+            { rate_limit_overrides_json: string | null } | undefined;
           if (existing) rateLimitOverridesJson = existing.rate_limit_overrides_json;
         }
         insertConn.run({
