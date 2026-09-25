@@ -185,22 +185,36 @@ export function clearStaleLKGP(
   executionKey?: string | null,
   comboId?: string | null,
   log?: { warn?: (tag: string, msg: string, data?: unknown) => void } | null,
-  tag: string = "COMBO"
-): void {
-  void (async () => {
-    try {
-      const { clearLKGP } = await import("@/lib/db/settings");
-      const promises: Promise<void>[] = [clearLKGP(comboName, comboId || comboName)];
-      if (executionKey) {
-        promises.push(clearLKGP(comboName, executionKey));
-      }
-      await Promise.all(promises);
-    } catch (err) {
-      log?.warn?.(tag, "Failed to clear Last Known Good Provider. This is non-fatal.", {
-        err,
-      });
+  tag: string = "COMBO",
+  clearLKGP?: (comboName: string, modelKey: string) => Promise<void>,
+  failed?: { provider?: string | null; connectionId?: string | null } | null
+): Promise<void> {
+  return (async () => {
+    const settings = clearLKGP ? null : await import("@/lib/db/settings");
+    const clear = clearLKGP ?? settings!.clearLKGP;
+    const comboKey = comboId || comboName;
+    const promises: Promise<void>[] = executionKey ? [clear(comboName, executionKey)] : [];
+
+    if (!failed?.provider) {
+      promises.push(clear(comboName, comboKey));
+    } else {
+      const getLKGP = settings?.getLKGP ?? (await import("@/lib/db/settings")).getLKGP;
+      const pin = await getLKGP(comboName, comboKey);
+      const namesFailedTarget =
+        pin?.provider === failed.provider &&
+        (!pin?.connectionId || !failed.connectionId || pin.connectionId === failed.connectionId);
+      if (namesFailedTarget) promises.push(clear(comboName, comboKey));
     }
-  })();
+
+    await Promise.all(promises);
+  })().catch((err) => {
+    log?.warn?.(tag, "Failed to clear Last Known Good Provider. This is non-fatal.", {
+      combo: comboName,
+      comboId: comboId ?? null,
+      executionKey: executionKey ?? null,
+      err,
+    });
+  });
 }
 
 const DEFAULT_MODEL_P95_MS: Record<string, number> = {
