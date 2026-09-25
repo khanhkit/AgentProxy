@@ -833,7 +833,9 @@ async function handleComboChatInner({
     });
   }
 
-  const maxRetries = activeNativeTurnPin ? 0 : (config.maxRetries ?? 1);
+  // A pinned native Codex turn must not rotate across targets, but a pre-content
+  // transient stream failure is safe to retry against the SAME pinned target.
+  const maxRetries = config.maxRetries ?? 1;
   const maxSetRetries = activeNativeTurnPin ? 0 : (config.maxSetRetries ?? 0);
   const setRetryDelayMs = resolveDelayMs(config.setRetryDelayMs, 2000);
 
@@ -994,6 +996,7 @@ async function handleComboChatInner({
     globalAttempts: 0,
     observedFailure: false,
     allObservedFailuresQuota: true,
+    requestScopedFailureSeen: false,
     observeFailure(quotaExhausted, targetExecutionKey) {
       this.observedFailure = true;
       this.allObservedFailuresQuota &&= quotaExhausted;

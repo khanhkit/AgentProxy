@@ -64,6 +64,8 @@ import {
   resolveDelayMs,
   resolvePersistedConnectionCooldownSkipReason,
   isModelScoped400,
+  classifyQualityFailure,
+  requestScopedReplayKey,
 } from "./comboPredicates.ts";
 import { applyComboTargetExhaustion } from "./targetExhaustion.ts";
 import { pinNativeCodexTurn } from "./nativeCodexTurnPin.ts";
@@ -84,6 +86,8 @@ import {
   remainderIsHomogeneous,
   shouldAbortOnInputBoundFailure,
   shouldSurfaceBodySpecific400,
+  handlePreContentStreamRetry,
+  qualityValidationFailure,
 } from "./executeTargetClassify.ts";
 import type { CompressionMode } from "../compression/types.ts";
 import type { AttemptLoopDeps, AttemptLoopState, ExecuteTargetResult } from "./attemptLoopTypes.ts";
@@ -402,29 +406,27 @@ export async function executeTargetAttempt(opts: {
           target: toRecordedTarget(target),
         });
         state.recordedAttempts++;
-        // Fix #1707: Set terminal state so the fallback doesn't emit
-        // misleading ALL_ACCOUNTS_INACTIVE when the real issue is quality.
+        const qualityFailure = classifyQualityFailure(quality);
         state.lastError = `Upstream response failed quality validation: ${quality.reason}`;
-        state.lastStatus = 502;
-        // #10314: record quality failures as a FIRST-CLASS per-target outcome
-        // so a quality reason is never silently dropped from the aggregated
-        // terminal message when a later sibling overwrites lastError.
+        state.lastStatus = qualityFailure.status;
         state.comboErrors.push({
           model: modelStr,
-          status: 502,
+          status: qualityFailure.status,
           error: quality.reason || "upstream response failed quality validation",
-          kind: "quality",
+          kind: qualityFailure.kind,
         });
         if (i > 0) state.fallbackCount++;
-        if (provider && rawModel) {
+        state.requestScopedFailureSeen ||= qualityFailure.requestScoped;
+        if (qualityFailure.requestScoped) state.requestScopedRejectedModelKeys?.add(requestScopedReplayKey(modelStr));
+        if (provider && rawModel && !qualityFailure.requestScoped) {
           const mlSettings = resolveModelLockoutSettings(deps.settings);
-          if (mlSettings.enabled && mlSettings.errorCodes.includes(502)) {
+          if (mlSettings.enabled && mlSettings.errorCodes.includes(qualityFailure.status)) {
             recordModelLockoutFailure(
               provider,
               target.connectionId || "",
               rawModel,
               "quality_failure",
-              502,
+              qualityFailure.status,
               mlSettings.baseCooldownMs,
               profile,
               {
@@ -443,14 +445,9 @@ export async function executeTargetAttempt(opts: {
           latencyMs: Date.now() - deps.startTime,
         });
         state.observeFailure(false, target.executionKey);
-        return protectedPriorityTarget
-          ? {
-              ok: false,
-              response: errorResponse(502, "Upstream response failed quality validation"),
-            }
-          : null;
+        if (handlePreContentStreamRetry(quality, retry, deps, modelStr)) continue;
+        return protectedPriorityTarget ? qualityValidationFailure(quality) : null;
       }
-
       if (Boolean(deps.clientManagedResponsesContext) && effectiveConnectionId) {
         pinNativeCodexTurn({
           body: deps.body,
