@@ -113,6 +113,37 @@ function escapeJsonStringValues(json: string, escapeState: JsonStringEscapeState
   return result;
 }
 
+function fixDoubleEscapedTabs(json: string): string {
+  let result = "";
+  let inString = false;
+
+  for (let i = 0; i < json.length; i++) {
+    const ch = json[i];
+
+    if (inString && ch === "\\" && json[i + 1] === "\\" && json[i + 2] === "t") {
+      result += "\\t";
+      i += 2;
+      continue;
+    }
+
+    if (inString && ch === "\\") {
+      result += ch + (json[i + 1] ?? "");
+      i++;
+      continue;
+    }
+
+    if (ch === '"') {
+      result += ch;
+      inString = !inString;
+      continue;
+    }
+
+    result += ch;
+  }
+
+  return result;
+}
+
 /**
  * Translate OpenAI chunk to Responses API events
  * @returns {Array} Array of events with { event, data } structure
@@ -589,7 +620,7 @@ function emitToolCall(state, emit, tc) {
       state.funcArgsEscapeState[tcIdx] = createJsonStringEscapeState();
     }
     const sanitized = escapeJsonStringValues(
-      tc.function.arguments,
+      fixDoubleEscapedTabs(tc.function.arguments),
       state.funcArgsEscapeState[tcIdx]
     );
     const nextArgs = appendToolCallArgumentDelta(existingArgs, sanitized);
