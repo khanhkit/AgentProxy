@@ -3,6 +3,12 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import {
+  toPlainHeaders,
+  type FetchCall,
+  type SeedApiKeyOptions,
+  type SeedConnectionOverrides,
+} from "./_chatPipelineTypes.ts";
 
 const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-chat-pipeline-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
@@ -33,46 +39,6 @@ const { clearProviderFailure } = await import("../../open-sse/services/accountFa
 
 const originalFetch = globalThis.fetch;
 const originalRetryDelayMs = BaseExecutor.RETRY_CONFIG.delayMs;
-
-type SeedConnectionOverrides = {
-  name?: string;
-  authType?: string;
-  apiKey?: string;
-  accessToken?: string;
-  refreshToken?: string;
-  tokenType?: string;
-  expiresAt?: string;
-  tokenExpiresAt?: string;
-  isActive?: boolean;
-  testStatus?: string;
-  priority?: number;
-  rateLimitedUntil?: string | number | null;
-  providerSpecificData?: Record<string, unknown>;
-};
-
-type FetchCall = {
-  url: string;
-  method?: string;
-  headers: Record<string, string>;
-  body: Record<string, any> | null;
-};
-
-type SeedApiKeyOptions = {
-  name?: string;
-  noLog?: boolean;
-  allowedConnections?: string[];
-  allowedCombos?: string[];
-  allowedModels?: string[];
-};
-
-function toPlainHeaders(headers: HeadersInit | undefined | null) {
-  if (!headers) return {};
-  if (headers instanceof Headers) return Object.fromEntries(headers.entries());
-  if (Array.isArray(headers)) return Object.fromEntries(headers);
-  return Object.fromEntries(
-    Object.entries(headers).map(([key, value]) => [key, value == null ? "" : String(value)])
-  );
-}
 
 function buildRequest({
   url = "http://localhost/v1/chat/completions",
