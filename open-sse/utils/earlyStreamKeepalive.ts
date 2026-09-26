@@ -93,6 +93,46 @@ export const OPENAI_RESPONSES_ERROR_FRAME = ENCODER.encode(
   })}\n\n`
 );
 
+function buildResponsesErrorDataLine(text: string): string {
+  const trimmed = text.trim();
+  let parsed: Record<string, unknown> | null = null;
+  if (trimmed) {
+    try {
+      const candidate = JSON.parse(trimmed);
+      if (candidate && typeof candidate === "object") {
+        parsed = candidate as Record<string, unknown>;
+      }
+    } catch {
+      parsed = null;
+    }
+  }
+
+  const errorObj =
+    parsed && typeof parsed.error === "object" && parsed.error !== null
+      ? (parsed.error as Record<string, unknown>)
+      : null;
+  const message =
+    (typeof errorObj?.message === "string" && errorObj.message) ||
+    (typeof parsed?.message === "string" && parsed.message) ||
+    trimmed ||
+    "Upstream stream failed before completion.";
+  const code = (typeof errorObj?.code === "string" && errorObj.code) || null;
+  const param = (typeof errorObj?.param === "string" && errorObj.param) || null;
+  const extras =
+    parsed && typeof parsed.diagnostics === "object" && parsed.diagnostics !== null
+      ? { diagnostics: parsed.diagnostics }
+      : {};
+
+  return JSON.stringify({
+    type: "error",
+    code,
+    message,
+    param,
+    sequence_number: SYNTHETIC_RESPONSES_SEQUENCE_NUMBER,
+    ...extras,
+  });
+}
+
 export type EarlyStreamKeepaliveOptions = {
   /** Wait this long for the handler before committing to a keepalive stream. */
   thresholdMs?: number;
@@ -172,11 +212,21 @@ export async function withEarlyStreamKeepalive(
       : null;
   const extraHeaders = options.extraHeaders ?? {};
   const errorFrame = options.errorFrame ?? ERROR_FRAME;
-  // Single source of truth for whether THIS route's error framing uses a named SSE
-  // `event: error` line (Anthropic) or a plain `data:` line (OpenAI Chat Completions /
-  // Responses) — derived from errorFrame itself so the dynamic real-upstream-body case
-  // below stays consistent with the static default-message case without a second option.
-  const errorFrameUsesNamedEvent = new TextDecoder().decode(errorFrame).startsWith("event:");
+  const decodedErrorFrame = new TextDecoder().decode(errorFrame);
+  const errorFrameFormat: "anthropic" | "responses" | "chat" = decodedErrorFrame.startsWith(
+    "event:"
+  )
+    ? "anthropic"
+    : (() => {
+        const dataLine = decodedErrorFrame.match(/^data: (.+)\n\n$/);
+        if (!dataLine) return "chat";
+        try {
+          const parsed = JSON.parse(dataLine[1]);
+          return parsed && typeof parsed === "object" && "type" in parsed ? "responses" : "chat";
+        } catch {
+          return "chat";
+        }
+      })();
   const correlationId = options.correlationId;
   const frameDecoder = correlationId ? new TextDecoder() : null;
   // Records every direct-to-client write EXCEPT the forwarded real response
@@ -325,11 +375,14 @@ export async function withEarlyStreamKeepalive(
             // instead of forwarding raw JSON, which would be malformed SSE.
             const text = response.body ? await response.text().catch(() => "") : "";
             const dataLine =
-              text.trim() ||
-              JSON.stringify({ error: { message: "stream_error", type: "stream_error" } });
-            const framed = errorFrameUsesNamedEvent
-              ? `event: error\ndata: ${dataLine}\n\n`
-              : `data: ${dataLine}\n\n`;
+              errorFrameFormat === "responses"
+                ? buildResponsesErrorDataLine(text)
+                : text.trim() ||
+                  JSON.stringify({ error: { message: "stream_error", type: "stream_error" } });
+            const framed =
+              errorFrameFormat === "anthropic"
+                ? `event: error\ndata: ${dataLine}\n\n`
+                : `data: ${dataLine}\n\n`;
             const framedBytes = ENCODER.encode(framed);
             controller.enqueue(framedBytes);
             recordClientBytes(framedBytes);
