@@ -111,7 +111,7 @@ export function copyOpenAICompatibleReasoningFields(source: JsonRecord, target: 
   if (source.thinking !== undefined) target.thinking = source.thinking;
   if (source.thought !== undefined) target.thought = source.thought;
   if (Array.isArray(source.reasoning_details)) target.reasoning_details = source.reasoning_details;
-  if (!getReadableReasoningValue(target)) {
+  if (!nonEmptyString(target.reasoning_content)) {
     const mirrored = getUnsupportedReasoningValue(source);
     if (mirrored) target.reasoning_content = mirrored;
   }
