@@ -246,13 +246,25 @@ async function start() {
   });
 
   const shutdown = async (signal, exitCode = 0) => {
-    if (shuttingDown) return;
+    if (shuttingDown) {
+      // A second Ctrl+C / signal forces immediate exit.
+      process.exit(1);
+    }
     shuttingDown = true;
+
+    // Safety net: force exit if keep-alive sockets or application cleanup hangs.
+    const forceExitTimer = setTimeout(() => {
+      process.exit(exitCode);
+    }, 2000);
+    forceExitTimer.unref?.();
+
     systemdNotifier.stopping();
     try {
       if (rustCoreHandle?.child) {
         await stopRustCore(rustCoreHandle.child);
       }
+      server.closeIdleConnections?.();
+      server.closeAllConnections?.();
       await new Promise((resolve) => server.close(resolve));
       await globalThis.__omnirouteRequestShutdown?.(signal);
       await nextApp.close();
@@ -260,6 +272,7 @@ async function start() {
       console.error("[SHUTDOWN] Failed during signal:", signal, error);
       exitCode = exitCode || 1;
     } finally {
+      clearTimeout(forceExitTimer);
       process.exit(exitCode);
     }
   };
