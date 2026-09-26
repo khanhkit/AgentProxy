@@ -21,6 +21,7 @@ import {
   type ConnectionCacheOverride,
 } from "../../utils/cacheControlPolicy.ts";
 import { FORMATS } from "../../translator/formats.ts";
+import { stripInternalBodyFields } from "../../config/cliFingerprints.ts";
 import { sanitizeRequestForResolvedTarget } from "../../services/targetRequestSanitizer.ts";
 
 type LoggerLike = { debug?: (...args: unknown[]) => void } | null | undefined;
@@ -238,6 +239,15 @@ export async function prepareUpstreamBody(opts: {
     targetFormat,
     connectionCacheOverride
   );
+
+  // Strip AgentProxy-owned routing/control markers before custom executors can
+  // serialize the request. The Responses store marker is intentionally preserved
+  // here because CodexExecutor consumes it after this boundary; applyFingerprint
+  // strips any surviving internal marker at final serialization.
+  bodyToSend = stripInternalBodyFields(
+    { ...bodyToSend },
+    { preserve: ["_agentproxyResponsesStore"] }
+  ) as Body;
 
   return bodyToSend;
 }
