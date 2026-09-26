@@ -258,6 +258,7 @@ export const CREDITS_EXHAUSTED_SIGNALS = [
   // marked credits_exhausted and keeps being re-selected on every request.
   "insufficient credits",
   "insufficient credit",
+  "exhausted all your credits",
 ];
 
 // T11: Signals that indicate OAuth token is invalid/expired (not permanent deactivation)

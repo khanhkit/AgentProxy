@@ -1204,6 +1204,27 @@ test("isCreditsExhausted returns true for actual credits-exhausted signals", () 
   );
 });
 
+test("FriendliAI exhausted-all-credits 403 is classified as quota exhaustion (#13040)", () => {
+  assert.equal(isCreditsExhausted("You've exhausted all your credits"), true);
+  assert.equal(
+    isCreditsExhausted('{"detail":"You\'ve exhausted all your credits"}'),
+    true
+  );
+
+  const result = checkFallbackError(
+    403,
+    '{"detail":"You\'ve exhausted all your credits"}',
+    0,
+    null,
+    "friendliai",
+    null,
+    makeProfile()
+  );
+  assert.equal(result.shouldFallback, true);
+  assert.equal(result.reason, RateLimitReason.QUOTA_EXHAUSTED);
+  assert.equal(result.creditsExhausted, true);
+});
+
 test("CREDITS_EXHAUSTED_SIGNALS no longer contains generic gRPC resource-exhausted patterns", () => {
   // These patterns were removed because they falsely matched Gemini RPM 429 errors
   assert.equal(CREDITS_EXHAUSTED_SIGNALS.includes("resource has been exhausted"), false);
