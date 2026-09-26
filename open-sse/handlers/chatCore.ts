@@ -2364,7 +2364,9 @@ export async function handleChatCore({
         extractSystemRoleMessages(translatedBody);
       } else {
         // Non-CC path: full normalization including content type conversion.
-        normalizeClaudeUpstreamMessages(translatedBody, { preserveToolResultBlocks: true });
+        normalizeClaudeUpstreamMessages(translatedBody, {
+          preserveToolResultBlocks: targetFormat === FORMATS.CLAUDE,
+        });
       }
     } else if (isClaudePassthrough) {
       // Pure passthrough: forward the body as-is without OpenAI round-trip.

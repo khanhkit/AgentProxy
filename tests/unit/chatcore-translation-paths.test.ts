@@ -379,6 +379,7 @@ async function invokeChatCore({
   reasoningTransportFallback = "drop",
   managedLease = null,
   cachedSettings = null,
+  modelTargetFormat = undefined,
 }: any = {}) {
   const calls: any[] = [];
 
@@ -408,7 +409,10 @@ async function invokeChatCore({
     const requestBody = structuredClone(body);
     const result = await handleChatCore({
       body: requestBody,
-      modelInfo: { provider, model, extendedContext: false },
+      modelInfo:
+        modelTargetFormat !== undefined
+          ? { provider, model, extendedContext: false, targetFormat: modelTargetFormat }
+          : { provider, model, extendedContext: false },
       credentials: credentials || {
         apiKey: "sk-test",
         providerSpecificData: {},
@@ -1557,6 +1561,60 @@ test("chatCore normalizes native Claude Code messages before CC-compatible relay
   // user msg[2] (was clientMessages[3]): tool_result preserved (preserveToolResultBlocks:true)
   assert.equal(call.body.messages[2].content[0].type, "tool_result");
 });
+
+function ccBridgeToolResultCall(modelTargetFormat?: string) {
+  return invokeChatCore({
+    provider: "anthropic-compatible-cc-test",
+    model: "claude-sonnet-4-6",
+    endpoint: "/v1/messages",
+    credentials: {
+      apiKey: "sk-test",
+      providerSpecificData: { baseUrl: "https://proxy.example.com/v1/messages" },
+    },
+    body: {
+      model: "claude-sonnet-4-6",
+      max_tokens: 64,
+      messages: [
+        {
+          role: "assistant",
+          content: [{ type: "tool_use", id: "toolu_x", name: "Read", input: {} }],
+        },
+        {
+          role: "user",
+          content: [{ type: "tool_result", tool_use_id: "toolu_x", content: "file contents" }],
+        },
+      ],
+      tools: [{ name: "Read", input_schema: { type: "object", properties: {} } }],
+    },
+    userAgent: "unit-test",
+    responseFormat: "claude",
+    modelTargetFormat,
+  });
+}
+
+test("chatCore strips raw tool_result blocks for OpenAI-compatible CC bridge targets", async () => {
+  const { call, result } = await ccBridgeToolResultCall("openai");
+  assert.equal(result.success, true);
+  for (const message of call.body.messages) {
+    for (const block of message.content) {
+      assert.notEqual(block.type, "tool_result");
+      assert.notEqual(block.type, "tool_use");
+    }
+  }
+  const flattened = call.body.messages
+    .flatMap((message: { content: Array<{ text?: string }> }) => message.content)
+    .map((block: { text?: string }) => block.text)
+    .join("\n");
+  assert.match(flattened, /file contents/);
+});
+
+test("chatCore preserves raw tool_result blocks for Claude-native CC bridge targets", async () => {
+  const { call, result } = await ccBridgeToolResultCall();
+  assert.equal(result.success, true);
+  assert.equal(call.body.messages[0].content[0].type, "tool_use");
+  assert.equal(call.body.messages[1].content[0].type, "tool_result");
+});
+
 test("chatCore preserves cache_control automatically for Claude Code single-model requests", async () => {
   await settingsDb.updateSettings({ alwaysPreserveClientCache: "auto" });
   invalidateCacheControlSettingsCache();
