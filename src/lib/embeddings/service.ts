@@ -348,6 +348,30 @@ export async function createEmbeddingResponse(
     ) {
       credentials = localCredentials;
     }
+  } else if (!credentials && providerConfig.authType === "none") {
+    // A private/LAN provider node stays keyless by default, but if the user
+    // stored a credential for that node it must ride on the embeddings request.
+    const keyedCredentials = await getProviderCredentials(credentialsProviderId);
+    if (
+      keyedCredentials &&
+      !("allRateLimited" in keyedCredentials) &&
+      !("allExpired" in keyedCredentials)
+    ) {
+      const token =
+        (typeof (keyedCredentials as { apiKey?: unknown }).apiKey === "string" &&
+          (keyedCredentials as { apiKey?: string }).apiKey) ||
+        (typeof (keyedCredentials as { accessToken?: unknown }).accessToken === "string" &&
+          (keyedCredentials as { accessToken?: string }).accessToken) ||
+        "";
+      if (token) {
+        credentials = keyedCredentials;
+        providerConfig = {
+          ...providerConfig,
+          authType: "apikey",
+          authHeader: "bearer",
+        };
+      }
+    }
   }
 
   // #474: when the request used a bare model name (no "/" — e.g. an alias that
