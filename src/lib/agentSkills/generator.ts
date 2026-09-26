@@ -167,6 +167,7 @@ function buildApiBody(skill: AgentSkill, sources: BuildSources): string {
 function buildCliBody(skill: AgentSkill, sources: BuildSources): string {
   const familyMap = sources.cliRegistry.families;
   const cmds = familyMap.get(skill.area as Parameters<typeof familyMap.get>[0]) ?? [];
+  const cliBinary = skill.cliBinary ?? "omniroute";
 
   const lines: string[] = [];
 
@@ -176,8 +177,8 @@ function buildCliBody(skill: AgentSkill, sources: BuildSources): string {
 
   lines.push("## Quick install\n");
   lines.push("```bash");
-  lines.push("npm install -g omniroute   # or: npx omniroute");
-  lines.push("omniroute --version");
+  lines.push(`npm install -g ${cliBinary}   # or: npx ${cliBinary}`);
+  lines.push(`${cliBinary} --version`);
   lines.push("```");
   lines.push("");
 
@@ -204,7 +205,7 @@ function buildCliBody(skill: AgentSkill, sources: BuildSources): string {
 
       lines.push("**Example:**\n");
       lines.push("```bash");
-      lines.push(`omniroute ${cmd.name}`);
+      lines.push(`${cliBinary} ${cmd.name}`);
       lines.push("```");
       lines.push("");
     }
