@@ -297,6 +297,10 @@ export async function createEmbeddingResponse(
   }
 
   if (!providerConfig) {
+    log.warn(
+      "EMBED",
+      `Unknown embedding provider ${provider} for model "${body.model}" -- checked static registry, provider nodes, chat-provider fallback, and synced-endpoint routing with no match`
+    );
     return errorResponse(
       HTTP_STATUS.BAD_REQUEST,
       formatUnknownEmbeddingProviderError(provider, resolvedModel)
