@@ -146,7 +146,8 @@ Runs on every PR to `main`. Blocks merge on failure.
 | `check-ui-keys-coverage` (inline) | UI i18n key coverage is ≥ 65%                                                                                                                                                         | Yes          |
 | `check-ui-value-drift` (inline)   | A rewritten English **value** leaves no stale translation behind                                                                                                                      | Yes          |
 | `check-new-key-coverage` (inline) | A new English key is translated in every locale; `__MISSING__:` markers are rejected | Yes |
-| `check-translation-ratio`         | Real-translation ratio per locale (identical-to-English / placeholder / missing leaves outside the allowlist) must not exceed `config/quality/i18n-translation-baseline.json` + slack | **Advisory** |
+| `check-key-completeness` (inline) | Every dashboard locale carries exactly the current `en.json` key set; missing or stale extra leaves fail | Yes |
+| `check-translation-ratio`         | Real-translation ratio per locale (identical-to-English / placeholder / missing leaves outside the allowlist) must not exceed `config/quality/i18n-translation-baseline.json` + slack | Yes |
 
 Needs `fetch-depth: 0` — the value-drift gate diffs `en.json` against the merge base.
 
