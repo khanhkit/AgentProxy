@@ -805,6 +805,14 @@ export function handleNoCredentials(
       status === "credits_exhausted" ? HTTP_STATUS.PAYMENT_REQUIRED : HTTP_STATUS.UNAUTHORIZED;
     return errorResponse(httpStatus, message);
   }
+  if (credentials?.blockedByKeyPolicy) {
+    const count = credentials.blockedCount || 1;
+    const message =
+      `[${provider}] ${count} connection(s) exist but are excluded by this API key's ` +
+      `connection allowlist / quota scope — add them to the key in the dashboard, or use a key without that scope`;
+    log.warn("AUTH", message);
+    return errorResponse(HTTP_STATUS.FORBIDDEN, message);
+  }
   if (!excludeConnectionId) {
     // Ported from upstream decolua/9router#336 (Ibrahim Ryan): surface as 404
     // NOT_FOUND instead of 400 BAD_REQUEST so combo routing can fall through to

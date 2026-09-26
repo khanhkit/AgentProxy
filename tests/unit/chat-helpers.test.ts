@@ -722,3 +722,22 @@ test("resolveModelOrError returns model_not_found error for unrecognised bare mo
   assert.match(json.error.message, /Unable to determine provider/i);
   assert.match(json.error.message, /completely-unknown-model-xyz/i);
 });
+
+test("handleNoCredentials names the API key allowlist when policy hid every connection (#13832)", async () => {
+  const blocked = handleNoCredentials(
+    { blockedByKeyPolicy: true, blockedCount: 2 },
+    null,
+    "nvidia",
+    "nemotron",
+    null,
+    null,
+    undefined,
+    false
+  );
+
+  assert.equal(blocked.status, 403);
+  const json = (await blocked.json()) as ApiErrorJson;
+  assert.match(json.error?.message ?? "", /nvidia/);
+  assert.match(json.error?.message ?? "", /2 connection\(s\)/);
+  assert.match(json.error?.message ?? "", /allowlist|quota scope/i);
+});

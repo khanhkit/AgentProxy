@@ -1726,3 +1726,16 @@ test("markAccountUnavailable persists in-memory model lockout for combo transien
   assert.equal(updated.rateLimitedUntil == null, true);
   assert.notEqual(updated.testStatus, "unavailable");
 });
+
+test("getProviderCredentials reports when allowedConnections hides every provider connection (#13832)", async () => {
+  await seedConnection("openai", {
+    name: "allowlist-hidden",
+    apiKey: "sk-hidden",
+  });
+
+  const selected = await auth.getProviderCredentials("openai", null, [
+    "00000000-0000-4000-8000-000000000999",
+  ]);
+
+  assert.deepEqual(selected, { blockedByKeyPolicy: true, blockedCount: 1 });
+});

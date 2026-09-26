@@ -1368,9 +1368,15 @@ export async function getProviderCredentials(
       let allConnections = (allConnectionsResults.filter(Array.isArray).flat() as unknown[])
         .map(toProviderConnection)
         .filter((conn) => conn.id.length > 0);
+      const connectionsBeforeKeyPolicy = allConnections.length;
       if (allowedConnections && allowedConnections.length > 0) {
         allConnections = allConnections.filter((conn) => allowedConnections.includes(conn.id));
       }
+      const blockedByKeyPolicyCount = connectionsBeforeKeyPolicy - allConnections.length;
+      const keyPolicyEmptiedPool =
+        connectionsBeforeKeyPolicy > 0 &&
+        blockedByKeyPolicyCount > 0 &&
+        allConnections.length === 0;
       if (forcedConnectionId) {
         allConnections = allConnections.filter((conn) => conn.id === forcedConnectionId);
       }
@@ -1440,6 +1446,13 @@ export async function getProviderCredentials(
         return geminiEnvCredentials;
       }
       invalidateManagedLease(options, "CONNECTION_INELIGIBLE");
+      if (keyPolicyEmptiedPool) {
+        log.warn(
+          "AUTH",
+          `${provider} | ${blockedByKeyPolicyCount} connection(s) hidden by the API key's allowed_connections/quota scope`
+        );
+        return { blockedByKeyPolicy: true, blockedCount: blockedByKeyPolicyCount };
+      }
       log.debug("AUTH", `No credentials for ${provider}`);
       return null;
     }
