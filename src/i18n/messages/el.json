@@ -3776,7 +3776,9 @@
     "duplicateAutoComboSnapshotMsg": "Αυτό θα αποτυπώσει τους τρέχοντα συνδεδεμένους παρόχους/μοντέλα που ταιριάζουν σε αυτό το πρότυπο σε έναν επεξεργάσιμο συνδυασμό.",
     "duplicateAutoComboFailedPrefix": "Αποτυχία αντιγραφής αυτόματου συνδυασμού:",
     "duplicateAutoComboUnknownError": "Άγνωστο σφάλμα",
-    "duplicateAutoComboTitle": "Δημιουργία στατικού συνδυασμού από {name}"
+    "duplicateAutoComboTitle": "Δημιουργία στατικού συνδυασμού από {name}",
+    "quotaWeighted": "Σταθμισμένο βάσει ορίου χρήσης",
+    "quotaWeightedDesc": "Παράλειψη εξαντλημένων λογαριασμών και, στη συνέχεια, επιλογή μεταξύ των υπολοίπων αναλογικά με το υπόλοιπό τους, διαιρεμένο με το τρέχον φορτίο. Οι υπάρχουσες συνομιλίες παραμένουν καρφιτσωμένες."
   },
   "costs": {
     "title": "Κόστη",
@@ -6303,7 +6305,8 @@
       "kiro": "Δωρεάν επίπεδο: 50 credits/μήνα (~25K–100K tokens). ⚠️ Οι Όροι Χρήσης του Kiro απαγορεύουν τη χρήση proxy/harness τρίτων.",
       "codex": "Σύνδεση του OpenAI Codex με την υπάρχουσα ροή OAuth.",
       "qwen": "Σύνδεση του Qwen Code με την υπάρχουσα ροή OAuth.",
-      "github-models": "Δημιουργήστε ένα GitHub PAT με εμβέλεια 'models: read' στο github.com/settings/tokens"
+      "github-models": "Δημιουργήστε ένα GitHub PAT με εμβέλεια 'models: read' στο github.com/settings/tokens",
+      "seekai": "Δημιουργήστε ένα κλειδί API στη διεύθυνση https://seekai.cc και, στη συνέχεια, επικολλήστε το εδώ ως διακριτικό Bearer. Βασικό URL συμβατό με OpenAI: https://seekai.cc/v1."
     },
     "passthroughModelsDescription": "Το {provider} δέχεται αναγνωριστικά μοντέλων native του παρόχου. Εισαγάγετε από το /models ή προσθέστε προσαρμοσμένα αναγνωριστικά για δρομολόγηση.",
     "bedrockModelsDescription": "Τα μοντέλα Amazon Bedrock ορίζονται ανά περιοχή AWS. Εισαγάγετε από το /models ή προσθέστε αναγνωριστικά μοντέλων Bedrock που είναι ενεργοποιημένα στην επιλεγμένη περιοχή.",
@@ -6461,7 +6464,14 @@
     "savedModelEndpointSettings": "Οι ρυθμίσεις τελικού σημείου μοντέλου αποθηκεύτηκαν",
     "searchByModelAria": "Αναζήτηση με βάση το μοντέλο",
     "selectSupportedEndpoint": "Επιλέξτε τουλάχιστον ένα υποστηριζόμενο endpoint",
-    "antigravityClientProfileHarness": "Harness / CLI"
+    "antigravityClientProfileHarness": "Harness / CLI",
+    "importFromFileDownloadTemplate": "Λήψη προτύπου CSV",
+    "importFromFileMoreErrors": "+{count} ακόμη",
+    "importFromFileSchemaHint": "Οι στήλες CSV είναι βάσει θέσης: provider, name, apiKey, baseUrl (προαιρετικό), priority (προαιρετικό). Η στήλη provider πρέπει να είναι ένα υπάρχον αναγνωριστικό διαχειριζόμενου παρόχου ή ένα ήδη καταχωρισμένο αναγνωριστικό κόμβου συμβατού με OpenAI/Anthropic — αυτή η εισαγωγή δεν δημιουργεί νέους κόμβους τελικών σημείων.",
+    "dailyQuotaResetTimezoneLabel": "Ζώνη ώρας ημερήσιας επαναφοράς ορίου χρήσης",
+    "dailyQuotaResetTimezoneHint": "Προαιρετική ζώνη ώρας IANA που χρησιμοποιείται όταν η ανάντη υπηρεσία παραλείπει το X-RateLimit-Reset. Αφήστε το κενό για να διατηρηθεί μια σύντομη περίοδος αναμονής.",
+    "dailyQuotaResetHourLabel": "Ώρα ημερήσιας επαναφοράς ορίου χρήσης",
+    "dailyQuotaResetHourHint": "Τοπική ώρα 0-23 στην παραπάνω ζώνη ώρας. Αν είναι κενό, δεν χρησιμοποιείται ρολόι σε επίπεδο κόμβου."
   },
   "settings": {
     "title": "Ρυθμίσεις",
@@ -8340,7 +8350,25 @@
     "cliproxyapiHealth": "Κατάσταση λειτουργίας",
     "cliproxyapiPort": "Θύρα",
     "qdrantHost": "Κεντρικός υπολογιστής",
-    "qdrantCollection": "Συλλογή"
+    "qdrantCollection": "Συλλογή",
+    "quotaWeighted": "Σταθμισμένο βάσει ορίου χρήσης",
+    "quotaWeightedDesc": "Παράλειψη εξαντλημένων λογαριασμών και, στη συνέχεια, επιλογή μεταξύ των υπολοίπων αναλογικά με το υπόλοιπό τους, διαιρεμένο με το τρέχον φορτίο. Οι υπάρχουσες συνομιλίες παραμένουν καρφιτσωμένες.",
+    "compressionAdaptiveMode": "Προσαρμοζόμενο όριο περιβάλλοντος",
+    "compressionAdaptiveModeOff": "Ανενεργό (αυτόματη ενεργοποίηση παλαιού τύπου)",
+    "compressionAdaptiveModeFloor": "Ελάχιστο (πάντα εγγυάται ότι χωράει)",
+    "compressionAdaptiveModeReplace": "Αντικατάσταση αυτόματης ενεργοποίησης",
+    "compressionAdaptivePolicy": "Πολιτική ορίου",
+    "compressionAdaptivePolicyReserve": "Δέσμευση χώρου για έξοδο",
+    "compressionAdaptivePolicyPercentage": "Ποσοστό του παραθύρου",
+    "compressionAdaptivePolicyAbsolute": "Απόλυτο όριο token",
+    "headroomProxyTitle": "Διακομιστής μεσολάβησης Headroom",
+    "headroomProxyDesc": "URL του προαιρετικού διακομιστή μεσολάβησης εξοικονόμησης token Headroom. Αν είναι κενό, χρησιμοποιείται το HEADROOM_URL ή το http://localhost:8787.",
+    "headroomProxyUrl": "URL Headroom",
+    "headroomProxyUrlHint": "Τα URL βρόχου επιστροφής μπορούν να εκκινηθούν από αυτήν τη σελίδα. Τα εξωτερικά URL ελέγχονται μόνο.",
+    "headroomProxySave": "Αποθήκευση",
+    "headroomProxyStart": "Έναρξη",
+    "headroomProxyStop": "Διακοπή",
+    "headroomProxyExternalHint": "Αυτό το URL δεν είναι βρόχου επιστροφής, επομένως το OmniRoute δεν θα εκκινήσει το τοπικό CLI."
   },
   "contextRtk": {
     "title": "Μηχανή RTK",
@@ -11381,8 +11409,8 @@
       "detailedPayloadInfo": "Ενεργοποιήστε πρώτα τη λεπτομερή καταγραφή εάν θέλετε την προβολή ωφέλιμου φορτίου τεσσάρων σταδίων πελάτη/παρόχου για νέα αιτήματα.",
       "copyAll": "Αντιγραφή όλων",
       "copiedAll": "Αντιγράφηκαν όλα",
-      "rawViewOn": "__MISSING__:Raw view: on",
-      "rawViewOff": "__MISSING__:Raw view: off"
+      "rawViewOn": "Προβολή ανεπεξέργαστων δεδομένων: ενεργή",
+      "rawViewOff": "Προβολή ανεπεξέργαστων δεδομένων: ανενεργή"
     }
   },
   "proxyLogger": {
@@ -12980,6 +13008,10 @@
       },
       "SKILLS_SANDBOX_NETWORK_ENABLED": {
         "description": "Ενεργοποίηση πρόσβασης δικτύου στο sandbox δεξιοτήτων."
+      },
+      "SERVER_OWNED_TOOL_LOOP_ENABLED": {
+        "label": "Βρόχος εργαλείων ελεγχόμενος από τον διακομιστή",
+        "description": "Συνέχιση των μη συνεχιζόμενων κλήσεων εργαλείων που ελέγχονται από τον διακομιστή, έως ότου το μοντέλο επιστρέψει μια απόκριση που μπορεί να χρησιμοποιήσει ο πελάτης."
       }
     }
   },
@@ -13145,7 +13177,8 @@
       "ok": "Γενικά επιτρεπτό"
     },
     "allProviders": "Όλοι οι πάροχοι",
-    "noApiKeyRequired": "Δεν απαιτείται κλειδί API"
+    "noApiKeyRequired": "Δεν απαιτείται κλειδί API",
+    "gated": "~{tokens}/μήνα επιπλέον, κατόπιν περιφερειακού ελέγχου ταυτότητας (π.χ. επαλήθευση πραγματικού ονόματος στην ηπειρωτική Κίνα) — πραγματικό όριο χρήσης, που δεν περιλαμβάνεται στον κύριο αναφερόμενο αριθμό:"
   },
   "providerHealthAutopilot": {
     "title": "Αυτόματος Πιλότος Υγείας Παρόχου",
@@ -13438,7 +13471,10 @@
     "localStateSaveFailed": "Αποτυχία αποθήκευσης τοπικών ρυθμίσεων Radar",
     "guidedCombos": "Καθοδηγούμενοι συνδυασμοί",
     "offers": "Προσφορές",
-    "intel": "Intel"
+    "intel": "Intel",
+    "limitsUnknownHelp": "Τα όρια αναφέρονται μόνο από τη ροή Radar· δεν υπάρχουν δημοσιευμένα όρια για αυτήν την καταχώριση",
+    "contextUnknownHelp": "Το παράθυρο περιβάλλοντος είναι άγνωστο για αυτήν την καταχώριση",
+    "capabilityUnknownHelp": "Η δυνατότητα δεν αναφέρεται από τη ροή δεδομένων"
   },
   "radarCombosPage": {
     "title": "Καθοδηγούμενοι συνδυασμοί Radar",
@@ -14006,7 +14042,23 @@
     "actionDone": "Η ενέργεια εφαρμόστηκε",
     "actionFailed": "Αποτυχία ενέργειας: {error}",
     "detailFailed": "Αποτυχία φόρτωσης λεπτομερειών: {error}",
-    "mirroredInA2A": "Αντικατοπτρίστηκε στο A2A"
+    "mirroredInA2A": "Αντικατοπτρίστηκε στο A2A",
+    "compareMode": "Σύγκριση εκτελέσεων",
+    "compareExit": "Έξοδος από τη σύγκριση",
+    "compareHint": "Επιλέξτε δύο εκτελέσεις για σύγκριση",
+    "compareTitle": "Σύγκριση",
+    "compareDetailFailed": "Δεν ήταν δυνατή η φόρτωση των λεπτομερειών αυτής της εκτέλεσης",
+    "compareDifferentIdentity": "Διαφορετικές πηγές ή δεξιότητες — οι διαφορές είναι ενημερωτικές",
+    "compareDuration": "Διάρκεια",
+    "compareCost": "Κόστος",
+    "compareEvents": "Συμβάντα",
+    "compareDeltaLegend": "Δ δεξιά − αριστερά",
+    "noMatches": "Καμία εκτέλεση δεν ταιριάζει με αυτά τα φίλτρα",
+    "drawerMemory": "Χρησιμοποιημένη μνήμη",
+    "actionRepeat": "Επανάληψη",
+    "repeatConfirm": "Κάντε ξανά κλικ για επιβεβαίωση",
+    "repeatDone": "Δημιουργήθηκε νέα εκτέλεση",
+    "repeatUnavailable": "Η αρχική είσοδος δεν είναι διαθέσιμη"
   },
   "cliproxyProviderExposure": {
     "title": "Έκθεση Παρόχου",

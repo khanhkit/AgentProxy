@@ -3776,7 +3776,9 @@
     "duplicateAutoComboSnapshotMsg": "Déanfaidh sé seo scáthghabháil de na soláthraithe/samhlacha atá nasctha faoi láthair a mheaitseálann an teimpléad seo, agus cuirfear i gcomhcheangal inathraithe iad.",
     "duplicateAutoComboFailedPrefix": "Theip ar an gcomhcheangal uathoibríoch a dhúbailt:",
     "duplicateAutoComboUnknownError": "Earráid anaithnid",
-    "duplicateAutoComboTitle": "Cruthaigh comhcheangal statach ó {name}"
+    "duplicateAutoComboTitle": "Cruthaigh comhcheangal statach ó {name}",
+    "quotaWeighted": "Ualaithe de réir Cuóta",
+    "quotaWeightedDesc": "Scipeáil cuntais ídithe, ansin roghnaigh as na cinn eile i gcomhréir leis an méid atá fágtha, roinnte ar an ualach idir lámha. Fanann comhráite atá ann cheana feistithe."
   },
   "costs": {
     "title": "Costais",
@@ -6303,7 +6305,8 @@
       "kiro": "Tier saor in aisce: 50 creidmheas/mí (~25K–100K comharthaí). ⚠️ Tá ToS Kiro ag toirmeasc ar úsáid proxy/harness tríú páirtí.",
       "codex": "Ceangail OpenAI Codex leis an sreabhadh OAuth atá ann cheana.",
       "qwen": "Ceangail Qwen Code leis an sreabhadh OAuth atá ann cheana.",
-      "github-models": "Cruthaigh PAT GitHub le scóip 'models: read' ag github.com/settings/tokens"
+      "github-models": "Cruthaigh PAT GitHub le scóip 'models: read' ag github.com/settings/tokens",
+      "seekai": "Cruthaigh eochair API ag https://seekai.cc, ansin greamaigh anseo í mar chomhartha Bearer. Bun-URL atá comhoiriúnach le OpenAI: https://seekai.cc/v1."
     },
     "passthroughModelsDescription": "Glacann {provider} le hAitheantais mhúnla dúchasacha don soláthraí. Iompórtáil ó /models nó cuir aitheantais shaincheaptha leis le haghaidh ródaithe.",
     "bedrockModelsDescription": "Tá samhlacha Amazon Bedrock scóipeáilte de réir réigiún AWS. Iompórtáil ó /models nó cuir aitheantais samhla Bedrock atá cumasaithe sa réigiún roghnaithe leis.",
@@ -6461,7 +6464,14 @@
     "savedModelEndpointSettings": "Sábháladh socruithe críochphointe an mhúnla",
     "searchByModelAria": "Cuardaigh de réir mhúnla",
     "selectSupportedEndpoint": "Roghnaigh ar a laghad ceannphointe tacaithe",
-    "antigravityClientProfileHarness": "Úim / CLI"
+    "antigravityClientProfileHarness": "Úim / CLI",
+    "importFromFileDownloadTemplate": "Íoslódáil teimpléad CSV",
+    "importFromFileMoreErrors": "+{count} eile",
+    "importFromFileSchemaHint": "Tá colúin CSV suite de réir oird: provider, name, apiKey, baseUrl (roghnach), priority (roghnach). Ní mór don cholún provider a bheith ina aitheantas soláthraí bainistithe atá ann cheana nó ina aitheantas nóid atá cláraithe cheana agus atá comhoiriúnach le OpenAI/Anthropic — ní chruthaíonn an t-iompórtáil seo nóid críochphointe nua.",
+    "dailyQuotaResetTimezoneLabel": "Crios ama athshocraithe an chuóta laethúil",
+    "dailyQuotaResetTimezoneHint": "Crios ama roghnach IANA a úsáidtear nuair a fhágann an tseirbhís réamhtheachtach X-RateLimit-Reset ar lár. Fág folamh é chun tréimhse ghearr fuaraithe a choinneáil.",
+    "dailyQuotaResetHourLabel": "Uair athshocraithe an chuóta laethúil",
+    "dailyQuotaResetHourHint": "Uair áitiúil 0-23 sa chrios ama thuas. Má fhágtar folamh é, ní bheidh clog ar leibhéal an nóid ann."
   },
   "settings": {
     "title": "Socruithe",
@@ -8341,7 +8351,24 @@
     "cliproxyapiPort": "Port",
     "qdrantHost": "Óstach",
     "qdrantCollection": "Bailiúchán",
-    "headroomProxyStop": "Stad"
+    "headroomProxyStop": "Stad",
+    "quotaWeighted": "Ualaithe de réir Cuóta",
+    "quotaWeightedDesc": "Scipeáil cuntais ídithe, ansin roghnaigh as na cinn eile i gcomhréir leis an méid atá fágtha, roinnte ar an ualach idir lámha. Fanann comhráite atá ann cheana feistithe.",
+    "compressionAdaptiveMode": "Buiséad comhthéacs oiriúnaitheach",
+    "compressionAdaptiveModeOff": "As (uath-thruicear oidhreachta)",
+    "compressionAdaptiveModeFloor": "Íosmhéid (ráthaigh go n-oirfidh sé i gcónaí)",
+    "compressionAdaptiveModeReplace": "Ionadaigh an t-uath-thruicear",
+    "compressionAdaptivePolicy": "Beartas buiséid",
+    "compressionAdaptivePolicyReserve": "Cuir aschur in áirithe",
+    "compressionAdaptivePolicyPercentage": "Céatadán den fhuinneog",
+    "compressionAdaptivePolicyAbsolute": "Buiséad dearbhchomharthaí",
+    "headroomProxyTitle": "Seachfhreastalaí Headroom",
+    "headroomProxyDesc": "URL an tseachfhreastalaí roghnaigh Headroom a shábhálann comharthaí. Má fhágtar folamh é, úsáidtear HEADROOM_URL nó http://localhost:8787.",
+    "headroomProxyUrl": "URL Headroom",
+    "headroomProxyUrlHint": "Is féidir URLanna aisfhillte a thosú ón leathanach seo. Ní dhéantar ach URLanna seachtracha a phromhadh.",
+    "headroomProxySave": "Sábháil",
+    "headroomProxyStart": "Tosaigh",
+    "headroomProxyExternalHint": "Ní URL aisfhillte é an URL seo, mar sin ní thionscnóidh OmniRoute an CLI áitiúil."
   },
   "contextRtk": {
     "title": "Inneall RTK",
@@ -11382,8 +11409,8 @@
       "detailedPayloadInfo": "Cumasaigh logáil mhionsonraithe ar dtús más mian leat an radharc ualaigh cliaint/soláthraí ceithre chéim d'iarratais nua.",
       "copyAll": "Cóipeáil go léir",
       "copiedAll": "Cóipeáilte go léir",
-      "rawViewOn": "__MISSING__:Raw view: on",
-      "rawViewOff": "__MISSING__:Raw view: off"
+      "rawViewOn": "Amharc amh: casta air",
+      "rawViewOff": "Amharc amh: casta as"
     }
   },
   "proxyLogger": {
@@ -12981,6 +13008,10 @@
       },
       "SKILLS_SANDBOX_NETWORK_ENABLED": {
         "description": "Cumasaigh rochtain líonra sa seanbhithcomhábhar scileanna."
+      },
+      "SERVER_OWNED_TOOL_LOOP_ENABLED": {
+        "label": "Lúb Uirlisí faoi Úinéireacht an Fhreastalaí",
+        "description": "Lean ar aghaidh le glaonna uirlise neamhshruthaithe atá faoi úinéireacht an fhreastalaí go dtí go gcuirfidh an tsamhail freagra ar fáil is féidir leis an gcliant a úsáid."
       }
     }
   },
@@ -13146,7 +13177,8 @@
       "ok": "De ghnáth ceadúnach"
     },
     "allProviders": "Gach soláthraí",
-    "noApiKeyRequired": "Ní theastaíonn eochair API"
+    "noApiKeyRequired": "Ní theastaíonn eochair API",
+    "gated": "~{tokens}/mo sa bhreis taobh thiar de sheiceáil aitheantais réigiúnach (e.g. fíorú fíorainm sa tSín mhórthír) — fíorchuóta nach n-áirítear sa phríomhfhigiúr:"
   },
   "providerHealthAutopilot": {
     "title": "Soláthraí Sláinte Autopilot",
@@ -13439,7 +13471,10 @@
     "localStateSaveFailed": "Theip ar shábháil socruithe logánacha Radar",
     "guidedCombos": "Combonnáilí treoraithe",
     "offers": "Tairiscintí",
-    "intel": "Eolas"
+    "intel": "Eolas",
+    "limitsUnknownHelp": "Teorainneacha arna dtuairisciú ag fotha Radar amháin; níl aon teorainneacha foilsithe don iontráil seo",
+    "contextUnknownHelp": "Ní fios méid na fuinneoige comhthéacs don iontráil seo",
+    "capabilityUnknownHelp": "Níor thuairiscigh an fotha an cumas"
   },
   "radarCombosPage": {
     "title": "Combonnáilí treoraithe Radar",
@@ -14007,7 +14042,23 @@
     "actionDone": "Gníomh curtha i bhfeidhm",
     "actionFailed": "Theip ar an ngníomh: {error}",
     "detailFailed": "Theip ar lódáil sonraí: {error}",
-    "mirroredInA2A": "Scáththa in A2A"
+    "mirroredInA2A": "Scáththa in A2A",
+    "compareMode": "Cuir rití i gcomparáid",
+    "compareExit": "Scoir den mhód comparáide",
+    "compareHint": "Roghnaigh dhá rith le cur i gcomparáid",
+    "compareTitle": "Comparáid",
+    "compareDetailFailed": "Níorbh fhéidir sonraí an rith seo a lódáil",
+    "compareDifferentIdentity": "Foinsí nó scileanna éagsúla — is eolas amháin iad na difríochtaí",
+    "compareDuration": "Fad",
+    "compareCost": "Costas",
+    "compareEvents": "Imeachtaí",
+    "compareDeltaLegend": "Δ ar dheis − ar chlé",
+    "noMatches": "Níl aon rith ag teacht leis na scagairí seo",
+    "drawerMemory": "Cuimhne úsáidte",
+    "actionRepeat": "Déan arís",
+    "repeatConfirm": "Cliceáil arís lena dheimhniú",
+    "repeatDone": "Rith nua cruthaithe",
+    "repeatUnavailable": "Níl an t-ionchur bunaidh ar fáil"
   },
   "cliproxyProviderExposure": {
     "title": "Nochtadh Soláthraí",

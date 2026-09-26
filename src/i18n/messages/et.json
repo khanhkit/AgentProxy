@@ -3776,7 +3776,9 @@
     "duplicateAutoComboSnapshotMsg": "See salvestab hetkel ühendatud ja sellele mallile vastavad teenusepakkujad/mudelid redigeeritavasse kombinatsiooni.",
     "duplicateAutoComboFailedPrefix": "Automaatse kombinatsiooni dubleerimine ebaõnnestus:",
     "duplicateAutoComboUnknownError": "Tundmatu viga",
-    "duplicateAutoComboTitle": "Loo staatiline kombinatsioon mallist {name}"
+    "duplicateAutoComboTitle": "Loo staatiline kombinatsioon mallist {name}",
+    "quotaWeighted": "Kvoodiga kaalutud",
+    "quotaWeightedDesc": "Jäta ammendunud kontod vahele, seejärel vali ülejäänute seast proportsionaalselt allesjäänud kvoodiga, jagatuna hetkel töös oleva koormusega. Olemasolevad vestlused jäävad seotuks."
   },
   "costs": {
     "title": "Kulud",
@@ -6303,7 +6305,8 @@
       "kiro": "Tasuta pakett: 50 krediiti kuus (~25K–100K tokenit). ⚠️ Kiro kasutustingimused keelavad kolmanda osapoole puhverserveri või rakenduskesta kasutamise.",
       "codex": "Ühenda OpenAI Codex olemasoleva OAuth-vooga.",
       "qwen": "Ühenda Qwen Code olemasoleva OAuth-vooga.",
-      "github-models": "Loo aadressil github.com/settings/tokens GitHub PAT õigusega „models: read”"
+      "github-models": "Loo aadressil github.com/settings/tokens GitHub PAT õigusega „models: read”",
+      "seekai": "Looge API-võti aadressil https://seekai.cc ja kleepige see siia Bearer-loana. OpenAI-ühilduv baas-URL: https://seekai.cc/v1."
     },
     "passthroughModelsDescription": "{provider} aktsepteerib teenusepakkuja omavormingus mudeli-ID-sid. Impordi need lehelt /models või lisa marsruutimiseks kohandatud ID-d.",
     "bedrockModelsDescription": "Amazon Bedrocki mudelid on seotud AWS-i piirkonnaga. Impordi need lehelt /models või lisa valitud piirkonnas lubatud Bedrocki mudelite ID-d.",
@@ -6461,7 +6464,14 @@
     "savedModelEndpointSettings": "Mudeli lõpp-punkti seaded salvestatud",
     "searchByModelAria": "Otsi mudeli järgi",
     "selectSupportedEndpoint": "Valige vähemalt üks toetatud lõpp-punkt",
-    "antigravityClientProfileHarness": "Rakendusraamistik / CLI"
+    "antigravityClientProfileHarness": "Rakendusraamistik / CLI",
+    "importFromFileDownloadTemplate": "Laadi alla CSV-mall",
+    "importFromFileMoreErrors": "+{count} veel",
+    "importFromFileSchemaHint": "CSV veerud on positsioonipõhised: provider, name, apiKey, baseUrl (valikuline), priority (valikuline). Veerg provider peab sisaldama olemasoleva hallatud teenusepakkuja ID-d või juba registreeritud OpenAI/Anthropic-ühilduva sõlme ID-d — see import ei loo uusi lõpp-punkti sõlmi.",
+    "dailyQuotaResetTimezoneLabel": "Päevakvoodi lähtestamise ajavöönd",
+    "dailyQuotaResetTimezoneHint": "Valikuline IANA ajavöönd, mida kasutatakse juhul, kui ülesvooluteenus jätab X-RateLimit-Reset päise saatmata. Lühikese ooteaja säilitamiseks jätke tühjaks.",
+    "dailyQuotaResetHourLabel": "Päevakvoodi lähtestamise tund",
+    "dailyQuotaResetHourHint": "Kohalik tund vahemikus 0–23 ülaltoodud ajavööndis. Tühi väärtus tähendab, et sõlme tasemel kella ei kasutata."
   },
   "settings": {
     "title": "Seaded",
@@ -8340,7 +8350,25 @@
     "cliproxyapiHealth": "Olek",
     "cliproxyapiPort": "Port",
     "qdrantHost": "Host",
-    "qdrantCollection": "Kogumik"
+    "qdrantCollection": "Kogumik",
+    "quotaWeighted": "Kvoodiga kaalutud",
+    "quotaWeightedDesc": "Jäta ammendunud kontod vahele, seejärel vali ülejäänute seast proportsionaalselt allesjäänud kvoodiga, jagatuna hetkel töös oleva koormusega. Olemasolevad vestlused jäävad seotuks.",
+    "compressionAdaptiveMode": "Kohanduv kontekstieelarve",
+    "compressionAdaptiveModeOff": "Väljas (pärandautomaatkäivitus)",
+    "compressionAdaptiveModeFloor": "Alampiir (tagab alati mahutavuse)",
+    "compressionAdaptiveModeReplace": "Asenda automaatkäivitus",
+    "compressionAdaptivePolicy": "Eelarvepoliitika",
+    "compressionAdaptivePolicyReserve": "Reserveeri väljundile",
+    "compressionAdaptivePolicyPercentage": "Protsent kontekstiaknast",
+    "compressionAdaptivePolicyAbsolute": "Absoluutne tokenite eelarve",
+    "headroomProxyTitle": "Headroomi puhverserver",
+    "headroomProxyDesc": "Valikulise Headroomi tokenisäästu puhverserveri URL. Tühja väärtuse korral kasutatakse HEADROOM_URL-i või http://localhost:8787.",
+    "headroomProxyUrl": "Headroomi URL",
+    "headroomProxyUrlHint": "Tagasisideahela URL-e saab käivitada sellelt lehelt. Väliseid URL-e ainult kontrollitakse.",
+    "headroomProxySave": "Salvesta",
+    "headroomProxyStart": "Käivita",
+    "headroomProxyStop": "Peata",
+    "headroomProxyExternalHint": "See URL ei ole tagasisideahela aadress, seega ei käivita OmniRoute kohalikku CLI-d."
   },
   "contextRtk": {
     "title": "RTK Engine",
@@ -11381,8 +11409,8 @@
       "detailedPayloadInfo": "Uute päringute neljaetapilise kliendi ja teenusepakkuja andmekehavaate kasutamiseks lubage esmalt üksikasjalik logimine.",
       "copyAll": "Kopeeri kõik",
       "copiedAll": "Kõik kopeeritud",
-      "rawViewOn": "__MISSING__:Raw view: on",
-      "rawViewOff": "__MISSING__:Raw view: off"
+      "rawViewOn": "Toorvaade: sees",
+      "rawViewOff": "Toorvaade: väljas"
     }
   },
   "proxyLogger": {
@@ -12980,6 +13008,10 @@
       },
       "SKILLS_SANDBOX_NETWORK_ENABLED": {
         "description": "Luba oskuste liivakastis võrguühendus."
+      },
+      "SERVER_OWNED_TOOL_LOOP_ENABLED": {
+        "label": "Serveri hallatav tööriistatsükkel",
+        "description": "Jätka serveri hallatavate voogedastuseta tööriistakutsete tegemist, kuni mudel tagastab kliendi jaoks kasutatava vastuse."
       }
     }
   },
@@ -13145,7 +13177,8 @@
       "ok": "Üldiselt lubav"
     },
     "allProviders": "Kõik pakkujad",
-    "noApiKeyRequired": "API-võtit pole vaja"
+    "noApiKeyRequired": "API-võtit pole vaja",
+    "gated": "~{tokens}/kuus lisaks piirkondliku isikusamasuse kontrolli taga (nt Mandri-Hiina pärisnimega isiku tuvastamine) — tegelik kvoot, mida põhinumbris ei arvestata:"
   },
   "providerHealthAutopilot": {
     "title": "Pakkujate töökindluse autopiloot",
@@ -13438,7 +13471,10 @@
     "localStateSaveFailed": "Radari kohalike seadete salvestamine ebaõnnestus",
     "guidedCombos": "Juhendatud kombinatsioonid",
     "offers": "Pakkumised",
-    "intel": "Teave"
+    "intel": "Teave",
+    "limitsUnknownHelp": "Piirangud pärinevad ainult Radari voost; selle kirje kohta pole avaldatud piiranguid",
+    "contextUnknownHelp": "Selle kirje kontekstiakna suurus pole teada",
+    "capabilityUnknownHelp": "Voog ei edasta selle funktsiooni teavet"
   },
   "radarCombosPage": {
     "title": "Radari juhendatud kombinatsioonid",
@@ -14006,7 +14042,23 @@
     "actionDone": "Toiming rakendatud",
     "actionFailed": "Toiming nurjus: {error}",
     "detailFailed": "Üksikasjade laadimine nurjus: {error}",
-    "mirroredInA2A": "Peegeldatud A2A-s"
+    "mirroredInA2A": "Peegeldatud A2A-s",
+    "compareMode": "Võrdle käivitusi",
+    "compareExit": "Välju võrdlusrežiimist",
+    "compareHint": "Valige võrdlemiseks kaks käivitust",
+    "compareTitle": "Võrdlus",
+    "compareDetailFailed": "Selle käivituse üksikasju ei õnnestunud laadida",
+    "compareDifferentIdentity": "Erinevad allikad või oskused — erinevused on informatiivsed",
+    "compareDuration": "Kestus",
+    "compareCost": "Maksumus",
+    "compareEvents": "Sündmused",
+    "compareDeltaLegend": "Δ parem − vasak",
+    "noMatches": "Ükski käivitus ei vasta neile filtritele",
+    "drawerMemory": "Kasutatud mälu",
+    "actionRepeat": "Korda",
+    "repeatConfirm": "Kinnitamiseks klõpsake uuesti",
+    "repeatDone": "Uus käivitus loodud",
+    "repeatUnavailable": "Algne sisend pole saadaval"
   },
   "cliproxyProviderExposure": {
     "title": "Teenusepakkuja nähtavus",

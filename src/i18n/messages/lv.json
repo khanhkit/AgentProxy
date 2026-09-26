@@ -3776,7 +3776,9 @@
     "duplicateAutoComboSnapshotMsg": "Tas izveidos momentuzņēmumu no pašlaik pievienotajiem nodrošinātājiem/modeļiem, kas atbilst šim šablonam, veidojot redigējamu kombināciju.",
     "duplicateAutoComboFailedPrefix": "Neizdevās dublēt automātisko kombināciju:",
     "duplicateAutoComboUnknownError": "Nezināma kļūda",
-    "duplicateAutoComboTitle": "Izveidot statisku kombināciju no {name}"
+    "duplicateAutoComboTitle": "Izveidot statisku kombināciju no {name}",
+    "quotaWeighted": "Kvotas svērts",
+    "quotaWeightedDesc": "Izlaist kontus ar izsmeltu kvotu, pēc tam izvēlēties no pārējiem proporcionāli atlikumam, dalot ar pašlaik apstrādāto pieprasījumu slodzi. Esošās sarunas paliek piesaistītas."
   },
   "costs": {
     "title": "Izmaksas",
@@ -6303,7 +6305,8 @@
       "kiro": "Bezmaksas plāns: 50 kredīti/mēnesī (~25K–100K žetoni). ⚠️ Kiro pakalpojuma sniegšanas noteikumi aizliedz trešo pušu proxy/harness lietošanu.",
       "codex": "Savienojiet OpenAI Codex, izmantojot esošo OAuth plūsmu.",
       "qwen": "Savienojiet Qwen Code, izmantojot esošo OAuth plūsmu.",
-      "github-models": "Izveidojiet GitHub PAT ar 'models: read' tvērumu vietnē github.com/settings/tokens"
+      "github-models": "Izveidojiet GitHub PAT ar 'models: read' tvērumu vietnē github.com/settings/tokens",
+      "seekai": "Izveidojiet API atslēgu vietnē https://seekai.cc un pēc tam ielīmējiet to šeit kā Bearer pilnvaru. Ar OpenAI saderīgs pamata URL: https://seekai.cc/v1."
     },
     "passthroughModelsDescription": "{provider} pieņem sniedzēja pamatnes modeļu ID. Importējiet no /models vai pievienojiet pielāgotus ID maršrutēšanai.",
     "bedrockModelsDescription": "Amazon Bedrock modeļi ir ierobežoti pēc AWS reģiona. Importējiet no /models vai pievienojiet Bedrock modeļu ID, kas ir iespējoti izvēlētajā reģionā.",
@@ -6461,7 +6464,14 @@
     "savedModelEndpointSettings": "Modeļa galapunkta iestatījumi saglabāti",
     "searchByModelAria": "Meklēt pēc modeļa",
     "selectSupportedEndpoint": "Izvēlieties vismaz vienu atbalstītu galapunktu",
-    "antigravityClientProfileHarness": "Harness / CLI"
+    "antigravityClientProfileHarness": "Harness / CLI",
+    "importFromFileDownloadTemplate": "Lejupielādēt CSV veidni",
+    "importFromFileMoreErrors": "+vēl {count}",
+    "importFromFileSchemaHint": "CSV kolonnas ir pozicionālas: provider, name, apiKey, baseUrl (neobligāts), priority (neobligāts). Kolonnā provider jānorāda esoša pārvaldīta pakalpojumu sniedzēja ID vai jau reģistrēta ar OpenAI/Anthropic saderīga mezgla ID — šis imports neveido jaunus galapunktu mezglus.",
+    "dailyQuotaResetTimezoneLabel": "Dienas kvotas atiestatīšanas laika josla",
+    "dailyQuotaResetTimezoneHint": "Neobligāta IANA laika josla, ko izmanto, ja augšupstraumes pakalpojums nenorāda X-RateLimit-Reset. Atstājiet tukšu, lai saglabātu īsu nogaidīšanas periodu.",
+    "dailyQuotaResetHourLabel": "Dienas kvotas atiestatīšanas stunda",
+    "dailyQuotaResetHourHint": "Vietējā stunda no 0 līdz 23 iepriekš norādītajā laika joslā. Tukšs lauks nozīmē, ka mezgla līmeņa pulkstenis netiek izmantots."
   },
   "settings": {
     "title": "Iestatījumi",
@@ -8340,7 +8350,25 @@
     "cliproxyapiHealth": "Veselība",
     "cliproxyapiPort": "Ports",
     "qdrantHost": "Resursdators",
-    "qdrantCollection": "Kolekcija"
+    "qdrantCollection": "Kolekcija",
+    "quotaWeighted": "Kvotas svērts",
+    "quotaWeightedDesc": "Izlaist kontus ar izsmeltu kvotu, pēc tam izvēlēties no pārējiem proporcionāli atlikumam, dalot ar pašlaik apstrādāto pieprasījumu slodzi. Esošās sarunas paliek piesaistītas.",
+    "compressionAdaptiveMode": "Adaptīvs konteksta budžets",
+    "compressionAdaptiveModeOff": "Izslēgts (mantotā automātiskā aktivizēšana)",
+    "compressionAdaptiveModeFloor": "Minimums (vienmēr garantēt ietilpšanu)",
+    "compressionAdaptiveModeReplace": "Aizstāt automātisko aktivizēšanu",
+    "compressionAdaptivePolicy": "Budžeta politika",
+    "compressionAdaptivePolicyReserve": "Rezervēt izvadei",
+    "compressionAdaptivePolicyPercentage": "Konteksta loga procentuālā daļa",
+    "compressionAdaptivePolicyAbsolute": "Absolūtais tokenu budžets",
+    "headroomProxyTitle": "Headroom starpniekserveris",
+    "headroomProxyDesc": "Neobligātā Headroom tokenu taupīšanas starpniekservera URL. Ja lauks ir tukšs, tiek izmantots HEADROOM_URL vai http://localhost:8787.",
+    "headroomProxyUrl": "Headroom URL",
+    "headroomProxyUrlHint": "Atgriezeniskās cilpas URL var palaist no šīs lapas. Ārējie URL tiek tikai pārbaudīti.",
+    "headroomProxySave": "Saglabāt",
+    "headroomProxyStart": "Sākt",
+    "headroomProxyStop": "Apturēt",
+    "headroomProxyExternalHint": "Šis nav atgriezeniskās cilpas URL, tāpēc OmniRoute nepalaidīs lokālo CLI."
   },
   "contextRtk": {
     "title": "RTK dzinējs",
@@ -11381,8 +11409,8 @@
       "detailedPayloadInfo": "Vispirms iespējojiet detalizētu žurnalēšanu, ja vēlaties četru posmu klienta/nodrošinātāja derīgās slodzes skatu jauniem pieprasījumiem.",
       "copyAll": "Kopēt visu",
       "copiedAll": "Viss nokopēts",
-      "rawViewOn": "__MISSING__:Raw view: on",
-      "rawViewOff": "__MISSING__:Raw view: off"
+      "rawViewOn": "Neapstrādātais skats: ieslēgts",
+      "rawViewOff": "Neapstrādātais skats: izslēgts"
     }
   },
   "proxyLogger": {
@@ -12980,6 +13008,10 @@
       },
       "SKILLS_SANDBOX_NETWORK_ENABLED": {
         "description": "Iespējot tīkla piekļuvi prasmju smilškastē."
+      },
+      "SERVER_OWNED_TOOL_LOOP_ENABLED": {
+        "label": "Servera pārvaldīta rīku izsaukumu cilpa",
+        "description": "Turpināt servera pārvaldītos rīku izsaukumus bez straumēšanas, līdz modelis atgriež klientam izmantojamu atbildi."
       }
     }
   },
@@ -13145,7 +13177,8 @@
       "ok": "Parasti pieļaujams"
     },
     "allProviders": "Visi pakalpojumu sniedzēji",
-    "noApiKeyRequired": "API atslēga nav nepieciešama"
+    "noApiKeyRequired": "API atslēga nav nepieciešama",
+    "gated": "Vēl aptuveni {tokens}/mēn. aiz reģionālās identitātes pārbaudes (piem., kontinentālās Ķīnas īstā vārda verifikācijas) — reāla kvota, kas nav iekļauta virsrakstā:"
   },
   "providerHealthAutopilot": {
     "title": "Pakalpojumu sniedzēju darbspējas autopilots",
@@ -13438,7 +13471,10 @@
     "localStateSaveFailed": "Neizdevās saglabāt vietējos Radar iestatījumus",
     "guidedCombos": "Ieteiktās kombinācijas",
     "offers": "Piedāvājumi",
-    "intel": "Informācija"
+    "intel": "Informācija",
+    "limitsUnknownHelp": "Ierobežojumi norādīti tikai Radar plūsmā; šim ierakstam nav publicētu ierobežojumu",
+    "contextUnknownHelp": "Šī ieraksta konteksta logs nav zināms",
+    "capabilityUnknownHelp": "Plūsma neziņo par šo iespēju"
   },
   "radarCombosPage": {
     "title": "Radar ieteiktās kombinācijas",
@@ -14006,7 +14042,23 @@
     "actionDone": "Darbība izpildīta",
     "actionFailed": "Darbība neizdevās: {error}",
     "detailFailed": "Neizdevās ielādēt detalizētu informāciju: {error}",
-    "mirroredInA2A": "Atspoguļots A2A"
+    "mirroredInA2A": "Atspoguļots A2A",
+    "compareMode": "Salīdzināt izpildes",
+    "compareExit": "Iziet no salīdzināšanas režīma",
+    "compareHint": "Atlasiet divas izpildes salīdzināšanai",
+    "compareTitle": "Salīdzinājums",
+    "compareDetailFailed": "Neizdevās ielādēt šīs izpildes informāciju",
+    "compareDifferentIdentity": "Dažādi avoti vai prasmes — atšķirības ir informatīvas",
+    "compareDuration": "Ilgums",
+    "compareCost": "Izmaksas",
+    "compareEvents": "Notikumi",
+    "compareDeltaLegend": "Δ labā − kreisā",
+    "noMatches": "Neviena izpilde neatbilst šiem filtriem",
+    "drawerMemory": "Izmantotā atmiņa",
+    "actionRepeat": "Atkārtot",
+    "repeatConfirm": "Noklikšķiniet vēlreiz, lai apstiprinātu",
+    "repeatDone": "Izveidota jauna izpilde",
+    "repeatUnavailable": "Sākotnējā ievade nav pieejama"
   },
   "cliproxyProviderExposure": {
     "title": "Pakalpojumu sniedzēju eksponēšana",

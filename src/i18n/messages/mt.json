@@ -3776,7 +3776,9 @@
     "duplicateAutoComboSnapshotMsg": "Dan se jieħu stampa tal-fornituri/mudelli konnessi bħalissa li jaqblu ma’ dan il-mudell u joħloq kombinazzjoni li tista’ tiġi editjata.",
     "duplicateAutoComboFailedPrefix": "Ma rnexxiex id-duplikazzjoni tal-kombinazzjoni awtomatika:",
     "duplicateAutoComboUnknownError": "Żball mhux magħruf",
-    "duplicateAutoComboTitle": "Oħloq kombinazzjoni statika minn {name}"
+    "duplicateAutoComboTitle": "Oħloq kombinazzjoni statika minn {name}",
+    "quotaWeighted": "Peżat skont il-kwota",
+    "quotaWeightedDesc": "Aqbeż il-kontijiet li eżawrew il-kwota, imbagħad agħżel minn fost il-bqija proporzjonalment għall-kwota li fadal, diviża bit-tagħbija li tkun għaddejja. Il-konverżazzjonijiet eżistenti jibqgħu marbuta mal-istess kont."
   },
   "costs": {
     "title": "Spejjeż",
@@ -6303,7 +6305,8 @@
       "kiro": "Livell bla ħlas: 50 kreditu/xahar (~25K–100K token). ⚠️ It-Termini tas-Servizz ta’ Kiro jipprojbixxu l-użu ta’ proxy/harness ta’ parti terza.",
       "codex": "Qabbad OpenAI Codex mal-fluss OAuth eżistenti.",
       "qwen": "Qabbad Qwen Code mal-fluss OAuth eżistenti.",
-      "github-models": "Oħloq GitHub PAT bl-ambitu 'models: read' fuq github.com/settings/tokens"
+      "github-models": "Oħloq GitHub PAT bl-ambitu 'models: read' fuq github.com/settings/tokens",
+      "seekai": "Oħloq API key fuq https://seekai.cc, imbagħad waħħalha hawn bħala Bearer token. URL bażi kompatibbli ma’ OpenAI: https://seekai.cc/v1."
     },
     "passthroughModelsDescription": "{provider} jaċċetta IDs tal-mudelli nattivi għall-fornitur. Importa minn /models jew żid IDs personalizzati għar-routing.",
     "bedrockModelsDescription": "Il-mudelli ta’ Amazon Bedrock huma limitati skont ir-reġjun AWS. Importa minn /models jew żid IDs tal-mudelli Bedrock attivati fir-reġjun magħżul.",
@@ -6461,7 +6464,14 @@
     "savedModelEndpointSettings": "Is-settings tal-endpoint tal-mudell ġew issejvjati",
     "searchByModelAria": "Fittex skont il-mudell",
     "selectSupportedEndpoint": "Agħżel mill-inqas endpoint wieħed appoġġjat",
-    "antigravityClientProfileHarness": "Harness / CLI"
+    "antigravityClientProfileHarness": "Harness / CLI",
+    "importFromFileDownloadTemplate": "Niżżel il-mudell CSV",
+    "importFromFileMoreErrors": "+{count} oħra",
+    "importFromFileSchemaHint": "Il-kolonni CSV huma pożizzjonali: provider, name, apiKey, baseUrl (mhux obbligatorju), priority (mhux obbligatorju). Il-kolonna provider trid tkun id ta’ fornitur ġestit eżistenti jew id ta’ nodu diġà rreġistrat kompatibbli ma’ OpenAI/Anthropic — dan l-importazzjoni ma toħloqx nodi ġodda ta’ endpoint.",
+    "dailyQuotaResetTimezoneLabel": "Żona tal-ħin għar-risettjar tal-kwota ta’ kuljum",
+    "dailyQuotaResetTimezoneHint": "Żona tal-ħin IANA mhux obbligatorja li tintuża meta s-servizz upstream iħalli barra X-RateLimit-Reset. Ħalliha vojta biex iżżomm perjodu qasir ta’ stennija.",
+    "dailyQuotaResetHourLabel": "Siegħa tar-risettjar tal-kwota ta’ kuljum",
+    "dailyQuotaResetHourHint": "Siegħa lokali 0-23 fiż-żona tal-ħin t’hawn fuq. Jekk titħalla vojta, ma jkun hemm l-ebda arloġġ fil-livell tan-nodu."
   },
   "settings": {
     "title": "Issettjar",
@@ -8340,7 +8350,25 @@
     "cliproxyapiHealth": "Saħħa",
     "cliproxyapiPort": "Port",
     "qdrantHost": "Ospitant",
-    "qdrantCollection": "Kollezzjoni"
+    "qdrantCollection": "Kollezzjoni",
+    "quotaWeighted": "Peżat skont il-kwota",
+    "quotaWeightedDesc": "Aqbeż il-kontijiet li eżawrew il-kwota, imbagħad agħżel minn fost il-bqija proporzjonalment għall-kwota li fadal, diviża bit-tagħbija li tkun għaddejja. Il-konverżazzjonijiet eżistenti jibqgħu marbuta mal-istess kont.",
+    "compressionAdaptiveMode": "Baġit adattiv tal-kuntest",
+    "compressionAdaptiveModeOff": "Mitfi (attivazzjoni awtomatika antika)",
+    "compressionAdaptiveModeFloor": "Limitu minimu (dejjem jiggarantixxi li joqgħod)",
+    "compressionAdaptiveModeReplace": "Issostitwixxi l-attivazzjoni awtomatika",
+    "compressionAdaptivePolicy": "Politika tal-baġit",
+    "compressionAdaptivePolicyReserve": "Irriserva l-output",
+    "compressionAdaptivePolicyPercentage": "Perċentwal tat-tieqa",
+    "compressionAdaptivePolicyAbsolute": "Baġit assolut ta’ tokens",
+    "headroomProxyTitle": "Proxy Headroom",
+    "headroomProxyDesc": "URL tal-proxy mhux obbligatorju Headroom li jiffranka t-tokens. Jekk jitħalla vojt, jintuża HEADROOM_URL jew http://localhost:8787.",
+    "headroomProxyUrl": "URL ta’ Headroom",
+    "headroomProxyUrlHint": "URLs ta’ loopback jistgħu jinbdew minn din il-paġna. URLs esterni jiġu ttestjati biss.",
+    "headroomProxySave": "Issejvja",
+    "headroomProxyStart": "Ibda",
+    "headroomProxyStop": "Waqqaf",
+    "headroomProxyExternalHint": "Dan il-URL mhuwiex loopback, għalhekk OmniRoute mhux se jħaddem is-CLI lokali."
   },
   "contextRtk": {
     "title": "Magna RTK",
@@ -11381,8 +11409,8 @@
       "detailedPayloadInfo": "L-ewwel attiva r-reġistrazzjoni dettaljata jekk trid id-dehra tal-payload tal-klijent/fornitur f'erba' stadji għal talbiet ġodda.",
       "copyAll": "Ikkopja kollox",
       "copiedAll": "Kollox ġie kkupjat",
-      "rawViewOn": "__MISSING__:Raw view: on",
-      "rawViewOff": "__MISSING__:Raw view: off"
+      "rawViewOn": "Dehra mhux ipproċessata: mixgħula",
+      "rawViewOff": "Dehra mhux ipproċessata: mitfija"
     }
   },
   "proxyLogger": {
@@ -12980,6 +13008,10 @@
       },
       "SKILLS_SANDBOX_NETWORK_ENABLED": {
         "description": "Ippermetti l-aċċess għan-network fis-sandbox tal-ħiliet."
+      },
+      "SERVER_OWNED_TOOL_LOOP_ENABLED": {
+        "label": "Ċiklu tal-Għodod Immexxi mis-Server",
+        "description": "Kompli s-sejħiet mhux streaming tal-għodod immexxija mis-server sakemm il-mudell jirritorna tweġiba li tista’ tintuża mill-klijent."
       }
     }
   },
@@ -13145,7 +13177,8 @@
       "ok": "Ġeneralment permissiv"
     },
     "allProviders": "Il-fornituri kollha",
-    "noApiKeyRequired": "Ma hija meħtieġa l-ebda ċavetta tal-API"
+    "noApiKeyRequired": "Ma hija meħtieġa l-ebda ċavetta tal-API",
+    "gated": "~{tokens}/xahar oħra wara verifika reġjonali tal-identità (eż. verifika tal-isem reali fiċ-Ċina kontinentali) — kwota reali, mhux inkluża fiċ-ċifra ewlenija:"
   },
   "providerHealthAutopilot": {
     "title": "Awtopilota tas-Saħħa tal-Fornituri",
@@ -13438,7 +13471,10 @@
     "localStateSaveFailed": "Ma rnexxilux jiġi ssejvjat l-issettjar lokali ta' Radar",
     "guidedCombos": "Kombinazzjonijiet iggwidati",
     "offers": "Offerti",
-    "intel": "Informazzjoni"
+    "intel": "Informazzjoni",
+    "limitsUnknownHelp": "Limiti rrappurtati biss mill-feed Radar; m’hemm l-ebda limitu ppubblikat għal din l-entrata",
+    "contextUnknownHelp": "It-tieqa tal-kuntest mhix magħrufa għal din l-entrata",
+    "capabilityUnknownHelp": "Il-kapaċità ma ġietx irrappurtata mill-feed"
   },
   "radarCombosPage": {
     "title": "Kombinazzjonijiet iggwidati minn Radar",
@@ -14006,7 +14042,23 @@
     "actionDone": "Azzjoni applikata",
     "actionFailed": "L-azzjoni falliet: {error}",
     "detailFailed": "Ma rnexxiex jittella' d-dettalji: {error}",
-    "mirroredInA2A": "Rifless f'A2A"
+    "mirroredInA2A": "Rifless f'A2A",
+    "compareMode": "Qabbel it-tħaddim",
+    "compareExit": "Oħroġ mill-modalità ta’ tqabbil",
+    "compareHint": "Agħżel żewġ tħaddimiet biex tqabbel",
+    "compareTitle": "Tqabbil",
+    "compareDetailFailed": "Ma setgħux jitniżżlu d-dettalji ta’ dan it-tħaddim",
+    "compareDifferentIdentity": "Sorsi jew ħiliet differenti — id-differenzi huma informattivi",
+    "compareDuration": "Tul",
+    "compareCost": "Spiża",
+    "compareEvents": "Avvenimenti",
+    "compareDeltaLegend": "Δ lemin − xellug",
+    "noMatches": "L-ebda tħaddim ma jaqbel ma’ dawn il-filtri",
+    "drawerMemory": "Memorja użata",
+    "actionRepeat": "Irrepeti",
+    "repeatConfirm": "Ikklikkja mill-ġdid biex tikkonferma",
+    "repeatDone": "Inħolqot eżekuzzjoni ġdida",
+    "repeatUnavailable": "L-input oriġinali mhuwiex disponibbli"
   },
   "cliproxyProviderExposure": {
     "title": "Espożizzjoni tal-Fornitur",

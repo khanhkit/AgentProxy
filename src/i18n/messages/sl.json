@@ -3776,7 +3776,9 @@
     "duplicateAutoComboSnapshotMsg": "S tem boste trenutno povezane ponudnike/modele, ki se ujemajo s to predlogo, zajeli v kombinacijo, ki jo je mogoče urejati.",
     "duplicateAutoComboFailedPrefix": "Podvajanje samodejne kombinacije ni uspelo:",
     "duplicateAutoComboUnknownError": "Neznana napaka",
-    "duplicateAutoComboTitle": "Ustvari statično kombinacijo iz {name}"
+    "duplicateAutoComboTitle": "Ustvari statično kombinacijo iz {name}",
+    "quotaWeighted": "Uteženo glede na kvoto",
+    "quotaWeightedDesc": "Preskoči račune z izčrpano kvoto, nato pa med preostalimi izbira sorazmerno s preostalo kvoto, deljeno s trenutno obremenitvijo. Obstoječi pogovori ostanejo pripeti."
   },
   "costs": {
     "title": "Stroški",
@@ -6303,7 +6305,8 @@
       "kiro": "Brezplačna raven: 50 dobroimetij/mesec (~25.000–100.000 žetonov). ⚠️ Pogoji uporabe storitve Kiro prepovedujejo uporabo posrednikov ali ogrodij tretjih oseb.",
       "codex": "Povežite OpenAI Codex z obstoječim postopkom OAuth.",
       "qwen": "Povežite Qwen Code z obstoječim postopkom OAuth.",
-      "github-models": "Ustvarite GitHub PAT z obsegom »models: read« na github.com/settings/tokens"
+      "github-models": "Ustvarite GitHub PAT z obsegom »models: read« na github.com/settings/tokens",
+      "seekai": "Ustvarite ključ API na https://seekai.cc, nato pa ga sem prilepite kot žeton Bearer. Osnovni URL, združljiv z OpenAI: https://seekai.cc/v1."
     },
     "passthroughModelsDescription": "{provider} sprejema izvorne ID-je modelov ponudnika. Uvozite jih iz /models ali dodajte ID-je po meri za usmerjanje.",
     "bedrockModelsDescription": "Modeli Amazon Bedrock so omejeni na regijo AWS. Uvozite jih iz /models ali dodajte ID-je modelov Bedrock, omogočene v izbrani regiji.",
@@ -6461,7 +6464,14 @@
     "savedModelEndpointSettings": "Nastavitve končne točke modela so shranjene",
     "searchByModelAria": "Iskanje po modelu",
     "selectSupportedEndpoint": "Izberite vsaj eno podprto končno točko",
-    "antigravityClientProfileHarness": "Ogrodje / CLI"
+    "antigravityClientProfileHarness": "Ogrodje / CLI",
+    "importFromFileDownloadTemplate": "Prenesi predlogo CSV",
+    "importFromFileMoreErrors": "+{count} več",
+    "importFromFileSchemaHint": "Stolpci CSV so določeni položajno: provider, name, apiKey, baseUrl (izbirno), priority (izbirno). Stolpec provider mora vsebovati ID obstoječega upravljanega ponudnika ali že registriran ID vozlišča, združljivega z OpenAI/Anthropic — ta uvoz ne ustvari novih vozlišč končnih točk.",
+    "dailyQuotaResetTimezoneLabel": "Časovni pas dnevne ponastavitve kvote",
+    "dailyQuotaResetTimezoneHint": "Izbirni časovni pas IANA, uporabljen, kadar nadrejena storitev izpusti X-RateLimit-Reset. Pustite prazno, da ohranite kratko obdobje čakanja.",
+    "dailyQuotaResetHourLabel": "Ura dnevne ponastavitve kvote",
+    "dailyQuotaResetHourHint": "Lokalna ura od 0 do 23 v zgornjem časovnem pasu. Prazno pomeni, da ni ure na ravni vozlišča."
   },
   "settings": {
     "title": "Nastavitve",
@@ -8340,7 +8350,25 @@
     "cliproxyapiHealth": "Stanje",
     "cliproxyapiPort": "Vrata",
     "qdrantHost": "Gostitelj",
-    "qdrantCollection": "Zbirka"
+    "qdrantCollection": "Zbirka",
+    "quotaWeighted": "Uteženo glede na kvoto",
+    "quotaWeightedDesc": "Preskoči račune z izčrpano kvoto, nato pa med preostalimi izbira sorazmerno s preostalo kvoto, deljeno s trenutno obremenitvijo. Obstoječi pogovori ostanejo pripeti.",
+    "compressionAdaptiveMode": "Prilagodljivi proračun konteksta",
+    "compressionAdaptiveModeOff": "Izklopljeno (starejše samodejno sprožanje)",
+    "compressionAdaptiveModeFloor": "Spodnja meja (vedno zagotovi prileganje)",
+    "compressionAdaptiveModeReplace": "Zamenjaj samodejno sprožanje",
+    "compressionAdaptivePolicy": "Pravilnik proračuna",
+    "compressionAdaptivePolicyReserve": "Rezerviraj izhod",
+    "compressionAdaptivePolicyPercentage": "Odstotek kontekstnega okna",
+    "compressionAdaptivePolicyAbsolute": "Absolutni proračun žetonov",
+    "headroomProxyTitle": "Posredniški strežnik Headroom",
+    "headroomProxyDesc": "URL izbirnega posredniškega strežnika Headroom za varčevanje z žetoni. Če je prazno, se uporabi HEADROOM_URL ali http://localhost:8787.",
+    "headroomProxyUrl": "URL storitve Headroom",
+    "headroomProxyUrlHint": "Povratne naslove URL je mogoče zagnati s te strani. Zunanji naslovi URL se samo preverijo.",
+    "headroomProxySave": "Shrani",
+    "headroomProxyStart": "Zaženi",
+    "headroomProxyStop": "Ustavi",
+    "headroomProxyExternalHint": "Ta URL ni povratni naslov, zato OmniRoute ne bo zagnal lokalnega CLI-ja."
   },
   "contextRtk": {
     "title": "Pogon RTK",
@@ -11381,8 +11409,8 @@
       "detailedPayloadInfo": "Najprej omogočite podrobno beleženje, če želite štiristopenjski pogled vsebine odjemalca/ponudnika za nove zahteve.",
       "copyAll": "Kopiraj vse",
       "copiedAll": "Vse kopirano",
-      "rawViewOn": "__MISSING__:Raw view: on",
-      "rawViewOff": "__MISSING__:Raw view: off"
+      "rawViewOn": "Neobdelani prikaz: vklopljen",
+      "rawViewOff": "Neobdelani prikaz: izklopljen"
     }
   },
   "proxyLogger": {
@@ -12980,6 +13008,10 @@
       },
       "SKILLS_SANDBOX_NETWORK_ENABLED": {
         "description": "Omogoči omrežni dostop v peskovniku spretnosti."
+      },
+      "SERVER_OWNED_TOOL_LOOP_ENABLED": {
+        "label": "Strežniško upravljana zanka orodij",
+        "description": "Nadaljuj nestreamne strežniško upravljane klice orodij, dokler model ne vrne odziva, uporabnega za odjemalca."
       }
     }
   },
@@ -13145,7 +13177,8 @@
       "ok": "Na splošno dovoljeno"
     },
     "allProviders": "Vsi ponudniki",
-    "noApiKeyRequired": "Ključ API ni potreben"
+    "noApiKeyRequired": "Ključ API ni potreben",
+    "gated": "Še približno {tokens}/mesec za regionalnim preverjanjem identitete (npr. preverjanjem pravega imena na celinski Kitajski) — dejanska kvota, ki ni vključena v navedeno glavno vrednost:"
   },
   "providerHealthAutopilot": {
     "title": "Avtopilot za stanje ponudnikov",
@@ -13438,7 +13471,10 @@
     "localStateSaveFailed": "Lokalnih nastavitev Radar ni bilo mogoče shraniti",
     "guidedCombos": "Vodene kombinacije",
     "offers": "Ponudbe",
-    "intel": "Informacije"
+    "intel": "Informacije",
+    "limitsUnknownHelp": "Omejitve sporoča samo vir Radar; za ta vnos ni objavljenih omejitev",
+    "contextUnknownHelp": "Kontekstno okno za ta vnos ni znano",
+    "capabilityUnknownHelp": "Vir ne poroča o tej zmogljivosti"
   },
   "radarCombosPage": {
     "title": "Vodene kombinacije Radar",
@@ -14006,7 +14042,23 @@
     "actionDone": "Dejanje je bilo izvedeno",
     "actionFailed": "Dejanje ni uspelo: {error}",
     "detailFailed": "Podrobnosti ni bilo mogoče naložiti: {error}",
-    "mirroredInA2A": "Zrcaljeno v A2A"
+    "mirroredInA2A": "Zrcaljeno v A2A",
+    "compareMode": "Primerjaj izvajanja",
+    "compareExit": "Izhod iz načina primerjave",
+    "compareHint": "Izberite dve izvajanji za primerjavo",
+    "compareTitle": "Primerjava",
+    "compareDetailFailed": "Podrobnosti tega izvajanja ni bilo mogoče naložiti",
+    "compareDifferentIdentity": "Različni viri ali zmožnosti — razlike so informativne",
+    "compareDuration": "Trajanje",
+    "compareCost": "Strošek",
+    "compareEvents": "Dogodki",
+    "compareDeltaLegend": "Δ desno − levo",
+    "noMatches": "Nobeno izvajanje ne ustreza tem filtrom",
+    "drawerMemory": "Uporabljen pomnilnik",
+    "actionRepeat": "Ponovi",
+    "repeatConfirm": "Za potrditev kliknite znova",
+    "repeatDone": "Ustvarjen je bil nov zagon",
+    "repeatUnavailable": "Izvirni vnos ni na voljo"
   },
   "cliproxyProviderExposure": {
     "title": "Dostopnost ponudnika",

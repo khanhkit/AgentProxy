@@ -3776,7 +3776,9 @@
     "duplicateAutoComboSnapshotMsg": "Tai užfiksuos šiuo metu prijungtus teikėjus/modelius, atitinkančius šį šabloną, redaguojamame kombo.",
     "duplicateAutoComboFailedPrefix": "Nepavyko dubliuoti automatinio kombo:",
     "duplicateAutoComboUnknownError": "Nežinoma klaida",
-    "duplicateAutoComboTitle": "Sukurti statinį kombo iš {name}"
+    "duplicateAutoComboTitle": "Sukurti statinį kombo iš {name}",
+    "quotaWeighted": "Pagal kvotos svorį",
+    "quotaWeightedDesc": "Praleisti paskyras, kurių kvota išnaudota, tada iš likusių rinktis proporcingai likučio ir vykdomos apkrovos santykiui. Esami pokalbiai lieka susieti."
   },
   "costs": {
     "title": "Išlaidos",
@@ -6303,7 +6305,8 @@
       "kiro": "Nemokamas planas: 50 kreditų per mėnesį (~25K–100K žetonų). ⚠️ Kiro ToS draudžia naudoti trečiųjų šalių tarpinius serverius ar valdymo įrankius.",
       "codex": "Prijunkite OpenAI Codex naudodami esamą OAuth procesą.",
       "qwen": "Prijunkite Qwen Code naudodami esamą OAuth procesą.",
-      "github-models": "Sukurkite GitHub PAT su „models: read“ aprėptimi adresu github.com/settings/tokens"
+      "github-models": "Sukurkite GitHub PAT su „models: read“ aprėptimi adresu github.com/settings/tokens",
+      "seekai": "Sukurkite API raktą adresu https://seekai.cc, tada įklijuokite jį čia kaip Bearer prieigos raktą. Su OpenAI suderinamas bazinis URL: https://seekai.cc/v1."
     },
     "passthroughModelsDescription": "{provider} priima teikėjui būdingus modelių ID. Importuokite juos iš /models arba pridėkite pasirinktinius ID maršrutizavimui.",
     "bedrockModelsDescription": "Amazon Bedrock modeliai susieti su AWS regionu. Importuokite juos iš /models arba pridėkite pasirinktame regione įgalintų Bedrock modelių ID.",
@@ -6461,7 +6464,14 @@
     "savedModelEndpointSettings": "Modelio galinio taško nustatymai išsaugoti",
     "searchByModelAria": "Ieškoti pagal modelį",
     "selectSupportedEndpoint": "Pasirinkite bent vieną palaikomą galinį tašką",
-    "antigravityClientProfileHarness": "Testavimo aplinka / CLI"
+    "antigravityClientProfileHarness": "Testavimo aplinka / CLI",
+    "importFromFileDownloadTemplate": "Atsisiųsti CSV šabloną",
+    "importFromFileMoreErrors": "+ dar {count}",
+    "importFromFileSchemaHint": "CSV stulpelių tvarka yra fiksuota: provider, name, apiKey, baseUrl (pasirinktinis), priority (pasirinktinis). Stulpelyje provider turi būti esamo valdomo teikėjo ID arba jau užregistruoto su OpenAI/Anthropic suderinamo mazgo ID — šis importavimas nekuria naujų galinių taškų mazgų.",
+    "dailyQuotaResetTimezoneLabel": "Dienos kvotos nustatymo iš naujo laiko juosta",
+    "dailyQuotaResetTimezoneHint": "Pasirinktinė IANA laiko juosta, naudojama, kai išorinis šaltinis nepateikia X-RateLimit-Reset. Palikite tuščią, kad būtų taikomas trumpas atvėsimo laikotarpis.",
+    "dailyQuotaResetHourLabel": "Dienos kvotos nustatymo iš naujo valanda",
+    "dailyQuotaResetHourHint": "Vietinė valanda nuo 0 iki 23 pirmiau nurodytoje laiko juostoje. Tuščia reikšmė reiškia, kad mazgo lygmens laikrodis nenaudojamas."
   },
   "settings": {
     "title": "Nustatymai",
@@ -8340,7 +8350,25 @@
     "cliproxyapiHealth": "Būsena",
     "cliproxyapiPort": "Prievadas",
     "qdrantHost": "Pagrindinis kompiuteris",
-    "qdrantCollection": "Rinkinys"
+    "qdrantCollection": "Rinkinys",
+    "quotaWeighted": "Pagal kvotos svorį",
+    "quotaWeightedDesc": "Praleisti paskyras, kurių kvota išnaudota, tada iš likusių rinktis proporcingai likučio ir vykdomos apkrovos santykiui. Esami pokalbiai lieka susieti.",
+    "compressionAdaptiveMode": "Adaptyvus konteksto biudžetas",
+    "compressionAdaptiveModeOff": "Išjungta (senasis automatinis aktyvinimas)",
+    "compressionAdaptiveModeFloor": "Apatinė riba (visada užtikrinti, kad tilptų)",
+    "compressionAdaptiveModeReplace": "Pakeisti automatinį aktyvinimą",
+    "compressionAdaptivePolicy": "Biudžeto politika",
+    "compressionAdaptivePolicyReserve": "Rezervuoti išvesčiai",
+    "compressionAdaptivePolicyPercentage": "Konteksto lango procentinė dalis",
+    "compressionAdaptivePolicyAbsolute": "Absoliutus žetonų biudžetas",
+    "headroomProxyTitle": "Headroom tarpinis serveris",
+    "headroomProxyDesc": "Pasirinktinio Headroom žetonus taupančio tarpinio serverio URL. Jei laukas tuščias, naudojamas HEADROOM_URL arba http://localhost:8787.",
+    "headroomProxyUrl": "Headroom URL",
+    "headroomProxyUrlHint": "Vietinius URL galima paleisti šiame puslapyje. Išoriniai URL tik tikrinami.",
+    "headroomProxySave": "Išsaugoti",
+    "headroomProxyStart": "Paleisti",
+    "headroomProxyStop": "Sustabdyti",
+    "headroomProxyExternalHint": "Šis URL nėra vietinis, todėl OmniRoute nepaleis vietinės CLI."
   },
   "contextRtk": {
     "title": "RTK variklis",
@@ -11381,8 +11409,8 @@
       "detailedPayloadInfo": "Jei norite naujoms užklausoms matyti keturių etapų kliento ir teikėjo turinio rodinį, pirmiausia įjunkite išsamų registravimą.",
       "copyAll": "Kopijuoti viską",
       "copiedAll": "Viskas nukopijuota",
-      "rawViewOn": "__MISSING__:Raw view: on",
-      "rawViewOff": "__MISSING__:Raw view: off"
+      "rawViewOn": "Neapdorotų duomenų rodinys: įjungtas",
+      "rawViewOff": "Neapdorotų duomenų rodinys: išjungtas"
     }
   },
   "proxyLogger": {
@@ -12980,6 +13008,10 @@
       },
       "SKILLS_SANDBOX_NETWORK_ENABLED": {
         "description": "Įjungti tinklo prieigą įgūdžių smėlio dėžėje."
+      },
+      "SERVER_OWNED_TOOL_LOOP_ENABLED": {
+        "label": "Serverio valdomas įrankių ciklas",
+        "description": "Tęsti serverio valdomus nesrautinius įrankių iškvietimus, kol modelis pateiks klientui tinkamą atsakymą."
       }
     }
   },
@@ -13145,7 +13177,8 @@
       "ok": "Paprastai leidžiama"
     },
     "allProviders": "Visi teikėjai",
-    "noApiKeyRequired": "API rakto nereikia"
+    "noApiKeyRequired": "API rakto nereikia",
+    "gated": "Dar ~{tokens}/mo po regioninės tapatybės patikros (pvz., tikrojo vardo patvirtinimo žemyninėje Kinijoje) — tai reali kvota, neįtraukta į antraštėje nurodytą skaičių:"
   },
   "providerHealthAutopilot": {
     "title": "Teikėjų būklės autopilotas",
@@ -13438,7 +13471,10 @@
     "localStateSaveFailed": "Nepavyko išsaugoti vietinių Radar nustatymų",
     "guidedCombos": "Rekomenduojami deriniai",
     "offers": "Pasiūlymai",
-    "intel": "Informacija"
+    "intel": "Informacija",
+    "limitsUnknownHelp": "Ribos pateiktos tik Radar sraute; šiam įrašui nepaskelbta jokių ribų",
+    "contextUnknownHelp": "Šio įrašo konteksto langas nežinomas",
+    "capabilityUnknownHelp": "Galimybė nepateikta duomenų sraute"
   },
   "radarCombosPage": {
     "title": "Radar rekomenduojami deriniai",
@@ -14006,7 +14042,23 @@
     "actionDone": "Veiksmas pritaikytas",
     "actionFailed": "Veiksmas nepavyko: {error}",
     "detailFailed": "Nepavyko įkelti išsamios informacijos: {error}",
-    "mirroredInA2A": "Dubliuojama A2A sistemoje"
+    "mirroredInA2A": "Dubliuojama A2A sistemoje",
+    "compareMode": "Palyginti vykdymus",
+    "compareExit": "Išeiti iš palyginimo režimo",
+    "compareHint": "Pasirinkite du vykdymus palyginimui",
+    "compareTitle": "Palyginimas",
+    "compareDetailFailed": "Nepavyko įkelti šio vykdymo informacijos",
+    "compareDifferentIdentity": "Skirtingi šaltiniai arba gebėjimai — skirtumai yra informaciniai",
+    "compareDuration": "Trukmė",
+    "compareCost": "Kaina",
+    "compareEvents": "Įvykiai",
+    "compareDeltaLegend": "Δ dešinė − kairė",
+    "noMatches": "Nė vienas vykdymas neatitinka šių filtrų",
+    "drawerMemory": "Naudojama atmintis",
+    "actionRepeat": "Pakartoti",
+    "repeatConfirm": "Spustelėkite dar kartą, kad patvirtintumėte",
+    "repeatDone": "Sukurtas naujas vykdymas",
+    "repeatUnavailable": "Pradinė įvestis nepasiekiama"
   },
   "cliproxyProviderExposure": {
     "title": "Teikėjo prieinamumas",
