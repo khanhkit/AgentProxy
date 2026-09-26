@@ -173,3 +173,35 @@ test("virtual auto-combo pool filters EVERY provider with partial sync, not just
     "kilocode pool must contain exactly the two synced models"
   );
 });
+
+test("virtual auto-combo pool survives a malformed customModels row", async () => {
+  const conn = await providersDb.createProviderConnection({
+    provider: "openai",
+    authType: "apikey",
+    name: "OpenAI",
+    apiKey: "sk-test-openai",
+  });
+  const connectionId = (conn as { id?: string }).id;
+  await modelsDb.replaceSyncedAvailableModelsForConnection("openai", connectionId, [
+    { id: "gpt-4o-mini", name: "GPT-4o mini", source: "imported" as const },
+  ]);
+  core
+    .getDbInstance()
+    .prepare("INSERT OR REPLACE INTO key_value (namespace, key, value) VALUES (?, ?, ?)")
+    .run(
+      "customModels",
+      "openai",
+      JSON.stringify([null, "not-an-object", { name: "Missing Id" }, { id: "operator-custom" }])
+    );
+
+  const prepared = await virtualFactory.prepareVirtualAutoComboInputs();
+  const openaiCandidates = prepared.regularCandidates.filter((c) => c.provider === "openai");
+  assert.ok(
+    openaiCandidates.some((c) => c.model === "gpt-4o-mini"),
+    "the synced model must still reach the pool despite malformed custom rows"
+  );
+  assert.ok(
+    openaiCandidates.some((c) => c.model === "operator-custom"),
+    "the well-formed custom row must still reach the pool"
+  );
+});

@@ -680,15 +680,15 @@ export async function prepareVirtualAutoComboInputs(
       .filter(Boolean);
     const hiddenModels = hiddenModelsMap.get(providerId);
 
-    // #auto-pool-visible-only: build the credentialed pool from the models the user
-    // actually has available (synced + custom non-hidden) when any exist, falling
-    // back to the static catalog only when the user has none. This keeps catalog-only
-    // models (e.g. openrouter/auto) out of every auto/* pool when the operator only
-    // synced a subset (e.g. OpenRouter with importFreeModelsOnly).
-    const [syncedByConnection, customModels] = await Promise.all([
+    // Prefer user-visible synced/custom models; otherwise fall back to the static catalog.
+    const [syncedByConnection, rawCustomModels] = await Promise.all([
       getSyncedAvailableModelsByConnection(providerId),
       getCustomModels(providerId),
     ]);
+    const customModels = (Array.isArray(rawCustomModels) ? rawCustomModels : []).filter(
+      (model: unknown): model is { id?: string } =>
+        !!model && typeof model === "object" && !Array.isArray(model)
+    );
     const userVisibleIds = new Set<string>();
     for (const models of Object.values(syncedByConnection)) {
       for (const m of models) if (m.id && !hiddenModels?.has(m.id)) userVisibleIds.add(m.id);
