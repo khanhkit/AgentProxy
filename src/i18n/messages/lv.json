@@ -10928,7 +10928,7 @@
     "poolNoMembers": "Šajā kopā vēl nav starpniekserveru.",
     "poolRemove": "Noņemt",
     "poolRemoveFailed": "Neizdevās noņemt starpniekserveri no kopas",
-    "poolAddLabel": "Pievienot proksi",
+    "poolAddLabel": "Pievienot starpniekserveri",
     "poolAddMember": "Pievienot",
     "poolAddFailed": "Neizdevās pievienot proksi kopumam",
     "poolSelectProxy": "Izvēlieties proksi…",

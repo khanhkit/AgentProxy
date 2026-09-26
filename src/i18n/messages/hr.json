@@ -10927,7 +10927,7 @@
     "poolMembersLabel": "Članovi poola ({count})",
     "poolNoMembers": "Još nema proxyja u ovom poolu.",
     "poolRemove": "Ukloni",
-    "poolRemoveFailed": "Uklanjanje proxyja iz poola nije uspjelo",
+    "poolRemoveFailed": "Uklanjanje proxyja iz skupa nije uspjelo",
     "poolAddLabel": "Dodaj proxy",
     "poolAddMember": "Dodaj",
     "poolAddFailed": "Dodavanje proxyja u skup nije uspjelo",

@@ -10927,7 +10927,7 @@
     "poolMembersLabel": "Μέλη pool ({count})",
     "poolNoMembers": "Δεν υπάρχουν ακόμα proxy σε αυτό το pool.",
     "poolRemove": "Αφαίρεση",
-    "poolRemoveFailed": "Αποτυχία αφαίρεσης του proxy από το pool",
+    "poolRemoveFailed": "Αποτυχία αφαίρεσης του διακομιστή μεσολάβησης από την ομάδα",
     "poolAddLabel": "Προσθήκη διαμεσολαβητή",
     "poolAddMember": "Προσθήκη",
     "poolAddFailed": "Αποτυχία προσθήκης του διαμεσολαβητή στη δεξαμενή",
