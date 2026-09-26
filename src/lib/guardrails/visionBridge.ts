@@ -59,6 +59,10 @@ export async function getComboVisionBridgeDecision(
     // 1. Try to find combo by exact name match
     let combo = await getComboByName(model);
 
+    if (!combo && model.startsWith("combo/")) {
+      combo = await getComboByName(model.slice("combo/".length));
+    }
+
     // 2. If no exact match, try model-combo mapping
     if (!combo) {
       const mapping = await resolveComboForModel(model);
