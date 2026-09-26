@@ -5,11 +5,25 @@ import { QoderExecutor, __test__ } from "../../open-sse/executors/qoder.ts";
 
 const { unwrapQoderEnvelope } = __test__;
 
+type ErrorPayload = { error: { message: string; type?: string } };
+
 function sseResponse(body: string, status = 200): Response {
   return new Response(body, {
     status,
     headers: { "Content-Type": "text/event-stream" },
   });
+}
+
+function chunkedSseResponse(chunks: Uint8Array[]): Response {
+  return new Response(
+    new ReadableStream({
+      start(controller) {
+        for (const chunk of chunks) controller.enqueue(chunk);
+        controller.close();
+      },
+    }),
+    { headers: { "Content-Type": "text/event-stream" } }
+  );
 }
 
 test("unwrapQoderEnvelope: surfaces an embedded non-200 statusCodeValue as a real HTTP error", async () => {
@@ -22,7 +36,7 @@ test("unwrapQoderEnvelope: surfaces an embedded non-200 statusCodeValue as a rea
   const result = await unwrapQoderEnvelope(wrapped);
 
   assert.equal(result.status, 429, "embedded 429 must become a real HTTP 429");
-  const payload = (await result.json()) as any;
+  const payload = (await result.json()) as ErrorPayload;
   assert.match(payload.error.message, /qoder error 429/);
   assert.match(payload.error.message, /rate limit exceeded/);
 });
@@ -41,7 +55,7 @@ test("unwrapQoderEnvelope: classifies embedded 401 as an authentication_error", 
   const result = await unwrapQoderEnvelope(wrapped);
 
   assert.equal(result.status, 401);
-  const payload = (await result.json()) as any;
+  const payload = (await result.json()) as ErrorPayload;
   assert.equal(payload.error.type, "authentication_error");
 });
 
@@ -87,9 +101,36 @@ test("QoderExecutor: stream call surfaces an embedded error envelope as a real H
 
     // Before the port this was a 200 — fallback could never trigger.
     assert.equal(response.status, 429);
-    const payload = (await response.json()) as any;
+    const payload = (await response.json()) as ErrorPayload;
     assert.match(payload.error.message, /qoder error 429/);
   } finally {
     globalThis.fetch = originalFetch;
   }
+});
+
+test("unwrapQoderEnvelope: detects a split error envelope across chunk and UTF-8 boundaries", async () => {
+  const encoded = new TextEncoder().encode(
+    'data: {"statusCodeValue":429,"body":"quota 🚫 exceeded"}\n\ndata: [DONE]\n\n'
+  );
+
+  for (let offset = 1; offset < encoded.length; offset += 1) {
+    const result = await unwrapQoderEnvelope(
+      chunkedSseResponse([encoded.slice(0, offset), encoded.slice(offset)])
+    );
+    assert.equal(result.status, 429, "split at byte " + offset);
+    const payload = (await result.json()) as ErrorPayload;
+    assert.match(payload.error.message, /quota 🚫 exceeded/);
+  }
+});
+
+test("unwrapQoderEnvelope: preserves every byte after peeking multiple success chunks", async () => {
+  const encoded = new TextEncoder().encode(
+    'data: {"choices":[{"delta":{"content":"O🚀K"}}]}\n\ndata: [DONE]\n\n'
+  );
+  const result = await unwrapQoderEnvelope(
+    chunkedSseResponse([encoded.slice(0, 11), encoded.slice(11, 44), encoded.slice(44)])
+  );
+
+  assert.equal(result.status, 200);
+  assert.deepEqual(new Uint8Array(await result.arrayBuffer()), encoded);
 });
