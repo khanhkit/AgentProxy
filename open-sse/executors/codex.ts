@@ -1382,8 +1382,14 @@ export class CodexExecutor extends BaseExecutor {
     // Issue #2331: model suffix aliases (for example gpt-5.5-xhigh) represent an
     // explicit model selection, so they must override client-injected defaults such
     // as OpenCode's automatic reasoning.effort=medium for GPT-5-family requests.
+    // OpenRouter-style enabled:false disables connection defaults unless the
+    // request selected an explicit effort through the model suffix or request fields.
+    const clientDisabledReasoning = reasoningRecord?.enabled === false;
     const rawEffort =
-      modelEffort || explicitReasoning || requestReasoningEffort || fallbackReasoningEffort;
+      modelEffort ||
+      explicitReasoning ||
+      requestReasoningEffort ||
+      (clientDisabledReasoning ? "none" : fallbackReasoningEffort);
 
     if (rawEffort) {
       const clampedEffort = clampEffort(cleanModel, rawEffort);
@@ -1392,6 +1398,18 @@ export class CodexExecutor extends BaseExecutor {
         // Ultra coordinates delegation in Codex clients; the upstream wire effort is Max.
         effort: clampedEffort === "ultra" ? "max" : clampedEffort,
       };
+    }
+
+    // Codex Responses accepts only effort + summary inside reasoning.
+    const wireReasoning =
+      body.reasoning && typeof body.reasoning === "object" && !Array.isArray(body.reasoning)
+        ? (body.reasoning as Record<string, unknown>)
+        : null;
+    if (wireReasoning) {
+      for (const key of Object.keys(wireReasoning)) {
+        if (key !== "effort" && key !== "summary") delete wireReasoning[key];
+      }
+      if (Object.keys(wireReasoning).length === 0) delete body.reasoning;
     }
     ensureCodexReasoningSummary(body);
     if (isCompactRequest) {
