@@ -298,7 +298,8 @@
     "agentproxy:verify": "node scripts/check/omniroute-verify.mjs",
     "check:toolchain-contract": "node scripts/check/check-toolchain-contract.mjs",
     "check:vitest-exclusions": "node scripts/check/check-vitest-exclusions.mjs",
-    "i18n:check-new-keys": "node scripts/i18n/check-new-key-coverage.mjs"
+    "i18n:check-new-keys": "node scripts/i18n/check-new-key-coverage.mjs",
+    "i18n:translate-new-keys": "bash scripts/i18n/translate-new-keys.sh"
   },
   "dependencies": {
     "@aws-sdk/client-bedrock-runtime": "^3.1120.0",

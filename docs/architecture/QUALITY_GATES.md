@@ -145,7 +145,7 @@ Runs on every PR to `main`. Blocks merge on failure.
 | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ |
 | `check-ui-keys-coverage` (inline) | UI i18n key coverage is ≥ 65%                                                                                                                                                         | Yes          |
 | `check-ui-value-drift` (inline)   | A rewritten English **value** leaves no stale translation behind                                                                                                                      | Yes          |
-| `check-new-key-coverage` (inline) | A new English key reaches every locale | Yes |
+| `check-new-key-coverage` (inline) | A new English key is translated in every locale; `__MISSING__:` markers are rejected | Yes |
 | `check-translation-ratio`         | Real-translation ratio per locale (identical-to-English / placeholder / missing leaves outside the allowlist) must not exceed `config/quality/i18n-translation-baseline.json` + slack | **Advisory** |
 
 Needs `fetch-depth: 0` — the value-drift gate diffs `en.json` against the merge base.
@@ -536,3 +536,7 @@ several "obvious" merges turned out to hide debt and are **not** clean drop-ins.
 ## Related Documentation
 
 - Supply-chain (provenance, SBOM, Trivy, Scorecard): [`docs/security/SUPPLY_CHAIN.md`](../security/SUPPLY_CHAIN.md)
+
+#### New-key translation enforcement
+
+`check-new-key-coverage` treats `__MISSING__:` as untranslated. Use `npm run i18n:translate-new-keys` to translate newly added keys across locales in parallel; pinned English-only terms belong in `scripts/i18n/untranslatable-keys.json`.
