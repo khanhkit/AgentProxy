@@ -1,0 +1,1 @@
+- **feat(i18n):** add Kannada, Malayalam, Odia, Punjabi, Nepali, Sinhala, Burmese, and Khmer across dashboard, CLI, and required localized documentation surfaces.

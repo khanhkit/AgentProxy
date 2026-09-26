@@ -1,9 +1,18 @@
 {
   "$schema": "./i18n-schema.json",
   "default": "en",
-  "rtl": ["ar", "fa", "he", "ur"],
-  "uiOnly": ["en"],
-  "docsExcluded": ["en"],
+  "rtl": [
+    "ar",
+    "fa",
+    "he",
+    "ur"
+  ],
+  "uiOnly": [
+    "en"
+  ],
+  "docsExcluded": [
+    "en"
+  ],
   "locales": [
     {
       "code": "ar",
@@ -172,7 +181,9 @@
       "native": "Bahasa Indonesia",
       "english": "Indonesian",
       "flag": "🇮🇩",
-      "aliases": ["in"]
+      "aliases": [
+        "in"
+      ]
     },
     {
       "code": "it",
@@ -189,6 +200,22 @@
       "native": "日本語",
       "english": "Japanese",
       "flag": "🇯🇵"
+    },
+    {
+      "code": "km",
+      "label": "KM",
+      "name": "ខ្មែរ",
+      "native": "ខ្មែរ",
+      "english": "Khmer",
+      "flag": "🇰🇭"
+    },
+    {
+      "code": "kn",
+      "label": "KN",
+      "name": "ಕನ್ನಡ",
+      "native": "ಕನ್ನಡ",
+      "english": "Kannada",
+      "flag": "🇮🇳"
     },
     {
       "code": "ko",
@@ -215,6 +242,14 @@
       "flag": "🇱🇻"
     },
     {
+      "code": "ml",
+      "label": "ML",
+      "name": "മലയാളം",
+      "native": "മലയാളം",
+      "english": "Malayalam",
+      "flag": "🇮🇳"
+    },
+    {
       "code": "mr",
       "label": "MR",
       "name": "मराठी",
@@ -239,6 +274,22 @@
       "flag": "🇲🇹"
     },
     {
+      "code": "my",
+      "label": "MY",
+      "name": "မြန်မာ",
+      "native": "မြန်မာ",
+      "english": "Burmese",
+      "flag": "🇲🇲"
+    },
+    {
+      "code": "ne",
+      "label": "NE",
+      "name": "नेपाली",
+      "native": "नेपाली",
+      "english": "Nepali",
+      "flag": "🇳🇵"
+    },
+    {
       "code": "nl",
       "label": "NL",
       "name": "Nederlands",
@@ -255,13 +306,32 @@
       "flag": "🇳🇴"
     },
     {
+      "code": "or",
+      "label": "OR",
+      "name": "ଓଡ଼ିଆ",
+      "native": "ଓଡ଼ିଆ",
+      "english": "Odia",
+      "flag": "🇮🇳"
+    },
+    {
+      "code": "pa",
+      "label": "PA",
+      "name": "ਪੰਜਾਬੀ",
+      "native": "ਪੰਜਾਬੀ",
+      "english": "Punjabi",
+      "flag": "🇮🇳"
+    },
+    {
       "code": "phi",
       "label": "PHI",
       "name": "Filipino",
       "native": "Filipino",
       "english": "Filipino",
       "flag": "🇵🇭",
-      "aliases": ["fil", "tl"]
+      "aliases": [
+        "fil",
+        "tl"
+      ]
     },
     {
       "code": "pl",
@@ -302,6 +372,14 @@
       "native": "Русский",
       "english": "Russian",
       "flag": "🇷🇺"
+    },
+    {
+      "code": "si",
+      "label": "SI",
+      "name": "සිංහල",
+      "native": "සිංහල",
+      "english": "Sinhala",
+      "flag": "🇱🇰"
     },
     {
       "code": "sk",
@@ -382,7 +460,9 @@
       "native": "Українська",
       "english": "Ukrainian",
       "flag": "🇺🇦",
-      "aliases": ["uk"]
+      "aliases": [
+        "uk"
+      ]
     },
     {
       "code": "ur",
@@ -415,7 +495,11 @@
       "native": "中文 (繁體)",
       "english": "Chinese (Traditional)",
       "flag": "🇹🇼",
-      "aliases": ["zh-hk", "zh-mo", "zh-hant"]
+      "aliases": [
+        "zh-hk",
+        "zh-mo",
+        "zh-hant"
+      ]
     }
   ]
 }
