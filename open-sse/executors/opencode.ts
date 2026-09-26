@@ -573,8 +573,8 @@ export class OpencodeExecutor extends BaseExecutor {
       // persistently malformed upstream.
       const emptyRejectionBudget = this.accounts.length === 1 ? 1 : 0;
       // Tried set: proxy keys already proven unusable for this request's
-      // model (geo-blocked, or transient 5xx). Request-local only — nothing
-      // persists past execute().
+      // model (geo-blocked, transient 5xx, or already-429 this request).
+      // Request-local only — nothing persists past execute().
       const geoTriedProxyKeys = new Set<string>();
       let directTried = false;
 
@@ -689,9 +689,11 @@ export class OpencodeExecutor extends BaseExecutor {
         const status = result.response.status;
         if (status === 429) {
           this.markCooldown(account);
+          const key = proxyKeyOf(account.proxy);
+          if (key !== null) geoTriedProxyKeys.add(key);
           log?.warn?.(
             "OPENCODE",
-            `${cid}Rate limited (429) on account ${masked}, rotating to next…`
+            `${cid}Rate limited (429) on account ${masked} (proxy ${key ?? "direct"}), rotating to next…`
           );
           continue;
         }
