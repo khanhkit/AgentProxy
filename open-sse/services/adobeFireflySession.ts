@@ -131,8 +131,15 @@ const FORTER_PROACTIVE_WARM_MS = 3 * 60_000;
  * unless explicitly disabled with ADOBE_FIREFLY_BROWSER_REFRESH=0. The legacy opt-in value
  * "1" still enables it; any other value (including unset) now also enables it.
  */
+function browserRefreshEnabled(): boolean {
+  if (process.env.ADOBE_FIREFLY_BROWSER_REFRESH === "0") return false;
+  if (process.env.NODE_ENV === "test") return false;
+  if (process.env.VITEST || process.env.NODE_TEST_CONTEXT) return false;
+  return true;
+}
+
 export function adobeFireflyBrowserEnabled(): boolean {
-  return process.env.ADOBE_FIREFLY_BROWSER_REFRESH !== "0";
+  return browserRefreshEnabled();
 }
 /** Persist sessions under DATA_DIR so restarts keep JWT + last cookie. */
 const SESSION_DIR_NAME = "adobe-firefly-sessions";
@@ -953,8 +960,7 @@ export async function rotateAdobeFireflySessionOnError(
   clearAdobeFireflyWorkingArp(session.fingerprint);
   noteAdobeFireflySubmitFailure();
 
-  const tryBrowser =
-    opts?.tryBrowser !== false && process.env.ADOBE_FIREFLY_BROWSER_REFRESH !== "0";
+  const tryBrowser = opts?.tryBrowser !== false && browserRefreshEnabled();
   if (tryBrowser) {
     opts?.log?.info?.(
       "ADOBE-FIREFLY",
