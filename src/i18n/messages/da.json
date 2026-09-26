@@ -11398,7 +11398,9 @@
       "correlationIdValue": "Korrelation ID: {id}",
       "detailedPayloadInfo": "Aktivér detaljeret logning først, hvis du ønsker den fire-trins klient/udbyder payload visning for nye anmodninger.",
       "copyAll": "Copy all",
-      "copiedAll": "Copied all"
+      "copiedAll": "Copied all",
+      "rawViewOn": "__MISSING__:Raw view: on",
+      "rawViewOff": "__MISSING__:Raw view: off"
     }
   },
   "proxyLogger": {

@@ -11398,7 +11398,9 @@
       "correlationIdValue": "Correlatie-ID: {id}",
       "detailedPayloadInfo": "Schakel eerst gedetailleerde logging in als je de vier-fasen client/provider payloadweergave voor nieuwe verzoeken wilt.",
       "copyAll": "Copy all",
-      "copiedAll": "Copied all"
+      "copiedAll": "Copied all",
+      "rawViewOn": "__MISSING__:Raw view: on",
+      "rawViewOff": "__MISSING__:Raw view: off"
     }
   },
   "proxyLogger": {

@@ -11398,7 +11398,9 @@
       "correlationIdValue": "ID di correlazione: {id}",
       "detailedPayloadInfo": "Abilita prima il logging dettagliato se desideri la visualizzazione del payload client/provider in quattro fasi per le nuove richieste.",
       "copyAll": "Copy all",
-      "copiedAll": "Copied all"
+      "copiedAll": "Copied all",
+      "rawViewOn": "__MISSING__:Raw view: on",
+      "rawViewOff": "__MISSING__:Raw view: off"
     }
   },
   "proxyLogger": {

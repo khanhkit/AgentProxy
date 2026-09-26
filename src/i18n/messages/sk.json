@@ -11398,7 +11398,9 @@
       "correlationIdValue": "ID korelácie: {id}",
       "detailedPayloadInfo": "Najprv povolte podrobné protokolovanie, ak chcete zobrazenie štyroch fáz klienta/poskytovateľa pre nové požiadavky.",
       "copyAll": "Copy all",
-      "copiedAll": "Copied all"
+      "copiedAll": "Copied all",
+      "rawViewOn": "__MISSING__:Raw view: on",
+      "rawViewOff": "__MISSING__:Raw view: off"
     }
   },
   "proxyLogger": {

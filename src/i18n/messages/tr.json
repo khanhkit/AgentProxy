@@ -11398,7 +11398,9 @@
       "correlationIdValue": "Korelasyon Kimliği: {id}",
       "detailedPayloadInfo": "Yeni istekler için dört aşamalı istemci/sağlayıcı yük görünümünü istiyorsanız önce ayrıntılı günlüğü etkinleştirin.",
       "copyAll": "Copy all",
-      "copiedAll": "Copied all"
+      "copiedAll": "Copied all",
+      "rawViewOn": "__MISSING__:Raw view: on",
+      "rawViewOff": "__MISSING__:Raw view: off"
     }
   },
   "proxyLogger": {

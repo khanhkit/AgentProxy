@@ -11398,7 +11398,9 @@
       "correlationIdValue": "সংযোগ আইডি: {id}",
       "detailedPayloadInfo": "নতুন অনুরোধের জন্য চার-পর্যায়ের ক্লায়েন্ট/প্রদানকারী পে-লোড ভিউ পেতে হলে প্রথমে বিস্তারিত লগিং সক্ষম করুন।",
       "copyAll": "Copy all",
-      "copiedAll": "Copied all"
+      "copiedAll": "Copied all",
+      "rawViewOn": "__MISSING__:Raw view: on",
+      "rawViewOff": "__MISSING__:Raw view: off"
     }
   },
   "proxyLogger": {

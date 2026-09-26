@@ -11380,7 +11380,9 @@
       "correlationIdValue": "Αναγνωριστικό Συσχέτισης: {id}",
       "detailedPayloadInfo": "Ενεργοποιήστε πρώτα τη λεπτομερή καταγραφή εάν θέλετε την προβολή ωφέλιμου φορτίου τεσσάρων σταδίων πελάτη/παρόχου για νέα αιτήματα.",
       "copyAll": "Αντιγραφή όλων",
-      "copiedAll": "Αντιγράφηκαν όλα"
+      "copiedAll": "Αντιγράφηκαν όλα",
+      "rawViewOn": "__MISSING__:Raw view: on",
+      "rawViewOff": "__MISSING__:Raw view: off"
     }
   },
   "proxyLogger": {

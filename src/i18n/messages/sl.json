@@ -11380,7 +11380,9 @@
       "correlationIdValue": "Korelacijski ID: {id}",
       "detailedPayloadInfo": "Najprej omogočite podrobno beleženje, če želite štiristopenjski pogled vsebine odjemalca/ponudnika za nove zahteve.",
       "copyAll": "Kopiraj vse",
-      "copiedAll": "Vse kopirano"
+      "copiedAll": "Vse kopirano",
+      "rawViewOn": "__MISSING__:Raw view: on",
+      "rawViewOff": "__MISSING__:Raw view: off"
     }
   },
   "proxyLogger": {

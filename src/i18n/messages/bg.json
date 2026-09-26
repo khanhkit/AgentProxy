@@ -11398,7 +11398,9 @@
       "correlationIdValue": "Идентификатор на корелация: {id}",
       "detailedPayloadInfo": "Първо активирайте подробното регистриране, ако искате изгледа на четирите етапа на клиент/доставчик за нови заявки.",
       "copyAll": "Copy all",
-      "copiedAll": "Copied all"
+      "copiedAll": "Copied all",
+      "rawViewOn": "__MISSING__:Raw view: on",
+      "rawViewOff": "__MISSING__:Raw view: off"
     }
   },
   "proxyLogger": {

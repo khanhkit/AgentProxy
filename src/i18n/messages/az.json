@@ -11398,7 +11398,9 @@
       "correlationIdValue": "Korrelyasiya ID: {id}",
       "detailedPayloadInfo": "Əvvəlcə ətraflı qeydiyyatı aktiv edin, əgər yeni tələblər üçün dörd mərhələli müştəri/təchizatçı yük görünüşünü istəyirsinizsə.",
       "copyAll": "Copy all",
-      "copiedAll": "Copied all"
+      "copiedAll": "Copied all",
+      "rawViewOn": "__MISSING__:Raw view: on",
+      "rawViewOff": "__MISSING__:Raw view: off"
     }
   },
   "proxyLogger": {

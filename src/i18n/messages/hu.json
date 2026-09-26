@@ -11398,7 +11398,9 @@
       "correlationIdValue": "Korelációs azonosító: {id}",
       "detailedPayloadInfo": "Először engedélyezze a részletes naplózást, ha a négyfázisú kliens/szolgáltató payload nézetet szeretné az új kérésekhez.",
       "copyAll": "Copy all",
-      "copiedAll": "Copied all"
+      "copiedAll": "Copied all",
+      "rawViewOn": "__MISSING__:Raw view: on",
+      "rawViewOff": "__MISSING__:Raw view: off"
     }
   },
   "proxyLogger": {

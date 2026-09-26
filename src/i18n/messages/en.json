@@ -11408,7 +11408,9 @@
       "correlationIdValue": "Correlation ID: {id}",
       "detailedPayloadInfo": "Enable detailed logging first if you want the four-stage client/provider payload view for new requests.",
       "copyAll": "Copy all",
-      "copiedAll": "Copied all"
+      "copiedAll": "Copied all",
+      "rawViewOn": "Raw view: on",
+      "rawViewOff": "Raw view: off"
     }
   },
   "proxyLogger": {
