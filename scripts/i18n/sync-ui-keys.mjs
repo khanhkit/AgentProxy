@@ -72,7 +72,28 @@ import { backendConfig, translateBatch, translateString } from "./lib/translate-
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(SCRIPT_DIR, "..", "..");
 const CONFIG_PATH = path.join(ROOT, "config", "i18n.json");
-const MESSAGES_DIR = path.join(ROOT, "src", "i18n", "messages");
+
+const CATALOGS = {
+  ui: {
+    name: "ui",
+    dir: path.join(ROOT, "src", "i18n", "messages"),
+    allowlistPath: path.join(SCRIPT_DIR, "untranslatable-keys.json"),
+  },
+  cli: {
+    name: "cli",
+    dir: path.join(ROOT, "bin", "cli", "locales"),
+    allowlistPath: path.join(SCRIPT_DIR, "untranslatable-cli-keys.json"),
+  },
+};
+
+/** Which flat-JSON catalog family a run targets: the dashboard (`ui`) or the CLI (`cli`). */
+export function resolveCatalog(name = "ui") {
+  const catalog = CATALOGS[name];
+  if (!catalog) throw new Error(`unknown catalog "${name}" (expected ui or cli)`);
+  return catalog;
+}
+
+let MESSAGES_DIR = CATALOGS.ui.dir; // reassigned in main() from --catalog
 const SOURCE_LOCALE = "en";
 const PLACEHOLDER_PREFIX = "__MISSING__:";
 
@@ -95,10 +116,12 @@ function parseArgs(argv) {
     translateMarkers: false,
     concurrency: null,
     batchSize: 1,
+    catalog: "ui",
   };
   for (const arg of argv.slice(2)) {
     if (arg === "--dry-run" || arg === "--dryrun") opts.dryRun = true;
     else if (arg === "--translate-markers") opts.translateMarkers = true;
+    else if (arg.startsWith("--catalog=")) opts.catalog = arg.slice(10).trim();
     else if (arg.startsWith("--locale=")) {
       opts.locales = arg
         .slice(9)
@@ -123,6 +146,7 @@ function parseArgs(argv) {
           "Usage: node scripts/i18n/sync-ui-keys.mjs [options]",
           "",
           "  --locale=<csv>          Target locales (default: all except `en`)",
+          "  --catalog=ui|cli        Catalog family (default ui = src/i18n/messages; cli = bin/cli/locales)",
           "  --dry-run               Report what would change, write nothing",
           "  --translate-markers     Call the translation backend to translate every",
           "                          __MISSING__:<en> placeholder",
@@ -402,6 +426,9 @@ async function processLocale(locale, source, config, opts, backend) {
 
 async function main() {
   const opts = parseArgs(process.argv);
+  const catalog = resolveCatalog(opts.catalog);
+  MESSAGES_DIR = catalog.dir;
+  logInfo(`catalog: ${catalog.name} (${path.relative(ROOT, catalog.dir)})`);
   const config = await loadConfig();
 
   const sourcePath = path.join(MESSAGES_DIR, `${SOURCE_LOCALE}.json`);
