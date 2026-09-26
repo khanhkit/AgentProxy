@@ -314,6 +314,8 @@ export function normalizeDiscoveredModels(
       record.inputTokenLimit,
       record.context_length,
       record.contextLength,
+      record.max_model_len,
+      record.maxModelLen,
       topProvider.context_length
     );
     const outputTokenLimit = firstPositiveNumber(
