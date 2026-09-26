@@ -133,6 +133,11 @@ export function checkIP(ip) {
 
   switch (_config.mode) {
     case "whitelist":
+      // An empty whitelist must fail open so enabling whitelist mode before
+      // adding entries cannot lock an admin out of the dashboard.
+      if (_config.whitelist.size === 0) {
+        return { allowed: true };
+      }
       // Only whitelisted IPs allowed
       if (!matchesAny(normalizedIP, _config.whitelist)) {
         return { allowed: false, reason: "IP not in whitelist" };

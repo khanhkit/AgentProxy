@@ -77,6 +77,12 @@ test("whitelist: CIDR match", () => {
   assert.equal(checkIP("11.0.0.1").allowed, false);
 });
 
+test("whitelist: empty list allows all IPs to prevent admin lockout", () => {
+  configureIPFilter({ enabled: true, mode: "whitelist", whitelist: [] });
+  assert.equal(checkIP("1.2.3.4").allowed, true);
+  assert.equal(checkIP("5.6.7.8").allowed, true);
+});
+
 // ─── Whitelist Priority Mode ────────────────────────────────────────────────
 
 test("whitelist-priority: whitelist overrides blacklist", () => {
@@ -120,9 +126,12 @@ test("addToBlacklist/removeFromBlacklist: dynamic updates", () => {
 test("addToWhitelist/removeFromWhitelist: dynamic updates", () => {
   configureIPFilter({ enabled: true, mode: "whitelist" });
   addToWhitelist("1.1.1.1");
+  addToWhitelist("2.2.2.2");
   assert.equal(checkIP("1.1.1.1").allowed, true);
   removeFromWhitelist("1.1.1.1");
   assert.equal(checkIP("1.1.1.1").allowed, false);
+  removeFromWhitelist("2.2.2.2");
+  assert.equal(checkIP("1.1.1.1").allowed, true);
 });
 
 // ─── IPv6 Normalization ─────────────────────────────────────────────────────
