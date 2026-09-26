@@ -20,6 +20,7 @@ import { CONTEXT_OVERFLOW_PATTERNS, cooldownUntilMs } from "../accountFallback.t
 import { isResourceNotFoundResponse } from "../errorClassifier.ts";
 import { getTrustedLocalRateLimitResponse } from "../rateLimitManager/errors.ts";
 import type { ResolvedComboTarget } from "./types.ts";
+import type { ComboErrorEntry } from "./comboErrorAggregation.ts";
 
 export { isModelScoped400 } from "../modelAccessDenied.ts";
 
@@ -108,6 +109,26 @@ export const MAX_GLOBAL_ATTEMPTS = 30;
 // but never above this cap — an unbounded attempt budget is the same runaway
 // background-request DoS risk that motivated MAX_COMBO_DEPTH_HARD_CAP.
 export const MAX_GLOBAL_ATTEMPTS_HARD_CAP = 200;
+
+// A malformed/unsupported request shape fails identically across fallback
+// targets because it is a property of the request, not a provider-local outage.
+// Stop after three consecutive identical model errors rather than replaying the
+// same bad payload through every target and every whole-set retry.
+export const IDENTICAL_MODEL_ERROR_STREAK = 3;
+
+export function hasIdenticalModelErrorStreak(
+  comboErrors: ReadonlyArray<ComboErrorEntry>,
+  streak: number = IDENTICAL_MODEL_ERROR_STREAK
+): boolean {
+  if (comboErrors.length < streak) return false;
+  const tail = comboErrors.slice(-streak);
+  const [first, ...rest] = tail;
+  if (first.kind !== "model") return false;
+  return rest.every(
+    (entry) =>
+      entry.kind === first.kind && entry.status === first.status && entry.error === first.error
+  );
+}
 
 /**
  * Clamp an operator-configured combo nesting depth (config.maxComboDepth) to a
