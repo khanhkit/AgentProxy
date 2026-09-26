@@ -59,6 +59,14 @@ export function detectVisionInput(record: JsonRecord): boolean {
     const [inputPart] = modality.toLowerCase().split("->");
     if ((inputPart || "").includes("image")) return true;
   }
+
+  if (
+    Array.isArray(record.labels) &&
+    record.labels.some((entry) => toNonEmptyString(entry)?.toLowerCase() === "vision")
+  ) {
+    return true;
+  }
+
   return false;
 }
 
