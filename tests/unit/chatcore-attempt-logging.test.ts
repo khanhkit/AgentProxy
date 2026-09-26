@@ -28,14 +28,16 @@ type CodexRotationEnvelope = {
 };
 
 function baseCtx(overrides: Record<string, unknown> = {}) {
+  const pendingRequestId = (overrides.pendingRequestId as string) ?? "REPLACE";
   return {
+    traceId: overrides.traceId ?? pendingRequestId,
     provider: "openai",
     connectionId: "conn-1",
     model: "gpt-x",
     skillRequestId: "skill-1",
     detailedLoggingEnabled: false,
     reqLogger: null,
-    pendingRequestId: "REPLACE",
+    pendingRequestId,
     clientRawRequest: { endpoint: "/v1/chat/completions" },
     requestedModel: "gpt-x-requested",
     credentials: { connectionId: "cred-conn" },
@@ -194,4 +196,39 @@ test("unique tool_calls do not write provider.spec_violation audit", () => {
     requestId: "skill-spec-clean-1",
   });
   assert.equal(rows.length, 0);
+});
+
+test("combo attempts persist separate call-log rows keyed by traceId", async () => {
+  const pendingRequestId = "combo-shared-request";
+  const firstTraceId = "combo-attempt-trace-1";
+  const secondTraceId = "combo-attempt-trace-2";
+
+  persistAttemptLogs(
+    { status: 502, error: "first leg failed" },
+    baseCtx({
+      traceId: firstTraceId,
+      pendingRequestId,
+      comboName: "test-combo",
+      comboStepId: "leg-1",
+    })
+  );
+  persistAttemptLogs(
+    { status: 200, tokens: { input: 3, output: 4 } },
+    baseCtx({
+      traceId: secondTraceId,
+      pendingRequestId,
+      comboName: "test-combo",
+      comboStepId: "leg-2",
+    })
+  );
+
+  const first = await pollForCallLog(firstTraceId);
+  const second = await pollForCallLog(secondTraceId);
+  assert.ok(first, "first combo attempt should be persisted");
+  assert.ok(second, "second combo attempt should be persisted");
+  assert.equal(first.status, 502);
+  assert.equal(first.comboStepId, "leg-1");
+  assert.equal(second.status, 200);
+  assert.equal(second.comboStepId, "leg-2");
+  assert.equal(await getCallLogById(pendingRequestId), null);
 });
