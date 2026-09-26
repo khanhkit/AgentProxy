@@ -18,6 +18,19 @@ import {
   type GeminiContent,
 } from "./openai-to-gemini/helpers.ts";
 
+function isUrlImageBlock(block) {
+  return (
+    block?.type === "image" &&
+    block.source?.type === "url" &&
+    typeof block.source.url === "string" &&
+    /^https:\/\//i.test(block.source.url)
+  );
+}
+
+function urlImagePart(url) {
+  return { fileData: { fileUri: url, mimeType: "image/*" } };
+}
+
 /**
  * Direct Claude → Gemini request translator.
  * Converts Claude Messages API body directly to Gemini format,
@@ -82,6 +95,10 @@ export function claudeToGeminiRequest(model, body, stream, credentials = null) {
       result.generationConfig.maxOutputTokens = maxOutputTokens;
     }
   }
+  if (body.stop_sequences !== undefined || body.stop !== undefined) {
+    const rawStop = body.stop_sequences ?? body.stop;
+    result.generationConfig.stopSequences = Array.isArray(rawStop) ? rawStop : [rawStop];
+  }
 
   // ── System instruction ─────────────────────────────────────────
   if (body.system) {
@@ -136,6 +153,8 @@ export function claudeToGeminiRequest(model, body, stream, credentials = null) {
     const omittedToolCallIds = new Set<string>();
     for (const msg of body.messages) {
       const parts = [];
+      const toolResultImageParts = [];
+      let afterLastToolResult = 0;
 
       if (Array.isArray(msg.content)) {
         for (const block of msg.content) {
@@ -180,9 +199,24 @@ export function claudeToGeminiRequest(model, body, stream, credentials = null) {
             case "tool_result": {
               let content = block.content;
               if (Array.isArray(content)) {
-                content = content
-                  .map((c) => (c.type === "text" ? c.text : JSON.stringify(c)))
-                  .join("\n");
+                const textParts = [];
+                let hasImage = false;
+                for (const c of content) {
+                  if (c.type === "image" && c.source?.type === "base64") {
+                    toolResultImageParts.push({
+                      inlineData: { mimeType: c.source.media_type, data: c.source.data },
+                    });
+                    hasImage = true;
+                  } else if (isUrlImageBlock(c)) {
+                    toolResultImageParts.push(urlImagePart(c.source.url));
+                    hasImage = true;
+                  } else {
+                    textParts.push(c.type === "text" ? c.text : JSON.stringify(c));
+                  }
+                }
+                content =
+                  textParts.join("\n") ||
+                  (hasImage ? "[tool returned an image; see attached]" : "");
               }
               const toolUseId = block.tool_use_id;
               const name = toolUseNames[toolUseId] || "unknown";
@@ -194,6 +228,7 @@ export function claudeToGeminiRequest(model, body, stream, credentials = null) {
                 parts.push({
                   text: buildHistoricalToolResultContext(name, content),
                 });
+                afterLastToolResult = parts.length;
                 break;
               }
 
@@ -204,11 +239,12 @@ export function claudeToGeminiRequest(model, body, stream, credentials = null) {
                   response: { result: content },
                 },
               });
+              afterLastToolResult = parts.length;
               break;
             }
 
             case "image":
-              // Base64 image → Gemini inlineData
+              // Base64 image → Gemini inlineData; HTTPS URL → Gemini fileData.
               if (block.source?.type === "base64") {
                 parts.push({
                   inlineData: {
@@ -216,12 +252,17 @@ export function claudeToGeminiRequest(model, body, stream, credentials = null) {
                     data: block.source.data,
                   },
                 });
+              } else if (isUrlImageBlock(block)) {
+                parts.push(urlImagePart(block.source.url));
               }
               break;
           }
         }
       } else if (typeof msg.content === "string" && msg.content) {
         parts.push({ text: msg.content });
+      }
+      if (toolResultImageParts.length > 0) {
+        parts.splice(afterLastToolResult, 0, ...toolResultImageParts);
       }
 
       if (parts.length > 0) {

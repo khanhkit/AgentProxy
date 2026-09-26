@@ -464,6 +464,9 @@ function convertClaudeMessage(msg, preserveCacheControl = false) {
                   },
                 });
                 hasImage = true;
+              } else if (c.type === "image" && c.source?.type === "url" && c.source.url) {
+                parts.push({ type: "image_url", image_url: { url: c.source.url } });
+                hasImage = true;
               }
             }
             resultContent =
