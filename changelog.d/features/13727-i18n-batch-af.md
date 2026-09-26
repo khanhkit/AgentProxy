@@ -1,0 +1,1 @@
+- **feat(i18n):** add Hausa, Yoruba, Igbo, Amharic, Uzbek, Georgian, and Armenian across dashboard, CLI, and required localized documentation surfaces.

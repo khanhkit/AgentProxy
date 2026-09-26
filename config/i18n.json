@@ -15,6 +15,14 @@
   ],
   "locales": [
     {
+      "code": "am",
+      "label": "AM",
+      "name": "አማርኛ",
+      "native": "አማርኛ",
+      "english": "Amharic",
+      "flag": "🇪🇹"
+    },
+    {
       "code": "ar",
       "label": "AR",
       "name": "العربية",
@@ -143,6 +151,14 @@
       "flag": "🇮🇳"
     },
     {
+      "code": "ha",
+      "label": "HA",
+      "name": "Hausa",
+      "native": "Hausa",
+      "english": "Hausa",
+      "flag": "🇳🇬"
+    },
+    {
       "code": "he",
       "label": "HE",
       "name": "עברית",
@@ -175,6 +191,14 @@
       "flag": "🇭🇺"
     },
     {
+      "code": "hy",
+      "label": "HY",
+      "name": "Հայերեն",
+      "native": "Հայերեն",
+      "english": "Armenian",
+      "flag": "🇦🇲"
+    },
+    {
       "code": "id",
       "label": "ID",
       "name": "Bahasa Indonesia",
@@ -184,6 +208,14 @@
       "aliases": [
         "in"
       ]
+    },
+    {
+      "code": "ig",
+      "label": "IG",
+      "name": "Igbo",
+      "native": "Igbo",
+      "english": "Igbo",
+      "flag": "🇳🇬"
     },
     {
       "code": "it",
@@ -200,6 +232,14 @@
       "native": "日本語",
       "english": "Japanese",
       "flag": "🇯🇵"
+    },
+    {
+      "code": "ka",
+      "label": "KA",
+      "name": "ქართული",
+      "native": "ქართული",
+      "english": "Georgian",
+      "flag": "🇬🇪"
     },
     {
       "code": "km",
@@ -473,12 +513,28 @@
       "flag": "🇵🇰"
     },
     {
+      "code": "uz",
+      "label": "UZ",
+      "name": "Oʻzbekcha",
+      "native": "Oʻzbekcha",
+      "english": "Uzbek",
+      "flag": "🇺🇿"
+    },
+    {
       "code": "vi",
       "label": "VI",
       "name": "Tiếng Việt",
       "native": "Tiếng Việt",
       "english": "Vietnamese",
       "flag": "🇻🇳"
+    },
+    {
+      "code": "yo",
+      "label": "YO",
+      "name": "Yorùbá",
+      "native": "Yorùbá",
+      "english": "Yoruba",
+      "flag": "🇳🇬"
     },
     {
       "code": "zh-CN",
