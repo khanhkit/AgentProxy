@@ -257,7 +257,8 @@
     "tray": "Sākt sistēmas tray (tikai darbvirsmas, izvēlēties)",
     "no_tray": "Atspējot sistēmas tray ikonu",
     "tls_cert": "Ceļš uz TLS sertifikātu (PEM) HTTPS apkalpošanai (arī OMNIROUTE_TLS_CERT)",
-    "tls_key": "Ceļš uz TLS privāto atslēgu (PEM) HTTPS apkalpošanai (arī OMNIROUTE_TLS_KEY)"
+    "tls_key": "Ceļš uz TLS privāto atslēgu (PEM) HTTPS apkalpošanai (arī OMNIROUTE_TLS_KEY)",
+    "ready_timeout": "Gatavības pārbaudes taimauts milisekundēs (arī OMNIROUTE_READY_TIMEOUT_MS, noklusējuma vērtība 60000)"
   },
   "backup": {
     "title": "Dublēšana",
@@ -374,6 +375,16 @@
     },
     "audit": {
       "description": "MCP audita žurnāls (alias for audit --source mcp)"
+    },
+    "stoppedHint": "Lai to ieslēgtu, palaidiet `omniroute mcp enable`.",
+    "enabled": "MCP serveris ir iespējots.",
+    "disabled": "MCP serveris ir atspējots.",
+    "enable": {
+      "description": "Iespējot MCP serveri",
+      "transport": "Izmantojamais transports: stdio|sse|streamable-http"
+    },
+    "disable": {
+      "description": "Atspējot MCP serveri"
     }
   },
   "a2a": {

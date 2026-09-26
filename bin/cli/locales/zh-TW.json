@@ -302,7 +302,7 @@
     "status": "狀態：{status}",
     "uptime": "執行時間：{uptime}",
     "requests": "請求數（24h）：{count}",
-    "cost": "成本（24h）："
+    "cost": "成本（24h）：${cost}"
   },
   "quota": {
     "description": "顯示提供者配額使用情況",

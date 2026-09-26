@@ -30,7 +30,7 @@
     "opencode": "Instala e configura o plugin @omniroute/opencode-plugin incluído para o OpenCode"
   },
   "doctor": {
-    "title": "OmniRoute Doctor",
+    "title": "Diagnóstico do OmniRoute",
     "dbOk": "Banco de dados: OK ({path})",
     "dbMissing": "Banco de dados: não inicializado — execute `omniroute setup`",
     "portOk": "Porta {port}: disponível",
@@ -257,7 +257,8 @@
     "tray": "Mostrar ícone na bandeja do sistema (apenas desktop, opt-in)",
     "no_tray": "Desabilitar ícone na bandeja do sistema",
     "tls_cert": "Caminho para um certificado TLS (PEM) para servir HTTPS (também OMNIROUTE_TLS_CERT)",
-    "tls_key": "Caminho para a chave privada TLS (PEM) para servir HTTPS (também OMNIROUTE_TLS_KEY)"
+    "tls_key": "Caminho para a chave privada TLS (PEM) para servir HTTPS (também OMNIROUTE_TLS_KEY)",
+    "ready_timeout": "Tempo limite da verificação de prontidão em ms (também OMNIROUTE_READY_TIMEOUT_MS, padrão 60000)"
   },
   "backup": {
     "title": "Backup",
@@ -301,7 +302,7 @@
     "noServer": "Servidor não está em execução. Inicie com: omniroute serve",
     "title": "Saúde",
     "status": "Status: {status}",
-    "uptime": "Uptime: {uptime}",
+    "uptime": "Tempo de atividade: {uptime}",
     "requests": "Requisições (24h): {count}",
     "cost": "Custo (24h): ${cost}"
   },
@@ -374,7 +375,17 @@
     },
     "running": "Servidor MCP em execução ({transport})",
     "stopped": "Servidor MCP parado.",
-    "restarted": "Servidor MCP reiniciado."
+    "restarted": "Servidor MCP reiniciado.",
+    "stoppedHint": "Execute `omniroute mcp enable` para ativá-lo.",
+    "enabled": "Servidor MCP ativado.",
+    "disabled": "Servidor MCP desativado.",
+    "enable": {
+      "description": "Ativar o servidor MCP",
+      "transport": "Transporte a ser usado: stdio|sse|streamable-http"
+    },
+    "disable": {
+      "description": "Desativar o servidor MCP"
+    }
   },
   "a2a": {
     "skills": {
@@ -1093,7 +1104,7 @@
     }
   },
   "combo": {
-    "title": "Combos",
+    "title": "Combinações",
     "switched": "Combo ativo: {name}",
     "created": "Combo criado: {name}",
     "deleted": "Combo removido: {name}",
@@ -1268,7 +1279,7 @@
     "description": "REPL interativo multi-turn com LLM",
     "model": "Modelo a usar (padrão: auto)",
     "combo": "Nome do combo a usar",
-    "system": "System prompt",
+    "system": "Prompt do sistema",
     "resume": "Retomar sessão salva pelo nome"
   },
   "plugin": {
