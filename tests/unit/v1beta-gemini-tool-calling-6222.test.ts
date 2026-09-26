@@ -117,7 +117,9 @@ test("request: functionResponse part → tool role message", () => {
 
   const toolMsg = out.messages.find((m) => m.role === "tool");
   assert.ok(toolMsg, "tool message should exist");
-  assert.equal(toolMsg.tool_call_id, "get_weather");
+  const assistantMsg = out.messages.find((m) => m.role === "assistant");
+  assert.ok(assistantMsg?.tool_calls?.[0]);
+  assert.equal(toolMsg.tool_call_id, assistantMsg.tool_calls[0].id);
   assert.deepEqual(JSON.parse(toolMsg.content), { tempC: 18 });
 });
 
