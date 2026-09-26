@@ -87,6 +87,19 @@ export function extractPreservedBlocks(
   let result = text;
 
   result = extractFrontmatter(result, addBlock);
+
+  const instructionRegions: CompiledPattern[] = [
+    { pattern: /<system-reminder>[\s\S]*?<\/system-reminder>/g, kind: "system_instruction" },
+    { pattern: /<instructions?>[\s\S]*?<\/instructions?>/g, kind: "system_instruction" },
+    {
+      pattern: /<project[- ]instructions?>[\s\S]*?<\/project[- ]instructions?>/g,
+      kind: "system_instruction",
+    },
+  ];
+  for (const { pattern, kind } of instructionRegions) {
+    result = replacePattern(result, pattern, kind, addBlock);
+  }
+
   result = extractFencedCodeBlocks(result, (content) => addBlock(content, "fenced_code"));
 
   const builtIns: CompiledPattern[] = [
