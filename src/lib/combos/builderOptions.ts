@@ -702,7 +702,12 @@ export async function getComboBuilderOptions(): Promise<ComboBuilderOptionsPaylo
     // #2901 follow-up: a configured OpenCode connection shadows the no-auth
     // entry below, so it must receive the same `oc/` routing prefix. The raw
     // `opencode/` prefix is reserved by model parsing for the api-key tier.
-    const routingPrefix = providerId === "opencode" ? providerVisual.alias : providerId;
+    const routingPrefix =
+      providerId === "opencode"
+        ? providerVisual.alias
+        : providerVisual.source === "provider-node" && providerVisual.alias
+          ? providerVisual.alias
+          : providerId;
     rewriteQualifiedModelPrefix(modelMap, providerId, routingPrefix);
 
     const normalizedConnections =
