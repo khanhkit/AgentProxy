@@ -309,7 +309,7 @@ export function processRtkText(
     }
   }
 
-  const shouldSkipDedup = options.skipFilters || isDocumentLikeRead;
+  const shouldSkipDedup = Boolean(options.skipFilters);
   const deduped = shouldSkipDedup
     ? { text: result, collapsed: 0 }
     : deduplicateRepeatedLines(result, { threshold: config.deduplicateThreshold });
