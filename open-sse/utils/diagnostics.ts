@@ -260,7 +260,9 @@ export function detectMalformedNonStream(resp: unknown): MalformedReason | null 
     // carry a structurally present but empty text block, so the max_tokens/tool_use
     // exemption applies whenever visible output is absent, not only to content:[].
     const stopReason = typeof body.stop_reason === "string" ? body.stop_reason : "";
-    if (stopReason === "max_tokens" || stopReason === "tool_use") return null;
+    if (stopReason === "max_tokens" || stopReason === "tool_use" || stopReason === "length") {
+      return null;
+    }
     // content:[] with no stop_reason is non-terminal, not empty (#9971).
     if (content.length === 0 && stopReason.length === 0) return null;
     return "empty_choices";

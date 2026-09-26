@@ -385,3 +385,12 @@ test("reportMalformed200 runs without throwing", () => {
     })
   );
 });
+
+test("AP-ISS-0124 Claude-compatible length stop_reason is a legitimate truncated completion", () => {
+  const resp = {
+    type: "message",
+    content: [{ type: "text", text: "(empty response)" }],
+    stop_reason: "length",
+  };
+  assert.equal(detectMalformedNonStream(resp), null);
+});
