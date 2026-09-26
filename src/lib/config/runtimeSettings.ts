@@ -85,11 +85,24 @@ const DEFAULT_RUNTIME_SETTINGS_SNAPSHOT: RuntimeSettingsSnapshot = {
 
 let lastAppliedSnapshot: RuntimeSettingsSnapshot | null = null;
 
-// Module-local mirror of the current bypass policy. Read by the route guard
-// on every non-loopback hit to a LOCAL_ONLY path via `getAuthzBypassSnapshot`.
-// Initialised to the default so cold-boot requests (before any
-// `applyRuntimeSettings` call) behave identically to PR #2473.
-let currentAuthzBypass: AuthzBypassSnapshot = DEFAULT_AUTHZ_BYPASS_SNAPSHOT;
+// Shared bypass-policy store. A globalThis-backed value is visible to every
+// independently evaluated server bundle/chunk that imports this module.
+const AUTHZ_BYPASS_GLOBAL_KEY = "__omniroute_authzBypass_config__";
+const authzBypassStore = globalThis as unknown as Record<
+  string,
+  AuthzBypassSnapshot | undefined
+>;
+
+function getCurrentAuthzBypass(): AuthzBypassSnapshot {
+  if (!authzBypassStore[AUTHZ_BYPASS_GLOBAL_KEY]) {
+    authzBypassStore[AUTHZ_BYPASS_GLOBAL_KEY] = DEFAULT_AUTHZ_BYPASS_SNAPSHOT;
+  }
+  return authzBypassStore[AUTHZ_BYPASS_GLOBAL_KEY]!;
+}
+
+function setCurrentAuthzBypass(snapshot: AuthzBypassSnapshot): void {
+  authzBypassStore[AUTHZ_BYPASS_GLOBAL_KEY] = snapshot;
+}
 
 function isTruthyEnvFlag(value: string | undefined): boolean {
   if (typeof value !== "string") return false;
@@ -252,7 +265,7 @@ function normalizeAuthzBypass(settings: Record<string, unknown>): AuthzBypassSna
  * state). Spec §Non-Functional Requirements / Performance.
  */
 export function getAuthzBypassSnapshot(): AuthzBypassSnapshot {
-  return currentAuthzBypass;
+  return getCurrentAuthzBypass();
 }
 
 export function buildRuntimeSettingsSnapshot(
@@ -390,7 +403,7 @@ async function applyCcBridgeTransformsSection(ccBridgeTransforms: unknown) {
  * (<50 ms hot-reload) is structurally satisfied by this shape.
  */
 function applyAuthzBypassSection(snapshot: AuthzBypassSnapshot) {
-  currentAuthzBypass = { enabled: snapshot.enabled, prefixes: [...snapshot.prefixes] };
+  setCurrentAuthzBypass({ enabled: snapshot.enabled, prefixes: [...snapshot.prefixes] });
 }
 
 async function applySystemTransformsSection(systemTransforms: unknown) {
@@ -613,5 +626,5 @@ export async function applyRuntimeSettings(
 
 export function resetRuntimeSettingsStateForTests() {
   lastAppliedSnapshot = null;
-  currentAuthzBypass = DEFAULT_AUTHZ_BYPASS_SNAPSHOT;
+  setCurrentAuthzBypass(DEFAULT_AUTHZ_BYPASS_SNAPSHOT);
 }
