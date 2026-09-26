@@ -575,7 +575,7 @@ async function prepare(body: JsonRecord) {
   );
   const transformed = (await executor.transformRequest(
     model,
-    responseBodyWithMemory,
+    { ...responseBodyWithMemory, _nativeCodexPassthrough: true },
     true,
     credentialsWithFingerprint
   )) as JsonRecord;
