@@ -59,6 +59,19 @@ test("errorConfig resolves text rules before status rules", () => {
   assert.equal(combinedRule?.cooldownMs, COOLDOWN_MS.requestNotAllowed);
 });
 
+test("errorConfig maps a bare 403 to a neutral permission code (not quota)", () => {
+  assert.deepEqual(getErrorInfo(403), {
+    type: "permission_error",
+    code: "permission_denied",
+  });
+  assert.equal(getDefaultErrorMessage(403), "Permission denied");
+  const bare = findMatchingErrorRule(403, "not allowed for this key");
+  assert.equal(bare?.id, "status_403");
+  assert.equal(bare?.reason, "unknown");
+  const quota = findMatchingErrorRule(403, "hour quota exceeded for today");
+  assert.equal(quota?.reason, "quota_exhausted");
+});
+
 test("errorConfig preserves the existing exponential backoff policy", () => {
   assert.equal(calculateBackoffCooldown(0), BACKOFF_CONFIG.base);
   assert.equal(calculateBackoffCooldown(3), BACKOFF_CONFIG.base * 8);
