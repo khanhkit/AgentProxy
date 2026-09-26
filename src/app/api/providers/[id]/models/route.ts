@@ -12,6 +12,7 @@ import { resolveAlibabaProviderModelsUrl } from "@/shared/constants/alibabaProvi
 import { getStaticModelsForProvider } from "@/lib/providers/staticModels";
 import { providerUsesCuratedModelsOnly } from "@/lib/providers/modelListingCapability";
 import { mergeModelsWithCustomPrecedence } from "@/lib/providers/modelMetadataPrecedence";
+import { addModelsSuffix } from "@/lib/providers/validation/urlHelpers";
 import { getCachedProviderConnectionById } from "@/lib/db/readCache";
 import { resolveProxyForProvider } from "@/lib/db/proxies";
 import {
@@ -2261,6 +2262,12 @@ export async function GET(
           base = base.slice(0, -"/v1".length);
         }
         url = `${base}/v1/models`;
+      }
+    }
+    if (provider === "openrouter") {
+      const customBaseUrl = getProviderBaseUrl(connection.providerSpecificData);
+      if (customBaseUrl) {
+        url = addModelsSuffix(customBaseUrl) || url;
       }
     }
     if (provider === "cloudflare-ai") {
