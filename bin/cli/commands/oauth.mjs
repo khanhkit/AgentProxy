@@ -25,6 +25,7 @@ const PROVIDERS_WITH_OAUTH = [
 // (issue #9474). Map the alias to the real backend key instead.
 const BACKEND_OAUTH_KEY = {
   "claude-code": "claude",
+  copilot: "github",
 };
 
 function resolveBackendKey(id) {
@@ -260,27 +261,41 @@ async function runDeviceFlow(def, opts) {
 
   if (opts.browser !== false && verificationUri) await openBrowser(verificationUri);
   process.stderr.write("Waiting for device authorization...\n");
+  const deviceCode = start.deviceCode ?? start.device_code ?? "";
+  if (!deviceCode) {
+    process.stderr.write("Server did not return a device code; cannot poll for authorization.\n");
+    process.exit(1);
+  }
+  const codeVerifier = start.codeVerifier ?? undefined;
   const deadline = Date.now() + (opts.timeout ?? 300000);
-  const intervalMs = (start.intervalMs ?? start.interval ?? 5) * 1000;
+  let intervalMs = (start.intervalMs ?? start.interval ?? 5) * 1000;
   while (Date.now() < deadline) {
     await sleep(intervalMs);
-    const statusRes = await apiFetch(
-      `/api/providers/${providerKey}/auth/status?state=${encodeURIComponent(start.state ?? "")}`,
-      targetApiOptions(opts)
-    );
-    if (!statusRes.ok) continue;
-    const status = await statusRes.json();
-    if (status.status === "complete" || status.status === "authorized") {
-      await apiFetch(`/api/providers/${providerKey}/auth/apply`, {
-        ...targetApiOptions(opts),
-        method: "POST",
-        body: { state: start.state },
-      });
-      process.stdout.write(`Authorized: ${status.account ?? status.email ?? "connected"}\n`);
+    const pollRes = await apiFetch(`/api/oauth/${providerKey}/poll`, {
+      ...targetApiOptions(opts),
+      method: "POST",
+      body: { deviceCode, ...(codeVerifier ? { codeVerifier } : {}) },
+    });
+    if (!pollRes.ok) continue;
+    let poll;
+    try {
+      poll = await pollRes.json();
+    } catch {
+      continue;
+    }
+    if (poll.success) {
+      const conn = poll.connection ?? {};
+      process.stdout.write(
+        `Authorized: ${conn.email ?? conn.displayName ?? conn.id ?? "connected"}\n`
+      );
       return;
     }
-    if (status.status === "error") {
-      process.stderr.write(`Device auth failed: ${status.error}\n`);
+    if (poll.error === "slow_down") {
+      intervalMs += 5000;
+      continue;
+    }
+    if (poll.error && !poll.pending) {
+      process.stderr.write(`Device auth failed: ${poll.errorDescription ?? poll.error}\n`);
       process.exit(1);
     }
   }
