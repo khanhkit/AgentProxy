@@ -11,8 +11,8 @@ Query available AI models, list model aliases, and browse the full model catalog
 ## Quick install
 
 ```bash
-npm install -g omniroute   # or: npx omniroute
-omniroute --version
+npm install -g agentproxy   # or: npx agentproxy
+agentproxy --version
 ```
 
 ## Subcommands
@@ -27,5 +27,66 @@ omniroute --version
 **Example:**
 
 ```bash
-omniroute models [provider]
+agentproxy models [provider]
+```
+
+### `models manual <provider>`
+
+List manual model metadata from the selected server
+
+**Example:**
+
+```bash
+agentproxy models manual <provider>
+```
+
+### `models add <provider> <model-id>`
+
+Add an unverified manual model, then verify persistence
+
+**Flags:**
+
+- `--name <name>`
+- `--api-format <format>`
+- `--context-window <tokens>`
+- `--max-output-tokens <tokens>`
+- `--dry-run`
+
+**Example:**
+
+```bash
+agentproxy models add <provider> <model-id>
+```
+
+### `models edit <provider> <model-id>`
+
+Edit manual model metadata, then verify persistence
+
+**Flags:**
+
+- `--name <name>`
+- `--api-format <format>`
+- `--context-window <tokens>`
+- `--clear-context-window`
+- `--dry-run`
+
+**Example:**
+
+```bash
+agentproxy models edit <provider> <model-id>
+```
+
+### `models remove <provider> <model-id>`
+
+Remove only a manual model override, then verify persistence
+
+**Flags:**
+
+- `--yes`
+- `--dry-run`
+
+**Example:**
+
+```bash
+agentproxy models remove <provider> <model-id>
 ```
