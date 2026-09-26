@@ -100,6 +100,14 @@ export const STOPWORDS = new Set([
 /** Regex for tokens that must never be pruned */
 export const FORCE_PRESERVE_RE = /\d|https?:\/\/|[._\/\\]|Error:|Exception:|```/i;
 
+const POLARITY_WORDS = new Set([
+  "never", "always", "no", "not", "nor",
+  "must", "shall", "do", "does", "did",
+  "don't", "doesn't", "didn't", "can", "cannot", "can't",
+  "should", "shouldn't", "need", "needs", "mustn't",
+  "won't", "wouldn't", "could", "couldn't",
+]);
+
 /**
  * Score a single token (word/symbol) for information value.
  * Returns 0.0 (prune candidate) to 1.0 (must keep).
@@ -107,6 +115,7 @@ export const FORCE_PRESERVE_RE = /\d|https?:\/\/|[._\/\\]|Error:|Exception:|```/
 export function scoreToken(token: string): number {
   if (FORCE_PRESERVE_RE.test(token)) return 1.0;
   const lower = token.toLowerCase();
+  if (POLARITY_WORDS.has(lower)) return 1.0;
   if (STOPWORDS.has(lower)) return 0.1;
   if (token.length <= 2) return 0.2;
   if (/^[A-Z]/.test(token)) return 0.8; // proper nouns / identifiers
@@ -152,6 +161,6 @@ export function pruneByScore(text: string, keepRate = 0.5, minScore = 0.3): stri
       return keep ? t : "";
     })
     .join("")
-    .replace(/\s{2,}/g, " ")
+    .replace(/[ \t]{2,}/g, " ")
     .trim();
 }
