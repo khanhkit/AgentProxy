@@ -114,6 +114,13 @@ export const opencode_goProvider: RegistryEntry = {
       supportsVision: false,
       supportsReasoning: true,
     },
+    {
+      id: "qwen3.8-max",
+      name: "Qwen3.8 Max",
+      targetFormat: "claude",
+      supportsVision: false,
+      supportsReasoning: true,
+    },
     // qwen3.6-plus / qwen3.5-plus base ids declared identically on opencode-zen — see
     // OPENCODE_ZEN_GO_SHARED_MODELS.
     {
