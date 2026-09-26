@@ -287,7 +287,7 @@
     "modelNamePlaceholder": "模型名稱",
     "mcpQuickStartStep2": "MCP 快速開始步驟 2",
     "quickStart": "快速開始",
-    "fullExportFailedWithError": "完整匯出失敗並發生錯誤",
+    "fullExportFailedWithError": "完整匯出失敗，並發生錯誤",
     "loadingBackups": "正在載入備份",
     "anthropicBaseUrlPlaceholder": "Anthropic Base URL",
     "description": "描述",
@@ -359,7 +359,7 @@
     "rerankDesc": "重排說明",
     "modelsPathPlaceholder": "Model 路徑",
     "noCombosYet": "暫無 Combo",
-    "connectedVerificationPendingWithError": "已連線，驗證待處理並發生錯誤",
+    "connectedVerificationPendingWithError": "已連線，驗證待處理且發生錯誤",
     "comboDefaultsGuideHint1": "設定 Combo 預設策略和目標。",
     "enableCloudTitle": "啟用雲端",
     "configuredProvidersHint": "僅顯示已設定的 Provider。",
@@ -369,7 +369,7 @@
     "removeProviderOverrideAria": "移除提供者覆蓋",
     "nodeVersion": "Node 版本",
     "openai": "OpenAI",
-    "exportFailedWithError": "匯出失敗並發生錯誤",
+    "exportFailedWithError": "匯出失敗，並發生錯誤",
     "proxyConfigured": "代理已設定",
     "concurrencyPerModel": "每個模型併發數",
     "protocolTasksLabel": "協議任務標籤",
@@ -1883,7 +1883,7 @@
     "noAuthLabel": "無認證",
     "readinessEyebrow": "準備開始路由",
     "readinessTitle": "傳送您的第一個請求",
-    "readinessSubtitle": "只需四個小步驟。OmniRoute 會在您進行時檢查就緒狀態。",
+    "readinessSubtitle": "四個簡單步驟。OmniRoute 會隨著您的進度檢查就緒狀態。",
     "readinessStep1": "連接提供者",
     "readinessStep2": "設定端點驗證",
     "readinessStep3": "複製您的端點",
@@ -2296,7 +2296,7 @@
     "savePermissions": "儲存許可權",
     "endpointRestrictions": "允許的端點",
     "allEndpointsAllowed": "此金鑰可以訪問所有 API 端點。",
-    "endpointsRestricted": "僅限用於 {count} 個端點。",
+    "endpointsRestricted": "僅限用於 {count} 個端點{count, plural, one {} other {}}。",
     "autoResolve": "自動解析",
     "autoResolveDesc": "為這個 API 金鑰自動將有歧義的模型名解析到原生提供者。",
     "streamDefaultMode": "流預設相容性",
@@ -4659,7 +4659,7 @@
     "allOperational": "所有系統均可執行",
     "issuesDetected": "檢測到系統問題",
     "healthVerdictReady": "OmniRoute 已就緒",
-    "healthVerdictActionRequired": "需要採取動作以恢復完整運作",
+    "healthVerdictActionRequired": "必須採取行動才能恢復完整運作",
     "healthVerdictCoolingDown": "近期變更後正在冷卻",
     "healthSubtitle": "系統健康狀況檢查",
     "advancedDiagnosticsTitle": "進階診斷",
@@ -5252,7 +5252,7 @@
     "iconUrlInvalid": "無效的圖示網址。請使用 http(s):// 或 data:image/*;base64 URL。",
     "dailyQuotaResetTimezoneLabel": "每日配額重設時區",
     "dailyQuotaResetTimezoneHint": "當上游未提供 X-RateLimit-Reset 時使用的選填 IANA 時區。留空則維持短暫冷卻。",
-    "dailyQuotaResetHourLabel": "每日配額重設小時",
+    "dailyQuotaResetHourLabel": "每日配額重設時間",
     "dailyQuotaResetHourHint": "上述時區中的當地小時（0–23）。留空表示不使用節點層級時鐘。",
     "anthropicPrefixPlaceholder": "ac-prod",
     "openaiPrefixPlaceholder": "oc-prod",
@@ -6691,7 +6691,7 @@
     "autoDisableThreshold": "封禁閾值",
     "autoDisableThresholdDesc": "觸發永久停用所需的連續封禁訊號次數。",
     "autoDisableBannedScope": "套用自動停用至",
-    "autoDisableBannedScopeDesc": "如果 OmniRoute 在遭封鎖後持續重試，登入席位（付費訂閱和免費帳戶）可能會被上游鎖定。付費預付 API 金鑰沒有此風險——請將它們保留在集區中，讓優先填滿策略可以使用下一把金鑰。",
+    "autoDisableBannedScopeDesc": "如果 OmniRoute 在遭封鎖後持續重試，上游可能會鎖定登入席次（付費訂閱和免費帳戶）。付費的預付 API 金鑰沒有此風險——請將它們保留在集區中，讓 fill-first 可以使用下一把金鑰。",
     "autoDisableBannedScopeAll": "所有連線",
     "autoDisableBannedScopeAllDesc": "停用所有傳回永久封鎖訊號的連線，包括預付 API 金鑰。",
     "autoDisableBannedScopeSubscription": "僅限登入／訂閱帳戶",
@@ -7471,7 +7471,7 @@
     "compressionGuidanceHide": "隱藏詳細資訊",
     "compressionGuidanceSafeDefault": "安全預設",
     "compressionGuidanceCacheImpact": "快取影響",
-    "tokenSaverTitle": "權杖節省器",
+    "tokenSaverTitle": "權杖節省模式",
     "tokenSaverSubtitle": "讓每次請求消耗更少 token。",
     "tokenSaverToolOutput": "工具輸出",
     "tokenSaverToolOutputDesc": "在傳送給提供者前清理 git、grep、ls、tree 和日誌輸出。",
@@ -7905,7 +7905,7 @@
       },
       "ponytail": {
         "label": "馬尾（懶惰的資深開發者）",
-        "description": "懶惰資深開發者的紀律：逐步攀登 YAGNI 階梯、修正根本原因，並採用可運作的最小差異。"
+        "description": "懶惰資深開發者的紀律：逐步攀登 YAGNI 階梯、修正根本原因，並採用可正常運作的最小變更。"
       },
       "i-have-adhd": {
         "label": "我有 ADHD（行動優先）",
@@ -8362,7 +8362,7 @@
     "qdrantHost": "主機",
     "qdrantCollection": "集合",
     "headroomProxyTitle": "Headroom Proxy",
-    "headroomProxyDesc": "選用 Headroom 權杖節省 Proxy 的 URL。留空時使用 HEADROOM_URL 或 http://localhost:8787。",
+    "headroomProxyDesc": "選用的 Headroom 節省權杖 Proxy URL。留空時使用 HEADROOM_URL 或 http://localhost:8787。",
     "headroomProxyUrl": "Headroom URL",
     "headroomProxyUrlHint": "可從此頁面啟動迴送 URL。外部 URL 則只會進行探測。",
     "headroomProxySave": "儲存",
@@ -8778,7 +8778,7 @@
     "profiles": {
       "aggressive": {
         "label": "積極（預設）",
-        "description": "已發布收據所測量的原則。將系統提示詞、工具文件及密集歷史記錄映像化。"
+        "description": "已發布的實測紀錄所衡量的原則。將系統提示詞、工具文件及內容密集的歷史記錄映像化。"
       },
       "balanced": {
         "label": "平衡",
@@ -10780,10 +10780,10 @@
     "title": "連線 Cursor IDE",
     "tabLogin": "使用 Cursor 登入",
     "tabImport": "匯入權杖",
-    "loginDescription": "開啟 Cursor 的瀏覽器登入頁面。可在 Docker 中使用——請在主機瀏覽器中核准，然後返回此處。",
+    "loginDescription": "開啟 Cursor 的瀏覽器登入頁面。可在 Docker 中使用——請在主機上的瀏覽器中核准，然後返回此處。",
     "loginWithCursor": "使用 Cursor 登入",
     "startingLogin": "正在啟動…",
-    "waitingApproval": "正在等待核准 Cursor 登入…",
+    "waitingApproval": "正在等待 Cursor 登入核准…",
     "openUrlHint": "如果瀏覽器未開啟：",
     "openLoginLink": "開啟登入頁面",
     "cancelLogin": "取消登入",
@@ -10793,8 +10793,8 @@
     "cursorNotDetected": "未檢測到 Cursor IDE。請手動貼上您的權杖。",
     "dockerImportHint": "在 Docker 中執行？建議使用「使用 Cursor 登入」。IDE 自動匯入和 cursor-agent 通常無法在容器內使用。請參閱 docs/providers/CURSOR-DOCKER.md。",
     "accessToken": "訪問權杖",
-    "refreshToken": "重新整理權杖",
-    "refreshTokenPlaceholder": "選填——啟用權杖自動重新整理",
+    "refreshToken": "更新權杖",
+    "refreshTokenPlaceholder": "選填——啟用權杖自動更新",
     "required": "*",
     "accessTokenPlaceholder": "訪問權杖將自動填充...",
     "machineId": "機器 ID",
@@ -12713,7 +12713,7 @@
       "radar-supporter": {
         "name": "Radar 支援者",
         "description": "已驗證即時 OmniRoute Radar 支援者資料來源",
-        "criteria": "驗證已簽署的即時 Radar 支持者資訊來源。"
+        "criteria": "驗證已簽署的即時 Radar 支援者資料來源。"
       },
       "first-token": {
         "name": "第一個代幣",
@@ -12940,8 +12940,8 @@
         "description": "允許每個相容性節點的多重連線。"
       },
       "DISABLE_CONTEXT_WINDOW_CHECKS": {
-        "label": "停用內容視窗檢查",
-        "description": "針對直接的單一模型請求，略過 OmniRoute 的本機內容視窗與輸入權杖上限檢查。上游提供者仍會強制執行其實際限制。提示詞壓縮與輸出權杖上限仍然有效。"
+        "label": "停用上下文視窗檢查",
+        "description": "針對直接的單一模型請求，略過 OmniRoute 的本機上下文視窗與輸入權杖上限檢查。上游提供者仍會強制執行其實際限制。提示詞壓縮與輸出權杖上限仍然有效。"
       },
       "RESPONSES_PASSTHROUGH_DROP_COMMENTARY": {
         "description": "在將 Responses API 穿透串流轉發至用戶端之前，移除內部註解階段的輸出項目。停用此旗標以接收原始上游註解。"
@@ -13406,7 +13406,7 @@
     "tierLive": "實時",
     "tierCommunity": "社群（30天延遲）",
     "activateTitle": "啟用雷達",
-    "activateDescription": "比較 Community 與即時存取權、瞭解您的安裝環境會交換哪些資料，然後選擇如何啟用 Radar。",
+    "activateDescription": "比較 Community 存取權與即時存取權、瞭解您的安裝環境會交換哪些資料，然後選擇如何啟用 Radar。",
     "activateButton": "啟用 Community",
     "activating": "正在啟用...",
     "keySectionTitle": "已經有支持者金鑰了嗎？",
@@ -13424,11 +13424,11 @@
     "colContext": "上下文",
     "colCapabilities": "能力",
     "colTos": "服務條款風險",
-    "colLimits": "速率限制",
+    "colLimits": "限制",
     "trainsOnPrompts": "使用提示詞進行訓練",
-    "trainsOnPromptsHelp": "此提供者的條款指出，其可能會使用您傳送的提示詞進行訓練。沒有此徽章的模型可能明確表示不會這麼做，也可能未加以說明——未作聲明並不代表有所保證。",
+    "trainsOnPromptsHelp": "此提供者揭露其可能會使用您的提示詞訓練模型",
     "limitsUnknownHelp": "僅由 Radar 資料來源回報限制；此項目沒有已公布的限制",
-    "contextUnknownHelp": "此項目的內容窗口未知",
+    "contextUnknownHelp": "此項目的上下文視窗未知",
     "capabilityUnknownHelp": "資料來源未回報此功能",
     "newBadge": "新的",
     "setupGuide": "設置指南",
@@ -14070,7 +14070,7 @@
   },
   "radarOffersPage": {
     "title": "支持者優惠",
-    "subtitle": "來自 Radar 的官方折扣、點數、試用方案與經審核的合作夥伴福利。",
+    "subtitle": "來自 Radar 的官方折扣、額度、試用方案與經審核的合作夥伴福利。",
     "backToRadar": "返回 Radar",
     "loading": "正在載入優惠...",
     "refresh": "重新整理優惠",
@@ -14098,7 +14098,7 @@
     "syncing": "正在重新整理...",
     "loadFailed": "無法重新整理情報。已保留最後驗證的本機快取。",
     "empty": "目前尚無可用的已驗證情報快照。",
-    "supporterBadge": "雷達支持者",
+    "supporterBadge": "Radar 支持者",
     "methodology": "方法論",
     "eloMethod": "ELO，初始值 {initial}，K={factor}",
     "freshness": "目錄新鮮度",
@@ -14129,8 +14129,8 @@
     "contextWindowMismatch": "請求超出提供者上下文窗口"
   },
   "cheaperInferenceSponsorBanner": {
-    "title": "Cheaper Inference 是 OmniRoute 的開源夥伴",
-    "description": "一個按成本排名的閘道，透過單一 OpenAI 相容端點轉售數十種前沿模型——將每個請求路由至符合資格且最便宜的提供者，價格絕不高於定價。",
+    "title": "Cheaper Inference 是 OmniRoute 的開源之友",
+    "description": "一個依成本排序的閘道，透過單一 OpenAI 相容端點轉售數十種前沿模型——將每個請求路由至符合資格且價格最低的提供者，價格絕不高於牌價。",
     "cta": "取得 API 金鑰",
     "partnerLinkNote": "合作夥伴連結",
     "dismissAriaLabel": "關閉"
