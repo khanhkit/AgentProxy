@@ -97,13 +97,22 @@ export const GROK_SELF_RE = /<grok:[^>]*\/>/g;
 export const XML_DECL_RE = /<[?]xml[^?]*[?]>/g;
 export const RESPONSE_TAG_RE = /<\/?response\b[^>]*>/gi;
 export const MULTI_NL = /\n{3,}/g;
+export const CODE_SPAN_RE =
+  /(```[\s\S]*?```|<tool>[\s\S]*?<\/tool>|```[\s\S]*$|<tool>[\s\S]*$|`[^`\n]+`)/g;
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
+
+export function stripCitations(text: string): string {
+  return text
+    .split(CODE_SPAN_RE)
+    .map((part, index) => (index % 2 === 1 ? part : part.replace(CITATION_RE, "")))
+    .join("");
+}
 
 export function cleanResponse(text: string, strip = true): string {
   let t = text;
   t = t.replace(XML_DECL_RE, "");
-  t = t.replace(CITATION_RE, "");
+  t = stripCitations(t);
   t = t.replace(GROK_TAG_RE, "");
   t = t.replace(GROK_SELF_RE, "");
   t = t.replace(RESPONSE_TAG_RE, "");
