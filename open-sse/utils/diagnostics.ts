@@ -256,26 +256,13 @@ export function detectMalformedNonStream(resp: unknown): MalformedReason | null 
     });
     if (hasOutput) return null;
 
-    // No per-block output. Two distinct situations remain:
-    //  1) A block IS present but invalid (e.g. text:"", a lone "(empty response)"
-    //     sentinel, or only null entries) — the model genuinely produced no
-    //     usable output. That is a MALFORMED-200 empty_choices regardless of
-    //     stop_reason (parity with the OpenAI content:"" path).
-    //  2) `content: []` — no block at all. #9971: a truncated / non-terminal
-    //     body (no stop_reason) must not become empty_choices. A terminal
-    //     stop_reason with no output usually is empty_choices — except the
-    //     same legitimate empty stops that `isEmptyContentResponse` already
-    //     accepts (`max_tokens`, `tool_use`). Claude Code's `/model` probe
-    //     sends `max_tokens: 1`; Opus can burn that budget on thinking and
-    //     return content:[] + stop_reason max_tokens. Treating that as
-    //     empty_choices turns a valid 200 into MALFORMED-200 → 502 even
-    //     though errorClassifier would have let it through.
-    if (content.length === 0) {
-      const stopReason = typeof body.stop_reason === "string" ? body.stop_reason : "";
-      if (stopReason.length === 0) return null;
-      if (stopReason === "max_tokens" || stopReason === "tool_use") return null;
-      return "empty_choices";
-    }
+    // No per-block output. Legitimate truncated completions may still
+    // carry a structurally present but empty text block, so the max_tokens/tool_use
+    // exemption applies whenever visible output is absent, not only to content:[].
+    const stopReason = typeof body.stop_reason === "string" ? body.stop_reason : "";
+    if (stopReason === "max_tokens" || stopReason === "tool_use") return null;
+    // content:[] with no stop_reason is non-terminal, not empty (#9971).
+    if (content.length === 0 && stopReason.length === 0) return null;
     return "empty_choices";
   }
 
