@@ -11,6 +11,11 @@ import {
  * 1001 upstream) vs. issue #3587 (headroom for real reasoning budgets).
  */
 export const REASONING_BUFFER_MIN_TRIGGER = 256;
+export const REASONING_MIN_BUDGET_ENV = "AGENTPROXY_REASONING_MIN_BUDGET";
+
+export function getReasoningMinBudget(): number | null {
+  return toPositiveInteger(process.env[REASONING_MIN_BUDGET_ENV]);
+}
 
 export function toPositiveInteger(value: unknown): number | null {
   const numericValue =
@@ -45,7 +50,14 @@ export function resolveReasoningBufferedMaxTokens(
   // request. Respect it verbatim instead of inflating (e.g. 1 -> 1001).
   if (current < REASONING_BUFFER_MIN_TRIGGER) return current;
 
-  // Issue #9507: never enlarge a client's explicit max_tokens. The #3587
+  const minBudget = getReasoningMinBudget();
+  if (minBudget !== null && current < minBudget) {
+    const floored = Math.min(minBudget, maxOutputTokens);
+    if (floored > current) return floored;
+  }
+
+  // Issue #9507: never enlarge a client's explicit max_tokens unless the operator
+  // explicitly opts into a floor via AGENTPROXY_REASONING_MIN_BUDGET. The #3587
   // headroom heuristic (Math.ceil(current * 1.5)) silently rewrote reasoning
   // budgets upward (64000 -> 96000 on claude-opus-5), violating the #1761
   // contract that upward adjustment must be opt-in. The over-cap clamp above
