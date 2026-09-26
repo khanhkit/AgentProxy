@@ -301,7 +301,8 @@ test("Claude -> OpenAI converts tool_result blocks into tool messages and preser
         // #4385: a tool_result must be paired with a preceding assistant tool_call,
         // otherwise it is an orphan that OpenAI-compatible upstreams reject (and that
         // claudeToOpenAIRequest now filters). Pair it so this test still exercises the
-        // content-extraction mechanics (array [text, image] → "20C") on a valid sequence.
+        // content-extraction mechanics on a valid sequence. Tool-result text stays in
+        // the tool message while URL images are lifted into the following user turn.
         {
           role: "assistant",
           content: [{ type: "tool_use", id: "tu_1", name: "weather", input: {} }],
@@ -339,7 +340,10 @@ test("Claude -> OpenAI converts tool_result blocks into tool messages and preser
   });
   assert.deepEqual(result.messages[2], {
     role: "user",
-    content: "Thanks",
+    content: [
+      { type: "image_url", image_url: { url: "https://example.com/ignored.png" } },
+      { type: "text", text: "Thanks" },
+    ],
   });
 });
 

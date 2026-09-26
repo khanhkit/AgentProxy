@@ -13,9 +13,9 @@ const { claudeToOpenAIRequest } =
   await import("../../open-sse/translator/request/claude-to-openai.ts");
 
 // ---------------------------------------------------------------------------
-// 1. system message mid-conversation keeps role: "system"
+// 1. system message mid-conversation is demoted to user (never assistant)
 // ---------------------------------------------------------------------------
-test("mid-conversation system message preserves role:system (not assistant)", () => {
+test("mid-conversation system message is demoted to user (not assistant)", () => {
   const result = claudeToOpenAIRequest(
     "gpt-4o",
     {
@@ -30,13 +30,14 @@ test("mid-conversation system message preserves role:system (not assistant)", ()
   );
 
   const roles = result.messages.map((m: { role: string }) => m.role);
-  assert.deepEqual(roles, ["user", "assistant", "system", "user"]);
+  assert.deepEqual(roles, ["user", "assistant", "user", "user"]);
+  assert.equal(result.messages[2].content, "Reminder: be concise.");
 });
 
 // ---------------------------------------------------------------------------
-// 2. system message with array content keeps role: "system"
+// 2. system message with array content keeps content after demotion
 // ---------------------------------------------------------------------------
-test("system message with array content preserves role:system", () => {
+test("system message with array content is demoted to user with content preserved", () => {
   const result = claudeToOpenAIRequest(
     "gpt-4o",
     {
@@ -51,11 +52,10 @@ test("system message with array content preserves role:system", () => {
     false
   );
 
-  const sysMsg = result.messages.find((m: { role: string }) => m.role === "system");
-  assert.ok(sysMsg, "expected a system message in output");
-  // Array content with text blocks is flattened to a string for system role
+  const demoted = result.messages[1];
+  assert.equal(demoted.role, "user");
   assert.equal(
-    typeof sysMsg.content === "string" ? sysMsg.content : JSON.stringify(sysMsg.content),
+    typeof demoted.content === "string" ? demoted.content : JSON.stringify(demoted.content),
     "System reminder text"
   );
 });

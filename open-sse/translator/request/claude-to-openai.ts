@@ -171,10 +171,17 @@ export function claudeToOpenAIRequest(model, body, stream, credentials: unknown 
       const msg = body.messages[i];
       const converted = convertClaudeMessage(msg, preserveCacheControl);
       if (converted) {
+        const demoteMidConversationSystem = (message: JsonRecord) => {
+          if (message.role === "system" && result.messages.length > 0) {
+            message.role = "user";
+          }
+        };
         // Handle array of messages (multiple tool results)
         if (Array.isArray(converted)) {
+          converted.forEach(demoteMidConversationSystem);
           result.messages.push(...converted);
         } else {
+          demoteMidConversationSystem(converted);
           result.messages.push(converted);
         }
       }
