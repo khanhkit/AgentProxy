@@ -1,0 +1,1 @@
+- **fix(ci):** align Docker publish builds with the 12288 MB webpack heap budget already proven by the native build workflow, preventing V8 heap exhaustion during image builds.
