@@ -1,0 +1,1 @@
+- **fix(docker):** copy runner artifacts with `node` ownership at COPY time instead of recursively chowning `/app`, avoiding a duplicate overlay layer while preserving the AgentProxy Rust gateway ownership.
