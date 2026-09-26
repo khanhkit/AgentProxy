@@ -91,12 +91,11 @@ export const THINKING_MAP: Record<string, string> = {
   "pplx-grok-4.6": "grok46medium",
 };
 
-export const CITATION_RE = /\[\d+\]/g;
+export const CITATION_RE = / ?\[\d+\]/g;
 export const GROK_TAG_RE = /<grok:[^>]*>.*?<\/grok:[^>]*>/gs;
 export const GROK_SELF_RE = /<grok:[^>]*\/>/g;
 export const XML_DECL_RE = /<[?]xml[^?]*[?]>/g;
 export const RESPONSE_TAG_RE = /<\/?response\b[^>]*>/gi;
-export const MULTI_SPACE = / {2,}/g;
 export const MULTI_NL = /\n{3,}/g;
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
@@ -109,7 +108,6 @@ export function cleanResponse(text: string, strip = true): string {
   t = t.replace(GROK_SELF_RE, "");
   t = t.replace(RESPONSE_TAG_RE, "");
   if (strip) {
-    t = t.replace(MULTI_SPACE, " ");
     t = t.replace(MULTI_NL, "\n\n");
     t = t.trim();
   }
