@@ -41,11 +41,16 @@ export function isStrictlySerializable(value: unknown, seen = new Set<object>())
   ) {
     return typeof value !== "number" || Number.isFinite(value);
   }
-  if (typeof value !== "object" || seen.has(value)) return false;
+  if (typeof value !== "object") return false;
+  if (seen.has(value)) return false;
   seen.add(value);
-  if (Array.isArray(value)) return value.every((entry) => isStrictlySerializable(entry, seen));
-  if (!isPlainObject(value)) return false;
-  return Object.values(value).every((entry) => isStrictlySerializable(entry, seen));
+  try {
+    if (Array.isArray(value)) return value.every((entry) => isStrictlySerializable(entry, seen));
+    if (!isPlainObject(value)) return false;
+    return Object.values(value).every((entry) => isStrictlySerializable(entry, seen));
+  } finally {
+    seen.delete(value);
+  }
 }
 
 const WORKER_STACK_ENGINES = new Set(["caveman", "rtk", "standard"]);
