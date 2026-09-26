@@ -1214,6 +1214,16 @@ export async function getProviderCredentials(
       // respected (the no-auth provider will be rejected if it has no real connections
       // matching the allowlist, or a real connection row will be selected if present).
       if (!allowedConnections || allowedConnections.length === 0) {
+        const modelLockout = requestedModel
+          ? getModelLockoutInfo(resolvedId, SYNTHETIC_NOAUTH_CONNECTION_ID, requestedModel)
+          : null;
+        if (modelLockout && modelLockout.remainingMs > 0) {
+          log.debug(
+            "AUTH",
+            `${resolvedId} | noauth model-only lockout for ${requestedModel} — ${modelLockout.remainingMs}ms remaining, returning null`
+          );
+          return null;
+        }
         return await maybeSyntheticNoAuthFallback(resolvedId, excludedForNoAuth);
       }
     }
