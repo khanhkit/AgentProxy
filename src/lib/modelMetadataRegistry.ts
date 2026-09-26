@@ -302,6 +302,7 @@ export function getCanonicalModelMetadata(input: {
 // its cache is warm, so the index is reused across every resolveCatalogPricing() call in
 // a rebuild instead of rebuilt per lookup.
 const lowercaseIndexCache = new WeakMap<object, Map<string, unknown>>();
+const COLLISION_SAMPLE_SIZE = 5;
 
 function findInsensitive<T>(obj: Record<string, T> | null | undefined, key: string): T | undefined {
   if (!obj || !key) return undefined;
@@ -309,20 +310,24 @@ function findInsensitive<T>(obj: Record<string, T> | null | undefined, key: stri
   let index = lowercaseIndexCache.get(obj);
   if (!index) {
     index = new Map();
+    const collisions: string[] = [];
+    const firstKeyByLower = new Map<string, string>();
     for (const [k, v] of Object.entries(obj)) {
       const lowerKey = k.toLowerCase();
-      // Warn once at index-build time (not per-lookup) if two keys collide
-      // case-insensitively — a real data-quality signal from an upstream sync (e.g.
-      // models.dev returning both "OpenAI" and "openai" as distinct provider keys).
-      // Matches the pre-fix scan's silent first-match-wins behavior, just surfaced
-      // instead of swallowed.
-      if (index.has(lowerKey)) {
-        console.warn(
-          `[modelMetadataRegistry] findInsensitive: case-insensitive key collision on "${lowerKey}" — keeping first-seen value, later one discarded`
-        );
+      const firstKey = firstKeyByLower.get(lowerKey);
+      if (firstKey !== undefined) {
+        collisions.push(`"${lowerKey}" ("${firstKey}" vs "${k}")`);
         continue;
       }
+      firstKeyByLower.set(lowerKey, k);
       index.set(lowerKey, v);
+    }
+    if (collisions.length > 0) {
+      const sample = collisions.slice(0, COLLISION_SAMPLE_SIZE).join(", ");
+      const more = collisions.length > COLLISION_SAMPLE_SIZE ? ", …" : "";
+      console.warn(
+        `[modelMetadataRegistry] findInsensitive: ${collisions.length} case-insensitive key collision(s) — keeping first-seen value, later ones discarded. Keys: ${sample}${more}`
+      );
     }
     lowercaseIndexCache.set(obj, index);
   }
