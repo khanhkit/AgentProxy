@@ -409,16 +409,19 @@ const SYSTEM_PROMPT = (englishName, native) =>
     `Return ONLY the translated markdown — no preamble, no explanation, no surrounding fences.`,
   ].join(" ");
 
-// Splits a markdown body into chunks of <= maxChars, breaking on top-level `## ` headings only.
-function chunkMarkdown(markdown, maxChars = 6000) {
+// Splits a markdown body into chunks of <= maxChars. Top-level `## ` headings
+// are the preferred cut; an oversized section is then split on sub-headings,
+// paragraph boundaries, and finally table/list item boundaries. Fenced code
+// blocks stay whole even when that means one block itself exceeds maxChars.
+export function chunkMarkdown(markdown, maxChars = 6000) {
   if (markdown.length <= maxChars) return [markdown];
   const lines = markdown.split("\n");
-  const chunks = [];
+  const sections = [];
   let buf = [];
   let size = 0;
   for (const line of lines) {
     if (line.startsWith("## ") && size > maxChars * 0.5) {
-      chunks.push(buf.join("\n"));
+      sections.push(buf.join("\n"));
       buf = [line];
       size = line.length;
     } else {
@@ -426,11 +429,110 @@ function chunkMarkdown(markdown, maxChars = 6000) {
       size += line.length + 1;
     }
   }
-  if (buf.length) chunks.push(buf.join("\n"));
-  return chunks;
+  if (buf.length) sections.push(buf.join("\n"));
+  return sections.flatMap((section) =>
+    section.length <= maxChars ? [section] : splitOversizedSection(section, maxChars)
+  );
 }
 
 const FENCE_LINE = /^\s*(```|~~~)/;
+const ITEM_LINE = /^\s*(\||[-*+]\s|\d+[.)]\s)/;
+const CONTINUATION_LINE = /^\s+\S/;
+
+function splitOversizedSection(section, maxChars) {
+  const blocks = [];
+  let block = [];
+  let inFence = false;
+  for (const line of section.split("\n")) {
+    const isFence = FENCE_LINE.test(line);
+    if (inFence) {
+      block.push(line);
+      if (isFence) {
+        inFence = false;
+        blocks.push(block);
+        block = [];
+      }
+      continue;
+    }
+    if (isFence) {
+      if (block.length) blocks.push(block);
+      block = [line];
+      inFence = true;
+      continue;
+    }
+    if (/^##+ /.test(line) && block.length) {
+      blocks.push(block);
+      block = [];
+    }
+    block.push(line);
+    if (line.trim() === "") {
+      blocks.push(block);
+      block = [];
+    }
+  }
+  if (block.length) blocks.push(block);
+
+  const chunks = [];
+  let current = [];
+  let currentSize = 0;
+  for (const lines of blocks.flatMap((candidate) => splitOversizedRun(candidate, maxChars))) {
+    const length = lines.join("\n").length + 1;
+    if (currentSize > 0 && currentSize + length > maxChars) {
+      chunks.push(current.join("\n"));
+      current = [];
+      currentSize = 0;
+    }
+    current.push(...lines);
+    currentSize += length;
+  }
+  if (current.length) chunks.push(current.join("\n"));
+  return chunks;
+}
+
+function splitOversizedRun(lines, maxChars) {
+  if (lines.join("\n").length <= maxChars) return [lines];
+  const content = lines.filter((line) => line.trim() !== "");
+  if (!content.every((line) => ITEM_LINE.test(line) || CONTINUATION_LINE.test(line))) {
+    return [lines];
+  }
+  if (!ITEM_LINE.test(content[0])) return [lines];
+
+  const groups = [];
+  let group = [];
+  let size = 0;
+  for (const line of lines) {
+    if (group.length && ITEM_LINE.test(line) && size + line.length + 1 > maxChars) {
+      groups.push(group);
+      group = [];
+      size = 0;
+    }
+    group.push(line);
+    size += line.length + 1;
+  }
+  if (group.length) groups.push(group);
+  return groups;
+}
+
+function endsInsideItemRun(text) {
+  const lines = text.trimEnd().split("\n");
+  let i = lines.length - 1;
+  while (i > 0 && CONTINUATION_LINE.test(lines[i])) i--;
+  return ITEM_LINE.test(lines[i] ?? "");
+}
+
+export function joinTranslatedChunks(parts) {
+  let out = "";
+  for (let i = 0; i < parts.length; i++) {
+    if (i === 0) {
+      out = parts[i];
+      continue;
+    }
+    const nextFirst = parts[i].trimStart().split("\n")[0] ?? "";
+    const seam = endsInsideItemRun(out) && ITEM_LINE.test(nextFirst) ? "\n" : "\n\n";
+    out = out.trimEnd() + seam + parts[i].trimStart();
+  }
+  return out;
+}
 
 // ----- Section cache --------------------------------------------------------
 // A mirror is retranslated section by section: the state remembers a short
@@ -785,12 +887,13 @@ async function translateBody(body, localeEntry, backend) {
       );
     }
   }
-  // Re-join with a blank line between chunks (we split on `## ` headings).
+  // Re-join normal chunks with a blank line, but preserve tight table/list
+  // seams that were split only to keep translation requests bounded.
   // Then normalize terminology to the locale's canonical glossary — the model
   // reliably converts characters but not vocabulary habits, so zh-TW output
   // otherwise keeps mainland renderings (默認 for 預設, 緩存 for 快取) and
   // wrong-homophone conversions (上遊 for 上游, 儀錶板 for 儀表板).
-  return normalizeLocaleText(translated.join("\n\n"), localeEntry.code);
+  return normalizeLocaleText(joinTranslatedChunks(translated), localeEntry.code);
 }
 
 // Simple promise-based semaphore (avoid runtime deps).
