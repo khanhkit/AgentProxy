@@ -1434,6 +1434,44 @@ test("chatCore preserves Opus 5 mid-conversation system cache breakpoints", asyn
     ttl: "5m",
   });
 });
+test("chatCore preserves Fable 5 mid-conversation system cache breakpoints", async () => {
+  await settingsDb.updateSettings({ alwaysPreserveClientCache: "auto" });
+  invalidateCacheControlSettingsCache();
+
+  const { call, result } = await invokeChatCore({
+    provider: "claude",
+    model: "claude-fable-5",
+    endpoint: "/v1/messages",
+    credentials: { apiKey: "claude-key", providerSpecificData: {} },
+    body: {
+      model: "claude-fable-5",
+      max_tokens: 64,
+      system: [{ type: "text", text: "stable system prompt", cache_control: { type: "ephemeral", ttl: "5m" } }],
+      messages: [
+        { role: "user", content: [{ type: "text", text: "first turn" }] },
+        { role: "assistant", content: [{ type: "text", text: "first response" }] },
+        { role: "system", content: [{ type: "text", text: "compact continuation", cache_control: { type: "ephemeral" } }] },
+        { role: "user", content: [{ type: "text", text: "latest turn" }] },
+      ],
+      tools: [{ name: "Bash", input_schema: { type: "object", properties: {} } }],
+    },
+    userAgent: "Claude-Code/2.1.220",
+    requestHeaders: { "x-app": "cli", "x-claude-code-session-id": "session-fable" },
+    responseFormat: "claude",
+  });
+
+  assert.equal(result.success, true);
+  assert.deepEqual(
+    call.body.messages.map((message: { role: string }) => message.role),
+    ["user", "assistant", "system", "user"]
+  );
+  assert.equal(
+    call.body.system.some((item: { text?: string }) => item.text === "compact continuation"),
+    false
+  );
+  assert.deepEqual(call.body.messages[2].content[0].cache_control, { type: "ephemeral", ttl: "5m" });
+});
+
 test("chatCore keeps Claude normalization for non-Claude-Code Claude passthrough", async () => {
   const { call, result } = await invokeChatCore({
     provider: "claude",
