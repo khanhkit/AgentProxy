@@ -65,6 +65,8 @@ export const FORWARDABLE_CLIENT_BETAS = Object.freeze([
   // gate (#9505), so a client that sent it must keep it through the merge —
   // otherwise its effort negotiation is silently dropped.
   "effort-2025-11-24",
+  // Claude Code auto-mode classifier negotiation; paired with the safeguards body field.
+  "dangerous-tool-use-2026-09-03",
 ]);
 
 /**
@@ -114,6 +116,19 @@ export function mergeClientAnthropicBeta(
     }
   }
   return baseList.join(",");
+}
+
+export function applyClientAnthropicBeta(
+  headers: Record<string, string>,
+  clientBeta: string | null | undefined,
+  options: { seedWhenAbsent?: boolean; model?: string | null } = {}
+): void {
+  if (typeof clientBeta !== "string" || !clientBeta.trim()) return;
+  const existingKey = Object.keys(headers).find((key) => key.toLowerCase() === "anthropic-beta");
+  const key = existingKey ?? (options.seedWhenAbsent ? "anthropic-beta" : null);
+  if (!key) return;
+  const merged = mergeClientAnthropicBeta(headers[key] ?? "", clientBeta, undefined, options.model);
+  if (merged) headers[key] = merged;
 }
 
 /**
