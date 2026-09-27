@@ -236,6 +236,13 @@ const CURSOR_STREAM_TIMEOUT_MS = (() => {
   return Number.isInteger(parsed) && parsed > 0 ? parsed : 300000;
 })();
 
+// Grace after a kv_after_text soft terminator when buffered bytes remain.
+// This lets a trailing exec_mcp frame finish without paying the full stream timeout.
+const CURSOR_KV_GRACE_MS = (() => {
+  const parsed = parseInt(process.env.CURSOR_KV_GRACE_MS || "2000", 10);
+  return Number.isInteger(parsed) && parsed > 0 ? parsed : 2000;
+})();
+
 // Upper bound on a single Connect-RPC frame. The 4-byte length prefix can
 // declare up to 4 GiB; a corrupt or hostile upstream could send a huge length
 // that forces driveH2's rolling buffer to grow unbounded (OOM) while it waits
@@ -1118,6 +1125,7 @@ export class CursorExecutor extends BaseExecutor {
     return new Promise((resolve, reject) => {
       let scanning = false;
       let settled = false;
+      let kvGraceTimer: NodeJS.Timeout | null = null;
       // Phase 8: safety timeout. If neither turn_ended, kv_after_text, nor
       // server-end fires within CURSOR_STREAM_TIMEOUT_MS, abort the stream
       // so a stuck upstream doesn't keep the response open indefinitely.
@@ -1160,6 +1168,7 @@ export class CursorExecutor extends BaseExecutor {
       // h2 alive (Phase 6 session reuse).
       const detachListeners = () => {
         clearTimeout(safetyTimer);
+        if (kvGraceTimer) clearTimeout(kvGraceTimer);
         h2.req.off("data", onData);
         h2.req.off("end", onEnd);
         h2.req.off("error", onErr);
@@ -1222,11 +1231,24 @@ export class CursorExecutor extends BaseExecutor {
             }
             pos += 5 + length;
             if (ctx.endReason) {
-              buf = buf.subarray(pos);
-              settled = true;
-              detachListeners();
-              resolve();
-              return;
+              const softKv = ctx.endReason === "kv_after_text";
+              const nextFrameStarted = pos < buf.length;
+              if (softKv && nextFrameStarted) {
+                if (!kvGraceTimer) {
+                  kvGraceTimer = setTimeout(() => {
+                    if (settled || !ctx.endReason) return;
+                    settled = true;
+                    detachListeners();
+                    resolve();
+                  }, CURSOR_KV_GRACE_MS);
+                }
+              } else {
+                buf = buf.subarray(pos);
+                settled = true;
+                detachListeners();
+                resolve();
+                return;
+              }
             }
           }
           // Splice off processed bytes so the buffer stays bounded.
