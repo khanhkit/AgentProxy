@@ -8,10 +8,17 @@ import { validateBaseUrl } from "@/lib/cli-helper/config-generator";
 import {
   generateHermesAgentConfig,
   getCurrentHermesAgentRoles,
+  HERMES_AGENT_ROLES,
+  type HermesAgentRole,
 } from "@/lib/cli-helper/config-generator/hermes-agent";
 import { getHermesConfigPath } from "@/lib/cli-helper/config-generator/hermesHome";
 import { recoverApiKeyById } from "@/lib/db/apiKeys";
 import { sanitizeErrorMessage } from "@omniroute/open-sse/utils/error.ts";
+
+const hermesRoleIds = HERMES_AGENT_ROLES.map((role) => role.id) as [
+  HermesAgentRole,
+  ...HermesAgentRole[],
+];
 
 const hermesAgentSettingsSchema = z.object({
   baseUrl: z.string().min(1, "baseUrl is required"),
@@ -20,7 +27,7 @@ const hermesAgentSettingsSchema = z.object({
   selections: z
     .array(
       z.object({
-        role: z.string(),
+        role: z.enum(hermesRoleIds),
         model: z.string(),
       })
     )
