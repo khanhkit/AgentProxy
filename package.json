@@ -12,6 +12,7 @@
     "bin/",
     "dist/",
     "@omniroute/opencode-plugin/",
+    "@omniroute/opencode-plugin-v2/",
     "@omniroute/opencode-provider/",
     "open-sse/",
     "src/domain/",
