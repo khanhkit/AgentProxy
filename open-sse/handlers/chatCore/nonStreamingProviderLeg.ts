@@ -953,7 +953,7 @@ export async function runNonStreamingProviderLeg(
   responseBody = unwrapClineNonStreamingEnvelope(provider, responseBody) as typeof responseBody;
 
   // -- Empty content -> family fallback (initial only) -------------------------
-  if (isEmptyContentResponse(responseBody)) {
+  if (isEmptyContentResponse(responseBody, { provider })) {
     const errMsg = "Provider returned empty content";
     if (allowModelFallback) {
       const triedModels = new Set<string>([currentModel]);

@@ -13,8 +13,16 @@ import { getProviderCategory, getRegistryEntry } from "../config/providerRegistr
 // (e.g. a Claude Code `max_tokens: 1` connectivity ping) into a synthetic 502.
 const LEGIT_EMPTY_CLAUDE_STOP = new Set(["max_tokens", "tool_use"]);
 const LEGIT_EMPTY_OPENAI_FINISH = new Set(["length", "tool_calls", "content_filter"]);
+const TRUSTED_EMPTY_STOP_PROVIDERS = new Set(["antigravity"]);
+const NORMAL_STOP_OPENAI_FINISH = new Set(["stop"]);
+const NORMAL_STOP_CLAUDE_STOP = new Set(["end_turn"]);
 
-export function isEmptyContentResponse(responseBody: unknown): boolean {
+export function isEmptyContentResponse(
+  responseBody: unknown,
+  opts?: { provider?: string | null }
+): boolean {
+  const trustedEmptyStop =
+    typeof opts?.provider === "string" && TRUSTED_EMPTY_STOP_PROVIDERS.has(opts.provider);
   if (!responseBody || typeof responseBody !== "object") return false;
 
   const body = responseBody as Record<string, unknown>;
@@ -45,6 +53,7 @@ export function isEmptyContentResponse(responseBody: unknown): boolean {
     const finishReason =
       typeof firstChoice.finish_reason === "string" ? firstChoice.finish_reason : "";
     if (LEGIT_EMPTY_OPENAI_FINISH.has(finishReason)) return false;
+    if (trustedEmptyStop && NORMAL_STOP_OPENAI_FINISH.has(finishReason)) return false;
 
     return !hasContent && !hasReasoning && !hasToolCalls;
   }
@@ -55,6 +64,7 @@ export function isEmptyContentResponse(responseBody: unknown): boolean {
     // to emit a tool_use block) is a legitimate terminal state, not a silent
     // failure. Only flag empty content when no such terminal stop_reason is present.
     const stopReason = typeof body.stop_reason === "string" ? body.stop_reason : "";
+    if (trustedEmptyStop && NORMAL_STOP_CLAUDE_STOP.has(stopReason)) return false;
     return !LEGIT_EMPTY_CLAUDE_STOP.has(stopReason);
   }
 
