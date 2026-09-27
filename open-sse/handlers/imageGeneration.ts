@@ -2885,12 +2885,36 @@ async function fetchImageEndpoint(url, headers, body, provider, log) {
 
     const data = await response.json();
 
-    // Normalize response to OpenAI format
+    // Normalize response to OpenAI format. A 2xx without at least one usable
+    // image must not terminate combo fallback with an image-less success.
+    const items = Array.isArray(data?.data) ? data.data : [];
+    const hasUsableImage = items.some(
+      (item: unknown) =>
+        isJsonObject(item) &&
+        ((typeof item.b64_json === "string" && item.b64_json.length > 0) ||
+          (typeof item.url === "string" && item.url.length > 0))
+    );
+    if (!hasUsableImage) {
+      if (log) {
+        log.warn(
+          "IMAGE",
+          `${provider} returned 200 without a usable image payload; treating as retryable 502`
+        );
+      }
+      return {
+        success: false,
+        status: HTTP_STATUS.BAD_GATEWAY,
+        error: sanitizeErrorMessage(
+          "Image provider returned a success status without an image payload"
+        ),
+      };
+    }
+
     return {
       success: true,
       data: {
         created: data.created || Math.floor(Date.now() / 1000),
-        data: data.data || [],
+        data: items,
       },
     };
   } catch (err: unknown) {
