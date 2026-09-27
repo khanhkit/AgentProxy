@@ -23,6 +23,7 @@ import {
   parseImprovedContent,
 } from "@/lib/playground/promptImprover";
 import { isRequireApiKeyEnabled } from "@/shared/utils/featureFlags";
+import { resolveOmniRouteApiBaseUrl } from "@/shared/utils/resolveOmniRouteBaseUrl";
 
 const CORS_HEADERS = {
   "Access-Control-Allow-Methods": "POST, OPTIONS",
@@ -76,9 +77,7 @@ export async function POST(request: Request): Promise<Response> {
   const chatBody = buildImproveChatBody(body);
 
   // 5. Call /v1/chat/completions on ourselves (D8)
-  const port = process.env.PORT ?? "20128";
-  const baseUrl = process.env.OMNIROUTE_BASE_URL ?? `http://127.0.0.1:${port}`;
-  const upstreamUrl = `${baseUrl}/v1/chat/completions`;
+  const upstreamUrl = `${resolveOmniRouteApiBaseUrl()}/chat/completions`;
 
   let upstreamResponse: Response;
   try {

@@ -3,6 +3,7 @@ import test from "node:test";
 
 import {
   DEFAULT_OMNIROUTE_BASE_URL,
+  resolveOmniRouteApiBaseUrl,
   resolveOmniRouteBaseUrl,
 } from "../../src/shared/utils/resolveOmniRouteBaseUrl.ts";
 
@@ -53,4 +54,12 @@ test("resolveOmniRouteBaseUrl uses the default localhost fallback", () => {
 
 test("resolveOmniRouteBaseUrl uses custom port when PORT env is set", () => {
   assert.equal(resolveOmniRouteBaseUrl({ PORT: 37128 }), "http://localhost:37128");
+});
+
+test("resolveOmniRouteApiBaseUrl appends v1 exactly once", () => {
+  assert.equal(resolveOmniRouteApiBaseUrl({ PORT: 37128 }), "http://localhost:37128/v1");
+  assert.equal(
+    resolveOmniRouteApiBaseUrl({ OMNIROUTE_BASE_URL: "http://gateway.test:37128/v1" }),
+    "http://gateway.test:37128/v1"
+  );
 });

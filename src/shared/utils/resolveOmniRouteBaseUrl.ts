@@ -27,4 +27,9 @@ export function resolveOmniRouteBaseUrl(env: OmniRouteBaseUrlEnv = process.env):
   );
 }
 
+export function resolveOmniRouteApiBaseUrl(env: OmniRouteBaseUrlEnv = process.env): string {
+  const baseUrl = resolveOmniRouteBaseUrl(env);
+  return /\/v1$/i.test(baseUrl) ? baseUrl : `${baseUrl}/v1`;
+}
+
 export { DEFAULT_OMNIROUTE_BASE_URL };

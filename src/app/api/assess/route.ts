@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { Assessor } from "@/domain/assessment/assessor";
 import { Categorizer } from "@/domain/assessment/categorizer";
-import { SelfHealer } from "@/domain/assessment/selfHealer";
 import {
   type AssessmentScope,
   type AssessmentTrigger,
@@ -10,14 +9,14 @@ import {
 } from "@/domain/assessment/types";
 import { validateBody } from "@/shared/validation/helpers";
 import { sanitizeErrorMessage } from "@omniroute/open-sse/utils/error";
+import { resolveOmniRouteApiBaseUrl } from "@/shared/utils/resolveOmniRouteBaseUrl";
 
-const assessor = new Assessor(
-  process.env.OMNIROUTe_API_KEY ?? process.env.API_KEY ?? "",
-  process.env.OMNIROUTe_BASE_URL ?? "http://localhost:20128/v1"
-);
+const assessmentApiKey =
+  process.env.OMNIROUTE_API_KEY ?? process.env.OMNIROUTe_API_KEY ?? process.env.API_KEY ?? "";
+
+const assessor = new Assessor(assessmentApiKey, resolveOmniRouteApiBaseUrl());
 
 const categorizer = new Categorizer();
-const healer = new SelfHealer();
 
 const modelCategories = new Set<ModelCategory>([
   "coding",
@@ -142,9 +141,9 @@ export async function GET(request: NextRequest) {
 
 async function getAllModels(): Promise<Array<{ providerId: string; modelId: string }>> {
   try {
-    const resp = await fetch("http://localhost:20128/v1/models", {
+    const resp = await fetch(`${resolveOmniRouteApiBaseUrl()}/models`, {
       headers: {
-        Authorization: `Bearer ${process.env.OMNIROUTe_API_KEY ?? process.env.API_KEY ?? ""}`,
+        Authorization: `Bearer ${assessmentApiKey}`,
       },
     });
     const data = (await resp.json()) as { data?: unknown };

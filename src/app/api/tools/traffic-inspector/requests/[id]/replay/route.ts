@@ -10,12 +10,15 @@
 
 import { buildErrorBody, sanitizeErrorMessage } from "@omniroute/open-sse/utils/error.ts";
 import { globalTrafficBuffer } from "@/mitm/inspector/buffer";
+import { resolveOmniRouteBaseUrl } from "@/shared/utils/resolveOmniRouteBaseUrl";
 
 interface Params {
   params: Promise<{ id: string }>;
 }
 
-const OMNIROUTE_BASE = process.env.OMNIROUTE_BASE_URL ?? "http://127.0.0.1:20128";
+function getOmniRouteReplayBaseUrl(): string {
+  return resolveOmniRouteBaseUrl().replace(/\/v1$/i, "");
+}
 
 export async function POST(_request: Request, { params }: Params): Promise<Response> {
   const { id } = await params;
@@ -27,7 +30,7 @@ export async function POST(_request: Request, { params }: Params): Promise<Respo
     });
   }
 
-  const url = `${OMNIROUTE_BASE}${entry.path}`;
+  const url = `${getOmniRouteReplayBaseUrl()}${entry.path}`;
 
   const replayHeaders: Record<string, string> = {
     "content-type": "application/json",
