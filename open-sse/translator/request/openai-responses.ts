@@ -99,7 +99,7 @@ function normalizeRoleBasedToolCalls(toolCalls: unknown): JsonRecord[] {
         },
       };
     })
-    .filter((toolCall): toolCall is JsonRecord => toolCall !== null);
+    .filter((toolCall): toolCall is NonNullable<typeof toolCall> => toolCall !== null);
 }
 
 /**
