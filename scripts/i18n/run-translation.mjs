@@ -584,12 +584,18 @@ export function mirrorLastCommitDate(mirrorRel, { cwd = ROOT } = {}) {
   }
 }
 
-async function resolveSectionPlan({ task, state, opts, sections }) {
+async function resolveSectionPlan({ task, state, opts, sections, historyCache }) {
   if (task.missingTarget || opts.force) return null;
   const recorded = state.sources[task.rel]?.locales?.[task.locale];
   let previousHashes = recorded?.section_hashes;
   if (!previousHashes && recorded?.source_hash) {
-    let oldText = await findSourceTextByHash(task.rel, recorded.source_hash);
+    const hashKey = `${task.rel}\0${recorded.source_hash}`;
+    let oldText;
+    if (historyCache?.has(hashKey)) oldText = historyCache.get(hashKey);
+    else {
+      oldText = await findSourceTextByHash(task.rel, recorded.source_hash);
+      historyCache?.set(hashKey, oldText);
+    }
     if (!oldText) {
       // `updated_at` is bumped by `--adopt`, so prefer the date of the last commit that
       // actually wrote the mirror (mirrors are only written by translation runs).
@@ -830,11 +836,38 @@ async function main() {
     `work units: ${tasks.length} (skipped up-to-date: ${stats.skipped} of ${stats.considered})`
   );
 
+  // Source-history bootstrap is identical for every locale that was translated
+  // from the same source revision. Cache exact-hash lookups across tasks so a
+  // 66-locale dry-run does not repeat up to 200 git show calls per locale.
+  const historyCache = new Map();
+
   if (opts.dryRun) {
-    for (const t of tasks) {
-      console.log(`  [DRY] ${t.rel} → ${path.relative(ROOT, t.targetAbs)}`);
+    let freshSections = 0;
+    let reusedSections = 0;
+    let fullBodyFallbacks = 0;
+    for (const task of tasks) {
+      const sourceText = sourceHashes.get(task.rel).text;
+      const sections = splitSections(stripTopHeading(sourceText));
+      const nonEmptySections = sections.filter((section) => section.trim()).length;
+      const plan = await resolveSectionPlan({ task, state, opts, sections, historyCache });
+      if (plan) {
+        const fresh = plan.translate.filter((i) => sections[i]?.trim()).length;
+        freshSections += fresh;
+        reusedSections += plan.reuse.size;
+        console.log(
+          `  [DRY] ${task.rel} → ${path.relative(ROOT, task.targetAbs)} (${fresh}/${nonEmptySections} sections fresh, ${plan.reuse.size} reused)`
+        );
+      } else {
+        freshSections += nonEmptySections;
+        fullBodyFallbacks++;
+        console.log(
+          `  [DRY] ${task.rel} → ${path.relative(ROOT, task.targetAbs)} (full-body fallback; ${nonEmptySections} sections)`
+        );
+      }
     }
-    logInfo(`dry-run complete — would translate ${tasks.length} files`);
+    logInfo(
+      `dry-run complete — ${tasks.length} files; estimated fresh sections: ${freshSections}; reusable sections: ${reusedSections}; full-body fallbacks: ${fullBodyFallbacks}`
+    );
     return;
   }
 
@@ -852,7 +885,7 @@ async function main() {
         const sections = splitSections(body);
         let translatedBody;
         try {
-          const plan = await resolveSectionPlan({ task, state, opts, sections });
+          const plan = await resolveSectionPlan({ task, state, opts, sections, historyCache });
           if (plan && plan.translate.length < sections.length) {
             const out = [...sections];
             for (const [i, text] of plan.reuse) out[i] = text;
