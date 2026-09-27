@@ -3428,7 +3428,9 @@
       "failoverBeforeRetry": "Kai įjungta, bet kokia aukštesnio lygio klaida iškart perjungia į kitą kombinacijos tikslinį objektą, praleidžiant visus pakartotinius bandymus ir atsarginius URL adresus.",
       "maxSetRetries": "Kiek kartų kartoti visą tikslinių objektų rinkinį, kai visi tiksliniai objektai nepavyksta. 0 = nėra rinkinio lygio pakartojimo.",
       "setRetryDelayMs": "Delsa tarp rinkinio lygio pakartotinių bandymų, suteikianti laiko laikinoms problemoms išsisprendus.",
-      "disableSessionStickiness": "Rotuokite prie skirtingo ryšio su kiekviena užklausa, vietoj to, kad prisegtumėte visą pokalbį prie vieno ryšio pagal pirmojo pranešimo maišos vertę. Pakeičia bendrą numatytąjį nustatymą. Palikite reikšmę „Paveldėti“, kad būtų išsaugoti krešmenos (prompt-cache) pataikymai daugiapakopiams pokalbiams."
+      "disableSessionStickiness": "Rotuokite prie skirtingo ryšio su kiekviena užklausa, vietoj to, kad prisegtumėte visą pokalbį prie vieno ryšio pagal pirmojo pranešimo maišos vertę. Pakeičia bendrą numatytąjį nustatymą. Palikite reikšmę „Paveldėti“, kad būtų išsaugoti krešmenos (prompt-cache) pataikymai daugiapakopiams pokalbiams.",
+      "connectionAwareExpansion": "When on, this combo expands each provider-level step into per-account targets before rotating. Inherit uses the global default (off). Off keeps provider-level rotation.",
+      "stickyLimit": "Round-robin sticky batch size: consecutive successful requests sent to one target before rotating to the next. Empty inherits the global Sticky Limit setting; 1 disables batching (pure one-request rotation)."
     },
     "templatesTitle": "Greiti šablonai",
     "templatesDescription": "Pritaikykite pradinį profilį, tada pakoreguokite modelius ir konfigūraciją.",
@@ -3782,7 +3784,16 @@
     "duplicateAutoComboSnapshotMsg": "Tai užfiksuos šiuo metu prijungtus teikėjus/modelius, atitinkančius šį šabloną, redaguojamame kombo.",
     "duplicateAutoComboFailedPrefix": "Nepavyko dubliuoti automatinio kombo:",
     "duplicateAutoComboUnknownError": "Nežinoma klaida",
-    "duplicateAutoComboTitle": "Sukurti statinį kombo iš {name}"
+    "duplicateAutoComboTitle": "Sukurti statinį kombo iš {name}",
+    "stickyLimitEffective": "Effective {value} ({source})",
+    "stickyLimitSourceCombo": "combo",
+    "stickyLimitSourceComboDefaults": "combo defaults",
+    "stickyLimitSourceGlobal": "global default",
+    "connectionAwareExpansion": "Connection-aware expansion",
+    "triStateInherit": "inherit",
+    "connectionAwareExpansionOn": "On",
+    "connectionAwareExpansionOff": "Off",
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation."
   },
   "costs": {
     "title": "Išlaidos",

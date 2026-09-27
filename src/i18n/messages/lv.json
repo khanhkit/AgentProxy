@@ -3428,7 +3428,9 @@
       "failoverBeforeRetry": "Kad iespējots, jebkura augšējā kļūda izraisa tūlītēju pāreju uz nākamo kombinācijas mērķi, izlaižot visus mēģinājumus un rezerves URL.",
       "maxSetRetries": "Reižu skaits, cik reizes mēģināt pilnu mērķu kopu, kad katrs mērķis neizdodas. 0 = nav kopas līmeņa mēģinājuma.",
       "setRetryDelayMs": "Aizkave starp kopas līmeņa mēģinājumiem, dodot laiku pagaidu problēmām atrisināties.",
-      "disableSessionStickiness": "Rotējiet uz citu savienojumu pie katras pieprasījuma, nevis piespraužot visu sarunu pie viena savienojuma pēc pirmās ziņas heša. Aizstāj globālo noklusējumu. Atstājiet Iedzimt, lai saglabātu uzvedību vairāku gājienu tērzēšanās gadījumā."
+      "disableSessionStickiness": "Rotējiet uz citu savienojumu pie katras pieprasījuma, nevis piespraužot visu sarunu pie viena savienojuma pēc pirmās ziņas heša. Aizstāj globālo noklusējumu. Atstājiet Iedzimt, lai saglabātu uzvedību vairāku gājienu tērzēšanās gadījumā.",
+      "connectionAwareExpansion": "When on, this combo expands each provider-level step into per-account targets before rotating. Inherit uses the global default (off). Off keeps provider-level rotation.",
+      "stickyLimit": "Round-robin sticky batch size: consecutive successful requests sent to one target before rotating to the next. Empty inherits the global Sticky Limit setting; 1 disables batching (pure one-request rotation)."
     },
     "templatesTitle": "Ātrie veidnes",
     "templatesDescription": "Piemērot sākuma profilu, pēc tam pielāgot modeļus un konfigurāciju.",
@@ -3782,7 +3784,16 @@
     "duplicateAutoComboSnapshotMsg": "Tas izveidos momentuzņēmumu no pašlaik pievienotajiem nodrošinātājiem/modeļiem, kas atbilst šim šablonam, veidojot redigējamu kombināciju.",
     "duplicateAutoComboFailedPrefix": "Neizdevās dublēt automātisko kombināciju:",
     "duplicateAutoComboUnknownError": "Nezināma kļūda",
-    "duplicateAutoComboTitle": "Izveidot statisku kombināciju no {name}"
+    "duplicateAutoComboTitle": "Izveidot statisku kombināciju no {name}",
+    "stickyLimitEffective": "Effective {value} ({source})",
+    "stickyLimitSourceCombo": "combo",
+    "stickyLimitSourceComboDefaults": "combo defaults",
+    "stickyLimitSourceGlobal": "global default",
+    "connectionAwareExpansion": "Connection-aware expansion",
+    "triStateInherit": "inherit",
+    "connectionAwareExpansionOn": "On",
+    "connectionAwareExpansionOff": "Off",
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation."
   },
   "costs": {
     "title": "Izmaksas",
