@@ -13908,7 +13908,12 @@
     "hour": "stunda",
     "day": "diena",
     "unknownModel": "nezināms",
-    "pending": "gaida"
+    "pending": "gaida",
+    "allApiKeys": "All API keys",
+    "mcp": "MCP",
+    "mcpTool": "MCP tool",
+    "scope": "Scope",
+    "apiKey": "API key"
   },
   "metadata": {
     "compressionTitle": "Saspiešana",
