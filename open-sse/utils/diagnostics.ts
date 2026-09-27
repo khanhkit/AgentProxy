@@ -307,7 +307,18 @@ export function detectMalformedNonStream(resp: unknown): MalformedReason | null 
     return false;
   });
 
-  if (!anyHasOutput) return "empty_choices";
+  if (!anyHasOutput) {
+    const truncatedAtLimit = choices.some((choice) => {
+      const c = choice as Record<string, unknown>;
+      return (
+        c?.finish_reason === "length" ||
+        c?.finish_reason === "tool_calls" ||
+        c?.finish_reason === "content_filter"
+      );
+    });
+    if (truncatedAtLimit) return null;
+    return "empty_choices";
+  }
   return null;
 }
 
