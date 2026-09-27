@@ -176,7 +176,7 @@ async function isTargetSelectableForWeighted(
       return false;
     }
   }
-  return isModelAvailable ? await isModelAvailable(target.modelStr, target) : true;
+  return isModelAvailable ? (await isModelAvailable(target.modelStr, target)) === true : true;
 }
 
 /**
