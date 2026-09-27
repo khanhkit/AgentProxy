@@ -40,10 +40,7 @@ export default defineConfig({
       "tests/e2e/ecosystem.test.ts",
       "tests/e2e/protocol-clients.test.ts",
       "tests/unit/ui/request-logger-autorefresh-visibility-3972.test.tsx", // #13204 — still failing; remove when fixed
-      "src/app/(dashboard)/dashboard/webhooks/__tests__/webhook-wizard.test.tsx", // #13204 — still failing; remove when fixed
       "tests/unit/ui/logs-page-detail-modal-reopen-on-close.test.tsx", // #13204 — still failing; remove when fixed
-      "src/app/(dashboard)/dashboard/endpoint/__tests__/ApiEndpointsTab.test.tsx", // #13204 — still failing; remove when fixed
-      "src/app/(dashboard)/dashboard/discovery/__tests__/DiscoveryPageClient.test.tsx", // #13204 — still failing; remove when fixed
     ],
 
     coverage: {
