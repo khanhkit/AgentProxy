@@ -52,6 +52,22 @@ function sha256(buf) {
   return crypto.createHash("sha256").update(buf).digest("hex");
 }
 
+/**
+ * Return every expected (source, locale) pair that has no state record yet.
+ * A mirror existing on disk is not enough: without a recorded source/target hash,
+ * drift checks cannot prove which English revision produced it.
+ */
+export function findUntrackedTargets(sources, expectedLocales) {
+  const missing = [];
+  for (const [rel, entry] of Object.entries(sources ?? {})) {
+    const recorded = entry?.locales ?? {};
+    for (const locale of expectedLocales ?? []) {
+      if (!recorded[locale]) missing.push({ rel, locale });
+    }
+  }
+  return missing;
+}
+
 async function main() {
   const opts = parseArgs(process.argv);
 
@@ -69,7 +85,7 @@ async function main() {
   // Scope: only the documentation core set is translated on purpose (PR-0 decision, 22
   // sources); state entries for other docs (older per-locale extras) are not a CI concern.
   // `--all` restores the full-state behaviour for local inspection.
-  const { computeDocsCoreSet } = await import("./lib/docs-core-set.mjs");
+  const { computeDocsCoreSet, docsLocaleDirs } = await import("./lib/docs-core-set.mjs");
   const config = JSON.parse(await fs.readFile(path.join(ROOT, "config", "i18n.json"), "utf8"));
   const coreSet = computeDocsCoreSet({ root: ROOT, config });
   const coreList = Array.isArray(coreSet)
@@ -80,8 +96,10 @@ async function main() {
   const sources = Object.fromEntries(
     Object.entries(state.sources || {}).filter(([rel]) => scopeAll || core.has(rel))
   );
+  const expectedLocales = docsLocaleDirs({ root: ROOT, config });
 
   const driftedSources = [];
+  const untrackedTargets = findUntrackedTargets(sources, expectedLocales);
   const missingTargets = [];
   const driftedTargets = [];
   let checkedSources = 0;
@@ -104,12 +122,12 @@ async function main() {
       });
     }
 
-    for (const [locale, info] of Object.entries(entry.locales || {})) {
+    for (const locale of expectedLocales) {
       checkedTargets++;
+      const info = entry.locales?.[locale];
+      if (!info) continue; // reported above as an untracked target
       // Mirror the path layout used by run-translation.mjs.
-      const targetAbs = rel.includes("/")
-        ? path.join(ROOT, "docs", "i18n", locale, rel)
-        : path.join(ROOT, "docs", "i18n", locale, rel);
+      const targetAbs = path.join(ROOT, "docs", "i18n", locale, rel);
       if (!existsSync(targetAbs)) {
         missingTargets.push({ rel, locale });
         continue;
@@ -122,7 +140,10 @@ async function main() {
   }
 
   const ok =
-    driftedSources.length === 0 && missingTargets.length === 0 && driftedTargets.length === 0;
+    driftedSources.length === 0 &&
+    untrackedTargets.length === 0 &&
+    missingTargets.length === 0 &&
+    driftedTargets.length === 0;
 
   if (opts.json) {
     process.stdout.write(
@@ -132,6 +153,7 @@ async function main() {
           checkedSources,
           checkedTargets,
           driftedSources,
+          untrackedTargets,
           missingTargets,
           driftedTargets,
         },
@@ -144,6 +166,12 @@ async function main() {
     if (driftedSources.length) {
       console.log(`[i18n-check] drifted sources (${driftedSources.length}):`);
       for (const d of driftedSources) console.log(`  - ${d.rel} (${d.reason})`);
+    }
+    if (untrackedTargets.length) {
+      console.log(`[i18n-check] untracked targets (${untrackedTargets.length}):`);
+      for (const m of untrackedTargets.slice(0, 40)) console.log(`  - ${m.rel} [${m.locale}]`);
+      if (untrackedTargets.length > 40)
+        console.log(`  ... ${untrackedTargets.length - 40} more`);
     }
     if (missingTargets.length) {
       console.log(`[i18n-check] missing targets (${missingTargets.length}):`);
