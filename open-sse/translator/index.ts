@@ -410,7 +410,14 @@ export function translateRequest(
   // execute — so a client-injected mid-array system message (OpenCode/Kilo Code style
   // clients) is still normalized before reaching the upstream. No-op for non-strict
   // providers and for already-compliant requests (prompt-cache prefix stability).
-  if (targetFormat === FORMATS.OPENAI && result.messages && Array.isArray(result.messages)) {
+  // Claude->OpenAI is excluded here because claude-to-openai demotes mid-array
+  // system messages in place; pre-hoisting them would destroy chronological order.
+  if (
+    targetFormat === FORMATS.OPENAI &&
+    sourceFormat !== FORMATS.CLAUDE &&
+    result.messages &&
+    Array.isArray(result.messages)
+  ) {
     result.messages = hoistLeadingSystemMessage(result.messages, provider);
   }
 
