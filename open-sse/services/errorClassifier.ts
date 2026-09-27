@@ -1,4 +1,6 @@
 import {
+  ACCOUNT_DEACTIVATED_SIGNALS,
+  CREDITS_EXHAUSTED_SIGNALS,
   isAccountDeactivated,
   isCreditsExhausted,
   isDailyQuotaExhausted,
@@ -446,5 +448,41 @@ export function classifyProviderError(
     }
   }
 
+  return null;
+}
+
+const FAKE_SUCCESS_BODY_ALLOWLIST = new Set(["pollinations", "perplexity-web"]);
+const FAKE_SUCCESS_MAX_CONTENT_LENGTH = 400;
+const FAKE_SUCCESS_MIN_SIGNAL_COVERAGE = 0.12;
+
+export function isFakeSuccessBodyAllowlistedProvider(provider?: string | null): boolean {
+  if (!provider) return false;
+  return FAKE_SUCCESS_BODY_ALLOWLIST.has(provider.toLowerCase());
+}
+
+function matchedSignalCoverage(lowerText: string, signals: readonly string[]): number {
+  let best = 0;
+  for (const signal of signals) {
+    if (lowerText.includes(signal) && signal.length > best) best = signal.length;
+  }
+  return lowerText.length > 0 ? best / lowerText.length : 0;
+}
+
+export function classifyFakeSuccessBody(
+  content: string,
+  provider?: string | null
+): ProviderErrorType | null {
+  if (!isFakeSuccessBodyAllowlistedProvider(provider)) return null;
+  const text = String(content || "").trim();
+  if (!text || text.length > FAKE_SUCCESS_MAX_CONTENT_LENGTH) return null;
+  const lower = text.toLowerCase();
+  if (matchedSignalCoverage(lower, CREDITS_EXHAUSTED_SIGNALS) >= FAKE_SUCCESS_MIN_SIGNAL_COVERAGE) {
+    return PROVIDER_ERROR_TYPES.QUOTA_EXHAUSTED;
+  }
+  if (
+    matchedSignalCoverage(lower, ACCOUNT_DEACTIVATED_SIGNALS) >= FAKE_SUCCESS_MIN_SIGNAL_COVERAGE
+  ) {
+    return PROVIDER_ERROR_TYPES.ACCOUNT_DEACTIVATED;
+  }
   return null;
 }

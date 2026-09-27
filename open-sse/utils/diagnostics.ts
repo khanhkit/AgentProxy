@@ -10,6 +10,7 @@
  */
 
 import { sanitizeErrorMessage } from "./error.ts";
+import { classifyFakeSuccessBody } from "../services/errorClassifier.ts";
 import { SYNTHETIC_RESPONSES_SEQUENCE_NUMBER } from "./responsesSequence.ts";
 
 // ── Types ────────────────────────────────────────────────────────────────────
@@ -23,6 +24,7 @@ export type MalformedReason =
   | "parse_fail"
   | "empty_choices"
   | "empty_stream"
+  | "content_is_upstream_error"
   | string;
 
 export interface ReportMalformed200Opts {
@@ -178,7 +180,10 @@ export function synthResponsesFailure(reason?: MalformedReason): string {
  *   since a Claude client receives the body in that shape (no
  *   `choices`/`object:"response"`).
  */
-export function detectMalformedNonStream(resp: unknown): MalformedReason | null {
+export function detectMalformedNonStream(
+  resp: unknown,
+  provider?: string | null
+): MalformedReason | null {
   if (!resp || typeof resp !== "object") return "empty_choices";
 
   const body = resp as Record<string, unknown>;
@@ -319,7 +324,30 @@ export function detectMalformedNonStream(resp: unknown): MalformedReason | null 
     if (truncatedAtLimit) return null;
     return "empty_choices";
   }
+
+  if (provider && classifyFakeSuccessBody(extractChatCompletionText(choices), provider)) {
+    return "content_is_upstream_error";
+  }
   return null;
+}
+
+function extractChatCompletionText(choices: unknown[]): string {
+  const parts: string[] = [];
+  for (const choice of choices) {
+    const c = choice as Record<string, unknown>;
+    const msg = c?.message as Record<string, unknown> | undefined;
+    if (typeof msg?.content === "string") {
+      parts.push(msg.content);
+    } else if (Array.isArray(msg?.content)) {
+      for (const block of msg.content as unknown[]) {
+        const b = block as Record<string, unknown> | null;
+        if (b && typeof b === "object" && b.type === "text" && typeof b.text === "string") {
+          parts.push(b.text);
+        }
+      }
+    }
+  }
+  return parts.join(" ");
 }
 
 export function describeMalformedNonStream(
@@ -337,6 +365,13 @@ export function describeMalformedNonStream(
         ? `upstream reported a failed response: ${rawMessage}`
         : "upstream reported a failed response without usable output",
       code: "upstream_response_failed",
+      type: "upstream_response_error",
+    };
+  }
+  if (reason === "content_is_upstream_error") {
+    return {
+      message: "upstream reported a failure disguised as a successful response",
+      code: "upstream_fake_success",
       type: "upstream_response_error",
     };
   }
