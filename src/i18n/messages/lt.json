@@ -11266,6 +11266,10 @@
     "columns": {
       "status": "Būsena",
       "cacheSource": "Podėlio šaltinis",
+      "contentProvenance": "Atsakymas",
+      "contentEmpty": "Tuščias atsakymas",
+      "usageAbsent": "Žetonų skaičius nepateiktas",
+      "usageEstimated": "Žetonų skaičius įvertintas",
       "model": "Modelis",
       "requested": "Prašyta",
       "provider": "Teikėjas",

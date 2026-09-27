@@ -11284,6 +11284,10 @@
     "columns": {
       "status": "Status",
       "cacheSource": "Źródło cache",
+      "contentProvenance": "Odpowiedź",
+      "contentEmpty": "Pusta odpowiedź",
+      "usageAbsent": "Liczba tokenów nie została zgłoszona",
+      "usageEstimated": "Liczba tokenów szacowana",
       "model": "Model",
       "requested": "Żądano",
       "provider": "Provider",

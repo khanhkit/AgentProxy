@@ -11266,6 +11266,10 @@
     "columns": {
       "status": "Olek",
       "cacheSource": "Vahemälu allikas",
+      "contentProvenance": "Vastus",
+      "contentEmpty": "Tühi vastus",
+      "usageAbsent": "Tokenite arvu ei teatatud",
+      "usageEstimated": "Tokenite arv on hinnanguline",
       "model": "Mudel",
       "requested": "Taotletud",
       "provider": "Teenusepakkuja",

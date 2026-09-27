@@ -11266,6 +11266,10 @@
     "columns": {
       "status": "Stanje",
       "cacheSource": "Vir predpomnilnika",
+      "contentProvenance": "Odgovor",
+      "contentEmpty": "Prazen odgovor",
+      "usageAbsent": "Število žetonov ni bilo sporočeno",
+      "usageEstimated": "Število žetonov je ocenjeno",
       "model": "Model",
       "requested": "Zahtevano",
       "provider": "Ponudnik",

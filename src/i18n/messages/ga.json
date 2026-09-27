@@ -11266,6 +11266,10 @@
     "columns": {
       "status": "Stádas",
       "cacheSource": "Foinse Taisce",
+      "contentProvenance": "Freagra",
+      "contentEmpty": "Freagra folamh",
+      "usageAbsent": "Níor tuairiscíodh líon na dtocán",
+      "usageEstimated": "Líon na dtocán measta",
       "model": "Múnla",
       "requested": "Iarrtha",
       "provider": "Soláthraí",

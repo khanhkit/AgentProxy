@@ -11266,6 +11266,10 @@
     "columns": {
       "status": "Status",
       "cacheSource": "Sors tal-cache",
+      "contentProvenance": "Tweġiba",
+      "contentEmpty": "Tweġiba vojta",
+      "usageAbsent": "L-għadd tat-tokens ma ġiex irrappurtat",
+      "usageEstimated": "L-għadd tat-tokens huwa stmat",
       "model": "Mudell",
       "requested": "Mitlub",
       "provider": "Fornitur",

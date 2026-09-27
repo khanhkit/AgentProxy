@@ -11284,6 +11284,10 @@
     "columns": {
       "status": "Status",
       "cacheSource": "Cache Source",
+      "contentProvenance": "Ответ",
+      "contentEmpty": "Пустой ответ",
+      "usageAbsent": "Число токенов не передано",
+      "usageEstimated": "Число токенов оценено",
       "model": "Model",
       "requested": "Requested",
       "provider": "Provider",

@@ -11284,6 +11284,10 @@
     "columns": {
       "status": "Status",
       "cacheSource": "Cache Source",
+      "contentProvenance": "సమాధానం",
+      "contentEmpty": "ఖాళీ సమాధానం",
+      "usageAbsent": "టోకెన్ సంఖ్య నివేదించబడలేదు",
+      "usageEstimated": "టోకెన్ సంఖ్య అంచనా",
       "model": "Model",
       "requested": "Requested",
       "provider": "Provider",

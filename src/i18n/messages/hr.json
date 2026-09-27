@@ -11266,6 +11266,10 @@
     "columns": {
       "status": "Status",
       "cacheSource": "Izvor predmemorije",
+      "contentProvenance": "Odgovor",
+      "contentEmpty": "Prazan odgovor",
+      "usageAbsent": "Broj tokena nije prijavljen",
+      "usageEstimated": "Broj tokena je procijenjen",
       "model": "Model",
       "requested": "Zatraženo",
       "provider": "Pružatelj",

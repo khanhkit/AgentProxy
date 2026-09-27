@@ -11284,6 +11284,10 @@
     "columns": {
       "status": "Estado",
       "cacheSource": "Fonte de Cache",
+      "contentProvenance": "Resposta",
+      "contentEmpty": "Resposta vazia",
+      "usageAbsent": "Contagem de tokens não comunicada",
+      "usageEstimated": "Contagem de tokens estimada",
       "model": "Modelo",
       "requested": "Pedido",
       "provider": "Fornecedor",

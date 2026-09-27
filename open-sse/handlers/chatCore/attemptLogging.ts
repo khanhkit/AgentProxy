@@ -201,6 +201,7 @@ export function extractResponsesId(sourceFormat: unknown, clientResponse: unknow
 export type PersistAttemptLogsArgs = {
   status: number;
   tokens?: unknown;
+  usageEstimated?: boolean | null;
   responseBody?: unknown;
   error?: string | null;
   providerRequest?: unknown;
@@ -470,6 +471,12 @@ export function persistAttemptLogs(args: PersistAttemptLogsArgs, ctx: PersistAtt
     connectionId: finalConnectionId || undefined,
     duration: Date.now() - startTime,
     tokens: tokens || {},
+    usageEstimated:
+      args.usageEstimated ??
+      (tokens && typeof tokens === "object" && !Array.isArray(tokens) &&
+      (tokens as Record<string, unknown>).estimated === true
+        ? true
+        : null),
     requestBody: cloneBoundedChatLogPayload(
       attachLogMeta(
         truncateForLog(

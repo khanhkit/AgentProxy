@@ -11284,6 +11284,10 @@
     "columns": {
       "status": "狀態",
       "cacheSource": "快取來源",
+      "contentProvenance": "回覆",
+      "contentEmpty": "空回覆",
+      "usageAbsent": "未回報 token 數量",
+      "usageEstimated": "token 數量為估算值",
       "model": "模型",
       "requested": "請求",
       "provider": "提供者",

@@ -11284,6 +11284,10 @@
     "columns": {
       "status": "状态",
       "cacheSource": "缓存来源",
+      "contentProvenance": "回复",
+      "contentEmpty": "空回复",
+      "usageAbsent": "未报告 token 数量",
+      "usageEstimated": "token 数量为估算值",
       "model": "模型",
       "requested": "请求",
       "provider": "提供者",

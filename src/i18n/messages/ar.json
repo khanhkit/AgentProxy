@@ -11284,6 +11284,10 @@
     "columns": {
       "status": "الحالة",
       "cacheSource": "مصدر ذاكرة التخزين المؤقت",
+      "contentProvenance": "الرد",
+      "contentEmpty": "رد فارغ",
+      "usageAbsent": "لم يتم الإبلاغ عن عدد الرموز",
+      "usageEstimated": "عدد الرموز مُقدَّر",
       "model": "نموذج",
       "requested": "مطلوب",
       "provider": "مزود",

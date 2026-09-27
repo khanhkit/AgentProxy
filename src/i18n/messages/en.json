@@ -11294,6 +11294,10 @@
     "columns": {
       "status": "Status",
       "cacheSource": "Cache Source",
+      "contentProvenance": "Reply",
+      "contentEmpty": "Empty reply",
+      "usageAbsent": "Token count not reported",
+      "usageEstimated": "Token count estimated",
       "model": "Model",
       "requested": "Requested",
       "provider": "Provider",

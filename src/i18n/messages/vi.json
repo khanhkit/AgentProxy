@@ -11295,6 +11295,10 @@
     "columns": {
       "status": "Trạng thái",
       "cacheSource": "Nguồn cache",
+      "contentProvenance": "Phản hồi",
+      "contentEmpty": "Phản hồi trống",
+      "usageAbsent": "Không báo cáo số token",
+      "usageEstimated": "Số token ước tính",
       "model": "Mô hình",
       "requested": "Đã yêu cầu",
       "provider": "Nhà cung cấp",

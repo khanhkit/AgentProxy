@@ -11266,6 +11266,10 @@
     "columns": {
       "status": "Статус",
       "cacheSource": "Извор кеша",
+      "contentProvenance": "Одговор",
+      "contentEmpty": "Празан одговор",
+      "usageAbsent": "Број токена није пријављен",
+      "usageEstimated": "Број токена је процењен",
       "model": "Модел",
       "requested": "Захтевано",
       "provider": "Провајдер",

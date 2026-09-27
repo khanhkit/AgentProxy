@@ -11284,6 +11284,10 @@
     "columns": {
       "status": "Status",
       "cacheSource": "Cache Source",
+      "contentProvenance": "Cavab",
+      "contentEmpty": "Boş cavab",
+      "usageAbsent": "Token sayı bildirilməyib",
+      "usageEstimated": "Token sayı təxmini",
       "model": "Model",
       "requested": "Requested",
       "provider": "Provider",

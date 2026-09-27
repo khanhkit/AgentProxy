@@ -11266,6 +11266,10 @@
     "columns": {
       "status": "Κατάσταση",
       "cacheSource": "Πηγή κρυφής μνήμης",
+      "contentProvenance": "Απάντηση",
+      "contentEmpty": "Κενή απάντηση",
+      "usageAbsent": "Το πλήθος tokens δεν αναφέρθηκε",
+      "usageEstimated": "Το πλήθος tokens εκτιμήθηκε",
       "model": "Μοντέλο",
       "requested": "Ζητήθηκε",
       "provider": "Πάροχος",
