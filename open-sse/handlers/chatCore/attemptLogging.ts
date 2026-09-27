@@ -459,7 +459,8 @@ export function persistAttemptLogs(args: PersistAttemptLogsArgs, ctx: PersistAtt
   }
 
   saveCallLog({
-    id: pendingRequestId,
+    id: traceId,
+    pendingRequestId: ctx.pendingRequestId,
     method: "POST",
     path: clientRawRequest?.endpoint || "/v1/chat/completions",
     status,
