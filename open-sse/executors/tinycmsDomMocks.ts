@@ -86,7 +86,7 @@ function ensureUsableLocation(target: Record<string, unknown>, key: "location"):
 export function setupDomMocks(): DomMockRestore {
   if (typeof global === "undefined") return () => {};
 
-  const g = global as typeof globalThis & Record<string, unknown>;
+  const g = global as unknown as Record<string, unknown>;
   const hadWindow = "window" in g;
   const hadWindowCtor = "Window" in g;
   const hadCanvasElement = "HTMLCanvasElement" in g;
