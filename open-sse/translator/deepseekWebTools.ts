@@ -423,6 +423,27 @@ function extractCall(
   return { name, arguments: toArgumentsString(argsValue) };
 }
 
+const DSML_INVOKE_OPEN_RE = /<[｜|]{1,2}DSML[｜|]{1,2}\s+(calls|invoke|parameter)([^>]*)>/gi;
+const DSML_INVOKE_CLOSE_RE = /<\/[｜|]{1,2}DSML[｜|]{1,2}\s+(calls|invoke|parameter)\s*>/gi;
+
+function normalizeDsmlInvokeMarkup(text: string): string {
+  if (!text.includes("DSML")) return text;
+
+  const withOpens = text.replace(DSML_INVOKE_OPEN_RE, (_full, word: string, attrs: string) => {
+    const tag = word.toLowerCase();
+    if (tag === "calls") return "";
+    const name = getAttr(attrs, "name");
+    const nameAttr = name !== null ? ` name="${name}"` : "";
+    return tag === "invoke" ? `<tool${nameAttr}>` : `<parameter${nameAttr}>`;
+  });
+
+  return withOpens.replace(DSML_INVOKE_CLOSE_RE, (_full, word: string) => {
+    const tag = word.toLowerCase();
+    if (tag === "calls") return "";
+    return tag === "invoke" ? "</tool>" : "</parameter>";
+  });
+}
+
 // ── Public parser ─────────────────────────────────────────────────────────────
 
 /**
@@ -440,6 +461,8 @@ export function parseDeepSeekToolCalls(
   if (typeof text !== "string" || text.length === 0) {
     return { content: text ?? "", toolCalls: null };
   }
+
+  text = normalizeDsmlInvokeMarkup(text);
 
   const tokens = tokenizeToolTags(text);
   if (tokens.length === 0) {
