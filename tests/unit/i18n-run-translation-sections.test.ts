@@ -11,6 +11,9 @@ import {
   planSectionReuse,
   extractMirrorBody,
   findSourceTextByHash,
+  findSourceTextsByHashes,
+  findSourceTextsBeforeDates,
+  mirrorLastCommitDates,
   extractTopHeading,
   stripTopHeading,
 } from "../../scripts/i18n/run-translation.mjs";
@@ -142,9 +145,60 @@ test("findSourceTextByHash walks the file's git history and returns the text wit
       git("commit", "-q", "-m", "c", "--no-verify");
     }
     const sha = createHash("sha256").update(Buffer.from(v1, "utf8")).digest("hex");
+    const sha2 = createHash("sha256").update(Buffer.from(v2, "utf8")).digest("hex");
     assert.equal(await findSourceTextByHash(rel, sha, { cwd: dir }), v1);
+    const batched = findSourceTextsByHashes(rel, [sha, sha2, "0".repeat(64)], { cwd: dir });
+    assert.equal(batched.get(sha), v1);
+    assert.equal(batched.get(sha2), v2);
+    assert.equal(batched.get("0".repeat(64)), null);
+    const byDate = findSourceTextsBeforeDates(
+      rel,
+      ["2100-01-01T00:00:00Z", "1970-01-01T00:00:00Z"],
+      { cwd: dir }
+    );
+    assert.equal(byDate.get("2100-01-01T00:00:00Z"), v2);
+    assert.equal(byDate.get("1970-01-01T00:00:00Z"), null);
     assert.equal(await findSourceTextByHash(rel, "0".repeat(64), { cwd: dir }), null);
     assert.equal(await findSourceTextByHash("docs/missing.md", sha, { cwd: dir }), null);
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test("mirrorLastCommitDates batches last-touch lookup for multiple mirrors", () => {
+  const dir = mkdtempSync(path.join(os.tmpdir(), "i18n-mirror-dates-"));
+  const git = (...args: string[]) =>
+    execFileSync("git", args, {
+      cwd: dir,
+      encoding: "utf8",
+      env: {
+        ...process.env,
+        GIT_AUTHOR_NAME: "t",
+        GIT_AUTHOR_EMAIL: "t@example.com",
+        GIT_COMMITTER_NAME: "t",
+        GIT_COMMITTER_EMAIL: "t@example.com",
+      },
+    });
+  try {
+    git("init", "-q");
+    mkdirSync(path.join(dir, "docs", "i18n", "de"), { recursive: true });
+    mkdirSync(path.join(dir, "docs", "i18n", "fr"), { recursive: true });
+    const de = "docs/i18n/de/README.md";
+    const fr = "docs/i18n/fr/README.md";
+    writeFileSync(path.join(dir, de), "de-1\n");
+    git("add", de);
+    git("commit", "-q", "-m", "de", "--no-verify");
+    writeFileSync(path.join(dir, fr), "fr-1\n");
+    git("add", fr);
+    git("commit", "-q", "-m", "fr", "--no-verify");
+    writeFileSync(path.join(dir, de), "de-2\n");
+    git("add", de);
+    git("commit", "-q", "-m", "de2", "--no-verify");
+
+    const dates = mirrorLastCommitDates([de, fr], { cwd: dir });
+    assert.equal(dates.get(de), git("log", "-1", "--format=%cI", "--", de).trim());
+    assert.equal(dates.get(fr), git("log", "-1", "--format=%cI", "--", fr).trim());
+    assert.equal(dates.size, 2);
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }

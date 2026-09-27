@@ -509,11 +509,15 @@ export function extractMirrorBody(mirrorText) {
     .replace(/^---\r?\n+/, "");
 }
 
-// Bootstrap for targets translated before section hashes existed: walks the
-// file's git history (newest first, at most 200 commits) and returns the text
-// whose sha256 equals `sha` — the source that produced the mirror on disk — or
-// `null` when it is not in reach (shallow clone, rewritten history).
-export async function findSourceTextByHash(rel, sha, { cwd = ROOT } = {}) {
+// Bootstrap for targets translated before section hashes existed. Resolve all
+// requested source hashes for one file in a single history walk plus one
+// `git cat-file --batch` process. Missing hashes are cached as `null`, which is
+// important because adopted working-tree hashes often never existed in git.
+export function findSourceTextsByHashes(rel, hashes, { cwd = ROOT } = {}) {
+  const wanted = [...new Set((hashes ?? []).filter(Boolean))];
+  const found = new Map(wanted.map((hash) => [hash, null]));
+  if (!wanted.length) return found;
+
   let commits;
   try {
     commits = execFileSync("git", ["log", "--format=%H", "-n", "200", "--", rel], {
@@ -524,22 +528,46 @@ export async function findSourceTextByHash(rel, sha, { cwd = ROOT } = {}) {
       .split("\n")
       .filter(Boolean);
   } catch {
-    return null;
+    return found;
   }
-  for (const commit of commits) {
-    let text;
-    try {
-      text = execFileSync("git", ["show", `${commit}:${rel}`], {
-        cwd,
-        encoding: "utf8",
-        maxBuffer: 1 << 28,
-      });
-    } catch {
-      continue;
+  if (!commits.length) return found;
+
+  try {
+    const specs = commits.map((commit) => `${commit}:${rel}`);
+    const batch = execFileSync("git", ["cat-file", "--batch"], {
+      cwd,
+      input: `${specs.join("\n")}\n`,
+      maxBuffer: 1 << 28,
+    });
+    let offset = 0;
+    let matched = 0;
+    for (let i = 0; i < specs.length && offset < batch.length; i++) {
+      const lineEnd = batch.indexOf(0x0a, offset);
+      if (lineEnd < 0) break;
+      const header = batch.subarray(offset, lineEnd).toString("utf8");
+      offset = lineEnd + 1;
+      if (header.endsWith(" missing")) continue;
+      const parts = header.split(" ");
+      const size = Number(parts[2]);
+      if (!Number.isFinite(size) || size < 0 || offset + size > batch.length) break;
+      const body = batch.subarray(offset, offset + size);
+      offset += size;
+      if (batch[offset] === 0x0a) offset += 1;
+      const digest = sha256(body);
+      if (found.has(digest) && found.get(digest) === null) {
+        found.set(digest, body.toString("utf8"));
+        matched++;
+        if (matched === wanted.length) break;
+      }
     }
-    if (sha256(Buffer.from(text, "utf8")) === sha) return text;
+  } catch {
+    return found;
   }
-  return null;
+  return found;
+}
+
+export async function findSourceTextByHash(rel, sha, { cwd = ROOT } = {}) {
+  return findSourceTextsByHashes(rel, [sha], { cwd }).get(sha) ?? null;
 }
 
 // Decides which sections of a task can be spliced in from the mirror on disk.
@@ -572,6 +600,68 @@ export function findSourceTextBefore(rel, isoDate, { cwd = ROOT } = {}) {
   }
 }
 
+export function findSourceTextsBeforeDates(rel, isoDates, { cwd = ROOT } = {}) {
+  const wanted = [...new Set((isoDates ?? []).filter(Boolean))];
+  const found = new Map(wanted.map((date) => [date, null]));
+  if (!wanted.length) return found;
+
+  let commits;
+  try {
+    commits = execFileSync("git", ["log", "--format=%H%x09%ct", "--", rel], {
+      cwd,
+      encoding: "utf8",
+    })
+      .trim()
+      .split("\n")
+      .filter(Boolean)
+      .map((line) => {
+        const [commit, epoch] = line.split("\t");
+        return { commit, epoch: Number(epoch) };
+      })
+      .filter((item) => item.commit && Number.isFinite(item.epoch));
+  } catch {
+    return found;
+  }
+
+  const commitForDate = new Map();
+  for (const date of wanted) {
+    const epoch = Date.parse(date) / 1000;
+    if (!Number.isFinite(epoch)) continue;
+    const match = commits.find((item) => item.epoch <= epoch);
+    if (match) commitForDate.set(date, match.commit);
+  }
+  const uniqueCommits = [...new Set(commitForDate.values())];
+  if (!uniqueCommits.length) return found;
+
+  try {
+    const specs = uniqueCommits.map((commit) => `${commit}:${rel}`);
+    const batch = execFileSync("git", ["cat-file", "--batch"], {
+      cwd,
+      input: `${specs.join("\n")}\n`,
+      maxBuffer: 1 << 28,
+    });
+    const textByCommit = new Map();
+    let offset = 0;
+    for (let i = 0; i < specs.length && offset < batch.length; i++) {
+      const lineEnd = batch.indexOf(0x0a, offset);
+      if (lineEnd < 0) break;
+      const header = batch.subarray(offset, lineEnd).toString("utf8");
+      offset = lineEnd + 1;
+      if (header.endsWith(" missing")) continue;
+      const size = Number(header.split(" ")[2]);
+      if (!Number.isFinite(size) || size < 0 || offset + size > batch.length) break;
+      const body = batch.subarray(offset, offset + size);
+      offset += size;
+      if (batch[offset] === 0x0a) offset += 1;
+      textByCommit.set(uniqueCommits[i], body.toString("utf8"));
+    }
+    for (const [date, commit] of commitForDate) found.set(date, textByCommit.get(commit) ?? null);
+  } catch {
+    return found;
+  }
+  return found;
+}
+
 export function mirrorLastCommitDate(mirrorRel, { cwd = ROOT } = {}) {
   try {
     const out = execFileSync("git", ["log", "-1", "--format=%cI", "--", mirrorRel], {
@@ -584,7 +674,46 @@ export function mirrorLastCommitDate(mirrorRel, { cwd = ROOT } = {}) {
   }
 }
 
-async function resolveSectionPlan({ task, state, opts, sections, historyCache }) {
+// Resolve many mirrors' last-touch timestamps with one git process. `git log`
+// is newest-first, so the first occurrence of a wanted path is its latest
+// commit. This replaces one `git log -1` subprocess per locale mirror during
+// large dry-runs (13 docs × 66 locales in the current backlog).
+export function mirrorLastCommitDates(mirrorRels, { cwd = ROOT } = {}) {
+  const wanted = new Set((mirrorRels ?? []).filter(Boolean));
+  const dates = new Map();
+  if (!wanted.size) return dates;
+  try {
+    const out = execFileSync(
+      "git",
+      ["log", "--format=@@%cI", "--name-only", "--", ...wanted],
+      { cwd, encoding: "utf8", maxBuffer: 1 << 28 }
+    );
+    let commitDate = null;
+    for (const rawLine of out.split("\n")) {
+      const line = rawLine.trim();
+      if (!line) continue;
+      if (line.startsWith("@@")) {
+        commitDate = line.slice(2) || null;
+        continue;
+      }
+      if (commitDate && wanted.has(line) && !dates.has(line)) dates.set(line, commitDate);
+      if (dates.size === wanted.size) break;
+    }
+  } catch {
+    // Callers retain the single-path fallback for shallow/odd repositories.
+  }
+  return dates;
+}
+
+async function resolveSectionPlan({
+  task,
+  state,
+  opts,
+  sections,
+  historyCache,
+  mirrorDateCache,
+  sourceBeforeCache,
+}) {
   if (task.missingTarget || opts.force) return null;
   const recorded = state.sources[task.rel]?.locales?.[task.locale];
   let previousHashes = recorded?.section_hashes;
@@ -599,9 +728,17 @@ async function resolveSectionPlan({ task, state, opts, sections, historyCache })
     if (!oldText) {
       // `updated_at` is bumped by `--adopt`, so prefer the date of the last commit that
       // actually wrote the mirror (mirrors are only written by translation runs).
+      const mirrorRel = path.relative(ROOT, task.targetAbs);
       const translatedAt =
-        mirrorLastCommitDate(path.relative(ROOT, task.targetAbs)) || recorded.updated_at;
-      if (translatedAt) oldText = findSourceTextBefore(task.rel, translatedAt);
+        mirrorDateCache?.get(mirrorRel) ?? mirrorLastCommitDate(mirrorRel) ?? recorded.updated_at;
+      if (translatedAt) {
+        const beforeKey = `${task.rel}\0${translatedAt}`;
+        if (sourceBeforeCache?.has(beforeKey)) oldText = sourceBeforeCache.get(beforeKey);
+        else {
+          oldText = findSourceTextBefore(task.rel, translatedAt);
+          sourceBeforeCache?.set(beforeKey, oldText);
+        }
+      }
     }
     if (oldText) previousHashes = sectionHashes(splitSections(stripTopHeading(oldText)));
   }
@@ -789,7 +926,7 @@ async function main() {
     logInfo(`backend (dry-run): ${apiUrl || "<unset>"}`);
   }
 
-  const limit = createLimiter(opts.dryRun ? 1 : backend.concurrency);
+  const limit = createLimiter(opts.dryRun ? 16 : backend.concurrency);
 
   let stats = { translated: 0, skipped: 0, failed: 0, considered: 0 };
   const failures = [];
@@ -837,33 +974,112 @@ async function main() {
   );
 
   // Source-history bootstrap is identical for every locale that was translated
-  // from the same source revision. Cache exact-hash lookups across tasks so a
-  // 66-locale dry-run does not repeat up to 200 git show calls per locale.
+  // from the same source revision. Resolve all recorded hashes for each source
+  // in one history walk + one cat-file batch, caching misses as well as hits.
   const historyCache = new Map();
+  const hashesBySource = new Map();
+  for (const task of tasks) {
+    const recorded = state.sources[task.rel]?.locales?.[task.locale];
+    if (recorded?.section_hashes || !recorded?.source_hash) continue;
+    if (!hashesBySource.has(task.rel)) hashesBySource.set(task.rel, new Set());
+    hashesBySource.get(task.rel).add(recorded.source_hash);
+  }
+  let requestedHistoryHashes = 0;
+  let matchedHistoryHashes = 0;
+  for (const [rel, hashes] of hashesBySource) {
+    const resolved = findSourceTextsByHashes(rel, [...hashes]);
+    for (const hash of hashes) {
+      requestedHistoryHashes++;
+      const text = resolved.get(hash) ?? null;
+      if (text) matchedHistoryHashes++;
+      historyCache.set(`${rel}\0${hash}`, text);
+    }
+  }
+  if (requestedHistoryHashes)
+    logInfo(`history preload: ${matchedHistoryHashes}/${requestedHistoryHashes} recorded source hashes resolved`);
+
+  // The fallback path used to spawn one `git log -1` per mirror. Resolve all
+  // mirror last-touch timestamps in one history walk, then cache source-before
+  // lookups by the (source, timestamp) pair shared by many locale mirrors.
+  const mirrorRels = tasks
+    .filter((task) => !task.missingTarget)
+    .map((task) => path.relative(ROOT, task.targetAbs));
+  const mirrorDateCache = mirrorLastCommitDates(mirrorRels);
+  const sourceBeforeCache = new Map();
+  if (mirrorRels.length)
+    logInfo(`history preload: ${mirrorDateCache.size}/${mirrorRels.length} mirror dates resolved`);
+
+  const datesBySource = new Map();
+  for (const task of tasks) {
+    const recorded = state.sources[task.rel]?.locales?.[task.locale];
+    if (recorded?.section_hashes || !recorded?.source_hash) continue;
+    const hashKey = `${task.rel}\0${recorded.source_hash}`;
+    if (historyCache.get(hashKey)) continue;
+    const mirrorRel = path.relative(ROOT, task.targetAbs);
+    const translatedAt = mirrorDateCache.get(mirrorRel);
+    if (!translatedAt) continue;
+    if (!datesBySource.has(task.rel)) datesBySource.set(task.rel, new Set());
+    datesBySource.get(task.rel).add(translatedAt);
+  }
+  let requestedBeforeDates = 0;
+  let matchedBeforeDates = 0;
+  for (const [rel, dates] of datesBySource) {
+    const resolved = findSourceTextsBeforeDates(rel, [...dates]);
+    for (const date of dates) {
+      requestedBeforeDates++;
+      const text = resolved.get(date) ?? null;
+      if (text) matchedBeforeDates++;
+      sourceBeforeCache.set(`${rel}\0${date}`, text);
+    }
+  }
+  if (requestedBeforeDates)
+    logInfo(`history preload: ${matchedBeforeDates}/${requestedBeforeDates} source-before timestamps resolved`);
 
   if (opts.dryRun) {
+    const planned = await Promise.all(
+      tasks.map((task, index) =>
+        limit(async () => {
+          const sourceText = sourceHashes.get(task.rel).text;
+          const sections = splitSections(stripTopHeading(sourceText));
+          const nonEmptySections = sections.filter((section) => section.trim()).length;
+          const plan = await resolveSectionPlan({
+            task,
+            state,
+            opts,
+            sections,
+            historyCache,
+            mirrorDateCache,
+            sourceBeforeCache,
+          });
+          if (plan) {
+            const fresh = plan.translate.filter((i) => sections[i]?.trim()).length;
+            return {
+              index,
+              fresh,
+              reused: plan.reuse.size,
+              fallback: 0,
+              line: `  [DRY] ${task.rel} → ${path.relative(ROOT, task.targetAbs)} (${fresh}/${nonEmptySections} sections fresh, ${plan.reuse.size} reused)`,
+            };
+          }
+          return {
+            index,
+            fresh: nonEmptySections,
+            reused: 0,
+            fallback: 1,
+            line: `  [DRY] ${task.rel} → ${path.relative(ROOT, task.targetAbs)} (full-body fallback; ${nonEmptySections} sections)`,
+          };
+        })
+      )
+    );
+    planned.sort((a, b) => a.index - b.index);
     let freshSections = 0;
     let reusedSections = 0;
     let fullBodyFallbacks = 0;
-    for (const task of tasks) {
-      const sourceText = sourceHashes.get(task.rel).text;
-      const sections = splitSections(stripTopHeading(sourceText));
-      const nonEmptySections = sections.filter((section) => section.trim()).length;
-      const plan = await resolveSectionPlan({ task, state, opts, sections, historyCache });
-      if (plan) {
-        const fresh = plan.translate.filter((i) => sections[i]?.trim()).length;
-        freshSections += fresh;
-        reusedSections += plan.reuse.size;
-        console.log(
-          `  [DRY] ${task.rel} → ${path.relative(ROOT, task.targetAbs)} (${fresh}/${nonEmptySections} sections fresh, ${plan.reuse.size} reused)`
-        );
-      } else {
-        freshSections += nonEmptySections;
-        fullBodyFallbacks++;
-        console.log(
-          `  [DRY] ${task.rel} → ${path.relative(ROOT, task.targetAbs)} (full-body fallback; ${nonEmptySections} sections)`
-        );
-      }
+    for (const result of planned) {
+      freshSections += result.fresh;
+      reusedSections += result.reused;
+      fullBodyFallbacks += result.fallback;
+      console.log(result.line);
     }
     logInfo(
       `dry-run complete — ${tasks.length} files; estimated fresh sections: ${freshSections}; reusable sections: ${reusedSections}; full-body fallbacks: ${fullBodyFallbacks}`
@@ -885,7 +1101,15 @@ async function main() {
         const sections = splitSections(body);
         let translatedBody;
         try {
-          const plan = await resolveSectionPlan({ task, state, opts, sections, historyCache });
+          const plan = await resolveSectionPlan({
+            task,
+            state,
+            opts,
+            sections,
+            historyCache,
+            mirrorDateCache,
+            sourceBeforeCache,
+          });
           if (plan && plan.translate.length < sections.length) {
             const out = [...sections];
             for (const [i, text] of plan.reuse) out[i] = text;
