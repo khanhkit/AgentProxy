@@ -188,6 +188,15 @@ function matchesComboAccessRule(comboName: string, requestedModel: string, rule:
   );
 }
 
+export function isComboNameAllowedForKey(
+  allowedCombos: string[] | null | undefined,
+  comboName: string
+): boolean {
+  if (!Array.isArray(allowedCombos)) return true;
+  if (!comboName) return false;
+  return allowedCombos.some((rule) => matchesComboAccessRule(comboName, comboName, rule));
+}
+
 function isAnthropicMessagesRequest(request: Request): boolean {
   if (request.headers.has("anthropic-version")) return true;
 
