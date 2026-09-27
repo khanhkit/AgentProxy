@@ -7,13 +7,27 @@ type DirectFetch = (
 const DEFAULT_DIRECT_HEADERS_TIMEOUT_MS = 30_000;
 const DIRECT_RESPONSE_START_TIMEOUT_CODE = "DIRECT_RESPONSE_START_TIMEOUT";
 
+const REASONING_READINESS_CEILING_MS = 180_000;
+const HIGH_REASONING_EFFORT_PATTERN = /"(?:reasoning_effort|effort)"\s*:\s*"(?:high|max)"/i;
+
+function hasHighReasoningEffort(body?: string | null): boolean {
+  return typeof body === "string" && body.length > 0 && HIGH_REASONING_EFFORT_PATTERN.test(body);
+}
+
 export function resolveDirectHeadersTimeoutMs(
-  env: Record<string, string | undefined> = process.env
+  env: Record<string, string | undefined> = process.env,
+  body?: string | null
 ): number {
   const raw = env.AGENTPROXY_DIRECT_HEADERS_TIMEOUT_MS;
-  if (raw == null || raw.trim() === "") return DEFAULT_DIRECT_HEADERS_TIMEOUT_MS;
-  const parsed = Number(raw);
-  return Number.isFinite(parsed) && parsed > 0 ? Math.floor(parsed) : 0;
+  const base =
+    raw == null || raw.trim() === ""
+      ? DEFAULT_DIRECT_HEADERS_TIMEOUT_MS
+      : Number.isFinite(Number(raw)) && Number(raw) > 0
+        ? Math.floor(Number(raw))
+        : 0;
+  return hasHighReasoningEffort(body)
+    ? Math.max(base, REASONING_READINESS_CEILING_MS)
+    : base;
 }
 
 function createDirectResponseStartTimeout(timeoutMs: number): Error & { code: string } {

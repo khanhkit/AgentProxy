@@ -907,12 +907,20 @@ export function handleNoCredentials(
  * transient upstream glitch, not a bad key.
  */
 export const STREAM_EARLY_EOF_MAX_RETRIES = 1;
+const RETRYABLE_STREAM_EMPTY_CODES: ReadonlySet<string> = new Set([
+  "STREAM_EARLY_EOF",
+  "empty_response",
+]);
 
 export function shouldRetryStreamEarlyEof(
   errorCode: string | null | undefined,
   attempt: number
 ): boolean {
-  return errorCode === "STREAM_EARLY_EOF" && attempt < STREAM_EARLY_EOF_MAX_RETRIES;
+  return (
+    typeof errorCode === "string" &&
+    RETRYABLE_STREAM_EMPTY_CODES.has(errorCode) &&
+    attempt < STREAM_EARLY_EOF_MAX_RETRIES
+  );
 }
 
 export function decideProxyResolutionFailure(

@@ -1043,7 +1043,9 @@ export function createSSEStream(options: StreamOptions = {}) {
     if (decrementPendingRequest && !failureHandled) {
       clearPendingRequestFromStream();
     }
-    controller.error(markPendingRequestCleared(new Error(msg)));
+    const emptyStreamError = new Error(msg) as Error & { code?: string };
+    emptyStreamError.code = "empty_response";
+    controller.error(markPendingRequestCleared(emptyStreamError));
   };
 
   const emitTranslatedClientItem = (
