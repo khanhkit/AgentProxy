@@ -13,7 +13,8 @@
 
 import { getProviderConnections, updateProviderConnection } from "@/lib/db/providers";
 import { getCachedProviderConnectionById } from "@/lib/db/readCache";
-import { getSettings, resolveProxyForConnection } from "@/lib/db/settings";
+import { getSettings } from "@/lib/db/settings";
+import { resolveGuardedProxyConfig } from "@/lib/tokenHealthCheckProxyGuard";
 import {
   getAccessToken,
   getDeprecationNotice,
@@ -701,8 +702,11 @@ export async function checkConnection(conn) {
 
       let refreshedProviderSpecificData: Record<string, unknown> | null = null;
       const hideLogs = await shouldHideLogs();
-      const proxyResolution = await resolveProxyForConnection(conn.id);
-      const proxyConfig = extractResolvedProxyConfig(proxyResolution);
+      const { proxyConfig, blocked } = await resolveGuardedProxyConfig(conn.id, conn.provider);
+      if (blocked) {
+        logWarn(`#13470 proxy-pool guard: skipping Copilot refresh for ${conn.id}`);
+        return;
+      }
       const healthCheckLog = {
         info: (tag: string, msg: string) => {
           if (!hideLogs) console.log(LOG_PREFIX, `[${tag}]`, msg);
@@ -908,8 +912,11 @@ export async function checkConnection(conn) {
   };
 
   const hideLogs = await shouldHideLogs();
-  const proxyResolution = await resolveProxyForConnection(conn.id);
-  const proxyConfig = extractResolvedProxyConfig(proxyResolution);
+  const { proxyConfig, blocked } = await resolveGuardedProxyConfig(conn.id, conn.provider);
+  if (blocked) {
+    logWarn(`#13470 proxy-pool guard: skipping token refresh for ${conn.id}`);
+    return;
+  }
 
   const healthCheckLog = {
     info: (tag: string, msg: string) => {
