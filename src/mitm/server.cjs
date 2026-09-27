@@ -42,9 +42,10 @@ const MITM_IDLE_TIMEOUT_MS =
 const ROUTER_BASE_URL = (
   process.env.OMNIROUTE_BASE_URL ||
   process.env.BASE_URL ||
-  "http://localhost:20128"
+  `http://localhost:${process.env.API_PORT || process.env.PORT || 20128}`
 )
   .trim()
+  .replace(/\/v1$/i, "")
   .replace(/\/+$/, "");
 const ROUTER_URL = `${ROUTER_BASE_URL}/v1/chat/completions`;
 const ROUTER_MESSAGES_URL = `${ROUTER_BASE_URL}/v1/messages`;

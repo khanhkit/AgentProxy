@@ -14,6 +14,7 @@
  * Concrete handlers live in `src/mitm/handlers/<agentId>.ts`.
  */
 import type { IncomingHttpHeaders, IncomingMessage, ServerResponse } from "node:http";
+import { resolveOmniRouteBaseUrl } from "@/shared/utils/resolveOmniRouteBaseUrl";
 import { randomUUID } from "node:crypto";
 import { performance } from "node:perf_hooks";
 import { maskSecret } from "../maskSecrets";
@@ -134,8 +135,8 @@ export abstract class MitmHandlerBase {
     path: string,
     headers: IncomingHttpHeaders,
   ): Promise<Response> {
-    const base = process.env.OMNIROUTE_BASE_URL ?? "http://127.0.0.1:20128";
-    const url = `${base.replace(/\/+$/, "")}${path}`;
+    const base = resolveOmniRouteBaseUrl();
+    const url = `${base.replace(/\/v1$/i, "").replace(/\/+$/, "")}${path}`;
     const apiKey = process.env.ROUTER_API_KEY ?? "";
 
     return fetch(url, {
