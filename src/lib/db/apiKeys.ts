@@ -81,7 +81,7 @@ import type {
   CreateApiKeyOptions,
   JsonRecord,
 } from "./apiKeys/internalTypes";
-import { assertExclusiveLeaseKeyPolicy } from "./apiKeys/leasePolicy";
+import { assertExclusiveLeaseKeyPolicy, EXCLUSIVE_LEASE_SCOPE } from "./apiKeys/leasePolicy";
 import {
   isConfiguredEnvApiKey,
   isRedisAuthCacheEnabled,

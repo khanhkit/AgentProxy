@@ -1,4 +1,4 @@
-const EXCLUSIVE_LEASE_SCOPE = "lease:exclusive";
+export const EXCLUSIVE_LEASE_SCOPE = "lease:exclusive";
 
 export class ApiKeyPolicyInvariantError extends Error {
   readonly code = "LEASE_KEY_POLICY_INVALID";
