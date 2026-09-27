@@ -40,7 +40,21 @@ cp contrib/podman/*.network ~/.config/containers/systemd/omniroute/
 cp contrib/podman/*.volume ~/.config/containers/systemd/omniroute/
 ```
 
-### 3. Mount the project .env for secrets
+### 3. Generate secrets before first start
+
+The checked-in Quadlet deliberately contains no literal `JWT_SECRET`,
+`API_KEY_SECRET`, or `INITIAL_PASSWORD`. Generate operator-owned values
+instead of copying placeholder secrets into production:
+
+```bash
+echo "JWT_SECRET=$(openssl rand -base64 48)" >> .env
+echo "API_KEY_SECRET=$(openssl rand -hex 32)" >> .env
+echo "INITIAL_PASSWORD=$(openssl rand -hex 24)" >> .env
+```
+
+Keep that `.env` private and outside version control.
+
+### 4. Mount the project .env for secrets
 
 Edit `~/.config/containers/systemd/omniroute/omniroute.container` and
 uncomment/replace the `EnvironmentFile` line with the absolute path to
@@ -54,7 +68,7 @@ Make sure `CONTAINER_HOST=podman` is set in that `.env`.
 
 Alternatively, edit the env vars directly in the `.container` file.
 
-### 4. Reload systemd and start
+### 5. Reload systemd and start
 
 ```bash
 systemctl --user daemon-reload
@@ -62,7 +76,7 @@ systemctl --user start omniroute-redis
 systemctl --user start omniroute
 ```
 
-### 5. Verify
+### 6. Verify
 
 ```bash
 systemctl --user status omniroute
