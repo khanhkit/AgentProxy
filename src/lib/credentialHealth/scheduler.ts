@@ -27,6 +27,7 @@ import {
   isCredentialProbeInconclusive,
   resolveInconclusiveProbeRecheckDelayMs,
 } from "@/lib/credentialHealth/probePolicy";
+import { getRefreshBackoffUntilMs, isInRefreshBackoff } from "@/lib/tokenRefreshCircuit";
 import { emit } from "@/lib/events/eventBus";
 import { isAutomatedTestProcess } from "@/shared/utils/testProcess";
 import { SEARCH_VALIDATOR_CONFIGS } from "@/lib/providers/validation/searchProviders";
@@ -331,6 +332,7 @@ export async function sweep(): Promise<void> {
       provider: string;
       authType?: string;
       healthCheckInterval?: number | null;
+      providerSpecificData?: { refreshCircuit?: { until?: unknown } | null } | null;
     }>;
 
     try {
@@ -348,6 +350,7 @@ export async function sweep(): Promise<void> {
         provider: string;
         authType?: string;
         healthCheckInterval?: number | null;
+        providerSpecificData?: { refreshCircuit?: { until?: unknown } | null } | null;
       }>;
     } catch (err) {
       console.error(LOG_PREFIX, "Failed to load provider connections:", err);
@@ -364,6 +367,16 @@ export async function sweep(): Promise<void> {
       // Per-connection opt-out: never tested.
       if (intervalMs === null) return false;
       const state_ = getSchedulerState();
+      if (isInRefreshBackoff(conn, now)) {
+        const untilMs = getRefreshBackoffUntilMs(conn);
+        if (untilMs !== null) {
+          state_.perConnTiming.set(conn.id, {
+            lastAttemptAt: state_.perConnTiming.get(conn.id)?.lastAttemptAt ?? now,
+            nextAttemptAt: untilMs,
+          });
+        }
+        return false;
+      }
       const timing = state_.perConnTiming.get(conn.id);
       // No timing entry = never tested since boot → due now
       if (!timing) return true;

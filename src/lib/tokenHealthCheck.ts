@@ -34,6 +34,7 @@ import {
   checkWebCookieConnectionIfNeeded,
   isWebCookieHealthProbeCandidate,
 } from "@/lib/tokenHealthCheckWebCookie";
+import { isInRefreshBackoff } from "@/lib/tokenRefreshCircuit";
 
 const LOG_PREFIX = "[HealthCheck]";
 const TRUE_ENV_VALUES = new Set(["1", "true", "yes", "on"]);
@@ -210,12 +211,7 @@ export function getRefreshBackoffUntil(streak: number, now: string): string {
   return new Date(new Date(now).getTime() + backoffMin * 60 * 1000).toISOString();
 }
 
-export function isInRefreshBackoff(conn: any, nowMs: number): boolean {
-  const until = conn?.providerSpecificData?.refreshCircuit?.until;
-  if (typeof until !== "string") return false;
-  const untilMs = new Date(until).getTime();
-  return Number.isFinite(untilMs) && untilMs > nowMs;
-}
+export { isInRefreshBackoff };
 
 export function buildRefreshFailureUpdate(
   conn: any,
