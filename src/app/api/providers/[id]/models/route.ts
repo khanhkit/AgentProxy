@@ -1835,6 +1835,49 @@ export async function GET(
         );
       }
 
+      if (queryKey) {
+        const { discoverVertexExpressModels } =
+          await import("@/lib/providerModels/vertexExpressDiscovery");
+        const curatedExpressModels = toLocalCatalogModels().filter((model) =>
+          /^gemini-/i.test(model.id)
+        );
+        const discovery = await discoverVertexExpressModels({
+          apiKey: queryKey,
+          curatedModels: curatedExpressModels,
+          fetchImpl: (url, init) =>
+            safeOutboundFetch(url, {
+              ...SAFE_OUTBOUND_FETCH_PRESETS.modelsDiscovery,
+              guard: getProviderOutboundGuard(),
+              proxyConfig: proxy,
+              ...init,
+            }),
+        });
+
+        if (discovery.models.length > 0) {
+          return buildApiDiscoveryResponse(discovery.models);
+        }
+
+        const warning = discovery.failureStatus
+          ? "Vertex model listing rejected the API key (HTTP " +
+            discovery.failureStatus +
+            "). No live catalog available for this API key — using curated Express catalog"
+          : "Vertex model discovery temporarily unavailable — using curated Express catalog";
+        const fallback = buildDiscoveryFallbackResponse({
+          cacheWarning: warning,
+          localWarning: warning,
+          localIntentional: true,
+        });
+        if (fallback) return fallback;
+        return buildResponse({
+          provider,
+          connectionId,
+          models: curatedExpressModels,
+          source: "local_catalog",
+          intentional: true,
+          warning,
+        });
+      }
+
       const baseUrl = "https://generativelanguage.googleapis.com/v1beta/models?pageSize=1000";
       const headers: Record<string, string> = { "Content-Type": "application/json" };
       if (bearerToken) headers["Authorization"] = `Bearer ${bearerToken}`;
