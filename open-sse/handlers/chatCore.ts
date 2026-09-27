@@ -275,6 +275,7 @@ import { handleBypassRequest } from "../utils/bypassHandler.ts";
 import { saveRequestUsage, trackPendingRequest, appendRequestLog } from "@/lib/usageDb";
 import { finalizePendingScope, updatePendingScope } from "@/lib/usage/pendingRequestScope";
 import { recordCost } from "@/domain/costRules";
+import { meteredBudgetCost } from "@/lib/usage/meteredBudgetPolicy";
 import { calculateCost } from "@/lib/usage/costCalculator";
 import {
   buildClaudePassthroughToolNameMap,
@@ -5270,8 +5271,9 @@ export async function handleChatCore({
           claudeCacheUsageMeta: cacheUsageLogMeta,
           cacheSource: "upstream",
         });
-        if (apiKeyInfo?.id && estimatedCost > 0) {
-          recordCost(apiKeyInfo.id, estimatedCost);
+        const budgetCost = meteredBudgetCost(provider, estimatedCost);
+        if (apiKeyInfo?.id && budgetCost > 0) {
+          recordCost(apiKeyInfo.id, budgetCost);
         }
         log?.warn?.(
           "GUARDRAIL",
@@ -5405,8 +5407,9 @@ export async function handleChatCore({
         claudeCacheUsageMeta: cacheUsageLogMeta,
         cacheSource: "upstream",
       });
-      if (apiKeyInfo?.id && estimatedCost > 0) {
-        recordCost(apiKeyInfo.id, estimatedCost);
+      const budgetCost = meteredBudgetCost(provider, estimatedCost);
+      if (apiKeyInfo?.id && budgetCost > 0) {
+        recordCost(apiKeyInfo.id, budgetCost);
       }
 
       // === Quota Share POST-hook (B/F7) — fire-and-forget, fail-open ===
@@ -5824,7 +5827,10 @@ export async function handleChatCore({
       streamUsage,
       serviceTier: effectiveServiceTier,
       calculateCost,
-      recordCost,
+      recordCost: (apiKeyId, cost, details) => {
+        const budgetCost = meteredBudgetCost(provider, cost);
+        if (budgetCost > 0) recordCost(apiKeyId, budgetCost, details);
+      },
     });
 
     // === Quota Share POST-hook streaming (B/F7) — fire-and-forget, fail-open ===
