@@ -866,7 +866,12 @@ async function patchedFetch(
             dispatcher: attempt === 0 ? getDefaultDispatcher() : getRetryDispatcher(),
           },
           _undiciDirect,
-          directHeadersTimeoutMs
+          resolveDirectHeadersTimeoutMs(
+            undefined,
+            directBodyForTimeout,
+            attempt,
+            !!options.signal
+          )
         );
       } catch (dispatcherError) {
         if (isDirectResponseStartTimeout(dispatcherError)) {
