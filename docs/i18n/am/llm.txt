@@ -4,21 +4,22 @@
 
 ---
 
-> AgentProxy is a free, open-source AI Gateway that acts as a universal API proxy for multi-provider LLMs. It provides smart routing, automatic fallback, load balancing, and format translation across 358 AI providers — all through a single OpenAI-compatible endpoint. Includes a built-in MCP Server (110 tools), A2A v0.3 protocol, Memory/Skills systems, Cloud Agents (codex, cursor, devin, jules), Guardrails framework, and an Electron desktop app.
+
+> AgentProxy is an independent, self-hosted AI gateway for coding agents and multi-agent systems. It combines a Rust streaming data plane with an inherited control plane that provides routing, fallback, load balancing, and format translation across 358 AI providers through a single OpenAI-compatible endpoint. It also includes the inherited MCP Server (110 tools), A2A v0.3 protocol, Memory/Skills systems, Cloud Agents, and Guardrails framework.
 
 ## Overview
 
-AgentProxy solves the problem of managing multiple AI provider subscriptions, quotas, and rate limits. It sits between your AI-powered tools (IDE agents, CLI tools) and AI providers, routing requests intelligently through a 4-tier fallback system: Subscription → API Key → Cheap → Free.
+AgentProxy solves the problem of managing multiple AI provider subscriptions, quotas, and rate limits. It sits between your AI-powered tools (IDE agents, CLI tools) and AI providers, routing requests through the inherited fallback system while native Rust routes migrate onto the low-latency data plane.
 
 **Key value:** One endpoint (`http://localhost:20128/v1`), unlimited models, zero downtime, minimal cost.
 
-**Current version:** 3.8.51
+**Current version:** 0.1.0
 
 ## Tech Stack
 
 - **Runtime:** Node.js `>=22.22.2 <23 || >=24.0.0 <27`, ES Modules (`"type": "module"`)
 - **Framework:** Next.js 16 (App Router) with TypeScript 6
-- **Database:** SQLite via better-sqlite3 (local, zero-config, 175 migrations)
+- **Database:** SQLite via better-sqlite3 (local, zero-config, 172 migrations)
 - **State management:** Zustand (client), SQLite (server persistence)
 - **UI:** React 19, Tailwind CSS 4, Recharts for analytics, @lobehub/icons for 130+ provider SVG icons
 - **Auth:** OAuth 2.0 (PKCE) for providers, bcrypt for local user auth
@@ -26,7 +27,7 @@ AgentProxy solves the problem of managing multiple AI provider subscriptions, qu
 - **Background jobs:** Custom token health check scheduler, 24h model auto-sync
 - **Streaming:** Server-Sent Events (SSE) for real-time proxy responses
 - **Proxy engine:** Custom pipeline with format translation, circuit breaker, rate limiting, auto-combo engine
-- **i18n:** next-intl with 66 languages
+- **i18n:** next-intl with 51 languages
 - **Desktop:** Electron (cross-platform: Windows, macOS, Linux)
 - **Package:** Published on npm (`omniroute`) and Docker Hub (`diegosouzapw/omniroute`)
 
@@ -98,7 +99,7 @@ AgentProxy solves the problem of managing multiple AI provider subscriptions, qu
 │   │   ├── configAudit.ts        # Configuration auditing
 │   │   └── responses.ts          # Domain response types
 │   ├── i18n/                     # Internationalization
-│   │   └── messages/             # 66 language JSON files
+│   │   └── messages/             # 51 language JSON files
 │   ├── lib/                      # Core libraries
 │   │   ├── a2a/                  # Agent-to-Agent v0.3 protocol server
 │   │   │   ├── skills/           # A2A skills (quotaManagement, smartRouting)
@@ -128,7 +129,7 @@ AgentProxy solves the problem of managing multiple AI provider subscriptions, qu
 │   │   │   ├── secrets.ts        # Secrets management
 │   │   │   ├── stateReset.ts     # State reset utilities
 │   │   │   ├── migrationRunner.ts # Schema migration runner
-│   │   │   └── migrations/       # 175 versioned SQL migration files
+│   │   │   └── migrations/       # 172 versioned SQL migration files
 │   │   ├── evals/                # Eval runner and scheduler
 │   │   ├── memory/               # Persistent conversational memory
 │   │   │   ├── extraction.ts     # Memory extraction from conversations
@@ -263,7 +264,7 @@ AgentProxy solves the problem of managing multiple AI provider subscriptions, qu
 │   ├── translator/               # Translator-specific tests
 │   └── load/                     # Load tests
 ├── docs/                         # Documentation
-│   ├── i18n/                     # 65-language translated docs
+│   ├── i18n/                     # 50-language translated docs
 │   ├── architecture/             # ARCHITECTURE.md, CODEBASE_DOCUMENTATION.md, REPOSITORY_MAP.md, AUTHZ_GUIDE.md, RESILIENCE_GUIDE.md, QUALITY_GATES.md
 │   ├── reference/                # API_REFERENCE.md, PROVIDER_REFERENCE.md, CLI-TOOLS.md
 │   ├── frameworks/               # MCP-SERVER.md (110 tools), A2A-SERVER.md, SKILLS.md, MEMORY.md, CLOUD_AGENT.md, EVALS.md, WEBHOOKS.md
@@ -281,7 +282,7 @@ AgentProxy solves the problem of managing multiple AI provider subscriptions, qu
 ## Key Features (v3.8.50)
 
 ### Core Proxy
-- **358 AI providers** with automatic format translation
+- **358 AI providers** in the inherited compatibility catalog with automatic format translation
 - **Provider categories**: Free (90+ free tiers), OAuth, API Key, Self-Hosted, Custom (OpenAI/Anthropic-compatible)
 - **19 routing strategies**: priority, weighted, round-robin, fill-first, p2c, random, least-used, cost-optimized, reset-aware, reset-window, headroom, strict-random, auto, lkgp, context-optimized, cache-optimized, context-relay, fusion, pipeline
 - **4-tier fallback**: Subscription → API Key → Cheap → Free
@@ -371,13 +372,13 @@ diagnostics) plus **memory**, **skill**, **agentSkill**, **githubSkill**, **pool
 **Custom Providers:** OpenAI-compatible (`openai-compatible-*`) and Anthropic-compatible (`anthropic-compatible-*`) with custom base URLs
 
 ### Internationalization
-- 66 languages for UI (all dashboard pages)
-- 65 translated documentation sets in docs/i18n/
+- 51 languages for UI (all dashboard pages)
+- 50 translated documentation sets in docs/i18n/
 - Language switcher in documentation
 
 ## Key Architectural Decisions
 
-1. **OpenAI-compatible API surface:** All incoming requests follow the OpenAI API format. This makes AgentProxy a drop-in replacement for any tool that supports custom OpenAI endpoints.
+1. **OpenAI-compatible API surface:** All incoming requests follow the OpenAI API format. This makes OmniRoute a drop-in replacement for any tool that supports custom OpenAI endpoints.
 
 2. **Provider abstraction via format translators:** Each AI provider has a translator in `open-sse/translator/` that converts between OpenAI format and the provider's native format transparently.
 
@@ -393,7 +394,7 @@ diagnostics) plus **memory**, **skill**, **agentSkill**, **githubSkill**, **pool
 
 8. **ProviderIcon component:** Unified icon system using `@lobehub/icons` (130+ SVG) with PNG fallback and generic icon fallback chain. Used on providers, dashboard, and agents pages.
 
-9. **DB architecture:** `localDb.ts` is a re-export layer only — real logic lives in 122 `src/lib/db/` modules with 175 SQL migrations.
+9. **DB architecture:** `localDb.ts` is a re-export layer only — real logic lives in 122 `src/lib/db/` modules with 172 SQL migrations.
 
 10. **Upstream headers:** Custom headers merged in executors after default auth; same header name replaces executor value. Forbidden header names in `src/shared/constants/upstreamHeaders.ts`.
 
@@ -437,7 +438,7 @@ diagnostics) plus **memory**, **skill**, **agentSkill**, **githubSkill**, **pool
 
 4. **Environment variables:** All configuration is in `.env` (from `.env.example`). Key vars: `PORT`, `NEXT_PUBLIC_BASE_URL`, `API_KEY`, `ADMIN_PASSWORD`.
 
-5. **Database layer:** Operations go through `src/lib/db/` modules (122 domain-specific files, 175 migrations). `localDb.ts` is re-exports only — add new functions to the proper `db/*.ts` module.
+5. **Database layer:** Operations go through `src/lib/db/` modules (122 domain-specific files, 172 migrations). `localDb.ts` is re-exports only — add new functions to the proper `db/*.ts` module.
 
 6. **Tests** use Node.js built-in test runner + Vitest. Run `npm test`. Vitest for MCP/autoCombo (`npm run test:vitest`). Playwright for E2E (`npm run test:e2e`). Coverage gate: ratchet vs `quality-baseline.json`, absolute floor 60% statements/lines/functions/branches.
 
@@ -489,7 +490,7 @@ diagnostics) plus **memory**, **skill**, **agentSkill**, **githubSkill**, **pool
 
 ## Links
 
-- Repository: https://github.com/diegosouzapw/AgentProxy
+- Repository: https://github.com/diegosouzapw/OmniRoute
 - Website: https://omniroute.online
 - npm: https://www.npmjs.com/package/omniroute
 - Docker Hub: https://hub.docker.com/r/diegosouzapw/omniroute
