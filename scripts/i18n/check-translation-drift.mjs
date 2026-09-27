@@ -68,6 +68,22 @@ export function findUntrackedTargets(sources, expectedLocales) {
   return missing;
 }
 
+export function findStaleTargetsForSource(rel, entry, currentSourceHash, expectedLocales) {
+  const stale = [];
+  for (const locale of expectedLocales ?? []) {
+    const info = entry?.locales?.[locale];
+    if (info?.source_hash && info.source_hash !== currentSourceHash) {
+      stale.push({
+        rel,
+        locale,
+        recorded: info.source_hash,
+        current: currentSourceHash,
+      });
+    }
+  }
+  return stale;
+}
+
 async function main() {
   const opts = parseArgs(process.argv);
 
@@ -102,6 +118,7 @@ async function main() {
   const untrackedTargets = findUntrackedTargets(sources, expectedLocales);
   const missingTargets = [];
   const driftedTargets = [];
+  const staleTargets = [];
   let checkedSources = 0;
   let checkedTargets = 0;
 
@@ -121,6 +138,8 @@ async function main() {
         current: currentHash,
       });
     }
+
+    staleTargets.push(...findStaleTargetsForSource(rel, entry, currentHash, expectedLocales));
 
     for (const locale of expectedLocales) {
       checkedTargets++;
@@ -143,7 +162,8 @@ async function main() {
     driftedSources.length === 0 &&
     untrackedTargets.length === 0 &&
     missingTargets.length === 0 &&
-    driftedTargets.length === 0;
+    driftedTargets.length === 0 &&
+    staleTargets.length === 0;
 
   if (opts.json) {
     process.stdout.write(
@@ -156,6 +176,7 @@ async function main() {
           untrackedTargets,
           missingTargets,
           driftedTargets,
+          staleTargets,
         },
         null,
         2
@@ -180,6 +201,12 @@ async function main() {
     if (driftedTargets.length) {
       console.log(`[i18n-check] drifted targets (${driftedTargets.length}):`);
       for (const t of driftedTargets) console.log(`  - ${t.rel} [${t.locale}]`);
+    }
+    if (staleTargets.length) {
+      console.log(`[i18n-check] stale targets (${staleTargets.length}):`);
+      for (const t of staleTargets.slice(0, 40)) console.log(`  - ${t.rel} [${t.locale}]`);
+      if (staleTargets.length > 40)
+        console.log(`  ... ${staleTargets.length - 40} more`);
     }
     if (ok) {
       console.log("[i18n-check] PASS — all sources and targets match recorded hashes.");

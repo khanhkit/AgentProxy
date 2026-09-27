@@ -27,6 +27,14 @@
  *                                  source_hash — mechanical mirror rewrites stop
  *                                  showing up as `target changed` while genuine
  *                                  source drift is still reported)
+ *   npm run i18n:run -- --adopt-safe-untracked
+ *                                 (reconstruct missing state records from the
+ *                                  mirror's single add commit; historical source
+ *                                  hashes are preserved, no API calls)
+ *   npm run i18n:run -- --repair-safe-provenance
+ *                                 (repair stale locale source_hash values only when
+ *                                  git proves the current mirror was created from
+ *                                  the current English source; no API calls)
  *
  * Backend (configured via env, never committed):
  *   OMNIROUTE_TRANSLATION_API_URL     e.g. https://cloud.omniroute.dev/v1
@@ -45,6 +53,10 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 import { normalizeLocaleText } from "./glossary-normalize.mjs";
 import { buildMirrorBar } from "./lib/language-bar.mjs";
 import { adoptState, mergeAdoptedState, refreshTargetHashes } from "./lib/translation-state.mjs";
+import {
+  recoverSafeUntrackedTargets,
+  repairSafeStaleProvenance,
+} from "./lib/safe-state-recovery.mjs";
 
 // ----- .env loader --------------------------------------------------------
 // Loads variables from a local `.env` (gitignored) into process.env without
@@ -168,6 +180,8 @@ function parseArgs(argv) {
     dryRun: false,
     adopt: false,
     targetsOnly: false,
+    adoptSafeUntracked: false,
+    repairSafeProvenance: false,
     concurrency: null,
   };
   for (const arg of argv.slice(2)) {
@@ -175,6 +189,8 @@ function parseArgs(argv) {
     else if (arg === "--dry-run" || arg === "--dryrun") opts.dryRun = true;
     else if (arg === "--adopt") opts.adopt = true;
     else if (arg === "--targets-only") opts.targetsOnly = true;
+    else if (arg === "--adopt-safe-untracked") opts.adoptSafeUntracked = true;
+    else if (arg === "--repair-safe-provenance") opts.repairSafeProvenance = true;
     else if (arg.startsWith("--locale="))
       opts.locales = arg
         .slice(9)
@@ -205,6 +221,8 @@ function parseArgs(argv) {
           "  --dry-run            Report what would happen but never call the API",
           "  --adopt              Rebuild .i18n-state.json from the files on disk (no API calls)",
           "  --targets-only       With --adopt: re-hash only the mirrors, keeping every source_hash",
+          "  --adopt-safe-untracked  Reconstruct git-proven missing state records (no API calls)",
+          "  --repair-safe-provenance  Repair git-proven stale locale provenance (no API calls)",
           "  --concurrency=<n>    Parallel API requests (default: env CONCURRENCY or 4)",
         ].join("\n")
       );
@@ -851,6 +869,59 @@ async function main() {
   if (opts.targetsOnly && !opts.adopt) {
     logError("--targets-only only applies to --adopt; re-run as `--adopt --targets-only`");
     process.exit(2);
+  }
+  if (opts.adoptSafeUntracked && (opts.adopt || opts.targetsOnly || opts.force || opts.repairSafeProvenance)) {
+    logError("--adopt-safe-untracked is a standalone recovery mode; do not combine it with other recovery/force modes");
+    process.exit(2);
+  }
+  if (opts.repairSafeProvenance && (opts.adopt || opts.targetsOnly || opts.force)) {
+    logError("--repair-safe-provenance is a standalone recovery mode; do not combine it with --adopt, --targets-only, or --force");
+    process.exit(2);
+  }
+
+  if (opts.adoptSafeUntracked) {
+    const now = new Date().toISOString();
+    const recovered = recoverSafeUntrackedTargets({
+      state,
+      root: ROOT,
+      sources,
+      locales: targetLocales,
+      targetPathFor: (rel, locale) => targetPathFor(rel, locale),
+      now,
+    });
+    const { candidates, adopted, unproven, driftedSources } = recovered.stats;
+    const stateRel = path.relative(ROOT, STATE_PATH);
+    const scope = `${adopted}/${candidates} untracked target(s) git-proven safe; ${unproven} unproven; ${driftedSources.length} source(s) currently drifted with historical hashes preserved`;
+    if (opts.dryRun) {
+      logInfo(`adopt-safe-untracked (dry-run): would adopt ${scope} into ${stateRel} — nothing written`);
+      return;
+    }
+    await saveState(recovered.state);
+    logInfo(`adopt-safe-untracked: adopted ${scope} into ${stateRel}`);
+    return;
+  }
+
+  if (opts.repairSafeProvenance) {
+    const now = new Date().toISOString();
+    const repaired = repairSafeStaleProvenance({
+      state,
+      root: ROOT,
+      sources,
+      locales: targetLocales,
+      targetPathFor: (rel, locale) => targetPathFor(rel, locale),
+      now,
+      advanceTopLevelSourceHash: !opts.locales,
+    });
+    const { candidates, repaired: repairedCount, unproven, sourceHashesAdvanced } = repaired.stats;
+    const stateRel = path.relative(ROOT, STATE_PATH);
+    const scope = `${repairedCount}/${candidates} stale locale record(s) git-proven current; ${unproven} unproven; ${sourceHashesAdvanced} top-level source hash(es) advanced`;
+    if (opts.dryRun) {
+      logInfo(`repair-safe-provenance (dry-run): would repair ${scope} in ${stateRel} — nothing written`);
+      return;
+    }
+    await saveState(repaired.state);
+    logInfo(`repair-safe-provenance: repaired ${scope} in ${stateRel}`);
+    return;
   }
 
   if (opts.adopt && opts.targetsOnly) {
