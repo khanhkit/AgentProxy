@@ -13,6 +13,7 @@ import {
   generateSignature as defaultGenerateSignature,
   setCachedResponse as defaultSetCachedResponse,
   isCacheableForWrite as defaultIsCacheableForWrite,
+  isTruncatedCompletion as defaultIsTruncatedCompletion,
 } from "@/lib/semanticCache";
 import { isSmallEnoughForSemanticCache as defaultIsSmallEnough } from "../../utils/estimateSize.ts";
 
@@ -27,6 +28,7 @@ type CacheBody = {
 
 export interface StreamingSemanticCacheStoreDeps {
   isCacheableForWrite: typeof defaultIsCacheableForWrite;
+  isTruncatedCompletion?: typeof defaultIsTruncatedCompletion;
   isSmallEnoughForSemanticCache: typeof defaultIsSmallEnough;
   generateSignature: typeof defaultGenerateSignature;
   setCachedResponse: typeof defaultSetCachedResponse;
@@ -34,6 +36,7 @@ export interface StreamingSemanticCacheStoreDeps {
 
 const DEFAULT_DEPS: StreamingSemanticCacheStoreDeps = {
   isCacheableForWrite: defaultIsCacheableForWrite,
+  isTruncatedCompletion: defaultIsTruncatedCompletion,
   isSmallEnoughForSemanticCache: defaultIsSmallEnough,
   generateSignature: defaultGenerateSignature,
   setCachedResponse: defaultSetCachedResponse,
@@ -90,7 +93,8 @@ export function storeStreamingSemanticCacheResponse(
     !args.enabled ||
     args.streamStatus !== 200 ||
     !args.streamResponseBody ||
-    !deps.isCacheableForWrite(args.body, args.headers)
+    !deps.isCacheableForWrite(args.body, args.headers) ||
+    (deps.isTruncatedCompletion ?? defaultIsTruncatedCompletion)(args.streamResponseBody)
   ) {
     return;
   }

@@ -405,3 +405,22 @@ export function isCacheableForWrite(body, headers) {
   if (body.temperature !== 0) return false;
   return true;
 }
+
+const TRUNCATED_FINISH_REASONS = new Set(["length", "max_tokens"]);
+
+export function isTruncatedCompletion(response: unknown): boolean {
+  if (!response || typeof response !== "object") return false;
+  const value = response as {
+    choices?: Array<{ finish_reason?: unknown }>;
+    stop_reason?: unknown;
+  };
+  if (Array.isArray(value.choices)) {
+    for (const choice of value.choices) {
+      const reason = choice?.finish_reason;
+      if (typeof reason === "string" && TRUNCATED_FINISH_REASONS.has(reason)) return true;
+    }
+  }
+  return (
+    typeof value.stop_reason === "string" && TRUNCATED_FINISH_REASONS.has(value.stop_reason)
+  );
+}

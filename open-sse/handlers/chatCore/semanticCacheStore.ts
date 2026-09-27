@@ -12,6 +12,7 @@ import {
   generateSignature as defaultGenerateSignature,
   setCachedResponse as defaultSetCachedResponse,
   isCacheableForWrite as defaultIsCacheableForWrite,
+  isTruncatedCompletion as defaultIsTruncatedCompletion,
 } from "@/lib/semanticCache";
 import { isSmallEnoughForSemanticCache as defaultIsSmallEnough } from "../../utils/estimateSize.ts";
 
@@ -28,6 +29,7 @@ type UsageLike = { prompt_tokens?: number; completion_tokens?: number } | null |
 
 export interface SemanticCacheStoreDeps {
   isCacheableForWrite: typeof defaultIsCacheableForWrite;
+  isTruncatedCompletion?: typeof defaultIsTruncatedCompletion;
   isSmallEnoughForSemanticCache: typeof defaultIsSmallEnough;
   generateSignature: typeof defaultGenerateSignature;
   setCachedResponse: typeof defaultSetCachedResponse;
@@ -35,6 +37,7 @@ export interface SemanticCacheStoreDeps {
 
 const DEFAULT_DEPS: SemanticCacheStoreDeps = {
   isCacheableForWrite: defaultIsCacheableForWrite,
+  isTruncatedCompletion: defaultIsTruncatedCompletion,
   isSmallEnoughForSemanticCache: defaultIsSmallEnough,
   generateSignature: defaultGenerateSignature,
   setCachedResponse: defaultSetCachedResponse,
@@ -56,6 +59,7 @@ export function storeSemanticCacheResponse(
   if (
     !args.enabled ||
     !deps.isCacheableForWrite(args.body, args.headers) ||
+    (deps.isTruncatedCompletion ?? defaultIsTruncatedCompletion)(args.translatedResponse) ||
     !deps.isSmallEnoughForSemanticCache(args.translatedResponse)
   ) {
     return;
