@@ -162,6 +162,7 @@ export type ProviderConfig = {
   headers?: Record<string, string>;
   requestDefaults?: ProviderRequestDefaults;
   timeoutMs?: number;
+  fetchStartTimeoutCapMs?: number;
   format?: string;
 };
 
@@ -915,6 +916,7 @@ export class BaseExecutor {
       const fetchStartTimeoutPolicy = resolveFetchStartTimeout({
         baseTimeoutMs: this.getTimeoutMs(),
         stream,
+        capMs: this.config?.fetchStartTimeoutCapMs,
       });
       const fetchStartTimeoutMs = fetchStartTimeoutPolicy.timeoutMs;
       if (fetchStartTimeoutPolicy.capped) {

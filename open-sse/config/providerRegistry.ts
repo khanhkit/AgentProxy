@@ -54,6 +54,9 @@ export function generateLegacyProviders(): Record<string, LegacyProvider> {
     if (typeof entry.timeoutMs === "number") {
       p.timeoutMs = entry.timeoutMs;
     }
+    if (typeof entry.fetchStartTimeoutCapMs === "number") {
+      p.fetchStartTimeoutCapMs = entry.fetchStartTimeoutCapMs;
+    }
 
     // Headers
     const mergedHeaders = {

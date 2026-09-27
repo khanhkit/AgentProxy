@@ -13,6 +13,8 @@ export const opencode_goProvider: RegistryEntry = {
   authHeader: "Authorization",
   authPrefix: "Bearer",
   defaultContextLength: 200000,
+  requestDefaults: { maxTokens: 16_384 },
+  fetchStartTimeoutCapMs: 600_000,
   models: [
     // Port from decolua/9router 8efacc11: align with official Go endpoints —
     // glm-5.2 is now advertised and Kimi chat traffic must route through
