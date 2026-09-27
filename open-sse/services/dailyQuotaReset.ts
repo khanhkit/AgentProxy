@@ -32,17 +32,28 @@ type ZonedParts = {
   second: number;
 };
 
+const zonedFormatters = new Map<string, Intl.DateTimeFormat>();
+
+function zonedFormatter(timeZone: string): Intl.DateTimeFormat {
+  let fmt = zonedFormatters.get(timeZone);
+  if (!fmt) {
+    fmt = new Intl.DateTimeFormat("en-US", {
+      timeZone,
+      hourCycle: "h23",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    });
+    zonedFormatters.set(timeZone, fmt);
+  }
+  return fmt;
+}
+
 function zonedParts(ms: number, timeZone: string): ZonedParts {
-  const fmt = new Intl.DateTimeFormat("en-US", {
-    timeZone,
-    hourCycle: "h23",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-  });
+  const fmt = zonedFormatter(timeZone);
   const bag: Record<string, string> = {};
   for (const part of fmt.formatToParts(new Date(ms))) {
     if (part.type !== "literal") bag[part.type] = part.value;
@@ -67,6 +78,29 @@ function addCalendarDay(year: number, month: number, day: number): {
   return { year: dt.getUTCFullYear(), month: dt.getUTCMonth() + 1, day: dt.getUTCDate() };
 }
 
+function convergeWallTime(
+  year: number,
+  month: number,
+  day: number,
+  hour: number,
+  minute: number,
+  second: number,
+  timeZone: string,
+): { ms: number; exact: boolean } {
+  const wanted = Date.UTC(year, month - 1, day, hour, minute, second);
+  let guess = wanted;
+  for (let i = 0; i < 4; i++) {
+    const p = zonedParts(guess, timeZone);
+    const asIfUtc = Date.UTC(p.year, p.month - 1, p.day, p.hour, p.minute, p.second);
+    const delta = asIfUtc - wanted;
+    if (delta === 0) return { ms: guess, exact: true };
+    guess -= delta;
+  }
+  return { ms: guess, exact: false };
+}
+
+const MAX_GAP_WALK_MINUTES = 24 * 60;
+
 /** Convert wall-clock time in `timeZone` to epoch ms. */
 function zonedLocalToUtc(
   year: number,
@@ -77,16 +111,30 @@ function zonedLocalToUtc(
   second: number,
   timeZone: string,
 ): number {
-  const wanted = Date.UTC(year, month - 1, day, hour, minute, second);
-  let guess = wanted;
-  for (let i = 0; i < 4; i++) {
-    const p = zonedParts(guess, timeZone);
-    const asIfUtc = Date.UTC(p.year, p.month - 1, p.day, p.hour, p.minute, p.second);
-    const delta = asIfUtc - wanted;
-    if (delta === 0) return guess;
-    guess -= delta;
+  const first = convergeWallTime(year, month, day, hour, minute, second, timeZone);
+  if (first.exact) return first.ms;
+
+  let date = { year, month, day };
+  let minuteOfDay = hour * 60 + minute;
+  for (let step = 0; step < MAX_GAP_WALK_MINUTES; step++) {
+    minuteOfDay += 1;
+    if (minuteOfDay >= 24 * 60) {
+      minuteOfDay -= 24 * 60;
+      date = addCalendarDay(date.year, date.month, date.day);
+    }
+    const candidate = convergeWallTime(
+      date.year,
+      date.month,
+      date.day,
+      Math.floor(minuteOfDay / 60),
+      minuteOfDay % 60,
+      second,
+      timeZone,
+    );
+    if (candidate.exact) return candidate.ms;
   }
-  return guess;
+
+  return first.ms;
 }
 
 /**
