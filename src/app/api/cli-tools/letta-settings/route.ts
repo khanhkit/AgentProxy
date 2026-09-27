@@ -10,6 +10,7 @@ import { isValidationFailure, validateBody } from "@/shared/validation/helpers";
 import { cliAuthOnlyConfigSchema } from "@/shared/validation/schemas/cli";
 import { requireCliToolsAuth } from "@/lib/api/requireCliToolsAuth";
 import { sanitizeErrorMessage } from "@omniroute/open-sse/utils/error";
+import { resolveOmniRouteBaseUrl } from "@/shared/utils/resolveOmniRouteBaseUrl";
 
 const execAsync = promisify(exec);
 
@@ -71,10 +72,21 @@ const readAuthFile = async () => {
   }
 };
 
-// ── Check if a base_url points to OmniRoute ──────────────────────────────
+// ── Check if a base_url points to the current AgentProxy/OmniRoute gateway ──
 const isOmniRouteUrl = (baseUrl) => {
   if (!baseUrl) return false;
-  return baseUrl.includes(":20128") || baseUrl.includes(":3000") || baseUrl.includes("omniroute");
+  let runtimePort = "";
+  try {
+    runtimePort = new URL(resolveOmniRouteBaseUrl()).port;
+  } catch {
+    // Keep compatibility checks below if an explicit base URL is malformed.
+  }
+  return (
+    baseUrl.includes(":20128") ||
+    baseUrl.includes(":3000") ||
+    (!!runtimePort && baseUrl.includes(`:${runtimePort}`)) ||
+    baseUrl.includes("omniroute")
+  );
 };
 
 // ── Check if OmniRoute is configured ─────────────────────────────────────

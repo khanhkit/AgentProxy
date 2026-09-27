@@ -89,6 +89,31 @@ test("letta-settings GET: treats an existing ~/.letta directory as installed", a
   assert.equal(body.hasOmniRoute, false);
 });
 
+test("letta-settings GET: recognizes the configured runtime port as AgentProxy", async () => {
+  const providersDir = path.join(tmpHome, ".letta", "lc-local-backend", "providers");
+  fs.mkdirSync(providersDir, { recursive: true });
+  fs.writeFileSync(
+    path.join(providersDir, "auth.json"),
+    JSON.stringify({
+      version: 1,
+      providers: { lmstudio: { base_url: "http://localhost:37128/v1" } },
+    })
+  );
+  const originalPort = process.env.PORT;
+  process.env.PORT = "37128";
+  try {
+    const res = await GET(req());
+    assert.equal(res.status, 200);
+    const body = await res.json();
+    assert.equal(body.installed, true);
+    assert.equal(body.hasOmniRoute, true);
+    assert.equal(body.lmstudioConflict, false);
+  } finally {
+    if (originalPort === undefined) delete process.env.PORT;
+    else process.env.PORT = originalPort;
+  }
+});
+
 // ── Test 4: POST with invalid body → 400 ─────────────────────────────────────
 
 test("letta-settings POST: 400 when baseUrl is missing", async () => {
