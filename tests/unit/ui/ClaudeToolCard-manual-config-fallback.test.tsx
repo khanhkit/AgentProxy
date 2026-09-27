@@ -73,8 +73,21 @@ vi.mock("@/shared/components", async () => {
       </button>
     ),
     ModelSelectModal: () => null,
-    ManualConfigModal: ({ isOpen, title }: { isOpen: boolean; title?: string }) =>
-      isOpen ? <div data-testid="manual-config-modal">{title}</div> : null,
+    ManualConfigModal: ({
+      isOpen,
+      title,
+      configs,
+    }: {
+      isOpen: boolean;
+      title?: string;
+      configs?: Array<{ filename: string; content: string }>;
+    }) =>
+      isOpen ? (
+        <div data-testid="manual-config-modal">
+          {title}
+          <pre data-testid="manual-config-content">{JSON.stringify(configs)}</pre>
+        </div>
+      ) : null,
   };
 });
 
@@ -172,5 +185,12 @@ describe("ClaudeToolCard — manual-config CTA when CLI is not detected", () => 
     });
 
     expect(container.querySelector("[data-testid='manual-config-modal']")).not.toBeNull();
+    const payload = container.querySelector("[data-testid='manual-config-content']")?.textContent;
+    const configs = JSON.parse(payload || "[]");
+    expect(JSON.parse(configs[0].content).env.ANTHROPIC_BASE_URL).toBe("http://localhost:20128");
+    expect(payload).not.toContain("[redacted]");
+    // The manual-copy consumer builds its own config; it never imports an API preview.
+    const calls = vi.mocked(globalThis.fetch).mock.calls.map(([url]) => String(url));
+    expect(calls.some((url) => /\/api\/cli-tools\/(?:config|apply)(?:\?|$)/.test(url))).toBe(false);
   });
 });

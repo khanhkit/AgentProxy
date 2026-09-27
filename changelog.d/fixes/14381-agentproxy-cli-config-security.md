@@ -1,0 +1,1 @@
+CLI configuration previews no longer accept credentials in query strings, use the canonical `x-agentproxy-config-api-key` header (with the legacy OmniRoute header kept as a migration alias), redact credential-bearing preview content, and write host configuration files atomically with private permissions and final-symlink protection.
