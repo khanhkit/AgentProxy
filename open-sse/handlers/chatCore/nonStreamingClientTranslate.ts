@@ -159,7 +159,7 @@ export function translateNonStreamingClientResponse(
       for (const item of responseOutput) {
         if (item?.type !== "function_call" && item?.type !== "custom_tool_call") continue;
         const identity = requestToolIdentityMap.get(item.name);
-        if (identity) {
+        if (identity && typeof identity === "object" && typeof identity.name === "string") {
           item.namespace = identity.namespace;
           item.name = identity.name;
         }

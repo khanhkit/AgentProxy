@@ -270,6 +270,40 @@ test("Responses API format: sanitizeResponsesApiResponse is applied", () => {
   assert.equal(output[0]?.name, "get_weather", "#7936 restore original name");
 });
 
+test("#12370: alias-shaped requestToolIdentityMap preserves function_call name", () => {
+  const input = baseInput({
+    responsePayloadFormat: FORMATS.GEMINI,
+    clientResponseFormat: FORMATS.OPENAI_RESPONSES,
+    sourceFormat: FORMATS.OPENAI_RESPONSES,
+    provider: "gemini",
+    model: "gemini-3-flash-preview",
+    responseBody: {
+      candidates: [
+        {
+          content: {
+            role: "model",
+            parts: [{ functionCall: { name: "shell", args: { command: ["ls"] } } }],
+          },
+          finishReason: "STOP",
+          index: 0,
+        },
+      ],
+    },
+    requestToolIdentityMap: new Map([["shell", "shell"]]) as unknown as Map<
+      string,
+      { namespace?: string; name: string }
+    >,
+  });
+
+  const result = translateNonStreamingClientResponse(input);
+  const output = result.response.output as Array<Record<string, unknown>>;
+  const functionCall = output.find((item) => item.type === "function_call");
+
+  assert.ok(functionCall, "expected a function_call output item");
+  assert.equal(functionCall.name, "shell", "alias map must not erase the function name");
+  assert.equal("name" in functionCall, true, "name key must survive serialization");
+});
+
 test("empty content response: passthrough without crash", () => {
   const input = baseInput({
     responseBody: {},
