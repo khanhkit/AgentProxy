@@ -38,6 +38,15 @@ export function applyClaudeEffortVariant(opts: {
   sourceFormat: string;
 }): { effectiveModel: string; log: string | null } {
   const { provider, body, sourceFormat } = opts;
+  if (
+    provider === "cursor" ||
+    provider === "cu" ||
+    provider === "cursor-api" ||
+    provider === "cua"
+  ) {
+    return { effectiveModel: opts.effectiveModel, log: null };
+  }
+
   let effectiveModel = opts.effectiveModel;
   let log: string | null = null;
 
