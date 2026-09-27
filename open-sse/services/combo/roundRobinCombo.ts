@@ -98,6 +98,7 @@ import {
 import { applyComboTargetExhaustion } from "./targetExhaustion.ts";
 import { isRetryAfterEligibleStatus } from "./unavailableRetryGate.ts";
 import { isRecord } from "./comboData.ts";
+import { createRRDashboardEvents } from "./rrDashboardEvents.ts";
 import { attemptCompatRejectedFallback } from "./comboCompatFallback.ts";
 import { applyRequestTagRouting } from "./autoStrategy.ts";
 import {
@@ -482,6 +483,7 @@ export async function handleRoundRobinCombo({
       const target = filteredTargets[modelIndex];
       const modelStr = target.modelStr;
       const provider = target.provider;
+      const rrEvents = createRRDashboardEvents(combo.name, modelIndex, provider, modelStr);
       const profile = await getRuntimeProviderProfile(provider);
       const semaphoreKey = `combo:${combo.name}:${target.executionKey}`;
       const allowRateLimitedConnection =
@@ -667,6 +669,7 @@ export async function handleRoundRobinCombo({
             fingerprint: resolveTargetFingerprint(target) ?? "",
           });
 
+          rrEvents.attempt();
           const result = await Promise.race([
             handleSingleModel(attemptBody, modelStr, {
               ...targetForAttempt,
@@ -730,6 +733,7 @@ export async function handleRoundRobinCombo({
                   rrSelectedConnectionId || target.connectionId
                 );
               }
+              rrEvents.failed(`Quality: ${quality.reason}`, Date.now() - startTime);
               recordComboRequest(combo.name, modelStr, {
                 success: false,
                 latencyMs: Date.now() - startTime,
@@ -756,6 +760,7 @@ export async function handleRoundRobinCombo({
               "COMBO-RR",
               `${modelStr} succeeded (${latencyMs}ms, ${fallbackCount} fallbacks)`
             );
+            rrEvents.succeeded(latencyMs);
             recordComboRequest(combo.name, modelStr, {
               success: true,
               latencyMs,
@@ -862,6 +867,7 @@ export async function handleRoundRobinCombo({
               "COMBO-RR",
               `Client disconnected (499) during ${modelStr} — stopping combo loop`
             );
+            rrEvents.failed("Client disconnected", Date.now() - startTime);
             recordComboRequest(combo.name, modelStr, {
               success: false,
               latencyMs: Date.now() - startTime,
@@ -902,6 +908,7 @@ export async function handleRoundRobinCombo({
               "COMBO-RR",
               `Local rate-limit queue capacity reached for ${modelStr} — returning without upstream fallback`
             );
+            rrEvents.failed(errorText || "Local queue full", Date.now() - startTime);
             recordComboRequest(combo.name, modelStr, {
               success: false,
               latencyMs: Date.now() - startTime,
@@ -1047,6 +1054,7 @@ export async function handleRoundRobinCombo({
           }
 
           // Done with this model
+          rrEvents.failed(errorText || `HTTP ${result.status}`, Date.now() - startTime);
           recordComboRequest(combo.name, modelStr, {
             success: false,
             latencyMs: Date.now() - startTime,
