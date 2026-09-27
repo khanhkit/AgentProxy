@@ -407,6 +407,7 @@
       "tests/unit/stream-early-eof-breaker.test.ts",
       "tests/unit/stream-readiness.test.ts",
       "tests/unit/strict-random-deck.test.ts",
+      "tests/unit/strong-credential-token-linear-scan.test.ts",
       "tests/unit/strip-reasoning-header.test.ts",
       "tests/unit/system-role-extraction.test.ts",
       "tests/unit/t23-t24-fallback-resilience.test.ts",
