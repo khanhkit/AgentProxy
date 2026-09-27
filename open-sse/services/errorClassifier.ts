@@ -215,12 +215,25 @@ function isGeoBlockEligibleProvider(provider?: string | null): boolean {
 const CLOUDFLARE_1010_REGEX =
   /(?<![A-Za-z0-9_-])error[\s_-]?code[\\"':=\s]{0,12}1010(?!\w)|(?<![A-Za-z0-9_-])error[-_]\s?1010(?!\w)\/?/i;
 
+const CLOUDFLARE_CHALLENGE_MARKERS = [
+  "_cf_chl_opt",
+  "cdn-cgi/challenge-platform",
+  'id="challenge-error-text"',
+  String.raw`id=\"challenge-error-text\"`,
+] as const;
+
+export function isCloudflareChallengeInterstitial(errorText: string): boolean {
+  const text = String(errorText || "").toLowerCase();
+  return CLOUDFLARE_CHALLENGE_MARKERS.some((marker) => text.includes(marker.toLowerCase()));
+}
+
 export function isCloudflareFingerprintRejection(errorText: string): boolean {
   const text = String(errorText || "").toLowerCase();
   return (
     CLOUDFLARE_1010_REGEX.test(text) ||
     text.includes("browser_signature_banned") ||
-    text.includes("fingerprint_rejection")
+    text.includes("fingerprint_rejection") ||
+    isCloudflareChallengeInterstitial(text)
   );
 }
 
