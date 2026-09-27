@@ -181,8 +181,10 @@ test("shared set size includes live REGISTRY and all retired web-provider tombst
   // alias out of the REGISTRY walk (408 → 406).
   // #11786: SeekAi adds id "seekai" + alias "ska" (406 → 408).
   // Clean-room ChatGPT Web restoration adds live id "chatgpt-web" while the retired
-  // legacy alias "cgpt-web" remains reserved as a tombstone (408 → 410).
-  assert.equal(RESERVED_PREFIX_COUNT, 410);
+  // legacy alias "cgpt-web" remains reserved as a tombstone. The pre-#13131 live set measured
+  // 411 (the older 410 literal was already stale); retiring Chipotle/Pepper removes two distinct
+  // live prefixes with no tombstone, so the measured post-removal total is 409.
+  assert.equal(RESERVED_PREFIX_COUNT, 409);
 });
 
 test("isReservedProviderPrefix rejects non-string input", () => {

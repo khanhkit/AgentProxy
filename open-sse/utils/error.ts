@@ -91,7 +91,6 @@ const SAFE_PUBLIC_ERROR_IDENTIFIERS = new Set([
   "connection_error",
   "context_length_exceeded",
   "context_window",
-  "chipotle_error",
   "devin_agentic_error",
   "devin_cli_error",
   "devin_desktop_error",
