@@ -1,6 +1,7 @@
 import { translateResponse, initState } from "../translator/index.ts";
 import { FORMATS } from "../translator/formats.ts";
-import { trackPendingRequest, appendRequestLog } from "@/lib/usageDb";
+import { appendRequestLog } from "@/lib/usageDb";
+import { clearPendingRequestOnce } from "./pendingRequestCleanup.ts";
 import {
   extractUsage,
   hasValidUsage,
@@ -189,6 +190,7 @@ type StreamOptions = {
    * codex-compatible `namespace` + `name` fields.
    */
   requestToolIdentityMap?: Map<string, { namespace: string; name: string }> | null;
+  pendingRequestId?: string | null;
 };
 
 type TranslateState = ReturnType<typeof initState> & {
@@ -667,8 +669,8 @@ export function createSSEStream(options: StreamOptions = {}) {
     customToolNames = new Set<string>(),
     requestToolIdentityMap = null,
     streamBufferBytes = DEFAULT_STREAM_BUFFER_BYTES,
+    pendingRequestId = null,
   } = options;
-  const signatureNamespace = connectionId;
   // Request-body-size metric (for monitoring payload size distribution & correlation with TTFT).
   // The size is JSON-serialised byte count; stored as a performance mark detail so monitoring
   // tools can query performance.getEntriesByType("mark") filtered by name.
@@ -756,7 +758,7 @@ export function createSSEStream(options: StreamOptions = {}) {
           ...(initState(sourceFormat) as TranslateState),
           provider,
           toolNameMap,
-          signatureNamespace,
+          signatureNamespace: connectionId,
           copilotCompatibleReasoning,
           suppressThinkClose,
           accumulatedContent: "",
@@ -1009,11 +1011,9 @@ export function createSSEStream(options: StreamOptions = {}) {
     }
   };
 
-  let pendingRequestClearedByStream = false;
+  const clearSeen = { done: false };
   const clearPendingRequestFromStream = () => {
-    if (pendingRequestClearedByStream) return;
-    pendingRequestClearedByStream = true;
-    trackPendingRequest(model, provider, connectionId, false);
+    clearPendingRequestOnce(clearSeen, { model, provider, connectionId, pendingRequestId });
   };
 
   const emitClaudeEmptyStreamErrorAndAbort = (

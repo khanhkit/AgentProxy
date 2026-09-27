@@ -36,6 +36,7 @@ type StreamControllerOptions = {
   provider?: string;
   model?: string;
   connectionId?: string | null;
+  pendingRequestId?: string | null;
   clientResponseFormat?: string | null;
   clientAbortSignal?: AbortSignal | null;
   allowCompletedToolHandoffGrace?: boolean;
@@ -244,6 +245,7 @@ export function createStreamController({
   provider,
   model,
   connectionId,
+  pendingRequestId = null,
   clientResponseFormat,
   clientAbortSignal,
   allowCompletedToolHandoffGrace = false,
@@ -280,7 +282,14 @@ export function createStreamController({
     pendingRequestCleared = true;
     if (!model && !provider && !connectionId) return;
     try {
-      trackPendingRequest(model || "", provider || "", connectionId ?? null, false);
+      trackPendingRequest(
+        model || "",
+        provider || "",
+        connectionId ?? null,
+        false,
+        undefined,
+        pendingRequestId ?? undefined
+      );
     } catch (e) {
       console.error(
         `[${getTimeString()}] [streamHandler] trackPendingRequest decrement failed — counter may drift`,
