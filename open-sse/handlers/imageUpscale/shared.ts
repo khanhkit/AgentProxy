@@ -161,7 +161,7 @@ export async function resolveUpscaleImageSource(source: string): Promise<Upscale
   }
 
   if (/^https?:\/\//i.test(trimmed)) {
-    const remote = await fetchRemoteImage(trimmed);
+    const remote = await fetchRemoteImage(trimmed, { guard: "public-only", pinDns: true });
     assertSourceBytes(remote.buffer);
     // fetchRemoteImage falls back to application/octet-stream; sniff whenever the
     // server did not send a usable image/* type so multipart uploads stay correct.

@@ -2242,7 +2242,7 @@ function extractImageInputs(body) {
   };
 }
 
-async function resolveImageSource(source, remoteFetchOptions = {}) {
+export async function resolveImageSource(source, remoteFetchOptions = {}) {
   if (typeof source !== "string" || source.trim().length === 0) {
     throw new Error("Invalid image source");
   }
@@ -2259,7 +2259,13 @@ async function resolveImageSource(source, remoteFetchOptions = {}) {
   }
 
   if (isHttpUrl(trimmed)) {
-    const remoteImage = await fetchRemoteImage(trimmed, remoteFetchOptions);
+    // Caller-controlled image/mask URLs are always strict public-only and DNS-pinned.
+    // Preserve the internal test fetch seam, but never let caller options relax the guard.
+    const remoteImage = await fetchRemoteImage(trimmed, {
+      ...remoteFetchOptions,
+      guard: "public-only",
+      pinDns: true,
+    });
     return {
       buffer: remoteImage.buffer,
       base64: remoteImage.buffer.toString("base64"),
@@ -3210,7 +3216,7 @@ function normalizeNanoBananaSyncPayload(data, prompt) {
   return { data: images.filter(Boolean) };
 }
 
-async function normalizeNanoBananaTaskResult(taskData, body, log) {
+export async function normalizeNanoBananaTaskResult(taskData, body, log) {
   const response = taskData?.response || {};
 
   const urlCandidates = [
@@ -3248,7 +3254,10 @@ async function normalizeNanoBananaTaskResult(taskData, body, log) {
 
     if (urlCandidates.length > 0) {
       const firstUrl = urlCandidates[0];
-      const remoteImage = await fetchRemoteImage(firstUrl, { guard: getProviderOutboundGuard() });
+      const remoteImage = await fetchRemoteImage(firstUrl, {
+        guard: "public-only",
+        pinDns: true,
+      });
       const base64 = remoteImage.buffer.toString("base64");
       return [{ b64_json: base64, revised_prompt: body.prompt }];
     }
