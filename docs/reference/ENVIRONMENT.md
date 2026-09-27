@@ -1674,3 +1674,8 @@ Used by `open-sse/services/combo.ts` and `src/lib/quota/quotaScheduler.ts` for p
 | Variable                          | Default  | Source File                       | Description                                                                                                      |
 | --------------------------------- | -------- | --------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
 | `OMNIROUTE_QUOTA_AWARE_ROUTING`   | `0`      | `open-sse/services/combo.ts`      | When `1`, skip connections whose per-window token budget (`rateLimitOverrides.tpm`, table `provider_quota_state`) cannot afford the estimated request cost before dispatch. Fail-open when no budget configured. |
+
+### OpenCode Responses headers wait
+
+- `OPENCODE_RESPONSES_HEADERS_WAIT_MS`: optional streamed-Responses response-header wait bound in milliseconds. Default `0` disables it; `30000` is the suggested starting value. Chat completions and non-streamed requests are unaffected.
+- `OPENCODE_RESPONSES_HEADERS_WAIT_MAX_ROTATIONS`: maximum rotations caused by this bound per request. Default `2`. The last remaining account keeps the full headers window.
