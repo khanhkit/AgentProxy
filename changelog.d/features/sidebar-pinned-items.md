@@ -1,0 +1,1 @@
+- **feat(dashboard):** add a sidebar pinned-items shortcut section with per-item pin toggles and persistent local storage.
