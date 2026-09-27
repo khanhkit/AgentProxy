@@ -169,6 +169,11 @@ npm install -g agentproxy
 agentproxy
 ```
 
+> **Using Gemini Web or another web-cookie provider?** The npm package includes
+> Playwright but not its Chromium browser binary. Install Chromium before the
+> first web-provider request; see
+> [Gemini Web and Playwright Chromium](../guides/TROUBLESHOOTING.md#gemini-web-and-playwright-chromium).
+
 This runs the Next.js standalone server directly on your host — same ports,
 same `DATA_DIR` (`./data` by default). Use it when you cannot run Docker
 (e.g. a locked-down VM). The container path above is the recommended default

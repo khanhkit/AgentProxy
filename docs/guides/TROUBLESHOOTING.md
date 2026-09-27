@@ -83,6 +83,29 @@ The warnings come from stale peer-dependency ranges in third-party packages Omni
 
 ---
 
+## Gemini Web and Playwright Chromium
+
+If a Gemini Web request returns `503` with a message that Playwright Chromium
+is not installed, the npm package is present but the browser binary is missing.
+Playwright keeps browser downloads separate from npm package installation, so
+this response is expected until Chromium is installed.
+
+For a global AgentProxy npm installation, install Chromium from the AgentProxy
+package directory so the browser cache belongs to the same Playwright install:
+
+```bash
+cd "$(npm root -g)/agentproxy"
+npx playwright install chromium
+```
+
+Restart AgentProxy after the install, then retry the Gemini Web request.
+
+For Docker deployments, use the `runner-web` build target (or the corresponding
+web image/profile). It bundles Chromium, Playwright, and the required system
+libraries; the base image intentionally does not.
+
+---
+
 ## Quick Fixes
 
 | Problem                                                    | Solution                                                                                                                                                  |
