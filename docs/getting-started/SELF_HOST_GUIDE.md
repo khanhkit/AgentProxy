@@ -169,6 +169,11 @@ npm install -g agentproxy
 agentproxy
 ```
 
+> **Skipping native warm-up:** `OMNIROUTE_SKIP_POSTINSTALL=1` skips only the
+> optional native-runtime warm-up in `scripts/postinstall.mjs`. The
+> binary-copy/repair hook in `scripts/build/postinstall.mjs` still runs so the
+> packaged native modules match your platform.
+
 > **Using Gemini Web or another web-cookie provider?** The npm package includes
 > Playwright but not its Chromium browser binary. Install Chromium before the
 > first web-provider request; see
