@@ -3425,7 +3425,9 @@
       "failoverBeforeRetry": "Khi được bật, bất kỳ lỗi nào từ thượng nguồn cũng sẽ kích hoạt chuyển đổi dự phòng ngay lập tức sang mục tiêu combo tiếp theo, bỏ qua tất cả các lần thử lại và URL dự phòng.",
       "maxSetRetries": "Số lần thử lại toàn bộ tập hợp mục tiêu khi mọi mục tiêu đều thất bại. 0 = không thử lại ở cấp tập hợp.",
       "setRetryDelayMs": "Độ trễ giữa các lần thử lại ở cấp tập hợp, giúp các sự cố tạm thời có thời gian tự khắc phục.",
-      "disableSessionStickiness": "Chuyển sang một kết nối khác cho mỗi yêu cầu thay vì ghim toàn bộ cuộc hội thoại vào một kết nối dựa trên giá trị băm của tin nhắn đầu tiên. Ghi đè cài đặt mặc định toàn cục. Hãy để ở chế độ Kế thừa để duy trì các lượt trúng cache prompt cho các cuộc trò chuyện nhiều lượt."
+      "disableSessionStickiness": "Chuyển sang một kết nối khác cho mỗi yêu cầu thay vì ghim toàn bộ cuộc hội thoại vào một kết nối dựa trên giá trị băm của tin nhắn đầu tiên. Ghi đè cài đặt mặc định toàn cục. Hãy để ở chế độ Kế thừa để duy trì các lượt trúng cache prompt cho các cuộc trò chuyện nhiều lượt.",
+      "connectionAwareExpansion": "Khi bật, combo này mở rộng mỗi bước nhà cung cấp thành mục tiêu theo tài khoản trước khi xoay vòng. Kế thừa dùng mặc định toàn cục (tắt). Tắt thì giữ xoay vòng theo nhà cung cấp.",
+      "stickyLimit": "Kích thước lô sticky round-robin: số request thành công liên tiếp gửi tới một mục tiêu trước khi xoay. Để trống để kế thừa Sticky Limit toàn cục; 1 tắt gom lô (xoay từng request)."
     },
     "templatesTitle": "Mẫu nhanh",
     "templatesDescription": "Áp dụng một cấu hình ban đầu, sau đó điều chỉnh các mô hình và cấu hình.",
@@ -3764,6 +3766,16 @@
     "disableSessionStickiness": "Tắt tính năng liên kết phiên",
     "sessionStickinessEnabled": "Bật liên kết phiên",
     "sessionStickinessDisabled": "Tắt liên kết phiên",
+    "stickyLimitInherit": "kế thừa",
+    "stickyLimitEffective": "Hiệu lực {value} ({source})",
+    "stickyLimitSourceCombo": "combo",
+    "stickyLimitSourceComboDefaults": "mặc định combo",
+    "stickyLimitSourceGlobal": "mặc định toàn cục",
+    "connectionAwareExpansion": "Mở rộng theo tài khoản",
+    "triStateInherit": "kế thừa",
+    "connectionAwareExpansionOn": "Bật",
+    "connectionAwareExpansionOff": "Tắt",
+    "promptCacheAffinityHint": "Định tuyến theo cache prompt được ưu tiên hơn round-robin/weighted giữa các tài khoản đã ghim. Tắt trong Settings → Combo defaults nếu cần xoay vòng nghiêm ngặt.",
     "kimiPresetTitle": "Kimi Coding preset",
     "kimiPresetDescription": "Kimi K3 as the primary model (Moonshot API), with automatic fallback to your Kimi Code connections (kimi-coding, kimi-web) when configured.",
     "kimiPresetCta": "Add preset",
@@ -12651,7 +12663,12 @@
     "createDahlTokenFailed": "Không thể tạo token Dahl",
     "providerProxy": "Proxy",
     "providerProxyConfigureHint": "Cấu hình proxy",
-    "providerProxyTitleConfigured": "Đã cấu hình proxy: {host}"
+    "providerProxyTitleConfigured": "Đã cấu hình proxy: {host}",
+    "inheritConnectionOption": "Không proxy riêng (kế thừa kết nối)",
+    "inheritedProxy": "Kế thừa kết nối: {host}",
+    "inheritedPool": "Kế thừa nhóm proxy của kết nối ({count})",
+    "poolEmptyBlocked": "Nhóm proxy trống — yêu cầu thất bại (không phải trực tiếp)",
+    "directEgress": "Kết nối trực tiếp (không dùng proxy)"
   },
   "gamification": {
     "leaderboardScopes": {
