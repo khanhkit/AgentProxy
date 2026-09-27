@@ -259,8 +259,11 @@ export function serviceSupervisorCooldown(
   if (status !== 503 || !headers) return null;
   const hintValue =
     typeof (headers as Headers).get === "function"
-      ? (headers as Headers).get("x-omni-fallback-hint")
-      : (headers as Record<string, string>)["x-omni-fallback-hint"] ||
+      ? (headers as Headers).get("x-agentproxy-fallback-hint") ||
+        (headers as Headers).get("x-omni-fallback-hint")
+      : (headers as Record<string, string>)["x-agentproxy-fallback-hint"] ||
+        (headers as Record<string, string>)["X-AgentProxy-Fallback-Hint"] ||
+        (headers as Record<string, string>)["x-omni-fallback-hint"] ||
         (headers as Record<string, string>)["X-Omni-Fallback-Hint"];
   if (typeof hintValue !== "string" || hintValue.toLowerCase() !== "connection_cooldown") {
     return null;
