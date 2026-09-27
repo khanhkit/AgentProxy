@@ -159,25 +159,27 @@ export function openaiToOpenAIResponsesResponse(chunk, state) {
     const u = chunk.usage;
     const input_tokens = u.input_tokens ?? u.prompt_tokens ?? 0;
     const output_tokens = u.output_tokens ?? u.completion_tokens ?? 0;
-    state.usage = {
-      input_tokens,
-      output_tokens,
-      total_tokens: u.total_tokens ?? input_tokens + output_tokens,
-    };
     const cachedTokens =
       u.input_tokens_details?.cached_tokens ?? u.prompt_tokens_details?.cached_tokens;
     const cacheCreationTokens = pickCacheCreationTokens(u);
-    if (cachedTokens || cacheCreationTokens) {
-      state.usage.input_tokens_details = {
-        ...(cachedTokens ? { cached_tokens: cachedTokens } : {}),
-        ...(cacheCreationTokens ? { cache_creation_tokens: cacheCreationTokens } : {}),
-      };
-    }
     const reasoningTokens =
       u.output_tokens_details?.reasoning_tokens ?? u.completion_tokens_details?.reasoning_tokens;
-    if (reasoningTokens) {
-      state.usage.output_tokens_details = { reasoning_tokens: reasoningTokens };
-    }
+    state.usage = {
+      input_tokens,
+      input_tokens_details: {
+        cached_tokens:
+          typeof cachedTokens === "number" && Number.isFinite(cachedTokens) ? cachedTokens : 0,
+        ...(cacheCreationTokens ? { cache_creation_tokens: cacheCreationTokens } : {}),
+      },
+      output_tokens,
+      output_tokens_details: {
+        reasoning_tokens:
+          typeof reasoningTokens === "number" && Number.isFinite(reasoningTokens)
+            ? reasoningTokens
+            : 0,
+      },
+      total_tokens: u.total_tokens ?? input_tokens + output_tokens,
+    };
   }
 
   if (!chunk.choices?.length) {
@@ -261,6 +263,9 @@ export function openaiToOpenAIResponsesResponse(chunk, state) {
       object: "response",
       created_at: state.created,
       status: "in_progress",
+      background: false,
+      error: null,
+      output: [],
     };
     if (state.model) inProgressResponse.model = state.model;
     emit("response.in_progress", {
@@ -388,7 +393,12 @@ function startReasoning(state, emit, idx) {
     emit("response.output_item.added", {
       type: "response.output_item.added",
       output_index: idx,
-      item: { id: state.reasoningId, type: "reasoning", summary: [] },
+      item: {
+        id: state.reasoningId,
+        type: "reasoning",
+        summary: [],
+        status: "in_progress",
+      },
     });
 
     emit("response.reasoning_summary_part.added", {
@@ -438,6 +448,7 @@ function closeReasoning(state, emit) {
       id: state.reasoningId,
       type: "reasoning",
       summary: [{ type: "summary_text", text: state.reasoningBuf }],
+      status: "completed",
     };
 
     emit("response.output_item.done", {
@@ -458,7 +469,13 @@ function emitTextContent(state, emit, idx, content) {
     emit("response.output_item.added", {
       type: "response.output_item.added",
       output_index: idx,
-      item: { id: msgId, type: "message", content: [], role: "assistant" },
+      item: {
+        id: msgId,
+        type: "message",
+        content: [],
+        role: "assistant",
+        status: "in_progress",
+      },
     });
   }
 
@@ -516,6 +533,7 @@ function closeMessage(state, emit, idx) {
       type: "message",
       content: [{ type: "output_text", annotations: [], logprobs: [], text: fullText }],
       role: "assistant",
+      status: "completed",
     };
 
     emit("response.output_item.done", {
