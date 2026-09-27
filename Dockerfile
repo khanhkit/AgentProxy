@@ -230,6 +230,10 @@ ENV API_PORT=20128
 ENV DASHBOARD_PORT=20129
 ENV HOSTNAME=0.0.0.0
 ENV AGENTPROXY_RUST_CORE=1
+# Published container images default to authenticated client API access. This
+# is a deployment posture only; npm/CLI local development keeps the repository
+# default REQUIRE_API_KEY=false unless the operator opts in.
+ENV REQUIRE_API_KEY=true
 # The Rust API is the externally published data plane on 20128. The supervisor
 # defaults to loopback for non-container use, so Docker must opt into binding the
 # container interface; otherwise `-p ...:20128:20128` cannot reach the gateway.
@@ -314,6 +318,7 @@ ENV DASHBOARD_PORT=20129
 ENV HOSTNAME=0.0.0.0
 ENV AGENTPROXY_RUST_CORE=1
 ENV AGENTPROXY_RUST_CORE_HOST=0.0.0.0
+ENV REQUIRE_API_KEY=true
 ENV OMNIROUTE_MEMORY_MB=1024
 ENV NODE_OPTIONS="--max-old-space-size=${OMNIROUTE_MEMORY_MB}"
 ENV DATA_DIR=/app/data
