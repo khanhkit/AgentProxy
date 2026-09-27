@@ -28,7 +28,7 @@ import { parseModel, stripContextWindowSuffix } from "../model.ts";
 import { dedupeTargetsByExecutionKey, isRecord } from "./comboData.ts";
 import { isComboModelVisible } from "./comboVisibility.ts";
 import { getTargetProvider, MAX_COMBO_DEPTH } from "./comboPredicates.ts";
-import { evaluateContextLimit } from "./contextOverrideGate.ts";
+import { evaluateContextLimit, getModelContextOverrideValue } from "./contextOverrideGate.ts";
 import {
   normalizeModelEntry,
   orderTargetsForWeightedFallback,
@@ -543,6 +543,19 @@ function hasKnownCompatibleContextLimit(
   return evaluateContextLimit(capabilities, requirements, target.modelStr) === true;
 }
 
+const OVERRIDE_REJECT_TRUST_MARGIN = 5;
+
+function isNearBoundaryOverrideReject(
+  target: ResolvedComboTarget,
+  requirements: RequestCompatibilityRequirements
+): boolean {
+  if (requirements.requiredContextTokens <= 0) return false;
+  const override = getModelContextOverrideValue(target.modelStr);
+  if (override == null || override <= 0) return false;
+  if (override >= requirements.requiredContextTokens) return false;
+  return requirements.requiredContextTokens <= override * OVERRIDE_REJECT_TRUST_MARGIN;
+}
+
 const HARD_COMPAT_REASONS = new Set(["tools", "vision", "structured_output", "output_tokens"]);
 
 /**
@@ -755,9 +768,31 @@ export function filterTargetsByRequestCompatibility(
     const knownContextCompatible = compatible.filter((target) =>
       hasKnownCompatibleContextLimit(target, requirements)
     );
-    if (knownContextCompatible.length > 0 && knownContextCompatible.length < compatible.length) {
-      const knownSet = new Set(knownContextCompatible);
-      return [...knownContextCompatible, ...compatible.filter((target) => !knownSet.has(target))];
+    const overrideVerifiedCompatible = knownContextCompatible.filter(
+      (target) => getModelContextOverrideValue(target.modelStr) != null
+    );
+    const catalogOnlyCompatible = knownContextCompatible.filter(
+      (target) => getModelContextOverrideValue(target.modelStr) == null
+    );
+    const overrideTrustedRejects = compatible.filter(
+      (target) =>
+        !knownContextCompatible.includes(target) &&
+        (targetReasons.get(target) || []).includes("context_window") &&
+        isNearBoundaryOverrideReject(target, requirements)
+    );
+    const preferredTier = [
+      ...overrideVerifiedCompatible,
+      ...overrideTrustedRejects,
+      ...catalogOnlyCompatible,
+    ];
+    if (preferredTier.length > 0) {
+      const preferredSet = new Set(preferredTier);
+      const reordered = [
+        ...preferredTier,
+        ...compatible.filter((target) => !preferredSet.has(target)),
+      ];
+      const changedOrder = reordered.some((target, index) => target !== compatible[index]);
+      if (changedOrder) return reordered;
     }
   }
 
