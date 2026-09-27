@@ -478,6 +478,22 @@ function runCompression(
  * already run in an async context (e.g. chatCore) await this so a future
  * worker-thread engine can await without changing the surrounding code.
  */
+function logCompressionWorkerFault(error: unknown, retryInProcess: boolean): void {
+  void (async () => {
+    try {
+      const { log } = await import("../../utils/logger.ts");
+      log.warn(
+        "COMPRESSION",
+        `Compression worker failed (${
+          retryInProcess ? "falling back to in-process compression" : "sending uncompressed"
+        }): ${error instanceof Error ? error.message : String(error)}`
+      );
+    } catch {
+      // Logging is best-effort and must not affect compression recovery.
+    }
+  })();
+}
+
 export async function applyCompressionAsync(
   body: Record<string, unknown>,
   mode: CompressionMode,
@@ -541,8 +557,11 @@ async function runCompressionAsync(
     try {
       const { runCompressionInWorker } = await import("./compressionWorkerPool.ts");
       return await runCompressionInWorker(body, mode, workerOptions, options?.onEngineStep);
-    } catch {
-      return { body, compressed: false, stats: null };
+    } catch (workerError) {
+      const retryInProcess =
+        (workerError as { retryInProcess?: boolean } | null)?.retryInProcess !== false;
+      logCompressionWorkerFault(workerError, retryInProcess);
+      if (!retryInProcess) return { body, compressed: false, stats: null };
     }
   }
   if (
