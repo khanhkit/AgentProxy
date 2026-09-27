@@ -99,6 +99,8 @@ export { MODEL_LOCKOUT_EVICTION_CAP } from "./accountFallback/lockoutEviction.ts
 import { capScaledCooldownMs } from "./accountFallback/cooldownCap.ts";
 import { resolveApiKeyForbiddenFallback } from "./accountFallback/nonRetryableUpstream.ts";
 import * as exactModelLock from "./accountFallback/exactModelLock.ts";
+import { isMistralAmbiguous401 } from "./accountFallback/mistralAmbiguousAuth.ts";
+import { isMistralAmbiguous401SoftLockoutEnabled } from "@/shared/utils/featureFlags";
 export type ProviderProfile = {
   baseCooldownMs: number;
   useUpstreamRetryHints: boolean;
@@ -1665,6 +1667,8 @@ export function checkFallbackError(
   permanent?: boolean;
   creditsExhausted?: boolean;
   dailyQuotaExhausted?: boolean;
+  /** #13609: bare Mistral 401 softened to a cooldown (MISTRAL_AMBIGUOUS_401_SOFT_LOCKOUT). */
+  ambiguousAuth?: boolean;
   /** G-02: true when the error originates from an embedded service supervisor (not the upstream AI
    * provider itself). Callers should apply connection cooldown only — do NOT record a provider
    * circuit-breaker failure when this flag is set. */
@@ -2153,6 +2157,16 @@ export function checkFallbackError(
           resolveRuleMatchBody(provider, structuredError ?? null, errorStr)
         )
       : null;
+    // #13609 (opt-in): a bare Mistral 401 is not proof of a dead key — back off
+    // instead; resolveTerminalConnectionStatus bounds how often (ambiguousAuth).
+    if (
+      status === HTTP_STATUS.UNAUTHORIZED &&
+      !providerMatch &&
+      isMistralAmbiguous401(provider, errorStr) &&
+      isMistralAmbiguous401SoftLockoutEnabled()
+    ) {
+      return { ...buildRetryableFallback(RateLimitReason.UNKNOWN), ambiguousAuth: true };
+    }
     const cooldownMs = providerMatch?.cooldownMs ?? configuredRule.cooldownMs ?? 0;
     const ruleScope =
       providerMatch && honorsRuleLockScope(provider) ? providerMatch.scope : undefined;
