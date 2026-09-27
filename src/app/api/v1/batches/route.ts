@@ -3,18 +3,24 @@ import { createBatch, listBatches, countBatches } from "@/lib/db/batches";
 import { getFile } from "@/lib/db/files";
 import { v1BatchCreateSchema } from "@/shared/validation/schemas";
 import { NextResponse } from "next/server";
-import { getApiKeyRequestScope } from "@/app/api/v1/_helpers/apiKeyScope";
+import {
+  canAccessOwnedRecord,
+  getPolicyAwareApiKeyRequestScope,
+  resolveEffectiveApiKeyId,
+  resolveListScope,
+} from "@/app/api/v1/_helpers/apiKeyScope";
 import { formatBatchResponse } from "./formatBatchResponse";
 import { parseBatchListLimit } from "./parseListLimit";
+import { sanitizeErrorMessage } from "@agentproxy/open-sse/utils/error";
 
 export async function OPTIONS() {
   return handleCorsOptions();
 }
 
 export async function POST(request: Request) {
-  const scope = await getApiKeyRequestScope(request);
+  const scope = await getPolicyAwareApiKeyRequestScope(request);
   if (scope.rejection) return scope.rejection;
-  const apiKeyId = scope.apiKeyId;
+  const apiKeyId = resolveEffectiveApiKeyId(scope, null);
 
   try {
     const body = await request.json();
@@ -33,7 +39,7 @@ export async function POST(request: Request) {
     const validated = validation.data;
 
     const inputFile = getFile(validated.input_file_id);
-    if (!inputFile || (inputFile.apiKeyId !== null && inputFile.apiKeyId !== apiKeyId)) {
+    if (!inputFile || !canAccessOwnedRecord(scope, inputFile.apiKeyId)) {
       return NextResponse.json(
         { error: { message: "Input file not found", type: "invalid_request_error" } },
         { status: 400, headers: CORS_HEADERS }
@@ -56,7 +62,9 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         error: {
-          message: error instanceof Error ? error.message : "Create failed",
+          message:
+            sanitizeErrorMessage(error instanceof Error ? error.message : "Create failed") ||
+            "Create failed",
           type: "invalid_request_error",
         },
       },
@@ -66,9 +74,11 @@ export async function POST(request: Request) {
 }
 
 export async function GET(request: Request) {
-  const scope = await getApiKeyRequestScope(request);
+  const scope = await getPolicyAwareApiKeyRequestScope(request);
   if (scope.rejection) return scope.rejection;
-  const apiKeyId = scope.apiKeyId;
+  const listScope = resolveListScope(scope);
+  if (listScope.mode === "rejected") return listScope.response;
+  const apiKeyId = listScope.mode === "api_key" ? listScope.apiKeyId : undefined;
 
   const url = new URL(request.url);
   const parsedLimit = parseBatchListLimit(url.searchParams.get("limit"));
@@ -81,13 +91,13 @@ export async function GET(request: Request) {
   const limit = parsedLimit.limit;
   const after = url.searchParams.get("after") || undefined;
 
-  const batches = listBatches(apiKeyId || undefined, limit + 1, after);
+  const batches = listBatches(apiKeyId, limit + 1, after);
   const hasMore = batches.length > limit;
   const data = hasMore ? batches.slice(0, limit) : batches;
 
   const formattedData = data.map((b) => formatBatchResponse(b));
 
-  const totalCount = countBatches(apiKeyId || undefined);
+  const totalCount = countBatches(apiKeyId);
 
   return NextResponse.json(
     {
