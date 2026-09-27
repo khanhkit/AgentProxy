@@ -2466,7 +2466,9 @@ export async function handleChatCore({
       // are already in Claude format. Applying the prefix turns "Bash" into
       // "proxy_Bash", which Claude rejects ("No such tool available: proxy_Bash").
       if (targetFormat === FORMATS.CLAUDE) {
-        translatedBody._disableToolPrefix = true;
+        if (provider === "claude") {
+          translatedBody._disableToolPrefix = true;
+        }
         normalizeClaudeUpstreamMessages(translatedBody);
       }
 
