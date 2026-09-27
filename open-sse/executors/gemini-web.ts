@@ -125,15 +125,16 @@ export function buildGeminiPrompt(messages: Array<{ role: string; content: unkno
     (m, i) => i < lastUserIdx && (m.role === "user" || m.role === "assistant")
   );
 
-  // Single-turn (no earlier user/assistant turns): byte-for-byte the original
-  // single-message derivation. Do NOT prepend system text here — the old
-  // no-tools path ignored a system-only prefix on the first turn.
-  if (priorTurns.length === 0) return lastUserContent;
-
   const systemText = textMessages
     .filter((m) => m.role === "system")
     .map((m) => m.content)
     .join("\n\n");
+
+  // Preserve the old fast path only when no system instruction exists.
+  if (priorTurns.length === 0 && !systemText) return lastUserContent;
+
+  // Single-turn system instructions must survive into the flattened web prompt.
+  if (priorTurns.length === 0) return `System:\n${systemText}\n\n${lastUserContent}`;
 
   const historyLines = priorTurns.map(
     (m) => `${m.role === "assistant" ? "Assistant" : "User"}: ${m.content}`
@@ -156,10 +157,12 @@ export function buildGeminiPrompt(messages: Array<{ role: string; content: unkno
 export function buildGeminiToolPrompt(
   effectiveMessages: Array<{ role: string; content: unknown }>
 ): string {
-  const toolSystemMsg = effectiveMessages.find((m) => m.role === "system");
+  const toolPrompt = effectiveMessages
+    .filter((m) => m.role === "system" && typeof m.content === "string")
+    .map((m) => m.content as string)
+    .join("\n\n");
   const lastUserMsg = [...effectiveMessages].reverse().find((m) => m.role === "user");
   const userText = typeof lastUserMsg?.content === "string" ? lastUserMsg.content : "";
-  const toolPrompt = typeof toolSystemMsg?.content === "string" ? toolSystemMsg.content : "";
   return toolPrompt ? `${toolPrompt}\n\n${userText}` : userText;
 }
 
@@ -462,7 +465,12 @@ export class GeminiWebExecutor extends BaseExecutor {
       ? buildGeminiToolPrompt(effectiveMessages)
       : buildGeminiPrompt(messages);
 
-    if (!prompt) {
+    const hasUserMessage = messages.some(
+      (m: { role: string; content: unknown }) =>
+        m.role === "user" && typeof m.content === "string" && m.content.trim().length > 0
+    );
+
+    if (!prompt || (!hasTools && !hasUserMessage)) {
       return {
         response: new Response(JSON.stringify({ error: "No user message found" }), {
           status: 400,
@@ -535,7 +543,7 @@ export class GeminiWebExecutor extends BaseExecutor {
         timeout: 10000,
       });
       await inputEl.click();
-      await page.keyboard.type(prompt, { delay: 10 });
+      await page.keyboard.insertText(prompt);
       await page.waitForTimeout(300);
       await page.keyboard.press("Enter");
 
