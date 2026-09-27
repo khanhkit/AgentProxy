@@ -290,6 +290,7 @@
       "tests/unit/mark-account-unavailable-numeric-epoch-guard.test.ts",
       "tests/unit/masked-200-exhaustion-fallback-6427.test.ts",
       "tests/unit/mcp-connect-scope.test.ts",
+      "tests/unit/mcp-restart-route-13012.test.ts",
       "tests/unit/memory-embedding-remote.test.ts",
       "tests/unit/memory-embedding-transformers.test.ts",
       "tests/unit/middleware-header-strip-5849.test.ts",
