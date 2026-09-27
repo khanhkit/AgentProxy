@@ -110,6 +110,7 @@ import { isNamedOpenAIStyleProvider } from "./discovery/providerSets";
 import { buildStaleEncryptionKeyResponse } from "./staleEncryptionGuard";
 import {
   assembleProviderModelsHeaders,
+  getXaiOauthLiveModelsConfig,
   PROVIDER_MODELS_CONFIG,
 } from "./discovery/providerModelsConfig";
 import {
@@ -2124,10 +2125,13 @@ export async function GET(
       }
     }
 
+    const xaiOauthLiveConfig =
+      provider === "xai-oauth" ? getXaiOauthLiveModelsConfig() : undefined;
     const config =
-      provider in PROVIDER_MODELS_CONFIG
+      xaiOauthLiveConfig ??
+      (provider in PROVIDER_MODELS_CONFIG
         ? PROVIDER_MODELS_CONFIG[provider as keyof typeof PROVIDER_MODELS_CONFIG]
-        : deriveConfigFromRegistryModelsUrl(provider);
+        : deriveConfigFromRegistryModelsUrl(provider));
     if (provider === "codex") {
       const staticCodexCatalog = mergeLocalCatalogModels(
         getModelsByProviderId("codex") || [],
