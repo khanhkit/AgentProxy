@@ -32,20 +32,34 @@ function isPlainObject(value: object): value is Record<string, unknown> {
   const prototype = Object.getPrototypeOf(value);
   return prototype === Object.prototype || prototype === null;
 }
+
+function isClonablePrimitive(value: unknown): boolean {
+  if (value === null || value === undefined) return true;
+  if (typeof value === "string" || typeof value === "boolean") return true;
+  if (typeof value === "number") return Number.isFinite(value);
+  return false;
+}
+
 export function isStrictlySerializable(value: unknown, seen = new Set<object>()): boolean {
-  if (
-    value === null ||
-    typeof value === "string" ||
-    typeof value === "boolean" ||
-    typeof value === "number"
-  ) {
-    return typeof value !== "number" || Number.isFinite(value);
-  }
-  if (typeof value !== "object" || seen.has(value)) return false;
+  if (value === null || typeof value !== "object") return isClonablePrimitive(value);
+  if (seen.has(value)) return false;
   seen.add(value);
-  if (Array.isArray(value)) return value.every((entry) => isStrictlySerializable(entry, seen));
-  if (!isPlainObject(value)) return false;
-  return Object.values(value).every((entry) => isStrictlySerializable(entry, seen));
+  try {
+    if (Array.isArray(value)) return value.every((entry) => isStrictlySerializable(entry, seen));
+    if (value instanceof Date || value instanceof RegExp) return true;
+    if (value instanceof Map) {
+      return [...value.entries()].every(
+        ([key, entry]) => isStrictlySerializable(key, seen) && isStrictlySerializable(entry, seen)
+      );
+    }
+    if (value instanceof Set) {
+      return [...value.values()].every((entry) => isStrictlySerializable(entry, seen));
+    }
+    if (!isPlainObject(value)) return false;
+    return Object.values(value).every((entry) => isStrictlySerializable(entry, seen));
+  } finally {
+    seen.delete(value);
+  }
 }
 
 const WORKER_STACK_ENGINES = new Set(["caveman", "rtk", "standard"]);
