@@ -1971,6 +1971,7 @@ async function handleSingleModelChat(
             reasoningTransportFallback: runtimeOptions.reasoningTransportFallback ?? "drop",
             managedLease: runtimeOptions.managedLease ?? null,
             videoBridgeLog: runtimeOptions.videoBridgeLog,
+            forcedConnectionId: hasForcedConnection ? forcedConnectionId : null,
           },
           runtimeOptions
         );

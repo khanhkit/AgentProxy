@@ -506,6 +506,7 @@ export async function handleChatCore({
   // applied to a CLONE of `body` at the persistAttemptLogs sink (surface 1) —
   // the model-bound `body` itself is never touched.
   videoBridgeLog = undefined,
+  forcedConnectionId = null,
 }) {
   let { provider, model, extendedContext } = modelInfo;
   // Keep the selected rule across format conversion, retries and refreshed credentials.
@@ -5665,6 +5666,9 @@ export async function handleChatCore({
     pendingRequestId,
     compressionResponseMeta,
     comboStrategy,
+    isCombo,
+    requestedConnectionId: forcedConnectionId || null,
+    selectedConnectionId: credentials?.connectionId ?? null,
   });
 
   // The streaming headers (turn-state included, when present) are committed to

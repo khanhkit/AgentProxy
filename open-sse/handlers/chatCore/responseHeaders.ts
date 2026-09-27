@@ -102,6 +102,19 @@ function isAgentProxyInternalHeader(headerName: string): boolean {
   return headerName.toLowerCase().startsWith("x-agentproxy-");
 }
 
+export function isCodexAccountQuotaHeader(headerName: string): boolean {
+  const normalized = headerName.toLowerCase();
+  return (
+    normalized.startsWith("x-codex-") &&
+    (normalized.includes("used-percent") ||
+      normalized.includes("reset") ||
+      normalized.includes("window") ||
+      normalized.includes("credits") ||
+      normalized.includes("over-secondary") ||
+      normalized.includes("plan-type"))
+  );
+}
+
 function getForwardingPriority(headerName: string): number {
   const normalized = headerName.toLowerCase();
   if (
@@ -117,15 +130,7 @@ function getForwardingPriority(headerName: string): number {
   if (normalized.includes("ratelimit") || normalized.includes("rate-limit")) return 2;
   // Codex quota / reset / credits do not contain "ratelimit" in the name,
   // so they used to fall through to priority 3 and lose to date/csp/cf-ray.
-  if (
-    normalized.startsWith("x-codex-") &&
-    (normalized.includes("used-percent") ||
-      normalized.includes("reset") ||
-      normalized.includes("window") ||
-      normalized.includes("credits") ||
-      normalized.includes("over-secondary") ||
-      normalized.includes("plan-type"))
-  ) {
+  if (isCodexAccountQuotaHeader(normalized)) {
     return 2;
   }
   if (
@@ -187,11 +192,29 @@ export function stripNextMiddlewareControlHeaders(headers: Headers): void {
   }
 }
 
+export type StreamingResponseHeadersMeta = Parameters<
+  typeof buildAgentProxyResponseMetaHeaders
+>[0] & {
+  isCombo?: boolean;
+  requestedConnectionId?: string | null;
+  selectedConnectionId?: string | null;
+};
+
+function isForeignComboAccountResponse(meta: StreamingResponseHeadersMeta): boolean {
+  return Boolean(
+    meta.isCombo &&
+    meta.requestedConnectionId &&
+    meta.selectedConnectionId &&
+    meta.requestedConnectionId !== meta.selectedConnectionId
+  );
+}
+
 export function buildStreamingResponseHeaders(
   providerHeaders: Headers,
-  meta: Parameters<typeof buildAgentProxyResponseMetaHeaders>[0],
+  meta: StreamingResponseHeadersMeta,
   log: ResponseHeaderLogger = defaultLogger
 ): Record<string, string> {
+  const foreignAccount = isForeignComboAccountResponse(meta);
   const connectionScopedHeaders = new Set(
     (providerHeaders.get("connection") || "")
       .split(",")
@@ -215,7 +238,10 @@ export function buildStreamingResponseHeaders(
       isNextMiddlewareControlHeader(normalized) ||
       isAgentProxyInternalHeader(normalized) ||
       // Forwarded separately below, outside the byte budget.
-      normalized === CODEX_TURN_STATE_RESPONSE_HEADER
+      normalized === CODEX_TURN_STATE_RESPONSE_HEADER ||
+      // Combo/pool failover may have selected a different account than the one
+      // the caller pinned. Its Codex account quota must never leak downstream.
+      (foreignAccount && isCodexAccountQuotaHeader(normalized))
     ) {
       return;
     }
