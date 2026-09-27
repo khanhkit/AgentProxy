@@ -102,6 +102,9 @@ const QUOTA_PATTERNS: ReadonlyArray<RegExp> = [
   /organization TPD rate limit/i,
   /\bTPD rate limit\b/i,
   /insufficient balance/i,
+
+  /used all the included free usage/i,
+  /resets over a rolling 24-hour window/i,
 ];
 
 /**
