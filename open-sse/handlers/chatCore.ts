@@ -266,6 +266,7 @@ import {
 import { stageTrace } from "./chatCore/stageTrace.ts";
 import { attachCompressionUsageReceiptAfterAnalytics as attachCompressionUsageReceiptAfterAnalyticsFor } from "./chatCore/compressionUsageReceipt.ts";
 import { prepareUpstreamBody } from "./chatCore/upstreamBody.ts";
+import { projectRetainedProviderFailureMessage } from "./chatCore/providerFailureRetention.ts";
 import { getQuotaScopeLabelForProvider } from "../services/antigravityQuotaFamily.ts";
 import { getKimiTemporaryRateLimitResetAt } from "./chatCore/kimiQuotaRecovery.ts";
 import {
@@ -4246,7 +4247,10 @@ export async function handleChatCore({
       }
       // Classifiers and recovery paths above consume the raw provider wording.
       // Project a separate value only at persistent connection-state boundaries.
-      const persistentMessage = sanitizeErrorMessage(message) || "Provider request failed";
+      const persistentMessage = projectRetainedProviderFailureMessage(
+        message,
+        videoBridgeObserved
+      );
       const errorConnectionId = getCurrentConnectionId();
       if (errorConnectionId && errorType) {
         try {
