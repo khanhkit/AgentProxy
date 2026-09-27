@@ -29,6 +29,7 @@
  * the catalog. Max/ultra are codex-only presets and are not synthesized here.
  */
 import { getModelSpec } from "@/shared/constants/modelSpecs";
+import { extendCodexGpt56EffortValues } from "@/shared/reasoning/effortStandardization";
 import { supportsXHighEffort } from "../config/providerModels.ts";
 
 /** Base reasoning-effort levels advertised for every effort-capable Claude model. */
@@ -41,6 +42,7 @@ export type ClaudeEffortVariantLevel =
 
 // Ids that already carry a reasoning-effort suffix — never double-suffix them.
 const CLAUDE_EFFORT_SUFFIX_RE = /-(?:xhigh|high|medium|low)$/i;
+const KIRO_OPUS_5_MAX_VARIANT_RE = /^claude-opus-5-max$/i;
 const CLAUDE_NAME_RE = /claude/i;
 const NO_THINKING_PREFIX = "no-think/";
 
@@ -95,6 +97,7 @@ export function shouldExposeClaudeEffortVariants(
   if (CLAUDE_EFFORT_SUFFIX_RE.test(id)) return false;
 
   const name = bareModelName(id);
+  if (KIRO_OPUS_5_MAX_VARIANT_RE.test(name)) return false;
   return isKnownClaudeEffortBaseModel(name);
 }
 
@@ -125,7 +128,7 @@ export function claudeEffortLevelsFor(providerId: string, modelId: string): stri
   if (supportsXHighEffort(providerId, modelId)) {
     levels.push(CLAUDE_XHIGH_EFFORT_LEVEL);
   }
-  return levels;
+  return extendCodexGpt56EffortValues(providerId, modelId, levels);
 }
 
 /**

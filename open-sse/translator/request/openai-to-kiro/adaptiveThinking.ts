@@ -11,7 +11,7 @@
  * on Kiro today. GPT-5.6 models use Kiro's separate `reasoning.effort` shape,
  * not this Claude adaptive envelope.
  */
-const KIRO_ADAPTIVE_THINKING_MODELS = new Set(["claude-sonnet-5"]);
+const KIRO_ADAPTIVE_THINKING_MODELS = new Set(["claude-opus-5", "claude-sonnet-5"]);
 const KIRO_NATIVE_REASONING_MODELS = new Set(["gpt-5.6-sol", "gpt-5.6-terra", "gpt-5.6-luna"]);
 
 export function supportsKiroAdaptiveThinking(normalizedModel: string): boolean {
