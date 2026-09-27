@@ -1,5 +1,6 @@
 import { randomUUID } from "crypto";
 import { nodeTypeFromId } from "@/lib/db/providerNodeSelect";
+import { hydrateCompatibleNodeBaseUrl } from "./compatibleNodeBaseUrl.ts";
 import { extractGoogApiKeyHeader } from "./googApiKeyAuth.ts";
 import { describeUpstreamFailure } from "@/shared/utils/upstreamError";
 import { buildAllExpiredCredentials } from "./authExpiredCredentials.ts";
@@ -1064,7 +1065,8 @@ async function materializeConnection(
   options: CredentialSelectionOptions,
   extra: DeferredLeaseSelection & { exclusiveLease?: ExclusiveConnectionLease } = {}
 ) {
-  const providerSpecificData = await hydrateAccountProxyReferences(connection.providerSpecificData);
+  const proxyHydrated = await hydrateAccountProxyReferences(connection.providerSpecificData);
+  const providerSpecificData = await hydrateCompatibleNodeBaseUrl(connection.provider, proxyHydrated);
   const apiKeyHealth = providerSpecificData.apiKeyHealth as Record<string, KeyHealth> | undefined;
   if (apiKeyHealth) syncHealthFromDB(connection.id, apiKeyHealth);
   const releaseOAuthSession =

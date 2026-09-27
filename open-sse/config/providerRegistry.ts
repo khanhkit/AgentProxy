@@ -322,3 +322,15 @@ export function getClaudeCodeDefaultModels(): {
     haiku: find(/haiku/i),
   };
 }
+
+/** Fail closed for dynamic compatible-provider nodes that were not hydrated. */
+export function requireCompatibleBaseUrl(
+  provider: string | null | undefined,
+  providerSpecificData: { baseUrl?: unknown } | null | undefined
+): string {
+  const baseUrl = providerSpecificData?.baseUrl;
+  if (typeof baseUrl === "string" && baseUrl.trim()) return baseUrl.trim();
+  throw new Error(
+    `provider node "${provider}" has no baseUrl — node missing or connection not hydrated`
+  );
+}

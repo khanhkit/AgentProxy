@@ -1,5 +1,5 @@
 import { HTTP_STATUS, FETCH_TIMEOUT_MS } from "../config/constants.ts";
-import { getRegistryEntry } from "../config/providerRegistry.ts";
+import { getRegistryEntry, requireCompatibleBaseUrl } from "../config/providerRegistry.ts";
 import { resolveFetchStartTimeout } from "../utils/fetchStartTimeoutPolicy.ts";
 import {
   resolveAlternateFormat,
@@ -381,7 +381,7 @@ export class BaseExecutor {
     void stream;
     if (this.provider?.startsWith?.("openai-compatible-")) {
       const psd = credentials?.providerSpecificData;
-      const baseUrl = typeof psd?.baseUrl === "string" ? psd.baseUrl : "https://api.openai.com/v1";
+      const baseUrl = requireCompatibleBaseUrl(this.provider, psd);
       const normalized = baseUrl.replace(/\/$/, "");
       // Sanitize custom path: must start with '/', no path traversal, no null bytes
       const rawPath = typeof psd?.chatPath === "string" && psd.chatPath ? psd.chatPath : null;
