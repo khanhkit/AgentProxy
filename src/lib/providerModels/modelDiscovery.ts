@@ -400,10 +400,15 @@ export function normalizeDiscoveredModels(
       record.contextLength,
       record.max_model_len,
       record.maxModelLen,
+      record.max_input_tokens,
+      record.maxInputTokens,
       topProvider.context_length
     );
     const outputTokenLimit = firstPositiveNumber(
       record.outputTokenLimit,
+      record.max_output_tokens,
+      record.maxOutputTokens,
+      record.max_tokens,
       topProvider.max_completion_tokens
     );
 
