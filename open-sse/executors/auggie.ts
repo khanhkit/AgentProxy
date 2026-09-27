@@ -294,6 +294,34 @@ function isEnoentLike(message: string): boolean {
   return message.includes("ENOENT") || message.includes("not found");
 }
 
+const AUGGIE_QUOTA_EXHAUSTED_PATTERNS = [
+  /you have run out of usage/i,
+  /run out of usage for/i,
+  /usage limit exceeded/i,
+];
+
+export function isAuggieQuotaExhaustedText(text: string): boolean {
+  return AUGGIE_QUOTA_EXHAUSTED_PATTERNS.some((pattern) => pattern.test(text));
+}
+
+const AUGGIE_QUOTA_EXHAUSTED_CODE = "AUGGIE_QUOTA_EXHAUSTED";
+
+function buildAuggieQuotaErrorResponse(message: string): Response {
+  return new Response(
+    JSON.stringify({
+      error: {
+        message: sanitizeErrorMessage(message),
+        type: "upstream_error",
+        code: AUGGIE_QUOTA_EXHAUSTED_CODE,
+      },
+    }),
+    {
+      status: 429,
+      headers: { "Content-Type": "application/json" },
+    }
+  );
+}
+
 export type AuggieCliVersionCheck = { ok: boolean; version?: string; error?: string };
 
 /**
@@ -504,8 +532,8 @@ export class AuggieExecutor extends BaseExecutor {
           );
         };
 
-        const emitError = (message: string) => {
-          emit(`data: ${JSON.stringify(buildErrorBody(502, message))}\n\n`);
+        const emitError = (message: string, statusCode = 502) => {
+          emit(`data: ${JSON.stringify(buildErrorBody(statusCode, message))}\n\n`);
           emit("data: [DONE]\n\n");
           finish();
         };
@@ -567,8 +595,33 @@ export class AuggieExecutor extends BaseExecutor {
         });
 
         let stderrTail = "";
+        const QUOTA_DETECTION_BUFFER_BYTES = 2048;
+        let pendingBuffer = "";
+        let bufferFlushed = false;
+        let quotaDetected = false;
+
+        const flushPendingBuffer = () => {
+          if (bufferFlushed) return;
+          bufferFlushed = true;
+          if (isAuggieQuotaExhaustedText(pendingBuffer)) {
+            quotaDetected = true;
+            emitError(sanitizeErrorMessage(pendingBuffer.trim()), 429);
+            return;
+          }
+          if (pendingBuffer) emitDelta(pendingBuffer);
+          pendingBuffer = "";
+        };
+
         child.stdout?.on("data", (chunk: Buffer) => {
-          emitDelta(chunk.toString("utf8"));
+          if (quotaDetected || finished) return;
+          if (bufferFlushed) {
+            emitDelta(chunk.toString("utf8"));
+            return;
+          }
+          pendingBuffer += chunk.toString("utf8");
+          if (pendingBuffer.length >= QUOTA_DETECTION_BUFFER_BYTES) {
+            flushPendingBuffer();
+          }
         });
 
         child.stderr?.on("data", (chunk: Buffer) => {
@@ -586,6 +639,8 @@ export class AuggieExecutor extends BaseExecutor {
             );
             return;
           }
+          flushPendingBuffer();
+          if (quotaDetected || finished) return;
           emitStop();
         });
       },
@@ -669,6 +724,10 @@ export class AuggieExecutor extends BaseExecutor {
               )
             )
           );
+          return;
+        }
+        if (isAuggieQuotaExhaustedText(stdout)) {
+          settle(buildAuggieQuotaErrorResponse(stdout.trim()));
           return;
         }
         settle(buildChatCompletionResponse(model, promptText, stdout));
