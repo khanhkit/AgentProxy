@@ -272,6 +272,9 @@ export function buildStreamingResponseHeaders(
 
   const responseHeaders: Record<string, string> = {
     ...Object.fromEntries(forwardedHeaders),
+    ...(droppedHeaders.length > 0
+      ? { [AGENTPROXY_RESPONSE_HEADERS.droppedUpstreamHeaders]: String(droppedHeaders.length) }
+      : {}),
     "Content-Type": "text/event-stream; charset=utf-8",
     "Cache-Control": "no-cache, no-transform",
     Connection: "keep-alive",
