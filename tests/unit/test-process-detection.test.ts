@@ -15,8 +15,8 @@ import { isAutomatedTestProcess } from "@/shared/utils/testProcess";
 const NO_ENV = {} as NodeJS.ProcessEnv;
 
 test("a 'latest' path segment is NOT a test run (the bug that disabled backups)", () => {
-  assert.equal(isAutomatedTestProcess(["node", "/opt/omniroute/latest/server.js"], NO_ENV), false);
-  assert.equal(isAutomatedTestProcess(["node", "C:\\apps\\latest\\bin\\omniroute.mjs", "serve"], NO_ENV), false);
+  assert.equal(isAutomatedTestProcess(["node", "/opt/agentproxy/latest/server.js"], NO_ENV), false);
+  assert.equal(isAutomatedTestProcess(["node", "C:\\apps\\latest\\bin\\agentproxy.mjs", "serve"], NO_ENV), false);
 });
 
 test("other words merely containing 'test' are not test runs either", () => {
@@ -46,7 +46,7 @@ test("env still wins, as before", () => {
 
 test("a production serve is never a test run", () => {
   assert.equal(
-    isAutomatedTestProcess(["C:\\Program Files\\nodejs\\node.exe", "bin/omniroute.mjs", "serve"], { NODE_ENV: "production" } as NodeJS.ProcessEnv),
+    isAutomatedTestProcess(["C:\\Program Files\\nodejs\\node.exe", "bin/agentproxy.mjs", "serve"], { NODE_ENV: "production" } as NodeJS.ProcessEnv),
     false
   );
 });

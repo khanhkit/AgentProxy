@@ -467,7 +467,7 @@ export function resolveRequestedModel(
 // ─── Request encoder ───────────────────────────────────────────────────────
 
 /**
- * OpenAI tool shape (subset OmniRoute receives from clients). Cursor's
+ * OpenAI tool shape (subset AgentProxy receives from clients). Cursor's
  * AgentRunRequest carries declared tools as McpToolDefinition entries; the
  * model uses these to know what's invocable, then emits ExecServerMessage
  * mcp_args when it wants to call one (Phase 5 surfaces those as OpenAI
@@ -521,7 +521,7 @@ export function openAIToolsToMcpDefs(tools: OpenAITool[]): McpToolDefinition[] {
       name: t.function.name,
       description: t.function.description ?? "",
       inputSchemaBytes: jsonSchemaToProtobufValue(params),
-      providerIdentifier: "omniroute",
+      providerIdentifier: "agentproxy",
       toolName: t.function.name,
     };
   });

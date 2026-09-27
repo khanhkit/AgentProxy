@@ -1,10 +1,10 @@
 /**
- * Opt-in REAL smoke harness for upstream CLIs launched through `omniroute run`.
+ * Opt-in REAL smoke harness for upstream CLIs launched through `agentproxy run`.
  *
  * Deterministic regression for the launch plans lives in
  * `tests/unit/cli/run-command.test.ts` (dry-run plans) and
  * `tests/unit/cli/run-execution.test.ts` (child-process isolation). This file
- * exercises the REAL binaries against a REAL OmniRoute server and therefore:
+ * exercises the REAL binaries against a REAL AgentProxy server and therefore:
  *
  *   - NEVER runs automatically: every sub-test skips unless RUN_CLI_SMOKE=1;
  *   - NEVER ships or prints credentials: the API key is passed by env-var NAME
@@ -16,13 +16,13 @@
  * Operator usage (all knobs are env vars — no secrets on the command line):
  *
  *   RUN_CLI_SMOKE=1 \
- *   OMNIROUTE_SMOKE_BASE_URL="http://localhost:20128" \
- *   OMNIROUTE_SMOKE_MODEL="<provider/model>" \
- *   OMNIROUTE_SMOKE_API_KEY_ENV="OMNIROUTE_API_KEY" \
+ *   AGENTPROXY_SMOKE_BASE_URL="http://localhost:20128" \
+ *   AGENTPROXY_SMOKE_MODEL="<provider/model>" \
+ *   AGENTPROXY_SMOKE_API_KEY_ENV="AGENTPROXY_API_KEY" \
  *   node --import tsx/esm --test tests/integration/upstream-cli-smoke.int.test.ts
  *
- * Optional: OMNIROUTE_SMOKE_TARGETS="codex,opencode,qwen" restricts the sweep;
- * OMNIROUTE_SMOKE_TIMEOUT_MS overrides the per-target timeout (default 120s).
+ * Optional: AGENTPROXY_SMOKE_TARGETS="codex,opencode,qwen" restricts the sweep;
+ * AGENTPROXY_SMOKE_TIMEOUT_MS overrides the per-target timeout (default 120s).
  */
 
 import { test } from "node:test";
@@ -32,15 +32,15 @@ import { fileURLToPath } from "node:url";
 import path from "node:path";
 
 const ENABLED = process.env.RUN_CLI_SMOKE === "1";
-const BASE_URL = (process.env.OMNIROUTE_SMOKE_BASE_URL || "http://localhost:20128").replace(
+const BASE_URL = (process.env.AGENTPROXY_SMOKE_BASE_URL || "http://localhost:20128").replace(
   /\/+$/,
   ""
 );
-const MODEL = process.env.OMNIROUTE_SMOKE_MODEL || "";
-const API_KEY_ENV = process.env.OMNIROUTE_SMOKE_API_KEY_ENV || "OMNIROUTE_API_KEY";
-const TIMEOUT_MS = Number(process.env.OMNIROUTE_SMOKE_TIMEOUT_MS || 120_000);
+const MODEL = process.env.AGENTPROXY_SMOKE_MODEL || "";
+const API_KEY_ENV = process.env.AGENTPROXY_SMOKE_API_KEY_ENV || "AGENTPROXY_API_KEY";
+const TIMEOUT_MS = Number(process.env.AGENTPROXY_SMOKE_TIMEOUT_MS || 120_000);
 
-const CLI_ENTRY = fileURLToPath(new URL("../../bin/omniroute.mjs", import.meta.url));
+const CLI_ENTRY = fileURLToPath(new URL("../../bin/agentproxy.mjs", import.meta.url));
 
 /** One-shot, non-interactive invocation per target. Prompts are inert. */
 const SMOKE_TARGETS: Record<string, { args: string[] }> = {
@@ -53,7 +53,7 @@ const SMOKE_TARGETS: Record<string, { args: string[] }> = {
 };
 
 function selectedTargets(): string[] {
-  const filter = String(process.env.OMNIROUTE_SMOKE_TARGETS || "")
+  const filter = String(process.env.AGENTPROXY_SMOKE_TARGETS || "")
     .split(",")
     .map((t) => t.trim())
     .filter(Boolean);
@@ -163,12 +163,12 @@ test(
       t.skip("RUN_CLI_SMOKE!=1 — real smoke is operator opt-in, never automatic");
       return;
     }
-    assert.ok(MODEL, "OMNIROUTE_SMOKE_MODEL must name the provider/model to exercise");
+    assert.ok(MODEL, "AGENTPROXY_SMOKE_MODEL must name the provider/model to exercise");
     assert.ok(
       process.env[API_KEY_ENV] !== undefined,
       `credential env var '${API_KEY_ENV}' must exist (value is never printed)`
     );
-    assert.ok(await serverReachable(), `OmniRoute is not reachable at ${BASE_URL}`);
+    assert.ok(await serverReachable(), `AgentProxy is not reachable at ${BASE_URL}`);
 
     for (const target of selectedTargets()) {
       await t.test(`smoke: ${target}`, async (st) => {

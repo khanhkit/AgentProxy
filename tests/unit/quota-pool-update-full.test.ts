@@ -16,7 +16,7 @@ import os from "node:os";
 import path from "node:path";
 
 // ── DB harness (mirror quota-pool-connections.test.ts) ──────────────────────
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-pool-update-full-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-pool-update-full-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../src/lib/db/core.ts");

@@ -1,5 +1,5 @@
 // #6914 (revised by #8098 protocol fidelity): the real Antigravity client does NOT
-// synthesize an `includeServerSideToolInvocations` flag on toolConfig, so OmniRoute must
+// synthesize an `includeServerSideToolInvocations` flag on toolConfig, so AgentProxy must
 // not either — sending a flag the native client never sends breaks protocol fidelity.
 // When tools are present the request still carries `functionCallingConfig.mode = "VALIDATED"`
 // (and NO synthetic server-side flag); when no tools are present toolConfig stays absent.

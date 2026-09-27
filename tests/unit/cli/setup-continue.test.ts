@@ -13,7 +13,7 @@ test("buildContinueModels emits provider:openai + apiBase + secret ref + roles",
   assert.equal(m.provider, "openai");
   assert.equal(m.model, "glm/glm-5.2");
   assert.equal(m.apiBase, "http://vps:20128/v1");
-  assert.equal(m.apiKey, "${{ secrets.OMNIROUTE_API_KEY }}");
+  assert.equal(m.apiKey, "${{ secrets.AGENTPROXY_API_KEY }}");
   assert.ok(m.roles.includes("chat") && m.roles.includes("edit") && m.roles.includes("apply"));
 });
 
@@ -26,7 +26,7 @@ test("buildContinueModels skips uncategorised models", () => {
   assert.equal(buildContinueModels(["some/unknown-model"], "http://x/v1").length, 0);
 });
 
-test("mergeContinueConfig replaces prior OmniRoute models, keeps others", () => {
+test("mergeContinueConfig replaces prior AgentProxy models, keeps others", () => {
   const existing = {
     name: "My Config",
     models: [

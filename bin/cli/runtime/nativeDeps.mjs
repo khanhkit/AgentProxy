@@ -66,15 +66,13 @@ export function ensureRuntimeDir() {
       pkgPath,
       JSON.stringify(
         {
-          name: "omniroute-runtime",
+          name: "agentproxy-runtime",
           version: "1.0.0",
           private: true,
-          description: "User-writable runtime deps for OmniRoute (native binaries)",
+          description: "User-writable runtime deps for AgentProxy (native binaries)",
           // #14355: npm 11+ rejects `--allow-scripts=<pkg>` as a CLI flag for
-          // project-scoped installs ("Add the entries to the 'allowScripts'
-          // field in package.json, or to .npmrc, instead") — this is the
-          // only way npm now accepts to run better-sqlite3's install script,
-          // which is what actually produces the native binary.
+          // project-scoped installs. Grant the controlled native packages
+          // permission through the runtime package.json instead.
           allowScripts: ALLOW_SCRIPTS_PACKAGES,
         },
         null,
@@ -204,7 +202,7 @@ export function npmInstallRuntime(pkgs, opts = {}) {
   }
 
   if (!opts.silent) {
-    process.stdout.write(`[omniroute][runtime] ${displayCmd}\n`);
+    process.stdout.write(`[agentproxy][runtime] ${displayCmd}\n`);
   }
   // #14355: `stdio: "ignore"` in silent mode was swallowing npm's own error
   // output on failure too, leaving only a generic "install failed" message
@@ -232,18 +230,18 @@ export function ensureBetterSqliteRuntime({ silent = false, force = false } = {}
   ensureRuntimeDir();
   const valid = hasModule("better-sqlite3") && isBetterSqliteBinaryValid();
   if (valid && !force) {
-    if (!silent) process.stdout.write("[omniroute][runtime] better-sqlite3 OK\n");
+    if (!silent) process.stdout.write("[agentproxy][runtime] better-sqlite3 OK\n");
     return { betterSqlite: true };
   }
   if (!silent) {
     process.stdout.write(
-      `[omniroute][runtime] Installing better-sqlite3@${BETTER_SQLITE3_VERSION} into runtime...\n`
+      `[agentproxy][runtime] Installing better-sqlite3@${BETTER_SQLITE3_VERSION} into runtime...\n`
     );
   }
   const ok = npmInstallRuntime([`better-sqlite3@${BETTER_SQLITE3_VERSION}`], { silent });
   if (!ok && !silent) {
     process.stderr.write(
-      "[omniroute][runtime] better-sqlite3 install failed.\n" +
+      "[agentproxy][runtime] better-sqlite3 install failed.\n" +
         "  This usually means npm install scripts are blocked.\n" +
         "  Try: npm install-scripts approve better-sqlite3\n"
     );

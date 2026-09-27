@@ -1,14 +1,14 @@
 ---
-title: "OmniRoute — Galeria funkcji dashboardu"
+title: "AgentProxy — Galeria funkcji dashboardu"
 version: 3.8.40
 lastUpdated: 2026-06-28
 ---
 
-# OmniRoute — Galeria funkcji dashboardu
+# AgentProxy — Galeria funkcji dashboardu
 
 🌐 **Languages:** 🇺🇸 [English](../../../../guides/FEATURES.md) · 🇸🇦 [ar](../../../ar/docs/guides/FEATURES.md) · 🇦🇿 [az](../../../az/docs/guides/FEATURES.md) · 🇧🇬 [bg](../../../bg/docs/guides/FEATURES.md) · 🇧🇩 [bn](../../../bn/docs/guides/FEATURES.md) · 🇨🇿 [cs](../../../cs/docs/guides/FEATURES.md) · 🇩🇰 [da](../../../da/docs/guides/FEATURES.md) · 🇩🇪 [de](../../../de/docs/guides/FEATURES.md) · 🇬🇷 [el](../../../el/docs/guides/FEATURES.md) · 🇪🇸 [es](../../../es/docs/guides/FEATURES.md) · 🇪🇪 [et](../../../et/docs/guides/FEATURES.md) · 🇮🇷 [fa](../../../fa/docs/guides/FEATURES.md) · 🇫🇮 [fi](../../../fi/docs/guides/FEATURES.md) · 🇫🇷 [fr](../../../fr/docs/guides/FEATURES.md) · 🇮🇪 [ga](../../../ga/docs/guides/FEATURES.md) · 🇮🇳 [gu](../../../gu/docs/guides/FEATURES.md) · 🇮🇱 [he](../../../he/docs/guides/FEATURES.md) · 🇮🇳 [hi](../../../hi/docs/guides/FEATURES.md) · 🇭🇷 [hr](../../../hr/docs/guides/FEATURES.md) · 🇭🇺 [hu](../../../hu/docs/guides/FEATURES.md) · 🇮🇩 [id](../../../id/docs/guides/FEATURES.md) · 🇮🇹 [it](../../../it/docs/guides/FEATURES.md) · 🇯🇵 [ja](../../../ja/docs/guides/FEATURES.md) · 🇰🇷 [ko](../../../ko/docs/guides/FEATURES.md) · 🇱🇹 [lt](../../../lt/docs/guides/FEATURES.md) · 🇱🇻 [lv](../../../lv/docs/guides/FEATURES.md) · 🇮🇳 [mr](../../../mr/docs/guides/FEATURES.md) · 🇲🇾 [ms](../../../ms/docs/guides/FEATURES.md) · 🇲🇹 [mt](../../../mt/docs/guides/FEATURES.md) · 🇳🇱 [nl](../../../nl/docs/guides/FEATURES.md) · 🇳🇴 [no](../../../no/docs/guides/FEATURES.md) · 🇵🇭 [phi](../../../phi/docs/guides/FEATURES.md) · 🇵🇹 [pt](../../../pt/docs/guides/FEATURES.md) · 🇧🇷 [pt-BR](../../../pt-BR/docs/guides/FEATURES.md) · 🇷🇴 [ro](../../../ro/docs/guides/FEATURES.md) · 🇷🇺 [ru](../../../ru/docs/guides/FEATURES.md) · 🇸🇰 [sk](../../../sk/docs/guides/FEATURES.md) · 🇸🇮 [sl](../../../sl/docs/guides/FEATURES.md) · 🇷🇸 [sr](../../../sr/docs/guides/FEATURES.md) · 🇸🇪 [sv](../../../sv/docs/guides/FEATURES.md) · 🇰🇪 [sw](../../../sw/docs/guides/FEATURES.md) · 🇮🇳 [ta](../../../ta/docs/guides/FEATURES.md) · 🇮🇳 [te](../../../te/docs/guides/FEATURES.md) · 🇹🇭 [th](../../../th/docs/guides/FEATURES.md) · 🇹🇷 [tr](../../../tr/docs/guides/FEATURES.md) · 🇺🇦 [uk-UA](../../../uk-UA/docs/guides/FEATURES.md) · 🇵🇰 [ur](../../../ur/docs/guides/FEATURES.md) · 🇻🇳 [vi](../../../vi/docs/guides/FEATURES.md) · 🇨🇳 [zh-CN](../../../zh-CN/docs/guides/FEATURES.md) · 🇹🇼 [zh-TW](../../../zh-TW/docs/guides/FEATURES.md)
 
-Wizualny przewodnik po każdej sekcji dashboardu OmniRoute.
+Wizualny przewodnik po każdej sekcji dashboardu AgentProxy.
 
 > 📅 **Ostatnia aktualizacja:** 2026-06-28 — **v3.8.40**
 
@@ -38,7 +38,7 @@ Cykl v3.7.x → v3.8.0 dodał auto-routing bez konfiguracji, nowych providerów,
 - 🚦 **Klasyfikacja 429 per provider** + przełącznik `useUpstream429BreakerHints` — precyzyjniejsze zachowanie breakera z użyciem wskazówek rate-limit z upstreamu
 - 🩺 **Dashboard model cooldowns** — podgląd blokad per model i ręczne ponowne włączanie z UI
 - 🔒 **MITM dynamiczna detekcja certyfikatów Linux** — działa na Debian/Ubuntu, Fedora/RHEL, Arch i innych dystrybucjach
-- 💻 **Pakiet ulepszeń CLI** — ponad 20 poleceń, w tym `omniroute providers`, `omniroute combos`, `omniroute doctor`, `omniroute setup`
+- 💻 **Pakiet ulepszeń CLI** — ponad 20 poleceń, w tym `agentproxy providers`, `agentproxy combos`, `agentproxy doctor`, `agentproxy setup`
 - 🔍 **Odkrywanie modeli embeddingów Qdrant** — automatyczna sonda modeli vector-store
 - 🔑 **API Keys / Bearer keys z zakresem `manage`** — operacje administracyjne programowo przez API
 - 🏥 **Analityka zdrowia celów combo** + **strukturalny builder combo** — zdrowie per target i builder UI do składania kroków `(provider, model, connection)`
@@ -53,7 +53,7 @@ Cykl v3.7.x → v3.8.0 dodał auto-routing bez konfiguracji, nowych providerów,
 
 Zarządzaj połączeniami z providerami AI: providerzy OAuth (Claude Code, Codex), providerzy z kluczem API (Groq, DeepSeek, OpenRouter) oraz darmowi providerzy (Qoder, Kiro). Konta Kiro obejmują śledzenie salda kredytów — pozostałe kredyty, całkowity limit i data odnowienia widoczne w Dashboard → Usage.
 
-Połączenia OpenRouter mogą przechowywać per-connection `preset` w Advanced Settings. Gdy jest ustawiony, OmniRoute wysyła go jako pole najwyższego poziomu żądania OpenRouter, na przykład `"preset": "email-copywriter"`, chyba że żądanie klienta już dostarczyło własny `preset`.
+Połączenia OpenRouter mogą przechowywać per-connection `preset` w Advanced Settings. Gdy jest ustawiony, AgentProxy wysyła go jako pole najwyższego poziomu żądania OpenRouter, na przykład `"preset": "email-copywriter"`, chyba że żądanie klienta już dostarczyło własny `preset`.
 
 ![Providers Dashboard](../screenshots/01-providers.png)
 
@@ -153,7 +153,7 @@ Dashboard do odkrywania i zarządzania agentami CLI. Pokazuje siatkę 16 wbudowa
 
 ## 🔗 Context Relay _(v3.5.5+)_
 
-Strategia combo, która zachowuje ciągłość sesji, gdy rotacja konta następuje w trakcie rozmowy. Zanim aktywne konto się wyczerpie, OmniRoute generuje w tle strukturalne podsumowanie handoff. Po tym, jak kolejne żądanie rozwiąże się na inne konto, podsumowanie jest wstrzykiwane jako komunikat systemowy, dzięki czemu nowe konto kontynuuje z pełnym kontekstem.
+Strategia combo, która zachowuje ciągłość sesji, gdy rotacja konta następuje w trakcie rozmowy. Zanim aktywne konto się wyczerpie, AgentProxy generuje w tle strukturalne podsumowanie handoff. Po tym, jak kolejne żądanie rozwiąże się na inne konto, podsumowanie jest wstrzykiwane jako komunikat systemowy, dzięki czemu nowe konto kontynuuje z pełnym kontekstem.
 
 Konfigurowalne przez ustawienia na poziomie combo lub globalne:
 
@@ -222,7 +222,7 @@ Skrypty czystego usuwania dla wszystkich metod instalacji:
 
 | Polecenie                | Działanie                                                                            |
 | ------------------------ | ------------------------------------------------------------------------------------ |
-| `npm run uninstall`      | Usuwa aplikację systemową, ale **zachowuje DB i konfiguracje** w `~/.omniroute`.     |
+| `npm run uninstall`      | Usuwa aplikację systemową, ale **zachowuje DB i konfiguracje** w `~/.agentproxy`.     |
 | `npm run uninstall:full` | Usuwa aplikację ORAZ trwale **kasuje wszystkie konfiguracje, klucze i bazy danych**. |
 
 ---
@@ -263,7 +263,7 @@ Twórz, nadawaj zakresy i odwołuj klucze API. Każdy klucz może być ograniczo
 
 ## 🖥️ Aplikacja desktopowa
 
-Natywna aplikacja desktopowa Electron dla Windows, macOS i Linux. Uruchamiaj OmniRoute jako samodzielną aplikację z integracją zasobnika systemowego, wsparciem offline, auto-update i instalacją jednym kliknięciem.
+Natywna aplikacja desktopowa Electron dla Windows, macOS i Linux. Uruchamiaj AgentProxy jako samodzielną aplikację z integracją zasobnika systemowego, wsparciem offline, auto-update i instalacją jednym kliknięciem.
 
 Kluczowe funkcje:
 
@@ -282,7 +282,7 @@ Kluczowe funkcje:
 
 ## 🌐 V1 WebSocket Bridge _(v3.6.6+)_
 
-OmniRoute obsługuje teraz **klienty WebSocket zgodne z OpenAI** przez endpoint upgrade `/v1/ws`. Niestandardowy serwer `scripts/dev/v1-ws-bridge.mjs` owija Next.js i upgrade’uje połączenia WS do pełnych dwukierunkowych sesji streamingowych. Uwierzytelnianie używa tego samego klucza API lub cookie sesji co żądania HTTP.
+AgentProxy obsługuje teraz **klienty WebSocket zgodne z OpenAI** przez endpoint upgrade `/v1/ws`. Niestandardowy serwer `scripts/dev/v1-ws-bridge.mjs` owija Next.js i upgrade’uje połączenia WS do pełnych dwukierunkowych sesji streamingowych. Uwierzytelnianie używa tego samego klucza API lub cookie sesji co żądania HTTP.
 
 Kluczowe zachowania:
 
@@ -308,7 +308,7 @@ Config bundle jest budowany przez `src/lib/sync/bundle.ts`. Konsumenci porównuj
 
 **GLM Thinking (`glmt`)** jest teraz zarejestrowanym providerem pierwszej klasy: 65 536 max output tokens, 24 576 thinking budget, domyślny timeout 900 s, format API zgodny z Claude oraz współdzielona synchronizacja użycia z rodziną GLM.
 
-**Hybrydowe zliczanie tokenów** również wchodzi w v3.6.6: gdy provider zgodny z Claude udostępnia `/messages/count_tokens`, OmniRoute wywołuje go przed dużymi żądaniami z łagodnym fallbackiem estymacji.
+**Hybrydowe zliczanie tokenów** również wchodzi w v3.6.6: gdy provider zgodny z Claude udostępnia `/messages/count_tokens`, AgentProxy wywołuje go przed dużymi żądaniami z łagodnym fallbackiem estymacji.
 
 ---
 

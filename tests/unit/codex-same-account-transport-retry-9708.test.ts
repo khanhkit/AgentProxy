@@ -13,7 +13,7 @@ const {
   SAME_ACCOUNT_TRANSPORT_RETRY_MAX,
 } = await import("../../src/sse/services/sameAccountTransportRetry.ts");
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-9708-codex-retry-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-9708-codex-retry-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.API_KEY_SECRET ||= "codex-9708-test-secret";
 

@@ -12,9 +12,8 @@ import assert from "node:assert/strict";
 // ─── resolveEndpointCategory: pure function tests ─────────────────────────
 // Import the pure resolver without DB dependencies
 
-const { resolveEndpointCategory } = await import(
-  "../../src/shared/constants/endpointCategories.ts"
-);
+const { resolveEndpointCategory } =
+  await import("../../src/shared/constants/endpointCategories.ts");
 
 test("resolveEndpointCategory: maps /v1/chat/completions to 'chat'", () => {
   assert.equal(resolveEndpointCategory("/v1/chat/completions"), "chat");
@@ -120,4 +119,26 @@ test("resolveEndpointCategory: handles sub-paths under category", () => {
   assert.equal(resolveEndpointCategory("/v1/files/some-file-id"), "files");
   assert.equal(resolveEndpointCategory("/v1/batches/batch-123"), "batches");
   assert.equal(resolveEndpointCategory("/v1/responses/some/path"), "chat");
+});
+
+test("resolveEndpointCategory: canonicalizes equivalent client route forms before policy lookup", () => {
+  const cases = [
+    ["/api/v1/chat/completions", "chat"],
+    ["/chat/completions", "chat"],
+    ["/chat/completions/", "chat"],
+    ["/v1/v1/chat/completions", "chat"],
+    ["/api/v1/responses", "chat"],
+    ["/responses", "chat"],
+    ["/codex/example", "chat"],
+    ["/api/v1/models", "models"],
+    ["/models/", "models"],
+    ["/v1/v1/models", "models"],
+    ["/CODEX/example", "chat"],
+    ["/V1/V1/models", "models"],
+    ["/MODELS/", "models"],
+  ] as const;
+
+  for (const [pathname, expected] of cases) {
+    assert.equal(resolveEndpointCategory(pathname), expected, pathname);
+  }
 });

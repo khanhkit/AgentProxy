@@ -21,7 +21,7 @@ import {
   resolveCursorBearerToken,
   resolveCursorSessionToken,
   stripCursorOAuthTokenPrefix,
-} from "@omniroute/open-sse/services/cursorApiKeyAuth.ts";
+} from "@agentproxy/open-sse/services/cursorApiKeyAuth.ts";
 
 const API_KEY = "crsr_test_key_0123456789";
 

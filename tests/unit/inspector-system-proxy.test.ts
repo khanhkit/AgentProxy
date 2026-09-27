@@ -4,6 +4,7 @@ import os from "node:os";
 import {
   __setExec,
   apply,
+  isPreviousStateValid,
   revert,
   type ExecFileFn,
 } from "../../src/mitm/inspector/systemProxyConfig.ts";
@@ -110,18 +111,14 @@ test("Linux apply uses gsettings with array args", async (t) => {
   assert.deepEqual(setMode.args, ["set", "org.gnome.system.proxy", "mode", "manual"]);
   const setHost = calls.find(
     (c) =>
-      c.args[0] === "set" &&
-      c.args[1] === "org.gnome.system.proxy.http" &&
-      c.args[2] === "host"
+      c.args[0] === "set" && c.args[1] === "org.gnome.system.proxy.http" && c.args[2] === "host"
   );
   assert.ok(setHost);
   assert.deepEqual(setHost.args, ["set", "org.gnome.system.proxy.http", "host", "127.0.0.1"]);
   // port string is passed as own arg (no shell interpolation)
   const setPort = calls.find(
     (c) =>
-      c.args[0] === "set" &&
-      c.args[1] === "org.gnome.system.proxy.http" &&
-      c.args[2] === "port"
+      c.args[0] === "set" && c.args[1] === "org.gnome.system.proxy.http" && c.args[2] === "port"
   );
   assert.ok(setPort);
   assert.equal(setPort.args[3], "9090");
@@ -176,7 +173,7 @@ test("Windows apply passes proxyArg as single arg, no shell interpolation", asyn
   assert.equal(proxyArg, "127.0.0.1:7777");
 });
 
-test("Windows revert calls netsh winhttp reset proxy", async (t) => {
+test("Windows revert calls netsh winhttp reset proxy for direct-access prior state", async (t) => {
   const orig = os.platform;
   (os as { platform: () => NodeJS.Platform }).platform = () => "win32" as NodeJS.Platform;
   t.after(() => {
@@ -187,9 +184,42 @@ test("Windows revert calls netsh winhttp reset proxy", async (t) => {
   const restore = __setExec(exec);
   t.after(restore);
 
-  await revert({ platform: "windows", netshOutput: "" });
+  await revert({ platform: "windows", netshOutput: "Direct access (no proxy server)." });
   const resetCall = calls.find((c) => c.args.join(" ") === "winhttp reset proxy");
   assert.ok(resetCall);
+});
+
+test("Windows revert restores the recorded proxy server and bypass list", async (t) => {
+  const orig = os.platform;
+  (os as { platform: () => NodeJS.Platform }).platform = () => "win32" as NodeJS.Platform;
+  t.after(() => {
+    (os as { platform: () => NodeJS.Platform }).platform = orig;
+  });
+
+  const { calls, exec } = makeRecorder();
+  const restore = __setExec(exec);
+  t.after(restore);
+
+  await revert({
+    platform: "windows",
+    netshOutput: [
+      "Current WinHTTP proxy settings:",
+      "",
+      "    Proxy Server(s) : old.proxy.local:8181",
+      "    Bypass List     : <local>;localhost;*.corp.local",
+      "",
+    ].join("\r\n"),
+  });
+
+  const restoreCall = calls.find((c) => c.args.slice(0, 3).join(" ") === "winhttp set proxy");
+  assert.ok(restoreCall, "a configured prior WinHTTP proxy must be restored, not reset to DIRECT");
+  assert.deepEqual(restoreCall.args, [
+    "winhttp",
+    "set",
+    "proxy",
+    "proxy-server=old.proxy.local:8181",
+    "bypass-list=<local>;localhost;*.corp.local",
+  ]);
 });
 
 test("apply throws sanitized error when exec fails", async (t) => {
@@ -205,12 +235,15 @@ test("apply throws sanitized error when exec fails", async (t) => {
   const restore = __setExec(exec);
   t.after(restore);
 
-  await assert.rejects(() => apply(8080), (err: Error) => {
-    // sanitizeErrorMessage strips paths; assert we still get an Error
-    assert.ok(err instanceof Error);
-    assert.ok(err.message.length > 0);
-    return true;
-  });
+  await assert.rejects(
+    () => apply(8080),
+    (err: Error) => {
+      // sanitizeErrorMessage strips paths; assert we still get an Error
+      assert.ok(err instanceof Error);
+      assert.ok(err.message.length > 0);
+      return true;
+    }
+  );
 });
 
 test("revert no-ops for unknown platform payload", async (t) => {
@@ -221,4 +254,47 @@ test("revert no-ops for unknown platform payload", async (t) => {
   await revert(null);
   await revert({ platform: "freebsd" });
   assert.equal(calls.length, 0);
+});
+
+test("previous-state validation rejects cross-platform and malformed recovery payloads", () => {
+  assert.equal(
+    isPreviousStateValid(
+      {
+        platform: "macos",
+        service: "Wi-Fi",
+        http: { enabled: false, host: "", port: "" },
+        https: { enabled: false, host: "", port: "" },
+      },
+      "linux"
+    ),
+    false
+  );
+  assert.equal(
+    isPreviousStateValid(
+      {
+        platform: "linux",
+        gnomeMode: "'auto'\nmalicious",
+        httpHost: "",
+        httpPort: "",
+        httpsHost: "",
+        httpsPort: "",
+      },
+      "linux"
+    ),
+    false
+  );
+  assert.equal(
+    isPreviousStateValid(
+      {
+        platform: "linux",
+        gnomeMode: "'auto'",
+        httpHost: "'proxy.local'",
+        httpPort: "3128",
+        httpsHost: "'proxy.local'",
+        httpsPort: "3128",
+      },
+      "linux"
+    ),
+    true
+  );
 });

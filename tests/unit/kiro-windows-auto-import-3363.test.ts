@@ -5,7 +5,7 @@
 // ("GLIBC_2.29 not found"), so the native module fails to dlopen and any test that
 // reaches better-sqlite3 directly (or asserts stdout that the load-failure warning
 // would pollute) fails HERE while passing in CI. This is a known environment
-// limitation, not a defect in the code under test: the OmniRoute runtime itself
+// limitation, not a defect in the code under test: the AgentProxy runtime itself
 // cascades to node:sqlite/sql.js when better-sqlite3 is unavailable. See
 // tests/unit/_helpers/betterSqlite3Availability.ts for a guard helper.
 /**
@@ -24,7 +24,7 @@ import Database from "better-sqlite3";
 
 // Set DATA_DIR before importing any app modules so isAuthRequired() reads from
 // a fresh, empty settings DB (no password → requireLogin defaults to false).
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-kiro-3363-data-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-kiro-3363-data-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../src/lib/db/core.ts");
@@ -41,7 +41,7 @@ const ORIGINAL_FETCH = globalThis.fetch;
 let tmpHome: string;
 
 test.beforeEach(() => {
-  tmpHome = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-kiro-3363-"));
+  tmpHome = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-kiro-3363-"));
   // Reset DB instance so each test gets a clean settings DB (no requireLogin).
   core.resetDbInstance();
   fs.rmSync(TEST_DATA_DIR, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });

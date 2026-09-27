@@ -94,7 +94,7 @@ test("bounding at the entry does not change what the request logger ultimately s
 test("buildClientRawRequest still carries endpoint, headers and signal", () => {
   const req = new Request("http://localhost:20128/v1/chat/completions?x=1", {
     method: "POST",
-    headers: { "content-type": "application/json", "x-omniroute-session-id": "sess-1" },
+    headers: { "content-type": "application/json", "x-agentproxy-session-id": "sess-1" },
   });
   const out = buildClientRawRequest(req, { model: "m", messages: [] }) as {
     endpoint: string;
@@ -102,7 +102,7 @@ test("buildClientRawRequest still carries endpoint, headers and signal", () => {
     signal: unknown;
   };
   assert.equal(out.endpoint, "/v1/chat/completions");
-  assert.equal(out.headers["x-omniroute-session-id"], "sess-1");
+  assert.equal(out.headers["x-agentproxy-session-id"], "sess-1");
   assert.equal(out.headers["content-type"], "application/json");
   assert.ok("signal" in out);
 });

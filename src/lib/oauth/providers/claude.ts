@@ -1,6 +1,6 @@
 import crypto from "node:crypto";
 import { CLAUDE_CONFIG } from "../constants/oauth";
-import { getClaudeCodeVersion } from "@omniroute/open-sse/executors/claudeIdentity.ts";
+import { getClaudeCodeVersion } from "@agentproxy/open-sse/executors/claudeIdentity.ts";
 
 const BOOTSTRAP_FETCH_TIMEOUT_MS = 10_000;
 

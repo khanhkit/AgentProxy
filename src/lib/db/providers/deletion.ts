@@ -15,7 +15,7 @@ import { deleteLKGPByConnectionIds } from "../settings/lkgp";
 import {
   removeConnectionHealth,
   removeConnectionIndex,
-} from "@omniroute/open-sse/services/apiKeyRotator.ts";
+} from "@agentproxy/open-sse/services/apiKeyRotator.ts";
 import { invalidateDbCache } from "../readCache";
 import { invalidateReasoningRoutingRuleCache } from "../reasoningRoutingRules";
 import { bumpProxyConfigGeneration } from "../settings";
@@ -93,7 +93,7 @@ export async function deleteProviderConnection(id: string) {
     _cleanupDeletedComboConnectionRefs(id),
     _cleanupDeletedLKGPConnectionRefs(id),
   ]);
-  void import("@omniroute/open-sse/services/combo/nativeCodexTurnPin.ts")
+  void import("@agentproxy/open-sse/services/combo/nativeCodexTurnPin.ts")
     .then((module) => module.revokeNativeCodexTurnPinsForConnection(id))
     .catch(() => {});
 
@@ -140,7 +140,7 @@ export async function deleteProviderConnections(ids: string[]): Promise<number> 
   for (const id of ids) {
     removeConnectionHealth(id);
     removeConnectionIndex(id);
-    void import("@omniroute/open-sse/services/combo/nativeCodexTurnPin.ts")
+    void import("@agentproxy/open-sse/services/combo/nativeCodexTurnPin.ts")
       .then((module) => module.revokeNativeCodexTurnPinsForConnection(id))
       .catch(() => {});
   }
@@ -182,7 +182,7 @@ export async function deleteProviderConnectionsByProvider(providerId: string) {
   for (const connectionId of connectionIds) {
     removeConnectionHealth(connectionId);
     removeConnectionIndex(connectionId);
-    void import("@omniroute/open-sse/services/combo/nativeCodexTurnPin.ts")
+    void import("@agentproxy/open-sse/services/combo/nativeCodexTurnPin.ts")
       .then((module) => module.revokeNativeCodexTurnPinsForConnection(connectionId))
       .catch(() => {});
   }

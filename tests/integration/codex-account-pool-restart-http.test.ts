@@ -5,7 +5,7 @@ import os from "node:os";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-codex-pool-http-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-codex-pool-http-"));
 const PHASE_SCRIPT = path.join(
   process.cwd(),
   "tests/integration/fixtures/codex-account-pool-restart-phase.ts"

@@ -1,10 +1,10 @@
-# OmniRoute A2A Server Documentation (中文 (简体))
+# AgentProxy A2A Server Documentation (中文 (简体))
 
 🌐 **Languages:** 🇺🇸 [English](../../../../frameworks/A2A-SERVER.md) · 🇸🇦 [ar](../../../ar/docs/frameworks/A2A-SERVER.md) · 🇦🇿 [az](../../../az/docs/frameworks/A2A-SERVER.md) · 🇧🇬 [bg](../../../bg/docs/frameworks/A2A-SERVER.md) · 🇧🇩 [bn](../../../bn/docs/frameworks/A2A-SERVER.md) · 🇨🇿 [cs](../../../cs/docs/frameworks/A2A-SERVER.md) · 🇩🇰 [da](../../../da/docs/frameworks/A2A-SERVER.md) · 🇩🇪 [de](../../../de/docs/frameworks/A2A-SERVER.md) · 🇬🇷 [el](../../../el/docs/frameworks/A2A-SERVER.md) · 🇪🇸 [es](../../../es/docs/frameworks/A2A-SERVER.md) · 🇪🇪 [et](../../../et/docs/frameworks/A2A-SERVER.md) · 🇮🇷 [fa](../../../fa/docs/frameworks/A2A-SERVER.md) · 🇫🇮 [fi](../../../fi/docs/frameworks/A2A-SERVER.md) · 🇫🇷 [fr](../../../fr/docs/frameworks/A2A-SERVER.md) · 🇮🇪 [ga](../../../ga/docs/frameworks/A2A-SERVER.md) · 🇮🇳 [gu](../../../gu/docs/frameworks/A2A-SERVER.md) · 🇮🇱 [he](../../../he/docs/frameworks/A2A-SERVER.md) · 🇮🇳 [hi](../../../hi/docs/frameworks/A2A-SERVER.md) · 🇭🇷 [hr](../../../hr/docs/frameworks/A2A-SERVER.md) · 🇭🇺 [hu](../../../hu/docs/frameworks/A2A-SERVER.md) · 🇮🇩 [id](../../../id/docs/frameworks/A2A-SERVER.md) · 🇮🇹 [it](../../../it/docs/frameworks/A2A-SERVER.md) · 🇯🇵 [ja](../../../ja/docs/frameworks/A2A-SERVER.md) · 🇰🇷 [ko](../../../ko/docs/frameworks/A2A-SERVER.md) · 🇱🇹 [lt](../../../lt/docs/frameworks/A2A-SERVER.md) · 🇱🇻 [lv](../../../lv/docs/frameworks/A2A-SERVER.md) · 🇮🇳 [mr](../../../mr/docs/frameworks/A2A-SERVER.md) · 🇲🇾 [ms](../../../ms/docs/frameworks/A2A-SERVER.md) · 🇲🇹 [mt](../../../mt/docs/frameworks/A2A-SERVER.md) · 🇳🇱 [nl](../../../nl/docs/frameworks/A2A-SERVER.md) · 🇳🇴 [no](../../../no/docs/frameworks/A2A-SERVER.md) · 🇵🇭 [phi](../../../phi/docs/frameworks/A2A-SERVER.md) · 🇵🇱 [pl](../../../pl/docs/frameworks/A2A-SERVER.md) · 🇵🇹 [pt](../../../pt/docs/frameworks/A2A-SERVER.md) · 🇧🇷 [pt-BR](../../../pt-BR/docs/frameworks/A2A-SERVER.md) · 🇷🇴 [ro](../../../ro/docs/frameworks/A2A-SERVER.md) · 🇷🇺 [ru](../../../ru/docs/frameworks/A2A-SERVER.md) · 🇸🇰 [sk](../../../sk/docs/frameworks/A2A-SERVER.md) · 🇸🇮 [sl](../../../sl/docs/frameworks/A2A-SERVER.md) · 🇷🇸 [sr](../../../sr/docs/frameworks/A2A-SERVER.md) · 🇸🇪 [sv](../../../sv/docs/frameworks/A2A-SERVER.md) · 🇰🇪 [sw](../../../sw/docs/frameworks/A2A-SERVER.md) · 🇮🇳 [ta](../../../ta/docs/frameworks/A2A-SERVER.md) · 🇮🇳 [te](../../../te/docs/frameworks/A2A-SERVER.md) · 🇹🇭 [th](../../../th/docs/frameworks/A2A-SERVER.md) · 🇹🇷 [tr](../../../tr/docs/frameworks/A2A-SERVER.md) · 🇺🇦 [uk-UA](../../../uk-UA/docs/frameworks/A2A-SERVER.md) · 🇵🇰 [ur](../../../ur/docs/frameworks/A2A-SERVER.md) · 🇻🇳 [vi](../../../vi/docs/frameworks/A2A-SERVER.md) · 🇹🇼 [zh-TW](../../../zh-TW/docs/frameworks/A2A-SERVER.md)
 
 ---
 
-> Agent-to-Agent Protocol v0.3 — OmniRoute 作为智能路由代理
+> Agent-to-Agent Protocol v0.3 — AgentProxy 作为智能路由代理
 
 A2A 层有两个入口：
 
@@ -19,7 +19,7 @@ A2A 层有两个入口：
 curl http://localhost:20128/.well-known/agent.json
 ```
 
-返回 Agent Card，其中描述 OmniRoute 的能力、技能和认证要求。
+返回 Agent Card，其中描述 AgentProxy 的能力、技能和认证要求。
 
 Agent Card 的 `version` 字段取自 `process.env.npm_package_version`（参见 `src/app/.well-known/agent.json/route.ts:13`），因此每次发布时都与 `package.json` 自动保持同步。
 
@@ -30,7 +30,7 @@ Agent Card 的 `version` 字段取自 `process.env.npm_package_version`（参见
 所有 `/a2a` 请求均需通过 `Authorization` 请求头提供 API Key：
 
 ```
-Authorization: Bearer YOUR_OMNIROUTE_API_KEY
+Authorization: Bearer YOUR_AGENTPROXY_API_KEY
 ```
 
 如果服务器未配置 API Key，认证将被跳过。
@@ -135,22 +135,22 @@ curl -X POST http://localhost:20128/a2a \
 
 ## 可用技能
 
-OmniRoute 暴露了 6 个 A2A 技能，连接到 `src/lib/a2a/taskExecution.ts::A2A_SKILL_HANDLERS`。每个技能模块位于 `src/lib/a2a/skills/`。
+AgentProxy 暴露了 6 个 A2A 技能，连接到 `src/lib/a2a/taskExecution.ts::A2A_SKILL_HANDLERS`。每个技能模块位于 `src/lib/a2a/skills/`。
 
 | 技能               | ID                   | 描述                                                                                         | 标签             | 示例                       |
 | :----------------- | :------------------- | :------------------------------------------------------------------------------------------- | :--------------- | :------------------------- |
-| Smart Routing      | `smart-routing`      | 通过 OmniRoute 的 Combo 引擎与评分，将提示路由到最优服务商/Combo                             | routing, 服务商  | "通过最佳模型路由此提示"   |
+| Smart Routing      | `smart-routing`      | 通过 AgentProxy 的 Combo 引擎与评分，将提示路由到最优服务商/Combo                             | routing, 服务商  | "通过最佳模型路由此提示"   |
 | Quota Management   | `quota-management`   | 报告每个服务商的配额状态，帮助调用方决定何时限流/切换                                        | 配额, 服务商     | "检查 anthropic 的配额"    |
 | Provider Discovery | `provider-discovery` | 列出已安装的服务商及其能力、免费层标志、OAuth 状态                                           | 服务商, 发现     | "有哪些可用服务商？"       |
 | Cost Analysis      | `cost-analysis`      | 根据目录和近期用量估算请求/对话的成本                                                        | 成本, 用量       | "估算本次对话的成本"       |
 | Health Report      | `health-report`      | 聚合每个服务商的熔断器、冷却、锁定状态                                                       | 健康, 容灾       | "显示所有服务商的健康状态" |
-| List Capabilities  | `list-capabilities`  | 返回完整的 42 项代理技能目录，以 Markdown 表格形式列出，附带原始 SKILL.md URL 用于上下文注入 | 目录, 发现, 技能 | "列出所有 OmniRoute 能力"  |
+| List Capabilities  | `list-capabilities`  | 返回完整的 42 项代理技能目录，以 Markdown 表格形式列出，附带原始 SKILL.md URL 用于上下文注入 | 目录, 发现, 技能 | "列出所有 AgentProxy 能力"  |
 
 > 注意：Agent Card 描述目前宣传 "36+ providers"（`src/app/.well-known/agent.json/route.ts:26` 和 `:55`）。实际目录已增长至 180+ 个服务商——该字符串应在后续变更中更新（作为单独的文档/代码 TODO 跟踪；此处不作修改）。
 
 ### `list-capabilities` 技能详情
 
-`list-capabilities` 技能对于需要在发送 API 调用前了解 OmniRoute 暴露了哪些内容的外部代理尤为有用。它返回结构化的 Markdown 表格 artifact：
+`list-capabilities` 技能对于需要在发送 API 调用前了解 AgentProxy 暴露了哪些内容的外部代理尤为有用。它返回结构化的 Markdown 表格 artifact：
 
 ```
 | ID | Name | Category | Area | Endpoints/Commands | Raw URL |

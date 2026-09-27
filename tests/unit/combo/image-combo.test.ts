@@ -13,7 +13,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-image-combo-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-image-combo-"));
 const ORIGINAL_DATA_DIR = process.env.DATA_DIR;
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.JWT_SECRET = "test-jwt-secret-for-image-combo-tests";
@@ -24,7 +24,7 @@ fs.mkdirSync(TEST_DATA_DIR, { recursive: true });
 const core = await import("@/lib/db/core.ts");
 const { createCombo } = await import("@/lib/db/combos");
 const { createProviderConnection } = await import("@/lib/db/providers");
-const { executeImageCombo } = await import("@omniroute/open-sse/services/imageCombo");
+const { executeImageCombo } = await import("@agentproxy/open-sse/services/imageCombo");
 
 type LogEntry = { level: string; tag: unknown; msg: unknown };
 

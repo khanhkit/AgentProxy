@@ -11,8 +11,8 @@ Inspect and manage circuit-breaker states, connection cooldowns, quota limits, a
 ## Quick install
 
 ```bash
-npm install -g omniroute   # or: npx omniroute
-omniroute --version
+npm install -g agentproxy   # or: npx agentproxy
+agentproxy --version
 ```
 
 ## Subcommands
@@ -27,17 +27,17 @@ omniroute --version
 **Example:**
 
 ```bash
-omniroute quota
+agentproxy quota
 ```
 
 ### `quota status`
 
-Show truthful OmniRoute gateway, quota, pool, and circuit state
+Show truthful AgentProxy gateway, quota, pool, and circuit state
 
 **Example:**
 
 ```bash
-omniroute quota status
+agentproxy quota status
 ```
 
 ### `quota preview`
@@ -51,7 +51,7 @@ Preview allocation enforcement without an upstream request
 **Example:**
 
 ```bash
-omniroute quota preview
+agentproxy quota preview
 ```
 
 ### `quota ensure <json>`
@@ -61,7 +61,7 @@ Idempotently create or update a quota pool from a JSON object
 **Example:**
 
 ```bash
-omniroute quota ensure <json>
+agentproxy quota ensure <json>
 ```
 
 ### `resilience`
@@ -69,7 +69,7 @@ omniroute quota ensure <json>
 **Example:**
 
 ```bash
-omniroute resilience
+agentproxy resilience
 ```
 
 ### `resilience status`
@@ -81,7 +81,7 @@ omniroute resilience
 **Example:**
 
 ```bash
-omniroute resilience status
+agentproxy resilience status
 ```
 
 ### `resilience breakers`
@@ -93,7 +93,7 @@ omniroute resilience status
 **Example:**
 
 ```bash
-omniroute resilience breakers
+agentproxy resilience breakers
 ```
 
 ### `resilience cooldowns`
@@ -106,7 +106,7 @@ omniroute resilience breakers
 **Example:**
 
 ```bash
-omniroute resilience cooldowns
+agentproxy resilience cooldowns
 ```
 
 ### `resilience lockouts`
@@ -119,7 +119,7 @@ omniroute resilience cooldowns
 **Example:**
 
 ```bash
-omniroute resilience lockouts
+agentproxy resilience lockouts
 ```
 
 ### `resilience reset`
@@ -134,7 +134,7 @@ omniroute resilience lockouts
 **Example:**
 
 ```bash
-omniroute resilience reset
+agentproxy resilience reset
 ```
 
 ### `resilience profile`
@@ -142,7 +142,7 @@ omniroute resilience reset
 **Example:**
 
 ```bash
-omniroute resilience profile
+agentproxy resilience profile
 ```
 
 ### `resilience show`
@@ -150,7 +150,7 @@ omniroute resilience profile
 **Example:**
 
 ```bash
-omniroute resilience show
+agentproxy resilience show
 ```
 
 ### `resilience set <name>`
@@ -158,7 +158,7 @@ omniroute resilience show
 **Example:**
 
 ```bash
-omniroute resilience set <name>
+agentproxy resilience set <name>
 ```
 
 ### `resilience config`
@@ -166,7 +166,7 @@ omniroute resilience set <name>
 **Example:**
 
 ```bash
-omniroute resilience config
+agentproxy resilience config
 ```
 
 ### `resilience show`
@@ -174,7 +174,7 @@ omniroute resilience config
 **Example:**
 
 ```bash
-omniroute resilience show
+agentproxy resilience show
 ```
 
 ### `resilience set`
@@ -188,5 +188,5 @@ omniroute resilience show
 **Example:**
 
 ```bash
-omniroute resilience set
+agentproxy resilience set
 ```

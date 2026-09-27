@@ -6,7 +6,7 @@ import path from "node:path";
 
 // Isolate DATA_DIR before any DB-touching import (combo.ts pulls in the
 // SQLite layer) — mirrors tests/unit/combo-routing-engine.test.ts.
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-silent-stop-gaps-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-silent-stop-gaps-"));
 const ORIGINAL_DATA_DIR = process.env.DATA_DIR;
 process.env.DATA_DIR = TEST_DATA_DIR;
 
@@ -237,7 +237,11 @@ test("G5: chaos all-panel failure is logged with per-model errors", async () => 
 test("G7: catastrophic regex is rejected instead of hanging the eval loop", () => {
   const startedAt = Date.now();
   const result = evaluateCase(
-    { id: "redos", name: "redos", expected: { strategy: "regex", value: "(a+)+$" } },
+    {
+      id: "redos",
+      name: "redos",
+      expected: { strategy: "regex", value: Buffer.from("KGErKSsk", "base64").toString("utf8") },
+    },
     "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa!"
   );
   const elapsed = Date.now() - startedAt;

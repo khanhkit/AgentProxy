@@ -11,7 +11,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-suggested-models-route-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-suggested-models-route-"));
 const ORIGINAL_DATA_DIR = process.env.DATA_DIR;
 process.env.DATA_DIR = TEST_DATA_DIR;
 
@@ -152,8 +152,8 @@ test("route source: imports and uses buildErrorBody (Hard Rule #12)", async () =
   );
   assert.match(
     src,
-    /import \{[^}]*buildErrorBody[^}]*\} from ["']@omniroute\/open-sse\/utils\/error(\.ts)?["']/,
-    "must import buildErrorBody from @omniroute/open-sse/utils/error"
+    /import \{[^}]*buildErrorBody[^}]*\} from ["']@agentproxy\/open-sse\/utils\/error(\.ts)?["']/,
+    "must import buildErrorBody from @agentproxy/open-sse/utils/error"
   );
   assert.match(src, /buildErrorBody\s*\(/, "must call buildErrorBody() in error responses");
 

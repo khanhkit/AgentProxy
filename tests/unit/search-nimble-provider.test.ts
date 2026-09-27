@@ -4,7 +4,7 @@ import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-process.env.DATA_DIR = mkdtempSync(join(tmpdir(), "omniroute-search-nimble-"));
+process.env.DATA_DIR = mkdtempSync(join(tmpdir(), "agentproxy-search-nimble-"));
 
 const { handleSearch } = await import("../../open-sse/handlers/search.ts");
 const { SEARCH_PROVIDERS } = await import("../../open-sse/config/searchRegistry.ts");
@@ -45,7 +45,7 @@ test("nimble-search is registered with the /v1/search endpoint and bearer auth",
   assert.deepEqual(provider.searchTypes, ["web", "news"]);
 });
 
-test("handleSearch builds a Nimble request with the omniroute client-source header", async () => {
+test("handleSearch builds a Nimble request with the agentproxy client-source header", async () => {
   const originalFetch = globalThis.fetch;
   let captured: { url: string; headers: Record<string, string>; body: Record<string, unknown> } = {
     url: "",
@@ -84,7 +84,7 @@ test("handleSearch builds a Nimble request with the omniroute client-source head
     assert.equal(captured.url, "https://sdk.nimbleway.com/v1/search");
     assert.equal(captured.headers.Authorization, "Bearer nimble-key");
     assert.equal(captured.headers[NIMBLE_CLIENT_SOURCE_HEADER], NIMBLE_CLIENT_SOURCE);
-    assert.equal(captured.headers[NIMBLE_CLIENT_SOURCE_HEADER], "omniroute");
+    assert.equal(captured.headers[NIMBLE_CLIENT_SOURCE_HEADER], "agentproxy");
 
     assert.deepEqual(captured.body, {
       query: "nimble web data",

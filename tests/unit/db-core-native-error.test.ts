@@ -45,6 +45,14 @@ test("isNativeSqliteLoadError detects MODULE_NOT_FOUND via error.code", () => {
   assert.equal(isNativeSqliteLoadError(err), true);
 });
 
+test("isNativeSqliteLoadError detects non-callable better-sqlite3 export", () => {
+  assert.equal(
+    isNativeSqliteLoadError(new TypeError("better-sqlite3 export is not a function")),
+    true
+  );
+  assert.equal(isNativeSqliteLoadError(new TypeError("Database is not a constructor")), true);
+});
+
 test("isNativeSqliteLoadError returns false for unrelated errors", () => {
   assert.equal(isNativeSqliteLoadError(new Error("SQLITE_BUSY: database is locked")), false);
   assert.equal(isNativeSqliteLoadError(new Error("ENOENT: no such file")), false);

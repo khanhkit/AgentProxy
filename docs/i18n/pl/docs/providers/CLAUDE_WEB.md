@@ -113,7 +113,7 @@ profilem Chrome 146 i dostarczonym cookie (`open-sse/services/claudeTlsClient.ts
 uruchamia solvera ani nie wytwarza zastępczego cookie.
 
 Ustaw `WEB_COOKIE_USE_BROWSER` na `1`, `true` lub `on`, aby adapter przeglądarkowy
-zakresowany do konta stał się transportem podstawowym. Ustaw `OMNIROUTE_BROWSER_POOL` na jedną z tych samych wartości, aby
+zakresowany do konta stał się transportem podstawowym. Ustaw `AGENTPROXY_BROWSER_POOL` na jedną z tych samych wartości, aby
 zezwolić rozpoznanemu wyzwaniu Cloudflare 403 na fallback z transportu bezpośredniego do
 adaptera przeglądarkowego (`open-sse/executors/claude-web.ts:195`). Inne błędy HTTP nie
 uruchamiają tego fallbacku.
@@ -140,7 +140,7 @@ delty tekstu na `content`, delty myślenia na `reasoning_content`, a znane zdarz
 na rozszerzenie odpowiedzi `claude_web`. Każde zdarzenie metadanych jest projektowane przez własną listę
 dozwolonych pól (`open-sse/executors/claude-web/stream.ts:37`). Metadane
 konwersacji, wiadomości nadrzędnej, wiadomości asystenta i operacji są również zwracane w
-nagłówkach `X-OmniRoute-Claude-Web-*` (`open-sse/executors/claude-web/stream.ts:364`).
+nagłówkach `X-AgentProxy-Claude-Web-*` (`open-sse/executors/claude-web/stream.ts:364`).
 
 Parser zamyka się awaryjnie przy niepoprawnym JSON, upstreamowych zdarzeniach `error`, nieznanych typach zdarzeń,
 nieprawidłowej kolejności, niedopasowaniach bloków treści lub EOF przed `message_stop`. Wyjście strumieniowe
@@ -179,7 +179,7 @@ więc te pominięte przypadki nie stanowią dowodu runtime.
 
 ### Konfiguracja
 
-1. Uruchom OmniRoute przez `npm run dev` lub zbudowaną instalację.
+1. Uruchom AgentProxy przez `npm run dev` lub zbudowaną instalację.
 2. Otwórz Dashboard → Providers → Add Provider.
 3. Wybierz kategorię Web Cookie oraz Claude Web.
 4. Wklej pełny nagłówek Cookie skopiowany z uwierzytelnionego żądania `claude.ai`.

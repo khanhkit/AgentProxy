@@ -1,12 +1,12 @@
 <?php
 /**
- * OmniRoute Quickstart — PHP (cURL)
+ * AgentProxy Quickstart — PHP (cURL)
  * ===================================
  * Run:  php php_curl.php
  * Requires: PHP 7.4+ with cURL extension enabled
  */
 
-// Your local OmniRoute server — started with: npx omniroute
+// Your local AgentProxy server — started with: npx agentproxy
 $api_url = "http://localhost:20128/v1/chat/completions";
 
 $headers = [

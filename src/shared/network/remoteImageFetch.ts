@@ -8,7 +8,6 @@ import {
   parseAndValidatePublicUrl,
   parseOutboundUrl,
 } from "@/shared/network/outboundUrlGuard";
-import { getProviderOutboundGuard } from "@/shared/network/outboundUrlGuardPolicy";
 
 const DEFAULT_MAX_REMOTE_IMAGE_BYTES = 20 * 1024 * 1024;
 const DEFAULT_MAX_REDIRECTS = 3;
@@ -27,6 +26,7 @@ export interface RemoteImageFetchOptions {
   /** Require HTTPS for the initial URL and every redirect hop. Default false for compatibility. */
   enforceHttps?: boolean;
   fetchImpl?: typeof fetch;
+  headers?: HeadersInit;
   /** Pin the network connection to a DNS answer that passed validation. */
   pinDns?: boolean;
   guard?: OutboundUrlGuardMode;
@@ -187,11 +187,8 @@ export async function fetchRemoteMedia(
   options: RemoteMediaFetchOptions = {}
 ): Promise<RemoteMediaFetchResult> {
   const injectedFetch = options.fetchImpl;
-  // Default off: production callers that need connection pinning opt in. This keeps
-  // globalThis.fetch mockable for image-generation tests and preserves the previous
-  // DNS pre-check behavior for non-embedding callers.
-  const pinDns = options.pinDns === true;
-  const guard = options.guard ?? getProviderOutboundGuard();
+  const guard = options.guard ?? "public-only";
+  const pinDns = options.pinDns ?? guard === "public-only";
   const maxBytes = options.maxBytes ?? DEFAULT_MAX_REMOTE_IMAGE_BYTES;
   const maxRedirects = options.maxRedirects ?? DEFAULT_MAX_REDIRECTS;
   const signal = combineSignals(options.signal, options.timeoutMs ?? DEFAULT_TIMEOUT_MS);
@@ -213,6 +210,7 @@ export async function fetchRemoteMedia(
     const response = await fetchImpl(currentUrl.toString(), {
       method: "GET",
       redirect: "manual",
+      headers: options.headers,
       signal,
     });
 

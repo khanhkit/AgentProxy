@@ -55,6 +55,7 @@ import { resolveUcCredential } from "../../../executors/uc/credentials.ts";
 import { mintUcSessionToken } from "../../../executors/uc/clerkAuth.ts";
 import { UC_ORIGIN } from "../../../executors/uc/constants.ts";
 import { sanitizeErrorMessage } from "../../../utils/error.ts";
+import { fetchRemoteMedia, type RemoteMediaFetchOptions } from "@/shared/network/remoteImageFetch";
 
 /** Persona signed-upload-URL endpoint (for the image-to-video input image). */
 export const UC_PERSONA_SIGNED_URL = "https://internal-6.pubyar.com/generate-signed-url";
@@ -113,6 +114,8 @@ interface UcVideoCredentials {
   providerSpecificData?: Record<string, unknown> | null;
 }
 
+type UcRemoteImageFetchOptions = Pick<RemoteMediaFetchOptions, "fetchImpl" | "lookup">;
+
 interface UcVideoHandlerArgs {
   model: string;
   provider?: string;
@@ -123,6 +126,8 @@ interface UcVideoHandlerArgs {
   log?: UcVideoLog | null;
   signal?: AbortSignal;
   fetchImpl?: typeof fetch;
+  /** Test/dependency seam for client-controlled remote image transport only. */
+  remoteImageFetchOptions?: UcRemoteImageFetchOptions;
   sleepImpl?: SleepImpl;
 }
 
@@ -274,8 +279,8 @@ function isDirectFailed(status: string | undefined): boolean {
 /** Decode an input image reference into raw bytes for the signed-URL PUT. */
 async function resolveImageBytes(
   ref: string,
-  fetchImpl: typeof fetch,
-  signal: AbortSignal | undefined
+  signal: AbortSignal | undefined,
+  remoteImageFetchOptions?: UcRemoteImageFetchOptions
 ): Promise<Uint8Array | null> {
   // data URL: data:image/png;base64,<payload>
   const dataMatch = /^data:[^;]*;base64,(.*)$/.exec(ref);
@@ -286,13 +291,16 @@ async function resolveImageBytes(
       return null;
     }
   }
-  // http(s) URL: fetch the bytes.
+  // Client-controlled http(s) URL: use the shared bounded SSRF-safe media path.
   if (/^https?:\/\//i.test(ref)) {
     try {
-      const resp = await fetchImpl(ref, { method: "GET", signal });
-      if (!resp.ok) return null;
-      const buf = await resp.arrayBuffer();
-      return new Uint8Array(buf);
+      const media = await fetchRemoteMedia(ref, {
+        guard: "public-only",
+        pinDns: true,
+        signal,
+        ...remoteImageFetchOptions,
+      });
+      return new Uint8Array(media.buffer);
     } catch {
       return null;
     }
@@ -362,6 +370,7 @@ interface PersonaContext {
   log?: UcVideoLog | null;
   signal?: AbortSignal;
   fetchImpl: typeof fetch;
+  remoteImageFetchOptions?: UcRemoteImageFetchOptions;
   sleepImpl: SleepImpl;
 }
 
@@ -371,7 +380,18 @@ interface PersonaContext {
  * pre-determined result URL until it returns 200.
  */
 async function handleUcPersonaVideo(ctx: PersonaContext): Promise<UcVideoResult> {
-  const { model, provider, body, credentials, prompt, log, signal, fetchImpl, sleepImpl } = ctx;
+  const {
+    model,
+    provider,
+    body,
+    credentials,
+    prompt,
+    log,
+    signal,
+    fetchImpl,
+    remoteImageFetchOptions,
+    sleepImpl,
+  } = ctx;
 
   const cred = resolveUcCredential(credentials?.providerSpecificData);
   if (!cred) {
@@ -415,7 +435,7 @@ async function handleUcPersonaVideo(ctx: PersonaContext): Promise<UcVideoResult>
 
   if (inputImage) {
     // Image-to-video: (1) signed URL, (2) PUT bytes, (3) generate.
-    const bytes = await resolveImageBytes(inputImage, fetchImpl, signal);
+    const bytes = await resolveImageBytes(inputImage, signal, remoteImageFetchOptions);
     if (!bytes) {
       return {
         success: false,
@@ -790,6 +810,7 @@ export async function handleUcVideoGeneration({
   log,
   signal,
   fetchImpl = fetch,
+  remoteImageFetchOptions,
   sleepImpl = realSleep,
 }: UcVideoHandlerArgs): Promise<UcVideoResult> {
   const prompt =
@@ -824,6 +845,7 @@ export async function handleUcVideoGeneration({
     log,
     signal,
     fetchImpl,
+    remoteImageFetchOptions,
     sleepImpl,
   });
 }

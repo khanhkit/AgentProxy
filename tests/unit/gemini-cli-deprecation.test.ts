@@ -20,7 +20,7 @@
  *
  * NOT touched, and asserted here so a future edit cannot conflate them: the
  * `gemini-cli` CLIENT identity (issue #7034) — requests ARRIVING from the Gemini CLI
- * or any @google/genai-based client, where OmniRoute is the server.
+ * or any @google/genai-based client, where AgentProxy is the server.
  */
 import test from "node:test";
 import assert from "node:assert/strict";
@@ -95,7 +95,7 @@ test("refreshing a stored gemini-cli connection fails with a CLASSIFIED code, no
 });
 
 test("the gemini-cli CLIENT identity is untouched (issue #7034)", () => {
-  // Category A. Requests ARRIVING from the Gemini CLI — OmniRoute is the server here.
+  // Category A. Requests ARRIVING from the Gemini CLI — AgentProxy is the server here.
   // Deleting this is the failure mode the deprecation must never cause.
   assert.ok(
     CLIENT_IDENTITY_PROFILES["gemini-cli"],

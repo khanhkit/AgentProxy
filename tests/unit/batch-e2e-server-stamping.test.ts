@@ -25,5 +25,5 @@ test("batch E2E boots the peer-stamped custom server, not the bare next CLI", ()
 
 test("batch E2E pins the loopback host and open bootstrap the management calls rely on", () => {
   assert.match(suiteSource, /HOST: "127\.0\.0\.1"/);
-  assert.match(suiteSource, /OMNIROUTE_E2E_BOOTSTRAP_MODE: "open"/);
+  assert.match(suiteSource, /AGENTPROXY_E2E_BOOTSTRAP_MODE: "open"/);
 });

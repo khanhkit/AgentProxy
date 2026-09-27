@@ -406,7 +406,7 @@
     "showConfiguredOnly": "Show Configured Only",
     "showFreeOnly": "માત્ર મફત",
     "addFirstProvider": "તમારા પ્રથમ પ્રદાતા ઉમેરો",
-    "addFirstProviderDesc": "OmniRoute દ્વારા રૂટીંગ વિનંતીઓ શરૂ કરવા માટે AI પ્રદાતાને કનેક્ટ કરો. તમે મફત પ્રદાતાઓ, API કી અથવા OAuth એકાઉન્ટ્સનો ઉપયોગ કરી શકો છો.",
+    "addFirstProviderDesc": "AgentProxy દ્વારા રૂટીંગ વિનંતીઓ શરૂ કરવા માટે AI પ્રદાતાને કનેક્ટ કરો. તમે મફત પ્રદાતાઓ, API કી અથવા OAuth એકાઉન્ટ્સનો ઉપયોગ કરી શકો છો.",
     "learnMore": "વધુ જાણો",
     "includeDomains": "Include Domains",
     "promptCache": "Prompt Cache",
@@ -960,7 +960,7 @@
     "selectAModel": "મોડલ પસંદ કરો",
     "degraded": "ખરાબ થયેલ",
     "zeroConfigBannerTitle": "ઝીરો-કન્ફિગ મોડમાં ચલાવી રહ્યા છીએ",
-    "zeroConfigBannerBody": "OmniRoute પ્રથમ લોંચ પર આપોઆપ જનરેટ થયેલ સુરક્ષિત એન્ક્રિપ્શન કી બનાવે છે. તે <code>{dataDir}</code> પર જાળવવામાં આવે છે. કોઈ ક્રિયા કરવાની જરૂર નથી — તમારું ડેટા એન્ક્રિપ્ટેડ અને સુરક્ષિત છે. કસ્ટમ કીનો ઉપયોગ કરવા માટે, તે ફાઇલમાં <code>JWT_SECRET</code> અને <code>STORAGE_ENCRYPTION_KEY</code> ઉમેરો.",
+    "zeroConfigBannerBody": "AgentProxy પ્રથમ લોંચ પર આપોઆપ જનરેટ થયેલ સુરક્ષિત એન્ક્રિપ્શન કી બનાવે છે. તે <code>{dataDir}</code> પર જાળવવામાં આવે છે. કોઈ ક્રિયા કરવાની જરૂર નથી — તમારું ડેટા એન્ક્રિપ્ટેડ અને સુરક્ષિત છે. કસ્ટમ કીનો ઉપયોગ કરવા માટે, તે ફાઇલમાં <code>JWT_SECRET</code> અને <code>STORAGE_ENCRYPTION_KEY</code> ઉમેરો.",
     "batchRelativeTimeIn": "માં {value}",
     "batchRelativeTimeAgo": "{value} પહેલા",
     "batchDetailsTitle": "બેચ વિગતો",
@@ -986,12 +986,12 @@
     "batchFileDownloadFull": "પૂર્ણ ફાઇલ ડાઉનલોડ કરો"
   },
   "disabled": "નિષ્ક્રિય કરેલ",
-  "featureFlagOmnirouteEmergencyFallbackDescription": "બજેટ-સમાપ્ત વિનંતીઓને કટોકટીના મફત ફોલબેક પ્રદાતા/મોડેલ પર રૂટ કરો.",
+  "featureFlagAgentProxyEmergencyFallbackDescription": "બજેટ-સમાપ્ત વિનંતીઓને કટોકટીના મફત ફોલબેક પ્રદાતા/મોડેલ પર રૂટ કરો.",
   "featureFlagArenaEloSyncEnabledDescription": "મોડેલ ઇન્ટેલિજન્સ રેન્કિંગ માટે સમયાંતરે Arena AI લીડરબોર્ડ ELO સિંક સક્ષમ કરો.",
   "featureFlagUniversalContextHandoffEnabledDescription": "__MISSING__:Generate and inject conversation summaries when combo routing switches models. Disable to treat model switches independently and prevent background handoff requests for all existing and future combos.",
   "featureFlagExposeCcDiscoveryAliasesDescription": "/v1/models પર claude/&lt;provider&gt;/&lt;model&gt; મિરર આઈડીઓનું જાહેરાત કરો જેથી Claude Code ગેટવે મોડલ શોધી કાઢે છે non-Claude મોડલ. ચેતવણી: જ્યારે વૈશ્વિક રીતે સક્રિય કરવામાં આવે ત્યારે તમામ ક્લાયન્ટ માટે કૅટલોગ એન્ટ્રીઓ ડબલ કરે છે.",
   "featureFlagNoThinkingAliasEnabledDescription": "__MISSING__:Master switch for the no-think/&lt;provider&gt;/&lt;model&gt; gateway aliases. On (default): /v1/models advertises a no-thinking variant for every eligible thinking-capable Claude model, and a no-think/ id sent on a request resolves back to the real model with reasoning suppressed. Off: no variants are advertised and a no-think/ id is treated like any other unknown model id. The per-model ModelSpec.noThinkingAlias opt-in/opt-out still applies while this is on.",
-  "featureFlagChatVirtualLanesEnabledDescription": "પ્રોવાઇડર ડિસ્પેચ માટે પ્રતિ-ટેનન્ટ અનુકૂલનશીલ વર્ચ્યુઅલ એડમિશન લેન સક્ષમ કરો (#9654): એક ટેનન્ટનો બર્સ્ટ હવે બીજા ટેનન્ટને 503 આપતો નથી. OMNIROUTE_CHAT_VIRTUAL_LANES એન્વાયર્નમેન્ટ વેરિયેબલ આ ડેશબોર્ડ સેટિંગ કરતાં વધુ પ્રાધાન્ય ધરાવે છે; ફેરફારો સર્વર પુનઃપ્રારંભ પર અસરકારક થાય છે.",
+  "featureFlagChatVirtualLanesEnabledDescription": "પ્રોવાઇડર ડિસ્પેચ માટે પ્રતિ-ટેનન્ટ અનુકૂલનશીલ વર્ચ્યુઅલ એડમિશન લેન સક્ષમ કરો (#9654): એક ટેનન્ટનો બર્સ્ટ હવે બીજા ટેનન્ટને 503 આપતો નથી. AGENTPROXY_CHAT_VIRTUAL_LANES એન્વાયર્નમેન્ટ વેરિયેબલ આ ડેશબોર્ડ સેટિંગ કરતાં વધુ પ્રાધાન્ય ધરાવે છે; ફેરફારો સર્વર પુનઃપ્રારંભ પર અસરકારક થાય છે.",
   "sidebar": {
     "home": "Home",
     "dashboard": "Dashboard",
@@ -1036,8 +1036,8 @@
     "auditLog": "Audit Log",
     "shutdown": "Shutdown",
     "restart": "Restart",
-    "shutdownConfirm": "Shut down OmniRoute?",
-    "restartConfirm": "Restart OmniRoute?",
+    "shutdownConfirm": "Shut down AgentProxy?",
+    "restartConfirm": "Restart AgentProxy?",
     "version": "v{version}",
     "debug": "Debug",
     "system": "System",
@@ -1277,11 +1277,11 @@
     "trafficInspectorSubtitle": "__MISSING__:Inspect request and response traffic from your apps",
     "trafficInspectorPurpose": "See exactly what your application sends to and receives from AI providers. Works with any OpenAI-compatible client.",
     "cliCode": "CLI કોડ",
-    "cliCodeSubtitle": "OmniRoute તરફ નિર્દેશ કરતા કોડ ટૂલ્સ",
+    "cliCodeSubtitle": "AgentProxy તરફ નિર્દેશ કરતા કોડ ટૂલ્સ",
     "cliAgents": "CLI એજન્ટ્સ",
     "cliAgentsSubtitle": "સ્વાયત્ત CLI એજન્ટ્સ",
     "acpAgents": "ACP એજન્ટ્સ",
-    "acpAgentsSubtitle": "OmniRoute દ્વારા શરૂ કરાયેલ CLIs",
+    "acpAgentsSubtitle": "AgentProxy દ્વારા શરૂ કરાયેલ CLIs",
     "skipToContent": "સામગ્રી પર જાઓ",
     "mainNavigation": "મુખ્ય નેવિગેશન",
     "unpinSection": "વિભાગને અનપિન કરો",
@@ -1586,7 +1586,7 @@
     "cliTools": "CLI Tools",
     "cliToolsDescription": "Configure CLI tools",
     "home": "Home",
-    "homeDescription": "Welcome to OmniRoute",
+    "homeDescription": "Welcome to AgentProxy",
     "endpoint": "Endpoints",
     "endpointDescription": "Manage proxy endpoints, MCP, A2A, and API endpoints",
     "mcp": "MCP",
@@ -1605,7 +1605,7 @@
     "cacheDescription": "Monitor provider prompt cache efficiency and local semantic response reuse.",
     "limitsDescription": "Configure rate limits and quotas per API key and provider",
     "runtimeDescription": "Live runtime observability — circuit breakers, cooldowns, model lockouts, sessions and quota alerts",
-    "apiManagerDescription": "Manage API keys and access control for your OmniRoute instance",
+    "apiManagerDescription": "Manage API keys and access control for your AgentProxy instance",
     "batchDescription": "Process large volumes of requests asynchronously with batched API calls",
     "contextCavemanDescription": "Rule-based message compression, language packs, analytics and output mode controls.",
     "contextRtkDescription": "Command-aware compression for tool output, terminal logs and build results.",
@@ -1834,13 +1834,13 @@
     "downloadUpdateDescription": "ઓમ્નીરૂટ ડેસ્કટોપ એપ્લિકેશનનો નવો સંસ્કરણ ઉપલબ્ધ છે. કૃપા કરીને તમારા સિસ્ટમ માટે સંબંધિત એપ ફોર્મેટ ડાઉનલોડ કરો (વર્તમાન: v{version}).",
     "updateQueued": "v{version} માટે અપડેટ ક્યૂ કરવામાં આવ્યું.",
     "updateDockerRebuilding": "ડોકર ઇમેજ પૃષ્ઠભૂમિમાં ફરીથી બનાવાઈ રહી છે.",
-    "updateWaitingRestart": "નવી આવૃત્તિ સાથે OmniRoute ફરી શરૂ થવાની રાહ જોઈ રહ્યા છીએ.",
+    "updateWaitingRestart": "નવી આવૃત્તિ સાથે AgentProxy ફરી શરૂ થવાની રાહ જોઈ રહ્યા છીએ.",
     "updateInstalling": "v{version} ઇન્સ્ટોલ કરી રહ્યા છીએ.",
-    "updateRunning": "OmniRoute હવે v{version} ચલાવી રહ્યું છે.",
-    "updateCompleted": "OmniRoute v{version} પર અપડેટ કરવામાં આવ્યું છે.",
+    "updateRunning": "AgentProxy હવે v{version} ચલાવી રહ્યું છે.",
+    "updateCompleted": "AgentProxy v{version} પર અપડેટ કરવામાં આવ્યું છે.",
     "updateDockerStillRebuilding": "Docker છબી હજુ પણ v{version} માટે પુનઃનિર્માણ થઈ રહી છે.",
     "updateInstallingBackground": "પૃષ્ઠભૂમિમાં v{version} સ્થાપિત કરી રહ્યું છે.",
-    "updateWaitingVersion": "v{version} પર OmniRoute પાછું આવવાની રાહ જોઈ રહ્યા છીએ.",
+    "updateWaitingVersion": "v{version} પર AgentProxy પાછું આવવાની રાહ જોઈ રહ્યા છીએ.",
     "updateDockerStillInProgress": "Docker પુનઃબાંધકામ હજુ પણ ચાલુ છે.",
     "updateRestarting": "સેવા પુનઃપ્રારંભ થઈ રહ્યો છે. ઓમ્નીરૂટને ફરીથી ઑનલાઇન આવવા માટે રાહ જોઈ રહ્યા છીએ...",
     "updateTimeout": "અપડેટ શરૂ થયું, પરંતુ v{version} સમય મર્યાદા પહેલા ઉપલબ્ધ નથી થયું. પૃષ્ઠને રિફ્રેશ કરો અથવા સર્વર લોગ્સ તપાસો.",
@@ -1857,7 +1857,7 @@
     "stepError": "ભૂલ",
     "updateCompleteTitle": "અપડેટ પૂર્ણ!",
     "updateFailedTitle": "અપડેટ નિષ્ફળ થયું",
-    "updatingTitle": "OmniRoute ને અપડેટ કરી રહ્યું છે...",
+    "updatingTitle": "AgentProxy ને અપડેટ કરી રહ્યું છે...",
     "reloadNotice": "પૃષ્ઠ થોડા સેકન્ડમાં આપોઆપ રિફ્રેશ થશે.",
     "retryNotice": "કૃપા કરીને ફરી પ્રયાસ કરો અથવા CLI દ્વારા મેન્યુઅલી અપડેટ કરો.",
     "restartNotice": "આ પૃષ્ઠ બંધ ન કરો. સિસ્ટમ આપોઆપ પુનઃપ્રારંભ કરશે.",
@@ -1883,7 +1883,7 @@
     "noAuthLabel": "કોઈ ઓથેન્ટિકેશન નથી",
     "readinessEyebrow": "Get ready to route",
     "readinessTitle": "Send your first request",
-    "readinessSubtitle": "Four small steps. OmniRoute checks readiness as you go.",
+    "readinessSubtitle": "Four small steps. AgentProxy checks readiness as you go.",
     "readinessStep1": "Connect a provider",
     "readinessStep2": "Configure endpoint authentication",
     "readinessStep3": "Copy your endpoint",
@@ -2188,7 +2188,7 @@
     "direct": "સીધું",
     "routeUnableToLoad": "રૂટની સમજૂતી લોડ કરવામાં અસમર્થ",
     "routeNoRequestLogs": "કોઈ વિનંતી લોગ ઉપલબ્ધ નથી",
-    "routeNoRequestLogsDescription": "પહેલા OmniRoute દ્વારા ટ્રાફિક મોકલો. રૂટની સમજૂતી સાચવેલા સંરચિત કૉલ લોગમાંથી જનરેટ કરવામાં આવે છે.",
+    "routeNoRequestLogsDescription": "પહેલા AgentProxy દ્વારા ટ્રાફિક મોકલો. રૂટની સમજૂતી સાચવેલા સંરચિત કૉલ લોગમાંથી જનરેટ કરવામાં આવે છે.",
     "routeDecisionSummary": "નિર્ણય સારાંશ",
     "routeConfidence": "{confidence} કોન્ફિડન્સ",
     "routeScore": "રૂટ સ્કોર",
@@ -2251,10 +2251,10 @@
     "fullAccess": "Full Access",
     "keyManagement": "API Key Management",
     "keyManagementDesc": "Create and manage API keys for authenticating requests to your endpoint",
-    "requestFlowAria": "Your app sends requests through an API key to OmniRoute",
+    "requestFlowAria": "Your app sends requests through an API key to AgentProxy",
     "requestFlowYourApp": "Your app",
     "requestFlowApiKey": "API key",
-    "requestFlowOmniRoute": "OmniRoute",
+    "requestFlowAgentProxy": "AgentProxy",
     "totalKeys": "Total Keys",
     "restricted": "Restricted",
     "totalRequests": "Total Requests",
@@ -2279,7 +2279,7 @@
     "keyName": "Key Name",
     "keyNamePlaceholder": "e.g., Production Key, Development Key",
     "keyNameDesc": "Choose a descriptive name to identify this key's purpose",
-    "managementAccessDesc": "આ API કીને OmniRoute રૂપરેખાંકન સંચાલિત કરવાની મંજૂરી આપો.",
+    "managementAccessDesc": "આ API કીને AgentProxy રૂપરેખાંકન સંચાલિત કરવાની મંજૂરી આપો.",
     "selfServiceVisibility": "સ્વ-સેવા દૃશ્યતા",
     "selfServiceVisibilityDesc": "આ કી પોતાના ઉપયોગ અને શેર કરેલા upstream ક્વોટા વિશે શું જોઈ શકે તે નિયંત્રિત કરો.",
     "ownUsageVisibility": "પોતાનો ખર્ચ અને ટોકન ઉપયોગ",
@@ -2488,7 +2488,7 @@
     "imagePromptPlaceholder": "સૂર્યાસ્ત સમયે પર્વતો સાથેનું એક શાંત દ્રશ્ય...",
     "videoPromptPlaceholder": "ફૂલ ખીલવાનો ટાઈમલેપ્સ...",
     "musicPromptPlaceholder": "સિન્થ પેડ્સ સાથે ઉત્સાહિત ઇલેક્ટ્રોનિક સંગીત...",
-    "speechTextPlaceholder": "હેલો! OmniRoute માં આપનું સ્વાગત છે, જે તમારું બુદ્ધિશાળી AI ગેટવે છે...",
+    "speechTextPlaceholder": "હેલો! AgentProxy માં આપનું સ્વાગત છે, જે તમારું બુદ્ધિશાળી AI ગેટવે છે...",
     "transcriptionPlaceholder": "ટ્રાન્સક્રાઇબ કરવા માટે ઑડિઓ ફાઇલ અપલોડ કરો...",
     "noImagesReturned": "કોઈ છબીઓ પરત આવી નથી. પ્રદાતાએ વિનંતી સ્વીકારી હોઈ શકે છે પરંતુ ખાલી ડેટા પરત કર્યો છે.",
     "generatedImageAlt": "જનરેટ કરેલી છબી {index}",
@@ -2675,7 +2675,7 @@
     "video": "વિડિઓ",
     "videoSample": "પર્વતમાળા પર વાદળોનો ટાઈમ-લેપ્સ",
     "webFetch": "વેબ ફેચ",
-    "webSearchSample": "OmniRoute AI ગેટવે શું છે?",
+    "webSearchSample": "AgentProxy AI ગેટવે શું છે?",
     "noActiveProviderDescription": "કોઈ સક્રિય સર્ચ પ્રોવાઈડર નથી. Providers માં એક કન્ફિગર કરો.",
     "configureProviders": "પ્રોવાઈડર્સ કન્ફિગર કરો",
     "compareQuery": "સરખામણી કરવા માટે ક્વેરી",
@@ -2710,7 +2710,7 @@
     "ccOnboardingTitle": "ગેટવે મોડલ શોધ માટે settings.json",
     "ccOnboardingCopy": "કોપી",
     "ccOnboardingCopied": "કોપી કરેલ",
-    "ccOnboardingKeyPlaceholder": "'<તમારો OmniRoute API કી>'",
+    "ccOnboardingKeyPlaceholder": "'<તમારો AgentProxy API કી>'",
     "ccOnboardingWindowNote": "Claude Code એ કોઈપણ મોડેલ આઈડી માટે 200K સંદર્ભ વિન્ડો માન્ય રાખે છે જે તે ઓળખતું નથી. જુદા રિયલ વિન્ડો ધરાવતા મોડેલ માટે, નીચે CLAUDE_CODE_AUTO_COMPACT_WINDOW ઉમેરો જેથી ઓટો-કમ્પેક્શન ખૂબ જ વહેલા ન ફાયર થાય.",
     "failedSave": "સાચવવામાં નિષ્ફળ",
     "profileSyncTitle": "CLI પ્રોફાઇલ ઓટો-સિંક",
@@ -2761,7 +2761,7 @@
     "configurationSaved": "Configuration saved successfully.",
     "failedToSave": "Failed to save configuration.",
     "noApiKeysCreateOne": "No API keys - Create one in Keys page",
-    "defaultOmnirouteKey": "sk_omniroute (default)",
+    "defaultAgentProxyKey": "sk_agentproxy (default)",
     "selectModel": "Select Model",
     "selectModelForAlias": "Select model for {alias}",
     "selectModelForTool": "Select Model for {tool}",
@@ -2806,13 +2806,13 @@
       "xhigh": "ખૂબ વધારે"
     },
     "howItWorks": "How it works:",
-    "antigravityHowWorksDesc": "Antigravity sends requests to Google's endpoint. MITM intercepts and redirects them to OmniRoute.",
-    "antigravityStep1": "1. Start MITM to route requests through OmniRoute.",
+    "antigravityHowWorksDesc": "Antigravity sends requests to Google's endpoint. MITM intercepts and redirects them to AgentProxy.",
+    "antigravityStep1": "1. Start MITM to route requests through AgentProxy.",
     "antigravityStep2Prefix": "2. Add",
     "antigravityStep2Suffix": "to your hosts file as 127.0.0.1.",
     "antigravityStep3": "3. Open Antigravity and requests will be proxied.",
-    "mitmHowWorksDesc": "{toolName} sends requests to its provider endpoint. MITM intercepts and redirects them to OmniRoute.",
-    "mitmStep1": "1. Start MITM to route requests through OmniRoute.",
+    "mitmHowWorksDesc": "{toolName} sends requests to its provider endpoint. MITM intercepts and redirects them to AgentProxy.",
+    "mitmStep1": "1. Start MITM to route requests through AgentProxy.",
     "mitmStep2Prefix": "2. Add",
     "mitmStep2Suffix": "to your hosts file as 127.0.0.1.",
     "mitmStep3": "3. Open {toolName} and requests will be proxied.",
@@ -2858,13 +2858,13 @@
     "applied": "Applied!",
     "failed": "Failed",
     "resetDone": "Reset!",
-    "omnirouteConfiguredOpenAiCompatible": "OmniRoute is configured as OpenAI-compatible provider",
+    "agentproxyConfiguredOpenAiCompatible": "AgentProxy is configured as OpenAI-compatible provider",
     "provider": "Provider",
     "model": "Model",
     "providers": "Providers",
     "auth": "Auth",
     "noApiKeysAvailable": "No API keys available",
-    "usingDefaultOmniroute": "Using default: sk_omniroute",
+    "usingDefaultAgentProxy": "Using default: sk_agentproxy",
     "updateConfig": "Update Config",
     "applyConfig": "Apply Config",
     "noBackupsAvailable": "No backups available.",
@@ -2894,19 +2894,19 @@
       "claude": "Use when you want strong planning workflows and long multi-file refactors with Claude Code.",
       "codex": "Use when your team is standardized on OpenAI Codex CLI flows and profile-based auth.",
       "droid": "Use when you need a lightweight terminal agent focused on fast coding and command execution loops.",
-      "openclaw": "Use when you want an Open Claw style coding agent but routed through OmniRoute policies.",
-      "cline": "Use when you configure coding agents inside editors and want guided setup with OmniRoute models.",
+      "openclaw": "Use when you want an Open Claw style coding agent but routed through AgentProxy policies.",
+      "cline": "Use when you configure coding agents inside editors and want guided setup with AgentProxy models.",
       "kilo": "Use when your workflow depends on Kilo Code commands and fast iterative edits.",
-      "cursor": "Use when coding in Cursor and you need custom OpenAI-compatible models through OmniRoute.",
+      "cursor": "Use when coding in Cursor and you need custom OpenAI-compatible models through AgentProxy.",
       "continue": "Use when running Continue in IDEs and you need portable JSON-based provider configuration.",
       "opencode": "Use when you prefer terminal-native agent runs and scripted automation via OpenCode.",
-      "kiro": "Use when integrating Kiro and controlling model routing centrally from OmniRoute.",
-      "windsurf": "Use when you want an AI-first IDE with Codeium/Windsurf models routed through OmniRoute.",
-      "antigravity": "Use when Antigravity/Kiro traffic must be intercepted through MITM and routed to OmniRoute.",
-      "copilot": "Use when you want Copilot chat style UX while enforcing OmniRoute keys and routing rules.",
-      "amp": "Use when you want Amp shorthand workflows but still need OmniRoute alias and routing rules enforcement.",
+      "kiro": "Use when integrating Kiro and controlling model routing centrally from AgentProxy.",
+      "windsurf": "Use when you want an AI-first IDE with Codeium/Windsurf models routed through AgentProxy.",
+      "antigravity": "Use when Antigravity/Kiro traffic must be intercepted through MITM and routed to AgentProxy.",
+      "copilot": "Use when you want Copilot chat style UX while enforcing AgentProxy keys and routing rules.",
+      "amp": "Use when you want Amp shorthand workflows but still need AgentProxy alias and routing rules enforcement.",
       "hermes": "Use when you need a lightweight terminal-native AI assistant for quick tasks.",
-      "hermes-agent": "જ્યારે તમને OmniRoute દ્વારા રૂટ કરાયેલા ડિફૉલ્ટ, ડેલિગેશન, વિઝન અને ઓક્સિલરી મોડેલ્સ સાથે Hermes Agent (Nousresearch દ્વારા) ની જરૂર હોય ત્યારે ઉપયોગ કરો.",
+      "hermes-agent": "જ્યારે તમને AgentProxy દ્વારા રૂટ કરાયેલા ડિફૉલ્ટ, ડેલિગેશન, વિઝન અને ઓક્સિલરી મોડેલ્સ સાથે Hermes Agent (Nousresearch દ્વારા) ની જરૂર હોય ત્યારે ઉપયોગ કરો.",
       "custom": "Use for custom tool implementations or generic OpenAI-compatible configurations."
     },
     "toolDescriptions": {
@@ -2946,7 +2946,7 @@
       "prime-agent": "Prime Agent — self-improving RLM coding harness with OpenAI-compatible provider support",
       "warp": "કસ્ટમ પ્રોવાઇડર સપોર્ટ સાથે Warp AI ટર્મિનલ",
       "agent-deck": "Agent Deck મલ્ટિ-એજન્ટ ઓર્કેસ્ટ્રેટર",
-      "5dive": "5dive — સ્વ-હોસ્ટેડ કોડિંગ એજન્ટ્સનો કાફલો; એક auth પ્રોફાઇલ બધાને OmniRoute તરફ દોરે છે"
+      "5dive": "5dive — સ્વ-હોસ્ટેડ કોડિંગ એજન્ટ્સનો કાફલો; એક auth પ્રોફાઇલ બધાને AgentProxy તરફ દોરે છે"
     },
     "guides": {
       "cursor": {
@@ -3022,7 +3022,7 @@
         },
         "notes": {
           "0": "OpenCode requires API key configuration.",
-          "1": "Set the base URL to your OmniRoute endpoint."
+          "1": "Set the base URL to your AgentProxy endpoint."
         }
       },
       "kiro": {
@@ -3033,7 +3033,7 @@
           },
           "2": {
             "title": "Base URL",
-            "desc": "Paste your OmniRoute endpoint URL"
+            "desc": "Paste your AgentProxy endpoint URL"
           },
           "3": {
             "title": "API Key"
@@ -3062,7 +3062,7 @@
           },
           "4": {
             "title": "API Key",
-            "desc": "Select your OmniRoute API key"
+            "desc": "Select your AgentProxy API key"
           },
           "5": {
             "title": "Select Model",
@@ -3072,7 +3072,7 @@
       }
     },
     "autoConfiguredTab": "Auto-Configured",
-    "toolCategoriesDesc": "Configure AI coding assistants to route through OmniRoute",
+    "toolCategoriesDesc": "Configure AI coding assistants to route through AgentProxy",
     "allToolsTab": "All Tools",
     "guidedClientsTab": "Guided Clients",
     "mitmClientsTab": "MITM Clients",
@@ -3085,8 +3085,8 @@
     "customCliNameLabel": "CLI નામ",
     "customCliNamePlaceholder": "દા.ત. મારી ટીમ CLI",
     "customCliDefaultModelLabel": "ડિફૉલ્ટ મોડલ",
-    "customCliDefaultModelHelp": "કોઈપણ OmniRoute મોડલ ID અથવા કોમ્બોનો ઉપયોગ કરો. મોટાભાગના OpenAI-સુસંગત CLI ને ફક્ત /v1 આધાર URL વત્તા એક મોડેલ સ્ટ્રિંગની જરૂર હોય છે.",
-    "customCliKeyHelper": "સ્થાનિક ઇન્સ્ટોલ માટે OmniRoute sk_omniroute નો ઉપયોગ કરી શકે છે. ક્લાઉડ મોડમાં, તમારી મેનેજમેન્ટ API કીમાંથી એક પસંદ કરો.",
+    "customCliDefaultModelHelp": "કોઈપણ AgentProxy મોડલ ID અથવા કોમ્બોનો ઉપયોગ કરો. મોટાભાગના OpenAI-સુસંગત CLI ને ફક્ત /v1 આધાર URL વત્તા એક મોડેલ સ્ટ્રિંગની જરૂર હોય છે.",
+    "customCliKeyHelper": "સ્થાનિક ઇન્સ્ટોલ માટે AgentProxy sk_agentproxy નો ઉપયોગ કરી શકે છે. ક્લાઉડ મોડમાં, તમારી મેનેજમેન્ટ API કીમાંથી એક પસંદ કરો.",
     "customCliAliasMappingsLabel": "ઉપનામ મેપિંગ્સ",
     "customCliAliasMappingsHelp": "રેપર સ્ક્રિપ્ટો અથવા રૂપરેખા ફાઇલો માટે વૈકલ્પિક સહાયક ઉપનામો જે સ્થિર લઘુલિપિ નામો ઇચ્છે છે.",
     "customCliAddAlias": "ઉપનામ ઉમેરો",
@@ -3094,7 +3094,7 @@
     "customCliAliasPlaceholder": "દા.ત. સમીક્ષા",
     "customCliTargetModelLabel": "લક્ષ્ય મોડેલ",
     "customCliEndpointHintLabel": "અંતિમ બિંદુને કેવી રીતે વાયર કરવું",
-    "customCliEndpointHint": "કોઈપણ OpenAI-સુસંગત ક્લાયંટને OmniRoute /v1 આધાર URL પર નિર્દેશ કરો. કાચી ચેટ પૂર્ણતાનો અંતિમ બિંદુ {endpoint} છે. જ્યારે ટૂલ પ્રદાતા ઑબ્જેક્ટ ઇચ્છે ત્યારે JSON બ્લોકનો ઉપયોગ કરો અથવા જ્યારે તે OPENAI_* ચલો વાંચે ત્યારે env સ્ક્રિપ્ટનો ઉપયોગ કરો.",
+    "customCliEndpointHint": "કોઈપણ OpenAI-સુસંગત ક્લાયંટને AgentProxy /v1 આધાર URL પર નિર્દેશ કરો. કાચી ચેટ પૂર્ણતાનો અંતિમ બિંદુ {endpoint} છે. જ્યારે ટૂલ પ્રદાતા ઑબ્જેક્ટ ઇચ્છે ત્યારે JSON બ્લોકનો ઉપયોગ કરો અથવા જ્યારે તે OPENAI_* ચલો વાંચે ત્યારે env સ્ક્રિપ્ટનો ઉપયોગ કરો.",
     "customCliEnvBlockTitle": "Env / શેલ સ્નિપેટ",
     "customCliJsonBlockTitle": "પ્રદાતા JSON બ્લોક",
     "networkError": "નેટવર્ક ભૂલ",
@@ -3140,13 +3140,13 @@
     "hermesSelectBeforePreview": "પૂર્વાવલોકન કરતા પહેલાં, ભૂમિકાઓ માટે મોડેલ્સ પસંદ કરો અથવા ખાતરી કરો કે ભૂમિકાઓ લોડ થયેલ છે.",
     "hermesPreviewFailed": "પૂર્વાવલોકન જનરેટ કરવામાં નિષ્ફળ",
     "hermesSavedTo": "{path} પર સાચવ્યું",
-    "hermesFirstSetupTitle": "{date} ના રોજ OmniRoute દ્વારા પ્રથમ સેટઅપ કર્યું",
+    "hermesFirstSetupTitle": "{date} ના રોજ AgentProxy દ્વારા પ્રથમ સેટઅપ કર્યું",
     "hermesSinceSetup": "સેટઅપ પછી {time}",
     "hermesConfiguredRoles": "{configured}/{total} ભૂમિકાઓ",
     "hermesQuickApply": "બધી ભૂમિકાઓ પર ઝડપથી સમાન મોડેલ લાગુ કરો:",
     "hermesApplyModelToAll": "દરેક ભૂમિકા પર {model} લાગુ કરો",
-    "hermesViaOmniRoute": "{provider} (OmniRoute દ્વારા)",
-    "hermesNotOmniRoute": "{provider} (OmniRoute નહીં)",
+    "hermesViaAgentProxy": "{provider} (AgentProxy દ્વારા)",
+    "hermesNotAgentProxy": "{provider} (AgentProxy નહીં)",
     "hermesRemovePendingRole": "આ ભૂમિકાને બાકી ફેરફારોમાંથી દૂર કરો",
     "hermesApply": "Hermes Agent પર લાગુ કરો",
     "hermesRolesWillUpdate": "{count, plural, one {# ભૂમિકા અપડેટ થશે} other {# ભૂમિકાઓ અપડેટ થશે}}",
@@ -3282,7 +3282,7 @@
     "concurrencyPerModel": "Concurrency / Model",
     "queueTimeout": "Queue Timeout (ms)",
     "contextRelayHandoffThreshold": "Handoff Threshold",
-    "contextRelayHandoffThresholdHelp": "When quota usage reaches this threshold, OmniRoute generates a structured handoff summary before the active account is exhausted.",
+    "contextRelayHandoffThresholdHelp": "When quota usage reaches this threshold, AgentProxy generates a structured handoff summary before the active account is exhausted.",
     "contextRelayMaxMessages": "Max Messages For Summary",
     "contextRelayMaxMessagesHelp": "Limits how much recent history is condensed into the relay summary.",
     "contextRelaySummaryModel": "Summary Model",
@@ -3660,7 +3660,7 @@
     "usageGuideInvokeTitle": "How to call this combo",
     "usageGuideInvokeDesc": "Send the combo's exact name as the model, e.g. model: \"my-combo\" (or combo/my-combo).",
     "usageGuideInvokeAutoNote": "auto and auto/* are a separate zero-config router that does not use your combos (unless a combo is literally named auto).",
-    "usageGuideInvokeOpenrouterNote": "openrouter/auto is a real paid OpenRouter product (Auto Best Available), not an OmniRoute alias — exclude it via Settings → Routing → Hide paid models.",
+    "usageGuideInvokeOpenrouterNote": "openrouter/auto is a real paid OpenRouter product (Auto Best Available), not an AgentProxy alias — exclude it via Settings → Routing → Hide paid models.",
     "emailVisibilityStateOn": "On",
     "emailVisibilityStateOff": "Off",
     "reorderHandle": "Drag to reorder",
@@ -3911,7 +3911,7 @@
     "moderationsDesc": "Content moderation and safety classification",
     "responsesDesc": "OpenAI Responses API for Codex and advanced agentic workflows",
     "listModelsDesc": "List all available models across all connected providers",
-    "settingsApiDesc": "Read and modify OmniRoute configuration via API",
+    "settingsApiDesc": "Read and modify AgentProxy configuration via API",
     "settingsApi": "Settings API",
     "categoryCore": "Core APIs",
     "categoryMedia": "Media & Multi-Modal",
@@ -3998,9 +3998,9 @@
     "openMcpDashboard": "Open MCP management",
     "openA2aDashboard": "Open A2A management",
     "mcpQuickStartTitle": "MCP Quick Start",
-    "mcpQuickStartStep1": "Run the MCP server via `omniroute --mcp`.",
+    "mcpQuickStartStep1": "Run the MCP server via `agentproxy --mcp`.",
     "mcpQuickStartStep2": "Configure your MCP client to connect over stdio transport.",
-    "mcpQuickStartStep3": "Invoke tools such as `omniroute_get_health` and `omniroute_list_combos`.",
+    "mcpQuickStartStep3": "Invoke tools such as `agentproxy_get_health` and `agentproxy_list_combos`.",
     "a2aQuickStartTitle": "A2A Quick Start",
     "a2aQuickStartStep1": "Discover the agent card at `/.well-known/agent.json`.",
     "a2aQuickStartStep2": "Send JSON-RPC requests to `POST /a2a` using `message/send` or `message/stream`.",
@@ -4019,9 +4019,9 @@
     "videoDesc": "Generate videos using AI models like ComfyUI and Stable Video Diffusion.",
     "tailscaleRequestFailed": "Failed to load Tailscale status",
     "tailscaleEnableFailed": "Failed to enable Tailscale Funnel",
-    "tailscaleWaitingForLogin": "Complete the Tailscale login in the opened browser tab. OmniRoute will retry automatically.",
+    "tailscaleWaitingForLogin": "Complete the Tailscale login in the opened browser tab. AgentProxy will retry automatically.",
     "tailscaleLoginTimedOut": "Timed out waiting for Tailscale login",
-    "tailscaleWaitingForFunnel": "Enable Funnel for this device in the opened browser tab. OmniRoute will keep polling.",
+    "tailscaleWaitingForFunnel": "Enable Funnel for this device in the opened browser tab. AgentProxy will keep polling.",
     "tailscaleFunnelTimedOut": "Timed out waiting for Tailscale Funnel to be enabled",
     "tailscaleStarted": "Tailscale Funnel enabled",
     "tailscaleDisableFailed": "Failed to disable Tailscale Funnel",
@@ -4045,7 +4045,7 @@
     "tailscaleBinaryPath": "Binary: {path}",
     "tailscaleLastError": "Last error: {error}",
     "tailscaleInstallTitle": "Install Tailscale",
-    "tailscaleInstallIntro": "Installs Tailscale on this machine and prepares OmniRoute to enable Funnel.",
+    "tailscaleInstallIntro": "Installs Tailscale on this machine and prepares AgentProxy to enable Funnel.",
     "tailscaleInstallPasswordHint": "On macOS and Linux, sudo may be required for the package install and daemon start.",
     "tailscaleSudoPlaceholder": "Optional sudo password",
     "tailscaleInstalling": "Installing",
@@ -4125,7 +4125,7 @@
     "vscodeAliasModelsLabel": "VS Code મોડેલ્સ",
     "vscodeAliasChatLabel": "VS Code ચેટ",
     "localServer": "સ્થાનિક સર્વર",
-    "cloudOmniroute": "મેઘ OmniRoute",
+    "cloudAgentProxy": "મેઘ AgentProxy",
     "copyUrl": "URL કૉપિ કરો",
     "badgeLoopbackTooltip": "આ એન્ડપોઇન્ટ ફક્ત સ્થાનિક રીતે ઍક્સેસિબલ છે (ફક્ત લૂપબૅક)",
     "badgeAlwaysProtectedTooltip": "આ એન્ડપોઇન્ટ હંમેશા સુરક્ષિત છે અને તેને અધિકૃતતાની જરૂર છે",
@@ -4218,7 +4218,7 @@
     "disableLabel": "{label} અક્ષમ કરો",
     "enableLabel": "{label} સક્ષમ કરો",
     "transportMode": "ટ્રાન્સપોર્ટ મોડ",
-    "transportStdioDesc": "લોકલ — IDE omniroute --mcp દ્વારા પ્રોસેસ શરૂ કરે છે",
+    "transportStdioDesc": "લોકલ — IDE agentproxy --mcp દ્વારા પ્રોસેસ શરૂ કરે છે",
     "transportSseDesc": "રિમોટ — HTTP પર Server-Sent Events",
     "transportStreamableHttpDesc": "રિમોટ — મોર્ડન બાયડાયરેક્શનલ HTTP",
     "copy": "કોપી કરો",
@@ -4371,7 +4371,7 @@
     "compactOld": "જૂના સંકુચિત કરો",
     "concept": {
       "title": "વાર્તાલાપ મેમરી",
-      "description": "OmniRoute દરેક વાર્તાલાપમાંથી શીખે છે, તથ્યો, એપિસોડ્સ, પ્રક્રિયાઓ અને સિમેન્ટીક વિભાવનાઓને યાદ રાખે છે જે પ્રતિભાવોને વધુ સચોટ અને સંદર્ભ-જાગૃત બનાવે છે.",
+      "description": "AgentProxy દરેક વાર્તાલાપમાંથી શીખે છે, તથ્યો, એપિસોડ્સ, પ્રક્રિયાઓ અને સિમેન્ટીક વિભાવનાઓને યાદ રાખે છે જે પ્રતિભાવોને વધુ સચોટ અને સંદર્ભ-જાગૃત બનાવે છે.",
       "howWorksToggle": "તે કેવી રીતે કાર્ય કરે છે",
       "howWorksContent": "1. સ્વચાલિત નિષ્કર્ષણ: દરેક પ્રતિભાવના અંતે, તથ્યો અને એપિસોડ્સ આપમેળે શોધી કાઢવામાં આવે છે અને સાચવવામાં આવે છે.\n2. પુનઃપ્રાપ્તિ: દરેક પ્રતિભાવ પહેલાં, FTS5 (ચોક્કસ), વેક્ટર (સિમેન્ટીક), અથવા હાઇબ્રિડ RRF દ્વારા સૌથી સંબંધિત મેમરીઝ શોધવામાં આવે છે.\n3. ઇન્જેક્શન: પ્રતિભાવ ગુણવત્તા સુધારવા માટે સહાયક સંદર્ભમાં સંબંધિત મેમરીઝ ઇન્જેક્ટ કરવામાં આવે છે.\n4. સંચાલન: જૂની મેમરીઝ જોવા, સંપાદિત કરવા, નિકાસ કરવા અને સંકુચિત કરવા માટે આ પૃષ્ઠનો ઉપયોગ કરો."
     },
@@ -4486,7 +4486,7 @@
       "enableDesc": "જ્યારે સક્ષમ હોય, ત્યારે Qdrant નો ઉપયોગ પ્રાથમિક વેક્ટર સ્ટોર તરીકે થાય છે",
       "banner": "ટાયર 2 વેક્ટર સ્ટોર — બિલ્ટ-ઇન sqlite-vec (ટાયર 1) નો બાહ્ય, સ્કેલેબલ વિકલ્પ. જો તમારી પાસે ખૂબ મોટો મેમરી સેટ હોય અથવા ઇન્સ્ટન્સ વચ્ચે શેર કરેલી મેમરી જોઈતી હોય તો જ તેને સક્ષમ કરો; મોટાભાગના વપરાશકર્તાઓ માટે sqlite-vec પૂરતું છે. જ્યારે સક્ષમ હોય ત્યારે તે પ્રાથમિક સ્ટોર બને છે અને જો તે અનુપલબ્ધ હોય તો આપમેળે sqlite-vec પર પાછું ફરે છે.",
       "hostHelp": "સ્થાનિક Docker: http://localhost:6333 · Qdrant Cloud: તમારા ક્લસ્ટરનું URL",
-      "collectionHelp": "કોઈપણ નામ — OmniRoute પ્રથમ ઉપયોગ પર તેને બનાવે છે",
+      "collectionHelp": "કોઈપણ નામ — AgentProxy પ્રથમ ઉપયોગ પર તેને બનાવે છે",
       "embeddingModelHelp": "પ્રથમ ઉપયોગ પર વેક્ટર પરિમાણ આપમેળે સેટ કરે છે. હાલની મેમરીઝ બેક-ફિલ થતી નથી, અને ડેટા અસ્તિત્વમાં આવ્યા પછી મોડેલ બદલવા માટે નવું કલેક્શન જરૂરી છે.",
       "testConnection": "કનેક્શન ટેસ્ટ કરો",
       "testing": "ટેસ્ટિંગ ચાલુ છે...",
@@ -4636,7 +4636,7 @@
   },
   "health": {
     "title": "System Health",
-    "description": "Real-time monitoring of your OmniRoute instance",
+    "description": "Real-time monitoring of your AgentProxy instance",
     "healthy": "Healthy",
     "degraded": "Degraded",
     "down": "Down",
@@ -4658,7 +4658,7 @@
     "retry": "Retry",
     "allOperational": "All systems operational",
     "issuesDetected": "System issues detected",
-    "healthVerdictReady": "OmniRoute is ready",
+    "healthVerdictReady": "AgentProxy is ready",
     "healthVerdictActionRequired": "Action required to restore full operation",
     "healthVerdictCoolingDown": "Cooling down after recent changes",
     "healthSubtitle": "System health check",
@@ -4779,7 +4779,7 @@
   },
   "telemetry": {
     "title": "સિસ્ટમ ટેલિમેટ્રી",
-    "description": "આ OmniRoute પ્રક્રિયામાંથી રોલિંગ વિનંતી, રનટાઇમ, સત્ર અને મેમરી સિગ્નલ.",
+    "description": "આ AgentProxy પ્રક્રિયામાંથી રોલિંગ વિનંતી, રનટાઇમ, સત્ર અને મેમરી સિગ્નલ.",
     "uptime": "અપટાઇમ",
     "totalRequests": "કુલ વિનંતીઓ",
     "avgLatency": "સરેરાશ વિલંબ",
@@ -4976,7 +4976,7 @@
     "passwordsMismatch": "Passwords do not match",
     "setupComplete": "Setup Complete!",
     "goToDashboard": "Go to Dashboard →",
-    "welcomeDesc": "OmniRoute is your local AI API proxy. It routes requests to multiple AI providers with load balancing, failover, and usage tracking.",
+    "welcomeDesc": "AgentProxy is your local AI API proxy. It routes requests to multiple AI providers with load balancing, failover, and usage tracking.",
     "multiProvider": "Multi-Provider",
     "usageTracking": "Usage Tracking",
     "securityDesc": "Set a password to protect your dashboard, or skip for now.",
@@ -4992,7 +4992,7 @@
     "noProviderFound": "No provider found. You can add one from the dashboard later.",
     "testFailed": "Test failed, but you can configure this later.",
     "couldNotTest": "Could not test right now. You can test from the dashboard.",
-    "doneDesc": "You're all set! Your OmniRoute instance is configured and ready to proxy AI requests.",
+    "doneDesc": "You're all set! Your AgentProxy instance is configured and ready to proxy AI requests.",
     "yourEndpoint": "Your endpoint:",
     "continue": "Continue",
     "retry": "Retry",
@@ -5002,7 +5002,7 @@
     "provider": "Provider",
     "apiKeyHelp": "API કી એ AI સેવાઓ માટેનો પાસવર્ડ છે. તમારા પ્રદાતાની વેબસાઇટ પરથી એક મેળવો (દા.ત., platform.openai.com, console.anthropic.com).",
     "tier": {
-      "subtitle": "OmniRoute પ્રદાતાઓને ત્રણ સ્તરોમાં ગોઠવે છે જેથી રાઉટીંગ સૌથી વિશ્વસનીય, સૌથી ઓછા ખર્ચવાળા પાથને પસંદ કરે છે.",
+      "subtitle": "AgentProxy પ્રદાતાઓને ત્રણ સ્તરોમાં ગોઠવે છે જેથી રાઉટીંગ સૌથી વિશ્વસનીય, સૌથી ઓછા ખર્ચવાળા પાથને પસંદ કરે છે.",
       "flowCaption": "વિનંતીઓ પહેલા તમારા સબ્સ્ક્રિપ્શન ક્વોટા દ્વારા વહે છે, પછી પે-પર-ટોકન સસ્તા પ્રદાતાઓ દ્વારા, પછી ફ્રી-ટિયર પ્રદાતાઓ દ્વારા — સ્વચાલિત, શૂન્ય-રૂપરેખાંકન.",
       "afterSetup": "સેટઅપ પછી.",
       "tier1": {
@@ -5019,7 +5019,7 @@
       },
       "configure": "પ્રદાતાઓને ગોઠવો"
     },
-    "tierFlowDiagramAlt": "OmniRoute 3-ટાયર ફોલબેક ડાયાગ્રામ",
+    "tierFlowDiagramAlt": "AgentProxy 3-ટાયર ફોલબેક ડાયાગ્રામ",
     "apiKeyMgmt": "API Key Mgmt",
     "freeProviders": {
       "title": "મફત પ્રદાતાઓને સેટ કરો",
@@ -5049,7 +5049,7 @@
     "showFreeOnly": "માત્ર મફત",
     "addProvider": "Add Provider",
     "addFirstProvider": "તમારા પ્રથમ પ્રદાતા ઉમેરો",
-    "addFirstProviderDesc": "OmniRoute દ્વારા રૂટીંગ વિનંતીઓ શરૂ કરવા માટે AI પ્રદાતાને કનેક્ટ કરો. તમે મફત પ્રદાતાઓ, API કી અથવા OAuth એકાઉન્ટ્સનો ઉપયોગ કરી શકો છો.",
+    "addFirstProviderDesc": "AgentProxy દ્વારા રૂટીંગ વિનંતીઓ શરૂ કરવા માટે AI પ્રદાતાને કનેક્ટ કરો. તમે મફત પ્રદાતાઓ, API કી અથવા OAuth એકાઉન્ટ્સનો ઉપયોગ કરી શકો છો.",
     "learnMore": "વધુ જાણો",
     "importFromFile": "ફાઇલમાંથી આયાત કરો",
     "importFromFileTitle": "ફાઇલમાંથી પ્રદાતાઓ આયાત કરો",
@@ -5072,7 +5072,7 @@
     "adaptaTutorial": {
       "title": "Adapta Web કેવી રીતે કનેક્ટ કરવું",
       "introPrefix": "Adapta Clerk દ્વારા પ્રમાણિત કરે છે. ટોકન",
-      "introSuffix": "એ લાંબા સમય સુધી ચાલતું JWT છે જે OmniRoute ને આપમેળે સત્રો રિફ્રેશ કરવા દે છે.",
+      "introSuffix": "એ લાંબા સમય સુધી ચાલતું JWT છે જે AgentProxy ને આપમેળે સત્રો રિફ્રેશ કરવા દે છે.",
       "or": "અથવા",
       "step1Title": "Adapta ચેટ ખોલો",
       "step1DescPrefix": "ખોલો",
@@ -5091,7 +5091,7 @@
       "step5Title": "તેને અહીં પેસ્ટ કરો અને સાચવો",
       "step5DescPrefix": "ક્લિક કરો",
       "step5DescMiddle": "પેસ્ટ કરો",
-      "step5DescSuffix": "મૂલ્ય API Key ફીલ્ડમાં, પછી સાચવો. OmniRoute આપમેળે સત્ર રિફ્રેશ કરશે.",
+      "step5DescSuffix": "મૂલ્ય API Key ફીલ્ડમાં, પછી સાચવો. AgentProxy આપમેળે સત્ર રિફ્રેશ કરશે.",
       "tipLabel": "ટીપ:",
       "tipPrefix": "આ",
       "tipSuffix": "કૂકી લાંબા સમય સુધી ચાલે છે, સામાન્ય રીતે મહિનાઓ સુધી. જો તમે સાઇન આઉટ કરો અથવા Adapta સત્રને અમાન્ય કરે તો જ તમારે તેને રીન્યુ કરવાની જરૂર છે."
@@ -5485,7 +5485,7 @@
     "compatDoNotPreserveDeveloper": "Do not preserve developer role",
     "compatBadgeNoPreserve": "No preserve",
     "compatProtocolLabel": "Client request protocol",
-    "compatProtocolHint": "These options apply when OmniRoute detects this request shape (OpenAI Chat, Responses API, or Anthropic Messages).",
+    "compatProtocolHint": "These options apply when AgentProxy detects this request shape (OpenAI Chat, Responses API, or Anthropic Messages).",
     "compatProtocolOpenAI": "OpenAI Chat Completions",
     "compatProtocolOpenAIResponses": "OpenAI Responses API",
     "compatProtocolClaude": "Anthropic Messages",
@@ -5520,11 +5520,11 @@
     "paramFiltersResetSuccess": "પેરામ ફિલ્ટર કન્ફિગ ડિફૉલ્ટ પર રીસેટ કરવામાં આવી",
     "paramFiltersResetError": "પેરામ ફિલ્ટર કન્ફિગ રીસેટ કરવામાં નિષ્ફળ: {error}",
     "interceptionSectionTitle": "વેબ ટૂલ ઇન્ટરસેપ્શન",
-    "interceptionSectionHint": "આ પ્રદાતાના મૂળ web_search / web_fetch ટૂલ કૉલ્સને પ્રદાતા દ્વારા મૂળ રીતે ચલાવવા દેવાને બદલે OmniRoute ના પોતાના સર્ચ અને ફેચ એન્ડપોઇન્ટ્સ દ્વારા રૂટ કરો. ડિફૉલ્ટ રૂપે બંધ — હાલનું વર્તન યથાવત છે.",
+    "interceptionSectionHint": "આ પ્રદાતાના મૂળ web_search / web_fetch ટૂલ કૉલ્સને પ્રદાતા દ્વારા મૂળ રીતે ચલાવવા દેવાને બદલે AgentProxy ના પોતાના સર્ચ અને ફેચ એન્ડપોઇન્ટ્સ દ્વારા રૂટ કરો. ડિફૉલ્ટ રૂપે બંધ — હાલનું વર્તન યથાવત છે.",
     "interceptSearchLabel": "web_search ઇન્ટરસેપ્ટ કરો",
-    "interceptSearchHint": "મૂળ web_search ટૂલ કૉલ્સને OmniRoute ના /v1/search પર ફરીથી લખો.",
+    "interceptSearchHint": "મૂળ web_search ટૂલ કૉલ્સને AgentProxy ના /v1/search પર ફરીથી લખો.",
     "interceptFetchLabel": "web_fetch ઇન્ટરસેપ્ટ કરો",
-    "interceptFetchHint": "મૂળ web_fetch ટૂલ કૉલ્સને OmniRoute ના /v1/web/fetch પર ફરીથી લખો.",
+    "interceptFetchHint": "મૂળ web_fetch ટૂલ કૉલ્સને AgentProxy ના /v1/web/fetch પર ફરીથી લખો.",
     "interceptionLoadError": "ઇન્ટરસેપ્શન સેટિંગ્સ લોડ કરવામાં નિષ્ફળ: {error}",
     "interceptionSaveError": "ઇન્ટરસેપ્શન સેટિંગ્સ સાચવવામાં નિષ્ફળ: {error}",
     "ccAliasSectionTitle": "Expose in Claude Code (claude/…)",
@@ -5540,7 +5540,7 @@
     "ccAliasLoadError": "Failed to load discovery-alias settings: {error}",
     "ccAliasSaveError": "Failed to save discovery-alias setting: {error}",
     "compatUpstreamHeadersLabel": "Extra upstream headers",
-    "compatUpstreamHeadersHint": "High-privilege setting — same trust level as editing provider API credentials; only trusted admins should use it. Merged after OmniRoute adds auth from the provider API key. If a custom header uses the same name as an existing one (e.g. Authorization), your value fully replaces the auto-generated header (including the Bearer token) — the upstream only sees what you typed, not the key from settings. Misconfiguration can cause 401 or broken upstream auth. One row per header (e.g. extra Authentication for some gateways). Hover or focus the value to preview. Saves on blur, outside click, or closing this panel.",
+    "compatUpstreamHeadersHint": "High-privilege setting — same trust level as editing provider API credentials; only trusted admins should use it. Merged after AgentProxy adds auth from the provider API key. If a custom header uses the same name as an existing one (e.g. Authorization), your value fully replaces the auto-generated header (including the Bearer token) — the upstream only sees what you typed, not the key from settings. Misconfiguration can cause 401 or broken upstream auth. One row per header (e.g. extra Authentication for some gateways). Hover or focus the value to preview. Saves on blur, outside click, or closing this panel.",
     "compatUpstreamHeaderName": "Header name",
     "compatUpstreamHeaderValue": "Value",
     "compatUpstreamAddRow": "Add header",
@@ -5703,7 +5703,7 @@
     "codexImportTabUpload": "ફાઇલ અપલોડ કરો",
     "codexImportTabPaste": "JSON પેસ્ટ કરો",
     "codexImportFileLabel": "auth.json પસંદ કરો",
-    "codexImportFileHint": "કોડેક્સ અથવા OmniRoute માંથી નિકાસ કરેલ auth.json ફાઇલ પસંદ કરો.",
+    "codexImportFileHint": "કોડેક્સ અથવા AgentProxy માંથી નિકાસ કરેલ auth.json ફાઇલ પસંદ કરો.",
     "codexImportPasteLabel": "JSON સામગ્રી પેસ્ટ કરો",
     "codexImportEmailLabel": "એકાઉન્ટ ઈમેલ",
     "codexImportEmailHint": "ફાઇલમાંથી સ્વતઃ શોધાયેલ; જો જરૂરી હોય તો સંપાદિત કરો.",
@@ -5774,7 +5774,7 @@
     "t3ChatWebCookieHint": "t3.chat → DevTools → Application → Local Storage → https://t3.chat ખોલો, 'convex-session-id' કૉપિ કરો. પછી DevTools → નેટવર્ક ખોલો, કોઈપણ ચેટ વિનંતીમાંથી સંપૂર્ણ કૂકી હેડરની નકલ કરો. નીચેના ફીલ્ડમાં બંને મૂલ્યો પેસ્ટ કરો.",
     "t3ChatWebCookiePlaceholder": "convex-session-id=abc123...",
     "grokWebCookieHint": "Grok Web Cookie Hint",
-    "blockClaudeExtraUsageDescription": "જ્યારે સક્રિય કરવામાં આવે છે, OmniRoute આ Claude કનેક્શનને ઉપલબ્ધ નહીં તરીકે ચિહ્નિત કરે છે જેમણે જલદી ઉપયોગ API ક્યૂમાં વધારાના ઉપયોગની જાણ કરે છે, જેથી ફોલબેક બીજાં કનેક્શન પર સ્વિચ થાય છે તેના બદલે કે પે-એઝ-યુ-ગો વધારાના બિલિંગ પર ચાલુ રહે.",
+    "blockClaudeExtraUsageDescription": "જ્યારે સક્રિય કરવામાં આવે છે, AgentProxy આ Claude કનેક્શનને ઉપલબ્ધ નહીં તરીકે ચિહ્નિત કરે છે જેમણે જલદી ઉપયોગ API ક્યૂમાં વધારાના ઉપયોગની જાણ કરે છે, જેથી ફોલબેક બીજાં કનેક્શન પર સ્વિચ થાય છે તેના બદલે કે પે-એઝ-યુ-ગો વધારાના બિલિંગ પર ચાલુ રહે.",
     "blockClaudeExtraUsageLabel": "અતિરિક્ત ક્લોડ ઉપયોગ રોકો",
     "disableCoolingDescription": "અસ્થાયી કૂલડાઉન છોડો જેથી પુનઃપ્રાપ્ત કરી શકાય તેવી ભૂલો પછી પણ આ કનેક્શન પાત્ર રહે (પ્રતિબંધિત/સમાપ્ત જેવી ટર્મિનલ સ્થિતિઓ હજુ પણ લાગુ પડે છે).",
     "disableCoolingLabel": "આ કનેક્શન માટે કૂલડાઉન અક્ષમ કરો",
@@ -5851,7 +5851,7 @@
     "googlePseInfo": "Google Pse Info",
     "antigravityProjectIdHint": "એન્ટિગ્રેવિટી ક્લાઉડ કોડ વિનંતીઓ માટે વૈકલ્પિક ઓવરરાઇડ. Google OAuth દરમિયાન શોધાયેલ પ્રોજેક્ટનો ઉપયોગ કરવા માટે ખાલી છોડો.",
     "antigravityClientProfileLabel": "ક્લાયન્ટ પ્રોફાઇલ",
-    "antigravityClientProfileHint": "OmniRoute API સમક્ષ કઈ Antigravity ક્લાયન્ટ ઓળખ રજૂ કરે છે તે પસંદ કરો.",
+    "antigravityClientProfileHint": "AgentProxy API સમક્ષ કઈ Antigravity ક્લાયન્ટ ઓળખ રજૂ કરે છે તે પસંદ કરો.",
     "antigravityClientProfileIde": "IDE",
     "antigravityClientProfileCli": "Harness / CLI",
     "codexFastTierActiveChip": "Codex Fast ટાયર સક્રિય છે",
@@ -5880,7 +5880,7 @@
     "tierOverrideFree": "મફત",
     "tierOverrideCheap": "સસ્તું",
     "tierOverridePremium": "પ્રીમિયમ",
-    "tierOverrideHelpText": "OmniRoute ને મોડેલ કિંમત પરથી તેનું અનુમાન કરવા દેવાને બદલે આ પ્રદાતાને રાઉટિંગ ટાયર પર પિન કરો.",
+    "tierOverrideHelpText": "AgentProxy ને મોડેલ કિંમત પરથી તેનું અનુમાન કરવા દેવાને બદલે આ પ્રદાતાને રાઉટિંગ ટાયર પર પિન કરો.",
     "museSparkWebCookieHint": "Muse Spark Web Cookie Hint",
     "museSparkWebCookiePlaceholder": "Muse Spark Web Cookie Placeholder",
     "oauth": "Oauth",
@@ -5976,7 +5976,7 @@
     "zedNoCredentials": "કીચેઇનમાં કોઈ Zed ઓળખપત્રો મળ્યા નથી",
     "zedUnsupportedCredentials": "{count} કીચેઇન ઓળખપત્ર(ઓ) મળ્યા, પરંતુ કોઈ પણ સમર્થિત પ્રદાતાઓ સાથે મેળ ખાતા નથી",
     "zedManualTitle": "મેન્યુઅલ ટોકન આયાત",
-    "zedManualDescription": "જ્યારે OmniRoute Docker માં ચાલતું હોય અથવા કીચેઇન અનુપલબ્ધ હોય ત્યારે આનો ઉપયોગ કરો. Zed એ <path>~/.config/zed/settings.json</path> હેઠળ સંગ્રહિત કરેલી API કી પેસ્ટ કરો, અથવા તેને Zed AI સેટિંગ્સ પેનલમાંથી કૉપિ કરો.",
+    "zedManualDescription": "જ્યારે AgentProxy Docker માં ચાલતું હોય અથવા કીચેઇન અનુપલબ્ધ હોય ત્યારે આનો ઉપયોગ કરો. Zed એ <path>~/.config/zed/settings.json</path> હેઠળ સંગ્રહિત કરેલી API કી પેસ્ટ કરો, અથવા તેને Zed AI સેટિંગ્સ પેનલમાંથી કૉપિ કરો.",
     "zedPasteApiKey": "API કી પેસ્ટ કરો…",
     "zedSaving": "સાચવી રહ્યું છે…",
     "zedImportAction": "આયાત કરો",
@@ -6029,9 +6029,9 @@
     "webFetchTooltip": "વેબ URLs માંથી સામગ્રી કાઢતા પ્રદાતાઓ (HTML → Markdown, સ્ક્રેપ, સ્ક્રીનશૉટ)",
     "webFetchProvidersHeading": "વેબ ફેચ પ્રદાતાઓ",
     "compatibleProvidersDesc": "OpenAI-સુસંગત અને Anthropic-સુસંગત એન્ડપોઇન્ટ્સ જે તમે હોસ્ટ અથવા કન્ફિગર કરો છો. કોઈપણ OpenAI SDK ને તમારા પોતાના URL પર પોઇન્ટ કરો અને વિનંતીઓને અહીં રૂટ કરો.",
-    "oauthProvidersDesc": "OAuth દ્વારા પ્રમાણિત પ્રદાતાઓ — એકવાર સાઇન ઇન કરો અને OmniRoute આપમેળે ટોકન રોટેશન સંભાળે છે.",
+    "oauthProvidersDesc": "OAuth દ્વારા પ્રમાણિત પ્રદાતાઓ — એકવાર સાઇન ઇન કરો અને AgentProxy આપમેળે ટોકન રોટેશન સંભાળે છે.",
     "webCookieProvidersDesc": "આ પ્રદાતાઓ API કીને બદલે બ્રાઉઝર વેબ સત્રો, કૂકીઝ અથવા વેબ ટોકન્સનો ઉપયોગ કરે છે. જરૂરી સત્ર ઓળખપત્ર ઉમેરવા માટે પ્રદાતા ખોલો.",
-    "apiKeyProvidersDesc": "સ્ટાન્ડર્ડ API કી પ્રદાતાઓ. તમારી કી એકવાર ઉમેરો અને OmniRoute તમારા વતી રૂટ કરે છે, ફરી પ્રયાસ કરે છે અને રેટ-મર્યાદા સંભાળે છે.",
+    "apiKeyProvidersDesc": "સ્ટાન્ડર્ડ API કી પ્રદાતાઓ. તમારી કી એકવાર ઉમેરો અને AgentProxy તમારા વતી રૂટ કરે છે, ફરી પ્રયાસ કરે છે અને રેટ-મર્યાદા સંભાળે છે.",
     "noAuthProvidersDesc": "ઓપન એન્ડપોઇન્ટ્સ કે જેમાં કોઈ ઓળખપત્રની જરૂર નથી — કોઈપણ સાઇન-અપ વિના તરત જ ઉપયોગ કરવા માટે તૈયાર.",
     "upstreamProxyProvidersDesc": "આઉટબાઉન્ડ ટ્રાફિક પ્રદાતા સુધી પહોંચે તે પહેલાં તેને અપસ્ટ્રીમ પ્રોક્સી દ્વારા રૂટ કરો. કોર્પોરેટ નેટવર્ક અથવા ટ્રાફિક નિરીક્ષણ માટે ઉપયોગી.",
     "webFetchProvidersDesc": "પ્રદાતાઓ જે વેબ URL માંથી સામગ્રી મેળવે છે અને બહાર કાઢે છે. લાઇવ વેબ ડેટા સાથે પ્રોમ્પ્ટ્સને ગ્રાઉન્ડ કરવા માટે તેમનો ઉપયોગ કરો.",
@@ -6108,7 +6108,7 @@
     "onboardingModelsPath": "મોડલ્સ પાથ",
     "onboardingCreateSaveTest": "બનાવો, સાચવો અને પરીક્ષણ કરો",
     "onboardingConnectProvider": "કનેક્ટ કરો {provider}",
-    "onboardingOAuthFlowDescription": "OmniRoute આ પ્રદાતા માટે હાલના OAuth પ્રવાહને ખોલશે. લૉગિન કર્યા પછી, વિઝાર્ડ સાચવેલ કનેક્શનને ફરીથી લોડ કરે છે અને પ્રદાતા પૃષ્ઠની જેમ જ કનેક્શન પરીક્ષણ ચલાવે છે.",
+    "onboardingOAuthFlowDescription": "AgentProxy આ પ્રદાતા માટે હાલના OAuth પ્રવાહને ખોલશે. લૉગિન કર્યા પછી, વિઝાર્ડ સાચવેલ કનેક્શનને ફરીથી લોડ કરે છે અને પ્રદાતા પૃષ્ઠની જેમ જ કનેક્શન પરીક્ષણ ચલાવે છે.",
     "onboardingStartOAuthFlow": "OAuth પ્રવાહ શરૂ કરો",
     "onboardingProviderDescriptions": {
       "360ai": "ai.360.cn પર API કી મેળવો",
@@ -6122,10 +6122,10 @@
       "bailian-coding-plan": "API કી વડે Alibaba Coding Plan ને કનેક્ટ કરો.",
       "bedrock": "નેટિવ Bedrock એકીકરણ: મોડેલ શોધ Bedrock ફાઉન્ડેશન મોડેલ્સ અને ઇન્ફરન્સ પ્રોફાઇલ્સનો ઉપયોગ કરે છે, જ્યારે ચેટ પ્રાદેશિક Bedrock Runtime Converse/ConverseStream APIs નો ઉપયોગ કરે છે.",
       "anthropic": "API કી વડે Anthropic ને કનેક્ટ કરો.",
-      "ant-ling": "Ant Ling API કન્સોલ પર નોંધણી કરો અને એક API કી બનાવો (https://chat.ant-ling.com/open), પછી તેને અહીં પેસ્ટ કરો. OmniRoute ચેટ ટ્રાફિકને https://api.ant-ling.com/v1/chat/completions પર માર્ગદર્શન આપે છે; પ્રદાતા OpenAI-સંગત છે અને એન્થ્રોપિક-સંગત સપાટી પણ પ્રદર્શિત કરે છે.",
+      "ant-ling": "Ant Ling API કન્સોલ પર નોંધણી કરો અને એક API કી બનાવો (https://chat.ant-ling.com/open), પછી તેને અહીં પેસ્ટ કરો. AgentProxy ચેટ ટ્રાફિકને https://api.ant-ling.com/v1/chat/completions પર માર્ગદર્શન આપે છે; પ્રદાતા OpenAI-સંગત છે અને એન્થ્રોપિક-સંગત સપાટી પણ પ્રદર્શિત કરે છે.",
       "api-airforce": "https://panel.api.airforce પરથી તમારી API કી મેળવો — https://api.airforce/v1 પર OpenAI-સુસંગત એન્ડપોઇન્ટ",
       "arcee-ai": "arcee.ai પર API કી મેળવો",
-      "azure-ai": "Foundry મોડેલ્સ તરીકે ડિપ્લોયમેન્ટ નામો સાથે OpenAI v1 સરફેસનો ઉપયોગ કરે છે. OmniRoute રૂટ રિસોર્સ URLs ને v1 ચેટ અને /models એન્ડપોઇન્ટ્સ પર સામાન્ય બનાવે છે.",
+      "azure-ai": "Foundry મોડેલ્સ તરીકે ડિપ્લોયમેન્ટ નામો સાથે OpenAI v1 સરફેસનો ઉપયોગ કરે છે. AgentProxy રૂટ રિસોર્સ URLs ને v1 ચેટ અને /models એન્ડપોઇન્ટ્સ પર સામાન્ય બનાવે છે.",
       "azure-openai": "તમારી Azure OpenAI API કીનો ઉપયોગ કરો. બેઝ URL તમારું રિસોર્સ એન્ડપોઇન્ટ હોવું જોઈએ, ઉદાહરણ તરીકે https://my-resource.openai.azure.com.",
       "bai": "b.ai OpenAI-સુસંગત LLM ગેટવે માટે Bearer API કી (TheB.AI થી અલગ). https://docs.b.ai પર કી બનાવો, પછી OpenAI-સુસંગત બેઝ URL તરીકે https://api.b.ai/v1 નો ઉપયોગ કરો.",
       "baichuan": "platform.baichuan-ai.com પર API કી મેળવો",
@@ -6156,7 +6156,7 @@
       "dgrid": "https://dgrid.ai પર DGrid API કી બનાવો, પછી OpenAI-સુસંગત બેઝ URL તરીકે https://api.dgrid.ai/v1 નો ઉપયોગ કરો.",
       "dify": "તમારા Dify ઇન્સ્ટન્સમાંથી API કી મેળવો.",
       "digitalocean": "API કી વડે DigitalOcean ને કનેક્ટ કરો.",
-      "dit": "dit.ai (Distributed Intelligence Trade) એ ગતિશીલ પ્રતિ-વિનંતી કિંમત નિર્ધારણ સાથેનું OpenAI-સુસંગત રાઉટર/ગેટવે છે, જે https://api.dit.ai/v1 પર /v1/chat/completions પ્રદર્શિત કરે છે. OmniRoute એ OpenAI પ્રોટોકોલનો ઉપયોગ કરે છે; ખર્ચ/બચત વિશ્લેષણ dit.ai ડેશબોર્ડમાં ઉપલબ્ધ છે.",
+      "dit": "dit.ai (Distributed Intelligence Trade) એ ગતિશીલ પ્રતિ-વિનંતી કિંમત નિર્ધારણ સાથેનું OpenAI-સુસંગત રાઉટર/ગેટવે છે, જે https://api.dit.ai/v1 પર /v1/chat/completions પ્રદર્શિત કરે છે. AgentProxy એ OpenAI પ્રોટોકોલનો ઉપયોગ કરે છે; ખર્ચ/બચત વિશ્લેષણ dit.ai ડેશબોર્ડમાં ઉપલબ્ધ છે.",
       "doubao": "console.volcengine.com પર API કી મેળવો",
       "empower": "Empower એ https://app.empower.dev/api/v1 પર OpenAI-સુસંગત ચેટ પ્રદર્શિત કરે છે જેમાં empower-functions પર ટૂલ-કોલિંગ સપોર્ટ છે.",
       "factory": "https://app.factory.ai/settings/api-keys પર તમારી Factory API કી મેળવો, પછી તેને Bearer ટોકન તરીકે પેસ્ટ કરો. OpenAI-સુસંગત એન્ડપોઇન્ટ https://api.factory.ai/v1 પર છે.",
@@ -6191,7 +6191,7 @@
       "internlm": "મફત માસિક ક્વોટા ~1M ઇનપુટ / 3M આઉટપુટ ટોકન (~10 RPM)",
       "jina-ai": "Jina AI rerank API માટે Bearer API કી.",
       "jina-reader": "API કી વડે Jina Reader ને કનેક્ટ કરો.",
-      "kenari": "Kenari https://kenari.id/v1/chat/completions પર OpenAI-સુસંગત ચેટ કમ્પ્લીશન્સ એન્ડપોઇન્ટ એક્સપોઝ કરે છે, વત્તા Claude, GPT, DeepSeek, GLM, Kimi અને વધુને આવરી લેતી લાઇવ /v1/models કેટલોગ પ્રદાન કરે છે. OmniRoute OpenAI પ્રોટોકોલનો ઉપયોગ કરે છે અને પાસથ્રુ દ્વારા મોડલ્સની સૂચિ બનાવે છે.",
+      "kenari": "Kenari https://kenari.id/v1/chat/completions પર OpenAI-સુસંગત ચેટ કમ્પ્લીશન્સ એન્ડપોઇન્ટ એક્સપોઝ કરે છે, વત્તા Claude, GPT, DeepSeek, GLM, Kimi અને વધુને આવરી લેતી લાઇવ /v1/models કેટલોગ પ્રદાન કરે છે. AgentProxy OpenAI પ્રોટોકોલનો ઉપયોગ કરે છે અને પાસથ્રુ દ્વારા મોડલ્સની સૂચિ બનાવે છે.",
       "kie": "API કી વડે KIE.AI ને કનેક્ટ કરો.",
       "kilo-gateway": "API કી વડે Kilo Gateway ને કનેક્ટ કરો.",
       "kimi": "API કી વડે Kimi ને કનેક્ટ કરો.",
@@ -6208,23 +6208,23 @@
       "minimax-cn": "API કી વડે Minimax (China) ને કનેક્ટ કરો.",
       "minimax": "API કી વડે Minimax Coding ને કનેક્ટ કરો.",
       "mistral": "મફત પ્રયોગ સ્તર: તમામ મોડલ્સ માટે રેટ-લિમિટેડ એક્સેસ, કોઈ ક્રેડિટ કાર્ડની જરૂર નથી",
-      "modal": "Modal સામાન્ય રીતે /v1 પર વપરાશકર્તા-હોસ્ટ કરેલી OpenAI-સુસંગત એપ્સને સેવા આપે છે. OmniRoute /v1/models ની તપાસ કરશે અને ચેટ ટ્રાફિકને /v1/chat/completions પર રૂટ કરશે.",
+      "modal": "Modal સામાન્ય રીતે /v1 પર વપરાશકર્તા-હોસ્ટ કરેલી OpenAI-સુસંગત એપ્સને સેવા આપે છે. AgentProxy /v1/models ની તપાસ કરશે અને ચેટ ટ્રાફિકને /v1/chat/completions પર રૂટ કરશે.",
       "modelscope": "ModelScope API-Inference દ્વારા મફત સ્તર — Alibaba એકાઉન્ટ જરૂરી છે.",
       "monsterapi": "monsterapi.ai પર API કી મેળવો",
       "moonshot": "API કી વડે Moonshot AI ને કનેક્ટ કરો.",
       "morph": "મફત સ્તર: 250K ક્રેડિટ્સ/મહિનો, $0",
       "nanogpt": "API કી વડે NanoGPT ને કનેક્ટ કરો.",
       "nebius": "API ટેસ્ટિંગ માટે સાઇનઅપ પર ~$1 ટ્રાયલ ક્રેડિટ્સ",
-      "nlpcloud": "NLP Cloud એ OpenAI chat/completions ને બદલે પ્રોપ્રાઇટરી ચેટબોટ API નો ઉપયોગ કરે છે. OmniRoute એ OpenAI સંદેશાઓને ઇનપુટ/સંદર્ભ/ઇતિહાસમાં અનુકૂળ કરે છે અને સમર્થિત ચેટબોટ મોડલ્સની સ્થાનિક કેટલોગ એક્સપોઝ કરે છે.",
+      "nlpcloud": "NLP Cloud એ OpenAI chat/completions ને બદલે પ્રોપ્રાઇટરી ચેટબોટ API નો ઉપયોગ કરે છે. AgentProxy એ OpenAI સંદેશાઓને ઇનપુટ/સંદર્ભ/ઇતિહાસમાં અનુકૂળ કરે છે અને સમર્થિત ચેટબોટ મોડલ્સની સ્થાનિક કેટલોગ એક્સપોઝ કરે છે.",
       "nomic": "atlas.nomic.ai પર API કી મેળવો",
       "nous-research": "Nous એક વિશાળ રિમોટ /models કેટલોગ સાથે OpenAI-સુસંગત /v1 સરફેસ એક્સપોઝ કરે છે. પ્રોગ્રામેટિક ઇન્ફરન્સ માટે /chat/completions એન્ડપોઇન્ટ માટે માન્ય API કીની જરૂર છે.",
       "novita": "સાઇનઅપ પર $0.50 ટ્રાયલ ક્રેડિટ્સ (આશરે 1 વર્ષ માટે માન્ય)",
       "nscale": "ઇન્ફરન્સ ટેસ્ટિંગ માટે સાઇનઅપ પર $5 મફત ક્રેડિટ્સ",
       "nube": "API કી વડે Nube.sh ને કનેક્ટ કરો.",
       "nvidia": "મફત ડેવલપર એક્સેસ: ~40 RPM, 70+ મોડલ્સ (Kimi K2.5, GLM 4.7, DeepSeek V3.2...)",
-      "oci": "OCI OpenAI-સુસંગત ચેટ અને રિસ્પોન્સ એન્ડપોઇન્ટ્સ પ્રદાન કરે છે. OmniRoute માં Project ID વૈકલ્પિક છે પરંતુ Responses અને એજન્ટિક વર્કફ્લો માટે જરૂરી હોઈ શકે છે.",
+      "oci": "OCI OpenAI-સુસંગત ચેટ અને રિસ્પોન્સ એન્ડપોઇન્ટ્સ પ્રદાન કરે છે. AgentProxy માં Project ID વૈકલ્પિક છે પરંતુ Responses અને એજન્ટિક વર્કફ્લો માટે જરૂરી હોઈ શકે છે.",
       "ollama-cloud": "API key વડે Ollama Cloud ને કનેક્ટ કરો.",
-      "openadapter": "OpenAdapter https://api.openadapter.in/v1/chat/completions પર OpenAI-સુસંગત ચેટ કમ્પ્લીશન્સ એન્ડપોઇન્ટ પ્રદાન કરે છે, જે 70+ ઓપન-સોર્સ મોડલ્સ (DeepSeek, Qwen, Kimi, MiniMax, GLM, Llama, Mistral, …) ને એકત્રિત કરે છે. OmniRoute OpenAI પ્રોટોકોલનો ઉપયોગ કરે છે.",
+      "openadapter": "OpenAdapter https://api.openadapter.in/v1/chat/completions પર OpenAI-સુસંગત ચેટ કમ્પ્લીશન્સ એન્ડપોઇન્ટ પ્રદાન કરે છે, જે 70+ ઓપન-સોર્સ મોડલ્સ (DeepSeek, Qwen, Kimi, MiniMax, GLM, Llama, Mistral, …) ને એકત્રિત કરે છે. AgentProxy OpenAI પ્રોટોકોલનો ઉપયોગ કરે છે.",
       "openai": "API key વડે OpenAI ને કનેક્ટ કરો.",
       "opencode-go": "API key વડે OpenCode Go ને કનેક્ટ કરો.",
       "opencode-zen": "API key વડે OpenCode Zen ને કનેક્ટ કરો.",
@@ -6241,13 +6241,13 @@
       "publicai": "API key ની જરૂર છે — એક વખતની સાઇનઅપ ક્રેડિટ, પછી પેઇડ",
       "qiniu": "https://portal.qiniu.com/ai-inference/api-key પર Qiniu AI ઇન્ફરન્સ API key બનાવો, પછી તેને અહીં Bearer token તરીકે પેસ્ટ કરો. https://api.qnaigc.com/v1 પર OpenAI-સુસંગત એન્ડપોઇન્ટ, જે એક જ કી પાછળ DeepSeek, Claude, Kimi અને વધુને પ્રોક્સી કરે છે.",
       "recraft": "API key વડે Recraft ને કનેક્ટ કરો.",
-      "reka": "Reka Chat /v1 પર OpenAI-સુસંગત છે. OmniRoute /v1/models ની તપાસ કરે છે અને ચેટ ટ્રાફિકને /v1/chat/completions પર રૂટ કરે છે.",
+      "reka": "Reka Chat /v1 પર OpenAI-સુસંગત છે. AgentProxy /v1/models ની તપાસ કરે છે અને ચેટ ટ્રાફિકને /v1/chat/completions પર રૂટ કરે છે.",
       "requesty": "https://app.requesty.ai પર API key બનાવો, પછી તેને અહીં Bearer token તરીકે પેસ્ટ કરો. લાઈવ /v1/models કેટલોગ સાથે https://router.requesty.ai/v1 પર OpenAI-સુસંગત એન્ડપોઇન્ટ.",
-      "runwayml": "Runway વીડિયો જનરેશન ટાસ્ક-આધારિત છે. OmniRoute ટેક્સ્ટ-ટુ-વીડિયો અથવા ઇમેજ-ટુ-વીડિયો જોબ્સ સબમિટ કરે છે, /v1/tasks/[id] ને પોલ કરે છે, અને પૂર્ણ થયેલા વીડિયો આઉટપુટને ફરીથી OpenAI જેવા /v1/videos/generations રિસ્પોન્સમાં નોર્મલાઇઝ કરે છે.",
+      "runwayml": "Runway વીડિયો જનરેશન ટાસ્ક-આધારિત છે. AgentProxy ટેક્સ્ટ-ટુ-વીડિયો અથવા ઇમેજ-ટુ-વીડિયો જોબ્સ સબમિટ કરે છે, /v1/tasks/[id] ને પોલ કરે છે, અને પૂર્ણ થયેલા વીડિયો આઉટપુટને ફરીથી OpenAI જેવા /v1/videos/generations રિસ્પોન્સમાં નોર્મલાઇઝ કરે છે.",
       "sambanova": "સાઇનઅપ પર $5 મફત ક્રેડિટ્સ (30-દિવસની માન્યતા), કોઈ ક્રેડિટ કાર્ડની જરૂર નથી",
       "seekai": "Create an API key at https://seekai.cc, then paste it here as a Bearer token. OpenAI-compatible base URL: https://seekai.cc/v1.",
       "sap": "મોડલ ડિસ્કવરી AI_API_URL પર /v2/lm/scenarios/foundation-models/models નો ઉપયોગ કરે છે. ચેટ વિનંતીઓ deploymentUrl/chat/completions નો ઉપયોગ કરે છે અને તેના માટે AI-Resource-Group જરૂરી છે.",
-      "sarvam": "Sarvam AI OpenAI-સંગત છે /v1. OmniRoute /v1/models ને તપાસે છે અને ચેટ ટ્રાફિકને /v1/chat/completions પર રુટ કરે છે. મોડલ્સ ઇન્ડિક ભાષાઓ માટે ટ્યુન કરવામાં આવ્યા છે.",
+      "sarvam": "Sarvam AI OpenAI-સંગત છે /v1. AgentProxy /v1/models ને તપાસે છે અને ચેટ ટ્રાફિકને /v1/chat/completions પર રુટ કરે છે. મોડલ્સ ઇન્ડિક ભાષાઓ માટે ટ્યુન કરવામાં આવ્યા છે.",
       "scaleway": "નવા એકાઉન્ટ્સ માટે 1M મફત ટોકન્સ — EU/GDPR સુસંગત (પેરિસ), Qwen3 235B & Llama 70B",
       "sensenova": "platform.sensenova.cn પર API key મેળવો",
       "siliconflow": "ઓળખ ચકાસણી પછી $1 મફત ક્રેડિટ્સ અને કાયમી ધોરણે મફત મોડલ્સ",
@@ -6255,14 +6255,14 @@
       "sparkdesk": "console.xfyun.cn પર API key મેળવો",
       "stability-ai": "API key વડે Stability AI ને કનેક્ટ કરો.",
       "stepfun": "platform.stepfun.com પર API key મેળવો",
-      "sumopod": "SumoPod https://ai.sumopod.com/v1/chat/completions પર OpenAI-સુસંગત ચેટ કમ્પ્લીશન્સ એન્ડપોઇન્ટ પ્રદાન કરે છે, સાથે જ એક લાઈવ /v1/models કેટલોગ પણ આપે છે. OmniRoute OpenAI પ્રોટોકોલનો ઉપયોગ કરે છે અને પાસથ્રુ દ્વારા મોડલ્સની યાદી આપે છે.",
+      "sumopod": "SumoPod https://ai.sumopod.com/v1/chat/completions પર OpenAI-સુસંગત ચેટ કમ્પ્લીશન્સ એન્ડપોઇન્ટ પ્રદાન કરે છે, સાથે જ એક લાઈવ /v1/models કેટલોગ પણ આપે છે. AgentProxy OpenAI પ્રોટોકોલનો ઉપયોગ કરે છે અને પાસથ્રુ દ્વારા મોડલ્સની યાદી આપે છે.",
       "suno": "suno.ai (Clerk auth) માંથી સેશન કૂકી પેસ્ટ કરો",
       "synthetic": "API key વડે Synthetic ને કનેક્ટ કરો.",
       "tencent": "console.cloud.tencent.com પર API key મેળવો",
       "thebai": "TheB.AI OpenAI-સુસંગત ગેટવે માટે Bearer API key.",
       "tinyfish": "agent.tinyfish.ai/api-keys માંથી X-API-Key",
       "together": "API key વડે Together AI ને કનેક્ટ કરો.",
-      "tokenrouter": "TokenRouter https://api.tokenrouter.com/v1/chat/completions પર OpenAI-સુસંગત ચેટ કમ્પ્લીશન્સ એન્ડપોઇન્ટ પ્રદાન કરે છે, સાથે જ એક કાર્યરત /v1/models કેટલોગ પણ આપે છે. OmniRoute OpenAI પ્રોટોકોલનો ઉપયોગ કરે છે.",
+      "tokenrouter": "TokenRouter https://api.tokenrouter.com/v1/chat/completions પર OpenAI-સુસંગત ચેટ કમ્પ્લીશન્સ એન્ડપોઇન્ટ પ્રદાન કરે છે, સાથે જ એક કાર્યરત /v1/models કેટલોગ પણ આપે છે. AgentProxy OpenAI પ્રોટોકોલનો ઉપયોગ કરે છે.",
       "topaz": "API key વડે Topaz ને કનેક્ટ કરો.",
       "typhoon": "ટાઈફૂન /v1 પર OpenAI-સંગત છે. SCB 10X (થાઇલેન્ડ) દ્વારા બનાવવામાં આવ્યું; typhoon-v2.5-30b-a3b-instruct એ થાઈ-પ્રથમ, બહુભાષી મોડેલ છે.",
       "udio": "udio.com (Supabase auth) માંથી સત્ર કૂકી પેસ્ટ કરો",
@@ -6278,12 +6278,12 @@
       "wafer": "https://wafer.ai માંથી API કી",
       "wandb": "API કી વડે Weights & Biases Inference ને કનેક્ટ કરો.",
       "writer": "Writer Palmyra OpenAI-સંગત છે https://api.writer.com/v1. palmyra-x5 1M-ટોકન સંદર્ભ વિન્ડો આપે છે.",
-      "x5lab": "X5Lab https://api.x5lab.dev/v1/chat/completions પર OpenAI-સુસંગત ચેટ કમ્પ્લીશન્સ એન્ડપોઇન્ટ, વત્તા લાઇવ /v1/models કેટલોગ પ્રદર્શિત કરે છે. OmniRoute OpenAI પ્રોટોકોલનો ઉપયોગ કરે છે અને પાસથ્રુ દ્વારા મોડલ્સની સૂચિ બનાવે છે.",
+      "x5lab": "X5Lab https://api.x5lab.dev/v1/chat/completions પર OpenAI-સુસંગત ચેટ કમ્પ્લીશન્સ એન્ડપોઇન્ટ, વત્તા લાઇવ /v1/models કેટલોગ પ્રદર્શિત કરે છે. AgentProxy OpenAI પ્રોટોકોલનો ઉપયોગ કરે છે અને પાસથ્રુ દ્વારા મોડલ્સની સૂચિ બનાવે છે.",
       "xai": "API કી વડે xAI (Grok) ને કનેક્ટ કરો.",
       "xiaomi-mimo": "API કી વડે Xiaomi MiMo ને કનેક્ટ કરો.",
       "yi": "platform.lingyiwanwu.com પર API કી મેળવો",
       "zai": "https://open.bigmodel.cn/usercenter/apikeys માંથી API કી",
-      "zenmux": "ZenMux /api/v1/chat/completions પર OpenAI-સુસંગત ચેટ કમ્પ્લીશન્સ એન્ડપોઇન્ટ, વત્તા Anthropic Messages (/api/anthropic/v1/messages) અને Google Gemini (/api/vertex-ai) પ્રોટોકોલ સરફેસ પ્રદર્શિત કરે છે. OmniRoute OpenAI પ્રોટોકોલનો ઉપયોગ કરે છે.",
+      "zenmux": "ZenMux /api/v1/chat/completions પર OpenAI-સુસંગત ચેટ કમ્પ્લીશન્સ એન્ડપોઇન્ટ, વત્તા Anthropic Messages (/api/anthropic/v1/messages) અને Google Gemini (/api/vertex-ai) પ્રોટોકોલ સરફેસ પ્રદર્શિત કરે છે. AgentProxy OpenAI પ્રોટોકોલનો ઉપયોગ કરે છે.",
       "galadriel": "API કી વડે Galadriel ને કનેક્ટ કરો.",
       "predibase": "$25 મફત ટ્રાયલ ક્રેડિટ્સ (30-દિવસની માન્યતા)",
       "chenzk": "chenzk.top પર લાઇવ મોડલ કેટલોગ સાથે OpenAI-સુસંગત ગેટવે.",
@@ -6304,7 +6304,7 @@
       "cursor": "હાલના OAuth ફ્લો વડે Cursor IDE ને કનેક્ટ કરો.",
       "cursor-api": "Connect Cursor with a user API key (crsr_...) from cursor.com/dashboard/api; no IDE session needed.",
       "github": "હાલના OAuth ફ્લો વડે GitHub Copilot ને કનેક્ટ કરો.",
-      "gitlab-duo": "ai_features + read_user સ્કોપ્સ સાથેની OAuth એપ્લિકેશન. આ OmniRoute ઇન્સ્ટન્સ પર GITLAB_DUO_OAUTH_CLIENT_ID અને વૈકલ્પિક રીતે GITLAB_DUO_OAUTH_CLIENT_SECRET કન્ફિગર કરો.",
+      "gitlab-duo": "ai_features + read_user સ્કોપ્સ સાથેની OAuth એપ્લિકેશન. આ AgentProxy ઇન્સ્ટન્સ પર GITLAB_DUO_OAUTH_CLIENT_ID અને વૈકલ્પિક રીતે GITLAB_DUO_OAUTH_CLIENT_SECRET કન્ફિગર કરો.",
       "kilocode": "હાલના OAuth ફ્લો વડે Kilo Code ને કનેક્ટ કરો.",
       "kimi-coding": "હાલના OAuth ફ્લો વડે Kimi Coding ને કનેક્ટ કરો.",
       "kiro": "મફત સ્તર: 50 ક્રેડિટ્સ/મહિનો (~25K–100K ટોકન્સ). ⚠️ Kiro ToS તૃતીય-પક્ષ પ્રોક્સી/હાર્નેસના ઉપયોગ પર પ્રતિબંધ મૂકે છે.",
@@ -6375,10 +6375,10 @@
     "bulkAddFormatHintCloudflare": "લાઇન દીઠ એક કી. ફોર્મેટ: name|accountId|apiKey (Cloudflare એકાઉન્ટ ID + API ટોકન).",
     "lmarenaWebCookieHint": "arena.ai ખોલો, સાઇન ઇન કરો, પછી Network વિનંતીમાંથી સંપૂર્ણ Cookie હેડર કૉપિ કરો. arena-auth-prod-v1.0 અને arena-auth-prod-v1.1 (અને જો હાજર હોય તો આગળના ભાગો) શામેલ કરો, પ્રાધાન્યમાં cf_clearance સાથે. ફક્ત ખાલી arena-auth-prod-v1 કૂકી પેસ્ટ કરશો નહીં. વૈકલ્પિક: providerSpecificData.recaptchaV3Token જો create-evaluation હજી પણ 403 પરત કરે છે.",
     "kimiOfficialSupporterBadge": "સ્થાપક મિત્ર",
-    "kimiOfficialSupporterTooltip": "Kimi (Moonshot AI) એ OmniRoute નો સ્થાપક ઓપન સોર્સ મિત્ર છે",
+    "kimiOfficialSupporterTooltip": "Kimi (Moonshot AI) એ AgentProxy નો સ્થાપક ઓપન સોર્સ મિત્ર છે",
     "cheaperInferenceSupporterBadge": "ઓપન સોર્સ મિત્ર",
-    "cheaperInferenceSupporterTooltip": "Cheaper Inference ઓપન સોર્સ મિત્ર તરીકે OmniRoute ને સમર્થન આપે છે",
-    "kimiPartnerLinkNote": "પાર્ટનર લિંક — તમારા માટે કોઈ વધારાના ખર્ચ વિના OmniRoute ને સપોર્ટ કરે છે",
+    "cheaperInferenceSupporterTooltip": "Cheaper Inference ઓપન સોર્સ મિત્ર તરીકે AgentProxy ને સમર્થન આપે છે",
+    "kimiPartnerLinkNote": "પાર્ટનર લિંક — તમારા માટે કોઈ વધારાના ખર્ચ વિના AgentProxy ને સપોર્ટ કરે છે",
     "codexQuotaPools": "Codex ક્વોટા પૂલ",
     "codexPoolAvailable": "ઉપલબ્ધ",
     "codexPoolPartiallyLimited": "આંશિક રીતે મર્યાદિત",
@@ -6499,7 +6499,7 @@
     "routingOpDropBlockContainsDesc": "સંપૂર્ણ સિસ્ટમ બ્લોક્સ (માત્ર ફકરા જ નહીં) દૂર કરે છે જેમના ટેક્સ્ટમાં સૂચિબદ્ધ સબસ્ટ્રિંગ્સમાંથી કોઈપણ શામેલ હોય. જ્યારે આખો બ્લોક ફિંગરપ્રિન્ટ ધરાવતો હોય અને તમે તેને દૂર કરવા માંગતા હોવ ત્યારે ઉપયોગ કરો — દા.ત. ઇન્જેક્ટ કરેલ MCP-સર્વર વર્ણન.",
     "routingOpPrependSystemBlockDesc": "સિસ્ટમ એરેની શરૂઆતમાં એક નવો ટેક્સ્ટ બ્લોક દાખલ કરે છે. SDK ઓળખ 'You are a Claude agent, built on Anthropic's Claude Agent SDK.' ઉમેરવા માટે ઉપયોગ કરો જેની Anthropic નું ક્લાસિફાયર અપેક્ષા રાખે છે.",
     "routingOpAppendSystemBlockDesc": "સિસ્ટમ એરેના અંતમાં એક નવો ટેક્સ્ટ બ્લોક દાખલ કરે છે. કોસ્મેટિક ઉમેરાઓ માટે ઉપયોગ કરો જેને સ્થાન [0] પર હોવાની જરૂર નથી.",
-    "routingOpInjectBillingHeaderDesc": "વિશિષ્ટ 'x-anthropic-billing-header: cc_version=...; cc_entrypoint=...; cch=...;' ટેક્સ્ટ બ્લોકને આગળ ઉમેરે છે જેને Anthropic નું વર્ગીકૃતકર્તા (classifier) માન્ય કરે છે. CC બ્રિજ રિલે એન્ડપોઇન્ટ્સ માટે જરૂરી છે; મૂળ claude પ્રદાતા માટે OmniRoute પહેલેથી જ તેની પોતાની બિલિંગ લાઇન ઇન્જેક્ટ કરે છે તેથી આ op સામાન્ય રીતે ત્યાં બિનજરૂરી છે.",
+    "routingOpInjectBillingHeaderDesc": "વિશિષ્ટ 'x-anthropic-billing-header: cc_version=...; cc_entrypoint=...; cch=...;' ટેક્સ્ટ બ્લોકને આગળ ઉમેરે છે જેને Anthropic નું વર્ગીકૃતકર્તા (classifier) માન્ય કરે છે. CC બ્રિજ રિલે એન્ડપોઇન્ટ્સ માટે જરૂરી છે; મૂળ claude પ્રદાતા માટે AgentProxy પહેલેથી જ તેની પોતાની બિલિંગ લાઇન ઇન્જેક્ટ કરે છે તેથી આ op સામાન્ય રીતે ત્યાં બિનજરૂરી છે.",
     "routingOpObfuscateWordsDesc": "દરેક સૂચિબદ્ધ શબ્દના પ્રથમ અક્ષર પછી ઝીરો-વિડ્થ-જોઇનર (Zero-Width-Joiner) અક્ષર દાખલ કરે છે, જેથી 'opencode' એ 'o‍pencode' બની જાય છે. મનુષ્યો માટે સમાન વંચાય છે પરંતુ વર્ગીકૃતકર્તા (classifier) ના શબ્દ મેળને બાયપાસ કરે છે. સિસ્ટમ બ્લોક્સ, વપરાશકર્તા/સહાયક સંદેશાઓ અને ટૂલ વર્ણનોને લક્ષ્ય બનાવે છે.",
     "routingNeedlesHint": "સબસ્ટ્રિંગ્સની સૂચિ. જો કોઈ ફકરામાં તેમાંથી કોઈપણ એક શામેલ હોય તો તે મેળ ખાય છે. 'Add entry' દ્વારા પ્રતિ લાઇન એક ઉમેરો.",
     "routingPrefixesHint": "સ્ટ્રિંગ્સની સૂચિ. જો કોઈ ફકરો તેમાંથી કોઈપણ એકથી શરૂ થાય તો તે મેળ ખાય છે (મેળ ખાતા પહેલા આગળની ખાલી જગ્યા કાપી નાખવામાં આવે છે).",
@@ -6512,7 +6512,7 @@
     "routingBlockTextHint": "નવા સિસ્ટમ બ્લોકનો સંપૂર્ણ ટેક્સ્ટ. શાબ્દિક સ્ટ્રિંગનો ઉપયોગ કરો; સિસ્ટમ બ્લોક ફક્ત ટેક્સ્ટ સ્ટોર કરે છે.",
     "routingIdempotencyKeyHint": "વૈકલ્પિક. જો સેટ કરેલ હોય, તો જ્યારે આ કીથી શરૂ થતો ટેક્સ્ટ બ્લોક પહેલેથી હાજર હોય ત્યારે op સ્કીપ થાય છે. પુનઃપ્રયાસો પર ડબલ-પ્રિપેન્ડને અટકાવે છે.",
     "routingBillingEntrypointHint": "'cc_entrypoint=' તરીકે ઇન્જેક્ટ કરેલ મૂલ્ય. Anthropic 'sdk-cli' (Agent SDK), 'cli' (Claude Code CLI), અથવા અન્ય દસ્તાવેજીકૃત મૂલ્યો સ્વીકારે છે.",
-    "routingBillingVersionFormatHint": "cc_version= પછી 3-અક્ષરનો બિલ્ડ હેશ કેવી રીતે ગણવામાં આવે છે. 'ex-machina' = CCH_SALT+પ્રથમ-વપરાશકર્તા-સંદેશના-અક્ષરો+સંસ્કરણ (પ્રતિ-સંદેશ) નું sha256. 'omniroute-daystamp' = YYYY-MM-DD+સંસ્કરણ (સ્થિર પ્રતિ-દિવસ) નું sha256.",
+    "routingBillingVersionFormatHint": "cc_version= પછી 3-અક્ષરનો બિલ્ડ હેશ કેવી રીતે ગણવામાં આવે છે. 'ex-machina' = CCH_SALT+પ્રથમ-વપરાશકર્તા-સંદેશના-અક્ષરો+સંસ્કરણ (પ્રતિ-સંદેશ) નું sha256. 'agentproxy-daystamp' = YYYY-MM-DD+સંસ્કરણ (સ્થિર પ્રતિ-દિવસ) નું sha256.",
     "routingBillingCchAlgoHint": "5-અક્ષરનો cch= ટોકન કેવી રીતે ગણવામાં આવે છે. 'sha256-first-user' = પ્રથમ વપરાશકર્તા સંદેશ ટેક્સ્ટનું sha256. 'xxhash64-body' = બોડી-લેવલ સાઇનિંગ તેને પછીથી ભરે છે. 'static-zero' = શાબ્દિક '00000' પ્લેસહોલ્ડર.",
     "routingObfuscateWordsHint": "અસ્પષ્ટ (obfuscate) કરવા માટેના નાના અક્ષરોના (lowercase) શબ્દો. ZWJ શામેલ કરવાની પ્રક્રિયા કેસ-અસંવેદનશીલ રીતે લાગુ થાય છે, તેથી 'opencode' એ 'OpenCode' અને 'OPENCODE' સાથે પણ મેળ ખાય છે.",
     "routingObfuscateTargetsHint": "શબ્દો માટે કયા બોડી વિસ્તારોને સ્કેન કરવા: સિસ્ટમ બ્લોક્સ, વપરાશકર્તા/સહાયક સંદેશાઓ અને/અથવા ટૂલ વર્ણનો.",
@@ -6589,8 +6589,8 @@
     "memoryTitle": "Memory",
     "memoryDesc": "Persistent cross-session conversational memory",
     "memoryEnabled": "Enable Memory",
-    "memoryEnabledDesc": "When enabled, OmniRoute will inject relevant past context.",
-    "memoryTokenCostWarning": "ધ્યાન આપો: મેમરી સક્ષમ હોવા સાથે, OmniRoute દરેક ચેટ વિનંતીમાં પુનઃપ્રાપ્ત સંદર્ભના {tokens} ટોકન્સ સુધી ઇન્જેક્ટ કરે છે — આ ટોકન વપરાશ અને ખર્ચમાં વધારો કરે છે. ચોક્કસ વિનંતી માટે ઇન્જેક્શન છોડવા માટે, \"x-omniroute-no-memory: true\" હેડર મોકલો.",
+    "memoryEnabledDesc": "When enabled, AgentProxy will inject relevant past context.",
+    "memoryTokenCostWarning": "ધ્યાન આપો: મેમરી સક્ષમ હોવા સાથે, AgentProxy દરેક ચેટ વિનંતીમાં પુનઃપ્રાપ્ત સંદર્ભના {tokens} ટોકન્સ સુધી ઇન્જેક્ટ કરે છે — આ ટોકન વપરાશ અને ખર્ચમાં વધારો કરે છે. ચોક્કસ વિનંતી માટે ઇન્જેક્શન છોડવા માટે, \"x-agentproxy-no-memory: true\" હેડર મોકલો.",
     "maxTokens": "Max Tokens",
     "retentionDays": "Retention",
     "recent": "Recent",
@@ -6688,7 +6688,7 @@
     "autoDisableThreshold": "Ban Threshold",
     "autoDisableThresholdDesc": "Consecutive ban signals required before permanent deactivation.",
     "autoDisableBannedScope": "Apply auto-disable to",
-    "autoDisableBannedScopeDesc": "Login seats (paid subscriptions and free accounts) can be locked by the upstream if OmniRoute keeps retrying after a ban. Paid prepaid API keys do not have that risk — leave them in the pool so fill-first can use the next key.",
+    "autoDisableBannedScopeDesc": "Login seats (paid subscriptions and free accounts) can be locked by the upstream if AgentProxy keeps retrying after a ban. Paid prepaid API keys do not have that risk — leave them in the pool so fill-first can use the next key.",
     "autoDisableBannedScopeAll": "All connections",
     "autoDisableBannedScopeAllDesc": "Deactivate every connection that returns a permanent ban signal, including prepaid API keys.",
     "autoDisableBannedScopeSubscription": "Login / subscription accounts only",
@@ -6792,7 +6792,7 @@
     "invalidFaviconFileType": "અમાન્ય ફાઇલ પ્રકાર. કૃપા કરીને PNG, ICO, SVG, GIF અથવા WebP અપલોડ કરો.",
     "failedToReadFile": "ફાઇલ વાંચવામાં નિષ્ફળ",
     "startOnLogin": "લોગિન પર શરૂ કરો",
-    "startOnLoginDesc": "સિસ્ટમ સ્ટાર્ટઅપ પર આપમેળે OmniRoute લોંચ કરો અને બેકગ્રાઉન્ડ ટ્રેમાં શાંતિથી ચલાવો.",
+    "startOnLoginDesc": "સિસ્ટમ સ્ટાર્ટઅપ પર આપમેળે AgentProxy લોંચ કરો અને બેકગ્રાઉન્ડ ટ્રેમાં શાંતિથી ચલાવો.",
     "flushCache": "Flush Cache",
     "flushing": "Flushing…",
     "size": "Size",
@@ -6854,7 +6854,7 @@
       "consecutiveFailures": "{count} સળંગ નિષ્ફળતાઓ",
       "lastError": "છેલ્લી ભૂલ: {time}",
       "coreHintTitle": "આ સબ્સ્ક્રિપ્શનમાં {count} નોડ્સ છે જેને સ્થાનિક પ્રોક્સી કોર (SS/VMess/Trojan/VLESS, વગેરે)ની જરૂર છે અને હાલમાં રૂટ કરેલ નથી.",
-      "coreHintDesc": "આ પ્રોટોકોલ્સ OmniRoute દ્વારા સીધા જ ફોરવર્ડ કરી શકાતા નથી. કૃપા કરીને તમારા મશીન પર સિંગ-બોક્સ અથવા ક્લેશ (Clash.Meta) કોર શરૂ કરો, તેને SOCKS5/HTTP એન્ડપોઇન્ટ તરીકે ઉજાગર કરો અને તેને સંપાદન દ્વારા ભરો (માત્ર 127.0.0.1 / લોકલહોસ્ટ સ્વીકારવામાં આવે છે).",
+      "coreHintDesc": "આ પ્રોટોકોલ્સ AgentProxy દ્વારા સીધા જ ફોરવર્ડ કરી શકાતા નથી. કૃપા કરીને તમારા મશીન પર સિંગ-બોક્સ અથવા ક્લેશ (Clash.Meta) કોર શરૂ કરો, તેને SOCKS5/HTTP એન્ડપોઇન્ટ તરીકે ઉજાગર કરો અને તેને સંપાદન દ્વારા ભરો (માત્ર 127.0.0.1 / લોકલહોસ્ટ સ્વીકારવામાં આવે છે).",
       "copy": "નકલ કરો",
       "goConfigure": "રૂપરેખાંકિત કરો",
       "disable": "અક્ષમ કરો",
@@ -6902,7 +6902,7 @@
     "healthcheckProxyUrl": "Proxy URL",
     "healthcheckLatency": "Latency",
     "proxyDocumentationScopeTitle": "પ્રોક્સી સ્કોપ રિઝોલ્યુશન",
-    "proxyDocumentationScopeDescBefore": "OmniRoute આઉટબાઉન્ડ પ્રોક્સીને પ્રાધાન્યતા ક્રમમાં રિઝોલ્વ કરે છે:",
+    "proxyDocumentationScopeDescBefore": "AgentProxy આઉટબાઉન્ડ પ્રોક્સીને પ્રાધાન્યતા ક્રમમાં રિઝોલ્વ કરે છે:",
     "proxyDocumentationScopeOrder": "combo → account → provider → global",
     "proxyDocumentationScopeDescAfter": ". સૌથી વિશિષ્ટ સ્કોપ જીતે છે.",
     "proxyDocumentationAddTitle": "કસ્ટમ પ્રોક્સી ઉમેરવી",
@@ -7564,7 +7564,7 @@
     "qdrantEmbeddingModel": "Embedding model",
     "qdrantHelpTitle": "Quick setup help",
     "qdrantHelpQuickTitle": "Quick setup (Qdrant + OpenRouter)",
-    "qdrantHelpStep1": "1. Host: Qdrant IP/URL, Port: 6333, Collection: omniroute_memory.",
+    "qdrantHelpStep1": "1. Host: Qdrant IP/URL, Port: 6333, Collection: agentproxy_memory.",
     "qdrantHelpStep2": "2. If using nvidia/llama-nemotron-embed-vl-1b-v2:free, use collection dimension 2048.",
     "qdrantHelpStep3": "3. Model field: openrouter/nvidia/llama-nemotron-embed-vl-1b-v2:free.",
     "qdrantHelpStep4": "4. Save, test connection, then test search.",
@@ -7659,9 +7659,9 @@
     "oneproxySuccess": "સફળતા",
     "oneproxyFailed": "નિષ્ફળ",
     "routingAntigravitySignatureTitle": "એન્ટિગ્રેવિટી સિગ્નેચર કેશ મોડ",
-    "routingAntigravitySignatureDesc": "OmniRoute ફક્ત સંગ્રહિત Gemini thought signatures નો ફરીથી ઉપયોગ કરે છે કે Antigravity-સુસંગત ટૂલ-કૉલ ફ્લોમાં માન્ય ક્લાયંટ-પ્રદાન કરેલ સિગ્નેચર્સ સ્વીકારે છે તે નિયંત્રિત કરો.",
+    "routingAntigravitySignatureDesc": "AgentProxy ફક્ત સંગ્રહિત Gemini thought signatures નો ફરીથી ઉપયોગ કરે છે કે Antigravity-સુસંગત ટૂલ-કૉલ ફ્લોમાં માન્ય ક્લાયંટ-પ્રદાન કરેલ સિગ્નેચર્સ સ્વીકારે છે તે નિયંત્રિત કરો.",
     "routingAntigravitySignatureEnabledLabel": "સક્ષમ કરેલ",
-    "routingAntigravitySignatureEnabledDesc": "વર્તમાન વર્તણૂક. ક્લાયંટ-પ્રદાન કરેલ સિગ્નેચર્સને અવગણો અને સંગ્રહિત OmniRoute ફ્લોનો ઉપયોગ કરવાનું ચાલુ રાખો.",
+    "routingAntigravitySignatureEnabledDesc": "વર્તમાન વર્તણૂક. ક્લાયંટ-પ્રદાન કરેલ સિગ્નેચર્સને અવગણો અને સંગ્રહિત AgentProxy ફ્લોનો ઉપયોગ કરવાનું ચાલુ રાખો.",
     "routingAntigravitySignatureBypassLabel": "બાયપાસ",
     "routingAntigravitySignatureBypassDesc": "હળવા વજનના માન્યીકરણ પછી ક્લાયંટ-પ્રદાન કરેલ સિગ્નેચર્સ સ્વીકારો અને અમાન્ય હોય ત્યારે સંગ્રહિત સિગ્નેચર પર પાછા જાઓ.",
     "routingAntigravitySignatureBypassStrictLabel": "બાયપાસ સ્ટ્રિક્ટ",
@@ -7670,12 +7670,12 @@
     "routingServerRejectedSave": "⚠ સર્વરે નકાર્યું સાચવો:",
     "routingAddTransformOp": "ટ્રાન્સફોર્મ ઓપ ઉમેરો",
     "routingClientCacheControlTitle": "ક્લાયંટ કેશ નિયંત્રણ",
-    "routingClientCacheControlDesc": "OmniRoute ક્લાયંટ-પ્રદાન કરેલ cache_control માર્કર્સ સાચવે છે કે નહીં તે ગોઠવો",
-    "routingClientCacheControlAutoDesc": "નિર્ધારિત Claude-સુસંગત ફ્લો માટે, ક્લાયંટ-પ્રદાન કરેલ cache_control ને જેમ છે તેમ સાચવો. જો વિનંતીમાં કોઈ cache_control ન હોય, તો OmniRoute CC-સુસંગત તૃતીય-પક્ષ પ્રોક્સી સુસંગતતા માટે કોઈપણ બ્રિજ-માલિકીના માર્કર્સ ઇન્જેક્ટ કરતું નથી.",
+    "routingClientCacheControlDesc": "AgentProxy ક્લાયંટ-પ્રદાન કરેલ cache_control માર્કર્સ સાચવે છે કે નહીં તે ગોઠવો",
+    "routingClientCacheControlAutoDesc": "નિર્ધારિત Claude-સુસંગત ફ્લો માટે, ક્લાયંટ-પ્રદાન કરેલ cache_control ને જેમ છે તેમ સાચવો. જો વિનંતીમાં કોઈ cache_control ન હોય, તો AgentProxy CC-સુસંગત તૃતીય-પક્ષ પ્રોક્સી સુસંગતતા માટે કોઈપણ બ્રિજ-માલિકીના માર્કર્સ ઇન્જેક્ટ કરતું નથી.",
     "routingClientCacheControlAlwaysLabel": "હંમેશા સાચવો",
     "routingClientCacheControlAlwaysDesc": "હંમેશા ક્લાયંટ-પ્રદાન કરેલ cache_control હેડર્સને અપસ્ટ્રીમ પ્રદાતાઓને જેમ છે તેમ ફોરવર્ડ કરો.",
     "routingClientCacheControlNeverLabel": "ક્યારેય સાચવશો નહીં",
-    "routingClientCacheControlNeverDesc": "હંમેશા ક્લાયંટ cache_control હેડર્સ દૂર કરો અને જ્યાં મૂળ પ્રદાતા ફ્લો તેને સપોર્ટ કરે છે ત્યાં OmniRoute ને કૅશિંગ મેનેજ કરવા દો.",
+    "routingClientCacheControlNeverDesc": "હંમેશા ક્લાયંટ cache_control હેડર્સ દૂર કરો અને જ્યાં મૂળ પ્રદાતા ફ્લો તેને સપોર્ટ કરે છે ત્યાં AgentProxy ને કૅશિંગ મેનેજ કરવા દો.",
     "routingZeroConfigTitle": "ઝીરો-કોન્ફિગ ઓટો-રાઉટીંગ",
     "routingZeroConfigDesc": "auto/ ઉપસર્ગનો ઉપયોગ કરીને સ્વચાલિત પ્રદાતા પસંદગી સક્ષમ કરો. જ્યારે સક્ષમ હોય, ત્યારે auto, auto/coding, auto/fast, વગેરેની વિનંતીઓ તમામ કનેક્ટેડ પ્રદાતાઓ પર ગતિશીલ રીતે રૂટ થશે.",
     "routingDefaultAutoVariant": "ડિફોલ્ટ ઓટો વેરિઅન્ટ",
@@ -7687,7 +7687,7 @@
     "visionBridgeRerouteTextOnlyDesc": "ચૂંટાયેલ મોડેલમાં છબીનો ઇનપુટ ન હોય ત્યારે છબીઓ સહિત સંપૂર્ણ વિનંતી બ્રિજ મોડેલને મોકલો.",
     "visionBridgeModel": "બ્રિજ મોડલ",
     "visionBridgeModelPlaceholder": "openai/gpt-4o-mini",
-    "visionBridgeModelHint": "વિઝનને સપોર્ટ કરતું કોઈપણ OmniRoute મોડેલ ID અહીં વાપરી શકાય છે.",
+    "visionBridgeModelHint": "વિઝનને સપોર્ટ કરતું કોઈપણ AgentProxy મોડેલ ID અહીં વાપરી શકાય છે.",
     "visionBridgePrompt": "બ્રિજ પ્રોમ્પ્ટ",
     "visionBridgePromptPlaceholder": "આ છબીનું સંક્ષિપ્તમાં વર્ણન કરો.",
     "visionBridgePromptHint": "એક્સટ્રેક્ટ કરેલ વર્ણન મૂળ વિનંતીમાં પાછું ઇન્જેક્ટ કરવામાં આવે તે પહેલાં વિઝન મોડેલ પર મોકલવામાં આવે છે.",
@@ -7805,7 +7805,7 @@
     "redisLauncherRunning": "ચાલુ છે",
     "redisLauncherReachable": "પહોંચવા યોગ્ય",
     "redisLauncherError": "ભૂલ: {message}",
-    "redisLauncherHint": "`omniroute redis up` ચલાવવા સમાન. કન્ટેનરનું નામ `omniroute-redis` છે અને તે 127.0.0.1:6379 પર લિસન કરે છે.",
+    "redisLauncherHint": "`agentproxy redis up` ચલાવવા સમાન. કન્ટેનરનું નામ `agentproxy-redis` છે અને તે 127.0.0.1:6379 પર લિસન કરે છે.",
     "compressionSettingsAutoTriggerMode": "સ્વતઃ ટ્રિગર મોડ",
     "compressionSettingsMcpDescriptionCompression": "MCP વર્ણન સંકોચન",
     "mcpAccessibilityTitle": "MCP ઍક્સેસિબિલિટી આઉટપુટ",
@@ -7927,7 +7927,7 @@
     "cliproxyapiStatus": "CLIProxyAPI સ્થિતિ",
     "cliproxyapiNotDetected": "શોધાયેલ નથી",
     "cliproxyapiImportAuthTitle": "CLIProxyAPI માંથી એકાઉન્ટ્સ આયાત કરો",
-    "cliproxyapiImportAuthDesc": "CLIProxyAPI એ ~/.cli-proxy-api/ માં પહેલેથી જ સાચવેલા OAuth એકાઉન્ટ્સને OmniRoute કનેક્શન્સ તરીકે આયાત કરો, જેથી તમારે દરેક એકાઉન્ટમાં ફરીથી લોગ ઇન કરવું ન પડે. સપોર્ટેડ એકાઉન્ટ પ્રકારો (Gemini, Codex, Claude, Antigravity, Qwen, Kimi) આયાત કરવામાં આવે છે; અન્યને છોડી દેવામાં આવે છે.",
+    "cliproxyapiImportAuthDesc": "CLIProxyAPI એ ~/.cli-proxy-api/ માં પહેલેથી જ સાચવેલા OAuth એકાઉન્ટ્સને AgentProxy કનેક્શન્સ તરીકે આયાત કરો, જેથી તમારે દરેક એકાઉન્ટમાં ફરીથી લોગ ઇન કરવું ન પડે. સપોર્ટેડ એકાઉન્ટ પ્રકારો (Gemini, Codex, Claude, Antigravity, Qwen, Kimi) આયાત કરવામાં આવે છે; અન્યને છોડી દેવામાં આવે છે.",
     "cliproxyapiImportAuthButton": "એકાઉન્ટ્સ આયાત કરો",
     "payloadRulesTitle": "પેલોડ નિયમો",
     "payloadRulesDesc": "મોડેલ અને પ્રોટોકોલ દ્વારા વિનંતી પેલોડ મ્યુટેશન ગોઠવો. ફેરફારો સેટિંગ્સમાં સાચવવામાં આવે છે અને સેવ કર્યા પછી તરત જ રનટાઇમમાં હોટ રીલોડ થાય છે.",
@@ -7971,7 +7971,7 @@
     "modelCooldownsReasonRemaining": "કારણ: {reason} • બાકી: {remaining}",
     "modelCooldownsReactivate": "પુનઃસક્રિય કરો",
     "responsesStateTitle": "Responses સ્ટેટ",
-    "responsesStateDesc": "OmniRoute કેવી રીતે previous_response_id ફોરવર્ડ કરે છે તે નિયંત્રિત કરો.",
+    "responsesStateDesc": "AgentProxy કેવી રીતે previous_response_id ફોરવર્ડ કરે છે તે નિયંત્રિત કરો.",
     "responsesStateModeLabel": "previous_response_id હેન્ડલિંગ",
     "responsesStateModeAuto": "ઓટો",
     "responsesStateModeStrip": "સ્ટ્રીપ",
@@ -7980,7 +7980,7 @@
     "responsesStateSaveError": "Responses સ્ટેટ સેટિંગ અપડેટ કરવામાં નિષ્ફળ",
     "codexFastTierTitle": "કોડેક્સ ફાસ્ટ ટાયર",
     "codexFastTierDesc": "OpenAI કોડેક્સ વિનંતીઓ માટે વૈશ્વિક સ્તરે service_tier=પ્રાયોરિટી દાખલ કરો.",
-    "codexFastTierHint": "જ્યારે સક્ષમ હોય, ત્યારે OmniRoute કનેક્શન્સ માટે આઉટબાઉન્ડ કોડેક્સ વિનંતીઓમાં service_tier=priority ઉમેરે છે જે પહેલાથી કોઈ સ્તરનો ઉલ્લેખ કરતા નથી. પ્રાધાન્યતા સ્તર માટે OpenAI Enterprise API કી અથવા ChatGPT-auth Codex પાથની જરૂર છે; અન્ય કી પ્રકારો OpenAI તરફથી ટાયર-સંબંધિત ભૂલ પ્રાપ્ત કરશે. કોડેક્સ પ્રદાતા પૃષ્ઠ પર પ્રતિ-કનેક્શન સેટિંગ્સ અગ્રતા લે છે.",
+    "codexFastTierHint": "જ્યારે સક્ષમ હોય, ત્યારે AgentProxy કનેક્શન્સ માટે આઉટબાઉન્ડ કોડેક્સ વિનંતીઓમાં service_tier=priority ઉમેરે છે જે પહેલાથી કોઈ સ્તરનો ઉલ્લેખ કરતા નથી. પ્રાધાન્યતા સ્તર માટે OpenAI Enterprise API કી અથવા ChatGPT-auth Codex પાથની જરૂર છે; અન્ય કી પ્રકારો OpenAI તરફથી ટાયર-સંબંધિત ભૂલ પ્રાપ્ત કરશે. કોડેક્સ પ્રદાતા પૃષ્ઠ પર પ્રતિ-કનેક્શન સેટિંગ્સ અગ્રતા લે છે.",
     "codexFastTierSaveError": "કોડેક્સ ફાસ્ટ ટિયર સેટિંગ અપડેટ કરવામાં નિષ્ફળ",
     "codexAutoPingTitle": "Codex Quota Auto-Ping",
     "codexAutoPingDesc": "Opt-in per connection: sends a tiny request right after a Codex session window resets so it isn't cold when you need it.",
@@ -7996,7 +7996,7 @@
     "codexFastTierModelCheckbox": "{model} માટે ફાસ્ટ ટિયર સક્ષમ કરો",
     "claudeFastModeTitle": "ક્લાઉડ ફાસ્ટ મોડ",
     "claudeFastModeDesc": "પસંદ કરેલ ક્લાઉડ વિનંતીઓને એન્થ્રોપિક ફાસ્ટ મોડમાં પસંદ કરો (સ્પીડ:\"ઝડપી\").",
-    "claudeFastModeHint": "એન્થ્રોપિક સત્તાવાર રીતે SDK-શૈલીના ક્લાયન્ટ્સ માટે ફાસ્ટ મોડને સપોર્ટ કરતું નથી. જ્યારે સક્ષમ હોય, ત્યારે OmniRoute X-CPA-Force-Fast-Mode હેડરને ફોરવર્ડ કરે છે જેથી જોડી CLIProxyAPI બિલ્ડ એન્ટ્રીપોઈન્ટને સ્પૂફ કરી શકે. એન્થ્રોપિકના ક્લાયન્ટ-સાઇડ ચેક દ્વારા ફક્ત લિસ્ટેડ ઓપસ મોડલ્સને ગેટ કરવામાં આવે છે. સબ્સ્ક્રિપ્શન ટાયર, મેક્સ પ્લાન, અને ફાસ્ટ મોડ ક્રેડિટ બેલેન્સ હજુ પણ સર્વર-સાઇડ લાગુ કરવામાં આવે છે — જ્યારે ટૉગલ ચાલુ હોય ત્યારે પણ એન્થ્રોપિક ક્રેડિટમાંથી_બહાર પરત આવી શકે છે.",
+    "claudeFastModeHint": "એન્થ્રોપિક સત્તાવાર રીતે SDK-શૈલીના ક્લાયન્ટ્સ માટે ફાસ્ટ મોડને સપોર્ટ કરતું નથી. જ્યારે સક્ષમ હોય, ત્યારે AgentProxy X-CPA-Force-Fast-Mode હેડરને ફોરવર્ડ કરે છે જેથી જોડી CLIProxyAPI બિલ્ડ એન્ટ્રીપોઈન્ટને સ્પૂફ કરી શકે. એન્થ્રોપિકના ક્લાયન્ટ-સાઇડ ચેક દ્વારા ફક્ત લિસ્ટેડ ઓપસ મોડલ્સને ગેટ કરવામાં આવે છે. સબ્સ્ક્રિપ્શન ટાયર, મેક્સ પ્લાન, અને ફાસ્ટ મોડ ક્રેડિટ બેલેન્સ હજુ પણ સર્વર-સાઇડ લાગુ કરવામાં આવે છે — જ્યારે ટૉગલ ચાલુ હોય ત્યારે પણ એન્થ્રોપિક ક્રેડિટમાંથી_બહાર પરત આવી શકે છે.",
     "claudeFastModeModelsLabel": "મોડલ્સ પર લાગુ ({count})",
     "claudeFastModeModelCheckbox": "{model} માટે ફાસ્ટ મોડને સક્ષમ કરો",
     "claudeFastModeSaveError": "ક્લાઉડ ફાસ્ટ મોડ સેટિંગ અપડેટ કરવામાં નિષ્ફળ",
@@ -8094,7 +8094,7 @@
     "resilienceWaitForCooldownEffect": "સર્વર પર રાહ જુએ છે અને જ્યારે પ્રથમ કૂલડાઉન સમાપ્ત થાય ત્યારે ફરીથી પ્રયાસ કરે છે",
     "resilienceWaitForCooldownDesc": "આ ફક્ત વર્તમાન વિનંતીને અસર કરે છે. તે કનેક્શન અથવા પ્રદાતા રાજ્યને સંગ્રહિત કરતું નથી.",
     "resilienceEnableServerWait": "સર્વર-સાઇડ રાહ સક્ષમ કરો",
-    "resilienceEnableServerWaitDesc": "જ્યારે સક્ષમ હોય, ત્યારે OmniRoute પ્રથમ કૂલડાઉન સમાપ્ત થવાની રાહ જુએ છે અને આપમેળે ફરી પ્રયાસ કરે છે.",
+    "resilienceEnableServerWaitDesc": "જ્યારે સક્ષમ હોય, ત્યારે AgentProxy પ્રથમ કૂલડાઉન સમાપ્ત થવાની રાહ જુએ છે અને આપમેળે ફરી પ્રયાસ કરે છે.",
     "resilienceMaxAttempts": "મહત્તમ પ્રયાસો",
     "resilienceMaxWaitPerAttempt": "પ્રયાસ દીઠ મહત્તમ રાહ જુઓ",
     "resilienceComboCooldownWaitTitle": "ક્વોટા-શેર કોમ્બો કૂલડાઉન પ્રતીક્ષા",
@@ -8137,7 +8137,7 @@
     "vercelRelaySuccess": "Vercel Relay સફળતાપૂર્વક ડિપ્લોય થયું",
     "vercelRelayButton": "Vercel Relay ડિપ્લોય કરો",
     "vercelRelayModalTitle": "Vercel Relay ડિપ્લોય કરો",
-    "vercelRelayWarning": "ચેતવણી: Vercel ડિપ્લોયમેન્ટ ટોકન આવશ્યક છે. આ ટોકનનો ઉપયોગ ફક્ત સર્વરલેસ રિલે બનાવવા માટે કરવામાં આવશે અને તેને OmniRoute દ્વારા ક્યારેય સંગ્રહિત કરવામાં આવશે નહીં.",
+    "vercelRelayWarning": "ચેતવણી: Vercel ડિપ્લોયમેન્ટ ટોકન આવશ્યક છે. આ ટોકનનો ઉપયોગ ફક્ત સર્વરલેસ રિલે બનાવવા માટે કરવામાં આવશે અને તેને AgentProxy દ્વારા ક્યારેય સંગ્રહિત કરવામાં આવશે નહીં.",
     "vercelRelayTokenLabel": "Vercel એક્સેસ ટોકન",
     "vercelRelayProjectNameLabel": "Vercel પ્રોજેક્ટ નામ",
     "vercelRelayFreeTierNote": "રિલે એ સ્થાનિક નેટવર્ક/પ્રદેશની મર્યાદાઓને બાયપાસ કરવા માટે Vercel ના ફ્રી ટીયર પર ડિપ્લોય કરાયેલા લાઇટવેઇટ પ્રોક્સી એન્ડપોઇન્ટ્સ છે.",
@@ -8146,7 +8146,7 @@
     "deployRelayButton": "રિલે ડિપ્લોય કરો",
     "denoRelayButton": "Deno Relay ડિપ્લોય કરો",
     "denoRelayModalTitle": "Deno Relay ડિપ્લોય કરો",
-    "denoRelayWarning": "ચેતવણી: Deno Deploy ઓર્ગેનાઈઝેશન ટોકન આવશ્યક છે. આ ટોકનનો ઉપયોગ ફક્ત રિલે એપ્લિકેશન બનાવવા માટે કરવામાં આવશે અને તેને OmniRoute દ્વારા ક્યારેય સંગ્રહિત કરવામાં આવશે નહીં.",
+    "denoRelayWarning": "ચેતવણી: Deno Deploy ઓર્ગેનાઈઝેશન ટોકન આવશ્યક છે. આ ટોકનનો ઉપયોગ ફક્ત રિલે એપ્લિકેશન બનાવવા માટે કરવામાં આવશે અને તેને AgentProxy દ્વારા ક્યારેય સંગ્રહિત કરવામાં આવશે નહીં.",
     "denoRelayTokenLabel": "Deno Deploy ઓર્ગેનાઈઝેશન ટોકન",
     "denoRelayOrgDomainLabel": "ઓર્ગેનાઈઝેશન ડોમેન",
     "denoRelayProjectNameLabel": "Deno એપ નામ",
@@ -8365,7 +8365,7 @@
     "headroomProxySave": "__MISSING__:Save",
     "headroomProxyStart": "__MISSING__:Start",
     "headroomProxyStop": "__MISSING__:Stop",
-    "headroomProxyExternalHint": "__MISSING__:This URL is not loopback, so OmniRoute will not spawn the local CLI."
+    "headroomProxyExternalHint": "__MISSING__:This URL is not loopback, so AgentProxy will not spawn the local CLI."
   },
   "contextRtk": {
     "title": "RTK Engine",
@@ -8809,7 +8809,7 @@
     "port": "પોર્ટ {port}",
     "externalBadge": "બાહ્ય રીતે સંચાલિત",
     "externalTitle": "બાહ્ય 9Router શોધાયું",
-    "externalDescription": "OmniRoute ને {host}:{port} પર 9Router મળ્યું. તેનું લાઇફસાઇકલ, લૉગ્સ, અપડેટ્સ અને સર્વિસ કી બાહ્ય ઇન્સ્ટોલેશન દ્વારા સંચાલિત રહે છે.",
+    "externalDescription": "AgentProxy ને {host}:{port} પર 9Router મળ્યું. તેનું લાઇફસાઇકલ, લૉગ્સ, અપડેટ્સ અને સર્વિસ કી બાહ્ય ઇન્સ્ટોલેશન દ્વારા સંચાલિત રહે છે.",
     "start": "શરૂ કરો",
     "starting": "શરૂ થઈ રહ્યું છે…",
     "stop": "બંધ કરો",
@@ -8821,9 +8821,9 @@
     "install": "ઇન્સ્ટોલ કરો",
     "installing": "ઇન્સ્ટોલ થઈ રહ્યું છે…",
     "autoStart": "ઑટો-સ્ટાર્ટ",
-    "autoStartDescription": "જ્યારે OmniRoute શરૂ થાય ત્યારે {name} આપમેળે લોંચ કરો",
+    "autoStartDescription": "જ્યારે AgentProxy શરૂ થાય ત્યારે {name} આપમેળે લોંચ કરો",
     "apiKey": "API કી",
-    "apiKeyDescription": "{name} સાથે પ્રમાણીકરણ કરવા માટે OmniRoute દ્વારા ઉપયોગમાં લેવાતી કી",
+    "apiKeyDescription": "{name} સાથે પ્રમાણીકરણ કરવા માટે AgentProxy દ્વારા ઉપયોગમાં લેવાતી કી",
     "keyRotated": "કી રોટેટ કરવામાં આવી — નવી કી લાગુ કરવા માટે {name} ફરી શરૂ થયું",
     "keyRotateFailed": "કી રોટેટ કરવામાં નિષ્ફળ",
     "keyRevealFailed": "કી દર્શાવવામાં નિષ્ફળ",
@@ -8842,7 +8842,7 @@
     "version": "વર્ઝન",
     "versionHint": "“latest” અથવા ચોક્કસ વર્ઝન દાખલ કરો (ઉદાહરણ તરીકે, 1.2.3).",
     "servicePort": "પોર્ટ",
-    "servicePortHint": "OmniRoute અને 9Router એ અલગ પોર્ટનો ઉપયોગ કરવો આવશ્યક છે. ડિફૉલ્ટ 9Router પોર્ટ 20130 છે.",
+    "servicePortHint": "AgentProxy અને 9Router એ અલગ પોર્ટનો ઉપયોગ કરવો આવશ્યક છે. ડિફૉલ્ટ 9Router પોર્ટ 20130 છે.",
     "installationFailed": "ઇન્સ્ટોલેશન નિષ્ફળ ગયું (HTTP {status})",
     "installationSucceeded": "9Router સફળતાપૂર્વક ઇન્સ્ટોલ થયું. શરૂ થઈ રહ્યું છે…",
     "networkInstallFailed": "નેટવર્ક ભૂલ — ઇન્સ્ટોલ એન્ડપોઇન્ટ સુધી પહોંચી શકાયું નથી",
@@ -8860,7 +8860,7 @@
     "providerExposure": "પ્રોવાઇડર એક્સપોઝર",
     "providerExposureDescription": "<prefix>9router/</prefix> પ્રીફિક્સ હેઠળ 9Router મોડેલ્સને રાઉટિંગ ટાર્ગેટ તરીકે એક્સપોઝ કરો.",
     "providerExposureLabel": "<prefix>9router/…</prefix> તરીકે એક્સપોઝ કરો",
-    "providerExposureHint": "જ્યારે સક્ષમ હોય, ત્યારે શોધાયેલા મોડેલ્સ સમગ્ર OmniRoute માં પ્રોવાઇડર સિલેક્ટર્સમાં દેખાય છે.",
+    "providerExposureHint": "જ્યારે સક્ષમ હોય, ત્યારે શોધાયેલા મોડેલ્સ સમગ્ર AgentProxy માં પ્રોવાઇડર સિલેક્ટર્સમાં દેખાય છે.",
     "providerExposureUpdateFailed": "અપડેટ કરવામાં નિષ્ફળ (HTTP {status})",
     "providerExposureNetworkFailed": "નેટવર્ક ભૂલ — પ્રોવાઇડર એક્સપોઝર સેટિંગ અપડેટ કરી શકાયું નથી",
     "webUi": "9Router Web UI",
@@ -8881,7 +8881,7 @@
     "saved": "સાચવ્યું",
     "saveFailed": "સેટિંગ સાચવવામાં નિષ્ફળ",
     "modelMapping": "મોડેલ મેપિંગ",
-    "modelMappingDescription": "OmniRoute મોડેલ IDs ને CLIProxyAPI મોડેલ IDs સાથે મેપ કરો (ઉદાહરણ તરીકે, <example>\"gpt-4o\": \"openai-gpt-4o\"</example>)",
+    "modelMappingDescription": "AgentProxy મોડેલ IDs ને CLIProxyAPI મોડેલ IDs સાથે મેપ કરો (ઉદાહરણ તરીકે, <example>\"gpt-4o\": \"openai-gpt-4o\"</example>)",
     "modelMappingEditor": "મોડેલ મેપિંગ JSON એડિટર",
     "mappingSaved": "મેપિંગ સાચવ્યું",
     "mappingSaveFailed": "મેપિંગ સાચવવામાં નિષ્ફળ",
@@ -8941,7 +8941,7 @@
   },
   "translator": {
     "title": "Translator",
-    "metaTitle": "Translator Playground | OmniRoute",
+    "metaTitle": "Translator Playground | AgentProxy",
     "metaDescription": "Debug, test, and visualize API format translations between providers",
     "playgroundTitle": "Translator Playground",
     "playground": "Playground",
@@ -8949,11 +8949,11 @@
     "chatTester": "Chat Tester",
     "testBench": "Test Bench",
     "liveMonitor": "Live Monitor",
-    "modeDescriptionPlayground": "Paste any API request body and see how OmniRoute translates it between provider formats (OpenAI ↔ Claude ↔ Gemini ↔ Responses API)",
-    "modeDescriptionChatTester": "Send real chat requests through OmniRoute and inspect the full round-trip: input, translated request, provider response, and translated output.",
+    "modeDescriptionPlayground": "Paste any API request body and see how AgentProxy translates it between provider formats (OpenAI ↔ Claude ↔ Gemini ↔ Responses API)",
+    "modeDescriptionChatTester": "Send real chat requests through AgentProxy and inspect the full round-trip: input, translated request, provider response, and translated output.",
     "modeDescriptionTestBench": "Run predefined scenarios and compare compatibility across providers and models.",
-    "modeDescriptionLiveMonitor": "Watch translation events in real time as requests flow through OmniRoute.",
-    "modeDescriptionFallback": "Debug, test, and visualize how OmniRoute translates API requests between providers.",
+    "modeDescriptionLiveMonitor": "Watch translation events in real time as requests flow through AgentProxy.",
+    "modeDescriptionFallback": "Debug, test, and visualize how AgentProxy translates API requests between providers.",
     "recentTranslations": "Recent Translations",
     "noTranslations": "No translations yet",
     "source": "Source",
@@ -8970,7 +8970,7 @@
     "notAvailableSymbol": "—",
     "liveAutoRefreshing": "Live — Auto-refreshing",
     "paused": "Paused",
-    "eventsAppearHint": "Translation events appear here as requests flow through OmniRoute. Use any of these methods to generate events:",
+    "eventsAppearHint": "Translation events appear here as requests flow through AgentProxy. Use any of these methods to generate events:",
     "chatTesterTab": "Chat Tester",
     "testBenchTab": "Test Bench",
     "externalApiCalls": "External API calls",
@@ -8979,12 +8979,12 @@
     "ok": "OK",
     "errorShort": "ERR",
     "formatConverter": "Format Converter",
-    "formatConverterDescription": "Paste or type a JSON request body. The translator will auto-detect the source format and convert it to the target format. Use this to debug how OmniRoute translates requests between formats (OpenAI ↔ Claude ↔ Gemini ↔ Responses API).",
+    "formatConverterDescription": "Paste or type a JSON request body. The translator will auto-detect the source format and convert it to the target format. Use this to debug how AgentProxy translates requests between formats (OpenAI ↔ Claude ↔ Gemini ↔ Responses API).",
     "translationPathHubSpoke": "{source} → OpenAI (મધ્યવર્તી) → {target}",
     "translationPathDirect": "{source} → {target} (સીધા અનુવાદક)",
     "translationPathPassthrough": "સમાન ફોર્મેટ — અનુવાદની જરૂર નથી",
     "openaiIntermediatePanel": "OpenAI મધ્યવર્તી",
-    "autoFeaturesTitle": "OmniRoute આપમેળે શું કરે છે",
+    "autoFeaturesTitle": "AgentProxy આપમેળે શું કરે છે",
     "autoFeaturesCount": "8 લક્ષણો",
     "featureReasoningCache": "રિઝનિંગ કેશ",
     "featureReasoningCacheDesc": "જ્યારે ક્લાયન્ટ વાતચીતના ઇતિહાસમાંથી તેને છોડી દે છે ત્યારે થિંકિંગ-મોડ મોડલ (ડીપસીક વી4, કિમી કે2, ક્વેન) માટે કૅશ્ડ રિઝનિંગ_કન્ટેન્ટને ફરીથી ઇન્જેક્ટ કરે છે.",
@@ -9119,7 +9119,7 @@
     "clientRequest": "Client Request",
     "clientRequestDescription": "The request body as your client would send it",
     "formatDetected": "Format Detected",
-    "formatDetectedDescription": "OmniRoute auto-detects the API format from the request structure",
+    "formatDetectedDescription": "AgentProxy auto-detects the API format from the request structure",
     "openaiIntermediate": "OpenAI Intermediate",
     "openaiIntermediateDescription": "All formats are first normalized to OpenAI format (the universal bridge)",
     "providerFormat": "Provider Format",
@@ -9137,12 +9137,12 @@
     "eventSourcesLabel": "ઇવેન્ટ સ્ત્રોતો:",
     "eventSourceTranslatorPage": "• અનુવાદક પૃષ્ઠ (ચેટ ટેસ્ટર, ટેસ્ટ બેન્ચ)",
     "eventSourceMainPipeline": "• મુખ્ય વિનંતી પાઇપલાઇન (CLI/IDE/API ટ્રાફિક)",
-    "liveMonitorDescriptionPrefix": "Shows translation events as API calls flow through OmniRoute. Events come from the in-memory buffer (resets on restart). Use",
+    "liveMonitorDescriptionPrefix": "Shows translation events as API calls flow through AgentProxy. Events come from the in-memory buffer (resets on restart). Use",
     "liveMonitorDescriptionSuffix": ", or external API calls to generate events.",
     "streamTransformer": "સ્ટ્રીમ ટ્રાન્સફોર્મર",
     "modeDescriptionStreamTransformer": "પ્રતિસાદ ટ્રાન્સફોર્મર દ્વારા ચેટ પૂર્ણતા SSE સ્ટ્રીમ્સ ચલાવો.",
     "streamTransformerTitle": "પ્રતિભાવો સ્ટ્રીમ ટ્રાન્સફોર્મર",
-    "streamTransformerDescription": "ચેટ પૂર્ણતા SSE સ્ટ્રીમ પેસ્ટ કરો, તેને OmniRoute ના પ્રતિસાદ ટ્રાન્સફોર્મર દ્વારા ચલાવો, અને ઉત્સર્જિત પ્રતિસાદનું નિરીક્ષણ કરો.* ક્લાયન્ટને વાયરિંગ કરતા પહેલા ઇવેન્ટ્સ.",
+    "streamTransformerDescription": "ચેટ પૂર્ણતા SSE સ્ટ્રીમ પેસ્ટ કરો, તેને AgentProxy ના પ્રતિસાદ ટ્રાન્સફોર્મર દ્વારા ચલાવો, અને ઉત્સર્જિત પ્રતિસાદનું નિરીક્ષણ કરો.* ક્લાયન્ટને વાયરિંગ કરતા પહેલા ઇવેન્ટ્સ.",
     "loadTextSample": "ટેક્સ્ટ નમૂના લોડ કરો",
     "loadToolSample": "ટૂલ-કોલ નમૂના લોડ કરો",
     "transformToResponses": "પ્રતિભાવોમાં પરિવર્તન કરો",
@@ -9185,7 +9185,7 @@
     "simpleAppUsesLabel": "મારી ઍપ ઉપયોગ કરે છે",
     "simpleAppUsesHint": "API ફોર્મેટ જે તમારી ઍપ વાપરે છે (દા.ત. Anthropic SDK = claude).",
     "simpleSendToLabel": "અહીં મોકલો",
-    "simpleSendToHint": "વિનંતી વાસ્તવમાં ક્યાં મોકલવી (OmniRoute માં કનેક્ટ થયેલ પ્રદાતા).",
+    "simpleSendToHint": "વિનંતી વાસ્તવમાં ક્યાં મોકલવી (AgentProxy માં કનેક્ટ થયેલ પ્રદાતા).",
     "simpleStartWithLabel": "આનાથી શરૂ કરો",
     "simpleStartWithExamplePlaceholder": "તૈયાર ઉદાહરણ પસંદ કરો",
     "simpleStartWithCustomOption": "તમારી વિનંતી પેસ્ટ કરો (અદ્યતન)",
@@ -9314,7 +9314,7 @@
     "define": "Define",
     "defineStepDescription": "Create test cases with input prompts and expected output criteria using strategies like contains, regex, or exact match.",
     "run": "Run",
-    "runStepDescription": "Execute test cases against your LLM endpoints through OmniRoute. Each case is sent as a real API request.",
+    "runStepDescription": "Execute test cases against your LLM endpoints through AgentProxy. Each case is sent as a real API request.",
     "evaluate": "Evaluate",
     "evaluateStepDescription": "Responses are compared against expected criteria. See pass/fail for each case with latency metrics and detailed feedback.",
     "evalsStrategyContainsLabel": "સમાવે છે",
@@ -9375,14 +9375,14 @@
     "noResultsYet": "No results yet",
     "testCasesCount": "Test Cases ({count})",
     "noTestCasesDefined": "No test cases defined",
-    "runEvalHint": "Click \"Run Eval\" to execute all cases against your LLM endpoint. Each test sends a real request through OmniRoute.",
+    "runEvalHint": "Click \"Run Eval\" to execute all cases against your LLM endpoint. Each test sends a real request through AgentProxy.",
     "notifyNoTestCases": "No test cases defined for this suite",
     "notifyAllCasesPassed": "All {total} cases passed ✅",
     "notifySomeCasesFailed": "{passed}/{total} passed, {failed} failed",
     "notifyEvalRunFailed": "Eval run failed",
     "notifyEvalTitle": "Eval: {name}",
     "modelEvals": "Model Evaluations",
-    "evalsHeroDescription": "Test and validate your LLM endpoints by running predefined evaluation suites. Each suite contains test cases that send real prompts through OmniRoute and compare responses against expected criteria — helping you detect regressions, compare models, and ensure response quality across providers.",
+    "evalsHeroDescription": "Test and validate your LLM endpoints by running predefined evaluation suites. Each suite contains test cases that send real prompts through AgentProxy and compare responses against expected criteria — helping you detect regressions, compare models, and ensure response quality across providers.",
     "qualityValidation": "Quality Validation",
     "modelComparison": "Model Comparison",
     "regressionDetection": "Regression Detection",
@@ -9806,7 +9806,7 @@
     "loading": "Loading...",
     "invalidPassword": "Invalid password",
     "errorOccurredRetry": "An error occurred. Please try again.",
-    "configureInstance": "Let's get your OmniRoute instance configured",
+    "configureInstance": "Let's get your AgentProxy instance configured",
     "runOnboardingWizard": "Run the onboarding wizard to set up your password and connect your first AI provider.",
     "startOnboarding": "Start Onboarding",
     "secureYourInstance": "Secure Your Instance",
@@ -9826,14 +9826,14 @@
     "featureUsageTrackingDesc": "Monitor costs and tokens",
     "resetPassword": "Reset Password",
     "resetDescription": "Choose a method to recover access to your dashboard",
-    "stopServer": "Stop the OmniRoute server",
+    "stopServer": "Stop the AgentProxy server",
     "processing": "Processing...",
     "pleaseWait": "Please wait while we complete the authorization.",
     "authSuccess": "Authorization Successful!",
     "copyUrl": "Copy This URL",
     "accessDenied": "Access Denied",
     "methodCliTitle": "Method 1: CLI Reset",
-    "methodCliDescription": "Run the following command on the server where OmniRoute is running:",
+    "methodCliDescription": "Run the following command on the server where AgentProxy is running:",
     "methodCliHint": "This will prompt you to set a new password. The server must be stopped first.",
     "methodManualTitle": "Method 2: Manual Reset",
     "methodManualDescription": "Delete the password from the database and set a new one on startup:",
@@ -9856,9 +9856,9 @@
     "waitingForQoderAuthorization": "Waiting for Qoder authorization...",
     "exchangingCodeForTokens": "Exchanging code for tokens...",
     "nodeIncompatibleTitle": "Incompatible Node.js Version",
-    "nodeIncompatibleDesc": "You are running Node.js {version}, which is outside OmniRoute's supported secure runtime policy. Use a patched Node.js 20.x or 22.x LTS release.",
+    "nodeIncompatibleDesc": "You are running Node.js {version}, which is outside AgentProxy's supported secure runtime policy. Use a patched Node.js 20.x or 22.x LTS release.",
     "nodeIncompatibleFixLabel": "Fix: install a patched Node.js 22 LTS release",
-    "nodeIncompatibleHint": "OmniRoute requires Node.js 22.22.2+ (22.x LTS) or 24.0.0+ (24.x LTS). Node 24 LTS is recommended.",
+    "nodeIncompatibleHint": "AgentProxy requires Node.js 22.22.2+ (22.x LTS) or 24.0.0+ (24.x LTS). Node 24 LTS is recommended.",
     "resetViaAppDataTitle": "એપ ડેટા દ્વારા પુનઃસેટ કરો",
     "resetViaAppDataDescription": "એપ ડેટા ડિરેક્ટરીમાંથી સેટિંગ્સ ફાઇલને કાઢી નાખો જેથી તમારું પાસવર્ડ પુનઃસેટ કરી શકાય:",
     "quitDesktopApp": "ઓમ્નીરૂટ ડેસ્કટોપ એપ્લિકેશન સંપૂર્ણપણે બંધ કરો",
@@ -9912,7 +9912,7 @@
     "relaunchApp": "ઓમ્નીરૂટ ડેસ્કટોપ એપ્લિકેશન ફરી શરૂ કરો"
   },
   "landing": {
-    "brandName": "OmniRoute",
+    "brandName": "AgentProxy",
     "navigateHome": "Navigate to home",
     "toggleMenu": "Toggle menu",
     "featuresLink": "Features",
@@ -9942,17 +9942,17 @@
     "featureCliSupportDesc": "Works with Claude Code, Codex, Cline, Cursor, and more.",
     "featureDashboardTitle": "Dashboard",
     "featureDashboardDesc": "Visual dashboard for real-time traffic analysis.",
-    "howItWorks": "How OmniRoute Works",
+    "howItWorks": "How AgentProxy Works",
     "howItWorksDescription": "Data flows seamlessly from your application through our intelligent routing layer to the best provider for the job.",
     "howItWorksStep1Title": "1. CLI & SDKs",
     "howItWorksStep1Description": "Your requests start from your favorite tools or our unified SDK. Just change the base URL.",
-    "howItWorksStep2Title": "2. OmniRoute Hub",
+    "howItWorksStep2Title": "2. AgentProxy Hub",
     "howItWorksStep2Description": "Our engine analyzes the prompt, checks provider health, and routes for lowest latency or cost.",
     "howItWorksStep3Title": "3. AI Providers",
     "howItWorksStep3Description": "The request is fulfilled by OpenAI, Anthropic, Gemini, or others instantly.",
     "getStartedIn30Seconds": "Get Started in 30 Seconds",
-    "getStartedDescription": "Install OmniRoute, configure your providers via web dashboard, and start routing AI requests.",
-    "installOmniRoute": "Install OmniRoute",
+    "getStartedDescription": "Install AgentProxy, configure your providers via web dashboard, and start routing AI requests.",
+    "installAgentProxy": "Install AgentProxy",
     "installStepDescription": "Run npx command to start the server instantly",
     "openDashboard": "Open Dashboard",
     "openDashboardStepDescription": "Configure providers and API keys via web interface",
@@ -9961,7 +9961,7 @@
     "terminal": "terminal",
     "copy": "Copy",
     "copied": "✓ Copied",
-    "startingOmniRoute": "Starting OmniRoute...",
+    "startingAgentProxy": "Starting AgentProxy...",
     "serverRunningOnLabel": "Server running on",
     "dashboardLabel": "Dashboard",
     "readyToRoute": "Ready to route! ✓",
@@ -9978,7 +9978,7 @@
     "legal": "Legal",
     "mitLicense": "MIT License",
     "footerTagline": "The unified endpoint for AI generation. Connect, route, and manage your AI providers with ease.",
-    "copyright": "© {year} OmniRoute. All rights reserved.",
+    "copyright": "© {year} AgentProxy. All rights reserved.",
     "flowToolClaudeCode": "Claude Code",
     "flowToolOpenAICodex": "OpenAI Codex",
     "flowToolCline": "Cline",
@@ -9989,7 +9989,7 @@
     "flowProviderGithubCopilot": "GitHub Copilot",
     "interactiveDiagram": "Interactive diagram visible on desktop",
     "ctaTitle": "Ready to Simplify Your AI Infrastructure?",
-    "ctaDescription": "Join developers who are streamlining their AI integrations with OmniRoute. Open source and free to start.",
+    "ctaDescription": "Join developers who are streamlining their AI integrations with AgentProxy. Open source and free to start.",
     "startFree": "Start Free",
     "readDocumentation": "Read Documentation",
     "company": "કંપની",
@@ -10046,9 +10046,9 @@
     "quickStartStep4Prefix": "Point your IDE or API client to",
     "quickStartStep4Suffix": "Use provider prefix, for example",
     "deploySetupTitle": "સેટઅપ માર્ગદર્શિકા",
-    "deploySetupText": "OmniRoute માટે સ્ટેપ-બાય-સ્ટેપ ઇન્સ્ટોલેશન, એન્વાયર્નમેન્ટ કન્ફિગરેશન અને ફર્સ્ટ-રન વૉકથ્રુ.",
+    "deploySetupText": "AgentProxy માટે સ્ટેપ-બાય-સ્ટેપ ઇન્સ્ટોલેશન, એન્વાયર્નમેન્ટ કન્ફિગરેશન અને ફર્સ્ટ-રન વૉકથ્રુ.",
     "deployElectronTitle": "ઇલેક્ટ્રોન ડેસ્કટોપ",
-    "deployElectronText": "Windows, macOS અને Linux પર મૂળ ડેસ્કટોપ એપ્લિકેશન તરીકે OmniRoute ચલાવો.",
+    "deployElectronText": "Windows, macOS અને Linux પર મૂળ ડેસ્કટોપ એપ્લિકેશન તરીકે AgentProxy ચલાવો.",
     "deployDockerTitle": "ડોકર",
     "deployDockerText": "ડોકર કંપોઝ સાથે કન્ટેનરાઇઝ્ડ જમાવટ; ઉત્પાદન સ્ટેક્સ અને કુબરનેટ્સ માટે તૈયાર.",
     "deployVmTitle": "વર્ચ્યુઅલ મશીન",
@@ -10056,9 +10056,9 @@
     "deployFlyTitle": "Fly.io",
     "deployFlyText": "એક fly.toml અને સિંગલ ડિપ્લોય કમાન્ડ સાથે Fly.io એજ રનટાઈમ પર તૈનાત કરો.",
     "deployPwaTitle": "પીડબલ્યુએ",
-    "deployPwaText": "Android, iOS અને ડેસ્કટૉપ બ્રાઉઝર પર પ્રોગ્રેસિવ વેબ ઍપ તરીકે OmniRoute ઇન્સ્ટોલ કરો.",
+    "deployPwaText": "Android, iOS અને ડેસ્કટૉપ બ્રાઉઝર પર પ્રોગ્રેસિવ વેબ ઍપ તરીકે AgentProxy ઇન્સ્ટોલ કરો.",
     "deployTermuxTitle": "Termux (Android)",
-    "deployTermuxText": "Run OmniRoute headless on Android via Termux. Access the dashboard from your mobile browser.",
+    "deployTermuxText": "Run AgentProxy headless on Android via Termux. Access the dashboard from your mobile browser.",
     "featureRoutingTitle": "Multi-Provider Routing",
     "featureRoutingText": "Route requests to 30+ AI providers through a single OpenAI-compatible endpoint. Supports chat, responses, audio, and image APIs.",
     "featureCombosTitle": "Combos and Balancing",
@@ -10104,24 +10104,24 @@
     "clientClaudeBullet1Middle": "(Claude) or",
     "clientClaudeBullet1Suffix": "(Antigravity) prefix.",
     "clientWindsurfTitle": "Windsurf",
-    "clientWindsurfBullet1": "Use OmniRoute as an OpenAI-compatible base URL and keep explicit provider prefixes for deterministic routing.",
+    "clientWindsurfBullet1": "Use AgentProxy as an OpenAI-compatible base URL and keep explicit provider prefixes for deterministic routing.",
     "clientWindsurfBullet2": "Point models to `/v1/chat/completions` for general traffic and preserve `/v1/responses` for Codex-style flows.",
     "clientWindsurfBullet3": "Use Dashboard -> CLI Tools for a ready-made Windsurf configuration guide.",
     "clientClineTitle": "Cline",
     "clientClineBullet1": "Cline works best with explicit provider/model prefixes so the router never has to guess the backend.",
-    "clientClineBullet2": "Use `/v1/chat/completions` for general models and reuse the same OmniRoute base URL across different accounts.",
+    "clientClineBullet2": "Use `/v1/chat/completions` for general models and reuse the same AgentProxy base URL across different accounts.",
     "clientClineBullet3": "Use the Providers dashboard to validate OAuth/API key before debugging Cline runtime issues.",
     "clientKimiTitle": "Kimi Coding",
-    "clientKimiBullet1": "Use OmniRoute as a stable base URL while rotating accounts or provider combos underneath.",
+    "clientKimiBullet1": "Use AgentProxy as a stable base URL while rotating accounts or provider combos underneath.",
     "clientKimiBullet2": "Prefer prefixed models in coding flows so fallback and audit trail remain explicit.",
     "clientKimiBullet3": "Use `/v1/responses` when you want native Responses-style routing for tool-using clients.",
     "protocolsTitle": "Protocols: MCP & A2A",
-    "protocolsDescription": "OmniRoute exposes two operational protocols in addition to OpenAI-compatible APIs: MCP for tool execution and A2A for agent-to-agent workflows.",
+    "protocolsDescription": "AgentProxy exposes two operational protocols in addition to OpenAI-compatible APIs: MCP for tool execution and A2A for agent-to-agent workflows.",
     "protocolMcpTitle": "MCP (Model Context Protocol)",
-    "protocolMcpDesc": "Use MCP over stdio to let clients discover and call OmniRoute tools with audit visibility.",
-    "protocolMcpStep1": "Start MCP transport with `omniroute --mcp`.",
+    "protocolMcpDesc": "Use MCP over stdio to let clients discover and call AgentProxy tools with audit visibility.",
+    "protocolMcpStep1": "Start MCP transport with `agentproxy --mcp`.",
     "protocolMcpStep2": "Point your MCP client to stdio transport.",
-    "protocolMcpStep3": "Call `omniroute_get_health` and `omniroute_list_combos` to validate connectivity.",
+    "protocolMcpStep3": "Call `agentproxy_get_health` and `agentproxy_list_combos` to validate connectivity.",
     "protocolA2aTitle": "A2A (Agent2Agent)",
     "protocolA2aDesc": "Use A2A JSON-RPC to submit tasks synchronously or via SSE streaming.",
     "protocolA2aStep1": "Read `/.well-known/agent.json` for agent discovery.",
@@ -10181,7 +10181,7 @@
     "mgmtPayloadRulesGetNote": "Get payload transformation rules.",
     "mgmtPayloadRulesUpdateNote": "Update payload transformation rules.",
     "mcpToolsTitle": "MCP Tools",
-    "mcpToolsDescription": "OmniRoute exposes {count} tools via Model Context Protocol for agent orchestration.",
+    "mcpToolsDescription": "AgentProxy exposes {count} tools via Model Context Protocol for agent orchestration.",
     "mcpToolsCount": "{count} tools",
     "mcpToolsToc": "MCP Tools",
     "mcpToolsRoutingTitle": "Routing & Discovery",
@@ -10215,17 +10215,17 @@
     "protocolAcpStep3": "Use CLI Tools to configure agent communication channels.",
     "metadataTitleTemplate": "%s — ઓમ્નીરૂટ દસ્તાવેજો",
     "metadataDefaultTitle": "ઓમ્નીરૂટ દસ્તાવેજીકરણ",
-    "metadataDescription": "OmniRoute AI ગેટવે માટે વ્યાપક દસ્તાવેજીકરણ — સેટઅપ, API, સંકોચન, ડિપ્લોયમેન્ટ, અને વધુ.",
+    "metadataDescription": "AgentProxy AI ગેટવે માટે વ્યાપક દસ્તાવેજીકરણ — સેટઅપ, API, સંકોચન, ડિપ્લોયમેન્ટ, અને વધુ.",
     "layoutNavTitle": "ઓમ્નીરૂટ ડોક્સ",
     "layoutHomeLink": "દસ્તાવેજો હોમ",
     "layoutDashboardLink": "← ડેશબોર્ડ પર પાછા",
     "homeTitle": "ઓમ્નિરાઉટ દસ્તાવેજીકરણ",
     "homeMetadataDescription": "તમારા AI ને રૂટ, સંકોચન અને સ્કેલ કરવા માટેની તમામ વસ્તુઓ - સેટઅપ માર્ગદર્શિકાઓ, API સંદર્ભ, સંકોચન, ડિપ્લોયમેન્ટ અને વધુ.",
-    "homeTwitterDescription": "OmniRoute AI ગેટવે માટે વ્યાપક દસ્તાવેજો",
+    "homeTwitterDescription": "AgentProxy AI ગેટવે માટે વ્યાપક દસ્તાવેજો",
     "homeDescription": "તમારા AI ને રૂટ, સંકોચિત અને સ્કેલ કરવા માટેની તમામ વસ્તુઓ",
     "homeSearchHint": "દસ્તાવેજો શોધવા માટે <kbd>Ctrl K</kbd> દબાવો",
     "featuredQuickStartTitle": "ઝડપી શરૂઆત",
-    "featuredQuickStartDescription": "3 મિનિટમાં OmniRoute ચલાવો",
+    "featuredQuickStartDescription": "3 મિનિટમાં AgentProxy ચલાવો",
     "featuredAutoComboTitle": "ઓટો-કોમ્બો માર્ગદર્શિકા",
     "featuredAutoComboDescription": "ઓમ્નીરૂટને તમારા માટે શ્રેષ્ઠ એઆઈ પસંદ કરવા દો",
     "featuredProvidersTitle": "પ્રદાતાઓની માર્ગદર્શિકા",
@@ -10235,7 +10235,7 @@
     "techUsersTitle": "ટેક યુઝર્સ માટે",
     "techUsersSubtitle": "આર્કિટેક્ચર, APIs, અને આંતરિક બાબતોમાં ઊંડાણપૂર્વક જાઓ",
     "apiExplorerMetadataTitle": "API એક્સપ્લોરર — ઓમ્નીરૂટ ડોક્સ",
-    "apiExplorerMetadataDescription": "ઇન્ટરેક્ટિવ API એક્સપ્લોરર — વાસ્તવિક સમયની પ્રતિસાદ સાથે OmniRoute અંતિમ બિંદુઓને જીવંત રીતે અજમાવો",
+    "apiExplorerMetadataDescription": "ઇન્ટરેક્ટિવ API એક્સપ્લોરર — વાસ્તવિક સમયની પ્રતિસાદ સાથે AgentProxy અંતિમ બિંદુઓને જીવંત રીતે અજમાવો",
     "apiExplorerTitle": "એપીઆઈ એક્સપ્લોરર",
     "apiExplorerDescription": "ઓમ્નીરૂટ એન્ડપોઈન્ટ્સને જીવંત રીતે અજમાવો. એક એન્ડપોઈન્ટ પસંદ કરો, તમારી વિનંતી કન્ફિગર કરો, અને વાસ્તવિક સમયમાં પ્રતિસાદ જુઓ.",
     "apiExplorerSseStarted": "SSE સ્ટ્રીમ શરૂ થયો — વાસ્તવિક-સમયના આઉટપુટ માટે ટર્મિનલ/devtools તપાસો.",
@@ -10247,7 +10247,7 @@
     "feedbackThanks": "તમારા પ્રતિસાદ માટે આભાર!",
     "feedbackQuestion": "શું આ પાનું મદદરૂપ હતું?",
     "pageMetadataTitle": "{title} — ઓમ્નીરૂટ ડોક્સ",
-    "pageMetadataDescription": "OmniRoute દસ્તાવેજીકરણ: {title}",
+    "pageMetadataDescription": "AgentProxy દસ્તાવેજીકરણ: {title}",
     "breadcrumb": "બ્રેડક્રંબ",
     "apiReferenceTable": {
       "parameters": "પેરામીટર્સ",
@@ -10269,10 +10269,10 @@
     "clearHistory": "Clear usage history at any time",
     "configureRetention": "Configure log retention policies",
     "backupRestore": "Back up and restore your database",
-    "privacyMetadataTitle": "Privacy Policy | OmniRoute",
-    "privacyMetadataDescription": "Privacy policy for the OmniRoute AI API proxy router.",
-    "termsMetadataTitle": "Terms of Service | OmniRoute",
-    "termsMetadataDescription": "Terms of service for the OmniRoute AI API proxy router.",
+    "privacyMetadataTitle": "Privacy Policy | AgentProxy",
+    "privacyMetadataDescription": "Privacy policy for the AgentProxy AI API proxy router.",
+    "termsMetadataTitle": "Terms of Service | AgentProxy",
+    "termsMetadataDescription": "Terms of service for the AgentProxy AI API proxy router.",
     "backToHome": "Back to home",
     "lastUpdated": "Last updated: {date}",
     "policyLastUpdatedDate": "February 13, 2026",
@@ -10280,7 +10280,7 @@
     "questionsVisit": "Questions? Visit our",
     "githubRepository": "GitHub repository",
     "privacySection1Title": "1. Local-First Architecture",
-    "privacySection1Text": "OmniRoute is designed as a local-first application. All data processing and storage occurs entirely on your machine. There is no centralized server collecting your information.",
+    "privacySection1Text": "AgentProxy is designed as a local-first application. All data processing and storage occurs entirely on your machine. There is no centralized server collecting your information.",
     "privacySection2Title": "2. Data We Store",
     "privacyDataStoredIn": "The following data is stored locally in",
     "privacyDataProviderConfigurationsDesc": "connection URLs, provider types, and priority settings",
@@ -10288,9 +10288,9 @@
     "privacyDataUsageLogsDesc": "request counts, token usage, model names, timestamps, and response times",
     "privacyDataApplicationSettingsDesc": "theme preferences, routing strategy, and combo configurations",
     "privacySection3Title": "3. No Telemetry",
-    "privacySection3Text": "OmniRoute does not collect telemetry, analytics, or crash reports. No data is sent to us or any third party. Your usage patterns, API calls, and configurations remain entirely private.",
+    "privacySection3Text": "AgentProxy does not collect telemetry, analytics, or crash reports. No data is sent to us or any third party. Your usage patterns, API calls, and configurations remain entirely private.",
     "privacySection4Title": "4. Third-Party AI Providers",
-    "privacySection4Text": "When you make API calls through OmniRoute, your requests are forwarded to the AI providers you have configured (for example: OpenAI, Anthropic, Google). These providers have their own privacy policies that govern how they handle your data. Please review:",
+    "privacySection4Text": "When you make API calls through AgentProxy, your requests are forwarded to the AI providers you have configured (for example: OpenAI, Anthropic, Google). These providers have their own privacy policies that govern how they handle your data. Please review:",
     "privacyOpenAiPolicy": "OpenAI Privacy Policy",
     "privacyAnthropicPolicy": "Anthropic Privacy Policy",
     "privacyGooglePolicy": "Google Privacy Policy",
@@ -10302,21 +10302,21 @@
     "privacySection7TextStart": "Since all data is stored locally, you have full control. You can delete your data at any time by removing the",
     "privacySection7TextEnd": "directory or using the database backup and restore features in the dashboard.",
     "termsSection1Title": "1. Overview",
-    "termsSection1Text": "OmniRoute is a local-first AI API proxy router that operates entirely on your machine. It routes requests to multiple AI providers with load balancing, failover, and usage tracking.",
+    "termsSection1Text": "AgentProxy is a local-first AI API proxy router that operates entirely on your machine. It routes requests to multiple AI providers with load balancing, failover, and usage tracking.",
     "termsSection2Title": "2. User Responsibilities",
     "termsResponsibilityApiKeys": "You are solely responsible for managing your own API keys and credentials for third-party AI providers (OpenAI, Anthropic, Google, etc.).",
-    "termsResponsibilityCompliance": "You must comply with the terms of service of each AI provider whose API you access through OmniRoute.",
-    "termsResponsibilitySecurity": "You are responsible for the security of your local OmniRoute installation, including setting a password and restricting network access.",
+    "termsResponsibilityCompliance": "You must comply with the terms of service of each AI provider whose API you access through AgentProxy.",
+    "termsResponsibilitySecurity": "You are responsible for the security of your local AgentProxy installation, including setting a password and restricting network access.",
     "termsSection3Title": "3. How It Works",
-    "termsSection3Text": "OmniRoute acts as an intermediary proxy. API calls sent to OmniRoute are translated and forwarded to your configured AI providers. OmniRoute does not modify the content of your requests or responses beyond the necessary protocol translation.",
+    "termsSection3Text": "AgentProxy acts as an intermediary proxy. API calls sent to AgentProxy are translated and forwarded to your configured AI providers. AgentProxy does not modify the content of your requests or responses beyond the necessary protocol translation.",
     "termsSection4Title": "4. Data Handling",
     "termsDataStoredLocally": "All data is stored locally on your machine in a SQLite database.",
-    "termsNoTransmission": "OmniRoute does not transmit any data to external servers unless you explicitly enable cloud sync features.",
+    "termsNoTransmission": "AgentProxy does not transmit any data to external servers unless you explicitly enable cloud sync features.",
     "termsDataLocationText": "Usage logs, API keys, and configuration are stored in",
     "termsSection5Title": "5. Disclaimer",
-    "termsSection5Text": "OmniRoute is provided \"as is\" without warranty of any kind. We are not responsible for any costs incurred through API usage, service disruptions, or data loss. Always maintain backups of your configuration.",
+    "termsSection5Text": "AgentProxy is provided \"as is\" without warranty of any kind. We are not responsible for any costs incurred through API usage, service disruptions, or data loss. Always maintain backups of your configuration.",
     "termsSection6Title": "6. Open Source",
-    "termsSection6Text": "OmniRoute is open-source software. You are free to inspect, modify, and distribute it under the terms of its license."
+    "termsSection6Text": "AgentProxy is open-source software. You are free to inspect, modify, and distribute it under the terms of its license."
   },
   "agents": {
     "title": "CLI Agents",
@@ -10337,13 +10337,13 @@
     "scanning": "Scanning system for CLI agents...",
     "opencodeIntegration": "OpenCode Integration",
     "opencodeDetected": "opencode {version} detected",
-    "opencodeDesc": "Generate a ready-to-use {configFile} with your OmniRoute base URL and all available models — drop it in your project root and run {command}.",
+    "opencodeDesc": "Generate a ready-to-use {configFile} with your AgentProxy base URL and all available models — drop it in your project root and run {command}.",
     "downloadConfig": "Download {file}",
     "downloaded": "Downloaded!",
     "setupGuideTitle": "Setup guide",
     "openCliTools": "Open CLI Tools",
     "setupGuideDetectCliTitle": "Detect installed CLIs",
-    "setupGuideDetectCliDesc": "Click Refresh after installing or updating a CLI so OmniRoute can rescan binaries and versions.",
+    "setupGuideDetectCliDesc": "Click Refresh after installing or updating a CLI so AgentProxy can rescan binaries and versions.",
     "setupGuideCustomAgentTitle": "Register custom binary",
     "setupGuideCustomAgentDesc": "Use Add Custom Agent when your CLI is not in the built-in list. Provide binary name and version command.",
     "setupGuideCommandMissingTitle": "Fix 'command not found'",
@@ -10355,7 +10355,7 @@
     "versionCommandPlaceholder": "Version Command Placeholder",
     "architectureTitle": "Architecture Title",
     "flowLocalBinary": "Flow Local Binary",
-    "flowOmniRoute": "Flow Omni Route",
+    "flowAgentProxy": "Flow Omni Route",
     "agentNamePlaceholder": "Agent Name Placeholder",
     "architectureDescription": "Architecture Description",
     "flowExecute": "Flow Execute",
@@ -10363,17 +10363,17 @@
     "cliToolsRedirectCta": "Cli Tools Redirect Cta",
     "comparisonTitle": "CLI ટૂલ્સ વિ એજન્ટ ટાર્ગેટ - શું તફાવત છે?",
     "comparisonCliToolsLabel": "CLI ટૂલ્સ પેજ",
-    "comparisonCliToolsTitle": "તમારો IDE OmniRoute દ્વારા વિનંતીઓ મોકલે છે",
-    "comparisonCliToolsDesc": "ક્લાઉડ કોડ, કોડેક્સ, કર્સર અને અન્ય IDE ને તેમના API આધાર URL તરીકે OmniRoute નો ઉપયોગ કરવા માટે ગોઠવો. OmniRoute પ્રોક્સી તરીકે કાર્ય કરે છે, તમારા ગોઠવેલ પ્રદાતાઓને વિનંતીઓ રાઉટીંગ કરે છે.",
+    "comparisonCliToolsTitle": "તમારો IDE AgentProxy દ્વારા વિનંતીઓ મોકલે છે",
+    "comparisonCliToolsDesc": "ક્લાઉડ કોડ, કોડેક્સ, કર્સર અને અન્ય IDE ને તેમના API આધાર URL તરીકે AgentProxy નો ઉપયોગ કરવા માટે ગોઠવો. AgentProxy પ્રોક્સી તરીકે કાર્ય કરે છે, તમારા ગોઠવેલ પ્રદાતાઓને વિનંતીઓ રાઉટીંગ કરે છે.",
     "comparisonAgentsLabel": "આ પૃષ્ઠ (એજન્ટ લક્ષ્યો)",
-    "comparisonAgentsTitle": "OmniRoute સ્થાનિક CLI ટૂલ્સમાં વિનંતીઓ મોકલે છે",
-    "comparisonAgentsDesc": "OmniRoute એક્ઝેક્યુશન બેકએન્ડ તરીકે સ્થાનિક CLI દ્વિસંગી (ક્લોડ, કોડેક્સ, હંસ) પેદા કરી શકે છે. CLI ટૂલ તેના પોતાના પ્રમાણીકરણનો ઉપયોગ કરીને વિનંતી પર પ્રક્રિયા કરે છે અને પરિણામ પરત કરે છે.",
-    "comparisonSummary": "ટૂંકમાં: CLI ટૂલ્સ = તમે OmniRoute પર નિર્દેશ કરવા માટે ટૂલ્સને ગોઠવો છો. એજન્ટ લક્ષ્યો = OmniRoute તેના અંતિમ બિંદુઓ તરીકે સાધનોનો ઉપયોગ કરે છે.",
+    "comparisonAgentsTitle": "AgentProxy સ્થાનિક CLI ટૂલ્સમાં વિનંતીઓ મોકલે છે",
+    "comparisonAgentsDesc": "AgentProxy એક્ઝેક્યુશન બેકએન્ડ તરીકે સ્થાનિક CLI દ્વિસંગી (ક્લોડ, કોડેક્સ, હંસ) પેદા કરી શકે છે. CLI ટૂલ તેના પોતાના પ્રમાણીકરણનો ઉપયોગ કરીને વિનંતી પર પ્રક્રિયા કરે છે અને પરિણામ પરત કરે છે.",
+    "comparisonSummary": "ટૂંકમાં: CLI ટૂલ્સ = તમે AgentProxy પર નિર્દેશ કરવા માટે ટૂલ્સને ગોઠવો છો. એજન્ટ લક્ષ્યો = AgentProxy તેના અંતિમ બિંદુઓ તરીકે સાધનોનો ઉપયોગ કરે છે.",
     "agentUseCaseHint": "ACP પ્રોટોકોલ દ્વારા એક્ઝેક્યુશન લક્ષ્ય તરીકે ઉપયોગ કરી શકાય છે",
     "flowDiagramClient": "ક્લાયન્ટ એપ્લિકેશન",
     "flowDiagramClientDesc": "SDK, API અથવા અપસ્ટ્રીમ સેવા",
-    "flowDiagramOmniRoute": "OmniRoute",
-    "flowDiagramOmniRouteDesc": "વિનંતી પ્રાપ્ત કરે છે અને લક્ષ્ય પસંદ કરે છે",
+    "flowDiagramAgentProxy": "AgentProxy",
+    "flowDiagramAgentProxyDesc": "વિનંતી પ્રાપ્ત કરે છે અને લક્ષ્ય પસંદ કરે છે",
     "flowDiagramSpawn": "સ્પાન પ્રક્રિયા",
     "flowDiagramSpawnDesc": "stdio દ્વારા CLI બાઈનરી લોન્ચ કરે છે",
     "flowDiagramCli": "CLI એજન્ટ",
@@ -10391,19 +10391,19 @@
     "browseAllSkillsOnGithub": "GitHub પર તમામ કુશળતા બ્રાઉઝ કરો",
     "apiSkills": "API કુશળતા",
     "cliSkills": "CLI કુશળતા",
-    "apiSkillsSubtitle": "{count} કૌશલ્યો — REST / HTTP દ્વારા OmniRoute નિયંત્રિત કરો",
-    "cliSkillsSubtitle": "{count} કૌશલ્યો — omniroute ટર્મિનલ બાઈનરી દ્વારા OmniRoute નિયંત્રિત કરો",
+    "apiSkillsSubtitle": "{count} કૌશલ્યો — REST / HTTP દ્વારા AgentProxy નિયંત્રિત કરો",
+    "cliSkillsSubtitle": "{count} કૌશલ્યો — agentproxy ટર્મિનલ બાઈનરી દ્વારા AgentProxy નિયંત્રિત કરો",
     "howToUseStep1": "તમે તમારા એજન્ટને જે કૌશલ્ય વિશે જણાવવા માંગો છો તેના પર <bold>{copyUrl}</bold> ક્લિક કરો.",
     "howToUseStep2": "તમારા AI એજન્ટમાં (Claude, Cursor, Cline…), કહો:",
     "howToUseStep2Code": "[pasted-url] પરના કૌશલ્યનો ઉપયોગ કરો",
-    "howToUseStep3": "એજન્ટ SKILL.md મેળવે છે અને OmniRoute ની API અથવા CLI શીખે છે — કોઈ મેન્યુઅલ દસ્તાવેજોની જરૂર નથી."
+    "howToUseStep3": "એજન્ટ SKILL.md મેળવે છે અને AgentProxy ની API અથવા CLI શીખે છે — કોઈ મેન્યુઅલ દસ્તાવેજોની જરૂર નથી."
   },
   "cloudAgents": {
     "title": "મેઘ એજન્ટો",
     "description": "સ્વાયત્ત કોડિંગ એજન્ટોનું સંચાલન કરો (જુલ્સ, ડેવિન, કોડેક્સ ક્લાઉડ)",
     "loading": "કાર્યો લોડ કરી રહ્યું છે...",
     "aboutTitle": "મેઘ એજન્ટો વિશે",
-    "aboutDescription": "ક્લાઉડ એજન્ટ્સ રિમોટ AI કોડિંગ સહાયકો છે જે સ્વાયત્ત રીતે કાર્યોને એક્ઝિક્યુટ કરી શકે છે. તેઓ સ્થાનિક CLI એજન્ટોથી અલગ રીતે કામ કરે છે - તમે OmniRoute ના API દ્વારા તેમની સાથે સંપર્ક કરો છો.",
+    "aboutDescription": "ક્લાઉડ એજન્ટ્સ રિમોટ AI કોડિંગ સહાયકો છે જે સ્વાયત્ત રીતે કાર્યોને એક્ઝિક્યુટ કરી શકે છે. તેઓ સ્થાનિક CLI એજન્ટોથી અલગ રીતે કામ કરે છે - તમે AgentProxy ના API દ્વારા તેમની સાથે સંપર્ક કરો છો.",
     "howItWorksTitle": "તે કેવી રીતે કાર્ય કરે છે:",
     "howItWorksDesc": "એક કાર્ય બનાવો → એજન્ટ વિશ્લેષણ કરે છે અને યોજનાનો પ્રસ્તાવ મૂકે છે → તમે મંજૂર કરો છો → એજન્ટ એક્ઝિક્યુટ કરે છે → પરિણામો પાછા ફર્યા",
     "newTaskTitle": "નવું કાર્ય બનાવો",
@@ -10432,7 +10432,7 @@
     "settingsTitle": "ક્લાઉડ એજન્ટ સેટિંગ્સ",
     "settingsDesc": "ક્લાઉડ એજન્ટો માટે સ્થાનિક પસંદગીઓ ગોઠવો.",
     "settingEnableAgents": "ક્લાઉડ એજન્ટો સક્ષમ કરો",
-    "settingEnableAgentsDesc": "OmniRoute ને સ્વાયત્ત કોડિંગ એજન્ટોનું સંચાલન કરવાની મંજૂરી આપો.",
+    "settingEnableAgentsDesc": "AgentProxy ને સ્વાયત્ત કોડિંગ એજન્ટોનું સંચાલન કરવાની મંજૂરી આપો.",
     "settingAutoPR": "PR આપમેળે બનાવો",
     "settingAutoPRDesc": "જ્યારે કોઈ કાર્ય પૂર્ણ થાય, ત્યારે ફેરફારો સાથે આપમેળે Pull Request બનાવો.",
     "settingRequireApproval": "યોજનાની મંજૂરી જરૂરી છે",
@@ -10596,8 +10596,8 @@
     "tableProvider": "પ્રદાતા",
     "tableModel": "મોડેલ",
     "performanceTitle": "પ્રદર્શન",
-    "semanticCacheSectionDesc": "OmniRoute's own deterministic response cache. When enabled, repeated non-streaming temperature=0 requests can be served locally without hitting the upstream provider.",
-    "semanticCacheDisabledDesc": "Semantic cache is disabled. OmniRoute will skip local response reuse until you turn it back on in Settings.",
+    "semanticCacheSectionDesc": "AgentProxy's own deterministic response cache. When enabled, repeated non-streaming temperature=0 requests can be served locally without hitting the upstream provider.",
+    "semanticCacheDisabledDesc": "Semantic cache is disabled. AgentProxy will skip local response reuse until you turn it back on in Settings.",
     "semanticEntriesDesc": "Persisted semantic cache records currently stored in SQLite. Provider-side prompt cache activity is not listed here.",
     "searchEntries": "Search entries...",
     "search": "Search",
@@ -10705,16 +10705,16 @@
     "googleLoopbackTitle": "આ સરનામેથી Google સાઇન-ઇન પૂર્ણ કરી શકાતું નથી",
     "googleLoopbackWhatHappens": "ગૂગલ માત્ર ત્યારે જ અધિકૃતતા કોડ પ્રકાશિત કરે છે જ્યારે <code>{redirectUri}</code> બ્રાઉઝર દ્વારા પહોંચવામાં આવે છે જે સાઇન-ઇનને મંજૂરી આપે છે. અહીં તે સરનામું આ કમ્પ્યુટરને દર્શાવે છે, ઓમ્નીરૂટ સર્વર પર નહીં — તેથી સંમતિ સ્ક્રીન અટકી જાય છે અને પુનઃદિશા કરવામાં આવતી નથી, અને કોપી કરવા માટે કોઈ કૉલબેક URL નથી.",
     "googleLoopbackRecommended": "સૂચવેલ — આ તમારા પોતાના કમ્પ્યુટરમાં ચલાવો, પછી નીચે પરિણામ પેસ્ટ કરો:",
-    "googleLoopbackHelperNote": "તે સ્થાનિક રીતે Google સંમતિ ખોલે છે (જ્યાં 127.0.0.1 કાર્ય કરે છે) અને એક-લાઇન omniroute-cred-v1.… બ્લોબ છાપે છે. તે બ્લોબને નીચેના પગલાં 2 ના ક્ષેત્રમાં પેસ્ટ કરો — તે એક પ્રમાણપત્ર બ્લોબ તેમજ એક કૉલબેક URL સ્વીકારે છે.",
-    "googleLoopbackTunnelLabel": "અથવા SSH દ્વારા ડેશબોર્ડ પોર્ટને આગળ વધારવા અને ટનલ દ્વારા OmniRouteને ફરીથી લોડ કરો:",
+    "googleLoopbackHelperNote": "તે સ્થાનિક રીતે Google સંમતિ ખોલે છે (જ્યાં 127.0.0.1 કાર્ય કરે છે) અને એક-લાઇન agentproxy-cred-v1.… બ્લોબ છાપે છે. તે બ્લોબને નીચેના પગલાં 2 ના ક્ષેત્રમાં પેસ્ટ કરો — તે એક પ્રમાણપત્ર બ્લોબ તેમજ એક કૉલબેક URL સ્વીકારે છે.",
+    "googleLoopbackTunnelLabel": "અથવા SSH દ્વારા ડેશબોર્ડ પોર્ટને આગળ વધારવા અને ટનલ દ્વારા AgentProxyને ફરીથી લોડ કરો:",
     "googleLoopbackTunnelNote": "તમારા SSH યુઝરનેમ સાથે {userPlaceholder} બદલો, ટર્મિનલ ખોલી રાખો, પછી {localUrl} ખોલો અને ત્યાંથી ફરી કનેક્ટ કરો.",
     "googleLoopbackHeadlessAlt": "કોઈ સ્થાનિક કૉલબેક વિના સંપૂર્ણ હેડલેસ ઉપયોગ માટે, <a>તમારા પોતાના Google OAuth પ્રમાણપત્રો</a> અને એક જાહેર આધાર URL કૉન્ફિગર કરો.",
-    "remoteAccessInfo": "Remote access: Since you're accessing OmniRoute remotely, after authorization you'll see an error page (localhost not found). This is normal — just copy the full URL from your browser address bar and paste it below.",
+    "remoteAccessInfo": "Remote access: Since you're accessing AgentProxy remotely, after authorization you'll see an error page (localhost not found). This is normal — just copy the full URL from your browser address bar and paste it below.",
     "loopbackMismatchTitle": "આ સરનામેથી સાઇન-ઇન પૂર્ણ કરી શકાતું નથી",
     "loopbackMismatchWhatHappened": "શું થઈ રહ્યું છે",
     "loopbackMismatchExplanation": "લોગિનને મંજૂરી આપ્યા પછી, {providerName} હંમેશા બ્રાઉઝરને <code>{redirectUri}</code> પર પાછું મોકલે છે. તે સરનામું આ બ્રાઉઝર ચલાવતી કમ્પ્યુટરને દર્શાવે છે, ઓમ્નીરૂટ સર્વર પર નહીં — તેથી અધિકૃતતા કોડ ઓમ્નીરૂટ સુધી પહોંચતું નથી અને પ્રદાતા ભૂલ વિના સાઇન-ઇન નિષ્ફળ જાય છે.",
     "loopbackMismatchHowToFix": "તેને કેવી રીતે ઠીક કરવું",
-    "loopbackMismatchStep1": "આ કમ્પ્યુટરમાં, એક ટર્મિનલ ખોલો અને OmniRoute સર્વર માટે SSH ટનલ શરૂ કરો:",
+    "loopbackMismatchStep1": "આ કમ્પ્યુટરમાં, એક ટર્મિનલ ખોલો અને AgentProxy સર્વર માટે SSH ટનલ શરૂ કરો:",
     "loopbackMismatchStep1Note": "{userPlaceholder} ને તમારા SSH યુઝરનેમ સાથે બદલો. કનેક્શન સક્રિય તરીકે દર્શાવા સુધી આ ટર્મિનલ ખોલી રાખો — બંને પોર્ટની જરૂર છે: એક ડેશબોર્ડને સેવા આપે છે, બીજું કૉલબેક પ્રાપ્ત કરે છે.",
     "loopbackMismatchStep2": "આ બ્રાઉઝરમાં, ટનલ દ્વારા ઓમ્નીરૂટ ફરીથી ખોલો:",
     "loopbackMismatchStep3": "ત્યારે નવા ટેબમાંથી {providerName} ફરીથી કનેક્ટ કરો. હવે કૉલબેક સર્વર સુધી પહોંચે છે અને લૉગિન સામાન્ય રીતે પૂર્ણ થાય છે.",
@@ -10763,7 +10763,7 @@
     "gheUrlRequired": "GitHub Enterprise URL જરૂરી છે",
     "gitlabDuoSetupTitle": "GitLab Duo OAuth સેટઅપ",
     "gitlabDuoSetupMessage": "GitLab Duo OAuth કન્ફિગર નથી કરવામાં આવ્યું. {applicationsUrl} પર એક OAuth એપ્લિકેશન નોંધણી કરો જેમાં રીડાયરેક્ટ URI {redirectUri} અને સ્કોપ્સ \"{scopes}\" છે, પછી {clientIdEnv} (અને વૈકલ્પિક રીતે {clientSecretEnv}) સેટ કરો અને પુનઃપ્રારંભ કરો.",
-    "gitlabDuoSetupDescription": "આ એપ્લિકેશન નોંધણી થયા પછી અને આ OmniRoute ઉદાહરણ પર env vars સેટ થયા પછી, OAuth લોગિન શરૂ કરવા માટે ચાલુ રાખવા માટે ક્લિક કરો.",
+    "gitlabDuoSetupDescription": "આ એપ્લિકેશન નોંધણી થયા પછી અને આ AgentProxy ઉદાહરણ પર env vars સેટ થયા પછી, OAuth લોગિન શરૂ કરવા માટે ચાલુ રાખવા માટે ક્લિક કરો.",
     "continue": "ચાલુ રાખો"
   },
   "cursorAuthModal": {
@@ -11200,16 +11200,16 @@
     "musicSample": "હૂંફાળા પિયાનો અને મૃદુ તાર સાથેનો એક શાંત એમ્બિયન્ટ ટ્રેક",
     "noAudioUrl": "પ્રતિસાદમાં ઑડિયો URL શામેલ નથી: {response}",
     "music": "સંગીત",
-    "embeddingSample": "OmniRoute બહુવિધ પ્રદાતાઓ વચ્ચે AI વિનંતીઓને રૂટ કરે છે.",
+    "embeddingSample": "AgentProxy બહુવિધ પ્રદાતાઓ વચ્ચે AI વિનંતીઓને રૂટ કરે છે.",
     "embedding": "એમ્બેડિંગ",
     "imageSample": "સૂર્યાસ્ત સમયે ભવિષ્યવાદી શહેર, સિનેમેટિક લાઇટિંગ",
     "image": "છબી",
-    "ttsSample": "OmniRoute તરફથી નમસ્તે. આ એક ટેક્સ્ટ-ટુ-સ્પીચ પરીક્ષણ છે.",
+    "ttsSample": "AgentProxy તરફથી નમસ્તે. આ એક ટેક્સ્ટ-ટુ-સ્પીચ પરીક્ષણ છે.",
     "textToSpeech": "ટેક્સ્ટ ટુ સ્પીચ",
     "videoSample": "ભવિષ્યવાદી શહેર પર ઉડતું કાગળનું વિમાન",
     "video": "વિડિઓ",
     "webFetch": "વેબ ફેચ",
-    "webSearchSample": "OmniRoute શું છે?",
+    "webSearchSample": "AgentProxy શું છે?",
     "webSearch": "વેબ શોધ",
     "documentUrl": "દસ્તાવેજ URL",
     "browserAudioUnsupported": "તમારું બ્રાઉઝર ઑડિયોને સપોર્ટ કરતું નથી.",
@@ -11265,7 +11265,7 @@
     "cacheUp": "UP",
     "semantic": "Semantic",
     "upstream": "Upstream",
-    "semanticCacheHit": "Semantic cache hit (served by OmniRoute)",
+    "semanticCacheHit": "Semantic cache hit (served by AgentProxy)",
     "upstreamResponse": "Upstream provider response",
     "noApiKey": "No API key",
     "requestedRoutedTitle": "Requested {requested}, routed as {routed}",
@@ -11353,7 +11353,7 @@
       "ariaLabel": "વિનંતી લોગ વિગતો",
       "completed": "પૂર્ણ થયું",
       "upstreamStatus": "અપસ્ટ્રીમ: {status}",
-      "statusDiscrepancy": "OmniRoute એ {provider} પાછું આપ્યા છતાં {status} પાછું આપ્યું",
+      "statusDiscrepancy": "AgentProxy એ {provider} પાછું આપ્યા છતાં {status} પાછું આપ્યું",
       "previousRequest": "પહેલાનો વિનંતી",
       "nextRequest": "આગળનો વિનંતી",
       "close": "વિગત મોડલ બંધ કરો",
@@ -11666,12 +11666,12 @@
   },
   "plugins": {
     "title": "Plugins",
-    "description": "Install and manage plugins for extending OmniRoute functionality",
+    "description": "Install and manage plugins for extending AgentProxy functionality",
     "loading": "Loading plugins...",
     "scanning": "Scanning...",
     "scanForPlugins": "Scan for Plugins",
     "noPlugins": "No plugins installed",
-    "noPluginsDescription": "Place plugin directories in ~/.omniroute/plugins/ and click Scan.",
+    "noPluginsDescription": "Place plugin directories in ~/.agentproxy/plugins/ and click Scan.",
     "activate": "Activate",
     "deactivate": "Deactivate",
     "uninstall": "Uninstall",
@@ -11701,7 +11701,7 @@
     "installedTab": "ઇન્સ્ટોલ કરેલ",
     "marketplaceTab": "માર્કેટપ્લેસ",
     "marketplaceUrlLabel": "કસ્ટમ માર્કેટપ્લેસ URL",
-    "marketplaceUrlPlaceholder": "સત્તાવાર Omniroute રજિસ્ટ્રી માટે ખાલી છોડો",
+    "marketplaceUrlPlaceholder": "સત્તાવાર AgentProxy રજિસ્ટ્રી માટે ખાલી છોડો",
     "saveMarketplaceUrl": "સાચવો અને ફરીથી લોડ કરો",
     "marketplaceUrlSaved": "માર્કેટપ્લેસ URL અપડેટ કર્યું",
     "marketplaceEmpty": "માર્કેટપ્લેસમાં કોઈ પ્લગઇન મળ્યા નથી.",
@@ -11824,7 +11824,7 @@
   },
   "agentBridge": {
     "title": "AgentBridge",
-    "subtitle": "OmniRoute મોડલ્સ સાથે IDE એજન્ટ્સનો ઉપયોગ કરો — કોઈ કન્ફિગની જરૂર નથી",
+    "subtitle": "AgentProxy મોડલ્સ સાથે IDE એજન્ટ્સનો ઉપયોગ કરો — કોઈ કન્ફિગની જરૂર નથી",
     "riskBannerTitle": "તમારા પોતાના જોખમે ઉપયોગ કરો",
     "riskBannerBody": "AgentBridge એ IDE એજન્ટોના HTTPS ટ્રાફિકને આંતરે છે. તેને સક્રિય કરીને તમે દરેક એજન્ટની સેવાની શરતોના પાલન માટેની જવાબદારી સ્વીકારો છો. એવા ઉપકરણો અથવા નેટવર્ક્સ પર ક્યારેય ઉપયોગ કરશો નહીં જ્યાં TLS નિરીક્ષણ પ્રતિબંધિત છે.",
     "riskBannerDismiss": "અવગણો",
@@ -11874,9 +11874,9 @@
     "investigatingNotice": "This agent is under investigation. Hosts and API surface are still being confirmed. Setup will be available once the upstream API is documented.",
     "modelMappingsLabel": "Model mappings",
     "sourceModel": "Source model (agent native)",
-    "targetModel": "Target model (OmniRoute)",
+    "targetModel": "Target model (AgentProxy)",
     "noMappings": "No model mappings configured. Run setup wizard to auto-detect models.",
-    "noMappingsDesc": "હજી સુધી કોઈ મોડેલ નકશા રૂપરેખાંકિત નથી. એજન્ટના વિનંતીઓને OmniRoute દ્વારા માર્ગદર્શન આપવા માટે નકશાઓ ઉમેરો.",
+    "noMappingsDesc": "હજી સુધી કોઈ મોડેલ નકશા રૂપરેખાંકિત નથી. એજન્ટના વિનંતીઓને AgentProxy દ્વારા માર્ગદર્શન આપવા માટે નકશાઓ ઉમેરો.",
     "addMapping": "મૅપિંગ ઉમેરો",
     "selectModel": "Select…",
     "saveMappings": "Save mappings",
@@ -11983,7 +11983,7 @@
   },
   "relay": {
     "title": "સર્વરલેસ રિલે પ્રોક્સીઝ",
-    "description": "રેટ લિમિટિંગ અને એક્સેસ કંટ્રોલ સાથે OmniRoute પર પ્રોક્સી કરતા પબ્લિક API એન્ડપોઇન્ટ્સ બનાવો",
+    "description": "રેટ લિમિટિંગ અને એક્સેસ કંટ્રોલ સાથે AgentProxy પર પ્રોક્સી કરતા પબ્લિક API એન્ડપોઇન્ટ્સ બનાવો",
     "created": "રિલે ટોકન બનાવવામાં આવ્યું",
     "createFailed": "ટોકન બનાવવામાં નિષ્ફળ",
     "toggleFailed": "ટોકન ટોગલ કરવામાં નિષ્ફળ",
@@ -12146,26 +12146,26 @@
     "concept": {
       "code": {
         "title": "CLI કોડ",
-        "phrase": "કોડ ટૂલ્સ જે તમે OmniRoute તરફ નિર્દેશ કરો છો",
-        "flow": "તમે → CLI કોડ → OmniRoute → પ્રદાતા",
+        "phrase": "કોડ ટૂલ્સ જે તમે AgentProxy તરફ નિર્દેશ કરો છો",
+        "flow": "તમે → CLI કોડ → AgentProxy → પ્રદાતા",
         "seeOther": "જુઓ →"
       },
       "agent": {
         "title": "CLI એજન્ટ્સ",
-        "phrase": "વ્યાપક-હેતુવાળા સ્વાયત્ત CLI એજન્ટ્સ જે તમે OmniRoute તરફ નિર્દેશ કરો છો",
-        "flow": "તમે → CLI એજન્ટ → OmniRoute → પ્રદાતા",
+        "phrase": "વ્યાપક-હેતુવાળા સ્વાયત્ત CLI એજન્ટ્સ જે તમે AgentProxy તરફ નિર્દેશ કરો છો",
+        "flow": "તમે → CLI એજન્ટ → AgentProxy → પ્રદાતા",
         "seeOther": "જુઓ →"
       },
       "acp": {
         "title": "ACP એજન્ટ્સ",
-        "phrase": "CLIs જે OmniRoute એક્ઝિક્યુશન બેકએન્ડ તરીકે શરૂ કરે છે (રિવર્સ ફ્લો)",
+        "phrase": "CLIs જે AgentProxy એક્ઝિક્યુશન બેકએન્ડ તરીકે શરૂ કરે છે (રિવર્સ ફ્લો)",
         "warning": "Most users can ignore this — use only when an integration requires it.",
-        "flow": "ક્લાયન્ટ → OmniRoute → spawn CLI (stdio/ACP) → પ્રતિસાદ",
+        "flow": "ક્લાયન્ટ → AgentProxy → spawn CLI (stdio/ACP) → પ્રતિસાદ",
         "seeOther": "જુઓ →"
       }
     },
     "comparison": {
-      "title": "OmniRoute માં 3 CLI પ્રકારોને સમજો",
+      "title": "AgentProxy માં 3 CLI પ્રકારોને સમજો",
       "thisPage": "આ પૃષ્ઠ",
       "open": "ખોલો →",
       "code": {
@@ -12223,7 +12223,7 @@
   },
   "cliCode": {
     "pageTitle": "CLI કોડ્સ",
-    "pageSubtitle": "OmniRoute તરફ નિર્દેશ કરતા કોડ ટૂલ્સ",
+    "pageSubtitle": "AgentProxy તરફ નિર્દેશ કરતા કોડ ટૂલ્સ",
     "searchPlaceholder": "CLI શોધો…",
     "filterDetectionLabel": "ડિટેક્શન",
     "filterBaseUrlLabel": "Base URL",
@@ -12248,7 +12248,7 @@
   },
   "acpAgents": {
     "pageTitle": "ACP એજન્ટ્સ",
-    "pageSubtitle": "CLIs જેને OmniRoute એક્ઝિક્યુશન બેકએન્ડ તરીકે સ્પોન કરે છે",
+    "pageSubtitle": "CLIs જેને AgentProxy એક્ઝિક્યુશન બેકએન્ડ તરીકે સ્પોન કરે છે",
     "scanning": "એજન્ટ્સ ડિટેક્ટ કરી રહ્યાં છે…",
     "refresh": "રિફ્રેશ કરો",
     "setupGuideTitle": "સેટઅપ માર્ગદર્શિકા",
@@ -12283,7 +12283,7 @@
     "catalog": {
       "omni-auth": {
         "name": "પ્રમાણીકરણ",
-        "description": "API કી પ્રમાણીકરણ અને સત્ર ટોકન્સ મેનેજ કરો. Bearer ટોકન દ્વારા વિનંતીઓને પ્રમાણિત કરવા, સત્ર કૂકીઝ મેળવવા અને OmniRoute API માટે લૉગિન આવશ્યકતાઓને ગોઠવવા માટે અહીંથી શરૂ કરો."
+        "description": "API કી પ્રમાણીકરણ અને સત્ર ટોકન્સ મેનેજ કરો. Bearer ટોકન દ્વારા વિનંતીઓને પ્રમાણિત કરવા, સત્ર કૂકીઝ મેળવવા અને AgentProxy API માટે લૉગિન આવશ્યકતાઓને ગોઠવવા માટે અહીંથી શરૂ કરો."
       },
       "omni-providers": {
         "name": "પ્રોવાઇડર્સ",
@@ -12299,7 +12299,7 @@
       },
       "omni-api-keys": {
         "name": "API કી",
-        "description": "OmniRoute API કી બનાવો, સૂચિબદ્ધ કરો, રોટેટ કરો અને રદ કરો. કી દીઠ સ્કોપ્સ, ખર્ચ મર્યાદા અને સમાપ્તિને નિયંત્રિત કરો. કી તમામ પ્રોક્સી અને મેનેજમેન્ટ એન્ડપોઇન્ટ્સની ઍક્સેસને નિયંત્રિત કરે છે."
+        "description": "AgentProxy API કી બનાવો, સૂચિબદ્ધ કરો, રોટેટ કરો અને રદ કરો. કી દીઠ સ્કોપ્સ, ખર્ચ મર્યાદા અને સમાપ્તિને નિયંત્રિત કરો. કી તમામ પ્રોક્સી અને મેનેજમેન્ટ એન્ડપોઇન્ટ્સની ઍક્સેસને નિયંત્રિત કરે છે."
       },
       "omni-usage-logs": {
         "name": "વપરાશ અને લૉગ્સ",
@@ -12335,15 +12335,15 @@
       },
       "omni-cli-tools": {
         "name": "CLI ટૂલ્સ",
-        "description": "API દ્વારા એક્સપોઝ થયેલા CLI ટૂલ ઇન્ટિગ્રેશન્સ મેનેજ કરો. OmniRoute ના ઓટોમેશન સરફેસને વિસ્તૃત કરતા CLI ટૂલ પ્લગઇન્સની સૂચિ બનાવો, કન્ફિગર કરો અને ઇનવોક કરો."
+        "description": "API દ્વારા એક્સપોઝ થયેલા CLI ટૂલ ઇન્ટિગ્રેશન્સ મેનેજ કરો. AgentProxy ના ઓટોમેશન સરફેસને વિસ્તૃત કરતા CLI ટૂલ પ્લગઇન્સની સૂચિ બનાવો, કન્ફિગર કરો અને ઇનવોક કરો."
       },
       "omni-tunnels": {
         "name": "ટનલ્સ",
-        "description": "OmniRoute ને ઇન્ટરનેટ પર એક્સપોઝ કરવા અથવા રિમોટ એજન્ટ્સ અને CI પાઇપલાઇન્સ સાથે એક્સેસ શેર કરવા માટે સુરક્ષિત ટનલ્સ (ngrok, Cloudflare Tunnel, custom) બનાવો અને મેનેજ કરો."
+        "description": "AgentProxy ને ઇન્ટરનેટ પર એક્સપોઝ કરવા અથવા રિમોટ એજન્ટ્સ અને CI પાઇપલાઇન્સ સાથે એક્સેસ શેર કરવા માટે સુરક્ષિત ટનલ્સ (ngrok, Cloudflare Tunnel, custom) બનાવો અને મેનેજ કરો."
       },
       "omni-sync-cloud": {
         "name": "ક્લાઉડ સિંક",
-        "description": "ક્લાઉડ સ્ટોરેજ પર/માંથી OmniRoute કન્ફિગરેશન, પ્રોવાઇડર કનેક્શન્સ અને સેટિંગ્સ સિંક્રનાઇઝ કરો. ક્લાઉડ વર્કર ઓથેન્ટિકેશન અને રિમોટ બેકઅપ ટાર્ગેટ્સ મેનેજ કરો."
+        "description": "ક્લાઉડ સ્ટોરેજ પર/માંથી AgentProxy કન્ફિગરેશન, પ્રોવાઇડર કનેક્શન્સ અને સેટિંગ્સ સિંક્રનાઇઝ કરો. ક્લાઉડ વર્કર ઓથેન્ટિકેશન અને રિમોટ બેકઅપ ટાર્ગેટ્સ મેનેજ કરો."
       },
       "omni-db-backups": {
         "name": "ડેટાબેઝ અને બેકઅપ્સ",
@@ -12355,11 +12355,11 @@
       },
       "omni-mcp": {
         "name": "MCP સર્વર",
-        "description": "OmniRoute MCP સર્વર (110 ટૂલ્સ, 3 ટ્રાન્સપોર્ટ્સ: SSE/stdio/HTTP) સાથે કનેક્ટ થાઓ. 33 પરમિશન સ્કોપ્સમાં રાઉટિંગ, કેશ, કમ્પ્રેશન, મેમરી, સ્કિલ્સ, પ્રોવાઇડર્સ અને ઓડિટ ટૂલ્સને આવરી લે છે."
+        "description": "AgentProxy MCP સર્વર (110 ટૂલ્સ, 3 ટ્રાન્સપોર્ટ્સ: SSE/stdio/HTTP) સાથે કનેક્ટ થાઓ. 33 પરમિશન સ્કોપ્સમાં રાઉટિંગ, કેશ, કમ્પ્રેશન, મેમરી, સ્કિલ્સ, પ્રોવાઇડર્સ અને ઓડિટ ટૂલ્સને આવરી લે છે."
       },
       "omni-agents-a2a": {
         "name": "એજન્ટ્સ અને A2A પ્રોટોકોલ",
-        "description": "JSON-RPC 2.0 એજન્ટ-ટુ-એજન્ટ પ્રોટોકોલ દ્વારા OmniRoute સાથે ક્રિયાપ્રતિક્રિયા કરો. 6 બિલ્ટ-ઇન A2A સ્કિલ્સ: smart-routing, quota-management, provider-discovery, cost-analysis, health-report, list-capabilities."
+        "description": "JSON-RPC 2.0 એજન્ટ-ટુ-એજન્ટ પ્રોટોકોલ દ્વારા AgentProxy સાથે ક્રિયાપ્રતિક્રિયા કરો. 6 બિલ્ટ-ઇન A2A સ્કિલ્સ: smart-routing, quota-management, provider-discovery, cost-analysis, health-report, list-capabilities."
       },
       "omni-version-manager": {
         "name": "વર્ઝન મેનેજર",
@@ -12371,7 +12371,7 @@
       },
       "cli-serve": {
         "name": "CLI: Serve",
-        "description": "CLI માંથી OmniRoute સર્વર શરૂ કરો, બંધ કરો અને રીસ્ટાર્ટ કરો. ડેમન મોડ, પોર્ટ કન્ફિગરેશન, ઑટો-રિકવરી, સિસ્ટમ ટ્રે ઇન્ટિગ્રેશન અને ડેશબોર્ડ ઓપન શોર્ટકટ મેનેજ કરો."
+        "description": "CLI માંથી AgentProxy સર્વર શરૂ કરો, બંધ કરો અને રીસ્ટાર્ટ કરો. ડેમન મોડ, પોર્ટ કન્ફિગરેશન, ઑટો-રિકવરી, સિસ્ટમ ટ્રે ઇન્ટિગ્રેશન અને ડેશબોર્ડ ઓપન શોર્ટકટ મેનેજ કરો."
       },
       "cli-health": {
         "name": "CLI: Health",
@@ -12383,7 +12383,7 @@
       },
       "cli-keys": {
         "name": "CLI: API Keys",
-        "description": "CLI માંથી OmniRoute API કી બનાવો, સૂચિબદ્ધ કરો, રોટેટ કરો અને રદ કરો. પ્રોવાઇડર ઓથેન્ટિકેશન માટે OAuth ફ્લો મેનેજ કરો અને કી સ્કોપ્સ તથા એક્સપાયરેશનનું નિરીક્ષણ કરો."
+        "description": "CLI માંથી AgentProxy API કી બનાવો, સૂચિબદ્ધ કરો, રોટેટ કરો અને રદ કરો. પ્રોવાઇડર ઓથેન્ટિકેશન માટે OAuth ફ્લો મેનેજ કરો અને કી સ્કોપ્સ તથા એક્સપાયરેશનનું નિરીક્ષણ કરો."
       },
       "cli-models": {
         "name": "CLI: Models",
@@ -12391,7 +12391,7 @@
       },
       "cli-chat": {
         "name": "CLI: Chat",
-        "description": "CLI માંથી ચેટ કમ્પ્લીશન્સ મોકલો, રિસ્પોન્સ સ્ટ્રીમ કરો અને ઇન્ટરેક્ટિવ REPL સત્ર શરૂ કરો. તમામ OmniRoute પ્રોવાઇડર્સ, કોમ્બો રાઉટિંગ અને સિસ્ટમ પ્રોમ્પ્ટ કન્ફિગરેશનને સપોર્ટ કરે છે."
+        "description": "CLI માંથી ચેટ કમ્પ્લીશન્સ મોકલો, રિસ્પોન્સ સ્ટ્રીમ કરો અને ઇન્ટરેક્ટિવ REPL સત્ર શરૂ કરો. તમામ AgentProxy પ્રોવાઇડર્સ, કોમ્બો રાઉટિંગ અને સિસ્ટમ પ્રોમ્પ્ટ કન્ફિગરેશનને સપોર્ટ કરે છે."
       },
       "cli-routing": {
         "name": "CLI: Routing & Combos",
@@ -12419,7 +12419,7 @@
       },
       "cli-a2a": {
         "name": "CLI: A2A પ્રોટોકોલ",
-        "description": "CLI માંથી OmniRoute A2A સર્વર સાથે ક્રિયાપ્રતિક્રિયા કરો. કાર્યો મોકલો, સ્કિલ એક્ઝિક્યુશન ઇતિહાસનું નિરીક્ષણ કરો અને JSON-RPC 2.0 એજન્ટ-ટુ-એજન્ટ પ્રોટોકોલનું ઇન્ટરેક્ટિવ રીતે પરીક્ષણ કરો."
+        "description": "CLI માંથી AgentProxy A2A સર્વર સાથે ક્રિયાપ્રતિક્રિયા કરો. કાર્યો મોકલો, સ્કિલ એક્ઝિક્યુશન ઇતિહાસનું નિરીક્ષણ કરો અને JSON-RPC 2.0 એજન્ટ-ટુ-એજન્ટ પ્રોટોકોલનું ઇન્ટરેક્ટિવ રીતે પરીક્ષણ કરો."
       },
       "cli-tunnel": {
         "name": "CLI: ટનલ્સ",
@@ -12427,7 +12427,7 @@
       },
       "cli-backup-sync": {
         "name": "CLI: બૅકઅપ અને સિંક",
-        "description": "CLI માંથી OmniRoute ડેટાનો બૅકઅપ લો અને પુનઃસ્થાપિત કરો. ઇન્ક્રીમેન્ટલ સ્નેપશોટ્સ ટ્રિગર કરો, ક્લાઉડ સ્ટોરેજ સાથે સિંક કરો, બૅકઅપ શેડ્યૂલ્સ મેનેજ કરો અને આર્કાઇવ ફાઇલોમાંથી પુનઃસ્થાપિત કરો."
+        "description": "CLI માંથી AgentProxy ડેટાનો બૅકઅપ લો અને પુનઃસ્થાપિત કરો. ઇન્ક્રીમેન્ટલ સ્નેપશોટ્સ ટ્રિગર કરો, ક્લાઉડ સ્ટોરેજ સાથે સિંક કરો, બૅકઅપ શેડ્યૂલ્સ મેનેજ કરો અને આર્કાઇવ ફાઇલોમાંથી પુનઃસ્થાપિત કરો."
       },
       "cli-policy-audit": {
         "name": "CLI: પૉલિસી અને ઑડિટ",
@@ -12451,11 +12451,11 @@
       },
       "cli-skill-collector": {
         "name": "CLI: એજન્ટ સ્કિલ કલેક્ટર",
-        "description": "ઇન્સ્ટોલ કરેલા CLI કોડિંગ ટૂલ્સ (Claude Code, Codex, Cursor, Copilot, Cline અને વધુ) શોધો, મેળ ખાતી એજન્ટ સ્કિલ્સ માટે GitHub પર શોધો અને OmniRoute ના બિલ્ટ-ઇન APIs દ્વારા શોધાયેલ ટૂલ્સમાં તેમને ઇન્સ્ટોલ કરો."
+        "description": "ઇન્સ્ટોલ કરેલા CLI કોડિંગ ટૂલ્સ (Claude Code, Codex, Cursor, Copilot, Cline અને વધુ) શોધો, મેળ ખાતી એજન્ટ સ્કિલ્સ માટે GitHub પર શોધો અને AgentProxy ના બિલ્ટ-ઇન APIs દ્વારા શોધાયેલ ટૂલ્સમાં તેમને ઇન્સ્ટોલ કરો."
       },
       "config-codex-cli": {
         "name": "કન્ફિગ: Codex CLI",
-        "description": "OmniRoute નો OpenAI-સુસંગત બૅકએન્ડ તરીકે ઉપયોગ કરવા માટે કોઈપણ મશીન (Linux, macOS, Windows) પર OpenAI Codex CLI ને ગોઠવવા માટે સ્ટેપ-બાય-સ્ટેપ એજન્ટ વર્કફ્લો. OS અને શેલ શોધે છે, config.toml અને 7 નામવાળી પ્રોફાઇલ્સ લખે છે, પર્યાવરણ વેરિએબલ્સ સેટ કરે છે અને સેટઅપની ચકાસણી કરે છે."
+        "description": "AgentProxy નો OpenAI-સુસંગત બૅકએન્ડ તરીકે ઉપયોગ કરવા માટે કોઈપણ મશીન (Linux, macOS, Windows) પર OpenAI Codex CLI ને ગોઠવવા માટે સ્ટેપ-બાય-સ્ટેપ એજન્ટ વર્કફ્લો. OS અને શેલ શોધે છે, config.toml અને 7 નામવાળી પ્રોફાઇલ્સ લખે છે, પર્યાવરણ વેરિએબલ્સ સેટ કરે છે અને સેટઅપની ચકાસણી કરે છે."
       },
       "omni-github-skills": {
         "name": "GitHub સ્કિલ ડિસ્કવરી",
@@ -12463,16 +12463,16 @@
       }
     },
     "pageTitle": "એજન્ટ સ્કિલ્સ",
-    "pageSubtitle": "તમારા એજન્ટને OmniRoute ઓપરેટ કરવાનું શીખવો — 23 API વિસ્તારો + 21 CLI પરિવારો",
+    "pageSubtitle": "તમારા એજન્ટને AgentProxy ઓપરેટ કરવાનું શીખવો — 23 API વિસ્તારો + 21 CLI પરિવારો",
     "conceptCard": {
       "agent": {
         "title": "એજન્ટ સ્કિલ્સ — આઉટબાઉન્ડ",
-        "description": "Agent Skills એ મશીન-વાંચી શકાય તેવા SKILL.md દસ્તાવેજો છે જે બાહ્ય AI એજન્ટ્સ (Claude Code, Cursor, Copilot…) REST અથવા CLI દ્વારા OmniRoute ને કેવી રીતે ઓપરેટ કરવું તે શીખવા માટે GitHub પરથી મેળવે છે. તે એજન્ટ દ્વારા વાંચવામાં આવે છે, OmniRoute દ્વારા એક્ઝિક્યુટ કરવામાં આવતા નથી.",
+        "description": "Agent Skills એ મશીન-વાંચી શકાય તેવા SKILL.md દસ્તાવેજો છે જે બાહ્ય AI એજન્ટ્સ (Claude Code, Cursor, Copilot…) REST અથવા CLI દ્વારા AgentProxy ને કેવી રીતે ઓપરેટ કરવું તે શીખવા માટે GitHub પરથી મેળવે છે. તે એજન્ટ દ્વારા વાંચવામાં આવે છે, AgentProxy દ્વારા એક્ઝિક્યુટ કરવામાં આવતા નથી.",
         "crossLinkLabel": "તફાવત સમજો →"
       },
       "omni": {
         "title": "Omni Skills — ઇનબાઉન્ડ",
-        "description": "Omni Skills એ સેન્ડબૉક્સ ટૂલ્સ છે જે OmniRoute દરેક વિનંતી પર મોડેલના સંદર્ભમાં ઇન્જેક્ટ કરે છે. તે OmniRoute દ્વારા એક્ઝિક્યુટ કરવામાં આવે છે, એજન્ટ દ્વારા વાંચવામાં આવતા નથી.",
+        "description": "Omni Skills એ સેન્ડબૉક્સ ટૂલ્સ છે જે AgentProxy દરેક વિનંતી પર મોડેલના સંદર્ભમાં ઇન્જેક્ટ કરે છે. તે AgentProxy દ્વારા એક્ઝિક્યુટ કરવામાં આવે છે, એજન્ટ દ્વારા વાંચવામાં આવતા નથી.",
         "crossLinkLabel": "તફાવત સમજો →"
       },
       "comparison": {
@@ -12480,18 +12480,18 @@
         "colOmni": "Omni Skills",
         "whatIs": {
           "label": "તે શું છે",
-          "agent": "મશીન-વાંચી શકાય તેવી SKILL.md જે બાહ્ય એજન્ટને OmniRoute ઓપરેટ કરવાનું શીખવે છે",
-          "omni": "એક્ઝિક્યુટેબલ ટૂલ્સ જે OmniRoute LLM વિનંતીઓમાં ટૂલ્સ તરીકે ઇન્જેક્ટ કરે છે"
+          "agent": "મશીન-વાંચી શકાય તેવી SKILL.md જે બાહ્ય એજન્ટને AgentProxy ઓપરેટ કરવાનું શીખવે છે",
+          "omni": "એક્ઝિક્યુટેબલ ટૂલ્સ જે AgentProxy LLM વિનંતીઓમાં ટૂલ્સ તરીકે ઇન્જેક્ટ કરે છે"
         },
         "direction": {
           "label": "દિશા",
-          "agent": "આઉટબાઉન્ડ — બાહ્ય એજન્ટ OmniRoute ને નિયંત્રિત કરવાનું શીખે છે",
-          "omni": "ઇનબાઉન્ડ — OmniRoute તેમાંથી પસાર થતા મોડેલોને ટૂલ્સ આપે છે"
+          "agent": "આઉટબાઉન્ડ — બાહ્ય એજન્ટ AgentProxy ને નિયંત્રિત કરવાનું શીખે છે",
+          "omni": "ઇનબાઉન્ડ — AgentProxy તેમાંથી પસાર થતા મોડેલોને ટૂલ્સ આપે છે"
         },
         "executor": {
           "label": "એક્ઝિક્યુટર",
           "agent": "બાહ્ય એજન્ટ (markdown વાંચે છે → API/CLI દ્વારા કાર્ય કરે છે)",
-          "omni": "OmniRoute પોતે (tool_calls ને અટકાવે છે, Docker સેન્ડબોક્સ)"
+          "omni": "AgentProxy પોતે (tool_calls ને અટકાવે છે, Docker સેન્ડબોક્સ)"
         },
         "storage": {
           "label": "સ્ટોરેજ",
@@ -12500,8 +12500,8 @@
         },
         "tagline": {
           "label": "ટેગલાઇન",
-          "agent": "તમારા એજન્ટને OmniRoute નો ઉપયોગ કરવાનું શીખવો",
-          "omni": "OmniRoute મોડેલોને એક્ઝિક્યુટેબલ ટૂલ્સ આપો"
+          "agent": "તમારા એજન્ટને AgentProxy નો ઉપયોગ કરવાનું શીખવો",
+          "omni": "AgentProxy મોડેલોને એક્ઝિક્યુટેબલ ટૂલ્સ આપો"
         }
       }
     },
@@ -12517,7 +12517,7 @@
     "coverageLabel": "કવરેજ",
     "mcpUrl": "MCP URL",
     "a2aLink": "A2A",
-    "mcpPrompt": "તમારા એજન્ટને 37 OmniRoute ટૂલ્સ આપવા માટે આ MCP એન્ડપોઇન્ટ ઉમેરો.",
+    "mcpPrompt": "તમારા એજન્ટને 37 AgentProxy ટૂલ્સ આપવા માટે આ MCP એન્ડપોઇન્ટ ઉમેરો.",
     "a2aPrompt": "A2A ટાસ્ક ડેલિગેશન સક્ષમ કરવા માટે તમારા ઓર્કેસ્ટ્રેટર સાથે આ Agent Card રજીસ્ટર કરો.",
     "refresh": "રિફ્રેશ કરો",
     "copyUrl": "URL કૉપિ કરો",
@@ -12656,7 +12656,7 @@
     "rank": "ક્રમ",
     "name": "નામ",
     "score": "સ્કોર",
-    "leaderboardEmpty": "આ સ્કોપ માટે હજી સુધી કોઈ એન્ટ્રી નથી. લીડરબોર્ડ પર દેખાવા માટે OmniRoute નો ઉપયોગ કરવાનું શરૂ કરો!",
+    "leaderboardEmpty": "આ સ્કોપ માટે હજી સુધી કોઈ એન્ટ્રી નથી. લીડરબોર્ડ પર દેખાવા માટે AgentProxy નો ઉપયોગ કરવાનું શરૂ કરો!",
     "profileLoadFailed": "પ્રોફાઇલ ડેટા લોડ કરવામાં નિષ્ફળ",
     "levelTitles": {
       "beginner": "પ્રારંભિક",
@@ -12676,7 +12676,7 @@
     "dayStreak": "{count}-દિવસની સ્ટ્રીક",
     "levelProgress": "લેવલ {current} → {next}",
     "totalXpEarned": "કુલ {count} XP મેળવ્યા",
-    "maintainStreak": "તમારી સ્ટ્રીક જાળવી રાખવા માટે દરરોજ OmniRoute નો ઉપયોગ કરતા રહો!",
+    "maintainStreak": "તમારી સ્ટ્રીક જાળવી રાખવા માટે દરરોજ AgentProxy નો ઉપયોગ કરતા રહો!",
     "badgesTitle": "બેજ ({earned}/{total})",
     "noBadges": "હજી સુધી કોઈ બેજ ઉપલબ્ધ નથી.",
     "hiddenBadge": "છુપાયેલ સિદ્ધિ",
@@ -12700,28 +12700,28 @@
     "badges": {
       "radar-supporter": {
         "name": "Radar Supporter",
-        "description": "Verified a live OmniRoute Radar supporter feed",
+        "description": "Verified a live AgentProxy Radar supporter feed",
         "criteria": "Verify a signed live Radar supporter feed."
       },
       "first-token": {
         "name": "પ્રથમ ટોકન",
         "description": "તમારી પ્રથમ API વિનંતી કરી",
-        "criteria": "OmniRoute દ્વારા તમારી પ્રથમ API વિનંતી પૂર્ણ કરો."
+        "criteria": "AgentProxy દ્વારા તમારી પ્રથમ API વિનંતી પૂર્ણ કરો."
       },
       "token-consumer": {
         "name": "ટોકન ગ્રાહક",
         "description": "1,000 API વિનંતીઓ કરી",
-        "criteria": "OmniRoute દ્વારા 1,000 API વિનંતીઓ પૂર્ણ કરો."
+        "criteria": "AgentProxy દ્વારા 1,000 API વિનંતીઓ પૂર્ણ કરો."
       },
       "token-machine": {
         "name": "ટોકન મશીન",
         "description": "10,000 API વિનંતીઓ કરી",
-        "criteria": "OmniRoute દ્વારા 10,000 API વિનંતીઓ પૂર્ણ કરો."
+        "criteria": "AgentProxy દ્વારા 10,000 API વિનંતીઓ પૂર્ણ કરો."
       },
       "token-whale": {
         "name": "ટોકન વ્હેલ",
         "description": "100,000 API વિનંતીઓ કરી",
-        "criteria": "OmniRoute દ્વારા 100,000 API વિનંતીઓ પૂર્ણ કરો."
+        "criteria": "AgentProxy દ્વારા 100,000 API વિનંતીઓ પૂર્ણ કરો."
       },
       "generous": {
         "name": "ઉદાર",
@@ -12771,22 +12771,22 @@
       "daily-user": {
         "name": "દૈનિક વપરાશકર્તા",
         "description": "સળંગ 3 દિવસ માટે સક્રિય",
-        "criteria": "સળંગ 3 દિવસ માટે OmniRoute નો ઉપયોગ કરો."
+        "criteria": "સળંગ 3 દિવસ માટે AgentProxy નો ઉપયોગ કરો."
       },
       "weekly-warrior": {
         "name": "સાપ્તાહિક યોદ્ધા",
         "description": "સળંગ 7 દિવસ માટે સક્રિય",
-        "criteria": "સળંગ 7 દિવસ માટે OmniRoute નો ઉપયોગ કરો."
+        "criteria": "સળંગ 7 દિવસ માટે AgentProxy નો ઉપયોગ કરો."
       },
       "monthly-master": {
         "name": "માસિક માસ્ટર",
         "description": "સળંગ 30 દિવસ માટે સક્રિય",
-        "criteria": "સળંગ 30 દિવસ માટે OmniRoute નો ઉપયોગ કરો."
+        "criteria": "સળંગ 30 દિવસ માટે AgentProxy નો ઉપયોગ કરો."
       },
       "unstoppable": {
         "name": "અણનમ",
         "description": "સળંગ 365 દિવસ માટે સક્રિય",
-        "criteria": "સળંગ 365 દિવસ માટે OmniRoute નો ઉપયોગ કરો."
+        "criteria": "સળંગ 365 દિવસ માટે AgentProxy નો ઉપયોગ કરો."
       },
       "early-adopter": {
         "name": "પ્રારંભિક અપનાવનાર",
@@ -12801,7 +12801,7 @@
       "contributor": {
         "name": "યોગદાનકર્તા",
         "description": "1 pull request મર્જ કરી",
-        "criteria": "OmniRoute માં 1 pull request મર્જ કરાવો."
+        "criteria": "AgentProxy માં 1 pull request મર્જ કરાવો."
       },
       "community-leader": {
         "name": "સમુદાય લીડર",
@@ -12903,16 +12903,16 @@
       "PROXY_AUTO_SELECT_ENABLED": {
         "description": "જ્યારે કનેક્શન માટે કોઈ પ્રોક્સી અસાઇન ન હોય, ત્યારે આપમેળે પ્રથમ કાર્યરત રજિસ્ટ્રી પ્રોક્સી પસંદ કરો. ડિફોલ્ટ રૂપે Off છે કારણ કે અન્યથા એક રજિસ્ટ્રી પ્રોક્સી તમામ ટ્રાફિક માટે વૈશ્વિક ફોલબેક બની જાય છે (#3332)."
       },
-      "OMNIROUTE_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
+      "AGENTPROXY_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
         "description": "જ્યારે પ્રોક્સી રીચેબિલિટી તપાસ નિષ્ફળ જાય ત્યારે OAuth અને પ્રદાતા-માન્યતા ફ્લોને પિન કરેલી પ્રોક્સીને બાયપાસ કરવાની મંજૂરી આપો. ડિફોલ્ટ રૂપે Off છે કારણ કે આ એકાઉન્ટના ઇગ્રેસ IP ને બદલી શકે છે."
       },
       "MITM_DISABLE_TLS_VERIFY": {
         "description": "MITM પ્રોક્સી માટે TLS પ્રમાણપત્ર ચકાસણી નિષ્ક્રિય કરો."
       },
-      "OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS": {
         "description": "ખાનગી અથવા આંતરિક નેટવર્ક તરફ નિર્દેશ કરતા પ્રદાતા URL ને મંજૂરી આપો."
       },
-      "OMNIROUTE_ALLOW_LOCAL_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_LOCAL_PROVIDER_URLS": {
         "description": "localhost, LAN અને ખાનગી IP રેન્જ પર પ્રદાતાઓને મંજૂરી આપો. સ્થાનિક OpenAI-સુસંગત મોડલ્સ માટે આ જરૂરી છે અને ડિફોલ્ટ રૂપે સક્ષમ છે. ક્લાઉડ-મેટાડેટા એન્ડપોઇન્ટ્સ જેમ કે 169.254.169.254 બ્લોક રહેશે."
       },
       "ENABLE_CC_COMPATIBLE_PROVIDER": {
@@ -12929,33 +12929,33 @@
       },
       "DISABLE_CONTEXT_WINDOW_CHECKS": {
         "label": "Disable Context Window Checks",
-        "description": "Skip OmniRoute's local context-window and max-input-token check for direct single-model requests. Upstream providers still enforce their actual limits. Prompt compression and output-token caps remain active."
+        "description": "Skip AgentProxy's local context-window and max-input-token check for direct single-model requests. Upstream providers still enforce their actual limits. Prompt compression and output-token caps remain active."
       },
       "RESPONSES_PASSTHROUGH_DROP_COMMENTARY": {
         "description": "ક્લાયન્ટ્સને ફોરવર્ડ કરતા પહેલા Responses API પાસથ્રુ સ્ટ્રીમ્સમાંથી આંતરિક કોમેન્ટરી-ફેઝ આઉટપુટ આઇટમ્સ દૂર કરો. કાચી અપસ્ટ્રીમ કોમેન્ટરી મેળવવા માટે આ ફ્લેગને નિષ્ક્રિય કરો."
       },
-      "OMNIROUTE_MCP_ENFORCE_SCOPES": {
+      "AGENTPROXY_MCP_ENFORCE_SCOPES": {
         "description": "MCP ટૂલ એક્સેસ માટે સ્કોપ પ્રતિબંધો લાગુ કરો."
       },
-      "OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS": {
+      "AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS": {
         "description": "ટોકન વપરાશ ઘટાડવા માટે MCP ટૂલ વર્ણનોને સંકુચિત કરો."
       },
-      "OMNIROUTE_ENABLE_RUNTIME_BACKGROUND_TASKS": {
+      "AGENTPROXY_ENABLE_RUNTIME_BACKGROUND_TASKS": {
         "description": "રનટાઇમ પર બેકગ્રાઉન્ડ-ટાસ્ક પ્રોસેસિંગ સક્ષમ કરો."
       },
-      "OMNIROUTE_DISABLE_BACKGROUND_SERVICES": {
+      "AGENTPROXY_DISABLE_BACKGROUND_SERVICES": {
         "description": "ક્વોટા રિફ્રેશ અને સિંક્રનાઇઝેશન સહિત તમામ બેકગ્રાઉન્ડ સેવાઓ નિષ્ક્રિય કરો."
       },
-      "OMNIROUTE_RTK_TRUST_PROJECT_FILTERS": {
+      "AGENTPROXY_RTK_TRUST_PROJECT_FILTERS": {
         "description": "ચકાસણી વિના પ્રોજેક્ટ-સ્તરના RTK ફિલ્ટર્સ પર વિશ્વાસ કરો."
       },
-      "OMNIROUTE_ENABLE_LIVE_WS": {
+      "AGENTPROXY_ENABLE_LIVE_WS": {
         "description": "લૂપબેક પોર્ટ 20132 પર આયાત કરવા પર રીઅલ-ટાઇમ ડેશબોર્ડ WebSocket સર્વર શરૂ કરો. તેને નિષ્ક્રિય કરવા માટે ફ્લેગને 0 અથવા false પર સેટ કરો. LAN એક્સપોઝર માટે LIVE_WS_HOST=0.0.0.0 અને LIVE_WS_ALLOWED_ORIGINS ની પણ જરૂર છે."
       },
-      "OMNIROUTE_CODEX_WS_ENABLED": {
+      "AGENTPROXY_CODEX_WS_ENABLED": {
         "description": "Codex ને WebSocket પર Responses નો ઉપયોગ કરવાની મંજૂરી આપો. જ્યારે નિષ્ક્રિય હોય, ત્યારે Codex ફરીથી HTTP Responses પર આવી જાય છે."
       },
-      "OMNIROUTE_EMERGENCY_FALLBACK": {
+      "AGENTPROXY_EMERGENCY_FALLBACK": {
         "description": "બજેટ-સમાપ્ત થઈ ગયેલી વિનંતીઓને ઇમરજન્સી ફ્રી ફોલબેક પ્રદાતા અને મોડલ પર રૂટ કરો."
       },
       "STREAM_RECOVERY_ENABLED": {
@@ -12982,16 +12982,16 @@
       "PRICING_SYNC_ENABLED": {
         "description": "કિંમત નિર્ધારણ ડેટા આપમેળે સિંક્રનાઇઝ કરો. PRICING_SYNC_ENABLED એન્વાયર્નમેન્ટ વેરિઅબલ પણ true હોવું આવશ્યક છે."
       },
-      "OMNIROUTE_AUTO_SYNC_CODEX_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CODEX_PROFILES": {
         "description": "પ્રદાતા-મોડલ સિંક્રનાઇઝેશન પછી, લાઇવ કૅટેલોગમાંથી ~/.codex/*.config.toml પ્રોફાઇલ્સ ફરીથી જનરેટ કરો. આ ક્યારેય સક્રિય અથવા ડિફોલ્ટ Codex રૂપરેખાંકનને બદલતું નથી અને ડિફોલ્ટ રૂપે off હોય છે."
       },
-      "OMNIROUTE_AUTO_SYNC_CLAUDE_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CLAUDE_PROFILES": {
         "description": "પ્રદાતા-મોડલ સિંક્રનાઇઝેશન પછી, લાઇવ કૅટેલોગમાંથી ~/.claude/profiles/'<name>'/settings.json પ્રોફાઇલ્સ ફરીથી જનરેટ કરો. આ ક્યારેય સક્રિય અથવા ડિફોલ્ટ Claude રૂપરેખાંકનને બદલતું નથી અને ડિફોલ્ટ રૂપે off હોય છે."
       },
-      "OMNIROUTE_DISABLE_LOCAL_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_LOCAL_HEALTHCHECK": {
         "description": "સ્થાનિક ઇન્સ્ટન્સ હેલ્થ-ચેક એન્ડપોઇન્ટ નિષ્ક્રિય કરો."
       },
-      "OMNIROUTE_DISABLE_TOKEN_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_TOKEN_HEALTHCHECK": {
         "description": "ટોકન-વેલિડેશન હેલ્થ ચેક નિષ્ક્રિય કરો."
       },
       "SKILLS_SANDBOX_NETWORK_ENABLED": {
@@ -13358,15 +13358,15 @@
     "testFailed": "ટેસ્ટ નિષ્ફળ થયું"
   },
   "kimiSponsorBanner": {
-    "foundingFriendTitle": "Kimi (Moonshot AI) એ OmniRoute નો સ્થાપક ઓપન સોર્સ મિત્ર છે",
-    "description": "નવા વપરાશકર્તાઓને પ્રથમ ટોપ-અપ પર 15% વધારાની API ક્રેડિટ મળે છે. સત્તાવાર Kimi API દ્વારા OmniRoute માં Kimi K3 વાપરો.",
+    "foundingFriendTitle": "Kimi (Moonshot AI) એ AgentProxy નો સ્થાપક ઓપન સોર્સ મિત્ર છે",
+    "description": "નવા વપરાશકર્તાઓને પ્રથમ ટોપ-અપ પર 15% વધારાની API ક્રેડિટ મળે છે. સત્તાવાર Kimi API દ્વારા AgentProxy માં Kimi K3 વાપરો.",
     "cta": "Kimi API કી મેળવો",
     "partnerLinkNote": "પાર્ટનર લિંક",
     "dismissAriaLabel": "બંધ કરો"
   },
   "vscodeCopilotBanner": {
-    "title": "OmniRoute હવે VS Code Copilot Chat અંદર ચાલે છે",
-    "description": "મફત OmniCopilot એક્સટેન્શન ઇન્સ્ટોલ કરો અને તમે પહેલેથી ઉપયોગ કરો છો તે Copilot Chat મોડલ પિકરમાં જ બધા OmniRoute મોડલ દેખાશે.",
+    "title": "AgentProxy હવે VS Code Copilot Chat અંદર ચાલે છે",
+    "description": "મફત OmniCopilot એક્સટેન્શન ઇન્સ્ટોલ કરો અને તમે પહેલેથી ઉપયોગ કરો છો તે Copilot Chat મોડલ પિકરમાં જ બધા AgentProxy મોડલ દેખાશે.",
     "cta": "એક્સટેન્શન મેળવો",
     "secondaryNote": "Open VSX પર પણ ઉપલબ્ધ (Cursor, Windsurf, VSCodium…)",
     "dismissAriaLabel": "બંધ કરો"
@@ -13401,7 +13401,7 @@
     "contributorButton": "I'm a contributor",
     "contributorHint": "__MISSING__:GitHub OAuth checks the current weekly ranking: Top 10 get 365 days and ranks 11–100 get 90 days. PR count alone never grants access outside the Top 100.",
     "supporterButton": "Support the project",
-    "supporterHint": "Support OmniRoute to get a supporter key with the live catalog and extra perks.",
+    "supporterHint": "Support AgentProxy to get a supporter key with the live catalog and extra perks.",
     "colProvider": "પ્રદાતા",
     "colModel": "મોડલ",
     "colQuota": "ક્વોટા",
@@ -13422,7 +13422,7 @@
     "capThinking": "વિચારવું",
     "catalogTab": "Catalog",
     "freeCreditsTab": "Free credits",
-    "freeCreditsSubtitle": "Referral links from Radar-tracked providers — using them costs you nothing extra and helps support OmniRoute.",
+    "freeCreditsSubtitle": "Referral links from Radar-tracked providers — using them costs you nothing extra and helps support AgentProxy.",
     "fixedLinksEmpty": "No referral links available yet. Sync Radar to check for updates.",
     "requiredActionLabel": "What to do:",
     "claimButton": "Claim credits",
@@ -13452,7 +13452,7 @@
     "accessContributorRule": "__MISSING__:Contributors — merged PRs, commits, and lines only order the weekly ranking. Top 10 receive 365 days; ranks 11–100 receive 90 days; contributors outside the Top 100 receive no grant regardless of PR count. Leaving the ranking never shortens time already granted.",
     "accessSupporterRule": "__MISSING__:Supporters — one-time purchases grant 6 months, 1 year, or lifetime with no automatic renewal. Purchases, donations, contributor periods, and manual grants accumulate; lifetime always prevails.",
     "accessUseTitle": "__MISSING__:Personal use, recovery, and review",
-    "accessInstallationRule": "__MISSING__:Personal license — use the key on one active installation at a time. OmniRoute does not fingerprint hardware. Recovery revokes and replaces a lost key without resetting its expiration.",
+    "accessInstallationRule": "__MISSING__:Personal license — use the key on one active installation at a time. AgentProxy does not fingerprint hardware. Recovery revokes and replaces a lost key without resetting its expiration.",
     "accessAbuseRule": "__MISSING__:Abuse review — the 4th distinct IP in 24 hours creates a manual review flag only; it never blocks or revokes a key automatically.",
     "accessOffersRule": "__MISSING__:Live offers are manually curated and may change or expire.",
     "privacyTitle": "__MISSING__:What Radar exchanges",
@@ -13505,7 +13505,7 @@
   "resilienceConnections": {
     "title": "કનેક્શન સ્થિતિસ્થાપકતા",
     "reassuranceTitle": "Your connections recover automatically",
-    "reassuranceDetail": "Usually no action is needed. OmniRoute temporarily rests a connection after failures, then safely tries it again.",
+    "reassuranceDetail": "Usually no action is needed. AgentProxy temporarily rests a connection after failures, then safely tries it again.",
     "plainStates": {
       "healthy": "Requests can be sent",
       "coolingDown": "Trying again soon",
@@ -13608,7 +13608,7 @@
     }
   },
   "featureFlagCapabilityFilterEnabledDescription": "જ્યારે લક્ષ્ય મોડેલમાં જરૂરી ક્ષમતાઓ (દૃષ્ટિ, સાધનો, રચિત આઉટપુટ, સંદર્ભ વિન્ડો) નથી ત્યારે વિતરણ પહેલાં વિનંતીઓને નકારી નાખો. કોમ્બો-લેયર સુસંગતતા ફિલ્ટરને બાયપાસ કરતી સીધી એકલ-પ્રદાતા વિનંતિઓને સુરક્ષિત કરે છે.",
-  "featureFlagDisableContextWindowChecksDescription": "Skip OmniRoute's local context-window and max-input-token check for direct single-model requests. Upstream providers still enforce their actual limits. Prompt compression and output-token caps remain active.",
+  "featureFlagDisableContextWindowChecksDescription": "Skip AgentProxy's local context-window and max-input-token check for direct single-model requests. Upstream providers still enforce their actual limits. Prompt compression and output-token caps remain active.",
   "publicSystem": {
     "notFound": {
       "title": "પૃષ્ઠ મળ્યું નથી",
@@ -13639,7 +13639,7 @@
     },
     "offline": {
       "title": "કનેક્ટિવિટી સમસ્યા",
-      "description": "OmniRoute હાલમાં નેટવર્ક સુધી પહોંચી શકતું નથી. તમારા ઇન્ટરનેટ, VPN, અથવા પ્રોક્સી સેટિંગ્સ તપાસો.",
+      "description": "AgentProxy હાલમાં નેટવર્ક સુધી પહોંચી શકતું નથી. તમારા ઇન્ટરનેટ, VPN, અથવા પ્રોક્સી સેટિંગ્સ તપાસો.",
       "connectionRestored": "કનેક્શન પુનઃસ્થાપિત થયું",
       "offlineModeDetected": "ઓફલાઇન મોડ શોધાયો",
       "retryConnection": "કનેક્શન ફરી પ્રયાસ કરો",
@@ -13978,7 +13978,7 @@
   },
   "orchestration": {
     "title": "ઓર્કેસ્ટ્રેશન",
-    "description": "OmniRoute અત્યારે જે કંઈ ચલાવી રહ્યું છે — એજન્ટ્સ, ફ્લીટ અને રાઉટિંગ",
+    "description": "AgentProxy અત્યારે જે કંઈ ચલાવી રહ્યું છે — એજન્ટ્સ, ફ્લીટ અને રાઉટિંગ",
     "tabAgents": "એજન્ટ્સ",
     "tabRouting": "રાઉટિંગ",
     "tabOverview": "ઝાંખી",
@@ -14113,11 +14113,11 @@
     "contextWindowMismatch": "વિનંતી પ્રદાતા સંદર્ભ વિન્ડોને પાર કરે છે"
   },
   "cheaperInferenceSponsorBanner": {
-    "title": "Cheaper Inference is an OmniRoute Open Source Friend",
+    "title": "Cheaper Inference is an AgentProxy Open Source Friend",
     "description": "A cost-ranked gateway reselling dozens of frontier models behind one OpenAI-compatible endpoint — routing each request to the cheapest eligible provider, never above list price.",
     "cta": "Get an API Key",
     "partnerLinkNote": "Partner link",
     "dismissAriaLabel": "Dismiss"
   },
-  "featureFlagOmnirouteDisableThinkingLevelVariantsDescription": "Disable the generation of thinking level variants (e.g. -low, -medium, -high) in the /v1/models catalog."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Disable the generation of thinking level variants (e.g. -low, -medium, -high) in the /v1/models catalog."
 }

@@ -15,7 +15,7 @@ lastUpdated: 2026-06-28
 
 🌐 **Languages:** 🇺🇸 [English](../../../../guides/USER_GUIDE.md) · 🇸🇦 [ar](../../../ar/docs/guides/USER_GUIDE.md) · 🇦🇿 [az](../../../az/docs/guides/USER_GUIDE.md) · 🇧🇬 [bg](../../../bg/docs/guides/USER_GUIDE.md) · 🇧🇩 [bn](../../../bn/docs/guides/USER_GUIDE.md) · 🇨🇿 [cs](../../../cs/docs/guides/USER_GUIDE.md) · 🇩🇰 [da](../../../da/docs/guides/USER_GUIDE.md) · 🇩🇪 [de](../../../de/docs/guides/USER_GUIDE.md) · 🇬🇷 [el](../../../el/docs/guides/USER_GUIDE.md) · 🇪🇸 [es](../../../es/docs/guides/USER_GUIDE.md) · 🇮🇷 [fa](../../../fa/docs/guides/USER_GUIDE.md) · 🇫🇮 [fi](../../../fi/docs/guides/USER_GUIDE.md) · 🇫🇷 [fr](../../../fr/docs/guides/USER_GUIDE.md) · 🇮🇪 [ga](../../../ga/docs/guides/USER_GUIDE.md) · 🇮🇳 [gu](../../../gu/docs/guides/USER_GUIDE.md) · 🇮🇱 [he](../../../he/docs/guides/USER_GUIDE.md) · 🇮🇳 [hi](../../../hi/docs/guides/USER_GUIDE.md) · 🇭🇷 [hr](../../../hr/docs/guides/USER_GUIDE.md) · 🇭🇺 [hu](../../../hu/docs/guides/USER_GUIDE.md) · 🇮🇩 [id](../../../id/docs/guides/USER_GUIDE.md) · 🇮🇹 [it](../../../it/docs/guides/USER_GUIDE.md) · 🇯🇵 [ja](../../../ja/docs/guides/USER_GUIDE.md) · 🇰🇷 [ko](../../../ko/docs/guides/USER_GUIDE.md) · 🇱🇹 [lt](../../../lt/docs/guides/USER_GUIDE.md) · 🇱🇻 [lv](../../../lv/docs/guides/USER_GUIDE.md) · 🇮🇳 [mr](../../../mr/docs/guides/USER_GUIDE.md) · 🇲🇾 [ms](../../../ms/docs/guides/USER_GUIDE.md) · 🇲🇹 [mt](../../../mt/docs/guides/USER_GUIDE.md) · 🇳🇱 [nl](../../../nl/docs/guides/USER_GUIDE.md) · 🇳🇴 [no](../../../no/docs/guides/USER_GUIDE.md) · 🇵🇭 [phi](../../../phi/docs/guides/USER_GUIDE.md) · 🇵🇱 [pl](../../../pl/docs/guides/USER_GUIDE.md) · 🇵🇹 [pt](../../../pt/docs/guides/USER_GUIDE.md) · 🇧🇷 [pt-BR](../../../pt-BR/docs/guides/USER_GUIDE.md) · 🇷🇴 [ro](../../../ro/docs/guides/USER_GUIDE.md) · 🇷🇺 [ru](../../../ru/docs/guides/USER_GUIDE.md) · 🇸🇰 [sk](../../../sk/docs/guides/USER_GUIDE.md) · 🇸🇮 [sl](../../../sl/docs/guides/USER_GUIDE.md) · 🇷🇸 [sr](../../../sr/docs/guides/USER_GUIDE.md) · 🇸🇪 [sv](../../../sv/docs/guides/USER_GUIDE.md) · 🇰🇪 [sw](../../../sw/docs/guides/USER_GUIDE.md) · 🇮🇳 [ta](../../../ta/docs/guides/USER_GUIDE.md) · 🇮🇳 [te](../../../te/docs/guides/USER_GUIDE.md) · 🇹🇭 [th](../../../th/docs/guides/USER_GUIDE.md) · 🇹🇷 [tr](../../../tr/docs/guides/USER_GUIDE.md) · 🇺🇦 [uk-UA](../../../uk-UA/docs/guides/USER_GUIDE.md) · 🇵🇰 [ur](../../../ur/docs/guides/USER_GUIDE.md) · 🇻🇳 [vi](../../../vi/docs/guides/USER_GUIDE.md) · 🇨🇳 [zh-CN](../../../zh-CN/docs/guides/USER_GUIDE.md) · 🇹🇼 [zh-TW](../../../zh-TW/docs/guides/USER_GUIDE.md)
 
-Täielik juhend teenusepakkujate seadistamiseks, kombode loomiseks, CLI-tööriistade integreerimiseks ja OmniRoute'i juurutamiseks.
+Täielik juhend teenusepakkujate seadistamiseks, kombode loomiseks, CLI-tööriistade integreerimiseks ja AgentProxy'i juurutamiseks.
 
 ---
 
@@ -144,9 +144,9 @@ Models:
   cc/claude-haiku-4-5-20251001
 ```
 
-**Kasulik nõuanne:** Kasuta Opust keeruliste ülesannete jaoks, Sonnetit kiiruse jaoks. OmniRoute jälgib kvooti mudeli kaupa!
+**Kasulik nõuanne:** Kasuta Opust keeruliste ülesannete jaoks, Sonnetit kiiruse jaoks. AgentProxy jälgib kvooti mudeli kaupa!
 
-Claude ja Claude Code'iga ühilduvad marsruudid säilitavad `max` mõtlemispingutuse Opuse ja Sonneti mudelite jaoks. Haiku mudelid ei toeta `max` pingutustaset, seega alandab OmniRoute selle taseme kõrgele mõtlemiseelarvele enne päringu edastamist.
+Claude ja Claude Code'iga ühilduvad marsruudid säilitavad `max` mõtlemispingutuse Opuse ja Sonneti mudelite jaoks. Haiku mudelid ei toeta `max` pingutustaset, seega alandab AgentProxy selle taseme kõrgele mõtlemiseelarvele enne päringu edastamist.
 
 #### OpenAI Codex (Plus/Pro)
 
@@ -196,7 +196,7 @@ Models:
 
 #### Kimi K2 ($9/kuus, fikseeritud)
 
-1. Telli: [Moonshot AI](https://platform.kimi.ai?aff=omniroute)
+1. Telli: [Moonshot AI](https://platform.kimi.ai?aff=agentproxy)
 2. Hangi API-võti → Dashboard → Add API Key
 
 **Kasuta:** `kimi/kimi-k2.5` — **Kasulik nõuanne:** Fikseeritud $9/kuus 10M tokeni eest = tegelik hind $0.90/1M!
@@ -267,16 +267,16 @@ Cost: praegu näidatud kui $0; tingimused ja saadavus võivad muutuda
 
 ### Cursor IDE
 
-**Cursori kasutamine OmniRoute kliendina** (suunake Cursori vestlus läbi OmniRoute):
+**Cursori kasutamine AgentProxy kliendina** (suunake Cursori vestlus läbi AgentProxy):
 
 ```
 Settings → Models → Advanced:
   OpenAI API Base URL: http://localhost:20128/v1
-  OpenAI API Key: [from omniroute dashboard]
+  OpenAI API Key: [from agentproxy dashboard]
   Model: cc/claude-opus-4-7
 ```
 
-**OmniRoute kasutamine Cursori teenusepakkujana** (OmniRoute kutsub Cursorit ülesvoolu): soovitatav on
+**AgentProxy kasutamine Cursori teenusepakkujana** (AgentProxy kutsub Cursorit ülesvoolu): soovitatav on
 **Dashboard → Providers → Cursor → Login with Cursor**. Dockeri puhul vaata
 [`docs/providers/CURSOR-DOCKER.md`](../providers/CURSOR-DOCKER.md).
 
@@ -288,7 +288,7 @@ Muuda faili `~/.claude/settings.json`:
 {
   "env": {
     "ANTHROPIC_BASE_URL": "http://localhost:20128",
-    "ANTHROPIC_AUTH_TOKEN": "your-omniroute-api-key"
+    "ANTHROPIC_AUTH_TOKEN": "your-agentproxy-api-key"
   }
 }
 ```
@@ -299,7 +299,7 @@ Kasutage siin Claude-ga ühilduvat juurpunkti (root endpoint). Ärge lisage `/v1
 
 ```bash
 export OPENAI_BASE_URL="http://localhost:20128"
-export OPENAI_API_KEY="your-omniroute-api-key"
+export OPENAI_API_KEY="your-agentproxy-api-key"
 codex "your prompt"
 ```
 
@@ -311,14 +311,14 @@ Muuda faili `~/.openclaw/openclaw.json`:
 {
   "agents": {
     "defaults": {
-      "model": { "primary": "omniroute/if/kimi-k2.7-code" }
+      "model": { "primary": "agentproxy/if/kimi-k2.7-code" }
     }
   },
   "models": {
     "providers": {
-      "omniroute": {
+      "agentproxy": {
         "baseUrl": "http://localhost:20128/v1",
-        "apiKey": "your-omniroute-api-key",
+        "apiKey": "your-agentproxy-api-key",
         "api": "openai-completions",
         "models": [{ "id": "if/kimi-k2.7-code", "name": "Kimi K2.7 Code" }]
       }
@@ -345,28 +345,28 @@ Model: cc/claude-opus-4-7
 ### Globaalne npm-paigaldus (soovitatav)
 
 ```bash
-npm install -g omniroute
+npm install -g agentproxy
 
 # Loo konfiguratsioonikataloog
-mkdir -p ~/.omniroute
+mkdir -p ~/.agentproxy
 
 # Loo .env fail (vaata .env.example)
-cp .env.example ~/.omniroute/.env
+cp .env.example ~/.agentproxy/.env
 
 # Käivita server
-omniroute
+agentproxy
 # Või kohandatud pordiga:
-omniroute --port 3000
+agentproxy --port 3000
 ```
 
-CLI laadib automaatselt faili `.env` asukohast `~/.omniroute/.env` või `./.env`.
+CLI laadib automaatselt faili `.env` asukohast `~/.agentproxy/.env` või `./.env`.
 
 ### Salveraadi (tray) režiim
 
-Käivita OmniRoute süsteemi salveraadis:
+Käivita AgentProxy süsteemi salveraadis:
 
 ```bash
-omniroute serve --tray
+agentproxy serve --tray
 ```
 
 Käsk tagastab väljundi pärast serveri ja salveraadi valmimist.
@@ -380,7 +380,7 @@ Kasuta salveraadi menüüd järgmiste toimingute jaoks:
 - Ava juhtpaneel.
 - Ava `/dashboard/logs`.
 - Muuda automaatkäivitust.
-- Peata OmniRoute.
+- Peata AgentProxy.
 
 Ei tohi kombineerida `--tray` võtit järgmistega:
 
@@ -393,7 +393,7 @@ Need režiimid vajavad erinevat protsessi omandiõigust.
 Lubage käivitamine järgmisel masinasse sisselogimisel:
 
 ```bash
-omniroute autostart enable
+agentproxy autostart enable
 ```
 
 Automaatkäivitus kasutab salveraadi režiimi macOS-il, Windowsil ja graafilistes Linuxi seanssides. Kasutajaliideseta (headless) Linux kasutab olemasolevat systemd kasutajateenust.
@@ -401,29 +401,29 @@ Automaatkäivitus kasutab salveraadi režiimi macOS-il, Windowsil ja graafiliste
 Sisselogimisel käivitamise keelamine:
 
 ```bash
-omniroute autostart disable
+agentproxy autostart disable
 ```
 
 ### Eemaldamine
 
-Kui OmniRoute't ei ole enam vaja, pakume kahte kiiret skripti puhtaks eemaldamiseks:
+Kui AgentProxy't ei ole enam vaja, pakume kahte kiiret skripti puhtaks eemaldamiseks:
 
 | Käsk                     | Tegevus                                                                                         |
 | ------------------------ | ----------------------------------------------------------------------------------------------- |
-| `npm run uninstall`      | Eemaldab süsteemirakenduse, kuid **säilitab teie andmebaasi ja seaded** kaustas `~/.omniroute`. |
+| `npm run uninstall`      | Eemaldab süsteemirakenduse, kuid **säilitab teie andmebaasi ja seaded** kaustas `~/.agentproxy`. |
 | `npm run uninstall:full` | Eemaldab rakenduse JA **kustutab jäädavalt kõik seaded, võtmed ja andmebaasid**.                |
 
-> Märkus: nende käskude käivitamiseks liikuge OmniRoute projekti kausta (kui kloonisite selle) ja käivitage need seal. Kui rakendus on paigaldatud globaalselt, võite lihtsalt käivitada `npm uninstall -g omniroute`.
+> Märkus: nende käskude käivitamiseks liikuge AgentProxy projekti kausta (kui kloonisite selle) ja käivitage need seal. Kui rakendus on paigaldatud globaalselt, võite lihtsalt käivitada `npm uninstall -g agentproxy`.
 
 ### VPS-i juurutamine
 
 ```bash
-git clone https://github.com/diegosouzapw/OmniRoute.git
-cd OmniRoute && npm install && npm run build
+git clone https://github.com/khanhkit/AgentProxy.git
+cd AgentProxy && npm install && npm run build
 
 export JWT_SECRET="your-secure-secret-change-this"
 export INITIAL_PASSWORD="your-password"
-export DATA_DIR="/var/lib/omniroute"
+export DATA_DIR="/var/lib/agentproxy"
 export PORT="20128"
 export HOSTNAME="0.0.0.0"
 export NODE_ENV="production"
@@ -431,7 +431,7 @@ export NEXT_PUBLIC_BASE_URL="http://localhost:20128"
 export API_KEY_SECRET="endpoint-proxy-api-key-secret"
 
 npm run start
-# Või: pm2 start npm --name omniroute -- start
+# Või: pm2 start npm --name agentproxy -- start
 ```
 
 ### PM2 juurutamine (väikese mäluga)
@@ -440,10 +440,10 @@ Piiratud RAM-i mahuga serverite jaoks kasutage mälupiirangu valikut:
 
 ```bash
 # 512 MB piiranguga (vaikimisi)
-pm2 start npm --name omniroute -- start
+pm2 start npm --name agentproxy -- start
 
 # Või kohandatud mälupiiranguga
-OMNIROUTE_MEMORY_MB=512 pm2 start npm --name omniroute -- start
+AGENTPROXY_MEMORY_MB=512 pm2 start npm --name agentproxy -- start
 
 # Või kasutades ecosystem.config.js
 pm2 start ecosystem.config.js
@@ -455,12 +455,12 @@ Loo fail `ecosystem.config.js`:
 module.exports = {
   apps: [
     {
-      name: "omniroute",
+      name: "agentproxy",
       script: "npm",
       args: "start",
       env: {
         NODE_ENV: "production",
-        OMNIROUTE_MEMORY_MB: "512",
+        AGENTPROXY_MEMORY_MB: "512",
         JWT_SECRET: "your-secret",
         INITIAL_PASSWORD: "your-password",
       },
@@ -475,24 +475,24 @@ module.exports = {
 
 ```bash
 # Ehita image (vaikimisi = runner-cli koos eelnevalt paigaldatud codex/claude/droid-iga)
-docker build -t omniroute:cli .
+docker build -t agentproxy:cli .
 
 # Portatiivne režiim (soovitatav)
-docker run -d --name omniroute -p 20128:20128 --env-file ./.env -v omniroute-data:/app/data omniroute:cli
+docker run -d --name agentproxy -p 20128:20128 --env-file ./.env -v agentproxy-data:/app/data agentproxy:cli
 ```
 
 Hostiga integreeritud režiimi kohta CLI binaaridega vaata Dockeri jaotist peamises dokumentatsioonis.
 
 ### Void Linux (xbps-src)
 
-Void Linuxi kasutajad saavad paketeerida ja paigaldada OmniRoute'i loomulikul viisil, kasutades `xbps-src` risttõlkimise raamistikku. See automatiseerib Node.js iseseisva (standalone) ehituse koos vajalike `better-sqlite3` natiivsete seostustega (bindings).
+Void Linuxi kasutajad saavad paketeerida ja paigaldada AgentProxy'i loomulikul viisil, kasutades `xbps-src` risttõlkimise raamistikku. See automatiseerib Node.js iseseisva (standalone) ehituse koos vajalike `better-sqlite3` natiivsete seostustega (bindings).
 
 <details>
 <summary><b>Vaata xbps-src malli</b></summary>
 
 ```bash
-# Malli fail 'omniroute' jaoks
-pkgname=omniroute
+# Malli fail 'agentproxy' jaoks
+pkgname=agentproxy
 version=3.8.0
 revision=1
 hostmakedepends="nodejs python3 make"
@@ -500,11 +500,11 @@ depends="openssl"
 short_desc="Universal AI gateway with smart routing for multiple LLM providers"
 maintainer="zenobit <zenobit@disroot.org>"
 license="MIT"
-homepage="https://github.com/diegosouzapw/OmniRoute"
-distfiles="https://github.com/diegosouzapw/OmniRoute/archive/refs/tags/v${version}.tar.gz"
+homepage="https://github.com/khanhkit/AgentProxy"
+distfiles="https://github.com/khanhkit/AgentProxy/archive/refs/tags/v${version}.tar.gz"
 checksum=009400afee90a9f32599d8fe734145cfd84098140b7287990183dde45ae2245b
-system_accounts="_omniroute"
-omniroute_homedir="/var/lib/omniroute"
+system_accounts="_agentproxy"
+agentproxy_homedir="/var/lib/agentproxy"
 export NODE_ENV=production
 export npm_config_engine_strict=false
 export npm_config_loglevel=error
@@ -554,26 +554,26 @@ do_check() {
 }
 
 do_install() {
-	vmkdir usr/lib/omniroute/.next
-	vcopy .next/standalone/. usr/lib/omniroute/.next/standalone
+	vmkdir usr/lib/agentproxy/.next
+	vcopy .next/standalone/. usr/lib/agentproxy/.next/standalone
 
 	# Väldi tühjade Next.js app router kataloogide eemaldamist paigaldusjärgse hoogi (hook) poolt
 	for _d in \
 		.next/standalone/.next/server/app/dashboard \
 		.next/standalone/.next/server/app/dashboard/settings \
 		.next/standalone/.next/server/app/dashboard/providers; do
-		touch "${DESTDIR}/usr/lib/omniroute/${_d}/.keep"
+		touch "${DESTDIR}/usr/lib/agentproxy/${_d}/.keep"
 	done
 
-	cat > "${WRKDIR}/omniroute" <<'EOF'
+	cat > "${WRKDIR}/agentproxy" <<'EOF'
 #!/bin/sh
 export PORT="${PORT:-20128}"
-export DATA_DIR="${DATA_DIR:-${XDG_DATA_HOME:-${HOME}/.local/share}/omniroute}"
+export DATA_DIR="${DATA_DIR:-${XDG_DATA_HOME:-${HOME}/.local/share}/agentproxy}"
 export APP_LOG_TO_FILE="${APP_LOG_TO_FILE:-false}"
 mkdir -p "${DATA_DIR}"
-exec node /usr/lib/omniroute/.next/standalone/server.js "$@"
+exec node /usr/lib/agentproxy/.next/standalone/server.js "$@"
 EOF
-	vbin "${WRKDIR}/omniroute"
+	vbin "${WRKDIR}/agentproxy"
 }
 
 post_install() {
@@ -587,14 +587,14 @@ post_install() {
 
 | Muutuja                                 | Vaikeväärtus                         | Kirjeldus                                                                                                                                                        |
 | --------------------------------------- | ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `JWT_SECRET`                            | `omniroute-default-secret-change-me` | JWT allkirjastamise saladus (**muutke tootmiskeskkonnas**)                                                                                                       |
+| `JWT_SECRET`                            | `agentproxy-default-secret-change-me` | JWT allkirjastamise saladus (**muutke tootmiskeskkonnas**)                                                                                                       |
 | `INITIAL_PASSWORD`                      | `CHANGEME`                           | Esimese sisselogimise parool                                                                                                                                     |
-| `DATA_DIR`                              | `~/.omniroute`                       | Andmekataloog (andmebaas, kasutus, logid)                                                                                                                        |
+| `DATA_DIR`                              | `~/.agentproxy`                       | Andmekataloog (andmebaas, kasutus, logid)                                                                                                                        |
 | `PORT`                                  | raamistiku vaikeväärtus              | Teenuse port (näidetes `20128`)                                                                                                                                  |
 | `HOSTNAME`                              | raamistiku vaikeväärtus              | Sidumise host (Dockeri vaikeväärtus on `0.0.0.0`)                                                                                                                |
 | `NODE_ENV`                              | käitusaja vaikeväärtus               | Määra `production` juurutamiseks                                                                                                                                 |
 | `NEXT_PUBLIC_BASE_URL`                  | `http://localhost:20128`             | Avalik baas-URL, mida näidatakse juhtpaneelis ja mis avaldatakse serverile (asendab vana `BASE_URL`)                                                             |
-| `NEXT_PUBLIC_CLOUD_URL`                 | `https://omniroute.dev`              | Pilvesünkroonimise lõpp-punkti baas-URL (asendab vana `CLOUD_URL`)                                                                                               |
+| `NEXT_PUBLIC_CLOUD_URL`                 | `https://agentproxy.example.com`              | Pilvesünkroonimise lõpp-punkti baas-URL (asendab vana `CLOUD_URL`)                                                                                               |
 | `API_KEY_SECRET`                        | `endpoint-proxy-api-key-secret`      | HMAC saladus loodud API võtmete jaoks                                                                                                                            |
 | `REQUIRE_API_KEY`                       | `false`                              | Nõua Bearer API võtit teel `/v1/*`                                                                                                                               |
 | `ALLOW_API_KEY_REVEAL`                  | `false`                              | Luba autenditud juhtpaneeli kasutajatel nõudmisel näidata salvestatud API võtme täisväärtusi                                                                     |
@@ -604,7 +604,7 @@ post_install() {
 | `AUTH_COOKIE_SECURE`                    | `false`                              | Sunni `Secure` autentimisküpsis (HTTPS pöördproksi taga)                                                                                                         |
 | `CLOUDFLARED_BIN`                       | määramata                            | Kasuta olemasolevat `cloudflared` binaari halduva allalaadimise asemel                                                                                           |
 | `CLOUDFLARED_PROTOCOL`                  | `http2`                              | Transport hallatavatele Quick Tunnels'idele (`http2`, `quic` või `auto`)                                                                                         |
-| `OMNIROUTE_MEMORY_MB`                   | `512`                                | Node.js hunniku (heap) piirang MB-des                                                                                                                            |
+| `AGENTPROXY_MEMORY_MB`                   | `512`                                | Node.js hunniku (heap) piirang MB-des                                                                                                                            |
 | `PROMPT_CACHE_MAX_SIZE`                 | `50`                                 | Vahemälu (prompt cache) kirjete maksimaalne arv                                                                                                                  |
 | `SEMANTIC_CACHE_MAX_SIZE`               | `100`                                | Semantilise vahemälu kirjete maksimaalne arv                                                                                                                     |
 
@@ -665,7 +665,7 @@ Täieliku keskkonnamuutujate loendi leiate [README](../README.md) failist.
 
 **Muud ühilduvad teenusepakkujad** (valik): `cohere`, `databricks`, `snowflake`, `together`, `vertex`, `alibaba`, `alibaba-cn`, `bedrock` (kaudu `aws-bedrock`), `azure-ai`, `openrouter` (edastuskataloog / passthrough), `siliconflow`, `hyperbolic`, `huggingface`, `featherless-ai`, `cloudflare-ai`, `scaleway`, `deepinfra`, `vercel-ai-gateway`, `bazaarlink`, `friendliai`, `nous-research`, `reka`, `volcengine`, `ai21`, `gigachat`. Igaüks neist haldab oma mudelite loendit failis `providerRegistry.ts` ja see saab olla automaatselt sünkroonitud, kui teenusepakkuja pakub `/models` lõpp-punkti.
 
-**Märkus mudeli ID-de kohta:** OmniRoute kasutab teenusepakkuja pärismudelite ID-sid (`claude-opus-4-8`, `gpt-5.5`, `glm-5.1`, `MiniMax-M2.7`, `kimi-k2.5`, `grok-4.20-0309-reasoning`). Mõned ID-d sisaldavad punktidega versiooninumbreid, kuna just sellisel kujul ootab neid allika API. Kui mõnda mudelit ülal loetletud ei ole, käivitage käsk `omniroute models --search <term>` või pöörduge `GET /api/models/catalog` poole, et saadavust kontrollida.
+**Märkus mudeli ID-de kohta:** AgentProxy kasutab teenusepakkuja pärismudelite ID-sid (`claude-opus-4-8`, `gpt-5.5`, `glm-5.1`, `MiniMax-M2.7`, `kimi-k2.5`, `grok-4.20-0309-reasoning`). Mõned ID-d sisaldavad punktidega versiooninumbreid, kuna just sellisel kujul ootab neid allika API. Kui mõnda mudelit ülal loetletud ei ole, käivitage käsk `agentproxy models --search <term>` või pöörduge `GET /api/models/catalog` poole, et saadavust kontrollida.
 
 </details>
 
@@ -694,35 +694,35 @@ Märkused:
 - OpenRouter ja OpenAI/Anthropic-ühilduvad teenusepakkujad haldatakse ainult jaotisest **Available Models**. Käsitsi lisamine, importimine ja automaatne sünkroonimine jõuavad kõik samasse saadaolevate mudelite loendisse, seega neil teenusepakkujatel eraldi Custom Models jaotist ei ole.
 - Jaotis **Custom Models** on mõeldud teenusepakkujatele, mis ei pakuvad haldatud saadaolevate mudelite importi.
 
-### OmniRoute'i tippude ahelasse ühendamine
+### AgentProxy'i tippude ahelasse ühendamine
 
-Teist OmniRoute'i väravat saab lisada kui **Custom OpenAI-compatible** teenusepakkujat. Kasuta
+Teist AgentProxy'i väravat saab lisada kui **Custom OpenAI-compatible** teenusepakkujat. Kasuta
 tipu `/v1` baas-URL-i ja selle tipu väljastatud pühendatud, minimaalsete õigustega API võtit.
 
 Vastastikuste või mitme etapiga ahelate puhul lülita igal väraval sisse valikuline ahela vältimise kaitse (loop guard):
 
 ```bash
 # gateway-a
-OMNIROUTE_INSTANCE_ID=gateway-a
-OMNIROUTE_PEER_URLS=http://gateway-b:20128/v1
-OMNIROUTE_PEER_MAX_HOPS=4
+AGENTPROXY_INSTANCE_ID=gateway-a
+AGENTPROXY_PEER_URLS=http://gateway-b:20128/v1
+AGENTPROXY_PEER_MAX_HOPS=4
 ```
 
 ```bash
 # gateway-b
-OMNIROUTE_INSTANCE_ID=gateway-b
-OMNIROUTE_PEER_URLS=http://gateway-a:20128/v1
-OMNIROUTE_PEER_MAX_HOPS=4
+AGENTPROXY_INSTANCE_ID=gateway-b
+AGENTPROXY_PEER_URLS=http://gateway-a:20128/v1
+AGENTPROXY_PEER_MAX_HOPS=4
 ```
 
 Ainult päringud, mis on saadetud selgesõnaliselt lubatud tipu URL-ile, saavad
-päise `X-OmniRoute-Peer-Trace`. Värav lükkab tagasi korduva instantsi ID-ga või ammendatud etapieelarvega
+päise `X-AgentProxy-Peer-Trace`. Värav lükkab tagasi korduva instantsi ID-ga või ammendatud etapieelarvega
 päringu HTTP-vastusega `508 Loop Detected`; tavalised ülemvoolu (upstream) teenusepakkujad ei saa tipumetaandmeid.
 
 Tippude ahelasse ühendamine ei ole andmebaasi replikatsioon ega hosti tõrkesiire. Igal väraval on
 sõltumatu SQLite olek, vahemälud, kiiruspiirajad ja sessioonid. Aktiivse/passiivse või aktiivse/aktiivse
 kättesaadavuse jaoks kasuta tervisekontrolliga pöördpuhverserverit (reverse proxy) või kliendipoolset tõrkesiiret,
-ja ära kunagi haagi üht SQLite andmebaasi mitmesse töötavasse OmniRoute'i instantsi.
+ja ära kunagi haagi üht SQLite andmebaasi mitmesse töötavasse AgentProxy'i instantsi.
 
 ### Pühendatud teenusepakkuja marsruudid
 
@@ -773,7 +773,7 @@ Tagastab mudelid gruppidena teenusepakkuja kaupa koos tüüpidega (`chat`, `embe
 - Saadaval jaotises **Dashboard → Endpoints** Dockeri ja teiste iseseisvalt majutatud (self-hosted) juurutuste jaoks
 - Loob ajutise `https://*.trycloudflare.com` URL-i, mis suunab liikluse edasi sinu praegusesse OpenAI-ühilduvasse `/v1` lõpp-punkti
 - Esimene lubamine paigaldab `cloudflared` binaari ainult vajadusel; järgnevad taaskäivitused kasutavad uuesti sama haldatud binaari
-- Quick Tunnelid ei taastu automaatselt pärast OmniRoute'i või konteineri taaskäivitust; vajadusel lülita need töölaualt uuesti sisse
+- Quick Tunnelid ei taastu automaatselt pärast AgentProxy'i või konteineri taaskäivitust; vajadusel lülita need töölaualt uuesti sisse
 - Tunneli URL-id on ajutised ja muutuvad igal tunneli peatamisel/käivitamisel
 - Haldatud Quick Tunnelid kasutavad vaikimisi HTTP/2 transporti, et vältida häirivaid QUIC UDP puhvri hoiatusi piiratud ressurssidega konteinerites
 - Määra `CLOUDFLARED_PROTOCOL=quic` või `auto`, kui soovid haldatud transpordivaliku üle kirjutada
@@ -782,15 +782,15 @@ Tagastab mudelid gruppidena teenusepakkuja kaupa koos tüüpidega (`chat`, `embe
 
 ### LLM-värava intelligentsus (Faas 9)
 
-- **Semantiline vahemälu** — Puhverdab automaatselt mittevoogedastuslikud (non-streaming) vastused temperatuuriga 0 (möödaminek päisega `X-OmniRoute-No-Cache: true`)
+- **Semantiline vahemälu** — Puhverdab automaatselt mittevoogedastuslikud (non-streaming) vastused temperatuuriga 0 (möödaminek päisega `X-AgentProxy-No-Cache: true`)
 - **Päringu idempotentsus** — Eemaldab 5 sekundi jooksul duplikaadid `Idempotency-Key` või `X-Request-Id` päise alusel
-- **Edenemise jälgimine** — Valikuline (opt-in) SSE `event: progress` sündmused, kasutades päist `X-OmniRoute-Progress: true`
+- **Edenemise jälgimine** — Valikuline (opt-in) SSE `event: progress` sündmused, kasutades päist `X-AgentProxy-Progress: true`
 
 ---
 
 ### Tõlkija mängupaik (Translator Playground)
 
-Ligipääs jaotisest **Dashboard → Translator**. Silumine ja visualiseerimine, kuidas OmniRoute tõlgib API päringuid teenusepakkujate vahel.
+Ligipääs jaotisest **Dashboard → Translator**. Silumine ja visualiseerimine, kuidas AgentProxy tõlgib API päringuid teenusepakkujate vahel.
 
 | Režiim           | Eesmärk                                                                               |
 | ---------------- | ------------------------------------------------------------------------------------- |
@@ -843,7 +843,7 @@ Välise sessiooniafiinsuse jaoks (näiteks Claude Code/Codex agendid pöördpuhv
 X-Session-Id: your-session-key
 ```
 
-OmniRoute aktsepteerib ka `x_session_id` ja tagastab kehtiva sessioonivõtme päises `X-OmniRoute-Session-Id`.
+AgentProxy aktsepteerib ka `x_session_id` ja tagastab kehtiva sessioonivõtme päises `X-AgentProxy-Session-Id`.
 
 Kui kasutad Nginxi ja saadad alakriipsu-kujulisi päiseid, lülita sisse:
 
@@ -879,7 +879,7 @@ Ahel: production-fallback
 
 Konfigureeri jaotisest **Dashboard → Settings → Resilience**.
 
-OmniRoute rakendab teenusepakkuja tasandi vastupidavust viie komponendiga:
+AgentProxy rakendab teenusepakkuja tasandi vastupidavust viie komponendiga:
 
 1. **Päringujärjekord ja tempo (Request Queue & Pacing)** — Süsteemitasandi päringu kujundamine:
    - **Päringud minutis (RPM)** — Maksimaalne päringute arv minutis konto kohta
@@ -904,7 +904,7 @@ OmniRoute rakendab teenusepakkuja tasandi vastupidavust viie komponendiga:
 
    Teenusepakkuja kaitsme reaalajas olekut näidatakse ainult jaotises **Dashboard → Health**.
 
-4. **Jahutusaja ootamine (Wait For Cooldown)** — Kui kõik kandidaatühendused on juba jahutusajal, saab OmniRoute oodata varajaseima jahutusaja lõppu ja proovida sama kliendipäringut automaatselt uuesti.
+4. **Jahutusaja ootamine (Wait For Cooldown)** — Kui kõik kandidaatühendused on juba jahutusajal, saab AgentProxy oodata varajaseima jahutusaja lõppu ja proovida sama kliendipäringut automaatselt uuesti.
 
 5. **Kiiruspiirangu automaattuvastus** — Kui ülemvoolu (upstream) teenusepakkujad tagastavad selgesõnalisi ootamise aknaid, kirjutavad need viited kohaliku ühenduse jahutusaja üle, kui seade on lubatud.
 
@@ -938,7 +938,7 @@ curl -X POST http://localhost:20128/api/db-backups/import \
 
 **Kasutusjuhtumid:**
 
-- Migreeri OmniRoute'i masinate vahel
+- Migreeri AgentProxy'i masinate vahel
 - Loo väliseid varukoopiaid katastroofitaastuse jaoks
 - Jaga konfiguratsioone meeskonnaliikmete vahel (ekspordi kõik → jaga arhiivi)
 
@@ -990,7 +990,7 @@ curl http://localhost:20128/api/usage/budget
 
 ### Audio transkriptsioon
 
-OmniRoute toetab audio transkriptsiooni OpenAI-ühilduva lõpp-punkti kaudu:
+AgentProxy toetab audio transkriptsiooni OpenAI-ühilduva lõpp-punkti kaudu:
 
 ```bash
 POST /v1/audio/transcriptions
@@ -1066,7 +1066,7 @@ Keela **Reasoning token buffer**, kui ülemvoolu (upstream) teenusepakkujad nõu
 `max_tokens` / `maxOutputTokens` piiranguid. Kui see on lubatud, lisab combo marsruutimine mõtlemismudeli
 (reasoning-model) puhvriruumi ainult mudelitele, millel on teadaolev väljundpiirang, ja jätab kliendi token'i
 piirangu muutmata, kui turvaline puhverdatud väärtus ületaks seda piirangut. Kui kliendi piirang on juba
-teadaolevast piirangust kõrgem, klambrib OmniRoute selle enne ülemvoolu (upstream) päringu saatmist selle piirangu peale.
+teadaolevast piirangust kõrgem, klambrib AgentProxy selle enne ülemvoolu (upstream) päringu saatmist selle piirangu peale.
 
 ---
 
@@ -1089,7 +1089,7 @@ Ligipääs jaotisest **Dashboard → Health**. Reaalajas süsteemi tervise ülev
 
 ## 🤖 Automaatne suunamine (Zero-config)
 
-OmniRoute tuleb kaasa **skooripõhise automaatse ruuteriga**, mis valib igale päringule sobivaima mudeli kõigi ühendatud pakkujate seast — ühtegi kombinatsiooni ei tule käsitsi hallata. Lihtsalt saada päring ühega `auto/*` eesliitedest ja OmniRoute koostab virtuaalse kombo käigupealt, hinnates kandidaate latentsuse, hinna, õnnestumismäära, konteksti sobivuse, mudeli sobivuse ülesandega, hiljutiste tõrgete, kvoodi ja lühisekaitse (circuit-breaker) oleku alusel.
+AgentProxy tuleb kaasa **skooripõhise automaatse ruuteriga**, mis valib igale päringule sobivaima mudeli kõigi ühendatud pakkujate seast — ühtegi kombinatsiooni ei tule käsitsi hallata. Lihtsalt saada päring ühega `auto/*` eesliitedest ja AgentProxy koostab virtuaalse kombo käigupealt, hinnates kandidaate latentsuse, hinna, õnnestumismäära, konteksti sobivuse, mudeli sobivuse ülesandega, hiljutiste tõrgete, kvoodi ja lühisekaitse (circuit-breaker) oleku alusel.
 
 | Eesliide       | Optimeerib                                                                                                |
 | -------------- | --------------------------------------------------------------------------------------------------------- |
@@ -1105,7 +1105,7 @@ Näide:
 
 ```bash
 curl -X POST http://localhost:20128/v1/chat/completions \
-  -H "Authorization: Bearer $OMNIROUTE_KEY" \
+  -H "Authorization: Bearer $AGENTPROXY_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "auto/coding",
@@ -1120,13 +1120,13 @@ Automaatne ruuter on täielikult kirjeldatud dokumendis [AUTO-COMBO.md](../routi
 
 ## 🔌 MCP ja A2A integratsioon
 
-OmniRoute on nii **MCP server** (Model Context Protocol) kui ka **A2A server** (Agent-to-Agent JSON-RPC 2.0). Iga MCP-ühilduv IDE või agendipõhine host saab kutsuda OmniRoute'i tööriistu otse — täiendavat ümbrist (wrapper) ei ole vaja.
+AgentProxy on nii **MCP server** (Model Context Protocol) kui ka **A2A server** (Agent-to-Agent JSON-RPC 2.0). Iga MCP-ühilduv IDE või agendipõhine host saab kutsuda AgentProxy'i tööriistu otse — täiendavat ümbrist (wrapper) ei ole vaja.
 
 ### MCP transpordid
 
 - **SSE**: `http://localhost:20128/api/mcp/sse`
 - **Streamable HTTP**: `http://localhost:20128/api/mcp/stream`
-- **stdio**: `omniroute --mcp` (IDE pluginate jaoks, mis eelistavad stdio-t)
+- **stdio**: `agentproxy --mcp` (IDE pluginate jaoks, mis eelistavad stdio-t)
 
 ### Ühenda Claude Desktop
 
@@ -1135,8 +1135,8 @@ Muuda faili `~/Library/Application Support/Claude/claude_desktop_config.json` (m
 ```json
 {
   "mcpServers": {
-    "omniroute": {
-      "command": "omniroute",
+    "agentproxy": {
+      "command": "agentproxy",
       "args": ["--mcp"]
     }
   }
@@ -1155,7 +1155,7 @@ MCP defineerib praegu 32 nimelist ulatust (scope). Igat Bearer-võtit saab piira
 
 ## 🧠 Oskuste süsteem
 
-OmniRoute pakub laiendatavat **oskuste raamistikku** (`src/lib/skills/`), mis võimaldab agentidel ja A2A lõpp-punktil käivitada valdkonnaspetsiifilisi rutiine (nt `code-review`, `summarize`, `extract-facts`, `web-research`).
+AgentProxy pakub laiendatavat **oskuste raamistikku** (`src/lib/skills/`), mis võimaldab agentidel ja A2A lõpp-punktil käivitada valdkonnaspetsiifilisi rutiine (nt `code-review`, `summarize`, `extract-facts`, `web-research`).
 
 - **Turuplatsi kasutajaliides** — Sirvi ja installi oskusi jaotisest **Dashboard → Skills**
 - **Võtmepõhised õigusulatused** — Piira, millised API-võtmed saavad milliseid oskusi käivitada
@@ -1167,7 +1167,7 @@ Täielik viide: [SKILLS.md](../frameworks/SKILLS.md).
 
 ## 💾 Mälusüsteem
 
-OmniRoute säilitab **pikaajalist vestlusmälu** hübriidotsingu abil:
+AgentProxy säilitab **pikaajalist vestlusmälu** hübriidotsingu abil:
 
 - **SQLite FTS5** märksõnaotsingu jaoks varasemate vestlusvoorude seas
 - **Qdrant vektorihoidla** (valikuline) semantilise meenutuse jaoks
@@ -1180,11 +1180,11 @@ Halda mälukirjeid jaotises **Dashboard → Memory** (otsi, muuda, ekspordi, kus
 
 ## 🔔 Veebihaagid
 
-Telli OmniRoute'i sündmused reaalajas jälgimiseks ja automatiseerimiseks.
+Telli AgentProxy'i sündmused reaalajas jälgimiseks ja automatiseerimiseks.
 
 - Loo veebihaak jaotises **Dashboard → Webhooks**, määrates sihtaadressi URL-i ja HMAC allkirjastamise saladuse
 - Saadaolevad sündmused: `request.completed`, `request.failed`, `provider.unavailable`, `budget.exceeded`, `combo.switched`, `circuit_breaker.opened`, `circuit_breaker.closed`
-- Igas kasulikus koormuses (payload) sisaldub `X-OmniRoute-Signature` (HMAC-SHA256) kontrollimiseks
+- Igas kasulikus koormuses (payload) sisaldub `X-AgentProxy-Signature` (HMAC-SHA256) kontrollimiseks
 - Uuestisaatmised: 3 katset astendava tagasilangusega, seejärel surnud kirjade järjekord (dead-letter queue)
 
 Täielik skeem [WEBHOOKS.md](../frameworks/WEBHOOKS.md)-s.
@@ -1193,11 +1193,11 @@ Täielik skeem [WEBHOOKS.md](../frameworks/WEBHOOKS.md)-s.
 
 ## ☁️ Pilveagendid
 
-OmniRoute integreerub pilvekoodimisagentidega (**OpenAI Codex Cloud**, **Devin**, **Jules**, **Antigravity**), mis võimaldab lähetada kaugtoimivaid ülesandeid samast juhtpaneelist, mis haldab teie kohalikku suunamist.
+AgentProxy integreerub pilvekoodimisagentidega (**OpenAI Codex Cloud**, **Devin**, **Jules**, **Antigravity**), mis võimaldab lähetada kaugtoimivaid ülesandeid samast juhtpaneelist, mis haldab teie kohalikku suunamist.
 
 - Loo ülesandeid jaotises **Dashboard → Cloud Agents** või kasutades `POST /api/v1/agents/tasks`
 - Jälgi olekut, logisid ja tulemfaile igal ülesandel
-- Igal teenusepakkujal on oma API-võti — mandaadid ei lahku kunagi OmniRoute'i eksemplarist
+- Igal teenusepakkujal on oma API-võti — mandaadid ei lahku kunagi AgentProxy'i eksemplarist
 
 Täielik viide: [CLOUD_AGENT.md](../frameworks/CLOUD_AGENT.md).
 
@@ -1205,30 +1205,30 @@ Täielik viide: [CLOUD_AGENT.md](../frameworks/CLOUD_AGENT.md).
 
 ## 🛠️ Programmiline haldus
 
-Sa saad hallata kõiki OmniRoute'i ressursse (teenusepakkujad, kombod, võtmed, seaded) HTTP kaudu, kasutades **Bearer-võtit õigusulatusega `manage`**.
+Sa saad hallata kõiki AgentProxy'i ressursse (teenusepakkujad, kombod, võtmed, seaded) HTTP kaudu, kasutades **Bearer-võtit õigusulatusega `manage`**.
 
 Genereeri võti jaotises **Dashboard → API Keys → New Key → Scope: manage**, ja seejärel:
 
 ```bash
 # Loetle teenusepakkujad
 curl http://localhost:20128/api/providers \
-  -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY"
+  -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY"
 
 # Lisa teenusepakkuja ühendus
 curl -X POST http://localhost:20128/api/providers \
-  -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY" \
+  -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY" \
   -H "Content-Type: application/json" \
   -d '{ "provider": "openai", "apiKey": "sk-...", "name": "main" }'
 
 # Loo kombo
 curl -X POST http://localhost:20128/api/combos \
-  -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY" \
+  -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY" \
   -H "Content-Type: application/json" \
   -d '{ "name": "premium", "strategy": "priority", "models": [{ "model": "cc/claude-opus-4-7" }, { "model": "glm/glm-5.1" }] }'
 
 # Loetle/loo API-võtmeid
-curl http://localhost:20128/api/keys -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY"
-curl -X POST http://localhost:20128/api/keys -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY" \
+curl http://localhost:20128/api/keys -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY"
+curl -X POST http://localhost:20128/api/keys -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY" \
   -d '{ "name": "ci-bot", "scopes": ["chat"] }'
 ```
 
@@ -1238,38 +1238,38 @@ Vaata [API_REFERENCE.md](../reference/API_REFERENCE.md), kus on toodud täielik 
 
 ## 💻 Sisemine CLI
 
-OmniRoute pakub sisemist CLI-d (`omniroute …`) seadistamiseks, diagnostikaks ja käitusaegseks juhtimiseks. See on **eraldiseisev töölaual olevast "CLI Tools" lehest**, mis konfigureerib kolmandate osapoolte CLI-sid (Claude Code, Cursor, Codex, Cline, …), et need saaksid OmniRoute'iga suhelda.
+AgentProxy pakub sisemist CLI-d (`agentproxy …`) seadistamiseks, diagnostikaks ja käitusaegseks juhtimiseks. See on **eraldiseisev töölaual olevast "CLI Tools" lehest**, mis konfigureerib kolmandate osapoolte CLI-sid (Claude Code, Cursor, Codex, Cline, …), et need saaksid AgentProxy'iga suhelda.
 
 ```bash
-omniroute setup                    # Interaktiivne juhendaja (parool, teenusepakkujad, kombinatsioonid)
-omniroute setup --non-interactive  # CI-sõbralik
-omniroute doctor                   # Terviseseisundi diagnostika (andmekataloog, andmebaas, teenusepakkujad, pordid)
-omniroute providers available      # Toetatud teenusepakkujate loend
-omniroute providers list           # Konfigureeritud ühenduste loend
-omniroute providers test <id>      # Teenusepakkuja ühenduse elutestimine
-omniroute combos list              # Kombinatsioonide loend
-omniroute combos switch <name>     # Vaikimisi kombinatsiooni määramine
-omniroute models                   # Saadaolevate mudelite loend (--json, --search)
-omniroute keys add | list | remove # API võtmete haldamine terminalist
-omniroute backup                   # Konfiguratsiooni + andmebaasi hetktõmmis
-omniroute restore [<timestamp>]    # Taastamine hetktõmmisest
-omniroute health                   # Detailne terviseseisund (katkestid, vahemälu, mälu)
-omniroute quota                    # Teenusepakkuja kvoodi kasutus
-omniroute mcp status               # MCP serveri olek
-omniroute a2a status               # A2A serveri olek
-omniroute tunnel list|create|stop  # Cloudflare/Tailscale/ngrok tunnelid
-omniroute reset-password           # Administraatori parooli lähtestamine
-omniroute --mcp                    # Käivita MCP server stdio kaudu
-omniroute --port 3000              # Käivita server kohandatud pordil
+agentproxy setup                    # Interaktiivne juhendaja (parool, teenusepakkujad, kombinatsioonid)
+agentproxy setup --non-interactive  # CI-sõbralik
+agentproxy doctor                   # Terviseseisundi diagnostika (andmekataloog, andmebaas, teenusepakkujad, pordid)
+agentproxy providers available      # Toetatud teenusepakkujate loend
+agentproxy providers list           # Konfigureeritud ühenduste loend
+agentproxy providers test <id>      # Teenusepakkuja ühenduse elutestimine
+agentproxy combos list              # Kombinatsioonide loend
+agentproxy combos switch <name>     # Vaikimisi kombinatsiooni määramine
+agentproxy models                   # Saadaolevate mudelite loend (--json, --search)
+agentproxy keys add | list | remove # API võtmete haldamine terminalist
+agentproxy backup                   # Konfiguratsiooni + andmebaasi hetktõmmis
+agentproxy restore [<timestamp>]    # Taastamine hetktõmmisest
+agentproxy health                   # Detailne terviseseisund (katkestid, vahemälu, mälu)
+agentproxy quota                    # Teenusepakkuja kvoodi kasutus
+agentproxy mcp status               # MCP serveri olek
+agentproxy a2a status               # A2A serveri olek
+agentproxy tunnel list|create|stop  # Cloudflare/Tailscale/ngrok tunnelid
+agentproxy reset-password           # Administraatori parooli lähtestamine
+agentproxy --mcp                    # Käivita MCP server stdio kaudu
+agentproxy --port 3000              # Käivita server kohandatud pordil
 ```
 
-Näpunäide: kombineeri `omniroute doctor --json` oma seireriistaga, et saada teavitusi ebatervete teenusepakkuja ühenduste korral.
+Näpunäide: kombineeri `agentproxy doctor --json` oma seireriistaga, et saada teavitusi ebatervete teenusepakkuja ühenduste korral.
 
 ---
 
 ## 🖥️ Töölauarakendus (Electron)
 
-OmniRoute on saadaval natiivse töölauarakendusena Windowsi, macOS-i ja Linuxi jaoks.
+AgentProxy on saadaval natiivse töölauarakendusena Windowsi, macOS-i ja Linuxi jaoks.
 
 ### Paigaldamine
 
@@ -1312,7 +1312,7 @@ Väljund → `electron/dist-electron/`
 
 | Muutuja               | Vaikeväärtus | Kirjeldus                           |
 | --------------------- | ------------ | ----------------------------------- |
-| `OMNIROUTE_PORT`      | `20128`      | Serveri port                        |
-| `OMNIROUTE_MEMORY_MB` | `512`        | Node.js pinu piirmäär (64–16384 MB) |
+| `AGENTPROXY_PORT`      | `20128`      | Serveri port                        |
+| `AGENTPROXY_MEMORY_MB` | `512`        | Node.js pinu piirmäär (64–16384 MB) |
 
 📖 Täielik dokumentatsioon: [`electron/README.md`](../../electron/README.md)

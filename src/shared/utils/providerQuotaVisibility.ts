@@ -1,5 +1,5 @@
 import { USAGE_SUPPORTED_PROVIDERS } from "@/shared/constants/providers";
-import { isMoonshotOpenPlatformConnection } from "@omniroute/open-sse/services/usage/moonshotOpenPlatform.ts";
+import { isMoonshotOpenPlatformConnection } from "@agentproxy/open-sse/services/usage/moonshotOpenPlatform.ts";
 
 export interface ProviderQuotaVisibilityConnection {
   quotaVisible?: boolean;

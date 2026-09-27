@@ -12,16 +12,16 @@
 # Ele bloqueia apenas as duas assinaturas do defeito:
 #   (a) um COMMITTER que não é a identidade desta máquina (pega ambas as janelas);
 #   (b) um AUTHOR com o e-mail do mantenedor sob o nome de outra pessoa;
-#   (c) um e-mail explicitamente aposentado (`omniroute.legacyEmail`).
+#   (c) um e-mail explicitamente aposentado (`agentproxy.legacyEmail`).
 #
 # Ativação — opcional e por máquina; sem ela o gate é inerte:
-#   git config --global omniroute.expectedName  "diegosouzapw"
-#   git config --global omniroute.expectedEmail "8016841+diegosouzapw@users.noreply.github.com"
-#   git config --global --add omniroute.legacyEmail "diegosouzapw@users.noreply.github.com"
+#   git config --global agentproxy.expectedName  "diegosouzapw"
+#   git config --global agentproxy.expectedEmail "8016841+diegosouzapw@users.noreply.github.com"
+#   git config --global --add agentproxy.legacyEmail "diegosouzapw@users.noreply.github.com"
 
-expected_name=$(git config --get omniroute.expectedName 2>/dev/null)
-expected_email=$(git config --get omniroute.expectedEmail 2>/dev/null)
-legacy_emails=$(git config --get-all omniroute.legacyEmail 2>/dev/null)
+expected_name=$(git config --get agentproxy.expectedName 2>/dev/null)
+expected_email=$(git config --get agentproxy.expectedEmail 2>/dev/null)
+legacy_emails=$(git config --get-all agentproxy.legacyEmail 2>/dev/null)
 
 # Sem configuração nesta máquina o gate não opina — contribuidores não são afetados.
 [ -z "$expected_email" ] && exit 0

@@ -283,9 +283,9 @@ export function findNewMcpTools(frozen: readonly string[], live: Set<string>): s
  * the reason in the commit message.
  *
  * Sources:
- *   - MCP_TOOLS (34 base tools: omniroute_* + compression + agent_skills)
- *   - memoryTools (3): omniroute_memory_*
- *   - skillTools (4): omniroute_skills_*
+ *   - MCP_TOOLS (34 base tools: agentproxy_* + compression + agent_skills)
+ *   - memoryTools (3): agentproxy_memory_*
+ *   - skillTools (4): agentproxy_skills_*
  *   - gamificationTools (8): gamification_*
  *   - pluginTools (8): plugin_*
  *   - notionTools (6): notion_*
@@ -294,49 +294,49 @@ export function findNewMcpTools(frozen: readonly string[], live: Set<string>): s
  */
 export const KNOWN_MCP_TOOL_NAMES: readonly string[] = [
   // MCP_TOOLS base (34)
-  "omniroute_get_health",
-  "omniroute_list_combos",
-  "omniroute_get_combo_metrics",
-  "omniroute_switch_combo",
-  "omniroute_check_quota",
-  "omniroute_route_request",
-  "omniroute_cost_report",
-  "omniroute_list_models_catalog",
-  "omniroute_web_search",
-  "omniroute_x_search",
-  "omniroute_simulate_route",
-  "omniroute_set_budget_guard",
-  "omniroute_set_routing_strategy",
-  "omniroute_set_resilience_profile",
-  "omniroute_test_combo",
-  "omniroute_get_provider_metrics",
-  "omniroute_best_combo_for_task",
-  "omniroute_explain_route",
-  "omniroute_get_session_snapshot",
-  "omniroute_db_health_check",
-  "omniroute_sync_pricing",
-  "omniroute_cache_stats",
-  "omniroute_cache_flush",
-  "omniroute_compression_status",
-  "omniroute_compression_configure",
-  "omniroute_set_compression_engine",
-  "omniroute_list_compression_combos",
-  "omniroute_compression_combo_stats",
-  "omniroute_oneproxy_fetch",
-  "omniroute_oneproxy_rotate",
-  "omniroute_oneproxy_stats",
-  "omniroute_agent_skills_list",
-  "omniroute_agent_skills_get",
-  "omniroute_agent_skills_coverage",
+  "agentproxy_get_health",
+  "agentproxy_list_combos",
+  "agentproxy_get_combo_metrics",
+  "agentproxy_switch_combo",
+  "agentproxy_check_quota",
+  "agentproxy_route_request",
+  "agentproxy_cost_report",
+  "agentproxy_list_models_catalog",
+  "agentproxy_web_search",
+  "agentproxy_x_search",
+  "agentproxy_simulate_route",
+  "agentproxy_set_budget_guard",
+  "agentproxy_set_routing_strategy",
+  "agentproxy_set_resilience_profile",
+  "agentproxy_test_combo",
+  "agentproxy_get_provider_metrics",
+  "agentproxy_best_combo_for_task",
+  "agentproxy_explain_route",
+  "agentproxy_get_session_snapshot",
+  "agentproxy_db_health_check",
+  "agentproxy_sync_pricing",
+  "agentproxy_cache_stats",
+  "agentproxy_cache_flush",
+  "agentproxy_compression_status",
+  "agentproxy_compression_configure",
+  "agentproxy_set_compression_engine",
+  "agentproxy_list_compression_combos",
+  "agentproxy_compression_combo_stats",
+  "agentproxy_oneproxy_fetch",
+  "agentproxy_oneproxy_rotate",
+  "agentproxy_oneproxy_stats",
+  "agentproxy_agent_skills_list",
+  "agentproxy_agent_skills_get",
+  "agentproxy_agent_skills_coverage",
   // memoryTools (3)
-  "omniroute_memory_search",
-  "omniroute_memory_add",
-  "omniroute_memory_clear",
+  "agentproxy_memory_search",
+  "agentproxy_memory_add",
+  "agentproxy_memory_clear",
   // skillTools (4)
-  "omniroute_skills_list",
-  "omniroute_skills_enable",
-  "omniroute_skills_execute",
-  "omniroute_skills_executions",
+  "agentproxy_skills_list",
+  "agentproxy_skills_enable",
+  "agentproxy_skills_execute",
+  "agentproxy_skills_executions",
   // gamificationTools (8)
   "gamification_leaderboard",
   "gamification_rank",
@@ -479,7 +479,7 @@ async function main(): Promise<void> {
   const failures: string[] = [];
 
   // ── (1) Executor conformance ──────────────────────────────────────────────
-  const executorsMod = await import("@omniroute/open-sse/executors/index.ts");
+  const executorsMod = await import("@agentproxy/open-sse/executors/index.ts");
   const getExecutor = executorsMod.getExecutor as (alias: string) => Promise<ExecutorLike>;
   const BaseExecutor = executorsMod.BaseExecutor as new (...args: never[]) => unknown;
   const indexSource = readFileSync(resolvePath(REPO_ROOT, "open-sse/executors/index.ts"), "utf8");
@@ -515,7 +515,7 @@ async function main(): Promise<void> {
   // converts it to a registry; enumerating at runtime keeps the gate correct either way.
   // Each entry in HANDLED_COMBO_STRATEGIES must stay in sync with a real dispatch branch.
   const strategyDispatchMod =
-    await import("@omniroute/open-sse/services/combo/strategyDispatch.ts");
+    await import("@agentproxy/open-sse/services/combo/strategyDispatch.ts");
   const handled = new Set(strategyDispatchMod.HANDLED_COMBO_STRATEGIES as readonly string[]);
 
   // Stale-enforcement (6A.3): IMPLICIT_DEFAULT_STRATEGIES is a suppression allowlist —
@@ -552,11 +552,11 @@ async function main(): Promise<void> {
   }
 
   // ── (3) Translator pairs ──────────────────────────────────────────────────
-  await import("@omniroute/open-sse/translator/bootstrap.ts").then((m) =>
+  await import("@agentproxy/open-sse/translator/bootstrap.ts").then((m) =>
     (m.bootstrapTranslatorRegistry as () => void)()
   );
-  const formatsMod = await import("@omniroute/open-sse/translator/formats.ts");
-  const registryMod = await import("@omniroute/open-sse/translator/registry.ts");
+  const formatsMod = await import("@agentproxy/open-sse/translator/formats.ts");
+  const registryMod = await import("@agentproxy/open-sse/translator/registry.ts");
   const FORMATS = formatsMod.FORMATS as Record<string, string>;
   const getRequestTranslator = registryMod.getRequestTranslator as (
     from: string,
@@ -587,14 +587,14 @@ async function main(): Promise<void> {
   const newPairs = findNewTranslatorPairs(KNOWN_TRANSLATOR_PAIRS, livePairs);
 
   // ── (4) MCP tools scope + snapshot ───────────────────────────────────────
-  const { MCP_TOOLS } = await import("@omniroute/open-sse/mcp-server/schemas/tools.ts");
-  const { memoryTools } = await import("@omniroute/open-sse/mcp-server/tools/memoryTools.ts");
-  const { skillTools } = await import("@omniroute/open-sse/mcp-server/tools/skillTools.ts");
+  const { MCP_TOOLS } = await import("@agentproxy/open-sse/mcp-server/schemas/tools.ts");
+  const { memoryTools } = await import("@agentproxy/open-sse/mcp-server/tools/memoryTools.ts");
+  const { skillTools } = await import("@agentproxy/open-sse/mcp-server/tools/skillTools.ts");
   const { gamificationTools } =
-    await import("@omniroute/open-sse/mcp-server/tools/gamificationTools.ts");
-  const { pluginTools } = await import("@omniroute/open-sse/mcp-server/tools/pluginTools.ts");
-  const { notionTools } = await import("@omniroute/open-sse/mcp-server/tools/notionTools.ts");
-  const { obsidianTools } = await import("@omniroute/open-sse/mcp-server/tools/obsidianTools.ts");
+    await import("@agentproxy/open-sse/mcp-server/tools/gamificationTools.ts");
+  const { pluginTools } = await import("@agentproxy/open-sse/mcp-server/tools/pluginTools.ts");
+  const { notionTools } = await import("@agentproxy/open-sse/mcp-server/tools/notionTools.ts");
+  const { obsidianTools } = await import("@agentproxy/open-sse/mcp-server/tools/obsidianTools.ts");
 
   // Build the full live set of registered tools (deduped by RESERVED_MCP_NAMES logic:
   // agentSkillTools + compressionTools are already in MCP_TOOLS).

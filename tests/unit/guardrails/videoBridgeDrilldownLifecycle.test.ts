@@ -45,11 +45,11 @@ function framesInput(
 
 test("video bridge drill-down feature flags default to opt-in / disabled", () => {
   assert.equal(isVideoBridgeDrilldownProductionEnabled({}), false);
-  assert.equal(isVideoBridgeDrilldownProductionEnabled({ OMNIROUTE_VIDEO_BRIDGE_DRILLDOWN_ENABLED: "true" }), true);
+  assert.equal(isVideoBridgeDrilldownProductionEnabled({ AGENTPROXY_VIDEO_BRIDGE_DRILLDOWN_ENABLED: "true" }), true);
   assert.equal(isVideoBridgeDrilldownRemoteAccessEnabled({}), false);
   assert.equal(
     isVideoBridgeDrilldownRemoteAccessEnabled({
-      OMNIROUTE_VIDEO_BRIDGE_DRILLDOWN_REMOTE_ENABLED: "1",
+      AGENTPROXY_VIDEO_BRIDGE_DRILLDOWN_REMOTE_ENABLED: "1",
     }),
     true
   );

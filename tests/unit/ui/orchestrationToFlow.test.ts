@@ -9,7 +9,7 @@ import type { OrchSnapshot } from "../../../src/app/(dashboard)/dashboard/orches
 
 const snap: OrchSnapshot = {
   nodes: [
-    { id: "orchestrator", kind: "orchestrator", label: "OmniRoute" },
+    { id: "orchestrator", kind: "orchestrator", label: "AgentProxy" },
     { id: "source:a2a", kind: "source", source: "a2a", label: "A2A" },
     { id: "a2a:t1", kind: "work", source: "a2a", state: "running", label: "smart-routing" },
     { id: "a2a:t2", kind: "work", source: "a2a", state: "failed", label: "cost-analysis" },
@@ -25,7 +25,7 @@ const snap: OrchSnapshot = {
 
 const multiSourceSnap: OrchSnapshot = {
   nodes: [
-    { id: "orchestrator", kind: "orchestrator", label: "OmniRoute" },
+    { id: "orchestrator", kind: "orchestrator", label: "AgentProxy" },
     { id: "source:a2a", kind: "source", source: "a2a", label: "A2A" },
     { id: "a2a:t1", kind: "work", source: "a2a", state: "running", label: "smart-routing" },
     {
@@ -167,7 +167,7 @@ describe("orchestrationToFlow", () => {
  */
 function busySnapshot(activeEdges: number): OrchSnapshot {
   const nodes: OrchSnapshot["nodes"] = [
-    { id: "orchestrator", kind: "orchestrator", label: "OmniRoute" },
+    { id: "orchestrator", kind: "orchestrator", label: "AgentProxy" },
     { id: "source:a2a", kind: "source", source: "a2a", label: "A2A" },
   ];
   const edges: OrchSnapshot["edges"] = [];

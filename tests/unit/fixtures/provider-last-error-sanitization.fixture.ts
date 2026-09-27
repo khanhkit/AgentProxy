@@ -4,19 +4,19 @@ import os from "node:os";
 import path from "node:path";
 import test from "node:test";
 
-const testRoot = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-provider-last-error-"));
+const testRoot = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-provider-last-error-"));
 const testDataDir = path.join(testRoot, "data");
 const testPluginsDir = path.join(testRoot, "plugins");
 const originalEnv = {
   DATA_DIR: process.env.DATA_DIR,
-  OMNIROUTE_PLUGINS_DIR: process.env.OMNIROUTE_PLUGINS_DIR,
+  AGENTPROXY_PLUGINS_DIR: process.env.AGENTPROXY_PLUGINS_DIR,
   API_KEY_SECRET: process.env.API_KEY_SECRET,
   DISABLE_SQLITE_AUTO_BACKUP: process.env.DISABLE_SQLITE_AUTO_BACKUP,
 };
 fs.mkdirSync(testDataDir, { recursive: true });
 fs.mkdirSync(testPluginsDir, { recursive: true });
 process.env.DATA_DIR = testDataDir;
-process.env.OMNIROUTE_PLUGINS_DIR = testPluginsDir;
+process.env.AGENTPROXY_PLUGINS_DIR = testPluginsDir;
 process.env.API_KEY_SECRET = "provider-last-error-test-secret";
 process.env.DISABLE_SQLITE_AUTO_BACKUP = "true";
 
@@ -45,7 +45,7 @@ test.after(async () => {
   core.resetDbInstance();
   await loggerResource.closeSharedLoggerResource();
   restoreEnv("DATA_DIR");
-  restoreEnv("OMNIROUTE_PLUGINS_DIR");
+  restoreEnv("AGENTPROXY_PLUGINS_DIR");
   restoreEnv("API_KEY_SECRET");
   restoreEnv("DISABLE_SQLITE_AUTO_BACKUP");
   fs.rmSync(testRoot, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });

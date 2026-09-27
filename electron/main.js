@@ -1,5 +1,5 @@
 /**
- * OmniRoute Electron Desktop App - Main Process
+ * AgentProxy Electron Desktop App - Main Process
  *
  * This is the entry point for the Electron desktop application.
  * It manages the main window, system tray, server lifecycle, and IPC communication.
@@ -13,7 +13,7 @@
  * #8  Removed dead isProduction variable
  * #9  Platform-conditional titleBarStyle
  * #10 stdio: pipe + stdout/stderr capture for readiness detection
- * #14 Removed dead omniroute:// protocol (no handler existed)
+ * #14 Removed dead agentproxy:// protocol (no handler existed)
  * #15 Content Security Policy via session headers
  */
 
@@ -37,7 +37,12 @@ const { loginManager } = require("./loginManager");
 const { killProcessTree } = require("./processTree");
 const { resolveServerEntry } = require("./lib/resolveServerEntry");
 const { resolveDarwinHelperExecutable } = require("./lib/resolveNodeHelper");
-const { resolveRemoteServerUrl, isValidHttpUrl } = require("./lib/resolveRemoteServerUrl");
+const {
+  resolveRemoteServerUrl,
+  isValidHttpUrl,
+  isTrustedRendererUrl,
+  isTrustedRendererEvent,
+} = require("./lib/resolveRemoteServerUrl");
 const {
   readPreferences,
   writeRemoteServerUrl,
@@ -64,7 +69,7 @@ app.on("second-instance", () => {
   const isHeadless =
     process.argv.includes("--headless") ||
     process.argv.includes("--cli") ||
-    process.env.OMNIROUTE_HEADLESS === "true";
+    process.env.AGENTPROXY_HEADLESS === "true";
   if (isHeadless) return;
   showMainWindow();
 });
@@ -88,10 +93,10 @@ let keepAliveWithoutWindows = false;
 let lastRendererUrl = null;
 
 // ── Remote Server Mode ──────────────────────────────────────
-// Lets the desktop shell attach to an already-running OmniRoute server (e.g. a
+// Lets the desktop shell attach to an already-running AgentProxy server (e.g. a
 // Docker/OrbStack container, or another machine) instead of spawning its own
 // bundled Next.js server. See lib/resolveRemoteServerUrl.js for precedence
-// (OMNIROUTE_REMOTE_URL env var, then the persisted prefs file below).
+// (AGENTPROXY_REMOTE_URL env var, then the persisted prefs file below).
 const REMOTE_SERVER_PREFS_PATH = path.join(
   resolveDataDir(null, process.env),
   "electron-preferences.json"
@@ -111,7 +116,7 @@ function resolveNodeExecutable(env = process.env) {
   // instead of a randomly found system Node to prevent ABI architecture mismatches.
   //
   // On macOS packaged builds, process.execPath is the main Electron binary
-  // (e.g. OmniRoute.app/Contents/MacOS/OmniRoute). Spawning it with
+  // (e.g. AgentProxy.app/Contents/MacOS/AgentProxy). Spawning it with
   // ELECTRON_RUN_AS_NODE causes macOS to show a second dock icon and/or
   // flash a shell window. Use the Helper binary instead — macOS treats
   // Helper processes as background tasks with no visible UI artifacts.
@@ -119,7 +124,7 @@ function resolveNodeExecutable(env = process.env) {
     // #7941: derive the Helper name from the packaged binary name
     // (path.basename(process.execPath)) rather than app.getName(). electron-builder
     // generates BOTH the main binary and the Helper.app bundles from build.productName
-    // ("OmniRoute"), whereas app.getName() reads package.json `name` ("omniroute-desktop")
+    // ("AgentProxy"), whereas app.getName() reads package.json `name` ("agentproxy-desktop")
     // — the two diverged, so app.getName() never matched a real Helper path and this fell
     // through to process.execPath, spawning the main Electron binary and producing a
     // second, inert macOS Dock icon.
@@ -201,13 +206,13 @@ function resolveDataDir(overridePath, env = process.env) {
 
   if (process.platform === "win32") {
     const appData = env.APPDATA || path.join(require("os").homedir(), "AppData", "Roaming");
-    return path.join(appData, "omniroute");
+    return path.join(appData, "agentproxy");
   }
 
   const xdg = env.XDG_CONFIG_HOME?.trim();
-  if (xdg) return path.join(path.resolve(xdg), "omniroute");
+  if (xdg) return path.join(path.resolve(xdg), "agentproxy");
 
-  return path.join(require("os").homedir(), ".omniroute");
+  return path.join(require("os").homedir(), ".agentproxy");
 }
 
 function getPreferredEnvFilePath(env = process.env) {
@@ -244,7 +249,7 @@ async function waitForServerExit(proc, timeoutMs = 5000) {
       setTimeout(() => {
         try {
           // #3347: force-kill the whole tree (Windows leaves grandchildren alive on a
-          // bare SIGKILL of the direct child, keeping omniroute.exe locked).
+          // bare SIGKILL of the direct child, keeping agentproxy.exe locked).
           killProcessTree(proc, { signal: "SIGKILL" });
         } catch {
           /* already dead */
@@ -287,7 +292,7 @@ function setupAutoUpdater() {
 
     if (Notification.isSupported()) {
       const notification = new Notification({
-        title: "OmniRoute Update Ready",
+        title: "AgentProxy Update Ready",
         body: `Version ${info.version} is ready to install. Click to restart.`,
       });
       notification.on("click", () => {
@@ -332,7 +337,7 @@ async function downloadUpdate() {
 function installUpdate() {
   if (nextServer) {
     // #3347: tree-kill before quitAndInstall — a surviving server child (and its
-    // grandchildren) keeps omniroute.exe locked and the updater fails with "file in use".
+    // grandchildren) keeps agentproxy.exe locked and the updater fails with "file in use".
     killProcessTree(nextServer, { signal: "SIGTERM" });
     nextServer = null;
   }
@@ -361,7 +366,7 @@ function setupContentSecurityPolicy() {
       "form-action 'self'",
       // Single connect-src: a duplicate directive is ignored by the browser (first wins),
       // which previously dropped the 127.0.0.1 origins. Keep both loopback forms here.
-      `connect-src 'self' http://localhost:* http://127.0.0.1:* ws://localhost:* ws://127.0.0.1:* wss://localhost:* wss://127.0.0.1:* https://*.omniroute.online https://*.omniroute.dev`,
+      `connect-src 'self' http://localhost:* http://127.0.0.1:* ws://localhost:* ws://127.0.0.1:* wss://localhost:* wss://127.0.0.1:* https://*.agentproxy.online https://*.agentproxy.dev`,
       scriptSrc,
       "script-src-attr 'none'",
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
@@ -398,7 +403,7 @@ function createWindow({ showWhenReady = true } = {}) {
     height: 900,
     minWidth: 1024,
     minHeight: 700,
-    title: "OmniRoute",
+    title: "AgentProxy",
     icon: path.join(RESOURCES_PATH, "assets", "icon.png"),
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
@@ -413,7 +418,15 @@ function createWindow({ showWhenReady = true } = {}) {
   });
   mainWindow = window;
 
-  // Load the Next.js app
+  const guardTrustedNavigation = (event, url) => {
+    if (isTrustedRendererUrl(url, getServerUrl())) return;
+    event.preventDefault();
+    console.warn("[Electron] Blocked privileged window navigation to untrusted origin:", url);
+  };
+  window.webContents.on("will-navigate", guardTrustedNavigation);
+  window.webContents.on("will-redirect", guardTrustedNavigation);
+
+  // Load the Next.js app only after navigation guards are installed.
   window.loadURL(resolveRendererUrl(lastRendererUrl, getServerUrl()));
   if (isDev) {
     window.webContents.openDevTools({ mode: "detach" });
@@ -511,7 +524,7 @@ function createTray() {
 
   const contextMenu = Menu.buildFromTemplate([
     {
-      label: "Open OmniRoute",
+      label: "Open AgentProxy",
       click: () => showMainWindow(),
     },
     {
@@ -578,7 +591,7 @@ function createTray() {
     },
   ]);
 
-  tray.setToolTip("OmniRoute");
+  tray.setToolTip("AgentProxy");
   tray.setContextMenu(contextMenu);
 
   tray.on("double-click", () => showMainWindow());
@@ -791,11 +804,11 @@ function startNextServer() {
     console.log("[Electron] ✨ API_KEY_SECRET auto-generated");
   }
   if (changed) {
-    serverEnv.OMNIROUTE_BOOTSTRAPPED = "true";
+    serverEnv.AGENTPROXY_BOOTSTRAPPED = "true";
     try {
       fs.mkdirSync(dataDir, { recursive: true, mode: 0o700 });
       const lines = [
-        "# Auto-generated by OmniRoute bootstrap",
+        "# Auto-generated by AgentProxy bootstrap",
         "",
         ...Object.entries(persisted).map(([k, v]) => `${k}=${v}`),
         "",
@@ -815,12 +828,12 @@ function startNextServer() {
   // default V8 heap (~512MB) and OOM-crashed on RAM-rich boxes under load
   // (65 providers / 2600 models → "Ineffective mark-compacts near heap limit").
   // Default the heap to ~35% of physical RAM (clamped [512, 4096]); an explicit
-  // OMNIROUTE_MEMORY_MB or a pre-set --max-old-space-size still wins. Mirrors
+  // AGENTPROXY_MEMORY_MB or a pre-set --max-old-space-size still wins. Mirrors
   // scripts/build/runtime-env.mjs (CJS can't import the ESM helper).
   const serverNodeOptions = (() => {
     const existing = serverEnv.NODE_OPTIONS || "";
     if (existing.includes("--max-old-space-size")) return existing;
-    const explicit = parseInt(serverEnv.OMNIROUTE_MEMORY_MB, 10);
+    const explicit = parseInt(serverEnv.AGENTPROXY_MEMORY_MB, 10);
     let heapMb;
     if (Number.isFinite(explicit) && explicit >= 64 && explicit <= 16384) {
       heapMb = explicit;
@@ -877,10 +890,10 @@ function startNextServer() {
       const isHeadless =
         process.argv.includes("--headless") ||
         process.argv.includes("--cli") ||
-        process.env.OMNIROUTE_HEADLESS === "true";
+        process.env.AGENTPROXY_HEADLESS === "true";
       if (isHeadless && !global.loggedHeadlessReady) {
         global.loggedHeadlessReady = true;
-        console.log("\n\x1b[32m✔ OmniRoute Headless CLI Server is ready and listening!\x1b[0m");
+        console.log("\n\x1b[32m✔ AgentProxy Headless CLI Server is ready and listening!\x1b[0m");
         console.log(`  \x1b[1mPort:\x1b[0m       http://localhost:${serverPort}`);
         console.log(`  \x1b[1mAPI Base:\x1b[0m   http://localhost:${serverPort}/v1`);
         console.log("  \x1b[2mPress Ctrl+C to terminate the process.\x1b[0m\n");
@@ -907,8 +920,8 @@ function startNextServer() {
 function stopNextServer() {
   if (nextServer) {
     // #3347: kill the whole tree, not just the direct child. On Windows the server
-    // (omniroute.exe-as-node) spawns grandchildren that a bare SIGTERM leaves alive,
-    // holding a lock on omniroute.exe and blocking updates.
+    // (agentproxy.exe-as-node) spawns grandchildren that a bare SIGTERM leaves alive,
+    // holding a lock on agentproxy.exe and blocking updates.
     killProcessTree(nextServer, { signal: "SIGTERM" });
     nextServer = null;
   }
@@ -928,15 +941,15 @@ function enableLinuxDesktopAutostart() {
       [
         "[Desktop Entry]",
         "Type=Application",
-        "Name=OmniRoute",
-        "Comment=OmniRoute Desktop Client",
+        "Name=AgentProxy",
+        "Comment=AgentProxy Desktop Client",
         `Exec="${execPath}" --hidden`,
         "Terminal=false",
         "Hidden=false",
         "X-GNOME-Autostart-enabled=true",
       ].join("\n") + "\n";
 
-    fs.writeFileSync(path.join(autostartDir, "omniroute-desktop.desktop"), desktopFileContent, {
+    fs.writeFileSync(path.join(autostartDir, "agentproxy-desktop.desktop"), desktopFileContent, {
       mode: 0o644,
     });
     return true;
@@ -955,7 +968,7 @@ function disableLinuxDesktopAutostart() {
       os.homedir(),
       ".config",
       "autostart",
-      "omniroute-desktop.desktop"
+      "agentproxy-desktop.desktop"
     );
     if (fs.existsSync(desktopPath)) {
       fs.unlinkSync(desktopPath);
@@ -973,7 +986,7 @@ function isLinuxDesktopAutostartEnabled() {
     const fs = require("fs");
     const path = require("path");
     return fs.existsSync(
-      path.join(os.homedir(), ".config", "autostart", "omniroute-desktop.desktop")
+      path.join(os.homedir(), ".config", "autostart", "agentproxy-desktop.desktop")
     );
   } catch {
     return false;
@@ -981,8 +994,31 @@ function isLinuxDesktopAutostartEnabled() {
 }
 
 // ── IPC Handlers ───────────────────────────────────────────
+function assertTrustedMainRenderer(event, channel) {
+  if (isTrustedRendererEvent(event, getServerUrl())) return;
+  console.warn(`[Electron] Blocked privileged IPC from untrusted renderer: ${channel}`);
+  throw new Error("Blocked privileged IPC from untrusted renderer");
+}
+
+function handleTrustedMainIpc(channel, handler) {
+  ipcMain.handle(channel, (event, ...args) => {
+    assertTrustedMainRenderer(event, channel);
+    return handler(event, ...args);
+  });
+}
+
+function onTrustedMainIpc(channel, listener) {
+  ipcMain.on(channel, (event, ...args) => {
+    if (!isTrustedRendererEvent(event, getServerUrl())) {
+      console.warn(`[Electron] Blocked privileged IPC from untrusted renderer: ${channel}`);
+      return;
+    }
+    return listener(event, ...args);
+  });
+}
+
 function setupIpcHandlers() {
-  ipcMain.handle("get-app-info", () => ({
+  handleTrustedMainIpc("get-app-info", () => ({
     name: app.getName(),
     version: app.getVersion(),
     platform: process.platform,
@@ -1004,7 +1040,7 @@ function setupIpcHandlers() {
     remoteServerPromptWindow?.close();
   });
 
-  ipcMain.handle("open-external", (_event, url) => {
+  handleTrustedMainIpc("open-external", (_event, url) => {
     try {
       const parsedUrl = new URL(url);
       if (["http:", "https:"].includes(parsedUrl.protocol)) {
@@ -1015,10 +1051,10 @@ function setupIpcHandlers() {
     }
   });
 
-  ipcMain.handle("get-data-dir", () => app.getPath("userData"));
+  handleTrustedMainIpc("get-data-dir", () => app.getPath("userData"));
 
   // Fix #2: Add timeout to restart
-  ipcMain.handle("restart-server", async () => {
+  handleTrustedMainIpc("restart-server", async () => {
     const serverToStop = nextServer;
     stopNextServer();
     await waitForServerExit(serverToStop);
@@ -1028,18 +1064,18 @@ function setupIpcHandlers() {
   });
 
   // Window controls
-  ipcMain.on("window-minimize", () => mainWindow?.minimize());
+  onTrustedMainIpc("window-minimize", () => mainWindow?.minimize());
 
-  ipcMain.on("window-maximize", () => {
+  onTrustedMainIpc("window-maximize", () => {
     if (mainWindow) {
       mainWindow.isMaximized() ? mainWindow.unmaximize() : mainWindow.maximize();
     }
   });
 
-  ipcMain.on("window-close", () => mainWindow?.close());
+  onTrustedMainIpc("window-close", () => mainWindow?.close());
 
   // Auto-update IPC handlers
-  ipcMain.handle("check-for-updates", async () => {
+  handleTrustedMainIpc("check-for-updates", async () => {
     try {
       await checkForUpdates(false);
       return { success: true };
@@ -1050,7 +1086,7 @@ function setupIpcHandlers() {
     }
   });
 
-  ipcMain.handle("download-update", async () => {
+  handleTrustedMainIpc("download-update", async () => {
     try {
       await downloadUpdate();
       return { success: true };
@@ -1061,12 +1097,12 @@ function setupIpcHandlers() {
     }
   });
 
-  ipcMain.handle("install-update", () => {
+  handleTrustedMainIpc("install-update", () => {
     installUpdate();
     // No return value — app will quit and restart
   });
 
-  ipcMain.handle("get-app-version", () => app.getVersion());
+  handleTrustedMainIpc("get-app-version", () => app.getVersion());
 
   // ── Web-Cookie Login IPC Handlers ──────────────────────────
   // Forward login status events to the renderer. Registered ONCE here — never
@@ -1076,7 +1112,7 @@ function setupIpcHandlers() {
     sendToRenderer("login:status", status);
   });
 
-  ipcMain.handle("login:start", async (_event, providerId, options) => {
+  handleTrustedMainIpc("login:start", async (_event, providerId, options) => {
     const result = await loginManager.startLogin(providerId, options);
 
     // Persist extracted credentials
@@ -1101,24 +1137,24 @@ function setupIpcHandlers() {
     return result;
   });
 
-  ipcMain.handle("login:cancel", async () => {
+  handleTrustedMainIpc("login:cancel", async () => {
     loginManager.cancel();
     return { success: true };
   });
 
-  ipcMain.handle("login:status", async () => {
+  handleTrustedMainIpc("login:status", async () => {
     return { active: loginManager.getActiveProvider() !== null };
   });
 
   // Autostart management handlers
-  ipcMain.handle("get-autostart-status", () => {
+  handleTrustedMainIpc("get-autostart-status", () => {
     if (process.platform === "linux") {
       return isLinuxDesktopAutostartEnabled();
     }
     return app.getLoginItemSettings().openAtLogin;
   });
 
-  ipcMain.handle("enable-autostart", () => {
+  handleTrustedMainIpc("enable-autostart", () => {
     if (process.platform === "linux") {
       return enableLinuxDesktopAutostart();
     }
@@ -1134,7 +1170,7 @@ function setupIpcHandlers() {
     }
   });
 
-  ipcMain.handle("disable-autostart", () => {
+  handleTrustedMainIpc("disable-autostart", () => {
     if (process.platform === "linux") {
       return disableLinuxDesktopAutostart();
     }
@@ -1159,7 +1195,7 @@ app.whenReady().then(async () => {
   const isHeadless =
     process.argv.includes("--headless") ||
     process.argv.includes("--cli") ||
-    process.env.OMNIROUTE_HEADLESS === "true";
+    process.env.AGENTPROXY_HEADLESS === "true";
   const startHidden =
     !isHeadless &&
     shouldStartHidden({
@@ -1219,7 +1255,7 @@ app.on("window-all-closed", () => {
   const isHeadless =
     process.argv.includes("--headless") ||
     process.argv.includes("--cli") ||
-    process.env.OMNIROUTE_HEADLESS === "true";
+    process.env.AGENTPROXY_HEADLESS === "true";
   if (
     process.platform !== "darwin" &&
     !isHeadless &&

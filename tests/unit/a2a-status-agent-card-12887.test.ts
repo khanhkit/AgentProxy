@@ -5,15 +5,15 @@ import os from "node:os";
 import path from "node:path";
 import { NextRequest } from "next/server";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-a2a-status-card-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-a2a-status-card-"));
 const ORIGINAL_DATA_DIR = process.env.DATA_DIR;
-const ORIGINAL_BASE_URL = process.env.OMNIROUTE_BASE_URL;
+const ORIGINAL_BASE_URL = process.env.AGENTPROXY_BASE_URL;
 
 process.env.DATA_DIR = TEST_DATA_DIR;
 // The bug only shows with no admin override: getBaseUrl() then reads
 // request.nextUrl.origin, which throws when the status route forgets to
 // forward its own request to the agent-card handler.
-delete process.env.OMNIROUTE_BASE_URL;
+delete process.env.AGENTPROXY_BASE_URL;
 
 const core = await import("../../src/lib/db/core.ts");
 const settingsDb = await import("../../src/lib/db/settings.ts");
@@ -32,8 +32,8 @@ test.after(() => {
   if (ORIGINAL_DATA_DIR === undefined) delete process.env.DATA_DIR;
   else process.env.DATA_DIR = ORIGINAL_DATA_DIR;
 
-  if (ORIGINAL_BASE_URL === undefined) delete process.env.OMNIROUTE_BASE_URL;
-  else process.env.OMNIROUTE_BASE_URL = ORIGINAL_BASE_URL;
+  if (ORIGINAL_BASE_URL === undefined) delete process.env.AGENTPROXY_BASE_URL;
+  else process.env.AGENTPROXY_BASE_URL = ORIGINAL_BASE_URL;
 });
 
 test("A2A status serves the agent card built from the incoming request origin", async () => {

@@ -107,7 +107,7 @@ export function registerHealth(program) {
 
 const FIXTURE_KEYS_MJS = `
 export function registerKeys(program) {
-  const keys = program.command('keys').description('Manage OmniRoute API keys');
+  const keys = program.command('keys').description('Manage AgentProxy API keys');
 
   keys
     .command('list')

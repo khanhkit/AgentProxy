@@ -1,4 +1,4 @@
-import { sanitizeErrorMessage } from "@omniroute/open-sse/utils/error.ts";
+import { sanitizeErrorMessage } from "@agentproxy/open-sse/utils/error.ts";
 
 import { getProviderCredentialsWithQuotaPreflight } from "./auth";
 import { checkAndRefreshToken } from "./tokenRefresh";

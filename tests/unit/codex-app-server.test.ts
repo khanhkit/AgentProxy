@@ -112,36 +112,36 @@ test("isCodexAppServerRequired: true only when codexTransport==='app-server' + c
   // no providerSpecificData
   assert.equal(isCodexAppServerRequired({}), false);
   // transport set but not configured (no url/token, no env)
-  const prevUrl = process.env.OMNIROUTE_CODEX_APPSERVER_WS;
-  const prevTok = process.env.OMNIROUTE_CODEX_APPSERVER_WS_TOKEN;
-  const prevTokFile = process.env.OMNIROUTE_CODEX_APPSERVER_WS_TOKEN_FILE;
-  delete process.env.OMNIROUTE_CODEX_APPSERVER_WS;
-  delete process.env.OMNIROUTE_CODEX_APPSERVER_WS_TOKEN;
-  delete process.env.OMNIROUTE_CODEX_APPSERVER_WS_TOKEN_FILE;
+  const prevUrl = process.env.AGENTPROXY_CODEX_APPSERVER_WS;
+  const prevTok = process.env.AGENTPROXY_CODEX_APPSERVER_WS_TOKEN;
+  const prevTokFile = process.env.AGENTPROXY_CODEX_APPSERVER_WS_TOKEN_FILE;
+  delete process.env.AGENTPROXY_CODEX_APPSERVER_WS;
+  delete process.env.AGENTPROXY_CODEX_APPSERVER_WS_TOKEN;
+  delete process.env.AGENTPROXY_CODEX_APPSERVER_WS_TOKEN_FILE;
   try {
     assert.equal(
       isCodexAppServerRequired({ providerSpecificData: { codexTransport: "app-server" } }),
       false
     );
   } finally {
-    if (prevUrl !== undefined) process.env.OMNIROUTE_CODEX_APPSERVER_WS = prevUrl;
-    if (prevTok !== undefined) process.env.OMNIROUTE_CODEX_APPSERVER_WS_TOKEN = prevTok;
+    if (prevUrl !== undefined) process.env.AGENTPROXY_CODEX_APPSERVER_WS = prevUrl;
+    if (prevTok !== undefined) process.env.AGENTPROXY_CODEX_APPSERVER_WS_TOKEN = prevTok;
     if (prevTokFile !== undefined)
-      process.env.OMNIROUTE_CODEX_APPSERVER_WS_TOKEN_FILE = prevTokFile;
+      process.env.AGENTPROXY_CODEX_APPSERVER_WS_TOKEN_FILE = prevTokFile;
   }
 });
 
-test("isCodexAppServerRequired: false when OMNIROUTE_CODEX_APP_SERVER_ENABLED=false", () => {
-  const prev = process.env.OMNIROUTE_CODEX_APP_SERVER_ENABLED;
-  process.env.OMNIROUTE_CODEX_APP_SERVER_ENABLED = "false";
+test("isCodexAppServerRequired: false when AGENTPROXY_CODEX_APP_SERVER_ENABLED=false", () => {
+  const prev = process.env.AGENTPROXY_CODEX_APP_SERVER_ENABLED;
+  process.env.AGENTPROXY_CODEX_APP_SERVER_ENABLED = "false";
   try {
     assert.equal(
       isCodexAppServerRequired({ providerSpecificData: { ...APP_SERVER_PSD } }),
       false
     );
   } finally {
-    if (prev === undefined) delete process.env.OMNIROUTE_CODEX_APP_SERVER_ENABLED;
-    else process.env.OMNIROUTE_CODEX_APP_SERVER_ENABLED = prev;
+    if (prev === undefined) delete process.env.AGENTPROXY_CODEX_APP_SERVER_ENABLED;
+    else process.env.AGENTPROXY_CODEX_APP_SERVER_ENABLED = prev;
   }
 });
 
@@ -376,12 +376,12 @@ test("CodexAppServerExecutor: streaming output is a valid Responses SSE stream",
 
 test("CodexAppServerExecutor: unconfigured connection returns an in-band error Response", async () => {
   const executor = new CodexAppServerExecutor({ websocketFn: async () => makeFakeSocket().socket });
-  const prevUrl = process.env.OMNIROUTE_CODEX_APPSERVER_WS;
-  const prevTok = process.env.OMNIROUTE_CODEX_APPSERVER_WS_TOKEN;
-  const prevTokFile = process.env.OMNIROUTE_CODEX_APPSERVER_WS_TOKEN_FILE;
-  delete process.env.OMNIROUTE_CODEX_APPSERVER_WS;
-  delete process.env.OMNIROUTE_CODEX_APPSERVER_WS_TOKEN;
-  delete process.env.OMNIROUTE_CODEX_APPSERVER_WS_TOKEN_FILE;
+  const prevUrl = process.env.AGENTPROXY_CODEX_APPSERVER_WS;
+  const prevTok = process.env.AGENTPROXY_CODEX_APPSERVER_WS_TOKEN;
+  const prevTokFile = process.env.AGENTPROXY_CODEX_APPSERVER_WS_TOKEN_FILE;
+  delete process.env.AGENTPROXY_CODEX_APPSERVER_WS;
+  delete process.env.AGENTPROXY_CODEX_APPSERVER_WS_TOKEN;
+  delete process.env.AGENTPROXY_CODEX_APPSERVER_WS_TOKEN_FILE;
   try {
     const result = await executor.execute(
       makeExecuteInput({ credentials: { providerSpecificData: { codexTransport: "app-server" } } })
@@ -389,10 +389,10 @@ test("CodexAppServerExecutor: unconfigured connection returns an in-band error R
     const response = "response" in result ? result.response : result;
     assert.equal(response.status, 503);
   } finally {
-    if (prevUrl !== undefined) process.env.OMNIROUTE_CODEX_APPSERVER_WS = prevUrl;
-    if (prevTok !== undefined) process.env.OMNIROUTE_CODEX_APPSERVER_WS_TOKEN = prevTok;
+    if (prevUrl !== undefined) process.env.AGENTPROXY_CODEX_APPSERVER_WS = prevUrl;
+    if (prevTok !== undefined) process.env.AGENTPROXY_CODEX_APPSERVER_WS_TOKEN = prevTok;
     if (prevTokFile !== undefined)
-      process.env.OMNIROUTE_CODEX_APPSERVER_WS_TOKEN_FILE = prevTokFile;
+      process.env.AGENTPROXY_CODEX_APPSERVER_WS_TOKEN_FILE = prevTokFile;
   }
 });
 
@@ -751,9 +751,9 @@ function withEnv<T>(vars: Record<string, string | undefined>, fn: () => T): T {
 }
 
 const BINDING_ENV_KEYS = {
-  OMNIROUTE_CODEX_APPSERVER_WS: undefined,
-  OMNIROUTE_CODEX_APPSERVER_WS_TOKEN: "env-token-hex",
-  OMNIROUTE_CODEX_APPSERVER_WS_TOKEN_FILE: undefined,
+  AGENTPROXY_CODEX_APPSERVER_WS: undefined,
+  AGENTPROXY_CODEX_APPSERVER_WS_TOKEN: "env-token-hex",
+  AGENTPROXY_CODEX_APPSERVER_WS_TOKEN_FILE: undefined,
 } as const;
 
 test("resolveAppServerConfig: refuses env token → remote psd URL (SSRF binding)", () => {
@@ -804,9 +804,9 @@ test("resolveAppServerConfig: env token allowed to operator-local psd URLs", () 
 test("resolveAppServerConfig: psd-sourced token may pair with any psd URL", () => {
   withEnv(
     {
-      OMNIROUTE_CODEX_APPSERVER_WS: undefined,
-      OMNIROUTE_CODEX_APPSERVER_WS_TOKEN: undefined,
-      OMNIROUTE_CODEX_APPSERVER_WS_TOKEN_FILE: undefined,
+      AGENTPROXY_CODEX_APPSERVER_WS: undefined,
+      AGENTPROXY_CODEX_APPSERVER_WS_TOKEN: undefined,
+      AGENTPROXY_CODEX_APPSERVER_WS_TOKEN_FILE: undefined,
     },
     () => {
       const cfg = resolveAppServerConfig({
@@ -823,9 +823,9 @@ test("resolveAppServerConfig: psd-sourced token may pair with any psd URL", () =
 test("resolveAppServerConfig: env URL + env token pairs regardless of host", () => {
   withEnv(
     {
-      OMNIROUTE_CODEX_APPSERVER_WS: "wss://codex-remote.example.com:8443",
-      OMNIROUTE_CODEX_APPSERVER_WS_TOKEN: "env-token-hex",
-      OMNIROUTE_CODEX_APPSERVER_WS_TOKEN_FILE: undefined,
+      AGENTPROXY_CODEX_APPSERVER_WS: "wss://codex-remote.example.com:8443",
+      AGENTPROXY_CODEX_APPSERVER_WS_TOKEN: "env-token-hex",
+      AGENTPROXY_CODEX_APPSERVER_WS_TOKEN_FILE: undefined,
     },
     () => {
       const cfg = resolveAppServerConfig({ codexTransport: "app-server" });

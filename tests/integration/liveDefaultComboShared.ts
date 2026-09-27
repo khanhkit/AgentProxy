@@ -23,7 +23,7 @@ import {
 
 export { API_KEY, BASE_URL };
 
-export const skip = !API_KEY ? "OMNIROUTE_API_KEY not set — skipping live test" : undefined;
+export const skip = !API_KEY ? "AGENTPROXY_API_KEY not set — skipping live test" : undefined;
 
 export interface ComboModelTarget {
   model: string;
@@ -115,7 +115,7 @@ export async function getDefaultComboModelTargets(): Promise<ComboModelTarget[]>
 // Skip (never fail) any model whose provider connection isn't currently
 // active — this suite's job is breadth across the real combo, not blocking
 // the whole run on one unrelated provider outage. baseUrl/apiKey default to
-// the module-level omniroute-beta target but can be overridden (see
+// the module-level agentproxy-beta target but can be overridden (see
 // sendModelRequest — same rationale, used by the wire-capture suite's
 // dedicated container).
 export async function filterActiveModelTargets(
@@ -177,7 +177,7 @@ export interface SendModelRequestOptions {
 // Deliberately lighter than liveGeminiShared's sendAndValidate (no retry
 // loop, one fixed prompt pair): this suite's job is breadth across every
 // model in the real combo, not depth on any single provider. baseUrl/apiKey
-// default to the module-level omniroute-beta target but can be overridden —
+// default to the module-level agentproxy-beta target but can be overridden —
 // e.g. by the wire-capture suite, which points requests at its own
 // dedicated throwaway container instead (see liveContainerHarness.ts).
 export async function sendModelRequest(

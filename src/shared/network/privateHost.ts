@@ -10,7 +10,7 @@
 // Two constraints this module MUST keep — both enforced by tests:
 //   1. No `node:*` import: it is bundled for the browser.
 //   2. No `@/`-aliased import: `./outboundUrlGuard.ts` re-exports from here and is loaded by the
-//      packaged CLI (`omniroute setup-opencode`), where no tsconfig resolves the alias (#7682).
+//      packaged CLI (`agentproxy setup-opencode`), where no tsconfig resolves the alias (#7682).
 
 // Vendored from Node's own `lib/internal/net.js` so `ipVersion` stays verdict-for-verdict
 // identical to `isIP` — a NARROWER match would silently reclassify a private address as public
@@ -49,10 +49,14 @@ export function ipVersion(host: string): 0 | 4 | 6 {
 
 export function normalizeHost(hostname: string) {
   const normalized = hostname.trim().toLowerCase();
-  if (normalized.startsWith("[") && normalized.endsWith("]")) {
-    return normalized.slice(1, -1);
-  }
-  return normalized;
+  const unwrapped =
+    normalized.startsWith("[") && normalized.endsWith("]") ? normalized.slice(1, -1) : normalized;
+
+  // CodeQL #482: avoid the end-anchored /\.+$/ shape. Scan once from the end and
+  // slice once so a hostile hostname containing a very long trailing dot run stays O(n).
+  let end = unwrapped.length;
+  while (end > 0 && unwrapped.charCodeAt(end - 1) === 46) end -= 1;
+  return end === unwrapped.length ? unwrapped : unwrapped.slice(0, end);
 }
 
 export function isPrivateHost(hostname: string) {

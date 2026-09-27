@@ -4,7 +4,15 @@ import type { SqliteAdapter } from "./adapters/types";
 
 type SqliteDatabase = SqliteAdapter;
 type DatabaseOptimizationSettings = DatabaseSettings["optimization"];
-type AutoVacuumMode = DatabaseOptimizationSettings["autoVacuumMode"];
+export type AutoVacuumMode = DatabaseOptimizationSettings["autoVacuumMode"];
+
+export interface AutoVacuumDrift {
+  configured: AutoVacuumMode;
+  live: AutoVacuumMode;
+}
+
+const AUTO_VACUUM_DRIFT_NAMESPACE = "scheduler";
+const AUTO_VACUUM_DRIFT_KEY = "vacuumDrift";
 
 const AUTO_VACUUM_MODE_TO_PRAGMA: Record<AutoVacuumMode, number> = {
   NONE: 0,
@@ -233,14 +241,47 @@ export function applyDatabaseOptimizationSettingsForDb(
   );
 }
 
+export function checkAutoVacuumDrift(
+  db: SqliteDatabase,
+  settings: DatabaseOptimizationSettings
+): AutoVacuumDrift | null {
+  const liveMode = getAutoVacuumModeForDb(db);
+  if (liveMode === settings.autoVacuumMode) return null;
+  return { configured: settings.autoVacuumMode, live: liveMode };
+}
+
+function persistAutoVacuumDriftRecord(
+  db: SqliteDatabase,
+  drift: AutoVacuumDrift | null
+): void {
+  try {
+    db.prepare("INSERT OR REPLACE INTO key_value (namespace, key, value) VALUES (?, ?, ?)").run(
+      AUTO_VACUUM_DRIFT_NAMESPACE,
+      AUTO_VACUUM_DRIFT_KEY,
+      JSON.stringify(drift)
+    );
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    console.warn(`[DB] Failed to persist auto_vacuum drift record: ${message}`);
+  }
+}
+
 export function applyStoredDatabaseOptimizationSettings(db: SqliteDatabase): void {
   const settings = readDatabaseOptimizationSettings(db);
-  // Startup can happen concurrently in test workers and clustered hosts. Only
-  // restore connection-local settings here; page_size/auto_vacuum require VACUUM
-  // and are applied synchronously when the Storage settings are saved.
+  // Startup restores only connection-local settings. Persistent auto_vacuum /
+  // page-size changes require VACUUM and are reconciled out-of-request.
   applyDatabaseOptimizationSettingsForDb(db, settings, {
     applyPersistent: false,
   });
+
+  const drift = checkAutoVacuumDrift(db, settings);
+  if (drift) {
+    console.warn(
+      `[DB] auto_vacuum drift detected (configured=${drift.configured}, live=${drift.live}); ` +
+        "scheduling reconcile on the next vacuum-scheduler run"
+    );
+  }
+  persistAutoVacuumDriftRecord(db, drift);
 }
 
 export function setAutoVacuumForDb(db: SqliteDatabase, mode: AutoVacuumMode): void {

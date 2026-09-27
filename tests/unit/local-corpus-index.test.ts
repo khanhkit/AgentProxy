@@ -9,7 +9,7 @@ import { LocalCorpusIndex, canonicalizeLocalCorpusRoot } from "../../src/lib/loc
 async function withCorpus(
   run: (root: string, index: LocalCorpusIndex) => Promise<void>
 ): Promise<void> {
-  const root = await fs.mkdtemp(path.join(os.tmpdir(), "omniroute-local-corpus-"));
+  const root = await fs.mkdtemp(path.join(os.tmpdir(), "agentproxy-local-corpus-"));
   const index = new LocalCorpusIndex(root, {
     maxFiles: 20,
     maxFileBytes: 2_048,

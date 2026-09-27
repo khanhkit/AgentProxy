@@ -3,8 +3,8 @@ import test from "node:test";
 
 assert.ok(process.env.DATA_DIR, "the subprocess fixture requires an isolated DATA_DIR");
 assert.ok(
-  process.env.OMNIROUTE_PLUGINS_DIR,
-  "the subprocess fixture requires an isolated OMNIROUTE_PLUGINS_DIR"
+  process.env.AGENTPROXY_PLUGINS_DIR,
+  "the subprocess fixture requires an isolated AGENTPROXY_PLUGINS_DIR"
 );
 
 const core = await import("../../src/lib/db/core.ts");
@@ -188,7 +188,7 @@ test("pre-content Perplexity failures remain unready and return a sanitized 502"
     {
       error_code: "PPLX_ERROR",
       error_message:
-        "failed at /srv/omniroute/private-runtime.ts:42:7 token=sk-pplx-secret-123456 api_key=hidden",
+        "failed at /srv/agentproxy/private-runtime.ts:42:7 token=sk-pplx-secret-123456 api_key=hidden",
     },
   ]);
 
@@ -207,7 +207,7 @@ test("thrown Perplexity stream failures remain unready and return a sanitized 50
       start(controller) {
         controller.error(
           new Error(
-            "socket failed at /srv/omniroute/private-runtime.ts:51:9 token=sk-pplx-secret-catch"
+            "socket failed at /srv/agentproxy/private-runtime.ts:51:9 token=sk-pplx-secret-catch"
           )
         );
       },
@@ -250,7 +250,7 @@ test("thrown failures after content preserve the prefix and terminate as a safe 
       }
       controller.error(
         new Error(
-          "transport failed at /srv/omniroute/private-runtime.ts:79 token=sk-pplx-secret-after"
+          "transport failed at /srv/agentproxy/private-runtime.ts:79 token=sk-pplx-secret-after"
         )
       );
     },
@@ -297,7 +297,7 @@ test("partial content is preserved before a terminal error and the failed sessio
       {
         error_code: "PPLX_ERROR",
         error_message:
-          "later failure at /srv/omniroute/private-runtime.ts:66:2 token=sk-pplx-secret-partial",
+          "later failure at /srv/agentproxy/private-runtime.ts:66:2 token=sk-pplx-secret-partial",
       },
     ],
     firstPrompt,

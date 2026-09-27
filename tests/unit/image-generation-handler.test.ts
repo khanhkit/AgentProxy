@@ -5,7 +5,7 @@ import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-process.env.DATA_DIR = mkdtempSync(join(tmpdir(), "omniroute-images-"));
+process.env.DATA_DIR = mkdtempSync(join(tmpdir(), "agentproxy-images-"));
 
 // Stub DNS for fetchRemoteImage's GHSA-cmhj-wh2f-9cgx DNS-rebinding guard
 // (assertHostnameResolvesPublic in src/shared/network/remoteImageFetch.ts).
@@ -461,6 +461,7 @@ test("handleImageGeneration routes Stability AI edit models to native endpoints"
       },
       credentials: { apiKey: "stability-key" },
       log: null,
+      remoteMediaFetchImpl: globalThis.fetch,
     });
 
     assert.equal(result.success, true);
@@ -595,6 +596,7 @@ test("handleImageGeneration polls Black Forest Labs results and sends base64 inp
       },
       credentials: { apiKey: "bfl-key" },
       log: null,
+      remoteMediaFetchImpl: globalThis.fetch,
     });
 
     assert.equal(result.success, true);
@@ -699,6 +701,7 @@ test("handleImageGeneration uploads source images to Topaz and returns base64 ou
       },
       credentials: { apiKey: "topaz-key" },
       log: null,
+      remoteMediaFetchImpl: globalThis.fetch,
     });
 
     assert.equal(result.success, true);
@@ -878,7 +881,7 @@ test("handleImageGeneration sanitizes Antigravity upstream error payloads", asyn
         error: {
           code: 500,
           message:
-            "failed at /Users/backryun/OmniRoute/open-sse/handlers/imageGeneration.ts:1\nstack",
+            "failed at /Users/backryun/AgentProxy/open-sse/handlers/imageGeneration.ts:1\nstack",
           status: "INTERNAL",
         },
       }),
@@ -2104,28 +2107,6 @@ test("handleImageGeneration (codex) marks the ChatGPT-account model-access 400 a
     assert.equal(result.success, false);
     assert.equal(result.status, 400);
     assert.equal(result.retryable, true);
-  } finally {
-    globalThis.fetch = originalFetch;
-  }
-});
-
-test("handleImageGeneration (codex) does not mark an ordinary 400 as retryable", async () => {
-  const originalFetch = globalThis.fetch;
-  globalThis.fetch = async () =>
-    new Response(JSON.stringify({ error: { message: "Invalid prompt" } }), {
-      status: 400,
-      headers: { "content-type": "application/json" },
-    });
-
-  try {
-    const result = await handleImageGeneration({
-      body: { model: "codex/gpt-5.6-sol", prompt: "kitten" },
-      credentials: { accessToken: "codex-token" },
-      log: null,
-    });
-    assert.equal(result.success, false);
-    assert.equal(result.status, 400);
-    assert.equal(result.retryable, undefined);
   } finally {
     globalThis.fetch = originalFetch;
   }

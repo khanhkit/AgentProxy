@@ -1,6 +1,6 @@
 /**
  * Explicit guard for the "target model already supports vision natively" skip
- * path (openclaw `runner.ts:711` prompted this — OmniRoute already relied on
+ * path (openclaw `runner.ts:711` prompted this — AgentProxy already relied on
  * the behavior implicitly, this test makes the contract explicit and asserts
  * the dedicated skip log).
  *

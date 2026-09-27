@@ -4,10 +4,10 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-// #8249: caller session tag (X-OmniRoute-Session-Id header) propagated into call_logs
+// #8249: caller session tag (X-AgentProxy-Session-Id header) propagated into call_logs
 // so operators can attribute cost per caller session. Isolated DATA_DIR per PII learnings §3
 // (resetDbInstance() + handle cleanup in test.after so the node:test runner doesn't hang).
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-session-tag-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-session-tag-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../src/lib/db/core.ts");

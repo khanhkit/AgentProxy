@@ -8,7 +8,7 @@ import path from "node:path";
 // (`oma_...`) and enforce the method+admin-allowlist scope policy. Other
 // credential paths (dashboard JWT, loopback CLI token, manage-scope API key)
 // are unaffected. Isolated DATA_DIR + DB handle closed in test.after.
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-mgmt-auth-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-mgmt-auth-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.DISABLE_SQLITE_AUTO_BACKUP = "true";
 // Force isAuthRequired() === true deterministically (config'd password present).
@@ -34,16 +34,16 @@ test.after(() => {
     fs.rmSync(TEST_DATA_DIR, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
   } catch {}
   delete process.env.INITIAL_PASSWORD;
-  delete process.env.OMNIROUTE_INTERNAL_SERVICE_TOKEN;
+  delete process.env.AGENTPROXY_INTERNAL_SERVICE_TOKEN;
 });
 
 test("internal service token requires the trusted loopback locality marker", async () => {
-  process.env.OMNIROUTE_INTERNAL_SERVICE_TOKEN = "internal-service-token-0123456789";
-  const tokenHeader = "x-omniroute-internal-service-token";
+  process.env.AGENTPROXY_INTERNAL_SERVICE_TOKEN = "internal-service-token-0123456789";
+  const tokenHeader = "x-agentproxy-internal-service-token";
   const local = new Request(`${BASE}/api/combos`, {
     headers: {
       [tokenHeader]: "internal-service-token-0123456789",
-      "x-omniroute-peer-locality": "loopback",
+      "x-agentproxy-peer-locality": "loopback",
     },
   });
   assert.equal(await requireManagementAuth(local), null);
@@ -51,7 +51,7 @@ test("internal service token requires the trusted loopback locality marker", asy
   const remote = new Request(`${BASE}/api/combos`, {
     headers: {
       [tokenHeader]: "internal-service-token-0123456789",
-      "x-omniroute-peer-locality": "remote",
+      "x-agentproxy-peer-locality": "remote",
     },
   });
   assert.equal((await requireManagementAuth(remote))?.status, 401);

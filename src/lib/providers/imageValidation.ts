@@ -1,4 +1,4 @@
-import { getImageProvider } from "@omniroute/open-sse/config/imageRegistry";
+import { getImageProvider } from "@agentproxy/open-sse/config/imageRegistry";
 
 import { getProviderOutboundGuard } from "@/shared/network/outboundUrlGuardPolicy";
 import { isSecurityBlockError } from "@/lib/providers/validation/transport";

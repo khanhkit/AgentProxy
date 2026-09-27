@@ -10,7 +10,7 @@ import path from "node:path";
 // commonly route every credential through one host:port, so host+port alone is
 // not a stable identity — the credential tuple is.
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-proxy-dedup-7594-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-proxy-dedup-7594-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../src/lib/db/core.ts");

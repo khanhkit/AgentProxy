@@ -21,7 +21,7 @@ test("buildKiloAuth merges (preserves other providers/keys)", () => {
 
 test("buildKiloAuth falls back to a placeholder key", () => {
   const auth = buildKiloAuth({}, { apiKey: "", baseUrl: "http://x/v1", model: "m" });
-  assert.equal(auth["openai-compatible"].apiKey, "sk_omniroute");
+  assert.equal(auth["openai-compatible"].apiKey, "sk_agentproxy");
 });
 
 test("buildKiloVscodeSettings sets kilocode.customProvider + defaultModel, preserving others", () => {
@@ -30,7 +30,7 @@ test("buildKiloVscodeSettings sets kilocode.customProvider + defaultModel, prese
     { apiKey: "k", baseUrl: "http://vps:20128/v1", model: "glm/glm-5.2" }
   );
   assert.equal(s["editor.fontSize"], 14);
-  assert.equal(s["kilocode.customProvider"].name, "OmniRoute");
+  assert.equal(s["kilocode.customProvider"].name, "AgentProxy");
   assert.equal(s["kilocode.customProvider"].baseURL, "http://vps:20128/v1");
   assert.equal(s["kilocode.defaultModel"], "glm/glm-5.2");
 });

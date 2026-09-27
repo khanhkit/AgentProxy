@@ -4,7 +4,7 @@ import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-process.env.DATA_DIR = mkdtempSync(join(tmpdir(), "omniroute-kie-11296-probe-"));
+process.env.DATA_DIR = mkdtempSync(join(tmpdir(), "agentproxy-kie-11296-probe-"));
 
 const { handleImageGeneration } = await import(
   "../../open-sse/handlers/imageGeneration.ts"

@@ -17,7 +17,7 @@ export DEVIN_BRIDGE_SONNET_MODEL="${DEVIN_BRIDGE_SONNET_MODEL:-$DEVIN_BRIDGE_MOD
 export DEVIN_BRIDGE_OPUS_MODEL="${DEVIN_BRIDGE_OPUS_MODEL:-$DEVIN_BRIDGE_MODEL}"
 export DEVIN_BRIDGE_HAIKU_MODEL="${DEVIN_BRIDGE_HAIKU_MODEL:-$DEVIN_BRIDGE_MODEL}"
 export DEVIN_BRIDGE_SUBAGENT_MODEL="${DEVIN_BRIDGE_SUBAGENT_MODEL:-$DEVIN_BRIDGE_MODEL}"
-docker compose -f "$BRIDGE_COMPOSE" --profile live-devin up -d --wait omniroute-live
+docker compose -f "$BRIDGE_COMPOSE" --profile live-devin up -d --wait agentproxy-live
 docker compose -f "$BRIDGE_COMPOSE" --profile live-devin run --rm --no-deps \
   claude-live claude
 bridge_cleanup_compose

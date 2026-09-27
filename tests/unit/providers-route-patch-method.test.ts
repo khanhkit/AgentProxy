@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 // Regression test for the providers-route PATCH gap: the OpenAPI spec and the
-// CLI (`omniroute providers rotate`, generated api-commands) both use
+// CLI (`agentproxy providers rotate`, generated api-commands) both use
 // PATCH /api/providers/[id], but the route only implemented PUT — PATCH
 // requests 405'd and `providers rotate --new-key` silently failed while
 // reporting success. See PR fix: the route now exports a PATCH handler that

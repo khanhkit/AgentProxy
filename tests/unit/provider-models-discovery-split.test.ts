@@ -429,7 +429,7 @@ test("codex.mergeCodexLiveModelsWithLocalCatalog merges capacity limits conserva
   const sol = merged.find((model) => model.id === "gpt-5.6-sol");
   assert.equal(sol?.name, "Live Sol");
   // Live (272000) is SMALLER than the pinned contract (372000) here — the
-  // smaller value wins so OmniRoute never promises more context than the
+  // smaller value wins so AgentProxy never promises more context than the
   // live account can actually serve (#7012).
   assert.equal(sol?.inputTokenLimit, 272000);
   assert.equal(sol?.supportsVision, true);

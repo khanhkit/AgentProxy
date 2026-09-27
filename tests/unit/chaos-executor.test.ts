@@ -2,7 +2,7 @@
  * Unit tests for src/lib/chaos/chaosExecutor.ts
  *
  * Regression coverage for #6679: the original PR dispatched to models via a real
- * network fetch() to `${OMNIROUTE_INTERNAL_URL || "http://localhost:30129"}` —
+ * network fetch() to `${AGENTPROXY_INTERNAL_URL || "http://localhost:30129"}` —
  * 30129 is the author's personal dev port, not the project's default port 20128,
  * so Chaos Mode silently failed on any standard install. This now dispatches
  * in-process via the established synthetic-Request/route-handler pattern (see
@@ -17,7 +17,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-chaos-executor-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-chaos-executor-"));
 const ORIGINAL_DATA_DIR = process.env.DATA_DIR;
 process.env.DATA_DIR = TEST_DATA_DIR;
 

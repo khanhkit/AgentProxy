@@ -3,7 +3,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 
-import { sanitizeErrorMessage } from "@omniroute/open-sse/utils/error.ts";
+import { sanitizeErrorMessage } from "@agentproxy/open-sse/utils/error.ts";
 import { NextResponse } from "next/server";
 import pino from "pino";
 import { z } from "zod";
@@ -142,12 +142,12 @@ const omitApiKeys = (settings: ReturnType<typeof parseGrokBuildConfig>) => ({
   >,
 });
 
-const hasOmniRouteConfig = (settings: GrokBuildSettings): boolean =>
-  settings.default === "omniroute" &&
+const hasAgentProxyConfig = (settings: GrokBuildSettings): boolean =>
+  settings.default === "agentproxy" &&
   settings.model?.base_url !== null &&
   settings.model?.api_backend === "chat_completions";
 
-/** Return Grok Build runtime and OmniRoute config status. */
+/** Return Grok Build runtime and AgentProxy config status. */
 export async function GET(request: Request): Promise<Response> {
   const authError = await requireCliToolsAuth(request);
   if (authError) return authError;
@@ -169,7 +169,7 @@ export async function GET(request: Request): Promise<Response> {
       ...runtime,
       config: publicSettings,
       settings: publicSettings,
-      hasOmniRoute: hasOmniRouteConfig(settings),
+      hasAgentProxy: hasAgentProxyConfig(settings),
       apiKeyConfigured,
       configPath,
     });
@@ -179,7 +179,7 @@ export async function GET(request: Request): Promise<Response> {
   }
 }
 
-/** Apply OmniRoute model slots to Grok Build. */
+/** Apply AgentProxy model slots to Grok Build. */
 export async function POST(request: Request): Promise<Response> {
   const authError = await requireCliToolsAuth(request);
   if (authError) return authError;
@@ -223,7 +223,7 @@ export async function POST(request: Request): Promise<Response> {
       success: true,
       message: "Grok Build settings applied successfully!",
       configPath,
-      modelSlot: "omniroute",
+      modelSlot: "agentproxy",
     });
   } catch (error) {
     if (error instanceof GrokBuildConfigConflictError) {
@@ -234,7 +234,7 @@ export async function POST(request: Request): Promise<Response> {
   }
 }
 
-/** Remove OmniRoute model slots from Grok Build. */
+/** Remove AgentProxy model slots from Grok Build. */
 export async function DELETE(request: Request): Promise<Response> {
   const authError = await requireCliToolsAuth(request);
   if (authError) return authError;
@@ -259,7 +259,7 @@ export async function DELETE(request: Request): Promise<Response> {
 
     return NextResponse.json({
       success: true,
-      message: "OmniRoute model slots removed from Grok Build",
+      message: "AgentProxy model slots removed from Grok Build",
     });
   } catch (error) {
     logger.error({ err: error }, "Failed to reset Grok Build settings");

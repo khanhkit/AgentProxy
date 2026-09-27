@@ -7,8 +7,8 @@
 
 import fs from "node:fs";
 import path from "node:path";
-import type { RequestPipelinePayloads } from "@omniroute/open-sse/utils/requestLogger.ts";
-import { sanitizeErrorMessage } from "@omniroute/open-sse/utils/errorSanitization.ts";
+import type { RequestPipelinePayloads } from "@agentproxy/open-sse/utils/requestLogger.ts";
+import { sanitizeErrorMessage } from "@agentproxy/open-sse/utils/errorSanitization.ts";
 import { getDbInstance } from "../db/core";
 import { getRequestDetailLogByCallLogId } from "../db/detailedLogs";
 import { shouldPersistToDisk } from "./migrations";
@@ -50,6 +50,7 @@ import {
   protectPipelinePayloads,
   buildRequestSummary,
   classifyCallLogError,
+  toStoredErrorType,
 } from "./callLogs/format";
 import {
   clearArtifactReference,
@@ -451,6 +452,7 @@ function getLegacyInlineDetail(id: string) {
 
 async function saveCallLogOperation(entry: any): Promise<void> {
   try {
+    const db = getDbInstance();
     const apiKeyContext = getCallLogApiKeyContext();
     // `||` (not `??`): an empty-string apiKeyId/apiKeyName is "unattributed",
     // same as before this fallback existed — it must not be persisted verbatim
@@ -507,7 +509,9 @@ async function saveCallLogOperation(entry: any): Promise<void> {
     // while reasoning source/char-count are recorded separately for observability.
     const tokensReasoning = getReasoningTokensOrNull(entry.tokens);
     const reasoningObservation = resolveReasoningObservation(tokensReasoning, entry.responseBody);
-    const errorType = classifyCallLogError(entry.status, entry.error, entry.provider);
+    const errorType = toStoredErrorType(
+      classifyCallLogError(entry.status, entry.error, entry.provider)
+    );
     const logEntry = {
       id: typeof entry.id === "string" && entry.id.length > 0 ? entry.id : generateLogId(),
       timestamp: typeof entry.timestamp === "string" ? entry.timestamp : new Date().toISOString(),
@@ -544,7 +548,7 @@ async function saveCallLogOperation(entry: any): Promise<void> {
       sessionTag: entry.sessionTag || null,
       // OpenAI Responses API response id, when this attempt produced one --
       // indexed so a later request's `previous_response_id` can resolve
-      // this row's artifact for OmniRoute-native continuation. See
+      // this row's artifact for AgentProxy-native continuation. See
       // src/lib/db/responsesContinuationStore.ts.
       responseId: typeof entry.responseId === "string" ? entry.responseId : null,
       // #12150 P2 surface 2: 1 when this request's persisted client snapshot had
@@ -588,7 +592,6 @@ async function saveCallLogOperation(entry: any): Promise<void> {
       }
     }
 
-    const db = getDbInstance();
     db.prepare(
       `
       INSERT INTO call_logs (
@@ -892,17 +895,122 @@ export async function getCallLogById(id: string) {
   };
 }
 
-export async function exportCallLogsSince(since: string) {
-  const db = getDbInstance();
-  const ids = db
-    .prepare("SELECT id FROM call_logs WHERE timestamp >= ? ORDER BY timestamp DESC")
-    .all(since)
-    .map((row) => String((row as { id: string }).id));
+export interface LegacyCallLogExportCursor {
+  timestamp: string;
+  rowId: number;
+}
 
+export interface LegacyCallLogExportIdRow extends LegacyCallLogExportCursor {
+  id: string;
+}
+
+export function getLegacyCallLogExportMaxRowId(since: string): number {
+  const db = getDbInstance();
+  const row = db
+    .prepare("SELECT COALESCE(MAX(rowid), 0) AS max_row_id FROM call_logs WHERE timestamp >= ?")
+    .get(since) as { max_row_id?: number } | undefined;
+  return Number(row?.max_row_id ?? 0);
+}
+
+export function getLegacyCallLogExportIdPage(
+  since: string,
+  maxRowId: number,
+  cursor: LegacyCallLogExportCursor | null,
+  limit: number
+): LegacyCallLogExportIdRow[] {
+  const db = getDbInstance();
+  const boundedLimit = Math.max(1, Math.min(Math.trunc(limit), 100));
+  const rows = cursor
+    ? db
+        .prepare(
+          `SELECT rowid AS row_id, id, timestamp
+             FROM call_logs
+            WHERE timestamp >= @since
+              AND rowid <= @maxRowId
+              AND (timestamp < @cursorTimestamp
+                   OR (timestamp = @cursorTimestamp AND rowid < @cursorRowId))
+            ORDER BY timestamp DESC, rowid DESC
+            LIMIT @limit`
+        )
+        .all({
+          since,
+          maxRowId,
+          cursorTimestamp: cursor.timestamp,
+          cursorRowId: cursor.rowId,
+          limit: boundedLimit,
+        })
+    : db
+        .prepare(
+          `SELECT rowid AS row_id, id, timestamp
+             FROM call_logs
+            WHERE timestamp >= @since
+              AND rowid <= @maxRowId
+            ORDER BY timestamp DESC, rowid DESC
+            LIMIT @limit`
+        )
+        .all({ since, maxRowId, limit: boundedLimit });
+
+  return (rows as Array<{ row_id: number; id: string; timestamp: string }>).map((row) => ({
+    id: String(row.id),
+    timestamp: String(row.timestamp),
+    rowId: Number(row.row_id),
+  }));
+}
+
+export async function exportCallLogsSince(since: string) {
+  const maxRowId = getLegacyCallLogExportMaxRowId(since);
   const logs: unknown[] = [];
-  for (const id of ids) {
-    const log = await getCallLogById(id);
-    if (log) logs.push(log);
+  let cursor: LegacyCallLogExportCursor | null = null;
+
+  while (true) {
+    const page = getLegacyCallLogExportIdPage(since, maxRowId, cursor, 100);
+    if (page.length === 0) break;
+
+    for (const row of page) {
+      const log = await getCallLogById(row.id);
+      if (log) logs.push(log);
+    }
+
+    const last = page[page.length - 1];
+    cursor = { timestamp: last.timestamp, rowId: last.rowId };
   }
+
   return logs;
+}
+
+export function countCallLogsSince(since: string): number {
+  const db = getDbInstance();
+  const row = db
+    .prepare("SELECT COUNT(*) AS count FROM call_logs WHERE timestamp >= ?")
+    .get(since) as { count?: number } | undefined;
+  return Number(row?.count ?? 0);
+}
+
+export async function* iterateCallLogsSince(
+  since: string,
+  limit: number
+): AsyncGenerator<unknown, void, void> {
+  const maxRows = Math.max(0, Math.trunc(limit));
+  if (maxRows === 0) return;
+
+  const maxRowId = getLegacyCallLogExportMaxRowId(since);
+  let cursor: LegacyCallLogExportCursor | null = null;
+  let processed = 0;
+
+  while (processed < maxRows) {
+    const pageLimit = Math.min(100, maxRows - processed);
+    const page = getLegacyCallLogExportIdPage(since, maxRowId, cursor, pageLimit);
+    if (page.length === 0) break;
+
+    for (const row of page) {
+      const log = await getCallLogById(row.id);
+      if (log) yield log;
+      processed++;
+      if (processed >= maxRows) break;
+    }
+
+    const last = page[page.length - 1];
+    cursor = { timestamp: last.timestamp, rowId: last.rowId };
+    if (page.length < pageLimit) break;
+  }
 }

@@ -36,11 +36,11 @@ function run(
 }
 
 test("createVideoBridgePromotionHoldReport reports HOLD with the missing-configuration reasons, no fabricated data", () => {
-  const report = createVideoBridgePromotionHoldReport(["--observations", "OMNIROUTE_API_KEY"]);
+  const report = createVideoBridgePromotionHoldReport(["--observations", "AGENTPROXY_API_KEY"]);
   assert.equal(report.execution.state, "not-configured");
   assert.equal(report.fu07.status, "hold");
   assert.equal(report.fu09.status, "hold");
-  assert.deepEqual(report.missingConfiguration, ["--observations", "OMNIROUTE_API_KEY"]);
+  assert.deepEqual(report.missingConfiguration, ["--observations", "AGENTPROXY_API_KEY"]);
   assert.deepEqual(report.records, []);
 });
 

@@ -23,7 +23,7 @@ import {
 } from "./liveGeminiShared.ts";
 
 export interface FreeModelSpec {
-  /** OmniRoute provider id, matching provider_connections.provider */
+  /** AgentProxy provider id, matching provider_connections.provider */
   provider: string;
   /** Full "provider/modelId" string sent as the `model` field */
   model: string;

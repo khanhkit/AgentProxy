@@ -352,7 +352,7 @@ test("Gemini stream: converts textual Tool call block to structured tool_calls",
           content: {
             parts: [
               {
-                text: '[Tool call: terminal]\nArguments: {"command":"sqlite3 ~/.omniroute/storage.sqlite \\"SELECT name FROM sqlite_master WHERE type=\'table\';\\""}',
+                text: '[Tool call: terminal]\nArguments: {"command":"sqlite3 ~/.agentproxy/storage.sqlite \\"SELECT name FROM sqlite_master WHERE type=\'table\';\\""}',
               },
             ],
           },
@@ -371,7 +371,7 @@ test("Gemini stream: converts textual Tool call block to structured tool_calls",
     toolCall.function.arguments,
     JSON.stringify({
       command:
-        "sqlite3 ~/.omniroute/storage.sqlite \"SELECT name FROM sqlite_master WHERE type='table';\"",
+        "sqlite3 ~/.agentproxy/storage.sqlite \"SELECT name FROM sqlite_master WHERE type='table';\"",
     })
   );
   assert.equal(
@@ -504,7 +504,7 @@ test("Gemini stream: converts prefixed textual Tool call block with zero-width c
           content: {
             parts: [
               {
-                text: '(empty)[Tool call: terminal]\nArguments: {"command":"sqlite3 ~/.o\u200dmniroute/storage.sqlite"}',
+                text: '(empty)[Tool call: terminal]\nArguments: {"command":"sqlite3 ~/.a\u200dgentproxy/storage.sqlite"}',
               },
             ],
           },
@@ -522,7 +522,7 @@ test("Gemini stream: converts prefixed textual Tool call block with zero-width c
   assert.equal(
     toolCall.function.arguments,
     JSON.stringify({
-      command: "sqlite3 ~/.omniroute/storage.sqlite",
+      command: "sqlite3 ~/.agentproxy/storage.sqlite",
     })
   );
   assert.equal(
@@ -621,7 +621,7 @@ test("Gemini stream: unwraps native functionCall args when emitted as JSON strin
                 functionCall: {
                   name: "terminal",
                   args: JSON.stringify({
-                    command: 'ssh test-vps "systemctl cat omniroute.service"',
+                    command: 'ssh test-vps "systemctl cat agentproxy.service"',
                   }),
                 },
               },
@@ -639,7 +639,7 @@ test("Gemini stream: unwraps native functionCall args when emitted as JSON strin
   assert.equal(toolCall.function.name, "terminal");
   assert.equal(
     toolCall.function.arguments,
-    JSON.stringify({ command: 'ssh test-vps "systemctl cat omniroute.service"' })
+    JSON.stringify({ command: 'ssh test-vps "systemctl cat agentproxy.service"' })
   );
 });
 
@@ -654,7 +654,7 @@ test("Gemini stream: converts JSON-string encoded textual Tool call arguments", 
           content: {
             parts: [
               {
-                text: '[Tool call: terminal]\nArguments: "{\\\"command\\\":\\\"ssh test-vps \\\\\\\"systemctl cat omniroute.service\\\\\\\"\\\"}"',
+                text: '[Tool call: terminal]\nArguments: "{\\\"command\\\":\\\"ssh test-vps \\\\\\\"systemctl cat agentproxy.service\\\\\\\"\\\"}"',
               },
             ],
           },
@@ -671,7 +671,7 @@ test("Gemini stream: converts JSON-string encoded textual Tool call arguments", 
   assert.equal(toolCall.function.name, "terminal");
   assert.equal(
     toolCall.function.arguments,
-    JSON.stringify({ command: 'ssh test-vps "systemctl cat omniroute.service"' })
+    JSON.stringify({ command: 'ssh test-vps "systemctl cat agentproxy.service"' })
   );
   assert.equal(
     result.some((event: any) => event.choices?.[0]?.delta?.content?.includes("[Tool call:")),
@@ -1174,7 +1174,7 @@ test("Gemini stream: open textual reasoning is flushed before a signed native to
     "buffered textual reasoning must be flushed, not dropped, when a tool call arrives"
   );
   assert.equal(r2[toolIdx]?.choices[0].delta.tool_calls[0].id, "call-flush-1");
-  assert.ok(reasoningIdx >= 0 && toolIdx > reasoningIdx, "reasoning is emitted before the tool call");
+  assert.ok(reasoningIdx >= 0 && toolIdx > reasoningIdx, "reasoning precedes tool call");
 });
 
 // #3821-review LEDGER-15 — a reasoning-only chunk interrupting a partially-buffered

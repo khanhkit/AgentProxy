@@ -1,6 +1,6 @@
 export function parseSseChunk(text) {
   // Itera LINHAS dentro de cada bloco: a VPS emite comment-lines SSE
-  // (": x-omniroute-*") no mesmo bloco do "data: [DONE]", então olhar só o
+  // (": x-agentproxy-*") no mesmo bloco do "data: [DONE]", então olhar só o
   // início do bloco perde o terminador.
   const events = [];
   for (const block of text.split(/\n\n/)) {

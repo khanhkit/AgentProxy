@@ -7,7 +7,7 @@ import { fileURLToPath } from "node:url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-test-flag-loop-"));
+const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-test-flag-loop-"));
 process.env.DATA_DIR = tmpDir;
 
 const { FEATURE_FLAG_DEFINITIONS } =

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import assert from "node:assert/strict";
 
-const endpoint = "http://omniroute:20128/v1/messages";
+const endpoint = "http://agentproxy:20128/v1/messages";
 const headers = {
   "anthropic-version": "2023-06-01",
   "content-type": "application/json",

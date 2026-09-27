@@ -23,12 +23,13 @@ import path from "node:path";
 const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omni-a2a-idor-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.API_KEY_SECRET = process.env.API_KEY_SECRET || "a2a-idor-test-secret";
-process.env.OMNIROUTE_DISABLE_REDIS_AUTH_CACHE = "1";
+process.env.AGENTPROXY_DISABLE_REDIS_AUTH_CACHE = "1";
 
 const core = await import("../../src/lib/db/core.ts");
 const apiKeysDb = await import("../../src/lib/db/apiKeys.ts");
 const { A2ATaskManager, getTaskManager } = await import("../../src/lib/a2a/taskManager.ts");
 const { resolveA2AOwner } = await import("../../src/lib/a2a/authenticate.ts");
+const tasksRoute = await import("../../src/app/api/a2a/tasks/route.ts");
 const restGet = await import("../../src/app/api/a2a/tasks/[id]/route.ts");
 
 const ORIGINAL_REQUIRE = process.env.REQUIRE_API_KEY;
@@ -72,8 +73,10 @@ describe("A2ATaskManager — owner scoping (GHSA-jcm5)", () => {
       listed.map((t) => t.id),
       [mine.id]
     );
+    assert.equal(tm.countTasks(undefined, "owner-b"), 1, "owner-scoped count matches owner-visible rows");
     // No owner scope (management/dashboard path) still sees everything.
     assert.equal(tm.listTasks(undefined).length, 2);
+    assert.equal(tm.countTasks(undefined), 2);
   });
 
   it("ownerless tasks stay visible to everyone (keyless local-first posture)", () => {
@@ -85,10 +88,55 @@ describe("A2ATaskManager — owner scoping (GHSA-jcm5)", () => {
   });
 });
 
+describe("REST /api/a2a/tasks — owner-scoped totals", () => {
+  it("keeps total aligned with the owner-visible filtered population at nonzero offsets", async () => {
+    process.env.REQUIRE_API_KEY = "true";
+    const key = await apiKeysDb.createApiKey("a2a-list-total", "machine-list-total", []);
+    const skill = "ap-iss-0014-owner-total";
+    const req = new Request(
+      `http://localhost/api/a2a/tasks?state=working&skill=${skill}&limit=1&offset=1`,
+      { headers: { authorization: `Bearer ${key.key}` } }
+    );
+    const owner = resolveA2AOwner(req as never);
+    assert.ok(owner, "keyed caller resolves to an owner scope");
+
+    const tm = getTaskManager();
+    const ownA = tm.createTask({ skill, messages: [] }, owner);
+    const ownB = tm.createTask({ skill, messages: [] }, owner);
+    const ownerless = tm.createTask({ skill, messages: [] });
+    const foreign = tm.createTask({ skill, messages: [] }, "some-other-owner-for-total");
+    const filteredByState = tm.createTask({ skill, messages: [] }, owner);
+    const filteredBySkill = tm.createTask({ skill: `${skill}-other`, messages: [] }, owner);
+
+    for (const task of [ownA, ownB, ownerless, foreign, filteredBySkill]) {
+      tm.updateTask(task.id, "working");
+    }
+    assert.equal(filteredByState.state, "submitted");
+
+    const res = await tasksRoute.GET(req as never);
+    assert.equal(res.status, 200);
+    const body = (await res.json()) as {
+      tasks: Array<{ owner?: string }>;
+      total: number;
+      limit: number;
+      offset: number;
+    };
+
+    assert.equal(body.total, 3, "total counts only owner-visible tasks matching state+skill");
+    assert.equal(body.tasks.length, 1, "offset/limit slices the same visible population");
+    assert.equal(body.limit, 1);
+    assert.equal(body.offset, 1);
+    assert.ok(
+      body.tasks.every((task) => task.owner === undefined || task.owner === owner),
+      "paged rows never include another principal"
+    );
+  });
+});
+
 describe("REST /api/a2a/tasks/[id] — authentication (GHSA-jcm5)", () => {
   it("rejects an unkeyed call when REQUIRE_API_KEY=true (was: no auth at all)", async () => {
     process.env.REQUIRE_API_KEY = "true";
-    delete process.env.OMNIROUTE_API_KEY;
+    delete process.env.AGENTPROXY_API_KEY;
     const res = await restGet.GET(new Request("http://localhost/api/a2a/tasks/abc") as never, {
       params: Promise.resolve({ id: "abc" }),
     });

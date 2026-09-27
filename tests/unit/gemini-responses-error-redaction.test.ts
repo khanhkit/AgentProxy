@@ -6,7 +6,7 @@ import { FORMATS } from "../../open-sse/translator/formats.ts";
 test("Gemini keeps raw failure wording internal but projects response.completed.error", () => {
   const state = initState(FORMATS.OPENAI_RESPONSES);
   const hostileMessage =
-    "Gemini failed at /srv/omniroute/private-runtime.ts:71:3 token=sk-gemini-secret-123456";
+    "Gemini failed at /srv/agentproxy/private-runtime.ts:71:3 token=sk-gemini-secret-123456";
 
   const translated = translateResponse(
     FORMATS.GEMINI,

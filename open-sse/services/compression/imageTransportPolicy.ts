@@ -3,7 +3,7 @@
  *
  * `supportsVision` only says that a model can read images. OmniGlyph also needs
  * the PNG bytes and dimensions to survive the provider route unchanged. The
- * allowlist below contains only paths with an existing OmniRoute receipt;
+ * allowlist below contains only paths with an existing AgentProxy receipt;
  * everything else is deliberately classified as unknown and skipped.
  */
 

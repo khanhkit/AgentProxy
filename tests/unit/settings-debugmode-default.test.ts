@@ -5,7 +5,7 @@ import os from "node:os";
 import path from "node:path";
 
 // Isolated DATA_DIR so persisted settings rows don't mask the default.
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-settings-debugmode-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-settings-debugmode-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.API_KEY_SECRET = process.env.API_KEY_SECRET || "settings-debugmode-test-secret";
 

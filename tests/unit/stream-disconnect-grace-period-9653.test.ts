@@ -1,6 +1,6 @@
 /**
  * Regression tests for #9653 — a client that closes its connection right after
- * reading a fully-completed SSE stream could race OmniRoute's own completion
+ * reading a fully-completed SSE stream could race AgentProxy's own completion
  * bookkeeping, persisting a false 499/0-tokens for a request that actually
  * delivered its full response. createClientDisconnectGraceHandler gives a
  * delayed completion a grace period to land before finalizing as a failure.

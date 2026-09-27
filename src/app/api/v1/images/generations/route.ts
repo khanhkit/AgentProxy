@@ -1,4 +1,4 @@
-import { handleImageGeneration } from "@omniroute/open-sse/handlers/imageGeneration.ts";
+import { handleImageGeneration } from "@agentproxy/open-sse/handlers/imageGeneration.ts";
 import { withInjectionGuard } from "@/middleware/promptInjectionGuard";
 import {
   getProviderCredentialsWithQuotaPreflight,
@@ -9,9 +9,9 @@ import {
   getImageProvider,
   getImageModelEntry,
   modalitiesRequireImageInput,
-} from "@omniroute/open-sse/config/imageRegistry.ts";
-import { errorResponse, unavailableResponse } from "@omniroute/open-sse/utils/error.ts";
-import { HTTP_STATUS } from "@omniroute/open-sse/config/constants.ts";
+} from "@agentproxy/open-sse/config/imageRegistry.ts";
+import { errorResponse, unavailableResponse } from "@agentproxy/open-sse/utils/error.ts";
+import { HTTP_STATUS } from "@agentproxy/open-sse/config/constants.ts";
 import { isAllRateLimitedCredentials } from "@/app/api/v1/_shared/rateLimit";
 import * as log from "@/sse/utils/logger";
 import { toJsonErrorPayload } from "@/shared/utils/upstreamError";
@@ -32,14 +32,15 @@ import {
   resolveLocalSyncedEndpointRoute,
   type LocalSyncedEndpointRoute,
 } from "@/lib/providerModels/syncedEndpointRouting";
-import { runWithProxyContext } from "@omniroute/open-sse/utils/proxyFetch.ts";
-import { attachOmniRouteMetaHeaders } from "@/domain/omnirouteResponseMeta";
+import { runWithProxyContext } from "@agentproxy/open-sse/utils/proxyFetch.ts";
+import { attachAgentProxyMetaHeaders } from "@/domain/agentproxyResponseMeta";
 import { calculateModalCost } from "@/lib/usage/costCalculator";
 import { generateRequestId } from "@/shared/utils/requestId";
 import { getSpecialtyModelsResponse } from "@/app/api/v1/_shared/specialtyCatalog";
 import { enforceClientApiRouteAuth } from "@/shared/utils/clientApiRouteAuth";
 import { runWithCallLogApiKeyContext } from "@/lib/usage/callLogApiKeyContext";
 import { executeImageWithCredentialFallback } from "@/sse/services/imageCredentialRetry";
+import { MAX_BODY_BYTES_MEDIA } from "@/shared/middleware/bodySizeGuard";
 import { AUTHZ_HEADER_PEER_LOCALITY } from "@/server/authz/headers";
 import {
   assertCommonChatGptWebModelAvailable,
@@ -107,7 +108,7 @@ function publicBaseUrlHeaders(headers: Headers): Record<string, string> {
   return out;
 }
 
-async function postHandler(request, context) {
+async function postHandler(request, _context) {
   let rawBody;
   try {
     rawBody = await request.json();
@@ -157,7 +158,7 @@ async function postHandler(request, context) {
   if (body.model && typeof body.model === "string" && !body.model.includes("/")) {
     const combo = await getComboByName(body.model as string);
     if (combo) {
-      const { executeImageCombo } = await import("@omniroute/open-sse/services/imageCombo");
+      const { executeImageCombo } = await import("@agentproxy/open-sse/services/imageCombo");
       return executeImageCombo(body.model as string, body, { request, policy }, startTime, log);
     }
   }
@@ -369,7 +370,7 @@ async function postHandler(request, context) {
     );
     const costUsd = await calculateModalCost("image", provider, body.model, { n });
     const headers = new Headers({ "Content-Type": "application/json" });
-    attachOmniRouteMetaHeaders(headers, {
+    attachAgentProxyMetaHeaders(headers, {
       provider,
       model: body.model,
       costUsd,
@@ -395,4 +396,4 @@ async function postHandler(request, context) {
   return errorResponse((result as any).status, message);
 }
 
-export const POST = withInjectionGuard(postHandler);
+export const POST = withInjectionGuard(postHandler, { bodySizeLimit: MAX_BODY_BYTES_MEDIA });

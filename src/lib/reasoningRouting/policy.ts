@@ -8,7 +8,7 @@ import {
 } from "@/lib/db/reasoningRoutingRules";
 import { getResolvedModelCapabilities } from "@/lib/modelCapabilities";
 import { normalizeRoutingTags } from "@/domain/tagRouter";
-import { splitClaudeEffortSuffix } from "@omniroute/open-sse/config/providerModels.ts";
+import { splitClaudeEffortSuffix } from "@agentproxy/open-sse/config/providerModels.ts";
 
 type JsonRecord = Record<string, unknown>;
 const EFFORTS = new Set<ReasoningEffort>([
@@ -508,14 +508,14 @@ export function attachReasoningRuleDirective(
     ...source,
     model: decision.rule.scope === "connection" ? source.model : decision.targetModel,
   };
-  body._omnirouteReasoningRule = {
+  body._agentproxyReasoningRule = {
     id: decision.rule.id,
     effortMode: decision.rule.effortMode,
     targetEffort: decision.targetEffort,
     budgetAction: decision.targetEffort === "none" ? "remove" : decision.rule.budgetAction,
     budgetTokens: decision.rule.budgetTokens,
   };
-  body._omnirouteReasoningRouteTrace = {
+  body._agentproxyReasoningRouteTrace = {
     ruleId: decision.rule.id,
     ruleName: decision.rule.name,
     scope: decision.rule.scope,
@@ -533,10 +533,10 @@ export function attachReasoningRuleDirective(
 
 export function applyReasoningRuleDirective(bodyInput: unknown): unknown {
   const source = asRecord(bodyInput);
-  const directive = asRecord(source._omnirouteReasoningRule);
+  const directive = asRecord(source._agentproxyReasoningRule);
   if (!directive.id) return bodyInput;
   const body = { ...source };
-  delete body._omnirouteReasoningRule;
+  delete body._agentproxyReasoningRule;
   const effortMode = directive.effortMode;
   const targetEffort = effort(directive.targetEffort);
   if (effortMode === "force" && targetEffort === "none") clearReasoning(body);

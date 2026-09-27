@@ -221,6 +221,39 @@ export function getActiveOnPersist(): RefreshPersistFn | undefined {
 // ./tokenRefresh/shared.ts (imported above, re-exported below) — used both by
 // the generic orchestrator below and by every per-provider refresh module.
 
+const TRANSIENT_REFRESH_TRANSPORT_CODES = new Set([
+  "ECONNRESET",
+  "EPIPE",
+  "ETIMEDOUT",
+  "ECONNREFUSED",
+  "ENETUNREACH",
+  "EHOSTUNREACH",
+  "UND_ERR_SOCKET",
+  "UND_ERR_CONNECT_TIMEOUT",
+  "UND_ERR_HEADERS_TIMEOUT",
+  "UND_ERR_BODY_TIMEOUT",
+  "PROXY_UNREACHABLE",
+]);
+
+function isTransientRefreshTransportError(error: unknown) {
+  const err =
+    error && typeof error === "object"
+      ? (error as { name?: string; code?: string; message?: string; cause?: unknown })
+      : {};
+  const cause =
+    err.cause && typeof err.cause === "object"
+      ? (err.cause as { name?: string; code?: string; message?: string })
+      : {};
+  const code = err.code || cause.code;
+  if (err?.name === "AbortError" || cause?.name === "AbortError" || code === "ABORT_ERR") {
+    return false;
+  }
+  return (
+    TRANSIENT_REFRESH_TRANSPORT_CODES.has(code) ||
+    /\b(?:ECONNRESET|EOF)\b/i.test(String(err?.message || "")) ||
+    /\b(?:ECONNRESET|EOF)\b/i.test(String(cause?.message || ""))
+  );
+}
 /**
  * Refresh OAuth access token using refresh token
  */
@@ -252,22 +285,39 @@ export async function refreshAccessToken(
     if (config.clientId) params.set("client_id", config.clientId);
     if (config.clientSecret) params.set("client_secret", config.clientSecret);
 
-    const response = await runWithProxyContext(proxyConfig, () =>
-      fetch(refreshEndpoint, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-          Accept: "application/json",
-          // Credential face (auth.openai.com): the real Codex client sends only
-          // originator + User-Agent here — no version header (that gate exists
-          // only on the /backend-api/codex inference face). Refreshing with a
-          // bare/anonymous identity is a half-identity no real client emits.
-          // Mirrors sub2api v0.1.178 ApplyCodexCanonicalAuthIdentity.
-          ...(provider === "codex" ? getCodexAuthIdentityHeaders() : null),
-        },
-        body: params,
-      })
-    );
+    let response;
+    for (let attempt = 0; attempt < 2; attempt++) {
+      try {
+        response = await runWithProxyContext(proxyConfig, () =>
+          fetch(refreshEndpoint, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+              Accept: "application/json",
+              // Credential face (auth.openai.com): the real Codex client sends only
+              // originator + User-Agent here — no version header (that gate exists
+              // only on the /backend-api/codex inference face). Refreshing with a
+              // bare/anonymous identity is a half-identity no real client emits.
+              // Mirrors sub2api v0.1.178 ApplyCodexCanonicalAuthIdentity.
+              ...(provider === "codex" ? getCodexAuthIdentityHeaders() : null),
+            },
+            body: params,
+          })
+        );
+        break;
+      } catch (error) {
+        if (attempt === 0 && isTransientRefreshTransportError(error)) {
+          log?.warn?.(
+            "TOKEN_REFRESH",
+            "Transient refresh transport failure for " + provider +
+              "; retrying once on the same egress",
+            { error: error instanceof Error ? error.message : String(error) }
+          );
+          continue;
+        }
+        throw error;
+      }
+    }
 
     if (!response.ok) {
       const errorText = await response.text();

@@ -48,11 +48,11 @@ test("scrubSyncedModelsWithCodexDenylist is a no-op when nothing is denylisted",
 });
 
 test("resolveCodexCatalogAppVersion uses stable, source-qualified identities", () => {
-  const runtimeRoot = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-version-identity-"));
+  const runtimeRoot = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-version-identity-"));
   assert.equal(
     resolveCodexCatalogAppVersion(
       {
-        OMNIROUTE_BUILD_SHA: "abc123",
+        AGENTPROXY_BUILD_SHA: "abc123",
         npm_package_version: "9.9.9",
       },
       { runtimeRoot }

@@ -11,7 +11,7 @@ test("news.json ships Radar inactive in the localized v2 feed without commercial
 
   assert.equal(payload.schemaVersion, 2);
   assert.equal(radar.active, false);
-  assert.equal(radar.link, "https://radar.omniroute.online/planos");
+  assert.equal(radar.link, "https://github.com/khanhkit/AgentProxy");
   assert.match(radar.text.en.message, /opt-in/i);
   assert.match(radar.text.en.message, /GET-only/i);
   assert.match(radar.text.en.message, /no telemetry/i);

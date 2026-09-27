@@ -10,7 +10,7 @@ const here = path.dirname(fileURLToPath(import.meta.url));
 const validator = path.resolve(here, "../../scripts/docs/validate-svg.mjs");
 
 test("SVG validator ignores Mermaid data-id attributes when checking duplicate IDs", () => {
-  const fixtureDir = mkdtempSync(path.join(tmpdir(), "omniroute-svg-validator-"));
+  const fixtureDir = mkdtempSync(path.join(tmpdir(), "agentproxy-svg-validator-"));
   const fixture = path.join(fixtureDir, "mermaid.svg");
   writeFileSync(
     fixture,
@@ -32,7 +32,7 @@ test("SVG validator ignores Mermaid data-id attributes when checking duplicate I
 });
 
 test("SVG validator rejects duplicate XML id attributes", () => {
-  const fixtureDir = mkdtempSync(path.join(tmpdir(), "omniroute-svg-validator-"));
+  const fixtureDir = mkdtempSync(path.join(tmpdir(), "agentproxy-svg-validator-"));
   const fixture = path.join(fixtureDir, "duplicate.svg");
   writeFileSync(
     fixture,
@@ -51,7 +51,7 @@ test("SVG validator rejects duplicate XML id attributes", () => {
 });
 
 test("SVG validator adds explicit accessible naming when requested for a generated diagram", () => {
-  const fixtureDir = mkdtempSync(path.join(tmpdir(), "omniroute-svg-validator-"));
+  const fixtureDir = mkdtempSync(path.join(tmpdir(), "agentproxy-svg-validator-"));
   const fixture = path.join(fixtureDir, "auto-combo.svg");
   writeFileSync(
     fixture,
@@ -68,7 +68,7 @@ test("SVG validator adds explicit accessible naming when requested for a generat
         "--title",
         "Auto-Combo scoring",
         "--description",
-        "How OmniRoute scores eligible routing targets with 15 factors.",
+        "How AgentProxy scores eligible routing targets with 15 factors.",
         fixture,
       ],
       { encoding: "utf8" }
@@ -83,7 +83,7 @@ test("SVG validator adds explicit accessible naming when requested for a generat
         "--title",
         "Auto-Combo scoring",
         "--description",
-        "How OmniRoute scores eligible routing targets with 15 factors.",
+        "How AgentProxy scores eligible routing targets with 15 factors.",
         fixture,
       ],
       { encoding: "utf8" }
@@ -96,7 +96,7 @@ test("SVG validator adds explicit accessible naming when requested for a generat
     assert.match(updated, /<title id="auto-combo-title">Auto-Combo scoring<\/title>/);
     assert.match(
       updated,
-      /<desc id="auto-combo-desc">How OmniRoute scores eligible routing targets with 15 factors\.<\/desc>/
+      /<desc id="auto-combo-desc">How AgentProxy scores eligible routing targets with 15 factors\.<\/desc>/
     );
     assert.equal([...updated.matchAll(/id="auto-combo-title"/g)].length, 1);
     assert.equal([...updated.matchAll(/id="auto-combo-desc"/g)].length, 1);

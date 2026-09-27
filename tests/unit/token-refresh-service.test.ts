@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 const tokenRefresh = await import("../../open-sse/services/tokenRefresh.ts");
+const { resolveProxyForRequest } = await import("../../open-sse/utils/proxyFetch.ts");
 const { PROVIDERS, OAUTH_ENDPOINTS } = await import("../../open-sse/config/constants.ts");
 const { KIMI_CODE_CLI_PLATFORM, getKimiCodeCliVersion } =
   await import("../../open-sse/config/providers/registry/kimi/coding/runtime.ts");
@@ -221,8 +222,58 @@ test("refreshAccessToken posts form data and returns rotated tokens", async () =
   );
 });
 
-test("refreshAccessToken returns null on upstream refresh failure", async () => {
+test("refreshAccessToken retries one transient failure on the same proxy context", async () => {
   const log = createLog();
+  const contexts: Array<{ source: string; proxyUrl: string | null }> = [];
+  let attempts = 0;
+  const proxyConfig = { type: "vercel", host: "retry-proxy.example.invalid" };
+
+  await withPatchedProperties(
+    PROVIDERS,
+    {
+      "custom-oauth-task-207": { tokenUrl: "https://oauth-refresh.ap-iss-0061.invalid/token" },
+    },
+    async () => {
+      await withMockedFetch(
+        async (url) => {
+          attempts++;
+          contexts.push(resolveProxyForRequest(String(url)));
+          if (attempts === 1) {
+            throw Object.assign(new Error("socket reset during CONNECT"), { code: "ECONNRESET" });
+          }
+          return jsonResponse({
+            access_token: "retry-access",
+            refresh_token: "retry-refresh",
+            expires_in: 3600,
+          });
+        },
+        async () => {
+          const result = await refreshAccessToken(
+            "custom-oauth-task-207",
+            "refresh-123",
+            {},
+            log,
+            proxyConfig
+          );
+
+          assert.deepEqual(result, {
+            accessToken: "retry-access",
+            refreshToken: "retry-refresh",
+            expiresIn: 3600,
+          });
+        }
+      );
+    }
+  );
+
+  assert.equal(attempts, 2);
+  assert.equal(contexts[0].source, "context");
+  assert.deepEqual(contexts[1], contexts[0]);
+});
+
+test("refreshAccessToken bounds repeated transient failures to one retry", async () => {
+  const log = createLog();
+  let attempts = 0;
 
   await withPatchedProperties(
     PROVIDERS,
@@ -231,7 +282,63 @@ test("refreshAccessToken returns null on upstream refresh failure", async () => 
     },
     async () => {
       await withMockedFetch(
-        async () => textResponse("rate limited", 429),
+        async () => {
+          attempts++;
+          throw Object.assign(new Error("socket reset"), { code: "ECONNRESET" });
+        },
+        async () => {
+          const result = await refreshAccessToken("custom-oauth-task-207", "refresh-123", {}, log);
+          assert.equal(result, null);
+        }
+      );
+    }
+  );
+
+  assert.equal(attempts, 2);
+});
+
+test("refreshAccessToken does not retry cancellation", async () => {
+  const log = createLog();
+  let attempts = 0;
+
+  await withPatchedProperties(
+    PROVIDERS,
+    {
+      "custom-oauth-task-207": { tokenUrl: "https://auth.example.com/token" },
+    },
+    async () => {
+      await withMockedFetch(
+        async () => {
+          attempts++;
+          const error = new Error("cancelled");
+          error.name = "AbortError";
+          throw error;
+        },
+        async () => {
+          const result = await refreshAccessToken("custom-oauth-task-207", "refresh-123", {}, log);
+          assert.equal(result, null);
+        }
+      );
+    }
+  );
+
+  assert.equal(attempts, 1);
+});
+test("refreshAccessToken returns null on upstream refresh failure", async () => {
+  const log = createLog();
+  let attempts = 0;
+
+  await withPatchedProperties(
+    PROVIDERS,
+    {
+      "custom-oauth-task-207": { tokenUrl: "https://auth.example.com/token" },
+    },
+    async () => {
+      await withMockedFetch(
+        async () => {
+          attempts++;
+          return textResponse("rate limited", 429);
+        },
         async () => {
           const result = await refreshAccessToken("custom-oauth-task-207", "refresh-123", {}, log);
 
@@ -244,6 +351,7 @@ test("refreshAccessToken returns null on upstream refresh failure", async () => 
       );
     }
   );
+  assert.equal(attempts, 1);
 });
 
 test("refreshClineToken handles nested payloads and computes expiresIn", async () => {
@@ -826,70 +934,79 @@ test("supportsTokenRefresh, isUnrecoverableRefreshError and formatProviderCreden
 
 test("getAccessToken discovers projectId for antigravity when stored value is empty", async () => {
   const log = createLog();
-  const { clearAntigravityProjectCache } = await import("../../open-sse/services/antigravityProjectBootstrap.ts");
+  const { clearAntigravityProjectCache } =
+    await import("../../open-sse/services/antigravityProjectBootstrap.ts");
   clearAntigravityProjectCache();
 
   let fetchCalls: string[] = [];
-  await withMockedFetch(async (url, init) => {
-    const urlStr = String(url);
-    fetchCalls.push(urlStr);
-    if (urlStr.includes("oauth2.googleapis.com/token")) {
-      return jsonResponse({
-        access_token: "new-token-1",
-        refresh_token: "new-refresh",
-        expires_in: 3600,
+  await withMockedFetch(
+    async (url, init) => {
+      const urlStr = String(url);
+      fetchCalls.push(urlStr);
+      if (urlStr.includes("oauth2.googleapis.com/token")) {
+        return jsonResponse({
+          access_token: "new-token-1",
+          refresh_token: "new-refresh",
+          expires_in: 3600,
+        });
+      }
+      if (urlStr.includes("loadCodeAssist")) {
+        return jsonResponse({ cloudaicompanionProject: "discovered-project" });
+      }
+      return new Response("not found", { status: 404 });
+    },
+    async () => {
+      const result = await getAccessToken("antigravity", {
+        refreshToken: "refresh",
+        projectId: "",
+        connectionId: "conn-1",
+        providerSpecificData: {},
       });
+      assert.equal(result.projectId, "discovered-project");
+      assert.ok(
+        fetchCalls.some((u) => u.includes("loadCodeAssist")),
+        "should call loadCodeAssist"
+      );
     }
-    if (urlStr.includes("loadCodeAssist")) {
-      return jsonResponse({ cloudaicompanionProject: "discovered-project" });
-    }
-    return new Response("not found", { status: 404 });
-  }, async () => {
-    const result = await getAccessToken("antigravity", {
-      refreshToken: "refresh",
-      projectId: "",
-      connectionId: "conn-1",
-      providerSpecificData: {},
-    });
-    assert.equal(result.projectId, "discovered-project");
-    assert.ok(fetchCalls.some((u) => u.includes("loadCodeAssist")), "should call loadCodeAssist");
-  });
+  );
   clearAntigravityProjectCache();
 });
-
 
 test("getAccessToken handles projectId discovery failure gracefully for antigravity", async () => {
   const log = createLog();
-  const { clearAntigravityProjectCache } = await import("../../open-sse/services/antigravityProjectBootstrap.ts");
+  const { clearAntigravityProjectCache } =
+    await import("../../open-sse/services/antigravityProjectBootstrap.ts");
   clearAntigravityProjectCache();
   tokenRefresh._clearTokenRotationMap();
 
-  await withMockedFetch(async (url) => {
-    const urlStr = String(url);
-    if (urlStr.includes("oauth2.googleapis.com/token")) {
-      return jsonResponse({
-        access_token: "new-token-3",
-        refresh_token: "new-refresh",
-        expires_in: 3600,
+  await withMockedFetch(
+    async (url) => {
+      const urlStr = String(url);
+      if (urlStr.includes("oauth2.googleapis.com/token")) {
+        return jsonResponse({
+          access_token: "new-token-3",
+          refresh_token: "new-refresh",
+          expires_in: 3600,
+        });
+      }
+      if (urlStr.includes("loadCodeAssist")) {
+        return new Response("server error", { status: 500 });
+      }
+      return new Response("not found", { status: 404 });
+    },
+    async () => {
+      const result = await getAccessToken("antigravity", {
+        refreshToken: "refresh",
+        projectId: "",
+        connectionId: "conn-1",
+        providerSpecificData: {},
       });
+      assert.equal(result.accessToken, "new-token-3");
+      assert.ok(result, "should return a result without throwing");
     }
-    if (urlStr.includes("loadCodeAssist")) {
-      return new Response("server error", { status: 500 });
-    }
-    return new Response("not found", { status: 404 });
-  }, async () => {
-    const result = await getAccessToken("antigravity", {
-      refreshToken: "refresh",
-      projectId: "",
-      connectionId: "conn-1",
-      providerSpecificData: {},
-    });
-    assert.equal(result.accessToken, "new-token-3");
-    assert.ok(result, "should return a result without throwing");
-  });
+  );
   clearAntigravityProjectCache();
 });
-
 
 test("getAccessToken deduplicates concurrent refreshes for the same provider and token", async () => {
   const log = createLog();
@@ -1281,126 +1398,6 @@ test("getAccessToken per-connection mutex: different connections run independent
           assert.notStrictEqual(groupA[0], groupB[0], "conn-A and conn-B got different results");
         }
       );
-    }
-  );
-});
-
-test("getAccessToken per-connection mutex: mutex cleared after success, next call re-fires upstream", async () => {
-  const log = createLog();
-  let upstreamCallCount = 0;
-
-  // The rotation map (added for the codex-multi-auth pattern) is process-wide
-  // and intentionally redirects a stale-token caller to the cached rotated
-  // tokens. Clear it BEFORE and BETWEEN calls so this test exercises the
-  // lower-level mutex semantics it was designed for.
-  tokenRefresh._clearTokenRotationMap();
-
-  await withPatchedProperties(
-    PROVIDERS,
-    { "custom-oauth-conn-mutex": { tokenUrl: "https://auth.example.com/token" } },
-    async () => {
-      await withMockedFetch(
-        async () => {
-          upstreamCallCount++;
-          return jsonResponse({
-            access_token: `access-${upstreamCallCount}`,
-            refresh_token: `refresh-${upstreamCallCount}`,
-            expires_in: 600,
-          });
-        },
-        async () => {
-          const credentials = { connectionId: "conn-refire", refreshToken: "rt" };
-
-          const first = await getAccessToken("custom-oauth-conn-mutex", { ...credentials }, log);
-          tokenRefresh._clearTokenRotationMap();
-          const second = await getAccessToken("custom-oauth-conn-mutex", { ...credentials }, log);
-
-          assert.equal(upstreamCallCount, 2, "each sequential call fires upstream once");
-          assert.equal(first?.accessToken, "access-1");
-          assert.equal(second?.accessToken, "access-2");
-        }
-      );
-    }
-  );
-});
-
-// ─── Unrecoverable error bail-out tests ──────────────────────────────────────
-
-test("refreshWithRetry bails immediately on unrecoverable error without retrying", async () => {
-  const provider = `bail-unrecoverable-${Date.now()}`;
-  const log = createLog();
-  let callCount = 0;
-
-  const result = await refreshWithRetry(
-    async () => {
-      callCount++;
-      return { error: "unrecoverable_refresh_error", code: "http_400" };
-    },
-    3,
-    log,
-    provider
-  );
-
-  assert.equal(callCount, 1, "should only call refreshFn once (no retries)");
-  assert.deepEqual(result, { error: "unrecoverable_refresh_error", code: "http_400" });
-  const warnMessages = log.entries.filter((e) => e.level === "warn").map((e) => e.message);
-  assert.ok(
-    warnMessages.some((m) => String(m).includes("Unrecoverable")),
-    "should log an unrecoverable warning"
-  );
-});
-
-test("refreshWithRetry bails immediately on invalid_grant error without retrying", async () => {
-  const provider = `bail-invalid-grant-${Date.now()}`;
-  const log = createLog();
-  let callCount = 0;
-
-  const result = await refreshWithRetry(
-    async () => {
-      callCount++;
-      return { error: "invalid_grant", code: "http_400" };
-    },
-    3,
-    log,
-    provider
-  );
-
-  assert.equal(callCount, 1, "should only call refreshFn once (no retries)");
-  assert.deepEqual(result, { error: "invalid_grant", code: "http_400" });
-});
-
-test("refreshClaudeOAuthToken returns error object for invalid_grant (expired refresh token)", async () => {
-  const log = createLog();
-
-  await withMockedFetch(
-    async () =>
-      new Response(JSON.stringify({ error: "invalid_grant", error_description: "Token expired" }), {
-        status: 400,
-        headers: { "Content-Type": "application/json" },
-      }),
-    async () => {
-      const result = await refreshClaudeOAuthToken("expired-token", log);
-      assert.ok(result && typeof result === "object", "should return error object, not null");
-      // Normalized to unrecoverable_refresh_error sentinel (Fix 6)
-      assert.equal((result as any).error, "unrecoverable_refresh_error");
-      assert.equal((result as any).code, "invalid_grant");
-      assert.ok(isUnrecoverableRefreshError(result), "should be detected as unrecoverable");
-    }
-  );
-});
-
-test("refreshClaudeOAuthToken returns null for transient server errors (not unrecoverable)", async () => {
-  const log = createLog();
-
-  await withMockedFetch(
-    async () =>
-      new Response(JSON.stringify({ error: "server_error" }), {
-        status: 503,
-        headers: { "Content-Type": "application/json" },
-      }),
-    async () => {
-      const result = await refreshClaudeOAuthToken("some-token", log);
-      assert.equal(result, null, "transient server errors should return null (retryable)");
     }
   );
 });

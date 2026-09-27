@@ -10,7 +10,7 @@
  * `extractApiKey(request)` result (`apiKeyRaw`), which is null for a request
  * authenticated only via the dashboard-playground "test this key by id" fallback
  * (`resolvePlaygroundTestKey`, only reachable via an authenticated dashboard
- * session + `x-omniroute-playground-key-id`, no bearer key). In that case the old
+ * session + `x-agentproxy-playground-key-id`, no bearer key). In that case the old
  * code ALWAYS produced `apiKeyMeta = null` — so the downstream handler's call log
  * never carried apiKeyId/apiKeyName. `policy.apiKeyInfo` is a superset that also
  * covers this path, so the fixed code populates it correctly.
@@ -40,7 +40,7 @@ const { createProviderNode } = await import("../../src/lib/db/providers/nodes.ts
 const { getCallLogs } = await import("../../src/lib/usage/callLogs.ts");
 const { POST } = await import("../../src/app/api/v1/embeddings/route.ts");
 
-const PLAYGROUND_KEY_ID_HEADER = "x-omniroute-playground-key-id";
+const PLAYGROUND_KEY_ID_HEADER = "x-agentproxy-playground-key-id";
 
 test.after(() => {
   core.resetDbInstance();

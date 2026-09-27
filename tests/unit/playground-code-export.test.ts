@@ -1,25 +1,24 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-const { exportCode, exportAllLanguages, endpointToPath, API_KEY_PLACEHOLDER } = await import(
-  "../../src/lib/playground/codeExport.ts"
-);
+const { exportCode, exportAllLanguages, endpointToPath, API_KEY_PLACEHOLDER } =
+  await import("../../src/lib/playground/codeExport.ts");
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
 
 /** Assert security invariants on every generated snippet. */
 function assertSecurityInvariants(generated: string, label: string) {
-  assert.ok(generated.includes(API_KEY_PLACEHOLDER), `${label}: must include $OMNIROUTE_API_KEY`);
+  assert.ok(generated.includes(API_KEY_PLACEHOLDER), `${label}: must include $AGENTPROXY_API_KEY`);
   assert.ok(generated.length > 0, `${label}: must not be empty`);
   assert.doesNotMatch(
     generated,
     /sk-[A-Za-z0-9_\-]{16,}/,
-    `${label}: must not contain real API keys`,
+    `${label}: must not contain real API keys`
   );
   assert.doesNotMatch(
     generated,
     /Bearer\s+[A-Za-z0-9_\-]{20,}\s/,
-    `${label}: must not contain real Bearer tokens`,
+    `${label}: must not contain real Bearer tokens`
   );
 }
 
@@ -43,8 +42,8 @@ test("endpointToPath: maps all 13 endpoints correctly (D4-rev2)", () => {
 
 // ── API_KEY_PLACEHOLDER ───────────────────────────────────────────────────────
 
-test("API_KEY_PLACEHOLDER is $OMNIROUTE_API_KEY", () => {
-  assert.equal(API_KEY_PLACEHOLDER, "$OMNIROUTE_API_KEY");
+test("API_KEY_PLACEHOLDER is $AGENTPROXY_API_KEY", () => {
+  assert.equal(API_KEY_PLACEHOLDER, "$AGENTPROXY_API_KEY");
 });
 
 // ── Table-driven tests for chat.completions ────────────────────────────────────
@@ -68,7 +67,7 @@ test("chat.completions × python: contains required elements", () => {
   const generated = exportCode(baseState, "python");
   assertSecurityInvariants(generated, "chat.completions/python");
   assert.ok(generated.includes("import requests"), "imports requests");
-  assert.ok(generated.includes('os.environ["OMNIROUTE_API_KEY"]'), "uses os.environ");
+  assert.ok(generated.includes('os.environ["AGENTPROXY_API_KEY"]'), "uses os.environ");
   assert.ok(generated.includes("gpt-4o-mini"), "model present");
 });
 
@@ -76,7 +75,7 @@ test("chat.completions × typescript: contains required elements", () => {
   const generated = exportCode(baseState, "typescript");
   assertSecurityInvariants(generated, "chat.completions/typescript");
   assert.ok(generated.includes("await fetch("), "uses fetch");
-  assert.ok(generated.includes("process.env.OMNIROUTE_API_KEY"), "uses process.env");
+  assert.ok(generated.includes("process.env.AGENTPROXY_API_KEY"), "uses process.env");
   assert.ok(generated.includes("gpt-4o-mini"), "model present");
 });
 
@@ -93,9 +92,7 @@ test("chat.completions: uses systemPrompt when messages is empty", () => {
 test("chat.completions: uses messages when provided", () => {
   const state = {
     ...baseState,
-    messages: [
-      { role: "user" as const, content: "My custom message" },
-    ],
+    messages: [{ role: "user" as const, content: "My custom message" }],
   };
   for (const lang of ["curl", "python", "typescript"] as const) {
     const generated = exportCode(state, lang);
@@ -183,7 +180,7 @@ test("web.fetch × all languages: security + path + url", () => {
     const generated = exportCode(state, lang);
     assertSecurityInvariants(generated, `web.fetch/${lang}`);
     assert.ok(generated.includes("/v1/web/fetch"), `${lang}: correct path`);
-    assert.ok(generated.includes("https://example.com"), `${lang}: url present`);
+    assert.ok(/https:\/\/example\.com/.test(generated), `${lang}: url present`);
   }
 });
 
@@ -261,7 +258,7 @@ test("exportAllLanguages returns all 3 snippets with valid content", () => {
   assert.ok(typeof result.python === "string" && result.python.length > 0, "python non-empty");
   assert.ok(
     typeof result.typescript === "string" && result.typescript.length > 0,
-    "typescript non-empty",
+    "typescript non-empty"
   );
 
   for (const [lang, snippet] of Object.entries(result)) {
@@ -321,7 +318,10 @@ test("chat.completions: defaults model when not provided", () => {
     // default prompt "Hello!" should appear (no messages, no systemPrompt, no prompt)
     assert.ok(generated.includes("Hello!"), `${lang}: default prompt fallback`);
     // default stream=false
-    assert.ok(generated.includes("false") || generated.includes("stream"), `${lang}: stream default`);
+    assert.ok(
+      generated.includes("false") || generated.includes("stream"),
+      `${lang}: stream default`
+    );
   }
 });
 
@@ -547,7 +547,7 @@ test("web.fetch: minimal state (only url)", () => {
   for (const lang of ["curl", "python", "typescript"] as const) {
     const generated = exportCode(state, lang);
     assertSecurityInvariants(generated, `web.fetch/minimal/${lang}`);
-    assert.ok(generated.includes("https://my-site.com"), `${lang}: url present`);
+    assert.ok(/https:\/\/my-site\.com/.test(generated), `${lang}: url present`);
   }
 });
 
@@ -655,7 +655,7 @@ test("web.fetch: default url when url not provided", () => {
   for (const lang of ["curl", "python", "typescript"] as const) {
     const generated = exportCode(state, lang);
     assertSecurityInvariants(generated, `web.fetch/default-url/${lang}`);
-    assert.ok(generated.includes("example.com"), `${lang}: default url`);
+    assert.ok(/example\.com/.test(generated), `${lang}: default url`);
   }
 });
 

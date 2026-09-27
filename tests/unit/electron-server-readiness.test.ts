@@ -12,8 +12,8 @@ describe("Electron server readiness", () => {
       "http://localhost:20128/api/health/ping"
     );
     assert.equal(
-      buildReadinessUrl("https://omniroute.example.com/"),
-      "https://omniroute.example.com/api/health/ping"
+      buildReadinessUrl("https://agentproxy.example.com/"),
+      "https://agentproxy.example.com/api/health/ping"
     );
   });
 

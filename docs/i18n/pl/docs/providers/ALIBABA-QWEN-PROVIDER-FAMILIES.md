@@ -6,12 +6,12 @@ description: "Regionalny projekt providerów dla produktów Alibaba Model Studio
 # Rodziny providerów Alibaba i Qwen
 
 Ten dokument zapisuje decyzję implementacyjną dla
-[Issue #7854](https://github.com/diegosouzapw/OmniRoute/issues/7854). Publiczne produkty są
+[Issue #7854](https://github.com/khanhkit/AgentProxy/issues/7854). Publiczne produkty są
 reprezentowane jako cztery rodziny providerów. Region to dane połączenia, a nie osobny produkt.
 
 ## Decyzja
 
-| Rodzina providera                          | ID OmniRoute            | Region globalny | Region Chiny |
+| Rodzina providera                          | ID AgentProxy            | Region globalny | Region Chiny |
 | ------------------------------------------ | ----------------------- | --------------- | ------------ |
 | Alibaba Cloud Model Studio (pay as you go) | `alibaba`               | Singapore       | Beijing      |
 | Alibaba Cloud Token Plan                   | `bailian-coding-plan`   | Singapore       | Beijing      |

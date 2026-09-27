@@ -1,8 +1,8 @@
 /**
  * #9717 — the MCP server's internal fetch budget.
  *
- * `omniRouteFetch` applied one hardcoded 10s `AbortSignal.timeout` to every
- * internal hop, including `omniroute_route_request`'s call to
+ * `AgentProxyFetch` applied one hardcoded 10s `AbortSignal.timeout` to every
+ * internal hop, including `agentproxy_route_request`'s call to
  * `/v1/chat/completions`. That hop waits on an upstream provider (and on
  * auto-combo candidate probing before a provider is even chosen), so any route
  * slower than 10s aborted from the MCP side while the same request succeeded
@@ -19,7 +19,7 @@ const {
   MCP_FETCH_TIMEOUT_ENV,
   MCP_UPSTREAM_FETCH_TIMEOUT_ENV,
 } = await import("../../open-sse/mcp-server/fetchTimeout.ts");
-const { createMcpServer, omniRouteFetch } = await import("../../open-sse/mcp-server/server.ts");
+const { createMcpServer, AgentProxyFetch } = await import("../../open-sse/mcp-server/server.ts");
 
 type RegisteredTool = {
   handler: (
@@ -94,7 +94,7 @@ function withEnv(vars: Record<string, string | undefined>) {
 }
 
 async function callRouteRequest() {
-  const handler = getRegisteredHandler(createMcpServer(), "omniroute_route_request");
+  const handler = getRegisteredHandler(createMcpServer(), "agentproxy_route_request");
   return handler(
     { model: "test-model", messages: [{ role: "user", content: "hi" }] },
     { authInfo: { clientId: "test-9717", scopes: ["execute:completions"] } }
@@ -181,7 +181,7 @@ test("#9717: management reads honour their own override", async () => {
   const restoreFetch = stubFetch(400, seen);
   try {
     await assert.rejects(
-      () => omniRouteFetch("/api/monitoring/health"),
+      () => AgentProxyFetch("/api/monitoring/health"),
       "a management read must abort at its configured budget"
     );
   } finally {

@@ -14,9 +14,13 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { DATA_DIR } from "@/lib/db/core";
-import { upsertVersionManagerTool } from "@/lib/db/versionManager";
+import { getVersionManagerTool, upsertVersionManagerTool } from "@/lib/db/versionManager";
 import { getLatestRelease } from "@/lib/versionManager/releaseChecker.ts";
 import { installVersion, getCurrentBinaryPath } from "@/lib/versionManager/binaryManager.ts";
+import {
+  assertManagedUpdateCompatibility,
+  mergeManagedUpdateMetadata,
+} from "./managedUpdatePolicy";
 
 export const CLIPROXY_DEFAULT_PORT = 8317;
 
@@ -67,17 +71,29 @@ export async function getLatestVersion(): Promise<string | null> {
  */
 export async function install(version = "latest"): Promise<InstallResult> {
   const startMs = Date.now();
-
+  const existingState = await getVersionManagerTool("cliproxy");
+  const previousVersion = await getInstalledVersion();
   const targetVersion = version === "latest" ? (await getLatestRelease()).version : version;
+
+  assertManagedUpdateCompatibility("cliproxy", targetVersion, {
+    pinnedVersion: existingState?.pinnedVersion ?? null,
+    configOverrides: existingState?.configOverrides ?? null,
+  });
 
   const binaryPath = await installVersion(targetVersion, DATA_DIR);
 
   await upsertVersionManagerTool({
     tool: "cliproxy",
     installedVersion: targetVersion,
+    pinnedVersion: existingState?.pinnedVersion ?? null,
     binaryPath,
     status: "stopped",
     port: CLIPROXY_DEFAULT_PORT,
+    configOverrides: mergeManagedUpdateMetadata(existingState?.configOverrides, {
+      version: targetVersion,
+      verification: "sha256-checksums.txt",
+      previousVersion,
+    }),
   });
 
   latestVersionCache = null;
@@ -90,7 +106,11 @@ export async function install(version = "latest"): Promise<InstallResult> {
 }
 
 export async function update(): Promise<InstallResult> {
-  return install("latest");
+  const latest = await getLatestVersion();
+  if (!latest) {
+    throw new Error("Could not resolve latest CLIProxyAPI version");
+  }
+  return install(latest);
 }
 
 /**

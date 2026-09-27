@@ -6,7 +6,7 @@ import { join } from "node:path";
 
 // familyGuard imports combo.ts which transitively touches DB modules at load;
 // give it a throwaway DATA_DIR so it uses defaults instead of the real store.
-process.env.DATA_DIR = mkdtempSync(join(tmpdir(), "omniroute-embed-family-"));
+process.env.DATA_DIR = mkdtempSync(join(tmpdir(), "agentproxy-embed-family-"));
 
 const { getEmbeddingDimension, detectEmbeddingDimensionConflict } = await import(
   "../../open-sse/config/embeddingRegistry.ts"

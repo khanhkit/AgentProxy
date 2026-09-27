@@ -20,7 +20,7 @@ test("relay routing backend defaults to TypeScript without bifrost", () => {
 test("relay routing backend auto-enables bifrost when base URL is configured", () => {
   const env = {
     BIFROST_BASE_URL: "http://127.0.0.1:8080/",
-    OMNIROUTE_BIFROST_KEY: "sidecar-key",
+    AGENTPROXY_BIFROST_KEY: "sidecar-key",
     BIFROST_TIMEOUT_MS: "250",
   };
 
@@ -38,14 +38,14 @@ test("relay routing backend auto-enables bifrost when base URL is configured", (
 test("relay routing backend honors explicit TS and strict bifrost modes", () => {
   const env = {
     BIFROST_BASE_URL: "http://127.0.0.1:8080",
-    OMNIROUTE_RELAY_BACKEND: "ts",
+    AGENTPROXY_RELAY_BACKEND: "ts",
   };
   const config = getBifrostRoutingConfig(env);
 
   assert.equal(resolveRelayRoutingBackend(env), "ts");
   assert.equal(shouldTryBifrost("ts", config), false);
 
-  env.OMNIROUTE_RELAY_BACKEND = "bifrost";
+  env.AGENTPROXY_RELAY_BACKEND = "bifrost";
   assert.equal(resolveRelayRoutingBackend(env), "bifrost");
   assert.equal(shouldTryBifrost("bifrost", config), true);
 });
@@ -99,7 +99,7 @@ test("relay routing backend keeps strict bifrost failures out of auto fallback a
 
   assert.equal(shouldTryBifrost("bifrost", config), true);
   assert.equal(getRoutingFallbackHeader("bifrost", config), undefined);
-  assert.equal(resolveRelayRoutingBackend({ OMNIROUTE_RELAY_BACKEND: "bifrost" }), "bifrost");
+  assert.equal(resolveRelayRoutingBackend({ AGENTPROXY_RELAY_BACKEND: "bifrost" }), "bifrost");
 });
 
 test("relay routing backend auto mode tries bifrost for manifest-eligible providers", () => {

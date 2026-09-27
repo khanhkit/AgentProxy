@@ -9,7 +9,7 @@ import path from "node:path";
 // "Module not found: Can't resolve '@/lib/db/connections'". Connection metadata
 // must come from src/lib/db/providers.ts instead.
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-utilization-route-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-utilization-route-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../src/lib/db/core.ts");

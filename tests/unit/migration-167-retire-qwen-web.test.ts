@@ -4,7 +4,7 @@ import os from "node:os";
 import path from "node:path";
 import test from "node:test";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-qwen-web-retirement-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-qwen-web-retirement-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../src/lib/db/core.ts");
@@ -74,7 +74,7 @@ test("migration 167 retires every Qwen Web id fail-closed and preserves audit hi
   const db = core.getDbInstance();
 
   const applied = db
-    .prepare("SELECT version FROM _omniroute_migrations WHERE version = 167")
+    .prepare("SELECT version FROM _agentproxy_migrations WHERE version = 167")
     .get() as { version: number } | undefined;
   assert.ok(applied, "migration 167 must be recorded as applied");
 
@@ -263,7 +263,7 @@ test("migration 167 retires every Qwen Web id fail-closed and preserves audit hi
     assert.equal(connection.is_active, 0);
     assert.equal(connection.test_status, "unavailable");
     assert.equal(connection.error_code, "PROVIDER_REMOVED");
-    assert.equal(connection.last_error, "Provider integration retired from OmniRoute v3.8.51");
+    assert.equal(connection.last_error, "Provider integration retired from AgentProxy v3.8.51");
     assert.equal(connection.last_error_type, "provider_removed");
     assert.equal(connection.last_error_source, "migration:retire-qwen-web");
     assert.notEqual(connection.last_error_at, "2000-01-01T00:00:00.000Z");
@@ -429,7 +429,7 @@ test("migration 167 retires every Qwen Web id fail-closed and preserves audit hi
       "last_error_type, last_error_source, last_error_at, created_at, updated_at) " +
       "VALUES ('already-tombstoned-insert-connection', '\u00a0qwen-web\ufeff', " +
       "'apikey', 'already tombstoned restore', 0, 'unavailable', 'PROVIDER_REMOVED', " +
-      "'Provider integration retired from OmniRoute v3.8.51', 'provider_removed', " +
+      "'Provider integration retired from AgentProxy v3.8.51', 'provider_removed', " +
       "'migration:retire-qwen-web', '2001-01-01T00:00:00.000Z', datetime('now'), " +
       "datetime('now'))"
   ).run();
@@ -450,7 +450,7 @@ test("migration 167 retires every Qwen Web id fail-closed and preserves audit hi
   db.prepare(
     "UPDATE provider_connections SET provider = '\u2003QW\u2029', is_active = 0, " +
       "test_status = 'unavailable', error_code = 'PROVIDER_REMOVED', " +
-      "last_error = 'Provider integration retired from OmniRoute v3.8.51', " +
+      "last_error = 'Provider integration retired from AgentProxy v3.8.51', " +
       "last_error_type = 'provider_removed', last_error_source = 'migration:retire-qwen-web', " +
       "last_error_at = '2001-01-01T00:00:00.000Z' " +
       "WHERE id = 'already-tombstoned-update-connection'"

@@ -13,7 +13,7 @@ import path from "node:path";
 import { resetDbInstance } from "../../src/lib/db/core";
 
 // Isolate DB state
-const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-test-pii-ipv6-"));
+const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-test-pii-ipv6-"));
 process.env.DATA_DIR = tmpDir;
 
 // Enable PII sanitization for all tests in this file

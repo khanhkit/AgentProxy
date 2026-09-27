@@ -402,7 +402,7 @@ function clampDiagStr(v: unknown, max = 128): string {
 }
 
 const RECOVERY_ROUTE_PLACEHOLDERS = [
-  ["/dashboard/providers", "OMNIROUTE_SAFE_DASHBOARD_PROVIDERS_ROUTE"],
+  ["/dashboard/providers", "AGENTPROXY_SAFE_DASHBOARD_PROVIDERS_ROUTE"],
 ] as const;
 
 function clampRecoveryStr(value: unknown, max: number): string {
@@ -487,12 +487,12 @@ export function sanitizeComboDiagnostics(d: ComboDiagnostics): ComboDiagnostics 
 
 /**
  * errorResponse variant that attaches a sanitized combo diagnostic trace as BOTH
- * `x-omniroute-combo-*` headers and a `diagnostics` field in the OpenAI-shaped
+ * `x-agentproxy-combo-*` headers and a `diagnostics` field in the OpenAI-shaped
  * error body (extra field — backward-compatible with standard error parsers).
  * `opts.code`/`opts.type` override the status-derived defaults (e.g. to preserve
  * the `ALL_ACCOUNTS_INACTIVE` code on the 503 terminal path). When the diagnostic
- * carries a `recovery` hint it is mirrored as `x-omniroute-recovery-action` /
- * `x-omniroute-recovery-next-step` / `x-omniroute-retry-after-seconds` headers and as a
+ * carries a `recovery` hint it is mirrored as `x-agentproxy-recovery-action` /
+ * `x-agentproxy-recovery-next-step` / `x-agentproxy-retry-after-seconds` headers and as a
  * top-level `recovery_hint` field on the body so non-header-aware clients (curl,
  * MCP tools, log scrapers) can also pick it up.
  */
@@ -517,17 +517,17 @@ export function errorResponseWithComboDiagnostics(
   );
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
-    "x-omniroute-combo-pool-size": String(safe.poolSize),
-    "x-omniroute-combo-attempted": String(safe.attempted),
-    "x-omniroute-combo-excluded": excludedHeader,
-    "x-omniroute-combo-terminal-reason": toHeaderSafeAscii(safe.terminalReason.slice(0, 200)),
+    "x-agentproxy-combo-pool-size": String(safe.poolSize),
+    "x-agentproxy-combo-attempted": String(safe.attempted),
+    "x-agentproxy-combo-excluded": excludedHeader,
+    "x-agentproxy-combo-terminal-reason": toHeaderSafeAscii(safe.terminalReason.slice(0, 200)),
   };
 
   if (safe.recovery) {
-    headers["x-omniroute-recovery-action"] = safe.recovery.action;
+    headers["x-agentproxy-recovery-action"] = safe.recovery.action;
     // Header limit of 128 chars — keep next_step compact for fast parsing.
     // The body field carries the full 200-char value for richer display.
-    headers["x-omniroute-recovery-next-step"] = toHeaderSafeAscii(safe.recovery.next_step).slice(
+    headers["x-agentproxy-recovery-next-step"] = toHeaderSafeAscii(safe.recovery.next_step).slice(
       0,
       128
     );
@@ -535,7 +535,7 @@ export function errorResponseWithComboDiagnostics(
       typeof safe.recovery.retry_after_seconds === "number" &&
       safe.recovery.retry_after_seconds > 0
     ) {
-      headers["x-omniroute-retry-after-seconds"] = String(safe.recovery.retry_after_seconds);
+      headers["x-agentproxy-retry-after-seconds"] = String(safe.recovery.retry_after_seconds);
     }
   }
 
@@ -892,7 +892,7 @@ export function providerCircuitOpenResponse(
       headers: {
         "Content-Type": "application/json",
         "Retry-After": String(retryAfterSec),
-        "X-OmniRoute-Provider-Breaker": "open",
+        "X-AgentProxy-Provider-Breaker": "open",
       },
     }
   );

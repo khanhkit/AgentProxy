@@ -174,7 +174,7 @@ export function applyVideoBridgeLogRedaction(
 
 /**
  * Extract the OpenAI Responses API response id this attempt produced, so it
- * can be indexed for OmniRoute-native `previous_response_id` continuation
+ * can be indexed for AgentProxy-native `previous_response_id` continuation
  * (see src/lib/db/responsesContinuationStore.ts). Only meaningful when the
  * client actually used the Responses endpoint -- a Chat Completions
  * `chatcmpl-*` id must never be mistaken for a Responses response id.
@@ -237,7 +237,7 @@ export type PersistAttemptLogsContext = {
   noLogEnabled: unknown;
   correlationId?: string | null;
   modelPinned?: boolean;
-  /** #8249: caller-supplied X-OmniRoute-Session-Id header, only set when the header was
+  /** #8249: caller-supplied X-AgentProxy-Session-Id header, only set when the header was
    * explicitly present (never synthesized from skillRequestId) — persisted as call_logs.session_tag
    * for per-session cost attribution. */
   sessionTag?: string | null;

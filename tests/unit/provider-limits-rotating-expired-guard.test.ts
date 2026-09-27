@@ -5,7 +5,7 @@ import os from "node:os";
 import path from "node:path";
 
 // providerLimits.ts touches the DB singleton at import time; give it a scratch dir.
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-rotating-expired-guard-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-rotating-expired-guard-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.API_KEY_SECRET = process.env.API_KEY_SECRET || "rotating-expired-guard-secret";
 

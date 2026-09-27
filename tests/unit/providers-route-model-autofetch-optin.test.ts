@@ -6,7 +6,7 @@ import test from "node:test";
 
 import { makeManagementSessionRequest } from "../helpers/managementSession.ts";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-provider-autofetch-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-provider-autofetch-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.API_KEY_SECRET = "provider-autofetch-test-secret";
 process.env.DISABLE_SQLITE_AUTO_BACKUP = "true";

@@ -5,7 +5,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-combo-trace-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-combo-trace-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.API_KEY_SECRET = process.env.API_KEY_SECRET || "combo-decision-trace-secret";
 
@@ -222,7 +222,7 @@ test("handleComboChat: pre-dispatch skip records allowlisted reason", async () =
   );
 });
 
-test("egress: every response carries X-OmniRoute-Combo-Trace (success path)", async () => {
+test("egress: every response carries X-AgentProxy-Combo-Trace (success path)", async () => {
   const invocationId = createInvocationId();
   const res = await handleComboChat({
     invocationId,
@@ -240,7 +240,7 @@ test("egress: every response carries X-OmniRoute-Combo-Trace (success path)", as
     allCombos: null,
   });
   assert.equal(res.status, 200);
-  assert.equal(res.headers.get("X-OmniRoute-Combo-Trace"), invocationId);
+  assert.equal(res.headers.get("X-AgentProxy-Combo-Trace"), invocationId);
 });
 
 test("egress: header present even when every target fails", async () => {
@@ -261,7 +261,7 @@ test("egress: header present even when every target fails", async () => {
     allCombos: null,
   });
   assert.notEqual(res.status, 200);
-  assert.equal(res.headers.get("X-OmniRoute-Combo-Trace"), invocationId);
+  assert.equal(res.headers.get("X-AgentProxy-Combo-Trace"), invocationId);
 });
 
 test("egress: finalized trace is emitted as one metadata-only log line", async () => {

@@ -28,7 +28,7 @@ const ENV_KEYS = [
   "all_proxy",
   "NO_PROXY",
   "no_proxy",
-  "OMNIROUTE_CONTROL_PLANE_PROXY_DIRECT_FALLBACK",
+  "AGENTPROXY_CONTROL_PLANE_PROXY_DIRECT_FALLBACK",
   "PROXY_AUTO_SELECT_ENABLED",
 ] as const;
 
@@ -274,7 +274,7 @@ test("control-plane direct fallback bypasses an environment proxy", async () => 
   await withEnv(
     {
       HTTPS_PROXY: "http://placeholder.proxy:8080",
-      OMNIROUTE_CONTROL_PLANE_PROXY_DIRECT_FALLBACK: "true",
+      AGENTPROXY_CONTROL_PLANE_PROXY_DIRECT_FALLBACK: "true",
     },
     async () => {
       const result = await runWithProxyContext(

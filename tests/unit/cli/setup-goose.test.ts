@@ -19,6 +19,6 @@ test("buildGooseConfig sets GOOSE_PROVIDER/MODEL + OPENAI_HOST (root), preserves
 test("buildGooseEnvRecipe references the env key (secret off disk)", () => {
   const r = buildGooseEnvRecipe({ host: "http://vps:20128", model: "m" });
   assert.ok(r.includes("OPENAI_HOST=http://vps:20128"));
-  assert.ok(r.includes("OPENAI_API_KEY=$OMNIROUTE_API_KEY"));
+  assert.ok(r.includes("OPENAI_API_KEY=$AGENTPROXY_API_KEY"));
   assert.ok(r.includes("GOOSE_PROVIDER=openai"));
 });

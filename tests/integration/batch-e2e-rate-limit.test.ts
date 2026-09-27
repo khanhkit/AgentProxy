@@ -8,7 +8,7 @@ import net from "node:net";
 import { spawn } from "node:child_process";
 import { fileURLToPath } from "node:url";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-batch-e2e-rl-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-batch-e2e-rl-"));
 const REPO_ROOT = fileURLToPath(new URL("../..", import.meta.url));
 const RELAY_PORT = await getFreePort();
 const SERVER_PORT = await getFreePort();
@@ -159,16 +159,14 @@ function createFakeEmbeddingRelay() {
   };
 }
 
-/* ---------- OmniRoute server process ---------- */
+/* ---------- AgentProxy server process ---------- */
 function createServerProcess() {
   const stdoutLines: string[] = [];
   const stderrLines: string[] = [];
   let exitInfo: { code: number | null; signal: NodeJS.Signals | null } | null = null;
 
-  // The management calls below (provider node + API key) only stay open in bootstrap mode for a
-  // loopback peer, and locality comes from the TCP-peer stamp that only the custom server in
-  // run-next.mjs writes. Bare `next dev` (run-next-playwright.mjs) has no stamp, so they fail
-  // closed with 401 — the same trap #11535 and #14403 fixed in the protocol and ecosystem harnesses.
+  // The management calls below only stay open in bootstrap mode for a loopback peer;
+  // locality comes from the TCP-peer stamp written by the custom run-next.mjs server.
   const child = spawn(process.execPath, ["scripts/dev/run-next.mjs", "dev"], {
     cwd: REPO_ROOT,
     env: {
@@ -178,16 +176,18 @@ function createServerProcess() {
       DASHBOARD_PORT: String(SERVER_PORT),
       API_PORT: String(SERVER_PORT),
       HOST: "127.0.0.1",
+      AGENTPROXY_BASE_URL: "http://127.0.0.1:" + SERVER_PORT,
       REQUIRE_API_KEY: "false",
       API_KEY_SECRET: "batch-e2e-rl-secret",
       DISABLE_SQLITE_AUTO_BACKUP: "true",
       INITIAL_PASSWORD: "",
       NEXT_TELEMETRY_DISABLED: "1",
-      OMNIROUTE_E2E_BOOTSTRAP_MODE: "open",
-      OMNIROUTE_DISABLE_BACKGROUND_SERVICES: "false",
-      OMNIROUTE_DISABLE_TOKEN_HEALTHCHECK: "true",
-      OMNIROUTE_DISABLE_LOCAL_HEALTHCHECK: "true",
-      OMNIROUTE_HIDE_HEALTHCHECK_LOGS: "true",
+      AGENTPROXY_E2E_BOOTSTRAP_MODE: "open",
+      AGENTPROXY_DISABLE_BACKGROUND_SERVICES: "false",
+      AGENTPROXY_DISABLE_TOKEN_HEALTHCHECK: "true",
+      AGENTPROXY_DISABLE_CREDENTIAL_HEALTH_CHECK: "true",
+      AGENTPROXY_DISABLE_LOCAL_HEALTHCHECK: "true",
+      AGENTPROXY_HIDE_HEALTHCHECK_LOGS: "true",
       PATH: process.env.PATH,
     },
     stdio: ["ignore", "pipe", "pipe"],

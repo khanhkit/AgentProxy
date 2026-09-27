@@ -2,7 +2,7 @@
  * Issue: the Embedding Source "remote provider" dropdown and the Rerank
  * (optional) selector both render from listEmbeddingProviders(), which
  * aggregates ONLY the hand-curated EMBEDDING_PROVIDERS + local provider_nodes.
- * Providers configured in OmniRoute but absent from that curated registry (groq,
+ * Providers configured in AgentProxy but absent from that curated registry (groq,
  * vercel-ai-gateway, ...) never appear — and before the runtime
  * fallback existed, selecting them manually would fail with
  * "Unknown embedding provider".
@@ -13,11 +13,11 @@
  */
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
-import { REGISTRY } from "@omniroute/open-sse/config/providerRegistry.ts";
+import { REGISTRY } from "@agentproxy/open-sse/config/providerRegistry.ts";
 import {
   deriveEmbeddingProviderForChatProvider,
   getEmbeddingProvider,
-} from "@omniroute/open-sse/config/embeddingRegistry.ts";
+} from "@agentproxy/open-sse/config/embeddingRegistry.ts";
 import {
   buildDerivedProviderListings,
   mergeProviderListings,

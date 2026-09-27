@@ -1,7 +1,7 @@
 /**
  * tests/unit/minimax-m3-maxtokens.test.ts
  *
- * Regression for issue #3141 — "Omniroute sets max_tokens = 8192 for
+ * Regression for issue #3141 — "AgentProxy sets max_tokens = 8192 for
  * minimax/MiniMax-M3" (reporter @totaltube).
  *
  * minimax-coding / minimax route through the Claude translator, which calls
@@ -22,7 +22,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-minimax-m3-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-minimax-m3-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../src/lib/db/core.ts");

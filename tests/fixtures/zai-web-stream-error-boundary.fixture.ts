@@ -4,13 +4,13 @@ import test from "node:test";
 
 assert.ok(process.env.DATA_DIR, "the parent wrapper must provide a synthetic DATA_DIR");
 assert.ok(
-  process.env.OMNIROUTE_PLUGINS_DIR,
+  process.env.AGENTPROXY_PLUGINS_DIR,
   "the parent wrapper must provide a synthetic plugin directory"
 );
 assert.ok(process.env.API_KEY_SECRET, "the parent wrapper must provide a synthetic API secret");
 
 fs.mkdirSync(process.env.DATA_DIR, { recursive: true });
-fs.mkdirSync(process.env.OMNIROUTE_PLUGINS_DIR, { recursive: true });
+fs.mkdirSync(process.env.AGENTPROXY_PLUGINS_DIR, { recursive: true });
 
 const [
   { buildZaiStreamingBody },
@@ -161,8 +161,8 @@ function assertFailureWasPersisted(result: PipelineResult): void {
 
 test("a pre-content Z.ai error fails stream readiness with a sanitized 502", async () => {
   const rawFailure =
-    'signature invalid at /srv/omniroute/open-sse/auth.ts:17:9 api_key="sk-private"\n' +
-    "    at verify (/srv/omniroute/open-sse/auth.ts:17:9)";
+    'signature invalid at /srv/agentproxy/open-sse/auth.ts:17:9 api_key="sk-private"\n' +
+    "    at verify (/srv/agentproxy/open-sse/auth.ts:17:9)";
   const stream = buildZaiStreamingBody(
     upstreamSse({ error: { detail: rawFailure } }),
     emitOpenAiChunk,
@@ -184,7 +184,7 @@ test("a pre-content Z.ai error fails stream readiness with a sanitized 502", asy
   assert.match(readiness.upstreamDiagnostic ?? "", /Z\.ai stream failed: signature invalid/);
 
   const publicBody = JSON.stringify(await readiness.response.json());
-  assert.doesNotMatch(publicBody, /sk-private|\/srv\/omniroute|auth\.ts/);
+  assert.doesNotMatch(publicBody, /sk-private|\/srv\/agentproxy|auth\.ts/);
   assert.match(publicBody, /<path>/);
 });
 

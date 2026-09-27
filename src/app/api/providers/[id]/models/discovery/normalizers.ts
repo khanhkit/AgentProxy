@@ -3,21 +3,21 @@ import { getProviderOutboundGuard } from "@/shared/network/outboundUrlGuardPolic
 import {
   getAntigravityModelsDiscoveryUrls,
   getAntigravityFetchAvailableModelsUrls,
-} from "@omniroute/open-sse/config/antigravityUpstream.ts";
-import { getAntigravityContentHeaders } from "@omniroute/open-sse/services/antigravityHeaders.ts";
-import { resolveAntigravityClientVersion } from "@omniroute/open-sse/services/antigravityClientProfile.ts";
+} from "@agentproxy/open-sse/config/antigravityUpstream.ts";
+import { getAntigravityContentHeaders } from "@agentproxy/open-sse/services/antigravityHeaders.ts";
+import { resolveAntigravityClientVersion } from "@agentproxy/open-sse/services/antigravityClientProfile.ts";
 import {
   getClientVisibleAntigravityModelName,
   isDiscoverableAntigravityModelId,
   toClientAntigravityModelId,
-} from "@omniroute/open-sse/config/antigravityModelAliases.ts";
+} from "@agentproxy/open-sse/config/antigravityModelAliases.ts";
 import {
   getClientVisibleAgyModelName,
   isDiscoverableAgyModelId,
-} from "@omniroute/open-sse/config/agyModels.ts";
+} from "@agentproxy/open-sse/config/agyModels.ts";
 import { normalizeAntigravityClientProfile } from "@/shared/constants/antigravityClientProfile";
-import { ensureAntigravityProjectAssigned } from "@omniroute/open-sse/services/antigravityProjectBootstrap.ts";
-import { persistDiscoveredAntigravityProjectId } from "@omniroute/open-sse/services/antigravityProjectPersist.ts";
+import { ensureAntigravityProjectAssigned } from "@agentproxy/open-sse/services/antigravityProjectBootstrap.ts";
+import { persistDiscoveredAntigravityProjectId } from "@agentproxy/open-sse/services/antigravityProjectPersist.ts";
 import { asRecord, toNonEmptyString } from "./helpers";
 
 const antigravityDiscoveryInflight = new Map<

@@ -4,12 +4,12 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-// Isolate DB state so this suite never touches the real ~/.omniroute/storage.sqlite.
+// Isolate DB state so this suite never touches the real ~/.agentproxy/storage.sqlite.
 // DATA_DIR is resolved eagerly at module-load time in src/lib/db/core.ts, so it
 // MUST be set before promptInjection.ts / piiMasker.ts (which transitively import
 // @/lib/db/featureFlags -> @/lib/db/core) are imported. Use dynamic import() after
 // setting the env var, matching tests/unit/pii-opt-in-default.test.ts.
-const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-test-sanitizer-residual-"));
+const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-test-sanitizer-residual-"));
 process.env.DATA_DIR = tmpDir;
 
 const { parseEnvBoolean } = await import("../../src/shared/utils/envBoolean.ts");

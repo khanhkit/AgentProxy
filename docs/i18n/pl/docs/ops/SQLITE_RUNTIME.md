@@ -4,12 +4,12 @@ title: "Rozwiązywanie runtime SQLite"
 
 # Rozwiązywanie runtime SQLite
 
-OmniRoute wybiera sterownik SQLite przy starcie w 5-stopniowym łańcuchu fallback:
+AgentProxy wybiera sterownik SQLite przy starcie w 5-stopniowym łańcuchu fallback:
 
 1. **Dołączony `better-sqlite3`** (przez `dependencies` w `package.json`)
    — najszybszy, natywny binariusz, instalowany przez `npm install`, gdy dostępne są narzędzia do budowania.
 
-2. **`better-sqlite3` zainstalowany w runtime** (w `~/.omniroute/runtime/`)
+2. **`better-sqlite3` zainstalowany w runtime** (w `~/.agentproxy/runtime/`)
    — instalowany leniwie przy pierwszym uruchomieniu **LUB** przez `scripts/build/postinstall.mjs → scripts/postinstall.mjs`.
    Przed załadowaniem waliduje magiczne bajty natywnego pliku `.node` (ELF / Mach-O / PE),
    aby chronić przed uszkodzonymi lub niepasującymi do platformy binariuszami.
@@ -22,19 +22,19 @@ OmniRoute wybiera sterownik SQLite przy starcie w 5-stopniowym łańcuchu fallba
 
 ## Po co ta złożoność?
 
-- **Windows EBUSY**: `npm install -g omniroute@latest` może się nie udać, jeśli
+- **Windows EBUSY**: `npm install -g agentproxy@latest` może się nie udać, jeśli
   `better_sqlite3.node` poprzedniej wersji jest zablokowany przez działający proces. Instalacja
-  runtime w `~/.omniroute/runtime/` omija globalną pamięć podręczną npm.
+  runtime w `~/.agentproxy/runtime/` omija globalną pamięć podręczną npm.
 - **Brak narzędzi do budowania**: Niektóre środowiska (korporacyjny Windows bez VS Build
   Tools, minimalne obrazy Docker) nie mogą skompilować `better-sqlite3`. Instalator
   runtime pobiera gotowy binariusz z rejestru npm; sterowniki fallback
-  gwarantują, że OmniRoute i tak się uruchomi, nawet gdy to się nie uda.
+  gwarantują, że AgentProxy i tak się uruchomi, nawet gdy to się nie uda.
 - **Systemy air-gapped**: Gdy rejestr npm jest niedostępny, `node:sqlite`
   lub `sql.js` zapewniają podstawową funkcjonalność.
 
 ## Walidacja magicznych bajtów
 
-Przed załadowaniem pliku `.node` zainstalowanego w runtime OmniRoute odczytuje pierwsze 8
+Przed załadowaniem pliku `.node` zainstalowanego w runtime AgentProxy odczytuje pierwsze 8
 bajtów i porównuje je ze znanymi magicznymi sekwencjami platform:
 
 | Platform              | Bytes (hex)   | Label       |
@@ -61,14 +61,14 @@ const info = getDriverInfo();
 
 ```bash
 # Skip postinstall warm-up (for fast CI installs)
-OMNIROUTE_SKIP_POSTINSTALL=1 npm install -g omniroute
+AGENTPROXY_SKIP_POSTINSTALL=1 npm install -g agentproxy
 
 # Force-reinstall runtime better-sqlite3
-rm -rf ~/.omniroute/runtime
-omniroute  # will reinstall on next start
+rm -rf ~/.agentproxy/runtime
+agentproxy  # will reinstall on next start
 
 # Check what driver is active
-omniroute config db-info  # (if CLI command exists)
+agentproxy config db-info  # (if CLI command exists)
 ```
 
 ## Odnośniki

@@ -10,26 +10,26 @@ import {
   shouldSuppressStaticModelForExclusiveListing,
 } from "./catalogSyncedCoverage";
 import { buildSyncedCapabilities, mergeSyncedCapabilities } from "./syncedCapabilities";
-import { getAllEmbeddingModels } from "@omniroute/open-sse/config/embeddingRegistry";
+import { getAllEmbeddingModels } from "@agentproxy/open-sse/config/embeddingRegistry";
 import {
   getAllImageModels,
   isRegisteredImageModel,
-} from "@omniroute/open-sse/config/imageRegistry";
-import { aiHordeImageCatalog } from "@omniroute/open-sse/services/aihordeImageCatalog";
-import { getAllRerankModels } from "@omniroute/open-sse/config/rerankRegistry";
-import { getAllAudioModels } from "@omniroute/open-sse/config/audioRegistry";
-import { getAllModerationModels } from "@omniroute/open-sse/config/moderationRegistry";
-import { getAllVideoModels } from "@omniroute/open-sse/config/videoRegistry";
-import { getAllMusicModels } from "@omniroute/open-sse/config/musicRegistry";
+} from "@agentproxy/open-sse/config/imageRegistry";
+import { aiHordeImageCatalog } from "@agentproxy/open-sse/services/aihordeImageCatalog";
+import { getAllRerankModels } from "@agentproxy/open-sse/config/rerankRegistry";
+import { getAllAudioModels } from "@agentproxy/open-sse/config/audioRegistry";
+import { getAllModerationModels } from "@agentproxy/open-sse/config/moderationRegistry";
+import { getAllVideoModels } from "@agentproxy/open-sse/config/videoRegistry";
+import { getAllMusicModels } from "@agentproxy/open-sse/config/musicRegistry";
 import {
   getRegistryModelThinkingEfforts,
   getRegistryThinkingEfforts,
   providerUsesAuthoritativeLiveCatalog,
   REGISTRY,
-} from "@omniroute/open-sse/config/providerRegistry";
-import { CODEX_NATIVE_UNPREFIXED_MODELS } from "@omniroute/open-sse/services/model";
-import { isModelSelectable } from "@omniroute/open-sse/services/modelLifecycle";
-import { resolveNestedComboTargets } from "@omniroute/open-sse/services/combo";
+} from "@agentproxy/open-sse/config/providerRegistry";
+import { CODEX_NATIVE_UNPREFIXED_MODELS } from "@agentproxy/open-sse/services/model";
+import { isModelSelectable } from "@agentproxy/open-sse/services/modelLifecycle";
+import { resolveNestedComboTargets } from "@agentproxy/open-sse/services/combo";
 import {
   AUTO_TEMPLATE_VARIANTS,
   AUTO_SUFFIX_VARIANTS,
@@ -37,7 +37,7 @@ import {
   createBuiltinAutoCombo,
   prepareBuiltinAutoComboInputs,
   isPaidTierAutoId,
-} from "@omniroute/open-sse/services/autoCombo/builtinCatalog";
+} from "@agentproxy/open-sse/services/autoCombo/builtinCatalog";
 import {
   getSyncedAvailableModelsByConnection,
   SYNCED_AVAILABLE_MODELS_MALFORMED,
@@ -83,7 +83,7 @@ import {
   isNoAuthRawProviderPrefix,
   normalizeBlockedProviderSet,
 } from "@/shared/utils/noAuthProviders";
-import { getSourcedTokenLimit, getTokenLimit } from "@omniroute/open-sse/services/contextManager";
+import { getSourcedTokenLimit, getTokenLimit } from "@agentproxy/open-sse/services/contextManager";
 import { extractApiKey } from "@/sse/services/auth";
 import type { ComboModelStep } from "@/lib/combos/steps";
 import {
@@ -125,7 +125,7 @@ import { isUnifiedChatSourceModelSelectable } from "./catalogModelPolicy";
 import { decideHidePaid } from "./catalogPaidFilter";
 import { isModelExposureAllowed } from "@/shared/utils/modelExposureList";
 import { isCodexDiscoveryModelExcluded } from "@/shared/services/codexDiscoveryPolicy";
-import { buildErrorBody } from "@omniroute/open-sse/utils/error";
+import { buildErrorBody } from "@agentproxy/open-sse/utils/error";
 
 // Public API of this module is preserved after the catalog helper extraction:
 // `isVisionModelId` (vision-detection-consistency.test.ts) and
@@ -1967,7 +1967,7 @@ async function buildUnifiedModelsResponseCore(
         );
       } else if (!keyMeta) {
         // #6406: A valid apiKey without a DB metadata row is an env-var master key
-        // (OMNIROUTE_API_KEY / ROUTER_API_KEY per isValidApiKey). Those keys have no
+        // (AGENTPROXY_API_KEY / ROUTER_API_KEY per isValidApiKey). Those keys have no
         // per-key allow/deny/quota restrictions — they authenticate the request but
         // do NOT scope the catalog. Skipping the per-model filter matches the intent:
         // auth GATES access; env-var master keys see everything the unauth path sees.

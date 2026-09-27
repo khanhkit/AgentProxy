@@ -132,7 +132,7 @@ describe("Notion thread session continuity", () => {
     __resetNotionThreadSessionsForTests();
     const spaceId = "space-urew";
     const threadId = "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee";
-    // What OmniRoute saw after VibeProxy agentic/UREW rewrite on turn 1
+    // What AgentProxy saw after VibeProxy agentic/UREW rewrite on turn 1
     const turn1Rewritten = [
       {
         role: "user",

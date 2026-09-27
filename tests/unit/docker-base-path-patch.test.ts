@@ -13,41 +13,41 @@ import {
 
 test("patchBasePathLiterals rewrites empty basePath literals", () => {
   const input = 'const cfg={basePath:"",assetPrefix:void 0};"basePath":""';
-  const output = patchBasePathLiterals(input, "/omniroute");
-  assert.match(output, /basePath:"\/omniroute"/);
-  assert.match(output, /"basePath":"\/omniroute"/);
+  const output = patchBasePathLiterals(input, "/agentproxy");
+  assert.match(output, /basePath:"\/agentproxy"/);
+  assert.match(output, /"basePath":"\/agentproxy"/);
 });
 
 test("patchJsonManifestFile updates nested basePath fields", () => {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-basepath-"));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-basepath-"));
   const filePath = path.join(dir, "routes-manifest.json");
   fs.writeFileSync(filePath, JSON.stringify({ basePath: "", nested: { basePath: "" } }, null, 2));
-  assert.equal(patchJsonManifestFile(filePath, "/omniroute"), true);
+  assert.equal(patchJsonManifestFile(filePath, "/agentproxy"), true);
   const parsed = JSON.parse(fs.readFileSync(filePath, "utf8"));
-  assert.equal(parsed.basePath, "/omniroute");
-  assert.equal(parsed.nested.basePath, "/omniroute");
+  assert.equal(parsed.basePath, "/agentproxy");
+  assert.equal(parsed.nested.basePath, "/agentproxy");
 });
 
 test("patchStandaloneBasePath rewrites a root-path standalone tree", () => {
-  const appRoot = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-standalone-"));
+  const appRoot = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-standalone-"));
   const distRoot = path.join(appRoot, ".build", "next");
   fs.mkdirSync(path.join(distRoot, "server"), { recursive: true });
   fs.writeFileSync(path.join(distRoot, "routes-manifest.json"), JSON.stringify({ basePath: "" }));
   fs.writeFileSync(path.join(distRoot, "server", "chunk.js"), 'export const config={basePath:""};');
-  fs.writeFileSync(path.join(appRoot, "BUILD_OMNIROUTE_BASE_PATH"), "\n");
+  fs.writeFileSync(path.join(appRoot, "BUILD_AGENTPROXY_BASE_PATH"), "\n");
 
   const result = patchStandaloneBasePath({
     appRoot,
     fromBasePath: "",
-    toBasePath: "/omniroute",
+    toBasePath: "/agentproxy",
   });
 
   assert.equal(result.changed, true);
   assert.equal(
     JSON.parse(fs.readFileSync(path.join(distRoot, "routes-manifest.json"), "utf8")).basePath,
-    "/omniroute"
+    "/agentproxy"
   );
-  assert.match(fs.readFileSync(path.join(distRoot, "server", "chunk.js"), "utf8"), /\/omniroute/);
+  assert.match(fs.readFileSync(path.join(distRoot, "server", "chunk.js"), "utf8"), /\/agentproxy/);
 });
 
 test("patchStandaloneBasePath rejects mismatched non-root builds", () => {
@@ -56,7 +56,7 @@ test("patchStandaloneBasePath rejects mismatched non-root builds", () => {
       patchStandaloneBasePath({
         appRoot: process.cwd(),
         fromBasePath: "/custom",
-        toBasePath: "/omniroute",
+        toBasePath: "/agentproxy",
       }),
     /does not match the image build/
   );
@@ -65,52 +65,52 @@ test("patchStandaloneBasePath rejects mismatched non-root builds", () => {
 test("patchBasePathLiterals rewrites assetPrefix literals (Next 16 SSR asset URLs)", () => {
   // Next 16 app-router renders SSR asset URLs from assetPrefix ALONE.
   assert.equal(
-    patchBasePathLiterals('{"assetPrefix":""}', "/omniroute"),
-    '{"assetPrefix":"/omniroute"}'
+    patchBasePathLiterals('{"assetPrefix":""}', "/agentproxy"),
+    '{"assetPrefix":"/agentproxy"}'
   );
-  assert.equal(patchBasePathLiterals('assetPrefix:""', "/omniroute"), 'assetPrefix:"/omniroute"');
+  assert.equal(patchBasePathLiterals('assetPrefix:""', "/agentproxy"), 'assetPrefix:"/agentproxy"');
   assert.equal(
-    patchBasePathLiterals("assetPrefix:void 0", "/omniroute"),
-    'assetPrefix:"/omniroute"'
+    patchBasePathLiterals("assetPrefix:void 0", "/agentproxy"),
+    'assetPrefix:"/agentproxy"'
   );
   // Asset prefix must mirror the basePath so both routing and assets align.
-  const mixed = patchBasePathLiterals('{"basePath":"","assetPrefix":""}', "/omniroute");
-  assert.match(mixed, /"basePath":"\/omniroute"/);
-  assert.match(mixed, /"assetPrefix":"\/omniroute"/);
+  const mixed = patchBasePathLiterals('{"basePath":"","assetPrefix":""}', "/agentproxy");
+  assert.match(mixed, /"basePath":"\/agentproxy"/);
+  assert.match(mixed, /"assetPrefix":"\/agentproxy"/);
 });
 
 test("patchBasePathLiterals rewrites the NEXT_PUBLIC env mirror", () => {
   assert.equal(
-    patchBasePathLiterals('{"env":{"NEXT_PUBLIC_OMNIROUTE_BASE_PATH":""}}', "/omniroute"),
-    '{"env":{"NEXT_PUBLIC_OMNIROUTE_BASE_PATH":"/omniroute"}}'
+    patchBasePathLiterals('{"env":{"NEXT_PUBLIC_AGENTPROXY_BASE_PATH":""}}', "/agentproxy"),
+    '{"env":{"NEXT_PUBLIC_AGENTPROXY_BASE_PATH":"/agentproxy"}}'
   );
   assert.equal(
-    patchBasePathLiterals('NEXT_PUBLIC_OMNIROUTE_BASE_PATH:""', "/omniroute"),
-    'NEXT_PUBLIC_OMNIROUTE_BASE_PATH:"/omniroute"'
+    patchBasePathLiterals('NEXT_PUBLIC_AGENTPROXY_BASE_PATH:""', "/agentproxy"),
+    'NEXT_PUBLIC_AGENTPROXY_BASE_PATH:"/agentproxy"'
   );
 });
 
 test("patchProcessEnvShim populates the Turbopack client process env", () => {
   assert.equal(
-    patchProcessEnvShim("o.env={},o.argv=[]", "/omniroute"),
-    'o.env={OMNIROUTE_BASE_PATH:"/omniroute",NEXT_PUBLIC_OMNIROUTE_BASE_PATH:"/omniroute"},o.argv=[]'
+    patchProcessEnvShim("o.env={},o.argv=[]", "/agentproxy"),
+    'o.env={AGENTPROXY_BASE_PATH:"/agentproxy",NEXT_PUBLIC_AGENTPROXY_BASE_PATH:"/agentproxy"},o.argv=[]'
   );
   // Non-empty env objects are left untouched (never clobber baked values).
-  assert.equal(patchProcessEnvShim("o.env={A:1}", "/omniroute"), "o.env={A:1}");
+  assert.equal(patchProcessEnvShim("o.env={A:1}", "/agentproxy"), "o.env={A:1}");
 });
 
 test("patchBakedAssetUrls prefixes absolute _next/static URLs", () => {
   assert.equal(
-    patchBakedAssetUrls('"/_next/static/chunks/a.js"', "/omniroute"),
-    '"/omniroute/_next/static/chunks/a.js"'
+    patchBakedAssetUrls('"/_next/static/chunks/a.js"', "/agentproxy"),
+    '"/agentproxy/_next/static/chunks/a.js"'
   );
   assert.equal(
-    patchBakedAssetUrls("'/_next/static/media/m.png'", "/omniroute"),
-    "'/omniroute/_next/static/media/m.png'"
+    patchBakedAssetUrls("'/_next/static/media/m.png'", "/agentproxy"),
+    "'/agentproxy/_next/static/media/m.png'"
   );
   // Already-prefixed URLs are stable.
   assert.equal(
-    patchBakedAssetUrls('"/omniroute/_next/static/a.js"', "/omniroute"),
-    '"/omniroute/_next/static/a.js"'
+    patchBakedAssetUrls('"/agentproxy/_next/static/a.js"', "/agentproxy"),
+    '"/agentproxy/_next/static/a.js"'
   );
 });

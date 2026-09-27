@@ -27,7 +27,7 @@ import { makeManagementSessionRequest } from "../../helpers/managementSession.ts
 
 // Allocate fixture FIRST so DATA_DIR is set before any DB import resolves.
 const fixture = setupSettingsFixture("settings-audit");
-process.env.OMNIROUTE_DISABLE_REDIS_AUTH_CACHE = "1";
+process.env.AGENTPROXY_DISABLE_REDIS_AUTH_CACHE = "1";
 
 const ORIGINAL_INITIAL_PASSWORD = process.env.INITIAL_PASSWORD;
 const ORIGINAL_JWT_SECRET = process.env.JWT_SECRET;
@@ -117,8 +117,8 @@ test("CLI subject stamp preserves actor attribution after the raw token is strip
       method: "PATCH",
       headers: {
         "content-type": "application/json",
-        "x-omniroute-auth-kind": "management_key",
-        "x-omniroute-auth-label": "local-cli-token",
+        "x-agentproxy-auth-kind": "management_key",
+        "x-agentproxy-auth-label": "local-cli-token",
       },
       body: JSON.stringify({ theme: "dark" }),
     })

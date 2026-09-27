@@ -31,7 +31,7 @@ import {
 } from "@/lib/oauth/antigravityProjectGate";
 import { syncToCloud } from "@/lib/cloudSync";
 import { startLocalServer } from "@/lib/oauth/utils/server";
-import { runWithProxyContextOrDirect } from "@omniroute/open-sse/utils/proxyFetch.ts";
+import { runWithProxyContextOrDirect } from "@agentproxy/open-sse/utils/proxyFetch.ts";
 import {
   jsonObjectSchema,
   oauthDeviceCompleteSchema,
@@ -40,8 +40,8 @@ import {
   oauthPollSchema,
 } from "@/shared/validation/schemas";
 import { isValidationFailure, validateBody } from "@/shared/validation/helpers";
-import { isAuthRequired, isAuthenticated } from "@/shared/utils/apiAuth";
-import { sanitizeErrorMessage } from "@omniroute/open-sse/utils/error";
+import { isAuthRequired, isAuthenticated, verifyAuth } from "@/shared/utils/apiAuth";
+import { sanitizeErrorMessage } from "@agentproxy/open-sse/utils/error";
 import { GITLAB_DUO_OAUTH_SETUP_MESSAGE } from "@/shared/constants/gitlabDuoSetupMessage";
 import { keychainImportOnlyGuard } from "./keychainImportOnly";
 import { buildRemoteOAuthHint } from "./remoteOAuthHint";
@@ -100,7 +100,7 @@ function safeEqual(a: string | null | undefined, b: string | null | undefined): 
  * link points at the host the operator actually serves (not an internal origin).
  */
 function resolvePublicBaseUrl(request: Request): string {
-  const env = process.env.NEXT_PUBLIC_BASE_URL || process.env.OMNIROUTE_PUBLIC_BASE_URL;
+  const env = process.env.NEXT_PUBLIC_BASE_URL || process.env.AGENTPROXY_PUBLIC_BASE_URL;
   if (env && env.trim()) return env.trim().replace(/\/+$/, "");
   const host = request.headers.get("x-forwarded-host") || request.headers.get("host");
   const proto = request.headers.get("x-forwarded-proto") || "https";
@@ -108,7 +108,12 @@ function resolvePublicBaseUrl(request: Request): string {
   return new URL(request.url).origin;
 }
 
-async function requireOAuthRouteAuth(request: Request) {
+async function requireOAuthRouteAuth(request: Request, forceManagementAuth = false) {
+  if (forceManagementAuth) {
+    const authError = await verifyAuth(request);
+    if (!authError) return null;
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
   if (!(await isAuthRequired(request))) return null;
   if (await isAuthenticated(request)) return null;
   return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -155,7 +160,8 @@ export async function GET(
     /* fall through to normal handling */
   }
 
-  const authResponse = await requireOAuthRouteAuth(request);
+  const authParams = await params;
+  const authResponse = await requireOAuthRouteAuth(request, authParams.provider === "ghe-copilot");
   if (authResponse) return authResponse;
 
   try {
@@ -301,7 +307,7 @@ export async function GET(
  */
 async function handleStartCallbackServer(
   provider: string,
-  searchParams: URLSearchParams,
+  _searchParams: URLSearchParams,
   request?: Request
 ) {
   if (!PKCE_CALLBACK_PROVIDERS.has(provider)) {
@@ -317,7 +323,7 @@ async function handleStartCallbackServer(
   if (callbackStates[provider]?.close) {
     try {
       callbackStates[provider].close();
-    } catch (e) {
+    } catch {
       /* ignore */
     }
   }
@@ -353,7 +359,7 @@ async function handleStartCallbackServer(
       if (callbackStates[provider]?.startedAt === startedAt) {
         try {
           close();
-        } catch (e) {
+        } catch {
           /* ignore */
         }
         delete callbackStates[provider];
@@ -362,7 +368,7 @@ async function handleStartCallbackServer(
 
     // #7523: the PKCE callback server listens on the SERVER's loopback
     // (localhost:PORT). When the operator drives the OAuth flow from a
-    // *different* machine (OmniRoute running on a remote host/VPS), the
+    // *different* machine (AgentProxy running on a remote host/VPS), the
     // provider redirects the browser to the operator's own localhost:PORT,
     // not the server's — so the final confirmation screen hangs forever.
     // Detect a non-loopback Host and surface the reverse-tunnel instruction
@@ -415,7 +421,8 @@ export async function POST(
     /* fall through to normal handling */
   }
 
-  const authResponse = await requireOAuthRouteAuth(request);
+  const authParams = await params;
+  const authResponse = await requireOAuthRouteAuth(request, authParams.provider === "ghe-copilot");
   if (authResponse) return authResponse;
 
   try {
@@ -712,7 +719,7 @@ export async function POST(
       // Clean up server
       try {
         close();
-      } catch (e) {
+      } catch {
         /* ignore */
       }
       delete callbackStates[provider];

@@ -12,7 +12,7 @@ test("redactString: standard email is replaced", () => {
 });
 
 test("redactString: sub-domain email is replaced", () => {
-  const { output } = redactString("ping ops+sre@mail.omniroute.dev today");
+  const { output } = redactString("ping ops+sre@mail.agentproxy.dev today");
   assert.equal(output, "ping [REDACTED_EMAIL] today");
 });
 

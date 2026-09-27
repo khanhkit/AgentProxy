@@ -1206,7 +1206,7 @@ export function recordProviderFailure(
   opts?: { isQueueTimeout?: boolean; isNetworkError?: boolean }
 ): void {
   if (!provider) return;
-  // OmniRoute's own rate-limit queue timeout is backpressure we applied, not a
+  // AgentProxy's own rate-limit queue timeout is backpressure we applied, not a
   // provider failure — the provider never saw the request, so it must not count
   // toward the provider breaker.
   if (opts?.isQueueTimeout) return;

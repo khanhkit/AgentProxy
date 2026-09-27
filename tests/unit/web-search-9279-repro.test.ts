@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-const { prepareWebSearchFallbackBody, OMNIROUTE_WEB_SEARCH_FALLBACK_TOOL_NAME } =
+const { prepareWebSearchFallbackBody, AGENTPROXY_WEB_SEARCH_FALLBACK_TOOL_NAME } =
   await import("../../open-sse/services/webSearchFallback.ts");
 
 // #9279 — Anthropic's date-suffixed server-tool variant web_search_20250305
@@ -28,7 +28,7 @@ test("#9279 versioned web_search_20250305 IS intercepted with interceptSearchOve
   assert.equal(fallback.enabled, true);
   assert.equal(
     fallback.toolName,
-    OMNIROUTE_WEB_SEARCH_FALLBACK_TOOL_NAME
+    AGENTPROXY_WEB_SEARCH_FALLBACK_TOOL_NAME
   );
   assert.equal(fallback.convertedToolCount, 1);
 });
@@ -53,12 +53,12 @@ test("#9279 versioned web_search_20250305 intercepted even without per-model ove
   assert.equal(fallback.enabled, true);
   assert.equal(
     fallback.toolName,
-    OMNIROUTE_WEB_SEARCH_FALLBACK_TOOL_NAME
+    AGENTPROXY_WEB_SEARCH_FALLBACK_TOOL_NAME
   );
   assert.equal(fallback.convertedToolCount, 1);
 });
 
-test("#9279 tool_choice with web_search_20250305 redirects to omniroute_web_search", () => {
+test("#9279 tool_choice with web_search_20250305 redirects to agentproxy_web_search", () => {
   const { body, fallback } = prepareWebSearchFallbackBody(
     {
       tools: [{ type: "web_search_20250305", name: "web_search", max_uses: 8 }],
@@ -76,6 +76,6 @@ test("#9279 tool_choice with web_search_20250305 redirects to omniroute_web_sear
   assert.equal(fallback.enabled, true);
   const choice = body.tool_choice as Record<string, unknown>;
   const fn = choice.function as Record<string, unknown> | undefined;
-  assert.equal(fn?.name, OMNIROUTE_WEB_SEARCH_FALLBACK_TOOL_NAME);
+  assert.equal(fn?.name, AGENTPROXY_WEB_SEARCH_FALLBACK_TOOL_NAME);
   assert.equal(choice.type, "function");
 });

@@ -5,7 +5,7 @@
  */
 
 import type { A2ATask, TaskArtifact } from "../taskManager";
-import { resolveOmniRouteBaseUrl } from "@/shared/utils/resolveOmniRouteBaseUrl";
+import { resolveAgentProxyBaseUrl } from "@/shared/utils/resolveAgentProxyBaseUrl";
 import { formatCost } from "@/shared/utils/formatting";
 import { toNumber } from "@/shared/utils/numeric";
 
@@ -18,8 +18,8 @@ type CostEntry = {
   tokens: number;
 };
 
-const OMNIROUTE_BASE_URL = resolveOmniRouteBaseUrl();
-const OMNIROUTE_API_KEY = process.env.OMNIROUTE_API_KEY || "";
+const AGENTPROXY_BASE_URL = resolveAgentProxyBaseUrl();
+const AGENTPROXY_API_KEY = process.env.AGENTPROXY_API_KEY || "";
 
 function detectRange(task: A2ATask): string {
   const metadataRange = task.input.metadata?.range;
@@ -33,19 +33,20 @@ function detectRange(task: A2ATask): string {
   return "30d";
 }
 
-async function costFetch(path: string): Promise<AnalyticsRecord> {
-  const url = `${OMNIROUTE_BASE_URL}${path}`;
+async function costFetch(path: string, signal?: AbortSignal): Promise<AnalyticsRecord> {
+  const url = `${AGENTPROXY_BASE_URL}${path}`;
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
-    ...(OMNIROUTE_API_KEY ? { Authorization: `Bearer ${OMNIROUTE_API_KEY}` } : {}),
+    ...(AGENTPROXY_API_KEY ? { Authorization: `Bearer ${AGENTPROXY_API_KEY}` } : {}),
   };
-  const response = await fetch(url, { headers, signal: AbortSignal.timeout(15000) });
+  const timeoutSignal = AbortSignal.timeout(15000);
+  const requestSignal = signal ? AbortSignal.any([signal, timeoutSignal]) : timeoutSignal;
+  const response = await fetch(url, { headers, signal: requestSignal });
   if (!response.ok) {
     throw new Error(`API [${response.status}]: ${await response.text().catch(() => "error")}`);
   }
   return response.json();
 }
-
 
 function toCostEntries(value: unknown): CostEntry[] {
   if (!value || typeof value !== "object" || Array.isArray(value)) return [];
@@ -105,10 +106,14 @@ export interface CostAnalysisResult {
   };
 }
 
-export async function executeCostAnalysis(task: A2ATask): Promise<CostAnalysisResult> {
+export async function executeCostAnalysis(
+  task: A2ATask,
+  signal?: AbortSignal
+): Promise<CostAnalysisResult> {
   const range = detectRange(task);
   const analytics = await costFetch(
-    `/api/usage/analytics?range=${encodeURIComponent(range)}&presets=1d,7d,30d,90d,ytd`
+    `/api/usage/analytics?range=${encodeURIComponent(range)}&presets=1d,7d,30d,90d,ytd`,
+    signal
   );
   const summary = (analytics.summary || {}) as AnalyticsRecord;
   const providerCosts = toCostEntries(analytics.byProvider).slice(0, 10);

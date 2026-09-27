@@ -8,7 +8,7 @@ import { makeManagementSessionRequest } from "../../helpers/managementSession.ts
 
 // DATA_DIR must be set before the DB core module evaluates its singleton. The
 // management session helper also requires JWT_SECRET, set per-test.
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-repair-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-repair-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 const ORIGINAL_KEY = process.env.STORAGE_ENCRYPTION_KEY;
 process.env.STORAGE_ENCRYPTION_KEY = "test-repair-encryption-key";

@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 
-import { SEARCH_PROVIDERS } from "@omniroute/open-sse/config/searchRegistry.ts";
+import { SEARCH_PROVIDERS } from "@agentproxy/open-sse/config/searchRegistry.ts";
 import { getStaticModelsForProvider } from "@/lib/providers/staticModels";
 
 const EXCLUDED_FROM_ISSUE = new Set(["duckduckgo-free"]);

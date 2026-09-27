@@ -6,7 +6,7 @@ export interface SharedLoggerResource {
 }
 
 declare global {
-  var __omnirouteLoggerResource: SharedLoggerResource | undefined;
+  var __agentproxyLoggerResource: SharedLoggerResource | undefined;
 }
 
 /**
@@ -19,14 +19,14 @@ declare global {
 export function getOrCreateSharedLoggerResource(
   create: () => SharedLoggerResource
 ): SharedLoggerResource {
-  return (globalThis.__omnirouteLoggerResource ??= create());
+  return (globalThis.__agentproxyLoggerResource ??= create());
 }
 
 /** Close and forget the shared transport. Idempotent across HMR module copies. */
 export async function closeSharedLoggerResource(): Promise<void> {
-  const resource = globalThis.__omnirouteLoggerResource;
+  const resource = globalThis.__agentproxyLoggerResource;
   if (!resource) return;
 
-  delete globalThis.__omnirouteLoggerResource;
+  delete globalThis.__agentproxyLoggerResource;
   await resource.close();
 }

@@ -4,7 +4,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-cliproxy-accounts-api-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-cliproxy-accounts-api-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.API_KEY_SECRET = "cliproxy-accounts-api-test-secret";
 process.env.DISABLE_SQLITE_AUTO_BACKUP = "true";
@@ -25,12 +25,12 @@ after(() => {
   fs.rmSync(TEST_DATA_DIR, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
 });
 
-it("requires OmniRoute management authentication", async () => {
+it("requires AgentProxy management authentication", async () => {
   const response = await GET(new Request("http://localhost/api/services/cliproxy/accounts"));
   assert.equal(response.status, 401);
 });
 
-it("accepts a scoped OmniRoute management API key", async () => {
+it("accepts a scoped AgentProxy management API key", async () => {
   const { key } = await apiKeysDb.createApiKey("cliproxy-accounts", "test", ["manage"]);
   const response = await GET(
     new Request("http://localhost/api/services/cliproxy/accounts", {

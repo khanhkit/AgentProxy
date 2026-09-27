@@ -6,16 +6,16 @@
 
 ---
 
-title: "OmniRoute — Ielādes ceļvedis VM ar Cloudflare"
+title: "AgentProxy — Ielādes ceļvedis VM ar Cloudflare"
 version: 3.8.40
 lastUpdated: 2026-06-28
 ---
 
-# OmniRoute — Ielādes ceļvedis VM ar Cloudflare
+# AgentProxy — Ielādes ceļvedis VM ar Cloudflare
 
 🌐 **Languages:** 🇺🇸 [English](../../../../ops/VM_DEPLOYMENT_GUIDE.md) · 🇸🇦 [ar](../../../ar/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇦🇿 [az](../../../az/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇧🇬 [bg](../../../bg/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇧🇩 [bn](../../../bn/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇨🇿 [cs](../../../cs/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇩🇰 [da](../../../da/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇩🇪 [de](../../../de/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇬🇷 [el](../../../el/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇪🇸 [es](../../../es/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇪🇪 [et](../../../et/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇷 [fa](../../../fa/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇫🇮 [fi](../../../fi/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇫🇷 [fr](../../../fr/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇪 [ga](../../../ga/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇳 [gu](../../../gu/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇱 [he](../../../he/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇳 [hi](../../../hi/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇭🇷 [hr](../../../hr/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇭🇺 [hu](../../../hu/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇩 [id](../../../id/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇹 [it](../../../it/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇯🇵 [ja](../../../ja/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇰🇷 [ko](../../../ko/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇱🇹 [lt](../../../lt/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇳 [mr](../../../mr/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇲🇾 [ms](../../../ms/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇲🇹 [mt](../../../mt/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇳🇱 [nl](../../../nl/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇳🇴 [no](../../../no/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇵🇭 [phi](../../../phi/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇵🇱 [pl](../../../pl/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇵🇹 [pt](../../../pt/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇧🇷 [pt-BR](../../../pt-BR/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇷🇴 [ro](../../../ro/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇷🇺 [ru](../../../ru/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇸🇰 [sk](../../../sk/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇸🇮 [sl](../../../sl/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇷🇸 [sr](../../../sr/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇸🇪 [sv](../../../sv/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇰🇪 [sw](../../../sw/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇳 [ta](../../../ta/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇳 [te](../../../te/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇹🇭 [th](../../../th/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇹🇷 [tr](../../../tr/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇺🇦 [uk-UA](../../../uk-UA/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇵🇰 [ur](../../../ur/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇻🇳 [vi](../../../vi/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇨🇳 [zh-CN](../../../zh-CN/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇹🇼 [zh-TW](../../../zh-TW/docs/ops/VM_DEPLOYMENT_GUIDE.md)
 
-Pilnīgs ceļvedis OmniRoute instalēšanai un konfigurēšanai VM (VPS) ar domēnu, ko pārvalda Cloudflare.
+Pilnīgs ceļvedis AgentProxy instalēšanai un konfigurēšanai VM (VPS) ar domēnu, ko pārvalda Cloudflare.
 
 ---
 
@@ -93,18 +93,18 @@ ufw enable
 
 ---
 
-## 2. Instalēt OmniRoute
+## 2. Instalēt AgentProxy
 
 ### 2.1 Izveidot konfigurācijas direktoriju
 
 ```bash
-mkdir -p /opt/omniroute
+mkdir -p /opt/agentproxy
 ```
 
 ### 2.2 Izveidot vides mainīgo failu
 
 ```bash
-cat > /opt/omniroute/.env << 'EOF'
+cat > /opt/agentproxy/.env << 'EOF'
 # === Drošība ===
 JWT_SECRET=CHANGE-TO-A-UNIQUE-64-CHAR-SECRET-KEY
 INITIAL_PASSWORD=YourSecurePassword123!
@@ -112,7 +112,7 @@ API_KEY_SECRET=REPLACE-WITH-ANOTHER-SECRET-KEY
 STORAGE_ENCRYPTION_KEY=REPLACE-WITH-THIRD-SECRET-KEY
 STORAGE_ENCRYPTION_KEY_VERSION=v1
 MACHINE_ID_SALT=CHANGE-TO-A-UNIQUE-SALT
-OMNIROUTE_WS_BRIDGE_SECRET=REPLACE-WITH-WS-BRIDGE-SECRET  # OBLIGĀTS ražošanā: izmanto Codex Responses WS bridge
+AGENTPROXY_WS_BRIDGE_SECRET=REPLACE-WITH-WS-BRIDGE-SECRET  # OBLIGĀTS ražošanā: izmanto Codex Responses WS bridge
 
 # === Lietotne ===
 PORT=20128
@@ -129,11 +129,11 @@ BASE_URL=http://127.0.0.1:20128
 # Pārlūka priekšpuses URL, ko izmanto OAuth atsauces, informācijas paneļa saites un ģenerētie publiskie URL.
 NEXT_PUBLIC_BASE_URL=https://llms.seudominio.com
 # Neobligāts eksplicitais publiskās izcelsmes pārrakstīšanas variants ģenerētajiem publiskajiem resursiem.
-# OMNIROUTE_PUBLIC_BASE_URL=https://llms.seudominio.com
+# AGENTPROXY_PUBLIC_BASE_URL=https://llms.seudominio.com
 
 # === Mākoņa sinhronizācija (neobligāta) ===
-# CLOUD_URL=https://cloud.omniroute.online
-# NEXT_PUBLIC_CLOUD_URL=https://cloud.omniroute.online
+# CLOUD_URL=https://cloud.agentproxy.example.com
+# NEXT_PUBLIC_CLOUD_URL=https://cloud.agentproxy.example.com
 EOF
 ```
 
@@ -142,22 +142,22 @@ EOF
 ### 2.3 Palaist konteineru
 
 ```bash
-docker pull diegosouzapw/omniroute:latest
+docker pull khanhkit/agentproxy:latest
 
 docker run -d \
-  --name omniroute \
+  --name agentproxy \
   --restart unless-stopped \
-  --env-file /opt/omniroute/.env \
+  --env-file /opt/agentproxy/.env \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
-  diegosouzapw/omniroute:latest
+  -v agentproxy-data:/app/data \
+  khanhkit/agentproxy:latest
 ```
 
 ### 2.4 Pārbaudīt, vai tas darbojas
 
 ```bash
-docker ps | grep omniroute
-docker logs omniroute --tail 20
+docker ps | grep agentproxy
+docker logs agentproxy --tail 20
 ```
 
 Tam vajadzētu parādīt: `[DB] SQLite database ready` un `listening on port 20128`.
@@ -190,7 +190,7 @@ chmod 600 /etc/nginx/ssl/origin.key
 ### 3.2 Nginx konfigurācija
 
 ```bash
-cat > /etc/nginx/sites-available/omniroute << 'NGINX'
+cat > /etc/nginx/sites-available/agentproxy << 'NGINX'
 # Noklusējuma serveris — bloķē tiešu piekļuvi caur IP
 server {
     listen 80 default_server;
@@ -203,7 +203,7 @@ server {
     return 444;
 }
 
-# OmniRoute — HTTPS
+# AgentProxy — HTTPS
 server {
     listen 443 ssl;
     listen [::]:443 ssl;
@@ -246,16 +246,16 @@ server {
 NGINX
 ```
 
-Saglabājiet reversā starpnieka straumes taimautus atbilstošus jūsu OmniRoute taimauta vides mainīgajiem. Ja paaugstināt
+Saglabājiet reversā starpnieka straumes taimautus atbilstošus jūsu AgentProxy taimauta vides mainīgajiem. Ja paaugstināt
 `FETCH_TIMEOUT_MS` / `STREAM_IDLE_TIMEOUT_MS`, paaugstiniet arī `proxy_read_timeout` / `proxy_send_timeout`
 virš šī paša sliekšņa.
 
-OmniRoute izmanto `NEXT_PUBLIC_BASE_URL` kā kanonisko pārlūka priekšpusi OAuth
+AgentProxy izmanto `NEXT_PUBLIC_BASE_URL` kā kanonisko pārlūka priekšpusi OAuth
 atgriezeniskajiem saucieniem un ģenerētajām publiskajām saitēm. Autentificētas vadības panela rakstīšanas izmanto vienas izcelsmes pieprasījumus
 plus ar sesiju saistītu CSRF aizsardzību, tāpēc tām nav nepieciešama statiska publiska bāzes URL. Iepriekš minētie
 `X-Forwarded-*` galvenes joprojām ir noderīga maršrutēšanas metadati, bet tās nav aizvietojums
 eksplicītā publiskā URL iestatīšanai, kad OAuth vai ģenerētās pārlūka saites to prasa. Iespējojiet
-`OMNIROUTE_TRUST_PROXY` tikai tad, ja OmniRoute nav tieši sasniedzams no klientiem un jūsu starpnieks
+`AGENTPROXY_TRUST_PROXY` tikai tad, ja AgentProxy nav tieši sasniedzams no klientiem un jūsu starpnieks
 noņem/pārbūvē ienākošās pārsūtīšanas galvenes.
 
 ### 3.3 Iespējot un pārbaudīt
@@ -264,8 +264,8 @@ noņem/pārbūvē ienākošās pārsūtīšanas galvenes.
 # Noņemt noklusējuma konfigurāciju
 rm -f /etc/nginx/sites-enabled/default
 
-# Iespējot OmniRoute
-ln -sf /etc/nginx/sites-available/omniroute /etc/nginx/sites-enabled/omniroute
+# Iespējot AgentProxy
+ln -sf /etc/nginx/sites-available/agentproxy /etc/nginx/sites-enabled/agentproxy
 
 # Pārbaudīt un pārlādēt
 nginx -t && systemctl reload nginx
@@ -309,40 +309,40 @@ curl -sI https://llms.seudominio.com/health
 ### Atjaunināšana uz jaunu versiju
 
 ```bash
-docker pull diegosouzapw/omniroute:latest
-docker stop omniroute && docker rm omniroute
-docker run -d --name omniroute --restart unless-stopped \
-  --env-file /opt/omniroute/.env \
+docker pull khanhkit/agentproxy:latest
+docker stop agentproxy && docker rm agentproxy
+docker run -d --name agentproxy --restart unless-stopped \
+  --env-file /opt/agentproxy/.env \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
-  diegosouzapw/omniroute:latest
+  -v agentproxy-data:/app/data \
+  khanhkit/agentproxy:latest
 ```
 
 ### Skatīt žurnālus
 
 ```bash
-docker logs -f omniroute          # Tiešraides straume
-docker logs omniroute --tail 50   # Pēdējās 50 rindas
+docker logs -f agentproxy          # Tiešraides straume
+docker logs agentproxy --tail 50   # Pēdējās 50 rindas
 ```
 
 ### Manuāla datu bāzes dublēšana
 
 ```bash
 # Kopēt datus no sējuma uz saimniekdatoru
-docker cp omniroute:/app/data ./backup-$(date +%F)
+docker cp agentproxy:/app/data ./backup-$(date +%F)
 
 # Vai saspiest visu sējumu
-docker run --rm -v omniroute-data:/data -v $(pwd):/backup \
-  alpine tar czf /backup/omniroute-data-$(date +%F).tar.gz /data
+docker run --rm -v agentproxy-data:/data -v $(pwd):/backup \
+  alpine tar czf /backup/agentproxy-data-$(date +%F).tar.gz /data
 ```
 
 ### Atjaunošana no dublējuma
 
 ```bash
-docker stop omniroute
-docker run --rm -v omniroute-data:/data -v $(pwd):/backup \
-  alpine sh -c "rm -rf /data/* && tar xzf /backup/omniroute-data-YYYY-MM-DD.tar.gz -C /"
-docker start omniroute
+docker stop agentproxy
+docker run --rm -v agentproxy-data:/data -v $(pwd):/backup \
+  alpine sh -c "rm -rf /data/* && tar xzf /backup/agentproxy-data-YYYY-MM-DD.tar.gz -C /"
+docker start agentproxy
 ```
 
 ---
@@ -411,13 +411,13 @@ Attālai piekļuvei caur Cloudflare Workers (bez VM tiešas eksponēšanas):
 
 ```bash
 # Vietējā repozitorijā
-cd omnirouteCloud
+cd agentproxyCloud
 npm install
 npx wrangler login
 npx wrangler deploy
 ```
 
-Skatīt arī [TUNNELS_GUIDE.md](./TUNNELS_GUIDE.md) par Cloudflare Tunnel norādījumiem repozitorijā. Atsevišķais `omnirouteCloud/` workers atrodas atsevišķā pavadošā repozitorijā.
+Skatīt arī [TUNNELS_GUIDE.md](./TUNNELS_GUIDE.md) par Cloudflare Tunnel norādījumiem repozitorijā. Atsevišķais `agentproxyCloud/` workers atrodas atsevišķā pavadošā repozitorijā.
 
 ---
 
@@ -428,15 +428,15 @@ Skatīt arī [TUNNELS_GUIDE.md](./TUNNELS_GUIDE.md) par Cloudflare Tunnel norād
 | 22    | SSH         | Publisks (ar fail2ban)           |
 | 80    | nginx HTTP  | Pāradresē → HTTPS                |
 | 443   | nginx HTTPS | Caur Cloudflare starpniekserveri |
-| 20128 | OmniRoute   | Tikai localhost (caur nginx)     |
+| 20128 | AgentProxy   | Tikai localhost (caur nginx)     |
 
 ## Mazatmiņas / Mazā VPS optimizācija
 
 Izvietojumiem mazos VPS instancēs (1 GB RAM vai mazāk):
 
-- **Atspējot fona pakalpojumus** — iestatiet `OMNIROUTE_DISABLE_BACKGROUND_SERVICES=1`, lai izlaistu plānotāju, MCP serveri un periodiskos uzturēšanas uzdevumus. Skatīt `docs/reference/ENVIRONMENT.md`.
+- **Atspējot fona pakalpojumus** — iestatiet `AGENTPROXY_DISABLE_BACKGROUND_SERVICES=1`, lai izlaistu plānotāju, MCP serveri un periodiskos uzturēšanas uzdevumus. Skatīt `docs/reference/ENVIRONMENT.md`.
 - **Izmantot SQLite WAL režīmu** — iespējots pēc noklusējuma, samazina maksimālo atmiņas lietošanu vienlaicīgu lasījumu laikā.
-- **Ierobežot V8 kaudzi** — iestatiet `OMNIROUTE_MEMORY_MB` (piemēram, `512`), lai izpildes vide nekalibrētu griestu, kas ir lielāks par VM. Skatīt `docs/reference/ENVIRONMENT.md`.
-- **Smagā ievadīšana automātiski mērogojas ar kaudzes ierobežojumu** — kad iepriekšminētais `OMNIROUTE_MEMORY_MB` ir iestatīts, ievadīšanas baitu budžets (`OMNIROUTE_CHAT_MAX_INFLIGHT_BYTES`) izriet no tā paša griesta, tādēļ atmiņas ierobežota VM jau saņem mazāku vienlaicīgu pieprasījumu budžetu bez papildu pielāgojumiem; lieki pieprasījumi saņem atkārtojamu `503` ar `Retry-After` statusu, nevis sacenstos par atmiņu. Veco `OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT` pieprasījumu skaita ierobežojumu iestatiet tikai tad, ja nepieciešams cietais griests virs tā.
+- **Ierobežot V8 kaudzi** — iestatiet `AGENTPROXY_MEMORY_MB` (piemēram, `512`), lai izpildes vide nekalibrētu griestu, kas ir lielāks par VM. Skatīt `docs/reference/ENVIRONMENT.md`.
+- **Smagā ievadīšana automātiski mērogojas ar kaudzes ierobežojumu** — kad iepriekšminētais `AGENTPROXY_MEMORY_MB` ir iestatīts, ievadīšanas baitu budžets (`AGENTPROXY_CHAT_MAX_INFLIGHT_BYTES`) izriet no tā paša griesta, tādēļ atmiņas ierobežota VM jau saņem mazāku vienlaicīgu pieprasījumu budžetu bez papildu pielāgojumiem; lieki pieprasījumi saņem atkārtojamu `503` ar `Retry-After` statusu, nevis sacenstos par atmiņu. Veco `AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT` pieprasījumu skaita ierobežojumu iestatiet tikai tad, ja nepieciešams cietais griests virs tā.
 - **Izvairieties no `next build` uz VPS** — veiciet būvējumu lokāli un izvietojiet neatkarīgo izeju (`.next/standalone/`).
-- **Monitorējiet ar `top` / `free -m`** — OmniRoute parasti patērē 200-400 MB RSS dīkstāves režīmā uz 1 GB VM.
+- **Monitorējiet ar `top` / `free -m`** — AgentProxy parasti patērē 200-400 MB RSS dīkstāves režīmā uz 1 GB VM.

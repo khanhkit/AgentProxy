@@ -6,12 +6,12 @@
 
 ---
 
-title: "OmniRoute Auto-Combo Engine"
+title: "AgentProxy Auto-Combo Engine"
 version: 3.8.40
 lastUpdated: 2026-06-28
 ---
 
-# OmniRoute Auto-Combo Engine
+# AgentProxy Auto-Combo Engine
 
 > **Za korisnike**: Tražite brzi početak? Pogledajte [Korisnički vodič za Auto-Combo](../getting-started/AUTO-COMBO-GUIDE.md) za jednostavna objašnjenja i primjere.
 
@@ -69,7 +69,7 @@ model: "auto/cheap"           # najjeftinije po tokenu
 
 **Što se događa:**
 
-1. OmniRoute detektira prefiks `auto/` u `src/sse/handlers/chat.ts`
+1. AgentProxy detektira prefiks `auto/` u `src/sse/handlers/chat.ts`
 2. Upituje sve **aktivne veze s pružateljem** iz baze podataka
 3. Filtrira one s valjanim vjerodajnicama (API ključ ili OAuth token)
 4. Određuje model po vezi (`connection.defaultModel` ili prvi model pružatelja)
@@ -97,7 +97,7 @@ postojeća čitanja otpornosti (nikad sirovo stanje prekidača `state`):
 - zaključavanje modela — `isModelLocked(provider, connectionId, model)`
 
 Svaki kandidat također nosi zastavicu `excluded` ovog API ključa. Isključenja se pohranjuju
-po API ključu (tablica `auto_candidate_overrides`, migracija `128`) — OmniRoute je
+po API ključu (tablica `auto_candidate_overrides`, migracija `128`) — AgentProxy je
 jednokorisnički bez tablice `users`, pa je `apiKeyId` najbliži stvarni identitet pozivatelja
 — i primjenjuju se na uskom grlu skupa kandidata u
 `open-sse/services/autoCombo/virtualFactory.ts` putem čiste, jedinično testirane
@@ -141,13 +141,13 @@ Automatsko bodovanje odabire najboljeg pružatelja/model po zahtjevu
 Kombij čiji je `name` identičan golom ID-u modela (npr. kombij nazvan
 `gpt-5.5`) je **namjerni, podržani obrazac**, a ne greška: to je
 mehanizam za rezervni odabir pružatelja usluge po ID-u modela dokumentiran u
-[#6940](https://github.com/diegosouzapw/OmniRoute/issues/6940). Budući da se
+[#6940](https://github.com/khanhkit/AgentProxy/issues/6940). Budući da se
 razrješavanje kombija provjerava prije razrješavanja golog ID-a modela
 (`getComboForModel()` u `src/sse/services/model.ts`), zahtjev za goli
 id `gpt-5.5` usmjerava se kroz ciljeve kombija (npr.
 `acme-responses/gpt-5.5`, `backup-responses/gpt-5.5`) umjesto izravno prema
 jednom pružatelju usluge — ovo ponovno koristi prednost kombija-prije-prepisa izgrađenu za
-[#3227/#3233](https://github.com/diegosouzapw/OmniRoute/issues/3227) i
+[#3227/#3233](https://github.com/khanhkit/AgentProxy/issues/3227) i
 regresijski je testirana s `tests/unit/responses-combo-resolution-3227.test.ts` i
 `tests/unit/combo-name-codex-responses-rewrite.test.ts`.
 
@@ -191,9 +191,9 @@ curl -X POST http://localhost:20128/v1/chat/completions \
 Dvije uobičajene zamke:
 
 - **`auto` ne koristi vaše kombije.** `auto`/`auto/*` gradi vlastiti skup kandidata bez konfiguracije i savjetuje se s pohranjenim kombijima samo ako je kombij doslovno nazvan `auto` (nije preporučeno). Za usmjeravanje kroz kombij, pošaljite njegov točan naziv — ne `auto`.
-- **`openrouter/auto` je pravi plaćeni OpenRouter proizvod** ("Auto Best Available"), a ne OmniRoute alias. To je jedini statični unos modela u registru OpenRoutera (`open-sse/config/providers/registry/openrouter/index.ts`) i naplaćuje se zasebno. Koristite Postavke → Usmjeravanje → Sakrij plaćene modele kako biste ga isključili iz `auto` skupova.
+- **`openrouter/auto` je pravi plaćeni OpenRouter proizvod** ("Auto Best Available"), a ne AgentProxy alias. To je jedini statični unos modela u registru OpenRoutera (`open-sse/config/providers/registry/openrouter/index.ts`) i naplaćuje se zasebno. Koristite Postavke → Usmjeravanje → Sakrij plaćene modele kako biste ga isključili iz `auto` skupova.
 
-Pogledajte [#7992](https://github.com/diegosouzapw/OmniRoute/issues/7992) i [#7111](https://github.com/diegosouzapw/OmniRoute/issues/7111) za izvorne nejasnoće koje ovaj tekst dokumentira.
+Pogledajte [#7992](https://github.com/khanhkit/AgentProxy/issues/7992) i [#7111](https://github.com/khanhkit/AgentProxy/issues/7111) za izvorne nejasnoće koje ovaj tekst dokumentira.
 
 ## Kako Radi (Trajni Auto-Kombiji)
 
@@ -265,17 +265,17 @@ kada zaglavlje nije prisutno.
 
 | Zaglavlje                     | Prihvaća                                                                                                                                                                                                    | Učinak                                                                                                                                                                                                                                                        |
 | :---------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `X-OmniRoute-Mode`            | unaprijed definiran alias (`fast`, `balanced`, `quality`, `cheap`, `reliable`, `offline`) ili neobrađeni naziv paketa (`ship-fast`, `cost-saver`, `quality-first`, `offline-friendly`, `reliability-first`) | Nadjačava težine bodovanja za ovaj zahtjev. `balanced`/`default` nameću zadane težine (bez paketa). Nepoznate vrijednosti se zanemaruju (konfiguracija se čuva).                                                                                              |
-| `X-OmniRoute-Budget`          | pozitivan broj (maks. USD po zahtjevu)                                                                                                                                                                      | Čvrsta gornja granica troška: kandidati čiji procijenjeni trošak prelazi granicu filtriraju se prije odabira. Što se događa kada **svaki** kandidat premaši granicu kontrolira se s `X-OmniRoute-Budget-Fallback` u nastavku.                                 |
-| `X-OmniRoute-Budget-Fallback` | `cheapest` (zadano, aliasi: `cheapest-viable`, `soft`) ili `strict` (aliasi: `block`, `hard`)                                                                                                               | `cheapest`: pada natrag na globalno najjeftinijeg kandidata čak i ako još uvijek prelazi granicu (nasljedno ponašanje). `strict`: odbija odabir — zahtjev brzo propada s `HTTP 402` umjesto tihog prekoračenja troškova. Nepoznate vrijednosti se zanemaruju. |
+| `X-AgentProxy-Mode`            | unaprijed definiran alias (`fast`, `balanced`, `quality`, `cheap`, `reliable`, `offline`) ili neobrađeni naziv paketa (`ship-fast`, `cost-saver`, `quality-first`, `offline-friendly`, `reliability-first`) | Nadjačava težine bodovanja za ovaj zahtjev. `balanced`/`default` nameću zadane težine (bez paketa). Nepoznate vrijednosti se zanemaruju (konfiguracija se čuva).                                                                                              |
+| `X-AgentProxy-Budget`          | pozitivan broj (maks. USD po zahtjevu)                                                                                                                                                                      | Čvrsta gornja granica troška: kandidati čiji procijenjeni trošak prelazi granicu filtriraju se prije odabira. Što se događa kada **svaki** kandidat premaši granicu kontrolira se s `X-AgentProxy-Budget-Fallback` u nastavku.                                 |
+| `X-AgentProxy-Budget-Fallback` | `cheapest` (zadano, aliasi: `cheapest-viable`, `soft`) ili `strict` (aliasi: `block`, `hard`)                                                                                                               | `cheapest`: pada natrag na globalno najjeftinijeg kandidata čak i ako još uvijek prelazi granicu (nasljedno ponašanje). `strict`: odbija odabir — zahtjev brzo propada s `HTTP 402` umjesto tihog prekoračenja troškova. Nepoznate vrijednosti se zanemaruju. |
 
 ```bash
 # Nametni najbrži profil, ograniči ovaj zahtjev na $0.05 i blokiraj umjesto prekoračenja troškova
 curl -sS http://localhost:20128/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "X-OmniRoute-Mode: fast" \
-  -H "X-OmniRoute-Budget: 0.05" \
-  -H "X-OmniRoute-Budget-Fallback: strict" \
+  -H "X-AgentProxy-Mode: fast" \
+  -H "X-AgentProxy-Budget: 0.05" \
+  -H "X-AgentProxy-Budget-Fallback: strict" \
   -d '{"model":"auto","messages":[{"role":"user","content":"hi"}]}'
 ```
 
@@ -286,7 +286,7 @@ vrijednosti napajaju postojeće ulaze motora `config.modePack` / `config.budgetC
 
 ## Sve Strategije Usmjeravanja
 
-OmniRoute-ov kombinirani mehanizam podržava **19 strategija usmjeravanja** (deklarirane u `src/shared/constants/routingStrategies.ts` → `ROUTING_STRATEGY_VALUES`). Sam Auto Combo mehanizam dostupan je putem `auto` strategije; ostale su dostupne za trajno pohranjene kombinacije.
+AgentProxy-ov kombinirani mehanizam podržava **19 strategija usmjeravanja** (deklarirane u `src/shared/constants/routingStrategies.ts` → `ROUTING_STRATEGY_VALUES`). Sam Auto Combo mehanizam dostupan je putem `auto` strategije; ostale su dostupne za trajno pohranjene kombinacije.
 
 | Strategija          | Opis                                                                                                                                                                                                                      |
 | :------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -650,7 +650,7 @@ Možete registrirati vlastitu `RouterStrategy` implementaciju putem javnog API-j
 import {
   registerStrategy,
   type RouterStrategy,
-} from "@omniroute/open-sse/services/autoCombo/routerStrategy";
+} from "@agentproxy/open-sse/services/autoCombo/routerStrategy";
 
 class MyCustomStrategy implements RouterStrategy {
   readonly name = "my-custom";
@@ -766,8 +766,8 @@ Ovaj skup testova izvodi se u CI (`test:integration` posao) s `--test-concurrenc
 
 | Naredba                                | Što radi                                                                                     |
 | :------------------------------------- | :------------------------------------------------------------------------------------------- |
-| `npm run test:combo:live`              | Stvarno usmjeravanje unutar procesa s `RUN_COMBO_LIVE=1`; snima živu OmniRoute bazu podataka |
-| `npm run test:combo:live:vps`          | HTTP pozivi prema živom OmniRoute poslužitelju (postavi `COMBO_LIVE_BASE_URL`)               |
+| `npm run test:combo:live`              | Stvarno usmjeravanje unutar procesa s `RUN_COMBO_LIVE=1`; snima živu AgentProxy bazu podataka |
+| `npm run test:combo:live:vps`          | HTTP pozivi prema živom AgentProxy poslužitelju (postavi `COMBO_LIVE_BASE_URL`)               |
 | `npm run test:combo:live:vps:failover` | Isto, s namjernim scenarijima prebacivanja u slučaju kvara                                   |
 
 Ovi testovi dima ispituju pravi mrežni put (combo → pružatelj usluge → dovršetak). Namjerno su

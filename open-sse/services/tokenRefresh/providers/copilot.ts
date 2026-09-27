@@ -2,7 +2,8 @@
 // Extracted from open-sse/services/tokenRefresh.ts — see ../shared.ts for
 // provenance notes (ported idea from KooshaPari's PR #7338, redone on tip).
 import { getGitHubCopilotRefreshHeaders } from "../../../config/providerHeaderProfiles.ts";
-import { runWithProxyContext } from "../../../utils/proxyFetch.ts";
+import { stripTrailingSlashes } from "../../../utils/urlSanitize.ts";
+import { safeOutboundFetch } from "@/shared/network/safeOutboundFetch";
 
 /**
  * Refresh GitHub Copilot token using a GitHub access token.
@@ -20,12 +21,18 @@ export async function refreshCopilotToken(
   baseUrl: string = "https://api.github.com"
 ) {
   try {
-    const tokenUrl = `${baseUrl.replace(/\/+$/, "")}/copilot_internal/v2/token`;
-    const response = await runWithProxyContext(proxyConfig, () =>
-      fetch(tokenUrl, {
-        headers: getGitHubCopilotRefreshHeaders(`token ${githubAccessToken}`),
-      })
-    );
+    const normalizedBaseUrl = stripTrailingSlashes(baseUrl);
+    const tokenUrl = `${normalizedBaseUrl}/copilot_internal/v2/token`;
+    const response = await safeOutboundFetch(tokenUrl, {
+      headers: getGitHubCopilotRefreshHeaders(`token ${githubAccessToken}`),
+      guard: "block-metadata",
+      // Preserve the long-standing github.com transport/mocking contract; the
+      // configurable GHE override is the authority that requires DNS pinning.
+      pinDns: normalizedBaseUrl !== "https://api.github.com",
+      allowRedirect: false,
+      retry: false,
+      proxyConfig,
+    });
 
     if (!response.ok) {
       log?.error?.("TOKEN_REFRESH", "Failed to refresh Copilot token", {

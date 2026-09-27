@@ -57,12 +57,7 @@ test("fetchRemoteImage blocks redirects to private image hosts", async () => {
   );
 });
 
-// The default guard mode (no `guard` option passed, matching production callers that rely on
-// `getProviderOutboundGuard()`'s local-first default) is "block-metadata". Every other test in
-// this file passes `guard: "public-only"` explicitly, which never exercised this branch — the
-// gap that let `validateRemoteImageUrl()`'s fall-through to the unchecked `parseOutboundUrl()`
-// for cloud-metadata hosts go undetected.
-test("fetchRemoteImage blocks cloud-metadata hosts under the default block-metadata guard", async () => {
+test("fetchRemoteImage blocks cloud-metadata hosts under the default client-safe guard", async () => {
   let called = false;
 
   await assert.rejects(
@@ -73,25 +68,83 @@ test("fetchRemoteImage blocks cloud-metadata hosts under the default block-metad
           return new Response("unexpected");
         },
       }),
-    /Blocked cloud-metadata endpoint/
+    /Blocked private or local provider URL/
   );
 
   assert.equal(called, false);
 });
 
-test("fetchRemoteImage allows private/LAN image hosts under the default block-metadata guard", async () => {
+test("fetchRemoteImage blocks private/LAN image hosts by default", async () => {
+  let called = false;
+
+  await assert.rejects(
+    () =>
+      fetchRemoteImage("http://192.168.1.50:8080/local.png", {
+        fetchImpl: async () => {
+          called = true;
+          return new Response("unexpected");
+        },
+      }),
+    /Blocked private or local provider URL/
+  );
+
+  assert.equal(called, false);
+});
+
+test("fetchRemoteImage preserves explicit local-first provider policy", async () => {
   const result = await fetchRemoteImage("http://192.168.1.50:8080/local.png", {
     fetchImpl: async () =>
       new Response(new Uint8Array([1, 2, 3]), {
         status: 200,
         headers: { "content-type": "image/png" },
       }),
+    guard: "block-metadata",
   });
 
   assert.equal(result.buffer.toString("base64"), "AQID");
 });
 
-test("fetchRemoteImage blocks redirects to cloud-metadata hosts under the default block-metadata guard", async () => {
+test("fetchRemoteImage blocks numeric loopback spellings before fetch", async () => {
+  for (const url of [
+    "http://2130706433/private.png",
+    "http://0x7f.1/private.png",
+    "http://0177.0.0.1/private.png",
+  ]) {
+    let called = false;
+
+    await assert.rejects(
+      () =>
+        fetchRemoteImage(url, {
+          fetchImpl: async () => {
+            called = true;
+            return new Response("unexpected");
+          },
+        }),
+      /Blocked private or local provider URL/
+    );
+
+    assert.equal(called, false, `fetch should not run for ${url}`);
+  }
+});
+
+test("fetchRemoteImage blocks trailing-dot localhost before fetch", async () => {
+  let called = false;
+
+  await assert.rejects(
+    () =>
+      fetchRemoteImage("http://localhost.:8080/private.png", {
+        fetchImpl: async () => {
+          called = true;
+          return new Response("unexpected");
+        },
+      }),
+    /Blocked private or local provider URL/
+  );
+
+  assert.equal(called, false);
+});
+
+test("fetchRemoteImage blocks redirects to cloud-metadata hosts under the default client-safe guard", async () => {
   await assert.rejects(
     () =>
       fetchRemoteImage("https://cdn.example.com/redirect.png", {
@@ -102,6 +155,6 @@ test("fetchRemoteImage blocks redirects to cloud-metadata hosts under the defaul
           }),
         lookup: publicLookup,
       }),
-    /Blocked cloud-metadata endpoint/
+    /Blocked private or local provider URL/
   );
 });

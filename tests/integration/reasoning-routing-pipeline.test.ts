@@ -89,8 +89,8 @@ test("chat pipeline applies a reasoning model/effort rule once and records route
   assert.equal(fetchCalls.length, 1);
   assert.equal(fetchCalls[0].body.model, "gpt-4.1-mini");
   assert.equal(fetchCalls[0].body.reasoning_effort, "high");
-  assert.equal(fetchCalls[0].body._omnirouteReasoningRule, undefined);
-  assert.equal(fetchCalls[0].body._omnirouteReasoningRouteTrace, undefined);
+  assert.equal(fetchCalls[0].body._agentproxyReasoningRule, undefined);
+  assert.equal(fetchCalls[0].body._agentproxyReasoningRouteTrace, undefined);
   assert.equal(callLog?.pipelinePayloads?.routeDecision?.sourceModel, "openai/gpt-4o-mini");
   assert.equal(callLog?.pipelinePayloads?.routeDecision?.targetModel, "openai/gpt-4.1-mini");
   assert.equal(callLog?.pipelinePayloads?.routeDecision?.targetEffort, "high");
@@ -124,8 +124,8 @@ test("chat pipeline stays unchanged when the reasoning rule table is empty", asy
   assert.equal(response.status, 200);
   assert.equal(fetchCalls.length, 1);
   assert.equal(fetchCalls[0].body.model, "gpt-4o-mini");
-  assert.equal(fetchCalls[0].body._omnirouteReasoningRule, undefined);
-  assert.equal(fetchCalls[0].body._omnirouteReasoningRouteTrace, undefined);
+  assert.equal(fetchCalls[0].body._agentproxyReasoningRule, undefined);
+  assert.equal(fetchCalls[0].body._agentproxyReasoningRouteTrace, undefined);
 });
 
 test("reasoning routing works through Responses and Anthropic Messages transports", async () => {

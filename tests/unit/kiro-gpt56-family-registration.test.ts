@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { REGISTRY } from "@omniroute/open-sse/config/providers/index.ts";
+import { REGISTRY } from "@agentproxy/open-sse/config/providers/index.ts";
 
 const { getResolvedModelCapabilities } = await import("../../src/lib/modelCapabilities.ts");
 

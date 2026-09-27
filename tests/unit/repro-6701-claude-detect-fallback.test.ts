@@ -1,5 +1,5 @@
 /**
- * Repro for #6701 — Claude Code CLI reported "not found" in OmniRoute's
+ * Repro for #6701 — Claude Code CLI reported "not found" in AgentProxy's
  * dashboard even though the user has used it before (settings.json present)
  * and upstream 9router (same machine, same settings.json) reports it as
  * "Connected".
@@ -8,13 +8,13 @@
  * only ever answers `installed` from binary resolution (known install paths
  * + PATH lookup via `where.exe`/`command -v`). If the CLI binary is not
  * currently resolvable (stale PATH inherited by a long-running/background
- * OmniRoute process, binary moved, etc.) it unconditionally reports
+ * AgentProxy process, binary moved, etc.) it unconditionally reports
  * installed:false — even when `~/.claude/settings.json` proves the tool was
  * installed and used before.
  *
  * Upstream 9router's equivalent route (src/app/api/cli-tools/claude-settings/route.js)
  * has a second-chance fallback: if `where`/`which` fails, it still reports
- * installed:true when the settings file exists on disk. OmniRoute's rewrite
+ * installed:true when the settings file exists on disk. AgentProxy's rewrite
  * into cliRuntime.ts dropped that fallback, which is the concrete regression
  * relative to 9router this issue's screenshots capture.
  *
@@ -41,7 +41,7 @@ describe("#6701 — claude detection should fall back to settings.json when bina
   before(() => {
     // Isolated config home *within* os.homedir() (CLI_CONFIG_HOME validation
     // requires this) so we never touch the real ~/.claude directory.
-    configHome = fs.mkdtempSync(path.join(os.homedir(), ".omniroute-test-6701-"));
+    configHome = fs.mkdtempSync(path.join(os.homedir(), ".agentproxy-test-6701-"));
     const claudeDir = path.join(configHome, ".claude");
     fs.mkdirSync(claudeDir, { recursive: true });
     fs.writeFileSync(

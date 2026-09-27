@@ -1,3 +1,5 @@
+import { canonicalizeTraeOAuthOrigin } from "@/lib/oauth/traeOrigins";
+
 /**
  * Pure parser for the Trae SOLO /authorize callback query string. Extracted
  * from route.ts so it can be unit-tested without touching the DB layer.
@@ -66,6 +68,13 @@ export function parseTraeCallbackQuery(q: URLSearchParams): ParsedTraeCallback |
   const userId = (info.UserID as string) || "";
   const region = (info.Region as string) || "US-East";
 
+  let host: string;
+  try {
+    host = canonicalizeTraeOAuthOrigin(q.get("host"));
+  } catch {
+    return { ok: false, error: "Unapproved Trae callback host/origin" };
+  }
+
   return {
     ok: true,
     record: {
@@ -85,7 +94,7 @@ export function parseTraeCallbackQuery(q: URLSearchParams): ParsedTraeCallback |
         tenant: "marscode",
         region,
         aiRegion: (info.AIRegion as string) || region,
-        host: q.get("host") || "https://api-us-east.trae.ai",
+        host,
         screenName: (info.ScreenName as string) || null,
         clientId: (userJwt.ClientID as string) || "en1oxy7wnw8j9n",
         refreshExpireAt: refreshExpiresAtMs || null,

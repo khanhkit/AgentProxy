@@ -16,7 +16,7 @@ import { resolveMcpCallerApiKeyId } from "../mcpCallerIdentity.ts";
  * `apiKeyId` — otherwise any MCP caller could read, write, or delete another
  * principal's memories by putting a different id in the tool arguments
  * (GHSA-cpv3-xr7r-xf8q, IDOR). The caller is resolved from the per-request HTTP
- * auth headers on SSE / Streamable HTTP transports, or from OMNIROUTE_API_KEY on
+ * auth headers on SSE / Streamable HTTP transports, or from AGENTPROXY_API_KEY on
  * stdio. The explicit argument is only honored as a fallback when no caller can
  * be resolved (a bare local stdio process with no configured key — already
  * trusted), preserving the local-tooling flow. Keeps MCP-stored memories under
@@ -54,8 +54,8 @@ export const MemoryClearSchema = z.object({
 });
 
 export const memoryTools = {
-  omniroute_memory_search: {
-    name: "omniroute_memory_search",
+  agentproxy_memory_search: {
+    name: "agentproxy_memory_search",
     description: "Search memories by query, type, or API key with token budget enforcement",
     scopes: ["read:memory"],
     inputSchema: MemorySearchSchema,
@@ -94,8 +94,8 @@ export const memoryTools = {
     },
   },
 
-  omniroute_memory_add: {
-    name: "omniroute_memory_add",
+  agentproxy_memory_add: {
+    name: "agentproxy_memory_add",
     description: "Add a new memory entry",
     scopes: ["write:memory"],
     inputSchema: MemoryAddSchema,
@@ -121,8 +121,8 @@ export const memoryTools = {
     },
   },
 
-  omniroute_memory_clear: {
-    name: "omniroute_memory_clear",
+  agentproxy_memory_clear: {
+    name: "agentproxy_memory_clear",
     description: "Clear memories for an API key, optionally filtered by type or age",
     scopes: ["write:memory"],
     inputSchema: MemoryClearSchema,

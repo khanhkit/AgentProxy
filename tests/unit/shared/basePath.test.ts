@@ -8,9 +8,9 @@ import {
 
 describe("normalizeBasePath", () => {
   it("normalizes leading/trailing slashes", () => {
-    assert.equal(normalizeBasePath("omniroute"), "/omniroute");
-    assert.equal(normalizeBasePath("/omniroute/"), "/omniroute");
-    assert.equal(normalizeBasePath("/omniroute"), "/omniroute");
+    assert.equal(normalizeBasePath("agentproxy"), "/agentproxy");
+    assert.equal(normalizeBasePath("/agentproxy/"), "/agentproxy");
+    assert.equal(normalizeBasePath("/agentproxy"), "/agentproxy");
     assert.equal(normalizeBasePath(""), "");
     assert.equal(normalizeBasePath("/"), "");
     assert.equal(normalizeBasePath(null), "");
@@ -18,47 +18,47 @@ describe("normalizeBasePath", () => {
 });
 
 describe("getDeployBasePath", () => {
-  it("reads NEXT_PUBLIC_OMNIROUTE_BASE_PATH first", () => {
+  it("reads NEXT_PUBLIC_AGENTPROXY_BASE_PATH first", () => {
     assert.equal(
       getDeployBasePath({
-        NEXT_PUBLIC_OMNIROUTE_BASE_PATH: "/omniroute",
-        OMNIROUTE_BASE_PATH: "/other",
+        NEXT_PUBLIC_AGENTPROXY_BASE_PATH: "/agentproxy",
+        AGENTPROXY_BASE_PATH: "/other",
       } as NodeJS.ProcessEnv),
-      "/omniroute"
+      "/agentproxy"
     );
   });
 
-  it("falls back to OMNIROUTE_BASE_PATH", () => {
+  it("falls back to AGENTPROXY_BASE_PATH", () => {
     assert.equal(
       getDeployBasePath({
-        OMNIROUTE_BASE_PATH: "/omniroute",
+        AGENTPROXY_BASE_PATH: "/agentproxy",
       } as NodeJS.ProcessEnv),
-      "/omniroute"
+      "/agentproxy"
     );
   });
 });
 
 describe("withBasePath", () => {
-  const base = "/omniroute";
+  const base = "/agentproxy";
 
   it("is a no-op when basePath is empty", () => {
     assert.equal(withBasePath("/api/health/ping", ""), "/api/health/ping");
   });
 
   it("prefixes absolute app paths", () => {
-    assert.equal(withBasePath("/api/health/ping", base), "/omniroute/api/health/ping");
-    assert.equal(withBasePath("/v1/models", base), "/omniroute/v1/models");
+    assert.equal(withBasePath("/api/health/ping", base), "/agentproxy/api/health/ping");
+    assert.equal(withBasePath("/v1/models", base), "/agentproxy/v1/models");
   });
 
   it("does not double-prefix", () => {
-    assert.equal(withBasePath("/omniroute/api/health/ping", base), "/omniroute/api/health/ping");
-    assert.equal(withBasePath("/omniroute", base), "/omniroute");
+    assert.equal(withBasePath("/agentproxy/api/health/ping", base), "/agentproxy/api/health/ping");
+    assert.equal(withBasePath("/agentproxy", base), "/agentproxy");
   });
 
   it("rewrites same-origin absolute URLs", () => {
     assert.equal(
       withBasePath("https://host.example/api/x", base, "https://host.example"),
-      "https://host.example/omniroute/api/x"
+      "https://host.example/agentproxy/api/x"
     );
   });
 

@@ -73,9 +73,9 @@ export function deleteCallLogArtifacts(relativePaths: string[]): {
   const result = { deletedArtifacts: 0, errors: 0 };
 
   for (const relPath of new Set(relativePaths)) {
-    if (deleteCallArtifact(relPath)) {
-      result.deletedArtifacts++;
-    }
+    const outcome = deleteCallArtifact(relPath);
+    if (outcome.state === "deleted") result.deletedArtifacts++;
+    if (outcome.state === "error") result.errors++;
   }
 
   cleanupEmptyCallLogDirs();

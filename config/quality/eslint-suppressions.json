@@ -1474,11 +1474,6 @@
       "count": 2
     }
   },
-  "src/lib/db/core.ts": {
-    "@typescript-eslint/no-unused-vars": {
-      "count": 3
-    }
-  },
   "src/lib/db/databaseSettings.ts": {
     "@typescript-eslint/no-unused-vars": {
       "count": 1

@@ -1,12 +1,12 @@
-import { handleRerank } from "@omniroute/open-sse/handlers/rerank.ts";
+import { handleRerank } from "@agentproxy/open-sse/handlers/rerank.ts";
 import {
   getProviderCredentialsWithQuotaPreflight,
   clearRecoveredProviderState,
 } from "@/sse/services/auth";
 import { withInjectionGuard } from "@/middleware/promptInjectionGuard";
-import { parseRerankModel, getRerankProvider } from "@omniroute/open-sse/config/rerankRegistry.ts";
-import { errorResponse } from "@omniroute/open-sse/utils/error.ts";
-import { HTTP_STATUS } from "@omniroute/open-sse/config/constants.ts";
+import { parseRerankModel, getRerankProvider } from "@agentproxy/open-sse/config/rerankRegistry.ts";
+import { errorResponse } from "@agentproxy/open-sse/utils/error.ts";
+import { HTTP_STATUS } from "@agentproxy/open-sse/config/constants.ts";
 import { enforceApiKeyPolicy } from "@/shared/utils/apiKeyPolicy";
 import { v1RerankSchema } from "@/shared/validation/schemas";
 import { isValidationFailure, validateBody } from "@/shared/validation/helpers";
@@ -16,10 +16,10 @@ import {
   rateLimitedProviderResponse,
 } from "@/app/api/v1/_shared/rateLimit";
 import { saveCallLog } from "@/lib/usageDb";
-import { attachOmniRouteMetaHeaders } from "@/domain/omnirouteResponseMeta";
+import { attachAgentProxyMetaHeaders } from "@/domain/agentproxyResponseMeta";
 import { generateRequestId } from "@/shared/utils/requestId";
-import { CORS_HEADERS } from "@omniroute/open-sse/utils/cors.ts";
-import { deriveRerankProviderForChatProvider } from "@omniroute/open-sse/config/rerankRegistry.ts";
+import { CORS_HEADERS } from "@agentproxy/open-sse/utils/cors.ts";
+import { deriveRerankProviderForChatProvider } from "@agentproxy/open-sse/config/rerankRegistry.ts";
 
 /**
  * Handle CORS preflight
@@ -117,7 +117,7 @@ async function postHandler(request, context) {
     const prefix = body.model.split("/")[0];
     if (prefix && prefix !== body.model) {
       try {
-        const { REGISTRY } = await import("@omniroute/open-sse/config/providerRegistry.ts");
+        const { REGISTRY } = await import("@agentproxy/open-sse/config/providerRegistry.ts");
         const chatEntry = (REGISTRY as Record<string, { baseUrl?: string } | undefined>)[prefix];
         derivedProvider = deriveRerankProviderForChatProvider(prefix, chatEntry);
       } catch {
@@ -274,7 +274,7 @@ async function postHandler(request, context) {
         }).catch(() => {});
 
         const headers = new Headers({ ...CORS_HEADERS, "Content-Type": "application/json" });
-        attachOmniRouteMetaHeaders(headers, {
+        attachAgentProxyMetaHeaders(headers, {
           provider: prefix,
           model: localModel,
           costUsd: 0,

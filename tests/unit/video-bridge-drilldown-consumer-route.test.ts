@@ -7,7 +7,7 @@ import test from "node:test";
 import sharp from "sharp";
 
 const TEST_DATA_DIR = fs.mkdtempSync(
-  path.join(os.tmpdir(), "omniroute-video-drilldown-consumer-route-")
+  path.join(os.tmpdir(), "agentproxy-video-drilldown-consumer-route-")
 );
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.API_KEY_SECRET = "video-drilldown-consumer-route-test-secret";
@@ -62,13 +62,13 @@ const derivation = {
 } as const;
 
 function get(url: string, key?: string): Request {
-  return new Request(`http://omniroute.local${url}`, {
+  return new Request(`http://agentproxy.local${url}`, {
     headers: key ? { Authorization: `Bearer ${key}` } : {},
   });
 }
 
 function del(url: string, key?: string): Request {
-  return new Request(`http://omniroute.local${url}`, {
+  return new Request(`http://agentproxy.local${url}`, {
     headers: key ? { Authorization: `Bearer ${key}` } : {},
     method: "DELETE",
   });

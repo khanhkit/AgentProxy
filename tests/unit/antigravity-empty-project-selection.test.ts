@@ -2,7 +2,7 @@
  * #11284 — Selection-side safety net for Antigravity accounts with no stored
  * Cloud Code projectId.
  *
- * Production evidence (VPS docker `omniroute`, 2026-08-24): a pool can hold
+ * Production evidence (VPS docker `agentproxy`, 2026-08-24): a pool can hold
  * healthy accounts WITH projectIds alongside accounts whose projectId is
  * empty and which were never confirmed missing (no errorCode) — those
  * empty-but-unconfirmed rows still win round-robin slots, burn the request on

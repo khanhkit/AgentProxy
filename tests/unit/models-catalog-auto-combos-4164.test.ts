@@ -1,7 +1,7 @@
 /**
  * #4164 — the built-in `auto/*` combos must be advertised in `/v1/models`.
  *
- * OmniRoute ships a zero-setup `auto/*` catalog (auto/best-coding, auto/pro-
+ * AgentProxy ships a zero-setup `auto/*` catalog (auto/best-coding, auto/pro-
  * reasoning, …) that the dashboard advertises and that resolve on demand via
  * createBuiltinAutoCombo. But the `/v1/models` listing only emitted persisted DB
  * combos + provider models, so clients that build their model picker from
@@ -15,7 +15,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-catalog-auto-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-catalog-auto-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.API_KEY_SECRET = process.env.API_KEY_SECRET || "catalog-auto-test-secret";
 

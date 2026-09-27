@@ -3,8 +3,8 @@ import test from "node:test";
 
 assert.ok(process.env.DATA_DIR, "the subprocess fixture requires an isolated DATA_DIR");
 assert.ok(
-  process.env.OMNIROUTE_PLUGINS_DIR,
-  "the subprocess fixture requires an isolated OMNIROUTE_PLUGINS_DIR"
+  process.env.AGENTPROXY_PLUGINS_DIR,
+  "the subprocess fixture requires an isolated AGENTPROXY_PLUGINS_DIR"
 );
 assert.equal(process.env.HOME, undefined, "the subprocess must not inherit HOME");
 assert.equal(process.env.CODEX_HOME, undefined, "the subprocess must not inherit CODEX_HOME");
@@ -19,7 +19,7 @@ test.afterEach(() => {
 
 test("terminates an upstream error event without exposing its text in the public SSE", async () => {
   const hostileError =
-    "SQLSTATE 42P01 at /srv/omniroute/private.ts:91 — Authorization: Bearer secret-token";
+    "SQLSTATE 42P01 at /srv/agentproxy/private.ts:91 — Authorization: Bearer secret-token";
   const requestedUrls: string[] = [];
   const logMessages: string[] = [];
 
@@ -64,6 +64,6 @@ test("terminates an upstream error event without exposing its text in the public
   assert.match(publicSse, /"content":"\\n\\n\[Erro: Adapta upstream error\]"/);
   assert.match(publicSse, /"finish_reason":"stop"/);
   assert.match(publicSse, /data: \[DONE\]/);
-  assert.doesNotMatch(publicSse, /SQLSTATE|\/srv\/omniroute|secret-token/);
-  assert.doesNotMatch(logMessages.join("\n"), /SQLSTATE|\/srv\/omniroute|secret-token/);
+  assert.doesNotMatch(publicSse, /SQLSTATE|\/srv\/agentproxy|secret-token/);
+  assert.doesNotMatch(logMessages.join("\n"), /SQLSTATE|\/srv\/agentproxy|secret-token/);
 });

@@ -14,7 +14,7 @@ import path from "node:path";
 import test, { after, before } from "node:test";
 import { SignJWT } from "jose";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-ff-vl-route-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-ff-vl-route-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const { GET, PUT } = await import("../../src/app/api/settings/feature-flags/route.ts");

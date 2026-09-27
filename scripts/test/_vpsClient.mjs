@@ -1,14 +1,14 @@
 /**
  * scripts/test/_vpsClient.mjs
  *
- * Reusable Phase-3 VPS HTTP client for OmniRoute combo live-smoke tests.
+ * Reusable Phase-3 VPS HTTP client for AgentProxy combo live-smoke tests.
  * NOT a test file — intentionally placed in scripts/test/ so check:test-discovery
  * does not scan it.
  *
  * Combo create/delete mechanism: SSH-sqlite fallback.
  * /api/combos requires management auth (returns 401 unauthenticated).
  * We insert/delete rows directly via:
- *   execFileSync("ssh", ["root@192.168.0.15", "sqlite3", "/root/.omniroute/storage.sqlite", SQL])
+ *   execFileSync("ssh", ["root@192.168.0.15", "sqlite3", "/root/.agentproxy/storage.sqlite", SQL])
  * Values are static test-scoped data — no untrusted interpolation.
  *
  * combos table schema (PRAGMA table_info):
@@ -30,7 +30,7 @@ import { randomUUID } from "node:crypto";
 const BASE_URL = process.env.COMBO_LIVE_BASE_URL ?? "http://192.168.0.15:20128";
 const API_KEY = process.env.COMBO_LIVE_API_KEY ?? null;
 const VPS_SSH_HOST = "root@192.168.0.15";
-const VPS_DB_PATH = "/root/.omniroute/storage.sqlite";
+const VPS_DB_PATH = "/root/.agentproxy/storage.sqlite";
 
 // ---------------------------------------------------------------------------
 // Nonce counter — increments per call so semantic cache cannot serve stale
@@ -228,7 +228,7 @@ const isMain = process.argv[1]?.endsWith("_vpsClient.mjs") ||
 
 if (isMain) {
   (async () => {
-    console.log("=== OmniRoute VPS Phase-3 Preflight ===");
+    console.log("=== AgentProxy VPS Phase-3 Preflight ===");
     console.log(`Base URL: ${BASE_URL}`);
     console.log(`API key: ${API_KEY ? "set (Bearer)" : "not set (REQUIRE_API_KEY=false)"}`);
     console.log();

@@ -5,7 +5,7 @@ import os from "node:os";
 import path from "node:path";
 
 // #10080 — `loadAvailableProviders()` always returned the 6-entry
-// COMMON_PROVIDERS fallback, so `omniroute keys add <provider>` rejected ~290 of
+// COMMON_PROVIDERS fallback, so `agentproxy keys add <provider>` rejected ~290 of
 // the ~296 catalog providers with "Unknown provider". Two independent causes:
 //   1. the parser required `typescript`, a devDependency absent from published
 //      installs, and swallowed the failure;
@@ -122,7 +122,7 @@ test("loadAvailableProviders reads the decomposed catalog, not the 6-entry fallb
 });
 
 test("falls back to COMMON_PROVIDERS when no catalog is present", () => {
-  const emptyRoot = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-empty-root-"));
+  const emptyRoot = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-empty-root-"));
   try {
     const providers = loadAvailableProviders({ rootDir: emptyRoot });
     assert.equal(providers.length, COMMON_PROVIDERS.length);
@@ -133,7 +133,7 @@ test("falls back to COMMON_PROVIDERS when no catalog is present", () => {
 });
 
 test("an explicit catalogPath still overrides the directory walk", () => {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-catalog-"));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-catalog-"));
   try {
     const file = path.join(dir, "custom.ts");
     fs.writeFileSync(

@@ -35,6 +35,7 @@ test("composite restores node_modules via actions/cache with an exact, fully-qua
     "runner.os",
     "runner.arch",
     "steps.node.outputs.version",
+    "package.json",
     "package-lock.json",
     ".npmrc",
   ]) {

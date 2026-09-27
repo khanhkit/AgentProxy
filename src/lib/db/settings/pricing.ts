@@ -4,8 +4,8 @@
 
 import { getDbInstance } from "../core";
 import { backupDbFile } from "../backup";
-import { invalidateDbCache } from "../readCache";
-import { PROVIDER_ID_TO_ALIAS } from "@omniroute/open-sse/config/providerModels.ts";
+import { getCachedPricing, invalidateDbCache } from "../readCache";
+import { PROVIDER_ID_TO_ALIAS } from "@agentproxy/open-sse/config/providerModels.ts";
 import { type JsonRecord, toRecord } from "./shared";
 
 type PricingModels = Record<string, JsonRecord>;
@@ -16,7 +16,7 @@ export type PricingSourceMap = Record<string, Record<string, PricingSource>>;
 async function touchPricing(): Promise<void> {
   invalidateDbCache("pricing");
   try {
-    const { clearTierCache } = await import("@omniroute/open-sse/services/tierResolver");
+    const { clearTierCache } = await import("@agentproxy/open-sse/services/tierResolver");
     clearTierCache();
   } catch {
     // fail-open: a missed tier invalidation must never break a price write
@@ -131,7 +131,7 @@ export async function getPricingWithSources(): Promise<{
 }
 
 export async function getPricingForModel(provider: string, model: string) {
-  const pricing = await getPricing();
+  const pricing = (await getCachedPricing()) as PricingByProvider;
 
   const findKeyInsensitive = <T>(
     obj: Record<string, T> | undefined | null,

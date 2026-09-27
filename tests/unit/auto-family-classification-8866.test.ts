@@ -8,7 +8,7 @@
  */
 import test from "node:test";
 import assert from "node:assert/strict";
-import { MODEL_FAMILIES } from "@omniroute/open-sse/services/autoCombo/modelFamily.ts";
+import { MODEL_FAMILIES } from "@agentproxy/open-sse/services/autoCombo/modelFamily.ts";
 import { resolveAutoRoutingState } from "../../src/sse/handlers/autoRouting.ts";
 
 test("#8866: every model family is recognized as auto/<family>", async () => {

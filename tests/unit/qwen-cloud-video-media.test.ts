@@ -4,7 +4,7 @@ import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-process.env.DATA_DIR = mkdtempSync(join(tmpdir(), "omniroute-qwen-cloud-video-"));
+process.env.DATA_DIR = mkdtempSync(join(tmpdir(), "agentproxy-qwen-cloud-video-"));
 
 const { VIDEO_PROVIDERS, parseVideoModel } = await import("../../open-sse/config/videoRegistry.ts");
 const { resolveProviderServiceKinds } = await import("../../open-sse/config/mediaServiceKinds.ts");

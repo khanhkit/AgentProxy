@@ -11,7 +11,7 @@
 //   - Rationale: the only tsconfig that covers the full open-sse workspace
 //     (src+open-sse together). `tsconfig.json` excludes open-sse; the
 //     `tsconfig.typecheck-core.json` only lists 26 explicit files (partial).
-//     open-sse/tsconfig.json declares path aliases (`@/*`, `@omniroute/open-sse/*`)
+//     open-sse/tsconfig.json declares path aliases (`@/*`, `@agentproxy/open-sse/*`)
 //     relative to its own directory, so it resolves both workspaces correctly and
 //     yields a representative global %. It carried a `baseUrl: ".."` until TS 7
 //     readiness removed it; that also stopped `electron/*.js` from being pulled

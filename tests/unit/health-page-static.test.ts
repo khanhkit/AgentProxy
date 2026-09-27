@@ -20,7 +20,7 @@ test("health page leads with a plain-language verdict and a collapsible advanced
   assert.match(source, /healthVerdictActionRequired/);
 
   // No hardcoded English outcomes in the verdict header
-  assert.doesNotMatch(source, /OmniRoute is ready/);
+  assert.doesNotMatch(source, /AgentProxy is ready/);
 
   // Collapsible "Advanced diagnostics" section
   assert.match(source, /advancedDiagnosticsTitle/);

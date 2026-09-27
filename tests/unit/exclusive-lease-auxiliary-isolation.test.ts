@@ -4,7 +4,7 @@ import os from "node:os";
 import path from "node:path";
 import test from "node:test";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-lease-auxiliary-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-lease-auxiliary-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.DISABLE_SQLITE_AUTO_BACKUP = "true";
 process.env.API_KEY_SECRET = "exclusive-lease-auxiliary-test-secret";
@@ -73,7 +73,7 @@ test("translator send accepts a FREE lease-capable connection and attempts provi
   await markLeaseOnly(connection.id);
 
   const _response = await translator.POST(
-    new Request("http://omniroute.local/api/translator/send", {
+    new Request("http://agentproxy.local/api/translator/send", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -97,7 +97,7 @@ test("translator send excludes an ACTIVE leased connection before provider fetch
   assert.equal(acquired.kind, "ACQUIRED");
 
   const response = await translator.POST(
-    new Request("http://omniroute.local/api/translator/send", {
+    new Request("http://agentproxy.local/api/translator/send", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -116,7 +116,7 @@ test("translator request preview materializes a FREE lease-capable credential", 
   await markLeaseOnly(connection.id);
 
   const response = await translatorPreview.POST(
-    new Request("http://omniroute.local/api/translator/translate", {
+    new Request("http://agentproxy.local/api/translator/translate", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -144,7 +144,7 @@ test("translator request preview never materializes an ACTIVE leased credential"
   assert.equal(acquired.kind, "ACQUIRED");
 
   const response = await translatorPreview.POST(
-    new Request("http://omniroute.local/api/translator/translate", {
+    new Request("http://agentproxy.local/api/translator/translate", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -273,7 +273,7 @@ test("usage refresh allows FREE lease-reserved connection and queries provider q
   };
 
   const response = await usageRoute.GET(
-    new Request(`http://omniroute.local/api/usage/${connection.id}`),
+    new Request(`http://agentproxy.local/api/usage/${connection.id}`),
     { params: Promise.resolve({ connectionId: connection.id }) }
   );
 
@@ -321,7 +321,7 @@ test("usage refresh allows ACTIVE leased connection and queries provider quota",
   };
 
   const response = await usageRoute.GET(
-    new Request(`http://omniroute.local/api/usage/${connection.id}`),
+    new Request(`http://agentproxy.local/api/usage/${connection.id}`),
     { params: Promise.resolve({ connectionId: connection.id }) }
   );
 

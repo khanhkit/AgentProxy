@@ -62,8 +62,8 @@ export class ServerSupervisor {
     this.crashLog = [];
     this.instrumentationFailureHintPrinted = false;
 
-    const showLog = process.env.OMNIROUTE_SHOW_LOG === "1";
-    // #6321: stdout used to be discarded (`"ignore"`) whenever `--log`/OMNIROUTE_SHOW_LOG
+    const showLog = process.env.AGENTPROXY_SHOW_LOG === "1";
+    // #6321: stdout used to be discarded (`"ignore"`) whenever `--log`/AGENTPROXY_SHOW_LOG
     // wasn't set (the default) — any debug/pino output written to stdout vanished
     // silently, so a boot that never becomes ready looked like a dead hang with zero
     // output even at APP_LOG_LEVEL=debug. Pipe stdout too and buffer it alongside

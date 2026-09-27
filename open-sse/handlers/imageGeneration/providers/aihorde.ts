@@ -28,7 +28,7 @@ const POLL_INTERVAL_MAX_MS = 8_000;
 // additionally capped to whatever remains of the overall generation deadline.
 const HORDE_API_CALL_TIMEOUT_MS = 30_000;
 // R2 image downloads point at a URL Horde's response supplies, not a fixed
-// OmniRoute-controlled host, so they get the SSRF host guard too.
+// AgentProxy-controlled host, so they get the SSRF host guard too.
 const HORDE_IMAGE_DOWNLOAD_TIMEOUT_MS = 60_000;
 const MAX_HORDE_IMAGE_BYTES = 25 * 1024 * 1024;
 
@@ -101,12 +101,12 @@ async function cancelHordeJob(jobId: string, apiKey: string): Promise<void> {
 
 async function fetchHordeImageBytes(
   img: string,
-  options: { signal?: AbortSignal | null; timeoutMs: number }
+  options: { signal?: AbortSignal | null; timeoutMs: number; fetchImpl?: typeof fetch }
 ): Promise<string> {
   const value = img.trim();
   if (value.startsWith("http://") || value.startsWith("https://")) {
     // Horde's response supplies this URL (a signed R2 storage link), not a
-    // fixed OmniRoute-controlled host — route it through the repository's
+    // fixed AgentProxy-controlled host — route it through the repository's
     // established bounded remote-image fetch (strict public-host validation,
     // streaming byte cap, redirect limit, abort-aware timeout) instead of
     // a bare fetch(). Same helper `imageGeneration.ts` already uses for other
@@ -116,6 +116,7 @@ async function fetchHordeImageBytes(
       timeoutMs: options.timeoutMs,
       signal: options.signal ?? undefined,
       maxBytes: MAX_HORDE_IMAGE_BYTES,
+      fetchImpl: options.fetchImpl,
     });
     if (remote.buffer.length === 0) throw new Error("Horde R2 download returned an empty image");
     return remote.buffer.toString("base64");
@@ -136,6 +137,7 @@ export async function handleAiHordeImageGeneration({
   log,
   signal = null,
   timeoutMs = GENERATE_TIMEOUT_MS,
+  remoteMediaFetchImpl = undefined,
 }: {
   model: string;
   provider: string;
@@ -147,6 +149,8 @@ export async function handleAiHordeImageGeneration({
     error: (scope: string, message: string) => void;
   } | null;
   signal?: AbortSignal | null;
+  /** Internal/test transport seam for public-only image downloads. Production leaves this unset. */
+  remoteMediaFetchImpl?: typeof fetch;
   /** Overridable for tests; production callers should rely on the default. */
   timeoutMs?: number;
 }) {
@@ -330,6 +334,7 @@ export async function handleAiHordeImageGeneration({
             b64_json: await fetchHordeImageBytes(img, {
               signal,
               timeoutMs: boundedTimeoutMs(deadline, HORDE_IMAGE_DOWNLOAD_TIMEOUT_MS),
+              fetchImpl: remoteMediaFetchImpl,
             }),
             revised_prompt: prompt,
           });

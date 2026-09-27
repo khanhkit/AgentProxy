@@ -11,7 +11,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-speech-combo-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-speech-combo-"));
 const ORIGINAL_DATA_DIR = process.env.DATA_DIR;
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.JWT_SECRET = "test-jwt-secret-for-speech-combo-tests";
@@ -20,7 +20,7 @@ fs.mkdirSync(TEST_DATA_DIR, { recursive: true });
 
 const core = await import("@/lib/db/core.ts");
 const { createCombo } = await import("@/lib/db/combos");
-const { executeSpeechCombo } = await import("@omniroute/open-sse/services/speechCombo");
+const { executeSpeechCombo } = await import("@agentproxy/open-sse/services/speechCombo");
 
 async function cleanupTestDataDir() {
   let lastError: unknown;

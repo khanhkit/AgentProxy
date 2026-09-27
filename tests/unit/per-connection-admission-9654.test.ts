@@ -172,7 +172,7 @@ test("admitChatRequest with explicit controller overrides per-connection lookup"
 test("admitChatStructure routes structural rejection to per-connection controller when heap pressure is genuinely high (#10183/#10268)", async () => {
   // occupy sess-a's per-connection controller via the module-level instance.
   // #503-fanout: the production singleton's legacy count cap is unlimited by
-  // default (OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT unset in tests) — the real
+  // default (AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT unset in tests) — the real
   // capacity dimension is now the auto-derived ingest byte budget, so
   // "occupied" must exhaust that budget, not the (now unlimited) count.
   const controller = perConnectionAdmissionController.getController("sess-a");

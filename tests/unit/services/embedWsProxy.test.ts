@@ -83,15 +83,15 @@ describe("embedWsProxy", () => {
 
   it("idempotent — initEmbedWsProxy does not bind twice", async () => {
     // Reset the global flag so we can test it from scratch
-    const prev = globalThis.__omnirouteEmbedWsStarted;
-    globalThis.__omnirouteEmbedWsStarted = true;
+    const prev = globalThis.__agentproxyEmbedWsStarted;
+    globalThis.__agentproxyEmbedWsStarted = true;
 
     const { initEmbedWsProxy } = await import("../../../src/lib/services/embedWsProxy.ts");
 
     // Should return immediately without creating a server (already started)
     assert.doesNotThrow(() => initEmbedWsProxy());
 
-    globalThis.__omnirouteEmbedWsStarted = prev;
+    globalThis.__agentproxyEmbedWsStarted = prev;
   });
 
   it("PATH_RE: /9router/path correctly identifies name and rest", () => {

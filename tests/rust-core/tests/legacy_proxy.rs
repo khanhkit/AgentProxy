@@ -1,5 +1,6 @@
 use std::{convert::Infallible, time::Duration};
 
+use agentproxy_gateway::{app, AppState};
 use async_stream::stream;
 use axum::{
     body::{Body, Bytes},
@@ -9,7 +10,6 @@ use axum::{
     Router,
 };
 use http_body_util::BodyExt;
-use agentproxy_gateway::{app, AppState};
 use tokio::{
     net::TcpListener,
     time::{sleep, timeout},
@@ -65,7 +65,7 @@ async fn unknown_http_route_is_stream_proxied_to_legacy_next() {
         .body(Body::empty())
         .unwrap();
 
-    let response = app(state).oneshot(request).await.unwrap();
+    let response = app(state.clone()).oneshot(request).await.unwrap();
     assert_eq!(response.status(), StatusCode::CREATED);
     assert_eq!(response.headers().get("x-legacy").unwrap(), "yes");
     let body = response.into_body().collect().await.unwrap().to_bytes();
@@ -83,10 +83,13 @@ async fn legacy_sse_is_not_buffered_by_rust_fallback() {
         .body(Body::from("{}"))
         .unwrap();
 
-    let response = timeout(Duration::from_millis(120), app(state).oneshot(request))
-        .await
-        .expect("proxy must return before delayed second SSE chunk")
-        .unwrap();
+    let response = timeout(
+        Duration::from_millis(120),
+        app(state.clone()).oneshot(request),
+    )
+    .await
+    .expect("proxy must return before delayed second SSE chunk")
+    .unwrap();
     assert_eq!(response.status(), StatusCode::OK);
 
     let mut body = response.into_body();

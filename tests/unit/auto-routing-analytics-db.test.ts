@@ -5,7 +5,7 @@ import os from "node:os";
 import path from "node:path";
 
 const originalDataDir = process.env.DATA_DIR;
-const testDataDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-auto-routing-analytics-"));
+const testDataDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-auto-routing-analytics-"));
 process.env.DATA_DIR = testDataDir;
 
 const core = await import("../../src/lib/db/core.ts");

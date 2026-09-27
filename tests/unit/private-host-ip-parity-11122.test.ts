@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 
 import { build } from "esbuild";
 
-import { ipVersion, isPrivateHost } from "../../src/shared/network/privateHost.ts";
+import { ipVersion, isPrivateHost, normalizeHost } from "../../src/shared/network/privateHost.ts";
 
 // #11122 — that PR pointed `isLocalProvider()` at `isPrivateHost`, imported from
 // `outboundUrlGuard.ts` (which imports `node:net`). `open-sse/config/providerRegistry.ts` is in
@@ -104,6 +104,17 @@ test("an over-long input is rejected rather than fed to the alternation", () => 
   const long = `${"f".repeat(200)}::1`;
   assert.equal(ipVersion(long), 0);
   assert.equal(isIP(long), 0);
+});
+
+test("normalizeHost strips pathological trailing-dot runs in linear time (CodeQL #482)", () => {
+  const pathological = `Example.COM${".".repeat(250_000)}`;
+  const started = performance.now();
+  assert.equal(normalizeHost(pathological), "example.com");
+  const elapsedMs = performance.now() - started;
+  assert.ok(
+    elapsedMs < 500,
+    `normalizeHost took ${elapsedMs.toFixed(1)}ms on a trailing-dot run — possible ReDoS regression`
+  );
 });
 
 test("isPrivateHost keeps its verdicts after the move", () => {

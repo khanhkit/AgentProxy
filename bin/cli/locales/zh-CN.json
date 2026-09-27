@@ -1,8 +1,8 @@
 {
   "common": {
     "error": "错误：{message}",
-    "serverOffline": "OmniRoute 服务器已离线。请启动：omniroute serve",
-    "authRequired": "需要认证。请设置 OMNIROUTE_API_KEY 或运行：omniroute setup",
+    "serverOffline": "AgentProxy 服务器已离线。请启动：agentproxy serve",
+    "authRequired": "需要认证。请设置 AGENTPROXY_API_KEY 或运行：agentproxy setup",
     "rateLimited": "请求超出限制。请在 {seconds}s 后重试。",
     "timeout": "请求在 {ms}ms 后超时。",
     "success": "完成。",
@@ -15,19 +15,19 @@
     "yesOpt": "跳过确认"
   },
   "program": {
-    "description": "OmniRoute — 具有自动故障转移的智能 AI 路由器",
+    "description": "AgentProxy — 具有自动故障转移的智能 AI 路由器",
     "version": "打印版本并退出",
     "output": "输出格式（table, json, jsonl, csv）",
     "quiet": "禁止非必要输出",
     "no_color": "禁用彩色输出",
     "timeout": "HTTP 请求超时（毫秒）",
-    "api_key": "OmniRoute 服务器的 API 密钥",
-    "base_url": "OmniRoute 服务器的基础 URL",
+    "api_key": "AgentProxy 服务器的 API 密钥",
+    "base_url": "AgentProxy 服务器的基础 URL",
     "context": "此命令使用的服务器上下文/配置文件",
-    "lang": "设置 CLI 显示语言（覆盖 OMNIROUTE_LANG）"
+    "lang": "设置 CLI 显示语言（覆盖 AGENTPROXY_LANG）"
   },
   "setup": {
-    "title": "OmniRoute 设置",
+    "title": "AgentProxy 设置",
     "passwordPrompt": "管理员密码",
     "providerPrompt": "默认提供者（留空跳过）",
     "done": "设置完成",
@@ -39,22 +39,22 @@
     "loginEnabled": "登录：已启用（密码已更新）",
     "loginDisabled": "登录：已禁用",
     "providerInfo": "提供者：{info}",
-    "opencode": "安装并配置随附的 @omniroute/opencode-plugin 以用于 OpenCode"
+    "opencode": "安装并配置随附的 @agentproxy/opencode-plugin 以用于 OpenCode"
   },
   "doctor": {
-    "title": "OmniRoute 诊断",
+    "title": "AgentProxy 诊断",
     "dbOk": "数据库：正常（{path}）",
-    "dbMissing": "数据库：未初始化 — 运行 omniroute setup",
+    "dbMissing": "数据库：未初始化 — 运行 agentproxy setup",
     "portOk": "端口 {port}：可用",
     "portConflict": "端口 {port}：已被其他进程占用",
     "encryptionOk": "加密密钥：已配置",
-    "encryptionMissing": "加密密钥缺失 — 运行 omniroute setup",
+    "encryptionMissing": "加密密钥缺失 — 运行 agentproxy setup",
     "allGood": "所有检查通过。",
     "warnings": "{count} 个警告 — 见上文。"
   },
   "providers": {
     "title": "提供者",
-    "noProviders": "未配置提供者。运行：omniroute setup",
+    "noProviders": "未配置提供者。运行：agentproxy setup",
     "testing": "正在测试 {name}...",
     "available": "{count} 个提供者可用",
     "connected": "已连接",
@@ -83,7 +83,7 @@
       "dryRunOpt": "预览将要更改的内容而不写入",
       "confirmPrompt": "替换连接 \"{name}\" ({id}) 的 API 密钥？[y/N] ",
       "dryRunResult": "【模拟】将轮换 \"{name}\" ({id}) 的密钥。未做任何更改。",
-      "oauthHint": "OAuth 连接 — 运行：omniroute oauth {provider}",
+      "oauthHint": "OAuth 连接 — 运行：agentproxy oauth {provider}",
       "envVarEmpty": "环境变量 {var} 未设置或为空。",
       "success": "已为 \"{name}\" 轮换密钥。运行 providers test {id} 验证。",
       "testPassed": "轮换后测试通过。",
@@ -94,7 +94,7 @@
       "providerOpt": "按提供者名称筛选",
       "header": "ID         提供者       名称                     过期状态  测试状态  冷却至",
       "noData": "没有可用的提供者连接数据。",
-      "requiresServer": "providers status 需要 OmniRoute 服务器正在运行。"
+      "requiresServer": "providers status 需要 AgentProxy 服务器正在运行。"
     }
   },
   "keys": {
@@ -102,8 +102,8 @@
     "addDescription": "为提供者添加或更新 API 密钥",
     "listDescription": "列出所有已配置的 API 密钥",
     "removeDescription": "移除提供者的 API 密钥",
-    "regenerateDescription": "重新生成 OmniRoute API 密钥",
-    "revokeDescription": "撤销 OmniRoute API 密钥",
+    "regenerateDescription": "重新生成 AgentProxy API 密钥",
+    "revokeDescription": "撤销 AgentProxy API 密钥",
     "revealDescription": "显示未掩码的 API 密钥值",
     "usageDescription": "显示 API 密钥的最近使用情况",
     "usageLimitOpt": "最近请求数",
@@ -218,10 +218,10 @@
     "reasoning": "推理努力级别（low|medium|high）",
     "thinking": "扩展思维令牌预算",
     "explain": "在 stderr 中打印回退树和成本范围",
-    "noCombo": "未找到匹配的组合。使用以下命令配置：omniroute combo create"
+    "noCombo": "未找到匹配的组合。使用以下命令配置：agentproxy combo create"
   },
   "chat": {
-    "description": "向 OmniRoute 发送一次性聊天提示",
+    "description": "向 AgentProxy 发送一次性聊天提示",
     "file": "从文件读取提示",
     "stdin": "从标准输入读取提示",
     "system": "系统提示",
@@ -234,14 +234,14 @@
     "combo": "强制指定组合名称",
     "responses_api": "使用 /v1/responses 而不是 /v1/chat/completions",
     "stream": "增量流式传输响应",
-    "no_history": "不保存到 ~/.omniroute/cli-history.jsonl",
+    "no_history": "不保存到 ~/.agentproxy/cli-history.jsonl",
     "error": {
       "empty_prompt": "错误：需要提供提示（位置参数、--file 或 --stdin）"
     }
   },
   "serve": {
-    "description": "启动 OmniRoute 服务器（默认操作）",
-    "starting": "正在启动 OmniRoute 服务器（端口 {port}）...",
+    "description": "启动 AgentProxy 服务器（默认操作）",
+    "starting": "正在启动 AgentProxy 服务器（端口 {port}）...",
     "ready": "就绪地址：http://localhost:{port}",
     "stopping": "正在停止服务器（PID {pid}）...",
     "stopped": "服务器已停止。",
@@ -254,12 +254,12 @@
     "max_restarts": "30 秒内的最大崩溃重启次数（默认：2）",
     "tray": "显示系统托盘图标（仅桌面，选择加入）",
     "no_tray": "禁用系统托盘图标",
-    "tls_cert": "用于提供 HTTPS 服务的 TLS 证书（PEM）路径（也可用 OMNIROUTE_TLS_CERT）",
-    "tls_key": "用于提供 HTTPS 服务的 TLS 私钥（PEM）路径（也可用 OMNIROUTE_TLS_KEY）"
+    "tls_cert": "用于提供 HTTPS 服务的 TLS 证书（PEM）路径（也可用 AGENTPROXY_TLS_CERT）",
+    "tls_key": "用于提供 HTTPS 服务的 TLS 私钥（PEM）路径（也可用 AGENTPROXY_TLS_KEY）"
   },
   "backup": {
     "title": "备份",
-    "description": "创建 OmniRoute 数据备份",
+    "description": "创建 AgentProxy 数据备份",
     "creating": "正在创建备份...",
     "done": "备份已保存至 {path}",
     "noFiles": "没有可备份的文件（数据库未初始化）",
@@ -271,7 +271,7 @@
     "noBackups": "未找到备份。",
     "notFound": "未找到备份：{name}",
     "confirmRestore": "用 {ts} 的备份覆盖当前数据？",
-    "createDescription": "创建 OmniRoute 数据备份",
+    "createDescription": "创建 AgentProxy 数据备份",
     "nameOpt": "自定义备份名称",
     "cloudOpt": "将备份上传到云存储",
     "encryptOpt": "使用 AES-256-GCM 加密备份",
@@ -289,14 +289,14 @@
       "statusDescription": "显示当前备份计划状态",
       "cronOpt": "计划 cron 表达式（默认：每天凌晨 3 点）",
       "enabled": "已启用自动备份（cron：{cron}）。",
-      "hint": "  计划由 omniroute serve 启动时读取。",
+      "hint": "  计划由 agentproxy serve 启动时读取。",
       "disabled": "已禁用自动备份。",
       "notConfigured": "未配置备份计划。"
     }
   },
   "health": {
     "description": "检查服务器健康状态和组件状态",
-    "noServer": "服务器未运行。启动：omniroute serve",
+    "noServer": "服务器未运行。启动：agentproxy serve",
     "title": "健康状态",
     "status": "状态：{status}",
     "uptime": "运行时间：{uptime}",
@@ -305,21 +305,21 @@
   },
   "quota": {
     "description": "显示提供者配额使用情况",
-    "noServer": "服务器未运行。启动：omniroute serve",
+    "noServer": "服务器未运行。启动：agentproxy serve",
     "noData": "没有可用的配额信息。"
   },
   "cache": {
     "description": "管理响应缓存",
-    "noServer": "服务器未运行。启动：omniroute serve",
+    "noServer": "服务器未运行。启动：agentproxy serve",
     "cleared": "缓存已清除。",
     "clearFailed": "清除缓存失败。"
   },
   "redis": {
-    "description": "一键启动本地 Redis 容器（Podman 或 Docker），用于 OmniRoute 缓存和配额跟踪"
+    "description": "一键启动本地 Redis 容器（Podman 或 Docker），用于 AgentProxy 缓存和配额跟踪"
   },
   "test": {
     "description": "测试提供者连接",
-    "noServer": "服务器未运行。启动：omniroute serve",
+    "noServer": "服务器未运行。启动：agentproxy serve",
     "testing": "正在测试 {provider} / {model}...",
     "passed": "连接成功！",
     "failed": "连接失败：{error}",
@@ -331,7 +331,7 @@
     "saved": "结果已保存至 {path}",
     "compareTitle": "模型比较",
     "compareMinTwo": "--compare 需要至少两个模型（逗号分隔）",
-    "noProviders": "未配置提供者。添加：omniroute keys add"
+    "noProviders": "未配置提供者。添加：agentproxy keys add"
   },
   "update": {
     "checking": "正在检查更新...",
@@ -403,7 +403,7 @@
     }
   },
   "policy": {
-    "description": "管理 OmniRoute 授权策略",
+    "description": "管理 AgentProxy 授权策略",
     "list": {
       "description": "列出策略",
       "kind": "按类型筛选（allow|deny|rate-limit|cost-cap）",
@@ -440,7 +440,7 @@
     }
   },
   "compression": {
-    "description": "配置和检查 OmniRoute 压缩管道",
+    "description": "配置和检查 AgentProxy 压缩管道",
     "status": {
       "description": "显示当前压缩状态和设置"
     },
@@ -494,18 +494,18 @@
     "confirmRotate": "轮换隧道 {type}？（将生成新 URL）"
   },
   "stop": {
-    "description": "停止 OmniRoute 服务器",
+    "description": "停止 AgentProxy 服务器",
     "stopping": "正在停止服务器（PID {pid}）...",
     "stopped": "服务器已停止。",
     "notRunning": "没有服务器在运行。",
     "portFallback": "未找到 PID 文件，尝试通过端口停止..."
   },
   "restart": {
-    "description": "重启 OmniRoute 服务器",
-    "restarting": "正在重启 OmniRoute 服务器..."
+    "description": "重启 AgentProxy 服务器",
+    "restarting": "正在重启 AgentProxy 服务器..."
   },
   "dashboard": {
-    "description": "在浏览器中打开 OmniRoute 仪表盘",
+    "description": "在浏览器中打开 AgentProxy 仪表盘",
     "opening": "正在打开仪表盘：{url}",
     "urlOnly": "仅打印仪表盘 URL，不打开浏览器",
     "tui": "打开交互式 TUI 仪表盘（终端 UI，7 个标签页）"
@@ -513,7 +513,7 @@
   "models": {
     "description": "列出可用模型（需要服务器）",
     "search": "按 ID、名称、提供者或描述筛选模型",
-    "noServer": "服务器未运行。启动：omniroute serve",
+    "noServer": "服务器未运行。启动：agentproxy serve",
     "noModels": "未找到模型。"
   },
   "audit": {
@@ -545,7 +545,7 @@
     }
   },
   "skills": {
-    "description": "管理 OmniRoute 技能（沙箱、内置、自定义、混合、skillssh）",
+    "description": "管理 AgentProxy 技能（沙箱、内置、自定义、混合、skillssh）",
     "list": {
       "description": "列出已安装的技能",
       "type": "按类型筛选（sandbox|custom|builtin|hybrid|skillssh）",
@@ -618,7 +618,7 @@
     }
   },
   "memory": {
-    "description": "管理 OmniRoute 对话记忆（FTS5 + 向量）",
+    "description": "管理 AgentProxy 对话记忆（FTS5 + 向量）",
     "search": {
       "description": "按语义查询搜索记忆条目",
       "type": "按记忆类型筛选（user|feedback|project|reference）",
@@ -776,7 +776,7 @@
     }
   },
   "webhooks": {
-    "description": "管理 OmniRoute Webhook",
+    "description": "管理 AgentProxy Webhook",
     "events": {
       "description": "列出所有可用的 Webhook 事件类型"
     },
@@ -1049,7 +1049,7 @@
     }
   },
   "openapi": {
-    "description": "访问和测试 OmniRoute OpenAPI 规范",
+    "description": "访问和测试 AgentProxy OpenAPI 规范",
     "dump": {
       "description": "将 OpenAPI 规范输出到 stdout 或文件",
       "format": "输出格式：yaml|json（默认：yaml）",
@@ -1119,7 +1119,7 @@
     }
   },
   "open": {
-    "description": "在浏览器中打开特定的 OmniRoute 仪表盘页面",
+    "description": "在浏览器中打开特定的 AgentProxy 仪表盘页面",
     "url": "仅打印 URL，不打开浏览器"
   },
   "telemetry": {
@@ -1136,7 +1136,7 @@
     }
   },
   "sync": {
-    "description": "在 OmniRoute 实例之间同步配置",
+    "description": "在 AgentProxy 实例之间同步配置",
     "push": {
       "description": "将配置推送到云或远程实例",
       "target": "目标（cloud 或 context:name）",
@@ -1192,10 +1192,10 @@
       "listTitle": "可用语言",
       "current": "语言：{code}（{name}）",
       "saved": "语言已设置为 {code}（{name}）。",
-      "noCode": "需要语言代码。运行 omniroute config lang list 查看可用代码。",
-      "unknown": "未知语言代码：{code}。运行 omniroute config lang list 查看可用代码。",
+      "noCode": "需要语言代码。运行 agentproxy config lang list 查看可用代码。",
+      "unknown": "未知语言代码：{code}。运行 agentproxy config lang list 查看可用代码。",
       "alreadySet": "语言已设置为 {code}。",
-      "envHint": "提示：您也可以在环境中设置 OMNIROUTE_LANG={code}。"
+      "envHint": "提示：您也可以在环境中设置 AGENTPROXY_LANG={code}。"
     }
   },
   "completion": {
@@ -1212,7 +1212,7 @@
     "filter": "按级别筛选（error,warn,info）— 逗号分隔",
     "lines": "要获取的行数",
     "timeout": "连接超时（毫秒）",
-    "baseUrl": "OmniRoute API 基础 URL",
+    "baseUrl": "AgentProxy API 基础 URL",
     "requestId": "按请求 ID 筛选",
     "apiKey": "按 API 密钥筛选",
     "combo": "按组合名称筛选",
@@ -1228,10 +1228,10 @@
     "description": "控制系统托盘图标",
     "show": "显示托盘图标（如果服务器使用 --tray 运行）",
     "hide": "隐藏托盘图标",
-    "quit": "通过托盘退出 OmniRoute"
+    "quit": "通过托盘退出 AgentProxy"
   },
   "autostart": {
-    "description": "管理 OmniRoute 开机自启（Linux：systemd 用户服务）",
+    "description": "管理 AgentProxy 开机自启（Linux：systemd 用户服务）",
     "enable": "启用开机自启",
     "disable": "禁用开机自启",
     "status": "显示自启状态",
@@ -1253,7 +1253,7 @@
     "resume": "按名称恢复保存的会话"
   },
   "plugin": {
-    "description": "管理 CLI 插件（omniroute-cmd-*）",
+    "description": "管理 CLI 插件（agentproxy-cmd-*）",
     "list": "列出已安装的插件",
     "install": "从 npm 或本地路径安装插件",
     "remove": "删除已安装的插件",
@@ -1271,7 +1271,7 @@
     "warning": "⚠ 此操作会打印/写入已解密的明文 API 密钥和 OAuth 令牌。请确保你的屏幕、shell 历史记录以及任何输出文件保持私密。",
     "confirmHeading": "⚠ 警告：此操作会以明文导出已解密的提供者凭据",
     "confirmBody": "此命令会为所选连接解密并打印/写入 apiKey、accessToken、refreshToken 和\nidToken。请将输出视为机密。",
-    "confirmFooter": "如需确认，请运行：\n  omniroute auth export --force",
+    "confirmFooter": "如需确认，请运行：\n  agentproxy auth export --force",
     "missingKey": "导出凭据需要 STORAGE_ENCRYPTION_KEY。",
     "notFound": "未找到连接：{id}",
     "invalidFormat": "无效格式：{format}。请使用 json 或 env。"
@@ -1282,19 +1282,19 @@
     "sync": "通过本地服务器同步目录、推荐、优惠和 Intel"
   },
   "launch": {
-    "description": "启动指向 OmniRoute 的 Claude Code（本地或远程，使用 --profile）",
+    "description": "启动指向 AgentProxy 的 Claude Code（本地或远程，使用 --profile）",
     "token": "Claude 客户端应发送的令牌（ANTHROPIC_AUTH_TOKEN）",
-    "notRunning": "无法在 {port} 访问 OmniRoute。请使用 “omniroute serve” 启动它。",
+    "notRunning": "无法在 {port} 访问 AgentProxy。请使用 “agentproxy serve” 启动它。",
     "notFound": "在 PATH 中未找到 “claude” CLI。"
   },
   "run": {
-    "description": "通过 OmniRoute 启动受支持的 CLI 目标"
+    "description": "通过 AgentProxy 启动受支持的 CLI 目标"
   },
   "setupClaude": {
-    "description": "从 OmniRoute 模型目录生成 ~/.claude/profiles 的 Claude Code 配置文件"
+    "description": "从 AgentProxy 模型目录生成 ~/.claude/profiles 的 Claude Code 配置文件"
   },
   "connect": {
-    "description": "连接到远程 OmniRoute 服务器并进入远程模式"
+    "description": "连接到远程 AgentProxy 服务器并进入远程模式"
   },
   "tokens": {
     "description": "管理限定范围的 CLI 访问令牌（远程模式）"
@@ -1303,10 +1303,10 @@
     "description": "从活动服务器选择提供者+模型并配置受支持的本地 CLI"
   },
   "launchCodex": {
-    "description": "启动指向 OmniRoute 的 Codex CLI（本地或远程 VPS）"
+    "description": "启动指向 AgentProxy 的 Codex CLI（本地或远程 VPS）"
   },
   "setupCodex": {
-    "description": "从 OmniRoute 实时模型目录生成 ~/.codex 配置文件"
+    "description": "从 AgentProxy 实时模型目录生成 ~/.codex 配置文件"
   },
   "packs": {
     "description": "管理可选的运行时包（ML / 浏览器自动化）",
@@ -1319,7 +1319,7 @@
     "errUnknown": "未知的包：{name}",
     "errNoIndex": "未找到包索引；请通过 --source <dir> 传入存放包负载的目录（桌面捆绑包会将其附带在应用旁）",
     "installed": "包 “{name}” 已安装并在 {dir} 验证通过",
-    "restartHint": "请重启 OmniRoute 服务器（或桌面应用），以便运行时加载该包",
+    "restartHint": "请重启 AgentProxy 服务器（或桌面应用），以便运行时加载该包",
     "removed": "包 “{name}” 已移除",
     "notInstalled": "包 “{name}” 未安装",
     "verifyOk": "所有已安装的包均已验证通过",

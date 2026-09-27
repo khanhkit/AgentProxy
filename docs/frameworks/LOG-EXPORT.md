@@ -6,7 +6,7 @@ lastUpdated: 2026-08-29
 
 # Log export
 
-Continuous, incremental export of OmniRoute call logs to an external analytics store.
+Continuous, incremental export of AgentProxy call logs to an external analytics store.
 
 The Logs dashboard tab keeps request history in SQLite (`call_logs`), which is bounded by
 rotation and retention. Log export ships the same record set out on a schedule so it can outlive
@@ -26,7 +26,7 @@ call_logs (SQLite)
 ```
 
 - **Schedule** — one `JobRegistry` cron job, `log_export`, defaulting to `0 * * * *` (hourly,
-  UTC). Registered in `src/lib/initCloudSync.ts`; overridable with `OMNIROUTE_LOG_EXPORT_CRON`.
+  UTC). Registered in `src/lib/initCloudSync.ts`; overridable with `AGENTPROXY_LOG_EXPORT_CRON`.
   Each tick drains every **enabled** destination, sequentially.
 - **Cursor** — SQLite's implicit `call_logs.rowid`, persisted per destination in
   `log_export_destinations.cursor_row_id`. `timestamp` is deliberately not the cursor: callers

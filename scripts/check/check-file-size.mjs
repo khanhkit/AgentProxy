@@ -179,12 +179,16 @@ function main() {
   const testCap = baseline.testCap;
   const testFrozen = baseline.testFrozen || {};
   const currentTests = collectTestLoc();
+  // Test paths are disjoint from production paths, so PR-relative mode needs
+  // its own base LOC map. Reusing the production baseLoc here silently drops
+  // every test path and compares inherited test debt against stale testFrozen thresholds.
+  const testBaseLoc = BASE_REF ? getBaseLoc(BASE_REF, Object.keys(currentTests)) : undefined;
   const {
     violations: testViolations,
     improvements: testImprovements,
     redundant: testRedundant,
   } = typeof testCap === "number"
-    ? evaluateFileSizes(currentTests, testFrozen, testCap, BASE_REF ? baseLoc : undefined)
+    ? evaluateFileSizes(currentTests, testFrozen, testCap, testBaseLoc)
     : { violations: [], improvements: [], redundant: [] };
 
   if (UPDATE) {

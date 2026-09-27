@@ -3,7 +3,7 @@
  *
  * When the upstream SSE stream fails mid-flight (after bytes have been forwarded
  * to the client) and the upstream drops without emitting a terminal marker,
- * OmniRoute used to silently close the connection with no terminal `event: error`
+ * AgentProxy used to silently close the connection with no terminal `event: error`
  * or `message_stop` for Anthropic-format clients. Claude Code and the Anthropic SDK
  * then report "Connection closed mid-response. The response above may be incomplete."
  *

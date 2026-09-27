@@ -37,7 +37,7 @@ describe("home page first-run readiness card", () => {
 
   it("keeps the readiness card dismissable via localStorage", () => {
     const source = readReadinessCard();
-    assert.match(source, /omniroute-first-run-readiness-dismissed/);
+    assert.match(source, /agentproxy-first-run-readiness-dismissed/);
     assert.match(source, /localStorage/);
     assert.match(source, /readinessContinue/);
     assert.match(source, /readinessDismiss/);

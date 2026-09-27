@@ -21,7 +21,7 @@ import path from "node:path";
 const ORIGINAL_DATA_DIR = process.env.DATA_DIR;
 
 function createTempDataDir(): string {
-  return fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-cliproxy-6877-"));
+  return fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-cliproxy-6877-"));
 }
 
 // DATA_DIR is captured into a module-level const the *first* time

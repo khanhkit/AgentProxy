@@ -93,7 +93,7 @@ test("callVisionModel returns description on success", async () => {
   }
 });
 
-test("callVisionModel can route a catalog model through the OmniRoute self-loop", async () => {
+test("callVisionModel can route a catalog model through the AgentProxy self-loop", async () => {
   let capturedUrl = "";
   let capturedBody: Record<string, unknown> = {};
   let capturedHeaders: Record<string, string> = {};
@@ -109,7 +109,7 @@ test("callVisionModel can route a catalog model through the OmniRoute self-loop"
     prompt: "Describe this frame",
     timeoutMs: 30000,
     maxImages: 1,
-    routeThroughOmniRoute: true,
+    routeThroughAgentProxy: true,
     fetchImpl,
   });
 
@@ -117,8 +117,8 @@ test("callVisionModel can route a catalog model through the OmniRoute self-loop"
   assert.equal(url.hostname, "localhost");
   assert.equal(url.pathname, "/v1/chat/completions");
   assert.equal(capturedBody.model, "openai/gpt-4o-mini");
-  assert.equal(capturedHeaders["x-omniroute-admission-bypass"], "internal");
-  assert.match(capturedHeaders["x-omniroute-disabled-guardrails"], /video-bridge/);
+  assert.equal(capturedHeaders["x-agentproxy-admission-bypass"], "internal");
+  assert.match(capturedHeaders["x-agentproxy-disabled-guardrails"], /video-bridge/);
   assert.equal(result, "GREEN_SCENE_2");
 });
 

@@ -15,7 +15,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-poe-api-8969-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-poe-api-8969-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const { getExecutor, hasSpecializedExecutor } = await import("../../open-sse/executors/index.ts");
@@ -92,14 +92,14 @@ test("#8969: buildUrl routes chat / responses / messages correctly", async () =>
   assert.equal(
     executor.buildUrl("gpt-5.2", false, 0, {
       ...creds,
-      providerSpecificData: { _omnirouteForceResponsesUpstream: true },
+      providerSpecificData: { _agentproxyForceResponsesUpstream: true },
     }),
     RESPONSES_URL
   );
   assert.equal(
     executor.buildUrl("claude-opus-4.8", true, 0, {
       ...creds,
-      providerSpecificData: { _omnirouteForceResponsesUpstream: true },
+      providerSpecificData: { _agentproxyForceResponsesUpstream: true },
     }),
     RESPONSES_URL
   );
@@ -197,7 +197,7 @@ test("#8969: resolveExecutionCredentials forces responses upstream for poe", () 
     provider: "poe",
     ccSessionId: null,
   }) as { providerSpecificData: Record<string, unknown> };
-  assert.equal(out.providerSpecificData._omnirouteForceResponsesUpstream, true);
+  assert.equal(out.providerSpecificData._agentproxyForceResponsesUpstream, true);
 });
 
 test("#8969: mocked execute posts Chat Completions with Bearer, no Cookie, stripped model", async () => {
@@ -276,7 +276,7 @@ test("#8969: mocked execute routes Responses + Messages fixtures to the right UR
       stream: false,
       credentials: {
         apiKey: "poe-test-key",
-        providerSpecificData: { _omnirouteForceResponsesUpstream: true },
+        providerSpecificData: { _agentproxyForceResponsesUpstream: true },
       },
       signal: null,
     });
@@ -292,7 +292,7 @@ test("#8969: mocked execute routes Responses + Messages fixtures to the right UR
       stream: true,
       credentials: {
         apiKey: "poe-test-key",
-        providerSpecificData: { _omnirouteForceResponsesUpstream: true },
+        providerSpecificData: { _agentproxyForceResponsesUpstream: true },
       },
       signal: null,
     });

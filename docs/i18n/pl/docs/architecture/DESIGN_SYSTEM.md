@@ -3,10 +3,10 @@ title: "System designu i tożsamość wizualna"
 lastUpdated: 2026-07-11
 ---
 
-# OmniRoute — System designu i tożsamość wizualna
+# AgentProxy — System designu i tożsamość wizualna
 
 > **Status:** referencja — opisana tu standaryzacja jest **zaimplementowana** (fazy 1–6: tapeta siatki, prymitywy, centralizacja kolorów statusu, token mono, migracja tokenów DataTable, focus-ring → accent, prymitywy Checkbox/Textarea, `cn()` → tailwind-merge, siatka na każdym samodzielnym ekranie, płynna powłoka treści 4K, nieprzezroczyste powierzchnie tabel danych). Ten dokument to kanoniczny opis tokenów designu dashboardu, komponentów i konwencji; poniższe ujęcie fazowe zachowano jako uzasadnienie każdej decyzji.
-> **Zakres:** dashboard OmniRoute (`src/`) i strona marketingowa (`_mono_repo/omnirouteSite/`) dzielą **jedną tożsamość wizualną** — ta sama tapeta siatki w kratkę (32px), te same tokeny kolorów, ustandaryzowane komponenty.
+> **Zakres:** dashboard AgentProxy (`src/`) i strona marketingowa (`_mono_repo/agentproxySite/`) dzielą **jedną tożsamość wizualną** — ta sama tapeta siatki w kratkę (32px), te same tokeny kolorów, ustandaryzowane komponenty.
 >
 > Uwagi praktyczne dla maintainerów:
 >
@@ -18,7 +18,7 @@ lastUpdated: 2026-07-11
 
 ## 1. Cel
 
-Strona marketingowa (`viral.omniroute.online`, `why.omniroute.online`, `omniroute.online`) i dashboard produktu powinny wyglądać jak **jeden produkt**. Strona już pożyczyła paletę z dashboardu — jej `css/tokens.css` wręcz mówi _"Palette mirrors the OmniRoute dashboard (src/app/globals.css)"_. Zatem obie są już zsynchronizowane w ~80% na poziomie kolorów. Czego brakuje na dashboardzie:
+Strona marketingowa (`viral.agentproxy.online`, `why.agentproxy.online`, `agentproxy.online`) i dashboard produktu powinny wyglądać jak **jeden produkt**. Strona już pożyczyła paletę z dashboardu — jej `css/tokens.css` wręcz mówi _"Palette mirrors the AgentProxy dashboard (src/app/globals.css)"_. Zatem obie są już zsynchronizowane w ~80% na poziomie kolorów. Czego brakuje na dashboardzie:
 
 1. **Tapeta siatki w kratkę (graph-paper)**, której strona używa na każdej stronie.
 2. Garść **współdzielonych tokenów designu**, które ma strona, a dashboard nie (skala radius, gradient brand, `surface-2`, font mono).
@@ -82,7 +82,7 @@ Każdy kolor brand i surface już pasuje do strony **wartością** (różnią si
 
 ### 4.1 Co to jest
 
-Dokładna receptura ze strony (`_mono_repo/omnirouteSite/css/base.css`): **stały, pełnoekranowy pseudo-element** malujący dwa gradienty linii 1px, siedzący na `z-index:-1` za całą treścią.
+Dokładna receptura ze strony (`_mono_repo/agentproxySite/css/base.css`): **stały, pełnoekranowy pseudo-element** malujący dwa gradienty linii 1px, siedzący na `z-index:-1` za całą treścią.
 
 ```css
 body::before {
@@ -229,4 +229,4 @@ Każda faza: `npm run lint` + `npm run typecheck:core` + visual pass.
 | Źródła kolorów statusu               | `flow/edgeStyles.ts`, `TokenHealthBadge.tsx`, `DegradationBadge.tsx`, `logTableStyles.ts`                            |
 | Util `cn`                            | `src/shared/utils/cn.ts`                                                                                             |
 | Test-guard Phase 1                   | `tests/unit/design-grid-background.test.ts`                                                                          |
-| Referencja strony                    | `_mono_repo/omnirouteSite/css/tokens.css`, `css/base.css`                                                            |
+| Referencja strony                    | `_mono_repo/agentproxySite/css/tokens.css`, `css/base.css`                                                            |

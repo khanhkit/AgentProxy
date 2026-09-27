@@ -13,7 +13,7 @@ import { MockUpstreamServer, buildCompletion } from "../e2e/helpers/mockUpstream
 // Seeds a mimocode connection with 3 fingerprints, creates a round-robin combo,
 // and verifies that requests route through the combo successfully.
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-fingerprint-e2e-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-fingerprint-e2e-"));
 const DASHBOARD_PORT = await getFreePort();
 const REPO_ROOT = fileURLToPath(new URL("../..", import.meta.url));
 
@@ -69,11 +69,11 @@ function createServerProcess(dataDir: string, port: number) {
       DISABLE_SQLITE_AUTO_BACKUP: "true",
       INITIAL_PASSWORD: "",
       NEXT_TELEMETRY_DISABLED: "1",
-      OMNIROUTE_DISABLE_BACKGROUND_SERVICES: "true",
-      OMNIROUTE_DISABLE_TOKEN_HEALTHCHECK: "true",
-      OMNIROUTE_DISABLE_LOCAL_HEALTHCHECK: "true",
-      OMNIROUTE_HIDE_HEALTHCHECK_LOGS: "true",
-      OMNIROUTE_E2E_BOOTSTRAP_MODE: "open",
+      AGENTPROXY_DISABLE_BACKGROUND_SERVICES: "true",
+      AGENTPROXY_DISABLE_TOKEN_HEALTHCHECK: "true",
+      AGENTPROXY_DISABLE_LOCAL_HEALTHCHECK: "true",
+      AGENTPROXY_HIDE_HEALTHCHECK_LOGS: "true",
+      AGENTPROXY_E2E_BOOTSTRAP_MODE: "open",
     },
     stdio: ["ignore", "pipe", "pipe"],
   });
@@ -117,7 +117,7 @@ async function waitForServer(
     if (logs.exitInfo) {
       throw new Error(
         [
-          `OmniRoute exited before it became ready (code=${logs.exitInfo.code}, signal=${logs.exitInfo.signal})`,
+          `AgentProxy exited before it became ready (code=${logs.exitInfo.code}, signal=${logs.exitInfo.signal})`,
           "--- stdout ---",
           ...logs.stdoutLines.slice(-40),
           "--- stderr ---",
@@ -138,7 +138,7 @@ async function waitForServer(
   }
   throw new Error(
     [
-      `Timed out waiting for OmniRoute to start: ${lastError}`,
+      `Timed out waiting for AgentProxy to start: ${lastError}`,
       "--- stdout ---",
       ...logs.stdoutLines.slice(-40),
       "--- stderr ---",
@@ -299,7 +299,7 @@ test("round-robin combo with 3 fingerprints: all requests succeed", async () => 
     assert.equal(result.json.choices[0].message.content, "fingerprint ok");
     // #6426 (v3.8.46): chatCore now unconditionally aligns the non-streaming
     // response body.model with the resolved backend model advertised in the
-    // X-OmniRoute-Model header (echoRequestedModelName/#1311 is opt-in and off
+    // X-AgentProxy-Model header (echoRequestedModelName/#1311 is opt-in and off
     // here), so the response echoes the bare backend model id ("mimo-auto"),
     // not the "fp-mimocode/"-prefixed provider-node routing target — even
     // though the mock upstream in this test is configured to self-report the

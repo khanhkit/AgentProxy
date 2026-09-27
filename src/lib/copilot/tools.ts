@@ -1,13 +1,13 @@
 /**
- * OmniRoute Copilot — Tool definitions
+ * AgentProxy Copilot — Tool definitions
  *
- * Tools the copilot can execute to configure OmniRoute on behalf of the user,
+ * Tools the copilot can execute to configure AgentProxy on behalf of the user,
  * query the codebase via CodeGraph, and execute CLI commands for full control.
  */
 
 import { execFile, execSync } from "node:child_process";
 import { promisify } from "node:util";
-import { sanitizeErrorMessage } from "@omniroute/open-sse/utils/error";
+import { sanitizeErrorMessage } from "@agentproxy/open-sse/utils/error";
 
 const execFileAsync = promisify(execFile);
 import { classifyCommand } from "./commandClassification";
@@ -61,11 +61,11 @@ function formatCodeGraphResult(result: CodeGraphQueryResult): string {
   );
 }
 
-// ── Helper: check if omniroute CLI is available ──────────────────────────────
+// ── Helper: check if agentproxy CLI is available ──────────────────────────────
 
-function getOmniRouteCliPath(): string | null {
+function getAgentProxyCliPath(): string | null {
   try {
-    const result = execSync("which omniroute 2>/dev/null || command -v omniroute 2>/dev/null", {
+    const result = execSync("which agentproxy 2>/dev/null || command -v agentproxy 2>/dev/null", {
       encoding: "utf-8",
       timeout: 3000,
     }).trim();
@@ -251,7 +251,7 @@ export const COPILOT_TOOLS: CopilotTool[] = [
   {
     name: "searchCodeGraph",
     description:
-      "Search for symbols in the OmniRoute codebase by name (functions, classes, types, variables). Use this to understand how the app works internally.",
+      "Search for symbols in the AgentProxy codebase by name (functions, classes, types, variables). Use this to understand how the app works internally.",
     parameters: [
       {
         name: "query",
@@ -294,7 +294,7 @@ export const COPILOT_TOOLS: CopilotTool[] = [
   {
     name: "findCallees",
     description:
-      "Find all functions/symbols that a specific function calls. Useful for understanding dependencies and code flow within OmniRoute.",
+      "Find all functions/symbols that a specific function calls. Useful for understanding dependencies and code flow within AgentProxy.",
     parameters: [
       {
         name: "symbol",
@@ -362,15 +362,15 @@ export const COPILOT_TOOLS: CopilotTool[] = [
 
   // ── CLI Execution Tool ──
   {
-    name: "runOmniRouteCli",
+    name: "runAgentProxyCli",
     description:
-      "Execute an 'omniroute' CLI command to configure or query the OmniRoute app. Gives complete control over the app — use for advanced operations not covered by other tools. Common commands: omniroute list-keys, omniroute switch-combo [id], omniroute set-budget 10, omniroute set-strategy [id] priority, omniroute health, omniroute mcp (starts MCP server), omniroute db-health, omniroute reset-password.",
+      "Execute an 'agentproxy' CLI command to configure or query the AgentProxy app. Gives complete control over the app — use for advanced operations not covered by other tools. Common commands: agentproxy list-keys, agentproxy switch-combo [id], agentproxy set-budget 10, agentproxy set-strategy [id] priority, agentproxy health, agentproxy mcp (starts MCP server), agentproxy db-health, agentproxy reset-password.",
     parameters: [
       {
         name: "command",
         type: "string",
         description:
-          "CLI command arguments (everything after 'omniroute'). Example: 'list-keys', 'switch-combo abc123', 'health'",
+          "CLI command arguments (everything after 'agentproxy'). Example: 'list-keys', 'switch-combo abc123', 'health'",
         required: true,
       },
     ],
@@ -378,8 +378,8 @@ export const COPILOT_TOOLS: CopilotTool[] = [
       const cmd = args.command as string;
       if (!cmd) return "Please provide a command to execute.";
 
-      const cliPath = getOmniRouteCliPath();
-      if (!cliPath) return "omniroute CLI not found in PATH. Install OmniRoute first.";
+      const cliPath = getAgentProxyCliPath();
+      if (!cliPath) return "agentproxy CLI not found in PATH. Install AgentProxy first.";
 
       try {
         const trimmedCmd = cmd.trim();

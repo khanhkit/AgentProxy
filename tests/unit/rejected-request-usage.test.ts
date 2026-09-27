@@ -1,5 +1,5 @@
 // Regression guard — support-mesh escalation (2026-07-08, whatsbrasil):
-// an OmniRoute API key ("opencode-mac") showed "zero requisições" even though
+// an AgentProxy API key ("opencode-mac") showed "zero requisições" even though
 // it received traffic. Root cause: requests rejected *before* handleChatCore
 // (pipeline-gate / provider circuit breaker OPEN, or a combo with every target
 // exhausted) short-circuit in src/sse/handlers/chat.ts and only wrote a
@@ -18,7 +18,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-rejected-usage-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-rejected-usage-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../src/lib/db/core.ts");

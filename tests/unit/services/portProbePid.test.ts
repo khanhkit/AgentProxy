@@ -16,6 +16,7 @@ import path from "node:path";
 import {
   parseLsofPid,
   parseNetstatPid,
+  parseProcNetListenInodes,
   parseSsPid,
   parseWindowsNetstatPid,
   resolvePortPid,
@@ -113,6 +114,20 @@ test("parseWindowsNetstatPid matches the local address, not the foreign one", ()
   assert.equal(parseWindowsNetstatPid("", 20128), null);
 });
 
+test("parseProcNetListenInodes reads only LISTEN rows for the exact hex port", () => {
+  const proc = [
+    "sl local_address rem_address st tx_queue rx_queue tr tm->when retrnsmt uid timeout inode",
+    "0: 0100007F:4EA0 00000000:0000 0A 00000000:00000000 00:00000000 00000000 1000 0 596922",
+    "1: 0100007F:4EA0 0100007F:9999 01 00000000:00000000 00:00000000 00000000 1000 0 111111",
+    "2: 00000000:1F90 00000000:0000 0A 00000000:00000000 00:00000000 00000000 1000 0 222222",
+    "",
+  ].join("\n");
+
+  assert.deepEqual(parseProcNetListenInodes(proc, 20128), ["596922"]);
+  assert.deepEqual(parseProcNetListenInodes(proc, 8080), ["222222"]);
+  assert.deepEqual(parseProcNetListenInodes(proc, 128), []);
+});
+
 test("resolvePortPid finds the pid holding a port", async () => {
   const server = createServer();
   await new Promise<void>((resolve) => server.listen(29994, "127.0.0.1", resolve));
@@ -163,6 +178,26 @@ test("resolvePortPid still resolves a pid on a host without lsof", async (t) => 
     process.env.PATH = shim;
     await new Promise<void>((resolve) => server.listen(29992, "127.0.0.1", resolve));
     assert.equal(await resolvePortPid(29992), process.pid);
+  } finally {
+    process.env.PATH = originalPath;
+    await new Promise<void>((resolve) => server.close(() => resolve()));
+    rmSync(shim, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
+  }
+});
+
+test("resolvePortPid falls back to Linux /proc when no pid helper binaries exist", async (t) => {
+  if (process.platform !== "linux") {
+    t.skip("Linux /proc fallback only");
+    return;
+  }
+
+  const shim = mkdtempSync(path.join(tmpdir(), "portprobe-empty-"));
+  const originalPath = process.env.PATH;
+  const server = createServer();
+  try {
+    process.env.PATH = shim;
+    await new Promise<void>((resolve) => server.listen(29991, "127.0.0.1", resolve));
+    assert.equal(await resolvePortPid(29991), process.pid);
   } finally {
     process.env.PATH = originalPath;
     await new Promise<void>((resolve) => server.close(() => resolve()));

@@ -66,11 +66,11 @@ function resolveAppDir(root: string, distServerExists: boolean): string {
 }
 
 test("serve app dir: resolves to dist/ when dist/server.js exists (current layout)", () => {
-  assert.equal(resolveAppDir("/opt/omniroute", true), "/opt/omniroute/dist");
+  assert.equal(resolveAppDir("/opt/agentproxy", true), "/opt/agentproxy/dist");
 });
 
 test("serve app dir: falls back to legacy app/ when dist/server.js is absent (upgrade safety)", () => {
-  assert.equal(resolveAppDir("/opt/omniroute", false), "/opt/omniroute/app");
+  assert.equal(resolveAppDir("/opt/agentproxy", false), "/opt/agentproxy/app");
 });
 
 test("serve command: APP_DIR keeps the dist/ -> app/ backward-compat fallback", async () => {

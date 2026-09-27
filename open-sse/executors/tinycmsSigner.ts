@@ -2,7 +2,7 @@
 // targeting the browser). These are NOT test mocks — the WASM module calls into
 // gl.bindTexImage2D-style canvas APIs via the wasm-bindgen generated JS, which
 // expects window, document, HTMLCanvasElement, and CanvasRenderingContext2D at
-// module load time. When running in Node.js (the OmniRoute server), these globals
+// module load time. When running in Node.js (the AgentProxy server), these globals
 // don't exist, so we provide minimal stubs that satisfy the wasm-bindgen
 // constructor shape checks. The stubs are never called for actual rendering --
 // the WASM signer only uses the canvas to compute a hashed fingerprint value.
@@ -439,7 +439,7 @@ async function __wbg_init(module_or_path) {
 
     if (module_or_path === undefined) {
         // Upstream wasm-bindgen glue defaults to a sidecar binary resolved via
-        // `new URL(<sidecar>, import.meta.url)`. OmniRoute ships the module inlined as
+        // `new URL(<sidecar>, import.meta.url)`. AgentProxy ships the module inlined as
         // WASM_BASE64 instead — no sidecar exists in the repo — and the only caller,
         // initTinyCmsWasm(), always passes that decoded Buffer explicitly, so this
         // branch is unreachable. The literal URL still had to go: Turbopack resolves

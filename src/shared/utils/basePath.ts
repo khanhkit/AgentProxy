@@ -1,5 +1,5 @@
 /**
- * Client/server helpers for Next.js `basePath` / `OMNIROUTE_BASE_PATH` deploys.
+ * Client/server helpers for Next.js `basePath` / `AGENTPROXY_BASE_PATH` deploys.
  *
  * Next.js rewrites Link/router automatically, but absolute browser calls like
  * `fetch("/api/...")` and `new EventSource("/api/...")` do not get the prefix.
@@ -16,21 +16,21 @@ export function normalizeBasePath(value?: string | null): string {
 
 /**
  * Deploy basePath as seen by the client bundle.
- * Set via next.config `env.NEXT_PUBLIC_OMNIROUTE_BASE_PATH` from `OMNIROUTE_BASE_PATH`.
+ * Set via next.config `env.NEXT_PUBLIC_AGENTPROXY_BASE_PATH` from `AGENTPROXY_BASE_PATH`.
  */
 export function getDeployBasePath(
   env: NodeJS.ProcessEnv = typeof process !== "undefined" ? process.env : ({} as NodeJS.ProcessEnv)
 ): string {
   return normalizeBasePath(
-    env.NEXT_PUBLIC_OMNIROUTE_BASE_PATH || env.OMNIROUTE_BASE_PATH || ""
+    env.NEXT_PUBLIC_AGENTPROXY_BASE_PATH || env.AGENTPROXY_BASE_PATH || ""
   );
 }
 
 /**
  * Prefix a same-origin app path with the deploy basePath when needed.
  *
- * - Relative absolute paths: `/api/health/ping` → `/omniroute/api/health/ping`
- * - Absolute same-origin URLs: `https://host/api/x` → `https://host/omniroute/api/x`
+ * - Relative absolute paths: `/api/health/ping` → `/agentproxy/api/health/ping`
+ * - Absolute same-origin URLs: `https://host/api/x` → `https://host/agentproxy/api/x`
  * - Already-prefixed paths, external URLs, and protocol-relative URLs are unchanged
  */
 export function withBasePath(

@@ -469,8 +469,8 @@ function main() {
   if ((STRICT || RATCHET) && provenanceFindings.length > 0) {
     console.error(
       `\n[check-workflows] FAIL — ${provenanceFindings.length} job(s) publish with --provenance from a self-hosted runner.\n` +
-        "  npm rejects that with 422 at the registry. Move the upload step to a github-hosted job\n" +
-        "  (see .github/workflows/npm-publish.yml `stage-npm` for the pattern)."
+        "  npm rejects that with 422 at the registry. Move any future provenance upload step\n" +
+        "  to a GitHub-hosted job; the legacy npm-publish workflow has been removed."
     );
     process.exit(1);
   }

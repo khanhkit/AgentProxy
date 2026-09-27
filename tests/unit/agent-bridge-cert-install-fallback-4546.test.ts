@@ -52,7 +52,7 @@ test("installCertResult → environment skip (not a throw) when install is impos
   // A non-existent cert path makes installCert() throw before any privileged
   // command runs — deterministic, no sudo. The wrapper must convert that into a
   // structured skippable result with a manual guide, never a thrown error.
-  const result = await installCertResult("", "/nonexistent/omniroute-4546-server.crt");
+  const result = await installCertResult("", "/nonexistent/agentproxy-4546-server.crt");
   assert.equal(result.installed, false);
   assert.equal(result.skipped, true);
   assert.equal(result.reason, "environment");

@@ -10,9 +10,9 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-egress-route-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-egress-route-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
-process.env.OMNIROUTE_DISABLE_BACKGROUND_SERVICES = "true";
+process.env.AGENTPROXY_DISABLE_BACKGROUND_SERVICES = "true";
 process.env.API_KEY_SECRET = "test-api-key-secret";
 
 const core = await import("../../src/lib/db/core.ts");

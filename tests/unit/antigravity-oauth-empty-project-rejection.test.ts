@@ -3,7 +3,7 @@
  * Code projectId, and the connect-time post-exchange must detect Google's
  * BYOP ("bring your own project") behavior instead of silently swallowing it.
  *
- * Production evidence (VPS docker `omniroute`, 2026-08-24): five antigravity
+ * Production evidence (VPS docker `agentproxy`, 2026-08-24): five antigravity
  * connections were persisted with project_id="" and
  * providerSpecificData.projectId="" while tier/subscriptionTier were fully
  * populated (g1-pro-tier / "Google AI Pro") — proof the token exchange and

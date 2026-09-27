@@ -15,7 +15,7 @@
  *
  * This helper copies the real migrations into a temp dir, renumbering any file
  * whose numeric prefix duplicates an earlier one to a fresh (max+1) version,
- * and points `OMNIROUTE_MIGRATIONS_DIR` (supported operator env var — see
+ * and points `AGENTPROXY_MIGRATIONS_DIR` (supported operator env var — see
  * `src/lib/db/migrationRunner.ts::resolveMigrationsDir`) at the copy. On the
  * FRESH per-process test DATA_DIR (tests/_setup/isolateDataDir.ts) the schema
  * CONTENT applied is byte-identical, but note the renumbering does shift the
@@ -26,17 +26,17 @@
  *
  * MUST be called before the first `getDbInstance()` in the process (i.e. at
  * test-file top level, before any `preCall`). An explicitly configured
- * `OMNIROUTE_MIGRATIONS_DIR` always wins.
+ * `AGENTPROXY_MIGRATIONS_DIR` always wins.
  */
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
 export function useDecollidedMigrationsDir(): void {
-  if (process.env.OMNIROUTE_MIGRATIONS_DIR) return;
+  if (process.env.AGENTPROXY_MIGRATIONS_DIR) return;
 
   const realDir = path.resolve("src/lib/db/migrations");
-  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-test-migrations-"));
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-test-migrations-"));
 
   const files = fs
     .readdirSync(realDir, { withFileTypes: true })
@@ -67,7 +67,7 @@ export function useDecollidedMigrationsDir(): void {
     fs.copyFileSync(path.join(realDir, file), path.join(tmp, target));
   }
 
-  process.env.OMNIROUTE_MIGRATIONS_DIR = tmp;
+  process.env.AGENTPROXY_MIGRATIONS_DIR = tmp;
 
   process.on("exit", () => {
     try {

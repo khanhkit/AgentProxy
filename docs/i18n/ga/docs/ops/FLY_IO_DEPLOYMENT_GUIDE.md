@@ -6,20 +6,20 @@
 
 ---
 
-title: "Treoir Imscartha OmniRoute ar Fly.io"
+title: "Treoir Imscartha AgentProxy ar Fly.io"
 version: 3.8.40
 lastUpdated: 2026-06-28
 ---
 
-# Treoir Imscartha OmniRoute ar Fly.io
+# Treoir Imscartha AgentProxy ar Fly.io
 
-Tugann an doc seo cur síos ar phróiseas iarbhír imscartha OmniRoute ar Fly.io, ag clúdach dhá chás:
+Tugann an doc seo cur síos ar phróiseas iarbhír imscartha AgentProxy ar Fly.io, ag clúdach dhá chás:
 
 - Imscartha an tionscadal reatha go Fly.go den chéad uair
 - Foilsiú nuashonruithe cód ina dhiaidh sin
 - Tionscadail nua ag leanúint an tsaothair imscartha chéanna
 
-Bunaithe ar chumraíocht oibre cruthaithe don tionscadal reatha é an treoir seo. Ainm an fheidhmchláir is ea `omniroute`.
+Bunaithe ar chumraíocht oibre cruthaithe don tionscadal reatha é an treoir seo. Ainm an fheidhmchláir is ea `agentproxy`.
 
 ---
 
@@ -29,7 +29,7 @@ Bunaithe ar chumraíocht oibre cruthaithe don tionscadal reatha é an treoir seo
 - Modh imscartha: Foilsiú díreach `flyctl` logánta
 - Am rite: Ag baint úsáide as an `Dockerfile` agus `fly.toml` atá sa stór
 - Leanúnachas sonraí: Imleabhar Fly curtha ar fáil ag `/data`
-- Seoladh rochtana: `https://omniroute.fly.dev/`
+- Seoladh rochtana: `https://agentproxy.example.com/`
 
 ---
 
@@ -38,7 +38,7 @@ Bunaithe ar chumraíocht oibre cruthaithe don tionscadal reatha é an treoir seo
 Tá an `fly.toml` sa stór reatha cruthaithe leis na míreanna tábhachtacha seo a leanas:
 
 ```toml
-app = 'omniroute'
+app = 'agentproxy'
 primary_region = 'sin'
 
 [[mounts]]
@@ -60,7 +60,7 @@ primary_region = 'sin'
 
 Nótaí:
 
-- Socraíonn `app = 'omniroute'` cén feidhmchlár Fly a bhfuil díriú air an t-imscaradh
+- Socraíonn `app = 'agentproxy'` cén feidhmchlár Fly a bhfuil díriú air an t-imscaradh
 - Socraíonn `destination = '/data'` an chomhadlann ina gcuirtear an imleabhar leanúnach ar fáil
 - Ní mór don tionscadal seo `DATA_DIR=/data` a shocrú, murach sin, scríobhfar an bunachar sonraí agus na heochracha go comhadlann shealadach an choimeádáin
 
@@ -98,8 +98,8 @@ flyctl version
 ### 4.1 Clónáil an Cód agus Déan Seiceáil ar an Eolaire
 
 ```powershell
-git clone https://github.com/diegosouzapw/OmniRoute.git
-cd OmniRoute
+git clone https://github.com/khanhkit/AgentProxy.git
+cd AgentProxy
 ```
 
 ### 4.2 Deimhnigh Ainm an Fheidhmchláir
@@ -107,29 +107,29 @@ cd OmniRoute
 Oscail `fly.toml` agus seiceáil an líne seo a leanas:
 
 ```toml
-app = 'omniroute'
+app = 'agentproxy'
 ```
 
 Má tá tú ag imscartha chuig feidhmchlár nua pearsanta, is féidir leat é a athrú go hainm uathúil domhanda, mar shampla:
 
 ```toml
-app = 'omniroute-yourname'
+app = 'agentproxy-yourname'
 ```
 
 Nóta:
 
 - Cinntigh go bhfuil an feidhmchlár atá le feiceáil sa chonsól ag teacht le luach an `app` i `fly.toml`
-- Má d'úsáid tú ainm éigin eile roimhe seo, cosúil le `oroute, ná déan é a mheascadh le `omniroute`
+- Má d'úsáid tú ainm éigin eile roimhe seo, cosúil le `oroute, ná déan é a mheascadh le `agentproxy`
 
 ### 4.3 Cruthaigh an Feidhmchlár
 
 Más rud é nach bhfuil an feidhmchlár ann fós:
 
 ```powershell
-flyctl apps create omniroute
+flyctl apps create agentproxy
 ```
 
-Mhí athraigh tú ainm an fheidhmchláir, cuir `omniroute` ina ionad leis an ainm a roghnaigh tú.
+Mhí athraigh tú ainm an fheidhmchláir, cuir `agentproxy` ina ionad leis an ainm a roghnaigh tú.
 
 ### 4.4 Imscartha den Chéad Uair
 
@@ -145,14 +145,14 @@ Moltar don tionscadal seo na paraiméadair seo a leanas a chur ar bun ar Fly.io.
 
 ### 5.1 Paraiméadair Cruthaithe
 
-Úsáíodh na paraiméadair seo in imscarthaí iarbhír ar an bhfeidhmchlár reatha `omniroute`:
+Úsáíodh na paraiméadair seo in imscarthaí iarbhír ar an bhfeidhmchlár reatha `agentproxy`:
 
 - `API_KEY_SECRET`
 - `DATA_DIR`
 - `JWT_SECRET`
 - `MACHINE_ID_SALT`
 - `NEXT_PUBLIC_BASE_URL`
-- `OMNIROUTE_WS_BRIDGE_SECRET` (riachtanach sa táirge — úsáidte le haghaidh fíordheimhniú droichid WebSocket)
+- `AGENTPROXY_WS_BRIDGE_SECRET` (riachtanach sa táirge — úsáidte le haghaidh fíordheimhniú droichid WebSocket)
 - `STORAGE_ENCRYPTION_KEY`
 
 ### 5.2 Maidir le `INITIAL_PASSWORD`
@@ -178,7 +178,7 @@ Moltar na hathróg seo a leanas do Sholaíochtaí Fly:
 | ------------------------------------ | ------------------------ | ------------------------------------------------------------- |
 | `API_KEY_SECRET`                     | Riachtanach              | Úsáidte le haghaidh ghiniúint agus bhailíochtú Eochracha API  |
 | `JWT_SECRET`                         | Riachtanach              | Úsáidte le haghaidh seisiún logála isteach agus sínithe JWT   |
-| `OMNIROUTE_WS_BRIDGE_SECRET`         | Riachtanach sa táirgeadh | Rúndacht fíordheimhnithe droichid WebSocket                   |
+| `AGENTPROXY_WS_BRIDGE_SECRET`         | Riachtanach sa táirgeadh | Rúndacht fíordheimhnithe droichid WebSocket                   |
 | `STORAGE_ENCRYPTION_KEY`             | Molta go láidir          | Criptíonn faisnéis ceangail íogair ag stóráil                 |
 | `MACHINE_ID_SALT`                    | Molta                    | Gineann aitheantas meaisín cobhsaí                            |
 | `INITIAL_PASSWORD`                   | Roghnach                 | Socraíonn pasfhocal tionscadail tosaigh ag an chéad imscaradh |
@@ -189,7 +189,7 @@ Moltar na hathróg seo a leanas do Sholaíochtaí Fly:
 | Athróg                 | Luach Molta                 |
 | ---------------------- | --------------------------- |
 | `DATA_DIR`             | `/data`                     |
-| `NEXT_PUBLIC_BASE_URL` | `https://omniroute.fly.dev` |
+| `NEXT_PUBLIC_BASE_URL` | `https://agentproxy.example.com` |
 
 Nótaí:
 
@@ -203,10 +203,10 @@ Más gá duit soláthraithe atá bunaithe ar OAuth a chumasú (m.sh. Antigravity
 1. **Socraigh `NEXT_PUBLIC_BASE_URL` le do thionscnamh HTTPS poiblí**
 
    ```powershell
-   flyctl secrets set NEXT_PUBLIC_BASE_URL=https://omniroute.fly.dev -a omniroute
+   flyctl secrets set NEXT_PUBLIC_BASE_URL=https://agentproxy.example.com -a agentproxy
    ```
 
-   Má tá fearann saincheaptha á úsáid agat, cuir an fearann comhfhreagrach ina ionad (m.sh. `https://omniroute.yourdomain.com`).
+   Má tá fearann saincheaptha á úsáid agat, cuir an fearann comhfhreagrach ina ionad (m.sh. `https://agentproxy.yourdomain.com`).
 
 2. **Cumraigh an URL aiseagcalla ar an deasc soláthraí**
 
@@ -217,7 +217,7 @@ Más gá duit soláthraithe atá bunaithe ar OAuth a chumasú (m.sh. Antigravity
    ```
 
    Mar shampla, beag beann ar Gemini, Antigravity, Cursor, nó GitLab Duo:
-   - `https://omniroute.fly.dev/callback`
+   - `https://agentproxy.example.com/callback`
 
    Mura bhfuil `NEXT_PUBLIC_BASE_URL` ag teacht leis an URL aiseagcalla atá cláraithe leis an soláthraí, theipfidh an sruthúadh ócáid ag an chéim atreorú an bhrabhsálaí.
 
@@ -230,7 +230,7 @@ Gineann na horduithe seo a leanas luachanna randamach sábháilte agus scríobha
 Nótaí:
 
 - Níl `INITIAL_PASSWORD` san áireamh
-- Tá sé beartaithe don tionscadal reatha `omniroute`
+- Tá sé beartaithe don tionscadal reatha `agentproxy`
 
 ```powershell
 $apiKeySecret = [Convert]::ToHexString((1..32 | ForEach-Object { Get-Random -Minimum 0 -Maximum 256 })).ToLower()
@@ -244,26 +244,26 @@ flyctl secrets set `
   JWT_SECRET=$jwtSecret `
   MACHINE_ID_SALT=$machineIdSalt `
   STORAGE_ENCRYPTION_KEY=$storageKey `
-  OMNIROUTE_WS_BRIDGE_SECRET=$wsBridgeSecret `
+  AGENTPROXY_WS_BRIDGE_SECRET=$wsBridgeSecret `
   DATA_DIR=/data `
-  NEXT_PUBLIC_BASE_URL=https://omniroute.fly.dev `
-  -a omniroute
+  NEXT_PUBLIC_BASE_URL=https://agentproxy.example.com `
+  -a agentproxy
 ```
 
 Ar Linux / macOS, is féidir leat `openssl rand -hex 32` a úsáid freisin:
 
 ```bash
-flyctl secrets set OMNIROUTE_WS_BRIDGE_SECRET=$(openssl rand -hex 32) -a omniroute
+flyctl secrets set AGENTPROXY_WS_BRIDGE_SECRET=$(openssl rand -hex 32) -a agentproxy
 ```
 
 Nótaí:
 
-- Tá `OMNIROUTE_WS_BRIDGE_SECRET` riachtanach sa táirgeadh; má dhéanann tú dearmad air, brisfidh sé handshaking na droichid WebSocket
+- Tá `AGENTPROXY_WS_BRIDGE_SECRET` riachtanach sa táirgeadh; má dhéanann tú dearmad air, brisfidh sé handshaking na droichid WebSocket
 
 Más mian leat pasfhocal tosaigh a shocrú freisin:
 
 ```powershell
-flyctl secrets set INITIAL_PASSWORD=your-strong-password -a omniroute
+flyctl secrets set INITIAL_PASSWORD=your-strong-password -a agentproxy
 ```
 
 ---
@@ -271,12 +271,12 @@ flyctl secrets set INITIAL_PASSWORD=your-strong-password -a omniroute
 ## 8. Ag amharc ar pharaiméirí reatha
 
 ```powershell
-flyctl secrets list -a omniroute
+flyctl secrets list -a agentproxy
 ```
 
 Má thaispeáin leathanach na `Rúndiamhracha` sa chonsól na hathróga a bhfuiltear ag súil leo, seiceáil:
 
-- Go bhfuil tú ag amharc ar an bhfeidhmchlár `omniroute`
+- Go bhfuil tú ag amharc ar an bhfeidhmchlár `agentproxy`
 - Go bhfuil an luach `app` i `fly.toml` ag teacht leis an bhfeidhmchlár sa chonsól
 
 ---
@@ -293,14 +293,14 @@ flyctl deploy
 Má theastaíonn uait paraiméirí a nuashonrú gan cód a athrú:
 
 ```powershell
-flyctl secrets set KEY=value -a omniroute
+flyctl secrets set KEY=value -a agentproxy
 ```
 
 Déanfaidh Fly uasghrádú rollaigh ar na meaisíní go huathoibríoch.
 
 ### 9.1 Ag Rianú Nuashonruithe stór上游 Ag Coinneáil `fly.toml` do Fhorc
 
-Má tá an stór reatha ina fhorc agus más mian leat nuashonruithe a shioncronú ón stór上游 `https://github.com/diegosouzapw/OmniRoute`, lean an sreabhadh oibre seo a leanas.
+Má tá an stór reatha ina fhorc agus más mian leat nuashonruithe a shioncronú ón stór上游 `https://github.com/khanhkit/AgentProxy`, lean an sreabhadh oibre seo a leanas.
 
 Ar dtús, dearbhaigh do remotes:
 
@@ -316,7 +316,7 @@ Ba cheart duit a fheiceáil ar a laghad:
 Má `upstream` gan cumrú, cuir é leis:
 
 ```powershell
-git remote add upstream https://github.com/diegosouzapw/OmniRoute.git`
+git remote add upstream https://github.com/khanhkit/AgentProxy.git`
 
 ```
 
@@ -369,8 +369,8 @@ Tar éis sioncrónú leis an bhunstór, lean an t-ord scaoilte molta seo:
 3. Athshlán `fly.toml` na forca
 4. `git push origin main`
 5. `flyctl deploy`
-6. `flyctl status -a omniroute`
-7. `flyctl logs --no-tail -a omniroute`
+6. `flyctl status -a agentproxy`
+7. `flyctl logs --no-tail -a agentproxy`
 
 Is é seo an sreabhadh oibre fíor a úsáideadh agus an tionscadal reatha á uasghrádú go `v3.4.7` (dtagraíonn an sampla do leagan stairiúil; is é an leagan reatha fíor ná `v3.8.0`).
 
@@ -381,20 +381,20 @@ Is é seo an sreabhadh oibre fíor a úsáideadh agus an tionscadal reatha á ua
 ### 10.1 Seiceáil Stádas an Fheidhmchláir
 
 ```powershell
-flyctl status -a omniroute
+flyctl status -a agentproxy
 ```
 
 ### 10.2 Féach Logaí Túslodra
 
 ```powershell
-flyctl logs --no-tail -a omniroute
+flyctl logs --no-tail -a agentproxy
 ```
 
 ### 10.3 Fíoraigh Inrochtaineacht an Láithreáin
 
 ```powershell
 try {
-  (Invoke-WebRequest -Uri "https://omniroute.fly.dev" -MaximumRedirection 5 -UseBasicParsing).StatusCode
+  (Invoke-WebRequest -Uri "https://agentproxy.example.com" -MaximumRedirection 5 -UseBasicParsing).StatusCode
 } catch {
   if ($_.Exception.Response) {
     $_.Exception.Response.StatusCode.value__
@@ -433,14 +433,14 @@ Mais amharcann tú `/app/data/...` ina ionad, tá `DATA_DIR` cumraithe go míche
 De ghnáth, tá dhá chúis:
 
 - Níl tú tar éis `flyctl secrets set` a rith fós
-- Tá tú ag breathnú ar fheidhmchlár difriúil (m.sh. `oroute` seachas `omniroute`)
+- Tá tú ag breathnú ar fheidhmchlár difriúil (m.sh. `oroute` seachas `agentproxy`)
 
 ### 12.2 Tuairiscíonn `flyctl deploy` `app not found`
 
 Cruthaigh an feidhmchlár ar dtús:
 
 ```powershell
-flyctl apps create omniroute
+flyctl apps create agentproxy
 ```
 
 ### 12.3 Theipeann ar Pharsáil `fly.toml`
@@ -483,10 +483,10 @@ Na horduithe is úsáidí do sheachadtaí subsequent:
 
 ```powershell
 flyctl auth whoami
-flyctl status -a omniroute
-flyctl secrets list -a omniroute
+flyctl status -a agentproxy
+flyctl secrets list -a agentproxy
 flyctl deploy
-flyctl logs --no-tail -a omniroute
+flyctl logs --no-tail -a agentproxy
 ```
 
 Le haghaidh seachadta gnáth, is é an príomhordú simplí:
@@ -498,7 +498,7 @@ flyctl deploy
 Le haghaidh chéad phoibliúcháin i timpeallacht nua, is iad na príomhchéimeanna:
 
 1. `flyctl auth login`
-2. `flyctl apps create omniroute`
-3. `flyctl secrets set ... -a omniroute`
+2. `flyctl apps create agentproxy`
+3. `flyctl secrets set ... -a agentproxy`
 4. `flyctl deploy`
-5. `flyctl logs --no-tail -a omniroute`
+5. `flyctl logs --no-tail -a agentproxy`

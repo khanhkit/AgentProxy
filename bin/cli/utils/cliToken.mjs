@@ -1,15 +1,15 @@
 import crypto from "node:crypto";
 
-const BUILTIN_DEFAULT_SALT = "omniroute-cli-auth-v1";
-export const CLI_TOKEN_HEADER = "x-omniroute-cli-token";
+const BUILTIN_DEFAULT_SALT = "agentproxy-cli-auth-v1";
+export const CLI_TOKEN_HEADER = "x-agentproxy-cli-token";
 
 let _cached = null;
 let _cachedSalt = null;
 
 /** Mirrors getActiveSalt() in src/lib/machineToken.ts so a rotated
- *  OMNIROUTE_CLI_SALT reaches the CLI too (docs/security/CLI_TOKEN.md). */
+ *  AGENTPROXY_CLI_SALT reaches the CLI too (docs/security/CLI_TOKEN.md). */
 function getActiveSalt() {
-  return process.env.OMNIROUTE_CLI_SALT || BUILTIN_DEFAULT_SALT;
+  return process.env.AGENTPROXY_CLI_SALT || BUILTIN_DEFAULT_SALT;
 }
 
 export function deriveCliToken(machineIdModule, salt) {
