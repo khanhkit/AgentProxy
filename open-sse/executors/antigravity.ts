@@ -604,6 +604,7 @@ export class AntigravityExecutor extends BaseExecutor {
     const normalizeProjectId = (value: unknown): string | null => {
       if (typeof value !== "string") return null;
       const trimmedValue = value.trim();
+      if (trimmedValue === ANTIGRAVITY_REQUIRES_MANUAL_PROJECT) return null;
       return trimmedValue ? trimmedValue : null;
     };
     const bodyRecord = asRecord(body) ?? {};
@@ -896,6 +897,7 @@ export class AntigravityExecutor extends BaseExecutor {
       // a proactive discovery here prevents 422 errors on the next request when the
       // per-token memoization cache is invalidated by the new access token.
       let projectId = credentials.projectId?.trim() || "";
+      if (projectId === ANTIGRAVITY_REQUIRES_MANUAL_PROJECT) projectId = "";
       if (!projectId && newAccessToken) {
         try {
           const discovered = await ensureAntigravityProjectAssigned(
@@ -904,7 +906,7 @@ export class AntigravityExecutor extends BaseExecutor {
             getAntigravityClientProfile(credentials),
             AbortSignal.timeout(8_000)
           );
-          if (discovered) {
+          if (discovered && discovered !== ANTIGRAVITY_REQUIRES_MANUAL_PROJECT) {
             projectId = discovered;
             await persistDiscoveredAntigravityProjectId(
               credentials.connectionId,
