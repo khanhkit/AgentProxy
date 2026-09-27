@@ -186,11 +186,11 @@ function buildAuditFilterSql(filters: McpAuditQuery): { whereSql: string; params
   };
 }
 
-function getCachedAuditDb(): AuditDatabase | null {
-  return globalThis.__agentproxyMcpAuditDb ?? null;
+function getCachedAuditDb(): AuditDatabase | null | undefined {
+  return globalThis.__agentproxyMcpAuditDb;
 }
 
-function setCachedAuditDb(database: AuditDatabase | null): void {
+function setCachedAuditDb(database: AuditDatabase | null | undefined): void {
   globalThis.__agentproxyMcpAuditDb = database;
 }
 
@@ -221,10 +221,11 @@ async function openBetterSqliteAuditDb(dbPath: string): Promise<AuditDatabase> {
   } else {
     mod = runtimeRequire("better-sqlite3");
   }
-  const Database = ((mod as { default?: unknown })?.default || mod) as unknown as new (
-    dbPath: string
-  ) => AuditDatabase;
-  return new Database(dbPath);
+  const Database = ((mod as { default?: unknown })?.default || mod) as unknown;
+  if (typeof Database !== "function") {
+    throw new TypeError("better-sqlite3 export is not a function");
+  }
+  return new (Database as new (dbPath: string) => AuditDatabase)(dbPath);
 }
 
 function nodeSqliteFallbackAvailable(): boolean {
@@ -278,7 +279,10 @@ async function openFallbackAuditDb(dbPath: string, nativeMessage: string): Promi
  */
 async function getDb(): Promise<AuditDatabase | null> {
   const cachedDb = getCachedAuditDb();
-  if (cachedDb) return cachedDb;
+  // undefined = never tried / retryable; null = driver/connect failure already observed.
+  // Cache only genuine failures so dashboard polling does not reopen and re-log them,
+  // while a missing database file remains retryable when the app creates it later.
+  if (cachedDb !== undefined) return cachedDb;
 
   try {
     // Try importing the db module from the main app
@@ -303,6 +307,7 @@ async function getDb(): Promise<AuditDatabase | null> {
       const nativeMessage = nativeErr instanceof Error ? nativeErr.message : String(nativeErr);
       if (!isNativeSqliteLoadError(nativeErr)) {
         console.error("[MCP Audit] Failed to connect to database:", nativeMessage);
+        setCachedAuditDb(null);
         return null;
       }
       const fallbackDb = await openFallbackAuditDb(dbPath, nativeMessage);
@@ -312,6 +317,7 @@ async function getDb(): Promise<AuditDatabase | null> {
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : String(err);
     console.error("[MCP Audit] Failed to connect to database:", message);
+    setCachedAuditDb(null);
     return null;
   }
 }
@@ -320,7 +326,8 @@ export function closeAuditDb(): boolean {
   const database = getCachedAuditDb();
   if (!database) return false;
 
-  setCachedAuditDb(null);
+  // Intentional close resets to "never tried" so the next call can reopen.
+  setCachedAuditDb(undefined);
 
   try {
     try {
