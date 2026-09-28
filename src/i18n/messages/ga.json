@@ -3252,7 +3252,13 @@
     "cliproxyapiUnknown": "Anaithnid",
     "cliproxyapiUpdate": "Nuashonrú",
     "cliproxyapiUpdateAvailable": "Nuashonrú ar fáil: v{current} → v{latest}",
-    "cliproxyapiVersion": "Leagan"
+    "cliproxyapiVersion": "Leagan",
+    "hermesRoleReview": "Athbhreithniú",
+    "hermesRoleReviewDesc": "Athbhreithniú cóid iomlán fo-ghníomhaire",
+    "hermesRoleMoaReference": "Tagairt MoA",
+    "hermesRoleMoaReferenceDesc": "Múnla tagartha Mixture-of-Agents",
+    "hermesRoleMoaAggregator": "Comhbhailitheoir MoA",
+    "hermesRoleMoaAggregatorDesc": "Múnla sintéise Mixture-of-Agents"
   },
   "combos": {
     "title": "Teaglamaí",
@@ -3481,7 +3487,9 @@
       "failoverBeforeRetry": "Nuair a chuirtear ar siúl é, spreagann aon earráid ón soláthraí réamhtheachtach failover láithreach chuig an gcéad sprioc comhcheangail eile, gan aon iarracht athrá ná fallback URL a dhéanamh.",
       "maxSetRetries": "An líon uaireanta a dhéantar iarracht eile leis an tacar iomlán spriocanna nuair a theipeann ar gach sprioc. 0 = gan aon iarracht athrá ar leibhéal tacair.",
       "setRetryDelayMs": "Moill idir iarrachtaí athrá ar leibhéal tacair, rud a thugann am d'fhadhbanna neamhbhuana réiteach.",
-      "disableSessionStickiness": "Athraigh chuig nasc difriúil le gach iarratas in ionad comhrá iomlán a phionnáil le nasc amháin de réir hash na chéad teachtaireachta. Sáraíonn sé seo an réamhshocrú domhanda. Fág ar Inherit é chun amasanna taisce leideanna a chaomhnú do chomhráite ilbhabhta."
+      "disableSessionStickiness": "Athraigh chuig nasc difriúil le gach iarratas in ionad comhrá iomlán a phionnáil le nasc amháin de réir hash na chéad teachtaireachta. Sáraíonn sé seo an réamhshocrú domhanda. Fág ar Inherit é chun amasanna taisce leideanna a chaomhnú do chomhráite ilbhabhta.",
+      "connectionAwareExpansion": "When on, this combo expands each provider-level step into per-account targets before rotating. Inherit uses the global default (off). Off keeps provider-level rotation.",
+      "stickyLimit": "Round-robin sticky batch size: consecutive successful requests sent to one target before rotating to the next. Empty inherits the global Sticky Limit setting; 1 disables batching (pure one-request rotation)."
     },
     "templatesTitle": "Teimpléid thapa",
     "templatesDescription": "Cuir próifíl tosaithe i bhfeidhm, ansin coigeartaigh samhlacha agus cumraíocht.",
@@ -3837,7 +3845,16 @@
     "duplicateAutoComboUnknownError": "Earráid anaithnid",
     "duplicateAutoComboTitle": "Cruthaigh comhcheangal statach ó {name}",
     "quotaWeighted": "Ualaithe de réir Cuóta",
-    "quotaWeightedDesc": "Scipeáil cuntais ídithe, ansin roghnaigh as na cinn eile i gcomhréir leis an méid atá fágtha, roinnte ar an ualach atá ar siúl. Fanann comhráite atá ann cheana ceangailte."
+    "quotaWeightedDesc": "Scipeáil cuntais ídithe, ansin roghnaigh as na cinn eile i gcomhréir leis an méid atá fágtha, roinnte ar an ualach atá ar siúl. Fanann comhráite atá ann cheana ceangailte.",
+    "stickyLimitEffective": "Effective {value} ({source})",
+    "stickyLimitSourceCombo": "combo",
+    "stickyLimitSourceComboDefaults": "combo defaults",
+    "stickyLimitSourceGlobal": "global default",
+    "connectionAwareExpansion": "Connection-aware expansion",
+    "triStateInherit": "inherit",
+    "connectionAwareExpansionOn": "On",
+    "connectionAwareExpansionOff": "Off",
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation."
   },
   "costs": {
     "title": "Costais",
@@ -11019,7 +11036,9 @@
     "poolAddMember": "Cuir",
     "poolAddFailed": "Theip ar an seachfhreastalaí a chur leis an linn",
     "poolSelectProxy": "Roghnaigh seachfhreastalaí…",
-    "poolSaveFailed": "Theip ar shannadh na linne a shábháil"
+    "poolSaveFailed": "Theip ar shannadh na linne a shábháil",
+    "poolEgressFailuresByExit": "Teipeanna trí {exit}: {count}",
+    "poolEgressFailuresUnattributed": "Teipeanna gan slí amach sannta: {count}"
   },
   "playground": {
     "title": "Clós Súgartha Múnlaí",
@@ -11360,7 +11379,11 @@
       "duration": "Fad",
       "time": "Am",
       "conversation": "Comhrá",
-      "ttft": "TTFT"
+      "ttft": "TTFT",
+      "contentProvenance": "Freagra",
+      "contentEmpty": "Freagra folamh",
+      "usageAbsent": "Níor tuairiscíodh líon na dtocán",
+      "usageEstimated": "Líon na dtocán measta"
     },
     "loadingLogs": "Ag lódáil logaí...",
     "noLogs": "Níl aon logaí ann go fóill. Déan roinnt glaonna API chun iad a fheiceáil anseo.",
@@ -12020,7 +12043,11 @@
       "goNow": "Téigh anois",
       "message": "Tá an MITM Proxy anois faoi AgentBridge.",
       "title": "Bogadh an leathanach seo"
-    }
+    },
+    "resetAgent": "Athchóirigh an réamhshocrú",
+    "resetAgentConfirm": "An réamhshocrú a athchóiriú?",
+    "resetting": "Á athchóiriú…",
+    "resetDone": "Athchóiríodh an DNS réamhshocraithe do {agent}. Scoir den aip go hiomlán (ní leor í a íoslaghdú) agus oscail arís í chun go dtiocfaidh an t-athrú i bhfeidhm."
   },
   "providerStats": {
     "unknownError": "Earráid anaithnid",
@@ -14014,7 +14041,12 @@
     "hour": "uair",
     "day": "lá",
     "unknownModel": "anaithnid",
-    "pending": "ar feithimh"
+    "pending": "ar feithimh",
+    "allApiKeys": "All API keys",
+    "mcp": "MCP",
+    "mcpTool": "MCP tool",
+    "scope": "Scope",
+    "apiKey": "API key"
   },
   "metadata": {
     "compressionTitle": "Comhbhrú",

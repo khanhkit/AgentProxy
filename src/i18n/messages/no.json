@@ -3193,7 +3193,13 @@
     "cliproxyapiUnknown": "Ukjent",
     "cliproxyapiUpdate": "Oppdater",
     "cliproxyapiUpdateAvailable": "Oppdatering tilgjengelig: v{current} → v{latest}",
-    "cliproxyapiVersion": "Versjon"
+    "cliproxyapiVersion": "Versjon",
+    "hermesRoleReview": "Gjennomgang",
+    "hermesRoleReviewDesc": "Full underagent-kodegjennomgang",
+    "hermesRoleMoaReference": "MoA-referanse",
+    "hermesRoleMoaReferenceDesc": "Mixture-of-Agents-referansemodell",
+    "hermesRoleMoaAggregator": "MoA-aggregator",
+    "hermesRoleMoaAggregatorDesc": "Mixture-of-Agents-syntesemodell"
   },
   "combos": {
     "title": "Kombinasjoner",
@@ -3424,7 +3430,9 @@
       "failoverBeforeRetry": "Når den er aktivert, utløser enhver oppstrømsfeil umiddelbar failover til neste kombinasjonsmål, og hopper over alle gjenforsøk og reservenettadresser.",
       "maxSetRetries": "Antall ganger å prøve hele målet satt på nytt når hvert mål mislykkes. 0 = ingen forsøk på nytt på satt nivå.",
       "setRetryDelayMs": "Forsinkelse mellom gjenforsøk på sett-nivå, noe som gir forbigående problemer tid til å løse.",
-      "disableSessionStickiness": "Roter til en annen tilkobling ved hver forespørsel i stedet for å låse en hel samtale til én tilkobling basert på hashen til første melding. Overstyrer den globale standarden. La stå på Arv for å bevare prompt-cache-treff for flertrinns-samtaler."
+      "disableSessionStickiness": "Roter til en annen tilkobling ved hver forespørsel i stedet for å låse en hel samtale til én tilkobling basert på hashen til første melding. Overstyrer den globale standarden. La stå på Arv for å bevare prompt-cache-treff for flertrinns-samtaler.",
+      "connectionAwareExpansion": "When on, this combo expands each provider-level step into per-account targets before rotating. Inherit uses the global default (off). Off keeps provider-level rotation.",
+      "stickyLimit": "Round-robin sticky batch size: consecutive successful requests sent to one target before rotating to the next. Empty inherits the global Sticky Limit setting; 1 disables batching (pure one-request rotation)."
     },
     "templatesTitle": "Hurtigmaler",
     "templatesDescription": "Bruk en startprofil, og juster deretter modeller og konfigurasjon.",
@@ -3778,7 +3786,16 @@
     "duplicateAutoComboSnapshotMsg": "Dette vil ta et øyeblikksbilde av de nåvørende tilkoblede leverandørene/modellene som matcher denne malen i en redigerbar kombinasjon.",
     "duplicateAutoComboFailedPrefix": "Duplisering av auto-kombinasjon mislyktes:",
     "duplicateAutoComboUnknownError": "Ukjent feil",
-    "duplicateAutoComboTitle": "Opprett en statisk kombinasjon fra {name}"
+    "duplicateAutoComboTitle": "Opprett en statisk kombinasjon fra {name}",
+    "stickyLimitEffective": "Effective {value} ({source})",
+    "stickyLimitSourceCombo": "combo",
+    "stickyLimitSourceComboDefaults": "combo defaults",
+    "stickyLimitSourceGlobal": "global default",
+    "connectionAwareExpansion": "Connection-aware expansion",
+    "triStateInherit": "inherit",
+    "connectionAwareExpansionOn": "On",
+    "connectionAwareExpansionOff": "Off",
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation."
   },
   "costs": {
     "title": "Kostnader",
@@ -10960,7 +10977,9 @@
     "poolAddMember": "Legg til",
     "poolAddFailed": "Kunne ikke legge proxyen til i poolen",
     "poolSelectProxy": "Velg en proxy…",
-    "poolSaveFailed": "Kunne ikke lagre pool-tildeling"
+    "poolSaveFailed": "Kunne ikke lagre pool-tildeling",
+    "poolEgressFailuresByExit": "Feil via {exit}: {count}",
+    "poolEgressFailuresUnattributed": "Feil uten tilordnet utgang: {count}"
   },
   "playground": {
     "title": "Title",
@@ -11301,7 +11320,11 @@
       "duration": "Varighet",
       "time": "Tid",
       "conversation": "Samtale",
-      "ttft": "TTFT"
+      "ttft": "TTFT",
+      "contentProvenance": "Svar",
+      "contentEmpty": "Tomt svar",
+      "usageAbsent": "Antall tokens ikke rapportert",
+      "usageEstimated": "Antall tokens anslått"
     },
     "loadingLogs": "Laster inn logger...",
     "noLogs": "Ingen logger ennå. Foreta noen API-kall for å se dem her.",
@@ -11897,6 +11920,10 @@
     "stopDns": "Stopp DNS",
     "toggling": "Veksler…",
     "viewTraffic": "Vis trafikk",
+    "resetAgent": "Gjenopprett standard",
+    "resetAgentConfirm": "Gjenopprette standard?",
+    "resetting": "Gjenoppretter…",
+    "resetDone": "Standard-DNS er gjenopprettet for {agent}. Avslutt appen helt (ikke bare minimer den) og åpne den igjen for at endringen skal tre i kraft.",
     "emptyNoProvidersTitle": "Ingen leverandører konfigurert ennå",
     "emptyNoProvidersBody": "For å bruke AgentBridge må du først koble til minst én leverandør. Den vil være destinasjonen som IDE-forespørsler rutes til.",
     "emptyGoToProviders": "Gå til leverandører",
@@ -13955,7 +13982,12 @@
     "hour": "time",
     "day": "dag",
     "unknownModel": "ukjent",
-    "pending": "ventende"
+    "pending": "ventende",
+    "allApiKeys": "All API keys",
+    "mcp": "MCP",
+    "mcpTool": "MCP tool",
+    "scope": "Scope",
+    "apiKey": "API key"
   },
   "metadata": {
     "compressionTitle": "Komprimering",

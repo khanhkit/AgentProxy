@@ -14,6 +14,7 @@ import {
   proxyUrlForLogs,
 } from "./proxyDispatcher.ts";
 import tlsClient, { type TlsFetchOptions } from "./tlsClient.ts";
+import { recordFinalTransportOutcome, recordProxiedSuccess } from "./proxyTransportOutcome.ts";
 import { describeFallbackFailure, redactProxyDetailsInMessage } from "./proxyFetchRedaction.ts";
 import { isProxyReachable } from "@/lib/proxyHealth";
 import {
@@ -1143,11 +1144,13 @@ async function patchedFetch(
   let lastProxyError: unknown = null;
   for (let attempt = 0; attempt < maxProxyAttempts; attempt++) {
     try {
-      return await _undiciProxy(input, {
+      const response = await _undiciProxy(input, {
         ...options,
         dispatcher:
           attempt === 0 ? createProxyDispatcher(proxyUrl) : getProxyRetryDispatcher(proxyUrl),
       });
+      recordProxiedSuccess(proxyUrl, targetUrl); // completed response, any status
+      return response;
     } catch (error) {
       if (isCallerAbort(error, getEffectiveSignal(input, options))) throw error;
       const msg = error instanceof Error ? error.message : String(error);
@@ -1179,6 +1182,9 @@ async function patchedFetch(
         originalMsg ? `Proxy request failed: ${originalMsg}` : "Proxy request failed",
         "PROXY_REQUEST_FAILED"
       );
+      // A tagged final transport failure is evidence only; cross-egress success decides set-aside.
+      if (sanitized.errorCode === "proxy_unreachable")
+        recordFinalTransportOutcome(proxyUrl, targetUrl);
       console.error(
         `[ProxyFetch] Proxy request failed (${source}, fail-closed; code=${sanitized.code})`
       );

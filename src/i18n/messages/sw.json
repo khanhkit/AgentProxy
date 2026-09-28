@@ -3193,7 +3193,13 @@
     "cliproxyapiUnknown": "Haijulikani",
     "cliproxyapiUpdate": "Sasisha",
     "cliproxyapiUpdateAvailable": "Sasisho linapatikana: v{current} → v{latest}",
-    "cliproxyapiVersion": "Toleo"
+    "cliproxyapiVersion": "Toleo",
+    "hermesRoleReview": "Ukaguzi",
+    "hermesRoleReviewDesc": "Ukaguzi kamili wa msimbo wa ajenti ndogo",
+    "hermesRoleMoaReference": "Rejeleo la MoA",
+    "hermesRoleMoaReferenceDesc": "Muundo wa rejeleo wa Mixture-of-Agents",
+    "hermesRoleMoaAggregator": "Kikusanyaji cha MoA",
+    "hermesRoleMoaAggregatorDesc": "Muundo wa usanisi wa Mixture-of-Agents"
   },
   "combos": {
     "title": "Mikusanyiko",
@@ -3424,7 +3430,9 @@
       "failoverBeforeRetry": "Inapowashwa, hitilafu yoyote ya mkondo wa juu husababisha kushindwa mara moja kwa shabaha ya mseto inayofuata, kuruka majaribio yote na URL mbadala.",
       "maxSetRetries": "Idadi ya mara za kujaribu tena lengo kamili lililowekwa wakati kila lengo limeshindwa. 0 = hakuna kiwango cha kuweka tena.",
       "setRetryDelayMs": "Kucheleweshwa kati ya majaribio ya kujaribu tena kiwango kilichowekwa, na kutoa muda wa kutatua masuala ya muda mfupi.",
-      "disableSessionStickiness": "Zungusha hadi kwenye muunganisho tofauti kwenye kila ombi badala ya kubandika mazungumzo yote kwenye muunganisho mmoja kwa kutumia hashi ya ujumbe wa kwanza. Hubatilisha chaguo-msingi la kimataifa. Acha kwenye Inherit ili kuhifadhi prompt-cache hits kwa soga za zamu nyingi."
+      "disableSessionStickiness": "Zungusha hadi kwenye muunganisho tofauti kwenye kila ombi badala ya kubandika mazungumzo yote kwenye muunganisho mmoja kwa kutumia hashi ya ujumbe wa kwanza. Hubatilisha chaguo-msingi la kimataifa. Acha kwenye Inherit ili kuhifadhi prompt-cache hits kwa soga za zamu nyingi.",
+      "connectionAwareExpansion": "When on, this combo expands each provider-level step into per-account targets before rotating. Inherit uses the global default (off). Off keeps provider-level rotation.",
+      "stickyLimit": "Round-robin sticky batch size: consecutive successful requests sent to one target before rotating to the next. Empty inherits the global Sticky Limit setting; 1 disables batching (pure one-request rotation)."
     },
     "templatesTitle": "Violezo vya haraka",
     "templatesDescription": "Tumia wasifu wa kuanzia, kisha rekebisha modeli na usanidi.",
@@ -3778,7 +3786,16 @@
     "duplicateAutoComboSnapshotMsg": "Hii itachukua picha ya watoa huduma/watolei sambazwa sasa yanayolingana na kioo hiki katika combo inayoedit.",
     "duplicateAutoComboFailedPrefix": "Imeshindwa kuiga combo ya otomatiki:",
     "duplicateAutoComboUnknownError": "Hitilafai isiyojulikana",
-    "duplicateAutoComboTitle": "Tengeneza combo thabiti kutoka {name}"
+    "duplicateAutoComboTitle": "Tengeneza combo thabiti kutoka {name}",
+    "stickyLimitEffective": "Effective {value} ({source})",
+    "stickyLimitSourceCombo": "combo",
+    "stickyLimitSourceComboDefaults": "combo defaults",
+    "stickyLimitSourceGlobal": "global default",
+    "connectionAwareExpansion": "Connection-aware expansion",
+    "triStateInherit": "inherit",
+    "connectionAwareExpansionOn": "On",
+    "connectionAwareExpansionOff": "Off",
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation."
   },
   "costs": {
     "title": "Gharama",
@@ -10960,7 +10977,9 @@
     "poolAddMember": "Ongeza",
     "poolAddFailed": "Imeshindwa kuongeza proksi kwenye dimbwi",
     "poolSelectProxy": "Chagua proksi…",
-    "poolSaveFailed": "Imeshindwa kuhifadhi ugawaji wa dimbwi"
+    "poolSaveFailed": "Imeshindwa kuhifadhi ugawaji wa dimbwi",
+    "poolEgressFailuresByExit": "Hitilafu kupitia {exit}: {count}",
+    "poolEgressFailuresUnattributed": "Hitilafu bila njia ya kutoka iliyohusishwa: {count}"
   },
   "playground": {
     "title": "Mazingira ya Majaribio ya Modeli",
@@ -11301,7 +11320,11 @@
       "duration": "Muda",
       "time": "Wakati",
       "conversation": "Mazungumzo",
-      "ttft": "TTFT"
+      "ttft": "TTFT",
+      "contentProvenance": "Jibu",
+      "contentEmpty": "Jibu tupu",
+      "usageAbsent": "Idadi ya tokeni haikuripotiwa",
+      "usageEstimated": "Idadi ya tokeni imekadiriwa"
     },
     "loadingLogs": "Kumbukumbu zinapakiwa...",
     "noLogs": "Bado hakuna kumbukumbu. Tuma baadhi ya maombi ya API ili uyaone hapa.",
@@ -11897,6 +11920,10 @@
     "stopDns": "Simamisha DNS",
     "toggling": "Inageuza…",
     "viewTraffic": "Tazama trafiki",
+    "resetAgent": "Rejesha chaguo-msingi",
+    "resetAgentConfirm": "Rejesha chaguo-msingi?",
+    "resetting": "Inarejesha…",
+    "resetDone": "DNS chaguo-msingi ya {agent} imerejeshwa. Funga programu kabisa (si kuipunguza tu) kisha uifungue tena ili mabadiliko yaanze kufanya kazi.",
     "emptyNoProvidersTitle": "Bado hakuna watoa huduma waliosanidiwa",
     "emptyNoProvidersBody": "Ili kutumia AgentBridge, kwanza unganisha angalau mtoa huduma mmoja. Itakuwa ndiyo fikio ambapo maombi ya IDE yanaelekezwa.",
     "emptyGoToProviders": "Nenda kwa Watoa Huduma",
@@ -13955,7 +13982,12 @@
     "hour": "saa",
     "day": "siku",
     "unknownModel": "sijulikana",
-    "pending": "inasubiriwa"
+    "pending": "inasubiriwa",
+    "allApiKeys": "All API keys",
+    "mcp": "MCP",
+    "mcpTool": "MCP tool",
+    "scope": "Scope",
+    "apiKey": "API key"
   },
   "metadata": {
     "compressionTitle": "Kufinya",

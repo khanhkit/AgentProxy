@@ -3193,7 +3193,13 @@
     "cliproxyapiUnknown": "Mhux magħruf",
     "cliproxyapiUpdate": "Aġġorna",
     "cliproxyapiUpdateAvailable": "Aġġornament disponibbli: v{current} → v{latest}",
-    "cliproxyapiVersion": "Verżjoni"
+    "cliproxyapiVersion": "Verżjoni",
+    "hermesRoleReview": "Reviżjoni",
+    "hermesRoleReviewDesc": "Reviżjoni sħiħa tal-kodiċi tas-sottoaġent",
+    "hermesRoleMoaReference": "Referenza MoA",
+    "hermesRoleMoaReferenceDesc": "Mudell ta' referenza Mixture-of-Agents",
+    "hermesRoleMoaAggregator": "Aggregatur MoA",
+    "hermesRoleMoaAggregatorDesc": "Mudell ta' sinteżi Mixture-of-Agents"
   },
   "combos": {
     "title": "Kombinazzjonijiet",
@@ -3422,7 +3428,9 @@
       "failoverBeforeRetry": "Meta din tkun attivata, kwalunkwe żball upstream jattiva failover immedjat lejn il-mira li jmiss tal-kombinazzjoni, filwaqt li jaqbeż it-tentattivi mill-ġdid u l-URLs ta' fallback kollha.",
       "maxSetRetries": "L-għadd ta' drabi li jerġa' jiġi ppruvat is-sett sħiħ tal-miri meta kull mira tfalli. 0 = ebda tentattiv mill-ġdid fil-livell tas-sett.",
       "setRetryDelayMs": "Id-dewmien bejn tentattivi mill-ġdid fil-livell tas-sett, biex il-problemi temporanji jingħataw ħin biex jissolvew.",
-      "disableSessionStickiness": "Aqleb għal konnessjoni differenti ma' kull talba minflok torbot konverżazzjoni sħiħa ma' konnessjoni waħda permezz tal-hash tal-ewwel messaġġ. Dan jieħu post il-konfigurazzjoni prestabbilita globali. Ħallih fuq Inherit biex tippreserva l-hits fil-cache tal-prompt għal chats b'diversi skambji."
+      "disableSessionStickiness": "Aqleb għal konnessjoni differenti ma' kull talba minflok torbot konverżazzjoni sħiħa ma' konnessjoni waħda permezz tal-hash tal-ewwel messaġġ. Dan jieħu post il-konfigurazzjoni prestabbilita globali. Ħallih fuq Inherit biex tippreserva l-hits fil-cache tal-prompt għal chats b'diversi skambji.",
+      "connectionAwareExpansion": "When on, this combo expands each provider-level step into per-account targets before rotating. Inherit uses the global default (off). Off keeps provider-level rotation.",
+      "stickyLimit": "Round-robin sticky batch size: consecutive successful requests sent to one target before rotating to the next. Empty inherits the global Sticky Limit setting; 1 disables batching (pure one-request rotation)."
     },
     "templatesTitle": "Mudelli ta' malajr",
     "templatesDescription": "Applika profil inizjali, imbagħad aġġusta l-mudelli u l-konfigurazzjoni.",
@@ -3778,7 +3786,16 @@
     "duplicateAutoComboUnknownError": "Żball mhux magħruf",
     "duplicateAutoComboTitle": "Oħloq kombinazzjoni statika minn {name}",
     "quotaWeighted": "Peżat skont il-kwota",
-    "quotaWeightedDesc": "Aqbeż il-kontijiet li eżawrew il-kwota, imbagħad agħżel minn fost il-bqija proporzjonalment għall-kwota li fadal, diviża bit-tagħbija li tkun għaddejja. Il-konverżazzjonijiet eżistenti jibqgħu marbuta mal-istess kont."
+    "quotaWeightedDesc": "Aqbeż il-kontijiet li eżawrew il-kwota, imbagħad agħżel minn fost il-bqija proporzjonalment għall-kwota li fadal, diviża bit-tagħbija li tkun għaddejja. Il-konverżazzjonijiet eżistenti jibqgħu marbuta mal-istess kont.",
+    "stickyLimitEffective": "Effective {value} ({source})",
+    "stickyLimitSourceCombo": "combo",
+    "stickyLimitSourceComboDefaults": "combo defaults",
+    "stickyLimitSourceGlobal": "global default",
+    "connectionAwareExpansion": "Connection-aware expansion",
+    "triStateInherit": "inherit",
+    "connectionAwareExpansionOn": "On",
+    "connectionAwareExpansionOff": "Off",
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation."
   },
   "costs": {
     "title": "Spejjeż",
@@ -10960,7 +10977,9 @@
     "poolAddMember": "Żid",
     "poolAddFailed": "Ma rnexxiex iż-żieda tal-proxy mal-pool",
     "poolSelectProxy": "Agħżel proxy…",
-    "poolSaveFailed": "Ma rnexxiex l-issejvjar tal-assenjazzjoni tal-pool"
+    "poolSaveFailed": "Ma rnexxiex l-issejvjar tal-assenjazzjoni tal-pool",
+    "poolEgressFailuresByExit": "Fallimenti permezz ta' {exit}: {count}",
+    "poolEgressFailuresUnattributed": "Fallimenti mingħajr ħruġ attribwit: {count}"
   },
   "playground": {
     "title": "Żona tal-Ittestjar tal-Mudelli",
@@ -11301,7 +11320,11 @@
       "duration": "Tul taż-żmien",
       "time": "Ħin",
       "conversation": "Konversazzjoni",
-      "ttft": "TTFT"
+      "ttft": "TTFT",
+      "contentProvenance": "Tweġiba",
+      "contentEmpty": "Tweġiba vojta",
+      "usageAbsent": "L-għadd tat-tokens ma ġiex irrappurtat",
+      "usageEstimated": "L-għadd tat-tokens huwa stmat"
     },
     "loadingLogs": "Qed jitgħabbew ir-reġistri...",
     "noLogs": "Għad m'hemmx reġistri. Agħmel xi sejħiet tal-API biex tarahom hawn.",
@@ -11961,7 +11984,11 @@
       "goNow": "Mur issa",
       "message": "Il-MITM Proxy issa jinsab taħt AgentBridge.",
       "title": "Din il-paġna ġiet imċaqalqa"
-    }
+    },
+    "resetAgent": "Irrestawra d-default",
+    "resetAgentConfirm": "Tirrestawra d-default?",
+    "resetting": "Qed jirrestawra…",
+    "resetDone": "Id-DNS default ġie rrestawrat għal {agent}. Agħlaq l-app għal kollox (mhux biss imminimizzaha) u erġa’ iftaħha biex il-bidla tidħol fis-seħħ."
   },
   "providerStats": {
     "unknownError": "Żball mhux magħruf",
@@ -13955,7 +13982,12 @@
     "hour": "siegħa",
     "day": "jum",
     "unknownModel": "mhux magħruf",
-    "pending": "pendenti"
+    "pending": "pendenti",
+    "allApiKeys": "All API keys",
+    "mcp": "MCP",
+    "mcpTool": "MCP tool",
+    "scope": "Scope",
+    "apiKey": "API key"
   },
   "metadata": {
     "compressionTitle": "Kompressjoni",

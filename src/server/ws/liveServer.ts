@@ -135,6 +135,53 @@ function loadAuthModule(): Promise<typeof import("../../sse/services/auth.ts")> 
   return authModulePromise;
 }
 
+/**
+ * True only when the real TCP peer is local. Forwarding headers indicate a
+ * reverse-proxy/tunnel hop and therefore disable the fresh-install bypass.
+ */
+function isLocalWsPeer(request: import("http").IncomingMessage): boolean {
+  if (
+    request.headers["x-forwarded-for"] !== undefined ||
+    request.headers["x-real-ip"] !== undefined
+  ) {
+    return false;
+  }
+
+  let peer = request.socket?.remoteAddress ?? null;
+  if (!peer) return false;
+  peer = peer.replace(/^::ffff:/i, "");
+  return peer === "127.0.0.1" || peer === "::1" || peer === "localhost";
+}
+
+/**
+ * Mirror the dashboard anonymous/open-mode semantics without importing
+ * Next.js-only auth helpers into the LiveWS sidecar.
+ */
+async function isLiveWsAuthRequired(request: import("http").IncomingMessage): Promise<boolean> {
+  try {
+    const { getSettings } = await import("@/lib/db/settings");
+    const settings = await getSettings();
+
+    if (settings.requireLogin === false) return false;
+
+    const hasPassword = typeof settings.password === "string" && settings.password.length > 0;
+    const hasOidc =
+      settings.oidcEnabled === true &&
+      typeof settings.oidcIssuer === "string" &&
+      settings.oidcIssuer.trim().length > 0;
+
+    if (!hasPassword && !hasOidc && !process.env.INITIAL_PASSWORD) {
+      const host = process.env.LIVE_WS_HOST || DEFAULT_HOST;
+      const loopbackBound = host === "127.0.0.1" || host === "::1" || host === "localhost";
+      if (loopbackBound && settings.setupComplete !== true && isLocalWsPeer(request)) return false;
+    }
+
+    return true;
+  } catch {
+    return true;
+  }
+}
+
 type AuthorizedConnection = WsAuthResult & { principalKey?: string };
 
 function hashPrincipal(kind: string, value: string): string {
@@ -145,6 +192,10 @@ async function authorizeConnection(
   request: import("http").IncomingMessage
 ): Promise<AuthorizedConnection> {
   const sessionId = randomUUID().slice(0, 8);
+
+  if (!(await isLiveWsAuthRequired(request))) {
+    return { authorized: true, sessionId };
+  }
 
   // Token MUST come from the Authorization header (or X-Live-WS-Token).
   // Query-string tokens leak into access logs, browser history, and Referer

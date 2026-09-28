@@ -3216,7 +3216,13 @@
     "cliproxyapiUnknown": "Nežinoma",
     "cliproxyapiUpdate": "Atnaujinti",
     "cliproxyapiUpdateAvailable": "Yra atnaujinimas: v{current} → v{latest}",
-    "cliproxyapiVersion": "Versija"
+    "cliproxyapiVersion": "Versija",
+    "hermesRoleReview": "Peržiūra",
+    "hermesRoleReviewDesc": "Išsami subagento kodo peržiūra",
+    "hermesRoleMoaReference": "MoA etalonas",
+    "hermesRoleMoaReferenceDesc": "Mixture-of-Agents etaloninis modelis",
+    "hermesRoleMoaAggregator": "MoA agregatorius",
+    "hermesRoleMoaAggregatorDesc": "Mixture-of-Agents sintezės modelis"
   },
   "combos": {
     "title": "Kombinacijos",
@@ -3445,7 +3451,9 @@
       "failoverBeforeRetry": "Kai įjungta, bet kokia aukštesnės grandies klaida iškart perjungia į kitą kombinacijos tikslinį objektą, praleidžiant visus pakartotinius bandymus ir atsarginius URL adresus.",
       "maxSetRetries": "Kiek kartų pakartotinai bandyti visą tikslinių objektų rinkinį, kai nepavyksta nė vienas tikslinis objektas. 0 = nekartoti rinkinio lygmeniu.",
       "setRetryDelayMs": "Delsa tarp rinkinio lygmens pakartotinių bandymų, suteikianti laiko laikiniems sutrikimams išsispręsti.",
-      "disableSessionStickiness": "Kiekvienai užklausai parinkite kitą ryšį, užuot visą pokalbį susieję su vienu ryšiu pagal pirmojo pranešimo maišos vertę. Šis nustatymas pakeičia bendrą numatytąją reikšmę. Palikite „Paveldėti“, kad kelių etapų pokalbiuose būtų išsaugoti prompt-cache podėlio atitikmenys."
+      "disableSessionStickiness": "Kiekvienai užklausai parinkite kitą ryšį, užuot visą pokalbį susieję su vienu ryšiu pagal pirmojo pranešimo maišos vertę. Šis nustatymas pakeičia bendrą numatytąją reikšmę. Palikite „Paveldėti“, kad kelių etapų pokalbiuose būtų išsaugoti prompt-cache podėlio atitikmenys.",
+      "connectionAwareExpansion": "When on, this combo expands each provider-level step into per-account targets before rotating. Inherit uses the global default (off). Off keeps provider-level rotation.",
+      "stickyLimit": "Round-robin sticky batch size: consecutive successful requests sent to one target before rotating to the next. Empty inherits the global Sticky Limit setting; 1 disables batching (pure one-request rotation)."
     },
     "templatesTitle": "Spartieji šablonai",
     "templatesDescription": "Pritaikykite pradinį profilį, tada pakoreguokite modelius ir konfigūraciją.",
@@ -3801,7 +3809,16 @@
     "duplicateAutoComboUnknownError": "Nežinoma klaida",
     "duplicateAutoComboTitle": "Sukurti statinį kombo iš {name}",
     "quotaWeighted": "Svertinis pagal kvotą",
-    "quotaWeightedDesc": "Praleisti paskyras, kurių kvota išnaudota, tada iš likusių rinktis proporcingai likučio ir vykdomos apkrovos santykiui. Esami pokalbiai lieka susieti."
+    "quotaWeightedDesc": "Praleisti paskyras, kurių kvota išnaudota, tada iš likusių rinktis proporcingai likučio ir vykdomos apkrovos santykiui. Esami pokalbiai lieka susieti.",
+    "stickyLimitEffective": "Effective {value} ({source})",
+    "stickyLimitSourceCombo": "combo",
+    "stickyLimitSourceComboDefaults": "combo defaults",
+    "stickyLimitSourceGlobal": "global default",
+    "connectionAwareExpansion": "Connection-aware expansion",
+    "triStateInherit": "inherit",
+    "connectionAwareExpansionOn": "On",
+    "connectionAwareExpansionOff": "Off",
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation."
   },
   "costs": {
     "title": "Išlaidos",
@@ -10983,7 +11000,9 @@
     "poolAddMember": "Pridėti",
     "poolAddFailed": "Nepavyko pridėti tarpinio serverio prie telkinio",
     "poolSelectProxy": "Pasirinkite tarpinį serverį…",
-    "poolSaveFailed": "Nepavyko išsaugoti priskyrimo telkiniui"
+    "poolSaveFailed": "Nepavyko išsaugoti priskyrimo telkiniui",
+    "poolEgressFailuresByExit": "Nesėkmės per {exit}: {count}",
+    "poolEgressFailuresUnattributed": "Nesėkmės be priskirto išėjimo: {count}"
   },
   "playground": {
     "title": "Modelių bandymų aplinka",
@@ -11324,7 +11343,11 @@
       "duration": "Trukmė",
       "time": "Laikas",
       "conversation": "Pokalbis",
-      "ttft": "TTFT"
+      "ttft": "TTFT",
+      "contentProvenance": "Atsakymas",
+      "contentEmpty": "Tuščias atsakymas",
+      "usageAbsent": "Žetonų skaičius nepateiktas",
+      "usageEstimated": "Žetonų skaičius įvertintas"
     },
     "loadingLogs": "Įkeliami žurnalai...",
     "noLogs": "Žurnalų dar nėra. Atlikite kelis API iškvietimus, kad jie būtų rodomi čia.",
@@ -11984,7 +12007,11 @@
       "goNow": "Eiti dabar",
       "message": "MITM Proxy dabar pasiekiamas AgentBridge skiltyje.",
       "title": "Šis puslapis perkeltas"
-    }
+    },
+    "resetAgent": "Atkurti numatytąjį",
+    "resetAgentConfirm": "Atkurti numatytąjį?",
+    "resetting": "Atkuriama…",
+    "resetDone": "Atkurtas numatytasis {agent} DNS. Kad pakeitimas įsigaliotų, visiškai uždarykite programą (ne tik sumažinkite) ir atidarykite ją iš naujo."
   },
   "providerStats": {
     "unknownError": "Nežinoma klaida",
@@ -13978,7 +14005,12 @@
     "hour": "valanda",
     "day": "diena",
     "unknownModel": "nežinomas",
-    "pending": "laukiama"
+    "pending": "laukiama",
+    "allApiKeys": "All API keys",
+    "mcp": "MCP",
+    "mcpTool": "MCP tool",
+    "scope": "Scope",
+    "apiKey": "API key"
   },
   "metadata": {
     "compressionTitle": "Glaudinimas",

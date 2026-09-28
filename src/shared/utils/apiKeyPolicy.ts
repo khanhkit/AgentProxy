@@ -188,6 +188,15 @@ function matchesComboAccessRule(comboName: string, requestedModel: string, rule:
   );
 }
 
+export function isComboNameAllowedForKey(
+  allowedCombos: string[] | null | undefined,
+  comboName: string
+): boolean {
+  if (!Array.isArray(allowedCombos)) return true;
+  if (!comboName) return false;
+  return allowedCombos.some((rule) => matchesComboAccessRule(comboName, comboName, rule));
+}
+
 function isAnthropicMessagesRequest(request: Request): boolean {
   if (request.headers.has("anthropic-version")) return true;
 
@@ -378,6 +387,25 @@ export interface ApiKeyPolicyResult {
   rejection: Response | null;
 }
 
+export interface EnforceApiKeyPolicyOptions {
+  /**
+   * Where the metered dollar budget is enforced for this request.
+   *
+   * `"enforce"` (the default) rejects here, the moment the key's allowance is
+   * spent. That is correct for every endpoint that dispatches to a single,
+   * already-determined provider.
+   *
+   * `"defer-to-candidate"` is for callers that route across several provider
+   * candidates. The budget is scoped by apiKeyId and knows nothing about which
+   * provider will serve the request, so rejecting here also rejects flat-rate
+   * subscription capacity that the allowance does not pay for. A caller passing
+   * this MUST re-apply the budget per resolved candidate — see
+   * `lib/usage/meteredBudgetPolicy` — or it drops metered-spend enforcement
+   * entirely. Every other check on this path is unaffected.
+   */
+  meteredBudget?: "enforce" | "defer-to-candidate";
+}
+
 /**
  * Enforce API key policies for a request.
  *
@@ -387,6 +415,9 @@ export interface ApiKeyPolicyResult {
  *
  * @param request - The incoming HTTP request
  * @param modelStr - The model ID from the request body
+ * @param options - See {@link EnforceApiKeyPolicyOptions}; omitted means every
+ *   check is enforced here, which is the behaviour every caller had before the
+ *   option existed.
  * @returns ApiKeyPolicyResult with apiKey, metadata, and optional rejection response
  *
  * @example
@@ -573,6 +604,18 @@ async function validateComboAccess(
   }
 }
 
+/**
+ * The metered dollar budget check, skipped when the caller defers it to the
+ * resolved candidate (see {@link EnforceApiKeyPolicyOptions.meteredBudget}).
+ */
+function validateBudgetUnlessDeferred(
+  context: PolicyContext,
+  options: EnforceApiKeyPolicyOptions | undefined
+): Response | null {
+  if (options?.meteredBudget === "defer-to-candidate") return null;
+  return validateBudget(context);
+}
+
 function validateBudget(context: PolicyContext): Response | null {
   const { apiKeyInfo } = context;
   if (!apiKeyInfo.id) return null;
@@ -660,7 +703,8 @@ function extractUngatedClientApiKey(request: Request): string | null {
 
 export async function enforceApiKeyPolicy(
   request: Request,
-  modelStr: string | null
+  modelStr: string | null,
+  options?: EnforceApiKeyPolicyOptions
 ): Promise<ApiKeyPolicyResult> {
   // A real bearer key wins; then a bare x-api-key/x-goog-api-key that auth
   // accepted but extractApiKey() gates out; otherwise an authenticated dashboard
@@ -708,7 +752,7 @@ export async function enforceApiKeyPolicy(
   const modelRejection = await validateModelAccess(context);
   if (modelRejection) return { apiKey, apiKeyInfo, rejection: modelRejection };
 
-  const budgetRejection = validateBudget(context);
+  const budgetRejection = validateBudgetUnlessDeferred(context, options);
   if (budgetRejection) return { apiKey, apiKeyInfo, rejection: budgetRejection };
   const tokenRejection = validateTokenLimit(context);
   if (tokenRejection) return { apiKey, apiKeyInfo, rejection: tokenRejection };

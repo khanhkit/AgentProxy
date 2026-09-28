@@ -3231,7 +3231,13 @@
     "cliproxyapiUnknown": "अज्ञात",
     "cliproxyapiUpdate": "अद्यतन करा",
     "cliproxyapiUpdateAvailable": "उपलब्ध अद्यतन: v{current} → v{latest}",
-    "cliproxyapiVersion": "आवृत्ती"
+    "cliproxyapiVersion": "आवृत्ती",
+    "hermesRoleReview": "पुनरावलोकन",
+    "hermesRoleReviewDesc": "संपूर्ण सब-एजंट कोड पुनरावलोकन",
+    "hermesRoleMoaReference": "MoA संदर्भ",
+    "hermesRoleMoaReferenceDesc": "Mixture-of-Agents संदर्भ मॉडेल",
+    "hermesRoleMoaAggregator": "MoA ॲग्रीगेटर",
+    "hermesRoleMoaAggregatorDesc": "Mixture-of-Agents सिंथेसिस मॉडेल"
   },
   "combos": {
     "title": "कॉम्बोज",
@@ -3462,7 +3468,9 @@
       "failoverBeforeRetry": "सक्षम केल्यावर, कोणतीही अपस्ट्रीम त्रुटी पुढील कॉम्बो लक्ष्यावर त्वरित फेलओव्हर ट्रिगर करते, सर्व पुन्हा प्रयत्न आणि फॉलबॅक URL वगळते.",
       "maxSetRetries": "प्रत्येक लक्ष्य अयशस्वी झाल्यावर पूर्ण लक्ष्य सेट करण्याचा पुन्हा प्रयत्न करण्याची संख्या. 0 = सेट-स्तरीय पुन्हा प्रयत्न नाही.",
       "setRetryDelayMs": "सेट-लेव्हल पुन्हा प्रयत्न करण्याच्या प्रयत्नांमध्ये विलंब, क्षणिक समस्यांचे निराकरण करण्यासाठी वेळ देते.",
-      "disableSessionStickiness": "पहिल्या-संदेश हॅशद्वारे संपूर्ण संभाषण एकाच कनेक्शनवर पिन करण्याऐवजी प्रत्येक विनंतीवर वेगळ्या कनेक्शनवर रोटेट करा. ग्लोबल डीफॉल्ट ओव्हरराइड करते. मल्टी-टर्न चॅट्ससाठी प्रॉम्प्ट-कॅशे हिट्स जतन करण्यासाठी Inherit वर ठेवा."
+      "disableSessionStickiness": "पहिल्या-संदेश हॅशद्वारे संपूर्ण संभाषण एकाच कनेक्शनवर पिन करण्याऐवजी प्रत्येक विनंतीवर वेगळ्या कनेक्शनवर रोटेट करा. ग्लोबल डीफॉल्ट ओव्हरराइड करते. मल्टी-टर्न चॅट्ससाठी प्रॉम्प्ट-कॅशे हिट्स जतन करण्यासाठी Inherit वर ठेवा.",
+      "connectionAwareExpansion": "When on, this combo expands each provider-level step into per-account targets before rotating. Inherit uses the global default (off). Off keeps provider-level rotation.",
+      "stickyLimit": "Round-robin sticky batch size: consecutive successful requests sent to one target before rotating to the next. Empty inherits the global Sticky Limit setting; 1 disables batching (pure one-request rotation)."
     },
     "templatesTitle": "द्रुत टेम्पलेट्स",
     "templatesDescription": "प्रारंभिक प्रोफाइल लागू करा, त्यानंतर मॉडेल्स आणि कॉन्फिग समायोजित करा.",
@@ -3816,7 +3824,16 @@
     "duplicateAutoComboSnapshotMsg": "या टेम्पलेटशी जुळणारे सध्या कनेक्ट केलेले प्रदाता/मॉडेल्स संपादनयोग्य कॉम्बोमध्ये स्नॅपशॉट घेईल.",
     "duplicateAutoComboFailedPrefix": "ऑटोकॉम्बो डुप्लिकेट करण्यात अपयश:",
     "duplicateAutoComboUnknownError": "अज्ञात त्रुटी",
-    "duplicateAutoComboTitle": "{name} मधून स्थिर कॉम्बो तयार करा"
+    "duplicateAutoComboTitle": "{name} मधून स्थिर कॉम्बो तयार करा",
+    "stickyLimitEffective": "Effective {value} ({source})",
+    "stickyLimitSourceCombo": "combo",
+    "stickyLimitSourceComboDefaults": "combo defaults",
+    "stickyLimitSourceGlobal": "global default",
+    "connectionAwareExpansion": "Connection-aware expansion",
+    "triStateInherit": "inherit",
+    "connectionAwareExpansionOn": "On",
+    "connectionAwareExpansionOff": "Off",
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation."
   },
   "costs": {
     "title": "खर्च",
@@ -10998,7 +11015,9 @@
     "poolAddMember": "जोडा",
     "poolAddFailed": "पूलमध्ये प्रॉक्सी जोडण्यात अयशस्वी",
     "poolSelectProxy": "प्रॉक्सी निवडा…",
-    "poolSaveFailed": "पूल असाइनमेंट सेव्ह करण्यात अयशस्वी"
+    "poolSaveFailed": "पूल असाइनमेंट सेव्ह करण्यात अयशस्वी",
+    "poolEgressFailuresByExit": "{exit} द्वारे अपयश: {count}",
+    "poolEgressFailuresUnattributed": "निश्चित एक्झिट नसलेली अपयशे: {count}"
   },
   "playground": {
     "title": "मॉडेल प्लेग्राउंड",
@@ -11339,7 +11358,11 @@
       "duration": "कालावधी",
       "time": "वेळ",
       "conversation": "संभाषण",
-      "ttft": "TTFT"
+      "ttft": "TTFT",
+      "contentProvenance": "उत्तर",
+      "contentEmpty": "रिकामे उत्तर",
+      "usageAbsent": "टोकन संख्या कळवली नाही",
+      "usageEstimated": "टोकन संख्या अंदाजे"
     },
     "loadingLogs": "लॉग लोड होत आहेत...",
     "noLogs": "अद्याप कोणतेही लॉग नाहीत. ते येथे पाहण्यासाठी काही API कॉल करा.",
@@ -11935,6 +11958,10 @@
     "stopDns": "DNS थांबवा",
     "toggling": "टॉगल करत आहे…",
     "viewTraffic": "ट्रॅफिक पहा",
+    "resetAgent": "डीफॉल्ट पुनर्संचयित करा",
+    "resetAgentConfirm": "डीफॉल्ट पुनर्संचयित करायचे?",
+    "resetting": "पुनर्संचयित करत आहे…",
+    "resetDone": "{agent} साठी डीफॉल्ट DNS पुनर्संचयित केले. बदल लागू होण्यासाठी अ‍ॅप पूर्णपणे बंद करा (फक्त मिनिमाइज करू नका) आणि पुन्हा उघडा.",
     "emptyNoProvidersTitle": "अद्याप कोणतेही प्रदाते कॉन्फिगर केलेले नाहीत",
     "emptyNoProvidersBody": "AgentBridge वापरण्यासाठी, प्रथम किमान एक प्रदाता कनेक्ट करा. हे ते गंतव्यस्थान असेल जिथे IDE विनंत्या पाठवल्या जातील.",
     "emptyGoToProviders": "प्रदात्यांवर जा",
@@ -13993,7 +14020,12 @@
     "hour": "तास",
     "day": "दिवस",
     "unknownModel": "अज्ञात",
-    "pending": "प्रलंबित"
+    "pending": "प्रलंबित",
+    "allApiKeys": "All API keys",
+    "mcp": "MCP",
+    "mcpTool": "MCP tool",
+    "scope": "Scope",
+    "apiKey": "API key"
   },
   "metadata": {
     "compressionTitle": "संकुचन",

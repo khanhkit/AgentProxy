@@ -3236,7 +3236,13 @@
     "cliproxyapiUnknown": "Непознато",
     "cliproxyapiUpdate": "Ажурирај",
     "cliproxyapiUpdateAvailable": "Доступно ажурирање: v{current} → v{latest}",
-    "cliproxyapiVersion": "Верзија"
+    "cliproxyapiVersion": "Верзија",
+    "hermesRoleReview": "Преглед",
+    "hermesRoleReviewDesc": "Потпуни преглед кода подагента",
+    "hermesRoleMoaReference": "MoA референца",
+    "hermesRoleMoaReferenceDesc": "Mixture-of-Agents референтни модел",
+    "hermesRoleMoaAggregator": "MoA агрегатор",
+    "hermesRoleMoaAggregatorDesc": "Mixture-of-Agents модел синтезе"
   },
   "combos": {
     "title": "Комбинације",
@@ -3465,7 +3471,9 @@
       "failoverBeforeRetry": "Када је укључено, свака грешка на upstream страни одмах покреће failover на следећу мету у комбинацији, заобилазећи све покушаје понављања и резервне URL-ове.",
       "maxSetRetries": "Број покушаја понављања целог скупа мета када све мете не успеју. 0 = без покушаја понављања на нивоу скупа.",
       "setRetryDelayMs": "Кашњење између покушаја понављања на нивоу скупа, дајући времена да се пролазни проблеми реше.",
-      "disableSessionStickiness": "Пребаците се на другу везу при сваком захтеву уместо да целу конверзацију фиксирате за једну везу на основу хеша прве поруке. Ово поништава глобално подразумевано подешавање. Оставите на Inherit да бисте задржали prompt-cache поготке за разговоре у више кругова."
+      "disableSessionStickiness": "Пребаците се на другу везу при сваком захтеву уместо да целу конверзацију фиксирате за једну везу на основу хеша прве поруке. Ово поништава глобално подразумевано подешавање. Оставите на Inherit да бисте задржали prompt-cache поготке за разговоре у више кругова.",
+      "connectionAwareExpansion": "When on, this combo expands each provider-level step into per-account targets before rotating. Inherit uses the global default (off). Off keeps provider-level rotation.",
+      "stickyLimit": "Round-robin sticky batch size: consecutive successful requests sent to one target before rotating to the next. Empty inherits the global Sticky Limit setting; 1 disables batching (pure one-request rotation)."
     },
     "templatesTitle": "Брзи шаблони",
     "templatesDescription": "Примените почетни профил, а затим прилагодите моделе и конфигурацију.",
@@ -3821,7 +3829,16 @@
     "duplicateAutoComboUnknownError": "Nepoznata greška",
     "duplicateAutoComboTitle": "Kreiraj statičku kombinaciju iz {name}",
     "quotaWeighted": "Пондерисано квотом",
-    "quotaWeightedDesc": "Прескочите налоге са исцрпљеном квотом, а затим изаберите међу преосталима сразмерно преосталој квоти, подељеној оптерећењем захтева у току. Постојећи разговори остају везани за исти налог."
+    "quotaWeightedDesc": "Прескочите налоге са исцрпљеном квотом, а затим изаберите међу преосталима сразмерно преосталој квоти, подељеној оптерећењем захтева у току. Постојећи разговори остају везани за исти налог.",
+    "stickyLimitEffective": "Effective {value} ({source})",
+    "stickyLimitSourceCombo": "combo",
+    "stickyLimitSourceComboDefaults": "combo defaults",
+    "stickyLimitSourceGlobal": "global default",
+    "connectionAwareExpansion": "Connection-aware expansion",
+    "triStateInherit": "inherit",
+    "connectionAwareExpansionOn": "On",
+    "connectionAwareExpansionOff": "Off",
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation."
   },
   "costs": {
     "title": "Troškovi",
@@ -11003,7 +11020,9 @@
     "poolAddMember": "Додај",
     "poolAddFailed": "Додавање проксија у групу није успело",
     "poolSelectProxy": "Изаберите прокси…",
-    "poolSaveFailed": "Чување припадности групи није успело"
+    "poolSaveFailed": "Чување припадности групи није успело",
+    "poolEgressFailuresByExit": "Неуспеси преко {exit}: {count}",
+    "poolEgressFailuresUnattributed": "Неуспеси без приписаног излаза: {count}"
   },
   "playground": {
     "title": "Окружење за тестирање модела",
@@ -11331,6 +11350,10 @@
     "columns": {
       "status": "Статус",
       "cacheSource": "Извор кеша",
+      "contentProvenance": "Одговор",
+      "contentEmpty": "Празан одговор",
+      "usageAbsent": "Број токена није пријављен",
+      "usageEstimated": "Број токена је процењен",
       "model": "Модел",
       "requested": "Захтевано",
       "provider": "Провајдер",
@@ -12004,7 +12027,11 @@
       "goNow": "Пређи сада",
       "message": "MITM Proxy се сада налази у оквиру AgentBridge.",
       "title": "Ова страница је премештена"
-    }
+    },
+    "resetAgent": "Врати подразумевано",
+    "resetAgentConfirm": "Вратити подразумевано?",
+    "resetting": "Враћање…",
+    "resetDone": "Подразумевани DNS је враћен за {agent}. Потпуно затворите апликацију (не само минимизујте) и поново је отворите да би промена ступила на снагу."
   },
   "providerStats": {
     "unknownError": "Непозната грешка",
@@ -13998,7 +14025,12 @@
     "hour": "sat",
     "day": "dan",
     "unknownModel": "nepoznato",
-    "pending": "na čekanju"
+    "pending": "na čekanju",
+    "allApiKeys": "All API keys",
+    "mcp": "MCP",
+    "mcpTool": "MCP tool",
+    "scope": "Scope",
+    "apiKey": "API key"
   },
   "metadata": {
     "compressionTitle": "Kompresija",

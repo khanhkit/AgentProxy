@@ -35,7 +35,18 @@ import {
   type ObservedToolsRetryContext,
 } from "./opencodeFreeTierRetry.ts";
 import { isRetriableUpstreamFailure } from "./opencodeTransientFailure.ts";
-import { isNetworkRotationSharedEgressGuardEnabled } from "@/shared/utils/featureFlags";
+import { headersWaitDispatch, headersWaitState } from "./opencodeHeadersWait.ts";
+import {
+  hasProxyRefusals,
+  isProxyAvoided,
+  noteProxyRefusal,
+  noteProxyServed,
+  proxyEgressKey,
+} from "../utils/proxyRefusalMemory.ts";
+import {
+  isNetworkRotationSharedEgressGuardEnabled,
+  isProxySkipRecentlyFailedEnabled,
+} from "@/shared/utils/featureFlags";
 
 /**
  * Per-account proxy configuration, persisted by NoAuthAccountCard under
@@ -350,6 +361,9 @@ export class OpencodeExecutor extends BaseExecutor {
 
   private markSuccess(account: OpencodeAccountState): void {
     markAccountSuccess(account);
+    // A response came back through this proxy: it is usable again for every refusal kind.
+    // Nothing is held unless PROXY_SKIP_RECENTLY_FAILED was on, so this costs no flag read.
+    if (hasProxyRefusals()) noteProxyServed(proxyEgressKey(account.proxy));
   }
 
   /**
@@ -528,6 +542,12 @@ export class OpencodeExecutor extends BaseExecutor {
       const cid = input.correlationId ? `correlationId=${input.correlationId} ` : "";
 
       const hasProxies = this.accounts.some((a) => a.proxy !== null);
+      const headersWait = headersWaitState(
+        input,
+        this._requestFormat,
+        this.getTimeoutMs(),
+        this.config?.fetchStartTimeoutCapMs
+      );
       // Fast path: no multi-account proxy wiring configured → original behavior,
       // plus exactly ONE bounded retry when the upstream answers a 400 empty
       // rejection (same predicate and logging as the rotation loop). Everything
@@ -610,6 +630,9 @@ export class OpencodeExecutor extends BaseExecutor {
       // model (geo-blocked, or transient 5xx). Request-local only — nothing
       // persists past execute().
       const geoTriedProxyKeys = new Set<string>();
+      // PROXY_SKIP_RECENTLY_FAILED is on by default: members the provider just refused
+      // (received refusal or refused TCP probe) are skipped. =false restores plain rotation.
+      const skipRecentlyFailed = isProxySkipRecentlyFailedEnabled();
       let directTried = false;
 
       for (let attempt = 0; attempt < this.accounts.length + emptyRejectionBudget; attempt++) {
@@ -618,6 +641,7 @@ export class OpencodeExecutor extends BaseExecutor {
           // Without any geo evidence this pass, every cooldown-ready account
           // stays eligible (preserves the plain round-robin first pick).
           if (a.proxy === null) return !directTried || geoTriedProxyKeys.size === 0;
+          if (skipRecentlyFailed && isProxyAvoided(proxyEgressKey(a.proxy))) return false;
           const k = proxyKeyOf(a.proxy);
           return k !== null && !geoTriedProxyKeys.has(k);
         };
@@ -680,13 +704,37 @@ export class OpencodeExecutor extends BaseExecutor {
         // the cross-account 429 fallback instead of BaseExecutor's same-key retry.
         let result: HttpExecuteResult;
         try {
-          // super.execute() here always dispatches the HTTP path (opencode is an
-          // OpenAI-compatible API, never the web/scraping bare-Response arm) —
-          // see base.ts:290-294.
-          result = (await runWithProxyContext(account.proxy, () =>
-            super.execute({ ...input, skipUpstreamRetry: true })
-          )) as HttpExecuteResult;
+          const { outcome, waitMs } = await headersWaitDispatch(
+            headersWait,
+            account,
+            this.accounts,
+            isProxiedCandidate,
+            (attemptSignal) =>
+              runWithProxyContext(account.proxy, () =>
+                super.execute({
+                  ...input,
+                  skipUpstreamRetry: true,
+                  signal: attemptSignal ?? input.signal,
+                })
+              ) as Promise<HttpExecuteResult>,
+            input.signal
+          );
+          if (outcome.kind === "aborted") throw outcome.reason;
+          if (outcome.kind === "expired") {
+            headersWait.spent.attempts += 1;
+            this.markCooldown(account);
+            const key = proxyKeyOf(account.proxy);
+            if (key !== null) geoTriedProxyKeys.add(key);
+            else directTried = true;
+            log?.warn?.(
+              "OPENCODE",
+              cid + "no response headers within " + waitMs + "ms on account " + masked + ", rotating to next…"
+            );
+            continue;
+          }
+          result = outcome.result as HttpExecuteResult;
         } catch (err) {
+          if (headersWait.policy.windowMs > 0 && input.signal?.aborted) throw err;
           const reason = err instanceof Error ? err.message : String(err);
           // A network exception (timeout, connection refused/reset) is only
           // account-scoped when this account has its OWN egress (a configured
@@ -723,9 +771,17 @@ export class OpencodeExecutor extends BaseExecutor {
         const status = result.response.status;
         if (status === 429) {
           this.markCooldown(account);
+          const key = proxyKeyOf(account.proxy);
+          if (key !== null) geoTriedProxyKeys.add(key);
+          // Persistent refusal memory complements request-local tried-set bookkeeping.
+          const setAsideMs = skipRecentlyFailed
+            ? noteProxyRefusal(proxyEgressKey(account.proxy), "ip_quota_429")
+            : null;
           log?.warn?.(
             "OPENCODE",
-            `${cid}Rate limited (429) on account ${masked}, rotating to next…`
+            `${cid}Rate limited (429) on account ${masked} (proxy ${key ?? "direct"})` +
+              (setAsideMs ? `, member set aside for ${Math.round(setAsideMs / 1000)}s` : "") +
+              ", rotating to next…"
           );
           continue;
         }

@@ -3193,7 +3193,13 @@
     "cliproxyapiUnknown": "Inconnu",
     "cliproxyapiUpdate": "Mettre à jour",
     "cliproxyapiUpdateAvailable": "Mise à jour disponible : v{current} → v{latest}",
-    "cliproxyapiVersion": "Version"
+    "cliproxyapiVersion": "Version",
+    "hermesRoleReview": "Revue",
+    "hermesRoleReviewDesc": "Revue de code complète par sous-agent",
+    "hermesRoleMoaReference": "Référence MoA",
+    "hermesRoleMoaReferenceDesc": "Modèle de référence Mixture-of-Agents",
+    "hermesRoleMoaAggregator": "Agrégateur MoA",
+    "hermesRoleMoaAggregatorDesc": "Modèle de synthèse Mixture-of-Agents"
   },
   "combos": {
     "title": "Combinaisons",
@@ -3424,7 +3430,9 @@
       "failoverBeforeRetry": "Lorsqu'elle est activée, toute erreur en amont déclenche un basculement immédiat vers la cible combinée suivante, ignorant toutes les tentatives et les URL de secours.",
       "maxSetRetries": "Nombre de fois où il faut réessayer l'ensemble de cibles complet lorsque chaque cible échoue. 0 = aucune nouvelle tentative de niveau défini.",
       "setRetryDelayMs": "Délai entre les tentatives de nouvelle tentative au niveau de l'ensemble, ce qui donne le temps aux problèmes transitoires de se résoudre.",
-      "disableSessionStickiness": "Passer à une connexion différente à chaque requête au lieu de figer une conversation entière sur une seule connexion via le hachage du premier message. Remplace le comportement par défaut global. Laisser sur Hériter pour préserver les correspondances de cache de prompt pour les discussions multi-tours."
+      "disableSessionStickiness": "Passer à une connexion différente à chaque requête au lieu de figer une conversation entière sur une seule connexion via le hachage du premier message. Remplace le comportement par défaut global. Laisser sur Hériter pour préserver les correspondances de cache de prompt pour les discussions multi-tours.",
+      "connectionAwareExpansion": "When on, this combo expands each provider-level step into per-account targets before rotating. Inherit uses the global default (off). Off keeps provider-level rotation.",
+      "stickyLimit": "Round-robin sticky batch size: consecutive successful requests sent to one target before rotating to the next. Empty inherits the global Sticky Limit setting; 1 disables batching (pure one-request rotation)."
     },
     "templatesTitle": "Modèles prédéfinis",
     "templatesDescription": "Appliquez un profil de départ, puis ajustez les modèles et la configuration.",
@@ -3778,7 +3786,16 @@
     "duplicateAutoComboSnapshotMsg": "Cela capturera les fournisseurs/modèles actuellement connectés qui correspondent à ce modèle dans une combinaison modifiable.",
     "duplicateAutoComboFailedPrefix": "Échec de la duplication de la combinaison automatique :",
     "duplicateAutoComboUnknownError": "Erreur inconnue",
-    "duplicateAutoComboTitle": "Créer une combinaison statique à partir de {name}"
+    "duplicateAutoComboTitle": "Créer une combinaison statique à partir de {name}",
+    "stickyLimitEffective": "Effective {value} ({source})",
+    "stickyLimitSourceCombo": "combo",
+    "stickyLimitSourceComboDefaults": "combo defaults",
+    "stickyLimitSourceGlobal": "global default",
+    "connectionAwareExpansion": "Connection-aware expansion",
+    "triStateInherit": "inherit",
+    "connectionAwareExpansionOn": "On",
+    "connectionAwareExpansionOff": "Off",
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation."
   },
   "costs": {
     "title": "Coûts",
@@ -10960,7 +10977,9 @@
     "poolAddMember": "Ajouter",
     "poolAddFailed": "Échec de l'ajout du proxy au pool",
     "poolSelectProxy": "Sélectionner un proxy…",
-    "poolSaveFailed": "Échec de l'enregistrement de l'attribution du pool"
+    "poolSaveFailed": "Échec de l'enregistrement de l'attribution du pool",
+    "poolEgressFailuresByExit": "Échecs via {exit} : {count}",
+    "poolEgressFailuresUnattributed": "Échecs sans sortie attribuée : {count}"
   },
   "playground": {
     "title": "Title",
@@ -11301,7 +11320,11 @@
       "duration": "Durée",
       "time": "Heure",
       "conversation": "Conversation",
-      "ttft": "TTFT"
+      "ttft": "TTFT",
+      "contentProvenance": "Réponse",
+      "contentEmpty": "Réponse vide",
+      "usageAbsent": "Nombre de tokens non transmis",
+      "usageEstimated": "Nombre de tokens estimé"
     },
     "loadingLogs": "Chargement des journaux...",
     "noLogs": "Aucun journal pour le moment. Effectuez des appels API pour les afficher ici.",
@@ -11961,7 +11984,11 @@
       "goNow": "Y aller maintenant",
       "message": "Le proxy MITM se trouve désormais sous AgentBridge.",
       "title": "Cette page a été déplacée"
-    }
+    },
+    "resetAgent": "Restaurer les paramètres par défaut",
+    "resetAgentConfirm": "Restaurer les paramètres par défaut ?",
+    "resetting": "Restauration…",
+    "resetDone": "DNS par défaut restauré pour {agent}. Quittez complètement l’application (ne la réduisez pas seulement) puis rouvrez-la pour que la modification prenne effet."
   },
   "providerStats": {
     "unknownError": "Erreur inconnue",
@@ -13955,7 +13982,12 @@
     "hour": "heure",
     "day": "jour",
     "unknownModel": "inconnu",
-    "pending": "en attente"
+    "pending": "en attente",
+    "allApiKeys": "All API keys",
+    "mcp": "MCP",
+    "mcpTool": "MCP tool",
+    "scope": "Scope",
+    "apiKey": "API key"
   },
   "metadata": {
     "compressionTitle": "Compression",

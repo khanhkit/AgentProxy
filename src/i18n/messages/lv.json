@@ -3222,7 +3222,13 @@
     "cliproxyapiUnknown": "Nezināms",
     "cliproxyapiUpdate": "Atjaunināt",
     "cliproxyapiUpdateAvailable": "Pieejams atjauninājums: v{current} → v{latest}",
-    "cliproxyapiVersion": "Versija"
+    "cliproxyapiVersion": "Versija",
+    "hermesRoleReview": "Pārskatīšana",
+    "hermesRoleReviewDesc": "Pilna apakšaģenta koda pārskatīšana",
+    "hermesRoleMoaReference": "MoA atsauce",
+    "hermesRoleMoaReferenceDesc": "Mixture-of-Agents atsauces modelis",
+    "hermesRoleMoaAggregator": "MoA agregators",
+    "hermesRoleMoaAggregatorDesc": "Mixture-of-Agents sintēzes modelis"
   },
   "combos": {
     "title": "Kombinācijas",
@@ -3451,7 +3457,9 @@
       "failoverBeforeRetry": "Ja šī opcija ir iespējota, jebkura augšupstraumes kļūda izraisa tūlītēju kļūmjpārlēci uz nākamo kombinācijas mērķi, izlaižot visus atkārtotos mēģinājumus un rezerves URL.",
       "maxSetRetries": "Cik reižu atkārtoti izmēģināt visu mērķu kopu, ja visi mērķi neizdodas. 0 = neveikt atkārtotus mēģinājumus kopas līmenī.",
       "setRetryDelayMs": "Aizkave starp atkārtotiem mēģinājumiem kopas līmenī, dodot laiku īslaicīgām problēmām atrisināties.",
-      "disableSessionStickiness": "Katrā pieprasījumā pārslēgties uz citu savienojumu, nevis piesaistīt visu sarunu vienam savienojumam pēc pirmās ziņas jaucējvērtības. Ignorē globālo noklusējuma iestatījumu. Atstājiet vērtību Mantot, lai vairāku gājienu tērzēšanā saglabātu uzvedņu kešatmiņas trāpījumus."
+      "disableSessionStickiness": "Katrā pieprasījumā pārslēgties uz citu savienojumu, nevis piesaistīt visu sarunu vienam savienojumam pēc pirmās ziņas jaucējvērtības. Ignorē globālo noklusējuma iestatījumu. Atstājiet vērtību Mantot, lai vairāku gājienu tērzēšanā saglabātu uzvedņu kešatmiņas trāpījumus.",
+      "connectionAwareExpansion": "When on, this combo expands each provider-level step into per-account targets before rotating. Inherit uses the global default (off). Off keeps provider-level rotation.",
+      "stickyLimit": "Round-robin sticky batch size: consecutive successful requests sent to one target before rotating to the next. Empty inherits the global Sticky Limit setting; 1 disables batching (pure one-request rotation)."
     },
     "templatesTitle": "Ātrās veidnes",
     "templatesDescription": "Lietojiet sākuma profilu un pēc tam pielāgojiet modeļus un konfigurāciju.",
@@ -3807,7 +3815,16 @@
     "duplicateAutoComboUnknownError": "Nezināma kļūda",
     "duplicateAutoComboTitle": "Izveidot statisku kombināciju no {name}",
     "quotaWeighted": "Kvotu svēršana",
-    "quotaWeightedDesc": "Izlaist kontus ar izsmeltu kvotu, pēc tam izvēlēties no pārējiem proporcionāli atlikumam, dalot ar pašlaik apstrādāto pieprasījumu slodzi. Esošās sarunas paliek piesaistītas."
+    "quotaWeightedDesc": "Izlaist kontus ar izsmeltu kvotu, pēc tam izvēlēties no pārējiem proporcionāli atlikumam, dalot ar pašlaik apstrādāto pieprasījumu slodzi. Esošās sarunas paliek piesaistītas.",
+    "stickyLimitEffective": "Effective {value} ({source})",
+    "stickyLimitSourceCombo": "combo",
+    "stickyLimitSourceComboDefaults": "combo defaults",
+    "stickyLimitSourceGlobal": "global default",
+    "connectionAwareExpansion": "Connection-aware expansion",
+    "triStateInherit": "inherit",
+    "connectionAwareExpansionOn": "On",
+    "connectionAwareExpansionOff": "Off",
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation."
   },
   "costs": {
     "title": "Izmaksas",
@@ -10989,7 +11006,9 @@
     "poolAddMember": "Pievienot",
     "poolAddFailed": "Neizdevās pievienot starpniekserveri kopai",
     "poolSelectProxy": "Izvēlieties starpniekserveri…",
-    "poolSaveFailed": "Neizdevās saglabāt kopas piešķīrumu"
+    "poolSaveFailed": "Neizdevās saglabāt kopas piešķīrumu",
+    "poolEgressFailuresByExit": "Kļūmes caur {exit}: {count}",
+    "poolEgressFailuresUnattributed": "Kļūmes bez piesaistītas izejas: {count}"
   },
   "playground": {
     "title": "Modeļu testēšanas vide",
@@ -11317,6 +11336,10 @@
     "columns": {
       "status": "Statuss",
       "cacheSource": "Kešatmiņas avots",
+      "contentProvenance": "Atbilde",
+      "contentEmpty": "Tukša atbilde",
+      "usageAbsent": "Marķieru skaits nav ziņots",
+      "usageEstimated": "Marķieru skaits ir aplēsts",
       "model": "Modelis",
       "requested": "Pieprasīts",
       "provider": "Pakalpojumu sniedzējs",
@@ -11990,7 +12013,11 @@
       "goNow": "Doties tagad",
       "message": "MITM Proxy tagad atrodas sadaļā AgentBridge.",
       "title": "Šī lapa ir pārvietota"
-    }
+    },
+    "resetAgent": "Atjaunot noklusējumu",
+    "resetAgentConfirm": "Atjaunot noklusējumu?",
+    "resetting": "Atjauno…",
+    "resetDone": "Noklusējuma DNS atjaunots aģentam {agent}. Lai izmaiņas stātos spēkā, pilnībā aizveriet lietotni (ne tikai minimizējiet) un atveriet to vēlreiz."
   },
   "providerStats": {
     "unknownError": "Nezināma kļūda",
@@ -13984,7 +14011,12 @@
     "hour": "stunda",
     "day": "diena",
     "unknownModel": "nezināms",
-    "pending": "gaida izpildi"
+    "pending": "gaida izpildi",
+    "allApiKeys": "All API keys",
+    "mcp": "MCP",
+    "mcpTool": "MCP tool",
+    "scope": "Scope",
+    "apiKey": "API key"
   },
   "metadata": {
     "compressionTitle": "Saspiešana",

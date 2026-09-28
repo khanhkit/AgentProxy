@@ -3193,7 +3193,13 @@
     "cliproxyapiUnknown": "અજ્ઞાત",
     "cliproxyapiUpdate": "અપડેટ કરો",
     "cliproxyapiUpdateAvailable": "અપડેટ ઉપલબ્ધ છે: v{current} → v{latest}",
-    "cliproxyapiVersion": "આવૃત્તિ"
+    "cliproxyapiVersion": "આવૃત્તિ",
+    "hermesRoleReview": "સમીક્ષા",
+    "hermesRoleReviewDesc": "સંપૂર્ણ સબએજન્ટ કોડ સમીક્ષા",
+    "hermesRoleMoaReference": "MoA સંદર્ભ",
+    "hermesRoleMoaReferenceDesc": "Mixture-of-Agents સંદર્ભ મોડેલ",
+    "hermesRoleMoaAggregator": "MoA એગ્રીગેટર",
+    "hermesRoleMoaAggregatorDesc": "Mixture-of-Agents સિન્થેસિસ મોડેલ"
   },
   "combos": {
     "title": "કોમ્બોઝ",
@@ -3424,7 +3430,9 @@
       "failoverBeforeRetry": "જ્યારે સક્ષમ હોય, ત્યારે કોઈપણ અપસ્ટ્રીમ ભૂલ આગામી કોમ્બો લક્ષ્ય પર તાત્કાલિક નિષ્ફળતાને ટ્રિગર કરે છે, તમામ પુનઃપ્રયાસો અને ફોલબેક URL ને છોડીને.",
       "maxSetRetries": "જ્યારે દરેક લક્ષ્ય નિષ્ફળ જાય ત્યારે સંપૂર્ણ લક્ષ્ય સેટ કરવાનો ફરીથી પ્રયાસ કરવાની સંખ્યા. 0 = કોઈ સેટ-લેવલ પુનઃપ્રયાસ નથી.",
       "setRetryDelayMs": "સેટ-લેવલના પુનઃપ્રયાસના પ્રયાસો વચ્ચે વિલંબ, ક્ષણિક સમસ્યાઓ ઉકેલવા માટે સમય આપે છે.",
-      "disableSessionStickiness": "પ્રથમ-સંદેશ હેશ દ્વારા સમગ્ર વાતચીતને એક કનેક્શન પર પિન કરવાને બદલે દરેક વિનંતી પર અલગ કનેક્શન પર ફેરવો. વૈશ્વિક ડિફૉલ્ટને ઓવરરાઇડ કરે છે. મલ્ટિ-ટર્ન ચેટ્સ માટે પ્રોમ્પ્ટ-કૅશ હિટ્સ સાચવવા માટે Inherit પર રહેવા દો."
+      "disableSessionStickiness": "પ્રથમ-સંદેશ હેશ દ્વારા સમગ્ર વાતચીતને એક કનેક્શન પર પિન કરવાને બદલે દરેક વિનંતી પર અલગ કનેક્શન પર ફેરવો. વૈશ્વિક ડિફૉલ્ટને ઓવરરાઇડ કરે છે. મલ્ટિ-ટર્ન ચેટ્સ માટે પ્રોમ્પ્ટ-કૅશ હિટ્સ સાચવવા માટે Inherit પર રહેવા દો.",
+      "connectionAwareExpansion": "When on, this combo expands each provider-level step into per-account targets before rotating. Inherit uses the global default (off). Off keeps provider-level rotation.",
+      "stickyLimit": "Round-robin sticky batch size: consecutive successful requests sent to one target before rotating to the next. Empty inherits the global Sticky Limit setting; 1 disables batching (pure one-request rotation)."
     },
     "templatesTitle": "ઝડપી ટેમ્પ્લેટ્સ",
     "templatesDescription": "પ્રારંભિક પ્રોફાઇલ લાગુ કરો, પછી મોડલ અને કૉન્ફિગ સમાયોજિત કરો.",
@@ -3778,7 +3786,16 @@
     "duplicateAutoComboSnapshotMsg": "આ ટેમપ્લેટ સાથે મેચ થતા વર્તમાન જોડાયેલા પ્રદાતાઓ/મોડેલને સંપાદનીય કોમ્બોમાં સ્નેપશોટ લેશે.",
     "duplicateAutoComboFailedPrefix": "ઓટોકોમ્બો ડુપ્લિકેટ કરવામાં નિષ્ફળ:",
     "duplicateAutoComboUnknownError": "અજ્ઞાત ભૂલ",
-    "duplicateAutoComboTitle": "{name} માંથી સ્ટેટિક કોમ્બો બનાવો"
+    "duplicateAutoComboTitle": "{name} માંથી સ્ટેટિક કોમ્બો બનાવો",
+    "stickyLimitEffective": "Effective {value} ({source})",
+    "stickyLimitSourceCombo": "combo",
+    "stickyLimitSourceComboDefaults": "combo defaults",
+    "stickyLimitSourceGlobal": "global default",
+    "connectionAwareExpansion": "Connection-aware expansion",
+    "triStateInherit": "inherit",
+    "connectionAwareExpansionOn": "On",
+    "connectionAwareExpansionOff": "Off",
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation."
   },
   "costs": {
     "title": "ખર્ચ",
@@ -10960,7 +10977,9 @@
     "poolAddMember": "ઉમેરો",
     "poolAddFailed": "પૂલમાં પ્રોક્સી ઉમેરવામાં નિષ્ફળ",
     "poolSelectProxy": "પ્રોક્સી પસંદ કરો…",
-    "poolSaveFailed": "પૂલ અસાઇનમેન્ટ સાચવવામાં નિષ્ફળ"
+    "poolSaveFailed": "પૂલ અસાઇનમેન્ટ સાચવવામાં નિષ્ફળ",
+    "poolEgressFailuresByExit": "{exit} દ્વારા નિષ્ફળતાઓ: {count}",
+    "poolEgressFailuresUnattributed": "નિર્ધારિત એક્ઝિટ વિનાની નિષ્ફળતાઓ: {count}"
   },
   "playground": {
     "title": "મોડેલ પ્લેગ્રાઉન્ડ",
@@ -11301,7 +11320,11 @@
       "duration": "અવધિ",
       "time": "સમય",
       "conversation": "વાતચીત",
-      "ttft": "TTFT"
+      "ttft": "TTFT",
+      "contentProvenance": "જવાબ",
+      "contentEmpty": "ખાલી જવાબ",
+      "usageAbsent": "ટોકન સંખ્યા જણાવાઈ નથી",
+      "usageEstimated": "ટોકન સંખ્યા અંદાજિત"
     },
     "loadingLogs": "લૉગ્સ લોડ થઈ રહ્યા છે...",
     "noLogs": "હજુ સુધી કોઈ લૉગ્સ નથી. તેમને અહીં જોવા માટે કેટલીક API કૉલ્સ કરો.",
@@ -11961,7 +11984,11 @@
       "goNow": "હમણાં જાઓ",
       "message": "MITM Proxy હવે AgentBridge હેઠળ રહે છે.",
       "title": "આ પૃષ્ઠ ખસેડવામાં આવ્યું છે"
-    }
+    },
+    "resetAgent": "ડિફોલ્ટ પુનઃસ્થાપિત કરો",
+    "resetAgentConfirm": "ડિફોલ્ટ પુનઃસ્થાપિત કરવું છે?",
+    "resetting": "પુનઃસ્થાપિત થઈ રહ્યું છે…",
+    "resetDone": "{agent} માટે ડિફોલ્ટ DNS પુનઃસ્થાપિત થયું. ફેરફાર લાગુ થાય તે માટે એપ્લિકેશન સંપૂર્ણપણે બંધ કરો (ફક્ત મિનિમાઇઝ નહીં) અને ફરી ખોલો."
   },
   "providerStats": {
     "unknownError": "અજ્ઞાત ભૂલ",
@@ -13955,7 +13982,12 @@
     "hour": "કલાક",
     "day": "દિવસ",
     "unknownModel": "અજ્ઞાત",
-    "pending": "લંબિત"
+    "pending": "લંબિત",
+    "allApiKeys": "All API keys",
+    "mcp": "MCP",
+    "mcpTool": "MCP tool",
+    "scope": "Scope",
+    "apiKey": "API key"
   },
   "metadata": {
     "compressionTitle": "સંકોચન",

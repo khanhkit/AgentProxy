@@ -3261,7 +3261,13 @@
     "cliproxyapiUnknown": "Άγνωστο",
     "cliproxyapiUpdate": "Ενημέρωση",
     "cliproxyapiUpdateAvailable": "Διαθέσιμη ενημέρωση: v{current} → v{latest}",
-    "cliproxyapiVersion": "Έκδοση"
+    "cliproxyapiVersion": "Έκδοση",
+    "hermesRoleReview": "Επιθεώρηση",
+    "hermesRoleReviewDesc": "Πλήρης επιθεώρηση κώδικα υποπράκτορα",
+    "hermesRoleMoaReference": "Αναφορά MoA",
+    "hermesRoleMoaReferenceDesc": "Μοντέλο αναφοράς Mixture-of-Agents",
+    "hermesRoleMoaAggregator": "Συγκεντρωτής MoA",
+    "hermesRoleMoaAggregatorDesc": "Μοντέλο σύνθεσης Mixture-of-Agents"
   },
   "combos": {
     "title": "Συνδυασμοί",
@@ -3490,7 +3496,9 @@
       "failoverBeforeRetry": "Όταν είναι ενεργοποιημένο, οποιοδήποτε σφάλμα upstream ενεργοποιεί άμεση μετάπτωση στον επόμενο στόχο combo, παρακάμπτοντας όλες τις επαναλήψεις και τα fallback URLs.",
       "maxSetRetries": "Αριθμός επαναλήψεων ολόκληρου του συνόλου στόχων όταν αποτυγχάνουν όλοι οι στόχοι. 0 = χωρίς επανάληψη σε επίπεδο συνόλου.",
       "setRetryDelayMs": "Καθυστέρηση μεταξύ επαναλήψεων σε επίπεδο συνόλου, δίνοντας χρόνο στα παροδικά προβλήματα να επιλυθούν.",
-      "disableSessionStickiness": "Εναλλαγή σε διαφορετική σύνδεση σε κάθε αίτημα αντί για ανάθεση ολόκληρης της συνομιλίας σε μία σύνδεση βάσει του hash του πρώτου μηνύματος. Παρακάμπτει την καθολική προεπιλογή. Αφήστε τη ρύθμιση σε Inherit για να διατηρηθούν τα prompt-cache hits σε συνομιλίες πολλαπλών γύρων."
+      "disableSessionStickiness": "Εναλλαγή σε διαφορετική σύνδεση σε κάθε αίτημα αντί για ανάθεση ολόκληρης της συνομιλίας σε μία σύνδεση βάσει του hash του πρώτου μηνύματος. Παρακάμπτει την καθολική προεπιλογή. Αφήστε τη ρύθμιση σε Inherit για να διατηρηθούν τα prompt-cache hits σε συνομιλίες πολλαπλών γύρων.",
+      "connectionAwareExpansion": "When on, this combo expands each provider-level step into per-account targets before rotating. Inherit uses the global default (off). Off keeps provider-level rotation.",
+      "stickyLimit": "Round-robin sticky batch size: consecutive successful requests sent to one target before rotating to the next. Empty inherits the global Sticky Limit setting; 1 disables batching (pure one-request rotation)."
     },
     "templatesTitle": "Γρήγορα πρότυπα",
     "templatesDescription": "Εφαρμόστε ένα αρχικό προφίλ και στη συνέχεια προσαρμόστε τα μοντέλα και τις ρυθμίσεις.",
@@ -3846,7 +3854,16 @@
     "duplicateAutoComboUnknownError": "Άγνωστο σφάλμα",
     "duplicateAutoComboTitle": "Δημιουργία στατικού συνδυασμού από {name}",
     "quotaWeighted": "Σταθμισμένο βάσει ποσόστωσης",
-    "quotaWeightedDesc": "Παραλείπει τους εξαντλημένους λογαριασμούς και, στη συνέχεια, επιλέγει μεταξύ των υπολοίπων αναλογικά με την εναπομένουσα ποσόστωση, διαιρεμένη με το φορτίο αιτημάτων σε εξέλιξη. Οι υπάρχουσες συνομιλίες παραμένουν καρφιτσωμένες."
+    "quotaWeightedDesc": "Παραλείπει τους εξαντλημένους λογαριασμούς και, στη συνέχεια, επιλέγει μεταξύ των υπολοίπων αναλογικά με την εναπομένουσα ποσόστωση, διαιρεμένη με το φορτίο αιτημάτων σε εξέλιξη. Οι υπάρχουσες συνομιλίες παραμένουν καρφιτσωμένες.",
+    "stickyLimitEffective": "Effective {value} ({source})",
+    "stickyLimitSourceCombo": "combo",
+    "stickyLimitSourceComboDefaults": "combo defaults",
+    "stickyLimitSourceGlobal": "global default",
+    "connectionAwareExpansion": "Connection-aware expansion",
+    "triStateInherit": "inherit",
+    "connectionAwareExpansionOn": "On",
+    "connectionAwareExpansionOff": "Off",
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation."
   },
   "costs": {
     "title": "Κόστη",
@@ -11028,7 +11045,9 @@
     "poolAddMember": "Προσθήκη",
     "poolAddFailed": "Αποτυχία προσθήκης του διακομιστή μεσολάβησης στην ομάδα",
     "poolSelectProxy": "Επιλογή διαμεσολαβητή…",
-    "poolSaveFailed": "Αποτυχία αποθήκευσης της αντιστοίχισης ομάδας"
+    "poolSaveFailed": "Αποτυχία αποθήκευσης της αντιστοίχισης ομάδας",
+    "poolEgressFailuresByExit": "Αποτυχίες μέσω {exit}: {count}",
+    "poolEgressFailuresUnattributed": "Αποτυχίες χωρίς αποδοθείσα έξοδο: {count}"
   },
   "playground": {
     "title": "Περιβάλλον δοκιμών μοντέλων",
@@ -11369,7 +11388,11 @@
       "duration": "Διάρκεια",
       "time": "Ώρα",
       "conversation": "Συνομιλία",
-      "ttft": "TTFT"
+      "ttft": "TTFT",
+      "contentProvenance": "Απάντηση",
+      "contentEmpty": "Κενή απάντηση",
+      "usageAbsent": "Το πλήθος tokens δεν αναφέρθηκε",
+      "usageEstimated": "Το πλήθος tokens εκτιμήθηκε"
     },
     "loadingLogs": "Φόρτωση αρχείων καταγραφής...",
     "noLogs": "Δεν υπάρχουν ακόμη αρχεία καταγραφής. Κάντε μερικές κλήσεις API για να τα δείτε εδώ.",
@@ -12029,7 +12052,11 @@
       "goNow": "Μετάβαση τώρα",
       "message": "Ο MITM Proxy βρίσκεται πλέον στην ενότητα AgentBridge.",
       "title": "Αυτή η σελίδα μεταφέρθηκε"
-    }
+    },
+    "resetAgent": "Επαναφορά προεπιλογής",
+    "resetAgentConfirm": "Επαναφορά προεπιλογής;",
+    "resetting": "Επαναφορά…",
+    "resetDone": "Το προεπιλεγμένο DNS επαναφέρθηκε για {agent}. Κλείστε εντελώς την εφαρμογή (όχι απλώς ελαχιστοποίηση) και ανοίξτε την ξανά για να εφαρμοστεί η αλλαγή."
   },
   "providerStats": {
     "unknownError": "Άγνωστο σφάλμα",
@@ -14023,7 +14050,12 @@
     "hour": "ώρα",
     "day": "ημέρα",
     "unknownModel": "άγνωστο",
-    "pending": "σε αναμονή"
+    "pending": "σε αναμονή",
+    "allApiKeys": "All API keys",
+    "mcp": "MCP",
+    "mcpTool": "MCP tool",
+    "scope": "Scope",
+    "apiKey": "API key"
   },
   "metadata": {
     "compressionTitle": "Συμπίεση",

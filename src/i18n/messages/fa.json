@@ -3193,7 +3193,13 @@
     "cliproxyapiUnknown": "ناشناخته",
     "cliproxyapiUpdate": "به‌روزرسانی",
     "cliproxyapiUpdateAvailable": "به‌روزرسانی موجود است: v{current} → v{latest}",
-    "cliproxyapiVersion": "نسخه"
+    "cliproxyapiVersion": "نسخه",
+    "hermesRoleReview": "بازبینی",
+    "hermesRoleReviewDesc": "بازبینی کامل کد توسط زیرعامل",
+    "hermesRoleMoaReference": "مرجع MoA",
+    "hermesRoleMoaReferenceDesc": "مدل مرجع Mixture-of-Agents",
+    "hermesRoleMoaAggregator": "تجمیعکننده MoA",
+    "hermesRoleMoaAggregatorDesc": "مدل سنتز Mixture-of-Agents"
   },
   "combos": {
     "title": "ترکیبها",
@@ -3424,7 +3430,9 @@
       "failoverBeforeRetry": "هنگامی که فعال باشد، هر خطای بالادستی باعث شکست فوری به هدف ترکیبی بعدی می‌شود، و از همه تلاش‌های مجدد و نشانی‌های اینترنتی برگشتی صرفنظر می‌کند.",
       "maxSetRetries": "تعداد دفعاتی که در صورت شکست هر هدف، مجموعه کامل هدف را دوباره امتحان کنید. 0 = بدون تلاش مجدد در سطح مجموعه.",
       "setRetryDelayMs": "تأخیر بین تلاش‌های مجدد در سطح مجموعه، به مشکلات گذرا زمان می‌دهد تا حل شوند.",
-      "disableSessionStickiness": "چرخش به یک اتصال متفاوت در هر درخواست به جای پین کردن کل مکالمه به یک اتصال بر اساس هش پیام اول. پیش‌فرض سراسری را بازنویسی می‌کند. برای حفظ موارد اصابت prompt-cache در گفتگوهای چندمرحله‌ای، روی Inherit بگذارید."
+      "disableSessionStickiness": "چرخش به یک اتصال متفاوت در هر درخواست به جای پین کردن کل مکالمه به یک اتصال بر اساس هش پیام اول. پیش‌فرض سراسری را بازنویسی می‌کند. برای حفظ موارد اصابت prompt-cache در گفتگوهای چندمرحله‌ای، روی Inherit بگذارید.",
+      "connectionAwareExpansion": "When on, this combo expands each provider-level step into per-account targets before rotating. Inherit uses the global default (off). Off keeps provider-level rotation.",
+      "stickyLimit": "Round-robin sticky batch size: consecutive successful requests sent to one target before rotating to the next. Empty inherits the global Sticky Limit setting; 1 disables batching (pure one-request rotation)."
     },
     "templatesTitle": "قالبهای آماده",
     "templatesDescription": "یک پروفایل اولیه اعمال کنید، سپس مدلها و پیکربندی را تنظیم کنید.",
@@ -3778,7 +3786,16 @@
     "duplicateAutoComboSnapshotMsg": "این ارائه‌دهندگان/مدل‌های متصل فعلی که با این قالب مطابقت دارند را در یک ترکیب قابل ویرایش ذخیره می‌کند.",
     "duplicateAutoComboFailedPrefix": "تکرار ترکیب خودکار ناموفق بود:",
     "duplicateAutoComboUnknownError": "خطای ناشناخته",
-    "duplicateAutoComboTitle": "ایجاد یک ترکیب ثابت از {name}"
+    "duplicateAutoComboTitle": "ایجاد یک ترکیب ثابت از {name}",
+    "stickyLimitEffective": "Effective {value} ({source})",
+    "stickyLimitSourceCombo": "combo",
+    "stickyLimitSourceComboDefaults": "combo defaults",
+    "stickyLimitSourceGlobal": "global default",
+    "connectionAwareExpansion": "Connection-aware expansion",
+    "triStateInherit": "inherit",
+    "connectionAwareExpansionOn": "On",
+    "connectionAwareExpansionOff": "Off",
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation."
   },
   "costs": {
     "title": "هزینهها",
@@ -10960,7 +10977,9 @@
     "poolAddMember": "افزودن",
     "poolAddFailed": "افزودن پروکسی به استخر ناموفق بود",
     "poolSelectProxy": "انتخاب یک پروکسی…",
-    "poolSaveFailed": "ذخیره تخصیص استخر ناموفق بود"
+    "poolSaveFailed": "ذخیره تخصیص استخر ناموفق بود",
+    "poolEgressFailuresByExit": "خطاها از طریق {exit}: {count}",
+    "poolEgressFailuresUnattributed": "خطاهای بدون خروجی مشخص: {count}"
   },
   "playground": {
     "title": "محیط آزمایش مدل",
@@ -11301,7 +11320,11 @@
       "duration": "مدتزمان",
       "time": "زمان",
       "conversation": "گفتوگو",
-      "ttft": "TTFT"
+      "ttft": "TTFT",
+      "contentProvenance": "پاسخ",
+      "contentEmpty": "پاسخ خالی",
+      "usageAbsent": "تعداد توکن گزارش نشده است",
+      "usageEstimated": "تعداد توکن تخمینی است"
     },
     "loadingLogs": "در حال بارگیری گزارشها...",
     "noLogs": "هنوز گزارشی وجود ندارد. چند فراخوانی API انجام دهید تا آنها را اینجا ببینید.",
@@ -11897,6 +11920,10 @@
     "stopDns": "توقف DNS",
     "toggling": "در حال تغییر وضعیت…",
     "viewTraffic": "مشاهده ترافیک",
+    "resetAgent": "بازگردانی پیش‌فرض",
+    "resetAgentConfirm": "پیش‌فرض بازگردانده شود؟",
+    "resetting": "در حال بازگردانی…",
+    "resetDone": "DNS پیش‌فرض برای {agent} بازگردانده شد. برای اعمال تغییر، برنامه را کاملاً ببندید (نه فقط کوچک کنید) و دوباره باز کنید.",
     "emptyNoProvidersTitle": "هنوز هیچ ارائه‌دهنده‌ای پیکربندی نشده است",
     "emptyNoProvidersBody": "برای استفاده از AgentBridge، ابتدا حداقل یک ارائه‌دهنده را متصل کنید. این ارائه‌دهنده مقصدی خواهد بود که درخواست‌های IDE به آن هدایت می‌شوند.",
     "emptyGoToProviders": "رفتن به ارائه‌دهندگان",
@@ -13955,7 +13982,12 @@
     "hour": "ساعت",
     "day": "روز",
     "unknownModel": "ناشناخته",
-    "pending": "در حال انتظار"
+    "pending": "در حال انتظار",
+    "allApiKeys": "All API keys",
+    "mcp": "MCP",
+    "mcpTool": "MCP tool",
+    "scope": "Scope",
+    "apiKey": "API key"
   },
   "metadata": {
     "compressionTitle": "فشرده‌سازی",

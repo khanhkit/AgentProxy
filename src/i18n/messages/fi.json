@@ -3193,7 +3193,13 @@
     "cliproxyapiUnknown": "Tuntematon",
     "cliproxyapiUpdate": "Päivitä",
     "cliproxyapiUpdateAvailable": "Päivitys saatavilla: v{current} → v{latest}",
-    "cliproxyapiVersion": "Versio"
+    "cliproxyapiVersion": "Versio",
+    "hermesRoleReview": "Katselmointi",
+    "hermesRoleReviewDesc": "Aliagentin täysi koodikatselmointi",
+    "hermesRoleMoaReference": "MoA-viite",
+    "hermesRoleMoaReferenceDesc": "Mixture-of-Agents -viitemalli",
+    "hermesRoleMoaAggregator": "MoA-aggregaattori",
+    "hermesRoleMoaAggregatorDesc": "Mixture-of-Agents -synteesimalli"
   },
   "combos": {
     "title": "Yhdistelmät",
@@ -3424,7 +3430,9 @@
       "failoverBeforeRetry": "Kun tämä on käytössä, kaikki ylävirran virheet laukaisevat välittömän vikasietoisuuden seuraavaan yhdistelmäkohteeseen ohittaen kaikki uudelleenyritykset ja vara-URL-osoitteet.",
       "maxSetRetries": "Kuinka monta kertaa koko tavoitejoukkoa yritetään uudelleen, kun jokainen tavoite epäonnistuu. 0 = ei asetustason uudelleenyritystä.",
       "setRetryDelayMs": "Viive asetustason uudelleenyritysten välillä, mikä antaa ohimeneville ongelmille aikaa ratkaista.",
-      "disableSessionStickiness": "Vaihda eri yhteyteen jokaisella pyynnöllä sen sijaan, että koko keskustelu kiinnitettäisiin yhteen yhteyteen ensimmäisen viestin tiivisteen perusteella. Ohittaa globaalin oletuksen. Jätä valintaan Inherit säilyttääksesi prompt-välimuistin osumat monivaiheisissa keskusteluissa."
+      "disableSessionStickiness": "Vaihda eri yhteyteen jokaisella pyynnöllä sen sijaan, että koko keskustelu kiinnitettäisiin yhteen yhteyteen ensimmäisen viestin tiivisteen perusteella. Ohittaa globaalin oletuksen. Jätä valintaan Inherit säilyttääksesi prompt-välimuistin osumat monivaiheisissa keskusteluissa.",
+      "connectionAwareExpansion": "When on, this combo expands each provider-level step into per-account targets before rotating. Inherit uses the global default (off). Off keeps provider-level rotation.",
+      "stickyLimit": "Round-robin sticky batch size: consecutive successful requests sent to one target before rotating to the next. Empty inherits the global Sticky Limit setting; 1 disables batching (pure one-request rotation)."
     },
     "templatesTitle": "Pikamallipohjat",
     "templatesDescription": "Ota aloitusprofiili käyttöön ja säädä sitten malleja ja määrityksiä.",
@@ -3778,7 +3786,16 @@
     "duplicateAutoComboSnapshotMsg": "Tämä tallentaa tämän mallin mukaiset tällä hetkellä yhdistetyt tarjoajat/mallit muokattavaan yhdistelmään.",
     "duplicateAutoComboFailedPrefix": "Automaattisen yhdistelmän kaksoiskappaleen luonti epäonnistui:",
     "duplicateAutoComboUnknownError": "Tuntematon virhe",
-    "duplicateAutoComboTitle": "Luo staattinen yhdistelmä kohteesta {name}"
+    "duplicateAutoComboTitle": "Luo staattinen yhdistelmä kohteesta {name}",
+    "stickyLimitEffective": "Effective {value} ({source})",
+    "stickyLimitSourceCombo": "combo",
+    "stickyLimitSourceComboDefaults": "combo defaults",
+    "stickyLimitSourceGlobal": "global default",
+    "connectionAwareExpansion": "Connection-aware expansion",
+    "triStateInherit": "inherit",
+    "connectionAwareExpansionOn": "On",
+    "connectionAwareExpansionOff": "Off",
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation."
   },
   "costs": {
     "title": "Kustannukset",
@@ -10960,7 +10977,9 @@
     "poolAddMember": "Lisää",
     "poolAddFailed": "Proxyn lisääminen pooliin epäonnistui",
     "poolSelectProxy": "Valitse proxy…",
-    "poolSaveFailed": "Poolimäärityksen tallentaminen epäonnistui"
+    "poolSaveFailed": "Poolimäärityksen tallentaminen epäonnistui",
+    "poolEgressFailuresByExit": "Virheet kautta {exit}: {count}",
+    "poolEgressFailuresUnattributed": "Virheet ilman kohdistettua ulostuloa: {count}"
   },
   "playground": {
     "title": "Title",
@@ -11301,7 +11320,11 @@
       "duration": "Kesto",
       "time": "Aika",
       "conversation": "Keskustelu",
-      "ttft": "TTFT"
+      "ttft": "TTFT",
+      "contentProvenance": "Vastaus",
+      "contentEmpty": "Tyhjä vastaus",
+      "usageAbsent": "Tokenien määrää ei raportoitu",
+      "usageEstimated": "Tokenien määrä on arvio"
     },
     "loadingLogs": "Ladataan lokeja...",
     "noLogs": "Ei vielä lokeja. Tee API-kutsuja nähdäksesi ne täällä.",
@@ -11897,6 +11920,10 @@
     "stopDns": "Pysäytä DNS",
     "toggling": "Vaihdetaan tilaa…",
     "viewTraffic": "Näytä liikenne",
+    "resetAgent": "Palauta oletus",
+    "resetAgentConfirm": "Palautetaanko oletus?",
+    "resetting": "Palautetaan…",
+    "resetDone": "Oletus-DNS palautettiin kohteelle {agent}. Sulje sovellus kokonaan (älä vain pienennä) ja avaa se uudelleen, jotta muutos tulee voimaan.",
     "emptyNoProvidersTitle": "Palveluntarjoajia ei ole vielä määritetty",
     "emptyNoProvidersBody": "Käyttääksesi AgentBridgeä yhdistä ensin vähintään yksi palveluntarjoaja. Se toimii kohteena, johon IDE-pyynnöt reititetään.",
     "emptyGoToProviders": "Siirry Palveluntarjoajiin",
@@ -13955,7 +13982,12 @@
     "hour": "tunti",
     "day": "päivä",
     "unknownModel": "tuntematon",
-    "pending": "odottaa"
+    "pending": "odottaa",
+    "allApiKeys": "All API keys",
+    "mcp": "MCP",
+    "mcpTool": "MCP tool",
+    "scope": "Scope",
+    "apiKey": "API key"
   },
   "metadata": {
     "compressionTitle": "Pakkaus",

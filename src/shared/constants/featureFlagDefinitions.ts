@@ -192,6 +192,30 @@ export const FEATURE_FLAG_DEFINITIONS: FeatureFlagDefinition[] = [
     warningLevel: "info",
   },
   {
+    key: "PROXY_SKIP_RECENTLY_FAILED",
+    label: "Skip Recently Failed Proxies",
+    description:
+      "Proxy pools and the per-account rotation of opencode stop re-serving a proxy that just failed (refused TCP probe, or a 429 received through it) for a per-process period that doubles on each repeat, up to a cap. No proxy status is written; with every candidate set aside the choice is unchanged. On by default: selection order is exactly the plain rotation only with PROXY_SKIP_RECENTLY_FAILED=false.",
+    descriptionI18nKey: "featureFlagProxySkipRecentlyFailedDescription",
+    category: "network",
+    defaultValue: "true",
+    type: "boolean",
+    requiresRestart: false,
+    warningLevel: "caution",
+  },
+  {
+    key: "PROXY_POOL_SHARED_EGRESS_ORDER",
+    label: "Shared Egress Pool Order",
+    description:
+      "For providers whose quota is bucketed by egress address, rank a pool member sharing a recently refused member's observed egress address just below healthy members. Order only, never excluded. Needs PROXY_SKIP_RECENTLY_FAILED, which produces the refusal signal it reads. Off by default: selection order is exactly the plain rotation.",
+    descriptionI18nKey: "featureFlagProxyPoolSharedEgressOrderDescription",
+    category: "network",
+    defaultValue: "false",
+    type: "boolean",
+    requiresRestart: false,
+    warningLevel: "caution",
+  },
+  {
     key: "MITM_DISABLE_TLS_VERIFY",
     label: "Disable TLS Verify (MITM)",
     description: "Disable TLS certificate verification for MITM proxy",
@@ -329,7 +353,9 @@ export const FEATURE_FLAG_DEFINITIONS: FeatureFlagDefinition[] = [
     description: "Enforce scope restrictions on MCP tool access",
     descriptionI18nKey: "featureFlagAgentProxyMcpEnforceScopesDescription",
     category: "runtime",
-    defaultValue: "true",
+    // Ships off: the gate rejects a caller that sends no scopes at all, so turning it on
+    // is an operator decision (.env.example has shipped `=false` since the gate landed).
+    defaultValue: "false",
     type: "boolean",
     requiresRestart: false,
     warningLevel: "caution",

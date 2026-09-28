@@ -3193,7 +3193,13 @@
     "cliproxyapiUnknown": "ไม่ทราบ",
     "cliproxyapiUpdate": "อัปเดต",
     "cliproxyapiUpdateAvailable": "มีการอัปเดต: v{current} → v{latest}",
-    "cliproxyapiVersion": "เวอร์ชัน"
+    "cliproxyapiVersion": "เวอร์ชัน",
+    "hermesRoleReview": "ตรวจทาน",
+    "hermesRoleReviewDesc": "การตรวจทานโค้ดแบบเต็มรูปแบบโดย Subagent",
+    "hermesRoleMoaReference": "โมเดลอ้างอิง MoA",
+    "hermesRoleMoaReferenceDesc": "โมเดลอ้างอิง Mixture-of-Agents",
+    "hermesRoleMoaAggregator": "ตัวรวบรวม MoA",
+    "hermesRoleMoaAggregatorDesc": "โมเดลสังเคราะห์ Mixture-of-Agents"
   },
   "combos": {
     "title": "คอมโบ",
@@ -3424,7 +3430,9 @@
       "failoverBeforeRetry": "เมื่อเปิดใช้งาน ข้อผิดพลาดอัปสตรีมจะทริกเกอร์การเฟลโอเวอร์ทันทีไปยังเป้าหมายคอมโบถัดไป โดยข้ามการลองใหม่ทั้งหมดและ URL สำรอง",
       "maxSetRetries": "จำนวนครั้งในการลองเป้าหมายทั้งหมดที่ตั้งไว้อีกครั้งเมื่อทุกเป้าหมายล้มเหลว 0 = ไม่มีการลองใหม่ในระดับที่กำหนด",
       "setRetryDelayMs": "ความล่าช้าระหว่างการพยายามลองใหม่ในระดับที่กำหนด ทำให้มีเวลาแก้ไขปัญหาชั่วคราว",
-      "disableSessionStickiness": "สลับไปยังการเชื่อมต่ออื่นในทุกๆ คำขอ แทนที่จะตรึงการสนทนาทั้งหมดไว้กับการเชื่อมต่อเดียวด้วยแฮชของข้อความแรก ซึ่งจะเขียนทับค่าเริ่มต้นส่วนกลาง ปล่อยไว้ที่ 'สืบทอด' (Inherit) เพื่อรักษาฮิตของแคชพรอมต์สำหรับการแชทแบบหลายเทิร์น"
+      "disableSessionStickiness": "สลับไปยังการเชื่อมต่ออื่นในทุกๆ คำขอ แทนที่จะตรึงการสนทนาทั้งหมดไว้กับการเชื่อมต่อเดียวด้วยแฮชของข้อความแรก ซึ่งจะเขียนทับค่าเริ่มต้นส่วนกลาง ปล่อยไว้ที่ 'สืบทอด' (Inherit) เพื่อรักษาฮิตของแคชพรอมต์สำหรับการแชทแบบหลายเทิร์น",
+      "connectionAwareExpansion": "When on, this combo expands each provider-level step into per-account targets before rotating. Inherit uses the global default (off). Off keeps provider-level rotation.",
+      "stickyLimit": "Round-robin sticky batch size: consecutive successful requests sent to one target before rotating to the next. Empty inherits the global Sticky Limit setting; 1 disables batching (pure one-request rotation)."
     },
     "templatesTitle": "เทมเพลตด่วน",
     "templatesDescription": "ใช้โปรไฟล์เริ่มต้น แล้วปรับโมเดลและการกำหนดค่า",
@@ -3778,7 +3786,16 @@
     "duplicateAutoComboSnapshotMsg": "สิ่งนี้จะจับภาพผู้ให้บริการ/โมเดลที่เชื่อมต่ออยู่ในปัจจุบันซึ่งตรงกับเทมเพลตนี้ลงในคอมโบที่แก้ไขได้",
     "duplicateAutoComboFailedPrefix": "ล้มเหลวในการทำสำเนาคอมโบอัตโนมัติ:",
     "duplicateAutoComboUnknownError": "ข้อผิดพลาดที่ไม่ทราบสาเหตุ",
-    "duplicateAutoComboTitle": "สร้างคอมโบคงที่จาก {name}"
+    "duplicateAutoComboTitle": "สร้างคอมโบคงที่จาก {name}",
+    "stickyLimitEffective": "Effective {value} ({source})",
+    "stickyLimitSourceCombo": "combo",
+    "stickyLimitSourceComboDefaults": "combo defaults",
+    "stickyLimitSourceGlobal": "global default",
+    "connectionAwareExpansion": "Connection-aware expansion",
+    "triStateInherit": "inherit",
+    "connectionAwareExpansionOn": "On",
+    "connectionAwareExpansionOff": "Off",
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation."
   },
   "costs": {
     "title": "ค่าใช้จ่าย",
@@ -10960,7 +10977,9 @@
     "poolAddMember": "เพิ่ม",
     "poolAddFailed": "เพิ่มพร็อกซีลงในพูลไม่สำเร็จ",
     "poolSelectProxy": "เลือกพร็อกซี…",
-    "poolSaveFailed": "บันทึกการกำหนดพูลไม่สำเร็จ"
+    "poolSaveFailed": "บันทึกการกำหนดพูลไม่สำเร็จ",
+    "poolEgressFailuresByExit": "ความล้มเหลวผ่าน {exit}: {count}",
+    "poolEgressFailuresUnattributed": "ความล้มเหลวที่ไม่ระบุทางออก: {count}"
   },
   "playground": {
     "title": "Title",
@@ -11301,7 +11320,11 @@
       "duration": "ระยะเวลา",
       "time": "เวลา",
       "conversation": "การสนทนา",
-      "ttft": "TTFT"
+      "ttft": "TTFT",
+      "contentProvenance": "คำตอบ",
+      "contentEmpty": "คำตอบว่างเปล่า",
+      "usageAbsent": "ไม่ได้รายงานจำนวนโทเค็น",
+      "usageEstimated": "จำนวนโทเค็นเป็นค่าประมาณ"
     },
     "loadingLogs": "กำลังโหลดบันทึก...",
     "noLogs": "ยังไม่มีบันทึก ลองเรียกใช้ API แล้วบันทึกจะแสดงที่นี่",
@@ -11897,6 +11920,10 @@
     "stopDns": "หยุด DNS",
     "toggling": "กำลังสลับ…",
     "viewTraffic": "ดูทราฟฟิก",
+    "resetAgent": "คืนค่าเริ่มต้น",
+    "resetAgentConfirm": "คืนค่าเริ่มต้นหรือไม่?",
+    "resetting": "กำลังคืนค่า…",
+    "resetDone": "คืนค่า DNS เริ่มต้นสำหรับ {agent} แล้ว ปิดแอปให้สนิท (ไม่ใช่แค่ย่อหน้าต่าง) แล้วเปิดใหม่เพื่อให้การเปลี่ยนแปลงมีผล",
     "emptyNoProvidersTitle": "ยังไม่ได้กำหนดค่าผู้ให้บริการ",
     "emptyNoProvidersBody": "หากต้องการใช้ AgentBridge ให้เชื่อมต่อผู้ให้บริการอย่างน้อยหนึ่งรายก่อน ซึ่งจะเป็นปลายทางที่คำขอของ IDE จะถูกกำหนดเส้นทางไป",
     "emptyGoToProviders": "ไปที่ผู้ให้บริการ",
@@ -13955,7 +13982,12 @@
     "hour": "ชั่วโมง",
     "day": "วัน",
     "unknownModel": "ไม่ทราบ",
-    "pending": "รอดำเนินการ"
+    "pending": "รอดำเนินการ",
+    "allApiKeys": "All API keys",
+    "mcp": "MCP",
+    "mcpTool": "MCP tool",
+    "scope": "Scope",
+    "apiKey": "API key"
   },
   "metadata": {
     "compressionTitle": "การบีบอัด",

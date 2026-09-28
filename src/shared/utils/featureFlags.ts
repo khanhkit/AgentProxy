@@ -100,6 +100,27 @@ export function isApiKeyRevealEnabledFlag(): boolean {
   }
 }
 
+let lastResolvedMcpScopeEnforcement: boolean | undefined;
+
+/**
+ * MCP tool-call scope enforcement. Resolved per call so the Feature Flags toggle
+ * (requiresRestart: false) applies without a restart. An unavailable flag store must never
+ * silently drop the gate, so a failed read keeps the last value that did resolve, and falls
+ * back to the environment variable the gate used before only if none ever did.
+ */
+export function isMcpScopeEnforcementEnabled(): boolean {
+  try {
+    lastResolvedMcpScopeEnforcement = isFeatureFlagEnabled("AGENTPROXY_MCP_ENFORCE_SCOPES");
+    return lastResolvedMcpScopeEnforcement;
+  } catch (error) {
+    console.error(
+      "[featureFlags] Failed to resolve AGENTPROXY_MCP_ENFORCE_SCOPES, keeping the last known value:",
+      error instanceof Error ? error.message : error
+    );
+    return lastResolvedMcpScopeEnforcement ?? process.env.AGENTPROXY_MCP_ENFORCE_SCOPES === "true";
+  }
+}
+
 export function isModelCatalogNamesEnabled(): boolean {
   return isFeatureFlagEnabled("MODEL_CATALOG_INCLUDE_NAMES");
 }
@@ -190,6 +211,40 @@ export function isMistralAmbiguous401SoftLockoutEnabled(): boolean {
   }
 }
 
+
+/**
+ * Proxy refusal memory (#13578): pools and account rotation skip a proxy that just failed.
+ * On by default; an unreadable flag store keeps skipping (fail-safe on).
+ * Opt-out: PROXY_SKIP_RECENTLY_FAILED=false restores the plain selection.
+ */
+export function isProxySkipRecentlyFailedEnabled(): boolean {
+  try {
+    return isFeatureFlagEnabled("PROXY_SKIP_RECENTLY_FAILED");
+  } catch (error) {
+    console.error(
+      "[featureFlags] Failed to resolve PROXY_SKIP_RECENTLY_FAILED, defaulting to enabled:",
+      error instanceof Error ? error.message : error
+    );
+    return true;
+  }
+}
+
+/**
+ * Shared-egress pool ordering (opt-in, default off). Needs
+ * PROXY_SKIP_RECENTLY_FAILED, which produces the refusal signal it reads.
+ * Fail-closed: an unreadable flag store keeps the plain selection.
+ */
+export function isProxyPoolSharedEgressOrderEnabled(): boolean {
+  try {
+    return isFeatureFlagEnabled("PROXY_POOL_SHARED_EGRESS_ORDER");
+  } catch (error) {
+    console.error(
+      "[featureFlags] Failed to resolve PROXY_POOL_SHARED_EGRESS_ORDER, defaulting to disabled:",
+      error instanceof Error ? error.message : error
+    );
+    return false;
+  }
+}
 
 export function isServerOwnedToolLoopEnabled(
   reader: (key: string) => boolean = isFeatureFlagEnabled

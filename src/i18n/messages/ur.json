@@ -3193,7 +3193,13 @@
     "cliproxyapiUnknown": "نامعلوم",
     "cliproxyapiUpdate": "اپ ڈیٹ",
     "cliproxyapiUpdateAvailable": "اپ ڈیٹ دستیاب ہے: v{current} → v{latest}",
-    "cliproxyapiVersion": "ورژن"
+    "cliproxyapiVersion": "ورژن",
+    "hermesRoleReview": "جائزہ",
+    "hermesRoleReviewDesc": "سب ایجنٹ کے کوڈ کا مکمل جائزہ",
+    "hermesRoleMoaReference": "MoA ریفرنس",
+    "hermesRoleMoaReferenceDesc": "Mixture-of-Agents ریفرنس ماڈل",
+    "hermesRoleMoaAggregator": "MoA ایگریگیٹر",
+    "hermesRoleMoaAggregatorDesc": "Mixture-of-Agents سنتھیسس ماڈل"
   },
   "combos": {
     "title": "کمبوز",
@@ -3424,7 +3430,9 @@
       "failoverBeforeRetry": "فعال ہونے پر، کوئی بھی اپ اسٹریم خرابی اگلے کومبو ہدف پر فوری ناکامی کو متحرک کرتی ہے، تمام دوبارہ کوششوں اور فال بیک URLs کو چھوڑ کر۔",
       "maxSetRetries": "جب ہر ٹارگٹ ناکام ہوجاتا ہے تو مکمل ٹارگٹ سیٹ پر دوبارہ کوشش کرنے کی تعداد۔ 0 = کوئی سیٹ لیول دوبارہ کوشش نہیں۔",
       "setRetryDelayMs": "سیٹ لیول کی دوبارہ کوشش کی کوششوں کے درمیان تاخیر، عارضی مسائل کو حل کرنے کا وقت دیتا ہے۔",
-      "disableSessionStickiness": "پہلے پیغام کے ہیش کے ذریعے پوری گفتگو کو ایک کنکشن پر پن کرنے کے بجائے ہر درخواست پر ایک مختلف کنکشن پر روٹیٹ کریں۔ یہ گلوبل ڈیفالٹ کو اوور رائیڈ کرتا ہے۔ ملٹی ٹرن چیٹس کے لیے پرامپٹ کیش ہٹس کو برقرار رکھنے کے لیے اسے Inherit پر چھوڑیں۔"
+      "disableSessionStickiness": "پہلے پیغام کے ہیش کے ذریعے پوری گفتگو کو ایک کنکشن پر پن کرنے کے بجائے ہر درخواست پر ایک مختلف کنکشن پر روٹیٹ کریں۔ یہ گلوبل ڈیفالٹ کو اوور رائیڈ کرتا ہے۔ ملٹی ٹرن چیٹس کے لیے پرامپٹ کیش ہٹس کو برقرار رکھنے کے لیے اسے Inherit پر چھوڑیں۔",
+      "connectionAwareExpansion": "When on, this combo expands each provider-level step into per-account targets before rotating. Inherit uses the global default (off). Off keeps provider-level rotation.",
+      "stickyLimit": "Round-robin sticky batch size: consecutive successful requests sent to one target before rotating to the next. Empty inherits the global Sticky Limit setting; 1 disables batching (pure one-request rotation)."
     },
     "templatesTitle": "فوری ٹیمپلیٹس",
     "templatesDescription": "ابتدائی پروفائل لاگو کریں، پھر ماڈلز اور کنفیگریشن کو ایڈجسٹ کریں۔",
@@ -3778,7 +3786,16 @@
     "duplicateAutoComboSnapshotMsg": "یہ اس ٹیمپلیٹ سے ملنے والے موجودہ منسلک فراہم کنندگان/ماڈلز کو ایڈیٹ ایبل کمبو میں اسنیپ شاট لے گا۔",
     "duplicateAutoComboFailedPrefix": "آٹو کمبو ڈپلیکیٹ کرنے میں ناکام:",
     "duplicateAutoComboUnknownError": "نامعلوم خرابی",
-    "duplicateAutoComboTitle": "{name} سے ایک جامد کمبو بنائیں"
+    "duplicateAutoComboTitle": "{name} سے ایک جامد کمبو بنائیں",
+    "stickyLimitEffective": "Effective {value} ({source})",
+    "stickyLimitSourceCombo": "combo",
+    "stickyLimitSourceComboDefaults": "combo defaults",
+    "stickyLimitSourceGlobal": "global default",
+    "connectionAwareExpansion": "Connection-aware expansion",
+    "triStateInherit": "inherit",
+    "connectionAwareExpansionOn": "On",
+    "connectionAwareExpansionOff": "Off",
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation."
   },
   "costs": {
     "title": "اخراجات",
@@ -10960,7 +10977,9 @@
     "poolAddMember": "شامل کریں",
     "poolAddFailed": "پول میں پروکسی شامل کرنے میں ناکامی",
     "poolSelectProxy": "ایک پروکسی منتخب کریں…",
-    "poolSaveFailed": "پول اسائنمنٹ کو محفوظ کرنے میں ناکامی"
+    "poolSaveFailed": "پول اسائنمنٹ کو محفوظ کرنے میں ناکامی",
+    "poolEgressFailuresByExit": "{exit} کے ذریعے ناکامیاں: {count}",
+    "poolEgressFailuresUnattributed": "بغیر متعین ایگزٹ کے ناکامیاں: {count}"
   },
   "playground": {
     "title": "ماڈل پلے گراؤنڈ",
@@ -11301,7 +11320,11 @@
       "duration": "دورانیہ",
       "time": "وقت",
       "conversation": "گفتگو",
-      "ttft": "TTFT"
+      "ttft": "TTFT",
+      "contentProvenance": "جواب",
+      "contentEmpty": "خالی جواب",
+      "usageAbsent": "ٹوکن کی تعداد رپورٹ نہیں کی گئی",
+      "usageEstimated": "ٹوکن کی تعداد تخمینی ہے"
     },
     "loadingLogs": "لاگز لوڈ ہو رہے ہیں...",
     "noLogs": "ابھی کوئی لاگز نہیں ہیں۔ انہیں یہاں دیکھنے کے لیے کچھ API کالز کریں۔",
@@ -11961,7 +11984,11 @@
       "goNow": "ابھی جائیں",
       "message": "MITM Proxy اب AgentBridge کے تحت کام کرتا ہے۔",
       "title": "یہ صفحہ منتقل ہو گیا ہے"
-    }
+    },
+    "resetAgent": "ڈیفالٹ بحال کریں",
+    "resetAgentConfirm": "ڈیفالٹ بحال کریں؟",
+    "resetting": "بحال کیا جا رہا ہے…",
+    "resetDone": "{agent} کے لیے ڈیفالٹ DNS بحال کر دیا گیا۔ تبدیلی نافذ ہونے کے لیے ایپ کو مکمل طور پر بند کریں (صرف چھوٹا نہ کریں) اور دوبارہ کھولیں۔"
   },
   "providerStats": {
     "unknownError": "نامعلوم خرابی",
@@ -13955,7 +13982,12 @@
     "hour": "گھنٹہ",
     "day": "دن",
     "unknownModel": "نامعلوم",
-    "pending": "زیر التواء"
+    "pending": "زیر التواء",
+    "allApiKeys": "All API keys",
+    "mcp": "MCP",
+    "mcpTool": "MCP tool",
+    "scope": "Scope",
+    "apiKey": "API key"
   },
   "metadata": {
     "compressionTitle": "کمپریشن",

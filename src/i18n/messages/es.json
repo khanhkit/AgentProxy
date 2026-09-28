@@ -3193,7 +3193,13 @@
     "cliproxyapiUnknown": "Desconocido",
     "cliproxyapiUpdate": "Actualizar",
     "cliproxyapiUpdateAvailable": "Actualización disponible: v{current} → v{latest}",
-    "cliproxyapiVersion": "Versión"
+    "cliproxyapiVersion": "Versión",
+    "hermesRoleReview": "Revisión",
+    "hermesRoleReviewDesc": "Revisión completa de código por subagente",
+    "hermesRoleMoaReference": "Referencia de MoA",
+    "hermesRoleMoaReferenceDesc": "Modelo de referencia de Mixture-of-Agents",
+    "hermesRoleMoaAggregator": "Agregador de MoA",
+    "hermesRoleMoaAggregatorDesc": "Modelo de síntesis de Mixture-of-Agents"
   },
   "combos": {
     "title": "combos",
@@ -3424,7 +3430,9 @@
       "failoverBeforeRetry": "Cuando está habilitado, cualquier error ascendente desencadena una conmutación por error inmediata al siguiente destino combinado, omitiendo todos los reintentos y las URL alternativas.",
       "maxSetRetries": "Número de veces que se reintenta el conjunto de objetivos completo cuando todos los objetivos fallan. 0 = ningún reintento de nivel establecido.",
       "setRetryDelayMs": "Retraso entre reintentos de nivel establecido, lo que da tiempo a los problemas transitorios para resolverse.",
-      "disableSessionStickiness": "Cambia a una conexión diferente en cada solicitud, en lugar de fijar toda una conversación a una sola conexión mediante el hash del primer mensaje. Anula el valor predeterminado global. Déjalo en Heredar para conservar los aciertos de la caché de prompts en chats con varios turnos."
+      "disableSessionStickiness": "Cambia a una conexión diferente en cada solicitud, en lugar de fijar toda una conversación a una sola conexión mediante el hash del primer mensaje. Anula el valor predeterminado global. Déjalo en Heredar para conservar los aciertos de la caché de prompts en chats con varios turnos.",
+      "connectionAwareExpansion": "When on, this combo expands each provider-level step into per-account targets before rotating. Inherit uses the global default (off). Off keeps provider-level rotation.",
+      "stickyLimit": "Round-robin sticky batch size: consecutive successful requests sent to one target before rotating to the next. Empty inherits the global Sticky Limit setting; 1 disables batching (pure one-request rotation)."
     },
     "templatesTitle": "Plantillas rápidas",
     "templatesDescription": "Aplica un perfil inicial y luego ajusta los modelos y la configuración.",
@@ -3778,7 +3786,16 @@
     "duplicateAutoComboSnapshotMsg": "Esto capturará los proveedores/modelos conectados actualmente que coincidan con esta plantilla en una combinación editable.",
     "duplicateAutoComboFailedPrefix": "Error al duplicar la combinación automática:",
     "duplicateAutoComboUnknownError": "Error desconocido",
-    "duplicateAutoComboTitle": "Crear una combinación estática de {name}"
+    "duplicateAutoComboTitle": "Crear una combinación estática de {name}",
+    "stickyLimitEffective": "Effective {value} ({source})",
+    "stickyLimitSourceCombo": "combo",
+    "stickyLimitSourceComboDefaults": "combo defaults",
+    "stickyLimitSourceGlobal": "global default",
+    "connectionAwareExpansion": "Connection-aware expansion",
+    "triStateInherit": "inherit",
+    "connectionAwareExpansionOn": "On",
+    "connectionAwareExpansionOff": "Off",
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation."
   },
   "costs": {
     "title": "Costos",
@@ -10960,7 +10977,9 @@
     "poolAddMember": "Añadir",
     "poolAddFailed": "No se pudo añadir el proxy al grupo",
     "poolSelectProxy": "Selecciona un proxy…",
-    "poolSaveFailed": "No se pudo guardar la asignación del grupo"
+    "poolSaveFailed": "No se pudo guardar la asignación del grupo",
+    "poolEgressFailuresByExit": "Fallos a través de {exit}: {count}",
+    "poolEgressFailuresUnattributed": "Fallos sin salida atribuida: {count}"
   },
   "playground": {
     "title": "Title",
@@ -11301,7 +11320,11 @@
       "duration": "Duración",
       "time": "Hora",
       "conversation": "Conversación",
-      "ttft": "TTFT"
+      "ttft": "TTFT",
+      "contentProvenance": "Respuesta",
+      "contentEmpty": "Respuesta vacía",
+      "usageAbsent": "Recuento de tokens no informado",
+      "usageEstimated": "Recuento de tokens estimado"
     },
     "loadingLogs": "Cargando registros...",
     "noLogs": "Aún no hay registros. Realiza algunas llamadas a la API para verlas aquí.",
@@ -11961,7 +11984,11 @@
       "goNow": "Ir ahora",
       "message": "El proxy MITM ahora se encuentra en AgentBridge.",
       "title": "Esta página se ha trasladado"
-    }
+    },
+    "resetAgent": "Restaurar valores predeterminados",
+    "resetAgentConfirm": "¿Restaurar valores predeterminados?",
+    "resetting": "Restaurando…",
+    "resetDone": "Se restauró el DNS predeterminado para {agent}. Cierra la aplicación por completo (no basta con minimizarla) y vuelve a abrirla para que el cambio surta efecto."
   },
   "providerStats": {
     "unknownError": "Error desconocido",
@@ -13955,7 +13982,12 @@
     "hour": "hora",
     "day": "día",
     "unknownModel": "desconocido",
-    "pending": "pendiente"
+    "pending": "pendiente",
+    "allApiKeys": "All API keys",
+    "mcp": "MCP",
+    "mcpTool": "MCP tool",
+    "scope": "Scope",
+    "apiKey": "API key"
   },
   "metadata": {
     "compressionTitle": "Compresión",
