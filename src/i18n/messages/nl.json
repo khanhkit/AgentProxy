@@ -3193,7 +3193,13 @@
     "cliproxyapiUnknown": "Onbekend",
     "cliproxyapiUpdate": "Bijwerken",
     "cliproxyapiUpdateAvailable": "Update beschikbaar: v{current} → v{latest}",
-    "cliproxyapiVersion": "Versie"
+    "cliproxyapiVersion": "Versie",
+    "hermesRoleReview": "Review",
+    "hermesRoleReviewDesc": "Volledige subagent-codereview",
+    "hermesRoleMoaReference": "MoA-referentie",
+    "hermesRoleMoaReferenceDesc": "Mixture-of-Agents-referentiemodel",
+    "hermesRoleMoaAggregator": "MoA-aggregator",
+    "hermesRoleMoaAggregatorDesc": "Mixture-of-Agents-synthesemodel"
   },
   "combos": {
     "title": "Combo's",
@@ -3424,7 +3430,9 @@
       "failoverBeforeRetry": "Indien ingeschakeld, activeert elke upstream-fout onmiddellijke failover naar het volgende combo-doel, waarbij alle nieuwe pogingen en reserve-URL's worden overgeslagen.",
       "maxSetRetries": "Aantal keren dat de volledige doelset opnieuw moet worden geprobeerd als elk doel mislukt. 0 = geen nieuwe poging op ingesteld niveau.",
       "setRetryDelayMs": "Vertraging tussen nieuwe pogingen op ingesteld niveau, waardoor tijdelijke problemen de tijd krijgen om op te lossen.",
-      "disableSessionStickiness": "Roteer naar een andere verbinding bij elk verzoek in plaats van een heel gesprek vast te pinnen op één verbinding via de hash van het eerste bericht. Overschrijft de globale standaardinstelling. Laat op Overnemen staan om prompt-cache hits te behouden voor chats met meerdere beurten."
+      "disableSessionStickiness": "Roteer naar een andere verbinding bij elk verzoek in plaats van een heel gesprek vast te pinnen op één verbinding via de hash van het eerste bericht. Overschrijft de globale standaardinstelling. Laat op Overnemen staan om prompt-cache hits te behouden voor chats met meerdere beurten.",
+      "connectionAwareExpansion": "When on, this combo expands each provider-level step into per-account targets before rotating. Inherit uses the global default (off). Off keeps provider-level rotation.",
+      "stickyLimit": "Round-robin sticky batch size: consecutive successful requests sent to one target before rotating to the next. Empty inherits the global Sticky Limit setting; 1 disables batching (pure one-request rotation)."
     },
     "templatesTitle": "Snelle sjablonen",
     "templatesDescription": "Pas een startprofiel toe en pas daarna de modellen en configuratie aan.",
@@ -3778,7 +3786,16 @@
     "duplicateAutoComboSnapshotMsg": "Dit maakt een momentopname van de momenteel verbonden providers/modellen die overeenkomen met dit sjabloon in een bewerkbare combinatie.",
     "duplicateAutoComboFailedPrefix": "Automatische combinatie dupliceren mislukt:",
     "duplicateAutoComboUnknownError": "Onbekende fout",
-    "duplicateAutoComboTitle": "Maak een statische combinatie van {name}"
+    "duplicateAutoComboTitle": "Maak een statische combinatie van {name}",
+    "stickyLimitEffective": "Effective {value} ({source})",
+    "stickyLimitSourceCombo": "combo",
+    "stickyLimitSourceComboDefaults": "combo defaults",
+    "stickyLimitSourceGlobal": "global default",
+    "connectionAwareExpansion": "Connection-aware expansion",
+    "triStateInherit": "inherit",
+    "connectionAwareExpansionOn": "On",
+    "connectionAwareExpansionOff": "Off",
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation."
   },
   "costs": {
     "title": "Kosten",
@@ -10960,7 +10977,9 @@
     "poolAddMember": "Toevoegen",
     "poolAddFailed": "Kan de proxy niet aan de pool toevoegen",
     "poolSelectProxy": "Selecteer een proxy…",
-    "poolSaveFailed": "Kan pooltoewijzing niet opslaan"
+    "poolSaveFailed": "Kan pooltoewijzing niet opslaan",
+    "poolEgressFailuresByExit": "Fouten via {exit}: {count}",
+    "poolEgressFailuresUnattributed": "Fouten zonder toegewezen uitgang: {count}"
   },
   "playground": {
     "title": "Title",
@@ -11301,7 +11320,11 @@
       "duration": "Duur",
       "time": "Tijd",
       "conversation": "Gesprek",
-      "ttft": "TTFT"
+      "ttft": "TTFT",
+      "contentProvenance": "Antwoord",
+      "contentEmpty": "Leeg antwoord",
+      "usageAbsent": "Aantal tokens niet gerapporteerd",
+      "usageEstimated": "Aantal tokens geschat"
     },
     "loadingLogs": "Logs laden...",
     "noLogs": "Nog geen logs. Voer enkele API-aanroepen uit om ze hier te zien.",
@@ -11961,7 +11984,11 @@
       "goNow": "Ga nu",
       "message": "De MITM-proxy bevindt zich nu onder AgentBridge.",
       "title": "Deze pagina is verplaatst"
-    }
+    },
+    "resetAgent": "Standaard herstellen",
+    "resetAgentConfirm": "Standaard herstellen?",
+    "resetting": "Herstellen…",
+    "resetDone": "Standaard-DNS hersteld voor {agent}. Sluit de app volledig af (niet alleen minimaliseren) en open hem opnieuw om de wijziging door te voeren."
   },
   "providerStats": {
     "unknownError": "Onbekende fout",
@@ -13955,7 +13982,12 @@
     "hour": "uur",
     "day": "dag",
     "unknownModel": "onbekend",
-    "pending": "in behandeling"
+    "pending": "in behandeling",
+    "allApiKeys": "All API keys",
+    "mcp": "MCP",
+    "mcpTool": "MCP tool",
+    "scope": "Scope",
+    "apiKey": "API key"
   },
   "metadata": {
     "compressionTitle": "Compressie",

@@ -3187,6 +3187,8 @@
     "hermesRoleSkillsHubDesc": "Raciocínio de competências e uso de ferramentas",
     "hermesRoleApproval": "Aprovação",
     "hermesRoleApprovalDesc": "Decisões de segurança e aprovação",
+    "hermesRoleReview": "Revisão",
+    "hermesRoleReviewDesc": "Revisão completa de código por subagente",
     "hermesRoleMcp": "MCP",
     "hermesRoleMcpDesc": "Chamadas da ferramenta do servidor MCP",
     "hermesRoleTitleGeneration": "Geração de Títulos",
@@ -3209,6 +3211,10 @@
     "hermesRoleMonitorDesc": "Monitorização em segundo plano",
     "hermesRoleBackgroundReview": "Revisão de Fundo",
     "hermesRoleBackgroundReviewDesc": "Revisão de código em segundo plano",
+    "hermesRoleMoaReference": "Referência MoA",
+    "hermesRoleMoaReferenceDesc": "Modelo de referência Mixture-of-Agents",
+    "hermesRoleMoaAggregator": "Agregador MoA",
+    "hermesRoleMoaAggregatorDesc": "Modelo de síntese Mixture-of-Agents",
     "hermesSelectBeforePreview": "Selecione modelos para as funções, ou certifique-se de que as funções estão carregadas, antes de pré-visualizar.",
     "hermesPreviewFailed": "Falha ao gerar a pré-visualização",
     "hermesSavedTo": "Guardado em {path}",
@@ -3496,7 +3502,9 @@
       "failoverBeforeRetry": "Quando ativado, qualquer erro upstream aciona o failover imediato para o próximo destino combinado, ignorando todas as novas tentativas e URLs substitutos.",
       "maxSetRetries": "Número de vezes para tentar novamente o destino completo definido quando todos os alvos falharem. 0 = nenhuma nova tentativa de nível definido.",
       "setRetryDelayMs": "Atraso entre novas tentativas de nível definido, dando tempo para que problemas transitórios sejam resolvidos.",
-      "disableSessionStickiness": "Rode para uma ligação diferente a cada pedido em vez de fixar uma conversa inteira a uma ligação através do hash da primeira mensagem. Substitui a predefinição global. Deixe em Herdar para preservar os acessos à cache de prompts em conversas com várias interações."
+      "disableSessionStickiness": "Rode para uma ligação diferente a cada pedido em vez de fixar uma conversa inteira a uma ligação através do hash da primeira mensagem. Substitui a predefinição global. Deixe em Herdar para preservar os acessos à cache de prompts em conversas com várias interações.",
+      "connectionAwareExpansion": "When on, this combo expands each provider-level step into per-account targets before rotating. Inherit uses the global default (off). Off keeps provider-level rotation.",
+      "stickyLimit": "Round-robin sticky batch size: consecutive successful requests sent to one target before rotating to the next. Empty inherits the global Sticky Limit setting; 1 disables batching (pure one-request rotation)."
     },
     "templatesTitle": "Modelos rápidos",
     "templatesDescription": "Aplica um perfil inicial e depois ajusta modelos e configuração.",
@@ -3850,7 +3858,16 @@
     "duplicateAutoComboSnapshotMsg": "Isto irá capturar os provedores/modelos atualmente conectados que correspondem a este modelo em uma combinação editável.",
     "duplicateAutoComboFailedPrefix": "Falha ao duplicar a combinação automática:",
     "duplicateAutoComboUnknownError": "Erro desconhecido",
-    "duplicateAutoComboTitle": "Criar uma combinação estática de {name}"
+    "duplicateAutoComboTitle": "Criar uma combinação estática de {name}",
+    "stickyLimitEffective": "Effective {value} ({source})",
+    "stickyLimitSourceCombo": "combo",
+    "stickyLimitSourceComboDefaults": "combo defaults",
+    "stickyLimitSourceGlobal": "global default",
+    "connectionAwareExpansion": "Connection-aware expansion",
+    "triStateInherit": "inherit",
+    "connectionAwareExpansionOn": "On",
+    "connectionAwareExpansionOff": "Off",
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation."
   },
   "costs": {
     "title": "Custos",
@@ -11032,7 +11049,9 @@
     "poolAddMember": "Adicionar",
     "poolAddFailed": "Falha ao adicionar o proxy ao pool",
     "poolSelectProxy": "Selecionar um proxy…",
-    "poolSaveFailed": "Falha ao guardar a atribuição do pool"
+    "poolSaveFailed": "Falha ao guardar a atribuição do pool",
+    "poolEgressFailuresByExit": "Falhas através de {exit}: {count}",
+    "poolEgressFailuresUnattributed": "Falhas sem saída atribuída: {count}"
   },
   "playground": {
     "title": "Title",
@@ -11360,6 +11379,10 @@
     "columns": {
       "status": "Estado",
       "cacheSource": "Fonte de Cache",
+      "contentProvenance": "Resposta",
+      "contentEmpty": "Resposta vazia",
+      "usageAbsent": "Contagem de tokens não comunicada",
+      "usageEstimated": "Contagem de tokens estimada",
       "model": "Modelo",
       "requested": "Pedido",
       "provider": "Fornecedor",
@@ -11969,6 +11992,10 @@
     "stopDns": "Parar DNS",
     "toggling": "A alternar…",
     "viewTraffic": "Ver tráfego",
+    "resetAgent": "Repor predefinição",
+    "resetAgentConfirm": "Repor predefinição?",
+    "resetting": "A repor…",
+    "resetDone": "DNS predefinido reposto para {agent}. Feche a aplicação por completo (não basta minimizar) e volte a abri-la para que a alteração tenha efeito.",
     "emptyNoProvidersTitle": "Ainda não existem fornecedores configurados",
     "emptyNoProvidersBody": "Para utilizar o AgentBridge, ligue primeiro pelo menos um fornecedor. Será o destino para onde os pedidos do IDE são encaminhados.",
     "emptyGoToProviders": "Ir para Fornecedores",
@@ -14027,7 +14054,12 @@
     "hour": "hora",
     "day": "dia",
     "unknownModel": "desconhecido",
-    "pending": "pendente"
+    "pending": "pendente",
+    "allApiKeys": "All API keys",
+    "mcp": "MCP",
+    "mcpTool": "MCP tool",
+    "scope": "Scope",
+    "apiKey": "API key"
   },
   "metadata": {
     "compressionTitle": "Compressão",

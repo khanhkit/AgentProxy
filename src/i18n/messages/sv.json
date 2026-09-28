@@ -3193,7 +3193,13 @@
     "cliproxyapiUnknown": "Okänd",
     "cliproxyapiUpdate": "Uppdatera",
     "cliproxyapiUpdateAvailable": "Uppdatering tillgänglig: v{current} → v{latest}",
-    "cliproxyapiVersion": "Version"
+    "cliproxyapiVersion": "Version",
+    "hermesRoleReview": "Granskning",
+    "hermesRoleReviewDesc": "Fullständig kodgranskning med underagenter",
+    "hermesRoleMoaReference": "MoA-referens",
+    "hermesRoleMoaReferenceDesc": "Mixture-of-Agents-referensmodell",
+    "hermesRoleMoaAggregator": "MoA-aggregator",
+    "hermesRoleMoaAggregatorDesc": "Mixture-of-Agents-syntesmodell"
   },
   "combos": {
     "title": "Kombinationer",
@@ -3424,7 +3430,9 @@
       "failoverBeforeRetry": "När det är aktiverat utlöser alla uppströmsfel omedelbar failover till nästa kombinationsmål, och hoppar över alla återförsök och reserv-URL:er.",
       "maxSetRetries": "Antal gånger för att försöka igen med hela måluppsättningen när varje mål misslyckas. 0 = inget nytt försök på inställd nivå.",
       "setRetryDelayMs": "Fördröjning mellan återförsök på inställd nivå, vilket ger övergående problem tid att lösa.",
-      "disableSessionStickiness": "Rotera till en annan anslutning vid varje förfrågan istället för att fästa en hel konversation vid en anslutning via det första meddelandets hash. Åsidosätter det globala standardvärdet. Lämna på Ärv för att bevara promptcache-träffar för multi-turn-chattar."
+      "disableSessionStickiness": "Rotera till en annan anslutning vid varje förfrågan istället för att fästa en hel konversation vid en anslutning via det första meddelandets hash. Åsidosätter det globala standardvärdet. Lämna på Ärv för att bevara promptcache-träffar för multi-turn-chattar.",
+      "connectionAwareExpansion": "When on, this combo expands each provider-level step into per-account targets before rotating. Inherit uses the global default (off). Off keeps provider-level rotation.",
+      "stickyLimit": "Round-robin sticky batch size: consecutive successful requests sent to one target before rotating to the next. Empty inherits the global Sticky Limit setting; 1 disables batching (pure one-request rotation)."
     },
     "templatesTitle": "Snabbmallar",
     "templatesDescription": "Använd en startprofil och justera sedan modeller och konfiguration.",
@@ -3778,7 +3786,16 @@
     "duplicateAutoComboSnapshotMsg": "Detta kommer att ta en ögonblicksbild av de för närvarande anslutna leverantörerna/modellerna som matchar denna mall i en redigerbar kombination.",
     "duplicateAutoComboFailedPrefix": "Kopiering av automatisk kombination misslyckades:",
     "duplicateAutoComboUnknownError": "Okänt fel",
-    "duplicateAutoComboTitle": "Skapa en statisk kombination från {name}"
+    "duplicateAutoComboTitle": "Skapa en statisk kombination från {name}",
+    "stickyLimitEffective": "Effective {value} ({source})",
+    "stickyLimitSourceCombo": "combo",
+    "stickyLimitSourceComboDefaults": "combo defaults",
+    "stickyLimitSourceGlobal": "global default",
+    "connectionAwareExpansion": "Connection-aware expansion",
+    "triStateInherit": "inherit",
+    "connectionAwareExpansionOn": "On",
+    "connectionAwareExpansionOff": "Off",
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation."
   },
   "costs": {
     "title": "Kostnader",
@@ -10960,7 +10977,9 @@
     "poolAddMember": "Lägg till",
     "poolAddFailed": "Misslyckades med att lägga till proxyn i poolen",
     "poolSelectProxy": "Välj en proxy…",
-    "poolSaveFailed": "Misslyckades med att spara pooltilldelning"
+    "poolSaveFailed": "Misslyckades med att spara pooltilldelning",
+    "poolEgressFailuresByExit": "Fel via {exit}: {count}",
+    "poolEgressFailuresUnattributed": "Fel utan tillskriven utgång: {count}"
   },
   "playground": {
     "title": "Title",
@@ -11301,7 +11320,11 @@
       "duration": "Varaktighet",
       "time": "Tid",
       "conversation": "Konversation",
-      "ttft": "TTFT"
+      "ttft": "TTFT",
+      "contentProvenance": "Svar",
+      "contentEmpty": "Tomt svar",
+      "usageAbsent": "Antal tokens har inte rapporterats",
+      "usageEstimated": "Antal tokens uppskattat"
     },
     "loadingLogs": "Läser in loggar...",
     "noLogs": "Inga loggar ännu. Gör några API-anrop för att se dem här.",
@@ -11897,6 +11920,10 @@
     "stopDns": "Stoppa DNS",
     "toggling": "Växlar…",
     "viewTraffic": "Visa trafik",
+    "resetAgent": "Återställ standard",
+    "resetAgentConfirm": "Återställa standard?",
+    "resetting": "Återställer…",
+    "resetDone": "Standard-DNS har återställts för {agent}. Avsluta appen helt (minimera den inte bara) och öppna den igen för att ändringen ska börja gälla.",
     "emptyNoProvidersTitle": "Inga leverantörer har konfigurerats än",
     "emptyNoProvidersBody": "För att använda AgentBridge måste du först ansluta minst en leverantör. Det blir destinationen dit IDE-förfrågningar dirigeras.",
     "emptyGoToProviders": "Gå till Leverantörer",
@@ -13955,7 +13982,12 @@
     "hour": "timme",
     "day": "dag",
     "unknownModel": "okänd",
-    "pending": "väntande"
+    "pending": "väntande",
+    "allApiKeys": "All API keys",
+    "mcp": "MCP",
+    "mcpTool": "MCP tool",
+    "scope": "Scope",
+    "apiKey": "API key"
   },
   "metadata": {
     "compressionTitle": "Komprimering",

@@ -176,6 +176,7 @@ describe("config-generator", () => {
         "compression",
         "skills_hub",
         "approval",
+        "review",
         "mcp",
         "title_generation",
         "memory_query_rewrite",
@@ -187,6 +188,8 @@ describe("config-generator", () => {
         "curator",
         "monitor",
         "background_review",
+        "moa_reference",
+        "moa_aggregator",
       ];
       assert.deepStrictEqual([...ids].sort(), [...expectedIds].sort());
     });

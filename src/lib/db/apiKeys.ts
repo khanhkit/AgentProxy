@@ -17,7 +17,12 @@ import { registerDbStateResetter } from "./stateReset";
 import { invalidateReasoningRoutingRuleCache } from "./reasoningRoutingRules";
 import { getKeyGroupsForApiKey, checkKeyModelAccess } from "./apiKeyGroups";
 import { API_KEY_COLUMN_FALLBACKS } from "./apiKeyColumnFallbacks";
-import { parseApiKeyUsageLimitFields } from "./apiKeyUsageLimitFields";
+import { SYNTHETIC_ENV_API_KEY_ID } from "@/shared/constants/apiKeyIdentities";
+import {
+  appendUsageLimitUpdates,
+  hasUsageLimitUpdate,
+  parseApiKeyUsageLimitFields,
+} from "./apiKeyUsageLimitFields";
 import { setNoLog } from "../compliance/noLog";
 import { resolveModelAlias } from "@agentproxy/open-sse/services/modelDeprecation.ts";
 import { getProviderAlias, resolveProviderId } from "@/shared/constants/providers";
@@ -378,6 +383,15 @@ async function getModelPermissionCandidates(modelId: string): Promise<string[]> 
   }
 
   return Array.from(candidates);
+}
+
+export async function isModelBlockedByPatterns(
+  blockedModels: string[] | null | undefined,
+  modelId: string
+): Promise<boolean> {
+  if (!blockedModels?.length) return false;
+  const candidates = await getModelPermissionCandidates(modelId);
+  return blockedModels.some((pattern) => modelPatternMatches(pattern, candidates));
 }
 
 async function getPublishedModelLookupTarget(
@@ -1164,7 +1178,7 @@ export async function getApiKeyMetadata(
     // / CI / first-boot scenarios. If you need to disable env-key access,
     // unset the env var instead.
     return {
-      id: "env-key",
+      id: SYNTHETIC_ENV_API_KEY_ID,
       name: "Environment Key",
       machineId: "server-env",
       modelAccessMode: "all",

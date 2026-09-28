@@ -7,9 +7,9 @@
  */
 
 import { hashInput, summarizeOutput } from "./schemas/audit.ts";
-import { getMcpHttpAuditApiKeyId } from "./httpAuthContext.ts";
 import { runtimeRequire } from "../../src/lib/db/adapters/runtimeRequire.ts";
 import { isNativeSqliteLoadError } from "../../src/lib/db/core.ts";
+import { resolveMcpCallerApiKeyId } from "./mcpCallerIdentity.ts";
 
 // ============ Database Connection ============
 
@@ -214,6 +214,19 @@ export function __setBetterSqliteLoaderForTests(loader: (() => unknown) | null):
   betterSqliteLoaderForTests = loader;
 }
 
+let auditCallerIdResolverForTests: (() => Promise<string | undefined>) | null = null;
+export function __setAuditCallerIdResolverForTests(
+  resolver: (() => Promise<string | undefined>) | null
+): void {
+  auditCallerIdResolverForTests = resolver;
+}
+
+async function resolveAuditCallerId(): Promise<string | null> {
+  const resolver = auditCallerIdResolverForTests ?? resolveMcpCallerApiKeyId;
+  const raw = await resolver();
+  return raw ? raw : null;
+}
+
 async function openBetterSqliteAuditDb(dbPath: string): Promise<AuditDatabase> {
   let mod: unknown;
   if (betterSqliteLoaderForTests) {
@@ -372,7 +385,7 @@ export async function logToolCall(
 
     const inputHash = await hashInput(input);
     const outputSummary = summarizeOutput(output);
-    const apiKeyId = getMcpHttpAuditApiKeyId() || process.env.AGENTPROXY_API_KEY_ID || null;
+    const apiKeyId = await resolveAuditCallerId();
 
     database
       .prepare(

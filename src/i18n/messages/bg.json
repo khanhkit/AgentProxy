@@ -3193,7 +3193,13 @@
     "cliproxyapiUnknown": "Неизвестен",
     "cliproxyapiUpdate": "Актуализиране",
     "cliproxyapiUpdateAvailable": "Налична актуализация: v{current} → v{latest}",
-    "cliproxyapiVersion": "Версия"
+    "cliproxyapiVersion": "Версия",
+    "hermesRoleReview": "Преглед",
+    "hermesRoleReviewDesc": "Пълен преглед на кода от субагент",
+    "hermesRoleMoaReference": "MoA референция",
+    "hermesRoleMoaReferenceDesc": "Mixture-of-Agents референтен модел",
+    "hermesRoleMoaAggregator": "MoA агрегатор",
+    "hermesRoleMoaAggregatorDesc": "Mixture-of-Agents модел за синтез"
   },
   "combos": {
     "title": "Комбота",
@@ -3424,7 +3430,9 @@
       "failoverBeforeRetry": "Когато е активирана, всяка грешка нагоре по веригата задейства незабавно прехвърляне към следващата комбинирана цел, като пропуска всички повторни опити и резервни URL адреси.",
       "maxSetRetries": "Брой пъти за повторен опит за пълния набор от цели, когато всяка цел е неуспешна. 0 = няма повторен опит на зададено ниво.",
       "setRetryDelayMs": "Забавяне между опитите за повторен опит на зададено ниво, което дава време за разрешаване на преходни проблеми.",
-      "disableSessionStickiness": "Ротирайте към различна връзка при всяка заявка, вместо да обвързвате цял разговор към една връзка чрез хеша на първото съобщение. Презаписва глобалната стойност по подразбиране. Оставете на „Наследяване“, за да запазите съвпаденията в кеша на подканите (prompt-cache) за многостъпкови чатове."
+      "disableSessionStickiness": "Ротирайте към различна връзка при всяка заявка, вместо да обвързвате цял разговор към една връзка чрез хеша на първото съобщение. Презаписва глобалната стойност по подразбиране. Оставете на „Наследяване“, за да запазите съвпаденията в кеша на подканите (prompt-cache) за многостъпкови чатове.",
+      "connectionAwareExpansion": "When on, this combo expands each provider-level step into per-account targets before rotating. Inherit uses the global default (off). Off keeps provider-level rotation.",
+      "stickyLimit": "Round-robin sticky batch size: consecutive successful requests sent to one target before rotating to the next. Empty inherits the global Sticky Limit setting; 1 disables batching (pure one-request rotation)."
     },
     "templatesTitle": "Бързи шаблони",
     "templatesDescription": "Приложете стартов профил, след това регулирайте моделите и конфигурирайте.",
@@ -3778,7 +3786,16 @@
     "duplicateAutoComboSnapshotMsg": "Това ще направи моментна снимка на текущо свързаните доставчици/модели, които съвпадат с този шаблон, в редактируемо комбо.",
     "duplicateAutoComboFailedPrefix": "Неуспешно копиране на автоматично комбо:",
     "duplicateAutoComboUnknownError": "Неизвестна грешка",
-    "duplicateAutoComboTitle": "Създайте статично комбо от {name}"
+    "duplicateAutoComboTitle": "Създайте статично комбо от {name}",
+    "stickyLimitEffective": "Effective {value} ({source})",
+    "stickyLimitSourceCombo": "combo",
+    "stickyLimitSourceComboDefaults": "combo defaults",
+    "stickyLimitSourceGlobal": "global default",
+    "connectionAwareExpansion": "Connection-aware expansion",
+    "triStateInherit": "inherit",
+    "connectionAwareExpansionOn": "On",
+    "connectionAwareExpansionOff": "Off",
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation."
   },
   "costs": {
     "title": "Разходи",
@@ -10960,7 +10977,9 @@
     "poolAddMember": "Добавяне",
     "poolAddFailed": "Неуспешно добавяне на проксито към пула",
     "poolSelectProxy": "Избор на прокси…",
-    "poolSaveFailed": "Неуспешно запазване на присвояването на пула"
+    "poolSaveFailed": "Неуспешно запазване на присвояването на пула",
+    "poolEgressFailuresByExit": "Неуспехи през {exit}: {count}",
+    "poolEgressFailuresUnattributed": "Неуспехи без приписан изход: {count}"
   },
   "playground": {
     "title": "Title",
@@ -11301,7 +11320,11 @@
       "duration": "Продължителност",
       "time": "Време",
       "conversation": "Разговор",
-      "ttft": "TTFT"
+      "ttft": "TTFT",
+      "contentProvenance": "Отговор",
+      "contentEmpty": "Празен отговор",
+      "usageAbsent": "Броят токени не е докладван",
+      "usageEstimated": "Броят токени е приблизителен"
     },
     "loadingLogs": "Зареждане на регистрационните записи...",
     "noLogs": "Все още няма регистрационни записи. Направете няколко API повиквания, за да ги видите тук.",
@@ -11897,6 +11920,10 @@
     "stopDns": "Спиране на DNS",
     "toggling": "Превключване…",
     "viewTraffic": "Преглед на трафика",
+    "resetAgent": "Възстановяване по подразбиране",
+    "resetAgentConfirm": "Да се възстанови ли по подразбиране?",
+    "resetting": "Възстановяване…",
+    "resetDone": "DNS по подразбиране е възстановен за {agent}. Затворете приложението напълно (не само го минимизирайте) и го отворете отново, за да влезе промяната в сила.",
     "emptyNoProvidersTitle": "Все още няма конфигурирани доставчици",
     "emptyNoProvidersBody": "За да използвате AgentBridge, първо свържете поне един доставчик. Той ще бъде дестинацията, към която се пренасочват заявките от IDE.",
     "emptyGoToProviders": "Отидете на Доставчици",
@@ -13955,7 +13982,12 @@
     "hour": "час",
     "day": "ден",
     "unknownModel": "неизвестен",
-    "pending": "в очакване"
+    "pending": "в очакване",
+    "allApiKeys": "All API keys",
+    "mcp": "MCP",
+    "mcpTool": "MCP tool",
+    "scope": "Scope",
+    "apiKey": "API key"
   },
   "metadata": {
     "compressionTitle": "Компресия",

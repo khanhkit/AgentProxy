@@ -3193,7 +3193,13 @@
     "cliproxyapiUnknown": "Bilinməyən",
     "cliproxyapiUpdate": "Yenilə",
     "cliproxyapiUpdateAvailable": "Yeniləmə mövcuddur: v{current} → v{latest}",
-    "cliproxyapiVersion": "Versiya"
+    "cliproxyapiVersion": "Versiya",
+    "hermesRoleReview": "Nəzərdən keçirmə",
+    "hermesRoleReviewDesc": "Tam subagent kod nəzərdən keçirilməsi",
+    "hermesRoleMoaReference": "MoA İstinadı",
+    "hermesRoleMoaReferenceDesc": "Mixture-of-Agents istinad modeli",
+    "hermesRoleMoaAggregator": "MoA Aqreqatoru",
+    "hermesRoleMoaAggregatorDesc": "Mixture-of-Agents sintez modeli"
   },
   "combos": {
     "title": "Kombinasiyalar",
@@ -3424,7 +3430,9 @@
       "failoverBeforeRetry": "Aktivləşdirildikdə, istənilən yuxarı xəta bütün təkrar cəhdləri və ehtiyat URL-ləri atlayaraq, dərhal növbəti kombinasiya hədəfinə keçidi tetikler.",
       "maxSetRetries": "Hər hədəf uğursuz olduqda tam hədəf setini yenidən sınamaq üçün neçə dəfə. 0 = müəyyən səviyyəli təkrar cəhd yoxdur.",
       "setRetryDelayMs": "Müəyyən səviyyəli təkrar cəhdlər arasında gecikmə, keçici məsələlərin həlli üçün vaxt verir.",
-      "disableSessionStickiness": "Bütün söhbəti ilk mesajın heşinə görə bir bağlantıya bağlamaq əvəzinə, hər sorğuda fərqli bir bağlantıya keçin. Qlobal standartı üstələyir. Çoxdönüşlü söhbətlər üçün prompt-cache hitlərini qorumaq üçün İrsi olaraq saxlayın."
+      "disableSessionStickiness": "Bütün söhbəti ilk mesajın heşinə görə bir bağlantıya bağlamaq əvəzinə, hər sorğuda fərqli bir bağlantıya keçin. Qlobal standartı üstələyir. Çoxdönüşlü söhbətlər üçün prompt-cache hitlərini qorumaq üçün İrsi olaraq saxlayın.",
+      "connectionAwareExpansion": "When on, this combo expands each provider-level step into per-account targets before rotating. Inherit uses the global default (off). Off keeps provider-level rotation.",
+      "stickyLimit": "Round-robin sticky batch size: consecutive successful requests sent to one target before rotating to the next. Empty inherits the global Sticky Limit setting; 1 disables batching (pure one-request rotation)."
     },
     "templatesTitle": "Sürətli şablonlar",
     "templatesDescription": "Başlanğıc profilini tətbiq edin, sonra modelləri və konfiqurasiyanı tənzimləyin.",
@@ -3778,7 +3786,16 @@
     "duplicateAutoComboSnapshotMsg": "Bu, bu şablona uyğun olan hazırkı qoşulmuş provayderləri/modeləri redaktə oluna bilən kombo kimi saxlayacaq.",
     "duplicateAutoComboFailedPrefix": "Avtokombo kopyalanması uğursuz oldu:",
     "duplicateAutoComboUnknownError": "Naməlum xəta",
-    "duplicateAutoComboTitle": "{name}-dan statik kombo yarat"
+    "duplicateAutoComboTitle": "{name}-dan statik kombo yarat",
+    "stickyLimitEffective": "Effective {value} ({source})",
+    "stickyLimitSourceCombo": "combo",
+    "stickyLimitSourceComboDefaults": "combo defaults",
+    "stickyLimitSourceGlobal": "global default",
+    "connectionAwareExpansion": "Connection-aware expansion",
+    "triStateInherit": "inherit",
+    "connectionAwareExpansionOn": "On",
+    "connectionAwareExpansionOff": "Off",
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation."
   },
   "costs": {
     "title": "Xərclər",
@@ -10960,7 +10977,9 @@
     "poolAddMember": "Əlavə et",
     "poolAddFailed": "Proksini hovuza əlavə etmək mümkün olmadı",
     "poolSelectProxy": "Proksi seçin…",
-    "poolSaveFailed": "Hovuz təyinatını yadda saxlamaq mümkün olmadı"
+    "poolSaveFailed": "Hovuz təyinatını yadda saxlamaq mümkün olmadı",
+    "poolEgressFailuresByExit": "{exit} üzərindən uğursuzluqlar: {count}",
+    "poolEgressFailuresUnattributed": "Çıxışı müəyyən edilməyən uğursuzluqlar: {count}"
   },
   "playground": {
     "title": "Model sınaq meydanı",
@@ -11301,7 +11320,11 @@
       "duration": "Müddət",
       "time": "Vaxt",
       "conversation": "Söhbət",
-      "ttft": "TTFT"
+      "ttft": "TTFT",
+      "contentProvenance": "Cavab",
+      "contentEmpty": "Boş cavab",
+      "usageAbsent": "Token sayı bildirilməyib",
+      "usageEstimated": "Token sayı təxmini"
     },
     "loadingLogs": "Jurnallar yüklənir...",
     "noLogs": "Hələ jurnal yoxdur. Onları burada görmək üçün bir neçə API çağırışı edin.",
@@ -11897,6 +11920,10 @@
     "stopDns": "DNS-i dayandır",
     "toggling": "Dəyişdirilir…",
     "viewTraffic": "Trafikə baxın",
+    "resetAgent": "Defoltu bərpa et",
+    "resetAgentConfirm": "Defolt bərpa edilsin?",
+    "resetting": "Bərpa edilir…",
+    "resetDone": "{agent} üçün defolt DNS bərpa edildi. Dəyişikliyin qüvvəyə minməsi üçün tətbiqi tam bağlayın (sadəcə kiçiltməyin) və yenidən açın.",
     "emptyNoProvidersTitle": "Hələ heç bir provayder konfiqurasiya edilməyib",
     "emptyNoProvidersBody": "AgentBridge-dən istifadə etmək üçün əvvəlcə ən azı bir provayder qoşun. Bu, IDE sorğularının yönləndiriləcəyi hədəf olacaq.",
     "emptyGoToProviders": "Provayderlərə keçin",
@@ -13955,7 +13982,12 @@
     "hour": "saat",
     "day": "gün",
     "unknownModel": "naməlum",
-    "pending": "gözləyir"
+    "pending": "gözləyir",
+    "allApiKeys": "All API keys",
+    "mcp": "MCP",
+    "mcpTool": "MCP tool",
+    "scope": "Scope",
+    "apiKey": "API key"
   },
   "metadata": {
     "compressionTitle": "Sıxma",

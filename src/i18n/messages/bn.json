@@ -3231,7 +3231,13 @@
     "cliproxyapiUnknown": "অজানা",
     "cliproxyapiUpdate": "আপডেট",
     "cliproxyapiUpdateAvailable": "আপডেট উপলব্ধ: v{current} → v{latest}",
-    "cliproxyapiVersion": "সংস্করণ"
+    "cliproxyapiVersion": "সংস্করণ",
+    "hermesRoleReview": "পর্যালোচনা",
+    "hermesRoleReviewDesc": "সম্পূর্ণ সাব-এজেন্ট কোড পর্যালোচনা",
+    "hermesRoleMoaReference": "MoA রেফারেন্স",
+    "hermesRoleMoaReferenceDesc": "Mixture-of-Agents রেফারেন্স মডেল",
+    "hermesRoleMoaAggregator": "MoA অ্যাগ্রিগেটর",
+    "hermesRoleMoaAggregatorDesc": "Mixture-of-Agents সিন্থেসিস মডেল"
   },
   "combos": {
     "title": "কম্বোসমূহ",
@@ -3462,7 +3468,9 @@
       "failoverBeforeRetry": "সক্রিয় করা হলে, যেকোনো আপস্ট্রিম ত্রুটি পরবর্তী কম্বো টার্গেটে অবিলম্বে ব্যর্থতা ট্রিগার করে, সমস্ত পুনঃপ্রচার এবং ফলব্যাক URL এড়িয়ে যায়।",
       "maxSetRetries": "প্রতিটি লক্ষ্য ব্যর্থ হলে পূর্ণ লক্ষ্য সেট করার জন্য পুনরায় চেষ্টা করার সংখ্যা। 0 = কোনো সেট-লেভেল পুনঃপ্রচেষ্টা নয়।",
       "setRetryDelayMs": "সেট-লেভেলের পুনঃপ্রচেষ্টার মধ্যে বিলম্ব, ক্ষণস্থায়ী সমস্যা সমাধানের জন্য সময় দেয়।",
-      "disableSessionStickiness": "প্রথম-বার্তার হ্যাশ দ্বারা একটি সম্পূর্ণ কথোপকথনকে একটি সংযোগে পিন করার পরিবর্তে প্রতিটি অনুরোধে একটি ভিন্ন সংযোগে রোটেট করুন। গ্লোবাল ডিফল্ট ওভাররাইড করে। মাল্টি-টার্ন চ্যাটের জন্য প্রম্পট-ক্যাশ হিট সংরক্ষণ করতে Inherit-এ রেখে দিন।"
+      "disableSessionStickiness": "প্রথম-বার্তার হ্যাশ দ্বারা একটি সম্পূর্ণ কথোপকথনকে একটি সংযোগে পিন করার পরিবর্তে প্রতিটি অনুরোধে একটি ভিন্ন সংযোগে রোটেট করুন। গ্লোবাল ডিফল্ট ওভাররাইড করে। মাল্টি-টার্ন চ্যাটের জন্য প্রম্পট-ক্যাশ হিট সংরক্ষণ করতে Inherit-এ রেখে দিন।",
+      "connectionAwareExpansion": "When on, this combo expands each provider-level step into per-account targets before rotating. Inherit uses the global default (off). Off keeps provider-level rotation.",
+      "stickyLimit": "Round-robin sticky batch size: consecutive successful requests sent to one target before rotating to the next. Empty inherits the global Sticky Limit setting; 1 disables batching (pure one-request rotation)."
     },
     "templatesTitle": "দ্রুত টেমপ্লেট",
     "templatesDescription": "একটি প্রারম্ভিক প্রোফাইল প্রয়োগ করুন, তারপর মডেল ও কনফিগ সমন্বয় করুন।",
@@ -3816,7 +3824,16 @@
     "duplicateAutoComboSnapshotMsg": "এটি এই টেমপ্লেটের সাথে মিলে যায় এমন বর্তমান সংযুক্ত প্রদানকারী/মডেলগুলিকে একটি সম্পাদনযোগ্য কম্বোতে স্ন্যাপশট নেবে।",
     "duplicateAutoComboFailedPrefix": "অটোকম্বো ডুপ্লিকেশন ব্যর্থ:",
     "duplicateAutoComboUnknownError": "অজানা ত্রুটি",
-    "duplicateAutoComboTitle": "{name} থেকে একটি স্ট্যাটিক কম্বো তৈরি করুন"
+    "duplicateAutoComboTitle": "{name} থেকে একটি স্ট্যাটিক কম্বো তৈরি করুন",
+    "stickyLimitEffective": "Effective {value} ({source})",
+    "stickyLimitSourceCombo": "combo",
+    "stickyLimitSourceComboDefaults": "combo defaults",
+    "stickyLimitSourceGlobal": "global default",
+    "connectionAwareExpansion": "Connection-aware expansion",
+    "triStateInherit": "inherit",
+    "connectionAwareExpansionOn": "On",
+    "connectionAwareExpansionOff": "Off",
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation."
   },
   "costs": {
     "title": "খরচ",
@@ -10998,7 +11015,9 @@
     "poolAddMember": "যোগ করুন",
     "poolAddFailed": "পুলে প্রক্সি যোগ করতে ব্যর্থ হয়েছে",
     "poolSelectProxy": "একটি প্রক্সি নির্বাচন করুন…",
-    "poolSaveFailed": "পুল অ্যাসাইনমেন্ট সংরক্ষণ করতে ব্যর্থ হয়েছে"
+    "poolSaveFailed": "পুল অ্যাসাইনমেন্ট সংরক্ষণ করতে ব্যর্থ হয়েছে",
+    "poolEgressFailuresByExit": "{exit} এর মাধ্যমে ব্যর্থতা: {count}",
+    "poolEgressFailuresUnattributed": "নির্ধারিত এক্সিট ছাড়া ব্যর্থতা: {count}"
   },
   "playground": {
     "title": "মডেল প্লেগ্রাউন্ড",
@@ -11339,7 +11358,11 @@
       "duration": "সময়কাল",
       "time": "সময়",
       "conversation": "কথোপকথন",
-      "ttft": "TTFT"
+      "ttft": "TTFT",
+      "contentProvenance": "উত্তর",
+      "contentEmpty": "খালি উত্তর",
+      "usageAbsent": "টোকেন সংখ্যা জানানো হয়নি",
+      "usageEstimated": "টোকেন সংখ্যা আনুমানিক"
     },
     "loadingLogs": "লগ লোড হচ্ছে...",
     "noLogs": "এখনও কোনো লগ নেই। এখানে লগ দেখতে কিছু API কল করুন।",
@@ -11999,7 +12022,11 @@
       "goNow": "এখনই যান",
       "message": "MITM Proxy এখন AgentBridge-এর অধীনে রয়েছে।",
       "title": "এই পৃষ্ঠাটি স্থানান্তরিত হয়েছে"
-    }
+    },
+    "resetAgent": "ডিফল্ট পুনরুদ্ধার করুন",
+    "resetAgentConfirm": "ডিফল্ট পুনরুদ্ধার করবেন?",
+    "resetting": "পুনরুদ্ধার করা হচ্ছে…",
+    "resetDone": "{agent}-এর জন্য ডিফল্ট DNS পুনরুদ্ধার করা হয়েছে। পরিবর্তন কার্যকর করতে অ্যাপটি সম্পূর্ণ বন্ধ করুন (শুধু মিনিমাইজ নয়) এবং আবার খুলুন।"
   },
   "providerStats": {
     "unknownError": "অজানা ত্রুটি",
@@ -13993,7 +14020,12 @@
     "hour": "ঘণ্টা",
     "day": "দিন",
     "unknownModel": "অজানা",
-    "pending": "মুলতুবি"
+    "pending": "মুলতুবি",
+    "allApiKeys": "All API keys",
+    "mcp": "MCP",
+    "mcpTool": "MCP tool",
+    "scope": "Scope",
+    "apiKey": "API key"
   },
   "metadata": {
     "compressionTitle": "সংকোচন",

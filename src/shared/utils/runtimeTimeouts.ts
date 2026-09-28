@@ -41,6 +41,10 @@ export const DEFAULT_CUSTOM_HTTP_SERVER_TIMEOUTS: Readonly<CustomHttpServerTimeo
 // failure, wait this long for the real completion to land. Set to 0 to
 // disable and restore the old immediate-fail behavior.
 export const DEFAULT_STREAM_DISCONNECT_GRACE_PERIOD_MS = 10_000;
+// Suggested operator value when enabling the OpenCode Responses headers-wait bound.
+// This is not an active default: the getter returns 0 unless explicitly configured.
+export const SUGGESTED_OPENCODE_RESPONSES_HEADERS_WAIT_MS = 30_000;
+export const DEFAULT_OPENCODE_RESPONSES_HEADERS_WAIT_MAX_ROTATIONS = 2;
 
 function hasEnvValue(env: EnvSource, name: string): boolean {
   const raw = env[name];
@@ -228,6 +232,28 @@ export function getTlsClientTimeoutConfig(
       logger,
     }),
   };
+}
+
+export function getOpencodeResponsesHeadersWaitMs(
+  env: EnvSource = process.env,
+  logger?: TimeoutLogger
+): number {
+  return readTimeoutMs(env, "OPENCODE_RESPONSES_HEADERS_WAIT_MS", 0, {
+    allowZero: true,
+    logger,
+  });
+}
+
+export function getOpencodeResponsesHeadersWaitMaxRotations(
+  env: EnvSource = process.env,
+  logger?: TimeoutLogger
+): number {
+  return readTimeoutMs(
+    env,
+    "OPENCODE_RESPONSES_HEADERS_WAIT_MAX_ROTATIONS",
+    DEFAULT_OPENCODE_RESPONSES_HEADERS_WAIT_MAX_ROTATIONS,
+    { allowZero: true, logger }
+  );
 }
 
 export function getApiBridgeTimeoutConfig(

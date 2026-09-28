@@ -3212,7 +3212,13 @@
     "cliproxyapiUnknown": "Tundmatu",
     "cliproxyapiUpdate": "Värskenda",
     "cliproxyapiUpdateAvailable": "Saadaval on värskendus: v{current} → v{latest}",
-    "cliproxyapiVersion": "Versioon"
+    "cliproxyapiVersion": "Versioon",
+    "hermesRoleReview": "Ülevaatus",
+    "hermesRoleReviewDesc": "Täielik alamagendi koodiülevaatus",
+    "hermesRoleMoaReference": "MoA viide",
+    "hermesRoleMoaReferenceDesc": "Mixture-of-Agents viitemudel",
+    "hermesRoleMoaAggregator": "MoA agregaator",
+    "hermesRoleMoaAggregatorDesc": "Mixture-of-Agents sünteesimudel"
   },
   "combos": {
     "title": "Kombinatsioonid",
@@ -3441,7 +3447,9 @@
       "failoverBeforeRetry": "Kui see on lubatud, käivitab mis tahes ülesvooluviga kohese ümberlülitumise kombinatsiooni järgmisele sihtmärgile, jättes vahele kõik korduskatsed ja varu-URL-id.",
       "maxSetRetries": "Mitu korda proovitakse kogu sihtmärkide komplekti uuesti, kui kõik sihtmärgid ebaõnnestuvad. 0 = komplekti tasemel korduskatseid ei tehta.",
       "setRetryDelayMs": "Viivitus komplekti tasemel korduskatsete vahel, mis annab ajutistele probleemidele aega laheneda.",
-      "disableSessionStickiness": "Esimese sõnumi räsi põhjal kogu vestluse ühe ühendusega sidumise asemel vaheta iga päringu puhul ühendust. See alistab globaalse vaikeseade. Mitmevooruliste vestluste viipade vahemälu tabamuste säilitamiseks jäta valikuks „Päri“."
+      "disableSessionStickiness": "Esimese sõnumi räsi põhjal kogu vestluse ühe ühendusega sidumise asemel vaheta iga päringu puhul ühendust. See alistab globaalse vaikeseade. Mitmevooruliste vestluste viipade vahemälu tabamuste säilitamiseks jäta valikuks „Päri“.",
+      "connectionAwareExpansion": "When on, this combo expands each provider-level step into per-account targets before rotating. Inherit uses the global default (off). Off keeps provider-level rotation.",
+      "stickyLimit": "Round-robin sticky batch size: consecutive successful requests sent to one target before rotating to the next. Empty inherits the global Sticky Limit setting; 1 disables batching (pure one-request rotation)."
     },
     "templatesTitle": "Kiirmallid",
     "templatesDescription": "Rakenda algprofiil, seejärel kohanda mudeleid ja konfiguratsiooni.",
@@ -3797,7 +3805,16 @@
     "duplicateAutoComboUnknownError": "Tundmatu viga",
     "duplicateAutoComboTitle": "Loo automaatsest kombinatsioonist {name} staatiline kombinatsioon",
     "quotaWeighted": "Kvoodi järgi kaalutud",
-    "quotaWeightedDesc": "Jäta ammendunud kontod vahele, seejärel vali ülejäänute seast proportsionaalselt allesjäänud kvoodiga, jagades selle pooleliolevate päringute koormusega. Olemasolevad vestlused jäävad samale kontole kinnistatuks."
+    "quotaWeightedDesc": "Jäta ammendunud kontod vahele, seejärel vali ülejäänute seast proportsionaalselt allesjäänud kvoodiga, jagades selle pooleliolevate päringute koormusega. Olemasolevad vestlused jäävad samale kontole kinnistatuks.",
+    "stickyLimitEffective": "Effective {value} ({source})",
+    "stickyLimitSourceCombo": "combo",
+    "stickyLimitSourceComboDefaults": "combo defaults",
+    "stickyLimitSourceGlobal": "global default",
+    "connectionAwareExpansion": "Connection-aware expansion",
+    "triStateInherit": "inherit",
+    "connectionAwareExpansionOn": "On",
+    "connectionAwareExpansionOff": "Off",
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation."
   },
   "costs": {
     "title": "Kulud",
@@ -10979,7 +10996,9 @@
     "poolAddMember": "Lisa",
     "poolAddFailed": "Puhverserveri lisamine kogumisse ebaõnnestus",
     "poolSelectProxy": "Vali puhverserver…",
-    "poolSaveFailed": "Kogumi määrangu salvestamine ebaõnnestus"
+    "poolSaveFailed": "Kogumi määrangu salvestamine ebaõnnestus",
+    "poolEgressFailuresByExit": "Tõrked väljundi {exit} kaudu: {count}",
+    "poolEgressFailuresUnattributed": "Tõrked ilma omistatud väljundita: {count}"
   },
   "playground": {
     "title": "Mudelite testkeskkond",
@@ -11307,6 +11326,10 @@
     "columns": {
       "status": "Olek",
       "cacheSource": "Vahemälu allikas",
+      "contentProvenance": "Vastus",
+      "contentEmpty": "Tühi vastus",
+      "usageAbsent": "Tokenite arvu ei teatatud",
+      "usageEstimated": "Tokenite arv on hinnanguline",
       "model": "Mudel",
       "requested": "Taotletud",
       "provider": "Teenusepakkuja",
@@ -11980,7 +12003,11 @@
       "goNow": "Ava kohe",
       "message": "MITM Proxy asub nüüd jaotises AgentBridge.",
       "title": "See leht on teisaldatud"
-    }
+    },
+    "resetAgent": "Taasta vaikeväärtus",
+    "resetAgentConfirm": "Taastada vaikeväärtus?",
+    "resetting": "Taastamine…",
+    "resetDone": "{agent} vaike-DNS on taastatud. Muudatuse jõustumiseks sulgege rakendus täielikult (ärge seda ainult minimeerige) ja avage see uuesti."
   },
   "providerStats": {
     "unknownError": "Tundmatu viga",
@@ -13974,7 +14001,12 @@
     "hour": "tund",
     "day": "päev",
     "unknownModel": "teadmata",
-    "pending": "ootel"
+    "pending": "ootel",
+    "allApiKeys": "All API keys",
+    "mcp": "MCP",
+    "mcpTool": "MCP tool",
+    "scope": "Scope",
+    "apiKey": "API key"
   },
   "metadata": {
     "compressionTitle": "Tihendamine",

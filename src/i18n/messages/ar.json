@@ -3115,6 +3115,8 @@
     "hermesRoleSkillsHubDesc": "الاستدلال على المهارات واستخدام الأدوات",
     "hermesRoleApproval": "الموافقة",
     "hermesRoleApprovalDesc": "قرارات السلامة والموافقة",
+    "hermesRoleReview": "مراجعة",
+    "hermesRoleReviewDesc": "مراجعة شاملة للكود بواسطة الوكيل الفرعي",
     "hermesRoleMcp": "MCP",
     "hermesRoleMcpDesc": "استدعاءات أداة خادم MCP",
     "hermesRoleTitleGeneration": "توليد العناوين",
@@ -3137,6 +3139,10 @@
     "hermesRoleMonitorDesc": "مراقبة الخلفية",
     "hermesRoleBackgroundReview": "مراجعة الخلفية",
     "hermesRoleBackgroundReviewDesc": "مراجعة كود الخلفية",
+    "hermesRoleMoaReference": "مرجع MoA",
+    "hermesRoleMoaReferenceDesc": "نموذج Mixture-of-Agents المرجعي",
+    "hermesRoleMoaAggregator": "مجمّع MoA",
+    "hermesRoleMoaAggregatorDesc": "نموذج توليف Mixture-of-Agents",
     "hermesSelectBeforePreview": "حدد النماذج للأدوار، أو تأكد من تحميل الأدوار، قبل المعاينة.",
     "hermesPreviewFailed": "فشل إنشاء المعاينة",
     "hermesSavedTo": "تم الحفظ في {path}",
@@ -3424,7 +3430,9 @@
       "failoverBeforeRetry": "عند التمكين، يؤدي أي خطأ في المنبع إلى تبديل احتياطي فوري إلى الهدف التالي في المجموعة، مع تخطي جميع المحاولات وعناوين URL الاحتياطية.",
       "maxSetRetries": "عدد مرات إعادة محاولة المجموعة كاملة بعد فشل جميع أهدافها. 0 = لا توجد إعادة محاولة على مستوى المجموعة.",
       "setRetryDelayMs": "التأخير بين محاولات إعادة المجموعة، لإتاحة وقت لحل المشكلات العابرة.",
-      "disableSessionStickiness": "التدوير إلى اتصال مختلف مع كل طلب بدلاً من ربط محادثة كاملة باتصال واحد عبر هاش الرسالة الأولى. يتجاوز هذا الإعداد الافتراضي العام. اتركه على 'توريث' للحفاظ على نجاحات ذاكرة التخزين المؤقت للمطالبات للمحادثات متعددة الأدوار."
+      "disableSessionStickiness": "التدوير إلى اتصال مختلف مع كل طلب بدلاً من ربط محادثة كاملة باتصال واحد عبر هاش الرسالة الأولى. يتجاوز هذا الإعداد الافتراضي العام. اتركه على 'توريث' للحفاظ على نجاحات ذاكرة التخزين المؤقت للمطالبات للمحادثات متعددة الأدوار.",
+      "connectionAwareExpansion": "When on, this combo expands each provider-level step into per-account targets before rotating. Inherit uses the global default (off). Off keeps provider-level rotation.",
+      "stickyLimit": "Round-robin sticky batch size: consecutive successful requests sent to one target before rotating to the next. Empty inherits the global Sticky Limit setting; 1 disables batching (pure one-request rotation)."
     },
     "templatesTitle": "قوالب سريعة",
     "templatesDescription": "طبّق قالب بداية، ثم اضبط النماذج والإعدادات.",
@@ -3778,7 +3786,16 @@
     "duplicateAutoComboSnapshotMsg": "سيؤدي هذا إلى التقاط المزودين/النماذج المتصلة حاليًا التي تطابق هذا القالب في مجموعة قابلة للتحرير.",
     "duplicateAutoComboFailedPrefix": "فشل تكرار المجموعة التلقائية:",
     "duplicateAutoComboUnknownError": "خطأ غير معروف",
-    "duplicateAutoComboTitle": "إنشاء مجموعة ثابتة من {name}"
+    "duplicateAutoComboTitle": "إنشاء مجموعة ثابتة من {name}",
+    "stickyLimitEffective": "Effective {value} ({source})",
+    "stickyLimitSourceCombo": "combo",
+    "stickyLimitSourceComboDefaults": "combo defaults",
+    "stickyLimitSourceGlobal": "global default",
+    "connectionAwareExpansion": "Connection-aware expansion",
+    "triStateInherit": "inherit",
+    "connectionAwareExpansionOn": "On",
+    "connectionAwareExpansionOff": "Off",
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation."
   },
   "costs": {
     "title": "التكاليف",
@@ -10960,7 +10977,9 @@
     "poolAddMember": "إضافة",
     "poolAddFailed": "فشل إضافة الوكيل إلى التجمع",
     "poolSelectProxy": "اختر وكيلاً…",
-    "poolSaveFailed": "فشل حفظ تعيين التجمع"
+    "poolSaveFailed": "فشل حفظ تعيين التجمع",
+    "poolEgressFailuresByExit": "الإخفاقات عبر {exit}: {count}",
+    "poolEgressFailuresUnattributed": "إخفاقات دون مخرج منسوب: {count}"
   },
   "playground": {
     "title": "العنوان",
@@ -11288,6 +11307,10 @@
     "columns": {
       "status": "الحالة",
       "cacheSource": "مصدر ذاكرة التخزين المؤقت",
+      "contentProvenance": "الرد",
+      "contentEmpty": "رد فارغ",
+      "usageAbsent": "لم يتم الإبلاغ عن عدد الرموز",
+      "usageEstimated": "عدد الرموز مُقدَّر",
       "model": "نموذج",
       "requested": "مطلوب",
       "provider": "مزود",
@@ -11897,6 +11920,10 @@
     "stopDns": "إيقاف DNS",
     "toggling": "جارٍ التبديل…",
     "viewTraffic": "عرض حركة المرور",
+    "resetAgent": "استعادة الافتراضي",
+    "resetAgentConfirm": "استعادة الافتراضي؟",
+    "resetting": "جارٍ الاستعادة…",
+    "resetDone": "تمت استعادة DNS الافتراضي لـ {agent}. أغلق التطبيق تمامًا (وليس تصغيره فقط) ثم أعد فتحه لكي يسري التغيير.",
     "emptyNoProvidersTitle": "لم يتم تكوين أي مزودين بعد",
     "emptyNoProvidersBody": "لاستخدام AgentBridge، قم أولاً بربط مزود واحد على الأقل. سيكون هو الوجهة التي يتم توجيه طلبات IDE إليها.",
     "emptyGoToProviders": "الانتقال إلى المزودين",
@@ -13955,7 +13982,12 @@
     "hour": "ساعة",
     "day": "يوم",
     "unknownModel": "غير معروف",
-    "pending": "معلق"
+    "pending": "معلق",
+    "allApiKeys": "All API keys",
+    "mcp": "MCP",
+    "mcpTool": "MCP tool",
+    "scope": "Scope",
+    "apiKey": "API key"
   },
   "metadata": {
     "compressionTitle": "ضغط",

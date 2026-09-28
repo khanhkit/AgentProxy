@@ -3193,7 +3193,13 @@
     "cliproxyapiUnknown": "अज्ञात",
     "cliproxyapiUpdate": "अपडेट करें",
     "cliproxyapiUpdateAvailable": "अपडेट उपलब्ध: v{current} → v{latest}",
-    "cliproxyapiVersion": "संस्करण"
+    "cliproxyapiVersion": "संस्करण",
+    "hermesRoleReview": "समीक्षा",
+    "hermesRoleReviewDesc": "पूर्ण सब-एजेंट कोड समीक्षा",
+    "hermesRoleMoaReference": "MoA संदर्भ",
+    "hermesRoleMoaReferenceDesc": "Mixture-of-Agents संदर्भ मॉडल",
+    "hermesRoleMoaAggregator": "MoA एग्रीगेटर",
+    "hermesRoleMoaAggregatorDesc": "Mixture-of-Agents संश्लेषण मॉडल"
   },
   "combos": {
     "title": "संयोजन",
@@ -3424,7 +3430,9 @@
       "failoverBeforeRetry": "सक्षम होने पर, कोई भी अपस्ट्रीम त्रुटि अगले कॉम्बो लक्ष्य के लिए तत्काल विफलता को ट्रिगर करती है, सभी पुनर्प्रयासों और फ़ॉलबैक यूआरएल को छोड़ देती है।",
       "maxSetRetries": "प्रत्येक लक्ष्य विफल होने पर पूर्ण लक्ष्य सेट को पुनः प्रयास करने की संख्या। 0 = कोई सेट-स्तरीय पुनः प्रयास नहीं।",
       "setRetryDelayMs": "सेट-स्तरीय पुनः प्रयास प्रयासों के बीच विलंब, क्षणिक मुद्दों को हल करने का समय देना।",
-      "disableSessionStickiness": "पहले-संदेश के हैश द्वारा पूरी बातचीत को एक कनेक्शन पर पिन करने के बजाय हर अनुरोध पर एक अलग कनेक्शन पर रोटेट करें। यह वैश्विक डिफ़ॉल्ट को ओवरराइड करता है। मल्टी-टर्न चैट के लिए प्रॉम्प्ट-कैश हिट्स को सुरक्षित रखने के लिए इसे Inherit पर छोड़ दें।"
+      "disableSessionStickiness": "पहले-संदेश के हैश द्वारा पूरी बातचीत को एक कनेक्शन पर पिन करने के बजाय हर अनुरोध पर एक अलग कनेक्शन पर रोटेट करें। यह वैश्विक डिफ़ॉल्ट को ओवरराइड करता है। मल्टी-टर्न चैट के लिए प्रॉम्प्ट-कैश हिट्स को सुरक्षित रखने के लिए इसे Inherit पर छोड़ दें।",
+      "connectionAwareExpansion": "When on, this combo expands each provider-level step into per-account targets before rotating. Inherit uses the global default (off). Off keeps provider-level rotation.",
+      "stickyLimit": "Round-robin sticky batch size: consecutive successful requests sent to one target before rotating to the next. Empty inherits the global Sticky Limit setting; 1 disables batching (pure one-request rotation)."
     },
     "templatesTitle": "त्वरित टेम्प्लेट",
     "templatesDescription": "एक आरंभिक प्रोफ़ाइल लागू करें, फिर मॉडल और कॉन्फ़िगरेशन समायोजित करें।",
@@ -3778,7 +3786,16 @@
     "duplicateAutoComboSnapshotMsg": "यह इस टेम्पलेट से मेल खाने वाले वर्तमान जुड़े प्रदाताओं/मॉडल को संपादन योग्य कॉम्बो में स्नैपशॉट लेगा।",
     "duplicateAutoComboFailedPrefix": "ऑटोकॉम्बो डुप्लिकेट करने में विफल:",
     "duplicateAutoComboUnknownError": "अज्ञात त्रुटि",
-    "duplicateAutoComboTitle": "{name} से एक स्थैतिक कॉम्बो बनाएं"
+    "duplicateAutoComboTitle": "{name} से एक स्थैतिक कॉम्बो बनाएं",
+    "stickyLimitEffective": "Effective {value} ({source})",
+    "stickyLimitSourceCombo": "combo",
+    "stickyLimitSourceComboDefaults": "combo defaults",
+    "stickyLimitSourceGlobal": "global default",
+    "connectionAwareExpansion": "Connection-aware expansion",
+    "triStateInherit": "inherit",
+    "connectionAwareExpansionOn": "On",
+    "connectionAwareExpansionOff": "Off",
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation."
   },
   "costs": {
     "title": "लागत",
@@ -10960,7 +10977,9 @@
     "poolAddMember": "जोड़ें",
     "poolAddFailed": "पूल में प्रॉक्सी जोड़ने में विफल",
     "poolSelectProxy": "एक प्रॉक्सी चुनें…",
-    "poolSaveFailed": "पूल असाइनमेंट सहेजने में विफल"
+    "poolSaveFailed": "पूल असाइनमेंट सहेजने में विफल",
+    "poolEgressFailuresByExit": "{exit} के माध्यम से विफलताएँ: {count}",
+    "poolEgressFailuresUnattributed": "बिना निर्धारित एग्ज़िट वाली विफलताएँ: {count}"
   },
   "playground": {
     "title": "Title",
@@ -11301,7 +11320,11 @@
       "duration": "अवधि",
       "time": "समय",
       "conversation": "वार्तालाप",
-      "ttft": "TTFT"
+      "ttft": "TTFT",
+      "contentProvenance": "उत्तर",
+      "contentEmpty": "खाली उत्तर",
+      "usageAbsent": "टोकन संख्या रिपोर्ट नहीं की गई",
+      "usageEstimated": "टोकन संख्या अनुमानित"
     },
     "loadingLogs": "लॉग लोड हो रहे हैं...",
     "noLogs": "अभी तक कोई लॉग नहीं है। उन्हें यहाँ देखने के लिए कुछ API कॉल करें।",
@@ -11897,6 +11920,10 @@
     "stopDns": "DNS रोकें",
     "toggling": "टॉगल किया जा रहा है…",
     "viewTraffic": "ट्रैफ़िक देखें",
+    "resetAgent": "डिफ़ॉल्ट पुनर्स्थापित करें",
+    "resetAgentConfirm": "डिफ़ॉल्ट पुनर्स्थापित करें?",
+    "resetting": "पुनर्स्थापित किया जा रहा है…",
+    "resetDone": "{agent} के लिए डिफ़ॉल्ट DNS पुनर्स्थापित किया गया। बदलाव लागू होने के लिए ऐप को पूरी तरह बंद करें (सिर्फ़ मिनिमाइज़ न करें) और फिर से खोलें।",
     "emptyNoProvidersTitle": "अभी तक कोई प्रदाता कॉन्फ़िगर नहीं किया गया है",
     "emptyNoProvidersBody": "AgentBridge का उपयोग करने के लिए, पहले कम से कम एक प्रदाता कनेक्ट करें। यह वह गंतव्य होगा जहां IDE अनुरोधों को रूट किया जाता है।",
     "emptyGoToProviders": "प्रदाताओं पर जाएं",
@@ -13955,7 +13982,12 @@
     "hour": "घंटा",
     "day": "दिन",
     "unknownModel": "अज्ञात",
-    "pending": "लंबित"
+    "pending": "लंबित",
+    "allApiKeys": "All API keys",
+    "mcp": "MCP",
+    "mcpTool": "MCP tool",
+    "scope": "Scope",
+    "apiKey": "API key"
   },
   "metadata": {
     "compressionTitle": "संपीड़न",

@@ -3193,7 +3193,13 @@
     "cliproxyapiUnknown": "తెలియదు",
     "cliproxyapiUpdate": "అప్‌డేట్",
     "cliproxyapiUpdateAvailable": "అప్‌డేట్ అందుబాటులో ఉంది: v{current} → v{latest}",
-    "cliproxyapiVersion": "సంవత్సరం"
+    "cliproxyapiVersion": "సంవత్సరం",
+    "hermesRoleReview": "సమీక్ష",
+    "hermesRoleReviewDesc": "పూర్తి సబ్-ఏజెంట్ కోడ్ సమీక్ష",
+    "hermesRoleMoaReference": "MoA రిఫరెన్స్",
+    "hermesRoleMoaReferenceDesc": "Mixture-of-Agents రిఫరెన్స్ మోడల్",
+    "hermesRoleMoaAggregator": "MoA అగ్రిగేటర్",
+    "hermesRoleMoaAggregatorDesc": "Mixture-of-Agents సింథసిస్ మోడల్"
   },
   "combos": {
     "title": "కాంబోలు",
@@ -3424,7 +3430,9 @@
       "failoverBeforeRetry": "ప్రారంభించబడినప్పుడు, ఏదైనా అప్‌స్ట్రీమ్ లోపం తదుపరి కాంబో లక్ష్యానికి తక్షణ వైఫల్యాన్ని ప్రేరేపిస్తుంది, అన్ని పునఃప్రయత్నాలు మరియు ఫాల్‌బ్యాక్ URLలను దాటవేస్తుంది.",
       "maxSetRetries": "ప్రతి లక్ష్యం విఫలమైనప్పుడు సెట్ చేసిన పూర్తి లక్ష్యాన్ని మళ్లీ ప్రయత్నించడానికి ఎన్ని సార్లు. 0 = సెట్-స్థాయి పునఃప్రయత్నం లేదు.",
       "setRetryDelayMs": "సెట్-స్థాయి పునఃప్రయత్నాల మధ్య ఆలస్యం, తాత్కాలిక సమస్యలను పరిష్కరించడానికి సమయం ఇస్తుంది.",
-      "disableSessionStickiness": "మొదటి-సందేశం హ్యాష్ ద్వారా మొత్తం సంభాషణను ఒకే కనెక్షన్‌కు పిన్ చేయడానికి బదులుగా ప్రతి రిక్వెస్ట్‌కు వేరొక కనెక్షన్‌కు రొటేట్ చేయండి. గ్లోబల్ డిఫాల్ట్‌ను ఓవర్‌రైడ్ చేస్తుంది. మల్టీ-టర్న్ చాట్‌ల కోసం ప్రాంప్ట్-కాష్ హిట్‌లను సంరక్షించడానికి Inherit లో ఉంచండి."
+      "disableSessionStickiness": "మొదటి-సందేశం హ్యాష్ ద్వారా మొత్తం సంభాషణను ఒకే కనెక్షన్‌కు పిన్ చేయడానికి బదులుగా ప్రతి రిక్వెస్ట్‌కు వేరొక కనెక్షన్‌కు రొటేట్ చేయండి. గ్లోబల్ డిఫాల్ట్‌ను ఓవర్‌రైడ్ చేస్తుంది. మల్టీ-టర్న్ చాట్‌ల కోసం ప్రాంప్ట్-కాష్ హిట్‌లను సంరక్షించడానికి Inherit లో ఉంచండి.",
+      "connectionAwareExpansion": "When on, this combo expands each provider-level step into per-account targets before rotating. Inherit uses the global default (off). Off keeps provider-level rotation.",
+      "stickyLimit": "Round-robin sticky batch size: consecutive successful requests sent to one target before rotating to the next. Empty inherits the global Sticky Limit setting; 1 disables batching (pure one-request rotation)."
     },
     "templatesTitle": "త్వరిత టెంప్లేట్లు",
     "templatesDescription": "ప్రారంభ ప్రొఫైల్ను వర్తింపజేసి, ఆపై మోడళ్లు మరియు కాన్ఫిగ్ను సర్దుబాటు చేయండి.",
@@ -3778,7 +3786,16 @@
     "duplicateAutoComboSnapshotMsg": "ఈ టెంప్లేట్‌తో సరిపోయే ప్రస్తుత కనెక్ట్ చేసిన ప్రొవైడర్లు/మోడల్‌లను ఎడిటబుల్ కంబోలో స్నాప్‌షాట్ తీసుకుంటుంది.",
     "duplicateAutoComboFailedPrefix": "ఆటోకంబో డూప్లికేట్ చేయడంలో విఫలమైంది:",
     "duplicateAutoComboUnknownError": "తెలియని దోషం",
-    "duplicateAutoComboTitle": "{name} నుండి స్థిర కంబో సృష్టించండి"
+    "duplicateAutoComboTitle": "{name} నుండి స్థిర కంబో సృష్టించండి",
+    "stickyLimitEffective": "Effective {value} ({source})",
+    "stickyLimitSourceCombo": "combo",
+    "stickyLimitSourceComboDefaults": "combo defaults",
+    "stickyLimitSourceGlobal": "global default",
+    "connectionAwareExpansion": "Connection-aware expansion",
+    "triStateInherit": "inherit",
+    "connectionAwareExpansionOn": "On",
+    "connectionAwareExpansionOff": "Off",
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation."
   },
   "costs": {
     "title": "ఖర్చులు",
@@ -10960,7 +10977,9 @@
     "poolAddMember": "జోడించు",
     "poolAddFailed": "పూల్‌కు ప్రాక్సీని జోడించడం విఫలమైంది",
     "poolSelectProxy": "ప్రాక్సీని ఎంచుకోండి…",
-    "poolSaveFailed": "పూల్ అసైన్‌మెంట్‌ను సేవ్ చేయడం విఫలమైంది"
+    "poolSaveFailed": "పూల్ అసైన్‌మెంట్‌ను సేవ్ చేయడం విఫలమైంది",
+    "poolEgressFailuresByExit": "{exit} ద్వారా వైఫల్యాలు: {count}",
+    "poolEgressFailuresUnattributed": "కేటాయించిన నిష్క్రమణ లేని వైఫల్యాలు: {count}"
   },
   "playground": {
     "title": "మోడల్ ప్లేగ్రౌండ్",
@@ -11301,7 +11320,11 @@
       "duration": "వ్యవధి",
       "time": "సమయం",
       "conversation": "సంభాషణ",
-      "ttft": "TTFT"
+      "ttft": "TTFT",
+      "contentProvenance": "సమాధానం",
+      "contentEmpty": "ఖాళీ సమాధానం",
+      "usageAbsent": "టోకెన్ సంఖ్య నివేదించబడలేదు",
+      "usageEstimated": "టోకెన్ సంఖ్య అంచనా"
     },
     "loadingLogs": "లాగ్లు లోడ్ అవుతున్నాయి...",
     "noLogs": "ఇంకా లాగ్లు లేవు. వాటిని ఇక్కడ చూడటానికి కొన్ని API కాల్లు చేయండి.",
@@ -11897,6 +11920,10 @@
     "stopDns": "DNS నిలిపివేయండి",
     "toggling": "టాగుల్ అవుతోంది…",
     "viewTraffic": "ట్రాఫిక్‌ను వీక్షించండి",
+    "resetAgent": "డిఫాల్ట్‌ను పునరుద్ధరించు",
+    "resetAgentConfirm": "డిఫాల్ట్‌ను పునరుద్ధరించాలా?",
+    "resetting": "పునరుద్ధరిస్తోంది…",
+    "resetDone": "{agent} కోసం డిఫాల్ట్ DNS పునరుద్ధరించబడింది. మార్పు అమలులోకి రావడానికి యాప్‌ను పూర్తిగా మూసివేసి (కేవలం మినిమైజ్ చేయడం కాదు) మళ్లీ తెరవండి.",
     "emptyNoProvidersTitle": "ఇంకా ఏ ప్రొవైడర్లు కాన్ఫిగర్ చేయబడలేదు",
     "emptyNoProvidersBody": "AgentBridgeని ఉపయోగించడానికి, మొదట కనీసం ఒక ప్రొవైడర్‌ను కనెక్ట్ చేయండి. IDE అభ్యర్థనలు రూట్ చేయబడే గమ్యస్థానం ఇదే అవుతుంది.",
     "emptyGoToProviders": "ప్రొవైడర్లకు వెళ్లండి",
@@ -13955,7 +13982,12 @@
     "hour": "గంట",
     "day": "రోజు",
     "unknownModel": "అజ్ఞాత",
-    "pending": "ప్రతిష్టితమైన"
+    "pending": "ప్రతిష్టితమైన",
+    "allApiKeys": "All API keys",
+    "mcp": "MCP",
+    "mcpTool": "MCP tool",
+    "scope": "Scope",
+    "apiKey": "API key"
   },
   "metadata": {
     "compressionTitle": "సంకోచనం",

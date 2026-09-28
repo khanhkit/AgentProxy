@@ -41,6 +41,7 @@ export const HERMES_AGENT_ROLES = [
   { id: "compression", label: "Compression", description: "Prompt compression and summarization" },
   { id: "skills_hub", label: "Skills Hub", description: "Skills and tool-use reasoning" },
   { id: "approval", label: "Approval", description: "Safety and approval decisions" },
+  { id: "review", label: "Review", description: "Full subagent code review" },
   { id: "mcp", label: "MCP", description: "MCP server tool calls" },
   { id: "title_generation", label: "Title Generation", description: "Session title generation" },
   {
@@ -67,6 +68,12 @@ export const HERMES_AGENT_ROLES = [
     id: "background_review",
     label: "Background Review",
     description: "Background code review",
+  },
+  { id: "moa_reference", label: "MoA Reference", description: "Mixture-of-Agents reference model" },
+  {
+    id: "moa_aggregator",
+    label: "MoA Aggregator",
+    description: "Mixture-of-Agents synthesis model",
   },
 ] as const;
 

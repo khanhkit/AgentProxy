@@ -3193,7 +3193,13 @@
     "cliproxyapiUnknown": "알 수 없음",
     "cliproxyapiUpdate": "업데이트",
     "cliproxyapiUpdateAvailable": "업데이트 가능: v{current} → v{latest}",
-    "cliproxyapiVersion": "버전"
+    "cliproxyapiVersion": "버전",
+    "hermesRoleReview": "리뷰",
+    "hermesRoleReviewDesc": "전체 서브에이전트 코드 리뷰",
+    "hermesRoleMoaReference": "MoA 레퍼런스",
+    "hermesRoleMoaReferenceDesc": "Mixture-of-Agents 레퍼런스 모델",
+    "hermesRoleMoaAggregator": "MoA 애그리게이터",
+    "hermesRoleMoaAggregatorDesc": "Mixture-of-Agents 합성 모델"
   },
   "combos": {
     "title": "콤보",
@@ -3424,7 +3430,9 @@
       "failoverBeforeRetry": "활성화되면 업스트림 오류가 발생하면 모든 재시도 및 대체 URL을 건너뛰고 다음 콤보 대상으로 즉시 장애 조치가 실행됩니다.",
       "maxSetRetries": "모든 대상이 실패할 경우 전체 대상 세트를 재시도하는 횟수입니다. 0 = 설정 수준 재시도가 없습니다.",
       "setRetryDelayMs": "설정 수준 재시도 사이의 지연을 통해 일시적인 문제를 해결할 시간을 제공합니다.",
-      "disableSessionStickiness": "첫 번째 메시지 해시로 전체 대화를 하나의 연결에 고정하는 대신, 요청마다 다른 연결로 순환합니다. 글로벌 기본값을 재정의합니다. 다회차 대화에서 프롬프트 캐시 적중을 유지하려면 상속(Inherit)으로 두세요."
+      "disableSessionStickiness": "첫 번째 메시지 해시로 전체 대화를 하나의 연결에 고정하는 대신, 요청마다 다른 연결로 순환합니다. 글로벌 기본값을 재정의합니다. 다회차 대화에서 프롬프트 캐시 적중을 유지하려면 상속(Inherit)으로 두세요.",
+      "connectionAwareExpansion": "When on, this combo expands each provider-level step into per-account targets before rotating. Inherit uses the global default (off). Off keeps provider-level rotation.",
+      "stickyLimit": "Round-robin sticky batch size: consecutive successful requests sent to one target before rotating to the next. Empty inherits the global Sticky Limit setting; 1 disables batching (pure one-request rotation)."
     },
     "templatesTitle": "빠른 시작 템플릿",
     "templatesDescription": "시작 프로필을 적용한 다음 모델과 설정을 조정하세요.",
@@ -3778,7 +3786,16 @@
     "duplicateAutoComboSnapshotMsg": "이 템플릿과 일치하는 현재 연결된 제공자/모델을 편집 가능한 콤보로 스냅샷합니다.",
     "duplicateAutoComboFailedPrefix": "자동 콤보 복제 실패:",
     "duplicateAutoComboUnknownError": "알 수 없는 오류",
-    "duplicateAutoComboTitle": "{name}에서 정적 콤보 만들기"
+    "duplicateAutoComboTitle": "{name}에서 정적 콤보 만들기",
+    "stickyLimitEffective": "Effective {value} ({source})",
+    "stickyLimitSourceCombo": "combo",
+    "stickyLimitSourceComboDefaults": "combo defaults",
+    "stickyLimitSourceGlobal": "global default",
+    "connectionAwareExpansion": "Connection-aware expansion",
+    "triStateInherit": "inherit",
+    "connectionAwareExpansionOn": "On",
+    "connectionAwareExpansionOff": "Off",
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation."
   },
   "costs": {
     "title": "비용",
@@ -10960,7 +10977,9 @@
     "poolAddMember": "추가",
     "poolAddFailed": "풀에 프록시를 추가하지 못했습니다",
     "poolSelectProxy": "프록시 선택…",
-    "poolSaveFailed": "풀 할당을 저장하지 못했습니다"
+    "poolSaveFailed": "풀 할당을 저장하지 못했습니다",
+    "poolEgressFailuresByExit": "{exit}을(를) 통한 실패: {count}",
+    "poolEgressFailuresUnattributed": "출구가 지정되지 않은 실패: {count}"
   },
   "playground": {
     "title": "모델 플레이그라운드",
@@ -11301,7 +11320,11 @@
       "duration": "소요 시간",
       "time": "시간",
       "conversation": "대화",
-      "ttft": "TTFT"
+      "ttft": "TTFT",
+      "contentProvenance": "응답",
+      "contentEmpty": "빈 응답",
+      "usageAbsent": "토큰 수가 보고되지 않음",
+      "usageEstimated": "토큰 수 추정됨"
     },
     "loadingLogs": "로그를 불러오는 중...",
     "noLogs": "아직 로그가 없습니다. API를 호출하면 여기에 표시됩니다.",
@@ -11961,7 +11984,11 @@
       "goNow": "지금 이동",
       "message": "이제 MITM Proxy는 AgentBridge에 위치합니다.",
       "title": "이 페이지는 이동되었습니다"
-    }
+    },
+    "resetAgent": "기본값 복원",
+    "resetAgentConfirm": "기본값으로 복원할까요?",
+    "resetting": "복원 중…",
+    "resetDone": "{agent}의 기본 DNS가 복원되었습니다. 변경 사항을 적용하려면 앱을 완전히 종료한 뒤(최소화만 하지 말고) 다시 여세요."
   },
   "providerStats": {
     "unknownError": "알 수 없는 오류",
@@ -13955,7 +13982,12 @@
     "hour": "시간",
     "day": "일",
     "unknownModel": "알 수 없음",
-    "pending": "보류 중"
+    "pending": "보류 중",
+    "allApiKeys": "All API keys",
+    "mcp": "MCP",
+    "mcpTool": "MCP tool",
+    "scope": "Scope",
+    "apiKey": "API key"
   },
   "metadata": {
     "compressionTitle": "압축",
