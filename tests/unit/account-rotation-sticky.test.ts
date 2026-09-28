@@ -45,10 +45,10 @@ test("#14202: store-refused member is skipped while another healthy member exist
   assert.equal(pickAccount(accounts, { nextAccountIdx: 0 }).fingerprint, "m1");
 });
 
-test("#14202: flag-off remains plain round robin even with store history", () => {
+test("#14202: explicit flag-off remains plain round robin even with store history", () => {
   const accounts = fleet();
   assert.ok(noteProxyRefusal(proxyEgressKey(accounts[0].proxy), "ip_quota_429") !== null);
-  delete process.env.PROXY_SKIP_RECENTLY_FAILED;
+  process.env.PROXY_SKIP_RECENTLY_FAILED = "false";
   const state: { nextAccountIdx: number; lastHealthyFingerprint?: string } = { nextAccountIdx: 0 };
   assert.equal(pickAccount(accounts, state).fingerprint, "m0");
   assert.equal(pickAccount(accounts, state).fingerprint, "m1");

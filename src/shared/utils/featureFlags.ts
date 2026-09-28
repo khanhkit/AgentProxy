@@ -194,16 +194,20 @@ export function isNetworkRotationSharedEgressGuardEnabled(): boolean {
   }
 }
 
-/** Proxy refusal memory (#13578): opt-in skip of proxies recently refused/failed. */
+/**
+ * Proxy refusal memory (#13578): pools and account rotation skip a proxy that just failed.
+ * On by default; an unreadable flag store keeps skipping (fail-safe on).
+ * Opt-out: PROXY_SKIP_RECENTLY_FAILED=false restores the plain selection.
+ */
 export function isProxySkipRecentlyFailedEnabled(): boolean {
   try {
     return isFeatureFlagEnabled("PROXY_SKIP_RECENTLY_FAILED");
   } catch (error) {
     console.error(
-      "[featureFlags] Failed to resolve PROXY_SKIP_RECENTLY_FAILED, defaulting to disabled:",
+      "[featureFlags] Failed to resolve PROXY_SKIP_RECENTLY_FAILED, defaulting to enabled:",
       error instanceof Error ? error.message : error
     );
-    return false;
+    return true;
   }
 }
 

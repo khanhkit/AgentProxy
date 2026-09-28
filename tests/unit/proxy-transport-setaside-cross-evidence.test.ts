@@ -81,8 +81,8 @@ test("an expired window is not evidence", () => {
   assert.equal(memory.isProxyAvoided(KEY_A, START + WINDOW + 61_000), false);
 });
 
-test("a disabled opt-in flag writes nothing", () => {
-  delete process.env.PROXY_SKIP_RECENTLY_FAILED;
+test("an explicit opt-out writes nothing", () => {
+  process.env.PROXY_SKIP_RECENTLY_FAILED = "false";
   fail(KEY_A, DEST, START);
   fail(KEY_A, DEST, START + 1_000);
   memory.recordTransportSuccess(DEST, KEY_B, START + 1_500);
@@ -133,10 +133,10 @@ test("evidence stores stay bounded", () => {
   assert.ok(memory.__transportEvidenceSizeForTesting().successes <= 1000);
 });
 
-test("with the opt-in flag off the dispatcher hooks record no evidence", async () => {
+test("with the flag explicitly off the dispatcher hooks record no evidence", async () => {
   const { recordFinalTransportOutcome, recordProxiedSuccess } =
     await import("../../open-sse/utils/proxyTransportOutcome.ts");
-  delete process.env.PROXY_SKIP_RECENTLY_FAILED;
+  process.env.PROXY_SKIP_RECENTLY_FAILED = "false";
   recordProxiedSuccess("http://10.9.0.2:8080", "https://api.example.com/v1/chat");
   await recordFinalTransportOutcome("http://10.9.0.1:8080", "https://api.example.com/v1/chat");
   assert.deepEqual(memory.__transportEvidenceSizeForTesting(), { failures: 0, successes: 0 });
