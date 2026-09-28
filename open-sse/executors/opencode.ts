@@ -15,6 +15,7 @@ import {
   hasAmbientProxyContext,
   runWithDirectFetchContext,
   runWithProxyContext,
+  noteRotationAccount,
 } from "../utils/proxyFetch.ts";
 import { forwardOpencodeClientHeaders } from "../utils/opencodeHeaders.ts";
 import { projectOpencodeSessionBody } from "../utils/opencodeSessionIdentity.ts";
@@ -25,6 +26,7 @@ import {
 import {
   type AccountProxyConfig,
   type RotatableAccount,
+  type RotationAccountSnapshot,
   pickAccount as pickRotatableAccount,
   markCooldown as markAccountCooldown,
   markSuccess as markAccountSuccess,
@@ -32,6 +34,7 @@ import {
   isNetworkErrorRotatable,
   isEmptyUpstreamRejection,
   extractChatcmplId,
+  recordRotationSnapshot,
 } from "./accountRotation.ts";
 import { isOpencodeGeoBlocked, proxyKeyOf } from "./opencodeGeoBlock.ts";
 import { isRetriableUpstreamFailure } from "./opencodeTransientFailure.ts";
@@ -46,6 +49,7 @@ import {
   isNetworkRotationSharedEgressGuardEnabled,
   isOpencodeRateLimited429EarlyStopEnabled,
   isProxySkipRecentlyFailedEnabled,
+  isRotationAttributionEnabled,
 } from "@/shared/utils/featureFlags";
 import { classifyUpstream429 } from "./opencodeRateLimited.ts";
 
@@ -375,6 +379,34 @@ export class OpencodeExecutor extends BaseExecutor {
     if (hasProxyRefusals()) noteProxyServed(proxyEgressKey(account.proxy));
   }
 
+  /** Snapshot entries for the read-only rotation attribution registry. */
+  private snapshotEntries(
+    accounts: OpencodeAccountState[],
+    nowMs: number = Date.now()
+  ): RotationAccountSnapshot[] {
+    return accounts.map((a) => ({
+      masked: maskAccountId(a.fingerprint),
+      ready: a.cooldownUntil <= nowMs,
+      cooldownUntilMs: a.cooldownUntil > nowMs ? a.cooldownUntil : null,
+      consecutiveFails: a.consecutiveFails,
+    }));
+  }
+
+  /** Emit one info line per cooldown-skipped account seen by this request. */
+  private logSkippedCooldownAccounts(
+    log: { info?: (...args: unknown[]) => void } | undefined,
+    cid: string,
+    skippedCooldown: Map<string, number>
+  ): void {
+    for (const [fp, until] of skippedCooldown) {
+      const remainingS = Math.max(0, Math.ceil((until - Date.now()) / 1000));
+      log?.info?.(
+        "OPENCODE",
+        `${cid}skipped account ${maskAccountId(fp)} (cooling down, ${remainingS}s remaining)`
+      );
+    }
+  }
+
   /**
    * Rewrite muse-spark's bogus `finish_reason:"length"` (see the
    * normalizeMuseSparkFinishReason note) to `"stop"` on both streaming and
@@ -614,6 +646,8 @@ export class OpencodeExecutor extends BaseExecutor {
       // Opt-in (PROXY_SKIP_RECENTLY_FAILED, default off): members the provider just refused
       // (received refusal or refused TCP probe) are skipped. Off = plain rotation.
       const skipRecentlyFailed = isProxySkipRecentlyFailedEnabled();
+      const attributionOn = isRotationAttributionEnabled();
+      const skippedCooldown = new Map<string, number>();
       let directTried = false;
 
       for (let attempt = 0; attempt < this.accounts.length + emptyRejectionBudget; attempt++) {
@@ -627,6 +661,21 @@ export class OpencodeExecutor extends BaseExecutor {
           return k !== null && !geoTriedProxyKeys.has(k);
         };
         let account = this.pickAccountWith(isProxiedCandidate);
+        if (attributionOn) {
+          const nowMs = Date.now();
+          for (const a of this.accounts) {
+            if (a.cooldownUntil > nowMs) {
+              const prev = skippedCooldown.get(a.fingerprint);
+              if (prev === undefined || a.cooldownUntil > prev) {
+                skippedCooldown.set(a.fingerprint, a.cooldownUntil);
+              }
+            }
+          }
+          recordRotationSnapshot(
+            String(input.credentials?.connectionId ?? ""),
+            this.snapshotEntries(this.accounts, nowMs)
+          );
+        }
         // Last resort: a single direct attempt (distinct egress that may
         // succeed) once no proxied account is a candidate — never before.
         if (!isProxiedCandidate(account) && !directTried && geoTriedProxyKeys.size > 0) {
@@ -659,6 +708,9 @@ export class OpencodeExecutor extends BaseExecutor {
         // above still lets this committed attempt through.
         if (account.proxy === null && geoTriedProxyKeys.size > 0) directTried = true;
         const masked = maskAccountId(account.fingerprint);
+        if (attributionOn && (this.accounts.length > 1 || account.fingerprint !== "")) {
+          noteRotationAccount(masked);
+        }
 
         if (sharedEgressGuardEnabled && sharedEgressDown && !account.proxy) {
           log?.warn?.(
@@ -788,7 +840,12 @@ export class OpencodeExecutor extends BaseExecutor {
             );
             // Single account with a proxy: 0 retries (same egress = dead latency).
             // (The fast path above already covers single-without-proxy; here length===1 WITH proxy.)
-            if (this.accounts.length === 1) return result;
+            if (this.accounts.length === 1) {
+              if (attributionOn && skippedCooldown.size > 0) {
+                this.logSkippedCooldownAccounts(log, cid, skippedCooldown);
+              }
+              return result;
+            }
             continue;
           }
         }
@@ -818,10 +875,16 @@ export class OpencodeExecutor extends BaseExecutor {
           // A 400 carrying a real error (or non-empty content): propagate
           // immediately, untouched — same as before this change.
           this.markSuccess(account);
+          if (attributionOn && skippedCooldown.size > 0) {
+            this.logSkippedCooldownAccounts(log, cid, skippedCooldown);
+          }
           return result;
         }
 
         this.markSuccess(account);
+        if (attributionOn && skippedCooldown.size > 0) {
+          this.logSkippedCooldownAccounts(log, cid, skippedCooldown);
+        }
         return this.normalizeMuseSparkResponse(input, result);
       }
 
@@ -836,6 +899,9 @@ export class OpencodeExecutor extends BaseExecutor {
       }
 
       // All accounts returned 429 (or errored) — surface the last response.
+      if (attributionOn && skippedCooldown.size > 0) {
+        this.logSkippedCooldownAccounts(log, cid, skippedCooldown);
+      }
       return this.normalizeMuseSparkResponse(input, lastResult ?? (await super.execute(input)));
     } finally {
       this._requestFormat = null;

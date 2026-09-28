@@ -1027,6 +1027,8 @@ export async function safeLogEvents({
   comboName,
   clientRawRequest,
   tlsFingerprintUsed = false,
+  rotationAccount = null,
+  correlationId = null,
 }) {
   try {
     const rawIp =
@@ -1069,6 +1071,8 @@ export async function safeLogEvents({
       connectionId: credentials.connectionId,
       comboId: comboName || null,
       account: credentials.connectionId?.slice(0, 8) || null,
+      rotationAccount: rotationAccount || null,
+      correlationId: correlationId || null,
       tlsFingerprint: tlsFingerprintUsed,
       upstreamStatus: proxyInfo?.upstreamStatus ?? null,
     });

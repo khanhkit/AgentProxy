@@ -199,6 +199,19 @@ export function isOpencodeRateLimited429EarlyStopEnabled(): boolean {
   }
 }
 
+/** Rotation attribution diagnostics; opt-in and fail-safe off. */
+export function isRotationAttributionEnabled(): boolean {
+  try {
+    return isFeatureFlagEnabled("ROTATION_ATTRIBUTION");
+  } catch (error) {
+    console.error(
+      "[featureFlags] Failed to resolve ROTATION_ATTRIBUTION, defaulting to disabled:",
+      error instanceof Error ? error.message : error
+    );
+    return false;
+  }
+}
+
 export function isServerOwnedToolLoopEnabled(
   reader: (key: string) => boolean = isFeatureFlagEnabled
 ): boolean {

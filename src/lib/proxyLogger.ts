@@ -40,6 +40,8 @@ interface ProxyLogEntry {
   connectionId: string | null;
   comboId: string | null;
   account: string | null;
+  rotationAccount: string | null;
+  correlationId: string | null;
   tlsFingerprint: boolean;
 }
 
@@ -92,6 +94,8 @@ function loadFromDb() {
         connectionId: row.connection_id || null,
         comboId: row.combo_id || null,
         account: row.account || null,
+        rotationAccount: row.rotation_account || null,
+        correlationId: row.correlation_id || null,
         tlsFingerprint: row.tls_fingerprint === 1,
       });
     }
@@ -173,6 +177,8 @@ export function logProxyEvent(entry: ProxyLogInput) {
     connectionId: entry.connectionId || null,
     comboId: entry.comboId || null,
     account: entry.account || null,
+    rotationAccount: entry.rotationAccount || null,
+    correlationId: entry.correlationId || null,
     tlsFingerprint: entry.tlsFingerprint || false,
   };
 
@@ -263,10 +269,10 @@ export function flushProxyLogsSync() {
     const insertStmt = db.prepare(
       `INSERT INTO proxy_logs (id, timestamp, status, proxy_type, proxy_host, proxy_port,
         level, level_id, provider, target_url, public_ip, egress_ip, latency_ms, error,
-        connection_id, combo_id, account, tls_fingerprint)
+        connection_id, combo_id, account, rotation_account, correlation_id, tls_fingerprint)
       VALUES (@id, @timestamp, @status, @proxyType, @proxyHost, @proxyPort,
         @level, @levelId, @provider, @targetUrl, @clientIp, @egressIp, @latencyMs, @error,
-        @connectionId, @comboId, @account, @tlsFingerprint)`
+        @connectionId, @comboId, @account, @rotationAccount, @correlationId, @tlsFingerprint)`
     );
 
     const transaction = db.transaction((entries: ProxyLogEntry[]) => {
@@ -289,6 +295,8 @@ export function flushProxyLogsSync() {
           connectionId: item.connectionId,
           comboId: item.comboId,
           account: item.account,
+          rotationAccount: item.rotationAccount,
+          correlationId: item.correlationId,
           tlsFingerprint: item.tlsFingerprint ? 1 : 0,
         });
       }
