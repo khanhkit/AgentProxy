@@ -14,6 +14,7 @@ import {
   proxyUrlForLogs,
 } from "./proxyDispatcher.ts";
 import tlsClient, { type TlsFetchOptions } from "./tlsClient.ts";
+import { withUpstreamStatusCapture } from "./upstreamStatusCapture.ts";
 import { isProxyReachable } from "@/lib/proxyHealth";
 import {
   isControlPlaneProxyDirectFallbackEnabled,
@@ -109,9 +110,10 @@ const TLS_PROVIDER_PROFILE: Record<string, { browser: string; os: string }> = {
   maxai: { browser: "firefox_150", os: "windows" },
 };
 
-function tlsProfileForProvider(
-  provider: string | null | undefined
-): { browserProfile?: string; os?: string } {
+function tlsProfileForProvider(provider: string | null | undefined): {
+  browserProfile?: string;
+  os?: string;
+} {
   if (!provider) return {};
   const p = TLS_PROVIDER_PROFILE[provider.trim().toLowerCase()];
   return p ? { browserProfile: p.browser, os: p.os } : {};
@@ -188,7 +190,7 @@ type TlsFingerprintStore = {
  * the egress logger read the innermost applied proxy (the last writer wins, which
  * is the executor's per-account proxy).
  */
-export type AppliedProxySink = { proxy: unknown };
+export type AppliedProxySink = { proxy: unknown; upstreamStatus?: number };
 const appliedProxyContext = new AsyncLocalStorage<AppliedProxySink>();
 
 /**
@@ -755,7 +757,7 @@ export async function runWithProxyContextOrDirect(proxyConfig, fn) {
   return runWithProxyContext(proxyConfig, fn, { directFallbackOnUnreachable: true });
 }
 
-async function patchedFetch(
+async function patchedFetchUnrecorded(
   input: RequestInfo | URL,
   options: FetchWithDispatcherOptions = {},
   deps: ProxyFetchDeps = {}
@@ -866,12 +868,7 @@ async function patchedFetch(
             dispatcher: attempt === 0 ? getDefaultDispatcher() : getRetryDispatcher(),
           },
           _undiciDirect,
-          resolveDirectHeadersTimeoutMs(
-            undefined,
-            directBodyForTimeout,
-            attempt,
-            !!options.signal
-          )
+          resolveDirectHeadersTimeoutMs(undefined, directBodyForTimeout, attempt, !!options.signal)
         );
       } catch (dispatcherError) {
         if (isDirectResponseStartTimeout(dispatcherError)) {
@@ -1186,6 +1183,9 @@ async function patchedFetch(
   }
   throw lastProxyError;
 }
+
+const getAppliedProxySink = () => appliedProxyContext.getStore();
+const patchedFetch = withUpstreamStatusCapture(patchedFetchUnrecorded, getAppliedProxySink);
 
 /**
  * Named export for proxyFetch — identical to the patched globalThis.fetch but
