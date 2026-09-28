@@ -238,6 +238,7 @@ const SAFE_PUBLIC_ERROR_IDENTIFIERS = new Set([
   "tls_session_capacity",
   "tool_calling_not_supported",
   "tools",
+  "turn_in_progress",
   "undeclared_historical_tool",
   "und_err_body_timeout",
   "und_err_connect_timeout",
