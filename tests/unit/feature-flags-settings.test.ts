@@ -40,7 +40,7 @@ const {
 // the dead ONEPROXY_ENABLED (readerless since the 1proxy purge, #12091)
 // brought it back to 53. UNIVERSAL_CONTEXT_HANDOFF_ENABLED bumped it to 54.
 // OPENCODE_RATE_LIMITED_429_EARLY_STOP and ROTATION_ATTRIBUTION add two diagnostics/network flags.
-const EXPECTED_FEATURE_FLAG_COUNT = 58;
+const EXPECTED_FEATURE_FLAG_COUNT = 59;
 
 // ──────────────────────────────────────────────────────
 // Test group 1 — Flag definitions registry
@@ -176,6 +176,15 @@ describe("featureFlagDefinitions", () => {
       (d) => d.key === "OPENCODE_RATE_LIMITED_429_EARLY_STOP"
     );
     assert.ok(def, "OPENCODE_RATE_LIMITED_429_EARLY_STOP should exist");
+    assert.strictEqual(def.category, "network");
+    assert.strictEqual(def.type, "boolean");
+    assert.strictEqual(def.defaultValue, "false");
+    assert.strictEqual(def.requiresRestart, false);
+  });
+
+  it("defines OPENCODE_RESPONSES_STALL_ROTATION as an opt-in network boolean flag disabled by default", () => {
+    const def = FEATURE_FLAG_DEFINITIONS.find((d) => d.key === "OPENCODE_RESPONSES_STALL_ROTATION");
+    assert.ok(def, "OPENCODE_RESPONSES_STALL_ROTATION should exist");
     assert.strictEqual(def.category, "network");
     assert.strictEqual(def.type, "boolean");
     assert.strictEqual(def.defaultValue, "false");

@@ -46,6 +46,8 @@ export const DEFAULT_CUSTOM_HTTP_SERVER_TIMEOUTS: Readonly<CustomHttpServerTimeo
 // failure, wait this long for the real completion to land. Set to 0 to
 // disable and restore the old immediate-fail behavior.
 export const DEFAULT_STREAM_DISCONNECT_GRACE_PERIOD_MS = 10_000;
+// OpenCode Responses emits a lifecycle event before generation; bound silence after headers.
+export const DEFAULT_RESPONSES_FIRST_BYTE_TIMEOUT_MS = 15_000;
 
 function hasEnvValue(env: EnvSource, name: string): boolean {
   const raw = env[name];
@@ -244,6 +246,18 @@ export function getTlsClientTimeoutConfig(
       logger,
     }),
   };
+}
+
+export function getResponsesFirstByteTimeoutMs(
+  env: EnvSource = process.env,
+  logger?: TimeoutLogger
+): number {
+  return readTimeoutMs(
+    env,
+    "RESPONSES_FIRST_BYTE_TIMEOUT_MS",
+    DEFAULT_RESPONSES_FIRST_BYTE_TIMEOUT_MS,
+    { allowZero: true, logger }
+  );
 }
 
 export function getApiBridgeTimeoutConfig(

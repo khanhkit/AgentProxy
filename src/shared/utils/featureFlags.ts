@@ -212,6 +212,19 @@ export function isRotationAttributionEnabled(): boolean {
   }
 }
 
+/** OpenCode Responses first-byte stall rotation (#13484). Opt-in and fail-closed. */
+export function isOpencodeResponsesStallRotationEnabled(): boolean {
+  try {
+    return isFeatureFlagEnabled("OPENCODE_RESPONSES_STALL_ROTATION");
+  } catch (error) {
+    console.error(
+      "[featureFlags] Failed to resolve OPENCODE_RESPONSES_STALL_ROTATION, defaulting to disabled:",
+      error instanceof Error ? error.message : error
+    );
+    return false;
+  }
+}
+
 export function isServerOwnedToolLoopEnabled(
   reader: (key: string) => boolean = isFeatureFlagEnabled
 ): boolean {
