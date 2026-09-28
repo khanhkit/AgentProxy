@@ -120,7 +120,7 @@ test("Normalizes a bare __Secure-1PSID value before adding browser cookies", asy
             click: async () => {},
           }),
           keyboard: {
-            type: async () => {},
+            insertText: async () => {},
             press: async () => {},
           },
         }),

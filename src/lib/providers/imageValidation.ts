@@ -30,9 +30,9 @@ const IMAGE_PROVIDER_VALIDATION_ENDPOINTS: Record<
     path: "/account/v1/credits/balance",
   },
   magnific: {
-    // GET /v1/ai/mystic lists tasks and does not start a paid generation.
+    // GET /v1/ai/flows is the read-only key-validation route.
     baseUrl: "https://api.magnific.com",
-    path: "/v1/ai/mystic",
+    path: "/v1/ai/flows",
   },
 };
 

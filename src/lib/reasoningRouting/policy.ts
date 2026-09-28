@@ -8,7 +8,10 @@ import {
 } from "@/lib/db/reasoningRoutingRules";
 import { getResolvedModelCapabilities } from "@/lib/modelCapabilities";
 import { normalizeRoutingTags } from "@/domain/tagRouter";
-import { splitClaudeEffortSuffix } from "@agentproxy/open-sse/config/providerModels.ts";
+import {
+  splitClaudeEffortSuffix,
+  getProviderModels,
+} from "@agentproxy/open-sse/config/providerModels.ts";
 
 type JsonRecord = Record<string, unknown>;
 const EFFORTS = new Set<ReasoningEffort>([
@@ -264,6 +267,29 @@ function capabilityFor(
   const capabilities = getResolvedModelCapabilities(model);
   if (capabilities.supportsThinking === false) return "unsupported" as const;
   if (targetEffort === "max" || targetEffort === "ultra") {
+    const declaredEfforts = capabilities.supportedThinkingEfforts;
+    const provider = model.includes("/") ? model.slice(0, model.indexOf("/")) : "";
+    const modelIdForRegistry = model.startsWith(`${provider}/`)
+      ? model.slice(provider.length + 1)
+      : model;
+    const registryDeclared = provider
+      ? getProviderModels(provider).find(
+          (entry) => entry.id === modelIdForRegistry || entry.aliases?.includes(modelIdForRegistry)
+        )?.supportedThinkingEfforts
+      : undefined;
+
+    if (Array.isArray(registryDeclared) && registryDeclared.length > 0) {
+      return registryDeclared.includes(targetEffort)
+        ? ("supported" as const)
+        : ("unsupported" as const);
+    }
+
+    if (Array.isArray(declaredEfforts) && declaredEfforts.length > 0) {
+      return declaredEfforts.includes(targetEffort)
+        ? ("supported" as const)
+        : ("unsupported" as const);
+    }
+
     const normalized = model.toLowerCase().replace(/^(?:codex|cx)\//, "");
     const supported =
       targetEffort === "ultra"

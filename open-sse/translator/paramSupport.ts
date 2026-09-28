@@ -25,6 +25,7 @@ type StripRule = {
   drop?: string[];
   clampToModelMaxOutput?: boolean;
   maxOutputCap?: number;
+  mapThinkingType?: Record<string, string>;
 };
 
 const MAX_OUTPUT_TOKEN_KEYS = ["max_tokens", "max_completion_tokens", "max_output_tokens"] as const;
@@ -93,6 +94,7 @@ const STRIP_RULES: StripRule[] = [
   // to read), hence the fixed cap.
   { provider: "azure-openai", match: /^gpt-4o-mini/i, maxOutputCap: 16384 },
   { provider: "azure-ai", match: /^gpt-4o-mini/i, maxOutputCap: 16384 },
+  { provider: "agentrouter", match: /glm-/i, mapThinkingType: { adaptive: "enabled" } },
 ];
 
 function matches(rule: StripRule, model: string): boolean {
@@ -105,6 +107,19 @@ function matches(rule: StripRule, model: string): boolean {
  * (`clampToModelMaxOutput`) and/or a fixed endpoint cap (`maxOutputCap`). Only
  * clamps keys that are present and numeric; never introduces a new key.
  */
+function applyThinkingTypeMap(rule: StripRule, body: Record<string, unknown>): void {
+  if (!rule.mapThinkingType) return;
+  const thinking = body.thinking;
+  if (!thinking || typeof thinking !== "object" || Array.isArray(thinking)) return;
+
+  const currentType = (thinking as Record<string, unknown>).type;
+  if (typeof currentType !== "string") return;
+  const mappedType = rule.mapThinkingType[currentType];
+  if (!mappedType || mappedType === currentType) return;
+
+  body.thinking = { ...(thinking as Record<string, unknown>), type: mappedType };
+}
+
 function applyMaxOutputClamp(
   rule: StripRule,
   provider: string | null | undefined,
@@ -157,6 +172,7 @@ export function stripUnsupportedParams<T>(
       if (rec[key] !== undefined) delete rec[key];
     }
     applyMaxOutputClamp(rule, provider, model, rec);
+    applyThinkingTypeMap(rule, rec);
   }
 
   // Phase 2: Config-driven rules from DB

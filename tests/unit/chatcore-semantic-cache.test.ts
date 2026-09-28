@@ -42,7 +42,12 @@ function makeBaseArgs(overrides: Record<string, unknown> = {}) {
       },
     },
     effectiveServiceTier: undefined,
-    connectionId: null as string | null,
+    pendingScope: {
+      id: null,
+      model: "gpt-4o",
+      provider: "openai",
+      connectionId: null,
+    },
     startTime: Date.now(),
     log: {
       debug: () => {
@@ -162,7 +167,12 @@ function makeHitArgs(overrides: Record<string, unknown> = {}) {
       },
     },
     effectiveServiceTier: undefined,
-    connectionId: null as string | null,
+    pendingScope: {
+      id: null,
+      model: "gpt-4o",
+      provider: "openai",
+      connectionId: null,
+    },
     startTime: Date.now() - 5,
     log: {
       debug: (...a: unknown[]) => {

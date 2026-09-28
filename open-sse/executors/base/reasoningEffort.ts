@@ -69,6 +69,16 @@ export const GROK_46_PATTERN = /(?:^|\/|\b)grok-4\.6/i;
 export const GLM_53_FAMILY_PATTERN = /(?:^|\/|\b)glm-5\.3(?:$|-)/i;
 export const GLM_52_FAMILY_PATTERN = /(?:^|\/|\b)glm-5\.2(?:$|-)/i;
 
+function isSenseNovaDeepSeekV4Flash(provider: string, model: string): boolean {
+  const normalizedModel = model.toLowerCase();
+  const modelMatches =
+    /(?:^|\/)deepseek-v4-flash(?:$|-)/.test(normalizedModel) &&
+    !normalizedModel.includes("vision");
+  if (!modelMatches) return false;
+  if (provider === "sensenova" || provider === "snova") return true;
+  return /(?:^|\/)snova(?:\/|$)/.test(normalizedModel);
+}
+
 export function isCommandCodeProvider(provider: string): boolean {
   return (
     provider === "command-code" ||
@@ -308,6 +318,13 @@ export function sanitizeReasoningEffortForProvider(
   if (c.effort === undefined) return body;
   const effortStr = typeof c.effort === "string" ? c.effort.toLowerCase() : "";
   const modelStr = model || "";
+
+  if (
+    isSenseNovaDeepSeekV4Flash(provider, modelStr) &&
+    (effortStr === "xhigh" || effortStr === "max")
+  ) {
+    return writeEffortValue(b, "high", c);
+  }
 
   // ── o1-preview: does not accept reasoning_effort parameter at all ─────────
   if (O1_PREVIEW_PATTERN.test(modelStr)) {

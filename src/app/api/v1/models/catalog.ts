@@ -14,6 +14,7 @@ import { getAllEmbeddingModels } from "@agentproxy/open-sse/config/embeddingRegi
 import {
   getAllImageModels,
   isRegisteredImageModel,
+  parseImageModel,
 } from "@agentproxy/open-sse/config/imageRegistry";
 import { aiHordeImageCatalog } from "@agentproxy/open-sse/services/aihordeImageCatalog";
 import { getAllRerankModels } from "@agentproxy/open-sse/config/rerankRegistry";
@@ -1508,7 +1509,11 @@ async function buildUnifiedModelsResponseCore(
     }
     for (const imgModel of getAllImageModels()) {
       if (!isProviderActive(imgModel.provider)) continue;
-      const rawModelId = getSpecialtyModelRelativeId(imgModel.id, imgModel.provider);
+      const parsedImageModel = parseImageModel(imgModel.id);
+      const rawModelId =
+        parsedImageModel.provider === imgModel.provider && parsedImageModel.model
+          ? parsedImageModel.model
+          : getSpecialtyModelRelativeId(imgModel.id, imgModel.provider);
       if (!providerSupportsModel(imgModel.provider, rawModelId)) continue;
       if (isModelHiddenBulk(imgModel.provider, rawModelId)) continue;
       models.push({

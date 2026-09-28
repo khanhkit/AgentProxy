@@ -309,7 +309,10 @@ export function processRtkText(
     }
   }
 
-  const deduped = deduplicateRepeatedLines(result, { threshold: config.deduplicateThreshold });
+  const shouldSkipDedup = Boolean(options.skipFilters);
+  const deduped = shouldSkipDedup
+    ? { text: result, collapsed: 0 }
+    : deduplicateRepeatedLines(result, { threshold: config.deduplicateThreshold });
   if (deduped.collapsed > 0) {
     result = deduped.text;
     techniquesUsed.push("rtk-dedup");

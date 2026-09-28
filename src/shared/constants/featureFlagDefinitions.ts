@@ -570,6 +570,18 @@ export const FEATURE_FLAG_DEFINITIONS: FeatureFlagDefinition[] = [
     requiresRestart: false,
     warningLevel: "caution",
   },
+  {
+    key: "MISTRAL_AMBIGUOUS_401_SOFT_LOCKOUT",
+    label: "Mistral Ambiguous 401 Soft Lockout",
+    description:
+      'A bare Mistral 401 ({"detail":"Unauthorized"}, no explicit auth signal) is byte-identical for a revoked key and for exhausted quota. When enabled, such a 401 cools the connection down instead of parking it as expired, up to 3 times within an hour; the next one still parks it as expired, so a revoked key converges. Off by default: every bare Mistral 401 parks the connection as expired, as before.',
+    descriptionI18nKey: "featureFlagMistralAmbiguous401SoftLockoutDescription",
+    category: "runtime",
+    defaultValue: "false",
+    type: "boolean",
+    requiresRestart: false,
+    warningLevel: "caution",
+  },
 
   // ──────────────── CLI (5) ────────────────
   {
@@ -660,6 +672,18 @@ export const FEATURE_FLAG_DEFINITIONS: FeatureFlagDefinition[] = [
     description: "Enable network access in the skills sandbox environment",
     descriptionI18nKey: "featureFlagSkillsSandboxNetworkEnabledDescription",
     category: "health",
+    defaultValue: "false",
+    type: "boolean",
+    requiresRestart: false,
+    warningLevel: "caution",
+  },
+  {
+    key: "XAI_OAUTH_LIVE_MODEL_DISCOVERY",
+    label: "xAI OAuth Live Model Discovery",
+    description:
+      "Fetch the live xAI model catalog for xai-oauth connections from https://api.x.ai/v1/models using the OAuth bearer token, instead of the frozen static seed. Off by default: xai-oauth keeps serving the static seed unchanged. On any resolution error, discovery falls back to the seed.",
+    descriptionI18nKey: "featureFlagXaiOauthLiveModelDiscoveryDescription",
+    category: "runtime",
     defaultValue: "false",
     type: "boolean",
     requiresRestart: false,

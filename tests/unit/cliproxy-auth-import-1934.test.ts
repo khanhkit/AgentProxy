@@ -55,10 +55,10 @@ test("parseCliProxyAuthRecord returns null for unknown type or missing access to
 });
 
 test("every CLIPROXY_TYPE_TO_PROVIDER target is a real OAuth provider id", () => {
-  // codex/antigravity/claude/kimi are all AgentProxy providers
+  // codex/antigravity/claude/kimi/muse-code are all AgentProxy providers
   for (const provider of Object.values(CLIPROXY_TYPE_TO_PROVIDER)) {
     assert.ok(
-      ["claude", "codex", "antigravity", "kimi"].includes(provider),
+      ["claude", "codex", "antigravity", "kimi", "muse-code"].includes(provider),
       `unexpected provider mapping: ${provider}`
     );
   }

@@ -72,6 +72,12 @@ const onboardLocks = new Map<string, Promise<void>>();
  */
 export const ANTIGRAVITY_REQUIRES_MANUAL_PROJECT = "__REQUIRES_GCP_PROJECT__";
 
+export function isUsableAntigravityProjectId(value: unknown): value is string {
+  if (typeof value !== "string") return false;
+  const trimmed = value.trim();
+  return trimmed !== "" && trimmed !== ANTIGRAVITY_REQUIRES_MANUAL_PROJECT;
+}
+
 /**
  * Per-token cache of accounts Google told us to Bring Your Own Project.
  * Permanent for the process lifetime (LRU-capped): re-running onboardUser

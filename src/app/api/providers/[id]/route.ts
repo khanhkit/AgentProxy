@@ -29,11 +29,6 @@ import {
   enableRateLimitProtection,
   disableRateLimitProtection,
 } from "@/../open-sse/services/rateLimitManager";
-import {
-  finalizeValidatedChatGptWebCodexSecrets,
-  decodeChatGptWebCodexSecrets,
-  encodeChatGptWebCodexSecrets,
-} from "@agentproxy/open-sse/services/chatgptWebCodexAdmin.ts";
 import { rejectRetiredCommonChatGptWebProvider } from "@/lib/providers/chatgptWebRetirementResponse";
 
 function normalizeCodexLimitPolicy(
@@ -178,6 +173,11 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
             ? incomingPsd.validationId
             : "";
         try {
+          const {
+            finalizeValidatedChatGptWebCodexSecrets,
+            decodeChatGptWebCodexSecrets,
+            encodeChatGptWebCodexSecrets,
+          } = await import("@agentproxy/open-sse/services/chatgptWebCodexAdmin.ts");
           const incomingSecrets = decodeChatGptWebCodexSecrets(apiKey);
           const existingSecrets = decodeChatGptWebCodexSecrets(existing.apiKey || "");
           const encoded = encodeChatGptWebCodexSecrets({

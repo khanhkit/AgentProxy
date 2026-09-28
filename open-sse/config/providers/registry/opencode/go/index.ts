@@ -114,6 +114,13 @@ export const opencode_goProvider: RegistryEntry = {
       supportsVision: false,
       supportsReasoning: true,
     },
+    {
+      id: "qwen3.8-max",
+      name: "Qwen3.8 Max",
+      targetFormat: "claude",
+      supportsVision: false,
+      supportsReasoning: true,
+    },
     // qwen3.6-plus / qwen3.5-plus base ids declared identically on opencode-zen — see
     // OPENCODE_ZEN_GO_SHARED_MODELS.
     {
@@ -218,6 +225,78 @@ export const opencode_goProvider: RegistryEntry = {
     {
       id: "muse-spark-1.2-contributor-xhigh",
       name: "Muse Spark 1.2 Contributor (xhigh effort)",
+      contextLength: 1048576,
+      maxOutputTokens: 131072,
+      supportsReasoning: true,
+      supportsVision: true,
+      supportsAudio: true,
+      supportsVideo: true,
+      targetFormat: "openai-responses",
+    },
+    // #12674: Muse Spark 1.3 Contributor — base + effort-tier aliases from the
+    // OpenCode Go registry (`opencode models opencode-go --refresh --verbose`;
+    // exact suffix set: minimal/low/medium/high/xhigh, no max — same as 1.2).
+    // Upstream serves Muse Spark only on the Responses API; without
+    // targetFormat:"openai-responses" these fall through to /chat/completions
+    // and the upstream returns 500 (same class as #12196).
+    {
+      id: "muse-spark-1.3-contributor",
+      name: "Muse Spark 1.3 Contributor",
+      contextLength: 1048576,
+      maxOutputTokens: 131072,
+      supportsReasoning: true,
+      supportsVision: true,
+      supportsAudio: true,
+      supportsVideo: true,
+      targetFormat: "openai-responses",
+    },
+    {
+      id: "muse-spark-1.3-contributor-minimal",
+      name: "Muse Spark 1.3 Contributor (minimal effort)",
+      contextLength: 1048576,
+      maxOutputTokens: 131072,
+      supportsReasoning: true,
+      supportsVision: true,
+      supportsAudio: true,
+      supportsVideo: true,
+      targetFormat: "openai-responses",
+    },
+    {
+      id: "muse-spark-1.3-contributor-low",
+      name: "Muse Spark 1.3 Contributor (low effort)",
+      contextLength: 1048576,
+      maxOutputTokens: 131072,
+      supportsReasoning: true,
+      supportsVision: true,
+      supportsAudio: true,
+      supportsVideo: true,
+      targetFormat: "openai-responses",
+    },
+    {
+      id: "muse-spark-1.3-contributor-medium",
+      name: "Muse Spark 1.3 Contributor (medium effort)",
+      contextLength: 1048576,
+      maxOutputTokens: 131072,
+      supportsReasoning: true,
+      supportsVision: true,
+      supportsAudio: true,
+      supportsVideo: true,
+      targetFormat: "openai-responses",
+    },
+    {
+      id: "muse-spark-1.3-contributor-high",
+      name: "Muse Spark 1.3 Contributor (high effort)",
+      contextLength: 1048576,
+      maxOutputTokens: 131072,
+      supportsReasoning: true,
+      supportsVision: true,
+      supportsAudio: true,
+      supportsVideo: true,
+      targetFormat: "openai-responses",
+    },
+    {
+      id: "muse-spark-1.3-contributor-xhigh",
+      name: "Muse Spark 1.3 Contributor (xhigh effort)",
       contextLength: 1048576,
       maxOutputTokens: 131072,
       supportsReasoning: true,

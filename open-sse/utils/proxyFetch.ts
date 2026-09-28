@@ -14,6 +14,7 @@ import {
   proxyUrlForLogs,
 } from "./proxyDispatcher.ts";
 import tlsClient, { type TlsFetchOptions } from "./tlsClient.ts";
+import { describeFallbackFailure, redactProxyDetailsInMessage } from "./proxyFetchRedaction.ts";
 import { isProxyReachable } from "@/lib/proxyHealth";
 import {
   isControlPlaneProxyDirectFallbackEnabled,
@@ -84,10 +85,26 @@ function isTlsFingerprintEnabled() {
   return process.env.ENABLE_TLS_FINGERPRINT === "true";
 }
 
+function isGroqTlsFingerprintTarget(
+  provider: string | null | undefined,
+  url?: string | null
+): boolean {
+  if (provider?.trim().toLowerCase() === "groq") return true;
+  if (!url) return false;
+  try {
+    const host = new URL(url).hostname.toLowerCase();
+    return host === "api.groq.com" || host.endsWith(".groq.com");
+  } catch {
+    return false;
+  }
+}
+
 function tlsFingerprintProviderAllowed(
   provider: string | null | undefined,
-  proxied: boolean
+  proxied: boolean,
+  url?: string | null
 ): boolean {
+  if (isGroqTlsFingerprintTarget(provider, url)) return false;
   const configured = process.env.TLS_FINGERPRINT_PROVIDERS?.trim();
   // Preserve the legacy direct-only opt-in. The new proxied transport requires
   // an explicit allowlist so enabling TLS cannot silently change proxy traffic.
@@ -338,20 +355,6 @@ function isWreqProxySupported(proxyUrl: string): boolean {
   } catch {
     return false;
   }
-}
-
-/**
- * Redact proxy URLs (and any bare `user:pass@host` credential tokens) from an
- * upstream transport-error message before it is surfaced. #10032 keeps the
- * underlying failure reason in the propagated error for diagnosability, but
- * the raw message can embed the full proxy URL — including userinfo
- * credentials — which must never bubble into response bodies (#9837, Hard
- * Rule #12).
- */
-function redactProxyDetailsInMessage(message: string): string {
-  return message
-    .replace(/\b(?:https?|socks[45][ah]?|socks):\/\/\S+/gi, "[redacted-proxy]")
-    .replace(/\b[^\s:@/]+:[^\s@/]*@\S+/g, "[redacted-proxy]");
 }
 
 function sanitizeTransportError(
@@ -792,7 +795,7 @@ async function patchedFetch(
     if (
       isTlsFingerprintEnabled() &&
       activeTlsClient.available &&
-      tlsFingerprintProviderAllowed(tlsStore?.provider, false) &&
+      tlsFingerprintProviderAllowed(tlsStore?.provider, false, targetUrl) &&
       isTlsRequestEligible(input, options)
     ) {
       try {
@@ -907,7 +910,10 @@ async function patchedFetch(
             continue;
           }
           if (hasNonReplayableBody) {
-            const detail = `dispatcher=[${describeFetchCause(dispatcherError)}] native=[skipped: non-replayable request body]`;
+            const detail = describeFallbackFailure(
+              describeFetchCause(dispatcherError),
+              "skipped: non-replayable request body"
+            );
             console.warn(
               `[ProxyFetch] skipping native fetch fallback for non-replayable body: ${detail}`
             );
@@ -951,7 +957,10 @@ async function patchedFetch(
             return await _nativeFallback(input, options);
           } catch (nativeError) {
             // Surface both dispatcher and native causes immediately.
-            const detail = `dispatcher=[${describeFetchCause(dispatcherError)}] native=[${describeFetchCause(nativeError)}]`;
+            const detail = describeFallbackFailure(
+              describeFetchCause(dispatcherError),
+              describeFetchCause(nativeError)
+            );
             console.warn(`[ProxyFetch] native fetch fallback ALSO failed: ${detail}`);
             if (nativeError instanceof Error) {
               (nativeError as Error & { proxyFetchDetail?: string }).proxyFetchDetail = detail;
@@ -1084,7 +1093,7 @@ async function patchedFetch(
     typeof tlsStore?.sessionScope === "string" &&
     tlsStore.sessionScope.trim().length > 0 &&
     activeTlsClient.available &&
-    tlsFingerprintProviderAllowed(tlsStore?.provider, true) &&
+    tlsFingerprintProviderAllowed(tlsStore?.provider, true, targetUrl) &&
     isTlsRequestEligible(input, options) &&
     isWreqProxySupported(proxyUrl)
   ) {

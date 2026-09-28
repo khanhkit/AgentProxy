@@ -47,6 +47,10 @@ function redactHeaderValue(value: string): string {
   return schemePrefix + "[REDACTED:auth_header]";
 }
 
+function isImageDataUrl(value: string): boolean {
+  return /^data:image\/[a-zA-Z0-9.+-]+;base64,/.test(value);
+}
+
 /** Redact values without cloning unchanged branches or non-plain objects. */
 function walkValue(
   value: unknown,
@@ -54,6 +58,7 @@ function walkValue(
   seen = new WeakSet<object>()
 ): { modified: boolean; value: unknown } {
   if (typeof value === "string") {
+    if (isImageDataUrl(value)) return { modified: false, value };
     const r = redactCredentials(value);
     if (r.detections.length) detections.push(...r.detections);
     return { modified: r.modified, value: r.text };

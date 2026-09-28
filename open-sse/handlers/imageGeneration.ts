@@ -821,6 +821,8 @@ function normalizeKieImageResult(recordData: unknown): string[] {
   // Check data.response (common in 4o-image API)
   add(response.resultUrls);
   add(response.resultUrl);
+  add(response.resultImageUrl);
+  add(response.resultImageUrls);
 
   // Check direct data fields
   add(data.resultImageUrls);
@@ -968,12 +970,12 @@ async function handleKieImageGeneration({
       pollIntervalMs,
     });
 
-    if (state === "success") {
+    const kieUrls = state === "success" ? normalizeKieImageResult(recordData) : [];
+    if (kieUrls.length > 0) {
       if (log) {
         log.info("IMAGE", `KIE poll success for task ${taskId}`);
       }
-      const urls = normalizeKieImageResult(recordData);
-      const images = urls.map((url: string) => ({ url, revised_prompt: prompt }));
+      const images = kieUrls.map((url: string) => ({ url, revised_prompt: prompt }));
 
       return saveImageSuccessResult({
         provider,

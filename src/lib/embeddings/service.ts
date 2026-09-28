@@ -33,6 +33,7 @@ import { calculateCost } from "@/lib/usage/costCalculator";
 import { attachAgentProxyMetaHeaders } from "@/domain/agentproxyResponseMeta";
 import { generateRequestId } from "@/shared/utils/requestId";
 import { resolveLocalSyncedEndpointRoute } from "@/lib/providerModels/syncedEndpointRouting";
+import { resolveAlibabaProviderEmbeddingUrl } from "@/shared/constants/alibabaProviderRegions";
 
 type ValidatedEmbeddingBody = Record<string, unknown> & { model: string };
 type ProviderCredentialsResult = Awaited<ReturnType<typeof getProviderCredentials>>;
@@ -328,6 +329,15 @@ export async function createEmbeddingResponse(
         `[${provider}] All ${credentials.expiredCount || 1} connection(s) ${reason} — please reconnect in the dashboard`
       );
     }
+    // #13945: blockedByKeyPolicy is another truthy credential-diagnostic
+    // sentinel. Without this guard it would reach the embeddings executor
+    // without usable apiKey/accessToken credentials.
+    if ("blockedByKeyPolicy" in credentials && credentials.blockedByKeyPolicy) {
+      return errorResponse(
+        HTTP_STATUS.BAD_REQUEST,
+        formatMissingEmbeddingCredentialsError(provider)
+      );
+    }
   } else if (provider === "ollama-local" || provider === "lmstudio") {
     // Ollama and LM Studio are keyless, but a configured connection can still
     // provide a custom local host. Hydrate that optional connection without
@@ -343,6 +353,27 @@ export async function createEmbeddingResponse(
       !("allExpired" in localCredentials)
     ) {
       credentials = localCredentials;
+    }
+  }
+
+  // Alibaba embedding endpoints are connection-scoped: workspace + region
+  // live in providerSpecificData, so the static chat registry cannot select
+  // the correct /compatible-mode/v1/embeddings host by itself.
+  if (
+    credentials &&
+    !options.resolvedProvider &&
+    (provider === "alibaba" || provider === "alibaba-cn")
+  ) {
+    const providerSpecificData = (
+      credentials as { providerSpecificData?: Record<string, unknown> | null }
+    ).providerSpecificData;
+    const connectionBaseUrl = resolveAlibabaProviderEmbeddingUrl(
+      provider,
+      providerSpecificData,
+      providerConfig.baseUrl
+    );
+    if (connectionBaseUrl) {
+      providerConfig = { ...providerConfig, baseUrl: connectionBaseUrl };
     }
   }
 

@@ -57,6 +57,7 @@ import {
   persistAntigravityFamilyCooldownIfQuota,
 } from "@agentproxy/open-sse/services/antigravityFamilyCooldown.ts";
 import { markQuotaPreflightAccountUnavailable } from "./quotaPreflightUnavailable.ts";
+import { buildNoAuthModelCooldown } from "./noAuthModelCooldown.ts";
 import { getCreditsMode } from "@agentproxy/open-sse/services/antigravityCredits.ts";
 import { preferAntigravityConnectionsWithStoredProject } from "@agentproxy/open-sse/services/antigravityProjectPersistence.ts";
 import {
@@ -1214,6 +1215,21 @@ export async function getProviderCredentials(
       // respected (the no-auth provider will be rejected if it has no real connections
       // matching the allowlist, or a real connection row will be selected if present).
       if (!allowedConnections || allowedConnections.length === 0) {
+        const modelLockout = requestedModel
+          ? getModelLockoutInfo(resolvedId, SYNTHETIC_NOAUTH_CONNECTION_ID, requestedModel)
+          : null;
+        if (modelLockout && modelLockout.remainingMs > 0) {
+          // Not-found style locks stay a plain "no credentials"; any other lock is a
+          // temporary cooldown that the chat handler can wait out or answer with a 429.
+          return isRetryableModelLockoutReason(modelLockout.reason)
+            ? buildNoAuthModelCooldown(
+                resolvedId,
+                requestedModel!,
+                modelLockout,
+                SYNTHETIC_NOAUTH_CONNECTION_ID
+              )
+            : null;
+        }
         return await maybeSyntheticNoAuthFallback(resolvedId, excludedForNoAuth);
       }
     }
@@ -3095,11 +3111,12 @@ export async function markAccountUnavailable(
 
     let terminalStatus = resolveTerminalConnectionStatus(
       status,
-      result as { permanent?: boolean; creditsExhausted?: boolean },
+      result as { permanent?: boolean; creditsExhausted?: boolean; ambiguousAuth?: boolean },
       providerErrorType,
       provider,
       isPerModelQuotaProvider,
-      errorText
+      errorText,
+      connectionId
     );
     // A still-valid access token after a successful refresh is not "expired".
     // A follow-up 401 (timeout, hop, race) must cooldown, not park the account.
