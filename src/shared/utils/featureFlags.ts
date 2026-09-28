@@ -211,6 +211,23 @@ export function isProxySkipRecentlyFailedEnabled(): boolean {
   }
 }
 
+/**
+ * Shared-egress pool ordering (opt-in, default off). Needs
+ * PROXY_SKIP_RECENTLY_FAILED, which produces the refusal signal it reads.
+ * Fail-closed: an unreadable flag store keeps the plain selection.
+ */
+export function isProxyPoolSharedEgressOrderEnabled(): boolean {
+  try {
+    return isFeatureFlagEnabled("PROXY_POOL_SHARED_EGRESS_ORDER");
+  } catch (error) {
+    console.error(
+      "[featureFlags] Failed to resolve PROXY_POOL_SHARED_EGRESS_ORDER, defaulting to disabled:",
+      error instanceof Error ? error.message : error
+    );
+    return false;
+  }
+}
+
 export function isServerOwnedToolLoopEnabled(
   reader: (key: string) => boolean = isFeatureFlagEnabled
 ): boolean {

@@ -171,3 +171,42 @@ export function getRecentEgressIpForConnection(
   if (!row) return null;
   return { egressIp: row.egress_ip, at: row.timestamp };
 }
+
+function normalizeProxyHostKey(host: unknown): string {
+  if (typeof host !== "string") return "";
+  const trimmed = host.trim();
+  if (!trimmed) return "";
+  const unbracketed =
+    trimmed.startsWith("[") && trimmed.endsWith("]") && trimmed.length > 2
+      ? trimmed.slice(1, -1).trim()
+      : trimmed;
+  return unbracketed.toLowerCase();
+}
+
+/**
+ * Distinct non-null egress IPs observed through a proxy endpoint since
+ * `sinceIso` (up to `limit`). Invalid keys return [] instead of throwing.
+ */
+export function getRecentEgressIpsForProxy(
+  host: string,
+  port: number,
+  sinceIso: string,
+  limit = 3
+): string[] {
+  const normalizedHost = normalizeProxyHostKey(host);
+  if (!normalizedHost) return [];
+  if (!Number.isInteger(port) || port < 1 || port > 65535) return [];
+  if (typeof sinceIso !== "string" || !sinceIso) return [];
+  const capped = Number.isInteger(limit) && limit > 0 ? Math.min(limit, 10) : 3;
+  const db = getDbInstance();
+  const rows = db
+    .prepare(
+      `SELECT DISTINCT egress_ip FROM proxy_logs
+       WHERE LOWER(TRIM(REPLACE(REPLACE(proxy_host, '[', ''), ']', ''))) = ?
+         AND proxy_port = ?
+         AND egress_ip IS NOT NULL AND timestamp >= ?
+       LIMIT ?`
+    )
+    .all(normalizedHost, port, sinceIso, capped) as Array<{ egress_ip: string }>;
+  return rows.map((row) => row.egress_ip).filter((ip) => typeof ip === "string" && ip);
+}

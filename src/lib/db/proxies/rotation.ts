@@ -6,6 +6,7 @@
 // dependency back on ../proxies.ts — mutators that also need to bump the registry
 // generation counter (addProxyToScopePool, removeProxyFromScopePool,
 // setScopeRotationStrategy) stay in ../proxies.ts and import the pure helpers here.
+import { isIP } from "node:net";
 import { randomInt } from "crypto";
 import { getDbInstance } from "../core";
 import { pickByLatency } from "../proxyLatency";
@@ -14,9 +15,14 @@ import {
   isProxyAvoided,
   proxyEgressKey,
 } from "@omniroute/open-sse/utils/proxyRefusalMemory.ts";
+import { isEgressBucketedLockScope } from "@omniroute/open-sse/config/providerErrorRules.ts";
 import { maybeEmitPoolExhausted } from "@/lib/proxyEvents/proxyTransitionBridge";
-import { isProxySkipRecentlyFailedEnabled } from "@/shared/utils/featureFlags";
+import {
+  isProxySkipRecentlyFailedEnabled,
+  isProxyPoolSharedEgressOrderEnabled,
+} from "@/shared/utils/featureFlags";
 import { getCachedProxyHealth } from "@/lib/proxyHealth";
+import { getRecentEgressIpsForProxy } from "../proxyLogs";
 import type { JsonRecord, ProxyScope, ProxyRotationStrategy } from "./types";
 import { PROXY_ROTATION_STRATEGIES, DEFAULT_PROXY_ROTATION_STRATEGY } from "./types";
 import {
@@ -172,6 +178,7 @@ function firstEligibleFrom(start: number, eligible: number[], size: number): num
 export interface PoolRankSignals {
   isAvoided: (key: string | null) => boolean;
   probeHealth: (url: string) => boolean | null;
+  sharesHotEgress?: (candidate: unknown) => boolean;
 }
 
 const DEFAULT_POOL_RANK_SIGNALS: PoolRankSignals = {
@@ -209,6 +216,122 @@ function candidateProbeUrl(row: unknown): string | null {
   return `${type}://${auth}${bracketed}:${port}${marker}`;
 }
 
+function expandIpv6ToGroups(text: string): number[] | null {
+  const halves = text.split("::");
+  if (halves.length > 2) return null;
+  const head = halves[0] ? halves[0].split(":") : [];
+  const tail = halves[1] ? halves[1].split(":") : [];
+  if (halves.length === 1 && head.length !== 8) return null;
+  if (halves.length === 2 && head.length + tail.length > 7) return null;
+  if ([...head, ...tail].some((part) => !/^[0-9a-f]{1,4}$/.test(part))) return null;
+  const groups = [
+    ...head.map((part) => parseInt(part, 16)),
+    ...new Array(halves.length === 2 ? 8 - head.length - tail.length : 0).fill(0),
+    ...tail.map((part) => parseInt(part, 16)),
+  ];
+  return groups.length === 8 ? groups : null;
+}
+
+/** IPv4 whole-address / IPv6-/64 key used only for shared-egress ranking. */
+export function normalizeEgressAddressForRanking(ip: unknown): string | null {
+  if (typeof ip !== "string") return null;
+  const text = ip.trim().toLowerCase();
+  if (!text || text.includes("%")) return null;
+  const mapped = text.startsWith("::ffff:") ? text.slice("::ffff:".length) : text;
+  if (isIP(mapped) === 4) return mapped;
+  if (isIP(text) !== 6) return null;
+  const groups = expandIpv6ToGroups(text);
+  if (groups === null) return null;
+  return `v6:${groups.slice(0, 4).map((group) => group.toString(16)).join(":")}`;
+}
+
+const EGRESS_RANKING_WINDOW_MS = 30 * 60_000;
+const HOT_EGRESS_CACHE_TTL_MS = 30_000;
+const HOT_EGRESS_CACHE_MAX_ENTRIES = 200;
+const hotEgressCache = new Map<string, { at: number; value: string | null }>();
+
+function writeHotEgressCache(key: string, value: string | null, nowMs: number): void {
+  if (!hotEgressCache.has(key) && hotEgressCache.size >= HOT_EGRESS_CACHE_MAX_ENTRIES) {
+    const oldest = hotEgressCache.keys().next().value;
+    if (oldest !== undefined) hotEgressCache.delete(oldest);
+  }
+  hotEgressCache.set(key, { at: nowMs, value });
+}
+
+export function __resetHotEgressCacheForTesting(): void {
+  hotEgressCache.clear();
+}
+
+function hotEgressCacheKey(row: unknown): string | null {
+  if (!row || typeof row !== "object" || Array.isArray(row)) return null;
+  const record = row as Record<string, unknown>;
+  const rawHost = typeof record.host === "string" ? record.host.trim() : "";
+  if (!rawHost) return null;
+  const host =
+    rawHost.startsWith("[") && rawHost.endsWith("]") && rawHost.length > 2
+      ? rawHost.slice(1, -1).trim()
+      : rawHost;
+  const port = Number(record.port);
+  if (!host || !Number.isInteger(port) || port < 1 || port > 65535) return null;
+  return `${host.toLowerCase()}:${port}`;
+}
+
+function readNormalizedEgressForMember(row: unknown, nowMs: number): string | null {
+  const key = hotEgressCacheKey(row);
+  if (key === null) return null;
+  const cached = hotEgressCache.get(key);
+  if (cached && nowMs - cached.at < HOT_EGRESS_CACHE_TTL_MS) return cached.value;
+  const record = row as Record<string, unknown>;
+  const host = typeof record.host === "string" ? record.host : "";
+  const port = Number(record.port);
+  let value: string | null = null;
+  try {
+    const observed = getRecentEgressIpsForProxy(
+      host,
+      port,
+      new Date(nowMs - EGRESS_RANKING_WINDOW_MS).toISOString(),
+      3
+    );
+    const distinct = new Set(
+      observed.map(normalizeEgressAddressForRanking).filter((ip): ip is string => ip !== null)
+    );
+    value = distinct.size === 1 ? [...distinct][0] : null;
+  } catch {
+    value = null;
+  }
+  writeHotEgressCache(key, value, nowMs);
+  return value;
+}
+
+/**
+ * Returns a predicate for candidates sharing the observed egress address of a
+ * currently refused member. Order only; it never removes a candidate.
+ */
+export function buildHotEgressPredicate(
+  provider: string | null | undefined,
+  candidates: unknown[],
+  signals?: Partial<PoolRankSignals>,
+  nowMs: number = Date.now()
+): (candidate: unknown) => boolean {
+  const none = () => false;
+  if (!isProxySkipRecentlyFailedEnabled()) return none;
+  if (!isProxyPoolSharedEgressOrderEnabled()) return none;
+  if (!isEgressBucketedLockScope(provider)) return none;
+  if (!hasProxyRefusals()) return none;
+  const isAvoided = signals?.isAvoided ?? DEFAULT_POOL_RANK_SIGNALS.isAvoided;
+  const hot = new Set<string>();
+  for (const candidate of candidates) {
+    if (!isAvoided(proxyEgressKey(candidate))) continue;
+    const egress = readNormalizedEgressForMember(candidate, nowMs);
+    if (egress !== null) hot.add(egress);
+  }
+  if (hot.size === 0) return none;
+  return (candidate: unknown) => {
+    const egress = readNormalizedEgressForMember(candidate, nowMs);
+    return egress !== null && hot.has(egress);
+  };
+}
+
 /**
  * Order pool candidates by crossed short-memory health signals without removing
  * anyone: a member just set aside ranks last, then a member whose last cached
@@ -218,13 +341,15 @@ function candidateProbeUrl(row: unknown): string | null {
  */
 export function rankPoolCandidates<T>(candidates: T[], signals?: Partial<PoolRankSignals>): T[] {
   if (candidates.length < 2) return [...candidates];
-  const { isAvoided, probeHealth } = {
+  const { isAvoided, probeHealth, sharesHotEgress } = {
     ...DEFAULT_POOL_RANK_SIGNALS,
     isAvoided: signals?.isAvoided ?? DEFAULT_POOL_RANK_SIGNALS.isAvoided,
     probeHealth: signals?.probeHealth ?? DEFAULT_POOL_RANK_SIGNALS.probeHealth,
+    sharesHotEgress: signals?.sharesHotEgress ?? DEFAULT_POOL_RANK_SIGNALS.sharesHotEgress,
   };
   const scored = candidates.map((candidate, index) => {
-    if (isAvoided(proxyEgressKey(candidate))) return { candidate, index, score: 2 };
+    if (isAvoided(proxyEgressKey(candidate))) return { candidate, index, score: 3 };
+    if (sharesHotEgress?.(candidate) === true) return { candidate, index, score: 2 };
     const url = candidateProbeUrl(candidate);
     if (url !== null && probeHealth(url) === false) return { candidate, index, score: 1 };
     return { candidate, index, score: 0 };
@@ -247,7 +372,8 @@ function pickFromCandidates<T>(
   db: ReturnType<typeof getDbInstance>,
   normalizedScope: string,
   rotationScopeId: string,
-  candidates: T[]
+  candidates: T[],
+  provider?: string | null
 ): T {
   // Pool-exhausted check first: a single-member pool set aside is exhausted
   // too, and this runs before the length-1 early return below. Flag-gated
@@ -283,7 +409,12 @@ function pickFromCandidates<T>(
   // advances past the member served, preserving rotation without re-serving the
   // failed head first.
   const ranked = isProxySkipRecentlyFailedEnabled()
-    ? rankPoolCandidates(candidates)
+    ? rankPoolCandidates(
+        candidates,
+        provider
+          ? { sharesHotEgress: buildHotEgressPredicate(provider, candidates) }
+          : undefined
+      )
     : [...candidates];
   const eligible = eligibleMemberIndexes(ranked);
 
@@ -389,7 +520,25 @@ function resolveScopePoolInternal(
     options.matchAnyScopeId === true
   );
   if (rows.length === 0) return null;
-  const picked = pickFromCandidates(db, scope, options.rotationScopeId, rows);
+  let provider: string | null = scope === "provider" ? levelId : null;
+  if (
+    provider === null &&
+    scope === "account" &&
+    options.scopeIdFilter &&
+    isProxySkipRecentlyFailedEnabled() &&
+    isProxyPoolSharedEgressOrderEnabled() &&
+    hasProxyRefusals()
+  ) {
+    try {
+      const row = db
+        .prepare("SELECT provider FROM provider_connections WHERE id = ?")
+        .get(options.scopeIdFilter) as { provider?: string } | undefined;
+      provider = typeof row?.provider === "string" && row.provider ? row.provider : null;
+    } catch {
+      provider = null;
+    }
+  }
+  const picked = pickFromCandidates(db, scope, options.rotationScopeId, rows, provider);
   return toRegistryProxyResolution(picked, scope, levelId);
 }
 

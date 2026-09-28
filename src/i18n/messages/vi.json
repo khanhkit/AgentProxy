@@ -14165,5 +14165,6 @@
     "cta": "Lấy khóa API",
     "partnerLinkNote": "Liên kết đối tác",
     "dismissAriaLabel": "Đóng"
-  }
+  },
+  "featureFlagProxyPoolSharedEgressOrderDescription": "Đối với các nhà cung cấp áp dụng hạn ngạch theo địa chỉ egress, xếp hạng thành viên pool có cùng địa chỉ egress quan sát được với thành viên vừa bị từ chối xuống dưới các thành viên khỏe mạnh. Chỉ sắp xếp thứ tự, không bao giờ loại trừ. Cần PROXY_SKIP_RECENTLY_FAILED, nguồn tín hiệu từ chối mà nó đọc. Mặc định tắt: thứ tự chọn đúng như vòng xoay thông thường."
 }
