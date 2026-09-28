@@ -1,6 +1,7 @@
 import fs from "fs/promises";
 import path from "path";
 import { resolveDataDir } from "@/lib/dataPaths";
+import { getCliConfigPaths } from "@/shared/services/cliRuntime";
 
 const BACKUP_DIR = path.join(resolveDataDir(), "backups");
 const MAX_BACKUPS_PER_TOOL = 5;
@@ -16,6 +17,59 @@ function safePath(...segments: string[]): string {
     throw new Error("Invalid path: directory traversal detected");
   }
   return resolved;
+}
+
+type BackupMetadata = {
+  originalPath?: unknown;
+  backupName?: unknown;
+  toolId?: unknown;
+  createdAt?: unknown;
+};
+
+function resolveCanonicalRestoreTarget(toolId: string, meta: BackupMetadata): string {
+  if (meta.toolId !== toolId) {
+    throw new Error("Backup metadata tool mismatch");
+  }
+  if (typeof meta.originalPath !== "string" || !meta.originalPath) {
+    throw new Error("Backup metadata original path is missing");
+  }
+  if (!path.isAbsolute(meta.originalPath) || path.normalize(meta.originalPath) !== meta.originalPath) {
+    throw new Error("Backup metadata original path is noncanonical");
+  }
+
+  const configPaths = getCliConfigPaths(toolId);
+  if (!configPaths) {
+    throw new Error(`Unknown backup tool: ${toolId}`);
+  }
+
+  const metadataPath = path.resolve(meta.originalPath);
+  const canonicalTarget = Object.values(configPaths).find(
+    (candidate) => typeof candidate === "string" && path.resolve(candidate) === metadataPath
+  );
+  if (!canonicalTarget) {
+    throw new Error("Backup metadata destination does not match a canonical tool path");
+  }
+  return canonicalTarget;
+}
+
+async function assertNoSymlinkComponents(targetPath: string): Promise<void> {
+  const absolute = path.resolve(targetPath);
+  const root = path.parse(absolute).root;
+  const segments = absolute.slice(root.length).split(path.sep).filter(Boolean);
+  let current = root;
+
+  for (const segment of segments) {
+    current = path.join(current, segment);
+    try {
+      const stat = await fs.lstat(current);
+      if (stat.isSymbolicLink()) {
+        throw new Error("Backup restore target contains a symbolic-link or junction component");
+      }
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code === "ENOENT") return;
+      throw error;
+    }
+  }
 }
 
 /**
@@ -153,14 +207,17 @@ export async function restoreBackup(toolId: string, backupId: string) {
   const backupPath = safePath(toolId, backupId);
   const metaPath = backupPath + ".meta.json";
 
-  // Read metadata to find original path
-  let meta;
+  // Read metadata, then bind its destination to the trusted tool registry before
+  // any filesystem mutation. Metadata selects only among canonical tool paths;
+  // it never supplies the destination directly.
+  let meta: BackupMetadata;
   try {
     const raw = await fs.readFile(metaPath, "utf-8");
-    meta = JSON.parse(raw);
+    meta = JSON.parse(raw) as BackupMetadata;
   } catch {
     throw new Error(`Backup metadata not found: ${backupId}`);
   }
+  const restoreTarget = resolveCanonicalRestoreTarget(toolId, meta);
 
   // Verify actual backup file exists
   try {
@@ -169,18 +226,24 @@ export async function restoreBackup(toolId: string, backupId: string) {
     throw new Error(`Backup file not found: ${backupId}`);
   }
 
-  // Before restoring, back up the current file (so restore is reversible)
-  await createBackup(toolId, meta.originalPath);
+  // Reject symlink/junction indirection before the reversible backup or mkdir can
+  // touch a destination outside the canonical lexical path.
+  await assertNoSymlinkComponents(restoreTarget);
 
-  // Copy backup over the original
-  const targetDir = path.dirname(meta.originalPath);
+  // Before restoring, back up the current file (so restore is reversible)
+  await createBackup(toolId, restoreTarget);
+
+  // Copy backup over the canonical target. Re-check after mkdir so a newly
+  // materialized parent chain is also free of symlink/junction components.
+  const targetDir = path.dirname(restoreTarget);
   await fs.mkdir(targetDir, { recursive: true });
-  await fs.copyFile(backupPath, meta.originalPath);
+  await assertNoSymlinkComponents(restoreTarget);
+  await fs.copyFile(backupPath, restoreTarget);
 
   return {
     restored: true,
     backupId,
-    originalPath: meta.originalPath,
+    originalPath: restoreTarget,
   };
 }
 

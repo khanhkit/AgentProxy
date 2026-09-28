@@ -15,19 +15,19 @@ const applySchema = z.object({
   dryRun: z.boolean().optional(),
 });
 
-/** The host-side command that does the same job when OmniRoute is containerised. */
+/** The host-side command that does the same job when AgentProxy is containerised. */
 const HOST_SETUP_COMMANDS: Record<string, string> = {
-  claude: "omniroute setup-claude",
-  codex: "omniroute setup-codex",
-  opencode: "omniroute setup-opencode",
-  cline: "omniroute setup-cline",
-  kilo: "omniroute setup-kilo",
-  continue: "omniroute setup-continue",
+  claude: "agentproxy setup-claude",
+  codex: "agentproxy setup-codex",
+  opencode: "agentproxy setup-opencode",
+  cline: "agentproxy setup-cline",
+  kilo: "agentproxy setup-kilo",
+  continue: "agentproxy setup-continue",
 };
 
 function ensureBackup(configPath: string): string | null {
   if (!fs.existsSync(configPath)) return null;
-  const backupDir = path.join(path.dirname(configPath), ".omniroute.bak");
+  const backupDir = path.join(path.dirname(configPath), ".agentproxy.bak");
   if (!fs.existsSync(backupDir)) fs.mkdirSync(backupDir, { recursive: true });
   const backupPath = path.join(backupDir, path.basename(configPath) + ".bak");
   fs.copyFileSync(configPath, backupPath);

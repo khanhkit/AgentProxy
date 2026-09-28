@@ -3,8 +3,14 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import {
+  toPlainHeaders,
+  type FetchCall,
+  type SeedApiKeyOptions,
+  type SeedConnectionOverrides,
+} from "./_chatPipelineTypes.ts";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-chat-pipeline-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-chat-pipeline-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.REQUIRE_API_KEY = "false";
 process.env.API_KEY_SECRET = process.env.API_KEY_SECRET || "test-chat-pipeline-secret";
@@ -16,6 +22,7 @@ const settingsDb = await import("../../src/lib/db/settings.ts");
 const apiKeysDb = await import("../../src/lib/db/apiKeys.ts");
 const readCacheDb = await import("../../src/lib/db/readCache.ts");
 const { getLatestCallLog, getResponsesCallLogs } = await import("./_chatPipelineCallLogs.ts");
+const { waitForCallLogSaves } = await import("../../src/lib/usage/callLogs.ts");
 const { invalidateMemorySettingsCache } = await import("../../src/lib/memory/settings.ts");
 const { skillRegistry } = await import("../../src/lib/skills/registry.ts");
 const { skillExecutor } = await import("../../src/lib/skills/executor.ts");
@@ -32,46 +39,6 @@ const { clearProviderFailure } = await import("../../open-sse/services/accountFa
 
 const originalFetch = globalThis.fetch;
 const originalRetryDelayMs = BaseExecutor.RETRY_CONFIG.delayMs;
-
-type SeedConnectionOverrides = {
-  name?: string;
-  authType?: string;
-  apiKey?: string;
-  accessToken?: string;
-  refreshToken?: string;
-  tokenType?: string;
-  expiresAt?: string;
-  tokenExpiresAt?: string;
-  isActive?: boolean;
-  testStatus?: string;
-  priority?: number;
-  rateLimitedUntil?: string | number | null;
-  providerSpecificData?: Record<string, unknown>;
-};
-
-type FetchCall = {
-  url: string;
-  method?: string;
-  headers: Record<string, string>;
-  body: Record<string, any> | null;
-};
-
-type SeedApiKeyOptions = {
-  name?: string;
-  noLog?: boolean;
-  allowedConnections?: string[];
-  allowedCombos?: string[];
-  allowedModels?: string[];
-};
-
-function toPlainHeaders(headers: HeadersInit | undefined | null) {
-  if (!headers) return {};
-  if (headers instanceof Headers) return Object.fromEntries(headers.entries());
-  if (Array.isArray(headers)) return Object.fromEntries(headers);
-  return Object.fromEntries(
-    Object.entries(headers).map(([key, value]) => [key, value == null ? "" : String(value)])
-  );
-}
 
 function buildRequest({
   url = "http://localhost/v1/chat/completions",
@@ -372,6 +339,15 @@ async function resetStorage() {
   readCacheDb.invalidateDbCache();
   invalidateMemorySettingsCache();
   await new Promise((resolve) => setTimeout(resolve, 20));
+  // Call-log persistence is fire-and-forget (persistAttemptLogs → saveCallLog with
+  // a .catch(() => {})), and the first cold artifact-worker spawn can take ~2.4s, so
+  // the previous test's saves may still be in flight here. Draining before the DB
+  // reset keeps those rows in the DB being torn down instead of letting them land
+  // in the next test's fresh database (#12780).
+  const drained = await waitForCallLogSaves(10_000);
+  if (!drained) {
+    console.warn("[chat-pipeline] call-log saves did not drain within 10s; resetting anyway");
+  }
   core.resetDbInstance();
   fs.rmSync(TEST_DATA_DIR, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
   fs.mkdirSync(TEST_DATA_DIR, { recursive: true });
@@ -575,7 +551,13 @@ test("chat pipeline persists Codex responses cache and reasoning tokens to call 
   );
 
   const json = (await response.json()) as any;
-  const callLog = await waitFor(() => getLatestCallLog());
+  // Wait specifically for THIS request's Codex /v1/responses row instead of taking
+  // whatever the latest row happens to be: an unfiltered read can surface a row from
+  // a previous test that landed late in this database (#12780).
+  const callLog = await waitFor(async () => {
+    const rows = await getResponsesCallLogs();
+    return rows.find((row) => row.provider === "codex") ?? null;
+  });
 
   assert.equal(response.status, 200);
   assert.equal(fetchCalls.length, 1);
@@ -762,7 +744,7 @@ test("chat pipeline fails closed on an unresolvable previous_response_id and kee
   );
 
   // #10262 virtualized `previous_response_id`: in any mode other than "preserve"
-  // the id is resolved against OmniRoute's own continuation store BEFORE routing.
+  // the id is resolved against AgentProxy's own continuation store BEFORE routing.
   // An id it cannot resolve fails closed with OpenAI's own contract instead of
   // being silently stripped and forwarded as a fresh turn (which would have
   // dropped the conversation history without telling the client).
@@ -942,9 +924,9 @@ test("chat pipeline serves repeated /v1/responses requests as MISS then HIT and 
   assert.equal(secondResponse.status, 200);
   assert.equal(thirdResponse.status, 200);
 
-  assert.equal(firstResponse.headers.get("X-OmniRoute-Cache"), "MISS");
-  assert.equal(secondResponse.headers.get("X-OmniRoute-Cache"), "HIT");
-  assert.equal(thirdResponse.headers.get("X-OmniRoute-Cache"), "HIT");
+  assert.equal(firstResponse.headers.get("X-AgentProxy-Cache"), "MISS");
+  assert.equal(secondResponse.headers.get("X-AgentProxy-Cache"), "HIT");
+  assert.equal(thirdResponse.headers.get("X-AgentProxy-Cache"), "HIT");
 
   assert.equal(fetchCalls.length, 1, "expected upstream to be called only once for MISS");
   assert.match(fetchCalls[0].url, /\/responses$/);
@@ -1184,7 +1166,7 @@ test("chat pipeline treats Accept text/event-stream as streaming mode and return
   const raw = await response.text();
   assert.equal(response.status, 200);
   assert.equal(response.headers.get("Content-Type"), "text/event-stream");
-  assert.ok(response.headers.get("X-OmniRoute-Session-Id"));
+  assert.ok(response.headers.get("X-AgentProxy-Session-Id"));
   assert.match(raw, /Accept header stream/);
   assert.match(raw, /\[DONE\]/);
 });

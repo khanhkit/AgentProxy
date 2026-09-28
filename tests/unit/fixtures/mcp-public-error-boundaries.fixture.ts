@@ -5,24 +5,24 @@ import path from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 
-const testRoot = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-mcp-error-boundaries-"));
+const testRoot = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-mcp-error-boundaries-"));
 const repoRoot = fileURLToPath(new URL("../../..", import.meta.url));
 const originalDataDir = process.env.DATA_DIR;
-const originalPluginsDir = process.env.OMNIROUTE_PLUGINS_DIR;
-const originalApiKey = process.env.OMNIROUTE_API_KEY;
-const originalApiKeyId = process.env.OMNIROUTE_API_KEY_ID;
-const originalInternalToken = process.env.OMNIROUTE_INTERNAL_SERVICE_TOKEN;
-const originalInternalTokenFile = process.env.OMNIROUTE_INTERNAL_SERVICE_TOKEN_FILE;
-const originalBaseUrl = process.env.OMNIROUTE_BASE_URL;
+const originalPluginsDir = process.env.AGENTPROXY_PLUGINS_DIR;
+const originalApiKey = process.env.AGENTPROXY_API_KEY;
+const originalApiKeyId = process.env.AGENTPROXY_API_KEY_ID;
+const originalInternalToken = process.env.AGENTPROXY_INTERNAL_SERVICE_TOKEN;
+const originalInternalTokenFile = process.env.AGENTPROXY_INTERNAL_SERVICE_TOKEN_FILE;
+const originalBaseUrl = process.env.AGENTPROXY_BASE_URL;
 process.env.DATA_DIR = path.join(testRoot, "data");
-process.env.OMNIROUTE_PLUGINS_DIR = path.join(testRoot, "plugins");
-process.env.OMNIROUTE_API_KEY = "mcp-boundary-test-key";
-process.env.OMNIROUTE_API_KEY_ID = "mcp-boundary-test-key-id";
-process.env.OMNIROUTE_INTERNAL_SERVICE_TOKEN = "mcp-boundary-internal-test-token";
-process.env.OMNIROUTE_BASE_URL = "http://localhost:20128";
-delete process.env.OMNIROUTE_INTERNAL_SERVICE_TOKEN_FILE;
+process.env.AGENTPROXY_PLUGINS_DIR = path.join(testRoot, "plugins");
+process.env.AGENTPROXY_API_KEY = "mcp-boundary-test-key";
+process.env.AGENTPROXY_API_KEY_ID = "mcp-boundary-test-key-id";
+process.env.AGENTPROXY_INTERNAL_SERVICE_TOKEN = "mcp-boundary-internal-test-token";
+process.env.AGENTPROXY_BASE_URL = "http://localhost:20128";
+delete process.env.AGENTPROXY_INTERNAL_SERVICE_TOKEN_FILE;
 fs.mkdirSync(process.env.DATA_DIR, { recursive: true });
-fs.mkdirSync(process.env.OMNIROUTE_PLUGINS_DIR, { recursive: true });
+fs.mkdirSync(process.env.AGENTPROXY_PLUGINS_DIR, { recursive: true });
 
 const { createMcpServer } = await import("../../../open-sse/mcp-server/server.ts");
 const { closeAuditDb, queryAuditEntries } = await import("../../../open-sse/mcp-server/audit.ts");
@@ -62,21 +62,21 @@ test.after(() => {
   core.resetDbInstance();
   if (originalDataDir === undefined) delete process.env.DATA_DIR;
   else process.env.DATA_DIR = originalDataDir;
-  if (originalPluginsDir === undefined) delete process.env.OMNIROUTE_PLUGINS_DIR;
-  else process.env.OMNIROUTE_PLUGINS_DIR = originalPluginsDir;
-  if (originalApiKey === undefined) delete process.env.OMNIROUTE_API_KEY;
-  else process.env.OMNIROUTE_API_KEY = originalApiKey;
-  if (originalApiKeyId === undefined) delete process.env.OMNIROUTE_API_KEY_ID;
-  else process.env.OMNIROUTE_API_KEY_ID = originalApiKeyId;
-  if (originalInternalToken === undefined) delete process.env.OMNIROUTE_INTERNAL_SERVICE_TOKEN;
-  else process.env.OMNIROUTE_INTERNAL_SERVICE_TOKEN = originalInternalToken;
+  if (originalPluginsDir === undefined) delete process.env.AGENTPROXY_PLUGINS_DIR;
+  else process.env.AGENTPROXY_PLUGINS_DIR = originalPluginsDir;
+  if (originalApiKey === undefined) delete process.env.AGENTPROXY_API_KEY;
+  else process.env.AGENTPROXY_API_KEY = originalApiKey;
+  if (originalApiKeyId === undefined) delete process.env.AGENTPROXY_API_KEY_ID;
+  else process.env.AGENTPROXY_API_KEY_ID = originalApiKeyId;
+  if (originalInternalToken === undefined) delete process.env.AGENTPROXY_INTERNAL_SERVICE_TOKEN;
+  else process.env.AGENTPROXY_INTERNAL_SERVICE_TOKEN = originalInternalToken;
   if (originalInternalTokenFile === undefined) {
-    delete process.env.OMNIROUTE_INTERNAL_SERVICE_TOKEN_FILE;
+    delete process.env.AGENTPROXY_INTERNAL_SERVICE_TOKEN_FILE;
   } else {
-    process.env.OMNIROUTE_INTERNAL_SERVICE_TOKEN_FILE = originalInternalTokenFile;
+    process.env.AGENTPROXY_INTERNAL_SERVICE_TOKEN_FILE = originalInternalTokenFile;
   }
-  if (originalBaseUrl === undefined) delete process.env.OMNIROUTE_BASE_URL;
-  else process.env.OMNIROUTE_BASE_URL = originalBaseUrl;
+  if (originalBaseUrl === undefined) delete process.env.AGENTPROXY_BASE_URL;
+  else process.env.AGENTPROXY_BASE_URL = originalBaseUrl;
   fs.rmSync(testRoot, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
 });
 
@@ -90,7 +90,7 @@ test("core MCP handlers sanitize upstream bodies before public and audit boundar
   };
 
   try {
-    const handler = getRegisteredHandler(createMcpServer(), "omniroute_list_combos");
+    const handler = getRegisteredHandler(createMcpServer(), "agentproxy_list_combos");
     const result = await handler({ includeMetrics: false });
     const publicText = result.content?.[0]?.text ?? "";
     assert.equal(result.isError, true);
@@ -100,7 +100,7 @@ test("core MCP handlers sanitize upstream bodies before public and audit boundar
     );
     assert.deepEqual(calledUrls, ["http://localhost:20128/api/combos"]);
 
-    const audit = await queryAuditEntries({ tool: "omniroute_list_combos", success: false });
+    const audit = await queryAuditEntries({ tool: "agentproxy_list_combos", success: false });
     assert.ok(audit.entries.length >= 1);
     assert.doesNotMatch(
       JSON.stringify(audit.entries),

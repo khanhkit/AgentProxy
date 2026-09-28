@@ -5,7 +5,7 @@
  * member out in parallel (`open-sse/services/fusion.ts::handleFusionChat` →
  * `Promise.all`-style fan-out via `collectPanel`), buffering each model's full
  * response text in memory at once. With the runtime heap capped at 1024MB
- * (Dockerfile `OMNIROUTE_MEMORY_MB`), a large panel with sizable concurrent
+ * (Dockerfile `AGENTPROXY_MEMORY_MB`), a large panel with sizable concurrent
  * responses can exceed the heap ceiling and crash the whole container with
  * "FATAL ERROR: Ineffective mark-compacts near heap limit — JavaScript heap
  * out of memory" instead of failing one request gracefully.

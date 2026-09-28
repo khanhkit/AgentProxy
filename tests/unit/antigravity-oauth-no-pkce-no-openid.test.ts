@@ -43,7 +43,7 @@ for (const providerId of ["antigravity", "agy"]) {
     const scopes = (url.searchParams.get("scope") || "").split(" ");
     assert.ok(!scopes.includes("openid"), `${providerId} must not request the openid scope`);
     assert.ok(
-      scopes.includes("https://www.googleapis.com/auth/cloud-platform"),
+      scopes.some((scope) => scope === "https://www.googleapis.com/auth/cloud-platform"),
       `${providerId} must still request the cloud-platform scope`
     );
   });

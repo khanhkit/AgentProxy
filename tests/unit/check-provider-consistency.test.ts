@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert";
 import { AI_PROVIDERS } from "@/shared/constants/providers.ts";
-import { REGISTRY } from "@omniroute/open-sse/config/providerRegistry.ts";
+import { REGISTRY } from "@agentproxy/open-sse/config/providerRegistry.ts";
 import {
   findOrphanRegistryIds,
   findCatalogOnlyLlmProviders,

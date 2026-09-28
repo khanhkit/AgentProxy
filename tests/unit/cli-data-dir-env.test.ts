@@ -9,7 +9,7 @@ import { resolveDataDir as cliResolveDataDir } from "../../bin/cli/data-dir.mjs"
 import { resolveDataDir as runtimeResolveDataDir } from "../../src/lib/dataPaths.ts";
 
 const REPO_ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
-const BIN = path.join(REPO_ROOT, "bin", "omniroute.mjs");
+const BIN = path.join(REPO_ROOT, "bin", "agentproxy.mjs");
 
 async function withTempEnv(
   fn: (paths: { root: string; home: string; cwd: string }) => void | Promise<void>
@@ -42,9 +42,9 @@ async function withTempEnv(
   }
 }
 
-test("CLI data dir preserves existing legacy ~/.omniroute before XDG", async () => {
+test("CLI data dir preserves existing legacy ~/.agentproxy before XDG", async () => {
   await withTempEnv(({ home, root }) => {
-    const legacyDir = path.join(home, ".omniroute");
+    const legacyDir = path.join(home, ".agentproxy");
     fs.mkdirSync(legacyDir, { recursive: true });
     process.env.XDG_CONFIG_HOME = path.join(root, "xdg");
 

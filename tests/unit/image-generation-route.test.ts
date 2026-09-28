@@ -4,7 +4,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-image-route-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-image-route-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.API_KEY_SECRET = process.env.API_KEY_SECRET || "image-route-test-api-key-secret";
 
@@ -236,13 +236,6 @@ test("v1 image generation POST accepts promptless requests for image-only models
 
   globalThis.fetch = async (url, options: RequestInit = {}) => {
     const stringUrl = String(url);
-    if (stringUrl === "https://example.com/topaz-input.png") {
-      return new Response(new Uint8Array([1, 2, 3]), {
-        status: 200,
-        headers: { "content-type": "image/png" },
-      });
-    }
-
     if (stringUrl === "https://api.topazlabs.com/image/v1/enhance") {
       const formData = options.body as FormData;
       assert.ok(formData.get("image") instanceof File);
@@ -261,7 +254,7 @@ test("v1 image generation POST accepts promptless requests for image-only models
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         model: "topaz/topaz-enhance",
-        image_url: "https://example.com/topaz-input.png",
+        image_url: "data:image/png;base64," + Buffer.from(VALID_PNG_BYTES).toString("base64"),
         size: "2048x2048",
         response_format: "b64_json",
       }),
@@ -290,7 +283,7 @@ test("v1 image generation POST still requires prompts for text-input models", as
   assert.match(body.error.message, /Prompt is required for image model: openai\/gpt-image-2/);
 });
 
-test("v1 image edit POST defers body-size validation to the provider", async () => {
+test("v1 image edit POST rejects declared bodies above the application media budget", async () => {
   const response = await imageEditRoute.POST(
     new Request("http://localhost/api/v1/images/edits", {
       method: "POST",
@@ -303,9 +296,26 @@ test("v1 image edit POST defers body-size validation to the provider", async () 
   );
   const body = (await response.json()) as ErrorResponseBody;
 
-  assert.equal(response.status, 400);
-  assert.match(body.error.message, /Missing required field: prompt/i);
-  assert.doesNotMatch(body.error.message, /request body|payload too large/i);
+  assert.equal(response.status, 413);
+  assert.match(body.error.message, /request body exceeds the 50 MiB limit/i);
+});
+
+test("provider-scoped image generation rejects declared bodies above the media budget", async () => {
+  const response = await providerImageRoute.POST(
+    new Request("http://localhost/api/v1/providers/openai/images/generations", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "content-length": String(Number.MAX_SAFE_INTEGER),
+      },
+      body: "{}",
+    }),
+    { params: Promise.resolve({ provider: "openai" }) }
+  );
+  const body = (await response.json()) as ErrorResponseBody;
+
+  assert.equal(response.status, 413);
+  assert.equal(body.error.code, "PAYLOAD_TOO_LARGE");
 });
 
 test("v1 image edit POST enforces disabled API key policy", async () => {
@@ -692,7 +702,7 @@ test("v1 image generation POST resolves proxy and executes with proxy context wh
 });
 
 test("v1 image generation POST executes directly when proxy resolution fails gracefully", async () => {
-  const connection = await seedConnection("openai", { apiKey: "image-proxy-fail-key" });
+  await seedConnection("openai", { apiKey: "image-proxy-fail-key" });
 
   const db = core.getDbInstance();
   db.prepare(

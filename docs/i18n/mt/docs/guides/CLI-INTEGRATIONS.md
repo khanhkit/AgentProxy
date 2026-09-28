@@ -6,30 +6,30 @@
 
 ---
 
-title: "Integrazjonijiet CLI — poġġi kwalunkwe CLI tal-kodiċi lejn OmniRoute"
+title: "Integrazjonijiet CLI — poġġi kwalunkwe CLI tal-kodiċi lejn AgentProxy"
 version: 3.8.50
 lastUpdated: 2026-08-18
 ---
 
 # Integrazjonijiet CLI
 
-OmniRoute jibgħat familja ta' kmandi `setup-*` li jikkonfiguraw CLI tal-kodiċi
-(Codex, Claude Code, OpenCode, Cline, …) biex juża OmniRoute bħala l-backend tiegħu — sabiex
-l-għodda titkellem mal-**waħda** endpoint u OmniRoute jiddirezzona lejn il-provditur it-tajjeb b'
-fallback awtomatiku. Kull kmand jaqra l-katalgu **ta' ħajja** tal-mudelli minn OmniRoute qed
+AgentProxy jibgħat familja ta' kmandi `setup-*` li jikkonfiguraw CLI tal-kodiċi
+(Codex, Claude Code, OpenCode, Cline, …) biex juża AgentProxy bħala l-backend tiegħu — sabiex
+l-għodda titkellem mal-**waħda** endpoint u AgentProxy jiddirezzona lejn il-provditur it-tajjeb b'
+fallback awtomatiku. Kull kmand jaqra l-katalgu **ta' ħajja** tal-mudelli minn AgentProxy qed
 jintuża (lokali jew remoto) u jikteb il-fajl tal-konfigurazzjoni speċifiku tal-għodda fuq
 **il-magna tiegħek**. L-API key tiġi riferita permezz ta' variabbli tal-ambjent fejn kull għodda
 tappoġġjah. Il-kmandi li jippersistu fajl tal-ambjent lokali tal-għodda huma nnotifikati t'hawn
 taħt.
 
-Hemm ukoll launch generika — `omniroute run <target>` — li toħroġ
+Hemm ukoll launch generika — `agentproxy run <target>` — li toħroġ
 `claude`, `codex`, `aider`, `goose`, `opencode`, `qwen` jew `gemini` bl-
 ambjent it-tajjeb injettat, bla ma jikteb l-ebda konfigurazzjoni. Il-miri u l-alijs tagħhom ġejjin
 minn il-manifest kanoniku `bin/cli/cli-manifest.mjs`
 (`claude-code|cc|anthropic`, `codex-cli|openai-codex|openai`, `goose-cli`,
-`open-code`, `qwen-code`, `gemini-cli`), u `omniroute completion` joffri l-
+`open-code`, `qwen-code`, `gemini-cli`), u `agentproxy completion` joffri l-
 istedess kelma miri derivata mill-manifest. Il-legacy launcher speċifiċi għall-għodda —
-`omniroute launch` (Claude Code) u `omniroute launch-codex` (Codex) — jibqgħu
+`agentproxy launch` (Claude Code) u `agentproxy launch-codex` (Codex) — jibqgħu
 disponibbli.
 
 It-tħejjija tal-provditur hija disponibbli mill-istess kontekst lokali/remoto. Il-
@@ -37,11 +37,11 @@ kmandi API-ewwel t'hawn taħt iżżomm l-awtentikazzjoni tal-ġestjoni separata 
 u qatt ma tipprintja kredenzjal f'output strutturat:
 
 ```bash
-omniroute providers add glm --credential-env GLM_API_KEY --name work
-omniroute providers import ./providers.json --dry-run --json
-omniroute providers auth openai
-omniroute providers edit <connection-id> --default-model glm/glm-5.2
-omniroute providers remove <connection-id> --yes
+agentproxy providers add glm --credential-env GLM_API_KEY --name work
+agentproxy providers import ./providers.json --dry-run --json
+agentproxy providers auth openai
+agentproxy providers edit <connection-id> --default-model glm/glm-5.2
+agentproxy providers remove <connection-id> --yes
 ```
 
 Għall-scripts, agħżel `--credential-stdin` jew `--credential-env`; `--credential`
@@ -54,7 +54,7 @@ Għas-setup bażiku wieħed-darba, miktub bl-idej, tal-iżjed integrazzjonijiet 
 
 - [Konfigurazzjoni ta' Claude Code](./CLAUDE-CODE-CONFIGURATION.md)
 - [Konfigurazzjoni ta' Codex CLI](./CODEX-CLI-CONFIGURATION.md)
-- [Modalità Remota](./REMOTE-MODE.md) — segwi OmniRoute remoto (VPS / Tailnet) mill-laptop tiegħek
+- [Modalità Remota](./REMOTE-MODE.md) — segwi AgentProxy remoto (VPS / Tailnet) mill-laptop tiegħek
 - [VS Code Copilot Chat](./VSCODE-COPILOT.md) — l-estensjoni OmniCopilot; tista' tħejji dawn ukoll
   il-kmandi `setup-*` għalik minn ġewwa l-editor
 
@@ -62,7 +62,7 @@ Għas-setup bażiku wieħed-darba, miktub bl-idej, tal-iżjed integrazzjonijiet 
 
 ## Tabella ewlenija
 
-Kull kmand jirrispetta l-**kontekst attiv** (imsejjaħ b'`omniroute connect`, ara
+Kull kmand jirrispetta l-**kontekst attiv** (imsejjaħ b'`agentproxy connect`, ara
 [Modalità Remota](./REMOTE-MODE.md)) jew flags expliċiti `--remote <url> --api-key <key>`.
 "Lokali vs remoto" hawn taħt jfisser: bla flags jimmarka `http://localhost:20128`;
 b'`--remote` (jew kontekst attiv remot) jiġbor il-katalgu minn dik is-server
@@ -70,28 +70,28 @@ u jikteb il-konfigurazzjoni lokalment.
 
 | Kmand                      | Għodda                            | X'jikteb                                                                                                                                                                            | Flags ewlenin                                                                                                                              | Lokali vs remoto |
 | -------------------------- | --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ | ---------------- |
-| `omniroute setup-codex`    | OpenAI Codex CLI                  | `~/.codex/<name>.config.toml` — profil wieħed għal kull mudell test kompatibbli (`codex --profile <name>`)                                                                          | `--remote` `--api-key` `--only` `--dry-run` `--port` `--codex-home`                                                                        | It-tnejn         |
-| `omniroute setup-claude`   | Claude Code                       | `~/.claude/profiles/<name>/settings.json` — profil wieħed għal kull mudell korrispondenti (`CLAUDE_CONFIG_DIR`)                                                                     | `--remote` `--api-key` `--only` `--dry-run` `--port` `--claude-home`                                                                       | It-tnejn         |
-| `omniroute setup-opencode` | OpenCode (kompatibbli mal-openai) | `~/.config/opencode/opencode.json` — fornitur `omniroute` bil-katalgu kollu tal-mudelli (`opencode -m omniroute/<model>`)                                                           | `--remote` `--api-key` `--only` `--model` `--dry-run` `--port`                                                                             | It-tnejn         |
-| `omniroute setup-cline`    | Cline                             | `~/.cline/data/{globalState,secrets}.json` (modalità CLI) + jistampa l-impurtazzjonijiet tal-estensjoni VS Code                                                                     | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--cline-dir`                                                                | It-tnejn         |
-| `omniroute setup-kilo`     | Kilo Code                         | `~/.local/share/kilo/auth.json` (CLI) + jidħol `kilocode.*` f'`settings.json` tal-VS Code jekk hemm                                                                                 | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--auth-path` `--vscode-settings`                                            | It-tnejn         |
-| `omniroute setup-continue` | Continue / `cn` CLI               | `~/.continue/config.yaml` — `provider: openai` mudelli, key permezz `${{ secrets.OMNIROUTE_API_KEY }}`                                                                              | `--remote` `--api-key` `--only` `--dry-run` `--port` `--config-path`                                                                       | It-tnejn         |
-| `omniroute setup-cursor`   | Cursor                            | Xejn — jistampa l-passi ġewwa l-app (konfigurazzjoni Cursor hija SQLite ma jistax jinftiehem)                                                                                       | `--remote` `--api-key` `--only` `--port`                                                                                                   | It-tnejn         |
-| `omniroute setup-roo`      | Roo Code                          | `~/.omniroute/roo-settings.json` (dokument impurtar) + jistabbilixxi `roo-cline.autoImportSettingsPath` jekk hemm `settings.json` tal-VS Code                                       | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--import-path` `--vscode-settings`                                          | It-tnejn         |
-| `omniroute setup-crush`    | Crush                             | `~/.config/crush/crush.json` — fornitur `openai-compat`, key permezz `$OMNIROUTE_API_KEY`                                                                                           | `--remote` `--api-key` `--only` `--dry-run` `--port` `--config-path`                                                                       | It-tnejn         |
-| `omniroute setup-goose`    | Goose                             | `~/.config/goose/config.yaml` (`GOOSE_PROVIDER`/`OPENAI_HOST`/`GOOSE_MODEL`) + jistampa ir-riċetta tal-ambjent                                                                      | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--config-path`                                                              | It-tnejn         |
-| `omniroute setup-aider`    | Aider                             | `~/.aider.conf.yml` (`openai-api-base` + `model: openai/<id>`) + jistampa ir-riċetta tal-ambjent                                                                                    | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--config-path`                                                              | It-tnejn         |
-| `omniroute setup-qwen`     | Qwen Code                         | `~/.qwen/settings.json` — V4 `modelProviders.openai` array + `OMNIROUTE_API_KEY` f'`~/.qwen/.env`                                                                                   | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--config-path` `--env-path`                                                 | It-tnejn         |
-| `omniroute setup-5dive`    | 5dive (flotta ta' aġenti)         | Xejn taħt `$HOME` — jikteb **profil awtentikazzjoni** 5dive (`/var/lib/5dive/auth-profiles/<name>/`) permezz `5dive agent auth set`; biss għar-radjk, jimxi fuq il-magna tal-flotta | `--remote` `--api-key` `--model` `--auth-profile` `--agent` `--byo-provider` `--fivedive-bin` `--no-sudo` `--yes` `--dry-run` `--port`     | It-tnejn         |
-| `omniroute run <target>`   | Ħruġ runtime (generiku)           | Xejn — joħroġ `claude`/`codex`/`aider`/`goose`/`opencode`/`qwen`/`gemini` bl-ambjent u argomenti t-tajjeb; Qwen u Gemini jużaw dar temporanju iżolat                                | `--remote` `--base-url` `--context` `--provider` `--model` `--api-key` `--api-key-env` `--dry-run` `--json` `--port` `--profile` `--token` | It-tnejn         |
-| `omniroute launch`         | Claude Code                       | Xejn — joħroġ `claude` b'`ANTHROPIC_BASE_URL`/`ANTHROPIC_AUTH_TOKEN` injettat                                                                                                       | `--remote` `--api-key` `--token` `--profile` `--port`                                                                                      | It-tnejn         |
-| `omniroute launch-codex`   | OpenAI Codex CLI                  | Xejn — joħroġ `codex` bil-fornitur `omniroute` injettat permezz `-c` flags                                                                                                          | `--remote` `--api-key` `--profile` (`-p`) `--port`                                                                                         | It-tnejn         |
+| `agentproxy setup-codex`    | OpenAI Codex CLI                  | `~/.codex/<name>.config.toml` — profil wieħed għal kull mudell test kompatibbli (`codex --profile <name>`)                                                                          | `--remote` `--api-key` `--only` `--dry-run` `--port` `--codex-home`                                                                        | It-tnejn         |
+| `agentproxy setup-claude`   | Claude Code                       | `~/.claude/profiles/<name>/settings.json` — profil wieħed għal kull mudell korrispondenti (`CLAUDE_CONFIG_DIR`)                                                                     | `--remote` `--api-key` `--only` `--dry-run` `--port` `--claude-home`                                                                       | It-tnejn         |
+| `agentproxy setup-opencode` | OpenCode (kompatibbli mal-openai) | `~/.config/opencode/opencode.json` — fornitur `agentproxy` bil-katalgu kollu tal-mudelli (`opencode -m agentproxy/<model>`)                                                           | `--remote` `--api-key` `--only` `--model` `--dry-run` `--port`                                                                             | It-tnejn         |
+| `agentproxy setup-cline`    | Cline                             | `~/.cline/data/{globalState,secrets}.json` (modalità CLI) + jistampa l-impurtazzjonijiet tal-estensjoni VS Code                                                                     | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--cline-dir`                                                                | It-tnejn         |
+| `agentproxy setup-kilo`     | Kilo Code                         | `~/.local/share/kilo/auth.json` (CLI) + jidħol `kilocode.*` f'`settings.json` tal-VS Code jekk hemm                                                                                 | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--auth-path` `--vscode-settings`                                            | It-tnejn         |
+| `agentproxy setup-continue` | Continue / `cn` CLI               | `~/.continue/config.yaml` — `provider: openai` mudelli, key permezz `${{ secrets.AGENTPROXY_API_KEY }}`                                                                              | `--remote` `--api-key` `--only` `--dry-run` `--port` `--config-path`                                                                       | It-tnejn         |
+| `agentproxy setup-cursor`   | Cursor                            | Xejn — jistampa l-passi ġewwa l-app (konfigurazzjoni Cursor hija SQLite ma jistax jinftiehem)                                                                                       | `--remote` `--api-key` `--only` `--port`                                                                                                   | It-tnejn         |
+| `agentproxy setup-roo`      | Roo Code                          | `~/.agentproxy/roo-settings.json` (dokument impurtar) + jistabbilixxi `roo-cline.autoImportSettingsPath` jekk hemm `settings.json` tal-VS Code                                       | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--import-path` `--vscode-settings`                                          | It-tnejn         |
+| `agentproxy setup-crush`    | Crush                             | `~/.config/crush/crush.json` — fornitur `openai-compat`, key permezz `$AGENTPROXY_API_KEY`                                                                                           | `--remote` `--api-key` `--only` `--dry-run` `--port` `--config-path`                                                                       | It-tnejn         |
+| `agentproxy setup-goose`    | Goose                             | `~/.config/goose/config.yaml` (`GOOSE_PROVIDER`/`OPENAI_HOST`/`GOOSE_MODEL`) + jistampa ir-riċetta tal-ambjent                                                                      | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--config-path`                                                              | It-tnejn         |
+| `agentproxy setup-aider`    | Aider                             | `~/.aider.conf.yml` (`openai-api-base` + `model: openai/<id>`) + jistampa ir-riċetta tal-ambjent                                                                                    | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--config-path`                                                              | It-tnejn         |
+| `agentproxy setup-qwen`     | Qwen Code                         | `~/.qwen/settings.json` — V4 `modelProviders.openai` array + `AGENTPROXY_API_KEY` f'`~/.qwen/.env`                                                                                   | `--remote` `--api-key` `--model` `--yes` `--dry-run` `--port` `--config-path` `--env-path`                                                 | It-tnejn         |
+| `agentproxy setup-5dive`    | 5dive (flotta ta' aġenti)         | Xejn taħt `$HOME` — jikteb **profil awtentikazzjoni** 5dive (`/var/lib/5dive/auth-profiles/<name>/`) permezz `5dive agent auth set`; biss għar-radjk, jimxi fuq il-magna tal-flotta | `--remote` `--api-key` `--model` `--auth-profile` `--agent` `--byo-provider` `--fivedive-bin` `--no-sudo` `--yes` `--dry-run` `--port`     | It-tnejn         |
+| `agentproxy run <target>`   | Ħruġ runtime (generiku)           | Xejn — joħroġ `claude`/`codex`/`aider`/`goose`/`opencode`/`qwen`/`gemini` bl-ambjent u argomenti t-tajjeb; Qwen u Gemini jużaw dar temporanju iżolat                                | `--remote` `--base-url` `--context` `--provider` `--model` `--api-key` `--api-key-env` `--dry-run` `--json` `--port` `--profile` `--token` | It-tnejn         |
+| `agentproxy launch`         | Claude Code                       | Xejn — joħroġ `claude` b'`ANTHROPIC_BASE_URL`/`ANTHROPIC_AUTH_TOKEN` injettat                                                                                                       | `--remote` `--api-key` `--token` `--profile` `--port`                                                                                      | It-tnejn         |
+| `agentproxy launch-codex`   | OpenAI Codex CLI                  | Xejn — joħroġ `codex` bil-fornitur `agentproxy` injettat permezz `-c` flags                                                                                                          | `--remote` `--api-key` `--profile` (`-p`) `--port`                                                                                         | It-tnejn         |
 
 Noti dwar il-flags (verifikati fil-kodiċi tal-kmand):
 
-- `--remote <url>` — jiġbor il-katalgu minn OmniRoute remoto (jirriskjara `--port`
+- `--remote <url>` — jiġbor il-katalgu minn AgentProxy remoto (jirriskjara `--port`
   u l-kontekst attiv). `--api-key <key>` jipprovdi l-kredenzjal għal dik
-  is-server (jekk le jittieħed il-variabbli tal-ambjent `OMNIROUTE_API_KEY`, jew it-token tal-kontekst attiv).
+  is-server (jekk le jittieħed il-variabbli tal-ambjent `AGENTPROXY_API_KEY`, jew it-token tal-kontekst attiv).
 - `--only <patterns>` — sottostrijni f'koma; Żomm biss l-IDs tal-mudell li jaqblu
   (eż. `--only glm,kimi`). Disponibbli fuq `setup-codex`, `setup-claude`,
   `setup-opencode`, `setup-continue`, `setup-cursor`, `setup-crush`.
@@ -102,17 +102,17 @@ Noti dwar il-flags (verifikati fil-kodiċi tal-kmand):
   skoperta awtomatika tal-mudelli: Cline, Kilo, Roo, Goose, Qwen, Aider, 5dive. Dawn l-għodda
   jaċċettaw ukoll `--yes` għal tmexxijiet mhux interattivi (li mbagħad jeħtieġu `--model`).
   `setup-opencode` jieħu `--model` biex jistabbilixxi l-mudell ewlieni implicitu.
-- `--model <id>` fuq `omniroute run` jimxi skont il-wirja speċifika tal-mirija tal-manifest
+- `--model <id>` fuq `agentproxy run` jimxi skont il-wirja speċifika tal-mirija tal-manifest
   (`bin/cli/cli-manifest.mjs`): **aider** jirċievi `--model openai/<id>` u
-  **opencode** `--model omniroute/<id>` (il-prefix jiżdied biss meta l-id
+  **opencode** `--model agentproxy/<id>` (il-prefix jiżdied biss meta l-id
   diġà m'għandux); **qwen** u **gemini** jirċievu l-id kif huwa; **claude** jieħdu permezz
   `ANTHROPIC_MODEL`, **goose** permezz `GOOSE_MODEL`, u **codex** permezz
-  `-c model_providers.omniroute.*` argomenti. **Qwen huwa l-unika mirija run
-  li jeħtieġ obbligatorjament `--model`** — `omniroute run qwen` bla ma jkun hemm joħroġ
+  `-c model_providers.agentproxy.*` argomenti. **Qwen huwa l-unika mirija run
+  li jeħtieġ obbligatorjament `--model`** — `agentproxy run qwen` bla ma jkun hemm joħroġ
   `2` b' żball expliċitu.
-- `--port <port>` — port lokali ta' OmniRoute (default `20128`, injorat meta `--remote`
+- `--port <port>` — port lokali ta' AgentProxy (default `20128`, injorat meta `--remote`
   huwa stabbilit). Preżenti fuq kollha `setup-*` u żewġ launchers.
-- Kohot tal-ħruġ ta' `omniroute run`: il-kod tal-ħruġ speċifiku tat-tifla CLI jiġi propagat
+- Kohot tal-ħruġ ta' `agentproxy run`: il-kod tal-ħruġ speċifiku tat-tifla CLI jiġi propagat
   kif huwa; `2` = argomenti invalidi (mirija mhux appoġġjata, ma jonqosx `--model`
   meħtieġ, gard tal-kontenitur); `127` = il-binari tal-mirija mhuwiex f'`PATH`;
   `130`/`143`/`129` meta l-ħruġ jiġi terminated b' `SIGINT`/`SIGTERM`/`SIGHUP`;
@@ -125,9 +125,9 @@ L-għażla interattiva tinqasam ukoll mir-riċetti tal-konfigurazzjoni:
 
 ```bash
 # Agħżel mill-katalgu lokali jew remot attiv u ikkonfigura l-mirija.
-omniroute configure claude
-omniroute configure opencode --provider glm
-omniroute configure qwen --model qwen/qwen3.8-max-preview --yes
+agentproxy configure claude
+agentproxy configure opencode --provider glm
+agentproxy configure qwen --model qwen/qwen3.8-max-preview --yes
 ```
 
 `configure` b'issa jiddelega għar-riċetti ttestjati għal `codex`, `claude`,
@@ -137,85 +137,85 @@ MITM, u entries tal-katalgu b' gida jibqgħu flussi expliċiti `setup-*`/manwali
 u mhumiex preżentati bħala mirijiiet li jitniedsu.
 
 > `setup-opencode` hija l-integrazzjoni **ħafif openai-kompatibbli** ta' OpenCode.
-> Hemm ukoll integrazzjoni sinjura b'plug-in — `omniroute setup opencode` — li
-> tinstalla `@omniroute/opencode-plugin`. Huma kmandi differenti; it-tabella
+> Hemm ukoll integrazzjoni sinjura b'plug-in — `agentproxy setup opencode` — li
+> tinstalla `@agentproxy/opencode-plugin`. Huma kmandi differenti; it-tabella
 > hawn fuq tiddokumenta `setup-opencode`.
 
 ---
 
 ## Użu lokali
 
-Meta OmniRoute qed jaħdem fuq `localhost:20128`, sempliċiment eżegwixxi l-kummerċ għodda tiegħek. Il-katalogu jitniżżel mis-server lokali.
+Meta AgentProxy qed jaħdem fuq `localhost:20128`, sempliċiment eżegwixxi l-kummerċ għodda tiegħek. Il-katalogu jitniżżel mis-server lokali.
 
 ```bash
 # Codex: write a profile per matched model into ~/.codex/
-omniroute setup-codex
+agentproxy setup-codex
 codex --profile glm52            # use a generated profile
 
 # Claude Code: write per-model profiles, then launch one
-omniroute setup-claude
-omniroute launch --profile glm52
+agentproxy setup-claude
+agentproxy launch --profile glm52
 
 # OpenCode: write the openai-compatible provider with all catalog models
-omniroute setup-opencode
-export OMNIROUTE_API_KEY=sk-...  # referenced via {env:OMNIROUTE_API_KEY}, never on disk
-opencode -m omniroute/glm/glm-5.2 "..."
+agentproxy setup-opencode
+export AGENTPROXY_API_KEY=sk-...  # referenced via {env:AGENTPROXY_API_KEY}, never on disk
+opencode -m agentproxy/glm/glm-5.2 "..."
 
 # Tools without auto-discovery need an explicit model:
-omniroute setup-aider --model glm/glm-5.2
-omniroute setup-qwen --model qwen/qwen3.8-max-preview
+agentproxy setup-aider --model glm/glm-5.2
+agentproxy setup-qwen --model qwen/qwen3.8-max-preview
 
 # Preview without writing anything:
-omniroute setup-continue --dry-run
+agentproxy setup-continue --dry-run
 ```
 
 Ittella mingħajr dikjarazzjoni speċifika waħda (biss injezzjoni fl-ambjent):
 
 ```bash
-omniroute launch                 # Claude Code → local OmniRoute
-omniroute launch-codex           # Codex CLI → local OmniRoute
-omniroute launch-codex --profile glm52
-omniroute run claude --model openai/gpt-5.4
-omniroute run codex --model openai/gpt-5.4 --dry-run --json
-omniroute run aider --model glm/glm-5.2 -- --message "reply OK"
-omniroute run goose --model glm/glm-5.2
-omniroute run opencode --model glm/glm-5.2 -- run "reply OK"
-omniroute run qwen --model glm/glm-5.2 -- -p "reply OK"
-omniroute run gemini --model glm/glm-5.2 -- --skip-trust -p "reply OK"
+agentproxy launch                 # Claude Code → local AgentProxy
+agentproxy launch-codex           # Codex CLI → local AgentProxy
+agentproxy launch-codex --profile glm52
+agentproxy run claude --model openai/gpt-5.4
+agentproxy run codex --model openai/gpt-5.4 --dry-run --json
+agentproxy run aider --model glm/glm-5.2 -- --message "reply OK"
+agentproxy run goose --model glm/glm-5.2
+agentproxy run opencode --model glm/glm-5.2 -- run "reply OK"
+agentproxy run qwen --model glm/glm-5.2 -- -p "reply OK"
+agentproxy run gemini --model glm/glm-5.2 -- --skip-trust -p "reply OK"
 
 # Explicit command path: pass through whatever comes after --
-omniroute run claude -- --print-system-prompt "review this diff"
+agentproxy run claude -- --print-system-prompt "review this diff"
 ```
 
 ---
 
 ## Użu mill-bogħod
 
-Indika kwalunkwe kummerċ setup għal OmniRoute mill-bogħod b `--remote` + `--api-key`. Il-
+Indika kwalunkwe kummerċ setup għal AgentProxy mill-bogħod b `--remote` + `--api-key`. Il-
 katalogu jitniżżel mill-bogħod; il-konfigurazzjoni titniżżel fil-magna lokali tiegħek.
 
 ```bash
 # OpenCode against a remote VPS, keep only glm/kimi models
-omniroute setup-opencode --remote http://192.168.0.15:20128 --api-key oma_live_xxx \
+agentproxy setup-opencode --remote http://192.168.0.15:20128 --api-key oma_live_xxx \
   --only glm,kimi
-opencode -m omniroute/glm/glm-5.2 "..."   # export OMNIROUTE_API_KEY first
+opencode -m agentproxy/glm/glm-5.2 "..."   # export AGENTPROXY_API_KEY first
 
 # Codex profiles from a remote catalog
-omniroute setup-codex --remote http://192.168.0.15:20128 --api-key oma_live_xxx
+agentproxy setup-codex --remote http://192.168.0.15:20128 --api-key oma_live_xxx
 
 # Launch a CLI straight against the remote
-omniroute launch       --remote http://192.168.0.15:20128 --api-key oma_live_xxx
-omniroute launch-codex --remote http://192.168.0.15:20128 --api-key oma_live_xxx
+agentproxy launch       --remote http://192.168.0.15:20128 --api-key oma_live_xxx
+agentproxy launch-codex --remote http://192.168.0.15:20128 --api-key oma_live_xxx
 ```
 
 Minflok jgħaddi `--remote`/`--api-key` kull darba, idħol darba u ħalli l-
 **kontatt attiv** japprovixxihom awtomatikament:
 
 ```bash
-omniroute connect 192.168.0.15        # mints a scoped token, stores the context
-omniroute setup-codex                 # ← now uses the remote catalog
-omniroute setup-opencode              # ← same
-omniroute launch                      # ← Claude Code against the remote
+agentproxy connect 192.168.0.15        # mints a scoped token, stores the context
+agentproxy setup-codex                 # ← now uses the remote catalog
+agentproxy setup-opencode              # ← same
+agentproxy launch                      # ← Claude Code against the remote
 ```
 
 Ara [Remote Mode](./REMOTE-MODE.md) għal kontatt, skopijiet, u ġestjoni tat-tokens.
@@ -226,15 +226,15 @@ Ara [Remote Mode](./REMOTE-MODE.md) għal kontatt, skopijiet, u ġestjoni tat-to
 
 [5dive](https://5dive.ai) jimxi b'flotta ta' aġenti tal-programmar fit-tul, kull wieħed
 unità ta' sistema taħt l-utent Unix tagħha stess. Mhuwiex għodda CLI tal-programmar b'saħħitha stess, għalhekk
-mhux hemm x'jittella `omniroute run` — `5dive` huwa magħmudija biss.
+mhux hemm x'jittella `agentproxy run` — `5dive` huwa magħmudija biss.
 
 ```bash
-omniroute configure 5dive --model failover-demo --yes
-omniroute setup-5dive --model failover-demo --auth-profile omniroute --agent worker1
+agentproxy configure 5dive --model failover-demo --yes
+agentproxy setup-5dive --model failover-demo --auth-profile agentproxy --agent worker1
 ```
 
 Iż-żewġ forom jiktbu **profil ta' awtentikazzjoni** wieħed ta' 5dive, u kull pjan `claude` marbut mal-
-profil jitkellem mal-OmniRoute. Tliet affarijiet huma speċifiċi għal din il-mira:
+profil jitkellem mal-AgentProxy. Tliet affarijiet huma speċifiċi għal din il-mira:
 
 - **Jiġi żviluppat fuq il-flotta host, bħala root.** Istampi ta' 5dive joperaw fuq unitajiet lokali tas-sistema
   u fuq direttorju stat bl-isem tal-root; mhuwiex hemm modalità mill-bogħod. Ir-riċetta terġa' taħdem mill-
@@ -249,14 +249,14 @@ profil jitkellem mal-OmniRoute. Tliet affarijiet huma speċifiċi għal din il-m
 L-awtentikazzjoni tal-API tingħata lill-5dive fuq **stdin** (`--api-key=-`), hekk li qatt tidher fil-
 output tal-`ps`.
 
-Il-profil imur lejn kombinazzjoni **OmniRoute** minflok mudell wieħed biss li jġib il-falliment tal-fornitur tal-flotta: meta l-punt ewlieni waqa' waqt karozza f'run irreġistrat fuq
-[#11578](https://github.com/diegosouzapw/OmniRoute/issues/11578), l-aġent lesta il-passi li fadal fuq il-fallback u qatt ma ħareġ in-breakout.
+Il-profil imur lejn kombinazzjoni **AgentProxy** minflok mudell wieħed biss li jġib il-falliment tal-fornitur tal-flotta: meta l-punt ewlieni waqa' waqt karozza f'run irreġistrat fuq
+[#11578](https://github.com/khanhkit/AgentProxy/issues/11578), l-aġent lesta il-passi li fadal fuq il-fallback u qatt ma ħareġ in-breakout.
 
 ---
 
 ## Konvenzjonijiet tal-URL bażiċi (liema għodod jitolbu `/v1`)
 
-OmniRoute jippreżenta s-superfiċċja ta' OpenAI f'`/v1`, is-superfiċċja ta' Anthropic fir-rads, u superfiċċja nativa ta' Gemini f'`/v1beta`. Kull integrazzjoni hija mqabbda mal-forma li l-għodda tagħha tistenna (verifikata fil-kodiċi tal-kmand):
+AgentProxy jippreżenta s-superfiċċja ta' OpenAI f'`/v1`, is-superfiċċja ta' Anthropic fir-rads, u superfiċċja nativa ta' Gemini f'`/v1beta`. Kull integrazzjoni hija mqabbda mal-forma li l-għodda tagħha tistenna (verifikata fil-kodiċi tal-kmand):
 
 | Integrazzjoni                                                              | URL bażi miktub | `/v1`?                                   |
 | -------------------------------------------------------------------------- | --------------- | ---------------------------------------- |
@@ -265,7 +265,7 @@ OmniRoute jippreżenta s-superfiċċja ta' OpenAI f'`/v1`, is-superfiċċja ta' 
 | `setup-aider` (`OPENAI_API_BASE`)                                          | rads            | Le — LiteLLM iżid `/v1/chat/completions` |
 | `setup-kilo`, `setup-roo`, `setup-continue`, `setup-crush`, `setup-cursor` | b'`/v1`         | Iva                                      |
 | `setup-claude` (`ANTHROPIC_BASE_URL`), `launch`                            | rads            | Le — Claude Code iżid `/v1/messages`     |
-| `setup-codex`, `launch-codex` (`model_providers.omniroute.base_url`)       | b'`/v1`         | Iva                                      |
+| `setup-codex`, `launch-codex` (`model_providers.agentproxy.base_url`)       | b'`/v1`         | Iva                                      |
 | `setup-qwen` (`modelProviders.openai[].baseUrl`)                           | b'`/v1`         | Iva                                      |
 | `run gemini` (`GOOGLE_GEMINI_BASE_URL`)                                    | rads            | Le — is-SDK iżid `/v1beta/models/…`      |
 | `setup-5dive` (`ANTHROPIC_BASE_URL` fil-profil tal-awtentikazzjoni)        | rads            | Le — Claude Code iżid `/v1messages`      |
@@ -274,35 +274,35 @@ OmniRoute jippreżenta s-superfiċċja ta' OpenAI f'`/v1`, is-superfiċċja ta' 
 
 ## It-tħażin ta' dipendenzi nattivi waqt it-tġdid: `--include=optional`
 
-Meta tġdid b'`omniroute update` (wara li tikkonferma, jew b'`--apply`), OmniRoute jimmoda l-installazzjoni b'`--include=optional` internament:
+Meta tġdid b'`agentproxy update` (wara li tikkonferma, jew b'`--apply`), AgentProxy jimmoda l-installazzjoni b'`--include=optional` internament:
 
 ```bash
-npm install -g omniroute@latest --include=optional
+npm install -g agentproxy@latest --include=optional
 ```
 
-Dan **mhux** flemma li tagħti lil `omniroute update` — huwa applikat dejjem mill-ġdid. Dan jiżgura li l-`optionalDependencies` (`better-sqlite3`, `keytar`, `tls-client`, il-pakkett tal-LLMLingua SLM) jibqgħu ma' l-aġġornament anki jekk il-konfigurazzjoni npm tiegħek għandha `omit=optional` sett, li b'xi mod iħalli l-pilotaġġ nattiv tal-SQLite u r-rabta tal-kċina tal-OS biex jitwarrab b'sik. Biex tara l-kmand eżatt mingħajr ma tapplikah:
+Dan **mhux** flemma li tagħti lil `agentproxy update` — huwa applikat dejjem mill-ġdid. Dan jiżgura li l-`optionalDependencies` (`better-sqlite3`, `keytar`, `tls-client`, il-pakkett tal-LLMLingua SLM) jibqgħu ma' l-aġġornament anki jekk il-konfigurazzjoni npm tiegħek għandha `omit=optional` sett, li b'xi mod iħalli l-pilotaġġ nattiv tal-SQLite u r-rabta tal-kċina tal-OS biex jitwarrab b'sik. Biex tara l-kmand eżatt mingħajr ma tapplikah:
 
 ```bash
-omniroute update --dry-run
-# [DRY RUN] Sejjer jirrikjedi: npm install -g omniroute@latest --include=optional
+agentproxy update --dry-run
+# [DRY RUN] Sejjer jirrikjedi: npm install -g agentproxy@latest --include=optional
 ```
 
-Flemm oħra ta' `omniroute update` (verifikati fil-kodiċi): `--check` (ħarġa 1 jekk skaduta), `--apply` (tinstalla mingħajr jekk tagħmel il-mistoqsija), `--changelog`, `--no-backup`, `--yes`.
+Flemm oħra ta' `agentproxy update` (verifikati fil-kodiċi): `--check` (ħarġa 1 jekk skaduta), `--apply` (tinstalla mingħajr jekk tagħmel il-mistoqsija), `--changelog`, `--no-backup`, `--yes`.
 
 ---
 
-## Google Gemini CLI permezz ta' `omniroute run gemini`
+## Google Gemini CLI permezz ta' `agentproxy run gemini`
 
-Il-kuntratt verifikat kontra `@google/gemini-cli` 0.50.0: il-CLI jirrikonoxxi `GOOGLE_GEMINI_BASE_URL` u jagħmel `POST /v1beta/models/<model>:generateContent` (u `:streamGenerateContent?alt=sse`) fuq dan — eżatt is-superfiċċja nativa ta' OmniRoute (`/v1beta`). `omniroute run gemini` iqabbad dan awtomatikament:
+Il-kuntratt verifikat kontra `@google/gemini-cli` 0.50.0: il-CLI jirrikonoxxi `GOOGLE_GEMINI_BASE_URL` u jagħmel `POST /v1beta/models/<model>:generateContent` (u `:streamGenerateContent?alt=sse`) fuq dan — eżatt is-superfiċċja nativa ta' AgentProxy (`/v1beta`). `agentproxy run gemini` iqabbad dan awtomatikament:
 
-- `GOOGLE_GEMINI_BASE_URL` → il-URL bażi attiv ta' OmniRoute (rads, bla `/v1`);
-- `GEMINI_API_KEY` → i-kredenzjali risolta ta' OmniRoute (għażla/madwar/kuntest);
-- **`GEMINI_CLI_HOME` temporanju iżolat** li fih il-`.gemini/settings.json` jagħżel awtentikazzjoni ta' `gemini-api-key`, sabiessi ħlas Google OAuth maħżun (Code Assist) qatt ma jiskontra l-ħruġ immexxi minn OmniRoute — jitneħħa wara l-ħruġ;
+- `GOOGLE_GEMINI_BASE_URL` → il-URL bażi attiv ta' AgentProxy (rads, bla `/v1`);
+- `GEMINI_API_KEY` → i-kredenzjali risolta ta' AgentProxy (għażla/madwar/kuntest);
+- **`GEMINI_CLI_HOME` temporanju iżolat** li fih il-`.gemini/settings.json` jagħżel awtentikazzjoni ta' `gemini-api-key`, sabiessi ħlas Google OAuth maħżun (Code Assist) qatt ma jiskontra l-ħruġ immexxi minn AgentProxy — jitneħħa wara l-ħruġ;
 - **iġjene tal-madwar**: l-madwar tat-tifel jitħassar minn `GOOGLE_API_KEY`, `GOOGLE_GENAI_USE_VERTEXAI` u `GOOGLE_GENAI_USE_GCA` (li jiddirott l-awtentikazzjoni għal Vertex/Code Assist), u `GEMINI_DEFAULT_AUTH_TYPE=gemini-api-key` jiġi stabbilit bħalaappoġġż added — il-miri oħra `run` jirċievu l-istess trattament għal l-ilħna konfliġġenti tagħhom stess;
 - injettjar `--model <id>` minn `--provider`/`--model`.
 
 ```bash
-omniroute run gemini --model glm/glm-5.2 -- --skip-trust -p "hello"
+agentproxy run gemini --model glm/glm-5.2 -- --skip-trust -p "hello"
 ```
 
 Is-sentunzja tal-fiduċja tax-xogħol ta' Gemini għadha tapplika fil-modalità b'ras— jgħaddi `--skip-trust` (jew tafda direttorju interattivament) int stess; il-pilota deliberatament mhux se jingħaddha. Dan il-pilota huwa distint mill-**reġistrazzjoni ACP** (`src/lib/acp/registry.ts`, `gemini --acp`), li jibqa' l-integrazzjoni tal-protokoll tal-aġenzija għal `/dashboard/acp-agents`.
@@ -312,7 +312,7 @@ Is-sentunzja tal-fiduċja tax-xogħol ta' Gemini għadha tapplika fil-modalità 
 ## Swejjar tal-mħagna reali (b'għażula)
 
 Il-jiċċekkjani reġressivi deterministiċi tal-pjan ta' tnedija jseħħu fl-CI (`tests/unit/cli/run-command.test.ts`,
-`tests/unit/cli/run-execution.test.ts`). Biex jivvaluta l-binarji REALI kontra Server OmniRoute REALI, hemm ġgħastra b'għażula fis-
+`tests/unit/cli/run-execution.test.ts`). Biex jivvaluta l-binarji REALI kontra Server AgentProxy REALI, hemm ġgħastra b'għażula fis-
 `tests/integration/upstream-cli-smoke.int.test.ts`. Qatt m'għandha taħdem awtomatikament
 (kull sub-test jispiċċa sakemm `RUN_CLI_SMOKE=1`), tgħaddi l-kredenzjali permezz tal-isem tal-varjabbli tal-ambjent
 (qatt bil-valur), tħassar iż-żġunijiet f'forma ta' sieħa minn kwalunkwe output irrekordjat, tispiċċa
@@ -321,20 +321,20 @@ auth / upstream / config minflok Booleana裸:
 
 ```bash
 RUN_CLI_SMOKE=1 \
-OMNIROUTE_SMOKE_BASE_URL="http://localhost:20128"OMNIROUTE_SMOKE_MODEL="<provider/model>" \
-OMNIROUTE_SMOKE_API_KEY_ENV="OMNIROUTE_API_KEY" \
+AGENTPROXY_SMOKE_BASE_URL="http://localhost:20128"AGENTPROXY_SMOKE_MODEL="<provider/model>" \
+AGENTPROXY_SMOKE_API_KEY_ENV="AGENTPROXY_API_KEY" \
 node --import tsx/esm --test tests/integration/upstream-cli-smoke.int.test.ts
 ```
 
-Fakultattiv: `OMNIROUTE_SMOKE_TARGETS="codex,opencode,qwen"` jirrestrinġi s-swejjar;
-`OMNIROUTE_SMOKE_TIMEOUT_MS` jaqbad it-timeout ta' 120s kull destinazzjoni.
+Fakultattiv: `AGENTPROXY_SMOKE_TARGETS="codex,opencode,qwen"` jirrestrinġi s-swejjar;
+`AGENTPROXY_SMOKE_TIMEOUT_MS` jaqbad it-timeout ta' 120s kull destinazzjoni.
 
 ---
 
 ## Ara wkoll
 
 - [Konfigurazzjoni ta' Claude Code](./CLAUDE-CODE-CONFIGURATION.md) — il-gwida aktar profonda ta' Claude Code
-- [Konfigurazzjoni tal-CLI ta' Codex](./CODEX-CLI-CONFIGURATION.md) — is-sistema waħda tal-bażi `[model_providers.omniroute]`
+- [Konfigurazzjoni tal-CLI ta' Codex](./CODEX-CLI-CONFIGURATION.md) — is-sistema waħda tal-bażi `[model_providers.agentproxy]`
 - [Modalità ta' Distanza](./REMOTE-MODE.md) — il-kuntesti, it-tokeni ta' aċċess skopati, it-tirressi ta' server ta' distanza
 - [Referenza għall-Għodod tal-CLI](../reference/CLI-TOOLS.md) — il-katalgu sħiħ tal-għodod appoġġjati + il-paġni tad-dashboard
 - [Gwida tal-Installazzjoni](./SETUP_GUIDE.md) - il-metodi tal-installazzjoni u l-onboarding tal-ewwel darba

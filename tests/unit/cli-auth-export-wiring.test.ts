@@ -1,10 +1,10 @@
-// #11226 — `omniroute auth export` crashed with "cmd.optsWithGlobals is not a
+// #11226 — `agentproxy auth export` crashed with "cmd.optsWithGlobals is not a
 // function" because the command was registered as `.command("auth export")`:
 // commander parses the bare word `export` as a REQUIRED POSITIONAL ARGUMENT, so
 // the action received ("export", options, command) while its signature expected
 // (options, command) — the classic opts/cmd swap. The fix registers `export` as
 // a proper nested subcommand of `auth`, restoring the documented CLI surface
-// (docs/reference/CLI-TOOLS.md): `omniroute auth export [--force] [--id] [--format] [--out]`.
+// (docs/reference/CLI-TOOLS.md): `agentproxy auth export [--force] [--id] [--format] [--out]`.
 //
 // These tests exercise the REAL commander wiring via createProgram() — no DB is
 // touched on any of these paths (the no-force gate prints and returns before any
@@ -74,7 +74,7 @@ test("auth export action receives (options, command): flags reach the handler en
     // parse rejects with "cmd.optsWithGlobals is not a function" instead.
     await program.parseAsync([
       "node",
-      "omniroute",
+      "agentproxy",
       "auth",
       "export",
       "--force",
@@ -102,7 +102,7 @@ test("auth export without --force prints the confirmation gate (no crash, no DB)
   const exitStub = stubProcessExit();
   const { captured, restore } = captureConsole();
   try {
-    await program.parseAsync(["node", "omniroute", "auth", "export"]);
+    await program.parseAsync(["node", "agentproxy", "auth", "export"]);
   } finally {
     restore();
     exitStub.restore();
@@ -118,7 +118,7 @@ test("auth export without --force prints the confirmation gate (no crash, no DB)
 test("auth rejects an unknown positional (was silently accepted as the 'export' argument)", async () => {
   const program = createProgram();
   await assert.rejects(
-    program.parseAsync(["node", "omniroute", "auth", "bogus-word"]),
+    program.parseAsync(["node", "agentproxy", "auth", "bogus-word"]),
     (err: unknown) => {
       assert.ok(err instanceof Error);
       assert.match(

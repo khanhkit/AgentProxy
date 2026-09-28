@@ -7,7 +7,7 @@
  * with "Auto mode could not evaluate this action and is blocking it for safety".
  *
  * When a combo/fallback route sends the classifier call to a cheap model that returns 200 with
- * empty content, the well-formed-but-empty Claude message OmniRoute produces still fails that
+ * empty content, the well-formed-but-empty Claude message AgentProxy produces still fails that
  * parser. With `claudeClassifierCompat` set to "auto" (or "always"), handleChatCore detects the
  * classifier request and short-circuits with a synthetic ALLOW response — WITHOUT ever calling
  * the upstream provider. Default is "off": nothing changes unless an operator explicitly opts in.
@@ -19,7 +19,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-claude-classifier-compat-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-claude-classifier-compat-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../src/lib/db/core.ts");

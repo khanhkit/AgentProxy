@@ -79,6 +79,30 @@ test("getMcpModelsCatalog exposes codex default thinking effort when no override
   assert.equal(result.models[0]?.thinkingEffort, "medium");
 });
 
+test("getMcpModelsCatalog includes context_length when present", async () => {
+  const result = await getMcpModelsCatalog(
+    {},
+    {
+      listProviderConnections: async () => [
+        { id: "conn-1", provider: "openai", isActive: true },
+      ],
+      fetchJson: async () => ({
+        source: "api",
+        models: [
+          { id: "gpt-4.1", owned_by: "openai", context_length: 1048576 },
+          { id: "text-embedding-3-small", owned_by: "openai" },
+        ],
+      }),
+    }
+  );
+
+  const gpt = result.models.find((m) => m.id === "gpt-4.1");
+  const emb = result.models.find((m) => m.id === "text-embedding-3-small");
+
+  assert.equal(gpt?.context_length, 1048576);
+  assert.equal(emb?.context_length, undefined);
+});
+
 test("getMcpModelsCatalog exposes stored thinking effort overrides", async () => {
   const result = await getMcpModelsCatalog(
     { provider: "gemini-web" },

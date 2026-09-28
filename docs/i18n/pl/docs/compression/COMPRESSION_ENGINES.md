@@ -6,7 +6,7 @@ lastUpdated: 2026-06-28
 
 # Silniki kompresji
 
-Kompresja OmniRoute opiera się na kontraktach silników. Tryb może uruchomić jeden silnik bezpośrednio
+Kompresja AgentProxy opiera się na kontraktach silników. Tryb może uruchomić jeden silnik bezpośrednio
 (`caveman` lub `rtk`) albo deterministyczny potok stacked, który wykonuje wiele silników po kolei.
 
 ## Tryby
@@ -64,7 +64,7 @@ marker `[CCR retrieve hash=<24hex> chars=N]`, że hash musi być skopiowany dos�
 (wszystkie 24 znaki hex — błędnie skopiowane hashe to prawdopodobna przyczyna missów
 „block not found”), oraz że marker `[dedup:ref sha=...]` oznacza „spójrz wstecz w historii”,
 a nie „wywołaj tool”. Nota jest wstrzykiwana **tylko gdy zadeklarowane `tools[]` wywołującego
-dowodzą, że faktycznie może dotrzeć do `omniroute_ccr_retrieve`** (`callerSupportsCcrRetrieve()` w
+dowodzą, że faktycznie może dotrzeć do `agentproxy_ccr_retrieve`** (`callerSupportsCcrRetrieve()` w
 `open-sse/services/compression/engines/ccr/protocolInstruction.ts`) — zwykły
 wywołujący zgodny z OpenAI bez tego toola nigdy nie dostanie instrukcji wywołania czegoś,
 do czego nie ma dostępu. Idempotencja jest wymuszana przez skan historii wiadomości w poszukiwaniu
@@ -83,7 +83,7 @@ Tryb Caveman skupia się na semantycznej kondensacji zwykłej prozy:
 Powierzchnia dashboardu to `Dashboard -> Context & Cache -> Caveman`.
 
 Upstream Caveman raportuje `~75%` mniej tokenów wyjściowych, średnio `65%` oszczędności wyjścia w benchmarkach
-z zakresem `22-87%` oraz narzędzie kompresji wejścia na poziomie `~46%`. OmniRoute używa liczby
+z zakresem `22-87%` oraz narzędzie kompresji wejścia na poziomie `~46%`. AgentProxy używa liczby
 po stronie wejścia Caveman przy dokumentowaniu złożonych oszczędności prompt/kontekst; tryb wyjścia Caveman
 pozostaje osobną funkcją zachowania odpowiedzi.
 
@@ -178,7 +178,7 @@ Per środowisko:
 
 - **Dev / `npm install`** — instalowane automatycznie, chyba że podano `--omit=optional`
   (lub `--no-optional`). Nie trzeba nic robić.
-- **Global npm (`npm i -g omniroute`) / standalone** — uruchom powyższą komendę install wewnątrz
+- **Global npm (`npm i -g agentproxy`) / standalone** — uruchom powyższą komendę install wewnątrz
   katalogu zainstalowanego pakietu albo zainstaluj ponownie bez pomijania opcjonalnych zależności.
 - **Docker** — dodaj komendę install w warstwie obrazu pochodnego; publikowany obraz
   jest z założenia slim.
@@ -308,11 +308,11 @@ Kompresja udostępnia pięć narzędzi MCP:
 
 | Tool                                | Scope               | Purpose                                 |
 | ----------------------------------- | ------------------- | --------------------------------------- |
-| `omniroute_compression_status`      | `read:compression`  | Ustawienia, analytics, statystyki cache |
-| `omniroute_compression_configure`   | `write:compression` | Aktualizacja ustawień globalnych        |
-| `omniroute_set_compression_engine`  | `write:compression` | Ustawienie trybu i opcjonalnego potoku  |
-| `omniroute_list_compression_combos` | `read:compression`  | Lista combo kompresji                   |
-| `omniroute_compression_combo_stats` | `read:compression`  | Odczyt analytics combo/silnika          |
+| `agentproxy_compression_status`      | `read:compression`  | Ustawienia, analytics, statystyki cache |
+| `agentproxy_compression_configure`   | `write:compression` | Aktualizacja ustawień globalnych        |
+| `agentproxy_set_compression_engine`  | `write:compression` | Ustawienie trybu i opcjonalnego potoku  |
+| `agentproxy_list_compression_combos` | `read:compression`  | Lista combo kompresji                   |
+| `agentproxy_compression_combo_stats` | `read:compression`  | Odczyt analytics combo/silnika          |
 
 ## Zakres i wykluczenia
 

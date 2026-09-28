@@ -169,14 +169,14 @@ function proxyUpgrade(
 }
 
 declare global {
-  var __omnirouteApiBridgeStarted: boolean | undefined;
+  var __agentproxyApiBridgeStarted: boolean | undefined;
 }
 
 export function shouldStartApiBridge(
   env: NodeJS.ProcessEnv,
   ports: { apiPort: number; dashboardPort: number }
 ): boolean {
-  if (env.AGENTPROXY_RUST_CORE === "1" || env.OMNIROUTE_RUST_CORE === "1") return false;
+  if (env.AGENTPROXY_RUST_CORE === "1") return false;
   return ports.apiPort !== ports.dashboardPort;
 }
 
@@ -186,7 +186,7 @@ export function initApiBridgeServer(): void {
   // becomes an uncaughtException that kills the server. Benign aborts are
   // swallowed; genuine errors still crash loudly (#fix-dev-server-aborted).
   installProcessCrashGuard();
-  if (globalThis.__omnirouteApiBridgeStarted) return;
+  if (globalThis.__agentproxyApiBridgeStarted) return;
 
   const { apiPort, dashboardPort } = getRuntimePorts();
   if (!shouldStartApiBridge(process.env, { apiPort, dashboardPort })) return;
@@ -248,7 +248,7 @@ export function initApiBridgeServer(): void {
   });
 
   server.listen(apiPort, host, () => {
-    globalThis.__omnirouteApiBridgeStarted = true;
+    globalThis.__agentproxyApiBridgeStarted = true;
     console.log(`[API Bridge] Listening on ${host}:${apiPort} -> dashboard:${dashboardPort}`);
   });
 }

@@ -1,6 +1,6 @@
 # Podman Deployment
 
-Run OmniRoute with **podman compose** on Linux, macOS, or Windows, or with
+Run AgentProxy with **podman compose** on Linux, macOS, or Windows, or with
 **Quadlet** on a Linux host that runs systemd.
 
 ---
@@ -23,56 +23,70 @@ Machine from a macOS or Windows host.
 ### 1. Build the image
 
 ```bash
-cd /path/to/omniroute
-podman build --target runner-base -t omniroute:base .
+cd /path/to/agentproxy
+podman build --target runner-base -t agentproxy:base .
 # For web-cookie providers (gemini-web, claude-web, claude-turnstile):
-podman build --target runner-web -t omniroute:web .
+podman build --target runner-web -t agentproxy:web .
 # For CLI tool support:
-podman build --target runner-cli -t omniroute:cli .
+podman build --target runner-cli -t agentproxy:cli .
 ```
 
 ### 2. Copy Quadlet files to the systemd directory
 
 ```bash
-mkdir -p ~/.config/containers/systemd/omniroute
-cp contrib/podman/*.container ~/.config/containers/systemd/omniroute/
-cp contrib/podman/*.network ~/.config/containers/systemd/omniroute/
-cp contrib/podman/*.volume ~/.config/containers/systemd/omniroute/
+mkdir -p ~/.config/containers/systemd/agentproxy
+cp contrib/podman/*.container ~/.config/containers/systemd/agentproxy/
+cp contrib/podman/*.network ~/.config/containers/systemd/agentproxy/
+cp contrib/podman/*.volume ~/.config/containers/systemd/agentproxy/
 ```
 
-### 3. Mount the project .env for secrets
+### 3. Generate secrets before first start
 
-Edit `~/.config/containers/systemd/omniroute/omniroute.container` and
+The checked-in Quadlet deliberately contains no literal `JWT_SECRET`,
+`API_KEY_SECRET`, or `INITIAL_PASSWORD`. Generate operator-owned values
+instead of copying placeholder secrets into production:
+
+```bash
+echo "JWT_SECRET=$(openssl rand -base64 48)" >> .env
+echo "API_KEY_SECRET=$(openssl rand -hex 32)" >> .env
+echo "INITIAL_PASSWORD=$(openssl rand -hex 24)" >> .env
+```
+
+Keep that `.env` private and outside version control.
+
+### 4. Mount the project .env for secrets
+
+Edit `~/.config/containers/systemd/agentproxy/agentproxy.container` and
 uncomment/replace the `EnvironmentFile` line with the absolute path to
 your project `.env`:
 
 ```
-EnvironmentFile=/home/USER/code/docker/OmniRoute/.env
+EnvironmentFile=/home/USER/code/docker/AgentProxy/.env
 ```
 
 Make sure `CONTAINER_HOST=podman` is set in that `.env`.
 
 Alternatively, edit the env vars directly in the `.container` file.
 
-### 4. Reload systemd and start
+### 5. Reload systemd and start
 
 ```bash
 systemctl --user daemon-reload
-systemctl --user start omniroute-redis
-systemctl --user start omniroute
+systemctl --user start agentproxy-redis
+systemctl --user start agentproxy
 ```
 
-### 5. Verify
+### 6. Verify
 
 ```bash
-systemctl --user status omniroute
+systemctl --user status agentproxy
 curl http://localhost:20128/v1/models
 ```
 
 To follow logs:
 
 ```bash
-journalctl --user -u omniroute -f
+journalctl --user -u agentproxy -f
 ```
 
 The checked-in Quadlet files already contain `[Install]` sections with
@@ -106,7 +120,7 @@ mkdir -p data
 
 ### 3. Build and start
 
-The application profiles use local image names such as `omniroute:base`; those
+The application profiles use local image names such as `agentproxy:base`; those
 are build outputs, not published Docker Hub tags. On the first run, have Compose
 build the selected profile:
 
@@ -118,7 +132,7 @@ Alternatively, build the matching target explicitly and tell Compose to reuse
 that local image:
 
 ```bash
-podman build --target runner-base -t omniroute:base .
+podman build --target runner-base -t agentproxy:base .
 podman compose --profile base up -d --no-build
 ```
 
@@ -164,13 +178,13 @@ database files, use a Podman-managed named volume with the published image.
 Named volumes avoid host-directory UID translation:
 
 ```bash
-podman volume create omniroute-data
-podman run -d --name omniroute \
+podman volume create agentproxy-data
+podman run -d --name agentproxy \
   --env-file .env \
   -e DATA_DIR=/app/data \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
-  docker.io/diegosouzapw/omniroute:latest
+  -v agentproxy-data:/app/data \
+  docker.io/khanhkit/agentproxy:latest
 ```
 
 For a bind mount that still fails, inspect or repair the shared path from the

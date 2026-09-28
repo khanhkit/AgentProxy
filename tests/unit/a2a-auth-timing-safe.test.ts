@@ -5,12 +5,12 @@ import os from "node:os";
 import path from "node:path";
 import type { NextRequest } from "next/server";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-a2a-auth-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-a2a-auth-"));
 const ORIGINAL_DATA_DIR = process.env.DATA_DIR;
-const ORIGINAL_OMNIROUTE_API_KEY = process.env.OMNIROUTE_API_KEY;
+const ORIGINAL_AGENTPROXY_API_KEY = process.env.AGENTPROXY_API_KEY;
 
 process.env.DATA_DIR = TEST_DATA_DIR;
-delete process.env.OMNIROUTE_API_KEY;
+delete process.env.AGENTPROXY_API_KEY;
 
 const core = await import("../../src/lib/db/core.ts");
 const a2aRoute = await import("../../src/app/a2a/route.ts");
@@ -36,7 +36,7 @@ test.beforeEach(() => {
   core.resetDbInstance();
   fs.rmSync(TEST_DATA_DIR, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
   fs.mkdirSync(TEST_DATA_DIR, { recursive: true });
-  process.env.OMNIROUTE_API_KEY = API_KEY;
+  process.env.AGENTPROXY_API_KEY = API_KEY;
 });
 
 test.after(() => {
@@ -46,8 +46,8 @@ test.after(() => {
   if (ORIGINAL_DATA_DIR === undefined) delete process.env.DATA_DIR;
   else process.env.DATA_DIR = ORIGINAL_DATA_DIR;
 
-  if (ORIGINAL_OMNIROUTE_API_KEY === undefined) delete process.env.OMNIROUTE_API_KEY;
-  else process.env.OMNIROUTE_API_KEY = ORIGINAL_OMNIROUTE_API_KEY;
+  if (ORIGINAL_AGENTPROXY_API_KEY === undefined) delete process.env.AGENTPROXY_API_KEY;
+  else process.env.AGENTPROXY_API_KEY = ORIGINAL_AGENTPROXY_API_KEY;
 });
 
 test("a valid bearer token passes auth (reaches the disabled-endpoint check)", async () => {

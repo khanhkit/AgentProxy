@@ -1,12 +1,12 @@
 import fs from "node:fs";
 import path from "node:path";
-import type { RequestPipelinePayloads } from "@omniroute/open-sse/utils/requestLogger.ts";
+import type { RequestPipelinePayloads } from "@agentproxy/open-sse/utils/requestLogger.ts";
 import { resolveDataDir } from "../dataPaths";
 import { getCallLogPipelineMaxSizeBytes, isChatDebugFileEnabled } from "../logEnv";
 
 const isCloud = typeof globalThis.caches === "object" && globalThis.caches !== null;
 const isBuildPhase =
-  process.env.NEXT_PHASE === "phase-production-build" || process.env.OMNIROUTE_BUILDING === "1";
+  process.env.NEXT_PHASE === "phase-production-build" || process.env.AGENTPROXY_BUILDING === "1";
 const DATA_DIR = resolveDataDir({ isCloud });
 
 export const CALL_LOGS_DIR = isCloud ? null : path.join(DATA_DIR, "call_logs");
@@ -54,7 +54,7 @@ function preserveErrorForSizeLimit(error: unknown): unknown {
   if (error === null || error === undefined) return null;
   let serialized: string;
   try {
-    serialized = typeof error === "string" ? error : JSON.stringify(error) ?? String(error);
+    serialized = typeof error === "string" ? error : (JSON.stringify(error) ?? String(error));
   } catch {
     // A circular or unserializable error must not take the whole artifact down.
     serialized = String(error);
@@ -162,7 +162,7 @@ function omitOversizedPipeline(artifact: CallLogArtifact): CallLogArtifact {
     ...artifact,
     pipeline: {
       error: {
-        _omniroute_truncated: true,
+        _agentproxy_truncated: true,
         reason: SIZE_LIMIT_EXCEEDED_REASON,
       },
     },
@@ -186,7 +186,7 @@ function buildMinimalArtifactForSizeLimit(artifact: CallLogArtifact) {
     error: preserveErrorForSizeLimit(artifact.error),
     pipeline: {
       error: {
-        _omniroute_truncated: true,
+        _agentproxy_truncated: true,
         reason: SIZE_LIMIT_EXCEEDED_REASON,
       },
     },
@@ -217,15 +217,18 @@ function buildMinimalArtifactForSizeLimit(artifact: CallLogArtifact) {
  * `pipeline.providerResponse` in preference to `responseBody`.
  */
 function buildSizeLimitStages(artifact: CallLogArtifact): Array<() => unknown> {
-  const omitBodies = <T extends object>(value: T) => ({
+  const omitBodies = <T extends object>(value: T, keepResponse = false) => ({
     ...value,
     requestBody: OMITTED_FOR_SIZE_LIMIT,
-    responseBody: OMITTED_FOR_SIZE_LIMIT,
+    responseBody: keepResponse
+      ? (value as { responseBody: unknown }).responseBody
+      : OMITTED_FOR_SIZE_LIMIT,
     error: preserveErrorForSizeLimit(artifact.error),
   });
 
   return [
     () => truncateArtifactForStorage(artifact),
+    ...(artifact.pipeline ? [() => omitBodies(artifact, true)] : []),
     // Bodies alone: worth a stage only when there is a pipeline to keep in
     // exchange. Without one it produces the same bytes as the stage two lines
     // below, so it is left out rather than costing a redundant stringify.
@@ -266,7 +269,7 @@ function serializeArtifactForStorage(artifact: CallLogArtifact): string {
   // the size-limit fallbacks exist to remove.
   return JSON.stringify({
     schemaVersion: artifact.schemaVersion,
-    _omniroute_truncated: true,
+    _agentproxy_truncated: true,
     reason: SIZE_LIMIT_EXCEEDED_REASON,
     error: preserveErrorForSizeLimit(artifact.error),
   });
@@ -331,13 +334,19 @@ export function readCallArtifact(relativePath: string | null): {
   }
 }
 
-export function deleteCallArtifact(relativePath: string | null, baseDir = CALL_LOGS_DIR): boolean {
-  if (!baseDir || !relativePath) return false;
+export type DeleteCallArtifactOutcome =
+  { state: "deleted" } | { state: "missing" } | { state: "error"; error: string };
+
+export function deleteCallArtifact(
+  relativePath: string | null,
+  baseDir = CALL_LOGS_DIR
+): DeleteCallArtifactOutcome {
+  if (!baseDir || !relativePath) return { state: "missing" };
 
   try {
     const resolvedBaseDir = path.resolve(baseDir);
     const absPath = path.join(resolvedBaseDir, relativePath);
-    if (!fs.existsSync(absPath)) return false;
+    if (!fs.existsSync(absPath)) return { state: "missing" };
     fs.rmSync(absPath, { force: true });
     const parentDir = path.dirname(absPath);
     if (parentDir !== resolvedBaseDir) {
@@ -347,9 +356,12 @@ export function deleteCallArtifact(relativePath: string | null, baseDir = CALL_L
         // Directory is non-empty or already gone.
       }
     }
-    return true;
-  } catch {
-    return false;
+    return { state: "deleted" };
+  } catch (error) {
+    return {
+      state: "error",
+      error: error instanceof Error ? error.message : String(error),
+    };
   }
 }
 

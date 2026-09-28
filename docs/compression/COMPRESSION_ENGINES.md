@@ -6,7 +6,7 @@ lastUpdated: 2026-06-28
 
 # Compression Engines
 
-OmniRoute compression is built around engine contracts. A mode can run one engine directly
+AgentProxy compression is built around engine contracts. A mode can run one engine directly
 (`caveman` or `rtk`) or a deterministic stacked pipeline that executes multiple engines in order.
 
 ## Modes
@@ -45,9 +45,9 @@ accumulated history yet stops at `below_min_chars` and the engine transforms not
 is why the default is `aggressive` rather than the safest profile.
 
 The package resolves its own model scope and profile from its environment configuration.
-OmniRoute never delegates the decision: the adapter pins the model gate to the package's
+AgentProxy never delegates the decision: the adapter pins the model gate to the package's
 most restrictive scope, so host environment settings can only narrow the allowlist, never
-widen it past OmniRoute's measured receipts.
+widen it past AgentProxy's measured receipts.
 
 ## Engine Registry
 
@@ -92,7 +92,7 @@ request, the engine prepends a single, idempotent `system` message (leading with
 (all 24 hex characters — mis-copied hashes are the likely cause of "block not found"
 misses), and that a `[dedup:ref sha=...]` marker means "look back in history", not "call the
 tool". The note is injected **only when the caller's advertised `tools[]` proves it can
-actually reach `omniroute_ccr_retrieve`** (`callerSupportsCcrRetrieve()` in
+actually reach `agentproxy_ccr_retrieve`** (`callerSupportsCcrRetrieve()` in
 `open-sse/services/compression/engines/ccr/protocolInstruction.ts`) — a plain
 OpenAI-compatible caller without that tool never receives an instruction to call something
 it cannot reach. Idempotency is enforced by scanning the message history for the sentinel
@@ -111,7 +111,7 @@ Caveman mode focuses on semantic condensation of normal prose:
 The dashboard surface is `Dashboard -> Context & Cache -> Caveman`.
 
 Caveman upstream reports `~75%` fewer output tokens, `65%` average output savings in benchmarks
-with a `22-87%` range, and a `~46%` input-compression tool. OmniRoute uses the Caveman input-side
+with a `22-87%` range, and a `~46%` input-compression tool. AgentProxy uses the Caveman input-side
 number when documenting stacked prompt/context savings; Caveman output mode remains a separate
 response-behavior feature.
 
@@ -206,7 +206,7 @@ Per environment:
 
 - **Dev / `npm install`** — installed automatically unless you passed `--omit=optional`
   (or `--no-optional`). No action needed.
-- **Global npm (`npm i -g omniroute`) / standalone** — run the install command above inside
+- **Global npm (`npm i -g agentproxy`) / standalone** — run the install command above inside
   the installed package directory, or reinstall without omitting optional deps.
 - **Docker** — add the install command in a derived image layer; the published image
   ships slim by design.
@@ -341,11 +341,11 @@ Compression exposes five MCP tools:
 
 | Tool                                | Scope               | Purpose                          |
 | ----------------------------------- | ------------------- | -------------------------------- |
-| `omniroute_compression_status`      | `read:compression`  | Settings, analytics, cache stats |
-| `omniroute_compression_configure`   | `write:compression` | Update global settings           |
-| `omniroute_set_compression_engine`  | `write:compression` | Set mode and optional pipeline   |
-| `omniroute_list_compression_combos` | `read:compression`  | List compression combos          |
-| `omniroute_compression_combo_stats` | `read:compression`  | Read combo/engine analytics      |
+| `agentproxy_compression_status`      | `read:compression`  | Settings, analytics, cache stats |
+| `agentproxy_compression_configure`   | `write:compression` | Update global settings           |
+| `agentproxy_set_compression_engine`  | `write:compression` | Set mode and optional pipeline   |
+| `agentproxy_list_compression_combos` | `read:compression`  | List compression combos          |
+| `agentproxy_compression_combo_stats` | `read:compression`  | Read combo/engine analytics      |
 
 ## Scope & exclusions
 

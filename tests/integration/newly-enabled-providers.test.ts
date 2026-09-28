@@ -23,8 +23,8 @@
  * account-wide block, confirmed on retry.
  *
  * Environment:
- *   OMNIROUTE_API_KEY  — required (else test skips)
- *   OMNIROUTE_URL      — defaults to http://localhost:3000
+ *   AGENTPROXY_API_KEY  — required (else test skips)
+ *   AGENTPROXY_URL      — defaults to http://localhost:3000
  */
 import test from "node:test";
 import assert from "node:assert/strict";

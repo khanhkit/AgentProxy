@@ -52,7 +52,7 @@ export const GITHUB_COPILOT_DEFAULT_INITIATOR = "user";
 // call (verified identical across all captured requests) — a per-call random id
 // would itself be an anti-fingerprint tell. We mint one per process and cache
 // it (env-overridable via GITHUB_COPILOT_MACHINE_ID), which keeps it stable for
-// the lifetime of a running OmniRoute instance, matching "one CLI install".
+// the lifetime of a running AgentProxy instance, matching "one CLI install".
 let _copilotMachineId: string | null = null;
 export function getGitHubCopilotMachineId(): string {
   const override = (process?.env?.GITHUB_COPILOT_MACHINE_ID || "").trim();
@@ -67,6 +67,10 @@ export const QWEN_CLI_VERSION = "0.19.3";
 export const QWEN_STAINLESS_LANG = "js";
 
 export const QODER_DEFAULT_USER_AGENT = "Qoder-Cli";
+
+// Keep the Tencent CodeBuddy fingerprint identical across OAuth, chat and quota calls.
+// A mixed version string on one account can look like an inconsistent client to the WAF.
+export const CODEBUDDY_CN_USER_AGENT = "CLI/2.108.1 CodeBuddy/2.108.1";
 
 export const KIRO_SDK_USER_AGENT = "AWS-SDK-JS/3.0.0 kiro-ide/1.0.0";
 export const KIRO_AMZ_USER_AGENT = "aws-sdk-js/3.0.0 kiro-ide/1.0.0";

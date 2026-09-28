@@ -30,7 +30,7 @@ import os from "node:os";
 import path from "node:path";
 import { SignJWT } from "jose";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-free-tier-summary-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-free-tier-summary-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.STORAGE_ENCRYPTION_KEY = "test-encryption-key-for-free-tier-summary-tests-32b";
 process.env.JWT_SECRET = "test-jwt-secret-for-free-tier-summary-tests";
@@ -68,7 +68,7 @@ async function authCookieHeader(): Promise<string> {
 
 function feedPayload(tier: "community" | "live") {
   return {
-    feed: "omniroute-radar",
+    feed: "agentproxy-radar",
     schemaVersion: 1,
     version: "2026.08.25.1",
     generatedAt: GEN_AT,

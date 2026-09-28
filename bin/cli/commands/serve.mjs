@@ -4,7 +4,13 @@ import { join, dirname } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { platform, totalmem } from "node:os";
 import { t } from "../i18n.mjs";
-import { writePidFile, cleanupPidFile, waitForServer } from "../utils/pid.mjs";
+import {
+  writePidFile,
+  cleanupPidFile,
+  waitForServer,
+  findListeningPids,
+  resolveReadyTimeoutMs,
+} from "../utils/pid.mjs";
 import {
   ServerSupervisor,
   detectMitmCrash,
@@ -29,7 +35,7 @@ import { startDetachedTray, validateTrayOptions } from "../tray/detachedTray.mjs
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const _pkg = JSON.parse(readFileSync(join(__dirname, "..", "..", "..", "package.json"), "utf8"));
 
-// URL scheme for the "OmniRoute is running" banner — flipped to https when
+// URL scheme for the "AgentProxy is running" banner — flipped to https when
 // opt-in TLS (#5242) is active. Process-scoped: one `serve` run = one scheme.
 let urlScheme = "http";
 const ROOT = join(__dirname, "..", "..", "..");
@@ -59,14 +65,19 @@ export function registerServe(program) {
     .option("--tray", t("serve.tray") || "Start in the system tray (desktop only)")
     .option("--no-tray", t("serve.no_tray") || "Disable system tray icon")
     .option(
+      "--ready-timeout <ms>",
+      t("serve.ready_timeout") ||
+        "Readiness probe timeout in ms (also OMNIROUTE_READY_TIMEOUT_MS, default 60000)"
+    )
+    .option(
       "--tls-cert <path>",
       t("serve.tls_cert") ||
-        "Path to a TLS certificate (PEM) to serve HTTPS (also OMNIROUTE_TLS_CERT)"
+        "Path to a TLS certificate (PEM) to serve HTTPS (also AGENTPROXY_TLS_CERT)"
     )
     .option(
       "--tls-key <path>",
       t("serve.tls_key") ||
-        "Path to the TLS private key (PEM) to serve HTTPS (also OMNIROUTE_TLS_KEY)"
+        "Path to the TLS private key (PEM) to serve HTTPS (also AGENTPROXY_TLS_KEY)"
     )
     .action(async (opts) => {
       await runServe(opts);
@@ -108,28 +119,28 @@ export async function runServe(opts = {}) {
 
   if (opts.tray === true && opts.trayWorker !== true) {
     const port = parsePort(opts.port ?? process.env.PORT ?? "20128", 20128);
-    const tlsCert = opts.tlsCert ?? process.env.OMNIROUTE_TLS_CERT;
-    const tlsKey = opts.tlsKey ?? process.env.OMNIROUTE_TLS_KEY;
+    const tlsCert = opts.tlsCert ?? process.env.AGENTPROXY_TLS_CERT;
+    const tlsKey = opts.tlsKey ?? process.env.AGENTPROXY_TLS_KEY;
     urlScheme = resolveTlsOptions({
       ...process.env,
-      ...(tlsCert ? { OMNIROUTE_TLS_CERT: tlsCert } : {}),
-      ...(tlsKey ? { OMNIROUTE_TLS_KEY: tlsKey } : {}),
+      ...(tlsCert ? { AGENTPROXY_TLS_CERT: tlsCert } : {}),
+      ...(tlsKey ? { AGENTPROXY_TLS_KEY: tlsKey } : {}),
     })
       ? "https"
       : "http";
     const result = await startDetachedTray({
-      cliPath: join(ROOT, "bin", "omniroute.mjs"),
+      cliPath: join(ROOT, "bin", "agentproxy.mjs"),
       port,
       maxRestarts: opts.maxRestarts ?? 2,
       tlsCert,
       tlsKey,
     });
-    console.log(`\x1b[32m✔ OmniRoute tray started in background\x1b[0m`);
+    console.log(`\x1b[32m✔ AgentProxy tray started in background\x1b[0m`);
     console.log(`  \x1b[1mDashboard:\x1b[0m  ${urlScheme}://localhost:${port}`);
     return result;
   }
 
-  // Same prep as bin/omniroute.mjs — keep it here so a direct `runServe()` call
+  // Same prep as bin/agentproxy.mjs — keep it here so a direct `runServe()` call
   // (tests / programmatic) still gets a writable Next.js cache dir before spawn.
   ensureAndroidCacheDir({ env: process.env });
 
@@ -162,7 +173,7 @@ export async function runServe(opts = {}) {
      Supported secure runtimes: ${nodeSupport.supportedDisplay}
      Recommended: use Node.js ${nodeSupport.recommendedVersion} or newer on the 22.x LTS line.
      Workaround:  npm rebuild better-sqlite3
-     Or run:      omniroute runtime repair  (rebuilds into a user-writable runtime; works without a C++ toolchain)\x1b[0m
+     Or run:      agentproxy runtime repair  (rebuilds into a user-writable runtime; works without a C++ toolchain)\x1b[0m
 `);
   }
 
@@ -187,18 +198,18 @@ export async function runServe(opts = {}) {
     const isNvm = nodeExec.includes(".nvm") || nodeExec.includes("nvm");
     if (isMise) {
       console.error(
-        "  \x1b[33m⚠ mise detected:\x1b[0m If you installed via `npm install -g omniroute`,"
+        "  \x1b[33m⚠ mise detected:\x1b[0m If you installed via `npm install -g agentproxy`,"
       );
-      console.error("    try: \x1b[36mnpx omniroute@latest\x1b[0m  (downloads a fresh copy)");
-      console.error("    or:  \x1b[36mmise exec -- npx omniroute\x1b[0m");
+      console.error("    try: \x1b[36mnpx agentproxy@latest\x1b[0m  (downloads a fresh copy)");
+      console.error("    or:  \x1b[36mmise exec -- npx agentproxy\x1b[0m");
     } else if (isNvm) {
       console.error(
         "  \x1b[33m⚠ nvm detected:\x1b[0m Try reinstalling after loading the correct Node version:"
       );
-      console.error("    \x1b[36mnvm use --lts && npm install -g omniroute\x1b[0m");
+      console.error("    \x1b[36mnvm use --lts && npm install -g agentproxy\x1b[0m");
     } else {
-      console.error("  Try: \x1b[36mnpm install -g omniroute\x1b[0m  (reinstall)");
-      console.error("  Or:  \x1b[36mnpx omniroute@latest\x1b[0m");
+      console.error("  Try: \x1b[36mnpm install -g agentproxy\x1b[0m  (reinstall)");
+      console.error("  Or:  \x1b[36mnpx agentproxy@latest\x1b[0m");
     }
     process.exit(1);
   }
@@ -221,7 +232,7 @@ export async function runServe(opts = {}) {
     );
     console.error(`  Run: cd ${APP_DIR} && npm rebuild better-sqlite3`);
     console.error(
-      "  Or run: \x1b[36momniroute runtime repair\x1b[0m" +
+      "  Or run: \x1b[36magentproxy runtime repair\x1b[0m" +
         "  (rebuilds into a user-writable runtime; works without a C++ toolchain)"
     );
     if (platform() === "darwin") {
@@ -230,38 +241,48 @@ export async function runServe(opts = {}) {
     process.exit(1);
   }
 
+  // Refuse to start a second instance on a port something else already owns,
+  // BEFORE any pid file is written or any child is spawned. Otherwise the
+  // doomed child's EADDRINUSE arrives only after this process has rewritten
+  // the pid files of the healthy instance that actually owns the port.
+  const busyPids = await findListeningPids(dashboardPort);
+  if (busyPids.length > 0) {
+    reportPortInUse(dashboardPort, busyPids);
+    process.exit(1);
+  }
+
   console.log(`  \x1b[2m⏳ Starting server...\x1b[0m\n`);
 
   // #5172/#5160/#5152: default the V8 heap to ~35% of physical RAM (clamped
   // [512, 4096]) instead of a fixed 512MB, which OOM-crashed boxes with plenty
-  // of RAM under load. An explicit OMNIROUTE_MEMORY_MB still wins.
+  // of RAM under load. An explicit AGENTPROXY_MEMORY_MB still wins.
   const memoryLimit = resolveMaxOldSpaceMb(
-    process.env.OMNIROUTE_MEMORY_MB,
+    process.env.AGENTPROXY_MEMORY_MB,
     calibrateHeapFallbackMb(totalmem())
   );
 
   // #5242: opt-in native HTTPS. CLI flags take precedence over env; the child
   // server (server-ws.mjs) reads these and terminates TLS on the same listener.
-  const tlsCert = opts.tlsCert ?? process.env.OMNIROUTE_TLS_CERT;
-  const tlsKey = opts.tlsKey ?? process.env.OMNIROUTE_TLS_KEY;
+  const tlsCert = opts.tlsCert ?? process.env.AGENTPROXY_TLS_CERT;
+  const tlsKey = opts.tlsKey ?? process.env.AGENTPROXY_TLS_KEY;
 
   const env = {
     ...process.env,
-    OMNIROUTE_PORT: String(port),
+    AGENTPROXY_PORT: String(port),
     PORT: String(dashboardPort),
     DASHBOARD_PORT: String(dashboardPort),
     API_PORT: String(apiPort),
     // #10492: HOSTNAME is standard shell state on Unix-like systems, not an
-    // OmniRoute bind setting. The resolver only keeps its legacy meaning on
-    // Windows; OMNIROUTE_SERVER_HOST is the cross-platform explicit setting.
+    // AgentProxy bind setting. The resolver only keeps its legacy meaning on
+    // Windows; AGENTPROXY_SERVER_HOST is the cross-platform explicit setting.
     HOSTNAME: resolveServerHost(),
     NODE_ENV: "production",
     // #5238: preserve a user-set NODE_OPTIONS (incl. their own
     // `--max-old-space-size=…`) instead of clobbering it with the calibrated
     // default — mirror the Electron/standalone launchers.
     NODE_OPTIONS: buildServerNodeOptions(process.env, memoryLimit),
-    ...(tlsCert ? { OMNIROUTE_TLS_CERT: tlsCert } : {}),
-    ...(tlsKey ? { OMNIROUTE_TLS_KEY: tlsKey } : {}),
+    ...(tlsCert ? { AGENTPROXY_TLS_CERT: tlsCert } : {}),
+    ...(tlsKey ? { AGENTPROXY_TLS_KEY: tlsKey } : {}),
   };
 
   // Validate the TLS pair up front so the operator sees a clear warning in the
@@ -276,7 +297,8 @@ export async function runServe(opts = {}) {
     return runDaemon(serverJs, env, memoryLimit, dashboardPort, apiPort);
   }
 
-  if (opts.noRecovery) {
+  // Commander stores `--no-recovery` as `recovery === false`, never as `noRecovery`.
+  if (opts.recovery === false || opts.noRecovery === true) {
     return runWithoutRecovery(
       serverJs,
       env,
@@ -299,8 +321,27 @@ export async function runServe(opts = {}) {
     opts.maxRestarts ?? 2,
     startedAt,
     useTray,
-    { trayReadyPort: opts.trayReadyPort, trayReadyToken: opts.trayReadyToken }
+    {
+      trayReadyPort: opts.trayReadyPort,
+      trayReadyToken: opts.trayReadyToken,
+      readyTimeoutMs: resolveReadyTimeoutMs({ timeoutMs: opts.readyTimeout }),
+    }
   );
+}
+
+/**
+ * Explain a port conflict in terms the operator can act on: who owns the port,
+ * and the two ways out. Exported for unit tests.
+ */
+export function reportPortInUse(port, pids = []) {
+  const owner = pids.length === 1 ? `PID ${pids[0]}` : `PIDs ${pids.join(", ")}`;
+  console.error(`\n\x1b[31m✖ Port ${port} is already in use by ${owner}.\x1b[0m`);
+  console.error(
+    `  Another OmniRoute is most likely already serving there, so open` +
+      ` ${urlScheme}://localhost:${port} before starting a second one.`
+  );
+  console.error(`  To replace it:    \x1b[36momniroute stop\x1b[0m, then start again`);
+  console.error(`  To run alongside: \x1b[36momniroute serve --port <other-port>\x1b[0m\n`);
 }
 
 function runDaemon(serverJs, env, memoryLimit, dashboardPort, apiPort) {
@@ -323,7 +364,7 @@ function runDaemon(serverJs, env, memoryLimit, dashboardPort, apiPort) {
   );
   writePidFile("server", server.pid);
   server.unref();
-  console.log(`\x1b[32m✔ OmniRoute started in background (PID: ${server.pid})\x1b[0m`);
+  console.log(`\x1b[32m✔ AgentProxy started in background (PID: ${server.pid})\x1b[0m`);
   console.log(`  \x1b[1mDashboard:\x1b[0m  ${urlScheme}://localhost:${dashboardPort}`);
   console.log(`  \x1b[1mAPI Base:\x1b[0m   ${urlScheme}://localhost:${apiPort}/v1`);
 }
@@ -382,7 +423,7 @@ function runWithoutRecovery(serverJs, env, memoryLimit, dashboardPort, apiPort, 
   });
 
   const shutdown = () => {
-    console.log("\n\x1b[33m⏹ Shutting down OmniRoute...\x1b[0m");
+    console.log("\n\x1b[33m⏹ Shutting down AgentProxy...\x1b[0m");
     cleanupPidFile("server");
     server.kill("SIGTERM");
     setTimeout(() => {
@@ -413,9 +454,9 @@ async function runWithSupervisor(
   maxRestarts,
   startedAt,
   useTray = false,
-  { trayReadyPort, trayReadyToken } = {}
+  { trayReadyPort, trayReadyToken, readyTimeoutMs = resolveReadyTimeoutMs() } = {}
 ) {
-  if (showLog) process.env.OMNIROUTE_SHOW_LOG = "1";
+  if (showLog) process.env.AGENTPROXY_SHOW_LOG = "1";
   writePidFile("supervisor", process.pid);
 
   const supervisor = new ServerSupervisor({
@@ -452,7 +493,12 @@ async function runWithSupervisor(
   });
 
   if (!showLog) {
-    waitForServer(dashboardPort, 60000).then(async (up) => {
+    let lastProbeOutcome = null;
+    waitForServer(dashboardPort, readyTimeoutMs, {
+      onOutcome: (outcome) => {
+        lastProbeOutcome = outcome;
+      },
+    }).then(async (up) => {
       if (up) {
         if (useTray) {
           const trayReady = await maybeStartTray(dashboardPort, apiPort, supervisor);
@@ -476,7 +522,7 @@ async function runWithSupervisor(
         }
         onReady(dashboardPort, apiPort, noOpen, startedAt);
       } else {
-        reportReadinessTimeout(dashboardPort, supervisor);
+        reportReadinessTimeout(dashboardPort, supervisor, lastProbeOutcome);
       }
     });
   }
@@ -488,10 +534,30 @@ async function runWithSupervisor(
 // stuck (issue reports show the server sometimes actually comes up later, or is
 // reachable directly while the CLI still looks hung). Surface a clear diagnostic
 // plus whatever stdout/stderr the child buffered instead of going silent.
-export function reportReadinessTimeout(dashboardPort, supervisor) {
+export function reportReadinessTimeout(dashboardPort, supervisor, lastProbeOutcome = null) {
+  const readyTimeoutMs = resolveReadyTimeoutMs();
+  const seconds = Math.round(readyTimeoutMs / 1000);
   console.error(
-    `\n\x1b[33m⚠ Server did not respond within 60s.\x1b[0m It may still be starting, or may` +
+    `\n\x1b[33m⚠ Server did not respond within ${seconds}s.\x1b[0m It may still be starting, or may` +
       ` have failed silently.`
+  );
+  // The last probe classification separates a real boot failure (nothing ever
+  // bound the port, so the buffered output below is the reason) from a server
+  // that IS listening and merely did not answer the health route in time:
+  // very likely usable already, with only the readiness signal timed out.
+  if (lastProbeOutcome === "hanging" || lastProbeOutcome === "fast-reject") {
+    console.error(
+      `  Port ${dashboardPort} IS accepting connections, so the server is probably up and` +
+        ` still warming up. Check the dashboard before restarting it.`
+    );
+  } else if (lastProbeOutcome === "not-listening") {
+    console.error(
+      `  Nothing is listening on port ${dashboardPort}, so the server never bound it and the` +
+        ` output below is the reason.`
+    );
+  }
+  console.error(
+    `  Tip:  set OMNIROUTE_READY_TIMEOUT_MS=${readyTimeoutMs * 2} or --ready-timeout ${readyTimeoutMs * 2} for slower cold starts.`
   );
   console.error(`  Try:  curl -I http://localhost:${dashboardPort}/api/monitoring/health`);
   console.error(`  Or:   rerun with \x1b[36m--log\x1b[0m to see live server output.\n`);
@@ -542,7 +608,7 @@ async function maybeStartTray(port, apiPort, supervisor) {
   } catch (err) {
     // tray is optional — do not fail the server, but surface why it failed so
     // "--tray shows nothing" is diagnosable instead of silent (#4605).
-    process.stderr.write(`[omniroute][tray] failed to start: ${err?.message ?? String(err)}\n`);
+    process.stderr.write(`[agentproxy][tray] failed to start: ${err?.message ?? String(err)}\n`);
     return false;
   }
 }
@@ -556,7 +622,7 @@ async function onReady(dashboardPort, apiPort, noOpen, startedAt) {
       : "0.0";
 
   console.log(`
-  \x1b[32m✔ OmniRoute is running!\x1b[0m \x1b[2m(started in ${elapsed}s)\x1b[0m
+  \x1b[32m✔ AgentProxy is running!\x1b[0m \x1b[2m(started in ${elapsed}s)\x1b[0m
 
   \x1b[1m  Dashboard:\x1b[0m  ${dashboardUrl}
   \x1b[1m  API Base:\x1b[0m   ${apiUrl}/v1

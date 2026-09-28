@@ -20,11 +20,11 @@ import {
   mintCursorCliSessionToken,
   normalizeCursorCliPath,
   type CursorCliProxyDeps,
-} from "@omniroute/open-sse/handlers/cursorCliProxy.ts";
-import { CursorApiKeyExchangeError } from "@omniroute/open-sse/services/cursorApiKeyAuth.ts";
+} from "@agentproxy/open-sse/handlers/cursorCliProxy.ts";
+import { CursorApiKeyExchangeError } from "@agentproxy/open-sse/services/cursorApiKeyAuth.ts";
 
 const SECRET = "unit-test-jwt-secret-with-enough-entropy-0123456789";
-const OMNI_KEY = "sk-omniroute-unit-key";
+const OMNI_KEY = "sk-agentproxy-unit-key";
 const CURSOR_KEY = "crsr_unit_cursor_key";
 const UPSTREAM = "https://upstream.example";
 const NOW = 1_800_000_000_000;
@@ -66,7 +66,7 @@ function makeDeps(overrides: Partial<CursorCliProxyDeps> = {}): {
 }
 
 function exchangeRequest(bearer: string | null, body = "{}"): Request {
-  return new Request("http://omniroute.local/api/cursor-cli/auth/exchange_user_api_key", {
+  return new Request("http://agentproxy.local/api/cursor-cli/auth/exchange_user_api_key", {
     method: "POST",
     headers: {
       ...(bearer ? { authorization: `Bearer ${bearer}` } : {}),
@@ -81,13 +81,13 @@ function rpcRequest(
   path = "/aiserver.v1.DashboardService/GetMe",
   body: BodyInit | null = new Uint8Array([0, 0, 0, 0, 0])
 ): Request {
-  return new Request(`http://omniroute.local/api/cursor-cli${path}?x=1`, {
+  return new Request(`http://agentproxy.local/api/cursor-cli${path}?x=1`, {
     method: "POST",
     headers: {
       ...(bearer ? { authorization: `Bearer ${bearer}` } : {}),
       "content-type": "application/proto",
       "connect-protocol-version": "1",
-      host: "omniroute.local",
+      host: "agentproxy.local",
       "accept-encoding": "gzip,br",
       cookie: "auth_token=dashboard",
     },
@@ -123,7 +123,7 @@ describe("cursorCliProxy: path normalisation", () => {
 });
 
 describe("cursorCliProxy: /auth/exchange_user_api_key", () => {
-  it("mints a 1h OmniRoute session JWT for a valid OmniRoute API key", async () => {
+  it("mints a 1h AgentProxy session JWT for a valid AgentProxy API key", async () => {
     const { deps, logs } = makeDeps();
     const res = await handleCursorCliProxy(
       exchangeRequest(OMNI_KEY),
@@ -146,7 +146,7 @@ describe("cursorCliProxy: /auth/exchange_user_api_key", () => {
     assert.equal(logs[0].apiKeyId, "key-1");
   });
 
-  it("rejects an unknown key with 401 when OmniRoute requires API keys", async () => {
+  it("rejects an unknown key with 401 when AgentProxy requires API keys", async () => {
     const { deps } = makeDeps();
     const res = await handleCursorCliProxy(
       exchangeRequest("sk-wrong"),
@@ -190,7 +190,7 @@ describe("cursorCliProxy: /auth/exchange_user_api_key", () => {
     );
     assert.equal(bad.status, 400);
     const get = await handleCursorCliProxy(
-      new Request("http://omniroute.local/api/cursor-cli/auth/exchange_user_api_key", {
+      new Request("http://agentproxy.local/api/cursor-cli/auth/exchange_user_api_key", {
         method: "GET",
       }),
       ["auth", "exchange_user_api_key"],
@@ -201,7 +201,7 @@ describe("cursorCliProxy: /auth/exchange_user_api_key", () => {
 });
 
 describe("cursorCliProxy: forwarded RPCs", () => {
-  it("swaps the OmniRoute session token for the Cursor bearer and strips hop headers", async () => {
+  it("swaps the AgentProxy session token for the Cursor bearer and strips hop headers", async () => {
     const { deps, upstreamCalls, logs } = makeDeps();
     const res = await handleCursorCliProxy(
       rpcRequest(await mintedToken()),
@@ -232,7 +232,7 @@ describe("cursorCliProxy: forwarded RPCs", () => {
     assert.equal(logs[0].apiKeyId, "key-1");
   });
 
-  it("rejects a raw OmniRoute API key on RPC paths so the CLI exchanges first", async () => {
+  it("rejects a raw AgentProxy API key on RPC paths so the CLI exchanges first", async () => {
     const { deps, upstreamCalls } = makeDeps();
     const res = await handleCursorCliProxy(
       rpcRequest(OMNI_KEY),
@@ -269,7 +269,7 @@ describe("cursorCliProxy: forwarded RPCs", () => {
     assert.equal(upstreamCalls.length, 0);
   });
 
-  it("rejects a session whose OmniRoute API key was revoked or deactivated", async () => {
+  it("rejects a session whose AgentProxy API key was revoked or deactivated", async () => {
     const revoked = makeDeps({
       getApiKeyById: async () => ({ isActive: true, revokedAt: "2026-01-01T00:00:00Z" }),
     });
@@ -400,7 +400,7 @@ describe("cursorCliProxy: forwarded RPCs", () => {
   it("maps upstream network failures to a sanitized 502", async () => {
     const { deps, logs } = makeDeps({
       fetchImpl: (async () => {
-        throw new Error("connect ECONNREFUSED at /home/user/OmniRoute/open-sse/x.ts:1:1");
+        throw new Error("connect ECONNREFUSED at /home/user/AgentProxy/open-sse/x.ts:1:1");
       }) as unknown as typeof fetch,
     });
     const res = await handleCursorCliProxy(

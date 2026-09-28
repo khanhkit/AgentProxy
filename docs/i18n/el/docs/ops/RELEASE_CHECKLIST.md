@@ -53,8 +53,8 @@ job `stage-npm` (φιλοξενούμενο στο github) ανταλλάσσε�
 αποκαθιστά την πλήρως αυτόματη ροή που είχε το έργο έως τη v3.8.48 διατηρώντας παράλληλα
 την εγγύηση WS1.3 (ένα διαρρευσμένο token δεν μπορεί να δημοσιεύσει μόνο του — δεν υπάρχει token).
 
-**Εφάπαξ ρύθμιση (ιδιοκτήτης):** npmjs.com → πακέτο `omniroute` → Ρυθμίσεις → _Trusted
-Publisher_ → GitHub: ιδιοκτήτης `diegosouzapw`, αποθετήριο `OmniRoute`, workflow `npm-publish.yml`
+**Εφάπαξ ρύθμιση (ιδιοκτήτης):** npmjs.com → πακέτο `agentproxy` → Ρυθμίσεις → _Trusted
+Publisher_ → GitHub: ιδιοκτήτης `diegosouzapw`, αποθετήριο `AgentProxy`, workflow `npm-publish.yml`
 (περιβάλλον: κανένα). Μέχρι να υπάρχει αυτό, το αυτόματο βήμα αποτυγχάνει με `ENEEDAUTH`:
 επανεκκινήστε με `publish_mode=staged` (παρακάτω) ή `direct`.
 
@@ -67,7 +67,7 @@ Publisher_ → GitHub: ιδιοκτήτης `diegosouzapw`, αποθετήριο
 
 **Ροή ιδιοκτήτη αφού το workflow γίνει πράσινο:**
 
-1. `npm stage list omniroute` — βρείτε το αναγνωριστικό σταδίου (εκτυπώνεται επίσης στην περίληψη του workflow).
+1. `npm stage list agentproxy` — βρείτε το αναγνωριστικό σταδίου (εκτυπώνεται επίσης στην περίληψη του workflow).
 2. Επαληθεύστε τα bytes σταδίου (συνιστάται): `npm stage download <id>`, στη συνέχεια εγκαταστήστε το
    ληφθέν tarball σε ένα προσωρινό πρόθεμα και εκκινήστε το (`npm run check:pack-boot` αυτοματοποιεί
    την ίδια κρίση pack→install→boot στο CI).
@@ -79,10 +79,10 @@ Publisher_ → GitHub: ιδιοκτήτης `diegosouzapw`, αποθετήριο
 παλαιό άμεσο `npm publish` (χρησιμοποιήστε μόνο αν το ίδιο το staging δυσλειτουργεί· καταγράψτε τον λόγο).
 
 **Εφάπαξ σκλήρυνση (ιδιοκτήτης, npmjs.com):** ρυθμίστε τον Αξιόπιστο Εκδότη για
-το `omniroute` σε λειτουργία μόνο-σταδίου, ώστε ένα διαρρευσμένο μακροχρόνιο token να μην μπορεί να εκτελέσει `npm publish`
+το `agentproxy` σε λειτουργία μόνο-σταδίου, ώστε ένα διαρρευσμένο μακροχρόνιο token να μην μπορεί να εκτελέσει `npm publish`
 άμεσα από οπουδήποτε — το CI μπορεί μόνο να κάνει stage· μόνο το 2FA του ιδιοκτήτη δημοσιεύει.
 
-**Εγχειρίδιο κατεστραμμένου artifact (αμετάβλητο):** `npm deprecate omniroute@<bad> "<reason> — use <fixed>"`
+**Εγχειρίδιο κατεστραμμένου artifact (αμετάβλητο):** `npm deprecate agentproxy@<bad> "<reason> — use <fixed>"`
 ως η προεπιλεγμένη άμεση αντίδραση (λεπτά, αναστρέψιμη)· `npm unpublish` μόνο εντός του παραθύρου 72ω/χωρίς-εξαρτήσεις
 και ποτέ ως πρώτη κίνηση. Docker: ποτέ μην ξαναγράφετε ετικέτα έκδοσης — η επαναφορά γίνεται με
 επαναστόχευση του `latest` στην τελευταία καλή κατάσταση digest.
@@ -201,7 +201,7 @@ unit shards, integration, vitest, lint/typecheck, docs-sync, `check:pack-artifac
 - [ ] Το `npm run i18n:check` τερματίζει με 0 — η κατάσταση μετάφρασης (`.i18n-state.json`) είναι συγχρονισμένη με τα πηγαία έγγραφα (χωρίς αποκλιμένες πηγές σε strict mode· η advisory warn-mode είναι αποδεκτή για τελευταία στιγμή doc touch-ups, αλλά πρέπει να είναι 0 πριν το tagging)
 - [ ] Το `npm run i18n:check-ui-coverage` τερματίζει με 0 — κάθε locale UI βρίσκεται πάνω ή στο όριο κάλυψης 80%
 - [ ] Το `npm run i18n:sync-ui:dry` αναφέρει 0 ελλείποντα κλειδιά σε όλα τα 42 locales
-- [ ] Αν τα πηγαία αγγλικά έγγραφα άλλαξαν, εκτελέστε `npm run i18n:run` (απαιτεί `OMNIROUTE_TRANSLATION_API_KEY` στο `.env`) πριν το tagging
+- [ ] Αν τα πηγαία αγγλικά έγγραφα άλλαξαν, εκτελέστε `npm run i18n:run` (απαιτεί `AGENTPROXY_TRANSLATION_API_KEY` στο `.env`) πριν το tagging
 - [ ] Οι συνεισφορές μετάφρασης μπορούν να αναβληθούν στην επόμενη έκδοση αν είναι μικρές (παρακολουθήστε στο CHANGELOG)
 
 ### Μεταναστεύσεις Βάσης Δεδομένων
@@ -210,7 +210,7 @@ unit shards, integration, vitest, lint/typecheck, docs-sync, `check:pack-artifac
   - [ ] Κάθε μετανάστευση είναι idempotent (`CREATE TABLE IF NOT EXISTS`, κ.λπ.)
   - [ ] Οι μεταναστεύσεις τυλιγμένες σε transactions
   - [ ] Αριθμημένες σωστά (χωρίς κενά στην ακολουθία)
-- [ ] Δοκιμή σε νέα εγκατάσταση: διαγράψτε `~/.omniroute/omniroute.db` και εκτελέστε `npm run dev`
+- [ ] Δοκιμή σε νέα εγκατάσταση: διαγράψτε `~/.agentproxy/agentproxy.db` και εκτελέστε `npm run dev`
 - [ ] Δοκιμή σε υπάρχουσα εγκατάσταση: δημιουργία αντιγράφου ασφαλείας DB, εκτέλεση μετανάστευσης, επαλήθευση schema
 - [ ] Τα αρχεία WAL (`-wal`, `-shm`) χειρίζονται σωστά αν η μετανάστευση ξαναγράφει πίνακες
 
@@ -245,7 +245,7 @@ unit shards, integration, vitest, lint/typecheck, docs-sync, `check:pack-artifac
 | `.build/` | Ενδιάμεσα build — έξοδος `next build` (`distDir`)                 | Όχι (gitignored) |
 | `dist/`   | Δέσμη npm για αποστολή — συναρμολογείται από `assembleStandalone` | Όχι (gitignored) |
 
-> **Σημείωση χειριστή:** ο κατάλογος εικόνων στο απομακρυσμένο VPS παραμένει `/usr/lib/node_modules/omniroute/app/`.
+> **Σημείωση χειριστή:** ο κατάλογος εικόνων στο απομακρυσμένο VPS παραμένει `/usr/lib/node_modules/agentproxy/app/`.
 > Μόνο η έξοδος build **εντός αποθετηρίου** μετακινήθηκε (`app/` → `dist/`). Τα deploy skills rsync
 > περιεχόμενα `dist/` στον απομακρυσμένο κατάλογο `app/` — δεν απαιτούνται αλλαγές VPS path.
 
@@ -365,12 +365,12 @@ npm run build:release
 
 Πριν από την αποστολή οποιασδήποτε έκδοσης v3.8.x, επαληθεύστε αυτά τα επιπλέον στοιχεία:
 
-- [ ] `omniroute --tray` εκκινεί στο macOS (το systray2 εγκαθίσταται στο `~/.omniroute/runtime/`)
-- [ ] `omniroute --tray` εκκινεί στο Linux (απαιτεί DISPLAY· ομαλό σφάλμα εάν δεν έχει οριστεί)
-- [ ] `omniroute --tray` εκκινεί στα Windows (PowerShell NotifyIcon, χωρίς επιπλέον δυαδικά αρχεία)
-- [ ] `omniroute config tray enable` δημιουργεί καταχώρηση αυτόματης εκκίνησης· το disable την αφαιρεί
-- [ ] `npm install -g omniroute@<this-version>` εκτελεί το postinstall χωρίς εξαναγκαστική έξοδο
-- [ ] Η διαδρομή ενημέρωσης διατηρεί τις προαιρετικές εξαρτήσεις: τα `omniroute update --apply` και ο αυτόματος ενημερωτής
+- [ ] `agentproxy --tray` εκκινεί στο macOS (το systray2 εγκαθίσταται στο `~/.agentproxy/runtime/`)
+- [ ] `agentproxy --tray` εκκινεί στο Linux (απαιτεί DISPLAY· ομαλό σφάλμα εάν δεν έχει οριστεί)
+- [ ] `agentproxy --tray` εκκινεί στα Windows (PowerShell NotifyIcon, χωρίς επιπλέον δυαδικά αρχεία)
+- [ ] `agentproxy config tray enable` δημιουργεί καταχώρηση αυτόματης εκκίνησης· το disable την αφαιρεί
+- [ ] `npm install -g agentproxy@<this-version>` εκτελεί το postinstall χωρίς εξαναγκαστική έξοδο
+- [ ] Η διαδρομή ενημέρωσης διατηρεί τις προαιρετικές εξαρτήσεις: τα `agentproxy update --apply` και ο αυτόματος ενημερωτής
       εκτελούν `npm install -g … --include=optional` ώστε τα `optionalDependencies` (better-sqlite3,
       keytar, tls-client, και η στοίβα SLM llmlingua: `@atjsh/llmlingua-2@2.0.5`,
       `js-tiktoken`) να επιβιώνουν μετά από ενημέρωση. Το επίπεδο SLM ultra `modelPath` χρειάζεται επίσης το
@@ -380,13 +380,13 @@ npm run build:release
       — τα αυτόνομα bundle ίχνους μεταφέρουν μόνο το transformers, όχι τα δυναμικά εισαγόμενα
       optionals, επομένως χωρίς αυτό ο worker θα φόρτωνε το llmlingua-2 έναντι του transformers της ρίζας
       και το επίπεδο SLM θα αποτύγχανε αθόρυβα.
-- [ ] `omniroute status` λειτουργεί χωρίς `.env` (διαδρομή token CLI, μόνο loopback)
+- [ ] `agentproxy status` λειτουργεί χωρίς `.env` (διαδρομή token CLI, μόνο loopback)
 - [ ] `curl http://localhost:20128/api/shutdown` επιστρέφει 401 (διαρκώς προστατευμένη διαδρομή)
 - [ ] `curl -H "host: evil.com" http://localhost:20128/api/mcp/sse` επιστρέφει 401 (φύλακας loopback)
 - [ ] Το runtime SQLite επιλύεται σε `bundled` κατά την πρώτη εκτέλεση (το bundled δυαδικό αρχείο είναι έγκυρο για την πλατφόρμα)
 - [ ] Το runtime SQLite υποχωρεί σε `runtime` όταν διαγραφεί το `node_modules/better-sqlite3`
 - [ ] Το έξυπνο φίλτρο MCP συμπιέζει πραγματική έξοδο `playwright-mcp browser_snapshot` (μείωση ≥50%)
-- [ ] Όλα τα 10 αρχεία `skills/omniroute*/SKILL.md` είναι δημοσίως προσβάσιμα μέσω raw URL GitHub
+- [ ] Όλα τα 10 αρχεία `skills/agentproxy*/SKILL.md` είναι δημοσίως προσβάσιμα μέσω raw URL GitHub
 - [ ] Ο οδηγός εισαγωγής εμφανίζει το βήμα περιήγησης "How It Works" κατά την αρχική ρύθμιση
 - [ ] Το widget κάλυψης επιπέδου στον κεντρικό πίνακα εμφανίζει τους αριθμούς ρυθμισμένων/ενεργών
 

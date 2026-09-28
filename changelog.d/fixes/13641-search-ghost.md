@@ -1,0 +1,1 @@
+- **fix(db):** search statistics and analytics no longer surface deleted/invalid keyed-provider ghost rows while preserving legitimate keyless and credential-fallback search providers.

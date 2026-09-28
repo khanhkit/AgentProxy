@@ -14,7 +14,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-migration-163-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-migration-163-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.NODE_ENV = "test";
 process.env.DISABLE_SQLITE_AUTO_BACKUP = "true";
@@ -61,7 +61,7 @@ test("migration 163 — a row from the previous schema keeps its data and reads 
   ).run(
     "2026.08.02.1",
     "community",
-    '{"feed":"omniroute-radar"}',
+    '{"feed":"agentproxy-radar"}',
     "sig",
     "2026-08-24T07:00:00.000Z"
   );

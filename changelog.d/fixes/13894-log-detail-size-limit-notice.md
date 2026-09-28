@@ -1,0 +1,1 @@
+- **fix(dashboard):** request-log details now show an explicit payload-size-limit omission notice instead of rendering truncation markers as upstream errors, and documented call-log limits are aligned with runtime defaults.

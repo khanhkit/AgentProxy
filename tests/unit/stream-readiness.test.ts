@@ -711,7 +711,7 @@ test("ensureStreamReadiness preserves sanitized error-only diagnostics on early 
         error: {
           message:
             "UPSTREAM_DETAIL quota exhausted; retry after 2s; empty content " +
-            "Bearer TOP_SECRET /srv/omniroute/handler.ts:42",
+            "Bearer TOP_SECRET /srv/agentproxy/handler.ts:42",
         },
       })}\n\n`,
       `data: ${JSON.stringify({ error: { message: "SECOND_DETAIL" } })}\n\n`,
@@ -752,7 +752,7 @@ test("ensureStreamReadiness preserves sanitized error-only diagnostics on early 
 
   for (const surfaced of [result.reason, body.upstream_details.error.message, warnings[0]]) {
     assert.match(surfaced, /UPSTREAM_DETAIL/);
-    assert.doesNotMatch(surfaced, /SECOND_DETAIL|TOP_SECRET|\/srv\/omniroute\/handler\.ts/);
+    assert.doesNotMatch(surfaced, /SECOND_DETAIL|TOP_SECRET|\/srv\/agentproxy\/handler\.ts/);
   }
 });
 

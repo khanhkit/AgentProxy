@@ -14,7 +14,7 @@ import os from "node:os";
 import path from "node:path";
 
 // Set up isolated DATA_DIR before any imports that touch the DB
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-plan-resolver-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-plan-resolver-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 // Import modules

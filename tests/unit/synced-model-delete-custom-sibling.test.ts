@@ -13,7 +13,7 @@ import path from "node:path";
 
 // Hermetic DB: this test writes into the customModels and
 // syncedAvailableModels namespaces.
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-delete-sibling-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-delete-sibling-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 // The DELETE route is auth-gated; with no INITIAL_PASSWORD and no stored
 // credential, `isAuthenticated` resolves true for local management calls.

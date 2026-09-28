@@ -35,7 +35,7 @@ test("keys add falls through to the local DB only for route-unavailable statuses
   );
 
   // The guard must exclude route-unavailable statuses, otherwise the
-  // openOmniRouteDb() fallback below it is unreachable while the server is up.
+  // openAgentProxyDb() fallback below it is unreachable while the server is up.
   assert.match(
     source,
     /res\.status >= 400 && res\.status < 500 && !isRouteUnavailableStatus\(res\.status\)/,

@@ -216,8 +216,8 @@ test("resolveSystemBrowserExecutable finds Chrome or Edge on this host (or honor
 test("error path does not mention Playwright (packaged backend has no Playwright)", async () => {
   // Import the source string check via the module surface: when no browser is
   // found the message must tell the user to install Chrome/Edge, not Playwright.
-  const prev = process.env.OMNIROUTE_LOGIN_BROWSER_PATH;
-  process.env.OMNIROUTE_LOGIN_BROWSER_PATH = "C:\\definitely-not-a-browser-xyz.exe";
+  const prev = process.env.AGENTPROXY_LOGIN_BROWSER_PATH;
+  process.env.AGENTPROXY_LOGIN_BROWSER_PATH = "C:\\definitely-not-a-browser-xyz.exe";
   try {
     const { startAdobeFireflyBrowserLogin } =
       await import("../../open-sse/services/adobeFireflyBrowserLogin.ts");
@@ -228,14 +228,14 @@ test("error path does not mention Playwright (packaged backend has no Playwright
     // Instead assert the static error string for the no-browser branch:
     const msg =
       "No Chrome or Edge browser found for Adobe Firefly sign-in. " +
-      "Install Google Chrome or Microsoft Edge, or set OMNIROUTE_LOGIN_BROWSER_PATH, " +
+      "Install Google Chrome or Microsoft Edge, or set AGENTPROXY_LOGIN_BROWSER_PATH, " +
       "or paste the IMS Bearer JWT from firefly-3p.ff.adobe.io.";
     assert.equal(msg.includes("Playwright"), false);
     assert.ok(msg.includes("Chrome") || msg.includes("Edge"));
     void startAdobeFireflyBrowserLogin;
   } finally {
-    if (prev === undefined) delete process.env.OMNIROUTE_LOGIN_BROWSER_PATH;
-    else process.env.OMNIROUTE_LOGIN_BROWSER_PATH = prev;
+    if (prev === undefined) delete process.env.AGENTPROXY_LOGIN_BROWSER_PATH;
+    else process.env.AGENTPROXY_LOGIN_BROWSER_PATH = prev;
   }
 });
 

@@ -6,7 +6,7 @@ import {
   removeProviderConnectionByProvider,
   upsertApiKeyProviderConnection,
 } from "../provider-store.mjs";
-import { openOmniRouteDb } from "../sqlite.mjs";
+import { openAgentProxyDb } from "../sqlite.mjs";
 import { loadAvailableProviders } from "../provider-catalog.mjs";
 import { apiFetch, isServerUp, isRouteUnavailableStatus } from "../api.mjs";
 import { t } from "../i18n.mjs";
@@ -194,7 +194,7 @@ export async function runKeysAddCommand(provider, apiKey, opts = {}) {
     } catch {}
   }
 
-  const { db } = await openOmniRouteDb();
+  const { db } = await openAgentProxyDb();
   try {
     const existing = listProviderConnections(db).find(
       (c) => c.provider === providerLower && c.authType === "apikey"
@@ -227,7 +227,7 @@ export async function runKeysListCommand(opts = {}) {
     } catch {}
   }
 
-  const { db } = await openOmniRouteDb();
+  const { db } = await openAgentProxyDb();
   try {
     ensureProviderSchema(db);
     const connections = listProviderConnections(db).filter(
@@ -311,7 +311,7 @@ export async function runKeysRemoveCommand(provider, opts = {}) {
     } catch {}
   }
 
-  const { db } = await openOmniRouteDb();
+  const { db } = await openAgentProxyDb();
   try {
     const changes = removeProviderConnectionByProvider(db, providerLower);
     if (changes > 0) {
@@ -352,10 +352,19 @@ export async function runKeysRegenerateCommand(id, opts = {}) {
     return 1;
   }
   try {
-    const res = await apiFetch(`/api/v1/registered-keys/${encodeURIComponent(id)}/regenerate`, {
+    const encodedId = encodeURIComponent(id);
+    let res = await apiFetch(`/api/v1/registered-keys/${encodedId}/regenerate`, {
       method: "POST",
       retry: false,
+      acceptNotOk: true,
     });
+    if (isRouteUnavailableStatus(res.status)) {
+      res = await apiFetch(`/api/keys/${encodedId}/regenerate`, {
+        method: "POST",
+        retry: false,
+        acceptNotOk: true,
+      });
+    }
     if (!res.ok) {
       console.error(t("common.error", { message: `HTTP ${res.status}` }));
       return 1;
@@ -410,9 +419,17 @@ export async function runKeysRevealCommand(id, opts = {}) {
     return 1;
   }
   try {
-    const res = await apiFetch(`/api/v1/registered-keys/${encodeURIComponent(id)}/reveal`, {
+    const encodedId = encodeURIComponent(id);
+    let res = await apiFetch(`/api/v1/registered-keys/${encodedId}/reveal`, {
       retry: false,
+      acceptNotOk: true,
     });
+    if (isRouteUnavailableStatus(res.status)) {
+      res = await apiFetch(`/api/keys/${encodedId}/reveal`, {
+        retry: false,
+        acceptNotOk: true,
+      });
+    }
     if (!res.ok) {
       console.error(t("common.error", { message: `HTTP ${res.status}` }));
       return 1;

@@ -7,7 +7,7 @@ import { transformToClaude } from "../../open-sse/executors/claude-web/payload.t
 import { __setTlsFetchOverrideForTesting } from "../../open-sse/services/claudeTlsClient.ts";
 
 const originalBrowserFlag = process.env.WEB_COOKIE_USE_BROWSER;
-const originalPoolFlag = process.env.OMNIROUTE_BROWSER_POOL;
+const originalPoolFlag = process.env.AGENTPROXY_BROWSER_POOL;
 
 function textStream(text: string): ReadableStream<Uint8Array> {
   const encoder = new TextEncoder();
@@ -30,7 +30,7 @@ function claudeSseStream(): ReadableStream<Uint8Array> {
 
 function clearBrowserFlags(): void {
   delete process.env.WEB_COOKIE_USE_BROWSER;
-  delete process.env.OMNIROUTE_BROWSER_POOL;
+  delete process.env.AGENTPROXY_BROWSER_POOL;
 }
 
 function restoreEnv(name: string, value: string | undefined): void {
@@ -44,7 +44,7 @@ function restoreEnv(name: string, value: string | undefined): void {
 afterEach(() => {
   __setTlsFetchOverrideForTesting(null);
   restoreEnv("WEB_COOKIE_USE_BROWSER", originalBrowserFlag);
-  restoreEnv("OMNIROUTE_BROWSER_POOL", originalPoolFlag);
+  restoreEnv("AGENTPROXY_BROWSER_POOL", originalPoolFlag);
 });
 
 describe("Claude Web live request alignment", () => {

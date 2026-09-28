@@ -2,8 +2,10 @@
   "title": "Security",
   "pages": [
     "GUARDRAILS",
+    "PRODUCTION_EXPOSURE",
     "PUBLIC_CREDS",
     "ERROR_SANITIZATION",
+    "INFERENCE_AUTH_POSTURE",
     "ROUTE_GUARD_TIERS",
     "BAN_DETECTION",
     "AGENTROUTER_WAF",

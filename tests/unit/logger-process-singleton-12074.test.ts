@@ -51,7 +51,7 @@ function closeLoggerStream(logger: LoggerModule["logger"]): void {
 
 test("logger transport and rotation timer remain process-singletons across HMR module instances", async () => {
   const savedEnv = saveEnv();
-  const testDir = mkdtempSync(join(tmpdir(), "omniroute-logger-singleton-12074-"));
+  const testDir = mkdtempSync(join(tmpdir(), "agentproxy-logger-singleton-12074-"));
   const originalSetInterval = globalThis.setInterval;
   let firstLogger: LoggerModule | undefined;
   let secondLogger: LoggerModule | undefined;
@@ -101,7 +101,7 @@ test("logger transport and rotation timer remain process-singletons across HMR m
     ];
     assert.equal(firstStream, secondStream, "HMR reloads must reuse one pino transport");
 
-    const resource = globalThis.__omnirouteLoggerResource;
+    const resource = globalThis.__agentproxyLoggerResource;
     assert.ok(resource, "expected the process-wide logger resource to be registered");
     const originalClose = resource.close;
     let closeCalls = 0;
@@ -113,7 +113,7 @@ test("logger transport and rotation timer remain process-singletons across HMR m
     await firstLoggerResource.closeSharedLoggerResource();
     await secondLoggerResource.closeSharedLoggerResource();
     assert.equal(closeCalls, 1, "shared logger teardown must be idempotent across HMR modules");
-    assert.equal(globalThis.__omnirouteLoggerResource, undefined);
+    assert.equal(globalThis.__agentproxyLoggerResource, undefined);
   } finally {
     globalThis.setInterval = originalSetInterval;
     firstRotation?.closeLogRotation();

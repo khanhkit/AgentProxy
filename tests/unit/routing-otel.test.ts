@@ -40,11 +40,11 @@ function event(partial: Partial<RoutingEvent> = {}): RoutingEvent {
 
 test("isRoutingOtelEnabled is false without an endpoint", () => {
   assert.equal(isRoutingOtelEnabled({}), false);
-  assert.equal(isRoutingOtelEnabled({ OMNIROUTE_OTEL_ENDPOINT: "   " }), false);
+  assert.equal(isRoutingOtelEnabled({ AGENTPROXY_OTEL_ENDPOINT: "   " }), false);
 });
 
-test("isRoutingOtelEnabled honors OMNIROUTE_OTEL_ENDPOINT and OTLP env", () => {
-  assert.equal(isRoutingOtelEnabled({ OMNIROUTE_OTEL_ENDPOINT: "http://collector:4318" }), true);
+test("isRoutingOtelEnabled honors AGENTPROXY_OTEL_ENDPOINT and OTLP env", () => {
+  assert.equal(isRoutingOtelEnabled({ AGENTPROXY_OTEL_ENDPOINT: "http://collector:4318" }), true);
   assert.equal(
     isRoutingOtelEnabled({ OTEL_EXPORTER_OTLP_ENDPOINT: "https://collector:4318" }),
     true
@@ -52,7 +52,7 @@ test("isRoutingOtelEnabled honors OMNIROUTE_OTEL_ENDPOINT and OTLP env", () => {
 });
 
 test("buildOtlpTracesPayload emits GenAI semantic-convention spans", () => {
-  const payload = buildOtlpTracesPayload([event()], "omniroute-test") as {
+  const payload = buildOtlpTracesPayload([event()], "agentproxy-test") as {
     resourceSpans: Array<{
       scopeSpans: Array<{
         spans: Array<{
@@ -71,11 +71,11 @@ test("buildOtlpTracesPayload emits GenAI semantic-convention spans", () => {
   assert.equal(attrs["gen_ai.usage.input_tokens"], "10");
   assert.equal(attrs["gen_ai.usage.output_tokens"], "20");
   assert.equal(attrs["gen_ai.completion.finish_reason"], "stop");
-  assert.equal(attrs["omniroute.routing.outcome"], "success");
-  assert.equal(attrs["omniroute.routing.status"], "200");
-  assert.equal(attrs["omniroute.routing.retries"], "1");
-  assert.equal(attrs["omniroute.routing.fallback_used"], "1");
-  assert.equal(attrs["omniroute.connection_id"], "conn-1");
+  assert.equal(attrs["agentproxy.routing.outcome"], "success");
+  assert.equal(attrs["agentproxy.routing.status"], "200");
+  assert.equal(attrs["agentproxy.routing.retries"], "1");
+  assert.equal(attrs["agentproxy.routing.fallback_used"], "1");
+  assert.equal(attrs["agentproxy.connection_id"], "conn-1");
   assert.ok(BigInt(span.startTimeUnixNano) > 0n);
 });
 

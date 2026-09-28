@@ -3,7 +3,7 @@
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'omniroute'
+app = 'agentproxy'
 primary_region = 'sin'
 
 [build]
@@ -42,3 +42,8 @@ primary_region = 'sin'
   HOST = "0.0.0.0"
   HOSTNAME = "0.0.0.0"
   BIND = "0.0.0.0"
+
+  # Fly apps are publicly reachable through the edge by design. Require client
+  # API authentication by default for this deployment manifest; local npm/CLI
+  # development keeps its separate local-first default.
+  REQUIRE_API_KEY = "true"

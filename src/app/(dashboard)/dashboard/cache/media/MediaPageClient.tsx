@@ -3,13 +3,13 @@
 import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
-import { IMAGE_PROVIDERS } from "@omniroute/open-sse/config/imageRegistry.ts";
-import { VIDEO_PROVIDERS } from "@omniroute/open-sse/config/videoRegistry.ts";
-import { MUSIC_PROVIDERS } from "@omniroute/open-sse/config/musicRegistry.ts";
+import { IMAGE_PROVIDERS } from "@agentproxy/open-sse/config/imageRegistry.ts";
+import { VIDEO_PROVIDERS } from "@agentproxy/open-sse/config/videoRegistry.ts";
+import { MUSIC_PROVIDERS } from "@agentproxy/open-sse/config/musicRegistry.ts";
 import {
   AUDIO_SPEECH_PROVIDERS,
   AUDIO_TRANSCRIPTION_PROVIDERS,
-} from "@omniroute/open-sse/config/audioRegistry.ts";
+} from "@agentproxy/open-sse/config/audioRegistry.ts";
 import { toProviderModels, type ProviderModelGroup } from "./mediaProviderModels";
 
 type Modality = "image" | "video" | "music" | "speech" | "transcription";

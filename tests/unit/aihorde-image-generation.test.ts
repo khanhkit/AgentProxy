@@ -4,7 +4,7 @@ import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-process.env.DATA_DIR = mkdtempSync(join(tmpdir(), "omniroute-aihorde-image-"));
+process.env.DATA_DIR = mkdtempSync(join(tmpdir(), "agentproxy-aihorde-image-"));
 
 import {
   capHordeN,
@@ -202,6 +202,7 @@ test("an oversized R2 image download is rejected instead of buffered whole", asy
       provider: "aihorde",
       body: { model: "aihorde/FLUX.1-schnell", prompt: "a red fox in snow" },
       credentials: { apiKey: "horde-key" },
+      remoteMediaFetchImpl: globalThis.fetch,
     });
 
     assert.equal(result.success, false);

@@ -4,13 +4,14 @@
 
 import { getDbInstance } from "./core";
 import { backupDbFile } from "./backup";
-import { PROVIDER_ID_TO_ALIAS } from "@omniroute/open-sse/config/providerModels.ts";
+import { PROVIDER_ID_TO_ALIAS } from "@agentproxy/open-sse/config/providerModels.ts";
 import { invalidateDbCache } from "./readCache";
 import { encrypt, decrypt } from "./encryption";
 import { getProxyRegistryGeneration, resolveProxyForScopeFromRegistry } from "./proxies";
 import { getComboModelProvider as getComboEntryProvider } from "@/lib/combos/steps";
 import { requestBodyLimitMbFromEnv } from "@/shared/constants/bodySize";
 import { DEFAULT_RESPONSES_PREVIOUS_RESPONSE_ID_MODE } from "@/shared/constants/responsesPreviousResponseId";
+import { decodeUserinfo } from "@/shared/utils/decodeUserinfo";
 import { type JsonRecord, toRecord } from "./settings/shared";
 import { resolveNoAuthSharedProviderProxy } from "./settings/noAuthProxyFallback";
 
@@ -182,7 +183,7 @@ export async function getSettings() {
     hideEndpointTailscaleFunnel: false,
     hideEndpointNgrokTunnel: false,
     preferClaudeCodeForUnprefixedClaudeModels: isTruthyEnvFlag(
-      process.env.OMNIROUTE_PREFER_CLAUDE_CODE_FOR_UNPREFIXED_CLAUDE_MODELS
+      process.env.AGENTPROXY_PREFER_CLAUDE_CODE_FOR_UNPREFIXED_CLAUDE_MODELS
     ),
     // Opt-in (default "off"): short-circuits Claude Code's `--permission-mode auto`
     // internal security-classifier request with a synthetic `<block>no</block>` ALLOW
@@ -411,8 +412,8 @@ function migrateProxyEntry(value: unknown): JsonRecord | null {
       port:
         url.port ||
         (url.protocol === "socks5:" ? "1080" : url.protocol === "https:" ? "443" : "8080"),
-      username: url.username ? decodeURIComponent(url.username) : "",
-      password: url.password ? decodeURIComponent(url.password) : "",
+      username: url.username ? decodeUserinfo(url.username) : "",
+      password: url.password ? decodeUserinfo(url.password) : "",
     };
   } catch {
     const parts = value.split(":");
@@ -758,7 +759,7 @@ export async function resolveProxyForConnection(
 
   // Step 11: Auto-selection fallback (only when global proxy is enabled)
   try {
-    const { selectWorkingProxyFallback } = await import("@omniroute/open-sse/utils/proxyFallback");
+    const { selectWorkingProxyFallback } = await import("@agentproxy/open-sse/utils/proxyFallback");
     const fallback = await selectWorkingProxyFallback(connectionId);
     if (fallback) {
       // Auto-selected proxies are probed via a URL roundtrip that drops any

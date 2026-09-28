@@ -3,7 +3,7 @@ import assert from "node:assert";
 
 /**
  * Regression guard for #10940: OpenCode rejects a generated config with
- * "Missing key provider.omniroute.models.{model}.limit.output" whenever a
+ * "Missing key provider.agentproxy.models.{model}.limit.output" whenever a
  * model has no catalog metadata (no `context_length`, no
  * `max_output_tokens`) and no existing user override. `limit.output` is a
  * REQUIRED field in OpenCode's v1 provider schema, so it must always be
@@ -45,7 +45,7 @@ describe("opencode config generator — limit.output always emitted (#10940)", (
         apiKey: "sk-test",
       });
       const cfg = JSON.parse(out);
-      const entry = cfg.provider.omniroute.models["metadataless-model"];
+      const entry = cfg.provider.agentproxy.models["metadataless-model"];
       assert.ok(entry, "model entry must exist in the generated config");
       assert.ok(entry.limit, "entry.limit must be present even without catalog metadata");
       assert.strictEqual(
@@ -76,7 +76,7 @@ describe("opencode config generator — limit.output always emitted (#10940)", (
         apiKey: "sk-test",
       });
       const cfg = JSON.parse(out);
-      const entry = cfg.provider.omniroute.models["has-output-meta"];
+      const entry = cfg.provider.agentproxy.models["has-output-meta"];
       assert.strictEqual(entry.limit.output, 4096);
     } finally {
       stub.restore();

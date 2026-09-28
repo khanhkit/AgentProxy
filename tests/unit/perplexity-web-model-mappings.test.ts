@@ -4,7 +4,7 @@ import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-process.env.DATA_DIR = mkdtempSync(join(tmpdir(), "omniroute-perplexity-models-"));
+process.env.DATA_DIR = mkdtempSync(join(tmpdir(), "agentproxy-perplexity-models-"));
 
 const { PROVIDER_MODELS } = await import("../../open-sse/config/providerModels.ts");
 const { MODEL_MAP, THINKING_MAP } =

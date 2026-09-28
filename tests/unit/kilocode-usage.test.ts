@@ -147,7 +147,7 @@ test("success: balance + Kilo Pass both present", async () => {
   for (const call of calls) {
     const headers = call.init.headers as Record<string, string>;
     assert.equal(headers.Authorization, "Bearer oauth-token-123");
-    assert.equal(headers["X-KILOCODE-EDITORNAME"], "OmniRoute");
+    assert.equal(headers["X-KILOCODE-EDITORNAME"], "AgentProxy");
   }
   const quotas = usage.quotas ?? {};
   assert.equal(quotas.balance.remaining, 12.34);

@@ -15,7 +15,7 @@ lastUpdated: 2026-06-28
 
 🌐 **Languages:** 🇺🇸 [English](../../../../guides/USER_GUIDE.md) · 🇸🇦 [ar](../../../ar/docs/guides/USER_GUIDE.md) · 🇦🇿 [az](../../../az/docs/guides/USER_GUIDE.md) · 🇧🇬 [bg](../../../bg/docs/guides/USER_GUIDE.md) · 🇧🇩 [bn](../../../bn/docs/guides/USER_GUIDE.md) · 🇨🇿 [cs](../../../cs/docs/guides/USER_GUIDE.md) · 🇩🇰 [da](../../../da/docs/guides/USER_GUIDE.md) · 🇩🇪 [de](../../../de/docs/guides/USER_GUIDE.md) · 🇬🇷 [el](../../../el/docs/guides/USER_GUIDE.md) · 🇪🇸 [es](../../../es/docs/guides/USER_GUIDE.md) · 🇪🇪 [et](../../../et/docs/guides/USER_GUIDE.md) · 🇮🇷 [fa](../../../fa/docs/guides/USER_GUIDE.md) · 🇫🇮 [fi](../../../fi/docs/guides/USER_GUIDE.md) · 🇫🇷 [fr](../../../fr/docs/guides/USER_GUIDE.md) · 🇮🇪 [ga](../../../ga/docs/guides/USER_GUIDE.md) · 🇮🇳 [gu](../../../gu/docs/guides/USER_GUIDE.md) · 🇮🇱 [he](../../../he/docs/guides/USER_GUIDE.md) · 🇮🇳 [hi](../../../hi/docs/guides/USER_GUIDE.md) · 🇭🇷 [hr](../../../hr/docs/guides/USER_GUIDE.md) · 🇭🇺 [hu](../../../hu/docs/guides/USER_GUIDE.md) · 🇮🇩 [id](../../../id/docs/guides/USER_GUIDE.md) · 🇮🇹 [it](../../../it/docs/guides/USER_GUIDE.md) · 🇯🇵 [ja](../../../ja/docs/guides/USER_GUIDE.md) · 🇰🇷 [ko](../../../ko/docs/guides/USER_GUIDE.md) · 🇱🇹 [lt](../../../lt/docs/guides/USER_GUIDE.md) · 🇱🇻 [lv](../../../lv/docs/guides/USER_GUIDE.md) · 🇮🇳 [mr](../../../mr/docs/guides/USER_GUIDE.md) · 🇲🇾 [ms](../../../ms/docs/guides/USER_GUIDE.md) · 🇳🇱 [nl](../../../nl/docs/guides/USER_GUIDE.md) · 🇳🇴 [no](../../../no/docs/guides/USER_GUIDE.md) · 🇵🇭 [phi](../../../phi/docs/guides/USER_GUIDE.md) · 🇵🇱 [pl](../../../pl/docs/guides/USER_GUIDE.md) · 🇵🇹 [pt](../../../pt/docs/guides/USER_GUIDE.md) · 🇧🇷 [pt-BR](../../../pt-BR/docs/guides/USER_GUIDE.md) · 🇷🇴 [ro](../../../ro/docs/guides/USER_GUIDE.md) · 🇷🇺 [ru](../../../ru/docs/guides/USER_GUIDE.md) · 🇸🇰 [sk](../../../sk/docs/guides/USER_GUIDE.md) · 🇸🇮 [sl](../../../sl/docs/guides/USER_GUIDE.md) · 🇷🇸 [sr](../../../sr/docs/guides/USER_GUIDE.md) · 🇸🇪 [sv](../../../sv/docs/guides/USER_GUIDE.md) · 🇰🇪 [sw](../../../sw/docs/guides/USER_GUIDE.md) · 🇮🇳 [ta](../../../ta/docs/guides/USER_GUIDE.md) · 🇮🇳 [te](../../../te/docs/guides/USER_GUIDE.md) · 🇹🇭 [th](../../../th/docs/guides/USER_GUIDE.md) · 🇹🇷 [tr](../../../tr/docs/guides/USER_GUIDE.md) · 🇺🇦 [uk-UA](../../../uk-UA/docs/guides/USER_GUIDE.md) · 🇵🇰 [ur](../../../ur/docs/guides/USER_GUIDE.md) · 🇻🇳 [vi](../../../vi/docs/guides/USER_GUIDE.md) · 🇨🇳 [zh-CN](../../../zh-CN/docs/guides/USER_GUIDE.md) · 🇹🇼 [zh-TW](../../../zh-TW/docs/guides/USER_GUIDE.md)
 
-Gwida kompleta għall-konfigurazzjoni tal-providers, il-ħolqien ta' combos, l-integrazzjoni ta' għodod CLI, u t-tqegħid ta' OmniRoute.
+Gwida kompleta għall-konfigurazzjoni tal-providers, il-ħolqien ta' combos, l-integrazzjoni ta' għodod CLI, u t-tqegħid ta' AgentProxy.
 
 ---
 
@@ -144,10 +144,10 @@ Models:
   cc/claude-haiku-4-5-20251001
 ```
 
-**Pro Tip:** Uża l-Opus għal komplessi, Sonnet għas-sekondarja. OmniRoute jissorvelja l-kwota għal kull mudell!
+**Pro Tip:** Uża l-Opus għal komplessi, Sonnet għas-sekondarja. AgentProxy jissorvelja l-kwota għal kull mudell!
 
 It-toroq li huma kompatibbli ma' Claude u Claude Code iżommu l-isforz ta' ħsieb "max" għall-mudelli Opus u Sonnet.
-Il-mudelli Haiku ma jirċevux il-livell "max" ta' sforz, għalhekk OmniRoute jagħmel downgrade ta' dik it-talba għal baġit ta' ħsieb qawwi qabel ma jibagħthha 'il quddiem.
+Il-mudelli Haiku ma jirċevux il-livell "max" ta' sforz, għalhekk AgentProxy jagħmel downgrade ta' dik it-talba għal baġit ta' ħsieb qawwi qabel ma jibagħthha 'il quddiem.
 
 #### OpenAI Codex (Plus/Pro)
 
@@ -197,7 +197,7 @@ Models:
 
 #### Kimi K2 ($9/xahar flat)
 
-1. Abbona: [Moonshot AI](https://platform.kimi.ai?aff=omniroute)
+1. Abbona: [Moonshot AI](https://platform.kimi.ai?aff=agentproxy)
 2. Ikseb API key → Dashboard → Add API Key
 
 **Uża:** `kimi/kimi-k2.5` — **Pro Tip:** $9 fissi fix-xahar għal 10M tokens = spża effettiva ta' $0.90/1M!
@@ -268,16 +268,16 @@ Cost: currently listed as $0; terms and availability may change
 
 ### Cursor IDE
 
-**Użu ta' Cursor bħala klijent OmniRoute** (instradi chat ta' Cursor permezz ta' OmniRoute):
+**Użu ta' Cursor bħala klijent AgentProxy** (instradi chat ta' Cursor permezz ta' AgentProxy):
 
 ```
 Settings → Models → Advanced:
   OpenAI API Base URL: http://localhost:20128/v1
-  OpenAI API Key: [mill-dashboard tal-omniroute]
+  OpenAI API Key: [mill-dashboard tal-agentproxy]
   Model: cc/claude-opus-4-7
 ```
 
-**Użu ta' OmniRoute bħala fornitur ta' Cursor** (OmniRoute jistenna lill-Cursor upstream): prefer
+**Użu ta' AgentProxy bħala fornitur ta' Cursor** (AgentProxy jistenna lill-Cursor upstream): prefer
 **Dashboard → Providers → Cursor → Login with Cursor**. F'Docker, ara
 [`docs/providers/CURSOR-DOCKER.md`](../providers/CURSOR-DOCKER.md).
 
@@ -289,7 +289,7 @@ Edit `~/.claude/settings.json`:
 {
   "env": {
     "ANTHROPIC_BASE_URL": "http://localhost:20128",
-    "ANTHROPIC_AUTH_TOKEN": "your-omniroute-api-key"
+    "ANTHROPIC_AUTH_TOKEN": "your-agentproxy-api-key"
   }
 }
 ```
@@ -300,7 +300,7 @@ Użu l-endpoint root kompatibbli ma' Claude hawn. Tagħlaqx `/v1` ma' `ANTHROPIC
 
 ```bash
 export OPENAI_BASE_URL="http://localhost:20128"
-export OPENAI_API_KEY="your-omniroute-api-key"
+export OPENAI_API_KEY="your-agentproxy-api-key"
 codex "your prompt"
 ```
 
@@ -312,14 +312,14 @@ Edit `~/.openclaw/openclaw.json`:
 {
   "agents": {
     "defaults": {
-      "model": { "primary": "omniroute/if/kimi-k2.7-code" }
+      "model": { "primary": "agentproxy/if/kimi-k2.7-code" }
     }
   },
   "models": {
     "providers": {
-      "omniroute": {
+      "agentproxy": {
         "baseUrl": "http://localhost:20128/v1",
-        "apiKey": "your-omniroute-api-key",
+        "apiKey": "your-agentproxy-api-key",
         "api": "openai-completions",
         "models": [{ "id": "if/kimi-k2.7-code", "name": "Kimi K2.7 Code" }]
       }
@@ -346,28 +346,28 @@ Model: cc/claude-opus-4-7
 ### npm globali install (Rikomandat)
 
 ```bash
-npm install -g omniroute
+npm install -g agentproxy
 
 # Oħloq direttorju tal-konfigurazzjoni
-mkdir -p ~/.omniroute
+mkdir -p ~/.agentproxy
 
 # Oħloq fajl .env (ara .env.example)
-cp .env.example ~/.omniroute/.env
+cp .env.example ~/.agentproxy/.env
 
 # Beda s-server
-omniroute
+agentproxy
 # Jew b'port abbinali:
-omniroute --port 3000
+agentproxy --port 3000
 ```
 
-L-CLI awtomatikament jgħabbi `.env` minn `~/.omniroute/.env` jew `./.env`.
+L-CLI awtomatikament jgħabbi `.env` minn `~/.agentproxy/.env` jew `./.env`.
 
 ### Triq il-tray
 
-Bedal OmniRoute fil-tray tas-sistema:
+Bedal AgentProxy fil-tray tas-sistema:
 
 ```bash
-omniroute serve --tray
+agentproxy serve --tray
 ```
 
 Il-kmand jirritorna wara li s-server u t-tray ikunu lesti.
@@ -381,7 +381,7 @@ Uża l-menu tal-tray għal dawn l-azzjonijiet:
 - Ftaħ l-dashboard.
 - Ftaħ `/dashboard/logs`.
 - Biddel l-awto-bidu.
-- Waqqaf OmniRoute.
+- Waqqaf AgentProxy.
 
 Tagħmilx `--tray` ma' dawn l-għażliet:
 
@@ -394,7 +394,7 @@ Dawn il-mudelli jeħtieġu proprjetà differenti tal-proċess.
 Ekwiżizzjoni ta' bidu fil-login li jmiss tal-magna:
 
 ```bash
-omniroute autostart enable
+agentproxy autostart enable
 ```
 
 L-awto-bidu juża t-tray mode fuq macOS, Windows, u sessions Linux b'interfaċċi grafika. Linux Headless juża s-servizz attwali tal-systemd user.
@@ -402,29 +402,29 @@ L-awto-bidu juża t-tray mode fuq macOS, Windows, u sessions Linux b'interfaċċ
 Tixħirx l-awto-bidu fil-login:
 
 ```bash
-omniroute autostart disable
+agentproxy autostart disable
 ```
 
 ### Tneħħija
 
-Meta m'għadekx teħtieġ OmniRoute, noffrulek żewġ scripts ħfief għat-tneħħija nadifa:
+Meta m'għadekx teħtieġ AgentProxy, noffrulek żewġ scripts ħfief għat-tneħħija nadifa:
 
 | Kmand                    | Azzjoni                                                                                         |
 | ------------------------ | ----------------------------------------------------------------------------------------------- |
-| `npm run uninstall`      | Jneħħi l-app tal-sistema iżda **jżomm il-DB u l-konfigurazzjonijiet tiegħek** f'`~/.omniroute`. |
+| `npm run uninstall`      | Jneħħi l-app tal-sistema iżda **jżomm il-DB u l-konfigurazzjonijiet tiegħek** f'`~/.agentproxy`. |
 | `npm run uninstall:full` | Jneħħi l-app U **jħassar permanentement il-konfigurazzjonijiet, ċavetti, u databases kollha**.  |
 
-> Nota: Biex tħaddem dawn il-kmandi, mur fil-folder tal-proġett OmniRoute (jekk klonjajtu) u ħaddemhom. Barra minn hekk, jekk installat globalment, tista' sempliċement tħaddem `npm uninstall -g omniroute`.
+> Nota: Biex tħaddem dawn il-kmandi, mur fil-folder tal-proġett AgentProxy (jekk klonjajtu) u ħaddemhom. Barra minn hekk, jekk installat globalment, tista' sempliċement tħaddem `npm uninstall -g agentproxy`.
 
 ### Twaqqif VPS
 
 ```bash
-git clone https://github.com/diegosouzapw/OmniRoute.git
-cd OmniRoute && npm install && npm run build
+git clone https://github.com/khanhkit/AgentProxy.git
+cd AgentProxy && npm install && npm run build
 
 export JWT_SECRET="your-secure-secret-change-this"
 export INITIAL_PASSWORD="your-password"
-export DATA_DIR="/var/lib/omniroute"
+export DATA_DIR="/var/lib/agentproxy"
 export PORT="20128"
 export HOSTNAME="0.0.0.0"
 export NODE_ENV="production"
@@ -432,7 +432,7 @@ export NEXT_PUBLIC_BASE_URL="http://localhost:20128"
 export API_KEY_SECRET="endpoint-proxy-api-key-secret"
 
 npm run start
-# Jew: pm2 start npm --name omniroute -- start
+# Jew: pm2 start npm --name agentproxy -- start
 ```
 
 ### Twaqqif PM2 (RAM Baxxa)
@@ -441,10 +441,10 @@ Għal servers b'RAM limitata, uża l-għażla tal-limitu tal-memorja:
 
 ```bash
 # B'limitu ta' 512MB (default)
-pm2 start npm --name omniroute -- start
+pm2 start npm --name agentproxy -- start
 
 # Jew b'limitu tal-memorja abbinali
-OMNIROUTE_MEMORY_MB=512 pm2 start npm --name omniroute -- start
+AGENTPROXY_MEMORY_MB=512 pm2 start npm --name agentproxy -- start
 
 # Jew uża ecosystem.config.js
 pm2 start ecosystem.config.js
@@ -456,12 +456,12 @@ Oħloq `ecosystem.config.js`:
 module.exports = {
   apps: [
     {
-      name: "omniroute",
+      name: "agentproxy",
       script: "npm",
       args: "start",
       env: {
         NODE_ENV: "production",
-        OMNIROUTE_MEMORY_MB: "512",
+        AGENTPROXY_MEMORY_MB: "512",
         JWT_SECRET: "your-secret",
         INITIAL_PASSWORD: "your-password",
       },
@@ -476,24 +476,24 @@ module.exports = {
 
 ```bash
 # Bini ta' stampa (default = runner-cli b'codex/claude/droid installat minn qabel)
-docker build -t omniroute:cli .
+docker build -t agentproxy:cli .
 
 # Mod portable (rikomandat)
-docker run -d --name omniroute -p 20128:20128 --env-file ./.env -v omniroute-data:/app/data omniroute:cli
+docker run -d --name agentproxy -p 20128:20128 --env-file ./.env -v agentproxy-data:/app/data agentproxy:cli
 ```
 
 Għall-mod host-integrated b'binaries CLI, ara t-taqsima Docker fil-dokumentazzjoni ewlenija.
 
 ### Void Linux (xbps-src)
 
-L-utenti tal-Void Linux jistgħu jippakkjaw u jinstallaw OmniRoute b'mod nattiv jużand il-framework tal-kross-kompilazzjoni `xbps-src`. Dan jawtomatizza l-bini standalone tal-Node/js flimkien mal-`better-sqlite3` native bindings meħtieġa.
+L-utenti tal-Void Linux jistgħu jippakkjaw u jinstallaw AgentProxy b'mod nattiv jużand il-framework tal-kross-kompilazzjoni `xbps-src`. Dan jawtomatizza l-bini standalone tal-Node/js flimkien mal-`better-sqlite3` native bindings meħtieġa.
 
 <details>
 <summary><b>Ara l-mudell xbps-src</b></summary>
 
 ```bash
-# Fajl tal-mudell għal 'omniroute'
-pkgname=omniroute
+# Fajl tal-mudell għal 'agentproxy'
+pkgname=agentproxy
 version=3.8.0
 revision=1
 hostmakedepends="nodejs python3 make"
@@ -501,11 +501,11 @@ depends="openssl"
 short_desc="Universal AI gateway with smart routing for multiple LLM providers"
 maintainer="zenobit <zenobit@disroot.org>"
 license="MIT"
-homepage="https://github.com/diegosouzapw/OmniRoute"
-distfiles="https://github.com/diegosouzapw/OmniRoute/archive/refs/tags/v${version}.tar.gz"
+homepage="https://github.com/khanhkit/AgentProxy"
+distfiles="https://github.com/khanhkit/AgentProxy/archive/refs/tags/v${version}.tar.gz"
 checksum=009400afee90a9f32599d8fe734145cfd84098140b7287990183dde45ae2245b
-system_accounts="_omniroute"
-omniroute_homedir="/var/lib/omniroute"
+system_accounts="_agentproxy"
+agentproxy_homedir="/var/lib/agentproxy"
 export NODE_ENV=production
 export npm_config_engine_strict=false
 export npm_config_loglevel=error
@@ -555,26 +555,26 @@ do_check() {
 }
 
 do_install() {
-	vmkdir usr/lib/omniroute/.next
-	vcopy .next/standalone/. usr/lib/omniroute/.next/standalone
+	vmkdir usr/lib/agentproxy/.next
+	vcopy .next/standalone/. usr/lib/agentproxy/.next/standalone
 
 	# Prevjeni t-tneħħija ta' direttorji vojta tal-app router Next.js mill-hook post-install
 	for _d in \
 		.next/standalone/.next/server/app/dashboard \
 		.next/standalone/.next/server/app/dashboard/settings \
 		.next/standalone/.next/server/app/dashboard/providers; do
-		touch "${DESTDIR}/usr/lib/omniroute/${_d}/.keep"
+		touch "${DESTDIR}/usr/lib/agentproxy/${_d}/.keep"
 	done
 
-	cat > "${WRKDIR}/omniroute" <<'EOF'
+	cat > "${WRKDIR}/agentproxy" <<'EOF'
 #!/bin/sh
 export PORT="${PORT:-20128}"
-export DATA_DIR="${DATA_DIR:-${XDG_DATA_HOME:-${HOME}/.local/share}/omniroute}"
+export DATA_DIR="${DATA_DIR:-${XDG_DATA_HOME:-${HOME}/.local/share}/agentproxy}"
 export APP_LOG_TO_FILE="${APP_LOG_TO_FILE:-false}"
 mkdir -p "${DATA_DIR}"
-exec node /usr/lib/omniroute/.next/standalone/server.js "$@"
+exec node /usr/lib/agentproxy/.next/standalone/server.js "$@"
 EOF
-	vbin "${WRKDIR}/omniroute"
+	vbin "${WRKDIR}/agentproxy"
 }
 
 post_install() {
@@ -588,14 +588,14 @@ post_install() {
 
 | Varjabbli                               | Default                              | Deskrizzjoni                                                                                                                                     |
 | --------------------------------------- | ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `JWT_SECRET`                            | `omniroute-default-secret-change-me` | Sigriet għat-tiffirma tal-JWT (**biddel fil-produzzjoni**)                                                                                       |
+| `JWT_SECRET`                            | `agentproxy-default-secret-change-me` | Sigriet għat-tiffirma tal-JWT (**biddel fil-produzzjoni**)                                                                                       |
 | `INITIAL_PASSWORD`                      | `CHANGEME`                           | Password tal-ewwel login                                                                                                                         |
-| `DATA_DIR`                              | `~/.omniroute`                       | Direttorju tad-dejta (db, użu, logħob)                                                                                                           |
+| `DATA_DIR`                              | `~/.agentproxy`                       | Direttorju tad-dejta (db, użu, logħob)                                                                                                           |
 | `PORT`                                  | default tal-frawwerk                 | Port tas-servizz (`20128` fil-eżempji)                                                                                                           |
 | `HOSTNAME`                              | default tal-frawwerk                 | Jorbot il-host (Docker default għal `0.0.0.0`)                                                                                                   |
 | `NODE_ENV`                              | default runtime                      | Waħħal `production` għat-twaqqif                                                                                                                 |
 | `NEXT_PUBLIC_BASE_URL`                  | `http://localhost:20128`             | URL pubbliku bażiċi murija lill-dashboard u esposta lis-sserver (tissostitwixxi l-`BASE_URL` antika)                                             |
-| `NEXT_PUBLIC_CLOUD_URL`                 | `https://omniroute.dev`              | URL bażiċi tal-endpoint tal-sinkronizzazzjoni cloud (tissostitwixxi l-`CLOUD_URL` antika)                                                        |
+| `NEXT_PUBLIC_CLOUD_URL`                 | `https://agentproxy.example.com`              | URL bażiċi tal-endpoint tal-sinkronizzazzjoni cloud (tissostitwixxi l-`CLOUD_URL` antika)                                                        |
 | `API_KEY_SECRET`                        | `endpoint-proxy-api-key-secret`      | Sigriet HMAC għall-API keys ġenerati                                                                                                             |
 | `REQUIRE_API_KEY`                       | `false`                              | Infurza Bearer API key fuq `/v1/*`                                                                                                               |
 | `ALLOW_API_KEY_REVEAL`                  | `false`                              | Tippermetti lill-utenti tal-dashboard awtentikati jikxfu l-valuri kompluti tal-API key洢żżati meta jitolbuhom                                    |
@@ -605,7 +605,7 @@ post_install() {
 | `AUTH_COOKIE_SECURE`                    | `false`                              | Tifforza cookie `Secure` tal-awtentikazzjoni (wara reverse proxy HTTPS)                                                                          |
 | `CLOUDFLARED_BIN`                       | ma twarrabx                          | Uża binarju `cloudflared` eżistenti minflok l-downloads immaniġġjati                                                                             |
 | `CLOUDFLARED_PROTOCOL`                  | `http2`                              | Trasport għat-Quick Tunnels immaniġġjati (`http2`, `quic`, jew `auto`)                                                                           |
-| `OMNIROUTE_MEMORY_MB`                   | `512`                                | Limitu tal-heap tal-Node.js f'MB                                                                                                                 |
+| `AGENTPROXY_MEMORY_MB`                   | `512`                                | Limitu tal-heap tal-Node.js f'MB                                                                                                                 |
 | `PROMPT_CACHE_MAX_SIZE`                 | `50`                                 | Daqs massimu ta' dħul tal-cache tal-prompt                                                                                                       |
 | `SEMANTIC_CACHE_MAX_SIZE`               | `100`                                | Daqs massimu ta' dħul tal-cache semantiku                                                                                                        |
 
@@ -664,7 +664,7 @@ Għar-riferenza sħiħa tal-varjabbli tal-ambjent, ara l-[README](../README.md).
 
 **Provajderi kompatibbli oħra** (magħżula): `cohere`, `databricks`, `snowflake`, `together`, `vertex`, `alibaba`, `alibaba-cn`, `bedrock` (permezz ta' `aws-bedrock`), `azure-ai`, `openrouter` (katalaġi pass-through), `siliconflow`, `hyperbolic`, `huggingface`, `featherless-ai`, `cloudflare-ai`, `scaleway`, `deepinfra`, `vercel-ai-gateway`, `bazaarlink`, `friendliai`, `nous-research`, `reka`, `volcengine`, `ai21`, `gigachat`. Kull wieħed iżomm il-lista tal-mudelli tiegħu stess fil-`providerRegistry.ts` u jista' jiġi ssinkronizzat awtomatikament meta l-provajder jiżvela endpoint `/models`.
 
-**Nota dwar l-IDs tal-mudelli:** OmniRoute juża IDs nattivi tal-provajder (`claude-opus-4-8`, `gpt-5.5`, `glm-5.1`, `MiniMax-M2.7`, `kimi-k2.5`, `groq-4.20-0309-reasoning`). Xi IDs jinkludu versjonijiet bil-punti għaliex hekk qed tistenna l-API ta' fuq. Jekk mudelli mhux elenkat hawn fuq, ħdimt `omniroute models --search <term>` jew sejjaħ `GET /api/models/catalog` biex tikkonferma d-disponibbiltà.
+**Nota dwar l-IDs tal-mudelli:** AgentProxy juża IDs nattivi tal-provajder (`claude-opus-4-8`, `gpt-5.5`, `glm-5.1`, `MiniMax-M2.7`, `kimi-k2.5`, `groq-4.20-0309-reasoning`). Xi IDs jinkludu versjonijiet bil-punti għaliex hekk qed tistenna l-API ta' fuq. Jekk mudelli mhux elenkat hawn fuq, ħdimt `agentproxy models --search <term>` jew sejjaħ `GET /api/models/catalog` biex tikkonferma d-disponibbiltà.
 
 </details>
 
@@ -693,29 +693,29 @@ Noti:
 - OpenRouter u fornituri kompatibbli mal-OpenAI/Anthropic humaġġestiti biss mill-**Mudelli Disponibbli**. It-tħ添, importazzjoni u sinkronizzazzjoni awtomatika kollha jispiċċaw fl-istess lista tal-mudelli disponibbli, hekk li m'hemm l-ebda sezzjoni separata għal Mudelli personalizzati għal dawk il-fornituri.
 - Is-Sezzjoni **Mudelli personalizzati** hija maħsuba għal fornituri li ma jurux importazzjonijiet tal-mudelli disponibbliġestiti.
 
-### Katina ta' Peers OmniRoute
+### Katina ta' Peers AgentProxy
 
-Tista' tiġi miżjuda peer OmniRoute oħra bħala fornititur **Kompatibbli mal-OpenAI personalizzat**. Uża l-URL bażiċi `/v1` tal-peer u API key dedikata, b'privileġġ minimu, mogħtija minn dik il-peer.
+Tista' tiġi miżjuda peer AgentProxy oħra bħala fornititur **Kompatibbli mal-OpenAI personalizzat**. Uża l-URL bażiċi `/v1` tal-peer u API key dedikata, b'privileġġ minimu, mogħtija minn dik il-peer.
 
 Għal katini reċiproki jew multi-hop, fil-permess il-guard tal-loop fuq kull bieb:
 
 ```bash
 # bieb-a
-OMNIROUTE_INSTANCE_ID=gateway-a
-OMNIROUTE_PEER_URLS=http://gateway-b:20128/v1
-OMNIROUTE_PEER_MAX_HOPS=4
+AGENTPROXY_INSTANCE_ID=gateway-a
+AGENTPROXY_PEER_URLS=http://gateway-b:20128/v1
+AGENTPROXY_PEER_MAX_HOPS=4
 ```
 
 ```bash
 # bieb-b
-OMNIROUTE_INSTANCE_ID=gateway-b
-OMNIROUTE_PEER_URLS=http://gateway-a:20128/v1
-OMNIROUTE_PEER_MAX_HOPS=4
+AGENTPROXY_INSTANCE_ID=gateway-b
+AGENTPROXY_PEER_URLS=http://gateway-a:20128/v1
+AGENTPROXY_PEER_MAX_HOPS=4
 ```
 
-It-talbiet biss li jintbagħtu lejn URL peer li huwa ċar permess jirċievu l-intestatura `X-OmniRoute-Peer-Trace`. Bieb jirrifjuta ID tal-istanza ripetut jew baġit hop fi tmiemu b'HTTP `508 Loop Detected`; il-fornituri upstream ordinarji ma jirċievu l-ebda metadata tal-peer.
+It-talbiet biss li jintbagħtu lejn URL peer li huwa ċar permess jirċievu l-intestatura `X-AgentProxy-Peer-Trace`. Bieb jirrifjuta ID tal-istanza ripetut jew baġit hop fi tmiemu b'HTTP `508 Loop Detected`; il-fornituri upstream ordinarji ma jirċievu l-ebda metadata tal-peer.
 
-Il-katina tal-peers mhijiex replikazzjoni tal-base tad-data jew failover tal-host. Kull bieb iżżomm stat indipendenti SQLite, buffers, kontijiet tal-miżura, u sessions. Uża prokri tal-inverżjoni b'saħħa ċċekkjata jew client failover għal disponibbiltà attiva/passiva jew attiva/attiva, u qatt twaħħal base tad-data SQLite f'ħafna istanzi OmniRoute qed jitħaddtu.
+Il-katina tal-peers mhijiex replikazzjoni tal-base tad-data jew failover tal-host. Kull bieb iżżomm stat indipendenti SQLite, buffers, kontijiet tal-miżura, u sessions. Uża prokri tal-inverżjoni b'saħħa ċċekkjata jew client failover għal disponibbiltà attiva/passiva jew attiva/attiva, u qatt twaħħal base tad-data SQLite f'ħafna istanzi AgentProxy qed jitħaddtu.
 
 ### Rotot tal-Furnitur Ddedikati
 
@@ -766,7 +766,7 @@ Jirritorna mudelli maġguppati skont il-furnitur b'tipi (`chat`, `embedding`, `i
 - Disponibbli fil-**Dashboard → Tmiem** għal Docker u deplojamenti oħra host personali
 - Joħloq URL temporanju `https://*.trycloudflare.com` li jwassal lejn il-punt ta' tilħiq attwali mal-OpenAI kompatibbli `/v1`
 - L-ewwel tiftaħ tinstalla `cloudflared` biss meta jkun meħtieġ; tiftaħiet wara jużaw l-istess binarjuġestit
-- Tunnel Quick mhumix awtomatikament restawrati wara restart ta' OmniRoute jew kontenitur; terġa' tiftaħhom mid-dashbord meta tixtieq
+- Tunnel Quick mhumix awtomatikament restawrati wara restart ta' AgentProxy jew kontenitur; terġa' tiftaħhom mid-dashbord meta tixtieq
 - URLs tal-tunnel huma temporanji u jinbidlu kull meta tieqaf/tibda t-tunnel
 - Tunnel Quick ġestiti jgħaddu b'ħin transport HTTP/2 biex jitwarrbu twigganijiet tal-buffer QUIC UDP fil-konteniturijiet ristretti
 - Isettja `CLOUDFLARED_PROTOCOL=quic` jew `auto` jekk trid toverride l-għażla tal-transport ġestita
@@ -775,15 +775,15 @@ Jirritorna mudelli maġguppati skont il-furnitur b'tipi (`chat`, `embedding`, `i
 
 ### Intelligenza tal-Bieb LLM (Fażi 9)
 
-- **Buffer Semantiku** — Jħaffer b'mod awtomatiku risponsi mhux stramming, b'temperature=0 (tħares b' `X-OmniRoute-No-Cache: true`)
+- **Buffer Semantiku** — Jħaffer b'mod awtomatiku risponsi mhux stramming, b'temperature=0 (tħares b' `X-AgentProxy-No-Cache: true`)
 - **Idempotenzi tal-Talba** — Jinfirek talbiet fi żmien 5s permezz ta' `Idempotency-Key` jew intestatura `X-Request-Id`
-- **Traċċar tal-Progress** — Fil-permess SSE `event: progress` events permezz ta' intestatura `X-OmniRoute-Progress: true`
+- **Traċċar tal-Progress** — Fil-permess SSE `event: progress` events permezz ta' intestatura `X-AgentProxy-Progress: true`
 
 ---
 
 ### Torkbar tal-Vertu
 
-Aċċess permezz **Dashboard → Vertu**. Debug u viżwalizza kif OmniRoute jivverifika talbiet API bejn il-fornituri.
+Aċċess permezz **Dashboard → Vertu**. Debug u viżwalizza kif AgentProxy jivverifika talbiet API bejn il-fornituri.
 
 | Mod                    | Skop                                                                                              |
 | ---------------------- | ------------------------------------------------------------------------------------------------- |
@@ -836,7 +836,7 @@ Għal affinità ta' sessione barra (per eżempju, aġenti Claude Code/Codex wara
 X-Session-Id: your-session-key
 ```
 
-OmniRoute jirċievi wkoll `x_session_id` u jirritorna l-ċavetta effettiva tas-sessione f'`X-OmniRoute-Session-Id`.
+AgentProxy jirċievi wkoll `x_session_id` u jirritorna l-ċavetta effettiva tas-sessione f'`X-AgentProxy-Session-Id`.
 
 Jekk tuża Nginx u tibgħat intestaturi b'underscore, fil-permess:
 
@@ -872,7 +872,7 @@ Chain: production-fallback
 
 Konfigurazzjoni permezz **Dashboard → Settings → Reżiljenza**.
 
-OmniRoute jimplimenta reżiljenza ta' livell tal-furnitur b'ħames komponenti:
+AgentProxy jimplimenta reżiljenza ta' livell tal-furnitur b'ħames komponenti:
 
 1. **Queue tal-Talba u Pacing** — Formazzjoni tat-talba ta' livell tas-sistema:
    - **Talbiet Fil-Minuta (RPM)** — Talbiet massimi fil-minuta għal kull kont
@@ -897,7 +897,7 @@ OmniRoute jimplimenta reżiljenza ta' livell tal-furnitur b'ħames komponenti:
 
    L-istat runtime tal-kuritur tal-furnitur jidher biss fil-**Dashboard → Saħħa**.
 
-4 Stenna għal Cooldown — Jekk kull konnessjoni kandidata diġa' tkun qed tistenna, OmniRoute jista' jistenna l-ewwel cooldown u jerġa' jipprova l-istess talba tal-client awtomatikament.
+4 Stenna għal Cooldown — Jekk kull konnessjoni kandidata diġa' tkun qed tistenna, AgentProxy jista' jistenna l-ewwel cooldown u jerġa' jipprova l-istess talba tal-client awtomatikament.
 
 5. **Għarfien Awtomatiku tal-Miżura** — Meta fornituri upstream jirritornaw tnoss tal-attendi ċari, id-dowżuni tagħhom jaħbu fuq il-cooldown tal-Ġonta lokali meta l-impostazzjoni tkun fil-permess.
 
@@ -931,7 +931,7 @@ curl -X POST http://localhost:20128/api/db-backups/import \
 
 **Każijiet tal-Użu:**
 
-- Tmigra OmniRoute bejn il-magni
+- Tmigra AgentProxy bejn il-magni
 - Oħloq backups esterni għal tħaris tad-diżastri
 - Tqassam il-konfigurazzjonijiet bejn membri tal-tim (esporta kollha → qassam l-arċiv)
 
@@ -983,7 +983,7 @@ curl http://localhost:20128/api/usage/budget
 
 ### Traskrizzjoni tal-Awdjo
 
-OmniRoute jappoġġja traskrizzjoni tal-awdjo permezz tal-punt ta' tilħiq kompatibbli mal-OpenAI:
+AgentProxy jappoġġja traskrizzjoni tal-awdjo permezz tal-punt ta' tilħiq kompatibbli mal-OpenAI:
 
 ```bash
 POST /v1/audio/transcriptions
@@ -1049,7 +1049,7 @@ It-timeouts tal-kombo intrist minn it-timeout tal-talba attwali b'mod default. U
 
 Ottimizzazzjonijiet tal-kombo b'latebja zero huma fil-permess. Ħalli **Ottimizzazzjonijiet b'latebja zero** mhux fil-permess biex tevita li dawn il-karatteristiċi tal-atebjija jiġru mal-miri tal-fallback, jaqsmu miri skont l-istorja tal-TTFT, jew jissikksaw talbiet fallback; jekk jitlesta jippermetti hedging konfigurat, skip predictor tal-TTFT, u s-sikksar proattiv tal-fallback biex itttrasferixxi l-fedelta tal-rotja/talba għal atebja eqsar ta' pont.
 
-Fil-permess **Buffer tal-Token tar-Raguna** meta fornituri upstream jeħtieġu limiti stretti `max_tokens` / `maxOutputTokens`. Meta miftuħ, il-rotja tal-kombo iżżid biss spazju ta' prijorità tal-mudell tar-raguna għal mudelli b'limitu magħruf tal-output u tħalli l-limitu tal-token tal-client inbidel meta l-valur sikur tal-buffer jaqbeż dak il-limitu. Jekk il-limitu tal-client diġa' huwa 'l fuq minn limitu magħruf, OmniRoute iwaħħalhu għal dak il-limitu qabel ma jibagħat it-talba upstream.
+Fil-permess **Buffer tal-Token tar-Raguna** meta fornituri upstream jeħtieġu limiti stretti `max_tokens` / `maxOutputTokens`. Meta miftuħ, il-rotja tal-kombo iżżid biss spazju ta' prijorità tal-mudell tar-raguna għal mudelli b'limitu magħruf tal-output u tħalli l-limitu tal-token tal-client inbidel meta l-valur sikur tal-buffer jaqbeż dak il-limitu. Jekk il-limitu tal-client diġa' huwa 'l fuq minn limitu magħruf, AgentProxy iwaħħalhu għal dak il-limitu qabel ma jibagħat it-talba upstream.
 
 ---
 
@@ -1072,7 +1072,7 @@ Aċċess permezz **Dashboard → Saħħa**. Ġabra real-time tal-istat tas-siste
 
 ## 🤖 Awto-Routjar (B’ebda konfigurazzjoni)
 
-OmniRoute jittrasmetti b’**awto-router mmexxi b’iskor** li jagħżel l-aħjar mudell għal kull talba fost il-provdituri kollha konnessi — l-ebda kombo x’tżomm. Agħti biss it-talba b’wieħed mill-prefissi `auto/*` u l-Omniroute se jkabbar kombo virtwali fuq il-post, billi jskora l-kandidati skont id-dewmien, l-ispiża, ir-rata ta’ suċċess, l-adattament tal-kuntest, l-adattament tal-mudell għall-impjiegi, it-telf reċenti, il-kwota, u l-kundizzjonijiet tal-ksur tal-ċirkuwitu.
+AgentProxy jittrasmetti b’**awto-router mmexxi b’iskor** li jagħżel l-aħjar mudell għal kull talba fost il-provdituri kollha konnessi — l-ebda kombo x’tżomm. Agħti biss it-talba b’wieħed mill-prefissi `auto/*` u l-AgentProxy se jkabbar kombo virtwali fuq il-post, billi jskora l-kandidati skont id-dewmien, l-ispiża, ir-rata ta’ suċċess, l-adattament tal-kuntest, l-adattament tal-mudell għall-impjiegi, it-telf reċenti, il-kwota, u l-kundizzjonijiet tal-ksur tal-ċirkuwitu.
 
 | Prefiss        | Jottimizza għal                                                                                                      |
 | -------------- | -------------------------------------------------------------------------------------------------------------------- |
@@ -1088,7 +1088,7 @@ Eżempju:
 
 ```bash
 curl -X POST http://localhost:20128/v1/chat/completions \
-  -H "Authorization: Bearer $OMNIROUTE_KEY" \
+  -H "Authorization: Bearer $AGENTPROXY_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "auto/coding",
@@ -1103,13 +1103,13 @@ L-awto-router huwa deskritt b’mod sħiħ f’[AUTO-COMBO.md](../routing/AUTO-C
 
 ## 🔌 Integrazzjoni MCP & A2A
 
-L-Omniroute huwa kemm **server MCP** (Protokoll tal-Kuntest tal-Mudell) kif ukoll **server A2A** (Agent-to-Agent JSON-RPC 2.0). Kwalunkwe IDE jew provditur tal-aġenti kompatibbli mal-MCP jista’ sejjaħ għall-għodod tal-Omniroute direttament — l-ebda wrapper addizzjonali meħtieġ.
+L-AgentProxy huwa kemm **server MCP** (Protokoll tal-Kuntest tal-Mudell) kif ukoll **server A2A** (Agent-to-Agent JSON-RPC 2.0). Kwalunkwe IDE jew provditur tal-aġenti kompatibbli mal-MCP jista’ sejjaħ għall-għodod tal-AgentProxy direttament — l-ebda wrapper addizzjonali meħtieġ.
 
 ### Trasporti MCP
 
 - **SSE**: `http://localhost:20128/api/mcp/sse`
 - **Streamable HTTP**: `http://localhost:20128/api/mcp/stream`
-- **stdio**: `omniroute --mcp` (għal plugins tal-IDE li jippreferixxu l-stdio)
+- **stdio**: `agentproxy --mcp` (għal plugins tal-IDE li jippreferixxu l-stdio)
 
 ### Konnetti Claude Desktop
 
@@ -1118,8 +1118,8 @@ Editja `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS)
 ```json
 {
   "mcpServers": {
-    "omniroute": {
-      "command": "omniroute",
+    "agentproxy": {
+      "command": "agentproxy",
       "args": ["--mcp"]
     }
   }
@@ -1138,7 +1138,7 @@ L-MCP bħalissa jiddefinixxi 32 ambitu magħruf. Kull Bearer key jista’ jiġi 
 
 ## 🧩 Sistema ta' Ħiliet
 
-OmniRoute toffri **qafas ta' ħiliet estensibbli** (`src/lib/skills/`) sabiex l-agenti u l-punt tat-tmiem A2A jistgħu jwettqu rutini speċifiċi għal domini (eż. `code-review`, `summarize`, `extract-facts`, `web-research`).
+AgentProxy toffri **qafas ta' ħiliet estensibbli** (`src/lib/skills/`) sabiex l-agenti u l-punt tat-tmiem A2A jistgħu jwettqu rutini speċifiċi għal domini (eż. `code-review`, `summarize`, `extract-facts`, `web-research`).
 
 - **Interfaċi tal-Marketplace** — Stenna u tinstalla ħiliet minn **Dashboard → Ħiliet**
 - **Ambiti fuq iċ-ċavetta** — Irstrinġu liema ċavetti tal-API jistgħu jsejħu liema ħiliet
@@ -1150,7 +1150,7 @@ Referenza sħiħa: [SKILLS.md](../frameworks/SKILLS.md).
 
 ## 💾 Sistema tal-Memorja
 
-OmniRoute jippreżerva **memorja twila tal-konverżazzjoni** b'retrieval ibridu:
+AgentProxy jippreżerva **memorja twila tal-konverżazzjoni** b'retrieval ibridu:
 
 - **SQLite FTS5** għal tiftixa bil-kelma mal-turns li għaddew
 - **Ħażna vetturali ta' Qdrant** (għażla) għal tifkira semantika
@@ -1163,11 +1163,11 @@ Immaniġġja l-mororji f' **Dashboard → Memorja** (tiftixa, teditja, esportazz
 
 ## 🔔 Webhooks
 
-Abbona għall-avvenimenti tal-OmniRoute għal monitoraġġ u awtomazzjoni f'ħin reali.
+Abbona għall-avvenimenti tal-AgentProxy għal monitoraġġ u awtomazzjoni f'ħin reali.
 
 - Oħloq webhook f' **Dashboard → Webhooks** b'URL ta' skop u sigriet tal-iffirma HMAC
 - L-avvenimenti disponibbli: `request.completed`, `request.failed`, `provider.unavailable`, `budget.exceeded`, `combo.switched`, `circuit_breaker.opened`, `circuit_breaker.closed`
-- Kull payload jinkludi `X-OmniRoute-Signature` (HMAC-SHA256) għal verifika
+- Kull payload jinkludi `X-AgentProxy-Signature` (HMAC-SHA256) għal verifika
 - Storji: 3 attentat b'retroċessjoniment esponenzjali, imbagħad il-queue tal-mewt
 
 Is-sema sħiħa f' [WEBHOOKS.md](../frameworks/WEBHOOKS.md).
@@ -1176,11 +1176,11 @@ Is-sema sħiħa f' [WEBHOOKS.md](../frameworks/WEBHOOKS.md).
 
 ## ☁️ Aġenti tal-Cloud
 
-OmniRoute jintegra ma' aġenti tal-kodiċi tal-cloud (**OpenAI Codex Cloud**, **Devin**, **Jules**, **Antigravity**) sabiex tista' tiddispatchja xogħlijiet li jdumu fit-tul minn l-istess dashboard li tiġġestixxi r-rotta lokali tiegħek.
+AgentProxy jintegra ma' aġenti tal-kodiċi tal-cloud (**OpenAI Codex Cloud**, **Devin**, **Jules**, **Antigravity**) sabiex tista' tiddispatchja xogħlijiet li jdumu fit-tul minn l-istess dashboard li tiġġestixxi r-rotta lokali tiegħek.
 
 - Oħloq xogħlijiet f' **Dashboard → Aġenti tal-Cloud** jew permezz ta' `POST /api/v1/agents/tasks`
 - Iġbor l-istatus, il-logs, u l-artifatti għal kull xogħol
-- Ġib ċavetta tal-API tiegħek stess għal kull fornitur — il-kredenzjali qatt ma ħarġu minn l-istanza tal-OmniRoute
+- Ġib ċavetta tal-API tiegħek stess għal kull fornitur — il-kredenzjali qatt ma ħarġu minn l-istanza tal-AgentProxy
 
 Referenza sħiħa: [CLOUD_AGENT.md](../frameworks/CLOUD_AGENT.md).
 
@@ -1188,30 +1188,30 @@ Referenza sħiħa: [CLOUD_AGENT.md](../frameworks/CLOUD_AGENT.md).
 
 ## 🛠️Ġestjoni Programmatika
 
-Tista' timmaniġġja kull riżorsa tal-OmniRoute (fornituri, kombos, ċavetti, settings) permezz ta' HTTP billi tuża **ċavetta Bearer b' l-ambitu `manage`**.
+Tista' timmaniġġja kull riżorsa tal-AgentProxy (fornituri, kombos, ċavetti, settings) permezz ta' HTTP billi tuża **ċavetta Bearer b' l-ambitu `manage`**.
 
 Ġenera l-ċavetta f' **Dashboard → Ċavetti tal-API → Ċavetta Ġdida → Ambitu: manage**, imbagħad:
 
 ```bash
 # Lista tal-fornituri
 curl http://localhost:20128/api/providers \
-  -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY"
+  -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY"
 
 # Żid konnessjoni mal-fornitur
 curl -X POST http://localhost:20128/api/providers \
-  -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY" \
+  -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY" \
   -H "Content-Type: application/json" \
   -d '{ "provider": "openai", "apiKey": "sk-...", "name": "main" }'
 
 # Oħloq combo
 curl -X POST http://localhost:20128/api/combos \
-  -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY" \
+  -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY" \
   -H "Content-Type: application/json" \
   -d '{ "name": "premium", "strategy": "priority", "models": [{ "model": "cc/claude-opus-4-7" }, { "model": "glm/glm-5.1" }] }'
 
 # Lista/ħoloq ċavetti tal-API
-curl http://localhost:20128/api/keys -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY"
-curl -X POST http://localhost:20128/api/keys -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY" \
+curl http://localhost:20128/api/keys -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY"
+curl -X POST http://localhost:20128/api/keys -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY" \
   -d '{ "name": "ci-bot", "scopes": ["chat"] }'
 ```
 
@@ -1221,38 +1221,38 @@ Ara [API_REFERENCE.md](../reference/API_REFERENCE.md) għall-katalgu sħiħ tal-
 
 ## 💻 CLI Interna
 
-OmniRoute jipprovdi CLI intern (`omniroute …`) għat-twaqqif, dijanjostika, u kontroll waqt l-isfond. Dan huwa **separat mill-paġna "Għodod CLI" fil-dashboard**, li tikkonfigura CLIs ta' parti terza (Claude Code, Cursor, Codex, Cline, …) sabiex ikunu jistgħu jikkomunikaw ma' OmniRoute.
+AgentProxy jipprovdi CLI intern (`agentproxy …`) għat-twaqqif, dijanjostika, u kontroll waqt l-isfond. Dan huwa **separat mill-paġna "Għodod CLI" fil-dashboard**, li tikkonfigura CLIs ta' parti terza (Claude Code, Cursor, Codex, Cline, …) sabiex ikunu jistgħu jikkomunikaw ma' AgentProxy.
 
 ```bash
-omniroute setup                    # Wizard interattiv (password, fornituri, kombinazzjonijiet)
-omniroute setup --non-interactive  # Ħaġar għal CI
-omniroute doctor                   # Dijanjostika tas-saħħa (dir. tad-dett, DB, fornituri, portijiet)
-omniroute providers available      # Elenka l-fornituri appoġġjati
-omniroute providers list           # Elenka konnessjonijiet ikkonfigurati
-omniroute providers test <id>      # Test ħaj ta' konnessjoni ta' fornitur
-omniroute combos list              # Elenka l-kombinazzjonijiet
-omniroute combos switch <name>     # Waqqaf kombinazzjoni default
-omniroute models                   # Elenka mudelli disponibbli (--json, --search)
-omniroute keys add | list | remove # Ġestixxi ċav API mill-terminal
-omniroute backup                   # Fenfas ta' konfigurazzjoni + DB
-omniroute restore [<timestamp>]    # Irrestorja minn fenfas
-omniroute health                   # Saħħa dettaljata (breakers, cache, memorja)
-omniroute quota                    # Użu tal-kwota tal-fornitur
-omniroute mcp status               # Statut tal-server MCP
-omniroute a2a status               # Statut tal-server A2A
-omniroute tunnel list|create|stop  # Tunelli Cloudflare/Tailscale/ngrok
-omniroute reset-password           # Ġeddid il-password tal-amministratur
-omniroute --mcp                    # Daħħal server MCP permezz ta' stdio
-omniroute --port 3000              # Daħħal il-server fuq port personaliżżat
+agentproxy setup                    # Wizard interattiv (password, fornituri, kombinazzjonijiet)
+agentproxy setup --non-interactive  # Ħaġar għal CI
+agentproxy doctor                   # Dijanjostika tas-saħħa (dir. tad-dett, DB, fornituri, portijiet)
+agentproxy providers available      # Elenka l-fornituri appoġġjati
+agentproxy providers list           # Elenka konnessjonijiet ikkonfigurati
+agentproxy providers test <id>      # Test ħaj ta' konnessjoni ta' fornitur
+agentproxy combos list              # Elenka l-kombinazzjonijiet
+agentproxy combos switch <name>     # Waqqaf kombinazzjoni default
+agentproxy models                   # Elenka mudelli disponibbli (--json, --search)
+agentproxy keys add | list | remove # Ġestixxi ċav API mill-terminal
+agentproxy backup                   # Fenfas ta' konfigurazzjoni + DB
+agentproxy restore [<timestamp>]    # Irrestorja minn fenfas
+agentproxy health                   # Saħħa dettaljata (breakers, cache, memorja)
+agentproxy quota                    # Użu tal-kwota tal-fornitur
+agentproxy mcp status               # Statut tal-server MCP
+agentproxy a2a status               # Statut tal-server A2A
+agentproxy tunnel list|create|stop  # Tunelli Cloudflare/Tailscale/ngrok
+agentproxy reset-password           # Ġeddid il-password tal-amministratur
+agentproxy --mcp                    # Daħħal server MCP permezz ta' stdio
+agentproxy --port 3000              # Daħħal il-server fuq port personaliżżat
 ```
 
-Parir: għaqqad `omniroute doctor --json` mal-għodda ta' monitoraġġ tiegħek biex twissi meta konnessjonijiet tal-fornituri m'humiex fl-isħun.
+Parir: għaqqad `agentproxy doctor --json` mal-għodda ta' monitoraġġ tiegħek biex twissi meta konnessjonijiet tal-fornituri m'humiex fl-isħun.
 
 ---
 
 ## 🖥️ Applikazzjoni Desktop (Electron)
 
-OmniRoute huwa disponibbli bħala applikazzjoni desktop nattiva għal Windows, macOS, u Linux.
+AgentProxy huwa disponibbli bħala applikazzjoni desktop nattiva għal Windows, macOS, u Linux.
 
 ### Twaqqif
 
@@ -1295,7 +1295,7 @@ Output → `electron/dist-electron/`
 
 | Variabbja             | Default | Twaħħal                               |
 | --------------------- | ------- | ------------------------------------- |
-| `OMNIROUTE_PORT`      | `20128` | Port tal-server                       |
-| `OMNIROUTE_MEMORY_MB` | `512`   | Limitu tal-ħira Node.js (64–16384 MB) |
+| `AGENTPROXY_PORT`      | `20128` | Port tal-server                       |
+| `AGENTPROXY_MEMORY_MB` | `512`   | Limitu tal-ħira Node.js (64–16384 MB) |
 
 📖 Dokumentazzjoni sħiħa: [`electron/README.md`](../../electron/README.md)

@@ -31,7 +31,7 @@ test("#7661 — fumadocs-mdx must not be a runtime dependency (npm install -g ET
 
   assert.ok(
     !("fumadocs-mdx" in deps),
-    'fumadocs-mdx is declared under "dependencies" — npm install -g omniroute fetches it ' +
+    'fumadocs-mdx is declared under "dependencies" — npm install -g agentproxy fetches it ' +
       "and its transitive yuku-analyzer/yuku-ast native-binding tree even though nothing at " +
       'runtime imports it. Move it to "devDependencies".'
   );

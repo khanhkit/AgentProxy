@@ -6,22 +6,22 @@
 
 ---
 
-title: "Alat CLI — OmniRoute"
+title: "Alat CLI — AgentProxy"
 version: 3.8.50
 lastUpdated: 2026-08-18
 ---
 
-# Alat CLI — OmniRoute
+# Alat CLI — AgentProxy
 
 Dikemas kini terakhir: 2026-08-18
 
-OmniRoute mengintegrasikan dengan tiga kategori alat CLI yang tersebar di tiga halaman papan pemuka khusus:
+AgentProxy mengintegrasikan dengan tiga kategori alat CLI yang tersebar di tiga halaman papan pemuka khusus:
 
 | Halaman      | Laluan                  | Konsep                                                                                 | Bilangan          |
 | ------------ | ----------------------- | -------------------------------------------------------------------------------------- | ----------------- |
-| **Kod CLI**  | `/dashboard/cli-code`   | Alat pengkodan yang anda arahkan ke OmniRoute (Pelanggan → CLI → OmniRoute → Penyedia) | 26                |
-| **Ejen CLI** | `/dashboard/cli-agents` | Ejen autonomi yang anda arahkan ke OmniRoute (aliran yang sama, skop yang lebih luas)  | 8                 |
-| **Ejen ACP** | `/dashboard/acp-agents` | CLI yang OmniRoute hasilkan sebagai backend melalui stdio/ACP (aliran terbalik)        | lihat pendaftaran |
+| **Kod CLI**  | `/dashboard/cli-code`   | Alat pengkodan yang anda arahkan ke AgentProxy (Pelanggan → CLI → AgentProxy → Penyedia) | 26                |
+| **Ejen CLI** | `/dashboard/cli-agents` | Ejen autonomi yang anda arahkan ke AgentProxy (aliran yang sama, skop yang lebih luas)  | 8                 |
+| **Ejen ACP** | `/dashboard/acp-agents` | CLI yang AgentProxy hasilkan sebagai backend melalui stdio/ACP (aliran terbalik)        | lihat pendaftaran |
 
 Laluan legasi mengalihkan melalui 308: `/dashboard/cli-tools` → `/dashboard/cli-code`, `/dashboard/agents` → `/dashboard/acp-agents`.
 
@@ -33,14 +33,14 @@ Laluan legasi mengalihkan melalui 308: `/dashboard/cli-tools` → `/dashboard/cl
 Kod CLI / Ejen CLI (aliran penggunaan):
 Claude / Codex / OpenCode / Cline / KiloCode / Continue / Hermes Agent / Goose / ...
            │
-           ▼  (semua mengarah ke OmniRoute)
+           ▼  (semua mengarah ke AgentProxy)
     http://YOUR_SERVER:20128/v1
            │
-           ▼  (OmniRoute mengarahkan ke penyedia yang betul)
+           ▼  (AgentProxy mengarahkan ke penyedia yang betul)
     Anthropic / OpenAI / Gemini / DeepSeek / Groq / Mistral / ...
 
 Ejen ACP (aliran hasil terbalik):
-    Permintaan pelanggan → OmniRoute → hasilkan CLI melalui stdio/ACP → respons
+    Permintaan pelanggan → AgentProxy → hasilkan CLI melalui stdio/ACP → respons
 ```
 
 **Manfaat:**
@@ -54,26 +54,26 @@ Ejen ACP (aliran hasil terbalik):
 
 ## Auto-konfigurasi dengan `setup-*`
 
-Anda tidak perlu menulis konfigurasi setiap alat dengan tangan. OmniRoute menyediakan perintah `setup-*`
-untuk setiap CLI yang disokong yang membaca katalog model **langsung** dari OmniRoute yang sedang berjalan
+Anda tidak perlu menulis konfigurasi setiap alat dengan tangan. AgentProxy menyediakan perintah `setup-*`
+untuk setiap CLI yang disokong yang membaca katalog model **langsung** dari AgentProxy yang sedang berjalan
 (tempatan atau jauh) dan menulis konfigurasi alat itu sendiri di mesin anda:
 
 ```bash
-omniroute setup-codex        omniroute setup-claude       omniroute setup-opencode
-omniroute setup-cline        omniroute setup-kilo         omniroute setup-continue
-omniroute setup-cursor       omniroute setup-roo          omniroute setup-crush
-omniroute setup-goose        omniroute setup-qwen         omniroute setup-aider
+agentproxy setup-codex        agentproxy setup-claude       agentproxy setup-opencode
+agentproxy setup-cline        agentproxy setup-kilo         agentproxy setup-continue
+agentproxy setup-cursor       agentproxy setup-roo          agentproxy setup-crush
+agentproxy setup-goose        agentproxy setup-qwen         agentproxy setup-aider
 ```
 
 Setiap satu menerima `--remote <url> --api-key <key>` (mengkonfigurasi alat tempatan terhadap
-OmniRoute jauh), `--dry-run` (pratonton tanpa menulis), dan `--port`. Alat
+AgentProxy jauh), `--dry-run` (pratonton tanpa menulis), dan `--port`. Alat
 tanpa penemuan model automatik (Cline, Kilo, Roo, Goose, Aider, Qwen) mengambil
 `--model <id>` (dan `--yes` untuk larian bukan interaktif). Untuk melancarkan CLI dengan
 persekitaran yang betul disuntik dan tanpa konfigurasi ditulis sama sekali, gunakan
-pelancar generik `omniroute run <target>` (claude, codex, aider, goose, opencode, qwen,
+pelancar generik `agentproxy run <target>` (claude, codex, aider, goose, opencode, qwen,
 gemini — sasaran dan alias datang dari `bin/cli/cli-manifest.mjs`); pelancar per-alat legasi
-`omniroute launch` (Claude Code) dan `omniroute launch-codex`
-(Codex) masih tersedia. CLI Gemini hanya untuk pelancaran: ia adalah sasaran `omniroute run`
+`agentproxy launch` (Claude Code) dan `agentproxy launch-codex`
+(Codex) masih tersedia. CLI Gemini hanya untuk pelancaran: ia adalah sasaran `agentproxy run`
 tetapi tidak mempunyai resipi `setup-*`/`configure`.
 
 > **Rujukan penuh:** jadual induk — apa yang ditulis oleh setiap perintah, setiap bendera,
@@ -82,21 +82,21 @@ tetapi tidak mempunyai resipi `setup-*`/`configure`.
 
 ### Menjalankan ini di dalam kontena
 
-Perintah `setup-*` yang dilaksanakan di dalam kontena OmniRoute menulis ke
+Perintah `setup-*` yang dilaksanakan di dalam kontena AgentProxy menulis ke
 rumah kontena itu sendiri, yang tidak dibaca oleh CLI host dan yang hilang dengan
-kontena. OmniRoute mengesan itu dan keluar `2` dengan arahan daripada menulis. Dua cara yang disokong untuk maju — pasang CLI di host dan
-`omniroute connect` ke kontena, atau bind-mount direktori konfigurasi dan set
+kontena. AgentProxy mengesan itu dan keluar `2` dengan arahan daripada menulis. Dua cara yang disokong untuk maju — pasang CLI di host dan
+`agentproxy connect` ke kontena, atau bind-mount direktori konfigurasi dan set
 `CLI_CONFIG_HOME` (profil `host` compose). Setiap perintah `setup-*`, ditambah
-`omniroute configure` dan `omniroute config set`, menerima
+`agentproxy configure` dan `agentproxy config set`, menerima
 `--allow-container-write` apabila mengkonfigurasi CLI kontena itu sendiri adalah apa yang anda
-sebenarnya maksudkan; `OMNIROUTE_ALLOW_CONTAINER_CONFIG_WRITE=true` melakukan perkara yang sama untuk
+sebenarnya maksudkan; `AGENTPROXY_ALLOW_CONTAINER_CONFIG_WRITE=true` melakukan perkara yang sama untuk
 pelayan. Lihat
-[Panduan Docker → Mengkonfigurasi alat CLI host](../guides/DOCKER_GUIDE.md#configuring-host-cli-tools-when-omniroute-runs-in-docker).
+[Panduan Docker → Mengkonfigurasi alat CLI host](../guides/DOCKER_GUIDE.md#configuring-host-cli-tools-when-agentproxy-runs-in-docker).
 
 Titik akhir **apply** papan pemuka (`POST /api/cli-tools/apply`) menguatkuasakan
 pengawal yang sama: dalam kontena, penulisan yang sasarannya tidak bind-mounted dari
 host menjawab **`422`** dengan `containerEphemeralTarget: true`, teks ralat selamat dan — untuk alat dengan resipi host (claude, codex, opencode, cline,
-kilo, continue) — satu `hostSetupCommand` (contohnya `omniroute setup-opencode`) untuk dijalankan
+kilo, continue) — satu `hostSetupCommand` (contohnya `agentproxy setup-opencode`) untuk dijalankan
 di host sebaliknya; tiada apa yang ditulis. `dryRun: true` terus berfungsi dalam mod kontena
 dan mengembalikan kandungan yang dihasilkan + laluan sasaran tanpa menyentuh cakera, jadi
 anda boleh pratonton dari papan pemuka dan memohon di host. Tingkah laku ini adalah
@@ -131,8 +131,8 @@ Tidak semua alat yang dikatalog boleh dikesan, boleh dikonfigurasi atau boleh di
 | ----------------------- | ---------------------------------------------------------------------------- | ----------------------------------------------------------------- |
 | **Dikatalog**           | Muncul dalam katalog papan pemuka (nama, vendor, dokumen, jenis konfigurasi) | `src/shared/constants/cliTools.ts` (`CLI_TOOLS`)                  |
 | **Dapat Dikesan**       | Pengesanan binari/config, pemeriksaan kesihatan, laluan konfigurasi          | `src/shared/services/cliRuntime.ts` (`CLI_TOOLS` katalog runtime) |
-| **Boleh Dikonfigurasi** | Disokong oleh `omniroute configure <cli>` (resipi penyediaan wujud)          | `bin/cli/cli-manifest.mjs` (`configure: true`)                    |
-| **Boleh Dilancarkan**   | Disokong oleh `omniroute run <target>` (injeksi env/args ditakrifkan)        | `bin/cli/cli-manifest.mjs` (`run: true`)                          |
+| **Boleh Dikonfigurasi** | Disokong oleh `agentproxy configure <cli>` (resipi penyediaan wujud)          | `bin/cli/cli-manifest.mjs` (`configure: true`)                    |
+| **Boleh Dilancarkan**   | Disokong oleh `agentproxy run <target>` (injeksi env/args ditakrifkan)        | `bin/cli/cli-manifest.mjs` (`run: true`)                          |
 
 `bin/cli/cli-manifest.mjs` adalah manifest boleh laku kanonik untuk permukaan arahan CLI: `run`, `configure` dan penjana penyelesaian shell semuanya memperoleh senarai sasaran mereka, penyelesaian alias (contohnya `kilocode`/`kilo-code`/`kilo_cli` → `kilo`) dan pengkabelan bendera `--model` daripadanya. Pengawal drift `tests/unit/cli/cli-manifest-drift.test.ts` mengesahkan bahawa manifest, katalog runtime, katalog UI dan setiap permukaan pengguna kekal seiring — sasaran yang ditambah kepada satu permukaan tanpa yang lain akan gagal suite dan bukannya mengalir secara senyap.
 
@@ -190,7 +190,7 @@ Ejen autonomi yang muncul di `/dashboard/cli-agents`:
 
 ## 3. Ejen ACP (/dashboard/acp-agents)
 
-Halaman ini (dikenali semula dari `/dashboard/agents`) menunjukkan CLI yang boleh **dihasilkan** oleh OmniRoute sebagai enjin pelaksanaan backend melalui protokol stdio/ACP. Katalog ini diselenggara secara berasingan dalam `src/lib/acp/registry.ts` dan **tidak** sama dengan `CLI_TOOLS`.
+Halaman ini (dikenali semula dari `/dashboard/agents`) menunjukkan CLI yang boleh **dihasilkan** oleh AgentProxy sebagai enjin pelaksanaan backend melalui protokol stdio/ACP. Katalog ini diselenggara secara berasingan dalam `src/lib/acp/registry.ts` dan **tidak** sama dengan `CLI_TOOLS`.
 
 ---
 
@@ -253,7 +253,7 @@ Alat baru dengan `configType: "custom"` mempunyai laluan API tetapan khusus:
 | `POST /api/cli-tools/codewhale-settings`    | CodeWhale (OPENAI_BASE_URL, utama + legasi `~/.deepseek` sync) |
 | `POST /api/cli-tools/smelt-settings`        | Smelt                                                          |
 | `POST /api/cli-tools/pi-settings`           | Ejen pengkodan Pi                                              |
-| `POST /api/cli-tools/grok-build-settings`   | Grok Build (~/.grok/config.toml, `[model.omniroute]`)          |
+| `POST /api/cli-tools/grok-build-settings`   | Grok Build (~/.grok/config.toml, `[model.agentproxy]`)          |
 | `POST /api/cli-tools/qwen-settings`         | Qwen Code (`~/.qwen/settings.json` + kunci `.env` khusus)      |
 
 Semua laluan menggunakan `sanitizeErrorMessage()` untuk respons ralat (Peraturan Ketat #12).
@@ -313,7 +313,7 @@ Terjemahan penuh PT-BR dan EN disediakan. 39 lokasi lain secara automatik menggu
 
 ## 9. Permulaan Pantas
 
-### Langkah 1 — Dapatkan Kunci API OmniRoute
+### Langkah 1 — Dapatkan Kunci API AgentProxy
 
 1. Buka `/dashboard/api-manager` → **Buat Kunci API**
 2. Berikan nama (contohnya `cli-tools`) dan pilih semua kebenaran
@@ -346,7 +346,7 @@ npm install -g kilocode
 # Qwen Code
 npm install -g @qwen-code/qwen-code
 
-# Google Gemini CLI (boleh dilancarkan melalui `omniroute run gemini` → /v1beta surface)
+# Google Gemini CLI (boleh dilancarkan melalui `agentproxy run gemini` → /v1beta surface)
 npm install -g @google/gemini-cli
 
 # Aider
@@ -377,14 +377,14 @@ cargo install smelt  # Berasaskan Rust
 ### Langkah 4 — Tetapkan Pembolehubah Persekitaran Global
 
 ```bash
-# Titik Akhir Universal OmniRoute
+# Titik Akhir Universal AgentProxy
 export OPENAI_BASE_URL="http://localhost:20128/v1"
-export OPENAI_API_KEY="sk-your-omniroute-key"
+export OPENAI_API_KEY="sk-your-agentproxy-key"
 export ANTHROPIC_BASE_URL="http://localhost:20128"
-export ANTHROPIC_AUTH_TOKEN="sk-your-omniroute-key"
+export ANTHROPIC_AUTH_TOKEN="sk-your-agentproxy-key"
 # Gemini CLI membaca GOOGLE_GEMINI_BASE_URL di ROOT (SDKnya menambah /v1beta/... sendiri)
 export GOOGLE_GEMINI_BASE_URL="http://localhost:20128"
-export GEMINI_API_KEY="sk-your-omniroute-key"
+export GEMINI_API_KEY="sk-your-agentproxy-key"
 ```
 
 > Untuk **pelayan jauh** ganti `localhost:20128` dengan IP pelayan atau domain,
@@ -402,7 +402,7 @@ mkdir -p ~/.claude && cat > ~/.claude/settings.json << EOF
 {
   "env": {
     "ANTHROPIC_BASE_URL": "http://localhost:20128",
-    "ANTHROPIC_AUTH_TOKEN": "sk-your-omniroute-key"
+    "ANTHROPIC_AUTH_TOKEN": "sk-your-agentproxy-key"
   }
 }
 EOF
@@ -416,19 +416,19 @@ Gunakan akar gerbang Anthropic yang bersatu untuk Claude Code. Jangan tambah `/v
 
 #### OpenAI Codex
 
-Codex moden (v0.137+) hanya membaca `~/.codex/config.toml` — `config.yaml` lama milik CLI npm warisan dan diabaikan secara senyap. Kunci API kekal dalam pembolehubah persekitaran `OMNIROUTE_API_KEY` (`env_key`), tidak pernah di dalam fail:
+Codex moden (v0.137+) hanya membaca `~/.codex/config.toml` — `config.yaml` lama milik CLI npm warisan dan diabaikan secara senyap. Kunci API kekal dalam pembolehubah persekitaran `AGENTPROXY_API_KEY` (`env_key`), tidak pernah di dalam fail:
 
 ```bash
 mkdir -p ~/.codex && cat > ~/.codex/config.toml << EOF
-model_provider = "omniroute"
+model_provider = "agentproxy"
 
-[model_providers.omniroute]
-name                 = "OmniRoute"
+[model_providers.agentproxy]
+name                 = "AgentProxy"
 base_url             = "http://localhost:20128/v1"
-env_key              = "OMNIROUTE_API_KEY"
+env_key              = "AGENTPROXY_API_KEY"
 requires_openai_auth = false
 EOF
-export OMNIROUTE_API_KEY="sk-your-omniroute-key"
+export AGENTPROXY_API_KEY="sk-your-agentproxy-key"
 ```
 
 Rujukan penuh (profil, `wire_api`, tingkap konteks): [CODEX-CLI-CONFIGURATION.md](../guides/CODEX-CLI-CONFIGURATION.md).
@@ -444,12 +444,12 @@ mkdir -p ~/.config/opencode && cat > ~/.config/opencode/opencode.json << EOF
 {
   "\$schema": "https://opencode.ai/config.json",
   "provider": {
-    "omniroute": {
+    "agentproxy": {
       "npm": "@ai-sdk/openai-compatible",
-      "name": "OmniRoute",
+      "name": "AgentProxy",
       "options": {
         "baseURL": "http://localhost:20128/v1",
-        "apiKey": "sk-your-omniroute-key"
+        "apiKey": "sk-your-agentproxy-key"
       },
       "models": {
         "claude-sonnet-4-5": { "name": "claude-sonnet-4-5" },
@@ -464,7 +464,7 @@ EOF
 
 **Uji:** `opencode`
 
-> Gunakan `opencode run "your prompt" --model omniroute/claude-sonnet-4-5-thinking --variant high`
+> Gunakan `opencode run "your prompt" --model agentproxy/claude-sonnet-4-5-thinking --variant high`
 > untuk menghantar varian pemikiran.
 
 ---
@@ -478,7 +478,7 @@ mkdir -p ~/.cline/data && cat > ~/.cline/data/globalState.json << EOF
 {
   "apiProvider": "openai",
   "openAiBaseUrl": "http://localhost:20128/v1",
-  "openAiApiKey": "sk-your-omniroute-key"
+  "openAiApiKey": "sk-your-agentproxy-key"
 }
 EOF
 ```
@@ -486,7 +486,7 @@ EOF
 **Mod VS Code:**
 Tetapan sambungan Cline → Penyedia API: `OpenAI Compatible` → URL Asas: `http://localhost:20128/v1`
 
-Atau gunakan dashboard OmniRoute → **Alat CLI → Cline → Terapkan Konfigurasi**.
+Atau gunakan dashboard AgentProxy → **Alat CLI → Cline → Terapkan Konfigurasi**.
 
 ---
 
@@ -495,7 +495,7 @@ Atau gunakan dashboard OmniRoute → **Alat CLI → Cline → Terapkan Konfigura
 **Mod CLI:**
 
 ```bash
-kilocode --api-base http://localhost:20128/v1 --api-key sk-your-omniroute-key
+kilocode --api-base http://localhost:20128/v1 --api-key sk-your-agentproxy-key
 ```
 
 **Tetapan VS Code:**
@@ -503,11 +503,11 @@ kilocode --api-base http://localhost:20128/v1 --api-key sk-your-omniroute-key
 ```json
 {
   "kilo-code.openAiBaseUrl": "http://localhost:20128/v1",
-  "kilo-code.apiKey": "sk-your-omniroute-key"
+  "kilo-code.apiKey": "sk-your-agentproxy-key"
 }
 ```
 
-Atau gunakan dashboard OmniRoute → **Alat CLI → KiloCode → Terapkan Konfigurasi**.
+Atau gunakan dashboard AgentProxy → **Alat CLI → KiloCode → Terapkan Konfigurasi**.
 
 ---
 
@@ -517,11 +517,11 @@ Edit `~/.continue/config.yaml`:
 
 ```yaml
 models:
-  - name: OmniRoute
+  - name: AgentProxy
     provider: openai
     model: auto
     apiBase: http://localhost:20128/v1
-    apiKey: sk-your-omniroute-key
+    apiKey: sk-your-agentproxy-key
     default: true
 ```
 
@@ -531,25 +531,25 @@ Mulakan semula VS Code selepas mengedit.
 
 #### VS Code Insiders (`chatLanguageModels.json`)
 
-Gunakan ini apabila VS Code Insiders dikonfigurasi untuk model titik akhir khusus dan anda mahu OmniRoute berfungsi tanpa medan header khusus.
+Gunakan ini apabila VS Code Insiders dikonfigurasi untuk model titik akhir khusus dan anda mahu AgentProxy berfungsi tanpa medan header khusus.
 
 **Lokasi yang disyorkan:**
 
 - Linux: `~/.config/Code - Insiders/User/chatLanguageModels.json`
 - Windows: `%APPDATA%/Code - Insiders/User/chatLanguageModels.json`
 
-**Contoh menggunakan alias OmniRoute yang ditokenkan:**
+**Contoh menggunakan alias AgentProxy yang ditokenkan:**
 
 ```json
 [
   {
     "vendor": "customendpoint",
     "id": "auto",
-    "name": "OmniRoute Auto",
+    "name": "AgentProxy Auto",
     "family": "gpt-4",
     "version": "1.0.0",
-    "url": "http://localhost:20128/api/v1/vscode/sk-your-omniroute-key/chat/completions",
-    "modelsUrl": "http://localhost:20128/api/v1/vscode/sk-your-omniroute-key/models",
+    "url": "http://localhost:20128/api/v1/vscode/sk-your-agentproxy-key/chat/completions",
+    "modelsUrl": "http://localhost:20128/api/v1/vscode/sk-your-agentproxy-key/models",
     "requestFormat": "openai-chat-completions",
     "contextWindow": 256000,
     "maxOutputTokens": 32768,
@@ -562,7 +562,7 @@ Gunakan ini apabila VS Code Insiders dikonfigurasi untuk model titik akhir khusu
 
 **Nota:**
 
-- Gantikan `sk-your-omniroute-key` dengan kunci API yang dibuat dalam OmniRoute.
+- Gantikan `sk-your-agentproxy-key` dengan kunci API yang dibuat dalam AgentProxy.
 - Medan `url` harus menunjuk kepada `/api/v1/vscode/{token}/chat/completions`.
 - Medan `modelsUrl` harus menunjuk kepada `/api/v1/vscode/{token}/models`.
 - Utamakan aliran `/v1` biasa + header Bearer apabila klien menyokong header khusus.
@@ -576,40 +576,40 @@ Gunakan ini apabila VS Code Insiders dikonfigurasi untuk model titik akhir khusu
 # Log masuk ke akaun AWS/Kiro anda:
 kiro-cli login
 
-# CLI menggunakan pengesahan sendiri — OmniRoute tidak diperlukan sebagai backend untuk Kiro CLI itu sendiri.
-# Gunakan kiro-cli bersama OmniRoute untuk alat lain.
+# CLI menggunakan pengesahan sendiri — AgentProxy tidak diperlukan sebagai backend untuk Kiro CLI itu sendiri.
+# Gunakan kiro-cli bersama AgentProxy untuk alat lain.
 kiro-cli status
 ```
 
-Untuk aplikasi desktop **Kiro IDE**, gunakan titik akhir MITM yang didedahkan oleh OmniRoute
+Untuk aplikasi desktop **Kiro IDE**, gunakan titik akhir MITM yang didedahkan oleh AgentProxy
 di bawah `/dashboard/cli-tools → Kiro`.
 
 ---
 
-## 10. OmniRoute CLI Dalaman
+## 10. AgentProxy CLI Dalaman
 
-Biner `omniroute` menyediakan perintah untuk kitaran hayat pelayan, penyediaan, diagnostik, dan pengurusan penyedia. Titik masuk: `bin/omniroute.mjs`.
+Biner `agentproxy` menyediakan perintah untuk kitaran hayat pelayan, penyediaan, diagnostik, dan pengurusan penyedia. Titik masuk: `bin/agentproxy.mjs`.
 
 ```bash
-omniroute                              # Mula pelayan (port lalai 20128)
-omniroute setup                        # Wizard penyediaan interaktif
-omniroute doctor                       # Semak konfigurasi, DB, port, masa berjalan
-omniroute providers list               # Sambungan penyedia yang dikonfigurasikan
-omniroute providers test-all           # Uji setiap sambungan aktif
-omniroute reset-password               # Tetapkan semula kata laluan admin
-omniroute logs                         # Aliran log permintaan
-omniroute health                       # Kesihatan terperinci (pemutus, cache, memori)
-omniroute --version                    # Cetak versi
-omniroute --help                       # Tunjukkan semua perintah
+agentproxy                              # Mula pelayan (port lalai 20128)
+agentproxy setup                        # Wizard penyediaan interaktif
+agentproxy doctor                       # Semak konfigurasi, DB, port, masa berjalan
+agentproxy providers list               # Sambungan penyedia yang dikonfigurasikan
+agentproxy providers test-all           # Uji setiap sambungan aktif
+agentproxy reset-password               # Tetapkan semula kata laluan admin
+agentproxy logs                         # Aliran log permintaan
+agentproxy health                       # Kesihatan terperinci (pemutus, cache, memori)
+agentproxy --version                    # Cetak versi
+agentproxy --help                       # Tunjukkan semua perintah
 ```
 
 ### Penyediaan & Inisialisasi
 
 ```bash
-omniroute setup                        # Wizard penyediaan interaktif
-omniroute setup --non-interactive      # Mod CI/automasi (membaca pembolehubah env + bendera)
-omniroute setup --password '<value>'   # Tetapkan kata laluan admin secara langsung
-omniroute setup --add-provider \
+agentproxy setup                        # Wizard penyediaan interaktif
+agentproxy setup --non-interactive      # Mod CI/automasi (membaca pembolehubah env + bendera)
+agentproxy setup --password '<value>'   # Tetapkan kata laluan admin secara langsung
+agentproxy setup --add-provider \
   --provider openai \
   --api-key '<value>' \
   --test-provider                      # Tambah dan uji penyedia dalam satu langkah
@@ -619,21 +619,21 @@ Pembolehubah persekitaran yang diiktiraf untuk penyediaan bukan interaktif:
 
 | Var                 | Tujuan                                                                     |
 | ------------------- | -------------------------------------------------------------------------- |
-| `OMNIROUTE_API_KEY` | Kunci API penyedia (terikat kepada `--api-key` melalui Commander `.env()`) |
-| `DATA_DIR`          | Gantikan direktori data OmniRoute                                          |
+| `AGENTPROXY_API_KEY` | Kunci API penyedia (terikat kepada `--api-key` melalui Commander `.env()`) |
+| `DATA_DIR`          | Gantikan direktori data AgentProxy                                          |
 
 Semua input bukan interaktif yang lain dihantar sebagai bendera, bukan pembolehubah persekitaran:
 `--password`, `--provider`, `--provider-name`, `--provider-base-url`, `--default-model`
-(rujuk pilihan `omniroute setup` di atas).
+(rujuk pilihan `agentproxy setup` di atas).
 
 ### Diagnostik
 
 ```bash
-omniroute doctor                       # Semak konfigurasi, DB, port, masa berjalan, memori, kelangsungan
-omniroute doctor --json                # JSON yang boleh dibaca mesin
-omniroute doctor --no-liveness         # Langkau probe kesihatan HTTP
-omniroute doctor --host 0.0.0.0        # Gantikan hos kelangsungan
-omniroute doctor --liveness-url <url>  # Gantikan URL titik akhir kesihatan penuh
+agentproxy doctor                       # Semak konfigurasi, DB, port, masa berjalan, memori, kelangsungan
+agentproxy doctor --json                # JSON yang boleh dibaca mesin
+agentproxy doctor --no-liveness         # Langkau probe kesihatan HTTP
+agentproxy doctor --host 0.0.0.0        # Gantikan hos kelangsungan
+agentproxy doctor --liveness-url <url>  # Gantikan URL titik akhir kesihatan penuh
 ```
 
 Doktor menjalankan pemeriksaan ini: `Konfigurasi`, `Pangkalan Data`, `Penyimpanan/enkripsi`,
@@ -643,47 +643,47 @@ Doktor menjalankan pemeriksaan ini: `Konfigurasi`, `Pangkalan Data`, `Penyimpana
 ### Pengurusan Penyedia
 
 ```bash
-omniroute providers available                       # Katalog penyedia OmniRoute
-omniroute providers available --search openai       # Penapis katalog mengikut id/nama/alias/kategori
-omniroute providers available --category api-key    # Penapis mengikut kategori (api-key, oauth, percuma, ...)
-omniroute providers available --json                # JSON yang boleh dibaca mesin
+agentproxy providers available                       # Katalog penyedia AgentProxy
+agentproxy providers available --search openai       # Penapis katalog mengikut id/nama/alias/kategori
+agentproxy providers available --category api-key    # Penapis mengikut kategori (api-key, oauth, percuma, ...)
+agentproxy providers available --json                # JSON yang boleh dibaca mesin
 
-omniroute providers list                            # Sambungan penyedia yang dikonfigurasikan
-omniroute providers list --json
+agentproxy providers list                            # Sambungan penyedia yang dikonfigurasikan
+agentproxy providers list --json
 
-omniroute providers test <id|name>                  # Uji satu sambungan yang dikonfigurasikan
-omniroute providers test-all                        # Uji setiap sambungan aktif
-omniroute providers validate                        # Pengesahan struktur hanya untuk tempatan
-omniroute providers add <provider> --credential-env PROVIDER_KEY
-omniroute providers import ./providers.json --dry-run --json
-omniroute providers auth <provider>                 # Aliran OAuth yang sedia ada
-omniroute providers edit <id|name> --default-model <model>
-omniroute providers remove <id|name> --yes
+agentproxy providers test <id|name>                  # Uji satu sambungan yang dikonfigurasikan
+agentproxy providers test-all                        # Uji setiap sambungan aktif
+agentproxy providers validate                        # Pengesahan struktur hanya untuk tempatan
+agentproxy providers add <provider> --credential-env PROVIDER_KEY
+agentproxy providers import ./providers.json --dry-run --json
+agentproxy providers auth <provider>                 # Aliran OAuth yang sedia ada
+agentproxy providers edit <id|name> --default-model <model>
+agentproxy providers remove <id|name> --yes
 ```
 
 `providers add/import/auth/edit/remove` adalah API-first dan oleh itu berfungsi terhadap
 konteks tempatan atau jauh yang aktif. Input kelayakan harus menggunakan
 `--credential-stdin` atau `--credential-env`; `--dry-run --json` hanya melaporkan
-kehadiran/bentuk yang disunting. `providers available` membaca katalog OmniRoute;
+kehadiran/bentuk yang disunting. `providers available` membaca katalog AgentProxy;
 `providers list/test/test-all/validate` mengekalkan tingkah laku SQLite tempatan mereka dan
 tidak memerlukan pelayan untuk berjalan.
 
 ### Pemulihan & Tetapan Semula
 
 ```bash
-omniroute reset-password                # Tetapkan semula kata laluan admin (juga: omniroute-reset-password)
-omniroute reset-encrypted-columns       # Tunjukkan amaran + dry-run untuk tetapan semula kelayakan yang dienkripsi
-omniroute reset-encrypted-columns --force  # Betul-betul kosongkan kelayakan yang dienkripsi dalam SQLite
+agentproxy reset-password                # Tetapkan semula kata laluan admin (juga: agentproxy-reset-password)
+agentproxy reset-encrypted-columns       # Tunjukkan amaran + dry-run untuk tetapan semula kelayakan yang dienkripsi
+agentproxy reset-encrypted-columns --force  # Betul-betul kosongkan kelayakan yang dienkripsi dalam SQLite
 ```
 
 ### Eksport Kelayakan (⚠ tangani dengan berhati-hati)
 
 ```bash
-omniroute auth export                                 # Tunjukkan amaran + pintu pengesahan — tiada akses DB
-omniroute auth export --force                          # Eksport SEMUA kelayakan DECRYPTED sambungan ke stdout sebagai JSON
-omniroute auth export --force --id <id>                 # Eksport hanya sambungan yang sepadan
-omniroute auth export --force --format env               # Emit OMNIROUTE_<PROVIDER>_<FIELD>=<value> baris
-omniroute auth export --force --out creds.json           # Tulis ke fail (dicipta dengan kebenaran 0600)
+agentproxy auth export                                 # Tunjukkan amaran + pintu pengesahan — tiada akses DB
+agentproxy auth export --force                          # Eksport SEMUA kelayakan DECRYPTED sambungan ke stdout sebagai JSON
+agentproxy auth export --force --id <id>                 # Eksport hanya sambungan yang sepadan
+agentproxy auth export --force --format env               # Emit AGENTPROXY_<PROVIDER>_<FIELD>=<value> baris
+agentproxy auth export --force --out creds.json           # Tulis ke fail (dicipta dengan kebenaran 0600)
 ```
 
 `auth export` adalah **hanya untuk tempatan** (bacaan SQLite langsung, tiada laluan HTTP) dan sengaja mencetak/menulis
@@ -695,36 +695,36 @@ ditetapkan. Sebuah medan yang gagal untuk didekripsi (kunci lapuk, ciphertext ro
 
 ### Subperintah Lain
 
-Ini menganggap pelayan OmniRoute sedang berjalan, kecuali dinyatakan sebaliknya:
+Ini menganggap pelayan AgentProxy sedang berjalan, kecuali dinyatakan sebaliknya:
 
 ```bash
-omniroute status                       # Status masa berjalan yang komprehensif
-omniroute logs                         # Aliran log permintaan (--json, --search, --follow)
-omniroute config show                  # Paparkan konfigurasi semasa
+agentproxy status                       # Status masa berjalan yang komprehensif
+agentproxy logs                         # Aliran log permintaan (--json, --search, --follow)
+agentproxy config show                  # Paparkan konfigurasi semasa
 
-omniroute provider list                # Senaraikan penyedia yang tersedia (alias bagi providers list)
-omniroute provider add                 # Daftar OmniRoute sebagai penyedia pada alat
-omniroute keys add | list | remove     # Urus kunci API
-omniroute models [provider]            # Senaraikan model (--json, --search)
-omniroute combo list | switch | create | delete
+agentproxy provider list                # Senaraikan penyedia yang tersedia (alias bagi providers list)
+agentproxy provider add                 # Daftar AgentProxy sebagai penyedia pada alat
+agentproxy keys add | list | remove     # Urus kunci API
+agentproxy models [provider]            # Senaraikan model (--json, --search)
+agentproxy combo list | switch | create | delete
 
-omniroute backup                       # Snapshot konfigurasi + DB
-omniroute restore                      # Pulihkan dari snapshot sebelumnya
+agentproxy backup                       # Snapshot konfigurasi + DB
+agentproxy restore                      # Pulihkan dari snapshot sebelumnya
 
-omniroute health                       # Kesihatan terperinci (pemutus, cache, memori)
-omniroute quota                        # Penggunaan kuota penyedia
-omniroute cache                        # Status cache
-omniroute cache clear                  # Kosongkan cache semantik + tanda tangan
+agentproxy health                       # Kesihatan terperinci (pemutus, cache, memori)
+agentproxy quota                        # Penggunaan kuota penyedia
+agentproxy cache                        # Status cache
+agentproxy cache clear                  # Kosongkan cache semantik + tanda tangan
 
-omniroute mcp status | restart         # Status pelayan MCP / mulakan semula
-omniroute a2a status | card            # Status pelayan A2A / kad ejen
+agentproxy mcp status | restart         # Status pelayan MCP / mulakan semula
+agentproxy a2a status | card            # Status pelayan A2A / kad ejen
 
-omniroute tunnel list | create | stop  # Urus terowong (cloudflare/tailscale/ngrok)
-omniroute env show | get <k> | set <k> <v>  # Periksa / tetapkan pembolehubah env (sementara)
+agentproxy tunnel list | create | stop  # Urus terowong (cloudflare/tailscale/ngrok)
+agentproxy env show | get <k> | set <k> <v>  # Periksa / tetapkan pembolehubah env (sementara)
 
-omniroute test                         # Ujian sambungan penyedia
-omniroute update                       # Semak untuk kemas kini
-omniroute completion                   # Hasilkan penyelesaian shell
+agentproxy test                         # Ujian sambungan penyedia
+agentproxy update                       # Semak untuk kemas kini
+agentproxy completion                   # Hasilkan penyelesaian shell
 ```
 
 ### Bendera Umum
@@ -753,7 +753,7 @@ omniroute completion                   # Hasilkan penyelesaian shell
 | `/v1/audio/speech`         | Teks-ke-ucapan                    | ElevenLabs, OpenAI TTS          |
 | `/v1/audio/transcriptions` | Ucapan-ke-teks                    | Deepgram, AssemblyAI            |
 
-Contoh sedia untuk tampal dengan URL OmniRoute yang ditokenkan:
+Contoh sedia untuk tampal dengan URL AgentProxy yang ditokenkan:
 
 ```txt
 Contoh token: sk-a3ab3c080beaee3a-69f4a4-070d71af
@@ -772,7 +772,7 @@ Sembang Ollama: http://localhost:20128/api/v1/vscode/sk-a3ab3c080beaee3a-69f4a4-
 
 | Ralat                                                   | Punca                         | Pembetulan                                       |
 | ------------------------------------------------------- | ----------------------------- | ------------------------------------------------ |
-| `Connection refused`                                    | OmniRoute tidak berjalan      | `omniroute serve`                                |
+| `Connection refused`                                    | AgentProxy tidak berjalan      | `agentproxy serve`                                |
 | `401 Unauthorized`                                      | Kunci API salah               | Semak di `/dashboard/api-manager`                |
 | `No combo configured`                                   | Tiada kombinasi routing aktif | Tetapkan di `/dashboard/combos`                  |
 | CLI menunjukkan "not installed"                         | Binari tidak dalam PATH       | Semak `which <command>`                          |

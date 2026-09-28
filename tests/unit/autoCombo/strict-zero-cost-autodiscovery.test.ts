@@ -75,7 +75,7 @@ test("a brand-new keyless model appearing in the catalog is usable the instant i
     connectionId: SYNTHETIC_NOAUTH_CONNECTION_ID,
   };
   const catalogBefore: FreeModelBudget[] = []; // model does not exist yet
-  const catalogAfter: FreeModelBudget[] = [keylessEntry(modelId)]; // "OmniRoute" just added it
+  const catalogAfter: FreeModelBudget[] = [keylessEntry(modelId)]; // "AgentProxy" just added it
 
   assert.deepEqual(
     evaluateCandidateConnections(
@@ -108,7 +108,7 @@ test("a model removed from the catalog stops being usable, with no code change",
     connectionId: SYNTHETIC_NOAUTH_CONNECTION_ID,
   };
   const catalogBefore: FreeModelBudget[] = [keylessEntry(modelId)];
-  const catalogAfter: FreeModelBudget[] = []; // "OmniRoute" dropped the promo
+  const catalogAfter: FreeModelBudget[] = []; // "AgentProxy" dropped the promo
 
   assert.deepEqual(
     evaluateCandidateConnections(
@@ -176,7 +176,7 @@ test("a new quota-based model WITHOUT hardStopGuaranteed is excluded automatical
 
 // Production never overrides `catalog` — `findBudgetEntry(candidate)` with no
 // second argument must read the real, live FREE_MODEL_BUDGETS, so an entirely
-// invented provider id (one no real OmniRoute release has ever catalogued) is
+// invented provider id (one no real AgentProxy release has ever catalogued) is
 // excluded automatically, with zero whitelist to edit, when the default is used.
 test("an entirely unknown provider id is excluded automatically when the default (real) catalog is used", () => {
   const candidate: StrictZeroCostCandidate = {

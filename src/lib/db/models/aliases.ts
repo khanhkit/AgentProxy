@@ -30,7 +30,52 @@ export async function setModelAlias(alias: string, model: unknown) {
 export async function deleteModelAlias(alias: string) {
   const db = getDbInstance();
   db.prepare("DELETE FROM key_value WHERE namespace = 'modelAliases' AND key = ?").run(alias);
+  await unmarkManagedModelAlias(alias);
   finishModelCatalogWriteWithBackup();
+}
+
+const MANAGED_ALIAS_NAMES_KEY = "names";
+
+async function getManagedModelAliasNamesRow(): Promise<string[]> {
+  const db = getDbInstance();
+  const row = db
+    .prepare("SELECT value FROM key_value WHERE namespace = 'managedModelAliasNames' AND key = ?")
+    .get(MANAGED_ALIAS_NAMES_KEY);
+  const parsed = getKeyValue(row).value;
+  if (!parsed) return [];
+  try {
+    const value = JSON.parse(parsed);
+    return Array.isArray(value)
+      ? value.filter((entry): entry is string => typeof entry === "string")
+      : [];
+  } catch {
+    return [];
+  }
+}
+
+export async function getManagedModelAliasNames(): Promise<Set<string>> {
+  return new Set(await getManagedModelAliasNamesRow());
+}
+
+async function writeManagedModelAliasNames(names: Set<string>): Promise<void> {
+  const db = getDbInstance();
+  db.prepare(
+    "INSERT OR REPLACE INTO key_value (namespace, key, value) VALUES ('managedModelAliasNames', ?, ?)"
+  ).run(MANAGED_ALIAS_NAMES_KEY, JSON.stringify(Array.from(names)));
+}
+
+export async function markManagedModelAlias(alias: string): Promise<void> {
+  const names = await getManagedModelAliasNames();
+  if (names.has(alias)) return;
+  names.add(alias);
+  await writeManagedModelAliasNames(names);
+}
+
+export async function unmarkManagedModelAlias(alias: string): Promise<void> {
+  const names = await getManagedModelAliasNames();
+  if (!names.has(alias)) return;
+  names.delete(alias);
+  await writeManagedModelAliasNames(names);
 }
 
 /**

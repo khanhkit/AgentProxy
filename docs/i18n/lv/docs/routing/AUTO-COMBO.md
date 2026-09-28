@@ -6,12 +6,12 @@
 
 ---
 
-title: "OmniRoute Auto-Combo dzinējs"
+title: "AgentProxy Auto-Combo dzinējs"
 version: 3.8.40
 lastUpdated: 2026-06-28
 ---
 
-# OmniRoute Auto-Combo dzinējs
+# AgentProxy Auto-Combo dzinējs
 
 > **Lietotājiem**: Meklējat ātru sākumu? Skatiet [Auto-Combo lietotāja rokasgrāmatu](../getting-started/AUTO-COMBO-GUIDE.md) vienkāršiem paskaidrojumiem un piemēriem.
 
@@ -69,7 +69,7 @@ model: "auto/cheap"           # lētākais par tokenu
 
 **Kas notiek:**
 
-1. OmniRoute atklāj `auto/` prefiksu failā `src/sse/handlers/chat.ts`
+1. AgentProxy atklāj `auto/` prefiksu failā `src/sse/handlers/chat.ts`
 2. Izjautā visas **aktīvās nodrošinātāju savienojumus** no datubāzes
 3. Filtrē tos ar derīgiem akreditācijas datiem (API atslēga vai OAuth tokens)
 4. Nosaka modeli katram savienojumam (`connection.defaultModel` vai nodrošinātāja pirmais modelis)
@@ -97,7 +97,7 @@ izmantojot esošos noturības nolasījumus (nekad neapstrādātu slēdža `stāv
 - modeļa bloķēšana — `isModelLocked(provider, connectionId, model)`
 
 Katra kandidāta satur arī šīs API atslēgas `excluded` karogu. Izņēmumi tiek glabāti
-katrā API atslēgā (`auto_candidate_overrides` tabula, migrācija `128`) — OmniRoute ir
+katrā API atslēgā (`auto_candidate_overrides` tabula, migrācija `128`) — AgentProxy ir
 viena nomnieka arhitektūra bez `users` tabulas, tāpēc `apiKeyId` ir tuvākā reālā izsaukēja
 identitāte — un tiek piemēroti kandidātu pūla sašaurināšanas punktā
 `open-sse/services/autoCombo/virtualFactory.ts`, izmantojot tīru, vienībām testētu
@@ -138,7 +138,7 @@ Auto-vērtēšana izvēlas labāko nodrošinātāju/modeli katram pieprasījumam
 
 ## Kombināciju nosaukumi, kas atbilst reāliem modeļa identifikatoriem
 
-Kombinācija, kuras `name` ir identisks vienkāršam modeļa identifikatoram (piemēram, kombinācija ar nosaukumu `gpt-5.5`), ir **apzināts un atbalstīts modelis**, nevis kļūda: tas ir mehānisms katra modeļa identifikatora pakalpojumu sniedzēja rezerves risinājumam, kas aprakstīts [sadaļā #6940](https://github.com/diegosouzapw/OmniRoute/issues/6940). Tā kā kombinācijas risināšana tiek pārbaudīta pirms vienkārša modeļa identifikatora risināšanas (`getComboForModel()` failā `src/sse/services/model.ts`), pieprasījums vienkāršajam identifikatoram `gpt-5.5` tiek novirzīts caur kombinācijas mērķiem (piemēram, `acme-responses/gpt-5.5`, `backup-responses/gpt-5.5`), nevis tieši uz vienu pakalpojumu sniedzēju — tas atkārto kombinācijas-pirms-pārrakstīšanas prioritāti, kas izveidota [sadaļā #3227/#3233](https://github.com/diegosouzapw/OmniRoute/issues/3227), un to pārbauda regresijas testi `tests/unit/responses-combo-resolution-3227.test.ts` un `tests/unit/combo-name-codex-responses-rewrite.test.ts`.
+Kombinācija, kuras `name` ir identisks vienkāršam modeļa identifikatoram (piemēram, kombinācija ar nosaukumu `gpt-5.5`), ir **apzināts un atbalstīts modelis**, nevis kļūda: tas ir mehānisms katra modeļa identifikatora pakalpojumu sniedzēja rezerves risinājumam, kas aprakstīts [sadaļā #6940](https://github.com/khanhkit/AgentProxy/issues/6940). Tā kā kombinācijas risināšana tiek pārbaudīta pirms vienkārša modeļa identifikatora risināšanas (`getComboForModel()` failā `src/sse/services/model.ts`), pieprasījums vienkāršajam identifikatoram `gpt-5.5` tiek novirzīts caur kombinācijas mērķiem (piemēram, `acme-responses/gpt-5.5`, `backup-responses/gpt-5.5`), nevis tieši uz vienu pakalpojumu sniedzēju — tas atkārto kombinācijas-pirms-pārrakstīšanas prioritāti, kas izveidota [sadaļā #3227/#3233](https://github.com/khanhkit/AgentProxy/issues/3227), un to pārbauda regresijas testi `tests/unit/responses-combo-resolution-3227.test.ts` un `tests/unit/combo-name-codex-responses-rewrite.test.ts`.
 
 Kombinācijas izveidošana vai pārdēvēšana uz nosaukumu, kas pārklājas ar reālu modeļa identifikatoru, **nekad netiek noraidīta** — tā rīcība pārtrauktu šo dokumentēto darboplastu. Tā vietā (#8530) `POST /api/combos` un `PUT /api/combos/[id]` pievieno atbildei bloķējošu `warning` lauku, kad (jaunais) nosaukums pārklājas ar reālu modeļa identifikatoru:
 
@@ -172,9 +172,9 @@ curl -X POST http://localhost:20128/v1/chat/completions \
 Divas biežās kļūdas:
 
 - **`auto` neizmanto jūsu kombinācijas.** `auto`/`auto/*` veido savu bezkonfigurācijas kandidātu kopu un konsultējas ar saglabātajām kombinācijām tikai tad, ja kombinācijas nosaukums ir burtiski `auto` (nav ieteicams). Lai novirzītu caur kombināciju, nosūtiet tās precīzo nosaukumu — ne `auto`.
-- **`openrouter/auto` ir reāls apmaksāts OpenRouter produkts** ("Auto Best Available"), nevis OmniRoute aizstājvārds. Tas ir OpenReģistra (`open-sse/config/providers/registry/openrouter/index.ts`) vienīgais statiskais modeļa ieraksts, un par to tiek atsevišķi iekasēta maksa. Lai izslēgtu to no `auto` kopām, izmantojiet Iestatījumi → Maršrutēšana → Slēgt apmaksātus modeļus.
+- **`openrouter/auto` ir reāls apmaksāts OpenRouter produkts** ("Auto Best Available"), nevis AgentProxy aizstājvārds. Tas ir OpenReģistra (`open-sse/config/providers/registry/openrouter/index.ts`) vienīgais statiskais modeļa ieraksts, un par to tiek atsevišķi iekasēta maksa. Lai izslēgtu to no `auto` kopām, izmantojiet Iestatījumi → Maršrutēšana → Slēgt apmaksātus modeļus.
 
-Skatīt [sadaļu #7992](https://github.com/diegosouzapw/OmniRoute/issues/7992) un [sadaļu #7111](https://github.com/diegosouzapw/OmniRoute/issues/7111) par sākotnējo pārpratumu, ko šis dokuments apraksta.
+Skatīt [sadaļu #7992](https://github.com/khanhkit/AgentProxy/issues/7992) un [sadaļu #7111](https://github.com/khanhkit/AgentProxy/issues/7111) par sākotnējo pārpratumu, ko šis dokuments apraksta.
 
 ## Kā tas darbojas (Saglabātas autokombo)
 
@@ -243,17 +243,17 @@ Piezīmes:
 
 | Galvene                       | Pieņem                                                                                                                                                                                                              | Efekts                                                                                                                                                                                                                                    |
 | :---------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `X-OmniRoute-Mode`            | iepriekš definētu aliāsu (`fast`, `balanced`, `quality`, `cheap`, `reliable`, `offline`) vai neapstrādāta komplekta nosaukumu (`ship-fast`, `cost-saver`, `quality-first`, `offline-friendly`, `reliability-first`) | Pārklāj vērtēšanas svarus šim pieprasījumam. `balanced`/`default` piespiež noklusējuma svarus (nav komplekta). Nezināmas vērtības tiek ignorētas (konfigurācija saglabāta).                                                               |
-| `X-OmniRoute-Budget`          | pozitīvu skaitli (maks. USD par pieprasījumu)                                                                                                                                                                       | Stingra izmaksu griestus: kandidāti, kuru paredzamās izmaksas pārsniedz šo griestu, tiek filtrēti pirms izvēles. Kas notiek, ja **visi** kandidāti to pārsniedz, nosaka zemāk esošais `X-OmniRoute-Budget-Fallback`.                      |
-| `X-OmniRoute-Budget-Fallback` | `cheapest` (noklusējuma, aliāsi: `cheapest-viable`, `soft`) vai `strict` (aliāsi: `block`, `hard`)                                                                                                                  | `cheapest`: izmanto globāli lētāko kandidātu, pat ja tas joprojām pārsniedz griestus (vecā uzvedība). `strict`: atsakās izvēlēties – pieprasījums ātri neizdodas ar `HTTP 402` vietā klusas pārtēriņa. Nezināmas vērtības tiek ignorētas. |
+| `X-AgentProxy-Mode`            | iepriekš definētu aliāsu (`fast`, `balanced`, `quality`, `cheap`, `reliable`, `offline`) vai neapstrādāta komplekta nosaukumu (`ship-fast`, `cost-saver`, `quality-first`, `offline-friendly`, `reliability-first`) | Pārklāj vērtēšanas svarus šim pieprasījumam. `balanced`/`default` piespiež noklusējuma svarus (nav komplekta). Nezināmas vērtības tiek ignorētas (konfigurācija saglabāta).                                                               |
+| `X-AgentProxy-Budget`          | pozitīvu skaitli (maks. USD par pieprasījumu)                                                                                                                                                                       | Stingra izmaksu griestus: kandidāti, kuru paredzamās izmaksas pārsniedz šo griestu, tiek filtrēti pirms izvēles. Kas notiek, ja **visi** kandidāti to pārsniedz, nosaka zemāk esošais `X-AgentProxy-Budget-Fallback`.                      |
+| `X-AgentProxy-Budget-Fallback` | `cheapest` (noklusējuma, aliāsi: `cheapest-viable`, `soft`) vai `strict` (aliāsi: `block`, `hard`)                                                                                                                  | `cheapest`: izmanto globāli lētāko kandidātu, pat ja tas joprojām pārsniedz griestus (vecā uzvedība). `strict`: atsakās izvēlēties – pieprasījums ātri neizdodas ar `HTTP 402` vietā klusas pārtēriņa. Nezināmas vērtības tiek ignorētas. |
 
 ```bash
 # Piespied ātrāko profilu, ierobežo šo pieprasījumu līdz $0.05 un bloķē stingri, nevis tērē vairāk
 curl -sS http://localhost:20128/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "X-OmniRoute-Mode: fast" \
-  -H "X-OmniRoute-Budget: 0.05" \
-  -H "X-OmniRoute-Budget-Fallback: strict" \
+  -H "X-AgentProxy-Mode: fast" \
+  -H "X-AgentProxy-Budget: 0.05" \
+  -H "X-AgentProxy-Budget-Fallback: strict" \
   -d '{"model":"auto","messages":[{"role":"user","content":"hi"}]}'
 ```
 
@@ -261,7 +261,7 @@ Izšķirtspēja ir tīra funkcija (`open-sse/services/autoCombo/requestControls.
 
 ## Visas maršrutēšanas stratēģijas
 
-OmniRoute kombinētājs atbalsta **19 maršrutēšanas stratēģijas** (deklarētas `src/shared/constants/routingStrategies.ts` → `ROUTING_STRATEGY_VALUES`). Pašas Auto kombinētāja dzinējs ir pieejams zem `auto` stratēģijas; pārējās ir pieejamas saglabātām kombinācijām.
+AgentProxy kombinētājs atbalsta **19 maršrutēšanas stratēģijas** (deklarētas `src/shared/constants/routingStrategies.ts` → `ROUTING_STRATEGY_VALUES`). Pašas Auto kombinētāja dzinējs ir pieejams zem `auto` stratēģijas; pārējās ir pieejamas saglabātām kombinācijām.
 
 | Stratēģija          | Apraksts                                                                                                                                                                                                  |
 | :------------------ | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -607,7 +607,7 @@ Varat reģistrēt savu `RouterStrategy` implementāciju, izmantojot publisko API
 import {
   registerStrategy,
   type RouterStrategy,
-} from "@omniroute/open-sse/services/autoCombo/routerStrategy";
+} from "@agentproxy/open-sse/services/autoCombo/routerStrategy";
 
 class MyCustomStrategy implements RouterStrategy {
   readonly name = "my-custom";
@@ -723,8 +723,8 @@ publisko stratēģiju maršrutēšanas **lēmumu** end-to-end caur reālo kombin
 
 | Komanda                                | Ko tā dara                                                                            |
 | :------------------------------------- | :------------------------------------------------------------------------------------ |
-| `npm run test:combo:live`              | Procesā reāla maršrutēšana ar `RUN_COMBO_LIVE=1`; saglabā dzīvo OmniRoute DB snapšotu |
-| `npm run test:combo:live:vps`          | HTTP pieprasījumi pret dzīvu OmniRoute serveri (iestatiet `COMBO_LIVE_BASE_URL`)      |
+| `npm run test:combo:live`              | Procesā reāla maršrutēšana ar `RUN_COMBO_LIVE=1`; saglabā dzīvo AgentProxy DB snapšotu |
+| `npm run test:combo:live:vps`          | HTTP pieprasījumi pret dzīvu AgentProxy serveri (iestatiet `COMBO_LIVE_BASE_URL`)      |
 | `npm run test:combo:live:vps:failover` | Tas pats, ar tīšiem failover scenārijiem                                              |
 
 Šie dūmu testi izmanto reālo tīkla ceļu (kombinācija → sniedzējs → pabeigšana). Tie ir

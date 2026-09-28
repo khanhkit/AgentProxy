@@ -8,7 +8,7 @@ import path from "path";
 import os from "os";
 import { cloudSyncActionSchema } from "@/shared/validation/schemas";
 import { isValidationFailure, validateBody } from "@/shared/validation/helpers";
-import { sanitizeErrorMessage } from "@omniroute/open-sse/utils/error";
+import { sanitizeErrorMessage } from "@agentproxy/open-sse/utils/error";
 
 /**
  * GET /api/sync/cloud

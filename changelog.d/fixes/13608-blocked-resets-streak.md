@@ -1,0 +1,1 @@
+- **fix(proxy-health):** optionally let target-refused probes reset the consecutive-failure streak behind `PROXY_HEALTH_BLOCKED_RESETS_STREAK`, while keeping the existing neutral behavior by default and never disabling a proxy for a refusal alone.

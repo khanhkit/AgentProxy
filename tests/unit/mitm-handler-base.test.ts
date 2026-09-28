@@ -168,11 +168,11 @@ test("base.fetchRouter — gateway router credential wins over client secrets", 
   const h = new TestHandler();
   const originalFetch = globalThis.fetch;
   const originalApiKey = process.env.ROUTER_API_KEY;
-  const originalBaseUrl = process.env.OMNIROUTE_BASE_URL;
+  const originalBaseUrl = process.env.AGENTPROXY_BASE_URL;
   let sentHeaders = new Headers();
 
   process.env.ROUTER_API_KEY = "router-owned-secret";
-  process.env.OMNIROUTE_BASE_URL = "http://router.internal:20128/";
+  process.env.AGENTPROXY_BASE_URL = "http://router.internal:20128/";
   globalThis.fetch = (async (_input: RequestInfo | URL, init?: RequestInit) => {
     sentHeaders = new Headers(init?.headers);
     return new Response("{}", { status: 200 });
@@ -193,8 +193,8 @@ test("base.fetchRouter — gateway router credential wins over client secrets", 
     globalThis.fetch = originalFetch;
     if (originalApiKey === undefined) delete process.env.ROUTER_API_KEY;
     else process.env.ROUTER_API_KEY = originalApiKey;
-    if (originalBaseUrl === undefined) delete process.env.OMNIROUTE_BASE_URL;
-    else process.env.OMNIROUTE_BASE_URL = originalBaseUrl;
+    if (originalBaseUrl === undefined) delete process.env.AGENTPROXY_BASE_URL;
+    else process.env.AGENTPROXY_BASE_URL = originalBaseUrl;
   }
 
   assert.equal(sentHeaders.get("authorization"), "Bearer router-owned-secret");
@@ -203,4 +203,39 @@ test("base.fetchRouter — gateway router credential wins over client secrets", 
   assert.equal(Array.from(sentHeaders.values()).join("\n").includes("client-owned-secret"), false);
   assert.equal(Array.from(sentHeaders.values()).join("\n").includes("client-cookie-secret"), false);
   assert.equal(Array.from(sentHeaders.values()).join("\n").includes("client-api-secret"), false);
+});
+
+test("base.fetchRouter — derives router URL from configured PORT", async () => {
+  const h = new TestHandler();
+  const originalFetch = globalThis.fetch;
+  const originalPort = process.env.PORT;
+  const originalApiPort = process.env.API_PORT;
+  const originalBaseUrl = process.env.OMNIROUTE_BASE_URL;
+  const originalGenericBaseUrl = process.env.BASE_URL;
+  let capturedUrl = "";
+
+  process.env.PORT = "37128";
+  delete process.env.API_PORT;
+  delete process.env.OMNIROUTE_BASE_URL;
+  delete process.env.BASE_URL;
+  globalThis.fetch = (async (input: RequestInfo | URL) => {
+    capturedUrl = String(input);
+    return new Response("{}", { status: 200 });
+  }) as typeof fetch;
+
+  try {
+    await h.publicFetchRouter({}, "/v1/chat/completions", {});
+  } finally {
+    globalThis.fetch = originalFetch;
+    if (originalPort === undefined) delete process.env.PORT;
+    else process.env.PORT = originalPort;
+    if (originalApiPort === undefined) delete process.env.API_PORT;
+    else process.env.API_PORT = originalApiPort;
+    if (originalBaseUrl === undefined) delete process.env.OMNIROUTE_BASE_URL;
+    else process.env.OMNIROUTE_BASE_URL = originalBaseUrl;
+    if (originalGenericBaseUrl === undefined) delete process.env.BASE_URL;
+    else process.env.BASE_URL = originalGenericBaseUrl;
+  }
+
+  assert.equal(capturedUrl, "http://localhost:37128/v1/chat/completions");
 });

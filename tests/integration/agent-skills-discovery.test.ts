@@ -4,7 +4,7 @@
  * Verifies:
  *  1. Every catalog ID has a skills/<id>/SKILL.md on disk.
  *  2. Each SKILL.md has valid frontmatter (name + description) and body ≥ 100 chars.
- *  3. MCP tool omniroute_agent_skills_list handler returns 46 entries.
+ *  3. MCP tool agentproxy_agent_skills_list handler returns 46 entries.
  *  4. A2A skill list-capabilities returns one artifact containing all 46 entries.
  *
  * Does NOT spin up a server — tests handlers directly via imports.
@@ -131,17 +131,17 @@ test("each SKILL.md body is at least 100 chars", () => {
   assert.deepEqual(failures, [], `SKILL.md files with body < 100 chars: ${msg}`);
 });
 
-// ── §3: MCP tool omniroute_agent_skills_list ─────────────────────────────────
+// ── §3: MCP tool agentproxy_agent_skills_list ─────────────────────────────────
 
-test("MCP omniroute_agent_skills_list handler returns count 46", async () => {
-  const result = await agentSkillTools.omniroute_agent_skills_list.handler({});
+test("MCP agentproxy_agent_skills_list handler returns count 46", async () => {
+  const result = await agentSkillTools.agentproxy_agent_skills_list.handler({});
   assert.equal(result.count, 46, `Expected 46 but got ${result.count}`);
   assert.ok(Array.isArray(result.skills));
   assert.equal(result.skills.length, 46);
 });
 
-test("MCP omniroute_agent_skills_list result has all 46 IDs", async () => {
-  const result = await agentSkillTools.omniroute_agent_skills_list.handler({});
+test("MCP agentproxy_agent_skills_list result has all 46 IDs", async () => {
+  const result = await agentSkillTools.agentproxy_agent_skills_list.handler({});
   const returnedIds = new Set(result.skills.map((s: { id: string }) => s.id));
   for (const id of ALL_IDS) {
     assert.ok(returnedIds.has(id), `MCP result missing skill ID: ${id}`);

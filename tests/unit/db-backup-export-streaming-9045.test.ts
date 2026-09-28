@@ -79,7 +79,7 @@ test("temp file cleanup on stream completion, error, and abort (#9045)", () => {
 test("streaming keeps memory bounded — simulate with a large file (#9045)", async () => {
   // Create a large-ish temp file to simulate a DB backup
   const tmpDir = os.tmpdir();
-  const tmpPath = path.join(tmpDir, "omniroute-9045-test-streaming.sqlite");
+  const tmpPath = path.join(tmpDir, "agentproxy-9045-test-streaming.sqlite");
   const fileSize = 10 * 1024 * 1024; // 10 MB
 
   try {
@@ -135,7 +135,7 @@ test("streaming keeps memory bounded — simulate with a large file (#9045)", as
 
 test("stream content matches file content (data integrity) (#9045)", async () => {
   const tmpDir = os.tmpdir();
-  const tmpPath = path.join(tmpDir, "omniroute-9045-test-integrity.sqlite");
+  const tmpPath = path.join(tmpDir, "agentproxy-9045-test-integrity.sqlite");
 
   try {
     // Write a known pattern

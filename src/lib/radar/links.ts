@@ -1,8 +1,8 @@
 /**
  * links.ts — pure config for the two Radar "get a supporter key" outbound
  * links (F4/T7): the contributor-claim (GitHub OAuth) flow and the
- * supporter-plans (payment) page on the private radar.omniroute.online
- * server.
+ * supporter-plans entry point. Private hosted services are opt-in via env;
+ * the safe default is the AgentProxy repository.
  *
  * DELIBERATELY DB-FREE and side-effect-free — same shape as the
  * `RADAR_FEED_URL` override already used by `./sync.ts`, so forks/self-hosters
@@ -21,11 +21,11 @@
 
 import { parseRadarAdminUrl } from "@/shared/validation/radarAdminUrl";
 
-/** Default contributor-claim entry point — starts the GitHub OAuth flow. */
-const DEFAULT_CONTRIBUTOR_CLAIM_URL = "https://radar.omniroute.online/auth/github";
+/** Safe fallback when no private contributor-claim service is configured. */
+const DEFAULT_CONTRIBUTOR_CLAIM_URL = "https://github.com/khanhkit/AgentProxy";
 
-/** Default supporter plans/payment page. */
-const DEFAULT_SUPPORTER_PLANS_URL = "https://radar.omniroute.online/planos";
+/** Safe fallback when no private supporter-plans service is configured. */
+const DEFAULT_SUPPORTER_PLANS_URL = "https://github.com/khanhkit/AgentProxy";
 
 /**
  * URL that starts the "I'm a contributor" GitHub OAuth claim flow.

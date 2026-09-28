@@ -13,7 +13,7 @@ process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.API_KEY_SECRET = "test-secret";
 // API-key validation falls through to a Redis-backed cache otherwise — disable
 // it for the local test loop so isValidApiKey() does not stall on ETIMEDOUT.
-process.env.OMNIROUTE_DISABLE_REDIS_AUTH_CACHE = "1";
+process.env.AGENTPROXY_DISABLE_REDIS_AUTH_CACHE = "1";
 
 const core = await import("../../src/lib/db/core.ts");
 const apiKeysDb = await import("../../src/lib/db/apiKeys.ts");
@@ -206,7 +206,7 @@ test("stdio path is unaffected: with no authInfo/meta, scope resolution still fa
   // stdio tool handlers never populate extra.authInfo (no per-caller identity
   // over stdio — see mcpCallerIdentity.ts) and never call
   // resolveMcpCallerAuthInfo (HTTP/SSE-only, see httpTransport.ts). The only
-  // scope source left for them is the OMNIROUTE_MCP_SCOPES env fallback.
+  // scope source left for them is the AGENTPROXY_MCP_SCOPES env fallback.
   const scopeContext = resolveCallerScopeContext({ sessionId: "stdio-session" }, ["read:health"]);
   assert.equal(scopeContext.source, "env");
   assert.deepEqual(scopeContext.scopes, ["read:health"]);

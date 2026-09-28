@@ -39,7 +39,7 @@ test("anysearch aliases resolve to the canonical id", () => {
 test("buildAnysearchSearchRequest uses the published REST contract", () => {
   const config = SEARCH_PROVIDERS["anysearch-search"];
   const { url, init } = buildAnysearchSearchRequest(config, {
-    query: "omniroute gateway",
+    query: "agentproxy gateway",
     maxResults: 3,
     token: "as_sk_test",
   });
@@ -47,7 +47,7 @@ test("buildAnysearchSearchRequest uses the published REST contract", () => {
   assert.equal(init.method, "POST");
   const headers = init.headers as Record<string, string>;
   assert.equal(headers.Authorization, "Bearer as_sk_test");
-  assert.deepEqual(JSON.parse(String(init.body)), { query: "omniroute gateway", max_results: 3 });
+  assert.deepEqual(JSON.parse(String(init.body)), { query: "agentproxy gateway", max_results: 3 });
 });
 
 test("buildAnysearchSearchRequest omits auth without a token and clamps max_results to 10", () => {
@@ -115,8 +115,8 @@ test("handleSearch maps AnySearch results into the unified search response", asy
         data: {
           results: [
             {
-              title: "OmniRoute",
-              url: "https://github.com/diegosouzapw/OmniRoute",
+              title: "AgentProxy",
+              url: "https://github.com/khanhkit/AgentProxy",
               snippet: "AI gateway for multi-provider LLM",
               date: "2026-08-23T00:00:00.000Z",
             },
@@ -130,7 +130,7 @@ test("handleSearch maps AnySearch results into the unified search response", asy
 
   try {
     const result = await handleSearch({
-      query: "omniroute",
+      query: "agentproxy",
       provider: "anysearch-search",
       maxResults: 5,
       searchType: "web",
@@ -143,8 +143,8 @@ test("handleSearch maps AnySearch results into the unified search response", asy
     const headers = (capturedInit?.headers ?? {}) as Record<string, string>;
     assert.equal(headers.Authorization, "Bearer as_sk_test");
     assert.equal(result.data?.provider, "anysearch-search");
-    assert.equal(result.data?.results[0].title, "OmniRoute");
-    assert.equal(result.data?.results[0].url, "https://github.com/diegosouzapw/OmniRoute");
+    assert.equal(result.data?.results[0].title, "AgentProxy");
+    assert.equal(result.data?.results[0].url, "https://github.com/khanhkit/AgentProxy");
     assert.equal(result.data?.results[0].snippet, "AI gateway for multi-provider LLM");
   } finally {
     globalThis.fetch = originalFetch;
@@ -178,7 +178,7 @@ test("handleSearch maps an exhausted-quota envelope to 402 and other envelope er
         }
       )) as typeof fetch;
     const quotaResult = await handleSearch({
-      query: "omniroute",
+      query: "agentproxy",
       provider: "anysearch-search",
       maxResults: 5,
       searchType: "web",
@@ -194,7 +194,7 @@ test("handleSearch maps an exhausted-quota envelope to 402 and other envelope er
         headers: { "content-type": "application/json" },
       })) as typeof fetch;
     const genericResult = await handleSearch({
-      query: "omniroute",
+      query: "agentproxy",
       provider: "anysearch-search",
       maxResults: 5,
       searchType: "web",

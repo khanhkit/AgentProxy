@@ -6,16 +6,16 @@
 
 ---
 
-title: "OmniRoute — Ġallerija tal-Karatteristiċi tal-Board tal-Ittri"
+title: "AgentProxy — Ġallerija tal-Karatteristiċi tal-Board tal-Ittri"
 version: 3.8.40
 lastUpdated: 2026-06-28
 ---
 
-# OmniRoute — Ġallerija tal-Karatteristiċi tal-Board tal-Ittri
+# AgentProxy — Ġallerija tal-Karatteristiċi tal-Board tal-Ittri
 
 🌐 **Languages:** 🇺🇸 [English](../../../../guides/FEATURES.md) · 🇸🇦 [ar](../../../ar/docs/guides/FEATURES.md) · 🇦🇿 [az](../../../az/docs/guides/FEATURES.md) · 🇧🇬 [bg](../../../bg/docs/guides/FEATURES.md) · 🇧🇩 [bn](../../../bn/docs/guides/FEATURES.md) · 🇨🇿 [cs](../../../cs/docs/guides/FEATURES.md) · 🇩🇰 [da](../../../da/docs/guides/FEATURES.md) · 🇩🇪 [de](../../../de/docs/guides/FEATURES.md) · 🇬🇷 [el](../../../el/docs/guides/FEATURES.md) · 🇪🇸 [es](../../../es/docs/guides/FEATURES.md) · 🇪🇪 [et](../../../et/docs/guides/FEATURES.md) · 🇮🇷 [fa](../../../fa/docs/guides/FEATURES.md) · 🇫🇮 [fi](../../../fi/docs/guides/FEATURES.md) · 🇫🇷 [fr](../../../fr/docs/guides/FEATURES.md) · 🇮🇪 [ga](../../../ga/docs/guides/FEATURES.md) · 🇮🇳 [gu](../../../gu/docs/guides/FEATURES.md) · 🇮🇱 [he](../../../he/docs/guides/FEATURES.md) · 🇮🇳 [hi](../../../hi/docs/guides/FEATURES.md) · 🇭🇷 [hr](../../../hr/docs/guides/FEATURES.md) · 🇭🇺 [hu](../../../hu/docs/guides/FEATURES.md) · 🇮🇩 [id](../../../id/docs/guides/FEATURES.md) · 🇮🇹 [it](../../../it/docs/guides/FEATURES.md) · 🇯🇵 [ja](../../../ja/docs/guides/FEATURES.md) · 🇰🇷 [ko](../../../ko/docs/guides/FEATURES.md) · 🇱🇹 [lt](../../../lt/docs/guides/FEATURES.md) · 🇱🇻 [lv](../../../lv/docs/guides/FEATURES.md) · 🇮🇳 [mr](../../../mr/docs/guides/FEATURES.md) · 🇲🇾 [ms](../../../ms/docs/guides/FEATURES.md) · 🇳🇱 [nl](../../../nl/docs/guides/FEATURES.md) · 🇳🇴 [no](../../../no/docs/guides/FEATURES.md) · 🇵🇭 [phi](../../../phi/docs/guides/FEATURES.md) · 🇵🇱 [pl](../../../pl/docs/guides/FEATURES.md) · 🇵🇹 [pt](../../../pt/docs/guides/FEATURES.md) · 🇧🇷 [pt-BR](../../../pt-BR/docs/guides/FEATURES.md) · 🇷🇴 [ro](../../../ro/docs/guides/FEATURES.md) · 🇷🇺 [ru](../../../ru/docs/guides/FEATURES.md) · 🇸🇰 [sk](../../../sk/docs/guides/FEATURES.md) · 🇸🇮 [sl](../../../sl/docs/guides/FEATURES.md) · 🇷🇸 [sr](../../../sr/docs/guides/FEATURES.md) · 🇸🇪 [sv](../../../sv/docs/guides/FEATURES.md) · 🇰🇪 [sw](../../../sw/docs/guides/FEATURES.md) · 🇮🇳 [ta](../../../ta/docs/guides/FEATURES.md) · 🇮🇳 [te](../../../te/docs/guides/FEATURES.md) · 🇹🇭 [th](../../../th/docs/guides/FEATURES.md) · 🇹🇷 [tr](../../../tr/docs/guides/FEATURES.md) · 🇺🇦 [uk-UA](../../../uk-UA/docs/guides/FEATURES.md) · 🇵🇰 [ur](../../../ur/docs/guides/FEATURES.md) · 🇻🇳 [vi](../../../vi/docs/guides/FEATURES.md) · 🇨🇳 [zh-CN](../../../zh-CN/docs/guides/FEATURES.md) · 🇹🇼 [zh-TW](../../../zh-TW/docs/guides/FEATURES.md)
 
-Gwida viżwali għal kull sezzjoni tal-portal OmniRoute.
+Gwida viżwali għal kull sezzjoni tal-portal AgentProxy.
 
 > 📅 **Aħħar aġġornament:** 2026-06-28 — **v3.8.40**
 
@@ -45,7 +45,7 @@ Iċ-ċiklu v3.7.x → v3.8 żied routing awtomatiku mingħajr konfigurazzjoni, p
 - 🚦 **Klassifikazzjoni per-provdiditur 429** + naħla `useUpstream429BreakerHints` — interrazzjon tal-biċċiera aktar fin li juża ħjiel tal-limiti tar-rata tal-upstream
 - 🩺 **Dashboard tal-mudelli fil-periklu** — osserva blokki per-mudell u erġa’ attiva manwalment mill-interfaċċ
 - 🔒 **Spezzjoni dinamika tal-cert MITM Linux** — taħdem fuq Debian/Ubuntu, Fedora/RHEL, Arch, u distro oħrajn
-- 💻 **Għodod tal-CLI** — aktar minn 20 kmand inklużi `omniroute providers`, `omniroute combos`, `omniroute doctor`, `omniroute setup`
+- 💻 **Għodod tal-CLI** — aktar minn 20 kmand inklużi `agentproxy providers`, `agentproxy combos`, `agentproxy doctor`, `agentproxy setup`
 - 🔵 **Skoperta tal-mudell embedded Qdrant** — sonda awtomatika tal-mudell tal-ħażna vettorjali
 - 🔑 **API Keys / Bearer keys b’maġisteru `manage`** — timplimenta operazzjonijiet tal-amministrazzjoni programmatikament permezz tal-API
 - 🏥 **Analitiċi tas-saħħa tal-mira Combo** + **ħolqien strutturat ta’ Combo** — saħħa per-mira u għodda tal-UI għat-tħaffif ta’ passi `(fornitur, mudell, konnessjoni)`
@@ -152,7 +152,7 @@ Dashboard għall-iskoperta u l-ġestjoni tal-aġenti CLI. Turi grilja ta' 16 aġ
 
 ## 🔗 Transmissjoni tal-Kuntest _(v3.5.5+)_
 
-Strateġija tal-kombinazzjoni li tiżżomm il-kontinuità tas-sessjoni meta ssir rotazzjoni tal-kont matul il-konversazzjoni. Qabel ma l-kont attiv jiġi eżawrit, OmniRoute jiġġenera sommarju ta' handoff strukturat fil-fond. Wara li l-istenniela li jmiss tirrispondi għal kont differenti, is-sommarju jiġi injettat bħala messaġġ tas-sistema biex il-kont ġdid ikompli bil-kuntest kollu.
+Strateġija tal-kombinazzjoni li tiżżomm il-kontinuità tas-sessjoni meta ssir rotazzjoni tal-kont matul il-konversazzjoni. Qabel ma l-kont attiv jiġi eżawrit, AgentProxy jiġġenera sommarju ta' handoff strukturat fil-fond. Wara li l-istenniela li jmiss tirrispondi għal kont differenti, is-sommarju jiġi injettat bħala messaġġ tas-sistema biex il-kont ġdid ikompli bil-kuntest kollu.
 
 Configurabbli permezz ta' settings tal-kombinazzjoni jew globali:
 
@@ -221,7 +221,7 @@ Skripts ta' tneħħija nodfa għall-metodi kollha ta' installazzjoni:
 
 | Kmand                    | Azzjoni                                                                                              |
 | ------------------------ | ---------------------------------------------------------------------------------------------------- |
-| `npm run uninstall`      | Ineħħi l-app tas-sistema iżda **iżomm id-DB u l-konfigurazzjonijiet tiegħek** f'`~/.omniroute`.      |
+| `npm run uninstall`      | Ineħħi l-app tas-sistema iżda **iżomm id-DB u l-konfigurazzjonijiet tiegħek** f'`~/.agentproxy`.      |
 | `npm run uninstall:full` | Ineħħi l-app U **iħassar b'mod permanenti l-konfigurazzjonijiet, iċ-ċwievet, u d-databases kollha**. |
 
 ---
@@ -262,7 +262,7 @@ Traċċar ta' azzjonijiet amministrattivi b'filtrazzjoni skont it-tip ta' azzjon
 
 ## 🖥️ Applikazzjoni Desktop
 
-App desktop nattiva Electron għal Windows, macOS, u Linux. Mexxi OmniRoute bħala applikazzjoni waħedha b'integrazzjoni mat-trej tas-sistema, appoġġ offline, aġġornament awtomatiku, u installazzjoni b'klikk waħda.
+App desktop nattiva Electron għal Windows, macOS, u Linux. Mexxi AgentProxy bħala applikazzjoni waħedha b'integrazzjoni mat-trej tas-sistema, appoġġ offline, aġġornament awtomatiku, u installazzjoni b'klikk waħda.
 
 Karatteristiċi ewlenin:
 
@@ -281,7 +281,7 @@ Karatteristiċi ewlenin:
 
 ## 🌐 Pont WebSocket V1 _(v3.6.6+)_
 
-OmniRoute issa jappoġġja **klijenti WebSocket kompatibbli mal-OpenAI** permezz tal-endpoint ta' aġġornament `/v1/ws`. Is-server personalizzat `scripts/dev/v1-ws-bridge.mjs` jgeżwer Next.js u jaġġorna konnessjonijiet WS għal sessjonijiet ta' streaming bidirezzjonali sħaħ. L-awtentikazzjoni tuża l-istess ċavetta tal-API jew cookie tas-sessjoni bħat-talbiet HTTP.
+AgentProxy issa jappoġġja **klijenti WebSocket kompatibbli mal-OpenAI** permezz tal-endpoint ta' aġġornament `/v1/ws`. Is-server personalizzat `scripts/dev/v1-ws-bridge.mjs` jgeżwer Next.js u jaġġorna konnessjonijiet WS għal sessjonijiet ta' streaming bidirezzjonali sħaħ. L-awtentikazzjoni tuża l-istess ċavetta tal-API jew cookie tas-sessjoni bħat-talbiet HTTP.
 
 Imġiba ewlenija:
 
@@ -307,7 +307,7 @@ Il-pakkett tal-konfigurazzjoni huwa mibni minn `src/lib/sync/bundle.ts`. Il-kons
 
 **GLM Thinking (`glmt`)** huwa issa pprovdit rreġistrat tal-ewwel livell: 65 536 token massimu tal-output, 24 576 baġit ta' ħsieb, 900 s timeout default, format ta' API kompatibbli ma' Claude, u t-taqsim-użu mal-familja GLM.
 
-**Tnaqqis tal-token ibridu** wasal ukoll fil-v3.6.6: meta pprovdit kompatibbli ma' Claude jirrevela `/messages/count_tokens`, OmniRoute sejjaħlu qabel talbiet kbar b'stima ta' riserva grazjuża.
+**Tnaqqis tal-token ibridu** wasal ukoll fil-v3.6.6: meta pprovdit kompatibbli ma' Claude jirrevela `/messages/count_tokens`, AgentProxy sejjaħlu qabel talbiet kbar b'stima ta' riserva grazjuża.
 
 ---
 

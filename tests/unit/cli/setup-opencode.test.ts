@@ -9,8 +9,8 @@ import {
 const RAW = JSON.stringify({
   $schema: "https://opencode.ai/config.json",
   provider: {
-    omniroute: {
-      name: "OmniRoute",
+    agentproxy: {
+      name: "AgentProxy",
       npm: "@ai-sdk/openai-compatible",
       options: { baseURL: "http://vps:20128/v1", apiKey: "sk-secret-literal" },
       models: {
@@ -26,8 +26,8 @@ test("postProcessOpencodeConfig replaces the literal API key with an env ref (no
   const { json } = postProcessOpencodeConfig(RAW);
   assert.equal(json.includes("sk-secret-literal"), false);
   const cfg = JSON.parse(json);
-  assert.equal(cfg.provider.omniroute.options.apiKey, "{env:OMNIROUTE_API_KEY}");
-  assert.equal(cfg.provider.omniroute.options.baseURL, "http://vps:20128/v1");
+  assert.equal(cfg.provider.agentproxy.options.apiKey, "{env:AGENTPROXY_API_KEY}");
+  assert.equal(cfg.provider.agentproxy.options.baseURL, "http://vps:20128/v1");
 });
 
 test("postProcessOpencodeConfig keeps all models by default", () => {
@@ -39,16 +39,16 @@ test("postProcessOpencodeConfig --only filters the model map by substring", () =
   const { json, modelCount } = postProcessOpencodeConfig(RAW, { only: ["glm", "kimi"] });
   const cfg = JSON.parse(json);
   assert.equal(modelCount, 2);
-  assert.ok(cfg.provider.omniroute.models["glm/glm-5.2"]);
-  assert.ok(cfg.provider.omniroute.models["kmc/kimi-k2.7"]);
-  assert.equal("openai/gpt-4o" in cfg.provider.omniroute.models, false);
+  assert.ok(cfg.provider.agentproxy.models["glm/glm-5.2"]);
+  assert.ok(cfg.provider.agentproxy.models["kmc/kimi-k2.7"]);
+  assert.equal("openai/gpt-4o" in cfg.provider.agentproxy.models, false);
 });
 
 test("postProcessOpencodeConfig preserves $schema, provider name and npm", () => {
   const { json } = postProcessOpencodeConfig(RAW);
   const cfg = JSON.parse(json);
   assert.equal(cfg.$schema, "https://opencode.ai/config.json");
-  assert.equal(cfg.provider.omniroute.npm, "@ai-sdk/openai-compatible");
+  assert.equal(cfg.provider.agentproxy.npm, "@ai-sdk/openai-compatible");
 });
 
 test("postProcessOpencodeConfig preserves JSONC comments outside managed fields", () => {
@@ -59,7 +59,7 @@ test("postProcessOpencodeConfig preserves JSONC comments outside managed fields"
         // nested provider comment
         "npm": "@ai-sdk/custom",
       },
-      "omniroute": {
+      "agentproxy": {
         "options": { "apiKey": "sk-secret-literal" },
         "models": { "openai/gpt-4o": { "name": "GPT-4o" } },
       },
@@ -72,7 +72,7 @@ test("postProcessOpencodeConfig preserves JSONC comments outside managed fields"
   assert.match(json, /\/\/ nested provider comment/);
   const config = parse(json);
   assert.equal(config.provider.custom.npm, "@ai-sdk/custom");
-  assert.equal(config.provider.omniroute.options.apiKey, "{env:OMNIROUTE_API_KEY}");
+  assert.equal(config.provider.agentproxy.options.apiKey, "{env:AGENTPROXY_API_KEY}");
   assert.equal(modelCount, 1);
 });
 

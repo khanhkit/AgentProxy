@@ -6,20 +6,20 @@
 
 ---
 
-title: "Vodnik za uvedbo OmniRoute na Fly.io"
+title: "Vodnik za uvedbo AgentProxy na Fly.io"
 version: 3.8.40
 lastUpdated: 2026-06-28
 ---
 
-# Vodnik za uvedbo OmniRoute na Fly.io
+# Vodnik za uvedbo AgentProxy na Fly.io
 
-Ta dokument opisuje dejanski postopek uvedbe OmniRoute na Fly.io in zajema naslednje scenarije:
+Ta dokument opisuje dejanski postopek uvedbe AgentProxy na Fly.io in zajema naslednje scenarije:
 
 - Prva uvedba trenutnega projekta na Fly.io
 - Objavljanje nadaljnjih posodobitev kode
 - Novi projekti, ki uporabljajo enak potek uvedbe
 
-Ta vodnik temelji na preverjeni delujoči konfiguraciji trenutnega projekta. Ime aplikacije je `omniroute`.
+Ta vodnik temelji na preverjeni delujoči konfiguraciji trenutnega projekta. Ime aplikacije je `agentproxy`.
 
 ---
 
@@ -29,7 +29,7 @@ Ta vodnik temelji na preverjeni delujoči konfiguraciji trenutnega projekta. Ime
 - Način uvedbe: Neposredna lokalna objava z `flyctl`
 - Izvajalno okolje: Uporaba obstoječih datotek `Dockerfile` in `fly.toml` v repozitoriju
 - Trajnost podatkov: Nosilec Fly, priklopljen na `/data`
-- URL za dostop: `https://omniroute.fly.dev/`
+- URL za dostop: `https://agentproxy.example.com/`
 
 ---
 
@@ -38,7 +38,7 @@ Ta vodnik temelji na preverjeni delujoči konfiguraciji trenutnega projekta. Ime
 Potrjeno je bilo, da datoteka `fly.toml` v trenutnem repozitoriju vsebuje naslednje ključne elemente:
 
 ```toml
-app = 'omniroute'
+app = 'agentproxy'
 primary_region = 'sin'
 
 [[mounts]]
@@ -60,7 +60,7 @@ primary_region = 'sin'
 
 Opombe:
 
-- `app = 'omniroute'` določa, na katero aplikacijo Fly je usmerjena uvedba
+- `app = 'agentproxy'` določa, na katero aplikacijo Fly je usmerjena uvedba
 - `destination = '/data'` določa imenik za priklop trajnega nosilca
 - Za ta projekt morate nastaviti `DATA_DIR=/data`, sicer bodo podatkovna zbirka in ključi zapisani v začasni imenik vsebnika
 
@@ -98,8 +98,8 @@ flyctl version
 ### 4.1 Kloniranje kode in premik v imenik
 
 ```powershell
-git clone https://github.com/diegosouzapw/OmniRoute.git
-cd OmniRoute
+git clone https://github.com/khanhkit/AgentProxy.git
+cd AgentProxy
 ```
 
 ### 4.2 Potrditev imena aplikacije
@@ -107,29 +107,29 @@ cd OmniRoute
 Odprite `fly.toml` in preverite naslednjo vrstico:
 
 ```toml
-app = 'omniroute'
+app = 'agentproxy'
 ```
 
 Če izvajate uvedbo v lastno novo aplikacijo, lahko ime spremenite v globalno enolično ime, na primer:
 
 ```toml
-app = 'omniroute-yourname'
+app = 'agentproxy-yourname'
 ```
 
 Opomba:
 
 - Prepričajte se, da se aplikacija, ki jo vidite v nadzorni plošči, ujema z vrednostjo `app` v datoteki `fly.toml`
-- Če ste prej uporabljali drugo ime, na primer `oroute`, ga ne zamenjujte z `omniroute`
+- Če ste prej uporabljali drugo ime, na primer `oroute`, ga ne zamenjujte z `agentproxy`
 
 ### 4.3 Ustvarjanje aplikacije
 
 Če aplikacija še ne obstaja:
 
 ```powershell
-flyctl apps create omniroute
+flyctl apps create agentproxy
 ```
 
-Če ste spremenili ime aplikacije, zamenjajte `omniroute` z izbranim imenom.
+Če ste spremenili ime aplikacije, zamenjajte `agentproxy` z izbranim imenom.
 
 ### 4.4 Prva uvedba
 
@@ -145,14 +145,14 @@ Za ta projekt je priporočljivo, da na Fly.io nastavite vsaj naslednje parametre
 
 ### 5.1 Preverjeni parametri
 
-Ti parametri so bili uporabljeni pri dejanskih uvedbah trenutne aplikacije `omniroute`:
+Ti parametri so bili uporabljeni pri dejanskih uvedbah trenutne aplikacije `agentproxy`:
 
 - `API_KEY_SECRET`
 - `DATA_DIR`
 - `JWT_SECRET`
 - `MACHINE_ID_SALT`
 - `NEXT_PUBLIC_BASE_URL`
-- `OMNIROUTE_WS_BRIDGE_SECRET` (zahtevano v produkciji — uporablja se za preverjanje pristnosti mostu WebSocket)
+- `AGENTPROXY_WS_BRIDGE_SECRET` (zahtevano v produkciji — uporablja se za preverjanje pristnosti mostu WebSocket)
 - `STORAGE_ENCRYPTION_KEY`
 
 ### 5.2 O parametru `INITIAL_PASSWORD`
@@ -180,7 +180,7 @@ Za Fly Secrets priporočamo naslednje spremenljivke:
 | ----------------------------- | -------------------- | --------------------------------------------------------- |
 | `API_KEY_SECRET`              | Obvezno              | Uporablja se za ustvarjanje in preverjanje ključev API    |
 | `JWT_SECRET`                  | Obvezno              | Uporablja se za prijavne seje in podpisovanje žetonov JWT |
-| `OMNIROUTE_WS_BRIDGE_SECRET`  | Obvezno v produkciji | Skrivnost za preverjanje pristnosti mostu WebSocket       |
+| `AGENTPROXY_WS_BRIDGE_SECRET`  | Obvezno v produkciji | Skrivnost za preverjanje pristnosti mostu WebSocket       |
 | `STORAGE_ENCRYPTION_KEY`      | Zelo priporočljivo   | Šifrira občutljive podatke o povezavah v mirovanju        |
 | `MACHINE_ID_SALT`             | Priporočljivo        | Ustvari stabilen identifikator naprave                    |
 | `INITIAL_PASSWORD`            | Izbirno              | Nastavi začetno geslo zaledja ob prvi uvedbi              |
@@ -191,7 +191,7 @@ Za Fly Secrets priporočamo naslednje spremenljivke:
 | Spremenljivka          | Priporočena vrednost        |
 | ---------------------- | --------------------------- |
 | `DATA_DIR`             | `/data`                     |
-| `NEXT_PUBLIC_BASE_URL` | `https://omniroute.fly.dev` |
+| `NEXT_PUBLIC_BASE_URL` | `https://agentproxy.example.com` |
 
 Opombe:
 
@@ -205,10 +205,10 @@ Opombe:
 1. **Nastavite `NEXT_PUBLIC_BASE_URL` na svojo javno domeno HTTPS**
 
    ```powershell
-   flyctl secrets set NEXT_PUBLIC_BASE_URL=https://omniroute.fly.dev -a omniroute
+   flyctl secrets set NEXT_PUBLIC_BASE_URL=https://agentproxy.example.com -a agentproxy
    ```
 
-   Če uporabljate domeno po meri, jo zamenjajte z ustrezno domeno (npr. `https://omniroute.yourdomain.com`).
+   Če uporabljate domeno po meri, jo zamenjajte z ustrezno domeno (npr. `https://agentproxy.yourdomain.com`).
 
 2. **Konfigurirajte URL povratnega klica v konzoli ponudnika**
 
@@ -219,7 +219,7 @@ Opombe:
    ```
 
    Na primer, ne glede na to, ali gre za Gemini, Antigravity, Cursor ali GitLab Duo:
-   - `https://omniroute.fly.dev/callback`
+   - `https://agentproxy.example.com/callback`
 
    Če se `NEXT_PUBLIC_BASE_URL` ne ujema z URL-jem povratnega klica, registriranim pri ponudniku, postopek OAuth ne bo uspel pri koraku preusmeritve v brskalniku.
 
@@ -232,7 +232,7 @@ Naslednji ukazi ustvarijo varne naključne vrednosti in v enem koraku zapišejo 
 Opombe:
 
 - Ne vključuje `INITIAL_PASSWORD`
-- Namenjeno trenutnemu projektu `omniroute`
+- Namenjeno trenutnemu projektu `agentproxy`
 
 ```powershell
 $apiKeySecret = [Convert]::ToHexString((1..32 | ForEach-Object { Get-Random -Minimum 0 -Maximum 256 })).ToLower()
@@ -246,26 +246,26 @@ flyctl secrets set `
   JWT_SECRET=$jwtSecret `
   MACHINE_ID_SALT=$machineIdSalt `
   STORAGE_ENCRYPTION_KEY=$storageKey `
-  OMNIROUTE_WS_BRIDGE_SECRET=$wsBridgeSecret `
+  AGENTPROXY_WS_BRIDGE_SECRET=$wsBridgeSecret `
   DATA_DIR=/data `
-  NEXT_PUBLIC_BASE_URL=https://omniroute.fly.dev `
-  -a omniroute
+  NEXT_PUBLIC_BASE_URL=https://agentproxy.example.com `
+  -a agentproxy
 ```
 
 V sistemih Linux/macOS lahko uporabite tudi `openssl rand -hex 32`:
 
 ```bash
-flyctl secrets set OMNIROUTE_WS_BRIDGE_SECRET=$(openssl rand -hex 32) -a omniroute
+flyctl secrets set AGENTPROXY_WS_BRIDGE_SECRET=$(openssl rand -hex 32) -a agentproxy
 ```
 
 Opombe:
 
-- `OMNIROUTE_WS_BRIDGE_SECRET` je obvezna v produkciji; če manjka, rokovanje mostu WebSocket ne bo delovalo
+- `AGENTPROXY_WS_BRIDGE_SECRET` je obvezna v produkciji; če manjka, rokovanje mostu WebSocket ne bo delovalo
 
 Če želite nastaviti tudi začetno geslo:
 
 ```powershell
-flyctl secrets set INITIAL_PASSWORD=your-strong-password -a omniroute
+flyctl secrets set INITIAL_PASSWORD=your-strong-password -a agentproxy
 ```
 
 ---
@@ -273,12 +273,12 @@ flyctl secrets set INITIAL_PASSWORD=your-strong-password -a omniroute
 ## 8. Ogled trenutnih parametrov
 
 ```powershell
-flyctl secrets list -a omniroute
+flyctl secrets list -a agentproxy
 ```
 
 Če stran `Secrets` v konzoli ne prikazuje pričakovanih spremenljivk, preverite:
 
-- Ali si ogledujete aplikacijo `omniroute`
+- Ali si ogledujete aplikacijo `agentproxy`
 - Ali se vrednost `app` v datoteki `fly.toml` ujema z aplikacijo v konzoli
 
 ---
@@ -295,14 +295,14 @@ flyctl deploy
 Če morate posodobiti samo parametre brez spreminjanja kode:
 
 ```powershell
-flyctl secrets set KEY=value -a omniroute
+flyctl secrets set KEY=value -a agentproxy
 ```
 
 Fly bo samodejno izvedel postopno posodobitev računalnikov.
 
 ### 9.1 Spremljanje posodobitev izvornega repozitorija ob ohranitvi datoteke `fly.toml` vaše razvejane kopije
 
-Če je trenutni repozitorij razvejana kopija in želite sinhronizirati posodobitve iz izvornega repozitorija `https://github.com/diegosouzapw/OmniRoute`, sledite spodnjemu postopku.
+Če je trenutni repozitorij razvejana kopija in želite sinhronizirati posodobitve iz izvornega repozitorija `https://github.com/khanhkit/AgentProxy`, sledite spodnjemu postopku.
 
 Najprej preverite oddaljene repozitorije:
 
@@ -318,7 +318,7 @@ Videti bi morali vsaj:
 Če `upstream` ni konfiguriran, ga dodajte:
 
 ```powershell
-git remote add upstream https://github.com/diegosouzapw/OmniRoute.git
+git remote add upstream https://github.com/khanhkit/AgentProxy.git
 ```
 
 Pred sinhronizacijo z izvornim repozitorijem pridobite najnovejše potrditve in oznake:
@@ -370,8 +370,8 @@ Po sinhronizaciji z izvirnim repozitorijem upoštevajte ta priporočeni vrstni r
 3. Obnovite datoteko `fly.toml` razvejane kopije
 4. `git push origin main`
 5. `flyctl deploy`
-6. `flyctl status -a omniroute`
-7. `flyctl logs --no-tail -a omniroute`
+6. `flyctl status -a agentproxy`
+7. `flyctl logs --no-tail -a agentproxy`
 
 To je dejanski postopek, uporabljen pri nadgradnji trenutnega projekta na `v3.4.7` (primer se nanaša na zgodovinsko različico; trenutna dejanska različica je `v3.8.0`).
 
@@ -382,20 +382,20 @@ To je dejanski postopek, uporabljen pri nadgradnji trenutnega projekta na `v3.4.
 ### 10.1 Preverjanje stanja aplikacije
 
 ```powershell
-flyctl status -a omniroute
+flyctl status -a agentproxy
 ```
 
 ### 10.2 Ogled dnevnikov zagona
 
 ```powershell
-flyctl logs --no-tail -a omniroute
+flyctl logs --no-tail -a agentproxy
 ```
 
 ### 10.3 Preverjanje dostopnosti spletnega mesta
 
 ```powershell
 try {
-  (Invoke-WebRequest -Uri "https://omniroute.fly.dev" -MaximumRedirection 5 -UseBasicParsing).StatusCode
+  (Invoke-WebRequest -Uri "https://agentproxy.example.com" -MaximumRedirection 5 -UseBasicParsing).StatusCode
 } catch {
   if ($_.Exception.Response) {
     $_.Exception.Response.StatusCode.value__
@@ -434,14 +434,14 @@ Ti dve točki sta ključni:
 Običajno obstajata dva razloga:
 
 - Ukaza `flyctl secrets set` še niste zagnali
-- Ogledujete si drugo aplikacijo (npr. `oroute` namesto `omniroute`)
+- Ogledujete si drugo aplikacijo (npr. `oroute` namesto `agentproxy`)
 
 ### 12.2 `flyctl deploy` sporoči `app not found`
 
 Najprej ustvarite aplikacijo:
 
 ```powershell
-flyctl apps create omniroute
+flyctl apps create agentproxy
 ```
 
 ### 12.3 Razčlenjevanje datoteke `fly.toml` ne uspe
@@ -484,10 +484,10 @@ Najpogosteje uporabljeni ukazi za nadaljnje izdaje so:
 
 ```powershell
 flyctl auth whoami
-flyctl status -a omniroute
-flyctl secrets list -a omniroute
+flyctl status -a agentproxy
+flyctl secrets list -a agentproxy
 flyctl deploy
-flyctl logs --no-tail -a omniroute
+flyctl logs --no-tail -a agentproxy
 ```
 
 Za običajno izdajo je ključni ukaz preprosto:
@@ -499,7 +499,7 @@ flyctl deploy
 Za prvo uvedbo v novem okolju so ključni koraki:
 
 1. `flyctl auth login`
-2. `flyctl apps create omniroute`
-3. `flyctl secrets set ... -a omniroute`
+2. `flyctl apps create agentproxy`
+3. `flyctl secrets set ... -a agentproxy`
 4. `flyctl deploy`
-5. `flyctl logs --no-tail -a omniroute`
+5. `flyctl logs --no-tail -a agentproxy`

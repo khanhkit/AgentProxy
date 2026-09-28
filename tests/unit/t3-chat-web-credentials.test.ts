@@ -5,7 +5,7 @@ import {
   parseT3Credentials,
   validateT3Credentials,
   T3ChatWebExecutor,
-} from "@omniroute/open-sse/executors/t3-chat-web.ts";
+} from "@agentproxy/open-sse/executors/t3-chat-web.ts";
 
 // Issue #3007: t3.chat web cookie providers not working.
 // The credential pipeline stores the single pasted string as `credentials.apiKey`

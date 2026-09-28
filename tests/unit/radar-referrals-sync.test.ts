@@ -29,6 +29,7 @@ const PUB_KEY_B64 = PUB_KEY_DER.toString("base64");
 
 // Inject as env override so pinnedKeys.ts picks it up (fork path) — same
 // pinned key backs both the catalog and the referrals feed.
+process.env.RADAR_FEED_URL = "https://radar.test.example";
 process.env.RADAR_FEED_PUBKEY = PUB_KEY_B64;
 
 // ---------------------------------------------------------------------------
@@ -59,14 +60,14 @@ function mockResponse(body: Buffer, headers: Record<string, string> = {}, status
 
 function baseReferralsFeed(generatedAt = "2026-08-07T12:00:00.000Z"): Record<string, unknown> {
   return {
-    feed: "omniroute-radar-referrals",
+    feed: "agentproxy-radar-referrals",
     schemaVersion: 1,
     generatedAt,
     referrals: {
       fixed: [
         {
           provider: "groq",
-          url: "https://groq.com/?ref=omniroute",
+          url: "https://groq.com/",
           kind: "fixo",
           validUntil: null,
           requiredAction: null,
@@ -103,7 +104,7 @@ test("RadarReferralsFeedSchema: valid feed parses successfully", () => {
 });
 
 test("RadarReferralsFeedSchema: rejects wrong feed literal", () => {
-  const feed = { ...baseReferralsFeed(), feed: "omniroute-radar" };
+  const feed = { ...baseReferralsFeed(), feed: "agentproxy-radar" };
   const result = referralsFeedSchema.RadarReferralsFeedSchema.safeParse(feed);
   assert.equal(result.success, false, "must reject a catalog-feed literal");
 });
@@ -127,8 +128,7 @@ test("RadarReferralsFeedSchema: rejects missing referrals section", () => {
 
 test("RadarReferralsFeedSchema: rejects a non-https referral url", () => {
   const feed = baseReferralsFeed();
-  (feed.referrals as { fixed: Array<Record<string, unknown>> }).fixed[0]!.url =
-    "http://groq.com/?ref=omniroute";
+  (feed.referrals as { fixed: Array<Record<string, unknown>> }).fixed[0]!.url = "http://groq.com/";
   const result = referralsFeedSchema.RadarReferralsFeedSchema.safeParse(feed);
   assert.equal(result.success, false);
 });
@@ -220,8 +220,8 @@ test("syncRadarReferrals: valid signature => cache updated, payload byte-identic
     fetch: (() =>
       Promise.resolve(
         mockResponse(bytes, {
-          "x-omniroute-feed-signature": sig,
-          "x-omniroute-feed-tier": "community",
+          "x-agentproxy-feed-signature": sig,
+          "x-agentproxy-feed-tier": "community",
         })
       )) as unknown as typeof globalThis.fetch,
     now: () => new Date("2026-08-07T12:05:00.000Z"),
@@ -251,7 +251,7 @@ test("syncRadarReferrals: tampered bytes => invalid_signature, cache untouched",
     },
     fetch: (() =>
       Promise.resolve(
-        mockResponse(tampered, { "x-omniroute-feed-signature": sig })
+        mockResponse(tampered, { "x-agentproxy-feed-signature": sig })
       )) as unknown as typeof globalThis.fetch,
   });
 
@@ -291,7 +291,7 @@ test("syncRadarReferrals: valid sig over garbage JSON => invalid_schema, cache u
     },
     fetch: (() =>
       Promise.resolve(
-        mockResponse(garbageBytes, { "x-omniroute-feed-signature": sig })
+        mockResponse(garbageBytes, { "x-agentproxy-feed-signature": sig })
       )) as unknown as typeof globalThis.fetch,
   });
 
@@ -334,8 +334,8 @@ test("syncRadarReferrals: same generatedAt with a new served tier replaces the c
     fetch: (() =>
       Promise.resolve(
         mockResponse(bytes, {
-          "x-omniroute-feed-signature": sig,
-          "x-omniroute-feed-tier": "live",
+          "x-agentproxy-feed-signature": sig,
+          "x-agentproxy-feed-tier": "live",
         })
       )) as unknown as typeof globalThis.fetch,
   });
@@ -366,7 +366,7 @@ test("syncRadarReferrals: older generatedAt than cache => stale (replay rejected
     },
     fetch: (() =>
       Promise.resolve(
-        mockResponse(bytes, { "x-omniroute-feed-signature": sig })
+        mockResponse(bytes, { "x-agentproxy-feed-signature": sig })
       )) as unknown as typeof globalThis.fetch,
   });
 
@@ -394,7 +394,7 @@ test("syncRadarReferrals: newer generatedAt than cache => updated", async () => 
     },
     fetch: (() =>
       Promise.resolve(
-        mockResponse(bytes, { "x-omniroute-feed-signature": sig })
+        mockResponse(bytes, { "x-agentproxy-feed-signature": sig })
       )) as unknown as typeof globalThis.fetch,
     now: () => new Date("2026-08-07T13:05:00.000Z"),
   });
@@ -426,7 +426,7 @@ test("syncRadarReferrals: two identical fetches (no cache between) produce ident
       },
       fetch: (() =>
         Promise.resolve(
-          mockResponse(bytes, { "x-omniroute-feed-signature": sig })
+          mockResponse(bytes, { "x-agentproxy-feed-signature": sig })
         )) as unknown as typeof globalThis.fetch,
       now: () => new Date("2026-08-07T12:05:00.000Z"),
     });
@@ -459,8 +459,8 @@ test("syncRadarReferrals: header 'community' => cache + result use community", a
     fetch: (() =>
       Promise.resolve(
         mockResponse(bytes, {
-          "x-omniroute-feed-signature": sig,
-          "x-omniroute-feed-tier": "community",
+          "x-agentproxy-feed-signature": sig,
+          "x-agentproxy-feed-tier": "community",
         })
       )) as unknown as typeof globalThis.fetch,
   });
@@ -485,8 +485,8 @@ test("syncRadarReferrals: header 'live' (supporter key) => cache + result use li
     fetch: (() =>
       Promise.resolve(
         mockResponse(bytes, {
-          "x-omniroute-feed-signature": sig,
-          "x-omniroute-feed-tier": "live",
+          "x-agentproxy-feed-signature": sig,
+          "x-agentproxy-feed-tier": "live",
         })
       )) as unknown as typeof globalThis.fetch,
   });
@@ -510,7 +510,7 @@ test("syncRadarReferrals: header absent => falls back to 'community' (no body ti
     },
     fetch: (() =>
       Promise.resolve(
-        mockResponse(bytes, { "x-omniroute-feed-signature": sig })
+        mockResponse(bytes, { "x-agentproxy-feed-signature": sig })
       )) as unknown as typeof globalThis.fetch,
   });
 
@@ -534,8 +534,8 @@ test("syncRadarReferrals: garbage tier header => never trusted, falls back to 'c
     fetch: (() =>
       Promise.resolve(
         mockResponse(bytes, {
-          "x-omniroute-feed-signature": sig,
-          "x-omniroute-feed-tier": "premium",
+          "x-agentproxy-feed-signature": sig,
+          "x-agentproxy-feed-tier": "premium",
         })
       )) as unknown as typeof globalThis.fetch,
   });
@@ -567,7 +567,7 @@ test("syncRadarReferrals: sends Authorization header when supporter key exists",
           ? Object.entries(init.headers as Record<string, string>)
           : []
       );
-      return Promise.resolve(mockResponse(bytes, { "x-omniroute-feed-signature": sig }));
+      return Promise.resolve(mockResponse(bytes, { "x-agentproxy-feed-signature": sig }));
     }) as unknown as typeof globalThis.fetch,
   });
 
@@ -590,7 +590,7 @@ test("syncRadarReferrals: no Authorization header when no supporter key", async 
           ? Object.entries(init.headers as Record<string, string>)
           : []
       );
-      return Promise.resolve(mockResponse(bytes, { "x-omniroute-feed-signature": sig }));
+      return Promise.resolve(mockResponse(bytes, { "x-agentproxy-feed-signature": sig }));
     }) as unknown as typeof globalThis.fetch,
   });
 
@@ -691,7 +691,7 @@ test("FIX: body within the 10MB cap proceeds normally (never returns too_large)"
     setCache: () => {},
     fetch: (() =>
       Promise.resolve(
-        mockResponse(bytes, { "x-omniroute-feed-signature": sig })
+        mockResponse(bytes, { "x-agentproxy-feed-signature": sig })
       )) as unknown as typeof globalThis.fetch,
   });
 

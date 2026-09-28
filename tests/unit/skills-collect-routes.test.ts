@@ -25,7 +25,7 @@ import type { NextRequest } from "next/server";
 
 // ── DB / auth setup ───────────────────────────────────────────────────────────
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-skills-collect-routes-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-skills-collect-routes-"));
 const ORIGINAL_DATA_DIR = process.env.DATA_DIR;
 
 process.env.DATA_DIR = TEST_DATA_DIR;

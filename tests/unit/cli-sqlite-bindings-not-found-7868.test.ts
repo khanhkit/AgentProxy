@@ -22,7 +22,7 @@ test("#7868: createSqliteNativeError() gives actionable guidance for a missing-b
     translated.message,
     /runtime repair/i,
     "translated error should point the user at the existing self-heal command " +
-      "(`omniroute runtime repair`), same as the ABI-mismatch branch already does"
+      "(`agentproxy runtime repair`), same as the ABI-mismatch branch already does"
   );
   assert.ok(
     !translated.message.includes("Tried:"),

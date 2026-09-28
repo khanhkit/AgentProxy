@@ -7,7 +7,7 @@
  * and Together with `stream_options.include_usage`) emit usage exactly that
  * way. `openaiToClaudeResponse()` returned early on `!chunk.choices?.[0]`
  * BEFORE reading `chunk.usage`, so `state.usage` stayed undefined and every
- * downstream consumer fell back to OmniRoute's own tokenizer estimate — no
+ * downstream consumer fell back to AgentProxy's own tokenizer estimate — no
  * cache_read_input_tokens, no cache_creation_input_tokens, and an input_tokens
  * figure that disagreed with the provider's own count.
  *

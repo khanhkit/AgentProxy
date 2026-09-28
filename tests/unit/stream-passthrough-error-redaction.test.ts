@@ -69,7 +69,7 @@ test("translated root error frames notify onFailure and terminate with a public-
       type: "server_error",
       code: "opaque-provider-code",
       message:
-        "translated failure at /srv/omniroute/private-runtime.ts:47:6 token=sk-stream-secret-xlate",
+        "translated failure at /srv/agentproxy/private-runtime.ts:47:6 token=sk-stream-secret-xlate",
       api_key: "sk-stream-secret-abcdef",
     },
   };
@@ -102,7 +102,7 @@ test("translated failed response.completed events cannot become successful Chat 
         type: "server_error",
         code: "translated_completed_failure",
         message:
-          "completed translate failure at /srv/omniroute/private-runtime.ts:58:4 token=sk-stream-secret-completed-translate",
+          "completed translate failure at /srv/agentproxy/private-runtime.ts:58:4 token=sk-stream-secret-completed-translate",
       },
     },
   };
@@ -136,7 +136,7 @@ test("a translated failed response.completed tail without a newline still termin
       error: {
         code: "translated_completed_tail_failure",
         message:
-          "completed tail failure at /srv/omniroute/private-runtime.ts:59:4 token=sk-stream-secret-completed-tail",
+          "completed tail failure at /srv/agentproxy/private-runtime.ts:59:4 token=sk-stream-secret-completed-tail",
       },
     },
   };
@@ -164,7 +164,7 @@ test("Responses response.failed is projected before forwarding, logging, and onF
   const raw = {
     type: "response.failed",
     response: {
-      id: "resp_hostile-/srv/omniroute/private-runtime.ts-token=sk-stream-secret-id",
+      id: "resp_hostile-/srv/agentproxy/private-runtime.ts-token=sk-stream-secret-id",
       model: "provider-model token=sk-stream-secret-model",
       status: "failed",
       output: [
@@ -174,7 +174,7 @@ test("Responses response.failed is projected before forwarding, logging, and onF
           role: "assistant",
           status: "in_progress",
           diagnostics: {
-            stack: "at /srv/omniroute/private-runtime.ts:47:2",
+            stack: "at /srv/agentproxy/private-runtime.ts:47:2",
             api_key: "sk-stream-secret-output-diagnostics",
           },
           content: [
@@ -185,7 +185,7 @@ test("Responses response.failed is projected before forwarding, logging, and onF
                 {
                   type: "url_citation",
                   url: "https://example.invalid/?token=sk-stream-secret-annotation",
-                  title: "at /srv/omniroute/private-runtime.ts:48:2",
+                  title: "at /srv/agentproxy/private-runtime.ts:48:2",
                 },
               ],
             },
@@ -205,7 +205,7 @@ test("Responses response.failed is projected before forwarding, logging, and onF
           content: [
             {
               type: "output_text",
-              text: "hidden commentary at /srv/omniroute/private-runtime.ts:49:2",
+              text: "hidden commentary at /srv/agentproxy/private-runtime.ts:49:2",
             },
           ],
         },
@@ -227,7 +227,7 @@ test("Responses response.failed is projected before forwarding, logging, and onF
           summary: [
             {
               type: "summary_text",
-              text: "at /srv/omniroute/private-runtime.ts:50:2",
+              text: "at /srv/agentproxy/private-runtime.ts:50:2",
             },
           ],
         },
@@ -237,13 +237,13 @@ test("Responses response.failed is projected before forwarding, logging, and onF
           call_id: "call_private",
           name: "read_private_file",
           arguments:
-            '{"path":"/srv/omniroute/private-runtime.ts","api_key":"sk-stream-secret-tool"}',
+            '{"path":"/srv/agentproxy/private-runtime.ts","api_key":"sk-stream-secret-tool"}',
         },
         {
           id: "provider_private",
           type: "provider_diagnostics",
           diagnostics: {
-            stack: "at /srv/omniroute/private-runtime.ts:51:2",
+            stack: "at /srv/agentproxy/private-runtime.ts:51:2",
             api_key: "sk-stream-secret-unknown-item",
           },
         },
@@ -251,17 +251,17 @@ test("Responses response.failed is projected before forwarding, logging, and onF
       error: {
         type: "server_error",
         code: "server_error",
-        message: "failed at /srv/omniroute/private-runtime.ts:44:2 token=sk-stream-secret-123456",
+        message: "failed at /srv/agentproxy/private-runtime.ts:44:2 token=sk-stream-secret-123456",
         api_key: "sk-stream-secret-abcdef",
       },
       last_error: {
         code: "server_error",
         message:
-          "last failure at /srv/omniroute/private-runtime.ts:45:2 token=sk-stream-secret-last",
+          "last failure at /srv/agentproxy/private-runtime.ts:45:2 token=sk-stream-secret-last",
       },
       message:
-        "sibling failure at /srv/omniroute/private-runtime.ts:46:2 token=sk-stream-secret-sibling",
-      diagnosis: { stack: "at /srv/omniroute/private-runtime.ts:46:2" },
+        "sibling failure at /srv/agentproxy/private-runtime.ts:46:2 token=sk-stream-secret-sibling",
+      diagnosis: { stack: "at /srv/agentproxy/private-runtime.ts:46:2" },
       settings: { api_key: "sk-stream-secret-response-setting" },
       usage: {
         input_tokens: 4,
@@ -319,9 +319,9 @@ test("failed response.completed events omit provider-only diagnostic siblings", 
       error: {
         code: "server_error",
         message:
-          "completed failure at /srv/omniroute/private-runtime.ts:55:2 token=sk-stream-secret-completed",
+          "completed failure at /srv/agentproxy/private-runtime.ts:55:2 token=sk-stream-secret-completed",
       },
-      diagnosis: { stack: "at /srv/omniroute/private-runtime.ts:55:2" },
+      diagnosis: { stack: "at /srv/agentproxy/private-runtime.ts:55:2" },
       settings: { api_key: "sk-stream-secret-completed-setting" },
     },
   };
@@ -351,7 +351,7 @@ test("OpenAI root error frames without a top-level type remain failures after pr
     error: {
       type: "server_error",
       code: "server_error",
-      message: "root failed at /srv/omniroute/private-runtime.ts:48:7 token=sk-stream-secret-root",
+      message: "root failed at /srv/agentproxy/private-runtime.ts:48:7 token=sk-stream-secret-root",
       api_key: "sk-stream-secret-abcdef",
     },
   };
@@ -373,7 +373,7 @@ test("OpenAI root error frames without a top-level type remain failures after pr
 test("OpenAI string error frames preserve raw classification but publish only safe text", async () => {
   const convertedLog: string[] = [];
   const raw = {
-    error: "string failure at /srv/omniroute/private-runtime.ts:49:8 token=sk-stream-secret-string",
+    error: "string failure at /srv/agentproxy/private-runtime.ts:49:8 token=sk-stream-secret-string",
   };
   const result = await collectUntilFailure(
     [`data: ${JSON.stringify(raw)}\n\n`],
@@ -397,7 +397,7 @@ test("Claude type:error is projected before forwarding and terminates the stream
       type: "server_error",
       code: "server_error",
       message:
-        "claude failed at /srv/omniroute/private-runtime.ts:51:3 token=sk-stream-secret-123456",
+        "claude failed at /srv/agentproxy/private-runtime.ts:51:3 token=sk-stream-secret-123456",
       api_key: "sk-stream-secret-abcdef",
     },
   };
@@ -425,7 +425,7 @@ test("a final response.failed frame without a trailing newline is projected befo
       error: {
         code: "server_error",
         message:
-          "tail failed at /srv/omniroute/private-runtime.ts:61:8 token=sk-stream-secret-123456",
+          "tail failed at /srv/agentproxy/private-runtime.ts:61:8 token=sk-stream-secret-123456",
         api_key: "sk-stream-secret-abcdef",
       },
     },

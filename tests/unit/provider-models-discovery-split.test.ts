@@ -336,12 +336,16 @@ test("codex.normalizeCodexGithubCatalogResponse parses current client catalog me
 
   assert.deepEqual(
     parsed.map((model) => model.id),
-    ["gpt-5.6-sol"]
+    ["gpt-5.6-sol", "future-model"]
   );
   assert.equal(parsed[0]?.description, "Latest frontier agentic coding model.");
   assert.equal(parsed[0]?.inputTokenLimit, 372000);
   assert.equal(parsed[0]?.supportsThinking, true);
   assert.equal(parsed[0]?.supportsVision, true);
+  assert.equal(parsed[1]?.visibility, "list");
+  assert.equal(parsed[1]?.supportedInApi, true);
+  assert.equal(parsed[1]?.minimalClientVersion, "999.0.0");
+  assert.equal(parsed[1]?.discoverySource, "github");
 });
 
 test("codex.enrichCodexModelsFromGithubCatalog keeps live entitlement list authoritative", () => {
@@ -429,7 +433,7 @@ test("codex.mergeCodexLiveModelsWithLocalCatalog merges capacity limits conserva
   const sol = merged.find((model) => model.id === "gpt-5.6-sol");
   assert.equal(sol?.name, "Live Sol");
   // Live (272000) is SMALLER than the pinned contract (372000) here — the
-  // smaller value wins so OmniRoute never promises more context than the
+  // smaller value wins so AgentProxy never promises more context than the
   // live account can actually serve (#7012).
   assert.equal(sol?.inputTokenLimit, 272000);
   assert.equal(sol?.supportsVision, true);

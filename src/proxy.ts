@@ -49,5 +49,11 @@ export const config = {
     "/:codexseg([cC][oO][dD][eE][xX])/:path*",
     "/:codexseg([cC][oO][dD][eE][xX])",
     "/:modelsseg([mM][oO][dD][eE][lL][sS])",
+    "/:anthropicseg([aA][nN][tT][hH][rR][oO][pP][iI][cC])/:path*",
+    "/:anthropicseg([aA][nN][tT][hH][rR][oO][pP][iI][cC])",
+    "/:openaiseg([oO][pP][eE][nN][aA][iI])/:path*",
+    "/:openaiseg([oO][pP][eE][nN][aA][iI])",
+    "/:metricsseg([mM][eE][tT][rR][iI][cC][sS])",
+    "/:debugseg([dD][eE][bB][uU][gG])",
   ],
 };

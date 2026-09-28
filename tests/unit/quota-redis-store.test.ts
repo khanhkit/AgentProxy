@@ -24,7 +24,7 @@ import { fileURLToPath } from "node:url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-redis-store-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-redis-store-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../src/lib/db/core.ts");
@@ -292,9 +292,9 @@ test("redis namespace prefix: quota store KEY_PREFIX derives from REDIS_KEY_PREF
     "utf8"
   );
   assert.ok(
-    quotaSrc.includes('process.env.REDIS_KEY_PREFIX?.trim() || "omniroute:"') &&
+    quotaSrc.includes('process.env.REDIS_KEY_PREFIX?.trim() || "agentproxy:"') &&
       quotaSrc.includes("const KEY_PREFIX = `") &&
       quotaSrc.includes("quota`"),
-    "redisQuotaStore KEY_PREFIX must derive from REDIS_KEY_PREFIX env, defaulting to omniroute:quota"
+    "redisQuotaStore KEY_PREFIX must derive from REDIS_KEY_PREFIX env, defaulting to agentproxy:quota"
   );
 });

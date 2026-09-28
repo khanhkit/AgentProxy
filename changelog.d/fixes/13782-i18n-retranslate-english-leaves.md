@@ -1,0 +1,1 @@
+- **fix(i18n):** retranslate stale verbatim-English dashboard leaves and make the translation-ratio ratchet blocking.

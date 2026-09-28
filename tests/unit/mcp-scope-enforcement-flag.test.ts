@@ -1,12 +1,12 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-// "MCP Enforce Scopes" (OMNIROUTE_MCP_ENFORCE_SCOPES) is a Feature Flags toggle with
+// "MCP Enforce Scopes" (AGENTPROXY_MCP_ENFORCE_SCOPES) is a Feature Flags toggle with
 // requiresRestart: false, but both readers compared process.env to "true" at module load, so
 // the toggle did nothing and the page reported a state the MCP gate never had. The flag now
 // resolves like every other one: DB override, then env, then the definition default.
 
-const KEY = "OMNIROUTE_MCP_ENFORCE_SCOPES";
+const KEY = "AGENTPROXY_MCP_ENFORCE_SCOPES";
 
 async function withFlag<T>(
   env: string | undefined,
@@ -42,7 +42,7 @@ test("a dashboard ON enforces scopes without a restart", async () => {
   });
 });
 
-test("a dashboard OFF beats OMNIROUTE_MCP_ENFORCE_SCOPES=true in env", async () => {
+test("a dashboard OFF beats AGENTPROXY_MCP_ENFORCE_SCOPES=true in env", async () => {
   await withFlag("true", "false", async () => {
     assert.equal(await isEnforced(), false);
   });

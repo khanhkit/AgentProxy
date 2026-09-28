@@ -12,7 +12,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-lkgp-stale-11911-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-lkgp-stale-11911-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const { handleComboChat } = await import("../../open-sse/services/combo.ts");

@@ -24,7 +24,7 @@
 //
 // This test reproduces run-eslint-json.mjs's EXACT args array (mirrored above,
 // verified against the source at HEAD) against a minimal, isolated ESLint fixture
-// (not OmniRoute's own 10k+ file tree — a cold full-tree lint costs 14-60min per
+// (not AgentProxy's own 10k+ file tree — a cold full-tree lint costs 14-60min per
 // open PR #11734, impractical for a fast regression test) and asserts the
 // spec-correct outcome: exit 0.
 

@@ -1,0 +1,1 @@
+- **docs(i18n):** reconcile surviving proxy-pool labels with reviewed translations; obsolete egress-observation keys are skipped because AgentProxy no longer carries them.

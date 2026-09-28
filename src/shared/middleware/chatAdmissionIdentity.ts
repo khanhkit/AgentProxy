@@ -2,10 +2,10 @@ import { createHmac } from "crypto";
 import { timingSafeCompare } from "@/shared/utils/timingSafeCompare";
 
 const ADMISSION_BYPASS_VALUE = "internal";
-const SELF_LOOP_KEY = "sk_omniroute";
-const FINGERPRINT_KEY = "omniroute-admission-fingerprint-v1";
+const SELF_LOOP_KEY = "sk_agentproxy";
+const FINGERPRINT_KEY = "agentproxy-admission-fingerprint-v1";
 
-export const ADMISSION_BYPASS_HEADER = "x-omniroute-admission-bypass";
+export const ADMISSION_BYPASS_HEADER = "x-agentproxy-admission-bypass";
 
 export function resolveSessionId(request: Request): string {
   const authHeader = request.headers.get("authorization") || "";
@@ -21,7 +21,7 @@ export function resolveSessionId(request: Request): string {
 
 export function resolveSelfLoopBearer(): string {
   return (
-    process.env.AGENTPROXY_API_KEY?.trim() || process.env.OMNIROUTE_API_KEY?.trim() || process.env.ROUTER_API_KEY?.trim() || SELF_LOOP_KEY
+    process.env.AGENTPROXY_API_KEY?.trim() || process.env.ROUTER_API_KEY?.trim() || SELF_LOOP_KEY
   );
 }
 

@@ -25,7 +25,7 @@ import { join } from "node:path";
 // Configure the shared pino logger BEFORE importing the admission module — the
 // logger builds its transports at import time (see logger-redaction-wiring.test.ts
 // for the same pattern). JSON to a temp file keeps test (c)'s capture deterministic.
-const logDir = mkdtempSync(join(tmpdir(), "omniroute-admission-11244-"));
+const logDir = mkdtempSync(join(tmpdir(), "agentproxy-admission-11244-"));
 const logFile = join(logDir, "app.log");
 process.env.NODE_ENV = "production";
 process.env.APP_LOG_TO_FILE = "true";

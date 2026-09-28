@@ -4,7 +4,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-6272-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-6272-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 const ORIGINAL_INITIAL_PASSWORD = process.env.INITIAL_PASSWORD;
 delete process.env.INITIAL_PASSWORD;
@@ -59,17 +59,17 @@ test("resolveProxyForConnection keeps provider-level no-auth proxies isolated", 
     host: "127.0.0.2",
     port: 8889,
   });
-  await settingsDb.setProxyForLevel("provider", "chipotle", {
+  await settingsDb.setProxyForLevel("provider", "duckduckgo-web", {
     type: "http",
     host: "127.0.0.3",
     port: 8890,
   });
 
   const opencode = await settingsDb.resolveProxyForConnection("noauth", undefined, "opencode");
-  const chipotle = await settingsDb.resolveProxyForConnection("noauth", undefined, "chipotle");
+  const ddgw = await settingsDb.resolveProxyForConnection("noauth", undefined, "duckduckgo-web");
 
   assert.equal(opencode?.proxy?.host, "127.0.0.2");
-  assert.equal(chipotle?.proxy?.host, "127.0.0.3");
+  assert.equal(ddgw?.proxy?.host, "127.0.0.3");
 });
 
 test("safeResolveProxy keeps the synthetic no-auth connection provider-specific", async () => {
@@ -79,15 +79,15 @@ test("safeResolveProxy keeps the synthetic no-auth connection provider-specific"
     host: "127.0.0.4",
     port: 8891,
   });
-  await settingsDb.setProxyForLevel("provider", "chipotle", {
+  await settingsDb.setProxyForLevel("provider", "duckduckgo-web", {
     type: "http",
     host: "127.0.0.5",
     port: 8892,
   });
 
   const opencode = await safeResolveProxy("noauth", undefined, "opencode");
-  const chipotle = await safeResolveProxy("noauth", undefined, "chipotle");
+  const ddgw = await safeResolveProxy("noauth", undefined, "duckduckgo-web");
 
   assert.equal(opencode?.proxy?.host, "127.0.0.4");
-  assert.equal(chipotle?.proxy?.host, "127.0.0.5");
+  assert.equal(ddgw?.proxy?.host, "127.0.0.5");
 });

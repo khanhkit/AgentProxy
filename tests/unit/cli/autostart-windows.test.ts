@@ -8,7 +8,7 @@ let tmpDir: string;
 let origAppData: string | undefined;
 
 test.before(() => {
-  tmpDir = mkdtempSync(join(tmpdir(), "omniroute-autostart-win-"));
+  tmpDir = mkdtempSync(join(tmpdir(), "agentproxy-autostart-win-"));
   origAppData = process.env.APPDATA;
   process.env.APPDATA = tmpDir;
 });
@@ -34,7 +34,7 @@ test("Windows enable/disable writes and removes VBS in Startup folder", async ()
     await import("../../../bin/cli/tray/autostart.mjs");
 
   const startupDir = join(tmpDir, "Microsoft", "Windows", "Start Menu", "Programs", "Startup");
-  const vbsPath = join(startupDir, "OmniRoute.vbs");
+  const vbsPath = join(startupDir, "AgentProxy.vbs");
 
   // Should start clean.
   assert.equal(existsSync(vbsPath), false);
@@ -48,7 +48,7 @@ test("Windows enable/disable writes and removes VBS in Startup folder", async ()
   const vbs = readFileSync(vbsPath, "utf8");
   assert.match(vbs, /WScript\.Shell/, "creates WScript.Shell COM object");
   assert.match(vbs, /WshShell\.Run/, "calls Run method");
-  assert.match(vbs, /serve --no-open --tray/, "launches OmniRoute tray server");
+  assert.match(vbs, /serve --no-open --tray/, "launches AgentProxy tray server");
   assert.match(vbs, /, 0, False/, "uses SW_HIDE (0) and no wait");
   assert.equal(vbs.endsWith("\n"), true, "trailing newline");
 
@@ -68,6 +68,23 @@ test("Windows enable/disable writes and removes VBS in Startup folder", async ()
 // Mirrors the pattern used by autostart-linux.test.ts and
 // autostart-macos-launchctl.test.ts.
 // ---------------------------------------------------------------------------
+
+test("Windows path resolution skips the POSIX command lookup", () => {
+  const source = readFileSync(join(process.cwd(), "bin/cli/tray/autostart.mjs"), "utf8");
+  const resolveCliPath = source.match(/function resolveCliPath\(\) \{([\s\S]*?)\n\}/);
+
+  assert.ok(resolveCliPath, "resolveCliPath should exist");
+  const nonWindowsGuard = resolveCliPath[1].match(
+    /if \(process\.platform !== "win32"\) \{([\s\S]*?)\n  \}/
+  );
+  assert.ok(nonWindowsGuard, "resolveCliPath should have a non-Windows guard");
+  assert.match(nonWindowsGuard[1], /command -v omniroute/);
+  assert.doesNotMatch(
+    resolveCliPath[1].replace(nonWindowsGuard[0], ""),
+    /command -v omniroute/,
+    "the POSIX PATH probe must only appear inside the non-Windows guard"
+  );
+});
 
 test("Windows enableWin writes VBS to Startup folder, not reg add", () => {
   const source = readFileSync(join(process.cwd(), "bin/cli/tray/autostart.mjs"), "utf8");

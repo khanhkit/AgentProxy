@@ -53,8 +53,8 @@ Tai yra npm leidžiama išimtis, nes prieigos raktai, leidžiantys apeiti 2FA, �
 taip atkuriamas visiškai automatinis procesas, kurį projektas turėjo iki v3.8.48, kartu išlaikant
 WS1.3 garantiją (nutekėjęs prieigos raktas vienas pats negali publikuoti — jokio prieigos rakto nėra).
 
-**Vienkartinė sąranka (savininkui):** npmjs.com → paketas `omniroute` → Settings → _Trusted
-Publisher_ → GitHub: savininkas `diegosouzapw`, saugykla `OmniRoute`, darbo eiga `npm-publish.yml`
+**Vienkartinė sąranka (savininkui):** npmjs.com → paketas `agentproxy` → Settings → _Trusted
+Publisher_ → GitHub: savininkas `diegosouzapw`, saugykla `AgentProxy`, darbo eiga `npm-publish.yml`
 (aplinka: nėra). Kol ši sąranka neatlikta, automatinis veiksmas nepavyks ir bus pateikta klaida `ENEEDAUTH`:
 paleiskite jį iš naujo naudodami `publish_mode=staged` (žr. toliau) arba `direct`.
 
@@ -67,7 +67,7 @@ perkelta PO patvirtinimo įrodymo, o ne prieš jį.
 
 **Savininko veiksmai, kai darbo eiga sėkmingai baigiama:**
 
-1. `npm stage list omniroute` — raskite etapo ID (jis taip pat pateikiamas darbo eigos suvestinėje).
+1. `npm stage list agentproxy` — raskite etapo ID (jis taip pat pateikiamas darbo eigos suvestinėje).
 2. Patikrinkite etapinius baitus (rekomenduojama): `npm stage download <id>`, tada įdiekite
    atsisiųstą tar archyvą į laikiną prefiksą ir jį paleiskite (`npm run check:pack-boot` automatizuoja
    tokį patį pakavimo → diegimo → paleidimo patikrinimą CI aplinkoje).
@@ -79,11 +79,11 @@ perkelta PO patvirtinimo įrodymo, o ne prieš jį.
 ankstesnį tiesioginį `npm publish` (naudokite tik tada, jei pats etapinis publikavimas veikia netinkamai; užfiksuokite priežastį).
 
 **Vienkartinis saugumo sustiprinimas (savininkui, npmjs.com):** sukonfigūruokite Trusted Publisher,
-skirtą `omniroute`, tik etapiniu režimu, kad nutekėjęs ilgalaikis prieigos raktas negalėtų tiesiogiai
+skirtą `agentproxy`, tik etapiniu režimu, kad nutekėjęs ilgalaikis prieigos raktas negalėtų tiesiogiai
 vykdyti `npm publish` iš jokios vietos — CI gali tik parengti etapą; leidimą publikuoja tik savininko 2FA.
 
 **Sugadinto artefakto veiksmų planas (nepakitęs):** numatytoji reakcija yra
-`npm deprecate omniroute@<bad> "<reason> — use <fixed>"` (užtrunka kelias minutes, galima atšaukti);
+`npm deprecate agentproxy@<bad> "<reason> — use <fixed>"` (užtrunka kelias minutes, galima atšaukti);
 `npm unpublish` naudokite tik per 72 val. laikotarpį, kai nėra priklausomų paketų, ir niekada ne kaip pirmą veiksmą.
 Docker atveju niekada neperrašykite versijos žymos — grąžinimas atliekamas nukreipiant `latest` į paskutinę tinkamą maišos reikšmę.
 
@@ -201,7 +201,7 @@ Nesuderinami pakeitimai: pridėkite `BREAKING CHANGE:` poraštę arba `!` po sri
 - [ ] `npm run i18n:check` baigiamas su kodu 0 — vertimų būsena (`.i18n-state.json`) sinchronizuota su pirminiais dokumentais (griežtu režimu nėra pakitusių šaltinių; įspėjimų režimo rekomendacijos priimtinos paskutinės minutės dokumentacijos pataisoms, tačiau prieš žymint leidimą rezultatas turėtų būti 0)
 - [ ] `npm run i18n:check-ui-coverage` baigiamas su kodu 0 — kiekvienos UI lokalės aprėptis siekia arba viršija 80 % ribą
 - [ ] `npm run i18n:sync-ui:dry` praneša apie 0 trūkstamų raktų visose 42 lokalėse
-- [ ] Jei pakeisti pirminiai angliški dokumentai, prieš žymėdami leidimą paleiskite `npm run i18n:run` (reikia `OMNIROUTE_TRANSLATION_API_KEY` faile `.env`)
+- [ ] Jei pakeisti pirminiai angliški dokumentai, prieš žymėdami leidimą paleiskite `npm run i18n:run` (reikia `AGENTPROXY_TRANSLATION_API_KEY` faile `.env`)
 - [ ] Nedidelius vertimo papildymus galima atidėti kitam leidimui (užregistruokite CHANGELOG)
 
 ### Duomenų bazės migracijos
@@ -210,7 +210,7 @@ Nesuderinami pakeitimai: pridėkite `BREAKING CHANGE:` poraštę arba `!` po sri
   - [ ] Kiekviena migracija yra idempotentinė (`CREATE TABLE IF NOT EXISTS` ir pan.)
   - [ ] Migracijos apgaubtos transakcijomis
   - [ ] Tinkamai sunumeruotos (sekoje nėra tarpų)
-- [ ] Išbandykite naujame diegime: pašalinkite `~/.omniroute/omniroute.db` ir paleiskite `npm run dev`
+- [ ] Išbandykite naujame diegime: pašalinkite `~/.agentproxy/agentproxy.db` ir paleiskite `npm run dev`
 - [ ] Išbandykite esamame diegime: sukurkite atsarginę DB kopiją, paleiskite migraciją, patikrinkite schemą
 - [ ] Jei migracija perrašo lenteles, WAL failai (`-wal`, `-shm`) apdorojami tinkamai
 
@@ -245,7 +245,7 @@ Saugykloje naudojami trys atskiri išvesties katalogai — niekada jų nesumaiš
 | `.build/` | Tarpiniai komponavimo failai — `next build` išvestis (`distDir`)   | Ne (gitignored) |
 | `dist/`   | Platinamas npm paketas — surenkamas naudojant `assembleStandalone` | Ne (gitignored) |
 
-> **Pastaba operatoriui:** nuotolinio VPS atvaizdo katalogas lieka `/usr/lib/node_modules/omniroute/app/`.
+> **Pastaba operatoriui:** nuotolinio VPS atvaizdo katalogas lieka `/usr/lib/node_modules/agentproxy/app/`.
 > Pasikeitė tik **saugyklos viduje** esanti komponavimo išvestis (`app/` → `dist/`). Diegimo įgūdžiai per rsync
 > perkelia `dist/` turinį į nuotolinį `app/` katalogą — VPS kelių keisti nereikia.
 
@@ -365,12 +365,12 @@ Prieš išleisdami bet kurį leidimą, kuriame yra įterptųjų paslaugų pakeit
 
 Prieš išleisdami bet kurį v3.8.x leidimą, patikrinkite ir šiuos punktus:
 
-- [ ] `omniroute --tray` paleidžiama macOS sistemoje (systray2 įdiegta į `~/.omniroute/runtime/`)
-- [ ] `omniroute --tray` paleidžiama Linux sistemoje (reikalingas DISPLAY; jei nenustatytas, pateikiama aiški klaida)
-- [ ] `omniroute --tray` paleidžiama Windows sistemoje (PowerShell NotifyIcon, be papildomų dvejetainių failų)
-- [ ] `omniroute config tray enable` sukuria automatinio paleidimo įrašą; išjungimas jį pašalina
-- [ ] `npm install -g omniroute@<this-version>` įvykdo podiegiminį veiksmą be lemtingos klaidos
-- [ ] Atnaujinimo kelias išsaugo pasirinktines priklausomybes: `omniroute update --apply` ir automatinio atnaujinimo priemonė
+- [ ] `agentproxy --tray` paleidžiama macOS sistemoje (systray2 įdiegta į `~/.agentproxy/runtime/`)
+- [ ] `agentproxy --tray` paleidžiama Linux sistemoje (reikalingas DISPLAY; jei nenustatytas, pateikiama aiški klaida)
+- [ ] `agentproxy --tray` paleidžiama Windows sistemoje (PowerShell NotifyIcon, be papildomų dvejetainių failų)
+- [ ] `agentproxy config tray enable` sukuria automatinio paleidimo įrašą; išjungimas jį pašalina
+- [ ] `npm install -g agentproxy@<this-version>` įvykdo podiegiminį veiksmą be lemtingos klaidos
+- [ ] Atnaujinimo kelias išsaugo pasirinktines priklausomybes: `agentproxy update --apply` ir automatinio atnaujinimo priemonė
       vykdo `npm install -g … --include=optional`, todėl `optionalDependencies` (better-sqlite3,
       keytar, tls-client ir llmlingua SLM rinkinys: `@atjsh/llmlingua-2@2.0.5`,
       `js-tiktoken`) išlieka po atnaujinimo. Ultra `modelPath` SLM lygiui taip pat reikia
@@ -380,13 +380,13 @@ Prieš išleisdami bet kurį v3.8.x leidimą, patikrinkite ir šiuos punktus:
       egzempliorių — autonominė sekimo versija įtraukia tik transformers, o ne dinamiškai importuojamas
       pasirinktines priklausomybes, todėl be šio veiksmo vykdyklė įkeltų llmlingua-2 su šakninio projekto transformers
       ir SLM lygis nepastebimai persijungtų į nesugriežtintą veikimą.
-- [ ] `omniroute status` veikia be `.env` (CLI prieigos rakto kelias, tik vietinio ciklo sąsajoje)
+- [ ] `agentproxy status` veikia be `.env` (CLI prieigos rakto kelias, tik vietinio ciklo sąsajoje)
 - [ ] `curl http://localhost:20128/api/shutdown` grąžina 401 (visada apsaugotas maršrutas)
 - [ ] `curl -H "host: evil.com" http://localhost:20128/api/mcp/sse` grąžina 401 (vietinio ciklo sąsajos apsauga)
 - [ ] Pirmą kartą paleidus SQLite vykdymo aplinka parenkama kaip `bundled` (įtrauktas dvejetainis failas tinkamas platformai)
 - [ ] Pašalinus `node_modules/better-sqlite3`, SQLite vykdymo aplinka grįžta prie `runtime`
 - [ ] Išmanusis MCP filtras suglaudina tikrą `playwright-mcp browser_snapshot` išvestį (sumažina ≥50 %)
-- [ ] Visi 10 `skills/omniroute*/SKILL.md` failų yra viešai pasiekiami naudojant tiesioginį GitHub URL
+- [ ] Visi 10 `skills/agentproxy*/SKILL.md` failų yra viešai pasiekiami naudojant tiesioginį GitHub URL
 - [ ] Pradinės sąrankos vediklis naujoje sąrankoje rodo lygių apžvalgos veiksmą „Kaip tai veikia“
 - [ ] Pradžios suvestinės lygių aprėpties valdiklis rodo sukonfigūruotų ir aktyvių elementų skaičių
 

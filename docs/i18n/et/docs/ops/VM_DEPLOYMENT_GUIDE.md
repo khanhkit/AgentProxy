@@ -6,16 +6,16 @@
 
 ---
 
-title: "OmniRoute — VM-deployimise juhend Cloudflare'iga"
+title: "AgentProxy — VM-deployimise juhend Cloudflare'iga"
 version: 3.8.40
 lastUpdated: 2026-06-28
 ---
 
-# OmniRoute — VM-deployimise juhend Cloudflare'iga
+# AgentProxy — VM-deployimise juhend Cloudflare'iga
 
 🌐 **Languages:** 🇺🇸 [English](../../../../ops/VM_DEPLOYMENT_GUIDE.md) · 🇸🇦 [ar](../../../ar/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇦🇿 [az](../../../az/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇧🇬 [bg](../../../bg/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇧🇩 [bn](../../../bn/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇨🇿 [cs](../../../cs/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇩🇰 [da](../../../da/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇩🇪 [de](../../../de/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇬🇷 [el](../../../el/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇪🇸 [es](../../../es/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇷 [fa](../../../fa/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇫🇮 [fi](../../../fi/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇫🇷 [fr](../../../fr/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇪 [ga](../../../ga/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇳 [gu](../../../gu/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇱 [he](../../../he/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇳 [hi](../../../hi/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇭🇷 [hr](../../../hr/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇭🇺 [hu](../../../hu/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇩 [id](../../../id/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇹 [it](../../../it/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇯🇵 [ja](../../../ja/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇰🇷 [ko](../../../ko/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇱🇹 [lt](../../../lt/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇱🇻 [lv](../../../lv/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇳 [mr](../../../mr/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇲🇾 [ms](../../../ms/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇲🇹 [mt](../../../mt/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇳🇱 [nl](../../../nl/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇳🇴 [no](../../../no/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇵🇭 [phi](../../../phi/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇵🇱 [pl](../../../pl/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇵🇹 [pt](../../../pt/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇧🇷 [pt-BR](../../../pt-BR/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇷🇴 [ro](../../../ro/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇷🇺 [ru](../../../ru/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇸🇰 [sk](../../../sk/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇸🇮 [sl](../../../sl/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇷🇸 [sr](../../../sr/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇸🇪 [sv](../../../sv/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇰🇪 [sw](../../../sw/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇳 [ta](../../../ta/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇳 [te](../../../te/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇹🇭 [th](../../../th/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇹🇷 [tr](../../../tr/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇺🇦 [uk-UA](../../../uk-UA/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇵🇰 [ur](../../../ur/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇻🇳 [vi](../../../vi/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇨🇳 [zh-CN](../../../zh-CN/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇹🇼 [zh-TW](../../../zh-TW/docs/ops/VM_DEPLOYMENT_GUIDE.md)
 
-Täielik juhend OmniRoute paigaldamiseks ja konfigureerimiseks VM-is (VPS-is), kus domeen on haldatud Cloudflare'i kaudu.
+Täielik juhend AgentProxy paigaldamiseks ja konfigureerimiseks VM-is (VPS-is), kus domeen on haldatud Cloudflare'i kaudu.
 
 ---
 
@@ -93,18 +93,18 @@ ufw enable
 
 ---
 
-## 2. Installi OmniRoute
+## 2. Installi AgentProxy
 
 ### 2.1 Loo konfiguratsiooni kataloog
 
 ```bash
-mkdir -p /opt/omniroute
+mkdir -p /opt/agentproxy
 ```
 
 ### 2.2 Loo keskkonnamuutujate fail
 
 ```bash
-cat > /opt/omniroute/.env << 'EOF'
+cat > /opt/agentproxy/.env << 'EOF'
 # === Turvalisus ===
 JWT_SECRET=MUUDA-UNIKAALSEKS-64-MÄRGI-SALAJÄTME-VÕTMEKS
 INITIAL_PASSWORD=SinuTurvalineParool123!
@@ -112,7 +112,7 @@ API_KEY_SECRET=ASENDA-TEISE-SALAJÄTME-VÕTMEGA
 STORAGE_ENCRYPTION_KEY=ASENDA-KOLMANDA-SALAJÄTME-VÕTMEGA
 STORAGE_ENCRYPTION_KEY_VERSION=v1
 MACHINE_ID_SALT=MUUDA-UNIKAALSEKS-SOOLAKS
-OMNIROUTE_WS_BRIDGE_SECRET=ASENDA-WS-SILLA-SALAJÄTMEGA  # KOHUSTUSLIK tootmises: kasutatakse Codex Responses WS silla poolt
+AGENTPROXY_WS_BRIDGE_SECRET=ASENDA-WS-SILLA-SALAJÄTMEGA  # KOHUSTUSLIK tootmises: kasutatakse Codex Responses WS silla poolt
 
 # === Rakendus ===
 PORT=20128
@@ -129,11 +129,11 @@ BASE_URL=http://127.0.0.1:20128
 # Brauseri jaoks mõeldud URL OAuth tagasisuunamiste, juhtpaneeli linkide ja genereeritud avalike URL-ide jaoks.
 NEXT_PUBLIC_BASE_URL=https://llms.sinudomeen.com
 # Valikuline avaliku päritolu ülekirjutus genereeritud avalike varade URL-ide jaoks.
-# OMNIROUTE_PUBLIC_BASE_URL=https://llms.sinudomeen.com
+# AGENTPROXY_PUBLIC_BASE_URL=https://llms.sinudomeen.com
 
 # === Pilvesünkroonimine (valikuline) ===
-# CLOUD_URL=https://cloud.omniroute.online
-# NEXT_PUBLIC_CLOUD_URL=https://cloud.omniroute.online
+# CLOUD_URL=https://cloud.agentproxy.example.com
+# NEXT_PUBLIC_CLOUD_URL=https://cloud.agentproxy.example.com
 EOF
 ```
 
@@ -142,22 +142,22 @@ EOF
 ### 2.3 Käivita konteiner
 
 ```bash
-docker pull diegosouzapw/omniroute:latest
+docker pull khanhkit/agentproxy:latest
 
 docker run -d \
-  --name omniroute \
+  --name agentproxy \
   --restart unless-stopped \
-  --env-file /opt/omniroute/.env \
+  --env-file /opt/agentproxy/.env \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
-  diegosouzapw/omniroute:latest
+  -v agentproxy-data:/app/data \
+  khanhkit/agentproxy:latest
 ```
 
 ### 2.4 Kontrolli, kas see töötab
 
 ```bash
-docker ps | grep omniroute
-docker logs omniroute --tail 20
+docker ps | grep agentproxy
+docker logs agentproxy --tail 20
 ```
 
 See peaks kuvama: `[DB] SQLite database ready` ja `listening on port 20128`.
@@ -190,7 +190,7 @@ chmod 600 /etc/nginx/ssl/origin.key
 ### 3.2 Nginx konfiguratsioon
 
 ```bash
-cat > /etc/nginx/sites-available/omniroute << 'NGINX'
+cat > /etc/nginx/sites-available/agentproxy << 'NGINX'
 # Vaikimisi server — blokeerib otsese juurdepääsu IP kaudu
 server {
     listen 80 default_server;
@@ -203,7 +203,7 @@ server {
     return 444;
 }
 
-# OmniRoute — HTTPS
+# AgentProxy — HTTPS
 server {
     listen 443 ssl;
     listen [::]:443 ssl;
@@ -246,16 +246,16 @@ server {
 NGINX
 ```
 
-Hoidke pöördproksi voo ajalõpud vastavuses oma OmniRoute ajalõpu keskkonnamuutujatega. Kui tõstate
+Hoidke pöördproksi voo ajalõpud vastavuses oma AgentProxy ajalõpu keskkonnamuutujatega. Kui tõstate
 `FETCH_TIMEOUT_MS` / `STREAM_IDLE_TIMEOUT_MS`, tõstke ka `proxy_read_timeout` / `proxy_send_timeout`
 samast lävest kõrgemale.
 
-OmniRoute kasutab `NEXT_PUBLIC_BASE_URL` kui kanoonilist brauseripoolset päritolu OAuth
+AgentProxy kasutab `NEXT_PUBLIC_BASE_URL` kui kanoonilist brauseripoolset päritolu OAuth
 tagasikutsete ja loodud avalike linkide jaoks. Autenditud juhtpaneeli kirjutused kasutavad sama päritolu päringuid
 pluss seansipõhist CSRF-kaitset, seega ei vaja need staatilist avalikku baas-URL-i. Ülaltoodud
 `X-Forwarded-*` päised on endiselt kasulikud marsruutimise metaandmed, kuid need ei asenda
 selgesõnalise avaliku URL-i seadmist, kui OAuth või loodud brauserilingid seda vajavad. Lubage
-`OMNIROUTE_TRUST_PROXY` ainult siis, kui OmniRoute ei ole klientidele otse kättesaadav ja teie proksi
+`AGENTPROXY_TRUST_PROXY` ainult siis, kui AgentProxy ei ole klientidele otse kättesaadav ja teie proksi
 eemaldab/taastab sissetulevad edastatud päised.
 
 ### 3.3 Lubamine ja testimine
@@ -264,8 +264,8 @@ eemaldab/taastab sissetulevad edastatud päised.
 # Eemaldage vaikekonfiguratsioon
 rm -f /etc/nginx/sites-enabled/default
 
-# Lubage OmniRoute
-ln -sf /etc/nginx/sites-available/omniroute /etc/nginx/sites-enabled/omniroute
+# Lubage AgentProxy
+ln -sf /etc/nginx/sites-available/agentproxy /etc/nginx/sites-enabled/agentproxy
 
 # Testige ja laadige uuesti
 nginx -t && systemctl reload nginx
@@ -307,40 +307,40 @@ curl -sI https://llms.seudominio.com/health
 ### Uuendamine uuele versioonile
 
 ```bash
-docker pull diegosouzapw/omniroute:latest
-docker stop omniroute && docker rm omniroute
-docker run -d --name omniroute --restart unless-stopped \
-  --env-file /opt/omniroute/.env \
+docker pull khanhkit/agentproxy:latest
+docker stop agentproxy && docker rm agentproxy
+docker run -d --name agentproxy --restart unless-stopped \
+  --env-file /opt/agentproxy/.env \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
-  diegosouzapw/omniroute:latest
+  -v agentproxy-data:/app/data \
+  khanhkit/agentproxy:latest
 ```
 
 ### Logide vaatamine
 
 ```bash
-docker logs -f omniroute          # Reaalajas voog
-docker logs omniroute --tail 50   # Viimased 50 rida
+docker logs -f agentproxy          # Reaalajas voog
+docker logs agentproxy --tail 50   # Viimased 50 rida
 ```
 
 ### Käsitsi andmebaasi varundus
 
 ```bash
 # Kopeeri andmed mahust hostile
-docker cp omniroute:/app/data ./backup-$(date +%F)
+docker cp agentproxy:/app/data ./backup-$(date +%F)
 
 # Või pakkige kogu maht kokku
-docker run --rm -v omniroute-data:/data -v $(pwd):/backup \
-  alpine tar czf /backup/omniroute-data-$(date +%F).tar.gz /data
+docker run --rm -v agentproxy-data:/data -v $(pwd):/backup \
+  alpine tar czf /backup/agentproxy-data-$(date +%F).tar.gz /data
 ```
 
 ### Taastamine varundusest
 
 ```bash
-docker stop omniroute
-docker run --rm -v omniroute-data:/data -v $(pwd):/backup \
-  alpine sh -c "rm -rf /data/* && tar xzf /backup/omniroute-data-YYYY-MM-DD.tar.gz -C /"
-docker start omniroute
+docker stop agentproxy
+docker run --rm -v agentproxy-data:/data -v $(pwd):/backup \
+  alpine sh -c "rm -rf /data/* && tar xzf /backup/agentproxy-data-YYYY-MM-DD.tar.gz -C /"
+docker start agentproxy
 ```
 
 ---
@@ -409,13 +409,13 @@ Juurdepääsuks Cloudflare Workersite kaudu ( ilma VM-i otse eksponeerimata):
 
 ```bash
 # Kohalikus hoidlas
-cd omnirouteCloud
+cd agentproxyCloud
 npm install
 npx wrangler login
 npx wrangler deploy
 ```
 
-Vaata lisaks ka [TUNNELS_GUIDE.md](./TUNNELS_GUIDE.md) Cloudflare Tunnel'i juhendamiseks hoidla sees. Iseseisev `omnirouteCloud/` worker asub eraldi kaashoidlas.
+Vaata lisaks ka [TUNNELS_GUIDE.md](./TUNNELS_GUIDE.md) Cloudflare Tunnel'i juhendamiseks hoidla sees. Iseseisev `agentproxyCloud/` worker asub eraldi kaashoidlas.
 
 ---
 
@@ -426,15 +426,15 @@ Vaata lisaks ka [TUNNELS_GUIDE.md](./TUNNELS_GUIDE.md) Cloudflare Tunnel'i juhen
 | 22    | SSH         | Avalik (koos fail2baniga)        |
 | 80    | nginx HTTP  | Suunamine → HTTPS                |
 | 443   | nginx HTTPS | Cloudflare Proxy kaudu           |
-| 20128 | OmniRoute   | Ainult localhost (nginx-i kaudu) |
+| 20128 | AgentProxy   | Ainult localhost (nginx-i kaudu) |
 
 ## Väikese mäluga / väikese VPS-i optimeerimine
 
 Väiksemates VPS-i instantsides (1 GB RAM-i või vähem) toimuvate deploy'i jaoks:
 
-- **Lülita taustateenused välja** — sea `OMNIROUTE_DISABLE_BACKGROUND_SERVICES=1`, et vahele jätta ajastaja, MCP server ja perioodilised hooldusülesanded. Vaata `docs/reference/ENVIRONMENT.md`.
+- **Lülita taustateenused välja** — sea `AGENTPROXY_DISABLE_BACKGROUND_SERVICES=1`, et vahele jätta ajastaja, MCP server ja perioodilised hooldusülesanded. Vaata `docs/reference/ENVIRONMENT.md`.
 - **Kasuta SQLite WAL režiimi** — see on vaikimisi sisse lülitatud, vähendab tipptaset mälu kasutamisel samaaegsetel lugemistel.
-- **Piira V8 heap'i** — sea `OMNIROUTE_MEMORY_MB` (nt. `512`), et jooksukeskkond ei kalibreeriks ülemist piiri suuremaks kui VM-i mälu. Vaata `docs/reference/ENVIRONMENT.md`.
-- **Raskete ülesannete lubamine skaleerub automaatselt heap'i piiriga** — kui `OMNIROUTE_MEMORY_MB` on seatud ülalmainitud väärtusele, siis sisendvoogude baitside piirang (`OMNIROUTE_CHAT_MAX_INFLIGHT_BYTES`) arvutatakse automaatselt sellest samast ülemisest piirist, nii et mälu piiratud VM saab automaatselt väiksema samaaegsete päringute eelarve ilma lisaseadistuseta; liigsed päringud saadavad taaskäivitatava `503` vea koos `Retry-After` parameetriga, mitte ei võistle mälu pärast. Sea vana hea `OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT` päringute arvu piirang ainult siis, kui vajad sellele lisaks kõva ülemist piiri.
+- **Piira V8 heap'i** — sea `AGENTPROXY_MEMORY_MB` (nt. `512`), et jooksukeskkond ei kalibreeriks ülemist piiri suuremaks kui VM-i mälu. Vaata `docs/reference/ENVIRONMENT.md`.
+- **Raskete ülesannete lubamine skaleerub automaatselt heap'i piiriga** — kui `AGENTPROXY_MEMORY_MB` on seatud ülalmainitud väärtusele, siis sisendvoogude baitside piirang (`AGENTPROXY_CHAT_MAX_INFLIGHT_BYTES`) arvutatakse automaatselt sellest samast ülemisest piirist, nii et mälu piiratud VM saab automaatselt väiksema samaaegsete päringute eelarve ilma lisaseadistuseta; liigsed päringud saadavad taaskäivitatava `503` vea koos `Retry-After` parameetriga, mitte ei võistle mälu pärast. Sea vana hea `AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT` päringute arvu piirang ainult siis, kui vajad sellele lisaks kõva ülemist piiri.
 - **Väldi `next build` käivitamist VPS-il** — kompileeri kohalikult ja deploy eraldiseisva väljundi (`.next/standalone/`).
-- **Jälgi `top` / `free -m` abil** — OmniRoute kasutab tüüpiliselt 200-400 MB RSS-i tühikäigul 1 GB suuruses VM-is.
+- **Jälgi `top` / `free -m` abil** — AgentProxy kasutab tüüpiliselt 200-400 MB RSS-i tühikäigul 1 GB suuruses VM-is.

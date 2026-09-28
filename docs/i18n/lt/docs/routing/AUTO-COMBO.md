@@ -6,12 +6,12 @@
 
 ---
 
-title: "OmniRoute Auto-Combo Engine"
+title: "AgentProxy Auto-Combo Engine"
 version: 3.8.40
 lastUpdated: 2026-06-28
 ---
 
-# OmniRoute Auto-Combo variklis
+# AgentProxy Auto-Combo variklis
 
 > **Naudotojams**: ieškote greitos pradžios? Paprastus paaiškinimus ir pavyzdžius rasite [Auto-Combo naudotojo vadove](../getting-started/AUTO-COMBO-GUIDE.md).
 
@@ -69,7 +69,7 @@ model: "auto/cheap"           # pigiausias vienam žetonui
 
 **Kas vyksta:**
 
-1. OmniRoute aptinka `auto/` priešdėlį faile `src/sse/handlers/chat.ts`
+1. AgentProxy aptinka `auto/` priešdėlį faile `src/sse/handlers/chat.ts`
 2. Duomenų bazėje užklausia visų **aktyvių teikėjų jungčių**
 3. Atrenka turinčias galiojančius prisijungimo duomenis (API raktą arba OAuth prieigos raktą)
 4. Nustato kiekvienos jungties modelį (`connection.defaultModel` arba pirmąjį teikėjo modelį)
@@ -99,7 +99,7 @@ operacijas (niekada nenaudojama neapdorota pertraukiklio `state`):
 
 Kiekvienas kandidatas taip pat turi šio API rakto `excluded` žymą. Išimtys saugomos
 atskirai kiekvienam API raktui (`auto_candidate_overrides` lentelė, migracija `128`) —
-OmniRoute yra vieno nuomininko sistema be `users` lentelės, todėl `apiKeyId` yra
+AgentProxy yra vieno nuomininko sistema be `users` lentelės, todėl `apiKeyId` yra
 artimiausia tikra kiekvieną iškvietėją identifikuojanti tapatybė — ir taikomos
 kandidatų telkinio kontroliniame taške
 `open-sse/services/autoCombo/virtualFactory.ts`, naudojant grynąją, vienetų testais
@@ -144,14 +144,14 @@ Automatinis vertinimas parenka geriausią teikėją / modelį kiekvienai užklau
 Kombinacija, kurios `name` yra identiškas nepapildytam modelio ID (pvz., kombinacija, pavadinta
 `gpt-5.5`), yra **sąmoningai palaikomas naudojimo būdas**, o ne klaida: tai
 atsarginio paslaugų teikėjo parinkimo pagal modelio ID mechanizmas, aprašytas
-[#6940](https://github.com/diegosouzapw/OmniRoute/issues/6940). Kadangi kombinacijų
+[#6940](https://github.com/khanhkit/AgentProxy/issues/6940). Kadangi kombinacijų
 atitiktis tikrinama prieš nepapildyto modelio ID atitiktį
 (`getComboForModel()` faile `src/sse/services/model.ts`), užklausa dėl nepapildyto
 ID `gpt-5.5` nukreipiama per kombinacijos paskirties vietas (pvz.,
 `acme-responses/gpt-5.5`, `backup-responses/gpt-5.5`), o ne tiesiai pas
 vieną paslaugų teikėją — taip pakartotinai panaudojama pirmumo taisyklė, pagal kurią
 kombinacija tikrinama prieš perrašymą, sukurta
-[#3227/#3233](https://github.com/diegosouzapw/OmniRoute/issues/3227), o regresijos
+[#3227/#3233](https://github.com/khanhkit/AgentProxy/issues/3227), o regresijos
 tikrinamos testais `tests/unit/responses-combo-resolution-3227.test.ts` ir
 `tests/unit/combo-name-codex-responses-rewrite.test.ts`.
 
@@ -195,9 +195,9 @@ curl -X POST http://localhost:20128/v1/chat/completions \
 Dvi dažnos klaidos:
 
 - **`auto` nenaudoja jūsų kombinacijų.** `auto`/`auto/*` sukuria savo be konfigūracijos veikiančių kandidatų telkinį ir atsižvelgia į išsaugotas kombinacijas tik tuo atveju, jei kombinacija tiesiogine prasme pavadinta `auto` (nerekomenduojama). Norėdami nukreipti per kombinaciją, siųskite tikslų jos pavadinimą, o ne `auto`.
-- **`openrouter/auto` yra tikras mokamas OpenRouter produktas** („Automatiškai parenkamas geriausias prieinamas“), o ne OmniRoute alternatyvusis pavadinimas. Tai yra vienintelis statinis OpenRouter registro modelio įrašas (`open-sse/config/providers/registry/openrouter/index.ts`), už kurį atsiskaitoma atskirai. Norėdami jo neįtraukti į `auto` telkinius, naudokite Nustatymai → Maršruto parinkimas → Slėpti mokamus modelius.
+- **`openrouter/auto` yra tikras mokamas OpenRouter produktas** („Automatiškai parenkamas geriausias prieinamas“), o ne AgentProxy alternatyvusis pavadinimas. Tai yra vienintelis statinis OpenRouter registro modelio įrašas (`open-sse/config/providers/registry/openrouter/index.ts`), už kurį atsiskaitoma atskirai. Norėdami jo neįtraukti į `auto` telkinius, naudokite Nustatymai → Maršruto parinkimas → Slėpti mokamus modelius.
 
-Pirminė painiava, kurią paaiškina šis dokumentas, aprašyta [#7992](https://github.com/diegosouzapw/OmniRoute/issues/7992) ir [#7111](https://github.com/diegosouzapw/OmniRoute/issues/7111).
+Pirminė painiava, kurią paaiškina šis dokumentas, aprašyta [#7992](https://github.com/khanhkit/AgentProxy/issues/7992) ir [#7111](https://github.com/khanhkit/AgentProxy/issues/7111).
 
 ## Kaip tai veikia (išsaugomi automatiniai deriniai)
 
@@ -269,17 +269,17 @@ reikšmės.
 
 | Antraštė                      | Priima                                                                                                                                                                                                                                 | Poveikis                                                                                                                                                                                                                                                         |
 | :---------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `X-OmniRoute-Mode`            | išankstinio nustatymo alternatyvųjį pavadinimą (`fast`, `balanced`, `quality`, `cheap`, `reliable`, `offline`) arba tiesioginį paketo pavadinimą (`ship-fast`, `cost-saver`, `quality-first`, `offline-friendly`, `reliability-first`) | Pakeičia šios užklausos vertinimo svorius. `balanced`/`default` priverstinai taiko numatytuosius svorius (be paketo). Nežinomos reikšmės ignoruojamos (konfigūracija išsaugoma).                                                                                 |
-| `X-OmniRoute-Budget`          | teigiamą skaičių (didžiausia USD suma vienai užklausai)                                                                                                                                                                                | Griežta kainos riba: kandidatai, kurių numatoma kaina ją viršija, prieš atranką atmetami. Kas nutinka, kai ją viršija **kiekvienas** kandidatas, nustatoma toliau pateikta `X-OmniRoute-Budget-Fallback` antrašte.                                               |
-| `X-OmniRoute-Budget-Fallback` | `cheapest` (numatytoji reikšmė, alternatyvos: `cheapest-viable`, `soft`) arba `strict` (alternatyvos: `block`, `hard`)                                                                                                                 | `cheapest`: grįžtama prie pigiausio kandidato iš visų, net jei jis vis tiek viršija ribą (ankstesnė elgsena). `strict`: atsisakoma atlikti atranką — užklausa iškart nutraukiama su `HTTP 402`, užuot tyliai viršijus biudžetą. Nežinomos reikšmės ignoruojamos. |
+| `X-AgentProxy-Mode`            | išankstinio nustatymo alternatyvųjį pavadinimą (`fast`, `balanced`, `quality`, `cheap`, `reliable`, `offline`) arba tiesioginį paketo pavadinimą (`ship-fast`, `cost-saver`, `quality-first`, `offline-friendly`, `reliability-first`) | Pakeičia šios užklausos vertinimo svorius. `balanced`/`default` priverstinai taiko numatytuosius svorius (be paketo). Nežinomos reikšmės ignoruojamos (konfigūracija išsaugoma).                                                                                 |
+| `X-AgentProxy-Budget`          | teigiamą skaičių (didžiausia USD suma vienai užklausai)                                                                                                                                                                                | Griežta kainos riba: kandidatai, kurių numatoma kaina ją viršija, prieš atranką atmetami. Kas nutinka, kai ją viršija **kiekvienas** kandidatas, nustatoma toliau pateikta `X-AgentProxy-Budget-Fallback` antrašte.                                               |
+| `X-AgentProxy-Budget-Fallback` | `cheapest` (numatytoji reikšmė, alternatyvos: `cheapest-viable`, `soft`) arba `strict` (alternatyvos: `block`, `hard`)                                                                                                                 | `cheapest`: grįžtama prie pigiausio kandidato iš visų, net jei jis vis tiek viršija ribą (ankstesnė elgsena). `strict`: atsisakoma atlikti atranką — užklausa iškart nutraukiama su `HTTP 402`, užuot tyliai viršijus biudžetą. Nežinomos reikšmės ignoruojamos. |
 
 ```bash
 # Priverstinai taikyti sparčiausią profilį, apriboti šią užklausą iki $0.05 ir griežtai blokuoti, užuot viršijus biudžetą
 curl -sS http://localhost:20128/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "X-OmniRoute-Mode: fast" \
-  -H "X-OmniRoute-Budget: 0.05" \
-  -H "X-OmniRoute-Budget-Fallback: strict" \
+  -H "X-AgentProxy-Mode: fast" \
+  -H "X-AgentProxy-Budget: 0.05" \
+  -H "X-AgentProxy-Budget-Fallback: strict" \
   -d '{"model":"auto","messages":[{"role":"user","content":"hi"}]}'
 ```
 
@@ -290,7 +290,7 @@ reikšmės perduodamos esamoms modulio `config.modePack` / `config.budgetCap` /
 
 ## Visos maršruto parinkimo strategijos
 
-„OmniRoute“ derinių variklis palaiko **19 maršruto parinkimo strategijų** (deklaruotų `src/shared/constants/routingStrategies.ts` → `ROUTING_STRATEGY_VALUES`). Pats „Auto Combo“ variklis pasiekiamas per strategiją `auto`, o kitos strategijos gali būti naudojamos išsaugotiems deriniams.
+„AgentProxy“ derinių variklis palaiko **19 maršruto parinkimo strategijų** (deklaruotų `src/shared/constants/routingStrategies.ts` → `ROUTING_STRATEGY_VALUES`). Pats „Auto Combo“ variklis pasiekiamas per strategiją `auto`, o kitos strategijos gali būti naudojamos išsaugotiems deriniams.
 
 | Strategija          | Aprašymas                                                                                                                                                                                                 |
 | :------------------ | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -653,7 +653,7 @@ Per viešąją API galite užregistruoti savo `RouterStrategy` realizaciją:
 import {
   registerStrategy,
   type RouterStrategy,
-} from "@omniroute/open-sse/services/autoCombo/routerStrategy";
+} from "@agentproxy/open-sse/services/autoCombo/routerStrategy";
 
 class MyCustomStrategy implements RouterStrategy {
   readonly name = "my-custom";
@@ -769,8 +769,8 @@ Aprėpiama:
 
 | Komanda                                | Ką ji atlieka                                                                                                                |
 | :------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------- |
-| `npm run test:combo:live`              | Tikras maršruto parinkimas tame pačiame procese su `RUN_COMBO_LIVE=1`; sukuriama veikiančios „OmniRoute“ DB momentinė kopija |
-| `npm run test:combo:live:vps`          | HTTP iškvietos į veikiantį „OmniRoute“ serverį (nustatykite `COMBO_LIVE_BASE_URL`)                                           |
+| `npm run test:combo:live`              | Tikras maršruto parinkimas tame pačiame procese su `RUN_COMBO_LIVE=1`; sukuriama veikiančios „AgentProxy“ DB momentinė kopija |
+| `npm run test:combo:live:vps`          | HTTP iškvietos į veikiantį „AgentProxy“ serverį (nustatykite `COMBO_LIVE_BASE_URL`)                                           |
 | `npm run test:combo:live:vps:failover` | Tas pats, tačiau su sąmoningai sukeltais perjungimo sutrikimo atveju scenarijais                                             |
 
 Šie baziniai testai tikrina tikrąjį duomenų perdavimo kelią (derinys → teikėjas → užbaigimas). Jie

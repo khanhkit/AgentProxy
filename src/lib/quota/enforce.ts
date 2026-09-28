@@ -111,8 +111,8 @@ export async function enforceQuotaShare(input: EnforceInput): Promise<EnforceDec
   // and the pool-level dimension loop (step 4).
   const store = await getQuotaStore();
 
-  // 3. Resolve the provider plan (dimensions).
-  const plan = resolvePlan(input.connectionId, input.provider);
+  // 3. Resolve the provider plan from the pool's canonical primary connection.
+  const plan = resolvePlan(pool.connectionId, input.provider);
 
   // 3b. Per-(key, model) model-cap pre-check (Fase 3 #7).
   //
@@ -302,8 +302,8 @@ export async function recordConsumption(input: RecordConsumptionInput): Promise<
 
   if (!allocations.length) return;
 
-  // Find the pool matching this connection
-  let poolId: string | null = null;
+  // Find the pool matching this connection and keep the canonical pool object.
+  let matchedPool: import("@/lib/db/quotaPools").QuotaPool | null = null;
   for (const { poolId: pid } of allocations) {
     let p: import("@/lib/db/quotaPools").QuotaPool | null = null;
     try {
@@ -318,14 +318,15 @@ export async function recordConsumption(input: RecordConsumptionInput): Promise<
         ? p.connectionIds.includes(input.connectionId)
         : p.connectionId === input.connectionId)
     ) {
-      poolId = pid;
+      matchedPool = p;
       break;
     }
   }
 
-  if (!poolId) return;
+  if (!matchedPool) return;
+  const poolId = matchedPool.id;
 
-  const plan = resolvePlan(input.connectionId, input.provider);
+  const plan = resolvePlan(matchedPool.connectionId, input.provider);
   const store = await getQuotaStore();
 
   // Pool-level dimension consumption (existing behaviour).

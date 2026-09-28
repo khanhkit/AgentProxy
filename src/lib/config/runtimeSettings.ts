@@ -1,9 +1,9 @@
 import { clearHealthCheckLogCache } from "@/lib/tokenHealthCheck";
-import { setCustomBannedSignals } from "@omniroute/open-sse/services/accountFallback.ts";
+import { setCustomBannedSignals } from "@agentproxy/open-sse/services/accountFallback.ts";
 import {
   setOperatorProviderErrorRules,
   type OperatorProviderErrorRule,
-} from "@omniroute/open-sse/config/providerErrorRules.ts";
+} from "@agentproxy/open-sse/config/providerErrorRules.ts";
 import { isAutomatedTestProcess } from "@/shared/utils/testProcess";
 
 type JsonRecord = Record<string, unknown>;
@@ -85,11 +85,24 @@ const DEFAULT_RUNTIME_SETTINGS_SNAPSHOT: RuntimeSettingsSnapshot = {
 
 let lastAppliedSnapshot: RuntimeSettingsSnapshot | null = null;
 
-// Module-local mirror of the current bypass policy. Read by the route guard
-// on every non-loopback hit to a LOCAL_ONLY path via `getAuthzBypassSnapshot`.
-// Initialised to the default so cold-boot requests (before any
-// `applyRuntimeSettings` call) behave identically to PR #2473.
-let currentAuthzBypass: AuthzBypassSnapshot = DEFAULT_AUTHZ_BYPASS_SNAPSHOT;
+// Shared bypass-policy store. A globalThis-backed value is visible to every
+// independently evaluated server bundle/chunk that imports this module.
+const AUTHZ_BYPASS_GLOBAL_KEY = "__omniroute_authzBypass_config__";
+const authzBypassStore = globalThis as unknown as Record<
+  string,
+  AuthzBypassSnapshot | undefined
+>;
+
+function getCurrentAuthzBypass(): AuthzBypassSnapshot {
+  if (!authzBypassStore[AUTHZ_BYPASS_GLOBAL_KEY]) {
+    authzBypassStore[AUTHZ_BYPASS_GLOBAL_KEY] = DEFAULT_AUTHZ_BYPASS_SNAPSHOT;
+  }
+  return authzBypassStore[AUTHZ_BYPASS_GLOBAL_KEY]!;
+}
+
+function setCurrentAuthzBypass(snapshot: AuthzBypassSnapshot): void {
+  authzBypassStore[AUTHZ_BYPASS_GLOBAL_KEY] = snapshot;
+}
 
 function isTruthyEnvFlag(value: string | undefined): boolean {
   if (typeof value !== "string") return false;
@@ -252,7 +265,7 @@ function normalizeAuthzBypass(settings: Record<string, unknown>): AuthzBypassSna
  * state). Spec §Non-Functional Requirements / Performance.
  */
 export function getAuthzBypassSnapshot(): AuthzBypassSnapshot {
-  return currentAuthzBypass;
+  return getCurrentAuthzBypass();
 }
 
 export function buildRuntimeSettingsSnapshot(
@@ -293,7 +306,7 @@ function getPreviousSnapshot(): RuntimeSettingsSnapshot {
 
 async function applyPayloadRulesSection(payloadRules: unknown) {
   const { clearPayloadRulesConfigOverride, setPayloadRulesConfig } =
-    await import("@omniroute/open-sse/services/payloadRules.ts");
+    await import("@agentproxy/open-sse/services/payloadRules.ts");
 
   if (payloadRules === null || payloadRules === undefined) {
     clearPayloadRulesConfigOverride();
@@ -304,13 +317,13 @@ async function applyPayloadRulesSection(payloadRules: unknown) {
 }
 
 async function applyModelAliasesSection(modelAliases: Record<string, string>) {
-  const { setCustomAliases } = await import("@omniroute/open-sse/services/modelDeprecation.ts");
+  const { setCustomAliases } = await import("@agentproxy/open-sse/services/modelDeprecation.ts");
   setCustomAliases(modelAliases);
 }
 
 async function applyBackgroundDegradationSection(backgroundDegradation: JsonRecord | null) {
   const { getDefaultDegradationMap, getDefaultDetectionPatterns, setBackgroundDegradationConfig } =
-    await import("@omniroute/open-sse/services/backgroundTaskDetector.ts");
+    await import("@agentproxy/open-sse/services/backgroundTaskDetector.ts");
 
   if (!backgroundDegradation) {
     setBackgroundDegradationConfig({
@@ -335,7 +348,7 @@ async function applyBackgroundDegradationSection(backgroundDegradation: JsonReco
 }
 
 async function applyCliCompatProvidersSection(cliCompatProviders: string[]) {
-  const { setCliCompatProviders } = await import("@omniroute/open-sse/config/cliFingerprints");
+  const { setCliCompatProviders } = await import("@agentproxy/open-sse/config/cliFingerprints");
   setCliCompatProviders(cliCompatProviders);
 }
 
@@ -346,7 +359,7 @@ async function applyCacheControlSection() {
 
 async function applyUsageTrackingSection(newBuffer: number | null) {
   const { invalidateBufferTokensCache, setBufferTokensCache } =
-    await import("@omniroute/open-sse/utils/usageTracking.ts");
+    await import("@agentproxy/open-sse/utils/usageTracking.ts");
   if (typeof newBuffer === "number" && newBuffer >= 0) {
     // Set the value directly so the first request after a settings save gets the
     // correct count synchronously — no race window back to DEFAULT (2000).
@@ -358,7 +371,7 @@ async function applyUsageTrackingSection(newBuffer: number | null) {
 
 async function applyThoughtSignatureSection(mode: string) {
   const { setGeminiThoughtSignatureMode } =
-    await import("@omniroute/open-sse/services/geminiThoughtSignatureStore.ts");
+    await import("@agentproxy/open-sse/services/geminiThoughtSignatureStore.ts");
   setGeminiThoughtSignatureMode(mode);
 }
 
@@ -379,7 +392,7 @@ async function applyCorsOriginsSection(corsOrigins: string) {
  */
 async function applyCcBridgeTransformsSection(ccBridgeTransforms: unknown) {
   const { setSystemTransformsConfig } =
-    await import("@omniroute/open-sse/services/systemTransforms.ts");
+    await import("@agentproxy/open-sse/services/systemTransforms.ts");
   if (ccBridgeTransforms && typeof ccBridgeTransforms === "object") {
     setSystemTransformsConfig(ccBridgeTransforms);
   }
@@ -390,12 +403,12 @@ async function applyCcBridgeTransformsSection(ccBridgeTransforms: unknown) {
  * (<50 ms hot-reload) is structurally satisfied by this shape.
  */
 function applyAuthzBypassSection(snapshot: AuthzBypassSnapshot) {
-  currentAuthzBypass = { enabled: snapshot.enabled, prefixes: [...snapshot.prefixes] };
+  setCurrentAuthzBypass({ enabled: snapshot.enabled, prefixes: [...snapshot.prefixes] });
 }
 
 async function applySystemTransformsSection(systemTransforms: unknown) {
   const { setSystemTransformsConfig, resetSystemTransformsConfig } =
-    await import("@omniroute/open-sse/services/systemTransforms.ts");
+    await import("@agentproxy/open-sse/services/systemTransforms.ts");
 
   if (
     systemTransforms === null ||
@@ -410,7 +423,7 @@ async function applySystemTransformsSection(systemTransforms: unknown) {
 }
 
 async function applySystemPromptSection(systemPrompt: unknown) {
-  const { setSystemPromptConfig } = await import("@omniroute/open-sse/services/systemPrompt.ts");
+  const { setSystemPromptConfig } = await import("@agentproxy/open-sse/services/systemPrompt.ts");
 
   if (systemPrompt && typeof systemPrompt === "object") {
     setSystemPromptConfig(systemPrompt as Record<string, unknown>);
@@ -436,8 +449,8 @@ async function applyModelsDevSyncSection(
     isModelsDevSyncEnvForcedOn,
   } = await import("@/lib/modelsDevSync");
   const skipBackgroundSyncInTests =
-    (isAutomatedTestProcess() && process.env.OMNIROUTE_ENABLE_RUNTIME_BACKGROUND_TASKS !== "1") ||
-    isTruthyEnvFlag(process.env.OMNIROUTE_DISABLE_BACKGROUND_SERVICES);
+    (isAutomatedTestProcess() && process.env.AGENTPROXY_ENABLE_RUNTIME_BACKGROUND_TASKS !== "1") ||
+    isTruthyEnvFlag(process.env.AGENTPROXY_DISABLE_BACKGROUND_SERVICES);
 
   if (skipBackgroundSyncInTests || isModelsDevSyncEnvDisabled()) {
     stopPeriodicSync();
@@ -613,5 +626,5 @@ export async function applyRuntimeSettings(
 
 export function resetRuntimeSettingsStateForTests() {
   lastAppliedSnapshot = null;
-  currentAuthzBypass = DEFAULT_AUTHZ_BYPASS_SNAPSHOT;
+  setCurrentAuthzBypass(DEFAULT_AUTHZ_BYPASS_SNAPSHOT);
 }

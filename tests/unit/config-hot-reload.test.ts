@@ -4,9 +4,9 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-config-hot-reload-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-config-hot-reload-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
-process.env.OMNIROUTE_CONFIG_HOT_RELOAD_MS = "100";
+process.env.AGENTPROXY_CONFIG_HOT_RELOAD_MS = "100";
 
 const core = await import("../../src/lib/db/core.ts");
 const settingsDb = await import("../../src/lib/db/settings.ts");
@@ -131,9 +131,9 @@ test("updateSettings applies runtime settings incrementally without restart", as
 
 test("MODELS_DEV_SYNC_ENABLED=0 blocks a live settings update from starting the sync timer", async () => {
   const previousEnvFlag = process.env.MODELS_DEV_SYNC_ENABLED;
-  const previousBackgroundTasks = process.env.OMNIROUTE_ENABLE_RUNTIME_BACKGROUND_TASKS;
+  const previousBackgroundTasks = process.env.AGENTPROXY_ENABLE_RUNTIME_BACKGROUND_TASKS;
   process.env.MODELS_DEV_SYNC_ENABLED = "0";
-  process.env.OMNIROUTE_ENABLE_RUNTIME_BACKGROUND_TASKS = "1";
+  process.env.AGENTPROXY_ENABLE_RUNTIME_BACKGROUND_TASKS = "1";
   stopPeriodicSync();
 
   try {
@@ -166,9 +166,9 @@ test("MODELS_DEV_SYNC_ENABLED=0 blocks a live settings update from starting the 
     if (previousEnvFlag === undefined) delete process.env.MODELS_DEV_SYNC_ENABLED;
     else process.env.MODELS_DEV_SYNC_ENABLED = previousEnvFlag;
     if (previousBackgroundTasks === undefined) {
-      delete process.env.OMNIROUTE_ENABLE_RUNTIME_BACKGROUND_TASKS;
+      delete process.env.AGENTPROXY_ENABLE_RUNTIME_BACKGROUND_TASKS;
     } else {
-      process.env.OMNIROUTE_ENABLE_RUNTIME_BACKGROUND_TASKS = previousBackgroundTasks;
+      process.env.AGENTPROXY_ENABLE_RUNTIME_BACKGROUND_TASKS = previousBackgroundTasks;
     }
   }
 });

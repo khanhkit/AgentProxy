@@ -18,11 +18,11 @@ const defaultKeyId = (selectedId, apiKeys) =>
  * re-select the API key whose masked value matches the stored one.
  */
 function initOpenclawFormFromSettings(data, apiKeys, onSelectModel, onSelectKeyId) {
-  const provider = data.settings?.models?.providers?.["omniroute"];
+  const provider = data.settings?.models?.providers?.["agentproxy"];
   if (!provider) return;
 
   const primaryModel = data.settings?.agents?.defaults?.model?.primary;
-  if (primaryModel) onSelectModel(primaryModel.replace("omniroute/", ""));
+  if (primaryModel) onSelectModel(primaryModel.replace("agentproxy/", ""));
 
   // (#523) Keys from /api/keys are masked (first 8 + "****" + last 4).
   // Match by prefix/suffix instead of exact comparison.
@@ -70,7 +70,7 @@ export default function OpenClawToolCard({
 
   const getConfigStatus = () => {
     if (!cliReady) return null;
-    const currentProvider = openclawStatus.settings?.models?.providers?.["omniroute"];
+    const currentProvider = openclawStatus.settings?.models?.providers?.["agentproxy"];
     if (!currentProvider) return "not_configured";
     const localMatch =
       currentProvider.baseUrl?.includes("localhost") ||
@@ -164,7 +164,7 @@ export default function OpenClawToolCard({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           baseUrl: getEffectiveBaseUrl(),
-          apiKey: !cloudEnabled ? "sk_omniroute" : null,
+          apiKey: !cloudEnabled ? "sk_agentproxy" : null,
           keyId: selectedKeyId,
           model: selectedModel,
         }),
@@ -252,19 +252,19 @@ export default function OpenClawToolCard({
     // (#523) Look up the key object by id to get the masked display value.
     const selectedKeyObj = apiKeys?.find((k) => k.id === effectiveApiKeyId);
     const keyToDisplay =
-      selectedKeyObj?.key || (!cloudEnabled ? "sk_omniroute" : "<API_KEY_FROM_DASHBOARD>");
+      selectedKeyObj?.key || (!cloudEnabled ? "sk_agentproxy" : "<API_KEY_FROM_DASHBOARD>");
 
     const settingsContent = {
       agents: {
         defaults: {
           model: {
-            primary: `omniroute/${selectedModel || "provider/model-id"}`,
+            primary: `agentproxy/${selectedModel || "provider/model-id"}`,
           },
         },
       },
       models: {
         providers: {
-          omniroute: {
+          agentproxy: {
             baseUrl: getEffectiveBaseUrl(),
             apiKey: keyToDisplay,
             api: "openai-completions",
@@ -352,7 +352,7 @@ export default function OpenClawToolCard({
               </div>
               {/*
                 Always surface Manual Config even when the CLI is not
-                detected locally — typical of remote OmniRoute
+                detected locally — typical of remote AgentProxy
                 deployments where the CLI lives on the user's machine,
                 not on the server. Upstream report: #579.
               */}
@@ -367,7 +367,7 @@ export default function OpenClawToolCard({
             <>
               <div className="flex flex-col gap-2">
                 {/* Current Base URL */}
-                {openclawStatus?.settings?.models?.providers?.["omniroute"]?.baseUrl && (
+                {openclawStatus?.settings?.models?.providers?.["agentproxy"]?.baseUrl && (
                   <div className="flex items-center gap-2">
                     <span className="w-32 shrink-0 text-sm font-semibold text-text-main text-right">
                       {t("current")}
@@ -376,7 +376,7 @@ export default function OpenClawToolCard({
                       arrow_forward
                     </span>
                     <span className="flex-1 px-2 py-1.5 text-xs text-text-muted truncate">
-                      {openclawStatus.settings.models.providers["omniroute"].baseUrl}
+                      {openclawStatus.settings.models.providers["agentproxy"].baseUrl}
                     </span>
                   </div>
                 )}
@@ -429,7 +429,7 @@ export default function OpenClawToolCard({
                     </select>
                   ) : (
                     <span className="flex-1 text-xs text-text-muted px-2 py-1.5">
-                      {cloudEnabled ? t("noApiKeysCreateOne") : t("defaultOmnirouteKey")}
+                      {cloudEnabled ? t("noApiKeysCreateOne") : t("defaultAgentProxyKey")}
                     </span>
                   )}
                 </div>
@@ -494,7 +494,7 @@ export default function OpenClawToolCard({
                   variant="outline"
                   size="sm"
                   onClick={handleResetSettings}
-                  disabled={!openclawStatus?.hasOmniRoute}
+                  disabled={!openclawStatus?.hasAgentProxy}
                   loading={restoring}
                 >
                   <span className="material-symbols-outlined text-[14px] mr-1">restore</span>

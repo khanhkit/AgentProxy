@@ -6,16 +6,16 @@
 
 ---
 
-title: "OmniRoute — Gailearaí Gníomhartha an Deais"
+title: "AgentProxy — Gailearaí Gníomhartha an Deais"
 version: 3.8.40
 lastUpdated: 2026-06-28
 ---
 
-# OmniRoute — Gailearaí Gníomhartha an Deais
+# AgentProxy — Gailearaí Gníomhartha an Deais
 
 🌐 **Languages:** 🇺🇸 [English](../../../../guides/FEATURES.md) · 🇸🇦 [ar](../../../ar/docs/guides/FEATURES.md) · 🇦🇿 [az](../../../az/docs/guides/FEATURES.md) · 🇧🇬 [bg](../../../bg/docs/guides/FEATURES.md) · 🇧🇩 [bn](../../../bn/docs/guides/FEATURES.md) · 🇨🇿 [cs](../../../cs/docs/guides/FEATURES.md) · 🇩🇰 [da](../../../da/docs/guides/FEATURES.md) · 🇩🇪 [de](../../../de/docs/guides/FEATURES.md) · 🇬🇷 [el](../../../el/docs/guides/FEATURES.md) · 🇪🇸 [es](../../../es/docs/guides/FEATURES.md) · 🇪🇪 [et](../../../et/docs/guides/FEATURES.md) · 🇮🇷 [fa](../../../fa/docs/guides/FEATURES.md) · 🇫🇮 [fi](../../../fi/docs/guides/FEATURES.md) · 🇫🇷 [fr](../../../fr/docs/guides/FEATURES.md) · 🇮🇳 [gu](../../../gu/docs/guides/FEATURES.md) · 🇮🇱 [he](../../../he/docs/guides/FEATURES.md) · 🇮🇳 [hi](../../../hi/docs/guides/FEATURES.md) · 🇭🇷 [hr](../../../hr/docs/guides/FEATURES.md) · 🇭🇺 [hu](../../../hu/docs/guides/FEATURES.md) · 🇮🇩 [id](../../../id/docs/guides/FEATURES.md) · 🇮🇹 [it](../../../it/docs/guides/FEATURES.md) · 🇯🇵 [ja](../../../ja/docs/guides/FEATURES.md) · 🇰🇷 [ko](../../../ko/docs/guides/FEATURES.md) · 🇱🇹 [lt](../../../lt/docs/guides/FEATURES.md) · 🇱🇻 [lv](../../../lv/docs/guides/FEATURES.md) · 🇮🇳 [mr](../../../mr/docs/guides/FEATURES.md) · 🇲🇾 [ms](../../../ms/docs/guides/FEATURES.md) · 🇲🇹 [mt](../../../mt/docs/guides/FEATURES.md) · 🇳🇱 [nl](../../../nl/docs/guides/FEATURES.md) · 🇳🇴 [no](../../../no/docs/guides/FEATURES.md) · 🇵🇭 [phi](../../../phi/docs/guides/FEATURES.md) · 🇵🇱 [pl](../../../pl/docs/guides/FEATURES.md) · 🇵🇹 [pt](../../../pt/docs/guides/FEATURES.md) · 🇧🇷 [pt-BR](../../../pt-BR/docs/guides/FEATURES.md) · 🇷🇴 [ro](../../../ro/docs/guides/FEATURES.md) · 🇷🇺 [ru](../../../ru/docs/guides/FEATURES.md) · 🇸🇰 [sk](../../../sk/docs/guides/FEATURES.md) · 🇸🇮 [sl](../../../sl/docs/guides/FEATURES.md) · 🇷🇸 [sr](../../../sr/docs/guides/FEATURES.md) · 🇸🇪 [sv](../../../sv/docs/guides/FEATURES.md) · 🇰🇪 [sw](../../../sw/docs/guides/FEATURES.md) · 🇮🇳 [ta](../../../ta/docs/guides/FEATURES.md) · 🇮🇳 [te](../../../te/docs/guides/FEATURES.md) · 🇹🇭 [th](../../../th/docs/guides/FEATURES.md) · 🇹🇷 [tr](../../../tr/docs/guides/FEATURES.md) · 🇺🇦 [uk-UA](../../../uk-UA/docs/guides/FEATURES.md) · 🇵🇰 [ur](../../../ur/docs/guides/FEATURES.md) · 🇻🇳 [vi](../../../vi/docs/guides/FEATURES.md) · 🇨🇳 [zh-CN](../../../zh-CN/docs/guides/FEATURES.md) · 🇹🇼 [zh-TW](../../../zh-TW/docs/guides/FEATURES.md)
 
-Treoir amhairc ar gach cuid de thaispeántas OmniRoute.
+Treoir amhairc ar gach cuid de thaispeántas AgentProxy.
 
 > 📅 **Nuashonrú deireanach:** 2026-06-28 — **v3.8.40**
 
@@ -45,7 +45,7 @@ Chuir an timthriall v3.7.x → v3.8.0 aicsíú uath-bhealach gan chumrú, solát
 - 🚦 **Aicrithiú 429 in aghaidh an soláthraí** + cnaipe `useUpdrois429BreakerHints` — iompar briseadh níos míne ag baint úsáide as leideanna teorainne reatha ó shreathfaigh
 - 🩺 **Deais cónaithe samhla** — breathnaigh ar dhúnaidh in aghaidh samhla agus athcumasaigh de láimh ón eispéireas úsáideora
 - 🔒 **Braithteacht deimhniú MITM dinimiciúla Linux** — oibríonn sé trasna Debian/Ubuntu, Fedora/RHEL, Arch, agus distros eile
-- 💧 **An sraith feabhsúchán CLI** — 20+ ordú lena n-áirítear `omniroute providers`, `omniroute combos`, `omniroute doctor`, `omniroute setup`
+- 💧 **An sraith feabhsúchán CLI** — 20+ ordú lena n-áirítear `agentproxy providers`, `agentproxy combos`, `agentproxy doctor`, `agentproxy setup`
 - 🔍 **Fionnadh samhla leabú Qdrant** — torthaí stórais veicteoir uathoibríoch
 - 🔑 **Eochranna API / Eochranna Bearer le scóip `manage`** — déan oibríochtaí riaracháin go programatach trí API
 - 🏥 **Anailísíocht sláinte comhcheangal sprioc** + **tógálaí comhcheangal struchtúrtha** — sláinte in aghaidh na spriocanna & tógálaí eispéireas úsáideora le haghaidh comhcheangal céimeanna `(soláthraí, samhail, ceangal)`
@@ -58,7 +58,7 @@ Chuir an timthriall v3.7.x → v3.8.0 aicsíú uath-bhealach gan chumrú, solát
 
 Bainistigh ceangail soláthraithe AI: soláthraithe OAuth (Claude Code, Codex), soláthraithe eochair API (Groq, DeepSeek, OpenRouter), agus soláthraithe saor in aisce (Qoder, Kiro). Áirítear le cuntais Kiro rianú iarmhairid creidmheacha — creidmheacha fágtha, ceadliomh iomlán, agus dáta athnuaite le feiceáil i deais → Úsáid.
 
-Is féidir le ceangail OpenRouter stóráil `preset` in aghaidh an cheangail i Socraithe Ardshocraíochta. Nuair a shocraítear é, seolann OmniRoute é mar réimse iarratais barrleibhél OpenRouter, mar shampla `"preset": "email-copywriter"`, mura bhfuil `preset` féin curtha ar fáil ag an iarratas cliént cheana féin.
+Is féidir le ceangail OpenRouter stóráil `preset` in aghaidh an cheangail i Socraithe Ardshocraíochta. Nuair a shocraítear é, seolann AgentProxy é mar réimse iarratais barrleibhél OpenRouter, mar shampla `"preset": "email-copywriter"`, mura bhfuil `preset` féin curtha ar fáil ag an iarratas cliént cheana féin.
 
 ![Deais Soláthraithe](../screenshots/01-providers.png)
 
@@ -163,7 +163,7 @@ Deais chun gníomhairí CLI a fhionnadh agus a bhainistiú. Taispeánann greille
 
 ## 🔗 Aistriú Comhthéacs _(v3.5.5+)_
 
-Straitéis chombó a chaomhainn síorghluasacht seisiúin nuair a tharlann rothlú cuntais i lár comhrá. Sula bhfuil an cuntas gníomhach curtha i gcrích, gineann OmniRoute achoimre struchtúrtha aistrithe sa chúlra. Tar éis do iarratas eile réiteach go cuntas eile, déantar an achoimre a instealladh mar fhíric chórais ionas go leanann an cuntas nua le comhthiomsú iomlán.
+Straitéis chombó a chaomhainn síorghluasacht seisiúin nuair a tharlann rothlú cuntais i lár comhrá. Sula bhfuil an cuntas gníomhach curtha i gcrích, gineann AgentProxy achoimre struchtúrtha aistrithe sa chúlra. Tar éis do iarratas eile réiteach go cuntas eile, déantar an achoimre a instealladh mar fhíric chórais ionas go leanann an cuntas nua le comhthiomsú iomlán.
 
 Intratable trí shocruithe combo nó domhanda:
 
@@ -229,7 +229,7 @@ Scripteanna díshuiteáil glan do gach modh suiteála:
 
 | Ordú                     | Gníomh                                                                                              |
 | ------------------------ | --------------------------------------------------------------------------------------------------- |
-| `npm run uninstall`      | Bainfean an aip chórais ach **coinnífidh sé do BNG agus cumraíochtaí** i `~/.omniroute`.            |
+| `npm run uninstall`      | Bainfean an aip chórais ach **coinnífidh sé do BNG agus cumraíochtaí** i `~/.agentproxy`.            |
 | `npm run uninstall:full` | Bainfean an aip AGUS **scriosfaidh sé go buan gach cumraíocht, eochracha, agus bunachair shonraí**. |
 
 ---
@@ -270,7 +270,7 @@ Rianú gníomhartha riaracháin le scagadh de réir cineáil gníomha, aisteora,
 
 ## 🖥️ Feidhmchlár Deisce
 
-Feidhmchlár deisce Electron dúchasach do Windows, macOS, agus Linux. Rith OmniRoute mar fheidhmchlár neamhspleách le comhtháthú tráidire córais, tacaíocht as líne, uath-threisiú, agus suiteáil le cliceáil amháin.
+Feidhmchlár deisce Electron dúchasach do Windows, macOS, agus Linux. Rith AgentProxy mar fheidhmchlár neamhspleách le comhtháthú tráidire córais, tacaíocht as líne, uath-threisiú, agus suiteáil le cliceáil amháin.
 
 Príghnéithe:
 
@@ -289,7 +289,7 @@ Príghnéithe:
 
 ## 🌐 Trasdáile V1 WebSocket _(v3.6.6+)_
 
-Tacaíonn OmniRoute anois le **cliaint WebSocket comhoiriúnach le OpenAI** trí thúnú `/v1/ws`. Briseann an freastalaí saincheaptha `scripts/dev/v1-ws-bridge.mjs` Next.js agus uasghrádaíonn ceangail WS go seisiúin sruthú déthreoch iomlán. Úsáideann an fhiúntais an eochair API nó fianán seisiúin céanna le hiarratais HTTP.
+Tacaíonn AgentProxy anois le **cliaint WebSocket comhoiriúnach le OpenAI** trí thúnú `/v1/ws`. Briseann an freastalaí saincheaptha `scripts/dev/v1-ws-bridge.mjs` Next.js agus uasghrádaíonn ceangail WS go seisiúin sruthú déthreoch iomlán. Úsáideann an fhiúntais an eochair API nó fianán seisiúin céanna le hiarratais HTTP.
 
 Príomh-oibreachaí:
 
@@ -315,7 +315,7 @@ Tógtar an pacáiste cumraíochta ag `src/lib/sern/bundle.ts`. Déanann tomhalt�
 
 Is soláthraí den chéad chéim cláraithe anois é **Smaointeoireacht GLM (`glmt`)**: 65 536 comhartha aschur uasta, 24 576 buiséad smaointeoireachta, 900 s am réamhshocraithe, formáid API atá comhoiriúnach le Claude, agus sioncronúsáid le teaghlach GLM.
 
-Tháinig **comhaireamh comharthaí hibrideach** isteach freisin i v3.6.6: nuair a nochtann soláthraí atá comhoiriúnach le Claude `/messages/count_tokens`, glacann OmniRoute é roimh iarratais mhóla le meastóireacht shlán mar tharraingt siar.
+Tháinig **comhaireamh comharthaí hibrideach** isteach freisin i v3.6.6: nuair a nochtann soláthraí atá comhoiriúnach le Claude `/messages/count_tokens`, glacann AgentProxy é roimh iarratais mhóla le meastóireacht shlán mar tharraingt siar.
 
 ---
 

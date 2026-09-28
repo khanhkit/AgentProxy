@@ -9,7 +9,7 @@
 # Dependencies and build output
 # `node_modules` alone matches the ROOT only — Docker's matcher does not cross
 # `/` like .gitignore does. Without the `**/` form, nested installs ship in the
-# build context (e.g. @omniroute/opencode-provider/node_modules, ~79 MB of
+# build context (e.g. @agentproxy/opencode-provider/node_modules, ~79 MB of
 # devDependencies). Both forms are kept: the bare one is the documented root
 # rule, the `**/` one covers every nested package.
 node_modules
@@ -108,8 +108,8 @@ bun.lock
 llm.txt
 images
 clipr
-omnirouteCloud
-omnirouteSite
+agentproxyCloud
+agentproxySite
 
 # Temporary/Scratch Folders
 _*

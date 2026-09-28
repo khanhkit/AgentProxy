@@ -9,11 +9,11 @@ test("parseSseChunk separa eventos data: e detecta [DONE]", () => {
 });
 
 test("parseSseChunk acha data: mesmo precedido de comment-lines SSE no mesmo bloco", () => {
-  // Formato real da VPS (v3.8.47): trailers de telemetria como comments (`: x-omniroute-*`)
+  // Formato real da VPS (v3.8.47): trailers de telemetria como comments (`: x-agentproxy-*`)
   // no MESMO bloco do data: [DONE] — o parser não pode olhar só o início do bloco.
   const chunk =
     'data: {"choices":[{"delta":{"content":"OK"}}]}\n\n' +
-    ": x-omniroute-cache-hit=false\n: x-omniroute-latency-ms=67\ndata: [DONE]\n\n";
+    ": x-agentproxy-cache-hit=false\n: x-agentproxy-latency-ms=67\ndata: [DONE]\n\n";
   const events = parseSseChunk(chunk);
   assert.deepEqual(events, ['{"choices":[{"delta":{"content":"OK"}}]}', "[DONE]"]);
 });

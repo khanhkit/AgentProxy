@@ -12,7 +12,7 @@ import { isCommonChatGptWebRetiredProviderId } from "@/shared/constants/chatgptW
 import { hasUsableWebSessionCredential } from "@/shared/providers/webSessionCredentials";
 import { toNumber } from "@/shared/utils/numeric";
 import { isCompatibleProviderConnectionId } from "@/shared/utils/compatibleProviderId";
-import { defaultLogger as log } from "@omniroute/open-sse/utils/logger";
+import { defaultLogger as log } from "@agentproxy/open-sse/utils/logger";
 import { getTokenLimit } from "../contextManager";
 import {
   createModelCapabilityResolutionSnapshot,
@@ -339,7 +339,7 @@ const SYNTHETIC_NOAUTH_CONNECTION_ID = RESILIENCE_NOAUTH_CONNECTION_ID;
 // candidate pool. Narrowed to the backends verified to answer without any
 // configuration on our reference egress (VPS .15): `opencode` returns 200
 // there, while duckduckgo-web (429/VQD rate limit),
-// chipotle (502), aihorde (401, anon key rejected)
+// aihorde (401, anon key rejected)
 // and the others are unreliable. The excluded providers stay fully usable via
 // direct `<alias>/<model>` calls — they are just kept OUT of auto-routing until
 // re-verified. Re-add an id here to bring it back into every auto/* pool.
@@ -680,15 +680,15 @@ export async function prepareVirtualAutoComboInputs(
       .filter(Boolean);
     const hiddenModels = hiddenModelsMap.get(providerId);
 
-    // #auto-pool-visible-only: build the credentialed pool from the models the user
-    // actually has available (synced + custom non-hidden) when any exist, falling
-    // back to the static catalog only when the user has none. This keeps catalog-only
-    // models (e.g. openrouter/auto) out of every auto/* pool when the operator only
-    // synced a subset (e.g. OpenRouter with importFreeModelsOnly).
-    const [syncedByConnection, customModels] = await Promise.all([
+    // Prefer user-visible synced/custom models; otherwise fall back to the static catalog.
+    const [syncedByConnection, rawCustomModels] = await Promise.all([
       getSyncedAvailableModelsByConnection(providerId),
       getCustomModels(providerId),
     ]);
+    const customModels = (Array.isArray(rawCustomModels) ? rawCustomModels : []).filter(
+      (model: unknown): model is { id?: string } =>
+        !!model && typeof model === "object" && !Array.isArray(model)
+    );
     const userVisibleIds = new Set<string>();
     for (const models of Object.values(syncedByConnection)) {
       for (const m of models) if (m.id && !hiddenModels?.has(m.id)) userVisibleIds.add(m.id);
@@ -1015,13 +1015,13 @@ export async function createVirtualAutoComboFromPrepared(
       effectivePool = narrowed;
     } else if (
       !spec?.family &&
-      (process.env.OMNIROUTE_AUTO_FREE_FALLBACK_TO_FULL_POOL === "true" ||
-        process.env.OMNIROUTE_AUTO_FREE_FALLBACK_TO_FULL_POOL === "1")
+      (process.env.AGENTPROXY_AUTO_FREE_FALLBACK_TO_FULL_POOL === "true" ||
+        process.env.AGENTPROXY_AUTO_FREE_FALLBACK_TO_FULL_POOL === "1")
     ) {
       // Opt-in legacy behavior (category/tier only): warn loudly, then keep the full pool.
       log.warn(
         "AUTO",
-        `${label} matched no connected models; falling back to the full pool (OMNIROUTE_AUTO_FREE_FALLBACK_TO_FULL_POOL=true)`
+        `${label} matched no connected models; falling back to the full pool (AGENTPROXY_AUTO_FREE_FALLBACK_TO_FULL_POOL=true)`
       );
     } else {
       // Family combos always degrade to an empty pool when unavailable — a family
@@ -1029,7 +1029,7 @@ export async function createVirtualAutoComboFromPrepared(
       // no sensible "fall back to the full pool" behavior for it.
       warnEmptyAutoPoolOnce(
         label,
-        `${label} matched no connected models; returning an empty pool.${spec?.family ? "" : ' Set OMNIROUTE_AUTO_FREE_FALLBACK_TO_FULL_POOL=true to restore the legacy "use full pool" behavior.'}`
+        `${label} matched no connected models; returning an empty pool.${spec?.family ? "" : ' Set AGENTPROXY_AUTO_FREE_FALLBACK_TO_FULL_POOL=true to restore the legacy "use full pool" behavior.'}`
       );
       effectivePool = [];
     }
@@ -1142,14 +1142,14 @@ export async function createVirtualAutoComboFromPrepared(
 
   // Chaos mode fans out to the top-N most stable models in parallel. Panel size
   // is capped to keep a single IDE request from fanning out to dozens of providers;
-  // operators can override via env var OMNIROUTE_CHAOS_MAX_PANEL (default 5).
+  // operators can override via env var AGENTPROXY_CHAOS_MAX_PANEL (default 5).
   //
   // Provider diversity: when multiple candidates from the same provider exist, only
   // the highest-scored model per provider is included. This prevents a single
   // provider from monopolizing the panel and gives the IDE truly diverse answers.
   const isChaos = variant === "chaos";
   const CHAOS_MAX_PANEL = (() => {
-    const env = process.env.OMNIROUTE_CHAOS_MAX_PANEL;
+    const env = process.env.AGENTPROXY_CHAOS_MAX_PANEL;
     const parsed = env ? parseInt(env, 10) : 5;
     return Number.isFinite(parsed) && parsed > 0 ? Math.min(parsed, 10) : 5;
   })();
@@ -1195,8 +1195,8 @@ export async function createVirtualAutoComboFromPrepared(
               judgeModel: chaosModels[0]?.model,
               tuning: {
                 panelHardTimeoutMs:
-                  Number(process.env.OMNIROUTE_CHAOS_PANEL_TIMEOUT_MS) || undefined,
-                minPanel: Number(process.env.OMNIROUTE_CHAOS_MIN_PANEL) || undefined,
+                  Number(process.env.AGENTPROXY_CHAOS_PANEL_TIMEOUT_MS) || undefined,
+                minPanel: Number(process.env.AGENTPROXY_CHAOS_MIN_PANEL) || undefined,
               },
             },
           }

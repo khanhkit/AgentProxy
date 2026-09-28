@@ -170,7 +170,7 @@ Plik zaufania projektu:
 }
 ```
 
-Nadpisanie środowiskowe `OMNIROUTE_RTK_TRUST_PROJECT_FILTERS=1` ufa filtrom projektu bez hasha
+Nadpisanie środowiskowe `AGENTPROXY_RTK_TRUST_PROJECT_FILTERS=1` ufa filtrom projektu bez hasha
 i powinno być ograniczone do kontrolowanego lokalnego developmentu.
 
 ## Reguły bezpieczeństwa

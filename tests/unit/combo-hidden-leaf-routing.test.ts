@@ -4,7 +4,7 @@ import os from "node:os";
 import path from "node:path";
 import test from "node:test";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-hidden-combo-routing-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-hidden-combo-routing-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const { handleComboChat, resolveShadowTargets } = await import("../../open-sse/services/combo.ts");

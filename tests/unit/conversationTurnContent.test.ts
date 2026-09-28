@@ -9,7 +9,7 @@ import path from "node:path";
 // last_correlation_id points at (migration 156 dropped the old stored
 // text_preview/block_kind/tool_name columns -- see conversationTracker.ts).
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-conv-turn-content-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-conv-turn-content-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../src/lib/db/core.ts");

@@ -4,9 +4,9 @@ import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-// Isolated DATA_DIR so this test never touches the real ~/.omniroute DB
+// Isolated DATA_DIR so this test never touches the real ~/.agentproxy DB
 // (handleImageGeneration's call-log path opens the shared DB singleton).
-process.env.DATA_DIR = mkdtempSync(join(tmpdir(), "omniroute-images-anon-8085-"));
+process.env.DATA_DIR = mkdtempSync(join(tmpdir(), "agentproxy-images-anon-8085-"));
 
 // #8085 — Pollinations image-generation requests with NO configured API key
 // (the common free/keyless case) must reuse the same anonymous fingerprint
@@ -15,7 +15,7 @@ process.env.DATA_DIR = mkdtempSync(join(tmpdir(), "omniroute-images-anon-8085-")
 // the outbound request to gen.pollinations.ai carries no Authorization AND
 // no browser fingerprint, so Pollinations legitimately rejects it with a
 // real upstream 401 — even though the caller supplied a perfectly valid
-// OmniRoute API key.
+// AgentProxy API key.
 const { handleImageGeneration } = await import("../../open-sse/handlers/imageGeneration.ts");
 
 test("#8085 keyless Pollinations image request includes anonymous fingerprint headers (User-Agent) instead of going out bare", async () => {

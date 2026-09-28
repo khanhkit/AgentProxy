@@ -55,7 +55,7 @@ test("#11825 manifest: HooksSchema preserves hooks.onStreamComplete", () => {
 
 describe("#11825 onStreamComplete is delivered to an installed+activated plugin", () => {
   const NAME = "sc-delivery-11825";
-  const outFile = join(tmpdir(), `omniroute-onstreamcomplete-11825-${process.pid}.json`);
+  const outFile = join(tmpdir(), `agentproxy-onstreamcomplete-11825-${process.pid}.json`);
 
   beforeEach(() => {
     getDbInstance(); // ensure the plugins table migration has run

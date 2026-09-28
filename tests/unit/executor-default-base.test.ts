@@ -164,7 +164,7 @@ test("DefaultExecutor.buildUrl handles openai-compatible and anthropic-compatibl
     openAICompat.buildUrl("gpt-4.1", true, 0, {
       providerSpecificData: {
         baseUrl: "https://proxy.example/v1/",
-        _omnirouteForceResponsesUpstream: true,
+        _agentproxyForceResponsesUpstream: true,
       },
     }),
     "https://proxy.example/v1/responses"

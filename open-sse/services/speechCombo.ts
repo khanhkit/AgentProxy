@@ -12,21 +12,21 @@
  * ADD-only meta headers are attached, matching the direct route.
  */
 import { getComboByName, getCombos } from "@/lib/db/combos";
-import { resolveComboTargets } from "@omniroute/open-sse/services/combo.ts";
-import { parseSpeechModel, getSpeechProvider } from "@omniroute/open-sse/config/audioRegistry.ts";
+import { resolveComboTargets } from "@agentproxy/open-sse/services/combo.ts";
+import { parseSpeechModel, getSpeechProvider } from "@agentproxy/open-sse/config/audioRegistry.ts";
 import { resolveDynamicAudioProviders } from "@/app/api/v1/_shared/audioProviderNodes";
 import {
   getProviderCredentialsWithQuotaPreflight,
   clearRecoveredProviderState,
 } from "@/sse/services/auth";
 import { isAllRateLimitedCredentials } from "@/app/api/v1/_shared/rateLimit";
-import { handleAudioSpeech } from "@omniroute/open-sse/handlers/audioSpeech.ts";
-import { attachOmniRouteMetaToResponse } from "@/domain/omnirouteResponseMeta";
+import { handleAudioSpeech } from "@agentproxy/open-sse/handlers/audioSpeech.ts";
+import { attachAgentProxyMetaToResponse } from "@/domain/agentproxyResponseMeta";
 import { generateRequestId } from "@/shared/utils/requestId";
 import { calculateModalCost } from "@/lib/usage/costCalculator";
 import { toJsonErrorPayload } from "@/shared/utils/upstreamError";
-import { HTTP_STATUS } from "@omniroute/open-sse/config/constants.ts";
-import { errorResponse } from "@omniroute/open-sse/utils/error.ts";
+import { HTTP_STATUS } from "@agentproxy/open-sse/config/constants.ts";
+import { errorResponse } from "@agentproxy/open-sse/utils/error.ts";
 
 /**
  * Execute a full combo strategy for a text-to-speech request.
@@ -134,7 +134,7 @@ export async function executeSpeechCombo(
         resolvedModel || target.modelStr,
         { characters }
       );
-      return attachOmniRouteMetaToResponse(response, {
+      return attachAgentProxyMetaToResponse(response, {
         provider: targetProvider,
         model: resolvedModel || target.modelStr,
         costUsd,

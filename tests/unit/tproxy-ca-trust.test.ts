@@ -2,7 +2,7 @@
  * Fase 3 / Epic A — OS trust-store install for the TPROXY dynamic CA (decrypt 4b/N).
  *
  * Installs the dynamic CA into the trust store under a DEDICATED slot
- * (`omniroute-tproxy-ca.crt`) so it never clobbers the static MITM cert slot.
+ * (`agentproxy-tproxy-ca.crt`) so it never clobbers the static MITM cert slot.
  * Every effectful seam is injected, so these tests pin the exact privileged
  * command sequence (no shell, arg arrays — Hard Rule #13) without root.
  */
@@ -45,7 +45,7 @@ test("installTproxyCa stages the PEM, copies it into the dedicated slot, refresh
   await installTproxyCa("CA-PEM", "", f.deps);
 
   assert.equal(f.writes.length, 1);
-  assert.match(f.writes[0].path, /omniroute-tproxy-ca\.crt$/);
+  assert.match(f.writes[0].path, /agentproxy-tproxy-ca\.crt$/);
   assert.equal(f.writes[0].data, "CA-PEM");
 
   const cmds = f.calls.map((c) => `${c.command} ${c.args.join(" ")}`);
@@ -61,8 +61,8 @@ test("installTproxyCa never touches the static MITM cert slot", async () => {
   const f = fakeDeps();
   await installTproxyCa("CA-PEM", "", f.deps);
   const joined = f.calls.map((c) => c.args.join(" ")).join(" ");
-  assert.ok(!joined.includes("omniroute-mitm.crt"), "must not collide with the MITM cert");
-  assert.ok(joined.includes("omniroute-tproxy-ca.crt"));
+  assert.ok(!joined.includes("agentproxy-mitm.crt"), "must not collide with the MITM cert");
+  assert.ok(joined.includes("agentproxy-tproxy-ca.crt"));
 });
 
 test("installTproxyCa cleans up the staged file even when a privileged command fails", async () => {

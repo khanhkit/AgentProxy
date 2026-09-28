@@ -1,18 +1,18 @@
 ---
-title: "OmniRoute Tiers — Przewodnik użytkownika"
+title: "AgentProxy Tiers — Przewodnik użytkownika"
 version: 3.8.40
 lastUpdated: 2026-06-28
 ---
 
-# OmniRoute Tiers — Przewodnik użytkownika
+# AgentProxy Tiers — Przewodnik użytkownika
 
-OmniRoute organizuje 207+ obsługiwanych providerów w 3 poziomy ekonomiczne (tiers). Każde
+AgentProxy organizuje 207+ obsługiwanych providerów w 3 poziomy ekonomiczne (tiers). Każde
 żądanie przechodzi przez nie po kolei, aż któreś zwróci sukces — otrzymujesz
 najtańszą sensowną odpowiedź, bez pisania kodu fallbacku.
 
 ## Tier 1 — Subskrypcja
 
-**Providerzy, za których już płacisz.** OmniRoute wykorzystuje każdą jednostkę quoty, zanim
+**Providerzy, za których już płacisz.** AgentProxy wykorzystuje każdą jednostkę quoty, zanim
 wygaśnie.
 
 | Provider                            | Dlaczego Tier 1                                           |

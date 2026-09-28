@@ -1,8 +1,8 @@
 // Regression test for issue #11787.
 //
-// scripts/build/prepublish.ts gates the "@omniroute/opencode-plugin already
+// scripts/build/prepublish.ts gates the "@agentproxy/opencode-plugin already
 // built -> skip rebuild" fast path on both dist/index.js AND dist/index.cjs
-// existing. @omniroute/opencode-plugin/tsup.config.ts is ESM-only
+// existing. @agentproxy/opencode-plugin/tsup.config.ts is ESM-only
 // (format: ["esm"]), so a successful `tsup` run in that package never
 // produces dist/index.cjs -- the old predicate could never be true.
 //
@@ -22,7 +22,7 @@ import { resolveBundledNpmEntry } from "../../scripts/build/resolveNpmEntry.ts";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..", "..");
-const opencodePluginSrc = join(ROOT, "@omniroute", "opencode-plugin");
+const opencodePluginSrc = join(ROOT, "@agentproxy", "opencode-plugin");
 const opencodePluginDist = join(opencodePluginSrc, "dist", "index.js");
 const opencodePluginCjs = join(opencodePluginSrc, "dist", "index.cjs");
 

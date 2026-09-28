@@ -17,9 +17,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-const { injectCustomSystemPrompt } = await import(
-  "../../open-sse/services/systemPrompt.ts"
-);
+const { injectCustomSystemPrompt } = await import("../../open-sse/services/systemPrompt.ts");
 
 // ─── injectCustomSystemPrompt ────────────────────────────────────────────────
 
@@ -129,7 +127,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { mkdirSync } from "node:fs";
 
-const tmpDir = join(tmpdir(), `omniroute-test-${Date.now()}`);
+const tmpDir = join(tmpdir(), `agentproxy-test-${Date.now()}`);
 mkdirSync(tmpDir, { recursive: true });
 process.env["DATA_DIR"] = tmpDir;
 
@@ -144,13 +142,31 @@ test("settings defaults include customSystemPromptEnabled=false and customSystem
     false,
     "customSystemPromptEnabled default is false"
   );
-  assert.equal(
-    settings.customSystemPrompt,
-    "",
-    "customSystemPrompt default is empty string"
-  );
+  assert.equal(settings.customSystemPrompt, "", "customSystemPrompt default is empty string");
 
   t.after(() => {
     resetDbInstance();
   });
+});
+
+test("injectCustomSystemPrompt: claude-shaped body keeps prompt out of messages[0] (#12584)", () => {
+  const body = {
+    system: "You are Claude Code.",
+    messages: [{ role: "user", content: "Hello" }],
+  };
+  const result = injectCustomSystemPrompt(body, "Always respond formally.");
+  assert.equal(result.messages.length, 1);
+  assert.equal(result.messages[0].role, "user");
+  assert.ok(String(result.system).includes("Always respond formally."));
+});
+
+test("injectCustomSystemPrompt: malformed null system still receives the prompt (#12584)", () => {
+  const body = {
+    system: null,
+    messages: [{ role: "user", content: "Hello" }],
+  };
+  const result = injectCustomSystemPrompt(body, "Always respond formally.");
+  assert.equal(result.system, "Always respond formally.", "prompt is not silently dropped");
+  assert.equal(result.messages.length, 1, "prompt does not leak into messages");
+  assert.equal(result.messages[0].role, "user");
 });

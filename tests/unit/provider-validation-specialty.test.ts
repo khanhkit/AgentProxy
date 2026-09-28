@@ -17,20 +17,21 @@ const { __setTlsFetchOverrideForTesting: __setGrokTlsFetchOverride } =
   await import("../../open-sse/services/grokTlsClient.ts");
 
 const originalFetch = globalThis.fetch;
-
 test.afterEach(() => {
   globalThis.fetch = originalFetch;
   __setPplxTlsFetchOverride(null);
   __setGrokTlsFetchOverride(null);
 });
-
 function toPlainHeaders(headers: HeadersInit | undefined) {
   if (headers instanceof Headers) return Object.fromEntries(headers.entries());
   return Object.fromEntries(
     Object.entries(headers || {}).map(([key, value]) => [key, String(value)])
   );
 }
-
+function urlMatches(value: string, hostname: string, pathname?: string) {
+  const url = new URL(value);
+  return url.hostname === hostname && (pathname === undefined || url.pathname === pathname);
+}
 function metaAiSseText(content: string, streamingState = "DONE") {
   return `event: next
 data: ${JSON.stringify({
@@ -85,7 +86,6 @@ test("Kiro API key validator resolves profiles with bearer auth", async () => {
   assert.equal(result.method, "kiro_list_available_profiles");
   assert.equal(calls.length, 1);
 });
-
 test("Kiro API key validator accepts API keys that cannot list profiles", async () => {
   const calls: Array<{
     url: string;
@@ -454,7 +454,7 @@ test("web-cookie provider validators accept valid Grok, Perplexity, Blackbox and
     const target = String(url);
     calls.push({ url: target, init });
 
-    if (target.includes("app.blackbox.ai/api/auth/session")) {
+    if (urlMatches(target, "app.blackbox.ai", "/api/auth/session")) {
       return new Response(
         JSON.stringify({
           user: { id: "bb-user-1", email: "premium@example.com" },
@@ -462,7 +462,7 @@ test("web-cookie provider validators accept valid Grok, Perplexity, Blackbox and
         { status: 200 }
       );
     }
-    if (target.includes("app.blackbox.ai/api/check-subscription")) {
+    if (urlMatches(target, "app.blackbox.ai", "/api/check-subscription")) {
       return new Response(
         JSON.stringify({
           hasActiveSubscription: true,
@@ -472,7 +472,7 @@ test("web-cookie provider validators accept valid Grok, Perplexity, Blackbox and
         { status: 200 }
       );
     }
-    if (target.includes("meta.ai/api/graphql")) {
+    if (urlMatches(target, "www.meta.ai", "/api/graphql")) {
       return new Response(metaAiSseText("Muse Spark says hello"), {
         status: 200,
         headers: { "Content-Type": "text/event-stream" },
@@ -502,16 +502,16 @@ test("web-cookie provider validators accept valid Grok, Perplexity, Blackbox and
   assert.equal(museSpark.valid, true);
 
   const blackboxSessionCall = calls.find((call) =>
-    call.url.includes("app.blackbox.ai/api/auth/session")
+    urlMatches(call.url, "app.blackbox.ai", "/api/auth/session")
   );
   const blackboxSubscriptionCall = calls.find((call) =>
-    call.url.includes("app.blackbox.ai/api/check-subscription")
+    urlMatches(call.url, "app.blackbox.ai", "/api/check-subscription")
   );
-  const museSparkCall = calls.find((call) => call.url.includes("meta.ai/api/graphql"));
+  const museSparkCall = calls.find((call) => urlMatches(call.url, "www.meta.ai", "/api/graphql"));
 
   // Grok goes through tlsFetchGrok (TLS override), not globalThis.fetch.
   assert.ok(grokTlsCall, "grok TLS override was called");
-  assert.ok(grokTlsCall!.url.includes("grok.com/rest/app-chat/conversations/new"));
+  assert.ok(urlMatches(grokTlsCall!.url, "grok.com", "/rest/app-chat/conversations/new"));
   assert.equal(
     (grokTlsCall!.options.headers as Record<string, string>)["Cookie"],
     "sso=grok-cookie"
@@ -523,7 +523,7 @@ test("web-cookie provider validators accept valid Grok, Perplexity, Blackbox and
   // Perplexity goes through tlsFetchPerplexity (TLS override), not globalThis.fetch.
   // options.headers is a plain object; the validator sets Cookie from the session token.
   assert.ok(pplxTlsCall, "perplexity TLS override was called");
-  assert.ok(pplxTlsCall!.url.includes("perplexity.ai/rest/sse/perplexity_ask"));
+  assert.ok(urlMatches(pplxTlsCall!.url, "www.perplexity.ai", "/rest/sse/perplexity_ask"));
   assert.equal(
     (pplxTlsCall!.options.headers as Record<string, string>)["Cookie"],
     "__Secure-next-auth.session-token=pplx-cookie"
@@ -549,7 +549,7 @@ test("web-cookie provider validators surface auth and subscription failures", as
 
   globalThis.fetch = async (url, init = {}) => {
     const target = String(url);
-    if (target.includes("app.blackbox.ai/api/auth/session")) {
+    if (urlMatches(target, "app.blackbox.ai", "/api/auth/session")) {
       const cookie = (init.headers as Record<string, string>)?.Cookie || "";
       if (cookie.includes("expired-cookie")) {
         return new Response("null", { status: 200 });
@@ -561,7 +561,7 @@ test("web-cookie provider validators surface auth and subscription failures", as
         { status: 200 }
       );
     }
-    if (target.includes("app.blackbox.ai/api/check-subscription")) {
+    if (urlMatches(target, "app.blackbox.ai", "/api/check-subscription")) {
       return new Response(
         JSON.stringify({
           hasActiveSubscription: false,
@@ -572,7 +572,7 @@ test("web-cookie provider validators surface auth and subscription failures", as
         { status: 200 }
       );
     }
-    if (target.includes("meta.ai/api/graphql")) {
+    if (urlMatches(target, "www.meta.ai", "/api/graphql")) {
       return new Response(metaAiSseText("Authentication required to send messages", "ERROR"), {
         status: 200,
         headers: { "Content-Type": "text/event-stream" },
@@ -874,8 +874,8 @@ test("search provider validators cover success, client errors, server errors and
 });
 
 test("extended search provider validators cover Google PSE, Linkup, SearchAPI, You.com and SearXNG", async () => {
-  const originalAllowPrivateProviderUrls = process.env.OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS;
-  process.env.OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS = "true";
+  const originalAllowPrivateProviderUrls = process.env.AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS;
+  process.env.AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS = "true";
   const calls = [];
   try {
     globalThis.fetch = async (url, init = {}) => {
@@ -932,9 +932,9 @@ test("extended search provider validators cover Google PSE, Linkup, SearchAPI, Y
     assert.equal(calls[3].init.headers["X-API-Key"], "you-key");
   } finally {
     if (originalAllowPrivateProviderUrls === undefined) {
-      delete process.env.OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS;
+      delete process.env.AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS;
     } else {
-      process.env.OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS = originalAllowPrivateProviderUrls;
+      process.env.AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS = originalAllowPrivateProviderUrls;
     }
   }
 });
@@ -1019,8 +1019,8 @@ test("Maritalk treats a rate-limited models probe as valid credentials", async (
 });
 
 test("local OpenAI-style providers validate without sending Authorization when apiKey is blank", async () => {
-  const originalAllowPrivateProviderUrls = process.env.OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS;
-  process.env.OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS = "true";
+  const originalAllowPrivateProviderUrls = process.env.AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS;
+  process.env.AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS = "true";
   const calls = [];
 
   try {
@@ -1065,9 +1065,9 @@ test("local OpenAI-style providers validate without sending Authorization when a
     assert.equal(calls[3].headers.Authorization, undefined);
   } finally {
     if (originalAllowPrivateProviderUrls === undefined) {
-      delete process.env.OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS;
+      delete process.env.AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS;
     } else {
-      process.env.OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS = originalAllowPrivateProviderUrls;
+      process.env.AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS = originalAllowPrivateProviderUrls;
     }
   }
 });
@@ -2388,7 +2388,7 @@ test("gemini-web validator: 200 from gemini.google.com → valid", async () => {
   globalThis.fetch = async (url, init = {}) => {
     const target = String(url);
     const headers = init.headers || {};
-    if (target.includes("gemini.google.com/app")) {
+    if (urlMatches(target, "gemini.google.com", "/app")) {
       assert.match((headers as Record<string, string>).Cookie || "", /__Secure-1PSID=eyJPSID/);
       return new Response("ok", { status: 200 });
     }
@@ -2407,7 +2407,7 @@ test("gemini-web validator: 200 from gemini.google.com → valid", async () => {
 test("gemini-web validator: bare value gets __Secure-1PSID prefix", async () => {
   let capturedCookie = "";
   globalThis.fetch = async (url, init = {}) => {
-    if (String(url).includes("gemini.google.com")) {
+    if (urlMatches(String(url), "gemini.google.com")) {
       capturedCookie = ((init.headers as Record<string, string>) || {}).Cookie || "";
       return new Response("ok", { status: 200 });
     }
@@ -2421,7 +2421,7 @@ test("gemini-web validator: bare value gets __Secure-1PSID prefix", async () => 
 test("gemini-web validator: accepts cookies JSON exported by browser tools", async () => {
   let capturedCookie = "";
   globalThis.fetch = async (url, init = {}) => {
-    if (String(url).includes("gemini.google.com")) {
+    if (urlMatches(String(url), "gemini.google.com")) {
       capturedCookie = ((init.headers as Record<string, string>) || {}).Cookie || "";
       return new Response("ok", { status: 200 });
     }
@@ -2470,7 +2470,7 @@ test("gemini-web validator: 500 → unavailable", async () => {
 test("copilot-web validator: valid access_token → 200", async () => {
   globalThis.fetch = async (url, init = {}) => {
     const target = String(url);
-    if (target.includes("copilot.microsoft.com/c/api/conversations")) {
+    if (urlMatches(target, "copilot.microsoft.com", "/c/api/conversations")) {
       assert.match(
         ((init.headers as Record<string, string>) || {}).Authorization || "",
         /Bearer eyJhbGci/
@@ -2492,7 +2492,7 @@ test("copilot-web validator: valid access_token → 200", async () => {
 test("copilot-web validator: cookie with access_token= is extracted", async () => {
   let capturedAuth = "";
   globalThis.fetch = async (url, init = {}) => {
-    if (String(url).includes("copilot.microsoft.com")) {
+    if (urlMatches(String(url), "copilot.microsoft.com")) {
       capturedAuth = ((init.headers as Record<string, string>) || {}).Authorization || "";
       return new Response(JSON.stringify({}), { status: 200 });
     }
@@ -2543,7 +2543,7 @@ test("copilot-web validator: empty input → paste prompt", async () => {
 
 // ─── copilot-m365-web validator ──────────────────────────────────────────────
 
-test("copilot-m365-web validator: accepts pasted OmniRoute credential without /models probe", async () => {
+test("copilot-m365-web validator: accepts pasted AgentProxy credential without /models probe", async () => {
   globalThis.fetch = async () => {
     throw new Error("should not fetch");
   };

@@ -2,7 +2,7 @@
  * #3503 — dashboard playground key-by-id resolution.
  *
  * The playground sends only the API key *id* (never the secret) via
- * `x-omniroute-playground-key-id`; the gateway resolves the secret server-side
+ * `x-agentproxy-playground-key-id`; the gateway resolves the secret server-side
  * in `resolvePlaygroundTestKey`. SECURITY INVARIANT: this is honored ONLY for an
  * authenticated dashboard session — the header alone must never resolve a key,
  * so it can't be abused by an unauthenticated caller to apply (or probe) a key's
@@ -24,7 +24,7 @@ process.env.JWT_SECRET = "playground-3503-jwt-secret";
 const apiKeysDb = await import("../../src/lib/db/apiKeys.ts");
 const { resolvePlaygroundTestKey } = await import("../../src/shared/utils/apiKeyPolicy.ts");
 
-const PLAYGROUND_KEY_ID_HEADER = "x-omniroute-playground-key-id";
+const PLAYGROUND_KEY_ID_HEADER = "x-agentproxy-playground-key-id";
 
 const created = await apiKeysDb.createApiKey("playground-3503", "machine-3503", []);
 const KEY_ID = created.id;

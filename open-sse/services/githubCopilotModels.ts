@@ -18,6 +18,7 @@
  * offline/unauthed/failed refresh so the import flow never breaks.
  */
 import { getGitHubCopilotChatHeaders } from "../config/providerHeaderProfiles.ts";
+import { safeOutboundFetch, type SafeOutboundDnsLookup } from "@/shared/network/safeOutboundFetch";
 
 export const GITHUB_COPILOT_MODELS_URL = "https://api.githubcopilot.com/models";
 
@@ -291,8 +292,10 @@ export type FetchGheCopilotModelsOptions = {
   apiUrl: string | null | undefined;
   /** Copilot bearer token. */
   token: string | null | undefined;
-  /** Injectable fetch (defaults to global fetch). */
+  /** Injectable fetch used by focused tests; production uses the guarded transport. */
   fetchImpl?: typeof fetch;
+  /** Test seam for DNS-rebinding coverage. */
+  dnsLookup?: SafeOutboundDnsLookup;
 };
 
 /**
@@ -303,17 +306,23 @@ export type FetchGheCopilotModelsOptions = {
 export async function fetchGheCopilotModels(
   options: FetchGheCopilotModelsOptions
 ): Promise<GitHubCopilotModel[]> {
-  const { apiUrl, token, fetchImpl = fetch } = options;
+  const { apiUrl, token, fetchImpl, dnsLookup } = options;
   const base = toNonEmptyString(apiUrl);
   if (!base || !toNonEmptyString(token)) return [];
 
   try {
-    const response = await fetchImpl(`${base.replace(/\/+$/, "")}/models`, {
+    const response = await safeOutboundFetch(`${base.replace(/\/+$/, "")}/models`, {
       method: "GET",
       headers: {
         ...getGitHubCopilotChatHeaders("application/json"),
         Authorization: `Bearer ${token}`,
       },
+      guard: "block-metadata",
+      pinDns: true,
+      retry: false,
+      allowRedirect: false,
+      fetchImpl,
+      dnsLookup,
     });
 
     if (!response.ok) return [];

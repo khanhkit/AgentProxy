@@ -57,7 +57,7 @@ function isBuiltin(pkg: string): boolean {
 function mcpBundleStaticExternalImports(): string[] {
   const outFile = path.join(
     os.tmpdir(),
-    `omniroute-mcp-server-probe-${process.pid}-${Date.now()}.js`
+    `agentproxy-mcp-server-probe-${process.pid}-${Date.now()}.js`
   );
   try {
     execFileSync(

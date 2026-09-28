@@ -23,7 +23,7 @@ describe("resolved proxy config → URL family encoding", () => {
 });
 
 // ──────────────── Integration: family survives the resolveProxyForConnection cascade ──
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-resolve-family-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-resolve-family-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.API_KEY_SECRET = "test-secret";
 

@@ -10,8 +10,9 @@ import { getCliToken, CLI_TOKEN_HEADER } from "../utils/cliToken.mjs";
 import { printHeading } from "../io.mjs";
 import { t } from "../i18n.mjs";
 import { readDatabaseHealth, readEncryptedCredentialSamples } from "../sqlite.mjs";
+import { getCrashLogPath } from "../runtime/processSupervisor.mjs";
 
-const STATIC_SALT = "omniroute-field-encryption-v1";
+const STATIC_SALT = "agentproxy-field-encryption-v1";
 const KEY_LENGTH = 32;
 const CHECK_TIMEOUT_MS = 2000;
 
@@ -82,7 +83,7 @@ function checkConfig(dataDir) {
 }
 
 function resolveMigrationsDir(rootDir) {
-  const configured = process.env.OMNIROUTE_MIGRATIONS_DIR;
+  const configured = process.env.AGENTPROXY_MIGRATIONS_DIR;
   const candidates = [
     configured,
     path.join(rootDir, "src", "lib", "db", "migrations"),
@@ -324,7 +325,7 @@ async function checkNativeBinary(rootDir) {
   const prebuildName = prebuiltBinaryName();
   const candidates = [
     ...buildRoots.map((root) => path.join(root, "build", "Release", "better_sqlite3.node")),
-    // Prebuilt layout — what `npm i -g omniroute` actually installs. Without
+    // Prebuilt layout — what `npm i -g agentproxy` actually installs. Without
     // these, doctor warns on every prebuilt install even though the binary is
     // present and loading fine.
     ...buildRoots.map((root) => path.join(root, "prebuilds", prebuildName)),
@@ -352,10 +353,10 @@ async function checkNativeBinary(rootDir) {
 }
 
 function checkMemory() {
-  const configured = process.env.OMNIROUTE_MEMORY_MB || "512";
+  const configured = process.env.AGENTPROXY_MEMORY_MB || "512";
   const memoryMb = Number.parseInt(configured, 10);
   if (!Number.isFinite(memoryMb) || memoryMb < 64 || memoryMb > 16384) {
-    return fail("Memory", `Invalid OMNIROUTE_MEMORY_MB: ${configured}`, { configured });
+    return fail("Memory", `Invalid AGENTPROXY_MEMORY_MB: ${configured}`, { configured });
   }
 
   const total = os.totalmem();
@@ -380,6 +381,33 @@ function checkMemory() {
   });
 }
 
+// #13538: surfaces the supervisor's give-up crash record (persisted by
+// ServerSupervisor.persistCrashLog(), bin/cli/runtime/processSupervisor.mjs)
+// so a user whose `--tray` worker died silently (detached, stdio:"ignore")
+// has something concrete `doctor` can point at without needing `--log`.
+function checkCrashLog() {
+  const crashLogPath = getCrashLogPath();
+  if (!fs.existsSync(crashLogPath)) {
+    return ok("Crash log", "No supervisor crash record found", { crashLogPath });
+  }
+
+  try {
+    const stat = fs.statSync(crashLogPath);
+    const contents = fs.readFileSync(crashLogPath, "utf8");
+    const lastEntry = contents.split("\n").filter(Boolean).slice(-6).join("\n");
+    return warn(
+      "Crash log",
+      `Supervisor recorded a give-up crash at ${crashLogPath} (last modified ${stat.mtime.toISOString()})`,
+      { crashLogPath, modifiedAt: stat.mtime.toISOString(), tail: lastEntry }
+    );
+  } catch (error) {
+    return warn("Crash log", `Crash record exists at ${crashLogPath} but could not be read`, {
+      crashLogPath,
+      error: error instanceof Error ? error.message : String(error),
+    });
+  }
+}
+
 async function fetchWithTimeout(url, options = {}) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), CHECK_TIMEOUT_MS);
@@ -395,12 +423,12 @@ function formatHostForUrl(host) {
 }
 
 function resolveLivenessUrl(options = {}) {
-  const explicitUrl = options.livenessUrl || process.env.OMNIROUTE_DOCTOR_LIVENESS_URL;
+  const explicitUrl = options.livenessUrl || process.env.AGENTPROXY_DOCTOR_LIVENESS_URL;
   if (explicitUrl) return explicitUrl;
 
   const port = parsePort(process.env.PORT || "20128", 20128);
   const dashboardPort = parsePort(process.env.DASHBOARD_PORT || String(port), port);
-  const host = String(options.livenessHost || process.env.OMNIROUTE_DOCTOR_HOST || "127.0.0.1")
+  const host = String(options.livenessHost || process.env.AGENTPROXY_DOCTOR_HOST || "127.0.0.1")
     .trim()
     .replace(/^https?:\/\//, "")
     .replace(/\/.*$/, "");
@@ -445,7 +473,7 @@ async function checkServerLiveness(options = {}) {
   } catch {
     const port = parsePort(process.env.PORT || "20128", 20128);
     const dashboardPort = parsePort(process.env.DASHBOARD_PORT || String(port), port);
-    const host = String(options.livenessHost || process.env.OMNIROUTE_DOCTOR_HOST || "127.0.0.1")
+    const host = String(options.livenessHost || process.env.AGENTPROXY_DOCTOR_HOST || "127.0.0.1")
       .trim()
       .replace(/^https?:\/\//, "")
       .replace(/\/.*$/, "");
@@ -474,7 +502,7 @@ async function checkServerLiveness(options = {}) {
 }
 
 export async function checkMachineTokenAuth(options = {}) {
-  if (process.env.OMNIROUTE_DISABLE_CLI_TOKEN === "true") {
+  if (process.env.AGENTPROXY_DISABLE_CLI_TOKEN === "true") {
     return warn("CLI machine token", "CLI machine-token authentication is disabled", {
       derived: false,
       accepted: false,
@@ -536,7 +564,7 @@ export async function checkMachineTokenAuth(options = {}) {
     if (response.status === 401 || response.status === 403) {
       return warn(
         "CLI machine token",
-        "Server rejected the local machine token; if the CLI and server are on different hosts or container boundaries, run `omniroute connect <host> --key <oma_live_...>`",
+        "Server rejected the local machine token; if the CLI and server are on different hosts or container boundaries, run `agentproxy connect <host> --key <oma_live_...>`",
         {
           url,
           status: response.status,
@@ -579,6 +607,7 @@ export async function collectDoctorChecks(context = {}, options = {}) {
   checks.push(await checkNodeRuntime(rootDir));
   checks.push(await checkNativeBinary(rootDir));
   checks.push(checkMemory());
+  checks.push(checkCrashLog());
 
   if (!options.skipLiveness) {
     checks.push(await checkServerLiveness(options));
@@ -640,7 +669,7 @@ export async function runDoctorCommand(opts = {}, context = {}) {
   if (isJson) {
     console.log(JSON.stringify(result, null, 2));
   } else {
-    printHeading("OmniRoute Doctor");
+    printHeading("AgentProxy Doctor");
     console.log(`Data dir: ${result.dataDir}`);
     console.log(`Database: ${result.dbPath}\n`);
     for (const check of result.checks) {

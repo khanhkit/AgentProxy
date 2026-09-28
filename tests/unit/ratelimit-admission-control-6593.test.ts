@@ -21,7 +21,7 @@ import path from "node:path";
 import { checkQueueAdmission } from "../../open-sse/services/rateLimitManager/admission.ts";
 import { getTrustedLocalRateLimitError } from "../../open-sse/services/rateLimitManager/errors.ts";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-rl-admission-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-rl-admission-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../src/lib/db/core.ts");
@@ -177,10 +177,10 @@ test("#6593 withRateLimit: default maxQueueDepth=0 preserves unbounded-queue beh
 
 // --- Default maxWaitMs ----------------------------------------------------
 
-test("#6593 DEFAULT_REQUEST_QUEUE_MAX_WAIT_MS is 15s absent RATE_LIMIT_MAX_WAIT_MS", () => {
+test("#6593 DEFAULT_REQUEST_QUEUE_MAX_WAIT_MS is 30s absent RATE_LIMIT_MAX_WAIT_MS", () => {
   assert.equal(process.env.RATE_LIMIT_MAX_WAIT_MS, undefined);
-  assert.equal(resilienceSettings.DEFAULT_REQUEST_QUEUE_MAX_WAIT_MS, 15000);
-  assert.equal(resilienceSettings.DEFAULT_RESILIENCE_SETTINGS.requestQueue.maxWaitMs, 15000);
+  assert.equal(resilienceSettings.DEFAULT_REQUEST_QUEUE_MAX_WAIT_MS, 30000);
+  assert.equal(resilienceSettings.DEFAULT_RESILIENCE_SETTINGS.requestQueue.maxWaitMs, 30000);
 });
 
 test("requestQueue.executionMaxWaitMs defaults to a 10-minute backstop, separate from maxWaitMs", () => {

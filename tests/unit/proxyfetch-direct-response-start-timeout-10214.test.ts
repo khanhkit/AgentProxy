@@ -21,7 +21,7 @@
  * and command-code stall 100% of routed requests until `systemctl restart`.
  *
  * The fix bounds the response-start window per direct attempt
- * (`OMNIROUTE_DIRECT_HEADERS_TIMEOUT_MS`, default 30 s) and retries once on the
+ * (`AGENTPROXY_DIRECT_HEADERS_TIMEOUT_MS`, default 30 s) and retries once on the
  * fresh no-keep-alive dispatcher (a brand-new socket) when the pooled attempt
  * times out — converting the zombie-socket stall into a clean failover.
  */
@@ -55,9 +55,9 @@ function hangingFetch(capture: {
 }
 
 function withFastTimeout<T>(fn: () => Promise<T>): Promise<T> {
-  process.env.OMNIROUTE_DIRECT_HEADERS_TIMEOUT_MS = "50";
+  process.env.AGENTPROXY_DIRECT_HEADERS_TIMEOUT_MS = "50";
   return fn().finally(() => {
-    delete process.env.OMNIROUTE_DIRECT_HEADERS_TIMEOUT_MS;
+    delete process.env.AGENTPROXY_DIRECT_HEADERS_TIMEOUT_MS;
   });
 }
 

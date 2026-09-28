@@ -6,7 +6,7 @@ import test from "node:test";
 
 import { SignJWT } from "jose";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-radar-intel-routes-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-radar-intel-routes-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.STORAGE_ENCRYPTION_KEY = "test-encryption-key-for-radar-intel-routes-32b!";
 process.env.JWT_SECRET = "test-jwt-secret-for-radar-intel-routes";

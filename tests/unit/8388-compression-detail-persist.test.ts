@@ -15,7 +15,7 @@ import path from "node:path";
 
 // Isolate DATA_DIR so this test never touches a real installed DB (see MEMORY: "teste sem
 // isolateDataDir → DB REAL"). Must be set BEFORE importing anything that resolves getDbInstance().
-const tmpDataDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-8388-"));
+const tmpDataDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-8388-"));
 process.env.DATA_DIR = tmpDataDir;
 
 const { compressionSettingsUpdateSchema } =

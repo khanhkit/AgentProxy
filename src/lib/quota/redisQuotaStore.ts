@@ -2,7 +2,7 @@
  * redisQuotaStore.ts — Optional Redis-backed QuotaStore implementation.
  *
  * Counter keys follow the pattern:
- *   omniroute:quota:<apiKeyId>:<dimensionKey>:<bucketIndex>
+ *   agentproxy:quota:<apiKeyId>:<dimensionKey>:<bucketIndex>
  *
  * Sliding window is maintained identically to the SQLite driver:
  *   effective = prev × (1 − elapsed/window) + curr
@@ -69,7 +69,7 @@ export function resetRedisClient(): void {
 // Key helpers
 // ---------------------------------------------------------------------------
 
-const KEY_PREFIX = `${process.env.REDIS_KEY_PREFIX?.trim() || "omniroute:"}quota`;
+const KEY_PREFIX = `${process.env.REDIS_KEY_PREFIX?.trim() || "agentproxy:"}quota`;
 
 function bucketKey(apiKeyId: string, dimensionKey: string, bucketIndex: number): string {
   return `${KEY_PREFIX}:${apiKeyId}:${dimensionKey}:${bucketIndex}`;
@@ -271,7 +271,8 @@ export class RedisQuotaStore implements QuotaStore {
         const consumed = await this.peek(alloc.apiKeyId, dim);
         consumedTotal += consumed;
 
-        const effectiveWeight = totalWeight > 0 ? alloc.weight : 0;
+        const effectiveWeight =
+          totalWeight > 0 ? alloc.weight : allocations.length > 0 ? 100 / allocations.length : 0;
         const fairShare = (effectiveWeight / 100) * planDim.limit;
         const deficit = consumed - fairShare;
         const borrowing = consumed > fairShare;

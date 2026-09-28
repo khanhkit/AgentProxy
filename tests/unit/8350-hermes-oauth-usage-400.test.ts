@@ -39,7 +39,7 @@ test("Hermes fixture: claude provider drops Hermes identity + doc-link paragraph
     "Hermes identity paragraph should be dropped by the default claude pipeline"
   );
   assert.ok(
-    !out.includes("hermes-agent.nousresearch.com"),
+    !/hermes-agent\.nousresearch\.com/.test(out),
     "Hermes doc-link paragraph should be dropped by the default claude pipeline"
   );
   // Unrelated legitimate content survives untouched.
@@ -71,7 +71,7 @@ test("non-Hermes system prompt passes through byte-identical through the claude 
 
 // #10484 — #8358 added "hermes" to DEFAULT_OBFUSCATE_WORDS. The ZWJ op
 // targets user messages with a case-insensitive, no-word-boundary regex, so
-// hostnames and ordinary mentions of the OmniRoute hermes CLI tool were
+// hostnames and ordinary mentions of the AgentProxy hermes CLI tool were
 // rewritten. System-prompt identity drops (#8350) must stay; user text must not
 // be mutated.
 test("user message containing hermes hostname stays byte-identical (#10484)", () => {

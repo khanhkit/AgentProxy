@@ -12,6 +12,11 @@ import {
 } from "@/lib/guardrails/promptInjection";
 import { resolveDisabledGuardrails } from "@/lib/guardrails/registry";
 import { CORS_HEADERS } from "@/shared/utils/cors";
+import {
+  readRequestBodyWithLimit,
+  requestBodyTooLargeResponse,
+  RequestBodyTooLargeError,
+} from "@/shared/middleware/bodySizeGuard";
 
 /**
  * Create a prompt injection guard middleware.
@@ -55,7 +60,8 @@ export function createInjectionGuard(options: PromptInjectionGuardrailOptions = 
  * @returns {Function} Wrapped handler
  */
 export function withInjectionGuard(handler: any, options: any = {}) {
-  const guard = createInjectionGuard(options);
+  const { bodySizeLimit, ...guardOptions } = options;
+  const guard = createInjectionGuard(guardOptions);
 
   return async function guardedHandler(request: any, context?: any) {
     // Only apply to POST/PUT/PATCH
@@ -67,9 +73,23 @@ export function withInjectionGuard(handler: any, options: any = {}) {
     let parsedBody: any = null;
 
     try {
-      // Clone request so body can still be read by handler
+      // Clone request so body can still be read by handler. Media routes can opt into a
+      // finite streamed pre-read so this security wrapper never becomes an unbounded parser.
       const cloned = request.clone();
-      parsedBody = await cloned.json().catch(() => null);
+      if (
+        typeof bodySizeLimit === "number" &&
+        Number.isFinite(bodySizeLimit) &&
+        bodySizeLimit > 0
+      ) {
+        const rawBody = await readRequestBodyWithLimit(cloned, bodySizeLimit);
+        try {
+          parsedBody = JSON.parse(new TextDecoder().decode(rawBody));
+        } catch {
+          parsedBody = null;
+        }
+      } else {
+        parsedBody = await cloned.json().catch(() => null);
+      }
 
       if (parsedBody) {
         const { blocked, result }: any = guard(parsedBody);
@@ -94,16 +114,16 @@ export function withInjectionGuard(handler: any, options: any = {}) {
         if (result.flagged) {
           try {
             request.headers.set("X-Injection-Flagged", "true");
-            request.headers.set(
-              "X-Injection-Detections",
-              String(result.detections.length)
-            );
+            request.headers.set("X-Injection-Detections", String(result.detections.length));
           } catch {
             // immutable headers: detection still applied; metadata is best-effort
           }
         }
       }
     } catch (error) {
+      if (error instanceof RequestBodyTooLargeError) {
+        return requestBodyTooLargeResponse(error.limit);
+      }
       console.error("[SECURITY] Injection guard error:", error);
       return new Response(JSON.stringify({ error: "Security check failed" }), {
         status: 500,

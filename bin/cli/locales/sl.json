@@ -257,7 +257,8 @@
     "tray": "Zaženi v sistemski vrstici (samo za namizne sisteme, po izbiri)",
     "no_tray": "Onemogoči ikono sistemske vrstice",
     "tls_cert": "Pot do potrdila TLS (PEM) za streženje prek HTTPS (tudi OMNIROUTE_TLS_CERT)",
-    "tls_key": "Pot do zasebnega ključa TLS (PEM) za streženje prek HTTPS (tudi OMNIROUTE_TLS_KEY)"
+    "tls_key": "Pot do zasebnega ključa TLS (PEM) za streženje prek HTTPS (tudi OMNIROUTE_TLS_KEY)",
+    "ready_timeout": "Časovna omejitev preverjanja pripravljenosti v ms (tudi OMNIROUTE_READY_TIMEOUT_MS, privzeto 60000)"
   },
   "backup": {
     "title": "Varnostno kopiranje",
@@ -374,6 +375,16 @@
     },
     "audit": {
       "description": "Dnevnik revizij MCP (vzdevek za audit --source mcp)"
+    },
+    "stoppedHint": "Za vklop zaženite `omniroute mcp enable`.",
+    "enabled": "Strežnik MCP je omogočen.",
+    "disabled": "Strežnik MCP je onemogočen.",
+    "enable": {
+      "description": "Omogoči strežnik MCP",
+      "transport": "Prenos, ki naj se uporabi: stdio|sse|streamable-http"
+    },
+    "disable": {
+      "description": "Onemogoči strežnik MCP"
     }
   },
   "a2a": {

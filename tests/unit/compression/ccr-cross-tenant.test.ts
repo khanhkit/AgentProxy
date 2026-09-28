@@ -257,7 +257,7 @@ describe("ccr security: [HIGH] ccrEngine.apply scopes the stored block to the pr
   // gate (these tests exercise principal-scoped storage, not the gate itself).
   const makeBody = () => ({
     messages: [{ role: "user", content: bigBlock }],
-    tools: [{ type: "function", function: { name: "omniroute_ccr_retrieve" } }],
+    tools: [{ type: "function", function: { name: "agentproxy_ccr_retrieve" } }],
   });
 
   it("apply with a principalId stores the block retrievable ONLY by that principal", () => {

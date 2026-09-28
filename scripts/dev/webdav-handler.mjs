@@ -1,5 +1,5 @@
 /**
- * WebDAV file server handler for OmniRoute.
+ * WebDAV file server handler for AgentProxy.
  *
  * Serves the Obsidian vault directory at /api/v1/webdav, enabling
  * Obsidian mobile (Remotely-Save plugin) to sync over Tailscale.
@@ -51,11 +51,11 @@ const WEBDAV_METHODS = new Set([
 // ─────────────────────────────────────────────────────────────────────────────
 // Encryption: minimal port of src/lib/db/encryption.ts
 // Must reproduce the EXACT format: enc:v1:<iv_hex>:<ciphertext_hex>:<authTag_hex>
-// Key derivation: scryptSync(secret, "omniroute-field-encryption-v1", 32)
+// Key derivation: scryptSync(secret, "agentproxy-field-encryption-v1", 32)
 // ─────────────────────────────────────────────────────────────────────────────
 
 const ENC_PREFIX = "enc:v1:";
-const STATIC_SALT = "omniroute-field-encryption-v1";
+const STATIC_SALT = "agentproxy-field-encryption-v1";
 const KEY_LENGTH = 32;
 const AUTH_TAG_LENGTH = 16;
 const ALGORITHM = "aes-256-gcm";
@@ -79,7 +79,7 @@ function getStaticKey() {
 }
 
 /**
- * Decrypt a value that may be encrypted with the OmniRoute enc:v1: format.
+ * Decrypt a value that may be encrypted with the AgentProxy enc:v1: format.
  * If the value does not have the enc:v1: prefix, treat as plaintext (backward compat).
  * Returns null if decryption fails.
  *
@@ -191,6 +191,310 @@ export function resolveDestinationPath(vaultRoot, destinationHeader) {
 
   // Strip webdav prefix from the path
   return resolveVaultPath(vaultRoot, destPath);
+}
+
+/**
+ * Canonicalize an existing filesystem target and prove it remains inside the
+ * canonical vault root after resolving every symlink.
+ *
+ * Keep this check immediately adjacent to filesystem I/O call sites. Besides
+ * closing symlink escapes that a lexical path.resolve check cannot see, the
+ * explicit realpath + containment contract is a recognizable path-injection
+ * sanitizer for static analysis.
+ *
+ * @param {string} vaultRoot
+ * @param {string} candidatePath
+ * @returns {string}
+ * @throws {{ status: 403 | 404, message: string }}
+ */
+export function resolveExistingVaultFsPath(vaultRoot, candidatePath) {
+  let canonicalRoot;
+  let canonicalTarget;
+  try {
+    canonicalRoot = fs.realpathSync(path.resolve(vaultRoot));
+  } catch {
+    throw { status: 404, message: "Vault root not found" };
+  }
+  try {
+    canonicalTarget = fs.realpathSync(path.resolve(candidatePath));
+  } catch {
+    throw { status: 404, message: "Not found" };
+  }
+  if (canonicalTarget !== canonicalRoot && !canonicalTarget.startsWith(canonicalRoot + path.sep)) {
+    throw { status: 403, message: "Forbidden: symlink escapes vault root" };
+  }
+  return canonicalTarget;
+}
+
+/**
+ * Resolve a create/write destination while proving every existing ancestor is
+ * inside the canonical vault. Missing suffix components are rebuilt only from
+ * path.basename-validated segments below the last canonical existing ancestor.
+ *
+ * @param {string} vaultRoot
+ * @param {string} candidatePath
+ * @returns {string}
+ * @throws {{ status: 403 | 404, message: string }}
+ */
+export function resolveWritableVaultFsPath(vaultRoot, candidatePath) {
+  const lexicalRoot = path.resolve(vaultRoot);
+  const lexicalTarget = path.resolve(candidatePath);
+  const relative = path.relative(lexicalRoot, lexicalTarget);
+  if (relative === ".." || relative.startsWith(".." + path.sep) || path.isAbsolute(relative)) {
+    throw { status: 403, message: "Forbidden: path escapes vault root" };
+  }
+
+  let canonicalRoot;
+  try {
+    canonicalRoot = fs.realpathSync(lexicalRoot);
+  } catch {
+    throw { status: 404, message: "Vault root not found" };
+  }
+
+  if (!relative) return canonicalRoot;
+
+  const segments = relative.split(path.sep).filter(Boolean);
+  for (const segment of segments) {
+    if (
+      segment === "." ||
+      segment === ".." ||
+      segment !== path.basename(segment) ||
+      segment.includes("\0")
+    ) {
+      throw { status: 403, message: "Forbidden: invalid path segment" };
+    }
+  }
+
+  // Preserve the final directory entry instead of resolving it. PUT/MKCOL/MOVE
+  // operate on the entry at the requested path; following a final symlink here
+  // would accidentally mutate its target. Every parent component is still
+  // canonicalized and confined to the vault.
+  const leaf = segments.pop();
+  let cursor = canonicalRoot;
+  for (let index = 0; index < segments.length; index += 1) {
+    const next = path.join(cursor, segments[index]);
+    try {
+      const canonicalNext = fs.realpathSync(next);
+      if (canonicalNext !== canonicalRoot && !canonicalNext.startsWith(canonicalRoot + path.sep)) {
+        throw { status: 403, message: "Forbidden: symlink escapes vault root" };
+      }
+      cursor = canonicalNext;
+    } catch (error) {
+      if (error && error.status === 403) throw error;
+      // Missing parent suffix is allowed for PUT/MOVE, which create parents.
+      return path.join(cursor, ...segments.slice(index), leaf);
+    }
+  }
+  return path.join(cursor, leaf);
+}
+
+/**
+ * Resolve an existing directory entry without dereferencing its final symlink.
+ * Parent directories are canonicalized inside the vault and the leaf is reduced
+ * to a basename before lstat. This is the safe boundary for DELETE/MOVE source.
+ *
+ * @param {string} vaultRoot
+ * @param {string} candidatePath
+ * @returns {string}
+ */
+export function resolveExistingVaultEntryFsPath(vaultRoot, candidatePath) {
+  const safeEntry = resolveWritableVaultFsPath(vaultRoot, candidatePath);
+  try {
+    fs.lstatSync(safeEntry);
+  } catch {
+    throw { status: 404, message: "Not found" };
+  }
+  return safeEntry;
+}
+
+/**
+ * Re-canonicalize the parent after a directory-creation step and return a safe
+ * leaf path. This closes a symlink swap/creation gap before the final write.
+ *
+ * @param {string} vaultRoot
+ * @param {string} candidatePath
+ * @returns {string}
+ */
+function statExistingVaultPath(vaultRoot, candidatePath) {
+  const canonicalRoot = fs.realpathSync(path.resolve(vaultRoot));
+  const safePath = fs.realpathSync(path.resolve(candidatePath));
+  const relative = path.relative(canonicalRoot, safePath);
+  if (path.isAbsolute(relative) || relative === ".." || relative.startsWith(".." + path.sep)) {
+    throw { status: 403, message: "Forbidden: path escapes vault root" };
+  }
+  return fs.statSync(safePath);
+}
+
+function readdirExistingVaultPath(vaultRoot, candidatePath) {
+  const canonicalRoot = fs.realpathSync(path.resolve(vaultRoot));
+  const safePath = fs.realpathSync(path.resolve(candidatePath));
+  const relative = path.relative(canonicalRoot, safePath);
+  if (path.isAbsolute(relative) || relative === ".." || relative.startsWith(".." + path.sep)) {
+    throw { status: 403, message: "Forbidden: path escapes vault root" };
+  }
+  return fs.readdirSync(safePath);
+}
+
+function createReadStreamExistingVaultPath(vaultRoot, candidatePath) {
+  const canonicalRoot = fs.realpathSync(path.resolve(vaultRoot));
+  const safePath = fs.realpathSync(path.resolve(candidatePath));
+  const relative = path.relative(canonicalRoot, safePath);
+  if (path.isAbsolute(relative) || relative === ".." || relative.startsWith(".." + path.sep)) {
+    throw { status: 403, message: "Forbidden: path escapes vault root" };
+  }
+  return fs.createReadStream(safePath);
+}
+
+function lstatVaultEntry(vaultRoot, candidatePath) {
+  const canonicalRoot = fs.realpathSync(path.resolve(vaultRoot));
+  const resolved = path.resolve(candidatePath);
+  const canonicalParent = fs.realpathSync(path.dirname(resolved));
+  let relative = path.relative(canonicalRoot, canonicalParent);
+  if (path.isAbsolute(relative) || relative === ".." || relative.startsWith(".." + path.sep)) {
+    throw { status: 403, message: "Forbidden: parent escapes vault root" };
+  }
+  const safePath = path.join(canonicalParent, path.basename(resolved));
+  relative = path.relative(canonicalRoot, safePath);
+  if (path.isAbsolute(relative) || relative === ".." || relative.startsWith(".." + path.sep)) {
+    throw { status: 403, message: "Forbidden: path escapes vault root" };
+  }
+  return fs.lstatSync(safePath);
+}
+
+function mkdirParentsInsideVault(vaultRoot, candidatePath) {
+  const safeTarget = resolveWritableVaultFsPath(vaultRoot, candidatePath);
+  const canonicalRoot = fs.realpathSync(path.resolve(vaultRoot));
+  const parentPath = path.dirname(safeTarget);
+  const relative = path.relative(canonicalRoot, parentPath);
+  if (path.isAbsolute(relative) || relative === ".." || relative.startsWith(".." + path.sep)) {
+    throw { status: 403, message: "Forbidden: parent escapes vault root" };
+  }
+  fs.mkdirSync(parentPath, { recursive: true });
+  const canonicalParent = fs.realpathSync(parentPath);
+  const canonicalRelative = path.relative(canonicalRoot, canonicalParent);
+  if (
+    path.isAbsolute(canonicalRelative) ||
+    canonicalRelative === ".." ||
+    canonicalRelative.startsWith(".." + path.sep)
+  ) {
+    throw { status: 403, message: "Forbidden: canonical parent escapes vault root" };
+  }
+  return path.join(canonicalParent, path.basename(safeTarget));
+}
+
+function createTempWriteStreamInsideVault(vaultRoot, candidatePath) {
+  const safeTarget = mkdirParentsInsideVault(vaultRoot, candidatePath);
+  const canonicalRoot = fs.realpathSync(path.resolve(vaultRoot));
+  const canonicalParent = fs.realpathSync(path.dirname(safeTarget));
+  let relative = path.relative(canonicalRoot, canonicalParent);
+  if (path.isAbsolute(relative) || relative === ".." || relative.startsWith(".." + path.sep)) {
+    throw { status: 403, message: "Forbidden: parent escapes vault root" };
+  }
+
+  const finalPath = path.join(canonicalParent, path.basename(safeTarget));
+  relative = path.relative(canonicalRoot, finalPath);
+  if (path.isAbsolute(relative) || relative === ".." || relative.startsWith(".." + path.sep)) {
+    throw { status: 403, message: "Forbidden: path escapes vault root" };
+  }
+
+  const tmpPath = path.join(
+    canonicalParent,
+    ".agentproxy-webdav-tmp-" + process.pid + "-" + Date.now()
+  );
+  relative = path.relative(canonicalRoot, tmpPath);
+  if (path.isAbsolute(relative) || relative === ".." || relative.startsWith(".." + path.sep)) {
+    throw { status: 403, message: "Forbidden: temp path escapes vault root" };
+  }
+
+  return {
+    stream: fs.createWriteStream(tmpPath),
+    tmpPath,
+    finalPath,
+  };
+}
+
+function unlinkVaultEntry(vaultRoot, candidatePath) {
+  const canonicalRoot = fs.realpathSync(path.resolve(vaultRoot));
+  const resolved = path.resolve(candidatePath);
+  const canonicalParent = fs.realpathSync(path.dirname(resolved));
+  let relative = path.relative(canonicalRoot, canonicalParent);
+  if (path.isAbsolute(relative) || relative === ".." || relative.startsWith(".." + path.sep)) {
+    throw { status: 403, message: "Forbidden: parent escapes vault root" };
+  }
+  const safePath = path.join(canonicalParent, path.basename(resolved));
+  relative = path.relative(canonicalRoot, safePath);
+  if (path.isAbsolute(relative) || relative === ".." || relative.startsWith(".." + path.sep)) {
+    throw { status: 403, message: "Forbidden: path escapes vault root" };
+  }
+  fs.unlinkSync(safePath);
+}
+
+function deleteVaultEntry(vaultRoot, candidatePath) {
+  const canonicalRoot = fs.realpathSync(path.resolve(vaultRoot));
+  const resolved = path.resolve(candidatePath);
+  const canonicalParent = fs.realpathSync(path.dirname(resolved));
+  let relative = path.relative(canonicalRoot, canonicalParent);
+  if (path.isAbsolute(relative) || relative === ".." || relative.startsWith(".." + path.sep)) {
+    throw { status: 403, message: "Forbidden: parent escapes vault root" };
+  }
+  const safePath = path.join(canonicalParent, path.basename(resolved));
+  relative = path.relative(canonicalRoot, safePath);
+  if (path.isAbsolute(relative) || relative === ".." || relative.startsWith(".." + path.sep)) {
+    throw { status: 403, message: "Forbidden: path escapes vault root" };
+  }
+
+  const stat = fs.lstatSync(safePath);
+  if (stat.isDirectory()) {
+    fs.rmdirSync(safePath, { recursive: true });
+  } else {
+    fs.unlinkSync(safePath);
+  }
+}
+
+function mkdirVaultEntry(vaultRoot, candidatePath) {
+  const canonicalRoot = fs.realpathSync(path.resolve(vaultRoot));
+  const resolved = path.resolve(candidatePath);
+  const canonicalParent = fs.realpathSync(path.dirname(resolved));
+  let relative = path.relative(canonicalRoot, canonicalParent);
+  if (path.isAbsolute(relative) || relative === ".." || relative.startsWith(".." + path.sep)) {
+    throw { status: 403, message: "Forbidden: parent escapes vault root" };
+  }
+  const safePath = path.join(canonicalParent, path.basename(resolved));
+  relative = path.relative(canonicalRoot, safePath);
+  if (path.isAbsolute(relative) || relative === ".." || relative.startsWith(".." + path.sep)) {
+    throw { status: 403, message: "Forbidden: path escapes vault root" };
+  }
+  fs.mkdirSync(safePath);
+}
+
+function renameVaultEntries(vaultRoot, sourcePath, destinationPath) {
+  const canonicalRoot = fs.realpathSync(path.resolve(vaultRoot));
+
+  const sourceResolved = path.resolve(sourcePath);
+  const sourceParent = fs.realpathSync(path.dirname(sourceResolved));
+  let relative = path.relative(canonicalRoot, sourceParent);
+  if (path.isAbsolute(relative) || relative === ".." || relative.startsWith(".." + path.sep)) {
+    throw { status: 403, message: "Forbidden: source parent escapes vault root" };
+  }
+  const safeSource = path.join(sourceParent, path.basename(sourceResolved));
+  relative = path.relative(canonicalRoot, safeSource);
+  if (path.isAbsolute(relative) || relative === ".." || relative.startsWith(".." + path.sep)) {
+    throw { status: 403, message: "Forbidden: source escapes vault root" };
+  }
+
+  const destinationResolved = path.resolve(destinationPath);
+  const destinationParent = fs.realpathSync(path.dirname(destinationResolved));
+  relative = path.relative(canonicalRoot, destinationParent);
+  if (path.isAbsolute(relative) || relative === ".." || relative.startsWith(".." + path.sep)) {
+    throw { status: 403, message: "Forbidden: destination parent escapes vault root" };
+  }
+  const safeDestination = path.join(destinationParent, path.basename(destinationResolved));
+  relative = path.relative(canonicalRoot, safeDestination);
+  if (path.isAbsolute(relative) || relative === ".." || relative.startsWith(".." + path.sep)) {
+    throw { status: 403, message: "Forbidden: destination escapes vault root" };
+  }
+
+  fs.renameSync(safeSource, safeDestination);
 }
 
 /**
@@ -347,9 +651,9 @@ export function resolveDataDir() {
 
 function getDefaultDataDir() {
   const homeDir = os.homedir();
-  const legacyDir = path.join(homeDir, ".omniroute"); // getLegacyDotDataDir()
+  const legacyDir = path.join(homeDir, ".agentproxy"); // getLegacyDotDataDir()
 
-  // 2) Preserve the legacy ~/.omniroute path if it already exists (avoid data loss).
+  // 2) Preserve the legacy ~/.agentproxy path if it already exists (avoid data loss).
   try {
     if (fs.existsSync(legacyDir) && fs.statSync(legacyDir).isDirectory()) {
       return legacyDir;
@@ -358,19 +662,19 @@ function getDefaultDataDir() {
     // ignore stat errors
   }
 
-  // 3) Windows → %APPDATA%/omniroute.
+  // 3) Windows → %APPDATA%/agentproxy.
   if (process.platform === "win32") {
     const appData = process.env.APPDATA || path.join(homeDir, "AppData", "Roaming");
-    return path.join(appData, "omniroute");
+    return path.join(appData, "agentproxy");
   }
 
   // 4) XDG on Linux/macOS only when XDG_CONFIG_HOME is explicitly configured.
   const xdgConfigHome = process.env.XDG_CONFIG_HOME;
   if (typeof xdgConfigHome === "string" && xdgConfigHome.trim().length > 0) {
-    return path.join(path.resolve(xdgConfigHome.trim()), "omniroute");
+    return path.join(path.resolve(xdgConfigHome.trim()), "agentproxy");
   }
 
-  // 5) Default → legacy ~/.omniroute (even if it does not exist yet).
+  // 5) Default → legacy ~/.agentproxy (even if it does not exist yet).
   return legacyDir;
 }
 
@@ -464,7 +768,7 @@ function sendError(res, status, safeMessage, extraHeaders = {}) {
  */
 function sendUnauthorized(res) {
   sendError(res, 401, "Unauthorized", {
-    "WWW-Authenticate": 'Basic realm="OmniRoute WebDAV"',
+    "WWW-Authenticate": 'Basic realm="AgentProxy WebDAV"',
   });
 }
 
@@ -494,8 +798,7 @@ function buildEntryHref(baseHref, relativePath, isDir) {
 function handleOptions(req, res) {
   res.writeHead(200, {
     DAV: "1, 2",
-    Allow:
-      "OPTIONS, GET, HEAD, PUT, DELETE, MKCOL, MOVE, COPY, PROPFIND, LOCK, UNLOCK",
+    Allow: "OPTIONS, GET, HEAD, PUT, DELETE, MKCOL, MOVE, COPY, PROPFIND, LOCK, UNLOCK",
     "MS-Author-Via": "DAV",
     "Content-Length": "0",
   });
@@ -509,13 +812,14 @@ function handleOptions(req, res) {
  * @param {import("node:http").ServerResponse} res
  * @param {string} absPath
  * @param {string} requestPath
+ * @param {string} vaultRoot
  */
-function handlePropfind(req, res, absPath, requestPath) {
+function handlePropfind(req, res, absPath, requestPath, vaultRoot) {
   const depth = req.headers["depth"] || "1";
 
   let stat;
   try {
-    stat = fs.statSync(absPath);
+    stat = statExistingVaultPath(vaultRoot, absPath);
   } catch {
     sendError(res, 404, "Not found");
     return;
@@ -542,17 +846,20 @@ function handlePropfind(req, res, absPath, requestPath) {
   if (stat.isDirectory() && depth !== "0") {
     let children;
     try {
-      children = fs.readdirSync(absPath);
+      children = readdirExistingVaultPath(vaultRoot, absPath);
     } catch {
       children = [];
     }
 
     for (const child of children) {
-      const childAbs = path.join(absPath, child);
+      const childCandidate = path.join(absPath, child);
+      let childAbs;
       let childStat;
       try {
-        childStat = fs.statSync(childAbs);
+        childAbs = resolveExistingVaultFsPath(vaultRoot, childCandidate);
+        childStat = statExistingVaultPath(vaultRoot, childAbs);
       } catch {
+        // Do not follow directory-entry symlinks outside the canonical vault.
         continue;
       }
       const childHref = buildEntryHref(href.replace(/\/$/, ""), child, childStat.isDirectory());
@@ -583,11 +890,12 @@ function handlePropfind(req, res, absPath, requestPath) {
  * @param {import("node:http").ServerResponse} res
  * @param {string} absPath
  * @param {boolean} headOnly
+ * @param {string} vaultRoot
  */
-function handleGet(req, res, absPath, headOnly) {
+function handleGet(req, res, absPath, headOnly, vaultRoot) {
   let stat;
   try {
-    stat = fs.statSync(absPath);
+    stat = statExistingVaultPath(vaultRoot, absPath);
   } catch {
     sendError(res, 404, "Not found");
     return;
@@ -609,7 +917,7 @@ function handleGet(req, res, absPath, headOnly) {
     return;
   }
 
-  const stream = fs.createReadStream(absPath);
+  const stream = createReadStreamExistingVaultPath(vaultRoot, absPath);
   stream.on("error", () => {
     if (!res.headersSent) {
       sendError(res, 500, "Read error");
@@ -626,33 +934,31 @@ function handleGet(req, res, absPath, headOnly) {
  * @param {import("node:http").IncomingMessage} req
  * @param {import("node:http").ServerResponse} res
  * @param {string} absPath
+ * @param {string} vaultRoot
  */
-async function handlePut(req, res, absPath) {
+async function handlePut(req, res, absPath, vaultRoot) {
   // Check if this is an update (204) or create (201)
   let existed = false;
   try {
-    fs.statSync(absPath);
+    lstatVaultEntry(vaultRoot, absPath);
     existed = true;
   } catch {
     /* new file */
   }
 
-  // Ensure parent directory exists
-  try {
-    fs.mkdirSync(path.dirname(absPath), { recursive: true });
-  } catch {
-    sendError(res, 500, "Could not create parent directory");
-    return;
-  }
-
   let written = 0;
   let limitExceeded = false;
-  const tmpPath = absPath + ".omniroute-webdav-tmp-" + Date.now();
+  let tmpPath;
+  let finalPath;
   let writeStream;
   try {
-    writeStream = fs.createWriteStream(tmpPath);
-  } catch {
-    sendError(res, 500, "Could not write file");
+    const prepared = createTempWriteStreamInsideVault(vaultRoot, absPath);
+    tmpPath = prepared.tmpPath;
+    finalPath = prepared.finalPath;
+    writeStream = prepared.stream;
+  } catch (error) {
+    const status = error && error.status ? error.status : 500;
+    sendError(res, status, status === 403 ? "Forbidden" : "Could not write file");
     return;
   }
 
@@ -687,7 +993,7 @@ async function handlePut(req, res, absPath) {
 
   if (limitExceeded) {
     try {
-      fs.unlinkSync(tmpPath);
+      unlinkVaultEntry(vaultRoot, tmpPath);
     } catch {
       /* ignore */
     }
@@ -697,10 +1003,10 @@ async function handlePut(req, res, absPath) {
 
   // Atomic rename
   try {
-    fs.renameSync(tmpPath, absPath);
+    renameVaultEntries(vaultRoot, tmpPath, finalPath);
   } catch {
     try {
-      fs.unlinkSync(tmpPath);
+      unlinkVaultEntry(vaultRoot, tmpPath);
     } catch {
       /* ignore */
     }
@@ -717,26 +1023,20 @@ async function handlePut(req, res, absPath) {
  *
  * @param {import("node:http").ServerResponse} res
  * @param {string} absPath
+ * @param {string} vaultRoot
  */
-function handleDelete(res, absPath) {
-  let stat;
+function handleDelete(res, absPath, vaultRoot) {
   try {
-    stat = fs.statSync(absPath);
-  } catch {
-    sendError(res, 404, "Not found");
-    return;
-  }
-
-  try {
-    if (stat.isDirectory()) {
-      fs.rmdirSync(absPath, { recursive: true });
-    } else {
-      fs.unlinkSync(absPath);
-    }
+    deleteVaultEntry(vaultRoot, absPath);
     res.writeHead(204, { "Content-Length": "0" });
     res.end();
-  } catch {
-    sendError(res, 500, "Could not delete");
+  } catch (error) {
+    const status = error && error.status ? error.status : 500;
+    sendError(
+      res,
+      status,
+      status === 404 ? "Not found" : status === 403 ? "Forbidden" : "Could not delete"
+    );
   }
 }
 
@@ -746,8 +1046,9 @@ function handleDelete(res, absPath) {
  * @param {import("node:http").IncomingMessage} req
  * @param {import("node:http").ServerResponse} res
  * @param {string} absPath
+ * @param {string} vaultRoot
  */
-function handleMkcol(req, res, absPath) {
+function handleMkcol(req, res, absPath, vaultRoot) {
   // MKCOL must not have a request body per RFC 4918 §9.3
   let bodyReceived = false;
   req.on("data", () => {
@@ -761,7 +1062,7 @@ function handleMkcol(req, res, absPath) {
 
     let exists = false;
     try {
-      fs.statSync(absPath);
+      lstatVaultEntry(vaultRoot, absPath);
       exists = true;
     } catch {
       /* does not exist — good */
@@ -776,7 +1077,7 @@ function handleMkcol(req, res, absPath) {
     const parent = path.dirname(absPath);
     let parentExists = false;
     try {
-      fs.statSync(parent);
+      statExistingVaultPath(vaultRoot, parent);
       parentExists = true;
     } catch {
       /* parent missing */
@@ -788,11 +1089,12 @@ function handleMkcol(req, res, absPath) {
     }
 
     try {
-      fs.mkdirSync(absPath);
+      mkdirVaultEntry(vaultRoot, absPath);
       res.writeHead(201, { "Content-Length": "0" });
       res.end();
-    } catch {
-      sendError(res, 500, "Could not create directory");
+    } catch (error) {
+      const status = error && error.status ? error.status : 500;
+      sendError(res, status, status === 403 ? "Forbidden" : "Could not create directory");
     }
   });
 }
@@ -810,7 +1112,7 @@ function handleMove(req, res, absPath, vaultRoot) {
   let destAbs;
   try {
     const resolved = resolveDestinationPath(vaultRoot, destinationHeader);
-    destAbs = resolved.absPath;
+    destAbs = resolveWritableVaultFsPath(vaultRoot, resolved.absPath);
   } catch (err) {
     if (err && err.status) {
       sendError(res, err.status, err.message || "Forbidden");
@@ -822,7 +1124,7 @@ function handleMove(req, res, absPath, vaultRoot) {
 
   let srcExists = false;
   try {
-    fs.statSync(absPath);
+    lstatVaultEntry(vaultRoot, absPath);
     srcExists = true;
   } catch {
     /* nope */
@@ -835,22 +1137,22 @@ function handleMove(req, res, absPath, vaultRoot) {
 
   let destExisted = false;
   try {
-    fs.statSync(destAbs);
+    lstatVaultEntry(vaultRoot, destAbs);
     destExisted = true;
   } catch {
     /* ok */
   }
 
-  // Ensure destination's parent exists
   try {
-    fs.mkdirSync(path.dirname(destAbs), { recursive: true });
-  } catch {
-    sendError(res, 500, "Could not create destination directory");
+    destAbs = mkdirParentsInsideVault(vaultRoot, destAbs);
+  } catch (error) {
+    const status = error && error.status ? error.status : 500;
+    sendError(res, status, status === 403 ? "Forbidden" : "Could not create destination directory");
     return;
   }
 
   try {
-    fs.renameSync(absPath, destAbs);
+    renameVaultEntries(vaultRoot, absPath, destAbs);
     res.writeHead(destExisted ? 204 : 201, { "Content-Length": "0" });
     res.end();
   } catch {
@@ -940,14 +1242,25 @@ export async function maybeHandleWebdav(req, res) {
     return true;
   }
 
-  // Resolve request path to absolute filesystem path
+  // Resolve request path and then canonicalize it at the filesystem boundary.
+  // Write/create operations may target a missing leaf; read/delete/move-source
+  // operations require an existing canonical path.
   let absPath;
   try {
     const resolved = resolveVaultPath(vaultRoot, url);
-    absPath = resolved.absPath;
+    if (method === "PUT" || method === "MKCOL") {
+      absPath = resolveWritableVaultFsPath(vaultRoot, resolved.absPath);
+    } else if (method === "DELETE" || method === "MOVE" || method === "COPY") {
+      absPath = resolveExistingVaultEntryFsPath(vaultRoot, resolved.absPath);
+    } else if (method === "OPTIONS" || method === "LOCK" || method === "UNLOCK") {
+      // These handlers do not touch the filesystem.
+      absPath = resolved.absPath;
+    } else {
+      absPath = resolveExistingVaultFsPath(vaultRoot, resolved.absPath);
+    }
   } catch (err) {
     if (err && err.status) {
-      sendError(res, err.status, "Forbidden");
+      sendError(res, err.status, err.status === 404 ? "Not found" : "Forbidden");
     } else {
       sendError(res, 400, "Bad request");
     }
@@ -961,22 +1274,22 @@ export async function maybeHandleWebdav(req, res) {
         handleOptions(req, res);
         break;
       case "PROPFIND":
-        handlePropfind(req, res, absPath, url);
+        handlePropfind(req, res, absPath, url, vaultRoot);
         break;
       case "GET":
-        handleGet(req, res, absPath, false);
+        handleGet(req, res, absPath, false, vaultRoot);
         break;
       case "HEAD":
-        handleGet(req, res, absPath, true);
+        handleGet(req, res, absPath, true, vaultRoot);
         break;
       case "PUT":
-        await handlePut(req, res, absPath);
+        await handlePut(req, res, absPath, vaultRoot);
         break;
       case "DELETE":
-        handleDelete(res, absPath);
+        handleDelete(res, absPath, vaultRoot);
         break;
       case "MKCOL":
-        handleMkcol(req, res, absPath);
+        handleMkcol(req, res, absPath, vaultRoot);
         break;
       case "MOVE":
         handleMove(req, res, absPath, vaultRoot);

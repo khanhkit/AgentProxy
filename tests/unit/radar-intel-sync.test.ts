@@ -4,6 +4,7 @@ import { readFile } from "node:fs/promises";
 import test from "node:test";
 
 const { publicKey, privateKey } = crypto.generateKeyPairSync("ed25519");
+process.env.RADAR_FEED_URL = "https://radar.test.example";
 process.env.RADAR_FEED_PUBKEY = publicKey
   .export({ type: "spki", format: "der" })
   .toString("base64");
@@ -33,10 +34,10 @@ const liveSettings = { optIn: true, supporterKey };
 
 test("canonical Intel fixture is byte-identical to the private contract", async () => {
   const bytes = await fixtureBytes();
-  assert.equal(bytes.byteLength, 1024);
+  assert.equal(bytes.byteLength, 1025);
   assert.equal(
     crypto.createHash("sha256").update(bytes).digest("hex"),
-    "c36aaa6ad53942afa0325d6b0fad0aa048ef66f24c805b743b9815446b0e6176"
+    "a9625e8f4cbea06fce111cd405e0ade991675da4460294998a85c30e62c1fc02"
   );
   assert.equal(RadarIntelFeedSchema.parse(JSON.parse(bytes.toString("utf8"))).tier, "live");
 });
@@ -79,8 +80,8 @@ test("Intel sync gates before fetch and only accepts exact signed live bytes", a
     fetch: (async (_input, init) => {
       authorization = new Headers(init?.headers).get("authorization") ?? "";
       return response(bytes, {
-        "x-omniroute-feed-signature": sign(bytes),
-        "x-omniroute-feed-tier": "live",
+        "x-agentproxy-feed-signature": sign(bytes),
+        "x-agentproxy-feed-tier": "live",
       });
     }) as typeof fetch,
     now: () => new Date("2026-08-09T12:05:00.000Z"),
@@ -127,8 +128,8 @@ test("Intel sync preserves the good cache on signature, tier, schema, replay, an
       },
       fetch: (async () =>
         response(item.body, {
-          "x-omniroute-feed-signature": signature,
-          "x-omniroute-feed-tier": item.tier,
+          "x-agentproxy-feed-signature": signature,
+          "x-agentproxy-feed-tier": item.tier,
         })) as typeof fetch,
     });
     assert.equal(result.status, item.expected);
@@ -151,8 +152,8 @@ test("Intel sync preserves the good cache on signature, tier, schema, replay, an
     },
     fetch: (async () =>
       response(bytes, {
-        "x-omniroute-feed-signature": validSignature,
-        "x-omniroute-feed-tier": "live",
+        "x-agentproxy-feed-signature": validSignature,
+        "x-agentproxy-feed-tier": "live",
       })) as typeof fetch,
   });
   assert.equal(stale.status, "stale");
@@ -200,7 +201,7 @@ test("Intel sync enforces the byte cap while reading streamed chunks", async () 
     fetch: (async () =>
       new Response(body, {
         status: 200,
-        headers: { "x-omniroute-feed-tier": "live" },
+        headers: { "x-agentproxy-feed-tier": "live" },
       })) as typeof fetch,
   });
 

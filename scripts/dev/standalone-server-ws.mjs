@@ -9,6 +9,17 @@ import headResponseGuard from "./head-response-guard.cjs";
 import { resolveTlsOptions, createServerListener } from "./tls-options.mjs";
 import { getMainServerTimeoutConfig } from "./main-server-timeouts.mjs";
 import { createSystemdNotifier } from "./systemd-notify.mjs";
+import { installProcessCrashGuard } from "./httpClientAbortGuard.mjs";
+
+// Safety net (#12861): this is the actual production entry point (see the
+// keepAliveTimeout comment below for why `run-next.mjs`-only fixes don't
+// reach real installs). Without this, a client abort OR a recoverable
+// upstream-fetch timeout that a retry path already handles (see
+// open-sse/utils/directResponseStartTimeout.ts) can surface as an
+// unhandledRejection -> uncaughtException and take the whole server down —
+// exactly the asymmetry `run-next.mjs` already closed for dev. Benign errors
+// are swallowed and logged; genuine bugs still crash loudly.
+installProcessCrashGuard();
 
 // systemd sd_notify (Type=notify / WatchdogSec=): this process is the one
 // whose event loop can freeze (cold /v1/models rebuild), so it must own the
@@ -28,17 +39,17 @@ const proxiesByPort = new Map();
 const { wrapRequestListenerWithMethodGuard } = methodGuard;
 const { wrapRequestListenerWithHeadResponseGuard } = headResponseGuard;
 
-// Opt-in native HTTPS (#5242). Resolved once at boot: when both OMNIROUTE_TLS_CERT
-// and OMNIROUTE_TLS_KEY point at readable files we terminate TLS on the same
+// Opt-in native HTTPS (#5242). Resolved once at boot: when both AGENTPROXY_TLS_CERT
+// and AGENTPROXY_TLS_KEY point at readable files we terminate TLS on the same
 // listener Next binds to (so WS `upgrade` / request wrappers keep working over
 // TLS). Absent or misconfigured → null → identical plain-HTTP behavior as before.
 const tlsOptions = resolveTlsOptions(process.env);
-process.env.OMNIROUTE_INTERNAL_SCHEME = tlsOptions ? "https" : "http";
+process.env.AGENTPROXY_INTERNAL_SCHEME = tlsOptions ? "https" : "http";
 if (tlsOptions) {
-  console.log(`[omniroute][tls] HTTPS enabled — terminating TLS with cert=${tlsOptions.certPath}`);
+  console.log(`[agentproxy][tls] HTTPS enabled — terminating TLS with cert=${tlsOptions.certPath}`);
 }
 
-process.env.OMNIROUTE_WS_BRIDGE_SECRET ||= randomUUID();
+process.env.AGENTPROXY_WS_BRIDGE_SECRET ||= randomUUID();
 // Per-process secret proving the trusted peer-IP stamp came from this server.
 ensurePeerStampToken();
 
@@ -59,7 +70,7 @@ function getProxy(server) {
 
   const proxy = createResponsesWsProxy({
     baseUrl: `http://127.0.0.1:${port}`,
-    bridgeSecret: process.env.OMNIROUTE_WS_BRIDGE_SECRET,
+    bridgeSecret: process.env.AGENTPROXY_WS_BRIDGE_SECRET,
   });
   proxiesByPort.set(port, proxy);
   return proxy;
@@ -176,7 +187,7 @@ http.createServer = function createServerWithResponsesWs(...args) {
   // keep-alive HTTP clients that idle longer than that between requests (e.g.
   // the JVM java.net.http.HttpClient used by JetBrains AI Assistant), which
   // reuse a socket the server already tore down and get 0 response bytes back
-  // (#7003). This wrapper is what `omniroute serve` / Docker / Electron actually
+  // (#7003). This wrapper is what `agentproxy serve` / Docker / Electron actually
   // spawn in production (run-standalone.mjs prefers server-ws.mjs over the bare
   // Next server.js), so it needs the same fix already wired into run-next.mjs
   // (the dev-only entry point) — otherwise real installs never got it. Raise

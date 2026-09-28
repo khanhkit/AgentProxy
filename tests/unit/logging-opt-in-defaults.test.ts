@@ -6,7 +6,7 @@ import { getCallLogPipelineCaptureStreamChunks } from "../../src/lib/logEnv.ts";
 
 const originalConsoleError = console.error;
 const originalCaptureChunks = process.env.CALL_LOG_PIPELINE_CAPTURE_STREAM_CHUNKS;
-const originalRequestShape = process.env.OMNIROUTE_LOG_REQUEST_SHAPE;
+const originalRequestShape = process.env.AGENTPROXY_LOG_REQUEST_SHAPE;
 
 test.afterEach(() => {
   console.error = originalConsoleError;
@@ -18,9 +18,9 @@ test.afterEach(() => {
   }
 
   if (originalRequestShape === undefined) {
-    delete process.env.OMNIROUTE_LOG_REQUEST_SHAPE;
+    delete process.env.AGENTPROXY_LOG_REQUEST_SHAPE;
   } else {
-    process.env.OMNIROUTE_LOG_REQUEST_SHAPE = originalRequestShape;
+    process.env.AGENTPROXY_LOG_REQUEST_SHAPE = originalRequestShape;
   }
 });
 
@@ -37,9 +37,9 @@ test("stream-chunk pipeline capture is disabled by default and supports explicit
 
 async function requestShapeMarkers(value: string | undefined): Promise<string[]> {
   if (value === undefined) {
-    delete process.env.OMNIROUTE_LOG_REQUEST_SHAPE;
+    delete process.env.AGENTPROXY_LOG_REQUEST_SHAPE;
   } else {
-    process.env.OMNIROUTE_LOG_REQUEST_SHAPE = value;
+    process.env.AGENTPROXY_LOG_REQUEST_SHAPE = value;
   }
 
   const markers: string[] = [];

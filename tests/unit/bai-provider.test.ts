@@ -63,7 +63,7 @@ test("b.ai accepts any model id via passthrough models (GPT/Claude/Gemini/Kimi/G
   assert.equal(isValidModel("bai", "kimi-k2.5"), true);
 });
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-bai-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-bai-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../src/lib/db/core.ts");

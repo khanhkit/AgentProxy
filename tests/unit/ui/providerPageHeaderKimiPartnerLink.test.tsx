@@ -47,8 +47,8 @@ describe("ProviderPageHeader — Kimi partner-link note", () => {
   }
 
   it.each([
-    ["moonshot", "Kimi", "https://platform.kimi.ai?aff=omniroute"],
-    ["kimi-coding", "Kimi Code CLI", "https://www.kimi.com/code?aff=omniroute"],
+    ["moonshot", "Kimi", "https://platform.kimi.ai"],
+    ["kimi-coding", "Kimi Code CLI", "https://www.kimi.com/code"],
     ["kimi-web", "Kimi Web", "https://www.kimi.ai"],
   ])("flags the %s header link as a partner link", (id, name, website) => {
     const el = renderHeader(id, name, website);
@@ -58,12 +58,12 @@ describe("ProviderPageHeader — Kimi partner-link note", () => {
     const link = el.querySelector(`a[href="${website}"]`);
     expect(link).not.toBeNull();
     expect(link?.getAttribute("title")).toBe(
-      "Partner link — supports OmniRoute at no extra cost to you"
+      "Partner link — supports AgentProxy at no extra cost to you"
     );
     expect(link?.getAttribute("aria-label")).toBe(
-      `${name} — Partner link — supports OmniRoute at no extra cost to you`
+      `${name} — Partner link — supports AgentProxy at no extra cost to you`
     );
-    expect(el.textContent).toContain("Partner link — supports OmniRoute at no extra cost to you");
+    expect(el.textContent).toContain("Partner link — supports AgentProxy at no extra cost to you");
   });
 
   it("does NOT flag an unrelated provider's website link as a partner link", () => {

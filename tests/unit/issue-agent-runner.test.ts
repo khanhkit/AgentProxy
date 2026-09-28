@@ -5,14 +5,14 @@ import { createRecordedTriageRun } from "../../src/lib/issueAgent/recordedTriage
 
 test("createRecordedTriageRun returns deterministic dry-run metadata", () => {
   const run = createRecordedTriageRun({
-    issueUrl: "https://github.com/KooshaPari/OmniRoute/issues/6059",
+    issueUrl: "https://github.com/KooshaPari/AgentProxy/issues/6059",
     dryRun: true,
   });
 
   assert.equal(run.mode, "recorded-triage");
   assert.equal(run.accepted, true);
   assert.equal(run.dryRun, true);
-  assert.equal(run.repository, "KooshaPari/OmniRoute");
+  assert.equal(run.repository, "KooshaPari/AgentProxy");
   assert.equal(run.issueNumber, 6059);
   assert.equal(run.runner, "deterministic-recorded-triage");
   assert.match(run.runId, /^issue-agent-recorded-triage-[a-f0-9]{16}$/);
@@ -26,10 +26,10 @@ test("createRecordedTriageRun returns deterministic dry-run metadata", () => {
 
 test("createRecordedTriageRun redacts URL credentials before returning metadata", () => {
   const run = createRecordedTriageRun({
-    issueUrl: "https://user:token12345678901234567890@github.com/KooshaPari/OmniRoute/issues/1",
+    issueUrl: "https://user:token12345678901234567890@github.com/KooshaPari/AgentProxy/issues/1",
   });
 
-  assert.equal(run.issueUrl, "https://[REDACTED]@github.com/KooshaPari/OmniRoute/issues/1");
+  assert.equal(run.issueUrl, "https://[REDACTED]@github.com/KooshaPari/AgentProxy/issues/1");
   assert.doesNotMatch(run.issueUrl, /token123/);
 });
 
@@ -42,7 +42,7 @@ test("createRecordedTriageRun rejects non-GitHub issue URLs", () => {
 
 test("createRecordedTriageRun summarizes recorded context without leaking secrets", () => {
   const run = createRecordedTriageRun({
-    issueUrl: "https://github.com/KooshaPari/OmniRoute/issues/42",
+    issueUrl: "https://github.com/KooshaPari/AgentProxy/issues/42",
     recordedContext: {
       title: "Need fix for failing route guard",
       body: "Please inspect Authorization: Bearer sk-secret1234567890abcd",

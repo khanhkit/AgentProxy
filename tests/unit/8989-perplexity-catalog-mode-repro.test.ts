@@ -10,7 +10,7 @@ import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-process.env.DATA_DIR = mkdtempSync(join(tmpdir(), "omniroute-8989-repro-"));
+process.env.DATA_DIR = mkdtempSync(join(tmpdir(), "agentproxy-8989-repro-"));
 
 const { MODEL_MAP, THINKING_MAP } = await import(
   "../../open-sse/executors/perplexity-web/protocol.ts"

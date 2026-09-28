@@ -14,13 +14,13 @@ import os from "node:os";
 import path from "node:path";
 import http from "node:http";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-supervisor-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-supervisor-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.NODE_ENV = "test";
 process.env.DISABLE_SQLITE_AUTO_BACKUP = "true";
 // Adoption is intentionally opt-in after GHSA-wg9p-6m2g-4v27. These tests
 // exercise the explicit adoption path, so enable it for this isolated process.
-process.env.OMNIROUTE_ADOPT_EXISTING_SERVICE = "1";
+process.env.AGENTPROXY_ADOPT_EXISTING_SERVICE = "1";
 
 // Import DB core first to trigger migration (creates version_manager with new columns)
 const core = await import("../../../src/lib/db/core.ts");
@@ -222,8 +222,8 @@ test("does NOT auto-restart on crash", async () => {
 test("#6205: probeBeforeSpawn adopts a healthy existing instance (no spawn)", async () => {
   // GHSA-wg9p-6m2g-4v27: adoption of an already-healthy listener is opt-in
   // (a squatter can answer 2xx), so this adoption-path test opts in explicitly.
-  const prevAdopt = process.env.OMNIROUTE_ADOPT_EXISTING_SERVICE;
-  process.env.OMNIROUTE_ADOPT_EXISTING_SERVICE = "1";
+  const prevAdopt = process.env.AGENTPROXY_ADOPT_EXISTING_SERVICE;
+  process.env.AGENTPROXY_ADOPT_EXISTING_SERVICE = "1";
   const healthServer = startHealthServer(29996);
   const cfg = { ...tickConfig("test-adopt", 29996), probeBeforeSpawn: true };
   const sup = new ServiceSupervisor(cfg);
@@ -243,15 +243,15 @@ test("#6205: probeBeforeSpawn adopts a healthy existing instance (no spawn)", as
   } finally {
     await sup.stop();
     healthServer.close();
-    if (prevAdopt === undefined) delete process.env.OMNIROUTE_ADOPT_EXISTING_SERVICE;
-    else process.env.OMNIROUTE_ADOPT_EXISTING_SERVICE = prevAdopt;
+    if (prevAdopt === undefined) delete process.env.AGENTPROXY_ADOPT_EXISTING_SERVICE;
+    else process.env.AGENTPROXY_ADOPT_EXISTING_SERVICE = prevAdopt;
   }
 });
 
 // Regression test: the adopt branch used to call setToolStatus(tool, "running")
 // with no pid argument at all, leaving `pid` permanently null for any service
 // adopted on a supervisor restart (common in production — e.g. after
-// `systemctl --user restart omniroute.service`, sidecar child processes can
+// `systemctl --user restart agentproxy.service`, sidecar child processes can
 // outlive the restart and get adopted rather than spawned fresh). Downstream
 // consumers that key liveness tracking off pid would then treat a genuinely
 // healthy, running service as untrustworthy/stale. This asserts the resolved
@@ -268,8 +268,8 @@ test("adopted service resolves and records the real pid of the process holding t
   const healthServer = startHealthServer(29995);
   const cfg = { ...tickConfig("test-adopt", 29995), probeBeforeSpawn: true };
   // Same opt-in as the adoption test above (GHSA-wg9p-6m2g-4v27).
-  const prevAdopt = process.env.OMNIROUTE_ADOPT_EXISTING_SERVICE;
-  process.env.OMNIROUTE_ADOPT_EXISTING_SERVICE = "1";
+  const prevAdopt = process.env.AGENTPROXY_ADOPT_EXISTING_SERVICE;
+  process.env.AGENTPROXY_ADOPT_EXISTING_SERVICE = "1";
   const sup = new ServiceSupervisor(cfg);
 
   try {
@@ -284,8 +284,8 @@ test("adopted service resolves and records the real pid of the process holding t
   } finally {
     await sup.stop();
     healthServer.close();
-    if (prevAdopt === undefined) delete process.env.OMNIROUTE_ADOPT_EXISTING_SERVICE;
-    else process.env.OMNIROUTE_ADOPT_EXISTING_SERVICE = prevAdopt;
+    if (prevAdopt === undefined) delete process.env.AGENTPROXY_ADOPT_EXISTING_SERVICE;
+    else process.env.AGENTPROXY_ADOPT_EXISTING_SERVICE = prevAdopt;
   }
 });
 
@@ -296,8 +296,8 @@ test("adopted service resolves and records the real pid of the process holding t
 test("probeBeforeSpawn does NOT adopt a healthy listener without the opt-in", async () => {
   const healthServer = startHealthServer(29994);
   const cfg = { ...tickConfig("test-adopt-deny", 29994), probeBeforeSpawn: true };
-  const prevAdopt = process.env.OMNIROUTE_ADOPT_EXISTING_SERVICE;
-  delete process.env.OMNIROUTE_ADOPT_EXISTING_SERVICE;
+  const prevAdopt = process.env.AGENTPROXY_ADOPT_EXISTING_SERVICE;
+  delete process.env.AGENTPROXY_ADOPT_EXISTING_SERVICE;
   const sup = new ServiceSupervisor(cfg);
 
   try {
@@ -305,12 +305,12 @@ test("probeBeforeSpawn does NOT adopt a healthy listener without the opt-in", as
     assert.equal(status.state, "error", "a healthy listener is not adopted by default");
     assert.match(
       status.lastError ?? "",
-      /OMNIROUTE_ADOPT_EXISTING_SERVICE/,
+      /AGENTPROXY_ADOPT_EXISTING_SERVICE/,
       "the error names the opt-in escape hatch"
     );
   } finally {
     await sup.stop();
     healthServer.close();
-    if (prevAdopt !== undefined) process.env.OMNIROUTE_ADOPT_EXISTING_SERVICE = prevAdopt;
+    if (prevAdopt !== undefined) process.env.AGENTPROXY_ADOPT_EXISTING_SERVICE = prevAdopt;
   }
 });

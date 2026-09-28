@@ -14,7 +14,7 @@ const __dirname = dirname(__filename);
 // registered tests finish, so a mid-file `await import` raced the runner and the
 // whole second describe died as "Promise resolution is still pending" on slow
 // CI machines (base-reds round 3, #9985).
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-compression-route-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-compression-route-"));
 const ORIGINAL_DATA_DIR = process.env.DATA_DIR;
 process.env.DATA_DIR = TEST_DATA_DIR;
 

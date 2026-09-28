@@ -1,7 +1,10 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { spawnSync } from "node:child_process";
+import { fileURLToPath } from "node:url";
 
 import {
+  isMainEntry,
   parseEnvExampleVars,
   parseEnvDocVars,
   runEnvDocSync,
@@ -49,9 +52,9 @@ test("parseEnvDocVars: extracts SHOUTY_NAMES from inline backticks", () => {
 });
 
 test("parseEnvDocVars: ignores values like `7s` or two-letter codes", () => {
-  const md = "TTL is `60s` and the type is `JSON`. Real var: `OMNIROUTE_TTL_MS`.";
+  const md = "TTL is `60s` and the type is `JSON`. Real var: `AGENTPROXY_TTL_MS`.";
   const vars = parseEnvDocVars(md);
-  assert.deepEqual([...vars].sort(), ["JSON", "OMNIROUTE_TTL_MS"]);
+  assert.deepEqual([...vars].sort(), ["AGENTPROXY_TTL_MS", "JSON"]);
 });
 
 test("runEnvDocSync: matched fixture passes", () => {
@@ -214,4 +217,46 @@ test("repository contract is in sync (live data)", () => {
     assert.fail(`Env/docs contract drift detected:\n${summary}`);
   }
   assert.equal(result.ok, true);
+});
+
+// ─── CLI entry guard ────────────────────────────────────────────────────────
+
+test("isMainEntry: absolute argv[1] matches the module URL (normal CLI invocation)", () => {
+  const moduleUrl =
+    "file:///home/runner/work/OmniRoute/OmniRoute/scripts/check/check-env-doc-sync.mjs";
+  const argv1 = "/home/runner/work/OmniRoute/OmniRoute/scripts/check/check-env-doc-sync.mjs";
+  assert.equal(isMainEntry(argv1, moduleUrl), true);
+});
+
+test("isMainEntry: path with characters that import.meta.url percent-encodes still matches", () => {
+  // A checkout path containing a space is the common macOS case; the module
+  // URL carries %20 while process.argv[1] carries the raw character.
+  const moduleUrl =
+    "file:///Users/dev/My%20Projects/OmniRoute/scripts/check/check-env-doc-sync.mjs";
+  const argv1 = "/Users/dev/My Projects/OmniRoute/scripts/check/check-env-doc-sync.mjs";
+  assert.equal(isMainEntry(argv1, moduleUrl), true);
+});
+
+test("isMainEntry: different entry target or missing argv[1] does not trigger the CLI", () => {
+  const moduleUrl =
+    "file:///home/runner/work/OmniRoute/OmniRoute/scripts/check/check-env-doc-sync.mjs";
+  assert.equal(
+    isMainEntry("/home/runner/work/OmniRoute/OmniRoute/tests/unit/x.test.ts", moduleUrl),
+    false
+  );
+  assert.equal(isMainEntry(undefined, moduleUrl), false);
+  assert.equal(isMainEntry("", moduleUrl), false);
+});
+
+test("CLI entry actually runs the gate when spawned directly", () => {
+  const scriptPath = fileURLToPath(
+    new URL("../../scripts/check/check-env-doc-sync.mjs", import.meta.url)
+  );
+  const res = spawnSync(process.execPath, [scriptPath], { encoding: "utf8" });
+  // The gate may legitimately exit 1 when the live contract is out of sync;
+  // what matters here is that main() ran and printed its report.
+  assert.ok(
+    res.stdout.includes("Env var contract sync report"),
+    `expected the sync report banner in stdout, got: ${JSON.stringify(res.stdout.slice(0, 200))}`
+  );
 });

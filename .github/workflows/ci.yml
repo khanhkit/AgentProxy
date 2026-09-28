@@ -19,11 +19,11 @@ env:
   # CI must never mutate the runner's OS trust store (2026-07-05: a cert-flow
   # test installed a fake PEM on a persistent self-hosted runner and broke all
   # system TLS). Belt-and-suspenders with tests/_setup/isolateDataDir.ts.
-  OMNIROUTE_SKIP_SYSTEM_TRUST: "1"
-  CI_NODE_VERSION: "24.14.1"
+  AGENTPROXY_SKIP_SYSTEM_TRUST: "1"
+  CI_NODE_VERSION: "24.15.0"
   CI_NODE_22_VERSION: "22.22.2"
   CI_NODE_25_VERSION: "25.0.0"
-  CI_NODE_24_VERSION: "24.14.1"
+  CI_NODE_24_VERSION: "24.15.0"
   CI_NODE_26_VERSION: "26.0.0"
 
 jobs:
@@ -35,6 +35,7 @@ jobs:
       docs: ${{ steps.classify.outputs.docs }}
       i18n: ${{ steps.classify.outputs.i18n }}
       workflow: ${{ steps.classify.outputs.workflow }}
+      rust: ${{ steps.classify.outputs.rust }}
       testsOnly: ${{ steps.classify.outputs.testsOnly }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -70,12 +71,58 @@ jobs:
               echo "docs=true"
               echo "i18n=true"
               echo "workflow=true"
+              echo "rust=true"
+              echo "testsOnly=false"
             } >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
           git diff --name-only "$BASE_SHA" "$HEAD_SHA" > changed-files.txt
           node scripts/quality/classify-pr-changes.mjs changed-files.txt >> "$GITHUB_OUTPUT"
+
+  dependency-review:
+    name: Dependency Review
+    runs-on: ubuntu-latest
+    needs: changes
+    if: ${{ github.event_name == 'pull_request' && github.event.pull_request.draft == false }}
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Review dependency delta
+        uses: actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294 # v5.0.0
+        with:
+          fail-on-severity: high
+
+  rust-quality:
+    name: Rust Quality
+    runs-on: ubuntu-latest
+    needs: changes
+    if: ${{ github.event_name != 'pull_request' || (github.event.pull_request.draft == false && needs.changes.outputs.rust == 'true') }}
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install release Rust toolchain
+        uses: dtolnay/rust-toolchain@02cb101ec7c40f2c49e1d9714d64511d8e1b74de # master @ 2026-09-23
+        with:
+          toolchain: 1.98.0
+          components: rustfmt, clippy
+      - name: Verify Rust formatting, lints, workspace and contract tests
+        run: npm run rust-core:verify
+      - name: Audit Rust advisories, licenses, bans and sources
+        uses: EmbarkStudios/cargo-deny-action@3c6349835b2b7b196a839186cb8b78e02f7b5f25 # v2.1.1
+        with:
+          manifest-path: rust/Cargo.toml
+          rust-version: 1.98.0
+          command: check advisories bans licenses sources
 
   lint:
     name: Lint
@@ -92,6 +139,8 @@ jobs:
       JWT_SECRET: ci-lint-secret-with-sufficient-length-for-validation
       API_KEY_SECRET: ci-lint-api-key-secret-long
       DISABLE_SQLITE_AUTO_BACKUP: "true"
+      EVENT_NAME: ${{ github.event_name }}
+      PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -137,7 +186,13 @@ jobs:
       - run: npm run check:provider-asset-provenance
       - run: npm run check:fetch-targets
       - run: npm run check:deps
-      - run: npm run check:file-size
+      - name: File-size ratchet
+        run: |
+          if [ "$EVENT_NAME" = "pull_request" ] && [ -n "$PR_BASE_SHA" ]; then
+            npm run check:file-size -- --base-ref "$PR_BASE_SHA"
+          else
+            npm run check:file-size
+          fi
       - run: npm run check:error-helper
       - run: npm run check:migration-numbering
       - run: npm run check:public-creds
@@ -147,6 +202,17 @@ jobs:
       - run: npm run check:test-discovery
       - run: npm run check:radar-sentinels
       - run: npm run check:tracked-artifacts
+      - run: npm run check:vitest-exclusions
+      - name: AI attribution in commit / PR metadata
+        if: github.event_name == 'pull_request'
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          printf '%s' "$PR_BODY" > "$RUNNER_TEMP/pr-body.md"
+          npm run check:ai-attribution -- --range "$PR_BASE_SHA..$PR_HEAD_SHA" --pr-title "$PR_TITLE" --pr-body-file "$RUNNER_TEMP/pr-body.md"
       # (gap 30) Also lives in quality.yml's PR-only "Merge integrity" job — because the
       # CHANGELOG half of that job needs a base to diff against. This half does NOT: the
       # generator either reproduces the committed SKILL.md files or it does not.
@@ -443,6 +509,8 @@ jobs:
       # (floor ~36), openapi-security-tiers is advisory (Hard Rules #15/#17).
       - name: CLI i18n consistency
         run: npm run check:cli-i18n
+      - name: CLI i18n key completeness
+        run: npm run i18n:check-keys:cli
       - name: OpenAPI route coverage (ratchet)
         run: npm run check:openapi-coverage
       - name: OpenAPI security-tier consistency (advisory)
@@ -473,7 +541,7 @@ jobs:
           node-version: ${{ env.CI_NODE_VERSION }}
           cache: npm
       - name: markdownlint (docs + root, advisory)
-        run: npx --yes markdownlint-cli2 "docs/**/*.md" "*.md" "!docs/i18n" "!docs/research" || true
+        run: npx --yes markdownlint-cli2@0.23.2 "docs/**/*.md" "*.md" "!docs/i18n" "!docs/research" || true
       - name: Vale prose lint (Microsoft style, advisory)
         # Non-fatal: a Vale/reviewdog setup error must not turn this advisory job red.
         continue-on-error: true
@@ -508,9 +576,9 @@ jobs:
       - run: node scripts/i18n/check-ui-keys-coverage.mjs --threshold=65
       # Real-translation ratchet: a leaf copied verbatim from en.json passes key
       # parity above but is still English to the user (es shipped 55% English).
-      # Advisory in PR-0; flipped to blocking once the backlog is retranslated (PR-4).
-      - name: i18n real-translation ratio (advisory)
-        run: node scripts/i18n/check-translation-ratio.mjs --warn
+      # Blocking ratchet: translated share may improve but must not regress past the baseline.
+      - name: i18n real-translation ratio
+        run: node scripts/i18n/check-translation-ratio.mjs
       # #8463: a rewritten English value used to leave its 39 translations behind
       # silently (googleOAuthWarning shipped wrong copy in 39 locales for months).
       # Key parity above cannot see it — a stale translation counts as covered.
@@ -518,6 +586,12 @@ jobs:
         env:
           BASE_REF: ${{ github.base_ref && format('origin/{0}', github.base_ref) || '' }}
         run: node scripts/i18n/check-ui-value-drift.mjs
+      - name: i18n new-key coverage (a new key must reach every locale)
+        env:
+          BASE_REF: ${{ github.base_ref && format('origin/{0}', github.base_ref) || '' }}
+        run: node scripts/i18n/check-new-key-coverage.mjs
+      - name: i18n key completeness (every locale carries every en.json key)
+        run: node scripts/i18n/check-key-completeness.mjs
 
   # #8038: cheap glossary/protected-terms consistency gate —
   # complements i18n-ui-coverage (key parity) and the ICU `i18n` job below
@@ -645,8 +719,8 @@ jobs:
       # below the runner's memory ceiling; Turbopack has peaked at 14–16 GB RSS here.
       - run: npm run build
         env:
-          OMNIROUTE_USE_TURBOPACK: "0"
-          OMNIROUTE_NEXT_BUILD_CPUS: "1"
+          AGENTPROXY_USE_TURBOPACK: "0"
+          AGENTPROXY_NEXT_BUILD_CPUS: "1"
       - name: Archive Next.js build for downstream jobs
         # Use tar so the archive preserves paths relative to CWD (.build/next/...).
         # upload-artifact path-stripping is ambiguous when exclude patterns are used;
@@ -664,10 +738,13 @@ jobs:
           path: ${{ runner.temp }}/e2e-build.tar.gz
           retention-days: 1
 
-  package-artifact:
-    name: Package Artifact
+  package-canonical:
+    name: Package Canonical Pack
     runs-on: ubuntu-latest
     needs: build
+    outputs:
+      pack-seconds: ${{ steps.pack.outputs.elapsed }}
+      tarball: ${{ steps.pack.outputs.tarball }}
     env:
       JWT_SECRET: ci-build-secret-with-sufficient-length-for-validation
     steps:
@@ -678,46 +755,91 @@ jobs:
         with:
           node-version: ${{ env.CI_NODE_VERSION }}
           cache: npm
-      - uses: $/.github/actions/npm-ci-retry
+      - uses: ./.github/actions/npm-ci-retry
       - run: npm run check:node-runtime
       - name: Download Next.js build artifact
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: next-build
-          # Workspace-relative on purpose: the matrix below includes windows-latest, whose
-          # default shell is pwsh, where $RUNNER_TEMP is empty (it is $env:RUNNER_TEMP) —
-          # #11896's first cut broke the Electron smoke on exactly that. A relative path
-          # works in bash and pwsh alike; hosted workspaces are ephemeral.
           path: next-build-artifact
       - name: Extract Next.js build artifact
-        run: |
-          tar -xzf next-build-artifact/e2e-build.tar.gz
-      # build:cli consumes the downloaded .build/next standalone artifact and assembles dist/;
-      # it only rebuilds if the downloaded standalone artifact is missing.
+        run: tar -xzf next-build-artifact/e2e-build.tar.gz
       - run: npm run build:cli
       - name: Assert dist/server.js exists
         run: test -f dist/server.js || (echo "dist/server.js missing — build:cli did not assemble correctly" && exit 1)
-      # `build:cli` monta dist/ mas NAO grava dist/BUILD_SHA — so `build:release` faz
-      # isso, chamando write-build-sha.mjs. O guard de proveniencia do #10427, dentro
-      # de check:pack-artifact, rejeita um artefato sem SHA (e rejeita mesmo com
-      # OMNIROUTE_ALLOW_CANARY_BUILD=1: o que nao da para identificar nao da para
-      # vouchear). Sem este passo o par build+validate deste job e estruturalmente
-      # incompativel e falha 100% das vezes.
       - name: Stamp dist/BUILD_SHA for the provenance guard (#10427)
-        # O SHA TEM de vir do head da PR, nao de `git rev-parse HEAD`. Este workflow
-        # roda em `pull_request`, entao o checkout e o MERGE COMMIT efemero que o
-        # GitHub cria — um commit que nao existe em branch nenhuma e portanto nunca e
-        # ancestral da release. O guard de proveniencia (#10427) rejeita exatamente
-        # isso, e com razao: um artefato carimbado com o merge commit nao pode ser
-        # rastreado ate codigo que passou pelos gates.
         env:
-          OMNIROUTE_BUILD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          AGENTPROXY_BUILD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
         run: |
-          export OMNIROUTE_BUILD_SHA="${OMNIROUTE_BUILD_SHA:0:7}"
+          export AGENTPROXY_BUILD_SHA="${AGENTPROXY_BUILD_SHA:0:7}"
           node scripts/build/write-build-sha.mjs
+      - name: Pack canonical npm artifact once
+        id: pack
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/canonical-package"
+          stage="$RUNNER_TEMP/canonical-package-stage"
+          rm -rf "$out" "$stage"
+          mkdir -p "$out"
+          stage_started=$(date +%s)
+          node scripts/build/stage-npm-package.mjs --output "$stage" > "$RUNNER_TEMP/npm-stage.json"
+          stage_elapsed=$(( $(date +%s) - stage_started ))
+          echo "bounded staging elapsed: ${stage_elapsed}s"
+          started=$(date +%s)
+          (
+            cd "$stage"
+            npm pack --json --pack-destination "$out" > "$RUNNER_TEMP/npm-pack.json"
+          )
+          mapfile -t packages < <(find "$out" -maxdepth 1 -type f -name '*.tgz' -print)
+          if [ "${#packages[@]}" -ne 1 ]; then
+            printf 'expected exactly one .tgz, found %s\n' "${#packages[@]}" >&2
+            exit 1
+          fi
+          package="${packages[0]}"
+          (cd "$out" && sha256sum "$(basename "$package")" > SHA256SUMS)
+          elapsed=$(( $(date +%s) - started ))
+          echo "npm pack elapsed: ${elapsed}s"
+          echo "elapsed=$elapsed" >> "$GITHUB_OUTPUT"
+          echo "tarball=$(basename "$package")" >> "$GITHUB_OUTPUT"
+          {
+            echo "### Canonical npm package"
+            echo "- tarball: \`$(basename "$package")\`"
+            echo "- bounded staging: ${stage_elapsed}s"
+            echo "- npm pack: ${elapsed}s"
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload canonical npm package
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: canonical-npm-package
+          path: ${{ runner.temp }}/canonical-package
+          retention-days: 1
+          compression-level: 0
+
+  package-policy:
+    name: Package Policy
+    runs-on: ubuntu-latest
+    needs: package-canonical
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: ${{ env.CI_NODE_VERSION }}
+          cache: npm
+      - uses: ./.github/actions/npm-ci-retry
+      - run: npm run check:node-runtime
+      - name: Download canonical npm package
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: canonical-npm-package
+          path: canonical-package
+      - name: Verify canonical package checksum
+        run: (cd canonical-package && sha256sum -c SHA256SUMS)
       # O guard de proveniencia checa ancestralidade contra `origin/main` por padrao.
-      # Esse e o ref certo na PUBLICACAO (npm-publish.yml roda em main), mas em
-      # `pull_request` e estruturalmente impossivel: enquanto a PR esta aberta o head
+      # A publicacao deve validar contra uma ref imutavel de release/main; em
+      # `pull_request` isso e estruturalmente impossivel: enquanto a PR esta aberta o head
       # dela NUNCA e ancestral de main — e o checkout raso nem traz `origin/main` para
       # o grafo local, entao a sonda responde `false` de qualquer jeito. Resultado: o
       # gate falhava 100% das vezes em PR. Pre-merge o unico invariante checavel e "o
@@ -738,14 +860,68 @@ jobs:
               "+refs/heads/$GITHUB_REF_NAME:refs/remotes/origin/$GITHUB_REF_NAME"
             echo "ref=origin/$GITHUB_REF_NAME" >> "$GITHUB_OUTPUT"
           fi
-      - run: npm run check:pack-artifact
+      - name: Validate the canonical npm package
         env:
-          OMNIROUTE_RELEASE_REF: ${{ steps.provenance-ref.outputs.ref }}
-      # WS1.2 (#7065 class): pack the real tarball, install it into a clean prefix and
-      # BOOT it to a healthy /api/monitoring/health — the gate that structure checks
-      # cannot provide (3 releases shipped boot-crashing tarballs with green lists).
-      - name: Boot-smoke the packed tarball
-        run: npm run check:pack-boot
+          AGENTPROXY_RELEASE_REF: ${{ steps.provenance-ref.outputs.ref }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          packages=(canonical-package/*.tgz)
+          [ "${#packages[@]}" -eq 1 ] || { echo "expected exactly one canonical .tgz" >&2; exit 1; }
+          npm run check:pack-artifact -- --package "${packages[0]}"
+
+  package-boot:
+    name: Package Boot Smoke
+    runs-on: ubuntu-latest
+    needs: package-canonical
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: ${{ env.CI_NODE_VERSION }}
+      - name: Pin authoritative npm
+        run: npm install -g npm@12.0.2 --no-audit --no-fund
+      - name: Download canonical npm package
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: canonical-npm-package
+          path: canonical-package
+      - name: Verify canonical package checksum
+        run: (cd canonical-package && sha256sum -c SHA256SUMS)
+      - name: Boot-smoke the exact canonical tarball
+        shell: bash
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          packages=(canonical-package/*.tgz)
+          [ "${#packages[@]}" -eq 1 ] || { echo "expected exactly one canonical .tgz" >&2; exit 1; }
+          node scripts/check/check-pack-boot.mjs --package "${packages[0]}"
+
+  package-artifact:
+    name: Package Artifact
+    runs-on: ubuntu-latest
+    if: ${{ always() && !cancelled() && needs.package-canonical.result != 'skipped' }}
+    needs: [package-canonical, package-policy, package-boot]
+    steps:
+      - name: Aggregate package verdict
+        env:
+          CANONICAL: ${{ needs.package-canonical.result }}
+          POLICY: ${{ needs.package-policy.result }}
+          BOOT: ${{ needs.package-boot.result }}
+          PACK_SECONDS: ${{ needs.package-canonical.outputs.pack-seconds }}
+          TARBALL: ${{ needs.package-canonical.outputs.tarball }}
+        run: |
+          {
+            echo "### Package Artifact"
+            echo "- canonical pack: $CANONICAL (${PACK_SECONDS:-n/a}s)"
+            echo "- policy: $POLICY"
+            echo "- boot smoke: $BOOT"
+            echo "- tarball: ${TARBALL:-n/a}"
+          } >> "$GITHUB_STEP_SUMMARY"
+          [ "$CANONICAL" = success ] && [ "$POLICY" = success ] && [ "$BOOT" = success ]
 
   electron-package-smoke:
     name: Electron Package Smoke (${{ matrix.os }})
@@ -789,7 +965,7 @@ jobs:
           tar -xzf next-build-artifact/e2e-build.tar.gz
       - name: Install Electron dependencies
         working-directory: electron
-        run: npm install --no-audit --no-fund
+        run: npm ci --no-audit --no-fund
       - name: Pack Electron app
         if: runner.os == 'Linux'
         working-directory: electron
@@ -817,7 +993,7 @@ jobs:
     timeout-minutes: 25
     # needs: changes (not build) — this job never downloads the next-build artifact;
     # gating it on Build only serialized ~20min of wall-clock for nothing. Jobs that
-    # DO consume the artifact (e2e, package-artifact, electron-package-smoke) keep
+    # DO consume the artifact (e2e, package-canonical, electron-package-smoke) keep
     # needs: build. The `if` mirrors Build's own skip condition so docs-only PRs
     # still skip the suite.
     needs: changes
@@ -1032,7 +1208,7 @@ jobs:
         # stalled upload can neither eat the job's budget nor turn a green job cancelled.
         timeout-minutes: 5
         continue-on-error: true
-        uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7.0.0
+        uses: codecov/codecov-action@0b35c9ecc4f0529d0eb674914510c22f85b196b4 # v7.1.0
         with:
           files: coverage/lcov.info
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -1132,7 +1308,7 @@ jobs:
         run: |
           mkdir -p .artifacts
           {
-            echo "<!-- omniroute-coverage-report -->"
+            echo "<!-- agentproxy-coverage-report -->"
             echo "## CI Coverage Report"
             echo ""
             echo "- Coverage job: \`${COVERAGE_RESULT}\`"
@@ -1154,7 +1330,7 @@ jobs:
         with:
           script: |
             const fs = require("fs");
-            const marker = "<!-- omniroute-coverage-report -->";
+            const marker = "<!-- agentproxy-coverage-report -->";
             const body = fs.readFileSync(".artifacts/pr-coverage-comment.md", "utf8");
             const { owner, repo } = context.repo;
             const issue_number = context.issue.number;
@@ -1206,7 +1382,7 @@ jobs:
       JWT_SECRET: ci-test-secret-with-sufficient-length-for-validation
       API_KEY_SECRET: ci-test-api-key-secret-long
       DISABLE_SQLITE_AUTO_BACKUP: "true"
-      OMNIROUTE_PLAYWRIGHT_SKIP_BUILD: "1"
+      AGENTPROXY_PLAYWRIGHT_SKIP_BUILD: "1"
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -1270,7 +1446,7 @@ jobs:
       JWT_SECRET: ci-test-secret-with-sufficient-length-for-validation
       API_KEY_SECRET: ci-test-api-key-secret-long
       INITIAL_PASSWORD: ci-test-password-for-integration
-      DATA_DIR: /tmp/omniroute-ci-${{ matrix.shard }}
+      DATA_DIR: /tmp/agentproxy-ci-${{ matrix.shard }}
       DISABLE_SQLITE_AUTO_BACKUP: "true"
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -1290,14 +1466,40 @@ jobs:
   test-security:
     name: Security Tests
     runs-on: ubuntu-latest
-    # needs: changes (not build) — no artifact consumed; see test-unit note.
-    needs: changes
-    if: ${{ github.event_name != 'pull_request' || (needs.changes.outputs.code == 'true' && github.event.pull_request.draft == false) }}
+    # This is an existing required branch-protection context. Keep the new dependency
+    # and native-Rust gates in its dependency chain so they fail closed without
+    # introducing an unobserved required context that could deadlock main.
+    needs: [changes, dependency-review, rust-quality]
+    if: ${{ always() && !cancelled() && (github.event_name != 'pull_request' || (github.event.pull_request.draft == false && (needs.changes.result != 'success' || needs.changes.outputs.code == 'true'))) }}
     env:
       JWT_SECRET: ci-test-secret-with-sufficient-length-for-validation
       API_KEY_SECRET: ci-test-api-key-secret-long
       DISABLE_SQLITE_AUTO_BACKUP: "true"
     steps:
+      - name: Enforce prerequisite security gates
+        shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          CHANGES_RESULT: ${{ needs.changes.result }}
+          RUST_CHANGED: ${{ needs.changes.outputs.rust }}
+          DEPENDENCY_REVIEW_RESULT: ${{ needs.dependency-review.result }}
+          RUST_QUALITY_RESULT: ${{ needs.rust-quality.result }}
+        run: |
+          set -euo pipefail
+          if [ "$CHANGES_RESULT" != "success" ]; then
+            echo "::error::Change Classification did not pass: $CHANGES_RESULT"
+            exit 1
+          fi
+          if [ "$EVENT_NAME" = "pull_request" ] && [ "$DEPENDENCY_REVIEW_RESULT" != "success" ]; then
+            echo "::error::Dependency Review did not pass: $DEPENDENCY_REVIEW_RESULT"
+            exit 1
+          fi
+          if [ "$EVENT_NAME" != "pull_request" ] || [ "$RUST_CHANGED" = "true" ]; then
+            if [ "$RUST_QUALITY_RESULT" != "success" ]; then
+              echo "::error::Rust Quality did not pass: $RUST_QUALITY_RESULT"
+              exit 1
+            fi
+          fi
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
@@ -1309,7 +1511,7 @@ jobs:
       - run: npm run check:node-runtime
       - run: npm run test:security
 
-  # Live-server E2E. Both suites boot a real OmniRoute via their own runner and
+  # Live-server E2E. Both suites boot a real AgentProxy via their own runner and
   # drive it over HTTP; neither needs provider credentials. They were documented in
   # AGENTS.md's test matrix but wired to NO workflow, and had additionally been
   # unrunnable (vitest.config.ts excluded the very files their runners passed as a
@@ -1372,6 +1574,8 @@ jobs:
     if: ${{ !cancelled() }}
     needs:
       - changes
+      - dependency-review
+      - rust-quality
       - lint
       - docs-sync-strict
       - i18n-ui-coverage
@@ -1451,6 +1655,8 @@ jobs:
           echo "| Job | Status |" >> "$GITHUB_STEP_SUMMARY"
           echo "|-----|--------|" >> "$GITHUB_STEP_SUMMARY"
           echo "| Change Classification | $(status_job changes) |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Dependency Review | $(status_job dependency-review) |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Rust Quality | $(status_job rust-quality) |" >> "$GITHUB_STEP_SUMMARY"
           echo "| Lint | $(status_job lint) |" >> "$GITHUB_STEP_SUMMARY"
           echo "| Docs Sync (Strict) | $(status_job docs-sync-strict) |" >> "$GITHUB_STEP_SUMMARY"
           echo "| i18n UI Coverage | $(status_job i18n-ui-coverage) |" >> "$GITHUB_STEP_SUMMARY"

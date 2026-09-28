@@ -1,5 +1,5 @@
-import { getEmbeddingProvider } from "@omniroute/open-sse/config/embeddingRegistry.ts";
-import { getRegistryEntry } from "@omniroute/open-sse/config/providerRegistry.ts";
+import { getEmbeddingProvider } from "@agentproxy/open-sse/config/embeddingRegistry.ts";
+import { getRegistryEntry } from "@agentproxy/open-sse/config/providerRegistry.ts";
 import {
   isClaudeCodeCompatibleProvider,
   isAnthropicCompatibleProvider,
@@ -12,12 +12,12 @@ import {
 } from "@/shared/constants/providers";
 import { MODAL_DEFAULT_VALIDATION_MODEL_ID } from "@/shared/constants/modal";
 import { validateImageProviderApiKey } from "@/lib/providers/imageValidation";
-import { usesCcWireImage } from "@omniroute/open-sse/services/ccWireImageBuiltins.ts";
+import { usesCcWireImage } from "@agentproxy/open-sse/services/ccWireImageBuiltins.ts";
 import {
   isAlibabaRegionalProvider,
   resolveAlibabaProviderBaseUrl,
 } from "@/shared/constants/alibabaProviderRegions";
-import { buildProviderHeaders, buildProviderUrl } from "@omniroute/open-sse/services/provider.ts";
+import { buildProviderHeaders, buildProviderUrl } from "@agentproxy/open-sse/services/provider.ts";
 
 import {
   OPENAI_LIKE_FORMATS,
@@ -108,6 +108,7 @@ import {
 } from "./validation/webCookie";
 import { validateAiHordeProvider } from "./validation/aihorde";
 import { validateDifyProvider } from "./validation/dify";
+import { validateZyloApiProvider } from "./validation/zylo";
 import { validateAdobeFireflyProvider } from "./validation/adobeFirefly";
 import {
   validateV0VercelProvider,
@@ -241,6 +242,8 @@ export async function validateProviderApiKey({ provider, apiKey, providerSpecifi
     // #5422: auth-only probe — Bytez 404s on every chat model until the account adds it to
     // its catalog, so the generic chat probe can't validate a fresh key.
     bytez: validateBytezProvider,
+    "zylo-api": validateZyloApiProvider,
+    zylo: validateZyloApiProvider,
     deepgram: validateDeepgramProvider,
     assemblyai: validateAssemblyAIProvider,
     "rev-ai": validateRevAiProvider,

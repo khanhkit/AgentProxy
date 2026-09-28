@@ -4,6 +4,7 @@ import fs from "node:fs";
 import path from "node:path";
 import {
   isContributorBuild,
+  shouldBuildStandalone,
   stubContributorInstrumentation,
 } from "../../../scripts/build/backendOnlyPages.mjs";
 
@@ -12,18 +13,18 @@ const nextConfigSource = fs.readFileSync(path.join(process.cwd(), "next.config.m
 const packageJson = JSON.parse(fs.readFileSync(path.join(process.cwd(), "package.json"), "utf8"));
 
 test("contributor build profile selects the webpack fallback", () => {
-  assert.match(packageJson.scripts["build:contributor"], /OMNIROUTE_USE_TURBOPACK=0/);
+  assert.match(packageJson.scripts["build:contributor"], /AGENTPROXY_USE_TURBOPACK=0/);
 });
 
 test("contributor build profile skips standalone packaging", () => {
-  assert.equal(isContributorBuild({ OMNIROUTE_BUILD_PROFILE: "contributor" }), true);
-  assert.equal(isContributorBuild({ OMNIROUTE_BUILD_PROFILE: "backend" }), false);
+  assert.equal(isContributorBuild({ AGENTPROXY_BUILD_PROFILE: "contributor" }), true);
+  assert.equal(isContributorBuild({ AGENTPROXY_BUILD_PROFILE: "backend" }), false);
 });
 
 test("contributor instrumentation stubs are reversible", async () => {
   const fs = await import("node:fs/promises");
   const os = await import("node:os");
-  const tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "omniroute-contributor-"));
+  const tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "agentproxy-contributor-"));
   const instrumentationDir = path.join(tempRoot, "src");
   await fs.mkdir(instrumentationDir, { recursive: true });
   const files = ["instrumentation.ts", "instrumentation-node.ts"];
@@ -51,10 +52,18 @@ test("contributor instrumentation stubs are reversible", async () => {
   await fs.rm(tempRoot, { recursive: true, force: true });
 });
 
-test("contributor profile disables standalone output while default keeps it", () => {
-  assert.match(nextConfigSource, /isContributorBuild/);
+test("shouldBuildStandalone disables standalone output for contributor and fast build while default keeps it", () => {
+  assert.equal(shouldBuildStandalone({}), true);
+  assert.equal(shouldBuildStandalone({ OMNIROUTE_BUILD_PROFILE: "backend" }), true);
+  assert.equal(shouldBuildStandalone({ OMNIROUTE_BUILD_PROFILE: "minimal" }), true);
+  assert.equal(shouldBuildStandalone({ OMNIROUTE_BUILD_PROFILE: "contributor" }), false);
+  assert.equal(shouldBuildStandalone({ OMNIROUTE_SKIP_STANDALONE: "1" }), false);
+  assert.match(packageJson.scripts["build:fast"], /OMNIROUTE_SKIP_STANDALONE=1/);
+  assert.match(packageJson.scripts["prebuild:fast"], /check:native-deps/);
+  assert.match(packageJson.scripts["start:fast"], /OMNIROUTE_SKIP_STANDALONE=1/);
+  assert.match(nextConfigSource, /shouldBuildStandalone/);
   assert.match(
     nextConfigSource,
-    /\.\.\.\(isContributorBuild \? \{\} : \{ output: "standalone" \}\)/
+    /\.\.\.\(shouldBuildStandalone\(process\.env\) \? \{ output: "standalone" \} : \{\}\)/
   );
 });

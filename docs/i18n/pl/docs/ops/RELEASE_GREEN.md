@@ -39,7 +39,7 @@ moment, w którym uruchomienie daje największą wartość.
 
 `quality.yml` zawiera teraz `Build (advisory)` dla niedraftowych PR-ów z kodem oraz gałęzi kolejki Mergify.
 Odtwarza recepturę builda produkcyjnego z `ci.yml`: Node 24, `npm-ci-retry`,
-`check:node-runtime` oraz `npm run build` z `OMNIROUTE_USE_TURBOPACK=1`. Celowo
+`check:node-runtime` oraz `npm run build` z `AGENTPROXY_USE_TURBOPACK=1`. Celowo
 nie wgrywa artefaktu builda, bo żaden dalszy job jakości w tym workflow go nie konsumuje.
 Usuń `continue-on-error` po tygodniu stabilnych przebiegów PR-ów release, aby sygnał stał się
 blokującą bramką PR-to-release.

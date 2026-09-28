@@ -7,7 +7,7 @@ import { SignJWT } from "jose";
 import { parse } from "jsonc-parser";
 
 const originalDataDir = process.env.DATA_DIR;
-const databaseRoot = await fs.mkdtemp(path.join(os.tmpdir(), "omniroute-apply-jsonc-db-"));
+const databaseRoot = await fs.mkdtemp(path.join(os.tmpdir(), "agentproxy-apply-jsonc-db-"));
 process.env.DATA_DIR = databaseRoot;
 const applyRoute = await import("../../src/app/api/cli-tools/apply/route.ts");
 
@@ -15,10 +15,10 @@ const originalFetch = globalThis.fetch;
 const originalJwtSecret = process.env.JWT_SECRET;
 const originalApiKeySecret = process.env.API_KEY_SECRET;
 const originalXdg = process.env.XDG_CONFIG_HOME;
-const originalAllowContainerWrite = process.env.OMNIROUTE_ALLOW_CONTAINER_CONFIG_WRITE;
+const originalAllowContainerWrite = process.env.AGENTPROXY_ALLOW_CONTAINER_CONFIG_WRITE;
 // This test exercises the apply/merge path, not the container guard (#10057) —
 // keep it hermetic on container devboxes/CI.
-process.env.OMNIROUTE_ALLOW_CONTAINER_CONFIG_WRITE = "1";
+process.env.AGENTPROXY_ALLOW_CONTAINER_CONFIG_WRITE = "1";
 const testRoots = new Set<string>();
 
 async function createAuthCookie(): Promise<string> {
@@ -49,7 +49,7 @@ async function postApply(): Promise<Response> {
 }
 
 test.beforeEach(async () => {
-  const root = await fs.mkdtemp(path.join(os.tmpdir(), "omniroute-apply-jsonc-"));
+  const root = await fs.mkdtemp(path.join(os.tmpdir(), "agentproxy-apply-jsonc-"));
   testRoots.add(root);
   process.env.XDG_CONFIG_HOME = root;
   process.env.API_KEY_SECRET = "test-secret";
@@ -77,14 +77,16 @@ test.afterEach(async () => {
   if (originalXdg === undefined) delete process.env.XDG_CONFIG_HOME;
   else process.env.XDG_CONFIG_HOME = originalXdg;
   if (originalAllowContainerWrite === undefined)
-    delete process.env.OMNIROUTE_ALLOW_CONTAINER_CONFIG_WRITE;
-  else process.env.OMNIROUTE_ALLOW_CONTAINER_CONFIG_WRITE = originalAllowContainerWrite;
+    delete process.env.AGENTPROXY_ALLOW_CONTAINER_CONFIG_WRITE;
+  else process.env.AGENTPROXY_ALLOW_CONTAINER_CONFIG_WRITE = originalAllowContainerWrite;
   for (const root of testRoots)
     await fs.rm(root, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
   testRoots.clear();
 });
 
 test.after(async () => {
+  const { resetDbInstance } = await import("../../src/lib/db/core.ts");
+  resetDbInstance();
   if (originalDataDir === undefined) delete process.env.DATA_DIR;
   else process.env.DATA_DIR = originalDataDir;
   await fs.rm(databaseRoot, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
@@ -117,7 +119,7 @@ test("apply writes back to the selected opencode.jsonc and does not create openc
   assert.equal(response.status, 200);
   assert.equal(body.success, true);
   assert.equal(body.configPath, jsoncPath);
-  assert.equal(body.backupPath, path.join(configDir, ".omniroute.bak", "opencode.jsonc.bak"));
+  assert.equal(body.backupPath, path.join(configDir, ".agentproxy.bak", "opencode.jsonc.bak"));
   await assert.rejects(fs.access(jsonPath));
 
   const updatedText = await fs.readFile(jsoncPath, "utf-8");
@@ -125,7 +127,7 @@ test("apply writes back to the selected opencode.jsonc and does not create openc
   assert.match(updatedText, /keep comments inside unrelated providers too/);
   const updated = parse(updatedText);
   assert.deepEqual(updated.provider.custom, { name: "Custom Provider" });
-  assert.equal(updated.provider.omniroute.models["catalog-model"].limit.context, 131072);
+  assert.equal(updated.provider.agentproxy.models["catalog-model"].limit.context, 131072);
   assert.equal(await fs.readFile(body.backupPath!, "utf-8"), original);
 });
 
@@ -138,10 +140,11 @@ test("apply leaves an invalid opencode.jsonc untouched instead of overwriting it
   await fs.writeFile(jsoncPath, invalid, "utf-8");
 
   const response = await postApply();
-  const body = (await response.json()) as { error?: string };
+  const body = (await response.json()) as { error?: { message?: string } };
 
   assert.equal(response.status, 400);
-  assert.match(body.error || "", /invalid.*JSONC|refus/i);
+  assert.match(body.error?.message || "", /Generation failed: Existing OpenCode config at <path>/);
+  assert.ok(!JSON.stringify(body).includes(jsoncPath), "public error must redact the config path");
   assert.equal(await fs.readFile(jsoncPath, "utf-8"), invalid);
   await assert.rejects(fs.access(jsonPath));
 });

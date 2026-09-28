@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-// Repro for #6571 — REST-fallback path of `omniroute compression` (hit only when
+// Repro for #6571 — REST-fallback path of `agentproxy compression` (hit only when
 // the MCP surface is not mounted, i.e. mcpCall()'s 404/501 branch) uses the
 // nonexistent `engine` field instead of the canonical `defaultMode` field, and
 // the table renderer prints "[object Object]" for nested object cells.

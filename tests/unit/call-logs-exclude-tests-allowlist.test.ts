@@ -14,7 +14,7 @@ import path from "node:path";
  * connection-test rows.
  */
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-calllogs-allowlist-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-calllogs-allowlist-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.CALL_LOG_RETENTION_DAYS = "3650";
 

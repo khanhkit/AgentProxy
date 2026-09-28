@@ -20,7 +20,7 @@ import { goldenSnapshot } from "../helpers/goldenSnapshot.ts";
 // current translate-path behavior so any drift is caught as a snapshot diff.
 //
 // Ported from decolua/9router golden-provider-service test (JS/vitest) — adapted to
-// OmniRoute's TS provider service + node:test goldenSnapshot helper.
+// AgentProxy's TS provider service + node:test goldenSnapshot helper.
 
 const API_KEY_CRED = { apiKey: "sk-test-APIKEY", providerSpecificData: {} };
 const OAUTH_CRED = { accessToken: "tok-test-ACCESS", providerSpecificData: {} };
@@ -34,7 +34,7 @@ const OAUTH_CRED = { accessToken: "tok-test-ACCESS", providerSpecificData: {} };
 // (process.versions.node) forms are collapsed to <NODE>.
 const NODE_VERSION = typeof process !== "undefined" ? process.version : "";
 const NODE_VERSION_BARE = typeof process !== "undefined" ? (process.versions?.node ?? "") : "";
-// The OmniRoute app version leaks into headers (cline User-Agent `Cline/<ver>`,
+// The AgentProxy app version leaks into headers (cline User-Agent `Cline/<ver>`,
 // X-CLIENT-VERSION, X-CORE-VERSION — all clineAuth's APP_VERSION). clineAuth resolves
 // it from APP_CONFIG.version (the package.json version, stable in every shard), NOT from
 // process.env.npm_package_version (which is unset under a direct `node` run — Unit Tests

@@ -33,11 +33,11 @@ function request(locality: "loopback" | "remote", token = TOKEN) {
 }
 
 test.beforeEach(() => {
-  process.env.OMNIROUTE_INTERNAL_SERVICE_TOKEN = TOKEN;
+  process.env.AGENTPROXY_INTERNAL_SERVICE_TOKEN = TOKEN;
 });
 
 test.afterEach(() => {
-  delete process.env.OMNIROUTE_INTERNAL_SERVICE_TOKEN;
+  delete process.env.AGENTPROXY_INTERNAL_SERVICE_TOKEN;
 });
 
 test("Rust snapshot handler rejects a remote peer even with the correct token", async () => {

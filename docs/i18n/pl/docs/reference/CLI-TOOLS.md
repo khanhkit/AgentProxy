@@ -6,22 +6,22 @@
 
 ---
 
-title: "Narzędzia CLI — OmniRoute"
+title: "Narzędzia CLI — AgentProxy"
 version: 3.8.50
 lastUpdated: 2026-08-18
 ---
 
-# Narzędzia CLI — OmniRoute
+# Narzędzia CLI — AgentProxy
 
 Ostatnia aktualizacja: 2026-08-18
 
-OmniRoute integruje się z trzema kategoriami narzędzi CLI rozłożonymi na trzech dedykowanych stronach pulpitu:
+AgentProxy integruje się z trzema kategoriami narzędzi CLI rozłożonymi na trzech dedykowanych stronach pulpitu:
 
 | Strona         | Trasa                   | Koncepcja                                                                                   | Liczba         |
 | -------------- | ----------------------- | ------------------------------------------------------------------------------------------- | -------------- |
-| **Kod CLI**    | `/dashboard/cli-code`   | Narzędzia do kodowania, które wskazujesz na OmniRoute (Klient → CLI → OmniRoute → Dostawca) | 26             |
-| **Agenci CLI** | `/dashboard/cli-agents` | Autonomiczne agenty, które wskazujesz na OmniRoute (ta sama ścieżka, szerszy zakres)        | 8              |
-| **Agenci ACP** | `/dashboard/acp-agents` | CLIs, które OmniRoute uruchamia jako backend przez stdio/ACP (odwrotna ścieżka)             | zobacz rejestr |
+| **Kod CLI**    | `/dashboard/cli-code`   | Narzędzia do kodowania, które wskazujesz na AgentProxy (Klient → CLI → AgentProxy → Dostawca) | 26             |
+| **Agenci CLI** | `/dashboard/cli-agents` | Autonomiczne agenty, które wskazujesz na AgentProxy (ta sama ścieżka, szerszy zakres)        | 8              |
+| **Agenci ACP** | `/dashboard/acp-agents` | CLIs, które AgentProxy uruchamia jako backend przez stdio/ACP (odwrotna ścieżka)             | zobacz rejestr |
 
 Trasy legacy przekierowują przez 308: `/dashboard/cli-tools` → `/dashboard/cli-code`, `/dashboard/agents` → `/dashboard/acp-agents`.
 
@@ -33,14 +33,14 @@ Trasy legacy przekierowują przez 308: `/dashboard/cli-tools` → `/dashboard/cl
 Kod CLI / Agenci CLI (przepływ konsumpcji):
 Claude / Codex / OpenCode / Cline / KiloCode / Continue / Hermes Agent / Goose / ...
            │
-           ▼  (wszystkie wskazują na OmniRoute)
+           ▼  (wszystkie wskazują na AgentProxy)
     http://YOUR_SERVER:20128/v1
            │
-           ▼  (OmniRoute kieruje do odpowiedniego dostawcy)
+           ▼  (AgentProxy kieruje do odpowiedniego dostawcy)
     Anthropic / OpenAI / Gemini / DeepSeek / Groq / Mistral / ...
 
 Agenci ACP (odwrotny przepływ uruchamiania):
-    Żądanie klienta → OmniRoute → uruchamia CLI przez stdio/ACP → odpowiedź
+    Żądanie klienta → AgentProxy → uruchamia CLI przez stdio/ACP → odpowiedź
 ```
 
 **Korzyści:**
@@ -54,26 +54,26 @@ Agenci ACP (odwrotny przepływ uruchamiania):
 
 ## Automatyczna konfiguracja z `setup-*`
 
-Nie musisz pisać konfiguracji każdego narzędzia ręcznie. OmniRoute dostarcza polecenie `setup-*`
+Nie musisz pisać konfiguracji każdego narzędzia ręcznie. AgentProxy dostarcza polecenie `setup-*`
 dla każdego obsługiwanego CLI, które odczytuje **na żywo** katalog modeli z działającego
-OmniRoute (lokalnie lub zdalnie) i zapisuje własną konfigurację narzędzia na twojej maszynie:
+AgentProxy (lokalnie lub zdalnie) i zapisuje własną konfigurację narzędzia na twojej maszynie:
 
 ```bash
-omniroute setup-codex        omniroute setup-claude       omniroute setup-opencode
-omniroute setup-cline        omniroute setup-kilo         omniroute setup-continue
-omniroute setup-cursor       omniroute setup-roo          omniroute setup-crush
-omniroute setup-goose        omniroute setup-qwen         omniroute setup-aider
+agentproxy setup-codex        agentproxy setup-claude       agentproxy setup-opencode
+agentproxy setup-cline        agentproxy setup-kilo         agentproxy setup-continue
+agentproxy setup-cursor       agentproxy setup-roo          agentproxy setup-crush
+agentproxy setup-goose        agentproxy setup-qwen         agentproxy setup-aider
 ```
 
 Każde z nich akceptuje `--remote <url> --api-key <key>` (konfiguracja lokalnego narzędzia w
-odniesieniu do zdalnego OmniRoute), `--dry-run` (podgląd bez zapisywania) oraz `--port`. Narzędzia
+odniesieniu do zdalnego AgentProxy), `--dry-run` (podgląd bez zapisywania) oraz `--port`. Narzędzia
 bez automatycznego odkrywania modeli (Cline, Kilo, Roo, Goose, Aider, Qwen) przyjmują
 `--model <id>` (i `--yes` dla uruchomień bez interakcji). Aby uruchomić CLI z
 odpowiednim środowiskiem wstrzykniętym i bez zapisanej konfiguracji, użyj ogólnego
-uruchamiacza `omniroute run <target>` (claude, codex, aider, goose, opencode, qwen,
+uruchamiacza `agentproxy run <target>` (claude, codex, aider, goose, opencode, qwen,
 gemini — cele i aliasy pochodzą z `bin/cli/cli-manifest.mjs`); legacy
-uruchamiacze per-narzędzie `omniroute launch` (Claude Code) i `omniroute launch-codex`
-(Codex) pozostają dostępne. Gemini CLI jest tylko do uruchamiania: jest celem `omniroute run`
+uruchamiacze per-narzędzie `agentproxy launch` (Claude Code) i `agentproxy launch-codex`
+(Codex) pozostają dostępne. Gemini CLI jest tylko do uruchamiania: jest celem `agentproxy run`
 ale nie ma przepisu `setup-*`/`configure`.
 
 > **Pełna dokumentacja:** główny stół — co każde polecenie zapisuje, każdy flag,
@@ -82,22 +82,22 @@ ale nie ma przepisu `setup-*`/`configure`.
 
 ### Uruchamianie tych wewnątrz kontenera
 
-Polecenie `setup-*` wykonane wewnątrz kontenera OmniRoute zapisuje w
+Polecenie `setup-*` wykonane wewnątrz kontenera AgentProxy zapisuje w
 własnym katalogu domowym kontenera, do którego żadne lokalne CLI nie ma dostępu i które znika z
-kontenerem. OmniRoute to wykrywa i kończy z kodem `2` z instrukcjami zamiast
+kontenerem. AgentProxy to wykrywa i kończy z kodem `2` z instrukcjami zamiast
 zapisywać. Dwie wspierane metody — zainstaluj CLI na hoście i
-`omniroute connect` do kontenera, lub zamontuj katalogi konfiguracyjne i ustaw
+`agentproxy connect` do kontenera, lub zamontuj katalogi konfiguracyjne i ustaw
 `CLI_CONFIG_HOME` (profil hosta w compose). Każde polecenie `setup-*`, plus
-`omniroute configure` i `omniroute config set`, akceptuje
+`agentproxy configure` i `agentproxy config set`, akceptuje
 `--allow-container-write`, gdy konfiguracja własnych CLI kontenera jest tym, co
-naprawdę miałeś na myśli; `OMNIROUTE_ALLOW_CONTAINER_CONFIG_WRITE=true` robi to samo dla
+naprawdę miałeś na myśli; `AGENTPROXY_ALLOW_CONTAINER_CONFIG_WRITE=true` robi to samo dla
 serwera. Zobacz
-[Przewodnik Docker → Konfigurowanie narzędzi CLI na hoście](../guides/DOCKER_GUIDE.md#configuring-host-cli-tools-when-omniroute-runs-in-docker).
+[Przewodnik Docker → Konfigurowanie narzędzi CLI na hoście](../guides/DOCKER_GUIDE.md#configuring-host-cli-tools-when-agentproxy-runs-in-docker).
 
 **Endpoint zastosowania** pulpitu (`POST /api/cli-tools/apply`) egzekwuje
 ten sam guard: w kontenerze, zapis, którego cel nie jest zamontowany z hosta, odpowiada
 **`422`** z `containerEphemeralTarget: true`, bezpiecznym tekstem błędu i — dla narzędzi z przepisem hosta (claude, codex, opencode, cline,
-kilo, continue) — `hostSetupCommand` (np. `omniroute setup-opencode`), które należy uruchomić
+kilo, continue) — `hostSetupCommand` (np. `agentproxy setup-opencode`), które należy uruchomić
 na hoście zamiast tego; nic nie jest zapisywane. `dryRun: true` działa nadal w trybie kontenera
 i zwraca wygenerowaną zawartość + ścieżkę docelową bez dotykania dysku, więc
 możesz podglądać z pulpitu i zastosować na hoście. To zachowanie jest
@@ -131,8 +131,8 @@ deklarujące źródło, a test dryfu utrzymuje je w synchronizacji:
 | ------------------ | ----------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
 | **Skatalogowane**  | Pojawia się w katalogu dashboardu (nazwa, dostawca, dokumentacja, typ konfiguracji) | `src/shared/constants/cliTools.ts` (`CLI_TOOLS`)                  |
 | **Wykrywalne**     | Wykrywanie binariów/konfiguracji, kontrole stanu, ścieżki konfiguracji              | `src/shared/services/cliRuntime.ts` (`CLI_TOOLS` runtime catalog) |
-| **Konfigurowalne** | Wsparcie przez `omniroute configure <cli>` (istnieje przepis na konfigurację)       | `bin/cli/cli-manifest.mjs` (`configure: true`)                    |
-| **Uruchamialne**   | Wsparcie przez `omniroute run <target>` (definiowane wstrzykiwanie env/args)        | `bin/cli/cli-manifest.mjs` (`run: true`)                          |
+| **Konfigurowalne** | Wsparcie przez `agentproxy configure <cli>` (istnieje przepis na konfigurację)       | `bin/cli/cli-manifest.mjs` (`configure: true`)                    |
+| **Uruchamialne**   | Wsparcie przez `agentproxy run <target>` (definiowane wstrzykiwanie env/args)        | `bin/cli/cli-manifest.mjs` (`run: true`)                          |
 
 `bin/cli/cli-manifest.mjs` jest kanonicznym manifestem wykonywalnym dla poleceń CLI: `run`, `configure` oraz generatorów uzupełnień powłoki, które czerpią swoje
 listy celów, rozwiązywanie aliasów (na przykład `kilocode`/`kilo-code`/`kilo_cli` → `kilo`)
@@ -195,7 +195,7 @@ Autonomiczne agenty, które pojawiają się w `/dashboard/cli-agents`:
 
 ## 3. Agenci ACP (/dashboard/acp-agents)
 
-Ta strona (zmieniona z `/dashboard/agents`) pokazuje CLI, które OmniRoute może **uruchomić** jako silniki wykonawcze w tle za pomocą protokołu stdio/ACP. Katalog jest utrzymywany osobno w `src/lib/acp/registry.ts` i **nie** jest tym samym co `CLI_TOOLS`.
+Ta strona (zmieniona z `/dashboard/agents`) pokazuje CLI, które AgentProxy może **uruchomić** jako silniki wykonawcze w tle za pomocą protokołu stdio/ACP. Katalog jest utrzymywany osobno w `src/lib/acp/registry.ts` i **nie** jest tym samym co `CLI_TOOLS`.
 
 ---
 
@@ -258,7 +258,7 @@ Nowe narzędzia z `configType: "custom"` mają dedykowane trasy API do ustawień
 | `POST /api/cli-tools/codewhale-settings`    | CodeWhale (OPENAI_BASE_URL, primary + legacy `~/.deepseek` sync) |
 | `POST /api/cli-tools/smelt-settings`        | Smelt                                                            |
 | `POST /api/cli-tools/pi-settings`           | Pi coding agent                                                  |
-| `POST /api/cli-tools/grok-build-settings`   | Grok Build (~/.grok/config.toml, `[model.omniroute]`)            |
+| `POST /api/cli-tools/grok-build-settings`   | Grok Build (~/.grok/config.toml, `[model.agentproxy]`)            |
 | `POST /api/cli-tools/qwen-settings`         | Qwen Code (`~/.qwen/settings.json` + dedicated `.env` key)       |
 
 Wszystkie trasy używają `sanitizeErrorMessage()` do odpowiedzi błędów (Twarda zasada #12).
@@ -318,7 +318,7 @@ Pełne tłumaczenia PT-BR i EN są dostępne. 39 innych lokalizacji automatyczni
 
 ## 9. Szybki start
 
-### Krok 1 — Uzyskaj klucz API OmniRoute
+### Krok 1 — Uzyskaj klucz API AgentProxy
 
 1. Otwórz `/dashboard/api-manager` → **Utwórz klucz API**
 2. Nadaj mu nazwę (np. `cli-tools`) i wybierz wszystkie uprawnienia
@@ -351,7 +351,7 @@ npm install -g kilocode
 # Qwen Code
 npm install -g @qwen-code/qwen-code
 
-# Google Gemini CLI (uruchamiane przez `omniroute run gemini` → /v1beta surface)
+# Google Gemini CLI (uruchamiane przez `agentproxy run gemini` → /v1beta surface)
 npm install -g @google/gemini-cli
 
 # Aider
@@ -382,14 +382,14 @@ cargo install smelt  # Oparte na Rust
 ### Krok 4 — Ustaw globalne zmienne środowiskowe
 
 ```bash
-# Uniwersalny punkt końcowy OmniRoute
+# Uniwersalny punkt końcowy AgentProxy
 export OPENAI_BASE_URL="http://localhost:20128/v1"
-export OPENAI_API_KEY="sk-your-omniroute-key"
+export OPENAI_API_KEY="sk-your-agentproxy-key"
 export ANTHROPIC_BASE_URL="http://localhost:20128"
-export ANTHROPIC_AUTH_TOKEN="sk-your-omniroute-key"
+export ANTHROPIC_AUTH_TOKEN="sk-your-agentproxy-key"
 # Gemini CLI odczytuje GOOGLE_GEMINI_BASE_URL na ROOT (jego SDK dodaje /v1beta/... samodzielnie)
 export GOOGLE_GEMINI_BASE_URL="http://localhost:20128"
-export GEMINI_API_KEY="sk-your-omniroute-key"
+export GEMINI_API_KEY="sk-your-agentproxy-key"
 ```
 
 > Dla **zdalnego serwera** zamień `localhost:20128` na adres IP serwera lub domenę,
@@ -407,7 +407,7 @@ mkdir -p ~/.claude && cat > ~/.claude/settings.json << EOF
 {
   "env": {
     "ANTHROPIC_BASE_URL": "http://localhost:20128",
-    "ANTHROPIC_AUTH_TOKEN": "sk-your-omniroute-key"
+    "ANTHROPIC_AUTH_TOKEN": "sk-your-agentproxy-key"
   }
 }
 EOF
@@ -423,20 +423,20 @@ Użyj zjednoczonego korzenia bramy Anthropic dla Claude Code. Nie dodawaj tutaj 
 
 Nowoczesny Codex (v0.137+) odczytuje tylko `~/.codex/config.toml` — stary
 `config.yaml` należy do przestarzałego CLI npm i jest cicho ignorowany. Klucz API
-pozostaje w zmiennej środowiskowej `OMNIROUTE_API_KEY` (`env_key`), nigdy
+pozostaje w zmiennej środowiskowej `AGENTPROXY_API_KEY` (`env_key`), nigdy
 wewnątrz pliku:
 
 ```bash
 mkdir -p ~/.codex && cat > ~/.codex/config.toml << EOF
-model_provider = "omniroute"
+model_provider = "agentproxy"
 
-[model_providers.omniroute]
-name                 = "OmniRoute"
+[model_providers.agentproxy]
+name                 = "AgentProxy"
 base_url             = "http://localhost:20128/v1"
-env_key              = "OMNIROUTE_API_KEY"
+env_key              = "AGENTPROXY_API_KEY"
 requires_openai_auth = false
 EOF
-export OMNIROUTE_API_KEY="sk-your-omniroute-key"
+export AGENTPROXY_API_KEY="sk-your-agentproxy-key"
 ```
 
 Pełna dokumentacja (profile, `wire_api`, okna kontekstowe): [CODEX-CLI-CONFIGURATION.md](../guides/CODEX-CLI-CONFIGURATION.md).
@@ -452,12 +452,12 @@ mkdir -p ~/.config/opencode && cat > ~/.config/opencode/opencode.json << EOF
 {
   "\$schema": "https://opencode.ai/config.json",
   "provider": {
-    "omniroute": {
+    "agentproxy": {
       "npm": "@ai-sdk/openai-compatible",
-      "name": "OmniRoute",
+      "name": "AgentProxy",
       "options": {
         "baseURL": "http://localhost:20128/v1",
-        "apiKey": "sk-your-omniroute-key"
+        "apiKey": "sk-your-agentproxy-key"
       },
       "models": {
         "claude-sonnet-4-5": { "name": "claude-sonnet-4-5" },
@@ -472,7 +472,7 @@ EOF
 
 **Test:** `opencode`
 
-> Użyj `opencode run "your prompt" --model omniroute/claude-sonnet-4-5-thinking --variant high`
+> Użyj `opencode run "your prompt" --model agentproxy/claude-sonnet-4-5-thinking --variant high`
 > aby wysłać warianty myślenia.
 
 ---
@@ -486,7 +486,7 @@ mkdir -p ~/.cline/data && cat > ~/.cline/data/globalState.json << EOF
 {
   "apiProvider": "openai",
   "openAiBaseUrl": "http://localhost:20128/v1",
-  "openAiApiKey": "sk-your-omniroute-key"
+  "openAiApiKey": "sk-your-agentproxy-key"
 }
 EOF
 ```
@@ -494,7 +494,7 @@ EOF
 **Tryb VS Code:**
 Ustawienia rozszerzenia Cline → Dostawca API: `OpenAI Compatible` → Podstawowy URL: `http://localhost:20128/v1`
 
-Lub użyj dashboardu OmniRoute → **Narzędzia CLI → Cline → Zastosuj konfigurację**.
+Lub użyj dashboardu AgentProxy → **Narzędzia CLI → Cline → Zastosuj konfigurację**.
 
 ---
 
@@ -503,7 +503,7 @@ Lub użyj dashboardu OmniRoute → **Narzędzia CLI → Cline → Zastosuj konfi
 **Tryb CLI:**
 
 ```bash
-kilocode --api-base http://localhost:20128/v1 --api-key sk-your-omniroute-key
+kilocode --api-base http://localhost:20128/v1 --api-key sk-your-agentproxy-key
 ```
 
 **Ustawienia VS Code:**
@@ -511,11 +511,11 @@ kilocode --api-base http://localhost:20128/v1 --api-key sk-your-omniroute-key
 ```json
 {
   "kilo-code.openAiBaseUrl": "http://localhost:20128/v1",
-  "kilo-code.apiKey": "sk-your-omniroute-key"
+  "kilo-code.apiKey": "sk-your-agentproxy-key"
 }
 ```
 
-Lub użyj dashboardu OmniRoute → **Narzędzia CLI → KiloCode → Zastosuj konfigurację**.
+Lub użyj dashboardu AgentProxy → **Narzędzia CLI → KiloCode → Zastosuj konfigurację**.
 
 ---
 
@@ -525,11 +525,11 @@ Edytuj `~/.continue/config.yaml`:
 
 ```yaml
 models:
-  - name: OmniRoute
+  - name: AgentProxy
     provider: openai
     model: auto
     apiBase: http://localhost:20128/v1
-    apiKey: sk-your-omniroute-key
+    apiKey: sk-your-agentproxy-key
     default: true
 ```
 
@@ -539,25 +539,25 @@ Uruchom ponownie VS Code po edytowaniu.
 
 #### VS Code Insiders (`chatLanguageModels.json`)
 
-Użyj tego, gdy VS Code Insiders jest skonfigurowany dla modeli punktów końcowych i chcesz, aby OmniRoute działał bez niestandardowego pola nagłówka.
+Użyj tego, gdy VS Code Insiders jest skonfigurowany dla modeli punktów końcowych i chcesz, aby AgentProxy działał bez niestandardowego pola nagłówka.
 
 **Zalecana lokalizacja:**
 
 - Linux: `~/.config/Code - Insiders/User/chatLanguageModels.json`
 - Windows: `%APPDATA%/Code - Insiders/User/chatLanguageModels.json`
 
-**Przykład używający tokenizowanego aliasu OmniRoute:**
+**Przykład używający tokenizowanego aliasu AgentProxy:**
 
 ```json
 [
   {
     "vendor": "customendpoint",
     "id": "auto",
-    "name": "OmniRoute Auto",
+    "name": "AgentProxy Auto",
     "family": "gpt-4",
     "version": "1.0.0",
-    "url": "http://localhost:20128/api/v1/vscode/sk-your-omniroute-key/chat/completions",
-    "modelsUrl": "http://localhost:20128/api/v1/vscode/sk-your-omniroute-key/models",
+    "url": "http://localhost:20128/api/v1/vscode/sk-your-agentproxy-key/chat/completions",
+    "modelsUrl": "http://localhost:20128/api/v1/vscode/sk-your-agentproxy-key/models",
     "requestFormat": "openai-chat-completions",
     "contextWindow": 256000,
     "maxOutputTokens": 32768,
@@ -570,7 +570,7 @@ Użyj tego, gdy VS Code Insiders jest skonfigurowany dla modeli punktów końcow
 
 **Uwagi:**
 
-- Zamień `sk-your-omniroute-key` na klucz API utworzony w OmniRoute.
+- Zamień `sk-your-agentproxy-key` na klucz API utworzony w AgentProxy.
 - Pole `url` powinno wskazywać na `/api/v1/vscode/{token}/chat/completions`.
 - Pole `modelsUrl` powinno wskazywać na `/api/v1/vscode/{token}/models`.
 - Preferuj normalny przepływ `/v1` + nagłówek Bearer, gdy klient obsługuje niestandardowe nagłówki.
@@ -584,40 +584,40 @@ Użyj tego, gdy VS Code Insiders jest skonfigurowany dla modeli punktów końcow
 # Zaloguj się do swojego konta AWS/Kiro:
 kiro-cli login
 
-# CLI używa własnej autoryzacji — OmniRoute nie jest potrzebny jako backend dla Kiro CLI.
-# Użyj kiro-cli obok OmniRoute dla innych narzędzi.
+# CLI używa własnej autoryzacji — AgentProxy nie jest potrzebny jako backend dla Kiro CLI.
+# Użyj kiro-cli obok AgentProxy dla innych narzędzi.
 kiro-cli status
 ```
 
-Dla aplikacji desktopowej **Kiro IDE** użyj punktu końcowego MITM udostępnionego przez OmniRoute
+Dla aplikacji desktopowej **Kiro IDE** użyj punktu końcowego MITM udostępnionego przez AgentProxy
 pod `/dashboard/cli-tools → Kiro`.
 
 ---
 
-## 10. Wewnętrzny OmniRoute CLI
+## 10. Wewnętrzny AgentProxy CLI
 
-Binarna wersja `omniroute` oferuje polecenia do zarządzania cyklem życia serwera, konfiguracji, diagnostyki i zarządzania dostawcami. Punkt wejścia: `bin/omniroute.mjs`.
+Binarna wersja `agentproxy` oferuje polecenia do zarządzania cyklem życia serwera, konfiguracji, diagnostyki i zarządzania dostawcami. Punkt wejścia: `bin/agentproxy.mjs`.
 
 ```bash
-omniroute                              # Uruchom serwer (domyślny port 20128)
-omniroute setup                        # Interaktywny kreator konfiguracji
-omniroute doctor                       # Sprawdź konfigurację, DB, porty, czas działania
-omniroute providers list               # Skonfigurowane połączenia dostawców
-omniroute providers test-all           # Przetestuj każde aktywne połączenie
-omniroute reset-password               # Zresetuj hasło administratora
-omniroute logs                         # Strumieniuj logi żądań
-omniroute health                       # Szczegółowe informacje o stanie (wyłączniki, pamięć podręczna, pamięć)
-omniroute --version                    # Wydrukuj wersję
-omniroute --help                       # Pokaż wszystkie polecenia
+agentproxy                              # Uruchom serwer (domyślny port 20128)
+agentproxy setup                        # Interaktywny kreator konfiguracji
+agentproxy doctor                       # Sprawdź konfigurację, DB, porty, czas działania
+agentproxy providers list               # Skonfigurowane połączenia dostawców
+agentproxy providers test-all           # Przetestuj każde aktywne połączenie
+agentproxy reset-password               # Zresetuj hasło administratora
+agentproxy logs                         # Strumieniuj logi żądań
+agentproxy health                       # Szczegółowe informacje o stanie (wyłączniki, pamięć podręczna, pamięć)
+agentproxy --version                    # Wydrukuj wersję
+agentproxy --help                       # Pokaż wszystkie polecenia
 ```
 
 ### Konfiguracja i inicjalizacja
 
 ```bash
-omniroute setup                        # Interaktywny kreator konfiguracji
-omniroute setup --non-interactive      # Tryb CI/automatyzacji (odczytuje zmienne środowiskowe + flagi)
-omniroute setup --password '<value>'   # Ustaw hasło administratora bezpośrednio
-omniroute setup --add-provider \
+agentproxy setup                        # Interaktywny kreator konfiguracji
+agentproxy setup --non-interactive      # Tryb CI/automatyzacji (odczytuje zmienne środowiskowe + flagi)
+agentproxy setup --password '<value>'   # Ustaw hasło administratora bezpośrednio
+agentproxy setup --add-provider \
   --provider openai \
   --api-key '<value>' \
   --test-provider                      # Dodaj i przetestuj dostawcę w jednym kroku
@@ -627,21 +627,21 @@ Rozpoznane zmienne środowiskowe do konfiguracji bez interakcji:
 
 | Var                 | Cel                                                             |
 | ------------------- | --------------------------------------------------------------- |
-| `OMNIROUTE_API_KEY` | Klucz API dostawcy (powiązany z `--api-key` za pomocą `.env()`) |
-| `DATA_DIR`          | Nadpisz katalog danych OmniRoute                                |
+| `AGENTPROXY_API_KEY` | Klucz API dostawcy (powiązany z `--api-key` za pomocą `.env()`) |
+| `DATA_DIR`          | Nadpisz katalog danych AgentProxy                                |
 
 Wszystkie inne wejścia bez interakcji są przekazywane jako flagi, a nie zmienne środowiskowe:
 `--password`, `--provider`, `--provider-name`, `--provider-base-url`, `--default-model`
-(zobacz opcje `omniroute setup` powyżej).
+(zobacz opcje `agentproxy setup` powyżej).
 
 ### Diagnostyka
 
 ```bash
-omniroute doctor                       # Sprawdź konfigurację, DB, porty, czas działania, pamięć, żywotność
-omniroute doctor --json                # Odczyt maszynowy w formacie JSON
-omniroute doctor --no-liveness         # Pomiń HTTP health probe
-omniroute doctor --host 0.0.0.0        # Nadpisz host żywotności
-omniroute doctor --liveness-url <url>  # Pełny adres URL punktu końcowego zdrowia
+agentproxy doctor                       # Sprawdź konfigurację, DB, porty, czas działania, pamięć, żywotność
+agentproxy doctor --json                # Odczyt maszynowy w formacie JSON
+agentproxy doctor --no-liveness         # Pomiń HTTP health probe
+agentproxy doctor --host 0.0.0.0        # Nadpisz host żywotności
+agentproxy doctor --liveness-url <url>  # Pełny adres URL punktu końcowego zdrowia
 ```
 
 Diagnosta wykonuje te kontrole: `Konfiguracja`, `Baza danych`, `Przechowywanie/szyfrowanie`,
@@ -651,47 +651,47 @@ Diagnosta wykonuje te kontrole: `Konfiguracja`, `Baza danych`, `Przechowywanie/s
 ### Zarządzanie dostawcami
 
 ```bash
-omniroute providers available                       # Katalog dostawców OmniRoute
-omniroute providers available --search openai       # Filtruj katalog według id/nazwy/aliasu/kategorii
-omniroute providers available --category api-key    # Filtruj według kategorii (api-key, oauth, free, ...)
-omniroute providers available --json                # Odczyt maszynowy w formacie JSON
+agentproxy providers available                       # Katalog dostawców AgentProxy
+agentproxy providers available --search openai       # Filtruj katalog według id/nazwy/aliasu/kategorii
+agentproxy providers available --category api-key    # Filtruj według kategorii (api-key, oauth, free, ...)
+agentproxy providers available --json                # Odczyt maszynowy w formacie JSON
 
-omniroute providers list                            # Skonfigurowane połączenia dostawców
-omniroute providers list --json
+agentproxy providers list                            # Skonfigurowane połączenia dostawców
+agentproxy providers list --json
 
-omniroute providers test <id|name>                  # Przetestuj jedno skonfigurowane połączenie
-omniroute providers test-all                        # Przetestuj każde aktywne połączenie
-omniroute providers validate                        # Walidacja strukturalna tylko lokalnie
-omniroute providers add <provider> --credential-env PROVIDER_KEY
-omniroute providers import ./providers.json --dry-run --json
-omniroute providers auth <provider>                 # Istniejący proces OAuth
-omniroute providers edit <id|name> --default-model <model>
-omniroute providers remove <id|name> --yes
+agentproxy providers test <id|name>                  # Przetestuj jedno skonfigurowane połączenie
+agentproxy providers test-all                        # Przetestuj każde aktywne połączenie
+agentproxy providers validate                        # Walidacja strukturalna tylko lokalnie
+agentproxy providers add <provider> --credential-env PROVIDER_KEY
+agentproxy providers import ./providers.json --dry-run --json
+agentproxy providers auth <provider>                 # Istniejący proces OAuth
+agentproxy providers edit <id|name> --default-model <model>
+agentproxy providers remove <id|name> --yes
 ```
 
 `providers add/import/auth/edit/remove` są oparte na API i dlatego działają w
 aktywnym lokalnym lub zdalnym kontekście. Wprowadzenie poświadczeń powinno używać
 `--credential-stdin` lub `--credential-env`; `--dry-run --json` raportuje tylko
-ukryte istnienie/kształt. `providers available` odczytuje katalog OmniRoute;
+ukryte istnienie/kształt. `providers available` odczytuje katalog AgentProxy;
 `providers list/test/test-all/validate` zachowują swoje lokalne zachowanie SQLite i
 nie wymagają uruchomionego serwera.
 
 ### Przywracanie i resetowanie
 
 ```bash
-omniroute reset-password                # Zresetuj hasło administratora (również: omniroute-reset-password)
-omniroute reset-encrypted-columns       # Pokaż ostrzeżenie + dry-run dla resetowania szyfrowanych poświadczeń
-omniroute reset-encrypted-columns --force  # Rzeczywiście wyczyść szyfrowane poświadczenia w SQLite
+agentproxy reset-password                # Zresetuj hasło administratora (również: agentproxy-reset-password)
+agentproxy reset-encrypted-columns       # Pokaż ostrzeżenie + dry-run dla resetowania szyfrowanych poświadczeń
+agentproxy reset-encrypted-columns --force  # Rzeczywiście wyczyść szyfrowane poświadczenia w SQLite
 ```
 
 ### Eksport poświadczeń (⚠ traktuj ostrożnie)
 
 ```bash
-omniroute auth export                                 # Pokaż ostrzeżenie + bramkę potwierdzenia — brak dostępu do DB
-omniroute auth export --force                          # Eksportuj WSZYSTKIE połączenia z DESZYFROWANYMI poświadczeniami do stdout jako JSON
-omniroute auth export --force --id <id>                 # Eksportuj tylko pasujące połączenie
-omniroute auth export --force --format env               # Emituj linie OMNIROUTE_<PROVIDER>_<FIELD>=<value>
-omniroute auth export --force --out creds.json           # Zapisz do pliku (utworzony z uprawnieniami 0600)
+agentproxy auth export                                 # Pokaż ostrzeżenie + bramkę potwierdzenia — brak dostępu do DB
+agentproxy auth export --force                          # Eksportuj WSZYSTKIE połączenia z DESZYFROWANYMI poświadczeniami do stdout jako JSON
+agentproxy auth export --force --id <id>                 # Eksportuj tylko pasujące połączenie
+agentproxy auth export --force --format env               # Emituj linie AGENTPROXY_<PROVIDER>_<FIELD>=<value>
+agentproxy auth export --force --out creds.json           # Zapisz do pliku (utworzony z uprawnieniami 0600)
 ```
 
 `auth export` jest **tylko lokalny** (bezpośredni odczyt SQLite, brak trasy HTTP) i celowo drukuje/zapisuje
@@ -703,36 +703,36 @@ Pole, które nie uda się zdeszyfrować (stary klucz, uszkodzony szyfrogram) jes
 
 ### Inne podpolecenia
 
-Te zakładają działający serwer OmniRoute, chyba że zaznaczone inaczej:
+Te zakładają działający serwer AgentProxy, chyba że zaznaczone inaczej:
 
 ```bash
-omniroute status                       # Wszechstronny status czasu działania
-omniroute logs                         # Strumieniuj logi żądań (--json, --search, --follow)
-omniroute config show                  # Wyświetl bieżącą konfigurację
+agentproxy status                       # Wszechstronny status czasu działania
+agentproxy logs                         # Strumieniuj logi żądań (--json, --search, --follow)
+agentproxy config show                  # Wyświetl bieżącą konfigurację
 
-omniroute provider list                # Lista dostępnych dostawców (alias polecenia providers list)
-omniroute provider add                 # Zarejestruj OmniRoute jako dostawcę w narzędziu
-omniroute keys add | list | remove     # Zarządzaj kluczami API
-omniroute models [provider]            # Lista modeli (--json, --search)
-omniroute combo list | switch | create | delete
+agentproxy provider list                # Lista dostępnych dostawców (alias polecenia providers list)
+agentproxy provider add                 # Zarejestruj AgentProxy jako dostawcę w narzędziu
+agentproxy keys add | list | remove     # Zarządzaj kluczami API
+agentproxy models [provider]            # Lista modeli (--json, --search)
+agentproxy combo list | switch | create | delete
 
-omniroute backup                       # Zrzut konfiguracji + DB
-omniroute restore                      # Przywróć z poprzedniego zrzutu
+agentproxy backup                       # Zrzut konfiguracji + DB
+agentproxy restore                      # Przywróć z poprzedniego zrzutu
 
-omniroute health                       # Szczegółowe informacje o stanie (wyłączniki, pamięć podręczna, pamięć)
-omniroute quota                        # Użycie limitu dostawcy
-omniroute cache                        # Status pamięci podręcznej
-omniroute cache clear                  # Wyczyść pamięć podręczną semantyczną + podpisów
+agentproxy health                       # Szczegółowe informacje o stanie (wyłączniki, pamięć podręczna, pamięć)
+agentproxy quota                        # Użycie limitu dostawcy
+agentproxy cache                        # Status pamięci podręcznej
+agentproxy cache clear                  # Wyczyść pamięć podręczną semantyczną + podpisów
 
-omniroute mcp status | restart         # Status serwera MCP / restart
-omniroute a2a status | card            # Status serwera A2A / karta agenta
+agentproxy mcp status | restart         # Status serwera MCP / restart
+agentproxy a2a status | card            # Status serwera A2A / karta agenta
 
-omniroute tunnel list | create | stop  # Zarządzaj tunelami (cloudflare/tailscale/ngrok)
-omniroute env show | get <k> | set <k> <v>  # Inspekcja / ustaw zmienne środowiskowe (tymczasowe)
+agentproxy tunnel list | create | stop  # Zarządzaj tunelami (cloudflare/tailscale/ngrok)
+agentproxy env show | get <k> | set <k> <v>  # Inspekcja / ustaw zmienne środowiskowe (tymczasowe)
 
-omniroute test                         # Test łączności dostawcy
-omniroute update                       # Sprawdź dostępność aktualizacji
-omniroute completion                   # Generuj uzupełnienie powłoki
+agentproxy test                         # Test łączności dostawcy
+agentproxy update                       # Sprawdź dostępność aktualizacji
+agentproxy completion                   # Generuj uzupełnienie powłoki
 ```
 
 ### Wspólne flagi
@@ -761,7 +761,7 @@ omniroute completion                   # Generuj uzupełnienie powłoki
 | `/v1/audio/speech`         | Tekst na mowę                       | ElevenLabs, OpenAI TTS                |
 | `/v1/audio/transcriptions` | Mowa na tekst                       | Deepgram, AssemblyAI                  |
 
-Przykłady gotowe do wklejenia z tokenizowanym adresem URL OmniRoute:
+Przykłady gotowe do wklejenia z tokenizowanym adresem URL AgentProxy:
 
 ```txt
 Przykład tokena: sk-a3ab3c080beaee3a-69f4a4-070d71af
@@ -780,7 +780,7 @@ Czat Ollama: http://localhost:20128/api/v1/vscode/sk-a3ab3c080beaee3a-69f4a4-070
 
 | Błąd                                            | Przyczyna                       | Naprawa                                                      |
 | ----------------------------------------------- | ------------------------------- | ------------------------------------------------------------ |
-| `Connection refused`                            | OmniRoute nie działa            | `omniroute serve`                                            |
+| `Connection refused`                            | AgentProxy nie działa            | `agentproxy serve`                                            |
 | `401 Unauthorized`                              | Zły klucz API                   | Sprawdź w `/dashboard/api-manager`                           |
 | `No combo configured`                           | Brak aktywnego zestawu routingu | Skonfiguruj w `/dashboard/combos`                            |
 | CLI pokazuje "not installed"                    | Plik binarny nie w PATH         | Sprawdź `which <command>`                                    |

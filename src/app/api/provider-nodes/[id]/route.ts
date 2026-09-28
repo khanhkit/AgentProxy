@@ -111,7 +111,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
 
     try {
       const { registerMoonshotFetchersForNodes } = await import(
-        "@omniroute/open-sse/services/moonshotQuotaFetcher.ts"
+        "@agentproxy/open-sse/services/moonshotQuotaFetcher.ts"
       );
       registerMoonshotFetchersForNodes([
         {

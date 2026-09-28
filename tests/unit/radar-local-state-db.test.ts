@@ -10,7 +10,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-radar-local-state-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-radar-local-state-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.RADAR_ENABLED = "true";
 
@@ -54,15 +54,15 @@ test("migration 153 creates the closed local model state schema", () => {
 
 test("legacy Radar migration 143 is rehomed before the canonical API-key migration runs", () => {
   const db = core.getDbInstance();
-  db.prepare("DELETE FROM _omniroute_migrations WHERE version IN ('143', '153')").run();
+  db.prepare("DELETE FROM _agentproxy_migrations WHERE version IN ('143', '153')").run();
   db.prepare(
-    "INSERT INTO _omniroute_migrations (version, name) VALUES ('143', 'radar_local_model_state')"
+    "INSERT INTO _agentproxy_migrations (version, name) VALUES ('143', 'radar_local_model_state')"
   ).run();
 
   core.resetDbInstance();
   const reopened = core.getDbInstance();
   const rows = reopened
-    .prepare("SELECT version, name FROM _omniroute_migrations WHERE version IN ('143', '153')")
+    .prepare("SELECT version, name FROM _agentproxy_migrations WHERE version IN ('143', '153')")
     .all() as Array<{ version: string; name: string }>;
 
   assert.deepEqual(rows, [

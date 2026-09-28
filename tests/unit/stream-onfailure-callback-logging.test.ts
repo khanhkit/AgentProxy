@@ -10,7 +10,7 @@ import path from "node:path";
 // Fix: keep the catch (a buggy failure handler must never break the stream) but emit
 // a contextual console.debug so the swallowed error is discoverable.
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-8142-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-8142-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 const core = await import("../../src/lib/db/core.ts");
 const { createSSEStream } = await import("../../open-sse/utils/stream.ts");

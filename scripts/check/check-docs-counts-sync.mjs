@@ -373,7 +373,7 @@ export function checkFreeTierHeadline(content, totals) {
   return { ok: false, detail: problems.join("; ") };
 }
 
-// PURE: docs prose that names the product version ("OmniRoute v3.8.50 ·",
+// PURE: docs prose that names the product version ("AgentProxy v3.8.50 ·",
 // "**Current version:** 3.8.50") must match package.json exactly.
 export function readPackageVersion() {
   try {
@@ -385,7 +385,7 @@ export function readPackageVersion() {
 
 export function makeVersionClaimValidator(expected) {
   const PATTERNS = [
-    /OmniRoute v(\d+\.\d+\.\d+)/g,
+    /AgentProxy v(\d+\.\d+\.\d+)/g,
     /Current version:\*{0,2}\s*\*{0,2}(\d+\.\d+\.\d+)/g,
   ];
   return (content) => {

@@ -2,7 +2,7 @@
 // extracted from handleChatCore's streaming success path (chatCore god-file decomposition, #3501).
 // buildStreamingResponseHeaders is injected so the merge of upstream headers + request-id + the
 // optional compression header is observable. Locks: zeroed latency/usage/cost at stream start, the
-// x-omniroute-request-id, and the compression header only when meta is present.
+// x-agentproxy-request-id, and the compression header only when meta is present.
 import { test } from "node:test";
 import assert from "node:assert/strict";
 
@@ -30,11 +30,11 @@ function baseArgs(overrides: Record<string, unknown> = {}) {
   } as Parameters<typeof assembleStreamingResponseHeaders>[0];
 }
 
-test("merges upstream headers and sets x-omniroute-request-id", () => {
+test("merges upstream headers and sets x-agentproxy-request-id", () => {
   const { build } = makeBuild();
   const h = assembleStreamingResponseHeaders(baseArgs(), build);
   assert.equal(h["x-upstream"], "kept");
-  assert.equal(h["x-omniroute-request-id"], "preq-1");
+  assert.equal(h["x-agentproxy-request-id"], "preq-1");
 });
 
 test("buildStreamingResponseHeaders receives zeroed latency/usage/cost and cacheHit false", () => {

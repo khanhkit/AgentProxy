@@ -3,8 +3,8 @@
 // The CCR ("Content-Compression-Retrieve") engine can replace an ENTIRE
 // single-message user prompt with nothing but a bare
 // `[CCR retrieve hash=... chars=N]` marker. The MCP tool that could expand
-// that marker (`omniroute_ccr_retrieve`) is only ever exposed through
-// OmniRoute's own MCP server — never injected into the `tools` array of a
+// that marker (`agentproxy_ccr_retrieve`) is only ever exposed through
+// AgentProxy's own MCP server — never injected into the `tools` array of a
 // plain /v1/chat/completions OpenAI-compatible request. So for non-MCP
 // clients (OpenCode, Claude Code in "openai-compatible" mode, or any generic
 // proxy client), once a large first-turn prompt is compressed, the original
@@ -70,7 +70,7 @@ describe("issue #7746 — CCR must not reduce the sole user prompt to a bare, un
     // not enough — a non-MCP caller received "[CCR retrieve hash=...] markers"
     // it had no tool to resolve (upstream saw 112 of ~3.6K tokens). The engine
     // now refuses to replace content at all when tools[] lacks
-    // omniroute_ccr_retrieve: compressed=false, message content untouched.
+    // agentproxy_ccr_retrieve: compressed=false, message content untouched.
     assert.equal(
       result.compressed,
       false,
@@ -137,11 +137,11 @@ describe("issue #7746 — CCR must not reduce the sole user prompt to a bare, un
     });
   }
 
-  it("MCP-capable caller (tools[] advertises omniroute_ccr_retrieve): replacement still runs and stays retrievable", () => {
+  it("MCP-capable caller (tools[] advertises agentproxy_ccr_retrieve): replacement still runs and stays retrievable", () => {
     resetCcrStore();
     const body = {
       ...makeOpenCodeStyleRequestBody(),
-      tools: [{ type: "function", function: { name: "omniroute_ccr_retrieve" } }],
+      tools: [{ type: "function", function: { name: "agentproxy_ccr_retrieve" } }],
     };
     const result = ccrEngine.apply(body as Record<string, unknown>, { stepConfig: {} });
 
@@ -156,7 +156,7 @@ describe("issue #7746 — CCR must not reduce the sole user prompt to a bare, un
       "instruction content must be non-empty"
     );
     assert.ok(
-      messages[0].content.includes("omniroute_ccr_retrieve"),
+      messages[0].content.includes("agentproxy_ccr_retrieve"),
       "instruction must teach the retrieve tool contract"
     );
     const compressedContent = messages[1].content;

@@ -6,15 +6,15 @@ import path from "node:path";
 
 // This file is executed only by the process-isolated unit-test wrapper. State
 // mutations and repository imports must remain here, never in the parent test.
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-zed-stream-data-"));
-const TEST_PLUGINS_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-zed-stream-plugins-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-zed-stream-data-"));
+const TEST_PLUGINS_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-zed-stream-plugins-"));
 const originalDataDir = process.env.DATA_DIR;
-const originalPluginsDir = process.env.OMNIROUTE_PLUGINS_DIR;
+const originalPluginsDir = process.env.AGENTPROXY_PLUGINS_DIR;
 const originalFetch = globalThis.fetch;
 let networkCalls = 0;
 
 process.env.DATA_DIR = TEST_DATA_DIR;
-process.env.OMNIROUTE_PLUGINS_DIR = TEST_PLUGINS_DIR;
+process.env.AGENTPROXY_PLUGINS_DIR = TEST_PLUGINS_DIR;
 globalThis.fetch = async () => {
   networkCalls += 1;
   throw new Error("Unexpected network access in Zed stream boundary test");
@@ -37,7 +37,7 @@ type StreamCompletionEvent = Parameters<
   Parameters<typeof createStreamFailureFinalizers>[0]["onStreamComplete"]
 >[0];
 
-const RAW_FAILURE = "Bearer TOP_SECRET /srv/omniroute/zed-handler.ts:42 api_key=zed-secret";
+const RAW_FAILURE = "Bearer TOP_SECRET /srv/agentproxy/zed-handler.ts:42 api_key=zed-secret";
 const TEST_MODEL = "grok-test-zed-stream-boundary";
 const TEST_CONNECTION_ID = "zed-stream-boundary-partial-connection";
 
@@ -146,7 +146,7 @@ function parseSsePayloads(text: string): Array<Record<string, unknown>> {
 }
 
 function assertNoSensitiveFailureText(text: string): void {
-  assert.doesNotMatch(text, /TOP_SECRET|zed-secret|\/srv\/omniroute\/zed-handler\.ts/);
+  assert.doesNotMatch(text, /TOP_SECRET|zed-secret|\/srv\/agentproxy\/zed-handler\.ts/);
 }
 
 test.after(async () => {
@@ -155,8 +155,8 @@ test.after(async () => {
   globalThis.fetch = originalFetch;
   if (originalDataDir === undefined) delete process.env.DATA_DIR;
   else process.env.DATA_DIR = originalDataDir;
-  if (originalPluginsDir === undefined) delete process.env.OMNIROUTE_PLUGINS_DIR;
-  else process.env.OMNIROUTE_PLUGINS_DIR = originalPluginsDir;
+  if (originalPluginsDir === undefined) delete process.env.AGENTPROXY_PLUGINS_DIR;
+  else process.env.AGENTPROXY_PLUGINS_DIR = originalPluginsDir;
   fs.rmSync(TEST_DATA_DIR, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
   fs.rmSync(TEST_PLUGINS_DIR, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
 });

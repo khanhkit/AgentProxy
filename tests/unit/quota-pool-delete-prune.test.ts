@@ -21,7 +21,7 @@ import os from "node:os";
 import path from "node:path";
 
 // ── DB harness (same pattern as quota-exclusivity-reconcile.test.ts) ─────────
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-pool-delete-prune-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-pool-delete-prune-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.API_KEY_SECRET = process.env.API_KEY_SECRET || "delete-prune-test-secret-32chars!!";
 

@@ -9,7 +9,7 @@ import path from "node:path";
 import { EventEmitter } from "node:events";
 import { canRunPrivilegedMitmSteps, isMitmSudoPasswordRequired } from "../../src/mitm/sudoGate.ts";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-mitm-sudo-gate-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-mitm-sudo-gate-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../src/lib/db/core.ts");

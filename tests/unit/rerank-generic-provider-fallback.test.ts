@@ -1,7 +1,7 @@
 /**
  * Issue: rerank model strings outside the curated RERANK_PROVIDERS registry were
  * rejected with "No rerank provider found" even when the provider was configured
- * in OmniRoute with a working Cohere-compatible /rerank endpoint (e.g. groq,
+ * in AgentProxy with a working Cohere-compatible /rerank endpoint (e.g. groq,
  * siliconflow-style hosts). The memory Rerank selector fed by the curated list
  * had the same blind spot.
  *
@@ -12,7 +12,7 @@
  */
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
-import { REGISTRY } from "@omniroute/open-sse/config/providerRegistry.ts";
+import { REGISTRY } from "@agentproxy/open-sse/config/providerRegistry.ts";
 import {
   getRerankProvider,
   parseRerankModel,

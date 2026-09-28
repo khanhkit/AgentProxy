@@ -22,7 +22,7 @@ import os from "node:os";
 import path from "node:path";
 
 // ── Single isolated DATA_DIR (same pattern as db-quota-pools.test.ts) ────
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-model-cap-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-model-cap-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 // ── Module imports (after DATA_DIR is set) ────────────────────────────────

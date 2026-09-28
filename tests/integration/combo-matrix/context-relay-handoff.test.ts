@@ -9,7 +9,7 @@
 // What is tested here:
 //   1. Universal handoff fires (extra summary dispatch + DB record) when:
 //      - universalHandoffConfig.enabled = true (default)
-//      - request carries x-omniroute-session-id header
+//      - request carries x-agentproxy-session-id header
 //      - session_model_history records a DIFFERENT prior model than the combo target
 //   2. Control (no model switch): prevModel === currModel — handoff must NOT fire.
 //   3. Control (no session ID): no header passed — handoff must NOT fire.
@@ -57,7 +57,7 @@ const SCRIPTED_SUMMARY_JSON = JSON.stringify({
 
 const COMBO_NAME = "m-relay-handoff";
 // The session ID must use the external-session format: extractExternalSessionId in chat.ts
-// reads "x-session-id" (not "x-omniroute-session-id") and prefixes the result with "ext:".
+// reads "x-session-id" (not "x-agentproxy-session-id") and prefixes the result with "ext:".
 // We must seed session_model_history with this exact "ext:"-prefixed ID so that
 // getLastSessionModel(relayOptions.sessionId, comboName) returns the prior model.
 const SESSION_HEADER_VALUE = "relay-handoff-session-001";
@@ -84,7 +84,7 @@ function relayRequest(withSessionId = true) {
 
 // Install a recording fetch that:
 //   • returns a valid handoff JSON (wrapped in an OpenAI completion) for the
-//     internal summary request (identified by _omnirouteInternalRequest flag in body)
+//     internal summary request (identified by _agentproxyInternalRequest flag in body)
 //   • returns a normal OpenAI response for every other call
 function installHandoffAwareFetch() {
   h.calls.length = 0;
@@ -115,7 +115,7 @@ function installHandoffAwareFetch() {
     h.calls.push(call);
 
     // Return valid handoff JSON for the internal summary generation request
-    if (bodyObj._omnirouteInternalRequest === "universal-handoff") {
+    if (bodyObj._agentproxyInternalRequest === "universal-handoff") {
       return buildOpenAIResponse(SCRIPTED_SUMMARY_JSON);
     }
 
@@ -245,8 +245,8 @@ test("context-relay universal handoff: does NOT fire when no prior model is reco
 // ── Test 3: control — no session ID, handoff must NOT fire ────────────────────
 //
 // Session ID gate: `relayOptions?.sessionId` must be truthy.
-// Without the x-omniroute-session-id header, sessionId = null → block is skipped.
-test("context-relay universal handoff: does NOT fire when x-omniroute-session-id header is absent", async () => {
+// Without the x-agentproxy-session-id header, sessionId = null → block is skipped.
+test("context-relay universal handoff: does NOT fire when x-agentproxy-session-id header is absent", async () => {
   await seedConnection("openai", { apiKey: "sk-openai-nosid" });
 
   await combosDb.createCombo({
@@ -271,7 +271,7 @@ test("context-relay universal handoff: does NOT fire when x-omniroute-session-id
   assert.equal(
     handoff,
     null,
-    "handoff must NOT be written when x-omniroute-session-id header is absent (sessionId gate)"
+    "handoff must NOT be written when x-agentproxy-session-id header is absent (sessionId gate)"
   );
 
   assert.equal(

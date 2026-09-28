@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import http from "node:http";
 import { runHealthCommand } from "../../bin/cli/commands/health.mjs";
 
-// Regression test for GH #6677: `omniroute health` calls GET /api/health, but the
+// Regression test for GH #6677: `agentproxy health` calls GET /api/health, but the
 // real server only implements GET /api/monitoring/health (plus the sub-routes
 // /api/health/degradation and /api/health/ping). This stub server mimics that
 // exact real-world shape: /api/monitoring/health responds 200 with a healthy
@@ -42,15 +42,15 @@ test.before(async () => {
   if (address && typeof address === "object") {
     baseUrl = `http://127.0.0.1:${address.port}`;
   }
-  process.env.OMNIROUTE_BASE_URL = baseUrl;
+  process.env.AGENTPROXY_BASE_URL = baseUrl;
 });
 
 test.after(async () => {
-  delete process.env.OMNIROUTE_BASE_URL;
+  delete process.env.AGENTPROXY_BASE_URL;
   await new Promise<void>((resolve) => server.close(() => resolve()));
 });
 
-test("GH #6677: omniroute health should succeed against a server that only implements /api/monitoring/health", async () => {
+test("GH #6677: agentproxy health should succeed against a server that only implements /api/monitoring/health", async () => {
   const originalError = console.error;
   const originalLog = console.log;
   const errors: string[] = [];

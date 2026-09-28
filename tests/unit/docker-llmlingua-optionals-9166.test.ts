@@ -93,7 +93,7 @@ function createStandalone(rootDir: string): {
 }
 
 test("#9166 standalone assembly includes the complete LLMLingua runtime closure", () => {
-  const root = mkdtempSync(join(tmpdir(), "omniroute-docker-llmlingua-9166-"));
+  const root = mkdtempSync(join(tmpdir(), "agentproxy-docker-llmlingua-9166-"));
 
   try {
     buildLlmlinguaRoot(root);
@@ -128,7 +128,7 @@ test("#9166 standalone assembly includes the complete LLMLingua runtime closure"
 });
 
 test("#9166 standalone assembly never overwrites an already pinned transformers instance", () => {
-  const root = mkdtempSync(join(tmpdir(), "omniroute-docker-llmlingua-pinned-9166-"));
+  const root = mkdtempSync(join(tmpdir(), "agentproxy-docker-llmlingua-pinned-9166-"));
 
   try {
     buildLlmlinguaRoot(root, "5.0.0");
@@ -168,7 +168,7 @@ test("#9166 standalone assembly never overwrites an already pinned transformers 
 });
 
 test("#9166 co-location completes a partially traced package (package.json without its main)", () => {
-  const root = mkdtempSync(join(tmpdir(), "omniroute-docker-llmlingua-partial-9166-"));
+  const root = mkdtempSync(join(tmpdir(), "agentproxy-docker-llmlingua-partial-9166-"));
 
   try {
     buildLlmlinguaRoot(root);
@@ -200,7 +200,7 @@ test("#9166 co-location completes a partially traced package (package.json witho
 });
 
 test("#9166 co-location is not skipped when every closure dir exists but one is partial", () => {
-  const root = mkdtempSync(join(tmpdir(), "omniroute-docker-llmlingua-partial-all-9166-"));
+  const root = mkdtempSync(join(tmpdir(), "agentproxy-docker-llmlingua-partial-all-9166-"));
 
   try {
     buildLlmlinguaRoot(root);

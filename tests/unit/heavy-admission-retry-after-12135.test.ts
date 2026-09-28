@@ -10,7 +10,7 @@
 //
 // The maintainer scoped the fix on the issue: "A `Retry-After` derived from observed
 // lease age/occupancy would be honest." These tests pin that contract WITHOUT touching
-// the queue posture (`OMNIROUTE_CHAT_ADMISSION_QUEUE_MS` default), which the maintainer
+// the queue posture (`AGENTPROXY_CHAT_ADMISSION_QUEUE_MS` default), which the maintainer
 // explicitly left as a separate decision:
 //  (a) after a `queue_timeout`, `Retry-After` is at least the queue window the waiter
 //      already exhausted — never less than what the server itself needed;

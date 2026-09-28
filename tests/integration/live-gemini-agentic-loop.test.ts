@@ -15,7 +15,7 @@
  *   2. Turn 2: the tool result + ~10k MORE filler is appended (cumulative
  *      conversation now ~20k tokens — past gemma-4's published 16000 TPM
  *      free-tier ceiling within the same rolling 60s window). Model A hits a
- *      real 429; OmniRoute transparently falls back to model B — the client
+ *      real 429; AgentProxy transparently falls back to model B — the client
  *      must see a normal 200 with a tool call from B, NEVER the 429.
  *   3. Turn 3: B's tool result + more filler. Now BOTH models are cooling
  *      down, but A's remaining cooldown (recorded a full turn earlier) is
@@ -34,7 +34,7 @@
  * treats an `event: error` frame exactly like a leaked 429/503 status: both
  * are the same regression (comboCooldownWait giving up instead of waiting).
  *
- * Env vars: same as liveGeminiShared.ts (OMNIROUTE_API_KEY required).
+ * Env vars: same as liveGeminiShared.ts (AGENTPROXY_API_KEY required).
  */
 import test from "node:test";
 import assert from "node:assert/strict";
@@ -305,7 +305,7 @@ test(
 
     // ── Turn 2: tool result + ~10k MORE filler (cumulative ~20k, past the 16k ──
     // TPM ceiling within the rolling 60s window) — model A should hit a real
-    // 429 and OmniRoute should transparently fail over to model B. The served
+    // 429 and AgentProxy should transparently fail over to model B. The served
     // model changing between turn 1 and turn 2, with NO leaked error, is the
     // client-observable proof that (a) a 429 really happened and (b) the other
     // model was transparently retried — there is no other way for a client to

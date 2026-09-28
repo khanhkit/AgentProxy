@@ -4,7 +4,7 @@ import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-process.env.DATA_DIR = mkdtempSync(join(tmpdir(), "omniroute-video-deepinfra-"));
+process.env.DATA_DIR = mkdtempSync(join(tmpdir(), "agentproxy-video-deepinfra-"));
 
 const { handleVideoGeneration } = await import("../../open-sse/handlers/videoGeneration.ts");
 const { VIDEO_PROVIDERS, parseVideoModel } = await import(
@@ -175,7 +175,7 @@ test("handleVideoGeneration sanitizes network-level failures via sanitizeErrorMe
   const originalFetch = globalThis.fetch;
   globalThis.fetch = async () => {
     throw new Error(
-      "fetch failed\n    at Object.fetch (/home/user/omniroute/node_modules/undici/lib/x.js:1:1)"
+      "fetch failed\n    at Object.fetch (/home/user/agentproxy/node_modules/undici/lib/x.js:1:1)"
     );
   };
 

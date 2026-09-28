@@ -7,16 +7,16 @@ import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 
 // Gera o export estável do catálogo (scripts/release/radar-export.mjs) e valida
-// o contrato consumido pelo OmniRoute Radar + a proveniência (D16: desconhecido
+// o contrato consumido pelo AgentProxy Radar + a proveniência (D16: desconhecido
 // permanece `null`, nunca inventado).
 
 const DIR = path.dirname(fileURLToPath(import.meta.url));
-const REPO = path.resolve(DIR, "../.."); // …/OmniRoute
+const REPO = path.resolve(DIR, "../.."); // …/AgentProxy
 const SCRIPT = path.join(REPO, "scripts/release/radar-export.mjs");
 
 function runExport(extraEnv = {}) {
   const outDir = fs.mkdtempSync(path.join(os.tmpdir(), "radar-export-"));
-  const outPath = path.join(outDir, "export-omniroute.json");
+  const outPath = path.join(outDir, "export-agentproxy.json");
   execFileSync("node", ["--import", "tsx/esm", SCRIPT, outPath], {
     cwd: REPO,
     stdio: ["ignore", "ignore", "inherit"],
@@ -77,12 +77,12 @@ test("radar export provenance reflects the GitHub Actions environment when prese
     GITHUB_SHA: sha,
     GITHUB_REF_NAME: "release/v9.9.9",
     GITHUB_SERVER_URL: "https://github.com",
-    GITHUB_REPOSITORY: "diegosouzapw/OmniRoute",
+    GITHUB_REPOSITORY: "khanhkit/AgentProxy",
     GITHUB_RUN_ID: "42",
   });
   const p = data.provenance;
   assert.equal(p.generatedBy, "github-actions");
   assert.equal(p.sourceCommit, sha);
   assert.equal(p.sourceRef, "release/v9.9.9");
-  assert.equal(p.runUrl, "https://github.com/diegosouzapw/OmniRoute/actions/runs/42");
+  assert.equal(p.runUrl, "https://github.com/khanhkit/AgentProxy/actions/runs/42");
 });

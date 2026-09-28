@@ -4,7 +4,7 @@
  * Combo and fusion fan-out dispatch N targets without ever consulting the
  * adaptive-admission layer: the parent request holds one lease, but each
  * fan-out target is dispatched unconditionally. With virtual lanes enabled
- * (OMNIROUTE_CHAT_VIRTUAL_LANES=1), a tenant whose lane queue is full
+ * (AGENTPROXY_CHAT_VIRTUAL_LANES=1), a tenant whose lane queue is full
  * should SKIP additional fan-out targets instead of piling more queued work
  * onto an already-congested lane.
  *
@@ -29,7 +29,7 @@ import path from "node:path";
 import type { AdaptiveAdmissionRuntime } from "../../open-sse/services/admission/runtime.ts";
 import type { PerTargetAdmissionHook } from "../../open-sse/services/admission/types.ts";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-combo-lane-awareness-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-combo-lane-awareness-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const { handleComboChat } = await import("../../open-sse/services/combo.ts");

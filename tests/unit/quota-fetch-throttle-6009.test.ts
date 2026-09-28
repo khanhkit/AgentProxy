@@ -65,20 +65,20 @@ test("#6009 jitter adds a bounded extra spacing on top of the min gap", async ()
 
 test("#6009 env resolver clamps to sane bounds and defaults", () => {
   assert.equal(resolveQuotaFetchMinIntervalMs({}), 250); // default
-  assert.equal(resolveQuotaFetchMinIntervalMs({ OMNIROUTE_QUOTA_FETCH_MIN_INTERVAL_MS: "0" }), 0);
+  assert.equal(resolveQuotaFetchMinIntervalMs({ AGENTPROXY_QUOTA_FETCH_MIN_INTERVAL_MS: "0" }), 0);
   assert.equal(
-    resolveQuotaFetchMinIntervalMs({ OMNIROUTE_QUOTA_FETCH_MIN_INTERVAL_MS: "1000" }),
+    resolveQuotaFetchMinIntervalMs({ AGENTPROXY_QUOTA_FETCH_MIN_INTERVAL_MS: "1000" }),
     1000
   );
   // garbage / negative → default
   assert.equal(
-    resolveQuotaFetchMinIntervalMs({ OMNIROUTE_QUOTA_FETCH_MIN_INTERVAL_MS: "abc" }),
+    resolveQuotaFetchMinIntervalMs({ AGENTPROXY_QUOTA_FETCH_MIN_INTERVAL_MS: "abc" }),
     250
   );
-  assert.equal(resolveQuotaFetchMinIntervalMs({ OMNIROUTE_QUOTA_FETCH_MIN_INTERVAL_MS: "-5" }), 250);
+  assert.equal(resolveQuotaFetchMinIntervalMs({ AGENTPROXY_QUOTA_FETCH_MIN_INTERVAL_MS: "-5" }), 250);
   // absurdly high → clamped to max 5000
   assert.equal(
-    resolveQuotaFetchMinIntervalMs({ OMNIROUTE_QUOTA_FETCH_MIN_INTERVAL_MS: "999999" }),
+    resolveQuotaFetchMinIntervalMs({ AGENTPROXY_QUOTA_FETCH_MIN_INTERVAL_MS: "999999" }),
     5000
   );
 });

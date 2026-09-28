@@ -6,12 +6,13 @@ import {
   OutboundUrlGuardError,
 } from "../../../shared/network/outboundUrlGuard";
 import { resolveOpencodeConfigPath } from "../../../shared/services/opencodeConfigPath";
+import { readPrivateConfigFile } from "../privateConfigFile";
 
 const JSON_FORMATTING_OPTIONS = { insertSpaces: true, tabSize: 2 } as const;
 
 /**
  * SSRF guard for the catalog fetch (CodeQL js/request-forgery #326). The catalog
- * source is the user's OWN OmniRoute instance, so loopback/private hosts are the
+ * source is the user's OWN AgentProxy instance, so loopback/private hosts are the
  * legitimate default and must stay allowed — we cannot use the public-only guard
  * here. What has NO legitimate use as a catalog source is the cloud-metadata /
  * link-local pivot (169.254.169.254, metadata.google.internal, …): that is the
@@ -40,6 +41,8 @@ export function assertSafeCatalogUrl(rawUrl: string): URL {
 interface CatalogModelEntry {
   id: string;
   owned_by?: string;
+  name?: string;
+  display_name?: string;
   /** OpenAI-compatible field name; some upstreams return this. */
   context_length?: number;
   max_context_window_tokens?: number;
@@ -99,11 +102,11 @@ export interface CatalogFetchResult {
 }
 
 /**
- * Fetch the live `/v1/models` catalog from OmniRoute. The catalog is the
+ * Fetch the live `/v1/models` catalog from AgentProxy. The catalog is the
  * single source of truth for context windows — opencode.json must NOT
  * hardcode values, otherwise we drift from the provider's actual limits.
  */
-export async function fetchOmniRouteCatalog(
+export async function fetchAgentProxyCatalog(
   baseUrl: string,
   apiKey: string,
   timeoutMs = 5_000
@@ -131,7 +134,7 @@ export async function fetchOmniRouteCatalog(
       signal: controller.signal,
     });
     if (!response.ok) {
-      throw new Error(`OmniRoute /v1/models returned ${response.status} ${response.statusText}`);
+      throw new Error(`AgentProxy /v1/models returned ${response.status} ${response.statusText}`);
     }
     const body = (await response.json()) as unknown;
     const list: unknown[] = Array.isArray(body)
@@ -254,8 +257,22 @@ function buildModelEntry(
   catalog: CatalogModelEntry | undefined,
   existing: ExistingModelEntry | undefined
 ): ExistingModelEntry {
-  // Carry over user-set "name" first; fall back to id when absent.
-  const name = (typeof existing?.name === "string" && existing.name.trim()) || id;
+  // Carry over user-set names first, then native catalog display metadata.
+  // Technical ids remain map keys; names are presentation only.
+  const catalogName = catalog?.display_name ?? catalog?.name;
+  const nativeName = typeof catalogName === "string" ? catalogName.trim() : "";
+  const providerPrefix = catalog?.owned_by ? `${catalog.owned_by}/` : "";
+  const modelName = nativeName.startsWith(providerPrefix)
+    ? nativeName.slice(providerPrefix.length)
+    : nativeName;
+  const autoName = id.startsWith("auto/")
+    ? `Auto ${id.slice("auto/".length).replace(/(^|[-_])([a-z])/g, (_, separator, letter) => `${separator === "" ? "" : " "}${letter.toUpperCase()}`)}`
+    : "";
+  const name =
+    (typeof existing?.name === "string" && existing.name.trim() !== id && existing.name.trim()) ||
+    autoName ||
+    modelName ||
+    id;
 
   const entry: ExistingModelEntry = { name };
 
@@ -303,7 +320,7 @@ function buildModelEntry(
   // regardless of whether the catalog (or the user's existing config) knows the model's
   // context window — a model with no catalog metadata at all must still get both
   // `limit.context` and `limit.output`, or OpenCode rejects the whole config with "Missing key
-  // provider.omniroute.models.{model}.limit.context" (#11035) or ".limit.output" (#10940, #11032).
+  // provider.agentproxy.models.{model}.limit.context" (#11035) or ".limit.output" (#10940, #11032).
   // `output` above resolves to a safe fallback (8K) and `context` resolves to a safe fallback (128K)
   // when nothing else is known, so we always emit both fields.
   const resolvedContext = typeof context === "number" && context > 0 ? context : 128_000;
@@ -334,7 +351,7 @@ function loadExistingConfig(configPath: string): { config: ExistingConfig; sourc
 
   let source: string;
   try {
-    source = fs.readFileSync(configPath, "utf8");
+    source = readPrivateConfigFile(configPath);
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     throw new Error(`Failed to read existing OpenCode config at ${configPath}: ${message}`);
@@ -401,7 +418,7 @@ export interface GenerateOpencodeOptions {
   configPath?: string;
   /**
    * Override the default `provider.id` used in the generated config.
-   * Defaults to `"omniroute"`.
+   * Defaults to `"agentproxy"`.
    */
   providerId?: string;
   /**
@@ -421,7 +438,7 @@ export interface GenerateOpencodeOptions {
 }
 
 /**
- * Generate a full `opencode.json` document for OmniRoute. The catalog is the
+ * Generate a full `opencode.json` document for AgentProxy. The catalog is the
  * primary source of truth for context windows, with a 128K fallback when unknown.
  *
  * Behavior:
@@ -441,7 +458,7 @@ export async function generateOpencodeConfig(options: GenerateOpencodeOptions): 
   const cleanBase = options.baseUrl.replace(/\/+$/, "");
   const baseURL = cleanBase.endsWith("/v1") ? cleanBase : `${cleanBase}/v1`;
 
-  const providerId = options.providerId?.trim() || "omniroute";
+  const providerId = options.providerId?.trim() || "agentproxy";
   const fetchCatalog = options.fetchCatalog !== false;
   const timeoutMs = options.catalogTimeoutMs ?? 5_000;
   const configPath = options.configPath ?? resolveOpencodeConfigPath();
@@ -452,7 +469,7 @@ export async function generateOpencodeConfig(options: GenerateOpencodeOptions): 
   // picking the wrong context window.
   let catalogById = new Map<string, CatalogModelEntry>();
   if (fetchCatalog) {
-    const result = await fetchOmniRouteCatalog(baseURL, options.apiKey, timeoutMs);
+    const result = await fetchAgentProxyCatalog(baseURL, options.apiKey, timeoutMs);
     catalogById = result.byId;
   } else {
     throw new Error(
@@ -540,7 +557,7 @@ export function generateOpencodeConfigSync(options: {
   const base = cleanBase.endsWith("/v1") ? cleanBase.slice(0, -3) : cleanBase;
 
   const config = {
-    provider: "omniroute",
+    provider: "agentproxy",
     baseURL: `${base}/v1`,
     apiKey: options.apiKey,
     model: options.model || "opencode",

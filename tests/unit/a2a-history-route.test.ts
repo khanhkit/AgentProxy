@@ -21,7 +21,7 @@ import path from "node:path";
 const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omni-a2a-history-route-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.API_KEY_SECRET = process.env.API_KEY_SECRET || "a2a-history-route-test-secret";
-process.env.OMNIROUTE_DISABLE_REDIS_AUTH_CACHE = "1";
+process.env.AGENTPROXY_DISABLE_REDIS_AUTH_CACHE = "1";
 
 const ORIGINAL_REQUIRE_API_KEY = process.env.REQUIRE_API_KEY;
 process.env.REQUIRE_API_KEY = "true";

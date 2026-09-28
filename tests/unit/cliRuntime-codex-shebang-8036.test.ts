@@ -17,7 +17,7 @@ import path from "node:path";
 //
 // cliRuntime.ts computes EXPECTED_PARENT_PATHS from os.homedir() at MODULE
 // LOAD time, so HOME must be redirected before the module is imported.
-const sandboxHome = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-8036-home-"));
+const sandboxHome = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-8036-home-"));
 process.env.HOME = sandboxHome;
 process.env.USERPROFILE = sandboxHome;
 process.env.npm_config_prefix = path.join(sandboxHome, "npm-prefix-unused");

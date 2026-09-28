@@ -11,14 +11,14 @@ const originalFetch = globalThis.fetch;
 const originalPath = process.env.PATH;
 
 async function makeFakeCli(name: string, body: string) {
-  const dir = await mkdtemp(path.join(os.tmpdir(), "omniroute-run-cli-"));
+  const dir = await mkdtemp(path.join(os.tmpdir(), "agentproxy-run-cli-"));
   const file = path.join(dir, name);
   await writeFile(file, `#!/usr/bin/env node\n${body}\n`, { mode: 0o755 });
   await chmod(file, 0o755);
   return { dir, file };
 }
 
-async function withReachableOmniRoute<T>(run: () => Promise<T>): Promise<T> {
+async function withReachableAgentProxy<T>(run: () => Promise<T>): Promise<T> {
   globalThis.fetch = async () => new Response("{}", { status: 200 });
   try {
     return await run();
@@ -33,7 +33,7 @@ test("run executes a generic target with isolated env and propagates its exit co
     return;
   }
 
-  const capture = await mkdtemp(path.join(os.tmpdir(), "omniroute-run-capture-"));
+  const capture = await mkdtemp(path.join(os.tmpdir(), "agentproxy-run-capture-"));
   const capturePath = path.join(capture, "aider.json");
   const fake = await makeFakeCli(
     "aider",
@@ -49,7 +49,7 @@ process.exit(7);`
   process.env.CAPTURE_PATH = capturePath;
 
   try {
-    const code = await withReachableOmniRoute(() =>
+    const code = await withReachableAgentProxy(() =>
       runCliTarget(
         "aider",
         { remote: "https://relay.example.test", apiKey: "sk_private", model: "glm/glm-5.2" },
@@ -77,7 +77,7 @@ test("run gives Gemini an isolated GEMINI_CLI_HOME forcing api-key auth and remo
     return;
   }
 
-  const capture = await mkdtemp(path.join(os.tmpdir(), "omniroute-run-gemini-capture-"));
+  const capture = await mkdtemp(path.join(os.tmpdir(), "agentproxy-run-gemini-capture-"));
   const capturePath = path.join(capture, "gemini.json");
   const fake = await makeFakeCli(
     "gemini",
@@ -98,7 +98,7 @@ fs.writeFileSync(process.env.CAPTURE_PATH, JSON.stringify({
   process.env.CAPTURE_PATH = capturePath;
 
   try {
-    const code = await withReachableOmniRoute(() =>
+    const code = await withReachableAgentProxy(() =>
       runCliTarget(
         "gemini",
         { remote: "https://relay.example.test", apiKey: "sk_private", model: "glm/glm-5.2" },
@@ -128,7 +128,7 @@ test("run gives Qwen an isolated temporary home and removes it after exit", asyn
     return;
   }
 
-  const capture = await mkdtemp(path.join(os.tmpdir(), "omniroute-run-qwen-capture-"));
+  const capture = await mkdtemp(path.join(os.tmpdir(), "agentproxy-run-qwen-capture-"));
   const capturePath = path.join(capture, "qwen.json");
   const fake = await makeFakeCli(
     "qwen",
@@ -147,7 +147,7 @@ fs.writeFileSync(process.env.CAPTURE_PATH, JSON.stringify({
   process.env.CAPTURE_PATH = capturePath;
 
   try {
-    const code = await withReachableOmniRoute(() =>
+    const code = await withReachableAgentProxy(() =>
       runCliTarget(
         "qwen",
         { remote: "https://relay.example.test", apiKey: "sk_private", model: "glm/glm-5.2" },

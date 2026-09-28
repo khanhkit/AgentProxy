@@ -5,7 +5,8 @@
  * - code  → heavy static + unit/vitest (code regression surface)
  * - docs  → docs-sync / prose only
  * - i18n  → translation validation; pure messages must NOT force full unit
- * - workflow → always code (CI is part of the safety net)
+ * - workflow → always code + Rust (CI changes exercise the native gate)
+ * - rust → native gateway source/tests
  * - unknown → code (fail-safe over-run)
  */
 import test from "node:test";
@@ -15,7 +16,7 @@ import { classifyPaths } from "../../scripts/quality/classify-pr-changes.mjs";
 
 test("pure docs PR → docs only (no code unit/lint bag)", () => {
   const c = classifyPaths(["docs/architecture/QUALITY_GATES.md", "README.md"]);
-  assert.deepEqual(c, { code: false, docs: true, i18n: false, workflow: false, testsOnly: false });
+  assert.deepEqual(c, { code: false, docs: true, i18n: false, workflow: false, rust: false, testsOnly: false });
 });
 
 test("openapi under docs/ → docs (contract gates live in docs-sync, not unit)", () => {
@@ -26,7 +27,7 @@ test("openapi under docs/ → docs (contract gates live in docs-sync, not unit)"
 
 test("pure message catalog → i18n only (not full unit suite)", () => {
   const c = classifyPaths(["src/i18n/messages/en.json", "src/i18n/messages/ko.json"]);
-  assert.deepEqual(c, { code: false, docs: false, i18n: true, workflow: false, testsOnly: false });
+  assert.deepEqual(c, { code: false, docs: false, i18n: true, workflow: false, rust: false, testsOnly: false });
 });
 
 test("i18n tooling/scripts → i18n + code (tooling can break runtime paths)", () => {
@@ -41,15 +42,26 @@ test("src/i18n loader TS (non-messages) → i18n + code", () => {
   assert.equal(c.code, true);
 });
 
-test("workflow change → workflow + code (gates protect the gates)", () => {
+test("workflow change → workflow + code + rust (gates protect the gates)", () => {
   const c = classifyPaths([".github/workflows/ci.yml"]);
   assert.equal(c.workflow, true);
+  assert.equal(c.code, true);
+  assert.equal(c.rust, true);
+});
+
+test("Rust source, rust-core contract tests and deny.toml → rust + code", () => {
+  const c = classifyPaths([
+    "rust/crates/gateway/src/main.rs",
+    "tests/rust-core/tests/legacy_proxy.rs",
+    "deny.toml",
+  ]);
+  assert.equal(c.rust, true);
   assert.equal(c.code, true);
 });
 
 test("production source → code", () => {
   const c = classifyPaths(["open-sse/handlers/chatCore.ts", "src/lib/db/core.ts"]);
-  assert.deepEqual(c, { code: true, docs: false, i18n: false, workflow: false, testsOnly: false });
+  assert.deepEqual(c, { code: true, docs: false, i18n: false, workflow: false, rust: false, testsOnly: false });
 });
 
 test("mixed docs + code → both flags (jobs union their filters)", () => {
@@ -65,7 +77,7 @@ test("unknown path → code fail-safe (never skip heavy gates by accident)", () 
 
 test("empty change list → all false (nothing to validate)", () => {
   const c = classifyPaths([]);
-  assert.deepEqual(c, { code: false, docs: false, i18n: false, workflow: false, testsOnly: false });
+  assert.deepEqual(c, { code: false, docs: false, i18n: false, workflow: false, rust: false, testsOnly: false });
 });
 
 // WS3.1 (v3.8.49 quality plan) — testsOnly powers the hotfix/test-only fast lane:

@@ -23,6 +23,7 @@ import {
   mapAssignmentRow,
   normalizeScope,
   normalizeAssignmentScopeId,
+  isScopeIdMissing,
   toLegacyProxyLevel,
   coerceProxyPayload,
   redactProxySecrets,
@@ -207,7 +208,7 @@ function upsertAssignmentRow(
 ) {
   const normalizedScope = normalizeScope(assignment.scope);
   const normalizedScopeId = normalizeAssignmentScopeId(normalizedScope, assignment.scopeId);
-  if (normalizedScope !== "global" && !normalizedScopeId) {
+  if (isScopeIdMissing(normalizedScope, normalizedScopeId)) {
     throw new Error("scopeId is required for non-global proxy assignments");
   }
 
@@ -503,6 +504,9 @@ export async function assignProxyToScope(
 ): Promise<ProxyAssignmentRecord | null> {
   const normalizedScope = normalizeScope(scope);
   const normalizedScopeId = normalizeAssignmentScopeId(normalizedScope, scopeId);
+  if (isScopeIdMissing(normalizedScope, normalizedScopeId)) {
+    throw new Error("scopeId is required for non-global proxy assignments");
+  }
   const db = getDbInstance();
 
   if (!proxyId) {
@@ -552,7 +556,7 @@ export async function addProxyToScopePool(
 ): Promise<ProxyAssignmentRecord | null> {
   const normalizedScope = normalizeScope(scope);
   const normalizedScopeId = normalizeAssignmentScopeId(normalizedScope, scopeId);
-  if (normalizedScope !== "global" && !normalizedScopeId) {
+  if (isScopeIdMissing(normalizedScope, normalizedScopeId)) {
     throw new Error("scopeId is required for non-global proxy assignments");
   }
 

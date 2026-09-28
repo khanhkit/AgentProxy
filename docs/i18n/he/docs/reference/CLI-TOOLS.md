@@ -6,22 +6,22 @@
 
 ---
 
-title: "כלי CLI — OmniRoute"
+title: "כלי CLI — AgentProxy"
 version: 3.8.50
 lastUpdated: 2026-08-18
 ---
 
-# כלי CLI — OmniRoute
+# כלי CLI — AgentProxy
 
 עודכן לאחרונה: 2026-08-18
 
-OmniRoute משתלב עם שלוש קטגוריות של כלי CLI המפוזרים על פני שלוש דפי לוח מחוונים ייעודיים:
+AgentProxy משתלב עם שלוש קטגוריות של כלי CLI המפוזרים על פני שלוש דפי לוח מחוונים ייעודיים:
 
 | דף            | מסלול                   | רעיון                                                               | מספר      |
 | ------------- | ----------------------- | ------------------------------------------------------------------- | --------- |
-| **קוד CLI**   | `/dashboard/cli-code`   | כלים לקידוד שאתה מפנה ל-OmniRoute (לקוח → CLI → OmniRoute → ספק)    | 26        |
-| **סוכני CLI** | `/dashboard/cli-agents` | סוכנים אוטונומיים שאתה מפנה ל-OmniRoute (אותו זרימה, טווח רחב יותר) | 8         |
-| **סוכני ACP** | `/dashboard/acp-agents` | CLIs ש-OmniRoute מפעיל כ-backend דרך stdio/ACP (זרימה הפוכה)        | ראה רישום |
+| **קוד CLI**   | `/dashboard/cli-code`   | כלים לקידוד שאתה מפנה ל-AgentProxy (לקוח → CLI → AgentProxy → ספק)    | 26        |
+| **סוכני CLI** | `/dashboard/cli-agents` | סוכנים אוטונומיים שאתה מפנה ל-AgentProxy (אותו זרימה, טווח רחב יותר) | 8         |
+| **סוכני ACP** | `/dashboard/acp-agents` | CLIs ש-AgentProxy מפעיל כ-backend דרך stdio/ACP (זרימה הפוכה)        | ראה רישום |
 
 מסלולים ישנים מפנים דרך 308: `/dashboard/cli-tools` → `/dashboard/cli-code`, `/dashboard/agents` → `/dashboard/acp-agents`.
 
@@ -33,14 +33,14 @@ OmniRoute משתלב עם שלוש קטגוריות של כלי CLI המפוזר
 קוד CLI / סוכני CLI (זרימת צריכה):
 Claude / Codex / OpenCode / Cline / KiloCode / Continue / Hermes Agent / Goose / ...
            │
-           ▼  (כולם מפנים ל-OmniRoute)
+           ▼  (כולם מפנים ל-AgentProxy)
     http://YOUR_SERVER:20128/v1
            │
-           ▼  (OmniRoute מפנה לספק הנכון)
+           ▼  (AgentProxy מפנה לספק הנכון)
     Anthropic / OpenAI / Gemini / DeepSeek / Groq / Mistral / ...
 
 סוכני ACP (זרימת הפעלה הפוכה):
-    בקשת לקוח → OmniRoute → מפעיל CLI דרך stdio/ACP → תגובה
+    בקשת לקוח → AgentProxy → מפעיל CLI דרך stdio/ACP → תגובה
 ```
 
 **יתרונות:**
@@ -54,21 +54,21 @@ Claude / Codex / OpenCode / Cline / KiloCode / Continue / Hermes Agent / Goose /
 
 ## קונפיגורציה אוטומטית עם `setup-*`
 
-אינך צריך לכתוב את הקונפיגורציה של כל כלי ביד. OmniRoute מספקת פקודת `setup-*`
-לכל CLI נתמך שקוראת את קטלוג המודלים **החי** מ-OmniRoute פועל (מקומי או מרוחק) וכותבת את הקונפיגורציה של הכלי שלך במחשב שלך:
+אינך צריך לכתוב את הקונפיגורציה של כל כלי ביד. AgentProxy מספקת פקודת `setup-*`
+לכל CLI נתמך שקוראת את קטלוג המודלים **החי** מ-AgentProxy פועל (מקומי או מרוחק) וכותבת את הקונפיגורציה של הכלי שלך במחשב שלך:
 
 ```bash
-omniroute setup-codex        omniroute setup-claude       omniroute setup-opencode
-omniroute setup-cline        omniroute setup-kilo         omniroute setup-continue
-omniroute setup-cursor       omniroute setup-roo          omniroute setup-crush
-omniroute setup-goose        omniroute setup-qwen         omniroute setup-aider
+agentproxy setup-codex        agentproxy setup-claude       agentproxy setup-opencode
+agentproxy setup-cline        agentproxy setup-kilo         agentproxy setup-continue
+agentproxy setup-cursor       agentproxy setup-roo          agentproxy setup-crush
+agentproxy setup-goose        agentproxy setup-qwen         agentproxy setup-aider
 ```
 
-כל אחת מקבלת `--remote <url> --api-key <key>` (להגדיר כלי מקומי מול OmniRoute מרוחק), `--dry-run` (תצוגה מקדימה ללא כתיבה), ו-`--port`. כלים ללא גילוי אוטומטי של מודלים (Cline, Kilo, Roo, Goose, Aider, Qwen) לוקחים
+כל אחת מקבלת `--remote <url> --api-key <key>` (להגדיר כלי מקומי מול AgentProxy מרוחק), `--dry-run` (תצוגה מקדימה ללא כתיבה), ו-`--port`. כלים ללא גילוי אוטומטי של מודלים (Cline, Kilo, Roo, Goose, Aider, Qwen) לוקחים
 `--model <id>` (ו-`--yes` להרצות לא אינטראקטיביות). כדי להפעיל CLI עם הסביבה הנכונה מוזרקת וללא קונפיגורציה שנכתבה כלל, השתמש במפעיל הכללי
-`omniroute run <target>` (claude, codex, aider, goose, opencode, qwen,
-gemini — מטרות וכינויים מגיעים מ-`bin/cli/cli-manifest.mjs`); המפעילים הישנים לכל כלי `omniroute launch` (Claude Code) ו-`omniroute launch-codex`
-(Codex) נשארים זמינים. CLI של Gemini הוא רק להפעלה: הוא יעד של `omniroute run`
+`agentproxy run <target>` (claude, codex, aider, goose, opencode, qwen,
+gemini — מטרות וכינויים מגיעים מ-`bin/cli/cli-manifest.mjs`); המפעילים הישנים לכל כלי `agentproxy launch` (Claude Code) ו-`agentproxy launch-codex`
+(Codex) נשארים זמינים. CLI של Gemini הוא רק להפעלה: הוא יעד של `agentproxy run`
 אבל אין לו מתכון `setup-*`/`configure`.
 
 > **הפניה מלאה:** הטבלה הראשית — מה כל פקודה כותבת, כל דגל,
@@ -77,15 +77,15 @@ gemini — מטרות וכינויים מגיעים מ-`bin/cli/cli-manifest.mjs
 
 ### הרצת אלה בתוך מיכל
 
-פקודת `setup-*` המבוצעת בתוך מיכל OmniRoute כותבת לתוך הבית של המיכל עצמו, שאף CLI מארח לא קורא אליו ונעלמת עם המיכל. OmniRoute מזהה זאת ויוצאת `2` עם הוראות במקום לכתוב. שתי דרכים נתמכות קדימה — התקן את ה-CLI על המחשב המארח ו
-`omniroute connect` למיכל, או חיבור-הרכבה של תיקי הקונפיגורציה והגדרת
-`CLI_CONFIG_HOME` (פרופיל המארח של ההרכבה). כל פקודת `setup-*`, בנוסף ל-`omniroute configure` ו-`omniroute config set`, מקבלת
-`--allow-container-write` כאשר הכוונה שלך היא להגדיר את ה-CLIs של המיכל; `OMNIROUTE_ALLOW_CONTAINER_CONFIG_WRITE=true` עושה את אותו הדבר עבור השרת. ראה
-[מדריך Docker → קונפיגורציה של כלי CLI מארח](../guides/DOCKER_GUIDE.md#configuring-host-cli-tools-when-omniroute-runs-in-docker).
+פקודת `setup-*` המבוצעת בתוך מיכל AgentProxy כותבת לתוך הבית של המיכל עצמו, שאף CLI מארח לא קורא אליו ונעלמת עם המיכל. AgentProxy מזהה זאת ויוצאת `2` עם הוראות במקום לכתוב. שתי דרכים נתמכות קדימה — התקן את ה-CLI על המחשב המארח ו
+`agentproxy connect` למיכל, או חיבור-הרכבה של תיקי הקונפיגורציה והגדרת
+`CLI_CONFIG_HOME` (פרופיל המארח של ההרכבה). כל פקודת `setup-*`, בנוסף ל-`agentproxy configure` ו-`agentproxy config set`, מקבלת
+`--allow-container-write` כאשר הכוונה שלך היא להגדיר את ה-CLIs של המיכל; `AGENTPROXY_ALLOW_CONTAINER_CONFIG_WRITE=true` עושה את אותו הדבר עבור השרת. ראה
+[מדריך Docker → קונפיגורציה של כלי CLI מארח](../guides/DOCKER_GUIDE.md#configuring-host-cli-tools-when-agentproxy-runs-in-docker).
 
 נקודת היישום של לוח המחוונים **(`POST /api/cli-tools/apply`)** אוכפת את
 אותו שומר: במיכל, כתיבה שהמטרה שלה אינה מחוברת מהמארח עונה **`422`** עם `containerEphemeralTarget: true`, טקסט השגיאה הבטוח ו — עבור הכלים עם מתכון מארח (claude, codex, opencode, cline,
-kilo, continue) — פקודת `hostSetupCommand` (למשל `omniroute setup-opencode`) להרצה על המארח במקום; שום דבר לא נכתב. `dryRun: true` ממשיך לעבוד במצב מיכל
+kilo, continue) — פקודת `hostSetupCommand` (למשל `agentproxy setup-opencode`) להרצה על המארח במקום; שום דבר לא נכתב. `dryRun: true` ממשיך לעבוד במצב מיכל
 ומחזיר את התוכן שנוצר + נתיב היעד מבלי לגעת בדיסק, כך שתוכל להציג מלוח המחוונים וליישם על המארח. התנהגות זו היא מכוונת ומוגנת רגרסיה על ידי
 `tests/unit/api/cli-tools/apply-container-guard.test.ts` — אל תנסה "לתקן" 422 על ידי הסרת השומר.
 
@@ -116,8 +116,8 @@ kilo, continue) — פקודת `hostSetupCommand` (למשל `omniroute setup-ope
 | --------------------- | ------------------------------------------------------------ | ----------------------------------------------------------------- |
 | **מקטלג**             | מופיע בקטלוג הלוח (שם, ספק, מסמכים, סוג קונפיגורציה)         | `src/shared/constants/cliTools.ts` (`CLI_TOOLS`)                  |
 | **ניתן לזיהוי**       | זיהוי בינארי/קונפיגורציה, בדיקות בריאות, נתיבי קונפיגורציה   | `src/shared/services/cliRuntime.ts` (`CLI_TOOLS` runtime catalog) |
-| **ניתן לקונפיגורציה** | נתמך על ידי `omniroute configure <cli>` (מתכון הגדרה קיים)   | `bin/cli/cli-manifest.mjs` (`configure: true`)                    |
-| **ניתן להשקה**        | נתמך על ידי `omniroute run <target>` (הזרקת env/args מוגדרת) | `bin/cli/cli-manifest.mjs` (`run: true`)                          |
+| **ניתן לקונפיגורציה** | נתמך על ידי `agentproxy configure <cli>` (מתכון הגדרה קיים)   | `bin/cli/cli-manifest.mjs` (`configure: true`)                    |
+| **ניתן להשקה**        | נתמך על ידי `agentproxy run <target>` (הזרקת env/args מוגדרת) | `bin/cli/cli-manifest.mjs` (`run: true`)                          |
 
 `bin/cli/cli-manifest.mjs` הוא המניפסט ההפעלה הקנוני עבור פקודת ה-CLI: `run`, `configure` ומחוללי השלמת-shell כולם שואבים את רשימות היעדים שלהם, פתרון כינויים (למשל `kilocode`/`kilo-code`/`kilo_cli` → `kilo`) וחיווט דגל `--model` ממנו. שומר הסטייה `tests/unit/cli/cli-manifest-drift.test.ts` מאמת שהמניפסט, הקטלוג בזמן ריצה, הקטלוג של ה-UI וכל משטח צרכן נשארים מסונכרנים — יעד שנוסף למשטח אחד ללא האחרים נכשל את המבחן במקום לסטות בשקט.
 
@@ -238,7 +238,7 @@ interface ToolBatchStatus {
 | `POST /api/cli-tools/codewhale-settings`    | CodeWhale (OPENAI_BASE_URL, primary + legacy `~/.deepseek` sync) |
 | `POST /api/cli-tools/smelt-settings`        | Smelt                                                            |
 | `POST /api/cli-tools/pi-settings`           | Pi coding agent                                                  |
-| `POST /api/cli-tools/grok-build-settings`   | Grok Build (~/.grok/config.toml, `[model.omniroute]`)            |
+| `POST /api/cli-tools/grok-build-settings`   | Grok Build (~/.grok/config.toml, `[model.agentproxy]`)            |
 | `POST /api/cli-tools/qwen-settings`         | Qwen Code (`~/.qwen/settings.json` + dedicated `.env` key)       |
 
 כל המסלולים משתמשים ב-`sanitizeErrorMessage()` עבור תגובות שגיאה (כלל קשה #12).
@@ -300,7 +300,7 @@ interface ToolBatchStatus {
 
 ## 9. התחלה מהירה
 
-### שלב 1 — קבלת מפתח API של OmniRoute
+### שלב 1 — קבלת מפתח API של AgentProxy
 
 1. פתחו את `/dashboard/api-manager` → **צור מפתח API**
 2. תן לו שם (למשל `cli-tools`) ובחר את כל ההרשאות
@@ -333,7 +333,7 @@ npm install -g kilocode
 # Qwen Code
 npm install -g @qwen-code/qwen-code
 
-# Google Gemini CLI (ניתן להשקה דרך `omniroute run gemini` → /v1beta surface)
+# Google Gemini CLI (ניתן להשקה דרך `agentproxy run gemini` → /v1beta surface)
 npm install -g @google/gemini-cli
 
 # Aider
@@ -364,14 +364,14 @@ cargo install smelt  # מבוסס Rust
 ### שלב 4 — הגדרת משתני סביבה גלובליים
 
 ```bash
-# נקודת קצה אוניברסלית של OmniRoute
+# נקודת קצה אוניברסלית של AgentProxy
 export OPENAI_BASE_URL="http://localhost:20128/v1"
-export OPENAI_API_KEY="sk-your-omniroute-key"
+export OPENAI_API_KEY="sk-your-agentproxy-key"
 export ANTHROPIC_BASE_URL="http://localhost:20128"
-export ANTHROPIC_AUTH_TOKEN="sk-your-omniroute-key"
+export ANTHROPIC_AUTH_TOKEN="sk-your-agentproxy-key"
 # Gemini CLI קורא GOOGLE_GEMINI_BASE_URL ב- ROOT (ה-SDK שלו מוסיף /v1beta/... בעצמו)
 export GOOGLE_GEMINI_BASE_URL="http://localhost:20128"
-export GEMINI_API_KEY="sk-your-omniroute-key"
+export GEMINI_API_KEY="sk-your-agentproxy-key"
 ```
 
 > עבור **שרת מרוחק** החלף `localhost:20128` עם כתובת ה-IP או הדומיין של השרת,
@@ -389,7 +389,7 @@ mkdir -p ~/.claude && cat > ~/.claude/settings.json << EOF
 {
   "env": {
     "ANTHROPIC_BASE_URL": "http://localhost:20128",
-    "ANTHROPIC_AUTH_TOKEN": "sk-your-omniroute-key"
+    "ANTHROPIC_AUTH_TOKEN": "sk-your-agentproxy-key"
   }
 }
 EOF
@@ -404,20 +404,20 @@ EOF
 #### OpenAI Codex
 
 Codex המודרני (v0.137+) קורא רק את `~/.codex/config.toml` — הישן
-`config.yaml` שייך ל-CLI npm הישן ומוזנח בשקט. מפתח ה-API נשאר במשתנה הסביבה `OMNIROUTE_API_KEY` (`env_key`), אף פעם
+`config.yaml` שייך ל-CLI npm הישן ומוזנח בשקט. מפתח ה-API נשאר במשתנה הסביבה `AGENTPROXY_API_KEY` (`env_key`), אף פעם
 לא בתוך הקובץ:
 
 ```bash
 mkdir -p ~/.codex && cat > ~/.codex/config.toml << EOF
-model_provider = "omniroute"
+model_provider = "agentproxy"
 
-[model_providers.omniroute]
-name                 = "OmniRoute"
+[model_providers.agentproxy]
+name                 = "AgentProxy"
 base_url             = "http://localhost:20128/v1"
-env_key              = "OMNIROUTE_API_KEY"
+env_key              = "AGENTPROXY_API_KEY"
 requires_openai_auth = false
 EOF
-export OMNIROUTE_API_KEY="sk-your-omniroute-key"
+export AGENTPROXY_API_KEY="sk-your-agentproxy-key"
 ```
 
 הפניה מלאה (פרופילים, `wire_api`, חלונות הקשר): [CODEX-CLI-CONFIGURATION.md](../guides/CODEX-CLI-CONFIGURATION.md).
@@ -433,12 +433,12 @@ mkdir -p ~/.config/opencode && cat > ~/.config/opencode/opencode.json << EOF
 {
   "\$schema": "https://opencode.ai/config.json",
   "provider": {
-    "omniroute": {
+    "agentproxy": {
       "npm": "@ai-sdk/openai-compatible",
-      "name": "OmniRoute",
+      "name": "AgentProxy",
       "options": {
         "baseURL": "http://localhost:20128/v1",
-        "apiKey": "sk-your-omniroute-key"
+        "apiKey": "sk-your-agentproxy-key"
       },
       "models": {
         "claude-sonnet-4-5": { "name": "claude-sonnet-4-5" },
@@ -453,7 +453,7 @@ EOF
 
 **בדיקה:** `opencode`
 
-> השתמש ב- `opencode run "your prompt" --model omniroute/claude-sonnet-4-5-thinking --variant high`
+> השתמש ב- `opencode run "your prompt" --model agentproxy/claude-sonnet-4-5-thinking --variant high`
 > כדי לשלוח וריאנטים של חשיבה.
 
 ---
@@ -467,7 +467,7 @@ mkdir -p ~/.cline/data && cat > ~/.cline/data/globalState.json << EOF
 {
   "apiProvider": "openai",
   "openAiBaseUrl": "http://localhost:20128/v1",
-  "openAiApiKey": "sk-your-omniroute-key"
+  "openAiApiKey": "sk-your-agentproxy-key"
 }
 EOF
 ```
@@ -475,7 +475,7 @@ EOF
 **מצב VS Code:**
 הגדרות הרחבת Cline → ספק API: `OpenAI Compatible` → כתובת URL בסיסית: `http://localhost:20128/v1`
 
-או השתמש בלוח המחוונים של OmniRoute → **כלי CLI → Cline → החל קונפיגורציה**.
+או השתמש בלוח המחוונים של AgentProxy → **כלי CLI → Cline → החל קונפיגורציה**.
 
 ---
 
@@ -484,7 +484,7 @@ EOF
 **מצב CLI:**
 
 ```bash
-kilocode --api-base http://localhost:20128/v1 --api-key sk-your-omniroute-key
+kilocode --api-base http://localhost:20128/v1 --api-key sk-your-agentproxy-key
 ```
 
 **הגדרות VS Code:**
@@ -492,11 +492,11 @@ kilocode --api-base http://localhost:20128/v1 --api-key sk-your-omniroute-key
 ```json
 {
   "kilo-code.openAiBaseUrl": "http://localhost:20128/v1",
-  "kilo-code.apiKey": "sk-your-omniroute-key"
+  "kilo-code.apiKey": "sk-your-agentproxy-key"
 }
 ```
 
-או השתמש בלוח המחוונים של OmniRoute → **כלי CLI → KiloCode → החל קונפיגורציה**.
+או השתמש בלוח המחוונים של AgentProxy → **כלי CLI → KiloCode → החל קונפיגורציה**.
 
 ---
 
@@ -506,11 +506,11 @@ kilocode --api-base http://localhost:20128/v1 --api-key sk-your-omniroute-key
 
 ```yaml
 models:
-  - name: OmniRoute
+  - name: AgentProxy
     provider: openai
     model: auto
     apiBase: http://localhost:20128/v1
-    apiKey: sk-your-omniroute-key
+    apiKey: sk-your-agentproxy-key
     default: true
 ```
 
@@ -520,25 +520,25 @@ models:
 
 #### VS Code Insiders (`chatLanguageModels.json`)
 
-השתמש בזה כאשר VS Code Insiders מוגדר עבור מודלים של נקודות קצה מותאמות ואתה רוצה ש-OmniRoute יעבוד ללא שדה כותרת מותאם.
+השתמש בזה כאשר VS Code Insiders מוגדר עבור מודלים של נקודות קצה מותאמות ואתה רוצה ש-AgentProxy יעבוד ללא שדה כותרת מותאם.
 
 **מיקום מומלץ:**
 
 - Linux: `~/.config/Code - Insiders/User/chatLanguageModels.json`
 - Windows: `%APPDATA%/Code - Insiders/User/chatLanguageModels.json`
 
-**דוגמה באמצעות הכינוי המוטבע של OmniRoute:**
+**דוגמה באמצעות הכינוי המוטבע של AgentProxy:**
 
 ```json
 [
   {
     "vendor": "customendpoint",
     "id": "auto",
-    "name": "OmniRoute Auto",
+    "name": "AgentProxy Auto",
     "family": "gpt-4",
     "version": "1.0.0",
-    "url": "http://localhost:20128/api/v1/vscode/sk-your-omniroute-key/chat/completions",
-    "modelsUrl": "http://localhost:20128/api/v1/vscode/sk-your-omniroute-key/models",
+    "url": "http://localhost:20128/api/v1/vscode/sk-your-agentproxy-key/chat/completions",
+    "modelsUrl": "http://localhost:20128/api/v1/vscode/sk-your-agentproxy-key/models",
     "requestFormat": "openai-chat-completions",
     "contextWindow": 256000,
     "maxOutputTokens": 32768,
@@ -551,7 +551,7 @@ models:
 
 **הערות:**
 
-- החלף `sk-your-omniroute-key` עם מפתח API שנוצר ב-OmniRoute.
+- החלף `sk-your-agentproxy-key` עם מפתח API שנוצר ב-AgentProxy.
 - שדה ה-`url` צריך להצביע על `/api/v1/vscode/{token}/chat/completions`.
 - שדה ה-`modelsUrl` צריך להצביע על `/api/v1/vscode/{token}/models`.
 - העדף את הזרימה הרגילה של `/v1` + כותרת Bearer כאשר הלקוח תומך בכותרות מותאמות.
@@ -565,40 +565,40 @@ models:
 # התחבר לחשבון AWS/Kiro שלך:
 kiro-cli login
 
-# ה-CLI משתמש באותנטיקציה משלו — OmniRoute לא נדרשת כ-backend עבור Kiro CLI עצמו.
-# השתמש ב-kiro-cli לצד OmniRoute עבור כלים אחרים.
+# ה-CLI משתמש באותנטיקציה משלו — AgentProxy לא נדרשת כ-backend עבור Kiro CLI עצמו.
+# השתמש ב-kiro-cli לצד AgentProxy עבור כלים אחרים.
 kiro-cli status
 ```
 
-עבור אפליקציית שולחן העבודה **Kiro IDE**, השתמש בנקודת הקצה MITM שנחשפת על ידי OmniRoute
+עבור אפליקציית שולחן העבודה **Kiro IDE**, השתמש בנקודת הקצה MITM שנחשפת על ידי AgentProxy
 מתחת ל- `/dashboard/cli-tools → Kiro`.
 
 ---
 
-## 10. OmniRoute CLI פנימי
+## 10. AgentProxy CLI פנימי
 
-הבינארי `omniroute` מספק פקודות עבור מחזור חיי השרת, התקנה, אבחון, וניהול ספקים. נקודת כניסה: `bin/omniroute.mjs`.
+הבינארי `agentproxy` מספק פקודות עבור מחזור חיי השרת, התקנה, אבחון, וניהול ספקים. נקודת כניסה: `bin/agentproxy.mjs`.
 
 ```bash
-omniroute                              # הפעל את השרת (פורט ברירת מחדל 20128)
-omniroute setup                        # אשף התקנה אינטראקטיבי
-omniroute doctor                       # בדוק קונפיגורציה, DB, פורטים, זמן ריצה
-omniroute providers list               # חיבורים לספקים שהוגדרו
-omniroute providers test-all           # בדוק כל חיבור פעיל
-omniroute reset-password               # אפס את סיסמת המנהל
-omniroute logs                         # זרם יומני בקשות
-omniroute health                       # בריאות מפורטת (מפסקי זרם, מטמון, זיכרון)
-omniroute --version                    # הדפס גרסה
-omniroute --help                       # הצג את כל הפקודות
+agentproxy                              # הפעל את השרת (פורט ברירת מחדל 20128)
+agentproxy setup                        # אשף התקנה אינטראקטיבי
+agentproxy doctor                       # בדוק קונפיגורציה, DB, פורטים, זמן ריצה
+agentproxy providers list               # חיבורים לספקים שהוגדרו
+agentproxy providers test-all           # בדוק כל חיבור פעיל
+agentproxy reset-password               # אפס את סיסמת המנהל
+agentproxy logs                         # זרם יומני בקשות
+agentproxy health                       # בריאות מפורטת (מפסקי זרם, מטמון, זיכרון)
+agentproxy --version                    # הדפס גרסה
+agentproxy --help                       # הצג את כל הפקודות
 ```
 
 ### התקנה והתחלה
 
 ```bash
-omniroute setup                        # אשף התקנה אינטראקטיבי
-omniroute setup --non-interactive      # מצב CI/אוטומציה (קורא משתני סביבה + דגלים)
-omniroute setup --password '<value>'   # הגדר סיסמת מנהל ישירות
-omniroute setup --add-provider \
+agentproxy setup                        # אשף התקנה אינטראקטיבי
+agentproxy setup --non-interactive      # מצב CI/אוטומציה (קורא משתני סביבה + דגלים)
+agentproxy setup --password '<value>'   # הגדר סיסמת מנהל ישירות
+agentproxy setup --add-provider \
   --provider openai \
   --api-key '<value>' \
   --test-provider                      # הוסף ובדוק ספק במכה אחת
@@ -608,21 +608,21 @@ omniroute setup --add-provider \
 
 | Var                 | מטרה                                                         |
 | ------------------- | ------------------------------------------------------------ |
-| `OMNIROUTE_API_KEY` | מפתח API של הספק (מחובר ל`--api-key` דרך Commander `.env()`) |
-| `DATA_DIR`          | החלף את תיקיית הנתונים של OmniRoute                          |
+| `AGENTPROXY_API_KEY` | מפתח API של הספק (מחובר ל`--api-key` דרך Commander `.env()`) |
+| `DATA_DIR`          | החלף את תיקיית הנתונים של AgentProxy                          |
 
 כל שאר הקלטים הלא אינטראקטיביים מועברים כדגלים, לא משתני סביבה:
 `--password`, `--provider`, `--provider-name`, `--provider-base-url`, `--default-model`
-(ראה את אפשרויות `omniroute setup` למעלה).
+(ראה את אפשרויות `agentproxy setup` למעלה).
 
 ### אבחון
 
 ```bash
-omniroute doctor                       # בדוק קונפיגורציה, DB, פורטים, זמן ריצה, זיכרון, חיות
-omniroute doctor --json                # JSON קריא למכונה
-omniroute doctor --no-liveness         # דלג על בדיקת בריאות HTTP
-omniroute doctor --host 0.0.0.0        # החלף את מארח החיות
-omniroute doctor --liveness-url <url>  # החלף את כתובת ה-URL של נקודת הבריאות המלאה
+agentproxy doctor                       # בדוק קונפיגורציה, DB, פורטים, זמן ריצה, זיכרון, חיות
+agentproxy doctor --json                # JSON קריא למכונה
+agentproxy doctor --no-liveness         # דלג על בדיקת בריאות HTTP
+agentproxy doctor --host 0.0.0.0        # החלף את מארח החיות
+agentproxy doctor --liveness-url <url>  # החלף את כתובת ה-URL של נקודת הבריאות המלאה
 ```
 
 הדוקטור מבצע את הבדיקות הללו: `קונפיגורציה`, `מסד נתונים`, `אחסון/הצפנה`,
@@ -632,46 +632,46 @@ omniroute doctor --liveness-url <url>  # החלף את כתובת ה-URL של נ
 ### ניהול ספקים
 
 ```bash
-omniroute providers available                       # קטלוג ספקי OmniRoute
-omniroute providers available --search openai       # סנן קטלוג לפי id/name/alias/category
-omniroute providers available --category api-key    # סנן לפי קטגוריה (api-key, oauth, free, ...)
-omniroute providers available --json                # JSON קריא למכונה
+agentproxy providers available                       # קטלוג ספקי AgentProxy
+agentproxy providers available --search openai       # סנן קטלוג לפי id/name/alias/category
+agentproxy providers available --category api-key    # סנן לפי קטגוריה (api-key, oauth, free, ...)
+agentproxy providers available --json                # JSON קריא למכונה
 
-omniroute providers list                            # חיבורים לספקים שהוגדרו
-omniroute providers list --json
+agentproxy providers list                            # חיבורים לספקים שהוגדרו
+agentproxy providers list --json
 
-omniroute providers test <id|name>                  # בדוק חיבור אחד שהוגדר
-omniroute providers test-all                        # בדוק כל חיבור פעיל
-omniroute providers validate                        # אימות מבני מקומי בלבד
-omniroute providers add <provider> --credential-env PROVIDER_KEY
-omniroute providers import ./providers.json --dry-run --json
-omniroute providers auth <provider>                 # זרימת OAuth קיימת
-omniroute providers edit <id|name> --default-model <model>
-omniroute providers remove <id|name> --yes
+agentproxy providers test <id|name>                  # בדוק חיבור אחד שהוגדר
+agentproxy providers test-all                        # בדוק כל חיבור פעיל
+agentproxy providers validate                        # אימות מבני מקומי בלבד
+agentproxy providers add <provider> --credential-env PROVIDER_KEY
+agentproxy providers import ./providers.json --dry-run --json
+agentproxy providers auth <provider>                 # זרימת OAuth קיימת
+agentproxy providers edit <id|name> --default-model <model>
+agentproxy providers remove <id|name> --yes
 ```
 
 `providers add/import/auth/edit/remove` הם API-first ולכן פועלים נגד
 ההקשר המקומי או המרוחק הפעיל. קלט ההסמכה צריך להשתמש ב
 `--credential-stdin` או `--credential-env`; `--dry-run --json` מדווח רק על
-נוכחות/צורה מחוקה. `providers available` קורא את קטלוג OmniRoute;
+נוכחות/צורה מחוקה. `providers available` קורא את קטלוג AgentProxy;
 `providers list/test/test-all/validate` שומרים על ההתנהגות המקומית של SQLite שלהם ואינם דורשים שהשרת יהיה פועל.
 
 ### שחזור ואיפוס
 
 ```bash
-omniroute reset-password                # אפס את סיסמת המנהל (גם: omniroute-reset-password)
-omniroute reset-encrypted-columns       # הצג אזהרה + דלג עבור איפוס הסמכה מוצפנת
-omniroute reset-encrypted-columns --force  # באמת נעל את ההסמכות המוצפנות ב-SQLite
+agentproxy reset-password                # אפס את סיסמת המנהל (גם: agentproxy-reset-password)
+agentproxy reset-encrypted-columns       # הצג אזהרה + דלג עבור איפוס הסמכה מוצפנת
+agentproxy reset-encrypted-columns --force  # באמת נעל את ההסמכות המוצפנות ב-SQLite
 ```
 
 ### ייצוא הסמכה (⚠ יש לטפל בזה בזהירות)
 
 ```bash
-omniroute auth export                                 # הצג אזהרה + שער אישור — אין גישה ל-DB
-omniroute auth export --force                          # ייצא את כל ההסמכות המפוענחות של כל החיבורים ל-stdout כ-JSON
-omniroute auth export --force --id <id>                 # ייצא רק את החיבור התואם
-omniroute auth export --force --format env               # פלט OMNIROUTE_<PROVIDER>_<FIELD>=<value> שורות
-omniroute auth export --force --out creds.json           # כתוב לקובץ (נוצר עם הרשאות 0600)
+agentproxy auth export                                 # הצג אזהרה + שער אישור — אין גישה ל-DB
+agentproxy auth export --force                          # ייצא את כל ההסמכות המפוענחות של כל החיבורים ל-stdout כ-JSON
+agentproxy auth export --force --id <id>                 # ייצא רק את החיבור התואם
+agentproxy auth export --force --format env               # פלט AGENTPROXY_<PROVIDER>_<FIELD>=<value> שורות
+agentproxy auth export --force --out creds.json           # כתוב לקובץ (נוצר עם הרשאות 0600)
 ```
 
 `auth export` הוא **מקומי בלבד** (קריאה ישירה מ-SQLite, ללא נתיב HTTP) ומדפיס/כותב
@@ -682,36 +682,36 @@ omniroute auth export --force --out creds.json           # כתוב לקובץ (
 
 ### פקודות משנה אחרות
 
-אלו מניחות ששרת OmniRoute פועל, אלא אם כן צוין אחרת:
+אלו מניחות ששרת AgentProxy פועל, אלא אם כן צוין אחרת:
 
 ```bash
-omniroute status                       # מצב ריצה מקיף
-omniroute logs                         # זרם יומני בקשות (--json, --search, --follow)
-omniroute config show                  # הצג קונפיגורציה נוכחית
+agentproxy status                       # מצב ריצה מקיף
+agentproxy logs                         # זרם יומני בקשות (--json, --search, --follow)
+agentproxy config show                  # הצג קונפיגורציה נוכחית
 
-omniroute provider list                # רשום ספקים זמינים (כינוי של providers list)
-omniroute provider add                 # רשם את OmniRoute כספק על כלי
-omniroute keys add | list | remove     # ניהול מפתחות API
-omniroute models [provider]            # רשום מודלים (--json, --search)
-omniroute combo list | switch | create | delete
+agentproxy provider list                # רשום ספקים זמינים (כינוי של providers list)
+agentproxy provider add                 # רשם את AgentProxy כספק על כלי
+agentproxy keys add | list | remove     # ניהול מפתחות API
+agentproxy models [provider]            # רשום מודלים (--json, --search)
+agentproxy combo list | switch | create | delete
 
-omniroute backup                       # צלם קונפיגורציה + DB
-omniroute restore                      # שחזר מצילום קודם
+agentproxy backup                       # צלם קונפיגורציה + DB
+agentproxy restore                      # שחזר מצילום קודם
 
-omniroute health                       # בריאות מפורטת (מפסקי זרם, מטמון, זיכרון)
-omniroute quota                        # שימוש במכסה של הספק
-omniroute cache                        # מצב המטמון
-omniroute cache clear                  # נקה את המטמון הסמנטי + החתימות
+agentproxy health                       # בריאות מפורטת (מפסקי זרם, מטמון, זיכרון)
+agentproxy quota                        # שימוש במכסה של הספק
+agentproxy cache                        # מצב המטמון
+agentproxy cache clear                  # נקה את המטמון הסמנטי + החתימות
 
-omniroute mcp status | restart         # מצב שרת MCP / הפעלה מחדש
-omniroute a2a status | card            # מצב שרת A2A / כרטיס סוכן
+agentproxy mcp status | restart         # מצב שרת MCP / הפעלה מחדש
+agentproxy a2a status | card            # מצב שרת A2A / כרטיס סוכן
 
-omniroute tunnel list | create | stop  # ניהול מנהרות (cloudflare/tailscale/ngrok)
-omniroute env show | get <k> | set <k> <v>  # בדוק / הגדר משתני סביבה (זמני)
+agentproxy tunnel list | create | stop  # ניהול מנהרות (cloudflare/tailscale/ngrok)
+agentproxy env show | get <k> | set <k> <v>  # בדוק / הגדר משתני סביבה (זמני)
 
-omniroute test                         # בדיקת חיבוריות ספק
-omniroute update                       # בדוק אם יש עדכונים
-omniroute completion                   # צור השלמה של shell
+agentproxy test                         # בדיקת חיבוריות ספק
+agentproxy update                       # בדוק אם יש עדכונים
+agentproxy completion                   # צור השלמה של shell
 ```
 
 ### דגלים נפוצים
@@ -740,7 +740,7 @@ omniroute completion                   # צור השלמה של shell
 | `/v1/audio/speech`         | טקסט לדיבור               | ElevenLabs, OpenAI TTS         |
 | `/v1/audio/transcriptions` | דיבור לטקסט               | Deepgram, AssemblyAI           |
 
-דוגמאות מוכנות להדבקה עם URL של OmniRoute עם טוקנים:
+דוגמאות מוכנות להדבקה עם URL של AgentProxy עם טוקנים:
 
 ```txt
 Token example: sk-a3ab3c080beaee3a-69f4a4-070d71af
@@ -759,7 +759,7 @@ Ollama chat: http://localhost:20128/api/v1/vscode/sk-a3ab3c080beaee3a-69f4a4-070
 
 | שגיאה                                        | סיבה                | תיקון                                         |
 | -------------------------------------------- | ------------------- | --------------------------------------------- |
-| `Connection refused`                         | OmniRoute לא פועל   | `omniroute serve`                             |
+| `Connection refused`                         | AgentProxy לא פועל   | `agentproxy serve`                             |
 | `401 Unauthorized`                           | מפתח API שגוי       | בדוק ב`/dashboard/api-manager`                |
 | `No combo configured`                        | אין קומבינציה פעילה | הגדר ב`/dashboard/combos`                     |
 | CLI shows "not installed"                    | בינארי לא ב-PATH    | בדוק `which <command>`                        |

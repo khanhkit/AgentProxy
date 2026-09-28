@@ -33,7 +33,7 @@ const LEGACY_HARDCODED_HOST = "daily-cloudcode-pa.googleapis.com";
 const originalPlatformDescriptor = Object.getOwnPropertyDescriptor(process, "platform")!;
 const originalPath = process.env.PATH;
 
-const tmpRoot = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-7275-"));
+const tmpRoot = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-7275-"));
 const binDir = path.join(tmpRoot, "bin");
 fs.mkdirSync(binDir, { recursive: true });
 const captureFile = path.join(tmpRoot, "certutil-argv.log");

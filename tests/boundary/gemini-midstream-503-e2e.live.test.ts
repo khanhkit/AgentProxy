@@ -9,11 +9,11 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-const OMNIROUTE_URL = `${process.env.OMNIROUTE_URL}/v1`;
-const AUTH = `Bearer ${process.env.OMNIROUTE_API_KEY || ""}`;
+const AGENTPROXY_URL = `${process.env.AGENTPROXY_URL}/v1`;
+const AUTH = `Bearer ${process.env.AGENTPROXY_API_KEY || ""}`;
 
-const skip = !(process.env.OMNIROUTE_API_KEY && process.env.OMNIROUTE_URL)
-  ? "OMNIROUTE_API_KEY or OMNIROUTE_URL not set — skipping live boundary test"
+const skip = !(process.env.AGENTPROXY_API_KEY && process.env.AGENTPROXY_URL)
+  ? "AGENTPROXY_API_KEY or AGENTPROXY_URL not set — skipping live boundary test"
   : undefined;
 
 interface SseEvent {
@@ -78,7 +78,7 @@ test(
     // If Gemini hits a mid-stream 503 (which is non-deterministic), the fix
     // ensures response.completed carries status="failed" and an error object.
     // If the request succeeds normally, we verify the standard completion shape.
-    const { events, status } = await fetchStream(`${OMNIROUTE_URL}/responses`, {
+    const { events, status } = await fetchStream(`${AGENTPROXY_URL}/responses`, {
       model: "gemini/gemini-2.0-flash",
       input: "Say 'hello' and nothing else.",
       stream: true,

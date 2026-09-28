@@ -29,6 +29,11 @@ import {
   extractChatcmplId,
 } from "./accountRotation.ts";
 import { isOpencodeGeoBlocked, proxyKeyOf } from "./opencodeGeoBlock.ts";
+import {
+  handleFreeTierObservedToolsRefusal,
+  noteAcceptedObservedTools,
+  type ObservedToolsRetryContext,
+} from "./opencodeFreeTierRetry.ts";
 import { isRetriableUpstreamFailure } from "./opencodeTransientFailure.ts";
 import { headersWaitDispatch, headersWaitState } from "./opencodeHeadersWait.ts";
 import {
@@ -98,6 +103,8 @@ const OPENCODE_FREE_MODELS = new Set([
  *   grok-4.5 low/medium/high; hy3 none/low/high; kimi-k3 max;
  *   qwen3.6-plus / qwen3.7-max / qwen3.7-plus high/max;
  *   muse-spark-1.2-contributor minimal/low/medium/high/xhigh (no max)
+ * - #12674 Muse Spark 1.3 Contributor: minimal/low/medium/high/xhigh (no max),
+ *   verified via `opencode models opencode-go --refresh --verbose`
  */
 const EFFORT_TIERS: Record<string, readonly string[]> = {
   "deepseek-v4-pro": EFFORT_LEVELS,
@@ -111,6 +118,7 @@ const EFFORT_TIERS: Record<string, readonly string[]> = {
   "qwen3.7-max": ["high", "max"],
   "qwen3.7-plus": ["high", "max"],
   "muse-spark-1.2-contributor": ["minimal", "low", "medium", "high", "xhigh"],
+  "muse-spark-1.3-contributor": ["minimal", "low", "medium", "high", "xhigh"],
 };
 
 /**
@@ -477,7 +485,16 @@ export class OpencodeExecutor extends BaseExecutor {
   }
 
   async execute(input: ExecuteInput) {
-    this._requestFormat = resolveOpencodeTargetFormat(this.provider, input.model);
+    const requestFormat = resolveOpencodeTargetFormat(this.provider, input.model);
+    this._requestFormat = requestFormat;
+    const observedToolsCtx: ObservedToolsRetryContext = {
+      provider: this.provider,
+      model: String(input.model ?? ""),
+      requestFormat,
+      gated:
+        (this.provider === "opencode" || this.provider === "opencode-zen") &&
+        !isPremiumOpencodeModel(String(input.model ?? ""), this.provider),
+    };
 
     // #8681: Gate premium opencode models behind a usable API key.
     // When the connection is keyless (no apiKey, no accessToken) and the model
@@ -546,6 +563,23 @@ export class OpencodeExecutor extends BaseExecutor {
         const single = (await (hasAmbientProxyContext()
           ? dispatch()
           : runWithDirectFetchContext(dispatch))) as HttpExecuteResult;
+        const freeTierHandled = await handleFreeTierObservedToolsRefusal(
+          observedToolsCtx,
+          input,
+          single,
+          log,
+          cid,
+          (retryInput) =>
+            (hasAmbientProxyContext()
+              ? super.execute(retryInput)
+              : runWithDirectFetchContext(() =>
+                  super.execute(retryInput)
+                )) as Promise<HttpExecuteResult>
+        );
+        if (freeTierHandled) {
+          return this.normalizeMuseSparkResponse(input, freeTierHandled);
+        }
+        noteAcceptedObservedTools(observedToolsCtx, input, single);
         if (single.response.status === 400) {
           let bodyText: string | null = null;
           try {
@@ -790,6 +824,22 @@ export class OpencodeExecutor extends BaseExecutor {
             if (this.accounts.length === 1) return result;
             continue;
           }
+
+          const freeTierHandled = await handleFreeTierObservedToolsRefusal(
+            observedToolsCtx,
+            input,
+            result,
+            log,
+            cid,
+            (retryInput) =>
+              runWithProxyContext(account.proxy, () =>
+                super.execute({ ...retryInput, skipUpstreamRetry: true })
+              ) as Promise<HttpExecuteResult>,
+            bodyText
+          );
+          if (freeTierHandled) {
+            return this.normalizeMuseSparkResponse(input, freeTierHandled);
+          }
         }
 
         // Empty upstream rejection (malformed 400: no error field, no real
@@ -820,6 +870,7 @@ export class OpencodeExecutor extends BaseExecutor {
           return result;
         }
 
+        noteAcceptedObservedTools(observedToolsCtx, input, result);
         this.markSuccess(account);
         return this.normalizeMuseSparkResponse(input, result);
       }

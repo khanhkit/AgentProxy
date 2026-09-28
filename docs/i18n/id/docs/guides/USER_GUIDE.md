@@ -4,7 +4,7 @@
 
 ---
 
-Panduan lengkap untuk mengonfigurasi penyedia, membuat combo, mengintegrasikan alat CLI, dan menerapkan OmniRoute.
+Panduan lengkap untuk mengonfigurasi penyedia, membuat combo, mengintegrasikan alat CLI, dan menerapkan AgentProxy.
 
 ---
 
@@ -123,7 +123,7 @@ Models:
   cc/claude-haiku-4-5-20251001
 ```
 
-**Tips Pro:** Gunakan Opus untuk tugas kompleks, Sonnet untuk kecepatan. OmniRoute melacak kuota per model!
+**Tips Pro:** Gunakan Opus untuk tugas kompleks, Sonnet untuk kecepatan. AgentProxy melacak kuota per model!
 
 #### OpenAI Codex (Plus/Pro)
 
@@ -232,7 +232,7 @@ Cost: saat ini $0 dalam batas penyedia; ketentuan dan ketersediaan dapat berubah
 ```
 Settings → Models → Advanced:
   OpenAI API Base URL: http://localhost:20128/v1
-  OpenAI API Key: [dari dasbor omniroute]
+  OpenAI API Key: [dari dasbor agentproxy]
   Model: cc/claude-opus-4-7
 ```
 
@@ -243,7 +243,7 @@ Edit `~/.claude/config.json`:
 ```json
 {
   "anthropic_api_base": "http://localhost:20128/v1",
-  "anthropic_api_key": "your-omniroute-api-key"
+  "anthropic_api_key": "your-agentproxy-api-key"
 }
 ```
 
@@ -251,7 +251,7 @@ Edit `~/.claude/config.json`:
 
 ```bash
 export OPENAI_BASE_URL="http://localhost:20128"
-export OPENAI_API_KEY="your-omniroute-api-key"
+export OPENAI_API_KEY="your-agentproxy-api-key"
 codex "your prompt"
 ```
 
@@ -263,14 +263,14 @@ Edit `~/.openclaw/openclaw.json`:
 {
   "agents": {
     "defaults": {
-      "model": { "primary": "omniroute/if/glm-4.7" }
+      "model": { "primary": "agentproxy/if/glm-4.7" }
     }
   },
   "models": {
     "providers": {
-      "omniroute": {
+      "agentproxy": {
         "baseUrl": "http://localhost:20128/v1",
-        "apiKey": "your-omniroute-api-key",
+        "apiKey": "your-agentproxy-api-key",
         "api": "openai-completions",
         "models": [{ "id": "if/glm-4.7", "name": "glm-4.7" }]
       }
@@ -297,42 +297,42 @@ Model: cc/claude-opus-4-7
 ### Instalasi npm Global (Direkomendasikan)
 
 ```bash
-npm install -g omniroute
+npm install -g agentproxy
 
 # Create config directory
-mkdir -p ~/.omniroute
+mkdir -p ~/.agentproxy
 
 # Create .env file (see .env.example)
-cp .env.example ~/.omniroute/.env
+cp .env.example ~/.agentproxy/.env
 
 # Start server
-omniroute
+agentproxy
 # Or with custom port:
-omniroute --port 3000
+agentproxy --port 3000
 ```
 
-CLI secara otomatis memuat `.env` dari `~/.omniroute/.env` atau `./.env`.
+CLI secara otomatis memuat `.env` dari `~/.agentproxy/.env` atau `./.env`.
 
 ### Menghapus Instalasi
 
-Saat Anda tidak lagi memerlukan OmniRoute, kami menyediakan dua skrip cepat untuk penghapusan bersih:
+Saat Anda tidak lagi memerlukan AgentProxy, kami menyediakan dua skrip cepat untuk penghapusan bersih:
 
 | Perintah                 | Tindakan                                                                                       |
 | ------------------------ | ---------------------------------------------------------------------------------------------- |
-| `npm run uninstall`      | Menghapus aplikasi dari sistem tetapi **menyimpan DB dan konfigurasi** di `~/.omniroute`.      |
+| `npm run uninstall`      | Menghapus aplikasi dari sistem tetapi **menyimpan DB dan konfigurasi** di `~/.agentproxy`.      |
 | `npm run uninstall:full` | Menghapus aplikasi DAN secara permanen **menghapus semua konfigurasi, kunci, dan basis data**. |
 
-> Catatan: Untuk menjalankan perintah ini, navigasikan ke folder proyek OmniRoute (jika Anda telah meng-clone-nya) dan jalankan. Atau, jika diinstal secara global, Anda cukup menjalankan `npm uninstall -g omniroute`.
+> Catatan: Untuk menjalankan perintah ini, navigasikan ke folder proyek AgentProxy (jika Anda telah meng-clone-nya) dan jalankan. Atau, jika diinstal secara global, Anda cukup menjalankan `npm uninstall -g agentproxy`.
 
 ### Penerapan VPS
 
 ```bash
-git clone https://github.com/diegosouzapw/OmniRoute.git
-cd OmniRoute && npm install && npm run build
+git clone https://github.com/khanhkit/AgentProxy.git
+cd AgentProxy && npm install && npm run build
 
 export JWT_SECRET="your-secure-secret-change-this"
 export INITIAL_PASSWORD="your-password"
-export DATA_DIR="/var/lib/omniroute"
+export DATA_DIR="/var/lib/agentproxy"
 export PORT="20128"
 export HOSTNAME="0.0.0.0"
 export NODE_ENV="production"
@@ -340,7 +340,7 @@ export NEXT_PUBLIC_BASE_URL="http://localhost:20128"
 export API_KEY_SECRET="endpoint-proxy-api-key-secret"
 
 npm run start
-# Or: pm2 start npm --name omniroute -- start
+# Or: pm2 start npm --name agentproxy -- start
 ```
 
 ### Penerapan PM2 (Memori Rendah)
@@ -349,10 +349,10 @@ Untuk server dengan RAM terbatas, gunakan opsi batas memori:
 
 ```bash
 # With 512MB limit (default)
-pm2 start npm --name omniroute -- start
+pm2 start npm --name agentproxy -- start
 
 # Or with custom memory limit
-OMNIROUTE_MEMORY_MB=512 pm2 start npm --name omniroute -- start
+AGENTPROXY_MEMORY_MB=512 pm2 start npm --name agentproxy -- start
 
 # Or using ecosystem.config.js
 pm2 start ecosystem.config.js
@@ -364,12 +364,12 @@ Buat `ecosystem.config.js`:
 module.exports = {
   apps: [
     {
-      name: "omniroute",
+      name: "agentproxy",
       script: "npm",
       args: "start",
       env: {
         NODE_ENV: "production",
-        OMNIROUTE_MEMORY_MB: "512",
+        AGENTPROXY_MEMORY_MB: "512",
         JWT_SECRET: "your-secret",
         INITIAL_PASSWORD: "your-password",
       },
@@ -384,24 +384,24 @@ module.exports = {
 
 ```bash
 # Build image (default = runner-cli with codex/claude/droid preinstalled)
-docker build -t omniroute:cli .
+docker build -t agentproxy:cli .
 
 # Portable mode (recommended)
-docker run -d --name omniroute -p 20128:20128 --env-file ./.env -v omniroute-data:/app/data omniroute:cli
+docker run -d --name agentproxy -p 20128:20128 --env-file ./.env -v agentproxy-data:/app/data agentproxy:cli
 ```
 
 Untuk mode integrasi host dengan binari CLI, lihat bagian Docker di dokumentasi utama.
 
 ### Void Linux (xbps-src)
 
-Pengguna Void Linux dapat mengemas dan menginstal OmniRoute secara native menggunakan framework kompilasi silang `xbps-src`. Ini mengotomasi build standalone Node.js beserta binding native `better-sqlite3` yang diperlukan.
+Pengguna Void Linux dapat mengemas dan menginstal AgentProxy secara native menggunakan framework kompilasi silang `xbps-src`. Ini mengotomasi build standalone Node.js beserta binding native `better-sqlite3` yang diperlukan.
 
 <details>
 <summary><b>Lihat template xbps-src</b></summary>
 
 ```bash
-# Template file for 'omniroute'
-pkgname=omniroute
+# Template file for 'agentproxy'
+pkgname=agentproxy
 version=3.2.4
 revision=1
 hostmakedepends="nodejs python3 make"
@@ -409,11 +409,11 @@ depends="openssl"
 short_desc="Universal AI gateway with smart routing for multiple LLM providers"
 maintainer="zenobit <zenobit@disroot.org>"
 license="MIT"
-homepage="https://github.com/diegosouzapw/OmniRoute"
-distfiles="https://github.com/diegosouzapw/OmniRoute/archive/refs/tags/v${version}.tar.gz"
+homepage="https://github.com/khanhkit/AgentProxy"
+distfiles="https://github.com/khanhkit/AgentProxy/archive/refs/tags/v${version}.tar.gz"
 checksum=009400afee90a9f32599d8fe734145cfd84098140b7287990183dde45ae2245b
-system_accounts="_omniroute"
-omniroute_homedir="/var/lib/omniroute"
+system_accounts="_agentproxy"
+agentproxy_homedir="/var/lib/agentproxy"
 export NODE_ENV=production
 export npm_config_engine_strict=false
 export npm_config_loglevel=error
@@ -463,26 +463,26 @@ do_check() {
 }
 
 do_install() {
-	vmkdir usr/lib/omniroute/.next
-	vcopy .next/standalone/. usr/lib/omniroute/.next/standalone
+	vmkdir usr/lib/agentproxy/.next
+	vcopy .next/standalone/. usr/lib/agentproxy/.next/standalone
 
 	# Prevent removal of empty Next.js app router dirs by the post-install hook
 	for _d in \
 		.next/standalone/.next/server/app/dashboard \
 		.next/standalone/.next/server/app/dashboard/settings \
 		.next/standalone/.next/server/app/dashboard/providers; do
-		touch "${DESTDIR}/usr/lib/omniroute/${_d}/.keep"
+		touch "${DESTDIR}/usr/lib/agentproxy/${_d}/.keep"
 	done
 
-	cat > "${WRKDIR}/omniroute" <<'EOF'
+	cat > "${WRKDIR}/agentproxy" <<'EOF'
 #!/bin/sh
 export PORT="${PORT:-20128}"
-export DATA_DIR="${DATA_DIR:-${XDG_DATA_HOME:-${HOME}/.local/share}/omniroute}"
+export DATA_DIR="${DATA_DIR:-${XDG_DATA_HOME:-${HOME}/.local/share}/agentproxy}"
 export APP_LOG_TO_FILE="${APP_LOG_TO_FILE:-false}"
 mkdir -p "${DATA_DIR}"
-exec node /usr/lib/omniroute/.next/standalone/server.js "$@"
+exec node /usr/lib/agentproxy/.next/standalone/server.js "$@"
 EOF
-	vbin "${WRKDIR}/omniroute"
+	vbin "${WRKDIR}/agentproxy"
 }
 
 post_install() {
@@ -496,14 +496,14 @@ post_install() {
 
 | Variabel                                | Default                              | Deskripsi                                                                                                                  |
 | --------------------------------------- | ------------------------------------ | -------------------------------------------------------------------------------------------------------------------------- |
-| `JWT_SECRET`                            | `omniroute-default-secret-change-me` | Rahasia penandatanganan JWT (**ubah di produksi**)                                                                         |
+| `JWT_SECRET`                            | `agentproxy-default-secret-change-me` | Rahasia penandatanganan JWT (**ubah di produksi**)                                                                         |
 | `INITIAL_PASSWORD`                      | `123456`                             | Kata sandi login pertama                                                                                                   |
-| `DATA_DIR`                              | `~/.omniroute`                       | Direktori data (db, penggunaan, log)                                                                                       |
+| `DATA_DIR`                              | `~/.agentproxy`                       | Direktori data (db, penggunaan, log)                                                                                       |
 | `PORT`                                  | default framework                    | Port layanan (`20128` dalam contoh)                                                                                        |
 | `HOSTNAME`                              | default framework                    | Host bind (Docker default ke `0.0.0.0`)                                                                                    |
 | `NODE_ENV`                              | default runtime                      | Atur `production` untuk penerapan                                                                                          |
 | `BASE_URL`                              | `http://localhost:20128`             | URL berbasis sisi server internal                                                                                          |
-| `CLOUD_URL`                             | `https://omniroute.dev`              | Cloud sinkronisasi titik akhir berbasis URL                                                                                |
+| `CLOUD_URL`                             | `https://agentproxy.example.com`              | Cloud sinkronisasi titik akhir berbasis URL                                                                                |
 | `API_KEY_SECRET`                        | `endpoint-proxy-api-key-secret`      | Rahasia HMAC untuk kunci API yang dihasilkan                                                                               |
 | `REQUIRE_API_KEY`                       | `false`                              | Wajibkan kunci API Bearer di `/v1/*`                                                                                       |
 | `ALLOW_API_KEY_REVEAL`                  | `false`                              | Izinkan Api Manager menyalin kunci API lengkap sesuai permintaan                                                           |
@@ -513,7 +513,7 @@ post_install() {
 | `AUTH_COOKIE_SECURE`                    | `false`                              | Paksa cookie auth `Secure` (di belakang reverse proxy HTTPS)                                                               |
 | `CLOUDFLARED_BIN`                       | tidak diatur                         | Gunakan binari `cloudflared` yang sudah ada alih-alih unduhan terkelola                                                    |
 | `CLOUDFLARED_PROTOCOL`                  | `http2`                              | Transport untuk Quick Tunnel terkelola (`http2`, `quic`, atau `auto`)                                                      |
-| `OMNIROUTE_MEMORY_MB`                   | `512`                                | Batas heap Node.js dalam MB                                                                                                |
+| `AGENTPROXY_MEMORY_MB`                   | `512`                                | Batas heap Node.js dalam MB                                                                                                |
 | `PROMPT_CACHE_MAX_SIZE`                 | `50`                                 | Entri cache prompt maksimum                                                                                                |
 | `SEMANTIC_CACHE_MAX_SIZE`               | `100`                                | Entri cache semantik maksimum                                                                                              |
 
@@ -636,7 +636,7 @@ Mengembalikan model yang dikelompokkan berdasarkan penyedia dengan tipe (`chat`,
 - Tersedia di **Dashboard → Endpoints** untuk penerapan Docker dan self-hosted lainnya
 - Membuat URL `https://*.trycloudflare.com` sementara yang diteruskan ke endpoint `/v1` Anda yang kompatibel dengan OpenAI
 - Aktifkan pertama kali untuk menginstal `cloudflared` hanya saat diperlukan; restart berikutnya menggunakan kembali binari terkelola yang sama
-- Quick Tunnel tidak dipulihkan otomatis setelah OmniRoute atau container di-restart; aktifkan kembali dari dasbor bila diperlukan
+- Quick Tunnel tidak dipulihkan otomatis setelah AgentProxy atau container di-restart; aktifkan kembali dari dasbor bila diperlukan
 - URL tunnel bersifat sementara dan berubah setiap kali Anda menghentikan/memulai tunnel
 - Managed Quick Tunnel secara default menggunakan transport HTTP/2 untuk menghindari peringatan buffer UDP QUIC yang mengganggu di container terbatas
 - Atur `CLOUDFLARED_PROTOCOL=quic` atau `auto` jika ingin mengubah pilihan transport terkelola
@@ -644,15 +644,15 @@ Mengembalikan model yang dikelompokkan berdasarkan penyedia dengan tipe (`chat`,
 
 ### Kecerdasan LLM Gateway (Fase 9)
 
-- **Cache Semantik** — Otomatis menyimpan respons non-streaming, temperature=0 (lewati dengan `X-OmniRoute-No-Cache: true`)
+- **Cache Semantik** — Otomatis menyimpan respons non-streaming, temperature=0 (lewati dengan `X-AgentProxy-No-Cache: true`)
 - **Idempotensitas Permintaan** — Mendeduplikasi permintaan dalam 5 detik melalui header `Idempotency-Key` atau `X-Request-Id`
-- **Pelacakan Progres** — Event SSE `event: progress` yang bisa diaktifkan melalui header `X-OmniRoute-Progress: true`
+- **Pelacakan Progres** — Event SSE `event: progress` yang bisa diaktifkan melalui header `X-AgentProxy-Progress: true`
 
 ---
 
 ### Translator Playground
 
-Akses melalui **Dashboard → Translator**. Debug dan visualisasikan bagaimana OmniRoute menerjemahkan permintaan API antar penyedia.
+Akses melalui **Dashboard → Translator**. Debug dan visualisasikan bagaimana AgentProxy menerjemahkan permintaan API antar penyedia.
 
 | Mode             | Tujuan                                                                                         |
 | ---------------- | ---------------------------------------------------------------------------------------------- |
@@ -690,7 +690,7 @@ Untuk afinitas sesi eksternal (misalnya, agen Claude Code/Codex di belakang prox
 X-Session-Id: your-session-key
 ```
 
-OmniRoute juga menerima `x_session_id` dan mengembalikan kunci sesi efektif di `X-OmniRoute-Session-Id`.
+AgentProxy juga menerima `x_session_id` dan mengembalikan kunci sesi efektif di `X-AgentProxy-Session-Id`.
 
 Jika Anda menggunakan Nginx dan mengirim header berbentuk garis bawah, aktifkan:
 
@@ -726,7 +726,7 @@ Chain: production-fallback
 
 Konfigurasikan melalui **Dasbor → Pengaturan → Ketahanan**.
 
-OmniRoute mengimplementasikan ketahanan tingkat penyedia dengan lima komponen:
+AgentProxy mengimplementasikan ketahanan tingkat penyedia dengan lima komponen:
 
 1. **Antrian & Kecepatan Permintaan** — Pembentukan permintaan tingkat sistem:
    - **Permintaan Per Menit (RPM)** — Permintaan maksimum per menit per akun
@@ -749,7 +749,7 @@ OmniRoute mengimplementasikan ketahanan tingkat penyedia dengan lima komponen:
 
    Status waktu proses pemutus penyedia hanya ditampilkan di **Dasbor → Kesehatan**.
 
-4. **Tunggu Cooldown** — Jika setiap kandidat koneksi sudah cooldown, OmniRoute dapat menunggu cooldown paling awal dan mencoba kembali permintaan klien yang sama secara otomatis.
+4. **Tunggu Cooldown** — Jika setiap kandidat koneksi sudah cooldown, AgentProxy dapat menunggu cooldown paling awal dan mencoba kembali permintaan klien yang sama secara otomatis.
 
 5. **Deteksi Otomatis Batas Kecepatan** — Saat penyedia upstream mengembalikan jendela tunggu eksplisit, petunjuk tersebut akan menggantikan jeda pakai koneksi lokal saat pengaturan diaktifkan.
 
@@ -783,7 +783,7 @@ curl -X POST http://localhost:20128/api/db-backups/import \
 
 **Use Cases:**
 
-- Migrasi OmniRoute antar mesin
+- Migrasi AgentProxy antar mesin
 - Buat cadangan eksternal untuk pemulihan bencana
 - Bagikan konfigurasi antar anggota tim (ekspor semua → bagikan arsip)
 
@@ -829,7 +829,7 @@ curl http://localhost:20128/api/usage/budget
 
 ### Transkripsi Audio
 
-OmniRoute mendukung transkripsi audio melalui titik akhir yang kompatibel dengan OpenAI:
+AgentProxy mendukung transkripsi audio melalui titik akhir yang kompatibel dengan OpenAI:
 
 ```bash
 POST /v1/audio/transcriptions
@@ -885,7 +885,7 @@ Akses melalui **Dasbor → Kesehatan**. Ikhtisar kesehatan sistem real-time deng
 
 ## 🖥️ Aplikasi Desktop (Elektron)
 
-OmniRoute tersedia sebagai aplikasi desktop asli untuk Windows, macOS, dan Linux.
+AgentProxy tersedia sebagai aplikasi desktop asli untuk Windows, macOS, dan Linux.
 
 ### Instal
 
@@ -928,7 +928,7 @@ Output → `electron/dist-electron/`
 
 | Variable              | Default | Description                      |
 | --------------------- | ------- | -------------------------------- |
-| `OMNIROUTE_PORT`      | `20128` | Server port                      |
-| `OMNIROUTE_MEMORY_MB` | `512`   | Node.js heap limit (64–16384 MB) |
+| `AGENTPROXY_PORT`      | `20128` | Server port                      |
+| `AGENTPROXY_MEMORY_MB` | `512`   | Node.js heap limit (64–16384 MB) |
 
 📖 Full documentation: [`electron/README.md`](../electron/README.md)

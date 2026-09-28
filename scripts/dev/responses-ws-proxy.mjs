@@ -1,6 +1,7 @@
 import { createHash, randomUUID } from "node:crypto";
 import { createRequire } from "node:module";
 import { STATUS_CODES } from "node:http";
+import { PEER_IP_HEADER, stampPeerIp } from "./peer-stamp.mjs";
 
 const _wreqRequire = createRequire(import.meta.url);
 
@@ -258,7 +259,7 @@ const WRITE_ERROR_RESERVED_HEADERS = new Set([
   "referrer-policy",
   "permissions-policy",
   "strict-transport-security",
-  "x-omniroute-route-class",
+  "x-agentproxy-route-class",
   "x-request-id",
   "date",
 ]);
@@ -302,7 +303,7 @@ function getAuthHeaders(requestUrl, requestHeaders) {
   if (isText(requestHeaders.authorization)) {
     headers.authorization = requestHeaders.authorization;
   } else {
-    const url = new URL(requestUrl, "http://omniroute.local");
+    const url = new URL(requestUrl, "http://agentproxy.local");
     for (const key of WS_QUERY_TOKEN_KEYS) {
       const value = url.searchParams.get(key);
       if (isText(value)) {
@@ -314,8 +315,11 @@ function getAuthHeaders(requestUrl, requestHeaders) {
 
   if (isText(requestHeaders.cookie)) headers.cookie = requestHeaders.cookie;
   if (isText(requestHeaders.origin)) headers.origin = requestHeaders.origin;
-  if (isText(requestHeaders["x-forwarded-for"])) {
-    headers["x-forwarded-for"] = requestHeaders["x-forwarded-for"];
+  if (isText(requestHeaders.host)) headers.host = requestHeaders.host;
+  if (isText(requestHeaders[PEER_IP_HEADER]))
+    headers[PEER_IP_HEADER] = requestHeaders[PEER_IP_HEADER];
+  for (const key of ["forwarded", "x-forwarded-for", "x-forwarded-host", "x-forwarded-proto"]) {
+    if (isText(requestHeaders[key])) headers[key] = requestHeaders[key];
   }
   for (const key of [
     "session-id",
@@ -378,7 +382,7 @@ async function callInternal(fetchImpl, baseUrl, bridgeSecret, action, payload) {
     method: "POST",
     headers: {
       "content-type": "application/json",
-      "x-omniroute-ws-bridge-secret": bridgeSecret,
+      "x-agentproxy-ws-bridge-secret": bridgeSecret,
     },
     body: JSON.stringify({ action, ...payload }),
   });
@@ -797,7 +801,7 @@ class ResponsesWsSession {
         transport: "responses_websocket",
         requestUrl: this.requestUrl,
         headers: getAuthHeaders(this.requestUrl, this.requestHeaders),
-        path: new URL(this.requestUrl || "/v1/responses", "http://omniroute.local").pathname,
+        path: new URL(this.requestUrl || "/v1/responses", "http://agentproxy.local").pathname,
         startedAt: new Date(this.startedAt).toISOString(),
         completedAt: new Date(finishedAt).toISOString(),
         durationMs: Math.max(0, finishedAt - this.startedAt),
@@ -913,6 +917,12 @@ export function createResponsesWsProxy({
         return true;
       }
 
+      // The auth route runs behind an internal loopback fetch, so preserve a
+      // token-authenticated copy of the REAL upgrade peer before bridging the
+      // browser Origin/Host context. stampPeerIp() deletes any client-supplied
+      // peer stamp before writing the trusted process stamp.
+      stampPeerIp(req);
+
       try {
         const auth = await callInternal(fetchImpl, baseUrl, bridgeSecret, "authenticate", {
           requestUrl: req.url || pathname,
@@ -972,12 +982,13 @@ export function createResponsesWsProxy({
         });
         return true;
       } catch (error) {
+        console.error("[responses-ws-proxy] WebSocket upgrade failed", error);
         writeHttpError(
           socket,
           500,
           JSON.stringify({
             error: {
-              message: error instanceof Error ? error.message : String(error),
+              message: "Responses WebSocket proxy failed",
               code: "responses_websocket_proxy_failed",
             },
           })

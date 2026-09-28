@@ -6,22 +6,22 @@
 
 ---
 
-title: "CLI Työkalut — OmniRoute"
+title: "CLI Työkalut — AgentProxy"
 version: 3.8.50
 lastUpdated: 2026-08-18
 ---
 
-# CLI Työkalut — OmniRoute
+# CLI Työkalut — AgentProxy
 
 Viimeksi päivitetty: 2026-08-18
 
-OmniRoute integroituu kolmeen kategoriaan CLI työkaluja, jotka on jaettu kolmeen erilliseen hallintapaneelisivuun:
+AgentProxy integroituu kolmeen kategoriaan CLI työkaluja, jotka on jaettu kolmeen erilliseen hallintapaneelisivuun:
 
 | Sivusto         | Reitti                  | Konsepti                                                                                  | Määrä           |
 | --------------- | ----------------------- | ----------------------------------------------------------------------------------------- | --------------- |
-| **CLI Koodi**   | `/dashboard/cli-code`   | Koodausvälineet, joita osoitat OmniRouteen (Asiakas → CLI → OmniRoute → Palveluntarjoaja) | 26              |
-| **CLI Agentit** | `/dashboard/cli-agents` | Itsenäiset agentit, joita osoitat OmniRouteen (sama virta, laajempi alue)                 | 8               |
-| **ACP Agentit** | `/dashboard/acp-agents` | CLI:t, joita OmniRoute luo taustalla stdio/ACP:n kautta (käänteinen virta)                | katso rekisteri |
+| **CLI Koodi**   | `/dashboard/cli-code`   | Koodausvälineet, joita osoitat AgentProxyen (Asiakas → CLI → AgentProxy → Palveluntarjoaja) | 26              |
+| **CLI Agentit** | `/dashboard/cli-agents` | Itsenäiset agentit, joita osoitat AgentProxyen (sama virta, laajempi alue)                 | 8               |
+| **ACP Agentit** | `/dashboard/acp-agents` | CLI:t, joita AgentProxy luo taustalla stdio/ACP:n kautta (käänteinen virta)                | katso rekisteri |
 
 Perintöreitit ohjaavat 308:lla: `/dashboard/cli-tools` → `/dashboard/cli-code`, `/dashboard/agents` → `/dashboard/acp-agents`.
 
@@ -33,14 +33,14 @@ Perintöreitit ohjaavat 308:lla: `/dashboard/cli-tools` → `/dashboard/cli-code
 CLI Koodi / CLI Agentit (kulutussuunta):
 Claude / Codex / OpenCode / Cline / KiloCode / Continue / Hermes Agent / Goose / ...
            │
-           ▼  (kaikki osoittavat OmniRouteen)
+           ▼  (kaikki osoittavat AgentProxyen)
     http://YOUR_SERVER:20128/v1
            │
-           ▼  (OmniRoute ohjaa oikealle palveluntarjoajalle)
+           ▼  (AgentProxy ohjaa oikealle palveluntarjoajalle)
     Anthropic / OpenAI / Gemini / DeepSeek / Groq / Mistral / ...
 
 ACP Agentit (käänteinen luontivirta):
-    Asiakkaan pyyntö → OmniRoute → luo CLI:n stdio/ACP:n kautta → vastaus
+    Asiakkaan pyyntö → AgentProxy → luo CLI:n stdio/ACP:n kautta → vastaus
 ```
 
 **Hyödyt:**
@@ -54,26 +54,26 @@ ACP Agentit (käänteinen luontivirta):
 
 ## Automaattinen konfigurointi `setup-*` avulla
 
-Sinun ei tarvitse kirjoittaa jokaisen työkalun konfiguraatiota käsin. OmniRoute toimittaa `setup-*`
+Sinun ei tarvitse kirjoittaa jokaisen työkalun konfiguraatiota käsin. AgentProxy toimittaa `setup-*`
 komennon jokaiselle tuetulle CLI:lle, joka lukee **live** malliluettelon käynnissä olevasta
-OmniRoute:sta (paikallinen tai etä) ja kirjoittaa työkalun oman konfiguraation koneellesi:
+AgentProxy:sta (paikallinen tai etä) ja kirjoittaa työkalun oman konfiguraation koneellesi:
 
 ```bash
-omniroute setup-codex        omniroute setup-claude       omniroute setup-opencode
-omniroute setup-cline        omniroute setup-kilo         omniroute setup-continue
-omniroute setup-cursor       omniroute setup-roo          omniroute setup-crush
-omniroute setup-goose        omniroute setup-qwen         omniroute setup-aider
+agentproxy setup-codex        agentproxy setup-claude       agentproxy setup-opencode
+agentproxy setup-cline        agentproxy setup-kilo         agentproxy setup-continue
+agentproxy setup-cursor       agentproxy setup-roo          agentproxy setup-crush
+agentproxy setup-goose        agentproxy setup-qwen         agentproxy setup-aider
 ```
 
 Jokainen hyväksyy `--remote <url> --api-key <key>` (konfiguroi paikallinen työkalu etä
-OmniRoutea vastaan), `--dry-run` (esikatselu ilman kirjoittamista) ja `--port`. Työkalut,
+AgentProxya vastaan), `--dry-run` (esikatselu ilman kirjoittamista) ja `--port`. Työkalut,
 joilla ei ole mallin automaattista löytämistä (Cline, Kilo, Roo, Goose, Aider, Qwen) ottavat
 `--model <id>` (ja `--yes` ei-interaktiivisiin suorituksiin). Käynnistääksesi CLI:n
 oikealla ympäristöllä injektoituna ja ilman konfiguraatiota kirjoitettuna, käytä yleistä
-`omniroute run <target>` käynnistintä (claude, codex, aider, goose, opencode, qwen,
+`agentproxy run <target>` käynnistintä (claude, codex, aider, goose, opencode, qwen,
 gemini — kohteet ja aliasit tulevat `bin/cli/cli-manifest.mjs`); perintö
-per-työkalu käynnistimet `omniroute launch` (Claude Code) ja `omniroute launch-codex`
-(Codex) pysyvät saatavilla. Gemini CLI on vain käynnistettävä: se on `omniroute run`
+per-työkalu käynnistimet `agentproxy launch` (Claude Code) ja `agentproxy launch-codex`
+(Codex) pysyvät saatavilla. Gemini CLI on vain käynnistettävä: se on `agentproxy run`
 kohde, mutta sillä ei ole `setup-*`/`configure` reseptiä.
 
 > **Täydellinen viite:** päätaulukko — mitä kukin komento kirjoittaa, jokainen lippu,
@@ -82,21 +82,21 @@ kohde, mutta sillä ei ole `setup-*`/`configure` reseptiä.
 
 ### Näiden suorittaminen säiliössä
 
-`setup-*` komento, joka suoritetaan OmniRoute säiliössä, kirjoittaa säiliön omaan kotiin,
-jota mikään isäntä CLI ei lue ja joka katoaa säiliön mukana. OmniRoute havaitsee tämän ja
+`setup-*` komento, joka suoritetaan AgentProxy säiliössä, kirjoittaa säiliön omaan kotiin,
+jota mikään isäntä CLI ei lue ja joka katoaa säiliön mukana. AgentProxy havaitsee tämän ja
 poistuu `2` ohjeiden kanssa sen sijaan, että kirjoittaisi. Kaksi tuettua tapaa edetä —
-asenna CLI isäntään ja `omniroute connect` säiliöön, tai bind-mountaa konfiguraatiokansiot ja
+asenna CLI isäntään ja `agentproxy connect` säiliöön, tai bind-mountaa konfiguraatiokansiot ja
 asettaa `CLI_CONFIG_HOME` (compose `host` profiili). Jokainen `setup-*` komento, plus
-`omniroute configure` ja `omniroute config set`, hyväksyy
+`agentproxy configure` ja `agentproxy config set`, hyväksyy
 `--allow-container-write`, kun säiliön omien CLI:den konfigurointi on se, mitä todella
-tarkoitit; `OMNIROUTE_ALLOW_CONTAINER_CONFIG_WRITE=true` tekee saman palvelimelle. Katso
-[Docker Opas → Isäntä CLI työkalujen konfigurointi](../guides/DOCKER_GUIDE.md#configuring-host-cli-tools-when-omniroute-runs-in-docker).
+tarkoitit; `AGENTPROXY_ALLOW_CONTAINER_CONFIG_WRITE=true` tekee saman palvelimelle. Katso
+[Docker Opas → Isäntä CLI työkalujen konfigurointi](../guides/DOCKER_GUIDE.md#configuring-host-cli-tools-when-agentproxy-runs-in-docker).
 
 Hallintapaneelin **apply endpoint** (`POST /api/cli-tools/apply`) valvoo
 samaa suojaa: säiliössä, kirjoitus, jonka kohde ei ole bind-mounted isännästä, vastaa
 **`422`** `containerEphemeralTarget: true`, turvallinen virheteksti ja — työkaluille,
 joilla on isäntäresepti (claude, codex, opencode, cline,
-kilo, continue) — `hostSetupCommand` (esim. `omniroute setup-opencode`), joka suoritetaan
+kilo, continue) — `hostSetupCommand` (esim. `agentproxy setup-opencode`), joka suoritetaan
 isännällä sen sijaan; mitään ei kirjoiteta. `dryRun: true` toimii edelleen säiliötilassa
 ja palauttaa luodun sisällön + kohdepolun ilman levyn koskettamista, joten voit esikatsella
 hallintapaneelista ja soveltaa isännällä. Tämä käyttäytyminen on tarkoituksellista ja
@@ -131,8 +131,8 @@ ilmoittava lähde, ja poikkeamatesti pitää ne synkronoituna:
 | --------------------- | --------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
 | **Luetteloitu**       | Näkyy hallintapaneelin luettelossa (nimi, myyjä, asiakirjat, konfigurointityyppi) | `src/shared/constants/cliTools.ts` (`CLI_TOOLS`)                        |
 | **Havaittavissa**     | Binäärin/kokoonpanon havaitseminen, terveyden tarkistukset, konfigurointipolut    | `src/shared/services/cliRuntime.ts` (`CLI_TOOLS` ajonaikainen luettelo) |
-| **Konfiguroitavissa** | Tuettu komennolla `omniroute configure <cli>` (asetustapaus olemassa)             | `bin/cli/cli-manifest.mjs` (`configure: true`)                          |
-| **Käynnistettävissä** | Tuettu komennolla `omniroute run <target>` (env/args-injektio määritelty)         | `bin/cli/cli-manifest.mjs` (`run: true`)                                |
+| **Konfiguroitavissa** | Tuettu komennolla `agentproxy configure <cli>` (asetustapaus olemassa)             | `bin/cli/cli-manifest.mjs` (`configure: true`)                          |
+| **Käynnistettävissä** | Tuettu komennolla `agentproxy run <target>` (env/args-injektio määritelty)         | `bin/cli/cli-manifest.mjs` (`run: true`)                                |
 
 `bin/cli/cli-manifest.mjs` on kanoninen suoritettava manifesti CLI-komennolle
 pinnat: `run`, `configure` ja shell-completion-generaattorit kaikki saavat
@@ -196,7 +196,7 @@ Itsenäiset agentit, jotka näkyvät kohdassa `/dashboard/cli-agents`:
 
 ## 3. ACP-agentit (/dashboard/acp-agents)
 
-Tämä sivu (nimetty uudelleen kohdasta `/dashboard/agents`) näyttää CLI:t, joita OmniRoute voi **luoda** taustasuoritusmoottoreina stdio/ACP-protokollan kautta. Luetteloa ylläpidetään erikseen tiedostossa `src/lib/acp/registry.ts` ja se **ei** ole sama kuin `CLI_TOOLS`.
+Tämä sivu (nimetty uudelleen kohdasta `/dashboard/agents`) näyttää CLI:t, joita AgentProxy voi **luoda** taustasuoritusmoottoreina stdio/ACP-protokollan kautta. Luetteloa ylläpidetään erikseen tiedostossa `src/lib/acp/registry.ts` ja se **ei** ole sama kuin `CLI_TOOLS`.
 
 ---
 
@@ -259,7 +259,7 @@ Uusilla työkaluilla, joilla on `configType: "custom"`, on omat asetusten API-re
 | `POST /api/cli-tools/codewhale-settings`    | CodeWhale (OPENAI_BASE_URL, pääasiallinen + legacy `~/.deepseek` synkronointi) |
 | `POST /api/cli-tools/smelt-settings`        | Smelt                                                                          |
 | `POST /api/cli-tools/pi-settings`           | Pi koodausagentti                                                              |
-| `POST /api/cli-tools/grok-build-settings`   | Grok Build (~/.grok/config.toml, `[model.omniroute]`)                          |
+| `POST /api/cli-tools/grok-build-settings`   | Grok Build (~/.grok/config.toml, `[model.agentproxy]`)                          |
 | `POST /api/cli-tools/qwen-settings`         | Qwen Code (`~/.qwen/settings.json` + omistettu `.env` avain)                   |
 
 Kaikki reitit käyttävät `sanitizeErrorMessage()` virhevastauksille (Kova sääntö #12).
@@ -319,7 +319,7 @@ Täydelliset PT-BR- ja EN-käännökset on toimitettu. 39 muuta paikallista aset
 
 ## 9. Nopeasti alkuun
 
-### Vaihe 1 — Hanki OmniRoute API-avain
+### Vaihe 1 — Hanki AgentProxy API-avain
 
 1. Avaa `/dashboard/api-manager` → **Luo API-avain**
 2. Anna sille nimi (esim. `cli-tools`) ja valitse kaikki käyttöoikeudet
@@ -352,7 +352,7 @@ npm install -g kilocode
 # Qwen Code
 npm install -g @qwen-code/qwen-code
 
-# Google Gemini CLI (käynnistettävissä komennolla `omniroute run gemini` → /v1beta surface)
+# Google Gemini CLI (käynnistettävissä komennolla `agentproxy run gemini` → /v1beta surface)
 npm install -g @google/gemini-cli
 
 # Aider
@@ -383,14 +383,14 @@ cargo install smelt  # Rust-pohjainen
 ### Vaihe 4 — Aseta globaalit ympäristömuuttujat
 
 ```bash
-# OmniRoute Universal Endpoint
+# AgentProxy Universal Endpoint
 export OPENAI_BASE_URL="http://localhost:20128/v1"
-export OPENAI_API_KEY="sk-your-omniroute-key"
+export OPENAI_API_KEY="sk-your-agentproxy-key"
 export ANTHROPIC_BASE_URL="http://localhost:20128"
-export ANTHROPIC_AUTH_TOKEN="sk-your-omniroute-key"
+export ANTHROPIC_AUTH_TOKEN="sk-your-agentproxy-key"
 # Gemini CLI lukee GOOGLE_GEMINI_BASE_URL:n JUURESTA (sen SDK liittää /v1beta/... itse)
 export GOOGLE_GEMINI_BASE_URL="http://localhost:20128"
-export GEMINI_API_KEY="sk-your-omniroute-key"
+export GEMINI_API_KEY="sk-your-agentproxy-key"
 ```
 
 > **Etäpalvelimelle** vaihda `localhost:20128` palvelimen IP-osoitteeseen tai verkkotunnukseen,
@@ -408,7 +408,7 @@ mkdir -p ~/.claude && cat > ~/.claude/settings.json << EOF
 {
   "env": {
     "ANTHROPIC_BASE_URL": "http://localhost:20128",
-    "ANTHROPIC_AUTH_TOKEN": "sk-your-omniroute-key"
+    "ANTHROPIC_AUTH_TOKEN": "sk-your-agentproxy-key"
   }
 }
 EOF
@@ -424,19 +424,19 @@ Käytä yhtenäistä Anthropic-portin juurta Claude Codea varten. Älä liitä `
 
 Moderni Codex (v0.137+) lukee vain `~/.codex/config.toml` — vanha
 `config.yaml` kuuluu perinteiselle npm CLI:lle ja se ohitetaan hiljaa. API
-avain pysyy `OMNIROUTE_API_KEY` ympäristömuuttujassa (`env_key`), ei koskaan tiedostossa:
+avain pysyy `AGENTPROXY_API_KEY` ympäristömuuttujassa (`env_key`), ei koskaan tiedostossa:
 
 ```bash
 mkdir -p ~/.codex && cat > ~/.codex/config.toml << EOF
-model_provider = "omniroute"
+model_provider = "agentproxy"
 
-[model_providers.omniroute]
-name                 = "OmniRoute"
+[model_providers.agentproxy]
+name                 = "AgentProxy"
 base_url             = "http://localhost:20128/v1"
-env_key              = "OMNIROUTE_API_KEY"
+env_key              = "AGENTPROXY_API_KEY"
 requires_openai_auth = false
 EOF
-export OMNIROUTE_API_KEY="sk-your-omniroute-key"
+export AGENTPROXY_API_KEY="sk-your-agentproxy-key"
 ```
 
 Täydellinen viittaus (profiilit, `wire_api`, konteksti-ikkunat): [CODEX-CLI-CONFIGURATION.md](../guides/CODEX-CLI-CONFIGURATION.md).
@@ -452,12 +452,12 @@ mkdir -p ~/.config/opencode && cat > ~/.config/opencode/opencode.json << EOF
 {
   "\$schema": "https://opencode.ai/config.json",
   "provider": {
-    "omniroute": {
+    "agentproxy": {
       "npm": "@ai-sdk/openai-compatible",
-      "name": "OmniRoute",
+      "name": "AgentProxy",
       "options": {
         "baseURL": "http://localhost:20128/v1",
-        "apiKey": "sk-your-omniroute-key"
+        "apiKey": "sk-your-agentproxy-key"
       },
       "models": {
         "claude-sonnet-4-5": { "name": "claude-sonnet-4-5" },
@@ -472,7 +472,7 @@ EOF
 
 **Testaa:** `opencode`
 
-> Käytä `opencode run "your prompt" --model omniroute/claude-sonnet-4-5-thinking --variant high`
+> Käytä `opencode run "your prompt" --model agentproxy/claude-sonnet-4-5-thinking --variant high`
 > lähettääksesi ajatteluvariantteja.
 
 ---
@@ -486,7 +486,7 @@ mkdir -p ~/.cline/data && cat > ~/.cline/data/globalState.json << EOF
 {
   "apiProvider": "openai",
   "openAiBaseUrl": "http://localhost:20128/v1",
-  "openAiApiKey": "sk-your-omniroute-key"
+  "openAiApiKey": "sk-your-agentproxy-key"
 }
 EOF
 ```
@@ -494,7 +494,7 @@ EOF
 **VS Code -tila:**
 Cline-laajennuksen asetukset → API Provider: `OpenAI Compatible` → Perus-URL: `http://localhost:20128/v1`
 
-Tai käytä OmniRoute-hallintapaneelia → **CLI-työkalut → Cline → Käytä asetuksia**.
+Tai käytä AgentProxy-hallintapaneelia → **CLI-työkalut → Cline → Käytä asetuksia**.
 
 ---
 
@@ -503,7 +503,7 @@ Tai käytä OmniRoute-hallintapaneelia → **CLI-työkalut → Cline → Käytä
 **CLI-tila:**
 
 ```bash
-kilocode --api-base http://localhost:20128/v1 --api-key sk-your-omniroute-key
+kilocode --api-base http://localhost:20128/v1 --api-key sk-your-agentproxy-key
 ```
 
 **VS Code -asetukset:**
@@ -511,11 +511,11 @@ kilocode --api-base http://localhost:20128/v1 --api-key sk-your-omniroute-key
 ```json
 {
   "kilo-code.openAiBaseUrl": "http://localhost:20128/v1",
-  "kilo-code.apiKey": "sk-your-omniroute-key"
+  "kilo-code.apiKey": "sk-your-agentproxy-key"
 }
 ```
 
-Tai käytä OmniRoute-hallintapaneelia → **CLI-työkalut → KiloCode → Käytä asetuksia**.
+Tai käytä AgentProxy-hallintapaneelia → **CLI-työkalut → KiloCode → Käytä asetuksia**.
 
 ---
 
@@ -525,11 +525,11 @@ Muokkaa `~/.continue/config.yaml`:
 
 ```yaml
 models:
-  - name: OmniRoute
+  - name: AgentProxy
     provider: openai
     model: auto
     apiBase: http://localhost:20128/v1
-    apiKey: sk-your-omniroute-key
+    apiKey: sk-your-agentproxy-key
     default: true
 ```
 
@@ -539,25 +539,25 @@ Käynnistä VS Code uudelleen muokkauksen jälkeen.
 
 #### VS Code Insiders (`chatLanguageModels.json`)
 
-Käytä tätä, kun VS Code Insiders on määritetty mukautettujen päätepisteiden malleille ja haluat OmniRouten toimivan ilman mukautettua otsikkokenttää.
+Käytä tätä, kun VS Code Insiders on määritetty mukautettujen päätepisteiden malleille ja haluat AgentProxyn toimivan ilman mukautettua otsikkokenttää.
 
 **Suositeltu sijainti:**
 
 - Linux: `~/.config/Code - Insiders/User/chatLanguageModels.json`
 - Windows: `%APPDATA%/Code - Insiders/User/chatLanguageModels.json`
 
-**Esimerkki tokenisoidun OmniRoute-aliasin käytöstä:**
+**Esimerkki tokenisoidun AgentProxy-aliasin käytöstä:**
 
 ```json
 [
   {
     "vendor": "customendpoint",
     "id": "auto",
-    "name": "OmniRoute Auto",
+    "name": "AgentProxy Auto",
     "family": "gpt-4",
     "version": "1.0.0",
-    "url": "http://localhost:20128/api/v1/vscode/sk-your-omniroute-key/chat/completions",
-    "modelsUrl": "http://localhost:20128/api/v1/vscode/sk-your-omniroute-key/models",
+    "url": "http://localhost:20128/api/v1/vscode/sk-your-agentproxy-key/chat/completions",
+    "modelsUrl": "http://localhost:20128/api/v1/vscode/sk-your-agentproxy-key/models",
     "requestFormat": "openai-chat-completions",
     "contextWindow": 256000,
     "maxOutputTokens": 32768,
@@ -570,7 +570,7 @@ Käytä tätä, kun VS Code Insiders on määritetty mukautettujen päätepistei
 
 **Huomautuksia:**
 
-- Vaihda `sk-your-omniroute-key` OmniRoutessa luotuun API-avaimeen.
+- Vaihda `sk-your-agentproxy-key` AgentProxyssa luotuun API-avaimeen.
 - `url`-kentän tulisi osoittaa `/api/v1/vscode/{token}/chat/completions`.
 - `modelsUrl`-kentän tulisi osoittaa `/api/v1/vscode/{token}/models`.
 - Suosi normaalia `/v1` + Bearer-otsikkovirtaa, kun asiakas tukee mukautettuja otsikoita.
@@ -584,40 +584,40 @@ Käytä tätä, kun VS Code Insiders on määritetty mukautettujen päätepistei
 # Kirjaudu AWS/Kiro-tilillesi:
 kiro-cli login
 
-# CLI käyttää omaa todennusta — OmniRoutea ei tarvita Kiro CLI:n taustapalvelimena.
-# Käytä kiro-cli:tä yhdessä OmniRouten kanssa muiden työkalujen osalta.
+# CLI käyttää omaa todennusta — AgentProxya ei tarvita Kiro CLI:n taustapalvelimena.
+# Käytä kiro-cli:tä yhdessä AgentProxyn kanssa muiden työkalujen osalta.
 kiro-cli status
 ```
 
-**Kiro IDE** -työpöytäsovellusta varten käytä OmniRouten kautta altistettua MITM-päätepistettä
+**Kiro IDE** -työpöytäsovellusta varten käytä AgentProxyn kautta altistettua MITM-päätepistettä
 osoitteessa `/dashboard/cli-tools → Kiro`.
 
 ---
 
-## 10. Sisäinen OmniRoute CLI
+## 10. Sisäinen AgentProxy CLI
 
-`omniroute` binaari tarjoaa komentoja palvelimen elinkaaren, asetusten, diagnostiikan ja tarjoajien hallinnan osalta. Sisäänkäyntipiste: `bin/omniroute.mjs`.
+`agentproxy` binaari tarjoaa komentoja palvelimen elinkaaren, asetusten, diagnostiikan ja tarjoajien hallinnan osalta. Sisäänkäyntipiste: `bin/agentproxy.mjs`.
 
 ```bash
-omniroute                              # Käynnistä palvelin (oletusportti 20128)
-omniroute setup                        # Interaktiivinen asennusvelho
-omniroute doctor                       # Tarkista konfiguraatio, DB, portit, ajonaika
-omniroute providers list               # Määritetyt tarjoajayhteydet
-omniroute providers test-all           # Testaa jokainen aktiivinen yhteys
-omniroute reset-password               # Nollaa pääkäyttäjän salasana
-omniroute logs                         # Suoratoista pyyntöjen lokit
-omniroute health                       # Yksityiskohtainen terveys (katkaisijat, välimuisti, muisti)
-omniroute --version                    # Tulosta versio
-omniroute --help                       # Näytä kaikki komennot
+agentproxy                              # Käynnistä palvelin (oletusportti 20128)
+agentproxy setup                        # Interaktiivinen asennusvelho
+agentproxy doctor                       # Tarkista konfiguraatio, DB, portit, ajonaika
+agentproxy providers list               # Määritetyt tarjoajayhteydet
+agentproxy providers test-all           # Testaa jokainen aktiivinen yhteys
+agentproxy reset-password               # Nollaa pääkäyttäjän salasana
+agentproxy logs                         # Suoratoista pyyntöjen lokit
+agentproxy health                       # Yksityiskohtainen terveys (katkaisijat, välimuisti, muisti)
+agentproxy --version                    # Tulosta versio
+agentproxy --help                       # Näytä kaikki komennot
 ```
 
 ### Asetukset & Alustus
 
 ```bash
-omniroute setup                        # Interaktiivinen asennusvelho
-omniroute setup --non-interactive      # CI/automaatio-tila (lukee ympäristömuuttujat + liput)
-omniroute setup --password '<value>'   # Aseta pääkäyttäjän salasana suoraan
-omniroute setup --add-provider \
+agentproxy setup                        # Interaktiivinen asennusvelho
+agentproxy setup --non-interactive      # CI/automaatio-tila (lukee ympäristömuuttujat + liput)
+agentproxy setup --password '<value>'   # Aseta pääkäyttäjän salasana suoraan
+agentproxy setup --add-provider \
   --provider openai \
   --api-key '<value>' \
   --test-provider                      # Lisää ja testaa tarjoaja yhdellä kertaa
@@ -627,21 +627,21 @@ Tunnetut ympäristömuuttujat ei-interaktiiviselle asennukselle:
 
 | Var                 | Tarkoitus                                                           |
 | ------------------- | ------------------------------------------------------------------- |
-| `OMNIROUTE_API_KEY` | Tarjoajan API-avain (sidottu `--api-key` kautta Commander `.env()`) |
-| `DATA_DIR`          | Korvata OmniRoute-datakansio                                        |
+| `AGENTPROXY_API_KEY` | Tarjoajan API-avain (sidottu `--api-key` kautta Commander `.env()`) |
+| `DATA_DIR`          | Korvata AgentProxy-datakansio                                        |
 
 Kaikki muut ei-interaktiiviset syötteet annetaan lippuina, ei ympäristömuuttujina:
 `--password`, `--provider`, `--provider-name`, `--provider-base-url`, `--default-model`
-(katso `omniroute setup` vaihtoehdot yllä).
+(katso `agentproxy setup` vaihtoehdot yllä).
 
 ### Diagnostiikka
 
 ```bash
-omniroute doctor                       # Tarkista konfiguraatio, DB, portit, ajonaika, muisti, elinkyky
-omniroute doctor --json                # Koneellisesti luettava JSON
-omniroute doctor --no-liveness         # Ohita HTTP-terveysmittaus
-omniroute doctor --host 0.0.0.0        # Korvata elinkykyisäntä
-omniroute doctor --liveness-url <url>  # Täydellinen terveys päätepisteen URL-korvaus
+agentproxy doctor                       # Tarkista konfiguraatio, DB, portit, ajonaika, muisti, elinkyky
+agentproxy doctor --json                # Koneellisesti luettava JSON
+agentproxy doctor --no-liveness         # Ohita HTTP-terveysmittaus
+agentproxy doctor --host 0.0.0.0        # Korvata elinkykyisäntä
+agentproxy doctor --liveness-url <url>  # Täydellinen terveys päätepisteen URL-korvaus
 ```
 
 Lääkäri suorittaa nämä tarkistukset: `Konfiguraatio`, `Tietokanta`, `Tallennus/salaus`,
@@ -651,47 +651,47 @@ Lääkäri suorittaa nämä tarkistukset: `Konfiguraatio`, `Tietokanta`, `Tallen
 ### Tarjoajan Hallinta
 
 ```bash
-omniroute providers available                       # OmniRoute tarjoajaluettelo
-omniroute providers available --search openai       # Suodata luetteloa id/nimi/alias/kategoria mukaan
-omniroute providers available --category api-key    # Suodata kategorian mukaan (api-key, oauth, ilmainen, ...)
-omniroute providers available --json                # Koneellisesti luettava JSON
+agentproxy providers available                       # AgentProxy tarjoajaluettelo
+agentproxy providers available --search openai       # Suodata luetteloa id/nimi/alias/kategoria mukaan
+agentproxy providers available --category api-key    # Suodata kategorian mukaan (api-key, oauth, ilmainen, ...)
+agentproxy providers available --json                # Koneellisesti luettava JSON
 
-omniroute providers list                            # Määritetyt tarjoajayhteydet
-omniroute providers list --json
+agentproxy providers list                            # Määritetyt tarjoajayhteydet
+agentproxy providers list --json
 
-omniroute providers test <id|name>                  # Testaa yksi määritetty yhteys
-omniroute providers test-all                        # Testaa jokainen aktiivinen yhteys
-omniroute providers validate                        # Vain paikallinen rakenteellinen validointi
-omniroute providers add <provider> --credential-env PROVIDER_KEY
-omniroute providers import ./providers.json --dry-run --json
-omniroute providers auth <provider>                 # Olemassa oleva OAuth-virta
-omniroute providers edit <id|name> --default-model <model>
-omniroute providers remove <id|name> --yes
+agentproxy providers test <id|name>                  # Testaa yksi määritetty yhteys
+agentproxy providers test-all                        # Testaa jokainen aktiivinen yhteys
+agentproxy providers validate                        # Vain paikallinen rakenteellinen validointi
+agentproxy providers add <provider> --credential-env PROVIDER_KEY
+agentproxy providers import ./providers.json --dry-run --json
+agentproxy providers auth <provider>                 # Olemassa oleva OAuth-virta
+agentproxy providers edit <id|name> --default-model <model>
+agentproxy providers remove <id|name> --yes
 ```
 
 `providers add/import/auth/edit/remove` ovat API-ensimmäisiä ja toimivat siten
 aktiivisen paikallisen tai etäyhteyden kanssa. Todennustiedot tulisi syöttää
 `--credential-stdin` tai `--credential-env`; `--dry-run --json` raportoi vain
-peitetyn läsnäolon/muodon. `providers available` lukee OmniRoute-luetteloa;
+peitetyn läsnäolon/muodon. `providers available` lukee AgentProxy-luetteloa;
 `providers list/test/test-all/validate` säilyttävät paikallisen SQLite-käyttäytymisen ja
 eivät vaadi palvelimen olevan käynnissä.
 
 ### Palautus & Nollaus
 
 ```bash
-omniroute reset-password                # Nollaa pääkäyttäjän salasana (myös: omniroute-reset-password)
-omniroute reset-encrypted-columns       # Näytä varoitus + dry-run salattujen todennustietojen nollaukselle
-omniroute reset-encrypted-columns --force  # Poista salatut todennustiedot SQLite:ssä
+agentproxy reset-password                # Nollaa pääkäyttäjän salasana (myös: agentproxy-reset-password)
+agentproxy reset-encrypted-columns       # Näytä varoitus + dry-run salattujen todennustietojen nollaukselle
+agentproxy reset-encrypted-columns --force  # Poista salatut todennustiedot SQLite:ssä
 ```
 
 ### Todennustietojen Vienti (⚠ käsittele varoen)
 
 ```bash
-omniroute auth export                                 # Näytä varoitus + vahvistusportti — ei DB-pääsyä
-omniroute auth export --force                          # Vie KAIKKIEN yhteyksien SALATTU todennustiedot stdout:iin JSON-muodossa
-omniroute auth export --force --id <id>                 # Vie vain vastaava yhteys
-omniroute auth export --force --format env               # Tuota OMNIROUTE_<PROVIDER>_<FIELD>=<value> rivejä
-omniroute auth export --force --out creds.json           # Kirjoita tiedostoon (luodaan 0600-oikeuksilla)
+agentproxy auth export                                 # Näytä varoitus + vahvistusportti — ei DB-pääsyä
+agentproxy auth export --force                          # Vie KAIKKIEN yhteyksien SALATTU todennustiedot stdout:iin JSON-muodossa
+agentproxy auth export --force --id <id>                 # Vie vain vastaava yhteys
+agentproxy auth export --force --format env               # Tuota AGENTPROXY_<PROVIDER>_<FIELD>=<value> rivejä
+agentproxy auth export --force --out creds.json           # Kirjoita tiedostoon (luodaan 0600-oikeuksilla)
 ```
 
 `auth export` on **vain paikallinen** (suora SQLite-luku, ei HTTP-reitti) ja tarkoituksellisesti tulostaa/kirjoittaa
@@ -702,36 +702,36 @@ varoitusbanneri tulostuu aina ennen kuin mitään selkokielistä tulostuu. Vaati
 
 ### Muut alakomennot
 
-Nämä olettavat käynnissä olevan OmniRoute-palvelimen, ellei toisin mainita:
+Nämä olettavat käynnissä olevan AgentProxy-palvelimen, ellei toisin mainita:
 
 ```bash
-omniroute status                       # Kattava ajonaikainen tila
-omniroute logs                         # Suoratoista pyyntöjen lokit (--json, --search, --follow)
-omniroute config show                  # Näytä nykyinen konfiguraatio
+agentproxy status                       # Kattava ajonaikainen tila
+agentproxy logs                         # Suoratoista pyyntöjen lokit (--json, --search, --follow)
+agentproxy config show                  # Näytä nykyinen konfiguraatio
 
-omniroute provider list                # Listaa saatavilla olevat tarjoajat (alias tarjoajien listalle)
-omniroute provider add                 # Rekisteröi OmniRoute tarjoajana työkalussa
-omniroute keys add | list | remove     # Hallitse API-avaimia
-omniroute models [provider]            # Listaa mallit (--json, --search)
-omniroute combo list | switch | create | delete
+agentproxy provider list                # Listaa saatavilla olevat tarjoajat (alias tarjoajien listalle)
+agentproxy provider add                 # Rekisteröi AgentProxy tarjoajana työkalussa
+agentproxy keys add | list | remove     # Hallitse API-avaimia
+agentproxy models [provider]            # Listaa mallit (--json, --search)
+agentproxy combo list | switch | create | delete
 
-omniroute backup                       # Ota konfiguraation + DB varmuuskopio
-omniroute restore                      # Palauta aiemmasta varmuuskopiosta
+agentproxy backup                       # Ota konfiguraation + DB varmuuskopio
+agentproxy restore                      # Palauta aiemmasta varmuuskopiosta
 
-omniroute health                       # Yksityiskohtainen terveys (katkaisijat, välimuisti, muisti)
-omniroute quota                        # Tarjoajan kiintiön käyttö
-omniroute cache                        # Välimuistin tila
-omniroute cache clear                  # Tyhjennä semanttiset + allekirjoitusvälimuistit
+agentproxy health                       # Yksityiskohtainen terveys (katkaisijat, välimuisti, muisti)
+agentproxy quota                        # Tarjoajan kiintiön käyttö
+agentproxy cache                        # Välimuistin tila
+agentproxy cache clear                  # Tyhjennä semanttiset + allekirjoitusvälimuistit
 
-omniroute mcp status | restart         # MCP-palvelimen tila / uudelleenkäynnistys
-omniroute a2a status | card            # A2A-palvelimen tila / agenttikortti
+agentproxy mcp status | restart         # MCP-palvelimen tila / uudelleenkäynnistys
+agentproxy a2a status | card            # A2A-palvelimen tila / agenttikortti
 
-omniroute tunnel list | create | stop  # Hallitse tunneleita (cloudflare/tailscale/ngrok)
-omniroute env show | get <k> | set <k> <v>  # Tarkastele / aseta ympäristömuuttujia (tilapäisesti)
+agentproxy tunnel list | create | stop  # Hallitse tunneleita (cloudflare/tailscale/ngrok)
+agentproxy env show | get <k> | set <k> <v>  # Tarkastele / aseta ympäristömuuttujia (tilapäisesti)
 
-omniroute test                         # Tarjoajan yhteys testaus
-omniroute update                       # Tarkista päivitykset
-omniroute completion                   # Generoi shell-täydennys
+agentproxy test                         # Tarjoajan yhteys testaus
+agentproxy update                       # Tarkista päivitykset
+agentproxy completion                   # Generoi shell-täydennys
 ```
 
 ### Yleiset liput
@@ -760,7 +760,7 @@ omniroute completion                   # Generoi shell-täydennys
 | `/v1/audio/speech`         | Tekstistä puheeksi            | ElevenLabs, OpenAI TTS                        |
 | `/v1/audio/transcriptions` | Puheesta tekstiksi            | Deepgram, AssemblyAI                          |
 
-Valmiit esimerkit tokenisoidulla OmniRoute-URL-osoitteella:
+Valmiit esimerkit tokenisoidulla AgentProxy-URL-osoitteella:
 
 ```txt
 Token esimerkki: sk-a3ab3c080beaee3a-69f4a4-070d71af
@@ -779,7 +779,7 @@ Ollama chat: http://localhost:20128/api/v1/vscode/sk-a3ab3c080beaee3a-69f4a4-070
 
 | Virhe                                               | Syynä                               | Korjaus                                                |
 | --------------------------------------------------- | ----------------------------------- | ------------------------------------------------------ |
-| `Connection refused`                                | OmniRoute ei käynnissä              | `omniroute serve`                                      |
+| `Connection refused`                                | AgentProxy ei käynnissä              | `agentproxy serve`                                      |
 | `401 Unauthorized`                                  | Väärä API-avain                     | Tarkista `/dashboard/api-manager`                      |
 | `No combo configured`                               | Ei aktiivista reitityskombinaatiota | Aseta `/dashboard/combos`                              |
 | CLI näyttää "not installed"                         | Binääri ei PATHissa                 | Tarkista `which <command>`                             |

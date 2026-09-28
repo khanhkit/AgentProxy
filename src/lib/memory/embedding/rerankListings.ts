@@ -1,4 +1,4 @@
-import { RERANK_PROVIDERS } from "@omniroute/open-sse/config/rerankRegistry.ts";
+import { RERANK_PROVIDERS } from "@agentproxy/open-sse/config/rerankRegistry.ts";
 import type { EmbeddingProviderListing } from "./types";
 
 type RerankProviderConfig = (typeof RERANK_PROVIDERS)[keyof typeof RERANK_PROVIDERS];

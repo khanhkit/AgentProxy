@@ -5,7 +5,7 @@
 // ("GLIBC_2.29 not found"), so the native module fails to dlopen and any test that
 // reaches better-sqlite3 directly (or asserts stdout that the load-failure warning
 // would pollute) fails HERE while passing in CI. This is a known environment
-// limitation, not a defect in the code under test: the OmniRoute runtime itself
+// limitation, not a defect in the code under test: the AgentProxy runtime itself
 // cascades to node:sqlite/sql.js when better-sqlite3 is unavailable. See
 // tests/unit/_helpers/betterSqlite3Availability.ts for a guard helper.
 import assert from "node:assert/strict";
@@ -64,13 +64,13 @@ test(
 
     try {
       db.exec(`
-        CREATE TABLE _omniroute_migrations (
+        CREATE TABLE _agentproxy_migrations (
           version TEXT PRIMARY KEY,
           name TEXT NOT NULL,
           applied_at TEXT NOT NULL DEFAULT (datetime('now'))
         );
       `);
-      db.prepare("INSERT INTO _omniroute_migrations (version, name) VALUES (?, ?)").run(
+      db.prepare("INSERT INTO _agentproxy_migrations (version, name) VALUES (?, ?)").run(
         "131",
         "windsurf_to_devin_desktop"
       );
@@ -89,7 +89,7 @@ test(
       );
 
       const applied = db
-        .prepare("SELECT version, name FROM _omniroute_migrations ORDER BY version")
+        .prepare("SELECT version, name FROM _agentproxy_migrations ORDER BY version")
         .all();
       assert.deepEqual(applied, [
         { version: "131", name: "proxy_subscriptions" },
@@ -133,13 +133,13 @@ test(
 
     try {
       db.exec(`
-        CREATE TABLE _omniroute_migrations (
+        CREATE TABLE _agentproxy_migrations (
           version TEXT PRIMARY KEY,
           name TEXT NOT NULL,
           applied_at TEXT NOT NULL DEFAULT (datetime('now'))
         );
       `);
-      db.prepare("INSERT INTO _omniroute_migrations (version, name) VALUES (?, ?)").run(
+      db.prepare("INSERT INTO _agentproxy_migrations (version, name) VALUES (?, ?)").run(
         "135",
         "windsurf_to_devin_desktop"
       );
@@ -155,7 +155,7 @@ test(
       );
 
       assert.deepEqual(
-        db.prepare("SELECT version, name FROM _omniroute_migrations ORDER BY version").all(),
+        db.prepare("SELECT version, name FROM _agentproxy_migrations ORDER BY version").all(),
         [
           { version: "135", name: "migrate_model_capability_max_token" },
           { version: "151", name: "windsurf_to_devin_desktop" },
@@ -187,13 +187,13 @@ test(
 
     try {
       db.exec(`
-        CREATE TABLE _omniroute_migrations (
+        CREATE TABLE _agentproxy_migrations (
           version TEXT PRIMARY KEY,
           name TEXT NOT NULL,
           applied_at TEXT NOT NULL DEFAULT (datetime('now'))
         );
       `);
-      db.prepare("INSERT INTO _omniroute_migrations (version, name) VALUES (?, ?)").run(
+      db.prepare("INSERT INTO _agentproxy_migrations (version, name) VALUES (?, ?)").run(
         "136",
         "windsurf_to_devin_desktop"
       );
@@ -209,7 +209,7 @@ test(
       );
 
       assert.deepEqual(
-        db.prepare("SELECT version, name FROM _omniroute_migrations ORDER BY version").all(),
+        db.prepare("SELECT version, name FROM _agentproxy_migrations ORDER BY version").all(),
         [
           { version: "136", name: "radar_cache_settings" },
           { version: "151", name: "windsurf_to_devin_desktop" },
@@ -241,13 +241,13 @@ test(
 
     try {
       db.exec(`
-        CREATE TABLE _omniroute_migrations (
+        CREATE TABLE _agentproxy_migrations (
           version TEXT PRIMARY KEY,
           name TEXT NOT NULL,
           applied_at TEXT NOT NULL DEFAULT (datetime('now'))
         );
       `);
-      db.prepare("INSERT INTO _omniroute_migrations (version, name) VALUES (?, ?)").run(
+      db.prepare("INSERT INTO _agentproxy_migrations (version, name) VALUES (?, ?)").run(
         "139",
         "windsurf_to_devin_desktop"
       );
@@ -262,7 +262,7 @@ test(
       );
 
       assert.deepEqual(
-        db.prepare("SELECT version, name FROM _omniroute_migrations ORDER BY version").all(),
+        db.prepare("SELECT version, name FROM _agentproxy_migrations ORDER BY version").all(),
         [
           { version: "139", name: "ccr_blocks" },
           { version: "151", name: "windsurf_to_devin_desktop" },
@@ -294,13 +294,13 @@ test(
 
     try {
       db.exec(`
-        CREATE TABLE _omniroute_migrations (
+        CREATE TABLE _agentproxy_migrations (
           version TEXT PRIMARY KEY,
           name TEXT NOT NULL,
           applied_at TEXT NOT NULL DEFAULT (datetime('now'))
         );
       `);
-      db.prepare("INSERT INTO _omniroute_migrations (version, name) VALUES (?, ?)").run(
+      db.prepare("INSERT INTO _agentproxy_migrations (version, name) VALUES (?, ?)").run(
         "140",
         "windsurf_to_devin_desktop"
       );
@@ -316,7 +316,7 @@ test(
       );
 
       assert.deepEqual(
-        db.prepare("SELECT version, name FROM _omniroute_migrations ORDER BY version").all(),
+        db.prepare("SELECT version, name FROM _agentproxy_migrations ORDER BY version").all(),
         [
           { version: "140", name: "connection_runtime_state" },
           { version: "151", name: "windsurf_to_devin_desktop" },
@@ -348,13 +348,13 @@ test(
 
     try {
       db.exec(`
-        CREATE TABLE _omniroute_migrations (
+        CREATE TABLE _agentproxy_migrations (
           version TEXT PRIMARY KEY,
           name TEXT NOT NULL,
           applied_at TEXT NOT NULL DEFAULT (datetime('now'))
         );
       `);
-      db.prepare("INSERT INTO _omniroute_migrations (version, name) VALUES (?, ?)").run(
+      db.prepare("INSERT INTO _agentproxy_migrations (version, name) VALUES (?, ?)").run(
         "143",
         "windsurf_to_devin_desktop"
       );
@@ -370,7 +370,7 @@ test(
       );
 
       assert.deepEqual(
-        db.prepare("SELECT version, name FROM _omniroute_migrations ORDER BY version").all(),
+        db.prepare("SELECT version, name FROM _agentproxy_migrations ORDER BY version").all(),
         [
           { version: "143", name: "retired_provider_purge" },
           { version: "151", name: "windsurf_to_devin_desktop" },

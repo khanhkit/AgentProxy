@@ -5,7 +5,7 @@
 // ("GLIBC_2.29 not found"), so the native module fails to dlopen and any test that
 // reaches better-sqlite3 directly (or asserts stdout that the load-failure warning
 // would pollute) fails HERE while passing in CI. This is a known environment
-// limitation, not a defect in the code under test: the OmniRoute runtime itself
+// limitation, not a defect in the code under test: the AgentProxy runtime itself
 // cascades to node:sqlite/sql.js when better-sqlite3 is unavailable. See
 // tests/unit/_helpers/betterSqlite3Availability.ts for a guard helper.
 import test from "node:test";
@@ -18,7 +18,7 @@ import { resetDbInstance } from "../../src/lib/db/core.ts";
 
 // Regression guard for #6260:
 //   1. The mass-migration safety-abort message must tell the operator how to
-//      bypass the check (OMNIROUTE_MAX_PENDING_MIGRATIONS=0) — e.g. after
+//      bypass the check (AGENTPROXY_MAX_PENDING_MIGRATIONS=0) — e.g. after
 //      restoring a backup where the migration tracking table was wiped.
 //   2. Repeated runMigrations() calls on the same over-threshold DB must throw
 //      the SAME memoized MigrationSafetyAbortError instance, so downstream
@@ -107,13 +107,13 @@ function withNonTestEnvironment<T>(fn: () => T): T {
 // abort decision depends purely on the resolved threshold.
 function seedExistingDbWithoutPhysicalBaseline(db: InstanceType<typeof Database>) {
   db.exec(`
-    CREATE TABLE _omniroute_migrations (
+    CREATE TABLE _agentproxy_migrations (
       version TEXT PRIMARY KEY,
       name TEXT NOT NULL,
       applied_at TEXT NOT NULL DEFAULT (datetime('now'))
     );
   `);
-  db.prepare("INSERT INTO _omniroute_migrations (version, name) VALUES (?, ?)").run(
+  db.prepare("INSERT INTO _agentproxy_migrations (version, name) VALUES (?, ?)").run(
     "001",
     "initial_schema"
   );
@@ -138,7 +138,7 @@ test.after(() => {
 });
 
 test(
-  "abort message tells the operator to set OMNIROUTE_MAX_PENDING_MIGRATIONS=0 to bypass (#6260)",
+  "abort message tells the operator to set AGENTPROXY_MAX_PENDING_MIGRATIONS=0 to bypass (#6260)",
   serial,
   async () => {
     const runner = await importFresh("src/lib/db/migrationRunner.ts");
@@ -159,7 +159,7 @@ test(
         }
       });
       const message = thrown instanceof Error ? thrown.message : String(thrown);
-      assert.match(message, /OMNIROUTE_MAX_PENDING_MIGRATIONS=0/);
+      assert.match(message, /AGENTPROXY_MAX_PENDING_MIGRATIONS=0/);
     } finally {
       db.close();
     }

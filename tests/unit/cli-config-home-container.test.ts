@@ -28,7 +28,7 @@ test.afterEach(restoreEnv);
 // Deps are injected because CI and dev machines are not containers and macOS
 // has no /proc/self/mountinfo at all.
 const HOST_PROFILE_MOUNTINFO = [
-  "31 28 254:1 /volumes/omniroute-data/_data /app/data rw,relatime - ext4 /dev/vda1 rw",
+  "31 28 254:1 /volumes/agentproxy-data/_data /app/data rw,relatime - ext4 /dev/vda1 rw",
   "44 28 254:1 /Users/me/.codex /host-home/.codex rw,relatime - ext4 /dev/vda1 rw",
   "45 28 254:1 /Users/me/.claude /host-home/.claude rw,relatime - ext4 /dev/vda1 rw",
 ].join("\n");
@@ -107,7 +107,7 @@ test("ensureCliConfigWriteAllowed refuses an ephemeral container target", async 
   assert.ok(message, "expected a refusal");
   assert.match(message, /Refusing to write/);
   assert.match(message, /\/home\/node\/\.codex/);
-  assert.match(message, /omniroute connect/);
+  assert.match(message, /agentproxy connect/);
   assert.match(message, /CLI_CONFIG_HOME=\/host-home/);
 });
 
@@ -129,9 +129,9 @@ test("ensureCliConfigWriteAllowed allows any target on a host", async () => {
   );
 });
 
-test("OMNIROUTE_ALLOW_CONTAINER_CONFIG_WRITE overrides the container refusal", async () => {
+test("AGENTPROXY_ALLOW_CONTAINER_CONFIG_WRITE overrides the container refusal", async () => {
   const cliRuntime = await importFresh("gate-override");
-  process.env.OMNIROUTE_ALLOW_CONTAINER_CONFIG_WRITE = "true";
+  process.env.AGENTPROXY_ALLOW_CONTAINER_CONFIG_WRITE = "true";
   assert.equal(
     cliRuntime.ensureCliConfigWriteAllowed("/home/node/.codex", { containerDeps }),
     null
@@ -141,7 +141,7 @@ test("OMNIROUTE_ALLOW_CONTAINER_CONFIG_WRITE overrides the container refusal", a
 test("the write-disabled flag still wins over the container override", async () => {
   const cliRuntime = await importFresh("gate-precedence");
   process.env.CLI_ALLOW_CONFIG_WRITES = "false";
-  process.env.OMNIROUTE_ALLOW_CONTAINER_CONFIG_WRITE = "true";
+  process.env.AGENTPROXY_ALLOW_CONTAINER_CONFIG_WRITE = "true";
   assert.match(
     cliRuntime.ensureCliConfigWriteAllowed("/home/node/.codex", { containerDeps }),
     /CLI_ALLOW_CONFIG_WRITES=false/

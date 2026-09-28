@@ -1,0 +1,1 @@
+- **fix(dashboard):** fresh Docker installs no longer loop on onboarding: a one-shot bootstrap token permits the initial non-loopback local setup without weakening the Docker-gateway-not-loopback security boundary.

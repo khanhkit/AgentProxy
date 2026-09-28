@@ -1,15 +1,15 @@
 ---
-title: "OmniRoute Roadmap"
+title: "AgentProxy Roadmap"
 version: 3.8.50
 lastUpdated: 2026-08-06
 ---
 
-# OmniRoute Roadmap
+# AgentProxy Roadmap
 
 > Version-gated, not date-gated: each milestone ships when its quality gates pass.
 > Current line: **v3.8.x** (this branch). Last updated: 2026-08-06.
 
-OmniRoute is heading from a monolithic router to a **modular AI platform**: a lightweight
+AgentProxy is heading from a monolithic router to a **modular AI platform**: a lightweight
 core engine, a typed SDK, and everything else as installable modules and plugins. The path
 runs through a stabilization rail (3.8.50 → 3.8.59), an LTS anchor (**3.9.0**), and the
 modular **4.0**.
@@ -34,7 +34,7 @@ mandatory quality-gate battery before new merges open.
 | 3.8.50 | CI safety net on release branches · dead-code cleanup · community-reported catalog/topology bug fixes · contributor "golden path" guide |
 | 3.8.51 | Executor registry (in-place) · end-to-end provider-journey contract test becomes a CI gate · official scoped-test dev loop · CI lane consolidation (shared install/setup across gate jobs, #8084) |
 | 3.8.52 | `combo.ts` decomposition · routing-strategy registry · unified model-catalog contract for `/v1/models` · one CI policy for PRs to `release/**` and `main` (#8084) |
-| 3.8.53 | `chatCore.ts` decomposition · headless mode (`OMNIROUTE_HEADLESS=1`) · local candidate build/promote loop |
+| 3.8.53 | `chatCore.ts` decomposition · headless mode (`AGENTPROXY_HEADLESS=1`) · local candidate build/promote loop |
 | 3.8.54 | Release infrastructure (dormant): channels, labels, PR templates, merge queue · full-regression authority moves to the merge queue once TIA shadow evidence clears (#8084) · public feature-freeze announcement |
 
 ## Phase 2 — Validation (3.8.55 → 3.8.59)
@@ -56,7 +56,7 @@ After 3.8.59 the next version is **3.9.0** (there is no 3.8.60). It creates the 
 branch model:
 
 - **`stable/v3`** — the LTS line (3.9.x). Receives fixes, security patches, and provider
-  updates. `npm install omniroute` (aka `latest`) stays on v3 during the whole v4 cycle.
+  updates. `npm install agentproxy` (aka `latest`) stays on v3 during the whole v4 cycle.
 - **`develop`** — v4 development, published as `4.0.0-nightly.*`.
 - **`main`** — v4 release candidates (`next`) and, eventually, GA.
 - Fixes merged to `stable/v3` are automatically forward-ported to `develop` with full
@@ -68,12 +68,12 @@ New features land in the v4 channel. The LTS line is stability-first.
 
 The monolith is intentionally disassembled on `develop`:
 
-- **`@omniroute/core`** (npm name stays `omniroute`) — just the engine: `/v1/*`, routing,
+- **`@agentproxy/core`** (npm name stays `agentproxy`) — just the engine: `/v1/*`, routing,
   combo/fallback, providers.
-- **`@omniroute/sdk`** — one typed contract: hooks, extension points, two-phase lifecycle,
+- **`@agentproxy/sdk`** — one typed contract: hooks, extension points, two-phase lifecycle,
   UI contributions. The five extension systems that exist today (plugins, CLI plugins,
   skills, MCP tools, A2A skills) collapse into one declarative manifest.
-- **Modules** (`@omniroute/mod-*`) — cloud agents, traffic inspection (MITM), evals,
+- **Modules** (`@agentproxy/mod-*`) — cloud agents, traffic inspection (MITM), evals,
   webhooks, memory, guardrails, observability and more move out of the core, each with its
   own version and lifecycle.
 - **Providers as plugins** — adding a provider stops touching the core.
