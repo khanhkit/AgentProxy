@@ -17,13 +17,13 @@ test("#14638 documents the portable Windows Docker CLI profile", () => {
   assert.match(compose, /base[\s\S]*no CLI tools/);
   assert.match(compose, /host[\s\S]*Linux-first/);
 
-  const cliStart = compose.indexOf("  omniroute-cli:");
-  const hostStart = compose.indexOf("  omniroute-host:");
+  const cliStart = compose.indexOf("  agentproxy-cli:");
+  const hostStart = compose.indexOf("  agentproxy-host:");
   assert.ok(cliStart >= 0, "cli service must exist");
   assert.ok(hostStart > cliStart, "host service must follow cli service");
   const cliService = compose.slice(cliStart, hostStart);
-  const baseStart = compose.indexOf("  omniroute-base:");
-  const webStart = compose.indexOf("  omniroute-web:");
+  const baseStart = compose.indexOf("  agentproxy-base:");
+  const webStart = compose.indexOf("  agentproxy-web:");
   assert.ok(baseStart >= 0, "base service must exist");
   assert.ok(webStart > baseStart, "web service must follow base service");
   const baseService = compose.slice(baseStart, webStart);
