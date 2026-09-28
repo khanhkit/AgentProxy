@@ -131,6 +131,31 @@ test("isClientAbortError matches AgentProxy SSE AbortError shapes (#fix-crash-gu
   assert.equal(isClientAbortError(typo), false);
 });
 
+test("isClientAbortError absorbs combo abort reasons and raw disconnect strings", () => {
+  for (const reason of [
+    "hedge-cancelled",
+    "combo-per-model-timeout",
+    "request_signal_aborted",
+    "client_closed",
+    "cancelled",
+  ]) {
+    assert.equal(isClientAbortError(reason), true, reason);
+  }
+  for (const reason of ["genuine failure", "permission denied", "timeout while writing database"]) {
+    assert.equal(isClientAbortError(reason), false, reason);
+  }
+  assert.equal(isClientAbortError(new Error("hedge-cancelled")), true);
+  assert.equal(isClientAbortError(new Error("combo-per-model-timeout")), true);
+});
+
+test("shouldSwallowUncaught absorbs combo cancellation rejections", () => {
+  assert.equal(shouldSwallowUncaught("hedge-cancelled", "unhandledRejection"), true);
+  assert.equal(
+    shouldSwallowUncaught(new Error("combo-per-model-timeout"), "unhandledRejection"),
+    true
+  );
+});
+
 test("shouldSwallowUncaught absorbs SSE AbortError rejections", () => {
   const sseAbort = Object.assign(new Error("request_signal_aborted"), { name: "AbortError" });
   assert.equal(shouldSwallowUncaught(sseAbort, "unhandledRejection"), true);

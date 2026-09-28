@@ -32,12 +32,22 @@
  * @module
  */
 
+const COMBO_ABORT_REASONS = new Set(["hedge-cancelled", "combo-per-model-timeout"]);
+const CLIENT_DISCONNECT_REASONS = new Set([
+  "request_signal_aborted",
+  "client_closed",
+  "cancelled",
+]);
+
 /**
  * @param {unknown} err
  * @returns {boolean} true when `err` represents a client closing the
  *   connection rather than a server-side fault.
  */
 export function isClientAbortError(err) {
+  if (typeof err === "string") {
+    return COMBO_ABORT_REASONS.has(err) || CLIENT_DISCONNECT_REASONS.has(err);
+  }
   if (!err || typeof err !== "object") return false;
   const e = /** @type {NodeJS.ErrnoException} */ (err);
   // Node emits `Error: aborted` (no code) from http.Server#abortIncoming.
@@ -49,6 +59,7 @@ export function isClientAbortError(err) {
   // `Error: aborted` — an emitter-left 'error' event on any of these used to
   // kill the process (#fix-dev-server-aborted).
   if (e.name === "AbortError" && /abort/i.test(String(e.message))) return true;
+  if (COMBO_ABORT_REASONS.has(String(e.message))) return true;
   switch (e.code) {
     case "ERR_STREAM_PREMATURE_CLOSE":
     case "ECONNRESET":
