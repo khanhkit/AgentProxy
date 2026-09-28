@@ -1,6 +1,8 @@
 import { describe, test } from "node:test";
 import assert from "node:assert/strict";
 import { prepareClaudeRequest } from "../../open-sse/translator/helpers/claudeHelper.ts";
+import { FORMATS } from "../../open-sse/translator/formats.ts";
+import { translateRequest } from "../../open-sse/translator/index.ts";
 
 describe("Claude cache_control passthrough", () => {
   test("preserveCacheControl=true preserves cache_control in system blocks", () => {
@@ -94,12 +96,12 @@ describe("Claude cache_control passthrough", () => {
 
     const result = prepareClaudeRequest(body, "claude", false);
 
-    // Original cache_control should be stripped and OmniRoute's strategy applied
+    // Original cache_control should be stripped and AgentProxy's strategy applied
     assert.equal(result.messages.length, 2);
     // User message should not have cache_control (only second-to-last user gets it)
     assert.equal(result.messages[0].content[0].cache_control, undefined);
     assert.equal(result.messages[0].content[1].cache_control, undefined);
-    // Last assistant should have cache_control added by OmniRoute
+    // Last assistant should have cache_control added by AgentProxy
     assert.deepEqual(result.messages[1].content[0].cache_control, { type: "ephemeral" });
   });
 
@@ -181,4 +183,59 @@ describe("Claude cache_control passthrough", () => {
     assert.equal(result.messages[2].content[0].cache_control, undefined);
     assert.deepEqual(result.tools[0].cache_control, { type: "ephemeral", ttl: "5m" });
   });
+
+  for (const provider of ["vertex", "vertex-partner"]) {
+    test(`${provider} supports prompt caching with the cost-sensitive default TTL`, () => {
+      const body = {
+        system: [{ type: "text", text: "Stable system prefix" }],
+        messages: [{ role: "user", content: [{ type: "text", text: "Dynamic question" }] }],
+        tools: [
+          {
+            name: "lookup",
+            description: "Stable tool definition",
+            input_schema: { type: "object" },
+          },
+        ],
+      };
+
+      const result = prepareClaudeRequest(body, provider, false, "claude-sonnet-4-6");
+
+      // Omitting ttl selects Anthropic's 5-minute default. Vertex does not support
+      // ttl:1h on every Claude model, and one-hour writes cost more.
+      assert.deepEqual(result.system[0].cache_control, { type: "ephemeral" });
+      assert.deepEqual(result.tools[0].cache_control, { type: "ephemeral" });
+    });
+
+    test(`${provider} uses the five-minute default through the full translation path`, () => {
+      const result = translateRequest(
+        FORMATS.OPENAI,
+        FORMATS.CLAUDE,
+        "claude-3-7-sonnet",
+        {
+          messages: [
+            { role: "system", content: "Stable system prefix" },
+            { role: "user", content: "Dynamic question" },
+          ],
+          tools: [
+            {
+              type: "function",
+              function: {
+                name: "lookup",
+                description: "Stable tool definition",
+                parameters: { type: "object" },
+              },
+            },
+          ],
+        },
+        true,
+        null,
+        provider,
+        null,
+        { preserveCacheControl: true }
+      );
+
+      assert.deepEqual(result.system[0].cache_control, { type: "ephemeral" });
+      assert.deepEqual(result.tools[0].cache_control, { type: "ephemeral" });
+    });
+  }
 });

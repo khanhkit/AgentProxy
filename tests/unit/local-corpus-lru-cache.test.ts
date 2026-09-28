@@ -67,11 +67,11 @@ test("search and read configured local corpus support dynamic root within bounds
   fs.rmSync(tmpBase, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
 });
 
-test("LRU cache respects access order and OMNIROUTE_CORPUS_CACHE_SIZE", async () => {
+test("LRU cache respects access order and AGENTPROXY_CORPUS_CACHE_SIZE", async () => {
   const tmpRoot = fs.mkdtempSync(path.join(os.tmpdir(), "omni-corpus-lru-root-"));
   setLocalCorpusRoot(tmpRoot);
 
-  process.env.OMNIROUTE_CORPUS_CACHE_SIZE = "2";
+  process.env.AGENTPROXY_CORPUS_CACHE_SIZE = "2";
 
   const dir1 = path.join(tmpRoot, "dir1");
   const dir2 = path.join(tmpRoot, "dir2");
@@ -94,6 +94,6 @@ test("LRU cache respects access order and OMNIROUTE_CORPUS_CACHE_SIZE", async ()
   const idx1Again = getConfiguredLocalCorpusStatus(dir1);
   assert.equal(idx1.indexedBytes, idx1Again.indexedBytes);
 
-  delete process.env.OMNIROUTE_CORPUS_CACHE_SIZE;
+  delete process.env.AGENTPROXY_CORPUS_CACHE_SIZE;
   fs.rmSync(tmpRoot, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
 });

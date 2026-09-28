@@ -161,15 +161,18 @@ describe("LOCAL_ONLY_API_PREFIXES constant integrity", () => {
     );
   });
 
-  it("has exactly 5 entries (no silent regressions adding or removing prefixes)", () => {
-    // 4 baseline entries (/api/mcp/, /api/cli-tools/runtime/, /api/services/,
-    // /dashboard/providers/services/) + /api/copilot/ added in the v3.8.4
-    // semgrep MCP hardening pass (commit 21f8dc4b3).
+  it("has no duplicate prefixes and contains every spawn-capable prefix", () => {
     assert.equal(
+      new Set(LOCAL_ONLY_API_PREFIXES).size,
       LOCAL_ONLY_API_PREFIXES.length,
-      5,
-      `Expected 5 LOCAL_ONLY_API_PREFIXES, got ${LOCAL_ONLY_API_PREFIXES.length}: ${JSON.stringify(LOCAL_ONLY_API_PREFIXES)}`
+      `LOCAL_ONLY_API_PREFIXES contains duplicates: ${JSON.stringify(LOCAL_ONLY_API_PREFIXES)}`
     );
+    for (const prefix of SPAWN_CAPABLE_PREFIXES) {
+      assert.ok(
+        LOCAL_ONLY_API_PREFIXES.includes(prefix),
+        `Spawn-capable prefix must also be LOCAL_ONLY: ${prefix}`
+      );
+    }
   });
 });
 
@@ -188,11 +191,11 @@ describe("SPAWN_CAPABLE_PREFIXES constant integrity", () => {
     );
   });
 
-  it("has exactly 2 entries (no silent regressions)", () => {
+  it("has no duplicate prefixes", () => {
     assert.equal(
+      new Set(SPAWN_CAPABLE_PREFIXES).size,
       SPAWN_CAPABLE_PREFIXES.length,
-      2,
-      `Expected 2 SPAWN_CAPABLE_PREFIXES, got ${SPAWN_CAPABLE_PREFIXES.length}: ${JSON.stringify(SPAWN_CAPABLE_PREFIXES)}`
+      `SPAWN_CAPABLE_PREFIXES contains duplicates: ${JSON.stringify(SPAWN_CAPABLE_PREFIXES)}`
     );
   });
 

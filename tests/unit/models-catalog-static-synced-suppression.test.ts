@@ -5,7 +5,7 @@ import os from "node:os";
 import path from "node:path";
 
 const TEST_DATA_DIR = fs.mkdtempSync(
-  path.join(os.tmpdir(), "omniroute-model-catalog-static-synced-suppression-")
+  path.join(os.tmpdir(), "agentproxy-model-catalog-static-synced-suppression-")
 );
 
 process.env.DATA_DIR = TEST_DATA_DIR;
@@ -16,7 +16,7 @@ const core = await import("../../src/lib/db/core.ts");
 const providersDb = await import("../../src/lib/db/providers.ts");
 const modelsDb = await import("../../src/lib/db/models.ts");
 const catalog = await import("../../src/app/api/v1/models/catalog.ts");
-const { REGISTRY } = await import("@omniroute/open-sse/config/providerRegistry");
+const { REGISTRY } = await import("@agentproxy/open-sse/config/providerRegistry");
 
 const LIVE_MODEL = "google/gemma-4-31b-it";
 

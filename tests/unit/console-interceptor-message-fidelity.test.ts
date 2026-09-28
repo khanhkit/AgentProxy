@@ -16,7 +16,7 @@ import path from "node:path";
 // consoleInterceptor freezes `logToFile` and `logFilePath` at import time, so the env has
 // to be set before the module is loaded — hence the dynamic import.
 
-const LOG_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-interceptor-fidelity-"));
+const LOG_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-interceptor-fidelity-"));
 const LOG_PATH = path.join(LOG_DIR, "app.log");
 
 process.env.APP_LOG_FILE_PATH = LOG_PATH;

@@ -111,8 +111,8 @@ export function isGitLabDirectAccessDisabled(status: number, bodyText: string): 
  * "direct mode unavailable, but the public monolith endpoint may still work" — never a
  * definitive "the token itself is bad" signal on their own.
  */
-export function shouldFallbackToPublicCodeSuggestions(status: number, bodyText: string): boolean {
-  return status === 401 || isGitLabDirectAccessDisabled(status, bodyText);
+export function shouldFallbackToPublicCodeSuggestions(status: number, _bodyText: string): boolean {
+  return status === 401 || status === 403;
 }
 
 /** Headers for a public Code Suggestions completions probe (chat path and connection test). */

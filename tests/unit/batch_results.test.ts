@@ -4,7 +4,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-batch-results-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-batch-results-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.API_KEY_SECRET = process.env.API_KEY_SECRET || "test-secret-123";
 
@@ -43,7 +43,7 @@ test("Batch processor produces output file for successful items", async () => {
   // with patchedFetch (which uses undici under the hood). By pre-setting its
   // state with isPatched: true, we skip the replacement and keep our mock.
   const { AsyncLocalStorage } = await import("node:async_hooks");
-  (globalThis as any)[Symbol.for("omniroute.proxyFetch.state")] = {
+  (globalThis as any)[Symbol.for("agentproxy.proxyFetch.state")] = {
     originalFetch: globalThis.fetch,
     proxyContext: new AsyncLocalStorage(),
     isPatched: true,

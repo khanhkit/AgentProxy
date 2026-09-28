@@ -88,7 +88,7 @@ const sourceConductor: OrchNode = {
   label: "conductor",
   counts: { failed: 1 },
 };
-const orchestratorNode: OrchNode = { id: "orchestrator", kind: "orchestrator", label: "OmniRoute" };
+const orchestratorNode: OrchNode = { id: "orchestrator", kind: "orchestrator", label: "AgentProxy" };
 
 const snap: OrchSnapshot = {
   nodes: [

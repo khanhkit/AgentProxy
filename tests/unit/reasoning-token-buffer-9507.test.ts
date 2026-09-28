@@ -1,6 +1,6 @@
 /**
  * #9507 — client max_tokens must NEVER be rewritten upward by the
- * reasoning-token buffer. Core contract from #1761: OmniRoute must not
+ * reasoning-token buffer. Core contract from #1761: AgentProxy must not
  * silently enlarge a Claude Max user's per-turn cost.
  *
  * On claude-opus-5 (registry maxOutputTokens = 128000), a client sending
@@ -13,7 +13,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-9507-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-9507-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../src/lib/db/core.ts");

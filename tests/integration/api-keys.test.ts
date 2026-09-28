@@ -5,10 +5,11 @@ import os from "node:os";
 import path from "node:path";
 import { makeManagementSessionRequest } from "../helpers/managementSession.ts";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-api-keys-route-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-api-keys-route-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.API_KEY_SECRET = "test-api-key-secret";
 process.env.CLOUD_URL = "http://cloud.example";
+process.env.AGENTPROXY_CLOUD_SYNC_SECRET = "integration-cloud-sync-secret";
 
 const core = await import("../../src/lib/db/core.ts");
 const apiKeysDb = await import("../../src/lib/db/apiKeys.ts");
@@ -41,6 +42,15 @@ async function enableManagementAuth() {
 
 async function createManagementKey() {
   return apiKeysDb.createApiKey("management", MACHINE_ID);
+}
+
+async function waitForCondition(predicate: () => boolean, timeoutMs = 2_000) {
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    if (predicate()) return;
+    await new Promise((resolve) => setTimeout(resolve, 20));
+  }
+  assert.ok(predicate(), "condition was not met within " + timeoutMs + "ms");
 }
 
 function makeRequest(
@@ -114,6 +124,50 @@ test("API keys POST also requires management auth when login protection is enabl
   assert.equal(unauthenticatedBody.error.message, "Authentication required");
   assert.equal(invalidToken.status, 403);
   assert.equal(invalidTokenBody.error.message, "Invalid management token");
+});
+
+test("TC-APIKEY-SEC-001: self-service key cannot mint privileged API keys", async () => {
+  await enableManagementAuth();
+  const caller = await apiKeysDb.createApiKey("self-service-caller", MACHINE_ID, ["self:usage"]);
+  const baselineCount = apiKeysDb.getApiKeysCount();
+
+  for (const scope of ["manage", "admin", "mcp:connect"]) {
+    const response = await listRoute.POST(
+      makeRequest("http://localhost/api/keys", {
+        method: "POST",
+        token: caller.key,
+        body: { name: `blocked-${scope}`, scopes: [scope] },
+      })
+    );
+
+    assert.equal(response.status, 403, `self-service caller must not mint ${scope}`);
+    assert.equal(
+      apiKeysDb.getApiKeysCount(),
+      baselineCount,
+      `${scope} attempt must not persist a new API key`
+    );
+  }
+});
+
+test("TC-APIKEY-SEC-002: self-service key cannot elevate another API key", async () => {
+  await enableManagementAuth();
+  const caller = await apiKeysDb.createApiKey("self-service-caller", MACHINE_ID, ["self:usage"]);
+  const target = await apiKeysDb.createApiKey("scope-target", `${MACHINE_ID}-target`, ["chat"]);
+
+  for (const scope of ["manage", "admin", "mcp:connect"]) {
+    const response = await keyRoute.PATCH(
+      makeRequest(`http://localhost/api/keys/${target.id}`, {
+        method: "PATCH",
+        token: caller.key,
+        body: { scopes: [scope] },
+      }),
+      { params: Promise.resolve({ id: target.id }) }
+    );
+
+    assert.equal(response.status, 403, `self-service caller must not grant ${scope}`);
+    const persisted = await apiKeysDb.getApiKeyById(target.id);
+    assert.deepEqual(persisted?.scopes, ["chat"], `${scope} attempt must not mutate target scopes`);
+  }
 });
 
 test("POST /api/keys creates a key, preserves special characters, and persists noLog", async () => {
@@ -424,7 +478,7 @@ test("POST /api/keys triggers cloud sync when cloud mode is enabled", async () =
     // #6570: cloud sync is fire-and-forget so it no longer blocks the
     // response — give the background task a moment to run before asserting
     // it happened.
-    await new Promise((resolve) => setTimeout(resolve, 50));
+    await waitForCondition(() => calls.length === 1);
     const syncPayload = JSON.parse(calls[0].options.body);
     assert.equal(calls.length, 1);
     assert.match(String(calls[0].url), /^http:\/\/cloud\.example\/sync\//);
@@ -497,7 +551,7 @@ test("POST /api/keys still succeeds when cloud sync fails after creation", async
     // #6570: cloud sync is fire-and-forget so it no longer blocks the
     // response — give the background task a moment to run before asserting
     // the (failed) sync attempt happened and was tolerated.
-    await new Promise((resolve) => setTimeout(resolve, 50));
+    await waitForCondition(() => syncAttempts === 1);
     assert.equal(syncAttempts, 1);
   } finally {
     globalThis.fetch = originalFetch;

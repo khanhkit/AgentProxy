@@ -1,5 +1,5 @@
-import { providerUsesAuthoritativeLiveCatalog } from "@omniroute/open-sse/config/providerRegistry";
-import { PROVIDER_ID_TO_ALIAS } from "@omniroute/open-sse/config/providerModels.ts";
+import { providerUsesAuthoritativeLiveCatalog } from "@agentproxy/open-sse/config/providerRegistry";
+import { PROVIDER_ID_TO_ALIAS } from "@agentproxy/open-sse/config/providerModels.ts";
 import { ensureCursorAutoCatalogEntry } from "@/lib/providerModels/cursorAutoCatalog";
 import {
   getCustomModels,
@@ -41,7 +41,23 @@ export type ProviderCatalogReconciliation = {
 type ProviderConnectionRef = {
   id: string;
   provider: string;
+  syncedModelsAt: string | null;
 };
+
+const DEFAULT_SYNCED_CATALOG_STALE_AFTER_MS = 30 * 24 * 60 * 60 * 1000;
+
+function getSyncedCatalogStaleAfterMs(): number {
+  const raw = process.env.AGENTPROXY_SYNCED_CATALOG_STALE_AFTER_MS;
+  const parsed = raw !== undefined ? Number(raw) : Number.NaN;
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : DEFAULT_SYNCED_CATALOG_STALE_AFTER_MS;
+}
+
+function isSyncedAtFresh(syncedModelsAt: string | null): boolean {
+  if (!syncedModelsAt) return false;
+  const syncedAtMs = Date.parse(syncedModelsAt);
+  if (Number.isNaN(syncedAtMs)) return false;
+  return Date.now() - syncedAtMs <= getSyncedCatalogStaleAfterMs();
+}
 
 function resolveStoredProviderId(aliasOrId: string): string {
   const normalized = aliasOrId.trim();
@@ -92,6 +108,7 @@ function readConnectionRef(connection: unknown): ProviderConnectionRef | null {
   const record = connection as {
     id?: unknown;
     provider?: unknown;
+    syncedModelsAt?: unknown;
   };
 
   if (
@@ -106,6 +123,7 @@ function readConnectionRef(connection: unknown): ProviderConnectionRef | null {
   return {
     id: record.id,
     provider: record.provider,
+    syncedModelsAt: typeof record.syncedModelsAt === "string" ? record.syncedModelsAt : null,
   };
 }
 
@@ -182,24 +200,41 @@ async function unionCustomModels(
  * non-empty usable catalog. Missing, empty, malformed, or unavailable state
  * fails open to the static registry.
  */
-async function loadConnectionCatalog(storedProviderId: string): Promise<SyncedAvailableModel[]> {
+type ConnectionCatalog = {
+  models: SyncedAvailableModel[];
+  hasFreshConnection: boolean;
+};
+
+async function loadConnectionCatalog(storedProviderId: string): Promise<ConnectionCatalog> {
   const [connections, modelsByConnection] = await Promise.all([
     getRawProviderConnections({ provider: storedProviderId, isActive: true }, undefined, undefined, [
       "id",
       "provider",
+      "synced_models_at",
     ]),
     getSyncedAvailableModelsByConnection(storedProviderId),
   ]);
 
-  const activeConnectionIds = connections
+  const activeConnections = connections
     .map(readConnectionRef)
-    .filter((connection): connection is ProviderConnectionRef => connection !== null)
-    .map((connection) => connection.id);
+    .filter((connection): connection is ProviderConnectionRef => connection !== null);
 
-  return collectModelsForConnections(modelsByConnection, activeConnectionIds);
+  return {
+    models: collectModelsForConnections(
+      modelsByConnection,
+      activeConnections.map((connection) => connection.id)
+    ),
+    hasFreshConnection: activeConnections.some((connection) =>
+      isSyncedAtFresh(connection.syncedModelsAt)
+    ),
+  };
 }
 
-export async function getActiveSyncedCatalog(providerId: string): Promise<ActiveSyncedCatalog> {
+/** Set includeCustomModels=false for consumers that overlay custom rows separately. */
+export async function getActiveSyncedCatalog(
+  providerId: string,
+  includeCustomModels = true
+): Promise<ActiveSyncedCatalog> {
   const storedProviderId = resolveStoredProviderId(providerId);
   if (!storedProviderId) {
     return { authoritative: false, models: [] };
@@ -210,13 +245,18 @@ export async function getActiveSyncedCatalog(providerId: string): Promise<Active
     const siblingCatalogs = await Promise.all(lookupIds.map(loadConnectionCatalog));
     // #12866 unions the agy/antigravity sibling catalogs; #12934 then overlays the
     // picker-added customModels so dispatch admits the same rows the picker REST shows.
+    // Dashboard/listing consumers can request the pure active catalog and overlay
+    // manual custom rows separately so legacy imported rows cannot resurrect
+    // models that are absent from the authoritative live union.
+    const discovered = unionModels(siblingCatalogs.map((catalog) => catalog.models));
     const models = enrichCursorCatalog(
       storedProviderId,
-      await unionCustomModels(storedProviderId, unionModels(siblingCatalogs))
+      includeCustomModels ? await unionCustomModels(storedProviderId, discovered) : discovered
     );
     if (models.length > 0) {
+      const hasFreshConnection = siblingCatalogs.some((catalog) => catalog.hasFreshConnection);
       return {
-        authoritative: providerUsesAuthoritativeLiveCatalog(providerId),
+        authoritative: providerUsesAuthoritativeLiveCatalog(providerId) && hasFreshConnection,
         models,
       };
     }
@@ -237,7 +277,12 @@ export async function getActiveSyncedCatalog(providerId: string): Promise<Active
       authoritative: false,
       models: enrichCursorCatalog(
         storedProviderId,
-        await unionCustomModels(storedProviderId, await getSyncedAvailableModels(storedProviderId))
+        includeCustomModels
+          ? await unionCustomModels(
+              storedProviderId,
+              await getSyncedAvailableModels(storedProviderId)
+            )
+          : await getSyncedAvailableModels(storedProviderId)
       ),
     };
   } catch {
@@ -277,10 +322,7 @@ export async function getAllActiveSyncedModels(): Promise<Record<string, SyncedA
 
         const models = enrichCursorCatalog(
           providerId,
-          await unionCustomModels(
-            providerId,
-            collectModelsForConnections(modelsByConnection, connectionIds)
-          )
+          collectModelsForConnections(modelsByConnection, connectionIds)
         );
 
         if (models.length > 0) {

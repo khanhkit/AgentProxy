@@ -112,7 +112,7 @@ function TransportSelector({
   ];
 
   const urlMap: Record<McpTransport, string> = {
-    stdio: "omniroute --mcp",
+    stdio: "agentproxy --mcp",
     sse: `${baseUrl}/api/mcp/sse`,
     "streamable-http": `${baseUrl}/api/mcp/stream`,
   };
@@ -333,8 +333,8 @@ export default function McpPage() {
               <li>{t("mcpStep2")}</li>
               <li>
                 {t.rich("mcpStep3", {
-                  code1: (chunks) => <code className="text-xs">omniroute_get_health</code>,
-                  code2: (chunks) => <code className="text-xs">omniroute_list_combos</code>,
+                  code1: (chunks) => <code className="text-xs">agentproxy_get_health</code>,
+                  code2: (chunks) => <code className="text-xs">agentproxy_list_combos</code>,
                 })}
               </li>
             </ol>

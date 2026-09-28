@@ -9,7 +9,7 @@ import {
 // Repro for GitHub issue #11510: Claude Code (or any client) issuing a PARALLEL
 // tool-call turn (2+ tool_use blocks in one assistant message) against a Gemini
 // 3.x thinking model. Gemini attaches (and requires) an individual
-// thoughtSignature on EVERY functionCall part in a multi-call turn, and OmniRoute
+// thoughtSignature on EVERY functionCall part in a multi-call turn, and AgentProxy
 // stores one per tool_use id (gemini-to-claude.ts reads `part.thoughtSignature`
 // per-part, not just a single pending value). But claude-to-gemini.ts's
 // `shouldUseEmbeddedSignature` flag strips the signature from every functionCall

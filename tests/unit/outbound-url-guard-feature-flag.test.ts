@@ -6,7 +6,7 @@ import assert from "node:assert/strict";
 // the Electron dashboard has no effect (the server was spawned with the env
 // value at boot and the subsequent toggle only lands in the DB).
 
-const KEY = "OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS";
+const KEY = "AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS";
 
 async function withEnv<T>(value: string | undefined, fn: () => Promise<T> | T): Promise<T> {
   const prev = process.env[KEY];
@@ -65,6 +65,16 @@ test("arePrivateProviderUrlsAllowed honors env = 'true' when DB has no override"
       const { arePrivateProviderUrlsAllowed } =
         await import("../../src/shared/network/outboundUrlGuardPolicy.ts");
       assert.equal(arePrivateProviderUrlsAllowed(), true);
+    });
+  });
+});
+
+test("dashboard OFF beats an env opt-in for private provider URLs", async () => {
+  await withEnv("true", async () => {
+    await withDbOverride("false", async () => {
+      const { arePrivateProviderUrlsAllowed } =
+        await import("../../src/shared/network/outboundUrlGuardPolicy.ts");
+      assert.equal(arePrivateProviderUrlsAllowed(), false);
     });
   });
 });

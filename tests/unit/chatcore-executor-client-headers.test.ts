@@ -43,8 +43,8 @@ test("a trimmed-empty user agent does not create headers on its own", () => {
 
 test("internal hard-lease control headers never reach an executor", () => {
   const out = buildExecutorClientHeaders({
-    "X-OmniRoute-Lease-Owner": `vlo_${"A".repeat(43)}`,
-    "x-omniroute-lease-generation": "7",
+    "X-AgentProxy-Lease-Owner": `vlo_${"A".repeat(43)}`,
+    "x-agentproxy-lease-generation": "7",
     "x-session-id": "routing-session-remains-independent",
   });
 

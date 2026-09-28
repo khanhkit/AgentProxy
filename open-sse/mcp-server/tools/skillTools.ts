@@ -1,6 +1,17 @@
 import { z } from "zod";
 import { skillRegistry } from "@/lib/skills/registry";
 import { skillExecutor } from "@/lib/skills/executor";
+import { hasManageScope } from "../../../src/shared/constants/managementScopes";
+import type { McpToolExtraLike } from "../scopeEnforcement.ts";
+
+function resolveSkillSubject(
+  requestedId: string | undefined,
+  extra?: McpToolExtraLike
+): string | undefined {
+  const callerId = extra?.authInfo?.clientId?.trim();
+  if (!callerId || hasManageScope(extra?.authInfo?.scopes ?? [])) return requestedId;
+  return callerId;
+}
 
 export const SkillListSchema = z.object({
   apiKeyId: z.string().optional(),
@@ -22,14 +33,15 @@ export const SkillExecuteSchema = z.object({
 });
 
 export const skillTools = {
-  omniroute_skills_list: {
-    name: "omniroute_skills_list",
+  agentproxy_skills_list: {
+    name: "agentproxy_skills_list",
     description: "List all registered skills with optional filtering by API key or name",
     scopes: ["read:skills"],
     inputSchema: SkillListSchema,
-    handler: async (args: z.infer<typeof SkillListSchema>) => {
-      await skillRegistry.loadFromDatabase(args.apiKeyId);
-      const skills = skillRegistry.list(args.apiKeyId);
+    handler: async (args: z.infer<typeof SkillListSchema>, extra?: McpToolExtraLike) => {
+      const apiKeyId = resolveSkillSubject(args.apiKeyId, extra);
+      await skillRegistry.loadFromDatabase(apiKeyId);
+      const skills = skillRegistry.list(apiKeyId);
 
       let filtered = skills;
       if (args.name) {
@@ -53,14 +65,15 @@ export const skillTools = {
     },
   },
 
-  omniroute_skills_enable: {
-    name: "omniroute_skills_enable",
+  agentproxy_skills_enable: {
+    name: "agentproxy_skills_enable",
     description: "Enable or disable a specific skill by ID",
     scopes: ["write:skills"],
     inputSchema: SkillEnableSchema,
-    handler: async (args: z.infer<typeof SkillEnableSchema>) => {
-      await skillRegistry.loadFromDatabase(args.apiKeyId);
-      const skill = await skillRegistry.setEnabledById(args.skillId, args.apiKeyId, args.enabled);
+    handler: async (args: z.infer<typeof SkillEnableSchema>, extra?: McpToolExtraLike) => {
+      const apiKeyId = resolveSkillSubject(args.apiKeyId, extra);
+      await skillRegistry.loadFromDatabase(apiKeyId);
+      const skill = await skillRegistry.setEnabledById(args.skillId, apiKeyId!, args.enabled);
       if (!skill) {
         throw new Error(`Skill not found: ${args.skillId}`);
       }
@@ -69,14 +82,15 @@ export const skillTools = {
     },
   },
 
-  omniroute_skills_execute: {
-    name: "omniroute_skills_execute",
+  agentproxy_skills_execute: {
+    name: "agentproxy_skills_execute",
     description: "Execute a skill with provided input and return the result",
     scopes: ["execute:skills"],
     inputSchema: SkillExecuteSchema,
-    handler: async (args: z.infer<typeof SkillExecuteSchema>) => {
+    handler: async (args: z.infer<typeof SkillExecuteSchema>, extra?: McpToolExtraLike) => {
+      const apiKeyId = resolveSkillSubject(args.apiKeyId, extra);
       const execution = await skillExecutor.execute(args.skillName, args.input, {
-        apiKeyId: args.apiKeyId,
+        apiKeyId: apiKeyId!,
         sessionId: args.sessionId,
       });
 
@@ -92,16 +106,17 @@ export const skillTools = {
     },
   },
 
-  omniroute_skills_executions: {
-    name: "omniroute_skills_executions",
+  agentproxy_skills_executions: {
+    name: "agentproxy_skills_executions",
     description: "List recent skill execution history",
     scopes: ["read:skills"],
     inputSchema: z.object({
       apiKeyId: z.string().optional(),
       limit: z.number().int().positive().max(100).optional(),
     }),
-    handler: async (args: { apiKeyId?: string; limit?: number }) => {
-      const executions = skillExecutor.listExecutions(args.apiKeyId, args.limit || 50);
+    handler: async (args: { apiKeyId?: string; limit?: number }, extra?: McpToolExtraLike) => {
+      const apiKeyId = resolveSkillSubject(args.apiKeyId, extra);
+      const executions = skillExecutor.listExecutions(apiKeyId, args.limit || 50);
 
       return {
         executions: executions.map((e) => ({

@@ -17,6 +17,7 @@ import {
   getDefaultThinkingBudget,
 } from "../../../src/lib/modelCapabilities.ts";
 import { getModelSpec } from "../../../src/shared/constants/modelSpecs.ts";
+import { gemini38ThinkingConfig, isGemini38Model } from "../../services/thinkingBudget.ts";
 
 import {
   DEFAULT_SAFETY_SETTINGS,
@@ -42,9 +43,15 @@ import {
   type GeminiPart,
   type GeminiContent,
   mergeConsecutiveSameRoleContents,
+  ensureHistoryDoesNotOpenWithFunctionCall,
 } from "./openai-to-gemini/helpers.ts";
 
-export { mergeConsecutiveSameRoleContents, type GeminiContent, type GeminiPart };
+export {
+  mergeConsecutiveSameRoleContents,
+  ensureHistoryDoesNotOpenWithFunctionCall,
+  type GeminiContent,
+  type GeminiPart,
+};
 
 // Observed Antigravity wrapper output cap, not an underlying model capability.
 // Keep this bridge-local: Antigravity currently caps visible output around 16K.
@@ -241,10 +248,12 @@ function openaiToGeminiBase(
       // the pre-#6943 native-defaults contract (thinkingBudget 0 / includeThoughts
       // false must still be present) and crashed callers that read
       // .thinkingConfig.thinkingBudget unconditionally.
-      result.generationConfig.thinkingConfig = {
-        thinkingBudget: budget,
-        includeThoughts: budget !== 0,
-      };
+      result.generationConfig.thinkingConfig = isGemini38Model(model)
+        ? gemini38ThinkingConfig(model, budget, body)
+        : {
+            thinkingBudget: budget,
+            includeThoughts: budget !== 0,
+          };
     }
     // 2. Claude format: thinking (type: enabled, budget_tokens)
     // Use an explicit numeric check (not truthy) so an explicit `budget_tokens: 0` — the
@@ -264,10 +273,12 @@ function openaiToGeminiBase(
       // but thinkingBudgetCap:24576, meaning it supports thinking via budget).
       // Models not in MODEL_SPECS (thinkingBudgetCap=undefined) default to allowed.
       if (cappedBudget > 0 || getModelSpec(model)?.thinkingBudgetCap !== 0) {
-        result.generationConfig.thinkingConfig = {
-          thinkingBudget: cappedBudget,
-          includeThoughts: cappedBudget !== 0,
-        };
+        result.generationConfig.thinkingConfig = isGemini38Model(model)
+          ? gemini38ThinkingConfig(model, cappedBudget, body)
+          : {
+              thinkingBudget: cappedBudget,
+              includeThoughts: cappedBudget !== 0,
+            };
       }
     }
   }
@@ -294,10 +305,14 @@ function openaiToGeminiBase(
       // Models not in MODEL_SPECS (thinkingBudgetCap=undefined) default to allowed.
       getModelSpec(model)?.thinkingBudgetCap !== 0
     ) {
-      result.generationConfig.thinkingConfig = {
-        thinkingBudget: getDefaultThinkingBudget(model) || capThinkingBudget(model, 24576),
-        includeThoughts: true,
-      };
+      const defaultBudget =
+        getDefaultThinkingBudget(model) || capThinkingBudget(model, 24576);
+      result.generationConfig.thinkingConfig = isGemini38Model(model)
+        ? gemini38ThinkingConfig(model, defaultBudget, body)
+        : {
+            thinkingBudget: defaultBudget,
+            includeThoughts: true,
+          };
     }
   }
 
@@ -363,26 +378,9 @@ function openaiToGeminiBase(
         }
       } else if (role === "assistant") {
         const parts: GeminiPart[] = [];
-
-        // Thinking/reasoning → thought part with signature
-        if (msg.reasoning_content) {
-          parts.push({
-            thought: true,
-            text: msg.reasoning_content,
-          });
-        }
-
-        if (content) {
-          const text = typeof content === "string" ? content : extractTextContent(content);
-          if (text) {
-            parts.push({ text });
-          }
-        }
-
         const toolCalls = msg.tool_calls as Array<Record<string, unknown>> | undefined;
+        const resolvedSignatures = new Map<string, string>();
         if (toolCalls && Array.isArray(toolCalls)) {
-          const toolCallIds: string[] = [];
-          const resolvedSignatures = new Map<string, string>();
           for (const tc of toolCalls) {
             const id = tc.id as string;
             const resolved = resolveGeminiThoughtSignature(
@@ -393,6 +391,43 @@ function openaiToGeminiBase(
               resolvedSignatures.set(id, resolved);
             }
           }
+        }
+
+        // Gemini 2.5+/3.x thinking turns require the authentic thoughtSignature from
+        // the prior provider response. The response translator binds that signature to
+        // the following tool-call id, so resolve it before materializing reasoning history.
+        // Older/non-strict Gemini variants retain their historical unsigned replay behavior.
+        const modelLower = model.toLowerCase();
+        const requiresSignedReasoning =
+          modelLower.includes("gemini") &&
+          (modelLower.includes("thinking") ||
+            modelLower.includes("gemini-3") ||
+            modelLower.includes("gemini-2.5") ||
+            modelLower.includes("gemini-pro"));
+        const reasoningSignature =
+          toolCalls && Array.isArray(toolCalls)
+            ? toolCalls
+                .map((tc) => resolvedSignatures.get(tc.id as string))
+                .find((signature): signature is string => Boolean(signature))
+            : undefined;
+
+        if (msg.reasoning_content && (!requiresSignedReasoning || reasoningSignature)) {
+          parts.push({
+            thought: true,
+            text: msg.reasoning_content,
+            ...(reasoningSignature ? { thoughtSignature: reasoningSignature } : {}),
+          });
+        }
+
+        if (content) {
+          const text = typeof content === "string" ? content : extractTextContent(content);
+          if (text) {
+            parts.push({ text });
+          }
+        }
+
+        if (toolCalls && Array.isArray(toolCalls)) {
+          const toolCallIds: string[] = [];
 
           const signaturelessToolCallMode = toolNameOptions.signaturelessToolCallMode;
           const stringifySignaturelessToolCalls = signaturelessToolCallMode === "text";
@@ -559,6 +594,9 @@ function openaiToGeminiBase(
 
   // Collapse any consecutive same-role contents Gemini would reject (9router#2191).
   result.contents = mergeConsecutiveSameRoleContents(result.contents ?? []);
+  // Guard the one alternation violation the merge above cannot reach: history
+  // that opens with a functionCall-bearing turn instead of a user turn.
+  result.contents = ensureHistoryDoesNotOpenWithFunctionCall(result.contents);
 
   // Convert tools
   const bodyTools = body.tools as Array<Record<string, unknown>> | undefined;
@@ -600,7 +638,11 @@ function openaiToGeminiBase(
       // Extract the schema (may be nested under .schema key)
       const schema = responseFormat.json_schema.schema || responseFormat.json_schema;
       if (schema && typeof schema === "object") {
-        result.generationConfig.responseSchema = cleanJSONSchemaForAntigravity(schema);
+        // #12308: response schemas opt in to nullability preservation; tool
+        // parameters (geminiToolsSanitizer) keep the default flattening.
+        result.generationConfig.responseSchema = cleanJSONSchemaForAntigravity(schema, {
+          preserveNullable: true,
+        });
       }
     } else if (responseFormat.type === "json_object") {
       result.generationConfig.responseMimeType = "application/json";
@@ -683,7 +725,7 @@ function wrapInCloudCodeEnvelope(model, cloudCodeRequest, credentials = null) {
 
   if (!projectId) {
     console.warn(
-      `[OmniRoute] Antigravity account is missing projectId. ` +
+      `[AgentProxy] Antigravity account is missing projectId. ` +
         `Attempting request with empty project — reconnect OAuth to resolve.`
     );
     projectId = "";

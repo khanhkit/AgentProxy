@@ -235,7 +235,7 @@ export class DefaultExecutor extends BaseExecutor {
       const normalized = baseUrl.replace(/\/$/, "");
       const customPath = typeof psd?.chatPath === "string" && psd.chatPath ? psd.chatPath : null;
       if (customPath) return `${normalized}${customPath}`;
-      const forceResponses = psd?._omnirouteForceResponsesUpstream === true;
+      const forceResponses = psd?._agentproxyForceResponsesUpstream === true;
       const path =
         forceResponses || getOpenAICompatibleType(this.provider, psd) === "responses"
           ? "/responses"
@@ -327,7 +327,7 @@ export class DefaultExecutor extends BaseExecutor {
       }
       case "azure-ai": {
         const forceResponses =
-          credentials?.providerSpecificData?._omnirouteForceResponsesUpstream === true;
+          credentials?.providerSpecificData?._agentproxyForceResponsesUpstream === true;
         const apiType =
           forceResponses || credentials?.providerSpecificData?.apiType === "responses"
             ? "responses"
@@ -346,7 +346,7 @@ export class DefaultExecutor extends BaseExecutor {
       }
       case "oci": {
         const forceResponses =
-          credentials?.providerSpecificData?._omnirouteForceResponsesUpstream === true;
+          credentials?.providerSpecificData?._agentproxyForceResponsesUpstream === true;
         const apiType =
           forceResponses || credentials?.providerSpecificData?.apiType === "responses"
             ? "responses"
@@ -414,7 +414,7 @@ export class DefaultExecutor extends BaseExecutor {
         const psd = credentials?.providerSpecificData;
         const manualBaseUrl =
           typeof psd?.baseUrl === "string" && psd.baseUrl.trim() ? psd.baseUrl.trim() : null;
-        const forceResponses = psd?._omnirouteForceResponsesUpstream === true;
+        const forceResponses = psd?._agentproxyForceResponsesUpstream === true;
         const modelTarget = getModelTargetFormat("poe", model);
         const connectionTarget =
           typeof psd?.targetFormat === "string" ? (psd.targetFormat as string) : null;
@@ -854,7 +854,7 @@ export class DefaultExecutor extends BaseExecutor {
       const hasUserTag = stringTags.some((t) => t.startsWith("user="));
       if (!hasUserTag) {
         const username =
-          typeof record.user === "string" && record.user.trim() ? record.user.trim() : "omniroute";
+          typeof record.user === "string" && record.user.trim() ? record.user.trim() : "agentproxy";
         record.tags = [...stringTags, `user=${username}`];
       } else {
         record.tags = stringTags;
@@ -1013,18 +1013,19 @@ export class DefaultExecutor extends BaseExecutor {
       this.ensureThinkingBudget(withDefaults as Record<string, unknown>, model);
     }
 
-    // 9router#1480: native Moonshot providers 400 when a prior assistant turn
-    // lacks reasoning_content. OpencodeExecutor
-    // already injects a placeholder for OpenCode-routed thinking models; the
-    // direct connections hit neither injection path. Scope to Moonshot ids so
-    // gateway-served models that merely match the thinking-model name pattern
-    // (and may reject an extra field) are unaffected.
-    if (this.provider === "kimi" || this.provider === "moonshot") {
+    // 9router#1480: native Moonshot providers 400 when a prior assistant turn lacks
+    // reasoning_content. Scope to Moonshot ids, or a registry entry opting in via
+    // `requiresReasoningContentEcho` (e.g. `bai`'s DeepSeek resale, #13599).
+    const reasoningEcho =
+      this.provider === "kimi" ||
+      this.provider === "moonshot" ||
+      !!getRegistryEntry(this.provider)?.requiresReasoningContentEcho;
+    if (reasoningEcho) {
       const outboundModel =
         typeof (withDefaults as Record<string, unknown>)?.model === "string"
           ? ((withDefaults as Record<string, unknown>).model as string)
           : model;
-      if (shouldInjectReasoningContentPlaceholder(this.provider, outboundModel)) {
+      if (shouldInjectReasoningContentPlaceholder(reasoningEcho, this.provider, outboundModel)) {
         withDefaults = injectReasoningContentForThinkingModel(withDefaults);
       }
     }
@@ -1076,7 +1077,8 @@ export class DefaultExecutor extends BaseExecutor {
     const reasoningEnabled =
       thinking?.type === "enabled" ||
       (typeof effort === "string" && effort !== "none" && effort !== "off") ||
-      effort === true;
+      effort === true ||
+      modelEntry.alwaysReasons === true;
     if (!reasoningEnabled) return body;
 
     const MIN_TOKENS = 4096;

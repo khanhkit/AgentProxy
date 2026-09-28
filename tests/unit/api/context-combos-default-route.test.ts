@@ -17,11 +17,11 @@ import os from "node:os";
 import path from "node:path";
 
 import { makeManagementSessionRequest } from "../../helpers/managementSession.ts";
-import { deriveDefaultPlan } from "@omniroute/open-sse/services/compression/deriveDefaultPlan.ts";
+import { deriveDefaultPlan } from "@agentproxy/open-sse/services/compression/deriveDefaultPlan.ts";
 
 // ─── isolated temp DB ─────────────────────────────────────────────────────────
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-ctx-combos-default-route-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-ctx-combos-default-route-"));
 const originalDataDir = process.env.DATA_DIR;
 const originalJwtSecret = process.env.JWT_SECRET;
 

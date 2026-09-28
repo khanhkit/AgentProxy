@@ -9,6 +9,7 @@
  * getClaudePlanLabel (__testing). Behavior-preserving move.
  */
 
+import { z } from "zod";
 import { safePercentage } from "@/shared/utils/formatting";
 import { getClaudeCodeVersion, fetchClaudeBootstrap } from "../../executors/claudeIdentity.ts";
 import { isClaudeOauthUsageCoolingDown, markClaudeOauthUsage429 } from "../claudeUsageCooldown.ts";
@@ -16,6 +17,13 @@ import { toRecord } from "./scalars.ts";
 import { type UsageQuota, parseResetTime } from "./quota.ts";
 
 type JsonRecord = Record<string, unknown>;
+
+const FABLE_WEEKLY_LIMIT_SCHEMA = z.object({
+  kind: z.literal("weekly_scoped"),
+  percent: z.number().min(0).max(100),
+  resets_at: z.string().nullable().optional(),
+  scope: z.object({ model: z.object({ display_name: z.literal("Fable") }) }),
+});
 
 // Claude API config
 const CLAUDE_CONFIG = {
@@ -85,7 +93,7 @@ export async function getClaudeUsage(accessToken?: string) {
       const quotas: Record<string, UsageQuota> = {};
 
       // utilization = percentage USED (e.g., 90 means 90% used, 10% remaining)
-      // Confirmed via user report #299: Claude.ai shows 87% used = OmniRoute must show 13% remaining.
+      // Confirmed via user report #299: Claude.ai shows 87% used = AgentProxy must show 13% remaining.
       const hasUtilization = (window: JsonRecord) =>
         window && typeof window === "object" && safePercentage(window.utilization) !== undefined;
 
@@ -125,6 +133,17 @@ export async function getClaudeUsage(accessToken?: string) {
         }
       }
 
+      // Display-only model limits must not enter account-wide routing quotas.
+      const modelQuotas: Record<string, UsageQuota> = {};
+      for (const limit of Array.isArray(data.limits) ? data.limits : []) {
+        const parsed = FABLE_WEEKLY_LIMIT_SCHEMA.safeParse(limit);
+        if (!parsed.success) continue;
+        modelQuotas["weekly fable (7d)"] = createQuotaObject({
+          utilization: parsed.data.percent,
+          resets_at: parsed.data.resets_at,
+        });
+      }
+
       const bootstrap = await bootstrapPromise;
       const plan =
         getClaudePlanLabel(
@@ -137,6 +156,7 @@ export async function getClaudeUsage(accessToken?: string) {
       return {
         ...(plan ? { plan } : {}),
         quotas,
+        modelQuotas,
         extraUsage: data.extra_usage ?? null,
         bootstrap,
       };

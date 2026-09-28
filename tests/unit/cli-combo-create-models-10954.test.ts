@@ -1,4 +1,4 @@
-// Regression for #10954: `omniroute combo create` did not accept any way to
+// Regression for #10954: `agentproxy combo create` did not accept any way to
 // specify models — `bin/cli/commands/combo.mjs` only ever registered
 // `--strategy`, and both the HTTP body (POST /api/combos) and the local-db
 // fallback (db.combos.createCombo) hardcoded `models: []`. Every combo
@@ -21,7 +21,7 @@ const ORIGINAL_DATA_DIR = process.env.DATA_DIR;
 const ORIGINAL_FETCH = globalThis.fetch;
 
 function createTempDataDir() {
-  return fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-cli-combo-models-"));
+  return fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-cli-combo-models-"));
 }
 
 async function withComboEnv(fn: (dataDir: string) => Promise<void>) {

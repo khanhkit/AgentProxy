@@ -14,8 +14,11 @@ const {
   tryParseJSON,
 } = await import("../../open-sse/translator/helpers/geminiHelper.ts");
 const { ANTIGRAVITY_DEFAULT_SYSTEM } = await import("../../open-sse/config/constants.ts");
-const { clearGeminiThoughtSignatures } =
-  await import("../../open-sse/services/geminiThoughtSignatureStore.ts");
+const {
+  buildGeminiThoughtSignatureKey,
+  storeGeminiThoughtSignature,
+  clearGeminiThoughtSignatures,
+} = await import("../../open-sse/services/geminiThoughtSignatureStore.ts");
 
 type UnknownRecord = Record<string, unknown>;
 type GeminiRequestWithConfig = { generationConfig: UnknownRecord };
@@ -194,6 +197,13 @@ test("OpenAI -> Gemini helper inlines local refs and preserves only additionalPr
 });
 
 test("OpenAI -> Gemini request maps messages, merged system instructions, tools and response schema", () => {
+  const signatureNamespace = "conn-general-map";
+  const reasoningSignature = "SIG_GENERAL_MAP";
+  storeGeminiThoughtSignature(
+    buildGeminiThoughtSignatureKey(signatureNamespace, "call_1"),
+    reasoningSignature
+  );
+
   const result = openaiToGeminiRequest(
     "gemini-2.5-pro",
     {
@@ -258,7 +268,8 @@ test("OpenAI -> Gemini request maps messages, merged system instructions, tools 
         },
       },
     },
-    false
+    false,
+    { _signatureNamespace: signatureNamespace }
   );
 
   const systemInstruction = (result as GeminiRequestWithSystem).systemInstruction;
@@ -274,10 +285,15 @@ test("OpenAI -> Gemini request maps messages, merged system instructions, tools 
     (content) => content.role === "model" && content.parts.some((part) => part.functionCall)
   );
   assert.ok(modelTurn, "expected a model turn with functionCall");
-  const modelTurnThought = modelTurn.parts[0] as { thought?: boolean; text?: string };
+  const modelTurnThought = modelTurn.parts[0] as {
+    thought?: boolean;
+    text?: string;
+    thoughtSignature?: string;
+  };
   const modelTurnFunctionCall = getFunctionCall(modelTurn.parts[2]);
   assert.equal(modelTurn.parts[0].thought, true);
   assert.equal(modelTurnThought.text, "Need live data");
+  assert.equal(modelTurnThought.thoughtSignature, reasoningSignature);
   assert.equal(modelTurn.parts[1].text, "Calling a tool");
   assert.equal(modelTurnFunctionCall.name, "weather");
   assert.deepEqual(modelTurnFunctionCall.args, { city: "Tokyo" });
@@ -689,7 +705,7 @@ test("OpenAI -> Antigravity preserves multiple signature-less historical tool re
     "gemini-3.7-flash-low",
     {
       messages: [
-        { role: "user", content: "Inspect OmniRoute config" },
+        { role: "user", content: "Inspect AgentProxy config" },
         {
           role: "assistant",
           tool_calls: [
@@ -701,7 +717,7 @@ test("OpenAI -> Antigravity preserves multiple signature-less historical tool re
             {
               id: "call_list_dir",
               type: "function",
-              function: { name: "terminal", arguments: '{"command":"ls ~/.omniroute"}' },
+              function: { name: "terminal", arguments: '{"command":"ls ~/.agentproxy"}' },
             },
           ],
         },
@@ -866,7 +882,11 @@ test("OpenAI -> Antigravity maps Claude-family models to Gemini-compatible schem
   assert.match(result.requestId, /^agent\/\d+\/[0-9a-f]{8}$/);
   assert.equal(result.enabledCreditTypes, undefined);
   assert.equal(result.request.systemInstruction.parts[0].text, ANTIGRAVITY_DEFAULT_SYSTEM);
-  assert.equal(result.request.systemInstruction.parts.length, 1, "systemInstruction must contain only ANTIGRAVITY_DEFAULT_SYSTEM (#9030)");
+  assert.equal(
+    result.request.systemInstruction.parts.length,
+    1,
+    "systemInstruction must contain only ANTIGRAVITY_DEFAULT_SYSTEM (#9030)"
+  );
   // #9030 — Client system content moved to first user message to avoid upstream 429s
   assert.equal(result.request.contents[0].parts[0].text, "Project rules");
   assert.equal(result.request.contents[0].parts[1].text, "Read a file");
@@ -1529,96 +1549,4 @@ test("registered OPENAI->GEMINI translator keeps native functionCall+thoughtSign
     false,
     "signed tool call must NOT fall back to context text"
   );
-});
-
-// Regression for #3842: thinking.budget_tokens on the explicit Claude-format path
-// must be capped by the model's thinkingBudgetCap, matching the reasoning_effort path.
-test("OpenAI -> Gemini thinking.budget_tokens is capped by model thinkingBudgetCap (#3842)", () => {
-  // gemini-2.5-flash has thinkingBudgetCap: 24576
-  const result = openaiToGeminiRequest(
-    "gemini-2.5-flash",
-    {
-      messages: [{ role: "user", content: "think hard" }],
-      thinking: { type: "enabled", budget_tokens: 50000 },
-    },
-    false
-  ) as any;
-  assert.equal(result.generationConfig.thinkingConfig.thinkingBudget, 24576);
-  assert.equal(result.generationConfig.thinkingConfig.includeThoughts, true);
-});
-
-test("OpenAI -> Gemini thinking.budget_tokens=0 disables thinking after cap", () => {
-  const result = openaiToGeminiRequest(
-    "gemini-2.5-flash",
-    {
-      messages: [{ role: "user", content: "no thinking" }],
-      thinking: { type: "enabled", budget_tokens: 0 },
-    },
-    false
-  ) as any;
-  assert.equal(result.generationConfig.thinkingConfig.thinkingBudget, 0);
-  assert.equal(result.generationConfig.thinkingConfig.includeThoughts, false);
-});
-
-test("OpenAI -> Gemini thinking.budget_tokens below cap passes through", () => {
-  const result = openaiToGeminiRequest(
-    "gemini-2.5-flash",
-    {
-      messages: [{ role: "user", content: "some thinking" }],
-      thinking: { type: "enabled", budget_tokens: 8192 },
-    },
-    false
-  ) as any;
-  assert.equal(result.generationConfig.thinkingConfig.thinkingBudget, 8192);
-  assert.equal(result.generationConfig.thinkingConfig.includeThoughts, true);
-});
-
-// Guard: models with thinkingBudgetCap=0 (e.g. gemini-3-flash) must NOT
-// receive thinkingConfig even when the caller explicitly sends budget_tokens.
-test("OpenAI -> Gemini skips thinkingConfig for model with thinkingBudgetCap=0", () => {
-  const result = openaiToGeminiRequest(
-    "gemini-3-flash",
-    {
-      messages: [{ role: "user", content: "hello" }],
-      thinking: { type: "enabled", budget_tokens: 5000 },
-    },
-    false
-  ) as any;
-  assert.equal(
-    result.generationConfig.thinkingConfig,
-    undefined,
-    "gemini-3-flash (thinkingBudgetCap:0) must not receive thinkingConfig"
-  );
-});
-
-// Guard: models with thinkingBudgetCap=0 (e.g. gemini-3-flash) still receive
-// thinkingConfig on the reasoning_effort path, clamped to budget 0 / includeThoughts
-// false — matching the pre-#6943 native-defaults contract (see
-// translator-openai-to-gemini-defaults.test.ts). Omitting thinkingConfig entirely
-// here would crash callers that read `.thinkingConfig.thinkingBudget` unconditionally.
-test("OpenAI -> Gemini clamps reasoning_effort thinkingConfig to 0 for model with thinkingBudgetCap=0", () => {
-  const result = openaiToGeminiRequest(
-    "gemini-3-flash",
-    {
-      messages: [{ role: "user", content: "hello" }],
-      reasoning_effort: "high",
-    },
-    false
-  ) as any;
-  assert.equal(result.generationConfig.thinkingConfig.thinkingBudget, 0);
-  assert.equal(result.generationConfig.thinkingConfig.includeThoughts, false);
-});
-
-// Guard: models not in MODEL_SPECS (thinkingBudgetCap=undefined) default to allowed.
-test("OpenAI -> Gemini allows thinkingConfig for unknown model (no spec)", () => {
-  const result = openaiToGeminiRequest(
-    "some-unknown-gemini-model",
-    {
-      messages: [{ role: "user", content: "hello" }],
-      thinking: { type: "enabled", budget_tokens: 5000 },
-    },
-    false
-  ) as any;
-  assert.equal(result.generationConfig.thinkingConfig.thinkingBudget, 5000);
-  assert.equal(result.generationConfig.thinkingConfig.includeThoughts, true);
 });

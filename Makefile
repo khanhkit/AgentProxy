@@ -2,7 +2,7 @@
         test test-unit test-vitest test-coverage test-all test-integration test-e2e \
         check check-cycles check-docs env-sync clean
 
-# OmniRoute — convenience wrapper around the npm scripts.
+# AgentProxy — convenience wrapper around the npm scripts.
 # All targets delegate to the canonical package.json scripts (single source of truth).
 
 help: ## Show this help

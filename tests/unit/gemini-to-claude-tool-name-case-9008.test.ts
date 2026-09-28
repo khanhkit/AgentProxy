@@ -1,5 +1,5 @@
 /**
- * #9008 — Claude Code → OmniRoute → Gemini/Antigravity must preserve the
+ * #9008 — Claude Code → AgentProxy → Gemini/Antigravity must preserve the
  * caller's PascalCase tool names in tool_use responses.
  *
  * Regression from #7926: gemini-to-claude applied REVERSE_MAP unconditionally
@@ -96,7 +96,7 @@ test("#9008 Gemini → Claude: lowercased upstream name restored to declared Pas
       candidates: [
         {
           content: {
-            parts: [{ functionCall: { name: "websearch", args: { query: "omniroute" } } }],
+            parts: [{ functionCall: { name: "websearch", args: { query: "agentproxy" } } }],
           },
           finishReason: "STOP",
         },

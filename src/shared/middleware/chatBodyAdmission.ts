@@ -38,9 +38,10 @@ import {
   type IngestBudgetAcquireResult,
 } from "./ingestByteAdmission";
 import {
+  checkResourcePressureGuard,
   getResourcePressureObservation,
   type PressureSeverity,
-} from "@omniroute/open-sse/utils/resourcePressure.ts";
+} from "@agentproxy/open-sse/utils/resourcePressure.ts";
 
 function parsePositiveInt(value: string | undefined, fallback: number): number {
   const parsed = Number.parseInt(String(value), 10);
@@ -53,17 +54,17 @@ function parseNonNegativeInt(value: string | undefined, fallback: number): numbe
 }
 
 export const CHAT_LARGE_BODY_BYTES = parsePositiveInt(
-  process.env.OMNIROUTE_CHAT_LARGE_BODY_BYTES,
+  process.env.AGENTPROXY_CHAT_LARGE_BODY_BYTES,
   256 * 1024
 );
 
 export const CHAT_HARD_MAX_BODY_BYTES = parsePositiveInt(
-  process.env.OMNIROUTE_CHAT_HARD_MAX_BODY_BYTES,
+  process.env.AGENTPROXY_CHAT_HARD_MAX_BODY_BYTES,
   50 * 1024 * 1024
 );
 
 export const CHAT_MAX_HEAVY_IN_FLIGHT = parsePositiveInt(
-  process.env.OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT,
+  process.env.AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT,
   1
 );
 
@@ -75,7 +76,7 @@ export const CHAT_MAX_HEAVY_IN_FLIGHT = parsePositiveInt(
  * bounded wait serializes the burst instead. `0` (legacy) rejects immediately.
  */
 export const CHAT_ADMISSION_QUEUE_MAX_MS = parseNonNegativeInt(
-  process.env.OMNIROUTE_CHAT_ADMISSION_QUEUE_MS,
+  process.env.AGENTPROXY_CHAT_ADMISSION_QUEUE_MS,
   2000
 );
 
@@ -88,7 +89,7 @@ export const CHAT_ADMISSION_QUEUE_MAX_MS = parseNonNegativeInt(
  * parking. Bytes are released when a waiter wakes, aborts, or times out.
  */
 export const CHAT_ADMISSION_MAX_QUEUED_BYTES = parsePositiveInt(
-  process.env.OMNIROUTE_CHAT_ADMISSION_MAX_QUEUED_BYTES,
+  process.env.AGENTPROXY_CHAT_ADMISSION_MAX_QUEUED_BYTES,
   4 * 1024 * 1024
 );
 
@@ -102,15 +103,15 @@ export const CHAT_ADMISSION_MAX_QUEUED_BYTES = parsePositiveInt(
 export const CHAT_ADMISSION_RETRY_AFTER_MAX_SECONDS = 60;
 
 export const CHAT_HEAVY_MESSAGE_COUNT = parsePositiveInt(
-  process.env.OMNIROUTE_CHAT_HEAVY_MESSAGE_COUNT,
+  process.env.AGENTPROXY_CHAT_HEAVY_MESSAGE_COUNT,
   200
 );
 export const CHAT_HEAVY_TOOL_COUNT = parsePositiveInt(
-  process.env.OMNIROUTE_CHAT_HEAVY_TOOL_COUNT,
+  process.env.AGENTPROXY_CHAT_HEAVY_TOOL_COUNT,
   64
 );
 export const CHAT_HEAVY_ESTIMATED_TOKENS = parsePositiveInt(
-  process.env.OMNIROUTE_CHAT_HEAVY_ESTIMATED_TOKENS,
+  process.env.AGENTPROXY_CHAT_HEAVY_ESTIMATED_TOKENS,
   32_000
 );
 
@@ -128,7 +129,7 @@ export const CHAT_HEAVY_ESTIMATED_TOKENS = parsePositiveInt(
  * admitted anyway because the heap has real headroom).
  */
 export const CHAT_ADMISSION_HEAP_SHED_RATIO = (() => {
-  const parsed = Number(process.env.OMNIROUTE_CHAT_ADMISSION_HEAP_SHED_RATIO);
+  const parsed = Number(process.env.AGENTPROXY_CHAT_ADMISSION_HEAP_SHED_RATIO);
   return Number.isFinite(parsed) && parsed > 0 && parsed <= 1 ? parsed : 0.75;
 })();
 
@@ -147,7 +148,7 @@ export const CHAT_ADMISSION_HEAP_SHED_RATIO = (() => {
  * real heap pressure, so there is still a real ceiling either way.
  */
 export const CHAT_ADMISSION_HEALTHY_HEADROOM = parseNonNegativeInt(
-  process.env.OMNIROUTE_CHAT_ADMISSION_HEALTHY_HEADROOM,
+  process.env.AGENTPROXY_CHAT_ADMISSION_HEALTHY_HEADROOM,
   CHAT_MAX_HEAVY_IN_FLIGHT
 );
 
@@ -172,19 +173,19 @@ export function defaultHeapPressureCheck(): boolean {
  *
  * A fixed message count is a *deployment policy*, not a universal property of a chat request:
  * the same 900-message conversation is trivial on a 16 GB host and fatal in a 1 GB container.
- * Enforcing one here rejected conversations before OmniRoute's own compression pipeline — the
+ * Enforcing one here rejected conversations before AgentProxy's own compression pipeline — the
  * component that exists precisely to make them servable — ever ran, and returned a terminal 413
  * that no client can retry its way out of. Message count is also not an input the caller fully
  * controls: translation from other protocols expands a single turn into several `messages[]`
- * entries, so the metric an operator caps is partly manufactured by OmniRoute itself.
+ * entries, so the metric an operator caps is partly manufactured by AgentProxy itself.
  *
  * What actually bounds heap growth is the heavyweight lease below (bounded concurrency through
  * the allocation-heavy path) plus the heap-pressure shed in the chat handler. Both remain in
  * force for every request, including large ones. Constrained deployments that still want a hard
- * ceiling opt in with `OMNIROUTE_CHAT_HARD_MAX_MESSAGES`.
+ * ceiling opt in with `AGENTPROXY_CHAT_HARD_MAX_MESSAGES`.
  */
 export const CHAT_HARD_MAX_MESSAGES = parsePositiveInt(
-  process.env.OMNIROUTE_CHAT_HARD_MAX_MESSAGES,
+  process.env.AGENTPROXY_CHAT_HARD_MAX_MESSAGES,
   0
 );
 
@@ -217,10 +218,24 @@ export type ChatAdmissionShedReason =
   | "inflight_bytes_budget"
   | "resource_pressure";
 
-/** Read cached pressure severity; sampling failures must not cause false sheds. */
+/**
+ * Read pressure severity for admission decisions.
+ *
+ * This gate runs before the downstream paths that also drive the resource-pressure
+ * runtime. It must therefore call checkResourcePressureGuard() itself; a passive
+ * cached read can latch the admission path at critical forever and starve the
+ * resample that would observe recovery.
+ *
+ * A non-null guard is the authoritative synchronous shed decision. When the guard
+ * is clear but the cached observation still says critical while an async refresh
+ * settles, report high rather than re-latching the structural shed.
+ */
 export function defaultPressureSeverity(): PressureSeverity {
   try {
-    return getResourcePressureObservation().state.severity;
+    const guard = checkResourcePressureGuard();
+    if (guard) return "critical";
+    const severity = getResourcePressureObservation().state.severity;
+    return severity === "critical" ? "high" : severity;
   } catch {
     return "normal";
   }
@@ -256,7 +271,7 @@ function defaultChatAdmissionShedSink(event: ChatAdmissionShedEvent): void {
 
 /**
  * Process-local heavyweight reservation. The capacity check and increment execute in one
- * synchronous JavaScript turn, making acquisition atomic within an OmniRoute process.
+ * synchronous JavaScript turn, making acquisition atomic within an AgentProxy process.
  * Unavailable capacity is a bounded wait (see `acquireHeavyWithin`) and only then a
  * retryable 503, so short agent bursts serialize instead of killing the client's
  * retry budget.
@@ -713,7 +728,7 @@ export class PerConnectionAdmissionController {
     /** #503-fanout: live multi-signal resource-pressure severity. */
     pressureSeverity: PressureSeverity;
     /** #503-fanout: false on a default deployment — the legacy count cap only
-     * binds when the operator explicitly set OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT. */
+     * binds when the operator explicitly set AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT. */
     countCapEnabled: boolean;
   } {
     return {
@@ -752,7 +767,7 @@ export class PerConnectionAdmissionController {
 
 /**
  * The legacy count cap (#503-fanout) now binds ONLY when the operator has
- * explicitly set `OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT`. Left unset — the
+ * explicitly set `AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT`. Left unset — the
  * default on every deployment that produced the multi-subagent 503 storm —
  * it resolves to effectively unlimited, so the auto-derived ingest byte
  * budget below (`resolveIngestByteBudget()`) is the gate that actually binds.
@@ -760,7 +775,7 @@ export class PerConnectionAdmissionController {
  * setting `=5`) keeps its exact prior behavior layered on top of the budget.
  */
 function resolveLegacyCountCap(): number {
-  const raw = process.env.OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT;
+  const raw = process.env.AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT;
   if (raw === undefined || raw.trim() === "") return Number.MAX_SAFE_INTEGER;
   return CHAT_MAX_HEAVY_IN_FLIGHT;
 }
@@ -783,7 +798,8 @@ export type ChatRequestAdmission =
   | { admit: false; response: Response };
 
 export type ChatStructureAdmission =
-  { admit: true; lease: ChatAdmissionLease | null } | { admit: false; response: Response };
+  | { admit: true; lease: ChatAdmissionLease | null }
+  | { admit: false; response: Response };
 
 const INGEST_NORMAL_MAX_WAIT_MS = 250;
 
@@ -1025,7 +1041,7 @@ export async function admitChatRequest(
   const heapPressureCheck = options.heapPressureCheck ?? defaultHeapPressureCheck;
   let lease: ChatAdmissionLease | null = null;
   // #10437: busy primary + healthy heap uses tryAcquireHealthyHeadroom; else queue/shed.
-  // Bodies at/above OMNIROUTE_CHAT_LARGE_BODY_BYTES take this same heavyweight lease.
+  // Bodies at/above AGENTPROXY_CHAT_LARGE_BODY_BYTES take this same heavyweight lease.
   const reserve = async (bytes = 0): Promise<boolean> => {
     if (lease) return true;
     const countLease =
@@ -1114,56 +1130,10 @@ export async function admitChatRequest(
   return { admit: true, request: rebuildRequest(request, body), lease };
 }
 
-/** Release a lease if a handler rejects; otherwise bind it to the returned response lifecycle. */
-export async function releaseChatAdmissionAfterHandler(
-  responsePromise: Promise<Response>,
-  lease: ChatAdmissionLease | null
-): Promise<Response> {
-  try {
-    return releaseChatAdmissionWhenDone(await responsePromise, lease);
-  } catch (error) {
-    lease?.release();
-    throw error;
-  }
-}
-
-/** Hold a heavyweight lease through an SSE response without buffering the response body. */
-export function releaseChatAdmissionWhenDone(
-  response: Response,
-  lease: ChatAdmissionLease | null
-): Response {
-  if (!lease) return response;
-  const isStreaming = response.headers.get("content-type")?.includes("text/event-stream");
-  if (!isStreaming || !response.body) {
-    lease.release();
-    return response;
-  }
-
-  const reader = response.body.getReader();
-  const body = new ReadableStream<Uint8Array>({
-    async pull(controller) {
-      try {
-        const { done, value } = await reader.read();
-        if (done) {
-          lease.release();
-          controller.close();
-        } else {
-          controller.enqueue(value);
-        }
-      } catch (error) {
-        lease.release();
-        controller.error(error);
-      }
-    },
-    async cancel(reason) {
-      lease.release();
-      await reader.cancel(reason).catch(() => undefined);
-    },
-  });
-
-  return new Response(body, {
-    status: response.status,
-    statusText: response.statusText,
-    headers: response.headers,
-  });
-}
+// Lease release binding lives in ./chatAdmissionRelease. Re-exported here so
+// existing import sites keep working.
+export {
+  releaseChatAdmissionAfterHandler,
+  releaseChatAdmissionWhenDone,
+  type ReleaseChatAdmissionOptions,
+} from "./chatAdmissionRelease";

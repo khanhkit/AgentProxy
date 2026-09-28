@@ -35,8 +35,8 @@ function makeAgentSkills(): AgentSkill[] {
       area: `area-${i}`,
       icon: "api",
       endpoints: [`GET /api/skill-${i}`],
-      rawUrl: `https://raw.githubusercontent.com/example/OmniRoute/main/skills/omni-skill-${i}/SKILL.md`,
-      githubUrl: `https://github.com/example/OmniRoute/blob/main/skills/omni-skill-${i}/SKILL.md`,
+      rawUrl: `https://raw.githubusercontent.com/example/AgentProxy/main/skills/omni-skill-${i}/SKILL.md`,
+      githubUrl: `https://github.com/example/AgentProxy/blob/main/skills/omni-skill-${i}/SKILL.md`,
     });
   }
   for (let i = 0; i < 21; i++) {
@@ -48,20 +48,20 @@ function makeAgentSkills(): AgentSkill[] {
       area: `cli-area-${i}`,
       icon: "terminal",
       cliCommands: [`skill${i} run`],
-      rawUrl: `https://raw.githubusercontent.com/example/OmniRoute/main/skills/cli-skill-${i}/SKILL.md`,
-      githubUrl: `https://github.com/example/OmniRoute/blob/main/skills/cli-skill-${i}/SKILL.md`,
+      rawUrl: `https://raw.githubusercontent.com/example/AgentProxy/main/skills/cli-skill-${i}/SKILL.md`,
+      githubUrl: `https://github.com/example/AgentProxy/blob/main/skills/cli-skill-${i}/SKILL.md`,
     });
   }
   skills.push({
     id: "config-codex-cli",
     name: "Config: Codex CLI",
-    description: "Configure Codex CLI to use OmniRoute.",
+    description: "Configure Codex CLI to use AgentProxy.",
     category: "config",
     area: "config-codex-cli",
     icon: "terminal",
     rawUrl:
-      "https://raw.githubusercontent.com/example/OmniRoute/main/skills/config-codex-cli/SKILL.md",
-    githubUrl: "https://github.com/example/OmniRoute/blob/main/skills/config-codex-cli/SKILL.md",
+      "https://raw.githubusercontent.com/example/AgentProxy/main/skills/config-codex-cli/SKILL.md",
+    githubUrl: "https://github.com/example/AgentProxy/blob/main/skills/config-codex-cli/SKILL.md",
   });
   return skills;
 }

@@ -266,6 +266,9 @@ export function ensureCallLogsColumns(db: SqliteDatabase) {
     );
     db.exec("CREATE INDEX IF NOT EXISTS idx_call_logs_request_type ON call_logs(request_type)");
     db.exec(
+      "CREATE INDEX IF NOT EXISTS idx_cl_request_provider ON call_logs(request_type, provider)"
+    );
+    db.exec(
       "CREATE INDEX IF NOT EXISTS idx_cl_combo_target ON call_logs(combo_name, combo_execution_key, timestamp)"
     );
     db.exec("CREATE INDEX IF NOT EXISTS idx_cl_correlation_id ON call_logs(correlation_id)");
@@ -285,6 +288,22 @@ export function ensureProxyLogsColumns(db: SqliteDatabase) {
     if (!columnNames.has("egress_ip")) {
       db.exec("ALTER TABLE proxy_logs ADD COLUMN egress_ip TEXT");
       console.log("[DB] Added proxy_logs.egress_ip column");
+    }
+    if (!columnNames.has("upstream_status")) {
+      db.exec("ALTER TABLE proxy_logs ADD COLUMN upstream_status INTEGER");
+      console.log("[DB] Added proxy_logs.upstream_status column");
+    }
+    if (!columnNames.has("proxy_name")) {
+      db.exec("ALTER TABLE proxy_logs ADD COLUMN proxy_name TEXT");
+      console.log("[DB] Added proxy_logs.proxy_name column");
+    }
+    if (!columnNames.has("rotation_account")) {
+      db.exec("ALTER TABLE proxy_logs ADD COLUMN rotation_account TEXT");
+      console.log("[DB] Added proxy_logs.rotation_account column");
+    }
+    if (!columnNames.has("correlation_id")) {
+      db.exec("ALTER TABLE proxy_logs ADD COLUMN correlation_id TEXT");
+      console.log("[DB] Added proxy_logs.correlation_id column");
     }
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : String(error);

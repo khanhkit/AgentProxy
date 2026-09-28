@@ -1,6 +1,6 @@
 # Free Tiers Guide: Understand and Combine Free AI Access
 
-> **TL;DR**: OmniRoute registers 352 provider IDs, with **152 provider-catalog entries marked `hasFree`**. The stricter audited free-model catalog covers **34 recurring pool keys / 444 entries** (437 active + 7 discontinued). Connect several suitable providers for broader fallback capacity; every quota, approval rule, privacy policy, and paid-overage condition still applies.
+> **TL;DR**: AgentProxy registers 352 provider IDs, with **152 provider-catalog entries marked `hasFree`**. The stricter audited free-model catalog covers **34 recurring pool keys / 444 entries** (437 active + 7 discontinued). Connect several suitable providers for broader fallback capacity; every quota, approval rule, privacy policy, and paid-overage condition still applies.
 
 ---
 
@@ -11,7 +11,7 @@ mean a no-auth endpoint, recurring quota, rate-limited uncapped access, a signup
 manual approval, or a temporary promotion. Some options require an account, API key,
 credit card, KYC, or acceptance of provider-specific terms.
 
-OmniRoute **aggregates** these free tiers into one endpoint. Instead of signing up for 10 different services, you connect them all to OmniRoute and use `model: "auto"` to automatically pick the best free option for each request.
+AgentProxy **aggregates** these free tiers into one endpoint. Instead of signing up for 10 different services, you connect them all to AgentProxy and use `model: "auto"` to automatically pick the best free option for each request.
 
 ---
 
@@ -58,7 +58,7 @@ These providers have **free tiers** with specific limits:
 
 ## How to Stack Free Tiers
 
-The magic of OmniRoute is **stacking free tiers**. Instead of relying on one provider, you connect multiple free providers and let OmniRoute automatically pick the best one for each request.
+The magic of AgentProxy is **stacking free tiers**. Instead of relying on one provider, you connect multiple free providers and let AgentProxy automatically pick the best one for each request.
 
 ### Example: Broader Free-Tier Coverage
 
@@ -69,7 +69,7 @@ Connect several providers to reduce dependence on any single quota:
 3. **Pollinations** — keyless, rate-limited access
 4. **LongCat** — one-time signup grant (requires KYC)
 
-Then use `model: "auto"` and OmniRoute will:
+Then use `model: "auto"` and AgentProxy will:
 
 - Try the highest-ranked eligible connection first
 - If its quota or health check fails → try the next configured provider
@@ -114,7 +114,7 @@ Connect several providers whose terms and privacy model fit your use case.
 
 ## Reading the Catalog Correctly
 
-- `NOAUTH` means OmniRoute does not ask you for a provider credential; it does not
+- `NOAUTH` means AgentProxy does not ask you for a provider credential; it does not
   guarantee uptime, privacy, or unlimited capacity.
 - `hasFree` is discovery metadata. It can represent a recurring quota, keyless access,
   signup credit, approval program, or promotion.
@@ -127,15 +127,15 @@ Connect several providers whose terms and privacy model fit your use case.
 
 ---
 
-## How OmniRoute Makes Free Tiers Better
+## How AgentProxy Makes Free Tiers Better
 
 ### 1. Automatic Fallback
 
-If one free provider is busy or down, OmniRoute automatically tries the next one. You don't need to do anything.
+If one free provider is busy or down, AgentProxy automatically tries the next one. You don't need to do anything.
 
 ### 2. Smart Routing
 
-OmniRoute picks the **best free provider** for each request based on:
+AgentProxy picks the **best free provider** for each request based on:
 
 - Speed — Which provider is fastest right now?
 - Quality — Which provider is best for this task?
@@ -143,13 +143,13 @@ OmniRoute picks the **best free provider** for each request based on:
 
 ### 3. Token Savings
 
-OmniRoute's compression pipeline can reduce eligible prompt and tool-output tokens. The
+AgentProxy's compression pipeline can reduce eligible prompt and tool-output tokens. The
 actual savings depend on content, selected engines, provider accounting, and fidelity
 settings; compression does not multiply every provider quota by a fixed amount.
 
 ### 4. Multi-Account Support
 
-If provider terms permit multiple accounts or credentials, OmniRoute can treat each
+If provider terms permit multiple accounts or credentials, AgentProxy can treat each
 connection as a separate routing candidate. Do not create extra accounts to evade a
 provider's quota or access policy.
 
@@ -194,7 +194,7 @@ requirements. Critical workloads should have monitored, contractually suitable f
 
 Tradeoffs may include strict limits, waitlists, KYC, credit-card verification, training on
 prompts, weaker privacy, no SLA, model churn, geographic restrictions, paid overage, or
-account-policy risk. OmniRoute surfaces the available metadata; you choose what to enable.
+account-policy risk. AgentProxy surfaces the available metadata; you choose what to enable.
 
 ### "How do I get more free quota?"
 
@@ -213,7 +213,7 @@ Free Provider Rankings page as a quality signal and verify the actual model serv
 
 ## What's Next?
 
-- **[Auto-Combo Guide](./AUTO-COMBO-GUIDE.md)** — Let OmniRoute pick the best AI for you
+- **[Auto-Combo Guide](./AUTO-COMBO-GUIDE.md)** — Let AgentProxy pick the best AI for you
 - **[Providers Guide](./PROVIDERS-GUIDE.md)** — Connect more providers
 - **[Troubleshooting](../guides/TROUBLESHOOTING.md)** — Fix common issues
 - **[Free Tiers Reference](../reference/FREE_TIERS.md)** — Full list of free tiers

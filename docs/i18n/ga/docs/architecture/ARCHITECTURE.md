@@ -6,12 +6,12 @@
 
 ---
 
-title: "Ingearchtúra OmniRoute"
+title: "Ingearchtúra AgentProxy"
 version: 3.8.40
 lastUpdated: 2026-06-28
 ---
 
-# Ingearchtúra OmniRoute
+# Ingearchtúra AgentProxy
 
 🌐 **Languages:** 🇺🇸 [English](../../../../architecture/ARCHITECTURE.md) · 🇸🇦 [ar](../../../ar/docs/architecture/ARCHITECTURE.md) · 🇦🇿 [az](../../../az/docs/architecture/ARCHITECTURE.md) · 🇧🇬 [bg](../../../bg/docs/architecture/ARCHITECTURE.md) · 🇧🇩 [bn](../../../bn/docs/architecture/ARCHITECTURE.md) · 🇨🇿 [cs](../../../cs/docs/architecture/ARCHITECTURE.md) · 🇩🇰 [da](../../../da/docs/architecture/ARCHITECTURE.md) · 🇩🇪 [de](../../../de/docs/architecture/ARCHITECTURE.md) · 🇬🇷 [el](../../../el/docs/architecture/ARCHITECTURE.md) · 🇪🇸 [es](../../../es/docs/architecture/ARCHITECTURE.md) · 🇪🇪 [et](../../../et/docs/architecture/ARCHITECTURE.md) · 🇮🇷 [fa](../../../fa/docs/architecture/ARCHITECTURE.md) · 🇫🇮 [fi](../../../fi/docs/architecture/ARCHITECTURE.md) · 🇫🇷 [fr](../../../fr/docs/architecture/ARCHITECTURE.md) · 🇮🇳 [gu](../../../gu/docs/architecture/ARCHITECTURE.md) · 🇮🇱 [he](../../../he/docs/architecture/ARCHITECTURE.md) · 🇮🇳 [hi](../../../hi/docs/architecture/ARCHITECTURE.md) · 🇭🇷 [hr](../../../hr/docs/architecture/ARCHITECTURE.md) · 🇭🇺 [hu](../../../hu/docs/architecture/ARCHITECTURE.md) · 🇮🇩 [id](../../../id/docs/architecture/ARCHITECTURE.md) · 🇮🇹 [it](../../../it/docs/architecture/ARCHITECTURE.md) · 🇯🇵 [ja](../../../ja/docs/architecture/ARCHITECTURE.md) · 🇰🇷 [ko](../../../ko/docs/architecture/ARCHITECTURE.md) · 🇱🇹 [lt](../../../lt/docs/architecture/ARCHITECTURE.md) · 🇱🇻 [lv](../../../lv/docs/architecture/ARCHITECTURE.md) · 🇮🇳 [mr](../../../mr/docs/architecture/ARCHITECTURE.md) · 🇲🇾 [ms](../../../ms/docs/architecture/ARCHITECTURE.md) · 🇲🇹 [mt](../../../mt/docs/architecture/ARCHITECTURE.md) · 🇳🇱 [nl](../../../nl/docs/architecture/ARCHITECTURE.md) · 🇳🇴 [no](../../../no/docs/architecture/ARCHITECTURE.md) · 🇵🇭 [phi](../../../phi/docs/architecture/ARCHITECTURE.md) · 🇵🇱 [pl](../../../pl/docs/architecture/ARCHITECTURE.md) · 🇵🇹 [pt](../../../pt/docs/architecture/ARCHITECTURE.md) · 🇧🇷 [pt-BR](../../../pt-BR/docs/architecture/ARCHITECTURE.md) · 🇷🇴 [ro](../../../ro/docs/architecture/ARCHITECTURE.md) · 🇷🇺 [ru](../../../ru/docs/architecture/ARCHITECTURE.md) · 🇸🇰 [sk](../../../sk/docs/architecture/ARCHITECTURE.md) · 🇸🇮 [sl](../../../sl/docs/architecture/ARCHITECTURE.md) · 🇷🇸 [sr](../../../sr/docs/architecture/ARCHITECTURE.md) · 🇸🇪 [sv](../../../sv/docs/architecture/ARCHITECTURE.md) · 🇰🇪 [sw](../../../sw/docs/architecture/ARCHITECTURE.md) · 🇮🇳 [ta](../../../ta/docs/architecture/ARCHITECTURE.md) · 🇮🇳 [te](../../../te/docs/architecture/ARCHITECTURE.md) · 🇹🇭 [th](../../../th/docs/architecture/ARCHITECTURE.md) · 🇹🇷 [tr](../../../tr/docs/architecture/ARCHITECTURE.md) · 🇺🇦 [uk-UA](../../../uk-UA/docs/architecture/ARCHITECTURE.md) · 🇵🇰 [ur](../../../ur/docs/architecture/ARCHITECTURE.md) · 🇻🇳 [vi](../../../vi/docs/architecture/ARCHITECTURE.md) · 🇨🇳 [zh-CN](../../../zh-CN/docs/architecture/ARCHITECTURE.md) · 🇹🇼 [zh-TW](../../../zh-TW/docs/architecture/ARCHITECTURE.md)
 
@@ -19,7 +19,7 @@ _Nuashonraithe ar an 2026-06-28_
 
 ## Achoimre Feidhmiúcháina
 
-Is é OmniRoute nascaire agus deais ríomhaireachta AI áitiúil atá tógtha ar Next.js.
+Is é AgentProxy nascaire agus deais ríomhaireachta AI áitiúil atá tógtha ar Next.js.
 Soláthraíonn sé amháin deireadh pointe comhoiriúnach le OpenAI (`/v1/*`) agus seolann sé tráchtaireacht ar fud iliomad soláthraithe barrlíne le haistriú, athchóiriú, athnua comhartha, agus rianú úsáide.
 
 Bunrialtanais:
@@ -173,7 +173,7 @@ flowchart LR
         BROWSER[Stiúrthóir Brabhsálaí]
     end
 
-    subgraph Router[Próiseas Áitiúil OmniRoute]
+    subgraph Router[Próiseas Áitiúil AgentProxy]
         API[API Comhoiriúnachta V1\n/v1/*]
         DASH[Stiúrthóir + API Bainistíochta\n/api/*]
         CORE[Croí SSE + Aistriúcháin\nopen-sse + src/sse]
@@ -336,7 +336,7 @@ Modúil sholáthróirí OAuth (22 chomhad aonair faoi `src/lib/oauth/providers/`
 
 ## 5) Seirbhísí Leabaithe (v3.8.4)
 
-Is féidir le OmniRoute próisis uirlisí AI atá ag rith go háitiúil a shuiteáil, a mhaoirsiú, agus a ródú chucu, ar a dtugtar **seirbhísí leabaithe**. Seoltar cúig cinn: 9Router, CLIProxyAPI, Bifrost, Mux agus Dario.
+Is féidir le AgentProxy próisis uirlisí AI atá ag rith go háitiúil a shuiteáil, a mhaoirsiú, agus a ródú chucu, ar a dtugtar **seirbhísí leabaithe**. Seoltar cúig cinn: 9Router, CLIProxyAPI, Bifrost, Mux agus Dario.
 
 Sraitheanna ailtireachta:
 
@@ -444,7 +444,7 @@ loighic glasála/buiséid/chúltaca a chur le chéile iad féin.
 - Taisce cuóta: `src/domain/quotaCache.ts`
 - Staid dhíghrádaithe: `src/domain/degradation.ts`
 - Iniúchadh cumraíochta: `src/domain/configAudit.ts`
-- Tógálaí meiteashonraí freagra OmniRoute: `src/domain/omnirouteResponseMeta.ts`
+- Tógálaí meiteashonraí freagra AgentProxy: `src/domain/agentproxyResponseMeta.ts`
 - Fochóras measúnaithe: `src/domain/assessment/` — poist mheastóireachta thréimhsiúla
 
 ### E. Píblíne Údaraithe
@@ -525,7 +525,7 @@ Príomh-DB stáit (SQLite):
 
 - Bonneagar lárnach: `src/lib/db/core.ts` (better-sqlite3, imircigh, WAL)
 - Rochtain ar DB: iompórtáil modúil shonracha `src/lib/db/*` go díreach (baineadh an sean-bharaille `localDb.ts`)
-- comhad: `${DATA_DIR}/storage.sqlite` (nó `$XDG_CONFIG_HOME/omniroute/storage.sqlite` nuair atá sé socraithe, nó `~/.omniroute/storage.sqlite`)
+- comhad: `${DATA_DIR}/storage.sqlite` (nó `$XDG_CONFIG_HOME/agentproxy/storage.sqlite` nuair atá sé socraithe, nó `~/.agentproxy/storage.sqlite`)
 - eintitis (táblaí + ainmspásanna KV): providerConnections, providerNodes, modelAliases, combos, apiKeys, settings, pricing, **customModels**, **proxyConfig**, **ipFilter**, **thinkingBudget**, **systemPrompt**
 
 Leanúnachas úsáide:
@@ -821,7 +821,7 @@ flowchart LR
         Browser[Brabhsálaí an Ionaid Rialaithe]
     end
 
-    subgraph ContainerOrProcess[Rith OmniRoute]
+    subgraph ContainerOrProcess[Rith AgentProxy]
         Next[Freastalaí Next.js\nPORT=20128]
         Core[Croí SSE + Feidhmitheoirí]
         MainDB[(storage.sqlite)]
@@ -940,7 +940,7 @@ Baineann soláthraíí eile (lena n-áirítear nóid comhoiriúnacha sainiúla) 
 ## Maitrís Comhoibriúcháin Soláthraithe
 
 > **Nóta:** Tá an maitrís thíos ina sampla ionadaíoch de na 351 soláthraí cláraithe i
-> OmniRoute v3.8.0. Le haghaidh an liosta bunaithe agus atá ag nuashonrú i gcónaí, féach ar
+> AgentProxy v3.8.0. Le haghaidh an liosta bunaithe agus atá ag nuashonrú i gcónaí, féach ar
 > [`docs/reference/PROVIDER_REFERENCE.md`](../reference/PROVIDER_REFERENCE.md) (ghintear go huathoibríoch) nó an fhoinse
 > fíor ag `src/shared/constants/providers.ts` (deimhnithe ag Zod ag am lódála).
 
@@ -1116,7 +1116,7 @@ Stóráiltear glacadh iomlán úsáide sonraí iarratais mionsonraithe suas le c
 - iarratas amh a fuarthas ón chliaint
 - iarratas aistrithe a seoladh i ndáiríre suas
 - freagra soláthraí athchóirithe mar JSON; compactáiltear freagraí srutha go dtí an achoimre deiridh chomh maith le meiteashonraí srutha
-- freagra deiridh chliaint a thugann OmniRoute ar ais; stóráiltear freagraí srutha san fhoirm achoimre chomhchruinnúcháin chéanna
+- freagra deiridh chliaint a thugann AgentProxy ar ais; stóráiltear freagraí srutha san fhoirm achoimre chomhchruinnúcháin chéanna
 
 ## Teorainneacha Íogaireachta Slándála
 
@@ -1142,11 +1142,11 @@ Athróga timpeallachta atá in úsáid gníomhach ag an gcód:
 
 ## Nótaí Airgeadaíochta Aitheanta
 
-1. Tá `usageDb` agus `localDb` ag roinnt an pholasaí comhad bonn céanna (`DATA_DIR` -> `XDG_CONFIG_HOME/omniroute` -> `~/.omniroute`) le maoiniú comhad sean-nós.
+1. Tá `usageDb` agus `localDb` ag roinnt an pholasaí comhad bonn céanna (`DATA_DIR` -> `XDG_CONFIG_HOME/agentproxy` -> `~/.agentproxy`) le maoiniú comhad sean-nós.
 2. Díleáigh `/api/v1/route.ts` chuig an tógálaí catalóige aonfhoirmeach a úsáidtear ag `/api/v1/models` (`src/app/api/v1/models/catalog.ts`) chun sruthántacht shéimeantach a sheachaint.
 3. An logálaí iarratais scríobhann ceanntaca/coirp iomlán nuair atá sé cumasaithe; déan an fillteán logála a phéacadh mar íogaireacht.
 4. Braitheann iompar scáileáin ar `NEXT_PUBLIC_BASE_URL` ceart agus ar bhaintniúlacht críochphointí scáileáin.
-5. Foilsítear an chomhadlann `open-sse/` mar an pacáiste **spás oibre npm** `@omniroute/open-sse`. Forbraítear cód foinse tríd `@omniroute/open-sse/...` (réitithe ag `transpilePackages` Next.js). Úsáideann cosáin chomhaid sa cháipéis seo fós an t-ainm comhadlann `open-sse/` le haghaidh comhsheasmhachta.
+5. Foilsítear an chomhadlann `open-sse/` mar an pacáiste **spás oibre npm** `@agentproxy/open-sse`. Forbraítear cód foinse tríd `@agentproxy/open-sse/...` (réitithe ag `transpilePackages` Next.js). Úsáideann cosáin chomhaid sa cháipéis seo fós an t-ainm comhadlann `open-sse/` le haghaidh comhsheasmhachta.
 6. Úsáideann na cairteacha sa deais **Recharts** (bonn SVG) le haghaidh taispeántais anailís inrochtana idirghníomhacha (chairteacha bá barr úsáide, táblaí briseadh síos soláthraí le rátaí rathúlachta).
 7. Úsáideann tástálacha E2E **Playwright** (`tests/e2e/`), rite trí `npm run test:e2e`. Úsáideann tástálacha aonáin **tiomnóir tástála Node.js** (`tests/unit/`), rite trí `npm run test:unit`. Tá cód foinse faoi `src/` i **TypeScript** (`.ts`/`.tsx`); fanann an spás oibre `open-sse/` i JavaScript (`.js`).
 8. Eagraítear an leathanach socruithe i 7 gcluaisín: Ginearálta, Cuma, AI, Slándála, Ródáil, Athléimneacht, Ardchéime. Ní chumraíonn an leathanach Athléimneacht ach qeue iarratais, fuarú ceangail, briseoir soláthraí, agus iompar fuaraithe; taispeántar stát rithama beo an bhriseora ar an leathanach Sláinte.
@@ -1157,7 +1157,7 @@ Athróga timpeallachta atá in úsáid gníomhach ag an gcód:
 ## Seicliosta Fíorú Oibriúcháin
 
 - Tógáil ó fhoinse: `npm run build`
-- Tógáil íomhá Docker: `docker build -t omniroute .`
+- Tógáil íomhá Docker: `docker build -t agentproxy .`
 - Tosú seirbhíse agus fíorú:
 - `GET /api/settings`
 - `GET /api/v1/models`

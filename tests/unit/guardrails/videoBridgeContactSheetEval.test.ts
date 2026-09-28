@@ -25,7 +25,7 @@ test("contact-sheet A/B eval remains HOLD when real-model configuration is missi
   const report = createVideoContactSheetEvalHoldReport({
     caseCount: 0,
     configurationState: "not-configured",
-    missingConfiguration: ["OMNIROUTE_API_KEY", "--model"],
+    missingConfiguration: ["AGENTPROXY_API_KEY", "--model"],
   });
 
   assert.equal(report.schemaVersion, 1);
@@ -38,7 +38,7 @@ test("contact-sheet A/B eval remains HOLD when real-model configuration is missi
     reasons: ["REAL_MODEL_CONFIGURATION_MISSING"],
     status: "HOLD",
   });
-  assert.deepEqual(report.missingConfiguration, ["OMNIROUTE_API_KEY", "--model"]);
+  assert.deepEqual(report.missingConfiguration, ["AGENTPROXY_API_KEY", "--model"]);
   assert.deepEqual(report.results, []);
   assert.equal(report.summary, null);
 });

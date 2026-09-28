@@ -4,7 +4,7 @@ title: Konfiguracja CORS i bezpieczeństwo
 
 # Konfiguracja CORS i bezpieczeństwo
 
-OmniRoute kontroluje, które **origin przeglądarki** mogą odczytywać odpowiedzi cross-origin
+AgentProxy kontroluje, które **origin przeglądarki** mogą odczytywać odpowiedzi cross-origin
 z jednej, scentralizowanej listy dozwolonych (allowlist). Model jest **fail-closed domyślnie**:
 żaden origin nie jest dozwolony, dopóki go nie dodasz. Ta strona opisuje, jak resolve'owana jest
 allowlist, co faktycznie udostępnia `CORS_ALLOW_ALL=true` (i — co ważne — czego **nie**
@@ -45,13 +45,13 @@ w tej kolejności:
 ## Model zagrożeń — co naprawdę udostępnia `CORS_ALLOW_ALL=true`
 
 Ogólne ostrzeżenie OWASP („wildcard CORS = dowolna strona może wywołać Twoje API”) warto
-traktować poważnie, ale ekspozycja OmniRoute jest **węższa niż w przypadku ogólnym**,
+traktować poważnie, ale ekspozycja AgentProxy jest **węższa niż w przypadku ogólnym**,
 z powodu jednego konkretnego faktu implementacyjnego:
 
 > **Centralne `applyCorsHeaders()` nigdy nie emituje
 > `Access-Control-Allow-Credentials`.** Przeglądarka nie udostępni _credentialed_
 > (z cookie) odpowiedzi cross-origin, dopóki serwer nie wyśle
-> `Access-Control-Allow-Credentials: true`. Wspólna ścieżka CORS OmniRoute nigdy
+> `Access-Control-Allow-Credentials: true`. Wspólna ścieżka CORS AgentProxy nigdy
 > tego nie robi.
 
 Co to oznacza per powierzchnia, nawet przy `CORS_ALLOW_ALL=true`:
@@ -91,7 +91,7 @@ osobno względem tego przewodnika CORS.
   CORS_ALLOWED_ORIGINS="https://app.example.com, https://admin.example.com"
   ```
 
-- Jeśli OmniRoute działa za reverse proxy / tunnel (nginx, Caddy, Cloudflare
+- Jeśli AgentProxy działa za reverse proxy / tunnel (nginx, Caddy, Cloudflare
   Tunnel, Tailscale), CORS to **nie** jedyna kontrola — loopback route
   guard nadal chroni route'y spawn-capable (zob.
   [ROUTE_GUARD_TIERS](./ROUTE_GUARD_TIERS.md)). Nie fałszuj
@@ -107,7 +107,7 @@ osobno względem tego przewodnika CORS.
 Nawet w dev rzadko potrzebujesz wildcarta. Zezwól tylko na dev serwery, których używasz:
 
 ```bash
-# Vite (5173) + Next.js (3000) dev servers calling a local OmniRoute
+# Vite (5173) + Next.js (3000) dev servers calling a local AgentProxy
 CORS_ALLOWED_ORIGINS="http://localhost:5173, http://localhost:3000"
 ```
 
@@ -127,14 +127,14 @@ restartu.
   originy management/dashboard poza jakąkolwiek permisywną konfiguracją; muszą pozostać ściśle
   fail-closed.
 
-## Przykład: reverse proxy przed OmniRoute
+## Przykład: reverse proxy przed AgentProxy
 
-CORS jest egzekwowany przez samo OmniRoute, więc proxy generalnie **nie powinno** dodawać ani
+CORS jest egzekwowany przez samo AgentProxy, więc proxy generalnie **nie powinno** dodawać ani
 przepisywać nagłówków `Access-Control-*` (podwójne nagłówki psują przeglądarki). Terminuj TLS
-i forwarduj — niech OmniRoute odpowiada na preflight:
+i forwarduj — niech AgentProxy odpowiada na preflight:
 
 ```nginx
-# nginx — forward to OmniRoute; do NOT inject Access-Control-* here
+# nginx — forward to AgentProxy; do NOT inject Access-Control-* here
 location / {
     proxy_pass http://127.0.0.1:20128;
     proxy_set_header Host $host;
@@ -143,7 +143,7 @@ location / {
 }
 ```
 
-Ustaw dozwolone originy przeglądarki w OmniRoute (`CORS_ALLOWED_ORIGINS` lub
+Ustaw dozwolone originy przeglądarki w AgentProxy (`CORS_ALLOWED_ORIGINS` lub
 zakładka Security), nie w proxy.
 
 ## Pliki źródłowe

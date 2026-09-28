@@ -27,6 +27,7 @@ import {
   isCredentialProbeInconclusive,
   resolveInconclusiveProbeRecheckDelayMs,
 } from "@/lib/credentialHealth/probePolicy";
+import { getRefreshBackoffUntilMs, isInRefreshBackoff } from "@/lib/tokenRefreshCircuit";
 import { emit } from "@/lib/events/eventBus";
 import { isAutomatedTestProcess } from "@/shared/utils/testProcess";
 import { SEARCH_VALIDATOR_CONFIGS } from "@/lib/providers/validation/searchProviders";
@@ -42,7 +43,7 @@ const TRUE_ENV_VALUES = new Set(["1", "true", "yes", "on"]);
 // ── State (globalThis singleton) ──────────────────────────────────────────
 
 declare global {
-  var __omnirouteCredentialHC:
+  var __agentproxyCredentialHC:
     | {
         initialized: boolean;
         sweepTimer: ReturnType<typeof setTimeout> | null;
@@ -60,8 +61,8 @@ declare global {
 }
 
 function getSchedulerState() {
-  if (!globalThis.__omnirouteCredentialHC) {
-    globalThis.__omnirouteCredentialHC = {
+  if (!globalThis.__agentproxyCredentialHC) {
+    globalThis.__agentproxyCredentialHC = {
       initialized: false,
       sweepTimer: null,
       sweepInProgress: false,
@@ -69,7 +70,7 @@ function getSchedulerState() {
       perConnTiming: new Map(),
     };
   }
-  return globalThis.__omnirouteCredentialHC;
+  return globalThis.__agentproxyCredentialHC;
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────
@@ -80,7 +81,7 @@ function isBuildProcess(): boolean {
 
 function isCredentialHealthCheckDisabled(): boolean {
   if (isBuildProcess() || isAutomatedTestProcess()) return true;
-  const val = process.env.OMNIROUTE_DISABLE_CREDENTIAL_HEALTH_CHECK;
+  const val = process.env.AGENTPROXY_DISABLE_CREDENTIAL_HEALTH_CHECK;
   return val ? TRUE_ENV_VALUES.has(val.trim().toLowerCase()) : false;
 }
 
@@ -331,6 +332,7 @@ export async function sweep(): Promise<void> {
       provider: string;
       authType?: string;
       healthCheckInterval?: number | null;
+      providerSpecificData?: { refreshCircuit?: { until?: unknown } | null } | null;
     }>;
 
     try {
@@ -348,6 +350,7 @@ export async function sweep(): Promise<void> {
         provider: string;
         authType?: string;
         healthCheckInterval?: number | null;
+        providerSpecificData?: { refreshCircuit?: { until?: unknown } | null } | null;
       }>;
     } catch (err) {
       console.error(LOG_PREFIX, "Failed to load provider connections:", err);
@@ -364,6 +367,16 @@ export async function sweep(): Promise<void> {
       // Per-connection opt-out: never tested.
       if (intervalMs === null) return false;
       const state_ = getSchedulerState();
+      if (isInRefreshBackoff(conn, now)) {
+        const untilMs = getRefreshBackoffUntilMs(conn);
+        if (untilMs !== null) {
+          state_.perConnTiming.set(conn.id, {
+            lastAttemptAt: state_.perConnTiming.get(conn.id)?.lastAttemptAt ?? now,
+            nextAttemptAt: untilMs,
+          });
+        }
+        return false;
+      }
       const timing = state_.perConnTiming.get(conn.id);
       // No timing entry = never tested since boot → due now
       if (!timing) return true;
@@ -429,7 +442,7 @@ function scheduleSweep(): void {
 /**
  * Start the credential health check scheduler (idempotent).
  * Returns whether the sweep is armed. False when
- * OMNIROUTE_DISABLE_CREDENTIAL_HEALTH_CHECK is set (#11016).
+ * AGENTPROXY_DISABLE_CREDENTIAL_HEALTH_CHECK is set (#11016).
  */
 export function initCredentialHealthCheck(): boolean {
   const state = getSchedulerState();

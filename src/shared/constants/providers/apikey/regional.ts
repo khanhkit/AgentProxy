@@ -90,7 +90,7 @@ export const APIKEY_PROVIDERS_REGIONAL = {
     // Kimi official-partnership aff link (2026-07) — see KIMI_PROVIDER_IDS in
     // featuredProviders.ts. hiddenFromDashboard, so this rarely renders, but is
     // kept in sync with moonshot's aff link for consistency.
-    website: "https://platform.kimi.ai?aff=omniroute",
+    website: "https://platform.kimi.ai",
     hiddenFromDashboard: true,
   },
   "kimi-coding-apikey": {
@@ -104,7 +104,7 @@ export const APIKEY_PROVIDERS_REGIONAL = {
     // Kimi official-partnership aff link (2026-07) — folds into the kimi-coding
     // card (PROVIDER_CONNECTION_ALIASES in providerPageUtils.ts) so this rarely
     // renders its own header, but stays in sync with kimi-coding's aff link.
-    website: "https://www.kimi.com/code?aff=omniroute",
+    website: "https://www.kimi.com/code",
     hiddenFromDashboard: true,
   },
   minimax: {
@@ -205,7 +205,7 @@ export const APIKEY_PROVIDERS_REGIONAL = {
     // Kimi official-partnership aff link (2026-07): the "Kimi API Platform"
     // tracking link — was the unattributed legacy platform.moonshot.ai domain
     // (301s to platform.kimi.ai with no aff tag).
-    website: "https://platform.kimi.ai?aff=omniroute",
+    website: "https://platform.kimi.ai",
   },
   volcengine: {
     id: "volcengine",
@@ -494,7 +494,7 @@ export const APIKEY_PROVIDERS_REGIONAL = {
     textIcon: "CS",
     website: "https://api.ncloud-docs.com/docs/en/ai-naver-clovastudio-summary",
     apiHint:
-      "OmniRoute routes chat traffic to the native Chat Completions v3 API (/v3/chat-completions/{model}), not the OpenAI-compatibility shim. All three v3 models are served: HCX-007 (reasoning, text only), HCX-005 (vision — accepts both public image URLs and inline base64 images), and HCX-DASH-002 (lightweight, text only). Requests stream upstream and are accumulated into a JSON body when the client asks for a non-streaming response.",
+      "AgentProxy routes chat traffic to the native Chat Completions v3 API (/v3/chat-completions/{model}), not the OpenAI-compatibility shim. All three v3 models are served: HCX-007 (reasoning, text only), HCX-005 (vision — accepts both public image URLs and inline base64 images), and HCX-DASH-002 (lightweight, text only). Requests stream upstream and are accumulated into a JSON body when the client asks for a non-streaming response.",
   },
   internlm: {
     id: "internlm",
@@ -520,7 +520,7 @@ export const APIKEY_PROVIDERS_REGIONAL = {
     hasFree: true,
     freeNote: "500,000 free tokens per day per account (resets 02:00 UTC+8, no rollover)",
     authHint:
-      "Register and create an API key at the Ant Ling API console (https://chat.ant-ling.com/open), then paste it here. OmniRoute routes chat traffic to https://api.ant-ling.com/v1/chat/completions; the provider is OpenAI-compatible and also exposes an Anthropic-compatible surface.",
+      "Register and create an API key at the Ant Ling API console (https://chat.ant-ling.com/open), then paste it here. AgentProxy routes chat traffic to https://api.ant-ling.com/v1/chat/completions; the provider is OpenAI-compatible and also exposes an Anthropic-compatible surface.",
   },
   sarvam: {
     id: "sarvam",
@@ -532,7 +532,7 @@ export const APIKEY_PROVIDERS_REGIONAL = {
     textIcon: "SV",
     website: "https://docs.sarvam.ai",
     apiHint:
-      "Sarvam AI is OpenAI-compatible on /v1. OmniRoute probes /v1/models and routes chat traffic to /v1/chat/completions. Models are tuned for Indic languages.",
+      "Sarvam AI is OpenAI-compatible on /v1. AgentProxy probes /v1/models and routes chat traffic to /v1/chat/completions. Models are tuned for Indic languages.",
     hasFree: true,
     freeNote: "₹1,000 in free signup credits — never expire",
   },

@@ -13,7 +13,7 @@ import os from "node:os";
 import path from "node:path";
 import fs from "node:fs";
 
-const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-6343-"));
+const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-6343-"));
 process.env.DATA_DIR = tmpDir;
 process.env.JWT_SECRET = "test-jwt-secret-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
 process.env.API_KEY_SECRET = "0123456789abcdef0123456789abcdef";

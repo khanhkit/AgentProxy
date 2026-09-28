@@ -6,10 +6,10 @@
 
 ## Prijava Ranjivosti
 
-Ako otkrijete sigurnosnu ranjivost u OmniRoute, molimo prijavite je odgovorno:
+Ako otkrijete sigurnosnu ranjivost u AgentProxy, molimo prijavite je odgovorno:
 
 1. **NE** otvarajte javni GitHub issue
-2. Koristite [GitHub Security Advisories](https://github.com/diegosouzapw/OmniRoute/security/advisories/new)
+2. Koristite [GitHub Security Advisories](https://github.com/khanhkit/AgentProxy/security/advisories/new)
 3. Uključite: opis, korake za reprodukciju i potencijalni utjecaj
 
 ## Vremenski Okvir Odgovora
@@ -32,7 +32,7 @@ Ako otkrijete sigurnosnu ranjivost u OmniRoute, molimo prijavite je odgovorno:
 
 ## Sigurnosna Arhitektura
 
-OmniRoute implementira višeslojni sigurnosni model:
+AgentProxy implementira višeslojni sigurnosni model:
 
 ```
 Zahtjev → CORS → Authz pipeline (klasifikacija → pravila → primjena)
@@ -69,7 +69,7 @@ STORAGE_ENCRYPTION_KEY=$(openssl rand -hex 32)
 
 ### 🛡️ Okvir Zaštitnika
 
-OmniRoute isporučuje **registar zaštitnika** koji se može vruće ponovno učitati (`src/lib/guardrails/`) s 3 ugrađena zaštitnika poredana po prioritetu:
+AgentProxy isporučuje **registar zaštitnika** koji se može vruće ponovno učitati (`src/lib/guardrails/`) s 3 ugrađena zaštitnika poredana po prioritetu:
 
 | Zaštitnik          | Prioritet | Svrha                                                                                        |
 | ------------------ | --------- | -------------------------------------------------------------------------------------------- |
@@ -77,7 +77,7 @@ OmniRoute isporučuje **registar zaštitnika** koji se može vruće ponovno uči
 | `pii-masker`       | 10        | Uklanjanje PII-a prije i poslije poziva (e-pošta, telefon, CPF, CNPJ, kreditne kartice, SSN) |
 | `prompt-injection` | 20        | Otkriva uzorke prepisivanja/otmice uloge/jailbreaka/curenja                                  |
 
-Prilagođeni zaštitnici registriraju se putem `registerGuardrail(new MyGuardrail())`. Model je fail-open (iznimke nikada ne blokiraju promet). Isključivanje po zahtjevu putem zaglavlja `x-omniroute-disabled-guardrails`. → Pogledajte [`docs/security/GUARDRAILS.md`](docs/security/GUARDRAILS.md).
+Prilagođeni zaštitnici registriraju se putem `registerGuardrail(new MyGuardrail())`. Model je fail-open (iznimke nikada ne blokiraju promet). Isključivanje po zahtjevu putem zaglavlja `x-agentproxy-disabled-guardrails`. → Pogledajte [`docs/security/GUARDRAILS.md`](docs/security/GUARDRAILS.md).
 
 ### 🧠 Zaštita od Prompt Injectiona
 
@@ -182,15 +182,15 @@ Poslužitelj aktivno odbija poznate slabe vrijednosti poput `changeme`, `secret`
 
 ```bash
 docker run -d \
-  --name omniroute \
+  --name agentproxy \
   --restart unless-stopped \
   --read-only \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
+  -v agentproxy-data:/app/data \
   -e JWT_SECRET="$(openssl rand -base64 48)" \
   -e API_KEY_SECRET="$(openssl rand -hex 32)" \
   -e STORAGE_ENCRYPTION_KEY="$(openssl rand -hex 32)" \
-  diegosouzapw/omniroute:latest
+  khanhkit/agentproxy:latest
 ```
 
 ---
@@ -222,7 +222,7 @@ Ova pravila provode alati i preglednici:
 
 ## Nalazi skenera dobavnog lanca (Socket.dev / Snyk / slični alati)
 
-Objavljeni `omniroute` npm artefakt sadrži Next.js `output: "standalone"`
+Objavljeni `agentproxy` npm artefakt sadrži Next.js `output: "standalone"`
 izgradnju, što znači da svaki rukovatelj zahtjevima — uključujući dokumentirane
 privilegirane značajke (MITM, Zed uvoz, Cloud Sync, ugrađeni nadzornik usluga) —
 završava u minificiranim dijelovima `.next/server/*.js`. Heuristički skeneri
@@ -238,7 +238,7 @@ Za svaku kategoriju nalaza vodimo pojedinačne potvrde održavatelja:
   točki funkcije upućuju natrag na isti dokument.
 
 Za korisnike čiji cjevovod ne može ublažiti upozorenje: izgradite s
-`OMNIROUTE_BUILD_PROFILE=minimal npm run build`. Time se četiri osjetljiva modula
+`AGENTPROXY_BUILD_PROFILE=minimal npm run build`. Time se četiri osjetljiva modula
 zamjenjuju zamjenskim verzijama koje za izvođenja vraćaju HTTP 503 `feature-disabled`,
 pa privilegirani putevi koda fizički ne postoje u paketu.
 Pogledajte [`docs/security/SOCKET_DEV_FINDINGS.md`](docs/security/SOCKET_DEV_FINDINGS.md)

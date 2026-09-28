@@ -18,7 +18,7 @@ import path from "node:path";
  *   3. The schema still rejects an entirely-empty PATCH (existing behavior).
  */
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-quota-preflight-ui-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-quota-preflight-ui-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.API_KEY_SECRET = process.env.API_KEY_SECRET || "quota-preflight-ui-secret";
 

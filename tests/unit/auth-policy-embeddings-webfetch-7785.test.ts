@@ -26,7 +26,7 @@ process.env.API_KEY_SECRET = process.env.API_KEY_SECRET || "auth-7785-api-secret
 process.env.JWT_SECRET = "auth-7785-jwt-secret";
 
 // Ensure no env-var API key interferes with isValidApiKey results.
-delete process.env.OMNIROUTE_API_KEY;
+delete process.env.AGENTPROXY_API_KEY;
 delete process.env.ROUTER_API_KEY;
 
 const core = await import("../../src/lib/db/core.ts");

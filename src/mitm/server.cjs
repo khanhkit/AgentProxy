@@ -10,7 +10,7 @@ const os = require("os");
 // This file runs as a standalone CommonJS process and cannot import the ES module.
 function getDataDir() {
   if (process.env.DATA_DIR) return path.resolve(process.env.DATA_DIR.trim());
-  return path.join(os.homedir(), ".omniroute");
+  return path.join(os.homedir(), ".agentproxy");
 }
 
 // Configuration
@@ -34,13 +34,14 @@ const LOCAL_PORT =
   Number.isInteger(parsedLocalPort) && parsedLocalPort > 0 && parsedLocalPort <= 65535
     ? parsedLocalPort
     : 443;
+const MITM_BIND_HOST = "127.0.0.1";
 // Idle timeout for sockets/tunnels. Mirrors ProxyBridge's 60s relay timeout so
 // hung/half-open connections cannot accumulate and exhaust fds. (Gap 10.)
 const parsedIdleTimeout = Number.parseInt(process.env.MITM_IDLE_TIMEOUT_MS || "60000", 10);
 const MITM_IDLE_TIMEOUT_MS =
   Number.isInteger(parsedIdleTimeout) && parsedIdleTimeout > 0 ? parsedIdleTimeout : 60000;
 const ROUTER_BASE_URL = (
-  process.env.OMNIROUTE_BASE_URL ||
+  process.env.AGENTPROXY_BASE_URL ||
   process.env.BASE_URL ||
   `http://localhost:${process.env.API_PORT || process.env.PORT || 20128}`
 )
@@ -141,11 +142,16 @@ const ingestShim = require("./_internal/ingest.cjs");
 const forwardShim = require("./_internal/forwardTarget.cjs");
 const aliasConfigShim = require("./_internal/aliasConfig.cjs");
 const standaloneRoutingShim = require("./_internal/standaloneRouting.cjs");
+const {
+  REQUEST_BODY_LIMIT_BYTES,
+  collectBodyRaw,
+  isPayloadTooLargeError,
+} = require("./_internal/boundedBody.cjs");
 
 // Inspector capture (D4 fallback). The standalone proxy intercepts AgentBridge
 // traffic inline (no MitmHandlerBase / agentBridgeHook), so it posts captured
 // entries to the local-only ingest endpoint to make them visible in the Traffic
-// Inspector. The token is injected by manager.ts (same value the OmniRoute
+// Inspector. The token is injected by manager.ts (same value the AgentProxy
 // process uses); absent token → capture is silently skipped.
 const INGEST_TOKEN = process.env.INSPECTOR_INTERNAL_INGEST_TOKEN || "";
 // Cap captured bodies to keep proxy memory bounded (the buffer truncates again).
@@ -256,7 +262,11 @@ function loadLegacySslOptions() {
 // `tproxy/dynamicCert.ts` — see that file's header for why it's duplicated
 // rather than imported). Resolved once during async bootstrap below.
 async function loadRootCaSslOptions() {
-  const { loadOrCreateMitmCa, issueLeafCert, DynamicCertStore } = require("./_internal/rootCaShim.cjs");
+  const {
+    loadOrCreateMitmCa,
+    issueLeafCert,
+    DynamicCertStore,
+  } = require("./_internal/rootCaShim.cjs");
   const ca = await loadOrCreateMitmCa(certDir);
   const certStore = new DynamicCertStore({ key: ca.key, cert: ca.cert });
   const defaultHost = [...TARGET_HOSTS][0];
@@ -340,15 +350,6 @@ async function resolveTargetIP(targetHost) {
   return targetIP;
 }
 
-function collectBodyRaw(req) {
-  return new Promise((resolve, reject) => {
-    const chunks = [];
-    req.on("data", (chunk) => chunks.push(chunk));
-    req.on("end", () => resolve(Buffer.concat(chunks)));
-    req.on("error", reject);
-  });
-}
-
 /**
  * Extract the source model name from request body or URL.
  *
@@ -406,7 +407,7 @@ function getSqliteDb() {
 /**
  * Resolve the stored alias override for a source model: `{ model?, reasoningEffort? }`.
  * `normalizeAliasMappings` upgrades legacy plain-string mappings into the structured
- * shape. The route-only namespace is reserved for client-facing OmniRoute model ids;
+ * shape. The route-only namespace is reserved for client-facing AgentProxy model ids;
  * fall back to `mitmAlias` until a route-alias writer is available.
  */
 function getMappedOverride(model, agentId = "antigravity") {
@@ -422,7 +423,7 @@ async function passthrough(req, res, bodyBuffer) {
   const targetHost = getTargetHost(req);
   const targetIP = await resolveTargetIP(targetHost);
 
-  // Defense-in-depth loop guard (Gap 14). The x-omniroute-source header is the
+  // Defense-in-depth loop guard (Gap 14). The x-agentproxy-source header is the
   // primary guard; this is a structural backstop for when it is stripped: if
   // the upstream resolves to ourselves (loopback on our own listen port),
   // forwarding would re-enter this server forever. Refuse instead of looping.
@@ -500,7 +501,7 @@ function captureToInspector(o) {
 
 async function intercept(req, res, bodyBuffer, override, sourceModel) {
   // C2 — Inject AgentBridge correlation headers per master plan §3.5.
-  // The OmniRoute router uses these to distinguish AgentBridge traffic from
+  // The AgentProxy router uses these to distinguish AgentBridge traffic from
   // other inbound clients and to record the originating IDE agent id.
   // Resolve agent id from the Host header against the target map; defensive
   // fallback to "unknown" when the host is somehow not in the map.
@@ -548,8 +549,8 @@ async function intercept(req, res, bodyBuffer, override, sourceModel) {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${API_KEY}`,
-        "x-omniroute-source": "agent-bridge",
-        "x-omniroute-agent": agentId,
+        "x-agentproxy-source": "agent-bridge",
+        "x-agentproxy-agent": agentId,
       },
       body: JSON.stringify(body),
     });
@@ -561,7 +562,7 @@ async function intercept(req, res, bodyBuffer, override, sourceModel) {
       const errText = await response.text().catch(() => "");
       respBody = errText.slice(0, INGEST_MAX_BODY);
       respSize = Buffer.byteLength(errText);
-      throw new Error(`OmniRoute ${response.status}: ${errText}`);
+      throw new Error(`AgentProxy ${response.status}: ${errText}`);
     }
 
     res.writeHead(200, {
@@ -636,7 +637,28 @@ async function startMitmServer() {
     stats.lastRequestAt = new Date().toISOString();
     writeStats();
 
-    const bodyBuffer = await collectBodyRaw(req);
+    let bodyBuffer;
+    try {
+      bodyBuffer = await collectBodyRaw(req, REQUEST_BODY_LIMIT_BYTES);
+    } catch (error) {
+      if (isPayloadTooLargeError(error)) {
+        const responseBody = JSON.stringify({
+          error: {
+            message: `Request body too large. Maximum allowed: ${REQUEST_BODY_LIMIT_BYTES} bytes`,
+            type: "payload_too_large",
+            code: "PAYLOAD_TOO_LARGE",
+          },
+        });
+        res.writeHead(413, {
+          "content-type": "application/json",
+          "content-length": Buffer.byteLength(responseBody),
+          connection: "close",
+        });
+        res.end(responseBody);
+        return;
+      }
+      throw error;
+    }
     const host = String(req.headers.host || "")
       .split(":")[0]
       .toLowerCase();
@@ -649,8 +671,8 @@ async function startMitmServer() {
 
     if (bodyBuffer.length > 0) saveRequestLog(req.url, bodyBuffer);
 
-    if (req.headers["x-omniroute-source"] === "omniroute") {
-      vlog(1, `[MITM] → PASSTHROUGH (OmniRoute source loop)`);
+    if (req.headers["x-agentproxy-source"] === "agentproxy") {
+      vlog(1, `[MITM] → PASSTHROUGH (AgentProxy source loop)`);
       return passthrough(req, res, bodyBuffer);
     }
 
@@ -706,7 +728,9 @@ async function startMitmServer() {
     vlog(
       1,
       `[MITM] INTERCEPTED ${agentId} ${model} → ${mappedOverride.model || model}` +
-        (mappedOverride.reasoningEffort ? ` (reasoningEffort=${mappedOverride.reasoningEffort})` : "")
+        (mappedOverride.reasoningEffort
+          ? ` (reasoningEffort=${mappedOverride.reasoningEffort})`
+          : "")
     );
     return intercept(req, res, bodyBuffer, mappedOverride, model);
   });
@@ -737,15 +761,23 @@ async function startMitmServer() {
   // =========================================================================
 
   function parseConnectAuthority(authority) {
-    // CONNECT host[:port]
-    const idx = authority.lastIndexOf(":");
-    if (idx === -1) return { host: authority.toLowerCase(), port: 443 };
-    const host = authority.slice(0, idx).toLowerCase();
-    const port = Number.parseInt(authority.slice(idx + 1), 10);
-    return {
-      host,
-      port: Number.isInteger(port) && port > 0 && port <= 65535 ? port : 443,
-    };
+    return bypassShim.parseConnectAuthorityStrict(authority);
+  }
+
+  function rejectConnect(clientSocket, statusCode, reason) {
+    const phrase = statusCode === 400 ? "Bad Request" : "Forbidden";
+    vlog(1, `[MITM] CONNECT rejected (${statusCode}): ${reason}`);
+    try {
+      clientSocket.end(
+        `HTTP/1.1 ${statusCode} ${phrase}\r\nConnection: close\r\nContent-Length: 0\r\n\r\n`
+      );
+    } catch {
+      try {
+        clientSocket.destroy();
+      } catch {
+        // ignore
+      }
+    }
   }
 
   function rawTcpForward(clientSocket, head, host, port, label) {
@@ -812,19 +844,16 @@ async function startMitmServer() {
   // passthrough); true on-wire bypass-without-decrypt at :443 under direct TLS would
   // require SNI sniffing on the raw 'connection' event, which is intentionally out
   // of scope for this release.
-  server.on("connect", (req, clientSocket, head) => {
+  server.on("connect", async (req, clientSocket, head) => {
     const authority = String(req.url || "");
-    const { host: connectHost, port: connectPort } = parseConnectAuthority(authority);
-
-    const decision = routeBypass(connectHost);
-
-    if (decision === "bypass") {
-      // Privacy: bypass hosts are never logged with body/headers and never
-      // TLS-decrypted. Only the hostname appears in console output.
-      vlog(1, `[MITM] CONNECT ${connectHost}:${connectPort} → BYPASS (TCP tunnel)`);
-      rawTcpForward(clientSocket, head, connectHost, connectPort, "bypass");
+    const parsed = parseConnectAuthority(authority);
+    if (!parsed) {
+      rejectConnect(clientSocket, 400, "malformed authority");
       return;
     }
+    const { host: connectHost, port: connectPort } = parsed;
+
+    const decision = routeBypass(connectHost);
 
     if (decision === "target") {
       // Hand the tunnel off to the local TLS-terminating server so the existing
@@ -838,9 +867,29 @@ async function startMitmServer() {
       return;
     }
 
+    let destination;
+    try {
+      destination = await bypassShim.resolveConnectDestination(connectHost, connectPort);
+    } catch (error) {
+      rejectConnect(
+        clientSocket,
+        403,
+        error && error.message ? error.message : "egress policy denied"
+      );
+      return;
+    }
+
+    if (decision === "bypass") {
+      // Privacy: bypass hosts are never logged with body/headers and never
+      // TLS-decrypted. Only the hostname appears in console output.
+      vlog(1, `[MITM] CONNECT ${connectHost}:${connectPort} → BYPASS (TCP tunnel)`);
+      rawTcpForward(clientSocket, head, destination.address, connectPort, "bypass");
+      return;
+    }
+
     // decision === "passthrough"
     vlog(1, `[MITM] CONNECT ${connectHost}:${connectPort} → PASSTHROUGH (TCP tunnel)`);
-    rawTcpForward(clientSocket, head, connectHost, connectPort, "passthrough");
+    rawTcpForward(clientSocket, head, destination.address, connectPort, "passthrough");
   });
 
   // Bound full-request / header / keep-alive lifetimes so a slow or hung client
@@ -849,10 +898,10 @@ async function startMitmServer() {
   server.headersTimeout = MITM_IDLE_TIMEOUT_MS; // time allowed to send headers
   server.keepAliveTimeout = MITM_IDLE_TIMEOUT_MS; // idle keep-alive window
 
-  server.listen(LOCAL_PORT, () => {
+  server.listen(LOCAL_PORT, MITM_BIND_HOST, () => {
     stats.startedAt = new Date().toISOString();
     writeStats();
-    console.log(`🚀 MITM ready on :${LOCAL_PORT} → ${ROUTER_URL}`);
+    console.log(`🚀 MITM ready on ${MITM_BIND_HOST}:${LOCAL_PORT} → ${ROUTER_URL}`);
   });
 
   server.on("connection", (socket) => {

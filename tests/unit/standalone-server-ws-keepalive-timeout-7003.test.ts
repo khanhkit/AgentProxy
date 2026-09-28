@@ -8,7 +8,7 @@ import { fileURLToPath } from "node:url";
 // getMainServerTimeoutConfig() raises keepAliveTimeout/headersTimeout above Node's
 // unconfigured 5_000ms default, and that the original fix wired it into
 // scripts/dev/run-next.mjs. But run-next.mjs only runs `npm run dev`/`npm start`
-// from a source checkout. The server real end users run — `omniroute serve`
+// from a source checkout. The server real end users run — `agentproxy serve`
 // (npm-installed CLI), Docker, and Electron — spawns the standalone Next build's
 // server.js via scripts/dev/run-standalone.mjs, which prefers server-ws.mjs
 // (built from scripts/dev/standalone-server-ws.mjs, copied byte-for-byte into

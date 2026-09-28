@@ -6,16 +6,16 @@
 
 ---
 
-title: "OmniRoute — diegimo virtualiojoje mašinoje su Cloudflare vadovas"
+title: "AgentProxy — diegimo virtualiojoje mašinoje su Cloudflare vadovas"
 version: 3.8.40
 lastUpdated: 2026-06-28
 ---
 
-# OmniRoute — diegimo virtualiojoje mašinoje su Cloudflare vadovas
+# AgentProxy — diegimo virtualiojoje mašinoje su Cloudflare vadovas
 
 🌐 **Languages:** 🇺🇸 [English](../../../../ops/VM_DEPLOYMENT_GUIDE.md) · 🇸🇦 [ar](../../../ar/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇦🇿 [az](../../../az/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇧🇬 [bg](../../../bg/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇧🇩 [bn](../../../bn/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇨🇿 [cs](../../../cs/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇩🇰 [da](../../../da/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇩🇪 [de](../../../de/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇬🇷 [el](../../../el/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇪🇸 [es](../../../es/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇪🇪 [et](../../../et/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇷 [fa](../../../fa/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇫🇮 [fi](../../../fi/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇫🇷 [fr](../../../fr/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇪 [ga](../../../ga/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇳 [gu](../../../gu/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇱 [he](../../../he/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇳 [hi](../../../hi/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇭🇷 [hr](../../../hr/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇭🇺 [hu](../../../hu/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇩 [id](../../../id/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇹 [it](../../../it/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇯🇵 [ja](../../../ja/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇰🇷 [ko](../../../ko/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇱🇻 [lv](../../../lv/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇳 [mr](../../../mr/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇲🇾 [ms](../../../ms/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇲🇹 [mt](../../../mt/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇳🇱 [nl](../../../nl/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇳🇴 [no](../../../no/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇵🇭 [phi](../../../phi/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇵🇱 [pl](../../../pl/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇵🇹 [pt](../../../pt/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇧🇷 [pt-BR](../../../pt-BR/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇷🇴 [ro](../../../ro/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇷🇺 [ru](../../../ru/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇸🇰 [sk](../../../sk/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇸🇮 [sl](../../../sl/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇷🇸 [sr](../../../sr/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇸🇪 [sv](../../../sv/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇰🇪 [sw](../../../sw/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇳 [ta](../../../ta/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇳 [te](../../../te/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇹🇭 [th](../../../th/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇹🇷 [tr](../../../tr/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇺🇦 [uk-UA](../../../uk-UA/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇵🇰 [ur](../../../ur/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇻🇳 [vi](../../../vi/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇨🇳 [zh-CN](../../../zh-CN/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇹🇼 [zh-TW](../../../zh-TW/docs/ops/VM_DEPLOYMENT_GUIDE.md)
 
-Išsamus OmniRoute diegimo ir konfigūravimo virtualiojoje mašinoje (VPS), naudojant per Cloudflare valdomą domeną, vadovas.
+Išsamus AgentProxy diegimo ir konfigūravimo virtualiojoje mašinoje (VPS), naudojant per Cloudflare valdomą domeną, vadovas.
 
 ---
 
@@ -93,18 +93,18 @@ ufw enable
 
 ---
 
-## 2. Įdiekite OmniRoute
+## 2. Įdiekite AgentProxy
 
 ### 2.1 Sukurkite konfigūracijos katalogą
 
 ```bash
-mkdir -p /opt/omniroute
+mkdir -p /opt/agentproxy
 ```
 
 ### 2.2 Sukurkite aplinkos kintamųjų failą
 
 ```bash
-cat > /opt/omniroute/.env << 'EOF'
+cat > /opt/agentproxy/.env << 'EOF'
 # === Saugumas ===
 JWT_SECRET=CHANGE-TO-A-UNIQUE-64-CHAR-SECRET-KEY
 INITIAL_PASSWORD=YourSecurePassword123!
@@ -112,7 +112,7 @@ API_KEY_SECRET=REPLACE-WITH-ANOTHER-SECRET-KEY
 STORAGE_ENCRYPTION_KEY=REPLACE-WITH-THIRD-SECRET-KEY
 STORAGE_ENCRYPTION_KEY_VERSION=v1
 MACHINE_ID_SALT=CHANGE-TO-A-UNIQUE-SALT
-OMNIROUTE_WS_BRIDGE_SECRET=REPLACE-WITH-WS-BRIDGE-SECRET  # BŪTINA gamybinėje aplinkoje: naudojama Codex Responses WS tiltui
+AGENTPROXY_WS_BRIDGE_SECRET=REPLACE-WITH-WS-BRIDGE-SECRET  # BŪTINA gamybinėje aplinkoje: naudojama Codex Responses WS tiltui
 
 # === Programa ===
 PORT=20128
@@ -129,11 +129,11 @@ BASE_URL=http://127.0.0.1:20128
 # Naršyklei skirtas URL, naudojamas OAuth atgaliniams iškvietimams, valdymo skydelio nuorodoms ir sugeneruotiems viešiesiems URL.
 NEXT_PUBLIC_BASE_URL=https://llms.seudominio.com
 # Pasirinktinis aiškiai nurodytas viešosios kilmės adreso perrašymas, skirtas sugeneruotiems viešiesiems išteklių URL.
-# OMNIROUTE_PUBLIC_BASE_URL=https://llms.seudominio.com
+# AGENTPROXY_PUBLIC_BASE_URL=https://llms.seudominio.com
 
 # === Sinchronizavimas su debesija (pasirinktinis) ===
-# CLOUD_URL=https://cloud.omniroute.online
-# NEXT_PUBLIC_CLOUD_URL=https://cloud.omniroute.online
+# CLOUD_URL=https://cloud.agentproxy.example.com
+# NEXT_PUBLIC_CLOUD_URL=https://cloud.agentproxy.example.com
 EOF
 ```
 
@@ -142,22 +142,22 @@ EOF
 ### 2.3 Paleiskite konteinerį
 
 ```bash
-docker pull diegosouzapw/omniroute:latest
+docker pull khanhkit/agentproxy:latest
 
 docker run -d \
-  --name omniroute \
+  --name agentproxy \
   --restart unless-stopped \
-  --env-file /opt/omniroute/.env \
+  --env-file /opt/agentproxy/.env \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
-  diegosouzapw/omniroute:latest
+  -v agentproxy-data:/app/data \
+  khanhkit/agentproxy:latest
 ```
 
 ### 2.4 Patikrinkite, ar jis veikia
 
 ```bash
-docker ps | grep omniroute
-docker logs omniroute --tail 20
+docker ps | grep agentproxy
+docker logs agentproxy --tail 20
 ```
 
 Turėtų būti rodoma: `[DB] SQLite database ready` ir `listening on port 20128`.
@@ -190,7 +190,7 @@ chmod 600 /etc/nginx/ssl/origin.key
 ### 3.2 Nginx konfigūracija
 
 ```bash
-cat > /etc/nginx/sites-available/omniroute << 'NGINX'
+cat > /etc/nginx/sites-available/agentproxy << 'NGINX'
 # Numatytasis serveris — blokuoja tiesioginę prieigą per IP
 server {
     listen 80 default_server;
@@ -203,7 +203,7 @@ server {
     return 444;
 }
 
-# OmniRoute — HTTPS
+# AgentProxy — HTTPS
 server {
     listen 443 ssl;
     listen [::]:443 ssl;
@@ -246,16 +246,16 @@ server {
 NGINX
 ```
 
-Suderinkite atvirkštinio tarpinio serverio srauto skirtąjį laiką su „OmniRoute“ skirtojo laiko aplinkos kintamaisiais. Jei padidinate
+Suderinkite atvirkštinio tarpinio serverio srauto skirtąjį laiką su „AgentProxy“ skirtojo laiko aplinkos kintamaisiais. Jei padidinate
 `FETCH_TIMEOUT_MS` / `STREAM_IDLE_TIMEOUT_MS`, padidinkite `proxy_read_timeout` / `proxy_send_timeout`
 virš tos pačios ribinės vertės.
 
-„OmniRoute“ naudoja `NEXT_PUBLIC_BASE_URL` kaip kanoninį naršyklei skirtą pradinį adresą, naudojamą „OAuth“
+„AgentProxy“ naudoja `NEXT_PUBLIC_BASE_URL` kaip kanoninį naršyklei skirtą pradinį adresą, naudojamą „OAuth“
 atgaliniams iškvietimams ir sugeneruotoms viešosioms nuorodoms. Autentifikuoti valdymo skydelio įrašymo veiksmai naudoja tos pačios kilmės užklausas
 ir su sesija susietą CSRF apsaugą, todėl jiems nereikia statinio viešojo bazinio URL. Aukščiau pateiktos
 `X-Forwarded-*` antraštės vis tiek yra naudingi maršruto parinkimo metaduomenys, tačiau jos nepakeičia
 aiškaus viešojo URL nustatymo, kai jo reikia „OAuth“ arba sugeneruotoms naršyklės nuorodoms. Įjunkite
-`OMNIROUTE_TRUST_PROXY` tik tuo atveju, jei klientai negali tiesiogiai pasiekti „OmniRoute“ ir jūsų tarpinis serveris
+`AGENTPROXY_TRUST_PROXY` tik tuo atveju, jei klientai negali tiesiogiai pasiekti „AgentProxy“ ir jūsų tarpinis serveris
 pašalina arba iš naujo sukuria gaunamas persiuntimo antraštes.
 
 ### 3.3 Įjunkite ir patikrinkite
@@ -264,8 +264,8 @@ pašalina arba iš naujo sukuria gaunamas persiuntimo antraštes.
 # Pašalinkite numatytąją konfigūraciją
 rm -f /etc/nginx/sites-enabled/default
 
-# Įjunkite OmniRoute
-ln -sf /etc/nginx/sites-available/omniroute /etc/nginx/sites-enabled/omniroute
+# Įjunkite AgentProxy
+ln -sf /etc/nginx/sites-available/agentproxy /etc/nginx/sites-enabled/agentproxy
 
 # Patikrinkite ir įkelkite iš naujo
 nginx -t && systemctl reload nginx
@@ -309,40 +309,40 @@ curl -sI https://llms.seudominio.com/health
 ### Atnaujinimas į naują versiją
 
 ```bash
-docker pull diegosouzapw/omniroute:latest
-docker stop omniroute && docker rm omniroute
-docker run -d --name omniroute --restart unless-stopped \
-  --env-file /opt/omniroute/.env \
+docker pull khanhkit/agentproxy:latest
+docker stop agentproxy && docker rm agentproxy
+docker run -d --name agentproxy --restart unless-stopped \
+  --env-file /opt/agentproxy/.env \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
-  diegosouzapw/omniroute:latest
+  -v agentproxy-data:/app/data \
+  khanhkit/agentproxy:latest
 ```
 
 ### Žurnalų peržiūra
 
 ```bash
-docker logs -f omniroute          # Srautas realiuoju laiku
-docker logs omniroute --tail 50   # Paskutinės 50 eilučių
+docker logs -f agentproxy          # Srautas realiuoju laiku
+docker logs agentproxy --tail 50   # Paskutinės 50 eilučių
 ```
 
 ### Rankinis duomenų bazės atsarginės kopijos kūrimas
 
 ```bash
 # Nukopijuoti duomenis iš tomo į pagrindinį kompiuterį
-docker cp omniroute:/app/data ./backup-$(date +%F)
+docker cp agentproxy:/app/data ./backup-$(date +%F)
 
 # Arba suglaudinti visą tomą
-docker run --rm -v omniroute-data:/data -v $(pwd):/backup \
-  alpine tar czf /backup/omniroute-data-$(date +%F).tar.gz /data
+docker run --rm -v agentproxy-data:/data -v $(pwd):/backup \
+  alpine tar czf /backup/agentproxy-data-$(date +%F).tar.gz /data
 ```
 
 ### Atkūrimas iš atsarginės kopijos
 
 ```bash
-docker stop omniroute
-docker run --rm -v omniroute-data:/data -v $(pwd):/backup \
-  alpine sh -c "rm -rf /data/* && tar xzf /backup/omniroute-data-YYYY-MM-DD.tar.gz -C /"
-docker start omniroute
+docker stop agentproxy
+docker run --rm -v agentproxy-data:/data -v $(pwd):/backup \
+  alpine sh -c "rm -rf /data/* && tar xzf /backup/agentproxy-data-YYYY-MM-DD.tar.gz -C /"
+docker start agentproxy
 ```
 
 ---
@@ -411,13 +411,13 @@ Nuotolinei prieigai per Cloudflare Workers (tiesiogiai neatskleidžiant VM):
 
 ```bash
 # Vietinėje saugykloje
-cd omnirouteCloud
+cd agentproxyCloud
 npm install
 npx wrangler login
 npx wrangler deploy
 ```
 
-Taip pat žr. [TUNNELS_GUIDE.md](./TUNNELS_GUIDE.md), kuriame pateiktas saugykloje esantis Cloudflare Tunnel naudojimo vadovas. Atskiras `omnirouteCloud/` worker yra atskiroje susietoje saugykloje.
+Taip pat žr. [TUNNELS_GUIDE.md](./TUNNELS_GUIDE.md), kuriame pateiktas saugykloje esantis Cloudflare Tunnel naudojimo vadovas. Atskiras `agentproxyCloud/` worker yra atskiroje susietoje saugykloje.
 
 ---
 
@@ -428,15 +428,15 @@ Taip pat žr. [TUNNELS_GUIDE.md](./TUNNELS_GUIDE.md), kuriame pateiktas saugyklo
 | 22        | SSH         | Vieša (su fail2ban)       |
 | 80        | nginx HTTP  | Peradresavimas → HTTPS    |
 | 443       | nginx HTTPS | Per Cloudflare Proxy      |
-| 20128     | OmniRoute   | Tik localhost (per nginx) |
+| 20128     | AgentProxy   | Tik localhost (per nginx) |
 
 ## Optimizavimas mažai atminties turintiems / nedideliems VPS
 
 Diegiant nedideliuose VPS egzemplioriuose (su 1 GB RAM ar mažiau):
 
-- **Išjunkite fonines paslaugas** — nustatykite `OMNIROUTE_DISABLE_BACKGROUND_SERVICES=1`, kad nebūtų paleidžiamas planuoklis, MCP serveris ir periodinės priežiūros užduotys. Žr. `docs/reference/ENVIRONMENT.md`.
+- **Išjunkite fonines paslaugas** — nustatykite `AGENTPROXY_DISABLE_BACKGROUND_SERVICES=1`, kad nebūtų paleidžiamas planuoklis, MCP serveris ir periodinės priežiūros užduotys. Žr. `docs/reference/ENVIRONMENT.md`.
 - **Naudokite SQLite WAL režimą** — jis įjungtas pagal numatytuosius nustatymus ir sumažina didžiausią atminties naudojimą vienalaikio skaitymo metu.
-- **Apribokite V8 kaupą** — nustatykite `OMNIROUTE_MEMORY_MB` (pvz., `512`), kad vykdymo aplinka nenustatytų didesnės ribos, nei gali palaikyti VM. Žr. `docs/reference/ENVIRONMENT.md`.
-- **Didelių užklausų priėmimas automatiškai pritaikomas pagal kaupo ribą** -- nustačius pirmiau nurodytą `OMNIROUTE_MEMORY_MB`, įvesties baitų biudžetas (`OMNIROUTE_CHAT_MAX_INFLIGHT_BYTES`) apskaičiuojamas pagal tą pačią ribą, todėl ribotą atmintį turinti VM automatiškai gauna mažesnį vienalaikių užklausų biudžetą be papildomo derinimo; perteklinėms užklausoms pateikiamas pakartotinai bandytinas `503` atsakymas su `Retry-After`, užuot leidus joms konkuruoti dėl atminties. Senąjį užklausų skaičiaus apribojimą `OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT` nustatykite tik tada, jei papildomai reikia griežtos viršutinės ribos.
+- **Apribokite V8 kaupą** — nustatykite `AGENTPROXY_MEMORY_MB` (pvz., `512`), kad vykdymo aplinka nenustatytų didesnės ribos, nei gali palaikyti VM. Žr. `docs/reference/ENVIRONMENT.md`.
+- **Didelių užklausų priėmimas automatiškai pritaikomas pagal kaupo ribą** -- nustačius pirmiau nurodytą `AGENTPROXY_MEMORY_MB`, įvesties baitų biudžetas (`AGENTPROXY_CHAT_MAX_INFLIGHT_BYTES`) apskaičiuojamas pagal tą pačią ribą, todėl ribotą atmintį turinti VM automatiškai gauna mažesnį vienalaikių užklausų biudžetą be papildomo derinimo; perteklinėms užklausoms pateikiamas pakartotinai bandytinas `503` atsakymas su `Retry-After`, užuot leidus joms konkuruoti dėl atminties. Senąjį užklausų skaičiaus apribojimą `AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT` nustatykite tik tada, jei papildomai reikia griežtos viršutinės ribos.
 - **Venkite vykdyti `next build` VPS serveryje** — sukompiliuokite lokaliai ir įdiekite autonominę išvestį (`.next/standalone/`).
-- **Stebėkite naudodami `top` / `free -m`** — 1 GB VM ramybės būsenoje OmniRoute paprastai naudoja 200-400 MB RSS.
+- **Stebėkite naudodami `top` / `free -m`** — 1 GB VM ramybės būsenoje AgentProxy paprastai naudoja 200-400 MB RSS.

@@ -12,7 +12,7 @@ export async function initializeCloudSync() {
     const enabled = await isCloudEnabled();
     if (enabled && !isCloudSyncIntegrityConfigured()) {
       throw new Error(
-        "OMNIROUTE_CLOUD_SYNC_SECRET is required before enabled cloud sync can start"
+        "AGENTPROXY_CLOUD_SYNC_SECRET is required before enabled cloud sync can start"
       );
     }
 

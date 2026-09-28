@@ -5,7 +5,10 @@ import { supportsClaudeMaxEffort, supportsXHighEffort } from "../../config/provi
 import { adjustMaxTokens } from "../helpers/maxTokensHelper.ts";
 import { sanitizeToolId } from "../helpers/schemaCoercion.ts";
 import { safeParseJSON } from "../helpers/jsonUtil.ts";
-import { applyKimiCodingThinking } from "../helpers/claudeHelper.ts";
+import {
+  applyKimiCodingThinking,
+  createDefaultClaudeCacheControl,
+} from "../helpers/claudeHelper.ts";
 import { DEFAULT_THINKING_CLAUDE_SIGNATURE } from "../../config/defaultThinkingSignature.ts";
 import {
   getDefaultThinkingBudget,
@@ -33,7 +36,7 @@ const ADAPTIVE_DOWNGRADE_BUDGET = 1024;
 // Can be disabled per-request via body._disableToolPrefix = true
 export const CLAUDE_OAUTH_TOOL_PREFIX = "proxy_";
 const CLAUDE_TOOL_CHOICE_REQUIRED = "an" + "y";
-const COPILOT_REASONING_SUMMARY_MARKER = "_omnirouteCopilotReasoningSummary";
+const COPILOT_REASONING_SUMMARY_MARKER = "_agentproxyCopilotReasoningSummary";
 
 function wantsCopilotSummarizedThinking(body: Record<string, unknown> | null | undefined): boolean {
   return body?.[COPILOT_REASONING_SUMMARY_MARKER] === "summarized";
@@ -454,7 +457,7 @@ export function openaiToClaudeRequest(model, body, stream, credentials = null) {
     // rejects cache_control on defer_loading tools.
     for (let i = result.tools.length - 1; i >= 0; i--) {
       if (!result.tools[i].defer_loading) {
-        result.tools[i].cache_control = { type: "ephemeral", ttl: "1h" };
+        result.tools[i].cache_control = createDefaultClaudeCacheControl(routedProvider);
         break;
       }
     }
@@ -491,7 +494,7 @@ export function openaiToClaudeRequest(model, body, stream, credentials = null) {
     const systemBlock = {
       type: "text",
       text: systemText,
-      cache_control: { type: "ephemeral", ttl: "1h" },
+      cache_control: createDefaultClaudeCacheControl(routedProvider),
     };
     // Merge with existing body.system if present
     if (Array.isArray(body.system)) {

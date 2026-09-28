@@ -43,12 +43,12 @@ function sseResponse(bodyText: string): Response {
 test("fast handler is returned verbatim with headers preserved (#2544)", async () => {
   const original = new Response("data: hi\n\n", {
     status: 200,
-    headers: { "Content-Type": "text/event-stream", "x-omniroute-provider": "openai" },
+    headers: { "Content-Type": "text/event-stream", "x-agentproxy-provider": "openai" },
   });
   const result = await withEarlyStreamKeepalive(Promise.resolve(original), { thresholdMs: 1000 });
 
   assert.equal(result, original, "fast path should return the same Response object");
-  assert.equal(result.headers.get("x-omniroute-provider"), "openai");
+  assert.equal(result.headers.get("x-agentproxy-provider"), "openai");
 });
 
 // #2544: when the handler is slow to produce its first byte (slow upstream / reasoning

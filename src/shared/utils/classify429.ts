@@ -13,7 +13,7 @@
  * response body and headers to return a `FailureKind` the circuit
  * breaker can use to pick the right cooldown.
  *
- * Companion to OmniRoute issue #2100.
+ * Companion to AgentProxy issue #2100.
  *
  * @module shared/utils/classify429
  */
@@ -67,7 +67,7 @@ const QUOTA_PATTERNS: ReadonlyArray<RegExp> = [
   // ~60s against a budget that only resets at UTC midnight.
   /daily free allocation/i,
 
-  // OmniRoute auth-layer synthetic 429 (Issue #9269).
+  // AgentProxy auth-layer synthetic 429 (Issue #9269).
   // Body: "All antigravity accounts have exhausted their quota (reset after 5m)"
   // Produced by auth.ts line 1477 when every account for a provider has
   // exhausted its quota. Without this pattern, the message is classified as
@@ -99,6 +99,22 @@ const QUOTA_PATTERNS: ReadonlyArray<RegExp> = [
   /organization TPD rate limit/i,
   /\bTPD rate limit\b/i,
   /insufficient balance/i,
+
+  // CJK long-window quota exhaustion.
+  /使用上限/,
+  /限额将在/,
+  /已达?到.*上限/,
+  /额度已用尽/,
+  /额度已用完/,
+  /今日调用上限/,
+  /调用上限/,
+  /配额[已超]/,
+  /超出.*配额/,
+  /クォータに達しました/,
+  /上限に達しました/,
+  /利用制限に達しました/,
+  /할당량을 초과/,
+  /사용 한도를 초과/,
 ];
 
 /**

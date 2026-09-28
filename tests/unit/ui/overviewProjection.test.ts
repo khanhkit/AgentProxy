@@ -6,7 +6,7 @@ import type { OrchSnapshot } from "../../../src/app/(dashboard)/dashboard/orches
 
 const snap: OrchSnapshot = {
   nodes: [
-    { id: "orchestrator", kind: "orchestrator", label: "OmniRoute" },
+    { id: "orchestrator", kind: "orchestrator", label: "AgentProxy" },
     { id: "cloud-agent:1", kind: "work", source: "cloud-agent", state: "running", label: "a" },
     {
       id: "cloud-agent:2",
@@ -51,7 +51,7 @@ describe("overviewProjection", () => {
     // node to also confirm it never lands in `done`.
     const interleaved: OrchSnapshot = {
       nodes: [
-        { id: "orchestrator", kind: "orchestrator", label: "OmniRoute" },
+        { id: "orchestrator", kind: "orchestrator", label: "AgentProxy" },
         {
           id: "a2a:oldest",
           kind: "work",

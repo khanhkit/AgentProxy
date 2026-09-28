@@ -4,7 +4,7 @@ import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-process.env.DATA_DIR = mkdtempSync(join(tmpdir(), "omniroute-kie-11225-"));
+process.env.DATA_DIR = mkdtempSync(join(tmpdir(), "agentproxy-kie-11225-"));
 
 const { KIE_IMAGE_MODELS } =
   await import("../../open-sse/config/providers/registry/kie/imageModels.ts");
@@ -12,7 +12,7 @@ const { handleImageGeneration, KIE_MARKET_UPSTREAM_MODEL_IDS, resolveKieMarketUp
   await import("../../open-sse/handlers/imageGeneration.ts");
 
 /**
- * Issue #11225 — KIE Market public model IDs are namespaced for the OmniRoute
+ * Issue #11225 — KIE Market public model IDs are namespaced for the AgentProxy
  * catalog (`kie/google-imagen/nano-banana-2`), but the KIE Market createTask
  * API expects the bare upstream model ID `nano-banana-2`. Sending the
  * namespaced id makes upstream reject the task.

@@ -22,7 +22,7 @@ import { NextRequest } from "next/server";
 // Hermetic DB: isolate from the shared dev DATA_DIR so this test never
 // touches or depends on real plugin rows, and so a fresh install has no
 // configured password (isAuthRequired() -> false -> GET reachable directly).
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-plugins-8374-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-plugins-8374-"));
 const originalDataDir = process.env.DATA_DIR;
 process.env.DATA_DIR = TEST_DATA_DIR;
 

@@ -4,18 +4,21 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-agnes-provider-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-agnes-provider-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const { APIKEY_PROVIDERS } = await import("../../src/shared/constants/providers.ts");
 const { VIDEO_PROVIDER_IDS } = await import("../../src/shared/constants/providers.ts");
-const { REGISTRY: providerRegistry } = await import("../../open-sse/config/providerRegistry.ts");
+const { REGISTRY: providerRegistry, getRegistryModelThinkingEfforts } =
+  await import("../../open-sse/config/providerRegistry.ts");
 const { IMAGE_PROVIDERS, getAllImageModels } =
   await import("../../open-sse/config/imageRegistry.ts");
 const { VIDEO_PROVIDERS, getAllVideoModels } =
   await import("../../open-sse/config/videoRegistry.ts");
 const { FREE_MODEL_BUDGETS } = await import("../../open-sse/config/freeModelCatalog.ts");
 const { DefaultExecutor } = await import("../../open-sse/executors/default.ts");
+const { sanitizeReasoningEffortForProvider } =
+  await import("../../open-sse/executors/base/reasoningEffort.ts");
 const { handleImageGeneration } = await import("../../open-sse/handlers/imageGeneration.ts");
 const { handleVideoGeneration } = await import("../../open-sse/handlers/videoGeneration.ts");
 const { resolveChatCoreTargetFormat } =
@@ -99,6 +102,29 @@ test("agnes ships the current public chat models with correct capabilities", () 
   assert.equal(flash25.contextLength, 524288);
   assert.equal(flash25.maxOutputTokens, 65536);
 });
+
+test("agnes reasoning models declare and enforce the upstream-supported effort tiers", () => {
+  const expected = ["none", "low", "medium", "high", "max"];
+
+  for (const model of ["agnes-2.0-flash", "agnes-2.5-flash"]) {
+    assert.deepEqual(getRegistryModelThinkingEfforts("agnes", model), expected);
+
+    const clamp = (effort: string) =>
+      (
+        sanitizeReasoningEffortForProvider({ reasoning_effort: effort }, "agnes", model) as {
+          reasoning_effort?: string;
+        }
+      ).reasoning_effort;
+
+    assert.equal(clamp("none"), "none");
+    assert.equal(clamp("high"), "high");
+    assert.equal(clamp("max"), "max");
+    assert.equal(clamp("xhigh"), "max");
+    assert.equal(clamp("minimal"), "low");
+    assert.equal(clamp("off"), "none");
+  }
+});
+
 test("agnes free catalog exposes the current free chat models through one shared pool", () => {
   const rows = FREE_MODEL_BUDGETS.filter((model) => model.provider === "agnes");
   assert.deepEqual(

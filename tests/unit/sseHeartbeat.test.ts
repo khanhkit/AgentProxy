@@ -8,26 +8,26 @@ import {
 } from "../../open-sse/utils/sseHeartbeat.ts";
 
 function withEnv(value: string | undefined, fn: () => void) {
-  const prev = process.env.OMNIROUTE_SSE_COMMENTS;
+  const prev = process.env.AGENTPROXY_SSE_COMMENTS;
   try {
-    if (value === undefined) delete process.env.OMNIROUTE_SSE_COMMENTS;
-    else process.env.OMNIROUTE_SSE_COMMENTS = value;
+    if (value === undefined) delete process.env.AGENTPROXY_SSE_COMMENTS;
+    else process.env.AGENTPROXY_SSE_COMMENTS = value;
     fn();
   } finally {
-    if (prev === undefined) delete process.env.OMNIROUTE_SSE_COMMENTS;
-    else process.env.OMNIROUTE_SSE_COMMENTS = prev;
+    if (prev === undefined) delete process.env.AGENTPROXY_SSE_COMMENTS;
+    else process.env.AGENTPROXY_SSE_COMMENTS = prev;
   }
 }
 
 async function withEnvAsync<T>(value: string | undefined, fn: () => Promise<T>): Promise<T> {
-  const prev = process.env.OMNIROUTE_SSE_COMMENTS;
+  const prev = process.env.AGENTPROXY_SSE_COMMENTS;
   try {
-    if (value === undefined) delete process.env.OMNIROUTE_SSE_COMMENTS;
-    else process.env.OMNIROUTE_SSE_COMMENTS = value;
+    if (value === undefined) delete process.env.AGENTPROXY_SSE_COMMENTS;
+    else process.env.AGENTPROXY_SSE_COMMENTS = value;
     return await fn();
   } finally {
-    if (prev === undefined) delete process.env.OMNIROUTE_SSE_COMMENTS;
-    else process.env.OMNIROUTE_SSE_COMMENTS = prev;
+    if (prev === undefined) delete process.env.AGENTPROXY_SSE_COMMENTS;
+    else process.env.AGENTPROXY_SSE_COMMENTS = prev;
   }
 }
 

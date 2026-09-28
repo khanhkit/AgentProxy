@@ -1,5 +1,5 @@
 import { NOAUTH_PROVIDERS } from "@/shared/constants/providers";
-import { REGISTRY } from "@omniroute/open-sse/config/providerRegistry";
+import { REGISTRY } from "@agentproxy/open-sse/config/providerRegistry";
 
 interface NoAuthOnboardingMetadata {
   id: string;

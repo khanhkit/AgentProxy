@@ -9,7 +9,7 @@ import os from "node:os";
 import path from "node:path";
 import { makeManagementSessionRequest } from "../helpers/managementSession.ts";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-settings-cas-7784-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-settings-cas-7784-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.REQUIRE_API_KEY = "false";
 if (!process.env.API_KEY_SECRET) {
@@ -52,8 +52,8 @@ describe("#7784 settings optimistic concurrency", () => {
         await makeManagementSessionRequest("http://localhost/api/settings", {
           method: "GET",
           headers: {
-            "x-omniroute-auth-kind": "dashboard_session",
-            "x-omniroute-auth-id": "dashboard",
+            "x-agentproxy-auth-kind": "dashboard_session",
+            "x-agentproxy-auth-id": "dashboard",
           },
         })
       );
@@ -71,9 +71,9 @@ describe("#7784 settings optimistic concurrency", () => {
       const internalServiceUrl = await settingsRoute.resolveOwnerRadarAdminUrl(
         await makeManagementSessionRequest("http://localhost/api/settings", {
           headers: {
-            "x-omniroute-auth-kind": "management_key",
-            "x-omniroute-auth-id": "internal-service",
-            "x-omniroute-peer-locality": "loopback",
+            "x-agentproxy-auth-kind": "management_key",
+            "x-agentproxy-auth-id": "internal-service",
+            "x-agentproxy-peer-locality": "loopback",
           },
         })
       );
@@ -82,9 +82,9 @@ describe("#7784 settings optimistic concurrency", () => {
       const cliUrl = await settingsRoute.resolveOwnerRadarAdminUrl(
         await makeManagementSessionRequest("http://localhost/api/settings", {
           headers: {
-            "x-omniroute-auth-kind": "management_key",
-            "x-omniroute-auth-id": "cli",
-            "x-omniroute-peer-locality": "loopback",
+            "x-agentproxy-auth-kind": "management_key",
+            "x-agentproxy-auth-id": "cli",
+            "x-agentproxy-peer-locality": "loopback",
           },
         })
       );
@@ -93,9 +93,9 @@ describe("#7784 settings optimistic concurrency", () => {
       const localBootstrapUrl = await settingsRoute.resolveOwnerRadarAdminUrl(
         new Request("http://localhost/api/settings", {
           headers: {
-            "x-omniroute-auth-kind": "anonymous",
-            "x-omniroute-auth-id": "anonymous",
-            "x-omniroute-peer-locality": "loopback",
+            "x-agentproxy-auth-kind": "anonymous",
+            "x-agentproxy-auth-id": "anonymous",
+            "x-agentproxy-peer-locality": "loopback",
           },
         })
       );

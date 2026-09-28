@@ -9,7 +9,7 @@ import { mkdtempSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 
-process.env.DATA_DIR = mkdtempSync(join(tmpdir(), "omniroute-agentic-conv-db-"));
+process.env.DATA_DIR = mkdtempSync(join(tmpdir(), "agentproxy-agentic-conv-db-"));
 process.env.API_KEY_SECRET = process.env.API_KEY_SECRET || "agentic-conversations-test-secret";
 
 // Dynamic imports (not static) are required here: a static `import` of a module

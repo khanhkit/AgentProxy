@@ -25,7 +25,7 @@ import path from "node:path";
 import test from "node:test";
 import { makeManagementSessionRequest } from "../helpers/managementSession.ts";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-connection-activation-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-connection-activation-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.API_KEY_SECRET = "connection-activation-test-secret";
 process.env.DISABLE_SQLITE_AUTO_BACKUP = "true";

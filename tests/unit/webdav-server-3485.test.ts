@@ -5,7 +5,7 @@
 // ("GLIBC_2.29 not found"), so the native module fails to dlopen and any test that
 // reaches better-sqlite3 directly (or asserts stdout that the load-failure warning
 // would pollute) fails HERE while passing in CI. This is a known environment
-// limitation, not a defect in the code under test: the OmniRoute runtime itself
+// limitation, not a defect in the code under test: the AgentProxy runtime itself
 // cascades to node:sqlite/sql.js when better-sqlite3 is unavailable. See
 // tests/unit/_helpers/betterSqlite3Availability.ts for a guard helper.
 /**
@@ -52,10 +52,10 @@ async function importHandler(): Promise<typeof import("../../scripts/dev/webdav-
   return import(`${url}?t=${Date.now()}-${Math.random().toString(36).slice(2)}`);
 }
 
-/** Encrypt a string with the OmniRoute enc:v1: format using the given secret.
+/** Encrypt a string with the AgentProxy enc:v1: format using the given secret.
  *  Mirrors src/lib/db/encryption.ts: scrypt with static salt, AES-256-GCM. */
 function encryptTs(secret: string, plaintext: string): string {
-  const STATIC_SALT = "omniroute-field-encryption-v1";
+  const STATIC_SALT = "agentproxy-field-encryption-v1";
   const key = scryptSync(secret, STATIC_SALT, 32);
   const iv = randomBytes(16);
   const cipher = createCipheriv("aes-256-gcm", key, iv);
@@ -225,6 +225,56 @@ test("resolveDestinationPath: raw path that escapes vault is rejected", async ()
     () => resolveDestinationPath(deepVault, "/api/v1/webdav/../../escape-target"),
     (err: { status: number }) => err.status === 403
   );
+});
+
+test(
+  "resolveExistingVaultFsPath: rejects an intermediate symlink that escapes the vault",
+  { skip: process.platform === "win32" },
+  async () => {
+    const { resolveExistingVaultFsPath } = await importHandler();
+    const outside = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-webdav-outside-"));
+    const outsideFile = path.join(outside, "secret.txt");
+    const link = path.join(VAULT_ROOT, "outside-link");
+    fs.writeFileSync(outsideFile, "outside");
+    fs.symlinkSync(outside, link, "dir");
+    try {
+      assert.throws(
+        () => resolveExistingVaultFsPath(VAULT_ROOT, path.join(link, "secret.txt")),
+        (err: { status: number }) => err.status === 403
+      );
+    } finally {
+      fs.unlinkSync(link);
+      fs.rmSync(outside, { recursive: true, force: true });
+    }
+  }
+);
+
+test(
+  "resolveWritableVaultFsPath: rejects a writable child below an escaping symlink",
+  { skip: process.platform === "win32" },
+  async () => {
+    const { resolveWritableVaultFsPath } = await importHandler();
+    const outside = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-webdav-write-outside-"));
+    const link = path.join(VAULT_ROOT, "write-outside-link");
+    fs.symlinkSync(outside, link, "dir");
+    try {
+      assert.throws(
+        () => resolveWritableVaultFsPath(VAULT_ROOT, path.join(link, "pwned.txt")),
+        (err: { status: number }) => err.status === 403
+      );
+      assert.equal(fs.existsSync(path.join(outside, "pwned.txt")), false);
+    } finally {
+      fs.unlinkSync(link);
+      fs.rmSync(outside, { recursive: true, force: true });
+    }
+  }
+);
+
+test("resolveWritableVaultFsPath: preserves safe missing descendants inside the vault", async () => {
+  const { resolveWritableVaultFsPath } = await importHandler();
+  const candidate = path.join(VAULT_ROOT, "new-parent", "new-child.md");
+  const safe = resolveWritableVaultFsPath(VAULT_ROOT, candidate);
+  assert.equal(safe, candidate);
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -563,6 +613,60 @@ test("DELETE removes a file, subsequent GET returns 404", async () => {
   });
   assert.equal(getRes.status, 404);
 });
+
+test(
+  "DELETE removes a symlink entry without deleting its external target",
+  { skip: process.platform === "win32" },
+  async () => {
+    const outside = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-webdav-delete-target-"));
+    const target = path.join(outside, "target.txt");
+    const link = path.join(intVaultDir, "delete-link.txt");
+    fs.writeFileSync(target, "outside-stays");
+    fs.symlinkSync(target, link);
+    try {
+      const delRes = await webdavRequest({
+        method: "DELETE",
+        url: "/api/v1/webdav/delete-link.txt",
+        headers: { authorization: AUTH_HEADER },
+        dataDir: intDataDir,
+      });
+      assert.equal(delRes.status, 204);
+      assert.equal(fs.existsSync(link), false);
+      assert.equal(fs.readFileSync(target, "utf8"), "outside-stays");
+    } finally {
+      fs.rmSync(outside, { recursive: true, force: true });
+      fs.rmSync(link, { force: true });
+    }
+  }
+);
+
+test(
+  "PUT replaces a symlink entry without overwriting its external target",
+  { skip: process.platform === "win32" },
+  async () => {
+    const outside = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-webdav-put-target-"));
+    const target = path.join(outside, "target.txt");
+    const link = path.join(intVaultDir, "put-link.txt");
+    fs.writeFileSync(target, "outside-original");
+    fs.symlinkSync(target, link);
+    try {
+      const putRes = await webdavRequest({
+        method: "PUT",
+        url: "/api/v1/webdav/put-link.txt",
+        headers: { authorization: AUTH_HEADER },
+        body: Buffer.from("vault-replacement", "utf8"),
+        dataDir: intDataDir,
+      });
+      assert.equal(putRes.status, 204);
+      assert.equal(fs.lstatSync(link).isSymbolicLink(), false);
+      assert.equal(fs.readFileSync(link, "utf8"), "vault-replacement");
+      assert.equal(fs.readFileSync(target, "utf8"), "outside-original");
+    } finally {
+      fs.rmSync(outside, { recursive: true, force: true });
+      fs.rmSync(link, { force: true });
+    }
+  }
+);
 
 test("MKCOL creates a directory", async () => {
   const mkcolRes = await webdavRequest({

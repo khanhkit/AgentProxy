@@ -19,7 +19,7 @@ import os from "node:os";
 import path from "node:path";
 
 // Set up a temp DATA_DIR so getDbInstance() initialises cleanly
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-improve-prompt-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-improve-prompt-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 // Disable mandatory auth for most tests
 process.env.REQUIRE_API_KEY = "false";

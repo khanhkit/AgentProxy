@@ -14,7 +14,7 @@ test("characterize: trayWindows.mjs initWinTray writes a temp .ps1 (old behavior
   try {
     const proc = initWinTray({ port: 8609, onQuit() {}, onOpenDashboard() {}, onShowLogs() {} });
     if (proc && typeof proc.on === "function") proc.on("error", () => {});
-    const scripts = readdirSync(tmpdir()).filter((f) => f.startsWith("omniroute-tray-") && f.endsWith(".ps1"));
+    const scripts = readdirSync(tmpdir()).filter((f) => f.startsWith("agentproxy-tray-") && f.endsWith(".ps1"));
     assert.ok(scripts.length > 0, "initWinTray creates a temp .ps1 (expected — that is the Norton trigger)");
     const content = readFileSync(join(tmpdir(), scripts[0]), "utf8");
     assert.ok(content.includes("System.Windows.Forms.NotifyIcon"), "temp .ps1 uses WinForms tray");

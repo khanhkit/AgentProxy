@@ -19,14 +19,12 @@ test("#8371: single user message returns that message verbatim (single-turn unch
   assert.equal(prompt, "What about Paris?");
 });
 
-test("#8371: single user turn with a system message still returns only the user text", () => {
-  // Preserves the pre-existing no-tools derivation, which ignored system-only
-  // context on the first turn.
+test("#13380: single user turn with a system message prepends the system text", () => {
   const prompt = buildGeminiPrompt([
     { role: "system", content: "You are helpful" },
     { role: "user", content: "Hello" },
   ]);
-  assert.equal(prompt, "Hello");
+  assert.equal(prompt, "System:\nYou are helpful\n\nHello");
 });
 
 // ─── Multi-turn: full history is flattened into the prompt ───────────────────

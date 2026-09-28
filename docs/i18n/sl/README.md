@@ -6,14 +6,14 @@
 
 <div align="center">
 
-<img src="./docs/screenshots/MainOmniRoute.png" alt="Nadzorna plošča OmniRoute" width="820"/>
+<img src="./docs/screenshots/MainAgentProxy.png" alt="Nadzorna plošča AgentProxy" width="820"/>
 
 <br/>
 <br/>
 
-# 🚀 OmniRoute — brezplačni prehod za umetno inteligenco
+# 🚀 AgentProxy — brezplačni prehod za umetno inteligenco
 
-<img src="./docs/diagrams/readme-hero.svg" width="100%" alt="OmniRoute — Nikoli ne prenehajte programirati. Vsako orodje umetne inteligence → 355 ponudnikov — več kot 150 brezplačnih — prek ene končne točke. Claude Code, Codex, Cursor, Cline, Copilot in Antigravity povežite z BREZPLAČNIMI Claude / GPT / Gemini s samodejnim preklopom ob napaki. Kombinirano stiskanje RTK + Caveman prihrani 15–95 % žetonov (v povprečju približno 89 %) — nikoli več ne dosezite omejitev. 355 ponudnikov umetne inteligence · več kot 150 brezplačnih paketov · približno 1,51 milijarde brezplačnih žetonov/mesec · 19 strategij usmerjanja · začnite z $0."/>
+<img src="./docs/diagrams/readme-hero.svg" width="100%" alt="AgentProxy — Nikoli ne prenehajte programirati. Vsako orodje umetne inteligence → 355 ponudnikov — več kot 150 brezplačnih — prek ene končne točke. Claude Code, Codex, Cursor, Cline, Copilot in Antigravity povežite z BREZPLAČNIMI Claude / GPT / Gemini s samodejnim preklopom ob napaki. Kombinirano stiskanje RTK + Caveman prihrani 15–95 % žetonov (v povprečju približno 89 %) — nikoli več ne dosezite omejitev. 355 ponudnikov umetne inteligence · več kot 150 brezplačnih paketov · približno 1,51 milijarde brezplačnih žetonov/mesec · 19 strategij usmerjanja · začnite z $0."/>
 
 </div>
 
@@ -23,9 +23,9 @@
 
 </div>
 
-> Ročno združevanje brezplačnih paketov je zahtevno — na ducate SDK-jev, na ducate omejitev hitrosti in nobenega pregleda nad tem, koliko dejansko imate na voljo. OmniRoute katalogizira **446 vnosov brezplačnih paketov v 38 ponavljajočih se ključih skupin** in izračuna skupno število žetonov iz **20 skupin z objavljenim pozitivnim mesečnim proračunom**, pri čemer odstrani podvojitve skupnih skupin. Rezultat je vedno prikazan na nadzorni plošči (`/dashboard/free-tiers`).
+> Ročno združevanje brezplačnih paketov je zahtevno — na ducate SDK-jev, na ducate omejitev hitrosti in nobenega pregleda nad tem, koliko dejansko imate na voljo. AgentProxy katalogizira **446 vnosov brezplačnih paketov v 38 ponavljajočih se ključih skupin** in izračuna skupno število žetonov iz **20 skupin z objavljenim pozitivnim mesečnim proračunom**, pri čemer odstrani podvojitve skupnih skupin. Rezultat je vedno prikazan na nadzorni plošči (`/dashboard/free-tiers`).
 
-<img src="./docs/diagrams/free-tier-budget.svg" width="100%" alt="Kartica proračuna brezplačnih paketov OmniRoute: približno 1,51 milijarde brezplačnih žetonov na mesec, v prvem mesecu pa do približno 2,13 milijarde z dobroimetjem ob registraciji, iz 38 dokumentiranih ključev ponavljajočih se skupin, ki zajemajo 446 katalogiziranih vnosov brezplačnih paketov za eno samo končno točko. Pošten izračun z odstranitvijo podvojitev skupin — vsaka skupna skupina se upošteva samo enkrat, vključno z 20 ponavljajočimi se skupinami z objavljenim pozitivnim mesečnim proračunom žetonov; 13 ponudnikov je v katalogu tveganj pogojev označenih za izogibanje, da se lahko odločite sami. Vrstica proračuna vključuje Mistral 1B, LLM7 150M, Nara 150M, Gemini 60M in manjše skupine, poleg tega pa so dobroimetja ob registraciji za prvi mesec in trajno brezplačni ponudniki brez omejitve žetonov prikazani ločeno, tako da nikoli ne napihnejo skupnega števila. Trenutna poraba in preostanek sta na voljo na /dashboard/free-tiers."/>
+<img src="./docs/diagrams/free-tier-budget.svg" width="100%" alt="Kartica proračuna brezplačnih paketov AgentProxy: približno 1,51 milijarde brezplačnih žetonov na mesec, v prvem mesecu pa do približno 2,13 milijarde z dobroimetjem ob registraciji, iz 38 dokumentiranih ključev ponavljajočih se skupin, ki zajemajo 446 katalogiziranih vnosov brezplačnih paketov za eno samo končno točko. Pošten izračun z odstranitvijo podvojitev skupin — vsaka skupna skupina se upošteva samo enkrat, vključno z 20 ponavljajočimi se skupinami z objavljenim pozitivnim mesečnim proračunom žetonov; 13 ponudnikov je v katalogu tveganj pogojev označenih za izogibanje, da se lahko odločite sami. Vrstica proračuna vključuje Mistral 1B, LLM7 150M, Nara 150M, Gemini 60M in manjše skupine, poleg tega pa so dobroimetja ob registraciji za prvi mesec in trajno brezplačni ponudniki brez omejitve žetonov prikazani ločeno, tako da nikoli ne napihnejo skupnega števila. Trenutna poraba in preostanek sta na voljo na /dashboard/free-tiers."/>
 
 > Animirani povzetek strani `/dashboard/free-tiers` v živo. Celotna metodologija (odstranjevanje podvojitev skupin, ravni dobroimetja, pogoji ponudnikov): **[docs/reference/FREE_TIERS.md](docs/reference/FREE_TIERS.md)**.
 >
@@ -37,14 +37,14 @@
 
 <h3>
 
-⭐ Dodajte repozitoriju zvezdico, če vam je OMNIROUTE pomagal prihraniti denar in olajšal delo.
+⭐ Dodajte repozitoriju zvezdico, če vam je AGENTPROXY pomagal prihraniti denar in olajšal delo.
 
 </h3>
 
-[![Zvezdice](https://img.shields.io/github/stars/diegosouzapw/OmniRoute?style=social)](https://github.com/diegosouzapw/OmniRoute)
-<a href="https://trendshift.io/repositories/23589" target="_blank"><img src="https://trendshift.io/api/badge/repositories/23589" alt="diegosouzapw%2FOmniRoute | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
-[![Uvrstitev po zgodovini zvezdic](https://api.star-history.com/badge?repo=diegosouzapw/OmniRoute&theme=dark)](https://www.star-history.com/diegosouzapw/omniroute)
-[![olud.ai](https://olud.ai/badge.php?tool=diegosouzapw-omniroute)](https://olud.ai/project/diegosouzapw-omniroute.html)
+[![Zvezdice](https://img.shields.io/github/stars/khanhkit/AgentProxy?style=social)](https://github.com/khanhkit/AgentProxy)
+<a href="https://trendshift.io/repositories/23589" target="_blank"><img src="https://trendshift.io/api/badge/repositories/23589" alt="diegosouzapw%2FAgentProxy | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
+[![Uvrstitev po zgodovini zvezdic](https://api.star-history.com/badge?repo=khanhkit/AgentProxy&theme=dark)](https://www.star-history.com/khanhkit/agentproxy)
+[![olud.ai](https://olud.ai/badge.php?tool=diegosouzapw-agentproxy)](https://olud.ai/project/diegosouzapw-agentproxy.html)
 
 ### 💬 Pridružite se skupnosti
 
@@ -54,12 +54,12 @@
 [![Sledite @diegosouzapw na GitHubu](https://img.shields.io/github/followers/diegosouzapw?style=for-the-badge&logo=github&logoColor=white&label=Follow%20on%20GitHub&color=181717)](https://github.com/diegosouzapw)
 
 [![Discord](https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/U47eFqAXCn)
-[![Telegram](https://img.shields.io/badge/Telegram-26A5E4?style=for-the-badge&logo=telegram&logoColor=white)](https://t.me/omnirouteOficial)
+[![Telegram](https://img.shields.io/badge/Telegram-26A5E4?style=for-the-badge&logo=telegram&logoColor=white)](https://github.com/khanhkit/AgentProxy/discussions)
 [![WhatsApp globalno](https://img.shields.io/badge/WhatsApp_Global-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://chat.whatsapp.com/FvuCbrpZmQ6I85n2vW5QIC?s=cl&p=a&mlu=4)
 [![WhatsApp Brazilija](https://img.shields.io/badge/WhatsApp_Brasil-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://chat.whatsapp.com/KWgatljAjmbELQory59Oti?s=cl&p=a&mlu=4)
-[![Spletno mesto](https://img.shields.io/badge/Website-omniroute.online-blue?logo=google-chrome&logoColor=white)](https://omniroute.online)
+[![Spletno mesto](https://img.shields.io/badge/Website-agentproxy.online-blue?logo=google-chrome&logoColor=white)](https://agentproxy.example.com)
 
-**Vprašanja, nasveti o ponudnikih, načrt razvoja in podpora → [Discord](https://discord.gg/U47eFqAXCn) · [Telegram](https://t.me/omnirouteOficial) · WhatsApp [🌍 globalno](https://chat.whatsapp.com/FvuCbrpZmQ6I85n2vW5QIC?s=cl&p=a&mlu=4) / [🇧🇷 Brazilija](https://chat.whatsapp.com/KWgatljAjmbELQory59Oti?s=cl&p=a&mlu=4) / [Portal](https://portal.sthub.com.br/communities/groups/st-hub/channels/Omniroute-World-8kRjmK)**
+**Vprašanja, nasveti o ponudnikih, načrt razvoja in podpora → [Discord](https://discord.gg/U47eFqAXCn) · [Telegram](https://github.com/khanhkit/AgentProxy/discussions) · WhatsApp [🌍 globalno](https://chat.whatsapp.com/FvuCbrpZmQ6I85n2vW5QIC?s=cl&p=a&mlu=4) / [🇧🇷 Brazilija](https://chat.whatsapp.com/KWgatljAjmbELQory59Oti?s=cl&p=a&mlu=4) / [Portal](https://portal.sthub.com.br/communities/groups/st-hub/channels/AgentProxy-World-8kRjmK)**
 
 <br/>
 
@@ -84,12 +84,12 @@
 
 ## 🧩 Na voljo
 
-[![različica npm](https://img.shields.io/npm/v/omniroute?color=cb3837&logo=npm)](https://www.npmjs.com/package/omniroute)
-![Mesečno na NPM](https://img.shields.io/npm/dm/omniroute?label=npm/month&color=cb3837&logo=npm)
-[![Docker Hub](https://img.shields.io/docker/v/diegosouzapw/omniroute?label=Docker%20Hub&logo=docker&color=2496ED)](https://hub.docker.com/r/diegosouzapw/omniroute)
+[![različica npm](https://img.shields.io/npm/v/agentproxy?color=cb3837&logo=npm)](https://www.npmjs.com/package/agentproxy)
+![Mesečno na NPM](https://img.shields.io/npm/dm/agentproxy?label=npm/month&color=cb3837&logo=npm)
+[![Docker Hub](https://img.shields.io/docker/v/khanhkit/agentproxy?label=Docker%20Hub&logo=docker&color=2496ED)](https://github.com/khanhkit/AgentProxy/pkgs/container/agentproxy)
 [![Licenca: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)
-![Prenosi Docker](https://img.shields.io/docker/pulls/diegosouzapw/omniroute?label=docker%20pulls&logo=docker&color=2496ED)
-![Prenosi Electron](https://img.shields.io/github/downloads/diegosouzapw/omniroute/total?style=flat&label=electron%20downloads&logo=electron&color=47848F)
+![Prenosi Docker](https://img.shields.io/docker/pulls/khanhkit/agentproxy?label=docker%20pulls&logo=docker&color=2496ED)
+![Prenosi Electron](https://img.shields.io/github/downloads/khanhkit/agentproxy/total?style=flat&label=electron%20downloads&logo=electron&color=47848F)
 
 <table>
   <tr>
@@ -101,8 +101,8 @@
   <tr>
     <td align="right"><b>💡 Spoznajte</b></td>
     <td align="center"><a href="#-the-promise">💥 Obljuba</a></td>
-    <td align="center"><a href="#-why-omniroute">🤔 Zakaj OmniRoute</a></td>
-    <td align="center"><a href="#-what-sets-omniroute-apart">🏆 Kaj ga odlikuje</a></td>
+    <td align="center"><a href="#-why-agentproxy">🤔 Zakaj AgentProxy</a></td>
+    <td align="center"><a href="#-what-sets-agentproxy-apart">🏆 Kaj ga odlikuje</a></td>
   </tr>
   <tr>
     <td align="right"><b>⚙️ Funkcije</b></td>
@@ -113,18 +113,18 @@
   <tr>
     <td align="right"></td>
     <td align="center"><a href="#%EF%B8%8F-save-1595-tokens--automatically">🗜️ Stiskanje</a></td>
-    <td align="center"><a href="#%EF%B8%8F-where-omniroute-runs--anywhere">🖥️ Kje deluje</a></td>
+    <td align="center"><a href="#%EF%B8%8F-where-agentproxy-runs--anywhere">🖥️ Kje deluje</a></td>
     <td align="center"><a href="#-private--local-first">🔒 Zasebno</a></td>
   </tr>
   <tr>
     <td align="right"><b>👀 Oglejte si</b></td>
-    <td align="center"><a href="#-omniroute-in-action">🎬 V delovanju</a></td>
+    <td align="center"><a href="#-agentproxy-in-action">🎬 V delovanju</a></td>
     <td align="center"><a href="#-whats-new">✨ Novosti</a></td>
     <td align="center"><a href="#-compatible-clis--coding-agents">🤖 Združljivi vmesniki CLI</a></td>
   </tr>
   <tr>
     <td align="right"><b>💚 Podpora</b></td>
-    <td align="center"><a href="#-support-omniroute">💚 Podprite / donirajte</a></td>
+    <td align="center"><a href="#-support-agentproxy">💚 Podprite / donirajte</a></td>
     <td align="center"><a href="#-community--help">💬 Skupnost</a></td>
     <td align="center"><a href="#-sponsors">💖 Sponzorji</a></td>
   </tr>
@@ -200,7 +200,7 @@
 
 </div>
 
-<img src="./docs/diagrams/works-zero-config.svg" width="100%" alt="Deluje takoj po namestitvi — brez konfiguracije. Trije koraki: 1. Namestite — npm i -g omniroute, strežnik se zažene na localhost:20128. 2. Svoje orodje usmerite na http://localhost:20128/v1 — katero koli orodje, združljivo z OpenAI (Claude Code, Cursor, Cline). 3. Odgovori — za takojšen odgovor pokličite model auto, brez ključa API, registracije ali konfiguracije. Ponudnik brez ključev OpenCode Free je vnaprej povezan s kombinacijo auto, zato sveža namestitev deluje takoj."/>
+<img src="./docs/diagrams/works-zero-config.svg" width="100%" alt="Deluje takoj po namestitvi — brez konfiguracije. Trije koraki: 1. Namestite — npm i -g agentproxy, strežnik se zažene na localhost:20128. 2. Svoje orodje usmerite na http://localhost:20128/v1 — katero koli orodje, združljivo z OpenAI (Claude Code, Cursor, Cline). 3. Odgovori — za takojšen odgovor pokličite model auto, brez ključa API, registracije ali konfiguracije. Ponudnik brez ključev OpenCode Free je vnaprej povezan s kombinacijo auto, zato sveža namestitev deluje takoj."/>
 
 ```bash
 # Sveža namestitev brez poverilnic — `auto` že deluje:
@@ -209,7 +209,7 @@ curl http://localhost:20128/v1/chat/completions \
   -d '{"model":"auto","messages":[{"role":"user","content":"Hello!"}]}'
 ```
 
-<sub>Želite določen brezplačen zaledni sistem? Neposredno pokličite `oc/…` (OpenCode Free). Nato preidite na `auto` in prepustite izbiro OmniRoute.</sub>
+<sub>Želite določen brezplačen zaledni sistem? Neposredno pokličite `oc/…` (OpenCode Free). Nato preidite na `auto` in prepustite izbiro AgentProxy.</sub>
 
 <sub>📦 Skripti za hiter začetek za **Python, Node.js, PHP in cURL**, pripravljeni za kopiranje in lepljenje → [`examples/quickstart/`](examples/quickstart/)</sub>
 
@@ -228,15 +228,15 @@ curl http://localhost:20128/v1/chat/completions \
 
 <div align="center">
 
-# 🤔 Zakaj OmniRoute?
+# 🤔 Zakaj AgentProxy?
 
 </div>
 
-<img src="./docs/diagrams/why-pain-fix.svg" width="100%" alt="Zakaj OmniRoute — nehajte žonglirati z 10 nadzornimi ploščami, nedelujočimi ključi API in nepričakovanimi računi. Deset vsakodnevnih težav in rešitev: kvota poteče neizkoriščena → čim bolj izkoristite naročnine; omejitve hitrosti sredi programiranja → 4-stopenjski samodejni preklop ob napaki (naročnina → API → poceni → brezplačno); izhodi orodij porabljajo žetone → stiskanje RTK + Caveman (15–95 %); dragi API-ji → stroškovno optimizirano usmerjanje; vsako orodje zahteva lastno nastavitev → ena končna točka, ena nadzorna plošča; umetna inteligenca je blokirana → 3-stopenjski posredniški strežnik + prikrivanje TLS; nedelujoči ključi → 3-plastna odpornost (odklopniki, čas mirovanja ključev, zaklep modela); ekipa si deli eno naročnino → skupine ključev s kvotami pravične porazdelitve; pozivi potujejo prek tujega oblaka → lokalno usmerjena zasnova s ključi, šifriranimi z AES-256-GCM; brez pregleda nad porabo → sprotna analitika (uporaba, kvota, prihranki, zakasnitev p95)."/>
+<img src="./docs/diagrams/why-pain-fix.svg" width="100%" alt="Zakaj AgentProxy — nehajte žonglirati z 10 nadzornimi ploščami, nedelujočimi ključi API in nepričakovanimi računi. Deset vsakodnevnih težav in rešitev: kvota poteče neizkoriščena → čim bolj izkoristite naročnine; omejitve hitrosti sredi programiranja → 4-stopenjski samodejni preklop ob napaki (naročnina → API → poceni → brezplačno); izhodi orodij porabljajo žetone → stiskanje RTK + Caveman (15–95 %); dragi API-ji → stroškovno optimizirano usmerjanje; vsako orodje zahteva lastno nastavitev → ena končna točka, ena nadzorna plošča; umetna inteligenca je blokirana → 3-stopenjski posredniški strežnik + prikrivanje TLS; nedelujoči ključi → 3-plastna odpornost (odklopniki, čas mirovanja ključev, zaklep modela); ekipa si deli eno naročnino → skupine ključev s kvotami pravične porazdelitve; pozivi potujejo prek tujega oblaka → lokalno usmerjena zasnova s ključi, šifriranimi z AES-256-GCM; brez pregleda nad porabo → sprotna analitika (uporaba, kvota, prihranki, zakasnitev p95)."/>
 
 <div align="center">
 
-<img src="./docs/diagrams/tier-cascade.svg" width="100%" alt="Potek zahteve OmniRoute: vaš IDE ali CLI (Claude Code, Cursor, Cline …) pokliče eno lokalno končno točko (http://localhost:20128/v1); pametni usmerjevalnik OmniRoute (stiskanje RTK + Caveman, 19 strategij usmerjanja, odklopniki, prikrivanje TLS, MCP, A2A, zaščitne omejitve) lahko izvede preklop ob napaki med 4 ravnmi ponudnikov, dokler je na voljo primeren in delujoč cilj — 1. raven: naročnina, 2. raven: ključ API, 3. raven: poceni in 4. raven: brezplačno."/>
+<img src="./docs/diagrams/tier-cascade.svg" width="100%" alt="Potek zahteve AgentProxy: vaš IDE ali CLI (Claude Code, Cursor, Cline …) pokliče eno lokalno končno točko (http://localhost:20128/v1); pametni usmerjevalnik AgentProxy (stiskanje RTK + Caveman, 19 strategij usmerjanja, odklopniki, prikrivanje TLS, MCP, A2A, zaščitne omejitve) lahko izvede preklop ob napaki med 4 ravnmi ponudnikov, dokler je na voljo primeren in delujoč cilj — 1. raven: naročnina, 2. raven: ključ API, 3. raven: poceni in 4. raven: brezplačno."/>
 
 </div>
 
@@ -249,17 +249,17 @@ curl http://localhost:20128/v1/chat/completions \
 </div>
 
 <p align="center">
-  <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798&aff=omniroute">
+  <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798">
     <img src="public/sponsors/kimi-k3-banner.png" width="100%" alt="Kimi K3 — odprta vrhunska inteligenca · 2,8 bilijona parametrov · kontekst z 1 milijonom žetonov"/>
   </a>
 </p>
 
-> **Želite postati prijatelj odprte kode?** To so podjetja, ki podpirajo odprto kodo in pomagajo pri nadaljnjem razvoju projekta OmniRoute — mi pa javno objavimo, za kaj porabimo vsak žeton, ki nam ga namenijo. Pišite nam: [diegosouza.pw@outlook.com](mailto:diegosouza.pw@outlook.com)
+> **Želite postati prijatelj odprte kode?** To so podjetja, ki podpirajo odprto kodo in pomagajo pri nadaljnjem razvoju projekta AgentProxy — mi pa javno objavimo, za kaj porabimo vsak žeton, ki nam ga namenijo. Pišite nam: [diegosouza.pw@outlook.com](mailto:diegosouza.pw@outlook.com)
 
 <table>
   <tr>
     <td align="center" width="150">
-      <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798&aff=omniroute">
+      <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798">
         <picture>
           <source media="(prefers-color-scheme: dark)" srcset="public/providers/kimi-logomark-dark.svg">
           <img src="public/providers/kimi-logomark-light.svg" width="64" alt="Kimi (Moonshot AI)"/>
@@ -269,35 +269,35 @@ curl http://localhost:20128/v1/chat/completions \
       <img src="https://img.shields.io/badge/Founding_Friend-1783FF?style=flat-square" alt="Ustanovni prijatelj odprte kode"/>
     </td>
     <td>
-      Hvala podjetju <b>Kimi (Moonshot AI)</b>, našemu ustanovnemu prijatelju odprte kode, za podporo temu projektu! Kimi je laboratorij za umetno inteligenco, ki stoji za družinama modelov K2 in K3 z odprtimi utežmi — <b>Kimi K3</b> ponuja kontekstno okno z 1 milijonom žetonov, izvorno podporo za vid in vrhunske sposobnosti programiranja za delček cene zaprtih modelov, poleg tega pa že takoj deluje s Claude Code, Codex in vsemi programerskimi orodji, ki jih podpira OmniRoute.
+      Hvala podjetju <b>Kimi (Moonshot AI)</b>, našemu ustanovnemu prijatelju odprte kode, za podporo temu projektu! Kimi je laboratorij za umetno inteligenco, ki stoji za družinama modelov K2 in K3 z odprtimi utežmi — <b>Kimi K3</b> ponuja kontekstno okno z 1 milijonom žetonov, izvorno podporo za vid in vrhunske sposobnosti programiranja za delček cene zaprtih modelov, poleg tega pa že takoj deluje s Claude Code, Codex in vsemi programerskimi orodji, ki jih podpira AgentProxy.
       <br/><br/>
-      <b>Kaj omogoča Kimijeva podpora:</b> Dobropisi za Kimijev API poganjajo cevovod za izdaje OmniRoute, preverjene z umetno inteligenco — stopnjo <i>preverjanja združitev, ki jo poganja Kimi K3</i>, v kateri je vsak zahtevek za vključitev pregledan pred izdajo — ter vsakodnevni razvoj funkcij. Prvorazredna podpora za Kimi je na voljo po obeh poteh: prek neposrednega vmesnika <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798&aff=omniroute">Kimi API</a> (<code>kimi-k3</code>) in <a href="https://www.kimi.com/code?aff=omniroute">programerskega paketa Kimi Code</a> (OAuth in ključ API). OmniRoute je tudi prvi brazilski odprtokodni projekt v Kimijevem programu podpore. <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798&aff=omniroute"><b>Pridobite ključ za Kimi API s 15 % dodatnega dobroimetja →</b></a>
+      <b>Kaj omogoča Kimijeva podpora:</b> Dobropisi za Kimijev API poganjajo cevovod za izdaje AgentProxy, preverjene z umetno inteligenco — stopnjo <i>preverjanja združitev, ki jo poganja Kimi K3</i>, v kateri je vsak zahtevek za vključitev pregledan pred izdajo — ter vsakodnevni razvoj funkcij. Prvorazredna podpora za Kimi je na voljo po obeh poteh: prek neposrednega vmesnika <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798">Kimi API</a> (<code>kimi-k3</code>) in <a href="https://www.kimi.com/code">programerskega paketa Kimi Code</a> (OAuth in ključ API). AgentProxy je tudi prvi brazilski odprtokodni projekt v Kimijevem programu podpore. <a href="https://platform.kimi.ai?track_id=track-8197581fdd7d4139a0f562e4a03c3798"><b>Pridobite ključ za Kimi API s 15 % dodatnega dobroimetja →</b></a>
     </td>
   </tr>
   <tr>
     <td align="center" width="150">
-      <a href="https://cheaperinference.com/?utm_source=omniroute">
+      <a href="https://cheaperinference.com/">
         <img src="./public/providers/cli-generic.svg" width="64" alt="Cheaper Inference"/>
       </a>
       <br/><b>Cheaper Inference</b><br/><sub>cheaperinference.com</sub><br/><br/>
       <img src="https://img.shields.io/badge/Open_Source_Friend-31f889?style=flat-square&labelColor=04170d" alt="Prijatelj odprte kode"/>
     </td>
     <td>
-      Hvala podjetju <b>Cheaper Inference</b>, prijatelju odprte kode projekta OmniRoute, za podporo temu projektu! Cheaper Inference je prehod, ki ponudnike razvršča po stroških in preprodaja dostop do 42 vrhunskih modelov — Claude, GPT-5.x, Gemini, Kimi K3, GLM, DeepSeek, Grok in MiniMax — prek ene končne točke, združljive z OpenAI, pri čemer vsako zahtevo usmeri k najcenejšemu ustreznemu ponudniku in nikoli ne zaračuna več od maloprodajne cene izdelovalca modela.
+      Hvala podjetju <b>Cheaper Inference</b>, prijatelju odprte kode projekta AgentProxy, za podporo temu projektu! Cheaper Inference je prehod, ki ponudnike razvršča po stroških in preprodaja dostop do 42 vrhunskih modelov — Claude, GPT-5.x, Gemini, Kimi K3, GLM, DeepSeek, Grok in MiniMax — prek ene končne točke, združljive z OpenAI, pri čemer vsako zahtevo usmeri k najcenejšemu ustreznemu ponudniku in nikoli ne zaračuna več od maloprodajne cene izdelovalca modela.
       <br/><br/>
-      <b>Prvorazredna podpora v OmniRoute:</b> dokončevanje klepeta, izvorna končna točka <code>/v1/responses</code>, vid, klicanje orodij in 3 slikovni modeli (<code>grok-imagine</code>, <code>nano-banana-pro</code>, <code>nano-banana-2</code>, dostopni kot <code>cheaperinference/&lt;model&gt;</code>). <a href="https://cheaperinference.com/?utm_source=omniroute"><b>Pridobite ključ API →</b></a>
+      <b>Prvorazredna podpora v AgentProxy:</b> dokončevanje klepeta, izvorna končna točka <code>/v1/responses</code>, vid, klicanje orodij in 3 slikovni modeli (<code>grok-imagine</code>, <code>nano-banana-pro</code>, <code>nano-banana-2</code>, dostopni kot <code>cheaperinference/&lt;model&gt;</code>). <a href="https://cheaperinference.com/"><b>Pridobite ključ API →</b></a>
     </td>
   </tr>
 </table>
 
-<sub>Povezave z oznako <code>aff=omniroute</code> so partnerske povezave. Financirajo projekt brez dodatnih stroškov za vas.</sub>
+<sub>Povezave z oznako <code>aff=agentproxy</code> so partnerske povezave. Financirajo projekt brez dodatnih stroškov za vas.</sub>
 
 <br/>
 
 <details open>
 <summary><sub><b>🎟️ Promocije pridruženih ponudnikov</b> — brezplačni kuponi ob registraciji pri ponudnikih, ki nas ne sponzorirajo (kliknite za razširitev)</sub></summary>
 
-<sub><i>Ta razdelek je namenjen samo napotitvenim kodam in kodam kuponov. Sponzorirana partnerstva so navedena v zgornjem razdelku <b>🤝 Podpirajo nas naši prijatelji odprte kode</b>. OmniRoute nima sponzorskega ali partnerskega odnosa s tukaj navedenimi ponudniki — to so javni kuponi, ki jih lahko uporabi vsakdo.</i></sub>
+<sub><i>Ta razdelek je namenjen samo napotitvenim kodam in kodam kuponov. Sponzorirana partnerstva so navedena v zgornjem razdelku <b>🤝 Podpirajo nas naši prijatelji odprte kode</b>. AgentProxy nima sponzorskega ali partnerskega odnosa s tukaj navedenimi ponudniki — to so javni kuponi, ki jih lahko uporabi vsakdo.</i></sub>
 
 <table>
   <tr>
@@ -308,14 +308,14 @@ curl http://localhost:20128/v1/chat/completions \
       <br/><sub><b>AgentRouter</b></sub><br/><sub>agentrouter.org</sub>
     </td>
     <td>
-      <sub><b><a href="https://agentrouter.org/register?aff=70LM">AgentRouter</a></b> — registracija prek partnerske povezave · <b>100 USD brezplačnega dobroimetja</b> ob registraciji (brezplačni strežnik, zato pričakujte večjo zakasnitev — najprimernejši je za preizkušanje, ne za produkcijo). Prvorazredna podpora v OmniRoute od različice <b>v3.8.50</b>: dokončevanje klepeta, žični format, združljiv z Anthropic, in pot, združljiva z OpenAI. Razpoložljivi modeli vključujejo <code>claude-opus-4-8</code>, <code>claude-opus-5</code>, <code>gpt-5.6-sol</code> in druge. <b><a href="https://agentrouter.org/register?aff=70LM">Prevzemite svojih 100 USD →</a></b></sub>
+      <sub><b><a href="https://agentrouter.org/register?aff=70LM">AgentRouter</a></b> — registracija prek partnerske povezave · <b>100 USD brezplačnega dobroimetja</b> ob registraciji (brezplačni strežnik, zato pričakujte večjo zakasnitev — najprimernejši je za preizkušanje, ne za produkcijo). Prvorazredna podpora v AgentProxy od različice <b>v3.8.50</b>: dokončevanje klepeta, žični format, združljiv z Anthropic, in pot, združljiva z OpenAI. Razpoložljivi modeli vključujejo <code>claude-opus-4-8</code>, <code>claude-opus-5</code>, <code>gpt-5.6-sol</code> in druge. <b><a href="https://agentrouter.org/register?aff=70LM">Prevzemite svojih 100 USD →</a></b></sub>
       <br/><br/>
-      <sub>⚠️ <i>Partnerska povezava — OmniRoute nima sponzorskega ali partnerskega odnosa s tem ponudnikom.</i></sub>
+      <sub>⚠️ <i>Partnerska povezava — AgentProxy nima sponzorskega ali partnerskega odnosa s tem ponudnikom.</i></sub>
     </td>
   </tr>
 </table>
 
-<sub>Poznate drugega ponudnika z velikodušnim brezplačnim kuponom ob registraciji, ki bi koristil uporabnikom OmniRoute? Odprite težavo in dodali ga bomo sem.</sub>
+<sub>Poznate drugega ponudnika z velikodušnim brezplačnim kuponom ob registraciji, ki bi koristil uporabnikom AgentProxy? Odprite težavo in dodali ga bomo sem.</sub>
 
 </details>
 
@@ -329,11 +329,11 @@ curl http://localhost:20128/v1/chat/completions \
 
 <img src="./docs/diagrams/strategies-grid.svg" width="100%" alt="Animiranih je vseh 19 strategij usmerjanja kombinacij — ena ploščica na strategijo: priority, fill-first, weighted, round-robin, p2c, least-used, random, strict-random, cost-optimized, headroom, reset-window, reset-aware, context-relay, context-optimized, cache-optimized, lkgp, auto, fusion, pipeline. Kaj počne posamezna strategija, si oglejte v zgornji tabeli."/>
 
-> **Kombinacija** je veriga modelov, med katerimi OmniRoute usmerja **samodejno**. Če zmanjka kvote, ponudnik odpove ali stroški skokovito narastejo, lahko kombinacija preklopi na naslednji ustrezni zdrav model. 🛡️
+> **Kombinacija** je veriga modelov, med katerimi AgentProxy usmerja **samodejno**. Če zmanjka kvote, ponudnik odpove ali stroški skokovito narastejo, lahko kombinacija preklopi na naslednji ustrezni zdrav model. 🛡️
 
 ### ⚡ Brez konfiguracije — preprosto uporabite `auto`
 
-Kombinacije ni treba ustvariti. Nastavite model na `auto` (ali eno od različic) in OmniRoute iz vaših povezanih ponudnikov sestavi navidezno kombinacijo, ki jo sproti ocenjuje:
+Kombinacije ni treba ustvariti. Nastavite model na `auto` (ali eno od različic) in AgentProxy iz vaših povezanih ponudnikov sestavi navidezno kombinacijo, ki jo sproti ocenjuje:
 
 <table>
   <tr><th align="left">ID modela</th><th align="left">Kaj optimizira</th></tr>
@@ -462,7 +462,7 @@ Vseh **19** strategij — poljubno jih kombinirajte v posameznih korakih kombina
 
 ### 🧱 Odpornost je vgrajena (3 neodvisne plasti)
 
-<img src="./docs/diagrams/resilience-layers.svg" width="100%" alt="Odpornost sistema OmniRoute — 3 neodvisne plasti samodejnega okrevanja, pri čemer se za posamezno napako uporabi ustrezna plast. Plast 1, varovalka ponudnika (celoten ponudnik): sproži se samo ob 408/5xx, pragovi so OAuth 8× / ključ API 12× / lokalno 2×, po 60s/30s/15s se ponastavi v stanje HALF-OPEN za preizkus, okrevanje ob naslednji uporabi; ko je stanje OPEN, kombinacija preusmeri promet k naslednjemu ponudniku. Plast 2, premor povezave (en ključ/račun): osnovno 5s za OAuth / 3s za ključ API, eksponentno podaljševanje ×2 z zaščito pred hkratnim navalom zahtev, pri 429 upošteva Retry-After, uspeh izbriše celotno stanje napake; ključ v premoru se preskoči, sorodni ključi pa še naprej obdelujejo zahteve. Plast 3, zaklep modela (en model): omejitev 429 za posamezni model, lokalni 404 ali zavrnitve načina zaklenejo samo ta model — nikoli celotne povezave. Končna stanja (prepovedan, potekel, dobroimetje izčrpano) mora obravnavati upravljavec in niso premori."/>
+<img src="./docs/diagrams/resilience-layers.svg" width="100%" alt="Odpornost sistema AgentProxy — 3 neodvisne plasti samodejnega okrevanja, pri čemer se za posamezno napako uporabi ustrezna plast. Plast 1, varovalka ponudnika (celoten ponudnik): sproži se samo ob 408/5xx, pragovi so OAuth 8× / ključ API 12× / lokalno 2×, po 60s/30s/15s se ponastavi v stanje HALF-OPEN za preizkus, okrevanje ob naslednji uporabi; ko je stanje OPEN, kombinacija preusmeri promet k naslednjemu ponudniku. Plast 2, premor povezave (en ključ/račun): osnovno 5s za OAuth / 3s za ključ API, eksponentno podaljševanje ×2 z zaščito pred hkratnim navalom zahtev, pri 429 upošteva Retry-After, uspeh izbriše celotno stanje napake; ključ v premoru se preskoči, sorodni ključi pa še naprej obdelujejo zahteve. Plast 3, zaklep modela (en model): omejitev 429 za posamezni model, lokalni 404 ali zavrnitve načina zaklenejo samo ta model — nikoli celotne povezave. Končna stanja (prepovedan, potekel, dobroimetje izčrpano) mora obravnavati upravljavec in niso premori."/>
 
 <sub>📖 [Mehanizem Auto-Combo](docs/routing/AUTO-COMBO.md) · [Vodnik po odpornosti](docs/architecture/RESILIENCE_GUIDE.md)</sub>
 
@@ -470,22 +470,22 @@ Vseh **19** strategij — poljubno jih kombinirajte v posameznih korakih kombina
 
 <div align="center">
 
-## 🏆 Po čem OmniRoute izstopa
+## 🏆 Po čem AgentProxy izstopa
 
 </div>
 
-<img src="./docs/diagrams/comparison-table.svg" width="100%" alt="Po čem OmniRoute izstopa — časovno omejen posnetek primerjave funkcij z rešitvami 9router, OpenRouter, CLIProxyAPI in LiteLLM pri 13 zmogljivostih. OmniRoute: 355 ponudnikov, več kot 150 vgrajenih brezplačnih paketov, 19 strategij usmerjanja, stiskanje žetonov z 12 mehanizmi, vgrajen strežnik MCP s 110 orodji, protokol agentov A2A, trajni pomnilnik, varnostne omejitve, agenti v oblaku, prikrivanje prstnega odtisa TLS, Desktop/Termux/PWA in uporabniški vmesnik v 42 jezikih. OmniRoute je licenciran z licenco MIT in ga je mogoče samostojno gostiti. Zmogljivosti in število funkcij konkurentov se lahko spremenijo; glejte povezano metodologijo."/>
+<img src="./docs/diagrams/comparison-table.svg" width="100%" alt="Po čem AgentProxy izstopa — časovno omejen posnetek primerjave funkcij z rešitvami 9router, OpenRouter, CLIProxyAPI in LiteLLM pri 13 zmogljivostih. AgentProxy: 355 ponudnikov, več kot 150 vgrajenih brezplačnih paketov, 19 strategij usmerjanja, stiskanje žetonov z 12 mehanizmi, vgrajen strežnik MCP s 110 orodji, protokol agentov A2A, trajni pomnilnik, varnostne omejitve, agenti v oblaku, prikrivanje prstnega odtisa TLS, Desktop/Termux/PWA in uporabniški vmesnik v 42 jezikih. AgentProxy je licenciran z licenco MIT in ga je mogoče samostojno gostiti. Zmogljivosti in število funkcij konkurentov se lahko spremenijo; glejte povezano metodologijo."/>
 
-<sub>📊 Celotna metodologija &amp; podrobnosti o posameznih funkcijah v primerjavi z 9router, OpenRouter, CLIProxyAPI &amp; LiteLLM → [`docs/comparison/OMNIROUTE_VS_ALTERNATIVES.md`](docs/comparison/OMNIROUTE_VS_ALTERNATIVES.md)</sub>
+<sub>📊 Celotna metodologija &amp; podrobnosti o posameznih funkcijah v primerjavi z 9router, OpenRouter, CLIProxyAPI &amp; LiteLLM → [`docs/comparison/AGENTPROXY_VS_ALTERNATIVES.md`](docs/comparison/AGENTPROXY_VS_ALTERNATIVES.md)</sub>
 
 <br/>
 
-## 💚 Podprite OmniRoute
+## 💚 Podprite AgentProxy
 
-OmniRoute je licenciran z licenco MIT in se vzdržuje odprto. Če vam prihrani čas ali denar, ga lahko pomagate ohraniti neodvisnega na katerega koli od spodnjih načinov. Sponzorstvo nikoli ne vpliva na prednost pri usmerjanju; omogoča prepoznavnost, ne višje uvrstitve.
+AgentProxy je licenciran z licenco MIT in se vzdržuje odprto. Če vam prihrani čas ali denar, ga lahko pomagate ohraniti neodvisnega na katerega koli od spodnjih načinov. Sponzorstvo nikoli ne vpliva na prednost pri usmerjanju; omogoča prepoznavnost, ne višje uvrstitve.
 
 <table>
-  <tr><td nowrap>⭐ <b>Dodajte repozitorij med priljubljene</b></td><td>Brezplačno — resnično pomaga pri prepoznavnosti</td><td><a href="https://github.com/diegosouzapw/OmniRoute">Dodajte OmniRoute med priljubljene</a></td></tr>
+  <tr><td nowrap>⭐ <b>Dodajte repozitorij med priljubljene</b></td><td>Brezplačno — resnično pomaga pri prepoznavnosti</td><td><a href="https://github.com/khanhkit/AgentProxy">Dodajte AgentProxy med priljubljene</a></td></tr>
   <tr><td nowrap>🐙 <b>GitHub Sponsors</b></td><td>Enkratno ali mesečno · brez provizije platforme</td><td><a href="https://github.com/sponsors/diegosouzapw">github.com/sponsors/diegosouzapw</a></td></tr>
   <tr><td nowrap>☕ <b>Ko-fi</b></td><td>Hitra enkratna donacija, brez registracije donatorja</td><td><a href="https://ko-fi.com/diegosouzapw">ko-fi.com/diegosouzapw</a></td></tr>
   <tr><td nowrap>🧋 <b>Buy Me a Coffee</b></td><td>Majhna, neformalna gesta</td><td><a href="https://www.buymeacoffee.com/diegosouzapw">buymeacoffee.com/diegosouzapw</a></td></tr>
@@ -496,14 +496,14 @@ OmniRoute je licenciran z licenco MIT in se vzdržuje odprto. Če vam prihrani �
 
 **🇧🇷 PIX** — takoj, brez provizij (Brazilija)
 
-<img src="docs/assets/pix-qr.png" width="140" align="right" alt="Koda QR OmniRoute PIX"/>
+<img src="docs/assets/pix-qr.png" width="140" align="right" alt="Koda QR AgentProxy PIX"/>
 
 Ključ (naključen): `5d865059-bc44-483a-962d-43ceb80126eb`
 
 Pix za kopiranje in lepljenje:
 
 ```
-00020101021126580014br.gov.bcb.pix01365d865059-bc44-483a-962d-43ceb80126eb5204000053039865802BR5922OMNIROUTE CONTRIBUICAO6006BRASIL62070503***630475DD
+00020101021126580014br.gov.bcb.pix01365d865059-bc44-483a-962d-43ceb80126eb5204000053039865802BR5922AGENTPROXY CONTRIBUICAO6006BRASIL62070503***630475DD
 ```
 
 <br clear="right"/>
@@ -522,27 +522,27 @@ Pix za kopiranje in lepljenje:
 
 </details>
 
-🐛 Ste našli napako ali imate povratne informacije? Odprite [razpravo](https://github.com/diegosouzapw/OmniRoute/discussions).
+🐛 Ste našli napako ali imate povratne informacije? Odprite [razpravo](https://github.com/khanhkit/AgentProxy/discussions).
 
 <br/>
 
 <p><strong>Opombe za razvijalce:</strong> Projekt lahko med postopkom npm install/postinstall zaradi priročnosti za razvijalce ustvari lokalno datoteko <code>.env</code>. Ta datoteka je namenoma prezrta prek <code>.gitignore</code> (glejte <code>.gitignore</code>) in ne sme biti nikoli vključena v objavo — če jo pomotoma vključite, zamenjajte vse razkrite skrivnosti in odstranite datoteko iz zgodovine. Navodila za upravljanje lokalnih datotek okolja in skrivnosti so na voljo v <a href="docs/DEVELOPER-ENVIRONMENT.md">docs/DEVELOPER-ENVIRONMENT.md</a>.</p>
 
-## 📡 OmniRoute Radar
+## 📡 AgentProxy Radar
 
 Glavna ponudba brezplačne ravni ostaja **~1.51B žetonov/mesec** iz zgoraj dokumentiranega
 kataloga z odstranjenimi podvojitvami med skupnimi bazeni. Začasni dobropisi ob registraciji pri ponudnikih lahko prvi
 mesec ločeno povečajo na **~2.13B**. Radar je izbirna, podpisana prekrivna plast kataloga za uporabnike, ki želijo bolj ažurne
-podatke o razpoložljivosti brezplačnih modelov med izdajami OmniRoute; katalog skupnosti in vse obstoječe brezplačne
+podatke o razpoložljivosti brezplačnih modelov med izdajami AgentProxy; katalog skupnosti in vse obstoječe brezplačne
 funkcije ostajajo brezplačni.
 
 Podporniki lahko prejemajo katalog v živo in dodatne priložnosti ponudnikov. Njegova ločena,
 spremenljiva zgornja meja je **največ približno 3B žetonov/mesec**, odvisno od razpoložljivosti ponudnikov.
 Ta meja ni zajamčena: ponudniki lahko kadar koli spremenijo kvote, pogoje upravičenosti, modele ali regije.
 
-Radar je treba izrecno omogočiti in uporablja samo zahteve GET. Odjemalec OmniRoute ne nalaga pozivov, prometa, konfiguracije
+Radar je treba izrecno omogočiti in uporablja samo zahteve GET. Odjemalec AgentProxy ne nalaga pozivov, prometa, konfiguracije
 ponudnikov, telemetrije uporabe ali lokalnega stanja opuščenih obvestil. Več o upravičenosti in
-trenutnem katalogu je na voljo na **[radar.omniroute.online/planos](https://radar.omniroute.online/planos)**.
+trenutnem katalogu je na voljo na **[radar.agentproxy.online/planos](https://radar.agentproxy.example.com/planos)**.
 
 <br/>
 
@@ -560,19 +560,19 @@ trenutnem katalogu je na voljo na **[radar.omniroute.online/planos](https://rada
 - **🗜️ Okrepljeno stiskanje** — privzeto omogočena zaščita pred čezmernim razširjanjem, paketi Caveman za DE / FR / JA + kitajščino (wényán) ter filtri RTK za Gradle in .NET. → [Stiskanje](docs/compression/COMPRESSION_ENGINES.md)
 - **💸 Pošten prikaz pavšalnih stroškov** — ponudniki z naročnino oziroma paketom za programiranje v analitiki stroškov prikazujejo **$0**; ocenjevanje proračuna, kvot in usmerjanja se nadaljuje. → [Referenca API-ja](docs/reference/API_REFERENCE.md)
 - **⚖️ Usmerjanje Quota-Share** — pravično razdeli kvoto skupnega računa med združene ključe in neizkoriščene dele posodi drugim. → [Vodnik za odpornost](docs/architecture/RESILIENCE_GUIDE.md)
-- **🤖 Nastavitev CLI-ja/agenta z enim ukazom** — 13 registriranih ukazov `setup-*`; `omniroute run` zažene 7 CLI-jev (Claude Code, Codex, Aider, Goose, OpenCode, Qwen Code, Gemini CLI); `omniroute configure` podpira 10 ciljev z interaktivnim izbirnikom ponudnika in modela ter priljubljenimi možnostmi za posamezni kontekst. → [Integracije CLI-ja](docs/guides/CLI-INTEGRATIONS.md)
-- **🛰️ Oddaljeni način** — upravljajte oddaljeno instanco OmniRoute z žetoni z omejenim obsegom (`connect` / `contexts` / `tokens`) in pomočnikom OAuth `antigravity` za namestitve na VPS. → [Oddaljeni način](docs/guides/REMOTE-MODE.md)
+- **🤖 Nastavitev CLI-ja/agenta z enim ukazom** — 13 registriranih ukazov `setup-*`; `agentproxy run` zažene 7 CLI-jev (Claude Code, Codex, Aider, Goose, OpenCode, Qwen Code, Gemini CLI); `agentproxy configure` podpira 10 ciljev z interaktivnim izbirnikom ponudnika in modela ter priljubljenimi možnostmi za posamezni kontekst. → [Integracije CLI-ja](docs/guides/CLI-INTEGRATIONS.md)
+- **🛰️ Oddaljeni način** — upravljajte oddaljeno instanco AgentProxy z žetoni z omejenim obsegom (`connect` / `contexts` / `tokens`) in pomočnikom OAuth `antigravity` za namestitve na VPS. → [Oddaljeni način](docs/guides/REMOTE-MODE.md)
 - **🧭 Pametnejše samodejno usmerjanje** — kombinacije `auto/<category>:<tier>`, **Fusion** (skupina modelov + ocenjevalec), usmerjanje glede na nalogo ter preglasitve modela, načina in proračuna v USD za posamezno zahtevo. → [Auto-Combo](docs/routing/AUTO-COMBO.md)
 - **🗜️ Modularno stiskanje** — 12 sestavljivih pogonov + Compression Studios: LLMLingua-2, dvonivojski Ultra, omniglyph, preverjanje zvestobe pri vsakem koraku, GCF v3.2 in urejevalnik za spreminjanje vrstnega reda z vlečenjem. → [Stiskanje](docs/compression/COMPRESSION_ENGINES.md)
 - **🕵️ Transparentno dešifriranje MITM (TPROXY)** — prestrezanje CLI-jev, ki prezrejo okoljske spremenljivke posredniškega strežnika, z overiteljem potrdil za posamezni SNI in namestitvenikom shrambe zaupanja. → [MITM/TPROXY](docs/security/MITM-TPROXY-DECRYPT.md)
-- **💸 Telemetrija stroškov povsod** — glave `X-OmniRoute-*` s stroški in uporabo na vsaki končni točki, glava s prihranki ob zadetku predpomnilnika in kvote porabe v USD za posamezni ključ. → [Referenca API-ja](docs/reference/API_REFERENCE.md)
-- **🧠 Pomnilnik pod vašim nadzorom** — privzeto izklopljen, izbirna kvantizacija vektorjev int8 in tipsko določeno pojemanje ter `x-omniroute-no-memory` za posamezno zahtevo. → [Pomnilnik](docs/frameworks/MEMORY.md)
+- **💸 Telemetrija stroškov povsod** — glave `X-AgentProxy-*` s stroški in uporabo na vsaki končni točki, glava s prihranki ob zadetku predpomnilnika in kvote porabe v USD za posamezni ključ. → [Referenca API-ja](docs/reference/API_REFERENCE.md)
+- **🧠 Pomnilnik pod vašim nadzorom** — privzeto izklopljen, izbirna kvantizacija vektorjev int8 in tipsko določeno pojemanje ter `x-agentproxy-no-memory` za posamezno zahtevo. → [Pomnilnik](docs/frameworks/MEMORY.md)
 - **🛡️ Varnost** — zaščita pred vbrizgavanjem pozivov na vsaki poti LLM (zbirka preizkusov red-team), izbirna zaščita z maskiranjem poverilnic (v obeh smereh zakrije razkrite ključe API in skrivnosti), brezplačno spletno iskanje DuckDuckGo kot skrajna možnost in izbirna prijavna zapora OIDC za nadzorno ploščo (prijava z geslom je vedno na voljo). → [Zaščitni ukrepi](docs/security/GUARDRAILS.md)
 - **🖼️ Nove končne točke** — `/v1/ocr` (Mistral OCR) in `/v1/audio/translations` (v slogu Whisper) dopolnjujeta nabor medijskih vmesnikov. → [Referenca API-ja](docs/reference/API_REFERENCE.md)
 - **🎨 Ustvarjanje slik, videoposnetkov in zvoka** — en API za predstavnostne vsebine: videoposnetki xAI Grok Imagine in Novita AI, ComfyUI, Magnific, Adobe Firefly, Segmind ter ponudniki govora, kot je ElevenLabs. → [Referenca API-ja](docs/reference/API_REFERENCE.md)
 - **🌍 Uvajanje in delovanje** — `basePath` za obratni posredniški strežnik, samodejno zaznavanje jezika brskalnika, sledenje napravam za posamezni ključ, zaupanje MITM brez pravic root in lokalizacija zh-TW. → [Okolje](docs/reference/ENVIRONMENT.md)
 - **🤝 Več ponudnikov in agentov** — agenti v oblaku (Codex Cloud, Cursor, Devin, Jules), Grok Build (xAI) z brskalnikom in prijavo OAuth, prvovrstna kartica Ollama, Claude Opus 5 in Sonnet 5, uradno partnerstvo s Kimi (Code/Web/Moonshot), Zed, Requesty, SenseNova, Yuanbao, Agnes AI … ter osvežen **katalog 352 ponudnikov**. → [Ponudniki](docs/reference/PROVIDER_REFERENCE.md)
-- **📡 Preglednost usmerjanja** — vsak odgovor vsebuje glavo `X-OmniRoute-Decision`, ki navede strategijo, ponudnika in zakasnitev obdelave; nova kombinirana strategija `cache-optimized` in dejavnik Auto-Combo `cacheAffinity` ponavljajoče se zahteve usmerita nazaj k povezavi s predpomnjeno predpono, končna točka samo za branje `/v1/auto-combo/{channel}/candidates` pa razkrije trenutno zbirko kandidatov kanala `auto/*`. → [Auto-Combo](docs/routing/AUTO-COMBO.md)
+- **📡 Preglednost usmerjanja** — vsak odgovor vsebuje glavo `X-AgentProxy-Decision`, ki navede strategijo, ponudnika in zakasnitev obdelave; nova kombinirana strategija `cache-optimized` in dejavnik Auto-Combo `cacheAffinity` ponavljajoče se zahteve usmerita nazaj k povezavi s predpomnjeno predpono, končna točka samo za branje `/v1/auto-combo/{channel}/candidates` pa razkrije trenutno zbirko kandidatov kanala `auto/*`. → [Auto-Combo](docs/routing/AUTO-COMBO.md)
 - **⚡ Lokalna zmogljivost in infrastruktura** — lokalni Redis z enim klikom, orodja za uvajanje relejev Cloudflare Workers / Deno Deploy ter Bifrost in Mux kot nadzorovani vdelani storitvi. → [Vdelane storitve](docs/frameworks/EMBEDDED-SERVICES.md)
 - **🧩 Vključeno je tudi** — ogrodje za vtičnike in tržnica, ogrodja veščin Omni/Agent/GitHub, integracija s trezorjem Obsidian (22 orodij MCP), API-ji Batch in Files, združljivi z OpenAI, semantični predpomnilnik odgovorov, igrifikacija z lestvicami najboljših, odkrivanje agentov ACP (15 vgrajenih agentov), načrtovani izvoz dnevnikov v BigQuery, vbrizgavanje napak `auto/chaos`, most do bota Telegram, upravljalnik različic v aplikaciji in lestvice brezplačnih ponudnikov LMArena-ELO. → [Dokumentacija](docs/README.md)
 
@@ -625,29 +625,29 @@ trenutnem katalogu je na voljo na **[radar.omniroute.online/planos](https://rada
 <b>＋ deluje tudi z</b> · Kiro · Command Code · Antigravity · Windsurf · AMP · <b>katerim koli orodjem, združljivim z OpenAI</b>
 </div>
 
-<sub>📖 Navodila za nastavitev vseh 36 orodij (26 orodij CLI za programiranje + 10 agentov CLI) → [`docs/reference/CLI-TOOLS.md`](docs/reference/CLI-TOOLS.md) · 🧩 Vtičnik OpenCode → [`@omniroute/opencode-provider`](https://www.npmjs.com/package/@omniroute/opencode-provider)</sub>
+<sub>📖 Navodila za nastavitev vseh 36 orodij (26 orodij CLI za programiranje + 10 agentov CLI) → [`docs/reference/CLI-TOOLS.md`](docs/reference/CLI-TOOLS.md) · 🧩 Vtičnik OpenCode → [`@agentproxy/opencode-provider`](https://www.npmjs.com/package/@agentproxy/opencode-provider)</sub>
 
 </div>
 
 <br/>
 
-**Zaženite kateri koli podprti CLI prek OmniRoute z enim ukazom** — brez zapisovanja konfiguracijskih datotek,
+**Zaženite kateri koli podprti CLI prek AgentProxy z enim ukazom** — brez zapisovanja konfiguracijskih datotek,
 poverilnice se vstavijo za vsak proces, Qwen/Gemini pa dobita začasen izoliran domači imenik:
 
 ```bash
-omniroute run claude   --model openai/gpt-5.4          # Claude Code
-omniroute run codex    --model glm/glm-5.2             # OpenAI Codex CLI
-omniroute run aider    --model glm/glm-5.2 -- --message "reply OK"
-omniroute run goose    --model glm/glm-5.2
-omniroute run opencode --model glm/glm-5.2 -- run "reply OK"
-omniroute run qwen     --model glm/glm-5.2 -- -p "reply OK"
-omniroute run gemini   --model glm/glm-5.2 -- --skip-trust -p "reply OK"
+agentproxy run claude   --model openai/gpt-5.4          # Claude Code
+agentproxy run codex    --model glm/glm-5.2             # OpenAI Codex CLI
+agentproxy run aider    --model glm/glm-5.2 -- --message "reply OK"
+agentproxy run goose    --model glm/glm-5.2
+agentproxy run opencode --model glm/glm-5.2 -- run "reply OK"
+agentproxy run qwen     --model glm/glm-5.2 -- -p "reply OK"
+agentproxy run gemini   --model glm/glm-5.2 -- --skip-trust -p "reply OK"
 
 # Ali interaktivno izberite ponudnika in model ter zapišite lastno konfiguracijo orodja:
-omniroute configure codex          # tudi: claude opencode qwen aider goose gemini cline continue kilo
+agentproxy configure codex          # tudi: claude opencode qwen aider goose gemini cline continue kilo
 ```
 
-Vsak ukaz upošteva aktivni oddaljeni kontekst (`omniroute connect <host>`), `--dry-run`
+Vsak ukaz upošteva aktivni oddaljeni kontekst (`agentproxy connect <host>`), `--dry-run`
 prikaže natančne spremenljivke okolja in argumente brez izvajanja, možnost `--api-key-env NAME` pa prepreči,
 da bi se skrivnosti zapisale v zgodovino lupine. → [Integracije CLI](docs/guides/CLI-INTEGRATIONS.md)
 
@@ -724,7 +724,7 @@ da bi se skrivnosti zapisale v zgodovino lupine. → [Integracije CLI](docs/guid
 
 <div align="center">
 
-## 🖥️ Kje deluje OmniRoute — povsod
+## 🖥️ Kje deluje AgentProxy — povsod
 
 </div>
 
@@ -732,14 +732,14 @@ da bi se skrivnosti zapisale v zgodovino lupine. → [Integracije CLI](docs/guid
 
 <table>
   <tr><th align="left">Platforma</th><th align="left">Namestitev</th><th align="left">Prednosti</th></tr>
-  <tr><td align="left" nowrap>📦 <b>npm (globalno)</b></td><td align="left" nowrap><code>npm install -g omniroute</code></td><td align="left">En ukaz, kateri koli operacijski sistem</td></tr>
-  <tr><td align="left" nowrap>🐳 <b>Docker</b></td><td align="left" nowrap><code>docker run … diegosouzapw/omniroute</code></td><td align="left">Več arhitektur: <b>AMD64 + ARM64</b></td></tr>
+  <tr><td align="left" nowrap>📦 <b>npm (globalno)</b></td><td align="left" nowrap><code>npm install -g agentproxy</code></td><td align="left">En ukaz, kateri koli operacijski sistem</td></tr>
+  <tr><td align="left" nowrap>🐳 <b>Docker</b></td><td align="left" nowrap><code>docker run … khanhkit/agentproxy</code></td><td align="left">Več arhitektur: <b>AMD64 + ARM64</b></td></tr>
   <tr><td align="left" nowrap>🖥️ <b>Namizje (Electron)</b></td><td align="left" nowrap><code>npm run electron:build</code></td><td align="left">Izvorno okno + sistemski pladenj — <b>Windows / macOS / Linux</b></td></tr>
   <tr><td align="left" nowrap>💪 <b>ARM</b></td><td align="left" nowrap>izvorni <code>arm64</code></td><td align="left">Raspberry Pi, strežniki ARM, Apple Silicon</td></tr>
-  <tr><td align="left" nowrap>📱 <b>Android (Termux)</b></td><td align="left" nowrap><code>pkg install nodejs && npx -y omniroute</code></td><td align="left">Deluje <b>v vašem telefonu</b>, 24 ur na dan, brez korenskega dostopa</td></tr>
+  <tr><td align="left" nowrap>📱 <b>Android (Termux)</b></td><td align="left" nowrap><code>pkg install nodejs && npx -y agentproxy</code></td><td align="left">Deluje <b>v vašem telefonu</b>, 24 ur na dan, brez korenskega dostopa</td></tr>
   <tr><td align="left" nowrap>📲 <b>PWA</b></td><td align="left" nowrap>"Dodaj na začetni zaslon"</td><td align="left">Celozaslonsko delovanje, brez povezave, namestitev iz brskalnika</td></tr>
-  <tr><td align="left" nowrap>🧩 <b>Vtičnik OpenCode</b></td><td align="left" nowrap><code>@omniroute/opencode-provider</code></td><td align="left">Izvorna integracija z OpenCode</td></tr>
-  <tr><td align="left" nowrap>🤖 <b>VS Code Copilot Chat</b></td><td align="left" nowrap>namestite razširitev <b>OmniCopilot</b></td><td align="left">Vsak model OmniRoute v izvornem izbirniku Copilot Chat — stabilna različica in različica Insiders</td></tr>
+  <tr><td align="left" nowrap>🧩 <b>Vtičnik OpenCode</b></td><td align="left" nowrap><code>@agentproxy/opencode-provider</code></td><td align="left">Izvorna integracija z OpenCode</td></tr>
+  <tr><td align="left" nowrap>🤖 <b>VS Code Copilot Chat</b></td><td align="left" nowrap>namestite razširitev <b>OmniCopilot</b></td><td align="left">Vsak model AgentProxy v izvornem izbirniku Copilot Chat — stabilna različica in različica Insiders</td></tr>
   <tr><td align="left" nowrap>🛠️ <b>Iz izvorne kode</b></td><td align="left" nowrap><code>npm install && npm run dev</code></td><td align="left">Prilagajajte ga in prispevajte</td></tr>
 </table>
 
@@ -749,18 +749,18 @@ da bi se skrivnosti zapisale v zgodovino lupine. → [Integracije CLI](docs/guid
 
 <div align="center">
 
-### 🧩 Novo: OmniRoute v izvornem klepetu Copilot Chat urejevalnika VS Code
+### 🧩 Novo: AgentProxy v izvornem klepetu Copilot Chat urejevalnika VS Code
 
 </div>
 
-> Brez nove stranske vrstice in novega uporabniškega vmesnika za klepet — vsak model, ki ga ponuja OmniRoute, se prikaže neposredno v
+> Brez nove stranske vrstice in novega uporabniškega vmesnika za klepet — vsak model, ki ga ponuja AgentProxy, se prikaže neposredno v
 > **izbirniku modelov Copilot Chat, ki ga že uporabljate**. Od različice VS Code 1.122 modeli ponudnikov delujejo
 > brez prijave v GitHub ali naročnine na Copilot — agentski način, klicanje orodij in vid, vse
 > brezplačno.
 
 Namestite razširitev **[OmniCopilot](https://github.com/diegosouzapw/OmniCopilot)** in jo usmerite
-na svoj strežnik OmniRoute (privzeto `localhost:20128`), nato odprite Copilot Chat → izbirnik modelov
-→ **Upravljanje modelov…** → **OmniRoute**.
+na svoj strežnik AgentProxy (privzeto `localhost:20128`), nato odprite Copilot Chat → izbirnik modelov
+→ **Upravljanje modelov…** → **AgentProxy**.
 
 <table>
   <tr><th align="left">Trgovina</th><th align="left">Povezava</th><th align="left">Deluje z</th></tr>
@@ -768,7 +768,7 @@ na svoj strežnik OmniRoute (privzeto `localhost:20128`), nato odprite Copilot C
   <tr><td align="left" nowrap>🔓 <b>Open VSX Registry</b></td><td align="left"><a href="https://open-vsx.org/extension/diegosouzapw/omnicopilot">Namesti →</a></td><td align="left">Cursor, Windsurf, VSCodium, Theia, code-server, Gitpod, Antigravity, Kiro…</td></tr>
 </table>
 
-V urejevalniku odprite pogled **Razširitve**, poiščite **"OmniRoute"** in kliknite **Namesti**
+V urejevalniku odprite pogled **Razširitve**, poiščite **"AgentProxy"** in kliknite **Namesti**
 — v obeh trgovinah deluje enako. Izvorna koda, prijave težav in navodila za objavo so na voljo na
 [diegosouzapw/OmniCopilot](https://github.com/diegosouzapw/OmniCopilot).
 
@@ -782,7 +782,7 @@ V urejevalniku odprite pogled **Razširitve**, poiščite **"OmniRoute"** in kli
 
 </div>
 
-<img src="./docs/diagrams/privacy-local.svg" width="100%" alt="Zasebno in lokalno zasnovano — prehod in nadzorna ravnina OmniRoute se izvajata v vašem računalniku. Pozivi se pošljejo ponudniku v zaledju, izbranemu za posamezno zahtevo; OmniRoute ne dodaja nobenega gostovanega vmesnega koraka za obdelavo pozivov, telemetrija pa je privzeto onemogočena. Poverilnice so pri shranjevanju šifrirane z AES-256-GCM; nadzorni mehanizmi vključujejo omejevanje obsega ključev API, filtriranje naslovov IP, omejitve hitrosti, zaščito pred vbrizgavanjem pozivov, odstranjevanje glav ponudnika v zaledju, izbirno zakrivanje osebno določljivih podatkov, prečiščene napake in lokalno revizijsko sled SQLite. OmniRoute je licenciran pod licenco MIT in ga lahko gostite sami."/>
+<img src="./docs/diagrams/privacy-local.svg" width="100%" alt="Zasebno in lokalno zasnovano — prehod in nadzorna ravnina AgentProxy se izvajata v vašem računalniku. Pozivi se pošljejo ponudniku v zaledju, izbranemu za posamezno zahtevo; AgentProxy ne dodaja nobenega gostovanega vmesnega koraka za obdelavo pozivov, telemetrija pa je privzeto onemogočena. Poverilnice so pri shranjevanju šifrirane z AES-256-GCM; nadzorni mehanizmi vključujejo omejevanje obsega ključev API, filtriranje naslovov IP, omejitve hitrosti, zaščito pred vbrizgavanjem pozivov, odstranjevanje glav ponudnika v zaledju, izbirno zakrivanje osebno določljivih podatkov, prečiščene napake in lokalno revizijsko sled SQLite. AgentProxy je licenciran pod licenco MIT in ga lahko gostite sami."/>
 
 <sub>📖 [Avtorizacija](docs/architecture/AUTHZ_GUIDE.md) · [Zaščitni mehanizmi](docs/security/GUARDRAILS.md) · [Skladnost](docs/security/COMPLIANCE.md)</sub>
 
@@ -794,28 +794,28 @@ V urejevalniku odprite pogled **Razširitve**, poiščite **"OmniRoute"** in kli
 
 </div>
 
-> Poleg strežnika je OmniRoute **celovito ukaznovrstično nadzorno središče** z **več kot 80 ukazi** in odprtimi protokoli za agente, zato ga lahko agent umetne inteligence upravlja **samostojno**.
+> Poleg strežnika je AgentProxy **celovito ukaznovrstično nadzorno središče** z **več kot 80 ukazi** in odprtimi protokoli za agente, zato ga lahko agent umetne inteligence upravlja **samostojno**.
 
 ### ⌨️ Pravi CLI (ne le `start`)
 
 ```bash
-omniroute               # zaženi prehod in nadzorno ploščo (vrata 20128)
-omniroute chat          # interaktivni odjemalec za klepet TUI (poševni ukazi: /model /combo /skill /memory)
-omniroute setup         # voden čarovnik za prvi zagon
-omniroute doctor        # diagnosticiraj ponudnike, vrata in izvorne odvisnosti
+agentproxy               # zaženi prehod in nadzorno ploščo (vrata 20128)
+agentproxy chat          # interaktivni odjemalec za klepet TUI (poševni ukazi: /model /combo /skill /memory)
+agentproxy setup         # voden čarovnik za prvi zagon
+agentproxy doctor        # diagnosticiraj ponudnike, vrata in izvorne odvisnosti
 ```
 
-### 🛰️ Oddaljeni način — CLI izvajajte tukaj, OmniRoute pa na VPS-u
+### 🛰️ Oddaljeni način — CLI izvajajte tukaj, AgentProxy pa na VPS-u
 
-Je OmniRoute na strežniku? Upravljajte ga iz prenosnika z **istim CLI-jem**. Enkrat se prijavite
+Je AgentProxy na strežniku? Upravljajte ga iz prenosnika z **istim CLI-jem**. Enkrat se prijavite
 z dostopnim žetonom z omejenim obsegom; nato vsak ukaz cilja oddaljeni strežnik.
 
 ```bash
-omniroute connect 192.168.0.15            # geslo → žeton z omejenim obsegom, shranjen kot kontekst
-omniroute models list                     # ← izvede se na ODDALJENEM strežniku
-omniroute configure codex                 # ← izbere oddaljeni model in zapiše lokalni profil Codex
-omniroute tokens create --name ci --scope read   # ustvari žetone z ožjim obsegom za druge naprave
-omniroute contexts use default            # ← preklopi nazaj na lokalni strežnik
+agentproxy connect 192.168.0.15            # geslo → žeton z omejenim obsegom, shranjen kot kontekst
+agentproxy models list                     # ← izvede se na ODDALJENEM strežniku
+agentproxy configure codex                 # ← izbere oddaljeni model in zapiše lokalni profil Codex
+agentproxy tokens create --name ci --scope read   # ustvari žetone z ožjim obsegom za druge naprave
+agentproxy contexts use default            # ← preklopi nazaj na lokalni strežnik
 ```
 
 Žetoni imajo obseg `read` / `write` / `admin`; poti, ki zaganjajo procese, ostanejo omejene na povratno zanko.
@@ -823,28 +823,28 @@ omniroute contexts use default            # ← preklopi nazaj na lokalni strež
 
 <div align="left">
 
-<img src="./docs/diagrams/cli-terminal.svg" width="50%" alt="Animiran terminalski prikaz CLI-ja OmniRoute — omniroute providers list, omniroute combo list in omniroute health — ki se pomika skozi nabor 86 ukazov najvišje ravni: providers · oauth · keys · combo · nodes · models · cache · compression · cost · usage · quota · health · resilience · telemetry · logs · audit · mcp · a2a · cloud · memory · skills · eval · tunnel · backup · sync · webhooks · policy · pricing · translator · simulate …"/>
+<img src="./docs/diagrams/cli-terminal.svg" width="50%" alt="Animiran terminalski prikaz CLI-ja AgentProxy — agentproxy providers list, agentproxy combo list in agentproxy health — ki se pomika skozi nabor 86 ukazov najvišje ravni: providers · oauth · keys · combo · nodes · models · cache · compression · cost · usage · quota · health · resilience · telemetry · logs · audit · mcp · a2a · cloud · memory · skills · eval · tunnel · backup · sync · webhooks · policy · pricing · translator · simulate …"/>
 
 </div>
 
-### 🤝 Povežite agenta — in ta bo sam upravljal OmniRoute
+### 🤝 Povežite agenta — in ta bo sam upravljal AgentProxy
 
-OmniRoute izpostavite prek **MCP-ja**, **A2A-ja**, **API-ja REST**, **spletnih kavljev** ali **oddaljenega CLI-ja** — vsak zmogljiv agent (ali vaša lastna koda) dobi ključe do celotnega prehoda: usmerjanja, ponudnikov, kombinacij, predpomnilnika, stiskanja in pomnilnika — vse avtonomno. Spodnje končne točke HTTP so na voljo pod `http://localhost:20128`.
+AgentProxy izpostavite prek **MCP-ja**, **A2A-ja**, **API-ja REST**, **spletnih kavljev** ali **oddaljenega CLI-ja** — vsak zmogljiv agent (ali vaša lastna koda) dobi ključe do celotnega prehoda: usmerjanja, ponudnikov, kombinacij, predpomnilnika, stiskanja in pomnilnika — vse avtonomno. Spodnje končne točke HTTP so na voljo pod `http://localhost:20128`.
 
 <table>
   <tr><th align="left">Vmesnik</th><th align="left">Končna točka / ukaz</th><th align="left">Namen uporabe</th></tr>
-  <tr><td align="left" nowrap>🧰 <b>MCP (stdio)</b></td><td align="left" nowrap><code>omniroute --mcp</code></td><td align="left">Povežite s Claude Desktop, Cursorjem ali katerim koli odjemalcem MCP</td></tr>
+  <tr><td align="left" nowrap>🧰 <b>MCP (stdio)</b></td><td align="left" nowrap><code>agentproxy --mcp</code></td><td align="left">Povežite s Claude Desktop, Cursorjem ali katerim koli odjemalcem MCP</td></tr>
   <tr><td align="left" nowrap>🌊 <b>MCP (HTTP)</b></td><td align="left" nowrap><code>/api/mcp/stream</code></td><td align="left">Oddaljeni MCP — <b>110 orodij</b>, 33 obsegov (uveljavljanje je izbirno), popolna revizijska sled</td></tr>
   <tr><td align="left" nowrap>📡 <b>MCP (SSE)</b></td><td align="left" nowrap><code>/api/mcp/sse</code></td><td align="left">Pretočni prenos MCP</td></tr>
   <tr><td align="left" nowrap>🤝 <b>A2A</b></td><td align="left" nowrap><code>/.well-known/agent.json</code></td><td align="left">Komunikacija med agenti, <b>JSON-RPC 2.0</b> + SSE, 6 spretnosti</td></tr>
   <tr><td align="left" nowrap>🌐 <b>API REST</b></td><td align="left" nowrap><code>/v1/*</code></td><td align="left">Združljivo z OpenAI — klepet, vdelave, slike, zvok, OCR</td></tr>
   <tr><td align="left" nowrap>🔔 <b>Spletni kavlji</b></td><td align="left" nowrap><code>/api/webhooks</code></td><td align="left">Pošiljajte dogodke zahtev / kvot v Slack, Discord, Telegram ali na kateri koli URL</td></tr>
-  <tr><td align="left" nowrap>🛰️ <b>Oddaljeni CLI</b></td><td align="left" nowrap><code>omniroute connect <host></code></td><td align="left">Upravljajte oddaljeni primerek z dostopnimi žetoni z omejenim obsegom</td></tr>
+  <tr><td align="left" nowrap>🛰️ <b>Oddaljeni CLI</b></td><td align="left" nowrap><code>agentproxy connect <host></code></td><td align="left">Upravljajte oddaljeni primerek z dostopnimi žetoni z omejenim obsegom</td></tr>
 </table>
 
 ```bash
-# Omogočite Claude Code dostop do celotnega nabora orodij OmniRoute prek MCP-ja:
-claude mcp add-server omniroute --type http --url http://localhost:20128/api/mcp/stream
+# Omogočite Claude Code dostop do celotnega nabora orodij AgentProxy prek MCP-ja:
+claude mcp add-server agentproxy --type http --url http://localhost:20128/api/mcp/stream
 ```
 
 <sub>📖 [Strežnik MCP](docs/frameworks/MCP-SERVER.md) · [Strežnik A2A](docs/frameworks/A2A-SERVER.md) · [Protokoli za agente](docs/frameworks/AGENT_PROTOCOLS_GUIDE.md)</sub>
@@ -859,7 +859,7 @@ claude mcp add-server omniroute --type http --url http://localhost:20128/api/mcp
 
 ### 📖 Kako deluje — cevovod, arhitektura in izračun prihrankov
 
-<img src="./docs/diagrams/compression-pipeline.svg" width="100%" alt="Cevovod stiskanja OmniRoute: ponazorjena zahteva odjemalca z 10.000 žetoni gre skozi 12 sestavljivih mehanizmov — Session-Dedup, CCR, Lite, RTK, Responses Tool Output, Headroom, Relevance, Caveman, Aggressive, LLMLingua-2, Ultra in OmniGlyph — ter lahko v dokumentiranem primeru zloženega načina doseže ponudnika s približno 1.080 žetoni. Strukturirano vsebino ščitijo varovala za ohranjanje in preverjanja zvestobe pri vsakem koraku; izrecno izbrani izgubni ali poskusni načini lahko preoblikujejo primerno vsebino."/>
+<img src="./docs/diagrams/compression-pipeline.svg" width="100%" alt="Cevovod stiskanja AgentProxy: ponazorjena zahteva odjemalca z 10.000 žetoni gre skozi 12 sestavljivih mehanizmov — Session-Dedup, CCR, Lite, RTK, Responses Tool Output, Headroom, Relevance, Caveman, Aggressive, LLMLingua-2, Ultra in OmniGlyph — ter lahko v dokumentiranem primeru zloženega načina doseže ponudnika s približno 1.080 žetoni. Strukturirano vsebino ščitijo varovala za ohranjanje in preverjanja zvestobe pri vsakem koraku; izrecno izbrani izgubni ali poskusni načini lahko preoblikujejo primerno vsebino."/>
 
 Privzeta zložena kombinacija izvaja `RTK → Caveman`. Ko oba delujeta na istem koristnem tovoru orodja/konteksta, se prihranki množijo:
 
@@ -871,7 +871,7 @@ range    = 78.4 – 94.6%
 
 Bloki kode, URL-ji, JSON in strukturirani podatki so **vedno zaščiteni** z mehanizmom za ohranjanje.
 
-> **Zakaj uporabljati veliko žetonov, ko zadostuje le nekaj?** Vsaka zahteva gre skozi cevovod stiskanja OmniRoute **pregledno** — brez sprememb odjemalca. Zdaj je to **sklad 12 sestavljivih mehanizmov**, ki se izvajajo po vrsti ter jih je mogoče poljubno kombinirati za vsako usmerjevalno kombinacijo — temelji pa na zamislih projektov [RTK](https://github.com/rtk-ai/rtk), [Caveman](https://github.com/JuliusBrussee/caveman) (⭐ 90K+), [LLMLingua-2](https://github.com/microsoft/LLMLingua) in [Troglodita](https://github.com/leninejunior/troglodita) (PT-BR).
+> **Zakaj uporabljati veliko žetonov, ko zadostuje le nekaj?** Vsaka zahteva gre skozi cevovod stiskanja AgentProxy **pregledno** — brez sprememb odjemalca. Zdaj je to **sklad 12 sestavljivih mehanizmov**, ki se izvajajo po vrsti ter jih je mogoče poljubno kombinirati za vsako usmerjevalno kombinacijo — temelji pa na zamislih projektov [RTK](https://github.com/rtk-ai/rtk), [Caveman](https://github.com/JuliusBrussee/caveman) (⭐ 90K+), [LLMLingua-2](https://github.com/microsoft/LLMLingua) in [Troglodita](https://github.com/leninejunior/troglodita) (PT-BR).
 
 ### 🧱 Sklad 12 mehanizmov
 
@@ -934,7 +934,7 @@ Zgornjih 12 mehanizmov zmanjša količino vsebine, ki gre **noter**. Tri dodatne
   - **Imam ADHD (najprej dejanje)** — začnite z naslednjim dejanjem, oštevilčite korake, navedite en konkreten naslednji korak, brez uvoda.
   - **Jedrnati CJK (文言)** — izjemno jedrnat slog klasične kitajščine (omejeno na področno nastavitev `zh`).
 - **🎯 Prilagodljivi proračun konteksta** _(gumb)_ — namesto enega praga za vklop/izklop glede na število žetonov stopnjuje najcenejše in najbolj brezizgubne mehanizme samo toliko, kolikor je potrebno, da se vsebina **prilega kontekstnemu oknu modela**. Pravilnik: `reserve-output` (privzeto, upošteva model) · `percentage` · `absolute`. Način: `floor` (zagotovi prileganje) · `replace-autotrigger` (vaša izrecna izbira ima prednost) · `off` (starejši prag).
-- **🎛️ Kje se določi stiskanje** _(prednost, visoka → nizka)_ — glava `x-omniroute-compression` posamezne zahteve › preglasitev usmerjevalne kombinacije › aktivni poimenovani profil › prilagodljivi/samodejni sprožilec › privzeta nastavitev nadzorne plošče › izklopljeno. Uporabljeni načrt se vrne v glavi odgovora `X-OmniRoute-Compression: <mode>; source=<source>`.
+- **🎛️ Kje se določi stiskanje** _(prednost, visoka → nizka)_ — glava `x-agentproxy-compression` posamezne zahteve › preglasitev usmerjevalne kombinacije › aktivni poimenovani profil › prilagodljivi/samodejni sprožilec › privzeta nastavitev nadzorne plošče › izklopljeno. Uporabljeni načrt se vrne v glavi odgovora `X-AgentProxy-Compression: <mode>; source=<source>`.
 
 Uporabite samodejni sprožilec glede na prag žetonov, vklopite prilagodljivi gumb, pripnite poimenovani profil, določite enkratno nastavitev za posamezno zahtevo ali dodelite cevovod posamezni usmerjevalni kombinaciji — kar koli najbolj ustreza delovni obremenitvi. Izbirno lokalno **ogrodje za vrednotenje** (`npm run eval:compression`) na pripetem korpusu oceni zvestobo glede na prihranek, preden uveljavite spremembo.
 
@@ -951,8 +951,8 @@ Uporabite samodejni sprožilec glede na prag žetonov, vklopite prilagodljivi gu
 **1) Namestite in zaženite**
 
 ```bash
-npm install -g omniroute
-omniroute
+npm install -g agentproxy
+agentproxy
 ```
 
 > 💡 Vidite `npm warn ERESOLVE` ali opozorila o enakovrednih odvisnostih? [So neškodljiva](docs/guides/TROUBLESHOOTING.md#npm-install-warnings-eresolve--peer--deprecated).
@@ -977,9 +977,9 @@ Model:       auto            (pametno usmerjanje brez nastavljanja — ali kater
 curl http://localhost:20128/v1/models -H "Authorization: Bearer YOUR_KEY"
 ```
 
-Prikazan bi moral biti seznam povezanih modelov. 🎉 To je vse — začnite programirati, OmniRoute pa bo za vas samodejno usmerjal zahteve in po potrebi preklapljal na nadomestne možnosti.
+Prikazan bi moral biti seznam povezanih modelov. 🎉 To je vse — začnite programirati, AgentProxy pa bo za vas samodejno usmerjal zahteve in po potrebi preklapljal na nadomestne možnosti.
 
-Če vaš odjemalec ne more pošiljati glav po meri, OmniRoute ponuja tudi tokenizirane združljivostne vzdevke:
+Če vaš odjemalec ne more pošiljati glav po meri, AgentProxy ponuja tudi tokenizirane združljivostne vzdevke:
 
 ```txt
 Katalog OpenAI:   http://localhost:20128/vscode/YOUR_KEY/
@@ -999,39 +999,39 @@ Uporabite jih samo za odjemalce, ki ne morejo dodati `Authorization: Bearer ...`
 **🐳 Docker**
 
 ```bash
-docker run -d --name omniroute --restart unless-stopped --stop-timeout 40 \
-  -p 127.0.0.1:20128:20128 -v omniroute-data:/app/data diegosouzapw/omniroute:latest
+docker run -d --name agentproxy --restart unless-stopped --stop-timeout 40 \
+  -p 127.0.0.1:20128:20128 -v agentproxy-data:/app/data khanhkit/agentproxy:latest
 ```
 
-`:latest` sledi najvišji **objavljeni** stabilni različici SemVer. Ne sledi veji git `main`. Za GitOps pripnite `:X.Y.Z`. Glejte [Kanali izdaj Docker](docs/guides/DOCKER_GUIDE.md#release-channels). Slika ima fiksno nastavljeno vrednost **`OMNIROUTE_MEMORY_MB=1024`**. To zadostuje za nadzorno ploščo in lahek klepet. **Agenti za programiranje** (`POST /v1/responses` iz Claude Code, Codex, Grok, …) potrebujejo veliko večji kopičeni pomnilnik V8, sicer se proces zaključi z napako `FATAL ERROR` pri približno 12 GiB ob dveh prekrivajočih se dolgih kontekstih. Velikost vsebnika nastavite nad velikostjo kopice (izvorni medpomnilniki so zunaj V8):
+`:latest` sledi najvišji **objavljeni** stabilni različici SemVer. Ne sledi veji git `main`. Za GitOps pripnite `:X.Y.Z`. Glejte [Kanali izdaj Docker](docs/guides/DOCKER_GUIDE.md#release-channels). Slika ima fiksno nastavljeno vrednost **`AGENTPROXY_MEMORY_MB=1024`**. To zadostuje za nadzorno ploščo in lahek klepet. **Agenti za programiranje** (`POST /v1/responses` iz Claude Code, Codex, Grok, …) potrebujejo veliko večji kopičeni pomnilnik V8, sicer se proces zaključi z napako `FATAL ERROR` pri približno 12 GiB ob dveh prekrivajočih se dolgih kontekstih. Velikost vsebnika nastavite nad velikostjo kopice (izvorni medpomnilniki so zunaj V8):
 
-| Delovna obremenitev               | Kopica (`-e OMNIROUTE_MEMORY_MB`) | Vsebnik (`--memory`) |
+| Delovna obremenitev               | Kopica (`-e AGENTPROXY_MEMORY_MB`) | Vsebnik (`--memory`) |
 | --------------------------------- | --------------------------------- | -------------------- |
 | Nadzorna plošča / lahek klepet    | `1024` (privzeto v sliki)         | ≥2 g                 |
 | En agent za programiranje         | `8192`                            | ≥10 g                |
 | Dva sočasna dolga `/v1/responses` | `10240`–`12288`                   | ≥12–16 g             |
 
 ```bash
-docker run -d --name omniroute --restart unless-stopped --stop-timeout 40 \
-  -e OMNIROUTE_MEMORY_MB=8192 --memory=10g \
-  -p 127.0.0.1:20128:20128 -v omniroute-data:/app/data diegosouzapw/omniroute:latest
+docker run -d --name agentproxy --restart unless-stopped --stop-timeout 40 \
+  -e AGENTPROXY_MEMORY_MB=8192 --memory=10g \
+  -p 127.0.0.1:20128:20128 -v agentproxy-data:/app/data khanhkit/agentproxy:latest
 ```
 
 Celotna tabela: [Vodnik za Docker — pomnilnik RAM med izvajanjem](docs/guides/DOCKER_GUIDE.md#runtime-ram-for-coding-agents).
 
-> **Kanal Docker za predizdaje:** `diegosouzapw/omniroute:next` in
-> `diegosouzapw/omniroute:next-web` sledita trenutni privzeti veji `release/v*`.
+> **Kanal Docker za predizdaje:** `khanhkit/agentproxy:next` in
+> `khanhkit/agentproxy:next-web` sledita trenutni privzeti veji `release/v*`.
 > Ti spremenljivi oznaki sta namenjeni samo preizkušanju neobjavljenih popravkov in
 > **nista podprti za produkcijsko uporabo**. Glejte
 > [Kanali izdaj Docker](docs/guides/DOCKER_GUIDE.md#release-channels).
 
 **🥟 Bun**
 
-Standardna namestitev z `bun install` in globalna namestitev (`bun install -g omniroute`) sta podprti prek zaznavanja izvajalnega okolja Bun:
+Standardna namestitev z `bun install` in globalna namestitev (`bun install -g agentproxy`) sta podprti prek zaznavanja izvajalnega okolja Bun:
 
-- **Vgrajeni `bun:sqlite`**: OmniRoute med izvajanjem v okolju Bun uporablja Bunov vgrajeni gonilnik `bun:sqlite`, v okolju Node.js pa preklopi na `better-sqlite3` ali `sql.js`.
-- **Samodejna izbira povezovalnika Webpack med razvojem**: Razvojno okolje (`bun run dev`) samodejno zazna Bun in onemogoči Turbopack ter namesto njega uporabi Webpack, da prepreči nezdružljivosti izvornih vezav V8. Produkcijske gradnje (`bun run build`) natančno upoštevajo `OMNIROUTE_USE_TURBOPACK`, enako kot v okolju Node: privzeto se uporablja Turbopack, za gradnjo z Webpackom pa nastavite `OMNIROUTE_USE_TURBOPACK=0` (`Dockerfile.bun` to omogoča kot `--build-arg`).
-- **Namenski Dockerfile za Bun**: Večstopenjski `Dockerfile.bun` za izvorne produkcijske uvedbe Bun (`docker build -f Dockerfile.bun -t omniroute:bun .`).
+- **Vgrajeni `bun:sqlite`**: AgentProxy med izvajanjem v okolju Bun uporablja Bunov vgrajeni gonilnik `bun:sqlite`, v okolju Node.js pa preklopi na `better-sqlite3` ali `sql.js`.
+- **Samodejna izbira povezovalnika Webpack med razvojem**: Razvojno okolje (`bun run dev`) samodejno zazna Bun in onemogoči Turbopack ter namesto njega uporabi Webpack, da prepreči nezdružljivosti izvornih vezav V8. Produkcijske gradnje (`bun run build`) natančno upoštevajo `AGENTPROXY_USE_TURBOPACK`, enako kot v okolju Node: privzeto se uporablja Turbopack, za gradnjo z Webpackom pa nastavite `AGENTPROXY_USE_TURBOPACK=0` (`Dockerfile.bun` to omogoča kot `--build-arg`).
+- **Namenski Dockerfile za Bun**: Večstopenjski `Dockerfile.bun` za izvorne produkcijske uvedbe Bun (`docker build -f Dockerfile.bun -t agentproxy:bun .`).
 
 ```bash
 # Namestitev in zagon z Bun
@@ -1049,13 +1049,13 @@ PORT=20128 npm run dev
 **📦 pnpm**
 
 ```bash
-pnpm add -g omniroute@latest --allow-build=better-sqlite3 --allow-build=@swc/core && omniroute
+pnpm add -g agentproxy@latest --allow-build=better-sqlite3 --allow-build=@swc/core && agentproxy
 ```
 
 **🐧 Arch Linux (AUR)**
 
 ```bash
-yay -S omniroute-bin && systemctl --user enable --now omniroute.service
+yay -S agentproxy-bin && systemctl --user enable --now agentproxy.service
 ```
 
 **🔧 Nix (Flake)**
@@ -1101,7 +1101,7 @@ za vašo platformo/Node, sicer pa neopazno preklopi na pogon v čistem JS
 Če želite v celoti preskočiti izvorno ogrevanje po namestitvi (CI, okolja brez grafičnega vmesnika ali počasni računalniki):
 
 ```bash
-OMNIROUTE_SKIP_POSTINSTALL=1 npm install -g omniroute   # Tudi CI=1 ga preskoči
+AGENTPROXY_SKIP_POSTINSTALL=1 npm install -g agentproxy   # Tudi CI=1 ga preskoči
 ```
 
 Za najhitrejše namestitve izberite **pnpm** (shramba z vsebinskim naslavljanjem + trde povezave — glejte zgoraj).
@@ -1113,7 +1113,7 @@ isti proces prek enih vrat, zato trenutno ni ločenega paketa samo za CLI.
 
 <div align="center">
 
-# 🎬 OmniRoute v akciji
+# 🎬 AgentProxy v akciji
 
 </div>
 
@@ -1177,7 +1177,7 @@ isti proces prek enih vrat, zato trenutno ni ločenega paketa samo za CLI.
 
 Kanonične metrike na dan 2026-08-24: **1.029 edinstvenih videoposnetkov** · **11.132.922 znanih ogledov** (`v > 0`) · **639 kanalov/profilov po omrežjih**. Neobdelana nadzorna plošča vsebuje 1.070 vrstic; 41 podvojenih vnosov z Instagrama je bilo normaliziranih glede na kanonični URL, pri čemer je bilo ohranjeno največje število ogledov na videoposnetek.
 
-> 🎬 **Ste posneli videoposnetek o OmniRoute?** Odprite [težavo](https://github.com/diegosouzapw/OmniRoute/issues/new) ali [razpravo](https://github.com/diegosouzapw/OmniRoute/discussions) s povezavo — predstavili jo bomo tukaj.
+> 🎬 **Ste posneli videoposnetek o AgentProxy?** Odprite [težavo](https://github.com/khanhkit/AgentProxy/issues/new) ali [razpravo](https://github.com/khanhkit/AgentProxy/discussions) s povezavo — predstavili jo bomo tukaj.
 
 <br/>
 
@@ -1192,15 +1192,15 @@ Kanonične metrike na dan 2026-08-24: **1.029 edinstvenih videoposnetkov** · **
 | 💼 **LinkedIn** — sledite vzdrževalcu          | [linkedin.com/in/diegosouzapw](https://www.linkedin.com/in/diegosouzapw/)                                            |
 | 🐙 **GitHub** — sledite za izdaje in nasvete   | [@diegosouzapw](https://github.com/diegosouzapw)                                                                     |
 | 💬 **Discord**                                 | [discord.gg/U47eFqAXCn](https://discord.gg/U47eFqAXCn)                                                               |
-| ✈️ **Telegram**                                | [t.me/omnirouteOficial](https://t.me/omnirouteOficial)                                                               |
+| ✈️ **Telegram**                                | [t.me/agentproxyOficial](https://github.com/khanhkit/AgentProxy/discussions)                                                               |
 | 🟢 **WhatsApp — 🌍 Globalno**                  | [pridružite se skupini](https://chat.whatsapp.com/FvuCbrpZmQ6I85n2vW5QIC?s=cl&p=a&mlu=4)                             |
 | 🟢 **WhatsApp — 🇧🇷 Brazilija**                 | [pridružite se skupini](https://chat.whatsapp.com/KWgatljAjmbELQory59Oti?s=cl&p=a&mlu=4)                             |
-| 🌍 **Spletno mesto**                           | [omniroute.online](https://omniroute.online)                                                                         |
-| 🌍 **🌍Skupnost StHub OmniRoute (brezplačno)** | [portal StHub](https://portal.sthub.com.br/communities/groups/st-hub/channels/Omniroute-World-8kRjmK)                |
-| 📦 **Izvorna koda**                            | [github.com/diegosouzapw/OmniRoute](https://github.com/diegosouzapw/OmniRoute)                                       |
-| 🐛 **Prijavite napako**                        | [odprite težavo](https://github.com/diegosouzapw/OmniRoute/issues) — priložite izpis ukaza `npm run system-info`     |
+| 🌍 **Spletno mesto**                           | [agentproxy.online](https://agentproxy.example.com)                                                                         |
+| 🌍 **🌍Skupnost StHub AgentProxy (brezplačno)** | [portal StHub](https://portal.sthub.com.br/communities/groups/st-hub/channels/AgentProxy-World-8kRjmK)                |
+| 📦 **Izvorna koda**                            | [github.com/khanhkit/AgentProxy](https://github.com/khanhkit/AgentProxy)                                       |
+| 🐛 **Prijavite napako**                        | [odprite težavo](https://github.com/khanhkit/AgentProxy/issues) — priložite izpis ukaza `npm run system-info`     |
 | 🤝 **Prispevajte**                             | [CONTRIBUTING.md](CONTRIBUTING.md) · [Model vej in izdaj](docs/ops/BRANCHING_MODEL.md) · izberite `good first issue` |
-| 💚 **Podprite projekt**                        | [Načini podpore ↑](#-support-omniroute) · [GitHub Sponsors](https://github.com/sponsors/diegosouzapw)                |
+| 💚 **Podprite projekt**                        | [Načini podpore ↑](#-support-agentproxy) · [GitHub Sponsors](https://github.com/sponsors/diegosouzapw)                |
 
 </div>
 
@@ -1231,7 +1231,7 @@ Kanonične metrike na dan 2026-08-24: **1.029 edinstvenih videoposnetkov** · **
   <tr><td nowrap><b>Preizkušanje</b></td><td>Izvajalnik preizkusov Node.js + Vitest — <b>39.000+ statičnih deklaracij preizkusov</b> v 5.100+ spremljanih preizkusnih datotekah (enotski, integracijski, E2E, varnostni, ekosistemski preizkusi)</td></tr>
   <tr><td nowrap><b>Platforme</b></td><td>Namizje (Electron) · Android (Termux) · PWA (kateri koli brskalnik)</td></tr>
   <tr><td nowrap><b>CI/CD</b></td><td>GitHub Actions — samodejna objava v npm in Docker Hub ob izdaji</td></tr>
-  <tr><td nowrap><b>Povezave</b></td><td><a href="https://omniroute.online">Spletno mesto</a> · <a href="https://www.npmjs.com/package/omniroute">npm</a> · <a href="https://hub.docker.com/r/diegosouzapw/omniroute">Docker Hub</a></td></tr>
+  <tr><td nowrap><b>Povezave</b></td><td><a href="https://agentproxy.example.com">Spletno mesto</a> · <a href="https://www.npmjs.com/package/agentproxy">npm</a> · <a href="https://github.com/khanhkit/AgentProxy/pkgs/container/agentproxy">Docker Hub</a></td></tr>
 </table>
 
 <div align="center">
@@ -1249,8 +1249,8 @@ Kanonične metrike na dan 2026-08-24: **1.029 edinstvenih videoposnetkov** · **
   <tr><td nowrap><b><a href="docs/guides/USER_GUIDE.md">Uporabniški priročnik</a></b></td><td>Ponudniki, kombinacije, integracija CLI-ja, uvajanje</td></tr>
   <tr><td nowrap><b><a href="docs/guides/SETUP_GUIDE.md">Priročnik za nastavitev</a></b></td><td>Vsi načini namestitve, konfiguracije orodij CLI, nastavitev protokolov, prilagajanje časovnih omejitev</td></tr>
   <tr><td nowrap><b><a href="docs/reference/CLI-TOOLS.md">Priročnik za orodja CLI</a></b></td><td>Nastavitev posameznih orodij Claude Code, Codex, Cursor, Cline, OpenClaw, Kilo, Copilot</td></tr>
-  <tr><td nowrap><b><a href="docs/guides/REMOTE-MODE.md">Oddaljeni način</a></b></td><td>Upravljajte oddaljeni OmniRoute (VPS) iz CLI-ja na prenosniku z žetoni za dostop z omejenim obsegom</td></tr>
-  <tr><td nowrap><b><a href="docs/guides/CLAUDE-CODE-CONFIGURATION.md">Konfiguracija Claude Code</a></b></td><td>Usmerite Claude Code na OmniRoute (lokalno/oddaljeno) z <code>launch</code> in profili za posamezne modele</td></tr>
+  <tr><td nowrap><b><a href="docs/guides/REMOTE-MODE.md">Oddaljeni način</a></b></td><td>Upravljajte oddaljeni AgentProxy (VPS) iz CLI-ja na prenosniku z žetoni za dostop z omejenim obsegom</td></tr>
+  <tr><td nowrap><b><a href="docs/guides/CLAUDE-CODE-CONFIGURATION.md">Konfiguracija Claude Code</a></b></td><td>Usmerite Claude Code na AgentProxy (lokalno/oddaljeno) z <code>launch</code> in profili za posamezne modele</td></tr>
   <tr><td nowrap><b><a href="README.md#-quick-start">Hitri začetek</a></b></td><td>Namestitev v 3 korakih → povezava → konfiguracija</td></tr>
 </table>
 
@@ -1262,7 +1262,7 @@ Kanonične metrike na dan 2026-08-24: **1.029 edinstvenih videoposnetkov** · **
   <tr><td nowrap><b><a href="contrib/podman/README.md">Priročnik za Podman</a></b></td><td>Integracija Quadlet systemd, podman-compose, SELinux</td></tr>
   <tr><td nowrap><b><a href="docs/ops/VM_DEPLOYMENT_GUIDE.md">Uvajanje navideznega stroja</a></b></td><td>Celovit priročnik: nastavitev navideznega stroja + nginx + Cloudflare</td></tr>
   <tr><td nowrap><b><a href="docs/ops/FLY_IO_DEPLOYMENT_GUIDE.md">Uvajanje v Fly.io</a></b></td><td>Uvedite v Fly.io s trajno shrambo</td></tr>
-  <tr><td nowrap><b><a href="docs/guides/TERMUX_GUIDE.md">Priročnik za Termux</a></b></td><td>Zaženite OmniRoute v Androidu prek Termuxa</td></tr>
+  <tr><td nowrap><b><a href="docs/guides/TERMUX_GUIDE.md">Priročnik za Termux</a></b></td><td>Zaženite AgentProxy v Androidu prek Termuxa</td></tr>
   <tr><td nowrap><b><a href="docs/guides/PWA_GUIDE.md">Priročnik za PWA</a></b></td><td>Namestitev progresivne spletne aplikacije, predpomnjenje, arhitektura</td></tr>
   <tr><td nowrap><b><a href="docs/guides/UNINSTALL.md">Priročnik za odstranitev</a></b></td><td>Čista odstranitev za vse načine namestitve</td></tr>
   <tr><td nowrap><b><a href="docs/reference/ENVIRONMENT.md">Konfiguracija okolja</a></b></td><td>Celoten seznam spremenljivk <code>.env</code> in referenc</td></tr>
@@ -1317,7 +1317,7 @@ Kanonične metrike na dan 2026-08-24: **1.029 edinstvenih videoposnetkov** · **
 
 # ⭐ Najpomembnejši sodelujoči
 
-> OmniRoute oblikuje zavzeta odprtokodna skupnost. Ti posamezniki so izjemno prispevali ter neposredno vplivali na kakovost, stabilnost in doseg projekta. **Hvala.**
+> AgentProxy oblikuje zavzeta odprtokodna skupnost. Ti posamezniki so izjemno prispevali ter neposredno vplivali na kakovost, stabilnost in doseg projekta. **Hvala.**
 
 ### Zunanji sodelujoči po združenih zahtevah za vključitev
 
@@ -1436,7 +1436,7 @@ Kanonične metrike na dan 2026-08-24: **1.029 edinstvenih videoposnetkov** · **
 
 <sub>Ponovno preverjeno ob 2026-08-24 06:14:31 UTC: potrditve, pripisane uporabnikom GitHuba, kot jih je sporočil API sodelujočih repozitorija za privzeto vejo <code>release/v3.8.50</code>. API je vrnil 525 identitet (415 uporabnikov, 2 bota, 108 anonimnih); ta tabela izključuje vzdrževalca, bote in anonimne identitete ter ohranja izenačenja na lestvici. Razlikuje se tako od zgornje razvrstitve združenih zahtev PR kot od spodnjega popisa metapodatkov Git za 639 oseb.</sub>
 
-> 🙏 Funkcije, popravki napak in izboljšave infrastrukture teh sodelujočih so **temeljni del** tega, zaradi česar je OmniRoute zanesljiv in bogat s funkcijami. Pomembna je vsaka zahteva za vključitev, vsak preizkusni primer in vsaka prevodna datoteka i18n. Odprto kodo gradijo ljudje, kot so oni.
+> 🙏 Funkcije, popravki napak in izboljšave infrastrukture teh sodelujočih so **temeljni del** tega, zaradi česar je AgentProxy zanesljiv in bogat s funkcijami. Pomembna je vsaka zahteva za vključitev, vsak preizkusni primer in vsaka prevodna datoteka i18n. Odprto kodo gradijo ljudje, kot so oni.
 
 </div>
 
@@ -1448,7 +1448,7 @@ Kanonične metrike na dan 2026-08-24: **1.029 edinstvenih videoposnetkov** · **
 
 <div align="center">
 
-Iskrena hvala ljudem, ki OmniRoute financirajo iz lastnega žepa — vsak prispevek pomaga, da projekt ostaja brezplačen, neodvisen in se še naprej razvija.
+Iskrena hvala ljudem, ki AgentProxy financirajo iz lastnega žepa — vsak prispevek pomaga, da projekt ostaja brezplačen, neodvisen in se še naprej razvija.
 
 <table>
   <tr>
@@ -1494,7 +1494,7 @@ Iskrena hvala ljudem, ki OmniRoute financirajo iz lastnega žepa — vsak prispe
 
 <sub>Javni sponzorji na GitHub Sponsors so bili znova preverjeni 2026-08-24. GitHubovo stanje <code>activeOnly</code> določa zgornje oznake aktivnosti; javno razkritim nekdanjim enkratnim podpornikom se še vedno zahvaljujemo, zasebni sponzorji pa ostajajo anonimni.</sub>
 
-<b><a href="https://github.com/sponsors/diegosouzapw">💖 Postanite sponzor →</a></b> — vsak dolar pomaga, da OmniRoute ostaja brezplačen in neodvisen.
+<b><a href="https://github.com/sponsors/diegosouzapw">💖 Postanite sponzor →</a></b> — vsak dolar pomaga, da AgentProxy ostaja brezplačen in neodvisen.
 
 </div>
 
@@ -1506,7 +1506,7 @@ Iskrena hvala ljudem, ki OmniRoute financirajo iz lastnega žepa — vsak prispe
 
 </div>
 
-[![Prispevalci](https://contrib.rocks/image?repo=diegosouzapw/OmniRoute&max=639&columns=20&anon=1)](https://github.com/diegosouzapw/OmniRoute/graphs/contributors)
+[![Prispevalci](https://contrib.rocks/image?repo=khanhkit/AgentProxy&max=639&columns=20&anon=1)](https://github.com/khanhkit/AgentProxy/graphs/contributors)
 
 <sub>Pregledano 2026-08-24 na zamrznjeni osnovi <code>ac02c5b42f</code> in znova preverjeno na trenutnem vrhu <code>dafb4ae808</code> veje <code>release/v3.8.50</code>: <b>639 normaliziranih človeških identitet Git</b> — 407 jih je navedenih kot avtorjev commitov (vključno z vzdrževalcem), 232 pa samo v izrecnih priklopnikih <code>Co-authored-by</code>. Popis normalizira uporabniška imena GitHub noreply, izključuje 26 identitet botov/agentov/storitev/oznak mest in običajnih e-poštnih naslovov ne združuje zgolj zato, ker se njihova prikazna imena ujemajo.</sub>
 
@@ -1535,11 +1535,11 @@ gh release create "v${VERSION}" --title "v${VERSION}" --generate-notes
 
 ## 📊 Zvezdice
 
-<a href="https://www.star-history.com/?repos=diegosouzapw%2FOmniRoute&type=date&legend=top-left">
+<a href="https://www.star-history.com/?repos=diegosouzapw%2FAgentProxy&type=date&legend=top-left">
  <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=diegosouzapw/OmniRoute&type=date&theme=dark&legend=top-left&sealed_token=XP_ycEjv7s31p1edvhsMOXry51OWYsUjDRWjflSG7jQKRpO9hPGg7i_EHvwhI6QtrARTMH-YGjJhi8sumRYflEJD0DPlH_MMHjizhBYCX8fbHFrHEiNvVA" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=diegosouzapw/OmniRoute&type=date&legend=top-left&sealed_token=XP_ycEjv7s31p1edvhsMOXry51OWYsUjDRWjflSG7jQKRpO9hPGg7i_EHvwhI6QtrARTMH-YGjJhi8sumRYflEJD0DPlH_MMHjizhBYCX8fbHFrHEiNvVA" />
-   <img alt="Graf zgodovine zvezdic" src="https://api.star-history.com/chart?repos=diegosouzapw/OmniRoute&type=date&legend=top-left&sealed_token=XP_ycEjv7s31p1edvhsMOXry51OWYsUjDRWjflSG7jQKRpO9hPGg7i_EHvwhI6QtrARTMH-YGjJhi8sumRYflEJD0DPlH_MMHjizhBYCX8fbHFrHEiNvVA" />
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=khanhkit/AgentProxy&type=date&theme=dark&legend=top-left&sealed_token=XP_ycEjv7s31p1edvhsMOXry51OWYsUjDRWjflSG7jQKRpO9hPGg7i_EHvwhI6QtrARTMH-YGjJhi8sumRYflEJD0DPlH_MMHjizhBYCX8fbHFrHEiNvVA" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=khanhkit/AgentProxy&type=date&legend=top-left&sealed_token=XP_ycEjv7s31p1edvhsMOXry51OWYsUjDRWjflSG7jQKRpO9hPGg7i_EHvwhI6QtrARTMH-YGjJhi8sumRYflEJD0DPlH_MMHjizhBYCX8fbHFrHEiNvVA" />
+   <img alt="Graf zgodovine zvezdic" src="https://api.star-history.com/chart?repos=khanhkit/AgentProxy&type=date&legend=top-left&sealed_token=XP_ycEjv7s31p1edvhsMOXry51OWYsUjDRWjflSG7jQKRpO9hPGg7i_EHvwhI6QtrARTMH-YGjJhi8sumRYflEJD0DPlH_MMHjizhBYCX8fbHFrHEiNvVA" />
  </picture>
 </a>
 
@@ -1549,11 +1549,11 @@ gh release create "v${VERSION}" --title "v${VERSION}" --generate-notes
 
 ## 🌍 StarMapper
 
-<a href="https://starmapper.bruniaux.com/diegosouzapw/omniroute">
+<a href="https://starmapper.bruniaux.com/khanhkit/agentproxy">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://starmapper.bruniaux.com/api/map-image/diegosouzapw/omniroute?theme=dark" />
-    <source media="(prefers-color-scheme: light)" srcset="https://starmapper.bruniaux.com/api/map-image/diegosouzapw/omniroute?theme=light" />
-    <img alt="StarMapper" src="https://starmapper.bruniaux.com/api/map-image/diegosouzapw/omniroute" />
+    <source media="(prefers-color-scheme: dark)" srcset="https://starmapper.bruniaux.com/api/map-image/khanhkit/agentproxy?theme=dark" />
+    <source media="(prefers-color-scheme: light)" srcset="https://starmapper.bruniaux.com/api/map-image/khanhkit/agentproxy?theme=light" />
+    <img alt="StarMapper" src="https://starmapper.bruniaux.com/api/map-image/khanhkit/agentproxy" />
   </picture>
 </a>
 </div>
@@ -1566,14 +1566,14 @@ gh release create "v${VERSION}" --title "v${VERSION}" --generate-notes
 
 </div>
 
-OmniRoute stoji na ramenih velikanov. Začel se je kot razcep projekta **[9router](https://github.com/decolua/9router)** in TypeScriptova predelava projekta **[CLIProxyAPI](https://github.com/router-for-me/CLIProxyAPI)**, napisanega v jeziku Go — od tam naprej pa je vsak spodaj navedeni podsistem navdihnil odprtokodni projekt, ki je to storil že prej. Vsak od njih je oblikoval konkreten del sistema OmniRoute. To je naša zahvala vsem. 🙏
+AgentProxy stoji na ramenih velikanov. Začel se je kot razcep projekta **[9router](https://github.com/decolua/9router)** in TypeScriptova predelava projekta **[CLIProxyAPI](https://github.com/router-for-me/CLIProxyAPI)**, napisanega v jeziku Go — od tam naprej pa je vsak spodaj navedeni podsistem navdihnil odprtokodni projekt, ki je to storil že prej. Vsak od njih je oblikoval konkreten del sistema AgentProxy. To je naša zahvala vsem. 🙏
 
 > ⭐ število zvezdic je bilo preverjeno prek GitHubovega vmesnika REST API 24. avgusta 2026 — podarite tem projektom zvezdico. Števila so natančen posnetek na navedeni datum in se bodo seveda spreminjala.
 
 ### 🧬 Izvor in prehod
 
 <table>
-  <tr><th align="left">Projekt</th><th align="center">⭐</th><th align="left">Kako je navdihnil OmniRoute</th></tr>
+  <tr><th align="left">Projekt</th><th align="center">⭐</th><th align="left">Kako je navdihnil AgentProxy</th></tr>
   <tr><td nowrap><b><a href="https://github.com/decolua/9router">9router</a></b></td><td align="center">26,161</td><td>Izvirni projekt, na katerem temelji ta razcep — tukaj razširjen z večmodalnimi API-ji in popolnoma na novo napisan v jeziku TypeScript.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/router-for-me/CLIProxyAPI">CLIProxyAPI</a></b></td><td align="center">48,497</td><td>Implementacija v jeziku Go, ki je navdihnila to predelavo v jezikih JavaScript / TypeScript.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/BerriAI/litellm">LiteLLM</a></b></td><td align="center">57,100</td><td>Prehod za umetno inteligenco, katerega javni nabor podatkov o cenah napaja našo sinhronizacijo spremljanja stroškov, njegov model normalizacije ponudnikov pa je vplival na naše usmerjanje.</td></tr>
@@ -1581,20 +1581,20 @@ OmniRoute stoji na ramenih velikanov. Začel se je kot razcep projekta **[9route
   <tr><td nowrap><b><a href="https://github.com/Alishahryar1/free-claude-code">free-claude-code</a></b></td><td align="center">48,112</td><td>Vzorci, preneseni v obnovitev toka, vzdevke brez razmišljanja, nadomestno spletno iskanje, omejitve drsečega okna, redigiranje dnevnikov in utrjene zagonske poteke.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/standardagents/composer-api">composer-api</a></b></td><td align="center">322</td><td>Vzorci izbire orodja, omejitev izhoda in potrditve orodja iz sistema Cursor Composer, prilagojeni izvornemu izvajalniku Cursor.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/ndycode/codex-multi-auth">codex-multi-auth</a></b></td><td align="center">457</td><td>Vzorci sveže prijave in izmenjevanja žetonov za osveževanje, preneseni v ponovno overjanje Codex OAuth.</td></tr>
-  <tr><td nowrap><b><a href="https://github.com/ex-machina-co/opencode-anthropic-auth">opencode-anthropic-auth</a></b></td><td align="center">510</td><td>Privzete nastavitve preoblikovanja, združljive s Claude Code, in vedenje glav za obračunavanje, posplošeni v konfiguracijsko voden most sistema OmniRoute.</td></tr>
-  <tr><td nowrap><b><a href="https://github.com/520mmxx/grok2api-merged">grok2api-merged</a></b></td><td align="center">2</td><td>Njegove preslikave modelov Grok, generator Statsig z lažnim TypeError, privzete nastavitve zahtev in naprav ter obdelovalnik odgovorov NDJSON so bili vsebinsko prilagojeni izvajalniku Grok Web sistema OmniRoute.</td></tr>
+  <tr><td nowrap><b><a href="https://github.com/ex-machina-co/opencode-anthropic-auth">opencode-anthropic-auth</a></b></td><td align="center">510</td><td>Privzete nastavitve preoblikovanja, združljive s Claude Code, in vedenje glav za obračunavanje, posplošeni v konfiguracijsko voden most sistema AgentProxy.</td></tr>
+  <tr><td nowrap><b><a href="https://github.com/520mmxx/grok2api-merged">grok2api-merged</a></b></td><td align="center">2</td><td>Njegove preslikave modelov Grok, generator Statsig z lažnim TypeError, privzete nastavitve zahtev in naprav ter obdelovalnik odgovorov NDJSON so bili vsebinsko prilagojeni izvajalniku Grok Web sistema AgentProxy.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/TQZHR/grok2api">TQZHR/grok2api</a></b></td><td align="center">705</td><td>Glavni posredni vir kode za grok2api-merged; njegove implementacije modelov, glav, koristnih vsebin, sistema Statsig in obdelovalnikov so ohranjene v izvorni liniji Grok Web.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/chenyme/grok2api">chenyme/grok2api</a></b></td><td align="center">7,520</td><td>Temeljni vir pod licenco MIT za koristne vsebine Grok in privzete nastavitve naprav, generator Statsig ter obdelovalnik <code>result.response</code>, prenesen prek projektov TQZHR in grok2api-merged.</td></tr>
-  <tr><td nowrap><b><a href="https://github.com/miuzhaii/grok2api-pro">grok2api-pro</a></b></td><td align="center">27</td><td>Posredni vir, ki ga grok2api-merged navaja za svojo plast skupine posredniških strežnikov; OmniRoute ohranja navedbo tega izvora, vendar ne trdi, da je v svoj omejeni izvajalnik Grok Web prenesel skupino posredniških strežnikov.</td></tr>
-  <tr><td nowrap><b><a href="https://github.com/CNFlyCat/GrokProxy">GrokProxy</a></b></td><td align="center">50</td><td>Njegov posredniški strežnik Grok z overjanjem prek piškotkov in vzorec pretočnega prenosa <code>result.response.token</code> sta vplivala na transport Grok Web sistema OmniRoute.</td></tr>
+  <tr><td nowrap><b><a href="https://github.com/miuzhaii/grok2api-pro">grok2api-pro</a></b></td><td align="center">27</td><td>Posredni vir, ki ga grok2api-merged navaja za svojo plast skupine posredniških strežnikov; AgentProxy ohranja navedbo tega izvora, vendar ne trdi, da je v svoj omejeni izvajalnik Grok Web prenesel skupino posredniških strežnikov.</td></tr>
+  <tr><td nowrap><b><a href="https://github.com/CNFlyCat/GrokProxy">GrokProxy</a></b></td><td align="center">50</td><td>Njegov posredniški strežnik Grok z overjanjem prek piškotkov in vzorec pretočnega prenosa <code>result.response.token</code> sta vplivala na transport Grok Web sistema AgentProxy.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/lianying1716/GrokBridge">GrokBridge</a></b></td><td align="center">5</td><td>Izvirna implementacija Grok Web se je zgledovala po njegovi zasnovi nadrejene povezave HTTP/brskalnik; njena neposredna pot HTTP izhaja iz projekta GrokProxy, zato ne trdimo, da gre za neodvisen prenos kode.</td></tr>
-  <tr><td nowrap><b><a href="https://github.com/imjustprism/grok-web-api">grok-web-api</a></b></td><td align="center">14</td><td>Njegove sheme Rust <code>ChatOptions</code> in ovojnic odgovorov so vplivale na tipe zahtev Grok in pretočnih odgovorov v jeziku TypeScript sistema OmniRoute.</td></tr>
+  <tr><td nowrap><b><a href="https://github.com/imjustprism/grok-web-api">grok-web-api</a></b></td><td align="center">14</td><td>Njegove sheme Rust <code>ChatOptions</code> in ovojnic odgovorov so vplivale na tipe zahtev Grok in pretočnih odgovorov v jeziku TypeScript sistema AgentProxy.</td></tr>
 </table>
 
 ### 🗜️ Stiskanje konteksta in žetonov — pogoni
 
 <table>
-  <tr><th align="left">Projekt</th><th align="center">⭐</th><th align="left">Kako je navdihnil OmniRoute</th></tr>
+  <tr><th align="left">Projekt</th><th align="center">⭐</th><th align="left">Kako je navdihnil AgentProxy</th></tr>
   <tr><td nowrap><b><a href="https://github.com/JuliusBrussee/caveman">Caveman</a></b></td><td align="center">100,538</td><td>Viralni projekt »zakaj uporabljati veliko žetonov, ko malo žetonov zadostuje« — njegova filozofija jamskega govora poganja naš standardni način stiskanja in več kot 30 pravil za odstranjevanje mašil ter zgoščevanje.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/rtk-ai/rtk">RTK – Rust Token Killer</a></b></td><td align="center">77,185</td><td>Visokozmogljivo stiskanje izhoda ukazov — navdihnilo je naš pogon RTK, DSL za filtriranje JSON, obnovitev neobdelanega izhoda in zloženi cevovod RTK → Caveman.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/headroomlabs-ai/headroom">headroom</a></b></td><td align="center">67,310</td><td>Povratno stiskanje konteksta (SmartCrusher) — navdihnilo je naš pogon <code>headroom</code> in vzorec označevalnika za pridobivanje <code>ccr</code>.</td></tr>
@@ -1602,15 +1602,15 @@ OmniRoute stoji na ramenih velikanov. Začel se je kot razcep projekta **[9route
   <tr><td nowrap><b><a href="https://github.com/atjsh/llmlingua-2-js">llmlingua-2-js</a></b></td><td align="center">31</td><td>Predelava JS/ONNX (MobileBERT / XLM-RoBERTa), uporabljena kot zaledje v delovni niti za naš pogon LLMLingua.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/leninejunior/troglodita">Troglodita</a></b></td><td align="center">40</td><td>Stiskanje žetonov za pt-BR — poganja naš jezikovni paket pt-BR: zmanjševanje pleonazmov in odstranjevanje mašil, prilagojeno brazilsko-portugalski slovnici.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/DietrichGebert/ponytail">ponytail</a></b></td><td align="center">108,957</td><td>Viralna veščina »lenega višjega razvijalca«, ki programira po načelu YAGNI — navdihnila je naš izhodni slog <b>less-code</b>: usmerjanje k najmanjši delujoči spremembi, ki zmanjša količino _ustvarjene_ kode (ustreznik jedrnati prozi projekta Caveman na izhodni osi).</td></tr>
-  <tr><td nowrap><b><a href="https://github.com/ayghri/i-have-adhd">i-have-adhd</a></b></td><td align="center">23,526</td><td>Njegov akcijsko usmerjen in osebam z ADHD prijazen slog odgovorov je bil prilagojen v jedrnati izhodni slog sistema OmniRoute v petih jezikih.</td></tr>
+  <tr><td nowrap><b><a href="https://github.com/ayghri/i-have-adhd">i-have-adhd</a></b></td><td align="center">23,526</td><td>Njegov akcijsko usmerjen in osebam z ADHD prijazen slog odgovorov je bil prilagojen v jedrnati izhodni slog sistema AgentProxy v petih jezikih.</td></tr>
 </table>
 
 ### 🧩 Kompaktni formati, raziskave žetonov in orodja, ki upoštevajo kodo
 
 <table>
-  <tr><th align="left">Projekt</th><th align="center">⭐</th><th align="left">Kako je navdihnil OmniRoute</th></tr>
+  <tr><th align="left">Projekt</th><th align="center">⭐</th><th align="left">Kako je navdihnil AgentProxy</th></tr>
   <tr><td nowrap><b><a href="https://github.com/toon-format/toon">TOON</a></b></td><td align="center">25,233</td><td>Objektni zapis, usmerjen v žetone — njegov stolpčni model z glavo in vrsticami je oblikoval našo stopnjo tabelarnega zgoščevanja.</td></tr>
-  <tr><td nowrap><b><a href="https://github.com/blackwell-systems/gcf">GCF – Graph Compact Format</a></b></td><td align="center">41</td><td>Njegova kompaktna oblika grafov in zasnova splošnega profila sta vplivali na tabelarno zgoščevanje sistema OmniRoute in obliko kodeka Headroom.</td></tr>
+  <tr><td nowrap><b><a href="https://github.com/blackwell-systems/gcf">GCF – Graph Compact Format</a></b></td><td align="center">41</td><td>Njegova kompaktna oblika grafov in zasnova splošnega profila sta vplivali na tabelarno zgoščevanje sistema AgentProxy in obliko kodeka Headroom.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/blackwell-systems/gcf-typescript">gcf-typescript</a></b></td><td align="center">4</td><td>Implementacija MIT za TypeScript, neposredno vključena in razširjena kot kodek splošnega profila Headroom.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/ooples/token-optimizer-mcp">token-optimizer-mcp</a></b></td><td align="center">494</td><td>Predpomnilnik Brotli/SQLite in delta konteksta za posamezno sejo — navdihnila sta naš pogon <code>session-dedup</code>.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/Mibayy/token-savior">token-savior</a></b></td><td align="center">1,122</td><td>Zgoščevanje izhoda Bash in profili MCP — navdihnili so našo načelnost pri prekinitvi stiskanja in zmanjševanje manifestov orodij MCP.</td></tr>
@@ -1627,7 +1627,7 @@ OmniRoute stoji na ramenih velikanov. Začel se je kot razcep projekta **[9route
 ### 🧠 Pomnilnik in RAG
 
 <table>
-  <tr><th align="left">Projekt</th><th align="center">⭐</th><th align="left">Kako je navdihnil OmniRoute</th></tr>
+  <tr><th align="left">Projekt</th><th align="center">⭐</th><th align="left">Kako je navdihnil AgentProxy</th></tr>
   <tr><td nowrap><b><a href="https://github.com/mem0ai/mem0">Mem0</a></b></td><td align="center">63,902</td><td>Univerzalna pomnilniška plast — njen model posredniškega strežnika kot meje za pisanje/branje je oblikoval našo pomnilniško arhitekturo.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/letta-ai/letta">Letta (MemGPT)</a></b></td><td align="center">24,382</td><td>Agenti s stanjem in večnivojskim pomnilnikom — navdihnili so naš večnivojski model nadzora in obnovitve konteksta (CCR).</td></tr>
   <tr><td nowrap><b><a href="https://github.com/onestardao/WFGY">WFGY</a></b></td><td align="center">1,781</td><td>Taksonomija ProblemMap s 16 ponavljajočimi se načini odpovedi RAG/LLM — skupni besednjak v našem vodniku za odpravljanje težav.</td></tr>
@@ -1636,15 +1636,15 @@ OmniRoute stoji na ramenih velikanov. Začel se je kot razcep projekta **[9route
 ### 🛰️ Pregledovanje prometa, MITM in transparentni posredniški strežnik
 
 <table>
-  <tr><th align="left">Projekt</th><th align="center">⭐</th><th align="left">Kako je navdihnil OmniRoute</th></tr>
-  <tr><td nowrap><b><a href="https://github.com/chouzz/llm-interceptor">llm-interceptor</a></b></td><td align="center">66</td><td>Prestrezanje/analiza prometa med pomočnikom za programiranje ↔ LLM z metodo MITM je vplivala na zgodnje zahteve za Traffic Inspector. Štiri predhodno izpeljane module — združevanje SSE, normalizacijo pogovorov, prikrivanje skrivnosti in čiščenje glav — so nadomestile neodvisne implementacije iz čiste sobe, ki temeljijo na javnih standardih protokolov. Površini za neposredno posredovanje gostitelju (<code>passthrough.ts</code> in <code>_internal/bypass.cjs</code>) ostajata interni implementaciji sistema OmniRoute, razvrščeni neodvisno; v okviru te zamenjave nista bili napisani na novo.</td></tr>
+  <tr><th align="left">Projekt</th><th align="center">⭐</th><th align="left">Kako je navdihnil AgentProxy</th></tr>
+  <tr><td nowrap><b><a href="https://github.com/chouzz/llm-interceptor">llm-interceptor</a></b></td><td align="center">66</td><td>Prestrezanje/analiza prometa med pomočnikom za programiranje ↔ LLM z metodo MITM je vplivala na zgodnje zahteve za Traffic Inspector. Štiri predhodno izpeljane module — združevanje SSE, normalizacijo pogovorov, prikrivanje skrivnosti in čiščenje glav — so nadomestile neodvisne implementacije iz čiste sobe, ki temeljijo na javnih standardih protokolov. Površini za neposredno posredovanje gostitelju (<code>passthrough.ts</code> in <code>_internal/bypass.cjs</code>) ostajata interni implementaciji sistema AgentProxy, razvrščeni neodvisno; v okviru te zamenjave nista bili napisani na novo.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/InterceptSuite/ProxyBridge">ProxyBridge</a></b></td><td align="center">5,995</td><td>Transparentno usmerjanje prek posredniškega strežnika za posamezen proces — navdihnilo je naše varno zaustavljanje MITM ob sesutju, časovne omejitve nedejavnosti vtičnic, pripisovanje procesov prek <code>/proc</code> in zajemanje TPROXY.</td></tr>
 </table>
 
 ### 📚 Podatki o modelih, opazljivost in uporabniški vmesnik
 
 <table>
-  <tr><th align="left">Projekt</th><th align="center">⭐</th><th align="left">Kako je navdihnil OmniRoute</th></tr>
+  <tr><th align="left">Projekt</th><th align="center">⭐</th><th align="left">Kako je navdihnil AgentProxy</th></tr>
   <tr><td nowrap><b><a href="https://github.com/anomalyco/models.dev">models.dev</a></b></td><td align="center">6,555</td><td>Odprta podatkovna zbirka specifikacij, cen in zmogljivosti modelov umetne inteligence — izvorno sinhronizirana v naš katalog modelov.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/xyflow/xyflow">React Flow / xyflow</a></b></td><td align="center">38,108</td><td>Knjižnica grafov na podlagi vozlišč, ki poganja naša sprotna okolja Compression Studio in Combo/Routing Studio.</td></tr>
   <tr><td nowrap><b><a href="https://github.com/langchain-ai/langgraph">LangGraph</a></b></td><td align="center">40,314</td><td>Prikaz grafa delovnega toka v živo v okolju LangGraph Studio je navdihnil sprotni kaskadni pogled v naših okoljih Studio.</td></tr>
@@ -1657,19 +1657,19 @@ OmniRoute stoji na ramenih velikanov. Začel se je kot razcep projekta **[9route
 ### 🛡️ Varnost
 
 <table>
-  <tr><th align="left">Projekt</th><th align="center">⭐</th><th align="left">Kako je navdihnil OmniRoute</th></tr>
+  <tr><th align="left">Projekt</th><th align="center">⭐</th><th align="left">Kako je navdihnil AgentProxy</th></tr>
   <tr><td nowrap><b><a href="https://github.com/tldrsec/awesome-secure-defaults">awesome-secure-defaults</a></b></td><td align="center">721</td><td>Kuriran seznam knjižnic, ki so privzeto varne in usmerjajo naše varnostne odločitve (Helmet.js, DOMPurify, ssrf-req-filter, safe-regex, Google Tink).</td></tr>
 </table>
 
 ### 🧭 Dopolnilna orodja
 
 <table>
-  <tr><th align="left">Projekt</th><th align="center">⭐</th><th align="left">Kako je navdihnil OmniRoute</th></tr>
+  <tr><th align="left">Projekt</th><th align="center">⭐</th><th align="left">Kako je navdihnil AgentProxy</th></tr>
   <tr><td nowrap><b><a href="https://github.com/BlockRunAI/ClawRouter">ClawRouter</a></b></td><td align="center">6,564</td><td>Navdihnil je odstranjevanje podvojenih zahtev, zasilni brezplačni nadomestni način, priključljive strategije Auto-Combo in večjezično razvrščanje namenov.</td></tr>
-  <tr><td nowrap><b><a href="https://github.com/lbjlaq/Antigravity-Manager">Antigravity-Manager</a></b></td><td align="center">30,652</td><td>Njegovo preslikavanje modelov glede na račun, preverjanje poti do izvedljivih datotek in vedenje oznak paketov so vplivali na izvajalno okolje Antigravity sistema OmniRoute.</td></tr>
-  <tr><td nowrap><b><a href="https://github.com/jlcodes99/vscode-antigravity-cockpit">vscode-antigravity-cockpit</a></b></td><td align="center">4,817</td><td>Njegova kompaktna oblika odštevanja do ponastavitve kvote je navdihnila ustrezni prikaz omejitev ponudnika v sistemu OmniRoute.</td></tr>
-  <tr><td nowrap><b><a href="https://github.com/iOfficeAI/AionUi">AionUi</a></b></td><td align="center">32,230</td><td>Njegove integracije ACP so navdihnile samodejno zaznavanje nameščenih agentov CLI v sistemu OmniRoute.</td></tr>
-  <tr><td nowrap><b><a href="https://github.com/steipete/CodexBar">CodexBar</a></b></td><td align="center">20,507</td><td>Prepoznal je mesto kvote Grok Build; OmniRoute je nato neodvisno preveril in popravil dejansko obliko prenosa po povezavi.</td></tr>
+  <tr><td nowrap><b><a href="https://github.com/lbjlaq/Antigravity-Manager">Antigravity-Manager</a></b></td><td align="center">30,652</td><td>Njegovo preslikavanje modelov glede na račun, preverjanje poti do izvedljivih datotek in vedenje oznak paketov so vplivali na izvajalno okolje Antigravity sistema AgentProxy.</td></tr>
+  <tr><td nowrap><b><a href="https://github.com/jlcodes99/vscode-antigravity-cockpit">vscode-antigravity-cockpit</a></b></td><td align="center">4,817</td><td>Njegova kompaktna oblika odštevanja do ponastavitve kvote je navdihnila ustrezni prikaz omejitev ponudnika v sistemu AgentProxy.</td></tr>
+  <tr><td nowrap><b><a href="https://github.com/iOfficeAI/AionUi">AionUi</a></b></td><td align="center">32,230</td><td>Njegove integracije ACP so navdihnile samodejno zaznavanje nameščenih agentov CLI v sistemu AgentProxy.</td></tr>
+  <tr><td nowrap><b><a href="https://github.com/steipete/CodexBar">CodexBar</a></b></td><td align="center">20,507</td><td>Prepoznal je mesto kvote Grok Build; AgentProxy je nato neodvisno preveril in popravil dejansko obliko prenosa po povezavi.</td></tr>
 </table>
 
 ## 📄 Licenca
@@ -1680,9 +1680,9 @@ Licenca MIT – za podrobnosti glejte [LICENSE](LICENSE).
 
 <div align="center">
 
-**[⬆ Nazaj na vrh](#-omniroute)** · Ustvarjeno z ❤️ za odprtokodno skupnost umetne inteligence.
+**[⬆ Nazaj na vrh](#-agentproxy)** · Ustvarjeno z ❤️ za odprtokodno skupnost umetne inteligence.
 
-<sub>OmniRoute v3.8.51 · Node ≥22.22.2 · Licenca MIT · <a href="https://omniroute.online">omniroute.online</a></sub>
+<sub>AgentProxy v3.8.51 · Node ≥22.22.2 · Licenca MIT · <a href="https://agentproxy.example.com">agentproxy.online</a></sub>
 
 </div>
 <!-- Razprave GitHub so omogočene za vprašanja in odgovore skupnosti -->

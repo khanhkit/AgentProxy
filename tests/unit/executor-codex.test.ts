@@ -34,6 +34,7 @@ type MockCodexWebSocket = {
   onerror: ((event: { message?: string }) => void) | null;
   onclose: (() => void) | null;
 };
+const UUID_V4_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 function getRecord(value: unknown): Record<string, unknown> {
   assert.equal(typeof value, "object");
@@ -41,12 +42,10 @@ function getRecord(value: unknown): Record<string, unknown> {
   assert.equal(Array.isArray(value), false);
   return value as Record<string, unknown>;
 }
-
 test.afterEach(() => {
   setThinkingBudgetConfig(DEFAULT_THINKING_CONFIG);
   __setCodexWebSocketTransportForTesting(undefined);
 });
-
 async function withEnv<T>(entries: Record<string, string | undefined>, fn: () => T | Promise<T>) {
   const previous = new Map();
   for (const [key, value] of Object.entries(entries)) {
@@ -118,7 +117,7 @@ test("Codex helper functions isolate rate-limit scopes and parse quota headers",
   assert.ok(getCodexResetTime(quota) >= new Date(quota.resetAt7d).getTime());
 });
 
-test("isCodexResponsesWebSocketRequired: OMNIROUTE_CODEX_WS_ENABLED=false forces HTTP even with codexTransport=websocket", () => {
+test("isCodexResponsesWebSocketRequired: AGENTPROXY_CODEX_WS_ENABLED=false forces HTTP even with codexTransport=websocket", () => {
   // Transport available + per-connection opt-in would normally enable WS…
   __setCodexWebSocketTransportForTesting(
     () =>
@@ -131,8 +130,8 @@ test("isCodexResponsesWebSocketRequired: OMNIROUTE_CODEX_WS_ENABLED=false forces
         onclose: null,
       }) as unknown as ReturnType<typeof Object>
   );
-  const prev = process.env.OMNIROUTE_CODEX_WS_ENABLED;
-  process.env.OMNIROUTE_CODEX_WS_ENABLED = "false";
+  const prev = process.env.AGENTPROXY_CODEX_WS_ENABLED;
+  process.env.AGENTPROXY_CODEX_WS_ENABLED = "false";
   try {
     // …but the global kill-switch (default ON) overrides it to false.
     assert.equal(
@@ -142,8 +141,8 @@ test("isCodexResponsesWebSocketRequired: OMNIROUTE_CODEX_WS_ENABLED=false forces
       false
     );
   } finally {
-    if (prev === undefined) delete process.env.OMNIROUTE_CODEX_WS_ENABLED;
-    else process.env.OMNIROUTE_CODEX_WS_ENABLED = prev;
+    if (prev === undefined) delete process.env.AGENTPROXY_CODEX_WS_ENABLED;
+    else process.env.AGENTPROXY_CODEX_WS_ENABLED = prev;
     __setCodexWebSocketTransportForTesting(undefined);
   }
 });
@@ -184,10 +183,10 @@ test("CodexExecutor.buildHeaders binds workspace ids and disables SSE accept for
   assert.equal(standardHeaders.Authorization, "Bearer codex-token");
   assert.equal(standardHeaders.Accept, "text/event-stream");
   assert.equal(standardHeaders["chatgpt-account-id"], "workspace-1");
-  assert.equal(standardHeaders.Version, "0.153.2");
+  assert.equal(standardHeaders.Version, "0.155.0");
   assert.equal(standardHeaders["Openai-Beta"], "responses=experimental");
   assert.equal(standardHeaders["X-Codex-Beta-Features"], "responses_websockets");
-  assert.equal(standardHeaders["User-Agent"], "codex-cli/0.153.2 (Windows 10.0.26200; x64)");
+  assert.equal(standardHeaders["User-Agent"], "codex-cli/0.155.0 (Windows 10.0.26200; x64)");
   assert.equal(compactHeaders.Accept, "application/json");
 });
 
@@ -213,7 +212,7 @@ test("CodexExecutor.buildHeaders honors safe env overrides for Version and User-
     },
     () => {
       const headers = executor.buildHeaders({ accessToken: "codex-token" }, true);
-      assert.equal(headers.Version, "0.153.2");
+      assert.equal(headers.Version, "0.155.0");
       assert.equal(headers["User-Agent"], "custom-codex/9.9.9");
     }
   );
@@ -406,7 +405,7 @@ test("CodexExecutor.transformRequest preserves store-enabled responses state whe
   const executor = new CodexExecutor();
   const body = {
     _nativeCodexPassthrough: true,
-    _omnirouteResponsesStore: true,
+    _agentproxyResponsesStore: true,
     instructions: "keep this",
     previous_response_id: "resp_prev_123",
     stream: false,
@@ -420,7 +419,7 @@ test("CodexExecutor.transformRequest preserves store-enabled responses state whe
     },
   });
 
-  assert.equal(result._omnirouteResponsesStore, undefined);
+  assert.equal(result._agentproxyResponsesStore, undefined);
   assert.equal(result.store, true);
   assert.equal(result.previous_response_id, "resp_prev_123");
 });
@@ -428,7 +427,7 @@ test("CodexExecutor.transformRequest strips store from compact requests even whe
   const executor = new CodexExecutor();
   const body = {
     _nativeCodexPassthrough: true,
-    _omnirouteResponsesStore: true,
+    _agentproxyResponsesStore: true,
     instructions: "keep this",
     store: true,
     stream: false,
@@ -442,7 +441,7 @@ test("CodexExecutor.transformRequest strips store from compact requests even whe
     },
   });
 
-  assert.equal(result._omnirouteResponsesStore, undefined);
+  assert.equal(result._agentproxyResponsesStore, undefined);
   assert.equal(result.store, undefined);
   assert.equal(result.stream, undefined);
   assert.equal(result.instructions, "keep this");
@@ -1030,6 +1029,161 @@ test("CodexExecutor.execute captures the exact websocket request body before sen
   assert.equal(sentBody.model, "gpt-5.5");
 });
 
+test("CodexExecutor.execute emits response.failed when websocket closes before a terminal event", async () => {
+  const executor = new CodexExecutor();
+  const ws: MockCodexWebSocket = {
+    send() {
+      queueMicrotask(() => {
+        ws.onmessage?.({
+          data: JSON.stringify({
+            type: "response.output_text.delta",
+            delta: "partial output",
+          }),
+        });
+        ws.onclose?.();
+      });
+    },
+    close() {},
+    onmessage: null,
+    onerror: null,
+    onclose: null,
+  };
+  __setCodexWebSocketTransportForTesting(async () => ws);
+
+  const result = await executor.execute({
+    model: "gpt-5.5-xhigh",
+    body: { model: "gpt-5.5-xhigh", input: [{ role: "user", content: "hello" }] },
+    stream: true,
+    credentials: {
+      accessToken: "codex-token",
+      providerSpecificData: { codexTransport: "websocket" },
+    },
+  });
+  const body = await result.response.text();
+
+  assert.match(body, /event: response\.failed/);
+  const terminalEvents = body.match(/event: response\.(?:completed|failed|incomplete)/g) ?? [];
+  assert.deepEqual(terminalEvents, ["event: response.failed"]);
+
+  const dataLine = body.split("\n").find((line) => line.includes('"upstream_websocket_closed"'));
+  assert.ok(dataLine);
+  const payload = JSON.parse(dataLine.slice("data: ".length));
+  assert.equal(payload.type, "response.failed");
+  assert.equal(payload.response.status, "failed");
+  assert.equal(payload.response.error.code, "upstream_websocket_closed");
+});
+
+test("CodexExecutor.execute does not emit a second terminal event after normal websocket close", async () => {
+  const executor = new CodexExecutor();
+  const ws: MockCodexWebSocket = {
+    send() {
+      queueMicrotask(() => {
+        ws.onmessage?.({
+          data: JSON.stringify({
+            type: "response.completed",
+            response: { id: "resp_complete", status: "completed" },
+          }),
+        });
+        ws.onclose?.();
+      });
+    },
+    close() {},
+    onmessage: null,
+    onerror: null,
+    onclose: null,
+  };
+  __setCodexWebSocketTransportForTesting(async () => ws);
+
+  const result = await executor.execute({
+    model: "gpt-5.5-xhigh",
+    body: { model: "gpt-5.5-xhigh", input: [{ role: "user", content: "hello" }] },
+    stream: true,
+    credentials: {
+      accessToken: "codex-token",
+      providerSpecificData: { codexTransport: "websocket" },
+    },
+  });
+  const body = await result.response.text();
+
+  const terminalEvents = body.match(/event: response\.(?:completed|failed|incomplete)/g) ?? [];
+  assert.deepEqual(terminalEvents, ["event: response.completed"]);
+  assert.doesNotMatch(body, /upstream_websocket_closed/);
+});
+
+test("CodexExecutor.execute emits a single response.failed when onerror precedes onclose", async () => {
+  const executor = new CodexExecutor();
+  const ws: MockCodexWebSocket = {
+    send() {
+      queueMicrotask(() => {
+        ws.onmessage?.({
+          data: JSON.stringify({
+            type: "response.output_text.delta",
+            delta: "partial output",
+          }),
+        });
+        // Real WebSocket implementations fire onerror before onclose on an
+        // abnormal close — the closed latch must keep this to one terminal event.
+        ws.onerror?.({ message: "socket hang up" });
+        ws.onclose?.({ code: 1006 });
+      });
+    },
+    close() {},
+    onmessage: null,
+    onerror: null,
+    onclose: null,
+  };
+  __setCodexWebSocketTransportForTesting(async () => ws);
+
+  const result = await executor.execute({
+    model: "gpt-5.5-xhigh",
+    body: { model: "gpt-5.5-xhigh", input: [{ role: "user", content: "hello" }] },
+    stream: true,
+    credentials: {
+      accessToken: "codex-token",
+      providerSpecificData: { codexTransport: "websocket" },
+    },
+  });
+  const body = await result.response.text();
+
+  const terminalEvents = body.match(/event: response\.(?:completed|failed|incomplete)/g) ?? [];
+  assert.deepEqual(terminalEvents, ["event: response.failed"]);
+  // The first failure wins: onerror fired before onclose, so the emitted code is
+  // upstream_websocket_error, not upstream_websocket_closed.
+  assert.match(body, /upstream_websocket_error/);
+  assert.doesNotMatch(body, /upstream_websocket_closed/);
+});
+
+test("CodexExecutor.execute emits response.failed when websocket closes with no prior events", async () => {
+  const executor = new CodexExecutor();
+  const ws: MockCodexWebSocket = {
+    send() {
+      queueMicrotask(() => {
+        ws.onclose?.({ code: 1006, reason: "abnormal closure" });
+      });
+    },
+    close() {},
+    onmessage: null,
+    onerror: null,
+    onclose: null,
+  };
+  __setCodexWebSocketTransportForTesting(async () => ws);
+
+  const result = await executor.execute({
+    model: "gpt-5.5-xhigh",
+    body: { model: "gpt-5.5-xhigh", input: [{ role: "user", content: "hello" }] },
+    stream: true,
+    credentials: {
+      accessToken: "codex-token",
+      providerSpecificData: { codexTransport: "websocket" },
+    },
+  });
+  const body = await result.response.text();
+
+  const terminalEvents = body.match(/event: response\.(?:completed|failed|incomplete)/g) ?? [];
+  assert.deepEqual(terminalEvents, ["event: response.failed"]);
+  assert.match(body, /upstream_websocket_closed/);
+});
+
 test("CodexExecutor.execute adds CLI-like session identity headers without changing response flow", async () => {
   const executor = new CodexExecutor();
   const originalFetch = globalThis.fetch;
@@ -1078,7 +1232,8 @@ test("CodexExecutor.execute adds CLI-like session identity headers without chang
     assert.equal(turnMetadata.sandbox, "none");
     assert.equal(typeof turnMetadata.turn_id, "string");
     assert.equal(capturedBody?.prompt_cache_key, "conversation-1");
-    assert.equal(meta["x-codex-installation-id"], "7f06a8ee-2981-4c81-a4ca-e443b5400a63");
+    assert.match(String(capturedHeaders?.get("x-codex-installation-id")), UUID_V4_RE);
+    assert.equal(meta["x-codex-installation-id"], capturedHeaders?.get("x-codex-installation-id"));
   } finally {
     globalThis.fetch = originalFetch;
   }
@@ -1442,15 +1597,15 @@ test("Codex internal websocket bridge secret comparison handles mismatched lengt
 });
 
 test("Codex internal websocket bridge rejects non-object JSON payloads", async () => {
-  await withEnv({ OMNIROUTE_WS_BRIDGE_SECRET: "bridge-secret" }, async () => {
+  await withEnv({ AGENTPROXY_WS_BRIDGE_SECRET: "bridge-secret" }, async () => {
     const { POST } = await import("../../src/app/api/internal/codex-responses-ws/route.ts");
 
     const response = await POST(
-      new Request("http://omniroute.local/api/internal/codex-responses-ws", {
+      new Request("http://agentproxy.local/api/internal/codex-responses-ws", {
         method: "POST",
         headers: {
           "content-type": "application/json",
-          "x-omniroute-ws-bridge-secret": "bridge-secret",
+          "x-agentproxy-ws-bridge-secret": "bridge-secret",
         },
         body: JSON.stringify(["invalid"]),
       })

@@ -1,12 +1,12 @@
 ---
-title: "📖 Setup Guide — OmniRoute"
+title: "📖 Setup Guide — AgentProxy"
 version: 3.8.50
 lastUpdated: 2026-08-18
 ---
 
-# 📖 Setup Guide — OmniRoute
+# 📖 Setup Guide — AgentProxy
 
-> Complete setup reference for OmniRoute. For the quick version, see the [Quick Start in README](../README.md#-quick-start).
+> Complete setup reference for AgentProxy. For the quick version, see the [Quick Start in README](../README.md#-quick-start).
 
 ## Table of Contents
 
@@ -25,8 +25,8 @@ lastUpdated: 2026-08-18
 ### npm (recommended)
 
 ```bash
-npm install -g omniroute
-omniroute
+npm install -g agentproxy
+agentproxy
 ```
 
 Dashboard opens at `http://localhost:20128` and API base URL is `http://localhost:20128/v1`.
@@ -34,8 +34,8 @@ Dashboard opens at `http://localhost:20128` and API base URL is `http://localhos
 ### pnpm
 
 ```bash
-pnpm add -g omniroute@latest --allow-build=better-sqlite3 --allow-build=@swc/core
-omniroute
+pnpm add -g agentproxy@latest --allow-build=better-sqlite3 --allow-build=@swc/core
+agentproxy
 ```
 
 > **pnpm users:** the `--allow-build` flag is required to enable native build scripts for `better-sqlite3` and `@swc/core`. The `pnpm approve-builds -g` command is not supported for global installs on pnpm v11.
@@ -43,11 +43,11 @@ omniroute
 ### Arch Linux (AUR)
 
 ```bash
-yay -S omniroute-bin
-systemctl --user enable --now omniroute.service
+yay -S agentproxy-bin
+systemctl --user enable --now agentproxy.service
 ```
 
-The [AUR package](https://aur.archlinux.org/packages/omniroute-bin) installs OmniRoute and provides a systemd user service.
+The [AUR package](https://aur.archlinux.org/packages/agentproxy-bin) installs AgentProxy and provides a systemd user service.
 
 ### From Source
 
@@ -56,7 +56,7 @@ npm install
 PORT=20128 DASHBOARD_PORT=20129 NEXT_PUBLIC_BASE_URL=http://localhost:20129 npm run dev
 ```
 
-> **Windows note:** By default, OmniRoute uses `%APPDATA%\omniroute` when the legacy `%USERPROFILE%\.omniroute` directory is not present. Set `DATA_DIR` to choose a different data-directory location.
+> **Windows note:** By default, AgentProxy uses `%APPDATA%\agentproxy` when the legacy `%USERPROFILE%\.agentproxy` directory is not present. Set `DATA_DIR` to choose a different data-directory location.
 
 > **Note:** `npm install` auto-generates `.env` from `.env.example` on first run. Subsequent installs will not overwrite an existing `.env`, so customizations are preserved. To re-seed, delete `.env` before re-running.
 
@@ -66,7 +66,7 @@ See the [Docker Guide](./DOCKER_GUIDE.md) for complete Docker setup including Co
 
 ### Desktop App (Electron)
 
-OmniRoute ships a desktop wrapper built on Electron 41 + electron-builder 26.10. Available scripts (workspace root):
+AgentProxy ships a desktop wrapper built on Electron 41 + electron-builder 26.10. Available scripts (workspace root):
 
 ```bash
 npm run electron:dev          # Run desktop with hot-reload
@@ -84,56 +84,56 @@ Releases of the desktop installers are attached to GitHub Releases. For the full
 For unattended setups (Docker, Kubernetes, CI), use:
 
 ```bash
-omniroute setup --non-interactive
-omniroute providers test-batch
+agentproxy setup --non-interactive
+agentproxy providers test-batch
 ```
 
-Combined with env vars (`INITIAL_PASSWORD`, `OMNIROUTE_WS_BRIDGE_SECRET`, etc.), this lets you spin up an OmniRoute instance fully scriptable.
+Combined with env vars (`INITIAL_PASSWORD`, `AGENTPROXY_WS_BRIDGE_SECRET`, etc.), this lets you spin up an AgentProxy instance fully scriptable.
 
 ### CLI Options
 
 | Command                 | Description                                                    |
 | ----------------------- | -------------------------------------------------------------- |
-| `omniroute`             | Start server (`PORT=20128`, API and dashboard on same port)    |
-| `omniroute setup`       | Guided CLI onboarding for password and first provider          |
-| `omniroute doctor`      | Run local health checks without starting the server            |
-| `omniroute providers`   | Discover, list, validate, and test providers from CLI          |
-| `omniroute config`      | CLI tool configuration — list, get, set, validate configs      |
-| `omniroute status`      | Offline status dashboard — version, DB, tools, config          |
-| `omniroute logs`        | Stream usage logs from the API (supports `--follow`)           |
-| `omniroute update`      | Check for or apply OmniRoute updates                           |
-| `omniroute provider`    | Manage provider connections — add, list, remove, test, default |
-| `omniroute --port 3000` | Set canonical/API port to 3000                                 |
-| `omniroute --mcp`       | Start MCP server (stdio transport)                             |
-| `omniroute --no-open`   | Don't auto-open browser                                        |
-| `omniroute --help`      | Show help                                                      |
+| `agentproxy`             | Start server (`PORT=20128`, API and dashboard on same port)    |
+| `agentproxy setup`       | Guided CLI onboarding for password and first provider          |
+| `agentproxy doctor`      | Run local health checks without starting the server            |
+| `agentproxy providers`   | Discover, list, validate, and test providers from CLI          |
+| `agentproxy config`      | CLI tool configuration — list, get, set, validate configs      |
+| `agentproxy status`      | Offline status dashboard — version, DB, tools, config          |
+| `agentproxy logs`        | Stream usage logs from the API (supports `--follow`)           |
+| `agentproxy update`      | Check for or apply AgentProxy updates                           |
+| `agentproxy provider`    | Manage provider connections — add, list, remove, test, default |
+| `agentproxy --port 3000` | Set canonical/API port to 3000                                 |
+| `agentproxy --mcp`       | Start MCP server (stdio transport)                             |
+| `agentproxy --no-open`   | Don't auto-open browser                                        |
+| `agentproxy --help`      | Show help                                                      |
 
 Headless setup can be scripted with flags or environment variables:
 
 ```bash
-omniroute setup --non-interactive --password "$OMNIROUTE_PASSWORD"
-omniroute setup --non-interactive --add-provider --provider openai --api-key "$OPENAI_API_KEY"
-omniroute setup --non-interactive --add-provider --provider openai --api-key "$OPENAI_API_KEY" --test-provider
+agentproxy setup --non-interactive --password "$AGENTPROXY_PASSWORD"
+agentproxy setup --non-interactive --add-provider --provider openai --api-key "$OPENAI_API_KEY"
+agentproxy setup --non-interactive --add-provider --provider openai --api-key "$OPENAI_API_KEY" --test-provider
 ```
 
 Run local diagnostics without opening the dashboard:
 
 ```bash
-omniroute doctor
-omniroute doctor --json
-omniroute doctor --no-liveness
+agentproxy doctor
+agentproxy doctor --json
+agentproxy doctor --no-liveness
 ```
 
 Manage providers from SSH or scripts without opening the dashboard:
 
 ```bash
-omniroute providers available
-omniroute providers available --search openai
-omniroute providers available --category api-key
-omniroute providers list
-omniroute providers test <id-or-name>
-omniroute providers test-all
-omniroute providers validate
+agentproxy providers available
+agentproxy providers available --search openai
+agentproxy providers available --category api-key
+agentproxy providers list
+agentproxy providers test <id-or-name>
+agentproxy providers test-all
+agentproxy providers validate
 ```
 
 ---
@@ -167,30 +167,30 @@ Works with Claude Code, Codex CLI, Cursor, Cline, OpenClaw, OpenCode, and OpenAI
 
 #### Auto-configure with `setup-*`
 
-Instead of pasting the base URL and key by hand, let OmniRoute write each tool's
+Instead of pasting the base URL and key by hand, let AgentProxy write each tool's
 own config from the live model catalog. One command per tool:
 
 ```bash
-omniroute setup-codex        # ~/.codex/<name>.config.toml profiles
-omniroute setup-claude       # ~/.claude/profiles/<name>/settings.json
-omniroute setup-opencode     # ~/.config/opencode/opencode.json (openai-compatible)
-omniroute setup-cline        # Cline CLI + VS Code extension settings
-omniroute setup-kilo         # Kilo Code
-omniroute setup-continue     # ~/.continue/config.yaml (Continue / cn)
-omniroute setup-cursor       # prints Cursor's in-app steps
-omniroute setup-roo          # Roo Code import + autoImport pointer
-omniroute setup-crush        # ~/.config/crush/crush.json
-omniroute setup-goose        # ~/.config/goose/config.yaml
-omniroute setup-aider        # ~/.aider.conf.yml
-omniroute setup-qwen         # ~/.qwen/settings.json + ~/.qwen/.env
+agentproxy setup-codex        # ~/.codex/<name>.config.toml profiles
+agentproxy setup-claude       # ~/.claude/profiles/<name>/settings.json
+agentproxy setup-opencode     # ~/.config/opencode/opencode.json (openai-compatible)
+agentproxy setup-cline        # Cline CLI + VS Code extension settings
+agentproxy setup-kilo         # Kilo Code
+agentproxy setup-continue     # ~/.continue/config.yaml (Continue / cn)
+agentproxy setup-cursor       # prints Cursor's in-app steps
+agentproxy setup-roo          # Roo Code import + autoImport pointer
+agentproxy setup-crush        # ~/.config/crush/crush.json
+agentproxy setup-goose        # ~/.config/goose/config.yaml
+agentproxy setup-aider        # ~/.aider.conf.yml
+agentproxy setup-qwen         # ~/.qwen/settings.json + ~/.qwen/.env
 ```
 
 Each accepts `--remote <url> --api-key <key>` to configure a local tool against a
-**remote** OmniRoute, plus `--dry-run` to preview. To launch a CLI with the right
+**remote** AgentProxy, plus `--dry-run` to preview. To launch a CLI with the right
 env injected and no config written at all, use the generic launcher
-`omniroute run <target>` (claude, codex, aider, goose, opencode, qwen, gemini);
-the legacy per-tool launchers `omniroute launch` (Claude Code) and
-`omniroute launch-codex` (Codex) remain available.
+`agentproxy run <target>` (claude, codex, aider, goose, opencode, qwen, gemini);
+the legacy per-tool launchers `agentproxy launch` (Claude Code) and
+`agentproxy launch-codex` (Codex) remain available.
 
 For the full table (what each command writes, every flag, local vs remote, base-URL
 `/v1` conventions), see **[CLI Integrations](./CLI-INTEGRATIONS.md)**.
@@ -206,18 +206,18 @@ For detailed per-tool configuration (Claude Code, Codex CLI, Cursor, Cline, Open
 Start MCP transport in stdio mode:
 
 ```bash
-omniroute --mcp
+agentproxy --mcp
 ```
 
 Recommended validation flow:
 
 ```bash
 # 1. Start MCP server
-omniroute --mcp
+agentproxy --mcp
 
 # 2. From your MCP client, call:
-omniroute_get_health        # Should return system health
-omniroute_list_combos       # Should return active combos
+agentproxy_get_health        # Should return system health
+agentproxy_list_combos       # Should return active combos
 
 # 3. Or run the full E2E suite:
 npm run test:protocols:e2e
@@ -228,7 +228,7 @@ npm run test:protocols:e2e
 **Claude Code:**
 
 ```bash
-claude mcp add-server omniroute --type http --url http://localhost:20128/api/mcp/stream
+claude mcp add-server agentproxy --type http --url http://localhost:20128/api/mcp/stream
 ```
 
 **Cursor / Cline:**
@@ -238,8 +238,8 @@ Add to your MCP settings:
 ```json
 {
   "mcpServers": {
-    "omniroute": {
-      "command": "omniroute",
+    "agentproxy": {
+      "command": "agentproxy",
       "args": ["--mcp"],
       "env": {}
     }
@@ -278,15 +278,15 @@ For most deployments, you only need these two variables:
 | Variable                 | Default                       | Purpose                                                                                                                                      |
 | ------------------------ | ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
 | `REQUEST_TIMEOUT_MS`     | `600000`                      | Shared baseline for upstream response-start timeout, hidden Undici timeouts, TLS fingerprint requests, and API bridge request/proxy timeouts |
-| `STREAM_IDLE_TIMEOUT_MS` | inherits `REQUEST_TIMEOUT_MS` | Maximum gap between streaming chunks before OmniRoute aborts the SSE stream                                                                  |
+| `STREAM_IDLE_TIMEOUT_MS` | inherits `REQUEST_TIMEOUT_MS` | Maximum gap between streaming chunks before AgentProxy aborts the SSE stream                                                                  |
 
 Backward compatibility is preserved: existing `FETCH_TIMEOUT_MS`, `API_BRIDGE_PROXY_TIMEOUT_MS`, and other per-layer timeout vars still work and override the shared baseline.
 
 ### Provider-Specific Notes
 
-For Claude Code-compatible upstreams (`anthropic-compatible-cc-*`), OmniRoute derives the outbound `X-Stainless-Timeout` header from the resolved fetch timeout so provider-side read timeouts stay aligned with your env configuration.
+For Claude Code-compatible upstreams (`anthropic-compatible-cc-*`), AgentProxy derives the outbound `X-Stainless-Timeout` header from the resolved fetch timeout so provider-side read timeouts stay aligned with your env configuration.
 
-For third-party Claude Code-compatible reverse proxies, OmniRoute keeps the default `anthropic-beta` set conservative and, when `Client Cache Control` is left on `Auto`, only forwards client-provided `cache_control` markers. Enable the per-connection "Enable redact-thinking beta" toggle only when the upstream specifically requires redacted Claude thinking streams.
+For third-party Claude Code-compatible reverse proxies, AgentProxy keeps the default `anthropic-beta` set conservative and, when `Client Cache Control` is left on `Auto`, only forwards client-provided `cache_control` markers. Enable the per-connection "Enable redact-thinking beta" toggle only when the upstream specifically requires redacted Claude thinking streams.
 
 ### Advanced Timeout Overrides
 
@@ -304,11 +304,11 @@ For third-party Claude Code-compatible reverse proxies, OmniRoute keeps the defa
 | `API_BRIDGE_SERVER_KEEPALIVE_TIMEOUT_MS` | `5000`                                     | Keep-alive timeout on the API bridge server                          |
 | `API_BRIDGE_SERVER_SOCKET_TIMEOUT_MS`    | `0`                                        | Socket inactivity timeout on the API bridge server (`0` disables it) |
 
-> **Note:** For streaming requests, `FETCH_TIMEOUT_MS` only covers connection setup / waiting for the first upstream response. Once the stream is active, OmniRoute will only abort on an actual stall (`STREAM_IDLE_TIMEOUT_MS`) or Undici body inactivity (`FETCH_BODY_TIMEOUT_MS`).
+> **Note:** For streaming requests, `FETCH_TIMEOUT_MS` only covers connection setup / waiting for the first upstream response. Once the stream is active, AgentProxy will only abort on an actual stall (`STREAM_IDLE_TIMEOUT_MS`) or Undici body inactivity (`FETCH_BODY_TIMEOUT_MS`).
 
 ### Reverse Proxy Compatibility
 
-If you run OmniRoute behind Nginx, Caddy, Cloudflare, or another reverse proxy, make sure the proxy timeouts are also higher than your OmniRoute stream/fetch timeouts.
+If you run AgentProxy behind Nginx, Caddy, Cloudflare, or another reverse proxy, make sure the proxy timeouts are also higher than your AgentProxy stream/fetch timeouts.
 
 ---
 
@@ -317,7 +317,7 @@ If you run OmniRoute behind Nginx, Caddy, Cloudflare, or another reverse proxy, 
 Run API and Dashboard on separate ports for advanced scenarios (reverse proxy, container networking):
 
 ```bash
-PORT=20128 DASHBOARD_PORT=20129 omniroute
+PORT=20128 DASHBOARD_PORT=20129 agentproxy
 # API:       http://localhost:20128/v1
 # Dashboard: http://localhost:20129
 ```
@@ -326,11 +326,11 @@ PORT=20128 DASHBOARD_PORT=20129 omniroute
 
 ## Void Linux (xbps-src) Template
 
-For Void Linux users, you can build a native package using `xbps-src`. Save this block as `srcpkgs/omniroute/template`:
+For Void Linux users, you can build a native package using `xbps-src`. Save this block as `srcpkgs/agentproxy/template`:
 
 ```bash
-# Template file for 'omniroute'
-pkgname=omniroute
+# Template file for 'agentproxy'
+pkgname=agentproxy
 version=3.8.0
 revision=1
 hostmakedepends="nodejs python3 make"
@@ -338,13 +338,13 @@ depends="openssl"
 short_desc="Universal AI gateway with smart routing for multiple LLM providers"
 maintainer="zenobit <zenobit@disroot.org>"
 license="MIT"
-homepage="https://github.com/diegosouzapw/OmniRoute"
-distfiles="https://github.com/diegosouzapw/OmniRoute/archive/refs/tags/v${version}.tar.gz"
+homepage="https://github.com/khanhkit/AgentProxy"
+distfiles="https://github.com/khanhkit/AgentProxy/archive/refs/tags/v${version}.tar.gz"
 # Regenerate the checksum for each release with:
-#   curl -L -o /tmp/omniroute.tar.gz "https://github.com/diegosouzapw/OmniRoute/archive/refs/tags/v${version}.tar.gz" && sha256sum /tmp/omniroute.tar.gz
+#   curl -L -o /tmp/agentproxy.tar.gz "https://github.com/khanhkit/AgentProxy/archive/refs/tags/v${version}.tar.gz" && sha256sum /tmp/agentproxy.tar.gz
 checksum=PLACEHOLDER_REGENERATE_PER_RELEASE
-system_accounts="_omniroute"
-omniroute_homedir="/var/lib/omniroute"
+system_accounts="_agentproxy"
+agentproxy_homedir="/var/lib/agentproxy"
 export NODE_ENV=production
 export npm_config_engine_strict=false
 export npm_config_loglevel=error
@@ -384,25 +384,25 @@ do_check() {
 }
 
 do_install() {
-	vmkdir usr/lib/omniroute/.next
-	vcopy .next/standalone/. usr/lib/omniroute/.next/standalone
+	vmkdir usr/lib/agentproxy/.next
+	vcopy .next/standalone/. usr/lib/agentproxy/.next/standalone
 
 	for _d in \
 		.next/standalone/.next/server/app/dashboard \
 		.next/standalone/.next/server/app/dashboard/settings \
 		.next/standalone/.next/server/app/dashboard/providers; do
-		touch "${DESTDIR}/usr/lib/omniroute/${_d}/.keep"
+		touch "${DESTDIR}/usr/lib/agentproxy/${_d}/.keep"
 	done
 
-	cat > "${WRKDIR}/omniroute" <<'EOF'
+	cat > "${WRKDIR}/agentproxy" <<'EOF'
 #!/bin/sh
 export PORT="${PORT:-20128}"
-export DATA_DIR="${DATA_DIR:-${XDG_DATA_HOME:-${HOME}/.local/share}/omniroute}"
+export DATA_DIR="${DATA_DIR:-${XDG_DATA_HOME:-${HOME}/.local/share}/agentproxy}"
 export APP_LOG_TO_FILE="${APP_LOG_TO_FILE:-false}"
 mkdir -p "${DATA_DIR}"
-exec node /usr/lib/omniroute/.next/standalone/server.js "$@"
+exec node /usr/lib/agentproxy/.next/standalone/server.js "$@"
 EOF
-	vbin "${WRKDIR}/omniroute"
+	vbin "${WRKDIR}/agentproxy"
 }
 
 post_install() {
@@ -416,7 +416,7 @@ post_install() {
 
 | Command                  | Action                                                                              |
 | ------------------------ | ----------------------------------------------------------------------------------- |
-| `npm run uninstall`      | Removes the system app but **keeps your DB and configurations** in `~/.omniroute`.  |
+| `npm run uninstall`      | Removes the system app but **keeps your DB and configurations** in `~/.agentproxy`.  |
 | `npm run uninstall:full` | Removes the app AND permanently **erases all configurations, keys, and databases**. |
 
 > For detailed uninstall instructions across all methods, see [UNINSTALL.md](./UNINSTALL.md).

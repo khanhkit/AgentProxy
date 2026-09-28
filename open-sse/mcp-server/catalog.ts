@@ -13,6 +13,7 @@ type McpCatalogResponse = {
     status: McpCatalogStatus;
     thinkingEffort?: string;
     pricing?: unknown;
+    context_length?: number;
   }>;
   source: string;
   warning?: string;
@@ -136,6 +137,8 @@ function normalizeProviderModelRecord(
 ) {
   const model = toRecord(rawModel);
   const id = toString(model.id, "");
+  const contextLength =
+    typeof model.context_length === "number" ? model.context_length : undefined;
 
   return {
     id,
@@ -144,6 +147,7 @@ function normalizeProviderModelRecord(
     status: normalizeCatalogStatus(model, source, warning),
     ...(thinkingEffort ? { thinkingEffort } : {}),
     pricing: model.pricing,
+    ...(contextLength !== undefined ? { context_length: contextLength } : {}),
   };
 }
 
@@ -249,7 +253,7 @@ export async function getMcpModelsCatalog(
     listProviderConnections?: () => Promise<ProviderConnectionLike[]>;
   } = {}
 ): Promise<McpCatalogResponse> {
-  const fetchJson = deps.fetchJson ?? ((path: string) => import("./server.ts").then((m) => m.omniRouteFetch(path)));
+  const fetchJson = deps.fetchJson ?? ((path: string) => import("./server.ts").then((m) => m.AgentProxyFetch(path)));
   const listProviderConnections = deps.listProviderConnections ?? getProviderConnections;
   const aliasMap = buildProviderAliasMap();
   const normalizeProviderId = (value: string) => aliasMap[value] || value;

@@ -2,7 +2,7 @@ import {
   DEFAULT_API_LIMITS,
   PROVIDER_PROFILES,
   STREAM_THROUGHPUT_WATCHDOG,
-} from "@omniroute/open-sse/config/constants";
+} from "@agentproxy/open-sse/config/constants";
 
 import type { JsonRecord, ResilienceSettings, ResilienceSettingsPatch } from "./settings/types";
 import {
@@ -43,8 +43,8 @@ export type {
 } from "./settings/types";
 
 export const DEFAULT_REQUEST_QUEUE_MAX_WAIT_MS = (() => {
-  const parsed = Number(process.env.RATE_LIMIT_MAX_WAIT_MS || "15000");
-  return Number.isFinite(parsed) && parsed > 0 ? Math.trunc(parsed) : 15000;
+  const parsed = Number(process.env.RATE_LIMIT_MAX_WAIT_MS || "30000");
+  return Number.isFinite(parsed) && parsed > 0 ? Math.trunc(parsed) : 30000;
 })();
 
 // Limiter-managed execution backstop (Bottleneck `expiration`). Deliberately

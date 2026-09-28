@@ -14,7 +14,7 @@ import path from "node:path";
 import { makeManagementSessionRequest } from "../helpers/managementSession.ts";
 
 // Unique temp dir for this test run to avoid cross-contamination
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-allstatuses-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-allstatuses-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.API_KEY_SECRET = "test-all-statuses-secret";
 
@@ -198,7 +198,7 @@ test("cache hit: pre-populated cache is returned without re-executing", async ()
   const toolId = Object.keys(CLI_TOOLS)[0];
   const knownStatus = {
     detection: { installed: true, runnable: true, version: "1.0.0-cached" },
-    config: { status: "configured" as const, endpoint: "http://cached.omniroute.local" },
+    config: { status: "configured" as const, endpoint: "http://cached.agentproxy.local" },
   };
   // mtime 0 = no config file; getCached(toolId, 0) will return this
   setCached(toolId, 0, knownStatus);
@@ -265,9 +265,9 @@ test("grok-build status uses GROK_HOME and returns its managed endpoint", async 
       path.join(grokHome, "config.toml"),
       [
         "[models]",
-        'default = "omniroute"',
+        'default = "agentproxy"',
         "",
-        "[model.omniroute]",
+        "[model.agentproxy]",
         'model = "openai/gpt-5.5"',
         'base_url = "https://gateway.example/v1"',
         'api_backend = "chat_completions"',

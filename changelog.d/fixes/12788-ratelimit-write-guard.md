@@ -1,0 +1,1 @@
+- **fix(db):** ignore expired or invalid rate-limit cooldown writes so a stale timestamp can't lock a connection that should be usable — clearing still works as before ([#12788](https://github.com/khanhkit/AgentProxy/pull/12788)) — thanks @maxmad64bis

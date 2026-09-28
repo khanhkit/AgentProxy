@@ -42,7 +42,7 @@ test("error() with a destroyed stderr does not crash, and still writes to the lo
   const loggerPath = fileURLToPath(
     new URL("../../../src/shared/utils/structuredLogger.ts", import.meta.url)
   );
-  const dir = mkdtempSync(join(tmpdir(), "omniroute-rawwrite-8181-"));
+  const dir = mkdtempSync(join(tmpdir(), "agentproxy-rawwrite-8181-"));
   const logFile = join(dir, "logs", "application", "app.log");
   const childFile = join(dir, "probe.mts");
 

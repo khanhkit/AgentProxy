@@ -37,6 +37,17 @@ describe("bounded request feature extraction", () => {
     }
   });
 
+  it("measures bodies using the active admission cost budget", () => {
+    const body = {
+      messages: Array.from({ length: 100 }, () => ({ role: "user", content: "x".repeat(10_000) })),
+    };
+    const features = extractAdmissionCostFeatures(body, {
+      cost: { bodyBytesPerUnit: 4096, maxRequestCost: 1024 },
+    });
+
+    assert.ok((features.bodyBytes ?? 0) > 1_000_000);
+  });
+
   it("extracts production-realistic Chat, Responses, Gemini, and Antigravity shapes", () => {
     // OpenAI Chat Completions — stream omitted defaults false (higher non-stream class).
     const chat = extractAdmissionCostFeatures({

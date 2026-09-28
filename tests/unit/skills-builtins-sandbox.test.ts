@@ -79,7 +79,7 @@ async function withSandboxModule(fakeSpawn, fn) {
 }
 
 test("builtin skill handlers validate required fields and perform real sandboxed work", async () => {
-  const dataDir = makeTempDir("omniroute-skills-builtins-");
+  const dataDir = makeTempDir("agentproxy-skills-builtins-");
   const context = { apiKeyId: "key-123", sessionId: "session-123" };
 
   try {
@@ -373,15 +373,15 @@ test("sandboxRunner kill/killAll fallback naming matches containerProvider's SAN
       // A freshly-imported sandboxRunner has never called run(), so
       // cachedProvider is still null and kill()/killAll() must fall back to
       // the docker CLI directly — that fallback name must still match
-      // containerProvider.ts's SANDBOX_NAME (`omniroute-${id}`), not the
-      // pre-PR `omniroute-sandbox-${id}` convention.
+      // containerProvider.ts's SANDBOX_NAME (`agentproxy-${id}`), not the
+      // pre-PR `agentproxy-sandbox-${id}` convention.
       const proc = createFakeProcess();
       sandboxRunner.runningContainers.set("fallback-id", proc);
       sandboxRunner.kill("fallback-id");
 
       const killCall = calls.find((entry) => entry.args[0] === "kill");
       assert.ok(killCall, "kill command should have been issued");
-      assert.equal(killCall.args[1], "omniroute-fallback-id");
+      assert.equal(killCall.args[1], "agentproxy-fallback-id");
 
       const procA = createFakeProcess();
       const procB = createFakeProcess();
@@ -392,8 +392,8 @@ test("sandboxRunner kill/killAll fallback naming matches containerProvider's SAN
       const killAllNames = calls
         .filter((entry) => entry.args[0] === "kill")
         .map((entry) => entry.args[1]);
-      assert.ok(killAllNames.includes("omniroute-fallback-a"));
-      assert.ok(killAllNames.includes("omniroute-fallback-b"));
+      assert.ok(killAllNames.includes("agentproxy-fallback-a"));
+      assert.ok(killAllNames.includes("agentproxy-fallback-b"));
     }
   );
 });
@@ -488,7 +488,7 @@ test("containerProvider: buildKillCommand utility", () => {
     const result = mod.buildKillCommand(dockerProvider, "test-id");
     assert.equal(result.command, "docker");
     assert.equal(result.args[0], "kill");
-    assert.equal(result.args[1], "omniroute-test-id");
+    assert.equal(result.args[1], "agentproxy-test-id");
   });
 });
 

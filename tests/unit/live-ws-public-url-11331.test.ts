@@ -15,8 +15,8 @@ import { deriveLiveWsPath, resolveLiveWsPublicUrl } from "../../src/shared/utils
 
 test("#11331 the runtime name is honoured", () => {
   assert.equal(
-    resolveLiveWsPublicUrl({ LIVE_WS_PUBLIC_URL: "wss://omniroute.example.tld/live-ws" }),
-    "wss://omniroute.example.tld/live-ws"
+    resolveLiveWsPublicUrl({ LIVE_WS_PUBLIC_URL: "wss://agentproxy.example.tld/live-ws" }),
+    "wss://agentproxy.example.tld/live-ws"
   );
 });
 
@@ -61,7 +61,7 @@ test("#11331 a surrounding-whitespace value is trimmed, not rejected", () => {
 });
 
 test("#11331 the path follows the resolved URL", () => {
-  assert.equal(deriveLiveWsPath("wss://proxy.example.tld/omniroute/live"), "/omniroute/live");
+  assert.equal(deriveLiveWsPath("wss://proxy.example.tld/agentproxy/live"), "/agentproxy/live");
   assert.equal(deriveLiveWsPath("wss://proxy.example.tld"), "/live-ws");
   assert.equal(deriveLiveWsPath(undefined), "/live-ws");
 });

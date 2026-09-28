@@ -59,7 +59,7 @@ export interface EngineBenchmarkGateRow {
 
 // ── Fixture corpus (BENCHMARK_CORPUS) ────────────────────────────────────────
 // Representative samples for reproducible A/B runs in CI and local dev.
-// Three task groups mirror real OmniRoute workloads:
+// Three task groups mirror real AgentProxy workloads:
 //   "prose"       — conversational / documentation turns
 //   "tool-output" — bash/CLI raw output with repeated structural noise
 //   "json"        — structured tool results / API responses
@@ -188,11 +188,11 @@ export function engineToCompressFn(engineId: string): CompressFn {
     const body: Record<string, unknown> = {
       messages: [{ role: "user", content: text }],
       // #7746 follow-up: CCR only compresses for callers that advertise the
-      // omniroute_ccr_retrieve tool (otherwise its content-addressed marker is
+      // agentproxy_ccr_retrieve tool (otherwise its content-addressed marker is
       // unresolvable). Real CCR traffic always carries this tool, so the
       // benchmark must too, or CCR measures as a no-op. Other engines ignore
       // the `tools` field, so this is inert for them.
-      tools: [{ type: "function", function: { name: "omniroute_ccr_retrieve" } }],
+      tools: [{ type: "function", function: { name: "agentproxy_ccr_retrieve" } }],
     };
 
     try {

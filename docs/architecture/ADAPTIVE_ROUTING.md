@@ -7,7 +7,7 @@ lastUpdated: 2026-08-20
 # Adaptive Routing: Routing Events, Quality Feedback & Explainability
 
 This document describes the feedback-driven adaptive routing foundation added to
-OmniRoute. It is deliberately small: it introduces a typed routing-outcome
+AgentProxy. It is deliberately small: it introduces a typed routing-outcome
 channel, an online quality signal that feeds the existing auto-combo scorer, an
 optional OpenTelemetry exporter, and an explainability endpoint. It does **not**
 replace the existing resilience stack (circuit breaker, connection cooldown,
@@ -15,7 +15,7 @@ model lockout, health matrix, autopilot) — it complements it.
 
 ## 1. Architectural context
 
-OmniRoute is a data plane with a **request hot path** and a **control/intelligence
+AgentProxy is a data plane with a **request hot path** and a **control/intelligence
 plane**. The hot path must stay fast, memory-efficient, asynchronous, resilient and
 predictable. Evaluation, quality scoring, experiments and historical analysis belong
 to the control plane.
@@ -25,7 +25,7 @@ AI Agent / IDE
       │
       ▼
 ┌─────────────────────┐
-│    OmniRoute        │   data plane (fast, sync, in-memory)
+│    AgentProxy        │   data plane (fast, sync, in-memory)
 │  routing / failover │
 │  health / guardrail │
 │  cache / streaming  │
@@ -120,7 +120,7 @@ Default sinks:
 - `MemoryRoutingEventStore` — bounded (500) ring buffer, newest-first, for the
   explain endpoint.
 - `QualityTracker` consumer — updates the EWMA quality estimate.
-- `OtlpHttpsEventSink` — optional, enabled only when `OMNIROUTE_OTEL_ENDPOINT`
+- `OtlpHttpsEventSink` — optional, enabled only when `AGENTPROXY_OTEL_ENDPOINT`
   (or `OTEL_EXPORTER_OTLP_ENDPOINT`) is set.
 
 ### Measured overhead (honest comparison)
@@ -225,7 +225,7 @@ wired into `createSSEStream` (open-sse/utils/stream.ts):
 - `avgItlMs()` = mean inter-chunk gap (a chunk-latency proxy for ITL).
 
 TTFT/ITL/interrupted flow into the `RoutingEvent` (`ttftMs`, `itlMs`) and are
-exported as GenAI/OmniRoute span attributes by the OTel sink.
+exported as GenAI/AgentProxy span attributes by the OTel sink.
 
 ## 4. OpenTelemetry / GenAI observability
 
@@ -235,13 +235,13 @@ Files: `open-sse/services/routing/otel.ts`
   `@opentelemetry/*` SDK).
 - Spans follow GenAI semantic conventions (`gen_ai.provider.name`,
   `gen_ai.request.model`, `gen_ai.usage.input_tokens/output_tokens`,
-  `gen_ai.completion.finish_reason`, `gen_ai.system`) plus OmniRoute routing
+  `gen_ai.completion.finish_reason`, `gen_ai.system`) plus AgentProxy routing
   attributes (outcome, status, ttft, retries, fallback).
 - `record()` only enqueues into a bounded buffer (O(1)); a background timer
   flushes via `POST {endpoint}/v1/traces` asynchronously. Under overload the
   oldest events are dropped (`dropped` counter) — never backpressure the data
   plane.
-- **Disabled unless configured.** `OMNIROUTE_OTEL_ENDPOINT` (or
+- **Disabled unless configured.** `AGENTPROXY_OTEL_ENDPOINT` (or
   `OTEL_EXPORTER_OTLP_ENDPOINT`) must be set; otherwise the sink is not
   registered and zero OTel code runs.
 
@@ -252,12 +252,12 @@ Files: `open-sse/services/routing/otel.ts`
 - Auth mirrors `/v1/combos` (Bearer API key or dashboard session; anonymous on
   single-user local deployments with `REQUIRE_API_KEY=false`).
 - Combo-level per-invocation traces remain available via the existing
-  `decisionTrace.ts` (header `X-OmniRoute-Combo-Trace`).
+  `decisionTrace.ts` (header `X-AgentProxy-Combo-Trace`).
 - Safety: events carry only routing metadata, never prompts/bodies/credentials.
 
 ## 6. Evaluation-plane integration (Future AGI readiness)
 
-OmniRoute treats Future AGI (or any evaluator) as a **potential
+AgentProxy treats Future AGI (or any evaluator) as a **potential
 intelligence/evaluation backend, not a dependency**. The seams:
 
 - A `RoutingEventSink` can forward events to an evaluator asynchronously.
@@ -314,9 +314,9 @@ fully with the evaluator absent.
 
 | Variable                      | Default     | Effect                                                                          |
 | ----------------------------- | ----------- | ------------------------------------------------------------------------------- |
-| `OMNIROUTE_OTEL_ENDPOINT`     | unset       | When set, enables the OTLP/HTTP traces exporter (e.g. `http://collector:4318`). |
+| `AGENTPROXY_OTEL_ENDPOINT`     | unset       | When set, enables the OTLP/HTTP traces exporter (e.g. `http://collector:4318`). |
 | `OTEL_EXPORTER_OTLP_ENDPOINT` | unset       | Fallback alias for the OTLP endpoint.                                           |
-| `OTEL_SERVICE_NAME`           | `omniroute` | `service.name` resource attribute.                                              |
+| `OTEL_SERVICE_NAME`           | `agentproxy` | `service.name` resource attribute.                                              |
 
 ## 9. Tests
 

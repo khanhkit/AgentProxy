@@ -5,7 +5,7 @@ import os from "node:os";
 import path from "node:path";
 
 const TEST_DATA_DIR = fs.mkdtempSync(
-  path.join(os.tmpdir(), "omniroute-call-log-provider-display-")
+  path.join(os.tmpdir(), "agentproxy-call-log-provider-display-")
 );
 process.env.DATA_DIR = TEST_DATA_DIR;
 

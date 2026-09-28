@@ -6,7 +6,7 @@ lastUpdated: 2026-06-28
 
 # AgentBridge
 
-AgentBridge to proxy MITM (Man-in-the-Middle) OmniRoute, który przechwytuje ruch HTTPS z agentów AI w IDE i przekierowuje go przez ujednolicony silnik routingu OmniRoute. Obsługuje **9 agentów IDE** — Antigravity, Kiro, GitHub Copilot, OpenAI Codex, Cursor, Zed, Claude Code, Open Code oraz Trae (w badaniu) — co czyni OmniRoute proxy MITM o najszerszym pokryciu asystentów AI do kodowania na rynku.
+AgentBridge to proxy MITM (Man-in-the-Middle) AgentProxy, który przechwytuje ruch HTTPS z agentów AI w IDE i przekierowuje go przez ujednolicony silnik routingu AgentProxy. Obsługuje **9 agentów IDE** — Antigravity, Kiro, GitHub Copilot, OpenAI Codex, Cursor, Zed, Claude Code, Open Code oraz Trae (w badaniu) — co czyni AgentProxy proxy MITM o najszerszym pokryciu asystentów AI do kodowania na rynku.
 
 **Lokalizacja w dashboardzie:** `/dashboard/tools/agent-bridge`
 **Grupa w sidebarze:** Tools (po Cloud Agents)
@@ -18,18 +18,18 @@ AgentBridge to proxy MITM (Man-in-the-Middle) OmniRoute, który przechwytuje ruc
 
 ### Czym jest AgentBridge?
 
-Gdy agent IDE (np. GitHub Copilot, Cursor, Claude Code) wykonuje wywołanie API, łączy się bezpośrednio z upstreamowym dostawcą AI (OpenAI, Anthropic itd.). AgentBridge przechwytuje to połączenie w sposób przezroczysty na poziomie TLS — bez konieczności zmiany konfiguracji agenta — i przepisuje żądanie przez OmniRoute.
+Gdy agent IDE (np. GitHub Copilot, Cursor, Claude Code) wykonuje wywołanie API, łączy się bezpośrednio z upstreamowym dostawcą AI (OpenAI, Anthropic itd.). AgentBridge przechwytuje to połączenie w sposób przezroczysty na poziomie TLS — bez konieczności zmiany konfiguracji agenta — i przepisuje żądanie przez AgentProxy.
 
 Dzięki temu możesz:
 
-- **Przekierować dowolnego agenta do dowolnego providera**: Copilot rozmawia z OpenAI? Przekieruj go na Anthropic Claude, Gemini lub dowolny z 329 wpisów katalogu OmniRoute.
+- **Przekierować dowolnego agenta do dowolnego providera**: Copilot rozmawia z OpenAI? Przekieruj go na Anthropic Claude, Gemini lub dowolny z 329 wpisów katalogu AgentProxy.
 - **Stosować mapowania modeli**: `gemini-3-flash` → `claude-sonnet-4.7` w sposób przezroczysty na poziomie handlera.
 - **Obserwować cały ruch agentów**: każde przechwycone żądanie jest publikowane w [Traffic Inspector](./TRAFFIC_INSPECTOR.md).
-- **Stosować odporność OmniRoute**: combo routing, circuit breakery, fallbacki i śledzenie kosztów działają także dla ruchu agentów IDE.
+- **Stosować odporność AgentProxy**: combo routing, circuit breakery, fallbacki i śledzenie kosztów działają także dla ruchu agentów IDE.
 
 ### Pozycjonowanie względem rynku
 
-| Feature           | 9router | anti-api | llm-interceptor | **OmniRoute AgentBridge** |
+| Feature           | 9router | anti-api | llm-interceptor | **AgentProxy AgentBridge** |
 | ----------------- | :-----: | :------: | :-------------: | :-----------------------: |
 | Antigravity       |    ✓    |    ✓     |        —        |             ✓             |
 | GitHub Copilot    |    ✓    |    ✓     |        —        |             ✓             |
@@ -42,7 +42,7 @@ Dzięki temu możesz:
 | Trae              |    —    |    —     |        —        |     🔍 Investigating      |
 | Dashboard UI      |    ✓    |    ✗     |        ✗        |             ✓             |
 | Traffic Inspector |    ✗    |    ✗     |        ✓        |             ✓             |
-| OmniRoute routing |    ✗    |    ✗     |        ✗        |             ✓             |
+| AgentProxy routing |    ✗    |    ✗     |        ✗        |             ✓             |
 | Model mapping UI  |    ✗    |    ✗     |        ✗        |             ✓             |
 | Bypass list       |    ✗    |    ✗     |        ✓        |             ✓             |
 | Upstream CA cert  |    ✗    |    ✗     |        ✓        |             ✓             |
@@ -64,7 +64,7 @@ src/mitm/server.cjs  (port 443, CJS child process)
     │  resolves target by Host header SNI
     │  generates per-SNI TLS cert signed by AgentBridge CA
     ├── Bypass list match? → TCP passthrough (no decrypt)
-    ├── Target match? → fetch → OmniRoute router (port 20128)
+    ├── Target match? → fetch → AgentProxy router (port 20128)
     │       └── handler.intercept() — TypeScript
     │               ├── maskSecrets() on request body/headers
     │               ├── TrafficBuffer.push() — publishes to Traffic Inspector
@@ -97,7 +97,7 @@ Rdzeniowy serwer MITM działa jako proces potomny Node.js CJS (aby uniknąć prz
 > to czysta funkcja decyzyjna — zaufane CA MITM, które może podpisać leaf dla
 > **dowolnego** hosta, jest istotnie silniejsze niż stary leaf z fixed-SAN, więc
 > przełączenie nigdy nie jest ciche dla już zaufanej instalacji). Certyfikat CA instaluje się
-> w tym samym slocie trust-store `omniroute-mitm.crt`, którego używał stary leaf
+> w tym samym slocie trust-store `agentproxy-mitm.crt`, którego używał stary leaf
 > (`cert/install.ts::installCaCert`) — nie jest potrzebne czyszczenie dual-trust.
 
 ### 2.3 Baza handlerów (`src/mitm/handlers/base.ts`)
@@ -202,20 +202,20 @@ Certyfikat CA AgentBridge musi być zaufany przez OS, zanim IDE zaakceptują po�
 **Linux (NSS — Chrome/Firefox):**
 
 ```bash
-certutil -A -d sql:$HOME/.pki/nssdb -n "OmniRoute AgentBridge" -t CT,, -i ~/.omniroute/mitm/ca.crt
+certutil -A -d sql:$HOME/.pki/nssdb -n "AgentProxy AgentBridge" -t CT,, -i ~/.agentproxy/mitm/ca.crt
 ```
 
 **macOS (Keychain):**
 
 ```bash
 sudo security add-trusted-cert -d -r trustRoot \
-  -k /Library/Keychains/System.keychain ~/.omniroute/mitm/ca.crt
+  -k /Library/Keychains/System.keychain ~/.agentproxy/mitm/ca.crt
 ```
 
 **Windows (certmgr):**
 
 ```powershell
-certutil -addstore -f Root $env:USERPROFILE\.omniroute\mitm\ca.crt
+certutil -addstore -f Root $env:USERPROFILE\.agentproxy\mitm\ca.crt
 ```
 
 Albo użyj przycisku „Trust Cert” w dashboardzie (uruchamia odpowiednią komendę dla Twojego OS, z promptem sudo jeśli potrzeba).
@@ -232,7 +232,7 @@ i oba mają znaczenie:
 
 1. Wskaż runtime jawnie na CA:
    ```bash
-   export NODE_EXTRA_CA_CERTS=/path/to/omniroute-agentbridge-ca.crt
+   export NODE_EXTRA_CA_CERTS=/path/to/agentproxy-agentbridge-ca.crt
    ```
 2. **Uruchom IDE z tej powłoki.** Start z ikony pulpitu / Dock / menu Start
    **nie** dziedziczy eksportów powłoki, a `~/.config/environment.d/*.conf` działa dopiero po
@@ -258,7 +258,7 @@ Przykładowe wpisy `/etc/hosts` dla GitHub Copilot:
 
 Użyj tabeli Model Mapping w karcie każdego agenta, aby zdefiniować mapowania source → target:
 
-| Source model (agent native) | Target model (OmniRoute) |
+| Source model (agent native) | Target model (AgentProxy) |
 | --------------------------- | ------------------------ |
 | `gpt-4o`                    | `claude-sonnet-4.7`      |
 | `*` (wildcard)              | `claude-haiku-4.7`       |
@@ -274,7 +274,7 @@ Wildcard `*` mapuje dowolny nierozpoznany model na wskazany target. Trwałe w ta
 
 ### 3.5 Ostrzeżenie o ryzyku
 
-AgentBridge przechwytuje poświadczenia (tokeny OAuth, klucze API), których IDE używa do uwierzytelnienia u upstreamowych providerów. Są one **maskowane przed logowaniem** (zob. §2.7), ale są widoczne dla warstwy MITM OmniRoute. Pierwsza aktywacja każdego agenta pokazuje zamykalny modal z ostrzeżeniem o ryzyku.
+AgentBridge przechwytuje poświadczenia (tokeny OAuth, klucze API), których IDE używa do uwierzytelnienia u upstreamowych providerów. Są one **maskowane przed logowaniem** (zob. §2.7), ale są widoczne dla warstwy MITM AgentProxy. Pierwsza aktywacja każdego agenta pokazuje zamykalny modal z ostrzeżeniem o ryzyku.
 
 ### 3.6 Maintenance & Diagnostics
 
@@ -383,7 +383,7 @@ Wykrywanie używa ścieżek specyficznych dla OS i sprawdzeń binarnych (np. `co
 
 ### Lista bypass dla wrażliwych hostów
 
-Lista bypass gwarantuje, że instytucje finansowe, providery OAuth/SSO i inne wrażliwe hosty **nigdy nie są deszyfrowane**. Ich ruch TLS przechodzi jako przezroczysty tunel TCP — OmniRoute nigdy nie widzi plaintextu.
+Lista bypass gwarantuje, że instytucje finansowe, providery OAuth/SSO i inne wrażliwe hosty **nigdy nie są deszyfrowane**. Ich ruch TLS przechodzi jako przezroczysty tunel TCP — AgentProxy nigdy nie widzi plaintextu.
 
 Domyślne wzorce bypass obejmują:
 
@@ -434,7 +434,7 @@ Alternatywnie skonfiguruj nieuprzywilejowany port w ustawieniach AgentBridge i u
 
 Jeśli IDE pokazuje błędy TLS po starcie AgentBridge:
 
-1. Sprawdź, czy cert został zainstalowany: `security find-certificate -c "OmniRoute AgentBridge"` (macOS) lub `certutil -L -d sql:$HOME/.pki/nssdb` (Linux/NSS)
+1. Sprawdź, czy cert został zainstalowany: `security find-certificate -c "AgentProxy AgentBridge"` (macOS) lub `certutil -L -d sql:$HOME/.pki/nssdb` (Linux/NSS)
 2. Niektóre aplikacje utrzymują własny magazyn zaufania (Firefox, Chrome na Linuxie). Uruchom „Trust Cert” ponownie i sprawdź store certyfikatów NSS/Firefox.
 3. Zrestartuj IDE po zaufaniu — trwające sesje TLS używają starego stanu zaufania.
 
@@ -459,7 +459,7 @@ IDE failuje przy tym samym setupie.
 Sprawdź, czy `/etc/hosts` został zaktualizowany:
 
 ```bash
-grep "omniroute\|127.0.0.1.*github\|127.0.0.1.*cursor" /etc/hosts
+grep "agentproxy\|127.0.0.1.*github\|127.0.0.1.*cursor" /etc/hosts
 ```
 
 Wyczyść cache DNS:
@@ -485,8 +485,8 @@ Auto-wykrywanie używa typowych ścieżek instalacji. Jeśli detekcja failuje, a
 Jeśli AgentBridge przechwytuje, ale wszystkie żądania failują:
 
 1. Sprawdź, czy co najmniej jeden provider jest podłączony pod `/dashboard/providers`
-2. Sprawdź logi serwera OmniRoute: `APP_LOG_LEVEL=debug` w `.env`
-3. Zweryfikuj, że `OMNIROUTE_BASE_URL` wskazuje na poprawny endpoint routera (domyślnie: `http://127.0.0.1:20128`)
+2. Sprawdź logi serwera AgentProxy: `APP_LOG_LEVEL=debug` w `.env`
+3. Zweryfikuj, że `AGENTPROXY_BASE_URL` wskazuje na poprawny endpoint routera (domyślnie: `http://127.0.0.1:20128`)
 
 ---
 

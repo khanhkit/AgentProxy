@@ -9,7 +9,7 @@ lastUpdated: 2026-06-28
 > **Source of truth:** `src/lib/{cloudflaredTunnel,ngrokTunnel,tailscaleTunnel}.ts`, `src/app/api/tunnels/`
 > **Last updated:** 2026-06-28 — v3.8.40
 
-OmniRoute może udostępnić swój lokalny serwer (`http://localhost:20128`) w publicznym
+AgentProxy może udostępnić swój lokalny serwer (`http://localhost:20128`) w publicznym
 internecie przez trzy backendy tuneli. Przydaje się to do:
 
 - callbacków OAuth od dostawców chmurowych (Antigravity, Gemini, Cursor), które
@@ -17,7 +17,7 @@ internecie przez trzy backendy tuneli. Przydaje się to do:
 - udostępniania lokalnej instancji współpracownikom bez wdrażania VM.
 - testów mobilnych, zdalnych lub między sieciami.
 
-Wszystkie trzy backendy są zarządzane w procesie — OmniRoute uruchamia/zatrzymuje
+Wszystkie trzy backendy są zarządzane w procesie — AgentProxy uruchamia/zatrzymuje
 binarkę lub SDK z dashboardu albo REST API. Nie jest wymagany reverse-proxy ani
 konfiguracja systemd.
 
@@ -42,14 +42,14 @@ URL `*.trycloudflare.com` ze stdout.
 
 Kluczowe zachowania:
 
-- **Auto-install.** Przy pierwszym użyciu OmniRoute pobiera najnowszą binarkę
+- **Auto-install.** Przy pierwszym użyciu AgentProxy pobiera najnowszą binarkę
   `cloudflared` z oficjalnych wydań GitHub (zarządzana instalacja trafia do
   `DATA_DIR/cloudflared/`). SHA256 pobranego assetu jest weryfikowany względem
   manifestu wydania przed uruchomieniem.
 - **Tylko quick-tunnel.** Obecna implementacja uruchamia wyłącznie quick tunnel
   w stylu `--url`. Nazwane/trwałe tunele (`cloudflared tunnel
 login` + `cloudflared tunnel route dns ...`) nie są orkiestrowane przez
-  OmniRoute. URL-e są efemeryczne i zmieniają się przy każdym restarcie.
+  AgentProxy. URL-e są efemeryczne i zmieniają się przy każdym restarcie.
 - **Nadzór procesu.** PID cloudflared oraz rozwiązany URL są zapisywane w
   `cloudflared-state.json`, dzięki czemu dashboard może wznowić status po przeładowaniu.
 
@@ -83,7 +83,7 @@ Lub przez dashboard: **Settings → Tunnels → Cloudflare**.
 
 | Variable                                             | Purpose                                                                                           |
 | ---------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
-| `CLOUDFLARED_BIN`                                    | Nadpisuje ścieżkę do binarki. Jeśli ustawiona i poprawna, OmniRoute używa jej zamiast pobierania. |
+| `CLOUDFLARED_BIN`                                    | Nadpisuje ścieżkę do binarki. Jeśli ustawiona i poprawna, AgentProxy używa jej zamiast pobierania. |
 | `CLOUDFLARED_PROTOCOL` / `TUNNEL_TRANSPORT_PROTOCOL` | Protokół transportu (domyślnie `http2`).                                                          |
 
 ## 2. ngrok
@@ -131,7 +131,7 @@ curl -X POST http://localhost:20128/api/tunnels/ngrok \
 
 Odpowiedź zawiera przypisany `publicUrl` (np.
 `https://abcd-1234.ngrok-free.app`). Własne domeny, regiony i reguły polityk
-trzeba skonfigurować w dashboardzie ngrok — sam OmniRoute tylko przekazuje
+trzeba skonfigurować w dashboardzie ngrok — sam AgentProxy tylko przekazuje
 lokalny target URL do SDK.
 
 ## 3. Tailscale Funnel
@@ -145,14 +145,14 @@ URL ma postać `https://<machine>.<tailnet>.ts.net/`.
 
 ### Wymagania wstępne
 
-1. Zainstaluj Tailscale (albo pozwól OmniRoute to zrobić — patrz endpoint `install` poniżej).
-2. Zaloguj się (`tailscale login` lub przez endpoint `login` OmniRoute).
+1. Zainstaluj Tailscale (albo pozwól AgentProxy to zrobić — patrz endpoint `install` poniżej).
+2. Zaloguj się (`tailscale login` lub przez endpoint `login` AgentProxy).
 3. Włącz Funnel dla swojego tailnetu w konsoli admina Tailscale:
    <https://login.tailscale.com/admin/settings/features>.
 
 Na Linuxie i macOS demon (`tailscaled`) wymaga `sudo` do sterowania. Endpointy
 POST przyjmują opcjonalne pole `sudoPassword`, które jest przekazywane do
-cache haseł MITM OmniRoute (`getCachedPassword` / `setCachedPassword`) na
+cache haseł MITM AgentProxy (`getCachedPassword` / `setCachedPassword`) na
 czas wywołania. Windows używa domyślnej instalacji usługi pod
 `C:\Program Files\Tailscale\tailscale.exe`.
 
@@ -213,7 +213,7 @@ niezależny.
 
 ## Uwagi dotyczące callbacków OAuth
 
-Gdy udostępniasz OmniRoute przez tunel, dashboard i przepływy OAuth muszą
+Gdy udostępniasz AgentProxy przez tunel, dashboard i przepływy OAuth muszą
 budować URL-e callbacków względem **publicznego** hostname, a nie `localhost`. W przeciwnym razie
 dostawca OAuth przekieruje użytkownika z powrotem na URL nieosiągalny dla jego serwerów
 i handshake się nie uda.
@@ -229,7 +229,7 @@ Ustaw:
 NEXT_PUBLIC_BASE_URL=https://<your-tunnel-host>
 ```
 
-i zrestartuj OmniRoute przed rozpoczęciem OAuth. Dla efemerycznych Cloudflare Quick
+i zrestartuj AgentProxy przed rozpoczęciem OAuth. Dla efemerycznych Cloudflare Quick
 Tunnel URL zmienia się po każdym restarcie, więc do produkcyjnego OAuth preferuj ngrok
 z zarezerwowaną domeną albo Tailscale Funnel.
 
@@ -244,14 +244,14 @@ Dashboard pokazuje stan tuneli pod **Settings → Tunnels**:
 - Ostatni komunikat błędu, jeśli wystąpił.
 
 Do programowego monitoringu odpytuj endpointy `GET` per backend. Jednoczesne
-uruchomienie więcej niż jednego backendu jest dozwolone; OmniRoute śledzi każdy
+uruchomienie więcej niż jednego backendu jest dozwolone; AgentProxy śledzi każdy
 niezależnie.
 
 ## Rozwiązywanie problemów
 
 ### "cloudflared binary not found"
 
-OmniRoute próbuje auto-instalacji przy pierwszym użyciu. Jeśli instalacja jest zablokowana
+AgentProxy próbuje auto-instalacji przy pierwszym użyciu. Jeśli instalacja jest zablokowana
 (ograniczona sieć, brak dostępu do GitHub), pobierz `cloudflared` ręcznie z
 <https://github.com/cloudflare/cloudflared/releases> i ustaw
 `CLOUDFLARED_BIN=/path/to/cloudflared`.

@@ -1,12 +1,12 @@
 # Langfuse Plugin
 
-Emits [Langfuse](https://langfuse.com/) generation traces for every LLM completion routed through OmniRoute.
+Emits [Langfuse](https://langfuse.com/) generation traces for every LLM completion routed through AgentProxy.
 
 Records **prompt, response, model, provider, token usage, latency, and error details** to Langfuse cloud (`cloud.langfuse.com` or `us.cloud.langfuse.com`) or a self-hosted Langfuse instance.
 
 ## Install
 
-Copy the `examples/plugins/langfuse/` directory to your OmniRoute plugins path, or install directly from the marketplace UI.
+Copy the `examples/plugins/langfuse/` directory to your AgentProxy plugins path, or install directly from the marketplace UI.
 
 ## Configuration
 
@@ -29,7 +29,7 @@ Get keys at [cloud.langfuse.com](https://cloud.langfuse.com) → Settings → AP
 
 Each LLM completion emits one Langfuse `generation` observation inside a per-request trace:
 
-- **Trace:** `omniroute:<model>` with `userId`, `provider`, `requestId` metadata
+- **Trace:** `agentproxy:<model>` with `userId`, `provider`, `requestId` metadata
 - **Generation:** `chat.completion` with:
   - `model` — full model ID
   - `modelParameters` — `temperature`, `max_tokens`, `top_p`
@@ -52,7 +52,7 @@ npm install langfuse
 ## Privacy
 
 - Prompts and completions are sent to Langfuse cloud (or your self-host) in cleartext unless `redactBody: true`
-- API keys are stored in the plugin config, encrypted at rest by OmniRoute
+- API keys are stored in the plugin config, encrypted at rest by AgentProxy
 - Set `sampleRate < 1.0` to reduce data volume
 - Set `enabled: false` to disable without removing configuration
 
@@ -60,4 +60,4 @@ npm install langfuse
 
 - [Langfuse docs](https://langfuse.com/docs)
 - [Langfuse OpenTelemetry endpoint](https://langfuse.com/docs/opentelemetry/get-started) (alternative path — this plugin uses the native SDK)
-- OmniRoute plugin SDK: `docs/frameworks/PLUGIN_SDK.md`
+- AgentProxy plugin SDK: `docs/frameworks/PLUGIN_SDK.md`

@@ -8,8 +8,7 @@ import path from "path";
 import os from "os";
 import { cloudSyncActionSchema } from "@/shared/validation/schemas";
 import { isValidationFailure, validateBody } from "@/shared/validation/helpers";
-import { sanitizeErrorMessage } from "@omniroute/open-sse/utils/error";
-import { resolveOmniRouteBaseUrl } from "@/shared/utils/resolveOmniRouteBaseUrl";
+import { sanitizeErrorMessage } from "@agentproxy/open-sse/utils/error";
 
 /**
  * GET /api/sync/cloud
@@ -230,14 +229,8 @@ async function handleDisable(machineId: string, request: any) {
     return NextResponse.json({ error: "Failed to disable cloud" }, { status: 502 });
   }
 
-  // Update Claude CLI settings to use local endpoint.
-  let fallbackHost = "localhost:20128";
-  try {
-    fallbackHost = new URL(resolveOmniRouteBaseUrl()).host;
-  } catch {
-    // Keep the compatibility fallback if an explicit base URL is malformed.
-  }
-  const host = request.headers.get("host") || fallbackHost;
+  // Update Claude CLI settings to use local endpoint
+  const host = request.headers.get("host") || "localhost:20128";
   await updateClaudeSettingsToLocal(machineId, host);
 
   return NextResponse.json({

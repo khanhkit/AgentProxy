@@ -2,7 +2,7 @@
  * Synced-model reasoning-effort catalog variants (#7694).
  *
  * Generic OpenAI-compatible model discovery (`src/lib/providerModels/modelDiscovery.ts`)
- * captures upstream `reasoning.supported_efforts` (or OmniRoute's own flat
+ * captures upstream `reasoning.supported_efforts` (or AgentProxy's own flat
  * `supportedThinkingEfforts` import field) into `SyncedAvailableModel.supportedThinkingEfforts`,
  * and the catalog builder (`src/app/api/v1/models/catalog.ts`) surfaces it as
  * `capabilities.effort_tiers`. Catalog-only clients (OpenCode, plain OpenAI-SDK model
@@ -27,6 +27,7 @@
  * model that legitimately ends in an effort-like token (e.g. a model named "...-high").
  */
 import { CANONICAL_EFFORT_VALUES } from "@/shared/reasoning/effortStandardization.ts";
+import { isDevinLiteralModelIdProvider } from "./devinLiteralModelIds.ts";
 
 /** Provider ids with dedicated `-{effort}` aliases — never synthesize another suffix layer. */
 export const SYNCED_EFFORT_SKIP_PROVIDERS = new Set(["codex", "glm", "glm-cn", "glmt"]);
@@ -37,7 +38,10 @@ const SYNCED_EFFORT_SKIP_PROVIDER_PREFIXES = ["kimi"];
 export function isSkippedEffortProvider(ownedBy: string): boolean {
   return (
     SYNCED_EFFORT_SKIP_PROVIDERS.has(ownedBy) ||
-    SYNCED_EFFORT_SKIP_PROVIDER_PREFIXES.some((prefix) => ownedBy.startsWith(prefix))
+    SYNCED_EFFORT_SKIP_PROVIDER_PREFIXES.some((prefix) => ownedBy.startsWith(prefix)) ||
+    // Devin CLI catalogs (devin-cli / devin-cli-agentic / devin-desktop, aliases
+    // dv / dva) embed the tier in the id itself — no variant layer on top.
+    isDevinLiteralModelIdProvider(ownedBy)
   );
 }
 

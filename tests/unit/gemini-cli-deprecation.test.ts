@@ -20,13 +20,14 @@
  *
  * NOT touched, and asserted here so a future edit cannot conflate them: the
  * `gemini-cli` CLIENT identity (issue #7034) — requests ARRIVING from the Gemini CLI
- * or any @google/genai-based client, where OmniRoute is the server.
+ * or any @google/genai-based client, where AgentProxy is the server.
  */
 import test from "node:test";
 import assert from "node:assert/strict";
 
 import { PROVIDERS } from "../../open-sse/config/constants.ts";
 import { REGISTRY } from "../../open-sse/config/providerRegistry.ts";
+import { getExecutor } from "../../open-sse/executors/index.ts";
 import {
   DEPRECATED_PROVIDERS,
   getAccessToken,
@@ -38,6 +39,7 @@ import {
   TOKEN_EXPIRY_BUFFER_MS,
 } from "../../open-sse/services/tokenRefresh.ts";
 import { CLIENT_IDENTITY_PROFILES } from "../../src/shared/constants/clientIdentityProfiles.ts";
+import { assertRuntimeProviderAvailable } from "../../src/shared/constants/providerRetirement.ts";
 
 test("gemini-cli is registered as deprecated, with a migration target that is routable", () => {
   assert.equal(isDeprecatedProvider("gemini-cli"), true);
@@ -63,6 +65,17 @@ test("a deprecated provider is no longer refresh-capable and carries no refresh 
   // scheduler no longer refreshes.
   assert.equal(REFRESH_LEAD_MS["gemini-cli"], undefined);
   assert.equal(getRefreshLeadMs("gemini-cli"), TOKEN_EXPIRY_BUFFER_MS);
+});
+
+test("gemini-cli is rejected before executor fallback", async () => {
+  assert.throws(() => assertRuntimeProviderAvailable("gemini-cli"), {
+    code: "PROVIDER_RETIRED",
+    status: 410,
+  });
+  await assert.rejects(getExecutor("gemini-cli"), {
+    code: "PROVIDER_RETIRED",
+    status: 410,
+  });
 });
 
 test("refreshing a stored gemini-cli connection fails with a CLASSIFIED code, not silence", async () => {
@@ -95,7 +108,7 @@ test("refreshing a stored gemini-cli connection fails with a CLASSIFIED code, no
 });
 
 test("the gemini-cli CLIENT identity is untouched (issue #7034)", () => {
-  // Category A. Requests ARRIVING from the Gemini CLI — OmniRoute is the server here.
+  // Category A. Requests ARRIVING from the Gemini CLI — AgentProxy is the server here.
   // Deleting this is the failure mode the deprecation must never cause.
   assert.ok(
     CLIENT_IDENTITY_PROFILES["gemini-cli"],

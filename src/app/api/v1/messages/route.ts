@@ -1,14 +1,14 @@
 import { handleChat } from "@/sse/handlers/chat";
-import { initTranslators } from "@omniroute/open-sse/translator/index.ts";
+import { initTranslators } from "@agentproxy/open-sse/translator/index.ts";
 import { withInjectionGuard } from "@/middleware/promptInjectionGuard";
 import { withChatAdmission } from "@/shared/middleware/withChatAdmission";
 import { requireJsonContentType } from "@/shared/middleware/requireJsonContentType";
 import {
   withEarlyStreamKeepalive,
   ANTHROPIC_PING_FRAME,
-} from "@omniroute/open-sse/utils/earlyStreamKeepalive";
-import { resolveKeepaliveThreshold } from "@omniroute/open-sse/utils/keepaliveThreshold";
-import { resolveStreamFlag } from "@omniroute/open-sse/utils/aiSdkCompat";
+} from "@agentproxy/open-sse/utils/earlyStreamKeepalive";
+import { resolveKeepaliveThreshold } from "@agentproxy/open-sse/utils/keepaliveThreshold";
+import { resolveStreamFlag } from "@agentproxy/open-sse/utils/aiSdkCompat";
 
 let initialized = false;
 
@@ -50,7 +50,7 @@ async function postHandler(request: any, context: any, preParsedBody: any = null
   await ensureInitialized();
   // Streaming Anthropic clients (Claude Code, the Anthropic SDK) drop the connection
   // when no bytes arrive while a large prompt is processed before the first token — a
-  // big context can exceed the client's stream/first-token watchdog. OmniRoute holds
+  // big context can exceed the client's stream/first-token watchdog. AgentProxy holds
   // the response until the first useful upstream byte (ensureStreamReadiness), so keep
   // the connection warm with early keepalives during that gap — same wrapper used by
   // /v1/responses (#2544). Anthropic clients ignore SSE comments for their watchdog, so

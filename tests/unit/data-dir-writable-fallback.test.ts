@@ -76,7 +76,7 @@ test(
 
       // It must NOT return the unwritable configured dir...
       assert.notEqual(resolved, path.resolve(configured));
-      // ...and instead fall back to the default user dir (~/.omniroute under HOME).
+      // ...and instead fall back to the default user dir (~/.agentproxy under HOME).
       assert.equal(resolved, expectedFallback);
       assert.ok(resolved.startsWith(path.resolve(home)));
     });
@@ -90,7 +90,7 @@ test("resolveWritableDataDir returns the default dir (no probe) when DATA_DIR is
     // DATA_DIR-less test process to a temp dir (so a test can never open the operator's
     // real DB), opt back in explicitly here — otherwise this test would be asserting the
     // guard's behavior instead of the server's.
-    process.env.OMNIROUTE_ALLOW_DEFAULT_DATA_DIR = "1";
+    process.env.AGENTPROXY_ALLOW_DEFAULT_DATA_DIR = "1";
     const resolved = resolveWritableDataDir();
     assert.equal(resolved, getDefaultDataDir());
     // Matches the pure resolver when no override is present.

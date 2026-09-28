@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 
 // Regression for #6854: TOTAL_MCP_TOOL_COUNT (open-sse/mcp-server/server.ts) was a
 // plain additive sum across all registered tool collections. Three tools
-// (omniroute_agent_skills_list/get/coverage) are intentionally defined in BOTH
+// (agentproxy_agent_skills_list/get/coverage) are intentionally defined in BOTH
 // MCP_TOOLS (open-sse/mcp-server/schemas/tools.ts) and agentSkillTools
 // (open-sse/mcp-server/tools/agentSkillTools.ts), so the additive sum reported 121
 // while only 109 distinct tool names actually exist. countUniqueMcpTools

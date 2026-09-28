@@ -1,9 +1,20 @@
 import { test, describe } from "node:test";
 import assert from "node:assert/strict";
+import path from "node:path";
 
-const { createSqlJsAdapter } = await import("../../../src/lib/db/adapters/sqljsAdapter.ts");
+const { createSqlJsAdapter, sqlJsWasmCandidatePaths } =
+  await import("../../../src/lib/db/adapters/sqljsAdapter.ts");
 
 describe("sqljsAdapter", () => {
+  test("packaged dist cwd resolves sql.js from the installed package root", () => {
+    const packageRoot = path.join(path.sep, "prefix", "lib", "node_modules", "agentproxy");
+    const candidates = sqlJsWasmCandidatePaths(path.join(packageRoot, "dist"));
+
+    assert.ok(
+      candidates.includes(path.join(packageRoot, "node_modules", "sql.js", "dist", "sql-wasm.wasm"))
+    );
+  });
+
   test("abre DB in-memory e executa CRUD básico", async () => {
     const adapter = await createSqlJsAdapter(":memory:");
 
@@ -107,8 +118,7 @@ describe("sqljsAdapter", () => {
         .prepare("INSERT INTO provider_connections (provider, is_active) VALUES (?, ?)")
         .run("openai", 0);
 
-      const sql =
-        "SELECT * FROM provider_connections WHERE is_active = @isActive ORDER BY id ASC";
+      const sql = "SELECT * FROM provider_connections WHERE is_active = @isActive ORDER BY id ASC";
       const rows = adapter.prepare(sql).all({ isActive: 1 }) as Array<{ provider: string }>;
 
       assert.equal(rows.length, 1, "expected exactly 1 active provider connection");
@@ -131,14 +141,12 @@ describe("sqljsAdapter", () => {
     test("run() with a single named-params object binds correctly", async () => {
       const adapter = await createSqlJsAdapter(":memory:");
       adapter.exec("CREATE TABLE t (id INTEGER PRIMARY KEY, val TEXT)");
-      const result = adapter
-        .prepare("INSERT INTO t (val) VALUES (@val)")
-        .run({ val: "named-run" });
+      const result = adapter.prepare("INSERT INTO t (val) VALUES (@val)").run({ val: "named-run" });
       assert.equal(result.changes, 1);
 
-      const row = adapter
-        .prepare("SELECT val FROM t WHERE id = ?")
-        .get(result.lastInsertRowid) as { val: string };
+      const row = adapter.prepare("SELECT val FROM t WHERE id = ?").get(result.lastInsertRowid) as {
+        val: string;
+      };
       assert.equal(row.val, "named-run");
       adapter.close();
     });

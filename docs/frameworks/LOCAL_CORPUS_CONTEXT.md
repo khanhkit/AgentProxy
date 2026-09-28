@@ -15,7 +15,7 @@ lastUpdated: 2026-07-20
 ## What it is
 
 Local Corpus lets an operator expose one explicitly approved directory of text files to
-OmniRoute's MCP server. Files stay in their original directory: OmniRoute stores only
+AgentProxy's MCP server. Files stay in their original directory: AgentProxy stores only
 the canonical root path in SQLite and maintains an in-memory search index. It does not
 copy corpus content into the repository or database.
 
@@ -71,7 +71,7 @@ Example MCP inputs:
 - Symlinks are skipped. Read paths are canonicalized and must remain inside the
   configured root; absolute paths and traversal attempts are rejected.
 - Sensitive and generated directory names are excluded: `.build`, `.codex`, `.env`,
-  `.git`, `.next`, `.omniroute`, `.ssh`, `coverage`, `dist`, `node_modules`, and
+  `.git`, `.next`, `.agentproxy`, `.ssh`, `coverage`, `dist`, `node_modules`, and
   `secrets`.
 - Default limits are 5,000 files, 1 MiB per file, 64 MiB total indexed content,
   approximately 4,000 characters per search chunk, and 400 lines per read.

@@ -3,8 +3,8 @@
  *
  * Contract test for scripts/sre/tcp-close-analyzer.py — the dependency-free
  * pcap analyzer used to debug "who closed the TCP connection first" between
- * Caddy and omniroute-dev (see the script's module docstring for the story
- * behind it: dashboard-level 499s don't say whether OmniRoute or the far end
+ * Caddy and agentproxy-dev (see the script's module docstring for the story
+ * behind it: dashboard-level 499s don't say whether AgentProxy or the far end
  * actually tore down the socket).
  *
  * Builds a minimal, synthetic libpcap file by hand (classic Ethernet framing,
@@ -107,7 +107,7 @@ const MARKER = "test-marker-c9f1a3d2-live-repro";
 
 function buildSyntheticCapture(): Buffer {
   const httpBody = Buffer.from(
-    `POST /v1/responses HTTP/1.1\r\nHost: omniroute\r\nContent-Length: 40\r\n\r\n{"input":"ping ${MARKER}"}`
+    `POST /v1/responses HTTP/1.1\r\nHost: agentproxy\r\nContent-Length: 40\r\n\r\n{"input":"ping ${MARKER}"}`
   );
 
   const packets = [
@@ -241,7 +241,7 @@ test("scripts/sre/tcp-close-analyzer.py exists, is executable, and prints captur
   const result = spawnSync("python3", [SCRIPT, "--show-capture-cmd"], { encoding: "utf8" });
   assert.equal(result.status, 0);
   assert.match(result.stdout, /nsenter/);
-  assert.match(result.stdout, /podman inspect omniroute-dev/);
+  assert.match(result.stdout, /podman inspect agentproxy-dev/);
 });
 
 test(

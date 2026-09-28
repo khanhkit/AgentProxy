@@ -14,7 +14,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-5899-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-5899-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../src/lib/db/core.ts");
@@ -61,11 +61,11 @@ test("#5899 openai gateway baseUrl ending in /v1/chat/completions never probes /
   }
 
   assert.ok(
-    requestedUrls.includes("https://api.airforce/v1/models"),
+    requestedUrls.some((url) => url === "https://api.airforce/v1/models"),
     `expected a request to the correctly-stripped /v1/models URL; got: ${JSON.stringify(requestedUrls)}`
   );
   assert.ok(
-    !requestedUrls.includes("https://api.airforce/v1/v1/models"),
+    !requestedUrls.some((url) => url === "https://api.airforce/v1/v1/models"),
     `must never probe the double-prefixed /v1/v1/models URL; got: ${JSON.stringify(requestedUrls)}`
   );
 });

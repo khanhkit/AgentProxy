@@ -4,7 +4,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-combo-routing-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-combo-routing-"));
 const ORIGINAL_DATA_DIR = process.env.DATA_DIR;
 process.env.DATA_DIR = TEST_DATA_DIR;
 
@@ -81,7 +81,7 @@ function providerBreakerOpenResponse() {
       status: 503,
       headers: {
         "content-type": "application/json",
-        "x-omniroute-provider-breaker": "open",
+        "x-agentproxy-provider-breaker": "open",
       },
     }
   );
@@ -329,7 +329,7 @@ test("handleComboChat runs shadow targets without changing the primary response 
       if (target?.trafficType === "shadow") {
         shadowRequests.push({
           executionKey: target.executionKey,
-          hasBodyMarker: body._omnirouteShadowRouting === true,
+          hasBodyMarker: body._agentproxyShadowRouting === true,
         });
       }
       if (target?.trafficType === "shadow") return errorResponse(503, "shadow failed");

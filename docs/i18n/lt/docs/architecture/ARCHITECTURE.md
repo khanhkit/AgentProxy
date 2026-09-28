@@ -6,12 +6,12 @@
 
 ---
 
-title: „OmniRoute architektūra“
+title: „AgentProxy architektūra“
 version: 3.8.40
 lastUpdated: 2026-06-28
 ---
 
-# OmniRoute architektūra
+# AgentProxy architektūra
 
 🌐 **Languages:** 🇺🇸 [English](../../../../architecture/ARCHITECTURE.md) · 🇸🇦 [ar](../../../ar/docs/architecture/ARCHITECTURE.md) · 🇦🇿 [az](../../../az/docs/architecture/ARCHITECTURE.md) · 🇧🇬 [bg](../../../bg/docs/architecture/ARCHITECTURE.md) · 🇧🇩 [bn](../../../bn/docs/architecture/ARCHITECTURE.md) · 🇨🇿 [cs](../../../cs/docs/architecture/ARCHITECTURE.md) · 🇩🇰 [da](../../../da/docs/architecture/ARCHITECTURE.md) · 🇩🇪 [de](../../../de/docs/architecture/ARCHITECTURE.md) · 🇬🇷 [el](../../../el/docs/architecture/ARCHITECTURE.md) · 🇪🇸 [es](../../../es/docs/architecture/ARCHITECTURE.md) · 🇪🇪 [et](../../../et/docs/architecture/ARCHITECTURE.md) · 🇮🇷 [fa](../../../fa/docs/architecture/ARCHITECTURE.md) · 🇫🇮 [fi](../../../fi/docs/architecture/ARCHITECTURE.md) · 🇫🇷 [fr](../../../fr/docs/architecture/ARCHITECTURE.md) · 🇮🇪 [ga](../../../ga/docs/architecture/ARCHITECTURE.md) · 🇮🇳 [gu](../../../gu/docs/architecture/ARCHITECTURE.md) · 🇮🇱 [he](../../../he/docs/architecture/ARCHITECTURE.md) · 🇮🇳 [hi](../../../hi/docs/architecture/ARCHITECTURE.md) · 🇭🇷 [hr](../../../hr/docs/architecture/ARCHITECTURE.md) · 🇭🇺 [hu](../../../hu/docs/architecture/ARCHITECTURE.md) · 🇮🇩 [id](../../../id/docs/architecture/ARCHITECTURE.md) · 🇮🇹 [it](../../../it/docs/architecture/ARCHITECTURE.md) · 🇯🇵 [ja](../../../ja/docs/architecture/ARCHITECTURE.md) · 🇰🇷 [ko](../../../ko/docs/architecture/ARCHITECTURE.md) · 🇱🇻 [lv](../../../lv/docs/architecture/ARCHITECTURE.md) · 🇮🇳 [mr](../../../mr/docs/architecture/ARCHITECTURE.md) · 🇲🇾 [ms](../../../ms/docs/architecture/ARCHITECTURE.md) · 🇲🇹 [mt](../../../mt/docs/architecture/ARCHITECTURE.md) · 🇳🇱 [nl](../../../nl/docs/architecture/ARCHITECTURE.md) · 🇳🇴 [no](../../../no/docs/architecture/ARCHITECTURE.md) · 🇵🇭 [phi](../../../phi/docs/architecture/ARCHITECTURE.md) · 🇵🇱 [pl](../../../pl/docs/architecture/ARCHITECTURE.md) · 🇵🇹 [pt](../../../pt/docs/architecture/ARCHITECTURE.md) · 🇧🇷 [pt-BR](../../../pt-BR/docs/architecture/ARCHITECTURE.md) · 🇷🇴 [ro](../../../ro/docs/architecture/ARCHITECTURE.md) · 🇷🇺 [ru](../../../ru/docs/architecture/ARCHITECTURE.md) · 🇸🇰 [sk](../../../sk/docs/architecture/ARCHITECTURE.md) · 🇸🇮 [sl](../../../sl/docs/architecture/ARCHITECTURE.md) · 🇷🇸 [sr](../../../sr/docs/architecture/ARCHITECTURE.md) · 🇸🇪 [sv](../../../sv/docs/architecture/ARCHITECTURE.md) · 🇰🇪 [sw](../../../sw/docs/architecture/ARCHITECTURE.md) · 🇮🇳 [ta](../../../ta/docs/architecture/ARCHITECTURE.md) · 🇮🇳 [te](../../../te/docs/architecture/ARCHITECTURE.md) · 🇹🇭 [th](../../../th/docs/architecture/ARCHITECTURE.md) · 🇹🇷 [tr](../../../tr/docs/architecture/ARCHITECTURE.md) · 🇺🇦 [uk-UA](../../../uk-UA/docs/architecture/ARCHITECTURE.md) · 🇵🇰 [ur](../../../ur/docs/architecture/ARCHITECTURE.md) · 🇻🇳 [vi](../../../vi/docs/architecture/ARCHITECTURE.md) · 🇨🇳 [zh-CN](../../../zh-CN/docs/architecture/ARCHITECTURE.md) · 🇹🇼 [zh-TW](../../../zh-TW/docs/architecture/ARCHITECTURE.md)
 
@@ -19,7 +19,7 @@ _Paskutinį kartą atnaujinta: 2026-06-28_
 
 ## Vykdomoji santrauka
 
-„OmniRoute“ yra vietinis, „Next.js“ pagrindu sukurtas DI užklausų nukreipimo šliuzas ir valdymo skydelis.
+„AgentProxy“ yra vietinis, „Next.js“ pagrindu sukurtas DI užklausų nukreipimo šliuzas ir valdymo skydelis.
 Jis suteikia vieną su „OpenAI“ suderinamą galinį tašką (`/v1/*`) ir nukreipia srautą keliems išoriniams paslaugų teikėjams, užtikrindamas formatų konvertavimą, atsarginį perjungimą, prieigos raktų atnaujinimą ir naudojimo stebėjimą.
 
 Pagrindinės galimybės:
@@ -173,7 +173,7 @@ flowchart LR
         BROWSER[Naršyklės valdymo skydas]
     end
 
-    subgraph Router[Vietinis OmniRoute procesas]
+    subgraph Router[Vietinis AgentProxy procesas]
         API[V1 suderinamumo API\n/v1/*]
         DASH[Valdymo skydas + administravimo API\n/api/*]
         CORE[SSE + vertimo branduolys\nopen-sse + src/sse]
@@ -336,7 +336,7 @@ OAuth teikėjų moduliai (22 atskiri failai kataloge `src/lib/oauth/providers/`)
 
 ## 5) Įterptosios paslaugos (v3.8.4)
 
-OmniRoute gali įdiegti, prižiūrėti ir nukreipti užklausas į vietoje veikiančius DI įrankių procesus,
+AgentProxy gali įdiegti, prižiūrėti ir nukreipti užklausas į vietoje veikiančius DI įrankių procesus,
 vadinamus **įterptosiomis paslaugomis**. Pateikiamos penkios: 9Router, CLIProxyAPI, Bifrost, Mux ir Dario.
 
 Architektūros sluoksniai:
@@ -445,7 +445,7 @@ nereikėtų pačioms sudaryti blokavimo, biudžeto ir atsarginio vykdymo logikos
 - Kvotų talpykla: `src/domain/quotaCache.ts`
 - Degradacijos būsena: `src/domain/degradation.ts`
 - Konfigūracijos auditas: `src/domain/configAudit.ts`
-- OmniRoute atsakymų metaduomenų kūrimo priemonė: `src/domain/omnirouteResponseMeta.ts`
+- AgentProxy atsakymų metaduomenų kūrimo priemonė: `src/domain/agentproxyResponseMeta.ts`
 - Vertinimo posistemė: `src/domain/assessment/` — periodinės vertinimo užduotys
 
 ### E. Autorizavimo konvejeris
@@ -526,7 +526,7 @@ Pirminė būsenos DB (SQLite):
 
 - Pagrindinė infrastruktūra: `src/lib/db/core.ts` (better-sqlite3, migracijos, WAL)
 - Prieiga prie DB: tiesiogiai importuokite konkrečius `src/lib/db/*` modulius (senasis `localDb.ts` agregavimo modulis buvo pašalintas)
-- failas: `${DATA_DIR}/storage.sqlite` (arba `$XDG_CONFIG_HOME/omniroute/storage.sqlite`, kai nustatyta, kitu atveju `~/.omniroute/storage.sqlite`)
+- failas: `${DATA_DIR}/storage.sqlite` (arba `$XDG_CONFIG_HOME/agentproxy/storage.sqlite`, kai nustatyta, kitu atveju `~/.agentproxy/storage.sqlite`)
 - esybės (lentelės + KV vardų sritys): providerConnections, providerNodes, modelAliases, combos, apiKeys, settings, pricing, **customModels**, **proxyConfig**, **ipFilter**, **thinkingBudget**, **systemPrompt**
 
 Naudojimo duomenų išliekamumas:
@@ -822,7 +822,7 @@ flowchart LR
         Browser[Dashboard Browser]
     end
 
-    subgraph ContainerOrProcess[OmniRoute Runtime]
+    subgraph ContainerOrProcess[AgentProxy Runtime]
         Next[Next.js Server\nPORT=20128]
         Core[SSE Core + Executors]
         MainDB[(storage.sqlite)]
@@ -940,7 +940,7 @@ Visi kiti teikėjai (įskaitant pasirinktinius suderinamus mazgus) naudoja `Defa
 
 ## Teikėjų suderinamumo matrica
 
-> **Pastaba:** Toliau pateikta matrica yra tipinė 351 „OmniRoute v3.8.0“ užregistruoto teikėjo imtis.
+> **Pastaba:** Toliau pateikta matrica yra tipinė 351 „AgentProxy v3.8.0“ užregistruoto teikėjo imtis.
 > Kanoninį ir nuolat atnaujinamą sąrašą rasite
 > [`docs/reference/PROVIDER_REFERENCE.md`](../reference/PROVIDER_REFERENCE.md) (sugeneruotas automatiškai) arba pirminiame
 > šaltinyje `src/shared/constants/providers.ts` (įkeliant tikrinamas naudojant „Zod“).
@@ -1123,7 +1123,7 @@ Išsamus užklausos naudingosios apkrovos fiksavimas išsaugo iki keturių JSON 
 - neapdorota iš kliento gauta užklausa
 - išversta užklausa, kuri faktiškai išsiųsta išoriniam teikėjui
 - teikėjo atsakymas, atkurtas kaip JSON; srautiniai atsakymai sutraukiami iki galutinės suvestinės ir srauto metaduomenų
-- galutinis kliento atsakymas, kurį grąžino OmniRoute; srautiniai atsakymai saugomi tokia pačia sutrumpintos suvestinės forma
+- galutinis kliento atsakymas, kurį grąžino AgentProxy; srautiniai atsakymai saugomi tokia pačia sutrumpintos suvestinės forma
 
 ## Saugumui jautrios ribos
 
@@ -1149,11 +1149,11 @@ Kodo aktyviai naudojami aplinkos kintamieji:
 
 ## Žinomos architektūros pastabos
 
-1. `usageDb` ir `localDb` taiko tą pačią bazinio katalogo strategiją (`DATA_DIR` -> `XDG_CONFIG_HOME/omniroute` -> `~/.omniroute`) ir palaiko senų failų migravimą.
+1. `usageDb` ir `localDb` taiko tą pačią bazinio katalogo strategiją (`DATA_DIR` -> `XDG_CONFIG_HOME/agentproxy` -> `~/.agentproxy`) ir palaiko senų failų migravimą.
 2. `/api/v1/route.ts` perduoda vykdymą tam pačiam suvienodinto katalogo kūrimo komponentui, kurį naudoja `/api/v1/models` (`src/app/api/v1/models/catalog.ts`), kad būtų išvengta semantinių neatitikimų.
 3. Kai užklausų žurnalas įjungtas, į jį įrašomos visos antraštės ir visas turinys; žurnalo katalogą laikykite jautriu.
 4. Debesijos veikimas priklauso nuo tinkamos `NEXT_PUBLIC_BASE_URL` reikšmės ir debesijos galinio taško pasiekiamumo.
-5. Katalogas `open-sse/` publikuojamas kaip **npm darbo srities paketas** `@omniroute/open-sse`. Šaltinio kodas jį importuoja per `@omniroute/open-sse/...` (išsprendžiama naudojant Next.js `transpilePackages`). Siekiant nuoseklumo, failų keliuose šiame dokumente ir toliau naudojamas katalogo pavadinimas `open-sse/`.
+5. Katalogas `open-sse/` publikuojamas kaip **npm darbo srities paketas** `@agentproxy/open-sse`. Šaltinio kodas jį importuoja per `@agentproxy/open-sse/...` (išsprendžiama naudojant Next.js `transpilePackages`). Siekiant nuoseklumo, failų keliuose šiame dokumente ir toliau naudojamas katalogo pavadinimas `open-sse/`.
 6. Valdymo skydelio diagramose naudojamas **Recharts** (pagrįstas SVG), skirtas prieinamoms, interaktyvioms analitinėms vizualizacijoms (modelių naudojimo stulpelinėms diagramoms, teikėjų suskirstymo lentelėms su sėkmės rodikliais).
 7. E2E testams naudojamas **Playwright** (`tests/e2e/`), jie paleidžiami vykdant `npm run test:e2e`. Vienetiniams testams naudojama **Node.js testų vykdymo priemonė** (`tests/unit/`), jie paleidžiami vykdant `npm run test:unit`. Šaltinio kodas kataloge `src/` yra **TypeScript** (`.ts`/`.tsx`); darbo sritis `open-sse/` išlieka JavaScript (`.js`).
 8. Nustatymų puslapis suskirstytas į 7 skirtukus: Bendrieji, Išvaizda, DI, Saugumas, Maršruto parinkimas, Atsparumas, Išplėstiniai. Atsparumo puslapyje konfigūruojama tik užklausų eilė, ryšio atvėsimo laikotarpis, teikėjo grandinės pertraukiklis ir laukimo, kol pasibaigs atvėsimo laikotarpis, elgsena; tiesioginė grandinės pertraukiklio vykdymo būsena rodoma Būklės puslapyje.
@@ -1164,7 +1164,7 @@ Kodo aktyviai naudojami aplinkos kintamieji:
 ## Veikimo patikros kontrolinis sąrašas
 
 - Sukurkite iš pirminio kodo: `npm run build`
-- Sukurkite Docker atvaizdą: `docker build -t omniroute .`
+- Sukurkite Docker atvaizdą: `docker build -t agentproxy .`
 - Paleiskite paslaugą ir patikrinkite:
 - `GET /api/settings`
 - `GET /api/v1/models`

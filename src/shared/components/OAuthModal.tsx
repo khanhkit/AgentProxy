@@ -24,6 +24,10 @@ import OAuthWaitingStep from "@/shared/components/oauthModal/OAuthWaitingStep";
 import { parseGrokCliPasteToken } from "@/lib/oauth/utils/grokCliAuthJson";
 import { buildGoogleLoopbackHint } from "@/lib/oauth/utils/googleLoopbackHint";
 import {
+  getOAuthCallbackChannelName,
+  LEGACY_OAUTH_CALLBACK_STORAGE_KEY,
+} from "@/shared/utils/oauthCallbackHandoff";
+import {
   buildPkceLoopbackMismatchHint,
   type PkceLoopbackMismatchHint,
 } from "@/lib/oauth/utils/pkceLoopbackWarning";
@@ -49,6 +53,7 @@ const DEVICE_CODE_PROVIDERS = new Set([
   "codebuddy-cn",
   "ghe-copilot",
   "grok-cli",
+  "muse-code",
 ]);
 
 const TOKEN_PASTE_PROVIDERS = new Set(["devin-desktop", "devin-cli", "grok-cli"]);
@@ -378,7 +383,7 @@ export default function OAuthModal({
   // specific branch synchronously (avoids reading a just-set state value through
   // a stale closure); when omitted, falls back to the grokBrowserMode state.
   const startOAuthFlow = useCallback(
-    async (opts?: { grokBrowser?: boolean }) => {
+    async (opts?: { grokBrowser?: boolean; manualLoopback?: boolean }) => {
       if (!provider) return;
       try {
         setError(null);
@@ -460,7 +465,7 @@ export default function OAuthModal({
         let forceManual = false;
 
         // Claude Code and Cline OAuth flows can finish on provider-hosted pages that
-        // show an auth code instead of redirecting back to OmniRoute.
+        // show an auth code instead of redirecting back to AgentProxy.
         // Start directly in manual mode so users always have an input to paste code/url.
         // zed-hosted's native-app sign-in redirects the browser to a local
         // 127.0.0.1:<native_app_port> callback. On true localhost that port IS the
@@ -533,7 +538,7 @@ export default function OAuthModal({
               setPolling(false);
               forceManual = true;
             }
-          } else if (isLocalhost) {
+          } else if (isLocalhost && !opts?.manualLoopback) {
             setLoopbackHint(buildPkceLoopbackMismatchHint(provider, loopbackLocation));
             setStep("loopback-mismatch");
             return;
@@ -550,7 +555,7 @@ export default function OAuthModal({
         //   localhost for the Google native-app handoff; Google documents that localhost
         //   can run into local firewall/name-resolution edge cases. The authorize route
         //   upgrades this to the public callback when custom Google web credentials plus
-        //   NEXT_PUBLIC_BASE_URL or OMNIROUTE_PUBLIC_BASE_URL are configured.
+        //   NEXT_PUBLIC_BASE_URL or AGENTPROXY_PUBLIC_BASE_URL are configured.
         // - Other providers on remote: use actual origin (supports PUBLIC_URL env var)
         // - Localhost: use localhost:port
         let redirectUri: string;
@@ -570,7 +575,7 @@ export default function OAuthModal({
           const port = window.location.port || "20128";
           redirectUri = `http://127.0.0.1:${port}/callback`;
         } else if (!isLocalhost) {
-          // Behind reverse proxy: use actual origin (e.g., https://omniroute.example.com/callback)
+          // Behind reverse proxy: use actual origin (e.g., https://agentproxy.example.com/callback)
           // Supports PUBLIC_URL env var override, or falls back to window.location.origin.
           const publicUrl = process.env.NEXT_PUBLIC_BASE_URL;
           const origin =
@@ -737,7 +742,7 @@ export default function OAuthModal({
 
       const { code, state, error: callbackError, errorDescription } = data;
 
-      if (authData?.state && state && state !== authData.state) {
+      if (authData?.state && state !== authData.state) {
         callbackProcessedRef.current = true;
         setError(t("errorStateMismatch"));
         setStep("error");
@@ -790,47 +795,29 @@ export default function OAuthModal({
     };
     window.addEventListener("message", handleMessage);
 
-    // Method 2: BroadcastChannel
-    let channel;
+    // Legacy persistent relay data may contain OAuth codes/tokens. Purge it
+    // unconditionally; new callbacks use only ephemeral transports.
     try {
-      channel = new BroadcastChannel("oauth_callback");
-      channel.onmessage = (event) => handleCallback(event.data);
-    } catch (e) {
-      console.log("BroadcastChannel not supported");
+      localStorage.removeItem(LEGACY_OAUTH_CALLBACK_STORAGE_KEY);
+    } catch {
+      // localStorage can be disabled; nothing else depends on it.
     }
 
-    // Method 3: localStorage event
-    const handleStorage = (event) => {
-      if (event.key === "oauth_callback" && event.newValue) {
-        try {
-          const data = JSON.parse(event.newValue);
-          handleCallback(data);
-          localStorage.removeItem("oauth_callback");
-        } catch (e) {
-          console.log("Failed to parse localStorage data");
-        }
+    // Method 2: state-scoped BroadcastChannel. Without an expected state there
+    // is no broadcast fallback; the callback page retains the manual-copy path.
+    let channel;
+    const callbackChannelName = getOAuthCallbackChannelName(authData?.state);
+    if (callbackChannelName) {
+      try {
+        channel = new BroadcastChannel(callbackChannelName);
+        channel.onmessage = (event) => handleCallback(event.data);
+      } catch (e) {
+        console.log("BroadcastChannel not supported");
       }
-    };
-    window.addEventListener("storage", handleStorage);
-
-    // Also check localStorage on mount (in case callback already happened)
-    try {
-      const stored = localStorage.getItem("oauth_callback");
-      if (stored) {
-        const data = JSON.parse(stored);
-        // Only use if recent (within 30 seconds)
-        if (data.timestamp && Date.now() - data.timestamp < 30000) {
-          handleCallback(data);
-          localStorage.removeItem("oauth_callback");
-        }
-      }
-    } catch {
-      // localStorage may be unavailable or data may be malformed - ignore silently
     }
 
     return () => {
       window.removeEventListener("message", handleMessage);
-      window.removeEventListener("storage", handleStorage);
       if (channel) channel.close();
     };
   }, [authData, exchangeTokens, provider, t]);
@@ -1160,6 +1147,7 @@ export default function OAuthModal({
           <OAuthLoopbackMismatchPanel
             providerName={providerInfo.name}
             hint={loopbackHint}
+            onManualInput={() => void startOAuthFlow({ manualLoopback: true })}
             onClose={handleClose}
           />
         )}

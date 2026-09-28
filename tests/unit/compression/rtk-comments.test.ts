@@ -20,7 +20,7 @@ describe("RTK code stripper — real comment removal (R1/N3)", () => {
       "javascript",
       OPTS
     );
-    assert.ok(out.text.includes("https://example.com/a//b"), "URL inside string lost");
+    assert.ok(/https:\/\/example\.com\/a\/\/b/.test(out.text), "URL inside string lost");
     assert.ok(!out.text.includes("real comment"), "trailing comment not removed");
   });
 

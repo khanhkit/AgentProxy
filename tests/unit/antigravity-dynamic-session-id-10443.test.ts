@@ -2,17 +2,23 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { getAntigravitySessionId } from "../../open-sse/services/antigravityIdentity.ts";
 
-test("getAntigravitySessionId yields dynamic random session IDs per request to avoid session pinning", () => {
+test("getAntigravitySessionId is stable per account and keeps explicit fallback precedence", () => {
   const credentials = { email: "user@example.com", connectionId: "conn_123" };
 
   const id1 = getAntigravitySessionId(credentials);
   const id2 = getAntigravitySessionId(credentials);
 
-  assert.notEqual(id1, id2, "getAntigravitySessionId should not pin to a static account email hash");
-  assert.equal(typeof id1, "string");
-  assert.equal(typeof id2, "string");
+  assert.equal(id1, id2, "same account should reuse a stable prompt-cache session");
+  assert.notEqual(
+    getAntigravitySessionId({ email: "other@example.com" }),
+    id1,
+    "different accounts should produce different sessions"
+  );
 
   const explicitFallback = "custom-session-456";
-  const idWithFallback = getAntigravitySessionId(credentials, explicitFallback);
-  assert.equal(idWithFallback, explicitFallback, "explicit fallback session ID should take precedence");
+  assert.equal(getAntigravitySessionId(credentials, explicitFallback), explicitFallback);
+});
+
+test("getAntigravitySessionId stays random when no account identity exists", () => {
+  assert.notEqual(getAntigravitySessionId(), getAntigravitySessionId());
 });

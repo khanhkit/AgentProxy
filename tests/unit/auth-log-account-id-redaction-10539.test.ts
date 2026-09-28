@@ -19,7 +19,7 @@ import { dirname, resolve } from "node:path";
 // Isolate DB state so the resolution chain (DB override > env > default)
 // reads a clean store and we exercise the definition default, not a leaked
 // override from another test file.
-const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-test-auth-log-account-id-"));
+const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-test-auth-log-account-id-"));
 process.env.DATA_DIR = tmpDir;
 
 const { FEATURE_FLAG_DEFINITIONS } = await import(

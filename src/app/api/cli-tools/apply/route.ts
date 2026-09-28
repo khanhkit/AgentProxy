@@ -1,108 +1,103 @@
+import { NextResponse } from "next/server";
 import { z } from "zod";
 import { requireCliToolsAuth } from "@/lib/api/requireCliToolsAuth";
 import fs from "node:fs";
 import path from "node:path";
-import { generateConfig, redactGeneratedConfig } from "@/lib/cli-helper/config-generator";
-import { readPrivateConfigFile, writePrivateConfigFile } from "@/lib/cli-helper/privateConfigFile";
+import { generateConfig } from "@/lib/cli-helper/config-generator";
 import { guardCliConfigWrite } from "@/lib/api/cliConfigWriteGuard";
 import { getCliPrimaryConfigPath, normalizeCliToolId } from "@/shared/services/cliRuntime";
-import {
-  configRequestSchema,
-  configError,
-  defaultConfigBaseUrl,
-  privateConfigResponse,
-} from "@/lib/cli-helper/configRequest";
 
-const applySchema = configRequestSchema.extend({
+const applySchema = z.object({
+  toolId: z.string().min(1),
+  baseUrl: z.string().optional(),
+  apiKey: z.string().min(1),
+  model: z.string().optional(),
   dryRun: z.boolean().optional(),
 });
 
 /** The host-side command that does the same job when AgentProxy is containerised. */
 const HOST_SETUP_COMMANDS: Record<string, string> = {
-  claude: "omniroute setup-claude",
-  codex: "omniroute setup-codex",
-  opencode: "omniroute setup-opencode",
-  cline: "omniroute setup-cline",
-  kilo: "omniroute setup-kilo",
-  continue: "omniroute setup-continue",
+  claude: "agentproxy setup-claude",
+  codex: "agentproxy setup-codex",
+  opencode: "agentproxy setup-opencode",
+  cline: "agentproxy setup-cline",
+  kilo: "agentproxy setup-kilo",
+  continue: "agentproxy setup-continue",
 };
 
 function ensureBackup(configPath: string): string | null {
   if (!fs.existsSync(configPath)) return null;
-  const backupDir = path.join(path.dirname(configPath), ".omniroute.bak");
+  const backupDir = path.join(path.dirname(configPath), ".agentproxy.bak");
+  if (!fs.existsSync(backupDir)) fs.mkdirSync(backupDir, { recursive: true });
   const backupPath = path.join(backupDir, path.basename(configPath) + ".bak");
-  writePrivateConfigFile(backupPath, readPrivateConfigFile(configPath));
+  fs.copyFileSync(configPath, backupPath);
   return backupPath;
 }
 
 // POST /api/cli-tools/apply - Apply config for a specific tool
 export async function POST(request: Request) {
   const authError = await requireCliToolsAuth(request);
-  if (authError) {
-    authError.headers.set("cache-control", "no-store");
-    return authError;
-  }
-
-  let body: unknown;
-  try {
-    body = await request.json();
-  } catch {
-    return configError(400, "Invalid JSON request");
-  }
+  if (authError) return authError;
 
   try {
-    const parsed = applySchema.safeParse(body);
-    if (!parsed.success) return configError(400, "Invalid config request");
-
+    const parsed = applySchema.safeParse(await request.json());
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: parsed.error.issues[0]?.message ?? "Invalid request" },
+        { status: 400 }
+      );
+    }
     const { toolId, baseUrl, apiKey, model, dryRun } = parsed.data;
     const canonicalToolId = normalizeCliToolId(toolId);
+
     const result = await generateConfig(canonicalToolId, {
-      baseUrl: baseUrl || defaultConfigBaseUrl(),
+      baseUrl: baseUrl || "http://localhost:20128/v1",
       apiKey,
       model,
     });
 
     if (!result.success) {
-      return configError(
-        400,
-        redactGeneratedConfig(result.error || "Config generation failed", [apiKey])
-      );
+      return NextResponse.json({ error: result.error }, { status: 400 });
     }
 
-    const safeContent = redactGeneratedConfig(result.content || "", [apiKey]);
-
     if (dryRun) {
-      return privateConfigResponse({
+      return NextResponse.json({
         dryRun: true,
         configPath: result.configPath,
-        content: safeContent,
+        content: result.content,
         ...(result.migration ? { migration: result.migration } : {}),
       });
     }
 
     const configPath = result.configPath || getCliPrimaryConfigPath(canonicalToolId);
-    if (!configPath) return configError(400, "Unknown CLI tool");
+    if (!configPath) {
+      return NextResponse.json({ error: `Unknown tool: ${toolId}` }, { status: 400 });
+    }
 
+    // A container write into an unmounted path looks successful and then
+    // disappears with the container — refuse it and point at the host CLI.
     const refusal = guardCliConfigWrite(configPath, {
       toolLabel: canonicalToolId,
       hostCommand: HOST_SETUP_COMMANDS[canonicalToolId],
     });
-    if (refusal) {
-      refusal.headers.set("cache-control", "no-store");
-      return refusal;
-    }
+    if (refusal) return refusal;
 
     const backupPath = ensureBackup(configPath);
-    writePrivateConfigFile(configPath, result.content!);
 
-    return privateConfigResponse({
+    const dir = path.dirname(configPath);
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+
+    fs.writeFileSync(configPath, result.content!, "utf-8");
+
+    return NextResponse.json({
       success: true,
       configPath,
       backupPath,
-      content: safeContent,
+      content: result.content,
       ...(result.migration ? { migration: result.migration } : {}),
     });
-  } catch {
-    return configError(500, "Failed to apply config");
+  } catch (error) {
+    console.log("Error applying config:", error);
+    return NextResponse.json({ error: "Failed to apply config" }, { status: 500 });
   }
 }

@@ -32,7 +32,7 @@ test("nous-research DefaultExecutor.buildUrl() targets the correct inference end
   assert.equal(url, "https://inference-api.nousresearch.com/v1/chat/completions");
 });
 
-test("nous-research DefaultExecutor.transformRequest injects user=omniroute tag when tags is absent (#11861)", () => {
+test("nous-research DefaultExecutor.transformRequest injects user=agentproxy tag when tags is absent (#11861)", () => {
   const executor = new DefaultExecutor("nous-research");
   const transformed = executor.transformRequest(
     "Hermes-4-70B",
@@ -42,7 +42,7 @@ test("nous-research DefaultExecutor.transformRequest injects user=omniroute tag 
   ) as Record<string, unknown>;
 
   assert.ok(Array.isArray(transformed.tags), "Expected tags array on nous-research body");
-  assert.deepEqual(transformed.tags, ["user=omniroute"]);
+  assert.deepEqual(transformed.tags, ["user=agentproxy"]);
 });
 
 test("nous-research DefaultExecutor.transformRequest respects client-sent user in tags (#11861)", () => {
@@ -70,7 +70,7 @@ test("nous-research DefaultExecutor.transformRequest preserves existing tags and
     null
   ) as Record<string, unknown>;
 
-  assert.deepEqual(transformed.tags, ["client=agent", "user=omniroute"]);
+  assert.deepEqual(transformed.tags, ["client=agent", "user=agentproxy"]);
 });
 
 test("nous-research DefaultExecutor.transformRequest does not duplicate user tag if already present (#11861)", () => {

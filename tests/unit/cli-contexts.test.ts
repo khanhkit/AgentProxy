@@ -16,7 +16,7 @@ let tmpDir: string;
 let origDataDir: string | undefined;
 
 test.before(() => {
-  tmpDir = mkdtempSync(join(tmpdir(), "omniroute-ctx-test-"));
+  tmpDir = mkdtempSync(join(tmpdir(), "agentproxy-ctx-test-"));
   origDataDir = process.env.DATA_DIR;
   process.env.DATA_DIR = tmpDir;
 });
@@ -128,7 +128,7 @@ test("saveContextsSecure guarda tokens no keychain e resolve pela referência", 
 
   const persisted = JSON.parse(readFileSync(join(tmpDir, "config.json"), "utf8"));
   assert.equal(persisted.contexts.secure.accessToken, undefined);
-  assert.match(persisted.contexts.secure.credentialRef, /^omniroute-cli:context:/);
+  assert.match(persisted.contexts.secure.credentialRef, /^agentproxy-cli:context:/);
   assert.equal(resolveActiveContext("secure").accessToken, "oma_test_secret");
   assert.ok(entries.size >= 1);
 
@@ -169,7 +169,7 @@ test("confirm() declines cleanly on non-interactive stdin (no hung await)", asyn
 });
 
 test("registerContexts registers the singular `context` alias", async () => {
-  // The connect output and older docs say `omniroute context current` (singular);
+  // The connect output and older docs say `agentproxy context current` (singular);
   // the command is `contexts`. An alias keeps the singular muscle-memory working.
   const { registerContexts } = await import("../../bin/cli/commands/contexts.mjs");
   let aliasName: string | undefined;

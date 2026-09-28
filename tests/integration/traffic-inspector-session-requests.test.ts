@@ -10,7 +10,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-ti-session-requests-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-ti-session-requests-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const { resetDbInstance, getDbInstance } = await import("../../src/lib/db/core.ts");

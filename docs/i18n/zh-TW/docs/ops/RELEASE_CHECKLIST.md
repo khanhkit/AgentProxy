@@ -46,7 +46,7 @@ npm 發布工作流程不再直接發布：它會啟動打包後的 tarball
 
 **工作流程轉為綠色後的擁有者流程：**
 
-1. `npm stage list omniroute` — 找到 stage id（也會列印在工作流程摘要中）。
+1. `npm stage list agentproxy` — 找到 stage id（也會列印在工作流程摘要中）。
 2. 驗證暫存位元組（建議執行）：`npm stage download <id>`，然後將下載的 tarball
    安裝到臨時字首目錄並啟動它（`npm run check:pack-boot` 會在 CI 中自動執行
    相同的 pack→install→boot 驗證流程）。
@@ -57,11 +57,11 @@ npm 發布工作流程不再直接發布：它會啟動打包後的 tarball
 **緊急備援：** 使用 `workflow_dispatch` 搭配 `publish_mode=direct` 可恢復
 傳統的立即 `npm publish`（僅在階段式發布本身出問題時使用；請記錄原因）。
 
-**一次性強化措施（擁有者，npmjs.com）：**為 `omniroute` 設定僅限階段式發布的
+**一次性強化措施（擁有者，npmjs.com）：**為 `agentproxy` 設定僅限階段式發布的
 Trusted Publisher，這樣即使長期權杖外洩，也無法從任何地方直接 `npm publish`——
 CI 只能暫存；只有擁有者的 2FA 才能真正發布。
 
-**成品損壞應對手冊（未變更）：** `npm deprecate omniroute@<bad> "<reason> — use <fixed>"`
+**成品損壞應對手冊（未變更）：** `npm deprecate agentproxy@<bad> "<reason> — use <fixed>"`
 為預設反射動作（幾分鐘內完成，可逆轉）；`npm unpublish` 僅在 72 小時／無依賴套件
 的時間窗口內使用，且絕不作為第一步。Docker：絕不重寫版本標籤——回滾是將
 `latest` 重新指向最後一個正常的摘要。
@@ -167,7 +167,7 @@ Husky hooks 位於 `.husky/` 目錄，會在 git 操作時自動執行。
 - [ ] `npm run i18n:check` 退出碼為 0——翻譯狀態（`.i18n-state.json`）與來源文件同步（嚴格模式下無偏差來源；警告模式對最後一刻的文件修飾可接受，但應在打標籤前歸零）
 - [ ] `npm run i18n:check-ui-coverage` 退出碼為 0——每個 UI 語系都達到或超過 80% 的覆蓋率門檻
 - [ ] `npm run i18n:sync-ui:dry` 回報 0 個缺失鍵，遍及全部 42 個語系
-- [ ] 若英文來源文件有變更，請在打標籤前執行 `npm run i18n:run`（需要在 `.env` 中有 `OMNIROUTE_TRANSLATION_API_KEY`）
+- [ ] 若英文來源文件有變更，請在打標籤前執行 `npm run i18n:run`（需要在 `.env` 中有 `AGENTPROXY_TRANSLATION_API_KEY`）
 - [ ] 若翻譯貢獻不大，可延遲至下一版本（在 CHANGELOG 中追蹤）
 
 ### 資料庫遷移
@@ -176,7 +176,7 @@ Husky hooks 位於 `.husky/` 目錄，會在 git 操作時自動執行。
   - [ ] 每個遷移都是等冪的（`CREATE TABLE IF NOT EXISTS` 等）
   - [ ] 遷移包含在交易中
   - [ ] 編號正確（序列中無間隙）
-- [ ] 在全新安裝上測試：刪除 `~/.omniroute/omniroute.db` 並執行 `npm run dev`
+- [ ] 在全新安裝上測試：刪除 `~/.agentproxy/agentproxy.db` 並執行 `npm run dev`
 - [ ] 在既有安裝上測試：備份資料庫、執行遷移、驗證結構
 - [ ] 若遷移會改寫表格，需正確處理 WAL 檔案（`-wal`、`-shm`）
 
@@ -211,7 +211,7 @@ Husky hooks 位於 `.husky/` 目錄，會在 git 操作時自動執行。
 | `.build/` | 建置中間產物 — `next build` 輸出（`distDir`）        | 否（gitignored）|
 | `dist/`   | 可發行的 npm 套件 — 由 `assembleStandalone` 組合而成 | 否（gitignored）|
 
-> **操作注意：** 遠端 VPS 映像目錄仍為 `/usr/lib/node_modules/omniroute/app/`。
+> **操作注意：** 遠端 VPS 映像目錄仍為 `/usr/lib/node_modules/agentproxy/app/`。
 > 只有**倉儲內**的建置輸出目錄變更了（`app/` → `dist/`）。部署 skills 會將
 > `dist/` 內容 rsync 到遠端的 `app/` 目錄——無需變更 VPS 路徑。
 
@@ -315,12 +315,12 @@ npm run build:release
 
 在發布任何 v3.8.x 版本前，請確認以下額外項目：
 
-- [ ] `omniroute --tray` 在 macOS 上啟動（systray2 已安裝到 `~/.omniroute/runtime/`）
-- [ ] `omniroute --tray` 在 Linux 上啟動（需要 DISPLAY；若未設定則優雅報錯）
-- [ ] `omniroute --tray` 在 Windows 上啟動（PowerShell NotifyIcon，無需額外二進位檔）
-- [ ] `omniroute config tray enable` 建立開機自啟項目；disable 則移除
-- [ ] `npm install -g omniroute@<此版本>` 執行 postinstall 而不會致命退出
-- [ ] 更新路徑保留選擇性依賴：`omniroute update --apply` 和自動更新器
+- [ ] `agentproxy --tray` 在 macOS 上啟動（systray2 已安裝到 `~/.agentproxy/runtime/`）
+- [ ] `agentproxy --tray` 在 Linux 上啟動（需要 DISPLAY；若未設定則優雅報錯）
+- [ ] `agentproxy --tray` 在 Windows 上啟動（PowerShell NotifyIcon，無需額外二進位檔）
+- [ ] `agentproxy config tray enable` 建立開機自啟項目；disable 則移除
+- [ ] `npm install -g agentproxy@<此版本>` 執行 postinstall 而不會致命退出
+- [ ] 更新路徑保留選擇性依賴：`agentproxy update --apply` 和自動更新器
       執行 `npm install -g … --include=optional`，因此 `optionalDependencies`（better-sqlite3、
       keytar、tls-client，以及 llmlingua SLM 堆疊：`@atjsh/llmlingua-2@2.0.5`、
       `js-tiktoken`）在更新後仍會保留。Ultra `modelPath` SLM 層還需要
@@ -330,13 +330,13 @@ npm run build:release
       實例——獨立追蹤僅捆綁 transformers，而非動態匯入的
       選擇性套件，因此若無此步驟，工作者會載入 llmlingua-2 並使用根目錄的 transformers，
       導致 SLM 層靜默地失敗但仍保持運作。
-- [ ] `omniroute status` 在無 `.env` 的情況下正常運作（僅限 CLI 權杖路徑，迴環介面）
+- [ ] `agentproxy status` 在無 `.env` 的情況下正常運作（僅限 CLI 權杖路徑，迴環介面）
 - [ ] `curl http://localhost:20128/api/shutdown` 回傳 401（始終受保護的路由）
 - [ ] `curl -H "host: evil.com" http://localhost:20128/api/mcp/sse` 回傳 401（迴環保護）
 - [ ] SQLite 執行時期在首次執行時解析為 `bundled`（捆綁的二進位檔對平台有效）
 - [ ] 當 `node_modules/better-sqlite3` 被刪除時，SQLite 執行時期備援至 `runtime`
 - [ ] Smart MCP 過濾器壓縮真實的 `playwright-mcp browser_snapshot` 輸出（≥50% 縮減）
-- [ ] 所有 10 個 `skills/omniroute*/SKILL.md` 檔案均可透過原始 GitHub URL 公開獲取
+- [ ] 所有 10 個 `skills/agentproxy*/SKILL.md` 檔案均可透過原始 GitHub URL 公開獲取
 - [ ] 入門精靈在新安裝時顯示「運作方式」分層導覽步驟
 - [ ] 首頁儀表板的分層覆蓋率小工具顯示已設定／啟用中的計數
 

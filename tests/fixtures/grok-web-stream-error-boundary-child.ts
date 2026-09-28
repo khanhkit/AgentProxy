@@ -7,14 +7,14 @@ import test from "node:test";
 // This file is executed only by the process-isolated unit-test wrapper. State
 // mutations and repository imports must remain here, never in the parent test.
 const originalDataDir = process.env.DATA_DIR;
-const originalPluginsDir = process.env.OMNIROUTE_PLUGINS_DIR;
+const originalPluginsDir = process.env.AGENTPROXY_PLUGINS_DIR;
 const originalFetch = globalThis.fetch;
-const testRoot = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-grok-web-stream-error-"));
+const testRoot = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-grok-web-stream-error-"));
 
 process.env.DATA_DIR = path.join(testRoot, "data");
-process.env.OMNIROUTE_PLUGINS_DIR = path.join(testRoot, "plugins");
+process.env.AGENTPROXY_PLUGINS_DIR = path.join(testRoot, "plugins");
 fs.mkdirSync(process.env.DATA_DIR, { recursive: true });
-fs.mkdirSync(process.env.OMNIROUTE_PLUGINS_DIR, { recursive: true });
+fs.mkdirSync(process.env.AGENTPROXY_PLUGINS_DIR, { recursive: true });
 globalThis.fetch = async () => {
   throw new Error("Unexpected network request in Grok stream error boundary test");
 };
@@ -185,8 +185,8 @@ test.after(async () => {
 
   if (originalDataDir === undefined) delete process.env.DATA_DIR;
   else process.env.DATA_DIR = originalDataDir;
-  if (originalPluginsDir === undefined) delete process.env.OMNIROUTE_PLUGINS_DIR;
-  else process.env.OMNIROUTE_PLUGINS_DIR = originalPluginsDir;
+  if (originalPluginsDir === undefined) delete process.env.AGENTPROXY_PLUGINS_DIR;
+  else process.env.AGENTPROXY_PLUGINS_DIR = originalPluginsDir;
 
   fs.rmSync(testRoot, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
 });

@@ -76,20 +76,40 @@ test("memoryCache evicts the least recently used entry when full", async () => {
   });
 });
 
-test("memoryCache invalidates entries by regex pattern", async () => {
+test("memoryCache invalidates entries by explicit prefix and exact selectors", async () => {
   await memoryCache.set("session:1", "a");
   await memoryCache.set("session:2", "b");
   await memoryCache.set("profile:1", "c");
+  await memoryCache.set("profile:2", "d");
 
-  await memoryCache.invalidate("^session:");
+  await memoryCache.invalidate({ prefix: "session:" });
+  await memoryCache.invalidate({ exact: "profile:1" });
 
   assert.equal(await memoryCache.get("session:1"), null);
   assert.equal(await memoryCache.get("session:2"), null);
-  assert.equal(await memoryCache.get("profile:1"), "c");
-  assert.deepEqual(memoryCache.stats(), {
-    size: 1,
-    maxSize: originalMaxSize,
-    hits: 1,
-    misses: 2,
-  });
+  assert.equal(await memoryCache.get("profile:1"), null);
+  assert.equal(await memoryCache.get("profile:2"), "d");
+});
+
+test("memoryCache rejects legacy regex-string invalidation without compiling regex", async () => {
+  await memoryCache.set("session:1", "a");
+
+  for (const legacyPattern of ["[", "(a+)+$", "^session:"]) {
+    await assert.rejects(
+      memoryCache.invalidate(legacyPattern as never),
+      /exact or prefix selector/i
+    );
+  }
+
+  assert.equal(await memoryCache.get("session:1"), "a");
+});
+
+test("memoryCache rejects ambiguous invalidation selectors", async () => {
+  await memoryCache.set("session:1", "a");
+
+  await assert.rejects(
+    memoryCache.invalidate({ exact: "session:1", prefix: "session:" } as never),
+    /exact or prefix selector/i
+  );
+  assert.equal(await memoryCache.get("session:1"), "a");
 });

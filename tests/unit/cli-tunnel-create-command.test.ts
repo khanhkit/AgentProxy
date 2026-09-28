@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-// #12295: `omniroute tunnel create <type>` crashed with
+// #12295: `agentproxy tunnel create <type>` crashed with
 // "Cannot read properties of undefined (reading optsWithGlobals)" because
 // `.command("create [type]")` + `.addArgument(new Argument("[type]", ...))`
 // registered TWO positional arguments. Commander then passed

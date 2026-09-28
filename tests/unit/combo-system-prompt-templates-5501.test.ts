@@ -7,7 +7,7 @@ import path from "node:path";
 // Node's test runner stops registering tests past a top-level `await import`, so
 // every module import — and the DATA_DIR pin that must precede combo.ts — happens
 // here, before any `test()` call. Mirrors the combo-attempt-body-isolation harness.
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-combo-tpl-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-combo-tpl-"));
 const ORIGINAL_DATA_DIR = process.env.DATA_DIR;
 process.env.DATA_DIR = TEST_DATA_DIR;
 

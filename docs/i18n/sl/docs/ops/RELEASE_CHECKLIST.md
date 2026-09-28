@@ -53,8 +53,8 @@ To je obvod, ki ga npm zdaj dovoljuje zaradi postopnega opuščanja žetonov, ki
 obnavlja popolnoma samodejen postopek, ki ga je projekt uporabljal do v3.8.48, hkrati pa ohranja
 zagotovilo WS1.3 (razkriti žeton sam ne more objavljati — žetona sploh ni).
 
-**Enkratna nastavitev (lastnik):** npmjs.com → paket `omniroute` → Settings → _Trusted
-Publisher_ → GitHub: lastnik `diegosouzapw`, repozitorij `OmniRoute`, delovni tok `npm-publish.yml`
+**Enkratna nastavitev (lastnik):** npmjs.com → paket `agentproxy` → Settings → _Trusted
+Publisher_ → GitHub: lastnik `diegosouzapw`, repozitorij `AgentProxy`, delovni tok `npm-publish.yml`
 (okolje: brez). Dokler to ni nastavljeno, samodejni korak ne uspe z napako `ENEEDAUTH`:
 znova ga sprožite s `publish_mode=staged` (spodaj) ali `direct`.
 
@@ -67,7 +67,7 @@ je prestavljeno PO dokazovanju, ne pred njega.
 
 **Postopek lastnika, ko delovni tok postane zelen:**
 
-1. `npm stage list omniroute` — poiščite ID stopnje (izpisan je tudi v povzetku delovnega toka).
+1. `npm stage list agentproxy` — poiščite ID stopnje (izpisan je tudi v povzetku delovnega toka).
 2. Preverite shranjene bajte (priporočeno): `npm stage download <id>`, nato namestite
    preneseni tarball v začasno predpono in ga zaženite (`npm run check:pack-boot` v CI avtomatizira
    enako preverjanje pakiranje→namestitev→zagon).
@@ -78,11 +78,11 @@ je prestavljeno PO dokazovanju, ne pred njega.
 **Rezervna možnost v sili:** `workflow_dispatch` z `publish_mode=direct` obnovi
 starejši način takojšnjega `npm publish` (uporabite samo, če postopno objavljanje ne deluje pravilno; zabeležite razlog).
 
-**Enkratna utrditev (lastnik, npmjs.com):** za `omniroute` konfigurirajte Trusted Publisher
+**Enkratna utrditev (lastnik, npmjs.com):** za `agentproxy` konfigurirajte Trusted Publisher
 v načinu samo za postopno objavljanje, tako da razkriti dolgoročni žeton ne more neposredno izvesti `npm publish`
 od nikoder — CI lahko vsebino samo pripravi; izda jo lahko le lastnik s 2FA.
 
-**Postopek za okvarjen artefakt (nespremenjen):** `npm deprecate omniroute@<bad> "<reason> — use <fixed>"`
+**Postopek za okvarjen artefakt (nespremenjen):** `npm deprecate agentproxy@<bad> "<reason> — use <fixed>"`
 kot privzeti prvi odziv (traja nekaj minut in je povraten); `npm unpublish` samo znotraj 72-urnega obdobja/brez odvisnih paketov
 in nikoli kot prva poteza. Docker: nikoli ne prepišite oznake različice — povrnitev pomeni
 preusmeritev `latest` na zadnjo delujočo zgoščeno vrednost.
@@ -202,7 +202,7 @@ Prelomne spremembe: dodajte nogo `BREAKING CHANGE:` ali `!` za obsegom (npr. `fe
 - [ ] `npm run i18n:check` se konča s kodo 0 — stanje prevodov (`.i18n-state.json`) je sinhronizirano z izvorno dokumentacijo (v strogem načinu ni odstopajočih virov; svetovalno opozorilo v načinu opozarjanja je sprejemljivo za zadnje manjše popravke dokumentacije, vendar mora biti pred označevanjem rezultat 0)
 - [ ] `npm run i18n:check-ui-coverage` se konča s kodo 0 — vsak jezik uporabniškega vmesnika dosega ali presega 80-odstotni prag pokritosti
 - [ ] `npm run i18n:sync-ui:dry` poroča o 0 manjkajočih ključih v vseh 42 jezikih
-- [ ] Če se je spremenila izvorna angleška dokumentacija, pred označevanjem zaženite `npm run i18n:run` (zahteva `OMNIROUTE_TRANSLATION_API_KEY` v `.env`)
+- [ ] Če se je spremenila izvorna angleška dokumentacija, pred označevanjem zaženite `npm run i18n:run` (zahteva `AGENTPROXY_TRANSLATION_API_KEY` v `.env`)
 - [ ] Prispevke k prevodom je mogoče prestaviti v naslednjo izdajo, če so manjši (zabeležite v CHANGELOG)
 
 ### Selitve podatkovne zbirke
@@ -211,7 +211,7 @@ Prelomne spremembe: dodajte nogo `BREAKING CHANGE:` ali `!` za obsegom (npr. `fe
   - [ ] Vsaka selitev je idempotentna (`CREATE TABLE IF NOT EXISTS` itd.)
   - [ ] Selitve so ovite v transakcije
   - [ ] Pravilno so oštevilčene (brez vrzeli v zaporedju)
-- [ ] Preizkusite pri sveži namestitvi: izbrišite `~/.omniroute/omniroute.db` in zaženite `npm run dev`
+- [ ] Preizkusite pri sveži namestitvi: izbrišite `~/.agentproxy/agentproxy.db` in zaženite `npm run dev`
 - [ ] Preizkusite pri obstoječi namestitvi: varnostno kopirajte DB, zaženite selitev in preverite shemo
 - [ ] Datoteke WAL (`-wal`, `-shm`) so pravilno obravnavane, če selitev prepisuje tabele
 
@@ -246,7 +246,7 @@ Repozitorij uporablja tri različne izhodne imenike — nikoli jih ne zamenjajte
 | `.build/` | Vmesni rezultati gradnje — izhod `next build` (`distDir`)   | Ne (gitignored) |
 | `dist/`   | Paket npm za distribucijo — sestavi ga `assembleStandalone` | Ne (gitignored) |
 
-> **Opomba za operaterja:** imenik slike na oddaljenem VPS ostaja `/usr/lib/node_modules/omniroute/app/`.
+> **Opomba za operaterja:** imenik slike na oddaljenem VPS ostaja `/usr/lib/node_modules/agentproxy/app/`.
 > Premaknjen je bil samo izhod gradnje **znotraj repozitorija** (`app/` → `dist/`). Veščine za uvajanje z rsync
 > prenesejo vsebino `dist/` v oddaljeni imenik `app/` — spremembe poti VPS niso potrebne.
 
@@ -366,12 +366,12 @@ Pred izdajo katere koli različice, ki vključuje spremembe vdelanih storitev, p
 
 Pred izdajo katere koli različice v3.8.x preverite še naslednje:
 
-- [ ] `omniroute --tray` se zažene v sistemu macOS (systray2 je nameščen v `~/.omniroute/runtime/`)
-- [ ] `omniroute --tray` se zažene v sistemu Linux (zahteva DISPLAY; prijazna napaka, če ni nastavljen)
-- [ ] `omniroute --tray` se zažene v sistemu Windows (PowerShell NotifyIcon, brez dodatnih izvršljivih datotek)
-- [ ] `omniroute config tray enable` ustvari vnos za samodejni zagon; onemogočanje ga odstrani
-- [ ] `npm install -g omniroute@<this-version>` izvede postinstall brez usodnega izhoda
-- [ ] Pot posodobitve ohrani neobvezne odvisnosti: `omniroute update --apply` in samodejni posodabljalnik
+- [ ] `agentproxy --tray` se zažene v sistemu macOS (systray2 je nameščen v `~/.agentproxy/runtime/`)
+- [ ] `agentproxy --tray` se zažene v sistemu Linux (zahteva DISPLAY; prijazna napaka, če ni nastavljen)
+- [ ] `agentproxy --tray` se zažene v sistemu Windows (PowerShell NotifyIcon, brez dodatnih izvršljivih datotek)
+- [ ] `agentproxy config tray enable` ustvari vnos za samodejni zagon; onemogočanje ga odstrani
+- [ ] `npm install -g agentproxy@<this-version>` izvede postinstall brez usodnega izhoda
+- [ ] Pot posodobitve ohrani neobvezne odvisnosti: `agentproxy update --apply` in samodejni posodabljalnik
       izvedeta `npm install -g … --include=optional`, tako da `optionalDependencies` (better-sqlite3,
       keytar, tls-client in sklad SLM llmlingua: `@atjsh/llmlingua-2@2.0.5`,
       `js-tiktoken`) preživijo posodobitev. Stopnja SLM ultra `modelPath` potrebuje tudi model
@@ -381,13 +381,13 @@ Pred izdajo katere koli različice v3.8.x preverite še naslednje:
       — samostojno sledenje vključuje le transformers, ne pa dinamično uvoženih
       neobveznih odvisnosti, zato bi brez tega delavec naložil llmlingua-2 s transformers iz korena,
       stopnja SLM pa bi se neopazno preklopila v odprto delovanje ob napaki.
-- [ ] `omniroute status` deluje brez `.env` (pot žetona CLI, samo povratna zanka)
+- [ ] `agentproxy status` deluje brez `.env` (pot žetona CLI, samo povratna zanka)
 - [ ] `curl http://localhost:20128/api/shutdown` vrne 401 (vedno zaščitena pot)
 - [ ] `curl -H "host: evil.com" http://localhost:20128/api/mcp/sse` vrne 401 (varovalo povratne zanke)
 - [ ] Izvajalno okolje SQLite se ob prvem zagonu razreši na `bundled` (priložena binarna datoteka je veljavna za platformo)
 - [ ] Izvajalno okolje SQLite preklopi na `runtime`, ko je `node_modules/better-sqlite3` izbrisan
 - [ ] Pametni filter MCP stisne dejanski izhod `playwright-mcp browser_snapshot` (≥50-odstotno zmanjšanje)
-- [ ] Vseh 10 datotek `skills/omniroute*/SKILL.md` je javno dostopnih prek neobdelanega URL-ja GitHub
+- [ ] Vseh 10 datotek `skills/agentproxy*/SKILL.md` je javno dostopnih prek neobdelanega URL-ja GitHub
 - [ ] Čarovnik za uvodno nastavitev pri sveži namestitvi prikaže korak predstavitve stopenj »Kako deluje«
 - [ ] Pripomoček za pokritost stopenj na domači nadzorni plošči prikazuje število konfiguriranih/aktivnih stopenj
 

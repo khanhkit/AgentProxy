@@ -17,17 +17,17 @@ lastUpdated: 2026-07-15
 
 🌐 **Languages:** 🇺🇸 [English](../../../../guides/TROUBLESHOOTING.md) · 🇸🇦 [ar](../../../ar/docs/guides/TROUBLESHOOTING.md) · 🇦🇿 [az](../../../az/docs/guides/TROUBLESHOOTING.md) · 🇧🇬 [bg](../../../bg/docs/guides/TROUBLESHOOTING.md) · 🇧🇩 [bn](../../../bn/docs/guides/TROUBLESHOOTING.md) · 🇨🇿 [cs](../../../cs/docs/guides/TROUBLESHOOTING.md) · 🇩🇰 [da](../../../da/docs/guides/TROUBLESHOOTING.md) · 🇩🇪 [de](../../../de/docs/guides/TROUBLESHOOTING.md) · 🇬🇷 [el](../../../el/docs/guides/TROUBLESHOOTING.md) · 🇪🇸 [es](../../../es/docs/guides/TROUBLESHOOTING.md) · 🇮🇷 [fa](../../../fa/docs/guides/TROUBLESHOOTING.md) · 🇫🇮 [fi](../../../fi/docs/guides/TROUBLESHOOTING.md) · 🇫🇷 [fr](../../../fr/docs/guides/TROUBLESHOOTING.md) · 🇮🇪 [ga](../../../ga/docs/guides/TROUBLESHOOTING.md) · 🇮🇳 [gu](../../../gu/docs/guides/TROUBLESHOOTING.md) · 🇮🇱 [he](../../../he/docs/guides/TROUBLESHOOTING.md) · 🇮🇳 [hi](../../../hi/docs/guides/TROUBLESHOOTING.md) · 🇭🇷 [hr](../../../hr/docs/guides/TROUBLESHOOTING.md) · 🇭🇺 [hu](../../../hu/docs/guides/TROUBLESHOOTING.md) · 🇮🇩 [id](../../../id/docs/guides/TROUBLESHOOTING.md) · 🇮🇹 [it](../../../it/docs/guides/TROUBLESHOOTING.md) · 🇯🇵 [ja](../../../ja/docs/guides/TROUBLESHOOTING.md) · 🇰🇷 [ko](../../../ko/docs/guides/TROUBLESHOOTING.md) · 🇱🇹 [lt](../../../lt/docs/guides/TROUBLESHOOTING.md) · 🇱🇻 [lv](../../../lv/docs/guides/TROUBLESHOOTING.md) · 🇮🇳 [mr](../../../mr/docs/guides/TROUBLESHOOTING.md) · 🇲🇾 [ms](../../../ms/docs/guides/TROUBLESHOOTING.md) · 🇲🇹 [mt](../../../mt/docs/guides/TROUBLESHOOTING.md) · 🇳🇱 [nl](../../../nl/docs/guides/TROUBLESHOOTING.md) · 🇳🇴 [no](../../../no/docs/guides/TROUBLESHOOTING.md) · 🇵🇭 [phi](../../../phi/docs/guides/TROUBLESHOOTING.md) · 🇵🇱 [pl](../../../pl/docs/guides/TROUBLESHOOTING.md) · 🇵🇹 [pt](../../../pt/docs/guides/TROUBLESHOOTING.md) · 🇧🇷 [pt-BR](../../../pt-BR/docs/guides/TROUBLESHOOTING.md) · 🇷🇴 [ro](../../../ro/docs/guides/TROUBLESHOOTING.md) · 🇷🇺 [ru](../../../ru/docs/guides/TROUBLESHOOTING.md) · 🇸🇰 [sk](../../../sk/docs/guides/TROUBLESHOOTING.md) · 🇸🇮 [sl](../../../sl/docs/guides/TROUBLESHOOTING.md) · 🇷🇸 [sr](../../../sr/docs/guides/TROUBLESHOOTING.md) · 🇸🇪 [sv](../../../sv/docs/guides/TROUBLESHOOTING.md) · 🇰🇪 [sw](../../../sw/docs/guides/TROUBLESHOOTING.md) · 🇮🇳 [ta](../../../ta/docs/guides/TROUBLESHOOTING.md) · 🇮🇳 [te](../../../te/docs/guides/TROUBLESHOOTING.md) · 🇹🇭 [th](../../../th/docs/guides/TROUBLESHOOTING.md) · 🇹🇷 [tr](../../../tr/docs/guides/TROUBLESHOOTING.md) · 🇺🇦 [uk-UA](../../../uk-UA/docs/guides/TROUBLESHOOTING.md) · 🇵🇰 [ur](../../../ur/docs/guides/TROUBLESHOOTING.md) · 🇻🇳 [vi](../../../vi/docs/guides/TROUBLESHOOTING.md) · 🇨🇳 [zh-CN](../../../zh-CN/docs/guides/TROUBLESHOOTING.md) · 🇹🇼 [zh-TW](../../../zh-TW/docs/guides/TROUBLESHOOTING.md)
 
-OmniRoute'i levinumad probleemid ja lahendused.
+AgentProxy'i levinumad probleemid ja lahendused.
 
 ---
 
 ## Kiirviide
 
-**Uus OmniRoute'iga?** Alusta siit — need lahendavad 90% probleemidest:
+**Uus AgentProxy'iga?** Alusta siit — need lahendavad 90% probleemidest:
 
 | Ma näen seda                    | See tähendab                                 | Mida teha                                                                                             |
 | ------------------------------- | -------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| "Ühendamine ebaõnnestub"        | OmniRoute ei tööta                           | Käivita `omniroute` või `docker restart omniroute`                                                    |
+| "Ühendamine ebaõnnestub"        | AgentProxy ei tööta                           | Käivita `agentproxy` või `docker restart agentproxy`                                                    |
 | "Vigane API võti"               | Sinu võti on vale või aegunud                | Kopeeri võti uuesti teenusepakkuja veebisaidilt                                                       |
 | "Kiirusepiirang ületatud"       | Saadad liiga palju päringuid                 | Oota 1 minut või kasuta `model: "auto"` automaatseks ümbersuunamiseks                                 |
 | "Kvoot ületatud"                | Oled oma tasuta/makstud kvoodi ära kasutanud | Ühenda rohkem teenusepakkuja või kasuta tasuta teenusepakkuja (Kiro, Pollinations)                    |
@@ -58,26 +58,26 @@ OmniRoute'i levinumad probleemid ja lahendused.
 **Tõestatud lahendus (kogukonna poolt teatatud, 10.08.2026)**: seadista kolm keskkonnamuutujat nii, et rotatsioon, rööpsus ja ümbersuunamine neelaksid tasuta kvoodi muutused, mitte ei sureks selle tõttu:
 
 ```bash
-export OMNIROUTE_ROTATE_ON_400=true           # hüppa teise mudeli/teenusepakkuja juurde 400/401 korral (jätab vahele katki läinud läbimudelid)
-export OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT=4   # konkreetne raskekaalu sissepääsu ülempiir (vaikimisi määramata: päringute arvuta pole, vt allolevat märkust)
-export OMNIROUTE_CHAT_ADMISSION_QUEUE_MS=5000 # pikem piiratud ootamine raskekaalu mahutavuse jaoks, mitte kohene 503
+export AGENTPROXY_ROTATE_ON_400=true           # hüppa teise mudeli/teenusepakkuja juurde 400/401 korral (jätab vahele katki läinud läbimudelid)
+export AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT=4   # konkreetne raskekaalu sissepääsu ülempiir (vaikimisi määramata: päringute arvuta pole, vt allolevat märkust)
+export AGENTPROXY_CHAT_ADMISSION_QUEUE_MS=5000 # pikem piiratud ootamine raskekaalu mahutavuse jaoks, mitte kohene 503
 ```
 
-Seadista need OmniRoute'i protsessi keskkonnas (deemon, nt LaunchAgent plist'i või `systemctl edit` kaudu), seejärel taaskäivita OmniRoute. Rotatsioonilipik on üks suurima mõjuga hoob: see muudab raske vea läbipaistvaks uuestiproovimiseks tervisliku teenusepakkuja vastu pakkides.
+Seadista need AgentProxy'i protsessi keskkonnas (deemon, nt LaunchAgent plist'i või `systemctl edit` kaudu), seejärel taaskäivita AgentProxy. Rotatsioonilipik on üks suurima mõjuga hoob: see muudab raske vea läbipaistvaks uuestiproovimiseks tervisliku teenusepakkuja vastu pakkides.
 
-**Märkus**: `OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT` piirab, mitu raskekaalu — pika kontekstiga — päringut korraga käivitub; piirang on sissepääsuvärav, mitte teenusepakkuja kiirusepiirang. **#503 hargnemise uuendus:** seda muutujat ei seata enam vaikimisi (see seob ainult siis, kui see on ülal mainitud viisil konkreetselt määratud) — raskekaalu sissepääs on hoopis piiratud automaatselt tuletatud baitide eelarvega (`OMNIROUTE_CHAT_MAX_INFLIGHT_BYTES`), mis skaleerib end vastavalt hosti reaalsele mälu ülempiirile, nii et uuel installil peaks nägema palju vähem `503 chat_admission_busy` tagasilükkamisi, ilma seda muutujat üldse määramata; siin konkreetne määramine töötab ikka täpselt nagu dokumenteeritud. Konkreetsed baitide eelarve ülekirjutused kuni 8 MiB–2 GiB. `413 body_exceeds_budget` ei ole ajutine: suurenda seda baitide eelarvet, alanda `OMNIROUTE_CHAT_HARD_MAX_BODY_BYTES` või suurenda protsessi mälu ülempiiri. `inflight_bytes_budget` mahasurumine on ajutine konkurents ja jääb uuestiproovitavaks. Teenusepakkuja kiirusepiirangut (`open-sse/services/rateLimitManager.ts`) juhitakse eraldi `RATE_LIMIT_MAX_WAIT_MS`, `RATE_LIMIT_MAX_QUEUE_DEPTH` ja `RATE_LIMIT_AUTO_ENABLE` abil — vt `.env.example`.
+**Märkus**: `AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT` piirab, mitu raskekaalu — pika kontekstiga — päringut korraga käivitub; piirang on sissepääsuvärav, mitte teenusepakkuja kiirusepiirang. **#503 hargnemise uuendus:** seda muutujat ei seata enam vaikimisi (see seob ainult siis, kui see on ülal mainitud viisil konkreetselt määratud) — raskekaalu sissepääs on hoopis piiratud automaatselt tuletatud baitide eelarvega (`AGENTPROXY_CHAT_MAX_INFLIGHT_BYTES`), mis skaleerib end vastavalt hosti reaalsele mälu ülempiirile, nii et uuel installil peaks nägema palju vähem `503 chat_admission_busy` tagasilükkamisi, ilma seda muutujat üldse määramata; siin konkreetne määramine töötab ikka täpselt nagu dokumenteeritud. Konkreetsed baitide eelarve ülekirjutused kuni 8 MiB–2 GiB. `413 body_exceeds_budget` ei ole ajutine: suurenda seda baitide eelarvet, alanda `AGENTPROXY_CHAT_HARD_MAX_BODY_BYTES` või suurenda protsessi mälu ülempiiri. `inflight_bytes_budget` mahasurumine on ajutine konkurents ja jääb uuestiproovitavaks. Teenusepakkuja kiirusepiirangut (`open-sse/services/rateLimitManager.ts`) juhitakse eraldi `RATE_LIMIT_MAX_WAIT_MS`, `RATE_LIMIT_MAX_QUEUE_DEPTH` ja `RATE_LIMIT_AUTO_ENABLE` abil — vt `.env.example`.
 
 **Kuidas kontrollida, kas see töötas**: käivita oma agent/cron kaks korda kiiresti ja kinnita, et mõlemad õnnestuvad. Paranduse enne viskas teine käivitamistavaliselt `429`/`401`. Pärast parandust (kui üldse esineb) ebaõnnestumised läbivad uuestiproovimise läbipaistvalt ja kõne lõpetatakse. Samuti võid `curl /monitoring/health` käivitada ja jälgida `rateLimitedUntil` välja teenusepakkuja ühendustes ja `circuitBreakers.providerBreakers[].state` mõjutatud teenusepakkuja jaoks — olek on üks `CLOSED`, `DEGRADED`, `OPEN` või `HALF_OPEN` (vt `src/shared/utils/circuitBreaker.ts`), ja teenusepakkuja, mis pidevalt ebaõnnestub, lülitub `CLOSED → DEGRADED → OPEN` enne lähtestamise akna lubamist sondil läbi minna (`HALF_OPEN`).
 
-**Kui sa näed ikka 429**: selle teenusepakkuja aktiivne konto on tõepoolest oma _kvoodi_ (mitte ainult kiiruse) ammendanud. Lisa sama teenusepakkuja teine konto OmniRoute'i juhtpaneelil → Teenusepakkuja → Kontod või lisa mõni muu tasuta teenusepakkuja (nt `routeway`, `auggie`). Rotatsioon aitab ainult ajutise kiiruse/400/401 korral; raske kvoodi ammendamine nõuab teisi volikirju või erinevat teenusepakkuja.
+**Kui sa näed ikka 429**: selle teenusepakkuja aktiivne konto on tõepoolest oma _kvoodi_ (mitte ainult kiiruse) ammendanud. Lisa sama teenusepakkuja teine konto AgentProxy'i juhtpaneelil → Teenusepakkuja → Kontod või lisa mõni muu tasuta teenusepakkuja (nt `routeway`, `auggie`). Rotatsioon aitab ainult ajutise kiiruse/400/401 korral; raske kvoodi ammendamine nõuab teisi volikirju või erinevat teenusepakkuja.
 
 **Kui sa näed 403 visioonimudelitel (`auto/vision`, `bazaarlink/*`)**: ühendatud kontol puudub makstud plaan, mis sisaldab visiooni, või API võtmel on ebapiisavad õigused. Kontrolli teenusepakkuja juhtpaneelil, kas võtme ulatus sisaldab visiooni/multimodaalset, või ühenda makstud plaani konto ja hoia seda visiooni sihtkohana.
 
 ## npm installi hoiatused (ERESOLVE / peer / deprecated)
 
-Käivitades `npm install -g omniroute`, võid näha hoiatuste seina nagu `npm warn ERESOLVE`, sõltuvusteade ja `deprecated` sõnumid. **Need on oodatud ja kahjutud.** Sinu install on õnnestunud, kui väljundis näed `added <N> packages`.
+Käivitades `npm install -g agentproxy`, võid näha hoiatuste seina nagu `npm warn ERESOLVE`, sõltuvusteade ja `deprecated` sõnumid. **Need on oodatud ja kahjutud.** Sinu install on õnnestunud, kui väljundis näed `added <N> packages`.
 
-Hoiatused tulevad kolmanda osapoole pakettide aegunud sõltuvusvahemikest, mida OmniRoute ei kontrolli:
+Hoiatused tulevad kolmanda osapoole pakettide aegunud sõltuvusvahemikest, mida AgentProxy ei kontrolli:
 
 1. **`marked-terminal` soovib `marked >=1 <16`, leitud `marked@18`** — töötab praktikas hästi; üleval pool olev sõltuvusvahemik on lihtsalt aegunud.
 2. **`deprecated prebuild-install@7.1.3`** — ülekandlik kohaliku binaari abiteenindaja. Seda ei kasutata
@@ -95,10 +95,10 @@ Hoiatused tulevad kolmanda osapoole pakettide aegunud sõltuvusvahemikest, mida 
 | Esimene sisselogimine ei tööta                             | Määra `INITIAL_PASSWORD` failis `.env` (ei ole koodikirjas seatud vaikeväärtust)                                                                                        |
 | Töölaud avaneb valel pordil                                | Määra `PORT=20128` ja `NEXT_PUBLIC_BASE_URL=http://localhost:20128`                                                                                                     |
 | Logisid ei kirjutata kettale                               | Määra `APP_LOG_TO_FILE=true` ja kontrolli, et kõne logi salvestamine on lubatud                                                                                         |
-| EACCES: õigus keelatud                                     | Määra `DATA_DIR=/path/to/writable/dir`, et tühistada `~/.omniroute`                                                                                                     |
+| EACCES: õigus keelatud                                     | Määra `DATA_DIR=/path/to/writable/dir`, et tühistada `~/.agentproxy`                                                                                                     |
 | marsruutimisstrateegiat ei salvestata                      | Uuenda viimasele v3.x versioonile (Zod skeemi parandus seadete püsivuse jaoks saadetud varasemates versioonides)                                                        |
 | Sisselogimine kukub kokku / tühi lehekülg                  | Kontrolli Node.js versiooni — vaata allpool [Node.js ühilduvus](#nodejs-compatibility)                                                                                  |
-| `dlopen` / `slice is not valid mach-o file` (macOS)        | Käivita `cd $(npm root -g)/omniroute/app && npm rebuild better-sqlite3 && omniroute` — vaata allpool [macOS kohaliku mooduli ümberehitus](#macos-native-module-rebuild) |
+| `dlopen` / `slice is not valid mach-o file` (macOS)        | Käivita `cd $(npm root -g)/agentproxy/app && npm rebuild better-sqlite3 && agentproxy` — vaata allpool [macOS kohaliku mooduli ümberehitus](#macos-native-module-rebuild) |
 | Proksi "fetch failed"                                      | Veendu, et proksi konfiguratsioon on õigel tasemel seadistatud — vaata allpool [Proksi probleemid](#proxy-issues)                                                       |
 | Docker `curl: (56) Recv failure: Connection reset by peer` | Sinu Docker pordi seos võib sattuda IPv6 peale. Kasuta `-p 127.0.0.1:20128:20128`, et sundida IPv4-d, või testi `curl -4`-ga. Vaata allpool [Docker IPv6](#docker-ipv6) |
 | Viirusetõrje karantiini seab `README.md`                   | Valepositiiv — vaata allpool [Viirusetõrje valepositiivsed tuvastused](#antivirus-false-positives)                                                                      |
@@ -115,8 +115,8 @@ Hoiatused tulevad kolmanda osapoole pakettide aegunud sõltuvusvahemikest, mida 
 **Tegemist on valepositiivse tulemusega. Miski pole nakatunud ja meetmeid pole vaja.**
 
 Avast ja AVG kasutavad heuristilist analüüsi, mis märgistab lihtteksti-/Markdown-faile, mis sisaldavad palju
-HTTP-päringu sarnaseid linke. OmniRoute'i `README.md` on npm-paketi sees (see on loetletud
-`package.json` → `files`), nii et see jõuab globaalse installi korral asukohta `node_modules/omniroute/README.md` —
+HTTP-päringu sarnaseid linke. AgentProxy'i `README.md` on npm-paketi sees (see on loetletud
+`package.json` → `files`), nii et see jõuab globaalse installi korral asukohta `node_modules/agentproxy/README.md` —
 ja see sisaldab ~15 `http://localhost:20128/...` näidet (MCP
 HTTP/SSE lõpp-punktid, A2A `.well-known` URL ja `curl` näited). Selline lingitihedus on
 piisav, et heuristiline analüüs reageeriks.
@@ -131,7 +131,7 @@ Fail on inertne dokumentatsioon ilma igasuguse käivitatava sisuta. Saate selle 
 
 1. **Peatage teavitused** — lisage oma viirusetõrjes installikataloog erandite hulka
    (Avast: Seaded → Erandid), lisades oma globaalse `node_modules` tee ja/või
-   OmniRoute'i andmekausta (`~/.omniroute/`).
+   AgentProxy'i andmekausta (`~/.agentproxy/`).
 2. **Teatage valepositiivsest tulemusest** — <https://www.avast.com/false-positive-file-form.php>,
    lisades karantiini pandud `README.md`. See on lahendus, mis aitab kõiki, kuna
    tegemist on tootja heuristilise analüüsi ülereageerimisega tekstifailile.
@@ -161,24 +161,24 @@ töölauarakendusega kaasas, näiteks:
 **Miks see käivitub:** Windowsi installer **ei ole veel koodiallkirjastatud**, seega
 allkirjastamata NSIS installeril puudub maine ja käitumuslikud heuristilised analüüsid töötavad maksimaalse agressiivsusega.
 Koos kaasasoleva natiivse DLL-iga ja sadade `.js` failidega, mis kirjutatakse
-`%LOCALAPPDATA%\Programs\OmniRoute` alla (sealhulgas Next.js standalone buildi räsisufiksiga paketikaustad),
+`%LOCALAPPDATA%\Programs\AgentProxy` alla (sealhulgas Next.js standalone buildi räsisufiksiga paketikaustad),
 piisab sellest heuristilise analüüsi käivitamiseks. Koodiallkirjastamine on plaanis;
 kuni see valmib, võivad uued väljalasked seda korrata.
 
 **Mida teha:**
 
 1. **Kontrollige kõigepealt allalaaditud faili** (välistab rikutud faili). Iga väljalase avaldab
-   `latest.yml`, mille `sha512` väli (base64) hõlmab `OmniRoute.Setup.<version>.exe`
+   `latest.yml`, mille `sha512` väli (base64) hõlmab `AgentProxy.Setup.<version>.exe`
    installerit. PowerShellis, installerit sisaldavast kaustast:
    ```powershell
    $b = [System.Security.Cryptography.SHA512]::Create().ComputeHash(
-     [System.IO.File]::ReadAllBytes("$PWD\OmniRoute.Setup.<version>.exe"))
+     [System.IO.File]::ReadAllBytes("$PWD\AgentProxy.Setup.<version>.exe"))
    [Convert]::ToBase64String($b)
    ```
    Väljund peab ühtima `latest.yml` → `sha512` väärtusega. Kui see ei ühti, kustutage fail ja
-   laadige uuesti ainult [GitHub releases lehelt](https://github.com/diegosouzapw/OmniRoute/releases).
+   laadige uuesti ainult [GitHub releases lehelt](https://github.com/khanhkit/AgentProxy/releases).
 2. **Taastage + lisage erand** — taastage tagasipööratud üksused karantiinist ja lisage erand
-   `%LOCALAPPDATA%\Programs\OmniRoute` jaoks (Kaspersky → Seaded → Ohud ja erandid),
+   `%LOCALAPPDATA%\Programs\AgentProxy` jaoks (Kaspersky → Seaded → Ohud ja erandid),
    seejärel installige uuesti.
 3. **Teatage valepositiivsest tulemusest** — <https://opentip.kaspersky.com/>. Kasutajate esitatud FP
    aruanded kiirendavad tõesti lubatud nimekirja lisamist.
@@ -191,7 +191,7 @@ kuni see valmib, võivad uued väljalasked seda korrata.
 
 ### Sisselogimise lehe krahhi või "Module self-registration" vea kuvamine
 
-**Põhjus:** Kasutate Node.js versiooni, mis jääb OmniRoute'i heakskiidetud turvalise käivituskeskkonna miinimumi alla. Kõige tavalisem juhtum on vanema Node 22 või 24 parandustaseme kasutamine, mis jääb alla OmniRoute'i nõutava turvaparanduste taseme.
+**Põhjus:** Kasutate Node.js versiooni, mis jääb AgentProxy'i heakskiidetud turvalise käivituskeskkonna miinimumi alla. Kõige tavalisem juhtum on vanema Node 22 või 24 parandustaseme kasutamine, mis jääb alla AgentProxy'i nõutava turvaparanduste taseme.
 
 **Sümptomid:**
 
@@ -207,8 +207,8 @@ kuni see valmib, võivad uued väljalasked seda korrata.
    nvm use 24
    ```
 2. Kontrollige oma versiooni: `node --version` peaks näitama `v24.0.0` või uuemat 24.x LTS liinis
-3. Installige OmniRoute uuesti: `npm install -g omniroute`
-4. Taaskäivitage: `omniroute`
+3. Installige AgentProxy uuesti: `npm install -g agentproxy`
+4. Taaskäivitage: `agentproxy`
 
 > **Toetatud turvaversioonid:** `>=22.22.2 <23` või `>=24.0.0 <27`. Node.js 24.x LTS (Krypton) ja Node.js 26 on täielikult toetatud.
 
@@ -246,7 +246,7 @@ ja nõuab native kompileerimist (`node-gyp rebuild`), npm vaigistab selle vahele
 
 <a name="macos-native-module-rebuild"></a>
 
-**Põhjus:** Pärast ülemaailmset `npm install -g omniroute` võib paketi sees olev `better-sqlite3` native binaarfail olla kompileeritud erineva arhitektuuri jaoks või erineva Node.js ABI-ga kui kohalikult töötav versioon. See on tavaline macOS-is (nii Apple Silicon kui Intel), kui eelkompileeritud binaarfail ei sobi teie keskkonnaga.
+**Põhjus:** Pärast ülemaailmset `npm install -g agentproxy` võib paketi sees olev `better-sqlite3` native binaarfail olla kompileeritud erineva arhitektuuri jaoks või erineva Node.js ABI-ga kui kohalikult töötav versioon. See on tavaline macOS-is (nii Apple Silicon kui Intel), kui eelkompileeritud binaarfail ei sobi teie keskkonnaga.
 
 **Sümptomid:**
 
@@ -255,15 +255,15 @@ ja nõuab native kompileerimist (`node-gyp rebuild`), npm vaigistab selle vahele
 - Täielik näide:
 
 ```
-dlopen(/Users/<user>/.nvm/versions/node/v24.14.1/lib/node_modules/omniroute/app/node_modules/better-sqlite3/build/Release/better_sqlite3.node, 0x0001): tried: '...' (slice is not valid mach-o file)
+dlopen(/Users/<user>/.nvm/versions/node/v24.14.1/lib/node_modules/agentproxy/app/node_modules/better-sqlite3/build/Release/better_sqlite3.node, 0x0001): tried: '...' (slice is not valid mach-o file)
 ```
 
 **Lahendus — kompileerige uuesti oma kohaliku keskkonna jaoks (Node.js versiooni alandamist pole vaja):**
 
 ```bash
-cd $(npm root -g)/omniroute/app
+cd $(npm root -g)/agentproxy/app
 npm rebuild better-sqlite3
-omniroute
+agentproxy
 ```
 
 > **Märkus:** See kompileerib native sidumise uuesti vastavalt teie kohalikule Node.js versioonile ja CPU arhitektuurile, lahendades binaarfailide vastuolu. Ametlikult toetatud käivituskeskkond on **`>=22.22.2 <23` või `>=24.0.0 <27`** (`SUPPORTED_NODE_RANGE` failis `src/shared/utils/nodeRuntimeSupport.ts`, vastavuses `package.json` `engines` väljaga). Node.js 24.x LTS (Krypton) ja Node.js 26 on täielikult toetatud `better-sqlite3` v12.x-ga.
@@ -290,13 +290,13 @@ omniroute
 
 **Põhjus:** Node.js 22 puhul ei ühildu undici@8 saatja Node'i sisseehitatud `fetch()` rakendusega.
 
-**Parandus (v3.5.5+):** OmniRoute kasutab nüüd proksi saatja aktiveerimisel undici oma `fetch()` funktsiooni, tagades järjepideva käitumise. Uuendage versioonile v3.5.5+.
+**Parandus (v3.5.5+):** AgentProxy kasutab nüüd proksi saatja aktiveerimisel undici oma `fetch()` funktsiooni, tagades järjepideva käitumise. Uuendage versioonile v3.5.5+.
 
 ### MITM proksi WSL-i all: Windowsi hostil töötavaid töölauarakendusi ei拦截
 
-**Põhjus:** MITM proksi ja tema CA sertifikaat installitakse keskkonda, kus OmniRoute töötab. WSL-i all on see keskkond Linuxi külaliskeskkond, samas kui AI töölauarakendused (Kiro, Trae, Copilot, Zed, …) töötavad Windowsi hostil. Hosti rakendused ei usalda külaliskeskkonna sertifikaatide salvest ega suuna läbi külaliskeskkonna süsteemiproksi, seega töölaua拦截 ei aktiveeru seal.
+**Põhjus:** MITM proksi ja tema CA sertifikaat installitakse keskkonda, kus AgentProxy töötab. WSL-i all on see keskkond Linuxi külaliskeskkond, samas kui AI töölauarakendused (Kiro, Trae, Copilot, Zed, …) töötavad Windowsi hostil. Hosti rakendused ei usalda külaliskeskkonna sertifikaatide salvest ega suuna läbi külaliskeskkonna süsteemiproksi, seega töölaua拦截 ei aktiveeru seal.
 
-**Soovitus:** Käivitage OmniRoute loomulikult samas operatsioonisüsteemis nagu töölauarakendused, mida soovite拦截ida (Windowsi rakenduste puhul Windows; macOS/Linux'i puhul vastavalt). OmniRoute'i hoidmine WSL-is, kui sihite hosti rakendusi, nõuab genereeritud CA sertifikaadi käsitsi usaldamist Windowsi hostil ja iga hosti rakenduse võrgu/proksi seadete suunamist WSL-i proksi otspunktile — toetamata ja habras lahendus.
+**Soovitus:** Käivitage AgentProxy loomulikult samas operatsioonisüsteemis nagu töölauarakendused, mida soovite拦截ida (Windowsi rakenduste puhul Windows; macOS/Linux'i puhul vastavalt). AgentProxy'i hoidmine WSL-is, kui sihite hosti rakendusi, nõuab genereeritud CA sertifikaadi käsitsi usaldamist Windowsi hostil ja iga hosti rakenduse võrgu/proksi seadete suunamist WSL-i proksi otspunktile — toetamata ja habras lahendus.
 
 ---
 
@@ -323,7 +323,7 @@ omniroute
 
 ### OAuthi märguanne aegunud
 
-OmniRoute värskendab märguandeid automaatselt. Kui probleemid püsivad:
+AgentProxy värskendab märguandeid automaatselt. Kui probleemid püsivad:
 
 1. Armatuurlaud → Tarnija → Taasta ühendus
 2. Kustutage ja lisage tarnija ühendus uuesti
@@ -353,7 +353,7 @@ Täielike üksikasjade ja samm-sammuliste juhiste kohta kahe Kiro konto kõrvuti
 ### Pilvesünkroonimise vead
 
 1. Veendu, et `BASE_URL` osutab sinu töötavale instantsile (nt `http://localhost:20128`)
-2. Veendu, et `CLOUD_URL` osutab sinu pilve lõpp-punktile (nt `https://omniroute.dev`)
+2. Veendu, et `CLOUD_URL` osutab sinu pilve lõpp-punktile (nt `https://agentproxy.example.com`)
 3. Hoia `NEXT_PUBLIC_*` väärtused kooskõlas serveripoolsete väärtustega
 
 ### Pilve `stream=false` tagastab 500
@@ -387,8 +387,8 @@ Täielike üksikasjade ja samm-sammuliste juhiste kohta kahe Kiro konto kõrvuti
 1. **Kiire diagnostika:** Käivita `curl -4 http://localhost:20128/v1/models`. Kui see töötab `-4` lipuga, kuid mitte ilma selleta, on sul IPv6 seotud konflikt.
 2. **Püsiv lahendus:** Seo IPv4 aadress kindlalt, kasutades `docker run` käskluses `-p 127.0.0.1:20128:20128`:
    ```bash
-   docker run -d --name omniroute --restart unless-stopped --stop-timeout 40 \
-     -p 127.0.0.1:20128:20128 -v omniroute-data:/app/data diegosouzapw/omniroute:latest
+   docker run -d --name agentproxy --restart unless-stopped --stop-timeout 40 \
+     -p 127.0.0.1:20128:20128 -v agentproxy-data:/app/data khanhkit/agentproxy:latest
    ```
    See sunnib IPv4 sidumise ja hoiab ära proxy avaldamise kõigi hosti liidestega.
 
@@ -529,7 +529,7 @@ Teenusepakkujate profiilid toetavad neid sätteid:
 
 ### Äikesekarja ennetamine
 
-Kui palju samaaegseid päringuid tabab kiirusepiiranguga teenusepakkujat, kasutab OmniRoute muutvälja + automaatset kiirusepiiramist, et seeriaalitada päringuid ja vältida kaskaadivigu. See toimub automaatselt API võtit pakkuvatele teenusepakkujatele.
+Kui palju samaaegseid päringuid tabab kiirusepiiranguga teenusepakkujat, kasutab AgentProxy muutvälja + automaatset kiirusepiiramist, et seeriaalitada päringuid ja vältida kaskaadivigu. See toimub automaatselt API võtit pakkuvatele teenusepakkujatele.
 
 ### Vestlusrequestid ebaõnnestuvad 503 / chat_admission_busy
 
@@ -538,7 +538,7 @@ Kui palju samaaegseid päringuid tabab kiirusepiiranguga teenusepakkujat, kasuta
 - Vestluse täiendused lõpp-punkt tagastab kordatava `503` vastuse, mille veakood on
   `chat_admission_busy`.
 - Vastus sisaldab `Retry-After`. Alates #12135 on väärtus tuletatud täheldatud
-  täitumusest — `OMNIROUTE_CHAT_ADMISSION_QUEUE_MS` akna suurem väärtus, mida päring juba
+  täitumusest — `AGENTPROXY_CHAT_ADMISSION_QUEUE_MS` akna suurem väärtus, mida päring juba
   ootas, ja aeg, mil praegused raskekaalulised rendid on olnud hoitud — ümardatud täis-
   sekunditesse ja piiratud 60-ga. Tühjal väraval säilitab see ajaloolised põhjaväärtused: 2
   sekundit baistruktuuriteel, 1 sekund struktuuripõhisel teel (mis sisaldab ka
@@ -565,24 +565,24 @@ Vaikimisi lävenditel on päring struktuuriliselt raske, kui sellel on vähemalt
 vähemalt `64` tööriista või vähemalt `32 000` hinnangulist märki, või kui piiratud
 struktuurihinnang ammendab oma piirid `10 000` külastatud sõlme või sügavusega `12`.
 
-**Põhjus:** See on tahtlik koormuse mahakandmine OmniRoute sees, mitte ülemteenusepakkuja
+**Põhjus:** See on tahtlik koormuse mahakandmine AgentProxy sees, mitte ülemteenusepakkuja
 viga. Iga protsess kasutab protsessikohast valvepuud, et reserveerida piiratud raskekaaluline
 mahutavus enne suure päringukeha säilitamist ja töötlemist. Raskekaaluline rendileping
 hoitakse kogu SSE vastuse eluea jooksul.
 
 **#503-fan-out:** enne seda parandust piiras valvepuu konkurentsi kindla päringute ARVuga
-(`OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT`, vaikimisi `1`), sõltumata hosti mälust, nii et
+(`AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT`, vaikimisi `1`), sõltumata hosti mälust, nii et
 programmeerimisagentide hajutamine (mitu allagenti/CLI-d, kehad regulaarselt > 256 KB)
 kollapses efektiivseks konkurentsideks ~1 ja 503-is täiesti normaalse koormuse all. Valvepuu
 kalibreerib ennast nüüd: see on kontrollitud automaatselt tuletatud sisendmähu BÜTSELLI reaga
-(`OMNIROUTE_CHAT_MAX_INFLIGHT_BYTES`), mis on suurusega protsessi tegelikust mälu ülempiirist,
+(`AGENTPROXY_CHAT_MAX_INFLIGHT_BYTES`), mis on suurusega protsessi tegelikust mälu ülempiirist,
 ja see konsulteerib ka elava ressursside surve signaaliga — nii et see mahakandmine toimub
 ainult siis, kui hostil on tõepoolest mälu surve all, mitte lihtsalt seetõttu, et rohkem kui
-üks raske päring korraga saabus. Vana arvupiir (`OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT`) on
+üks raske päring korraga saabus. Vana arvupiir (`AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT`) on
 endiselt aktsepteeritud, aga ainult siis, kui sa selle sõnaselgelt määrad.
 
 Kui mahutavus on hõivatud, ootab raskekaaluline päring kõigepealt kuni
-`OMNIROUTE_CHAT_ADMISSION_QUEUE_MS` (vaikimisi `2000`, `0` keelab ootamise), et koht
+`AGENTPROXY_CHAT_ADMISSION_QUEUE_MS` (vaikimisi `2000`, `0` keelab ootamise), et koht
 vabaneb enne kordatava `503` vastamist. Piiratud ootamine on olemas, et agentide-laadsed
 kliendid (OpenCode, Claude Code, Cursor), mis hajutavad rasked alampäringud samaaegselt,
 seeriaalitaksid paugu, mitte ei kulutaks oma kogu kordamise eelarvet kohesetele keeldumistele
@@ -603,7 +603,7 @@ false` ja helde `maxInflightBytes` tähendavad, et automaatselt tuletatud eelarv
    või väiksemat töökoormust.
 3. Ainult siis, kui `/api/monitoring/health` näitab, et automaatselt tuletatud eelarve on
    tõepoolest liiga väike su hosti jaoks (harv — see skaleerub juba konteinerist paljas-
-   riistvarani), kohalda seda otse `OMNIROUTE_CHAT_MAX_INFLIGHT_BYTES` abil, mitte
+   riistvarani), kohalda seda otse `AGENTPROXY_CHAT_MAX_INFLIGHT_BYTES` abil, mitte
    vana päringute arvupiiri juurde tagasi pöördudes.
 
 Vaata [keskkonnamuutjate viidet](../reference/ENVIRONMENT.md#4-security--authentication)
@@ -613,7 +613,7 @@ ametlike sissepääsusätete jaoks.
 
 ## Valikuline RAG / LLM tõrgete klassifikatsioon (16 probleemi)
 
-Mõned OmniRoute kasutajad paigaldavad maksvärava RAG-i või agentide kuhjade ette. Sellistel seadetel on sageli näha kummalist mustrit: OmniRoute näib terve (teenusepakkujad töötavad, marsruutimisprofiilid on korras, ülempiiritusi ei teatata), kuid lõppvastus on siiski vale.
+Mõned AgentProxy kasutajad paigaldavad maksvärava RAG-i või agentide kuhjade ette. Sellistel seadetel on sageli näha kummalist mustrit: AgentProxy näib terve (teenusepakkujad töötavad, marsruutimisprofiilid on korras, ülempiiritusi ei teatata), kuid lõppvastus on siiski vale.
 
 Praktikas põhjustavad need intsidendid tavaliselt tagavoolu RAG torustik, mitte ise maksvärav.
 
@@ -632,17 +632,17 @@ Idee on lihtne:
 
 1. Halva vastuse uurimisel kirjeldage:
    - kasutaja ülesannet ja päringut
-   - marsruuti või teenusepakkuja kombinatsiooni OmniRoute's
+   - marsruuti või teenusepakkuja kombinatsiooni AgentProxy's
    - mis tahes tagavoolu RAG konteksti (hangitud dokumendid, tööriistakutsed jne)
 2. Seostage juhtum ühe või kahe WFGY ProblemMap numbriga (`No.1` … `No.16`).
-3. Salvestage number oma juhtpaneelil, käsureendokumendis või intsidentide jälgitajal koos OmniRoute logidega.
+3. Salvestage number oma juhtpaneelil, käsureendokumendis või intsidentide jälgitajal koos AgentProxy logidega.
 4. Kasutage vastavat WFGY lehte, et otsustada, kas peate muutma oma RAG kuhja, otsijat või marsruutimisstrateegiat.
 
 Täistekst ja konkreetseid retsepte leiate siit (MIT litsents, ainult tekst):
 
 [WFGY ProblemMap README](https://github.com/onestardao/WFGY/blob/main/ProblemMap/README.md)
 
-Selle osa saate ignoreerida, kui te ei kasuta OmniRoute taga RAG-i ega agentide torustikke.
+Selle osa saate ignoreerida, kui te ei kasuta AgentProxy taga RAG-i ega agentide torustikke.
 
 ---
 
@@ -666,7 +666,7 @@ Probleemid, mis on spetsiifilised v3.8.0 väljaandele ja nende praegused lahendu
 
 1. Installige oma platvormile Devin CLI
 2. Määrake `CLI_DEVIN_BIN=/usr/local/bin/devin` (või tegelik tee) `.env` failis
-3. Taaskäivitage OmniRoute ja testige uuesti **Juhtpaneel → CLI tööriistad**
+3. Taaskäivitage AgentProxy ja testige uuesti **Juhtpaneel → CLI tööriistad**
 
 ### Mudeli jahutusaja kinnijäämine (käsitsi lähtestamine)
 
@@ -691,7 +691,7 @@ Probleemid, mis on spetsiifilised v3.8.0 väljaandele ja nende praegused lahendu
 
 **Parandus:**
 
-- Käivitage `omniroute providers` käsurealt OAuth voolu uuesti käivitamiseks, või
+- Käivitage `agentproxy providers` käsurealt OAuth voolu uuesti käivitamiseks, või
 - Käivitage OAuth uuesti **Juhtpaneel → Teenusepakkujad → Command Code → Ühenda uuesti**
 
 ### ModelScope annab agressiivseid 429 jahutusi
@@ -708,20 +708,20 @@ Probleemid, mis on spetsiifilised v3.8.0 väljaandele ja nende praegused lahendu
 - Veenduge, et kasutate v3.8.0 või uuemat versiooni
 - Kontrollige, et `useUpstream429BreakerHints` lüliti on lubatud **Seaded → Vastupidavus** all
 
-### OMNIROUTE_WS_BRIDGE_SECRET puudub tootmiskeskkonnas
+### AGENTPROXY_WS_BRIDGE_SECRET puudub tootmiskeskkonnas
 
 **Sümptomid:**
 
 - 401 igal Codex/Responses WebSocket silla päringul tootmisserveris töötamisel
 - WebSocket silla kätelõpetus sulgub kohe pärast ühendamist
 
-**Põhjus:** `OMNIROUTE_WS_BRIDGE_SECRET` keskkonnamuutuja puudub tootmiskeskkonnas.
+**Põhjus:** `AGENTPROXY_WS_BRIDGE_SECRET` keskkonnamuutuja puudub tootmiskeskkonnas.
 
 **Parandus:**
 
 1. Genereerige juhuslik salajane võti: `openssl rand -hex 32`
-2. Määrake `OMNIROUTE_WS_BRIDGE_SECRET=<juhuslik-salajane>` tootmiskeskkonna serveri keskkonnas (ja igas kliendis, mis suhtleb sillaga)
-3. Taaskäivitage OmniRoute
+2. Määrake `AGENTPROXY_WS_BRIDGE_SECRET=<juhuslik-salajane>` tootmiskeskkonna serveri keskkonnas (ja igas kliendis, mis suhtleb sillaga)
+3. Taaskäivitage AgentProxy
 
 ### Responses API: taustrežiim degradatakse sünkroonseks
 
@@ -741,7 +741,7 @@ Probleemid, mis on spetsiifilised v3.8.0 väljaandele ja nende praegused lahendu
 
 ## Ikka kinni?
 
-- **GitHubi probleemid**: [github.com/diegosouzapw/OmniRoute/issues](https://github.com/diegosouzapw/OmniRoute/issues)
+- **GitHubi probleemid**: [github.com/khanhkit/AgentProxy/issues](https://github.com/khanhkit/AgentProxy/issues)
 - **Arhitektuur**: Vaata [`docs/architecture/ARCHITECTURE.md`](../architecture/ARCHITECTURE.md) sisemiste üksikasjade jaoks
 - **API viide**: Vaata [`docs/reference/API_REFERENCE.md`](../reference/API_REFERENCE.md) kõigi lõpp-punktide jaoks
 - **Tervise paneel**: Kontrolli **Paneel → Tervis** reaalajas süsteemi oleku jaoks

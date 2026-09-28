@@ -6,7 +6,7 @@ import path from "node:path";
 
 const TEST_DATA_DIR =
   process.env.DATA_DIR ??
-  fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-issue-agent-execution-"));
+  fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-issue-agent-execution-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.APP_LOG_TO_FILE = "false";
 
@@ -34,14 +34,14 @@ async function seedOpenAiConnection() {
 
 test.beforeEach(async () => {
   globalThis.fetch = originalFetch;
-  process.env.OMNIROUTE_ISSUE_AGENT_ENABLED = "true";
+  process.env.AGENTPROXY_ISSUE_AGENT_ENABLED = "true";
   await resetStorage();
   await core.ensureDbInitialized();
 });
 
 test.afterEach(() => {
   globalThis.fetch = originalFetch;
-  delete process.env.OMNIROUTE_ISSUE_AGENT_ENABLED;
+  delete process.env.AGENTPROXY_ISSUE_AGENT_ENABLED;
 });
 
 test("issue-agent live triage traverses the normal chat-completions POST route", async () => {
@@ -61,7 +61,7 @@ test("issue-agent live triage traverses the normal chat-completions POST route",
       body: JSON.stringify({
         mode: "recorded-triage",
         dryRun: false,
-        issueUrl: "https://github.com/KooshaPari/OmniRoute/issues/5980",
+        issueUrl: "https://github.com/KooshaPari/AgentProxy/issues/5980",
         recordedContext: {
           title: "Execute issue-agent triage through the router",
           body: "Use the configured provider and routing policy.",
@@ -75,7 +75,7 @@ test("issue-agent live triage traverses the normal chat-completions POST route",
   const body = (await response.json()) as Record<string, unknown>;
 
   assert.equal(response.status, 200);
-  assert.equal(body.runner, "omniroute-chat-completions");
+  assert.equal(body.runner, "agentproxy-chat-completions");
   assert.equal(fetchCalls.length, 1, "only the external provider boundary is mocked");
   assert.match(fetchCalls[0]!.url, /\/chat\/completions$/);
 
@@ -108,7 +108,7 @@ test("issue-agent preserves the normal chat route provider failure response", as
         // 200 dry-run response instead. Not a semantic-cache collision: the
         // sibling test above passes dryRun:false explicitly, this one didn't.
         dryRun: false,
-        issueUrl: "https://github.com/KooshaPari/OmniRoute/issues/5980",
+        issueUrl: "https://github.com/KooshaPari/AgentProxy/issues/5980",
         recordedContext: { body: "Preserve upstream errors for triage." },
         provider: "openai",
         model: "gpt-4.1",

@@ -1,5 +1,5 @@
 /**
- * OmniRoute Quickstart — Node.js (axios)
+ * AgentProxy Quickstart — Node.js (axios)
  * =======================================
  * Run:  npm install axios
  *       node nodejs_axios.js
@@ -7,7 +7,7 @@
 
 const axios = require("axios");
 
-// Your local OmniRoute server — started with: npx omniroute
+// Your local AgentProxy server — started with: npx agentproxy
 const API_URL = "http://localhost:20128/v1/chat/completions";
 
 const headers = {

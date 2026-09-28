@@ -28,7 +28,7 @@ import path from "node:path";
 // asserts the redirect completes (200 + real upstream dispatch) instead of throwing.
 // WITHOUT the fix it fails: 502 with the "reqId is not defined" body and zero fetches.
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-chat-safetynet-6097-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-chat-safetynet-6097-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../src/lib/db/core.ts");

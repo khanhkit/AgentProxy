@@ -518,7 +518,7 @@ const SCHEMA_SLOT_KEYS = [
   // placeholder in either position falls through to the scalar branch at the
   // bottom of the walker and is forwarded as a string, which is the shape this
   // sanitizer exists to remove. The opencode plugin's own walker
-  // (@omniroute/opencode-plugin-v2/src/shared/gemini.ts) lists both.
+  // (@agentproxy/opencode-plugin-v2/src/shared/gemini.ts) lists both.
   "contentSchema",
   "unevaluatedItems",
 ];

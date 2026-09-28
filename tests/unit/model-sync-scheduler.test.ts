@@ -5,7 +5,7 @@ import os from "node:os";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-model-sync-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-model-sync-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const coreDb = await import("../../src/lib/db/core.ts");
@@ -132,46 +132,46 @@ test("modelSyncScheduler: internal auth headers validate only for scheduler requ
 
 test("modelSyncScheduler resolves only loopback origins and uses the dashboard port", async () => {
   const previous = {
-    OMNIROUTE_PORT: process.env.OMNIROUTE_PORT,
+    AGENTPROXY_PORT: process.env.AGENTPROXY_PORT,
     PORT: process.env.PORT,
     DASHBOARD_PORT: process.env.DASHBOARD_PORT,
     BASE_URL: process.env.BASE_URL,
     NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL,
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
-    OMNIROUTE_BASE_PATH: process.env.OMNIROUTE_BASE_PATH,
-    OMNIROUTE_INTERNAL_SCHEME: process.env.OMNIROUTE_INTERNAL_SCHEME,
-    OMNIROUTE_TLS_CERT: process.env.OMNIROUTE_TLS_CERT,
-    OMNIROUTE_TLS_KEY: process.env.OMNIROUTE_TLS_KEY,
+    AGENTPROXY_BASE_PATH: process.env.AGENTPROXY_BASE_PATH,
+    AGENTPROXY_INTERNAL_SCHEME: process.env.AGENTPROXY_INTERNAL_SCHEME,
+    AGENTPROXY_TLS_CERT: process.env.AGENTPROXY_TLS_CERT,
+    AGENTPROXY_TLS_KEY: process.env.AGENTPROXY_TLS_KEY,
   };
-  process.env.OMNIROUTE_PORT = "20128";
+  process.env.AGENTPROXY_PORT = "20128";
   process.env.PORT = "22128";
   process.env.DASHBOARD_PORT = "22128";
   process.env.BASE_URL = "https://attacker.example";
   delete process.env.NEXT_PUBLIC_BASE_URL;
   delete process.env.NEXT_PUBLIC_APP_URL;
-  process.env.OMNIROUTE_BASE_PATH = "/omniroute/";
-  delete process.env.OMNIROUTE_INTERNAL_SCHEME;
-  delete process.env.OMNIROUTE_TLS_CERT;
-  delete process.env.OMNIROUTE_TLS_KEY;
+  process.env.AGENTPROXY_BASE_PATH = "/agentproxy/";
+  delete process.env.AGENTPROXY_INTERNAL_SCHEME;
+  delete process.env.AGENTPROXY_TLS_CERT;
+  delete process.env.AGENTPROXY_TLS_KEY;
 
   try {
     const scheduler = await loadScheduler("trusted-loopback-origin");
-    assert.equal(scheduler.getModelSyncInternalBaseUrl(), "http://127.0.0.1:22128/omniroute");
+    assert.equal(scheduler.getModelSyncInternalBaseUrl(), "http://127.0.0.1:22128/agentproxy");
     assert.equal(
       scheduler.resolveModelSyncInternalBaseUrl("https://attacker.example/steal"),
-      "http://127.0.0.1:22128/omniroute"
+      "http://127.0.0.1:22128/agentproxy"
     );
     assert.equal(
       scheduler.resolveModelSyncInternalBaseUrl("http://127.0.0.1:7777/nested/path"),
-      "http://127.0.0.1:22128/omniroute"
+      "http://127.0.0.1:22128/agentproxy"
     );
     assert.equal(
       scheduler.resolveModelSyncInternalBaseUrl("http://0.0.0.0:7777/nested/path"),
-      "http://127.0.0.1:22128/omniroute"
+      "http://127.0.0.1:22128/agentproxy"
     );
     assert.equal(
       scheduler.resolveModelSyncInternalBaseUrl("http://user:pass@localhost:7777"),
-      "http://127.0.0.1:22128/omniroute"
+      "http://127.0.0.1:22128/agentproxy"
     );
   } finally {
     for (const [key, value] of Object.entries(previous)) {
@@ -187,17 +187,17 @@ test("modelSyncScheduler does not infer the internal listener scheme from public
     BASE_URL: process.env.BASE_URL,
     NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL,
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
-    OMNIROUTE_INTERNAL_SCHEME: process.env.OMNIROUTE_INTERNAL_SCHEME,
-    OMNIROUTE_TLS_CERT: process.env.OMNIROUTE_TLS_CERT,
-    OMNIROUTE_TLS_KEY: process.env.OMNIROUTE_TLS_KEY,
+    AGENTPROXY_INTERNAL_SCHEME: process.env.AGENTPROXY_INTERNAL_SCHEME,
+    AGENTPROXY_TLS_CERT: process.env.AGENTPROXY_TLS_CERT,
+    AGENTPROXY_TLS_KEY: process.env.AGENTPROXY_TLS_KEY,
   };
   process.env.DASHBOARD_PORT = "22128";
   process.env.BASE_URL = "https://attacker.example";
   process.env.NEXT_PUBLIC_BASE_URL = "file:///tmp/not-http";
   process.env.NEXT_PUBLIC_APP_URL = "https://localhost:7777/ignored";
-  delete process.env.OMNIROUTE_INTERNAL_SCHEME;
-  delete process.env.OMNIROUTE_TLS_CERT;
-  delete process.env.OMNIROUTE_TLS_KEY;
+  delete process.env.AGENTPROXY_INTERNAL_SCHEME;
+  delete process.env.AGENTPROXY_TLS_CERT;
+  delete process.env.AGENTPROXY_TLS_KEY;
 
   try {
     const scheduler = await loadScheduler("safe-loopback-fallback");
@@ -216,29 +216,29 @@ test("modelSyncScheduler uses the listener-declared TLS scheme without trusting 
     BASE_URL: process.env.BASE_URL,
     NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL,
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
-    OMNIROUTE_BASE_PATH: process.env.OMNIROUTE_BASE_PATH,
-    OMNIROUTE_INTERNAL_SCHEME: process.env.OMNIROUTE_INTERNAL_SCHEME,
-    OMNIROUTE_TLS_CERT: process.env.OMNIROUTE_TLS_CERT,
-    OMNIROUTE_TLS_KEY: process.env.OMNIROUTE_TLS_KEY,
+    AGENTPROXY_BASE_PATH: process.env.AGENTPROXY_BASE_PATH,
+    AGENTPROXY_INTERNAL_SCHEME: process.env.AGENTPROXY_INTERNAL_SCHEME,
+    AGENTPROXY_TLS_CERT: process.env.AGENTPROXY_TLS_CERT,
+    AGENTPROXY_TLS_KEY: process.env.AGENTPROXY_TLS_KEY,
   };
   process.env.DASHBOARD_PORT = "22128";
   process.env.BASE_URL = "https://attacker.example";
   delete process.env.NEXT_PUBLIC_BASE_URL;
   delete process.env.NEXT_PUBLIC_APP_URL;
-  process.env.OMNIROUTE_BASE_PATH = "/omniroute";
-  process.env.OMNIROUTE_INTERNAL_SCHEME = "https";
-  delete process.env.OMNIROUTE_TLS_CERT;
-  delete process.env.OMNIROUTE_TLS_KEY;
+  process.env.AGENTPROXY_BASE_PATH = "/agentproxy";
+  process.env.AGENTPROXY_INTERNAL_SCHEME = "https";
+  delete process.env.AGENTPROXY_TLS_CERT;
+  delete process.env.AGENTPROXY_TLS_KEY;
 
   try {
     const scheduler = await loadScheduler("trusted-native-tls");
     assert.equal(
       scheduler.resolveModelSyncInternalBaseUrl("https://attacker.example:7777/steal"),
-      "https://localhost:22128/omniroute"
+      "https://localhost:22128/agentproxy"
     );
     assert.equal(
       scheduler.resolveModelSyncInternalBaseUrl("https://127.0.0.1:7777/nested/path"),
-      "https://localhost:22128/omniroute"
+      "https://localhost:22128/agentproxy"
     );
   } finally {
     for (const [key, value] of Object.entries(previous)) {
@@ -277,8 +277,8 @@ test("runtime launchers publish the actual internal listener scheme", () => {
     "utf8"
   );
 
-  assert.match(runNext, /OMNIROUTE_INTERNAL_SCHEME\s*=\s*["']http["']/);
-  assert.match(standalone, /OMNIROUTE_INTERNAL_SCHEME\s*=\s*tlsOptions\s*\?\s*["']https["']/);
+  assert.match(runNext, /AGENTPROXY_INTERNAL_SCHEME\s*=\s*["']http["']/);
+  assert.match(standalone, /AGENTPROXY_INTERNAL_SCHEME\s*=\s*tlsOptions\s*\?\s*["']https["']/);
 });
 
 test("initCloudSync: startup initialization also starts model sync scheduler", () => {
@@ -314,7 +314,7 @@ test("initCloudSync skips auto initialization during build and test processes un
     initCloudSync.shouldSkipCloudSyncInitialization(
       {
         NODE_ENV: "test",
-        OMNIROUTE_ENABLE_RUNTIME_BACKGROUND_TASKS: "1",
+        AGENTPROXY_ENABLE_RUNTIME_BACKGROUND_TASKS: "1",
       },
       ["node", "--test"]
     ),

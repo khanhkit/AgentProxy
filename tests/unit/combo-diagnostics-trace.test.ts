@@ -2,7 +2,7 @@
  * QA P0 — sanitized auto-combo diagnostic trace.
  * Guards the new `errorResponseWithComboDiagnostics` / `sanitizeComboDiagnostics`
  * helpers: they must surface pool size + attempt order + exclusion reasons as
- * both `x-omniroute-combo-*` headers and a `diagnostics` body field, while the
+ * both `x-agentproxy-combo-*` headers and a `diagnostics` body field, while the
  * sanitizer is the secret-containment boundary (only provider/model/reason ids +
  * counts may ever escape — never keys/tokens/credentials).
  */
@@ -28,10 +28,10 @@ test("combo diagnostics: headers + body carry the sanitized trace (code override
   );
 
   assert.equal(res.status, 503);
-  assert.equal(res.headers.get("x-omniroute-combo-pool-size"), "3");
-  assert.equal(res.headers.get("x-omniroute-combo-attempted"), "2");
-  assert.match(res.headers.get("x-omniroute-combo-excluded") || "", /openai\/gpt-x:exhausted/);
-  assert.equal(res.headers.get("x-omniroute-combo-terminal-reason"), "all_accounts_inactive");
+  assert.equal(res.headers.get("x-agentproxy-combo-pool-size"), "3");
+  assert.equal(res.headers.get("x-agentproxy-combo-attempted"), "2");
+  assert.match(res.headers.get("x-agentproxy-combo-excluded") || "", /openai\/gpt-x:exhausted/);
+  assert.equal(res.headers.get("x-agentproxy-combo-terminal-reason"), "all_accounts_inactive");
 
   const body = await res.json();
   assert.equal(body.error.code, "ALL_ACCOUNTS_INACTIVE");
@@ -115,7 +115,7 @@ test("combo diagnostics: JSON body keeps the original non-Latin1 text even thoug
   );
   // Header value must be a valid Latin1 ByteString — em dash (U+2014) replaced.
   assert.equal(
-    res.headers.get("x-omniroute-combo-terminal-reason"),
+    res.headers.get("x-agentproxy-combo-terminal-reason"),
     terminalReason.replace("—", "?")
   );
   const body = await res.json();

@@ -16,7 +16,7 @@ import { makeManagementSessionRequest } from "../../helpers/managementSession.ts
 // ─── isolated temp DB ─────────────────────────────────────────────────────────
 
 const TEST_DATA_DIR = fs.mkdtempSync(
-  path.join(os.tmpdir(), "omniroute-compression-engines-route-")
+  path.join(os.tmpdir(), "agentproxy-compression-engines-route-")
 );
 const originalDataDir = process.env.DATA_DIR;
 const originalJwtSecret = process.env.JWT_SECRET;

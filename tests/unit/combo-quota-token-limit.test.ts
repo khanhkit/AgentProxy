@@ -4,11 +4,11 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-combo-quota-token-limit-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-combo-quota-token-limit-"));
 const ORIGINAL_DATA_DIR = process.env.DATA_DIR;
-const ORIGINAL_QUOTA_ROUTING = process.env.OMNIROUTE_QUOTA_AWARE_ROUTING;
+const ORIGINAL_QUOTA_ROUTING = process.env.AGENTPROXY_QUOTA_AWARE_ROUTING;
 process.env.DATA_DIR = TEST_DATA_DIR;
-process.env.OMNIROUTE_QUOTA_AWARE_ROUTING = "1";
+process.env.AGENTPROXY_QUOTA_AWARE_ROUTING = "1";
 
 const { handleComboChat } = await import("../../open-sse/services/combo.ts");
 const { getProviderQuota } = await import("../../src/lib/quota/providerQuotaState.ts");
@@ -21,8 +21,8 @@ test.after(() => {
   dbCore.resetDbInstance();
   if (ORIGINAL_DATA_DIR === undefined) delete process.env.DATA_DIR;
   else process.env.DATA_DIR = ORIGINAL_DATA_DIR;
-  if (ORIGINAL_QUOTA_ROUTING === undefined) delete process.env.OMNIROUTE_QUOTA_AWARE_ROUTING;
-  else process.env.OMNIROUTE_QUOTA_AWARE_ROUTING = ORIGINAL_QUOTA_ROUTING;
+  if (ORIGINAL_QUOTA_ROUTING === undefined) delete process.env.AGENTPROXY_QUOTA_AWARE_ROUTING;
+  else process.env.AGENTPROXY_QUOTA_AWARE_ROUTING = ORIGINAL_QUOTA_ROUTING;
   fs.rmSync(TEST_DATA_DIR, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
 });
 

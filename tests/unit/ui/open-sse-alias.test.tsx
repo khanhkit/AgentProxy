@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
 
 import { getCredentialRequirement } from "@/shared/utils/providerCredentialRequirement";
-import { REGISTRY } from "@omniroute/open-sse/config/providerRegistry.ts";
+import { REGISTRY } from "@agentproxy/open-sse/config/providerRegistry.ts";
 
 /**
- * Guards the `@omniroute/open-sse` alias in vitest.config.ts.
+ * Guards the `@agentproxy/open-sse` alias in vitest.config.ts.
  *
  * Without it, imports from open-sse resolve to undefined instead of throwing,
  * so a UI test keeps passing while every lookup silently returns a default.

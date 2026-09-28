@@ -3,7 +3,7 @@
  *
  * Verifies:
  *  1. All 46 skill IDs from the catalog have a skills/{id}/ folder with SKILL.md.
- *  2. Zero omniroute-* folders remain (post-prune: old omniroute-* skill dirs were removed).
+ *  2. Zero agentproxy-* folders remain (post-prune: old agentproxy-* skill dirs were removed).
  *  3. 14 specific IDs have <!-- skill:custom-start --> ... <!-- skill:custom-end --> blocks:
  *     omni-mcp, omni-compression, cli-providers, cli-eval, omni-agents-a2a,
  *     omni-combos-routing, omni-auth, omni-resilience, omni-inference, cli-serve.
@@ -15,11 +15,11 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
 
-const { API_SKILL_IDS, CLI_SKILL_IDS, CONFIG_SKILL_IDS, getCatalog } =
-  await import("../../src/lib/agentSkills/catalog.ts");
+const { getCatalog } = await import("../../src/lib/agentSkills/catalog.ts");
 
 const SKILLS_DIR = path.resolve(process.cwd(), "skills");
 const ALL_IDS = getCatalog().map((skill) => skill.id);
+const APPROVED_PROJECT_TOOLING_SKILL_DIRS = new Set(["typesafe-ai"]);
 
 // IDs that must have a custom block
 const CUSTOM_BLOCK_IDS = [
@@ -64,30 +64,32 @@ test("all 46 catalog IDs have a skills/{id}/SKILL.md file", () => {
   assert.deepEqual(missing, [], `Missing SKILL.md files: ${missing.join(", ")}`);
 });
 
-// ── §2: No omniroute-* directories remain ────────────────────────────────────
+// ── §2: No agentproxy-* directories remain ────────────────────────────────────
 
-test("skills/ has zero omniroute-* directories (all pruned)", () => {
+test("skills/ has zero agentproxy-* directories (all pruned)", () => {
   if (!fs.existsSync(SKILLS_DIR)) {
     // If skills dir doesn't exist at all, nothing to prune
     return;
   }
   const entries = fs.readdirSync(SKILLS_DIR, { withFileTypes: true });
-  const omniRouteDirs = entries
-    .filter((e) => e.isDirectory() && e.name.startsWith("omniroute-"))
+  const AgentProxyDirs = entries
+    .filter((e) => e.isDirectory() && e.name.startsWith("agentproxy-"))
     .map((e) => e.name);
   assert.deepEqual(
-    omniRouteDirs,
+    AgentProxyDirs,
     [],
-    `Found omniroute-* directories that should have been pruned: ${omniRouteDirs.join(", ")}`
+    `Found agentproxy-* directories that should have been pruned: ${AgentProxyDirs.join(", ")}`
   );
 });
 
-test("skills/ directory only contains expected catalog IDs plus README", () => {
+test("skills/ directory only contains expected catalog IDs plus approved project tooling", () => {
   if (!fs.existsSync(SKILLS_DIR)) return;
   const entries = fs.readdirSync(SKILLS_DIR, { withFileTypes: true });
   const dirs = entries.filter((e) => e.isDirectory()).map((e) => e.name);
   const expectedSet = new Set(ALL_IDS);
-  const unexpected = dirs.filter((d) => !expectedSet.has(d));
+  const unexpected = dirs.filter(
+    (d) => !expectedSet.has(d) && !APPROVED_PROJECT_TOOLING_SKILL_DIRS.has(d)
+  );
   assert.deepEqual(unexpected, [], `Unexpected directories in skills/: ${unexpected.join(", ")}`);
 });
 

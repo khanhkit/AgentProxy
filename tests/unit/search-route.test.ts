@@ -4,7 +4,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-search-route-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-search-route-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../src/lib/db/core.ts");
@@ -109,7 +109,7 @@ test("v1 search POST uses stored Linkup credentials and returns normalized resul
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          query: "omniroute linkup",
+          query: "agentproxy linkup",
           provider: "linkup-search",
           max_results: 1,
           search_type: "web",
@@ -125,7 +125,7 @@ test("v1 search POST uses stored Linkup credentials and returns normalized resul
       "Bearer linkup-key"
     );
     assert.equal(body.provider, "linkup-search");
-    assert.equal(body.query, "omniroute linkup");
+    assert.equal(body.query, "agentproxy linkup");
     assert.equal(body.results.length, 1);
     assert.equal(body.results[0].title, "Linkup result");
     assert.equal(body.results[0].snippet, "Linkup snippet");
@@ -170,7 +170,7 @@ test("v1 search POST uses firecrawl credentials for unified firecrawl search", a
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          query: "omniroute firecrawl",
+          query: "agentproxy firecrawl",
           provider: "firecrawl",
           max_results: 3,
           search_type: "web",
@@ -190,7 +190,7 @@ test("v1 search POST uses firecrawl credentials for unified firecrawl search", a
       "Bearer fc-route-key"
     );
     const requestBody = JSON.parse(String(capturedInit?.body || "{}"));
-    assert.equal(requestBody.query, "omniroute firecrawl");
+    assert.equal(requestBody.query, "agentproxy firecrawl");
     assert.equal(requestBody.limit, 3);
     assert.deepEqual(requestBody.sources, ["web"]);
     assert.equal(body.provider, "firecrawl");

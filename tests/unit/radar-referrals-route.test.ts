@@ -34,7 +34,7 @@ import { SignJWT } from "jose";
 // Isolate DB + feature flag state
 // ---------------------------------------------------------------------------
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-radar-referrals-api-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-radar-referrals-api-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.STORAGE_ENCRYPTION_KEY = "test-encryption-key-for-radar-referrals-tests-32b!";
 process.env.JWT_SECRET = "test-jwt-secret-for-radar-referrals-tests";
@@ -78,7 +78,7 @@ function resetStorage() {
 
 function baseReferralsFeed(): Record<string, unknown> {
   return {
-    feed: "omniroute-radar-referrals",
+    feed: "agentproxy-radar-referrals",
     schemaVersion: 1,
     generatedAt: new Date().toISOString(),
     referrals: { fixed: [], campaigns: [] },
@@ -139,7 +139,7 @@ test("GET /api/radar/referrals: flag on, authenticated, cached referrals feed =>
       fixed: [
         {
           provider: "groq",
-          url: "https://groq.com/?ref=omniroute",
+          url: "https://groq.com/",
           kind: "fixo",
           validUntil: null,
           requiredAction: null,
@@ -181,7 +181,7 @@ test("GET /api/radar/referrals: stale cached referrals feed still served (sync-o
       fixed: [
         {
           provider: "cerebras",
-          url: "https://cerebras.ai/?ref=omniroute",
+          url: "https://cerebras.ai/",
           kind: "fixo",
           validUntil: null,
           requiredAction: null,

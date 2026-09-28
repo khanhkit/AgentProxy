@@ -4,12 +4,12 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-// #7339 — proves the synthetic omniroute_web_fetch tool call (emitted by
+// #7339 — proves the synthetic agentproxy_web_fetch tool call (emitted by
 // webFetchInterception.ts, Phase 3-4 of #3384) is routed through the same
-// generic dispatch path already proven for omniroute_web_search
+// generic dispatch path already proven for agentproxy_web_search
 // (handleToolCallExecution -> builtinSkills.web_fetch), including the
 // error/abort-not-swallowed case (Hard Rule #6).
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-web-fetch-dispatch-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-web-fetch-dispatch-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const coreDb = await import("../../src/lib/db/core.ts");
@@ -17,7 +17,7 @@ const { skillRegistry } = await import("../../src/lib/skills/registry.ts");
 const { skillExecutor } = await import("../../src/lib/skills/executor.ts");
 const { handleToolCallExecution } = await import("../../src/lib/skills/interception.ts");
 const { builtinSkills } = await import("../../src/lib/skills/builtins.ts");
-const { OMNIROUTE_WEB_FETCH_FALLBACK_TOOL_NAME } =
+const { AGENTPROXY_WEB_FETCH_FALLBACK_TOOL_NAME } =
   await import("../../open-sse/services/webFetchInterception.ts");
 
 const originalWebFetchHandler = builtinSkills.web_fetch;
@@ -47,12 +47,12 @@ const contextWithFetchBuiltin = {
   apiKeyId: "key-a",
   sessionId: "session-1",
   requestId: "request-1",
-  builtinToolNames: [OMNIROUTE_WEB_FETCH_FALLBACK_TOOL_NAME],
+  builtinToolNames: [AGENTPROXY_WEB_FETCH_FALLBACK_TOOL_NAME],
   provider: "openai",
   model: "gpt-5",
 };
 
-test("handleToolCallExecution routes omniroute_web_fetch to the web_fetch builtin handler and returns the tool-result envelope", async () => {
+test("handleToolCallExecution routes agentproxy_web_fetch to the web_fetch builtin handler and returns the tool-result envelope", async () => {
   let receivedInput: unknown;
   let receivedContext: unknown;
   builtinSkills.web_fetch = async (input, context) => {
@@ -78,7 +78,7 @@ test("handleToolCallExecution routes omniroute_web_fetch to the web_fetch builti
               {
                 id: "call-fetch-1",
                 function: {
-                  name: OMNIROUTE_WEB_FETCH_FALLBACK_TOOL_NAME,
+                  name: AGENTPROXY_WEB_FETCH_FALLBACK_TOOL_NAME,
                   arguments: '{"url":"https://example.com"}',
                 },
               },
@@ -119,7 +119,7 @@ test("an unknown tool name is left untouched when builtinToolNames does not incl
             {
               id: "call-fetch-2",
               function: {
-                name: OMNIROUTE_WEB_FETCH_FALLBACK_TOOL_NAME,
+                name: AGENTPROXY_WEB_FETCH_FALLBACK_TOOL_NAME,
                 arguments: '{"url":"https://example.com"}',
               },
             },
@@ -155,7 +155,7 @@ test("an error thrown mid-fetch (e.g. an aborted request) is surfaced, not silen
               {
                 id: "call-fetch-abort",
                 function: {
-                  name: OMNIROUTE_WEB_FETCH_FALLBACK_TOOL_NAME,
+                  name: AGENTPROXY_WEB_FETCH_FALLBACK_TOOL_NAME,
                   arguments: '{"url":"https://example.com"}',
                 },
               },

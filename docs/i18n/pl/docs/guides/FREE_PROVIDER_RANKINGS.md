@@ -6,7 +6,7 @@ lastUpdated: 2026-06-28
 
 # Rankingi darmowych providerów (Arena ELO)
 
-> **TL;DR**: OmniRoute rankinguje swoje **darmowe** providery według jakości modeli, używając **wyników ELO Arena AI
+> **TL;DR**: AgentProxy rankinguje swoje **darmowe** providery według jakości modeli, używając **wyników ELO Arena AI
 > (w stylu LMArena)**. Otwórz stronę **Free Provider Rankings** w
 > dashboardzie, aby zobaczyć, które darmowe providery oferują najsilniejsze modele do Twojego zadania —
 > ogólnie albo z filtrem kategorii (coding, review, documentation, debugging).
@@ -15,7 +15,7 @@ lastUpdated: 2026-06-28
 
 ## Czym to jest
 
-OmniRoute agreguje 329 wpisów katalogu providerów, z których wiele udostępnia **darmowy tier** (no-auth,
+AgentProxy agreguje 329 wpisów katalogu providerów, z których wiele udostępnia **darmowy tier** (no-auth,
 darmowy OAuth albo darmowy klucz API — zobacz
 [Przewodnik Free Tiers](../getting-started/FREE-TIERS-GUIDE.md) oraz pełny
 [katalog Free Tiers](../reference/FREE_TIERS.md)). Haczyk: darmowi providerzy różnią się
@@ -130,9 +130,9 @@ oraz `code` — z API rankingu Arena AI
 (`https://api.wulong.dev/arena-ai-leaderboards/v1/leaderboard`). Każdy wpis rankingu
 niesie nazwę modelu, vendora, ELO `score`, przedział ufności oraz liczbę głosów.
 
-Kategorie rankingu mapują się na kategorie zadań OmniRoute:
+Kategorie rankingu mapują się na kategorie zadań AgentProxy:
 
-| Ranking Arena | Kategorie zadań OmniRoute                         |
+| Ranking Arena | Kategorie zadań AgentProxy                         |
 | ------------- | ------------------------------------------------- |
 | `text`        | `default`, `review`, `documentation`, `debugging` |
 | `code`        | `coding`                                          |
@@ -169,7 +169,7 @@ Synchronizacja jest **domyślnie włączona**:
 
 - Uruchamia się raz przy starcie serwera, a potem na okresowym timerze
   (`src/lib/arenaEloSync.ts`, podpięte z `src/server-init.ts`).
-- Jest **nieblokująca i nigdy nie jest fatalna** — jeśli fetch upstreamu się nie uda, OmniRoute dalej
+- Jest **nieblokująca i nigdy nie jest fatalna** — jeśli fetch upstreamu się nie uda, AgentProxy dalej
   działa, a rankingi po prostu pokazują ostatnie dobre dane (albo stan pusty).
 
 Sterują nią dwie zmienne środowiskowe (opisane w
@@ -205,7 +205,7 @@ elastycznego dopasowania (`findMatchingIntelligence` w `src/lib/freeProviderRank
 
 Po stronie sync znane prefiksy vendorów (`anthropic/`, `openai/`, `google/`, …) są
 usuwane, a mała mapa aliasów rozwija kanoniczne nazwy do wariantów używanych wewnętrznie
-przez OmniRoute, dzięki czemu modele da się znaleźć pod dowolną nazwą.
+przez AgentProxy, dzięki czemu modele da się znaleźć pod dowolną nazwą.
 
 ### Jak rankingowany jest provider
 

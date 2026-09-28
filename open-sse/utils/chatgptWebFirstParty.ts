@@ -53,9 +53,9 @@ interface BrowserConversationAttachment {
 const CHATGPT_ORIGIN = "https://chatgpt.com";
 const CHATGPT_ASSET_PATH_RE = /^\/cdn\/assets\/[A-Za-z0-9_-]+\.js$/;
 const OAI_UPLOAD_HOST_RE = /(?:^|\.)oaiusercontent\.com$/i;
-const FIRST_PARTY_BRIDGE_KEY = "__omnirouteChatGptFirstPartyV1";
-const FIRST_PARTY_ABORT_KEY = "__omnirouteChatGptAbortV1";
-const FIRST_PARTY_REQUEST_KEY = "__omnirouteChatGptRequestV1";
+const FIRST_PARTY_BRIDGE_KEY = "__agentproxyChatGptFirstPartyV1";
+const FIRST_PARTY_ABORT_KEY = "__agentproxyChatGptAbortV1";
+const FIRST_PARTY_REQUEST_KEY = "__agentproxyChatGptRequestV1";
 const MAX_ASSET_SOURCE_BYTES = 24 * 1024 * 1024;
 const MAX_CONVERSATION_RESPONSE_BYTES = 16 * 1024 * 1024;
 const ASSET_FETCH_TIMEOUT_MS = 20_000;

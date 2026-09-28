@@ -15,7 +15,7 @@ import { randomUUID } from "crypto";
 
 import { emit } from "@/lib/events/eventBus";
 import { upsertA2ATask, appendA2ATaskEvent, purgeA2AHistory } from "@/lib/db/a2aTasks";
-import { logger } from "@omniroute/open-sse/utils/logger";
+import { logger } from "@agentproxy/open-sse/utils/logger";
 
 const log = logger("A2A_TASKS");
 
@@ -52,10 +52,10 @@ const TERMINAL = new Set(["completed", "failed", "cancelled"]);
 
 /**
  * Days of A2A task history to retain before `purgeA2AHistory` deletes a row. Reads
- * `OMNIROUTE_A2A_HISTORY_RETENTION_DAYS`; falls back to 30 when unset, non-numeric, or <= 0.
+ * `AGENTPROXY_A2A_HISTORY_RETENTION_DAYS`; falls back to 30 when unset, non-numeric, or <= 0.
  */
 export function historyRetentionDays(): number {
-  const raw = Number.parseInt(process.env.OMNIROUTE_A2A_HISTORY_RETENTION_DAYS ?? "", 10);
+  const raw = Number.parseInt(process.env.AGENTPROXY_A2A_HISTORY_RETENTION_DAYS ?? "", 10);
   return Number.isFinite(raw) && raw > 0 ? raw : 30;
 }
 
@@ -135,6 +135,7 @@ export class A2ATaskManager {
   private cleanupInterval: ReturnType<typeof setInterval>;
   private activeStreams = 0;
   private lastPurgeAt = 0;
+  private executionControllers = new Map<string, AbortController>();
 
   constructor(ttlMinutes: number = 5, persistence: A2APersistence = defaultPersistence) {
     this.ttlMs = ttlMinutes * 60 * 1000;
@@ -206,7 +207,7 @@ export class A2ATaskManager {
       // one reference made every runtime write leak back into `input` — and from
       // there into the persisted `a2a_tasks.input_json` and into the drawer's
       // "Repeat" body, so a repeated task was born carrying the previous run's
-      // memory snippets even with `OMNIROUTE_A2A_MEMORY_HITS=0`.
+      // memory snippets even with `AGENTPROXY_A2A_MEMORY_HITS=0`.
       metadata: { ...(input.metadata ?? {}) },
       createdAt: now.toISOString(),
       updatedAt: now.toISOString(),
@@ -265,6 +266,32 @@ export class A2ATaskManager {
     return task;
   }
 
+  beginExecution(taskId: string): AbortSignal {
+    const task = this.tasks.get(taskId);
+    if (!task) throw new Error(`Task ${taskId} not found`);
+
+    const existing = this.executionControllers.get(taskId);
+    if (existing && !existing.signal.aborted) return existing.signal;
+
+    const controller = new AbortController();
+    if (task.state === "cancelled") {
+      const reason = new Error(`Task ${taskId} cancelled`);
+      reason.name = "AbortError";
+      controller.abort(reason);
+    } else if (TERMINAL.has(task.state)) {
+      throw new Error(`Cannot execute terminal task ${taskId} in state ${task.state}`);
+    }
+    this.executionControllers.set(taskId, controller);
+    return controller.signal;
+  }
+
+  endExecution(taskId: string, signal?: AbortSignal): void {
+    const current = this.executionControllers.get(taskId);
+    if (!current) return;
+    if (signal && current.signal !== signal) return;
+    this.executionControllers.delete(taskId);
+  }
+
   cancelTask(taskId: string, owner?: string): A2ATask {
     // Owner check BEFORE the mutation (GHSA-jcm5-6wpp-wjj8): a caller must not
     // cancel another principal's task by id. Uses the same not-found error as
@@ -274,11 +301,19 @@ export class A2ATaskManager {
     if (!task || !this.isVisibleTo(task, owner)) {
       throw new Error(`Task ${taskId} not found`);
     }
-    return this.updateTask(taskId, "cancelled", undefined, "Cancelled by client");
+    const cancelled = this.updateTask(taskId, "cancelled", undefined, "Cancelled by client");
+    const controller = this.executionControllers.get(taskId);
+    if (controller && !controller.signal.aborted) {
+      const reason = new Error(`Task ${taskId} cancelled by client`);
+      reason.name = "AbortError";
+      controller.abort(reason);
+    }
+    return cancelled;
   }
 
-  countTasks(filter?: Pick<TaskListFilter, "state" | "skill">): number {
+  countTasks(filter?: Pick<TaskListFilter, "state" | "skill">, owner?: string): number {
     let tasks = [...this.tasks.values()];
+    if (owner !== undefined) tasks = tasks.filter((t) => this.isVisibleTo(t, owner));
     if (filter?.state) tasks = tasks.filter((t) => t.state === filter.state);
     if (filter?.skill) tasks = tasks.filter((t) => t.skill === filter.skill);
     return tasks.length;
@@ -363,6 +398,10 @@ export class A2ATaskManager {
 
   destroy() {
     clearInterval(this.cleanupInterval);
+    for (const controller of this.executionControllers.values()) {
+      if (!controller.signal.aborted) controller.abort(new Error("A2A task manager destroyed"));
+    }
+    this.executionControllers.clear();
   }
 }
 

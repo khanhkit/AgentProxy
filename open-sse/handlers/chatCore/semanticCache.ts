@@ -4,11 +4,11 @@ import {
   isCacheableForRead,
 } from "@/lib/semanticCache";
 import { calculateCost } from "@/lib/usage/costCalculator";
-import { trackPendingRequest } from "@/lib/usageDb";
+import { finalizePendingScope, type PendingRequestScope } from "@/lib/usage/pendingRequestScope";
 import { synthesizeOpenAiSseFromJson } from "../../utils/jsonToSse.ts";
-import { attachOmniRouteMetaHeaders } from "@/domain/omnirouteResponseMeta";
+import { attachAgentProxyMetaHeaders } from "@/domain/agentproxyResponseMeta";
 import { extractUsageFromResponse } from "../usageExtractor.ts";
-import { OMNIROUTE_RESPONSE_HEADERS } from "@/shared/constants/headers";
+import { AGENTPROXY_RESPONSE_HEADERS } from "@/shared/constants/headers";
 
 export async function checkSemanticCache({
   semanticCacheEnabled,
@@ -19,7 +19,7 @@ export async function checkSemanticCache({
   stream,
   reqLogger,
   effectiveServiceTier,
-  connectionId,
+  pendingScope,
   startTime,
   log,
   persistAttemptLogs,
@@ -36,7 +36,7 @@ export async function checkSemanticCache({
   stream: boolean;
   reqLogger: { logConvertedResponse: (response: Record<string, unknown>) => void };
   effectiveServiceTier: string | null | undefined;
-  connectionId: string | null;
+  pendingScope: PendingRequestScope;
   startTime: number;
   log: { debug?: (...args: unknown[]) => void } | null;
   persistAttemptLogs: (args: unknown) => void;
@@ -74,19 +74,23 @@ export async function checkSemanticCache({
         clientResponse: cached,
         cacheSource: "semantic",
       });
-      trackPendingRequest(model, provider, connectionId, false);
+      finalizePendingScope(pendingScope, {
+        status: 200,
+        providerResponse: cached,
+        clientResponse: cached,
+      });
       const cachedSse = stream ? synthesizeOpenAiSseFromJson(JSON.stringify(cached)) : "";
       const headers: Record<string, string> = {
         "Content-Type": cachedSse ? "text/event-stream" : "application/json",
-        [OMNIROUTE_RESPONSE_HEADERS.cache]: "HIT",
+        [AGENTPROXY_RESPONSE_HEADERS.cache]: "HIT",
         // Marker for latency measurement tools: this response served from cache
         // has synthetic (near-zero) latency, not real upstream latency.
-        [OMNIROUTE_RESPONSE_HEADERS.cacheLatency]: "synthetic",
+        [AGENTPROXY_RESPONSE_HEADERS.cacheLatency]: "synthetic",
       };
       // A cache HIT serves WITHOUT an upstream call, so the incremental cost billed to
-      // the client is 0 (consumers that sum X-OmniRoute-Response-Cost must not charge for
-      // hits). The original/would-have-been cost is surfaced via X-OmniRoute-Cost-Saved.
-      attachOmniRouteMetaHeaders(headers, {
+      // the client is 0 (consumers that sum X-AgentProxy-Response-Cost must not charge for
+      // hits). The original/would-have-been cost is surfaced via X-AgentProxy-Cost-Saved.
+      attachAgentProxyMetaHeaders(headers, {
         provider,
         model,
         cacheHit: true,

@@ -34,7 +34,7 @@ function cliCtx(overrides: Partial<PolicyContext["request"]> = {}): PolicyContex
   return {
     request: {
       method: "GET",
-      headers: new Headers({ "x-omniroute-cli-token": getMachineTokenSync() }),
+      headers: new Headers({ "x-agentproxy-cli-token": getMachineTokenSync() }),
       ip: "127.0.0.1",
       ...overrides,
     },
@@ -71,7 +71,7 @@ test("publicPolicy keeps anonymous for a non-loopback peer carrying the token", 
 
 test("publicPolicy keeps anonymous for a wrong token from loopback", async () => {
   const out = await publicPolicy.evaluate(
-    cliCtx({ headers: new Headers({ "x-omniroute-cli-token": "0".repeat(64) }) })
+    cliCtx({ headers: new Headers({ "x-agentproxy-cli-token": "0".repeat(64) }) })
   );
   assert.equal(out.allow, true);
   if (out.allow) assert.equal(out.subject.kind, "anonymous");

@@ -5,7 +5,7 @@
 // ("GLIBC_2.29 not found"), so the native module fails to dlopen and any test that
 // reaches better-sqlite3 directly (or asserts stdout that the load-failure warning
 // would pollute) fails HERE while passing in CI. This is a known environment
-// limitation, not a defect in the code under test: the OmniRoute runtime itself
+// limitation, not a defect in the code under test: the AgentProxy runtime itself
 // cascades to node:sqlite/sql.js when better-sqlite3 is unavailable. See
 // tests/unit/_helpers/betterSqlite3Availability.ts for a guard helper.
 import test from "node:test";
@@ -19,12 +19,12 @@ import { resetDbInstance } from "../../src/lib/db/core.ts";
 
 // Regression guard for #9934 — init asymmetry breaks a fresh install.
 //
-// `omniroute setup` (bin/cli/sqlite.mjs::openOmniRouteDb) creates
+// `agentproxy setup` (bin/cli/sqlite.mjs::openAgentProxyDb) creates
 // storage.sqlite with the *partial* inline schema (key_value +
-// provider_connections) but NEVER creates _omniroute_migrations and never runs
+// provider_connections) but NEVER creates _agentproxy_migrations and never runs
 // migrations. That file flips the server's new-DB heuristic
 // (src/lib/db/core.ts uses `!fs.existsSync(sqliteFile)`), so the first
-// `omniroute serve` believes it is an existing DB, auto-seeds only the 001
+// `agentproxy serve` believes it is an existing DB, auto-seeds only the 001
 // marker, and then trips the mass-migration safety abort because 139 pending
 // migrations exceed the default threshold of 50 (#6260 gate).
 //
@@ -74,11 +74,11 @@ function withNonTestEnvironment<R>(fn: () => R): R {
 function cleanupGlobalDb() {
   try {
     const g = globalThis as Record<string, { open?: boolean; close?: () => void }>;
-    if (g.__omnirouteDb?.open) g.__omnirouteDb.close?.();
+    if (g.__agentproxyDb?.open) g.__agentproxyDb.close?.();
   } catch {
     /* ignore */
   }
-  delete (globalThis as Record<string, unknown>).__omnirouteDb;
+  delete (globalThis as Record<string, unknown>).__agentproxyDb;
 }
 
 test.after(() => {
@@ -87,19 +87,19 @@ test.after(() => {
 });
 
 test(
-  "fresh `omniroute setup` DB (only the 001 seed) survives first serve without mass-migration abort (#9934)",
+  "fresh `agentproxy setup` DB (only the 001 seed) survives first serve without mass-migration abort (#9934)",
   serial,
   async () => {
-    const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-9934-"));
+    const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-9934-"));
     const originalDataDir = process.env.DATA_DIR;
     process.env.DATA_DIR = dataDir;
 
     try {
-      // Step 1 — mimic `omniroute setup`: the CLI opens the DB, writes the
+      // Step 1 — mimic `agentproxy setup`: the CLI opens the DB, writes the
       // partial inline schema (key_value + provider_connections) and closes it,
-      // WITHOUT running migrations or creating _omniroute_migrations.
+      // WITHOUT running migrations or creating _agentproxy_migrations.
       const cli = await importFresh("bin/cli/sqlite.mjs");
-      const setup = await cli.openOmniRouteDb();
+      const setup = await cli.openAgentProxyDb();
       assert.ok(fs.existsSync(setup.dbPath), "setup created storage.sqlite");
       setup.db
         .prepare(
@@ -114,7 +114,7 @@ test(
       try {
         const hasMigrationTable = !!onDisk
           .prepare("SELECT name FROM sqlite_master WHERE type='table' AND name=?")
-          .get("_omniroute_migrations");
+          .get("_agentproxy_migrations");
         assert.equal(
           hasMigrationTable,
           false,
@@ -124,7 +124,7 @@ test(
         onDisk.close();
       }
 
-      // Step 2 — mimic the first `omniroute serve`: the real server opens the
+      // Step 2 — mimic the first `agentproxy serve`: the real server opens the
       // same DB, auto-seeds only the 001 marker and runs migrations. Under a
       // live (non-test) safety gate this must NOT throw.
       const core = await importFresh("src/lib/db/core.ts");
@@ -140,7 +140,7 @@ test(
 
       // Prove the fresh DB actually got migrated past 001 to the latest version.
       const maxRow = db
-        .prepare("SELECT MAX(CAST(version AS INTEGER)) AS maxV FROM _omniroute_migrations")
+        .prepare("SELECT MAX(CAST(version AS INTEGER)) AS maxV FROM _agentproxy_migrations")
         .get();
       assert.ok(
         (maxRow?.maxV ?? 0) > 1,

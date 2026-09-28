@@ -12,6 +12,11 @@
  */
 import { z } from "zod";
 import type { ProxySubscriptionPayload } from "./subscriptionService";
+import {
+  DEFAULT_SUBSCRIPTION_UPDATE_INTERVAL_MINUTES,
+  isValidSubscriptionUpdateInterval,
+  SUBSCRIPTION_UPDATE_INTERVAL_ERROR,
+} from "./limits";
 
 function readRuleProviders(b: Record<string, unknown>): string[] | null {
   if (!Array.isArray(b.ruleProviders)) return null;
@@ -52,7 +57,19 @@ export const proxySubscriptionCreateSchema = z
       typeof b.localCoreEndpoint === "string" && b.localCoreEndpoint.trim()
         ? b.localCoreEndpoint.trim()
         : null;
-    const updateIntervalMinutes = Number(b.updateIntervalMinutes) || 60;
+    const rawInterval = b.updateIntervalMinutes;
+    const coercedInterval = Number(rawInterval);
+    // Preserve the legacy create parser's `Number(value) || 60` coercion for
+    // wrong-typed values, except an explicitly numeric zero is now rejected by
+    // the bounded interval contract instead of silently becoming 60.
+    const updateIntervalMinutes = coercedInterval || DEFAULT_SUBSCRIPTION_UPDATE_INTERVAL_MINUTES;
+    if (
+      (typeof rawInterval === "number" && rawInterval === 0) ||
+      !isValidSubscriptionUpdateInterval(updateIntervalMinutes)
+    ) {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, message: SUBSCRIPTION_UPDATE_INTERVAL_ERROR });
+      return z.NEVER;
+    }
     const enabled = b.enabled === true;
 
     return {
@@ -84,6 +101,10 @@ export const proxySubscriptionUpdateSchema = z
       payload.localCoreEndpoint = b.localCoreEndpoint.trim() || null;
     }
     if (typeof b.updateIntervalMinutes === "number") {
+      if (!isValidSubscriptionUpdateInterval(b.updateIntervalMinutes)) {
+        ctx.addIssue({ code: z.ZodIssueCode.custom, message: SUBSCRIPTION_UPDATE_INTERVAL_ERROR });
+        return z.NEVER;
+      }
       payload.updateIntervalMinutes = b.updateIntervalMinutes;
     }
     const ruleProviders = readRuleProviders(b);

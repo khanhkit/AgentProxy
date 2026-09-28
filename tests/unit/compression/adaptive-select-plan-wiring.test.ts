@@ -3,9 +3,9 @@ import assert from "node:assert/strict";
 import {
   selectCompressionPlan,
   shouldAutoTrigger,
-} from "@omniroute/open-sse/services/compression/strategySelector.ts";
-import { getDefaultCompressionConfig } from "@omniroute/open-sse/services/compression/stats.ts";
-import type { CompressionConfig } from "@omniroute/open-sse/services/compression/types.ts";
+} from "@agentproxy/open-sse/services/compression/strategySelector.ts";
+import { getDefaultCompressionConfig } from "@agentproxy/open-sse/services/compression/stats.ts";
+import type { CompressionConfig } from "@agentproxy/open-sse/services/compression/types.ts";
 
 function legacyCfg() {
   return {
@@ -75,7 +75,7 @@ test("adaptive floor: bypasses auto-trigger, escalates a base plan to fit", () =
     },
   };
   const tel: {
-    value: import("@omniroute/open-sse/services/compression/adaptiveCompression/types.ts").AdaptiveTelemetry | null;
+    value: import("@agentproxy/open-sse/services/compression/adaptiveCompression/types.ts").AdaptiveTelemetry | null;
   } = { value: null };
   // estimatedTokens far over the 200000-window target → adaptive must escalate.
   const plan = selectCompressionPlan(

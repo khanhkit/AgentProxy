@@ -21,7 +21,7 @@
  * directly against the real `bottleneck` dependency (not a mock) — reservoir:0
  * is the one way to deterministically force a genuine QUEUED-with-nothing-
  * running state without needing Bottleneck's internal timers to actually wedge,
- * since OmniRoute's own public settings API treats a "0" override as
+ * since AgentProxy's own public settings API treats a "0" override as
  * "unlimited" (resolveRpm/resolveMaxConcurrent) and can never produce a true
  * zero-capacity limiter through withRateLimit() itself.
  */

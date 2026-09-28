@@ -1,10 +1,10 @@
 ---
-title: "Dokumentacja serwera MCP OmniRoute"
+title: "Dokumentacja serwera MCP AgentProxy"
 version: 3.8.40
 lastUpdated: 2026-06-28
 ---
 
-# Dokumentacja serwera MCP OmniRoute
+# Dokumentacja serwera MCP AgentProxy
 
 > Serwer Model Context Protocol z 105 narzędziami obejmującymi routing, cache, kompresję, pamięć, skills, proxy, pool oraz operacje na źródłach kontekstu.
 >
@@ -12,17 +12,17 @@ lastUpdated: 2026-06-28
 
 ## Instalacja
 
-OmniRoute MCP jest wbudowany. Uruchom go poleceniem:
+AgentProxy MCP jest wbudowany. Uruchom go poleceniem:
 
 ```bash
-omniroute --mcp
+agentproxy --mcp
 ```
 
 Albo przez transport open-sse:
 
 ```bash
 # HTTP streamable transport (port 20130)
-omniroute --dev  # MCP auto-starts on /mcp endpoint
+agentproxy --dev  # MCP auto-starts on /mcp endpoint
 ```
 
 ## Transporty
@@ -68,61 +68,61 @@ Cursor, Cline oraz kompatybilnych klientów MCP.
 
 | Tool                            | Scopes                | Description                                                        |
 | :------------------------------ | :-------------------- | :----------------------------------------------------------------- |
-| `omniroute_get_health`          | `read:health`         | Uptime, pamięć, circuit breakery, limity rate, statystyki cache    |
-| `omniroute_list_combos`         | `read:combos`         | Wszystkie skonfigurowane combo ze strategiami (opcjonalne metryki) |
-| `omniroute_get_combo_metrics`   | `read:combos`         | Metryki wydajności dla konkretnego combo                           |
-| `omniroute_switch_combo`        | `write:combos`        | Aktywacja lub deaktywacja combo                                    |
-| `omniroute_check_quota`         | `read:quota`          | Quota used/total, procent pozostały, czas resetu, health tokenów   |
-| `omniroute_route_request`       | `execute:completions` | Wysłanie chat completion przez routing OmniRoute                   |
-| `omniroute_cost_report`         | `read:usage`          | Raport kosztów wg okresu (session/day/week/month)                  |
-| `omniroute_list_models_catalog` | `read:models`         | Pełny katalog modeli z capabilities, statusem i pricing            |
+| `agentproxy_get_health`          | `read:health`         | Uptime, pamięć, circuit breakery, limity rate, statystyki cache    |
+| `agentproxy_list_combos`         | `read:combos`         | Wszystkie skonfigurowane combo ze strategiami (opcjonalne metryki) |
+| `agentproxy_get_combo_metrics`   | `read:combos`         | Metryki wydajności dla konkretnego combo                           |
+| `agentproxy_switch_combo`        | `write:combos`        | Aktywacja lub deaktywacja combo                                    |
+| `agentproxy_check_quota`         | `read:quota`          | Quota used/total, procent pozostały, czas resetu, health tokenów   |
+| `agentproxy_route_request`       | `execute:completions` | Wysłanie chat completion przez routing AgentProxy                   |
+| `agentproxy_cost_report`         | `read:usage`          | Raport kosztów wg okresu (session/day/week/month)                  |
+| `agentproxy_list_models_catalog` | `read:models`         | Pełny katalog modeli z capabilities, statusem i pricing            |
 
 ## Phase 1 — Search
 
 | Tool                   | Scopes           | Description                                                                                                                            |
 | :--------------------- | :--------------- | :------------------------------------------------------------------------------------------------------------------------------------- |
-| `omniroute_web_search` | `execute:search` | Wyszukiwanie w sieci przez bramkę search OmniRoute (Serper/Brave/Perplexity/Exa/Tavily/Google PSE/Linkup/SearchAPI/SearXNG) z failover |
+| `agentproxy_web_search` | `execute:search` | Wyszukiwanie w sieci przez bramkę search AgentProxy (Serper/Brave/Perplexity/Exa/Tavily/Google PSE/Linkup/SearchAPI/SearXNG) z failover |
 
 ## Advanced Tools (11) — Phase 2
 
 | Tool                               | Scopes                               | Description                                                                                   |
 | :--------------------------------- | :----------------------------------- | :-------------------------------------------------------------------------------------------- |
-| `omniroute_simulate_route`         | `read:health`, `read:combos`         | Symulacja routingu dry-run z drzewem fallback                                                 |
-| `omniroute_set_budget_guard`       | `write:budget`                       | Budżet sesji z akcją degrade/block/alert                                                      |
-| `omniroute_set_routing_strategy`   | `write:combos`                       | Aktualizacja strategii combo w runtime (priority/weighted/auto itd.)                          |
-| `omniroute_set_resilience_profile` | `write:resilience`                   | Zastosowanie presetu resilience `aggressive` / `balanced` / `conservative`                    |
-| `omniroute_test_combo`             | `execute:completions`, `read:combos` | Live test każdego providera w combo przez realne wywołanie upstream                           |
-| `omniroute_get_provider_metrics`   | `read:health`                        | Metryki per provider z latencją p50/p95/p99 i stanem circuit breakera                         |
-| `omniroute_best_combo_for_task`    | `read:combos`, `read:health`         | Rekomendacja combo wg typu zadania z ograniczeniami budżetu/latencji                          |
-| `omniroute_explain_route`          | `read:health`, `read:usage`          | Wyjaśnienie, dlaczego request poszedł do providera (czynniki scoringu + fallbacki)            |
-| `omniroute_get_session_snapshot`   | `read:usage`                         | Pełny snapshot sesji: koszt, tokeny, top modele/providerzy, błędy, budget guard               |
-| `omniroute_db_health_check`        | `read:health`, `write:resilience`    | Diagnoza (i opcjonalna auto-naprawa) driftu bazy, np. uszkodzone refy combo / wiersze-sieroty |
-| `omniroute_sync_pricing`           | `pricing:write`                      | Synchronizacja danych cenowych ze źródeł zewnętrznych (LiteLLM); obsługuje `dryRun`           |
+| `agentproxy_simulate_route`         | `read:health`, `read:combos`         | Symulacja routingu dry-run z drzewem fallback                                                 |
+| `agentproxy_set_budget_guard`       | `write:budget`                       | Budżet sesji z akcją degrade/block/alert                                                      |
+| `agentproxy_set_routing_strategy`   | `write:combos`                       | Aktualizacja strategii combo w runtime (priority/weighted/auto itd.)                          |
+| `agentproxy_set_resilience_profile` | `write:resilience`                   | Zastosowanie presetu resilience `aggressive` / `balanced` / `conservative`                    |
+| `agentproxy_test_combo`             | `execute:completions`, `read:combos` | Live test każdego providera w combo przez realne wywołanie upstream                           |
+| `agentproxy_get_provider_metrics`   | `read:health`                        | Metryki per provider z latencją p50/p95/p99 i stanem circuit breakera                         |
+| `agentproxy_best_combo_for_task`    | `read:combos`, `read:health`         | Rekomendacja combo wg typu zadania z ograniczeniami budżetu/latencji                          |
+| `agentproxy_explain_route`          | `read:health`, `read:usage`          | Wyjaśnienie, dlaczego request poszedł do providera (czynniki scoringu + fallbacki)            |
+| `agentproxy_get_session_snapshot`   | `read:usage`                         | Pełny snapshot sesji: koszt, tokeny, top modele/providerzy, błędy, budget guard               |
+| `agentproxy_db_health_check`        | `read:health`, `write:resilience`    | Diagnoza (i opcjonalna auto-naprawa) driftu bazy, np. uszkodzone refy combo / wiersze-sieroty |
+| `agentproxy_sync_pricing`           | `pricing:write`                      | Synchronizacja danych cenowych ze źródeł zewnętrznych (LiteLLM); obsługuje `dryRun`           |
 
 ## Cache Tools (2)
 
 | Tool                    | Scopes        | Description                                           |
 | :---------------------- | :------------ | :---------------------------------------------------- |
-| `omniroute_cache_stats` | `read:cache`  | Statystyki semantic cache, prompt-cache i idempotency |
-| `omniroute_cache_flush` | `write:cache` | Flush cache globalnie albo wg signature/model         |
+| `agentproxy_cache_stats` | `read:cache`  | Statystyki semantic cache, prompt-cache i idempotency |
+| `agentproxy_cache_flush` | `write:cache` | Flush cache globalnie albo wg signature/model         |
 
 ## Compression Tools (13)
 
 | Tool                                | Scopes              | Description                                                                                                                       |
 | :---------------------------------- | :------------------ | :-------------------------------------------------------------------------------------------------------------------------------- |
-| `omniroute_compression_status`      | `read:compression`  | Ustawienia kompresji, podsumowanie analytics oraz statystyki cache-aware (zawiera metadane `analytics.mcpDescriptionCompression`) |
-| `omniroute_compression_configure`   | `write:compression` | Konfiguracja trybu kompresji, progu, target ratio, zachowania system-prompt oraz przełącznika kompresji opisów MCP                |
-| `omniroute_set_compression_engine`  | `write:compression` | Wybór aktywnego silnika (off/caveman/rtk/stacked) oraz intensywności Caveman/RTK                                                  |
-| `omniroute_list_compression_combos` | `read:compression`  | Lista nazwanych compression combo i ich pipeline'ów silników                                                                      |
-| `omniroute_compression_combo_stats` | `read:compression`  | Analytics pogrupowane wg compression combo i silnika                                                                              |
-| `omniroute_ccr_store`               | `write:compression` | Zapis izolowanej per-caller treści w ograniczonym in-memory magazynie CCR i zwrot markera plus referencji `ccr://`                |
-| `omniroute_ccr_retrieve`            | `read:compression`  | Odczyt treści CCR w całości albo w trybach head, tail, lines, grep i stats                                                        |
-| `omniroute_ccr_inspect`             | `read:compression`  | Podgląd metadanych CCR należących do callera bez zwracania treści                                                                 |
-| `omniroute_ccr_list`                | `read:compression`  | Stronicowana lista metadanych bloków CCR należących do callera                                                                    |
-| `omniroute_ccr_delete`              | `write:compression` | Usunięcie bloku CCR należącego do callera                                                                                         |
-| `omniroute_ccr_stats`               | `read:compression`  | Raport użycia pamięci w zakresie callera, liczników cyklu życia i limitów magazynu                                                |
-| `omniroute_rtk_discover`            | `read:compression`  | Wykrywanie powtarzającego się szumu w opt-in próbkach wyjścia RTK                                                                 |
-| `omniroute_rtk_learn`               | `read:compression`  | Generowanie draftu filtra RTK do przeglądu na podstawie opt-in próbek                                                             |
+| `agentproxy_compression_status`      | `read:compression`  | Ustawienia kompresji, podsumowanie analytics oraz statystyki cache-aware (zawiera metadane `analytics.mcpDescriptionCompression`) |
+| `agentproxy_compression_configure`   | `write:compression` | Konfiguracja trybu kompresji, progu, target ratio, zachowania system-prompt oraz przełącznika kompresji opisów MCP                |
+| `agentproxy_set_compression_engine`  | `write:compression` | Wybór aktywnego silnika (off/caveman/rtk/stacked) oraz intensywności Caveman/RTK                                                  |
+| `agentproxy_list_compression_combos` | `read:compression`  | Lista nazwanych compression combo i ich pipeline'ów silników                                                                      |
+| `agentproxy_compression_combo_stats` | `read:compression`  | Analytics pogrupowane wg compression combo i silnika                                                                              |
+| `agentproxy_ccr_store`               | `write:compression` | Zapis izolowanej per-caller treści w ograniczonym in-memory magazynie CCR i zwrot markera plus referencji `ccr://`                |
+| `agentproxy_ccr_retrieve`            | `read:compression`  | Odczyt treści CCR w całości albo w trybach head, tail, lines, grep i stats                                                        |
+| `agentproxy_ccr_inspect`             | `read:compression`  | Podgląd metadanych CCR należących do callera bez zwracania treści                                                                 |
+| `agentproxy_ccr_list`                | `read:compression`  | Stronicowana lista metadanych bloków CCR należących do callera                                                                    |
+| `agentproxy_ccr_delete`              | `write:compression` | Usunięcie bloku CCR należącego do callera                                                                                         |
+| `agentproxy_ccr_stats`               | `read:compression`  | Raport użycia pamięci w zakresie callera, liczników cyklu życia i limitów magazynu                                                |
+| `agentproxy_rtk_discover`            | `read:compression`  | Wykrywanie powtarzającego się szumu w opt-in próbkach wyjścia RTK                                                                 |
+| `agentproxy_rtk_learn`               | `read:compression`  | Generowanie draftu filtra RTK do przeglądu na podstawie opt-in próbek                                                             |
 
 Wpisy CCR są wyłącznie w pamięci i znikają po restarcie. Każdy blok ma limit 2 MiB, każdy
 principal 16 MiB, a globalny magazyn 64 MiB. Wpisy domyślnie mają TTL 24 godziny (maksimum
@@ -130,14 +130,14 @@ siedem dni). Pełny odczyt MCP jest ograniczony do 256 KiB; większe bloki pozos
 tryby ranged i grep. Przechowywanie, odczyt, listowanie, inspekcja, usuwanie i statystyki są izolowane wg
 uwierzytelnionego principalu klucza API. Rekordy audytu zawierają hashe i metadane rozmiaru, nigdy treść.
 
-`omniroute_compression_status` raportuje kompresję opisów MCP osobno pod
+`agentproxy_compression_status` raportuje kompresję opisów MCP osobno pod
 `analytics.mcpDescriptionCompression`. Te wartości to szacunki rozmiaru metadanych listowalnych
 opisów MCP (`tools`, `prompts`, `resources` i `resourceTemplates`); nie są to rachunki użycia
 providera i są oznaczone `source: "mcp_metadata_estimate"`.
 
 ### MCP Accessibility Tree Filter (v3.8.0)
 
-Osobno od powyższych narzędzi kompresji OmniRoute zawiera filtr post-execution, który
+Osobno od powyższych narzędzi kompresji AgentProxy zawiera filtr post-execution, który
 kompresuje **wyniki narzędzi** MCP przeglądarki/accessibility, zanim wrócą do
 agenta. Ten filtr sam w sobie nie jest narzędziem — działa przejrzyście na każdym wyniku toola, który zawiera
 rozwlekły tekst accessibility-tree lub browser-snapshot (≥2000 znaków).
@@ -160,9 +160,9 @@ modelu kompresji runtime stojącego za tymi narzędziami.
 
 | Tool                        | Scopes         | Description                                                                            |
 | :-------------------------- | :------------- | :------------------------------------------------------------------------------------- |
-| `omniroute_oneproxy_fetch`  | `read:proxies` | Pobranie darmowych proxy z marketplace 1proxy (filtry protocol/country/quality/limit)  |
-| `omniroute_oneproxy_rotate` | `read:proxies` | Pobranie kolejnego dostępnego proxy wg strategii (`random` / `quality` / `sequential`) |
-| `omniroute_oneproxy_stats`  | `read:proxies` | Statystyki poola, status sync, rozkład wg protocol i country                           |
+| `agentproxy_oneproxy_fetch`  | `read:proxies` | Pobranie darmowych proxy z marketplace 1proxy (filtry protocol/country/quality/limit)  |
+| `agentproxy_oneproxy_rotate` | `read:proxies` | Pobranie kolejnego dostępnego proxy wg strategii (`random` / `quality` / `sequential`) |
+| `agentproxy_oneproxy_stats`  | `read:proxies` | Statystyki poola, status sync, rozkład wg protocol i country                           |
 
 ## Memory Tools (3)
 
@@ -170,9 +170,9 @@ Zdefiniowane w `open-sse/mcp-server/tools/memoryTools.ts`. Auth/scope jest egzek
 
 | Tool                      | Scopes         | Description                                                                                    |
 | :------------------------ | :------------- | :--------------------------------------------------------------------------------------------- |
-| `omniroute_memory_search` | `read:memory`  | Wyszukiwanie pamięci po query / type / API key z egzekwowaniem token-budget                    |
-| `omniroute_memory_add`    | `write:memory` | Dodanie nowego wpisu pamięci (`factual` / `episodic` / `procedural` / `semantic`)              |
-| `omniroute_memory_clear`  | `write:memory` | Czyszczenie pamięci dla klucza API, opcjonalnie filtrowane po type lub timestampie `olderThan` |
+| `agentproxy_memory_search` | `read:memory`  | Wyszukiwanie pamięci po query / type / API key z egzekwowaniem token-budget                    |
+| `agentproxy_memory_add`    | `write:memory` | Dodanie nowego wpisu pamięci (`factual` / `episodic` / `procedural` / `semantic`)              |
+| `agentproxy_memory_clear`  | `write:memory` | Czyszczenie pamięci dla klucza API, opcjonalnie filtrowane po type lub timestampie `olderThan` |
 
 ## Skill Tools (4)
 
@@ -180,10 +180,10 @@ Zdefiniowane w `open-sse/mcp-server/tools/skillTools.ts`. Oparte o `src/lib/skil
 
 | Tool                          | Scopes           | Description                                                                             |
 | :---------------------------- | :--------------- | :-------------------------------------------------------------------------------------- |
-| `omniroute_skills_list`       | `read:skills`    | Lista zarejestrowanych skills z opcjonalnym filtrem po API key, name lub stanie enabled |
-| `omniroute_skills_enable`     | `write:skills`   | Włączenie lub wyłączenie konkretnego skilla po ID                                       |
-| `omniroute_skills_execute`    | `execute:skills` | Wykonanie skilla z podanym inputem i zwrot rekordu wykonania                            |
-| `omniroute_skills_executions` | `read:skills`    | Lista niedawnej historii wykonań skills                                                 |
+| `agentproxy_skills_list`       | `read:skills`    | Lista zarejestrowanych skills z opcjonalnym filtrem po API key, name lub stanie enabled |
+| `agentproxy_skills_enable`     | `write:skills`   | Włączenie lub wyłączenie konkretnego skilla po ID                                       |
+| `agentproxy_skills_execute`    | `execute:skills` | Wykonanie skilla z podanym inputem i zwrot rekordu wykonania                            |
+| `agentproxy_skills_executions` | `read:skills`    | Lista niedawnej historii wykonań skills                                                 |
 
 ## Notion Context Source (6)
 
@@ -219,9 +219,9 @@ Zdefiniowane w `open-sse/mcp-server/tools/agentSkillTools.ts`. Oparte o `src/lib
 
 | Tool                              | Scopes         | Description                                                                                                         |
 | :-------------------------------- | :------------- | :------------------------------------------------------------------------------------------------------------------ |
-| `omniroute_agent_skills_list`     | `read:catalog` | Lista wszystkich 42 agent skills z opcjonalnymi filtrami `category` (api\|cli) i `area`; zwraca metadata + coverage |
-| `omniroute_agent_skills_get`      | `read:catalog` | Pełne metadata + treść SKILL.md dla pojedynczego skilla po kanonicznym `id`                                         |
-| `omniroute_agent_skills_coverage` | `read:catalog` | Statystyki coverage: ile z 22 API i 20 CLI skills ma pliki SKILL.md na filesystemie względem sum katalogu           |
+| `agentproxy_agent_skills_list`     | `read:catalog` | Lista wszystkich 42 agent skills z opcjonalnymi filtrami `category` (api\|cli) i `area`; zwraca metadata + coverage |
+| `agentproxy_agent_skills_get`      | `read:catalog` | Pełne metadata + treść SKILL.md dla pojedynczego skilla po kanonicznym `id`                                         |
+| `agentproxy_agent_skills_coverage` | `read:catalog` | Statystyki coverage: ile z 22 API i 20 CLI skills ma pliki SKILL.md na filesystemie względem sum katalogu           |
 
 Zobacz [AGENT-SKILLS.md](./AGENT-SKILLS.md) po pełny katalog i sposób konsumowania przez zewnętrznych agentów.
 
@@ -234,7 +234,7 @@ frameworki dostarczane razem z serwerem MCP w v3.8.0 są udokumentowane osobno:
 ### Cloud Agents
 
 Cloud Agents to poza-procesowe agenty AI do kodowania (codex-cloud, devin, jules) podpięte do
-OmniRoute przez ten sam model połączeń co providery LLM. Są wystawione przez
+AgentProxy przez ten sam model połączeń co providery LLM. Są wystawione przez
 własną powierzchnię REST (`/api/v1/agents/*`) i **nie** należą do katalogu narzędzi MCP
 — wywołanie Cloud Agent nie zużywa scope MCP.
 
@@ -328,10 +328,10 @@ Po HTTP/SSE `open-sse/mcp-server/httpTransport.ts` rozwiązuje teraz rzeczywiste
 i przekazuje je do `transport.handleRequest(req, { authInfo })` SDK MCP, więc
 `extra.authInfo.scopes` docierające do każdego wywołania toola odzwierciedla własne scope'y klucza Bearer.
 `resolveCallerScopeContext()` w `scopeEnforcement.ts` już priorytetyzował `authInfo` nad
-fallbackami `_meta` i env `OMNIROUTE_MCP_SCOPES` — ta zmiana tylko zapełnia to pierwsze,
+fallbackami `_meta` i env `AGENTPROXY_MCP_SCOPES` — ta zmiana tylko zapełnia to pierwsze,
 najwyżej priorytetowe źródło, które wcześniej nie było karmione po HTTP. Gdy klucz API się nie rozwiąże
 (brak nagłówka, nieprawidłowy klucz), `authInfo` pozostaje `undefined` i resolucja spada na
-istniejący łańcuch `meta`/env bez zmian. To NIE zmienia domyślnej wartości `OMNIROUTE_MCP_ENFORCE_SCOPES`
+istniejący łańcuch `meta`/env bez zmian. To NIE zmienia domyślnej wartości `AGENTPROXY_MCP_ENFORCE_SCOPES`
 — egzekwowanie nadal trzeba włączyć jawnie; ta zmiana sprawia tylko, że
 ścieżka per-key ma pierwszeństwo, gdy jest włączone. stdio nie ma tożsamości per-caller (zob.
 `mcpCallerIdentity.ts`) i pozostaje nietknięte — zostaje na łańcuchu fallback `_meta`/env.
@@ -342,15 +342,15 @@ istniejący łańcuch `meta`/env bez zmian. To NIE zmienia domyślnej wartości 
 
 | Variable                                | Default                            | Purpose                                                                                                       |
 | :-------------------------------------- | :--------------------------------- | :------------------------------------------------------------------------------------------------------------ |
-| `OMNIROUTE_BASE_URL`                    | `http://localhost:20128`           | Bazowy URL używany przez serwer MCP przy wywołaniach wewnętrznych API OmniRoute                               |
-| `OMNIROUTE_API_KEY`                     | (empty)                            | Klucz API przekazywany jako `Authorization: Bearer` do wewnętrznych wywołań API                               |
-| `OMNIROUTE_MCP_ENFORCE_SCOPES`          | `false` (only `"true"` enables it) | Po włączeniu brakujące scope'y odmawiają wywołań tooli i logują `scope_denied:<reason>` w audycie             |
-| `OMNIROUTE_MCP_SCOPES`                  | (empty)                            | Lista scope'ów rozdzielona przecinkami uważanych domyślnie za „dostępne” (gdy caller nie podaje własnych)     |
-| `OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS`   | (unset = on)                       | Ustawienie na `0/false/off/no` wyłącza kompresję opisów MCP w czasie rejestracji                              |
-| `OMNIROUTE_MCP_DESCRIPTION_COMPRESSION` | (unset = on)                       | Alternatywny alias tego samego przełącznika co powyżej                                                        |
+| `AGENTPROXY_BASE_URL`                    | `http://localhost:20128`           | Bazowy URL używany przez serwer MCP przy wywołaniach wewnętrznych API AgentProxy                               |
+| `AGENTPROXY_API_KEY`                     | (empty)                            | Klucz API przekazywany jako `Authorization: Bearer` do wewnętrznych wywołań API                               |
+| `AGENTPROXY_MCP_ENFORCE_SCOPES`          | `false` (only `"true"` enables it) | Po włączeniu brakujące scope'y odmawiają wywołań tooli i logują `scope_denied:<reason>` w audycie             |
+| `AGENTPROXY_MCP_SCOPES`                  | (empty)                            | Lista scope'ów rozdzielona przecinkami uważanych domyślnie za „dostępne” (gdy caller nie podaje własnych)     |
+| `AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS`   | (unset = on)                       | Ustawienie na `0/false/off/no` wyłącza kompresję opisów MCP w czasie rejestracji                              |
+| `AGENTPROXY_MCP_DESCRIPTION_COMPRESSION` | (unset = on)                       | Alternatywny alias tego samego przełącznika co powyżej                                                        |
 | `MCP_TOOL_DENY`                         | (unset = no filter)                | Nazwy tooli rozdzielone przecinkami do usunięcia z `tools/list` (redukcja kardynalności tooli — zob. poniżej) |
 | `MCP_TOOL_ALLOW`                        | (unset = no filter)                | Nazwy tooli rozdzielone przecinkami do wyłącznego zachowania (tryb allow-list — zob. poniżej)                 |
-| `DATA_DIR`                              | `~/.omniroute`                     | Plik heartbeat jest zapisywany do `${DATA_DIR}/runtime/mcp-heartbeat.json`                                    |
+| `DATA_DIR`                              | `~/.agentproxy`                     | Plik heartbeat jest zapisywany do `${DATA_DIR}/runtime/mcp-heartbeat.json`                                    |
 
 ---
 
@@ -360,8 +360,8 @@ Rejestry tooli, promptów i resources MCP mogą kompresować opisy w czasie reje
 
 - Kompresja działa na tekście opisu z użyciem rulesetu Caveman (`getRulesForContext("all", "full")`) z ekstrakcją zachowanych bloków (code spans, fenced blocks itd.), więc treść strukturalna nie jest zmieniana.
 - Przełącznik per-deployment przez wartość `compression.mcpDescriptionCompressionEnabled` w tabeli ustawień `key_value` (domyślnie: włączone) — w UI jako **Analytics → MCP description compression**.
-- Przełącznik process-wide przez `OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS=false` albo `OMNIROUTE_MCP_DESCRIPTION_COMPRESSION=false`.
-- Statystyki realtime są dostępne przez `omniroute_compression_status` pod `analytics.mcpDescriptionCompression` i oznaczone `source: "mcp_metadata_estimate"`, aby odróżnić je od rzeczywistych rachunków użycia providera.
+- Przełącznik process-wide przez `AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS=false` albo `AGENTPROXY_MCP_DESCRIPTION_COMPRESSION=false`.
+- Statystyki realtime są dostępne przez `agentproxy_compression_status` pod `analytics.mcpDescriptionCompression` i oznaczone `source: "mcp_metadata_estimate"`, aby odróżnić je od rzeczywistych rachunków użycia providera.
 
 ---
 
@@ -380,10 +380,10 @@ Kompresja opisów zmniejsza metadane każdego toola; **redukcja kardynalności t
 
 ```bash
 # Drop two tools from the catalog
-MCP_TOOL_DENY="omniroute_get_health,omniroute_list_combos" omniroute --mcp
+MCP_TOOL_DENY="agentproxy_get_health,agentproxy_list_combos" agentproxy --mcp
 
 # Announce only the routing + quota tools (allow-list mode)
-MCP_TOOL_ALLOW="omniroute_route_request,omniroute_check_quota" omniroute --mcp
+MCP_TOOL_ALLOW="agentproxy_route_request,agentproxy_check_quota" agentproxy --mcp
 ```
 
 **Jak usuwane są odfiltrowane tool'e:** rejestracja zawsze się udaje; tool odrzucony przez profil jest potem `.disable()` na uchwycie SDK MCP, więc nie pojawia się w `tools/list`, ale okablowanie zostaje (czyste enable/disable, bez re-rejestracji). Parser profilu to `readMcpToolProfileFromEnv(process.env)`, który zwraca `null` (brak filtrowania), gdy obie zmienne są puste.

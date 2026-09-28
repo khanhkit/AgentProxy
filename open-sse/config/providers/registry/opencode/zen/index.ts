@@ -30,9 +30,9 @@ export const opencode_zenProvider: RegistryEntry = {
     ...OPENCODE_ZEN_GO_SHARED_MODELS,
     // models[0] (big-pickle) is the dashboard default; SHARED spread kept after it.
 
-    { id: "gpt-5.6-sol", name: "GPT 5.6 Sol" },
-    { id: "gpt-5.6-terra", name: "GPT 5.6 Terra" },
-    { id: "gpt-5.6-luna", name: "GPT 5.6 Luna" },
+    { id: "gpt-5.6-sol", name: "GPT 5.6 Sol", targetFormat: "openai-responses" },
+    { id: "gpt-5.6-terra", name: "GPT 5.6 Terra", targetFormat: "openai-responses" },
+    { id: "gpt-5.6-luna", name: "GPT 5.6 Luna", targetFormat: "openai-responses" },
     { id: "gpt-5.4", name: "GPT 5.4" },
     { id: "gpt-5.4-mini", name: "GPT 5.4 Mini" },
     { id: "gpt-5.4-nano", name: "GPT 5.4 Nano" },
@@ -76,6 +76,25 @@ export const opencode_zenProvider: RegistryEntry = {
       name: "Muse Spark 1.2 Contributor Free",
       supportsReasoning: true,
       targetFormat: "openai-responses",
+    },
+    // Muse Spark 1.3 is served only on the Responses API, same as 1.2 above.
+    // Its window matches the published OpenCode catalog instead of the
+    // 200000 provider default.
+    {
+      id: "muse-spark-1.3",
+      name: "Muse Spark 1.3",
+      supportsReasoning: true,
+      targetFormat: "openai-responses",
+      contextLength: 1048576,
+      maxOutputTokens: 131072,
+    },
+    {
+      id: "muse-spark-1.3-contributor-free",
+      name: "Muse Spark 1.3 Contributor Free",
+      supportsReasoning: true,
+      targetFormat: "openai-responses",
+      contextLength: 1048576,
+      maxOutputTokens: 131072,
     },
 
     // ── DeepSeek ────────────────────────────────────────────────

@@ -9,8 +9,8 @@ import ProviderIcon from "@/shared/components/ProviderIcon";
 
 const CLOUD_URL = process.env.NEXT_PUBLIC_CLOUD_URL;
 
-// (#618) Match any custom:OmniRoute-<i> entry (multi-model).
-const isOmniRouteEntry = (m) => typeof m?.id === "string" && m.id.startsWith("custom:OmniRoute");
+// (#618) Match any custom:AgentProxy-<i> entry (multi-model).
+const isAgentProxyEntry = (m) => typeof m?.id === "string" && m.id.startsWith("custom:AgentProxy");
 
 export default function DroidToolCard({
   tool,
@@ -50,7 +50,7 @@ export default function DroidToolCard({
 
   const getConfigStatus = () => {
     if (!cliReady) return null;
-    const currentConfig = droidStatus.settings?.customModels?.find(isOmniRouteEntry);
+    const currentConfig = droidStatus.settings?.customModels?.find(isAgentProxyEntry);
     if (!currentConfig) return "not_configured";
     const localMatch =
       currentConfig.baseUrl?.includes("localhost") || currentConfig.baseUrl?.includes("127.0.0.1");
@@ -102,10 +102,10 @@ export default function DroidToolCard({
       // setState runs synchronously inside an effect body).
       if (data?.installed && !hasInitializedModel.current) {
         hasInitializedModel.current = true;
-        // (#618) Pre-fill the multi-model list from every custom:OmniRoute-<i>
+        // (#618) Pre-fill the multi-model list from every custom:AgentProxy-<i>
         // entry, preserving the original index order.
         const existing = (data.settings?.customModels || [])
-          .filter(isOmniRouteEntry)
+          .filter(isAgentProxyEntry)
           .slice()
           .sort((a, b) => (a.index || 0) - (b.index || 0));
         if (existing.length > 0) {
@@ -172,7 +172,7 @@ export default function DroidToolCard({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           baseUrl: getEffectiveBaseUrl(),
-          apiKey: !cloudEnabled ? "sk_omniroute" : null,
+          apiKey: !cloudEnabled ? "sk_agentproxy" : null,
           keyId: selectedKeyId,
           // (#618) Send both `model` (legacy, first entry) and `models` (array).
           // Backend prefers `models` when present; `model` keeps Zod happy
@@ -270,7 +270,7 @@ export default function DroidToolCard({
     // (#523) Look up the key object by id to get the masked display value.
     const selectedKeyObj = apiKeys?.find((k) => k.id === effectiveApiKeyId);
     const keyToDisplay =
-      selectedKeyObj?.key || (!cloudEnabled ? "sk_omniroute" : "<API_KEY_FROM_DASHBOARD>");
+      selectedKeyObj?.key || (!cloudEnabled ? "sk_agentproxy" : "<API_KEY_FROM_DASHBOARD>");
 
     // (#618) Render one entry per requested model; fall back to a placeholder
     // when the list is empty so manual-config preview still shows the shape.
@@ -278,7 +278,7 @@ export default function DroidToolCard({
     const settingsContent = {
       customModels: modelsForPreview.map((m, i) => ({
         model: m,
-        id: `custom:OmniRoute-${i}`,
+        id: `custom:AgentProxy-${i}`,
         index: i,
         baseUrl: getEffectiveBaseUrl(),
         apiKey: keyToDisplay,
@@ -363,8 +363,8 @@ export default function DroidToolCard({
           {!checkingDroid && cliReady && (
             <>
               <div className="flex flex-col gap-2">
-                {/* Current Base URL — first OmniRoute entry, any index (#618) */}
-                {droidStatus?.settings?.customModels?.find(isOmniRouteEntry)?.baseUrl && (
+                {/* Current Base URL — first AgentProxy entry, any index (#618) */}
+                {droidStatus?.settings?.customModels?.find(isAgentProxyEntry)?.baseUrl && (
                   <div className="flex items-center gap-2">
                     <span className="w-32 shrink-0 text-sm font-semibold text-text-main text-right">
                       {t("current")}
@@ -373,7 +373,7 @@ export default function DroidToolCard({
                       arrow_forward
                     </span>
                     <span className="flex-1 px-2 py-1.5 text-xs text-text-muted truncate">
-                      {droidStatus.settings.customModels.find(isOmniRouteEntry).baseUrl}
+                      {droidStatus.settings.customModels.find(isAgentProxyEntry).baseUrl}
                     </span>
                   </div>
                 )}
@@ -426,7 +426,7 @@ export default function DroidToolCard({
                     </select>
                   ) : (
                     <span className="flex-1 text-xs text-text-muted px-2 py-1.5">
-                      {cloudEnabled ? t("noApiKeysCreateOne") : t("defaultOmnirouteKey")}
+                      {cloudEnabled ? t("noApiKeysCreateOne") : t("defaultAgentProxyKey")}
                     </span>
                   )}
                 </div>
@@ -522,7 +522,7 @@ export default function DroidToolCard({
                   variant="outline"
                   size="sm"
                   onClick={handleResetSettings}
-                  disabled={!droidStatus?.hasOmniRoute}
+                  disabled={!droidStatus?.hasAgentProxy}
                   loading={restoring}
                 >
                   <span className="material-symbols-outlined text-[14px] mr-1">restore</span>

@@ -7,17 +7,17 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
-const BIN = path.join(ROOT, "bin", "omniroute.mjs");
+const BIN = path.join(ROOT, "bin", "agentproxy.mjs");
 
 function layout() {
-  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-cli-env-collision-"));
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-cli-env-collision-"));
   const home = path.join(tmp, "home");
   const dataDir = path.join(tmp, "data");
   const cwd = path.join(tmp, "cwd");
   const appDataDir =
     process.platform === "win32"
-      ? path.join(tmp, "appdata", "omniroute")
-      : path.join(home, ".omniroute");
+      ? path.join(tmp, "appdata", "agentproxy")
+      : path.join(home, ".agentproxy");
   fs.mkdirSync(dataDir, { recursive: true });
   fs.mkdirSync(appDataDir, { recursive: true });
   fs.mkdirSync(cwd, { recursive: true });
@@ -29,7 +29,7 @@ function runCli(
   extraEnv: Record<string, string> = {}
 ) {
   const cleanEnv = { ...process.env };
-  for (const key of ["OMNIROUTE_BASE_URL", "PORT", "STORAGE_ENCRYPTION_KEY"]) {
+  for (const key of ["AGENTPROXY_BASE_URL", "PORT", "STORAGE_ENCRYPTION_KEY"]) {
     delete cleanEnv[key];
   }
   return spawnSync("node", [BIN, "env", "show", "--json"], {
@@ -41,8 +41,8 @@ function runCli(
       USERPROFILE: home,
       APPDATA: path.join(tmp, "appdata"),
       CI: "1",
-      OMNIROUTE_CLI_SKIP_REPO_ENV: "1",
-      OMNIROUTE_NO_UPDATE_NOTIFIER: "1",
+      AGENTPROXY_CLI_SKIP_REPO_ENV: "1",
+      AGENTPROXY_NO_UPDATE_NOTIFIER: "1",
       ...extraEnv,
     },
     encoding: "utf-8",
@@ -55,13 +55,13 @@ test("a key masked by an earlier .env is named, with both files and without its 
   try {
     fs.writeFileSync(
       path.join(dirs.dataDir, ".env"),
-      "OMNIROUTE_BASE_URL=https://data.example/v1\n"
+      "AGENTPROXY_BASE_URL=https://data.example/v1\n"
     );
-    fs.writeFileSync(path.join(dirs.cwd, ".env"), "OMNIROUTE_BASE_URL=https://cwd.example/v1\n");
+    fs.writeFileSync(path.join(dirs.cwd, ".env"), "AGENTPROXY_BASE_URL=https://cwd.example/v1\n");
 
     const stderr = runCli(dirs).stderr ?? "";
 
-    assert.match(stderr, /OMNIROUTE_BASE_URL/);
+    assert.match(stderr, /AGENTPROXY_BASE_URL/);
     assert.ok(stderr.includes(path.join(dirs.cwd, ".env")), `ignored file named: ${stderr}`);
     assert.ok(stderr.includes(path.join(dirs.dataDir, ".env")), `winning file named: ${stderr}`);
     assert.ok(!stderr.includes("cwd.example"), "the ignored value must never be printed");
@@ -76,12 +76,12 @@ test("a key each file declares once says nothing", () => {
   try {
     fs.writeFileSync(
       path.join(dirs.dataDir, ".env"),
-      "OMNIROUTE_BASE_URL=https://data.example/v1\n"
+      "AGENTPROXY_BASE_URL=https://data.example/v1\n"
     );
     fs.writeFileSync(path.join(dirs.cwd, ".env"), "PORT=34567\n");
 
     const stderr = runCli(dirs).stderr ?? "";
-    assert.ok(!/OMNIROUTE_BASE_URL|PORT/.test(stderr), `nothing to report: ${stderr}`);
+    assert.ok(!/AGENTPROXY_BASE_URL|PORT/.test(stderr), `nothing to report: ${stderr}`);
   } finally {
     fs.rmSync(dirs.tmp, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
   }
@@ -92,12 +92,12 @@ test("a key the environment already set is reported too — that is #6194", () =
   try {
     fs.writeFileSync(
       path.join(dirs.dataDir, ".env"),
-      "OMNIROUTE_BASE_URL=https://data.example/v1\n"
+      "AGENTPROXY_BASE_URL=https://data.example/v1\n"
     );
 
-    const stderr = runCli(dirs, { OMNIROUTE_BASE_URL: "https://shell.example/v1" }).stderr ?? "";
+    const stderr = runCli(dirs, { AGENTPROXY_BASE_URL: "https://shell.example/v1" }).stderr ?? "";
 
-    assert.match(stderr, /OMNIROUTE_BASE_URL/);
+    assert.match(stderr, /AGENTPROXY_BASE_URL/);
     assert.ok(stderr.includes(path.join(dirs.dataDir, ".env")), `inert file named: ${stderr}`);
     assert.match(stderr, /environment/);
     assert.ok(!stderr.includes("shell.example"), "the winning value must never be printed");
@@ -115,7 +115,7 @@ test("an unreadable .env is reported instead of being swallowed", () => {
     fs.mkdirSync(path.join(dirs.cwd, ".env"), { recursive: true });
     fs.writeFileSync(
       path.join(dirs.dataDir, ".env"),
-      "OMNIROUTE_BASE_URL=https://data.example/v1\n"
+      "AGENTPROXY_BASE_URL=https://data.example/v1\n"
     );
 
     const result = runCli(dirs);

@@ -10,7 +10,7 @@ import assert from "node:assert/strict";
 const { extractEndpoints, extractPaths } = await import("../../bin/cli/commands/openapi.mjs");
 
 const CATALOG_SHAPE = {
-  info: { title: "OmniRoute API", version: "3.8.50" },
+  info: { title: "AgentProxy API", version: "3.8.50" },
   servers: [{ url: "http://localhost:20128" }],
   tags: ["Playground"],
   endpoints: [
@@ -28,7 +28,7 @@ const CATALOG_SHAPE = {
 
 const SPEC_SHAPE = {
   openapi: "3.1.0",
-  info: { title: "OmniRoute API", version: "3.8.50" },
+  info: { title: "AgentProxy API", version: "3.8.50" },
   paths: {
     "/api/providers": {
       // Path Item fields that sit alongside operations must not be treated as one.

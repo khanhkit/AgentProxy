@@ -12,12 +12,12 @@ const {
 
 test("5dive target resolves the Anthropic surface ROOT (5dive appends nothing)", () => {
   assert.equal(
-    resolveFivediveTarget({ remote: "https://omniroute.example.test/v1" }).baseUrl,
-    "https://omniroute.example.test"
+    resolveFivediveTarget({ remote: "https://agentproxy.example.test/v1" }).baseUrl,
+    "https://agentproxy.example.test"
   );
   assert.equal(
-    resolveFivediveTarget({ remote: "https://omniroute.example.test/" }).baseUrl,
-    "https://omniroute.example.test"
+    resolveFivediveTarget({ remote: "https://agentproxy.example.test/" }).baseUrl,
+    "https://agentproxy.example.test"
   );
 });
 
@@ -46,7 +46,7 @@ test("5dive target takes the API key from flags before the environment", () => {
 });
 
 test("base URL check mirrors 5dive: https anywhere, http only on loopback", () => {
-  assert.equal(validateFivediveBaseUrl("https://omniroute.example.test").ok, true);
+  assert.equal(validateFivediveBaseUrl("https://agentproxy.example.test").ok, true);
   assert.equal(validateFivediveBaseUrl("http://127.0.0.1:20128").ok, true);
   assert.equal(validateFivediveBaseUrl("http://localhost:20128").ok, true);
   assert.equal(validateFivediveBaseUrl("http://[::1]:20128").ok, true);
@@ -56,14 +56,14 @@ test("base URL check mirrors 5dive: https anywhere, http only on loopback", () =
   // A private LAN is still off-box: the refusal has to say why, not just "no".
   assert.match(lan.reason, /plaintext/);
 
-  assert.equal(validateFivediveBaseUrl("ftp://omniroute.example.test").ok, false);
+  assert.equal(validateFivediveBaseUrl("ftp://agentproxy.example.test").ok, false);
   assert.equal(validateFivediveBaseUrl("").ok, false);
 });
 
 test("auth argv carries all four value flags and never the key itself", () => {
   const args = buildFivediveAuthArgs({
-    baseUrl: "https://omniroute.example.test",
-    profile: "omniroute",
+    baseUrl: "https://agentproxy.example.test",
+    profile: "agentproxy",
     model: "failover-demo",
   });
   assert.deepEqual(args, [
@@ -72,9 +72,9 @@ test("auth argv carries all four value flags and never the key itself", () => {
     "set",
     "claude",
     "--provider=openai",
-    "--base-url=https://omniroute.example.test",
+    "--base-url=https://agentproxy.example.test",
     "--api-key=-",
-    "--auth-profile=omniroute",
+    "--auth-profile=agentproxy",
     "--model=failover-demo",
   ]);
   // `--api-key=-` is the stdin sentinel: the secret must not be reachable in `ps`.
@@ -83,7 +83,7 @@ test("auth argv carries all four value flags and never the key itself", () => {
 
 test("auth argv honours a non-default BYO provider id", () => {
   const args = buildFivediveAuthArgs({
-    baseUrl: "https://omniroute.example.test",
+    baseUrl: "https://agentproxy.example.test",
     profile: "p",
     model: "m",
     provider: "zai",

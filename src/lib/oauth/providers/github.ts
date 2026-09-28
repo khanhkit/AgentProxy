@@ -1,4 +1,4 @@
-import { getGitHubCopilotChatUserAgent } from "@omniroute/open-sse/config/providerHeaderProfiles.ts";
+import { getGitHubCopilotChatUserAgent } from "@agentproxy/open-sse/config/providerHeaderProfiles.ts";
 import { GITHUB_CONFIG } from "../constants/oauth";
 
 export const github = {
@@ -38,11 +38,11 @@ export const github = {
       }),
     });
 
+    const text = await response.text();
     let data;
     try {
-      data = await response.json();
-    } catch (e) {
-      const text = await response.text();
+      data = JSON.parse(text);
+    } catch {
       data = { error: "invalid_response", error_description: text };
     }
 

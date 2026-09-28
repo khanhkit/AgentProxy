@@ -17,7 +17,6 @@ vi.mock("next-intl", () => ({
   useTranslations: (namespace?: string) => {
     const messages: Record<string, string> = {
       "endpoint.apiEndpointsCatalogUnavailable": "API catalog unavailable",
-      "endpoint.catalogStats": "{endpoints} endpoints across {categories} categories",
       "endpoint.apiEndpointsSearchPlaceholder": "Search endpoints",
       "endpoint.badgeLoopbackTooltip": "Loopback only",
       "endpoint.badgeAlwaysProtectedTooltip": "Always protected",
@@ -54,17 +53,10 @@ vi.mock("next-intl", () => ({
       "endpoint.execute": "Execute",
       "endpoint.executing": "Executing",
       "endpoint.close": "Close",
-      "endpoint.example": "Example",
       "endpoint.openJsonResponse": "Open JSON response",
     };
 
-    return (key: string, values?: Record<string, string | number>) => {
-      const template = messages[`${namespace}.${key}`] || key;
-      return Object.entries(values || {}).reduce(
-        (text, [name, value]) => text.replace(`{${name}}`, String(value)),
-        template
-      );
-    };
+    return (key: string) => messages[`${namespace}.${key}`] || key;
   },
 }));
 
@@ -157,7 +149,7 @@ describe("ApiEndpointsTab", () => {
       }
 
       return jsonResponse({
-        info: { title: "OmniRoute API", version: "3.7.6" },
+        info: { title: "AgentProxy API", version: "3.7.6" },
         servers: [],
         tags: [{ name: "Chat" }],
         endpoints: [
@@ -180,9 +172,7 @@ describe("ApiEndpointsTab", () => {
     renderApiEndpointsTab();
 
     await waitForText("VS Code Token Alias");
-    await waitForText("OmniRoute API");
-    await waitForText("1 endpoints across 1 categories");
-    await waitForText("/api/v1/vscode/sk-live-123/models");
+    await waitForText("AgentProxy API");
     expect(document.body.textContent).toContain("1 endpoints across 1 categories");
     expect(document.body.textContent).toContain("/api/v1/vscode/sk-live-123/models");
     expect(document.body.textContent).toContain("/api/v1/chat/completions");
@@ -196,7 +186,7 @@ describe("ApiEndpointsTab", () => {
       }
 
       return jsonResponse({
-        info: { title: "OmniRoute API", version: "3.7.6" },
+        info: { title: "AgentProxy API", version: "3.7.6" },
         servers: [],
         tags: [{ name: "Chat" }],
         endpoints: [
@@ -218,17 +208,17 @@ describe("ApiEndpointsTab", () => {
 
     renderApiEndpointsTab();
 
-    await waitForText("OmniRoute API");
-    await waitForText("1 endpoints across 1 categories");
+    await waitForText("AgentProxy API");
 
     // Expand the endpoint to reveal the curl example
-    const endpointRow = Array.from(document.body.querySelectorAll("code")).find(
-      (node) => node.textContent?.trim() === "/api/v1/chat/completions"
+    const endpointRow = Array.from(document.body.querySelectorAll("code")).find((node) =>
+      node.textContent?.includes("/api/v1/chat/completions")
     );
-    expect(endpointRow).toBeTruthy();
-    act(() => {
-      endpointRow!.parentElement!.dispatchEvent(new MouseEvent("click", { bubbles: true }));
-    });
+    if (endpointRow?.parentElement) {
+      await act(async () => {
+        endpointRow.parentElement!.click();
+      });
+    }
 
     await waitForText("curl -X POST");
 

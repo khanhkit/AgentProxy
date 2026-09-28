@@ -1,5 +1,5 @@
 /**
- * Shared Node.js runtime support policy for OmniRoute.
+ * Shared Node.js runtime support policy for AgentProxy.
  *
  * This module is intentionally plain ESM JavaScript so it can be reused by:
  * - runtime CLI entrypoints under bin/
@@ -14,7 +14,7 @@ export const SECURE_NODE_LINES = Object.freeze([
   Object.freeze({ major: 26, minor: 0, patch: 0 }),
 ]);
 
-export const RECOMMENDED_NODE_VERSION = "24.14.1";
+export const RECOMMENDED_NODE_VERSION = "24.15.0";
 export const SUPPORTED_NODE_RANGE = ">=22.22.2 <23 || >=24.0.0 <27";
 export const SUPPORTED_NODE_DISPLAY =
   "Node.js 22.22.2+ (22.x LTS), 24.0.0+ (24.x LTS), 25.0.0+ (25.x), or 26.0.0+ (26.x)";
@@ -117,8 +117,8 @@ export function getNodeRuntimeWarning(version: string = process.versions.node): 
   }
 
   if (support.reason === "unreleased-major") {
-    return `Node.js ${support.nodeVersion} is outside the supported LTS lines. OmniRoute currently supports Node.js 22.x, 24.x, 25.x, and 26.x.`;
+    return `Node.js ${support.nodeVersion} is outside the supported LTS lines. AgentProxy currently supports Node.js 22.x, 24.x, 25.x, and 26.x.`;
   }
 
-  return `Node.js ${support.nodeVersion} is outside OmniRoute's approved secure runtime policy.`;
+  return `Node.js ${support.nodeVersion} is outside AgentProxy's approved secure runtime policy.`;
 }

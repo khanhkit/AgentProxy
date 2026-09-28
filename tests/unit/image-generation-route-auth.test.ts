@@ -11,7 +11,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-image-route-auth-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-image-route-auth-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.API_KEY_SECRET = process.env.API_KEY_SECRET || "image-route-test-api-key-secret";
 
@@ -102,9 +102,9 @@ test("v1 image generation POST requires an API key when REQUIRE_API_KEY is enabl
 });
 
 test("v1 image generation POST rejects an invalid presented API key", async () => {
-  const originalOmniRouteApiKey = process.env.OMNIROUTE_API_KEY;
+  const originalAgentProxyApiKey = process.env.AGENTPROXY_API_KEY;
   const originalRequireApiKey = process.env.REQUIRE_API_KEY;
-  process.env.OMNIROUTE_API_KEY = "valid-image-route-key";
+  process.env.AGENTPROXY_API_KEY = "valid-image-route-key";
   process.env.REQUIRE_API_KEY = "true";
 
   try {
@@ -125,10 +125,10 @@ test("v1 image generation POST rejects an invalid presented API key", async () =
     assert.equal(response.status, 401);
     assert.match(await readErrorMessage(response), /Invalid API key/);
   } finally {
-    if (originalOmniRouteApiKey === undefined) {
-      delete process.env.OMNIROUTE_API_KEY;
+    if (originalAgentProxyApiKey === undefined) {
+      delete process.env.AGENTPROXY_API_KEY;
     } else {
-      process.env.OMNIROUTE_API_KEY = originalOmniRouteApiKey;
+      process.env.AGENTPROXY_API_KEY = originalAgentProxyApiKey;
     }
     if (originalRequireApiKey === undefined) {
       delete process.env.REQUIRE_API_KEY;
@@ -142,9 +142,9 @@ test("v1 image generation POST rejects an invalid presented API key", async () =
 // anonymous exactly like clientApiPolicy does — the route guard must not be
 // stricter than the middleware that already fronts it.
 test("v1 image generation POST ignores an invalid presented key while REQUIRE_API_KEY is off", async () => {
-  const originalOmniRouteApiKey = process.env.OMNIROUTE_API_KEY;
+  const originalAgentProxyApiKey = process.env.AGENTPROXY_API_KEY;
   const originalRequireApiKey = process.env.REQUIRE_API_KEY;
-  process.env.OMNIROUTE_API_KEY = "valid-image-route-key";
+  process.env.AGENTPROXY_API_KEY = "valid-image-route-key";
   process.env.REQUIRE_API_KEY = "false";
 
   globalThis.fetch = async (url) => {
@@ -172,10 +172,10 @@ test("v1 image generation POST ignores an invalid presented key while REQUIRE_AP
 
     assert.equal(response.status, 200);
   } finally {
-    if (originalOmniRouteApiKey === undefined) {
-      delete process.env.OMNIROUTE_API_KEY;
+    if (originalAgentProxyApiKey === undefined) {
+      delete process.env.AGENTPROXY_API_KEY;
     } else {
-      process.env.OMNIROUTE_API_KEY = originalOmniRouteApiKey;
+      process.env.AGENTPROXY_API_KEY = originalAgentProxyApiKey;
     }
     if (originalRequireApiKey === undefined) {
       delete process.env.REQUIRE_API_KEY;

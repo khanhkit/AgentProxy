@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { OMNIROUTE_WEB_SEARCH_FALLBACK_TOOL_NAME } from "../../open-sse/services/webSearchFallback.ts";
+import { AGENTPROXY_WEB_SEARCH_FALLBACK_TOOL_NAME } from "../../open-sse/services/webSearchFallback.ts";
 import { decodeSkillToolName, encodeSkillToolName } from "../../src/lib/skills/injection.ts";
 
 import { createChatPipelineHarness } from "./_chatPipelineHarness.ts";
@@ -802,15 +802,18 @@ test("web_search fallback converts built-in tools for unsupported providers and 
     const urlStr = String(url);
     const body = init.body ? JSON.parse(String(init.body)) : null;
 
-    if (urlStr.includes("google.serper.dev/search")) {
+    if (
+      new URL(urlStr).hostname === "google.serper.dev" &&
+      new URL(urlStr).pathname === "/search"
+    ) {
       searchCalls.push({ url: urlStr, init, body });
       return new Response(
         JSON.stringify({
           organic: [
             {
-              title: "OmniRoute Search Result",
-              link: "https://example.com/omniroute",
-              snippet: "Fresh OmniRoute web search fallback result",
+              title: "AgentProxy Search Result",
+              link: "https://example.com/agentproxy",
+              snippet: "Fresh AgentProxy web search fallback result",
             },
           ],
         }),
@@ -820,10 +823,10 @@ test("web_search fallback converts built-in tools for unsupported providers and 
 
     upstreamBodies.push(body);
     return buildOpenAIToolCallResponse({
-      toolName: OMNIROUTE_WEB_SEARCH_FALLBACK_TOOL_NAME,
+      toolName: AGENTPROXY_WEB_SEARCH_FALLBACK_TOOL_NAME,
       toolCallId: "call_web_search",
       argumentsObject: {
-        query: "latest omniroute release notes",
+        query: "latest agentproxy release notes",
         max_results: 3,
       },
     });
@@ -836,7 +839,7 @@ test("web_search fallback converts built-in tools for unsupported providers and 
         model: "openai/gpt-4o-mini",
         stream: false,
         messages: [
-          { role: "user", content: "Search the web for the latest OmniRoute release notes" },
+          { role: "user", content: "Search the web for the latest AgentProxy release notes" },
         ],
         tools: [{ type: "web_search", search_context_size: "medium" }],
       },
@@ -847,14 +850,14 @@ test("web_search fallback converts built-in tools for unsupported providers and 
   assert.equal(response.status, 200);
   assert.equal(upstreamBodies.length, 1);
   assert.equal(upstreamBodies[0].tools[0].type, "function");
-  assert.equal(upstreamBodies[0].tools[0].function.name, OMNIROUTE_WEB_SEARCH_FALLBACK_TOOL_NAME);
+  assert.equal(upstreamBodies[0].tools[0].function.name, AGENTPROXY_WEB_SEARCH_FALLBACK_TOOL_NAME);
   assert.equal(searchCalls.length, 1);
   assert.equal(json.choices[0].finish_reason, "tool_calls");
   assert.equal(json.tool_results[0].tool_call_id, "call_web_search");
   const output = JSON.parse(json.tool_results[0].output);
   assert.equal(output.success, true);
   assert.equal(output.provider, "serper-search");
-  assert.equal(output.results[0].title, "OmniRoute Search Result");
+  assert.equal(output.results[0].title, "AgentProxy Search Result");
 });
 
 test("web_search fallback preserves Responses API output by appending function_call_output", async () => {
@@ -864,7 +867,10 @@ test("web_search fallback preserves Responses API output by appending function_c
 
   globalThis.fetch = async (url, _init = {}) => {
     const urlStr = String(url);
-    if (urlStr.includes("google.serper.dev/search")) {
+    if (
+      new URL(urlStr).hostname === "google.serper.dev" &&
+      new URL(urlStr).pathname === "/search"
+    ) {
       return new Response(
         JSON.stringify({
           organic: [
@@ -880,10 +886,10 @@ test("web_search fallback preserves Responses API output by appending function_c
     }
 
     return buildOpenAIToolCallResponse({
-      toolName: OMNIROUTE_WEB_SEARCH_FALLBACK_TOOL_NAME,
+      toolName: AGENTPROXY_WEB_SEARCH_FALLBACK_TOOL_NAME,
       toolCallId: "call_responses_web_search",
       argumentsObject: {
-        query: "latest omniroute roadmap",
+        query: "latest agentproxy roadmap",
         // Auto-selection prefers $0 free providers (duckduckgo-free); pin the
         // seeded serper-search connection so the mock stays deterministic.
         provider: "serper-search",
@@ -903,7 +909,7 @@ test("web_search fallback preserves Responses API output by appending function_c
             type: "message",
             role: "user",
             content: [
-              { type: "input_text", text: "Search the web for the latest OmniRoute roadmap" },
+              { type: "input_text", text: "Search the web for the latest AgentProxy roadmap" },
             ],
           },
         ],
@@ -918,7 +924,7 @@ test("web_search fallback preserves Responses API output by appending function_c
   assert.equal(response.status, 200);
   assert.ok(functionCall, "should include the original function_call item");
   assert.ok(functionCallOutput, "should append function_call_output");
-  assert.equal(functionCall.name, OMNIROUTE_WEB_SEARCH_FALLBACK_TOOL_NAME);
+  assert.equal(functionCall.name, AGENTPROXY_WEB_SEARCH_FALLBACK_TOOL_NAME);
   assert.equal(functionCallOutput.call_id, "call_responses_web_search");
   const output =
     typeof functionCallOutput.output === "string"
@@ -935,7 +941,10 @@ test("web_search fallback emits a native web_search_call output item with source
 
   globalThis.fetch = async (url, _init = {}) => {
     const urlStr = String(url);
-    if (urlStr.includes("google.serper.dev/search")) {
+    if (
+      new URL(urlStr).hostname === "google.serper.dev" &&
+      new URL(urlStr).pathname === "/search"
+    ) {
       return new Response(
         JSON.stringify({
           organic: [
@@ -951,10 +960,10 @@ test("web_search fallback emits a native web_search_call output item with source
     }
 
     return buildOpenAIToolCallResponse({
-      toolName: OMNIROUTE_WEB_SEARCH_FALLBACK_TOOL_NAME,
+      toolName: AGENTPROXY_WEB_SEARCH_FALLBACK_TOOL_NAME,
       toolCallId: "call_responses_web_search_call",
       argumentsObject: {
-        query: "latest omniroute release",
+        query: "latest agentproxy release",
         // Pin the seeded serper-search connection so the mock stays deterministic.
         provider: "serper-search",
       },
@@ -973,7 +982,7 @@ test("web_search fallback emits a native web_search_call output item with source
             type: "message",
             role: "user",
             content: [
-              { type: "input_text", text: "Search the web for the latest OmniRoute release" },
+              { type: "input_text", text: "Search the web for the latest AgentProxy release" },
             ],
           },
         ],
@@ -993,7 +1002,7 @@ test("web_search fallback emits a native web_search_call output item with source
   assert.ok(webSearchCall, "should append a native web_search_call output item");
   assert.equal(webSearchCall.status, "completed");
   assert.equal(webSearchAction?.type, "web_search");
-  assert.equal(webSearchAction?.query, "latest omniroute release");
+  assert.equal(webSearchAction?.query, "latest agentproxy release");
   assert.ok(Array.isArray(webSearchAction?.sources), "sources should be an array");
   assert.equal(webSearchAction?.sources?.[0]?.title, "Web Search Call Result");
   assert.equal(webSearchAction?.sources?.[0]?.url, "https://example.com/web-search-call");
@@ -1014,7 +1023,10 @@ test("web_search fallback executes stream:true responses requests non-streaming 
   globalThis.fetch = async (url, init = {}) => {
     const urlStr = String(url);
     const body = init.body ? JSON.parse(String(init.body)) : null;
-    if (urlStr.includes("google.serper.dev/search")) {
+    if (
+      new URL(urlStr).hostname === "google.serper.dev" &&
+      new URL(urlStr).pathname === "/search"
+    ) {
       return new Response(
         JSON.stringify({
           organic: [
@@ -1030,7 +1042,7 @@ test("web_search fallback executes stream:true responses requests non-streaming 
     }
     upstreamBodies.push(body);
     return buildOpenAIToolCallResponse({
-      toolName: OMNIROUTE_WEB_SEARCH_FALLBACK_TOOL_NAME,
+      toolName: AGENTPROXY_WEB_SEARCH_FALLBACK_TOOL_NAME,
       toolCallId: "call_responses_stream_search",
       argumentsObject: {
         query: "streaming fallback probe",
@@ -1087,7 +1099,10 @@ test("web_search fallback auto-selects a configured paid provider over duckduckg
 
   globalThis.fetch = async (url, _init = {}) => {
     const urlStr = String(url);
-    if (urlStr.includes("google.serper.dev/search")) {
+    if (
+      new URL(urlStr).hostname === "google.serper.dev" &&
+      new URL(urlStr).pathname === "/search"
+    ) {
       return new Response(
         JSON.stringify({
           organic: [
@@ -1101,7 +1116,7 @@ test("web_search fallback auto-selects a configured paid provider over duckduckg
         { status: 200, headers: { "Content-Type": "application/json" } }
       );
     }
-    if (urlStr.includes("lite.duckduckgo.com")) {
+    if (new URL(urlStr).hostname === "lite.duckduckgo.com") {
       // Return empty HTML success -- without the fix this is what gets selected
       // and no failover to the paid provider occurs.
       return new Response("<html></html>", {
@@ -1110,7 +1125,7 @@ test("web_search fallback auto-selects a configured paid provider over duckduckg
       });
     }
     return buildOpenAIToolCallResponse({
-      toolName: OMNIROUTE_WEB_SEARCH_FALLBACK_TOOL_NAME,
+      toolName: AGENTPROXY_WEB_SEARCH_FALLBACK_TOOL_NAME,
       toolCallId: "call_responses_auto_search",
       argumentsObject: {
         query: "paid provider auto-select test",
@@ -1130,7 +1145,7 @@ test("web_search fallback auto-selects a configured paid provider over duckduckg
             type: "message",
             role: "user",
             content: [
-              { type: "input_text", text: "Search the web for the latest OmniRoute roadmap" },
+              { type: "input_text", text: "Search the web for the latest AgentProxy roadmap" },
             ],
           },
         ],
@@ -1149,7 +1164,7 @@ test("web_search fallback auto-selects a configured paid provider over duckduckg
   assert.equal(response.status, 200);
   assert.ok(functionCall, "should include the original function_call item");
   assert.ok(functionCallOutput, "should append function_call_output");
-  assert.equal(functionCall.name, OMNIROUTE_WEB_SEARCH_FALLBACK_TOOL_NAME);
+  assert.equal(functionCall.name, AGENTPROXY_WEB_SEARCH_FALLBACK_TOOL_NAME);
   assert.equal(functionCallOutput.call_id, "call_responses_auto_search");
   assert.equal(output.provider, "serper-search");
   assert.equal(output.results[0].title, "Paid Provider Result");

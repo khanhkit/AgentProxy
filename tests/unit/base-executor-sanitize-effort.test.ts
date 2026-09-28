@@ -677,7 +677,7 @@ test("sanitizeReasoningEffortForProvider: NVIDIA GLM-5.2 mapping is narrowly sco
 
 // ── Native DeepSeek (api.deepseek.com) ───────────────────────────────────────
 // DeepSeek V4 thinking mode accepts reasoning_effort as {low, high, max}.
-// The internal OmniRoute scale maps medium → high and xhigh → max so the client's
+// The internal AgentProxy scale maps medium → high and xhigh → max so the client's
 // requested effort is honored instead of silently dropped to the default.
 
 test("sanitizeReasoningEffortForProvider: native deepseek maps xhigh → max", () => {

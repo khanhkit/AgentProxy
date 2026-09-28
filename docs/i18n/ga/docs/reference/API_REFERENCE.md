@@ -15,7 +15,7 @@ lastUpdated: 2026-08-31
 
 🌐 **Languages:** 🇺🇸 [English](../../../../reference/API_REFERENCE.md) · 🇸🇦 [ar](../../../ar/docs/reference/API_REFERENCE.md) · 🇦🇿 [az](../../../az/docs/reference/API_REFERENCE.md) · 🇧🇬 [bg](../../../bg/docs/reference/API_REFERENCE.md) · 🇧🇩 [bn](../../../bn/docs/reference/API_REFERENCE.md) · 🇨🇿 [cs](../../../cs/docs/reference/API_REFERENCE.md) · 🇩🇰 [da](../../../da/docs/reference/API_REFERENCE.md) · 🇩🇪 [de](../../../de/docs/reference/API_REFERENCE.md) · 🇬🇷 [el](../../../el/docs/reference/API_REFERENCE.md) · 🇪🇸 [es](../../../es/docs/reference/API_REFERENCE.md) · 🇪🇪 [et](../../../et/docs/reference/API_REFERENCE.md) · 🇮🇷 [fa](../../../fa/docs/reference/API_REFERENCE.md) · 🇫🇮 [fi](../../../fi/docs/reference/API_REFERENCE.md) · 🇫🇷 [fr](../../../fr/docs/reference/API_REFERENCE.md) · 🇮🇳 [gu](../../../gu/docs/reference/API_REFERENCE.md) · 🇮🇱 [he](../../../he/docs/reference/API_REFERENCE.md) · 🇮🇳 [hi](../../../hi/docs/reference/API_REFERENCE.md) · 🇭🇷 [hr](../../../hr/docs/reference/API_REFERENCE.md) · 🇭🇺 [hu](../../../hu/docs/reference/API_REFERENCE.md) · 🇮🇩 [id](../../../id/docs/reference/API_REFERENCE.md) · 🇮🇹 [it](../../../it/docs/reference/API_REFERENCE.md) · 🇯🇵 [ja](../../../ja/docs/reference/API_REFERENCE.md) · 🇰🇷 [ko](../../../ko/docs/reference/API_REFERENCE.md) · 🇱🇹 [lt](../../../lt/docs/reference/API_REFERENCE.md) · 🇱🇻 [lv](../../../lv/docs/reference/API_REFERENCE.md) · 🇮🇳 [mr](../../../mr/docs/reference/API_REFERENCE.md) · 🇲🇾 [ms](../../../ms/docs/reference/API_REFERENCE.md) · 🇲🇹 [mt](../../../mt/docs/reference/API_REFERENCE.md) · 🇳🇱 [nl](../../../nl/docs/reference/API_REFERENCE.md) · 🇳🇴 [no](../../../no/docs/reference/API_REFERENCE.md) · 🇵🇭 [phi](../../../phi/docs/reference/API_REFERENCE.md) · 🇵🇱 [pl](../../../pl/docs/reference/API_REFERENCE.md) · 🇵🇹 [pt](../../../pt/docs/reference/API_REFERENCE.md) · 🇧🇷 [pt-BR](../../../pt-BR/docs/reference/API_REFERENCE.md) · 🇷🇴 [ro](../../../ro/docs/reference/API_REFERENCE.md) · 🇷🇺 [ru](../../../ru/docs/reference/API_REFERENCE.md) · 🇸🇰 [sk](../../../sk/docs/reference/API_REFERENCE.md) · 🇸🇮 [sl](../../../sl/docs/reference/API_REFERENCE.md) · 🇷🇸 [sr](../../../sr/docs/reference/API_REFERENCE.md) · 🇸🇪 [sv](../../../sv/docs/reference/API_REFERENCE.md) · 🇰🇪 [sw](../../../sw/docs/reference/API_REFERENCE.md) · 🇮🇳 [ta](../../../ta/docs/reference/API_REFERENCE.md) · 🇮🇳 [te](../../../te/docs/reference/API_REFERENCE.md) · 🇹🇭 [th](../../../th/docs/reference/API_REFERENCE.md) · 🇹🇷 [tr](../../../tr/docs/reference/API_REFERENCE.md) · 🇺🇦 [uk-UA](../../../uk-UA/docs/reference/API_REFERENCE.md) · 🇵🇰 [ur](../../../ur/docs/reference/API_REFERENCE.md) · 🇻🇳 [vi](../../../vi/docs/reference/API_REFERENCE.md) · 🇨🇳 [zh-CN](../../../zh-CN/docs/reference/API_REFERENCE.md) · 🇹🇼 [zh-TW](../../../zh-TW/docs/reference/API_REFERENCE.md)
 
-Príomhthagairt don API OmniRoute. Cuimsíonn sé an dromchla poiblí `/v1` agus na pointí bainistíochta is mó a úsáidtear; [`docs/openapi.yaml`](../openapi.yaml) léite le meaisín agus an crann ródanna faoi `src/app/api/` is iad na foinsí iomlána.
+Príomhthagairt don API AgentProxy. Cuimsíonn sé an dromchla poiblí `/v1` agus na pointí bainistíochta is mó a úsáidtear; [`docs/openapi.yaml`](../openapi.yaml) léite le meaisín agus an crann ródanna faoi `src/app/api/` is iad na foinsí iomlána.
 
 ---
 
@@ -72,33 +72,33 @@ Content-Type: application/json
 
 | Príobháideacht           | Treoshuíomh | Cur Síos                                                                                                                                                                                                                                                                                  |
 | ------------------------ | ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `X-OmniRoute-No-Cache`   | Iarratas    | Socraigh go `true` chun taisce a sheachaint                                                                                                                                                                                                                                               |
-| `x-omniroute-no-memory`  | Iarratas    | Socraigh go `true` chun cuimhne + insteáil scileanna a scipeáil don iarratas seo (macallaí le no-cache; seachaineann sé costas comharthaíochta/costais in aghaidh an ghairm)                                                                                                              |
-| `X-OmniRoute-Progress`   | Iarratas    | Socraigh go `true` le haghaidh teagmhais dul chun cinn                                                                                                                                                                                                                                    |
+| `X-AgentProxy-No-Cache`   | Iarratas    | Socraigh go `true` chun taisce a sheachaint                                                                                                                                                                                                                                               |
+| `x-agentproxy-no-memory`  | Iarratas    | Socraigh go `true` chun cuimhne + insteáil scileanna a scipeáil don iarratas seo (macallaí le no-cache; seachaineann sé costas comharthaíochta/costais in aghaidh an ghairm)                                                                                                              |
+| `X-AgentProxy-Progress`   | Iarratas    | Socraigh go `true` le haghaidh teagmhais dul chun cinn                                                                                                                                                                                                                                    |
 | `X-Session-Id`           | Iarratas    | Eochair seisiúin greamaitheach don bhfuaimniú seisiúin seachtrach                                                                                                                                                                                                                         |
 | `x_session_id`           | Iarratas    | Malartach foirmne leictreonach freisin (HTTP díreach)                                                                                                                                                                                                                                     |
-| `X-OmniRoute-Session-Id` | Iarratas    | Clib seisiúin/comhrá soláthraithe ag an gcaoineoir (soláthraíonn sé freisin cuimhne). Nuair a bheidh sé i láthair, coinnítear mar atá i `call_logs.session_tag` le haghaidh leithscriú costais in aghaidh an tseisiúin (#8249) — ní dhéantar é a shintéisú nuair nach bhfuil sé i láthair |
+| `X-AgentProxy-Session-Id` | Iarratas    | Clib seisiúin/comhrá soláthraithe ag an gcaoineoir (soláthraíonn sé freisin cuimhne). Nuair a bheidh sé i láthair, coinnítear mar atá i `call_logs.session_tag` le haghaidh leithscriú costais in aghaidh an tseisiúin (#8249) — ní dhéantar é a shintéisú nuair nach bhfuil sé i láthair |
 | `Idempotency-Key`        | Iarratas    | Eochair dídhíolaimh (fuinneog 5s)                                                                                                                                                                                                                                                         |
 | `X-Request-Id`           | Iarratas    | Eochair dídhíolaimh malartach                                                                                                                                                                                                                                                             |
-| `X-OmniRoute-Cache`      | Freagra     | `HIT` nó `MISS` (neamh-ghruthaíoch)                                                                                                                                                                                                                                                       |
-| `X-OmniRoute-Idempotent` | Freagra     | `true` má tá sé dídhílithe                                                                                                                                                                                                                                                                |
-| `X-OmniRoute-Progress`   | Freagra     | `enabled` má tá rianú dul chun cinn ann                                                                                                                                                                                                                                                   |
-| `X-OmniRoute-Session-Id` | Freagra     | Aitheantas seisiúin éifeachtach a úsáideann OmniRoute                                                                                                                                                                                                                                     |
-| `X-OmniRoute-Request-Id` | Freagra     | Aitheantas comhghaoil an iarratais (nuair a bhfuil sé ar eolas)                                                                                                                                                                                                                           |
-| `X-OmniRoute-Version`    | Freagra     | Leagan tógála OmniRoute (i gcónaí i láthair)                                                                                                                                                                                                                                              |
-| `X-OmniRoute-Cost-Saved` | Freagra     | USD a sheachain an taisce ar HIT (buanna taisce amháin)                                                                                                                                                                                                                                   |
-| `X-OmniRoute-Decision`   | Freagra     | Rianú ródaithe: `strategy=<ainm>; provider=<ailias>; latency_ms=<n>` (`<ainm>` é an straitéis combo, nó `single` d'iarratas neamh-combo) — i gcónaí i láthair ar fhreagairt críochnaithe                                                                                                  |
+| `X-AgentProxy-Cache`      | Freagra     | `HIT` nó `MISS` (neamh-ghruthaíoch)                                                                                                                                                                                                                                                       |
+| `X-AgentProxy-Idempotent` | Freagra     | `true` má tá sé dídhílithe                                                                                                                                                                                                                                                                |
+| `X-AgentProxy-Progress`   | Freagra     | `enabled` má tá rianú dul chun cinn ann                                                                                                                                                                                                                                                   |
+| `X-AgentProxy-Session-Id` | Freagra     | Aitheantas seisiúin éifeachtach a úsáideann AgentProxy                                                                                                                                                                                                                                     |
+| `X-AgentProxy-Request-Id` | Freagra     | Aitheantas comhghaoil an iarratais (nuair a bhfuil sé ar eolas)                                                                                                                                                                                                                           |
+| `X-AgentProxy-Version`    | Freagra     | Leagan tógála AgentProxy (i gcónaí i láthair)                                                                                                                                                                                                                                              |
+| `X-AgentProxy-Cost-Saved` | Freagra     | USD a sheachain an taisce ar HIT (buanna taisce amháin)                                                                                                                                                                                                                                   |
+| `X-AgentProxy-Decision`   | Freagra     | Rianú ródaithe: `strategy=<ainm>; provider=<ailias>; latency_ms=<n>` (`<ainm>` é an straitéis combo, nó `single` d'iarratas neamh-combo) — i gcónaí i láthair ar fhreagairt críochnaithe                                                                                                  |
 
 > Nóta Nginx: má braitheann tú ar cheannteidil le foirmne leictreonach (mar shampla `x_session_id`), cumasaigh `underscores_in_headers on;`.
 
-> **Ceannteidil teileaméadrachta costais:** cuirtear tacar `X-OmniRoute-*` teileaméadrachta costais le freagairt rathúil neamh-ghruthaíoch freisin — `X-OmniRoute-Response-Cost` (USD, deich n-uimhir dheicigiúil seasta; `0.0000000000` dathaorí/nár phraghsáladh), `X-OmniRoute-Tokens-In` / `X-OmniRoute-Tokens-Out`, `X-OmniRoute-Model`, `X-OmniRoute-Provider`, `X-OmniRoute-Latency-Ms`, `X-OmniRoute-Cache-Hit`, agus `X-OmniRoute-Fallback-Attempts` (amháin nuair a bhíonn > 0), móide `X-OmniRoute-Request-Id` agus `X-OmniRoute-Version`. Fuaimeann iad seo le comhlánúcháin comhrá, `/v1/responses`, `/v1/messages**, agus **na deireanna meán** — `/v1/embeddings`, `/v1/images/generations`, `/v1/audio/speech`, `/v1/audio/transcriptions`, `/v1/rerank`, `/v1/videos/generations`, `/v1/music/generations`, agus `/v1/moderations`(costas i gcónaí`0`). Ríomhann costas meán de réir modality (in aghaidh na híomhá, in aghaidh an tsoicind, in aghaidh an charachtair, in aghaidh an aonaid taiscéil) nuair a bhíonn praghsáil ar fáil, seachas sin `0` (teip oscailte).
+> **Ceannteidil teileaméadrachta costais:** cuirtear tacar `X-AgentProxy-*` teileaméadrachta costais le freagairt rathúil neamh-ghruthaíoch freisin — `X-AgentProxy-Response-Cost` (USD, deich n-uimhir dheicigiúil seasta; `0.0000000000` dathaorí/nár phraghsáladh), `X-AgentProxy-Tokens-In` / `X-AgentProxy-Tokens-Out`, `X-AgentProxy-Model`, `X-AgentProxy-Provider`, `X-AgentProxy-Latency-Ms`, `X-AgentProxy-Cache-Hit`, agus `X-AgentProxy-Fallback-Attempts` (amháin nuair a bhíonn > 0), móide `X-AgentProxy-Request-Id` agus `X-AgentProxy-Version`. Fuaimeann iad seo le comhlánúcháin comhrá, `/v1/responses`, `/v1/messages**, agus **na deireanna meán** — `/v1/embeddings`, `/v1/images/generations`, `/v1/audio/speech`, `/v1/audio/transcriptions`, `/v1/rerank`, `/v1/videos/generations`, `/v1/music/generations`, agus `/v1/moderations`(costas i gcónaí`0`). Ríomhann costas meán de réir modality (in aghaidh na híomhá, in aghaidh an tsoicind, in aghaidh an charachtair, in aghaidh an aonaid taiscéil) nuair a bhíonn praghsáil ar fáil, seachas sin `0` (teip oscailte).
 
-> **Samhlacha costas buanna taisce:** ar buanna taisce séimeantach (`X-OmniRoute-Catch-Hit: true`) ní dhéantar glao ar ais, mar sin is `0.0000000000` é `X-OmniRoute-Response-Cost` (an costas **fhorlíontach** a sheirbheálann an buanna). Tugtar tuairisc ar an bhunchoiste/bheadh-fosta costas ar leithligh i `X-OmniRoute-Cost-Saved`. Ba cheart do thomhaltóirí billíochta `X-OmniRoute-Response-Cost` a shuim (ní chosnaíonn buanna taisce aon ní); is féidir le taisce-anailísíocht `X-OmniRoute-Cost-Saved` a chomhoibriú.
+> **Samhlacha costas buanna taisce:** ar buanna taisce séimeantach (`X-AgentProxy-Catch-Hit: true`) ní dhéantar glao ar ais, mar sin is `0.0000000000` é `X-AgentProxy-Response-Cost` (an costas **fhorlíontach** a sheirbheálann an buanna). Tugtar tuairisc ar an bhunchoiste/bheadh-fosta costas ar leithligh i `X-AgentProxy-Cost-Saved`. Ba cheart do thomhaltóirí billíochta `X-AgentProxy-Response-Cost` a shuim (ní chosnaíonn buanna taisce aon ní); is féidir le taisce-anailísíocht `X-AgentProxy-Cost-Saved` a chomhoibriú.
 
 ## Cúraimí Sesiúin Eisiach Aistrithe
 
 Is éard atá i gceist le cíosú suíochán aistrithe eisiach ná conradh ródála roghnach neodrúil an chliaint: sealbhóir gníomhach amháin
-seasann ceann amháin de cheangal bailí OmniRoute. Níl sé ag cíosú samhail, ní éilíonn sé OAuth, ní aithníonn sé
+seasann ceann amháin de cheangal bailí AgentProxy. Níl sé ag cíosú samhail, ní éilíonn sé OAuth, ní aithníonn sé
 cliant ar leith, níl sé ag teastáil ó sholáthraí ar leith.
 
 Caithfidh an eochair API fíordheimhnithe an raon `lease:exclusive` a bheith aici agus liosta ceart
@@ -109,7 +109,7 @@ cruthaítear eochair agus i nglanbhfuascailt páirteach.
 POST /api/v1/session-leases
 Authorization: Bearer <managed-api-key>
 Content-Type: application/json
-X-OmniRoute-Lease-Owner: vlo_<43-base64url-characters>
+X-AgentProxy-Lease-Owner: vlo_<43-base64url-characters>
 
 {"action":"acquire","model":"glm/glm-4.6"}
 ```
@@ -148,7 +148,7 @@ Is féidir le sealbhóir suíochán gníomhach iarratas a dhéanamh go soiléir 
 
 Cuirtear an stádas roghnach seo i bhfeidhm ag an sealbhóir dorchadais, an eochair API aistrithe dearbhaithe, agus an
 giniúint gníomhach beacht in aon idirbheart bunachar sonraí amháin. Níl `displayName` ach an t-ainm ceangail cumraithe
-gearrtha; is é `null` é nuair nach bhfuil ainm sábháilte cumraithe ann. Ní déanann OmniRoute riamh ríomhphost nó
+gearrtha; is é `null` é nuair nach bhfuil ainm sábháilte cumraithe ann. Ní déanann AgentProxy riamh ríomhphost nó
 aitheantas cuntas ginte a athchur. Is é an luach soláthraí lipéad taispeána neamh-thollsmaoine agus ní
 aitheantas soláthraí comhoiriúnach ginte riamh. Earraí teagmhála, teibhiní, fianáin, IDanna ceangail nó API amh,
 hashes sealbhóra, rúin fhaing, agus sonraí ródála inmheánacha fágtar amach.
@@ -167,8 +167,8 @@ ar bithe a rindreáil; caithfidh comhtháthú cliant ina dhiaidh sin glao a dhé
 Ansin soláthraíonn gach iarratas tomhaillte aistrithe an dá cheann rialaithe:
 
 ```http
-X-OmniRoute-Lease-Owner: vlo_<43-base64url-characters>
-X-OmniRoute-Lease-Generation: 1
+X-AgentProxy-Lease-Owner: vlo_<43-base64url-characters>
+X-AgentProxy-Lease-Generation: 1
 ```
 
 Dearadh an sealbhóir beacht, an giniúint, an ceangal gníomhach, agus an eochair API dearbhaithe díreach roimh
@@ -189,9 +189,9 @@ Fillean troid shealadach le HTTP `429` le `Retry-After` agus:
 
 Ciallaíonn an freagra seo ach go raibh an tacar gníomhach gnáth go heisiach agus go raibh gach iarrthóir saor
 ag coinneáil ag suíochán coigríche gníomhach. Coinníonn samhlacha/soláthraithe gan tacaíocht, mímhaitheas polasaí, fuarú,
-ciste, sláinte, agus teipthe eisiúcháin gnáth a bhfreagairtí OmniRoute reatha.
+ciste, sláinte, agus teipthe eisiúcháin gnáth a bhfreagairtí AgentProxy reatha.
 
-### `x-omniroute-compression`
+### `x-agentproxy-compression`
 
 Forbhreathnú ríomhaireachta in aghaidh an iarratais ar an bplean comhbhrú. Imeallacht is airde — buann sé an ródáil-chomhcheangal
 forbhreathnú, an próifíl gníomhach, tuarascáil auto, agus an Réamhshocrú Pána. Luachanna:
@@ -216,7 +216,7 @@ Nótaí:
 Filleann an plean i bhfeidhm sa cheann freagra:
 
 ```
-X-OmniRoute-Compression: <mode>; source=<source>
+X-AgentProxy-Compression: <mode>; source=<source>
 ```
 
 áit a bhfuil `<source>` ceann de `request-header`, `routing-override`, `active-profile`, `auto-trigger`, `default`, nó `off`.
@@ -262,7 +262,7 @@ Native EmbeddingsV5Request Jina agus **seolann sé iad slán** go `https://api.j
 }
 ```
 
-Is féidir na luachanna `{ image | audio | video | pdf }` native a bheith ina n-URL HTTPS poiblí, ina `data:` URI, nó ina raw base64. Ní dhéanann OmniRoute na haitheanna sin a shníomh nó ní tharraingíonn sé URLanna bunúsacha íomhá — déanann Jina an meáin poiblí a aimsiú féin. Seoltar na breisshuimeanna Jina (`task`, `normalized`, `truncate`, `embedding_type`). Ní dhéanann SKUanna Jina téacs amháin ach cáipéisí neamh-théacs a dhearcadh.
+Is féidir na luachanna `{ image | audio | video | pdf }` native a bheith ina n-URL HTTPS poiblí, ina `data:` URI, nó ina raw base64. Ní dhéanann AgentProxy na haitheanna sin a shníomh nó ní tharraingíonn sé URLanna bunúsacha íomhá — déanann Jina an meáin poiblí a aimsiú féin. Seoltar na breisshuimeanna Jina (`task`, `normalized`, `truncate`, `embedding_type`). Ní dhéanann SKUanna Jina téacs amháin ach cáipéisí neamh-théacs a dhearcadh.
 
 Teorainneacha slándála agus iompair:
 
@@ -365,7 +365,7 @@ Tá API `analyze` Azure Document Intelligence asuaineach: fillteann an t-iarrata
 
 ### Údarás agus réiteach críochphointe Vertex AI DeepSeek OCR
 
-Athúsáideann `vertex-deepseek-ocr` an t-údarás Vertex AI céanna a thacaíonn OmniRoute cheana féin le haghaidh tráfaic comhrá/íomhá (`open-sse/executors/vertex.ts`): nó is eochair API an cheangail comhartha seirbhíse JSON (malartaithe le haghaidh comhartha rochtana OAuth gearrthéarma trí shreabhadh JWT-bearer) nó nó comhartha rochtana OAuth atá déanta cheana féin agus úsáidte mar atá é. Is é críochphointe upstream URL críochphointe páirtnéara ginearálta Vertex `openapi/chat/completions`, tógtha ón tionscadal agus an réigiún a bhaineann leis an gceangal — buann sonraí sonracha an tsoláthraí `providerSpecificData.project`/`providerSpecificData.region` i gcónaí; murach sin, díorthaítear an tionscadal ó `project_id` na comhartha seirbhíse JSON agus glacann an réigiún `us-central1` de réir réamhshocraithe. Tarlaítear an dá réiteach i `open-sse/handlers/ocr.ts` (`resolveVertexOcrAccessToken`, `resolveVertexOcrBaseUrl`), a úsáidtear ag `src/app/api/v1/ocr/route.ts` sula seoltar ar ais go `handleOcr`.
+Athúsáideann `vertex-deepseek-ocr` an t-údarás Vertex AI céanna a thacaíonn AgentProxy cheana féin le haghaidh tráfaic comhrá/íomhá (`open-sse/executors/vertex.ts`): nó is eochair API an cheangail comhartha seirbhíse JSON (malartaithe le haghaidh comhartha rochtana OAuth gearrthéarma trí shreabhadh JWT-bearer) nó nó comhartha rochtana OAuth atá déanta cheana féin agus úsáidte mar atá é. Is é críochphointe upstream URL críochphointe páirtnéara ginearálta Vertex `openapi/chat/completions`, tógtha ón tionscadal agus an réigiún a bhaineann leis an gceangal — buann sonraí sonracha an tsoláthraí `providerSpecificData.project`/`providerSpecificData.region` i gcónaí; murach sin, díorthaítear an tionscadal ó `project_id` na comhartha seirbhíse JSON agus glacann an réigiún `us-central1` de réir réamhshocraithe. Tarlaítear an dá réiteach i `open-sse/handlers/ocr.ts` (`resolveVertexOcrAccessToken`, `resolveVertexOcrBaseUrl`), a úsáidtear ag `src/app/api/v1/ocr/route.ts` sula seoltar ar ais go `handleOcr`.
 
 ---
 
@@ -400,10 +400,10 @@ Ba cheart do chliant a thaispeánann roghnóir samhlacha iarratas a dhéanamh ar
 
 ### Samhlacha gan smaoineamh
 
-Do shamhlacha Claude atá in ann smaoineamh, fógraíonn `/v1/models` freisin leagan **gan smaoineamh** a bhfuil a aitheantas réimhaithe le `claude-3-omniroute-no-thinking/`:
+Do shamhlacha Claude atá in ann smaoineamh, fógraíonn `/v1/models` freisin leagan **gan smaoineamh** a bhfuil a aitheantas réimhaithe le `claude-3-agentproxy-no-thinking/`:
 
 ```
-claude-3-omniroute-no-thinking/<soláthraí>/<samhail>
+claude-3-agentproxy-no-thinking/<soláthraí>/<samhail>
 ```
 
 Trí an t-aitheantas seo a roghnú (m.sh. i gcumraíocht Claude Code a chuireann bloic `thinking` i gcónaí leis) réitíonn sé ar ais go dtí an fíor `<soláthraí>/<samhail>` le réasúnú curtha ar ceal — `thinking:{type:"disabled"}` ar an gcosán `/v1/messages`, nó na réimsí `reasoning`/`reasoning_effort` curtha ar ceal ar an gcosán `/v1/chat/completions`. Ní liostaítear an leagan ach do shamhlacha teaghlach Claude a thacaíonn le smaoineamh **agus** a urramaíonn `disabled` (mar sin, m.sh. samhlacha inoiriúnaithe amháin a dhiúltaíonn `disabled` cuirtear as an áireamh). Is féidir le hoibreoirí an leagan a chur i bhfeidhm nó as as de réir samhail trí `ModelSpec.noThinkingAlias`.
@@ -579,8 +579,8 @@ Bailíonn sé idir-lámhach uasghrádaithe WebSocket agus filleann sé na teacht
 
 ```bash
 # An t-aochchlár chéanna leis an API HTTP (réamhshocrú 20128); uasghrádaigh an ceangal:
-wscat -c "ws://localhost:20128/v1/responses?api_key=<OMNIROUTE_API_KEY>"
-# (nó: -H "Authorization: Bearer <OMNIROUTE_API_KEY>")
+wscat -c "ws://localhost:20128/v1/responses?api_key=<AGENTPROXY_API_KEY>"
+# (nó: -H "Authorization: Bearer <AGENTPROXY_API_KEY>")
 
 # NÍ mór an chéad fhráma a bheith response.create:
 { "type": "response.create", "model": "gpt-5.5", "input": [ { "role": "user", "content": "hi" } ] }
@@ -603,34 +603,34 @@ a bheith ina phointe iontrála gníomhach (mar atá sé, de réir réamhshocrait
 Déanann **Codex CLI** OpenAI bailíochtú ar ainm an mhúnla ar thaobh an chliaint nuair a
 `tacaíonn_websockets = true` agus **diúltaíonn IDanna le réimír soláthraí** cosúil le
 `codex/gpt-5.5` (`Ní thacaítear leis an múnla 'codex/gpt-5.5' agus é ag úsáid Codex le
-cuntas ChatGPT`). Seol an ID **bare** (m.sh. `gpt-5.5`). Tá droichead OmniRoute
+cuntas ChatGPT`). Seol an ID **bare** (m.sh. `gpt-5.5`). Tá droichead AgentProxy
 codex-amháin, mar sin athshuíomhann sé ID bare mar múnla codex
 (`resolveCodexWsModelInfo`) sula ndéanann sé pasáil suas go barrshraithe — fiú is go
 ródhálfeadh bare `gpt-5.5` go soláthraí eile thar HTTP.
 
 #### Cumrú Codex CLI OpenAI
 
-Cuir an Codex CLI ar OmniRoute trí sholáthraí saincheaptha le tacaíocht WebSocket
+Cuir an Codex CLI ar AgentProxy trí sholáthraí saincheaptha le tacaíocht WebSocket
 a chur le `~/.codex/config.toml` (úsáid `CODEX_HOME ar leith chun cumraíocht atá ann cheana a sheachaint):
 
 ```toml
 model = "gpt-5.5"                 # ID bare — NÍ "codex/gpt-5.5"
-model_provider = "omniroute"
+model_provider = "agentproxy"
 
-[model_providers.omniroute]
-name = "OmniRoute (WS)"
+[model_providers.agentproxy]
+name = "AgentProxy (WS)"
 base_url = "http://localhost:20128/v1"   # gan(/) deiridh; déantar URL an WS a threorú (úsáid https/wss i dtáirgeadh)
 wire_api = "responses"                    # luach amháin tacaíochta ó Feabhra 2026
 supports_websockets = true                # cumasaíonn an t-iompar Responses-over-WS
-env_key = "OMNIROUTE_API_KEY"             # coinníonn eochair API OmniRoute (Béar)
+env_key = "AGENTPROXY_API_KEY"             # coinníonn eochair API AgentProxy (Béar)
 ```
 
 ```bash
-export OMNIROUTE_API_KEY=sk-...           # eochair API OmniRoute (aon eochair má tá REQUIRE_API_KEY=false)
+export AGENTPROXY_API_KEY=sk-...           # eochair API AgentProxy (aon eochair má tá REQUIRE_API_KEY=false)
 codex exec "Responda apenas: PONG"
 ```
 
-Uasghrádaíonn an CLI `base_url + /responses` go WebSocket agus pasálann OmniRoute é
+Uasghrádaíonn an CLI `base_url + /responses` go WebSocket agus pasálann AgentProxy é
 go dtí an ceangal codex OAuth roghnaithe. Bailíodh go hiomlán i gcoinne an
 fhreastaláin áitiúil: fillfidh ChatGPT `codex.rate_limits` + `response.created` agus sruthóidh sé an
 críochnú.
@@ -728,7 +728,7 @@ Sampla freagra:
 
 ### Tionchar aseolaíochta
 
-Seirbheálann turas taisce Sémantach an freagra ón taisce **gan aon ghlao ar bharr**, mar sin tá an t-aiseolas `X-OmniRoute-Response-Latency` tuairiscithe gar don náid (is cuma cén t-am aseolaíochta bunaidh). Ba cheart do chliaint atá íogair maidir le hacléadh (bainistíocht luais, monatóireacht p50/p99) an ceannteideal freagra `X-OmniRoute-Cache-Latency` a sheiceáil:
+Seirbheálann turas taisce Sémantach an freagra ón taisce **gan aon ghlao ar bharr**, mar sin tá an t-aiseolas `X-AgentProxy-Response-Latency` tuairiscithe gar don náid (is cuma cén t-am aseolaíochta bunaidh). Ba cheart do chliaint atá íogair maidir le hacléadh (bainistíocht luais, monatóireacht p50/p99) an ceannteideal freagra `X-AgentProxy-Cache-Latency` a sheiceáil:
 
 | Luach          | Ciall                                                           |
 | -------------- | --------------------------------------------------------------- |
@@ -755,7 +755,7 @@ Socraítear é ag cruthú eochrach (`POST /api/keys`) nó nuashonrú (`PATCH /ap
 Is féidir le haon iarratas an taisce a sheachaint is cuma faoi shocruithe na heochrach:
 
 ```
-X-OmniRoute-No-Cache: true
+X-AgentProxy-No-Cache: true
 ```
 
 ---
@@ -976,7 +976,7 @@ Deisíonn sé athrógacha timpeallachta OAuth atá in easnamh nó truaillithe do
 {
   "success": true,
   "repaired": ["CLAUDE_CODE_OAUTH_CLIENT_ID", "CLAUDE_CODE_OAUTH_CLIENT_SECRET"],
-  "backupPath": "/home/user/.omniroute/backups/env-repair-2026-04-11.bak"
+  "backupPath": "/home/user/.agentproxy/backups/env-repair-2026-04-11.bak"
 }
 ```
 
@@ -1065,7 +1065,7 @@ Nótaí:
 
 - Athúsáidtear na hainmneacha le comharthaí mona na láimhseálaithe céanna le haghaidh `/v1/*` agus `/api/tags`; fanann cruthanna na bhfreagraí mar an gcéanna.
 - Is fearr `Authorization: Bearer ...` a úsáid i gcónaí nuair a thacaíonn an cliant le ceanntáscanna saincheaptha.
-- D'fhéadfadh comharthaí atá bunaithe ar URL teacht i dtaifeadtaí freasúra droim ar ais, stair brabhsálaí, agus teileamheadrachta taobh amuigh de OmniRoute. Déileáil leo mar rogha comhoiriúnachta, ní mar mhodh réamhshocraithe fíordheimhnithe.
+- D'fhéadfadh comharthaí atá bunaithe ar URL teacht i dtaifeadtaí freasúra droim ar ais, stair brabhsálaí, agus teileamheadrachta taobh amuigh de AgentProxy. Déileáil leo mar rogha comhoiriúnachta, ní mar mhodh réamhshocraithe fíordheimhnithe.
 
 ---
 
@@ -1171,7 +1171,7 @@ Is féidir comhoibrithe ródaithe ardleibhéil (cur síos cheana féin faoi `/ap
 
 ## Webhooks
 
-Sreathsheoltaí amach webhook d’imeachtaí OmniRoute (críochchur iarratais, tuirse ceadanna, casadh eochrach, srl.).
+Sreathsheoltaí amach webhook d’imeachtaí AgentProxy (críochchur iarratais, tuirse ceadanna, casadh eochrach, srl.).
 
 | Modh   | Conair                    | Cur síos                                                                      |
 | ------ | ------------------------- | ----------------------------------------------------------------------------- |
@@ -1202,7 +1202,7 @@ Sreathsheoltaí amach webhook d’imeachtaí OmniRoute (críochchur iarratais, t
 
 ## Prótacal na nGníomhairí
 
-Tascanna ghníomhairí scálaíomhá (Claude Code, Codex Cloud, OpenHands, srl.) a chomhlíonann i bhfíor-am thar ceann úsáideoirí OmniRoute.
+Tascanna ghníomhairí scálaíomhá (Claude Code, Codex Cloud, OpenHands, srl.) a chomhlíonann i bhfíor-am thar ceann úsáideoirí AgentProxy.
 
 | Modh   | Conair                        | Cur síos                                                                                                                                        |
 | ------ | ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -1246,7 +1246,7 @@ Seachmhóirí HTTP(S)/SOCKS amach is féidir a shannadh do sholáthraithe, cunta
 
 ## Seasmhacht (leathnaithe)
 
-Nochtann OmniRoute trí shéimhchóras neamhspleácha ar theip shealadach; ligeann na críochphoist bainistíochta thíos d'oibritheoirí iad a léamh agus a shárú:
+Nochtann AgentProxy trí shéimhchóras neamhspleácha ar theip shealadach; ligeann na críochphoist bainistíochta thíos d'oibritheoirí iad a léamh agus a shárú:
 
 | Scóp                 | Stóráil stáit                             | Léamh                                     | Athshocrú / glan                                 |
 | -------------------- | ----------------------------------------- | ----------------------------------------- | ------------------------------------------------ |
@@ -1275,7 +1275,7 @@ Tagairt choincheapúil iomlán agus réamhshocruithe briseadh: féach [`CLAUDE.m
 
 ## Scileanna
 
-Frámaíocht scileanna le haghaidh síneadh OmniRoute le láimhseálaithe inrite saincheaptha, móide idirthábháil margaidh.
+Frámaíocht scileanna le haghaidh síneadh AgentProxy le láimhseálaithe inrite saincheaptha, móide idirthábháil margaidh.
 
 | Modh   | Cosán                             | Cur Síos                                                                                                                      |
 | ------ | --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
@@ -1310,7 +1310,7 @@ Stóráil cuimhne chomhrá/sléite seasta, scóipithe in aghaidh an eochair-API 
 
 ## Freastalaí MCP
 
-Seolann OmniRoute freastalaí Prótacail Comhthéacs Mhúnla leabaithe le 3 iompar (stdio, SSE, streamable-http) agus uirlisí scóipithe. Léann na deiridhanna an stiúrthóra stádas/ sonraacha iniúchta agus ionadaíonn na heasnáin HTTP.
+Seolann AgentProxy freastalaí Prótacail Comhthéacs Mhúnla leabaithe le 3 iompar (stdio, SSE, streamable-http) agus uirlisí scóipithe. Léann na deiridhanna an stiúrthóra stádas/ sonraacha iniúchta agus ionadaíonn na heasnáin HTTP.
 
 | Modh | Cosán | Cur Síos |
 | ------ | ---------------------- | ------------------------------------------------------------------------------------------------ | -------------------- |
@@ -1330,13 +1330,13 @@ Seolann OmniRoute freastalaí Prótacail Comhthéacs Mhúnla leabaithe le 3 iomp
 
 ## Freastalaí A2A
 
-Nochtann OmniRoute críochphointe JSON-RPC 2.0 A2A (Ailceimeadóir-go-Ailceimeadóir) chomh maith le casúr REST le haghaidh iniúchta/anoiaill.
+Nochtann AgentProxy críochphointe JSON-RPC 2.0 A2A (Ailceimeadóir-go-Ailceimeadóir) chomh maith le casúr REST le haghaidh iniúchta/anoiaill.
 
 ### JSON-RPC
 
 ```bash
 POST /a2a
-Authorization: Bearer your-api-key   # roghnach mura bhfuil OMNIROUTE_API_KEY socraithe
+Authorization: Bearer your-api-key   # roghnach mura bhfuil AGENTPROXY_API_KEY socraithe
 Content-Type: application/json
 
 {
@@ -1379,7 +1379,7 @@ Filltean cárta poiblí A2A an ailceimeadóra (ainm, cur síos, cumais, catalóg
 | GET  | `/api/a2a/tasks/[id]`        | Faigh tasc amháin                                                                                                    |
 | POST | `/api/a2a/tasks/[id]/cancel` | Cealaigh tasc                                                                                                        |
 
-**Údarás:** ritheann na cúntóirí REST gan údarás bainistíochta (inisithe ag an deais); úsáideann an bealach JSON-RPC `/a2a` Bearer `OMNIROUTE_API_KEY` más rud é atá cumraithe.
+**Údarás:** ritheann na cúntóirí REST gan údarás bainistíochta (inisithe ag an deais); úsáideann an bealach JSON-RPC `/a2a` Bearer `AGENTPROXY_API_KEY` más rud é atá cumraithe.
 
 ---
 
@@ -1556,7 +1556,7 @@ Deireannaí ar nósanna riarachána amháin le haghaidh bainistíochta oibríoch
 
 ## Bainistíocht Uirlisí CLI
 
-Bainistigh uirlisí CLI a chomhtháthaíonn le OmniRoute (antigravity, chiplete, commandCode, devin-cli, srl.). Féach [Tagairt Soláthraí](./PROVIDER_REFERENCE.md) le haghaidh an liosta iomlán.
+Bainistigh uirlisí CLI a chomhtháthaíonn le AgentProxy (antigravity, chiplete, commandCode, devin-cli, srl.). Féach [Tagairt Soláthraí](./PROVIDER_REFERENCE.md) le haghaidh an liosta iomlán.
 
 | Modh | Conair                                  | Cur Síos                                                                                                                                                                  |
 | ---- | --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -1664,7 +1664,7 @@ Féach [Fráma Scileanna](../frameworks/SKILLS.md) le haghaidh sonraí iomlána.
 
 ## Breiseáin
 
-Bainistigh breiseáin OmniRoute (síntí tríú páirtí).
+Bainistigh breiseáin AgentProxy (síntí tríú páirtí).
 
 | Method | Path                               | Description                           |
 | ------ | ---------------------------------- | ------------------------------------- |
@@ -1690,7 +1690,7 @@ Ní dromchla REST neamhspleách é comparáid scátha / A-B de sholáthraithe �
 
 ## Ráillí Cosanta
 
-Déan iniúchadh ar na ráillí cosanta ag am rite (braite PII, braite insteallta pras, nascacht fís). Ritheann ráillí cosanta ar gach iarratas; is trí cheanntásc iarrata `x-omniroute-disabled-guardrails` a dhéantar rogha an fhágáil amach in aghaidh an ghlao — níl aon dromchla cumasaithe/díchumaisithe buan ann.
+Déan iniúchadh ar na ráillí cosanta ag am rite (braite PII, braite insteallta pras, nascacht fís). Ritheann ráillí cosanta ar gach iarratas; is trí cheanntásc iarrata `x-agentproxy-disabled-guardrails` a dhéantar rogha an fhágáil amach in aghaidh an ghlao — níl aon dromchla cumasaithe/díchumaisithe buan ann.
 
 | Method | Path                   | Description                                                                                                    |
 | ------ | ---------------------- | -------------------------------------------------------------------------------------------------------------- |

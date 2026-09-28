@@ -6,10 +6,10 @@
 
 ## Turvanõrkustest teatamine
 
-Kui avastate OmniRoute'is turvanõrkuse, teatage sellest vastutustundlikult:
+Kui avastate AgentProxy'is turvanõrkuse, teatage sellest vastutustundlikult:
 
 1. **ÄRGE** avage avalikku GitHubi probleemi
-2. Kasutage [GitHub Security Advisories](https://github.com/diegosouzapw/OmniRoute/security/advisories/new)
+2. Kasutage [GitHub Security Advisories](https://github.com/khanhkit/AgentProxy/security/advisories/new)
 3. Lisage: kirjeldus, taasesitamise juhised ja võimalik mõju
 
 ## Reageerimise ajakava
@@ -32,7 +32,7 @@ Kui avastate OmniRoute'is turvanõrkuse, teatage sellest vastutustundlikult:
 
 ## Turbearhitektuur
 
-OmniRoute kasutab mitmekihilist turbemudelit:
+AgentProxy kasutab mitmekihilist turbemudelit:
 
 ```
 Päring → CORS → Autoriseerimiskonveier (klassifitseerimine → reeglid → jõustamine)
@@ -69,7 +69,7 @@ STORAGE_ENCRYPTION_KEY=$(openssl rand -hex 32)
 
 ### 🛡️ Kaitsepiirete raamistik
 
-OmniRoute sisaldab käigult uuesti laaditavat **kaitsepiirete registrit** (`src/lib/guardrails/`) kolme sisseehitatud kaitsepiirdega, mis on järjestatud prioriteedi alusel:
+AgentProxy sisaldab käigult uuesti laaditavat **kaitsepiirete registrit** (`src/lib/guardrails/`) kolme sisseehitatud kaitsepiirdega, mis on järjestatud prioriteedi alusel:
 
 | Kaitsepiire        | Prioriteet | Eesmärk                                                                                                |
 | ------------------ | ---------- | ------------------------------------------------------------------------------------------------------ |
@@ -77,7 +77,7 @@ OmniRoute sisaldab käigult uuesti laaditavat **kaitsepiirete registrit** (`src/
 | `pii-masker`       | 10         | PII redigeerimine enne ja pärast väljakutset (e-post, telefon, CPF, CNPJ, krediitkaardid, SSN)         |
 | `prompt-injection` | 20         | Tuvastab alistamise, rollikaaperdamise, piirangutest möödahiilimise ja lekete mustreid                 |
 
-Kohandatud kaitsepiirded registreeritakse käsuga `registerGuardrail(new MyGuardrail())`. Mudel töötab tõrke korral avatult (erandid ei blokeeri kunagi liiklust). Üksikpäringu tasemel saab loobuda päise `x-omniroute-disabled-guardrails` abil. → Vt [`docs/security/GUARDRAILS.md`](docs/security/GUARDRAILS.md).
+Kohandatud kaitsepiirded registreeritakse käsuga `registerGuardrail(new MyGuardrail())`. Mudel töötab tõrke korral avatult (erandid ei blokeeri kunagi liiklust). Üksikpäringu tasemel saab loobuda päise `x-agentproxy-disabled-guardrails` abil. → Vt [`docs/security/GUARDRAILS.md`](docs/security/GUARDRAILS.md).
 
 ### 🧠 Kaitse viibasüstide vastu
 
@@ -182,15 +182,15 @@ Server lükkab aktiivselt tagasi teadaolevalt nõrgad väärtused nagu `changeme
 
 ```bash
 docker run -d \
-  --name omniroute \
+  --name agentproxy \
   --restart unless-stopped \
   --read-only \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
+  -v agentproxy-data:/app/data \
   -e JWT_SECRET="$(openssl rand -base64 48)" \
   -e API_KEY_SECRET="$(openssl rand -hex 32)" \
   -e STORAGE_ENCRYPTION_KEY="$(openssl rand -hex 32)" \
-  diegosouzapw/omniroute:latest
+  khanhkit/agentproxy:latest
 ```
 
 ---
@@ -222,7 +222,7 @@ Neid reegleid jõustavad tööriistad ja ülevaatajad:
 
 ## Tarneahela skanneri leiud (Socket.dev / Snyk / sarnased)
 
-Avaldatud `omniroute` npm-artefakt sisaldab Next.js `output: "standalone"`
+Avaldatud `agentproxy` npm-artefakt sisaldab Next.js `output: "standalone"`
 paketti, mis tähendab, et kõik marsruudikäsitlejad — kaasa arvatud dokumenteeritud
 privilegeeritud funktsioonid (MITM, Zed import, Cloud Sync, sisseehitatud
 teenuste haldur) — jõuavad `.next/server/*.js` minifitseeritud pakkidesse.
@@ -238,7 +238,7 @@ Iga leiukategooria kohta säilitame leiupõhise hooldaja kinnituse:
   kohas viitavad tagasi samale dokumendile.
 
 Kasutajatele, kelle pipeline ei võimalda hoiatust leevendada: ehitage projekt
-käsuga `OMNIROUTE_BUILD_PROFILE=minimal npm run build`. See asendab neli
+käsuga `AGENTPROXY_BUILD_PROFILE=minimal npm run build`. See asendab neli
 tundlikku moodulit jämestega, mis tagastavad käitusajal HTTP 503 vastuse
 koodiga `feature-disabled`, mistõttu privilegeeritud kooditeed on paketist
 füüsiliselt eemaldatud. Vaadake avaldamisretsepti dokumendist

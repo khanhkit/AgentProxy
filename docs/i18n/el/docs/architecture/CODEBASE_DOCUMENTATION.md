@@ -6,16 +6,16 @@
 
 ---
 
-title: "OmniRoute Codebase Documentation"
+title: "AgentProxy Codebase Documentation"
 version: 3.8.40
 lastUpdated: 2026-06-28
 ---
 
-# Τεκμηρίωση Κώδικα OmniRoute
+# Τεκμηρίωση Κώδικα AgentProxy
 
 > **Έκδοση:** v3.8.51
 > **Τελευταία ενημέρωση:** 2026-06-28
-> **Κοινό:** Μηχανικοί που συνεισφέρουν στο OmniRoute ή δημιουργούν ενσωματώσεις πάνω σε αυτό.
+> **Κοινό:** Μηχανικοί που συνεισφέρουν στο AgentProxy ή δημιουργούν ενσωματώσεις πάνω σε αυτό.
 >
 > Για διαγράμματα αρχιτεκτονικής υψηλού επιπέδου και την αιτιολόγηση κάθε υποσυστήματος, διαβάστε το
 > [ARCHITECTURE.md](./ARCHITECTURE.md). Για εκτενή ανάλυση μεμονωμένων υποσυστημάτων
@@ -46,22 +46,22 @@ lastUpdated: 2026-06-28
 Ψευδώνυμα διαδρομών (`tsconfig.json`):
 
 - `@/*` → `src/*`
-- `@omniroute/open-sse` → `open-sse/index.ts`
-- `@omniroute/open-sse/*` → `open-sse/*`
+- `@agentproxy/open-sse` → `open-sse/index.ts`
+- `@agentproxy/open-sse/*` → `open-sse/*`
 
 Προεπιλεγμένη θύρα HTTP: **`20128`** (το API και το dashboard μοιράζονται την ίδια διεργασία). Ο κατάλογος δεδομένων
-ορίζεται από τη μεταβλητή περιβάλλοντος `DATA_DIR`, με προεπιλογή `~/.omniroute/`.
+ορίζεται από τη μεταβλητή περιβάλλοντος `DATA_DIR`, με προεπιλογή `~/.agentproxy/`.
 
 ---
 
 ## 2. Δομή Αποθετηρίου
 
 ```
-OmniRoute/
+AgentProxy/
 ├── src/                  # Εφαρμογή Next.js (App Router, libs, domain, server, shared)
-├── open-sse/             # Χώρος εργασίας streaming engine (@omniroute/open-sse)
+├── open-sse/             # Χώρος εργασίας streaming engine (@agentproxy/open-sse)
 ├── electron/             # Desktop wrapper (Electron 41 main + preload)
-├── bin/                  # Σημεία εισόδου CLI (omniroute, reset-password)
+├── bin/                  # Σημεία εισόδου CLI (agentproxy, reset-password)
 ├── tests/                # Unit, integration, e2e, protocols-e2e, translator, security, fixtures
 ├── scripts/              # Σενάρια build, sync, check, migration και runtime helper
 ├── docs/                 # Δημόσια τεκμηρίωση (αυτός ο κατάλογος)
@@ -307,7 +307,7 @@ Route → CORS preflight → Επικύρωση Zod body → προαιρετι�
 | `runtime/`        | Ανίχνευση χαρακτηριστικών χρόνου εκτέλεσης                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | `search/`         | `executeWebSearch.ts`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | `services/`       | Framework ενσωματωμένων υπηρεσιών: `ServiceSupervisor.ts` (γενικός επιτηρητής θυγατρικής διεργασίας με κλείδωμα λειτουργίας, ring buffer, έλεγχο υγείας), `bootstrap.ts` (εγγραφή επιπέδου διεργασίας και αυτόματη εκκίνηση), `registry.ts` (χαρτογράφηση εργαλείου → επιτηρητή), `apiKey.ts` (αποθήκη κλειδιών AES-256-GCM), `modelSync.ts` (περιοδικός συγχρονισμός μοντέλων), `ringBuffer.ts` (κυκλικό buffer καταγραφής 5 MB), `healthCheck.ts` (ανιχνευτής υγείας HTTP), `types.ts`, `embedWsProxy.ts` (proxy WebSocket), `installers/{ninerouter,cliproxy}.ts`. Βλ. `docs/frameworks/EMBEDDED-SERVICES.md`                                                                                      |
-| `agentSkills/`    | Κατάλογος + γεννήτρια Agent Skills: `catalog.ts` (getCatalog/getSkillById/filterCatalog/computeCoverage), `generator.ts` (generateAgentSkills → εγγράφει `skills/{id}/SKILL.md`), `openapiParser.ts` (εξάγει τελικά σημεία REST από προδιαγραφή OpenAPI), `cliRegistryParser.ts` (εξάγει υποεντολές CLI από bin/cli-registry), `schemas.ts` (Zod: AgentSkillSchema, SkillCoverageSchema, ListQuerySchema, GenerateBodySchema), `types.ts` (AgentSkill, SkillCoverage, SkillMarkdown, GeneratorReport). Χρησιμοποιείται από διαδρομές REST (`/api/agent-skills/*`), εργαλεία MCP (`omniroute_agent_skills_*`) και A2A skill `list-capabilities`. Βλ. [AGENT-SKILLS.md](../frameworks/AGENT-SKILLS.md). |
+| `agentSkills/`    | Κατάλογος + γεννήτρια Agent Skills: `catalog.ts` (getCatalog/getSkillById/filterCatalog/computeCoverage), `generator.ts` (generateAgentSkills → εγγράφει `skills/{id}/SKILL.md`), `openapiParser.ts` (εξάγει τελικά σημεία REST από προδιαγραφή OpenAPI), `cliRegistryParser.ts` (εξάγει υποεντολές CLI από bin/cli-registry), `schemas.ts` (Zod: AgentSkillSchema, SkillCoverageSchema, ListQuerySchema, GenerateBodySchema), `types.ts` (AgentSkill, SkillCoverage, SkillMarkdown, GeneratorReport). Χρησιμοποιείται από διαδρομές REST (`/api/agent-skills/*`), εργαλεία MCP (`agentproxy_agent_skills_*`) και A2A skill `list-capabilities`. Βλ. [AGENT-SKILLS.md](../frameworks/AGENT-SKILLS.md). |
 | `skills/`         | Framework skills: `registry.ts`, `executor.ts`, `interception.ts`, `injection.ts`, `sandbox.ts`, `custom.ts`, `hybrid.ts`, `builtins.ts`, `a2a.ts`, `providerSettings.ts`, `schemas.ts`, `skillssh.ts`, `types.ts`, καθώς και `builtin/browser.ts`                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | `spend/`          | `batchWriter.ts` (buffer εγγραφής με καθυστέρηση)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | `sync/`           | `bundle.ts`, `tokens.ts` (Cloud Sync)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
@@ -393,7 +393,7 @@ Modules domain (καθένα ανήκει σε έναν ή περισσότερ�
 | `degradation.ts`                           | Μεταβάσεις υποβαθμισμένης λειτουργίας              |
 | `providerExpiration.ts`                    | Ανίχνευση ληγμένου λογαριασμού/κλειδιού            |
 | `quotaCache.ts`                            | Αποθηκευμένες αποφάσεις ποσοστώσεων                |
-| `responses.ts`, `omnirouteResponseMeta.ts` | Βοηθητικά μορφής απόκρισης                         |
+| `responses.ts`, `agentproxyResponseMeta.ts` | Βοηθητικά μορφής απόκρισης                         |
 | `configAudit.ts`                           | Έλεγχος αλλαγών ρυθμίσεων                          |
 | `assessment/`                              | Αξιολόγηση μοντέλου (ανά RFC, μερικώς υλοποιημένο) |
 | `types.ts`                                 | Κοινόχρηστοι τύποι domain                          |
@@ -445,7 +445,7 @@ server/
 
 ## 4. `open-sse/` — Χώρος εργασίας μηχανής ροής (streaming)
 
-Ξεχωριστός χώρος εργασίας npm που δημοσιεύεται ως `@omniroute/open-sse`. Διαχειρίζεται την
+Ξεχωριστός χώρος εργασίας npm που δημοσιεύεται ως `@agentproxy/open-sse`. Διαχειρίζεται την
 επεξεργασία αιτημάτων, τους εκτελεστές, τους μεταφραστές, τις υπηρεσίες, τον μετασχηματιστή και τον διακομιστή MCP.
 
 ```
@@ -608,7 +608,7 @@ electron/
 
 ```
 bin/
-├── omniroute.mjs           # Κύρια είσοδος CLI (Node ESM)
+├── agentproxy.mjs           # Κύρια είσοδος CLI (Node ESM)
 ├── reset-password.mjs      # Επαναφορά κωδικού διαχείρισης από CLI
 ├── mcp-server.mjs          # Εκκινητής διακομιστή MCP (stdio)
 ├── nodeRuntimeSupport.mjs  # Έλεγχος έκδοσης Node
@@ -631,8 +631,8 @@ bin/
 
 Δύο δυαδικά αρχεία εκτίθενται στο `package.json` → `bin`:
 
-- `omniroute` → `bin/omniroute.mjs`
-- `omniroute-reset-password` → `bin/reset-password.mjs`
+- `agentproxy` → `bin/agentproxy.mjs`
+- `agentproxy-reset-password` → `bin/reset-password.mjs`
 
 ---
 
@@ -788,7 +788,7 @@ bin/
 
 - **Στυλ κώδικα**: εσοχή 2 κενών, διπλά εισαγωγικά, πλάτος 100 χαρακτήρων, ερωτηματικά,
   `es5` trailing commas — επιβάλλεται από το Prettier μέσω `lint-staged`.
-- **Εισαγωγές**: εξωτερικές → εσωτερικές (`@/`, `@omniroute/open-sse`) → σχετικές.
+- **Εισαγωγές**: εξωτερικές → εσωτερικές (`@/`, `@agentproxy/open-sse`) → σχετικές.
 - **Ονοματολογία**: αρχεία `camelCase` ή `kebab-case`, components `PascalCase`,
   σταθερές `UPPER_SNAKE`.
 - **ESLint**: `no-eval`, `no-implied-eval`, `no-new-func` = `error` παντού·

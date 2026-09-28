@@ -44,5 +44,5 @@ test("no compose file publishes a port on 0.0.0.0 implicitly for Redis", () => {
 test(".env.example documents REDIS_BIND_HOST and its default", () => {
   const env = fs.readFileSync(path.join(REPO_ROOT, ".env.example"), "utf8");
   assert.match(env, /# REDIS_BIND_HOST=127\.0\.0\.1/);
-  assert.match(env, /# OMNIROUTE_REDIS_BIND_HOST=/);
+  assert.match(env, /# AGENTPROXY_REDIS_BIND_HOST=/);
 });

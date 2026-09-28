@@ -16,13 +16,13 @@
  * dist/node_modules (for the standalone bundle). It is idempotent — running
  * multiple times is safe.
  *
- * Fixes: https://github.com/diegosouzapw/OmniRoute/issues/7265
+ * Fixes: https://github.com/khanhkit/AgentProxy/issues/7265
  */
 
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
-const PATCHED_MARKER = "/* omniroute-android-patch */";
+const PATCHED_MARKER = "/* agentproxy-android-patch */";
 
 /**
  * Patch coreBundle.js to accept Android as a valid platform.

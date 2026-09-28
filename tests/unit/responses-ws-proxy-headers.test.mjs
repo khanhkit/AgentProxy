@@ -15,7 +15,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-const { writeHttpError } = await import("../../scripts/dev/responses-ws-proxy.mjs");
+const { createResponsesWsProxy, writeHttpError } =
+  await import("../../scripts/dev/responses-ws-proxy.mjs");
 
 function fakeSocket() {
   return {
@@ -42,7 +43,7 @@ test("writeHttpError strips chunked transfer-encoding + leaked pipeline headers 
     "content-type": "application/json",
     "content-security-policy": "default-src 'self'",
     "x-frame-options": "DENY",
-    "x-omniroute-route-class": "MANAGEMENT",
+    "x-agentproxy-route-class": "MANAGEMENT",
     "x-request-id": "abc",
   });
 
@@ -51,13 +52,16 @@ test("writeHttpError strips chunked transfer-encoding + leaked pipeline headers 
 
   // The single most important invariant: never both framing headers.
   assert.ok(lower.includes("content-length:"), "must emit Content-Length");
-  assert.ok(!lower.includes("transfer-encoding"), "must NOT emit Transfer-Encoding alongside Content-Length");
+  assert.ok(
+    !lower.includes("transfer-encoding"),
+    "must NOT emit Transfer-Encoding alongside Content-Length"
+  );
   assert.ok(!lower.includes("keep-alive"), "must not forward the upstream keep-alive Connection");
   // Exactly one Content-Type (no duplicate from a case-mismatched spread).
   assert.equal((lower.match(/content-type:/g) || []).length, 1, "exactly one Content-Type header");
   // Pipeline / security headers must not leak onto the raw upgrade socket.
   assert.ok(!lower.includes("content-security-policy"), "must not leak CSP");
-  assert.ok(!lower.includes("x-omniroute-route-class"), "must not leak route-class");
+  assert.ok(!lower.includes("x-agentproxy-route-class"), "must not leak route-class");
   // Our own framing defaults win.
   assert.ok(head.startsWith("HTTP/1.1 401 "), "status line preserved");
   assert.ok(lower.includes("connection: close"), "Connection: close default wins");
@@ -69,4 +73,46 @@ test("writeHttpError still forwards safe non-framing headers (e.g. retry-after)"
   const lower = sock._head.toLowerCase();
   assert.ok(lower.includes("retry-after: 5"), "safe header forwarded");
   assert.ok(!lower.includes("transfer-encoding"), "framing header still stripped");
+});
+
+test("upgrade exceptions are logged server-side but never reflected in the HTTP error body", async () => {
+  const sock = fakeSocket();
+  const canary = "SECRET_EXCEPTION_CANARY /srv/private/stack.js:42";
+  const logged = [];
+  const originalError = console.error;
+  console.error = (...args) => logged.push(args.map(String).join(" "));
+  try {
+    const proxy = createResponsesWsProxy({
+      baseUrl: "http://127.0.0.1:20128",
+      bridgeSecret: "bridge-secret",
+      fetchImpl: async () => {
+        throw new Error(canary);
+      },
+      wsFactory: async () => {
+        throw new Error("must not reach upstream websocket factory");
+      },
+    });
+
+    const handled = await proxy.handleUpgrade(
+      {
+        url: "/v1/responses?api_key=test",
+        headers: { upgrade: "websocket" },
+        socket: { remoteAddress: "127.0.0.1" },
+      },
+      sock,
+      Buffer.alloc(0)
+    );
+
+    assert.equal(handled, true);
+    assert.match(sock._head, /^HTTP\/1\.1 500 /);
+    const body = Buffer.isBuffer(sock._body)
+      ? sock._body.toString("utf8")
+      : String(sock._body ?? "");
+    assert.match(body, /Responses WebSocket proxy failed/);
+    assert.match(body, /responses_websocket_proxy_failed/);
+    assert.doesNotMatch(body, /SECRET_EXCEPTION_CANARY|\/srv\/private\/stack\.js|Error:/);
+    assert.ok(logged.some((line) => line.includes("WebSocket upgrade failed")));
+  } finally {
+    console.error = originalError;
+  }
 });

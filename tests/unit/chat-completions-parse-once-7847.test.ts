@@ -11,7 +11,7 @@ import path from "node:path";
 // the ORIGINAL request must now see zero json() calls and zero clone() calls; the one
 // parse happens on the admission-rebuilt request over the already-buffered bytes.
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-chat-parse-once-7847-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-chat-parse-once-7847-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../src/lib/db/core.ts");

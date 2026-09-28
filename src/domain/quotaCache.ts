@@ -16,10 +16,10 @@
  * @module domain/quotaCache
  */
 
-import { getUsageForProvider } from "@omniroute/open-sse/services/usage.ts";
+import { getUsageForProvider } from "@agentproxy/open-sse/services/usage.ts";
 import { getCachedProviderConnectionById } from "@/lib/db/readCache";
 import { resolveProxyForConnection } from "@/lib/db/settings";
-import { runWithProxyContext } from "@omniroute/open-sse/utils/proxyFetch.ts";
+import { runWithProxyContext } from "@agentproxy/open-sse/utils/proxyFetch.ts";
 import { safePercentage } from "@/shared/utils/formatting";
 import {
   saveQuotaSnapshot,
@@ -31,14 +31,15 @@ import {
   CODEX_SPARK_QUOTA_SESSION,
   CODEX_SPARK_QUOTA_WEEKLY,
   getCodexQuotaWindowFilterForModel,
-} from "@omniroute/open-sse/config/codexQuotaScopes.ts";
+} from "@agentproxy/open-sse/config/codexQuotaScopes.ts";
+import { liftCodexScopeCooldownOnHeadroom } from "@/lib/db/providers/codexAccountState";
 import {
   createCodexAccountPool,
   getCodexChildQuotaHydration,
   resolveCodexAccount,
   type CodexPersistedQuotaState,
-} from "@omniroute/open-sse/services/codexAccount/index.ts";
-import { selectAntigravityQuotaWindowNames } from "@omniroute/open-sse/services/antigravityQuotaFamily.ts";
+} from "@agentproxy/open-sse/services/codexAccount/index.ts";
+import { selectAntigravityQuotaWindowNames } from "@agentproxy/open-sse/services/antigravityQuotaFamily.ts";
 import { isClaudeExtraUsageAllowed } from "@/lib/providers/claudeExtraUsage";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
@@ -110,19 +111,19 @@ interface QuotaCacheState {
 }
 
 declare global {
-  var __omnirouteQuotaCacheState: QuotaCacheState | undefined;
+  var __agentproxyQuotaCacheState: QuotaCacheState | undefined;
 }
 
 function getState(): QuotaCacheState {
-  if (!globalThis.__omnirouteQuotaCacheState) {
-    globalThis.__omnirouteQuotaCacheState = {
+  if (!globalThis.__agentproxyQuotaCacheState) {
+    globalThis.__agentproxyQuotaCacheState = {
       cache: new Map(),
       refreshingSet: new Set(),
       refreshTimer: null,
       tickRunning: false,
     };
   }
-  return globalThis.__omnirouteQuotaCacheState;
+  return globalThis.__agentproxyQuotaCacheState;
 }
 
 const MAX_CONCURRENT_REFRESHES = 5;
@@ -130,12 +131,11 @@ const MAX_CONCURRENT_REFRESHES = 5;
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
 function isExhausted(quotas: Record<string, QuotaInfo>): boolean {
-  const entries = Object.values(quotas);
+  const entries = Object.values(quotas).filter((q) => q.fractionReported !== false);
   if (entries.length === 0) return false;
-  // #10095 — a window whose fraction was never reported by upstream must
-  // never single-handedly flip the whole connection to exhausted; treat it
-  // as available (mirrors the guard in genericQuotaFetcher.ts).
-  return entries.every((q) => q.fractionReported !== false && q.remainingPercentage <= 0);
+  // Informational/unknown windows neither exhaust an account nor override a
+  // real exhausted window. In particular, spend telemetry is not a quota.
+  return entries.every((q) => q.remainingPercentage <= 0);
 }
 
 /**
@@ -260,14 +260,21 @@ function normalizeQuotas(rawQuotas: Record<string, any>): Record<string, QuotaIn
           : typeof q.window_seconds === "number" && Number.isFinite(q.window_seconds)
             ? q.window_seconds
             : null;
+      const percentage = safePercentage(q.remainingPercentage);
+      const total = safePercentage(q.total);
+      const used = q.used == null ? 0 : safePercentage(q.used);
+      const boundedPercentage =
+        total !== undefined && total > 0 && used !== undefined
+          ? Math.round(((total - used) / total) * 100)
+          : undefined;
+      const fractionReported =
+        q.fractionReported !== false &&
+        q.unlimited !== true &&
+        (percentage !== undefined || boundedPercentage !== undefined);
       result[key] = {
-        remainingPercentage:
-          safePercentage(q.remainingPercentage) ??
-          (q.total > 0 ? Math.round(((q.total - (q.used || 0)) / q.total) * 100) : 0),
+        remainingPercentage: fractionReported ? (percentage ?? boundedPercentage!) : 0,
         resetAt: q.resetAt || null,
-        // #10095 — thread through the "did upstream actually report this
-        // window's fraction" signal (see UsageQuota in usage/quota.ts).
-        fractionReported: q.fractionReported === false ? false : undefined,
+        fractionReported: fractionReported ? undefined : false,
         ...(typeof q.displayName === "string" && q.displayName.trim()
           ? { displayName: q.displayName.trim() }
           : {}),
@@ -370,9 +377,27 @@ export function hydrateCodexQuotaCacheForRequest(
       exhausted: false,
       nextResetAt: null,
     };
-  mergeCodexPersistedQuota(entry, hydration.scope, hydration.quotaState);
+
+  // AP-ISS-0059: request-time hydration must not overwrite a newer quota-cache
+  // observation (including one reconstructed from quota_snapshots) with stale
+  // providerSpecificData from the 429 that originally parked the child cooldown.
+  const persistedObservedMs = hydration.quotaState.observedAt
+    ? new Date(hydration.quotaState.observedAt).getTime()
+    : NaN;
+  const scopeFilter = getCodexQuotaWindowFilterForModel(requestedModel);
+  const hasScopedCacheEvidence = Object.keys(entry.quotas).some((windowName) =>
+    scopeFilter?.(windowName)
+  );
+  const cacheIsNewer =
+    hasScopedCacheEvidence &&
+    Number.isFinite(persistedObservedMs) &&
+    entry.fetchedAt > persistedObservedMs;
+
+  if (!cacheIsNewer) {
+    mergeCodexPersistedQuota(entry, hydration.scope, hydration.quotaState);
+  }
   let exhaustedResetAt: string | null = null;
-  if (hydration.exhaustedWindow) {
+  if (!cacheIsNewer && hydration.exhaustedWindow) {
     const windowName =
       hydration.scope === "spark"
         ? hydration.exhaustedWindow === "5h"
@@ -437,6 +462,9 @@ export function isQuotaExhaustedForRequest(
   }
 
   if (provider === "antigravity" || provider === "agy") {
+    if (Object.keys(entry.quotas || {}).length === 0) {
+      return isStandardQuotaExhausted(entry, now);
+    }
     return isAntigravityQuotaExhausted(connectionId, entry, requestedModel);
   }
 
@@ -446,6 +474,44 @@ export function isQuotaExhaustedForRequest(
 
   // Standard (non-per-model-quota) providers: check connection-wide aggregate
   return isStandardQuotaExhausted(entry, now);
+}
+
+function freshQuotaWindowHasHeadroom(quotaInfo: unknown): boolean {
+  if (!quotaInfo || typeof quotaInfo !== "object") return false;
+  const info = quotaInfo as Record<string, unknown>;
+  const explicit = safePercentage(info.remainingPercentage);
+  if (explicit != null) return explicit > 0;
+  const total = Number(info.total);
+  const used = Number(info.used ?? 0);
+  return Number.isFinite(total) && total > 0 && Number.isFinite(used) && used < total;
+}
+
+/**
+ * AP-ISS-0059: a single fresh Codex usage response is stronger evidence than a
+ * persisted reset deadline when it reports headroom for the complete child scope.
+ * Require both canonical windows from the SAME refresh before overriding an
+ * active quota_reset cooldown; individual snapshot writes remain conservative.
+ */
+function reconcileCodexChildCooldownFromFreshQuota(
+  connectionId: string,
+  provider: string,
+  rawQuotas: Record<string, any>
+): void {
+  if (provider.toLowerCase() !== "codex") return;
+
+  const normalKeys = ["session", "weekly"] as const;
+  if (normalKeys.every((key) => freshQuotaWindowHasHeadroom(rawQuotas[key]))) {
+    liftCodexScopeCooldownOnHeadroom(connectionId, "codex", {
+      authoritativeFreshScopeHeadroom: true,
+    });
+  }
+
+  const sparkKeys = [CODEX_SPARK_QUOTA_SESSION, CODEX_SPARK_QUOTA_WEEKLY] as const;
+  if (sparkKeys.every((key) => freshQuotaWindowHasHeadroom(rawQuotas[key]))) {
+    liftCodexScopeCooldownOnHeadroom(connectionId, "spark", {
+      authoritativeFreshScopeHeadroom: true,
+    });
+  }
 }
 
 /**
@@ -461,6 +527,16 @@ export function setQuotaCache(
   // #4438 — capture the prior entry BEFORE overwriting the cache so we can skip
   // redundant snapshot writes for idle connections whose quota didn't change.
   const prior = getState().cache.get(connectionId);
+  // A telemetry-only refresh is not evidence that a real upstream 429 has
+  // recovered. Keep its original timestamp so it can still expire normally.
+  if (
+    prior?.exhausted &&
+    Object.keys(prior.quotas).length === 0 &&
+    isStandardQuotaExhausted(prior, Date.now()) &&
+    Object.values(quotas).every((q) => q.fractionReported === false)
+  ) {
+    return;
+  }
   const entry: QuotaCacheEntry = {
     connectionId,
     provider,
@@ -474,31 +550,37 @@ export function setQuotaCache(
   if (entry && rawQuotas) {
     for (const [windowKey, quotaInfo] of Object.entries(rawQuotas)) {
       if (!quotaInfo || typeof quotaInfo !== "object") continue;
-      const remainingPercentage =
-        safePercentage(quotaInfo.remainingPercentage) ??
-        (quotaInfo.total > 0
-          ? Math.round(((quotaInfo.total - (quotaInfo.used || 0)) / quotaInfo.total) * 100)
-          : 0);
-      recordProviderQuotaResetEventIfChanged({
-        provider,
-        connectionId,
-        windowKey,
-        currentResetAt: quotaInfo.resetAt ?? null,
-        currentRemainingPercentage: remainingPercentage,
-        previousObservation: prior?.quotas?.[windowKey]
-          ? {
-              resetAt: prior.quotas[windowKey].resetAt,
-              remainingPercentage: prior.quotas[windowKey].remainingPercentage,
-            }
-          : null,
-      });
+      const normalized = quotas[windowKey];
+      if (!normalized) continue;
+      const { remainingPercentage } = normalized;
+      const fractionReported = normalized.fractionReported !== false;
+      if (fractionReported) {
+        recordProviderQuotaResetEventIfChanged({
+          provider,
+          connectionId,
+          windowKey,
+          currentResetAt: quotaInfo.resetAt ?? null,
+          currentRemainingPercentage: remainingPercentage,
+          previousObservation: prior?.quotas?.[windowKey]
+            ? {
+                resetAt: prior.quotas[windowKey].resetAt,
+                remainingPercentage: prior.quotas[windowKey].remainingPercentage,
+              }
+            : null,
+        });
+      }
       // #5923 (Finding #5) — is_exhausted must reflect THIS window's own remaining
       // percentage, not the connection-wide AND-across-all-windows aggregate
       // (`entry.exhausted`). A connection with one 0% window and other non-zero
       // windows previously never flagged that window's row as exhausted.
-      const windowExhausted = remainingPercentage <= 0;
+      const windowExhausted = fractionReported && remainingPercentage <= 0;
       // #4438 — only persist on the first observation or a real change.
-      if (!quotaSnapshotChanged(prior, windowKey, remainingPercentage, windowExhausted)) continue;
+      if (
+        !quotaSnapshotChanged(prior, windowKey, remainingPercentage, windowExhausted) &&
+        prior?.quotas?.[windowKey]?.fractionReported === normalized.fractionReported
+      ) {
+        continue;
+      }
       try {
         saveQuotaSnapshot({
           provider,
@@ -508,13 +590,16 @@ export function setQuotaCache(
           is_exhausted: windowExhausted ? 1 : 0,
           next_reset_at: quotaInfo.resetAt ?? null,
           window_duration_ms: entry.windowDurationMs ?? null,
-          raw_data: null,
+          // Persist only the interpretation, never the raw provider payload.
+          raw_data: fractionReported ? null : JSON.stringify({ fractionReported: false }),
         });
       } catch (error) {
         console.error("[quotaCache] Failed to save snapshot:", error);
       }
     }
   }
+
+  reconcileCodexChildCooldownFromFreshQuota(connectionId, provider, rawQuotas);
 }
 
 /**
@@ -549,15 +634,34 @@ function hydrateQuotaCacheFromSnapshots(connectionId: string): QuotaCacheEntry |
       nextResetAt?: string | null;
       windowDurationMs?: number | null;
       createdAt?: string;
+      rawData?: string | { fractionReported?: boolean } | null;
     };
     const windowKey = camelSnapshot.windowKey ?? snapshot.window_key;
     if (!windowKey) continue;
     provider = provider || snapshot.provider || "";
+
+    let fractionReported: false | undefined;
+    const rawData = camelSnapshot.rawData ?? snapshot.raw_data;
+    try {
+      const metadata = typeof rawData === "string" ? JSON.parse(rawData) : rawData;
+      if (metadata?.fractionReported === false) fractionReported = false;
+    } catch {
+      // Legacy snapshots need not contain JSON metadata.
+    }
+
+    // Older builds persisted Vertex's local spend counter as 0% remaining.
+    // It never represented a provider limit. Ignore its old exhaustion flag
+    // without deleting history or weakening genuine Vertex quota windows.
+    if ((provider === "vertex" || provider === "vertex-partner") && windowKey === "spend") {
+      fractionReported = false;
+    }
+
     quotas[windowKey] = {
       remainingPercentage: clampPercent(
         Number(camelSnapshot.remainingPercentage ?? snapshot.remaining_percentage ?? 0)
       ),
       resetAt: camelSnapshot.nextResetAt ?? snapshot.next_reset_at ?? null,
+      fractionReported,
     };
     const snapshotWindowDurationMs =
       camelSnapshot.windowDurationMs ?? snapshot.window_duration_ms ?? null;

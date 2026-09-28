@@ -14,7 +14,7 @@ import { fileURLToPath } from "node:url";
 // Lowering to 2 workers (#10060 / PR #11419) was not enough: it modeled the
 // per-process peak as an INFERENCE (`WORKER_PEAK_MB = 2560`, derived only from
 // "7 workers didn't fit") and assumed the parent process tracked the V8 heap
-// ceiling (`OMNIROUTE_BUILD_MEMORY_MB`) rather than its own RSS. The owner's
+// ceiling (`AGENTPROXY_BUILD_MEMORY_MB`) rather than its own RSS. The owner's
 // live VPS reproduction (issue #7518, dmesg OOM-killer report, 2026-08-24)
 // measured the real number directly: `next-build (v16) ... anon-rss:4522744kB`
 // (~4.5 GB) per process, independent of the NODE_OPTIONS heap flag — Turbopack
@@ -47,21 +47,21 @@ function readArgDefault(name: string): number {
   return Number(match![1]);
 }
 
-test("the Docker build's worker pool is derived from OMNIROUTE_BUILD_WORKERS", () => {
+test("the Docker build's worker pool is derived from AGENTPROXY_BUILD_WORKERS", () => {
   // assert.ok(boolean), not assert.match — a failing assert.match dumps the
   // whole Dockerfile into the report.
   assert.ok(
-    /^ENV CIRCLE_NODE_TOTAL=\$\{OMNIROUTE_BUILD_WORKERS\}$/m.test(dockerfile),
+    /^ENV CIRCLE_NODE_TOTAL=\$\{AGENTPROXY_BUILD_WORKERS\}$/m.test(dockerfile),
     "CIRCLE_NODE_TOTAL must stay wired to the build arg so a big builder can raise it"
   );
   assert.ok(
-    /^ENV NODE_OPTIONS="--max-old-space-size=\$\{OMNIROUTE_BUILD_MEMORY_MB\}"$/m.test(dockerfile),
-    "the build heap ceiling must stay wired to OMNIROUTE_BUILD_MEMORY_MB"
+    /^ENV NODE_OPTIONS="--max-old-space-size=\$\{AGENTPROXY_BUILD_MEMORY_MB\}"$/m.test(dockerfile),
+    "the build heap ceiling must stay wired to AGENTPROXY_BUILD_MEMORY_MB"
   );
 });
 
 test("worker count × measured per-process RSS fits a 16 GB GitHub runner", () => {
-  const workerPool = readArgDefault("OMNIROUTE_BUILD_WORKERS");
+  const workerPool = readArgDefault("AGENTPROXY_BUILD_WORKERS");
 
   // Next derives `workers = CIRCLE_NODE_TOTAL - 1`.
   const workers = workerPool - 1;
@@ -69,7 +69,7 @@ test("worker count × measured per-process RSS fits a 16 GB GitHub runner", () =
 
   // Every process — the parent `next build` process AND each page-data
   // worker — is budgeted at the measured per-process RSS floor (see the file
-  // banner comment). The V8 heap ceiling (OMNIROUTE_BUILD_MEMORY_MB) bounds
+  // banner comment). The V8 heap ceiling (AGENTPROXY_BUILD_MEMORY_MB) bounds
   // JS allocations but not Turbopack's native/Rust memory, so it cannot stand
   // in for the parent process's real RSS.
   const processes = workers + 1;
@@ -85,6 +85,6 @@ test("worker count × measured per-process RSS fits a 16 GB GitHub runner", () =
 });
 
 test("the worker pool does not oversubscribe the runner's 4 vCPU", () => {
-  const workers = readArgDefault("OMNIROUTE_BUILD_WORKERS") - 1;
+  const workers = readArgDefault("AGENTPROXY_BUILD_WORKERS") - 1;
   assert.ok(workers <= 4, `${workers} workers oversubscribe a 4 vCPU runner`);
 });

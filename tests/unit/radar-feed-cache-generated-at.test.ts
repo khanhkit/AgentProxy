@@ -28,7 +28,9 @@ process.env.RADAR_FEED_PUBKEY = publicKey
   .export({ type: "spki", format: "der" })
   .toString("base64");
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-radar-generated-at-"));
+const ORIGINAL_RADAR_FEED_URL = process.env.RADAR_FEED_URL;
+process.env.RADAR_FEED_URL = "https://radar.test";
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-radar-generated-at-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.STORAGE_ENCRYPTION_KEY = "test-encryption-key-for-radar-genat-tests-32b";
 process.env.JWT_SECRET = "test-jwt-secret-for-radar-genat-tests";
@@ -113,8 +115,8 @@ test("syncRadar writes the build date it just validated", async () => {
         new Response(bytes, {
           status: 200,
           headers: {
-            "x-omniroute-feed-signature": signature,
-            "x-omniroute-feed-tier": "community",
+            "x-agentproxy-feed-signature": signature,
+            "x-agentproxy-feed-tier": "community",
           },
         })
       )) as unknown as typeof globalThis.fetch,
@@ -208,6 +210,8 @@ test.after(() => {
   core.resetDbInstance();
   delete process.env.RADAR_ENABLED;
   delete process.env.INITIAL_PASSWORD;
+  if (ORIGINAL_RADAR_FEED_URL === undefined) delete process.env.RADAR_FEED_URL;
+  else process.env.RADAR_FEED_URL = ORIGINAL_RADAR_FEED_URL;
   try {
     fs.rmSync(TEST_DATA_DIR, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
   } catch {

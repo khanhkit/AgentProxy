@@ -80,9 +80,21 @@ export function resolveWorkerFile(): string {
 function unchanged(body: Record<string, unknown>): CompressionResult {
   return { body, compressed: false, stats: null };
 }
+
+export class CompressionWorkerError extends Error {
+  readonly retryInProcess: boolean;
+
+  constructor(message: string, retryInProcess: boolean) {
+    super(message);
+    this.name = "CompressionWorkerError";
+    this.retryInProcess = retryInProcess;
+  }
+}
+
 interface PendingJob extends CompressionWorkerJob {
   originalBody: Record<string, unknown>;
   resolve: (result: CompressionResult) => void;
+  reject: (error: Error) => void;
   onEngineStep?: (step: StackedCompressionStep) => void;
 }
 interface PoolWorker {
@@ -116,7 +128,7 @@ export class CompressionWorkerPool {
     options?: CompressionWorkerOptions,
     onEngineStep?: (step: StackedCompressionStep) => void
   ): Promise<CompressionResult> {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.queue.push({
         id: this.nextId++,
         body,
@@ -124,6 +136,7 @@ export class CompressionWorkerPool {
         options,
         originalBody: body,
         resolve,
+        reject,
         onEngineStep,
       });
       this.dispatch();
@@ -144,9 +157,14 @@ export class CompressionWorkerPool {
     slot.worker.on("message", (message: CompressionWorkerMessage) =>
       this.handleMessage(slot, message)
     );
-    slot.worker.on("error", () => this.fail(slot));
-    slot.worker.on("exit", () => {
-      if (this.workers.has(slot)) this.fail(slot);
+    slot.worker.on("error", (error) =>
+      this.fail(
+        slot,
+        `compression worker thread error: ${error instanceof Error ? error.message : String(error)}`
+      )
+    );
+    slot.worker.on("exit", (code) => {
+      if (this.workers.has(slot)) this.fail(slot, `compression worker exited (code ${code})`);
     });
     return slot;
   }
@@ -159,9 +177,18 @@ export class CompressionWorkerPool {
       const job = this.queue.shift();
       if (!job) return;
       slot.job = job;
-      slot.timeout = setTimeout(() => this.fail(slot!), this.timeoutMs);
+      slot.timeout = setTimeout(
+        () => this.fail(slot!, `compression worker timed out after ${this.timeoutMs}ms`, false),
+        this.timeoutMs
+      );
       slot.timeout.unref();
-      const { originalBody: _body, resolve: _resolve, onEngineStep: _step, ...wireJob } = job;
+      const {
+        originalBody: _body,
+        resolve: _resolve,
+        reject: _reject,
+        onEngineStep: _step,
+        ...wireJob
+      } = job;
       slot.worker.postMessage(wireJob);
     }
   }
@@ -176,7 +203,14 @@ export class CompressionWorkerPool {
       }
       return;
     }
-    this.finish(slot, message.type === "result" ? message.result : unchanged(job.originalBody));
+    if (message.type === "result") {
+      this.finish(slot, message.result);
+      return;
+    }
+    this.abort(
+      slot,
+      new CompressionWorkerError(`compression worker error: ${message.error}`, true)
+    );
   }
   private finish(slot: PoolWorker, result: CompressionResult): void {
     const job = slot.job;
@@ -192,10 +226,20 @@ export class CompressionWorkerPool {
     slot.idle.unref();
     this.dispatch();
   }
-  private fail(slot: PoolWorker): void {
+  private fail(
+    slot: PoolWorker,
+    reason = "compression worker failed or timed out",
+    retryInProcess = true
+  ): void {
+    this.abort(slot, new CompressionWorkerError(reason, retryInProcess));
+  }
+
+  private abort(slot: PoolWorker, error: CompressionWorkerError): void {
     const job = slot.job;
-    if (job) job.resolve(unchanged(job.originalBody));
+    if (slot.timeout) clearTimeout(slot.timeout);
+    slot.timeout = null;
     slot.job = null;
+    if (job) job.reject(error);
     void this.remove(slot).finally(() => this.dispatch());
   }
   /** Drop a slot and release its OS thread. Removal always terminates: a pooled worker

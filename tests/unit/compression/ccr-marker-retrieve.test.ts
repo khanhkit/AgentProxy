@@ -41,12 +41,12 @@ const SYSTEM_TEXT = "You are a helpful assistant with system instructions.";
 
 function makeBody(messages: Array<{ role: string; content: string }>) {
   // #7746 follow-up: CCR now only compresses for callers that can reach
-  // omniroute_ccr_retrieve. These tests exercise the compression/marker logic
+  // agentproxy_ccr_retrieve. These tests exercise the compression/marker logic
   // itself, so advertise the retrieve tool to pass the caller gate.
   return {
     model: "gpt-4",
     messages,
-    tools: [{ type: "function", function: { name: "omniroute_ccr_retrieve" } }],
+    tools: [{ type: "function", function: { name: "agentproxy_ccr_retrieve" } }],
   };
 }
 
@@ -222,7 +222,7 @@ describe("ccr engine", () => {
         },
       ],
       // Advertise the retrieve tool so the #7746 caller gate lets compression run.
-      tools: [{ type: "function", function: { name: "omniroute_ccr_retrieve" } }],
+      tools: [{ type: "function", function: { name: "agentproxy_ccr_retrieve" } }],
     };
 
     const result = ccrEngine.apply(body as Record<string, unknown>);

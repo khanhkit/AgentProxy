@@ -17,7 +17,7 @@ function request(etag?: string) {
 }
 
 test("AP-ISS-0087 snapshot handler returns ETag and 304 without a response body until data changes", async () => {
-  process.env.OMNIROUTE_INTERNAL_SERVICE_TOKEN = TEST_SERVICE_TOKEN;
+  process.env.AGENTPROXY_INTERNAL_SERVICE_TOKEN = TEST_SERVICE_TOKEN;
   let accessToken = "test-access-v1";
   const handler = createRustCoreSnapshotHandler({
     getConnections: async () => [
@@ -53,6 +53,6 @@ test("AP-ISS-0087 snapshot handler returns ETag and 304 without a response body 
     const changedBody = (await changed.json()) as { generation: number };
     assert.equal(changedBody.generation, 2);
   } finally {
-    delete process.env.OMNIROUTE_INTERNAL_SERVICE_TOKEN;
+    delete process.env.AGENTPROXY_INTERNAL_SERVICE_TOKEN;
   }
 });

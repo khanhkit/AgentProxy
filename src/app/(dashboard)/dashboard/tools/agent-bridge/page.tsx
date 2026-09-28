@@ -3,7 +3,6 @@ import { ALL_TARGETS } from "@/mitm/targets/index";
 import AgentBridgePageClient from "./AgentBridgePageClient";
 import type { AgentBridgePageData } from "./AgentBridgePageClient";
 import { normalizeAgentBridgeState } from "./normalizeState";
-import { resolveOmniRouteBaseUrl } from "@/shared/utils/resolveOmniRouteBaseUrl";
 
 /**
  * AgentBridge page — Server Component entry point.
@@ -40,7 +39,9 @@ export default async function AgentBridgePage() {
   };
 
   try {
-    const base = resolveOmniRouteBaseUrl();
+    const base =
+      process.env.AGENTPROXY_BASE_URL ??
+      `http://127.0.0.1:${process.env.PORT ?? 20128}`;
     const res = await fetch(`${base}/api/tools/agent-bridge/state`, {
       cache: "no-store",
       headers: { "x-internal-fetch": "1" },

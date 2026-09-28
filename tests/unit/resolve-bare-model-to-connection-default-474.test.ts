@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 
-import { resolveBareModelToConnectionDefault } from "@omniroute/open-sse/services/model.ts";
+import { resolveBareModelToConnectionDefault } from "@agentproxy/open-sse/services/model.ts";
 
 // #474 — When a bare model name (no "/") reaches the upstream call and the
 // selected connection declares a defaultModel, the bare name must resolve to

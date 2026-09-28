@@ -22,9 +22,11 @@ import { readCodexPeekChunk, buildCodexTimeoutSafePassthroughBody } from "./code
 import {
   CODEX_CLI_RS_ORIGINATOR,
   getCodexClientVersion,
+  getCodexClientVersionFromHeaders,
   getCodexUserAgent,
   normalizeCodexSessionId,
 } from "../config/codexClient.ts";
+import type { KeyHealth } from "../services/apiKeyRotator.ts";
 import {
   applyCodexClientIdentityHeaders,
   applyCodexClientMetadata,
@@ -76,7 +78,7 @@ type WreqWebSocket = {
   close: (code?: number, reason?: string) => void;
   onmessage: ((event: { data: unknown }) => void) | null;
   onerror: ((event: { message?: string }) => void) | null;
-  onclose: (() => void) | null;
+  onclose: ((event?: { code?: number; reason?: string }) => void) | null;
 };
 type WebsocketFn = (url: string, opts?: Record<string, unknown>) => Promise<WreqWebSocket>;
 type ResponsesMessageInput = { role?: unknown; phase?: unknown; content?: unknown };
@@ -386,31 +388,31 @@ function ensureCodexReasoningSummary(body: Record<string, unknown>): void {
 }
 
 function consumeResponsesStoreMarker(body: Record<string, unknown>): unknown {
-  const marker = body._omnirouteResponsesStore;
-  delete body._omnirouteResponsesStore;
+  const marker = body._agentproxyResponsesStore;
+  delete body._agentproxyResponsesStore;
   return marker;
 }
 
 /**
- * Global Codex WebSocket kill-switch (feature flag OMNIROUTE_CODEX_WS_ENABLED,
+ * Global Codex WebSocket kill-switch (feature flag AGENTPROXY_CODEX_WS_ENABLED,
  * default ON). Fail-open: if the flag store is unreachable (e.g. DB not yet
  * ready), treat as enabled so codex routing is never broken by the read itself.
  */
 function isCodexWsGloballyEnabled(): boolean {
   try {
-    return isFeatureFlagEnabled("OMNIROUTE_CODEX_WS_ENABLED");
+    return isFeatureFlagEnabled("AGENTPROXY_CODEX_WS_ENABLED");
   } catch {
     return true;
   }
 }
 
 /**
- * Global Codex app-server kill-switch (feature flag OMNIROUTE_CODEX_APP_SERVER_ENABLED,
+ * Global Codex app-server kill-switch (feature flag AGENTPROXY_CODEX_APP_SERVER_ENABLED,
  * default ON). Fail-open, mirroring isCodexWsGloballyEnabled.
  */
 function isCodexAppServerGloballyEnabled(): boolean {
   try {
-    return isFeatureFlagEnabled("OMNIROUTE_CODEX_APP_SERVER_ENABLED");
+    return isFeatureFlagEnabled("AGENTPROXY_CODEX_APP_SERVER_ENABLED");
   } catch {
     return true;
   }
@@ -437,7 +439,7 @@ export function isCodexResponsesWebSocketRequired(_model: string, credentials: u
   // transport — even per-connection codexTransport=websocket falls back to the
   // HTTP Responses SSE endpoint.
   if (!isCodexWsGloballyEnabled()) return false;
-  // OmniRoute is an HTTP→SSE gateway — WebSocket transport is unnecessary and
+  // AgentProxy is an HTTP→SSE gateway — WebSocket transport is unnecessary and
   // breaks when upstream requests go through an HTTP proxy (403 on WS upgrade).
   // Default to the standard HTTP Responses SSE endpoint for all Codex models.
   // Users who need WebSocket can opt in via the provider codexTransport setting.
@@ -526,7 +528,7 @@ function toCodexResponseFailedEvent(parsed: Record<string, unknown>): Record<str
 // 502 "Unknown error" / "Invalid state: Controller is already closed".
 // Default ON (#11014). Opt out with 0/false/no/off if a client consumes them.
 export function codexDropNonstandardEvents(): boolean {
-  const v = process.env.OMNIROUTE_CODEX_DROP_NONSTANDARD_EVENTS;
+  const v = process.env.AGENTPROXY_CODEX_DROP_NONSTANDARD_EVENTS;
   if (v === undefined || v.trim() === "") return true;
   const n = v.trim().toLowerCase();
   if (n === "0" || n === "false" || n === "no" || n === "off") return false;
@@ -749,7 +751,7 @@ export function encodeResponseSseEvent(raw: string): { sse: string; terminal: bo
   // check below never caught codex.rate_limits — over WS the frame carries a
   // non-empty JSON payload (`{"type":"codex.rate_limits", ...}`), so
   // `!payload.trim()` is false. Match by event type instead. Default ON via
-  // OMNIROUTE_CODEX_DROP_NONSTANDARD_EVENTS (#11014); the HTTP transport is handled
+  // AGENTPROXY_CODEX_DROP_NONSTANDARD_EVENTS (#11014); the HTTP transport is handled
   // separately by filterNonstandardCodexSse, since super.execute forwards the
   // upstream stream verbatim and never runs this function).
   if (eventType.startsWith("codex.") && codexDropNonstandardEvents()) {
@@ -957,8 +959,9 @@ export class CodexExecutor extends BaseExecutor {
       }
     };
 
-    const failController = (code: string, _message: string) => {
+    const failController = (code: string, message: string) => {
       if (closed) return;
+      nextInput.log?.warn?.("CODEX", `WebSocket stream failed (${code}): ${message}`);
       const controller = streamController;
       const payload = JSON.stringify({
         type: "response.failed",
@@ -971,6 +974,7 @@ export class CodexExecutor extends BaseExecutor {
       try {
         controller?.enqueue(encoder.encode(`event: response.failed\ndata: ${payload}\n\n`));
       } catch {
+        console.warn("[codex] failController: failed to enqueue response.failed");
         // Downstream closed before the failure could be delivered.
       }
       finishStream({ reason: "upstream_failed" });
@@ -1027,8 +1031,19 @@ export class CodexExecutor extends BaseExecutor {
               event.message || "Codex upstream WebSocket error"
             );
           };
-          ws.onclose = () => {
-            finishStream({ reason: "upstream_closed", closeSocket: false });
+          ws.onclose = (event) => {
+            // A close after a terminal event already finished the stream — no-op.
+            // A close before any terminal event means the upstream died mid-response:
+            // emit a terminal response.failed instead of ending the client stream as
+            // if it completed normally (silent truncation).
+            if (closed) return;
+            const closeDetail = event
+              ? ` (code ${event.code ?? "unknown"}${event.reason ? `: ${event.reason}` : ""})`
+              : "";
+            failController(
+              "upstream_websocket_closed",
+              `Codex upstream WebSocket closed before a terminal response event${closeDetail}`
+            );
           };
           if (!closed) {
             await prl.captureCurrentProviderBody(url, headers, bodyString, nextInput.log);
@@ -1088,11 +1103,30 @@ export class CodexExecutor extends BaseExecutor {
    * Always request event-stream from upstream, even when client requested stream=false.
    * Includes chatgpt-account-id header for strict workspace binding.
    */
-  buildHeaders(credentials: ProviderCredentials, stream = true) {
+  buildHeaders(
+    credentials: ProviderCredentials,
+    stream = true,
+    clientHeaders?: Record<string, string> | null,
+    model?: string,
+    health?: Record<string, KeyHealth>
+  ) {
     const isCompactRequest = isCompactResponsesEndpoint(credentials?.requestEndpointPath);
-    const headers = super.buildHeaders(credentials, isCompactRequest ? false : true);
-    headers.Version = getCodexClientVersion();
-    setUserAgentHeader(headers, getCodexUserAgent());
+    const headers = super.buildHeaders(
+      credentials,
+      isCompactRequest ? false : true,
+      clientHeaders,
+      model,
+      health
+    );
+
+    // Forward the CALLER's own Codex client version upstream instead of a pinned
+    // default. The ChatGPT backend gates newer models on the reported client
+    // version (e.g. "The 'gpt-6-astra' model requires a newer version of Codex"),
+    // so a hardcoded value silently rots whenever the user upgrades their CLI.
+    // Falls back to the configured/default version when the caller sends none.
+    const clientVersion = getCodexClientVersionFromHeaders(clientHeaders);
+    headers.Version = clientVersion ?? getCodexClientVersion();
+    setUserAgentHeader(headers, getCodexUserAgent(clientVersion));
 
     // Add workspace binding header if workspaceId is persisted
     const workspaceId = credentials?.providerSpecificData?.workspaceId;
@@ -1382,8 +1416,14 @@ export class CodexExecutor extends BaseExecutor {
     // Issue #2331: model suffix aliases (for example gpt-5.5-xhigh) represent an
     // explicit model selection, so they must override client-injected defaults such
     // as OpenCode's automatic reasoning.effort=medium for GPT-5-family requests.
+    // OpenRouter-style enabled:false disables connection defaults unless the
+    // request selected an explicit effort through the model suffix or request fields.
+    const clientDisabledReasoning = reasoningRecord?.enabled === false;
     const rawEffort =
-      modelEffort || explicitReasoning || requestReasoningEffort || fallbackReasoningEffort;
+      modelEffort ||
+      explicitReasoning ||
+      requestReasoningEffort ||
+      (clientDisabledReasoning ? "none" : fallbackReasoningEffort);
 
     if (rawEffort) {
       const clampedEffort = clampEffort(cleanModel, rawEffort);
@@ -1392,6 +1432,18 @@ export class CodexExecutor extends BaseExecutor {
         // Ultra coordinates delegation in Codex clients; the upstream wire effort is Max.
         effort: clampedEffort === "ultra" ? "max" : clampedEffort,
       };
+    }
+
+    // Codex Responses accepts only effort + summary inside reasoning.
+    const wireReasoning =
+      body.reasoning && typeof body.reasoning === "object" && !Array.isArray(body.reasoning)
+        ? (body.reasoning as Record<string, unknown>)
+        : null;
+    if (wireReasoning) {
+      for (const key of Object.keys(wireReasoning)) {
+        if (key !== "effort" && key !== "summary") delete wireReasoning[key];
+      }
+      if (Object.keys(wireReasoning).length === 0) delete body.reasoning;
     }
     ensureCodexReasoningSummary(body);
     if (isCompactRequest) {
@@ -1442,7 +1494,7 @@ export class CodexExecutor extends BaseExecutor {
     }
 
     // Delete session_id and conversation_id from the body.
-    // These are often injected by OmniRoute's fallback logic for store=true,
+    // These are often injected by AgentProxy's fallback logic for store=true,
     // but the upstream Codex API strictly rejects them as unsupported parameters.
     delete body.session_id;
     delete body.conversation_id;
@@ -1489,8 +1541,8 @@ export class CodexExecutor extends BaseExecutor {
       // must survive this allowlist filter or upstream rejects with "X-OpenAI-Internal-
       // Codex-Responses-Lite requires `parallel_tool_calls` to be false."
       "parallel_tool_calls",
-      // Internal markers used by OmniRoute pipeline
-      "_omnirouteResponsesStore",
+      // Internal markers used by AgentProxy pipeline
+      "_agentproxyResponsesStore",
     ]);
 
     for (const key of Object.keys(body)) {

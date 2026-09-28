@@ -11,7 +11,7 @@ import { after, before, describe, it } from "node:test";
 // and the federation endpoint keep returning id-only rows, and no key material
 // (key, key_hash, key_prefix, machine_id, ...) may ever ride along with the name.
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-leaderboard-names-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-leaderboard-names-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.API_KEY_SECRET = "leaderboard-names-route-test-secret";
 process.env.DISABLE_SQLITE_AUTO_BACKUP = "true";
@@ -67,7 +67,7 @@ before(async () => {
   gamificationDb.updateScore(orphanKeyId, SCOPE, 250);
 
   const tokenHash = crypto
-    .pbkdf2Sync(FEDERATION_TOKEN, "omniroute-federation-salt", 120000, 32, "sha256")
+    .pbkdf2Sync(FEDERATION_TOKEN, "agentproxy-federation-salt", 120000, 32, "sha256")
     .toString("hex");
   gamificationDb.connectServer(
     "federation-test-server",

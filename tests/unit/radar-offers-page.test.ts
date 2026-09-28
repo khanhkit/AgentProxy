@@ -20,7 +20,7 @@ test("offers page uses only local settings, sync, and cache routes", () => {
   assert.match(source, /fetch\("\/api\/radar\/settings"\)/);
   assert.match(source, /fetch\("\/api\/radar\/offers\/sync",\s*\{\s*method:\s*"POST"/);
   assert.match(source, /fetch\("\/api\/radar\/offers"\)/);
-  assert.doesNotMatch(source, /RADAR_FEED_URL|radar\.omniroute\.online|localDb|getDbInstance/);
+  assert.doesNotMatch(source, /RADAR_FEED_URL|radar\.agentproxy\.online|localDb|getDbInstance/);
 });
 
 test("offers UI is live-key gated, filters expiry, localizes, and labels partnerships", () => {

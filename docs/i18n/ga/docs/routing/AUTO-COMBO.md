@@ -6,12 +6,12 @@
 
 ---
 
-title: "OmniRoute Auto-Combo Engine"
+title: "AgentProxy Auto-Combo Engine"
 version: 3.8.40
 lastUpdated: 2026-06-28
 ---
 
-# OmniRoute Auto-Combo Engine
+# AgentProxy Auto-Combo Engine
 
 > **Do Úsáideoirí**: Ag lorg tosaigh tapa? Féach ar an [Treoir Úsáideora Auto-Combo](../getting-started/AUTO-COMBO-GUIDE.md) le haghaidh míniúcháin shimplí agus samplaí.
 
@@ -69,7 +69,7 @@ model: "auto/cheap"           # is saoire in aghaidh an tseicind
 
 **Cad a tharlaíonn:**
 
-1. Lorgann OmniRoute réimír `auto/` i `src/sse/handlers/chat.ts`
+1. Lorgann AgentProxy réimír `auto/` i `src/sse/handlers/chat.ts`
 2. Iarrann ar gach **nasc gníomhach soláthraí** ón mbunachar sonraí
 3. Scagann iad siúd a bhfuil dintiúra bailí acu (eochair API nó comhartha OAuth)
 4. Socraíonn an tsamhail in aghaidh an naisc (`connection.defaultModel` nó an chéad tsamhail soláthraí)
@@ -98,7 +98,7 @@ athsúsáid na léitheanna seasmhachta reatha (riamh stáit `state` raw scriost�
 
 Tugann gach iarratasóir an bhratach `excluded` den eochair API seo. Stóráiltear easnaimh
 in aghaidh an eochair API (`auto_candidate_overrides` tábla, imirce `128`) — Il-áit
-atá in OmniRoute gan tábla `users`, mar sin is `apiKeyId` an aitheantas fíor is gaire don
+atá in AgentProxy gan tábla `users`, mar sin is `apiKeyId` an aitheantas fíor is gaire don
 glaoiteoir — agus cuirtear i bhfeidhm é ag an bpointe teannais linn iarratasóirí i
 `open-sse/services/autoCombo/virtualFactory.ts` le `filterExcludedCandidates()`
 glan, tástáil-aonaid (`open-sse/services/autoCombo/candidateOverrides.ts`).
@@ -139,7 +139,7 @@ Roghnú uathoibríoch roghnaíonn an soláthraí/samhail is fearr in aghaidh an 
 
 ## Ainmneacha Combo a Mheaitseálann le Fíor-Aitheantas Múnla
 
-Is **phatrún intentional, tacaíochta** é combo a bhfuil a `name` mar an gcéanna le bare aitheantas múnla (m.sh. combo dar ainm `gpt-5.5`), ní fabht: is é an meicníocht é le haghaidh tacaíocht soláthraí in aghaidh an aitheantas múnla, mar atá cur síos air in [#6940](https://github.com/diegosouzapw/OmniRoute/issues/6940). Toisc go ndéantar seiceáil ar réiteach combo roimh réiteach bare aitheantas múnla (`getComboForModel()` in `src/sse/services/model.ts`), tá iarratas ar an bare aitheantas `gpt-5.5` á ródú trí spriocanna an combo (m.sh. `acme-responses/gpt-5.5`, `backup-responses/gpt-5.5)` in ionad dul díreach chuig soláthraí amháin — athúsáidtear an tosaíocht combo-roimh-athscríobh a tógadh le haghaidh [#3227/#3233](https://github.com/diegosouzapw/OmniRoute/issues/3227) agus tá sé á thástáil aisghníomhaíochta ag `tests/unit/responses-combo-resolution-3227.test.ts` agus `tests/unit/combo-name-codex-responses-rewrite.test.ts`.
+Is **phatrún intentional, tacaíochta** é combo a bhfuil a `name` mar an gcéanna le bare aitheantas múnla (m.sh. combo dar ainm `gpt-5.5`), ní fabht: is é an meicníocht é le haghaidh tacaíocht soláthraí in aghaidh an aitheantas múnla, mar atá cur síos air in [#6940](https://github.com/khanhkit/AgentProxy/issues/6940). Toisc go ndéantar seiceáil ar réiteach combo roimh réiteach bare aitheantas múnla (`getComboForModel()` in `src/sse/services/model.ts`), tá iarratas ar an bare aitheantas `gpt-5.5` á ródú trí spriocanna an combo (m.sh. `acme-responses/gpt-5.5`, `backup-responses/gpt-5.5)` in ionad dul díreach chuig soláthraí amháin — athúsáidtear an tosaíocht combo-roimh-athscríobh a tógadh le haghaidh [#3227/#3233](https://github.com/khanhkit/AgentProxy/issues/3227) agus tá sé á thástáil aisghníomhaíochta ag `tests/unit/responses-combo-resolution-3227.test.ts` agus `tests/unit/combo-name-codex-responses-rewrite.test.ts`.
 
 Nuair a chruthaítear nó a athainmnítear combo go hainm a chlúdaíonn fíor-aitheantas múnla, **ní dhéantar é a dhiúltú riamh** — bhrisfeadh sin an sreabhadh oibre seo atá cur síos air. Ina áit sin (#8530), cuireann `POST /api/combos` agus `PUT /api/combos/[id]` réimse `warning` neamh-bhlocála leis an bhfreagra nuair a thagann an t-ainm (nua) salach ar fíor-aitheantas múnla:
 
@@ -173,9 +173,9 @@ curl -X POST http://localhost:20128/v1/chat/completions \
 Dá pholl coitianta:
 
 - **Ní úsáideann `auto` do combos.** Tógann `auto`/`auto/*` a líonra iarrthóirí féin gan chumraíocht agus ní thagann sé ar combos curtha ar ais ach amháin má tá combo dar ainm `auto` go litriúil (nach molta). Chun ródú a dhéanamh trí combo, seol a ainm beacht — ní `auto`.
-- **Is táirge íoctha fíor é `openrouter/auto`** ("Auto Best Available") ag OpenRouter, ní ailias OmniRoute. Is é an iontráil múnla statach aonair é de chlárúchán OpenRouter (`open-sse/config/providers/registry/openrouter/index.ts`) agus tá billiú á dhéanamh air go dhíreach. Úsáid Socruithe → Ródú → Folaigh móideanna íoctha chun é a dhíliostáil ó phoolanna `auto`.
+- **Is táirge íoctha fíor é `openrouter/auto`** ("Auto Best Available") ag OpenRouter, ní ailias AgentProxy. Is é an iontráil múnla statach aonair é de chlárúchán OpenRouter (`open-sse/config/providers/registry/openrouter/index.ts`) agus tá billiú á dhéanamh air go dhíreach. Úsáid Socruithe → Ródú → Folaigh móideanna íoctha chun é a dhíliostáil ó phoolanna `auto`.
 
-Féach [#7992](https://github.com/diegosouzapw/OmniRoute/issues/7992) agus [#7111](https://github.com/diegosouzapw/OmniRoute/issues/7111) le haghaidh an mearbhail bhunúsháite a ndéanann an doiciméad seo cur síos air.
+Féach [#7992](https://github.com/khanhkit/AgentProxy/issues/7992) agus [#7111](https://github.com/khanhkit/AgentProxy/issues/7111) le haghaidh an mearbhail bhunúsháite a ndéanann an doiciméad seo cur síos air.
 
 ## Conas a Oibríonn Sé (Auto-Chomhshuitmhí Leanúnacha)
 
@@ -244,17 +244,17 @@ Is féidir comhcheangal `auto` a stiúradh **in aghaidh an iarratais** trí thr�
 
 | Ceanntásc                     | Glacann sé                                                                                                                                                                                        | Éifeacht                                                                                                                                                                                                                                                                                |
 | :---------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `X-OmniRoute-Mode`            | ailias réamhshocraithe (`fast`, `balanced`, `quality`, `cheap`, `reliable`, `offline`) nó ainm pacáiste amh (`ship-fast`, `cost-saver`, `quality-first`, `offline-friendly`, `reliability-first`) | Sáraíonn sé na meáchain scórála don iarratas seo. Cuireann `balanced`/`default` na meáchain réamhshocraithe i bhfeidhm (gan phacáiste). Déantar neamhaird ar luachanna anaithnide (cumraíocht caomhnaithe).                                                                             |
-| `X-OmniRoute-Budget`          | uimhir dhearfach (uas USD in aghaidh an iarratais)                                                                                                                                                | Uasteorainn chostais chrua: scagtar iarrthóirí a bhfuil a meastachán costais os a chionn roimh roghnú. Rialaítear cad a tharlaíonn nuair a sháraíonn **gach** iarrthóir é le `X-OmniRoute-Budget-Fallback` thíos.                                                                       |
-| `X-OmniRoute-Budget-Fallback` | `cheapest` (réamhshocrú, ailiasanna: `cheapest-viable`, `soft`) nó `strict` (ailiasanna: `block`, `hard`)                                                                                         | `cheapest`: titeann sé ar ais go dtí an t-iarrthóir is saoire go domhanda cé go sáraíonn sé an caipín fós (iompar oidhreachta). `strict`: diúltaíonn sé roghnú — teipeann ar an iarratas go tapa le `HTTP 402` in ionad róchaiteachas ciúin. Déantar neamhaird ar luachanna anaithnide. |
+| `X-AgentProxy-Mode`            | ailias réamhshocraithe (`fast`, `balanced`, `quality`, `cheap`, `reliable`, `offline`) nó ainm pacáiste amh (`ship-fast`, `cost-saver`, `quality-first`, `offline-friendly`, `reliability-first`) | Sáraíonn sé na meáchain scórála don iarratas seo. Cuireann `balanced`/`default` na meáchain réamhshocraithe i bhfeidhm (gan phacáiste). Déantar neamhaird ar luachanna anaithnide (cumraíocht caomhnaithe).                                                                             |
+| `X-AgentProxy-Budget`          | uimhir dhearfach (uas USD in aghaidh an iarratais)                                                                                                                                                | Uasteorainn chostais chrua: scagtar iarrthóirí a bhfuil a meastachán costais os a chionn roimh roghnú. Rialaítear cad a tharlaíonn nuair a sháraíonn **gach** iarrthóir é le `X-AgentProxy-Budget-Fallback` thíos.                                                                       |
+| `X-AgentProxy-Budget-Fallback` | `cheapest` (réamhshocrú, ailiasanna: `cheapest-viable`, `soft`) nó `strict` (ailiasanna: `block`, `hard`)                                                                                         | `cheapest`: titeann sé ar ais go dtí an t-iarrthóir is saoire go domhanda cé go sáraíonn sé an caipín fós (iompar oidhreachta). `strict`: diúltaíonn sé roghnú — teipeann ar an iarratas go tapa le `HTTP 402` in ionad róchaiteachas ciúin. Déantar neamhaird ar luachanna anaithnide. |
 
 ```bash
 # Cuir an phróifíl is tapúla i bhfeidhm, caipín an t-iarratas seo ag $0.05, agus bloc go crua in ionad róchaiteachais
 curl -sS http://localhost:20128/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "X-OmniRoute-Mode: fast" \
-  -H "X-OmniRoute-Budget: 0.05" \
-  -H "X-OmniRoute-Budget-Fallback: strict" \
+  -H "X-AgentProxy-Mode: fast" \
+  -H "X-AgentProxy-Budget: 0.05" \
+  -H "X-AgentProxy-Budget-Fallback: strict" \
   -d '{"model":"auto","messages":[{"role":"user","content":"hi"}]}'
 ```
 
@@ -262,7 +262,7 @@ Is feidhm íon í an réiteach (`open-sse/services/autoCombo/requestControls.ts`
 
 ## Gach Straitéis Ródaithe
 
-Tacaíonn innill combo OmniRoute le **19 straitéis ródaithe** (deartha i `src/shared/constants/routingStrategies.ts` → `ROUTING_STRATEGY_VALUES`). Tá an tUath-innill combo féin ar fáil faoin straitéis `auto`; tá na cinn eile ar fáil le haghaidh comboanna stóráilte.
+Tacaíonn innill combo AgentProxy le **19 straitéis ródaithe** (deartha i `src/shared/constants/routingStrategies.ts` → `ROUTING_STRATEGY_VALUES`). Tá an tUath-innill combo féin ar fáil faoin straitéis `auto`; tá na cinn eile ar fáil le haghaidh comboanna stóráilte.
 
 | Straitéis           | Cur síos                                                                                                                                                                                                                       |
 | :------------------ | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -587,7 +587,7 @@ Is féidir leat cur i bhfeidhm `RouterStrategy` féin a chlárú trí an API poi
 import {
   registerStrategy,
   type RouterStrategy,
-} from "@omniroute/open-sse/services/autoCombo/routerStrategy";
+} from "@agentproxy/open-sse/services/autoCombo/routerStrategy";
 
 class MyCustomStrategy implements RouterStrategy {
   readonly name = "my-custom";
@@ -702,8 +702,8 @@ Ritheann an tsraith seo in CI (`test:integration` post) le `--test-concurrency=1
 
 | Ordú                                   | Cad a dhéanann sé                                                                                     |
 | :------------------------------------- | :---------------------------------------------------------------------------------------------------- |
-| `npm run test:combo:live`              | Ríochtáil fíor in-phróiseas le `RUN.ImageLayoutLIVE=1`; snapshootann sé bunachar sonraí OmniRoute beo |
-| `npm run test:combo:live:vps`          | Glaonna HTTP i gcoinne freastalaí OmniRoute beo (socraigh `COMBO_LIVE_BASE_URL`)                      |
+| `npm run test:combo:live`              | Ríochtáil fíor in-phróiseas le `RUN.ImageLayoutLIVE=1`; snapshootann sé bunachar sonraí AgentProxy beo |
+| `npm run test:combo:live:vps`          | Glaonna HTTP i gcoinne freastalaí AgentProxy beo (socraigh `COMBO_LIVE_BASE_URL`)                      |
 | `npm run test:combo:live:vps:failover` | Amhlaidh, le cásanna teip éignithe                                                                    |
 
 Cothaíonn na tástálacha smotháiste seo an cosán fíor sreafa (comhcheangal → soláthraí → críochnú). Tá siad

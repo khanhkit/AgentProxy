@@ -6,30 +6,30 @@
 
 ---
 
-title: "OmniRoute MCP servera dokumentācija"
+title: "AgentProxy MCP servera dokumentācija"
 version: 3.8.50
 lastUpdated: 2026-08-08
 ---
 
-# OmniRoute MCP servera dokumentācija
+# AgentProxy MCP servera dokumentācija
 
 > Model Context Protocol serveris ar 110 rīkiem maršrutēšanas, kešatmiņas, saspiešanas, atmiņas, prasmju, starpniekservera, kopuma, Radar un konteksta avotu darbībām.
 >
-> Patiesais avots: `open-sse/mcp-server/server.ts` aprēķina **110 unikālus rīkus**, izmantojot `countUniqueMcpTools()`: 45 kanoniskas definīcijas (tostarp sešus CCR dzīves cikla rīkus, aģentu prasmju trijnieku, `omniroute_radar_catalog` un `omniroute_x_search`), kā arī memory (3), skills (4), GitHub skills (3), pool (6), gamification (8), plugins (8), Notion (6), Obsidian (22), local corpus (3) un divus tikai RTK paredzētus saspiešanas rīkus.
+> Patiesais avots: `open-sse/mcp-server/server.ts` aprēķina **110 unikālus rīkus**, izmantojot `countUniqueMcpTools()`: 45 kanoniskas definīcijas (tostarp sešus CCR dzīves cikla rīkus, aģentu prasmju trijnieku, `agentproxy_radar_catalog` un `agentproxy_x_search`), kā arī memory (3), skills (4), GitHub skills (3), pool (6), gamification (8), plugins (8), Notion (6), Obsidian (22), local corpus (3) un divus tikai RTK paredzētus saspiešanas rīkus.
 
 ## Instalēšana
 
-OmniRoute MCP ir iebūvēts. Palaidiet to ar:
+AgentProxy MCP ir iebūvēts. Palaidiet to ar:
 
 ```bash
-omniroute --mcp
+agentproxy --mcp
 ```
 
 Vai, izmantojot open-sse transportu:
 
 ```bash
 # HTTP straumējams transports (ports 20130)
-omniroute --dev  # MCP automātiski tiek palaists /mcp galapunktā
+agentproxy --dev  # MCP automātiski tiek palaists /mcp galapunktā
 ```
 
 ## Transporti
@@ -75,61 +75,61 @@ Cursor, Cline un saderīgu MCP klientu iestatīšanu.
 
 | Tool                            | Scopes                | Description                                                                                                                                                     |
 | :------------------------------ | :-------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `omniroute_get_health`          | `read:health`         | Darbspējas laiks, atmiņa, ķēdes pārtraucēji, ātruma ierobežojumi, kešatmiņas statistika                                                                         |
-| `omniroute_list_combos`         | `read:combos`         | Visas konfigurētās kombinācijas ar stratēģijām (neobligāti rādītāji)                                                                                            |
-| `omniroute_get_combo_metrics`   | `read:combos`         | Konkrētas kombinācijas veiktspējas rādītāji                                                                                                                     |
-| `omniroute_switch_combo`        | `write:combos`        | Aktivizēt vai deaktivizēt kombināciju                                                                                                                           |
-| `omniroute_create_combo`        | `write:combos`        | Izveidot validētu kombināciju, izmantojot esošo kombināciju API                                                                                                 |
-| `omniroute_check_quota`         | `read:quota`          | Izmantotā/kopējā kvota, atlikušais procentuālais daudzums, atiestatīšanas laiks, tokenu stāvoklis                                                               |
-| `omniroute_route_request`       | `execute:completions` | Nosūtīt tērzēšanas pabeigšanas pieprasījumu, izmantojot OmniRoute maršrutēšanu                                                                                  |
-| `omniroute_cost_report`         | `read:usage`          | Izmaksu pārskats pēc perioda (sesija/diena/nedēļa/mēnesis)                                                                                                      |
-| `omniroute_list_models_catalog` | `read:models`         | Pilns modeļu katalogs ar iespējām, statusu un cenām                                                                                                             |
-| `omniroute_radar_catalog`       | `read:radar`          | Lokāls parakstīts Radar katalogs; neobligāti pakalpojumu sniedzēju/saimes filtri                                                                                |
-| `omniroute_tool_search`         | `read:tools`          | Atklāt rīkus no reģistrētā MCP kataloga                                                                                                                         |
-| `omniroute_web_search`          | `execute:search`      | Meklēt tīmeklī, izmantojot konfigurētos meklēšanas pakalpojumu sniedzējus. Neattiecas uz X/Twitter.                                                             |
-| `omniroute_x_search`            | `execute:search`      | Meklēt X, izmantojot xAI/SuperGrok, vai izvēlēties `xquik-search`, lai iegūtu Xquik API rezultātus. Nepieciešami izvēlētās aizmugursistēmas akreditācijas dati. |
-| `omniroute_web_fetch`           | `execute:search`      | Iegūt tīmekļa saturu, izmantojot konfigurētos satura iegūšanas pakalpojumu sniedzējus                                                                           |
+| `agentproxy_get_health`          | `read:health`         | Darbspējas laiks, atmiņa, ķēdes pārtraucēji, ātruma ierobežojumi, kešatmiņas statistika                                                                         |
+| `agentproxy_list_combos`         | `read:combos`         | Visas konfigurētās kombinācijas ar stratēģijām (neobligāti rādītāji)                                                                                            |
+| `agentproxy_get_combo_metrics`   | `read:combos`         | Konkrētas kombinācijas veiktspējas rādītāji                                                                                                                     |
+| `agentproxy_switch_combo`        | `write:combos`        | Aktivizēt vai deaktivizēt kombināciju                                                                                                                           |
+| `agentproxy_create_combo`        | `write:combos`        | Izveidot validētu kombināciju, izmantojot esošo kombināciju API                                                                                                 |
+| `agentproxy_check_quota`         | `read:quota`          | Izmantotā/kopējā kvota, atlikušais procentuālais daudzums, atiestatīšanas laiks, tokenu stāvoklis                                                               |
+| `agentproxy_route_request`       | `execute:completions` | Nosūtīt tērzēšanas pabeigšanas pieprasījumu, izmantojot AgentProxy maršrutēšanu                                                                                  |
+| `agentproxy_cost_report`         | `read:usage`          | Izmaksu pārskats pēc perioda (sesija/diena/nedēļa/mēnesis)                                                                                                      |
+| `agentproxy_list_models_catalog` | `read:models`         | Pilns modeļu katalogs ar iespējām, statusu un cenām                                                                                                             |
+| `agentproxy_radar_catalog`       | `read:radar`          | Lokāls parakstīts Radar katalogs; neobligāti pakalpojumu sniedzēju/saimes filtri                                                                                |
+| `agentproxy_tool_search`         | `read:tools`          | Atklāt rīkus no reģistrētā MCP kataloga                                                                                                                         |
+| `agentproxy_web_search`          | `execute:search`      | Meklēt tīmeklī, izmantojot konfigurētos meklēšanas pakalpojumu sniedzējus. Neattiecas uz X/Twitter.                                                             |
+| `agentproxy_x_search`            | `execute:search`      | Meklēt X, izmantojot xAI/SuperGrok, vai izvēlēties `xquik-search`, lai iegūtu Xquik API rezultātus. Nepieciešami izvēlētās aizmugursistēmas akreditācijas dati. |
+| `agentproxy_web_fetch`           | `execute:search`      | Iegūt tīmekļa saturu, izmantojot konfigurētos satura iegūšanas pakalpojumu sniedzējus                                                                           |
 
 ## Papildu rīki (11) — 2. fāze
 
 | Rīks                               | Tvērumi                              | Apraksts                                                                                                                   |
 | :--------------------------------- | :----------------------------------- | :------------------------------------------------------------------------------------------------------------------------- |
-| `omniroute_simulate_route`         | `read:health`, `read:combos`         | Maršrutēšanas simulācija testa režīmā ar atkāpju koku                                                                      |
-| `omniroute_set_budget_guard`       | `write:budget`                       | Sesijas budžets ar samazināšanas/ bloķēšanas/brīdināšanas darbību                                                          |
-| `omniroute_set_routing_strategy`   | `write:combos`                       | Kombināciju stratēģijas atjaunināšana izpildes laikā (prioritāte/svēršana/automātiski u.c.)                                |
-| `omniroute_set_resilience_profile` | `write:resilience`                   | `aggressive` / `balanced` / `conservative` noturības priekšiestatījuma lietošana                                           |
-| `omniroute_test_combo`             | `execute:completions`, `read:combos` | Katrs kombinācijas nodrošinātājs tiek pārbaudīts tiešraidē, izmantojot reālu augšupējo izsaukumu                           |
-| `omniroute_get_provider_metrics`   | `read:health`                        | Katra nodrošinātāja metrika ar p50/p95/p99 latentumu un ķēdes pārtraucēja stāvokli                                         |
-| `omniroute_best_combo_for_task`    | `read:combos`, `read:health`         | Ieteikt kombināciju pēc uzdevuma veida, ņemot vērā budžeta/latentuma ierobežojumus                                         |
-| `omniroute_explain_route`          | `read:health`, `read:usage`          | Izskaidrot, kāpēc pieprasījums tika maršrutēts pie nodrošinātāja (vērtēšanas faktori + atkāpšanās iespējas)                |
-| `omniroute_get_session_snapshot`   | `read:usage`                         | Pilns sesijas momentuzņēmums: izmaksas, marķieri, populārākie modeļi/nodrošinātāji, kļūdas, budžeta aizsargs               |
-| `omniroute_db_health_check`        | `read:health`, `write:resilience`    | Diagnosticēt (un pēc izvēles automātiski labot) datubāzes novirzes, piemēram, bojātas kombināciju atsauces / bāreņu rindas |
-| `omniroute_sync_pricing`           | `pricing:write`                      | Sinhronizēt cenu datus no ārējiem avotiem (LiteLLM); atbalsta `dryRun`                                                     |
+| `agentproxy_simulate_route`         | `read:health`, `read:combos`         | Maršrutēšanas simulācija testa režīmā ar atkāpju koku                                                                      |
+| `agentproxy_set_budget_guard`       | `write:budget`                       | Sesijas budžets ar samazināšanas/ bloķēšanas/brīdināšanas darbību                                                          |
+| `agentproxy_set_routing_strategy`   | `write:combos`                       | Kombināciju stratēģijas atjaunināšana izpildes laikā (prioritāte/svēršana/automātiski u.c.)                                |
+| `agentproxy_set_resilience_profile` | `write:resilience`                   | `aggressive` / `balanced` / `conservative` noturības priekšiestatījuma lietošana                                           |
+| `agentproxy_test_combo`             | `execute:completions`, `read:combos` | Katrs kombinācijas nodrošinātājs tiek pārbaudīts tiešraidē, izmantojot reālu augšupējo izsaukumu                           |
+| `agentproxy_get_provider_metrics`   | `read:health`                        | Katra nodrošinātāja metrika ar p50/p95/p99 latentumu un ķēdes pārtraucēja stāvokli                                         |
+| `agentproxy_best_combo_for_task`    | `read:combos`, `read:health`         | Ieteikt kombināciju pēc uzdevuma veida, ņemot vērā budžeta/latentuma ierobežojumus                                         |
+| `agentproxy_explain_route`          | `read:health`, `read:usage`          | Izskaidrot, kāpēc pieprasījums tika maršrutēts pie nodrošinātāja (vērtēšanas faktori + atkāpšanās iespējas)                |
+| `agentproxy_get_session_snapshot`   | `read:usage`                         | Pilns sesijas momentuzņēmums: izmaksas, marķieri, populārākie modeļi/nodrošinātāji, kļūdas, budžeta aizsargs               |
+| `agentproxy_db_health_check`        | `read:health`, `write:resilience`    | Diagnosticēt (un pēc izvēles automātiski labot) datubāzes novirzes, piemēram, bojātas kombināciju atsauces / bāreņu rindas |
+| `agentproxy_sync_pricing`           | `pricing:write`                      | Sinhronizēt cenu datus no ārējiem avotiem (LiteLLM); atbalsta `dryRun`                                                     |
 
 ## Kešatmiņas rīki (2)
 
 | Rīks                    | Tvērumi       | Apraksts                                                              |
 | :---------------------- | :------------ | :-------------------------------------------------------------------- |
-| `omniroute_cache_stats` | `read:cache`  | Semantiskās kešatmiņas, uzvedņu kešatmiņas un idempotences statistika |
-| `omniroute_cache_flush` | `write:cache` | Iztīrīt kešatmiņu globāli vai pēc paraksta/modeļa                     |
+| `agentproxy_cache_stats` | `read:cache`  | Semantiskās kešatmiņas, uzvedņu kešatmiņas un idempotences statistika |
+| `agentproxy_cache_flush` | `write:cache` | Iztīrīt kešatmiņu globāli vai pēc paraksta/modeļa                     |
 
 ## Saspiešanas rīki (13)
 
 | Rīks                                | Tvērumi             | Apraksts                                                                                                                                   |
 | :---------------------------------- | :------------------ | :----------------------------------------------------------------------------------------------------------------------------------------- |
-| `omniroute_compression_status`      | `read:compression`  | Saspiešanas iestatījumi, analītikas kopsavilkums un kešatmiņu apzinoša statistika (ietver `analytics.mcpDescriptionCompression` metadatus) |
-| `omniroute_compression_configure`   | `write:compression` | Konfigurēt saspiešanas režīmu, slieksni, mērķa attiecību, sistēmas uzvednes saglabāšanu un MCP aprakstu saspiešanas pārslēgu               |
-| `omniroute_set_compression_engine`  | `write:compression` | Izvēlēties aktīvo dzini (off/caveman/rtk/stacked) un Caveman/RTK intensitāti                                                               |
-| `omniroute_list_compression_combos` | `read:compression`  | Uzskaitīt nosauktās saspiešanas kombinācijas un to dzinēju cauruļvadus                                                                     |
-| `omniroute_compression_combo_stats` | `read:compression`  | Analītika, grupēta pēc saspiešanas kombinācijas un dzinēja                                                                                 |
-| `omniroute_ccr_store`               | `write:compression` | Saglabāt izsaucēja izolētu saturu ierobežotā atmiņas CCR krātuvē un atgriezt marķieri ar `ccr://` atsauci                                  |
-| `omniroute_ccr_retrieve`            | `read:compression`  | Iegūt CCR saturu pilnībā vai režīmos head, tail, lines, grep un stats                                                                      |
-| `omniroute_ccr_inspect`             | `read:compression`  | Pārbaudīt izsaucējam piederošus CCR metadatus, neatgriežot saturu                                                                          |
-| `omniroute_ccr_list`                | `read:compression`  | Uzskaitīt lapotos metadatus izsaucējam piederošajiem CCR blokiem                                                                           |
-| `omniroute_ccr_delete`              | `write:compression` | Dzēst izsaucējam piederošu CCR bloku                                                                                                       |
-| `omniroute_ccr_stats`               | `read:compression`  | Ziņot par izsaucēja tvērumam piesaistīto atmiņas lietojumu, dzīves cikla skaitītājiem un krātuves ierobežojumiem                           |
-| `omniroute_rtk_discover`            | `read:compression`  | Atklāt atkārtotu troksni izvēles RTK izvades paraugos                                                                                      |
-| `omniroute_rtk_learn`               | `read:compression`  | Ģenerēt pārskatāmu RTK filtra melnrakstu no izvēles paraugiem                                                                              |
+| `agentproxy_compression_status`      | `read:compression`  | Saspiešanas iestatījumi, analītikas kopsavilkums un kešatmiņu apzinoša statistika (ietver `analytics.mcpDescriptionCompression` metadatus) |
+| `agentproxy_compression_configure`   | `write:compression` | Konfigurēt saspiešanas režīmu, slieksni, mērķa attiecību, sistēmas uzvednes saglabāšanu un MCP aprakstu saspiešanas pārslēgu               |
+| `agentproxy_set_compression_engine`  | `write:compression` | Izvēlēties aktīvo dzini (off/caveman/rtk/stacked) un Caveman/RTK intensitāti                                                               |
+| `agentproxy_list_compression_combos` | `read:compression`  | Uzskaitīt nosauktās saspiešanas kombinācijas un to dzinēju cauruļvadus                                                                     |
+| `agentproxy_compression_combo_stats` | `read:compression`  | Analītika, grupēta pēc saspiešanas kombinācijas un dzinēja                                                                                 |
+| `agentproxy_ccr_store`               | `write:compression` | Saglabāt izsaucēja izolētu saturu ierobežotā atmiņas CCR krātuvē un atgriezt marķieri ar `ccr://` atsauci                                  |
+| `agentproxy_ccr_retrieve`            | `read:compression`  | Iegūt CCR saturu pilnībā vai režīmos head, tail, lines, grep un stats                                                                      |
+| `agentproxy_ccr_inspect`             | `read:compression`  | Pārbaudīt izsaucējam piederošus CCR metadatus, neatgriežot saturu                                                                          |
+| `agentproxy_ccr_list`                | `read:compression`  | Uzskaitīt lapotos metadatus izsaucējam piederošajiem CCR blokiem                                                                           |
+| `agentproxy_ccr_delete`              | `write:compression` | Dzēst izsaucējam piederošu CCR bloku                                                                                                       |
+| `agentproxy_ccr_stats`               | `read:compression`  | Ziņot par izsaucēja tvērumam piesaistīto atmiņas lietojumu, dzīves cikla skaitītājiem un krātuves ierobežojumiem                           |
+| `agentproxy_rtk_discover`            | `read:compression`  | Atklāt atkārtotu troksni izvēles RTK izvades paraugos                                                                                      |
+| `agentproxy_rtk_learn`               | `read:compression`  | Ģenerēt pārskatāmu RTK filtra melnrakstu no izvēles paraugiem                                                                              |
 
 CCR ieraksti pastāv tikai atmiņā un pazūd pēc restartēšanas. Katra bloka lielums ir ierobežots līdz
 2 MiB, katra principāla — līdz 16 MiB, bet globālās krātuves — līdz 64 MiB. Ierakstu noklusējuma
@@ -138,14 +138,14 @@ lielāki bloki paliek pieejami, izmantojot diapazona un grep režīmus. Glabāš
 pārbaude, dzēšana un statistika ir izolēta pēc autentificētās API atslēgas principāla. Audita ieraksti
 satur jaucējvērtības un lieluma metadatus, bet nekad — saturu.
 
-`omniroute_compression_status` atsevišķi ziņo par MCP aprakstu saspiešanu sadaļā
+`agentproxy_compression_status` atsevišķi ziņo par MCP aprakstu saspiešanu sadaļā
 `analytics.mcpDescriptionCompression`. Šīs vērtības ir MCP uzskaitāmo aprakstu
 (`tools`, `prompts`, `resources` un `resourceTemplates`) metadatu lieluma aprēķini; tās nav
 nodrošinātāja lietojuma uzskaites dati, un tās ir marķētas ar `source: "mcp_metadata_estimate"`.
 
 ### MCP pieejamības koka filtrs (v3.8.0)
 
-Atsevišķi no iepriekš minētajiem saspiešanas rīkiem OmniRoute ietver pēciekses filtru, kas saspiež
+Atsevišķi no iepriekš minētajiem saspiešanas rīkiem AgentProxy ietver pēciekses filtru, kas saspiež
 MCP pārlūkprogrammas/pieejamības rīku **rīku rezultātus**, pirms tie tiek atgriezti aģentam. Šis
 filtrs pats par sevi nav rīks — tas darbojas caurspīdīgi ar jebkuru rīka rezultātu, kas satur
 detalizētu pieejamības koka vai pārlūkprogrammas momentuzņēmuma tekstu (≥2000 rakstzīmju).
@@ -168,9 +168,9 @@ lai uzzinātu par šo rīku pamatā esošo izpildes laika saspiešanas modeli.
 
 | Rīks                        | Tvērumi        | Apraksts                                                                                             |
 | :-------------------------- | :------------- | :--------------------------------------------------------------------------------------------------- |
-| `omniroute_oneproxy_fetch`  | `read:proxies` | Iegūt bezmaksas starpniekserverus no 1proxy tirgus (protokola/valsts/kvalitātes/ierobežojuma filtri) |
-| `omniroute_oneproxy_rotate` | `read:proxies` | Iegūt nākamo pieejamo starpniekserveri pēc stratēģijas (`random` / `quality` / `sequential`)         |
-| `omniroute_oneproxy_stats`  | `read:proxies` | Kopas statistika, sinhronizācijas statuss, sadalījums pēc protokola un valsts                        |
+| `agentproxy_oneproxy_fetch`  | `read:proxies` | Iegūt bezmaksas starpniekserverus no 1proxy tirgus (protokola/valsts/kvalitātes/ierobežojuma filtri) |
+| `agentproxy_oneproxy_rotate` | `read:proxies` | Iegūt nākamo pieejamo starpniekserveri pēc stratēģijas (`random` / `quality` / `sequential`)         |
+| `agentproxy_oneproxy_stats`  | `read:proxies` | Kopas statistika, sinhronizācijas statuss, sadalījums pēc protokola un valsts                        |
 
 ## Atmiņas rīki (3)
 
@@ -178,9 +178,9 @@ Definēti failā `open-sse/mcp-server/tools/memoryTools.ts`. Autentifikācija/tv
 
 | Rīks                      | Tvērumi        | Apraksts                                                                                  |
 | :------------------------ | :------------- | :---------------------------------------------------------------------------------------- |
-| `omniroute_memory_search` | `read:memory`  | Meklēt atmiņas pēc vaicājuma / tipa / API atslēgas, ievērojot marķieru budžetu            |
-| `omniroute_memory_add`    | `write:memory` | Pievienot jaunu atmiņas ierakstu (`factual` / `episodic` / `procedural` / `semantic`)     |
-| `omniroute_memory_clear`  | `write:memory` | Notīrīt API atslēgas atmiņas, pēc izvēles filtrējot pēc tipa vai `olderThan` laikspiedoga |
+| `agentproxy_memory_search` | `read:memory`  | Meklēt atmiņas pēc vaicājuma / tipa / API atslēgas, ievērojot marķieru budžetu            |
+| `agentproxy_memory_add`    | `write:memory` | Pievienot jaunu atmiņas ierakstu (`factual` / `episodic` / `procedural` / `semantic`)     |
+| `agentproxy_memory_clear`  | `write:memory` | Notīrīt API atslēgas atmiņas, pēc izvēles filtrējot pēc tipa vai `olderThan` laikspiedoga |
 
 ## Prasmju rīki (4)
 
@@ -188,10 +188,10 @@ Definēti failā `open-sse/mcp-server/tools/skillTools.ts`. Darbina `src/lib/ski
 
 | Rīks                          | Tvērumi          | Apraksts                                                                                                   |
 | :---------------------------- | :--------------- | :--------------------------------------------------------------------------------------------------------- |
-| `omniroute_skills_list`       | `read:skills`    | Uzskaitīt reģistrētās prasmes, pēc izvēles filtrējot pēc API atslēgas, nosaukuma vai iespējošanas stāvokļa |
-| `omniroute_skills_enable`     | `write:skills`   | Iespējot vai atspējot konkrētu prasmi pēc ID                                                               |
-| `omniroute_skills_execute`    | `execute:skills` | Izpildīt prasmi ar norādīto ievadi un atgriezt izpildes ierakstu                                           |
-| `omniroute_skills_executions` | `read:skills`    | Uzskaitīt neseno prasmju izpildes vēsturi                                                                  |
+| `agentproxy_skills_list`       | `read:skills`    | Uzskaitīt reģistrētās prasmes, pēc izvēles filtrējot pēc API atslēgas, nosaukuma vai iespējošanas stāvokļa |
+| `agentproxy_skills_enable`     | `write:skills`   | Iespējot vai atspējot konkrētu prasmi pēc ID                                                               |
+| `agentproxy_skills_execute`    | `execute:skills` | Izpildīt prasmi ar norādīto ievadi un atgriezt izpildes ierakstu                                           |
+| `agentproxy_skills_executions` | `read:skills`    | Uzskaitīt neseno prasmju izpildes vēsturi                                                                  |
 
 ## Notion konteksta avots (6)
 
@@ -227,9 +227,9 @@ Definēti failā `open-sse/mcp-server/tools/agentSkillTools.ts`. Nodrošināti a
 
 | Rīks                              | Tvērumi        | Apraksts                                                                                                                                       |
 | :-------------------------------- | :------------- | :--------------------------------------------------------------------------------------------------------------------------------------------- |
-| `omniroute_agent_skills_list`     | `read:catalog` | Uzskaitīt visas 45 aģentu prasmes ar neobligātiem `category` (api\|cli) un `area` filtriem; atgriež metadatus + pārklājumu                     |
-| `omniroute_agent_skills_get`      | `read:catalog` | Iegūt pilnus metadatus + `SKILL.md` saturu vienai prasmei pēc kanoniskā `id`                                                                   |
-| `omniroute_agent_skills_coverage` | `read:catalog` | Pārklājuma statistika: cik no 23 API, 21 CLI un 1 konfigurācijas prasmes failu sistēmā ir `SKILL.md` faili salīdzinājumā ar kataloga kopsummām |
+| `agentproxy_agent_skills_list`     | `read:catalog` | Uzskaitīt visas 45 aģentu prasmes ar neobligātiem `category` (api\|cli) un `area` filtriem; atgriež metadatus + pārklājumu                     |
+| `agentproxy_agent_skills_get`      | `read:catalog` | Iegūt pilnus metadatus + `SKILL.md` saturu vienai prasmei pēc kanoniskā `id`                                                                   |
+| `agentproxy_agent_skills_coverage` | `read:catalog` | Pārklājuma statistika: cik no 23 API, 21 CLI un 1 konfigurācijas prasmes failu sistēmā ir `SKILL.md` faili salīdzinājumā ar kataloga kopsummām |
 
 Pilnu katalogu un informāciju par to, kā ārējie aģenti to izmanto, skatiet [AGENT-SKILLS.md](./AGENT-SKILLS.md).
 
@@ -239,7 +239,7 @@ Iepriekš minētais MCP rīku inventārs (110 unikāli rīki, aprēķināts ar `
 
 ### Mākoņa aģenti
 
-Mākoņa aģenti ir ārpusprocesa AI programmēšanas aģenti (codex-cloud, cursor-cloud, devin, jules), kas ir savienoti ar OmniRoute, izmantojot to pašu savienojuma modeli, ko izmanto LLM nodrošinātāji. Tie ir pieejami, izmantojot savu REST saskarni (`/api/v1/agents/*`), un **nav** MCP rīku kataloga daļa — mākoņa aģenta izsaukšana nepatērē MCP tvērumu.
+Mākoņa aģenti ir ārpusprocesa AI programmēšanas aģenti (codex-cloud, cursor-cloud, devin, jules), kas ir savienoti ar AgentProxy, izmantojot to pašu savienojuma modeli, ko izmanto LLM nodrošinātāji. Tie ir pieejami, izmantojot savu REST saskarni (`/api/v1/agents/*`), un **nav** MCP rīku kataloga daļa — mākoņa aģenta izsaukšana nepatērē MCP tvērumu.
 
 - Implementācija: `src/lib/cloudAgent/` (`registry.ts`, `agents/codex.ts`, `agents/cursor.ts`, `agents/devin.ts`, `agents/jules.ts`).
 - Dzīves cikls: `createTask`, `getStatus`, `approvePlan`, `sendMessage`, `listSources`.
@@ -304,8 +304,8 @@ MCP rīki tiek autentificēti, izmantojot API atslēgu tvērumus. Tvērumu piem�
 | `write:skills`        | `skills_enable`                                                                                                                                                                  |
 | `execute:skills`      | `skills_execute`                                                                                                                                                                 |
 | `read:catalog`        | `agent_skills_list`, `agent_skills_get`, `agent_skills_coverage`                                                                                                                 |
-| `read:tools`          | `omniroute_tool_search`                                                                                                                                                          |
-| `read:radar`          | `omniroute_radar_catalog`                                                                                                                                                        |
+| `read:tools`          | `agentproxy_tool_search`                                                                                                                                                          |
+| `read:radar`          | `agentproxy_radar_catalog`                                                                                                                                                        |
 | `read:gamification`   | `gamification_profile`, `gamification_rank`, `gamification_leaderboard`, `gamification_badges`, `gamification_servers`, `gamification_anomalies`                                 |
 | `write:gamification`  | `gamification_invite`, `gamification_transfer`                                                                                                                                   |
 | `read:plugins`        | `plugin_list`, `plugin_executions`                                                                                                                                               |
@@ -329,10 +329,10 @@ eksportē `MCP_CONNECT_SCOPE = "mcp:connect"`: papildinošu, ierobežotu tvērum
 
 Izmantojot HTTP/SSE, `open-sse/mcp-server/httpTransport.ts` tagad atrisina izsaucēja faktiskos `api_keys.scopes`, izmantojot `resolveMcpCallerAuthInfo()` (`open-sse/mcp-server/httpAuthContext.ts`),
 un nodod tos MCP SDK `transport.handleRequest(req, { authInfo })`, tādējādi `extra.authInfo.scopes`, kas sasniedz katru rīka izsaukumu, atspoguļo pašas Bearer atslēgas tvērumus.
-`scopeEnforcement.ts` funkcija `resolveCallerScopeContext()` jau piešķīra prioritāti `authInfo`, nevis `_meta` un `OMNIROUTE_MCP_SCOPES` vides atkāpēm — šīs izmaiņas tikai aizpilda pirmo,
+`scopeEnforcement.ts` funkcija `resolveCallerScopeContext()` jau piešķīra prioritāti `authInfo`, nevis `_meta` un `AGENTPROXY_MCP_SCOPES` vides atkāpēm — šīs izmaiņas tikai aizpilda pirmo,
 augstākās prioritātes avotu, kas iepriekš netika padots, izmantojot HTTP. Ja neviena API atslēga netiek atrisināta
 (nav galvenes vai atslēga ir nederīga), `authInfo` paliek `undefined`, un atrisināšana nemainītā veidā pāriet uz esošo `meta`/vides ķēdi. Tas NEIZMAINĀ
-`OMNIROUTE_MCP_ENFORCE_SCOPES` noklusējuma vērtību — piemērošana joprojām ir jāiespējo tieši; šīs izmaiņas tikai nodrošina, ka katrai atslēgai paredzētais ceļš iegūst prioritāti, tiklīdz tas ir iespējots. stdio nav katra izsaucēja identitātes (skatiet
+`AGENTPROXY_MCP_ENFORCE_SCOPES` noklusējuma vērtību — piemērošana joprojām ir jāiespējo tieši; šīs izmaiņas tikai nodrošina, ka katrai atslēgai paredzētais ceļš iegūst prioritāti, tiklīdz tas ir iespējots. stdio nav katra izsaucēja identitātes (skatiet
 `mcpCallerIdentity.ts`), un tas netiek ietekmēts — tas joprojām izmanto `_meta`/vides atkāpju ķēdi.
 
 ---
@@ -341,17 +341,17 @@ augstākās prioritātes avotu, kas iepriekš netika padots, izmantojot HTTP. Ja
 
 | Mainīgais                               | Noklusējums                         | Nolūks                                                                                                                                                  |
 | :-------------------------------------- | :---------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `OMNIROUTE_BASE_URL`                    | `http://localhost:20128`            | Bāzes URL, ko MCP serveris izmanto, izsaucot OmniRoute iekšējās API                                                                                     |
-| `OMNIROUTE_API_KEY`                     | (tukšs)                             | API atslēga, kas iekšējo API izsaukumiem tiek pārsūtīta kā `Authorization: Bearer`                                                                      |
-| `OMNIROUTE_MCP_ENFORCE_SCOPES`          | `false` (to iespējo tikai `"true"`) | Kad iespējots, trūkstoši tvērumi liedz izsaukt rīkus un audita žurnālā ieraksta `scope_denied:<reason>`                                                 |
-| `OMNIROUTE_MCP_SCOPES`                  | (tukšs)                             | Ar komatiem atdalīts atļauto tvērumu saraksts, kas pēc noklusējuma tiek uzskatīts par “pieejamu” (tiek izmantots, ja izsaucējs nenorāda savus tvērumus) |
-| `OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS`   | (nav iestatīts = ieslēgts)          | Ja iestatīts uz `0/false/off/no`, reģistrēšanas laikā atspējo MCP aprakstu saspiešanu                                                                   |
-| `OMNIROUTE_MCP_DESCRIPTION_COMPRESSION` | (nav iestatīts = ieslēgts)          | Alternatīvs aizstājvārds iepriekš aprakstītajam pārslēdzim                                                                                              |
-| `OMNIROUTE_MCP_FETCH_TIMEOUT_MS`        | `10000`                             | Pārtraukšanas laika budžets iekšējiem pārvaldības lasījumiem (veselības stāvoklis, noturība, kombinācijas, kvota, lietojums)                            |
-| `OMNIROUTE_MCP_UPSTREAM_TIMEOUT_MS`     | `60000`                             | Pārtraukšanas laika budžets lēcieniem, kas gaida pakalpojumu sniedzēja atbildi (`route_request`, `web_search`, `web_fetch`)                             |
+| `AGENTPROXY_BASE_URL`                    | `http://localhost:20128`            | Bāzes URL, ko MCP serveris izmanto, izsaucot AgentProxy iekšējās API                                                                                     |
+| `AGENTPROXY_API_KEY`                     | (tukšs)                             | API atslēga, kas iekšējo API izsaukumiem tiek pārsūtīta kā `Authorization: Bearer`                                                                      |
+| `AGENTPROXY_MCP_ENFORCE_SCOPES`          | `false` (to iespējo tikai `"true"`) | Kad iespējots, trūkstoši tvērumi liedz izsaukt rīkus un audita žurnālā ieraksta `scope_denied:<reason>`                                                 |
+| `AGENTPROXY_MCP_SCOPES`                  | (tukšs)                             | Ar komatiem atdalīts atļauto tvērumu saraksts, kas pēc noklusējuma tiek uzskatīts par “pieejamu” (tiek izmantots, ja izsaucējs nenorāda savus tvērumus) |
+| `AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS`   | (nav iestatīts = ieslēgts)          | Ja iestatīts uz `0/false/off/no`, reģistrēšanas laikā atspējo MCP aprakstu saspiešanu                                                                   |
+| `AGENTPROXY_MCP_DESCRIPTION_COMPRESSION` | (nav iestatīts = ieslēgts)          | Alternatīvs aizstājvārds iepriekš aprakstītajam pārslēdzim                                                                                              |
+| `AGENTPROXY_MCP_FETCH_TIMEOUT_MS`        | `10000`                             | Pārtraukšanas laika budžets iekšējiem pārvaldības lasījumiem (veselības stāvoklis, noturība, kombinācijas, kvota, lietojums)                            |
+| `AGENTPROXY_MCP_UPSTREAM_TIMEOUT_MS`     | `60000`                             | Pārtraukšanas laika budžets lēcieniem, kas gaida pakalpojumu sniedzēja atbildi (`route_request`, `web_search`, `web_fetch`)                             |
 | `MCP_TOOL_DENY`                         | (nav iestatīts = bez filtra)        | Ar komatiem atdalīti rīku nosaukumi, kas jāizslēdz no `tools/list` (rīku skaita samazināšana — skatiet tālāk)                                           |
 | `MCP_TOOL_ALLOW`                        | (nav iestatīts = bez filtra)        | Ar komatiem atdalīti rīku nosaukumi, kurus atstāt (atļaušanas saraksta režīms — skatiet tālāk)                                                          |
-| `DATA_DIR`                              | `~/.omniroute`                      | Sirdsdarbības fails tiek ierakstīts vietnē `${DATA_DIR}/runtime/mcp-heartbeat.json`                                                                     |
+| `DATA_DIR`                              | `~/.agentproxy`                      | Sirdsdarbības fails tiek ierakstīts vietnē `${DATA_DIR}/runtime/mcp-heartbeat.json`                                                                     |
 
 ---
 
@@ -361,8 +361,8 @@ MCP rīku, uzvedņu un resursu reģistri reģistrēšanas/saraksta izveides laik
 
 - Saspiešana tiek veikta apraksta tekstam, izmantojot Caveman noteikumu kopu (`getRulesForContext("all", "full")`) un saglabāto bloku izdalīšanu (koda fragmenti, norobežoti bloki u. c.), lai strukturālais saturs netiktu mainīts.
 - Pārslēgšana katrai izvietošanai atsevišķi tiek veikta, izmantojot `compression.mcpDescriptionCompressionEnabled` vērtību `key_value` iestatījumu tabulā (pēc noklusējuma: iespējots) — lietotāja saskarnē pieejama sadaļā **Analītika → MCP aprakstu saspiešana**.
-- Procesa mēroga pārslēgšana tiek veikta, izmantojot `OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS=false` vai `OMNIROUTE_MCP_DESCRIPTION_COMPRESSION=false`.
-- Reāllaika statistika ir pieejama, izmantojot `omniroute_compression_status` sadaļā `analytics.mcpDescriptionCompression`, un tai ir pievienota atzīme `source: "mcp_metadata_estimate"`, lai to atšķirtu no faktiskajiem pakalpojumu sniedzēja lietojuma kvīšu datiem.
+- Procesa mēroga pārslēgšana tiek veikta, izmantojot `AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS=false` vai `AGENTPROXY_MCP_DESCRIPTION_COMPRESSION=false`.
+- Reāllaika statistika ir pieejama, izmantojot `agentproxy_compression_status` sadaļā `analytics.mcpDescriptionCompression`, un tai ir pievienota atzīme `source: "mcp_metadata_estimate"`, lai to atšķirtu no faktiskajiem pakalpojumu sniedzēja lietojuma kvīšu datiem.
 
 ---
 
@@ -381,10 +381,10 @@ Apraksta saspiešana samazina katra rīka metadatus; **rīku kardinalitātes sam
 
 ```bash
 # Izņemiet no kataloga divus rīkus
-MCP_TOOL_DENY="omniroute_get_health,omniroute_list_combos" omniroute --mcp
+MCP_TOOL_DENY="agentproxy_get_health,agentproxy_list_combos" agentproxy --mcp
 
 # Paziņojiet tikai maršrutēšanas + kvotu rīkus (atļauju saraksta režīms)
-MCP_TOOL_ALLOW="omniroute_route_request,omniroute_check_quota" omniroute --mcp
+MCP_TOOL_ALLOW="agentproxy_route_request,agentproxy_check_quota" agentproxy --mcp
 ```
 
 **Kā filtrētie rīki tiek izņemti:** reģistrācija vienmēr ir veiksmīga; rīks, ko profils noraida, pēc tam MCP SDK apstrādes objektā tiek atspējots ar `.disable()`, tāpēc tas nekad neparādās `tools/list`, bet savienojums paliek neskarts (tīra iespējošana/atspējošana, bez atkārtotas reģistrācijas). Profila parsētājs ir `readMcpToolProfileFromEnv(process.env)`, kas atgriež `null` (bez filtrēšanas), ja abi mainīgie ir tukši.

@@ -1,13 +1,13 @@
 # Quickstart Code Examples
 
-Simple, copy-paste scripts to get your first response from a local OmniRoute server in under a minute.
+Simple, copy-paste scripts to get your first response from a local AgentProxy server in under a minute.
 
 ## Prerequisites
 
-Start OmniRoute locally first:
+Start AgentProxy locally first:
 
 ```bash
-npx omniroute
+npx agentproxy
 # Server is now live at http://localhost:20128/v1
 ```
 

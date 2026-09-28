@@ -198,7 +198,8 @@ export class SqliteQuotaStore implements QuotaStore {
         const consumed = await this.peek(alloc.apiKeyId, dim);
         consumedTotal += consumed;
 
-        const effectiveWeight = totalWeight > 0 ? alloc.weight : 0;
+        const effectiveWeight =
+          totalWeight > 0 ? alloc.weight : allocations.length > 0 ? 100 / allocations.length : 0;
         const fairShare = (effectiveWeight / 100) * planDim.limit;
         const deficit = consumed - fairShare;
         const borrowing = consumed > fairShare;

@@ -119,3 +119,32 @@ test("fetchRemoteImage rejects when DNS resolution fails entirely", async () => 
   );
   assert.equal(fetchCalled, false);
 });
+
+test("fetchRemoteImage uses DNS pinning by default for public-only hostname fetches", async () => {
+  const originalFetch = globalThis.fetch;
+  let ordinaryFetchCalled = false;
+  globalThis.fetch = (async () => {
+    ordinaryFetchCalled = true;
+    return new Response(new Uint8Array([1, 2, 3]), {
+      status: 200,
+      headers: { "content-type": "image/png" },
+    });
+  }) as typeof fetch;
+
+  try {
+    await assert.rejects(() =>
+      fetchRemoteImage("http://pin-default.invalid:1/image.png", {
+        guard: "public-only",
+        lookup: async () => [{ address: "192.0.2.1", family: 4 }],
+        timeoutMs: 25,
+      })
+    );
+    assert.equal(
+      ordinaryFetchCalled,
+      false,
+      "public-only fetches must not perform an unpinned fetch"
+    );
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});

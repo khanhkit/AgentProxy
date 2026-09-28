@@ -34,7 +34,7 @@ test("provider list has well-formed URLs, unique IDs, and canonical requirements
 });
 
 test("VNC_CONFIG defaults to the bundled Chromium browser image", () => {
-  assert.equal(VNC_CONFIG.image, "omniroute-vnc-chromium:local");
+  assert.equal(VNC_CONFIG.image, "agentproxy-vnc-chromium:local");
   assert.equal(VNC_CONFIG.containerVncPort, 3000);
   assert.equal(VNC_CONFIG.containerCdpPort, 9223);
   assert.equal(VNC_CONFIG.persistProfiles, false);

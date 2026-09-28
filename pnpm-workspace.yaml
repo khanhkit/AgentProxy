@@ -1,7 +1,7 @@
 packages:
   - "packages/*"
   - "open-sse"
-# Match `.npmrc`'s legacy-peer-deps posture. OmniRoute imports only the deep
+# Match `.npmrc`'s legacy-peer-deps posture. AgentProxy imports only the deep
 # icon modules from @lobehub/icons; auto-installing its unused @lobehub/ui peer
 # pulls a large UI subtree (including packages without distributable licenses).
 autoInstallPeers: false
@@ -26,7 +26,7 @@ onlyBuiltDependencies:
   - "keytar"
   - "libxmljs2"
   - "onnxruntime-node"
-  - "omniroute"
+  - "agentproxy"
   - "protobufjs"
   - "sharp"
   - "unrs-resolver"

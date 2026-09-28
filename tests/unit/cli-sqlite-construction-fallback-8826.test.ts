@@ -10,7 +10,7 @@ import path from "node:path";
 // SUCCEEDS and only new Database() throws "Could not locate the bindings file" when
 // there is no .node binding for the runtime ABI (e.g. CachyOS + Node v26 via AUR).
 // openSqliteDatabase() only fell back when the *import* failed; the construction-time
-// failure was translated into "Run: omniroute runtime repair" guidance and aborted.
+// failure was translated into "Run: agentproxy runtime repair" guidance and aborted.
 
 const FIXTURE_DIR = new URL("fixtures/", import.meta.url).pathname;
 const hookPath = path.join(FIXTURE_DIR, "8826-mock-better-sqlite3.mjs");
@@ -34,10 +34,10 @@ Module._load = function patchedLoad(request, parent, isMain) {
   return originalLoad.call(this, request, parent, isMain);
 };
 
-const { openOmniRouteDb } = await import("../../bin/cli/sqlite.mjs");
+const { openAgentProxyDb } = await import("../../bin/cli/sqlite.mjs");
 
-test("#8826: openOmniRouteDb() falls back to node:sqlite when better-sqlite3 native binding is missing (construction-time failure)", async (t) => {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-8826-"));
+test("#8826: openAgentProxyDb() falls back to node:sqlite when better-sqlite3 native binding is missing (construction-time failure)", async (t) => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-8826-"));
   t.after(() => {
     try {
       fs.rmSync(tmpDir, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
@@ -55,9 +55,9 @@ test("#8826: openOmniRouteDb() falls back to node:sqlite when better-sqlite3 nat
     }
   });
 
-  const result = await openOmniRouteDb();
+  const result = await openAgentProxyDb();
 
-  assert.ok(result.db, "openOmniRouteDb() should return a working db adapter");
+  assert.ok(result.db, "openAgentProxyDb() should return a working db adapter");
   assert.equal(
     result.db.driver,
     "node:sqlite",

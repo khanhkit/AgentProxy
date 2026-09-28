@@ -15,7 +15,7 @@ import path from "node:path";
 // compatible connection must stay eligible. This gate is one step later than
 // #5873 (registry-absent defaultModel fallback), whose guard still passes.
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-auto-keyless-11180-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-auto-keyless-11180-"));
 const ORIGINAL_DATA_DIR = process.env.DATA_DIR;
 
 process.env.DATA_DIR = TEST_DATA_DIR;

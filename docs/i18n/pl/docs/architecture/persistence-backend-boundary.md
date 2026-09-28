@@ -7,12 +7,12 @@ lastUpdated: 2026-07-23
 # ADR: Podłączalna granica persystencji
 
 - **Status:** Zaproponowany — wymaga zatwierdzenia maintainerów przed rozpoczęciem prac runtime
-- **Tracking issue:** [#8075](https://github.com/diegosouzapw/OmniRoute/issues/8075)
+- **Tracking issue:** [#8075](https://github.com/khanhkit/AgentProxy/issues/8075)
 - **Zakres:** Wyłącznie architektura persystencji; ta decyzja nie dodaje ani nie wybiera zewnętrznej bazy danych
 
 ## Kontekst
 
-OmniRoute obecnie udostępnia zorientowane domenowo funkcje persystencji z `src/lib/db/`, podczas gdy
+AgentProxy obecnie udostępnia zorientowane domenowo funkcje persystencji z `src/lib/db/`, podczas gdy
 współdzielone połączenie zwracane przez `src/lib/db/core.ts` implementuje synchroniczny kontrakt
 `SqliteAdapter` w `src/lib/db/adapters/types.ts`. Ten adapter obsługuje kilka runtime'ów SQLite, ale
 jego powierzchnia pozostaje ukształtowana pod SQLite: synchroniczne prepared statements, `pragma`,

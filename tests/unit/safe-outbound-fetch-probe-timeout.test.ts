@@ -1,7 +1,7 @@
 import { describe, it, beforeEach, afterEach } from "node:test";
 import assert from "node:assert/strict";
 
-const ENV_KEY = "OMNIROUTE_PROVIDER_PROBE_TIMEOUT_MS";
+const ENV_KEY = "AGENTPROXY_PROVIDER_PROBE_TIMEOUT_MS";
 const originalValue = process.env[ENV_KEY];
 
 async function freshImport() {
@@ -23,7 +23,7 @@ describe("safeOutboundFetch — provider probe timeout (validationRead / modelsP
     assert.equal(SAFE_OUTBOUND_FETCH_PRESETS.modelsProbe.timeoutMs, 8000);
   });
 
-  it("honors OMNIROUTE_PROVIDER_PROBE_TIMEOUT_MS when set to a valid value", async () => {
+  it("honors AGENTPROXY_PROVIDER_PROBE_TIMEOUT_MS when set to a valid value", async () => {
     process.env[ENV_KEY] = "12000";
     const { SAFE_OUTBOUND_FETCH_PRESETS } = await freshImport();
     assert.equal(SAFE_OUTBOUND_FETCH_PRESETS.validationRead.timeoutMs, 12000);

@@ -4,7 +4,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-rl-local-errors-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-rl-local-errors-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.API_KEY_SECRET = "test-rate-limit-local-error-secret";
 
@@ -36,7 +36,7 @@ const { createStreamingErrorResult } =
 const { shouldTripProviderBreakerForResult } =
   await import("../../src/sse/handlers/chatPredicates.ts");
 
-const LOCAL_ERROR_MESSAGE = "OmniRoute repaired a local limiter queue";
+const LOCAL_ERROR_MESSAGE = "AgentProxy repaired a local limiter queue";
 
 function createLocalLimiterSseResponse(connectionId: string, code = RATE_LIMIT_QUEUE_WEDGED_CODE) {
   const error = markLocalRateLimitError(new Error(LOCAL_ERROR_MESSAGE), code);
@@ -46,7 +46,7 @@ function createLocalLimiterSseResponse(connectionId: string, code = RATE_LIMIT_Q
     code,
     "rate_limit_queue_wedged"
   );
-  response.headers.set("X-OmniRoute-Selected-Connection-Id", connectionId);
+  response.headers.set("X-AgentProxy-Selected-Connection-Id", connectionId);
   return markTrustedLocalRateLimitResponse(response, error);
 }
 
@@ -63,7 +63,7 @@ function createUpstreamCollisionResponse(connectionId: string) {
       status: 503,
       headers: {
         "content-type": "application/json",
-        "X-OmniRoute-Selected-Connection-Id": connectionId,
+        "X-AgentProxy-Selected-Connection-Id": connectionId,
       },
     }
   );
@@ -74,7 +74,7 @@ function createSuccessResponse(connectionId: string) {
     status: 200,
     headers: {
       "content-type": "application/json",
-      "X-OmniRoute-Selected-Connection-Id": connectionId,
+      "X-AgentProxy-Selected-Connection-Id": connectionId,
     },
   });
 }
@@ -143,7 +143,7 @@ test("execution-timeout classification requires trusted provenance; queue codes 
     true
   );
   // #9164 (3898305df0) deliberately widened the contract: the rate_limit_queue_*
-  // code strings are OmniRoute-owned backpressure codes and classify as
+  // code strings are AgentProxy-owned backpressure codes and classify as
   // request-scoped even without WeakMap provenance (an upstream collision is
   // accepted as fail-safe: worst case a colliding provider 503 skips health
   // penalties, it never amplifies into fallback storms).
@@ -176,7 +176,7 @@ test("execution-timeout classification requires trusted provenance; queue codes 
       false
     ),
     false,
-    "#9342 (47c819df66): RATE_LIMIT_QUEUE_* codes are OmniRoute backpressure and never trip the provider breaker, provenance or not"
+    "#9342 (47c819df66): RATE_LIMIT_QUEUE_* codes are AgentProxy backpressure and never trip the provider breaker, provenance or not"
   );
   assert.equal(
     shouldSkipConnDisable(

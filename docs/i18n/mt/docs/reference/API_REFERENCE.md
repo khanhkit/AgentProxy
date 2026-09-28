@@ -72,32 +72,32 @@ Content-Type: application/json
 
 | Intestatura              | Direzzjoni  | Deskrizzjoni                                                                                                                                                                                                                       |
 | ------------------------ | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `X-OmniRoute-No-Cache`   | Tal-Ħarsa   | Ibbuttaha għal `true` biex tevita l-cache                                                                                                                                                                                          |
-| `x-omniroute-no-memory`  | Tal-Ħarsa   | Ibbuttaha għal `true` biex taħbi l-memorja + l-injezzjoni tal-ħiliet għal din il-ħarsa (tirrifletti no-cache; tevita l-ispiża tal-token/kull ċempela)                                                                              |
-| `X-OmniRoute-Progress`   | Tal-Ħarsa   | Ibbuttaha għal `true` għall-avvenimenti tal-progress                                                                                                                                                                               |
+| `X-AgentProxy-No-Cache`   | Tal-Ħarsa   | Ibbuttaha għal `true` biex tevita l-cache                                                                                                                                                                                          |
+| `x-agentproxy-no-memory`  | Tal-Ħarsa   | Ibbuttaha għal `true` biex taħbi l-memorja + l-injezzjoni tal-ħiliet għal din il-ħarsa (tirrifletti no-cache; tevita l-ispiża tal-token/kull ċempela)                                                                              |
+| `X-AgentProxy-Progress`   | Tal-Ħarsa   | Ibbuttaha għal `true` għall-avvenimenti tal-progress                                                                                                                                                                               |
 | `X-Session-Id`           | Tal-Ħarsa   | Ċavviera tal-isessjoni stikky għall-affinità tal-isessjoni esterna                                                                                                                                                                 |
 | `x_session_id`           | Tal-Ħarsa   | Varjazzjoni b'ankra aċċettata wkoll (HTTP dirett)                                                                                                                                                                                  |
-| `X-OmniRoute-Session-Id` | Tal-Ħarsa   | Ċippa ta' konverżazzjoni/isessjoni pprovduta mill-appell (tagħti wkoll memorja). Meta preżenti, tistaħżen verbatim fi `call_logs.session_tag` għall-attribuzzjoni tal-ispiża ta' kull isessjoni (#8249) — qatt ma ssir meta nieqes |
+| `X-AgentProxy-Session-Id` | Tal-Ħarsa   | Ċippa ta' konverżazzjoni/isessjoni pprovduta mill-appell (tagħti wkoll memorja). Meta preżenti, tistaħżen verbatim fi `call_logs.session_tag` għall-attribuzzjoni tal-ispiża ta' kull isessjoni (#8249) — qatt ma ssir meta nieqes |
 | `Idempotency-Key`        | Tal-Ħarsa   | Ċavviera dedup (finestra ta' 5s)                                                                                                                                                                                                   |
 | `X-Request-Id`           | Tal-Ħarsa   | Ċavviera dedup alternattiva                                                                                                                                                                                                        |
-| `X-OmniRoute-Cache`      | Tar-Rispons | `HIT` jew `MISS` (mhux streaming)                                                                                                                                                                                                  |
-| `X-OmniRoute-Idempotent` | Tar-Rispons | `true` jekk iddeduplikat                                                                                                                                                                                                           |
-| `X-OmniRoute-Progress`   | Tar-Rispons | `enabled` jekk it-traċċar tal-progress ikun mixgħul                                                                                                                                                                                |
-| `X-OmniRoute-Session-Id` | Tar-Rispons | ID tal-isessjoni effettiva użata minn OmniRoute                                                                                                                                                                                    |
-| `X-OmniRoute-Request-Id` | Tar-Rispons | ID tal-korrelazzjoni tal-ħarsa (meta magħrufa)                                                                                                                                                                                     |
-| `X-OmniRoute-Version`    | Tar-Rispons | Verżjoni tal-bini ta' OmniRoute (dejjem preżenti)                                                                                                                                                                                  |
-| `X-OmniRoute-Cost-Saved` | Tar-Rispons | USD li l-cache ħlset fuq HIT ( HITs tal-cache biss)                                                                                                                                                                                |
-| `X-OmniRoute-Decision`   | Tar-Rispons | Traċċar ir-routing: `strategy=<isem>; provider=<alias>; latency_ms=<n>` (`<isem>` hija l-istrateġija tal-kombo, jew `single` għal ħarsa mhux kombo) — dejjem preżenti fir-risponsijiet tat-tmiem                                   |
+| `X-AgentProxy-Cache`      | Tar-Rispons | `HIT` jew `MISS` (mhux streaming)                                                                                                                                                                                                  |
+| `X-AgentProxy-Idempotent` | Tar-Rispons | `true` jekk iddeduplikat                                                                                                                                                                                                           |
+| `X-AgentProxy-Progress`   | Tar-Rispons | `enabled` jekk it-traċċar tal-progress ikun mixgħul                                                                                                                                                                                |
+| `X-AgentProxy-Session-Id` | Tar-Rispons | ID tal-isessjoni effettiva użata minn AgentProxy                                                                                                                                                                                    |
+| `X-AgentProxy-Request-Id` | Tar-Rispons | ID tal-korrelazzjoni tal-ħarsa (meta magħrufa)                                                                                                                                                                                     |
+| `X-AgentProxy-Version`    | Tar-Rispons | Verżjoni tal-bini ta' AgentProxy (dejjem preżenti)                                                                                                                                                                                  |
+| `X-AgentProxy-Cost-Saved` | Tar-Rispons | USD li l-cache ħlset fuq HIT ( HITs tal-cache biss)                                                                                                                                                                                |
+| `X-AgentProxy-Decision`   | Tar-Rispons | Traċċar ir-routing: `strategy=<isem>; provider=<alias>; latency_ms=<n>` (`<isem>` hija l-istrateġija tal-kombo, jew `single` għal ħarsa mhux kombo) — dejjem preżenti fir-risponsijiet tat-tmiem                                   |
 
 > Nota ta' Nginx: jekk tista' sserraħ fuq l-intestaturi b'ankra (eż. `x_session_id`), attiva `underscores_in_headers on;`.
 
-> **Intestaturi tat-telemetija tal-ispiża:** ir-risponsijiet ta' suċċess mhux streaming iġorru wkoll l-intestaturi tal-grupp `X-OmniRoute-*` tal-ispiża — `X-OmniRoute-Response-Cost` (USD, 10 deċimali fissi; `0.0000000000` għal mingħajr spiża/mhux ittakkjar), `X-OmniRoute-Tokens-In` / `X-OmniRoute-Tokens-Out`, `X-OmniRoute-Model`, `X-OmniRoute-Provider`, `X-OmniRoute-Latency-Ms`, `X-OmniRoute-Cache-Hit`, u `X-OmniRoute-Fallback-Attempts` (biss meta > 0), flimkien ma' `X-OmniRoute-Request-Id` u `X-OmniRoute-Version`. Dawn jiġu emessi mill-kompletamenti tal-chat, `/v1/responses`, `/v1/messages`, **u l-għanijiet tal-midja** — `/v1/embeddings`, `/v1/images/generations`, `/v1/audio/speech`, `/v1/audio/transcriptions`, `/v1/rerank`, `/v1/videos/generations`, `/v1/music/generations`, u `/v1/moderations` (dejjem spiża `0`). L-ispiża tal-midja tintlibes skont il-modalità (kull immaġni, kull sekonda, kull karattru, kull unità ta' tiftix) meta l-prezzijiet huma disponibbli, inkella `0` (ħlas falz).
+> **Intestaturi tat-telemetija tal-ispiża:** ir-risponsijiet ta' suċċess mhux streaming iġorru wkoll l-intestaturi tal-grupp `X-AgentProxy-*` tal-ispiża — `X-AgentProxy-Response-Cost` (USD, 10 deċimali fissi; `0.0000000000` għal mingħajr spiża/mhux ittakkjar), `X-AgentProxy-Tokens-In` / `X-AgentProxy-Tokens-Out`, `X-AgentProxy-Model`, `X-AgentProxy-Provider`, `X-AgentProxy-Latency-Ms`, `X-AgentProxy-Cache-Hit`, u `X-AgentProxy-Fallback-Attempts` (biss meta > 0), flimkien ma' `X-AgentProxy-Request-Id` u `X-AgentProxy-Version`. Dawn jiġu emessi mill-kompletamenti tal-chat, `/v1/responses`, `/v1/messages`, **u l-għanijiet tal-midja** — `/v1/embeddings`, `/v1/images/generations`, `/v1/audio/speech`, `/v1/audio/transcriptions`, `/v1/rerank`, `/v1/videos/generations`, `/v1/music/generations`, u `/v1/moderations` (dejjem spiża `0`). L-ispiża tal-midja tintlibes skont il-modalità (kull immaġni, kull sekonda, kull karattru, kull unità ta' tiftix) meta l-prezzijiet huma disponibbli, inkella `0` (ħlas falz).
 
-> **Semantika tal-ispiża ta' HIT tal-cache:** fuq HIT tal-cache semantika (`X-OmniRoute-Cache-Hit: true`) ma ssir l-ebda sejħa upstream, għalhekk `X-OmniRoute-Response-Cost` hija `0.0000000000` (l-ispiża **inkrementalment** tas-servizz tal-HIT). L-ispiża oriġinali/tal-possibbiltà titwettaq f'rapport separat fi `X-OmniRoute-Cost-Saved`. L-konsumaturi tal-fattur għandhom jisummaw `X-OmniRoute-Response-Cost` (HITs jiswew xejn); l-analitika tal-cache tista' tiggruppa `X-OmniRoute-Cost-Saved`.
+> **Semantika tal-ispiża ta' HIT tal-cache:** fuq HIT tal-cache semantika (`X-AgentProxy-Cache-Hit: true`) ma ssir l-ebda sejħa upstream, għalhekk `X-AgentProxy-Response-Cost` hija `0.0000000000` (l-ispiża **inkrementalment** tas-servizz tal-HIT). L-ispiża oriġinali/tal-possibbiltà titwettaq f'rapport separat fi `X-AgentProxy-Cost-Saved`. L-konsumaturi tal-fattur għandhom jisummaw `X-AgentProxy-Response-Cost` (HITs jiswew xejn); l-analitika tal-cache tista' tiggruppa `X-AgentProxy-Cost-Saved`.
 
 ## Sessjonijiet ta’ Kirja Eżklużivi ta’ Ġestjoni
 
-Il-kiri ta’ sessjonijiet ta’ ġestjoni eżklużivi huwa kuntrat ta’ routing appoġġat u newtrali għall-klijent: wieħed proprjetarju attiv iżomm konnessjoni ta’ OmniRoute waħda eliġibbli. Mhuwiex jagħmel kiri ta’ mudell, ma jeħtieġx OAuth, ma jidentifikax klijent partikolari, u lanqas jeħtieġi fornitur partikolari.
+Il-kiri ta’ sessjonijiet ta’ ġestjoni eżklużivi huwa kuntrat ta’ routing appoġġat u newtrali għall-klijent: wieħed proprjetarju attiv iżomm konnessjoni ta’ AgentProxy waħda eliġibbli. Mhuwiex jagħmel kiri ta’ mudell, ma jeħtieġx OAuth, ma jidentifikax klijent partikolari, u lanqas jeħtieġi fornitur partikolari.
 
 Il-mewt API tal-awtentikazzjoni trid ikollha skop `lease:exclusive` u lista li ma hijiex vojta `allowedConnections` espliċita. Il-limitu tal-mutazzjoni tal-bażi tad-dejta jinfurza iż-żewġ qasam flimkien meta jinħoloq il-mewt u waqt il-aġġornamenti parzjali.
 
@@ -105,7 +105,7 @@ Il-mewt API tal-awtentikazzjoni trid ikollha skop `lease:exclusive` u lista li m
 POST /api/v1/session-leases
 Authorization: Bearer <managed-api-key>
 Content-Type: application/json
-X-OmniRoute-Lease-Owner: vlo_<43-base64url-characters>
+X-AgentProxy-Lease-Owner: vlo_<43-base64url-characters>
 
 {"action":"acquire","model":"glm/glm-4.6"}
 ```
@@ -140,7 +140,7 @@ Proprjetarju ta’ kiri attiv jista’ jitolb b’mod espliċitu metadata ta’ 
 }
 ```
 
-L-azzjoni ta’ stat appoġġata ġġib protezzjoni permezz tal-proprjetarju opaq, il-mewt API awtentikata, u l-ġenerazzjoni attiva eżatt f’transazzjoni waħda tal-bażi tad-dejta. `displayName` huwa biss l-isem tal-konnessjoni kkonfigurat li ntilef; huwa `null` meta m’hemmx isem sigur kkonfigurat. OmniRoute ma jissostitwixxi qatt email jew identità tal-kont generata. Il-valur tal-fornitur huwa etiketta ta’ wiri mhux sensittiva u qatt mhux identifikatur ta’ fornitur kompatibbli magħmul. Credentials, tokens, cookies, IDs ta’ konnessjoni ġodda jew tal-mewt, hashes tal-proprjetarju, ficing secrets, u data interna ta’ routing huma esklużi.
+L-azzjoni ta’ stat appoġġata ġġib protezzjoni permezz tal-proprjetarju opaq, il-mewt API awtentikata, u l-ġenerazzjoni attiva eżatt f’transazzjoni waħda tal-bażi tad-dejta. `displayName` huwa biss l-isem tal-konnessjoni kkonfigurat li ntilef; huwa `null` meta m’hemmx isem sigur kkonfigurat. AgentProxy ma jissostitwixxi qatt email jew identità tal-kont generata. Il-valur tal-fornitur huwa etiketta ta’ wiri mhux sensittiva u qatt mhux identifikatur ta’ fornitur kompatibbli magħmul. Credentials, tokens, cookies, IDs ta’ konnessjoni ġodda jew tal-mewt, hashes tal-proprjetarju, ficing secrets, u data interna ta’ routing huma esklużi.
 
 Tfittxijiet b’mewt ħażin, proprjetarju ħażin, ġenerazzjoni skaduta, nieqsa, skaduta, rilaxxata, u invalidata kollha jirritornaw l-istess ħata `409 LEASE_FENCE_STALE` mingħajr metadata ta’ konnessjoni. Klijent li rċieva r-rispons ta’ stennija tal-kapaċità m’għandux qafas attiv x’jispezzjona. Meta r-routing jibdel kiri attiv, l-istess ġenerazzjoni tibqa’ valida u l-stat atomikament jirritorna l-qafas ġdid, qatt l-ieħor. Klijenti eżistenti jibqgħu l-istess għax l-akkwist, tġdid, rilaxx, u risponsi ta’ stenni żżomm l-istqarrijiet preċedenti tagħhom.
 
@@ -149,8 +149,8 @@ Dan il-kuntrat tas-servizz ma jibdlilx statut l-OpenAI Codex `/status`. L-iStatu
 Kull talba ta’ inferenza ta’ ġestjoni mbagħad jipprovdi iż-żewġ headers ta’ kontroll:
 
 ```http
-X-OmniRoute-Lease-Owner: vlo_<43-base64url-characters>
-X-OmniRoute-Lease-Generation: 1
+X-AgentProxy-Lease-Owner: vlo_<43-base64url-characters>
+X-AgentProxy-Lease-Generation: 1
 ```
 
 Il-proprjetarju eżatt, ġenerazzjoni, konnessjoni attiva, u mewt API awtentikata ġew imfissra mal-eqqel qabel kull tentattiv upstream appoġġat. Il-logħob mill-ġdid tal-proprjetarju u tal-ġenerazzjoni b’mewt ieħor fallas anki jekk dik il-mewt tippermetti l-istess konnessjoni. Proprjetarji ġodda mhumiex permanenti, irreġistrati, iżżomm fl-snapshot tat-talba, jew imgħadda upstream.
@@ -166,9 +166,9 @@ Kontenzjoni temporanja tirritorna HTTP `429` b'`Retry-After` u:
 }
 ```
 
-Dan ir-rispons ifisser biss li l-grupp normali eliġibbli kien mhux vojt u kull kandidat ħieles kien miżmum minn kiri attiv barrani. Mudelli/fornituri mhumiex appoġġati, in-nuqqas tal-politika, tas-sħana, kwota, saħħa, u fallimenti normali oħra ta’ eliġibbilta jżommu l-ispezzjonijiet preċedenti ta’ OmniRoute tagħhom.
+Dan ir-rispons ifisser biss li l-grupp normali eliġibbli kien mhux vojt u kull kandidat ħieles kien miżmum minn kiri attiv barrani. Mudelli/fornituri mhumiex appoġġati, in-nuqqas tal-politika, tas-sħana, kwota, saħħa, u fallimenti normali oħra ta’ eliġibbilta jżommu l-ispezzjonijiet preċedenti ta’ AgentProxy tagħhom.
 
-### `x-omniroute-compression`
+### `x-agentproxy-compression`
 
 Override għal kull talba tal-pjan tal-kompressjoni. Preċedenza l-ogħla — jegħlba l-override ta’ routing-combo, il-profil attiv, l-awto-triger, u l-Default tal-pannell. Valuri:
 
@@ -189,7 +189,7 @@ Noti:
 Il-pjan applikata jittella’ lura fil-header tar-rispons:
 
 ```
-X-OmniRoute-Compression: <mode>; source=<source>
+X-AgentProxy-Compression: <mode>; source=<source>
 ```
 
 fejn `<source>` huwa wieħed minn `request-header`, `routing-override`, `active-profile`, `auto-trigger`, `default`, jew `off`.
@@ -234,7 +234,7 @@ u l-isem tal-familja `jina-ai/jina-embeddings-v5-omni` → omni-small) jaċċett
 }
 ```
 
-Valuri nattivi `{ image | audio | video | pdf }` jistgħu jkunu URL HTTPS pubbliku, URI `data:`, jew base64 dirett. OmniRoute ma jħaddanx dawn l-oġġetti jew ifittex URLs tal-istampi nattivi — Jina ifittex il-medja pubbliku nnifsu. Ġiti estiżi ta' Jina (`task`, `normalized`, `truncate`, `typing_type`) jibqgħu jgħaddu. Is- SKUJ ta' Jina b'tekst biss għadhom jirrifjutaw dokumenti mhux test.
+Valuri nattivi `{ image | audio | video | pdf }` jistgħu jkunu URL HTTPS pubbliku, URI `data:`, jew base64 dirett. AgentProxy ma jħaddanx dawn l-oġġetti jew ifittex URLs tal-istampi nattivi — Jina ifittex il-medja pubbliku nnifsu. Ġiti estiżi ta' Jina (`task`, `normalized`, `truncate`, `typing_type`) jibqgħu jgħaddu. Is- SKUJ ta' Jina b'tekst biss għadhom jirrifjutaw dokumenti mhux test.
 
 Limiti ta' sigurtà u trasport:
 
@@ -345,7 +345,7 @@ jagħmel xi ħaġa speċjali għal dan il-fornitur.
 
 ### L-Awtentiċità u r-Riżoluzzjoni tal-Punt għal Vertex AI DeepSeek OCR
 
-`vertex-deepseek-ocr` jerġa' juża l-istess awtentiċità ta' Vertex AI li OmniRoute juża diġà għal
+`vertex-deepseek-ocr` jerġa' juża l-istess awtentiċità ta' Vertex AI li AgentProxy juża diġà għal
 traffiku tal-konversazzjoni/immaġni (`open-sse/executors/vertex.ts`): iċ-ċavetta API tal-konnessjoni
 tista' tkun kredenzjali JSON ta' Account tas-Servizz (eskambjata għal token OAuth ta' ħajja qasira permezz
 tal-fluss tal-JWT-bearer) jew token OAuth diġà maħruq u jużatha kif hi. L-URL tal-punt ta' fuq
@@ -393,10 +393,10 @@ Il-kliets li juru għażla tal-mudell għandhom jitolbu `?prefix=alias` — dan 
 
 ### Varjanti tal-mudell mingħajr ħsieb
 
-Għal mudelli tal-Claude kapaċi bi ħsieb, `/v1/models` jirreklama ukoll varjanti **mingħajr ħsieb** li l-ID tagħhom huwa b'bord ma' `claude-3-omniroute-no-thinking/`:
+Għal mudelli tal-Claude kapaċi bi ħsieb, `/v1/models` jirreklama ukoll varjanti **mingħajr ħsieb** li l-ID tagħhom huwa b'bord ma' `claude-3-agentproxy-no-thinking/`:
 
 ```
-claude-3-omniroute-no-thinking/<provider>/<model>
+claude-3-agentproxy-no-thinking/<provider>/<model>
 ```
 
 L-għażla ta' dan l-ID (e.g. f'konfigurazzjoni ta' Claude Code li dejjem tattacha blokka `thinking`) tassigura lura lejn il-`<provider>/<model>` reali bil-konsiderazzjoni fis-sikketta — `thinking:{type:"disabled"` fuq it-triq `/v1/messages`, jew il-qasam `reasoning`/`reasoning_effort` jitneħħa fuq it-triq `/v1/chat/completions`. Il-varjanti huwa mliesta biss għal mudelli tal-familja Claude li jappoġġaw ħsieb **u** jirrispettaw `disabled` (għal e.g. mudelli biss adattivi li jerġgħu jkunu `disabled` huma esklużi). L-operaturi jistgħu iġiegħlu l-varjanti fuq jew off għal kull mudell permezz ta' `ModelSpec.noThinkingAlias`.
@@ -445,7 +445,7 @@ Uża dan il-punt ta' aċċess meta sidecar joper barra mill-proċess u ma jistax
 
 Il-ħatrie kollha POST jsegwu l-istess forma: `Bearer your-api-key` + bodi JSON validat minn Zod (`v1RerankSchema`, `v1ModerationSchema`, `v1AudioSpeechSchema`, eċċ., ara `src/shared/validation/schemas.ts`). 4xx jirritorna meta skema falliet.
 
-Għal klijenti li ma jistgħu jwaħħlu `Authorization: Bearer ...`, OmniRoute jaqbad ukoll ċavetar API fl-URL permezz ta' kompatibbiltà b'query-string (`?token=...`, `?apiKey=...`, `?api_key=...`, `?key=...`) jew il-punti ta' aċċess dedikati `/api/v1/vscode/{token}/...` dokumentati hawn taħt.
+Għal klijenti li ma jistgħu jwaħħlu `Authorization: Bearer ...`, AgentProxy jaqbad ukoll ċavetar API fl-URL permezz ta' kompatibbiltà b'query-string (`?token=...`, `?apiKey=...`, `?api_key=...`, `?key=...`) jew il-punti ta' aċċess dedikati `/api/v1/vscode/{token}/...` dokumentati hawn taħt.
 
 ```bash
 # Rerank
@@ -564,8 +564,8 @@ Jivvalida hand shake WebSocket u jirritorna l-eżempji ta' messaġġi tal-protok
 
 ```bash
 # L-istess host:port bħall-API HTTP (default 20128); ittella' il-konnessjoni:
-wscat -c "ws://localhost:20128/v1/responses?api_key=<OMNIROUTE_API_KEY>"
-# (jew: -H "Authorization: Bearer <OMNIROUTE_API_KEY>")
+wscat -c "ws://localhost:20128/v1/responses?api_key=<AGENTPROXY_API_KEY>"
+# (jew: -H "Authorization: Bearer <AGENTPROXY_API_KEY>")
 
 # L-ewwel frame IRID JKUN response.create:
 { "type": "response.create", "model": "gpt-5.5", "input": [ { "role": "user", "content": "hi" } ] }
@@ -588,35 +588,35 @@ iridu jkunu l-punt attiv (hekk huwa, b'mod default, meta `app/server-ws.mjs` je�
 Il-**Codex CLI** tal-OpenAI jivvalida l-isem tal-mudell fil-klient meta
 `supports_websockets = true` u **jirrifjuta ID bil-prefiss tal-fornitur** bħal
 `codex/gpt-5.5` (`Il-mudell 'codex/gpt-5.5' mhuwiex appoġġjat meta tuża Codex
-b'kont ChatGPT`). Bagħat l-ID **ħafna** (e.g. `gpt-5.5`). Il-pont ta' OmniRoute huwa
+b'kont ChatGPT`). Bagħat l-ID **ħafna** (e.g. `gpt-5.5`). Il-pont ta' AgentProxy huwa
 biss-codex, għalhekk terġa' tissolva ID ħafna bħala mudell codex
 (`resolveCodexWsModelInfo`) qabel tibgħatha fuq il-foreached — anki jekk `gpt-5.5`
 ħafna oħra rotterebtbfornitur ieħor permezz HTTP.
 
 #### Kif tikkonfigura l-OpenAI Codex CLI
 
-Indika lill-Codex CLI lejn OmniRoute billi żżid fornitur personalizzat ma' appoġġ
+Indika lill-Codex CLI lejn AgentProxy billi żżid fornitur personalizzat ma' appoġġ
 WebSocket f' `~/.codex/config.toml` (użu `CODEX_HOME` separat biex tevita li tmiss
 konfigurazzjoni eżistenti):
 
 ```toml
 model = "gpt-5.5"                 # ID ěafna — MHUX "codex/gpt-5.5"
-model_provider = "omniroute"
+model_provider = "agentproxy"
 
-[model_providers.omniroute]
-name = "OmniRoute (WS)"
+[model_providers.agentproxy]
+name = "AgentProxy (WS)"
 base_url = "http://localhost:20128/v1"   # ebda slash tal-aħħar; l-URL WS jiġi dderivat (uża https/wss fil-produzzjoni)
 wire_api = "responses"                    # l-uniku valur appoġġjat minn Frar 2026
 supports_websockets = true                # jippermetti t-trasport Responses-over-WS
-env_key = "OMNIROUTE_API_KEY"             iżomm iċ-ċavetta API OmniRoute (Bearer)
+env_key = "AGENTPROXY_API_KEY"             iżomm iċ-ċavetta API AgentProxy (Bearer)
 ```
 
 ```bash
-export OMNIROUTE_API_KEY=sk-...           # ċavetta API OmniRoute (kull ċavetta jekk REQUIRE_API_KEY=false)
+export AGENTPROXY_API_KEY=sk-...           # ċavetta API AgentProxy (kull ċavetta jekk REQUIRE_API_KEY=false)
 codex exec "Responda apenas: PONG"
 ```
 
-Il-CLI ittella' `base_url + /responses` għal WebSocket u OmniRoute tgħaddiha
+Il-CLI ittella' `base_url + /responses` għal WebSocket u AgentProxy tgħaddiha
 għal-konnessjoni codex OAuth magħżula. Vvalida tmiem għal tmiem kontra s-server lokali: ChatGPT terġa' `codex.rate_limits` + `response.created` u tista mill-kompluzzjoni.
 
 ---
@@ -720,10 +720,10 @@ Eżempju ta' rispons:
 ### Impatt fuq il-latenza
 
 HIT tal-cache semantiku jservi r-rispons mill-cache **mingħajr sejħa
-upstream**, għalhekk il-`X-OmniRoute-Response-Latency` rrappurtata hija kważi żero
+upstream**, għalhekk il-`X-AgentProxy-Response-Latency` rrappurtata hija kważi żero
 (irrispettivament mil-latenza upstream oriġinali). Klijenti sensittivi għal-latenza
 (benchmarking, monitoraġġ p50/p99) għandhom jiċċekkjaw l-header tar-rispons
-`X-OmniRoute-Cache-Latency`:
+`X-AgentProxy-Cache-Latency`:
 
 | Valur       | Tifsira                                                          |
 | ----------- | ---------------------------------------------------------------- |
@@ -750,7 +750,7 @@ Issettjat fil-ħolqien taċ-ċavetta (`POST /api/keys`) jew fl-aġġornament (`P
 Kwalunkwe talba tista' taqbeż il-cache irrispettivament mis-settings taċ-ċavetta:
 
 ```
-X-OmniRoute-No-Cache: true
+X-AgentProxy-No-Cache: true
 ```
 
 ---
@@ -972,7 +972,7 @@ Tissewwa varjabbli tal-ambjent OAuth nieqsa jew korrotti għal provider speċifi
 {
   "success": true,
   "repaired": ["CLAUDE_CODE_OAUTH_CLIENT_ID", "CLAUDE_CODE_OAUTH_CLIENT_SECRET"],
-  "backupPath": "/home/user/.omniroute/backups/env-repair-2026-04-11.bak"
+  "backupPath": "/home/user/.agentproxy/backups/env-repair-2026-04-11.bak"
 }
 ```
 
@@ -1063,7 +1063,7 @@ Noti:
 
 - L-alias tokenizzati jerġgħu jużaw l-istess handlers bħal `/v1/*` u `/api/tags`; ix-xhur tal-rispons jibqgħu identiċi.
 - Agħżel `Authorization: Bearer ...` meta l-klijent jappoġġja custom headers.
-- Ix-xhur tal-URL jistgħu jidhru fil-logħob tal-proxi magħluf, fl-istorja tal-browser, u fit-telemetrija barra OmniRoute. Trattahom bħala għażla ta' kompatibilità, mhux il-modalità ta' awtentikazzjoni predefinita.
+- Ix-xhur tal-URL jistgħu jidhru fil-logħob tal-proxi magħluf, fl-istorja tal-browser, u fit-telemetrija barra AgentProxy. Trattahom bħala għażla ta' kompatibilità, mhux il-modalità ta' awtentikazzjoni predefinita.
 
 ---
 
@@ -1169,7 +1169,7 @@ Kombinazzjonijiet tar-rotta ta' livell ogħla (diġà sommarizzati taħt `/api/c
 
 ## Webhooks
 
-Abbonamenti tal-webhooks li ħierjin għal avvenimenti tal-OmniRoute (tlestija tal-ħtiġijiet, għebien tal-kwota, rotazzjonal tal-ħdd, eċċ.).
+Abbonamenti tal-webhooks li ħierjin għal avvenimenti tal-AgentProxy (tlestija tal-ħtiġijiet, għebien tal-kwota, rotazzjonal tal-ħdd, eċċ.).
 
 | Metodu | Triq                      | Deskrizzjoni                                                                   |
 | ------ | ------------------------- | ------------------------------------------------------------------------------ |
@@ -1202,7 +1202,7 @@ Użat mis-sottosustem għall-ġestjoni awtomatika tal-ħdd biex joħroġ u jdur 
 
 ## Protokoll tal-Aġenti
 
-Direzzjonijiet għax-xogħol tal-Aġenti tal-Cloud (Claude Code, Codex Cloud, OpenHands, eċċ.) ejekutati mill-bogħod f'isem l-utenti tal-OmniRoute.
+Direzzjonijiet għax-xogħol tal-Aġenti tal-Cloud (Claude Code, Codex Cloud, OpenHands, eċċ.) ejekutati mill-bogħod f'isem l-utenti tal-AgentProxy.
 
 | Metodu | Triq                          | Deskrizzjoni                                                                                                                                           |
 | ------ | ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -1246,7 +1246,7 @@ Proxies tal-outbound HTTP(S)/SOCKS li jistgħu jiġu assenjati lill-fornituri, l
 
 ## Reżiljenza (estiża)
 
-OmniRoute jur昕 xi ħaġa ta' falliment temporanju indipendenti; il-punti tal-immaniġġar t'hawn taħt jippermettu lill-operaturi jrawwlu u jirraddjhom:
+AgentProxy jur昕 xi ħaġa ta' falliment temporanju indipendenti; il-punti tal-immaniġġar t'hawn taħt jippermettu lill-operaturi jrawwlu u jirraddjhom:
 
 | Ambitu                  | Ħażna tal-istat                                      | Qari                                      | Tindif / ħasil                              |
 | ----------------------- | ---------------------------------------------------- | ----------------------------------------- | ------------------------------------------- |
@@ -1275,7 +1275,7 @@ Referenza ġenerika u defaults tal-interruttur: ara [`CLAUDE.md`](../../CLAUDE.m
 
 ## Ħiliet
 
-Qafas ta' ħiliet għat-tiswir ta' OmniRoute b'maniġġari eżegwibbli personalizzati, flimkien mal-integrazzjonijiet tal-marketplace.
+Qafas ta' ħiliet għat-tiswir ta' AgentProxy b'maniġġari eżegwibbli personalizzati, flimkien mal-integrazzjonijiet tal-marketplace.
 
 | Metodu | Triq                              | Deskrizzjoni                                                                                                                        |
 | ------ | --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
@@ -1310,7 +1310,7 @@ Qafas ta' ħiliet għat-tiswir ta' OmniRoute b'maniġġari eżegwibbli personali
 
 ## Server MCP
 
-OmniRoute jipprovdi server tal-Model Context Protocol integrat b'3 trasporti (stdio, SSE, streamable-http) u strumenti skedati. It-tmiem tas-sinks hawn taħt jaqraw data tal-stat/awdit u jipprokssjany it-trasporti HTTP.
+AgentProxy jipprovdi server tal-Model Context Protocol integrat b'3 trasporti (stdio, SSE, streamable-http) u strumenti skedati. It-tmiem tas-sinks hawn taħt jaqraw data tal-stat/awdit u jipprokssjany it-trasporti HTTP.
 
 | Metodu | Triq                   | Deskrizzjoni                                                                                          |
 | ------ | ---------------------- | ----------------------------------------------------------------------------------------------------- |
@@ -1330,13 +1330,13 @@ OmniRoute jipprovdi server tal-Model Context Protocol integrat b'3 trasporti (st
 
 ## Server tal-A2A
 
-OmniRoute juri punt ta' titjiba A2A (Agent-to-Agent) JSON-RPC 2.0 flimkien ma' wrapper REST għal użu ta' spezzjoni/dashboard.
+AgentProxy juri punt ta' titjiba A2A (Agent-to-Agent) JSON-RPC 2.0 flimkien ma' wrapper REST għal użu ta' spezzjoni/dashboard.
 
 ### JSON-RPC
 
 ```bash
 POST /a2a
-Authorization: Bearer your-api-key   # optional unless OMNIROUTE_API_KEY is set
+Authorization: Bearer your-api-key   # optional unless AGENTPROXY_API_KEY is set
 Content-Type: application/json
 
 {
@@ -1379,7 +1379,7 @@ Jirritorna il-karta pubblika tal-aġent A2A (isem, deskrizzjoni, kapaċitajiet, 
 | GET    | `/api/a2a/tasks/[id]`        | Retrieves wieħed mill-xogħol                                                                                          |
 | POST   | `/api/a2a/tasks/[id]/cancel` | Iħassar xogħol                                                                                                        |
 
-**Awtentikazzjoni:** il-għajnuniet REST jaħdmu mingħajr awtentikazzjoni ta' ġestjoni (readable mill-dashboard); il-rotta JSON-RPC `/a2a` tuża Bearer `OMNIROUTE_API_KEY` jekk ikun konfigurat.
+**Awtentikazzjoni:** il-għajnuniet REST jaħdmu mingħajr awtentikazzjoni ta' ġestjoni (readable mill-dashboard); il-rotta JSON-RPC `/a2a` tuża Bearer `AGENTPROXY_API_KEY` jekk ikun konfigurat.
 
 ---
 
@@ -1552,7 +1552,7 @@ Punti tal-aċċess għall-analiżi real-time għas-sorveljanza tal-ir Routing, i
 
 ## Ġestjoni tal-Għodod CLI
 
-Ħaddem għodod CLI li jintegraw mal-OmniRoute (antigravity, chipitol, commandCode,
+Ħaddem għodod CLI li jintegraw mal-AgentProxy (antigravity, chipitol, commandCode,
 devin-cli, eċċ.). Aħseb [Riferenza tal-Fornitur](./PROVIDER_REFERENCE.md) għall-lista sħiħa.
 
 | Metodu | Triq                                    | Deskrizzjoni                                                                                                                                                               |
@@ -1663,7 +1663,7 @@ Ara [Qafas tal-Ħiliet](../frameworks/SKILLS.md) għad-dettalji sħaħ.
 
 ## Plugins
 
-Immaniġġja plugins OmniRoute (estensjonijiet terzi).
+Immaniġġja plugins AgentProxy (estensjonijiet terzi).
 
 | Metodu | Triq                               | Deskrizzjoni                          |
 | ------ | ---------------------------------- | ------------------------------------- |
@@ -1689,7 +1689,7 @@ L-iskurjar / paragun A-B tal-fornituri **mhux żifna tal-wiċċ REST** — huwa 
 
 ## Safe-guards
 
-Iskenni l-safe-guards runtime (rilevament PII, rilevament ta' għoti ta' prompt, għanċjar ta' viżjoni). Is-safe-gwards jimxu fuq kull talba; il-għażla ta' barra għal kull sejħa hija permezz tal-header tal-talba `x-omniroute-disabled-guardrails` — m'hemmx wifqa preservata biex tiddiżattiva/tiġġedded.
+Iskenni l-safe-guards runtime (rilevament PII, rilevament ta' għoti ta' prompt, għanċjar ta' viżjoni). Is-safe-gwards jimxu fuq kull talba; il-għażla ta' barra għal kull sejħa hija permezz tal-header tal-talba `x-agentproxy-disabled-guardrails` — m'hemmx wifqa preservata biex tiddiżattiva/tiġġedded.
 
 | Metodu | Triq                   | Deskrizzjoni                                                                                          |
 | ------ | ---------------------- | ----------------------------------------------------------------------------------------------------- |

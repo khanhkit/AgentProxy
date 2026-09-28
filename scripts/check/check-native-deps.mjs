@@ -25,7 +25,7 @@
 // declared optional — a required dependency that is missing means `npm install`
 // never ran, which every other part of the build already reports clearly.
 //
-// Escape hatch: OMNIROUTE_SKIP_NATIVE_DEP_CHECK=1 (for exotic vendored trees).
+// Escape hatch: AGENTPROXY_SKIP_NATIVE_DEP_CHECK=1 (for exotic vendored trees).
 //
 // See: docs/guides/TROUBLESHOOTING.md#npm-v11-better-sqlite3-not-installed-cannot-find-module
 
@@ -171,13 +171,13 @@ export function formatMissingReport(missing) {
     "",
     "More detail: docs/guides/TROUBLESHOOTING.md#npm-v11-better-sqlite3-not-installed-cannot-find-module",
     "",
-    "Escape hatch for vendored trees: OMNIROUTE_SKIP_NATIVE_DEP_CHECK=1",
+    "Escape hatch for vendored trees: AGENTPROXY_SKIP_NATIVE_DEP_CHECK=1",
   ].join("\n");
 }
 
 function main() {
-  if (process.env.OMNIROUTE_SKIP_NATIVE_DEP_CHECK === "1") {
-    console.log("[check-native-deps] skipped (OMNIROUTE_SKIP_NATIVE_DEP_CHECK=1)");
+  if (process.env.AGENTPROXY_SKIP_NATIVE_DEP_CHECK === "1") {
+    console.log("[check-native-deps] skipped (AGENTPROXY_SKIP_NATIVE_DEP_CHECK=1)");
     return;
   }
 

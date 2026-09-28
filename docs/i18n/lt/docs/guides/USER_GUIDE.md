@@ -15,7 +15,7 @@ lastUpdated: 2026-06-28
 
 🌐 **Languages:** 🇺🇸 [English](../../../../guides/USER_GUIDE.md) · 🇸🇦 [ar](../../../ar/docs/guides/USER_GUIDE.md) · 🇦🇿 [az](../../../az/docs/guides/USER_GUIDE.md) · 🇧🇬 [bg](../../../bg/docs/guides/USER_GUIDE.md) · 🇧🇩 [bn](../../../bn/docs/guides/USER_GUIDE.md) · 🇨🇿 [cs](../../../cs/docs/guides/USER_GUIDE.md) · 🇩🇰 [da](../../../da/docs/guides/USER_GUIDE.md) · 🇩🇪 [de](../../../de/docs/guides/USER_GUIDE.md) · 🇬🇷 [el](../../../el/docs/guides/USER_GUIDE.md) · 🇪🇸 [es](../../../es/docs/guides/USER_GUIDE.md) · 🇪🇪 [et](../../../et/docs/guides/USER_GUIDE.md) · 🇮🇷 [fa](../../../fa/docs/guides/USER_GUIDE.md) · 🇫🇮 [fi](../../../fi/docs/guides/USER_GUIDE.md) · 🇫🇷 [fr](../../../fr/docs/guides/USER_GUIDE.md) · 🇮🇪 [ga](../../../ga/docs/guides/USER_GUIDE.md) · 🇮🇳 [gu](../../../gu/docs/guides/USER_GUIDE.md) · 🇮🇱 [he](../../../he/docs/guides/USER_GUIDE.md) · 🇮🇳 [hi](../../../hi/docs/guides/USER_GUIDE.md) · 🇭🇷 [hr](../../../hr/docs/guides/USER_GUIDE.md) · 🇭🇺 [hu](../../../hu/docs/guides/USER_GUIDE.md) · 🇮🇩 [id](../../../id/docs/guides/USER_GUIDE.md) · 🇮🇹 [it](../../../it/docs/guides/USER_GUIDE.md) · 🇯🇵 [ja](../../../ja/docs/guides/USER_GUIDE.md) · 🇰🇷 [ko](../../../ko/docs/guides/USER_GUIDE.md) · 🇱🇻 [lv](../../../lv/docs/guides/USER_GUIDE.md) · 🇮🇳 [mr](../../../mr/docs/guides/USER_GUIDE.md) · 🇲🇾 [ms](../../../ms/docs/guides/USER_GUIDE.md) · 🇲🇹 [mt](../../../mt/docs/guides/USER_GUIDE.md) · 🇳🇱 [nl](../../../nl/docs/guides/USER_GUIDE.md) · 🇳🇴 [no](../../../no/docs/guides/USER_GUIDE.md) · 🇵🇭 [phi](../../../phi/docs/guides/USER_GUIDE.md) · 🇵🇱 [pl](../../../pl/docs/guides/USER_GUIDE.md) · 🇵🇹 [pt](../../../pt/docs/guides/USER_GUIDE.md) · 🇧🇷 [pt-BR](../../../pt-BR/docs/guides/USER_GUIDE.md) · 🇷🇴 [ro](../../../ro/docs/guides/USER_GUIDE.md) · 🇷🇺 [ru](../../../ru/docs/guides/USER_GUIDE.md) · 🇸🇰 [sk](../../../sk/docs/guides/USER_GUIDE.md) · 🇸🇮 [sl](../../../sl/docs/guides/USER_GUIDE.md) · 🇷🇸 [sr](../../../sr/docs/guides/USER_GUIDE.md) · 🇸🇪 [sv](../../../sv/docs/guides/USER_GUIDE.md) · 🇰🇪 [sw](../../../sw/docs/guides/USER_GUIDE.md) · 🇮🇳 [ta](../../../ta/docs/guides/USER_GUIDE.md) · 🇮🇳 [te](../../../te/docs/guides/USER_GUIDE.md) · 🇹🇭 [th](../../../th/docs/guides/USER_GUIDE.md) · 🇹🇷 [tr](../../../tr/docs/guides/USER_GUIDE.md) · 🇺🇦 [uk-UA](../../../uk-UA/docs/guides/USER_GUIDE.md) · 🇵🇰 [ur](../../../ur/docs/guides/USER_GUIDE.md) · 🇻🇳 [vi](../../../vi/docs/guides/USER_GUIDE.md) · 🇨🇳 [zh-CN](../../../zh-CN/docs/guides/USER_GUIDE.md) · 🇹🇼 [zh-TW](../../../zh-TW/docs/guides/USER_GUIDE.md)
 
-Išsamus „OmniRoute“ teikėjų konfigūravimo, derinių kūrimo, CLI įrankių integravimo ir diegimo vadovas.
+Išsamus „AgentProxy“ teikėjų konfigūravimo, derinių kūrimo, CLI įrankių integravimo ir diegimo vadovas.
 
 ---
 
@@ -144,11 +144,11 @@ Modeliai:
   cc/claude-haiku-4-5-20251001
 ```
 
-**Profesionalo patarimas:** Sudėtingoms užduotims naudokite Opus, o kai svarbi sparta – Sonnet. OmniRoute stebi kiekvieno modelio kvotą!
+**Profesionalo patarimas:** Sudėtingoms užduotims naudokite Opus, o kai svarbi sparta – Sonnet. AgentProxy stebi kiekvieno modelio kvotą!
 
 Su Claude ir Claude Code suderinami maršrutai išlaiko `max` mąstymo pastangų lygį Opus ir Sonnet
 modeliams. Haiku modeliai nepalaiko `max` pastangų lygio, todėl prieš siųsdama užklausą pirminiam
-teikėjui OmniRoute sumažina jį iki didelio mąstymo biudžeto.
+teikėjui AgentProxy sumažina jį iki didelio mąstymo biudžeto.
 
 #### OpenAI Codex (Plus/Pro)
 
@@ -198,7 +198,7 @@ Modeliai:
 
 #### Kimi K2 (fiksuotas $9/mėn. mokestis)
 
-1. Užsisakykite prenumeratą: [Moonshot AI](https://platform.kimi.ai?aff=omniroute)
+1. Užsisakykite prenumeratą: [Moonshot AI](https://platform.kimi.ai?aff=agentproxy)
 2. Gaukite API raktą → Valdymo skydas → Pridėti API raktą
 
 **Naudojimas:** `kimi/kimi-k2.5` — **Profesionalo patarimas:** Fiksuotas $9/mėn. mokestis už 10M prieigos raktų = faktinė $0.90/1M kaina!
@@ -269,16 +269,16 @@ Kaina: šiuo metu nurodoma kaip $0; sąlygos ir prieinamumas gali keistis
 
 ### Cursor IDE
 
-**Cursor naudojimas kaip OmniRoute kliento** (nukreipkite Cursor pokalbius per OmniRoute):
+**Cursor naudojimas kaip AgentProxy kliento** (nukreipkite Cursor pokalbius per AgentProxy):
 
 ```
 Nustatymai → Modeliai → Išplėstiniai:
   OpenAI API bazinis URL: http://localhost:20128/v1
-  OpenAI API raktas: [iš OmniRoute valdymo skydelio]
+  OpenAI API raktas: [iš AgentProxy valdymo skydelio]
   Modelis: cc/claude-opus-4-7
 ```
 
-**OmniRoute naudojimas kaip Cursor teikėjo** (OmniRoute kreipiasi į Cursor aukštesniojo lygio paslaugą): rekomenduojama
+**AgentProxy naudojimas kaip Cursor teikėjo** (AgentProxy kreipiasi į Cursor aukštesniojo lygio paslaugą): rekomenduojama
 **Valdymo skydelis → Teikėjai → Cursor → Prisijungti naudojant Cursor**. Apie Docker žr.
 [`docs/providers/CURSOR-DOCKER.md`](../providers/CURSOR-DOCKER.md).
 
@@ -290,7 +290,7 @@ Redaguokite `~/.claude/settings.json`:
 {
   "env": {
     "ANTHROPIC_BASE_URL": "http://localhost:20128",
-    "ANTHROPIC_AUTH_TOKEN": "your-omniroute-api-key"
+    "ANTHROPIC_AUTH_TOKEN": "your-agentproxy-api-key"
   }
 }
 ```
@@ -301,7 +301,7 @@ Redaguokite `~/.claude/settings.json`:
 
 ```bash
 export OPENAI_BASE_URL="http://localhost:20128"
-export OPENAI_API_KEY="your-omniroute-api-key"
+export OPENAI_API_KEY="your-agentproxy-api-key"
 codex "your prompt"
 ```
 
@@ -313,14 +313,14 @@ Redaguokite `~/.openclaw/openclaw.json`:
 {
   "agents": {
     "defaults": {
-      "model": { "primary": "omniroute/if/kimi-k2.7-code" }
+      "model": { "primary": "agentproxy/if/kimi-k2.7-code" }
     }
   },
   "models": {
     "providers": {
-      "omniroute": {
+      "agentproxy": {
         "baseUrl": "http://localhost:20128/v1",
-        "apiKey": "your-omniroute-api-key",
+        "apiKey": "your-agentproxy-api-key",
         "api": "openai-completions",
         "models": [{ "id": "if/kimi-k2.7-code", "name": "Kimi K2.7 Code" }]
       }
@@ -347,28 +347,28 @@ Modelis: cc/claude-opus-4-7
 ### Visuotinis diegimas naudojant npm (rekomenduojama)
 
 ```bash
-npm install -g omniroute
+npm install -g agentproxy
 
 # Sukurkite konfigūracijos katalogą
-mkdir -p ~/.omniroute
+mkdir -p ~/.agentproxy
 
 # Sukurkite .env failą (žr. .env.example)
-cp .env.example ~/.omniroute/.env
+cp .env.example ~/.agentproxy/.env
 
 # Paleiskite serverį
-omniroute
+agentproxy
 # Arba naudodami pasirinktinį prievadą:
-omniroute --port 3000
+agentproxy --port 3000
 ```
 
-CLI automatiškai įkelia `.env` iš `~/.omniroute/.env` arba `./.env`.
+CLI automatiškai įkelia `.env` iš `~/.agentproxy/.env` arba `./.env`.
 
 ### Sistemos dėklo režimas
 
-Paleiskite OmniRoute sistemos dėkle:
+Paleiskite AgentProxy sistemos dėkle:
 
 ```bash
-omniroute serve --tray
+agentproxy serve --tray
 ```
 
 Komanda baigia darbą, kai serveris ir sistemos dėklo programa yra paruošti.
@@ -382,7 +382,7 @@ Naudokite sistemos dėklo meniu šiems veiksmams:
 - Atidaryti valdymo skydelį.
 - Atidaryti `/dashboard/logs`.
 - Keisti automatinio paleidimo nustatymą.
-- Sustabdyti OmniRoute.
+- Sustabdyti AgentProxy.
 
 Nenaudokite `--tray` kartu su šiomis parinktimis:
 
@@ -395,7 +395,7 @@ Nenaudokite `--tray` kartu su šiomis parinktimis:
 Įjunkite paleidimą kito prisijungimo prie kompiuterio metu:
 
 ```bash
-omniroute autostart enable
+agentproxy autostart enable
 ```
 
 Automatinis paleidimas naudoja sistemos dėklo režimą macOS, Windows ir grafinėse Linux sesijose. Linux sistemose be grafinės aplinkos naudojama esama systemd naudotojo paslauga.
@@ -403,29 +403,29 @@ Automatinis paleidimas naudoja sistemos dėklo režimą macOS, Windows ir grafin
 Išjunkite paleidimą prisijungimo metu:
 
 ```bash
-omniroute autostart disable
+agentproxy autostart disable
 ```
 
 ### Šalinimas
 
-Kai OmniRoute nebebus reikalingas, švariam pašalinimui pateikiame du sparčiuosius scenarijus:
+Kai AgentProxy nebebus reikalingas, švariam pašalinimui pateikiame du sparčiuosius scenarijus:
 
 | Komanda                  | Veiksmas                                                                                       |
 | ------------------------ | ---------------------------------------------------------------------------------------------- |
-| `npm run uninstall`      | Pašalina sistemos programą, bet **išsaugo jūsų DB ir konfigūracijas** kataloge `~/.omniroute`. |
+| `npm run uninstall`      | Pašalina sistemos programą, bet **išsaugo jūsų DB ir konfigūracijas** kataloge `~/.agentproxy`. |
 | `npm run uninstall:full` | Pašalina programą IR visam laikui **ištrina visas konfigūracijas, raktus ir duomenų bazes**.   |
 
-> Pastaba: norėdami vykdyti šias komandas, eikite į OmniRoute projekto aplanką (jei jį klonavote) ir paleiskite jas. Arba, jei įdiegėte visuotinai, galite tiesiog paleisti `npm uninstall -g omniroute`.
+> Pastaba: norėdami vykdyti šias komandas, eikite į AgentProxy projekto aplanką (jei jį klonavote) ir paleiskite jas. Arba, jei įdiegėte visuotinai, galite tiesiog paleisti `npm uninstall -g agentproxy`.
 
 ### Diegimas VPS serveryje
 
 ```bash
-git clone https://github.com/diegosouzapw/OmniRoute.git
-cd OmniRoute && npm install && npm run build
+git clone https://github.com/khanhkit/AgentProxy.git
+cd AgentProxy && npm install && npm run build
 
 export JWT_SECRET="your-secure-secret-change-this"
 export INITIAL_PASSWORD="your-password"
-export DATA_DIR="/var/lib/omniroute"
+export DATA_DIR="/var/lib/agentproxy"
 export PORT="20128"
 export HOSTNAME="0.0.0.0"
 export NODE_ENV="production"
@@ -433,7 +433,7 @@ export NEXT_PUBLIC_BASE_URL="http://localhost:20128"
 export API_KEY_SECRET="endpoint-proxy-api-key-secret"
 
 npm run start
-# Arba: pm2 start npm --name omniroute -- start
+# Arba: pm2 start npm --name agentproxy -- start
 ```
 
 ### Diegimas naudojant PM2 (mažai atminties)
@@ -442,10 +442,10 @@ Serveriuose, kuriuose yra mažai RAM, naudokite atminties apribojimo parinktį:
 
 ```bash
 # Su 512 MB apribojimu (numatytasis)
-pm2 start npm --name omniroute -- start
+pm2 start npm --name agentproxy -- start
 
 # Arba su pasirinktiniu atminties apribojimu
-OMNIROUTE_MEMORY_MB=512 pm2 start npm --name omniroute -- start
+AGENTPROXY_MEMORY_MB=512 pm2 start npm --name agentproxy -- start
 
 # Arba naudojant ecosystem.config.js
 pm2 start ecosystem.config.js
@@ -457,12 +457,12 @@ Sukurkite `ecosystem.config.js`:
 module.exports = {
   apps: [
     {
-      name: "omniroute",
+      name: "agentproxy",
       script: "npm",
       args: "start",
       env: {
         NODE_ENV: "production",
-        OMNIROUTE_MEMORY_MB: "512",
+        AGENTPROXY_MEMORY_MB: "512",
         JWT_SECRET: "your-secret",
         INITIAL_PASSWORD: "your-password",
       },
@@ -477,24 +477,24 @@ module.exports = {
 
 ```bash
 # Sukurkite atvaizdą (numatytasis = runner-cli su iš anksto įdiegtais codex/claude/droid)
-docker build -t omniroute:cli .
+docker build -t agentproxy:cli .
 
 # Perkeliamasis režimas (rekomenduojama)
-docker run -d --name omniroute -p 20128:20128 --env-file ./.env -v omniroute-data:/app/data omniroute:cli
+docker run -d --name agentproxy -p 20128:20128 --env-file ./.env -v agentproxy-data:/app/data agentproxy:cli
 ```
 
 Apie su pagrindine sistema integruotą režimą su CLI dvejetainiais failais žr. pagrindinės dokumentacijos Docker skyrių.
 
 ### Void Linux (xbps-src)
 
-Void Linux naudotojai gali sukurti OmniRoute paketą ir įdiegti jį sistemoje naudodami `xbps-src` kryžminio kompiliavimo sistemą. Ji automatizuoja savarankiško Node.js paketo kūrimą kartu su reikalingomis savosiomis `better-sqlite3` susiejimo bibliotekomis.
+Void Linux naudotojai gali sukurti AgentProxy paketą ir įdiegti jį sistemoje naudodami `xbps-src` kryžminio kompiliavimo sistemą. Ji automatizuoja savarankiško Node.js paketo kūrimą kartu su reikalingomis savosiomis `better-sqlite3` susiejimo bibliotekomis.
 
 <details>
 <summary><b>Peržiūrėti xbps-src šabloną</b></summary>
 
 ```bash
-# „omniroute“ šablono failas
-pkgname=omniroute
+# „agentproxy“ šablono failas
+pkgname=agentproxy
 version=3.8.0
 revision=1
 hostmakedepends="nodejs python3 make"
@@ -502,11 +502,11 @@ depends="openssl"
 short_desc="Universal AI gateway with smart routing for multiple LLM providers"
 maintainer="zenobit <zenobit@disroot.org>"
 license="MIT"
-homepage="https://github.com/diegosouzapw/OmniRoute"
-distfiles="https://github.com/diegosouzapw/OmniRoute/archive/refs/tags/v${version}.tar.gz"
+homepage="https://github.com/khanhkit/AgentProxy"
+distfiles="https://github.com/khanhkit/AgentProxy/archive/refs/tags/v${version}.tar.gz"
 checksum=009400afee90a9f32599d8fe734145cfd84098140b7287990183dde45ae2245b
-system_accounts="_omniroute"
-omniroute_homedir="/var/lib/omniroute"
+system_accounts="_agentproxy"
+agentproxy_homedir="/var/lib/agentproxy"
 export NODE_ENV=production
 export npm_config_engine_strict=false
 export npm_config_loglevel=error
@@ -556,26 +556,26 @@ do_check() {
 }
 
 do_install() {
-	vmkdir usr/lib/omniroute/.next
-	vcopy .next/standalone/. usr/lib/omniroute/.next/standalone
+	vmkdir usr/lib/agentproxy/.next
+	vcopy .next/standalone/. usr/lib/agentproxy/.next/standalone
 
 	# Neleiskite diegimo užbaigimo procedūrai pašalinti tuščių Next.js programos maršruto parinktuvo katalogų
 	for _d in \
 		.next/standalone/.next/server/app/dashboard \
 		.next/standalone/.next/server/app/dashboard/settings \
 		.next/standalone/.next/server/app/dashboard/providers; do
-		touch "${DESTDIR}/usr/lib/omniroute/${_d}/.keep"
+		touch "${DESTDIR}/usr/lib/agentproxy/${_d}/.keep"
 	done
 
-	cat > "${WRKDIR}/omniroute" <<'EOF'
+	cat > "${WRKDIR}/agentproxy" <<'EOF'
 #!/bin/sh
 export PORT="${PORT:-20128}"
-export DATA_DIR="${DATA_DIR:-${XDG_DATA_HOME:-${HOME}/.local/share}/omniroute}"
+export DATA_DIR="${DATA_DIR:-${XDG_DATA_HOME:-${HOME}/.local/share}/agentproxy}"
 export APP_LOG_TO_FILE="${APP_LOG_TO_FILE:-false}"
 mkdir -p "${DATA_DIR}"
-exec node /usr/lib/omniroute/.next/standalone/server.js "$@"
+exec node /usr/lib/agentproxy/.next/standalone/server.js "$@"
 EOF
-	vbin "${WRKDIR}/omniroute"
+	vbin "${WRKDIR}/agentproxy"
 }
 
 post_install() {
@@ -589,14 +589,14 @@ post_install() {
 
 | Kintamasis                              | Numatytoji reikšmė                   | Aprašymas                                                                                                                                      |
 | --------------------------------------- | ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| `JWT_SECRET`                            | `omniroute-default-secret-change-me` | JWT pasirašymo paslaptis (**pakeiskite gamybinėje aplinkoje**)                                                                                 |
+| `JWT_SECRET`                            | `agentproxy-default-secret-change-me` | JWT pasirašymo paslaptis (**pakeiskite gamybinėje aplinkoje**)                                                                                 |
 | `INITIAL_PASSWORD`                      | `CHANGEME`                           | Pirmojo prisijungimo slaptažodis                                                                                                               |
-| `DATA_DIR`                              | `~/.omniroute`                       | Duomenų katalogas (DB, naudojimo duomenys, žurnalai)                                                                                           |
+| `DATA_DIR`                              | `~/.agentproxy`                       | Duomenų katalogas (DB, naudojimo duomenys, žurnalai)                                                                                           |
 | `PORT`                                  | sistemos numatytoji reikšmė          | Paslaugos prievadas (pavyzdžiuose – `20128`)                                                                                                   |
 | `HOSTNAME`                              | sistemos numatytoji reikšmė          | Susiejimo pagrindinis kompiuteris (Docker numatytoji reikšmė – `0.0.0.0`)                                                                      |
 | `NODE_ENV`                              | vykdymo aplinkos numatytoji reikšmė  | Diegdami nustatykite `production`                                                                                                              |
 | `NEXT_PUBLIC_BASE_URL`                  | `http://localhost:20128`             | Viešasis bazinis URL, rodomas valdymo skydelyje ir pateikiamas serveriui (pakeičia senąjį `BASE_URL`)                                          |
-| `NEXT_PUBLIC_CLOUD_URL`                 | `https://omniroute.dev`              | Debesijos sinchronizavimo galinio taško bazinis URL (pakeičia senąjį `CLOUD_URL`)                                                              |
+| `NEXT_PUBLIC_CLOUD_URL`                 | `https://agentproxy.example.com`              | Debesijos sinchronizavimo galinio taško bazinis URL (pakeičia senąjį `CLOUD_URL`)                                                              |
 | `API_KEY_SECRET`                        | `endpoint-proxy-api-key-secret`      | HMAC paslaptis sugeneruotiems API raktams                                                                                                      |
 | `REQUIRE_API_KEY`                       | `false`                              | Reikalauti Bearer API rakto maršrutams `/v1/*`                                                                                                 |
 | `ALLOW_API_KEY_REVEAL`                  | `false`                              | Leisti autentifikuotiems valdymo skydelio naudotojams pareikalavus parodyti visas išsaugotas API raktų reikšmes                                |
@@ -606,7 +606,7 @@ post_install() {
 | `AUTH_COOKIE_SECURE`                    | `false`                              | Priverstinai naudoti `Secure` autentifikavimo slapuką (už HTTPS atvirkštinio tarpinio serverio)                                                |
 | `CLOUDFLARED_BIN`                       | nenustatyta                          | Naudoti esamą `cloudflared` dvejetainį failą vietoje valdomo atsisiuntimo                                                                      |
 | `CLOUDFLARED_PROTOCOL`                  | `http2`                              | Valdomų sparčiųjų tunelių transportas (`http2`, `quic` arba `auto`)                                                                            |
-| `OMNIROUTE_MEMORY_MB`                   | `512`                                | Node.js kaupo apribojimas MB                                                                                                                   |
+| `AGENTPROXY_MEMORY_MB`                   | `512`                                | Node.js kaupo apribojimas MB                                                                                                                   |
 | `PROMPT_CACHE_MAX_SIZE`                 | `50`                                 | Didžiausias užklausų talpyklos įrašų skaičius                                                                                                  |
 | `SEMANTIC_CACHE_MAX_SIZE`               | `100`                                | Didžiausias semantinės talpyklos įrašų skaičius                                                                                                |
 
@@ -667,7 +667,7 @@ Visą aplinkos kintamųjų žinyną rasite [README](../README.md).
 
 **Kiti suderinami teikėjai** (atrinkti): `cohere`, `databricks`, `snowflake`, `together`, `vertex`, `alibaba`, `alibaba-cn`, `bedrock` (per `aws-bedrock`), `azure-ai`, `openrouter` (tiesiogiai perduodamas katalogas), `siliconflow`, `hyperbolic`, `huggingface`, `featherless-ai`, `cloudflare-ai`, `scaleway`, `deepinfra`, `vercel-ai-gateway`, `bazaarlink`, `friendliai`, `nous-research`, `reka`, `volcengine`, `ai21`, `gigachat`. Kiekvienas turi savo modelių sąrašą faile `providerRegistry.ts` ir gali būti automatiškai sinchronizuojamas, kai teikėjas pateikia `/models` galinį tašką.
 
-**Pastaba apie modelių ID:** „OmniRoute“ naudoja teikėjų savuosius ID (`claude-opus-4-8`, `gpt-5.5`, `glm-5.1`, `MiniMax-M2.7`, `kimi-k2.5`, `grok-4.20-0309-reasoning`). Kai kuriuose ID yra versijų su taškais, nes tokio formato tikisi pirminio šaltinio API. Jei modelis nepateiktas pirmiau, paleiskite `omniroute models --search <term>` arba iškvieskite `GET /api/models/catalog`, kad patvirtintumėte jo prieinamumą.
+**Pastaba apie modelių ID:** „AgentProxy“ naudoja teikėjų savuosius ID (`claude-opus-4-8`, `gpt-5.5`, `glm-5.1`, `MiniMax-M2.7`, `kimi-k2.5`, `grok-4.20-0309-reasoning`). Kai kuriuose ID yra versijų su taškais, nes tokio formato tikisi pirminio šaltinio API. Jei modelis nepateiktas pirmiau, paleiskite `agentproxy models --search <term>` arba iškvieskite `GET /api/models/catalog`, kad patvirtintumėte jo prieinamumą.
 
 </details>
 
@@ -696,34 +696,34 @@ Pastabos:
 - OpenRouter ir su OpenAI/Anthropic suderinami teikėjai valdomi tik skiltyje **Galimi modeliai**. Rankinis pridėjimas, importavimas ir automatinis sinchronizavimas atliekami tame pačiame galimų modelių sąraše, todėl šiems teikėjams nėra atskiros pasirinktinių modelių skilties.
 - Skiltis **Pasirinktiniai modeliai** skirta teikėjams, kurie nesiūlo valdomo galimų modelių importavimo.
 
-### OmniRoute lygiaverčių mazgų grandinės
+### AgentProxy lygiaverčių mazgų grandinės
 
-Kitą OmniRoute šliuzą galima pridėti kaip **pasirinktinį su OpenAI suderinamą** teikėją. Naudokite
+Kitą AgentProxy šliuzą galima pridėti kaip **pasirinktinį su OpenAI suderinamą** teikėją. Naudokite
 lygiaverčio mazgo bazinį `/v1` URL ir specialų, mažiausių būtinų teisių API raktą, išduotą to mazgo.
 
 Abipusėms arba kelių šuolių grandinėms kiekviename šliuze įjunkite pasirenkamąją ciklų apsaugą:
 
 ```bash
 # gateway-a
-OMNIROUTE_INSTANCE_ID=gateway-a
-OMNIROUTE_PEER_URLS=http://gateway-b:20128/v1
-OMNIROUTE_PEER_MAX_HOPS=4
+AGENTPROXY_INSTANCE_ID=gateway-a
+AGENTPROXY_PEER_URLS=http://gateway-b:20128/v1
+AGENTPROXY_PEER_MAX_HOPS=4
 ```
 
 ```bash
 # gateway-b
-OMNIROUTE_INSTANCE_ID=gateway-b
-OMNIROUTE_PEER_URLS=http://gateway-a:20128/v1
-OMNIROUTE_PEER_MAX_HOPS=4
+AGENTPROXY_INSTANCE_ID=gateway-b
+AGENTPROXY_PEER_URLS=http://gateway-a:20128/v1
+AGENTPROXY_PEER_MAX_HOPS=4
 ```
 
 Tik užklausos, siunčiamos į aiškiai leidžiamų lygiaverčių mazgų URL sąraše esantį adresą, gauna
-`X-OmniRoute-Peer-Trace` antraštę. Šliuzas atmeta pasikartojantį egzemplioriaus ID arba išnaudotą šuolių
+`X-AgentProxy-Peer-Trace` antraštę. Šliuzas atmeta pasikartojantį egzemplioriaus ID arba išnaudotą šuolių
 limitą pateikdamas HTTP `508 Loop Detected`; įprasti aukštesnio lygio teikėjai negauna jokių lygiaverčių mazgų metaduomenų.
 
 Lygiaverčių mazgų grandinės nėra duomenų bazės replikavimas ar pagrindinio kompiuterio perjungimas gedimo atveju. Kiekvienas šliuzas turi nepriklausomą
 SQLite būseną, podėlius, dažnio skaitiklius ir seansus. Aktyviam / pasyviam arba aktyviam / aktyviam pasiekiamumui naudokite būklę tikrinantį atvirkštinį tarpinį serverį arba kliento
-perjungimą gedimo atveju ir niekada neprijunkite vienos SQLite duomenų bazės prie kelių veikiančių OmniRoute egzempliorių.
+perjungimą gedimo atveju ir niekada neprijunkite vienos SQLite duomenų bazės prie kelių veikiančių AgentProxy egzempliorių.
 
 ### Specialieji teikėjų maršrutai
 
@@ -774,7 +774,7 @@ Grąžina pagal teikėją sugrupuotus modelius su tipais (`chat`, `embedding`, `
 - Pasiekiamas skiltyje **Valdymo skydelis → Galiniai taškai**, skirtoje Docker ir kitoms savarankiškai talpinamoms diegtims
 - Sukuria laikiną `https://*.trycloudflare.com` URL, kuris persiunčia užklausas į dabartinį su OpenAI suderinamą `/v1` galinį tašką
 - Pirmą kartą įjungus `cloudflared` įdiegiamas tik tada, kai jo reikia; vėlesni paleidimai iš naujo naudoja tą patį valdomą dvejetainį failą
-- Spartieji tuneliai automatiškai neatkuriami iš naujo paleidus OmniRoute ar konteinerį; prireikus vėl įjunkite juos valdymo skydelyje
+- Spartieji tuneliai automatiškai neatkuriami iš naujo paleidus AgentProxy ar konteinerį; prireikus vėl įjunkite juos valdymo skydelyje
 - Tunelių URL yra laikini ir pasikeičia kiekvieną kartą sustabdžius bei paleidus tunelį
 - Valdomi spartieji tuneliai pagal numatytąsias nuostatas naudoja HTTP/2 transportą, kad ribotuose konteineriuose būtų išvengta triukšmingų QUIC UDP buferio įspėjimų
 - Jei norite pakeisti valdomo transporto pasirinkimą, nustatykite `CLOUDFLARED_PROTOCOL=quic` arba `auto`
@@ -783,15 +783,15 @@ Grąžina pagal teikėją sugrupuotus modelius su tipais (`chat`, `embedding`, `
 
 ### LLM šliuzo intelektika (9 etapas)
 
-- **Semantinis podėlis** — Automatiškai įrašo į podėlį nesrautinius atsakymus, kurių temperature=0 (apeikite naudodami `X-OmniRoute-No-Cache: true`)
+- **Semantinis podėlis** — Automatiškai įrašo į podėlį nesrautinius atsakymus, kurių temperature=0 (apeikite naudodami `X-AgentProxy-No-Cache: true`)
 - **Užklausų idempotentiškumas** — Pašalina pasikartojančias užklausas per 5 s naudodamas `Idempotency-Key` arba `X-Request-Id` antraštę
-- **Eigos stebėjimas** — Pasirenkamieji SSE `event: progress` įvykiai naudojant `X-OmniRoute-Progress: true` antraštę
+- **Eigos stebėjimas** — Pasirenkamieji SSE `event: progress` įvykiai naudojant `X-AgentProxy-Progress: true` antraštę
 
 ---
 
 ### Vertėjo bandymų aplinka
 
-Pasiekite per **Valdymo skydelis → Vertėjas**. Derinkite ir vizualizuokite, kaip OmniRoute verčia API užklausas tarp teikėjų.
+Pasiekite per **Valdymo skydelis → Vertėjas**. Derinkite ir vizualizuokite, kaip AgentProxy verčia API užklausas tarp teikėjų.
 
 | Režimas                    | Paskirtis                                                                                                    |
 | -------------------------- | ------------------------------------------------------------------------------------------------------------ |
@@ -844,7 +844,7 @@ Išoriniam seanso susiejimui (pavyzdžiui, Claude Code/Codex agentams už atvirk
 X-Session-Id: your-session-key
 ```
 
-OmniRoute taip pat priima `x_session_id` ir grąžina faktiškai naudojamą seanso raktą antraštėje `X-OmniRoute-Session-Id`.
+AgentProxy taip pat priima `x_session_id` ir grąžina faktiškai naudojamą seanso raktą antraštėje `X-AgentProxy-Session-Id`.
 
 Jei naudojate Nginx ir siunčiate antraštes su pabraukimo brūkšniais, įjunkite:
 
@@ -880,7 +880,7 @@ Chain: production-fallback
 
 Konfigūruokite skiltyje **Valdymo skydelis → Nuostatos → Atsparumas**.
 
-OmniRoute įgyvendina teikėjo lygmens atsparumą naudodamas penkis komponentus:
+AgentProxy įgyvendina teikėjo lygmens atsparumą naudodamas penkis komponentus:
 
 1. **Užklausų eilė ir tempo valdymas** — Sistemos lygmens užklausų srauto formavimas:
    - **Užklausos per minutę (RPM)** — Didžiausias užklausų skaičius per minutę vienai paskyrai
@@ -905,7 +905,7 @@ OmniRoute įgyvendina teikėjo lygmens atsparumą naudodamas penkis komponentus:
 
    Teikėjo pertraukiklio vykdymo būsena rodoma tik skiltyje **Valdymo skydelis → Būklė**.
 
-4. **Laukti atvėsimo laikotarpio** — Jei visi galimi ryšiai jau yra atvėsimo būsenoje, OmniRoute gali palaukti, kol pasibaigs anksčiausias atvėsimo laikotarpis, ir automatiškai pakartoti tą pačią kliento užklausą.
+4. **Laukti atvėsimo laikotarpio** — Jei visi galimi ryšiai jau yra atvėsimo būsenoje, AgentProxy gali palaukti, kol pasibaigs anksčiausias atvėsimo laikotarpis, ir automatiškai pakartoti tą pačią kliento užklausą.
 
 5. **Automatinis dažnio apribojimų aptikimas** — Kai aukštesnio lygio teikėjai grąžina aiškius laukimo intervalus, įjungus šią nuostatą tos užuominos pakeičia vietinį ryšio atvėsimo laikotarpį.
 
@@ -939,7 +939,7 @@ curl -X POST http://localhost:20128/api/db-backups/import \
 
 **Naudojimo atvejai:**
 
-- Perkelkite OmniRoute iš vieno įrenginio į kitą
+- Perkelkite AgentProxy iš vieno įrenginio į kitą
 - Kurkite išorines atsargines kopijas atkūrimui po nelaimės
 - Bendrinkite konfigūracijas su komandos nariais (eksportuokite viską → bendrinkite archyvą)
 
@@ -991,7 +991,7 @@ curl http://localhost:20128/api/usage/budget
 
 ### Garso transkribavimas
 
-OmniRoute palaiko garso transkribavimą per su OpenAI suderinamą galinį tašką:
+AgentProxy palaiko garso transkribavimą per su OpenAI suderinamą galinį tašką:
 
 ```bash
 POST /v1/audio/transcriptions
@@ -1067,7 +1067,7 @@ Išjunkite **Samprotavimo prieigos raktų buferį**, kai aukštesnio lygio teik�
 `max_tokens` / `maxOutputTokens` limitų. Kai ši funkcija įjungta, derinių maršruto parinkimas papildomą samprotavimo modelio
 rezervą prideda tik modeliams su žinomu išvesties limitu ir nekeičia kliento prieigos raktų limito, kai
 saugi reikšmė su buferiu viršytų tą limitą. Jei kliento limitas jau viršija žinomą ribą,
-prieš siųsdamas užklausą aukštesnio lygio teikėjui OmniRoute sumažina jį iki tos ribos.
+prieš siųsdamas užklausą aukštesnio lygio teikėjui AgentProxy sumažina jį iki tos ribos.
 
 ---
 
@@ -1090,7 +1090,7 @@ Pasiekite per **Valdymo skydelis → Būklė**. Sistemos būklės apžvalga real
 
 ## 🤖 Automatinis maršruto parinkimas (be konfigūravimo)
 
-„OmniRoute“ turi **vertinimu pagrįstą automatinį maršruto parinktuvą**, kuris kiekvienai užklausai parenka geriausią modelį iš visų prijungtų teikėjų — nereikia prižiūrėti jokių derinių. Tiesiog siųskite užklausą su vienu iš `auto/*` prefiksų, o „OmniRoute“ dinamiškai sudarys virtualų derinį, įvertindama kandidatus pagal delsą, kainą, sėkmės rodiklį, konteksto atitiktį, modelio tinkamumą užduočiai, naujausias triktis, kvotą ir grandinės pertraukiklio būseną.
+„AgentProxy“ turi **vertinimu pagrįstą automatinį maršruto parinktuvą**, kuris kiekvienai užklausai parenka geriausią modelį iš visų prijungtų teikėjų — nereikia prižiūrėti jokių derinių. Tiesiog siųskite užklausą su vienu iš `auto/*` prefiksų, o „AgentProxy“ dinamiškai sudarys virtualų derinį, įvertindama kandidatus pagal delsą, kainą, sėkmės rodiklį, konteksto atitiktį, modelio tinkamumą užduočiai, naujausias triktis, kvotą ir grandinės pertraukiklio būseną.
 
 | Prefiksas      | Optimizuojama pagal                                                                                                |
 | -------------- | ------------------------------------------------------------------------------------------------------------------ |
@@ -1106,7 +1106,7 @@ Pavyzdys:
 
 ```bash
 curl -X POST http://localhost:20128/v1/chat/completions \
-  -H "Authorization: Bearer $OMNIROUTE_KEY" \
+  -H "Authorization: Bearer $AGENTPROXY_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "auto/coding",
@@ -1121,13 +1121,13 @@ Automatinis maršruto parinktuvas išsamiai aprašytas dokumente [AUTO-COMBO.md]
 
 ## 🔌 MCP ir A2A integracija
 
-„OmniRoute“ yra ir **MCP serveris** („Model Context Protocol“), ir **A2A serveris** („Agent-to-Agent JSON-RPC 2.0“). Bet kuri su MCP suderinama IDE ar agentų prieglobos sistema gali tiesiogiai iškviesti „OmniRoute“ įrankius — papildomas tarpinis komponentas nereikalingas.
+„AgentProxy“ yra ir **MCP serveris** („Model Context Protocol“), ir **A2A serveris** („Agent-to-Agent JSON-RPC 2.0“). Bet kuri su MCP suderinama IDE ar agentų prieglobos sistema gali tiesiogiai iškviesti „AgentProxy“ įrankius — papildomas tarpinis komponentas nereikalingas.
 
 ### MCP perdavimo būdai
 
 - **SSE**: `http://localhost:20128/api/mcp/sse`
 - **Srautinis HTTP**: `http://localhost:20128/api/mcp/stream`
-- **stdio**: `omniroute --mcp` (IDE papildiniams, kurie pirmenybę teikia stdio)
+- **stdio**: `agentproxy --mcp` (IDE papildiniams, kurie pirmenybę teikia stdio)
 
 ### „Claude Desktop“ prijungimas
 
@@ -1136,8 +1136,8 @@ Redaguokite `~/Library/Application Support/Claude/claude_desktop_config.json` (�
 ```json
 {
   "mcpServers": {
-    "omniroute": {
-      "command": "omniroute",
+    "agentproxy": {
+      "command": "agentproxy",
       "args": ["--mcp"]
     }
   }
@@ -1156,7 +1156,7 @@ Naudokite SSE URL `http://localhost:20128/api/mcp/sse` ir „Bearer“ API rakt�
 
 ## 🧠 Įgūdžių sistema
 
-„OmniRoute“ suteikia išplečiamą **įgūdžių sistemą** (`src/lib/skills/`), kad agentai ir A2A galinis taškas galėtų vykdyti konkrečioms sritims skirtas procedūras (pvz., `code-review`, `summarize`, `extract-facts`, `web-research`).
+„AgentProxy“ suteikia išplečiamą **įgūdžių sistemą** (`src/lib/skills/`), kad agentai ir A2A galinis taškas galėtų vykdyti konkrečioms sritims skirtas procedūras (pvz., `code-review`, `summarize`, `extract-facts`, `web-research`).
 
 - **Prekyvietės sąsaja** — Naršykite ir diekite įgūdžius skiltyje **Valdymo skydas → Įgūdžiai**
 - **Atskirų raktų aprėptys** — Apribokite, kurie API raktai gali iškviesti konkrečius įgūdžius
@@ -1168,7 +1168,7 @@ Išsami dokumentacija: [SKILLS.md](../frameworks/SKILLS.md).
 
 ## 💾 Atminties sistema
 
-„OmniRoute“ išsaugo **ilgalaikę pokalbių atmintį**, kurioje naudojama hibridinė paieška:
+„AgentProxy“ išsaugo **ilgalaikę pokalbių atmintį**, kurioje naudojama hibridinė paieška:
 
 - **SQLite FTS5** raktažodžių paieškai ankstesniuose pokalbiuose
 - **Qdrant vektorių saugykla** (pasirinktinė) semantiniam prisiminimui
@@ -1181,11 +1181,11 @@ Tvarkykite atminties įrašus skiltyje **Valdymo skydas → Atmintis** (ieškoki
 
 ## 🔔 Webhook pranešimai
 
-Prenumeruokite „OmniRoute“ įvykius, kad galėtumėte stebėti sistemą ir automatizuoti veiksmus realiuoju laiku.
+Prenumeruokite „AgentProxy“ įvykius, kad galėtumėte stebėti sistemą ir automatizuoti veiksmus realiuoju laiku.
 
 - Sukurkite webhook skiltyje **Valdymo skydas → Webhook pranešimai**, nurodydami paskirties URL ir HMAC pasirašymo slaptąjį raktą
 - Galimi įvykiai: `request.completed`, `request.failed`, `provider.unavailable`, `budget.exceeded`, `combo.switched`, `circuit_breaker.opened`, `circuit_breaker.closed`
-- Kiekvienoje naudingojoje apkrovoje pateikiama `X-OmniRoute-Signature` (HMAC-SHA256), skirta patikrai
+- Kiekvienoje naudingojoje apkrovoje pateikiama `X-AgentProxy-Signature` (HMAC-SHA256), skirta patikrai
 - Pakartotiniai bandymai: 3 bandymai su eksponentiškai didėjančia delsa, o tada pranešimas perkeliamas į neapdorotų pranešimų eilę
 
 Visa schema pateikta [WEBHOOKS.md](../frameworks/WEBHOOKS.md).
@@ -1194,11 +1194,11 @@ Visa schema pateikta [WEBHOOKS.md](../frameworks/WEBHOOKS.md).
 
 ## ☁️ Debesijos agentai
 
-„OmniRoute“ integruojama su debesijos programavimo agentais (**OpenAI Codex Cloud**, **Devin**, **Jules**, **Antigravity**), todėl ilgai vykdomas užduotis galite siųsti iš to paties valdymo skydo, kuriame tvarkomas vietinis maršruto parinkimas.
+„AgentProxy“ integruojama su debesijos programavimo agentais (**OpenAI Codex Cloud**, **Devin**, **Jules**, **Antigravity**), todėl ilgai vykdomas užduotis galite siųsti iš to paties valdymo skydo, kuriame tvarkomas vietinis maršruto parinkimas.
 
 - Kurkite užduotis skiltyje **Valdymo skydas → Debesijos agentai** arba naudodami `POST /api/v1/agents/tasks`
 - Stebėkite kiekvienos užduoties būseną, žurnalus ir artefaktus
-- Kiekvienam teikėjui naudokite savo API raktą — prisijungimo duomenys niekada nepalieka „OmniRoute“ egzemplioriaus
+- Kiekvienam teikėjui naudokite savo API raktą — prisijungimo duomenys niekada nepalieka „AgentProxy“ egzemplioriaus
 
 Išsami dokumentacija: [CLOUD_AGENT.md](../frameworks/CLOUD_AGENT.md).
 
@@ -1206,30 +1206,30 @@ Išsami dokumentacija: [CLOUD_AGENT.md](../frameworks/CLOUD_AGENT.md).
 
 ## 🛠️ Programinis valdymas
 
-Kiekvieną „OmniRoute“ išteklių (teikėjus, derinius, raktus, nuostatas) galite valdyti per HTTP naudodami **Bearer raktą su `manage` aprėptimi**.
+Kiekvieną „AgentProxy“ išteklių (teikėjus, derinius, raktus, nuostatas) galite valdyti per HTTP naudodami **Bearer raktą su `manage` aprėptimi**.
 
 Sugeneruokite raktą skiltyje **Valdymo skydas → API raktai → Naujas raktas → Aprėptis: manage**, tada:
 
 ```bash
 # Pateikti teikėjų sąrašą
 curl http://localhost:20128/api/providers \
-  -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY"
+  -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY"
 
 # Pridėti teikėjo ryšį
 curl -X POST http://localhost:20128/api/providers \
-  -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY" \
+  -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY" \
   -H "Content-Type: application/json" \
   -d '{ "provider": "openai", "apiKey": "sk-...", "name": "main" }'
 
 # Sukurti derinį
 curl -X POST http://localhost:20128/api/combos \
-  -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY" \
+  -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY" \
   -H "Content-Type: application/json" \
   -d '{ "name": "premium", "strategy": "priority", "models": [{ "model": "cc/claude-opus-4-7" }, { "model": "glm/glm-5.1" }] }'
 
 # Pateikti API raktų sąrašą / sukurti API raktą
-curl http://localhost:20128/api/keys -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY"
-curl -X POST http://localhost:20128/api/keys -H "Authorization: Bearer $OMNIROUTE_MANAGE_KEY" \
+curl http://localhost:20128/api/keys -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY"
+curl -X POST http://localhost:20128/api/keys -H "Authorization: Bearer $AGENTPROXY_MANAGE_KEY" \
   -d '{ "name": "ci-bot", "scopes": ["chat"] }'
 ```
 
@@ -1239,38 +1239,38 @@ Visą galinių taškų katalogą ir užklausų bei atsakymų schemas rasite [API
 
 ## 💻 Vidinė CLI
 
-„OmniRoute“ pateikiama su vidine CLI (`omniroute …`), skirta konfigūravimui, diagnostikai ir veikimo valdymui. Ji yra **atskira nuo valdymo skydelio puslapio „CLI įrankiai“**, kuriame konfigūruojamos trečiųjų šalių CLI („Claude Code“, „Cursor“, „Codex“, „Cline“, …), kad jos galėtų palaikyti ryšį su „OmniRoute“.
+„AgentProxy“ pateikiama su vidine CLI (`agentproxy …`), skirta konfigūravimui, diagnostikai ir veikimo valdymui. Ji yra **atskira nuo valdymo skydelio puslapio „CLI įrankiai“**, kuriame konfigūruojamos trečiųjų šalių CLI („Claude Code“, „Cursor“, „Codex“, „Cline“, …), kad jos galėtų palaikyti ryšį su „AgentProxy“.
 
 ```bash
-omniroute setup                    # Interaktyvus vediklis (slaptažodis, teikėjai, deriniai)
-omniroute setup --non-interactive  # Tinka CI aplinkai
-omniroute doctor                   # Būklės diagnostika (duomenų katalogas, DB, teikėjai, prievadai)
-omniroute providers available      # Rodyti palaikomus teikėjus
-omniroute providers list           # Rodyti sukonfigūruotus ryšius
-omniroute providers test <id>      # Realiuoju laiku patikrinti ryšį su teikėju
-omniroute combos list              # Rodyti derinius
-omniroute combos switch <name>     # Nustatyti numatytąjį derinį
-omniroute models                   # Rodyti galimus modelius (--json, --search)
-omniroute keys add | list | remove # Tvarkyti API raktus terminale
-omniroute backup                   # Sukurti konfigūracijos ir DB momentinę kopiją
-omniroute restore [<timestamp>]    # Atkurti iš momentinės kopijos
-omniroute health                   # Išsami būklė (grandinės pertraukikliai, podėlis, atmintis)
-omniroute quota                    # Teikėjų kvotų naudojimas
-omniroute mcp status               # MCP serverio būsena
-omniroute a2a status               # A2A serverio būsena
-omniroute tunnel list|create|stop  # Cloudflare/Tailscale/ngrok tuneliai
-omniroute reset-password           # Iš naujo nustatyti administratoriaus slaptažodį
-omniroute --mcp                    # Paleisti MCP serverį per stdio
-omniroute --port 3000              # Paleisti serverį naudojant pasirinktinį prievadą
+agentproxy setup                    # Interaktyvus vediklis (slaptažodis, teikėjai, deriniai)
+agentproxy setup --non-interactive  # Tinka CI aplinkai
+agentproxy doctor                   # Būklės diagnostika (duomenų katalogas, DB, teikėjai, prievadai)
+agentproxy providers available      # Rodyti palaikomus teikėjus
+agentproxy providers list           # Rodyti sukonfigūruotus ryšius
+agentproxy providers test <id>      # Realiuoju laiku patikrinti ryšį su teikėju
+agentproxy combos list              # Rodyti derinius
+agentproxy combos switch <name>     # Nustatyti numatytąjį derinį
+agentproxy models                   # Rodyti galimus modelius (--json, --search)
+agentproxy keys add | list | remove # Tvarkyti API raktus terminale
+agentproxy backup                   # Sukurti konfigūracijos ir DB momentinę kopiją
+agentproxy restore [<timestamp>]    # Atkurti iš momentinės kopijos
+agentproxy health                   # Išsami būklė (grandinės pertraukikliai, podėlis, atmintis)
+agentproxy quota                    # Teikėjų kvotų naudojimas
+agentproxy mcp status               # MCP serverio būsena
+agentproxy a2a status               # A2A serverio būsena
+agentproxy tunnel list|create|stop  # Cloudflare/Tailscale/ngrok tuneliai
+agentproxy reset-password           # Iš naujo nustatyti administratoriaus slaptažodį
+agentproxy --mcp                    # Paleisti MCP serverį per stdio
+agentproxy --port 3000              # Paleisti serverį naudojant pasirinktinį prievadą
 ```
 
-Patarimas: naudokite `omniroute doctor --json` kartu su savo stebėjimo įrankiu, kad gautumėte įspėjimus apie sutrikusius ryšius su teikėjais.
+Patarimas: naudokite `agentproxy doctor --json` kartu su savo stebėjimo įrankiu, kad gautumėte įspėjimus apie sutrikusius ryšius su teikėjais.
 
 ---
 
 ## 🖥️ Darbalaukio programa („Electron“)
 
-„OmniRoute“ galima naudoti kaip savąją darbalaukio programą, skirtą „Windows“, „macOS“ ir „Linux“.
+„AgentProxy“ galima naudoti kaip savąją darbalaukio programą, skirtą „Windows“, „macOS“ ir „Linux“.
 
 ### Diegimas
 
@@ -1313,7 +1313,7 @@ Išvestis → `electron/dist-electron/`
 
 | Kintamasis            | Numatytoji reikšmė | Aprašymas                        |
 | --------------------- | ------------------ | -------------------------------- |
-| `OMNIROUTE_PORT`      | `20128`            | Serverio prievadas               |
-| `OMNIROUTE_MEMORY_MB` | `512`              | Node.js kaupo riba (64–16384 MB) |
+| `AGENTPROXY_PORT`      | `20128`            | Serverio prievadas               |
+| `AGENTPROXY_MEMORY_MB` | `512`              | Node.js kaupo riba (64–16384 MB) |
 
 📖 Visa dokumentacija: [`electron/README.md`](../../electron/README.md)

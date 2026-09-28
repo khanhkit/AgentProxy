@@ -4,7 +4,7 @@ import assert from "node:assert/strict";
 // OpenCode `subagent.sessionID` is an optional plain string. Absence means "spawn a
 // new child". Responses/Codex strict mode forces every declared property into
 // `required`, so models invent fillers (`ses_`, `ses_new`, parent IDs) unless
-// OmniRoute offers `null` as the omission sentinel and strips it before the client
+// AgentProxy offers `null` as the omission sentinel and strips it before the client
 // sees the tool call. This is the string counterpart of the #7023 enum sentinel.
 
 const { injectOptionalStringOmissionSentinel, injectOptionalStringOmissionForTools } =
@@ -240,7 +240,7 @@ test("characterization: optional unmarked null is already stripped; real IDs are
   assert.equal(kept.sessionID, "ses_valid_child");
 });
 
-test("RED: strictified required sessionID with OmniRoute marker still drops null", () => {
+test("RED: strictified required sessionID with AgentProxy marker still drops null", () => {
   const strictified = {
     type: "object",
     additionalProperties: false,

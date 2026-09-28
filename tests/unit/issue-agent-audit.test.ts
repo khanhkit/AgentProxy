@@ -10,7 +10,7 @@ import { createRecordedTriageRun } from "../../src/lib/issueAgent/recordedTriage
 test("appendIssueAgentAuditRecord writes redacted JSONL under explicit data dir", async () => {
   const dataDir = mkdtempSync(join(tmpdir(), "issue-agent-audit-"));
   const run = createRecordedTriageRun({
-    issueUrl: "https://github.com/KooshaPari/OmniRoute/issues/42",
+    issueUrl: "https://github.com/KooshaPari/AgentProxy/issues/42",
     recordedContext: {
       title: "Need fix",
       body: "Authorization: Bearer sk-secret1234567890abcd",
@@ -23,7 +23,7 @@ test("appendIssueAgentAuditRecord writes redacted JSONL under explicit data dir"
 
   assert.equal(result.path, join(dataDir, "issue-agent", "audit.jsonl"));
   assert.equal(row.runId, run.runId);
-  assert.equal(row.repository, "KooshaPari/OmniRoute");
+  assert.equal(row.repository, "KooshaPari/AgentProxy");
   assert.equal(row.issueNumber, 42);
   assert.equal(row.dryRun, true);
   assert.doesNotMatch(payload, /sk-secret/);

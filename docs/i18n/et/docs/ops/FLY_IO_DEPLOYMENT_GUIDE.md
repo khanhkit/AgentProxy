@@ -6,20 +6,20 @@
 
 ---
 
-title: "OmniRoute'i Fly.io juurutamise juhend"
+title: "AgentProxy'i Fly.io juurutamise juhend"
 version: 3.8.40
 lastUpdated: 2026-06-28
 ---
 
-# OmniRoute'i Fly.io juurutamise juhend
+# AgentProxy'i Fly.io juurutamise juhend
 
-Käesolev dokument kirjeldab OmniRoute'i tegelikku juurutamisprotsessi Fly.io platvormil, hõlmates kahte stsenaariumit:
+Käesolev dokument kirjeldab AgentProxy'i tegelikku juurutamisprotsessi Fly.io platvormil, hõlmates kahte stsenaariumit:
 
 - praeguse projekti esmakordne juurutamine Fly.io-le
 - järgnevate koodiuuenduste avaldamine
 - uued projektid, mis järgivad sama juurutamise töövoogu
 
-Käesolev juhend põhineb praeguse projekti kontrollitud toimival konfiguratsioonil. Rakenduse nimi on `omniroute`.
+Käesolev juhend põhineb praeguse projekti kontrollitud toimival konfiguratsioonil. Rakenduse nimi on `agentproxy`.
 
 ---
 
@@ -29,7 +29,7 @@ Käesolev juhend põhineb praeguse projekti kontrollitud toimival konfiguratsioo
 - Juurutamise meetod: kohalik `flyctl` otseavaldamine
 - Käitusaeg: kasutatakse hoidlas olevat olemasolevat `Dockerfile` ja `fly.toml`
 - Andmete püsivus: Fly Volume, mis on ühendatud kataloogiga `/data`
-- Juurdepääsu URL: `https://omniroute.fly.dev/`
+- Juurdepääsu URL: `https://agentproxy.example.com/`
 
 ---
 
@@ -38,7 +38,7 @@ Käesolev juhend põhineb praeguse projekti kontrollitud toimival konfiguratsioo
 On kinnitatud, et praeguse hoidla failis `fly.toml` on järgmised põhielemendid:
 
 ```toml
-app = 'omniroute'
+app = 'agentproxy'
 primary_region = 'sin'
 
 [[mounts]]
@@ -60,7 +60,7 @@ primary_region = 'sin'
 
 Märkused:
 
-- `app = 'omniroute'` määrab, millisele Fly rakendusele juurutamine suunatakse
+- `app = 'agentproxy'` määrab, millisele Fly rakendusele juurutamine suunatakse
 - `destination = '/data'` määrab püsiva köite ühenduskataloogi
 - Selles projektis tuleb kindlasti määrata `DATA_DIR=/data`, vastasel juhul kirjutatakse andmebaas ja võtmed konteineri ajutisse kataloogi
 
@@ -98,8 +98,8 @@ flyctl version
 ### 4.1 Kloonige kood ja liikuge kataloogi
 
 ```powershell
-git clone https://github.com/diegosouzapw/OmniRoute.git
-cd OmniRoute
+git clone https://github.com/khanhkit/AgentProxy.git
+cd AgentProxy
 ```
 
 ### 4.2 Kinnitage rakenduse nimi
@@ -107,29 +107,29 @@ cd OmniRoute
 Avage `fly.toml` ja kontrollige järgmist rida:
 
 ```toml
-app = 'omniroute'
+app = 'agentproxy'
 ```
 
 Kui juurutate seda oma uude rakendusse, võite selle muuta globaalselt kordumatuks nimeks, näiteks:
 
 ```toml
-app = 'omniroute-yourname'
+app = 'agentproxy-yourname'
 ```
 
 Märkus:
 
 - Veenduge, et konsoolis kuvatav rakendus vastab `fly.toml` failis olevale `app` väärtusele
-- Kui olete varem kasutanud teistsugust nime, näiteks `oroute`, ärge ajage seda segamini nimega `omniroute`
+- Kui olete varem kasutanud teistsugust nime, näiteks `oroute`, ärge ajage seda segamini nimega `agentproxy`
 
 ### 4.3 Rakenduse loomine
 
 Kui rakendust veel ei eksisteeri:
 
 ```powershell
-flyctl apps create omniroute
+flyctl apps create agentproxy
 ```
 
-Kui olete rakenduse nime muutnud, asendage `omniroute` valitud nimega.
+Kui olete rakenduse nime muutnud, asendage `agentproxy` valitud nimega.
 
 ### 4.4 Esmakordne juurutamine
 
@@ -145,14 +145,14 @@ Käesolev projekt soovitab konfigureerida Fly.io-l vähemalt järgmised parameet
 
 ### 5.1 Kontrollitud parameetrid
 
-Neid parameetreid on kasutatud praeguse `omniroute` rakenduse tegelikes juurutamistes:
+Neid parameetreid on kasutatud praeguse `agentproxy` rakenduse tegelikes juurutamistes:
 
 - `API_KEY_SECRET`
 - `DATA_DIR`
 - `JWT_SECRET`
 - `MACHINE_ID_SALT`
 - `NEXT_PUBLIC_BASE_URL`
-- `OMNIROUTE_WS_BRIDGE_SECRET` (vajalik tootmiskeskkonnas — kasutatakse WebSocket-i vahendaja autentimiseks)
+- `AGENTPROXY_WS_BRIDGE_SECRET` (vajalik tootmiskeskkonnas — kasutatakse WebSocket-i vahendaja autentimiseks)
 - `STORAGE_ENCRYPTION_KEY`
 
 ### 5.2 `INITIAL_PASSWORD` kohta
@@ -180,7 +180,7 @@ Fly Secrets jaoks soovitatakse kasutada järgmisi muutujaid:
 | ---------------------------- | --------------------- | -------------------------------------------------------------- |
 | `API_KEY_SECRET`             | Kohustuslik           | Kasutatakse API võtme genereerimiseks ja valideerimiseks       |
 | `JWT_SECRET`                 | Kohustuslik           | Kasutatakse sisselogimisseansside ja JWT allkirjastamise jaoks |
-| `OMNIROUTE_WS_BRIDGE_SECRET` | Kohustuslik toodangus | WebSocket bridge autentimissaladus                             |
+| `AGENTPROXY_WS_BRIDGE_SECRET` | Kohustuslik toodangus | WebSocket bridge autentimissaladus                             |
 | `STORAGE_ENCRYPTION_KEY`     | Tugevalt soovitatav   | Krüpteerib tundliku ühenduse teabe salvestuse ajal             |
 | `MACHINE_ID_SALT`            | Soovitatav            | Genereerib stabiilse masina identifikaatori                    |
 | `INITIAL_PASSWORD`           | Valikuline            | Määrab esimese kasutuselevõtu ajal taustaprogrammi algparooli  |
@@ -191,7 +191,7 @@ Fly Secrets jaoks soovitatakse kasutada järgmisi muutujaid:
 | Muutuja                | Soovitatud väärtus          |
 | ---------------------- | --------------------------- |
 | `DATA_DIR`             | `/data`                     |
-| `NEXT_PUBLIC_BASE_URL` | `https://omniroute.fly.dev` |
+| `NEXT_PUBLIC_BASE_URL` | `https://agentproxy.example.com` |
 
 Märkused:
 
@@ -205,10 +205,10 @@ Kui soovid Fly.io kasutuselevõtul lubada OAuth-põhiseid teenusepakkujaid (nt A
 1. **Määra `NEXT_PUBLIC_BASE_URL` oma avalikuks HTTPS domeeniks**
 
    ```powershell
-   flyctl secrets set NEXT_PUBLIC_BASE_URL=https://omniroute.fly.dev -a omniroute
+   flyctl secrets set NEXT_PUBLIC_BASE_URL=https://agentproxy.example.com -a agentproxy
    ```
 
-   Kui kasutad kohandatud domeeni, asenda see vastava domeeniga (nt `https://omniroute.yourdomain.com`).
+   Kui kasutad kohandatud domeeni, asenda see vastava domeeniga (nt `https://agentproxy.yourdomain.com`).
 
 2. **Konfigureeri tagasikutse URL teenusepakkuja konsoolis**
 
@@ -219,7 +219,7 @@ Kui soovid Fly.io kasutuselevõtul lubada OAuth-põhiseid teenusepakkujaid (nt A
    ```
 
    Näiteks, sõltumata sellest, kas kasutad Geminit, Antigravityt, Cursorit või GitLab Duo'd:
-   - `https://omniroute.fly.dev/callback`
+   - `https://agentproxy.example.com/callback`
 
    Kui `NEXT_PUBLIC_BASE_URL` ei ühti teenusepakkuja juures registreeritud tagasikutse URL-iga, ebaõnnestub OAuth voog brauseri suunamise etapis.
 
@@ -232,7 +232,7 @@ Järgmised käsud genereerivad turvalisi juhuslikke väärtusi ja kirjutavad üh
 Märkused:
 
 - Ei sisalda `INITIAL_PASSWORD` väärtust
-- Mõeldud praeguse projekti `omniroute` jaoks
+- Mõeldud praeguse projekti `agentproxy` jaoks
 
 ```powershell
 $apiKeySecret = [Convert]::ToHexString((1..32 | ForEach-Object { Get-Random -Minimum 0 -Maximum 256 })).ToLower()
@@ -246,26 +246,26 @@ flyctl secrets set `
   JWT_SECRET=$jwtSecret `
   MACHINE_ID_SALT=$machineIdSalt `
   STORAGE_ENCRYPTION_KEY=$storageKey `
-  OMNIROUTE_WS_BRIDGE_SECRET=$wsBridgeSecret `
+  AGENTPROXY_WS_BRIDGE_SECRET=$wsBridgeSecret `
   DATA_DIR=/data `
-  NEXT_PUBLIC_BASE_URL=https://omniroute.fly.dev `
-  -a omniroute
+  NEXT_PUBLIC_BASE_URL=https://agentproxy.example.com `
+  -a agentproxy
 ```
 
 Linuxis / macOS-is saab kasutada ka `openssl rand -hex 32`:
 
 ```bash
-flyctl secrets set OMNIROUTE_WS_BRIDGE_SECRET=$(openssl rand -hex 32) -a omniroute
+flyctl secrets set AGENTPROXY_WS_BRIDGE_SECRET=$(openssl rand -hex 32) -a agentproxy
 ```
 
 Märkused:
 
-- `OMNIROUTE_WS_BRIDGE_SECRET` on toodangus kohustuslik; selle puudumine rikub WebSocket bridge käepigistuse (handshake)
+- `AGENTPROXY_WS_BRIDGE_SECRET` on toodangus kohustuslik; selle puudumine rikub WebSocket bridge käepigistuse (handshake)
 
 Kui soovid ka algparooli määrata:
 
 ```powershell
-flyctl secrets set INITIAL_PASSWORD=your-strong-password -a omniroute
+flyctl secrets set INITIAL_PASSWORD=your-strong-password -a agentproxy
 ```
 
 ---
@@ -273,12 +273,12 @@ flyctl secrets set INITIAL_PASSWORD=your-strong-password -a omniroute
 ## 8. Praeguste parameetrite vaatamine
 
 ```powershell
-flyctl secrets list -a omniroute
+flyctl secrets list -a agentproxy
 ```
 
 Kui konsooli lehel `Secrets` ei kuvata oodatud muutujaid, kontrolli:
 
-- Et vaatad rakendust `omniroute`
+- Et vaatad rakendust `agentproxy`
 - Et `fly.toml` failis olev `app` väärtus vastab konsoolis olevale rakendusele
 
 ---
@@ -295,14 +295,14 @@ flyctl deploy
 Kui soovid uuendada ainult parameetreid koodi muutmata:
 
 ```powershell
-flyctl secrets set KEY=value -a omniroute
+flyctl secrets set KEY=value -a agentproxy
 ```
 
 Fly teeb masinatele automaatselt astmelise (rolling) uuenduse.
 
 ### 9.1 Ülempoolse hoidla (upstream) uuenduste jälgimine, säilitades samal ajal oma forgi `fly.toml` faili
 
-Kui praegune hoidla on fork ja soovid sünkroonida uuendusi ülempoolsest hoidlast `https://github.com/diegosouzapw/OmniRoute`, järgi allolevat töövoogu.
+Kui praegune hoidla on fork ja soovid sünkroonida uuendusi ülempoolsest hoidlast `https://github.com/khanhkit/AgentProxy`, järgi allolevat töövoogu.
 
 Kõigepealt kontrolli oma remote'e:
 
@@ -318,7 +318,7 @@ Peaksid näha vähemalt:
 Kui `upstream` ei ole konfigureeritud, lisa see:
 
 ```powershell
-git remote add upstream https://github.com/diegosouzapw/OmniRoute.git
+git remote add upstream https://github.com/khanhkit/AgentProxy.git
 ```
 
 Enne ülempoolse hoidlaga sünkroonimist tõmba (fetch) uusimad commit'id ja tagid:
@@ -370,8 +370,8 @@ Pärast algse hoidlaga sünkroonimist järgi seda soovitatud väljalaske järjek
 3. Taasta forgi `fly.toml`
 4. `git push origin main`
 5. `flyctl deploy`
-6. `flyctl status -a omniroute`
-7. `flyctl logs --no-tail -a omniroute`
+6. `flyctl status -a agentproxy`
+7. `flyctl logs --no-tail -a agentproxy`
 
 See on tegelik töövoog, mida kasutati praeguse projekti uuendamisel versioonile `v3.4.7` (näide viitab ajaloolisele versioonile; praegune tegelik versioon on `v3.8.0`).
 
@@ -382,20 +382,20 @@ See on tegelik töövoog, mida kasutati praeguse projekti uuendamisel versioonil
 ### 10.1 Rakenduse oleku kontrollimine
 
 ```powershell
-flyctl status -a omniroute
+flyctl status -a agentproxy
 ```
 
 ### 10.2 Käivituslogide vaatamine
 
 ```powershell
-flyctl logs --no-tail -a omniroute
+flyctl logs --no-tail -a agentproxy
 ```
 
 ### 10.3 Saidi ligipääsetavuse kontrollimine
 
 ```powershell
 try {
-  (Invoke-WebRequest -Uri "https://omniroute.fly.dev" -MaximumRedirection 5 -UseBasicParsing).StatusCode
+  (Invoke-WebRequest -Uri "https://agentproxy.example.com" -MaximumRedirection 5 -UseBasicParsing).StatusCode
 } catch {
   if ($_.Exception.Response) {
     $_.Exception.Response.StatusCode.value__
@@ -434,14 +434,14 @@ Kui näete selle asemel `/app/data/...`, on `DATA_DIR` valesti konfigureeritud j
 Selleks on üldjuhul kaks põhjust:
 
 - Te ei ole veel käivitanud `flyctl secrets set`
-- Te vaatate teist rakendust (nt `oroute` mitte `omniroute`)
+- Te vaatate teist rakendust (nt `oroute` mitte `agentproxy`)
 
 ### 12.2 `flyctl deploy` teatab `app not found`
 
 Looge rakendus esmalt:
 
 ```powershell
-flyctl apps create omniroute
+flyctl apps create agentproxy
 ```
 
 ### 12.3 `fly.toml` parsimine ebaõnnestub
@@ -484,10 +484,10 @@ Kõige sagedamini kasutatavad käsud järgnevate väljalasete jaoks on:
 
 ```powershell
 flyctl auth whoami
-flyctl status -a omniroute
-flyctl secrets list -a omniroute
+flyctl status -a agentproxy
+flyctl secrets list -a agentproxy
 flyctl deploy
-flyctl logs --no-tail -a omniroute
+flyctl logs --no-tail -a agentproxy
 ```
 
 Tavapärase väljalaske puhul on põhikäsk lihtsalt:
@@ -499,7 +499,7 @@ flyctl deploy
 Uues keskkonnas esmakordse kasutuselevõtu põhietapid on:
 
 1. `flyctl auth login`
-2. `flyctl apps create omniroute`
-3. `flyctl secrets set ... -a omniroute`
+2. `flyctl apps create agentproxy`
+3. `flyctl secrets set ... -a agentproxy`
 4. `flyctl deploy`
-5. `flyctl logs --no-tail -a omniroute`
+5. `flyctl logs --no-tail -a agentproxy`

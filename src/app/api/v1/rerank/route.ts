@@ -1,12 +1,12 @@
-import { handleRerank } from "@omniroute/open-sse/handlers/rerank.ts";
+import { handleRerank } from "@agentproxy/open-sse/handlers/rerank.ts";
 import {
   getProviderCredentialsWithQuotaPreflight,
   clearRecoveredProviderState,
 } from "@/sse/services/auth";
 import { withInjectionGuard } from "@/middleware/promptInjectionGuard";
-import { parseRerankModel, getRerankProvider } from "@omniroute/open-sse/config/rerankRegistry.ts";
-import { errorResponse } from "@omniroute/open-sse/utils/error.ts";
-import { HTTP_STATUS } from "@omniroute/open-sse/config/constants.ts";
+import { parseRerankModel, getRerankProvider } from "@agentproxy/open-sse/config/rerankRegistry.ts";
+import { errorResponse } from "@agentproxy/open-sse/utils/error.ts";
+import { HTTP_STATUS } from "@agentproxy/open-sse/config/constants.ts";
 import { enforceApiKeyPolicy } from "@/shared/utils/apiKeyPolicy";
 import { v1RerankSchema } from "@/shared/validation/schemas";
 import { isValidationFailure, validateBody } from "@/shared/validation/helpers";
@@ -16,10 +16,11 @@ import {
   rateLimitedProviderResponse,
 } from "@/app/api/v1/_shared/rateLimit";
 import { saveCallLog } from "@/lib/usageDb";
-import { attachOmniRouteMetaHeaders } from "@/domain/omnirouteResponseMeta";
+import { attachAgentProxyMetaHeaders } from "@/domain/agentproxyResponseMeta";
 import { generateRequestId } from "@/shared/utils/requestId";
-import { CORS_HEADERS } from "@omniroute/open-sse/utils/cors.ts";
-import { deriveRerankProviderForChatProvider } from "@omniroute/open-sse/config/rerankRegistry.ts";
+import { CORS_HEADERS } from "@agentproxy/open-sse/utils/cors.ts";
+import { deriveRerankProviderForChatProvider } from "@agentproxy/open-sse/config/rerankRegistry.ts";
+import { resolveAlibabaQwen3RerankUrl } from "@/shared/constants/alibabaProviderRegions";
 
 /**
  * Handle CORS preflight
@@ -107,6 +108,9 @@ async function postHandler(request, context) {
 
   // Try cloud registry first
   const { provider, model: modelId } = parseRerankModel(body.model);
+  const prefixSeparator = body.model.indexOf("/");
+  const resolvedModelId =
+    provider || prefixSeparator < 0 ? modelId : body.model.slice(prefixSeparator + 1);
 
   // Generic fallback: a configured OpenAI-compatible chat provider with no
   // curated rerank entry (groq, mistral, ...) still exposes a Cohere-compatible
@@ -117,7 +121,7 @@ async function postHandler(request, context) {
     const prefix = body.model.split("/")[0];
     if (prefix && prefix !== body.model) {
       try {
-        const { REGISTRY } = await import("@omniroute/open-sse/config/providerRegistry.ts");
+        const { REGISTRY } = await import("@agentproxy/open-sse/config/providerRegistry.ts");
         const chatEntry = (REGISTRY as Record<string, { baseUrl?: string } | undefined>)[prefix];
         derivedProvider = deriveRerankProviderForChatProvider(prefix, chatEntry);
       } catch {
@@ -129,7 +133,12 @@ async function postHandler(request, context) {
   if (provider || derivedProvider) {
     // Cloud provider matched (or a generic Cohere-compatible endpoint was derived)
     const effectiveProviderId = provider || derivedProvider!.id;
-    const credentials = await getProviderCredentialsWithQuotaPreflight(effectiveProviderId);
+    const credentials = await getProviderCredentialsWithQuotaPreflight(
+      effectiveProviderId,
+      null,
+      null,
+      resolvedModelId
+    );
     if (!credentials) {
       return errorResponse(
         HTTP_STATUS.BAD_REQUEST,
@@ -140,6 +149,40 @@ async function postHandler(request, context) {
       return rateLimitedProviderResponse(effectiveProviderId, credentials);
     }
 
+    let runtimeProvider = derivedProvider as
+      | (NonNullable<ReturnType<typeof deriveRerankProviderForChatProvider>> & {
+          format?: string;
+        })
+      | null;
+
+    if (
+      (effectiveProviderId === "alibaba" || effectiveProviderId === "alibaba-cn") &&
+      resolvedModelId === "qwen3-rerank"
+    ) {
+      const providerSpecificData = (
+        credentials as { providerSpecificData?: Record<string, unknown> | null }
+      ).providerSpecificData;
+      const baseUrl = resolveAlibabaQwen3RerankUrl(
+        effectiveProviderId,
+        providerSpecificData,
+        derivedProvider?.baseUrl || ""
+      );
+      if (!baseUrl) {
+        return errorResponse(
+          HTTP_STATUS.BAD_REQUEST,
+          "No rerank endpoint configured for provider: " + effectiveProviderId
+        );
+      }
+      runtimeProvider = {
+        id: effectiveProviderId,
+        baseUrl,
+        authType: "apikey",
+        authHeader: "bearer",
+        models: [],
+        format: "alibaba-qwen3",
+      };
+    }
+
     const response = await handleRerank({
       model: body.model,
       query: body.query,
@@ -147,7 +190,8 @@ async function postHandler(request, context) {
       top_n: body.top_n,
       return_documents: body.return_documents,
       credentials,
-      resolvedProvider: derivedProvider || null,
+      resolvedProvider: runtimeProvider,
+      resolvedModel: resolvedModelId,
       connectionId: (credentials as { connectionId?: string } | null)?.connectionId || null,
       apiKeyId: policy.apiKeyInfo?.id || null,
       apiKeyName: policy.apiKeyInfo?.name || null,
@@ -274,7 +318,7 @@ async function postHandler(request, context) {
         }).catch(() => {});
 
         const headers = new Headers({ ...CORS_HEADERS, "Content-Type": "application/json" });
-        attachOmniRouteMetaHeaders(headers, {
+        attachAgentProxyMetaHeaders(headers, {
           provider: prefix,
           model: localModel,
           costUsd: 0,

@@ -9,7 +9,7 @@ lastUpdated: 2026-06-28
 > **Source of truth:** `src/server/authz/`, `src/shared/constants/publicApiRoutes.ts`, `src/lib/api/requireManagementAuth.ts`, `src/shared/utils/apiAuth.ts`
 > **Last updated:** 2026-06-28 — v3.8.40
 
-OmniRoute ma potok autoryzacji zależny od trasy, który bramkuje każde żądanie API. Klasyfikacja jest **deterministyczna** i **fail-closed** — wszystko, czego nie da się sklasyfikować, trafia do `MANAGEMENT` i wymaga sesji albo tokenu klasy management. Ta strona opisuje model dla inżynierów utrzymujących trasy lub projektujących nowe endpointy.
+AgentProxy ma potok autoryzacji zależny od trasy, który bramkuje każde żądanie API. Klasyfikacja jest **deterministyczna** i **fail-closed** — wszystko, czego nie da się sklasyfikować, trafia do `MANAGEMENT` i wymaga sesji albo tokenu klasy management. Ta strona opisuje model dla inżynierów utrzymujących trasy lub projektujących nowe endpointy.
 
 ![AuthZ pipeline (3 route classes + policy evaluation)](../diagrams/exported/authz-pipeline.svg)
 
@@ -25,7 +25,7 @@ Używany dla klienckich API zgodnych z OpenAI/Anthropic/Gemini oraz dla kilku tr
 Authorization: Bearer <api-key>
 ```
 
-Walidowane przez `isValidApiKey()` / `extractApiKey()` w `src/sse/services/auth.ts` i reeksportowane przez `src/shared/utils/apiAuth.ts`. Walidator akceptuje też zmienne środowiskowe `OMNIROUTE_API_KEY` / `ROUTER_API_KEY` jako trwałe klucze passthrough (issue #1350).
+Walidowane przez `isValidApiKey()` / `extractApiKey()` w `src/sse/services/auth.ts` i reeksportowane przez `src/shared/utils/apiAuth.ts`. Walidator akceptuje też zmienne środowiskowe `AGENTPROXY_API_KEY` / `ROUTER_API_KEY` jako trwałe klucze passthrough (issue #1350).
 
 ### 2. Sesja dashboardu (ciastko auth_token)
 
@@ -54,7 +54,7 @@ Niektóre trasy management akceptują **którykolwiek** tryb: ciastko LUB `Beare
 ```
 Incoming request → src/proxy.ts
   → runAuthzPipeline() in src/server/authz/pipeline.ts
-    1. Strip trusted internal headers (x-omniroute-auth-*, x-omniroute-route-class)
+    1. Strip trusted internal headers (x-agentproxy-auth-*, x-agentproxy-route-class)
     2. Generate request id, classify route via classifyRoute()
     3. If pathname == "/" → redirect /dashboard
     4. If draining (graceful shutdown) and /api/* → 503
@@ -62,11 +62,11 @@ Incoming request → src/proxy.ts
     6. If OPTIONS → CORS preflight 204
     7. If options.enforce == false → pass-through with route-class headers
     8. Otherwise: POLICIES[routeClass].evaluate(ctx)
-       - allow  → stamp x-omniroute-auth-{kind,id,label,scopes} → NextResponse.next()
+       - allow  → stamp x-agentproxy-auth-{kind,id,label,scopes} → NextResponse.next()
        - reject → JSON error w/ correlation_id (dashboard pages → 302 /login)
 ```
 
-Zaufane nagłówki wewnętrzne (zdefiniowane w `src/server/authz/headers.ts`) są **usuwane z przychodzących żądań** przed klasyfikacją — klienci nie mogą wcześniej ustawić `x-omniroute-auth-*`, aby podszyć się pod subject.
+Zaufane nagłówki wewnętrzne (zdefiniowane w `src/server/authz/headers.ts`) są **usuwane z przychodzących żądań** przed klasyfikacją — klienci nie mogą wcześniej ustawić `x-agentproxy-auth-*`, aby podszyć się pod subject.
 
 ### Kontrakty polityk
 
@@ -165,7 +165,7 @@ read:compression, write:compression, read:proxies
 
 Egzekwowanie scope w `open-sse/mcp-server/server.ts` przekazuje listę scope'ów każdego narzędzia do
 `evaluateToolScopes()` po tym, jak `resolveCallerScopeContext()` rozwiąże scope'y z informacji auth MCP,
-metadanych żądania lub `OMNIROUTE_MCP_SCOPES`.
+metadanych żądania lub `AGENTPROXY_MCP_SCOPES`.
 
 ## Przełącznik wymagania auth
 
@@ -197,16 +197,16 @@ Potok zawsze stempluje odpowiedzi:
 
 ```
 x-request-id:               <correlation id, echoed in error bodies>
-x-omniroute-route-class:    PUBLIC | CLIENT_API | MANAGEMENT
+x-agentproxy-route-class:    PUBLIC | CLIENT_API | MANAGEMENT
 ```
 
 Dla uwierzytelnionych żądań nagłówki żądania upstream (po stronie handlera) zawierają także:
 
 ```
-x-omniroute-auth-kind:      client_api_key | dashboard_session | management_key | anonymous
-x-omniroute-auth-id:        key_<last-4> | "dashboard" | "anonymous"
-x-omniroute-auth-label:     (optional)
-x-omniroute-auth-scopes:    comma-separated list
+x-agentproxy-auth-kind:      client_api_key | dashboard_session | management_key | anonymous
+x-agentproxy-auth-id:        key_<last-4> | "dashboard" | "anonymous"
+x-agentproxy-auth-label:     (optional)
+x-agentproxy-auth-scopes:    comma-separated list
 ```
 
 Używaj `assertAuth(req, expectedClass)` wewnątrz handlerów — rzuca `AuthzAssertionError` z kodem `AUTHZ_NOT_INITIALIZED`, jeśli middleware zostało ominięte (przydatne do łapania regresji konfiguracji w testach).

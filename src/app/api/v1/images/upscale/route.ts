@@ -1,27 +1,28 @@
-import { handleImageUpscale } from "@omniroute/open-sse/handlers/imageUpscale.ts";
+import { handleImageUpscale } from "@agentproxy/open-sse/handlers/imageUpscale.ts";
 import {
   getUpscaleProvider,
   getAllUpscaleModels,
   parseUpscaleModel,
-} from "@omniroute/open-sse/config/upscaleRegistry.ts";
-import { extractUpscaleSourceImage } from "@omniroute/open-sse/handlers/imageUpscale/shared.ts";
+} from "@agentproxy/open-sse/config/upscaleRegistry.ts";
+import { extractUpscaleSourceImage } from "@agentproxy/open-sse/handlers/imageUpscale/shared.ts";
 import { withInjectionGuard } from "@/middleware/promptInjectionGuard";
 import {
   getProviderCredentialsWithQuotaPreflight,
   clearRecoveredProviderState,
 } from "@/sse/services/auth";
-import { errorResponse, unavailableResponse } from "@omniroute/open-sse/utils/error.ts";
-import { HTTP_STATUS } from "@omniroute/open-sse/config/constants.ts";
+import { errorResponse, unavailableResponse } from "@agentproxy/open-sse/utils/error.ts";
+import { HTTP_STATUS } from "@agentproxy/open-sse/config/constants.ts";
 import * as log from "@/sse/utils/logger";
 import { toJsonErrorPayload } from "@/shared/utils/upstreamError";
 import { enforceApiKeyPolicy } from "@/shared/utils/apiKeyPolicy";
 import { v1ImageUpscaleSchema } from "@/shared/validation/schemas";
 import { isValidationFailure, validateBody } from "@/shared/validation/helpers";
 import { resolveProxyForConnection } from "@/lib/db/settings";
-import { runWithProxyContext } from "@omniroute/open-sse/utils/proxyFetch.ts";
-import { attachOmniRouteMetaHeaders } from "@/domain/omnirouteResponseMeta";
+import { runWithProxyContext } from "@agentproxy/open-sse/utils/proxyFetch.ts";
+import { attachAgentProxyMetaHeaders } from "@/domain/agentproxyResponseMeta";
 import { calculateModalCost } from "@/lib/usage/costCalculator";
 import { generateRequestId } from "@/shared/utils/requestId";
+import { MAX_BODY_BYTES_MEDIA } from "@/shared/middleware/bodySizeGuard";
 
 export const dynamic = "force-dynamic";
 
@@ -102,7 +103,10 @@ async function readUpscaleBody(request: Request): Promise<Record<string, unknown
       }
       return body;
     } catch (err) {
-      log.warn("IMAGE", `Invalid multipart upscale body: ${err instanceof Error ? err.message : err}`);
+      log.warn(
+        "IMAGE",
+        `Invalid multipart upscale body: ${err instanceof Error ? err.message : err}`
+      );
       return null;
     }
   }
@@ -226,7 +230,9 @@ async function postHandler(request: Request) {
   let proxyInfo: { proxy?: unknown } | null = null;
   if (creds.connectionId) {
     try {
-      proxyInfo = (await resolveProxyForConnection(creds.connectionId)) as { proxy?: unknown } | null;
+      proxyInfo = (await resolveProxyForConnection(creds.connectionId)) as {
+        proxy?: unknown;
+      } | null;
     } catch {
       log.debug("PROXY", `Failed to resolve proxy for upscale provider: ${provider}`);
     }
@@ -248,7 +254,7 @@ async function postHandler(request: Request) {
     await clearRecoveredProviderState(credentialsResult);
     const costUsd = await calculateModalCost("image", provider, `${provider}/${model}`, { n: 1 });
     const headers = new Headers({ "Content-Type": "application/json" });
-    attachOmniRouteMetaHeaders(headers, {
+    attachAgentProxyMetaHeaders(headers, {
       provider,
       model: `${provider}/${model}`,
       costUsd,
@@ -271,4 +277,4 @@ async function postHandler(request: Request) {
   });
 }
 
-export const POST = withInjectionGuard(postHandler);
+export const POST = withInjectionGuard(postHandler, { bodySizeLimit: MAX_BODY_BYTES_MEDIA });

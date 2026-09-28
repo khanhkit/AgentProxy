@@ -33,7 +33,7 @@ function probeWindowsBinary(command) {
 }
 
 /** OpenAI/Codex env keys stripped from the child so a stale OpenAI key/base-url
- *  in the shell can't shadow the omniroute provider (defense-in-depth). Mirrors
+ *  in the shell can't shadow the agentproxy provider (defense-in-depth). Mirrors
  *  free-claude-code's codex adapter. NOTE: this does NOT silence codex's
  *  `refresh_token` log noise — that comes from a stored OpenAI session in
  *  ~/.codex/auth.json, not the env; it is cosmetic and does not block requests. */
@@ -47,7 +47,7 @@ const STRIPPED_CODEX_ENV_KEYS = [
 ];
 
 /** Placeholder so codex's `env_key` is always satisfied when the backend is open. */
-const NO_AUTH_SENTINEL = "omniroute-no-auth";
+const NO_AUTH_SENTINEL = "agentproxy-no-auth";
 
 // On Windows the `codex` binary is an npm `.cmd` shim that `spawn` cannot resolve
 // without a shell (bare "codex" → ENOENT). Mirror the qodercli Windows fix (#6263):
@@ -78,7 +78,7 @@ export async function resolveCodexSpawn(platform, opts = {}) {
  * DEP0190 warning). That mangles every launch-codex invocation on Windows, not
  * just the ones with a multi-word user argument: the injected `-c` provider
  * flags carry TOML values whose quotes cmd.exe strips
- * (`model_providers.omniroute.name="OmniRoute"` arrives unquoted and no longer
+ * (`model_providers.agentproxy.name="AgentProxy"` arrives unquoted and no longer
  * parses as TOML). Quote the args ourselves on that path; off Windows there is
  * no shell, so argv is passed through untouched. Same fix as `launch` (#8837).
  *
@@ -104,7 +104,7 @@ function tomlAssign(key, value) {
 }
 
 /**
- * Resolve the OmniRoute root base URL + auth for codex, honouring (in order):
+ * Resolve the AgentProxy root base URL + auth for codex, honouring (in order):
  * explicit flags → active context (remote mode) → localhost:<port>.
  * @returns {{ baseUrl:string, authToken:string|undefined }}
  */
@@ -116,7 +116,7 @@ export function resolveCodexTarget(opts = {}) {
   } else {
     let fromCtx;
     try {
-      fromCtx = resolveActiveContext(opts.context ?? process.env.OMNIROUTE_CONTEXT)?.baseUrl;
+      fromCtx = resolveActiveContext(opts.context ?? process.env.AGENTPROXY_CONTEXT)?.baseUrl;
     } catch {
       /* no context */
     }
@@ -128,17 +128,17 @@ export function resolveCodexTarget(opts = {}) {
   let authToken = opts.apiKey ?? opts["api-key"];
   if (!authToken) {
     try {
-      const ctx = resolveActiveContext(opts.context ?? process.env.OMNIROUTE_CONTEXT);
+      const ctx = resolveActiveContext(opts.context ?? process.env.AGENTPROXY_CONTEXT);
       authToken = ctx?.accessToken || ctx?.apiKey || undefined;
     } catch {
       /* no context auth */
     }
   }
-  if (!authToken) authToken = process.env.OMNIROUTE_API_KEY;
+  if (!authToken) authToken = process.env.AGENTPROXY_API_KEY;
   return { baseUrl, authToken };
 }
 
-/** Health-check an OmniRoute root URL before launching Codex. */
+/** Health-check an AgentProxy root URL before launching Codex. */
 async function healthCheck(baseUrl, timeoutMs = 3000) {
   try {
     const res = await fetch(`${baseUrl}/api/monitoring/health`, {
@@ -152,7 +152,7 @@ async function healthCheck(baseUrl, timeoutMs = 3000) {
 
 /**
  * Build the env for the Codex child: strip stale OpenAI/Codex creds, then set
- * OMNIROUTE_API_KEY (the provider env_key) to the resolved token or a sentinel.
+ * AGENTPROXY_API_KEY (the provider env_key) to the resolved token or a sentinel.
  * @param {Record<string,string>} baseEnv
  * @param {string|undefined} authToken
  * @returns {Record<string,string>}
@@ -160,36 +160,36 @@ async function healthCheck(baseUrl, timeoutMs = 3000) {
 export function buildCodexEnv(baseEnv, authToken) {
   const env = { ...baseEnv };
   for (const key of STRIPPED_CODEX_ENV_KEYS) delete env[key];
-  env.OMNIROUTE_API_KEY = (authToken && String(authToken).trim()) || NO_AUTH_SENTINEL;
+  env.AGENTPROXY_API_KEY = (authToken && String(authToken).trim()) || NO_AUTH_SENTINEL;
   return env;
 }
 
 /**
- * Codex `-c` flags that define the `omniroute` provider inline, so launch works
+ * Codex `-c` flags that define the `agentproxy` provider inline, so launch works
  * WITHOUT a pre-existing ~/.codex/config.toml. Mirrors free-claude-code.
- * @param {string} baseUrl  OmniRoute root URL (no /v1)
+ * @param {string} baseUrl  AgentProxy root URL (no /v1)
  * @returns {string[]}
  */
 export function buildCodexProviderArgs(baseUrl, model) {
   const args = [
     "-c",
-    tomlAssign("model_provider", "omniroute"),
+    tomlAssign("model_provider", "agentproxy"),
     "-c",
-    tomlAssign("model_providers.omniroute.name", "OmniRoute"),
+    tomlAssign("model_providers.agentproxy.name", "AgentProxy"),
     "-c",
-    tomlAssign("model_providers.omniroute.base_url", `${baseUrl}/v1`),
+    tomlAssign("model_providers.agentproxy.base_url", `${baseUrl}/v1`),
     "-c",
-    tomlAssign("model_providers.omniroute.env_key", "OMNIROUTE_API_KEY"),
+    tomlAssign("model_providers.agentproxy.env_key", "AGENTPROXY_API_KEY"),
     "-c",
-    tomlAssign("model_providers.omniroute.wire_api", "responses"),
+    tomlAssign("model_providers.agentproxy.wire_api", "responses"),
     "-c",
-    tomlAssign("model_providers.omniroute.requires_openai_auth", false),
+    tomlAssign("model_providers.agentproxy.requires_openai_auth", false),
   ];
 
   if (model) {
     const normalized = String(model).trim();
     if (normalized) {
-      args.push("-c", tomlAssign("model_providers.omniroute.model", normalized));
+      args.push("-c", tomlAssign("model_providers.agentproxy.model", normalized));
     }
   }
 
@@ -208,7 +208,7 @@ export async function runLaunchCodexCommand(opts = {}, codexArgs = []) {
     console.error(
       (
         t("launch.notRunning") ||
-        "OmniRoute is not reachable at {port}. Start it with 'omniroute serve'."
+        "AgentProxy is not reachable at {port}. Start it with 'agentproxy serve'."
       ).replace("{port}", baseUrl)
     );
     return 1;
@@ -275,18 +275,18 @@ export function registerLaunchCodex(program) {
   program
     .command("launch-codex")
     .description(
-      t("launchCodex.description") || "Launch Codex CLI pointed at OmniRoute (local or remote VPS)"
+      t("launchCodex.description") || "Launch Codex CLI pointed at AgentProxy (local or remote VPS)"
     )
-    .option("--port <port>", "Local OmniRoute port (ignored when --remote is set)", "20128")
+    .option("--port <port>", "Local AgentProxy port (ignored when --remote is set)", "20128")
     .option(
       "--remote <url>",
-      "Remote OmniRoute base URL, e.g. http://192.168.0.15:20128 (overrides --port + context)"
+      "Remote AgentProxy base URL, e.g. http://192.168.0.15:20128 (overrides --port + context)"
     )
     .option("--profile <name>", "Codex profile to activate (passed as --profile <name>)")
     .option("-p, --p <name>", "Alias for --profile")
     .option(
       "--api-key <key>",
-      "OmniRoute API key (overrides OMNIROUTE_API_KEY env var for this invocation)"
+      "AgentProxy API key (overrides AGENTPROXY_API_KEY env var for this invocation)"
     )
     .allowUnknownOption(true)
     .allowExcessArguments(true)

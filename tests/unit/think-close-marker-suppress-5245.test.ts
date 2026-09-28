@@ -148,7 +148,7 @@ test("claude-to-openai: finish-flush emits </think> when suppressThinkClose=fals
   assert.ok(contents.includes("</think>"), "marker must be emitted at finish when opted in");
 });
 
-// ── header signal resolution (x-omniroute-thinking-marker — #5312) ───────────
+// ── header signal resolution (x-agentproxy-thinking-marker — #5312) ───────────
 
 test("thinkingMarkerHeaderSignal: off → suppress, on → keep, absent/unknown → null", () => {
   assert.equal(thinkingMarkerHeaderSignal("off"), true);
@@ -164,7 +164,7 @@ test("thinkingMarkerHeaderSignal: off → suppress, on → keep, absent/unknown 
 
 test("resolveSuppressThinkClose: default suppresses; header on opts into marker (#8245)", () => {
   // header constant is the documented wire name
-  assert.equal(THINKING_MARKER_HEADER, "x-omniroute-thinking-marker");
+  assert.equal(THINKING_MARKER_HEADER, "x-agentproxy-thinking-marker");
   // #8245: Chat Completions default suppresses for every UA (incl. Cursor / Claude Code).
   assert.equal(resolveSuppressThinkClose({ userAgent: "cursor-agent/0.5" }), true);
   assert.equal(resolveSuppressThinkClose({ userAgent: "claude-code/1.0" }), true);

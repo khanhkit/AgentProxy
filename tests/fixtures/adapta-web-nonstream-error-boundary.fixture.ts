@@ -6,11 +6,11 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { after, afterEach, describe, it } from "node:test";
 
-const TEST_DATA_DIR = mkdtempSync(join(tmpdir(), "omniroute-adapta-nonstream-error-"));
+const TEST_DATA_DIR = mkdtempSync(join(tmpdir(), "agentproxy-adapta-nonstream-error-"));
 const TEST_PLUGINS_DIR = join(TEST_DATA_DIR, "plugins");
 mkdirSync(TEST_PLUGINS_DIR, { recursive: true });
 process.env.DATA_DIR = TEST_DATA_DIR;
-process.env.OMNIROUTE_PLUGINS_DIR = TEST_PLUGINS_DIR;
+process.env.AGENTPROXY_PLUGINS_DIR = TEST_PLUGINS_DIR;
 
 const originalFetch = globalThis.fetch;
 const { AdaptaWebExecutor } = await import("../../open-sse/executors/adapta-web.ts");
@@ -75,7 +75,7 @@ describe("Adapta Web non-stream error boundary", () => {
       `data: ${JSON.stringify({
         type: "error",
         errorText:
-          "SQLSTATE 42P01 private detail at /srv/omniroute/open-sse/executors/adapta-web.ts:481:9 Authorization: Bearer secret-token\n    at secret (/srv/omniroute/internal.ts:1:1)",
+          "SQLSTATE 42P01 private detail at /srv/agentproxy/open-sse/executors/adapta-web.ts:481:9 Authorization: Bearer secret-token\n    at secret (/srv/agentproxy/internal.ts:1:1)",
       })}\n\n`
     );
 
@@ -95,7 +95,7 @@ describe("Adapta Web non-stream error boundary", () => {
     assert.equal(payload.error?.message, "Adapta upstream error");
     assert.ok(!payload.error?.message?.includes("SQLSTATE"));
     assert.ok(!payload.error?.message?.includes("private detail"));
-    assert.ok(!payload.error?.message?.includes("/srv/omniroute"));
+    assert.ok(!payload.error?.message?.includes("/srv/agentproxy"));
     assert.ok(!payload.error?.message?.includes("secret-token"));
     assert.ok(!payload.error?.message?.includes("\n"));
     assert.equal(payload.choices, undefined);

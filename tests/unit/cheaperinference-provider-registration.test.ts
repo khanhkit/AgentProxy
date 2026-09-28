@@ -41,7 +41,7 @@ test("cheaperinference is NOT wired into any quota/usage surface", () => {
 });
 
 test("cheaperinference registry entry points at the measured API surface", async () => {
-  const { REGISTRY } = await import("@omniroute/open-sse/config/providers/index.ts");
+  const { REGISTRY } = await import("@agentproxy/open-sse/config/providers/index.ts");
   const entry = REGISTRY.cheaperinference as unknown as Record<string, unknown>;
   assert.ok(entry, "cheaperinference missing from REGISTRY");
   assert.equal(entry.format, "openai");
@@ -53,7 +53,7 @@ test("cheaperinference registry entry points at the measured API surface", async
 });
 
 test("cheaperinference catalog matches the measured GET /v1/models text set", async () => {
-  const { REGISTRY } = await import("@omniroute/open-sse/config/providers/index.ts");
+  const { REGISTRY } = await import("@agentproxy/open-sse/config/providers/index.ts");
   const models = (REGISTRY.cheaperinference as unknown as { models: Array<{ id: string }> })
     .models;
   // 39 text models measured on 2026-07-31; the 3 image models live in
@@ -69,7 +69,7 @@ test("cheaperinference catalog matches the measured GET /v1/models text set", as
 });
 
 test("cheaperinference tags its Responses-capable models", async () => {
-  const { REGISTRY } = await import("@omniroute/open-sse/config/providers/index.ts");
+  const { REGISTRY } = await import("@agentproxy/open-sse/config/providers/index.ts");
   const models = (
     REGISTRY.cheaperinference as unknown as {
       models: Array<{ id: string; targetFormat?: string }>;
@@ -84,7 +84,7 @@ test("cheaperinference tags its Responses-capable models", async () => {
 
 test("cheaperinference resale pricing covers every catalog model", async () => {
   const { DEFAULT_PRICING } = await import("@/shared/constants/pricing/default-pricing");
-  const { REGISTRY } = await import("@omniroute/open-sse/config/providers/index.ts");
+  const { REGISTRY } = await import("@agentproxy/open-sse/config/providers/index.ts");
   const pricing = (DEFAULT_PRICING as Record<string, Record<string, unknown>>).cheaperinference;
   assert.ok(pricing, "no pricing block for cheaperinference");
   const models = (REGISTRY.cheaperinference as unknown as { models: Array<{ id: string }> })

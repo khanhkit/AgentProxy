@@ -18,17 +18,29 @@ import { isLoopbackHost, isPrivateLanHost } from "./routeGuard";
  * local CLI as a management principal.
  */
 
+function hasForwardingEvidence(headers: Headers): boolean {
+  return ["forwarded", "x-forwarded-for", "x-real-ip", "cf-connecting-ip"].some((name) =>
+    Boolean(headers.get(name)?.trim())
+  );
+}
+
 export function requestPeerAddress(ctx: PolicyContext): string | null {
   // The Next proxy runtime exposes no socket/.ip, so the only trustworthy
   // locality signal is the token-stamped PEER_IP_HEADER our custom server writes
   // from the real TCP peer (scripts/dev/peer-stamp.mjs). We NEVER read the Host
-  // header here — it is client-controlled and spoofable. Absent/forged stamp →
-  // null → isLoopbackRequest/isPrivateLanRequest return false → fail closed.
+  // header here — it is client-controlled and spoofable.
   const stamped = resolveStampedPeer(
     ctx.request.headers?.get?.(PEER_IP_HEADER) ?? null,
-    process.env.OMNIROUTE_PEER_STAMP_TOKEN
+    process.env.AGENTPROXY_PEER_STAMP_TOKEN
   );
   if (stamped) return stamped;
+
+  // A raw socket peer is safe only for a demonstrably direct request. If any
+  // forwarding evidence is present but the signed peer/via-proxy contract is
+  // missing, the socket may be a loopback reverse-proxy hop rather than the
+  // caller. Fail closed instead of promoting that hop to local/LAN trust.
+  if (hasForwardingEvidence(ctx.request.headers)) return null;
+
   // Non-proxy callers (tests / direct Node) may carry a real socket peer.
   return ctx.request.ip ?? ctx.request.socket?.remoteAddress ?? null;
 }
@@ -44,7 +56,7 @@ export function requestPeerAddress(ctx: PolicyContext): string | null {
 export function isViaProxyRequest(ctx: PolicyContext): boolean {
   return resolveStampedViaProxy(
     ctx.request.headers?.get?.(VIA_PROXY_HEADER) ?? null,
-    process.env.OMNIROUTE_PEER_STAMP_TOKEN
+    process.env.AGENTPROXY_PEER_STAMP_TOKEN
   );
 }
 
@@ -67,7 +79,7 @@ export function isPrivateLanRequest(ctx: PolicyContext): boolean {
 
 /** Strictly-loopback machine-token check (constant-time). */
 export function hasValidLoopbackCliToken(ctx: PolicyContext): boolean {
-  if (process.env.OMNIROUTE_DISABLE_CLI_TOKEN === "true") return false;
+  if (process.env.AGENTPROXY_DISABLE_CLI_TOKEN === "true") return false;
   if (!isLoopbackRequest(ctx)) return false;
   const headers = ctx.request.headers;
   const provided = headers.get(CLI_TOKEN_HEADER);

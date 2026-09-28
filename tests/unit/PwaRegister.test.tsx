@@ -60,7 +60,7 @@ describe("PwaRegister", () => {
     });
 
     const cachesDelete = vi.fn().mockResolvedValue(true);
-    const cachesKeys = vi.fn().mockResolvedValue(["omniroute-pwa-v1", "omniroute-pwa-v2"]);
+    const cachesKeys = vi.fn().mockResolvedValue(["agentproxy-pwa-v1", "agentproxy-pwa-v2"]);
     (globalThis as any).caches = { keys: cachesKeys, delete: cachesDelete };
 
     mount();
@@ -74,8 +74,8 @@ describe("PwaRegister", () => {
     expect(unregister1).toHaveBeenCalledTimes(1);
     expect(unregister2).toHaveBeenCalledTimes(1);
     expect(cachesKeys).toHaveBeenCalledTimes(1);
-    expect(cachesDelete).toHaveBeenCalledWith("omniroute-pwa-v1");
-    expect(cachesDelete).toHaveBeenCalledWith("omniroute-pwa-v2");
+    expect(cachesDelete).toHaveBeenCalledWith("agentproxy-pwa-v1");
+    expect(cachesDelete).toHaveBeenCalledWith("agentproxy-pwa-v2");
     expect(register).not.toHaveBeenCalled();
   });
 

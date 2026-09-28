@@ -3,7 +3,7 @@
 // (subscriptionService.ts et al.) can keep importing from the original module.
 import { getDbInstance } from "./core";
 import { backupDbFile } from "./backup";
-import { normalizeScope, normalizeAssignmentScopeId } from "./proxies/mappers";
+import { normalizeScope, normalizeAssignmentScopeId, isScopeIdMissing } from "./proxies/mappers";
 import { bumpProxyRegistryGeneration } from "./proxies/registryGeneration";
 
 /**
@@ -21,7 +21,7 @@ export async function addProxiesToScopePool(
 ): Promise<number> {
   const normalizedScope = normalizeScope(scope);
   const normalizedScopeId = normalizeAssignmentScopeId(normalizedScope, scopeId);
-  if (normalizedScope !== "global" && !normalizedScopeId) {
+  if (isScopeIdMissing(normalizedScope, normalizedScopeId)) {
     throw new Error("scopeId is required for non-global proxy assignments");
   }
   const unique = [...new Set((proxyIds || []).filter(Boolean))];

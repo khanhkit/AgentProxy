@@ -32,6 +32,7 @@ const FORBIDDEN_PREFIXES = [
   // repo git próprio (_tasks). Nunca rastrear nada dentro deles (Hard Rule #23).
   ".claude/worktrees/",
   "docs/superpowers/",
+  "docs/plans/", // implementation planning belongs in local coordination storage, not production docs
   ".eslintcache", // matches .eslintcache, .eslintcache-complexity, .eslintcache-probe, …
   ".fakebin-", // test executable shim dirs (.fakebin-<pid>/)
   "dist/",
@@ -39,6 +40,17 @@ const FORBIDDEN_PREFIXES = [
   ".artifacts/",
   "logs/",
 ];
+const FORBIDDEN_PATH_PATTERNS = [
+  {
+    re: /^task-[^/]+-report\.(?:md|json|txt)$/i,
+    label: "root task report",
+  },
+  {
+    re: /^docs\/(?:.*\/)?[^/]*handoff[^/]*\.(?:md|json|txt)$/i,
+    label: "docs handoff artifact",
+  },
+];
+
 const FORBIDDEN_EXACT = new Set([
   "quality-metrics.json", // legacy root location (still forbidden if a stale run writes it)
   "config/quality/quality-metrics.json", // current generated location (collect-metrics.mjs)
@@ -59,6 +71,11 @@ export function checkTrackedArtifacts(trackedFiles, trackedSymlinks = []) {
   for (const file of trackedFiles) {
     if (FORBIDDEN_EXACT.has(file)) {
       violations.push(`forbidden tracked artifact: ${file}`);
+      continue;
+    }
+    const pattern = FORBIDDEN_PATH_PATTERNS.find(({ re }) => re.test(file));
+    if (pattern) {
+      violations.push(`forbidden tracked artifact (${pattern.label}): ${file}`);
       continue;
     }
     // Regra genérica: NENHUM caminho de raiz prefixado com "_" pode ser rastreado

@@ -7,7 +7,7 @@ import { ensureDbReadyForBoot } from "../../src/instrumentation-node";
 // ensureDbReadyForBoot() used to re-throw the fatal error WITHOUT ever
 // logging it, and this happens before initConsoleInterceptor() runs — so the
 // one message that would explain the crash never reached app.log. The server
-// kept listening (hence "OmniRoute is running") but every DB-touching route
+// kept listening (hence "AgentProxy is running") but every DB-touching route
 // 500s forever with a permanently empty log.
 
 function captureConsole(): { captured: string[]; restore: () => void } {
@@ -43,7 +43,7 @@ test("issue #7773: a fatal (non-transient) boot-time DB init failure must be log
   // failed (core.ts:172-176) — the exact shape a Termux install with no working
   // SQLite driver at all would surface.
   const fatalMessage =
-    "[DB] Nenhum driver SQLite disponível para '/data/data/com.termux/files/home/.omniroute/storage.sqlite'. " +
+    "[DB] Nenhum driver SQLite disponível para '/data/data/com.termux/files/home/.agentproxy/storage.sqlite'. " +
     "Drivers testados: better-sqlite3 (falhou), node:sqlite (indisponível), " +
     "sql.js (falhou: ENOENT: no such file or directory, open '.../sql-wasm.wasm').";
 

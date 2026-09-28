@@ -7,7 +7,7 @@ import fs from "node:fs";
 
 /**
  * #10428 — a script or test that opens the DB without setting DATA_DIR resolves to the
- * operator's REAL database (`~/.omniroute/storage.sqlite`, credentials included).
+ * operator's REAL database (`~/.agentproxy/storage.sqlite`, credentials included).
  * `tests/_setup/isolateDataDir.ts` protects the npm test scripts, but it is opt-in per
  * invocation: the AGENTS.md-documented single-file command
  * (`node --import tsx/esm --test tests/unit/x.test.ts`) does NOT load it, and neither does
@@ -29,7 +29,7 @@ function assertOwnedRedirectDir(candidate: string): string {
   const tempRoot = path.resolve(os.tmpdir());
   assert.ok(
     resolved.startsWith(`${tempRoot}${path.sep}`) &&
-      path.basename(resolved).startsWith("omniroute-testctx-"),
+      path.basename(resolved).startsWith("agentproxy-testctx-"),
     `refusing to treat a non-owned path as a test redirect: ${resolved}`
   );
   return resolved;
@@ -66,7 +66,7 @@ function withEnv(overrides: Record<string, string | undefined>, run: () => void)
 
 const EVAL_PROBE_SCRIPT =
   "import('./src/lib/dataPaths.ts').then(({ resolveWritableDataDir }) => " +
-  "console.log('OMNIROUTE_TEST_DATA_DIR=' + resolveWritableDataDir()))";
+  "console.log('AGENTPROXY_TEST_DATA_DIR=' + resolveWritableDataDir()))";
 
 function assertEvalProbeIsIsolated(evalArgs: string[], configuredDataDir = "") {
   const result = spawnSync(process.execPath, ["--import", "tsx/esm", ...evalArgs], {
@@ -79,7 +79,7 @@ function assertEvalProbeIsIsolated(evalArgs: string[], configuredDataDir = "") {
       NODE_ENV: "production",
       NODE_TEST_CONTEXT: "",
       VITEST: "",
-      OMNIROUTE_ALLOW_DEFAULT_DATA_DIR: "",
+      AGENTPROXY_ALLOW_DEFAULT_DATA_DIR: "",
     },
   });
 
@@ -87,13 +87,13 @@ function assertEvalProbeIsIsolated(evalArgs: string[], configuredDataDir = "") {
   const outputLine = result.stdout
     .trim()
     .split("\n")
-    .find((line) => line.startsWith("OMNIROUTE_TEST_DATA_DIR="));
-  const resolved = outputLine?.slice("OMNIROUTE_TEST_DATA_DIR=".length) ?? "";
+    .find((line) => line.startsWith("AGENTPROXY_TEST_DATA_DIR="));
+  const resolved = outputLine?.slice("AGENTPROXY_TEST_DATA_DIR=".length) ?? "";
   const ownedRedirect = assertOwnedRedirectDir(resolved);
   try {
     assert.notEqual(
       ownedRedirect,
-      path.join(os.homedir(), ".omniroute"),
+      path.join(os.homedir(), ".agentproxy"),
       "an eval/import probe must not inherit the normal server's default database"
     );
     assert.equal(
@@ -113,7 +113,7 @@ function assertEvalProbeIsIsolated(evalArgs: string[], configuredDataDir = "") {
 
 test("G1: a test context with no DATA_DIR never resolves to the operator's real data dir", () => {
   withEnv(
-    { DATA_DIR: undefined, NODE_ENV: "test", OMNIROUTE_ALLOW_DEFAULT_DATA_DIR: undefined },
+    { DATA_DIR: undefined, NODE_ENV: "test", AGENTPROXY_ALLOW_DEFAULT_DATA_DIR: undefined },
     () => {
       const resolved = rememberRedirectDir(resolveWritableDataDir());
       assert.notEqual(
@@ -128,7 +128,7 @@ test("G1: a test context with no DATA_DIR never resolves to the operator's real 
 });
 
 test("G2: an explicit DATA_DIR still wins inside a test context", () => {
-  const explicit = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-explicit-"));
+  const explicit = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-explicit-"));
   withEnv({ DATA_DIR: explicit, NODE_ENV: "test" }, () => {
     assert.equal(resolveWritableDataDir(), explicit);
   });
@@ -136,7 +136,7 @@ test("G2: an explicit DATA_DIR still wins inside a test context", () => {
 });
 
 test("G3: the escape hatch restores the old behavior for deliberate runs", () => {
-  withEnv({ DATA_DIR: undefined, NODE_ENV: "test", OMNIROUTE_ALLOW_DEFAULT_DATA_DIR: "1" }, () => {
+  withEnv({ DATA_DIR: undefined, NODE_ENV: "test", AGENTPROXY_ALLOW_DEFAULT_DATA_DIR: "1" }, () => {
     assert.equal(
       resolveWritableDataDir(),
       getDefaultDataDir(),
@@ -152,7 +152,7 @@ test("G4: a normal server run (no test markers) is untouched", () => {
       NODE_ENV: "production",
       VITEST: undefined,
       NODE_TEST_CONTEXT: undefined,
-      OMNIROUTE_ALLOW_DEFAULT_DATA_DIR: undefined,
+      AGENTPROXY_ALLOW_DEFAULT_DATA_DIR: undefined,
     },
     () => {
       assert.equal(
@@ -170,7 +170,7 @@ test("G5: node:test subprocesses are detected through NODE_TEST_CONTEXT too", ()
       DATA_DIR: undefined,
       NODE_ENV: undefined,
       NODE_TEST_CONTEXT: "child-v8",
-      OMNIROUTE_ALLOW_DEFAULT_DATA_DIR: undefined,
+      AGENTPROXY_ALLOW_DEFAULT_DATA_DIR: undefined,
     },
     () => {
       const resolved = rememberRedirectDir(resolveWritableDataDir());

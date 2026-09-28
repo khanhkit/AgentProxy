@@ -1,14 +1,14 @@
 ---
-title: "OmniRoute 程式碼基礎文件"
+title: "AgentProxy 程式碼基礎文件"
 version: 3.8.40
 lastUpdated: 2026-06-28
 ---
 
-# OmniRoute 程式碼基礎文件
+# AgentProxy 程式碼基礎文件
 
 > **版本：** v3.8.0
 > **最後更新：** 2026-06-28
-> **讀者對象：** 為 OmniRoute 貢獻程式碼或在其之上建立整合的工程師。
+> **讀者對象：** 為 AgentProxy 貢獻程式碼或在其之上建立整合的工程師。
 >
 > 如需高階架構圖表及各子系統背後的設計理念，請參閱 [ARCHITECTURE.md](./ARCHITECTURE.md)。如需深入了解各子系統（Auto Combo、MCP 伺服器、A2A 伺服器、技能、記憶體、雲端代理、韌性、壓縮等），請參閱 `docs/` 目錄中的對應文件。
 
@@ -34,22 +34,22 @@ lastUpdated: 2026-06-28
 路徑別名（`tsconfig.json`）：
 
 - `@/*` → `src/*`
-- `@omniroute/open-sse` → `open-sse/index.ts`
-- `@omniroute/open-sse/*` → `open-sse/*`
+- `@agentproxy/open-sse` → `open-sse/index.ts`
+- `@agentproxy/open-sse/*` → `open-sse/*`
 
 預設 HTTP 埠：**`20128`**（API 與儀表板共用同一個程序。資料
-目錄由 `DATA_DIR` 環境變數指定，預設為 `~/.omniroute/`）。
+目錄由 `DATA_DIR` 環境變數指定，預設為 `~/.agentproxy/`）。
 
 ---
 
 ## 2. 儲存庫佈局
 
 ```
-OmniRoute/
+AgentProxy/
 ├── src/                  Next.js 應用程式（App Router、函式庫、領域、伺服器、共用）
-├── open-sse/             串流引擎 workspace（@omniroute/open-sse）
+├── open-sse/             串流引擎 workspace（@agentproxy/open-sse）
 ├── electron/             桌面包裝程式（Electron 41 main + preload）
-├── bin/                  CLI 進入點（omniroute、reset-password）
+├── bin/                  CLI 進入點（agentproxy、reset-password）
 ├── tests/                單元、整合、e2e、protocols-e2e、翻譯器、安全性、測試用 fixture
 ├── scripts/              建置、同步、檢查、遷移及執行時期輔助腳本
 ├── docs/                 公開文件（此目錄）
@@ -296,7 +296,7 @@ v1/
 | `runtime/`        | 執行時期功能檢測                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | `search/`         | `executeWebSearch.ts`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | `services/`       | 嵌入式服務框架：`ServiceSupervisor.ts`（通用子程序監控器，具備操作鎖、環形緩衝區、健康檢查）、`bootstrap.ts`（程序層級註冊與自動啟動）、`registry.ts`（工具 → 監控器對應）、`apiKey.ts`（AES-256-GCM 金鑰儲存）、`modelSync.ts`（定期模型同步）、`ringBuffer.ts`（5 MB 循環日誌緩衝區）、`healthCheck.ts`（HTTP 健康探測）、`types.ts`、`embedWsProxy.ts`（WebSocket 代理）、`installers/{ninerouter,cliproxy}.ts`。參見 `docs/frameworks/EMBEDDED-SERVICES.md`                                                                                                                                                                             |
-| `agentSkills/`    | 代理技能目錄 + 產生器：`catalog.ts`（getCatalog/getSkillById/filterCatalog/computeCoverage）、`generator.ts`（generateAgentSkills → 寫入 `skills/{id}/SKILL.md`）、`openapiParser.ts`（從 OpenAPI 規格提取 REST 端點）、`cliRegistryParser.ts`（從 bin/cli-registry 提取 CLI 子命令）、`schemas.ts`（Zod：AgentSkillSchema、SkillCoverageSchema、ListQuerySchema、GenerateBodySchema）、`types.ts`（AgentSkill、SkillCoverage、SkillMarkdown、GeneratorReport）。由 REST 路由（`/api/agent-skills/*`）、MCP 工具（`omniroute_agent_skills_*`）和 A2A 技能 `list-capabilities` 使用。參見 [AGENT-SKILLS.md](../frameworks/AGENT-SKILLS.md)。 |
+| `agentSkills/`    | 代理技能目錄 + 產生器：`catalog.ts`（getCatalog/getSkillById/filterCatalog/computeCoverage）、`generator.ts`（generateAgentSkills → 寫入 `skills/{id}/SKILL.md`）、`openapiParser.ts`（從 OpenAPI 規格提取 REST 端點）、`cliRegistryParser.ts`（從 bin/cli-registry 提取 CLI 子命令）、`schemas.ts`（Zod：AgentSkillSchema、SkillCoverageSchema、ListQuerySchema、GenerateBodySchema）、`types.ts`（AgentSkill、SkillCoverage、SkillMarkdown、GeneratorReport）。由 REST 路由（`/api/agent-skills/*`）、MCP 工具（`agentproxy_agent_skills_*`）和 A2A 技能 `list-capabilities` 使用。參見 [AGENT-SKILLS.md](../frameworks/AGENT-SKILLS.md)。 |
 | `skills/`         | 技能框架：`registry.ts`、`executor.ts`、`interception.ts`、`injection.ts`、`sandbox.ts`、`custom.ts`、`hybrid.ts`、`builtins.ts`、`a2a.ts`、`providerSettings.ts`、`schemas.ts`、`skillssh.ts`、`types.ts`，加上 `builtin/browser.ts`                                                                                                                                                                                                                                                                                                                                                                                                       |
 | `spend/`          | `batchWriter.ts`（寫入緩衝區）                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
 | `sync/`           | `bundle.ts`、`tokens.ts`（雲端同步）                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
@@ -382,7 +382,7 @@ v1/
 | `degradation.ts`                           | 降級模式轉換                 |
 | `providerExpiration.ts`                    | 過期帳戶/金鑰偵測            |
 | `quotaCache.ts`                            | 快取配額決策                 |
-| `responses.ts`、`omnirouteResponseMeta.ts` | 回應形狀輔助程式             |
+| `responses.ts`、`agentproxyResponseMeta.ts` | 回應形狀輔助程式             |
 | `configAudit.ts`                           | 設定變更稽核                 |
 | `assessment/`                              | 模型評估（依 RFC，部分實作） |
 | `types.ts`                                 | 共用領域型別                 |
@@ -433,7 +433,7 @@ server/
 
 ## 4. `open-sse/` — 串流引擎 workspace
 
-獨立的 npm workspace，發布為 `@omniroute/open-sse`。負責請求
+獨立的 npm workspace，發布為 `@agentproxy/open-sse`。負責請求
 處理、執行器、翻譯器、服務、轉換器及 MCP 伺服器。
 
 ```
@@ -595,7 +595,7 @@ electron/
 
 ```
 bin/
-├── omniroute.mjs           主要 CLI 進入點（Node ESM）
+├── agentproxy.mjs           主要 CLI 進入點（Node ESM）
 ├── reset-password.mjs      從 CLI 重設管理密碼
 ├── mcp-server.mjs          MCP 伺服器啟動器（stdio）
 ├── nodeRuntimeSupport.mjs  Node 版本守衛
@@ -618,8 +618,8 @@ bin/
 
 `package.json` → `bin` 中公開了兩個二進位檔：
 
-- `omniroute` → `bin/omniroute.mjs`
-- `omniroute-reset-password` → `bin/reset-password.mjs`
+- `agentproxy` → `bin/agentproxy.mjs`
+- `agentproxy-reset-password` → `bin/reset-password.mjs`
 
 ---
 
@@ -768,7 +768,7 @@ bin/
 ## 11. 慣例
 
 - **程式碼風格**：2 空格縮排、雙引號、100 字元寬度、分號、`es5` 結尾逗號 — 由 Prettier 透過 `lint-staged` 強制執行。
-- **匯入順序**：外部 → 內部（`@/`、`@omniroute/open-sse`）→ 相對。
+- **匯入順序**：外部 → 內部（`@/`、`@agentproxy/open-sse`）→ 相對。
 - **命名**：檔案 `camelCase` 或 `kebab-case`，元件 `PascalCase`，常數 `UPPER_SNAKE`。
 - **ESLint**：`no-eval`、`no-implied-eval`、`no-new-func` = `error` 適用於所有地方；`no-explicit-any` = `warn` 在 `open-sse/` 和 `tests/` 中，其他位置為 error。
 - **TypeScript**：`strict: false`（舊有設定）。在跨模組邊界處優先使用明確型別而非推斷。

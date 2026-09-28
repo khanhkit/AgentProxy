@@ -1,0 +1,26 @@
+{
+  "generatedFor": "AP-ISS-0127",
+  "sources": {
+    "9router": {
+      "repository": "decolua/9router",
+      "commit": "39e36d3d0c849e0e01dfeacddf111edf892448fc",
+      "version": "0.5.86",
+      "evidence": [
+        "src/lib/db/schema.js",
+        "src/lib/db/migrate.js",
+        "src/lib/db/repos/connectionsRepo.js",
+        "src/lib/db/repos/nodesRepo.js",
+        "src/lib/db/repos/combosRepo.js",
+        "src/lib/db/repos/apiKeysRepo.js"
+      ]
+    },
+    "omniroute": {
+      "repository": "diegosouzapw/OmniRoute",
+      "commit": "7d23bcf8ecb3b43c00c024e317af9c39384a1bee",
+      "ref": "release/v3.8.51",
+      "evidence": [
+        "src/lib/db/core.ts"
+      ]
+    }
+  }
+}

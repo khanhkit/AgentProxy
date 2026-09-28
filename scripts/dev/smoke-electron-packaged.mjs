@@ -14,7 +14,7 @@ const ROOT = join(__dirname, "..", "..");
 const DEFAULT_TIMEOUT_MS = 45_000;
 const DEFAULT_SETTLE_MS = 2_000;
 const DEFAULT_URL = "http://127.0.0.1:20128/login";
-export const LINUX_EXECUTABLE_NAMES = ["omniroute-desktop", "omniroute", "OmniRoute"];
+export const LINUX_EXECUTABLE_NAMES = ["agentproxy-desktop", "agentproxy", "AgentProxy"];
 export const FATAL_LOG_PATTERNS = [
   /Cannot find module/i,
   /MODULE_NOT_FOUND/,
@@ -44,13 +44,13 @@ function discoverMacExecutable() {
     join(
       distDir,
       arch() === "arm64" ? "mac-arm64" : "mac",
-      "OmniRoute.app",
+      "AgentProxy.app",
       "Contents",
       "MacOS",
-      "OmniRoute"
+      "AgentProxy"
     ),
-    join(distDir, "mac", "OmniRoute.app", "Contents", "MacOS", "OmniRoute"),
-    join(distDir, "mac-arm64", "OmniRoute.app", "Contents", "MacOS", "OmniRoute"),
+    join(distDir, "mac", "AgentProxy.app", "Contents", "MacOS", "AgentProxy"),
+    join(distDir, "mac-arm64", "AgentProxy.app", "Contents", "MacOS", "AgentProxy"),
   ];
 
   return candidates.find((candidate) => existsSync(candidate)) || candidates[0];
@@ -85,14 +85,14 @@ function findExecutableByName(rootDir, names) {
 function discoverWindowsExecutable() {
   const distDir = join(ROOT, "electron", "dist-electron");
   const candidates = [
-    join(distDir, "win-unpacked", "OmniRoute.exe"),
-    join(distDir, "win-x64-unpacked", "OmniRoute.exe"),
-    join(distDir, "win-arm64-unpacked", "OmniRoute.exe"),
+    join(distDir, "win-unpacked", "AgentProxy.exe"),
+    join(distDir, "win-x64-unpacked", "AgentProxy.exe"),
+    join(distDir, "win-arm64-unpacked", "AgentProxy.exe"),
   ];
 
   return (
     candidates.find((candidate) => existsSync(candidate)) ||
-    findExecutableByName(distDir, ["OmniRoute.exe"]) ||
+    findExecutableByName(distDir, ["AgentProxy.exe"]) ||
     candidates[0]
   );
 }
@@ -184,7 +184,7 @@ async function assertPortIsFree(url) {
   try {
     const response = await fetchWithTimeout(url, 1_000);
     throw new Error(
-      `Smoke URL already responded with HTTP ${response.status}: ${url}. Stop the existing OmniRoute process before running this check.`
+      `Smoke URL already responded with HTTP ${response.status}: ${url}. Stop the existing AgentProxy process before running this check.`
     );
   } catch (error) {
     if (error instanceof Error && error.message.startsWith("Smoke URL already responded")) {
@@ -431,7 +431,7 @@ export async function ensureSmokeEnvDirs(smokeEnv, dataDir, { currentPlatform = 
   // requestSingleInstanceLock() runs synchronously at module load and
   // fails silently if the directory doesn't exist yet — causing exit(0).
   if (currentPlatform === "win32" && smokeEnv.APPDATA) {
-    for (const subdir of ["omniroute-desktop", "OmniRoute", "omniroute"]) {
+    for (const subdir of ["agentproxy-desktop", "AgentProxy", "agentproxy"]) {
       dirs.push(join(smokeEnv.APPDATA, subdir));
     }
   }
@@ -441,7 +441,7 @@ export async function ensureSmokeEnvDirs(smokeEnv, dataDir, { currentPlatform = 
   // which makes requestSingleInstanceLock() return false and the app exit(0)
   // before app.whenReady(). Pre-create the derived tree as well.
   if (currentPlatform === "win32" && smokeEnv.USERPROFILE) {
-    for (const subdir of ["omniroute-desktop", "OmniRoute", "omniroute"]) {
+    for (const subdir of ["agentproxy-desktop", "AgentProxy", "agentproxy"]) {
       dirs.push(join(smokeEnv.USERPROFILE, "AppData", "Roaming", subdir));
     }
   }
@@ -470,7 +470,7 @@ function assertExecutableExists(appExecutable) {
   if (existsSync(appExecutable)) return;
 
   throw new Error(
-    `Packaged OmniRoute executable not found at ${appExecutable}. Build it first with \`npm run build:<target> --prefix electron\` or set ELECTRON_SMOKE_APP_EXECUTABLE.`
+    `Packaged AgentProxy executable not found at ${appExecutable}. Build it first with \`npm run build:<target> --prefix electron\` or set ELECTRON_SMOKE_APP_EXECUTABLE.`
   );
 }
 
@@ -634,7 +634,7 @@ async function main() {
   const coldRestart = process.env.ELECTRON_SMOKE_COLD_RESTART === "1";
   const dataDir =
     process.env.ELECTRON_SMOKE_DATA_DIR ||
-    (await mkdtemp(join(tmpdir(), "omniroute-electron-smoke-")));
+    (await mkdtemp(join(tmpdir(), "agentproxy-electron-smoke-")));
   const removeDataDir =
     !process.env.ELECTRON_SMOKE_DATA_DIR && process.env.ELECTRON_SMOKE_KEEP_DATA !== "1";
 

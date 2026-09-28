@@ -1,5 +1,5 @@
 // Repro/regression test for issue #9474
-// Claude Code OAuth device flow (`omniroute oauth start --provider claude-code`)
+// Claude Code OAuth device flow (`agentproxy oauth start --provider claude-code`)
 // failed with 401 because the CLI mapped `claude-code` to the unrelated
 // `command-code` (CommandCode.ai) API-key provider instead of the real
 // Anthropic `claude` browser-PKCE OAuth flow.

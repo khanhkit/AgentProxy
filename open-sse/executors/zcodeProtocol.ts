@@ -1,4 +1,5 @@
 import { spawn, type ChildProcessWithoutNullStreams } from "node:child_process";
+import { shouldUseShellForCommand } from "@/shared/services/cliRuntime";
 
 const HEADER_SIZE = 13;
 const REGULAR_MESSAGE = 1;
@@ -154,6 +155,10 @@ export function encodeZcodeRpcCall(
   return frame;
 }
 
+export function shouldUseShellForZcodeCommand(command: string): boolean {
+  return shouldUseShellForCommand(command);
+}
+
 function errorFromPayload(payload: unknown, fallback: string): Error {
   if (payload && typeof payload === "object") {
     const record = payload as JsonRecord;
@@ -212,7 +217,7 @@ export class ZcodeAppServerClient implements ZcodeClientLike {
         cwd: this.cwd,
         env: this.env ? { ...process.env, ...this.env } : process.env,
         stdio: ["pipe", "pipe", "pipe"],
-        shell: false,
+        shell: shouldUseShellForZcodeCommand(this.command),
         windowsHide: true,
       });
     } catch (error) {
@@ -309,8 +314,8 @@ export class ZcodeAppServerClient implements ZcodeClientLike {
       if (!child) return;
       child.stdin.write(`${JSON.stringify({
         type: "zcode-hello-ack",
-        version: "omniroute",
-        clientId: `omniroute-${process.pid}`,
+        version: "agentproxy",
+        clientId: `agentproxy-${process.pid}`,
       })}\n`);
       this.handshakeDone = true;
     }

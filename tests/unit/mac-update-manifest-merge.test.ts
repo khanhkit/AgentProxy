@@ -12,7 +12,7 @@
  *
  *     files.find(it => [...].some(n => n.includes(process.arch))) ?? files.shift()
  *
- * The Intel dmg is `OmniRoute-X.Y.Z.dmg` — no arch suffix. On Intel `process.arch` is `"x64"`,
+ * The Intel dmg is `AgentProxy-X.Y.Z.dmg` — no arch suffix. On Intel `process.arch` is `"x64"`,
  * nothing matches, and the fallback takes the FIRST entry.
  *
  * So ORDER is the fix, not tidiness, and that is what most of these tests pin: the un-suffixed
@@ -32,20 +32,20 @@ import {
 // Verbatim shape of what the two jobs produced for v3.8.49.
 const INTEL = `version: 3.8.49
 files:
-  - url: OmniRoute-3.8.49.dmg
+  - url: AgentProxy-3.8.49.dmg
     sha512: FSRnh09fSyOSeB7VXXe==
     size: 392717602
-path: OmniRoute-3.8.49.dmg
+path: AgentProxy-3.8.49.dmg
 sha512: FSRnh09fSyOSeB7VXXe==
 releaseDate: '2026-07-30T01:07:13.268Z'
 `;
 
 const ARM = `version: 3.8.49
 files:
-  - url: OmniRoute-3.8.49-arm64.dmg
+  - url: AgentProxy-3.8.49-arm64.dmg
     sha512: 2eVsFVsY0JiCKgNkNYg==
     size: 390627465
-path: OmniRoute-3.8.49-arm64.dmg
+path: AgentProxy-3.8.49-arm64.dmg
 sha512: 2eVsFVsY0JiCKgNkNYg==
 releaseDate: '2026-07-30T01:22:47.282Z'
 `;
@@ -54,9 +54,9 @@ test("parses electron-builder's manifest shape", () => {
   const m = parseManifest(INTEL);
   assert.equal(m.version, "3.8.49");
   assert.equal(m.files.length, 1);
-  assert.equal(m.files[0].url, "OmniRoute-3.8.49.dmg");
+  assert.equal(m.files[0].url, "AgentProxy-3.8.49.dmg");
   assert.equal(m.files[0].size, "392717602");
-  assert.equal(m.path, "OmniRoute-3.8.49.dmg");
+  assert.equal(m.path, "AgentProxy-3.8.49.dmg");
   assert.match(m.releaseDate, /^2026-07-30T01:07/);
 });
 
@@ -66,11 +66,11 @@ test("the un-suffixed (Intel) entry is FIRST — this is the entire fix", () => 
   assert.equal(merged.files.length, 2);
   assert.equal(
     merged.files[0].url,
-    "OmniRoute-3.8.49.dmg",
+    "AgentProxy-3.8.49.dmg",
     "electron-updater's `?? shift()` fallback takes files[0]; only the un-suffixed build " +
       "depends on it, so it must be there"
   );
-  assert.equal(merged.files[1].url, "OmniRoute-3.8.49-arm64.dmg");
+  assert.equal(merged.files[1].url, "AgentProxy-3.8.49-arm64.dmg");
 });
 
 test("order is stable regardless of input order", () => {
@@ -94,8 +94,8 @@ test("the legacy top-level fields agree with the first entry", () => {
 test("checksums and sizes travel untouched", () => {
   const merged = mergeManifests([parseManifest(INTEL), parseManifest(ARM)]);
   const byUrl = Object.fromEntries(merged.files.map((f: { url: string }) => [f.url, f]));
-  assert.equal(byUrl["OmniRoute-3.8.49.dmg"].sha512, "FSRnh09fSyOSeB7VXXe==");
-  assert.equal(byUrl["OmniRoute-3.8.49-arm64.dmg"].size, "390627465");
+  assert.equal(byUrl["AgentProxy-3.8.49.dmg"].sha512, "FSRnh09fSyOSeB7VXXe==");
+  assert.equal(byUrl["AgentProxy-3.8.49-arm64.dmg"].size, "390627465");
 });
 
 test("the newest releaseDate wins", () => {
@@ -124,19 +124,19 @@ test("no usable input yields null rather than an empty manifest", () => {
 });
 
 test("hasArchSuffix recognizes only real arch markers", () => {
-  assert.equal(hasArchSuffix("OmniRoute-3.8.49-arm64.dmg"), true);
-  assert.equal(hasArchSuffix("OmniRoute-3.8.49-x64.dmg"), true);
-  assert.equal(hasArchSuffix("OmniRoute-3.8.49-universal.dmg"), true);
-  assert.equal(hasArchSuffix("OmniRoute-3.8.49.dmg"), false);
+  assert.equal(hasArchSuffix("AgentProxy-3.8.49-arm64.dmg"), true);
+  assert.equal(hasArchSuffix("AgentProxy-3.8.49-x64.dmg"), true);
+  assert.equal(hasArchSuffix("AgentProxy-3.8.49-universal.dmg"), true);
+  assert.equal(hasArchSuffix("AgentProxy-3.8.49.dmg"), false);
   // "arm64" must be a suffix segment, not any substring of the name.
-  assert.equal(hasArchSuffix("OmniRoute-arm64beta-3.8.49.dmg"), false);
+  assert.equal(hasArchSuffix("AgentProxy-arm64beta-3.8.49.dmg"), false);
 });
 
 test("the rendered manifest round-trips", () => {
   const merged = mergeManifests([parseManifest(ARM), parseManifest(INTEL)]);
   const reparsed = parseManifest(renderManifest(merged));
   assert.equal(reparsed.files.length, 2);
-  assert.equal(reparsed.files[0].url, "OmniRoute-3.8.49.dmg", "order survives serialization");
+  assert.equal(reparsed.files[0].url, "AgentProxy-3.8.49.dmg", "order survives serialization");
   assert.equal(reparsed.version, "3.8.49");
-  assert.equal(reparsed.path, "OmniRoute-3.8.49.dmg");
+  assert.equal(reparsed.path, "AgentProxy-3.8.49.dmg");
 });

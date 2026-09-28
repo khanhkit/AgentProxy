@@ -28,6 +28,7 @@ dependencies = [
  "async-stream",
  "axum",
  "futures-util",
+ "httpdate",
  "reqwest",
  "serde_json",
  "sha2",

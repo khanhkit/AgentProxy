@@ -59,7 +59,7 @@ fn selection_can_exclude_accounts_already_tried_by_retry_loop() {
 }
 
 #[test]
-fn live_lease_survives_snapshot_generation_change() {
+fn credential_version_change_starts_new_runtime_epoch_without_invalidating_old_lease() {
     let state = AppState::new();
     let mut only = connection("a");
     only.max_concurrent = Some(1);
@@ -67,7 +67,8 @@ fn live_lease_survives_snapshot_generation_change() {
         .install_snapshot(snapshot(1, vec![only.clone()]), false)
         .unwrap();
 
-    let lease = state.select_codex_account().expect("first lease");
+    let old_lease = state.select_codex_account().expect("first lease");
+    assert_eq!(old_lease.config.access_token, "token-a");
 
     only.access_token = "rotated-token".to_owned();
     only.credential_version = 2;
@@ -75,13 +76,19 @@ fn live_lease_survives_snapshot_generation_change() {
         .install_snapshot(snapshot(2, vec![only]), false)
         .unwrap();
 
-    assert!(
-        state.select_codex_account().is_none(),
-        "snapshot swap must preserve the existing in-flight lease"
+    let rotated = state
+        .select_codex_account()
+        .expect("credential rotation must start a fresh runtime epoch");
+    assert_eq!(rotated.config.access_token, "rotated-token");
+    assert_eq!(
+        old_lease.config.access_token, "token-a",
+        "old in-flight work must remain isolated on the previous runtime/config"
     );
-    drop(lease);
 
-    let next = state.select_codex_account().expect("lease after release");
+    drop(rotated);
+    drop(old_lease);
+
+    let next = state.select_codex_account().expect("lease after releases");
     assert_eq!(next.config.access_token, "rotated-token");
 }
 
@@ -97,7 +104,6 @@ fn lower_max_concurrency_applies_without_resetting_in_flight() {
     let lease = state.select_codex_account().expect("first lease");
 
     only.max_concurrent = Some(1);
-    only.credential_version = 2;
     state
         .install_snapshot(snapshot(2, vec![only]), false)
         .unwrap();

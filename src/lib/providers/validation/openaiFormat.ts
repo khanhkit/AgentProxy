@@ -2,13 +2,13 @@
 // Extracted from validation.ts (god-file decomposition) — top-level functions; behavior is
 // byte-identical to the original inline defs.
 import { randomUUID } from "node:crypto";
-import { getRegistryEntry } from "@omniroute/open-sse/config/providerRegistry.ts";
-import { COMMAND_CODE_VERSION } from "@omniroute/open-sse/executors/commandCode.ts";
+import { getRegistryEntry } from "@agentproxy/open-sse/config/providerRegistry.ts";
+import { COMMAND_CODE_VERSION } from "@agentproxy/open-sse/executors/commandCode.ts";
 import {
   discoverBedrockNativeModels,
   isBedrockNativeApiError,
   isBedrockNativeAuthError,
-} from "@omniroute/open-sse/services/bedrock.ts";
+} from "@agentproxy/open-sse/services/bedrock.ts";
 import { addModelsSuffix, normalizeBaseUrl, resolveChatUrl } from "./urlHelpers";
 import { applyCustomUserAgent, buildBearerHeaders } from "./headers";
 import { toValidationErrorResult, validationRead, validationWrite } from "./transport";

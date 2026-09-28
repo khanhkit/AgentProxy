@@ -9,7 +9,7 @@ if (scenario !== "conversation-creation" && scenario !== "message-send") {
   throw new Error(`Unknown HuggingChat transport scenario: ${String(scenario)}`);
 }
 
-const testRoot = mkdtempSync(join(tmpdir(), "omniroute-huggingchat-transport-child-"));
+const testRoot = mkdtempSync(join(tmpdir(), "agentproxy-huggingchat-transport-child-"));
 const testDataDir = join(testRoot, "data");
 const testPluginsDir = join(testRoot, "plugins");
 const testConfigDir = join(testRoot, "config");
@@ -18,15 +18,15 @@ mkdirSync(testDataDir, { recursive: true });
 mkdirSync(testPluginsDir, { recursive: true });
 mkdirSync(testConfigDir, { recursive: true });
 process.env.DATA_DIR = testDataDir;
-process.env.OMNIROUTE_PLUGINS_DIR = testPluginsDir;
+process.env.AGENTPROXY_PLUGINS_DIR = testPluginsDir;
 process.env.XDG_CONFIG_HOME = testConfigDir;
 process.env.APP_LOG_TO_FILE = "false";
 process.env.API_KEY_SECRET = "synthetic-huggingchat-transport-test-key";
 
 const hostileTransportMessage =
-  "TLS request failed at /srv/omniroute/providers/huggingchat/client.ts:44:9 " +
+  "TLS request failed at /srv/agentproxy/providers/huggingchat/client.ts:44:9 " +
   "access_token=transport-secret\n" +
-  "    at sendRequest (/srv/omniroute/runtime/fetch.ts:12:3)";
+  "    at sendRequest (/srv/agentproxy/runtime/fetch.ts:12:3)";
 
 const originalFetch = globalThis.fetch;
 let fetchCalls = 0;

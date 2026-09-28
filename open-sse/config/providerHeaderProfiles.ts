@@ -52,7 +52,7 @@ export const GITHUB_COPILOT_DEFAULT_INITIATOR = "user";
 // call (verified identical across all captured requests) — a per-call random id
 // would itself be an anti-fingerprint tell. We mint one per process and cache
 // it (env-overridable via GITHUB_COPILOT_MACHINE_ID), which keeps it stable for
-// the lifetime of a running OmniRoute instance, matching "one CLI install".
+// the lifetime of a running AgentProxy instance, matching "one CLI install".
 let _copilotMachineId: string | null = null;
 export function getGitHubCopilotMachineId(): string {
   const override = (process?.env?.GITHUB_COPILOT_MACHINE_ID || "").trim();

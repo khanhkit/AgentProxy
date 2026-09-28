@@ -419,10 +419,10 @@ test("structural admission enforces the queued-bytes cap end-to-end", async () =
 });
 
 test("queue-wait defaults are bounded (2s wait, 4MB queued-bytes budget)", () => {
-  if (process.env.OMNIROUTE_CHAT_ADMISSION_QUEUE_MS === undefined) {
+  if (process.env.AGENTPROXY_CHAT_ADMISSION_QUEUE_MS === undefined) {
     assert.equal(CHAT_ADMISSION_QUEUE_MAX_MS, 2_000);
   }
-  if (process.env.OMNIROUTE_CHAT_ADMISSION_MAX_QUEUED_BYTES === undefined) {
+  if (process.env.AGENTPROXY_CHAT_ADMISSION_MAX_QUEUED_BYTES === undefined) {
     assert.equal(CHAT_ADMISSION_MAX_QUEUED_BYTES, 4 * 1024 * 1024);
   }
 });

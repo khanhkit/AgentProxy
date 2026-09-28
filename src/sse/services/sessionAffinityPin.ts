@@ -40,8 +40,8 @@ import { isAccountQuotaExhausted } from "@/domain/quotaCache";
 import {
   isAccountUnavailable,
   isModelLocked,
-} from "@omniroute/open-sse/services/accountFallback.ts";
-import { isComboPerModelTimeoutAbort } from "@omniroute/open-sse/services/combo/comboAbortReasons.ts";
+} from "@agentproxy/open-sse/services/accountFallback.ts";
+import { isComboPerModelTimeoutAbort } from "@agentproxy/open-sse/services/combo/comboAbortReasons.ts";
 import * as log from "../utils/logger";
 import { readHeaderValue } from "./headerReader.ts";
 
@@ -201,7 +201,7 @@ export function extractSessionAffinityKey(
   const headerKey = normalizeSessionKey(
     readHeaderValue(headers, "x-codex-session-id") ??
       readHeaderValue(headers, "x-session-id") ??
-      readHeaderValue(headers, "x-omniroute-session"),
+      readHeaderValue(headers, "x-agentproxy-session"),
     "header"
   );
   if (headerKey) return headerKey;
@@ -577,7 +577,7 @@ export function resolveForcedConnectionForCredentialPool(
 }
 
 /**
- * A forced connection (combo step `connectionId` / `x-omniroute-connection`) is an
+ * A forced connection (combo step `connectionId` / `x-agentproxy-connection`) is an
  * operator instruction, not a suggestion. resolveForcedConnectionForCredentialPool()
  * above returns null for two very different reasons: (a) intentional pin-release
  * cases it already handles correctly (the forced id was excluded after a failed

@@ -4,7 +4,7 @@ import {
   isModelCapacityOverloadError,
 } from "../../shared/utils/circuitBreaker";
 import { isRequestScopedUpstreamFailure } from "./comboFailureLogging";
-import { getTrustedLocalRateLimitResponse } from "@omniroute/open-sse/services/rateLimitManager/errors";
+import { getTrustedLocalRateLimitResponse } from "@agentproxy/open-sse/services/rateLimitManager/errors";
 
 export const PROVIDER_BREAKER_FAILURE_STATUSES = new Set([408, 500, 502, 503, 504]);
 
@@ -35,7 +35,7 @@ export function shouldTripProviderBreakerForResult(
     !isLocalStreamLifecycleError(result.error) &&
     !isLocalExecutionError(result.error) &&
     // Network-layer errors (ECONNREFUSED, ETIMEDOUT) never reached the provider —
-    // the provider may be healthy, only the network path is broken. OmniRoute's own
+    // the provider may be healthy, only the network path is broken. AgentProxy's own
     // rate-limit queue timeouts are backpressure we applied, not a provider failure.
     result.errorCode !== "proxy_unreachable" &&
     result.errorCode !== "RATE_LIMIT_QUEUE_TIMEOUT" &&

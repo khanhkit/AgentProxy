@@ -10,7 +10,7 @@
  * mapping is resolved relative to the directory containing the tsconfig rather
  * than relative to `baseUrl`. So asserting "no baseUrl" alone is not enough —
  * the mappings have to keep pointing at real directories, or `@/*` and
- * `@omniroute/open-sse/*` silently stop resolving. Both halves are asserted here.
+ * `@agentproxy/open-sse/*` silently stop resolving. Both halves are asserted here.
  */
 import test from "node:test";
 import assert from "node:assert/strict";
@@ -143,6 +143,6 @@ test("open-sse aliases point at the repo-root src/ and open-sse/ directories", (
     path.resolve(resolveRoot, paths[alias][0].replace(/\/?\*+$/, ""));
 
   assert.equal(resolveAlias("@/*"), path.join(REPO_ROOT, "src"));
-  assert.equal(resolveAlias("@omniroute/open-sse"), path.join(REPO_ROOT, "open-sse"));
-  assert.equal(resolveAlias("@omniroute/open-sse/*"), path.join(REPO_ROOT, "open-sse"));
+  assert.equal(resolveAlias("@agentproxy/open-sse"), path.join(REPO_ROOT, "open-sse"));
+  assert.equal(resolveAlias("@agentproxy/open-sse/*"), path.join(REPO_ROOT, "open-sse"));
 });

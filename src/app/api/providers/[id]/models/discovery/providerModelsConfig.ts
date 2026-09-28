@@ -1,11 +1,11 @@
-import { getAntigravityModelsDiscoveryUrls } from "@omniroute/open-sse/config/antigravityUpstream.ts";
+import { getAntigravityModelsDiscoveryUrls } from "@agentproxy/open-sse/config/antigravityUpstream.ts";
 import {
   GROK_BUILD_DEFAULT_CONTEXT_WINDOW,
   getGrokBuildModelsHeaders,
   GROK_BUILD_MODELS_URL,
   GROK_BUILD_SUPPORTED_REASONING_EFFORTS,
-} from "@omniroute/open-sse/config/grokBuild.ts";
-import { getAntigravityContentHeaders } from "@omniroute/open-sse/services/antigravityHeaders.ts";
+} from "@agentproxy/open-sse/config/grokBuild.ts";
+import { getAntigravityContentHeaders } from "@agentproxy/open-sse/services/antigravityHeaders.ts";
 import { parseGeminiModelsList } from "@/lib/providerModels/geminiModelsParser";
 import { buildClaudeModelsHeaders } from "@/lib/providerModels/claudeModelsHeaders";
 import {
@@ -13,19 +13,20 @@ import {
   CLINEPASS_MODELS_ENDPOINT,
   parseClineModels,
   parseClinepassRecommendedModels,
-} from "@omniroute/open-sse/services/clinepassModels.ts";
-import { buildClaudeCodeCompatibleHeaders } from "@omniroute/open-sse/services/claudeCodeCompatible.ts";
+} from "@agentproxy/open-sse/services/clinepassModels.ts";
+import { buildClaudeCodeCompatibleHeaders } from "@agentproxy/open-sse/services/claudeCodeCompatible.ts";
 import {
   buildKimiCodeIdentityHeaders,
   getKimiCodeCliUserAgent,
   KIMI_CODING_MODELS_URL,
-} from "@omniroute/open-sse/config/providers/registry/kimi/coding/runtime.ts";
-import { ALIBABA_MODEL_STUDIO_MODELS } from "@omniroute/open-sse/config/providers/registry/alibaba/index.ts";
-import { QWEN_CLOUD_TEXT_MODELS } from "@omniroute/open-sse/config/providers/registry/qwen-cloud/index.ts";
-import { filterAlibabaFreeEligibleModels } from "@omniroute/open-sse/services/alibabaFreeTierDiscovery.ts";
-import { shouldUseLiveAlibabaFreeModelDiscovery } from "@omniroute/open-sse/services/alibabaFreeTier.ts";
-import { isDashscopeTextModelId } from "@omniroute/open-sse/services/dashscopeTextModels.ts";
-import { extractZaiToken } from "@omniroute/open-sse/services/zaiWebCredentials.ts";
+} from "@agentproxy/open-sse/config/providers/registry/kimi/coding/runtime.ts";
+import { ALIBABA_MODEL_STUDIO_MODELS } from "@agentproxy/open-sse/config/providers/registry/alibaba/index.ts";
+import { QWEN_CLOUD_TEXT_MODELS } from "@agentproxy/open-sse/config/providers/registry/qwen-cloud/index.ts";
+import { filterAlibabaFreeEligibleModels } from "@agentproxy/open-sse/services/alibabaFreeTierDiscovery.ts";
+import { shouldUseLiveAlibabaFreeModelDiscovery } from "@agentproxy/open-sse/services/alibabaFreeTier.ts";
+import { isDashscopeTextModelId } from "@agentproxy/open-sse/services/dashscopeTextModels.ts";
+import { extractZaiToken } from "@agentproxy/open-sse/services/zaiWebCredentials.ts";
+import { isFeatureFlagEnabled } from "@/shared/utils/featureFlags";
 import { normalizeOpenAiLikeModelsResponse } from "./normalizers";
 
 const QWEN_CLOUD_TEXT_MODEL_IDS = new Set(QWEN_CLOUD_TEXT_MODELS.map((model) => model.id));
@@ -396,6 +397,25 @@ const KIMI_CODING_MODELS_CONFIG: ProviderModelsConfigEntry = {
   parseResponse: parseKimiCodingModels,
 };
 
+export const XAI_MODELS_CONFIG: ProviderModelsConfigEntry = {
+  url: "https://api.x.ai/v1/models",
+  method: "GET",
+  headers: { "Content-Type": "application/json" },
+  authHeader: "Authorization",
+  authPrefix: "Bearer ",
+  parseResponse: (data) => data.data || data.models || [],
+};
+
+export function getXaiOauthLiveModelsConfig(): ProviderModelsConfigEntry | undefined {
+  try {
+    return isFeatureFlagEnabled("XAI_OAUTH_LIVE_MODEL_DISCOVERY")
+      ? XAI_MODELS_CONFIG
+      : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 // Provider models endpoints configuration
 export const PROVIDER_MODELS_CONFIG: Record<string, ProviderModelsConfigEntry> = {
   alibaba: ALIBABA_MODEL_STUDIO_MODELS_CONFIG,
@@ -592,14 +612,7 @@ export const PROVIDER_MODELS_CONFIG: Record<string, ProviderModelsConfigEntry> =
     authPrefix: "Bearer ",
     parseResponse: (data) => data.data || data.models || [],
   },
-  xai: {
-    url: "https://api.x.ai/v1/models",
-    method: "GET",
-    headers: { "Content-Type": "application/json" },
-    authHeader: "Authorization",
-    authPrefix: "Bearer ",
-    parseResponse: (data) => data.data || data.models || [],
-  },
+  xai: XAI_MODELS_CONFIG,
   mistral: {
     url: "https://api.mistral.ai/v1/models",
     method: "GET",

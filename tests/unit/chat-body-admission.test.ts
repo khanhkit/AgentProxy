@@ -23,7 +23,7 @@ const { getActiveRequestCount } = await import("../../src/lib/gracefulShutdown.t
  * set them without leaking into the process (and without breaking the existing
  * "sk_real_key must NOT bypass" test that assumes the sentinel is the fallback).
  */
-const SELF_LOOP_ENV_KEYS = ["OMNIROUTE_API_KEY", "ROUTER_API_KEY"] as const;
+const SELF_LOOP_ENV_KEYS = ["AGENTPROXY_API_KEY", "ROUTER_API_KEY"] as const;
 function withSelfLoopEnv(env: Partial<Record<(typeof SELF_LOOP_ENV_KEYS)[number], string>>) {
   const saved = new Map<string, string | undefined>();
   for (const key of SELF_LOOP_ENV_KEYS) {
@@ -51,7 +51,7 @@ function chatRequest(body: string, contentLength: string | null = String(body.le
 }
 
 test("heavyweight leases are counted for SIGTERM drain (#11015)", () => {
-  globalThis.__omnirouteShutdown = { init: true, shuttingDown: false, activeRequests: 0 };
+  globalThis.__agentproxyShutdown = { init: true, shuttingDown: false, activeRequests: 0 };
   const controller = new ChatAdmissionController(2);
   const before = getActiveRequestCount();
   const lease = controller.tryAcquireHeavy();
@@ -628,10 +628,10 @@ function selfLoopChatRequest(
 ): Request {
   const headers: Record<string, string> = {
     "content-type": "application/json",
-    "x-omniroute-admission-bypass": "internal",
+    "x-agentproxy-admission-bypass": "internal",
     // Follows the resolved self-loop bearer (the sentinel in these tests — each
     // test wraps itself in withSelfLoopEnv({}) so it is deterministic even when
-    // the developer's shell has OMNIROUTE_API_KEY set).
+    // the developer's shell has AGENTPROXY_API_KEY set).
     authorization: `Bearer ${resolveSelfLoopBearer()}`,
   };
   if (contentLength !== null) headers["content-length"] = contentLength;
@@ -765,7 +765,7 @@ test("external clients cannot use the bypass header without a trusted self-loop 
     });
     const headers: Record<string, string> = {
       "content-type": "application/json",
-      "x-omniroute-admission-bypass": "internal",
+      "x-agentproxy-admission-bypass": "internal",
       authorization: "Bearer sk_real_key",
       "content-length": String(body.length),
     };
@@ -792,18 +792,18 @@ test("external clients cannot use the bypass header without a trusted self-loop 
 
 // ── self-loop bearer resolution (env-key aware, #1350) ─────────────────
 
-test("resolveSelfLoopBearer falls back to sk_omniroute when no env key is set", () => {
+test("resolveSelfLoopBearer falls back to sk_agentproxy when no env key is set", () => {
   const restore = withSelfLoopEnv({});
   try {
-    assert.equal(resolveSelfLoopBearer(), "sk_omniroute");
+    assert.equal(resolveSelfLoopBearer(), "sk_agentproxy");
   } finally {
     restore();
   }
 });
 
-test("resolveSelfLoopBearer prefers OMNIROUTE_API_KEY over ROUTER_API_KEY", () => {
+test("resolveSelfLoopBearer prefers AGENTPROXY_API_KEY over ROUTER_API_KEY", () => {
   const restore = withSelfLoopEnv({
-    OMNIROUTE_API_KEY: "omni-key",
+    AGENTPROXY_API_KEY: "omni-key",
     ROUTER_API_KEY: "router-key",
   });
   try {
@@ -813,7 +813,7 @@ test("resolveSelfLoopBearer prefers OMNIROUTE_API_KEY over ROUTER_API_KEY", () =
   }
 });
 
-test("resolveSelfLoopBearer uses ROUTER_API_KEY when OMNIROUTE_API_KEY is unset", () => {
+test("resolveSelfLoopBearer uses ROUTER_API_KEY when AGENTPROXY_API_KEY is unset", () => {
   const restore = withSelfLoopEnv({ ROUTER_API_KEY: "router-key" });
   try {
     assert.equal(resolveSelfLoopBearer(), "router-key");
@@ -823,7 +823,7 @@ test("resolveSelfLoopBearer uses ROUTER_API_KEY when OMNIROUTE_API_KEY is unset"
 });
 
 test("env-key bearer is honored as a self-loop admission bypass (REQUIRE_API_KEY deployment)", async () => {
-  const restore = withSelfLoopEnv({ OMNIROUTE_API_KEY: "env-key" });
+  const restore = withSelfLoopEnv({ AGENTPROXY_API_KEY: "env-key" });
   try {
     const controller = new ChatAdmissionController(1);
     // Parent holds the single heavyweight lease.
@@ -838,7 +838,7 @@ test("env-key bearer is honored as a self-loop admission bypass (REQUIRE_API_KEY
       method: "POST",
       headers: {
         "content-type": "application/json",
-        "x-omniroute-admission-bypass": "internal",
+        "x-agentproxy-admission-bypass": "internal",
         authorization: "Bearer env-key",
         "content-length": String(body.length),
       },
@@ -858,8 +858,8 @@ test("env-key bearer is honored as a self-loop admission bypass (REQUIRE_API_KEY
   }
 });
 
-test("sk_omniroute sentinel is rejected once an env key is configured (REQUIRE_API_KEY hardening)", async () => {
-  const restore = withSelfLoopEnv({ OMNIROUTE_API_KEY: "env-key" });
+test("sk_agentproxy sentinel is rejected once an env key is configured (REQUIRE_API_KEY hardening)", async () => {
+  const restore = withSelfLoopEnv({ AGENTPROXY_API_KEY: "env-key" });
   try {
     const controller = new ChatAdmissionController(1);
     // Parent holds the single heavyweight lease → capacity exhausted.
@@ -875,8 +875,8 @@ test("sk_omniroute sentinel is rejected once an env key is configured (REQUIRE_A
       method: "POST",
       headers: {
         "content-type": "application/json",
-        "x-omniroute-admission-bypass": "internal",
-        authorization: "Bearer sk_omniroute",
+        "x-agentproxy-admission-bypass": "internal",
+        authorization: "Bearer sk_agentproxy",
         "content-length": String(body.length),
       },
       body,

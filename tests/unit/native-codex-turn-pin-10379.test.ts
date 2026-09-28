@@ -14,12 +14,15 @@ const {
   areAllPinnedTargetsModelScopedUnusable,
   clearNativeCodexTurnPinsForTests,
 } = await import("../../open-sse/services/combo/nativeCodexTurnPin.ts");
-const { lockExactModel, clearAllModelLockouts } =
-  await import("../../open-sse/services/accountFallback.ts");
-const { getCircuitBreaker, resetAllCircuitBreakers } =
-  await import("../../src/shared/utils/circuitBreaker.ts");
-const { recordProviderCooldown, clearCooldownState } =
-  await import("../../open-sse/services/providerCooldownTracker.ts");
+const { lockExactModel, clearAllModelLockouts } = await import(
+  "../../open-sse/services/accountFallback.ts"
+);
+const { getCircuitBreaker, resetAllCircuitBreakers } = await import(
+  "../../src/shared/utils/circuitBreaker.ts"
+);
+const { recordProviderCooldown, clearCooldownState } = await import(
+  "../../open-sse/services/providerCooldownTracker.ts"
+);
 const { PROVIDER_PROFILES } = await import("../../open-sse/config/constants.ts");
 const { resolveResilienceSettings } = await import("../../src/lib/resilience/settings.ts");
 
@@ -156,6 +159,39 @@ test("pinNativeCodexTurn rejects provider/model change", () => {
         comboName: "test-combo",
         target: makeTarget("conn-1", "different-model", "codex"),
         connectionId: "conn-1",
+      }),
+    /Native Codex turn target changed/
+  );
+});
+
+test("guarded auto-resume may change model exactly once", () => {
+  clearNativeCodexTurnPinsForTests();
+  pinNativeCodexTurn({
+    body: BODY,
+    comboName: "test-combo",
+    target: makeTarget("conn-1", "model-a", "codex"),
+    connectionId: "conn-1",
+  });
+
+  pinNativeCodexTurn({
+    body: BODY,
+    comboName: "test-combo",
+    target: makeTarget("conn-2", "model-b", "codex"),
+    connectionId: "conn-2",
+    autoResume: true,
+  });
+  const resumed = getNativeCodexTurnPin(BODY, "test-combo");
+  assert.equal(resumed?.modelStr, "model-b");
+  assert.equal(resumed?.autoResumes, 1);
+
+  assert.throws(
+    () =>
+      pinNativeCodexTurn({
+        body: BODY,
+        comboName: "test-combo",
+        target: makeTarget("conn-3", "model-c", "codex"),
+        connectionId: "conn-3",
+        autoResume: true,
       }),
     /Native Codex turn target changed/
   );
