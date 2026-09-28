@@ -558,3 +558,36 @@ test("createResponsesApiTransformStream keepalive self-clears when enqueue fails
     globalThis.clearInterval = realClearInterval;
   }
 });
+
+
+test("#12901: generic transformer ignores empty tool_calls arrays", async () => {
+  const output = await runTransformStream([
+    'data: {"id":"chatcmpl_12901","choices":[{"index":0,"delta":{"content":"H","tool_calls":[]}}]}\n\n',
+    'data: {"choices":[{"index":0,"delta":{"content":"ello","tool_calls":[]}}]}\n\n',
+    'data: {"choices":[{"index":0,"delta":{},"finish_reason":"stop"}],"usage":{"prompt_tokens":1,"completion_tokens":2,"total_tokens":3}}\n\n',
+  ]);
+  const events = parseSseOutput(output);
+  const deltas = events
+    .filter((event) => event.event === "response.output_text.delta")
+    .map((event) => JSON.parse(event.data).delta);
+  assert.deepEqual(deltas, ["H", "ello"]);
+  const completed = JSON.parse(
+    events.find((event) => event.event === "response.completed").data
+  ).response;
+  assert.equal(completed.output.filter((item) => item.type === "message").length, 1);
+  assert.equal(completed.output[0].content[0].text, "Hello");
+});
+
+test("#12901: generic transformer still emits non-empty tool calls", async () => {
+  const output = await runTransformStream([
+    'data: {"id":"chatcmpl_12901b","choices":[{"index":0,"delta":{"content":"search","tool_calls":[]}}]}\n\n',
+    'data: {"choices":[{"index":0,"delta":{"tool_calls":[{"index":0,"id":"call_1","function":{"name":"lookup","arguments":"{\\"q\\":\\"x\\"}"}}]}}]}\n\n',
+    'data: {"choices":[{"index":0,"delta":{},"finish_reason":"tool_calls"}],"usage":{"prompt_tokens":1,"completion_tokens":2,"total_tokens":3}}\n\n',
+  ]);
+  const events = parseSseOutput(output);
+  const completed = JSON.parse(
+    events.find((event) => event.event === "response.completed").data
+  ).response;
+  assert.equal(completed.output.filter((item) => item.type === "message").length, 1);
+  assert.equal(completed.output.filter((item) => item.type === "function_call").length, 1);
+});
