@@ -1,0 +1,1 @@
+- **feat(proxylogs):** proxy log columns and detail views now preserve and display the registry proxy name instead of falling back to a bare `host:port` when multiple registry entries share a gateway.

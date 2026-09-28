@@ -5,8 +5,9 @@ import { t } from "../i18n.mjs";
 import { apiFetch } from "../api.mjs";
 import { resolveDataDir } from "../data-dir.mjs";
 import { listManifestTargets } from "../cli-manifest.mjs";
+import { loadModelCatalog, ModelCommandError } from "./model-api.mjs";
 
-// Target lists shared with `agentproxy run` / `agentproxy configure` — always
+// Target lists shared with `omniroute run` / `omniroute configure` — always
 // derived from the canonical manifest so the completion scripts cannot drift.
 const RUN_TARGET_WORDS = listManifestTargets("run").join(" ");
 const CONFIGURE_TARGET_WORDS = listManifestTargets("configure").join(" ");
@@ -22,22 +23,22 @@ function readCache() {
     const raw = JSON.parse(readFileSync(cachePath(), "utf8"));
     if (raw && typeof raw.ts === "number" && Date.now() - raw.ts < CACHE_TTL_MS) return raw;
   } catch (err) {
-    if (process.env.AGENTPROXY_DEBUG_COMPLETION) {
-      console.error("[agentproxy completion] readCache failed:", err?.message ?? err);
+    if (process.env.OMNIROUTE_DEBUG_COMPLETION) {
+      console.error("[omniroute completion] readCache failed:", err?.message ?? err);
     }
   }
   return null;
 }
 
 async function refreshCache(opts = {}) {
+  // Fail before replacing the cache when the selected catalog is unavailable.
+  const models = (await loadModelCatalog(opts)).map((model) => model.id);
   let combos = [],
-    providers = [],
-    models = [];
+    providers = [];
   try {
-    const [cr, pr, mr] = await Promise.allSettled([
+    const [cr, pr] = await Promise.allSettled([
       apiFetch("/api/combos", opts),
       apiFetch("/api/providers", opts),
-      apiFetch("/api/models", opts),
     ]);
     if (cr.status === "fulfilled" && cr.value.ok) {
       const j = await cr.value.json();
@@ -47,13 +48,9 @@ async function refreshCache(opts = {}) {
       const j = await pr.value.json();
       providers = (j.providers || j.items || []).map((p) => p.id || p.name).filter(Boolean);
     }
-    if (mr.status === "fulfilled" && mr.value.ok) {
-      const j = await mr.value.json();
-      models = (Array.isArray(j) ? j : j.data || []).map((m) => m.id).filter(Boolean);
-    }
   } catch (err) {
-    if (process.env.AGENTPROXY_DEBUG_COMPLETION) {
-      console.error("[agentproxy completion] refreshCache failed:", err?.message ?? err);
+    if (process.env.OMNIROUTE_DEBUG_COMPLETION) {
+      console.error("[omniroute completion] refreshCache failed:", err?.message ?? err);
     }
   }
   const data = { combos, providers, models, ts: Date.now() };
@@ -61,8 +58,8 @@ async function refreshCache(opts = {}) {
     mkdirSync(dirname(cachePath()), { recursive: true });
     writeFileSync(cachePath(), JSON.stringify(data));
   } catch (err) {
-    if (process.env.AGENTPROXY_DEBUG_COMPLETION) {
-      console.error("[agentproxy completion] writeCache failed:", err?.message ?? err);
+    if (process.env.OMNIROUTE_DEBUG_COMPLETION) {
+      console.error("[omniroute completion] writeCache failed:", err?.message ?? err);
     }
   }
   return data;
@@ -77,38 +74,43 @@ function detectShell() {
 
 function installPath(shell) {
   const home = homedir();
-  if (shell === "zsh") return join(home, ".zsh", "completions", "_agentproxy");
-  if (shell === "fish") return join(home, ".config", "fish", "completions", "agentproxy.fish");
-  return join(home, ".bash_completion.d", "agentproxy");
+  if (shell === "zsh") return join(home, ".zsh", "completions", "_omniroute");
+  if (shell === "fish") return join(home, ".config", "fish", "completions", "omniroute.fish");
+  return join(home, ".bash_completion.d", "omniroute");
 }
 
-function generateZshScript() {
-  return `#compdef agentproxy
+function modelSubcommandWords(program) {
+  const models = program?.commands.find((command) => command.name() === "models");
+  return models?.commands.map((command) => command.name()).join(" ") || "";
+}
 
-# AgentProxy zsh completion (dynamic)
-_agentproxy_get_cache() {
+function generateZshScript(modelCommands) {
+  return `#compdef omniroute
+
+# OmniRoute zsh completion (dynamic)
+_omniroute_get_cache() {
   local key="$1"
-  local cache="$HOME/.agentproxy/completion-cache.json"
+  local cache="$HOME/.omniroute/completion-cache.json"
   local now=$(date +%s 2>/dev/null || echo 0)
   local mtime=0
   if [[ -f "$cache" ]]; then
     mtime=$(stat -c %Y "$cache" 2>/dev/null || stat -f %m "$cache" 2>/dev/null || echo 0)
   fi
   if [[ $((now - mtime)) -gt 3600 ]]; then
-    agentproxy completion refresh --quiet >/dev/null 2>&1
+    omniroute completion refresh --quiet >/dev/null 2>&1
   fi
   if command -v python3 &>/dev/null && [[ -f "$cache" ]]; then
     python3 -c "import json,sys;d=json.load(open('$cache'));print(' '.join(d.get('$key',[])))" 2>/dev/null
   fi
 }
 
-_agentproxy() {
+_omniroute() {
   local -a commands
   commands=(
-    'serve:Start the AgentProxy server'
+    'serve:Start the OmniRoute server'
     'stop:Stop the server'
     'restart:Restart the server'
-    'setup:Configure AgentProxy'
+    'setup:Configure OmniRoute'
     'doctor:Run health diagnostics'
     'status:Show server status'
     'logs:View application logs'
@@ -135,12 +137,12 @@ _agentproxy() {
     'completion:Shell completion'
     'memory:Manage memory store'
     'skills:Manage skills'
-    'connect:Connect to a local or remote AgentProxy server'
+    'connect:Connect to a local or remote OmniRoute server'
     'contexts:Manage local and remote server contexts'
     'configure:Configure a supported AI CLI'
-    'launch:Launch an AI CLI through AgentProxy'
-    'launch-codex:Launch Codex through AgentProxy'
-    'run:Run a supported AI CLI through AgentProxy'
+    'launch:Launch an AI CLI through OmniRoute'
+    'launch-codex:Launch Codex through OmniRoute'
+    'run:Run a supported AI CLI through OmniRoute'
     'runtime:Inspect CLI runtime capabilities'
     'repair:Repair native runtime dependencies'
   )
@@ -157,7 +159,7 @@ _agentproxy() {
           case $words[2] in
             switch|delete|show)
               local -a combos
-              combos=($(_agentproxy_get_cache combos))
+              combos=($(_omniroute_get_cache combos))
               _describe 'combo' combos ;;
             *) _arguments '1:subcommand:(list switch create delete show suggest)' ;;
           esac ;;
@@ -165,7 +167,7 @@ _agentproxy() {
           case $words[2] in
             add|remove|test)
               local -a providers
-              providers=($(_agentproxy_get_cache providers))
+              providers=($(_omniroute_get_cache providers))
               _describe 'provider' providers ;;
             *) _arguments '1:subcommand:(available list test test-all validate rotate status add import auth remove edit metrics metric)' ;;
           esac ;;
@@ -179,6 +181,7 @@ _agentproxy() {
           _arguments '1:resource:(combos providers api-manager cli-tools agents settings logs memory skills evals audit cost resilience)' ;;
         completion) _arguments '1:subcommand:(zsh bash fish install refresh)' ;;
         config) _arguments '1:subcommand:(list get set validate contexts)' ;;
+        models) _arguments '1:subcommand:(${modelCommands})' ;;
         contexts) _arguments '1:subcommand:(list add use current show remove rename export import migrate)' ;;
         configure) _arguments '1:target:(${CONFIGURE_TARGET_WORDS})' ;;
         run) _arguments '1:target:(${RUN_TARGET_WORDS})' ;;
@@ -190,40 +193,40 @@ _agentproxy() {
       case $state in
         models)
           local -a models
-          models=($(_agentproxy_get_cache models))
+          models=($(_omniroute_get_cache models))
           _describe 'model' models ;;
         combos)
           local -a combos
-          combos=($(_agentproxy_get_cache combos))
+          combos=($(_omniroute_get_cache combos))
           _describe 'combo' combos ;;
       esac ;;
   esac
 }
 
-compdef _agentproxy agentproxy
+compdef _omniroute omniroute
 `;
 }
 
-function generateBashScript() {
+function generateBashScript(modelCommands) {
   return `#!/bin/bash
-# AgentProxy CLI bash completion (dynamic)
+# OmniRoute CLI bash completion (dynamic)
 
-_agentproxy_get_cache() {
+_omniroute_get_cache() {
   local key="$1"
-  local cache="$HOME/.agentproxy/completion-cache.json"
+  local cache="$HOME/.omniroute/completion-cache.json"
   local now
   now=$(date +%s 2>/dev/null || echo 0)
   local mtime=0
   [[ -f "$cache" ]] && mtime=$(stat -c %Y "$cache" 2>/dev/null || stat -f %m "$cache" 2>/dev/null || echo 0)
   if (( now - mtime > 3600 )); then
-    agentproxy completion refresh --quiet >/dev/null 2>&1
+    omniroute completion refresh --quiet >/dev/null 2>&1
   fi
   if command -v python3 &>/dev/null && [[ -f "$cache" ]]; then
     python3 -c "import json,sys;d=json.load(open('$cache'));print(' '.join(d.get('$key',[])))" 2>/dev/null
   fi
 }
 
-_agentproxy() {
+_omniroute() {
   local cur prev cmds
   COMPREPLY=()
   cur="\${COMP_WORDS[COMP_CWORD]}"
@@ -235,6 +238,7 @@ _agentproxy() {
     keys)        COMPREPLY=($(compgen -W "add list remove regenerate revoke reveal usage" -- "\${cur}")); return 0 ;;
     providers)   COMPREPLY=($(compgen -W "available list test test-all validate rotate status add import auth remove edit metrics metric" -- "\${cur}")); return 0 ;;
     config)      COMPREPLY=($(compgen -W "list get set validate contexts" -- "\${cur}")); return 0 ;;
+    models)      COMPREPLY=($(compgen -W "${modelCommands}" -- "\${cur}")); return 0 ;;
     completion)  COMPREPLY=($(compgen -W "zsh bash fish install refresh" -- "\${cur}")); return 0 ;;
     open)        COMPREPLY=($(compgen -W "combos providers api-manager cli-tools agents settings logs memory skills evals audit cost resilience" -- "\${cur}")); return 0 ;;
     contexts)    COMPREPLY=($(compgen -W "list add use current show remove rename export import migrate" -- "\${cur}")); return 0 ;;
@@ -243,65 +247,66 @@ _agentproxy() {
     runtime)     COMPREPLY=($(compgen -W "check repair clean" -- "\${cur}")); return 0 ;;
     --model)
       local models
-      models=$(_agentproxy_get_cache models)
+      models=$(_omniroute_get_cache models)
       COMPREPLY=($(compgen -W "\${models}" -- "\${cur}")); return 0 ;;
     --combo)
       local combos
-      combos=$(_agentproxy_get_cache combos)
+      combos=$(_omniroute_get_cache combos)
       COMPREPLY=($(compgen -W "\${combos}" -- "\${cur}")); return 0 ;;
     switch|delete)
       local combos
-      combos=$(_agentproxy_get_cache combos)
+      combos=$(_omniroute_get_cache combos)
       COMPREPLY=($(compgen -W "\${combos}" -- "\${cur}")); return 0 ;;
     *)
       COMPREPLY=($(compgen -W "\${cmds} --help --version --output --quiet" -- "\${cur}")); return 0 ;;
   esac
 }
 
-complete -F _agentproxy agentproxy
+complete -F _omniroute omniroute
 `;
 }
 
-function generateFishScript() {
-  return `# AgentProxy CLI fish completion (dynamic)
-complete -c agentproxy -f
+function generateFishScript(modelCommands) {
+  return `# OmniRoute CLI fish completion (dynamic)
+complete -c omniroute -f
 
 set -l commands serve stop restart setup doctor status logs providers config keys models combo chat stream completion dashboard open backup restore health quota cache mcp a2a tunnel env memory skills connect contexts configure launch launch-codex update test run runtime repair
 
 for cmd in $commands
-  complete -c agentproxy -n '__fish_is_nth_token 1' -a $cmd
+  complete -c omniroute -n '__fish_is_nth_token 1' -a $cmd
 end
 
 # Subcommands
-complete -c agentproxy -n '__fish_seen_subcommand_from combo' -a 'list switch create delete show suggest'
-complete -c agentproxy -n '__fish_seen_subcommand_from keys' -a 'add list remove regenerate revoke reveal usage'
-complete -c agentproxy -n '__fish_seen_subcommand_from providers' -a 'available list test test-all validate rotate status add import auth remove edit metrics metric'
-complete -c agentproxy -n '__fish_seen_subcommand_from config' -a 'list get set validate contexts'
-complete -c agentproxy -n '__fish_seen_subcommand_from completion' -a 'zsh bash fish install refresh'
-complete -c agentproxy -n '__fish_seen_subcommand_from open' -a 'combos providers api-manager cli-tools agents settings logs memory skills evals audit cost resilience'
-complete -c agentproxy -n '__fish_seen_subcommand_from contexts' -a 'list add use current show remove rename export import migrate'
-complete -c agentproxy -n '__fish_seen_subcommand_from configure' -a '${CONFIGURE_TARGET_WORDS}'
-complete -c agentproxy -n '__fish_seen_subcommand_from run' -a '${RUN_TARGET_WORDS}'
-complete -c agentproxy -n '__fish_seen_subcommand_from runtime' -a 'check repair clean'
+complete -c omniroute -n '__fish_seen_subcommand_from combo' -a 'list switch create delete show suggest'
+complete -c omniroute -n '__fish_seen_subcommand_from keys' -a 'add list remove regenerate revoke reveal usage'
+complete -c omniroute -n '__fish_seen_subcommand_from providers' -a 'available list test test-all validate rotate status add import auth remove edit metrics metric'
+complete -c omniroute -n '__fish_seen_subcommand_from config' -a 'list get set validate contexts'
+complete -c omniroute -n '__fish_seen_subcommand_from models' -a '${modelCommands}'
+complete -c omniroute -n '__fish_seen_subcommand_from completion' -a 'zsh bash fish install refresh'
+complete -c omniroute -n '__fish_seen_subcommand_from open' -a 'combos providers api-manager cli-tools agents settings logs memory skills evals audit cost resilience'
+complete -c omniroute -n '__fish_seen_subcommand_from contexts' -a 'list add use current show remove rename export import migrate'
+complete -c omniroute -n '__fish_seen_subcommand_from configure' -a '${CONFIGURE_TARGET_WORDS}'
+complete -c omniroute -n '__fish_seen_subcommand_from run' -a '${RUN_TARGET_WORDS}'
+complete -c omniroute -n '__fish_seen_subcommand_from runtime' -a 'check repair clean'
 
 # Dynamic completions from cache (requires python3)
-function __agentproxy_cache_get
+function __omniroute_cache_get
   set -l key $argv[1]
-  set -l cache "$HOME/.agentproxy/completion-cache.json"
+  set -l cache "$HOME/.omniroute/completion-cache.json"
   set -l now (date +%s 2>/dev/null; or echo 0)
   set -l mtime 0
   test -f $cache; and set mtime (stat -c %Y $cache 2>/dev/null; or stat -f %m $cache 2>/dev/null; or echo 0)
   if test (math $now - $mtime) -gt 3600
-    agentproxy completion refresh --quiet >/dev/null 2>&1
+    omniroute completion refresh --quiet >/dev/null 2>&1
   end
   if command -q python3; and test -f $cache
     python3 -c "import json,sys;d=json.load(open('$cache'));print('\\n'.join(d.get('$key',[])))" 2>/dev/null
   end
 end
 
-complete -c agentproxy -n '__fish_seen_subcommand_from combo; and __fish_seen_subcommand_from switch delete' -a '(__agentproxy_cache_get combos)'
-complete -c agentproxy -l model -a '(__agentproxy_cache_get models)'
-complete -c agentproxy -l combo -a '(__agentproxy_cache_get combos)'
+complete -c omniroute -n '__fish_seen_subcommand_from combo; and __fish_seen_subcommand_from switch delete' -a '(__omniroute_cache_get combos)'
+complete -c omniroute -l model -a '(__omniroute_cache_get models)'
+complete -c omniroute -l combo -a '(__omniroute_cache_get combos)'
 `;
 }
 
@@ -315,17 +320,17 @@ export function registerCompletion(program) {
   comp
     .command("zsh")
     .description(t("completion.zsh") || "Print zsh completion script")
-    .action(async () => process.stdout.write(generateZshScript()));
+    .action(async () => process.stdout.write(generateZshScript(modelSubcommandWords(program))));
 
   comp
     .command("bash")
     .description(t("completion.bash") || "Print bash completion script")
-    .action(async () => process.stdout.write(generateBashScript()));
+    .action(async () => process.stdout.write(generateBashScript(modelSubcommandWords(program))));
 
   comp
     .command("fish")
     .description(t("completion.fish") || "Print fish completion script")
-    .action(async () => process.stdout.write(generateFishScript()));
+    .action(async () => process.stdout.write(generateFishScript(modelSubcommandWords(program))));
 
   comp
     .command("install [shell]")
@@ -339,7 +344,7 @@ export function registerCompletion(program) {
       }
       const dest = installPath(target);
       mkdirSync(dirname(dest), { recursive: true });
-      writeFileSync(dest, gen());
+      writeFileSync(dest, gen(modelSubcommandWords(program)));
       process.stdout.write(
         `Installed ${target} completion at ${dest}\nRestart your shell or source the file.\n`
       );
@@ -351,7 +356,18 @@ export function registerCompletion(program) {
     .option("--quiet", "Suppress output")
     .action(async (opts, cmd) => {
       const globalOpts = cmd.optsWithGlobals();
-      const data = await refreshCache(globalOpts);
+      let data;
+      try {
+        data = await refreshCache(globalOpts);
+      } catch (error) {
+        console.error(
+          error instanceof ModelCommandError
+            ? error.message
+            : "Unable to refresh model completions."
+        );
+        process.exitCode = error.exitCode || 1;
+        return;
+      }
       if (!opts.quiet && !globalOpts.quiet) {
         process.stdout.write(
           `Cached: ${data.combos.length} combos, ${data.providers.length} providers, ${data.models.length} models\n`
@@ -359,7 +375,7 @@ export function registerCompletion(program) {
       }
     });
 
-  // Backward-compat: `agentproxy completion <shell>` (positional arg form)
+  // Backward-compat: `omniroute completion <shell>` (positional arg form)
   comp
     .command("<shell>")
     .description("Print completion script for shell (bash, zsh, fish)")
@@ -370,17 +386,17 @@ export function registerCompletion(program) {
         process.stderr.write(`Unknown shell: ${shell}. Valid: bash, zsh, fish\n`);
         process.exit(1);
       }
-      process.stdout.write(gen());
+      process.stdout.write(gen(modelSubcommandWords(program)));
     });
 }
 
 // Legacy export for backward compatibility
-export async function runCompletionCommand(shell) {
+export async function runCompletionCommand(shell, program) {
   const gen = generators[shell];
   if (!gen) {
     process.stderr.write(`Unknown shell: ${shell}. Valid: bash, zsh, fish\n`);
     return 1;
   }
-  process.stdout.write(gen());
+  process.stdout.write(gen(modelSubcommandWords(program)));
   return 0;
 }

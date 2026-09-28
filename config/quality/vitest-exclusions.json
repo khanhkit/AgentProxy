@@ -1,0 +1,18 @@
+{
+  "_comment": "Inventory of Vitest exclusions; every real excluded test must name a tracking issue. Gate: npm run check:vitest-exclusions.",
+  "_measured": "2026-09-28 — two residual exclusions remain after webhook/API-endpoint/discovery reactivation",
+  "excluded": [
+    {
+      "file": "tests/unit/ui/request-logger-autorefresh-visibility-3972.test.tsx",
+      "issue": "#13204",
+      "measured": "2026-09-10",
+      "status": "Tests 1 failed | 5 passed (6)"
+    },
+    {
+      "file": "tests/unit/ui/logs-page-detail-modal-reopen-on-close.test.tsx",
+      "issue": "#13204",
+      "measured": "2026-09-10",
+      "status": "Tests 2 failed (2)"
+    }
+  ]
+}

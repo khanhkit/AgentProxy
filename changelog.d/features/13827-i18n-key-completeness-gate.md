@@ -1,0 +1,1 @@
+- **feat(i18n):** make exact dashboard-locale key completeness a blocking CI gate now that all current catalogs are structurally complete.

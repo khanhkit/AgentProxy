@@ -352,10 +352,19 @@ export async function runKeysRegenerateCommand(id, opts = {}) {
     return 1;
   }
   try {
-    const res = await apiFetch(`/api/v1/registered-keys/${encodeURIComponent(id)}/regenerate`, {
+    const encodedId = encodeURIComponent(id);
+    let res = await apiFetch(`/api/v1/registered-keys/${encodedId}/regenerate`, {
       method: "POST",
       retry: false,
+      acceptNotOk: true,
     });
+    if (isRouteUnavailableStatus(res.status)) {
+      res = await apiFetch(`/api/keys/${encodedId}/regenerate`, {
+        method: "POST",
+        retry: false,
+        acceptNotOk: true,
+      });
+    }
     if (!res.ok) {
       console.error(t("common.error", { message: `HTTP ${res.status}` }));
       return 1;
@@ -410,9 +419,17 @@ export async function runKeysRevealCommand(id, opts = {}) {
     return 1;
   }
   try {
-    const res = await apiFetch(`/api/v1/registered-keys/${encodeURIComponent(id)}/reveal`, {
+    const encodedId = encodeURIComponent(id);
+    let res = await apiFetch(`/api/v1/registered-keys/${encodedId}/reveal`, {
       retry: false,
+      acceptNotOk: true,
     });
+    if (isRouteUnavailableStatus(res.status)) {
+      res = await apiFetch(`/api/keys/${encodedId}/reveal`, {
+        retry: false,
+        acceptNotOk: true,
+      });
+    }
     if (!res.ok) {
       console.error(t("common.error", { message: `HTTP ${res.status}` }));
       return 1;

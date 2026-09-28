@@ -1,0 +1,1 @@
+- **fix(security):** `POST /api/cli/connect` no longer exchanges the well-known default management password for an admin-scoped access token from off-loopback peers; local bootstrap and rotated passwords remain supported.

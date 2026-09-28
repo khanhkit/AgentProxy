@@ -1,0 +1,1 @@
+- **fix(db):** give `conversation_turn_nodes` an independent retention setting and clean up orphaned agentic conversations after retained turn nodes expire.

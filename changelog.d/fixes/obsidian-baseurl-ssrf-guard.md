@@ -1,0 +1,1 @@
+- **fix(security):** Obsidian integration base URLs now pass through the outbound URL guard, blocking cloud-metadata/link-local targets and cross-host redirects while preserving legitimate loopback, LAN, and Tailscale use.

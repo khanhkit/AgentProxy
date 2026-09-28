@@ -14,6 +14,7 @@ import {
   shouldUseShellForCommand,
 } from "../../shared/services/cliRuntime";
 import { resolveOpencodeConfigPath } from "../../shared/services/opencodeConfigPath";
+import { resolveOmniRouteBaseUrl } from "../../shared/utils/resolveOmniRouteBaseUrl";
 
 const execFileAsync = promisify(execFile);
 let execFileImpl = execFileAsync;
@@ -42,7 +43,7 @@ export interface DetectedTool {
     {
       model: string;
       provider?: string;
-      usingAgentProxy: boolean;
+      usingOmniRoute: boolean;
     }
   >;
 }
@@ -77,10 +78,17 @@ function expandHome(p: string): string {
 
 function isConfigured(content: string, baseUrl: string): boolean {
   const normalized = baseUrl.replace(/\/+$/, "");
+  let runtimePort = "";
+  try {
+    runtimePort = new URL(normalized).port;
+  } catch {
+    // Invalid explicit base URL is handled by the normal literal checks below.
+  }
   return (
     content.includes(normalized) ||
     content.includes("localhost:20128") ||
-    content.includes("AGENTPROXY_BASE_URL")
+    (!!runtimePort && content.includes(`localhost:${runtimePort}`)) ||
+    content.includes("OMNIROUTE_BASE_URL")
   );
 }
 
@@ -170,7 +178,8 @@ export async function detectTool(id: string): Promise<DetectedTool | null> {
       : getCliPrimaryConfigPath(tool.id) ||
         (tool.id === "opencode" ? resolveOpencodeConfigPath() : "");
   const configContents = await readConfigFile(configPath);
-  const configured = !!configContents && isConfigured(configContents, "http://localhost:20128");
+  const runtimeBaseUrl = resolveOmniRouteBaseUrl();
+  const configured = !!configContents && isConfigured(configContents, runtimeBaseUrl);
 
   const result: DetectedTool = {
     id: canonicalId,
@@ -188,16 +197,24 @@ export async function detectTool(id: string): Promise<DetectedTool | null> {
       const roles = await getCurrentHermesAgentRoles();
       const richRoles: Record<string, any> = {};
 
+      let runtimePort = "";
+      try {
+        runtimePort = new URL(runtimeBaseUrl).port;
+      } catch {
+        // Keep compatibility checks below when the configured base URL is malformed.
+      }
+
       Object.entries(roles).forEach(([role, info]) => {
+        const roleBaseUrl = info?.base_url || "";
         const usingOmni =
-          info?.provider === "agentproxy" ||
-          (info?.base_url || "").includes("20128") ||
-          (info?.base_url || "").includes("localhost:20128");
+          info?.provider === "omniroute" ||
+          roleBaseUrl.includes("20128") ||
+          (!!runtimePort && roleBaseUrl.includes(`localhost:${runtimePort}`));
 
         richRoles[role] = {
           model: info.model,
           provider: info.provider,
-          usingAgentProxy: usingOmni,
+          usingOmniRoute: usingOmni,
         };
       });
 

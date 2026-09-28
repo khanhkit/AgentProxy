@@ -202,6 +202,17 @@ jobs:
       - run: npm run check:test-discovery
       - run: npm run check:radar-sentinels
       - run: npm run check:tracked-artifacts
+      - run: npm run check:vitest-exclusions
+      - name: AI attribution in commit / PR metadata
+        if: github.event_name == 'pull_request'
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          printf '%s' "$PR_BODY" > "$RUNNER_TEMP/pr-body.md"
+          npm run check:ai-attribution -- --range "$PR_BASE_SHA..$PR_HEAD_SHA" --pr-title "$PR_TITLE" --pr-body-file "$RUNNER_TEMP/pr-body.md"
       # (gap 30) Also lives in quality.yml's PR-only "Merge integrity" job — because the
       # CHANGELOG half of that job needs a base to diff against. This half does NOT: the
       # generator either reproduces the committed SKILL.md files or it does not.
@@ -498,6 +509,8 @@ jobs:
       # (floor ~36), openapi-security-tiers is advisory (Hard Rules #15/#17).
       - name: CLI i18n consistency
         run: npm run check:cli-i18n
+      - name: CLI i18n key completeness
+        run: npm run i18n:check-keys:cli
       - name: OpenAPI route coverage (ratchet)
         run: npm run check:openapi-coverage
       - name: OpenAPI security-tier consistency (advisory)
@@ -563,9 +576,9 @@ jobs:
       - run: node scripts/i18n/check-ui-keys-coverage.mjs --threshold=65
       # Real-translation ratchet: a leaf copied verbatim from en.json passes key
       # parity above but is still English to the user (es shipped 55% English).
-      # Advisory in PR-0; flipped to blocking once the backlog is retranslated (PR-4).
-      - name: i18n real-translation ratio (advisory)
-        run: node scripts/i18n/check-translation-ratio.mjs --warn
+      # Blocking ratchet: translated share may improve but must not regress past the baseline.
+      - name: i18n real-translation ratio
+        run: node scripts/i18n/check-translation-ratio.mjs
       # #8463: a rewritten English value used to leave its 39 translations behind
       # silently (googleOAuthWarning shipped wrong copy in 39 locales for months).
       # Key parity above cannot see it — a stale translation counts as covered.
@@ -573,6 +586,12 @@ jobs:
         env:
           BASE_REF: ${{ github.base_ref && format('origin/{0}', github.base_ref) || '' }}
         run: node scripts/i18n/check-ui-value-drift.mjs
+      - name: i18n new-key coverage (a new key must reach every locale)
+        env:
+          BASE_REF: ${{ github.base_ref && format('origin/{0}', github.base_ref) || '' }}
+        run: node scripts/i18n/check-new-key-coverage.mjs
+      - name: i18n key completeness (every locale carries every en.json key)
+        run: node scripts/i18n/check-key-completeness.mjs
 
   # #8038: cheap glossary/protected-terms consistency gate —
   # complements i18n-ui-coverage (key parity) and the ICU `i18n` job below
@@ -1189,7 +1208,7 @@ jobs:
         # stalled upload can neither eat the job's budget nor turn a green job cancelled.
         timeout-minutes: 5
         continue-on-error: true
-        uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7.0.0
+        uses: codecov/codecov-action@0b35c9ecc4f0529d0eb674914510c22f85b196b4 # v7.1.0
         with:
           files: coverage/lcov.info
           token: ${{ secrets.CODECOV_TOKEN }}

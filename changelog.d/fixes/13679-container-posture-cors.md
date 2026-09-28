@@ -1,0 +1,1 @@
+- **fix(security):** harden published container deployments toward API-key-required operation and keep free-tier summary data from exposing operator usage to unauthenticated callers.

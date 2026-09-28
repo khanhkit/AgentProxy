@@ -1,0 +1,1 @@
+- **fix(api):** completed-batch cleanup now preserves API-key policy and tenant scope while using bounded, forward-progressing cleanup units instead of an unbounded instance-wide write lock.

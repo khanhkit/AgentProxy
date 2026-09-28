@@ -1,0 +1,1 @@
+- **fix(proxies):** proxy-pool validation preserves explicitly inactive or dead members and only updates statuses that are eligible for validation refresh.

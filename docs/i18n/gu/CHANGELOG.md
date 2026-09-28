@@ -17,7 +17,6 @@ Initial **AgentProxy** release, published as an independent repository seeded fr
 - Preserved OmniRoute history below for attribution and migration reference; AgentProxy versioning starts at `0.1.0`.
 
 
-
 ## [3.8.51] — TBD
 
 _Living section — cycle opened at the v3.8.50 freeze (parallel-cycle model). Bullets are aggregated from `changelog.d/` fragments at each `/generate-release` phase._
