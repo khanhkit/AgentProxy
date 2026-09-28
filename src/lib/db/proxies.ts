@@ -45,12 +45,14 @@ import {
   clearRotationState,
   resetRotationCursor,
   normalizeRotationStrategy,
+  getScopePoolEgressRows,
   getScopeProxyPool,
   getScopeRotationStrategy,
   resolveProxyForConnectionFromRegistry,
   resolveProxyForScopeFromRegistry,
 } from "./proxies/rotation";
 export {
+  getScopePoolEgressRows,
   getScopeProxyPool,
   getScopeRotationStrategy,
   resolveProxyForConnectionFromRegistry,

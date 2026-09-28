@@ -38,6 +38,13 @@ type PoolFailureBreakdown = {
   byFamily: PoolFailureFamily[];
   unattributed: number;
 };
+type PoolVisibilityMember = {
+  id: string | null;
+  rank: number;
+  signal: "set-aside" | "position";
+  setAside: { kind: string; since: string; endsAt: string; streak: number } | null;
+};
+type PoolVisibility = { rankedBy: "health" | "position"; members: PoolVisibilityMember[] };
 
 function isPoolFailureBreakdown(value: unknown): value is PoolFailureBreakdown {
   if (!value || typeof value !== "object") return false;
@@ -95,6 +102,7 @@ function isPoolFailureBreakdown(value: unknown): value is PoolFailureBreakdown {
   const [poolLoaded, setPoolLoaded] = useState(false);
   const [poolSaving, setPoolSaving] = useState(false);
   const [poolFailures, setPoolFailures] = useState<PoolFailureBreakdown | null>(null);
+  const [poolVisibility, setPoolVisibility] = useState<PoolVisibility | null>(null);
   const [bulkImportOpen, setBulkImportOpen] = useState(false);
   const [bulkImportText, setBulkImportText] = useState("");
   const [bulkImportParsed, setBulkImportParsed] = useState<ParsedProxyEntry[]>([]);
@@ -475,6 +483,7 @@ function isPoolFailureBreakdown(value: unknown): value is PoolFailureBreakdown {
       setPoolStrategy(isPoolStrategy(payload?.strategy) ? payload.strategy : "round-robin");
       setPoolLoaded(true);
       setPoolFailures(null);
+      setPoolVisibility(null);
       try {
         const observationRes = await fetch(`/api/settings/proxies/egress?${poolQuery()}`);
         const observationPayload = await observationRes.json().catch(() => ({}));
@@ -486,6 +495,18 @@ function isPoolFailureBreakdown(value: unknown): value is PoolFailureBreakdown {
       } catch {
         // Read-only diagnostics are best-effort and must never break pool editing.
         setPoolFailures(null);
+      }
+      try {
+        const visibilityRes = await fetch(`/api/admin/proxy-pool-visibility?${poolQuery()}`);
+        const visibilityPayload = await visibilityRes.json().catch(() => ({}));
+        setPoolVisibility(
+          visibilityRes.ok && Array.isArray(visibilityPayload?.members)
+            ? (visibilityPayload as PoolVisibility)
+            : null
+        );
+      } catch {
+        // Process-memory visibility is diagnostic only; editing remains available.
+        setPoolVisibility(null);
       }
     } catch (e: any) {
       setError(e?.message || t("poolLoadFailed"));
@@ -1308,6 +1329,7 @@ function isPoolFailureBreakdown(value: unknown): value is PoolFailureBreakdown {
                   <div className="flex flex-col gap-1" data-testid="proxy-registry-pool-members">
                     {poolMembers.map((proxyId) => {
                       const proxy = items.find((it) => it.id === proxyId);
+                      const visibility = poolVisibility?.members.find((member) => member.id === proxyId);
                       return (
                         <div
                           key={proxyId}
@@ -1317,6 +1339,20 @@ function isPoolFailureBreakdown(value: unknown): value is PoolFailureBreakdown {
                             {proxy
                               ? `${proxy.name} (${proxy.type}://${proxy.host}:${proxy.port})`
                               : proxyId}
+                            {visibility && (
+                              <span
+                                className="ml-2 text-xs text-text-muted"
+                                data-testid={`proxy-registry-pool-visibility-${proxyId}`}
+                                title={
+                                  visibility.setAside
+                                    ? `${visibility.setAside.kind}; until ${visibility.setAside.endsAt}; streak ${visibility.setAside.streak}`
+                                    : `ranked by ${poolVisibility?.rankedBy ?? "position"}`
+                                }
+                              >
+                                #{visibility.rank}
+                                {visibility.setAside ? ` · ${visibility.setAside.kind}` : ""}
+                              </span>
+                            )}
                           </span>
                           <Button
                             size="sm"
