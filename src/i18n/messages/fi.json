@@ -10967,7 +10967,9 @@
     "poolAddMember": "Lisää",
     "poolAddFailed": "Proxyn lisääminen pooliin epäonnistui",
     "poolSelectProxy": "Valitse proxy…",
-    "poolSaveFailed": "Poolimäärityksen tallentaminen epäonnistui"
+    "poolSaveFailed": "Poolimäärityksen tallentaminen epäonnistui",
+    "poolEgressFailuresByExit": "Virheet kautta {exit}: {count}",
+    "poolEgressFailuresUnattributed": "Virheet ilman kohdistettua ulostuloa: {count}"
   },
   "playground": {
     "title": "Title",

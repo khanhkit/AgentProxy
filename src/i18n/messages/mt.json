@@ -10949,7 +10949,9 @@
     "poolAddMember": "Żid",
     "poolAddFailed": "Ma rnexxiex iżżid il-proxy mal-pool",
     "poolSelectProxy": "Agħżel proxy…",
-    "poolSaveFailed": "Ma rnexxiex tissejvja l-assenjazzjoni tal-pool"
+    "poolSaveFailed": "Ma rnexxiex tissejvja l-assenjazzjoni tal-pool",
+    "poolEgressFailuresByExit": "Fallimenti permezz ta' {exit}: {count}",
+    "poolEgressFailuresUnattributed": "Fallimenti mingħajr ħruġ attribwit: {count}"
   },
   "playground": {
     "title": "Żona tal-Ittestjar tal-Mudelli",

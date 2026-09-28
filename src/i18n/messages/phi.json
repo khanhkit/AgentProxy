@@ -10967,7 +10967,9 @@
     "poolAddMember": "Idagdag",
     "poolAddFailed": "Hindi naidagdag ang proxy sa pool",
     "poolSelectProxy": "Pumili ng proxy…",
-    "poolSaveFailed": "Hindi na-save ang pool assignment"
+    "poolSaveFailed": "Hindi na-save ang pool assignment",
+    "poolEgressFailuresByExit": "Mga pagkabigo sa pamamagitan ng {exit}: {count}",
+    "poolEgressFailuresUnattributed": "Mga pagkabigong walang natukoy na exit: {count}"
   },
   "playground": {
     "title": "Title",

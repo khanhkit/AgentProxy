@@ -10967,7 +10967,9 @@
     "poolAddMember": "Dodaj",
     "poolAddFailed": "Nie udało się dodać proxy do puli",
     "poolSelectProxy": "Wybierz proxy…",
-    "poolSaveFailed": "Nie udało się zapisać przypisania puli"
+    "poolSaveFailed": "Nie udało się zapisać przypisania puli",
+    "poolEgressFailuresByExit": "Błędy przez {exit}: {count}",
+    "poolEgressFailuresUnattributed": "Błędy bez przypisanego wyjścia: {count}"
   },
   "playground": {
     "title": "Model Playground",

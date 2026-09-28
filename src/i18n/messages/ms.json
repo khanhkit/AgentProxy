@@ -10967,7 +10967,9 @@
     "poolAddMember": "Tambah",
     "poolAddFailed": "Gagal menambah proksi ke dalam kolam",
     "poolSelectProxy": "Pilih proksi…",
-    "poolSaveFailed": "Gagal menyimpan tugasan kolam"
+    "poolSaveFailed": "Gagal menyimpan tugasan kolam",
+    "poolEgressFailuresByExit": "Kegagalan melalui {exit}: {count}",
+    "poolEgressFailuresUnattributed": "Kegagalan tanpa laluan keluar yang dikaitkan: {count}"
   },
   "playground": {
     "title": "Title",

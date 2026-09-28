@@ -10967,7 +10967,9 @@
     "poolAddMember": "Legg til",
     "poolAddFailed": "Kunne ikke legge proxyen til i poolen",
     "poolSelectProxy": "Velg en proxy…",
-    "poolSaveFailed": "Kunne ikke lagre pool-tildeling"
+    "poolSaveFailed": "Kunne ikke lagre pool-tildeling",
+    "poolEgressFailuresByExit": "Feil via {exit}: {count}",
+    "poolEgressFailuresUnattributed": "Feil uten tilordnet utgang: {count}"
   },
   "playground": {
     "title": "Title",

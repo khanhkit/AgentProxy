@@ -10967,7 +10967,9 @@
     "poolAddMember": "Ongeza",
     "poolAddFailed": "Imeshindwa kuongeza proksi kwenye dimbwi",
     "poolSelectProxy": "Chagua proksi…",
-    "poolSaveFailed": "Imeshindwa kuhifadhi ugawaji wa dimbwi"
+    "poolSaveFailed": "Imeshindwa kuhifadhi ugawaji wa dimbwi",
+    "poolEgressFailuresByExit": "Hitilafu kupitia {exit}: {count}",
+    "poolEgressFailuresUnattributed": "Hitilafu bila njia ya kutoka iliyohusishwa: {count}"
   },
   "playground": {
     "title": "Model Playground",

@@ -10967,7 +10967,9 @@
     "poolAddMember": "הוסף",
     "poolAddFailed": "הוספת הפרוקסי למאגר נכשלה",
     "poolSelectProxy": "בחר פרוקסי…",
-    "poolSaveFailed": "שמירת הקצאת המאגר נכשלה"
+    "poolSaveFailed": "שמירת הקצאת המאגר נכשלה",
+    "poolEgressFailuresByExit": "כשלים דרך {exit}: {count}",
+    "poolEgressFailuresUnattributed": "כשלים ללא יציאה משויכת: {count}"
   },
   "playground": {
     "title": "Title",

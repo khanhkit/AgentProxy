@@ -10949,7 +10949,9 @@
     "poolAddMember": "Προσθήκη",
     "poolAddFailed": "Αποτυχία προσθήκης του διαμεσολαβητή στη δεξαμενή",
     "poolSelectProxy": "Επιλογή διαμεσολαβητή…",
-    "poolSaveFailed": "Αποτυχία αποθήκευσης ανάθεσης δεξαμενής"
+    "poolSaveFailed": "Αποτυχία αποθήκευσης ανάθεσης δεξαμενής",
+    "poolEgressFailuresByExit": "Αποτυχίες μέσω {exit}: {count}",
+    "poolEgressFailuresUnattributed": "Αποτυχίες χωρίς αποδοθείσα έξοδο: {count}"
   },
   "playground": {
     "title": "Παιδική χαρά μοντέλων",

@@ -10967,7 +10967,9 @@
     "poolAddMember": "شامل کریں",
     "poolAddFailed": "پول میں پروکسی شامل کرنے میں ناکامی",
     "poolSelectProxy": "ایک پروکسی منتخب کریں…",
-    "poolSaveFailed": "پول اسائنمنٹ کو محفوظ کرنے میں ناکامی"
+    "poolSaveFailed": "پول اسائنمنٹ کو محفوظ کرنے میں ناکامی",
+    "poolEgressFailuresByExit": "{exit} کے ذریعے ناکامیاں: {count}",
+    "poolEgressFailuresUnattributed": "بغیر متعین ایگزٹ کے ناکامیاں: {count}"
   },
   "playground": {
     "title": "Model Playground",

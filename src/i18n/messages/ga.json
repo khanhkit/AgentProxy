@@ -10949,7 +10949,9 @@
     "poolAddMember": "Cuir",
     "poolAddFailed": "Theip ar an procsí a chur leis an linn",
     "poolSelectProxy": "Roghnaigh procsí…",
-    "poolSaveFailed": "Theip ar shocrú na linne a shábháil"
+    "poolSaveFailed": "Theip ar shocrú na linne a shábháil",
+    "poolEgressFailuresByExit": "Teipeanna trí {exit}: {count}",
+    "poolEgressFailuresUnattributed": "Teipeanna gan slí amach sannta: {count}"
   },
   "playground": {
     "title": "Súgartha Múnla",

@@ -10967,7 +10967,9 @@
     "poolAddMember": "追加",
     "poolAddFailed": "プールへのプロキシの追加に失敗しました",
     "poolSelectProxy": "プロキシを選択…",
-    "poolSaveFailed": "プールの割り当ての保存に失敗しました"
+    "poolSaveFailed": "プールの割り当ての保存に失敗しました",
+    "poolEgressFailuresByExit": "{exit} 経由の失敗: {count}",
+    "poolEgressFailuresUnattributed": "出口を特定できない失敗: {count}"
   },
   "playground": {
     "title": "Title",

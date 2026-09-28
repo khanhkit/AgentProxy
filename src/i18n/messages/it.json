@@ -10967,7 +10967,9 @@
     "poolAddMember": "Aggiungi",
     "poolAddFailed": "Impossibile aggiungere il proxy al pool",
     "poolSelectProxy": "Seleziona un proxy…",
-    "poolSaveFailed": "Impossibile salvare l'assegnazione del pool"
+    "poolSaveFailed": "Impossibile salvare l'assegnazione del pool",
+    "poolEgressFailuresByExit": "Errori tramite {exit}: {count}",
+    "poolEgressFailuresUnattributed": "Errori senza uscita attribuita: {count}"
   },
   "playground": {
     "title": "Title",

@@ -10967,7 +10967,9 @@
     "poolAddMember": "Добавить",
     "poolAddFailed": "Не удалось добавить прокси в пул",
     "poolSelectProxy": "Выберите прокси…",
-    "poolSaveFailed": "Не удалось сохранить назначение пула"
+    "poolSaveFailed": "Не удалось сохранить назначение пула",
+    "poolEgressFailuresByExit": "Сбои через {exit}: {count}",
+    "poolEgressFailuresUnattributed": "Сбои без определённого выхода: {count}"
   },
   "playground": {
     "title": "Title",

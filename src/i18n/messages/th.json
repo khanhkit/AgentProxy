@@ -10967,7 +10967,9 @@
     "poolAddMember": "เพิ่ม",
     "poolAddFailed": "เพิ่มพร็อกซีลงในพูลไม่สำเร็จ",
     "poolSelectProxy": "เลือกพร็อกซี…",
-    "poolSaveFailed": "บันทึกการกำหนดพูลไม่สำเร็จ"
+    "poolSaveFailed": "บันทึกการกำหนดพูลไม่สำเร็จ",
+    "poolEgressFailuresByExit": "ความล้มเหลวผ่าน {exit}: {count}",
+    "poolEgressFailuresUnattributed": "ความล้มเหลวที่ไม่ระบุทางออก: {count}"
   },
   "playground": {
     "title": "Title",

@@ -30,6 +30,25 @@ import {
   repairRelayResponseSchema,
 } from "./proxyRegistryData";
 
+
+type PoolFailureFamily = { family: string; count: number };
+type PoolFailureExit = { exit: string; failures: number; byFamily: PoolFailureFamily[] };
+type PoolFailureBreakdown = {
+  byExit: PoolFailureExit[];
+  byFamily: PoolFailureFamily[];
+  unattributed: number;
+};
+
+function isPoolFailureBreakdown(value: unknown): value is PoolFailureBreakdown {
+  if (!value || typeof value !== "object") return false;
+  const record = value as Record<string, unknown>;
+  return (
+    Array.isArray(record.byExit) &&
+    Array.isArray(record.byFamily) &&
+    typeof record.unattributed === "number"
+  );
+}
+
  export default function ProxyRegistryManager({
   onRedeployRelay,
   showVercelRelay = false,
@@ -75,6 +94,7 @@ import {
   const [poolLoading, setPoolLoading] = useState(false);
   const [poolLoaded, setPoolLoaded] = useState(false);
   const [poolSaving, setPoolSaving] = useState(false);
+  const [poolFailures, setPoolFailures] = useState<PoolFailureBreakdown | null>(null);
   const [bulkImportOpen, setBulkImportOpen] = useState(false);
   const [bulkImportText, setBulkImportText] = useState("");
   const [bulkImportParsed, setBulkImportParsed] = useState<ParsedProxyEntry[]>([]);
@@ -454,6 +474,19 @@ import {
       setPoolMembers(members.map((m) => m.proxyId));
       setPoolStrategy(isPoolStrategy(payload?.strategy) ? payload.strategy : "round-robin");
       setPoolLoaded(true);
+      setPoolFailures(null);
+      try {
+        const observationRes = await fetch(`/api/settings/proxies/egress?${poolQuery()}`);
+        const observationPayload = await observationRes.json().catch(() => ({}));
+        setPoolFailures(
+          observationRes.ok && isPoolFailureBreakdown(observationPayload?.poolFailures)
+            ? observationPayload.poolFailures
+            : null
+        );
+      } catch {
+        // Read-only diagnostics are best-effort and must never break pool editing.
+        setPoolFailures(null);
+      }
     } catch (e: any) {
       setError(e?.message || t("poolLoadFailed"));
     } finally {
@@ -547,6 +580,7 @@ import {
     setPoolLoaded(false);
     setPoolAddProxyId("");
     setPoolStrategy("round-robin");
+    setPoolFailures(null);
     setPoolOpen(true);
   };
 
@@ -1233,6 +1267,34 @@ import {
                 </select>
                 <p className="text-xs text-text-muted mt-1">{t("poolStrategyHint")}</p>
               </div>
+
+              {poolFailures && (poolFailures.byExit.length > 0 || poolFailures.unattributed > 0) && (
+                <div
+                  className="rounded border border-border bg-bg-subtle px-3 py-2"
+                  data-testid="proxy-registry-pool-failure-breakdown"
+                >
+                  <p className="text-xs font-medium mb-1">
+                    Failed requests by exit (24 h)
+                  </p>
+                  <div className="text-xs text-text-muted space-y-1">
+                    {poolFailures.byExit.map((entry) => (
+                      <p key={entry.exit}>
+                        {typeof t.has === "function" && t.has("poolEgressFailuresByExit")
+                          ? t("poolEgressFailuresByExit", { exit: entry.exit, count: entry.failures })
+                          : `${entry.failures} failed requests via ${entry.exit}`}
+                        {entry.byFamily.map((item) => ` · ${item.family}: ${item.count}`).join("")}
+                      </p>
+                    ))}
+                    {poolFailures.unattributed > 0 && (
+                      <p>
+                        {typeof t.has === "function" && t.has("poolEgressFailuresUnattributed")
+                          ? t("poolEgressFailuresUnattributed", { count: poolFailures.unattributed })
+                          : `${poolFailures.unattributed} failed requests could not be attributed to an exit`}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              )}
 
               <div>
                 <label className="text-xs text-text-muted mb-1 block">

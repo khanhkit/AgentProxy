@@ -10949,7 +10949,9 @@
     "poolAddMember": "Dodaj",
     "poolAddFailed": "Dodavanje proxyja u skup nije uspjelo",
     "poolSelectProxy": "Odaberi proxy…",
-    "poolSaveFailed": "Spremanje dodjele skupa nije uspjelo"
+    "poolSaveFailed": "Spremanje dodjele skupa nije uspjelo",
+    "poolEgressFailuresByExit": "Neuspjesi preko {exit}: {count}",
+    "poolEgressFailuresUnattributed": "Neuspjesi bez pripisanog izlaza: {count}"
   },
   "playground": {
     "title": "Model Playground",

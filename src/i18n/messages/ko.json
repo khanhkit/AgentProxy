@@ -10967,7 +10967,9 @@
     "poolAddMember": "추가",
     "poolAddFailed": "풀에 프록시를 추가하지 못했습니다",
     "poolSelectProxy": "프록시 선택…",
-    "poolSaveFailed": "풀 할당을 저장하지 못했습니다"
+    "poolSaveFailed": "풀 할당을 저장하지 못했습니다",
+    "poolEgressFailuresByExit": "{exit}을(를) 통한 실패: {count}",
+    "poolEgressFailuresUnattributed": "출구가 지정되지 않은 실패: {count}"
   },
   "playground": {
     "title": "모델 플레이그라운드",

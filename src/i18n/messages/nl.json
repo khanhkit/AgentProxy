@@ -10967,7 +10967,9 @@
     "poolAddMember": "Toevoegen",
     "poolAddFailed": "Kan de proxy niet aan de pool toevoegen",
     "poolSelectProxy": "Selecteer een proxy…",
-    "poolSaveFailed": "Kan pooltoewijzing niet opslaan"
+    "poolSaveFailed": "Kan pooltoewijzing niet opslaan",
+    "poolEgressFailuresByExit": "Fouten via {exit}: {count}",
+    "poolEgressFailuresUnattributed": "Fouten zonder toegewezen uitgang: {count}"
   },
   "playground": {
     "title": "Title",

@@ -10949,7 +10949,9 @@
     "poolAddMember": "Dodaj",
     "poolAddFailed": "Posredniškega strežnika ni bilo mogoče dodati v skupino",
     "poolSelectProxy": "Izberite posredniški strežnik…",
-    "poolSaveFailed": "Dodelitve skupini ni bilo mogoče shraniti"
+    "poolSaveFailed": "Dodelitve skupini ni bilo mogoče shraniti",
+    "poolEgressFailuresByExit": "Napake prek {exit}: {count}",
+    "poolEgressFailuresUnattributed": "Napake brez pripisanega izhoda: {count}"
   },
   "playground": {
     "title": "Preizkusno okolje za modele",

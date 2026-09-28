@@ -10967,7 +10967,9 @@
     "poolAddMember": "Pridať",
     "poolAddFailed": "Nepodarilo sa pridať proxy do poolu",
     "poolSelectProxy": "Vyberte proxy…",
-    "poolSaveFailed": "Nepodarilo sa uložiť priradenie poolu"
+    "poolSaveFailed": "Nepodarilo sa uložiť priradenie poolu",
+    "poolEgressFailuresByExit": "Zlyhania cez {exit}: {count}",
+    "poolEgressFailuresUnattributed": "Zlyhania bez priradeného výstupu: {count}"
   },
   "playground": {
     "title": "Title",

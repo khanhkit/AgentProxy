@@ -10967,7 +10967,9 @@
     "poolAddMember": "சேர்",
     "poolAddFailed": "தொகுப்பில் proxy-ஐச் சேர்ப்பது தோல்வியடைந்தது",
     "poolSelectProxy": "ஒரு proxy-ஐத் தேர்ந்தெடு…",
-    "poolSaveFailed": "தொகுப்பு ஒதுக்கீட்டைச் சேமிப்பது தோல்வியடைந்தது"
+    "poolSaveFailed": "தொகுப்பு ஒதுக்கீட்டைச் சேமிப்பது தோல்வியடைந்தது",
+    "poolEgressFailuresByExit": "{exit} வழியான தோல்விகள்: {count}",
+    "poolEgressFailuresUnattributed": "ஒதுக்கப்பட்ட வெளியேற்றம் இல்லாத தோல்விகள்: {count}"
   },
   "playground": {
     "title": "Model Playground",

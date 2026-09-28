@@ -10967,7 +10967,9 @@
     "poolAddMember": "जोड़ें",
     "poolAddFailed": "पूल में प्रॉक्सी जोड़ने में विफल",
     "poolSelectProxy": "एक प्रॉक्सी चुनें…",
-    "poolSaveFailed": "पूल असाइनमेंट सहेजने में विफल"
+    "poolSaveFailed": "पूल असाइनमेंट सहेजने में विफल",
+    "poolEgressFailuresByExit": "{exit} के माध्यम से विफलताएँ: {count}",
+    "poolEgressFailuresUnattributed": "बिना निर्धारित एग्ज़िट वाली विफलताएँ: {count}"
   },
   "playground": {
     "title": "Title",

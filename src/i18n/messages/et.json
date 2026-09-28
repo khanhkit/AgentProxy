@@ -10949,7 +10949,9 @@
     "poolAddMember": "Lisa",
     "poolAddFailed": "Puhverserveri lisamine kogumisse ebaõnnestus",
     "poolSelectProxy": "Vali puhverserver…",
-    "poolSaveFailed": "Kogumi määrangu salvestamine ebaõnnestus"
+    "poolSaveFailed": "Kogumi määrangu salvestamine ebaõnnestus",
+    "poolEgressFailuresByExit": "Tõrked väljundi {exit} kaudu: {count}",
+    "poolEgressFailuresUnattributed": "Tõrked ilma omistatud väljundita: {count}"
   },
   "playground": {
     "title": "Mudelite testkeskkond",

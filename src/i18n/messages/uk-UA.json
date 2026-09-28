@@ -10967,7 +10967,9 @@
     "poolAddMember": "Додати",
     "poolAddFailed": "Не вдалося додати проксі до пулу",
     "poolSelectProxy": "Виберіть проксі…",
-    "poolSaveFailed": "Не вдалося зберегти призначення пулу"
+    "poolSaveFailed": "Не вдалося зберегти призначення пулу",
+    "poolEgressFailuresByExit": "Збої через {exit}: {count}",
+    "poolEgressFailuresUnattributed": "Збої без визначеного виходу: {count}"
   },
   "playground": {
     "title": "Title",

@@ -10967,7 +10967,9 @@
     "poolAddMember": "Přidat",
     "poolAddFailed": "Nepodařilo se přidat proxy do poolu",
     "poolSelectProxy": "Vybrat proxy…",
-    "poolSaveFailed": "Nepodařilo se uložit přiřazení poolu"
+    "poolSaveFailed": "Nepodařilo se uložit přiřazení poolu",
+    "poolEgressFailuresByExit": "Selhání přes {exit}: {count}",
+    "poolEgressFailuresUnattributed": "Selhání bez přiřazeného výstupu: {count}"
   },
   "playground": {
     "title": "Title",

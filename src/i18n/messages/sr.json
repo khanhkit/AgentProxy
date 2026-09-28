@@ -10949,7 +10949,9 @@
     "poolAddMember": "Додај",
     "poolAddFailed": "Није успело додавање proxy-ја у пул",
     "poolSelectProxy": "Изаберите proxy…",
-    "poolSaveFailed": "Није успело чување додела пула"
+    "poolSaveFailed": "Није успело чување додела пула",
+    "poolEgressFailuresByExit": "Неуспеси преко {exit}: {count}",
+    "poolEgressFailuresUnattributed": "Неуспеси без приписаног излаза: {count}"
   },
   "playground": {
     "title": "Playground за модел",

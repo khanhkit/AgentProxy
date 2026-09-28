@@ -10949,7 +10949,9 @@
     "poolAddMember": "Pievienot",
     "poolAddFailed": "Neizdevās pievienot proksi kopumam",
     "poolSelectProxy": "Izvēlieties proksi…",
-    "poolSaveFailed": "Neizdevās saglabāt kopuma piešķīrumu"
+    "poolSaveFailed": "Neizdevās saglabāt kopuma piešķīrumu",
+    "poolEgressFailuresByExit": "Kļūmes caur {exit}: {count}",
+    "poolEgressFailuresUnattributed": "Kļūmes bez piesaistītas izejas: {count}"
   },
   "playground": {
     "title": "Modeļu izmēģinājumu vieta",

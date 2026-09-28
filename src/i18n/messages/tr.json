@@ -10967,7 +10967,9 @@
     "poolAddMember": "Ekle",
     "poolAddFailed": "Proxy havuza eklenemedi",
     "poolSelectProxy": "Bir proxy seçin…",
-    "poolSaveFailed": "Havuz ataması kaydedilemedi"
+    "poolSaveFailed": "Havuz ataması kaydedilemedi",
+    "poolEgressFailuresByExit": "{exit} üzerinden hatalar: {count}",
+    "poolEgressFailuresUnattributed": "Atanmış çıkışı olmayan hatalar: {count}"
   },
   "playground": {
     "title": "Title",

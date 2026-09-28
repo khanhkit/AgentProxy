@@ -10967,7 +10967,9 @@
     "poolAddMember": "যোগ করুন",
     "poolAddFailed": "পুলে প্রক্সি যোগ করতে ব্যর্থ হয়েছে",
     "poolSelectProxy": "একটি প্রক্সি নির্বাচন করুন…",
-    "poolSaveFailed": "পুল অ্যাসাইনমেন্ট সংরক্ষণ করতে ব্যর্থ হয়েছে"
+    "poolSaveFailed": "পুল অ্যাসাইনমেন্ট সংরক্ষণ করতে ব্যর্থ হয়েছে",
+    "poolEgressFailuresByExit": "{exit} এর মাধ্যমে ব্যর্থতা: {count}",
+    "poolEgressFailuresUnattributed": "নির্ধারিত এক্সিট ছাড়া ব্যর্থতা: {count}"
   },
   "playground": {
     "title": "Model Playground",

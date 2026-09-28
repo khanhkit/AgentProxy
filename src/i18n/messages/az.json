@@ -10967,7 +10967,9 @@
     "poolAddMember": "Əlavə et",
     "poolAddFailed": "Proksini hovuza əlavə etmək mümkün olmadı",
     "poolSelectProxy": "Proksi seçin…",
-    "poolSaveFailed": "Hovuz təyinatını yadda saxlamaq mümkün olmadı"
+    "poolSaveFailed": "Hovuz təyinatını yadda saxlamaq mümkün olmadı",
+    "poolEgressFailuresByExit": "{exit} üzərindən uğursuzluqlar: {count}",
+    "poolEgressFailuresUnattributed": "Çıxışı müəyyən edilməyən uğursuzluqlar: {count}"
   },
   "playground": {
     "title": "Model Playground",

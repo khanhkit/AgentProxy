@@ -10967,7 +10967,9 @@
     "poolAddMember": "Tilføj",
     "poolAddFailed": "Kunne ikke føje proxyen til poolen",
     "poolSelectProxy": "Vælg en proxy…",
-    "poolSaveFailed": "Kunne ikke gemme pool-tildeling"
+    "poolSaveFailed": "Kunne ikke gemme pool-tildeling",
+    "poolEgressFailuresByExit": "Fejl via {exit}: {count}",
+    "poolEgressFailuresUnattributed": "Fejl uden tilknyttet udgang: {count}"
   },
   "playground": {
     "title": "Title",

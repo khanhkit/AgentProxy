@@ -10967,7 +10967,9 @@
     "poolAddMember": "新增",
     "poolAddFailed": "將代理新增至池失敗",
     "poolSelectProxy": "選取代理…",
-    "poolSaveFailed": "儲存池指派失敗"
+    "poolSaveFailed": "儲存池指派失敗",
+    "poolEgressFailuresByExit": "經由 {exit} 的失敗：{count}",
+    "poolEgressFailuresUnattributed": "未歸屬出口的失敗：{count}"
   },
   "playground": {
     "title": "模型演練場",

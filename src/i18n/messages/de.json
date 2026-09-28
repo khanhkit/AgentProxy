@@ -10974,7 +10974,9 @@
     "poolAddMember": "Hinzufügen",
     "poolAddFailed": "Fehler beim Hinzufügen des Proxys zum Pool",
     "poolSelectProxy": "Proxy auswählen…",
-    "poolSaveFailed": "Fehler beim Speichern der Pool-Zuweisung"
+    "poolSaveFailed": "Fehler beim Speichern der Pool-Zuweisung",
+    "poolEgressFailuresByExit": "Fehler über {exit}: {count}",
+    "poolEgressFailuresUnattributed": "Fehler ohne zugeordneten Ausgang: {count}"
   },
   "playground": {
     "title": "Title",

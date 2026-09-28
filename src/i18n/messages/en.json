@@ -10977,7 +10977,9 @@
     "poolAddMember": "Add",
     "poolAddFailed": "Failed to add the proxy to the pool",
     "poolSelectProxy": "Select a proxy…",
-    "poolSaveFailed": "Failed to save pool assignment"
+    "poolSaveFailed": "Failed to save pool assignment",
+    "poolEgressFailuresByExit": "Failures via {exit}: {count}",
+    "poolEgressFailuresUnattributed": "Failures with no attributed exit: {count}"
   },
   "playground": {
     "title": "Model Playground",

@@ -10967,7 +10967,9 @@
     "poolAddMember": "Lägg till",
     "poolAddFailed": "Misslyckades med att lägga till proxyn i poolen",
     "poolSelectProxy": "Välj en proxy…",
-    "poolSaveFailed": "Misslyckades med att spara pooltilldelning"
+    "poolSaveFailed": "Misslyckades med att spara pooltilldelning",
+    "poolEgressFailuresByExit": "Fel via {exit}: {count}",
+    "poolEgressFailuresUnattributed": "Fel utan tillskriven utgång: {count}"
   },
   "playground": {
     "title": "Title",

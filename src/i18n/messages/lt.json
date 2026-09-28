@@ -10949,7 +10949,9 @@
     "poolAddMember": "Pridėti",
     "poolAddFailed": "Nepavyko pridėti tarpinio serverio prie telkinio",
     "poolSelectProxy": "Pasirinkite tarpinį serverį…",
-    "poolSaveFailed": "Nepavyko išsaugoti priskyrimo telkiniui"
+    "poolSaveFailed": "Nepavyko išsaugoti priskyrimo telkiniui",
+    "poolEgressFailuresByExit": "Nesėkmės per {exit}: {count}",
+    "poolEgressFailuresUnattributed": "Nesėkmės be priskirto išėjimo: {count}"
   },
   "playground": {
     "title": "Modelių bandymų aplinka",

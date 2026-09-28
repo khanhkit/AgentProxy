@@ -10967,7 +10967,9 @@
     "poolAddMember": "Adaugă",
     "poolAddFailed": "Nu s-a putut adăuga proxy-ul în pool",
     "poolSelectProxy": "Selectează un proxy…",
-    "poolSaveFailed": "Nu s-a putut salva atribuirea pool-ului"
+    "poolSaveFailed": "Nu s-a putut salva atribuirea pool-ului",
+    "poolEgressFailuresByExit": "Eșecuri prin {exit}: {count}",
+    "poolEgressFailuresUnattributed": "Eșecuri fără ieșire atribuită: {count}"
   },
   "playground": {
     "title": "Title",

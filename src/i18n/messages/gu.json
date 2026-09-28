@@ -10967,7 +10967,9 @@
     "poolAddMember": "ઉમેરો",
     "poolAddFailed": "પૂલમાં પ્રોક્સી ઉમેરવામાં નિષ્ફળ",
     "poolSelectProxy": "પ્રોક્સી પસંદ કરો…",
-    "poolSaveFailed": "પૂલ અસાઇનમેન્ટ સાચવવામાં નિષ્ફળ"
+    "poolSaveFailed": "પૂલ અસાઇનમેન્ટ સાચવવામાં નિષ્ફળ",
+    "poolEgressFailuresByExit": "{exit} દ્વારા નિષ્ફળતાઓ: {count}",
+    "poolEgressFailuresUnattributed": "નિર્ધારિત એક્ઝિટ વિનાની નિષ્ફળતાઓ: {count}"
   },
   "playground": {
     "title": "Model Playground",

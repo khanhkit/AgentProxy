@@ -10967,7 +10967,9 @@
     "poolAddMember": "افزودن",
     "poolAddFailed": "افزودن پروکسی به استخر ناموفق بود",
     "poolSelectProxy": "انتخاب یک پروکسی…",
-    "poolSaveFailed": "ذخیره تخصیص استخر ناموفق بود"
+    "poolSaveFailed": "ذخیره تخصیص استخر ناموفق بود",
+    "poolEgressFailuresByExit": "خطاها از طریق {exit}: {count}",
+    "poolEgressFailuresUnattributed": "خطاهای بدون خروجی مشخص: {count}"
   },
   "playground": {
     "title": "Model Playground",

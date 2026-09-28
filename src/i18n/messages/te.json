@@ -10967,7 +10967,9 @@
     "poolAddMember": "జోడించు",
     "poolAddFailed": "పూల్‌కు ప్రాక్సీని జోడించడం విఫలమైంది",
     "poolSelectProxy": "ప్రాక్సీని ఎంచుకోండి…",
-    "poolSaveFailed": "పూల్ అసైన్‌మెంట్‌ను సేవ్ చేయడం విఫలమైంది"
+    "poolSaveFailed": "పూల్ అసైన్‌మెంట్‌ను సేవ్ చేయడం విఫలమైంది",
+    "poolEgressFailuresByExit": "{exit} ద్వారా వైఫల్యాలు: {count}",
+    "poolEgressFailuresUnattributed": "కేటాయించిన నిష్క్రమణ లేని వైఫల్యాలు: {count}"
   },
   "playground": {
     "title": "Model Playground",

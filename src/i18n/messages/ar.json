@@ -10967,7 +10967,9 @@
     "poolAddMember": "إضافة",
     "poolAddFailed": "فشل إضافة الوكيل إلى التجمع",
     "poolSelectProxy": "اختر وكيلاً…",
-    "poolSaveFailed": "فشل حفظ تعيين التجمع"
+    "poolSaveFailed": "فشل حفظ تعيين التجمع",
+    "poolEgressFailuresByExit": "الإخفاقات عبر {exit}: {count}",
+    "poolEgressFailuresUnattributed": "إخفاقات دون مخرج منسوب: {count}"
   },
   "playground": {
     "title": "العنوان",

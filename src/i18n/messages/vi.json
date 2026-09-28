@@ -10978,7 +10978,9 @@
     "poolAddMember": "Thêm",
     "poolAddFailed": "Không thể thêm proxy vào nhóm",
     "poolSelectProxy": "Chọn một proxy…",
-    "poolSaveFailed": "Không thể lưu mục gán nhóm proxy"
+    "poolSaveFailed": "Không thể lưu mục gán nhóm proxy",
+    "poolEgressFailuresByExit": "Lỗi qua {exit}: {count}",
+    "poolEgressFailuresUnattributed": "Lỗi không xác định được lối ra: {count}"
   },
   "playground": {
     "title": "Khu thử nghiệm mô hình",
