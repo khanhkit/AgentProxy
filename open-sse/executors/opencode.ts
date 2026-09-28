@@ -44,8 +44,10 @@ import {
 } from "../utils/proxyRefusalMemory.ts";
 import {
   isNetworkRotationSharedEgressGuardEnabled,
+  isOpencodeRateLimited429EarlyStopEnabled,
   isProxySkipRecentlyFailedEnabled,
 } from "@/shared/utils/featureFlags";
+import { classifyUpstream429 } from "./opencodeRateLimited.ts";
 
 /**
  * Per-account proxy configuration, persisted by NoAuthAccountCard under
@@ -732,6 +734,16 @@ export class OpencodeExecutor extends BaseExecutor {
           const setAsideMs = skipRecentlyFailed
             ? noteProxyRefusal(proxyEgressKey(account.proxy), "ip_quota_429")
             : null;
+          if (
+            isOpencodeRateLimited429EarlyStopEnabled() &&
+            (await classifyUpstream429(result.response)) === "rate_limited"
+          ) {
+            log?.warn?.(
+              "OPENCODE",
+              `${cid}rate-limited 429 on account ${masked}, stopping the account wave`
+            );
+            return result;
+          }
           log?.warn?.(
             "OPENCODE",
             `${cid}Rate limited (429) on account ${masked} (proxy ${key ?? "direct"})` +

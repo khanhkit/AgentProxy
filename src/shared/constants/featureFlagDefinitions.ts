@@ -204,6 +204,18 @@ export const FEATURE_FLAG_DEFINITIONS: FeatureFlagDefinition[] = [
     warningLevel: "caution",
   },
   {
+    key: "OPENCODE_RATE_LIMITED_429_EARLY_STOP",
+    label: "OpenCode Rate-Limited 429 Early Stop",
+    description:
+      "For the OpenCode multi-account rotation, stop the account wave at the first 429 classified as a real rate limit (a parseable Retry-After header, or a body naming a rate/usage limit) and return that upstream 429 unchanged instead of trying every remaining account. Unclassified 429s keep rotating. Off by default.",
+    descriptionI18nKey: "featureFlagOpencodeRateLimited429EarlyStopDescription",
+    category: "network",
+    defaultValue: "false",
+    type: "boolean",
+    requiresRestart: false,
+    warningLevel: "caution",
+  },
+  {
     key: "MITM_DISABLE_TLS_VERIFY",
     label: "Disable TLS Verify (MITM)",
     description: "Disable TLS certificate verification for MITM proxy",

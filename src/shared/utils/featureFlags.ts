@@ -186,6 +186,19 @@ export function isProxySkipRecentlyFailedEnabled(): boolean {
   }
 }
 
+/** OpenCode classified-429 early stop (#13657); opt-in and fail-closed. */
+export function isOpencodeRateLimited429EarlyStopEnabled(): boolean {
+  try {
+    return isFeatureFlagEnabled("OPENCODE_RATE_LIMITED_429_EARLY_STOP");
+  } catch (error) {
+    console.error(
+      "[featureFlags] Failed to resolve OPENCODE_RATE_LIMITED_429_EARLY_STOP, defaulting to disabled:",
+      error instanceof Error ? error.message : error
+    );
+    return false;
+  }
+}
+
 export function isServerOwnedToolLoopEnabled(
   reader: (key: string) => boolean = isFeatureFlagEnabled
 ): boolean {
