@@ -1598,7 +1598,6 @@ export async function handleChatCore({
         }
       }
       // Phase 4A: unified output styles (supersedes cavemanOutputMode via the back-compat shim).
-      // The Auto-Clarity toggle is read from cavemanOutputMode.autoClarity.
       let outputStyleResult:
         import("../services/compression/outputStyles/apply.ts").OutputStylesResult | null = null;
       if (config.enabled && compressionHeader?.trim().toLowerCase() !== "off") {
@@ -1644,8 +1643,7 @@ export async function handleChatCore({
         }
       }
       const compressionInputBody = body as Record<string, unknown>;
-      // Adaptive context-budget (Sub-project C): model context window + request max_tokens drive
-      // the budget target. getTokenLimit is already imported; provider/effectiveModel resolved above.
+      // Adaptive context-budget: model context window + request max_tokens drive the target.
       const adaptiveModelContextLimit =
         provider && effectiveModel ? getTokenLimit(provider, effectiveModel) : null;
       const requestMaxTokens =

@@ -1111,14 +1111,12 @@ test("chatCore integration: caveman output mode injected when both compression a
     globalThis.fetch = originalFetch;
   }
 });
-
 async function styleInstructionReachesUpstream(
   autoClarity: boolean,
   outputStyles?: Array<{ id: string; level: "lite" | "full" | "ultra" }>
 ) {
-  const provider = "openai";
-  const model = "gpt-4";
-
+  const provider = "openai",
+    model = "gpt-4";
   await compressionDb.updateCompressionSettings({
     enabled: true,
     defaultMode: "off",
@@ -1130,18 +1128,14 @@ async function styleInstructionReachesUpstream(
       autoClarity,
     },
   });
-
   const connection = await providersDb.createProviderConnection({
     provider,
     apiKey: "test-key",
     isActive: true,
   });
-
   let capturedBody = null as { messages?: Array<{ role?: string; content?: string }> } | null;
   globalThis.fetch = async (_url: string | URL | Request, init?: RequestInit) => {
-    if (init?.body) {
-      capturedBody = JSON.parse(init.body as string);
-    }
+    if (init?.body) capturedBody = JSON.parse(init.body as string);
     return new Response(
       JSON.stringify({
         choices: [{ message: { role: "assistant", content: "ok" } }],
