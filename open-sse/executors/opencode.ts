@@ -19,6 +19,10 @@ import {
 import { forwardOpencodeClientHeaders } from "../utils/opencodeHeaders.ts";
 import { projectOpencodeSessionBody } from "../utils/opencodeSessionIdentity.ts";
 import {
+  currentOpencodeRequestContext,
+  runInOpencodeRequestContext,
+} from "./opencodeRequestContext.ts";
+import {
   type AccountProxyConfig,
   type RotatableAccount,
   pickAccount as pickRotatableAccount,
@@ -280,7 +284,18 @@ export class OpencodeExecutor extends BaseExecutor {
     return isPremiumOpencodeModel(model, provider);
   }
 
-  _requestFormat: string | null = null;
+  private _formatFallback: string | null = null;
+
+  /** Request-local during execute(); plain fallback for direct helper calls/tests. */
+  get _requestFormat(): string | null {
+    return currentOpencodeRequestContext()?.format ?? this._formatFallback;
+  }
+
+  set _requestFormat(value: string | null) {
+    const context = currentOpencodeRequestContext();
+    if (context) context.format = value;
+    else this._formatFallback = value;
+  }
 
   /**
    * Per-account rotation state, rebuilt from credentials on each request. The
@@ -477,6 +492,10 @@ export class OpencodeExecutor extends BaseExecutor {
   }
 
   async execute(input: ExecuteInput) {
+    return runInOpencodeRequestContext(() => this.executeInRequestContext(input));
+  }
+
+  private async executeInRequestContext(input: ExecuteInput) {
     this._requestFormat = resolveOpencodeTargetFormat(this.provider, input.model);
 
     // #8681: Gate premium opencode models behind a usable API key.
