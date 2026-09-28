@@ -1,0 +1,1 @@
+- **fix(auth):** fresh-install bootstrap and protected management flows now derive loopback trust from the real/stamped peer rather than client-controlled host metadata, closing remote bootstrap and related Obsidian/WebDAV exposure paths.

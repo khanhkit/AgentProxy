@@ -1,0 +1,1 @@
+- **fix(cli):** complete the existing localized CLI catalogs and enforce full key parity with the English catalog in CI.

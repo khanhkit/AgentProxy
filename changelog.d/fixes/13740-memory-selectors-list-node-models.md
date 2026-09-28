@@ -1,0 +1,1 @@
+- **fix(memory):** Memory → Engine Embedding and Rerank selectors now list provider-node models by their actual modality, including synced and custom rows.

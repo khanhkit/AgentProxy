@@ -204,6 +204,20 @@ test("apply mode writes SKILL.md for a CLI skill with correct structure", async 
   }
 });
 
+
+
+test("cli-models generator uses AgentProxy binary override without changing legacy CLI defaults", () => {
+  refreshCatalog();
+  const models = buildSkillMarkdown("cli-models", emptySources()).body;
+  assert.match(models, /npm install -g agentproxy/);
+  assert.match(models, /agentproxy --version/);
+  assert.doesNotMatch(models, /npm install -g omniroute/);
+
+  const serve = buildSkillMarkdown("cli-serve", emptySources()).body;
+  assert.match(serve, /npm install -g omniroute/);
+  assert.match(serve, /omniroute --version/);
+});
+
 test("apply mode writes SKILL.md for an API skill with correct sections", async () => {
   const tmpDir = mkTmpDir();
   try {

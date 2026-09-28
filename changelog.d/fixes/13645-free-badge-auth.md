@@ -1,0 +1,1 @@
+- **fix(dashboard):** add an opt-in strict Free-badge policy that requires documented provider free-tier support while preserving the existing badge behavior by default.

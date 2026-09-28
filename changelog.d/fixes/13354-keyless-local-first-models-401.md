@@ -1,0 +1,1 @@
+- **fix(auth):** restore the keyless local-first posture for `GET /v1/models` on pre-existing installs that have no configured credentials.

@@ -8,6 +8,11 @@ import os from "node:os";
 const { parseCliRegistry, getCommandsForFamily } =
   await import("../../src/lib/agentSkills/cliRegistryParser.ts");
 
+const REAL_MCP_SOURCE = fs.readFileSync(
+  path.resolve(process.cwd(), "bin", "cli", "commands", "mcp.mjs"),
+  "utf8"
+);
+
 // ─── Fixture helpers ──────────────────────────────────────────────────────────
 
 /**
@@ -35,6 +40,18 @@ function withFixtureCli(files: Record<string, string>): { cleanup: () => void } 
 }
 
 // ─── Fixture content ──────────────────────────────────────────────────────────
+
+test("current MCP command source exposes enable/disable to the cli-mcp generator family", () => {
+  const { cleanup } = withFixtureCli({ "mcp.mjs": REAL_MCP_SOURCE });
+  try {
+    const names = (getCommandsForFamily("cli-mcp") ?? []).map((name) => name);
+    assert.ok(names.includes("mcp enable"), `missing mcp enable: ${names.join(", ")}`);
+    assert.ok(names.includes("mcp disable"), `missing mcp disable: ${names.join(", ")}`);
+  } finally {
+    cleanup();
+  }
+});
+
 
 const FIXTURE_PROVIDERS_MJS = `
 export function registerProviders(program) {

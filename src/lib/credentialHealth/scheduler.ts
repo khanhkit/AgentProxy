@@ -10,7 +10,7 @@
  *
  * Schedule:
  *   - Initial delay: 30s after server boot (allows DB migrations to complete)
- *   - Interval: configurable via CREDENTIAL_HEALTH_CHECK_INTERVAL (default 5 min)
+ *   - Interval: configurable via CREDENTIAL_HEALTH_CHECK_INTERVAL (default 60 min)
  *   - Per-connection override: provider_connections.healthCheckInterval (minutes,
  *     0 = never test this connection) paces each connection individually
  *   - Backoff on failure: 5min -> 10min -> 30min -> max 2h

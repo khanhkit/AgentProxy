@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 
 import {
   APP_STAGING_ALLOWED_EXACT_PATHS,
@@ -335,6 +335,7 @@ test("findMissingArtifactPaths flags missing root runtime files in the tarball",
     "config/release/wreq-js-rust-notices.md",
     "dist/head-response-guard.cjs",
     "dist/http-method-guard.cjs",
+    "dist/httpClientAbortGuard.mjs",
     "dist/main-server-timeouts.mjs",
     "dist/open-sse/services/compression/engines/rtk/filters/generic-output.json",
     "dist/open-sse/services/compression/rules/en/filler.json",
@@ -354,4 +355,22 @@ test("findMissingArtifactPaths flags missing root runtime files in the tarball",
     "scripts/packs/optionalPackManifest.mjs",
     "src/shared/utils/nodeRuntimeSupport.ts",
   ]);
+});
+
+test("every explicitly shipped @omniroute workspace package is covered by an artifact prefix", () => {
+  const packageJson = JSON.parse(readFileSync("package.json", "utf8")) as { files: string[] };
+  const shippedWorkspaces = packageJson.files.filter((entry) => entry.startsWith("@omniroute/"));
+
+  assert.ok(
+    shippedWorkspaces.includes("@omniroute/opencode-plugin-v2/"),
+    "the root npm artifact must ship the OpenCode v2 plugin beside the v1 plugin"
+  );
+
+  for (const prefix of shippedWorkspaces) {
+    assert.ok(existsSync(`${prefix}package.json`), `${prefix} must name a real workspace package`);
+    assert.ok(
+      PACK_ARTIFACT_ALLOWED_PATH_PREFIXES.includes(prefix),
+      `${prefix} must be covered by the pack artifact path policy`
+    );
+  }
 });

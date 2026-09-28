@@ -1,5 +1,8 @@
 import { describe, it, before } from "node:test";
 import assert from "node:assert";
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
 import * as toolDetector from "../../../src/lib/cli-helper/tool-detector.ts";
 
 // The Hermes tool detector honors a HERMES_HOME env var (#3628) and only falls
@@ -57,6 +60,31 @@ describe("tool-detector", () => {
       assert.strictEqual(result!.version, "0.75.3");
       assert.ok(result!.configPath.includes(".hermes/config.yaml"));
       assert.strictEqual(typeof result!.configured, "boolean");
+    });
+
+    it("recognizes a Hermes config that uses the configured runtime port", async () => {
+      const home = fs.mkdtempSync(path.join(os.tmpdir(), "tool-detector-hermes-port-"));
+      const originalHermesHome = process.env.HERMES_HOME;
+      const originalPort = process.env.PORT;
+      const originalBaseUrl = process.env.OMNIROUTE_BASE_URL;
+      process.env.HERMES_HOME = home;
+      process.env.PORT = "37128";
+      delete process.env.OMNIROUTE_BASE_URL;
+      fs.writeFileSync(path.join(home, "config.yaml"), "base_url: http://localhost:37128/v1\n");
+
+      try {
+        const result = await toolDetector.detectTool("hermes");
+        assert.ok(result !== null);
+        assert.strictEqual(result!.configured, true);
+      } finally {
+        fs.rmSync(home, { recursive: true, force: true });
+        if (originalHermesHome === undefined) delete process.env.HERMES_HOME;
+        else process.env.HERMES_HOME = originalHermesHome;
+        if (originalPort === undefined) delete process.env.PORT;
+        else process.env.PORT = originalPort;
+        if (originalBaseUrl === undefined) delete process.env.OMNIROUTE_BASE_URL;
+        else process.env.OMNIROUTE_BASE_URL = originalBaseUrl;
+      }
     });
 
     // Regression test for #2833 — openclaw was missing from TOOLS array

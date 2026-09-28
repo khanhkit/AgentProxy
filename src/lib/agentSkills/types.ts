@@ -61,6 +61,7 @@ export interface AgentSkill {
   area: SkillArea;
   endpoints?: string[]; // e.g. ["POST /api/providers", "GET /api/providers/:id"] (api only)
   cliCommands?: string[]; // e.g. ["providers list", "providers test", "providers rotate"] (cli only)
+  cliBinary?: string; // generated CLI package/binary override; defaults to legacy "omniroute"
   icon?: string; // Material symbol name
   isEntry?: boolean; // "start here" tag
   isNew?: boolean; // "new" tag

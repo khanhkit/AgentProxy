@@ -1,4 +1,5 @@
 import type { NextRequest } from "next/server";
+import { resolveOmniRouteBaseUrl } from "@/shared/utils/resolveOmniRouteBaseUrl";
 
 /**
  * Derive the base URL for A2A agent card endpoints.
@@ -9,6 +10,6 @@ import type { NextRequest } from "next/server";
 export function getBaseUrl(request?: NextRequest | null): string {
   if (process.env.AGENTPROXY_BASE_URL) return process.env.AGENTPROXY_BASE_URL;
   // Direct route-handler invocation (unit tests, programmatic calls) passes no
-  // Request — fall back to the default local gateway origin instead of crashing.
-  return request?.nextUrl?.origin ?? "http://localhost:20128";
+  // Request — fall back to the configured local gateway origin instead of crashing.
+  return request?.nextUrl?.origin ?? resolveOmniRouteBaseUrl();
 }

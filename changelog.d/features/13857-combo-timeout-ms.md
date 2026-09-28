@@ -1,0 +1,1 @@
+- **feat(combos):** expose a configurable combo wall-clock timeout alongside target timeout; blank retains the built-in hang-stop and a positive value overrides it.

@@ -105,7 +105,7 @@ Intelligent circuit breaker with progressive degradation:
 - Configurable per profile (OAuth vs API key)
 
 ### 3.4 Fail-Fast Credential Health Check (NEW)
-Background scheduler that validates credentials every 5 minutes:
+Background scheduler that validates credentials every 60 minutes by default:
 - Cache elimination: stale credentials skipped in <1ms
 - Configurable via CREDENTIAL_HEALTH_CHECK_INTERVAL env var
 - Disable via AGENTPROXY_DISABLE_CREDENTIAL_HEALTH_CHECK
@@ -146,7 +146,7 @@ Cache, compression, 1proxy, memory, skills tools
 | DATA_DIR | Data directory | ~/.agentproxy/ |
 | PORT | HTTP server port | 20128 |
 | REQUIRE_API_KEY | Force API key auth | false |
-| CREDENTIAL_HEALTH_CHECK_INTERVAL | Health check interval (ms) | 300000 |
+| CREDENTIAL_HEALTH_CHECK_INTERVAL | Health check interval (ms) | 3600000 |
 | CREDENTIAL_HEALTH_CACHE_TTL | Credential cache TTL (ms) | 300000 |
 | AGENTPROXY_DISABLE_CREDENTIAL_HEALTH_CHECK | Disable health check | off |
 
