@@ -57,6 +57,13 @@ export function isOpencodeGeoBlocked(status: number, bodyText: string): boolean 
  * 403/451 refusal scoped to the request shape/client identity, not account health.
  * More specific fingerprint/geo/user-blocked signals retain their own handling.
  */
+export function isOpencodeUserBlocked(status: number, bodyText: string | null): boolean {
+  if (status !== 403 && status !== 451) return false;
+  const text = String(bodyText || "");
+  if (isFingerprintRejection(text) || isOpencodeGeoBlocked(status, text)) return false;
+  return text.toLowerCase().includes(USER_BLOCKED_SIGNAL);
+}
+
 export function isOpencodeFreeTierRefusal(status: number, bodyText: string | null): boolean {
   if (status !== 403 && status !== 451) return false;
   const text = String(bodyText || "");

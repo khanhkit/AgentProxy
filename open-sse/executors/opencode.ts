@@ -34,13 +34,19 @@ import {
   extractChatcmplId,
   recordRotationSnapshot,
 } from "./accountRotation.ts";
-import { isOpencodeFreeTierRefusal, isOpencodeGeoBlocked, proxyKeyOf } from "./opencodeGeoBlock.ts";
+import {
+  isOpencodeFreeTierRefusal,
+  isOpencodeGeoBlocked,
+  isOpencodeUserBlocked,
+  proxyKeyOf,
+} from "./opencodeGeoBlock.ts";
 import {
   guardResponsesStall,
   isResponsesFirstByteTimeout,
   resolveResponsesStallWindowMs,
 } from "./opencodeResponsesStall.ts";
 import { markCooldown, markOutcome, noteResponseServed } from "./opencodeAccountHealth.ts";
+import { discardResponseBody } from "./opencodeResponseBody.ts";
 import { isRetriableUpstreamFailure } from "./opencodeTransientFailure.ts";
 import {
   isProxyAvoided,
@@ -52,6 +58,7 @@ import {
   isOpencodeRateLimited429EarlyStopEnabled,
   isProxySkipRecentlyFailedEnabled,
   isRotationAttributionEnabled,
+  isOpencodeUserBlockedRotationEnabled,
 } from "@/shared/utils/featureFlags";
 import { classifyUpstream429 } from "./opencodeRateLimited.ts";
 
@@ -645,6 +652,8 @@ export class OpencodeExecutor extends BaseExecutor {
       let directTried = false;
       // Stalls before the first Responses byte: one rotation, then fail fast.
       let stalledAttempts = 0;
+      let abandonedResponse: Response | null = null;
+      let userBlockedRotations = 0;
 
       for (let attempt = 0; attempt < this.accounts.length + emptyRejectionBudget; attempt++) {
         const isProxiedCandidate = (a: OpencodeAccountState): boolean => {
@@ -789,6 +798,8 @@ export class OpencodeExecutor extends BaseExecutor {
           );
           continue;
         }
+        discardResponseBody(abandonedResponse);
+        abandonedResponse = null;
         lastResult = result;
 
         const status = result.response.status;
@@ -872,6 +883,25 @@ export class OpencodeExecutor extends BaseExecutor {
               this.logSkippedCooldownAccounts(log, cid, skippedCooldown);
             }
             return result;
+          }
+          if (
+            bodyText !== null &&
+            isOpencodeUserBlocked(status, bodyText) &&
+            isOpencodeUserBlockedRotationEnabled()
+          ) {
+            const key = proxyKeyOf(account.proxy);
+            if (key !== null) geoTriedProxyKeys.add(key);
+            else directTried = true;
+            markCooldown(account);
+            const rotate = userBlockedRotations === 0 && this.accounts.length > 1;
+            log?.warn?.(
+              "OPENCODE",
+              `${cid}user_blocked ${status} on account ${masked} (proxy ${key ?? "direct"}), ${rotate ? "rotating to next account once…" : "returning the refusal"}`
+            );
+            if (!rotate) return result;
+            userBlockedRotations++;
+            abandonedResponse = result.response;
+            continue;
           }
         }
 

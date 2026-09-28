@@ -63,7 +63,7 @@ used when neither a DB override nor an environment variable is present.
 | `PII_RESPONSE_SANITIZATION_MODE`  | enum    | `redact`  | Mode for PII response sanitization. Values: `redact`, `warn`, `block`, `off`.                                       |
 | `OUTBOUND_SSRF_GUARD_ENABLED`     | boolean | `true`    | Block outbound requests to private/internal IP ranges.                                                              |
 
-### Network (9)
+### Network (10)
 
 | Key                                             | Type    | Default | Restart | Description                                                                                                                                                                                   |
 | ----------------------------------------------- | ------- | ------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
