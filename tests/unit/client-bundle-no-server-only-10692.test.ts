@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import fs from "node:fs";
 import path from "node:path";
+import { builtinModules } from "node:module";
 import { fileURLToPath } from "node:url";
 
 /**
@@ -38,6 +39,22 @@ const SERVER_ONLY = new Set([
   "open-sse/utils/proxyFetch.ts",
   "open-sse/utils/tlsClient.ts",
 ]);
+const NEXT_CLIENT_POLYFILLED_BUILTINS = new Set([
+  "assert", "buffer", "constants", "crypto", "domain", "events", "http", "https",
+  "os", "path", "process", "punycode", "querystring", "stream", "string_decoder",
+  "sys", "timers", "tty", "util", "vm", "zlib",
+]);
+
+const NODE_BUILTINS = new Set(
+  builtinModules.map((name) => name.replace(/^node:/, "")).filter((bare) => !bare.startsWith("_"))
+);
+
+function isBrowserForbiddenBuiltin(specifier: string): boolean {
+  if (specifier.startsWith("node:")) return true;
+  const root = specifier.split("/")[0];
+  return NODE_BUILTINS.has(root) && !NEXT_CLIENT_POLYFILLED_BUILTINS.has(root);
+}
+
 
 /**
  * Non-`"use client"` entry points that still end up in a client bundle because client
@@ -60,6 +77,9 @@ function resolveSpecifier(fromFile: string, specifier: string): string | null {
   } else if (specifier.startsWith("@agentproxy/open-sse")) {
     const rest = specifier.slice("@agentproxy/open-sse".length).replace(/^\//, "");
     base = path.join(REPO_ROOT, "open-sse", rest);
+  } else if (specifier.startsWith("@agentproxy/browser-pool")) {
+    const rest = specifier.slice("@agentproxy/browser-pool".length).replace(/^\//, "");
+    base = path.join(REPO_ROOT, "packages/browser-pool/src", rest);
   } else if (specifier.startsWith("@/")) {
     base = path.join(REPO_ROOT, "src", specifier.slice(2));
   } else {
@@ -118,29 +138,45 @@ function staticSpecifiers(source: string): string[] {
 }
 
 const specifierCache = new Map<string, string[]>();
-function edgesOf(file: string): string[] {
+function specifiersOf(file: string): string[] {
   const cached = specifierCache.get(file);
   if (cached) return cached;
   const absolute = path.join(REPO_ROOT, file);
-  let edges: string[] = [];
-  if (fs.existsSync(absolute)) {
-    edges = staticSpecifiers(fs.readFileSync(absolute, "utf8"))
-      .map((specifier) => resolveSpecifier(file, specifier))
-      .filter((resolved): resolved is string => resolved !== null);
-  }
-  specifierCache.set(file, edges);
+  const specs = fs.existsSync(absolute) ? staticSpecifiers(fs.readFileSync(absolute, "utf8")) : [];
+  specifierCache.set(file, specs);
+  return specs;
+}
+
+const edgeCache = new Map<string, string[]>();
+function edgesOf(file: string): string[] {
+  const cached = edgeCache.get(file);
+  if (cached) return cached;
+  const edges = specifiersOf(file)
+    .map((specifier) => resolveSpecifier(file, specifier))
+    .filter((resolved): resolved is string => resolved !== null);
+  edgeCache.set(file, edges);
   return edges;
+}
+
+const serverOnlyVerdictCache = new Map<string, boolean>();
+function isServerOnly(file: string): boolean {
+  const cached = serverOnlyVerdictCache.get(file);
+  if (cached !== undefined) return cached;
+  const verdict = SERVER_ONLY.has(file) || specifiersOf(file).some(isBrowserForbiddenBuiltin);
+  serverOnlyVerdictCache.set(file, verdict);
+  return verdict;
 }
 
 /** BFS over static imports; returns the first path reaching a server-only module. */
 function findServerOnlyPath(entry: string): string[] | null {
   const seen = new Set<string>([entry]);
+  if (isServerOnly(entry)) return [entry];
   const queue: Array<string[]> = [[entry]];
   while (queue.length > 0) {
     const trail = queue.shift()!;
     for (const resolved of edgesOf(trail[trail.length - 1])) {
       if (seen.has(resolved)) continue;
-      if (SERVER_ONLY.has(resolved)) return [...trail, resolved];
+      if (isServerOnly(resolved)) return [...trail, resolved];
       seen.add(resolved);
       queue.push([...trail, resolved]);
     }
@@ -183,4 +219,19 @@ test("no client entry point statically reaches server-only code", () => {
       "\nBreak the chain — or, when the binding is only a type, mark it `import type` so it " +
       "carries no runtime edge."
   );
+});
+
+test("builtin classification: node: scheme always forbidden, bare polyfilled names tolerated", () => {
+  for (const specifier of ["node:fs", "node:path", "node:os", "node:crypto", "fs", "fs/promises"]) {
+    assert.equal(isBrowserForbiddenBuiltin(specifier), true, specifier);
+  }
+  for (const specifier of ["child_process", "net", "tls", "module", "worker_threads"]) {
+    assert.equal(isBrowserForbiddenBuiltin(specifier), true, specifier);
+  }
+  for (const specifier of ["path", "os", "crypto", "buffer", "events", "util", "stream"]) {
+    assert.equal(isBrowserForbiddenBuiltin(specifier), false, specifier);
+  }
+  for (const specifier of ["react", "@/lib/db/core", "./local", "zod"]) {
+    assert.equal(isBrowserForbiddenBuiltin(specifier), false, specifier);
+  }
 });
