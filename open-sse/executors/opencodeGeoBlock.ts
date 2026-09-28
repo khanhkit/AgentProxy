@@ -11,6 +11,10 @@
 // (2026-09-07 — app.log: "This model is not available in your country.");
 // siblings cover the same class, not the single incident. No bare "in your
 // country/region": location text without the full prefix is not a geo signal.
+// OpenCode free-tier request refusal: exact observed token/sentence only.
+const FREE_TIER_SIGNALS = ["freetiererror", "free tier can only be used"];
+const USER_BLOCKED_SIGNAL = "user_blocked";
+
 const GEO_SIGNALS = [
   "not available in your country",
   "not available in your region",
@@ -47,6 +51,28 @@ export function isOpencodeGeoBlocked(status: number, bodyText: string): boolean 
   const lower = text.toLowerCase();
   if (REGION_ERROR_REGEX.test(text)) return true;
   return GEO_SIGNALS.some((signal) => lower.includes(signal));
+}
+
+/**
+ * 403/451 refusal scoped to the request shape/client identity, not account health.
+ * More specific fingerprint/geo/user-blocked signals retain their own handling.
+ */
+export function isOpencodeFreeTierRefusal(status: number, bodyText: string | null): boolean {
+  if (status !== 403 && status !== 451) return false;
+  const text = String(bodyText || "");
+  if (isFingerprintRejection(text) || isOpencodeGeoBlocked(status, text)) return false;
+  const lower = text.toLowerCase();
+  if (lower.includes(USER_BLOCKED_SIGNAL)) return false;
+  return FREE_TIER_SIGNALS.some((signal) => lower.includes(signal));
+}
+
+export function isOpencodeFreeTierRefusalForProvider(
+  provider: string | null | undefined,
+  status: number,
+  bodyText: string | null
+): boolean {
+  if (!provider || !provider.toLowerCase().startsWith("opencode")) return false;
+  return isOpencodeFreeTierRefusal(status, bodyText);
 }
 
 export function proxyKeyOf(proxy: { host: string; port: number } | null): string | null {

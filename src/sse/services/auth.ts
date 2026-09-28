@@ -77,6 +77,7 @@ import {
   retryHintBypassesMaxCooldownMs,
   isProviderModelUnsupported400,
 } from "@agentproxy/open-sse/services/accountFallback.ts";
+import { isOpencodeFreeTierRefusalForProvider } from "@agentproxy/open-sse/executors/opencodeGeoBlock.ts";
 import { isLocalProvider } from "@agentproxy/open-sse/config/providerRegistry.ts";
 import { COOLDOWN_MS, RateLimitReason } from "@agentproxy/open-sse/config/constants.ts";
 import { sanitizeErrorMessage } from "@agentproxy/open-sse/utils/errorSanitization.ts";
@@ -2613,6 +2614,11 @@ export async function markAccountUnavailable(
 
   try {
     await currentMutex;
+
+    // Request-scoped OpenCode free-tier refusal: do not write any account/model health state.
+    if (isOpencodeFreeTierRefusalForProvider(provider, status, errorText)) {
+      return { shouldFallback: true, cooldownMs: 0 };
+    }
 
     // STRICT_ZERO_COST: this connection just failed (whatever the reason) —
     // drop any cached "SAFE" free-allowance reading for it immediately rather

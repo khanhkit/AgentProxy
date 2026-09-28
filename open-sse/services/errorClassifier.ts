@@ -177,6 +177,19 @@ export function isGeoBlockedError(errorMessage: string): boolean {
 // classified as an egress-fixable geo block, or it would get the non-terminal
 // 24h exclusion treatment instead of that provider's own (possibly terminal)
 // path.
+// OpenCode free-tier request refusal. Keep this mirror local so the executor leaf
+// remains dependency-free; parity tests pin both predicates to the same vectors.
+const FREE_TIER_REFUSAL_SIGNALS = ["freetiererror", "free tier can only be used"];
+
+function isOpencodeFreeTierProvider(provider?: string | null): boolean {
+  return (provider || "").toLowerCase().startsWith("opencode");
+}
+
+function isFreeTierClientRefusal(bodyStr: string): boolean {
+  const lower = bodyStr.toLowerCase();
+  return FREE_TIER_REFUSAL_SIGNALS.some((signal) => lower.includes(signal));
+}
+
 function isGeoBlockEligibleProvider(provider?: string | null): boolean {
   const p = (provider || "").toLowerCase();
   if (
@@ -420,6 +433,12 @@ export function classifyProviderError(
       /\bTurnstile required\b/i.test(bodyStr)
     ) {
       return PROVIDER_ERROR_TYPES.FORBIDDEN;
+    }
+
+    // Request-scoped OpenCode free-tier refusal: record as recoverable routing error,
+    // never as a connection ban/model lockout. Must precede the apikey short-circuit.
+    if (isOpencodeFreeTierProvider(provider) && isFreeTierClientRefusal(bodyStr)) {
+      return PROVIDER_ERROR_TYPES.PROJECT_ROUTE_ERROR;
     }
 
     if (provider && getProviderCategory(provider) === "apikey") {

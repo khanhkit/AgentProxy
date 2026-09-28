@@ -28,21 +28,18 @@ import {
   type RotatableAccount,
   type RotationAccountSnapshot,
   pickAccount as pickRotatableAccount,
-  markCooldown as markAccountCooldown,
-  markSuccess as markAccountSuccess,
   maskAccountId,
   isNetworkErrorRotatable,
   isEmptyUpstreamRejection,
   extractChatcmplId,
   recordRotationSnapshot,
 } from "./accountRotation.ts";
-import { isOpencodeGeoBlocked, proxyKeyOf } from "./opencodeGeoBlock.ts";
+import { isOpencodeFreeTierRefusal, isOpencodeGeoBlocked, proxyKeyOf } from "./opencodeGeoBlock.ts";
+import { markCooldown, markOutcome, noteResponseServed } from "./opencodeAccountHealth.ts";
 import { isRetriableUpstreamFailure } from "./opencodeTransientFailure.ts";
 import {
-  hasProxyRefusals,
   isProxyAvoided,
   noteProxyRefusal,
-  noteProxyServed,
   proxyEgressKey,
 } from "../utils/proxyRefusalMemory.ts";
 import {
@@ -363,20 +360,6 @@ export class OpencodeExecutor extends BaseExecutor {
     isReady: (account: OpencodeAccountState) => boolean
   ): OpencodeAccountState {
     return pickRotatableAccount(this.accounts, this, isReady);
-  }
-
-  private markCooldown(
-    account: OpencodeAccountState,
-    kind: "transient" | "terminal" = "transient"
-  ): void {
-    markAccountCooldown(account, kind);
-  }
-
-  private markSuccess(account: OpencodeAccountState): void {
-    markAccountSuccess(account);
-    // A response came back through this proxy: it is usable again for every refusal kind.
-    // Nothing is held unless PROXY_SKIP_RECENTLY_FAILED was on, so this costs no flag read.
-    if (hasProxyRefusals()) noteProxyServed(proxyEgressKey(account.proxy));
   }
 
   /** Snapshot entries for the read-only rotation attribution registry. */
@@ -753,7 +736,7 @@ export class OpencodeExecutor extends BaseExecutor {
           // silently either way: logged before rotating, skipping, or rethrowing.
           if (!isNetworkErrorRotatable(account)) {
             if (sharedEgressGuardEnabled) {
-              this.markCooldown(account);
+              markCooldown(account);
               sharedEgressDown = true;
               lastSharedEgressError = err;
               log?.warn?.(
@@ -768,7 +751,7 @@ export class OpencodeExecutor extends BaseExecutor {
             );
             throw err;
           }
-          this.markCooldown(account);
+          markCooldown(account);
           log?.warn?.(
             "OPENCODE",
             `${cid}network error on account ${masked}, rotating to next… (${reason})`
@@ -779,7 +762,7 @@ export class OpencodeExecutor extends BaseExecutor {
 
         const status = result.response.status;
         if (status === 429) {
-          this.markCooldown(account);
+          markCooldown(account);
           const key = proxyKeyOf(account.proxy);
           if (key !== null) geoTriedProxyKeys.add(key);
           // Persistent refusal memory complements request-local tried-set bookkeeping.
@@ -848,6 +831,17 @@ export class OpencodeExecutor extends BaseExecutor {
             }
             continue;
           }
+          if (bodyText !== null && isOpencodeFreeTierRefusal(status, bodyText)) {
+            log?.warn?.(
+              "OPENCODE",
+              `${cid}free-tier refusal ${status} on account ${masked} (proxy ${proxyKeyOf(account.proxy) ?? "direct"}), returning it unchanged (request-scoped, no rotation)`
+            );
+            noteResponseServed(account);
+            if (attributionOn && skippedCooldown.size > 0) {
+              this.logSkippedCooldownAccounts(log, cid, skippedCooldown);
+            }
+            return result;
+          }
         }
 
         // Empty upstream rejection (malformed 400: no error field, no real
@@ -874,14 +868,14 @@ export class OpencodeExecutor extends BaseExecutor {
           }
           // A 400 carrying a real error (or non-empty content): propagate
           // immediately, untouched — same as before this change.
-          this.markSuccess(account);
+          markOutcome(account, result.response);
           if (attributionOn && skippedCooldown.size > 0) {
             this.logSkippedCooldownAccounts(log, cid, skippedCooldown);
           }
           return result;
         }
 
-        this.markSuccess(account);
+        markOutcome(account, result.response);
         if (attributionOn && skippedCooldown.size > 0) {
           this.logSkippedCooldownAccounts(log, cid, skippedCooldown);
         }
