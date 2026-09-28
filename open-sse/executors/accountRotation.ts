@@ -16,6 +16,8 @@
 // of inventing a separate constant — same magnitude the codebase already
 // applies whether the failure is a 429 or a network-level throw.
 import { TRANSIENT_COOLDOWN_MS, COOLDOWN_MS } from "../config/errorConfig.ts";
+import { isProxySkipRecentlyFailedEnabled } from "@/shared/utils/featureFlags";
+import { isProxyAvoided, proxyEgressKey } from "../utils/proxyRefusalMemory.ts";
 
 /** Per-account proxy configuration, persisted by NoAuthAccountCard under
  * `providerSpecificData.accountProxies` (keyed by the account id, which the UI
@@ -67,20 +69,64 @@ export function isAccountReady(account: RotatableAccount): boolean {
  * mimocode's JWT-freshness-aware variant). */
 export function pickAccount<T extends RotatableAccount>(
   accounts: T[],
-  state: { nextAccountIdx: number },
+  state: { nextAccountIdx: number; lastHealthyFingerprint?: string },
   isReady: (account: T) => boolean = isAccountReady
 ): T {
+  const serve = (idx: number): T => {
+    const account = accounts[idx];
+    state.nextAccountIdx = (idx + 1) % accounts.length;
+    if (isStickyDrainEnabled()) state.lastHealthyFingerprint = account.fingerprint;
+    return account;
+  };
+
+  const stickyIdx = stickyServeIndex(accounts, state, isReady);
+  if (stickyIdx !== null) return serve(stickyIdx);
+
   for (let i = 0; i < accounts.length; i++) {
     const idx = (state.nextAccountIdx + i) % accounts.length;
-    const acct = accounts[idx];
-    if (isReady(acct)) {
-      state.nextAccountIdx = (idx + 1) % accounts.length;
-      return acct;
-    }
+    if (isReady(accounts[idx]) && !isStoreDrained(accounts[idx])) return serve(idx);
   }
+
+  for (let i = 0; i < accounts.length; i++) {
+    const idx = (state.nextAccountIdx + i) % accounts.length;
+    if (isReady(accounts[idx])) return serve(idx);
+  }
+
   const fallbackIdx = state.nextAccountIdx % accounts.length;
   state.nextAccountIdx = (state.nextAccountIdx + 1) % accounts.length;
   return accounts[fallbackIdx];
+}
+
+function isStickyDrainEnabled(): boolean {
+  try {
+    return isProxySkipRecentlyFailedEnabled();
+  } catch {
+    return false;
+  }
+}
+
+function stickyServeIndex<T extends RotatableAccount>(
+  accounts: T[],
+  state: { nextAccountIdx: number; lastHealthyFingerprint?: string },
+  isReady: (account: T) => boolean
+): number | null {
+  if (!isStickyDrainEnabled() || !hasStoreHistory(accounts)) return null;
+  const wanted = state.lastHealthyFingerprint;
+  if (!wanted) return null;
+  const sticky = accounts.findIndex((account) => account.fingerprint === wanted);
+  if (sticky === -1 || !isReady(accounts[sticky]) || isStoreDrained(accounts[sticky])) return null;
+  if (state.nextAccountIdx <= sticky) return null;
+  const cursorIdx = state.nextAccountIdx % accounts.length;
+  if (isReady(accounts[cursorIdx]) && !isStoreDrained(accounts[cursorIdx])) return null;
+  return sticky;
+}
+
+function isStoreDrained(account: RotatableAccount): boolean {
+  return isStickyDrainEnabled() && isProxyAvoided(proxyEgressKey(account.proxy));
+}
+
+function hasStoreHistory(accounts: RotatableAccount[]): boolean {
+  return accounts.some((account) => isProxyAvoided(proxyEgressKey(account.proxy)));
 }
 
 export function markCooldown(account: RotatableAccount, kind: CooldownKind = "transient"): void {
