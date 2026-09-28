@@ -245,7 +245,7 @@ export function openaiToClaudeResponse(chunk, state) {
   // block — including prompt_tokens_details.cached_tokens — on a trailing
   // usage-only chunk shaped `{"choices":[],"usage":{...}}`. Returning early on
   // that chunk discarded the real numbers and left downstream accounting on
-  // OmniRoute's own tokenizer estimate (#11817).
+  // AgentProxy's own tokenizer estimate (#11817).
   //
   // Harvesting alone is not enough: if the finish_reason chunk arrives BEFORE
   // this trailing usage chunk (the normal order for these upstreams), the

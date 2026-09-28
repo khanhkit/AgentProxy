@@ -23,10 +23,10 @@ RUN set -eu; \
 
 RUN groupadd --gid 10001 bridge \
   && useradd --uid 10001 --gid bridge --create-home --home-dir /home/bridge --shell /bin/bash bridge \
-  && mkdir -p /opt/omniroute /workspace \
-  && chown -R bridge:bridge /opt/omniroute /workspace
+  && mkdir -p /opt/agentproxy /workspace \
+  && chown -R bridge:bridge /opt/agentproxy /workspace
 
-WORKDIR /opt/omniroute
+WORKDIR /opt/agentproxy
 USER bridge
 COPY --chown=bridge:bridge package.json package-lock.json .npmrc ./
 RUN npm ci --ignore-scripts --no-audit --fund=false
@@ -36,8 +36,8 @@ RUN npm rebuild better-sqlite3 || true
 ENV HOME=/home/bridge \
   CLAUDE_CONFIG_DIR=/home/bridge/.claude-devin-isolated \
   DEVIN_AGENTIC_HOME=/home/bridge \
-  DATA_DIR=/home/bridge/.omniroute-isolated \
-  SQLITE_FILE=/home/bridge/.omniroute-isolated/storage.sqlite \
+  DATA_DIR=/home/bridge/.agentproxy-isolated \
+  SQLITE_FILE=/home/bridge/.agentproxy-isolated/storage.sqlite \
   CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1 \
   DISABLE_TELEMETRY=1 \
   DISABLE_ERROR_REPORTING=1 \
@@ -46,12 +46,12 @@ ENV HOME=/home/bridge \
   NEXT_TELEMETRY_DISABLED=1
 
 RUN mkdir -p /home/bridge/.claude-devin-isolated /home/bridge/.local/share/devin \
-  /home/bridge/.omniroute-isolated
+  /home/bridge/.agentproxy-isolated
 
-RUN DATA_DIR=/tmp/omniroute-build-data \
-  SQLITE_FILE=/tmp/omniroute-build-data/storage.sqlite \
+RUN DATA_DIR=/tmp/agentproxy-build-data \
+  SQLITE_FILE=/tmp/agentproxy-build-data/storage.sqlite \
   npm run build \
-  && rm -rf /tmp/omniroute-build-data
+  && rm -rf /tmp/agentproxy-build-data
 
 ENTRYPOINT ["/usr/bin/tini", "--"]
 CMD ["bash"]

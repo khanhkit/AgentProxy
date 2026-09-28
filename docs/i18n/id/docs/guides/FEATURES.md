@@ -1,10 +1,10 @@
-# OmniRoute — Galeri Fitur Dashboard (Bahasa Indonesia)
+# AgentProxy — Galeri Fitur Dashboard (Bahasa Indonesia)
 
 🌐 **Languages:** 🇺🇸 [English](../../../../guides/FEATURES.md) · 🇸🇦 [ar](../../../ar/docs/guides/FEATURES.md) · 🇦🇿 [az](../../../az/docs/guides/FEATURES.md) · 🇧🇬 [bg](../../../bg/docs/guides/FEATURES.md) · 🇧🇩 [bn](../../../bn/docs/guides/FEATURES.md) · 🇨🇿 [cs](../../../cs/docs/guides/FEATURES.md) · 🇩🇰 [da](../../../da/docs/guides/FEATURES.md) · 🇩🇪 [de](../../../de/docs/guides/FEATURES.md) · 🇬🇷 [el](../../../el/docs/guides/FEATURES.md) · 🇪🇸 [es](../../../es/docs/guides/FEATURES.md) · 🇪🇪 [et](../../../et/docs/guides/FEATURES.md) · 🇮🇷 [fa](../../../fa/docs/guides/FEATURES.md) · 🇫🇮 [fi](../../../fi/docs/guides/FEATURES.md) · 🇫🇷 [fr](../../../fr/docs/guides/FEATURES.md) · 🇮🇪 [ga](../../../ga/docs/guides/FEATURES.md) · 🇮🇳 [gu](../../../gu/docs/guides/FEATURES.md) · 🇮🇱 [he](../../../he/docs/guides/FEATURES.md) · 🇮🇳 [hi](../../../hi/docs/guides/FEATURES.md) · 🇭🇷 [hr](../../../hr/docs/guides/FEATURES.md) · 🇭🇺 [hu](../../../hu/docs/guides/FEATURES.md) · 🇮🇹 [it](../../../it/docs/guides/FEATURES.md) · 🇯🇵 [ja](../../../ja/docs/guides/FEATURES.md) · 🇰🇷 [ko](../../../ko/docs/guides/FEATURES.md) · 🇱🇹 [lt](../../../lt/docs/guides/FEATURES.md) · 🇱🇻 [lv](../../../lv/docs/guides/FEATURES.md) · 🇮🇳 [mr](../../../mr/docs/guides/FEATURES.md) · 🇲🇾 [ms](../../../ms/docs/guides/FEATURES.md) · 🇲🇹 [mt](../../../mt/docs/guides/FEATURES.md) · 🇳🇱 [nl](../../../nl/docs/guides/FEATURES.md) · 🇳🇴 [no](../../../no/docs/guides/FEATURES.md) · 🇵🇭 [phi](../../../phi/docs/guides/FEATURES.md) · 🇵🇱 [pl](../../../pl/docs/guides/FEATURES.md) · 🇵🇹 [pt](../../../pt/docs/guides/FEATURES.md) · 🇧🇷 [pt-BR](../../../pt-BR/docs/guides/FEATURES.md) · 🇷🇴 [ro](../../../ro/docs/guides/FEATURES.md) · 🇷🇺 [ru](../../../ru/docs/guides/FEATURES.md) · 🇸🇰 [sk](../../../sk/docs/guides/FEATURES.md) · 🇸🇮 [sl](../../../sl/docs/guides/FEATURES.md) · 🇷🇸 [sr](../../../sr/docs/guides/FEATURES.md) · 🇸🇪 [sv](../../../sv/docs/guides/FEATURES.md) · 🇰🇪 [sw](../../../sw/docs/guides/FEATURES.md) · 🇮🇳 [ta](../../../ta/docs/guides/FEATURES.md) · 🇮🇳 [te](../../../te/docs/guides/FEATURES.md) · 🇹🇭 [th](../../../th/docs/guides/FEATURES.md) · 🇹🇷 [tr](../../../tr/docs/guides/FEATURES.md) · 🇺🇦 [uk-UA](../../../uk-UA/docs/guides/FEATURES.md) · 🇵🇰 [ur](../../../ur/docs/guides/FEATURES.md) · 🇻🇳 [vi](../../../vi/docs/guides/FEATURES.md) · 🇨🇳 [zh-CN](../../../zh-CN/docs/guides/FEATURES.md) · 🇹🇼 [zh-TW](../../../zh-TW/docs/guides/FEATURES.md)
 
 ---
 
-Panduan visual untuk setiap bagian dashboard OmniRoute.
+Panduan visual untuk setiap bagian dashboard AgentProxy.
 
 ---
 
@@ -97,7 +97,7 @@ Panel pengaturan komprehensif dengan tab:
 
 ## 🔗 Context Relay _(v3.5.5+)_
 
-Strategi combo yang mempertahankan kesinambungan sesi saat rotasi akun terjadi di tengah percakapan. Sebelum akun aktif habis, OmniRoute menghasilkan ringkasan handoff terstruktur di latar belakang. Setelah permintaan berikutnya diarahkan ke akun berbeda, ringkasan disuntikkan sebagai pesan sistem sehingga akun baru melanjutkan dengan konteks penuh.
+Strategi combo yang mempertahankan kesinambungan sesi saat rotasi akun terjadi di tengah percakapan. Sebelum akun aktif habis, AgentProxy menghasilkan ringkasan handoff terstruktur di latar belakang. Setelah permintaan berikutnya diarahkan ke akun berbeda, ringkasan disuntikkan sebagai pesan sistem sehingga akun baru melanjutkan dengan konteks penuh.
 
 Dapat dikonfigurasi melalui pengaturan level combo atau global:
 
@@ -152,7 +152,7 @@ Skrip penghapusan bersih untuk semua metode instalasi:
 
 | Perintah                 | Tindakan                                                                                       |
 | ------------------------ | ---------------------------------------------------------------------------------------------- |
-| `npm run uninstall`      | Menghapus aplikasi sistem tetapi **mempertahankan DB dan konfigurasi Anda** di `~/.omniroute`. |
+| `npm run uninstall`      | Menghapus aplikasi sistem tetapi **mempertahankan DB dan konfigurasi Anda** di `~/.agentproxy`. |
 | `npm run uninstall:full` | Menghapus aplikasi DAN secara permanen **menghapus semua konfigurasi, kunci, dan database**.   |
 
 ---
@@ -193,7 +193,7 @@ Pelacakan tindakan administratif dengan pemfilteran berdasarkan jenis tindakan, 
 
 ## 🖥️ Aplikasi Desktop
 
-Aplikasi desktop Electron asli untuk Windows, macOS, dan Linux. Jalankan OmniRoute sebagai aplikasi mandiri dengan integrasi system tray, dukungan offline, pembaruan otomatis, dan instalasi satu klik.
+Aplikasi desktop Electron asli untuk Windows, macOS, dan Linux. Jalankan AgentProxy sebagai aplikasi mandiri dengan integrasi system tray, dukungan offline, pembaruan otomatis, dan instalasi satu klik.
 
 Fitur utama:
 
@@ -212,7 +212,7 @@ Fitur utama:
 
 ## 🌐 Jembatan WebSocket V1 _(v3.6.6+)_
 
-OmniRoute kini mendukung **klien WebSocket yang kompatibel dengan OpenAI** melalui endpoint upgrade `/v1/ws`. Server `scripts/v1-ws-bridge.mjs` kustom membungkus Next.js dan mengupgrade koneksi WS menjadi sesi streaming dua arah penuh. Autentikasi menggunakan kunci API atau cookie sesi yang sama seperti permintaan HTTP.
+AgentProxy kini mendukung **klien WebSocket yang kompatibel dengan OpenAI** melalui endpoint upgrade `/v1/ws`. Server `scripts/v1-ws-bridge.mjs` kustom membungkus Next.js dan mengupgrade koneksi WS menjadi sesi streaming dua arah penuh. Autentikasi menggunakan kunci API atau cookie sesi yang sama seperti permintaan HTTP.
 
 Perilaku utama:
 
@@ -238,7 +238,7 @@ Bundel konfigurasi dibuat oleh `src/lib/sync/bundle.ts`. Konsumen membandingkan 
 
 **GLM Thinking (`glmt`)** kini merupakan penyedia kelas pertama yang terdaftar: 65 536 token output maksimum, anggaran thinking 24 576, timeout default 900 detik, format API yang kompatibel dengan Claude, dan sinkronisasi penggunaan bersama dengan keluarga GLM.
 
-**Penghitungan token hibrida** juga hadir di v3.6.6: ketika penyedia yang kompatibel dengan Claude mengekspos `/messages/count_tokens`, OmniRoute memanggilnya sebelum permintaan besar dengan fallback estimasi yang baik.
+**Penghitungan token hibrida** juga hadir di v3.6.6: ketika penyedia yang kompatibel dengan Claude mengekspos `/messages/count_tokens`, AgentProxy memanggilnya sebelum permintaan besar dengan fallback estimasi yang baik.
 
 ---
 

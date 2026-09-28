@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-const { GrokCliExecutor } = await import("@omniroute/open-sse/executors/grok-cli");
+const { GrokCliExecutor } = await import("@agentproxy/open-sse/executors/grok-cli");
 
 // #6288 originally protected the legacy Chat Completions bridge from reasoning
 // fields. Both current models now use Responses; grok-4.5 accepts an effort,

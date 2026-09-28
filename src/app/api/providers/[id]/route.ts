@@ -29,11 +29,6 @@ import {
   enableRateLimitProtection,
   disableRateLimitProtection,
 } from "@/../open-sse/services/rateLimitManager";
-import {
-  finalizeValidatedChatGptWebCodexSecrets,
-  decodeChatGptWebCodexSecrets,
-  encodeChatGptWebCodexSecrets,
-} from "@omniroute/open-sse/services/chatgptWebCodexAdmin.ts";
 import { rejectRetiredCommonChatGptWebProvider } from "@/lib/providers/chatgptWebRetirementResponse";
 
 function normalizeCodexLimitPolicy(
@@ -178,6 +173,11 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
             ? incomingPsd.validationId
             : "";
         try {
+          const {
+            finalizeValidatedChatGptWebCodexSecrets,
+            decodeChatGptWebCodexSecrets,
+            encodeChatGptWebCodexSecrets,
+          } = await import("@agentproxy/open-sse/services/chatgptWebCodexAdmin.ts");
           const incomingSecrets = decodeChatGptWebCodexSecrets(apiKey);
           const existingSecrets = decodeChatGptWebCodexSecrets(existing.apiKey || "");
           const encoded = encodeChatGptWebCodexSecrets({
@@ -398,7 +398,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
 }
 
 // PATCH /api/providers/[id] - Update connection (partial)
-// The OpenAPI spec and the CLI (`omniroute providers rotate`, generated
+// The OpenAPI spec and the CLI (`agentproxy providers rotate`, generated
 // api-commands) both use PATCH, but only PUT was implemented — PATCH requests
 // 405'd. PATCH and PUT share the same update semantics here (the schema only
 // applies provided fields), so delegate to the PUT handler.

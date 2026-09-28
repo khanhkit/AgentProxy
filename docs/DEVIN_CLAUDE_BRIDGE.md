@@ -1,6 +1,6 @@
 # Devin Claude Bridge
 
-`devin-cli-agentic` lets the real Claude Code runtime use OmniRoute's local Anthropic
+`devin-cli-agentic` lets the real Claude Code runtime use AgentProxy's local Anthropic
 Messages endpoint while the official Devin CLI supplies model responses over ACP stdio. It
 does not modify the existing Anthropic, Claude OAuth, Claude Web, or `devin-cli` providers.
 
@@ -9,7 +9,7 @@ does not modify the existing Anthropic, Claude OAuth, Claude Web, or `devin-cli`
 > `3000.2.17` and model `swe-1-7-lightning`; that final live run proved client-owned `Read`,
 > `Edit`, and `Bash` turns, successful `npm test` results, project command and skill
 > discovery, Devin-only routing, and zero Claude egress. The pin was then raised to `2.1.258`
-> (the CLI generation OmniRoute's Claude identity impersonates, and the first line that ships
+> (the CLI generation AgentProxy's Claude identity impersonates, and the first line that ships
 > the Fable 5.1 tier natively). On the new pin the install layer and `claude --version` were
 > verified on the pinned base image, and the bridge unit suite, `compose config` and the
 > static isolation proof pass — but the offline mock scenario and the live three-scenario
@@ -20,7 +20,7 @@ does not modify the existing Anthropic, Claude OAuth, Claude Web, or `devin-cli`
 
 ```text
 Claude Code 2.1.258 (isolated non-root Linux container)
-  -> http://omniroute:20128/v1/messages
+  -> http://agentproxy:20128/v1/messages
   -> devin-cli-agentic (Claude-format, no-auth provider)
   -> devin acp --agent-type summarizer (official ACP stdio, no Devin tools)
   -> Devin account in the dedicated devin-auth volume
@@ -42,7 +42,7 @@ The parser accepts one standalone `<tool>{...}</tool>` envelope per model turn. 
 the name against the request's tool list, validates arguments against that tool's JSON
 Schema, rejects mixed narrative/actions, and permits one bounded repair. Claude Code then
 executes the resulting Anthropic `tool_use` locally and sends the `tool_result` back through
-OmniRoute.
+AgentProxy.
 
 ## Isolation and threat model
 
@@ -51,16 +51,16 @@ forbidden. The Compose services:
 
 - run as UID/GID `10001:10001`, with a read-only root filesystem, dropped capabilities, and
   `no-new-privileges`;
-- use a private `/home/bridge`, a dedicated Claude config volume, isolated OmniRoute data,
+- use a private `/home/bridge`, a dedicated Claude config volume, isolated AgentProxy data,
   and a separate `devin-auth` volume;
 - mount only disposable `.sandbox` workspaces/evidence;
 - do not mount the host home, Keychain, SSH, cloud credentials, or Docker socket;
 - construct explicit environments and remove Anthropic API/OAuth/routing variables;
-- direct Claude Code inference only to `http://omniroute:20128` with a local-only key.
+- direct Claude Code inference only to `http://agentproxy:20128` with a local-only key.
 
-The offline profile uses an internal network. In the live profile, OmniRoute reaches the
+The offline profile uses an internal network. In the live profile, AgentProxy reaches the
 official Devin endpoints only through `network-guard`; unrelated destinations are denied.
-Claude Code has a separate deny-all egress guard and can reach only the local OmniRoute
+Claude Code has a separate deny-all egress guard and can reach only the local AgentProxy
 service through `NO_PROXY`. Guard audit files are mounted only by their guard process. The
 scripts verify file ownership, mode, link count, and every decision before exporting
 token-free evidence.
@@ -151,7 +151,7 @@ unverified download.
 
 ## Diagnosis and cleanup
 
-- `docker compose -f docker/devin-bridge/compose.yml --profile offline logs omniroute`
+- `docker compose -f docker/devin-bridge/compose.yml --profile offline logs agentproxy`
   shows local routing and sanitized executor errors.
 - `.sandbox/evidence/mock-acp.jsonl` records deterministic mock ACP actions.
 - `.sandbox/evidence/claude-stream.jsonl` records the real Claude Code offline run.

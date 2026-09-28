@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * OmniRoute — Docs translation pipeline (hash-based, incremental).
+ * AgentProxy — Docs translation pipeline (hash-based, incremental).
  *
  * Source of truth: `config/i18n.json` (locale list) and the original English
  * markdown files at the repo root (`CLAUDE.md`, `GEMINI.md`, `README.md`, …)
@@ -29,11 +29,11 @@
  *                                  source drift is still reported)
  *
  * Backend (configured via env, never committed):
- *   OMNIROUTE_TRANSLATION_API_URL     e.g. https://cloud.omniroute.dev/v1
- *   OMNIROUTE_TRANSLATION_API_KEY     bearer token (kept out of logs)
- *   OMNIROUTE_TRANSLATION_MODEL       e.g. cx/gpt-5.6-sol
- *   OMNIROUTE_TRANSLATION_TIMEOUT_MS  optional, default 60000
- *   OMNIROUTE_TRANSLATION_CONCURRENCY optional, default 4
+ *   AGENTPROXY_TRANSLATION_API_URL     e.g. https://cloud.agentproxy.dev/v1
+ *   AGENTPROXY_TRANSLATION_API_KEY     bearer token (kept out of logs)
+ *   AGENTPROXY_TRANSLATION_MODEL       e.g. cx/gpt-5.6-sol
+ *   AGENTPROXY_TRANSLATION_TIMEOUT_MS  optional, default 60000
+ *   AGENTPROXY_TRANSLATION_CONCURRENCY optional, default 4
  */
 
 import { promises as fs, existsSync, readFileSync } from "node:fs";
@@ -111,19 +111,11 @@ const DOCS_DIR = path.join(ROOT, "docs");
 
 // ----- Source set ----------------------------------------------------------
 //
-// Root-level markdown files that should be translated as `docs/i18n/<loc>/<name>`.
+// Root-level user-facing markdown files translated as `docs/i18n/<loc>/<name>`.
 // Strict-mirror files (`llm.txt`, `CHANGELOG.md`) are intentionally NOT in this
 // list — they are handled by `scripts/check-docs-sync.mjs` rules and are kept
 // in sync by other tooling. Adding them here would conflict with that script.
-const ROOT_DOC_SOURCES = [
-  "CLAUDE.md",
-  "GEMINI.md",
-  "AGENTS.md",
-  "CONTRIBUTING.md",
-  "SECURITY.md",
-  "CODE_OF_CONDUCT.md",
-  "README.md",
-];
+const ROOT_DOC_SOURCES = ["CONTRIBUTING.md", "SECURITY.md", "CODE_OF_CONDUCT.md", "README.md"];
 
 // File names inside `docs/` that should NOT be translated. Anything else with
 // a `.md` extension at the top of `docs/` is treated as a source.
@@ -304,10 +296,10 @@ function requireEnv(name) {
 }
 
 function backendConfig() {
-  const apiUrl = requireEnv("OMNIROUTE_TRANSLATION_API_URL").replace(/\/$/, "");
-  const apiKey = requireEnv("OMNIROUTE_TRANSLATION_API_KEY");
-  const model = requireEnv("OMNIROUTE_TRANSLATION_MODEL");
-  const timeoutMs = Number(process.env.OMNIROUTE_TRANSLATION_TIMEOUT_MS || 60000);
+  const apiUrl = requireEnv("AGENTPROXY_TRANSLATION_API_URL").replace(/\/$/, "");
+  const apiKey = requireEnv("AGENTPROXY_TRANSLATION_API_KEY");
+  const model = requireEnv("AGENTPROXY_TRANSLATION_MODEL");
+  const timeoutMs = Number(process.env.AGENTPROXY_TRANSLATION_TIMEOUT_MS || 60000);
   return { apiUrl, apiKey, model, timeoutMs };
 }
 
@@ -554,12 +546,12 @@ async function main() {
   if (!opts.dryRun) {
     backend = backendConfig();
     if (opts.concurrency) backend.concurrency = opts.concurrency;
-    else backend.concurrency = Number(process.env.OMNIROUTE_TRANSLATION_CONCURRENCY || 4);
+    else backend.concurrency = Number(process.env.AGENTPROXY_TRANSLATION_CONCURRENCY || 4);
     logInfo(
       `backend: ${backend.apiUrl} (model=${backend.model}, concurrency=${backend.concurrency}, timeout=${backend.timeoutMs}ms)`
     );
   } else {
-    const apiUrl = (process.env.OMNIROUTE_TRANSLATION_API_URL || "").replace(/\/$/, "");
+    const apiUrl = (process.env.AGENTPROXY_TRANSLATION_API_URL || "").replace(/\/$/, "");
     logInfo(`backend (dry-run): ${apiUrl || "<unset>"}`);
   }
 

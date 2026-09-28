@@ -21,7 +21,7 @@ import {
   createManagementSessionHeaders,
 } from "../helpers/managementSession.ts";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-qdrant-routes-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-qdrant-routes-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.API_KEY_SECRET = "test-secret-qdrant-routes";
 
@@ -90,7 +90,7 @@ test.beforeEach(async () => {
     qdrantEnabled: false,
     qdrantHost: "",
     qdrantPort: 6333,
-    qdrantCollection: "omniroute_memory",
+    qdrantCollection: "agentproxy_memory",
     qdrantEmbeddingModel: "openai/text-embedding-3-small",
   });
 });
@@ -292,12 +292,12 @@ test("GET /api/settings/qdrant/health — reports named collection vector metada
   await localDb.updateSettings({
     qdrantEnabled: true,
     qdrantHost: "http://qdrant.test",
-    qdrantCollection: "omniroute_memory",
+    qdrantCollection: "agentproxy_memory",
   });
   const originalFetch = globalThis.fetch;
   globalThis.fetch = async (url) => {
     if (String(url).endsWith("/readyz")) return new Response("ready", { status: 200 });
-    if (String(url).endsWith("/collections/omniroute_memory")) {
+    if (String(url).endsWith("/collections/agentproxy_memory")) {
       return Response.json({
         result: {
           config: {

@@ -6,7 +6,7 @@ lastUpdated: 2026-06-28
 
 # Resilience Guide
 
-OmniRoute has three distinct but related resilience mechanisms. Each has a different scope and purpose. Keep them separate when debugging routing behavior.
+AgentProxy has three distinct but related resilience mechanisms. Each has a different scope and purpose. Keep them separate when debugging routing behavior.
 
 ![3-layer resilience model](../diagrams/exported/resilience-3layers.svg)
 
@@ -66,7 +66,7 @@ failed. Provider-level entries honor the `PROVIDER_PROFILES` window gate:
 Below the threshold the provider is **not** considered cooling; a success clears
 the window. Connection-level entries (`provider:connectionId`) keep the
 exponential `minRetryCooldownMs → maxRetryCooldownMs` backoff instead. Overrides:
-`OMNIROUTE_PROVIDER_BREAKER_{OAUTH,API_KEY}_{FAILURE_THRESHOLD,FAILURE_WINDOW_MS,COOLDOWN_MS}`.
+`AGENTPROXY_PROVIDER_BREAKER_{OAUTH,API_KEY}_{FAILURE_THRESHOLD,FAILURE_WINDOW_MS,COOLDOWN_MS}`.
 Regression guard: `tests/unit/provider-cooldown-window-gate.test.ts`.
 
 ## 2. Connection Cooldown
@@ -110,7 +110,7 @@ These persist until credentials change or an operator resets them. Do not overwr
 
 ### Session affinity (#7274)
 
-**Scope:** one client session (`X-Session-Id` / `x-codex-session-id` / `x-omniroute-session` header) pinned to one connection, for **any** provider.
+**Scope:** one client session (`X-Session-Id` / `x-codex-session-id` / `x-agentproxy-session` header) pinned to one connection, for **any** provider.
 
 **Purpose:** keep a multi-turn agent (Claude Code, aider, custom agents) on the same account across requests, reducing cross-account context loss and repeated cold-start 429s on providers with per-account session state.
 
@@ -128,7 +128,7 @@ The three session-affinity headers are never forwarded upstream — executors bu
 
 ### Exclusive managed session connection leases
 
-**Scope:** one active managed HTTP client/session owns one eligible OmniRoute connection.
+**Scope:** one active managed HTTP client/session owns one eligible AgentProxy connection.
 
 **Purpose:** provide durable exclusive connection ownership for clients that need a hard routing
 fence across requests. This differs from session affinity, which is a soft continuity preference:
@@ -143,14 +143,14 @@ eligible. Normal model, quota, health, cooldown, and allowlist rules remain auth
 transition the same generation to another free eligible connection.
 
 The lifecycle is `POST /api/v1/session-leases` with JSON actions `acquire`, `renew`, and `release`.
-Managed inference requests present the opaque `X-OmniRoute-Lease-Owner` value and exact
-`X-OmniRoute-Lease-Generation`. The owner uses `vlo_` followed by 43 base64url characters; only
+Managed inference requests present the opaque `X-AgentProxy-Lease-Owner` value and exact
+`X-AgentProxy-Lease-Generation`. The owner uses `vlo_` followed by 43 base64url characters; only
 its SHA-256 hash is stored. Every final dispatch fence also binds the authenticated API key ID and
 active connection ID. Lease control headers are removed from logs, retained request snapshots, and
 upstream executor headers.
 
 If ordinary routing has eligible managed candidates but every free candidate is occupied by a
-foreign active lease, OmniRoute returns HTTP `429`, lease-capacity-unavailable code, a
+foreign active lease, AgentProxy returns HTTP `429`, lease-capacity-unavailable code, a
 waiting-for-capacity state, and a bounded `Retry-After` derived from the earliest relevant expiry.
 Ordinary empty eligibility is not lease contention and keeps its existing routing error semantics.
 
@@ -438,7 +438,7 @@ never `creditsExhausted` — a defense against a future rule pairing scope
 connectionId)` before the `exhaustedConnections` lookup) — a plain
   model-list combo, where sibling targets carry no pinned `connectionId` of
   their own and one is only resolved per-dispatch from the response's
-  `X-OmniRoute-Selected-Connection-Id` header, never hits that key match. For
+  `X-AgentProxy-Selected-Connection-Id` header, never hits that key match. For
   that common case, the real protection against a remaining leg reusing the
   just-exhausted account is NOT this Set — it is the persistence layer above
   (the connection's `rateLimitedUntil` is now in the future) combined with
@@ -612,7 +612,7 @@ rate limit is the same signal as an exhausted quota. Honest limits:
 - **Reset-aware routing** (v3.8.0) — prioritizes connections by quota reset time.
 - **Background mode degradation** — Responses API `background: true` degraded to sync with warning.
 - **Dynamic tool limit detection** — backs off providers when tool count limits hit.
-- **Emergency fallback** — controlled by `OMNIROUTE_EMERGENCY_FALLBACK`; operators can override it from the Feature Flags page without a restart.
+- **Emergency fallback** — controlled by `AGENTPROXY_EMERGENCY_FALLBACK`; operators can override it from the Feature Flags page without a restart.
 
 ---
 

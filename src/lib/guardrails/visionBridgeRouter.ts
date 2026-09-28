@@ -5,8 +5,8 @@
 
 import { getResolvedModelCapabilities } from "@/lib/modelCapabilities";
 import { getActiveSyncedCatalog } from "@/lib/db/models/activeSyncedCatalog";
-import { PROVIDER_MODELS } from "@omniroute/open-sse/config/providerModels";
-import { getRegisteredProviderEffortBaseModelId } from "@omniroute/open-sse/utils/registeredEffortVariants.ts";
+import { PROVIDER_MODELS } from "@agentproxy/open-sse/config/providerModels";
+import { getRegisteredProviderEffortBaseModelId } from "@agentproxy/open-sse/utils/registeredEffortVariants.ts";
 import { hasUsableCredentialsForModel } from "./visionBridgeCredentials";
 import { isVisionBridgeForcedModel } from "@/shared/constants/visionBridgeDefaults";
 
@@ -33,6 +33,8 @@ export interface VisionBridgeRouterConfig {
   maxFallbackAttempts: number;
   /** Cache TTL for selection decisions (ms) */
   selectionCacheTtlMs: number;
+  /** Cache TTL for a no-candidate outcome (ms); 0 disables negative caching. */
+  noCandidateCacheTtlMs: number;
   /** Minimum number of latency samples before trusting average */
   minLatencySamples: number;
   /** Models to exclude from auto-routing */
@@ -42,6 +44,7 @@ export interface VisionBridgeRouterConfig {
 const DEFAULT_ROUTER_CONFIG: VisionBridgeRouterConfig = {
   maxFallbackAttempts: 3,
   selectionCacheTtlMs: 60_000, // 1 minute
+  noCandidateCacheTtlMs: 30_000,
   minLatencySamples: 5,
   excludedModels: [],
 };
@@ -49,6 +52,7 @@ const DEFAULT_ROUTER_CONFIG: VisionBridgeRouterConfig = {
 // In-memory latency tracker (would be Redis in production)
 const latencyStore = new Map<string, LatencyRecord[]>();
 const selectionCache = new Map<string, { modelId: string; expiresAt: number }>();
+const noCandidateCache = new Map<string, number>();
 
 /**
  * Record a latency measurement for a model.
@@ -357,6 +361,12 @@ export async function getBestVisionModel(
   const cachedPick = await resolveCachedSelection(cacheKey, virtualCombo, deps);
   if (cachedPick) return cachedPick;
 
+  const noCandidateUntil = noCandidateCache.get(cacheKey);
+  if (noCandidateUntil !== undefined) {
+    if (noCandidateUntil > Date.now()) return null;
+    noCandidateCache.delete(cacheKey);
+  }
+
   // Get all vision-capable candidates
   const candidates = await getVisionCapableModels(deps);
 
@@ -364,9 +374,14 @@ export async function getBestVisionModel(
   const best = selectBestModel(candidates, fullConfig);
 
   if (!best) {
-    // No vision-capable candidate has usable credentials on this instance
+    // No vision-capable candidate has usable credentials on this instance.
+    if (fullConfig.noCandidateCacheTtlMs > 0) {
+      noCandidateCache.set(cacheKey, Date.now() + fullConfig.noCandidateCacheTtlMs);
+    }
     return null;
   }
+
+  noCandidateCache.delete(cacheKey);
 
   // Cache the selection
   selectionCache.set(cacheKey, {
@@ -413,6 +428,7 @@ export async function getFallbackModels(
  */
 export function clearSelectionCache(): void {
   selectionCache.clear();
+  noCandidateCache.clear();
 }
 
 /**

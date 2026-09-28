@@ -16,12 +16,12 @@ import {
   resolveMitmSudoPassword,
 } from "@/mitm/sudoGate";
 import path from "path";
-import { sanitizeErrorMessage } from "@omniroute/open-sse/utils/error";
+import { sanitizeErrorMessage } from "@agentproxy/open-sse/utils/error";
 import { createErrorResponse } from "@/lib/api/errorResponse";
 import { pickApiKeyForInternalUse } from "@/lib/db/apiKeys";
 
 /**
- * Resolve the OmniRoute API key the spawned MITM child (`server.cjs`) uses to
+ * Resolve the AgentProxy API key the spawned MITM child (`server.cjs`) uses to
  * authenticate its own outbound calls back to `/v1/chat/completions`
  * (`ROUTER_API_KEY` env — see `src/mitm/manager.ts::startMitmInternal`).
  *
@@ -30,7 +30,7 @@ import { pickApiKeyForInternalUse } from "@/lib/db/apiKeys";
  * `apiKey` field) and the `ROUTER_API_KEY` process env var (unset unless an
  * operator manually exports it). On a normal install neither is ever set, so
  * `startMitm()` always received `""` and the MITM child exited with
- * "ROUTER_API_KEY required" even though OmniRoute already had a usable key in
+ * "ROUTER_API_KEY required" even though AgentProxy already had a usable key in
  * its own DB (#6403). Falls back to the same DB-backed selector used by the
  * combo-health-check / cloud-sync-verify internal probes.
  */

@@ -19,7 +19,7 @@ import {
 
 /**
  * Write a fake `qodercli` binary and point CLI_QODER_BIN at it. The stub mimics
- * the two invocations OmniRoute makes: `--print --output-format json` (chat) and
+ * the two invocations AgentProxy makes: `--print --output-format json` (chat) and
  * `--list-models` (validation). It fails auth when the PAT contains "bad" so a
  * single stub covers both the happy and the rejection path. Returns a cleanup fn.
  */

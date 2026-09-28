@@ -26,7 +26,7 @@ import { WEB_COOKIE_PROVIDERS } from "@/shared/constants/providers/web-cookie";
  * real per-token pricing rows.
  *
  * Deliberately EXCLUDED even though token-priced and sometimes grouped with the
- * above: `codex`/`cx` (OmniRoute actively tracks Codex token cost — Fast-tier
+ * above: `codex`/`cx` (AgentProxy actively tracks Codex token cost — Fast-tier
  * multipliers and GPT-5.x pricing — and Codex can be a metered API account, so
  * its analytics cost is intentional, not an artifact), `byteplus` (BytePlus
  * ModelArk is a metered inference host, billed per token — zeroing it would hide
@@ -39,6 +39,7 @@ const FLAT_RATE_SUBSCRIPTION_PROVIDER_IDS: ReadonlySet<string> = new Set([
   "minimax", // "Minimax Coding" plan
   "kimi-coding", // Kimi Coding plan (OAuth)
   "kimi-coding-apikey", // Kimi Coding plan (API-key auth, still flat-rate)
+  "muse-code", // Muse Code subscription (device OAuth minted key or META_API_KEY)
   "xiaomi-mimo", // Xiaomi MiMo plan (issue: "MiMo Token Plan")
   "bailian-coding-plan", // Alibaba Token Plan (legacy provider ID)
   "qwen-cloud-token-plan", // Qwen Cloud Token Plan

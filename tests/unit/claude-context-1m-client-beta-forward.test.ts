@@ -4,7 +4,7 @@
  * When Claude Code runs with a `[1m]` model (e.g. `/model sonnet[1m]` or
  * `ANTHROPIC_DEFAULT_SONNET_MODEL='<id>[1m]'`), the client sizes its context
  * window at 1M AND negotiates `anthropic-beta: context-1m-2025-08-07` itself.
- * Behind OmniRoute that beta was silently dropped for non-Opus models:
+ * Behind AgentProxy that beta was silently dropped for non-Opus models:
  * selectBetaFlags only emits context-1m for `claude-opus*` (deliberate — never
  * FORCE it, see the long-context credit-gate note there), and the
  * FORWARDABLE_CLIENT_BETAS allowlist did not include it, so the client's own

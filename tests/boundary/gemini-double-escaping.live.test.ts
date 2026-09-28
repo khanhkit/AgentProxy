@@ -1,18 +1,18 @@
 /**
  * Direct Gemini tests: verify no double-escaping in tool call arguments.
  *
- * Calls Gemini through OmniRoute via both Chat Completions and Responses API,
+ * Calls Gemini through AgentProxy via both Chat Completions and Responses API,
  * comparing streaming vs non-streaming paths. The goal is to verify that
  * tool call arguments are valid JSON throughout the pipeline.
  */
 import test from "node:test";
 import assert from "node:assert/strict";
 
-const OMNIROUTE_URL = `${process.env.OMNIROUTE_URL}/v1`;
-const AUTH = `Bearer ${process.env.OMNIROUTE_API_KEY || ""}`;
+const AGENTPROXY_URL = `${process.env.AGENTPROXY_URL}/v1`;
+const AUTH = `Bearer ${process.env.AGENTPROXY_API_KEY || ""}`;
 
-const skip = !(process.env.OMNIROUTE_API_KEY && process.env.OMNIROUTE_URL)
-  ? "OMNIROUTE_API_KEY or OMNIROUTE_URL not set — skipping live boundary test"
+const skip = !(process.env.AGENTPROXY_API_KEY && process.env.AGENTPROXY_URL)
+  ? "AGENTPROXY_API_KEY or AGENTPROXY_URL not set — skipping live boundary test"
   : undefined;
 
 // Chat Completions format tool definition
@@ -214,7 +214,7 @@ test(
       stream: false,
     };
 
-    const response = await fetchJson(`${OMNIROUTE_URL}/chat/completions`, body);
+    const response = await fetchJson(`${AGENTPROXY_URL}/chat/completions`, body);
     assert.ok(
       Array.isArray((response as Record<string, unknown>).choices) &&
         (response as Record<string, unknown>).choices.length > 0,
@@ -260,7 +260,7 @@ test(
       stream: true,
     };
 
-    const events = await fetchStream(`${OMNIROUTE_URL}/chat/completions`, body);
+    const events = await fetchStream(`${AGENTPROXY_URL}/chat/completions`, body);
 
     // Collect tool call arguments from delta chunks
     let fullArgs = "";
@@ -300,7 +300,7 @@ test(
       stream: false,
     };
 
-    const response = await fetchJson(`${OMNIROUTE_URL}/responses`, body);
+    const response = await fetchJson(`${AGENTPROXY_URL}/responses`, body);
 
     assert.equal((response as Record<string, unknown>).status, "completed");
     const output = ((response as Record<string, unknown>).output ?? []) as Record<
@@ -333,7 +333,7 @@ test(
       stream: true,
     };
 
-    const events = await fetchStream(`${OMNIROUTE_URL}/responses`, body);
+    const events = await fetchStream(`${AGENTPROXY_URL}/responses`, body);
 
     // Accumulate function_call_arguments.delta then parse final from output_item.done
     let doneArgs: string | null = null;
@@ -373,7 +373,7 @@ test(
       temperature: 0.1,
       stream: false,
     };
-    const ccResp = await fetchJson(`${OMNIROUTE_URL}/chat/completions`, ccBody);
+    const ccResp = await fetchJson(`${AGENTPROXY_URL}/chat/completions`, ccBody);
     const ccChoices = (ccResp as Record<string, unknown>).choices as
       Record<string, unknown>[] | undefined;
     const ccToolCall = findChatToolCall(
@@ -392,7 +392,7 @@ test(
       max_output_tokens: 4096,
       stream: false,
     };
-    const respResp = await fetchJson(`${OMNIROUTE_URL}/responses`, respBody);
+    const respResp = await fetchJson(`${AGENTPROXY_URL}/responses`, respBody);
     const respOutput = ((respResp as Record<string, unknown>).output ?? []) as Record<
       string,
       unknown
@@ -436,7 +436,7 @@ test("Chat Completions args survive round-trip through Responses API", { skip },
     temperature: 0.1,
     stream: false,
   };
-  const ccResp = await fetchJson(`${OMNIROUTE_URL}/chat/completions`, ccBody);
+  const ccResp = await fetchJson(`${AGENTPROXY_URL}/chat/completions`, ccBody);
   const ccChoices = (ccResp as Record<string, unknown>).choices as
     Record<string, unknown>[] | undefined;
   const ccToolCall = findChatToolCall(

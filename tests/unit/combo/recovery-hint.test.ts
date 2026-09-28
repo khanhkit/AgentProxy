@@ -65,7 +65,7 @@ test("recovery hint omitted when recovery is undefined", async () => {
   assert.equal(body.diagnostics?.recovery, undefined);
 });
 
-test("x-omniroute-recovery-action header emitted when recovery present", async () => {
+test("x-agentproxy-recovery-action header emitted when recovery present", async () => {
   const diag = emptyDiag({
     recovery: {
       action: "try-auto" as RecoveryAction,
@@ -73,34 +73,34 @@ test("x-omniroute-recovery-action header emitted when recovery present", async (
     },
   });
   const res = errorResponseWithComboDiagnostics(503, "exhausted", diag);
-  assert.equal(res.headers.get("x-omniroute-recovery-action"), "try-auto");
+  assert.equal(res.headers.get("x-agentproxy-recovery-action"), "try-auto");
   assert.equal(
-    res.headers.get("x-omniroute-recovery-next-step"),
+    res.headers.get("x-agentproxy-recovery-next-step"),
     "Auto-select available providers."
   );
 });
 
-test("x-omniroute-retry-after-seconds header emitted when retry_after_seconds set", async () => {
+test("x-agentproxy-retry-after-seconds header emitted when retry_after_seconds set", async () => {
   const diag = emptyDiag({
     recovery: { action: "wait" as RecoveryAction, next_step: "wait", retry_after_seconds: 45 },
   });
   const res = errorResponseWithComboDiagnostics(429, "rate limited", diag);
-  assert.equal(res.headers.get("x-omniroute-retry-after-seconds"), "45");
+  assert.equal(res.headers.get("x-agentproxy-retry-after-seconds"), "45");
 });
 
-test("x-omniroute-retry-after-seconds omitted when retry_after_seconds is 0", async () => {
+test("x-agentproxy-retry-after-seconds omitted when retry_after_seconds is 0", async () => {
   const diag = emptyDiag({
     recovery: { action: "retry" as RecoveryAction, next_step: "retry", retry_after_seconds: 0 },
   });
   const res = errorResponseWithComboDiagnostics(503, "transient", diag);
-  assert.equal(res.headers.get("x-omniroute-retry-after-seconds"), null);
+  assert.equal(res.headers.get("x-agentproxy-retry-after-seconds"), null);
 });
 
-test("x-omniroute-recovery-* headers omitted when recovery is undefined", async () => {
+test("x-agentproxy-recovery-* headers omitted when recovery is undefined", async () => {
   const diag = emptyDiag();
   const res = errorResponseWithComboDiagnostics(503, "generic", diag);
-  assert.equal(res.headers.get("x-omniroute-recovery-action"), null);
-  assert.equal(res.headers.get("x-omniroute-recovery-next-step"), null);
+  assert.equal(res.headers.get("x-agentproxy-recovery-action"), null);
+  assert.equal(res.headers.get("x-agentproxy-recovery-next-step"), null);
 });
 
 test("next_step sanitized (newlines → spaces, max 128 chars)", async () => {
@@ -109,7 +109,7 @@ test("next_step sanitized (newlines → spaces, max 128 chars)", async () => {
     recovery: { action: "try-auto" as RecoveryAction, next_step: longStep },
   });
   const res = errorResponseWithComboDiagnostics(503, "exhausted", diag);
-  const sanitized = res.headers.get("x-omniroute-recovery-next-step")!;
+  const sanitized = res.headers.get("x-agentproxy-recovery-next-step")!;
   assert.ok(sanitized.length <= 128);
   assert.ok(!sanitized.includes("\n"));
 });
@@ -119,7 +119,7 @@ test("drops recovery when next_step is whitespace-only", async () => {
   const res = errorResponseWithComboDiagnostics(503, "exhausted", diag);
   const body = (await res.json()) as JsonBody;
   assert.equal(body.diagnostics?.recovery, undefined);
-  assert.equal(res.headers.get("x-omniroute-recovery-action"), null);
+  assert.equal(res.headers.get("x-agentproxy-recovery-action"), null);
 });
 
 test("invalid action causes recovery to be dropped", async () => {

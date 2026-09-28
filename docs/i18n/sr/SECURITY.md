@@ -6,10 +6,10 @@
 
 ## Prijavljivanje bezbednosnih propusta
 
-Ako otkrijete bezbednosni propust u OmniRoute, prijavite ga odgovorno:
+Ako otkrijete bezbednosni propust u AgentProxy, prijavite ga odgovorno:
 
 1. **NEMOJTE** otvarati javni GitHub issue
-2. Koristite [GitHub Security Advisories](https://github.com/diegosouzapw/OmniRoute/security/advisories/new)
+2. Koristite [GitHub Security Advisories](https://github.com/khanhkit/AgentProxy/security/advisories/new)
 3. Uključite: opis, korake za reprodukciju i potencijalni uticaj
 
 ## Vremenski okvir odgovora
@@ -32,7 +32,7 @@ Ako otkrijete bezbednosni propust u OmniRoute, prijavite ga odgovorno:
 
 ## Bezbednosna arhitektura
 
-OmniRoute implementira višeslojni bezbednosni model:
+AgentProxy implementira višeslojni bezbednosni model:
 
 ```
 Request → CORS → Authz pipeline (classify → policies → enforce)
@@ -69,7 +69,7 @@ STORAGE_ENCRYPTION_KEY=$(openssl rand -hex 32)
 
 ### 🛡️ Guardrails Framework
 
-OmniRoute isporučuje registar zaštitnih mera koji se može učitati u realnom vremenu (**guardrails registry**) (`src/lib/guardrails/`) sa 3 ugrađene zaštitne mere poređane po prioritetu:
+AgentProxy isporučuje registar zaštitnih mera koji se može učitati u realnom vremenu (**guardrails registry**) (`src/lib/guardrails/`) sa 3 ugrađene zaštitne mere poređane po prioritetu:
 
 | Guardrail          | Prioritet | Namena                                                                                                                |
 | ------------------ | --------- | --------------------------------------------------------------------------------------------------------------------- |
@@ -77,7 +77,7 @@ OmniRoute isporučuje registar zaštitnih mera koji se može učitati u realnom 
 | `pii-masker`       | 10        | Cenzura ličnih podataka (PII) pre i posle poziva (email adrese, telefonski brojevi, CPF, CNPJ, kreditne kartice, SSN) |
 | `prompt-injection` | 20        | Otkriva obrasce override/role-hijack/jailbreak/leak                                                                   |
 
-Prilagođene zaštitne mere se registruju putem `registerGuardrail(new MyGuardrail())`. Model funkcioniše po principu "fail-open" (izuzeci nikada ne blokiraju saobraćaj). Isključivanje po zahtevu putem `x-omniroute-disabled-guardrails` zaglavlja. → Pogledajte [`docs/security/GUARDRAILS.md`](docs/security/GUARDRAILS.md).
+Prilagođene zaštitne mere se registruju putem `registerGuardrail(new MyGuardrail())`. Model funkcioniše po principu "fail-open" (izuzeci nikada ne blokiraju saobraćaj). Isključivanje po zahtevu putem `x-agentproxy-disabled-guardrails` zaglavlja. → Pogledajte [`docs/security/GUARDRAILS.md`](docs/security/GUARDRAILS.md).
 
 ### 🧠 Zaštita od Prompt Injection napada
 
@@ -182,15 +182,15 @@ STORAGE_ENCRYPTION_KEY=$(openssl rand -hex 32)
 
 ```bash
 docker run -d \
-  --name omniroute \
+  --name agentproxy \
   --restart unless-stopped \
   --read-only \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
+  -v agentproxy-data:/app/data \
   -e JWT_SECRET="$(openssl rand -base64 48)" \
   -e API_KEY_SECRET="$(openssl rand -hex 32)" \
   -e STORAGE_ENCRYPTION_KEY="$(openssl rand -hex 32)" \
-  diegosouzapw/omniroute:latest
+  khanhkit/agentproxy:latest
 ```
 
 ---
@@ -222,7 +222,7 @@ docker run -d \
 
 ## Nalazi skenera lanca snabdevanja (Socket.dev / Snyk / slično)
 
-Objavljeni `omniroute` npm artefakt sadrži Next.js `output: "standalone"`
+Objavljeni `agentproxy` npm artefakt sadrži Next.js `output: "standalone"`
 build, što znači da svaki route handler — uključujući dokumentovane privilegovane
 funkcionalnosti (MITM, Zed import, Cloud Sync, ugrađeni service supervisor) — završava
 u minifikovanim `.next/server/*.js` chunkovima. Heuristički skeneri lanca snabdevanja
@@ -237,7 +237,7 @@ Za svaku kategoriju nalaza održavamo atestaciju održavaoca po nalazu:
   upućuju na isti dokument.
 
 Za korisnike čiji pipeline ne može da relaksira upozorenje: build-ujte sa
-`OMNIROUTE_BUILD_PROFILE=minimal npm run build`. To zamenjuje četiri
+`AGENTPROXY_BUILD_PROFILE=minimal npm run build`. To zamenjuje četiri
 osetljiva modula stubovima koji u runtime-u vraćaju HTTP 503 `feature-disabled`,
 tako da su privilegovane putanje koda fizički odsutne iz bundle-a.
 Pogledajte [`docs/security/SOCKET_DEV_FINDINGS.md`](docs/security/SOCKET_DEV_FINDINGS.md)

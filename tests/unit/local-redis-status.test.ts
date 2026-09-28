@@ -2,7 +2,7 @@
  * tests/unit/local-redis-status.test.ts
  *
  * Coverage for src/app/api/local/redis/status/route.ts:
- *   - The status endpoint must report OmniRoute as "connected" whenever the
+ *   - The status endpoint must report AgentProxy as "connected" whenever the
  *     native REDIS_URL is reachable — not only when a Docker/Podman container
  *     is present. This is the production path used by this instance
  *     (redis on 127.0.0.1:6379, no container).

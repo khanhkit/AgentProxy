@@ -1,7 +1,7 @@
 /**
  * tests/integration/free-models-benchmark.test.ts
  *
- * Live benchmark: how well do the free-tier models OmniRoute exposes handle
+ * Live benchmark: how well do the free-tier models AgentProxy exposes handle
  * a representative slice of the general workload (the same CASE_BUILDERS
  * used by live-gemini-workload.test.ts)? Unlike the pass/fail live-gemini
  * suite, this is a report, not a gate — free-tier providers are expected to
@@ -11,8 +11,8 @@
  * every model (the harness itself broken) fails the test.
  *
  * Environment:
- *   OMNIROUTE_API_KEY  — required (else test skips)
- *   OMNIROUTE_URL      — defaults to http://localhost:3000
+ *   AGENTPROXY_API_KEY  — required (else test skips)
+ *   AGENTPROXY_URL      — defaults to http://localhost:3000
  *
  * Models benchmarked are restricted to providers with an active connection
  * on this deployment (checked live via GET /api/providers) — see
@@ -101,7 +101,7 @@ test(
     // Only a total-outage catches a real regression here — free-tier providers
     // are individually allowed to be unreliable (that's the finding, not a
     // bug), but a harness-wide 0% success rate means the benchmark itself (or
-    // OmniRoute's routing) is broken, not that every free provider failed at
+    // AgentProxy's routing) is broken, not that every free provider failed at
     // once.
     assert.ok(
       totalSucceeded > 0,

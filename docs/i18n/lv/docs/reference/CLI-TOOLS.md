@@ -6,22 +6,22 @@
 
 ---
 
-title: "CLI rīki — OmniRoute"
+title: "CLI rīki — AgentProxy"
 version: 3.8.50
 lastUpdated: 2026-08-23
 ---
 
-# CLI rīki — OmniRoute
+# CLI rīki — AgentProxy
 
 Pēdējoreiz atjaunināts: 2026-08-23
 
-OmniRoute integrējas ar trim CLI rīku kategorijām, kas izvietotas trīs īpašās informācijas paneļa lapās:
+AgentProxy integrējas ar trim CLI rīku kategorijām, kas izvietotas trīs īpašās informācijas paneļa lapās:
 
 | Lapa           | Maršruts                | Koncepts                                                                                             | Daudzums       |
 | -------------- | ----------------------- | ---------------------------------------------------------------------------------------------------- | -------------- |
-| **CLI Code's** | `/dashboard/cli-code`   | Programmēšanas rīki, kurus novirzāt uz OmniRoute (Klients → CLI → OmniRoute → Pakalpojumu sniedzējs) | 26             |
-| **CLI Agents** | `/dashboard/cli-agents` | Autonomi aģenti, kurus novirzāt uz OmniRoute (tāda pati plūsma, plašāks tvēriens)                    | 10             |
-| **ACP Agents** | `/dashboard/acp-agents` | CLI, kurus OmniRoute izveido kā aizmugursistēmu, izmantojot stdio/ACP (apgriezta plūsma)             | skat. reģistru |
+| **CLI Code's** | `/dashboard/cli-code`   | Programmēšanas rīki, kurus novirzāt uz AgentProxy (Klients → CLI → AgentProxy → Pakalpojumu sniedzējs) | 26             |
+| **CLI Agents** | `/dashboard/cli-agents` | Autonomi aģenti, kurus novirzāt uz AgentProxy (tāda pati plūsma, plašāks tvēriens)                    | 10             |
+| **ACP Agents** | `/dashboard/acp-agents` | CLI, kurus AgentProxy izveido kā aizmugursistēmu, izmantojot stdio/ACP (apgriezta plūsma)             | skat. reģistru |
 
 Vecie maršruti veic pāradresēšanu ar 308: `/dashboard/cli-tools` → `/dashboard/cli-code`, `/dashboard/agents` → `/dashboard/acp-agents`.
 
@@ -33,14 +33,14 @@ Vecie maršruti veic pāradresēšanu ar 308: `/dashboard/cli-tools` → `/dashb
 CLI Code's / CLI Agents (patēriņa plūsma):
 Claude / Codex / OpenCode / Cline / KiloCode / Continue / Hermes Agent / Goose / ...
            │
-           ▼  (visi norāda uz OmniRoute)
+           ▼  (visi norāda uz AgentProxy)
     http://JŪSU_SERVERIS:20128/v1
            │
-           ▼  (OmniRoute maršrutē uz atbilstošo pakalpojumu sniedzēju)
+           ▼  (AgentProxy maršrutē uz atbilstošo pakalpojumu sniedzēju)
     Anthropic / OpenAI / Gemini / DeepSeek / Groq / Mistral / ...
 
 ACP Agents (apgrieztā izveidošanas plūsma):
-    Klienta pieprasījums → OmniRoute → izveido CLI caur stdio/ACP → atbilde
+    Klienta pieprasījums → AgentProxy → izveido CLI caur stdio/ACP → atbilde
 ```
 
 **Ieguvumi:**
@@ -54,30 +54,30 @@ ACP Agents (apgrieztā izveidošanas plūsma):
 
 ## Automātiskā konfigurēšana ar `setup-*`
 
-Jums nav jāraksta katra rīka konfigurācija ar roku. OmniRoute piegādā `setup-*`
+Jums nav jāraksta katra rīka konfigurācija ar roku. AgentProxy piegādā `setup-*`
 komandu katrai atbalstītai CLI, kas nolasa **dzīvo** modeļu katalogu no darbojošās
-OmniRoute (vietējās vai attālās) un raksta rīka paša konfigurāciju jūsu datorā:
+AgentProxy (vietējās vai attālās) un raksta rīka paša konfigurāciju jūsu datorā:
 
 ```bash
-omniroute setup-codex        omniroute setup-claude       omniroute setup-opencode
-omniroute setup-cline        omniroute setup-kilo         omniroute setup-continue
-omniroute setup-cursor       omniroute setup-roo          omniroute setup-crush
-omniroute setup-goose        omniroute setup-qwen         omniroute setup-aider
-omniroute setup-5dive
+agentproxy setup-codex        agentproxy setup-claude       agentproxy setup-opencode
+agentproxy setup-cline        agentproxy setup-kilo         agentproxy setup-continue
+agentproxy setup-cursor       agentproxy setup-roo          agentproxy setup-crush
+agentproxy setup-goose        agentproxy setup-qwen         agentproxy setup-aider
+agentproxy setup-5dive
 ```
 
 Katra pieņem `--remote <url> --api-key <key>` (konfigurēt vietēju rīku pret
-attālu OmniRoute), `--dry-run` (priekšskatījums bez rakstīšanas) un `--port`. Rīki
+attālu AgentProxy), `--dry-run` (priekšskatījums bez rakstīšanas) un `--port`. Rīki
 bez modeļa automātiskās noteikšanas (Cline, Kilo, Roo, Goose, Aider, Qwen, 5dive) pieņem
 `--model <id>` (un `--yes` neinteraktīviem braucieniem). `setup-5dive` ir vienīgais
 recepšu risinājums, kas neraksta zem `$HOME`: tas konfigurē 5dive aģenta floti, rakstot
 root-owned autentifikācijas profilu flozes saimniekdatorā, tāpēc tas atkārtoti izpilda caur `sudo`
 un tam pašam nav attālā režīma. Lai palaiž CLI ar
 pareizo injicēto vidi un vispār bez rakstītas konfigurācijas, izmantojiet vispārējo
-`omniroute run <mērķis>` startētāju (claude, codex, aider, goose, opencode, qwen,
+`agentproxy run <mērķis>` startētāju (claude, codex, aider, goose, opencode, qwen,
 gemini — mērķi un aliāši nāk no `bin/cli/cli-manifest.mjs`); vecie
-par instrumentiem startētāji `omniroute launch` (Claude Code) un `omniroute launch-codex`
-(Codex) paliek pieejami. Gemini CLI ir tikai palaižams: tas ir `omniroute run`
+par instrumentiem startētāji `agentproxy launch` (Claude Code) un `agentproxy launch-codex`
+(Codex) paliek pieejami. Gemini CLI ir tikai palaižams: tas ir `agentproxy run`
 mērķis, bet tam nav `setup-*`/`configure` receptes.
 
 > **Pilna atsauce:** galvenā tabula — ko raksta katra komanda, katra karodziņa,
@@ -86,21 +86,21 @@ mērķis, bet tam nav `setup-*`/`configure` receptes.
 
 ### Šo komandu palaišana konteinerī
 
-`setup-*` komanda, kas izpildīta OmniRoute konteinerī, raksta konteinera
+`setup-*` komanda, kas izpildīta AgentProxy konteinerī, raksta konteinera
 paša mājas direktorijā, kuru neviens saimniekdatora CLI nelasa un kas pazūd līdz ar
-konteineri. OmniRoute to atklāj un iziet ar kodu `2` ar instrukcijām, nevis
+konteineri. AgentProxy to atklāj un iziet ar kodu `2` ar instrukcijām, nevis
 rakstot. Divas atbalstītas iespējas — instalēt CLI saimniekdatorā un
-`omniroute connect` uz konteineri, vai bin-montēt konfigurācijas direktorijus un iestatīt
+`agentproxy connect` uz konteineri, vai bin-montēt konfigurācijas direktorijus un iestatīt
 `CLI_CONFIG_HOME` (compose `host` profils). Katra `setup-*` komanda, plus
-`omniroute configure` un `omniroute config set`, pieņem
-`--allow-container-write`, kad faktiski bija domāts konfigurēt konteinera paša CLI; `OMNIROUTE_ALLOW_CONTAINER_CONFIG_WRITE=true` nodrošina to pašu serverim. Skat.
-[Docker rokasgrāmata → Host CLI rīku konfigurēšana](../guides/DOCKER_GUIDE.md#configuring-host-cli-tools-when-omniroute-runs-in-docker).
+`agentproxy configure` un `agentproxy config set`, pieņem
+`--allow-container-write`, kad faktiski bija domāts konfigurēt konteinera paša CLI; `AGENTPROXY_ALLOW_CONTAINER_CONFIG_WRITE=true` nodrošina to pašu serverim. Skat.
+[Docker rokasgrāmata → Host CLI rīku konfigurēšana](../guides/DOCKER_GUIDE.md#configuring-host-cli-tools-when-agentproxy-runs-in-docker).
 
 Informācijas paneļa **pielietojuma galapunkts** (`POST /api/cli-tools/apply`) ievieš
 tādu pašu sargu: konteinerī, rakstīšana, kuras mērķis nav bin-montēts no
 saimniekdatora, atbild ar **`422`** ar `containerEphemeralTarget: true`, drošo
 kļūdas tekstun — rīkiem ar saimniekdatora recepti (claude, codex, opencode, cline,
-kilo, continue) — ar `hostSetupCommand` (piem., `omniroute setup-opencode`), ko palaist
+kilo, continue) — ar `hostSetupCommand` (piem., `agentproxy setup-opencode`), ko palaist
 saimniekdatorā tā vietā; nekas netiek rakstīts. `dryRun: true` turpina strādāt konteinera
 režīmā un atgriež ģenerēto saturu + mērķa ceļu, nesaskaroties ar disku, tāpēc
 jūs varat priekšskatīt no informācijas paneļa un pielietot saimniekdatorā. Šāda uzvedība ir
@@ -136,8 +136,8 @@ deklarēšanas avots, un novirzes tests tos uztur saskaņotus:
 | ----------------- | ------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------- |
 | **Katalogizēts**  | Parādās informācijas paneļa katalogā (nosaukums, ražotājs, dokumenti, konfigurācijas tips) | `src/shared/constants/cliTools.ts` (`CLI_TOOLS`)                       |
 | **Nosakāms**      | Binārā faila/konfigurācijas noteikšana, veselības pārbaudes, konfigurācijas ceļi           | `src/shared/services/cliRuntime.ts` (`CLI_TOOLS` izpildlaika katalogs) |
-| **Konfigurējams** | Atbalstīts ar `omniroute configure <cli>` (iestatīšanas recepte pastāv)                    | `bin/cli/cli-manifest.mjs` (`configure: true`)                         |
-| **Palaižams**     | Atbalstīts ar `omniroute run <target>` (iekļauti env/args injekcijas definīcijas)          | `bin/cli/cli-manifest.mjs` (`run: true`)                               |
+| **Konfigurējams** | Atbalstīts ar `agentproxy configure <cli>` (iestatīšanas recepte pastāv)                    | `bin/cli/cli-manifest.mjs` (`configure: true`)                         |
+| **Palaižams**     | Atbalstīts ar `agentproxy run <target>` (iekļauti env/args injekcijas definīcijas)          | `bin/cli/cli-manifest.mjs` (`run: true`)                               |
 
 `bin/cli/cli-manifest.mjs` ir kanoniskais izpildāmā faila manifests CLI komandu
 virsmām: `run`, `configure` un čaulas pabeigšanas ģeneratori visi iegūst savus
@@ -205,7 +205,7 @@ Autonomie aģenti, kas atrodas `/dashboard/cli-agents`:
 
 ## 3. ACP aģenti (/dashboard/acp-agents)
 
-Šī lapa (pārdēvēta no `/dashboard/agents`) parāda CLI, kurus OmniRoute var **izsaukt** kā aizmugures izpildes dzinējus, izmantojot stdio/ACP protokolu. Katalogs tiek uzturēts atsevišķi `src/lib/acp/registry.ts` un **nav** tas pats, kas `CLI_TOOLS`.
+Šī lapa (pārdēvēta no `/dashboard/agents`) parāda CLI, kurus AgentProxy var **izsaukt** kā aizmugures izpildes dzinējus, izmantojot stdio/ACP protokolu. Katalogs tiek uzturēts atsevišķi `src/lib/acp/registry.ts` un **nav** tas pats, kas `CLI_TOOLS`.
 
 ---
 
@@ -268,7 +268,7 @@ Jauniem rīkiem ar `configType: "custom"` ir paredzētas specifiskas iestatījum
 | `POST /api/cli-tools/codewhale-settings`    | CodeWhale (OPENAI_BASE_URL, primārā + mantojuma `~/.deepseek` sinhronizācija) |
 | `POST /api/cli-tools/smelt-settings`        | Smelt                                                                         |
 | `POST /api/cli-tools/pi-settings`           | Pi kodēšanas aģents                                                           |
-| `POST /api/cli-tools/grok-build-settings`   | Grok Build (~/.grok/config.toml, `[model.omniroute]`)                         |
+| `POST /api/cli-tools/grok-build-settings`   | Grok Build (~/.grok/config.toml, `[model.agentproxy]`)                         |
 | `POST /api/cli-tools/qwen-settings`         | Qwen Code (`~/.qwen/settings.json` + specifiskā `.env` atslēga)               |
 
 Visi maršruti izmanto `sanitizeErrorMessage()` kļūdu atbildēm (Stingrā Noteikuma #12).
@@ -328,7 +328,7 @@ Pilnas PT-BR un EN tulkojumi ir nodrošināti. 39 citas valodas automātiski pā
 
 ## 9. Ātrā sākšana
 
-### 1. solis — Iegūstiet OmniRoute API atslēgu
+### 1. solis — Iegūstiet AgentProxy API atslēgu
 
 1. Atveriet `/dashboard/api-manager` → **Izveidot API atslēgu**
 2. Piešķirt tai nosaukumu (piem., `cli-tools`) un atlasiet visas atļaujas
@@ -361,7 +361,7 @@ npm install -g kilocode
 # Qwen Code
 npm install -g @qwen-code/qwen-code
 
-# Google Gemini CLI (palaižams ar `omniroute run gemini` → /v1beta virsma)
+# Google Gemini CLI (palaižams ar `agentproxy run gemini` → /v1beta virsma)
 npm install -g @google/gemini-cli
 
 # Aider
@@ -392,14 +392,14 @@ cargo install smelt  # Uz Rust balstīts
 ### 4. solis — Iestatiet globālos vides mainīgos
 
 ```bash
-# OmniRoute universālais gala punkts
+# AgentProxy universālais gala punkts
 export OPENAI_BASE_URL="http://localhost:20128/v1"
-export OPENAI_API_KEY="sk-your-omniroute-key"
+export OPENAI_API_KEY="sk-your-agentproxy-key"
 export ANTHROPIC_BASE_URL="http://localhost:20128"
-export ANTHROPIC_AUTH_TOKEN="sk-your-omniroute-key"
+export ANTHROPIC_AUTH_TOKEN="sk-your-agentproxy-key"
 # Gemini CLI nolasa GOOGLE_GEMINI_BASE_URL saknes līmenī (tā SDK pats pievieno /v1beta/...)
 export GOOGLE_GEMINI_BASE_URL="http://localhost:20128"
-export GEMINI_API_KEY="sk-your-omniroute-key"
+export GEMINI_API_KEY="sk-your-agentproxy-key"
 ```
 
 > **Attālinātam serverim** aizstājiet `localhost:20128` ar servera IP adresi vai domēnvārdu,
@@ -417,7 +417,7 @@ mkdir -p ~/.claude && cat > ~/.claude/settings.json << EOF
 {
   "env": {
     "ANTHROPIC_BASE_URL": "http://localhost:20128",
-    "ANTHROPIC_AUTH_TOKEN": "sk-your-omniroute-key"
+    "ANTHROPIC_AUTH_TOKEN": "sk-your-agentproxy-key"
   }
 }
 EOF
@@ -433,20 +433,20 @@ Izmantojiet vienoto Anthropic vārtu sakni Claude Code. Šeit nepievienojiet `/v
 
 Mūsdienu Codex (v0.137+) nolasa tikai `~/.codex/config.toml` — vecais
 `config.yaml` pieder vecajam npm CLI un klusām tiek ignorēts. API
-atslēga paliek vides mainīgajā `OMNIROUTE_API_KEY` (`env_key`), nekad
+atslēga paliek vides mainīgajā `AGENTPROXY_API_KEY` (`env_key`), nekad
 failā:
 
 ```bash
 mkdir -p ~/.codex && cat > ~/.codex/config.toml << EOF
-model_provider = "omniroute"
+model_provider = "agentproxy"
 
-[model_providers.omniroute]
-name                 = "OmniRoute"
+[model_providers.agentproxy]
+name                 = "AgentProxy"
 base_url             = "http://localhost:20128/v1"
-env_key              = "OMNIROUTE_API_KEY"
+env_key              = "AGENTPROXY_API_KEY"
 requires_openai_auth = false
 EOF
-export OMNIROUTE_API_KEY="sk-your-omniroute-key"
+export AGENTPROXY_API_KEY="sk-your-agentproxy-key"
 ```
 
 Pilna atsauce (profili, `wire_api`, konteksta logi): [CODEX-CLI-CONFIGURATION.md](../guides/CODEX-CLI-CONFIGURATION.md).
@@ -462,12 +462,12 @@ mkdir -p ~/.config/opencode && cat > ~/.config/opencode/opencode.json << EOF
 {
   "\$schema": "https://opencode.ai/config.json",
   "provider": {
-    "omniroute": {
+    "agentproxy": {
       "npm": "@ai-sdk/openai-compatible",
-      "name": "OmniRoute",
+      "name": "AgentProxy",
       "options": {
         "baseURL": "http://localhost:20128/v1",
-        "apiKey": "sk-your-omniroute-key"
+        "apiKey": "sk-your-agentproxy-key"
       },
       "models": {
         "claude-sonnet-4-5": { "name": "claude-sonnet-4-5" },
@@ -482,7 +482,7 @@ EOF
 
 **Testēt:** `opencode`
 
-> Izmantojiet `opencode run "your prompt" --model omniroute/claude-sonnet-4-5-thinking --variant high`,
+> Izmantojiet `opencode run "your prompt" --model agentproxy/claude-sonnet-4-5-thinking --variant high`,
 > lai nosūtītu domāšanas variantus.
 
 ---
@@ -496,7 +496,7 @@ mkdir -p ~/.cline/data && cat > ~/.cline/data/globalState.json << EOF
 {
   "apiProvider": "openai",
   "openAiBaseUrl": "http://localhost:20128/v1",
-  "openAiApiKey": "sk-your-omniroute-key"
+  "openAiApiKey": "sk-your-agentproxy-key"
 }
 EOF
 ```
@@ -504,7 +504,7 @@ EOF
 **VS Code režīms:**
 Cline paplašinājuma iestatījumi → API sniedzējs: `OpenAI Compatible` → Bāzes URL: `http://localhost:20128/v1`
 
-Vai izmantojiet OmniRoute vadības paneli → **CLI rīki → Cline → Lietot konfigurāciju**.
+Vai izmantojiet AgentProxy vadības paneli → **CLI rīki → Cline → Lietot konfigurāciju**.
 
 ---
 
@@ -513,7 +513,7 @@ Vai izmantojiet OmniRoute vadības paneli → **CLI rīki → Cline → Lietot k
 **CLI režīms:**
 
 ```bash
-kilocode --api-base http://localhost:20128/v1 --api-key sk-your-omniroute-key
+kilocode --api-base http://localhost:20128/v1 --api-key sk-your-agentproxy-key
 ```
 
 **VS Code iestatījumi:**
@@ -521,11 +521,11 @@ kilocode --api-base http://localhost:20128/v1 --api-key sk-your-omniroute-key
 ```json
 {
   "kilo-code.openAiBaseUrl": "http://localhost:20128/v1",
-  "kilo-code.apiKey": "sk-your-omniroute-key"
+  "kilo-code.apiKey": "sk-your-agentproxy-key"
 }
 ```
 
-Vai izmantojiet OmniRoute vadības paneli → **CLI rīki → KiloCode → Lietot konfigurāciju**.
+Vai izmantojiet AgentProxy vadības paneli → **CLI rīki → KiloCode → Lietot konfigurāciju**.
 
 ---
 
@@ -535,11 +535,11 @@ Rediģējiet `~/.continue/config.yaml`:
 
 ```yaml
 models:
-  - name: OmniRoute
+  - name: AgentProxy
     provider: openai
     model: auto
     apiBase: http://localhost:20128/v1
-    apiKey: sk-your-omniroute-key
+    apiKey: sk-your-agentproxy-key
     default: true
 ```
 
@@ -549,25 +549,25 @@ Pēc rediģēšanas restartējiet VS Code.
 
 #### VS Code Insiders (`chatLanguageModels.json`)
 
-Izmantojiet šo, kad VS Code Insiders ir konfigurēts pielāgoto gala punktu modeļiem un vēlaties, lai OmniRoute darbotos bez pielāgota galvenes lauka.
+Izmantojiet šo, kad VS Code Insiders ir konfigurēts pielāgoto gala punktu modeļiem un vēlaties, lai AgentProxy darbotos bez pielāgota galvenes lauka.
 
 **Ieteicamā atrašanās vieta:**
 
 - Linux: `~/.config/Code - Insiders/User/chatLanguageModels.json`
 - Windows: `%APPDATA%/Code - Insiders/User/chatLanguageModels.json`
 
-**Piemērs, izmantojot tokenizēto OmniRoute aizstājvārdu:**
+**Piemērs, izmantojot tokenizēto AgentProxy aizstājvārdu:**
 
 ```json
 [
   {
     "vendor": "customendpoint",
     "id": "auto",
-    "name": "OmniRoute Auto",
+    "name": "AgentProxy Auto",
     "family": "gpt-4",
     "version": "1.0.0",
-    "url": "http://localhost:20128/api/v1/vscode/sk-your-omniroute-key/chat/completions",
-    "modelsUrl": "http://localhost:20128/api/v1/vscode/sk-your-omniroute-key/models",
+    "url": "http://localhost:20128/api/v1/vscode/sk-your-agentproxy-key/chat/completions",
+    "modelsUrl": "http://localhost:20128/api/v1/vscode/sk-your-agentproxy-key/models",
     "requestFormat": "openai-chat-completions",
     "contextWindow": 256000,
     "maxOutputTokens": 32768,
@@ -580,7 +580,7 @@ Izmantojiet šo, kad VS Code Insiders ir konfigurēts pielāgoto gala punktu mod
 
 **Piezīmes:**
 
-- Aizstājiet `sk-your-omniroute-key` ar OmniRoute izveidotu API atslēgu.
+- Aizstājiet `sk-your-agentproxy-key` ar AgentProxy izveidotu API atslēgu.
 - Laukam `url` jānorāda `/api/v1/vscode/{token}/chat/completions`.
 - Laukam `modelsUrl` jānorāda `/api/v1/vscode/{token}/models`.
 - Dodiet priekšroku parastajai `/v1` + Bearer galvenes plūsmai, kad klients atbalsta pielāgotas galvenes.
@@ -594,38 +594,38 @@ Izmantojiet šo, kad VS Code Insiders ir konfigurēts pielāgoto gala punktu mod
 # Piesakieties savā AWS/Kiro kontā:
 kiro-cli login
 
-# CLI izmanto savu autentifikāciju — OmniRoute nav nepieciešams kā backend pašam Kiro CLI.
-# Izmantojiet kiro-cli kopā ar OmniRoute citiem rīkiem.
+# CLI izmanto savu autentifikāciju — AgentProxy nav nepieciešams kā backend pašam Kiro CLI.
+# Izmantojiet kiro-cli kopā ar AgentProxy citiem rīkiem.
 kiro-cli status
 ```
 
-**Kiro IDE** darbvirsmas lietotnei izmantojiet MITM gala punktu, ko nodrošina OmniRoute
+**Kiro IDE** darbvirsmas lietotnei izmantojiet MITM gala punktu, ko nodrošina AgentProxy
 vadības sadaļā `/dashboard/cli-tools → Kiro`.
 
-## 10. Iekšējais OmniRoute CLI
+## 10. Iekšējais AgentProxy CLI
 
-Binance `omniroute` binārais faila nodrošina komandas servera dzīves ciklam, iestatīšanai, diagnostikai un pakalpojumu sniedzēju pārvaldībai. Ieejas punkts: `bin/omniroute.mjs`.
+Binance `agentproxy` binārais faila nodrošina komandas servera dzīves ciklam, iestatīšanai, diagnostikai un pakalpojumu sniedzēju pārvaldībai. Ieejas punkts: `bin/agentproxy.mjs`.
 
 ```bash
-omniroute                              # Start server (default port 20128)
-omniroute setup                        # Interactive setup wizard
-omniroute doctor                       # Check config, DB, ports, runtime
-omniroute providers list               # Configured provider connections
-omniroute providers test-all           # Test every active connection
-omniroute reset-password               # Reset the admin password
-omniroute logs                         # Stream request logs
-omniroute health                       # Detailed health (breakers, cache, memory)
-omniroute --version                    # Print version
-omniroute --help                       # Show all commands
+agentproxy                              # Start server (default port 20128)
+agentproxy setup                        # Interactive setup wizard
+agentproxy doctor                       # Check config, DB, ports, runtime
+agentproxy providers list               # Configured provider connections
+agentproxy providers test-all           # Test every active connection
+agentproxy reset-password               # Reset the admin password
+agentproxy logs                         # Stream request logs
+agentproxy health                       # Detailed health (breakers, cache, memory)
+agentproxy --version                    # Print version
+agentproxy --help                       # Show all commands
 ```
 
 ### Iestatīšana un inicializācija
 
 ```bash
-omniroute setup                        # Interactive setup wizard
-omniroute setup --non-interactive      # CI/automation mode (reads env vars + flags)
-omniroute setup --password '<value>'   # Set admin password directly
-omniroute setup --add-provider \
+agentproxy setup                        # Interactive setup wizard
+agentproxy setup --non-interactive      # CI/automation mode (reads env vars + flags)
+agentproxy setup --password '<value>'   # Set admin password directly
+agentproxy setup --add-provider \
   --provider openai \
   --api-key '<value>' \
   --test-provider                      # Add and test a provider in one shot
@@ -635,21 +635,21 @@ Neinteraktīvai iestatīšanai atpazīstamās vides mainīgās:
 
 | Mainīgais           | Mērķis                                                                              |
 | ------------------- | ----------------------------------------------------------------------------------- |
-| `OMNIROUTE_API_KEY` | Pakalpojuma sniedzēja API atslēga (saistīta ar `--api-key` caur Commander `.env()`) |
-| `DATA_DIR`          | Pārrakstīt OmniRoute datu direktoriju                                               |
+| `AGENTPROXY_API_KEY` | Pakalpojuma sniedzēja API atslēga (saistīta ar `--api-key` caur Commander `.env()`) |
+| `DATA_DIR`          | Pārrakstīt AgentProxy datu direktoriju                                               |
 
 Visas citas neinteraktīvās ievades tiek padotas kā karogi, nevis vides mainīgās:
 `--password`, `--provider`, `--provider-name`, `--provider-base-url`, `--default-model`
-(sk. `omniroute setup` opcijas iepriekš).
+(sk. `agentproxy setup` opcijas iepriekš).
 
 ### Diagnostika
 
 ```bash
-omniroute doctor                       # Check config, DB, ports, runtime, memory, liveness
-omniroute doctor --json                # Machine-readable JSON
-omniroute doctor --no-liveness         # Skip the HTTP health probe
-omniroute doctor --host 0.0.0.0        # Override liveness host
-omniroute doctor --liveness-url <url>  # Full health endpoint URL override
+agentproxy doctor                       # Check config, DB, ports, runtime, memory, liveness
+agentproxy doctor --json                # Machine-readable JSON
+agentproxy doctor --no-liveness         # Skip the HTTP health probe
+agentproxy doctor --host 0.0.0.0        # Override liveness host
+agentproxy doctor --liveness-url <url>  # Full health endpoint URL override
 ```
 
 `doctor` veic šādas pārbaudes: `Config`, `Database`, `Storage/encryption`,
@@ -659,47 +659,47 @@ omniroute doctor --liveness-url <url>  # Full health endpoint URL override
 ### Pakalpojumu sniedzēju pārvaldība
 
 ```bash
-omniroute providers available                       # OmniRoute provider catalog
-omniroute providers available --search openai       # Filter catalog by id/name/alias/category
-omniroute providers available --category api-key    # Filter by category (api-key, oauth, free, ...)
-omniroute providers available --json                # Machine-readable JSON
+agentproxy providers available                       # AgentProxy provider catalog
+agentproxy providers available --search openai       # Filter catalog by id/name/alias/category
+agentproxy providers available --category api-key    # Filter by category (api-key, oauth, free, ...)
+agentproxy providers available --json                # Machine-readable JSON
 
-omniroute providers list                            # Configured provider connections
-omniroute providers list --json
+agentproxy providers list                            # Configured provider connections
+agentproxy providers list --json
 
-omniroute providers test <id|name>                  # Test one configured connection
-omniroute providers test-all                        # Test every active connection
-omniroute providers validate                        # Local-only structural validation
-omniroute providers add <provider> --credential-env PROVIDER_KEY
-omniroute providers import ./providers.json --dry-run --json
-omniroute providers auth <provider>                 # Existing OAuth flow
-omniroute providers edit <id|name> --default-model <model>
-omniroute providers remove <id|name> --yes
+agentproxy providers test <id|name>                  # Test one configured connection
+agentproxy providers test-all                        # Test every active connection
+agentproxy providers validate                        # Local-only structural validation
+agentproxy providers add <provider> --credential-env PROVIDER_KEY
+agentproxy providers import ./providers.json --dry-run --json
+agentproxy providers auth <provider>                 # Existing OAuth flow
+agentproxy providers edit <id|name> --default-model <model>
+agentproxy providers remove <id|name> --yes
 ```
 
 `providers add/import/auth/edit/remove` ir API-primāri un tāpēc darbojas pret
 aktīvo lokālo vai attālo kontekstu. Pieteikšanās datu ievadei jāizmanto
 `--credential-stdin` vai `--credential-env`; `--dry-run --json` ziņo tikai par
-rediģētu esamību/formu. `providers available` nolasa OmniRoute katalogu;
+rediģētu esamību/formu. `providers available` nolasa AgentProxy katalogu;
 `providers list/test/test-all/validate` saglabā savu lokālo SQLite uzvedību un
 neprasa servera darbību.
 
 ### Atgūšana un atiestatīšana
 
 ```bash
-omniroute reset-password                # Reset the admin password (also: omniroute-reset-password)
-omniroute reset-encrypted-columns       # Show warning + dry-run for encrypted credential reset
-omniroute reset-encrypted-columns --force  # Actually null out encrypted credentials in SQLite
+agentproxy reset-password                # Reset the admin password (also: agentproxy-reset-password)
+agentproxy reset-encrypted-columns       # Show warning + dry-run for encrypted credential reset
+agentproxy reset-encrypted-columns --force  # Actually null out encrypted credentials in SQLite
 ```
 
 ### Pieteikšanās datu eksportēšana (⚠ apieties piesardzīgi)
 
 ```bash
-omniroute auth export                                 # Show warning + confirmation gate — no DB access
-omniroute auth export --force                          # Export ALL connections' DECRYPTED credentials to stdout as JSON
-omniroute auth export --force --id <id>                 # Export only the matching connection
-omniroute auth export --force --format env               # Emit OMNIROUTE_<PROVIDER>_<FIELD>=<value> lines
-omniroute auth export --force --out creds.json           # Write to a file (created with 0600 permissions)
+agentproxy auth export                                 # Show warning + confirmation gate — no DB access
+agentproxy auth export --force                          # Export ALL connections' DECRYPTED credentials to stdout as JSON
+agentproxy auth export --force --id <id>                 # Export only the matching connection
+agentproxy auth export --force --format env               # Emit AGENTPROXY_<PROVIDER>_<FIELD>=<value> lines
+agentproxy auth export --force --out creds.json           # Write to a file (created with 0600 permissions)
 ```
 
 `auth export` ir **tikai lokāls** (tieša SQLite nolasīšana, nevis HTTP maršruts) un apzināti drukā/raksta
@@ -711,36 +711,36 @@ Lauks, kuram neizdodas atšifrēt (novecojusi atslēga, bojāts šifrots), tiek 
 
 ### Citas apakškomandas
 
-Pieņem, ka darbojas OmniRoute serveris, ja vien nav norādīts citādi:
+Pieņem, ka darbojas AgentProxy serveris, ja vien nav norādīts citādi:
 
 ```bash
-omniroute status                       # Comprehensive runtime status
-omniroute logs                         # Stream request logs (--json, --search, --follow)
-omniroute config show                  # Display current configuration
+agentproxy status                       # Comprehensive runtime status
+agentproxy logs                         # Stream request logs (--json, --search, --follow)
+agentproxy config show                  # Display current configuration
 
-omniroute provider list                # List available providers (alias of providers list)
-omniroute provider add                 # Register OmniRoute as a provider on a tool
-omniroute keys add | list | remove     # Manage API keys
-omniroute models [provider]            # List models (--json, --search)
-omniroute combo list | switch | create | delete
+agentproxy provider list                # List available providers (alias of providers list)
+agentproxy provider add                 # Register AgentProxy as a provider on a tool
+agentproxy keys add | list | remove     # Manage API keys
+agentproxy models [provider]            # List models (--json, --search)
+agentproxy combo list | switch | create | delete
 
-omniroute backup                       # Snapshot config + DB
-omniroute restore                      # Restore from a previous snapshot
+agentproxy backup                       # Snapshot config + DB
+agentproxy restore                      # Restore from a previous snapshot
 
-omniroute health                       # Detailed health (breakers, cache, memory)
-omniroute quota                        # Provider quota usage
-omniroute cache                        # Cache status
-omniroute cache clear                  # Clear semantic + signature caches
+agentproxy health                       # Detailed health (breakers, cache, memory)
+agentproxy quota                        # Provider quota usage
+agentproxy cache                        # Cache status
+agentproxy cache clear                  # Clear semantic + signature caches
 
-omniroute mcp status | restart         # MCP server status / restart
-omniroute a2a status | card            # A2A server status / agent card
+agentproxy mcp status | restart         # MCP server status / restart
+agentproxy a2a status | card            # A2A server status / agent card
 
-omniroute tunnel list | create | stop  # Manage tunnels (cloudflare/tailscale/ngrok)
-omniroute env show | get <k> | set <k> <v>  # Inspect / set env vars (temporary)
+agentproxy tunnel list | create | stop  # Manage tunnels (cloudflare/tailscale/ngrok)
+agentproxy env show | get <k> | set <k> <v>  # Inspect / set env vars (temporary)
 
-omniroute test                         # Provider connectivity smoke test
-omniroute update                       # Check for updates
-omniroute completion                   # Generate shell completion
+agentproxy test                         # Provider connectivity smoke test
+agentproxy update                       # Check for updates
+agentproxy completion                   # Generate shell completion
 ```
 
 ### Bieži izmantotie karogi
@@ -769,7 +769,7 @@ omniroute completion                   # Generate shell completion
 | `/v1/audio/speech`         | Teksts-skaņa                         | ElevenLabs, OpenAI TTS    |
 | `/v1/audio/transcriptions` | Skaņa-teksts                         | Deepgram, AssemblyAI      |
 
-Gatavi ielīmēt piemēri ar tokenizētu OmniRoute URL:
+Gatavi ielīmēt piemēri ar tokenizētu AgentProxy URL:
 
 ```txt
 Token piemērs: sk-a3ab3c080beaee3a-69f4a4-070d71af
@@ -788,7 +788,7 @@ Ollama tērzēšana: http://localhost:20128/api/v1/vscode/sk-a3ab3c080beaee3a-69
 
 | Kļūda                                          | Cēlonis                                | Labojums                                               |
 | ---------------------------------------------- | -------------------------------------- | ------------------------------------------------------ |
-| `Connection refused`                           | OmniRoute nav palaists                 | `omniroute serve`                                      |
+| `Connection refused`                           | AgentProxy nav palaists                 | `agentproxy serve`                                      |
 | `401 Unauthorized`                             | Nepareizs API atslēga                  | Pārbaudīt `/dashboard/api-manager`                     |
 | `No combo configured`                          | Nav aktīvas maršrutēšanas kombinācijas | Iestatīt `/dashboard/combos`                           |
 | CLI rāda "not installed"                       | Binārfails nav PATH                    | Pārbaudīt `which <command>`                            |

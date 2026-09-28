@@ -72,11 +72,11 @@ test("quota/keys/[id]/models: GET returns early when authError is truthy", () =>
 
 // ── Error sanitization ────────────────────────────────────────────────────────
 
-test("quota/keys/[id]/models: imports buildErrorBody from @omniroute/open-sse/utils/error", () => {
+test("quota/keys/[id]/models: imports buildErrorBody from @agentproxy/open-sse/utils/error", () => {
   assert.ok(src.includes("buildErrorBody"), "route must use buildErrorBody — Hard Rule #12");
   assert.ok(
-    src.includes("@omniroute/open-sse/utils/error"),
-    "route must import buildErrorBody from @omniroute/open-sse/utils/error"
+    src.includes("@agentproxy/open-sse/utils/error"),
+    "route must import buildErrorBody from @agentproxy/open-sse/utils/error"
   );
 });
 

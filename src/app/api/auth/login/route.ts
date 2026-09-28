@@ -15,6 +15,7 @@ import { loginSchema } from "@/shared/validation/schemas";
 import { isValidationFailure, validateBody } from "@/shared/validation/helpers";
 import { checkLoginGuard, clearLoginAttempts, recordLoginFailure } from "@/server/auth/loginGuard";
 import { AUTHZ_HEADER_TRUSTED_PEER_IP } from "@/server/authz/headers";
+import { resolvePublicOrigin } from "@/server/origin/publicOrigin";
 
 // SECURITY: No hardcoded fallback — JWT_SECRET must be configured.
 if (!process.env.JWT_SECRET) {
@@ -77,15 +78,15 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Invalid password payload" }, { status: 400 });
     }
     const settings = await getCachedSettings();
-    const trustedPeerIp = process.env.OMNIROUTE_PEER_STAMP_TOKEN
+    const trustedPeerIp = process.env.AGENTPROXY_PEER_STAMP_TOKEN
       ? request.headers.get(AUTHZ_HEADER_TRUSTED_PEER_IP)
       : null;
     const clientIp = trustedPeerIp || auditContext.ipAddress || null;
     const oidcDisabledPassword =
       settings.oidcEnabled === true &&
       (settings.oidcDisablePasswordLogin === true ||
-        isFeatureFlagEnabled("OMNIROUTE_OIDC_DISABLE_PASSWORD_LOGIN") ||
-        process.env.OMNIROUTE_OIDC_DISABLE_PASSWORD_LOGIN === "true" ||
+        isFeatureFlagEnabled("AGENTPROXY_OIDC_DISABLE_PASSWORD_LOGIN") ||
+        process.env.AGENTPROXY_OIDC_DISABLE_PASSWORD_LOGIN === "true" ||
         process.env.OIDC_DISABLE_PASSWORD_LOGIN === "true");
 
     if (oidcDisabledPassword) {
@@ -155,9 +156,8 @@ export async function POST(request: NextRequest) {
 
     if (isValid) {
       const forceSecureCookie = process.env.AUTH_COOKIE_SECURE === "true";
-      const forwardedProtoHeader = request.headers.get("x-forwarded-proto") || "";
-      const forwardedProto = forwardedProtoHeader.split(",")[0].trim().toLowerCase();
-      const isHttpsRequest = forwardedProto === "https" || request.nextUrl?.protocol === "https:";
+      const publicOrigin = resolvePublicOrigin(request).origin;
+      const isHttpsRequest = new URL(publicOrigin).protocol === "https:";
       const useSecureCookie = forceSecureCookie || isHttpsRequest;
 
       const token = await new SignJWT({ authenticated: true })

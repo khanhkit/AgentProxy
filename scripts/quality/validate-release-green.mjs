@@ -33,7 +33,7 @@
 // orchestration lives in the /green-prs + review-prs flows that call it.
 //
 // Usage:
-//   node scripts/quality/validate-release-green.mjs [--json] [--with-build] [--quick] [--full-ci] [--hermetic]
+//   node scripts/quality/validate-release-green.mjs [--json] [--with-build] [--quick] [--full-ci] [--hermetic] [--serial-slow]
 //     --json        emit machine-readable JSON to stdout (report goes to stderr)
 //     --with-build  also run check:pack-artifact (needs a dist/ build — slow)
 //     --quick       skip the slow unit + vitest + integration suites (drift + fast
@@ -43,15 +43,18 @@
 //                   read straight from ci.yml so the set never drifts. Catches the whole
 //                   "static base-red" category the curated list missed (v3.8.46: 11 of 16
 //                   leaked reds). Pair with --quick for the fast "1 command, 0 CI layers" pass.
-//     --hermetic    scrub OMNIROUTE_API_KEY/OMNIROUTE_URL from gate env so live
+//     --hermetic    scrub AGENTPROXY_API_KEY/AGENTPROXY_URL from gate env so live
 //                   tests self-skip exactly like CI (dev machines otherwise run
 //                   them against localhost and produce false-positive reds)
+//     --serial-slow run unit/vitest/integration/package-artifact one at a time.
+//                   This runs the same HARD gates with the same ceilings; use it on
+//                   resource-constrained release hosts where parallel execution can
+//                   fabricate timeout reds through CPU/RAM contention.
 //
 // Per-gate output is saved to _artifacts/release-green/<gate>.log (gitignored) —
 // diagnose a red from the file instead of re-running the gate.
 
-import { execFile, execFileSync } from "node:child_process";
-import { promisify } from "node:util";
+import { execFileSync, spawn } from "node:child_process";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -395,9 +398,23 @@ export function classifyRunError(err, timeoutMs) {
 }
 
 // --hermetic: scrub the live-test trigger vars so the pre-flight behaves like CI
-// (a dev machine with OMNIROUTE_API_KEY set runs 17+ live tests that CI skips —
+// (a dev machine with AGENTPROXY_API_KEY set runs 17+ live tests that CI skips —
 // every one a false-positive red against the release branch).
-const HERMETIC_SCRUB = ["OMNIROUTE_API_KEY", "OMNIROUTE_URL"];
+const HERMETIC_SCRUB = ["AGENTPROXY_API_KEY", "AGENTPROXY_URL"];
+
+// Package gates must stay finite, but their ceilings must reflect measured
+// authority-host runtime. On the constrained ARM release host (~1.9 CPUs),
+// AP-ISS-0113 measured a green package-artifact npm-pack phase at ~4h27m and
+// a standalone pack-boot npm-pack phase at ~5h25m. The former 3h artifact
+// ceiling and 15m boot ceiling would kill healthy work. Seven hours retains a
+// hard hang ceiling while leaving ~29% headroom over the slowest measured pack.
+export const PACK_ARTIFACT_TIMEOUT_MS = 7 * 60 * 60 * 1000;
+export const PACK_BOOT_TIMEOUT_MS = 7 * 60 * 60 * 1000;
+export const PACK_ARTIFACT_ENV = Object.freeze({
+  AGENTPROXY_USE_TURBOPACK: "0",
+  AGENTPROXY_NEXT_BUILD_CPUS: "1",
+});
+
 let hermetic = false;
 function buildGateEnv(extra) {
   const env = { ...process.env, FORCE_COLOR: "0", ...(extra || {}) };
@@ -423,26 +440,191 @@ function run(cmd, cmdArgs, opts = {}) {
   }
 }
 
-const execFileAsync = promisify(execFile);
+const ASYNC_MAX_BUFFER = 256 * 1024 * 1024;
+const TREE_KILL_GRACE_MS = 2_000;
 
-// Async twin of run() — same {code, out} contract, so the slow suites (unit /
-// vitest / integration / pack-artifact) can run CONCURRENTLY instead of in
-// series. Sequentially they dominate the pre-flight wall time (~2h in the
-// v3.8.45 run); they are independent processes with per-process DATA_DIR
-// isolation, so overlapping them cuts the pre-flight to ~the slowest single one.
-async function runAsync(cmd, cmdArgs, opts = {}) {
-  try {
-    const { stdout, stderr } = await execFileAsync(cmd, cmdArgs, {
-      cwd: ROOT,
-      encoding: "utf8",
-      maxBuffer: 256 * 1024 * 1024,
-      env: buildGateEnv(opts.env),
-      ...(opts.timeout ? { timeout: opts.timeout } : {}),
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+/**
+ * Terminate a whole gate subprocess tree.
+ *
+ * POSIX children are spawned detached, making the launcher the process-group leader;
+ * signalling -pid therefore reaches npm/sh/node grandchildren too. Windows has no
+ * equivalent negative-pid group signal, so use taskkill /T /F.
+ */
+export async function terminateProcessTree(
+  pid,
+  {
+    platform = process.platform,
+    processKill = process.kill.bind(process),
+    spawnFn = spawn,
+    sleepFn = sleep,
+    graceMs = TREE_KILL_GRACE_MS,
+  } = {}
+) {
+  if (!Number.isInteger(pid) || pid <= 0) return;
+
+  if (platform === "win32") {
+    await new Promise((resolve) => {
+      let settled = false;
+      const finish = () => {
+        if (settled) return;
+        settled = true;
+        resolve();
+      };
+      const fallback = () => {
+        try {
+          processKill(pid, "SIGKILL");
+        } catch {
+          /* already gone */
+        }
+        finish();
+      };
+
+      try {
+        const killer = spawnFn("taskkill", ["/PID", String(pid), "/T", "/F"], {
+          stdio: "ignore",
+          windowsHide: true,
+        });
+        killer.once("close", finish);
+        killer.once("error", fallback);
+      } catch {
+        fallback();
+      }
     });
-    return { code: 0, out: `${stdout || ""}${stderr || ""}` };
-  } catch (err) {
-    return classifyRunError(err, opts.timeout);
+    return;
   }
+
+  const signalGroupOrChild = (signal) => {
+    try {
+      processKill(-pid, signal);
+      return true;
+    } catch {
+      try {
+        processKill(pid, signal);
+        return true;
+      } catch {
+        return false;
+      }
+    }
+  };
+
+  signalGroupOrChild("SIGTERM");
+  await sleepFn(graceMs);
+
+  try {
+    processKill(-pid, 0);
+    signalGroupOrChild("SIGKILL");
+    return;
+  } catch {
+    /* group gone or platform does not expose negative-pid probing */
+  }
+
+  try {
+    processKill(pid, 0);
+    processKill(pid, "SIGKILL");
+  } catch {
+    /* already gone */
+  }
+}
+
+// Async twin of run() — same {code, out} contract, but it keeps the ChildProcess
+// handle so timeout cleanup can reap the ENTIRE process tree before the next slow
+// gate starts. This prevents a timed-out unit/pack launcher from continuing under
+// PID 1 and stealing CPU/RAM from Vitest/integration/package-artifact.
+export async function runAsync(cmd, cmdArgs, opts = {}) {
+  return await new Promise((resolve) => {
+    let child;
+    try {
+      child = spawn(cmd, cmdArgs, {
+        cwd: ROOT,
+        env: buildGateEnv(opts.env),
+        stdio: ["ignore", "pipe", "pipe"],
+        windowsHide: true,
+        detached: process.platform !== "win32",
+      });
+    } catch (err) {
+      resolve(classifyRunError(err, opts.timeout));
+      return;
+    }
+
+    let stdout = "";
+    let stderr = "";
+    let captured = 0;
+    let settled = false;
+    let cleanupStarted = false;
+    let timer;
+
+    const finish = (result) => {
+      if (settled) return;
+      settled = true;
+      if (timer) clearTimeout(timer);
+      resolve(result);
+    };
+
+    const cleanupAndFinish = async (resultFactory) => {
+      if (cleanupStarted || settled) return;
+      cleanupStarted = true;
+      await terminateProcessTree(child.pid);
+      finish(resultFactory());
+    };
+
+    const capture = (which, chunk) => {
+      if (settled || cleanupStarted) return;
+      const text = String(chunk);
+      captured += Buffer.byteLength(text);
+      if (captured > ASYNC_MAX_BUFFER) {
+        void cleanupAndFinish(() => ({
+          code: 1,
+          out: stdout + stderr + "\ngate output exceeded " + ASYNC_MAX_BUFFER + " bytes",
+        }));
+        return;
+      }
+      if (which === "stdout") stdout += text;
+      else stderr += text;
+    };
+
+    child.stdout?.setEncoding("utf8");
+    child.stderr?.setEncoding("utf8");
+    child.stdout?.on("data", (chunk) => capture("stdout", chunk));
+    child.stderr?.on("data", (chunk) => capture("stderr", chunk));
+
+    child.once("error", (err) => {
+      if (cleanupStarted) return;
+      finish(classifyRunError({ ...err, stdout, stderr }, opts.timeout));
+    });
+
+    child.once("close", (code, signal) => {
+      if (cleanupStarted) return;
+      if (code === 0) {
+        finish({ code: 0, out: stdout + stderr });
+        return;
+      }
+      finish(
+        classifyRunError(
+          { status: typeof code === "number" ? code : 1, signal, stdout, stderr },
+          opts.timeout
+        )
+      );
+    });
+
+    if (opts.timeout) {
+      timer = setTimeout(() => {
+        void cleanupAndFinish(() =>
+          classifyRunError(
+            {
+              killed: true,
+              code: "ETIMEDOUT",
+              signal: "SIGTERM",
+              stdout,
+              stderr,
+            },
+            opts.timeout
+          )
+        );
+      }, opts.timeout);
+    }
+  });
 }
 
 async function main() {
@@ -451,6 +633,7 @@ async function main() {
   const WITH_BUILD = args.has("--with-build");
   const QUICK = args.has("--quick");
   const FULL_CI = args.has("--full-ci");
+  const SERIAL_SLOW = args.has("--serial-slow");
   hermetic = args.has("--hermetic");
 
   const results = [];
@@ -497,6 +680,13 @@ async function main() {
   };
 
   process.stderr.write("🔎 Release-green validation (current working tree)\n\n");
+
+  hardCmd(
+    "release-branch-hygiene",
+    "Release branch hygiene (remote must contain only main)",
+    npmCmd,
+    ["run", "check:release-branch-hygiene"]
+  );
 
   hardCmd("typecheck", "Typecheck (core)", npmCmd, ["run", "typecheck:core"]);
 
@@ -658,21 +848,17 @@ async function main() {
     // release — that is why it is a HARD pre-flight gate.
     const slow = [
       {
-        // Raised 45→100min 2026-08-05: a hermetic-env run on the loaded devbox
-        // (load 7-26) was still inside invocation 1 of 3 at 76min when killed;
-        // contention factor 2-3× was measured against idle windows, and no idle
-        // measurement exists yet. The pre-flight's REAL condition is exactly
-        // this contended one (unit runs in Promise.all with integration+vitest
-        // plus whatever else the devbox carries), and there 45min provably
-        // killed a healthy suite and fabricated a false base-red. The ceiling's
-        // purpose — turning a genuine hang (stuck SQLite handle = zero progress
-        // forever) into a visible failure — survives at 100min.
-        // Measured on idle .113: unavailable (checkout not found). Tightened to 80min from 100min as a conservative step. TODO: re-measure on idle .113 and tighten to ~1.8× measured.
+        // AP-ISS-0113 authority measurements on this constrained ARM host show
+        // the full CI unit command needs ~2h16m (v7) to ~2h24m (v8) while still
+        // making progress. The old 80m ceiling therefore killed healthy work.
+        // Keep a finite three-hour ceiling: it gives ~25% headroom over the
+        // measured v8 runtime while the process-tree cleanup in runAsync still
+        // converts a genuine hang into a hard failure without orphaning children.
         id: "unit",
         label:
-          "Unit tests (full suite, CI concurrency — ~30-50min idle, up to ~80min under load (awaiting idle .113 measurement, #9532))",
+          "Unit tests (full suite, CI concurrency — measured ~2h16-2h24 on release authority host)",
         args: ["run", "test:unit:ci"],
-        timeout: 80 * 60 * 1000,
+        timeout: 3 * 60 * 60 * 1000,
       },
       {
         id: "vitest",
@@ -698,13 +884,23 @@ async function main() {
         id: "pack-artifact",
         label: "Package artifact (npm pack policy)",
         args: ["run", "check:pack-artifact"],
-        timeout: 20 * 60 * 1000,
+        timeout: PACK_ARTIFACT_TIMEOUT_MS,
+        env: PACK_ARTIFACT_ENV,
       });
     }
-    slow.forEach((g) => announce(`${g.label} [parallel]`));
-    const slowResults = await Promise.all(
-      slow.map((g) => runAsync(npmCmd, g.args, { timeout: g.timeout }))
-    );
+    const slowMode = SERIAL_SLOW ? "serial" : "parallel";
+    slow.forEach((g) => announce(`${g.label} [${slowMode}]`));
+    let slowResults;
+    if (SERIAL_SLOW) {
+      slowResults = [];
+      for (const g of slow) {
+        slowResults.push(await runAsync(npmCmd, g.args, { timeout: g.timeout, env: g.env }));
+      }
+    } else {
+      slowResults = await Promise.all(
+        slow.map((g) => runAsync(npmCmd, g.args, { timeout: g.timeout, env: g.env }))
+      );
+    }
     slow.forEach((g, i) => {
       const { code, out } = slowResults[i];
       saveGateLog(g.id, out);
@@ -739,7 +935,7 @@ async function main() {
       } else {
         announce(bootLabel);
         const { code, out } = await runAsync(npmCmd, ["run", "check:pack-boot"], {
-          timeout: 15 * 60 * 1000,
+          timeout: PACK_BOOT_TIMEOUT_MS,
         });
         saveGateLog("pack-boot", out);
         record({
@@ -754,7 +950,8 @@ async function main() {
   } else if (WITH_BUILD) {
     // --with-build without the suites (--quick): still verify the package artifact.
     const { code, out } = await runAsync(npmCmd, ["run", "check:pack-artifact"], {
-      timeout: 20 * 60 * 1000,
+      timeout: PACK_ARTIFACT_TIMEOUT_MS,
+      env: PACK_ARTIFACT_ENV,
     });
     saveGateLog("pack-artifact", out);
     record({

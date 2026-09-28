@@ -9,7 +9,7 @@ lastUpdated: 2026-06-28
 > **Source of truth:** `src/lib/memory/` and `src/app/api/memory/`
 > **Last updated:** 2026-06-28 — v3.8.40 (off-by-default + int8 quantization catch-up)
 
-OmniRoute zapewnia trwałą pamięć konwersacyjną powiązaną z kluczem API (oraz
+AgentProxy zapewnia trwałą pamięć konwersacyjną powiązaną z kluczem API (oraz
 opcjonalnie z identyfikatorem sesji). Wspomnienia są wyodrębniane automatycznie
 z odpowiedzi LLM poprzez lekkie dopasowanie wzorców regex i wstrzykiwane z powrotem
 do kolejnych żądań jako wiodąca wiadomość systemowa (albo pierwsza wiadomość
@@ -21,7 +21,7 @@ użytkownika dla dostawców, którzy odrzucają rolę system).
 > rozliczane — zaskakujący koszt przy nowych instalacjach i dla klientów, które
 > same zarządzają swoim kontekstem. Włącz jawnie w **Settings → Memory**
 > (`MemorySkillsTab` pokazuje ostrzeżenie o koszcie tokenów, gdy pamięć jest włączona).
-> Klient może wyłączyć pamięć dla pojedynczego żądania nagłówkiem `x-omniroute-no-memory`
+> Klient może wyłączyć pamięć dla pojedynczego żądania nagłówkiem `x-agentproxy-no-memory`
 > (`true`/`1`/`yes`) — zobacz tabelę nagłówków żądań w
 > [API_REFERENCE.md](../reference/API_REFERENCE.md). Żądanie no-memory ustawia
 > `memoryOwnerId = null`, co wyłącza **zarówno** wstrzykiwanie pamięci, jak i skilli
@@ -237,7 +237,7 @@ nieosiągalny lub nic nie zwróci, retrieval spada do sqlite-vec → FTS5.
   cosine-distance przy pierwszym użyciu) i upsertuje punkt z payloadem
   `{memoryId, apiKeyId, sessionId, key, content, metadata, createdAtUnix, expiresAtUnix}`.
 - `searchSemanticMemory(query, topK, scope)` — embeduje zapytanie, przeszukuje
-  kolekcję filtrowaną po `kind = "omniroute_memory"` oraz opcjonalnie po
+  kolekcję filtrowaną po `kind = "agentproxy_memory"` oraz opcjonalnie po
   `apiKeyId` / `sessionId`. Ogranicza `topK` do `[1, 20]`.
 - `deleteSemanticMemoryPoint(id)` — usunięcie pojedynczego punktu. Wołane przez
   `deleteMemory()` po usunięciu wiersza SQLite (D15).
@@ -368,7 +368,7 @@ fakty bez ich zapisywania.
    zwraca co najmniej jeden wpis, gdy cokolwiek pasowało.
 
 `estimateTokens` jest eksportowane i używane przez retrieval, summarisation oraz narzędzie MCP
-`omniroute_memory_search`.
+`agentproxy_memory_search`.
 
 ## Injection (`injection.ts`)
 
@@ -424,7 +424,7 @@ Zobacz też sekcję „Rozszerzenie ustawień” powyżej dla opisów pól.
 | `memoryVectorStore`         | `vectorStore`            | `"auto"` |
 
 Klucze DB związane z Qdrant (`qdrantEnabled`, `qdrantHost`, `qdrantPort`,
-`qdrantApiKey`, `qdrantCollection` domyślnie `"omniroute_memory"`,
+`qdrantApiKey`, `qdrantCollection` domyślnie `"agentproxy_memory"`,
 `qdrantEmbeddingModel` domyślnie `"openai/text-embedding-3-small"`) czyta
 `normalizeQdrantConfig()` w `qdrant.ts`.
 
@@ -503,15 +503,15 @@ ma pierwszeństwo, a wyprowadzone `page` jest liczone pod kształt odpowiedzi.
 
 Gdy serwer MCP jest włączony, rejestrowane są trzy narzędzia memory:
 
-- `omniroute_memory_search` — `{apiKeyId, query?, type?, maxTokens?, limit?}`
+- `agentproxy_memory_search` — `{apiKeyId, query?, type?, maxTokens?, limit?}`
   → opakowuje `retrieveMemories()`. Od v3.8.6 (D16) `strategy` jest czytane
   z `getMemorySettings()` zamiast być zahardkodowane na `"exact"`. Jeśli
   podano `query` i `strategy` to `semantic` lub `hybrid`, używany jest magazyn
   wektorowy, gdy dostępny.
-- `omniroute_memory_add` — `{apiKeyId, sessionId?, type, key, content,
+- `agentproxy_memory_add` — `{apiKeyId, sessionId?, type, key, content,
 metadata?}` → opakowuje `createMemory()`. Przyjmuje tylko 4 kanoniczne typy:
   `factual`, `episodic`, `procedural`, `semantic` (D17).
-- `omniroute_memory_clear` — `{apiKeyId, type?, olderThan?}` → listuje pasujące
+- `agentproxy_memory_clear` — `{apiKeyId, type?, olderThan?}` → listuje pasujące
   wpisy, opcjonalnie filtruje po znaczniku created-before, potem usuwa każdy
   przez `deleteMemory()` (co usuwa też wektory z sqlite-vec + Qdrant).
 
@@ -574,7 +574,7 @@ domyślny TTL 5 min).
 - Wpisy z przyszłym `expires_at` są odfiltrowywane z retrieval; stare
   wpisy poza `retentionDays` są wykluczane przez klauzulę
   `created_at >= cutoff` w `retrieveMemories`.
-- Do twardego usunięcia użyj `DELETE /api/memory/[id]` lub `omniroute_memory_clear`.
+- Do twardego usunięcia użyj `DELETE /api/memory/[id]` lub `agentproxy_memory_clear`.
 - Extraction jest fire-and-forget przez `setImmediate`; błędy logowane są pod
   `memory.extraction.background.failed` i nigdy nie wychodzą do wywołującego.
 - Round-tripy weryfikacji (`verifyExtractionPipeline`) sprzątają własne
@@ -618,7 +618,7 @@ domyślny TTL 5 min).
 
 ## Wybór providera embeddingów (v3.8.16+)
 
-Silnik memory OmniRoute wspiera **cztery źródła embeddingów** (`src/lib/memory/embedding/`). Każde ma inne kompromisy w **latencji, koszcie, jakości modelu i złożoności setupu**.
+Silnik memory AgentProxy wspiera **cztery źródła embeddingów** (`src/lib/memory/embedding/`). Każde ma inne kompromisy w **latencji, koszcie, jakości modelu i złożoności setupu**.
 
 ### Cztery providery
 
@@ -863,7 +863,7 @@ więc nic nie jest kompaktowane automatycznie. Wyzwól przez API:
 
 ```bash
 curl -X POST http://localhost:20128/api/memory/summarize \
-  -H "Authorization: Bearer $OMNIROUTE_KEY"
+  -H "Authorization: Bearer $AGENTPROXY_KEY"
 ```
 
 Aby zostawić wyłączone, po prostu trzymaj `autoSummarize` na domyślnym (`false`).
@@ -878,5 +878,5 @@ Aby zostawić wyłączone, po prostu trzymaj `autoSummarize` na domyślnym (`fal
 ```bash
 # Cron-style: summarize at 3am daily
 0 3 * * * curl -X POST http://localhost:20128/api/memory/summarize \
-  -H "Authorization: Bearer $OMNIROUTE_KEY"
+  -H "Authorization: Bearer $AGENTPROXY_KEY"
 ```

@@ -303,7 +303,7 @@ test("context-relay codex quota handoff: fires and expiresAt matches session-win
 
   // ── Secondary assertion: codex usage URL was fetched ─────────────────────
   assert.ok(
-    seenUrls.includes(CODEX_USAGE_URL),
+    seenUrls.some((url) => url === CODEX_USAGE_URL),
     `codex usage URL must have been fetched to produce the expiresAt; seen URLs: ${JSON.stringify(seenUrls)}`
   );
 
@@ -352,7 +352,7 @@ test("context-relay codex quota handoff: does NOT fire when provider is openai (
   // The codex block requires provider === "codex", so it never runs for openai.
   // The codex usage URL must NOT have been fetched.
   assert.ok(
-    !seenUrls.includes(CODEX_USAGE_URL),
+    !seenUrls.some((url) => url === CODEX_USAGE_URL),
     `codex usage URL must NOT be fetched for openai provider; seen: ${JSON.stringify(seenUrls)}`
   );
 

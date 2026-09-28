@@ -21,7 +21,7 @@ test("buildSlackPayload — request.failed produces Block Kit with model in titl
 });
 
 test("buildSlackPayload — test.ping produces a ping/test message", () => {
-  const payload = buildSlackPayload("test.ping", { message: "Test ping from OmniRoute" });
+  const payload = buildSlackPayload("test.ping", { message: "Test ping from AgentProxy" });
   const combined = JSON.stringify(payload);
   assert.ok(
     combined.toLowerCase().includes("ping") ||

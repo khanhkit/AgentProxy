@@ -4,6 +4,9 @@ interface MemoryCache {
   expiresAt: number;
 }
 
+export type MemoryCacheInvalidationSelector =
+  { exact: string; prefix?: never } | { prefix: string; exact?: never };
+
 class MemoryCachingLayer {
   private cache: Map<string, MemoryCache> = new Map();
   private maxSize: number = 1000;
@@ -48,10 +51,37 @@ class MemoryCachingLayer {
     });
   }
 
-  async invalidate(pattern: string): Promise<void> {
-    const regex = new RegExp(pattern);
+  async invalidate(selector: MemoryCacheInvalidationSelector): Promise<void> {
+    if (!selector || typeof selector !== "object" || Array.isArray(selector)) {
+      throw new TypeError(
+        "Memory cache invalidation requires exactly one non-empty exact or prefix selector"
+      );
+    }
+
+    const keys = Object.keys(selector);
+    const hasExact = Object.prototype.hasOwnProperty.call(selector, "exact");
+    const hasPrefix = Object.prototype.hasOwnProperty.call(selector, "prefix");
+
+    if (keys.length !== 1 || hasExact === hasPrefix) {
+      throw new TypeError(
+        "Memory cache invalidation requires exactly one non-empty exact or prefix selector"
+      );
+    }
+
+    const value = hasExact ? selector.exact : selector.prefix;
+    if (typeof value !== "string" || value.length === 0) {
+      throw new TypeError(
+        "Memory cache invalidation requires exactly one non-empty exact or prefix selector"
+      );
+    }
+
+    if (hasExact) {
+      this.cache.delete(value);
+      return;
+    }
+
     for (const key of this.cache.keys()) {
-      if (regex.test(key)) {
+      if (key.startsWith(value)) {
         this.cache.delete(key);
       }
     }

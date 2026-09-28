@@ -24,7 +24,7 @@ import { mkdtempSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 
-process.env.DATA_DIR = mkdtempSync(join(tmpdir(), "omniroute-conv-7847-"));
+process.env.DATA_DIR = mkdtempSync(join(tmpdir(), "agentproxy-conv-7847-"));
 process.env.API_KEY_SECRET = process.env.API_KEY_SECRET || "conversation-7847-test-secret";
 
 // Dynamic imports: modules reading DATA_DIR at top level must evaluate after

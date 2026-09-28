@@ -5,7 +5,7 @@ import path from "path";
  * Live-server E2E suites (`tests/e2e/ecosystem.test.ts`,
  * `tests/e2e/protocol-clients.test.ts`).
  *
- * These are the only two suites that drive a REAL running OmniRoute over HTTP
+ * These are the only two suites that drive a REAL running AgentProxy over HTTP
  * rather than importing modules. Their runners — `scripts/dev/run-ecosystem-tests.mjs`
  * and `scripts/dev/run-protocol-clients-tests.mjs` — boot a dev server, wait for
  * `/api/monitoring/health`, then invoke Vitest with this config.
@@ -35,7 +35,7 @@ export default defineConfig({
     alias: {
       "@": path.resolve(__dirname, "./src"),
       // Mirrors tsconfig paths, same as the other two vitest configs.
-      "@omniroute/open-sse": path.resolve(__dirname, "./open-sse"),
+      "@agentproxy/open-sse": path.resolve(__dirname, "./open-sse"),
     },
   },
 });

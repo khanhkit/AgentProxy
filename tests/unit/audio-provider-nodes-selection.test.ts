@@ -17,7 +17,7 @@ import {
   isLocalAudioNodeHost,
   selectAudioProviderNodes,
 } from "@/app/api/v1/_shared/audioProviderNodes";
-import type { ProviderNodeRow } from "@omniroute/open-sse/config/audioRegistry.ts";
+import type { ProviderNodeRow } from "@agentproxy/open-sse/config/audioRegistry.ts";
 
 const LOCAL_AUDIO_NODE: ProviderNodeRow = {
   id: "openai-compatible-audio-transcriptions-local",

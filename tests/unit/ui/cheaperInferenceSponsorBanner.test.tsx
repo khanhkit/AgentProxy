@@ -10,9 +10,9 @@ import { act } from "react";
 import { createRoot } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-const STORAGE_KEY = "omniroute-cheaperinference-sponsor-banner-dismissed-v1";
-const DISMISS_EVENT = "omniroute:cheaperinference-sponsor-banner-dismissed";
-const CTA_URL = "https://cheaperinference.com/?utm_source=omniroute";
+const STORAGE_KEY = "agentproxy-cheaperinference-sponsor-banner-dismissed-v1";
+const DISMISS_EVENT = "agentproxy:cheaperinference-sponsor-banner-dismissed";
+const CTA_URL = "https://cheaperinference.com/";
 
 vi.mock("next-intl", () => ({ useTranslations: () => (k: string) => k }));
 vi.mock("@/shared/components/ProviderIcon", () => ({ default: () => null }));

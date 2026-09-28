@@ -6,16 +6,16 @@
 
 ---
 
-title: "OmniRoute — Οδηγός Ανάπτυξης σε VM με Cloudflare"
+title: "AgentProxy — Οδηγός Ανάπτυξης σε VM με Cloudflare"
 version: 3.8.40
 lastUpdated: 2026-06-28
 ---
 
-# OmniRoute — Οδηγός Ανάπτυξης σε VM με Cloudflare
+# AgentProxy — Οδηγός Ανάπτυξης σε VM με Cloudflare
 
 🌐 **Languages:** 🇺🇸 [English](../../../../ops/VM_DEPLOYMENT_GUIDE.md) · 🇸🇦 [ar](../../../ar/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇦🇿 [az](../../../az/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇧🇬 [bg](../../../bg/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇧🇩 [bn](../../../bn/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇨🇿 [cs](../../../cs/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇩🇰 [da](../../../da/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇩🇪 [de](../../../de/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇪🇸 [es](../../../es/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇪🇪 [et](../../../et/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇷 [fa](../../../fa/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇫🇮 [fi](../../../fi/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇫🇷 [fr](../../../fr/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇪 [ga](../../../ga/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇳 [gu](../../../gu/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇱 [he](../../../he/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇳 [hi](../../../hi/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇭🇷 [hr](../../../hr/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇭🇺 [hu](../../../hu/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇩 [id](../../../id/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇹 [it](../../../it/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇯🇵 [ja](../../../ja/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇰🇷 [ko](../../../ko/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇱🇹 [lt](../../../lt/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇱🇻 [lv](../../../lv/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇳 [mr](../../../mr/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇲🇾 [ms](../../../ms/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇲🇹 [mt](../../../mt/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇳🇱 [nl](../../../nl/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇳🇴 [no](../../../no/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇵🇭 [phi](../../../phi/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇵🇱 [pl](../../../pl/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇵🇹 [pt](../../../pt/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇧🇷 [pt-BR](../../../pt-BR/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇷🇴 [ro](../../../ro/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇷🇺 [ru](../../../ru/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇸🇰 [sk](../../../sk/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇸🇮 [sl](../../../sl/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇷🇸 [sr](../../../sr/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇸🇪 [sv](../../../sv/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇰🇪 [sw](../../../sw/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇳 [ta](../../../ta/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇳 [te](../../../te/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇹🇭 [th](../../../th/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇹🇷 [tr](../../../tr/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇺🇦 [uk-UA](../../../uk-UA/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇵🇰 [ur](../../../ur/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇻🇳 [vi](../../../vi/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇨🇳 [zh-CN](../../../zh-CN/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇹🇼 [zh-TW](../../../zh-TW/docs/ops/VM_DEPLOYMENT_GUIDE.md)
 
-Πλήρης οδηγός για την εγκατάσταση και ρύθμιση του OmniRoute σε VM (VPS) με τομέα διαχειριζόμενο μέσω Cloudflare.
+Πλήρης οδηγός για την εγκατάσταση και ρύθμιση του AgentProxy σε VM (VPS) με τομέα διαχειριζόμενο μέσω Cloudflare.
 
 ---
 
@@ -93,18 +93,18 @@ ufw enable
 
 ---
 
-## 2. Εγκατάσταση OmniRoute
+## 2. Εγκατάσταση AgentProxy
 
 ### 2.1 Δημιουργία καταλόγου διαμόρφωσης
 
 ```bash
-mkdir -p /opt/omniroute
+mkdir -p /opt/agentproxy
 ```
 
 ### 2.2 Δημιουργία αρχείου μεταβλητών περιβάλλοντος
 
 ```bash
-cat > /opt/omniroute/.env << 'EOF'
+cat > /opt/agentproxy/.env << 'EOF'
 # === Ασφάλεια ===
 JWT_SECRET=CHANGE-TO-A-UNIQUE-64-CHAR-SECRET-KEY
 INITIAL_PASSWORD=YourSecurePassword123!
@@ -112,7 +112,7 @@ API_KEY_SECRET=REPLACE-WITH-ANOTHER-SECRET-KEY
 STORAGE_ENCRYPTION_KEY=REPLACE-WITH-THIRD-SECRET-KEY
 STORAGE_ENCRYPTION_KEY_VERSION=v1
 MACHINE_ID_SALT=CHANGE-TO-A-UNIQUE-SALT
-OMNIROUTE_WS_BRIDGE_SECRET=REPLACE-WITH-WS-BRIDGE-SECRET  # ΑΠΑΙΤΕΙΤΑΙ σε παραγωγή: χρησιμοποιείται από το Codex Responses WS bridge
+AGENTPROXY_WS_BRIDGE_SECRET=REPLACE-WITH-WS-BRIDGE-SECRET  # ΑΠΑΙΤΕΙΤΑΙ σε παραγωγή: χρησιμοποιείται από το Codex Responses WS bridge
 
 # === Εφαρμογή ===
 PORT=20128
@@ -129,11 +129,11 @@ BASE_URL=http://127.0.0.1:20128
 # URL για το πρόγραμμα περιήγησης, που χρησιμοποιείται για OAuth callbacks, συνδέσμους dashboard και δημόσια URLs.
 NEXT_PUBLIC_BASE_URL=https://llms.seudominio.com
 # Προαιρετική ρητή παράκαμψη δημόσιας προέλευσης για δημόσια URLs περιουσιακών στοιχείων.
-# OMNIROUTE_PUBLIC_BASE_URL=https://llms.seudominio.com
+# AGENTPROXY_PUBLIC_BASE_URL=https://llms.seudominio.com
 
 # === Συγχρονισμός Cloud (προαιρετικό) ===
-# CLOUD_URL=https://cloud.omniroute.online
-# NEXT_PUBLIC_CLOUD_URL=https://cloud.omniroute.online
+# CLOUD_URL=https://cloud.agentproxy.example.com
+# NEXT_PUBLIC_CLOUD_URL=https://cloud.agentproxy.example.com
 EOF
 ```
 
@@ -142,22 +142,22 @@ EOF
 ### 2.3 Εκκίνηση του container
 
 ```bash
-docker pull diegosouzapw/omniroute:latest
+docker pull khanhkit/agentproxy:latest
 
 docker run -d \
-  --name omniroute \
+  --name agentproxy \
   --restart unless-stopped \
-  --env-file /opt/omniroute/.env \
+  --env-file /opt/agentproxy/.env \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
-  diegosouzapw/omniroute:latest
+  -v agentproxy-data:/app/data \
+  khanhkit/agentproxy:latest
 ```
 
 ### 2.4 Επαλήθευση ότι εκτελείται
 
 ```bash
-docker ps | grep omniroute
-docker logs omniroute --tail 20
+docker ps | grep agentproxy
+docker logs agentproxy --tail 20
 ```
 
 Θα πρέπει να εμφανίζει: `[DB] SQLite database ready` και `listening on port 20128`.
@@ -190,7 +190,7 @@ chmod 600 /etc/nginx/ssl/origin.key
 ### 3.2 Ρύθμιση Nginx
 
 ```bash
-cat > /etc/nginx/sites-available/omniroute << 'NGINX'
+cat > /etc/nginx/sites-available/agentproxy << 'NGINX'
 # Προεπιλεγμένος διακομιστής — αποκλείει την απευθείας πρόσβαση μέσω IP
 server {
     listen 80 default_server;
@@ -203,7 +203,7 @@ server {
     return 444;
 }
 
-# OmniRoute — HTTPS
+# AgentProxy — HTTPS
 server {
     listen 443 ssl;
     listen [::]:443 ssl;
@@ -246,16 +246,16 @@ server {
 NGINX
 ```
 
-Διατηρήστε τα χρονικά όρια ροής του αντίστροφου διακομιστή μεσολάβησης συγχρονισμένα με τις μεταβλητές περιβάλλοντος χρονικών ορίων του OmniRoute. Εάν αυξήσετε τα
+Διατηρήστε τα χρονικά όρια ροής του αντίστροφου διακομιστή μεσολάβησης συγχρονισμένα με τις μεταβλητές περιβάλλοντος χρονικών ορίων του AgentProxy. Εάν αυξήσετε τα
 `FETCH_TIMEOUT_MS` / `STREAM_IDLE_TIMEOUT_MS`, αυξήστε αντίστοιχα τα `proxy_read_timeout` / `proxy_send_timeout`
 πάνω από το ίδιο όριο.
 
-Το OmniRoute χρησιμοποιεί το `NEXT_PUBLIC_BASE_URL` ως την κανονική προέλευση που βλέπει ο περιηγητής για τις
+Το AgentProxy χρησιμοποιεί το `NEXT_PUBLIC_BASE_URL` ως την κανονική προέλευση που βλέπει ο περιηγητής για τις
 επανακλήσεις OAuth και τους δημιουργημένους δημόσιους συνδέσμους. Τα εγκεκριμένα αιτήματα εγγραφής στον πίνακα ελέγχου χρησιμοποιούν αιτήματα ίδιας προέλευσης
 μαζί με προστασία CSRF βάσει συνεδρίας, επομένως δεν απαιτούν στατικό δημόσιο URL βάσης. Οι
 κεφαλίδες `X-Forwarded-*` παραπάνω εξακολουθούν να αποτελούν χρήσιμα μεταδεδομένα δρομολόγησης, αλλά δεν αντικαθιστούν
 τη ρητή ορισμένη δημόσια URL όταν το OAuth ή οι δημιουργημένοι συνδέσμοι περιηγητή τη χρειάζονται. Ενεργοποιήστε το
-`OMNIROUTE_TRUST_PROXY` μόνο εάν το OmniRoute δεν είναι άμεσα προσβάσιμο από τους χρήστες και ο διακομιστής μεσολάβησής σας
+`AGENTPROXY_TRUST_PROXY` μόνο εάν το AgentProxy δεν είναι άμεσα προσβάσιμο από τους χρήστες και ο διακομιστής μεσολάβησής σας
 αφαιρεί/αναδημιουργεί τις εισερχόμενες κεφαλίδες προώθησης.
 
 ### 3.3 Ενεργοποίηση και Δοκιμή
@@ -264,8 +264,8 @@ NGINX
 # Αφαίρεση προεπιλεγμένης ρύθμισης
 rm -f /etc/nginx/sites-enabled/default
 
-# Ενεργοποίηση OmniRoute
-ln -sf /etc/nginx/sites-available/omniroute /etc/nginx/sites-enabled/omniroute
+# Ενεργοποίηση AgentProxy
+ln -sf /etc/nginx/sites-available/agentproxy /etc/nginx/sites-enabled/agentproxy
 
 # Δοκιμή και επαναφόρτωση
 nginx -t && systemctl reload nginx
@@ -309,40 +309,40 @@ curl -sI https://llms.seudominio.com/health
 ### Αναβάθμιση σε νέα έκδοση
 
 ```bash
-docker pull diegosouzapw/omniroute:latest
-docker stop omniroute && docker rm omniroute
-docker run -d --name omniroute --restart unless-stopped \
-  --env-file /opt/omniroute/.env \
+docker pull khanhkit/agentproxy:latest
+docker stop agentproxy && docker rm agentproxy
+docker run -d --name agentproxy --restart unless-stopped \
+  --env-file /opt/agentproxy/.env \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
-  diegosouzapw/omniroute:latest
+  -v agentproxy-data:/app/data \
+  khanhkit/agentproxy:latest
 ```
 
 ### Προβολή αρχείων καταγραφής
 
 ```bash
-docker logs -f omniroute          # Ζωντανή ροή σε πραγματικό χρόνο
-docker logs omniroute --tail 50   # Τελευταίες 50 γραμμές
+docker logs -f agentproxy          # Ζωντανή ροή σε πραγματικό χρόνο
+docker logs agentproxy --tail 50   # Τελευταίες 50 γραμμές
 ```
 
 ### Χειροκίνητο αντίγραφο ασφαλείας βάσης δεδομένων
 
 ```bash
 # Αντιγραφή δεδομένων από τον τόμο στον κεντρικό υπολογιστή
-docker cp omniroute:/app/data ./backup-$(date +%F)
+docker cp agentproxy:/app/data ./backup-$(date +%F)
 
 # Ή συμπίεση ολόκληρου του τόμου
-docker run --rm -v omniroute-data:/data -v $(pwd):/backup \
-  alpine tar czf /backup/omniroute-data-$(date +%F).tar.gz /data
+docker run --rm -v agentproxy-data:/data -v $(pwd):/backup \
+  alpine tar czf /backup/agentproxy-data-$(date +%F).tar.gz /data
 ```
 
 ### Επαναφορά από αντίγραφο ασφαλείας
 
 ```bash
-docker stop omniroute
-docker run --rm -v omniroute-data:/data -v $(pwd):/backup \
-  alpine sh -c "rm -rf /data/* && tar xzf /backup/omniroute-data-YYYY-MM-DD.tar.gz -C /"
-docker start omniroute
+docker stop agentproxy
+docker run --rm -v agentproxy-data:/data -v $(pwd):/backup \
+  alpine sh -c "rm -rf /data/* && tar xzf /backup/agentproxy-data-YYYY-MM-DD.tar.gz -C /"
+docker start agentproxy
 ```
 
 ---
@@ -411,13 +411,13 @@ netfilter-persistent save
 
 ```bash
 # Στο τοπικό αποθετήριο
-cd omnirouteCloud
+cd agentproxyCloud
 npm install
 npx wrangler login
 npx wrangler deploy
 ```
 
-Δείτε επίσης το [TUNNELS_GUIDE.md](./TUNNELS_GUIDE.md) για τον οδηγό Cloudflare Tunnel που περιλαμβάνεται στο αποθετήριο. Το αυτόνομο worker `omnirouteCloud/` βρίσκεται σε ξεχωριστό συνοδευτικό αποθετήριο.
+Δείτε επίσης το [TUNNELS_GUIDE.md](./TUNNELS_GUIDE.md) για τον οδηγό Cloudflare Tunnel που περιλαμβάνεται στο αποθετήριο. Το αυτόνομο worker `agentproxyCloud/` βρίσκεται σε ξεχωριστό συνοδευτικό αποθετήριο.
 
 ---
 
@@ -428,15 +428,15 @@ npx wrangler deploy
 | 22    | SSH         | Δημόσια (με fail2ban)       |
 | 80    | nginx HTTP  | Ανακατεύθυνση → HTTPS       |
 | 443   | nginx HTTPS | Μέσω Cloudflare Proxy       |
-| 20128 | OmniRoute   | Μόνο localhost (μέσω nginx) |
+| 20128 | AgentProxy   | Μόνο localhost (μέσω nginx) |
 
 ## Βελτιστοποίηση για Περιορισμένη Μνήμη / Μικρά VPS
 
 Για αναπτύξεις σε μικρές παρουσίες VPS (1 GB RAM ή λιγότερο):
 
-- **Απενεργοποίηση υπηρεσιών παρασκηνίου** — ορίστε `OMNIROUTE_DISABLE_BACKGROUND_SERVICES=1` για παράλειψη του χρονοπρογραμματιστή, του διακομιστή MCP και των περιοδικών εργασιών συντήρησης. Δείτε `docs/reference/ENVIRONMENT.md`.
+- **Απενεργοποίηση υπηρεσιών παρασκηνίου** — ορίστε `AGENTPROXY_DISABLE_BACKGROUND_SERVICES=1` για παράλειψη του χρονοπρογραμματιστή, του διακομιστή MCP και των περιοδικών εργασιών συντήρησης. Δείτε `docs/reference/ENVIRONMENT.md`.
 - **Χρήση λειτουργίας SQLite WAL** — ενεργοποιημένη από προεπιλογή, μειώνει την κατανάλωση μνήμης κατά τις ταυτόχρονες αναγνώσεις.
-- **Περιορισμός του heap V8** — ορίστε `OMNIROUTE_MEMORY_MB` (π.χ. `512`) ώστε το runtime να μην ορίσει ανώτατο όριο μεγαλύτερο από αυτό της εικονικής μηχανής. Δείτε `docs/reference/ENVIRONMENT.md`.
-- **Ο έλεγχος εισδοχής βαριών αιτημάτων κλιμακώνεται αυτόματα με το όριο heap** — μόλις οριστεί το `OMNIROUTE_MEMORY_MB` παραπάνω, ο προϋπολογισμός byte εισροής (`OMNIROUTE_CHAT_MAX_INFLIGHT_BYTES`) παράγεται αυτόματα από το ίδιο ανώτατο όριο· έτσι, μια εικονική μηχανή με περιορισμένη μνήμη λαμβάνει ήδη μικρότερο προϋπολογισμό ταυτόχρονων αιτημάτων χωρίς πρόσθετη ρύθμιση· τα πλεονάζοντα αιτήματα λαμβάνουν επαναλαμβανόμενο `503` με `Retry-After` αντί να ανταγωνίζονται για μνήμη. Ορίστε το παλαιό όριο αριθμού αιτημάτων `OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT` μόνο αν χρειάζεστε ένα σκληρό ανώτατο όριο επιπλέον αυτού.
+- **Περιορισμός του heap V8** — ορίστε `AGENTPROXY_MEMORY_MB` (π.χ. `512`) ώστε το runtime να μην ορίσει ανώτατο όριο μεγαλύτερο από αυτό της εικονικής μηχανής. Δείτε `docs/reference/ENVIRONMENT.md`.
+- **Ο έλεγχος εισδοχής βαριών αιτημάτων κλιμακώνεται αυτόματα με το όριο heap** — μόλις οριστεί το `AGENTPROXY_MEMORY_MB` παραπάνω, ο προϋπολογισμός byte εισροής (`AGENTPROXY_CHAT_MAX_INFLIGHT_BYTES`) παράγεται αυτόματα από το ίδιο ανώτατο όριο· έτσι, μια εικονική μηχανή με περιορισμένη μνήμη λαμβάνει ήδη μικρότερο προϋπολογισμό ταυτόχρονων αιτημάτων χωρίς πρόσθετη ρύθμιση· τα πλεονάζοντα αιτήματα λαμβάνουν επαναλαμβανόμενο `503` με `Retry-After` αντί να ανταγωνίζονται για μνήμη. Ορίστε το παλαιό όριο αριθμού αιτημάτων `AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT` μόνο αν χρειάζεστε ένα σκληρό ανώτατο όριο επιπλέον αυτού.
 - **Αποφύγετε το `next build` στο VPS** — κάντε build τοπικά και αναπτύξτε την αυτόνομη έξοδο (`.next/standalone/`).
-- **Παρακολούθηση με `top` / `free -m`** — το OmniRoute χρησιμοποιεί συνήθως 200–400 MB RSS σε αδράνεια σε εικονική μηχανή 1 GB.
+- **Παρακολούθηση με `top` / `free -m`** — το AgentProxy χρησιμοποιεί συνήθως 200–400 MB RSS σε αδράνεια σε εικονική μηχανή 1 GB.

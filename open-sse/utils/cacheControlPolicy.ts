@@ -2,7 +2,7 @@
  * Cache Control Policy
  *
  * Determines when to preserve client-side prompt caching headers (cache_control)
- * vs. applying OmniRoute's own caching strategy.
+ * vs. applying AgentProxy's own caching strategy.
  *
  * Client-side caching (e.g., Claude Code) is preserved when:
  * 1. Client is Claude Code or similar caching-aware client
@@ -216,7 +216,13 @@ export function providerSupportsCaching(
     return connectionCacheOverride.supportsPromptCaching;
   }
   if (!provider) return false;
-  if (CACHING_PROVIDERS.has(provider.toLowerCase())) return true;
+  const providerId = provider.toLowerCase();
+  // Vertex is a mixed-format provider. Only its Anthropic Claude path accepts
+  // cache_control; Gemini and OpenAI-format partner models use other mechanisms.
+  if (providerId === "vertex" || providerId === "vertex-partner") {
+    return targetFormat?.toLowerCase() === "claude";
+  }
+  if (CACHING_PROVIDERS.has(providerId)) return true;
   // All Claude-protocol providers support prompt caching
   if (targetFormat === "claude") return true;
   return false;
@@ -238,7 +244,7 @@ export function isDeterministicStrategy(
  * Auto mode preserves for every caching-aware client talking to a
  * caching-capable provider — regardless of combo membership or routing
  * strategy. The old gate (combos only preserved on "deterministic"
- * strategies) forced OmniRoute to strip the client's markers and re-derive
+ * strategies) forced AgentProxy to strip the client's markers and re-derive
  * breakpoints per request; the re-derived positions are not stable
  * turn-over-turn, which thrashed the provider prompt cache (observed in
  * production as ~200k cache_write tokens per turn on quota-share combos).
@@ -253,7 +259,7 @@ export function isDeterministicStrategy(
  *   callers/telemetry; no longer gates preservation)
  * @param targetProvider - The target provider for the request
  * @param settings - Cache control settings from database (optional)
- * @returns true if cache_control should be preserved, false if OmniRoute should manage it
+ * @returns true if cache_control should be preserved, false if AgentProxy should manage it
  */
 export function shouldPreserveCacheControl({
   userAgent,

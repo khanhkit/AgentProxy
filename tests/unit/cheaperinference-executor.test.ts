@@ -7,7 +7,7 @@
 // executor every Responses request through this gateway would 400.
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { CheaperInferenceExecutor } from "@omniroute/open-sse/executors/cheaperinference.ts";
+import { CheaperInferenceExecutor } from "@agentproxy/open-sse/executors/cheaperinference.ts";
 
 const CREDENTIALS = { apiKey: "ir_live_test" } as never;
 
@@ -66,7 +66,7 @@ test("REGRESSION: targetFormat lookup resolves both the provider id and alias", 
   // chat-completions and 400ing upstream. The lookup now resolves the id through
   // the alias map while the underlying registry remains alias-keyed.
   const { PROVIDER_MODELS, PROVIDER_ID_TO_ALIAS, getModelTargetFormat } =
-    await import("@omniroute/open-sse/config/providerModels.ts");
+    await import("@agentproxy/open-sse/config/providerModels.ts");
   assert.equal(PROVIDER_ID_TO_ALIAS.cheaperinference, "cinf");
   assert.ok(PROVIDER_MODELS.cinf, "PROVIDER_MODELS is keyed by alias");
   assert.equal(PROVIDER_MODELS.cheaperinference, undefined, "…and NOT by provider id");

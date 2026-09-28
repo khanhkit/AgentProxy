@@ -1,16 +1,16 @@
 ---
-title: "OmniRoute — Pano Özellikleri Galerisi"
+title: "AgentProxy — Pano Özellikleri Galerisi"
 version: 3.8.50
 lastUpdated: 2026-08-23
 ---
 
-# OmniRoute — Pano Özellikleri Galerisi (Türkçe)
+# AgentProxy — Pano Özellikleri Galerisi (Türkçe)
 
 🌐 **Languages:** 🇺🇸 [English](../../../../guides/FEATURES.md) · 🇸🇦 [ar](../../../ar/docs/guides/FEATURES.md) · 🇦🇿 [az](../../../az/docs/guides/FEATURES.md) · 🇧🇬 [bg](../../../bg/docs/guides/FEATURES.md) · 🇧🇩 [bn](../../../bn/docs/guides/FEATURES.md) · 🇨🇿 [cs](../../../cs/docs/guides/FEATURES.md) · 🇩🇰 [da](../../../da/docs/guides/FEATURES.md) · 🇩🇪 [de](../../../de/docs/guides/FEATURES.md) · 🇬🇷 [el](../../../el/docs/guides/FEATURES.md) · 🇪🇸 [es](../../../es/docs/guides/FEATURES.md) · 🇪🇪 [et](../../../et/docs/guides/FEATURES.md) · 🇮🇷 [fa](../../../fa/docs/guides/FEATURES.md) · 🇫🇮 [fi](../../../fi/docs/guides/FEATURES.md) · 🇫🇷 [fr](../../../fr/docs/guides/FEATURES.md) · 🇮🇪 [ga](../../../ga/docs/guides/FEATURES.md) · 🇮🇳 [gu](../../../gu/docs/guides/FEATURES.md) · 🇮🇱 [he](../../../he/docs/guides/FEATURES.md) · 🇮🇳 [hi](../../../hi/docs/guides/FEATURES.md) · 🇭🇷 [hr](../../../hr/docs/guides/FEATURES.md) · 🇭🇺 [hu](../../../hu/docs/guides/FEATURES.md) · 🇮🇩 [id](../../../id/docs/guides/FEATURES.md) · 🇮🇹 [it](../../../it/docs/guides/FEATURES.md) · 🇯🇵 [ja](../../../ja/docs/guides/FEATURES.md) · 🇰🇷 [ko](../../../ko/docs/guides/FEATURES.md) · 🇱🇹 [lt](../../../lt/docs/guides/FEATURES.md) · 🇱🇻 [lv](../../../lv/docs/guides/FEATURES.md) · 🇮🇳 [mr](../../../mr/docs/guides/FEATURES.md) · 🇲🇾 [ms](../../../ms/docs/guides/FEATURES.md) · 🇲🇹 [mt](../../../mt/docs/guides/FEATURES.md) · 🇳🇱 [nl](../../../nl/docs/guides/FEATURES.md) · 🇳🇴 [no](../../../no/docs/guides/FEATURES.md) · 🇵🇭 [phi](../../../phi/docs/guides/FEATURES.md) · 🇵🇱 [pl](../../../pl/docs/guides/FEATURES.md) · 🇵🇹 [pt](../../../pt/docs/guides/FEATURES.md) · 🇧🇷 [pt-BR](../../../pt-BR/docs/guides/FEATURES.md) · 🇷🇴 [ro](../../../ro/docs/guides/FEATURES.md) · 🇷🇺 [ru](../../../ru/docs/guides/FEATURES.md) · 🇸🇰 [sk](../../../sk/docs/guides/FEATURES.md) · 🇸🇮 [sl](../../../sl/docs/guides/FEATURES.md) · 🇷🇸 [sr](../../../sr/docs/guides/FEATURES.md) · 🇸🇪 [sv](../../../sv/docs/guides/FEATURES.md) · 🇰🇪 [sw](../../../sw/docs/guides/FEATURES.md) · 🇮🇳 [ta](../../../ta/docs/guides/FEATURES.md) · 🇮🇳 [te](../../../te/docs/guides/FEATURES.md) · 🇹🇭 [th](../../../th/docs/guides/FEATURES.md) · 🇺🇦 [uk-UA](../../../uk-UA/docs/guides/FEATURES.md) · 🇵🇰 [ur](../../../ur/docs/guides/FEATURES.md) · 🇻🇳 [vi](../../../vi/docs/guides/FEATURES.md) · 🇨🇳 [zh-CN](../../../zh-CN/docs/guides/FEATURES.md) · 🇹🇼 [zh-TW](../../../zh-TW/docs/guides/FEATURES.md)
 
 ---
 
-OmniRoute panosunun her bölümüne ilişkin görsel ve işlevsel kılavuz.
+AgentProxy panosunun her bölümüne ilişkin görsel ve işlevsel kılavuz.
 
 ---
 
@@ -25,7 +25,7 @@ OmniRoute panosunun her bölümüne ilişkin görsel ve işlevsel kılavuz.
 - 📌 **Oturum Başına Yapışkan Yönlendirme (Sticky Routing)** — Codex oturumları turlar arasında aynı hesaba sabitlenir.
 - 🔄 **Sıfırlama Duyarlı Yönlendirme Stratejisi** — Kombolar, kota penceresi en erken sıfırlanan hesapları tercih eder.
 - 🩺 **Model Soğuma Süreleri Panosu** — Model bazlı kilitlenmeleri izleme ve kullanıcı arayüzünden manuel olarak yeniden etkinleştirme.
-- 💻 **CLI Geliştirme Paketi** — `omniroute providers`, `omniroute combos`, `omniroute doctor`, `omniroute setup` dahil 20'den fazla komut.
+- 💻 **CLI Geliştirme Paketi** — `agentproxy providers`, `agentproxy combos`, `agentproxy doctor`, `agentproxy setup` dahil 20'den fazla komut.
 - 🧠 **Akıl Yürütme Tekrar Oynatma Önbelleği (Reasoning Replay Cache)** — Akıl yürütme izlerinin hibrit bellek içi + SQLite kalıcılığı.
 
 ---
@@ -48,4 +48,4 @@ Gerçek zamanlı izleme: çalışma süresi, bellek, sürüm, gecikme yüzdelikl
 
 ## 🛠️ CLI Araçları ve Ajanlar
 
-14'ten fazla yerleşik kodlama CLI aracını tek tıkla yapılandırın, algılayın ve doğrudan OmniRoute'a bağlayın.
+14'ten fazla yerleşik kodlama CLI aracını tek tıkla yapılandırın, algılayın ve doğrudan AgentProxy'a bağlayın.

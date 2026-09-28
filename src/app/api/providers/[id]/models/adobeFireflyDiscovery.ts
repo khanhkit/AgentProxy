@@ -1,14 +1,14 @@
 import {
   discoverAdobeFireflyModels,
   resolveAdobeAccessToken,
-} from "@omniroute/open-sse/services/adobeFireflyClient.ts";
+} from "@agentproxy/open-sse/services/adobeFireflyClient.ts";
 import {
   getAdobeFireflyFallbackCatalog,
   mapDiscoveredToCatalog,
   toAdobeMediaCapabilitiesApi,
   type AdobeFireflyCatalogModel,
-} from "@omniroute/open-sse/services/adobeFireflyModels.ts";
-import { sanitizeErrorMessage } from "@omniroute/open-sse/utils/error";
+} from "@agentproxy/open-sse/services/adobeFireflyModels.ts";
+import { sanitizeErrorMessage } from "@agentproxy/open-sse/utils/error";
 
 type AdobeProviderData = { cookie?: unknown; access_token?: unknown; accessToken?: unknown };
 

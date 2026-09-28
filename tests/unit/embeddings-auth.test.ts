@@ -32,12 +32,12 @@ test("extractApiKey", async (t) => {
 });
 
 test("isValidApiKey", async (t) => {
-  const originalEnv = process.env.OMNIROUTE_API_KEY;
+  const originalEnv = process.env.AGENTPROXY_API_KEY;
 
-  await t.test("should return true if key matches OMNIROUTE_API_KEY", async () => {
-    process.env.OMNIROUTE_API_KEY = "test-key";
+  await t.test("should return true if key matches AGENTPROXY_API_KEY", async () => {
+    process.env.AGENTPROXY_API_KEY = "test-key";
     assert.strictEqual(await isValidApiKey("test-key"), true);
-    delete process.env.OMNIROUTE_API_KEY;
+    delete process.env.AGENTPROXY_API_KEY;
   });
 
   await t.test("should return false for unknown key (when not in env)", async () => {
@@ -46,18 +46,18 @@ test("isValidApiKey", async (t) => {
   });
 
   // Restore original env in case of failure
-  process.env.OMNIROUTE_API_KEY = originalEnv;
+  process.env.AGENTPROXY_API_KEY = originalEnv;
 });
 
 test("POST /v1/embeddings authentication", async (t) => {
   const originalRequireApiKey = process.env.REQUIRE_API_KEY;
-  const originalOmniKey = process.env.OMNIROUTE_API_KEY;
+  const originalOmniKey = process.env.AGENTPROXY_API_KEY;
 
   await t.test(
     "should return 401 when an invalid API key is provided and REQUIRE_API_KEY is true",
     async () => {
       process.env.REQUIRE_API_KEY = "true";
-      process.env.OMNIROUTE_API_KEY = "valid-key";
+      process.env.AGENTPROXY_API_KEY = "valid-key";
       const req = new Request("http://localhost/v1/embeddings", {
         method: "POST",
         headers: { Authorization: "Bearer invalid-key" },
@@ -65,7 +65,7 @@ test("POST /v1/embeddings authentication", async (t) => {
       });
       const res = await POST(req);
       assert.strictEqual(res.status, 401);
-      delete process.env.OMNIROUTE_API_KEY;
+      delete process.env.AGENTPROXY_API_KEY;
       delete process.env.REQUIRE_API_KEY;
     }
   );
@@ -74,7 +74,7 @@ test("POST /v1/embeddings authentication", async (t) => {
     "should NOT return 401 when an invalid API key is provided and REQUIRE_API_KEY is false (#7785)",
     async () => {
       process.env.REQUIRE_API_KEY = "false";
-      process.env.OMNIROUTE_API_KEY = "valid-key";
+      process.env.AGENTPROXY_API_KEY = "valid-key";
       const req = new Request("http://localhost/v1/embeddings", {
         method: "POST",
         headers: { Authorization: "Bearer invalid-key" },
@@ -86,7 +86,7 @@ test("POST /v1/embeddings authentication", async (t) => {
         401,
         "an invalid presented key must not 401 when REQUIRE_API_KEY=false (anonymous access)"
       );
-      delete process.env.OMNIROUTE_API_KEY;
+      delete process.env.AGENTPROXY_API_KEY;
       delete process.env.REQUIRE_API_KEY;
     }
   );
@@ -107,7 +107,7 @@ test("POST /v1/embeddings authentication", async (t) => {
   );
 
   await t.test("should NOT return 401 when a valid API key is provided", async () => {
-    process.env.OMNIROUTE_API_KEY = "valid-key";
+    process.env.AGENTPROXY_API_KEY = "valid-key";
     const originalFetch = globalThis.fetch;
     globalThis.fetch = async () => new Response(JSON.stringify({ data: [] }), { status: 200 });
 
@@ -126,11 +126,11 @@ test("POST /v1/embeddings authentication", async (t) => {
       assert.notStrictEqual(res.status, 401, "Should not be 401 Unauthorized");
     } finally {
       globalThis.fetch = originalFetch;
-      delete process.env.OMNIROUTE_API_KEY;
+      delete process.env.AGENTPROXY_API_KEY;
     }
   });
 
   // Restore original env in case of failure
   process.env.REQUIRE_API_KEY = originalRequireApiKey;
-  process.env.OMNIROUTE_API_KEY = originalOmniKey;
+  process.env.AGENTPROXY_API_KEY = originalOmniKey;
 });

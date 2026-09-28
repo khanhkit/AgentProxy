@@ -6,16 +6,16 @@
 
 ---
 
-title: "OmniRoute Codebase Documentation"
+title: "AgentProxy Codebase Documentation"
 version: 3.8.40
 lastUpdated: 2026-06-28
 ---
 
-# OmniRoute Dokumentacija Kodne Baze
+# AgentProxy Dokumentacija Kodne Baze
 
 > **Verzija:** v3.8.51
 > **Zadnje ažuriranje:** 2026-06-28
-> **Ciljana publika:** Inženjeri koji doprinose OmniRoute-u ili grade integracije na njemu.
+> **Ciljana publika:** Inženjeri koji doprinose AgentProxy-u ili grade integracije na njemu.
 >
 > Za arhitekturne dijagrame visoke razine i obrazloženje svakog podsustava, pročitajte
 > [ARCHITECTURE.md](./ARCHITECTURE.md). Za dubinska istraživanja pojedinih podsustava
@@ -46,22 +46,22 @@ bez izmišljanja novih modula.
 Aliasi putanja (`tsconfig.json`):
 
 - `@/*` → `src/*`
-- `@omniroute/open-sse` → `open-sse/index.ts`
-- `@omniroute/open-sse/*` → `open-sse/*`
+- `@agentproxy/open-sse` → `open-sse/index.ts`
+- `@agentproxy/open-sse/*` → `open-sse/*`
 
 Zadani HTTP port: **`20128`** (API i nadzorna ploča dijele isti proces). Direktorij
-podataka je env varijabla `DATA_DIR`, a zadana vrijednost je `~/.omniroute/`.
+podataka je env varijabla `DATA_DIR`, a zadana vrijednost je `~/.agentproxy/`.
 
 ---
 
 ## 2. Struktura Repozitorija
 
 ```
-OmniRoute/
+AgentProxy/
 ├── src/                  # Next.js aplikacija (App Router, libs, domain, server, shared)
-├── open-sse/             # Workspace streaming enginea (@omniroute/open-sse)
+├── open-sse/             # Workspace streaming enginea (@agentproxy/open-sse)
 ├── electron/             # Desktop omotač (Electron 41 main + preload)
-├── bin/                  # CLI ulazne točke (omniroute, reset-password)
+├── bin/                  # CLI ulazne točke (agentproxy, reset-password)
 ├── tests/                # Jedinični, integracijski, e2e, protocols-e2e, translator, sigurnosni testovi i fixture datoteke
 ├── scripts/              # Skripte za izgradnju, sinkronizaciju, provjeru, migraciju i pomoćne skripte izvođenja
 ├── docs/                 # Javna dokumentacija (ovaj direktorij)
@@ -307,7 +307,7 @@ grupira stvarne direktorije i važne datoteke na najvišoj razini.
 | `runtime/`        | Otkrivanje značajki izvođenja                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | `search/`         | `executeWebSearch.ts`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | `services/`       | Okvir ugrađenih servisa: `ServiceSupervisor.ts` (generički nadzornik podređenog procesa s bravom operacije, kružnim međuspremnikom, provjerom zdravlja), `bootstrap.ts` (registracija na razini procesa i automatsko pokretanje), `registry.ts` (mapa alata → nadzornik), `apiKey.ts` (pohrana ključeva AES-256-GCM), `modelSync.ts` (periodična sinkronizacija modela), `ringBuffer.ts` (kružni međuspremnik zapisa od 5 MB), `healthCheck.ts` (HTTP provjera zdravlja), `types.ts`, `embedWsProxy.ts` (WebSocket proxy), `installers/{ninerouter,cliproxy}.ts`. Vidi `docs/frameworks/EMBEDDED-SERVICES.md`                                                                          |
-| `agentSkills/`    | Katalog i generator vještina agenta: `catalog.ts` (getCatalog/getSkillById/filterCatalog/computeCoverage), `generator.ts` (generateAgentSkills → zapisuje `skills/{id}/SKILL.md`), `openapiParser.ts` (izvlači REST krajnje točke iz OpenAPI specifikacije), `cliRegistryParser.ts` (izvlači CLI podkomande iz bin/cli-registry), `schemas.ts` (Zod: AgentSkillSchema, SkillCoverageSchema, ListQuerySchema, GenerateBodySchema), `types.ts` (AgentSkill, SkillCoverage, SkillMarkdown, GeneratorReport). Koriste REST rute (`/api/agent-skills/*`), MCP alati (`omniroute_agent_skills_*`) i A2A vještina `list-capabilities`. Vidi [AGENT-SKILLS.md](../frameworks/AGENT-SKILLS.md). |
+| `agentSkills/`    | Katalog i generator vještina agenta: `catalog.ts` (getCatalog/getSkillById/filterCatalog/computeCoverage), `generator.ts` (generateAgentSkills → zapisuje `skills/{id}/SKILL.md`), `openapiParser.ts` (izvlači REST krajnje točke iz OpenAPI specifikacije), `cliRegistryParser.ts` (izvlači CLI podkomande iz bin/cli-registry), `schemas.ts` (Zod: AgentSkillSchema, SkillCoverageSchema, ListQuerySchema, GenerateBodySchema), `types.ts` (AgentSkill, SkillCoverage, SkillMarkdown, GeneratorReport). Koriste REST rute (`/api/agent-skills/*`), MCP alati (`agentproxy_agent_skills_*`) i A2A vještina `list-capabilities`. Vidi [AGENT-SKILLS.md](../frameworks/AGENT-SKILLS.md). |
 | `skills/`         | Okvir vještina: `registry.ts`, `executor.ts`, `interception.ts`, `injection.ts`, `sandbox.ts`, `custom.ts`, `hybrid.ts`, `builtins.ts`, `a2a.ts`, `providerSettings.ts`, `schemas.ts`, `skillssh.ts`, `types.ts`, plus `builtin/browser.ts`                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | `spend/`          | `batchWriter.ts` (međuspremnik pisanja s odgodom)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
 | `sync/`           | `bundle.ts`, `tokens.ts` (Cloud Sync)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
@@ -393,7 +393,7 @@ Tablice stvorene kroz migracije (ukupno 123):
 | `degradation.ts`                           | Prijelazi u degradirani način rada                       |
 | `providerExpiration.ts`                    | Otkrivanje isteklih računa/ključeva                      |
 | `quotaCache.ts`                            | Predmemorirane odluke o kvoti                            |
-| `responses.ts`, `omnirouteResponseMeta.ts` | Pomoćnici oblika odgovora                                |
+| `responses.ts`, `agentproxyResponseMeta.ts` | Pomoćnici oblika odgovora                                |
 | `configAudit.ts`                           | Revizija promjena konfiguracije                          |
 | `assessment/`                              | Procjena modela (prema RFC-u, djelomično implementirano) |
 | `types.ts`                                 | Dijeljeni domenski tipovi                                |
@@ -445,7 +445,7 @@ Podijeljeno u fokusirane poddirektorije:
 
 ## 4. `open-sse/` — Radni prostor streaming pogona
 
-Zasebni npm radni prostor objavljen kao `@omniroute/open-sse`. Sadrži obradu
+Zasebni npm radni prostor objavljen kao `@agentproxy/open-sse`. Sadrži obradu
 zahtjeva, izvršitelje, prevoditelje, servise, transformator i MCP poslužitelj.
 
 ```
@@ -608,7 +608,7 @@ putem `electron-updater` koji pokazuje na GitHub feed objava.
 
 ```
 bin/
-├── omniroute.mjs           # Glavna CLI ulazna točka (Node ESM)
+├── agentproxy.mjs           # Glavna CLI ulazna točka (Node ESM)
 ├── reset-password.mjs      # Resetiranje lozinke za upravljanje putem CLI-a
 ├── mcp-server.mjs          # Pokretač MCP poslužitelja (stdio)
 ├── nodeRuntimeSupport.mjs  # Provjera verzije Nodea
@@ -631,8 +631,8 @@ bin/
 
 Dvije binarne datoteke izložene u `package.json` → `bin`:
 
-- `omniroute` → `bin/omniroute.mjs`
-- `omniroute-reset-password` → `bin/reset-password.mjs`
+- `agentproxy` → `bin/agentproxy.mjs`
+- `agentproxy-reset-password` → `bin/reset-password.mjs`
 
 ---
 
@@ -788,7 +788,7 @@ Pogledajte [A2A-SERVER.md § Adding a New Skill](../frameworks/A2A-SERVER.md). V
 
 - **Stil koda**: uvlačenje 2 razmaka, dvostruki navodnici, širina 100 znakova, točka-zarezi,
   `es5` završni zarezi — primjenjuje Prettier putem `lint-staged`.
-- **Uvozi**: vanjski → interni (`@/`, `@omniroute/open-sse`) → relativni.
+- **Uvozi**: vanjski → interni (`@/`, `@agentproxy/open-sse`) → relativni.
 - **Imenovanje**: datoteke `camelCase` ili `kebab-case`, komponente `PascalCase`,
   konstante `UPPER_SNAKE`.
 - **ESLint**: `no-eval`, `no-implied-eval`, `no-new-func` = `error` svugdje;

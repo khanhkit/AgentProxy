@@ -1,10 +1,10 @@
 ---
-title: "OmniRoute MCP Server Documentation"
+title: "AgentProxy MCP Server Documentation"
 version: 3.8.40
 lastUpdated: 2026-06-28
 ---
 
-# OmniRoute MCP 服务器文档
+# AgentProxy MCP 服务器文档
 
 > 包含 94 个工具的 MCP 服务器，覆盖路由、缓存、压缩、记忆、技能、代理、连接池和上下文源操作。
 >
@@ -16,17 +16,17 @@ lastUpdated: 2026-06-28
 
 ## 安装
 
-OmniRoute MCP 内置。启动方式：
+AgentProxy MCP 内置。启动方式：
 
 ```bash
-omniroute --mcp
+agentproxy --mcp
 ```
 
 或通过 open-sse 传输：
 
 ```bash
 # HTTP streamable 传输（端口 20130）
-omniroute --dev  # MCP 自动在 /mcp 端点启动
+agentproxy --dev  # MCP 自动在 /mcp 端点启动
 ```
 
 ## 传输
@@ -71,59 +71,59 @@ Claude Desktop、Cursor、Cline 及其他兼容 MCP 客户端的配置，参见 
 
 | 工具                              | 权限域                  | 描述                                                         |
 | :-------------------------------- | :---------------------- | :----------------------------------------------------------- |
-| `omniroute_get_health`            | `read:health`           | 运行时间、内存、熔断器、速率限制、缓存统计                   |
-| `omniroute_list_combos`           | `read:combos`           | 所有已配置 Combo 及其策略（可选指标）                        |
-| `omniroute_get_combo_metrics`     | `read:combos`           | 指定 Combo 的性能指标                                        |
-| `omniroute_switch_combo`          | `write:combos`          | 激活或停用 Combo                                             |
-| `omniroute_check_quota`           | `read:quota`            | 已用/总配额、剩余百分比、重置时间、Token 健康状态            |
-| `omniroute_route_request`         | `execute:completions`   | 通过 OmniRoute 路由发送聊天补全请求                          |
-| `omniroute_cost_report`           | `read:usage`            | 按时间段（会话/天/周/月）的费用报告                          |
-| `omniroute_list_models_catalog`   | `read:models`           | 完整模型目录，包含能力、状态、定价                           |
+| `agentproxy_get_health`            | `read:health`           | 运行时间、内存、熔断器、速率限制、缓存统计                   |
+| `agentproxy_list_combos`           | `read:combos`           | 所有已配置 Combo 及其策略（可选指标）                        |
+| `agentproxy_get_combo_metrics`     | `read:combos`           | 指定 Combo 的性能指标                                        |
+| `agentproxy_switch_combo`          | `write:combos`          | 激活或停用 Combo                                             |
+| `agentproxy_check_quota`           | `read:quota`            | 已用/总配额、剩余百分比、重置时间、Token 健康状态            |
+| `agentproxy_route_request`         | `execute:completions`   | 通过 AgentProxy 路由发送聊天补全请求                          |
+| `agentproxy_cost_report`           | `read:usage`            | 按时间段（会话/天/周/月）的费用报告                          |
+| `agentproxy_list_models_catalog`   | `read:models`           | 完整模型目录，包含能力、状态、定价                           |
 
 ## 阶段 1 — 搜索
 
 | 工具                   | 权限域             | 描述                                                                                  |
 | :--------------------- | :----------------- | :------------------------------------------------------------------------------------ |
-| `omniroute_web_search` | `execute:search`   | 通过 OmniRoute 搜索网关进行 Web 搜索（Serper/Brave/Perplexity/Exa/Tavily/Google PSE/Linkup/SearchAPI/SearXNG），支持容灾 |
+| `agentproxy_web_search` | `execute:search`   | 通过 AgentProxy 搜索网关进行 Web 搜索（Serper/Brave/Perplexity/Exa/Tavily/Google PSE/Linkup/SearchAPI/SearXNG），支持容灾 |
 
 ## 高级工具（11）— 阶段 2
 
 | 工具                                 | 权限域                                 | 描述                                                                 |
 | :----------------------------------- | :------------------------------------- | :------------------------------------------------------------------- |
-| `omniroute_simulate_route`           | `read:health`、`read:combos`           | 包含容灾树的演习路由仿真                                             |
-| `omniroute_set_budget_guard`         | `write:budget`                         | 会话预算，支持降级/阻断/告警动作                                     |
-| `omniroute_set_routing_strategy`     | `write:combos`                         | 在运行时更新 Combo 策略（priority/weighted/auto 等）                 |
-| `omniroute_set_resilience_profile`   | `write:resilience`                     | 应用 `aggressive` / `balanced` / `conservative` 容灾预设文件         |
-| `omniroute_test_combo`               | `execute:completions`、`read:combos`   | 使用真实上游调用对 Combo 中的每个服务商进行实时测试                  |
-| `omniroute_get_provider_metrics`     | `read:health`                          | 每个服务商的指标，含 p50/p95/p99 延迟和熔断器状态                    |
-| `omniroute_best_combo_for_task`      | `read:combos`、`read:health`           | 根据任务类型推荐 Combo，含预算/延迟约束                             |
-| `omniroute_explain_route`            | `read:health`、`read:usage`            | 解释某次请求的路由决策依据（评分因子 + 容灾路径）                   |
-| `omniroute_get_session_snapshot`     | `read:usage`                           | 完整会话快照：费用、Token、热门模型/服务商、错误、预算守卫           |
-| `omniroute_db_health_check`          | `read:health`、`write:resilience`      | 诊断（并可自动修复）数据库异常，如损坏的 Combo 引用/孤儿行          |
-| `omniroute_sync_pricing`             | `pricing:write`                        | 从外部源（LiteLLM）同步定价数据；支持 `dryRun`                      |
+| `agentproxy_simulate_route`           | `read:health`、`read:combos`           | 包含容灾树的演习路由仿真                                             |
+| `agentproxy_set_budget_guard`         | `write:budget`                         | 会话预算，支持降级/阻断/告警动作                                     |
+| `agentproxy_set_routing_strategy`     | `write:combos`                         | 在运行时更新 Combo 策略（priority/weighted/auto 等）                 |
+| `agentproxy_set_resilience_profile`   | `write:resilience`                     | 应用 `aggressive` / `balanced` / `conservative` 容灾预设文件         |
+| `agentproxy_test_combo`               | `execute:completions`、`read:combos`   | 使用真实上游调用对 Combo 中的每个服务商进行实时测试                  |
+| `agentproxy_get_provider_metrics`     | `read:health`                          | 每个服务商的指标，含 p50/p95/p99 延迟和熔断器状态                    |
+| `agentproxy_best_combo_for_task`      | `read:combos`、`read:health`           | 根据任务类型推荐 Combo，含预算/延迟约束                             |
+| `agentproxy_explain_route`            | `read:health`、`read:usage`            | 解释某次请求的路由决策依据（评分因子 + 容灾路径）                   |
+| `agentproxy_get_session_snapshot`     | `read:usage`                           | 完整会话快照：费用、Token、热门模型/服务商、错误、预算守卫           |
+| `agentproxy_db_health_check`          | `read:health`、`write:resilience`      | 诊断（并可自动修复）数据库异常，如损坏的 Combo 引用/孤儿行          |
+| `agentproxy_sync_pricing`             | `pricing:write`                        | 从外部源（LiteLLM）同步定价数据；支持 `dryRun`                      |
 
 ## 缓存工具（2）
 
 | 工具                      | 权限域          | 描述                                     |
 | :------------------------ | :-------------- | :--------------------------------------- |
-| `omniroute_cache_stats`   | `read:cache`    | 语义缓存、提示缓存和幂等性统计           |
-| `omniroute_cache_flush`   | `write:cache`   | 全局或按签名/模型刷新缓存                |
+| `agentproxy_cache_stats`   | `read:cache`    | 语义缓存、提示缓存和幂等性统计           |
+| `agentproxy_cache_flush`   | `write:cache`   | 全局或按签名/模型刷新缓存                |
 
 ## 压缩工具（5）
 
 | 工具                                  | 权限域                | 描述                                                                                                       |
 | :------------------------------------ | :-------------------- | :--------------------------------------------------------------------------------------------------------- |
-| `omniroute_compression_status`        | `read:compression`    | 压缩设置、分析摘要和缓存感知统计（含 `analytics.mcpDescriptionCompression` 元数据）                         |
-| `omniroute_compression_configure`     | `write:compression`   | 配置压缩模式、阈值、目标比例、系统提示保留、MCP 描述压缩开关                                               |
-| `omniroute_set_compression_engine`    | `write:compression`   | 选择活跃引擎（off/caveman/rtk/stacked）及 Caveman/RTK 强度                                                 |
-| `omniroute_list_compression_combos`   | `read:compression`    | 列出已命名的压缩 Combo 及其引擎流水线                                                                      |
-| `omniroute_compression_combo_stats`   | `read:compression`    | 按压缩 Combo 和引擎分组的分析数据                                                                          |
+| `agentproxy_compression_status`        | `read:compression`    | 压缩设置、分析摘要和缓存感知统计（含 `analytics.mcpDescriptionCompression` 元数据）                         |
+| `agentproxy_compression_configure`     | `write:compression`   | 配置压缩模式、阈值、目标比例、系统提示保留、MCP 描述压缩开关                                               |
+| `agentproxy_set_compression_engine`    | `write:compression`   | 选择活跃引擎（off/caveman/rtk/stacked）及 Caveman/RTK 强度                                                 |
+| `agentproxy_list_compression_combos`   | `read:compression`    | 列出已命名的压缩 Combo 及其引擎流水线                                                                      |
+| `agentproxy_compression_combo_stats`   | `read:compression`    | 按压缩 Combo 和引擎分组的分析数据                                                                          |
 
-`omniroute_compression_status` 将 MCP 描述压缩数据单独报告在 `analytics.mcpDescriptionCompression` 下。这些值是 MCP 可列表描述（`tools`、`prompts`、`resources` 和 `resourceTemplates`）的元数据大小估算；不是服务商用量记录，标记为 `source: "mcp_metadata_estimate"`。
+`agentproxy_compression_status` 将 MCP 描述压缩数据单独报告在 `analytics.mcpDescriptionCompression` 下。这些值是 MCP 可列表描述（`tools`、`prompts`、`resources` 和 `resourceTemplates`）的元数据大小估算；不是服务商用量记录，标记为 `source: "mcp_metadata_estimate"`。
 
 ### MCP 无障碍树过滤器（v3.8.0）
 
-除了上述 5 个压缩工具，OmniRoute 还包含一个执行后过滤器，在 MCP 浏览器/无障碍工具的**工具结果**返回给代理之前对其进行压缩。此过滤器本身不是工具——它对任何包含冗长的无障碍树或浏览器快照文本（≥2000 字符）的工具结果透明运行。
+除了上述 5 个压缩工具，AgentProxy 还包含一个执行后过滤器，在 MCP 浏览器/无障碍工具的**工具结果**返回给代理之前对其进行压缩。此过滤器本身不是工具——它对任何包含冗长的无障碍树或浏览器快照文本（≥2000 字符）的工具结果透明运行。
 
 关键行为：
 
@@ -142,9 +142,9 @@ Claude Desktop、Cursor、Cline 及其他兼容 MCP 客户端的配置，参见 
 
 | 工具                          | 权限域           | 描述                                                                               |
 | :---------------------------- | :--------------- | :--------------------------------------------------------------------------------- |
-| `omniroute_oneproxy_fetch`    | `read:proxies`   | 从 1proxy 市场获取免费代理（支持协议/国家/质量/数量筛选）                          |
-| `omniroute_oneproxy_rotate`   | `read:proxies`   | 按策略获取下一个可用代理（`random` / `quality` / `sequential`）                    |
-| `omniroute_oneproxy_stats`    | `read:proxies`   | 连接池统计、同步状态、按协议和国家分布                                             |
+| `agentproxy_oneproxy_fetch`    | `read:proxies`   | 从 1proxy 市场获取免费代理（支持协议/国家/质量/数量筛选）                          |
+| `agentproxy_oneproxy_rotate`   | `read:proxies`   | 按策略获取下一个可用代理（`random` / `quality` / `sequential`）                    |
+| `agentproxy_oneproxy_stats`    | `read:proxies`   | 连接池统计、同步状态、按协议和国家分布                                             |
 
 ## 记忆工具（3）
 
@@ -152,9 +152,9 @@ Claude Desktop、Cursor、Cline 及其他兼容 MCP 客户端的配置，参见 
 
 | 工具                        | 权限域           | 描述                                                                       |
 | :-------------------------- | :--------------- | :------------------------------------------------------------------------- |
-| `omniroute_memory_search`   | `read:memory`    | 按查询/类型/API Key 搜索记忆，强制 Token 预算                              |
-| `omniroute_memory_add`      | `write:memory`   | 添加新的记忆条目（`factual` / `episodic` / `procedural` / `semantic`）     |
-| `omniroute_memory_clear`    | `write:memory`   | 清除某 API Key 的记忆，可选按类型或 `olderThan` 时间戳过滤                 |
+| `agentproxy_memory_search`   | `read:memory`    | 按查询/类型/API Key 搜索记忆，强制 Token 预算                              |
+| `agentproxy_memory_add`      | `write:memory`   | 添加新的记忆条目（`factual` / `episodic` / `procedural` / `semantic`）     |
+| `agentproxy_memory_clear`    | `write:memory`   | 清除某 API Key 的记忆，可选按类型或 `olderThan` 时间戳过滤                 |
 
 ## 技能工具（4）
 
@@ -162,10 +162,10 @@ Claude Desktop、Cursor、Cline 及其他兼容 MCP 客户端的配置，参见 
 
 | 工具                            | 权限域             | 描述                                                                     |
 | :------------------------------ | :----------------- | :----------------------------------------------------------------------- |
-| `omniroute_skills_list`         | `read:skills`      | 列出已注册的技能，支持按 API Key、名称或启用状态过滤                     |
-| `omniroute_skills_enable`       | `write:skills`     | 按 ID 启用或禁用某个技能                                                |
-| `omniroute_skills_execute`      | `execute:skills`   | 以给定输入执行技能，返回执行记录                                         |
-| `omniroute_skills_executions`   | `read:skills`      | 列出近期的技能执行历史                                                   |
+| `agentproxy_skills_list`         | `read:skills`      | 列出已注册的技能，支持按 API Key、名称或启用状态过滤                     |
+| `agentproxy_skills_enable`       | `write:skills`     | 按 ID 启用或禁用某个技能                                                |
+| `agentproxy_skills_execute`      | `execute:skills`   | 以给定输入执行技能，返回执行记录                                         |
+| `agentproxy_skills_executions`   | `read:skills`      | 列出近期的技能执行历史                                                   |
 
 ## Notion 上下文源（6）
 
@@ -201,9 +201,9 @@ curl -X DELETE http://localhost:20128/api/settings/notion
 
 | 工具                                | 权限域           | 描述                                                                                                      |
 | :---------------------------------- | :--------------- | :-------------------------------------------------------------------------------------------------------- |
-| `omniroute_agent_skills_list`       | `read:catalog`   | 列出全部 42 个代理技能，支持可选的 `category`（api\|cli）和 `area` 过滤；返回元数据 + 覆盖情况             |
-| `omniroute_agent_skills_get`        | `read:catalog`   | 按规范 `id` 获取单个技能的完整元数据 + SKILL.md 内容                                                      |
-| `omniroute_agent_skills_coverage`   | `read:catalog`   | 覆盖统计：22 个 API 技能和 20 个 CLI 技能中，哪些在文件系统上有 SKILL.md 文件 vs 目录总计                 |
+| `agentproxy_agent_skills_list`       | `read:catalog`   | 列出全部 42 个代理技能，支持可选的 `category`（api\|cli）和 `area` 过滤；返回元数据 + 覆盖情况             |
+| `agentproxy_agent_skills_get`        | `read:catalog`   | 按规范 `id` 获取单个技能的完整元数据 + SKILL.md 内容                                                      |
+| `agentproxy_agent_skills_coverage`   | `read:catalog`   | 覆盖统计：22 个 API 技能和 20 个 CLI 技能中，哪些在文件系统上有 SKILL.md 文件 vs 目录总计                 |
 
 完整目录及外部代理如何消费，参见 [AGENT-SKILLS.md](./AGENT-SKILLS.md)。
 
@@ -213,7 +213,7 @@ curl -X DELETE http://localhost:20128/api/settings/notion
 
 ### 云代理
 
-云代理是外部 AI 编程代理（codex-cloud、devin、jules），通过与大语言模型服务商相同的连接模型接入 OmniRoute。它们通过自己的 REST 接口（`/api/v1/agents/*`）暴露，**不**属于 MCP 工具目录——调用云代理不消耗 MCP 权限域。
+云代理是外部 AI 编程代理（codex-cloud、devin、jules），通过与大语言模型服务商相同的连接模型接入 AgentProxy。它们通过自己的 REST 接口（`/api/v1/agents/*`）暴露，**不**属于 MCP 工具目录——调用云代理不消耗 MCP 权限域。
 
 - 实现：`src/lib/cloudAgent/`（`registry.ts`、`agents/codex-cloud.ts`、`agents/devin.ts`、`agents/jules.ts`）。
 - 生命周期：`createTask`、`getStatus`、`approvePlan`、`sendMessage`、`listSources`。
@@ -286,15 +286,15 @@ MCP 工具通过 API Key 权限域进行认证。权限域执行集中在 `open-
 
 | 变量                                      | 默认值                              | 用途                                                                                                                       |
 | :---------------------------------------- | :---------------------------------- | :------------------------------------------------------------------------------------------------------------------------- |
-| `OMNIROUTE_BASE_URL`                      | `http://localhost:20128`            | MCP 服务器调用 OmniRoute 内部 API 时使用的基础 URL                                                                          |
-| `OMNIROUTE_API_KEY`                       | （空）                              | 转发为 `Authorization: Bearer` 给内部 API 调用的 API Key                                                                     |
-| `OMNIROUTE_MCP_ENFORCE_SCOPES`            | `false`（仅 `"true"` 启用）         | 启用后，缺少权限域时拒绝工具调用并在审计日志中记录 `scope_denied:<reason>`                                                  |
-| `OMNIROUTE_MCP_SCOPES`                    | （空）                              | 逗号分隔的权限域白名单，视为默认"可用"（当调用方不提供自身权限域时使用）                                                   |
-| `OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS`     | （不设置 = 开启）                   | 设置为 `0/false/off/no` 时，禁用注册时的 MCP 描述压缩                                                                        |
-| `OMNIROUTE_MCP_DESCRIPTION_COMPRESSION`   | （不设置 = 开启）                   | 与上文相同开关的别名                                                                                                       |
+| `AGENTPROXY_BASE_URL`                      | `http://localhost:20128`            | MCP 服务器调用 AgentProxy 内部 API 时使用的基础 URL                                                                          |
+| `AGENTPROXY_API_KEY`                       | （空）                              | 转发为 `Authorization: Bearer` 给内部 API 调用的 API Key                                                                     |
+| `AGENTPROXY_MCP_ENFORCE_SCOPES`            | `false`（仅 `"true"` 启用）         | 启用后，缺少权限域时拒绝工具调用并在审计日志中记录 `scope_denied:<reason>`                                                  |
+| `AGENTPROXY_MCP_SCOPES`                    | （空）                              | 逗号分隔的权限域白名单，视为默认"可用"（当调用方不提供自身权限域时使用）                                                   |
+| `AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS`     | （不设置 = 开启）                   | 设置为 `0/false/off/no` 时，禁用注册时的 MCP 描述压缩                                                                        |
+| `AGENTPROXY_MCP_DESCRIPTION_COMPRESSION`   | （不设置 = 开启）                   | 与上文相同开关的别名                                                                                                       |
 | `MCP_TOOL_DENY`                           | （不设置 = 无过滤）                 | 逗号分隔的工具名称，从 `tools/list` 中移除（工具基数精简 — 见下文）                                                        |
 | `MCP_TOOL_ALLOW`                          | （不设置 = 无过滤）                 | 逗号分隔的工具名称，仅保留这些工具（白名单模式 — 见下文）                                                                  |
-| `DATA_DIR`                                | `~/.omniroute`                      | 心跳文件写入 `${DATA_DIR}/runtime/mcp-heartbeat.json`                                                                       |
+| `DATA_DIR`                                | `~/.agentproxy`                      | 心跳文件写入 `${DATA_DIR}/runtime/mcp-heartbeat.json`                                                                       |
 
 ---
 
@@ -304,8 +304,8 @@ MCP 工具、提示和资源注册表可以在注册/列表时压缩描述，以
 
 - 压缩在描述文本上运行，使用 Caveman 规则集（`getRulesForContext("all", "full")`），并进行保留块提取（代码段、围栏块等），因此结构化内容不会被修改。
 - 按部署级别通过 `key_value` 设置表中的 `compression.mcpDescriptionCompressionEnabled` 值切换开关（默认：启用）——在界面中暴露为 **Analytics → MCP description compression**。
-- 按进程级别通过 `OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS=false` 或 `OMNIROUTE_MCP_DESCRIPTION_COMPRESSION=false` 切换。
-- 实时统计通过 `omniroute_compression_status` 在 `analytics.mcpDescriptionCompression` 下呈现，标记为 `source: "mcp_metadata_estimate"` 以区别于实际服务商用量记录。
+- 按进程级别通过 `AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS=false` 或 `AGENTPROXY_MCP_DESCRIPTION_COMPRESSION=false` 切换。
+- 实时统计通过 `agentproxy_compression_status` 在 `analytics.mcpDescriptionCompression` 下呈现，标记为 `source: "mcp_metadata_estimate"` 以区别于实际服务商用量记录。
 
 ---
 
@@ -324,10 +324,10 @@ MCP 工具、提示和资源注册表可以在注册/列表时压缩描述，以
 
 ```bash
 # 从目录中移除两个工具
-MCP_TOOL_DENY="omniroute_get_health,omniroute_list_combos" omniroute --mcp
+MCP_TOOL_DENY="agentproxy_get_health,agentproxy_list_combos" agentproxy --mcp
 
 # 仅宣布路由 + 配额工具（白名单模式）
-MCP_TOOL_ALLOW="omniroute_route_request,omniroute_check_quota" omniroute --mcp
+MCP_TOOL_ALLOW="agentproxy_route_request,agentproxy_check_quota" agentproxy --mcp
 ```
 
 **已过滤工具的移除方式：** 注册始终成功；被配置淘汰的工具会在 MCP SDK 句柄上执行 `.disable()`，因此它不会出现在 `tools/list` 中，但连接保持完整（干净启用/禁用，无需重新注册）。配置解析器为 `readMcpToolProfileFromEnv(process.env)`，当两个变量均为空时返回 `null`（无过滤）。

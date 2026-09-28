@@ -4,7 +4,7 @@ import {
   hasCodexScopeCooldown,
   liftCodexScopeCooldownOnHeadroom,
 } from "./providers/codexAccountState";
-import { isCodexSparkQuotaKey } from "@omniroute/open-sse/config/codexQuotaScopes";
+import { isCodexSparkQuotaKey } from "@agentproxy/open-sse/config/codexQuotaScopes";
 
 type JsonRecord = Record<string, unknown>;
 

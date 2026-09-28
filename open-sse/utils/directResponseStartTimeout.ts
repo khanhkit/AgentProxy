@@ -10,7 +10,7 @@ const DIRECT_RESPONSE_START_TIMEOUT_CODE = "DIRECT_RESPONSE_START_TIMEOUT";
 export function resolveDirectHeadersTimeoutMs(
   env: Record<string, string | undefined> = process.env
 ): number {
-  const raw = env.OMNIROUTE_DIRECT_HEADERS_TIMEOUT_MS;
+  const raw = env.AGENTPROXY_DIRECT_HEADERS_TIMEOUT_MS;
   if (raw == null || raw.trim() === "") return DEFAULT_DIRECT_HEADERS_TIMEOUT_MS;
   const parsed = Number(raw);
   return Number.isFinite(parsed) && parsed > 0 ? Math.floor(parsed) : 0;

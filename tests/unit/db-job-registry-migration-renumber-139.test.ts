@@ -5,7 +5,7 @@
 // ("GLIBC_2.29 not found"), so the native module fails to dlopen and any test that
 // reaches better-sqlite3 directly (or asserts stdout that the load-failure warning
 // would pollute) fails HERE while passing in CI. This is a known environment
-// limitation, not a defect in the code under test: the OmniRoute runtime itself
+// limitation, not a defect in the code under test: the AgentProxy runtime itself
 // cascades to node:sqlite/sql.js when better-sqlite3 is unavailable. See
 // tests/unit/_helpers/betterSqlite3Availability.ts for a guard helper.
 import test from "node:test";
@@ -15,9 +15,9 @@ import os from "node:os";
 import path from "node:path";
 import Database from "better-sqlite3";
 
-const migrationsDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-job-migration-"));
-const originalMigrationsDir = process.env.OMNIROUTE_MIGRATIONS_DIR;
-process.env.OMNIROUTE_MIGRATIONS_DIR = migrationsDir;
+const migrationsDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-job-migration-"));
+const originalMigrationsDir = process.env.AGENTPROXY_MIGRATIONS_DIR;
+process.env.AGENTPROXY_MIGRATIONS_DIR = migrationsDir;
 
 fs.writeFileSync(
   path.join(migrationsDir, "139_ccr_blocks.sql"),
@@ -36,8 +36,8 @@ const { runMigrations } = await import("../../src/lib/db/migrationRunner.ts");
 
 test.after(() => {
   fs.rmSync(migrationsDir, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
-  if (originalMigrationsDir === undefined) delete process.env.OMNIROUTE_MIGRATIONS_DIR;
-  else process.env.OMNIROUTE_MIGRATIONS_DIR = originalMigrationsDir;
+  if (originalMigrationsDir === undefined) delete process.env.AGENTPROXY_MIGRATIONS_DIR;
+  else process.env.AGENTPROXY_MIGRATIONS_DIR = originalMigrationsDir;
 });
 
 test("job registry previously applied on 139 is rehomed so CCR can claim that slot", () => {
@@ -46,17 +46,17 @@ test("job registry previously applied on 139 is rehomed so CCR can claim that sl
     db.exec(`
       CREATE TABLE jobs (id TEXT PRIMARY KEY);
       CREATE TABLE job_runs (id INTEGER PRIMARY KEY);
-      CREATE TABLE _omniroute_migrations (
+      CREATE TABLE _agentproxy_migrations (
         version TEXT PRIMARY KEY,
         name TEXT NOT NULL,
         applied_at TEXT NOT NULL DEFAULT (datetime('now'))
       );
-      INSERT INTO _omniroute_migrations (version, name) VALUES ('139', 'job_registry');
+      INSERT INTO _agentproxy_migrations (version, name) VALUES ('139', 'job_registry');
     `);
 
     assert.equal(runMigrations(db), 1);
     assert.deepEqual(
-      db.prepare("SELECT version, name FROM _omniroute_migrations ORDER BY version").all(),
+      db.prepare("SELECT version, name FROM _agentproxy_migrations ORDER BY version").all(),
       [
         { version: "139", name: "ccr_blocks" },
         { version: "146", name: "job_registry" },
@@ -88,19 +88,19 @@ test("untracked Job Registry tables do not suppress pending migration 146", () =
       CREATE TABLE jobs (id TEXT PRIMARY KEY);
       CREATE TABLE job_runs (id INTEGER PRIMARY KEY);
       CREATE TABLE ccr_blocks (principal_id TEXT PRIMARY KEY);
-      CREATE TABLE _omniroute_migrations (
+      CREATE TABLE _agentproxy_migrations (
         version TEXT PRIMARY KEY,
         name TEXT NOT NULL,
         applied_at TEXT NOT NULL DEFAULT (datetime('now'))
       );
-      INSERT INTO _omniroute_migrations (version, name)
+      INSERT INTO _agentproxy_migrations (version, name)
       VALUES ('139', 'ccr_blocks');
     `);
 
     assert.equal(runMigrations(db), 1);
 
     assert.deepEqual(
-      db.prepare("SELECT version, name FROM _omniroute_migrations ORDER BY version").all(),
+      db.prepare("SELECT version, name FROM _agentproxy_migrations ORDER BY version").all(),
       [
         { version: "139", name: "ccr_blocks" },
         { version: "146", name: "job_registry" },

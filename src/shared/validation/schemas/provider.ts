@@ -25,7 +25,7 @@ import {
 import {
   isValidIanaTimeZone,
   isValidResetHour,
-} from "@omniroute/open-sse/services/dailyQuotaReset.ts";
+} from "@agentproxy/open-sse/services/dailyQuotaReset.ts";
 import {
   upstreamHeadersRecordSchema,
   modelCompatPerProtocolSchema,

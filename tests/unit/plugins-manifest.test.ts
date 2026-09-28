@@ -13,7 +13,7 @@ const validFull = {
   main: "handler.js",
   source: "local" as const,
   tags: ["test", "demo"],
-  requires: { omniroute: ">=3.0.0", permissions: ["network", "file-read"] as const },
+  requires: { agentproxy: ">=3.0.0", permissions: ["network", "file-read"] as const },
   hooks: { onRequest: true, onResponse: true, onError: false },
   skills: [{ name: "my-skill", description: "does things", input: { q: "string" } }],
   enabledByDefault: true,

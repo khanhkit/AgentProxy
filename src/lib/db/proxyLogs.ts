@@ -26,12 +26,128 @@ import { getDbInstance } from "./core";
  *
  * @param since - ISO-8601 timestamp lower bound, e.g. "2024-01-01T00:00:00.000Z".
  */
-export function exportProxyLogsSince(since: string): Record<string, unknown>[] {
+export interface LegacyProxyLogExportCursor {
+  timestamp: string;
+  rowId: number;
+}
+
+export interface LegacyProxyLogExportRow {
+  rowId: number;
+  timestamp: string;
+  record: Record<string, unknown>;
+}
+
+export function getLegacyProxyLogExportMaxRowId(since: string): number {
   const db = getDbInstance();
-  const stmt = db.prepare(
-    "SELECT * FROM proxy_logs WHERE timestamp >= @since ORDER BY timestamp DESC"
+  const row = db
+    .prepare(
+      "SELECT COALESCE(MAX(rowid), 0) AS max_row_id FROM proxy_logs WHERE timestamp >= @since"
+    )
+    .get({ since }) as { max_row_id?: number } | undefined;
+  return Number(row?.max_row_id ?? 0);
+}
+
+export function getLegacyProxyLogExportPage(
+  since: string,
+  maxRowId: number,
+  cursor: LegacyProxyLogExportCursor | null,
+  limit: number
+): LegacyProxyLogExportRow[] {
+  const db = getDbInstance();
+  const boundedLimit = Math.max(1, Math.min(Math.trunc(limit), 100));
+  const rows = cursor
+    ? db
+        .prepare(
+          `SELECT rowid AS __row_id, *
+             FROM proxy_logs
+            WHERE timestamp >= @since
+              AND rowid <= @maxRowId
+              AND (timestamp < @cursorTimestamp
+                   OR (timestamp = @cursorTimestamp AND rowid < @cursorRowId))
+            ORDER BY timestamp DESC, rowid DESC
+            LIMIT @limit`
+        )
+        .all({
+          since,
+          maxRowId,
+          cursorTimestamp: cursor.timestamp,
+          cursorRowId: cursor.rowId,
+          limit: boundedLimit,
+        })
+    : db
+        .prepare(
+          `SELECT rowid AS __row_id, *
+             FROM proxy_logs
+            WHERE timestamp >= @since
+              AND rowid <= @maxRowId
+            ORDER BY timestamp DESC, rowid DESC
+            LIMIT @limit`
+        )
+        .all({ since, maxRowId, limit: boundedLimit });
+
+  return (rows as Array<Record<string, unknown> & { __row_id: number; timestamp: string }>).map(
+    (row) => {
+      const { __row_id, ...record } = row;
+      return {
+        rowId: Number(__row_id),
+        timestamp: String(row.timestamp),
+        record,
+      };
+    }
   );
-  return stmt.all({ since }) as Record<string, unknown>[];
+}
+
+export function exportProxyLogsSince(since: string): Record<string, unknown>[] {
+  const maxRowId = getLegacyProxyLogExportMaxRowId(since);
+  const logs: Record<string, unknown>[] = [];
+  let cursor: LegacyProxyLogExportCursor | null = null;
+
+  while (true) {
+    const page = getLegacyProxyLogExportPage(since, maxRowId, cursor, 100);
+    if (page.length === 0) break;
+    logs.push(...page.map((row) => row.record));
+
+    const last = page[page.length - 1];
+    cursor = { timestamp: last.timestamp, rowId: last.rowId };
+  }
+
+  return logs;
+}
+
+export function countProxyLogsSince(since: string): number {
+  const db = getDbInstance();
+  const row = db
+    .prepare("SELECT COUNT(*) AS count FROM proxy_logs WHERE timestamp >= @since")
+    .get({ since }) as { count?: number } | undefined;
+  return Number(row?.count ?? 0);
+}
+
+export function* iterateProxyLogsSince(
+  since: string,
+  limit: number
+): Generator<Record<string, unknown>, void, void> {
+  const maxRows = Math.max(0, Math.trunc(limit));
+  if (maxRows === 0) return;
+
+  const maxRowId = getLegacyProxyLogExportMaxRowId(since);
+  let cursor: LegacyProxyLogExportCursor | null = null;
+  let processed = 0;
+
+  while (processed < maxRows) {
+    const pageLimit = Math.min(100, maxRows - processed);
+    const page = getLegacyProxyLogExportPage(since, maxRowId, cursor, pageLimit);
+    if (page.length === 0) break;
+
+    for (const row of page) {
+      yield row.record;
+      processed++;
+      if (processed >= maxRows) break;
+    }
+
+    const last = page[page.length - 1];
+    cursor = { timestamp: last.timestamp, rowId: last.rowId };
+    if (page.length < pageLimit) break;
+  }
 }
 
 // 24h window for "last known egress IP" lookups. This helper answers a

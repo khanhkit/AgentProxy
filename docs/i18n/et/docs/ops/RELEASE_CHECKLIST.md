@@ -53,8 +53,8 @@ See on möödaviik npm sanktsioonidest, kuna 2FA-t vahele jätvad tokenid on kas
 see taastab täisautomaatse voo, mis projektil oli kuni v3.8.48-ni, hoides samal ajal
 WS1.3 tagatist (lekkinud token üksinda ei saa avaldada — tokenit ei ole olemas).
 
-**Ühekordne seadistus (omanik):** npmjs.com → paketi `omniroute` → Settings → _Trusted
-Publisher_ → GitHub: omanik `diegosouzapw`, repo `OmniRoute`, workflow `npm-publish.yml`
+**Ühekordne seadistus (omanik):** npmjs.com → paketi `agentproxy` → Settings → _Trusted
+Publisher_ → GitHub: omanik `diegosouzapw`, repo `AgentProxy`, workflow `npm-publish.yml`
 (keskkond: puudub). Kuni seda pole seadistatud, ebaõnnestub automaatne etapp veaga `ENEEDAUTH`:
 saada uuesti käivitatuna parameetriga `publish_mode=staged` (vaata allpool) või `direct`.
 
@@ -67,7 +67,7 @@ liikus tõestuse JÄRELE, mitte enne selle.
 
 **Omaniku vooskeem pärast töövoo rohelist tulemust:**
 
-1. `npm stage list omniroute` — leia stage id (kuvatakse ka töövoo kokkuvõttes).
+1. `npm stage list agentproxy` — leia stage id (kuvatakse ka töövoo kokkuvõttes).
 2. Kontrolli pargitud baite (soovituslik): `npm stage download <id>`, seejärel paigalda
    allalaaditud tarball ajutisse prefiksisse ja käivita see (`npm run check:pack-boot` automatiseerib
    sama pack→install→boot verdikti CI-s).
@@ -78,11 +78,11 @@ liikus tõestuse JÄRELE, mitte enne selle.
 **Hädaolukorra varulahendus:** `workflow_dispatch` parameetriga `publish_mode=direct` taastab
 vana kohese `npm publish` toimingu (kasuta ainult siis, kui etapiviisiline protsess ise ei toimi korrektselt; dokumenteeri põhjus).
 
-**Ühekordne karastamine (omanik, npmjs.com):** seadista `omniroute` jaoks Trusted Publisher
+**Ühekordne karastamine (omanik, npmjs.com):** seadista `agentproxy` jaoks Trusted Publisher
 ainult-etapiviisilisse režiimi, et lekkinud pikaajaline token ei saaks teha `npm publish`
 otse kusagilt — CI saab ainult etapistada; ainult omaniku 2FA vabastab avaldamise.
 
-**Katkise artefakti tegevuskava (muutumatu):** `npm deprecate omniroute@<bad> "<põhjus> — kasuta <fixed>"`
+**Katkise artefakti tegevuskava (muutumatu):** `npm deprecate agentproxy@<bad> "<põhjus> — kasuta <fixed>"`
 on vaikimisi reaktsioon (minutid, tühistatav); `npm unpublish` kasutatakse ainult 72h/mitte-sõltuvuste
 akna sees ja mitte kunagi esimese sammuna. Docker: ära kirjuta versioonimärgendit üle — tagasipöördumine
 tähendab `latest` viitamist ümber viimasele töötavale digestile.
@@ -193,7 +193,7 @@ Katkestavad muudatused (breaking changes): lisa jaluses `BREAKING CHANGE:` või 
 - [ ] `npm run i18n:check` väljub kood 0-ga — tõlke olek (`.i18n-state.json`) on kooskõlas lähtedokumentidega (range režiimis ei ole lahknenud lähteid; hoiatusrežiimi nõuandev osa on aktsepteeritav viimase hetke dokumendiparandusteks, kuid peaks olema 0 enne märgistamist)
 - [ ] `npm run i18n:check-ui-coverage` väljub kood 0-ga — kõik UI keeled on 80% katvuse alammäärast kõrgemal
 - [ ] `npm run i18n:sync-ui:dry` teatab 0 puuduvat võtit kõigis 42 keeles
-- [ ] Kui lähte-ingliskeelsed dokumendid muutusid, käivita `npm run i18n:run` (vajab `.env` failis `OMNIROUTE_TRANSLATION_API_KEY`-d) enne märgistamist
+- [ ] Kui lähte-ingliskeelsed dokumendid muutusid, käivita `npm run i18n:run` (vajab `.env` failis `AGENTPROXY_TRANSLATION_API_KEY`-d) enne märgistamist
 - [ ] Tõlkepanuseid võib lükata edasi järgmisse väljalaskesse, kui need on väikesed (jälgi CHANGELOG-is)
 
 ### Andmebaasi migratsioonid
@@ -202,7 +202,7 @@ Katkestavad muudatused (breaking changes): lisa jaluses `BREAKING CHANGE:` või 
   - [ ] Iga migratsioon on idempotentne (`CREATE TABLE IF NOT EXISTS` jne)
   - [ ] Migratsioonid on pakitud transaktsioonidesse
   - [ ] Numeratsioon on õige (järjekorras ei ole tühikuid)
-- [ ] Testi värskel paigaldusel: kustuta `~/.omniroute/omniroute.db` ja käivita `npm run dev`
+- [ ] Testi värskel paigaldusel: kustuta `~/.agentproxy/agentproxy.db` ja käivita `npm run dev`
 - [ ] Testi olemasoleval paigaldusel: varunda andmebaas, käivita migratsioon, kontrolli skeemi
 - [ ] WAL-failid (`-wal`, `-shm`) käsitletakse õigesti, kui migratsioon kirjutab tabeleid ümber
 
@@ -237,7 +237,7 @@ Repositoorium kasutab kolme eraldi väljundkataloogi — ei tohi neid segamini a
 | `.build/` | Buildi vahetulemused — `next build` väljund (`distDir`)  | Ei (gitignoritud) |
 | `dist/`   | Tarnitav npm-pakett — koostatud `assembleStandalone`-iga | Ei (gitignoritud) |
 
-> **Operaatori märkus:** kaugem VPS-i pildikataloog on jätkuvalt `/usr/lib/node_modules/omniroute/app/`.
+> **Operaatori märkus:** kaugem VPS-i pildikataloog on jätkuvalt `/usr/lib/node_modules/agentproxy/app/`.
 > Liikunud on ainult **repositooriumisisene** buildi väljund (`app/` → `dist/`). Juurutamisoskused rsync'ivad
 > `dist/` sisu kaugesse `app/` kataloogi — VPS-i teekondade muutmine ei ole vajalik.
 
@@ -357,12 +357,12 @@ Enne mistahes väljalaske saatmist, mis sisaldab manustatud teenuste muudatusi, 
 
 Enne mistahes v3.8.x väljalaske saatmist kontrolli neid täiendavaid punkte:
 
-- [ ] `omniroute --tray` käivitub macOS-il (systray2 paigaldatud `~/.omniroute/runtime/`-i)
-- [ ] `omniroute --tray` käivitub Linuxil (vajab DISPLAY muutujat; sujuv veateade, kui see ei ole seatud)
-- [ ] `omniroute --tray` käivitub Windowsil (PowerShell NotifyIcon, lisabinaarfailideta)
-- [ ] `omniroute config tray enable` loob autostardi kirje; disable eemaldab selle
-- [ ] `npm install -g omniroute@<see-versioon>` käivitab postinstall'i ilma fataalse väljumiseta
-- [ ] Uuendustee säilitab valikulised sõltuvused (optional deps): `omniroute update --apply` ja automaatuuendaja
+- [ ] `agentproxy --tray` käivitub macOS-il (systray2 paigaldatud `~/.agentproxy/runtime/`-i)
+- [ ] `agentproxy --tray` käivitub Linuxil (vajab DISPLAY muutujat; sujuv veateade, kui see ei ole seatud)
+- [ ] `agentproxy --tray` käivitub Windowsil (PowerShell NotifyIcon, lisabinaarfailideta)
+- [ ] `agentproxy config tray enable` loob autostardi kirje; disable eemaldab selle
+- [ ] `npm install -g agentproxy@<see-versioon>` käivitab postinstall'i ilma fataalse väljumiseta
+- [ ] Uuendustee säilitab valikulised sõltuvused (optional deps): `agentproxy update --apply` ja automaatuuendaja
       käivitavad `npm install -g … --include=optional`, et `optionalDependencies` (better-sqlite3,
       keytar, tls-client, ja llmlingua SLM pakett: `@atjsh/llmlingua-2@2.0.5`,
       `js-tiktoken`) säiliksid uuenduse ajal. Ultra `modelPath` SLM tase vajab lisaks
@@ -372,13 +372,13 @@ Enne mistahes v3.8.x väljalaske saatmist kontrolli neid täiendavaid punkte:
       instantsi kaudu — iseseisev jälituspakett (standalone trace bundle) sisaldab vaid transformers-it, mitte dünaamiliselt imporditud
       valikulisi sõltuvusi, mistõttu selle puudumisel laadiks töölõim llmlingua-2 juuruse transformers-i vastu
       ja SLM tase ebaõnnestuks vaikimisi (fail-open) märkamatult.
-- [ ] `omniroute status` töötab ilma `.env`-ita (CLI tokeni tee, ainult loopback)
+- [ ] `agentproxy status` töötab ilma `.env`-ita (CLI tokeni tee, ainult loopback)
 - [ ] `curl http://localhost:20128/api/shutdown` tagastab 401 (alati kaitstud marsruut)
 - [ ] `curl -H "host: evil.com" http://localhost:20128/api/mcp/sse` tagastab 401 (loopback kaitse)
 - [ ] SQLite käitusaeg (runtime) lahendub esimesel käivitusel väärtuseks `bundled` (kaasapandud binaarfail on platvormile sobiv)
 - [ ] SQLite käitusaeg taandub väärtuseks `runtime`, kui `node_modules/better-sqlite3` kustutatakse
 - [ ] Nutikas MCP filter tihendab tegelikku `playwright-mcp browser_snapshot` väljundit (≥50% vähenemine)
-- [ ] Kõik 10 `skills/omniroute*/SKILL.md` faili on avalikult kättesaadavad raw GitHub URL-i kaudu
+- [ ] Kõik 10 `skills/agentproxy*/SKILL.md` faili on avalikult kättesaadavad raw GitHub URL-i kaudu
 - [ ] Sisseelamise juhendaja (onboarding wizard) näitab "How It Works" tasemetuuri sammu värske seadistuse korral
 - [ ] Avapaneeli (home dashboard) tasemekattuvuse vidin näitab konfigureeritud/aktiivseid loendeid
 

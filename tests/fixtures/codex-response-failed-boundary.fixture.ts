@@ -9,12 +9,12 @@ import test from "node:test";
 import type { CodexWreqWebSocket } from "../../open-sse/executors/codex/appServerClient.ts";
 import type { AdapterEvent } from "../../open-sse/vendor/codex-chatgpt-web/types.ts";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-codex-boundary-data-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-codex-boundary-data-"));
 const TEST_PLUGINS_DIR = fs.mkdtempSync(
-  path.join(os.tmpdir(), "omniroute-codex-boundary-plugins-")
+  path.join(os.tmpdir(), "agentproxy-codex-boundary-plugins-")
 );
 process.env.DATA_DIR = TEST_DATA_DIR;
-process.env.OMNIROUTE_PLUGINS_DIR = TEST_PLUGINS_DIR;
+process.env.AGENTPROXY_PLUGINS_DIR = TEST_PLUGINS_DIR;
 process.env.APP_LOG_TO_FILE = "false";
 
 const { CodexExecutor, __setCodexWebSocketTransportForTesting, encodeResponseSseEvent } =
@@ -26,7 +26,7 @@ const { resetDbInstance } = await import("../../src/lib/db/core.ts");
 
 const PUBLIC_MESSAGE = "Codex provider request failed";
 const HOSTILE_MESSAGE =
-  "token=codex-secret-value at /srv/omniroute/private/config.json\nforged-log: admin=true";
+  "token=codex-secret-value at /srv/agentproxy/private/config.json\nforged-log: admin=true";
 
 type FailedPayload = {
   type: "response.failed";
@@ -61,7 +61,7 @@ function assertPublicFailure(
   }
   assert.ok(!JSON.stringify(payload).includes(HOSTILE_MESSAGE));
   assert.ok(!JSON.stringify(payload).includes("codex-secret-value"));
-  assert.ok(!JSON.stringify(payload).includes("/srv/omniroute/private"));
+  assert.ok(!JSON.stringify(payload).includes("/srv/agentproxy/private"));
 }
 
 async function executeCodexWebSocketFailure(

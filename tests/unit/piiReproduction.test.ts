@@ -6,7 +6,7 @@ import path from "node:path";
 import { resetDbInstance } from "../../src/lib/db/core";
 
 // Isolate DB state
-const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-test-repro-"));
+const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-test-repro-"));
 process.env.DATA_DIR = tmpDir;
 
 import { createPiiSseTransform } from "../../src/lib/streamingPiiTransform";

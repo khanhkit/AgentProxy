@@ -4,7 +4,7 @@ import os from "node:os";
 import path from "node:path";
 import test from "node:test";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-lease-key-policy-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-lease-key-policy-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.API_KEY_SECRET = "exclusive-lease-key-policy-test-secret";
 process.env.DISABLE_SQLITE_AUTO_BACKUP = "true";
@@ -88,7 +88,7 @@ test("partial management PATCH maps the domain invariant to a sanitized 400", as
   const ordinary = await apiKeys.createApiKey("ordinary route key", "test");
   const management = await apiKeys.createApiKey("management route key", "test", ["manage"]);
   const response = await keysRoute.PATCH(
-    new Request(`http://omniroute.local/api/keys/${ordinary.id}`, {
+    new Request(`http://agentproxy.local/api/keys/${ordinary.id}`, {
       method: "PATCH",
       headers: {
         Authorization: `Bearer ${management.key}`,

@@ -6,10 +6,10 @@
 
 ## Αναφορά Ευπαθειών
 
-Εάν ανακαλύψετε μια ευπάθεια ασφαλείας στο OmniRoute, παρακαλούμε να την αναφέρετε υπεύθυνα:
+Εάν ανακαλύψετε μια ευπάθεια ασφαλείας στο AgentProxy, παρακαλούμε να την αναφέρετε υπεύθυνα:
 
 1. **ΜΗΝ** ανοίξετε δημόσιο ζήτημα στο GitHub
-2. Χρησιμοποιήστε τα [GitHub Security Advisories](https://github.com/diegosouzapw/OmniRoute/security/advisories/new)
+2. Χρησιμοποιήστε τα [GitHub Security Advisories](https://github.com/khanhkit/AgentProxy/security/advisories/new)
 3. Συμπεριλάβετε: περιγραφή, βήματα αναπαραγωγής και πιθανό αντίκτυπο
 
 ## Χρονοδιάγραμμα Απόκρισης
@@ -32,7 +32,7 @@
 
 ## Αρχιτεκτονική Ασφαλείας
 
-Το OmniRoute υλοποιεί ένα πολυεπίπεδο μοντέλο ασφαλείας:
+Το AgentProxy υλοποιεί ένα πολυεπίπεδο μοντέλο ασφαλείας:
 
 ```
 Request → CORS → Authz pipeline (classify → policies → enforce)
@@ -69,7 +69,7 @@ STORAGE_ENCRYPTION_KEY=$(openssl rand -hex 32)
 
 ### 🛡️ Πλαίσιο Guardrails
 
-Το OmniRoute διαθέτει ένα **μητρώο guardrails** που επαναφορτώνεται εν ώρα λειτουργίας (`src/lib/guardrails/`) με 3 ενσωματωμένα guardrails ταξινομημένα κατά προτεραιότητα:
+Το AgentProxy διαθέτει ένα **μητρώο guardrails** που επαναφορτώνεται εν ώρα λειτουργίας (`src/lib/guardrails/`) με 3 ενσωματωμένα guardrails ταξινομημένα κατά προτεραιότητα:
 
 | Guardrail          | Προτεραιότητα | Σκοπός                                                                                                |
 | ------------------ | ------------- | ----------------------------------------------------------------------------------------------------- |
@@ -77,7 +77,7 @@ STORAGE_ENCRYPTION_KEY=$(openssl rand -hex 32)
 | `pii-masker`       | 10            | Απόκρυψη PII πριν και μετά την κλήση (email, τηλέφωνο, CPF, CNPJ, πιστωτικές κάρτες, SSN)             |
 | `prompt-injection` | 20            | Ανιχνεύει μοτίβα παράκαμψης/πλαστοπροσωπίας ρόλου/jailbreak/διαρροής                                  |
 
-Τα προσαρμοσμένα guardrails δηλώνονται μέσω `registerGuardrail(new MyGuardrail())`. Το μοντέλο είναι fail-open (οι εξαιρέσεις δεν αποκλείουν ποτέ την κίνηση). Απόρριψη ανά αίτημα μέσω της κεφαλίδας `x-omniroute-disabled-guardrails`. → Βλ. [`docs/security/GUARDRAILS.md`](docs/security/GUARDRAILS.md).
+Τα προσαρμοσμένα guardrails δηλώνονται μέσω `registerGuardrail(new MyGuardrail())`. Το μοντέλο είναι fail-open (οι εξαιρέσεις δεν αποκλείουν ποτέ την κίνηση). Απόρριψη ανά αίτημα μέσω της κεφαλίδας `x-agentproxy-disabled-guardrails`. → Βλ. [`docs/security/GUARDRAILS.md`](docs/security/GUARDRAILS.md).
 
 ### 🧠 Φρουρός Έγχυσης Οδηγιών
 
@@ -182,15 +182,15 @@ STORAGE_ENCRYPTION_KEY=$(openssl rand -hex 32)
 
 ```bash
 docker run -d \
-  --name omniroute \
+  --name agentproxy \
   --restart unless-stopped \
   --read-only \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
+  -v agentproxy-data:/app/data \
   -e JWT_SECRET="$(openssl rand -base64 48)" \
   -e API_KEY_SECRET="$(openssl rand -hex 32)" \
   -e STORAGE_ENCRYPTION_KEY="$(openssl rand -hex 32)" \
-  diegosouzapw/omniroute:latest
+  khanhkit/agentproxy:latest
 ```
 
 ---
@@ -222,7 +222,7 @@ docker run -d \
 
 ## Ευρήματα σαρωτή αλυσίδας εφοδιασμού (Socket.dev / Snyk / παρόμοια)
 
-Το δημοσιευμένο artifact npm `omniroute` περιλαμβάνει το build του Next.js με `output: "standalone"`,
+Το δημοσιευμένο artifact npm `agentproxy` περιλαμβάνει το build του Next.js με `output: "standalone"`,
 που σημαίνει ότι κάθε χειριστής διαδρομής — συμπεριλαμβανομένων των τεκμηριωμένων προνομιακών
 λειτουργιών (MITM, εισαγωγή Zed, Cloud Sync, ενσωματωμένος επόπτης υπηρεσιών) — καταλήγει
 σε ελαχιστοποιημένα τμήματα `.next/server/*.js`. Οι ευρετικοί σαρωτές αλυσίδας εφοδιασμού
@@ -237,7 +237,7 @@ docker run -d \
   παραπέμπουν στο ίδιο έγγραφο.
 
 Για χρήστες των οποίων η διοχέτευση δεν μπορεί να χαλαρώσει την ειδοποίηση: κάντε build με
-`OMNIROUTE_BUILD_PROFILE=minimal npm run build`. Αυτό αντικαθιστά τις τέσσερις
+`AGENTPROXY_BUILD_PROFILE=minimal npm run build`. Αυτό αντικαθιστά τις τέσσερις
 ευαίσθητες μονάδες με stubs που επιστρέφουν HTTP 503 `feature-disabled` κατά την
 εκτέλεση, ώστε τα προνομιακά μονοπάτια κώδικα να απουσιάζουν φυσικά από το bundle.
 Δείτε το [`docs/security/SOCKET_DEV_FINDINGS.md`](docs/security/SOCKET_DEV_FINDINGS.md)

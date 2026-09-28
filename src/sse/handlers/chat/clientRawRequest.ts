@@ -8,14 +8,14 @@
  * chat.ts re-exports both, so the public surface and tests/unit/chat-build-client-raw-request
  * are unchanged.
  */
-import { mergeAbortSignals } from "@omniroute/open-sse/executors/base.ts";
-import { cloneBoundedForLog } from "@omniroute/open-sse/utils/requestLogger.ts";
+import { mergeAbortSignals } from "@agentproxy/open-sse/executors/base.ts";
+import { cloneBoundedForLog } from "@agentproxy/open-sse/utils/requestLogger.ts";
 
 export function buildClientRawRequest(request: Request, body: unknown) {
   const url = new URL(request.url);
   const headers = Object.fromEntries(request.headers.entries());
-  delete headers["x-omniroute-lease-owner"];
-  delete headers["x-omniroute-lease-generation"];
+  delete headers["x-agentproxy-lease-owner"];
+  delete headers["x-agentproxy-lease-generation"];
   return {
     endpoint: url.pathname,
     // #7847: bounded, not a full deep clone. Every consumer of clientRawRequest.body is

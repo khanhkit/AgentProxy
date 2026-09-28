@@ -4,7 +4,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-puter-removed-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-puter-removed-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const { REGISTRY } = await import("../../open-sse/config/providerRegistry.ts");
@@ -47,7 +47,7 @@ test("migration 152 deletes stored puter configuration and is idempotent", () =>
   const db = core.getDbInstance();
 
   const applied = db
-    .prepare("SELECT version FROM _omniroute_migrations WHERE version = 152")
+    .prepare("SELECT version FROM _agentproxy_migrations WHERE version = 152")
     .get() as { version: number } | undefined;
   assert.ok(applied, "migration 152 must be recorded as applied");
 

@@ -26,7 +26,7 @@ const SERVICE_ACCOUNT = {
 
 const CONFIG: BigQueryConfig = {
   projectId: "test-project",
-  datasetId: "omniroute_test",
+  datasetId: "agentproxy_test",
   tableId: "call_logs",
   location: "EU",
   serviceAccountJson: JSON.stringify(SERVICE_ACCOUNT),

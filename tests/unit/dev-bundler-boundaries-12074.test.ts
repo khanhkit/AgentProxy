@@ -11,7 +11,7 @@ async function loadNextConfig(label: string) {
   return import(`${pathToFileURL(nextConfigPath).href}?case=${label}-${Date.now()}`);
 }
 
-test("Tailwind scans only the UI source roots declared by OmniRoute (#12074 phase 1)", () => {
+test("Tailwind scans only the UI source roots declared by AgentProxy (#12074 phase 1)", () => {
   const css = readFileSync(path.join(repoRoot, "src/app/globals.css"), "utf8");
 
   assert.match(
@@ -56,7 +56,7 @@ test("webpack dev keeps Next defaults instead of production vendor cache groups 
   assert.equal(cacheGroups.fumadocs, undefined);
 });
 
-test("webpack production retains OmniRoute vendor cache groups (#12074 phase 1)", async () => {
+test("webpack production retains AgentProxy vendor cache groups (#12074 phase 1)", async () => {
   const { default: nextConfig } = await loadNextConfig("production-split-chunks");
   const config = {
     context: repoRoot,

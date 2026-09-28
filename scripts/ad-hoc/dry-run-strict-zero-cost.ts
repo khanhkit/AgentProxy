@@ -1,6 +1,6 @@
 /**
  * Ad-hoc, one-shot dry run of STRICT_ZERO_COST against the real candidate
- * pools currently served by this OmniRoute instance (fetched via the
+ * pools currently served by this AgentProxy instance (fetched via the
  * existing read-only `GET /v1/auto-combo/{channel}/candidates` endpoint —
  * no changes made, no billable calls). Not wired into any test suite.
  *

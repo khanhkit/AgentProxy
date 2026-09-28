@@ -1,4 +1,4 @@
-# OmniRoute'a Katkıda Bulunma (Türkçe)
+# AgentProxy'a Katkıda Bulunma (Türkçe)
 
 🌐 **Languages:** 🇺🇸 [English](../../../CONTRIBUTING.md) · 🇸🇦 [ar](../ar/CONTRIBUTING.md) · 🇦🇿 [az](../az/CONTRIBUTING.md) · 🇧🇬 [bg](../bg/CONTRIBUTING.md) · 🇧🇩 [bn](../bn/CONTRIBUTING.md) · 🇨🇿 [cs](../cs/CONTRIBUTING.md) · 🇩🇰 [da](../da/CONTRIBUTING.md) · 🇩🇪 [de](../de/CONTRIBUTING.md) · 🇬🇷 [el](../el/CONTRIBUTING.md) · 🇪🇸 [es](../es/CONTRIBUTING.md) · 🇪🇪 [et](../et/CONTRIBUTING.md) · 🇮🇷 [fa](../fa/CONTRIBUTING.md) · 🇫🇮 [fi](../fi/CONTRIBUTING.md) · 🇫🇷 [fr](../fr/CONTRIBUTING.md) · 🇮🇪 [ga](../ga/CONTRIBUTING.md) · 🇮🇳 [gu](../gu/CONTRIBUTING.md) · 🇮🇱 [he](../he/CONTRIBUTING.md) · 🇮🇳 [hi](../hi/CONTRIBUTING.md) · 🇭🇷 [hr](../hr/CONTRIBUTING.md) · 🇭🇺 [hu](../hu/CONTRIBUTING.md) · 🇮🇩 [id](../id/CONTRIBUTING.md) · 🇮🇹 [it](../it/CONTRIBUTING.md) · 🇯🇵 [ja](../ja/CONTRIBUTING.md) · 🇰🇷 [ko](../ko/CONTRIBUTING.md) · 🇱🇹 [lt](../lt/CONTRIBUTING.md) · 🇱🇻 [lv](../lv/CONTRIBUTING.md) · 🇮🇳 [mr](../mr/CONTRIBUTING.md) · 🇲🇾 [ms](../ms/CONTRIBUTING.md) · 🇲🇹 [mt](../mt/CONTRIBUTING.md) · 🇳🇱 [nl](../nl/CONTRIBUTING.md) · 🇳🇴 [no](../no/CONTRIBUTING.md) · 🇵🇭 [phi](../phi/CONTRIBUTING.md) · 🇵🇱 [pl](../pl/CONTRIBUTING.md) · 🇵🇹 [pt](../pt/CONTRIBUTING.md) · 🇧🇷 [pt-BR](../pt-BR/CONTRIBUTING.md) · 🇷🇴 [ro](../ro/CONTRIBUTING.md) · 🇷🇺 [ru](../ru/CONTRIBUTING.md) · 🇸🇰 [sk](../sk/CONTRIBUTING.md) · 🇸🇮 [sl](../sl/CONTRIBUTING.md) · 🇷🇸 [sr](../sr/CONTRIBUTING.md) · 🇸🇪 [sv](../sv/CONTRIBUTING.md) · 🇰🇪 [sw](../sw/CONTRIBUTING.md) · 🇮🇳 [ta](../ta/CONTRIBUTING.md) · 🇮🇳 [te](../te/CONTRIBUTING.md) · 🇹🇭 [th](../th/CONTRIBUTING.md) · 🇺🇦 [uk-UA](../uk-UA/CONTRIBUTING.md) · 🇵🇰 [ur](../ur/CONTRIBUTING.md) · 🇻🇳 [vi](../vi/CONTRIBUTING.md) · 🇨🇳 [zh-CN](../zh-CN/CONTRIBUTING.md) · 🇹🇼 [zh-TW](../zh-TW/CONTRIBUTING.md)
 
@@ -27,8 +27,8 @@ Değişiklik başına resmi iş akışı için [Katkı Altın Yolu (Contribution
 ### Klonlama ve Kurulum
 
 ```bash
-git clone https://github.com/diegosouzapw/OmniRoute.git
-cd OmniRoute
+git clone https://github.com/khanhkit/AgentProxy.git
+cd AgentProxy
 npm install
 ```
 
@@ -101,7 +101,7 @@ npm run build
 `npm run build:release` ek olarak önce her iki dizini de temizler ve dağıtım bütünlüğü nöbetçisi olarak
 `dist/BUILD_SHA` (= `git rev-parse --short HEAD`) yazar.
 
-> **VPS dağıtım notu:** uzak imaj dizini `/usr/lib/node_modules/omniroute/app/`
+> **VPS dağıtım notu:** uzak imaj dizini `/usr/lib/node_modules/agentproxy/app/`
 > değişmemiştir. Dağıtım yetenekleri `dist/` içeriğini rsync ile buraya aktarır.
 > Yalnızca repo içi derleme çıktı yolu taşınmıştır (`app/` → `dist/`).
 
@@ -284,7 +284,7 @@ src/                        # TypeScript (.ts / .tsx)
 │   └── validation/         # Zod v4 şemaları
 └── sse/                    # SSE proxy hattı
 
-open-sse/                   # @omniroute/open-sse çalışma alanı
+open-sse/                   # @agentproxy/open-sse çalışma alanı
 ├── executors/              # 89 yürütücü uygulama modülü
 ├── handlers/               # 11 istek işleyici (chat, responses, embeddings, images, vb.)
 ├── mcp-server/             # MCP sunucusu (107 benzersiz araç, 3 taşıma, 32 kapsam)
@@ -306,7 +306,7 @@ tests/
 docs/
 ├── adr/                     # Mimari Karar Kayıtları (ADR)
 ├── architecture/            # Sistem mimarisi ve dayanıklılık
-├── comparison/              # OmniRoute ve alternatifler
+├── comparison/              # AgentProxy ve alternatifler
 ├── compression/             # Sıkıştırma kılavuzları ve kuralları
 ├── dev/                     # Geliştirme kılavuzları
 ├── diagrams/                # Mimari diyagramları
@@ -395,5 +395,5 @@ VPS dağıtımları için `npm run build:release` kullanın — temiz bir yenide
 - **API Referansı**: Bkz. [`docs/reference/API_REFERENCE.md`](docs/reference/API_REFERENCE.md)
 - **Güvenlik belgeleri**: [`docs/security/CLI_TOKEN.md`](docs/security/CLI_TOKEN.md), [`docs/security/ROUTE_GUARD_TIERS.md`](docs/security/ROUTE_GUARD_TIERS.md), [`docs/security/ERROR_SANITIZATION.md`](docs/security/ERROR_SANITIZATION.md), [`docs/security/PUBLIC_CREDS.md`](docs/security/PUBLIC_CREDS.md)
 - **Operasyon belgeleri**: [`docs/ops/SQLITE_RUNTIME.md`](docs/ops/SQLITE_RUNTIME.md)
-- **Sorun Bildirimi (Issues)**: [github.com/diegosouzapw/OmniRoute/issues](https://github.com/diegosouzapw/OmniRoute/issues)
+- **Sorun Bildirimi (Issues)**: [github.com/khanhkit/AgentProxy/issues](https://github.com/khanhkit/AgentProxy/issues)
 - **Mimari Karar Kayıtları (ADR)**: Mimari karar kayıtları için `docs/adr/` dizinine bakın

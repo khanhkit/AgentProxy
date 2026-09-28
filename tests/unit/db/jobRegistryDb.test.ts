@@ -10,7 +10,7 @@
  *  - pruneRuns dual dimension (150 rows, 50 older than 30 days -> keep 100)
  *  - cleanupOrphanedRuns fixes stale 'running' records past the timeout
  *
- * Runs against an isolated temp DATA_DIR so the real ~/.omniroute DB is never touched.
+ * Runs against an isolated temp DATA_DIR so the real ~/.agentproxy DB is never touched.
  */
 
 import test from "node:test";
@@ -19,7 +19,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-jr-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-jr-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.DISABLE_SQLITE_AUTO_BACKUP = "true";
 
@@ -53,7 +53,7 @@ test("seed: warmup is cron type with env gate + envDefault=false", () => {
   assert.ok(warmup);
   assert.equal(warmup.type, "cron");
   assert.equal(warmup.cron, "0 7 * * *");
-  assert.equal(warmup.envFlag, "OMNIROUTE_WARMUP_ENABLED");
+  assert.equal(warmup.envFlag, "AGENTPROXY_WARMUP_ENABLED");
   // Seeded disabled: the warmup handler is not registered by this change, and
   // startAll() would otherwise warn about the missing handler on every boot.
   assert.equal(warmup.enabled, false);

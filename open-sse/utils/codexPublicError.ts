@@ -76,6 +76,7 @@ const CODEX_PUBLIC_ERROR_RULES = new Map<string, CodexPublicErrorRule>([
     "upstream_websocket_connect_failed",
     { type: "provider_error", allowsStatus: exactStatuses(502) },
   ],
+  ["upstream_websocket_closed", { type: "provider_error", allowsStatus: exactStatuses(502) }],
   ["upstream_websocket_error", { type: "provider_error", allowsStatus: exactStatuses(502) }],
   ["usage_limit_reached", { type: "rate_limit_error", allowsStatus: exactStatuses(429) }],
 ]);
@@ -95,7 +96,7 @@ function defaultPublicClassification(status: number): Pick<CodexPublicError, "ty
  *
  * Upstream message, code, and type fields are untrusted. The public message is fixed,
  * while code/type retain only closed, protocol-level identifiers already produced by
- * OmniRoute. Everything else falls back to the HTTP status classification.
+ * AgentProxy. Everything else falls back to the HTTP status classification.
  */
 export function projectCodexPublicError(input: CodexPublicErrorInput): CodexPublicError {
   const status =

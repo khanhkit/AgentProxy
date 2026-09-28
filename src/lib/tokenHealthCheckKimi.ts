@@ -1,4 +1,4 @@
-import { isKimiTokenExpiringSoon } from "@omniroute/open-sse/utils/kimiJwt.ts";
+import { isKimiTokenExpiringSoon } from "@agentproxy/open-sse/utils/kimiJwt.ts";
 import { exchangeKimiRefreshToken } from "@/lib/kimi/tokenRefresh";
 import { updateProviderConnection } from "@/lib/db/providers";
 

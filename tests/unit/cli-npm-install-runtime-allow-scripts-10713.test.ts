@@ -6,7 +6,7 @@ import { join } from "node:path";
 import { npmInstallRuntime } from "../../bin/cli/runtime/nativeDeps.mjs";
 
 test("issue #10713: npmInstallRuntime requests --allow-scripts for its own fully-controlled runtime dependency", () => {
-  const fakeBinDir = mkdtempSync(join(tmpdir(), "omniroute-fakenpm-"));
+  const fakeBinDir = mkdtempSync(join(tmpdir(), "agentproxy-fakenpm-"));
   const argvLog = join(fakeBinDir, "argv.log");
   const npmScript = join(fakeBinDir, "npm");
   writeFileSync(npmScript, `#!/usr/bin/env bash\nprintf '%s\\n' "$@" > "${argvLog}"\nexit 0\n`);
@@ -14,7 +14,7 @@ test("issue #10713: npmInstallRuntime requests --allow-scripts for its own fully
 
   const originalPath = process.env.PATH;
   const originalDataDir = process.env.DATA_DIR;
-  const fakeDataDir = mkdtempSync(join(tmpdir(), "omniroute-fakedata-"));
+  const fakeDataDir = mkdtempSync(join(tmpdir(), "agentproxy-fakedata-"));
   try {
     process.env.PATH = `${fakeBinDir}:${originalPath}`;
     process.env.DATA_DIR = fakeDataDir;

@@ -8,7 +8,7 @@ import path from "node:path";
 // (local mode: !isCloud && !isBuildPhase). Setting DATA_DIR to a fresh temp
 // dir keeps the test in local mode; the assertions below would otherwise fail
 // with no explanatory guard.
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-proxy-egress-ip-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-proxy-egress-ip-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../src/lib/db/core.ts");

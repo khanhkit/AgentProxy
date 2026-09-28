@@ -10,7 +10,8 @@
  * starts — regardless of WHICH packaging list drifted.
  *
  * Requires a built dist/ (run after `npm run build:cli`, e.g. in the CI
- * package-artifact job or `check:release-green --with-build`). Exit codes:
+ * package-artifact job or `check:release-green --with-build`). Pass `--package <tgz>` to
+ * boot an already-created canonical tarball without repacking the source tree. Exit codes:
  * 0 = boots and reports the right version · 1 = boot failed · 2 = missing build.
  */
 import { execFileSync, spawn } from "node:child_process";
@@ -24,7 +25,7 @@ const POLL_INTERVAL_MS = 2_000;
 const BOOT_DEADLINE_MS = 240_000;
 const MAX_SERVER_OUTPUT_CHARS = 1_000_000;
 const SQLJS_STARTUP_MARKER = "Pre-initializing sql.js WASM";
-const DEFAULT_CLI_SALT = "omniroute-cli-auth-v1";
+const DEFAULT_CLI_SALT = "agentproxy-cli-auth-v1";
 
 // Dependency-based packaging (#11242): the tarball can never contain a node_modules
 // path (files[] has "!**/node_modules/**" and check:pack-artifact fails on the
@@ -46,10 +47,39 @@ export const REQUIRED_MACHINE_TOKEN_RUNTIME_FILES = Object.freeze([
 /** Parse `npm pack --json` output into the generated tarball filename. */
 export function pickTarball(packJsonOutput) {
   const parsed = JSON.parse(packJsonOutput);
-  const filename = Array.isArray(parsed) ? parsed[0]?.filename : undefined;
+  const entries = Array.isArray(parsed)
+    ? parsed
+    : parsed && typeof parsed === "object"
+      ? Object.values(parsed)
+      : [];
+  const filename = entries.find(
+    (entry) => entry && typeof entry === "object" && typeof entry.filename === "string"
+  )?.filename;
   if (!filename) throw new Error("npm pack --json returned no filename");
-  // npm >=9 may emit scoped names with "/" — normalize to the on-disk file name.
+  // npm <=11 emits an array; npm 12+ emits an object keyed by package name.
+  // Scoped package filenames may still contain "/" and need normalization on disk.
   return filename.replace(/\//g, "-");
+}
+export function resolvePackageArg(
+  args = process.argv.slice(2),
+  cwd = process.cwd(),
+  exists = fs.existsSync
+) {
+  const index = args.indexOf("--package");
+  if (index < 0) return null;
+  const value = args[index + 1];
+  if (!value || value.startsWith("--")) {
+    throw new Error("--package requires a path");
+  }
+  const resolved = path.resolve(cwd, value);
+  if (!exists(resolved)) {
+    throw new Error(`--package path does not exist: ${resolved}`);
+  }
+  return resolved;
+}
+
+export function selectPackageTarball(suppliedPackage, packCurrentTree) {
+  return suppliedPackage || packCurrentTree();
 }
 
 /** Resolve the globally-installed package root from the manifest being packed. */
@@ -96,7 +126,7 @@ export function evaluateMachineTokenAuth({
   unauthenticatedStatus,
   invalidStatus,
   authenticatedStatus,
-  salt = process.env.OMNIROUTE_CLI_SALT || DEFAULT_CLI_SALT,
+  salt = process.env.AGENTPROXY_CLI_SALT || DEFAULT_CLI_SALT,
 }) {
   const failures = [];
   if (!/^[0-9a-f]{64}$/.test(cliToken || "")) {
@@ -163,7 +193,7 @@ async function readJsonResponse(url, options) {
 }
 
 async function verifySettingsRoundTrip(baseUrl, startupOutput, cliToken) {
-  const authHeaders = { "x-omniroute-cli-token": cliToken };
+  const authHeaders = { "x-agentproxy-cli-token": cliToken };
   const initial = await readJsonResponse(`${baseUrl}/api/settings`, { headers: authHeaders });
   if (initial.response.status !== 200 || !initial.body || typeof initial.body !== "object") {
     return {
@@ -296,9 +326,9 @@ function spawnServer(binPath, port, dataDir) {
       JWT_SECRET: "pack-boot-smoke-secret-with-sufficient-length-000",
       API_KEY_SECRET: "pack-boot-smoke-api-key-secret-long",
       DISABLE_SQLITE_AUTO_BACKUP: "true",
-      OMNIROUTE_SKIP_SYSTEM_TRUST: "1",
-      OMNIROUTE_PACK_BOOT_SMOKE: "1",
-      OMNIROUTE_PACK_BOOT_FORCE_SQLJS: "1",
+      AGENTPROXY_SKIP_SYSTEM_TRUST: "1",
+      AGENTPROXY_PACK_BOOT_SMOKE: "1",
+      AGENTPROXY_PACK_BOOT_FORCE_SQLJS: "1",
       INITIAL_PASSWORD: "pack-boot-machine-token-auth-required",
     },
     stdio: ["ignore", "pipe", "pipe"],
@@ -339,10 +369,10 @@ async function verifyMachineTokenAuth(baseUrl, cliToken) {
   const endpoint = `${baseUrl}/api/cli/whoami`;
   const unauthenticatedStatus = (await fetch(endpoint)).status;
   const invalidStatus = (
-    await fetch(endpoint, { headers: { "x-omniroute-cli-token": "0".repeat(64) } })
+    await fetch(endpoint, { headers: { "x-agentproxy-cli-token": "0".repeat(64) } })
   ).status;
   const authenticatedStatus = (
-    await fetch(endpoint, { headers: { "x-omniroute-cli-token": cliToken } })
+    await fetch(endpoint, { headers: { "x-agentproxy-cli-token": cliToken } })
   ).status;
   return evaluateMachineTokenAuth({
     cliToken,
@@ -376,7 +406,7 @@ async function waitForHealthy(port, child, expectedVersion, cliToken) {
       }
       try {
         const res = await fetch(`http://127.0.0.1:${port}/api/monitoring/health`, {
-          headers: { "x-omniroute-cli-token": cliToken },
+          headers: { "x-agentproxy-cli-token": cliToken },
         });
         const body = await res.json().catch(() => null);
         verdict = evaluateBoot(res.status, body, expectedVersion);
@@ -399,7 +429,7 @@ async function waitForHealthy(port, child, expectedVersion, cliToken) {
  */
 async function readSettingsDebugMode(baseUrl, cliToken) {
   const { response, body } = await readJsonResponse(`${baseUrl}/api/settings`, {
-    headers: { "x-omniroute-cli-token": cliToken },
+    headers: { "x-agentproxy-cli-token": cliToken },
   });
   if (response.status !== 200 || !body || typeof body !== "object") {
     throw new Error(`settings GET HTTP ${response.status} or non-JSON body`);
@@ -412,7 +442,8 @@ async function readSettingsDebugMode(baseUrl, cliToken) {
 
 async function main() {
   const ROOT = process.cwd();
-  if (!fs.existsSync(path.join(ROOT, "dist", "server.js"))) {
+  const suppliedPackage = resolvePackageArg();
+  if (!suppliedPackage && !fs.existsSync(path.join(ROOT, "dist", "server.js"))) {
     console.error(
       "[pack-boot] dist/server.js missing — run `npm run build:cli` first (this is a --with-build gate)"
     );
@@ -421,7 +452,7 @@ async function main() {
   const packageManifest = JSON.parse(fs.readFileSync(path.join(ROOT, "package.json"), "utf8"));
   const expectedVersion = packageManifest.version;
   const packageName = packageManifest.name;
-  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-pack-boot-"));
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-pack-boot-"));
   let child = null;
   let tail = [];
   let exitCode = 1;
@@ -429,13 +460,18 @@ async function main() {
   let cleanupError = null; // recorded ONLY in finally, ONLY for a final stopChild failure
   let shutdownConfirmed = false; // process group confirmed stopped → safe to rm the workspace
   try {
-    log(`packing v${expectedVersion}…`);
-    const packOut = execFileSync("npm", ["pack", "--json", "--pack-destination", tmp], {
-      cwd: ROOT,
-      encoding: "utf8",
-      maxBuffer: 64 * 1024 * 1024,
+    const tarball = selectPackageTarball(suppliedPackage, () => {
+      log(`packing v${expectedVersion}…`);
+      const packOut = execFileSync("npm", ["pack", "--json", "--pack-destination", tmp], {
+        cwd: ROOT,
+        encoding: "utf8",
+        maxBuffer: 64 * 1024 * 1024,
+      });
+      return path.join(tmp, pickTarball(packOut));
     });
-    const tarball = path.join(tmp, pickTarball(packOut));
+    if (suppliedPackage) {
+      log(`using canonical package ${path.basename(tarball)} (no repack)`);
+    }
     log(`installing ${path.basename(tarball)} into a clean prefix (postinstall runs for real)…`);
     const prefix = path.join(tmp, "prefix");
     execFileSync("npm", ["install", "-g", "--prefix", prefix, tarball], {
@@ -461,7 +497,7 @@ async function main() {
     const port = pickPort();
     const dataDir = path.join(tmp, "data");
     fs.mkdirSync(dataDir, { recursive: true });
-    const binPath = path.join(prefix, "bin", "omniroute");
+    const binPath = path.join(prefix, "bin", "agentproxy");
     const packagedCliToken = derivePackagedCliToken(packageRoot);
 
     // BOOT #1 — boot, prove the forced sql.js tier, PATCH a setting, then shut down cleanly

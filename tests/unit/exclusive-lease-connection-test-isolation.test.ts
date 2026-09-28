@@ -4,10 +4,10 @@ import os from "node:os";
 import path from "node:path";
 import test from "node:test";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-lease-test-isolation-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-lease-test-isolation-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.DISABLE_SQLITE_AUTO_BACKUP = "true";
-process.env.OMNIROUTE_DISABLE_CREDENTIAL_HEALTH_CHECK = "true";
+process.env.AGENTPROXY_DISABLE_CREDENTIAL_HEALTH_CHECK = "true";
 
 let externalCalls = 0;
 const originalFetch = globalThis.fetch;
@@ -73,7 +73,7 @@ test("connection verification skips an ACTIVE exclusive lease before any probe o
 
 test("model discovery and reset-credit paths reject ACTIVE leased connections", async () => {
   const response = await providerModels.GET(
-    new Request("http://omniroute.local/api/providers/leased-test-connection/models"),
+    new Request("http://agentproxy.local/api/providers/leased-test-connection/models"),
     { params: { id: "leased-test-connection" } }
   );
   assert.equal(response.status, 409);

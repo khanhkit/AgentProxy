@@ -14,7 +14,7 @@ import { makeManagementSessionRequest } from "../helpers/managementSession.ts";
 // the pre-call hooks) — removes the fictional enable/disable/logs + shadow rows
 // from the docs, and drops them from KNOWN_STALE_DOC_REFS.
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-guardrails-3496-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-guardrails-3496-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 if (!process.env.JWT_SECRET) process.env.JWT_SECRET = "test-guardrails-3496-jwt-secret";
 if (!process.env.API_KEY_SECRET) process.env.API_KEY_SECRET = "test-guardrails-3496-apikey-secret";

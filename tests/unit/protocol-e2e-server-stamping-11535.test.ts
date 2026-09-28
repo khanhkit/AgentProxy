@@ -49,7 +49,7 @@ describe("protocol clients E2E harness (#11535)", () => {
       "DATA_DIR:",
       "PORT:",
       "DASHBOARD_PORT:",
-      "OMNIROUTE_E2E_BOOTSTRAP_MODE",
+      "AGENTPROXY_E2E_BOOTSTRAP_MODE",
       // Under the programmatic next() entry, middleware nextUrl.hostname mirrors the
       // configured HOST — an unpinned "0.0.0.0" bind makes apiAuth treat loopback
       // requests as remote, so the open-bootstrap anonymous allow never fires.
@@ -73,12 +73,12 @@ describe("protocol clients E2E harness (#11535)", () => {
 
   it("run-next.mjs applies the E2E open-mode credential clear AFTER the env merge", () => {
     const mergeLoopIdx = runNextSource.indexOf("Object.entries(mergedEnv)");
-    const openModeIdx = runNextSource.indexOf('OMNIROUTE_E2E_BOOTSTRAP_MODE === "open"');
+    const openModeIdx = runNextSource.indexOf('AGENTPROXY_E2E_BOOTSTRAP_MODE === "open"');
     assert.notEqual(mergeLoopIdx, -1, "mergedEnv application loop expected");
     assert.notEqual(openModeIdx, -1, "open-mode bootstrap hook missing");
 
     const openModeBlock = runNextSource.slice(Math.max(0, openModeIdx - 200));
-    for (const key of ["INITIAL_PASSWORD", "OMNIROUTE_E2E_PASSWORD", "OMNIROUTE_API_KEY"]) {
+    for (const key of ["INITIAL_PASSWORD", "AGENTPROXY_E2E_PASSWORD", "AGENTPROXY_API_KEY"]) {
       // Empty-string assignment, NOT delete: Next's env loader re-reads the repo .env
       // during app prepare() (after this hook), so an absent var would be re-populated
       // from the file and bcrypt-persisted by instrumentation — 401s everywhere.

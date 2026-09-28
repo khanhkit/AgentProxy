@@ -15,7 +15,7 @@ import os from "node:os";
 import path from "node:path";
 import net from "node:net";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-ti-capture-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-ti-capture-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.INSPECTOR_HTTP_PROXY_PORT = "0"; // ephemeral port
 
@@ -162,10 +162,21 @@ test("http-proxy: EADDRINUSE returns 409 with structured error", async () => {
 // ── POST /capture-modes/system-proxy ───────────────────────────────────────
 
 test("system-proxy: apply with mocked OS commands", async () => {
-  const restore = __setExec(async (_file, _args) => ({
-    stdout: "Enabled: No\nServer: \nPort: 0",
-    stderr: "",
-  }));
+  const restore = __setExec(async (file, args) => {
+    if (file === "gsettings" && args[0] === "get") {
+      const key = args.at(-1);
+      if (key === "mode") return { stdout: "'none'\n", stderr: "" };
+      if (key === "host") return { stdout: "''\n", stderr: "" };
+      if (key === "port") return { stdout: "0\n", stderr: "" };
+    }
+    if (file === "networksetup" && args[0]?.startsWith("-get")) {
+      return { stdout: "Enabled: No\nServer: \nPort: 0\n", stderr: "" };
+    }
+    if (file === "netsh" && args[0] === "winhttp" && args[1] === "show") {
+      return { stdout: "Direct access (no proxy server).\n", stderr: "" };
+    }
+    return { stdout: "", stderr: "" };
+  });
   try {
     const req = new Request(
       "http://localhost/api/tools/traffic-inspector/capture-modes/system-proxy",

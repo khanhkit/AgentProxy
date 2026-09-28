@@ -77,7 +77,7 @@ describe("RTK TOML schema v1 compatibility", () => {
   });
 
   it("matches imported TOML before a detected builtin command type", () => {
-    const project = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-rtk-toml-project-"));
+    const project = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-rtk-toml-project-"));
     process.chdir(project);
     const rtkDir = path.join(project, ".rtk");
     const filterPath = path.join(rtkDir, "filters.toml");
@@ -107,7 +107,7 @@ strip_lines_matching = ["^noise"]
   });
 
   it("requires a separate trust hash for project TOML files", () => {
-    const project = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-rtk-toml-project-"));
+    const project = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-rtk-toml-project-"));
     process.chdir(project);
     const rtkDir = path.join(project, ".rtk");
     fs.mkdirSync(rtkDir, { recursive: true });
@@ -129,8 +129,8 @@ strip_lines_matching = ["^noise"]
   });
 
   it("loads global TOML and exposes its source format in the catalog", () => {
-    const project = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-rtk-toml-project-"));
-    const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-rtk-toml-data-"));
+    const project = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-rtk-toml-project-"));
+    const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-rtk-toml-data-"));
     process.chdir(project);
     process.env.DATA_DIR = dataDir;
     fs.mkdirSync(path.join(dataDir, "rtk"), { recursive: true });
@@ -144,8 +144,8 @@ strip_lines_matching = ["^noise"]
   });
 
   it("prioritizes project TOML over a higher-priority global JSON match", () => {
-    const project = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-rtk-toml-project-"));
-    const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-rtk-toml-data-"));
+    const project = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-rtk-toml-project-"));
+    const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-rtk-toml-data-"));
     process.chdir(project);
     process.env.DATA_DIR = dataDir;
 
@@ -187,8 +187,8 @@ match_command = "^scope-tool"
   });
 
   it("keeps project JSON ahead of a matching global TOML filter", () => {
-    const project = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-rtk-toml-project-"));
-    const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-rtk-toml-data-"));
+    const project = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-rtk-toml-project-"));
+    const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-rtk-toml-data-"));
     process.chdir(project);
     process.env.DATA_DIR = dataDir;
 
@@ -232,7 +232,7 @@ match_command = "^scope-tool"
   });
 
   it("installs atomically, protects the file and refuses an implicit overwrite", () => {
-    const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-rtk-toml-data-"));
+    const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-rtk-toml-data-"));
     process.env.DATA_DIR = dataDir;
 
     const installed = installGlobalRtkTomlV1(SAMPLE);

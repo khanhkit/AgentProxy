@@ -36,12 +36,12 @@ test("runtime env helpers normalize runtime ports and conflicting color flags", 
     ),
     {
       NODE_ENV: "test",
-      OMNIROUTE_PORT: "20128",
+      AGENTPROXY_PORT: "20128",
       PORT: "22128",
       DASHBOARD_PORT: "22128",
       API_PORT: "21128",
       // #8999 (docker entrypoint moved to /app) made withRuntimePortEnv also pin
-      // the bind address, defaulting to 0.0.0.0 when OMNIROUTE_HOSTNAME is unset.
+      // the bind address, defaulting to 0.0.0.0 when AGENTPROXY_HOSTNAME is unset.
       HOSTNAME: "0.0.0.0",
     }
   );

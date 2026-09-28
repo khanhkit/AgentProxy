@@ -98,10 +98,7 @@ function makeExecuteInput(overrides: Partial<ExecuteInput> = {}): ExecuteInput {
 // ── Gating ──────────────────────────────────────────────────────────────────
 
 test("isCodexAppServerRequired: true only when codexTransport==='app-server' + configured", () => {
-  assert.equal(
-    isCodexAppServerRequired({ providerSpecificData: { ...APP_SERVER_PSD } }),
-    true
-  );
+  assert.equal(isCodexAppServerRequired({ providerSpecificData: { ...APP_SERVER_PSD } }), true);
   // wrong transport
   assert.equal(
     isCodexAppServerRequired({
@@ -112,41 +109,41 @@ test("isCodexAppServerRequired: true only when codexTransport==='app-server' + c
   // no providerSpecificData
   assert.equal(isCodexAppServerRequired({}), false);
   // transport set but not configured (no url/token, no env)
-  const prevUrl = process.env.OMNIROUTE_CODEX_APPSERVER_WS;
-  const prevTok = process.env.OMNIROUTE_CODEX_APPSERVER_WS_TOKEN;
-  const prevTokFile = process.env.OMNIROUTE_CODEX_APPSERVER_WS_TOKEN_FILE;
-  delete process.env.OMNIROUTE_CODEX_APPSERVER_WS;
-  delete process.env.OMNIROUTE_CODEX_APPSERVER_WS_TOKEN;
-  delete process.env.OMNIROUTE_CODEX_APPSERVER_WS_TOKEN_FILE;
+  const prevUrl = process.env.AGENTPROXY_CODEX_APPSERVER_WS;
+  const prevTok = process.env.AGENTPROXY_CODEX_APPSERVER_WS_TOKEN;
+  const prevTokFile = process.env.AGENTPROXY_CODEX_APPSERVER_WS_TOKEN_FILE;
+  delete process.env.AGENTPROXY_CODEX_APPSERVER_WS;
+  delete process.env.AGENTPROXY_CODEX_APPSERVER_WS_TOKEN;
+  delete process.env.AGENTPROXY_CODEX_APPSERVER_WS_TOKEN_FILE;
   try {
     assert.equal(
       isCodexAppServerRequired({ providerSpecificData: { codexTransport: "app-server" } }),
       false
     );
   } finally {
-    if (prevUrl !== undefined) process.env.OMNIROUTE_CODEX_APPSERVER_WS = prevUrl;
-    if (prevTok !== undefined) process.env.OMNIROUTE_CODEX_APPSERVER_WS_TOKEN = prevTok;
+    if (prevUrl !== undefined) process.env.AGENTPROXY_CODEX_APPSERVER_WS = prevUrl;
+    if (prevTok !== undefined) process.env.AGENTPROXY_CODEX_APPSERVER_WS_TOKEN = prevTok;
     if (prevTokFile !== undefined)
-      process.env.OMNIROUTE_CODEX_APPSERVER_WS_TOKEN_FILE = prevTokFile;
+      process.env.AGENTPROXY_CODEX_APPSERVER_WS_TOKEN_FILE = prevTokFile;
   }
 });
 
-test("isCodexAppServerRequired: false when OMNIROUTE_CODEX_APP_SERVER_ENABLED=false", () => {
-  const prev = process.env.OMNIROUTE_CODEX_APP_SERVER_ENABLED;
-  process.env.OMNIROUTE_CODEX_APP_SERVER_ENABLED = "false";
+test("isCodexAppServerRequired: false when AGENTPROXY_CODEX_APP_SERVER_ENABLED=false", () => {
+  const prev = process.env.AGENTPROXY_CODEX_APP_SERVER_ENABLED;
+  process.env.AGENTPROXY_CODEX_APP_SERVER_ENABLED = "false";
   try {
-    assert.equal(
-      isCodexAppServerRequired({ providerSpecificData: { ...APP_SERVER_PSD } }),
-      false
-    );
+    assert.equal(isCodexAppServerRequired({ providerSpecificData: { ...APP_SERVER_PSD } }), false);
   } finally {
-    if (prev === undefined) delete process.env.OMNIROUTE_CODEX_APP_SERVER_ENABLED;
-    else process.env.OMNIROUTE_CODEX_APP_SERVER_ENABLED = prev;
+    if (prev === undefined) delete process.env.AGENTPROXY_CODEX_APP_SERVER_ENABLED;
+    else process.env.AGENTPROXY_CODEX_APP_SERVER_ENABLED = prev;
   }
 });
 
 test("resolveAppServerConfig: env fallback + token-file, ws-scheme validation", () => {
-  assert.equal(resolveAppServerConfig({ codexAppServerUrl: "http://x", codexAppServerToken: "t" }), null);
+  assert.equal(
+    resolveAppServerConfig({ codexAppServerUrl: "http://x", codexAppServerToken: "t" }),
+    null
+  );
   const cfg = resolveAppServerConfig({ ...APP_SERVER_PSD });
   assert.deepEqual(cfg, { url: "ws://ts-egress:1456", token: "deadbeef", cwd: "/tmp" });
 });
@@ -157,14 +154,8 @@ test("translateNotification: maps deltas, done and error to AdapterEvents", () =
   const events: AdapterEvent[] = [];
   const push = (e: AdapterEvent) => events.push(e);
 
-  assert.equal(
-    translateNotification("item/agentMessage/delta", { delta: "Hel" }, push),
-    false
-  );
-  assert.equal(
-    translateNotification("item/reasoning/textDelta", { delta: "think" }, push),
-    false
-  );
+  assert.equal(translateNotification("item/agentMessage/delta", { delta: "Hel" }, push), false);
+  assert.equal(translateNotification("item/reasoning/textDelta", { delta: "think" }, push), false);
   // terminal → returns true
   assert.equal(
     translateNotification(
@@ -186,10 +177,8 @@ test("translateNotification: maps deltas, done and error to AdapterEvents", () =
 
 test("translateNotification: error notification maps to error event (terminal)", () => {
   const events: AdapterEvent[] = [];
-  const isTerminal = translateNotification(
-    "error",
-    { error: { message: "boom" } },
-    (e) => events.push(e)
+  const isTerminal = translateNotification("error", { error: { message: "boom" } }, (e) =>
+    events.push(e)
   );
   assert.equal(isTerminal, true);
   assert.equal(events[0].type, "error");
@@ -343,7 +332,9 @@ async function runStreamingTurn(): Promise<{
 
 test("CodexAppServerExecutor: streaming turn emits initialize → thread/start → turn/start in order", async () => {
   const { sent } = await runStreamingTurn();
-  const methods = sent.filter((f) => typeof f.method === "string" && f.id != null).map((f) => f.method);
+  const methods = sent
+    .filter((f) => typeof f.method === "string" && f.id != null)
+    .map((f) => f.method);
   const lifecycle = methods.filter(
     (m) => m === "initialize" || m === "thread/start" || m === "turn/start"
   );
@@ -376,12 +367,12 @@ test("CodexAppServerExecutor: streaming output is a valid Responses SSE stream",
 
 test("CodexAppServerExecutor: unconfigured connection returns an in-band error Response", async () => {
   const executor = new CodexAppServerExecutor({ websocketFn: async () => makeFakeSocket().socket });
-  const prevUrl = process.env.OMNIROUTE_CODEX_APPSERVER_WS;
-  const prevTok = process.env.OMNIROUTE_CODEX_APPSERVER_WS_TOKEN;
-  const prevTokFile = process.env.OMNIROUTE_CODEX_APPSERVER_WS_TOKEN_FILE;
-  delete process.env.OMNIROUTE_CODEX_APPSERVER_WS;
-  delete process.env.OMNIROUTE_CODEX_APPSERVER_WS_TOKEN;
-  delete process.env.OMNIROUTE_CODEX_APPSERVER_WS_TOKEN_FILE;
+  const prevUrl = process.env.AGENTPROXY_CODEX_APPSERVER_WS;
+  const prevTok = process.env.AGENTPROXY_CODEX_APPSERVER_WS_TOKEN;
+  const prevTokFile = process.env.AGENTPROXY_CODEX_APPSERVER_WS_TOKEN_FILE;
+  delete process.env.AGENTPROXY_CODEX_APPSERVER_WS;
+  delete process.env.AGENTPROXY_CODEX_APPSERVER_WS_TOKEN;
+  delete process.env.AGENTPROXY_CODEX_APPSERVER_WS_TOKEN_FILE;
   try {
     const result = await executor.execute(
       makeExecuteInput({ credentials: { providerSpecificData: { codexTransport: "app-server" } } })
@@ -389,10 +380,10 @@ test("CodexAppServerExecutor: unconfigured connection returns an in-band error R
     const response = "response" in result ? result.response : result;
     assert.equal(response.status, 503);
   } finally {
-    if (prevUrl !== undefined) process.env.OMNIROUTE_CODEX_APPSERVER_WS = prevUrl;
-    if (prevTok !== undefined) process.env.OMNIROUTE_CODEX_APPSERVER_WS_TOKEN = prevTok;
+    if (prevUrl !== undefined) process.env.AGENTPROXY_CODEX_APPSERVER_WS = prevUrl;
+    if (prevTok !== undefined) process.env.AGENTPROXY_CODEX_APPSERVER_WS_TOKEN = prevTok;
     if (prevTokFile !== undefined)
-      process.env.OMNIROUTE_CODEX_APPSERVER_WS_TOKEN_FILE = prevTokFile;
+      process.env.AGENTPROXY_CODEX_APPSERVER_WS_TOKEN_FILE = prevTokFile;
   }
 });
 
@@ -639,7 +630,13 @@ test("CodexAppServerExecutor: async post-turn/start completion does not close th
   const result = await Promise.race([
     executor.execute(makeExecuteInput({ stream: false })),
     new Promise<never>((_, reject) =>
-      setTimeout(() => reject(new Error("execute() hung: socket closed before async completion (BUG#3 regressed)")), 5000)
+      setTimeout(
+        () =>
+          reject(
+            new Error("execute() hung: socket closed before async completion (BUG#3 regressed)")
+          ),
+        5000
+      )
     ),
   ]);
   const response = "response" in result ? result.response : (result as Response);
@@ -648,7 +645,11 @@ test("CodexAppServerExecutor: async post-turn/start completion does not close th
     status?: string;
     output?: Array<{ content?: Array<{ text?: string }> }>;
   };
-  assert.equal(body.status, "completed", "the turn completed after the async terminal notification");
+  assert.equal(
+    body.status,
+    "completed",
+    "the turn completed after the async terminal notification"
+  );
   const text = body.output?.[0]?.content?.[0]?.text ?? "";
   assert.equal(text, "ASYNC-OK", "the model output that arrived AFTER turn/start is present");
 });
@@ -693,7 +694,10 @@ const AUTH_CONFIG = { url: "ws://ts-egress:1456", token: "deadbeef", cwd: "/tmp"
 
 test("probeCodexAppServerAuth: account with email → authenticated", async () => {
   const fn = fakeAuthTransport({
-    result: { account: { type: "chatgpt", email: "user@example.com", planType: "pro" }, requiresOpenaiAuth: true },
+    result: {
+      account: { type: "chatgpt", email: "user@example.com", planType: "pro" },
+      requiresOpenaiAuth: true,
+    },
   });
   const status = await probeCodexAppServerAuth(AUTH_CONFIG, fn, 3000);
   assert.equal(status.state, "authenticated");
@@ -710,7 +714,9 @@ test("probeCodexAppServerAuth: no account → logged_out", async () => {
 });
 
 test("probeCodexAppServerAuth: auth-error on account/read → logged_out", async () => {
-  const fn = fakeAuthTransport({ error: { code: -32000, message: "AuthRequiredError: please login" } });
+  const fn = fakeAuthTransport({
+    error: { code: -32000, message: "AuthRequiredError: please login" },
+  });
   const status = await probeCodexAppServerAuth(AUTH_CONFIG, fn, 3000);
   assert.equal(status.state, "logged_out");
 });
@@ -719,7 +725,6 @@ test("probeCodexAppServerAuth: no transport → unknown (does not throw)", async
   const status = await probeCodexAppServerAuth(AUTH_CONFIG, null, 3000);
   assert.equal(status.state, "unknown");
 });
-
 
 // ── Security hardening (#11205 post-merge review) ───────────────────────────
 // Two findings from the automated push review on the original #11205 merge:
@@ -751,9 +756,9 @@ function withEnv<T>(vars: Record<string, string | undefined>, fn: () => T): T {
 }
 
 const BINDING_ENV_KEYS = {
-  OMNIROUTE_CODEX_APPSERVER_WS: undefined,
-  OMNIROUTE_CODEX_APPSERVER_WS_TOKEN: "env-token-hex",
-  OMNIROUTE_CODEX_APPSERVER_WS_TOKEN_FILE: undefined,
+  AGENTPROXY_CODEX_APPSERVER_WS: undefined,
+  AGENTPROXY_CODEX_APPSERVER_WS_TOKEN: "env-token-hex",
+  AGENTPROXY_CODEX_APPSERVER_WS_TOKEN_FILE: undefined,
 } as const;
 
 test("resolveAppServerConfig: refuses env token → remote psd URL (SSRF binding)", () => {
@@ -804,9 +809,9 @@ test("resolveAppServerConfig: env token allowed to operator-local psd URLs", () 
 test("resolveAppServerConfig: psd-sourced token may pair with any psd URL", () => {
   withEnv(
     {
-      OMNIROUTE_CODEX_APPSERVER_WS: undefined,
-      OMNIROUTE_CODEX_APPSERVER_WS_TOKEN: undefined,
-      OMNIROUTE_CODEX_APPSERVER_WS_TOKEN_FILE: undefined,
+      AGENTPROXY_CODEX_APPSERVER_WS: undefined,
+      AGENTPROXY_CODEX_APPSERVER_WS_TOKEN: undefined,
+      AGENTPROXY_CODEX_APPSERVER_WS_TOKEN_FILE: undefined,
     },
     () => {
       const cfg = resolveAppServerConfig({
@@ -823,9 +828,9 @@ test("resolveAppServerConfig: psd-sourced token may pair with any psd URL", () =
 test("resolveAppServerConfig: env URL + env token pairs regardless of host", () => {
   withEnv(
     {
-      OMNIROUTE_CODEX_APPSERVER_WS: "wss://codex-remote.example.com:8443",
-      OMNIROUTE_CODEX_APPSERVER_WS_TOKEN: "env-token-hex",
-      OMNIROUTE_CODEX_APPSERVER_WS_TOKEN_FILE: undefined,
+      AGENTPROXY_CODEX_APPSERVER_WS: "wss://codex-remote.example.com:8443",
+      AGENTPROXY_CODEX_APPSERVER_WS_TOKEN: "env-token-hex",
+      AGENTPROXY_CODEX_APPSERVER_WS_TOKEN_FILE: undefined,
     },
     () => {
       const cfg = resolveAppServerConfig({ codexTransport: "app-server" });
@@ -838,9 +843,8 @@ test("resolveAppServerConfig: env URL + env token pairs regardless of host", () 
 // ── Health probe: redirect pinning + binding inheritance ────────────────────
 
 test("testCodexAppServerConnection: readyz probe pins redirects (no token leak via 30x)", async () => {
-  const { testCodexAppServerConnection } = await import(
-    "../../src/app/api/providers/[id]/test/codexAppServerHealth.ts"
-  );
+  const { testCodexAppServerConnection } =
+    await import("../../src/app/api/providers/[id]/test/codexAppServerHealth.ts");
   const originalFetch = globalThis.fetch;
   const seen: Array<{ url: string; init?: RequestInit }> = [];
   globalThis.fetch = (async (url: unknown, init?: RequestInit) => {
@@ -866,9 +870,8 @@ test("testCodexAppServerConnection: readyz probe pins redirects (no token leak v
 });
 
 test("testCodexAppServerConnection: env token + remote psd URL reports unconfigured, no network", async () => {
-  const { testCodexAppServerConnection } = await import(
-    "../../src/app/api/providers/[id]/test/codexAppServerHealth.ts"
-  );
+  const { testCodexAppServerConnection } =
+    await import("../../src/app/api/providers/[id]/test/codexAppServerHealth.ts");
   const originalFetch = globalThis.fetch;
   let fetched = false;
   globalThis.fetch = (async () => {
@@ -883,10 +886,175 @@ test("testCodexAppServerConnection: env token + remote psd URL reports unconfigu
       });
       assert.ok(result);
       assert.equal(result!.valid, false);
-      assert.match(String((result!.diagnosis as { code?: string })?.code), /app_server_unconfigured/);
+      assert.match(
+        String((result!.diagnosis as { code?: string })?.code),
+        /app_server_unconfigured/
+      );
     });
     assert.equal(fetched, false, "binding refusal must happen before any network call");
   } finally {
     globalThis.fetch = originalFetch;
+  }
+});
+
+// ── Suffix normalization & effort precedence (#14277) ───────────────────────
+
+test("CodexAppServerExecutor: turn/start receives baseModel and suffix-derived effort (#14277)", async () => {
+  const ctrl = makeFakeSocket();
+  const { fn } = fakeTransport(ctrl);
+  const executor = new CodexAppServerExecutor({ websocketFn: fn });
+
+  const originalSend = ctrl.socket.send;
+  ctrl.socket.send = (data: string) => {
+    originalSend(data);
+    const frame = JSON.parse(data) as Record<string, unknown>;
+    if (frame.id == null || !frame.method) return;
+    queueMicrotask(() => {
+      if (frame.method === "thread/start") {
+        ctrl.emit({ jsonrpc: "2.0", id: frame.id, result: { threadId: "thr_alias" } });
+      } else if (frame.method === "turn/start") {
+        ctrl.emit({ jsonrpc: "2.0", method: "turn/completed", params: { turn: {} } });
+        ctrl.emit({ jsonrpc: "2.0", id: frame.id, result: {} });
+      } else {
+        ctrl.emit({ jsonrpc: "2.0", id: frame.id, result: {} });
+      }
+    });
+  };
+
+  const res = await executor.execute(makeExecuteInput({ stream: false, model: "gpt-5.5-medium" }));
+  const response = "response" in res ? res.response : res;
+  await response.text();
+
+  const turnStart = ctrl.sent.find((f) => f.method === "turn/start");
+  assert.ok(turnStart, "turn/start must be sent");
+  const params = turnStart!.params as Record<string, unknown>;
+  assert.equal(params.model, "gpt-5.5", "model alias suffix must be stripped for turn/start");
+  assert.equal(params.effort, "medium", "reasoning suffix must be forwarded as effort");
+});
+
+test("CodexAppServerExecutor: model suffix effort takes precedence over body effort (#14277)", async () => {
+  const ctrl = makeFakeSocket();
+  const { fn } = fakeTransport(ctrl);
+  const executor = new CodexAppServerExecutor({ websocketFn: fn });
+
+  const originalSend = ctrl.socket.send;
+  ctrl.socket.send = (data: string) => {
+    originalSend(data);
+    const frame = JSON.parse(data) as Record<string, unknown>;
+    if (frame.id == null || !frame.method) return;
+    queueMicrotask(() => {
+      if (frame.method === "thread/start") {
+        ctrl.emit({ jsonrpc: "2.0", id: frame.id, result: { threadId: "thr_alias" } });
+      } else if (frame.method === "turn/start") {
+        ctrl.emit({ jsonrpc: "2.0", method: "turn/completed", params: { turn: {} } });
+        ctrl.emit({ jsonrpc: "2.0", id: frame.id, result: {} });
+      } else {
+        ctrl.emit({ jsonrpc: "2.0", id: frame.id, result: {} });
+      }
+    });
+  };
+
+  // Suffix is high, body specifies low -> suffix wins
+  const res = await executor.execute(
+    makeExecuteInput({
+      stream: false,
+      model: "gpt-5.5-high",
+      body: { input: "test", reasoning: { effort: "low" } },
+    })
+  );
+  const response = "response" in res ? res.response : res;
+  await response.text();
+
+  const turnStart = ctrl.sent.find((f) => f.method === "turn/start");
+  assert.ok(turnStart);
+  const params = turnStart!.params as Record<string, unknown>;
+  assert.equal(params.model, "gpt-5.5");
+  assert.equal(params.effort, "high", "explicit model suffix overrides body reasoning effort");
+});
+
+test("CodexAppServerExecutor: body effort is forwarded when model has no reasoning suffix (#14277)", async () => {
+  const ctrl = makeFakeSocket();
+  const { fn } = fakeTransport(ctrl);
+  const executor = new CodexAppServerExecutor({ websocketFn: fn });
+
+  const originalSend = ctrl.socket.send;
+  ctrl.socket.send = (data: string) => {
+    originalSend(data);
+    const frame = JSON.parse(data) as Record<string, unknown>;
+    if (frame.id == null || !frame.method) return;
+    queueMicrotask(() => {
+      if (frame.method === "thread/start") {
+        ctrl.emit({ jsonrpc: "2.0", id: frame.id, result: { threadId: "thr_alias" } });
+      } else if (frame.method === "turn/start") {
+        ctrl.emit({ jsonrpc: "2.0", method: "turn/completed", params: { turn: {} } });
+        ctrl.emit({ jsonrpc: "2.0", id: frame.id, result: {} });
+      } else {
+        ctrl.emit({ jsonrpc: "2.0", id: frame.id, result: {} });
+      }
+    });
+  };
+
+  const res = await executor.execute(
+    makeExecuteInput({
+      stream: false,
+      model: "gpt-5.5",
+      body: { input: "test", reasoning_effort: "low" },
+    })
+  );
+  const response = "response" in res ? res.response : res;
+  await response.text();
+
+  const turnStart = ctrl.sent.find((f) => f.method === "turn/start");
+  assert.ok(turnStart);
+  const params = turnStart!.params as Record<string, unknown>;
+  assert.equal(params.model, "gpt-5.5");
+  assert.equal(params.effort, "low", "body reasoning_effort is forwarded when model is unsuffixed");
+});
+
+test("CodexAppServerExecutor: registry loader injects codex websocket transport (#14277)", async () => {
+  const { getExecutor } = await import("../../open-sse/executors/index.ts");
+  const { __setCodexWebSocketTransportForTesting } =
+    await import("../../open-sse/executors/codex.ts");
+
+  const ctrl = makeFakeSocket();
+  const { fn } = fakeTransport(ctrl);
+  __setCodexWebSocketTransportForTesting(fn);
+
+  try {
+    const executor = await getExecutor("codex-app-server");
+    assert.ok(executor instanceof CodexAppServerExecutor, "must resolve to CodexAppServerExecutor");
+
+    const originalSend = ctrl.socket.send;
+    ctrl.socket.send = (data: string) => {
+      originalSend(data);
+      const frame = JSON.parse(data) as Record<string, unknown>;
+      if (frame.id == null || !frame.method) return;
+      queueMicrotask(() => {
+        if (frame.method === "thread/start") {
+          ctrl.emit({ jsonrpc: "2.0", id: frame.id, result: { threadId: "thr_reg" } });
+        } else if (frame.method === "turn/start") {
+          ctrl.emit({ jsonrpc: "2.0", method: "turn/completed", params: { turn: {} } });
+          ctrl.emit({ jsonrpc: "2.0", id: frame.id, result: {} });
+        } else {
+          ctrl.emit({ jsonrpc: "2.0", id: frame.id, result: {} });
+        }
+      });
+    };
+
+    const res = await executor.execute(
+      makeExecuteInput({ stream: false, model: "gpt-5.5-medium" })
+    );
+    const response = "response" in res ? res.response : res;
+    await response.text();
+
+    const turnStart = ctrl.sent.find((f) => f.method === "turn/start");
+    assert.ok(
+      turnStart,
+      "registry-created executor successfully dispatched over injected transport"
+    );
+    assert.equal((turnStart!.params as Record<string, unknown>).model, "gpt-5.5");
+    assert.equal((turnStart!.params as Record<string, unknown>).effort, "medium");
+  } finally {
+    __setCodexWebSocketTransportForTesting(undefined);
   }
 });

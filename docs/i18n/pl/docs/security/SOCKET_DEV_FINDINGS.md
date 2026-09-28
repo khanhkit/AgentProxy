@@ -1,13 +1,13 @@
 ---
 title: "Atestacja znalezisk supply-chain Socket.dev"
-description: "Atestacja maintainerów dla znalezisk AI-detected potential-malware zgłoszonych wobec omniroute oraz mitigacji z v3.8.6 zastosowanych w każdym oznaczonym call site."
+description: "Atestacja maintainerów dla znalezisk AI-detected potential-malware zgłoszonych wobec agentproxy oraz mitigacji z v3.8.6 zastosowanych w każdym oznaczonym call site."
 ---
 
 # Socket.dev / atestacja znalezisk supply-chain
 
 Ten dokument to atestacja napisana przez maintainerów dla sześciu
-znalezisk `AI-detected potential malware` zgłoszonych wobec `omniroute@3.8.5` oraz
-mitigacji wprowadzonych w `omniroute@3.8.6`. Istnieje po to, aby:
+znalezisk `AI-detected potential malware` zgłoszonych wobec `agentproxy@3.8.5` oraz
+mitigacji wprowadzonych w `agentproxy@3.8.6`. Istnieje po to, aby:
 
 1. Operatorzy pipeline'ów bezpieczeństwa mieli jedno źródło do cytowania, gdy muszą
    ocenić znaleziska względem rzeczywistego kodu źródłowego.
@@ -47,7 +47,7 @@ JWT wystawiony przez tunel **nie może** uruchomić tej ścieżki kodu.
 | Linux+Firefox/Chromium | per-profile NSS DB update via `certutil -d sql:<profile>`                                                         |
 
 To te same komendy, których używają `mitmproxy`, Charles Proxy, Fiddler i
-Caddy. Fakt, że istnieją w OmniRoute, jest udokumentowany w
+Caddy. Fakt, że istnieją w AgentProxy, jest udokumentowany w
 `docs/security/STEALTH_GUIDE.md`.
 
 **Mitigacja v3.8.6**:
@@ -102,12 +102,12 @@ fingerprintu — po prostu „znaleziono N tokenów, wszystkie zaimportowane”.
    jeśli żywy token zmienił się od discover, fingerprint już nie
    pasuje i credential jest pomijany.
 
-Flaga env `OMNIROUTE_ZED_IMPORT_LEGACY_ONE_STEP=true` zachowuje zachowanie v3.8.5
+Flaga env `AGENTPROXY_ZED_IMPORT_LEGACY_ONE_STEP=true` zachowuje zachowanie v3.8.5
 dla operatorów, którzy jeszcze nie zaktualizowali automatyzacji. Zostanie
 usunięta w v3.9.
 
 **Dlaczego to zostawiamy**: import Zed to najprzyjaźniejsza ścieżka onboardingu dla użytkowników,
-którzy już używają Zed i chcą odzwierciedlić klucze providerów w OmniRoute
+którzy już używają Zed i chcą odzwierciedlić klucze providerów w AgentProxy
 bez ponownego wklejania.
 
 ---
@@ -119,7 +119,7 @@ bez ponownego wklejania.
 **Dlaczego oznaczono**: chunk re-eksportuje `execFileWithPassword`,
 `runElevatedPowerShell` oraz współdzielony helper `quotePowerShell`. Klasyfikator AI
 Socket.dev widzi je jako generyczny „toolkit wykonania na hoście + podnoszenia
-uprawnień”. W OmniRoute są używane wyłącznie przez ścieżkę instalacji certyfikatu MITM
+uprawnień”. W AgentProxy są używane wyłącznie przez ścieżkę instalacji certyfikatu MITM
 (§1) oraz przez `execFileWithPassword` do wykonywania komend `sudo`.
 
 **Mitigacja v3.8.6**:
@@ -160,7 +160,7 @@ lokalnym dashboardzie.
   na dysk, chyba że użytkownik włączy logowanie z dashboardu.
 
 **Mitigacja v3.8.6**: bez zmiany funkcjonalnej. Minimalny profil builda
-(`OMNIROUTE_BUILD_PROFILE=minimal`) zastępuje
+(`AGENTPROXY_BUILD_PROFILE=minimal`) zastępuje
 `src/lib/services/installers/ninerouter.ts` stubem dla użytkowników, którzy chcą
 fizycznie usunąć uprzywilejowane ścieżki z bundle'a.
 
@@ -169,7 +169,7 @@ towarzyszący (pomyśl: plugin w stylu WordPress) — ścisły opt-in.
 
 ---
 
-## §5 — Zapis zwrotny credentiali OmniRoute Cloud Sync (`api/keys/[id]/route.js`)
+## §5 — Zapis zwrotny credentiali AgentProxy Cloud Sync (`api/keys/[id]/route.js`)
 
 **Pliki źródłowe**:
 
@@ -191,18 +191,18 @@ tokeny OAuth providerów.
 **Mitigacja v3.8.6**:
 
 1. **Weryfikacja HMAC**: `verifyCloudSignature(rawBody, sigHeader)` sprawdza
-   nagłówek `X-Cloud-Sig` (`HMAC-SHA256(OMNIROUTE_CLOUD_SYNC_SECRET,
+   nagłówek `X-Cloud-Sig` (`HMAC-SHA256(AGENTPROXY_CLOUD_SYNC_SECRET,
 rawBody)`) przed parsowaniem JSON. Jeśli secret jest ustawiony, podpis jest
    wymagany. Jeśli nie (tryb legacy), logowane jest ostrzeżenie i odpowiedź jest
    akceptowana — secret będzie wymagany w v3.9.
 2. **Opt-in pól sekretnych**: `accessToken` / `refreshToken` /
    `providerSpecificData` są nadpisywane **tylko** gdy
-   `OMNIROUTE_CLOUD_SYNC_SECRETS=true`. Domyślny tryb synchronizuje wyłącznie
+   `AGENTPROXY_CLOUD_SYNC_SECRETS=true`. Domyślny tryb synchronizuje wyłącznie
    metadane niebędące credentialami (`expiresAt`, `status`, `lastError*`,
    `rateLimitedUntil`, `updatedAt`). To **breaking change** dla użytkowników,
    którzy polegali na zdalnej synchronizacji tokenów — muszą jawnie opt-in.
 
-**Dlaczego to zostawiamy**: Cloud Sync to jedyny sposób, by tenant OmniRoute Cloud
+**Dlaczego to zostawiamy**: Cloud Sync to jedyny sposób, by tenant AgentProxy Cloud
 centralizował credentials zespołu. Poprawka czyni model zagrożeń uczciwym:
 „serwer podpisuje, klient weryfikuje, operator opt-in”.
 
@@ -213,7 +213,7 @@ centralizował credentials zespołu. Poprawka czyni model zagrożeń uczciwym:
 Dla użytkowników potrzebujących artefaktu przyjaznego Socket, buduj z:
 
 ```bash
-OMNIROUTE_BUILD_PROFILE=minimal npm run build
+AGENTPROXY_BUILD_PROFILE=minimal npm run build
 ```
 
 Webpackowy `NormalModuleReplacementPlugin` aliasuje cztery moduły do stubów:
@@ -230,7 +230,7 @@ Każdy stub eksportuje tę samą powierzchnię, ale każda funkcja rzuca
 modułu zwracają HTTP 503 z jasnym komunikatem zamiast aktywować
 wrażliwą ścieżkę kodu.
 
-Wynikowy bundle ma być publikowany jako `omniroute-secure`. Zob.
+Wynikowy bundle ma być publikowany jako `agentproxy-secure`. Zob.
 `docs/ops/PUBLISHING_SECURE.md` po receptę publikacji.
 
 ---

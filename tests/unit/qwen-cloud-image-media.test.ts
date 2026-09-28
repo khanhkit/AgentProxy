@@ -4,7 +4,7 @@ import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-process.env.DATA_DIR = mkdtempSync(join(tmpdir(), "omniroute-qwen-cloud-image-"));
+process.env.DATA_DIR = mkdtempSync(join(tmpdir(), "agentproxy-qwen-cloud-image-"));
 
 const { IMAGE_PROVIDERS, parseImageModel } = await import("../../open-sse/config/imageRegistry.ts");
 const { resolveProviderServiceKinds } = await import("../../open-sse/config/mediaServiceKinds.ts");

@@ -6,16 +6,16 @@
 
 ---
 
-title: "OmniRoute programinio kodo bazės dokumentacija"
+title: "AgentProxy programinio kodo bazės dokumentacija"
 version: 3.8.40
 lastUpdated: 2026-06-28
 ---
 
-# OmniRoute programinio kodo bazės dokumentacija
+# AgentProxy programinio kodo bazės dokumentacija
 
 > **Versija:** v3.8.51
 > **Paskutinį kartą atnaujinta:** 2026-06-28
-> **Auditorija:** inžinieriai, prisidedantys prie OmniRoute arba kuriantys juo pagrįstas integracijas.
+> **Auditorija:** inžinieriai, prisidedantys prie AgentProxy arba kuriantys juo pagrįstas integracijas.
 >
 > Aukšto lygio architektūros diagramas ir kiekvieno posistemio pagrindimą rasite
 > [ARCHITECTURE.md](./ARCHITECTURE.md). Išsamią informaciją apie atskirus posistemius
@@ -46,22 +46,22 @@ nekuriant naujų modulių.
 Kelių alternatyvieji vardai (`tsconfig.json`):
 
 - `@/*` → `src/*`
-- `@omniroute/open-sse` → `open-sse/index.ts`
-- `@omniroute/open-sse/*` → `open-sse/*`
+- `@agentproxy/open-sse` → `open-sse/index.ts`
+- `@agentproxy/open-sse/*` → `open-sse/*`
 
 Numatytasis HTTP prievadas: **`20128`** (API ir valdymo skydelis naudoja tą patį procesą). Duomenų
-katalogas nurodomas aplinkos kintamuoju `DATA_DIR`; numatytoji reikšmė yra `~/.omniroute/`.
+katalogas nurodomas aplinkos kintamuoju `DATA_DIR`; numatytoji reikšmė yra `~/.agentproxy/`.
 
 ---
 
 ## 2. Saugyklos struktūra
 
 ```
-OmniRoute/
+AgentProxy/
 ├── src/                  Next.js programa (App Router, bibliotekos, domenas, serveris, bendrasis kodas)
-├── open-sse/             Srautinio perdavimo variklio darbo sritis (@omniroute/open-sse)
+├── open-sse/             Srautinio perdavimo variklio darbo sritis (@agentproxy/open-sse)
 ├── electron/             Darbalaukio apvalkalas (Electron 41 pagrindinis procesas + išankstinis įkėlimas)
-├── bin/                  CLI įvesties taškai (omniroute, reset-password)
+├── bin/                  CLI įvesties taškai (agentproxy, reset-password)
 ├── tests/                Vienetų, integraciniai, e2e, protocols-e2e, vertimo, saugumo testai ir fikstūros
 ├── scripts/              Kūrimo, sinchronizavimo, tikrinimo, migravimo ir vykdymo aplinkos pagalbiniai scenarijai
 ├── docs/                 Vieša dokumentacija (šis katalogas)
@@ -307,7 +307,7 @@ Lentelėje sugrupuoti tikrieji katalogai ir svarbūs aukščiausio lygmens faila
 | `runtime/`        | Vykdymo aplinkos funkcijų aptikimas                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | `search/`         | `executeWebSearch.ts`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | `services/`       | Įterptųjų paslaugų sistema: `ServiceSupervisor.ts` (bendroji antrinių procesų priežiūros priemonė su operacijų užraktu, žiediniu buferiu ir būklės tikrintuvu), `bootstrap.ts` (proceso lygmens registravimas ir automatinis paleidimas), `registry.ts` (įrankio → priežiūros priemonės žemėlapis), `apiKey.ts` (AES-256-GCM raktų saugykla), `modelSync.ts` (periodinis modelių sinchronizavimas), `ringBuffer.ts` (5 MB žiedinis žurnalo buferis), `healthCheck.ts` (HTTP būklės patikra), `types.ts`, `embedWsProxy.ts` (WebSocket tarpinis serveris), `installers/{ninerouter,cliproxy}.ts`. Žr. `docs/frameworks/EMBEDDED-SERVICES.md`                                                                   |
-| `agentSkills/`    | Agentų įgūdžių katalogas + generatorius: `catalog.ts` (getCatalog/getSkillById/filterCatalog/computeCoverage), `generator.ts` (generateAgentSkills → įrašo `skills/{id}/SKILL.md`), `openapiParser.ts` (ištraukia REST galinius taškus iš OpenAPI specifikacijos), `cliRegistryParser.ts` (ištraukia CLI antrines komandas iš bin/cli-registry), `schemas.ts` (Zod: AgentSkillSchema, SkillCoverageSchema, ListQuerySchema, GenerateBodySchema), `types.ts` (AgentSkill, SkillCoverage, SkillMarkdown, GeneratorReport). Naudojamas REST maršrutų (`/api/agent-skills/*`), MCP įrankių (`omniroute_agent_skills_*`) ir A2A įgūdžio `list-capabilities`. Žr. [AGENT-SKILLS.md](../frameworks/AGENT-SKILLS.md). |
+| `agentSkills/`    | Agentų įgūdžių katalogas + generatorius: `catalog.ts` (getCatalog/getSkillById/filterCatalog/computeCoverage), `generator.ts` (generateAgentSkills → įrašo `skills/{id}/SKILL.md`), `openapiParser.ts` (ištraukia REST galinius taškus iš OpenAPI specifikacijos), `cliRegistryParser.ts` (ištraukia CLI antrines komandas iš bin/cli-registry), `schemas.ts` (Zod: AgentSkillSchema, SkillCoverageSchema, ListQuerySchema, GenerateBodySchema), `types.ts` (AgentSkill, SkillCoverage, SkillMarkdown, GeneratorReport). Naudojamas REST maršrutų (`/api/agent-skills/*`), MCP įrankių (`agentproxy_agent_skills_*`) ir A2A įgūdžio `list-capabilities`. Žr. [AGENT-SKILLS.md](../frameworks/AGENT-SKILLS.md). |
 | `skills/`         | Įgūdžių sistema: `registry.ts`, `executor.ts`, `interception.ts`, `injection.ts`, `sandbox.ts`, `custom.ts`, `hybrid.ts`, `builtins.ts`, `a2a.ts`, `providerSettings.ts`, `schemas.ts`, `skillssh.ts`, `types.ts`, taip pat `builtin/browser.ts`                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
 | `spend/`          | `batchWriter.ts` (atidėto įrašymo buferis)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | `sync/`           | `bundle.ts`, `tokens.ts` (debesijos sinchronizavimas)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
@@ -393,7 +393,7 @@ Gryna verslo logika, be įvesties / išvesties. Importuojama maršrutų ir dorok
 | `degradation.ts`                           | Perėjimai į riboto veikimo režimą                      |
 | `providerExpiration.ts`                    | Nebegaliojančios paskyros / rakto aptikimas            |
 | `quotaCache.ts`                            | Podėliuoti kvotų sprendimai                            |
-| `responses.ts`, `omnirouteResponseMeta.ts` | Atsakymo formos pagalbinės priemonės                   |
+| `responses.ts`, `agentproxyResponseMeta.ts` | Atsakymo formos pagalbinės priemonės                   |
 | `configAudit.ts`                           | Konfigūracijos pakeitimų auditas                       |
 | `assessment/`                              | Modelio vertinimas (pagal RFC, įgyvendintas iš dalies) |
 | `types.ts`                                 | Bendrinami domeno tipai                                |
@@ -445,7 +445,7 @@ Padalyta į konkrečios paskirties pakatalogius:
 
 ## 4. `open-sse/` — Srautinio perdavimo variklio darbo sritis
 
-Atskira npm darbo sritis, publikuojama kaip `@omniroute/open-sse`. Ji apima užklausų
+Atskira npm darbo sritis, publikuojama kaip `@agentproxy/open-sse`. Ji apima užklausų
 apdorojimą, vykdykles, vertimo komponentus, paslaugas, transformavimo komponentą ir MCP serverį.
 
 ```
@@ -608,7 +608,7 @@ Darbo srities šaknyje yra penki npm scenarijai: `electron:dev`, `electron:build
 
 ```
 bin/
-├── omniroute.mjs           Pagrindinis CLI įvesties taškas (Node ESM)
+├── agentproxy.mjs           Pagrindinis CLI įvesties taškas (Node ESM)
 ├── reset-password.mjs      Valdymo slaptažodžio nustatymas iš naujo per CLI
 ├── mcp-server.mjs          MCP serverio paleidiklis (stdio)
 ├── nodeRuntimeSupport.mjs  Node versijos patikra
@@ -631,8 +631,8 @@ bin/
 
 `package.json` → `bin` pateikiami du vykdomieji failai:
 
-- `omniroute` → `bin/omniroute.mjs`
-- `omniroute-reset-password` → `bin/reset-password.mjs`
+- `agentproxy` → `bin/agentproxy.mjs`
+- `agentproxy-reset-password` → `bin/reset-password.mjs`
 
 ---
 
@@ -788,7 +788,7 @@ Kliento užklausa
 
 - **Kodo stilius**: 2 tarpų įtrauka, dvigubos kabutės, 100 simbolių eilutės plotis, kabliataškiai,
   `es5` baigiamieji kableliai — tai užtikrina „Prettier“ per `lint-staged`.
-- **Importai**: išoriniai → vidiniai (`@/`, `@omniroute/open-sse`) → santykiniai.
+- **Importai**: išoriniai → vidiniai (`@/`, `@agentproxy/open-sse`) → santykiniai.
 - **Pavadinimai**: failams naudojamas `camelCase` arba `kebab-case`, komponentams `PascalCase`,
   konstantoms `UPPER_SNAKE`.
 - **ESLint**: `no-eval`, `no-implied-eval`, `no-new-func` = `error` visur;

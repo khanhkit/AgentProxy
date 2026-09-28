@@ -1,14 +1,14 @@
 ---
-title: "Dokumentacja bazy kodu OmniRoute"
+title: "Dokumentacja bazy kodu AgentProxy"
 version: 3.8.40
 lastUpdated: 2026-06-28
 ---
 
-# Dokumentacja bazy kodu OmniRoute
+# Dokumentacja bazy kodu AgentProxy
 
 > **Wersja:** v3.8.0
 > **Ostatnia aktualizacja:** 2026-06-28
-> **Odbiorcy:** Inżynierowie współtworzący OmniRoute lub budujący na nim integracje.
+> **Odbiorcy:** Inżynierowie współtworzący AgentProxy lub budujący na nim integracje.
 >
 > Diagramy architektury wysokiego poziomu i uzasadnienie każdego podsystemu znajdziesz w
 > [ARCHITECTURE.md](./ARCHITECTURE.md). Szczegółowe opracowania poszczególnych podsystemów
@@ -39,22 +39,22 @@ bez wymyślania nowych modułów.
 Aliasy ścieżek (`tsconfig.json`):
 
 - `@/*` → `src/*`
-- `@omniroute/open-sse` → `open-sse/index.ts`
-- `@omniroute/open-sse/*` → `open-sse/*`
+- `@agentproxy/open-sse` → `open-sse/index.ts`
+- `@agentproxy/open-sse/*` → `open-sse/*`
 
 Domyślny port HTTP: **`20128`** (API i dashboard współdzielą ten sam proces). Katalog
-danych to zmienna środowiskowa `DATA_DIR`, domyślnie `~/.omniroute/`.
+danych to zmienna środowiskowa `DATA_DIR`, domyślnie `~/.agentproxy/`.
 
 ---
 
 ## 2. Układ repozytorium
 
 ```
-OmniRoute/
+AgentProxy/
 ├── src/                  Aplikacja Next.js (App Router, libs, domain, server, shared)
-├── open-sse/             Workspace silnika streamingu (@omniroute/open-sse)
+├── open-sse/             Workspace silnika streamingu (@agentproxy/open-sse)
 ├── electron/             Opakowanie desktopowe (Electron 41 main + preload)
-├── bin/                  Punkty wejścia CLI (omniroute, reset-password)
+├── bin/                  Punkty wejścia CLI (agentproxy, reset-password)
 ├── tests/                Unit, integration, e2e, protocols-e2e, translator, security, fixtures
 ├── scripts/              Skrypty build, sync, check, migracji i pomocnicze runtime
 ├── docs/                 Dokumentacja publiczna (ten katalog)
@@ -301,7 +301,7 @@ grupuje rzeczywiste katalogi i istotne pliki najwyższego poziomu.
 | `runtime/`        | Wykrywanie feature'ów runtime                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | `search/`         | `executeWebSearch.ts`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | `services/`       | Framework usług wbudowanych: `ServiceSupervisor.ts` (generyczny supervisor procesów potomnych z operation lock, ring buffer, health checker), `bootstrap.ts` (process-level registration i auto-start), `registry.ts` (mapa tool → supervisor), `apiKey.ts` (magazyn kluczy AES-256-GCM), `modelSync.ts` (okresowy sync modeli), `ringBuffer.ts` (okrągły bufor logów 5 MB), `healthCheck.ts` (sonda health HTTP), `types.ts`, `embedWsProxy.ts` (proxy WebSocket), `installers/{ninerouter,cliproxy}.ts`. See `docs/frameworks/EMBEDDED-SERVICES.md`                                                                                                                                          |
-| `agentSkills/`    | Katalog + generator Agent Skills: `catalog.ts` (getCatalog/getSkillById/filterCatalog/computeCoverage), `generator.ts` (generateAgentSkills → zapisuje `skills/{id}/SKILL.md`), `openapiParser.ts` (wyciąga endpointy REST ze specyfikacji OpenAPI), `cliRegistryParser.ts` (extracts CLI subcommands from bin/cli-registry), `schemas.ts` (Zod: AgentSkillSchema, SkillCoverageSchema, ListQuerySchema, GenerateBodySchema), `types.ts` (AgentSkill, SkillCoverage, SkillMarkdown, GeneratorReport). Konsumowane przez trasy REST (`/api/agent-skills/*`), narzędzia MCP (`omniroute_agent_skills_*`), i A2A skill `list-capabilities`. See [AGENT-SKILLS.md](../frameworks/AGENT-SKILLS.md). |
+| `agentSkills/`    | Katalog + generator Agent Skills: `catalog.ts` (getCatalog/getSkillById/filterCatalog/computeCoverage), `generator.ts` (generateAgentSkills → zapisuje `skills/{id}/SKILL.md`), `openapiParser.ts` (wyciąga endpointy REST ze specyfikacji OpenAPI), `cliRegistryParser.ts` (extracts CLI subcommands from bin/cli-registry), `schemas.ts` (Zod: AgentSkillSchema, SkillCoverageSchema, ListQuerySchema, GenerateBodySchema), `types.ts` (AgentSkill, SkillCoverage, SkillMarkdown, GeneratorReport). Konsumowane przez trasy REST (`/api/agent-skills/*`), narzędzia MCP (`agentproxy_agent_skills_*`), i A2A skill `list-capabilities`. See [AGENT-SKILLS.md](../frameworks/AGENT-SKILLS.md). |
 | `skills/`         | Framework skilli: `registry.ts`, `executor.ts`, `interception.ts`, `injection.ts`, `sibox.ts`, `custom.ts`, `hybrid.ts`, `builtins.ts`, `a2a.ts`, `providerSettings.ts`, `schemas.ts`, `skillssh.ts`, `types.ts`, plus `builtin/browser.ts`                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | `spend/`          | `batchWriter.ts` (bufor write-behind)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | `sync/`           | `bundle.ts`, `tokens.ts` (Cloud Sync)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
@@ -387,7 +387,7 @@ Czysta logika biznesowa, bez I/O. Importowana przez trasy i handlery.
 | `degradation.ts`                           | Przejścia trybu zdegradowanego                    |
 | `providerExpiration.ts`                    | Wykrywanie wygasłego konta/klucza                 |
 | `quotaCache.ts`                            | Cache'owane decyzje quota                         |
-| `responses.ts`, `omnirouteResponseMeta.ts` | Helpery kształtu odpowiedzi                       |
+| `responses.ts`, `agentproxyResponseMeta.ts` | Helpery kształtu odpowiedzi                       |
 | `configAudit.ts`                           | Audyt zmian konfiguracji                          |
 | `assessment/`                              | Ocena modelu (wg RFC, częściowo zaimplementowane) |
 | `types.ts`                                 | Współdzielone typy domenowe                       |
@@ -439,7 +439,7 @@ Podzielone na skupione podkatalogi:
 
 ## 4. `open-sse/` — Workspace silnika streamingu
 
-Osobny npm workspace publikowany jako `@omniroute/open-sse`. Odpowiada za
+Osobny npm workspace publikowany jako `@agentproxy/open-sse`. Odpowiada za
 przetwarzanie requestów, executory, translatory, services, transformer i serwer MCP.
 
 ```
@@ -602,7 +602,7 @@ Pięć skryptów npm w korzeniu workspace: `electron:dev`, `electron:build`,
 
 ```
 bin/
-├── omniroute.mjs           Główne wejście CLI (Node ESM)
+├── agentproxy.mjs           Główne wejście CLI (Node ESM)
 ├── reset-password.mjs      Reset hasła management z CLI
 ├── mcp-server.mjs          Launcher serwera MCP (stdio)
 ├── nodeRuntimeSupport.mjs  Strażnik wersji Node
@@ -625,8 +625,8 @@ bin/
 
 Dwa binaria są wystawione w `package.json` → `bin`:
 
-- `omniroute` → `bin/omniroute.mjs`
-- `omniroute-reset-password` → `bin/reset-password.mjs`
+- `agentproxy` → `bin/agentproxy.mjs`
+- `agentproxy-reset-password` → `bin/reset-password.mjs`
 
 ---
 
@@ -782,7 +782,7 @@ Zob. [A2A-SERVER.md § Adding a New Skill](../frameworks/A2A-SERVER.md). Skille 
 
 - **Styl kodu**: wcięcie 2 spacje, podwójne cudzysłowy, szerokość 100 znaków, średniki,
   trailing commas `es5` — egzekwowane przez Prettier via `lint-staged`.
-- **Importy**: external → internal (`@/`, `@omniroute/open-sse`) → relative.
+- **Importy**: external → internal (`@/`, `@agentproxy/open-sse`) → relative.
 - **Nazewnictwo**: pliki `camelCase` lub `kebab-case`, komponenty `PascalCase`,
   stałe `UPPER_SNAKE`.
 - **ESLint**: `no-eval`, `no-implied-eval`, `no-new-func` = `error` wszędzie;

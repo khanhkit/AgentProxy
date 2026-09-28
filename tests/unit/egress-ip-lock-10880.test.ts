@@ -23,7 +23,7 @@ import path from "node:path";
 
 // #10460/#10525: DATA_DIR must be assigned BEFORE any transitive DB import —
 // core.ts captures resolveWritableDataDir at module-load time.
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-egress-lock-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-egress-lock-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../src/lib/db/core.ts");

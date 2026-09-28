@@ -37,7 +37,7 @@ function runIsolatedFixture(testRoot: string): Promise<FixtureResult> {
     APP_LOG_TO_FILE: "false",
     API_KEY_SECRET: SYNTHETIC_API_KEY_SECRET,
     DATA_DIR: dataDir,
-    OMNIROUTE_PLUGINS_DIR: pluginsDir,
+    AGENTPROXY_PLUGINS_DIR: pluginsDir,
   };
   delete childEnv.NODE_TEST_CONTEXT;
 
@@ -62,12 +62,12 @@ function runIsolatedFixture(testRoot: string): Promise<FixtureResult> {
 }
 
 test("Adapta stream errors are sanitized in an isolated executor fixture", async () => {
-  const testRoot = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-adapta-boundary-parent-"));
+  const testRoot = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-adapta-boundary-parent-"));
   const originalDataDir = process.env.DATA_DIR;
-  const originalPluginsDir = process.env.OMNIROUTE_PLUGINS_DIR;
+  const originalPluginsDir = process.env.AGENTPROXY_PLUGINS_DIR;
   const originalFetch = globalThis.fetch;
-  const eventBusOwner = globalThis as { __omnirouteEventBus?: unknown };
-  const originalEventBus = eventBusOwner.__omnirouteEventBus;
+  const eventBusOwner = globalThis as { __agentproxyEventBus?: unknown };
+  const originalEventBus = eventBusOwner.__agentproxyEventBus;
 
   try {
     const result = await runIsolatedFixture(testRoot);
@@ -84,10 +84,10 @@ test("Adapta stream errors are sanitized in an isolated executor fixture", async
     assert.doesNotMatch(result.stdout + result.stderr, new RegExp(SYNTHETIC_API_KEY_SECRET));
 
     assert.equal(process.env.DATA_DIR, originalDataDir);
-    assert.equal(process.env.OMNIROUTE_PLUGINS_DIR, originalPluginsDir);
+    assert.equal(process.env.AGENTPROXY_PLUGINS_DIR, originalPluginsDir);
     assert.equal(globalThis.fetch, originalFetch);
     assert.equal(
-      eventBusOwner.__omnirouteEventBus,
+      eventBusOwner.__agentproxyEventBus,
       originalEventBus,
       "the subprocess fixture must not replace the parent event bus singleton"
     );

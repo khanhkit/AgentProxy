@@ -211,7 +211,7 @@ async function withMockedGeminiBrowser<T>(
           waitForTimeout: async () => {},
           waitForSelector: async () => ({ click: async () => {} }),
           keyboard: {
-            type: async (text: string) => {
+            insertText: async (text: string) => {
               typedPrompt.value = text;
             },
             press: async () => {

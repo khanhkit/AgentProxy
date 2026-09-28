@@ -1,1 +1,1 @@
-- **fix(providers):** lock opencode model on upstream 400 model-unavailable ([#13146](https://github.com/diegosouzapw/OmniRoute/pull/13146)) — thanks @maxmad64bis
+- **fix(providers):** lock opencode model on upstream 400 model-unavailable ([#13146](https://github.com/khanhkit/AgentProxy/pull/13146)) — thanks @maxmad64bis

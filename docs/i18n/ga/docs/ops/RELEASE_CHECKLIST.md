@@ -56,8 +56,8 @@ amach; aisghníomhann sé an sreabhm hiomlán uathoibríoch a bhí ag an tionsca
 v3.8.48 agus ag coimeád na ráthaíochta WS1.3 (ní féidir le comhartha sceite foilsiú ina n-aonar — níl
 comhartha ann).
 
-**Socrú uair amháin (úinéir):** npmjs.com → páitiúl `omniroute` → Settings → _Foilsitheoir
-Taofach_ → GitHub: úinéir `diegosouzapw`, repository `OmniRoute`, obair-shruth `npm-publish.yml`
+**Socrú uair amháin (úinéir):** npmjs.com → páitiúl `agentproxy` → Settings → _Foilsitheoir
+Taofach_ → GitHub: úinéir `diegosouzapw`, repository `AgentProxy`, obair-shruth `npm-publish.yml`
 (timpeallacht: gan). Go dtí go bhfuil sé sin ann, theipeann an chéim uathoibríoch le `ENEEDAUTH`:
 ath-déan deilbhín le `publish_mode=staged` (thíos) nó `direct`.
 
@@ -70,7 +70,7 @@ Bogadh geata 2FA an duine go TAR éis an fianaise, ní roimhe.
 
 **Sreabhm úinéir tar éis go n-éiríonn an obair-shruth glas:**
 
-1. `npm stage list omniroute` — aimsigh an aitheantas stáisiúin (priontáilte freisin sa
+1. `npm stage list agentproxy` — aimsigh an aitheantas stáisiúin (priontáilte freisin sa
    achoimre obair-shruth).
 2. Seiceáil na biteanna stáisiúnaithe (molta): `npm stage download <id>`, ansin suiteáil an
    tarball íoslódáilte i réamhshocrú Sealadach agus tosaigh é (`npm run check:pack-boot`
@@ -85,7 +85,7 @@ Bogadh geata 2FA an duine go TAR éis an fianaise, ní roimhe.
 taifead cén fáth).
 
 **Dúnadh crua uair amháin (úinéir, npmjs.com):** cumraigh an Foilsitheoir Taofach le
-haghaidh `omniroute i mód stáisiúnaithe amháin ionas nach féidir le comhartha fada-téarma
+haghaidh `agentproxy i mód stáisiúnaithe amháin ionas nach féidir le comhartha fada-téarma
 sceite `npm publish` go díreach ó áit ar bith — CI is féidir leis stáisiúnú amháin; ní
 folmhaíonn ach 2FA an úinéir.
 
@@ -208,7 +208,7 @@ Athruithe briste: cuir `BREAKING CHANGE:` i gcóirín nó `!` tar éis an scóip
 - [ ] Scoireann `npm run i18n:check` le 0 — staid aistriúcháin (`.i18n-state.json`) i sync le doiciméid fhoinse (gan aon fhoinsí sruthaithe i mód dian; tá comhairle mód rabhaidh inghlactha do thadhlanna deireanacha doiciméad, ach ba chóir go mbeadh 0 ann roimh thagáil)
 - [ ] Scoireann `npm run i18n:check-ui-coverage` le 0 — gach locale UI ag nó os cionn urlár clúdaigh 80%
 - [ ] Tuairiscíonn `npm run i18n:sync-ui:dry` 0 eochracha ar iarraidh ar fud na 42 locale go léir
-- [ ] Má athraíodh doiciméid fhoinse Béarla, rith `npm run i18n:run` (éilíonn `OMNIROUTE_TRANSLATION_API_KEY` in `.env`) roimh thagáil
+- [ ] Má athraíodh doiciméid fhoinse Béarla, rith `npm run i18n:run` (éilíonn `AGENTPROXY_TRANSLATION_API_KEY` in `.env`) roimh thagáil
 - [ ] Is féidir ranníocaíochtaí aistriúcháin a chur siar go dtí an chéad scaoileadh eile más beag iad (rianú in CHANGELOG)
 
 ### Imirceacha Bunachar Sonraí
@@ -217,7 +217,7 @@ Athruithe briste: cuir `BREAKING CHANGE:` i gcóirín nó `!` tar éis an scóip
   - [ ] Tá gach imirce idirphearsanta (`CREATE TABLE IF NOT EXISTS`, etc.)
   - [ ] Imirceacha fillte in idirbhearta
   - [ ] Uimhrithe i gceart (gan aon bhearnaí sa seicheamh)
-- [ ] Tástáil ar shuiteáil úr: scrios `~/.omniroute/omniroute.db` agus rith `npm run dev`
+- [ ] Tástáil ar shuiteáil úr: scrios `~/.agentproxy/agentproxy.db` agus rith `npm run dev`
 - [ ] Tástáil ar shuiteáil atá ann cheana: cúltaca DB, rith imirce, fíoraigh scéim
 - [ ] Láimhseáiltear comhaid WAL (`-wal`, `-shm`) i gceart má athscríobhann imirce táblaí
 
@@ -252,7 +252,7 @@ Má athraíodh `electron/`:
 | `.build/` | Idirmheánacha tógála — aschur `next build` (`distDir`)   | Níl (gitignored) |
 | `dist/`   | Bundle npm inseolta — cóimeáilte ag `assembleStandalone` | Níl (gitignored) |
 
-> **Nóta oibreora:** fanann eolaire íomhá cianda VPS mar `/usr/lib/node_modules/omniroute/app/`.
+> **Nóta oibreora:** fanann eolaire íomhá cianda VPS mar `/usr/lib/node_modules/agentproxy/app/`.
 > Níor bhog ach aschur tógála **in-stórais** (`app/` → `dist/`). Déanann na scileanna imlonnaithe rsync
 > ábhar `dist/` isteach san eolaire cianda `app/` — gan aon athruithe cosáin VPS ag teastáil.
 
@@ -372,12 +372,12 @@ Sula seoladh aon eisiúin ina bhfuil athruithe ar sheirbhísí ionsáite, déan 
 
 Sula seoladh aon eisiúin v3.8.x, déan na hiontrálacha breise seo a bhailíochtú:
 
-- [ ] `omniroute --tray` tosaíonn ar macOS (systrá seachadta isteach i `~/.omniroute/runtime/`)
-- [ ] `omniroute --tray` tosaíonn ar Linux (teastaíonn DISPLAY; earráid shiúil má dhéantar neamhord air)
-- [ ] `omniroute --tray` tosaíonn ar Windows (NotifyIcon PowerShell, gan comhaid déanta breise)
-- [ ] `omniroute config tray enable` cruthaíonn iontráil tosach uathoibríoch; baineann `disable` é
-- [ ] `npm install -g omniroute@<this-version>` rithíonn postinstall gan scor marfach
-- [ ] Coinníonn an nuashonrú conair suiteálacha roghnacha: `omniroute update --apply` agus an nuashonróir uathoibríoch
+- [ ] `agentproxy --tray` tosaíonn ar macOS (systrá seachadta isteach i `~/.agentproxy/runtime/`)
+- [ ] `agentproxy --tray` tosaíonn ar Linux (teastaíonn DISPLAY; earráid shiúil má dhéantar neamhord air)
+- [ ] `agentproxy --tray` tosaíonn ar Windows (NotifyIcon PowerShell, gan comhaid déanta breise)
+- [ ] `agentproxy config tray enable` cruthaíonn iontráil tosach uathoibríoch; baineann `disable` é
+- [ ] `npm install -g agentproxy@<this-version>` rithíonn postinstall gan scor marfach
+- [ ] Coinníonn an nuashonrú conair suiteálacha roghnacha: `agentproxy update --apply` agus an nuashonróir uathoibríoch
       rithíonn `npm install -g … --include=optional` ionas go maireann `optionalDependencies` (better-sqlite3,
       keytar, tls-client, agus an t-ualach SLM llmlingua: `@atjsh/llmlingua-2@2.0.5`,
       `js-tiktoken`) nuashonrú. Teastaíonn an tsraith `modelPath` SLM ultra freisin le haghaidh an
@@ -385,13 +385,13 @@ Sula seoladh aon eisiúin v3.8.x, déan na hiontrálacha breise seo a bhailíoch
       (`scripts/build/colocateOptionals.mjs`) ansin co-locates an glas SLM roghnach isteach i
       `dist/node_modules` ionas go réitíonn an t-oibreoir amháin `@huggingface/transformers` ^4.2.0
       — ní chuireann an lorgaíocht aonair ach transformers leis, gan na roghnacha a allmhairítear go dinimiciúil, agus gan é seo, dhéanfadh an t-oibreoir llmlingua-2 a luchtú i gcoinne transformers an bhun agus d'fhéadfadh an tsraith SLM gan dul i bhfeidhm go ciúin.
-- [ ] `omniroute status` oibríonn gan `.env` (conair comhartha CLI, aisghníomhach amháin)
+- [ ] `agentproxy status` oibríonn gan `.env` (conair comhartha CLI, aisghníomhach amháin)
 - [ ] `curl http://localhost:20128/api/shutdown` cuireann ar ais 401 (cosnóidh an conair i gcónaí)
 - [ ] `curl -H "host: evil.com" http://localhost:20128/api/mcp/sse` cuireann ar ais 401 (cosnóidh aisghníomhach)
 - [ ] Réitíonn SQLite runtimne go `bundled` an chéad uair (binse bactha bailí don ardán)
 - [ ] Titeann SQLite runtimne ar ais go `runtime` nuair a scriostar `node_modules/better-sqlite3`
 - [ ] Comhbrúnn an scagaire MCP cliste torthaí `playwright-mcp browser_snapshot` fíor (laghú ≥50%)
-- [ ] Tá na 10 comhad `skills/omniroute*/SKILL.md` go léir in-ionsáil go poiblí trí URL raw GitHub
+- [ ] Tá na 10 comhad `skills/agentproxy*/SKILL.md` go léir in-ionsáil go poiblí trí URL raw GitHub
 - [ ] Taispeánann an draoi chéimeanna turas "Conas a Oibríonn sé" ar shocrú nua
 - [ ] Taispeánann giuirléid clúdach ranga an deais baile líon na socrúchán/gníomhach
 

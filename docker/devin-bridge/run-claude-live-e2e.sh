@@ -28,7 +28,7 @@ validate_scenario() {
   local required_slash_command="${5:-}"
   local required_skill="${6:-}"
   local accept_explicit_completion="${7:-false}"
-  node /opt/omniroute/scripts/devin-bridge/validate-claude-evidence.mjs \
+  node /opt/agentproxy/scripts/devin-bridge/validate-claude-evidence.mjs \
     "$evidence_file" "$marker" "$required_tools" "$require_npm_test" \
     "$required_slash_command" "$required_skill" "$accept_explicit_completion"
 }

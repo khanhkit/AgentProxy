@@ -4,7 +4,7 @@
  * The published package ships a PREBUILT `.next` directory. That build output is
  * tightly coupled to the exact Next.js runtime that produced it: `next start`
  * reads build manifests whose shape changes between minors. With a caret range,
- * `npm i -g omniroute` resolves whatever Next is latest at INSTALL time, so a
+ * `npm i -g agentproxy` resolves whatever Next is latest at INSTALL time, so a
  * fresh upstream release silently breaks every new install even though nothing
  * in this repo changed.
  *

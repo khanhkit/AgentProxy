@@ -233,7 +233,8 @@ export function hasCodexScopeCooldown(id: string, scope: "codex" | "spark"): boo
  */
 export function liftCodexScopeCooldownOnHeadroom(
   id: string,
-  scope: "codex" | "spark"
+  scope: "codex" | "spark",
+  options?: { authoritativeFreshScopeHeadroom?: boolean }
 ): boolean {
   if (typeof id !== "string" || id.length === 0) return false;
   const db = getDbInstance() as unknown as DbLike;
@@ -268,7 +269,8 @@ export function liftCodexScopeCooldownOnHeadroom(
     if (
       curSource === "quota_reset" &&
       Number.isFinite(curUntilMs) &&
-      curUntilMs > Date.now() - QUOTA_RESET_CLOCK_SKEW_GRACE_MS
+      curUntilMs > Date.now() - QUOTA_RESET_CLOCK_SKEW_GRACE_MS &&
+      options?.authoritativeFreshScopeHeadroom !== true
     ) {
       return false;
     }

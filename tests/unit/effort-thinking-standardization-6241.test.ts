@@ -6,7 +6,7 @@ import path from "node:path";
 
 // DB-backed pieces (/models enrichment) need an isolated DATA_DIR + a released handle
 // (PII learning #3). Set it BEFORE importing any db-touching module.
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-effort-6241-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-effort-6241-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const { CANONICAL_EFFORT_VALUES, normalizeEffort, effortRequestSchema, normalizeReasoningRequest } =

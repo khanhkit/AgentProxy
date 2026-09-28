@@ -42,7 +42,7 @@ const { APIKEY_PROVIDERS } = await import("../../src/shared/constants/providers.
 const { PROVIDER_ENDPOINTS } = await import("../../src/shared/constants/config.ts");
 const { REGISTRY: providerRegistry } = await import("../../open-sse/config/providerRegistry.ts");
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-providers-batch-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-providers-batch-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../src/lib/db/core.ts");

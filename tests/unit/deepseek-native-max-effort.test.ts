@@ -7,7 +7,7 @@
  * invalid value enumerates the full accepted set:
  * `none`, `minimal`, `low`, `medium`, `high`, `xhigh`, `max`.)
  *
- * OmniRoute's canonical vocabulary is `none|low|medium|high|xhigh|max` (#11875).
+ * AgentProxy's canonical vocabulary is `none|low|medium|high|xhigh|max` (#11875).
  * `max` is a first-class value so DeepSeek's native top tier is reachable through
  * the canonical `effort` field instead of collapsing onto `xhigh` (which DeepSeek
  * then maps back down to `high`).

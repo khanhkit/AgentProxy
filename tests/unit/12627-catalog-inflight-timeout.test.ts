@@ -6,7 +6,7 @@ import test from "node:test";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-12627-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-12627-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const catalogCache = await import("../../src/app/api/v1/models/catalogCache.ts");
@@ -57,5 +57,5 @@ test("#12627 timeout serves last-good 200 when a prior build succeeded", async (
   );
   assert.equal(second.status, 200);
   assert.equal(await second.text(), "good");
-  assert.equal(second.headers.get("x-omniroute-catalog"), "last-good");
+  assert.equal(second.headers.get("x-agentproxy-catalog"), "last-good");
 });

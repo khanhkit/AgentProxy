@@ -21,7 +21,7 @@ import { makeManagementSessionRequest } from "../../helpers/managementSession.ts
 
 const fixture = setupSettingsFixture("probe-8950");
 
-process.env.OMNIROUTE_DISABLE_REDIS_AUTH_CACHE = "1";
+process.env.AGENTPROXY_DISABLE_REDIS_AUTH_CACHE = "1";
 
 const core = await import("../../../src/lib/db/core.ts");
 const settingsDb = await import("../../../src/lib/db/settings.ts");

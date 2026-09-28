@@ -10,7 +10,7 @@ lastUpdated: 2026-08-23
 
 ---
 
-Sağlayıcıları yapılandırma, kombolar oluşturma, CLI araçlarını entegre etme ve OmniRoute'u dağıtma konusunda eksiksiz kılavuz.
+Sağlayıcıları yapılandırma, kombolar oluşturma, CLI araçlarını entegre etme ve AgentProxy'u dağıtma konusunda eksiksiz kılavuz.
 
 ---
 
@@ -111,7 +111,7 @@ Kombo: "always-on"
 
 ## 💻 CLI Entegrasyonu
 
-OmniRoute, standart OpenAI uyumlu uç nokta sunduğundan tüm geliştirici araçlarıyla uyumludur:
+AgentProxy, standart OpenAI uyumlu uç nokta sunduğundan tüm geliştirici araçlarıyla uyumludur:
 
 - **Claude Code:** `CLAUDE_BASE_URL="http://localhost:20128/v1"`
 - **OpenAI Codex:** `OPENAI_BASE_URL="http://localhost:20128/v1"`

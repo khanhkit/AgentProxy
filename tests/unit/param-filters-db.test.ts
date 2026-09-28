@@ -5,7 +5,7 @@ import os from "node:os";
 import path from "node:path";
 
 // Set DATA_DIR BEFORE any DB modules are imported so core.ts uses the temp dir.
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-pf-db-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-pf-db-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 // Dynamic imports — these modules initialize SQLite on load, so DATA_DIR must be

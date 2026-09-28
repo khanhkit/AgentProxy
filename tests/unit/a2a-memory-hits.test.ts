@@ -42,7 +42,7 @@ function makeTask(overrides: Partial<A2ATask> = {}): A2ATask {
   };
 }
 
-const ENV_KEY = "OMNIROUTE_A2A_MEMORY_HITS";
+const ENV_KEY = "AGENTPROXY_A2A_MEMORY_HITS";
 
 function withEnv(value: string | undefined, fn: () => Promise<void>) {
   const original = process.env[ENV_KEY];
@@ -151,7 +151,7 @@ test("collectMemoryHits returns [] when search throws — never fails the caller
   assert.deepEqual(hits, []);
 });
 
-test("collectMemoryHits kill-switch (OMNIROUTE_A2A_MEMORY_HITS=0) returns [] without calling search", async () => {
+test("collectMemoryHits kill-switch (AGENTPROXY_A2A_MEMORY_HITS=0) returns [] without calling search", async () => {
   await withEnv("0", async () => {
     let called = false;
     const deps: MemoryHitsDeps = {
@@ -280,7 +280,7 @@ test("executeA2ATaskWithState swallows a throwing appendEvent (best-effort) and 
  * landed inside `task.input.metadata` too — from where it was serialized into
  * `a2a_tasks.input_json` and echoed back by the drawer's "Repeat" body, making the repeated
  * task be born carrying the previous run's memory snippets (visible even with the
- * `OMNIROUTE_A2A_MEMORY_HITS=0` kill-switch on). `metadata` must be a COPY.
+ * `AGENTPROXY_A2A_MEMORY_HITS=0` kill-switch on). `metadata` must be a COPY.
  */
 test("executeA2ATaskWithState never leaks memoryHits into task.input.metadata or the persisted input", async () => {
   const upsertCalls: Array<{ inputJson: string | null }> = [];

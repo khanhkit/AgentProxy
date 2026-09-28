@@ -6,7 +6,7 @@ import path from "node:path";
 
 /**
  * #10225 — combo known-context-overflow must NOT hard-reject a compressible
- * request before OmniRoute's compression pipeline can run.
+ * request before AgentProxy's compression pipeline can run.
  *
  * Root cause: getKnownContextOverflow() estimates the RAW body (ceil(serializedChars/4)
  * over the whole Responses input[]) during combo target resolution, before any
@@ -25,7 +25,7 @@ import path from "node:path";
  * the final context gate — a local 400 only if the compressed body still cannot fit.
  */
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-combo-overflow-compress-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-combo-overflow-compress-"));
 const ORIGINAL_DATA_DIR = process.env.DATA_DIR;
 process.env.DATA_DIR = TEST_DATA_DIR;
 

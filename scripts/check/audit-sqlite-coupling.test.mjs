@@ -16,7 +16,7 @@ function git(cwd, ...args) {
 }
 
 test("audit separates code syntax from comments/literals and rejects a dirty corpus", () => {
-  const root = mkdtempSync(path.join(tmpdir(), "omniroute-sqlite-audit-"));
+  const root = mkdtempSync(path.join(tmpdir(), "agentproxy-sqlite-audit-"));
 
   try {
     mkdirSync(path.join(root, "scripts/check"), { recursive: true });

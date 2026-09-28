@@ -67,7 +67,7 @@ describe("memory-embedding-transformers", () => {
     const errorReason = "model_load_failed";
     const errMsg = "Network error loading model";
 
-    const { sanitizeErrorMessage } = await import("@omniroute/open-sse/utils/error.ts");
+    const { sanitizeErrorMessage } = await import("@agentproxy/open-sse/utils/error.ts");
     const sanitized = sanitizeErrorMessage(errMsg);
 
     const embErr = {

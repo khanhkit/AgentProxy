@@ -6,16 +6,16 @@
 
 ---
 
-title: "OmniRoute — Galerija funkcij nadzorne plošče"
+title: "AgentProxy — Galerija funkcij nadzorne plošče"
 version: 3.8.40
 lastUpdated: 2026-06-28
 ---
 
-# OmniRoute — Galerija funkcij nadzorne plošče
+# AgentProxy — Galerija funkcij nadzorne plošče
 
 🌐 **Languages:** 🇺🇸 [English](../../../../guides/FEATURES.md) · 🇸🇦 [ar](../../../ar/docs/guides/FEATURES.md) · 🇦🇿 [az](../../../az/docs/guides/FEATURES.md) · 🇧🇬 [bg](../../../bg/docs/guides/FEATURES.md) · 🇧🇩 [bn](../../../bn/docs/guides/FEATURES.md) · 🇨🇿 [cs](../../../cs/docs/guides/FEATURES.md) · 🇩🇰 [da](../../../da/docs/guides/FEATURES.md) · 🇩🇪 [de](../../../de/docs/guides/FEATURES.md) · 🇬🇷 [el](../../../el/docs/guides/FEATURES.md) · 🇪🇸 [es](../../../es/docs/guides/FEATURES.md) · 🇪🇪 [et](../../../et/docs/guides/FEATURES.md) · 🇮🇷 [fa](../../../fa/docs/guides/FEATURES.md) · 🇫🇮 [fi](../../../fi/docs/guides/FEATURES.md) · 🇫🇷 [fr](../../../fr/docs/guides/FEATURES.md) · 🇮🇪 [ga](../../../ga/docs/guides/FEATURES.md) · 🇮🇳 [gu](../../../gu/docs/guides/FEATURES.md) · 🇮🇱 [he](../../../he/docs/guides/FEATURES.md) · 🇮🇳 [hi](../../../hi/docs/guides/FEATURES.md) · 🇭🇷 [hr](../../../hr/docs/guides/FEATURES.md) · 🇭🇺 [hu](../../../hu/docs/guides/FEATURES.md) · 🇮🇩 [id](../../../id/docs/guides/FEATURES.md) · 🇮🇹 [it](../../../it/docs/guides/FEATURES.md) · 🇯🇵 [ja](../../../ja/docs/guides/FEATURES.md) · 🇰🇷 [ko](../../../ko/docs/guides/FEATURES.md) · 🇱🇹 [lt](../../../lt/docs/guides/FEATURES.md) · 🇱🇻 [lv](../../../lv/docs/guides/FEATURES.md) · 🇮🇳 [mr](../../../mr/docs/guides/FEATURES.md) · 🇲🇾 [ms](../../../ms/docs/guides/FEATURES.md) · 🇲🇹 [mt](../../../mt/docs/guides/FEATURES.md) · 🇳🇱 [nl](../../../nl/docs/guides/FEATURES.md) · 🇳🇴 [no](../../../no/docs/guides/FEATURES.md) · 🇵🇭 [phi](../../../phi/docs/guides/FEATURES.md) · 🇵🇱 [pl](../../../pl/docs/guides/FEATURES.md) · 🇵🇹 [pt](../../../pt/docs/guides/FEATURES.md) · 🇧🇷 [pt-BR](../../../pt-BR/docs/guides/FEATURES.md) · 🇷🇴 [ro](../../../ro/docs/guides/FEATURES.md) · 🇷🇺 [ru](../../../ru/docs/guides/FEATURES.md) · 🇸🇰 [sk](../../../sk/docs/guides/FEATURES.md) · 🇷🇸 [sr](../../../sr/docs/guides/FEATURES.md) · 🇸🇪 [sv](../../../sv/docs/guides/FEATURES.md) · 🇰🇪 [sw](../../../sw/docs/guides/FEATURES.md) · 🇮🇳 [ta](../../../ta/docs/guides/FEATURES.md) · 🇮🇳 [te](../../../te/docs/guides/FEATURES.md) · 🇹🇭 [th](../../../th/docs/guides/FEATURES.md) · 🇹🇷 [tr](../../../tr/docs/guides/FEATURES.md) · 🇺🇦 [uk-UA](../../../uk-UA/docs/guides/FEATURES.md) · 🇵🇰 [ur](../../../ur/docs/guides/FEATURES.md) · 🇻🇳 [vi](../../../vi/docs/guides/FEATURES.md) · 🇨🇳 [zh-CN](../../../zh-CN/docs/guides/FEATURES.md) · 🇹🇼 [zh-TW](../../../zh-TW/docs/guides/FEATURES.md)
 
-Vizualni vodnik po vseh razdelkih nadzorne plošče OmniRoute.
+Vizualni vodnik po vseh razdelkih nadzorne plošče AgentProxy.
 
 > 📅 **Nazadnje posodobljeno:** 2026-06-28 — **v3.8.40**
 
@@ -45,7 +45,7 @@ Razvojni cikel v3.7.x → v3.8.0 je prinesel samodejno usmerjanje brez konfigura
 - 🚦 **Razvrščanje napak 429 za posameznega ponudnika** + stikalo `useUpstream429BreakerHints` — natančnejše delovanje odklopnika z uporabo namigov nadrejene storitve o omejitvah hitrosti
 - 🩺 **Nadzorna plošča obdobij ohlajanja modelov** — spremljajte zaklepe posameznih modelov in jih ročno znova omogočite v uporabniškem vmesniku
 - 🔒 **Dinamično zaznavanje potrdil MITM v sistemu Linux** — deluje v distribucijah Debian/Ubuntu, Fedora/RHEL, Arch in drugih
-- 💻 **Nabor izboljšav vmesnika ukazne vrstice** — več kot 20 ukazov, vključno z `omniroute providers`, `omniroute combos`, `omniroute doctor`, `omniroute setup`
+- 💻 **Nabor izboljšav vmesnika ukazne vrstice** — več kot 20 ukazov, vključno z `agentproxy providers`, `agentproxy combos`, `agentproxy doctor`, `agentproxy setup`
 - 🔍 **Odkrivanje modelov vdelav Qdrant** — samodejno preverjanje modela vektorske shrambe
 - 🔑 **Ključi API / žetonski ključi z obsegom `manage`** — programsko izvajajte skrbniška opravila prek API-ja
 - 🏥 **Analitika zdravja ciljev kombinacij** + **strukturiran graditelj kombinacij** — zdravje posameznih ciljev in graditelj uporabniškega vmesnika za sestavljanje korakov `(provider, model, connection)`
@@ -60,7 +60,7 @@ Razvojni cikel v3.7.x → v3.8.0 je prinesel samodejno usmerjanje brez konfigura
 
 Upravljajte povezave s ponudniki umetne inteligence: ponudnike OAuth (Claude Code, Codex), ponudnike s ključi API (Groq, DeepSeek, OpenRouter) in brezplačne ponudnike (Qoder, Kiro). Računi Kiro vključujejo spremljanje stanja dobroimetja — preostalo število kreditov, skupno razpoložljivo količino in datum obnovitve si lahko ogledate v razdelku Nadzorna plošča → Poraba.
 
-Povezave OpenRouter lahko v naprednih nastavitvah shranijo `preset` za posamezno povezavo. Ko je nastavljen, ga OmniRoute pošlje kot polje najvišje ravni zahteve OpenRouter, na primer `"preset": "email-copywriter"`, razen če je odjemalska zahteva že navedla lasten `preset`.
+Povezave OpenRouter lahko v naprednih nastavitvah shranijo `preset` za posamezno povezavo. Ko je nastavljen, ga AgentProxy pošlje kot polje najvišje ravni zahteve OpenRouter, na primer `"preset": "email-copywriter"`, razen če je odjemalska zahteva že navedla lasten `preset`.
 
 ![Nadzorna plošča ponudnikov](../screenshots/01-providers.png)
 
@@ -166,7 +166,7 @@ Nadzorna plošča za odkrivanje in upravljanje agentov CLI. Prikazuje mrežo 16 
 
 ## 🔗 Prenos konteksta _(v3.5.5+)_
 
-Kombinirana strategija, ki ohranja neprekinjenost seje, ko med pogovorom pride do zamenjave računa. Preden se kvota aktivnega računa izčrpa, OmniRoute v ozadju ustvari strukturiran povzetek za predajo. Ko je naslednja zahteva usmerjena v drug račun, se povzetek vstavi kot sistemsko sporočilo, tako da novi račun nadaljuje s celotnim kontekstom.
+Kombinirana strategija, ki ohranja neprekinjenost seje, ko med pogovorom pride do zamenjave računa. Preden se kvota aktivnega računa izčrpa, AgentProxy v ozadju ustvari strukturiran povzetek za predajo. Ko je naslednja zahteva usmerjena v drug račun, se povzetek vstavi kot sistemsko sporočilo, tako da novi račun nadaljuje s celotnim kontekstom.
 
 Nastavljivo na ravni kombinacije ali prek globalnih nastavitev:
 
@@ -235,7 +235,7 @@ Skripti za čisto odstranitev pri vseh načinih namestitve:
 
 | Ukaz                     | Dejanje                                                                                                 |
 | ------------------------ | ------------------------------------------------------------------------------------------------------- |
-| `npm run uninstall`      | Odstrani sistemsko aplikacijo, vendar **ohrani vašo podatkovno zbirko in nastavitve** v `~/.omniroute`. |
+| `npm run uninstall`      | Odstrani sistemsko aplikacijo, vendar **ohrani vašo podatkovno zbirko in nastavitve** v `~/.agentproxy`. |
 | `npm run uninstall:full` | Odstrani aplikacijo IN trajno **izbriše vse nastavitve, ključe in podatkovne zbirke**.                  |
 
 ---
@@ -276,7 +276,7 @@ Sledenje skrbniškim dejanjem s filtriranjem po vrsti dejanja, izvajalcu, cilju,
 
 ## 🖥️ Namizna aplikacija
 
-Izvorna namizna aplikacija Electron za Windows, macOS in Linux. Zaženite OmniRoute kot samostojno aplikacijo z integracijo v sistemsko vrstico, podporo za delo brez povezave, samodejnim posodabljanjem in namestitvijo z enim klikom.
+Izvorna namizna aplikacija Electron za Windows, macOS in Linux. Zaženite AgentProxy kot samostojno aplikacijo z integracijo v sistemsko vrstico, podporo za delo brez povezave, samodejnim posodabljanjem in namestitvijo z enim klikom.
 
 Ključne funkcije:
 
@@ -295,7 +295,7 @@ Ključne funkcije:
 
 ## 🌐 Most WebSocket V1 _(v3.6.6+)_
 
-OmniRoute zdaj prek končne točke za nadgradnjo `/v1/ws` podpira **odjemalce WebSocket, združljive z OpenAI**. Strežnik po meri `scripts/dev/v1-ws-bridge.mjs` ovije Next.js in nadgradi povezave WS v polne dvosmerne pretočne seje. Overjanje uporablja isti ključ API ali sejni piškotek kot zahteve HTTP.
+AgentProxy zdaj prek končne točke za nadgradnjo `/v1/ws` podpira **odjemalce WebSocket, združljive z OpenAI**. Strežnik po meri `scripts/dev/v1-ws-bridge.mjs` ovije Next.js in nadgradi povezave WS v polne dvosmerne pretočne seje. Overjanje uporablja isti ključ API ali sejni piškotek kot zahteve HTTP.
 
 Ključna vedenja:
 
@@ -321,7 +321,7 @@ Konfiguracijski paket ustvari `src/lib/sync/bundle.ts`. Odjemalci primerjajo gla
 
 **GLM Thinking (`glmt`)** je zdaj registriran kot prvovrstni ponudnik: največ 65 536 izhodnih žetonov, proračun za razmišljanje 24 576 žetonov, privzeta časovna omejitev 900 s, oblika API-ja, združljiva s Claude, in skupna sinhronizacija porabe z družino GLM.
 
-V v3.6.6 je uvedeno tudi **hibridno štetje žetonov**: ko ponudnik, združljiv s Claude, omogoča `/messages/count_tokens`, ga OmniRoute pokliče pred velikimi zahtevami in v primeru težav nemoteno preklopi na ocenjevanje.
+V v3.6.6 je uvedeno tudi **hibridno štetje žetonov**: ko ponudnik, združljiv s Claude, omogoča `/messages/count_tokens`, ga AgentProxy pokliče pred velikimi zahtevami in v primeru težav nemoteno preklopi na ocenjevanje.
 
 ---
 

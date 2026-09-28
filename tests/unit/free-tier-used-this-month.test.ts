@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-process.env.DATA_DIR = mkdtempSync(join(tmpdir(), "omniroute-used-month-"));
+process.env.DATA_DIR = mkdtempSync(join(tmpdir(), "agentproxy-used-month-"));
 
 const { getDbInstance, resetDbInstance } = await import("../../src/lib/db/core.ts");
 const { sumUsageTokensThisMonth } = await import("../../src/lib/db/usageSummary.ts");

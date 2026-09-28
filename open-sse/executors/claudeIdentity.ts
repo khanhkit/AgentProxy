@@ -431,7 +431,7 @@ export function selectBetaFlags(
 
 const TOOL_PREFIX = "proxy_";
 
-/** Strip OmniRoute's `proxy_` tool-name prefix; real CLI never sends it. */
+/** Strip AgentProxy's `proxy_` tool-name prefix; real CLI never sends it. */
 export function stripProxyToolPrefix(body: Record<string, unknown>): void {
   const stripName = (n: unknown): string | undefined => {
     if (typeof n !== "string") return undefined;

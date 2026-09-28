@@ -5,7 +5,7 @@ import { AntigravityExecutor } from "../../open-sse/executors/antigravity.ts";
 
 test("AntigravityExecutor.transformRequest preserves prompt text byte-for-byte", async () => {
   const executor = new AntigravityExecutor();
-  const text = "OmniRoute, OpenCode, Cursor — keep this exact text 👩🏽‍💻";
+  const text = "AgentProxy, OpenCode, Cursor — keep this exact text 👩🏽‍💻";
   const body = {
     request: {
       contents: [{ role: "user", parts: [{ text }] }],

@@ -38,7 +38,7 @@ import path from "node:path";
 // default exactly like a vanilla install).
 // ---------------------------------------------------------------------------
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-radar-inertia-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-radar-inertia-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.STORAGE_ENCRYPTION_KEY = "test-encryption-key-for-radar-inertia-tests-32b!";
 delete process.env.RADAR_ENABLED;
@@ -198,7 +198,7 @@ test("Radar inertia — flag off means zero behavioral delta", async (t) => {
       //
       // As asserções comparam os totais contra valores RECOMPUTADOS a partir de
       // FREE_MODEL_BUDGETS, e não contra números cravados: o catálogo cresce a
-      // cada release do OmniRoute, e um total fixo quebraria o teste pelo motivo
+      // cada release do AgentProxy, e um total fixo quebraria o teste pelo motivo
       // errado (catálogo mudou) em vez do certo (Radar mutou o catálogo).
       const totals = computeFreeModelTotals();
 

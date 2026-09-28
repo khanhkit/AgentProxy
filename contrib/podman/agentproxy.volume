@@ -1,0 +1,3 @@
+# AgentProxy persistent data (SQLite DB, logs, backups)
+[Volume]
+Label=agentproxy

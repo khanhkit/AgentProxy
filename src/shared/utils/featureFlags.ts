@@ -135,10 +135,10 @@ export function isNoThinkingAliasEnabled(): boolean {
 
 export function isDisableThinkingLevelVariantsEnabled(): boolean {
   try {
-    return isFeatureFlagEnabled("OMNIROUTE_DISABLE_THINKING_LEVEL_VARIANTS");
+    return isFeatureFlagEnabled("AGENTPROXY_DISABLE_THINKING_LEVEL_VARIANTS");
   } catch (error) {
     console.error(
-      "[featureFlags] Failed to resolve OMNIROUTE_DISABLE_THINKING_LEVEL_VARIANTS, defaulting to disabled:",
+      "[featureFlags] Failed to resolve AGENTPROXY_DISABLE_THINKING_LEVEL_VARIANTS, defaulting to disabled:",
       error instanceof Error ? error.message : error
     );
     return false;
@@ -151,10 +151,10 @@ export function isArenaEloSyncEnabled(): boolean {
 
 export function isControlPlaneProxyDirectFallbackEnabled(): boolean {
   try {
-    return isFeatureFlagEnabled("OMNIROUTE_CONTROL_PLANE_PROXY_DIRECT_FALLBACK");
+    return isFeatureFlagEnabled("AGENTPROXY_CONTROL_PLANE_PROXY_DIRECT_FALLBACK");
   } catch (error) {
     console.error(
-      "[featureFlags] Failed to resolve OMNIROUTE_CONTROL_PLANE_PROXY_DIRECT_FALLBACK, defaulting to disabled:",
+      "[featureFlags] Failed to resolve AGENTPROXY_CONTROL_PLANE_PROXY_DIRECT_FALLBACK, defaulting to disabled:",
       error instanceof Error ? error.message : error
     );
     return false;
@@ -172,6 +172,24 @@ export function isNetworkRotationSharedEgressGuardEnabled(): boolean {
     return true;
   }
 }
+
+/**
+ * Mistral bare-401 bounded soft lockout (#13609). Opt-in: when off, a bare Mistral 401 parks
+ * the connection as expired exactly as before.
+ * Fail closed: an unreadable flag store keeps the pre-flag behavior (disabled).
+ */
+export function isMistralAmbiguous401SoftLockoutEnabled(): boolean {
+  try {
+    return isFeatureFlagEnabled("MISTRAL_AMBIGUOUS_401_SOFT_LOCKOUT");
+  } catch (error) {
+    console.error(
+      "[featureFlags] Failed to resolve MISTRAL_AMBIGUOUS_401_SOFT_LOCKOUT, defaulting to disabled:",
+      error instanceof Error ? error.message : error
+    );
+    return false;
+  }
+}
+
 
 export function isServerOwnedToolLoopEnabled(
   reader: (key: string) => boolean = isFeatureFlagEnabled

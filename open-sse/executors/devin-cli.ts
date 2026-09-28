@@ -471,7 +471,7 @@ export class DevinCliExecutor extends BaseExecutor {
         // ── Send initialize ───────────────────────────────────────────────
         sendRpc("initialize", {
           protocolVersion: "0.3",
-          clientInfo: { name: "omniroute", version: "1.0" },
+          clientInfo: { name: "agentproxy", version: "1.0" },
           capabilities: {},
         });
       },

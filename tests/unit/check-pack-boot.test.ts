@@ -16,6 +16,8 @@ import {
   evaluateMachineTokenAuth,
   evaluateSqlJsRoundTrip,
   evaluateRestartPersistence,
+  resolvePackageArg,
+  selectPackageTarball,
 } from "../../scripts/check/check-pack-boot.mjs";
 
 // WS1.2 (T1, v3.8.49 quality plan) — pure-function guards for the tarball boot-smoke
@@ -30,8 +32,23 @@ const SCRIPT_PATH = path.join(
 
 test("pickTarball extracts the filename from npm pack --json output", () => {
   assert.equal(
-    pickTarball('[{"filename":"omniroute-3.8.49.tgz","size":1}]'),
-    "omniroute-3.8.49.tgz"
+    pickTarball('[{"filename":"agentproxy-3.8.49.tgz","size":1}]'),
+    "agentproxy-3.8.49.tgz"
+  );
+});
+
+test("pickTarball accepts npm 12 object-keyed pack --json output", () => {
+  assert.equal(
+    pickTarball(
+      JSON.stringify({
+        agentproxy: {
+          id: "agentproxy@0.1.0",
+          filename: "agentproxy-0.1.0.tgz",
+          size: 1,
+        },
+      })
+    ),
+    "agentproxy-0.1.0.tgz"
   );
 });
 
@@ -44,7 +61,34 @@ test("pickTarball throws on empty/odd npm output instead of booting garbage", ()
   assert.throws(() => pickTarball("{}"));
 });
 
-test("installed package root follows the package manifest name instead of the legacy OmniRoute name", () => {
+test("resolvePackageArg resolves an existing --package path and rejects invalid input", () => {
+  const exists = (candidate) => candidate === path.resolve("/repo", "artifact.tgz");
+  assert.equal(
+    resolvePackageArg(["--package", "artifact.tgz"], "/repo", exists),
+    path.resolve("/repo", "artifact.tgz")
+  );
+  assert.throws(() => resolvePackageArg(["--package"], "/repo", exists), /requires a path/);
+  assert.throws(
+    () => resolvePackageArg(["--package", "missing.tgz"], "/repo", exists),
+    /does not exist/
+  );
+});
+
+test("selectPackageTarball reuses a supplied canonical package without repacking", () => {
+  let packCalls = 0;
+  const pack = () => {
+    packCalls++;
+    return "/tmp/repacked.tgz";
+  };
+
+  assert.equal(selectPackageTarball("/tmp/canonical.tgz", pack), "/tmp/canonical.tgz");
+  assert.equal(packCalls, 0, "supplying --package must bypass npm pack entirely");
+
+  assert.equal(selectPackageTarball(null, pack), "/tmp/repacked.tgz");
+  assert.equal(packCalls, 1);
+});
+
+test("installed package root follows the package manifest name instead of the legacy AgentProxy name", () => {
   assert.equal(
     resolveInstalledPackageRoot("/prefix", "agentproxy"),
     path.join("/prefix", "lib", "node_modules", "agentproxy")
@@ -141,7 +185,7 @@ test("machine-token smoke requires no/invalid credentials to fail and the packag
       authenticatedStatus: 401,
     },
     {
-      cliToken: createHmac("sha256", "").update("omniroute-cli-auth-v1").digest("hex"),
+      cliToken: createHmac("sha256", "").update("agentproxy-cli-auth-v1").digest("hex"),
       unauthenticatedStatus: 401,
       invalidStatus: 401,
       authenticatedStatus: 200,
@@ -181,7 +225,7 @@ test("source guard: the gate polls the real health endpoint of the INSTALLED bin
   assert.ok(src.includes("/api/monitoring/health"), "must poll the health endpoint");
   assert.ok(src.includes("/api/settings"), "must verify a real application write and read");
   assert.ok(src.includes("/api/cli/whoami"), "must exercise the machine-token auth endpoint");
-  assert.ok(src.includes("x-omniroute-cli-token"), "must send the official machine-token header");
+  assert.ok(src.includes("x-agentproxy-cli-token"), "must send the official machine-token header");
   const postinstall = readFileSync(
     fileURLToPath(new URL("../../scripts/build/postinstall.mjs", import.meta.url)),
     "utf8"
@@ -189,12 +233,51 @@ test("source guard: the gate polls the real health endpoint of the INSTALLED bin
   assert.ok(postinstall.includes('["sql.js", "node-machine-id"]'));
   assert.ok(postinstall.includes('join(ROOT, "dist", "node_modules", packageName)'));
   assert.ok(
-    src.includes('OMNIROUTE_PACK_BOOT_FORCE_SQLJS: "1"'),
+    src.includes('AGENTPROXY_PACK_BOOT_FORCE_SQLJS: "1"'),
     "must force the packaged sql.js tier during this smoke"
   );
   assert.ok(src.includes("MAX_SERVER_OUTPUT_CHARS"));
   assert.ok(!src.includes("while (tail.length > 80)"), "must not discard early startup proof");
   assert.ok(src.indexOf("npm") < src.indexOf("spawn"), "pack+install must precede the boot spawn");
+});
+
+test("CI packs once, then fans out the exact canonical tarball to policy and boot", () => {
+  const workflow = readFileSync(
+    fileURLToPath(new URL("../../.github/workflows/ci.yml", import.meta.url)),
+    "utf8"
+  );
+  const start = workflow.indexOf("  package-canonical:");
+  const end = workflow.indexOf("  electron-package-smoke:", start);
+  assert.ok(start >= 0 && end > start, "package pipeline jobs must exist");
+  const packagePipeline = workflow.slice(start, end);
+
+  assert.equal(
+    (packagePipeline.match(/npm pack --json/g) || []).length,
+    1,
+    "the package pipeline must execute npm pack exactly once"
+  );
+  assert.match(
+    packagePipeline,
+    /node scripts\/build\/stage-npm-package\.mjs --output "\$stage"/,
+    "canonical packaging must construct a bounded publish staging tree first"
+  );
+  assert.match(
+    packagePipeline,
+    /cd "\$stage"[\s\S]*npm pack --json --pack-destination "\$out"/,
+    "the single canonical npm pack must run from the bounded staging tree"
+  );
+  assert.match(packagePipeline, /npm run check:pack-artifact -- --package/);
+  assert.match(packagePipeline, /check-pack-boot\.mjs --package/);
+  assert.match(
+    packagePipeline,
+    /needs: \[package-canonical, package-policy, package-boot\]/,
+    "Package Artifact must aggregate both parallel consumers"
+  );
+  assert.match(
+    packagePipeline,
+    /needs\.package-canonical\.result != 'skipped'/,
+    "docs-only/build-skip flows must keep Package Artifact skipped instead of false-failing"
+  );
 });
 
 test("restart persistence requires the reboot value to match the boot #1 written value", () => {

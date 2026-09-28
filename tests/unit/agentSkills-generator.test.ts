@@ -224,7 +224,7 @@ test("apply mode writes SKILL.md for an API skill with correct sections", async 
     assert.ok(content.includes('-d \'{"password":"<management-password>"}\''));
     assert.ok(content.includes("-c cookie.jar"), "login must save the dashboard session cookie");
     assert.ok(content.includes("-b cookie.jar"), "auth examples must send the session cookie");
-    assert.ok(content.includes("x-omniroute-csrf"), "mutations must include a CSRF token");
+    assert.ok(content.includes("x-agentproxy-csrf"), "mutations must include a CSRF token");
     const loginExample = content.slice(
       content.indexOf("### POST /api/auth/login"),
       content.indexOf("### POST /api/auth/logout")
@@ -235,7 +235,7 @@ test("apply mode writes SKILL.md for an API skill with correct sections", async 
       content.indexOf("### GET /api/auth/oidc/login")
     );
     assert.ok(logoutExample.includes("-b cookie.jar"));
-    assert.ok(logoutExample.includes("x-omniroute-csrf"));
+    assert.ok(logoutExample.includes("x-agentproxy-csrf"));
     assert.ok(!logoutExample.includes("Authorization: Bearer"));
   } finally {
     rmTmpDir(tmpDir);
@@ -256,7 +256,7 @@ test("generic API skill GET and mutation examples use standalone Bearer auth", a
     assert.equal(report.errors.length, 0, `Errors: ${JSON.stringify(report.errors)}`);
     for (const id of ["omni-providers", "omni-settings"]) {
       const content = fs.readFileSync(path.join(tmpDir, id, "SKILL.md"), "utf-8");
-      assert.ok(content.includes('  -H "Authorization: Bearer $OMNIROUTE_TOKEN"'));
+      assert.ok(content.includes('  -H "Authorization: Bearer $AGENTPROXY_TOKEN"'));
       assert.ok(!content.includes("cookie.jar"), `${id} must not assume a session cookie`);
       assert.ok(!content.includes("CSRF_TOKEN"), `${id} must not assume a CSRF token`);
     }
@@ -270,8 +270,8 @@ test("generic API skill GET and mutation examples use standalone Bearer auth", a
       providers.indexOf("### POST /api/providers"),
       providers.indexOf("### GET /api/providers/{id}")
     );
-    assert.ok(providersGet.includes('  -H "Authorization: Bearer $OMNIROUTE_TOKEN"'));
-    assert.ok(providersPost.includes('  -H "Authorization: Bearer $OMNIROUTE_TOKEN" \\\n'));
+    assert.ok(providersGet.includes('  -H "Authorization: Bearer $AGENTPROXY_TOKEN"'));
+    assert.ok(providersPost.includes('  -H "Authorization: Bearer $AGENTPROXY_TOKEN" \\\n'));
     assert.ok(providersPost.includes('  -H "Content-Type: application/json" \\\n'));
 
     const settings = fs.readFileSync(path.join(tmpDir, "omni-settings", "SKILL.md"), "utf-8");
@@ -279,7 +279,7 @@ test("generic API skill GET and mutation examples use standalone Bearer auth", a
       settings.indexOf("### PATCH /api/settings"),
       settings.indexOf("### POST /api/settings/purge-request-history")
     );
-    assert.ok(settingsPatch.includes('  -H "Authorization: Bearer $OMNIROUTE_TOKEN" \\\n'));
+    assert.ok(settingsPatch.includes('  -H "Authorization: Bearer $AGENTPROXY_TOKEN" \\\n'));
     assert.ok(settingsPatch.includes('  -H "Content-Type: application/json" \\\n'));
   } finally {
     rmTmpDir(tmpDir);

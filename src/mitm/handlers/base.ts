@@ -6,7 +6,7 @@
  * The base handles the cross-cutting concerns shared by every IDE-agent handler:
  *   - request body capture + secret masking
  *   - source model extraction
- *   - forwarding to the OmniRoute router (Next.js API)
+ *   - forwarding to the AgentProxy router (Next.js API)
  *   - SSE piping
  *   - optional Traffic Inspector hook (F4 — loaded via dynamic import; no-op when
  *     `agentBridgeHook.ts` is not yet present in the build)
@@ -23,13 +23,13 @@ import type { InterceptedRequest } from "../inspector/types";
 
 /**
  * Best-effort error sanitizer.
- * Routes through `@omniroute/open-sse/utils/error.sanitizeErrorMessage` (Hard Rule #12)
+ * Routes through `@agentproxy/open-sse/utils/error.sanitizeErrorMessage` (Hard Rule #12)
  * when available; falls back to a safe `String(err)` if the module is not present
  * (e.g. unit tests that don't load the full open-sse barrel).
  */
 async function safeErrorMessage(err: unknown): Promise<string> {
   try {
-    const mod = (await import("@omniroute/open-sse/utils/error")) as {
+    const mod = (await import("@agentproxy/open-sse/utils/error")) as {
       sanitizeErrorMessage?: (m: unknown) => string;
     };
     if (typeof mod.sanitizeErrorMessage === "function") {
@@ -84,7 +84,7 @@ export abstract class MitmHandlerBase {
    * Concrete handlers must:
    *   1. Optionally call `this.hookBufferStart(req, body, mappedModel)`.
    *   2. Build the upstream-bound payload (translate model, format, etc.).
-   *   3. Call `this.fetchRouter(...)` for the OmniRoute router round-trip.
+   *   3. Call `this.fetchRouter(...)` for the AgentProxy router round-trip.
    *   4. Pipe the response back via `this.pipeSSE(...)` for streaming
    *      or write the JSON body directly for non-streaming flows.
    *   5. Call `this.hookBufferUpdate(intercepted)` on completion / error.
@@ -124,8 +124,8 @@ export abstract class MitmHandlerBase {
   }
 
   /**
-   * Forward the prepared body to the OmniRoute router (Next.js API).
-   * Adds AgentBridge correlation headers (`x-omniroute-source`, `x-omniroute-agent`)
+   * Forward the prepared body to the AgentProxy router (Next.js API).
+   * Adds AgentBridge correlation headers (`x-agentproxy-source`, `x-agentproxy-agent`)
    * and forwards a sanitized copy of the original request headers (secrets masked,
    * hop-by-hop stripped).
    */
@@ -134,7 +134,7 @@ export abstract class MitmHandlerBase {
     path: string,
     headers: IncomingHttpHeaders,
   ): Promise<Response> {
-    const base = process.env.OMNIROUTE_BASE_URL ?? "http://127.0.0.1:20128";
+    const base = process.env.AGENTPROXY_BASE_URL ?? "http://127.0.0.1:20128";
     const url = `${base.replace(/\/+$/, "")}${path}`;
     const apiKey = process.env.ROUTER_API_KEY ?? "";
 
@@ -142,8 +142,8 @@ export abstract class MitmHandlerBase {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "x-omniroute-source": "agent-bridge",
-        "x-omniroute-agent": this.agentId,
+        "x-agentproxy-source": "agent-bridge",
+        "x-agentproxy-agent": this.agentId,
         ...sanitizeHeaders(headers),
         ...(apiKey ? { authorization: `Bearer ${apiKey}` } : {}),
       },

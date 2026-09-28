@@ -1,6 +1,6 @@
 /**
  * Unit tests for bin/aliasResolver.mjs — the ESM resolver hook that fixes
- * `Cannot find package '@/shared'` when OmniRoute is installed globally
+ * `Cannot find package '@/shared'` when AgentProxy is installed globally
  * (issue #7791).
  *
  * The hook is registered via module.register() and runs in a loader worker,
@@ -134,26 +134,26 @@ describe("aliasResolver.resolveAlias (pure)", () => {
   });
 });
 
-describe("aliasResolver.resolveAlias — @omniroute/open-sse aliases", () => {
+describe("aliasResolver.resolveAlias — @agentproxy/open-sse aliases", () => {
   it("exposes ALIAS_MAP with three entries matching tsconfig paths", () => {
     assert.equal(ALIAS_MAP.length, 3, "must have 3 alias entries");
     // @/
     assert.equal(ALIAS_MAP[0].prefix, "@/");
     assert.equal(ALIAS_MAP[0].target, "src");
     assert.equal(ALIAS_MAP[0].exact, false);
-    // @omniroute/open-sse/ (subpath)
-    assert.equal(ALIAS_MAP[1].prefix, "@omniroute/open-sse/");
+    // @agentproxy/open-sse/ (subpath)
+    assert.equal(ALIAS_MAP[1].prefix, "@agentproxy/open-sse/");
     assert.equal(ALIAS_MAP[1].target, "open-sse");
     assert.equal(ALIAS_MAP[1].exact, false);
-    // @omniroute/open-sse (exact package name)
-    assert.equal(ALIAS_MAP[2].prefix, "@omniroute/open-sse");
+    // @agentproxy/open-sse (exact package name)
+    assert.equal(ALIAS_MAP[2].prefix, "@agentproxy/open-sse");
     assert.equal(ALIAS_MAP[2].target, "open-sse");
     assert.equal(ALIAS_MAP[2].exact, true);
   });
 
-  it("resolves @omniroute/open-sse (bare) to open-sse/index.ts", () => {
-    const got = resolveAlias("@omniroute/open-sse", REPO_ROOT);
-    assert.ok(got, "expected non-null URL for @omniroute/open-sse");
+  it("resolves @agentproxy/open-sse (bare) to open-sse/index.ts", () => {
+    const got = resolveAlias("@agentproxy/open-sse", REPO_ROOT);
+    assert.ok(got, "expected non-null URL for @agentproxy/open-sse");
     assert.ok(got.startsWith("file://"), "must be a file URL");
     const fsPath = fileURLToPath(got);
     assert.ok(
@@ -162,8 +162,8 @@ describe("aliasResolver.resolveAlias — @omniroute/open-sse aliases", () => {
     );
   });
 
-  it("resolves @omniroute/open-sse/services/usage to open-sse/services/usage.ts", () => {
-    const got = resolveAlias("@omniroute/open-sse/services/usage", REPO_ROOT);
+  it("resolves @agentproxy/open-sse/services/usage to open-sse/services/usage.ts", () => {
+    const got = resolveAlias("@agentproxy/open-sse/services/usage", REPO_ROOT);
     assert.ok(got, "expected non-null URL");
     const fsPath = fileURLToPath(got);
     assert.ok(
@@ -172,8 +172,8 @@ describe("aliasResolver.resolveAlias — @omniroute/open-sse aliases", () => {
     );
   });
 
-  it("resolves @omniroute/open-sse/utils/proxyFetch to open-sse/utils/proxyFetch.ts", () => {
-    const got = resolveAlias("@omniroute/open-sse/utils/proxyFetch", REPO_ROOT);
+  it("resolves @agentproxy/open-sse/utils/proxyFetch to open-sse/utils/proxyFetch.ts", () => {
+    const got = resolveAlias("@agentproxy/open-sse/utils/proxyFetch", REPO_ROOT);
     assert.ok(got, "expected non-null URL");
     const fsPath = fileURLToPath(got);
     assert.ok(
@@ -182,17 +182,17 @@ describe("aliasResolver.resolveAlias — @omniroute/open-sse aliases", () => {
     );
   });
 
-  it("returns null for non-existent @omniroute/open-sse/* paths", () => {
-    assert.equal(resolveAlias("@omniroute/open-sse/does/not/exist", REPO_ROOT), null);
+  it("returns null for non-existent @agentproxy/open-sse/* paths", () => {
+    assert.equal(resolveAlias("@agentproxy/open-sse/does/not/exist", REPO_ROOT), null);
   });
 
-  it("returns null for @omniroute/other (unmatched scope)", () => {
-    assert.equal(resolveAlias("@omniroute/other", REPO_ROOT), null);
-    assert.equal(resolveAlias("@omniroute/other/pkg", REPO_ROOT), null);
+  it("returns null for @agentproxy/other (unmatched scope)", () => {
+    assert.equal(resolveAlias("@agentproxy/other", REPO_ROOT), null);
+    assert.equal(resolveAlias("@agentproxy/other/pkg", REPO_ROOT), null);
   });
 
-  it("rejects path-traversal via @omniroute/open-sse/../../etc/passwd", () => {
-    assert.equal(resolveAlias("@omniroute/open-sse/../../etc/passwd", REPO_ROOT), null);
+  it("rejects path-traversal via @agentproxy/open-sse/../../etc/passwd", () => {
+    assert.equal(resolveAlias("@agentproxy/open-sse/../../etc/passwd", REPO_ROOT), null);
   });
 });
 
@@ -247,7 +247,7 @@ describe("aliasResolver end-to-end (#7791 regression)", () => {
         ...process.env,
         // Force a clean DATA_DIR so loadEnvFile() does not pick up dev .env
         DATA_DIR: mkdtempSync(join(tmpdir(), "alias-resolver-e2e-")),
-        OMNIROUTE_CLI_SKIP_REPO_ENV: "1",
+        AGENTPROXY_CLI_SKIP_REPO_ENV: "1",
       },
       encoding: "utf8",
     });
@@ -263,7 +263,7 @@ describe("aliasResolver end-to-end (#7791 regression)", () => {
     // loaded module's transitive relative imports (e.g. `./core` without an
     // extension) need tsx to resolve, and tsx must be installed in the loader
     // before any dynamic import() of a .ts file. This mirrors what
-    // bin/omniroute.mjs does (await import("tsx/esm") first, then register).
+    // bin/agentproxy.mjs does (await import("tsx/esm") first, then register).
     const script = `
       await import("tsx/esm");
       import { join } from "node:path";

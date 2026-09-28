@@ -9,7 +9,7 @@ import {
 import {
   buildErrorBody,
   sanitizeErrorMessage,
-} from "@omniroute/open-sse/utils/error.ts";
+} from "@agentproxy/open-sse/utils/error.ts";
 import { CORS_HEADERS, handleCorsOptions } from "@/shared/utils/cors";
 
 const ELEVENLABS_API_BASE = "https://api.elevenlabs.io/v1";

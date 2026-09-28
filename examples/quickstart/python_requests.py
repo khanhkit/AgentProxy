@@ -1,5 +1,5 @@
 """
-OmniRoute Quickstart — Python (requests library)
+AgentProxy Quickstart — Python (requests library)
 ================================================
 Run:  pip install requests  (if not already installed)
       python python_requests.py
@@ -7,7 +7,7 @@ Run:  pip install requests  (if not already installed)
 
 import requests
 
-# Your local OmniRoute server — started with: npx omniroute
+# Your local AgentProxy server — started with: npx agentproxy
 API_URL = "http://localhost:20128/v1/chat/completions"
 
 headers = {

@@ -21,13 +21,13 @@ test("buildCodexEnv strips stale OpenAI/Codex creds from the child env (defense-
   assert.equal(env.OPENAI_BASE_URL, undefined);
   assert.equal(env.OPENAI_ORG_ID, undefined);
   assert.equal(env.CODEX_API_KEY, undefined);
-  assert.equal(env.OMNIROUTE_API_KEY, "oma_live_x");
+  assert.equal(env.AGENTPROXY_API_KEY, "oma_live_x");
   assert.equal(env.PATH, "/bin", "unrelated vars preserved");
 });
 
 test("buildCodexEnv uses a no-auth sentinel when no token is given", () => {
   const env = buildCodexEnv({ PATH: "/bin" }, undefined);
-  assert.equal(env.OMNIROUTE_API_KEY, "omniroute-no-auth");
+  assert.equal(env.AGENTPROXY_API_KEY, "agentproxy-no-auth");
 });
 
 test("buildCodexEnv does not mutate the input env", () => {
@@ -36,14 +36,14 @@ test("buildCodexEnv does not mutate the input env", () => {
   assert.equal(input.OPENAI_API_KEY, "leak");
 });
 
-test("buildCodexProviderArgs defines the omniroute provider inline (works without config.toml)", () => {
+test("buildCodexProviderArgs defines the agentproxy provider inline (works without config.toml)", () => {
   const args = buildCodexProviderArgs("http://vps:20128");
   const joined = args.join(" ");
-  assert.ok(joined.includes('model_provider="omniroute"'));
-  assert.ok(joined.includes('model_providers.omniroute.base_url="http://vps:20128/v1"'));
-  assert.ok(joined.includes('model_providers.omniroute.env_key="OMNIROUTE_API_KEY"'));
-  assert.ok(joined.includes('model_providers.omniroute.wire_api="responses"'));
-  assert.ok(joined.includes("model_providers.omniroute.requires_openai_auth=false"));
+  assert.ok(joined.includes('model_provider="agentproxy"'));
+  assert.ok(joined.includes('model_providers.agentproxy.base_url="http://vps:20128/v1"'));
+  assert.ok(joined.includes('model_providers.agentproxy.env_key="AGENTPROXY_API_KEY"'));
+  assert.ok(joined.includes('model_providers.agentproxy.wire_api="responses"'));
+  assert.ok(joined.includes("model_providers.agentproxy.requires_openai_auth=false"));
   // each assignment is preceded by a -c flag
   assert.equal(args.filter((a) => a === "-c").length, 6);
 });
@@ -51,7 +51,7 @@ test("buildCodexProviderArgs defines the omniroute provider inline (works withou
 test("buildCodexProviderArgs accepts a model id and serializes it into provider args", () => {
   const args = buildCodexProviderArgs("http://vps:20128", "glm/glm-4.5");
   assert.equal(args.includes("-c"), true);
-  assert.ok(args.some((arg) => arg === 'model_providers.omniroute.model="glm/glm-4.5"'));
+  assert.ok(args.some((arg) => arg === 'model_providers.agentproxy.model="glm/glm-4.5"'));
   // model is optional => previous 6 assignments + one extra
   assert.equal(args.filter((a) => a === "-c").length, 7);
 });

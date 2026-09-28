@@ -10,13 +10,13 @@ test("cliToken.mjs pode ser importado sem erro", async () => {
   const mod = await import("../../bin/cli/utils/cliToken.mjs");
   assert.equal(typeof mod.getCliToken, "function");
   assert.equal(typeof mod.CLI_TOKEN_HEADER, "string");
-  assert.equal(mod.CLI_TOKEN_HEADER, "x-omniroute-cli-token");
+  assert.equal(mod.CLI_TOKEN_HEADER, "x-agentproxy-cli-token");
 });
 
 test("packaged CLI derives the same current machine token as the server", async () => {
   const salt = `cli-machine-token-${process.pid}`;
-  const previousSalt = process.env.OMNIROUTE_CLI_SALT;
-  process.env.OMNIROUTE_CLI_SALT = salt;
+  const previousSalt = process.env.AGENTPROXY_CLI_SALT;
+  process.env.AGENTPROXY_CLI_SALT = salt;
   try {
     const { getCliToken } = await import(`../../bin/cli/utils/cliToken.mjs?current=${Date.now()}`);
     const { getMachineTokenSync } = await import("../../src/lib/machineToken.ts");
@@ -25,8 +25,8 @@ test("packaged CLI derives the same current machine token as the server", async 
     assert.match(token, /^[0-9a-f]{64}$/, "CLI token must be a non-empty HMAC-SHA256 digest");
     assert.equal(token, getMachineTokenSync(salt));
   } finally {
-    if (previousSalt === undefined) delete process.env.OMNIROUTE_CLI_SALT;
-    else process.env.OMNIROUTE_CLI_SALT = previousSalt;
+    if (previousSalt === undefined) delete process.env.AGENTPROXY_CLI_SALT;
+    else process.env.AGENTPROXY_CLI_SALT = previousSalt;
   }
 });
 
@@ -60,7 +60,7 @@ test("getCliToken deriva token de 64 chars sob o node puro que a CLI usa", async
   if (typeof machineIdSync !== "function") return;
 
   // Precisa rodar em `node` puro, sem o loader tsx/esm: o tsx resolve os named
-  // exports de um CJS e mascara o bug de interop. `omniroute` roda sob node puro,
+  // exports de um CJS e mascara o bug de interop. `agentproxy` roda sob node puro,
   // onde `const { machineIdSync } = await import(...)` dava undefined, o catch
   // zerava o token e TODA requisição de management saía sem autenticação.
   const repoRoot = fileURLToPath(new URL("../..", import.meta.url));
@@ -85,17 +85,17 @@ test("getCliToken retorna mesmo valor em chamadas repetidas (cache)", async () =
   assert.equal(t1, t2);
 });
 
-test("getCliToken respeita rotação de OMNIROUTE_CLI_SALT", async () => {
+test("getCliToken respeita rotação de AGENTPROXY_CLI_SALT", async () => {
   const mod = await import("node-machine-id");
   const machineIdSync = mod.machineIdSync ?? mod.default?.machineIdSync;
   if (typeof machineIdSync !== "function") return;
 
   const { getCliToken } = await import("../../bin/cli/utils/cliToken.mjs");
-  const original = process.env.OMNIROUTE_CLI_SALT;
+  const original = process.env.AGENTPROXY_CLI_SALT;
   try {
-    delete process.env.OMNIROUTE_CLI_SALT;
+    delete process.env.AGENTPROXY_CLI_SALT;
     const withDefaultSalt = await getCliToken();
-    process.env.OMNIROUTE_CLI_SALT = "rotated-salt-for-test";
+    process.env.AGENTPROXY_CLI_SALT = "rotated-salt-for-test";
     const withRotatedSalt = await getCliToken();
     // docs/security/CLI_TOKEN.md promete que a rotação alcança os processos CLI;
     // o SALT hardcoded ignorava a env var e devolvia sempre o mesmo token.
@@ -103,8 +103,8 @@ test("getCliToken respeita rotação de OMNIROUTE_CLI_SALT", async () => {
     // HMAC-SHA256 digest hex = 64 chars (#10148 cliToken hardening).
     assert.equal(withRotatedSalt.length, 64);
   } finally {
-    if (original === undefined) delete process.env.OMNIROUTE_CLI_SALT;
-    else process.env.OMNIROUTE_CLI_SALT = original;
+    if (original === undefined) delete process.env.AGENTPROXY_CLI_SALT;
+    else process.env.AGENTPROXY_CLI_SALT = original;
   }
 });
 
@@ -117,40 +117,40 @@ test("getCliToken produz apenas hex lowercase se não-vazio", async () => {
   }
 });
 
-test("OMNIROUTE_CLI_TOKEN env sobrescreve token gerado em apiFetch", async () => {
-  const orig = process.env.OMNIROUTE_CLI_TOKEN;
-  process.env.OMNIROUTE_CLI_TOKEN = "test-override-token-12345";
+test("AGENTPROXY_CLI_TOKEN env sobrescreve token gerado em apiFetch", async () => {
+  const orig = process.env.AGENTPROXY_CLI_TOKEN;
+  process.env.AGENTPROXY_CLI_TOKEN = "test-override-token-12345";
   try {
     // Re-import api.mjs não funciona por cache ESM — validamos apenas que env é lido.
-    assert.equal(process.env.OMNIROUTE_CLI_TOKEN, "test-override-token-12345");
+    assert.equal(process.env.AGENTPROXY_CLI_TOKEN, "test-override-token-12345");
   } finally {
-    if (orig === undefined) delete process.env.OMNIROUTE_CLI_TOKEN;
-    else process.env.OMNIROUTE_CLI_TOKEN = orig;
+    if (orig === undefined) delete process.env.AGENTPROXY_CLI_TOKEN;
+    else process.env.AGENTPROXY_CLI_TOKEN = orig;
   }
 });
 
 test("apiFetch never sends an implicit machine token to remote contexts", async () => {
-  const originalBaseUrl = process.env.OMNIROUTE_BASE_URL;
-  const originalOverride = process.env.OMNIROUTE_CLI_TOKEN;
-  process.env.OMNIROUTE_BASE_URL = "https://remote.example.test";
-  delete process.env.OMNIROUTE_CLI_TOKEN;
+  const originalBaseUrl = process.env.AGENTPROXY_BASE_URL;
+  const originalOverride = process.env.AGENTPROXY_CLI_TOKEN;
+  process.env.AGENTPROXY_BASE_URL = "https://remote.example.test";
+  delete process.env.AGENTPROXY_CLI_TOKEN;
   try {
     const { buildHeaders } = await import(`../../bin/cli/api.mjs?remote=${Date.now()}`);
     const headers = await buildHeaders({});
-    assert.equal(headers.has("x-omniroute-cli-token"), false);
+    assert.equal(headers.has("x-agentproxy-cli-token"), false);
   } finally {
-    if (originalBaseUrl === undefined) delete process.env.OMNIROUTE_BASE_URL;
-    else process.env.OMNIROUTE_BASE_URL = originalBaseUrl;
-    if (originalOverride === undefined) delete process.env.OMNIROUTE_CLI_TOKEN;
-    else process.env.OMNIROUTE_CLI_TOKEN = originalOverride;
+    if (originalBaseUrl === undefined) delete process.env.AGENTPROXY_BASE_URL;
+    else process.env.AGENTPROXY_BASE_URL = originalBaseUrl;
+    if (originalOverride === undefined) delete process.env.AGENTPROXY_CLI_TOKEN;
+    else process.env.AGENTPROXY_CLI_TOKEN = originalOverride;
   }
 });
 
 test("apiFetch sends the implicit machine token only to loopback destinations", async () => {
-  const originalBaseUrl = process.env.OMNIROUTE_BASE_URL;
-  const originalOverride = process.env.OMNIROUTE_CLI_TOKEN;
-  process.env.OMNIROUTE_BASE_URL = "http://127.0.0.1:20128";
-  delete process.env.OMNIROUTE_CLI_TOKEN;
+  const originalBaseUrl = process.env.AGENTPROXY_BASE_URL;
+  const originalOverride = process.env.AGENTPROXY_CLI_TOKEN;
+  process.env.AGENTPROXY_BASE_URL = "http://127.0.0.1:20128";
+  delete process.env.AGENTPROXY_CLI_TOKEN;
   try {
     const [{ buildHeaders, isLoopbackUrl }, { getCliToken }] = await Promise.all([
       import(`../../bin/cli/api.mjs?loopback=${Date.now()}`),
@@ -161,38 +161,38 @@ test("apiFetch sends the implicit machine token only to loopback destinations", 
     assert.equal(isLoopbackUrl("http://[::1]:20128"), true);
     assert.equal(isLoopbackUrl("https://remote.example.test"), false);
     const headers = await buildHeaders({});
-    assert.equal(headers.get("x-omniroute-cli-token"), await getCliToken());
+    assert.equal(headers.get("x-agentproxy-cli-token"), await getCliToken());
   } finally {
-    if (originalBaseUrl === undefined) delete process.env.OMNIROUTE_BASE_URL;
-    else process.env.OMNIROUTE_BASE_URL = originalBaseUrl;
-    if (originalOverride === undefined) delete process.env.OMNIROUTE_CLI_TOKEN;
-    else process.env.OMNIROUTE_CLI_TOKEN = originalOverride;
+    if (originalBaseUrl === undefined) delete process.env.AGENTPROXY_BASE_URL;
+    else process.env.AGENTPROXY_BASE_URL = originalBaseUrl;
+    if (originalOverride === undefined) delete process.env.AGENTPROXY_CLI_TOKEN;
+    else process.env.AGENTPROXY_CLI_TOKEN = originalOverride;
   }
 });
 
 test("CLI-token overrides are also suppressed for remote contexts", async () => {
-  const originalBaseUrl = process.env.OMNIROUTE_BASE_URL;
-  const originalOverride = process.env.OMNIROUTE_CLI_TOKEN;
-  process.env.OMNIROUTE_BASE_URL = "https://remote.example.test";
-  process.env.OMNIROUTE_CLI_TOKEN = "must-not-leave-loopback";
+  const originalBaseUrl = process.env.AGENTPROXY_BASE_URL;
+  const originalOverride = process.env.AGENTPROXY_CLI_TOKEN;
+  process.env.AGENTPROXY_BASE_URL = "https://remote.example.test";
+  process.env.AGENTPROXY_CLI_TOKEN = "must-not-leave-loopback";
   try {
     const { buildHeaders } = await import(`../../bin/cli/api.mjs?override=${Date.now()}`);
     const headers = await buildHeaders({ cliToken: "also-local-only" });
-    assert.equal(headers.has("x-omniroute-cli-token"), false);
+    assert.equal(headers.has("x-agentproxy-cli-token"), false);
   } finally {
-    if (originalBaseUrl === undefined) delete process.env.OMNIROUTE_BASE_URL;
-    else process.env.OMNIROUTE_BASE_URL = originalBaseUrl;
-    if (originalOverride === undefined) delete process.env.OMNIROUTE_CLI_TOKEN;
-    else process.env.OMNIROUTE_CLI_TOKEN = originalOverride;
+    if (originalBaseUrl === undefined) delete process.env.AGENTPROXY_BASE_URL;
+    else process.env.AGENTPROXY_BASE_URL = originalBaseUrl;
+    if (originalOverride === undefined) delete process.env.AGENTPROXY_CLI_TOKEN;
+    else process.env.AGENTPROXY_CLI_TOKEN = originalOverride;
   }
 });
 
 test("absolute remote URLs cannot inherit a local context machine token", async () => {
-  const originalBaseUrl = process.env.OMNIROUTE_BASE_URL;
-  const originalOverride = process.env.OMNIROUTE_CLI_TOKEN;
+  const originalBaseUrl = process.env.AGENTPROXY_BASE_URL;
+  const originalOverride = process.env.AGENTPROXY_CLI_TOKEN;
   const originalFetch = globalThis.fetch;
-  process.env.OMNIROUTE_BASE_URL = "http://127.0.0.1:20128";
-  process.env.OMNIROUTE_CLI_TOKEN = "must-stay-local";
+  process.env.AGENTPROXY_BASE_URL = "http://127.0.0.1:20128";
+  process.env.AGENTPROXY_CLI_TOKEN = "must-stay-local";
   let receivedHeaders: Headers | null = null;
   globalThis.fetch = (async (_url, init) => {
     receivedHeaders = new Headers(init?.headers);
@@ -201,19 +201,19 @@ test("absolute remote URLs cannot inherit a local context machine token", async 
   try {
     const { apiFetch } = await import(`../../bin/cli/api.mjs?absolute=${Date.now()}`);
     await apiFetch("https://remote.example.test/probe", { retry: false });
-    assert.equal(receivedHeaders?.has("x-omniroute-cli-token"), false);
+    assert.equal(receivedHeaders?.has("x-agentproxy-cli-token"), false);
   } finally {
     globalThis.fetch = originalFetch;
-    if (originalBaseUrl === undefined) delete process.env.OMNIROUTE_BASE_URL;
-    else process.env.OMNIROUTE_BASE_URL = originalBaseUrl;
-    if (originalOverride === undefined) delete process.env.OMNIROUTE_CLI_TOKEN;
-    else process.env.OMNIROUTE_CLI_TOKEN = originalOverride;
+    if (originalBaseUrl === undefined) delete process.env.AGENTPROXY_BASE_URL;
+    else process.env.AGENTPROXY_BASE_URL = originalBaseUrl;
+    if (originalOverride === undefined) delete process.env.AGENTPROXY_CLI_TOKEN;
+    else process.env.AGENTPROXY_CLI_TOKEN = originalOverride;
   }
 });
 
 test("apiFetch refuses redirects while carrying a local machine token", async () => {
-  const originalBaseUrl = process.env.OMNIROUTE_BASE_URL;
-  const originalOverride = process.env.OMNIROUTE_CLI_TOKEN;
+  const originalBaseUrl = process.env.AGENTPROXY_BASE_URL;
+  const originalOverride = process.env.AGENTPROXY_CLI_TOKEN;
   let redirectedRequests = 0;
   const destination = http.createServer((_request, response) => {
     redirectedRequests += 1;
@@ -229,8 +229,8 @@ test("apiFetch refuses redirects while carrying a local machine token", async ()
   await new Promise<void>((resolve) => redirector.listen(0, "127.0.0.1", resolve));
   const redirectorAddress = redirector.address();
   assert.ok(redirectorAddress && typeof redirectorAddress === "object");
-  process.env.OMNIROUTE_BASE_URL = `http://127.0.0.1:${redirectorAddress.port}`;
-  process.env.OMNIROUTE_CLI_TOKEN = "redirect-secret";
+  process.env.AGENTPROXY_BASE_URL = `http://127.0.0.1:${redirectorAddress.port}`;
+  process.env.AGENTPROXY_CLI_TOKEN = "redirect-secret";
   try {
     const { apiFetch } = await import(`../../bin/cli/api.mjs?redirect=${Date.now()}`);
     await assert.rejects(() => apiFetch("/redirect", { retry: false }), /fetch failed/i);
@@ -240,10 +240,10 @@ test("apiFetch refuses redirects while carrying a local machine token", async ()
       new Promise<void>((resolve) => redirector.close(() => resolve())),
       new Promise<void>((resolve) => destination.close(() => resolve())),
     ]);
-    if (originalBaseUrl === undefined) delete process.env.OMNIROUTE_BASE_URL;
-    else process.env.OMNIROUTE_BASE_URL = originalBaseUrl;
-    if (originalOverride === undefined) delete process.env.OMNIROUTE_CLI_TOKEN;
-    else process.env.OMNIROUTE_CLI_TOKEN = originalOverride;
+    if (originalBaseUrl === undefined) delete process.env.AGENTPROXY_BASE_URL;
+    else process.env.AGENTPROXY_BASE_URL = originalBaseUrl;
+    if (originalOverride === undefined) delete process.env.AGENTPROXY_CLI_TOKEN;
+    else process.env.AGENTPROXY_CLI_TOKEN = originalOverride;
   }
 });
 
@@ -272,7 +272,7 @@ test("isLoopback rejeita IP público", async () => {
 });
 
 test("token derivado de machine-id diferente produz hash diferente", () => {
-  const SALT = "omniroute-cli-auth-v1";
+  const SALT = "agentproxy-cli-auth-v1";
   // Mirror the production derivation (#10148): HMAC-SHA256(machineId, SALT) hex.
   const hash = (mid: string) =>
     crypto
@@ -286,13 +286,13 @@ test("token derivado de machine-id diferente produz hash diferente", () => {
   assert.match(t2, /^[0-9a-f]{64}$/);
 });
 
-test("OMNIROUTE_DISABLE_CLI_TOKEN desabilita auth (estrutura verificada)", async () => {
+test("AGENTPROXY_DISABLE_CLI_TOKEN desabilita auth (estrutura verificada)", async () => {
   const { readFileSync } = await import("node:fs");
   const { join, dirname } = await import("node:path");
   const { fileURLToPath } = await import("node:url");
   const dir = dirname(fileURLToPath(import.meta.url));
   const src = readFileSync(join(dir, "../../src/lib/middleware/cliTokenAuth.ts"), "utf8");
-  assert.ok(src.includes("OMNIROUTE_DISABLE_CLI_TOKEN"));
+  assert.ok(src.includes("AGENTPROXY_DISABLE_CLI_TOKEN"));
 });
 
 test("cliTokenAuth must NOT derive loopback from the spoofable Host header", async () => {

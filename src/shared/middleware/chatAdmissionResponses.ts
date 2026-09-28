@@ -1,4 +1,4 @@
-import { buildErrorBody } from "@omniroute/open-sse/utils/error.ts";
+import { buildErrorBody } from "@agentproxy/open-sse/utils/error.ts";
 
 import { CORS_HEADERS } from "../utils/cors";
 

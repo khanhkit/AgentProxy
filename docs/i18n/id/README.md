@@ -1,4 +1,4 @@
-# 🚀 OmniRoute — Gateway AI Gratis (Bahasa Indonesia)
+# 🚀 AgentProxy — Gateway AI Gratis (Bahasa Indonesia)
 
 🌐 **Languages:** 🇺🇸 [English](../../../README.md) · 🇸🇦 [ar](../ar/README.md) · 🇦🇿 [az](../az/README.md) · 🇧🇬 [bg](../bg/README.md) · 🇧🇩 [bn](../bn/README.md) · 🇨🇿 [cs](../cs/README.md) · 🇩🇰 [da](../da/README.md) · 🇩🇪 [de](../de/README.md) · 🇬🇷 [el](../el/README.md) · 🇪🇸 [es](../es/README.md) · 🇪🇪 [et](../et/README.md) · 🇮🇷 [fa](../fa/README.md) · 🇫🇮 [fi](../fi/README.md) · 🇫🇷 [fr](../fr/README.md) · 🇮🇪 [ga](../ga/README.md) · 🇮🇳 [gu](../gu/README.md) · 🇮🇱 [he](../he/README.md) · 🇮🇳 [hi](../hi/README.md) · 🇭🇷 [hr](../hr/README.md) · 🇭🇺 [hu](../hu/README.md) · 🇮🇹 [it](../it/README.md) · 🇯🇵 [ja](../ja/README.md) · 🇰🇷 [ko](../ko/README.md) · 🇱🇹 [lt](../lt/README.md) · 🇱🇻 [lv](../lv/README.md) · 🇮🇳 [mr](../mr/README.md) · 🇲🇾 [ms](../ms/README.md) · 🇲🇹 [mt](../mt/README.md) · 🇳🇱 [nl](../nl/README.md) · 🇳🇴 [no](../no/README.md) · 🇵🇭 [phi](../phi/README.md) · 🇵🇱 [pl](../pl/README.md) · 🇵🇹 [pt](../pt/README.md) · 🇧🇷 [pt-BR](../pt-BR/README.md) · 🇷🇴 [ro](../ro/README.md) · 🇷🇺 [ru](../ru/README.md) · 🇸🇰 [sk](../sk/README.md) · 🇸🇮 [sl](../sl/README.md) · 🇷🇸 [sr](../sr/README.md) · 🇸🇪 [sv](../sv/README.md) · 🇰🇪 [sw](../sw/README.md) · 🇮🇳 [ta](../ta/README.md) · 🇮🇳 [te](../te/README.md) · 🇹🇭 [th](../th/README.md) · 🇹🇷 [tr](../tr/README.md) · 🇺🇦 [uk-UA](../uk-UA/README.md) · 🇵🇰 [ur](../ur/README.md) · 🇻🇳 [vi](../vi/README.md) · 🇨🇳 [zh-CN](../zh-CN/README.md) · 🇹🇼 [zh-TW](../zh-TW/README.md)
 
@@ -14,34 +14,34 @@ _Proxy API universal Anda — satu endpoint untuk 329 entri katalog penyedia, de
 
 <div align="center">
 
-[![npm version](https://img.shields.io/npm/v/omniroute?color=cb3837&logo=npm)](https://www.npmjs.com/package/omniroute)
-[![Docker Hub](https://img.shields.io/docker/v/diegosouzapw/omniroute?label=Docker%20Hub&logo=docker&color=2496ED)](https://hub.docker.com/r/diegosouzapw/omniroute)
+[![npm version](https://img.shields.io/npm/v/agentproxy?color=cb3837&logo=npm)](https://www.npmjs.com/package/agentproxy)
+[![Docker Hub](https://img.shields.io/docker/v/khanhkit/agentproxy?label=Docker%20Hub&logo=docker&color=2496ED)](https://github.com/khanhkit/AgentProxy/pkgs/container/agentproxy)
 
-![NPM Downloads](https://img.shields.io/npm/dw/omniroute?label=npm%20down%20week&color=red)
-![NPM Downloads](https://img.shields.io/npm/dm/omniroute?label=npm%20down%20month&color=red)
+![NPM Downloads](https://img.shields.io/npm/dw/agentproxy?label=npm%20down%20week&color=red)
+![NPM Downloads](https://img.shields.io/npm/dm/agentproxy?label=npm%20down%20month&color=red)
 
-![NPM Downloads](https://img.shields.io/npm/d18m/omniroute?label=npm%20down%20year&color=red)
-![Docker Pulls](https://img.shields.io/docker/pulls/diegosouzapw/omniroute)
-![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/diegosouzapw/omniroute/total?style=flat&label=eletron%20donwloads&color=blue)
+![NPM Downloads](https://img.shields.io/npm/d18m/agentproxy?label=npm%20down%20year&color=red)
+![Docker Pulls](https://img.shields.io/docker/pulls/khanhkit/agentproxy)
+![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/khanhkit/agentproxy/total?style=flat&label=eletron%20donwloads&color=blue)
 
-[![stars](https://custom-icon-badges.demolab.com/github/stars/diegosouzapw/OmniRoute?logo=star&style=flat)](https://github.com/diegosouzapw/OmniRoute/stargazers)
-[![open issues](https://custom-icon-badges.demolab.com/github/issues-raw/diegosouzapw/OmniRoute?logo=issue)](https://github.com/diegosouzapw/OmniRoute/issues)
-[![license](https://custom-icon-badges.demolab.com/github/license/diegosouzapw/OmniRoute?logo=law)](https://github.com/diegosouzapw/OmniRoute/blob/main/LICENSE)
-[![last commit](https://custom-icon-badges.demolab.com/github/last-commit/diegosouzapw/OmniRoute?logo=history&logoColor=white)](https://github.com/diegosouzapw/OmniRoute/commits/main)
+[![stars](https://custom-icon-badges.demolab.com/github/stars/khanhkit/AgentProxy?logo=star&style=flat)](https://github.com/khanhkit/AgentProxy/stargazers)
+[![open issues](https://custom-icon-badges.demolab.com/github/issues-raw/khanhkit/AgentProxy?logo=issue)](https://github.com/khanhkit/AgentProxy/issues)
+[![license](https://custom-icon-badges.demolab.com/github/license/khanhkit/AgentProxy?logo=law)](https://github.com/khanhkit/AgentProxy/blob/main/LICENSE)
+[![last commit](https://custom-icon-badges.demolab.com/github/last-commit/khanhkit/AgentProxy?logo=history&logoColor=white)](https://github.com/khanhkit/AgentProxy/commits/main)
 [![total contributions](https://custom-icon-badges.demolab.com/badge/dynamic/json?logo=graph&logoColor=fff&color=blue&label=total%20contributions&query=%24.totalContributions&url=https%3A%2F%2Fstreak-stats.demolab.com%2F%3Fuser%3Ddiegosouzapw%26type%3Djson)](https://github.com/diegosouzapw)
-[![code size](https://custom-icon-badges.demolab.com/github/languages/code-size/diegosouzapw/OmniRoute?logo=file-code&logoColor=white)](https://github.com/diegosouzapw/OmniRoute)
-[![pr closed](https://custom-icon-badges.demolab.com/github/issues-pr-closed/diegosouzapw/OmniRoute?color=purple&logo=git-pull-request&logoColor=white)](https://github.com/diegosouzapw/OmniRoute/pulls?q=is%3Apr+is%3Aclosed)
-[![tag](https://custom-icon-badges.demolab.com/github/v/tag/diegosouzapw/OmniRoute?logo=tag&logoColor=white)](https://github.com/diegosouzapw/OmniRoute/tags)
+[![code size](https://custom-icon-badges.demolab.com/github/languages/code-size/khanhkit/AgentProxy?logo=file-code&logoColor=white)](https://github.com/khanhkit/AgentProxy)
+[![pr closed](https://custom-icon-badges.demolab.com/github/issues-pr-closed/khanhkit/AgentProxy?color=purple&logo=git-pull-request&logoColor=white)](https://github.com/khanhkit/AgentProxy/pulls?q=is%3Apr+is%3Aclosed)
+[![tag](https://custom-icon-badges.demolab.com/github/v/tag/khanhkit/AgentProxy?logo=tag&logoColor=white)](https://github.com/khanhkit/AgentProxy/tags)
 [![github streak](https://custom-icon-badges.demolab.com/badge/dynamic/json?logo=fire&logoColor=fff&color=orange&label=github%20streak&query=%24.currentStreak.length&suffix=%20days&url=https%3A%2F%2Fstreak-stats.demolab.com%2F%3Fuser%3Ddiegosouzapw%26type%3Djson)](https://github.com/diegosouzapw)
 [![followers](https://custom-icon-badges.demolab.com/github/followers/diegosouzapw?logo=person-add)](https://github.com/diegosouzapw?tab=followers)
-[![fork](https://custom-icon-badges.demolab.com/github/forks/diegosouzapw/OmniRoute?logo=fork)](https://github.com/diegosouzapw/OmniRoute/network/members)
-[![watch](https://custom-icon-badges.demolab.com/github/watchers/diegosouzapw/OmniRoute?logo=eye)](https://github.com/diegosouzapw/OmniRoute/watchers)
+[![fork](https://custom-icon-badges.demolab.com/github/forks/khanhkit/AgentProxy?logo=fork)](https://github.com/khanhkit/AgentProxy/network/members)
+[![watch](https://custom-icon-badges.demolab.com/github/watchers/khanhkit/AgentProxy?logo=eye)](https://github.com/khanhkit/AgentProxy/watchers)
 
-[![License](https://img.shields.io/github/license/diegosouzapw/OmniRoute)](https://github.com/diegosouzapw/OmniRoute/blob/main/LICENSE)
-[![Website](https://img.shields.io/badge/Website-omniroute.online-blue?logo=google-chrome&logoColor=white)](https://omniroute.online)
+[![License](https://img.shields.io/github/license/khanhkit/AgentProxy)](https://github.com/khanhkit/AgentProxy/blob/main/LICENSE)
+[![Website](https://img.shields.io/badge/Website-agentproxy.online-blue?logo=google-chrome&logoColor=white)](https://agentproxy.example.com)
 [![WhatsApp](https://img.shields.io/badge/WhatsApp-Community-25D366?logo=whatsapp&logoColor=white)](https://chat.whatsapp.com/JI7cDQ1GyaiDHhVBpLxf8b?mode=gi_t)
 
-[🌐 Website](https://omniroute.online) • [🚀 Mulai Cepat](#-quick-start) • [💡 Fitur](#-key-features) • [📖 Dokumentasi](#-documentation) • [💰 Harga](#-pricing-at-a-glance) • [💬 WhatsApp](https://chat.whatsapp.com/JI7cDQ1GyaiDHhVBpLxf8b?mode=gi_t)
+[🌐 Website](https://agentproxy.example.com) • [🚀 Mulai Cepat](#-quick-start) • [💡 Fitur](#-key-features) • [📖 Dokumentasi](#-documentation) • [💰 Harga](#-pricing-at-a-glance) • [💬 WhatsApp](https://chat.whatsapp.com/JI7cDQ1GyaiDHhVBpLxf8b?mode=gi_t)
 
 </div>
 
@@ -52,7 +52,7 @@ _Proxy API universal Anda — satu endpoint untuk 329 entri katalog penyedia, de
 ## 🖼️ Dashboard Utama
 
 <div align="center">
-  <img src="./docs/screenshots/MainOmniRoute.png" alt="OmniRoute Dashboard" width="800"/>
+  <img src="./docs/screenshots/MainAgentProxy.png" alt="AgentProxy Dashboard" width="800"/>
 </div>
 
 ---
@@ -80,7 +80,7 @@ _Proxy API universal Anda — satu endpoint untuk 329 entri katalog penyedia, de
 
 ### 🤖 Penyedia AI Gratis untuk agen coding favorit Anda
 
-_Hubungkan IDE atau alat CLI berbasis AI apa pun melalui OmniRoute — gateway API dengan akses gratis yang tetap tunduk pada batas penyedia._
+_Hubungkan IDE atau alat CLI berbasis AI apa pun melalui AgentProxy — gateway API dengan akses gratis yang tetap tunduk pada batas penyedia._
 
   <table>
     <tr>
@@ -152,11 +152,11 @@ _Hubungkan IDE atau alat CLI berbasis AI apa pun melalui OmniRoute — gateway A
     </tr>
   </table>
 
-<sub>📡 Semua agen terhubung melalui <code>http://localhost:20128/v1</code> atau <code>http://cloud.omniroute.online/v1</code> — satu konfigurasi, model dan kuota tak terbatas</sub>
+<sub>📡 Semua agen terhubung melalui <code>http://localhost:20128/v1</code> atau <code>http://cloud.agentproxy.example.com/v1</code> — satu konfigurasi, model dan kuota tak terbatas</sub>
 
 ---
 
-## 🤔 Mengapa OmniRoute?
+## 🤔 Mengapa AgentProxy?
 
 **Berhenti membuang uang dan terus mencapai batas:**
 
@@ -165,7 +165,7 @@ _Hubungkan IDE atau alat CLI berbasis AI apa pun melalui OmniRoute — gateway A
 - <img src="https://img.shields.io/badge/✗-e74c3c?style=flat-square" height="16"/> API mahal ($20-50/bulan per penyedia)
 - <img src="https://img.shields.io/badge/✗-e74c3c?style=flat-square" height="16"/> Perpindahan manual antar penyedia
 
-**OmniRoute mengatasi ini:**
+**AgentProxy mengatasi ini:**
 
 - ✅ **Maksimalkan langganan** - Pantau kuota, gunakan setiap bit sebelum reset
 - ✅ **Fallback otomatis** - Langganan → Kunci API → Murah → Gratis, tanpa downtime
@@ -177,9 +177,9 @@ _Hubungkan IDE atau alat CLI berbasis AI apa pun melalui OmniRoute — gateway A
 
 > 💬 **Bergabunglah dengan komunitas kami!** [Grup WhatsApp](https://chat.whatsapp.com/JI7cDQ1GyaiDHhVBpLxf8b?mode=gi_t) — Dapatkan bantuan, berbagi tips, dan tetap terupdate.
 
-- **Website**: [omniroute.online](https://omniroute.online)
-- **GitHub**: [github.com/diegosouzapw/OmniRoute](https://github.com/diegosouzapw/OmniRoute)
-- **Issues**: [github.com/diegosouzapw/OmniRoute/issues](https://github.com/diegosouzapw/OmniRoute/issues)
+- **Website**: [agentproxy.online](https://agentproxy.example.com)
+- **GitHub**: [github.com/khanhkit/AgentProxy](https://github.com/khanhkit/AgentProxy)
+- **Issues**: [github.com/khanhkit/AgentProxy/issues](https://github.com/khanhkit/AgentProxy/issues)
 - **WhatsApp**: [Grup Komunitas](https://chat.whatsapp.com/JI7cDQ1GyaiDHhVBpLxf8b?mode=gi_t)
 - **Berkontribusi**: Lihat [CONTRIBUTING.md](CONTRIBUTING.md), buka PR, atau pilih `good first issue`
 
@@ -191,7 +191,7 @@ Saat membuka issue, jalankan perintah system-info dan lampirkan file yang dihasi
 npm run system-info
 ```
 
-Perintah ini menghasilkan `system-info.txt` berisi versi Node.js, versi OmniRoute, detail OS, alat CLI yang terpasang (qoder, gemini, claude, codex, antigravity, droid, dll.), status Docker/PM2, dan paket sistem — semua yang dibutuhkan untuk mereproduksi masalah Anda dengan cepat. Lampirkan file tersebut langsung ke GitHub issue Anda.
+Perintah ini menghasilkan `system-info.txt` berisi versi Node.js, versi AgentProxy, detail OS, alat CLI yang terpasang (qoder, gemini, claude, codex, antigravity, droid, dll.), status Docker/PM2, dan paket sistem — semua yang dibutuhkan untuk mereproduksi masalah Anda dengan cepat. Lampirkan file tersebut langsung ke GitHub issue Anda.
 
 ---
 
@@ -205,7 +205,7 @@ Perintah ini menghasilkan `system-info.txt` berisi versi Node.js, versi OmniRout
        │ http://localhost:20128/v1
        ↓
 ┌─────────────────────────────────────────┐
-│           OmniRoute (Router Cerdas)       │
+│           AgentProxy (Router Cerdas)       │
 │  • Translasi format (OpenAI ↔ Claude)   │
 │  • Pelacakan kuota + Embeddings + Gambar│
 │  • Refresh token otomatis               │
@@ -224,16 +224,16 @@ Hasil: Tidak pernah berhenti coding, biaya minimal
 
 ---
 
-## 🎯 Apa yang Diselesaikan OmniRoute — 30 Masalah Nyata & Kasus Penggunaan
+## 🎯 Apa yang Diselesaikan AgentProxy — 30 Masalah Nyata & Kasus Penggunaan
 
-> **Setiap developer yang menggunakan alat AI menghadapi masalah ini setiap hari.** OmniRoute dibangun untuk menyelesaikannya semua — dari pembengkakan biaya hingga pemblokiran regional, dari alur OAuth yang rusak hingga operasi protokol dan observabilitas enterprise.
+> **Setiap developer yang menggunakan alat AI menghadapi masalah ini setiap hari.** AgentProxy dibangun untuk menyelesaikannya semua — dari pembengkakan biaya hingga pemblokiran regional, dari alur OAuth yang rusak hingga operasi protokol dan observabilitas enterprise.
 
 <details>
 <summary><b>💸 1. "Saya membayar langganan mahal tapi masih terganggu oleh batas"</b></summary>
 
 Developer membayar $20–200/bulan untuk Claude Pro, Codex Pro, atau GitHub Copilot. Meski sudah membayar, kuota memiliki batas — 5 jam penggunaan, batas mingguan, atau batas rate per menit. Di tengah sesi coding, penyedia berhenti merespons dan developer kehilangan fokus dan produktivitas.
 
-**Cara OmniRoute menyelesaikannya:**
+**Cara AgentProxy menyelesaikannya:**
 
 - **Fallback 4-Tier Cerdas** — Jika kuota langganan habis, secara otomatis mengarahkan ke Kunci API → Murah → Gratis tanpa intervensi manual
 - **Pelacakan Batas Penyedia** — Snapshot kuota yang di-cache diperbarui sesuai jadwal sisi server (default `PROVIDER_LIMITS_SYNC_INTERVAL_MINUTES=70`) dengan pembaruan manual tersedia di UI
@@ -250,7 +250,7 @@ Developer membayar $20–200/bulan untuk Claude Pro, Codex Pro, atau GitHub Copi
 
 OpenAI menggunakan satu format, Claude (Anthropic) menggunakan format lain, Gemini pun berbeda lagi. Jika seorang developer ingin menguji model dari penyedia berbeda atau melakukan fallback di antara mereka, mereka perlu mengonfigurasi ulang SDK, mengganti endpoint, dan menangani format yang tidak kompatibel. Penyedia kustom (FriendLI, NIM) memiliki endpoint model non-standar.
 
-**Cara OmniRoute menyelesaikannya:**
+**Cara AgentProxy menyelesaikannya:**
 
 - **Endpoint Terpadu** — Satu `http://localhost:20128/v1` berfungsi sebagai proxy untuk seluruh 329 entri katalog penyedia
 - **Translasi Format** — Otomatis dan transparan: OpenAI ↔ Claude ↔ Gemini ↔ Responses API
@@ -267,7 +267,7 @@ OpenAI menggunakan satu format, Claude (Anthropic) menggunakan format lain, Gemi
 
 Penyedia seperti OpenAI/Codex memblokir akses dari wilayah geografis tertentu. Pengguna mendapat kesalahan seperti `unsupported_country_region_territory` saat OAuth dan koneksi API. Ini sangat membuat frustasi para developer dari negara berkembang.
 
-**Cara OmniRoute menyelesaikannya:**
+**Cara AgentProxy menyelesaikannya:**
 
 - **Konfigurasi Proxy 3-Level** — Proxy yang dapat dikonfigurasi di 3 level: global (semua lalu lintas), per-penyedia (hanya satu penyedia), dan per-koneksi/kunci
 - **Lencana Proxy Berkode Warna** — Indikator visual: 🟢 proxy global, 🟡 proxy penyedia, 🔵 proxy koneksi, selalu menampilkan IP
@@ -284,7 +284,7 @@ Penyedia seperti OpenAI/Codex memblokir akses dari wilayah geografis tertentu. P
 
 Tidak semua orang bisa membayar $20–200/bulan untuk langganan AI. Pelajar, developer dari negara berkembang, penghobi, dan freelancer membutuhkan akses ke model berkualitas tanpa biaya sama sekali.
 
-**Cara OmniRoute menyelesaikannya:**
+**Cara AgentProxy menyelesaikannya:**
 
 - **Ollama Cloud** — Model Ollama yang di-host di cloud pada `api.ollama.com` dengan tier "Light usage" gratis; gunakan prefix `ollamacloud/<model>`
 - **Combo Hanya Gratis** — Rantai `if/kimi-k2-thinking → kr/qwen3-coder-next` = $0/bulan tanpa downtime
@@ -298,7 +298,7 @@ Tidak semua orang bisa membayar $20–200/bulan untuk langganan AI. Pelajar, dev
 
 Saat mengekspos gateway AI ke jaringan (LAN, VPS, Docker), siapa pun yang memiliki alamat tersebut dapat mengonsumsi token/kuota developer. Tanpa perlindungan, API rentan terhadap penyalahgunaan, injeksi prompt, dan eksploitasi.
 
-**Cara OmniRoute menyelesaikannya:**
+**Cara AgentProxy menyelesaikannya:**
 
 - **Manajemen Kunci API** — Pembuatan, rotasi, dan pembatasan lingkup per penyedia dengan halaman `/dashboard/api-manager` yang didedikasikan
 - **Izin Tingkat Model** — Batasi kunci API ke model tertentu (`openai/*`, pola wildcard), dengan toggle Izinkan Semua/Batasi
@@ -316,7 +316,7 @@ Saat mengekspos gateway AI ke jaringan (LAN, VPS, Docker), siapa pun yang memili
 
 Penyedia AI bisa menjadi tidak stabil, mengembalikan kesalahan 5xx, atau mencapai batas rate sementara. Jika developer bergantung pada satu penyedia, mereka akan terganggu. Tanpa circuit breaker, percobaan ulang berulang dapat menyebabkan aplikasi crash.
 
-**Cara OmniRoute menyelesaikannya:**
+**Cara AgentProxy menyelesaikannya:**
 
 - **Antrian & Pacing Permintaan** — Bucket permintaan per-koneksi memperhalus lonjakan sebelum mencapai batas rate upstream
 - **Pendinginan Koneksi** — Satu koneksi mendingin setelah kegagalan yang dapat dicoba ulang dengan petunjuk `Retry-After` upstream opsional dan backoff eksponensial
@@ -331,7 +331,7 @@ Penyedia AI bisa menjadi tidak stabil, mengembalikan kesalahan 5xx, atau mencapa
 <details>
 <summary><b>🔧 7. "Mengonfigurasi setiap alat AI membosankan dan berulang"</b></summary>
 
-**Cara OmniRoute menyelesaikannya:**
+**Cara AgentProxy menyelesaikannya:**
 
 - **Dashboard Alat CLI** — Halaman khusus dengan pengaturan satu klik untuk Claude Code, Codex CLI, OpenClaw, Kilo Code, Antigravity, Cline
 - **Generator Konfigurasi GitHub Copilot** — Menghasilkan `chatLanguageModels.json` untuk VS Code dengan pemilihan model massal
@@ -343,7 +343,7 @@ Penyedia AI bisa menjadi tidak stabil, mengembalikan kesalahan 5xx, atau mencapa
 <details>
 <summary><b>🔑 8. "Mengelola token OAuth dari beberapa penyedia adalah mimpi buruk"</b></summary>
 
-**Cara OmniRoute menyelesaikannya:**
+**Cara AgentProxy menyelesaikannya:**
 
 - **Refresh Token Otomatis** — Token OAuth diperbarui di latar belakang sebelum kedaluwarsa
 - **OAuth Multi-Akun** — Beberapa akun per penyedia melalui ekstraksi token JWT/ID
@@ -358,7 +358,7 @@ Penyedia AI bisa menjadi tidak stabil, mengembalikan kesalahan 5xx, atau mencapa
 
 Developer menggunakan beberapa penyedia berbayar tetapi tidak memiliki tampilan pengeluaran yang terpadu. Setiap penyedia memiliki dashboard penagihan sendiri, tetapi tidak ada tampilan konsolidasi. Biaya tak terduga bisa menumpuk.
 
-**Cara OmniRoute menyelesaikannya:**
+**Cara AgentProxy menyelesaikannya:**
 
 - **Dashboard Analitik Biaya** — Pelacakan biaya per-token dan manajemen anggaran per penyedia
 - **Batas Anggaran per Tier** — Batas pengeluaran per tier yang memicu fallback otomatis
@@ -373,7 +373,7 @@ Developer menggunakan beberapa penyedia berbayar tetapi tidak memiliki tampilan 
 
 Saat panggilan gagal, pengembang tidak mengetahui apakah itu batas kecepatan, token kedaluwarsa, format salah, atau kesalahan penyedia. Log terfragmentasi di terminal yang berbeda. Tanpa observabilitas, debugging adalah trial-and-error.
 
-**Bagaimana OmniRoute menyelesaikannya:**
+**Bagaimana AgentProxy menyelesaikannya:**
 
 - **Dasbor Log Terpadu** — 4 tab: Log Permintaan, Log Proksi, Log Audit, Konsol
 - **Penampil Log Konsol** — Penampil gaya terminal real-time dengan level kode warna, gulir otomatis, pencarian, filter
@@ -381,7 +381,7 @@ Saat panggilan gagal, pengembang tidak mengetahui apakah itu batas kecepatan, to
 - **Translator Playground** — 4 mode debugging: Playground (terjemahan format), Chat Tester (pulang pergi), Test Bench (batch), Live Monitor (real-time)
 - **Telemetri Permintaan** — latensi p50/p95/p99 + penelusuran X-Request-Id
 - **Artefak Detail Berbasis File** — Log aplikasi dirotasi berdasarkan ukuran, hari penyimpanan, dan jumlah arsip; payload permintaan/respons terperinci ada di `DATA_DIR/call_logs/` dan diputar secara independen dari ringkasan SQLite
-- **Laporan Info Sistem** — `npm run system-info` menghasilkan `system-info.txt` dengan lingkungan lengkap Anda (versi Node, versi OmniRoute, OS, alat CLI, status Docker/PM2). Lampirkan saat melaporkan masalah untuk triase instan.
+- **Laporan Info Sistem** — `npm run system-info` menghasilkan `system-info.txt` dengan lingkungan lengkap Anda (versi Node, versi AgentProxy, OS, alat CLI, status Docker/PM2). Lampirkan saat melaporkan masalah untuk triase instan.
 
 </details>
 
@@ -390,9 +390,9 @@ Saat panggilan gagal, pengembang tidak mengetahui apakah itu batas kecepatan, to
 
 Menginstal, mengonfigurasi, dan memelihara proksi AI di berbagai lingkungan (lokal, VPS, Docker, cloud) membutuhkan banyak tenaga. Masalah seperti jalur hardcode, `EACCES` pada direktori, konflik port, dan pembangunan lintas platform menambah gesekan.
 
-**Bagaimana OmniRoute menyelesaikannya:**
+**Bagaimana AgentProxy menyelesaikannya:**
 
-- **instal global npm** — `npm install -g omniroute && omniroute` — selesai
+- **instal global npm** — `npm install -g agentproxy && agentproxy` — selesai
 - **Docker Multi-Platform** — asli AMD64 + ARM64 (Apple Silicon, AWS Graviton, Raspberry Pi)
 - **Docker Compose Profiles** — `base` (tanpa alat CLI) dan `cli` (dengan Claude Code, Codex, OpenClaw)
 - **Aplikasi Desktop Electron** — Aplikasi asli untuk Windows/macOS/Linux dengan baki sistem, mulai otomatis, mode offline
@@ -407,7 +407,7 @@ Menginstal, mengonfigurasi, dan memelihara proksi AI di berbagai lingkungan (lok
 
 Tim di negara-negara yang tidak berbahasa Inggris, khususnya di Amerika Latin, Asia, dan Eropa, kesulitan dengan antarmuka yang hanya berbahasa Inggris. Hambatan bahasa mengurangi adopsi dan meningkatkan kesalahan konfigurasi.
 
-**Bagaimana OmniRoute menyelesaikannya:**
+**Bagaimana AgentProxy menyelesaikannya:**
 
 - **Dasbor i18n — 30 Bahasa** — 500+ tombol diterjemahkan termasuk Arab, Bulgaria, Denmark, Jerman, Spanyol, Finlandia, Prancis, Ibrani, Hindi, Hungaria, Indonesia, Italia, Jepang, Korea, Melayu, Belanda, Norwegia, Polandia, Portugis (PT/BR), Rumania, Rusia, Slovakia, Swedia, Thailand, Ukraina, Vietnam, China, Filipina, Inggris
 - **Dukungan RTL** — Dukungan kanan ke kiri untuk bahasa Arab dan Ibrani
@@ -421,7 +421,7 @@ Tim di negara-negara yang tidak berbahasa Inggris, khususnya di Amerika Latin, A
 
 AI bukan hanya penyelesaian obrolan. Pengembang perlu membuat gambar, mentranskripsikan audio, membuat penyematan untuk RAG, mengubah peringkat dokumen, dan memoderasi konten. Setiap API memiliki titik akhir dan format yang berbeda.
 
-**Bagaimana OmniRoute menyelesaikannya:**
+**Bagaimana AgentProxy menyelesaikannya:**
 
 - **Sematan** — `/v1/embeddings` dengan 6 penyedia dan 9+ model
 - **Pembuatan Gambar** — `/v1/images/generations` dengan 10 penyedia dan 20+ model (OpenAI, xAI, Together, Fireworks, Nebius, Hyperbolic, NanoBanana, Antigravity, SD WebUI, ComfyUI)
@@ -440,7 +440,7 @@ AI bukan hanya penyelesaian obrolan. Pengembang perlu membuat gambar, mentranskr
 
 Pengembang ingin mengetahui model mana yang terbaik untuk kasus penggunaan mereka — kode, terjemahan, penalaran — tetapi membandingkan secara manual itu lambat. Tidak ada alat evaluasi terintegrasi.
 
-**Bagaimana OmniRoute menyelesaikannya:**
+**Bagaimana AgentProxy menyelesaikannya:**
 
 - **Evaluasi LLM** — Pengujian set emas dengan 10 kasus yang dimuat sebelumnya yang mencakup salam, matematika, geografi, pembuatan kode, kepatuhan JSON, terjemahan, penurunan harga, penolakan keamanan
 - **4 Strategi Pertandingan** — `exact`, `contains`, `regex`, `custom` (fungsi JS)
@@ -455,7 +455,7 @@ Pengembang ingin mengetahui model mana yang terbaik untuk kasus penggunaan merek
 
 Seiring bertambahnya volume permintaan, tanpa menyimpan pertanyaan yang sama akan menghasilkan biaya duplikat. Tanpa idempotensi, permintaan duplikat akan membuang-buang pemrosesan. Batasan tarif per penyedia harus dipatuhi.
 
-**Bagaimana OmniRoute menyelesaikannya:**
+**Bagaimana AgentProxy menyelesaikannya:**
 
 - **Cache Semantik** — Cache dua tingkat (tanda tangan + semantik) mengurangi biaya dan latensi
 - **Request Idempoency** — Jendela deduplikasi 5 detik untuk permintaan yang identik
@@ -471,7 +471,7 @@ Seiring bertambahnya volume permintaan, tanpa menyimpan pertanyaan yang sama aka
 
 Pengembang yang menginginkan semua respons dalam bahasa tertentu, dengan nada tertentu, atau ingin membatasi token penalaran. Mengonfigurasi ini di setiap alat/permintaan tidak praktis.
 
-**Bagaimana OmniRoute menyelesaikannya:**
+**Bagaimana AgentProxy menyelesaikannya:**
 
 - **Injeksi Perintah Sistem** — Perintah global diterapkan ke semua permintaan
 - **Validasi Anggaran Berpikir** — Kontrol alokasi token penalaran per permintaan (passthrough, otomatis, kustom, adaptif)
@@ -489,11 +489,11 @@ Pengembang yang menginginkan semua respons dalam bahasa tertentu, dengan nada te
 
 Many AI gateways expose MCP only as a hidden implementation detail. Teams need a visible, manageable operation layer.
 
-**Bagaimana OmniRoute menyelesaikannya:**
+**Bagaimana AgentProxy menyelesaikannya:**
 
 - MCP muncul di navigasi dasbor dan tab protokol titik akhir
 - Halaman manajemen MCP khusus dengan proses, alat, cakupan, dan audit
-- Mulai cepat bawaan untuk `omniroute --mcp` dan orientasi klien
+- Mulai cepat bawaan untuk `agentproxy --mcp` dan orientasi klien
 
 </details>
 
@@ -502,7 +502,7 @@ Many AI gateways expose MCP only as a hidden implementation detail. Teams need a
 
 Alur kerja agen memerlukan balasan langsung dan eksekusi streaming jangka panjang dengan kontrol siklus hidup.
 
-**Bagaimana OmniRoute menyelesaikannya:**
+**Bagaimana AgentProxy menyelesaikannya:**
 
 - Titik akhir A2A JSON-RPC (`POST /a2a`) dengan `message/send` dan `message/stream`
 - Streaming SSE dengan propagasi status terminal
@@ -515,7 +515,7 @@ Alur kerja agen memerlukan balasan langsung dan eksekusi streaming jangka panjan
 
 Tim operasional perlu mengetahui apakah MCP benar-benar aktif, bukan hanya apakah API dapat dijangkau.
 
-**Bagaimana OmniRoute menyelesaikannya:**
+**Bagaimana AgentProxy menyelesaikannya:**
 
 - File detak jantung runtime dengan PID, stempel waktu, transportasi, jumlah alat, dan mode cakupan
 - API status MCP menggabungkan detak jantung + aktivitas terkini
@@ -528,7 +528,7 @@ Tim operasional perlu mengetahui apakah MCP benar-benar aktif, bukan hanya apaka
 
 Saat alat mengubah konfigurasi atau memicu tindakan operasi, tim memerlukan kemampuan penelusuran forensik.
 
-**Bagaimana OmniRoute menyelesaikannya:**
+**Bagaimana AgentProxy menyelesaikannya:**
 
 - Pencatatan audit yang didukung SQLite untuk panggilan alat MCP
 - Filter berdasarkan alat, keberhasilan/kegagalan, kunci API, dan penomoran halaman
@@ -541,7 +541,7 @@ Saat alat mengubah konfigurasi atau memicu tindakan operasi, tim memerlukan kema
 
 Different clients should have least-privilege access to tool categories.
 
-**Bagaimana OmniRoute menyelesaikannya:**
+**Bagaimana AgentProxy menyelesaikannya:**
 
 - 32 cakupan MCP granular untuk akses alat terkontrol
 - Penegakan cakupan dan visibilitas di UI manajemen MCP
@@ -554,7 +554,7 @@ Different clients should have least-privilege access to tool categories.
 
 Tim memerlukan perubahan runtime yang cepat selama insiden atau peristiwa biaya.
 
-**Bagaimana OmniRoute menyelesaikannya:**
+**Bagaimana AgentProxy menyelesaikannya:**
 
 - Beralih aktivasi kombo langsung dari dasbor MCP
 - Sesuaikan pengaturan antrean, cooldown, pemutus, dan tunggu dari halaman Ketahanan khusus
@@ -567,7 +567,7 @@ Tim memerlukan perubahan runtime yang cepat selama insiden atau peristiwa biaya.
 
 Without lifecycle visibility, task incidents become hard to triage.
 
-**Bagaimana OmniRoute menyelesaikannya:**
+**Bagaimana AgentProxy menyelesaikannya:**
 
 - Daftar tugas/pemfilteran berdasarkan status/keterampilan dengan penomoran halaman
 - Telusuri metadata tugas, peristiwa, dan artefak
@@ -580,7 +580,7 @@ Without lifecycle visibility, task incidents become hard to triage.
 
 Alur kerja streaming memerlukan wawasan operasional tentang konkurensi dan koneksi langsung.
 
-**Bagaimana OmniRoute menyelesaikannya:**
+**Bagaimana AgentProxy menyelesaikannya:**
 
 - Penghitung aliran aktif terintegrasi ke dalam status A2A
 - Stempel waktu tugas terakhir dan jumlah per negara bagian
@@ -593,7 +593,7 @@ Alur kerja streaming memerlukan wawasan operasional tentang konkurensi dan konek
 
 Klien dan orkestra eksternal memerlukan metadata yang dapat dibaca mesin untuk orientasi.
 
-**Bagaimana OmniRoute menyelesaikannya:**
+**Bagaimana AgentProxy menyelesaikannya:**
 
 - Kartu Agen terungkap di `/.well-known/agent.json`
 - Kemampuan dan keterampilan yang ditunjukkan dalam manajemen UI
@@ -606,7 +606,7 @@ Klien dan orkestra eksternal memerlukan metadata yang dapat dibaca mesin untuk o
 
 If users cannot discover protocol surfaces, adoption and support quality drop.
 
-**Bagaimana OmniRoute menyelesaikannya:**
+**Bagaimana AgentProxy menyelesaikannya:**
 
 - Halaman **Endpoint** terkonsolidasi dengan tab untuk Proxy, MCP, A2A, dan API Endpoints
 - Pengalih status layanan inline (Online/Offline) untuk MCP dan A2A
@@ -619,7 +619,7 @@ If users cannot discover protocol surfaces, adoption and support quality drop.
 
 Mock tests are not enough to validate protocol compatibility before release.
 
-**Bagaimana OmniRoute menyelesaikannya:**
+**Bagaimana AgentProxy menyelesaikannya:**
 
 - Suite E2E yang mem-boot aplikasi dan menggunakan transportasi klien MCP SDK yang sebenarnya
 - Klien A2A menguji penemuan, pengiriman, streaming, dapatkan, dan pembatalan aliran
@@ -632,7 +632,7 @@ Mock tests are not enough to validate protocol compatibility before release.
 
 Splitting observability by protocol creates blind spots and longer MTTR.
 
-**Bagaimana OmniRoute menyelesaikannya:**
+**Bagaimana AgentProxy menyelesaikannya:**
 
 - Dasbor/log/analitik terpadu dalam satu produk
 - Kesehatan + audit + permintaan telemetri di seluruh lapisan OpenAI, MCP, dan A2A
@@ -645,7 +645,7 @@ Splitting observability by protocol creates blind spots and longer MTTR.
 
 Menjalankan banyak layanan terpisah akan meningkatkan biaya operasional dan mode kegagalan.
 
-**Bagaimana OmniRoute menyelesaikannya:**
+**Bagaimana AgentProxy menyelesaikannya:**
 
 - Proksi yang kompatibel dengan OpenAI, server MCP, dan server A2A dalam satu tumpukan
 - Otentikasi bersama, ketahanan, penyimpanan data, dan kemampuan observasi
@@ -658,7 +658,7 @@ Menjalankan banyak layanan terpisah akan meningkatkan biaya operasional dan mode
 
 Tim kehilangan kecepatan saat menggabungkan beberapa layanan dan skrip ad-hoc.
 
-**Bagaimana OmniRoute menyelesaikannya:**
+**Bagaimana AgentProxy menyelesaikannya:**
 
 - Strategi titik akhir terpadu untuk klien dan agen
 - UI manajemen protokol bawaan dan jalur validasi asap
@@ -671,7 +671,7 @@ Tim kehilangan kecepatan saat menggabungkan beberapa layanan dan skrip ad-hoc.
 
 Selama proses debug mendalam, riwayat panjang dengan hasil alat dengan cepat melampaui jendela token penyedia, menyebabkan permintaan gagal dan konteks tidak ada lagi.
 
-**Bagaimana OmniRoute menyelesaikannya:**
+**Bagaimana AgentProxy menyelesaikannya:**
 
 - **Kompresi Konteks Proaktif** — Mengevaluasi anggaran token sebelum permintaan mencapai hulu dan secara proaktif memangkas riwayat percakapan lama dengan mekanisme pencarian biner yang cerdas.
 - **Pengaman Integritas Struktural** — Secara otomatis melacak definisi `tool_use` yang eksplisit dan memastikan bahwa jika masukan alat terpotong, `tool_result` yang terkait juga dihapus dengan aman, sehingga mencegah kesalahan validasi API.
@@ -720,7 +720,7 @@ Outcome: deep fallback depth for deadline-critical workloads
 **Playbook D: Operasi agen dengan MCP + A2A**
 
 ```txt
-1) Start MCP transport (`omniroute --mcp`) for tool-driven operations
+1) Start MCP transport (`agentproxy --mcp`) for tool-driven operations
 2) Run A2A tasks via `message/send` and `message/stream`
 3) Observe via /dashboard/endpoint (MCP and A2A tabs)
 4) Toggle services via inline status controls
@@ -747,54 +747,54 @@ Outcome: deep fallback depth for deadline-critical workloads
 ### 1) Instal dan jalankan
 
 ```bash
-npm install -g omniroute
-omniroute
+npm install -g agentproxy
+agentproxy
 ```
 
 > **pengguna pnpm:** Pass `--allow-build` at install time to enable native build scripts required by `better-sqlite3` and `@swc/core` (the `approve-builds -g` command is not supported for global installs on pnpm v11):
 >
 > ```bash
-> pnpm add -g omniroute@latest --allow-build=better-sqlite3 --allow-build=@swc/core
-> omniroute
+> pnpm add -g agentproxy@latest --allow-build=better-sqlite3 --allow-build=@swc/core
+> agentproxy
 > ```
 
 Dasbor terbuka di `http://localhost:20128` dan URL dasar API adalah `http://localhost:20128/v1`.
 
 #### Arch Linux (AUR)
 
-Pengguna Arch Linux dapat menginstal [AUR package](https://aur.archlinux.org/packages/omniroute-bin), yang menginstal OmniRoute dan menyediakan layanan pengguna systemd:
+Pengguna Arch Linux dapat menginstal [AUR package](https://aur.archlinux.org/packages/agentproxy-bin), yang menginstal AgentProxy dan menyediakan layanan pengguna systemd:
 
 ```bash
-yay -S omniroute-bin
-systemctl --user enable --now omniroute.service
+yay -S agentproxy-bin
+systemctl --user enable --now agentproxy.service
 ```
 
 | Command                 | Description                                                     |
 | ----------------------- | --------------------------------------------------------------- |
-| `omniroute`             | Mulai server (`PORT=20128`, API dan dasbor pada port yang sama) |
-| `omniroute --port 3000` | Set canonical/API port to 3000                                  |
-| `omniroute --mcp`       | Mulai server MCP (stdio transport)                              |
-| `omniroute --no-open`   | Don't auto-open browser                                         |
-| `omniroute --help`      | Show help                                                       |
+| `agentproxy`             | Mulai server (`PORT=20128`, API dan dasbor pada port yang sama) |
+| `agentproxy --port 3000` | Set canonical/API port to 3000                                  |
+| `agentproxy --mcp`       | Mulai server MCP (stdio transport)                              |
+| `agentproxy --no-open`   | Don't auto-open browser                                         |
+| `agentproxy --help`      | Show help                                                       |
 
 Optional split-port mode:
 
 ```bash
-PORT=20128 DASHBOARD_PORT=20129 omniroute
+PORT=20128 DASHBOARD_PORT=20129 agentproxy
 # API:       http://localhost:20128/v1
 # Dashboard: http://localhost:20129
 ```
 
 ### 2) Menghapus Instalasi
 
-Saat Anda tidak lagi memerlukan OmniRoute, kami menyediakan dua skrip cepat untuk penghapusan bersih:
+Saat Anda tidak lagi memerlukan AgentProxy, kami menyediakan dua skrip cepat untuk penghapusan bersih:
 
 | Command                  | Action                                                                                       |
 | ------------------------ | -------------------------------------------------------------------------------------------- |
-| `npm run uninstall`      | Menghapus aplikasi sistem tetapi **menyimpan DB dan konfigurasi Anda** di `~/.omniroute`.    |
+| `npm run uninstall`      | Menghapus aplikasi sistem tetapi **menyimpan DB dan konfigurasi Anda** di `~/.agentproxy`.    |
 | `npm run uninstall:full` | Menghapus aplikasi DAN secara permanen **menghapus semua konfigurasi, kunci, dan database**. |
 
-> Catatan: Untuk menjalankan perintah ini, navigasikan ke folder proyek OmniRoute (jika Anda mengkloningnya) dan jalankan. Alternatifnya, jika diinstal secara global, Anda cukup menjalankan `npm uninstall -g omniroute`.
+> Catatan: Untuk menjalankan perintah ini, navigasikan ke folder proyek AgentProxy (jika Anda mengkloningnya) dan jalankan. Alternatifnya, jika diinstal secara global, Anda cukup menjalankan `npm uninstall -g agentproxy`.
 
 ### Batas Waktu Streaming yang Berlangsung Lama
 
@@ -803,16 +803,16 @@ Untuk sebagian besar penerapan, Anda hanya memerlukan:
 | Variable                 | Default                       | Purpose                                                                                                                                                                      |
 | ------------------------ | ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `REQUEST_TIMEOUT_MS`     | `600000`                      | Garis dasar bersama untuk batas waktu mulai respons upstream, batas waktu Undici yang tersembunyi, permintaan sidik jari TLS, dan batas waktu permintaan/proksi jembatan API |
-| `STREAM_IDLE_TIMEOUT_MS` | inherits `REQUEST_TIMEOUT_MS` | Kesenjangan maksimum antara potongan streaming sebelum OmniRoute membatalkan aliran SSE                                                                                      |
+| `STREAM_IDLE_TIMEOUT_MS` | inherits `REQUEST_TIMEOUT_MS` | Kesenjangan maksimum antara potongan streaming sebelum AgentProxy membatalkan aliran SSE                                                                                      |
 
 Kompatibilitas mundur dipertahankan: `FETCH_TIMEOUT_MS`, `API_BRIDGE_PROXY_TIMEOUT_MS`, dan var batas waktu per lapisan lainnya yang ada masih berfungsi dan menggantikan garis dasar bersama.
 
-Untuk upstream yang kompatibel dengan Kode Claude (`anthropic-compatible-cc-*`), OmniRoute juga memperoleh header `X-Stainless-Timeout` keluar dari batas waktu pengambilan yang diselesaikan sehingga batas waktu baca sisi penyedia tetap selaras dengan konfigurasi env Anda.
+Untuk upstream yang kompatibel dengan Kode Claude (`anthropic-compatible-cc-*`), AgentProxy juga memperoleh header `X-Stainless-Timeout` keluar dari batas waktu pengambilan yang diselesaikan sehingga batas waktu baca sisi penyedia tetap selaras dengan konfigurasi env Anda.
 
-Untuk reverse proxy pihak ketiga yang kompatibel dengan Claude Code, OmniRoute tetap menggunakan default
+Untuk reverse proxy pihak ketiga yang kompatibel dengan Claude Code, AgentProxy tetap menggunakan default
 `anthropic-beta` disetel konservatif dan, ketika `Client Cache Control` tersisa di `Auto`,
 hanya meneruskan penanda `cache_control` yang disediakan klien. Jika permintaan tidak menyertakan
-`cache_control`, OmniRoute tidak memasukkan penanda milik jembatan.
+`cache_control`, AgentProxy tidak memasukkan penanda milik jembatan.
 
 Penggantian tingkat lanjut tersedia jika Anda memerlukan kontrol yang lebih baik:
 
@@ -830,10 +830,10 @@ Penggantian tingkat lanjut tersedia jika Anda memerlukan kontrol yang lebih baik
 | `API_BRIDGE_SERVER_KEEPALIVE_TIMEOUT_MS` | `5000`                                     | Batas waktu tetap hidup di server jembatan API                                 |
 | `API_BRIDGE_SERVER_SOCKET_TIMEOUT_MS`    | `0`                                        | Batas waktu ketidakaktifan soket di server jembatan API (`0` menonaktifkannya) |
 
-Untuk permintaan streaming, `FETCH_TIMEOUT_MS` hanya mencakup pengaturan koneksi/menunggu respons upstream pertama. Setelah aliran aktif, OmniRoute hanya akan dibatalkan pada keadaan terhenti sebenarnya (`STREAM_IDLE_TIMEOUT_MS`) atau tubuh Undici tidak aktif (`FETCH_BODY_TIMEOUT_MS`).
+Untuk permintaan streaming, `FETCH_TIMEOUT_MS` hanya mencakup pengaturan koneksi/menunggu respons upstream pertama. Setelah aliran aktif, AgentProxy hanya akan dibatalkan pada keadaan terhenti sebenarnya (`STREAM_IDLE_TIMEOUT_MS`) atau tubuh Undici tidak aktif (`FETCH_BODY_TIMEOUT_MS`).
 
-Jika Anda menjalankan OmniRoute di belakang Nginx, Caddy, Cloudflare, atau proksi terbalik lainnya, pastikan proksi tersebut
-waktu tunggu juga lebih tinggi daripada waktu tunggu aliran/pengambilan OmniRoute Anda.
+Jika Anda menjalankan AgentProxy di belakang Nginx, Caddy, Cloudflare, atau proksi terbalik lainnya, pastikan proksi tersebut
+waktu tunggu juga lebih tinggi daripada waktu tunggu aliran/pengambilan AgentProxy Anda.
 
 ### 2) Hubungkan penyedia dan buat kunci API Anda
 
@@ -841,7 +841,7 @@ waktu tunggu juga lebih tinggi daripada waktu tunggu aliran/pengambilan OmniRout
 2. Buka Dasbor → `Endpoints` dan buat kunci API.
 3. (Opsional) Buka Dasbor → `Combos` dan atur rantai cadangan Anda.
 
-### 3) Arahkan alat pengkodean Anda ke OmniRoute
+### 3) Arahkan alat pengkodean Anda ke AgentProxy
 
 ```txt
 Base URL: http://localhost:20128/v1
@@ -854,13 +854,13 @@ Model:    if/kimi-k2-thinking (or any provider/model prefix)
 **MCP (untuk operasi yang digerakkan oleh alat):**
 
 ```bash
-omniroute --mcp
+agentproxy --mcp
 ```
 
 Kemudian sambungkan klien MCP Anda melalui `stdio` dan uji alat seperti:
 
-- `omniroute_get_health`
-- `omniroute_list_combos`
+- `agentproxy_get_health`
+- `agentproxy_list_combos`
 
 **A2A (untuk alur kerja agen-ke-agen):**
 
@@ -893,11 +893,11 @@ PORT=20128 DASHBOARD_PORT=20129 NEXT_PUBLIC_BASE_URL=http://localhost:20129 npm 
 <details>
 <summary><b>Void Linux (`xbps-src` template)</b></summary>
 
-Untuk pengguna Void Linux, Anda dapat membuat paket asli menggunakan `xbps-src`. Simpan blok ini sebagai `srcpkgs/omniroute/template`:
+Untuk pengguna Void Linux, Anda dapat membuat paket asli menggunakan `xbps-src`. Simpan blok ini sebagai `srcpkgs/agentproxy/template`:
 
 ```bash
-# Template file for 'omniroute'
-pkgname=omniroute
+# Template file for 'agentproxy'
+pkgname=agentproxy
 version=3.4.1
 revision=1
 hostmakedepends="nodejs python3 make"
@@ -905,11 +905,11 @@ depends="openssl"
 short_desc="Universal AI gateway with smart routing for multiple LLM providers"
 maintainer="zenobit <zenobit@disroot.org>"
 license="MIT"
-homepage="https://github.com/diegosouzapw/OmniRoute"
-distfiles="https://github.com/diegosouzapw/OmniRoute/archive/refs/tags/v${version}.tar.gz"
+homepage="https://github.com/khanhkit/AgentProxy"
+distfiles="https://github.com/khanhkit/AgentProxy/archive/refs/tags/v${version}.tar.gz"
 checksum=009400afee90a9f32599d8fe734145cfd84098140b7287990183dde45ae2245b
-system_accounts="_omniroute"
-omniroute_homedir="/var/lib/omniroute"
+system_accounts="_agentproxy"
+agentproxy_homedir="/var/lib/agentproxy"
 export NODE_ENV=production
 export npm_config_engine_strict=false
 export npm_config_loglevel=error
@@ -967,27 +967,27 @@ do_check() {
 }
 
 do_install() {
-	vmkdir usr/lib/omniroute/.next
+	vmkdir usr/lib/agentproxy/.next
 
-	vcopy .next/standalone/. usr/lib/omniroute/.next/standalone
+	vcopy .next/standalone/. usr/lib/agentproxy/.next/standalone
 
 	# Prevent removal of empty Next.js app router dirs by the post-install hook
 	for _d in \
 		.next/standalone/.next/server/app/dashboard \
 		.next/standalone/.next/server/app/dashboard/settings \
 		.next/standalone/.next/server/app/dashboard/providers; do
-		touch "${DESTDIR}/usr/lib/omniroute/${_d}/.keep"
+		touch "${DESTDIR}/usr/lib/agentproxy/${_d}/.keep"
 	done
 
-	cat > "${WRKDIR}/omniroute" <<'EOF'
+	cat > "${WRKDIR}/agentproxy" <<'EOF'
 #!/bin/sh
 export PORT="${PORT:-20128}"
-export DATA_DIR="${DATA_DIR:-${XDG_DATA_HOME:-${HOME}/.local/share}/omniroute}"
+export DATA_DIR="${DATA_DIR:-${XDG_DATA_HOME:-${HOME}/.local/share}/agentproxy}"
 export APP_LOG_TO_FILE="${APP_LOG_TO_FILE:-false}"
 mkdir -p "${DATA_DIR}"
-exec node /usr/lib/omniroute/.next/standalone/server.js "$@"
+exec node /usr/lib/agentproxy/.next/standalone/server.js "$@"
 EOF
-	vbin "${WRKDIR}/omniroute"
+	vbin "${WRKDIR}/agentproxy"
 }
 
 post_install() {
@@ -1001,18 +1001,18 @@ post_install() {
 
 ## 🐳 Docker
 
-OmniRoute tersedia sebagai image Docker publik di [Docker Hub](https://hub.docker.com/r/diegosouzapw/omniroute).
+AgentProxy tersedia sebagai image Docker publik di [Docker Hub](https://github.com/khanhkit/AgentProxy/pkgs/container/agentproxy).
 
 **Quick run:**
 
 ```bash
 docker run -d \
-  --name omniroute \
+  --name agentproxy \
   --restart unless-stopped \
   --stop-timeout 40 \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
-  diegosouzapw/omniroute:latest
+  -v agentproxy-data:/app/data \
+  khanhkit/agentproxy:latest
 ```
 
 **Dengan file lingkungan:**
@@ -1022,13 +1022,13 @@ docker run -d \
 cp .env.example .env
 
 docker run -d \
-  --name omniroute \
+  --name agentproxy \
   --restart unless-stopped \
   --stop-timeout 40 \
   --env-file .env \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
-  diegosouzapw/omniroute:latest
+  -v agentproxy-data:/app/data \
+  khanhkit/agentproxy:latest
 ```
 
 **Menggunakan Docker Tulis:**
@@ -1046,26 +1046,26 @@ Dukungan dasbor untuk penerapan Docker kini mencakup **Cloudflare Quick Tunnel**
 Notes:
 
 - URL Terowongan Cepat bersifat sementara dan berubah setelah setiap restart.
-- Terowongan Cepat tidak dipulihkan secara otomatis setelah OmniRoute atau kontainer dimulai ulang. Aktifkan kembali dari dasbor bila diperlukan.
+- Terowongan Cepat tidak dipulihkan secara otomatis setelah AgentProxy atau kontainer dimulai ulang. Aktifkan kembali dari dasbor bila diperlukan.
 - Penginstalan terkelola saat ini mendukung Linux, macOS, dan Windows di `x64` / `arm64`.
 - Terkelola Quick Tunnels default ke transportasi HTTP/2 untuk menghindari peringatan buffer UDP QUIC yang berisik di lingkungan kontainer yang terbatas. Setel `CLOUDFLARED_PROTOCOL=quic` atau `auto` jika Anda menginginkan transportasi lain.
 - Gambar Docker menggabungkan akar CA sistem dan meneruskannya ke `cloudflared` yang dikelola, yang menghindari kegagalan kepercayaan TLS ketika terowongan melakukan bootstrap di dalam wadah.
-- SQLite berjalan dalam mode WAL. `docker stop` harus dibiarkan selesai sehingga OmniRoute dapat memeriksa kembali perubahan terbaru ke `storage.sqlite`.
+- SQLite berjalan dalam mode WAL. `docker stop` harus dibiarkan selesai sehingga AgentProxy dapat memeriksa kembali perubahan terbaru ke `storage.sqlite`.
 - File Compose yang dibundel sudah menetapkan masa tenggang penghentian 40 detik. Jika Anda menjalankan image secara langsung, pertahankan `--stop-timeout 40` (atau serupa) sehingga penghentian manual tidak menghentikan pembersihan pematian.
-- Setel `CLOUDFLARED_BIN=/absolute/path/to/cloudflared` jika Anda ingin OmniRoute menggunakan biner yang sudah ada alih-alih mengunduhnya.
+- Setel `CLOUDFLARED_BIN=/absolute/path/to/cloudflared` jika Anda ingin AgentProxy menggunakan biner yang sudah ada alih-alih mengunduhnya.
 
 **Menggunakan Docker Compose dengan Caddy (HTTPS Auto-TLS):**
 
-OmniRoute dapat diekspos dengan aman menggunakan penyediaan SSL otomatis Caddy. Pastikan data DNS A domain Anda mengarah ke IP server Anda.
+AgentProxy dapat diekspos dengan aman menggunakan penyediaan SSL otomatis Caddy. Pastikan data DNS A domain Anda mengarah ke IP server Anda.
 
 ```yaml
 services:
-  omniroute:
-    image: diegosouzapw/omniroute:latest
-    container_name: omniroute
+  agentproxy:
+    image: khanhkit/agentproxy:latest
+    container_name: agentproxy
     restart: unless-stopped
     volumes:
-      - omniroute-data:/app/data
+      - agentproxy-data:/app/data
     environment:
       - PORT=20128
       - NEXT_PUBLIC_BASE_URL=https://your-domain.com
@@ -1077,27 +1077,27 @@ services:
     ports:
       - "80:80"
       - "443:443"
-    command: caddy reverse-proxy --from https://your-domain.com --to http://omniroute:20128
+    command: caddy reverse-proxy --from https://your-domain.com --to http://agentproxy:20128
 
 volumes:
-  omniroute-data:
+  agentproxy-data:
 ```
 
 | Image                    | Tag      | Size   | Description           |
 | ------------------------ | -------- | ------ | --------------------- |
-| `diegosouzapw/omniroute` | `latest` | ~250MB | Latest stable release |
-| `diegosouzapw/omniroute` | `3.6.2`  | ~250MB | Current version       |
+| `khanhkit/agentproxy` | `latest` | ~250MB | Latest stable release |
+| `khanhkit/agentproxy` | `3.6.2`  | ~250MB | Current version       |
 
 ---
 
 ## 🖥️ Aplikasi Desktop — Offline & Selalu Aktif
 
-> 🆕 **BARU!** OmniRoute kini tersedia sebagai **aplikasi desktop asli** untuk Windows, macOS, dan Linux.
+> 🆕 **BARU!** AgentProxy kini tersedia sebagai **aplikasi desktop asli** untuk Windows, macOS, dan Linux.
 
-Jalankan OmniRoute sebagai aplikasi desktop mandiri — tanpa terminal, tanpa browser, tanpa internet untuk model lokal. Aplikasi berbasis Electron meliputi:
+Jalankan AgentProxy sebagai aplikasi desktop mandiri — tanpa terminal, tanpa browser, tanpa internet untuk model lokal. Aplikasi berbasis Electron meliputi:
 
 - 🖥️ **Jendela Asli** — Jendela aplikasi khusus dengan integrasi baki sistem
-- 🔄 **Mulai Otomatis** — Luncurkan OmniRoute saat login sistem
+- 🔄 **Mulai Otomatis** — Luncurkan AgentProxy saat login sistem
 - 🔔 **Pemberitahuan Asli** — Dapatkan peringatan jika kuota habis atau masalah penyedia
 - ⚡ **Instal Sekali Klik** — NSIS (Windows), DMG (macOS), AppImage (Linux)
 - 🌐 **Mode Offline** — Bekerja sepenuhnya offline dengan server yang dibundel
@@ -1117,7 +1117,7 @@ npm run electron:build:linux   # Linux (.AppImage)
 
 ### System Tray
 
-Saat diminimalkan, OmniRoute ada di baki sistem Anda dengan tindakan cepat:
+Saat diminimalkan, AgentProxy ada di baki sistem Anda dengan tindakan cepat:
 
 - Buka dasbor
 - Ubah port server
@@ -1173,7 +1173,7 @@ NVIDIA NIM (nvidia/)   → selected models — current rate limits apply
 Cerebras (cerebras/)   → Llama/Qwen world-fastest — 1M tok/day
 ```
 
-**Tanpa biaya. Jangan pernah berhenti melakukan pengkodean.** Konfigurasikan ini sebagai satu kombo OmniRoute dan semua fallback terjadi secara otomatis — tidak pernah ada peralihan manual.
+**Tanpa biaya. Jangan pernah berhenti melakukan pengkodean.** Konfigurasikan ini sebagai satu kombo AgentProxy dan semua fallback terjadi secara otomatis — tidak pernah ada peralihan manual.
 
 ---
 
@@ -1309,7 +1309,7 @@ Kemudian di tab `/dashboard/media` → **Transkripsi**: unggah file audio atau v
 
 ## 💡 Fitur Utama
 
-OmniRoute v3.6 dibangun sebagai platform operasional, bukan hanya proxy relai.
+AgentProxy v3.6 dibangun sebagai platform operasional, bukan hanya proxy relai.
 
 ### 🆕 Baru — Sorotan v3.6.x (Apr 2026)
 
@@ -1488,7 +1488,7 @@ Combo: "my-coding-stack"
   4. if/kimi-k2-thinking
 ```
 
-Ketika kuota, tarif, atau kesehatan gagal, OmniRoute secara otomatis berpindah ke kandidat berikutnya tanpa peralihan manual.
+Ketika kuota, tarif, atau kesehatan gagal, AgentProxy secara otomatis berpindah ke kandidat berikutnya tanpa peralihan manual.
 
 #### Manajemen protokol yang terlihat dan dapat dioperasikan
 
@@ -1513,11 +1513,11 @@ Ditambah validasi protokol dengan klien nyata melalui `npm run test:protocols:e2
 
 ## 🧪 Evaluasi (Evals)
 
-OmniRoute menyertakan kerangka evaluasi bawaan untuk menguji kualitas respons LLM terhadap rangkaian emas. Akses melalui **Analytics → Evals** di dasbor.
+AgentProxy menyertakan kerangka evaluasi bawaan untuk menguji kualitas respons LLM terhadap rangkaian emas. Akses melalui **Analytics → Evals** di dasbor.
 
 ### Golden Set Bawaan
 
-"OmniRoute Golden Set" yang dimuat sebelumnya berisi kasus uji untuk:
+"AgentProxy Golden Set" yang dimuat sebelumnya berisi kasus uji untuk:
 
 - Salam, matematika, geografi, pembuatan kode
 - Kepatuhan format JSON, terjemahan, pembuatan penurunan harga
@@ -1544,14 +1544,14 @@ OmniRoute menyertakan kerangka evaluasi bawaan untuk menguji kualitas respons LL
 Start MCP transport in stdio mode:
 
 ```bash
-omniroute --mcp
+agentproxy --mcp
 ```
 
 Recommended validation flow:
 
 1. Hubungkan klien MCP Anda melalui stdio.
-2. Jalankan `omniroute_get_health`.
-3. Jalankan `omniroute_list_combos`.
+2. Jalankan `agentproxy_get_health`.
+3. Jalankan `agentproxy_list_combos`.
 4. Buka `/dashboard/mcp` untuk mengonfirmasi detak jantung, aktivitas, dan audit.
 
 API yang berguna untuk otomatisasi:
@@ -1626,7 +1626,7 @@ Models:
   cc/claude-haiku-4-5-20251001
 ```
 
-**Kiat Pro:** Gunakan Opus untuk tugas kompleks, Soneta untuk kecepatan. OmniRoute melacak kuota per model!
+**Kiat Pro:** Gunakan Opus untuk tugas kompleks, Soneta untuk kecepatan. AgentProxy melacak kuota per model!
 
 ### OpenAI Codex (Plus/Pro)
 
@@ -1647,7 +1647,7 @@ Setiap akun Codex kini memiliki kebijakan yang dapat diubah di `Dashboard -> Pro
 - `5h` (ON/OFF): menerapkan kebijakan ambang jendela 5 jam.
 - `Weekly` (ON/OFF): menerapkan kebijakan ambang jendela mingguan.
 - Perilaku ambang batas: ketika jendela yang diaktifkan mencapai >=90% penggunaan, akun tersebut dilewati.
-- Perilaku rotasi: OmniRoute merutekan ke akun Codex berikutnya yang memenuhi syarat secara otomatis.
+- Perilaku rotasi: AgentProxy merutekan ke akun Codex berikutnya yang memenuhi syarat secara otomatis.
 - Perilaku reset: ketika waktu `resetAt` penyedia telah berlalu, akun akan memenuhi syarat lagi secara otomatis.
 
 Scenarios:
@@ -1684,7 +1684,7 @@ Models:
 
 **Model:** `nvidia/llama-3.3-70b-instruct`, `nvidia/mistral-7b-instruct`, dan 50+ lainnya
 
-**Kiat Pro:** API yang kompatibel dengan OpenAI — bekerja secara lancar dengan terjemahan format OmniRoute!
+**Kiat Pro:** API yang kompatibel dengan OpenAI — bekerja secara lancar dengan terjemahan format AgentProxy!
 
 ### DeepSeek
 
@@ -1823,7 +1823,7 @@ Cost: currently listed as $0; terms and availability may change
 ```
 Settings → Models → Advanced:
   OpenAI API Base URL: http://localhost:20128/v1
-  OpenAI API Key: [from OmniRoute dashboard]
+  OpenAI API Key: [from AgentProxy dashboard]
   Model: cc/claude-opus-4-7
 ```
 
@@ -1835,7 +1835,7 @@ Gunakan halaman **Alat CLI** di dasbor untuk konfigurasi sekali klik, atau edit 
 
 ```bash
 export OPENAI_BASE_URL="http://localhost:20128"
-export OPENAI_API_KEY="your-omniroute-api-key"
+export OPENAI_API_KEY="your-agentproxy-api-key"
 
 codex "your prompt"
 ```
@@ -1854,9 +1854,9 @@ Dashboard → CLI Tools → OpenClaw → Select Model → Apply
 {
   "models": {
     "providers": {
-      "omniroute": {
+      "agentproxy": {
         "baseUrl": "http://127.0.0.1:20128/v1",
-        "apiKey": "sk_omniroute",
+        "apiKey": "sk_agentproxy",
         "api": "openai-completions"
       }
     }
@@ -1864,7 +1864,7 @@ Dashboard → CLI Tools → OpenClaw → Select Model → Apply
 }
 ```
 
-> **Catatan:** OpenClaw hanya berfungsi dengan OmniRoute lokal. Gunakan `127.0.0.1` alih-alih `localhost` untuk menghindari masalah resolusi IPv6.
+> **Catatan:** OpenClaw hanya berfungsi dengan AgentProxy lokal. Gunakan `127.0.0.1` alih-alih `localhost` untuk menghindari masalah resolusi IPv6.
 
 ### Cline / Continue / RooCode
 
@@ -1872,18 +1872,18 @@ Dashboard → CLI Tools → OpenClaw → Select Model → Apply
 Settings → API Configuration:
   Provider: OpenAI Compatible
   Base URL: http://localhost:20128/v1
-  API Key: [from OmniRoute dashboard]
+  API Key: [from AgentProxy dashboard]
   Model: if/kimi-k2-thinking
 ```
 
 ### OpenCode
 
-**Langkah 1:** Tambahkan OmniRoute sebagai penyedia khusus:
+**Langkah 1:** Tambahkan AgentProxy sebagai penyedia khusus:
 
 ```bash
 opencode
 /connect
-# Select "Other" → Enter ID: "omniroute" → Enter your OmniRoute API key
+# Select "Other" → Enter ID: "agentproxy" → Enter your AgentProxy API key
 ```
 
 **Langkah 2:** Buat/edit `opencode.json` di root proyek Anda:
@@ -1892,9 +1892,9 @@ opencode
 {
   "$schema": "https://opencode.ai/config.json",
   "provider": {
-    "omniroute": {
+    "agentproxy": {
       "npm": "@ai-sdk/openai-compatible",
-      "name": "OmniRoute",
+      "name": "AgentProxy",
       "options": {
         "baseURL": "http://localhost:20128/v1"
       },
@@ -1912,10 +1912,10 @@ opencode
 
 ```bash
 /models
-# Select any OmniRoute model from the list
+# Select any AgentProxy model from the list
 ```
 
-> **Tips:** Tambahkan model apa pun yang tersedia di titik akhir OmniRoute `/v1/models` Anda ke bagian `models`. Gunakan format `provider/model-id` dari dasbor OmniRoute Anda.
+> **Tips:** Tambahkan model apa pun yang tersedia di titik akhir AgentProxy `/v1/models` Anda ke bagian `models`. Gunakan format `provider/model-id` dari dasbor AgentProxy Anda.
 
 </details>
 
@@ -1938,7 +1938,7 @@ opencode
 
 **OAuth token expired**
 
-- Disegarkan secara otomatis oleh OmniRoute
+- Disegarkan secara otomatis oleh AgentProxy
 - Jika masalah terus berlanjut: Dasbor → Penyedia → Sambungkan kembali
 
 **High costs**
@@ -1976,7 +1976,7 @@ opencode
 **Tes koneksi menunjukkan "Tidak Valid" untuk penyedia yang kompatibel dengan OpenAI**
 
 - Banyak penyedia tidak mengekspos titik akhir `/models`
-- OmniRoute v1.0.6+ menyertakan validasi fallback melalui penyelesaian obrolan
+- AgentProxy v1.0.6+ menyertakan validasi fallback melalui penyelesaian obrolan
 - Pastikan URL dasar menyertakan akhiran `/v1`
 
 ### 🔐 OAuth di Server Jarak Jauh
@@ -1984,9 +1984,9 @@ opencode
 <a name="oauth-on-a-remote-server"></a>
 <a name="oauth-em-servidor-remoto"></a>
 
-> **⚠️ Penting bagi pengguna yang menjalankan OmniRoute di VPS, Docker, atau server jarak jauh mana pun**
+> **⚠️ Penting bagi pengguna yang menjalankan AgentProxy di VPS, Docker, atau server jarak jauh mana pun**
 
-Kredensial OAuth yang disertakan dalam OmniRoute didaftarkan **hanya untuk `localhost`**. Saat Anda mengakses OmniRoute di server jarak jauh (misalnya `https://omniroute.myserver.com`), Google menolak autentikasi dengan:
+Kredensial OAuth yang disertakan dalam AgentProxy didaftarkan **hanya untuk `localhost`**. Saat Anda mengakses AgentProxy di server jarak jauh (misalnya `https://agentproxy.myserver.com`), Google menolak autentikasi dengan:
 
 ```
 Error 400: redirect_uri_mismatch
@@ -2006,7 +2006,7 @@ Go to: [https://console.cloud.google.com/apis/credentials](https://console.cloud
 
 - Klik **"+ Buat Kredensial"** → **"ID klien OAuth"**
 - Jenis aplikasi: **"Aplikasi web"**
-- Nama: apa pun yang Anda suka (mis. `OmniRoute Remote`)
+- Nama: apa pun yang Anda suka (mis. `AgentProxy Remote`)
 
 **3. Add Authorized Redirect URIs**
 
@@ -2035,14 +2035,14 @@ GEMINI_OAUTH_CLIENT_ID=your-client-id.apps.googleusercontent.com
 GEMINI_OAUTH_CLIENT_SECRET=GOCSPX-your-secret
 ```
 
-**6. Restart OmniRoute**
+**6. Restart AgentProxy**
 
 ```bash
 # npm:
 npm run dev
 
 # Docker:
-docker restart omniroute
+docker restart agentproxy
 ```
 
 **7. Try connecting again**
@@ -2055,10 +2055,10 @@ Google will now redirect correctly to `https://your-server.com/callback`.
 
 Jika Anda tidak ingin menyiapkan kredensial Anda sendiri saat ini, Anda masih dapat menggunakan **alur URL manual**:
 
-1. OmniRoute membuka URL otorisasi Google
+1. AgentProxy membuka URL otorisasi Google
 2. Setelah otorisasi, Google mencoba mengalihkan ke `localhost` (yang gagal di server jauh)
 3. **Salin URL lengkap** dari bilah alamat browser Anda (meskipun halaman tidak dimuat)
-4. Tempelkan URL tersebut ke bidang yang ditampilkan di modal koneksi OmniRoute
+4. Tempelkan URL tersebut ke bidang yang ditampilkan di modal koneksi AgentProxy
 5. Klik **"Hubungkan"**
 
 > Ini berfungsi karena kode otorisasi di URL valid terlepas dari apakah halaman pengalihan dimuat.
@@ -2080,9 +2080,9 @@ Jika Anda tidak ingin menyiapkan kredensial Anda sendiri saat ini, Anda masih da
 - **Auth**: OAuth 2.0 (PKCE) + JWT + Kunci API + Otorisasi Cakupan MCP
 - **Pengujian**: Pelari pengujian Node.js + Vitest (900+ pengujian termasuk unit, integrasi, E2E)
 - **CI/CD**: Tindakan GitHub (publikasi npm otomatis + Docker Hub saat dirilis)
-- **Situs Web**: [omniroute.online](https://omniroute.online)
-- **Paket**: [npmjs.com/package/omniroute](https://www.npmjs.com/package/omniroute)
-- **Pekerja Pelabuhan**: [hub.docker.com/r/diegosouzapw/omniroute](https://hub.docker.com/r/diegosouzapw/omniroute)
+- **Situs Web**: [agentproxy.online](https://agentproxy.example.com)
+- **Paket**: [npmjs.com/package/agentproxy](https://www.npmjs.com/package/agentproxy)
+- **Pekerja Pelabuhan**: [hub.docker.com/r/khanhkit/agentproxy](https://github.com/khanhkit/AgentProxy/pkgs/container/agentproxy)
 - **Ketahanan**: Pemutus arus, backoff eksponensial, kawanan anti-thundering, spoofing TLS, penyembuhan diri kombo otomatis
 
 </details>
@@ -2115,7 +2115,7 @@ Jika Anda tidak ingin menyiapkan kredensial Anda sendiri saat ini, Anda masih da
 
 ## 🗺️ Roadmap
 
-OmniRoute memiliki **218+ fitur yang direncanakan** di berbagai fase pengembangan. Berikut adalah bidang-bidang utamanya:
+AgentProxy memiliki **218+ fitur yang direncanakan** di berbagai fase pengembangan. Berikut adalah bidang-bidang utamanya:
 
 | Category                      | Planned Features | Highlights                                                                                                          |
 | ----------------------------- | ---------------- | ------------------------------------------------------------------------------------------------------------------- |
@@ -2140,7 +2140,7 @@ OmniRoute memiliki **218+ fitur yang direncanakan** di berbagai fase pengembanga
 
 ## 👥 Kontributor
 
-[![Contributors](https://contrib.rocks/image?repo=diegosouzapw/OmniRoute&max=100&columns=20&anon=1)](https://github.com/diegosouzapw/OmniRoute/graphs/contributors)
+[![Contributors](https://contrib.rocks/image?repo=khanhkit/AgentProxy&max=100&columns=20&anon=1)](https://github.com/khanhkit/AgentProxy/graphs/contributors)
 
 ### Cara Berkontribusi
 
@@ -2163,21 +2163,21 @@ gh release create v2.0.0 --title "v2.0.0" --generate-notes
 
 ## 📊 Riwayat Star
 
-<a href="https://www.star-history.com/?repos=diegosouzapw%2Fomniroute&type=date&legend=top-left">
+<a href="https://www.star-history.com/?repos=diegosouzapw%2Fagentproxy&type=date&legend=top-left">
  <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=diegosouzapw/omniroute&type=date&theme=dark&legend=top-left" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=diegosouzapw/omniroute&type=date&legend=top-left" />
-   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=diegosouzapw/omniroute&type=date&legend=top-left" />
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=khanhkit/agentproxy&type=date&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=khanhkit/agentproxy&type=date&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=khanhkit/agentproxy&type=date&legend=top-left" />
  </picture>
 </a>
 
 ## 🌍 StarMapper
 
-<a href="https://starmapper.bruniaux.com/diegosouzapw/omniroute">
+<a href="https://starmapper.bruniaux.com/khanhkit/agentproxy">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://starmapper.bruniaux.com/api/map-image/diegosouzapw/omniroute?theme=dark" />
-    <source media="(prefers-color-scheme: light)" srcset="https://starmapper.bruniaux.com/api/map-image/diegosouzapw/omniroute?theme=light" />
-    <img alt="StarMapper" src="https://starmapper.bruniaux.com/api/map-image/diegosouzapw/omniroute" />
+    <source media="(prefers-color-scheme: dark)" srcset="https://starmapper.bruniaux.com/api/map-image/khanhkit/agentproxy?theme=dark" />
+    <source media="(prefers-color-scheme: light)" srcset="https://starmapper.bruniaux.com/api/map-image/khanhkit/agentproxy?theme=light" />
+    <img alt="StarMapper" src="https://starmapper.bruniaux.com/api/map-image/khanhkit/agentproxy" />
   </picture>
 </a>
 
@@ -2196,6 +2196,6 @@ Lisensi MIT - lihat [LICENSE](LICENSE) untuk detailnya.
 <div align="center">
   <sub>Built with ❤️ for developers who code 24/7</sub>
   <br/>
-  <sub><a href="https://omniroute.online">omniroute.online</a></sub>
+  <sub><a href="https://agentproxy.example.com">agentproxy.online</a></sub>
 </div>
 <!-- GitHub Discussions enabled for community Q&A -->

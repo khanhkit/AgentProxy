@@ -24,7 +24,7 @@ test("#7243 getVisibleResponsesReasoningSummaryText suppresses synthetic text fo
   assert.equal(getVisibleResponsesReasoningSummaryText(item), "");
   assert.doesNotMatch(
     getVisibleResponsesReasoningSummaryText(item),
-    /OmniRoute cannot recover|encrypted private reasoning/i
+    /AgentProxy cannot recover|encrypted private reasoning/i
   );
 });
 

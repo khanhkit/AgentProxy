@@ -6,7 +6,7 @@ import os from "node:os";
 import path from "node:path";
 import { DatabaseSync } from "node:sqlite";
 
-// #7586: `omniroute doctor`'s "Database" and "Storage/encryption" checks call
+// #7586: `agentproxy doctor`'s "Database" and "Storage/encryption" checks call
 // readDatabaseHealth()/readEncryptedCredentialSamples() from bin/cli/sqlite.mjs,
 // which — unlike the real server's driver cascade
 // (src/lib/db/adapters/driverFactory.ts::tryOpenSync, which tries
@@ -59,13 +59,13 @@ test("#7586: readDatabaseHealth() falls back to node:sqlite when better-sqlite3 
   // on a machine without a better-sqlite3 native binary.
   const seed = new DatabaseSync(dbPath);
   seed.exec(
-    "CREATE TABLE _omniroute_migrations (version TEXT PRIMARY KEY, name TEXT NOT NULL, applied_at TEXT);" +
-      "INSERT INTO _omniroute_migrations (version, name, applied_at) VALUES ('001', 'initial_schema', datetime('now'));"
+    "CREATE TABLE _agentproxy_migrations (version TEXT PRIMARY KEY, name TEXT NOT NULL, applied_at TEXT);" +
+      "INSERT INTO _agentproxy_migrations (version, name, applied_at) VALUES ('001', 'initial_schema', datetime('now'));"
   );
   seed.close();
 
   // Exercise the CLI helper's own health check — the exact function
-  // `omniroute doctor` calls (bin/cli/commands/doctor.mjs:checkDatabase ->
+  // `agentproxy doctor` calls (bin/cli/commands/doctor.mjs:checkDatabase ->
   // readDatabaseHealth). Before the fix this threw "better-sqlite3 is not
   // installed..." even though the DB is perfectly healthy.
   const result = await readDatabaseHealth(dbPath);

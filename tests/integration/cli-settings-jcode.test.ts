@@ -8,7 +8,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-jcode-settings-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-jcode-settings-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.API_KEY_SECRET = "test-api-key-secret-jcode";
 process.env.JWT_SECRET = "test-jwt-secret-jcode";
@@ -83,7 +83,7 @@ test("jcode-settings POST: 400 when model is missing", async () => {
 
 // ── Test 4: POST with valid body → writes provider profile into config.toml ──
 
-test("jcode-settings POST: writes [providers.omniroute] into config.toml", async () => {
+test("jcode-settings POST: writes [providers.agentproxy] into config.toml", async () => {
   const tmpHome = fs.mkdtempSync(path.join(os.tmpdir(), "jcode-home-"));
   const origHome = process.env.HOME;
   process.env.HOME = tmpHome;
@@ -107,8 +107,8 @@ test("jcode-settings POST: writes [providers.omniroute] into config.toml", async
       const configPath = path.join(tmpHome, ".jcode", "config.toml");
       if (fs.existsSync(configPath)) {
         const written = fs.readFileSync(configPath, "utf-8");
-        assert.ok(written.includes("managed by OmniRoute"));
-        assert.ok(written.includes("[providers.omniroute]"));
+        assert.ok(written.includes("managed by AgentProxy"));
+        assert.ok(written.includes("[providers.agentproxy]"));
         assert.ok(written.includes('type = "openai-compatible"'));
         assert.ok(written.includes("localhost:20128/v1"));
         assert.ok(written.includes('default_model = "gpt-5.4-mini"'));
@@ -120,9 +120,9 @@ test("jcode-settings POST: writes [providers.omniroute] into config.toml", async
   }
 });
 
-// ── Test 5: DELETE → removes OmniRoute fields ────────────────────────────────
+// ── Test 5: DELETE → removes AgentProxy fields ────────────────────────────────
 
-test("jcode-settings DELETE: removes only the OmniRoute-managed block", async () => {
+test("jcode-settings DELETE: removes only the AgentProxy-managed block", async () => {
   const tmpHome = fs.mkdtempSync(path.join(os.tmpdir(), "jcode-home-del-"));
   const origHome = process.env.HOME;
   process.env.HOME = tmpHome;
@@ -132,14 +132,14 @@ test("jcode-settings DELETE: removes only the OmniRoute-managed block", async ()
     fs.mkdirSync(jcodeDir, { recursive: true });
     const userSection = '[provider]\ndefault_model = "claude-opus-4-8"\n';
     const managedBlock = [
-      "# >>> managed by OmniRoute (jcode provider profile) >>>",
-      "[providers.omniroute]",
+      "# >>> managed by AgentProxy (jcode provider profile) >>>",
+      "[providers.agentproxy]",
       'type = "openai-compatible"',
       'base_url = "http://localhost:20128/v1"',
       'api_key = "sk-test"',
       'default_model = "gpt-5"',
       "requires_api_key = false",
-      "# <<< managed by OmniRoute <<<",
+      "# <<< managed by AgentProxy <<<",
     ].join("\n");
     fs.writeFileSync(path.join(jcodeDir, "config.toml"), `${userSection}\n${managedBlock}\n`);
 
@@ -153,8 +153,8 @@ test("jcode-settings DELETE: removes only the OmniRoute-managed block", async ()
       const configPath = path.join(jcodeDir, "config.toml");
       if (fs.existsSync(configPath)) {
         const remaining = fs.readFileSync(configPath, "utf-8");
-        assert.ok(!remaining.includes("managed by OmniRoute"));
-        assert.ok(!remaining.includes("[providers.omniroute]"));
+        assert.ok(!remaining.includes("managed by AgentProxy"));
+        assert.ok(!remaining.includes("[providers.agentproxy]"));
         assert.ok(remaining.includes('default_model = "claude-opus-4-8"'));
       }
     }

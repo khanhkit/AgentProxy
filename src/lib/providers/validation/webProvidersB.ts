@@ -2,6 +2,7 @@
 // copilot-web, t3-web, jules, devin (cloud-agent), inner-ai. Extracted from validation.ts (god-file
 // decomposition) — top-level functions with no dispatcher-state captures; behavior is byte-identical
 // to the inline defs.
+import { spawn } from "child_process";
 import { applyCustomUserAgent } from "./headers";
 import {
   isSecurityBlockError,
@@ -11,7 +12,7 @@ import {
 } from "./transport";
 import { SafeOutboundFetchError } from "@/shared/network/safeOutboundFetch";
 import { normalizeSessionCookieHeader } from "@/lib/providers/webCookieAuth";
-import { normalizeGeminiCookieInput } from "@omniroute/open-sse/utils/geminiCookies.ts";
+import { normalizeGeminiCookieInput } from "@agentproxy/open-sse/utils/geminiCookies.ts";
 import { buildJulesApiUrl } from "@/lib/cloudAgent/julesApi.ts";
 import {
   META_AI_ASBD_ID,
@@ -141,7 +142,7 @@ export async function validateClaudeWebProvider({ apiKey, providerSpecificData =
     }
 
     const { tlsFetchClaude, TlsClientUnavailableError } =
-      await import("@omniroute/open-sse/services/claudeTlsClient.ts");
+      await import("@agentproxy/open-sse/services/claudeTlsClient.ts");
 
     let response: { status: number; text: string | null };
     try {
@@ -298,7 +299,7 @@ export async function validateCopilotWebProvider({ apiKey, providerSpecificData 
     }
 
     // Extract token — may be bare JWT, cookie string with access_token=, or Bearer prefix
-    const { extractAccessToken } = await import("@omniroute/open-sse/executors/copilot-web.ts");
+    const { extractAccessToken } = await import("@agentproxy/open-sse/executors/copilot-web.ts");
     const token = extractAccessToken(raw);
     if (!token) {
       return { valid: false, error: "Could not extract access_token from input" };
@@ -358,7 +359,7 @@ export function extractM365CredentialParts(
   // Accept the current M365 web endpoint (m365.cloud.microsoft, including
   // regional subdomains) plus the two legacy hosts (substrate.office.com,
   // copilot.microsoft.com). The path still carries /m365Copilot/Chathub/<tenant>,
-  // so extraction is unchanged. (OmniRoute issue #7078)
+  // so extraction is unchanged. (AgentProxy issue #7078)
   if (/^wss:\/\//i.test(text)) {
     try {
       const url = new URL(text);
@@ -514,12 +515,40 @@ export async function validateJulesProvider({ apiKey }: { apiKey: string }) {
   }
 }
 
+async function validateDevinCliKeyFallback(
+  apiKey: unknown
+): Promise<{ valid: boolean; error: string | null }> {
+  const bin = process.env.CLI_DEVIN_BIN?.trim() || "devin";
+  return new Promise((resolve) => {
+    try {
+      const child = spawn(bin, ["acp", "--agent-type", "summarizer"], {
+        env: { ...process.env, WINDSURF_API_KEY: String(apiKey || "") },
+        stdio: ["ignore", "pipe", "pipe"],
+        timeout: 30_000,
+      });
+      child.on("error", () =>
+        resolve({ valid: false, error: "Devin CLI not available for fallback validation" })
+      );
+      child.on("close", (code) => {
+        if (code === 0) resolve({ valid: true, error: null });
+        else resolve({ valid: false, error: `Devin CLI key check failed (exit ${code})` });
+      });
+    } catch {
+      resolve({ valid: false, error: "Devin CLI fallback spawn failed" });
+    }
+  });
+}
+
 /**
  * Devin cloud-agent (Cognition) — GET /v1/sessions with Bearer auth
  * (see docs.devin.ai/api-reference/sessions/list-sessions). Distinct from the
  * "devin-cli" LLM provider (ACP), which is already wired via providerRegistry.
  */
-export async function validateDevinCloudAgentProvider({ apiKey }: { apiKey: string }) {
+export async function validateDevinCloudAgentProvider({
+  apiKey,
+}: {
+  apiKey: string;
+}): Promise<{ valid: boolean; error: string | null; warning?: string }> {
   try {
     const response = await validationWrite("https://api.devin.ai/v1/sessions?limit=1", {
       method: "GET",
@@ -529,6 +558,14 @@ export async function validateDevinCloudAgentProvider({ apiKey }: { apiKey: stri
     });
 
     if (response.status === 401 || response.status === 403) {
+      const cliCheck = await validateDevinCliKeyFallback(apiKey);
+      if (cliCheck.valid) {
+        return {
+          valid: true,
+          error: null,
+          warning: "HTTP API rejected this key; validated via Devin CLI instead",
+        };
+      }
       return { valid: false, error: "Invalid API key" };
     }
 

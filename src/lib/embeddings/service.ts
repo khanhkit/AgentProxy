@@ -1,4 +1,4 @@
-import { handleEmbedding } from "@omniroute/open-sse/handlers/embeddings.ts";
+import { handleEmbedding } from "@agentproxy/open-sse/handlers/embeddings.ts";
 import {
   parseEmbeddingModel,
   getEmbeddingProvider,
@@ -6,9 +6,9 @@ import {
   deriveEmbeddingProviderForChatProvider,
   type EmbeddingProviderNodeRow,
   type EmbeddingProvider,
-} from "@omniroute/open-sse/config/embeddingRegistry.ts";
-import { errorResponse, unavailableResponse } from "@omniroute/open-sse/utils/error.ts";
-import { HTTP_STATUS } from "@omniroute/open-sse/config/constants.ts";
+} from "@agentproxy/open-sse/config/embeddingRegistry.ts";
+import { errorResponse, unavailableResponse } from "@agentproxy/open-sse/utils/error.ts";
+import { HTTP_STATUS } from "@agentproxy/open-sse/config/constants.ts";
 import * as log from "@/sse/utils/logger";
 import { toJsonErrorPayload } from "@/shared/utils/upstreamError";
 import {
@@ -20,9 +20,9 @@ import { getCachedProviderNodes } from "@/lib/db/readCache";
 import { getComboByName, getCombos } from "@/lib/db/combos";
 import { getDatabaseSettings } from "@/lib/db/databaseSettings";
 import { resolveProxyForConnection } from "@/lib/db/settings";
-import { runWithProxyContext } from "@omniroute/open-sse/utils/proxyFetch.ts";
-import { handleComboChat } from "@omniroute/open-sse/services/combo.ts";
-import { resolveBareModelToConnectionDefault } from "@omniroute/open-sse/services/model.ts";
+import { runWithProxyContext } from "@agentproxy/open-sse/utils/proxyFetch.ts";
+import { handleComboChat } from "@agentproxy/open-sse/services/combo.ts";
+import { resolveBareModelToConnectionDefault } from "@agentproxy/open-sse/services/model.ts";
 import { findEmbeddingComboDimensionConflict } from "./familyGuard";
 import {
   formatMissingEmbeddingCredentialsError,
@@ -30,9 +30,10 @@ import {
 } from "./errors";
 import { isPrivateHost, isCloudMetadataHost } from "@/shared/network/outboundUrlGuard";
 import { calculateCost } from "@/lib/usage/costCalculator";
-import { attachOmniRouteMetaHeaders } from "@/domain/omnirouteResponseMeta";
+import { attachAgentProxyMetaHeaders } from "@/domain/agentproxyResponseMeta";
 import { generateRequestId } from "@/shared/utils/requestId";
 import { resolveLocalSyncedEndpointRoute } from "@/lib/providerModels/syncedEndpointRouting";
+import { resolveAlibabaProviderEmbeddingUrl } from "@/shared/constants/alibabaProviderRegions";
 
 type ValidatedEmbeddingBody = Record<string, unknown> & { model: string };
 type ProviderCredentialsResult = Awaited<ReturnType<typeof getProviderCredentials>>;
@@ -242,7 +243,7 @@ export async function createEmbeddingResponse(
   // entries are checked first and keep their specialized configuration.
   if (!providerConfig && !options.resolvedProvider) {
     try {
-      const { REGISTRY } = await import("@omniroute/open-sse/config/providerRegistry.ts");
+      const { REGISTRY } = await import("@agentproxy/open-sse/config/providerRegistry.ts");
       const chatEntry = (REGISTRY as Record<string, { baseUrl?: string } | undefined>)[provider];
       providerConfig = deriveEmbeddingProviderForChatProvider(provider, chatEntry);
       if (providerConfig) {
@@ -328,6 +329,15 @@ export async function createEmbeddingResponse(
         `[${provider}] All ${credentials.expiredCount || 1} connection(s) ${reason} — please reconnect in the dashboard`
       );
     }
+    // #13945: blockedByKeyPolicy is another truthy credential-diagnostic
+    // sentinel. Without this guard it would reach the embeddings executor
+    // without usable apiKey/accessToken credentials.
+    if ("blockedByKeyPolicy" in credentials && credentials.blockedByKeyPolicy) {
+      return errorResponse(
+        HTTP_STATUS.BAD_REQUEST,
+        formatMissingEmbeddingCredentialsError(provider)
+      );
+    }
   } else if (provider === "ollama-local" || provider === "lmstudio") {
     // Ollama and LM Studio are keyless, but a configured connection can still
     // provide a custom local host. Hydrate that optional connection without
@@ -343,6 +353,27 @@ export async function createEmbeddingResponse(
       !("allExpired" in localCredentials)
     ) {
       credentials = localCredentials;
+    }
+  }
+
+  // Alibaba embedding endpoints are connection-scoped: workspace + region
+  // live in providerSpecificData, so the static chat registry cannot select
+  // the correct /compatible-mode/v1/embeddings host by itself.
+  if (
+    credentials &&
+    !options.resolvedProvider &&
+    (provider === "alibaba" || provider === "alibaba-cn")
+  ) {
+    const providerSpecificData = (
+      credentials as { providerSpecificData?: Record<string, unknown> | null }
+    ).providerSpecificData;
+    const connectionBaseUrl = resolveAlibabaProviderEmbeddingUrl(
+      provider,
+      providerSpecificData,
+      providerConfig.baseUrl
+    );
+    if (connectionBaseUrl) {
+      providerConfig = { ...providerConfig, baseUrl: connectionBaseUrl };
     }
   }
 
@@ -415,7 +446,7 @@ export async function createEmbeddingResponse(
     responseHeaders.set("Content-Type", "application/json");
     const usage = (result.data as { usage?: Record<string, number> })?.usage ?? null;
     const costUsd = usage ? await calculateCost(provider, effectiveModel ?? "", usage) : 0;
-    attachOmniRouteMetaHeaders(responseHeaders, {
+    attachAgentProxyMetaHeaders(responseHeaders, {
       provider,
       model: effectiveModel,
       usage,

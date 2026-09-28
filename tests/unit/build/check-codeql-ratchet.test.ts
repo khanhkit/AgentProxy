@@ -11,11 +11,9 @@ import { readFileSync } from "node:fs";
 // @ts-expect-error — .mjs helper has no type declarations; runtime shape is known.
 import {
   parseCodeQLAlerts,
-  evaluateCodeqlRatchet,
+  evaluateCodeqlGate,
+  findFreshCodeqlAnalysis,
 } from "../../../scripts/check/check-codeql-ratchet.mjs";
-
-type RatchetVerdict = { regressed: boolean; improved: boolean };
-const evaluate = evaluateCodeqlRatchet as (current: number, baseline: number) => RatchetVerdict;
 
 // ---------------------------------------------------------------------------
 // Fixtures — synthetic GitHub code-scanning/alerts API responses
@@ -292,58 +290,144 @@ test("parseCodeQLAlerts: dismissed com mesmo ruleId que open — dismissed não 
 });
 
 // ---------------------------------------------------------------------------
-// evaluateCodeqlRatchet — ratchet direction:down (Task 7.3 promote to blocking)
-// Mirror of evaluateDeadCode: regression when measured > baseline; the baseline
-// is 0 (clean), so ANY open CodeQL alert is a regression that blocks.
+// AP-ISS-0107 — freshness + PR-relative regression gate
 // ---------------------------------------------------------------------------
 
-test("evaluateCodeqlRatchet: equal to baseline passes (0 vs 0 — clean)", () => {
-  const r = evaluate(0, 0);
-  assert.equal(r.regressed, false);
-  assert.equal(r.improved, false);
+test("findFreshCodeqlAnalysis: matches exact CodeQL ref and commit SHA", () => {
+  const analyses = [
+    {
+      tool: { name: "CodeQL" },
+      ref: "refs/heads/main",
+      commit_sha: "old-sha",
+      category: "/language:javascript-typescript",
+    },
+    {
+      tool: { name: "CodeQL" },
+      ref: "refs/pull/42/merge",
+      commit_sha: "merge-sha",
+      category: "/language:javascript-typescript",
+    },
+  ];
+
+  const fresh = findFreshCodeqlAnalysis(analyses, "merge-sha", "refs/pull/42/merge");
+  assert.equal(fresh?.commit_sha, "merge-sha");
+  assert.equal(fresh?.ref, "refs/pull/42/merge");
 });
 
-test("evaluateCodeqlRatchet: one more alert than baseline 0 is a regression", () => {
-  const r = evaluate(1, 0);
-  assert.equal(r.regressed, true, "a single new open CodeQL alert must block");
-  assert.equal(r.improved, false);
+test("findFreshCodeqlAnalysis: stale analysis is not accepted", () => {
+  const analyses = [
+    {
+      tool: { name: "CodeQL" },
+      ref: "refs/heads/main",
+      commit_sha: "old-sha",
+      category: "/language:javascript-typescript",
+    },
+  ];
+
+  assert.equal(findFreshCodeqlAnalysis(analyses, "current-sha", "refs/heads/main"), null);
 });
 
-test("evaluateCodeqlRatchet: fewer alerts than a non-zero baseline is an improvement", () => {
-  const r = evaluate(2, 5);
-  assert.equal(r.regressed, false);
-  assert.equal(r.improved, true);
+test("evaluateCodeqlGate: unchanged PR passes even when repository has historical debt", () => {
+  const verdict = evaluateCodeqlGate({
+    freshAnalysis: true,
+    pullRequestNumber: 42,
+    pullRequestAlertCount: 0,
+  });
+  assert.deepEqual(verdict, { blocked: false, reason: "ok" });
 });
 
-test("evaluateCodeqlRatchet: zero alerts against a non-zero baseline is a maximum improvement", () => {
-  const r = evaluate(0, 5);
-  assert.equal(r.regressed, false);
-  assert.equal(r.improved, true);
+test("evaluateCodeqlGate: newly introduced PR CodeQL alert blocks", () => {
+  const verdict = evaluateCodeqlGate({
+    freshAnalysis: true,
+    pullRequestNumber: 42,
+    pullRequestAlertCount: 1,
+  });
+  assert.deepEqual(verdict, { blocked: true, reason: "pr-alerts" });
 });
 
-test("evaluateCodeqlRatchet: strict integer comparison — any increase regresses", () => {
-  assert.equal(evaluate(6, 5).regressed, true);
-  assert.equal(evaluate(5, 5).regressed, false);
-  assert.equal(evaluate(4, 5).regressed, false);
+test("evaluateCodeqlGate: stale analysis blocks even when PR alert count is zero", () => {
+  const verdict = evaluateCodeqlGate({
+    freshAnalysis: false,
+    pullRequestNumber: 42,
+    pullRequestAlertCount: 0,
+  });
+  assert.deepEqual(verdict, { blocked: true, reason: "stale-analysis" });
 });
 
-// ---------------------------------------------------------------------------
-// AgentProxy repository migration baseline
-// ---------------------------------------------------------------------------
+test("evaluateCodeqlGate: fresh non-PR main analysis passes freshness gate", () => {
+  const verdict = evaluateCodeqlGate({
+    freshAnalysis: true,
+    pullRequestNumber: null,
+    pullRequestAlertCount: null,
+  });
+  assert.deepEqual(verdict, { blocked: false, reason: "ok" });
+});
 
-test("AgentProxy CodeQL debt ledger is seeded from the stable default-suite analysis", () => {
+test("AgentProxy repository-wide CodeQL count is telemetry, not a blocking blanket baseline", () => {
   const baseline = JSON.parse(readFileSync("config/quality/quality-baseline.json", "utf8"));
   const metric = baseline.metrics?.codeqlAlerts;
 
-  assert.equal(metric?.value, 132, "AgentProxy stable default-suite debt ledger must be 132");
+  assert.equal(metric?.value, 132, "historical debt inventory remains explicit");
+  assert.equal(metric?.dedicatedGate, false, "global debt count must not be a blocking gate");
   assert.match(
-    metric?._agentproxy_migration_rebaseline_2026_09_14 ?? "",
-    /AgentProxy.*132.*default-suite/i,
-    "migration note must explain the AgentProxy default-suite provenance"
+    metric?._ap0107_telemetry_only ?? "",
+    /telemetry.*not.*blocking|not.*merge.*threshold/i,
+    "metric must document that 132 is telemetry rather than an accepted merge threshold"
+  );
+});
+
+test("advanced CodeQL workflow auto-runs and enforces post-analysis freshness/PR regression", () => {
+  const workflow = readFileSync(".github/workflows/codeql.yml", "utf8");
+
+  assert.match(workflow, /\n\s+push:\s*\n\s+branches:\s*\[main\]/);
+  assert.match(workflow, /\n\s+pull_request:\s*\n\s+branches:\s*\[main\]/);
+  assert.match(workflow, /\n\s+schedule:\s*\n\s+- cron:/);
+  assert.match(workflow, /workflow_dispatch:/);
+  assert.match(workflow, /CODEQL_RATCHET_ENFORCE:\s*["']?1["']?/);
+  assert.match(workflow, /CODEQL_EXPECTED_SHA:/);
+  assert.match(workflow, /CODEQL_EXPECTED_REF:/);
+  assert.match(workflow, /CODEQL_PR_NUMBER:/);
+  assert.match(workflow, /check:codeql-ratchet/);
+  assert.match(
+    workflow,
+    /packs:\s*codeql\/javascript-queries@\*:AlertSuppression\.ql/,
+    "advanced CodeQL must execute the bundled alert-suppression query so source suppressions are honored"
+  );
+  assert.doesNotMatch(
+    workflow,
+    /disable-default-queries:\s*true/,
+    "enabling source suppressions must not replace or weaken the default CodeQL query suite"
+  );
+  assert.doesNotMatch(workflow, /OWNER ACTION REQUIRED|manual dispatch/i);
+});
+
+test("advanced CodeQL workflow filters only CodeQL-declared in-source SARIF suppressions before upload", () => {
+  const workflow = readFileSync(".github/workflows/codeql.yml", "utf8");
+
+  assert.match(
+    workflow,
+    /github\/codeql-action\/analyze@[^\n]+[\s\S]*?upload:\s*failure-only[\s\S]*?post-processed-sarif-path:\s*\.\.\/results-post-processed/,
+    "analyze must produce post-processed SARIF without directly uploading successful results"
   );
   assert.match(
-    metric?._agentproxy_critical_debt_2026_09_14 ?? "",
-    /2 critical.*request-forgery/i,
-    "critical debt must remain explicit rather than silently absorbed"
+    workflow,
+    /node scripts\/check\/filter-codeql-in-source-suppressions\.mjs\s+\.\.\/results-post-processed\s+\.\.\/results-filtered/,
+    "workflow must run the generic in-source SARIF filter"
   );
+  assert.match(
+    workflow,
+    /github\/codeql-action\/upload-sarif@[^\n]+[\s\S]*?sarif_file:\s*\.\.\/results-filtered[\s\S]*?category:\s*["']?\/language:javascript-typescript["']?/,
+    "filtered SARIF must be uploaded with the same CodeQL category"
+  );
+  assert.doesNotMatch(
+    workflow,
+    /upload:\s*never/,
+    "failed-run CoeQL diagnostics must remain available"
+  );
+
+  const analyze = workflow.indexOf("github/codeql-action/analyze@");
+  const filter = workflow.indexOf("filter-codeql-in-source-suppressions.mjs");
+  const upload = workflow.indexOf("github/codeql-action/upload-sarif@");
+  const ratchet = workflow.indexOf("check:codeql-ratchet");
+  assert.ok(analyze >= 0 && analyze < filter && filter < upload && upload < ratchet);
 });

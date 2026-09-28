@@ -9,7 +9,7 @@ if [[ "${PIXELFLUX_WAYLAND,,}" == "true" ]]; then
   done
   echo "[svc-de] ${SOCKET_PATH} found launching de"
   cd $HOME
-  # OmniRoute: bridge Chromium DevTools (127.0.0.1:9222) to 0.0.0.0:9223.
+  # AgentProxy: bridge Chromium DevTools (127.0.0.1:9222) to 0.0.0.0:9223.
   ( sleep 8; python3 /usr/local/bin/cdp-bridge.py >/proc/1/fd/2 2>&1 ) &
   exec s6-setuidgid abc \
     /bin/bash /defaults/startwm_wayland.sh &
@@ -56,7 +56,7 @@ chmod 777 /tmp/selkies*
 
 # run
 cd $HOME
-# OmniRoute: bridge Chromium DevTools (127.0.0.1:9222) to 0.0.0.0:9223.
+# AgentProxy: bridge Chromium DevTools (127.0.0.1:9222) to 0.0.0.0:9223.
 ( sleep 8; python3 /usr/local/bin/cdp-bridge.py >/proc/1/fd/2 2>&1 ) &
 exec s6-setuidgid abc \
   /bin/bash /defaults/startwm.sh &

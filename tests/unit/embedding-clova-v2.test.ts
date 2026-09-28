@@ -14,7 +14,7 @@ import { join } from "node:path";
 // Live-verified against the API on 2026-09-01: 1024 dimensions, ~100ms per call,
 // and an empty string is rejected with `40004 Text empty`.
 
-const TEST_DATA_DIR = mkdtempSync(join(tmpdir(), "omniroute-clova-embeddings-"));
+const TEST_DATA_DIR = mkdtempSync(join(tmpdir(), "agentproxy-clova-embeddings-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.SQLITE_FILE = join(TEST_DATA_DIR, "storage.sqlite");
 

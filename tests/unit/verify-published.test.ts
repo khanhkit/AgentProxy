@@ -33,7 +33,7 @@ test("buildDockerArgs passes the version via env, never into the script body", (
 });
 
 test("container script installs from the registry and polls health with a version match", () => {
-  assert.ok(CONTAINER_SCRIPT.includes('npm install -g "omniroute@${VERIFY_VERSION}"'));
+  assert.ok(CONTAINER_SCRIPT.includes('npm install -g "agentproxy@${VERIFY_VERSION}"'));
   assert.ok(CONTAINER_SCRIPT.includes("/api/monitoring/health"));
   assert.ok(CONTAINER_SCRIPT.includes("body.version === want"), "must assert the served version");
   assert.ok(CONTAINER_SCRIPT.includes("WRONG VERSION"), "must fail loudly on version mismatch");

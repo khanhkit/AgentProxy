@@ -7,14 +7,14 @@ import path from "node:path";
 import test from "node:test";
 
 const originalDataDir = process.env.DATA_DIR;
-const originalPluginsDir = process.env.OMNIROUTE_PLUGINS_DIR;
-const testRoot = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-stream-public-error-"));
+const originalPluginsDir = process.env.AGENTPROXY_PLUGINS_DIR;
+const testRoot = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-stream-public-error-"));
 const TEST_DATA_DIR = path.join(testRoot, "data");
 const TEST_PLUGINS_DIR = path.join(testRoot, "plugins");
 fs.mkdirSync(TEST_DATA_DIR, { recursive: true });
 fs.mkdirSync(TEST_PLUGINS_DIR, { recursive: true });
 process.env.DATA_DIR = TEST_DATA_DIR;
-process.env.OMNIROUTE_PLUGINS_DIR = TEST_PLUGINS_DIR;
+process.env.AGENTPROXY_PLUGINS_DIR = TEST_PLUGINS_DIR;
 
 const [core, callLogs, artifactWriter, loggerResource, streamHandler, { FORMATS }] =
   await Promise.all([
@@ -29,10 +29,10 @@ const { createStreamController, pipeWithDisconnect } = streamHandler;
 
 const SECRET = "sk-live-streamhandler-secret-123456";
 const API_KEY = "provider-key-streamhandler-654321";
-const PRIVATE_PATH = "/srv/omniroute/private/provider.ts:42:9";
+const PRIVATE_PATH = "/srv/agentproxy/private/provider.ts:42:9";
 const RAW_MESSAGE =
   `Upstream failed at ${PRIVATE_PATH} Authorization: Bearer ${SECRET} api_key=${API_KEY}` +
-  `\n    at dispatch (/srv/omniroute/private/dispatcher.ts:88:3)`;
+  `\n    at dispatch (/srv/agentproxy/private/dispatcher.ts:88:3)`;
 
 test.after(async () => {
   assert.equal(await callLogs.waitForCallLogSaves(3_000), true);
@@ -42,8 +42,8 @@ test.after(async () => {
 
   if (originalDataDir === undefined) delete process.env.DATA_DIR;
   else process.env.DATA_DIR = originalDataDir;
-  if (originalPluginsDir === undefined) delete process.env.OMNIROUTE_PLUGINS_DIR;
-  else process.env.OMNIROUTE_PLUGINS_DIR = originalPluginsDir;
+  if (originalPluginsDir === undefined) delete process.env.AGENTPROXY_PLUGINS_DIR;
+  else process.env.AGENTPROXY_PLUGINS_DIR = originalPluginsDir;
 
   fs.rmSync(testRoot, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
 });
@@ -52,7 +52,7 @@ test("fixture binds all persistent state to its process-owned directories", () =
   assert.equal(core.DATA_DIR, TEST_DATA_DIR);
   assert.equal(core.SQLITE_FILE, path.join(TEST_DATA_DIR, "storage.sqlite"));
   assert.equal(process.env.DATA_DIR, TEST_DATA_DIR);
-  assert.equal(process.env.OMNIROUTE_PLUGINS_DIR, TEST_PLUGINS_DIR);
+  assert.equal(process.env.AGENTPROXY_PLUGINS_DIR, TEST_PLUGINS_DIR);
   assert.equal(fs.existsSync(TEST_DATA_DIR), true);
   assert.equal(fs.existsSync(TEST_PLUGINS_DIR), true);
 });
@@ -86,7 +86,7 @@ test("OpenAI stream failures keep raw diagnostics internal and sanitize the publ
   assert.match(publicWire, /\[DONE\]/);
   assert.doesNotMatch(publicWire, new RegExp(SECRET));
   assert.doesNotMatch(publicWire, new RegExp(API_KEY));
-  assert.doesNotMatch(publicWire, /\/srv\/omniroute\/private/);
+  assert.doesNotMatch(publicWire, /\/srv\/agentproxy\/private/);
   assert.doesNotMatch(publicWire, /dispatcher\.ts/);
   assert.doesNotMatch(publicWire, /Authorization:\s*Bearer/i);
   assert.match(publicWire, /<path>/);
@@ -122,7 +122,7 @@ test("Responses stream failures preserve the failure event shape without leaking
   assert.match(publicWire, /"code":"rate_limit_exceeded"/);
   assert.doesNotMatch(publicWire, new RegExp(SECRET));
   assert.doesNotMatch(publicWire, new RegExp(API_KEY));
-  assert.doesNotMatch(publicWire, /\/srv\/omniroute\/private/);
+  assert.doesNotMatch(publicWire, /\/srv\/agentproxy\/private/);
   assert.doesNotMatch(publicWire, /dispatcher\.ts/);
   assert.doesNotMatch(publicWire, /Authorization:\s*Bearer/i);
   assert.match(publicWire, /<path>/);
@@ -157,7 +157,7 @@ test("Claude stream failures preserve error and stop events without leaking diag
   assert.match(publicWire, /event: message_stop/);
   assert.doesNotMatch(publicWire, new RegExp(SECRET));
   assert.doesNotMatch(publicWire, new RegExp(API_KEY));
-  assert.doesNotMatch(publicWire, /\/srv\/omniroute\/private/);
+  assert.doesNotMatch(publicWire, /\/srv\/agentproxy\/private/);
   assert.doesNotMatch(publicWire, /dispatcher\.ts/);
   assert.doesNotMatch(publicWire, /Authorization:\s*Bearer/i);
   assert.match(publicWire, /<path>/);
@@ -191,7 +191,7 @@ test("stream diagnostics sanitize logs while callbacks retain the original failu
   assert.doesNotMatch(logs, /Authorization:\s*Bearer/i);
   assert.doesNotMatch(logs, new RegExp(SECRET));
   assert.doesNotMatch(logs, new RegExp(API_KEY));
-  assert.doesNotMatch(logs, /\/srv\/omniroute\/private/);
+  assert.doesNotMatch(logs, /\/srv\/agentproxy\/private/);
   assert.doesNotMatch(logs, /dispatcher\.ts/);
 });
 

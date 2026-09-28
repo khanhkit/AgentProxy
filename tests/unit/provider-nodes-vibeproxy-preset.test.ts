@@ -9,7 +9,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-vibeproxy-preset-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-vibeproxy-preset-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../src/lib/db/core.ts");
@@ -33,8 +33,8 @@ interface ProviderNodeResponseBody {
 }
 
 async function resetStorage() {
-  delete process.env.OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS;
-  delete process.env.OMNIROUTE_ALLOW_LOCAL_PROVIDER_URLS;
+  delete process.env.AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS;
+  delete process.env.AGENTPROXY_ALLOW_LOCAL_PROVIDER_URLS;
   core.resetDbInstance();
   fs.rmSync(TEST_DATA_DIR, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
   fs.mkdirSync(TEST_DATA_DIR, { recursive: true });

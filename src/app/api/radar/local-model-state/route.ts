@@ -6,7 +6,7 @@
  */
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { buildErrorBody, sanitizeErrorMessage } from "@omniroute/open-sse/utils/error";
+import { buildErrorBody, sanitizeErrorMessage } from "@agentproxy/open-sse/utils/error";
 import {
   clearRadarLocalModelOverride,
   listRadarLocalModelState,

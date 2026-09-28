@@ -364,7 +364,8 @@ export function xaiCompletedToGeminiJson(
       promptTokenCount: u.input_tokens ?? u.prompt_tokens ?? 0,
       candidatesTokenCount: u.output_tokens ?? u.completion_tokens ?? 0,
       totalTokenCount:
-        u.total_tokens ?? ((u.input_tokens ?? 0) + (u.output_tokens ?? 0)),
+        u.total_tokens ??
+        (u.input_tokens ?? u.prompt_tokens ?? 0) + (u.output_tokens ?? u.completion_tokens ?? 0),
     };
   }
   return out;

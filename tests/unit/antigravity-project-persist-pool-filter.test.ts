@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { preferAntigravityConnectionsWithStoredProject } from "@omniroute/open-sse/services/antigravityProjectPersist.ts";
+import { preferAntigravityConnectionsWithStoredProject } from "@agentproxy/open-sse/services/antigravityProjectPersist.ts";
 
 test("keeps connections with a projectId on the column or in providerSpecificData", () => {
   const kept = preferAntigravityConnectionsWithStoredProject([

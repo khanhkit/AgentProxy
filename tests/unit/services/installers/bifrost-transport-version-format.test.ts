@@ -58,8 +58,8 @@ describe("resolveSpawnArgs BIFROST_TRANSPORT_VERSION (real filesystem)", () => {
   let fakeBinDir: string;
 
   before(() => {
-    dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-bifrost-vfix-"));
-    fakeBinDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-bifrost-vfix-bin-"));
+    dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-bifrost-vfix-"));
+    fakeBinDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-bifrost-vfix-bin-"));
     process.env.DATA_DIR = dataDir;
     process.env.PATH = `${fakeBinDir}:${ORIGINAL_PATH}`;
 

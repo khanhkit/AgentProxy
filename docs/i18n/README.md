@@ -1,4 +1,4 @@
-# 🌐 Multilingual Documentation — OmniRoute
+# 🌐 Multilingual Documentation — AgentProxy
 
 Translations of documentation into 50 languages; together with the English source, the UI supports 51 locales. Code blocks remain in English.
 

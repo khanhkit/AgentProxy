@@ -17,14 +17,14 @@ import http from "node:http";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-cliproxy-auth-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-cliproxy-auth-"));
 const DEDICATED_API_KEY = "cpa-dedicated-data-plane-key";
 
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.NODE_ENV = "test";
 process.env.DISABLE_SQLITE_AUTO_BACKUP = "true";
 process.env.STORAGE_ENCRYPTION_KEY = "cliproxy-health-model-auth-test-key";
-process.env.OMNIROUTE_ADOPT_EXISTING_SERVICE = "1";
+process.env.AGENTPROXY_ADOPT_EXISTING_SERVICE = "1";
 
 const seenPaths: string[] = [];
 const modelAuthorizationHeaders: Array<string | null> = [];

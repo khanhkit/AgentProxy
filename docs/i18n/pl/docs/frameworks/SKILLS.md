@@ -9,29 +9,29 @@ lastUpdated: 2026-06-28
 > **Source of truth:** `src/lib/skills/` and `src/app/api/skills/`
 > **Last updated:** 2026-06-28 — v3.8.40
 
-OmniRoute udostępnia rozszerzalny framework Skills, który pozwala modelom językowym (oraz operatorom) składać wielokrotnego użytku możliwości — od odczytów systemu plików i żądań HTTP po wykonywanie kodu w sandboxie oraz wyselekcjonowane skille z marketplace.
+AgentProxy udostępnia rozszerzalny framework Skills, który pozwala modelom językowym (oraz operatorom) składać wielokrotnego użytku możliwości — od odczytów systemu plików i żądań HTTP po wykonywanie kodu w sandboxie oraz wyselekcjonowane skille z marketplace.
 
-Skill to wersjonowana, zdefiniowana schematem jednostka pracy. OmniRoute może wstrzykiwać skille jako definicje narzędzi do żądań wychodzących, przechwytywać wywołania narzędzi wracające od modelu, uruchamiać pasujący handler i zwracać wynik do modelu, aby rozmowa mogła być kontynuowana. Model nigdy nie widzi implementacji — tylko interfejs narzędzia.
+Skill to wersjonowana, zdefiniowana schematem jednostka pracy. AgentProxy może wstrzykiwać skille jako definicje narzędzi do żądań wychodzących, przechwytywać wywołania narzędzi wracające od modelu, uruchamiać pasujący handler i zwracać wynik do modelu, aby rozmowa mogła być kontynuowana. Model nigdy nie widzi implementacji — tylko interfejs narzędzia.
 
 ---
 
 ## Agent Skills vs Omni Skills
 
-OmniRoute ma dwa odrębne, ale komplementarne systemy skilli:
+AgentProxy ma dwa odrębne, ale komplementarne systemy skilli:
 
 | Dimension       | **Omni Skills** (ten dokument)                                | **Agent Skills**                                                                                |
 | :-------------- | :------------------------------------------------------------ | :---------------------------------------------------------------------------------------------- |
 | Purpose         | Wstrzykiwanie narzędzi LLM + wykonanie w sandboxie            | Katalog SKILL.md do odkrywania i konsumowania przez zewnętrznych agentów                        |
 | Source of truth | `src/lib/skills/` + marketplace                               | `src/lib/agentSkills/` + katalog `skills/`                                                      |
 | Runtime mode    | Wstrzykiwane do żądań wychodzących, wykonywane przy tool-call | Statyczny katalog markdown + endpointy discovery REST/MCP/A2A                                   |
-| Who uses it     | Sam OmniRoute (routing combo, przychodzące wywołania LLM)     | Zewnętrzni agenci, klienci MCP, orkiestratory A2A                                               |
+| Who uses it     | Sam AgentProxy (routing combo, przychodzące wywołania LLM)     | Zewnętrzni agenci, klienci MCP, orkiestratory A2A                                               |
 | Count           | Zmienna (napędzana marketplace)                               | 42 kanoniczne wpisy (22 API + 20 CLI)                                                           |
 | Format          | `SkillDefinition` ze schematem narzędzia + handler            | Frontmatter `SKILL.md` + treść markdown                                                         |
-| Discovery       | REST `/api/skills/*` + narzędzia MCP `omniroute_skills_*`     | REST `/api/agent-skills/*` + narzędzia MCP `omniroute_agent_skills_*` + A2A `list-capabilities` |
+| Discovery       | REST `/api/skills/*` + narzędzia MCP `agentproxy_skills_*`     | REST `/api/agent-skills/*` + narzędzia MCP `agentproxy_agent_skills_*` + A2A `list-capabilities` |
 
-**Omni Skills** to silnik wykonania — definiują, _co OmniRoute potrafi zrobić_, gdy LLM wywoła narzędzie.
+**Omni Skills** to silnik wykonania — definiują, _co AgentProxy potrafi zrobić_, gdy LLM wywoła narzędzie.
 
-**Agent Skills** to katalog dokumentacji — wyjaśniają zewnętrznym agentom, _jak używać_ REST API i CLI OmniRoute, ze ustrukturyzowanymi plikami SKILL.md, które można bezpośrednio wstawić do promptów agenta.
+**Agent Skills** to katalog dokumentacji — wyjaśniają zewnętrznym agentom, _jak używać_ REST API i CLI AgentProxy, ze ustrukturyzowanymi plikami SKILL.md, które można bezpośrednio wstawić do promptów agenta.
 
 Katalog Agent Skills, generator, narzędzia MCP oraz skill A2A opisano w [docs/frameworks/AGENT-SKILLS.md](./AGENT-SKILLS.md).
 
@@ -43,14 +43,14 @@ Katalog Agent Skills, generator, narzędzia MCP oraz skill A2A opisano w [docs/f
 
 W tym samym rejestrze współistnieją trzy źródła skilli:
 
-1. **Built-in skills** (`src/lib/skills/builtins.ts`) — dostarczane z OmniRoute. Pokrywają typowe przypadki:
+1. **Built-in skills** (`src/lib/skills/builtins.ts`) — dostarczane z AgentProxy. Pokrywają typowe przypadki:
    - `file_read`, `file_write` — workspace sandboxa per klucz API pod `<DATA_DIR>/skills/workspaces/<hashed-key>/`
    - `http_request` — wychodzące HTTP przez `safeOutboundFetch` z `guard: "public-only"`
    - `web_search` — podłączany provider wyszukiwania z cache (`executeWebSearch`)
    - `eval_code` — wykonanie `node` lub `python` w sandboxie Dockera
    - `execute_command` — polecenie shell w sandboxie Dockera
    - `browser` — scaffolding oparty o Playwright, domyślnie wyłączony (`builtin/browser.ts`)
-2. **SkillsMP** (OmniRoute Marketplace) — pobierany z `https://skillsmp.com/api/v1/skills/search`. Wymaga `skillsmpApiKey` w Settings.
+2. **SkillsMP** (AgentProxy Marketplace) — pobierany z `https://skillsmp.com/api/v1/skills/search`. Wymaga `skillsmpApiKey` w Settings.
 3. **SkillsSH** (katalog społecznościowy `skills.sh`) — pobierany z `https://skills.sh/api/search`. Auth nie jest wymagany; treść SKILL.md ściągana z GitHub raw.
 
 Jeden „active provider” kontroluje, z którego katalogu dashboard instaluje skille (`src/lib/skills/providerSettings.ts`). Przełączysz go w **Settings → Memory & Skills**. Domyślnie: `skillsmp`.
@@ -120,7 +120,7 @@ Top `AUTO_MAX_SKILLS = 5` skilli z `score >= AUTO_MIN_SCORE = 3` jest wstrzykiwa
 `handleToolCallExecution()` w `src/lib/skills/interception.ts` jest wywoływane przez chat handler po tym, jak upstream zwróci odpowiedź z tool-calling:
 
 1. `extractToolCalls()` czyta kształty specyficzne dla providera (OpenAI `tool_calls` / Responses `function_call`, Anthropic `tool_use`, Gemini `functionCalls`).
-2. Aliasys wbudowanych narzędzi (np. `omniroute_web_search` → `web_search`) są rozwiązywane najpierw. Handlery wbudowane działają inline.
+2. Aliasys wbudowanych narzędzi (np. `agentproxy_web_search` → `web_search`) są rozwiązywane najpierw. Handlery wbudowane działają inline.
 3. Wszystko inne idzie przez `skillExecutor.execute(name@version, args, { apiKeyId, sessionId })`.
 4. Wyniki są wstawiane z powrotem do odpowiedzi — `tool_results`, elementy `function_call_output` albo bloki Anthropic `tool_result` w zależności od formatu.
 
@@ -172,7 +172,7 @@ Domyślnie dozwolone obrazy: `alpine:3.20`, `node:22-alpine`, `python:3.12-alpin
 
 ### Workspace Isolation
 
-`file_read` i `file_write` rozwiązują każdą ścieżkę względem workspace per klucz API w `<DATA_DIR>/skills/workspaces/<sha256(apiKeyId).slice(0,24)>/`. Path traversal (`..`) oraz zabronione segmenty (`.env`, `.git`, `.ssh`, `.omniroute`, `.codex`, `secrets`) są odrzucane przed jakimkolwiek I/O dyskowym.
+`file_read` i `file_write` rozwiązują każdą ścieżkę względem workspace per klucz API w `<DATA_DIR>/skills/workspaces/<sha256(apiKeyId).slice(0,24)>/`. Path traversal (`..`) oraz zabronione segmenty (`.env`, `.git`, `.ssh`, `.agentproxy`, `.codex`, `secrets`) są odrzucane przed jakimkolwiek I/O dyskowym.
 
 ### HTTP Hardening
 
@@ -226,7 +226,7 @@ Endpoint `POST /api/skills/executions` zwraca HTTP `503` z `{ error: "Skills exe
 
 ```bash
 curl -X POST http://localhost:20128/api/skills/install \
-  -H "Authorization: Bearer $OMNIROUTE_MGMT_TOKEN" \
+  -H "Authorization: Bearer $AGENTPROXY_MGMT_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
     "name": "reverse-text",
@@ -251,10 +251,10 @@ Cztery narzędzia MCP owijają powierzchnię skilli (`open-sse/mcp-server/tools/
 
 | Tool                          | Description                                                  |
 | ----------------------------- | ------------------------------------------------------------ |
-| `omniroute_skills_list`       | List skills, optional filters: `apiKeyId`, `name`, `enabled` |
-| `omniroute_skills_enable`     | Enable/disable a skill by `skillId`                          |
-| `omniroute_skills_execute`    | Execute a skill with an input payload                        |
-| `omniroute_skills_executions` | Recent execution history (default 50, max 100)               |
+| `agentproxy_skills_list`       | List skills, optional filters: `apiKeyId`, `name`, `enabled` |
+| `agentproxy_skills_enable`     | Enable/disable a skill by `skillId`                          |
+| `agentproxy_skills_execute`    | Execute a skill with an input payload                        |
+| `agentproxy_skills_executions` | Recent execution history (default 50, max 100)               |
 
 Transport i przypisania scope: [MCP-SERVER.md](./MCP-SERVER.md).
 
@@ -294,7 +294,7 @@ Transport i przypisania scope: [MCP-SERVER.md](./MCP-SERVER.md).
 - **Master switch:** `settings.skillsEnabled = false` blokuje całe wykonanie i zwraca HTTP `503` na `/api/skills/executions`. Rejestr nadal się ładuje.
 - **Zablokuj egress:** trzymaj `SKILLS_SANDBOX_NETWORK_ENABLED` nieustawione (domyślnie) dla w pełni air-gapped sandboxingu. Per-call `networkEnabled: true` i tak wymaga master gate.
 - **Zezwól na konkretne obrazy:** ustaw `SKILLS_ALLOWED_SANDBOX_IMAGES="myorg/sandbox:1.0,node:22-alpine"`, aby rozszerzyć allowlistę.
-- **Audytuj wykonania:** `/dashboard/skills/executions` oraz `omniroute_skills_executions` odpytują `skill_executions`. Udane runy zawierają `durationMs`; nieudane — `errorMessage`.
+- **Audytuj wykonania:** `/dashboard/skills/executions` oraz `agentproxy_skills_executions` odpytują `skill_executions`. Udane runy zawierają `durationMs`; nieudane — `errorMessage`.
 - **Unieważnienie cache:** wywołaj `skillRegistry.invalidateCache()` po ręcznych edycjach DB; w przeciwnym razie poczekaj 60 s.
 - **Anonimowy workspace:** gdy `apiKeyId` jest puste, wszystkie wywołania haszują do tego samego workspace `"anonymous"` — kod świadomy współdzielenia powinien zawsze przekazywać prawdziwy klucz.
 
@@ -358,7 +358,7 @@ enum SkillStatus {
 ### Inspecting Executions
 
 ```ts
-import { skillExecutor } from "omniroute/skills/executor";
+import { skillExecutor } from "agentproxy/skills/executor";
 
 // Get a specific execution by ID
 const exec = skillExecutor.getExecution("exec-uuid-123");
@@ -444,7 +444,7 @@ dokumencie; nie ma progu float w stylu `0.6` ani scoringu w `registry.ts`.
 
 ## Built-in Skills Catalog
 
-OmniRoute dostarcza wyselekcjonowany zestaw wbudowanych skilli w `src/lib/skills/builtin/`. Najczęstsze:
+AgentProxy dostarcza wyselekcjonowany zestaw wbudowanych skilli w `src/lib/skills/builtin/`. Najczęstsze:
 
 ### Browser Automation Skill
 

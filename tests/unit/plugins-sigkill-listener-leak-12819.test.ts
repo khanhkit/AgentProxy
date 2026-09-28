@@ -23,7 +23,7 @@ after(() => {
 
 /** A plugin that ignores SIGTERM and never answers a hook, forcing the escalation path. */
 function writeStubbornPlugin(): string {
-  const dir = mkdtempSync(join(tmpdir(), "omniroute-plugin-12819-"));
+  const dir = mkdtempSync(join(tmpdir(), "agentproxy-plugin-12819-"));
   dirs.push(dir);
   const entry = join(dir, "index.mjs");
   writeFileSync(

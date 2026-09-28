@@ -4,8 +4,8 @@
  * while the handler waits on upstream first-byte (reasoning models, combo failover).
  *
  * @changes
- * - [2026-07-28] [Cursor Grok 4.5] - Scrub omniroute from client-facing keepalive id/model/comment frames
- * - [2026-07-28] [Cursor Grok 4.5] - Neutralize Responses startup thinking text (no OmniRoute brand leak)
+ * - [2026-07-28] [Cursor Grok 4.5] - Scrub agentproxy from client-facing keepalive id/model/comment frames
+ * - [2026-07-28] [Cursor Grok 4.5] - Neutralize Responses startup thinking text (no AgentProxy brand leak)
  *
  * Strict HTTP clients (notably Codex CLI's `reqwest`, which has a ~5s idle-read
  * timeout) drop the connection if no bytes arrive shortly after the request.

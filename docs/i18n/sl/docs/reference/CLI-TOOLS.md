@@ -6,22 +6,22 @@
 
 ---
 
-title: "Orodja CLI — OmniRoute"
+title: "Orodja CLI — AgentProxy"
 version: 3.8.50
 lastUpdated: 2026-08-23
 ---
 
-# Orodja CLI — OmniRoute
+# Orodja CLI — AgentProxy
 
 Nazadnje posodobljeno: 2026-08-23
 
-OmniRoute se integrira s tremi kategorijami orodij CLI, razporejenimi na treh namenskih straneh nadzorne plošče:
+AgentProxy se integrira s tremi kategorijami orodij CLI, razporejenimi na treh namenskih straneh nadzorne plošče:
 
 | Stran              | Pot                     | Koncept                                                                             | Število         |
 | ------------------ | ----------------------- | ----------------------------------------------------------------------------------- | --------------- |
-| **CLI-ji za kodo** | `/dashboard/cli-code`   | Orodja za kodiranje, usmerjena v OmniRoute (odjemalec → CLI → OmniRoute → ponudnik) | 26              |
-| **Agenti CLI**     | `/dashboard/cli-agents` | Avtonomni agenti, usmerjeni v OmniRoute (enak tok, širši obseg)                     | 10              |
-| **Agenti ACP**     | `/dashboard/acp-agents` | CLI-ji, ki jih OmniRoute zažene kot zaledje prek stdio/ACP (obratni tok)            | glejte register |
+| **CLI-ji za kodo** | `/dashboard/cli-code`   | Orodja za kodiranje, usmerjena v AgentProxy (odjemalec → CLI → AgentProxy → ponudnik) | 26              |
+| **Agenti CLI**     | `/dashboard/cli-agents` | Avtonomni agenti, usmerjeni v AgentProxy (enak tok, širši obseg)                     | 10              |
+| **Agenti ACP**     | `/dashboard/acp-agents` | CLI-ji, ki jih AgentProxy zažene kot zaledje prek stdio/ACP (obratni tok)            | glejte register |
 
 Podedovane poti se preusmerijo s kodo 308: `/dashboard/cli-tools` → `/dashboard/cli-code`, `/dashboard/agents` → `/dashboard/acp-agents`.
 
@@ -33,14 +33,14 @@ Podedovane poti se preusmerijo s kodo 308: `/dashboard/cli-tools` → `/dashboar
 CLI-ji za kodo / agenti CLI (tok uporabe):
 Claude / Codex / OpenCode / Cline / KiloCode / Continue / Hermes Agent / Goose / ...
            │
-           ▼  (vsi so usmerjeni v OmniRoute)
+           ▼  (vsi so usmerjeni v AgentProxy)
     http://YOUR_SERVER:20128/v1
            │
-           ▼  (OmniRoute usmeri zahtevo k ustreznemu ponudniku)
+           ▼  (AgentProxy usmeri zahtevo k ustreznemu ponudniku)
     Anthropic / OpenAI / Gemini / DeepSeek / Groq / Mistral / ...
 
 Agenti ACP (obratni tok zagona):
-    Zahteva odjemalca → OmniRoute → zažene CLI prek stdio/ACP → odgovor
+    Zahteva odjemalca → AgentProxy → zažene CLI prek stdio/ACP → odgovor
 ```
 
 **Prednosti:**
@@ -54,30 +54,30 @@ Agenti ACP (obratni tok zagona):
 
 ## Samodejna konfiguracija z `setup-*`
 
-Konfiguracije posameznega orodja vam ni treba pisati ročno. OmniRoute vključuje ukaz `setup-*`
+Konfiguracije posameznega orodja vam ni treba pisati ročno. AgentProxy vključuje ukaz `setup-*`
 za vsak podprti CLI, ki prebere **aktualni** katalog modelov iz delujočega
-OmniRoute (lokalnega ali oddaljenega) in zapiše konfiguracijo orodja v vaš računalnik:
+AgentProxy (lokalnega ali oddaljenega) in zapiše konfiguracijo orodja v vaš računalnik:
 
 ```bash
-omniroute setup-codex        omniroute setup-claude       omniroute setup-opencode
-omniroute setup-cline        omniroute setup-kilo         omniroute setup-continue
-omniroute setup-cursor       omniroute setup-roo          omniroute setup-crush
-omniroute setup-goose        omniroute setup-qwen         omniroute setup-aider
-omniroute setup-5dive
+agentproxy setup-codex        agentproxy setup-claude       agentproxy setup-opencode
+agentproxy setup-cline        agentproxy setup-kilo         agentproxy setup-continue
+agentproxy setup-cursor       agentproxy setup-roo          agentproxy setup-crush
+agentproxy setup-goose        agentproxy setup-qwen         agentproxy setup-aider
+agentproxy setup-5dive
 ```
 
 Vsak sprejema `--remote <url> --api-key <key>` (konfiguriranje lokalnega orodja za
-uporabo oddaljenega OmniRoute), `--dry-run` (predogled brez zapisovanja) in `--port`. Orodja
+uporabo oddaljenega AgentProxy), `--dry-run` (predogled brez zapisovanja) in `--port`. Orodja
 brez samodejnega odkrivanja modelov (Cline, Kilo, Roo, Goose, Aider, Qwen, 5dive) sprejemajo
 `--model <id>` (in `--yes` za neinteraktivne zagone). `setup-5dive` je edini
 postopek, ki ne zapisuje pod `$HOME`: konfigurira gručo agentov 5dive tako, da
 na gostitelju gruče zapiše korenski profil za preverjanje pristnosti, zato se znova izvede prek `sudo`
 in nima lastnega oddaljenega načina. Če želite zagnati CLI z
 vstavljenimi ustreznimi spremenljivkami okolja in brez zapisovanja kakršne koli konfiguracije, uporabite splošni
-zaganjalnik `omniroute run <target>` (claude, codex, aider, goose, opencode, qwen,
+zaganjalnik `agentproxy run <target>` (claude, codex, aider, goose, opencode, qwen,
 gemini — cilji in vzdevki izvirajo iz `bin/cli/cli-manifest.mjs`); podedovana
-zaganjalnika za posamezni orodji `omniroute launch` (Claude Code) in `omniroute launch-codex`
-(Codex) ostajata na voljo. Gemini CLI podpira samo zagon: je cilj ukaza `omniroute run`,
+zaganjalnika za posamezni orodji `agentproxy launch` (Claude Code) in `agentproxy launch-codex`
+(Codex) ostajata na voljo. Gemini CLI podpira samo zagon: je cilj ukaza `agentproxy run`,
 vendar nima postopka `setup-*`/`configure`.
 
 > **Celotna referenca:** glavna tabela — kaj zapiše posamezni ukaz, vse zastavice,
@@ -86,23 +86,23 @@ vendar nima postopka `setup-*`/`configure`.
 
 ### Izvajanje teh ukazov znotraj vsebnika
 
-Ukaz `setup-*`, izveden znotraj vsebnika OmniRoute, zapisuje v
+Ukaz `setup-*`, izveden znotraj vsebnika AgentProxy, zapisuje v
 domači imenik samega vsebnika, ki ga noben CLI na gostitelju ne bere in ki izgine skupaj z
-vsebnikom. OmniRoute to zazna in namesto zapisovanja konča s kodo `2` ter prikaže
+vsebnikom. AgentProxy to zazna in namesto zapisovanja konča s kodo `2` ter prikaže
 navodila. Na voljo sta dva podprta načina nadaljevanja — namestite CLI na gostitelja in
-uporabite `omniroute connect` za povezavo z vsebnikom ali pa konfiguracijske imenike priklopite z vezanim priklopom in nastavite
+uporabite `agentproxy connect` za povezavo z vsebnikom ali pa konfiguracijske imenike priklopite z vezanim priklopom in nastavite
 `CLI_CONFIG_HOME` (profil `host` za compose). Vsak ukaz `setup-*`, pa tudi
-`omniroute configure` in `omniroute config set`, sprejema
+`agentproxy configure` in `agentproxy config set`, sprejema
 `--allow-container-write`, kadar dejansko želite konfigurirati CLI-je samega vsebnika;
-`OMNIROUTE_ALLOW_CONTAINER_CONFIG_WRITE=true` enako omogoči za
+`AGENTPROXY_ALLOW_CONTAINER_CONFIG_WRITE=true` enako omogoči za
 strežnik. Glejte
-[Vodnik za Docker → Konfiguriranje orodij CLI na gostitelju](../guides/DOCKER_GUIDE.md#configuring-host-cli-tools-when-omniroute-runs-in-docker).
+[Vodnik za Docker → Konfiguriranje orodij CLI na gostitelju](../guides/DOCKER_GUIDE.md#configuring-host-cli-tools-when-agentproxy-runs-in-docker).
 
 **Končna točka za uveljavitev** na nadzorni plošči (`POST /api/cli-tools/apply`) uveljavlja
 enako varovalo: v vsebniku zapisovanje, katerega cilj ni vezano priklopljen z
 gostitelja, vrne **`422`** z `containerEphemeralTarget: true`, varnim besedilom
 napake in — za orodja s postopkom za gostitelja (claude, codex, opencode, cline,
-kilo, continue) — z `hostSetupCommand` (npr. `omniroute setup-opencode`), ki ga je treba
+kilo, continue) — z `hostSetupCommand` (npr. `agentproxy setup-opencode`), ki ga je treba
 namesto tega izvesti na gostitelju; nič se ne zapiše. `dryRun: true` še naprej deluje v načinu
 vsebnika ter vrne ustvarjeno vsebino in ciljno pot, ne da bi se dotaknil diska, zato
 lahko konfiguracijo predogledate na nadzorni plošči in jo uveljavite na gostitelju. To vedenje je
@@ -138,8 +138,8 @@ deklarativni vir, preizkus odstopanj pa zagotavlja njihovo usklajenost:
 | ------------------ | ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
 | **Katalogizirano** | Prikazano v katalogu nadzorne plošče (ime, ponudnik, dokumentacija, vrsta konfiguracije) | `src/shared/constants/cliTools.ts` (`CLI_TOOLS`)                    |
 | **Zaznavno**       | Zaznavanje binarne datoteke/konfiguracije, preverjanja stanja, poti konfiguracije        | `src/shared/services/cliRuntime.ts` (izvajalni katalog `CLI_TOOLS`) |
-| **Nastavljivo**    | Podprto z `omniroute configure <cli>` (obstaja recept za nastavitev)                     | `bin/cli/cli-manifest.mjs` (`configure: true`)                      |
-| **Zagonsko**       | Podprto z `omniroute run <target>` (določeno je vstavljanje okolja/argumentov)           | `bin/cli/cli-manifest.mjs` (`run: true`)                            |
+| **Nastavljivo**    | Podprto z `agentproxy configure <cli>` (obstaja recept za nastavitev)                     | `bin/cli/cli-manifest.mjs` (`configure: true`)                      |
+| **Zagonsko**       | Podprto z `agentproxy run <target>` (določeno je vstavljanje okolja/argumentov)           | `bin/cli/cli-manifest.mjs` (`run: true`)                            |
 
 `bin/cli/cli-manifest.mjs` je kanonični izvedljivi manifest za površine ukazov CLI:
 `run`, `configure` in generatorji dopolnjevanja v lupini iz njega pridobivajo svoje
@@ -208,7 +208,7 @@ Avtonomni agenti, ki so prikazani na `/dashboard/cli-agents`:
 
 ## 3. Agenti ACP (/dashboard/acp-agents)
 
-Ta stran (preimenovana iz `/dashboard/agents`) prikazuje vmesnike CLI, ki jih lahko OmniRoute **zažene** kot zaledne izvajalne mehanizme prek protokola stdio/ACP. Katalog se vzdržuje ločeno v `src/lib/acp/registry.ts` in **ni** enak kot `CLI_TOOLS`.
+Ta stran (preimenovana iz `/dashboard/agents`) prikazuje vmesnike CLI, ki jih lahko AgentProxy **zažene** kot zaledne izvajalne mehanizme prek protokola stdio/ACP. Katalog se vzdržuje ločeno v `src/lib/acp/registry.ts` in **ni** enak kot `CLI_TOOLS`.
 
 ---
 
@@ -273,7 +273,7 @@ Nova orodja z `configType: "custom"` imajo namenske API-poti za nastavitve:
 | `POST /api/cli-tools/codewhale-settings`    | CodeWhale (OPENAI_BASE_URL, primarna + starejša sinhronizacija z `~/.deepseek`) |
 | `POST /api/cli-tools/smelt-settings`        | Smelt                                                                           |
 | `POST /api/cli-tools/pi-settings`           | Agent za programiranje Pi                                                       |
-| `POST /api/cli-tools/grok-build-settings`   | Grok Build (~/.grok/config.toml, `[model.omniroute]`)                           |
+| `POST /api/cli-tools/grok-build-settings`   | Grok Build (~/.grok/config.toml, `[model.agentproxy]`)                           |
 | `POST /api/cli-tools/qwen-settings`         | Qwen Code (`~/.qwen/settings.json` + namenski ključ `.env`)                     |
 
 Vse poti za odzive z napakami uporabljajo `sanitizeErrorMessage()` (strogo pravilo št. 12).
@@ -335,7 +335,7 @@ Na voljo so celotni prevodi za PT-BR in EN. Preostalih 39 jezikovnih nastavitev 
 
 ## 9. Hiter začetek
 
-### 1. korak — Pridobite ključ API OmniRoute
+### 1. korak — Pridobite ključ API AgentProxy
 
 1. Odprite `/dashboard/api-manager` → **Ustvari ključ API**
 2. Poimenujte ga (npr. `cli-tools`) in izberite vsa dovoljenja
@@ -368,7 +368,7 @@ npm install -g kilocode
 # Qwen Code
 npm install -g @qwen-code/qwen-code
 
-# Google Gemini CLI (zagon prek `omniroute run gemini` → površina /v1beta)
+# Google Gemini CLI (zagon prek `agentproxy run gemini` → površina /v1beta)
 npm install -g @google/gemini-cli
 
 # Aider
@@ -399,14 +399,14 @@ cargo install smelt  # Temelji na Rustu
 ### 4. korak — Nastavite globalne spremenljivke okolja
 
 ```bash
-# Univerzalna končna točka OmniRoute
+# Univerzalna končna točka AgentProxy
 export OPENAI_BASE_URL="http://localhost:20128/v1"
-export OPENAI_API_KEY="sk-your-omniroute-key"
+export OPENAI_API_KEY="sk-your-agentproxy-key"
 export ANTHROPIC_BASE_URL="http://localhost:20128"
-export ANTHROPIC_AUTH_TOKEN="sk-your-omniroute-key"
+export ANTHROPIC_AUTH_TOKEN="sk-your-agentproxy-key"
 # Gemini CLI prebere GOOGLE_GEMINI_BASE_URL na KORENSKI ravni (njegov SDK sam doda /v1beta/...)
 export GOOGLE_GEMINI_BASE_URL="http://localhost:20128"
-export GEMINI_API_KEY="sk-your-omniroute-key"
+export GEMINI_API_KEY="sk-your-agentproxy-key"
 ```
 
 > Za **oddaljeni strežnik** zamenjajte `localhost:20128` z naslovom IP ali domeno strežnika,
@@ -424,7 +424,7 @@ mkdir -p ~/.claude && cat > ~/.claude/settings.json << EOF
 {
   "env": {
     "ANTHROPIC_BASE_URL": "http://localhost:20128",
-    "ANTHROPIC_AUTH_TOKEN": "sk-your-omniroute-key"
+    "ANTHROPIC_AUTH_TOKEN": "sk-your-agentproxy-key"
   }
 }
 EOF
@@ -440,20 +440,20 @@ Za Claude Code uporabite korensko pot poenotenega prehoda Anthropic. Tukaj ne do
 
 Sodobni Codex (v0.137+) bere samo `~/.codex/config.toml` — stari
 `config.yaml` pripada podedovanemu odjemalcu npm CLI in je tiho prezrt. Ključ API
-ostane v spremenljivki okolja `OMNIROUTE_API_KEY` (`env_key`), nikoli
+ostane v spremenljivki okolja `AGENTPROXY_API_KEY` (`env_key`), nikoli
 v datoteki:
 
 ```bash
 mkdir -p ~/.codex && cat > ~/.codex/config.toml << EOF
-model_provider = "omniroute"
+model_provider = "agentproxy"
 
-[model_providers.omniroute]
-name                 = "OmniRoute"
+[model_providers.agentproxy]
+name                 = "AgentProxy"
 base_url             = "http://localhost:20128/v1"
-env_key              = "OMNIROUTE_API_KEY"
+env_key              = "AGENTPROXY_API_KEY"
 requires_openai_auth = false
 EOF
-export OMNIROUTE_API_KEY="sk-your-omniroute-key"
+export AGENTPROXY_API_KEY="sk-your-agentproxy-key"
 ```
 
 Celotna referenčna dokumentacija (profili, `wire_api`, kontekstna okna): [CODEX-CLI-CONFIGURATION.md](../guides/CODEX-CLI-CONFIGURATION.md).
@@ -469,12 +469,12 @@ mkdir -p ~/.config/opencode && cat > ~/.config/opencode/opencode.json << EOF
 {
   "\$schema": "https://opencode.ai/config.json",
   "provider": {
-    "omniroute": {
+    "agentproxy": {
       "npm": "@ai-sdk/openai-compatible",
-      "name": "OmniRoute",
+      "name": "AgentProxy",
       "options": {
         "baseURL": "http://localhost:20128/v1",
-        "apiKey": "sk-your-omniroute-key"
+        "apiKey": "sk-your-agentproxy-key"
       },
       "models": {
         "claude-sonnet-4-5": { "name": "claude-sonnet-4-5" },
@@ -489,7 +489,7 @@ EOF
 
 **Preizkus:** `opencode`
 
-> Uporabite `opencode run "your prompt" --model omniroute/claude-sonnet-4-5-thinking --variant high`
+> Uporabite `opencode run "your prompt" --model agentproxy/claude-sonnet-4-5-thinking --variant high`
 > za pošiljanje različic z razmišljanjem.
 
 ---
@@ -503,7 +503,7 @@ mkdir -p ~/.cline/data && cat > ~/.cline/data/globalState.json << EOF
 {
   "apiProvider": "openai",
   "openAiBaseUrl": "http://localhost:20128/v1",
-  "openAiApiKey": "sk-your-omniroute-key"
+  "openAiApiKey": "sk-your-agentproxy-key"
 }
 EOF
 ```
@@ -511,7 +511,7 @@ EOF
 **Način VS Code:**
 Nastavitve razširitve Cline → Ponudnik API: `OpenAI Compatible` → Osnovni URL: `http://localhost:20128/v1`
 
-Lahko pa uporabite nadzorno ploščo OmniRoute → **Orodja CLI → Cline → Uporabi konfiguracijo**.
+Lahko pa uporabite nadzorno ploščo AgentProxy → **Orodja CLI → Cline → Uporabi konfiguracijo**.
 
 ---
 
@@ -520,7 +520,7 @@ Lahko pa uporabite nadzorno ploščo OmniRoute → **Orodja CLI → Cline → Up
 **Način CLI:**
 
 ```bash
-kilocode --api-base http://localhost:20128/v1 --api-key sk-your-omniroute-key
+kilocode --api-base http://localhost:20128/v1 --api-key sk-your-agentproxy-key
 ```
 
 **Nastavitve VS Code:**
@@ -528,11 +528,11 @@ kilocode --api-base http://localhost:20128/v1 --api-key sk-your-omniroute-key
 ```json
 {
   "kilo-code.openAiBaseUrl": "http://localhost:20128/v1",
-  "kilo-code.apiKey": "sk-your-omniroute-key"
+  "kilo-code.apiKey": "sk-your-agentproxy-key"
 }
 ```
 
-Lahko pa uporabite nadzorno ploščo OmniRoute → **Orodja CLI → KiloCode → Uporabi konfiguracijo**.
+Lahko pa uporabite nadzorno ploščo AgentProxy → **Orodja CLI → KiloCode → Uporabi konfiguracijo**.
 
 ---
 
@@ -542,11 +542,11 @@ Uredite `~/.continue/config.yaml`:
 
 ```yaml
 models:
-  - name: OmniRoute
+  - name: AgentProxy
     provider: openai
     model: auto
     apiBase: http://localhost:20128/v1
-    apiKey: sk-your-omniroute-key
+    apiKey: sk-your-agentproxy-key
     default: true
 ```
 
@@ -556,25 +556,25 @@ Po urejanju znova zaženite VS Code.
 
 #### VS Code Insiders (`chatLanguageModels.json`)
 
-To uporabite, ko je VS Code Insiders konfiguriran za modele s končnimi točkami po meri in želite, da OmniRoute deluje brez polja glave po meri.
+To uporabite, ko je VS Code Insiders konfiguriran za modele s končnimi točkami po meri in želite, da AgentProxy deluje brez polja glave po meri.
 
 **Priporočena lokacija:**
 
 - Linux: `~/.config/Code - Insiders/User/chatLanguageModels.json`
 - Windows: `%APPDATA%/Code - Insiders/User/chatLanguageModels.json`
 
-**Primer z uporabo psevdonima OmniRoute z žetonom:**
+**Primer z uporabo psevdonima AgentProxy z žetonom:**
 
 ```json
 [
   {
     "vendor": "customendpoint",
     "id": "auto",
-    "name": "OmniRoute Auto",
+    "name": "AgentProxy Auto",
     "family": "gpt-4",
     "version": "1.0.0",
-    "url": "http://localhost:20128/api/v1/vscode/sk-your-omniroute-key/chat/completions",
-    "modelsUrl": "http://localhost:20128/api/v1/vscode/sk-your-omniroute-key/models",
+    "url": "http://localhost:20128/api/v1/vscode/sk-your-agentproxy-key/chat/completions",
+    "modelsUrl": "http://localhost:20128/api/v1/vscode/sk-your-agentproxy-key/models",
     "requestFormat": "openai-chat-completions",
     "contextWindow": 256000,
     "maxOutputTokens": 32768,
@@ -587,7 +587,7 @@ To uporabite, ko je VS Code Insiders konfiguriran za modele s končnimi točkami
 
 **Opombe:**
 
-- Zamenjajte `sk-your-omniroute-key` s ključem API, ustvarjenim v OmniRoute.
+- Zamenjajte `sk-your-agentproxy-key` s ključem API, ustvarjenim v AgentProxy.
 - Polje `url` mora kazati na `/api/v1/vscode/{token}/chat/completions`.
 - Polje `modelsUrl` mora kazati na `/api/v1/vscode/{token}/models`.
 - Ko odjemalec podpira glave po meri, dajte prednost običajnemu toku `/v1` + glava Bearer.
@@ -601,40 +601,40 @@ To uporabite, ko je VS Code Insiders konfiguriran za modele s končnimi točkami
 # Prijavite se v svoj račun AWS/Kiro:
 kiro-cli login
 
-# CLI uporablja lastno preverjanje pristnosti — OmniRoute ni potreben kot zaledje za sam Kiro CLI.
-# Kiro-cli uporabljajte skupaj z OmniRoute za druga orodja.
+# CLI uporablja lastno preverjanje pristnosti — AgentProxy ni potreben kot zaledje za sam Kiro CLI.
+# Kiro-cli uporabljajte skupaj z AgentProxy za druga orodja.
 kiro-cli status
 ```
 
-Za namizno aplikacijo **Kiro IDE** uporabite končno točko MITM, ki jo izpostavlja OmniRoute
+Za namizno aplikacijo **Kiro IDE** uporabite končno točko MITM, ki jo izpostavlja AgentProxy
 pod `/dashboard/cli-tools → Kiro`.
 
 ---
 
-## 10. Interni CLI OmniRoute
+## 10. Interni CLI AgentProxy
 
-Izvršljiva datoteka `omniroute` ponuja ukaze za življenjski cikel strežnika, nastavitev, diagnostiko in upravljanje ponudnikov. Vstopna točka: `bin/omniroute.mjs`.
+Izvršljiva datoteka `agentproxy` ponuja ukaze za življenjski cikel strežnika, nastavitev, diagnostiko in upravljanje ponudnikov. Vstopna točka: `bin/agentproxy.mjs`.
 
 ```bash
-omniroute                              # Zaženi strežnik (privzeta vrata 20128)
-omniroute setup                        # Interaktivni čarovnik za nastavitev
-omniroute doctor                       # Preveri konfiguracijo, podatkovno zbirko, vrata in izvajalno okolje
-omniroute providers list               # Konfigurirane povezave s ponudniki
-omniroute providers test-all           # Preizkusi vsako aktivno povezavo
-omniroute reset-password               # Ponastavi skrbniško geslo
-omniroute logs                         # Pretakaj dnevnike zahtev
-omniroute health                       # Podrobno stanje (odklopniki, predpomnilnik, pomnilnik)
-omniroute --version                    # Izpiši različico
-omniroute --help                       # Prikaži vse ukaze
+agentproxy                              # Zaženi strežnik (privzeta vrata 20128)
+agentproxy setup                        # Interaktivni čarovnik za nastavitev
+agentproxy doctor                       # Preveri konfiguracijo, podatkovno zbirko, vrata in izvajalno okolje
+agentproxy providers list               # Konfigurirane povezave s ponudniki
+agentproxy providers test-all           # Preizkusi vsako aktivno povezavo
+agentproxy reset-password               # Ponastavi skrbniško geslo
+agentproxy logs                         # Pretakaj dnevnike zahtev
+agentproxy health                       # Podrobno stanje (odklopniki, predpomnilnik, pomnilnik)
+agentproxy --version                    # Izpiši različico
+agentproxy --help                       # Prikaži vse ukaze
 ```
 
 ### Nastavitev in inicializacija
 
 ```bash
-omniroute setup                        # Interaktivni čarovnik za nastavitev
-omniroute setup --non-interactive      # Način CI/avtomatizacije (bere spremenljivke okolja in zastavice)
-omniroute setup --password '<value>'   # Neposredno nastavi skrbniško geslo
-omniroute setup --add-provider \
+agentproxy setup                        # Interaktivni čarovnik za nastavitev
+agentproxy setup --non-interactive      # Način CI/avtomatizacije (bere spremenljivke okolja in zastavice)
+agentproxy setup --password '<value>'   # Neposredno nastavi skrbniško geslo
+agentproxy setup --add-provider \
   --provider openai \
   --api-key '<value>' \
   --test-provider                      # Dodaj in preizkusi ponudnika v enem koraku
@@ -644,21 +644,21 @@ Prepoznane spremenljivke okolja za neinteraktivno nastavitev:
 
 | Spremenljivka       | Namen                                                                    |
 | ------------------- | ------------------------------------------------------------------------ |
-| `OMNIROUTE_API_KEY` | API-ključ ponudnika (prek Commanderjevega `.env()` vezan na `--api-key`) |
-| `DATA_DIR`          | Preglasi podatkovni imenik OmniRoute                                     |
+| `AGENTPROXY_API_KEY` | API-ključ ponudnika (prek Commanderjevega `.env()` vezan na `--api-key`) |
+| `DATA_DIR`          | Preglasi podatkovni imenik AgentProxy                                     |
 
 Vsi drugi neinteraktivni vnosi se posredujejo kot zastavice in ne kot spremenljivke okolja:
 `--password`, `--provider`, `--provider-name`, `--provider-base-url`, `--default-model`
-(glejte zgornje možnosti ukaza `omniroute setup`).
+(glejte zgornje možnosti ukaza `agentproxy setup`).
 
 ### Diagnostika
 
 ```bash
-omniroute doctor                       # Preveri konfiguracijo, podatkovno zbirko, vrata, izvajalno okolje, pomnilnik in delovanje
-omniroute doctor --json                # Strojno berljiv JSON
-omniroute doctor --no-liveness         # Preskoči preverjanje stanja prek HTTP-ja
-omniroute doctor --host 0.0.0.0        # Preglasi gostitelja za preverjanje delovanja
-omniroute doctor --liveness-url <url>  # Preglasi celoten URL končne točke za preverjanje stanja
+agentproxy doctor                       # Preveri konfiguracijo, podatkovno zbirko, vrata, izvajalno okolje, pomnilnik in delovanje
+agentproxy doctor --json                # Strojno berljiv JSON
+agentproxy doctor --no-liveness         # Preskoči preverjanje stanja prek HTTP-ja
+agentproxy doctor --host 0.0.0.0        # Preglasi gostitelja za preverjanje delovanja
+agentproxy doctor --liveness-url <url>  # Preglasi celoten URL končne točke za preverjanje stanja
 ```
 
 Ukaz doctor izvede naslednja preverjanja: `Config`, `Database`, `Storage/encryption`,
@@ -668,47 +668,47 @@ Ukaz doctor izvede naslednja preverjanja: `Config`, `Database`, `Storage/encrypt
 ### Upravljanje ponudnikov
 
 ```bash
-omniroute providers available                       # Katalog ponudnikov OmniRoute
-omniroute providers available --search openai       # Filtriraj katalog po id/name/alias/category
-omniroute providers available --category api-key    # Filtriraj po kategoriji (api-key, oauth, free, ...)
-omniroute providers available --json                # Strojno berljiv JSON
+agentproxy providers available                       # Katalog ponudnikov AgentProxy
+agentproxy providers available --search openai       # Filtriraj katalog po id/name/alias/category
+agentproxy providers available --category api-key    # Filtriraj po kategoriji (api-key, oauth, free, ...)
+agentproxy providers available --json                # Strojno berljiv JSON
 
-omniroute providers list                            # Konfigurirane povezave s ponudniki
-omniroute providers list --json
+agentproxy providers list                            # Konfigurirane povezave s ponudniki
+agentproxy providers list --json
 
-omniroute providers test <id|name>                  # Preizkusi eno konfigurirano povezavo
-omniroute providers test-all                        # Preizkusi vsako aktivno povezavo
-omniroute providers validate                        # Samo lokalno strukturno preverjanje
-omniroute providers add <provider> --credential-env PROVIDER_KEY
-omniroute providers import ./providers.json --dry-run --json
-omniroute providers auth <provider>                 # Obstoječi tok OAuth
-omniroute providers edit <id|name> --default-model <model>
-omniroute providers remove <id|name> --yes
+agentproxy providers test <id|name>                  # Preizkusi eno konfigurirano povezavo
+agentproxy providers test-all                        # Preizkusi vsako aktivno povezavo
+agentproxy providers validate                        # Samo lokalno strukturno preverjanje
+agentproxy providers add <provider> --credential-env PROVIDER_KEY
+agentproxy providers import ./providers.json --dry-run --json
+agentproxy providers auth <provider>                 # Obstoječi tok OAuth
+agentproxy providers edit <id|name> --default-model <model>
+agentproxy providers remove <id|name> --yes
 ```
 
 Ukazi `providers add/import/auth/edit/remove` primarno uporabljajo API in zato delujejo z
 aktivnim lokalnim ali oddaljenim kontekstom. Poverilnice vnesite z možnostjo
 `--credential-stdin` ali `--credential-env`; `--dry-run --json` sporoči samo
-redigirano prisotnost/obliko. `providers available` bere katalog OmniRoute;
+redigirano prisotnost/obliko. `providers available` bere katalog AgentProxy;
 `providers list/test/test-all/validate` ohranijo lokalno vedenje SQLite in
 ne zahtevajo, da strežnik deluje.
 
 ### Obnovitev in ponastavitev
 
 ```bash
-omniroute reset-password                # Ponastavi skrbniško geslo (tudi: omniroute-reset-password)
-omniroute reset-encrypted-columns       # Prikaži opozorilo in poskusni zagon ponastavitve šifriranih poverilnic
-omniroute reset-encrypted-columns --force  # Dejansko nastavi šifrirane poverilnice v SQLite na null
+agentproxy reset-password                # Ponastavi skrbniško geslo (tudi: agentproxy-reset-password)
+agentproxy reset-encrypted-columns       # Prikaži opozorilo in poskusni zagon ponastavitve šifriranih poverilnic
+agentproxy reset-encrypted-columns --force  # Dejansko nastavi šifrirane poverilnice v SQLite na null
 ```
 
 ### Izvoz poverilnic (⚠ ravnajte previdno)
 
 ```bash
-omniroute auth export                                 # Prikaži opozorilo in zahtevo za potrditev — brez dostopa do podatkovne zbirke
-omniroute auth export --force                          # Izvozi DEŠIFRIRANE poverilnice VSEH povezav v stdout kot JSON
-omniroute auth export --force --id <id>                 # Izvozi samo ujemajočo se povezavo
-omniroute auth export --force --format env               # Izpiši vrstice OMNIROUTE_<PROVIDER>_<FIELD>=<value>
-omniroute auth export --force --out creds.json           # Zapiši v datoteko (ustvarjeno z dovoljenji 0600)
+agentproxy auth export                                 # Prikaži opozorilo in zahtevo za potrditev — brez dostopa do podatkovne zbirke
+agentproxy auth export --force                          # Izvozi DEŠIFRIRANE poverilnice VSEH povezav v stdout kot JSON
+agentproxy auth export --force --id <id>                 # Izvozi samo ujemajočo se povezavo
+agentproxy auth export --force --format env               # Izpiši vrstice AGENTPROXY_<PROVIDER>_<FIELD>=<value>
+agentproxy auth export --force --out creds.json           # Zapiši v datoteko (ustvarjeno z dovoljenji 0600)
 ```
 
 `auth export` deluje **samo lokalno** (neposredno branje SQLite, brez poti HTTP) ter namenoma izpiše/zapiše
@@ -721,36 +721,36 @@ razkrila osnovna napaka.
 
 ### Drugi podukazi
 
-Ti predpostavljajo delujoč strežnik OmniRoute, razen če je navedeno drugače:
+Ti predpostavljajo delujoč strežnik AgentProxy, razen če je navedeno drugače:
 
 ```bash
-omniroute status                       # Celovito stanje izvajalnega okolja
-omniroute logs                         # Pretakaj dnevnike zahtev (--json, --search, --follow)
-omniroute config show                  # Prikaži trenutno konfiguracijo
+agentproxy status                       # Celovito stanje izvajalnega okolja
+agentproxy logs                         # Pretakaj dnevnike zahtev (--json, --search, --follow)
+agentproxy config show                  # Prikaži trenutno konfiguracijo
 
-omniroute provider list                # Navedi razpoložljive ponudnike (vzdevek za providers list)
-omniroute provider add                 # Registriraj OmniRoute kot ponudnika v orodju
-omniroute keys add | list | remove     # Upravljaj API-ključe
-omniroute models [provider]            # Navedi modele (--json, --search)
-omniroute combo list | switch | create | delete
+agentproxy provider list                # Navedi razpoložljive ponudnike (vzdevek za providers list)
+agentproxy provider add                 # Registriraj AgentProxy kot ponudnika v orodju
+agentproxy keys add | list | remove     # Upravljaj API-ključe
+agentproxy models [provider]            # Navedi modele (--json, --search)
+agentproxy combo list | switch | create | delete
 
-omniroute backup                       # Ustvari posnetek konfiguracije in podatkovne zbirke
-omniroute restore                      # Obnovi iz prejšnjega posnetka
+agentproxy backup                       # Ustvari posnetek konfiguracije in podatkovne zbirke
+agentproxy restore                      # Obnovi iz prejšnjega posnetka
 
-omniroute health                       # Podrobno stanje (odklopniki, predpomnilnik, pomnilnik)
-omniroute quota                        # Poraba kvote ponudnika
-omniroute cache                        # Stanje predpomnilnika
-omniroute cache clear                  # Počisti semantične predpomnilnike in predpomnilnike podpisov
+agentproxy health                       # Podrobno stanje (odklopniki, predpomnilnik, pomnilnik)
+agentproxy quota                        # Poraba kvote ponudnika
+agentproxy cache                        # Stanje predpomnilnika
+agentproxy cache clear                  # Počisti semantične predpomnilnike in predpomnilnike podpisov
 
-omniroute mcp status | restart         # Stanje/ponovni zagon strežnika MCP
-omniroute a2a status | card            # Stanje strežnika A2A/kartica agenta
+agentproxy mcp status | restart         # Stanje/ponovni zagon strežnika MCP
+agentproxy a2a status | card            # Stanje strežnika A2A/kartica agenta
 
-omniroute tunnel list | create | stop  # Upravljaj tunele (cloudflare/tailscale/ngrok)
-omniroute env show | get <k> | set <k> <v>  # Preglej/nastavi spremenljivke okolja (začasno)
+agentproxy tunnel list | create | stop  # Upravljaj tunele (cloudflare/tailscale/ngrok)
+agentproxy env show | get <k> | set <k> <v>  # Preglej/nastavi spremenljivke okolja (začasno)
 
-omniroute test                         # Hiter preizkus povezljivosti ponudnika
-omniroute update                       # Preveri posodobitve
-omniroute completion                   # Ustvari samodejno dokončevanje za lupino
+agentproxy test                         # Hiter preizkus povezljivosti ponudnika
+agentproxy update                       # Preveri posodobitve
+agentproxy completion                   # Ustvari samodejno dokončevanje za lupino
 ```
 
 ### Pogoste zastavice
@@ -779,7 +779,7 @@ omniroute completion                   # Ustvari samodejno dokončevanje za lupi
 | `/v1/audio/speech`         | Pretvorba besedila v govor        | ElevenLabs, OpenAI TTS                    |
 | `/v1/audio/transcriptions` | Pretvorba govora v besedilo       | Deepgram, AssemblyAI                      |
 
-Primeri z žetoniziranim URL-jem OmniRoute, pripravljeni za lepljenje:
+Primeri z žetoniziranim URL-jem AgentProxy, pripravljeni za lepljenje:
 
 ```txt
 Primer žetona: sk-a3ab3c080beaee3a-69f4a4-070d71af
@@ -798,7 +798,7 @@ Klepet Ollama: http://localhost:20128/api/v1/vscode/sk-a3ab3c080beaee3a-69f4a4-0
 
 | Napaka                                               | Vzrok                               | Rešitev                                                 |
 | ---------------------------------------------------- | ----------------------------------- | ------------------------------------------------------- |
-| `Connection refused`                                 | OmniRoute se ne izvaja              | `omniroute serve`                                       |
+| `Connection refused`                                 | AgentProxy se ne izvaja              | `agentproxy serve`                                       |
 | `401 Unauthorized`                                   | Napačen ključ API-ja                | Preverite v `/dashboard/api-manager`                    |
 | `No combo configured`                                | Ni aktivne usmerjevalne kombinacije | Nastavite jo v `/dashboard/combos`                      |
 | CLI prikazuje »ni nameščen«                          | Izvedljiva datoteka ni v PATH       | Preverite `which <command>`                             |

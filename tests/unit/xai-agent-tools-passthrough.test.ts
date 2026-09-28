@@ -15,7 +15,7 @@ const {
 const {
   supportsNativeWebSearchFallbackBypass,
   prepareWebSearchFallbackBody,
-  OMNIROUTE_WEB_SEARCH_FALLBACK_TOOL_NAME,
+  AGENTPROXY_WEB_SEARCH_FALLBACK_TOOL_NAME,
 } = await import("../../open-sse/services/webSearchFallback.ts");
 
 const { openaiResponsesToOpenAIRequest } =
@@ -146,10 +146,10 @@ test("web_search IS rewritten for xAI when native passthrough flag is false", ()
     }
   );
   assert.equal(fallback.enabled, true);
-  assert.equal(fallback.toolName, OMNIROUTE_WEB_SEARCH_FALLBACK_TOOL_NAME);
+  assert.equal(fallback.toolName, AGENTPROXY_WEB_SEARCH_FALLBACK_TOOL_NAME);
   const tools = body.tools as Record<string, unknown>[];
   const names = tools.map((t) => (t.function ? (t.function as { name?: string }).name : t.name));
-  assert.ok(names.includes(OMNIROUTE_WEB_SEARCH_FALLBACK_TOOL_NAME));
+  assert.ok(names.includes(AGENTPROXY_WEB_SEARCH_FALLBACK_TOOL_NAME));
 });
 
 test("interceptSearchOverride true still forces rewrite on passthrough path", () => {

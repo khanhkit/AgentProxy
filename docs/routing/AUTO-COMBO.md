@@ -1,10 +1,10 @@
 ---
-title: "OmniRoute Auto-Combo Engine"
+title: "AgentProxy Auto-Combo Engine"
 version: 3.8.40
 lastUpdated: 2026-06-28
 ---
 
-# OmniRoute Auto-Combo Engine
+# AgentProxy Auto-Combo Engine
 
 > **For Users**: Looking for a quick start? See the [Auto-Combo User Guide](../getting-started/AUTO-COMBO-GUIDE.md) for simple explanations and examples.
 
@@ -62,7 +62,7 @@ model: "auto/cheap"           # cheapest per token
 
 **What happens:**
 
-1. OmniRoute detects `auto/` prefix in `src/sse/handlers/chat.ts`
+1. AgentProxy detects `auto/` prefix in `src/sse/handlers/chat.ts`
 2. Queries all **active provider connections** from the database
 3. Filters to those with valid credentials (API key or OAuth token)
 4. Determines the model per connection (`connection.defaultModel` or provider's first model)
@@ -90,7 +90,7 @@ the existing resilience reads (never raw breaker `state`):
 - model lockout — `isModelLocked(provider, connectionId, model)`
 
 Each candidate also carries this API key's `excluded` flag. Exclusions are stored
-per-API-key (`auto_candidate_overrides` table, migration `128`) — OmniRoute is
+per-API-key (`auto_candidate_overrides` table, migration `128`) — AgentProxy is
 single-tenant with no `users` table, so `apiKeyId` is the closest real per-caller
 identity — and enforced at the candidate-pool chokepoint in
 `open-sse/services/autoCombo/virtualFactory.ts` via the pure, unit-tested
@@ -134,13 +134,13 @@ Auto-scoring selects best provider/model per request
 A combo whose `name` is identical to a bare model id (e.g. a combo named
 `gpt-5.5`) is an **intentional, supported pattern**, not a bug: it is the
 mechanism for per-model-id provider fallback documented in
-[#6940](https://github.com/diegosouzapw/OmniRoute/issues/6940). Because combo
+[#6940](https://github.com/khanhkit/AgentProxy/issues/6940). Because combo
 resolution is checked before bare-model-id resolution
 (`getComboForModel()` in `src/sse/services/model.ts`), a request for the bare
 id `gpt-5.5` is routed through the combo's targets (e.g.
 `acme-responses/gpt-5.5`, `backup-responses/gpt-5.5`) instead of straight to
 a single provider — this reuses the combo-before-rewrite precedence built for
-[#3227/#3233](https://github.com/diegosouzapw/OmniRoute/issues/3227) and is
+[#3227/#3233](https://github.com/khanhkit/AgentProxy/issues/3227) and is
 regression-tested by `tests/unit/responses-combo-resolution-3227.test.ts` and
 `tests/unit/combo-name-codex-responses-rewrite.test.ts`.
 
@@ -178,9 +178,9 @@ curl -X POST http://localhost:20128/v1/chat/completions \
 Two common pitfalls:
 
 - **`auto` does not use your combos.** `auto`/`auto/*` builds its own zero-config candidate pool and only consults persisted combos if a combo is literally named `auto` (not recommended). To route through a combo, send its exact name — not `auto`.
-- **`openrouter/auto` is a real paid OpenRouter product** ("Auto Best Available"), not an OmniRoute alias. It is the single static model entry of the OpenRouter registry (`open-sse/config/providers/registry/openrouter/index.ts`) and is billed separately. Use Settings → Routing → Hide paid models to exclude it from `auto` pools.
+- **`openrouter/auto` is a real paid OpenRouter product** ("Auto Best Available"), not an AgentProxy alias. It is the single static model entry of the OpenRouter registry (`open-sse/config/providers/registry/openrouter/index.ts`) and is billed separately. Use Settings → Routing → Hide paid models to exclude it from `auto` pools.
 
-See [#7992](https://github.com/diegosouzapw/OmniRoute/issues/7992) and [#7111](https://github.com/diegosouzapw/OmniRoute/issues/7111) for the original confusion this documents.
+See [#7992](https://github.com/khanhkit/AgentProxy/issues/7992) and [#7111](https://github.com/khanhkit/AgentProxy/issues/7111) for the original confusion this documents.
 
 ## How It Works (Persisted Auto-Combos)
 
@@ -254,17 +254,17 @@ when the header is absent.
 
 | Header                        | Accepts                                                                                                                                                                                 | Effect                                                                                                                                                                                                                                               |
 | :---------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `X-OmniRoute-Mode`            | a preset alias (`fast`, `balanced`, `quality`, `cheap`, `reliable`, `offline`) or a raw pack name (`ship-fast`, `cost-saver`, `quality-first`, `offline-friendly`, `reliability-first`) | Overrides the scoring weights for this request. `balanced`/`default` force the default weights (no pack). Unknown values are ignored (config preserved).                                                                                             |
-| `X-OmniRoute-Budget`          | a positive number (max USD per request)                                                                                                                                                 | Hard cost ceiling: candidates whose estimated cost exceeds it are filtered before selection. What happens when **every** candidate exceeds it is controlled by `X-OmniRoute-Budget-Fallback` below.                                                  |
-| `X-OmniRoute-Budget-Fallback` | `cheapest` (default, aliases: `cheapest-viable`, `soft`) or `strict` (aliases: `block`, `hard`)                                                                                         | `cheapest`: falls back to the globally cheapest candidate even though it still exceeds the cap (legacy behavior). `strict`: refuses to select — the request fails fast with `HTTP 402` instead of silently overspending. Unknown values are ignored. |
+| `X-AgentProxy-Mode`            | a preset alias (`fast`, `balanced`, `quality`, `cheap`, `reliable`, `offline`) or a raw pack name (`ship-fast`, `cost-saver`, `quality-first`, `offline-friendly`, `reliability-first`) | Overrides the scoring weights for this request. `balanced`/`default` force the default weights (no pack). Unknown values are ignored (config preserved).                                                                                             |
+| `X-AgentProxy-Budget`          | a positive number (max USD per request)                                                                                                                                                 | Hard cost ceiling: candidates whose estimated cost exceeds it are filtered before selection. What happens when **every** candidate exceeds it is controlled by `X-AgentProxy-Budget-Fallback` below.                                                  |
+| `X-AgentProxy-Budget-Fallback` | `cheapest` (default, aliases: `cheapest-viable`, `soft`) or `strict` (aliases: `block`, `hard`)                                                                                         | `cheapest`: falls back to the globally cheapest candidate even though it still exceeds the cap (legacy behavior). `strict`: refuses to select — the request fails fast with `HTTP 402` instead of silently overspending. Unknown values are ignored. |
 
 ```bash
 # Force the fastest profile, cap this request at $0.05, and hard-block instead of overspending
 curl -sS http://localhost:20128/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "X-OmniRoute-Mode: fast" \
-  -H "X-OmniRoute-Budget: 0.05" \
-  -H "X-OmniRoute-Budget-Fallback: strict" \
+  -H "X-AgentProxy-Mode: fast" \
+  -H "X-AgentProxy-Budget: 0.05" \
+  -H "X-AgentProxy-Budget-Fallback: strict" \
   -d '{"model":"auto","messages":[{"role":"user","content":"hi"}]}'
 ```
 
@@ -275,7 +275,7 @@ resolved values feed the engine's existing `config.modePack` / `config.budgetCap
 
 ## All Routing Strategies
 
-OmniRoute's combo engine supports **19 routing strategies** (declared in `src/shared/constants/routingStrategies.ts` → `ROUTING_STRATEGY_VALUES`). The Auto Combo engine itself is exposed under the `auto` strategy; the others are available for persisted combos.
+AgentProxy's combo engine supports **19 routing strategies** (declared in `src/shared/constants/routingStrategies.ts` → `ROUTING_STRATEGY_VALUES`). The Auto Combo engine itself is exposed under the `auto` strategy; the others are available for persisted combos.
 
 | Strategy            | Description                                                                                                                                                                               |
 | :------------------ | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -638,7 +638,7 @@ You can register your own `RouterStrategy` implementation via the public API:
 import {
   registerStrategy,
   type RouterStrategy,
-} from "@omniroute/open-sse/services/autoCombo/routerStrategy";
+} from "@agentproxy/open-sse/services/autoCombo/routerStrategy";
 
 class MyCustomStrategy implements RouterStrategy {
   readonly name = "my-custom";
@@ -754,8 +754,8 @@ This suite runs in CI (`test:integration` job) with `--test-concurrency=1` and
 
 | Command                                | What it does                                                                   |
 | :------------------------------------- | :----------------------------------------------------------------------------- |
-| `npm run test:combo:live`              | In-process real routing with `RUN_COMBO_LIVE=1`; snapshots a live OmniRoute DB |
-| `npm run test:combo:live:vps`          | HTTP calls against a live OmniRoute server (set `COMBO_LIVE_BASE_URL`)         |
+| `npm run test:combo:live`              | In-process real routing with `RUN_COMBO_LIVE=1`; snapshots a live AgentProxy DB |
+| `npm run test:combo:live:vps`          | HTTP calls against a live AgentProxy server (set `COMBO_LIVE_BASE_URL`)         |
 | `npm run test:combo:live:vps:failover` | Same, with deliberate failover scenarios                                       |
 
 These smoke tests exercise the real wire path (combo → provider → completion). They are

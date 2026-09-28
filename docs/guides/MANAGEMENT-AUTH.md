@@ -6,7 +6,7 @@ lastUpdated: 2026-08-20
 
 # Management Authentication
 
-OmniRoute has **four credential families** that can authorize management routes.
+AgentProxy has **four credential families** that can authorize management routes.
 They are not interchangeable. Inference API keys (`sk-…`) do **not** manage the
 server unless they were explicitly granted `manage` or `admin` scope.
 
@@ -15,8 +15,8 @@ Canonical implementation: `src/lib/api/requireManagementAuth.ts`.
 | Credential | Typical form | Created where | Intended use | Management capability |
 |---|---|---|---|---|
 | Dashboard JWT session | `auth_token` cookie | Dashboard login | Browser UI | Full dashboard management, subject to CSRF, locality, and always-protected-route rules |
-| CLI machine-id token | internal / local | CLI bootstrap (`omniroute` on the same machine) | Local CLI | Local management only |
-| Scoped Access Token | `oma_live_…` | **Settings → Access Tokens** or `omniroute connect` | Remote CLI and management API | Must satisfy the route's required `read`, `write`, or `admin` scope |
+| CLI machine-id token | internal / local | CLI bootstrap (`agentproxy` on the same machine) | Local CLI | Local management only |
+| Scoped Access Token | `oma_live_…` | **Settings → Access Tokens** or `agentproxy connect` | Remote CLI and management API | Must satisfy the route's required `read`, `write`, or `admin` scope |
 | Inference API key | `sk-…` (and other API-key prefixes) | **API Manager / API Keys** | `/v1/*` inference | **None** unless the key metadata includes `manage` or `admin` |
 
 `oma_` credentials are management/CLI credentials. They are **not** inference API keys.
@@ -69,14 +69,14 @@ chat client key for automation unless you deliberately granted that scope.
 
 ### CLI machine-id token
 
-1. Run `omniroute` on the **same host** as the server (loopback).
-2. The CLI bootstraps a machine-id token under `~/.omniroute/` (chmod 600).
+1. Run `agentproxy` on the **same host** as the server (loopback).
+2. The CLI bootstraps a machine-id token under `~/.agentproxy/` (chmod 600).
 3. This does **not** work from another machine. Use an Access Token for remote CLI.
 
 ### Scoped Access Token (`oma_live_…`)
 
 1. Dashboard: **Settings → Access Tokens** → create (name + scope). **The secret is shown once.**
-2. Or CLI: `omniroute connect <host>` (password → token). See [Remote Mode](./REMOTE-MODE.md).
+2. Or CLI: `agentproxy connect <host>` (password → token). See [Remote Mode](./REMOTE-MODE.md).
 3. Header: `Authorization: Bearer oma_live_…`
 4. Revoke from the same Access Tokens page (or delete the CLI context).
 5. Server stores only a hash. Treat the plaintext like a password.
@@ -108,7 +108,7 @@ auth is header/cookie only.
 Read-only (list providers). Use a `read` Access Token:
 
 ```bash
-curl -sS "$OMNIROUTE_URL/api/providers" \
+curl -sS "$AGENTPROXY_URL/api/providers" \
   -H "Authorization: Bearer oma_live_<read-token>"
 ```
 
@@ -116,7 +116,7 @@ Modifying (create a provider connection). Use `write`/`admin` Access Token or a
 manage-scoped API key:
 
 ```bash
-curl -sS -X POST "$OMNIROUTE_URL/api/providers" \
+curl -sS -X POST "$AGENTPROXY_URL/api/providers" \
   -H "Authorization: Bearer oma_live_<write-or-admin-token>" \
   -H "Content-Type: application/json" \
   -d '{"provider":"openai","apiKey":"<upstream-key>"}'
@@ -125,7 +125,7 @@ curl -sS -X POST "$OMNIROUTE_URL/api/providers" \
 Inference (not management). Ordinary API key, no `manage` required:
 
 ```bash
-curl -sS "$OMNIROUTE_URL/v1/models" \
+curl -sS "$AGENTPROXY_URL/v1/models" \
   -H "Authorization: Bearer sk-<inference-key>"
 ```
 
@@ -154,6 +154,6 @@ uses the session cookie.
 |---|---|
 | Browser | Dashboard session |
 | CLI on the server host | Machine token |
-| CLI on a laptop talking to a remote server | `oma_live_…` from `omniroute connect` |
+| CLI on a laptop talking to a remote server | `oma_live_…` from `agentproxy connect` |
 | CI / scripts (management only) | `oma_live_…` with the smallest scope that works |
 | CI that must call both `/v1` and `/api` | API key with `manage` **or** two credentials |

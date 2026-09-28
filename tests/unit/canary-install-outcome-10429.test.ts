@@ -11,8 +11,8 @@ import {
  *
  *   npm error code ENOTEMPTY
  *   npm error syscall rename
- *   npm error path /usr/lib/node_modules/omniroute
- *   npm error dest /usr/lib/node_modules/.omniroute-h797OOZa
+ *   npm error path /usr/lib/node_modules/agentproxy
+ *   npm error dest /usr/lib/node_modules/.agentproxy-h797OOZa
  *
  * Exit status is 217, but `dist/BUILD_SHA`, the package version and every dependency are the
  * new ones. The canary treated the non-zero exit as "install failed", aborted before the
@@ -27,10 +27,10 @@ const ENOTEMPTY_STDERR = [
   "npm warn deprecated boolean@3.2.0: Package no longer supported.",
   "npm error code ENOTEMPTY",
   "npm error syscall rename",
-  "npm error path /usr/lib/node_modules/omniroute",
-  "npm error dest /usr/lib/node_modules/.omniroute-h797OOZa",
-  "npm error ENOTEMPTY: directory not empty, rename '/usr/lib/node_modules/omniroute' -> " +
-    "'/usr/lib/node_modules/.omniroute-h797OOZa'",
+  "npm error path /usr/lib/node_modules/agentproxy",
+  "npm error dest /usr/lib/node_modules/.agentproxy-h797OOZa",
+  "npm error ENOTEMPTY: directory not empty, rename '/usr/lib/node_modules/agentproxy' -> " +
+    "'/usr/lib/node_modules/.agentproxy-h797OOZa'",
 ].join("\n");
 
 test("non-zero exit with the expected SHA on disk is a cleanup failure, not an install failure", () => {
@@ -96,7 +96,7 @@ test("an unreadable SHA fails closed", () => {
 test("the orphaned staging directory is extracted so the operator can clear it", () => {
   assert.equal(
     orphanStagingDirFromStderr(ENOTEMPTY_STDERR),
-    "/usr/lib/node_modules/.omniroute-h797OOZa"
+    "/usr/lib/node_modules/.agentproxy-h797OOZa"
   );
 });
 

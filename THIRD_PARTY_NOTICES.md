@@ -1,8 +1,22 @@
 # Third-Party Notices
 
+## elkjs 0.9.3
+
+AgentProxy receives `elkjs@0.9.3` transitively through `mermaid@12.0.0` for diagram layout.
+AgentProxy does not modify elkjs.
+
+- Upstream source: <https://github.com/kieler/elkjs>
+- npm package: `elkjs@0.9.3`
+- License: Eclipse Public License 2.0 (EPL-2.0)
+- The upstream npm tarball includes `LICENSE.md`; recipients can obtain the corresponding source from
+  the upstream repository above.
+
+The elkjs package remains subject to EPL-2.0. This notice does not relicense elkjs under AgentProxy's
+MIT license.
+
 ## wreq-js 3.2.0 native transport
 
-OmniRoute ships `wreq-js@3.2.0` and its platform-specific native bindings for browser-
+AgentProxy ships `wreq-js@3.2.0` and its platform-specific native bindings for browser-
 fingerprinted HTTP transport. The npm package and all nine binding tarballs are tied by npm SLSA
 attestations to signed tag `v3.2.0` and immutable source commit
 [`0d52d5fa252841aeef34d4d063b1766a59612bf7`](https://github.com/sqdshguy/wreq-js/commit/0d52d5fa252841aeef34d4d063b1766a59612bf7).
@@ -343,7 +357,7 @@ because its matching file has no entry or license claim in the fixed registry.
 
 ### Trademark and affiliation disclaimer
 
-All brand names, logos, and trademarks are the property of their respective owners. OmniRoute uses
+All brand names, logos, and trademarks are the property of their respective owners. AgentProxy uses
 these assets nominatively to identify provider integrations. There is no affiliation, sponsorship,
 or endorsement by the respective owners. Copyright provenance and source license claims do not
 provide trademark clearance; users should follow each owner's official brand guidelines.

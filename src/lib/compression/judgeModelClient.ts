@@ -1,10 +1,10 @@
-import { getExecutor } from "@omniroute/open-sse/executors/index";
-import type { ExecuteInput, ProviderCredentials } from "@omniroute/open-sse/executors/base";
+import { getExecutor } from "@agentproxy/open-sse/executors/index";
+import type { ExecuteInput, ProviderCredentials } from "@agentproxy/open-sse/executors/base";
 import type {
   ChatTurn,
   ModelCallResult,
   ModelClient,
-} from "@omniroute/open-sse/services/compression/eval/types";
+} from "@agentproxy/open-sse/services/compression/eval/types";
 import { calculateCost } from "@/lib/usage/costCalculator";
 
 /**

@@ -5,7 +5,7 @@
 // ("GLIBC_2.29 not found"), so the native module fails to dlopen and any test that
 // reaches better-sqlite3 directly (or asserts stdout that the load-failure warning
 // would pollute) fails HERE while passing in CI. This is a known environment
-// limitation, not a defect in the code under test: the OmniRoute runtime itself
+// limitation, not a defect in the code under test: the AgentProxy runtime itself
 // cascades to node:sqlite/sql.js when better-sqlite3 is unavailable. See
 // tests/unit/_helpers/betterSqlite3Availability.ts for a guard helper.
 import test from "node:test";
@@ -16,7 +16,7 @@ import path from "node:path";
 import net from "node:net";
 
 const isWindows = process.platform === "win32";
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-fixes-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-fixes-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../src/lib/db/core.ts");

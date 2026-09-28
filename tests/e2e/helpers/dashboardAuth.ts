@@ -12,7 +12,7 @@ const DEFAULT_TIMEOUT_MS = 300_000;
 // timeout with no assertion error, which is how #8292's prefetch spec hung.
 const APP_ROUTE_PATTERN = /\/(login|dashboard|home)(\/[^?#]*)?([?#].*)?$/;
 const E2E_PASSWORD =
-  process.env.OMNIROUTE_E2E_PASSWORD || process.env.INITIAL_PASSWORD || "omniroute-e2e-password";
+  process.env.AGENTPROXY_E2E_PASSWORD || process.env.INITIAL_PASSWORD || "agentproxy-e2e-password";
 
 async function waitForAppRoute(page: Page, timeoutMs: number) {
   await page.waitForURL(APP_ROUTE_PATTERN, { timeout: timeoutMs });

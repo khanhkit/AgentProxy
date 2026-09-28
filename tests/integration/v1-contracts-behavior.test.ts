@@ -13,12 +13,12 @@ const BASE_URL = "http://localhost:20128";
 // (`isConfiguredEnvApiKey` → `validateApiKey` returns true) and let
 // tests/unit/v1-models-auth-leak-9320.test.ts own the auth-gate contract.
 const TEST_API_KEY = "sk-v1-contracts-behavior-test-key";
-const previousEnvApiKey = process.env.OMNIROUTE_API_KEY;
-process.env.OMNIROUTE_API_KEY = TEST_API_KEY;
+const previousEnvApiKey = process.env.AGENTPROXY_API_KEY;
+process.env.AGENTPROXY_API_KEY = TEST_API_KEY;
 
 test.after(() => {
-  if (previousEnvApiKey === undefined) delete process.env.OMNIROUTE_API_KEY;
-  else process.env.OMNIROUTE_API_KEY = previousEnvApiKey;
+  if (previousEnvApiKey === undefined) delete process.env.AGENTPROXY_API_KEY;
+  else process.env.AGENTPROXY_API_KEY = previousEnvApiKey;
 });
 
 function authedRequest(path: string): Request {

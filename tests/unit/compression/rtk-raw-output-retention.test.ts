@@ -20,7 +20,7 @@ afterEach(() => {
 });
 
 function freshDataDir(): string {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-rtk-store-"));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-rtk-store-"));
   process.env.DATA_DIR = dir;
   return dir;
 }

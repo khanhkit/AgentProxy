@@ -7,8 +7,8 @@ import {
 } from "../../scripts/i18n/check-translation-ratio.mjs";
 
 test("measureLocale counts identical, placeholder and missing leaves and skips the allowlist", () => {
-  const en = flattenLeaves({ a: { b: "Save", c: "Cancel", d: "OmniRoute", e: "Delete" } });
-  const loc = flattenLeaves({ a: { b: "Save", c: "__MISSING__:Cancel", d: "OmniRoute" } });
+  const en = flattenLeaves({ a: { b: "Save", c: "Cancel", d: "AgentProxy", e: "Delete" } });
+  const loc = flattenLeaves({ a: { b: "Save", c: "__MISSING__:Cancel", d: "AgentProxy" } });
   assert.deepEqual(measureLocale(en, loc, new Set(["a.d"])), {
     total: 3,
     identical: 1,

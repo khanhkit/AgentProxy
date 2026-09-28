@@ -4,7 +4,7 @@
 Chrome binds DevTools to 127.0.0.1 only and ignores --remote-debugging-address
 on recent versions, so the host can't reach it via `docker -p 9222:9222`. This
 tiny TCP bridge (run inside the container) exposes the same CDP on all
-interfaces so the OmniRoute server's VNC harvester can connect from the host.
+interfaces so the AgentProxy server's VNC harvester can connect from the host.
 """
 import socket, threading, sys
 

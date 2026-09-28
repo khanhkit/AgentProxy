@@ -22,7 +22,7 @@ const ORIGINAL_USERPROFILE = process.env.USERPROFILE;
 const ORIGINAL_DATA_DIR = process.env.DATA_DIR;
 const ORIGINAL_NEXT_PHASE = process.env.NEXT_PHASE;
 
-const TEST_HOME_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-6401-6799-home-"));
+const TEST_HOME_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-6401-6799-home-"));
 const TEST_DATA_DIR = path.join(TEST_HOME_DIR, "data");
 
 process.env.HOME = TEST_HOME_DIR;

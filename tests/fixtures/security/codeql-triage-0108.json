@@ -1,0 +1,698 @@
+{
+  "alerts": [
+    {
+      "alert_number": 1,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 2,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 3,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 4,
+      "disposition": "CONFIRMED_DEFECT",
+      "follow_up_issue": "AP-ISS-0115"
+    },
+    {
+      "alert_number": 5,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 6,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 7,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 8,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 9,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 10,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 11,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 12,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 13,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 14,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 15,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 16,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 17,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 18,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 19,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 20,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 21,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 22,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 23,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 24,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 25,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 26,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 27,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 28,
+      "disposition": "ACCEPTED_PROTOCOL_COMPATIBILITY",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 29,
+      "disposition": "ACCEPTED_PROTOCOL_COMPATIBILITY",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 30,
+      "disposition": "FALSE_POSITIVE",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 31,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 32,
+      "disposition": "FALSE_POSITIVE",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 33,
+      "disposition": "CONFIRMED_DEFECT",
+      "follow_up_issue": "AP-ISS-0114"
+    },
+    {
+      "alert_number": 34,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 35,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 36,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 37,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 38,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 39,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 40,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 41,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 42,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 43,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 44,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 45,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 46,
+      "disposition": "FALSE_POSITIVE",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 47,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 48,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 49,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 50,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 51,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 52,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 53,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 54,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 55,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 56,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 57,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 58,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 59,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 60,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 61,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 62,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 63,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 64,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 65,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 66,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 67,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 68,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 69,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 70,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 71,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 72,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 73,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 74,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 75,
+      "disposition": "FALSE_POSITIVE",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 76,
+      "disposition": "FALSE_POSITIVE",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 77,
+      "disposition": "FALSE_POSITIVE",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 78,
+      "disposition": "FALSE_POSITIVE",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 79,
+      "disposition": "FALSE_POSITIVE",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 80,
+      "disposition": "FALSE_POSITIVE",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 81,
+      "disposition": "FALSE_POSITIVE",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 82,
+      "disposition": "FALSE_POSITIVE",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 83,
+      "disposition": "FALSE_POSITIVE",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 84,
+      "disposition": "FALSE_POSITIVE",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 85,
+      "disposition": "FALSE_POSITIVE",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 86,
+      "disposition": "FALSE_POSITIVE",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 87,
+      "disposition": "FALSE_POSITIVE",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 88,
+      "disposition": "FALSE_POSITIVE",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 89,
+      "disposition": "FALSE_POSITIVE",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 90,
+      "disposition": "FALSE_POSITIVE",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 91,
+      "disposition": "FALSE_POSITIVE",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 92,
+      "disposition": "ACCEPTED_PROTOCOL_COMPATIBILITY",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 93,
+      "disposition": "ACCEPTED_PROTOCOL_COMPATIBILITY",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 94,
+      "disposition": "FALSE_POSITIVE",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 95,
+      "disposition": "FALSE_POSITIVE",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 96,
+      "disposition": "FALSE_POSITIVE",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 97,
+      "disposition": "FALSE_POSITIVE",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 98,
+      "disposition": "FALSE_POSITIVE",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 99,
+      "disposition": "FALSE_POSITIVE",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 100,
+      "disposition": "FALSE_POSITIVE",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 101,
+      "disposition": "FALSE_POSITIVE",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 102,
+      "disposition": "FALSE_POSITIVE",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 103,
+      "disposition": "FALSE_POSITIVE",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 104,
+      "disposition": "FALSE_POSITIVE",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 105,
+      "disposition": "FALSE_POSITIVE",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 106,
+      "disposition": "FALSE_POSITIVE",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 107,
+      "disposition": "FALSE_POSITIVE",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 108,
+      "disposition": "ACCEPTED_PROTOCOL_COMPATIBILITY",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 109,
+      "disposition": "ACCEPTED_PROTOCOL_COMPATIBILITY",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 110,
+      "disposition": "ACCEPTED_PROTOCOL_COMPATIBILITY",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 111,
+      "disposition": "FALSE_POSITIVE",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 112,
+      "disposition": "FALSE_POSITIVE",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 113,
+      "disposition": "FALSE_POSITIVE",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 114,
+      "disposition": "FALSE_POSITIVE",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 116,
+      "disposition": "FALSE_POSITIVE",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 117,
+      "disposition": "FALSE_POSITIVE",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 118,
+      "disposition": "FALSE_POSITIVE",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 119,
+      "disposition": "FALSE_POSITIVE",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 120,
+      "disposition": "FALSE_POSITIVE",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 121,
+      "disposition": "FALSE_POSITIVE",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 122,
+      "disposition": "FALSE_POSITIVE",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 123,
+      "disposition": "FALSE_POSITIVE",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 124,
+      "disposition": "FALSE_POSITIVE",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 125,
+      "disposition": "FALSE_POSITIVE",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 126,
+      "disposition": "FALSE_POSITIVE",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 127,
+      "disposition": "FALSE_POSITIVE",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 128,
+      "disposition": "FALSE_POSITIVE",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 129,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 130,
+      "disposition": "CONFIRMED_DEFECT",
+      "follow_up_issue": "AP-ISS-0116"
+    },
+    {
+      "alert_number": 131,
+      "disposition": "DUPLICATE",
+      "follow_up_issue": "AP-ISS-0116"
+    },
+    {
+      "alert_number": 132,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 475,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 476,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 477,
+      "disposition": "FALSE_POSITIVE",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 478,
+      "disposition": "FALSE_POSITIVE",
+      "follow_up_issue": null
+    },
+    {
+      "alert_number": 479,
+      "disposition": "TEST_DEV_TOOL_DEBT",
+      "follow_up_issue": null
+    }
+  ],
+  "analysis": {
+    "commit_sha": "ec476df1eb433a3e96b4c0ba90116d67b5b0e453",
+    "id": 1799410531
+  },
+  "confirmed_follow_ups": ["AP-ISS-0114", "AP-ISS-0115", "AP-ISS-0116"],
+  "current_open_count": 136,
+  "disposition_counts": {
+    "ACCEPTED_PROTOCOL_COMPATIBILITY": 7,
+    "CONFIRMED_DEFECT": 3,
+    "DUPLICATE": 1,
+    "FALSE_POSITIVE": 53,
+    "TEST_DEV_TOOL_DEBT": 72
+  },
+  "source_evidence_sha256": "65ce9e01d8d99745d65604cee4ccf41bd895a4bf2590e49f9748baf76ede19b2"
+}

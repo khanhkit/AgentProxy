@@ -5,7 +5,7 @@ import {
   parseEmbeddingModel,
   deriveEmbeddingProviderForChatProvider,
   type EmbeddingProvider,
-} from "@omniroute/open-sse/config/embeddingRegistry.ts";
+} from "@agentproxy/open-sse/config/embeddingRegistry.ts";
 
 describe("deriveEmbeddingProviderForChatProvider (global OpenAI-compatible fallback)", () => {
   it("derives an embeddings endpoint from a chat-completions base URL", () => {

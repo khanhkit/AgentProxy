@@ -299,7 +299,7 @@ describe("Obsidian Plugin E2E — Server + HTTP", { skip: SKIP_OBSIDIAN_E2E }, (
     const res = await httpRequest(`${baseUrl}/vault/discover`);
     assert.equal(res.status, 200);
     const body = res.data as VaultDiscoverResponse;
-    assert.equal(body.service, "omniroute-sync");
+    assert.equal(body.service, "agentproxy-sync");
     assert.equal(body.vaultName, "test-vault");
     assert.equal(body.port, port);
   });
@@ -609,7 +609,7 @@ describe("Obsidian Plugin E2E — Auth", { skip: SKIP_OBSIDIAN_E2E }, () => {
   test("discover endpoint works without auth", async () => {
     const res = await httpRequest(`${baseUrl}/vault/discover`);
     assert.equal(res.status, 200);
-    assert.equal((res.data as VaultDiscoverResponse).service, "omniroute-sync");
+    assert.equal((res.data as VaultDiscoverResponse).service, "agentproxy-sync");
   });
 
   test("protected endpoint rejects without auth", async () => {

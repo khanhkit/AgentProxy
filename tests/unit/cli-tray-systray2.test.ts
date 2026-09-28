@@ -33,7 +33,7 @@ test("resolveSystrayBinName returns *_release name on all platforms (#8609)", ()
 });
 
 test("chmodSystrayBinAt sets +x on the bundled tray binary when present", () => {
-  const root = mkdtempSync(join(tmpdir(), "omniroute-systray-bin-"));
+  const root = mkdtempSync(join(tmpdir(), "agentproxy-systray-bin-"));
   try {
     const platform = process.platform === "win32" ? "linux" : process.platform;
     const binName = resolveSystrayBinName(platform)!;
@@ -53,7 +53,7 @@ test("chmodSystrayBinAt sets +x on the bundled tray binary when present", () => 
 });
 
 test("chmodSystrayBinAt is a no-op when the binary doesn't exist", () => {
-  const root = mkdtempSync(join(tmpdir(), "omniroute-systray-bin-"));
+  const root = mkdtempSync(join(tmpdir(), "agentproxy-systray-bin-"));
   try {
     const result = chmodSystrayBinAt(root, "linux");
     assert.equal(result.changed, false);
@@ -64,7 +64,7 @@ test("chmodSystrayBinAt is a no-op when the binary doesn't exist", () => {
 });
 
 test("chmodSystrayBinAt returns missing on win32 when binary is absent (#8609)", () => {
-  const root = mkdtempSync(join(tmpdir(), "omniroute-systray-bin-"));
+  const root = mkdtempSync(join(tmpdir(), "agentproxy-systray-bin-"));
   try {
     const result = chmodSystrayBinAt(root, "win32");
     assert.equal(result.changed, false);

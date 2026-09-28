@@ -46,9 +46,9 @@ describe("resolveRuntimePorts", () => {
     delete process.env.PORT;
     delete process.env.API_PORT;
     delete process.env.DASHBOARD_PORT;
-    delete process.env.OMNIROUTE_PORT;
+    delete process.env.AGENTPROXY_PORT;
     delete process.env.AGENTPROXY_RUST_CORE;
-    delete process.env.OMNIROUTE_RUST_CORE;
+    delete process.env.AGENTPROXY_RUST_CORE;
   });
 
   afterEach(() => {
@@ -117,7 +117,7 @@ describe("resolveRuntimePorts", () => {
   });
 
   it("keeps an explicit dashboard port in Rust core mode", () => {
-    process.env.OMNIROUTE_RUST_CORE = "1";
+    process.env.AGENTPROXY_RUST_CORE = "1";
     process.env.PORT = "3000";
     process.env.DASHBOARD_PORT = "4000";
     const ports = resolveRuntimePorts();

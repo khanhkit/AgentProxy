@@ -5,8 +5,8 @@ import os from "node:os";
 import path from "node:path";
 import { execSync } from "node:child_process";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-bifrost-installer-"));
-const FAKE_BIN_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-bifrost-fake-bin-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-bifrost-installer-"));
+const FAKE_BIN_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-bifrost-fake-bin-"));
 
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.NODE_ENV = "test";
@@ -33,7 +33,10 @@ if [ "$CMD" = "install" ]; then
   exit 0
 fi
 if [ "$CMD" = "view" ]; then
-  echo "1.6.3"
+  case "$*" in
+    *dist.integrity*) echo "sha512-YWJjZA==" ;;
+    *) echo "1.6.3" ;;
+  esac
   exit 0
 fi
 exit 0
@@ -81,7 +84,7 @@ test("install creates host package.json structure", async () => {
     name: string;
     private: boolean;
   };
-  assert.equal(parsedHost.name, "omniroute-bifrost-host");
+  assert.equal(parsedHost.name, "agentproxy-bifrost-host");
   assert.ok(parsedHost.private);
 
   assert.equal(result.installedVersion, "1.6.3");

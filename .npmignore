@@ -86,8 +86,8 @@ electron/
 
 # Subprojects
 clipr/
-omnirouteCloud/
-omnirouteSite/
+agentproxyCloud/
+agentproxySite/
 vscode-extension/
 
 # Root-level underscore-prefixed directories (private/draft — never publish)
@@ -120,4 +120,4 @@ test-results/
 playwright-report/
 blob-report/
 coverage/
-@omniroute/
+@agentproxy/

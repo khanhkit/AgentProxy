@@ -2,7 +2,7 @@
 //
 // The Codex CLI model-catalog refresh (codex_models_manager) does
 //   GET /v1/models?client_version=<v>
-// and decodes a JSON object with a TOP-LEVEL `models` array. OmniRoute answers in the
+// and decodes a JSON object with a TOP-LEVEL `models` array. AgentProxy answers in the
 // OpenAI-standard `{ object: "list", data: [...] }` shape, so codex's serde fails with
 //   failed to decode models response: missing field `models`
 // and logs "failed to refresh available models" on every startup (verified live against
@@ -26,7 +26,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-codex-models-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-codex-models-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.API_KEY_SECRET = process.env.API_KEY_SECRET || "catalog-test-secret";
 

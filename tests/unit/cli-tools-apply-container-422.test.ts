@@ -51,14 +51,14 @@ function applyRequest(body: Record<string, unknown>) {
 }
 
 test("refuses with 422 and does not write when the target is container-ephemeral", async () => {
-  // OMNIROUTE_CONTAINER forces detection; the fake HOME has no bind mount, so
+  // AGENTPROXY_CONTAINER forces detection; the fake HOME has no bind mount, so
   // the target classifies as ephemeral.
   const fakeHome = fs.mkdtempSync(path.join(os.tmpdir(), "or-apply-ephemeral-"));
   tempDirs.add(fakeHome);
-  process.env.OMNIROUTE_CONTAINER = "1";
+  process.env.AGENTPROXY_CONTAINER = "1";
   process.env.HOME = fakeHome;
   process.env.USERPROFILE = fakeHome;
-  delete process.env.OMNIROUTE_ALLOW_CONTAINER_CONFIG_WRITE;
+  delete process.env.AGENTPROXY_ALLOW_CONTAINER_CONFIG_WRITE;
 
   const { POST } = await importRoute("ephemeral");
   const response = await POST(applyRequest({}));
@@ -66,9 +66,9 @@ test("refuses with 422 and does not write when the target is container-ephemeral
   assert.equal(response.status, 422);
   const body = await response.json();
   assert.equal(body.containerEphemeralTarget, true);
-  assert.equal(body.hostSetupCommand, "omniroute setup-codex");
+  assert.equal(body.hostSetupCommand, "agentproxy setup-codex");
   assert.match(body.error, /Refusing to write/);
-  assert.match(body.error, /omniroute connect/);
+  assert.match(body.error, /agentproxy connect/);
   // Nothing may hit disk.
   assert.equal(fs.existsSync(path.join(fakeHome, ".codex")), false);
 });
@@ -76,7 +76,7 @@ test("refuses with 422 and does not write when the target is container-ephemeral
 test("the 422 body carries no stack trace", async () => {
   const fakeHome = fs.mkdtempSync(path.join(os.tmpdir(), "or-apply-stack-"));
   tempDirs.add(fakeHome);
-  process.env.OMNIROUTE_CONTAINER = "1";
+  process.env.AGENTPROXY_CONTAINER = "1";
   process.env.HOME = fakeHome;
   process.env.USERPROFILE = fakeHome;
 
@@ -90,7 +90,7 @@ test("the 422 body carries no stack trace", async () => {
 test("dry-run still previews the config inside a container", async () => {
   const fakeHome = fs.mkdtempSync(path.join(os.tmpdir(), "or-apply-dry-"));
   tempDirs.add(fakeHome);
-  process.env.OMNIROUTE_CONTAINER = "1";
+  process.env.AGENTPROXY_CONTAINER = "1";
   process.env.HOME = fakeHome;
   process.env.USERPROFILE = fakeHome;
 
@@ -102,11 +102,11 @@ test("dry-run still previews the config inside a container", async () => {
   assert.equal(body.dryRun, true);
 });
 
-test("OMNIROUTE_ALLOW_CONTAINER_CONFIG_WRITE lets the write through", async () => {
+test("AGENTPROXY_ALLOW_CONTAINER_CONFIG_WRITE lets the write through", async () => {
   const fakeHome = fs.mkdtempSync(path.join(os.tmpdir(), "or-apply-override-"));
   tempDirs.add(fakeHome);
-  process.env.OMNIROUTE_CONTAINER = "1";
-  process.env.OMNIROUTE_ALLOW_CONTAINER_CONFIG_WRITE = "true";
+  process.env.AGENTPROXY_CONTAINER = "1";
+  process.env.AGENTPROXY_ALLOW_CONTAINER_CONFIG_WRITE = "true";
   process.env.HOME = fakeHome;
   process.env.USERPROFILE = fakeHome;
 
@@ -122,10 +122,10 @@ test("OMNIROUTE_ALLOW_CONTAINER_CONFIG_WRITE lets the write through", async () =
 test("the dashboard's guide-settings writer refuses the same way", async () => {
   const fakeHome = fs.mkdtempSync(path.join(os.tmpdir(), "or-guide-ephemeral-"));
   tempDirs.add(fakeHome);
-  process.env.OMNIROUTE_CONTAINER = "1";
+  process.env.AGENTPROXY_CONTAINER = "1";
   process.env.HOME = fakeHome;
   process.env.USERPROFILE = fakeHome;
-  delete process.env.OMNIROUTE_ALLOW_CONTAINER_CONFIG_WRITE;
+  delete process.env.AGENTPROXY_ALLOW_CONTAINER_CONFIG_WRITE;
 
   const guideRoute = path.join(
     process.cwd(),
@@ -145,14 +145,14 @@ test("the dashboard's guide-settings writer refuses the same way", async () => {
   assert.equal(response.status, 422);
   const body = await response.json();
   assert.equal(body.containerEphemeralTarget, true);
-  assert.equal(body.hostSetupCommand, "omniroute setup-continue");
+  assert.equal(body.hostSetupCommand, "agentproxy setup-continue");
   assert.equal(fs.existsSync(path.join(fakeHome, ".continue")), false);
 });
 
 test("a host environment applies the config normally", async () => {
   const fakeHome = fs.mkdtempSync(path.join(os.tmpdir(), "or-apply-host-"));
   tempDirs.add(fakeHome);
-  process.env.OMNIROUTE_CONTAINER = "0";
+  process.env.AGENTPROXY_CONTAINER = "0";
   process.env.HOME = fakeHome;
   process.env.USERPROFILE = fakeHome;
 

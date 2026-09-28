@@ -6,7 +6,7 @@
  * upstream SSE/JSON response body as a Node Response.
  *
  * Used by duckduckgo-web and claude-web executors when
- * OMNIROUTE_BROWSER_POOL=on (or WEB_COOKIE_USE_BROWSER=1) is set and
+ * AGENTPROXY_BROWSER_POOL=on (or WEB_COOKIE_USE_BROWSER=1) is set and
  * the user wants guaranteed live working from this environment, even at
  * the cost of 5-15s of browser navigation overhead per request.
  *
@@ -17,6 +17,7 @@
  */
 
 import { Buffer } from "node:buffer";
+import { randomUUID } from "node:crypto";
 import {
   acquireBrowserContext,
   openPage,
@@ -171,17 +172,32 @@ async function uploadBrowserAttachments(
   }
 }
 
+let freshContextSequence = 0;
+
+export function deriveBrowserContextPoolKey(
+  requestedKey: string,
+  reuseContext: boolean,
+  secureId: () => string = randomUUID
+): { key: string; acquired: boolean } {
+  if (reuseContext) return { key: requestedKey, acquired: true };
+
+  // A cryptographically strong identifier provides collision resistance across
+  // independent callers/processes. The monotonic suffix keeps same-process
+  // fresh requests unique even if a test double returns the same identifier.
+  freshContextSequence =
+    freshContextSequence >= Number.MAX_SAFE_INTEGER ? 1 : freshContextSequence + 1;
+
+  return {
+    key: `${requestedKey}:${secureId()}:${freshContextSequence.toString(36)}`,
+    acquired: false,
+  };
+}
+
 async function settlePoolKey(
   requestedKey: string,
   reuseContext: boolean
 ): Promise<{ key: string; acquired: boolean }> {
-  if (reuseContext) return { key: requestedKey, acquired: true };
-  // Use a unique key per non-reuse call so the pool always creates a
-  // fresh context. Slower but isolates state.
-  return {
-    key: `${requestedKey}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-    acquired: false,
-  };
+  return deriveBrowserContextPoolKey(requestedKey, reuseContext);
 }
 
 // Match by stable path prefix and stable trailing suffix, allowing a
@@ -692,7 +708,7 @@ async function startBrowserWarmup(
   req: BrowserBackedChatRequest
 ): Promise<import("./browserPool.ts").PooledContext | null> {
   if (!req.cookieDomain || httpOverride !== null) return null;
-  const flag = process.env.OMNIROUTE_BROWSER_POOL;
+  const flag = process.env.AGENTPROXY_BROWSER_POOL;
   if (flag === "off" || flag === "0" || flag === "false") return null;
   try {
     const { key } = await settlePoolKey(req.poolKey, true);
@@ -752,7 +768,7 @@ function isChallengeResponse(status: number): boolean {
  *   5. browserBackedChat (slow, ~10-25s) — Full chat through browser
  *
  * Returns the first successful (2xx) response, or the last error.
- * Skips browser steps when OMNIROUTE_BROWSER_POOL=off.
+ * Skips browser steps when AGENTPROXY_BROWSER_POOL=off.
  */
 export async function tryBackedChat(
   req: BrowserBackedChatRequest

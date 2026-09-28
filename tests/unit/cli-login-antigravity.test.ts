@@ -1,4 +1,4 @@
-// Tests for the `omniroute login antigravity` local OAuth helper.
+// Tests for the `agentproxy login antigravity` local OAuth helper.
 //
 // The helper runs the OAuth on the user's own machine (where the Google
 // native-loopback consent can complete) and prints a credential blob to paste

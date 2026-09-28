@@ -231,7 +231,7 @@ async function handleDeepgramSpeech(providerConfig, body, modelId, token) {
 
 /**
  * Voice-note clients send response_format=ogg. OpenAI TTS documents opus, not ogg.
- * OmniRoute already returns Ogg/Opus bytes for opus — alias ogg → opus (#10587).
+ * AgentProxy already returns Ogg/Opus bytes for opus — alias ogg → opus (#10587).
  */
 export function normalizeSpeechResponseFormat(fmt) {
   if (typeof fmt !== "string" || !fmt) return "mp3";

@@ -23,7 +23,7 @@ const { resolveBuildProvenance } = await import("../../scripts/build/buildProven
 const { buildHealthPayload } = await import("../../src/lib/monitoring/observability.ts");
 
 function makeRepo(): string {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-prov-"));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-prov-"));
   return dir;
 }
 

@@ -4,7 +4,7 @@ import os from "node:os";
 import path from "node:path";
 import test from "node:test";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-session-leases-route-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-session-leases-route-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.API_KEY_SECRET = "session-leases-route-test-secret";
 process.env.DISABLE_SQLITE_AUTO_BACKUP = "true";
@@ -28,11 +28,11 @@ function request(key: string, body: unknown, owner?: string, generation?: number
     Authorization: `Bearer ${key}`,
     "Content-Type": "application/json",
   });
-  if (owner) headers.set("X-OmniRoute-Lease-Owner", owner);
+  if (owner) headers.set("X-AgentProxy-Lease-Owner", owner);
   if (generation !== undefined) {
-    headers.set("X-OmniRoute-Lease-Generation", String(generation));
+    headers.set("X-AgentProxy-Lease-Generation", String(generation));
   }
-  return new Request("http://omniroute.local/api/v1/session-leases", {
+  return new Request("http://agentproxy.local/api/v1/session-leases", {
     method: "POST",
     headers,
     body: JSON.stringify(body),
@@ -90,7 +90,7 @@ test.after(() => {
 
 test("requires authentication, managed scope, and canonical explicit owner", async () => {
   const unauthenticated = await route.POST(
-    new Request("http://omniroute.local/api/v1/session-leases", {
+    new Request("http://agentproxy.local/api/v1/session-leases", {
       method: "POST",
       body: JSON.stringify({ action: "acquire", model: "glm/glm-4.6" }),
     })
@@ -158,7 +158,7 @@ test("requires JSON mutation input after authenticating and exposes generic CORS
   const connection = await seedConnection(1);
   const managed = await seedKey([connection.id]);
   const unsupported = await route.POST(
-    new Request("http://omniroute.local/api/v1/session-leases", {
+    new Request("http://agentproxy.local/api/v1/session-leases", {
       method: "POST",
       headers: { Authorization: `Bearer ${managed.key}` },
       body: JSON.stringify({ action: "acquire", model: "glm/glm-4.6" }),
@@ -173,8 +173,8 @@ test("requires JSON mutation input after authenticating and exposes generic CORS
   const preflight = await route.OPTIONS();
   assert.equal(preflight.status, 204);
   const allowedHeaders = preflight.headers.get("Access-Control-Allow-Headers") ?? "";
-  assert.match(allowedHeaders, /X-OmniRoute-Lease-Owner/i);
-  assert.match(allowedHeaders, /X-OmniRoute-Lease-Generation/i);
+  assert.match(allowedHeaders, /X-AgentProxy-Lease-Owner/i);
+  assert.match(allowedHeaders, /X-AgentProxy-Lease-Generation/i);
   assert.equal(attemptedExternalCalls, 0);
 });
 
