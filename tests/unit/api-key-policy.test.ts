@@ -663,7 +663,10 @@ test("enforceApiKeyPolicy enforces combo allowlists separately from model allowl
     "combo/fast-chat"
   );
   assert.equal(blocked.rejection.status, 403);
-  assert.match(await readErrorMessage(blocked.rejection), /Combo "fast-chat" is not allowed/);
+  const blockedMessage = await readErrorMessage(blocked.rejection);
+  assert.match(blockedMessage, /Combo "fast-chat" is not allowed/);
+  assert.match(blockedMessage, /combo\/\*/);
+  assert.match(blockedMessage, /Dashboard → API Manager/);
 
   const mapped = await policy.enforceApiKeyPolicy(
     makePolicyRequest(allowedKey.key),
@@ -743,6 +746,11 @@ test("enforceApiKeyPolicy treats combo wildcard, empty list, and names as distin
       routingCase.model
     );
     assert.equal(rejection?.status ?? null, routingCase.status);
+    if (routingCase.status === 403 && rejection) {
+      const message = await readErrorMessage(rejection);
+      assert.match(message, /combo\/\*/);
+      assert.match(message, /Dashboard → API Manager/);
+    }
   }
 });
 

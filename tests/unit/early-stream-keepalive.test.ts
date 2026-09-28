@@ -75,6 +75,16 @@ test("slow handler emits early keepalive then forwards the real body (#2544)", a
 // Anthropic clients (Claude Code, the Anthropic SDK) ignore SSE comments for their
 // stream/first-token watchdog and abort+retry on a slow first token. The /v1/messages
 // route keeps the connection warm with a REAL `event: ping` instead of the comment frame.
+test("default keepalive cadence emits another heartbeat inside a 2s watchdog", async () => {
+  const slow = new Promise<Response>((resolve) => {
+    setTimeout(() => resolve(sseResponse("data: [DONE]\n\n")), 1650);
+  });
+  const result = await withEarlyStreamKeepalive(slow, { thresholdMs: 5 });
+  const body = await readAll(result);
+  const keepalives = body.split("\n\n").filter((frame) => frame === ": keepalive");
+  assert.ok(keepalives.length >= 2, "expected startup plus a recurring default heartbeat");
+});
+
 test("ANTHROPIC_PING_FRAME is a real Anthropic ping event (not a comment)", () => {
   const decoded = new TextDecoder().decode(ANTHROPIC_PING_FRAME);
   assert.equal(decoded, 'event: ping\ndata: {"type":"ping"}\n\n');

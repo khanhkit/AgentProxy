@@ -199,7 +199,7 @@ export async function withEarlyStreamKeepalive(
   options: EarlyStreamKeepaliveOptions = {}
 ): Promise<Response> {
   const thresholdMs = Math.max(0, options.thresholdMs ?? 2_000);
-  const intervalMs = Math.max(250, options.intervalMs ?? 2_500);
+  const intervalMs = Math.max(250, options.intervalMs ?? 1_500);
   const signal = options.signal ?? null;
   const keepaliveFrame = options.keepaliveFrame ?? KEEPALIVE_FRAME;
   const startupFrame = options.startupFrame ?? keepaliveFrame;
