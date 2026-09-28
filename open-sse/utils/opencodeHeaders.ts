@@ -1,6 +1,10 @@
 import { randomUUID } from "crypto";
 import { setUserAgentHeader } from "../executors/base.ts";
 import { generateSessionId } from "../services/sessionManager.ts";
+import {
+  resolveOpencodeSessionIdentity,
+  type OpencodeSessionBody,
+} from "./opencodeSessionIdentity.ts";
 
 /**
  * Header keys that are forwarded from the client to the upstream provider.
@@ -27,6 +31,13 @@ const AGENT_METADATA_HEADER_KEYS = ["x-session-id", "x-title"] as const;
  */
 function findHeader(headers: Record<string, string>, name: string): string | undefined {
   return Object.entries(headers).find(([key]) => key.toLowerCase() === name.toLowerCase())?.[1];
+}
+
+export function clientSuppliedOpencodeSession(
+  clientHeaders: Record<string, string> | null | undefined,
+  body?: unknown
+): string | undefined {
+  return resolveOpencodeSessionIdentity(clientHeaders, body);
 }
 
 /**
@@ -63,12 +74,7 @@ export function forwardOpencodeClientHeaders(
   options?: {
     synthesizeRequestId?: boolean;
     cliDefaults?: { userAgent: string; client: string; project: string };
-    sessionBody?: {
-      model?: string;
-      system?: unknown;
-      messages?: Array<{ role?: string; content?: unknown }>;
-      tools?: Array<{ name?: string; function?: { name?: string } }>;
-    };
+    sessionBody?: OpencodeSessionBody;
   }
 ): void {
   // 1. Forward User-Agent
@@ -93,17 +99,9 @@ export function forwardOpencodeClientHeaders(
     }
   }
 
-  // 3. OpencodeExecutor-only: synthesize session/request id from fallback headers
-  if (options?.synthesizeRequestId && !headers["x-opencode-session"]) {
-    const sessionAffinity =
-      findHeader(clientHeaders, "x-session-affinity") || findHeader(clientHeaders, "x-session-id");
-    if (sessionAffinity) {
-      headers["x-opencode-session"] = sessionAffinity;
-
-      if (!headers["x-opencode-request"]) {
-        headers["x-opencode-request"] = randomUUID();
-      }
-    }
+  // 3. OpencodeExecutor-only: preserve explicit native conversation identity first.
+  if (options?.synthesizeRequestId || options?.cliDefaults) {
+    applySessionFallback(headers, clientHeaders, options.sessionBody);
   }
 
   // 4. OpencodeExecutor-only: synthesize the OpenCode CLI identity Cloudflare expects
@@ -111,6 +109,19 @@ export function forwardOpencodeClientHeaders(
   if (options?.cliDefaults) {
     applyCliDefaults(headers, options.cliDefaults, options.sessionBody);
   }
+}
+
+/** Fill missing session/request identity before deterministic fingerprint fallback. */
+function applySessionFallback(
+  headers: Record<string, string>,
+  clientHeaders: Record<string, string>,
+  sessionBody?: OpencodeSessionBody
+): void {
+  if (headers["x-opencode-session"]) return;
+  const sessionAffinity = resolveOpencodeSessionIdentity(clientHeaders, sessionBody);
+  if (!sessionAffinity) return;
+  headers["x-opencode-session"] = sessionAffinity;
+  headers["x-opencode-request"] ||= randomUUID();
 }
 
 /**
@@ -125,12 +136,7 @@ export function forwardOpencodeClientHeaders(
 function applyCliDefaults(
   headers: Record<string, string>,
   cliDefaults: { userAgent: string; client: string; project: string },
-  sessionBody?: {
-    model?: string;
-    system?: unknown;
-    messages?: Array<{ role?: string; content?: unknown }>;
-    tools?: Array<{ name?: string; function?: { name?: string } }>;
-  }
+  sessionBody?: OpencodeSessionBody
 ): void {
   const existingUa = headers["User-Agent"] || headers["user-agent"];
   const clientUaIsCliLike =

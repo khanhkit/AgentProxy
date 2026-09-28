@@ -17,6 +17,7 @@ import {
   runWithProxyContext,
 } from "../utils/proxyFetch.ts";
 import { forwardOpencodeClientHeaders } from "../utils/opencodeHeaders.ts";
+import { projectOpencodeSessionBody } from "../utils/opencodeSessionIdentity.ts";
 import {
   type AccountProxyConfig,
   type RotatableAccount,
@@ -887,22 +888,10 @@ export class OpencodeExecutor extends BaseExecutor {
       : undefined;
 
     if (clientHeaders || cliDefaults) {
-      const b = body && typeof body === "object" ? (body as Record<string, unknown>) : null;
       forwardOpencodeClientHeaders(headers, clientHeaders ?? {}, {
         synthesizeRequestId: true,
         cliDefaults,
-        sessionBody: b
-          ? {
-              model: typeof b.model === "string" ? b.model : undefined,
-              system: b.system,
-              messages: Array.isArray(b.messages)
-                ? (b.messages as Array<{ role?: string; content?: unknown }>)
-                : undefined,
-              tools: Array.isArray(b.tools)
-                ? (b.tools as Array<{ name?: string; function?: { name?: string } }>)
-                : undefined,
-            }
-          : undefined,
+        sessionBody: projectOpencodeSessionBody(body),
       });
     }
 
