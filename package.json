@@ -396,7 +396,7 @@
     "@cyclonedx/cyclonedx-npm": "6.0.1",
     "@eslint/compat": "^2.1.1",
     "@playwright/test": "^1.63.0",
-    "@size-limit/file": "^13.1.1",
+    "@size-limit/file": "^14.0.0",
     "@stryker-mutator/core": "^10.0.0",
     "@stryker-mutator/tap-runner": "^10.0.0",
     "@tailwindcss/postcss": "^4.3.0",
