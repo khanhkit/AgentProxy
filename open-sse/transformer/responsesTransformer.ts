@@ -7,6 +7,8 @@ import {
 } from "../utils/reasoningPlaceholder.ts";
 import * as fs from "fs";
 import * as path from "path";
+import { resolveRequestToolIdentity } from "../translator/response/openai-responses/requestToolIdentity.ts";
+import { plaintextCollaborationFields } from "../translator/response/openai-responses/collaborationPlaintextMarker.ts";
 
 // #10223: threshold for detecting corrupted request_id fields. Normal
 // request IDs are <100 chars. DeepSeek's SSE encoder bug produces 200+
@@ -186,15 +188,19 @@ export function createResponsesLogger(model, logsDir = null) {
  * Create TransformStream that converts Chat Completions SSE to Responses API SSE
  * @param {Object} logger - Optional logger instance
  * @param {number} keepaliveIntervalMs - Keepalive interval in milliseconds
- * @param {{ customToolNames?: Iterable<string> }} options - Original Responses tool metadata
+ * @param {{ customToolNames?: Iterable<string>, requestToolIdentityMap?: ReadonlyMap<string, unknown> | null }} options - Original Responses tool metadata
  * @returns {TransformStream}
  */
 export function createResponsesApiTransformStream(
   logger = null,
   keepaliveIntervalMs = 3000,
-  options: { customToolNames?: Iterable<string> } = {}
+  options: {
+    customToolNames?: Iterable<string>;
+    requestToolIdentityMap?: ReadonlyMap<string, unknown> | null;
+  } = {}
 ) {
   const customToolNames = new Set(options.customToolNames || []);
+  const requestToolIdentityMap = options.requestToolIdentityMap ?? null;
   const state = {
     seq: 0,
     responseId: `resp_${Date.now()}`,
@@ -525,6 +531,13 @@ export function createResponsesApiTransformStream(
           status: "completed",
         };
       }
+
+      const identity = resolveRequestToolIdentity(requestToolIdentityMap, toolName);
+      if (identity) {
+        funcItem.namespace = identity.namespace;
+        funcItem.name = identity.name;
+      }
+      Object.assign(funcItem, plaintextCollaborationFields(funcItem.namespace, funcItem.name));
 
       emit(controller, "response.output_item.done", {
         type: "response.output_item.done",

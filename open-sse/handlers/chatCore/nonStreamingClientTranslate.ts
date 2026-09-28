@@ -31,6 +31,8 @@ import {
 } from "../responseSanitizer.ts";
 import { isStripReasoningRequested } from "./headers.ts";
 import { applyClientUsageBuffer } from "./clientUsageBuffer.ts";
+import { resolveRequestToolIdentity } from "../../translator/response/openai-responses/requestToolIdentity.ts";
+import { plaintextCollaborationFields } from "../../translator/response/openai-responses/collaborationPlaintextMarker.ts";
 
 export type { NonStreamingClientTranslateInput, NonStreamingClientTranslateResult };
 
@@ -158,11 +160,12 @@ export function translateNonStreamingClientResponse(
     if (requestToolIdentityMap && Array.isArray(responseOutput)) {
       for (const item of responseOutput) {
         if (item?.type !== "function_call" && item?.type !== "custom_tool_call") continue;
-        const identity = requestToolIdentityMap.get(item.name);
-        if (identity && typeof identity === "object" && typeof identity.name === "string") {
+        const identity = resolveRequestToolIdentity(requestToolIdentityMap, item.name);
+        if (identity) {
           item.namespace = identity.namespace;
           item.name = identity.name;
         }
+        Object.assign(item, plaintextCollaborationFields(item.namespace, item.name));
       }
     }
   } else if (clientResponseFormat === FORMATS.OPENAI) {

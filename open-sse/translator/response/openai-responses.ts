@@ -25,6 +25,7 @@ import {
 import { createEventEmitter } from "./openai-responses/eventEmitter.ts";
 import { buildResponsesToolCallItem } from "./responsesToolItem.ts";
 import { resolveRequestToolIdentity } from "./openai-responses/requestToolIdentity.ts";
+import { applyFunctionCallIdentity } from "./openai-responses/functionCallIdentity.ts";
 import { resolveLocalToolCallIndex } from "./openai-responses/toolCallLocalIndex.ts";
 import {
   synthesizeCompletedToolCalls,
@@ -743,18 +744,11 @@ function closeToolCall(state, emit, idx, recordAsCompleted = true) {
         status: "completed",
       };
 
-      // #7936 identity closure: rewrite the function_call item's `name` back to
-      // its bare leaf and stamp the original `namespace` alongside it, matching
-      // the codex ResponseItem::FunctionCall schema (independent `namespace`
-      // field, NOT a `__` split on `name`).
-      const fnIdentity = resolveRequestToolIdentity(
+      applyFunctionCallIdentity(
+        funcItem,
         state.requestToolIdentityMap,
         state.funcNames[idx] || ""
       );
-      if (fnIdentity) {
-        funcItem.namespace = fnIdentity.namespace;
-        funcItem.name = fnIdentity.name;
-      }
 
       emit("response.output_item.done", {
         type: "response.output_item.done",
