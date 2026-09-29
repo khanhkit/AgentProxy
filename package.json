@@ -1,7 +1,7 @@
 {
   "name": "agentproxy",
   "version": "0.1.0",
-  "description": "Agent-first AI gateway with a Rust streaming data plane and an inherited 358-provider control plane for routing, MCP, memory, RAG, and knowledge workflows.",
+  "description": "Agent-first AI gateway with a Rust streaming data plane and an inherited 355-provider control plane for routing, MCP, memory, RAG, and knowledge workflows.",
   "type": "module",
   "bin": {
     "agentproxy": "bin/agentproxy.mjs",
@@ -117,7 +117,7 @@
     "build:cli": "node --import tsx scripts/build/prepublish.ts",
     "omniroute:verify": "node scripts/check/omniroute-verify.mjs",
     "build:release": "rm -rf .build dist && OMNIROUTE_BUILD_SHA=$(git rev-parse --short HEAD) npm run build && npm run build:cli && node scripts/build/write-build-sha.mjs",
-    "build:native:tproxy": "cd src/mitm/tproxy/native && npx --yes node-gyp rebuild",
+    "build:native:tproxy": "cd src/mitm/tproxy/native && node-gyp rebuild",
     "start": "node scripts/dev/run-next.mjs start",
     "start:fast": "cross-env OMNIROUTE_SKIP_STANDALONE=1 node scripts/dev/run-next.mjs start",
     "start:rust-core": "node scripts/dev/run-rust-core.mjs start",
@@ -126,7 +126,7 @@
     "homolog": "node scripts/homolog/run.mjs",
     "lint": "eslint . --cache --cache-location .eslintcache --suppressions-location config/quality/eslint-suppressions.json",
     "lint:json": "node scripts/quality/run-eslint-json.mjs",
-    "lint:md": "npx --yes markdownlint-cli2 \"docs/**/*.md\" \"*.md\" \"!docs/i18n\" \"!docs/research\"",
+    "lint:md": "markdownlint-cli2 \"docs/**/*.md\" \"*.md\" \"!docs/i18n\" \"!docs/research\"",
     "lint:prose": "vale docs",
     "electron:dev": "concurrently \"npm run dev\" \"node scripts/dev/run-electron-dev.mjs\"",
     "electron:build": "npm run build && cd electron && npm run build",
@@ -458,7 +458,9 @@
     "vite": "^8.0.16",
     "vitest": "^5.0.0",
     "wait-on": "^9.1.0",
-    "wtfnode": "^0.10.1"
+    "wtfnode": "^0.10.1",
+    "node-gyp": "13.0.2",
+    "markdownlint-cli2": "0.23.2"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,mjs}": [

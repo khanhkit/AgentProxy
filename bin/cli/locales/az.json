@@ -271,7 +271,7 @@
     "max_restarts": "İmtina etməzdən əvvəl 30 saniyə ərzində qəza sonrası maksimum yenidən başlatma sayı (standart: 2)",
     "tray": "Sistem treyində başladın (yalnız masaüstü, istifadəçi seçimi ilə)",
     "no_tray": "Sistem treyi ikonunu deaktiv edin",
-    "ready_timeout": "Hazırlıq yoxlamasının ms ilə gözləmə müddəti (həmçinin OMNIROUTE_READY_TIMEOUT_MS, standart 60000)",
+    "ready_timeout": "Hazırlıq yoxlamasının ms ilə gözləmə müddəti (həmçinin AGENTPROXY_READY_TIMEOUT_MS, standart 60000)",
     "tls_cert": "HTTPS xidməti üçün TLS sertifikatına (PEM) yol (həmçinin OMNIROUTE_TLS_CERT)",
     "tls_key": "HTTPS xidməti üçün TLS şəxsi açarına (PEM) yol (həmçinin OMNIROUTE_TLS_KEY)"
   },

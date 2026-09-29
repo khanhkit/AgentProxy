@@ -256,7 +256,7 @@
     "max_restarts": "ከመተው በፊት በ30s ውስጥ የሚፈቀደው ከፍተኛ የብልሽት ዳግም መጀመር ብዛት (ነባሪ፦ 2)",
     "tray": "በስርዓት ትሪ ውስጥ አስጀምር (ለዴስክቶፕ ብቻ፣ በፈቃድ)",
     "no_tray": "የስርዓት ትሪ አዶን አሰናክል",
-    "ready_timeout": "የዝግጁነት ምርመራ ጊዜ ማብቂያ በሚሊሰከንድ (እንዲሁም OMNIROUTE_READY_TIMEOUT_MS፣ ነባሪ 60000)",
+    "ready_timeout": "የዝግጁነት ምርመራ ጊዜ ማብቂያ በሚሊሰከንድ (እንዲሁም AGENTPROXY_READY_TIMEOUT_MS፣ ነባሪ 60000)",
     "tls_cert": "HTTPSን ለማቅረብ የTLS ሰርተፍኬት (PEM) ዱካ (OMNIROUTE_TLS_CERTም ጭምር)",
     "tls_key": "HTTPSን ለማቅረብ የTLS የግል ቁልፍ (PEM) ዱካ (OMNIROUTE_TLS_KEYም ጭምር)"
   },

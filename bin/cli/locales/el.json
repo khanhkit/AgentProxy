@@ -258,7 +258,7 @@
     "no_tray": "Απενεργοποίηση εικονιδίου περιοχής ειδοποιήσεων",
     "tls_cert": "Διαδρομή προς πιστοποιητικό TLS (PEM) για εξυπηρέτηση HTTPS (επίσης OMNIROUTE_TLS_CERT)",
     "tls_key": "Διαδρομή προς το ιδιωτικό κλειδί TLS (PEM) για εξυπηρέτηση HTTPS (επίσης OMNIROUTE_TLS_KEY)",
-    "ready_timeout": "Χρονικό όριο λήξης του ελέγχου ετοιμότητας σε ms (επίσης OMNIROUTE_READY_TIMEOUT_MS, προεπιλογή 60000)"
+    "ready_timeout": "Χρονικό όριο λήξης του ελέγχου ετοιμότητας σε ms (επίσης AGENTPROXY_READY_TIMEOUT_MS, προεπιλογή 60000)"
   },
   "backup": {
     "title": "Αντίγραφο ασφαλείας",

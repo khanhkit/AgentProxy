@@ -271,7 +271,7 @@
     "max_restarts": "Numero massimo di riavvii in seguito ad arresti anomali entro 30 s prima di rinunciare (predefinito: 2)",
     "tray": "Avvia nell'area di notifica di sistema (solo desktop, attivazione facoltativa)",
     "no_tray": "Disabilita l'icona nell'area di notifica di sistema",
-    "ready_timeout": "Timeout della verifica di disponibilità in ms (anche OMNIROUTE_READY_TIMEOUT_MS, valore predefinito 60000)",
+    "ready_timeout": "Timeout della verifica di disponibilità in ms (anche AGENTPROXY_READY_TIMEOUT_MS, valore predefinito 60000)",
     "tls_cert": "Percorso di un certificato TLS (PEM) per fornire HTTPS (anche OMNIROUTE_TLS_CERT)",
     "tls_key": "Percorso della chiave privata TLS (PEM) per fornire HTTPS (anche OMNIROUTE_TLS_KEY)"
   },

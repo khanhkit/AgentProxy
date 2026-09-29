@@ -271,7 +271,7 @@
     "max_restarts": "Kaatumisen jälkeisten uudelleenkäynnistysten enimmäismäärä 30 sekunnin sisällä ennen luovuttamista (oletus: 2)",
     "tray": "Käynnistä ilmaisinalueella (vain työpöytäympäristössä, valinnainen)",
     "no_tray": "Poista ilmaisinalueen kuvake käytöstä",
-    "ready_timeout": "Valmiustarkistuksen aikakatkaisu millisekunteina (myös OMNIROUTE_READY_TIMEOUT_MS, oletus 60000)",
+    "ready_timeout": "Valmiustarkistuksen aikakatkaisu millisekunteina (myös AGENTPROXY_READY_TIMEOUT_MS, oletus 60000)",
     "tls_cert": "HTTPS-palvelussa käytettävän TLS-varmenteen (PEM) polku (myös OMNIROUTE_TLS_CERT)",
     "tls_key": "HTTPS-palvelussa käytettävän yksityisen TLS-avaimen (PEM) polku (myös OMNIROUTE_TLS_KEY)"
   },

@@ -68,7 +68,7 @@ export function registerServe(program) {
     .option(
       "--ready-timeout <ms>",
       t("serve.ready_timeout") ||
-        "Readiness probe timeout in ms (also OMNIROUTE_READY_TIMEOUT_MS, default 60000)"
+        "Readiness probe timeout in ms (also AGENTPROXY_READY_TIMEOUT_MS, default 60000)"
     )
     .option(
       "--tls-cert <path>",
@@ -575,7 +575,7 @@ export function reportReadinessTimeout(dashboardPort, supervisor, lastProbeOutco
     );
   }
   console.error(
-    `  Tip:  set OMNIROUTE_READY_TIMEOUT_MS=${readyTimeoutMs * 2} or --ready-timeout ${readyTimeoutMs * 2} for slower cold starts.`
+    `  Tip:  set AGENTPROXY_READY_TIMEOUT_MS=${readyTimeoutMs * 2} or --ready-timeout ${readyTimeoutMs * 2} for slower cold starts.`
   );
   console.error(`  Try:  curl -I http://localhost:${dashboardPort}/api/monitoring/health`);
   console.error(`  Or:   rerun with \x1b[36m--log\x1b[0m to see live server output.\n`);

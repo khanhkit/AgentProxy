@@ -258,7 +258,7 @@
     "no_tray": "Onemogoči ikono sistemske vrstice",
     "tls_cert": "Pot do potrdila TLS (PEM) za streženje prek HTTPS (tudi OMNIROUTE_TLS_CERT)",
     "tls_key": "Pot do zasebnega ključa TLS (PEM) za streženje prek HTTPS (tudi OMNIROUTE_TLS_KEY)",
-    "ready_timeout": "Časovna omejitev preverjanja pripravljenosti v ms (tudi OMNIROUTE_READY_TIMEOUT_MS, privzeto 60000)"
+    "ready_timeout": "Časovna omejitev preverjanja pripravljenosti v ms (tudi AGENTPROXY_READY_TIMEOUT_MS, privzeto 60000)"
   },
   "backup": {
     "title": "Varnostno kopiranje",

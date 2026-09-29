@@ -271,7 +271,7 @@
     "max_restarts": "Maximalt antal omstarter efter krascher inom 30 s innan försöken avbryts (standard: 2)",
     "tray": "Starta i systemfältet (endast skrivbord, måste aktiveras)",
     "no_tray": "Inaktivera ikonen i systemfältet",
-    "ready_timeout": "Tidsgräns för beredskapskontroll i ms (även OMNIROUTE_READY_TIMEOUT_MS, standard 60000)",
+    "ready_timeout": "Tidsgräns för beredskapskontroll i ms (även AGENTPROXY_READY_TIMEOUT_MS, standard 60000)",
     "tls_cert": "Sökväg till ett TLS-certifikat (PEM) för att tillhandahålla HTTPS (även OMNIROUTE_TLS_CERT)",
     "tls_key": "Sökväg till den privata TLS-nyckeln (PEM) för att tillhandahålla HTTPS (även OMNIROUTE_TLS_KEY)"
   },

@@ -258,7 +258,7 @@
     "no_tray": "Desabilitar ícone na bandeja do sistema",
     "tls_cert": "Caminho para um certificado TLS (PEM) para servir HTTPS (também OMNIROUTE_TLS_CERT)",
     "tls_key": "Caminho para a chave privada TLS (PEM) para servir HTTPS (também OMNIROUTE_TLS_KEY)",
-    "ready_timeout": "Tempo limite da verificação de prontidão em ms (também OMNIROUTE_READY_TIMEOUT_MS, padrão 60000)"
+    "ready_timeout": "Tempo limite da verificação de prontidão em ms (também AGENTPROXY_READY_TIMEOUT_MS, padrão 60000)"
   },
   "backup": {
     "title": "Backup",

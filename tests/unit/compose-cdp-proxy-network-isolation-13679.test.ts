@@ -13,7 +13,7 @@ const REPO_ROOT = path.resolve(import.meta.dirname, "../..");
 // — any compromised sibling container on that shared bridge can reach it and
 // take full control of the live browser session. It must be isolated onto a
 // dedicated network shared only with the one legitimate consumer
-// (omniroute-web).
+// (agentproxy-web).
 
 function readCompose(): string {
   return fs.readFileSync(path.join(REPO_ROOT, "docker-compose.yml"), "utf8");
@@ -74,13 +74,13 @@ test("chatgpt-web-codex-browser is isolated off the shared default network", () 
   );
 });
 
-test("omniroute-web (the one legitimate CDP consumer) stays reachable via the dedicated network", () => {
+test("agentproxy-web (the one legitimate CDP consumer) stays reachable via the dedicated network", () => {
   const compose = readCompose();
-  const block = serviceBlock(compose, "omniroute-web");
+  const block = serviceBlock(compose, "agentproxy-web");
   assert.match(
     block,
     /networks:/,
-    "omniroute-web must explicitly join the dedicated CDP-proxy network to keep reaching " +
+    "agentproxy-web must explicitly join the dedicated CDP-proxy network to keep reaching " +
       "chatgpt-web-codex-browser:9223 after the sidecar is isolated off the default network"
   );
 });

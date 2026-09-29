@@ -259,7 +259,7 @@
     "max_restarts": "Pinakamataas na bilang ng pag-restart dahil sa pag-crash sa loob ng 30s bago sumuko (default: 2)",
     "tray": "Magsimula sa system tray (desktop lang, kailangang i-enable)",
     "no_tray": "I-disable ang icon sa system tray",
-    "ready_timeout": "Timeout ng readiness probe sa ms (OMNIROUTE_READY_TIMEOUT_MS din, default na 60000)",
+    "ready_timeout": "Timeout ng readiness probe sa ms (AGENTPROXY_READY_TIMEOUT_MS din, default na 60000)",
     "tls_cert": "Path patungo sa TLS certificate (PEM) para maghatid ng HTTPS (OMNIROUTE_TLS_CERT din)",
     "tls_key": "Path patungo sa pribadong TLS key (PEM) para maghatid ng HTTPS (OMNIROUTE_TLS_KEY din)"
   },

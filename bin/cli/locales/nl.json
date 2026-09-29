@@ -271,7 +271,7 @@
     "max_restarts": "Maximaal aantal herstarts na crashes binnen 30 s voordat wordt opgegeven (standaard: 2)",
     "tray": "Starten in het systeemvak (alleen desktop, optioneel)",
     "no_tray": "Systeemvakpictogram uitschakelen",
-    "ready_timeout": "Time-out voor gereedheidscontrole in ms (ook OMNIROUTE_READY_TIMEOUT_MS, standaard 60000)",
+    "ready_timeout": "Time-out voor gereedheidscontrole in ms (ook AGENTPROXY_READY_TIMEOUT_MS, standaard 60000)",
     "tls_cert": "Pad naar een TLS-certificaat (PEM) om HTTPS aan te bieden (ook OMNIROUTE_TLS_CERT)",
     "tls_key": "Pad naar de privésleutel voor TLS (PEM) om HTTPS aan te bieden (ook OMNIROUTE_TLS_KEY)"
   },

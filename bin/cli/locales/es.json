@@ -271,7 +271,7 @@
     "max_restarts": "Número máximo de reinicios tras fallos en un plazo de 30 s antes de desistir (predeterminado: 2)",
     "tray": "Iniciar en la bandeja del sistema (solo para escritorio, opcional)",
     "no_tray": "Desactivar el icono de la bandeja del sistema",
-    "ready_timeout": "Tiempo de espera de la comprobación de disponibilidad en ms (también OMNIROUTE_READY_TIMEOUT_MS, predeterminado: 60000)",
+    "ready_timeout": "Tiempo de espera de la comprobación de disponibilidad en ms (también AGENTPROXY_READY_TIMEOUT_MS, predeterminado: 60000)",
     "tls_cert": "Ruta a un certificado TLS (PEM) para servir mediante HTTPS (también OMNIROUTE_TLS_CERT)",
     "tls_key": "Ruta a la clave privada TLS (PEM) para servir mediante HTTPS (también OMNIROUTE_TLS_KEY)"
   },

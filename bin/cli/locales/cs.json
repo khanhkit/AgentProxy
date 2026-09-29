@@ -271,7 +271,7 @@
     "max_restarts": "Maximální počet restartů po pádu během 30 s před ukončením pokusů (výchozí: 2)",
     "tray": "Spustit v systémové liště (pouze pro počítače, volitelné)",
     "no_tray": "Zakázat ikonu v systémové liště",
-    "ready_timeout": "Časový limit kontroly připravenosti v ms (také OMNIROUTE_READY_TIMEOUT_MS, výchozí 60000)",
+    "ready_timeout": "Časový limit kontroly připravenosti v ms (také AGENTPROXY_READY_TIMEOUT_MS, výchozí 60000)",
     "tls_cert": "Cesta k certifikátu TLS (PEM) pro poskytování HTTPS (také OMNIROUTE_TLS_CERT)",
     "tls_key": "Cesta k privátnímu klíči TLS (PEM) pro poskytování HTTPS (také OMNIROUTE_TLS_KEY)"
   },

@@ -259,7 +259,7 @@
     "max_restarts": "Idadi ya juu ya uanzishaji upya baada ya kuharibika ndani ya sekunde 30 kabla ya kukata tamaa (chaguo-msingi: 2)",
     "tray": "Anza katika trei ya mfumo (kompyuta pekee, kwa hiari)",
     "no_tray": "Zima ikoni ya trei ya mfumo",
-    "ready_timeout": "Muda wa mwisho wa ukaguzi wa utayari kwa ms (pia OMNIROUTE_READY_TIMEOUT_MS, chaguo-msingi 60000)",
+    "ready_timeout": "Muda wa mwisho wa ukaguzi wa utayari kwa ms (pia AGENTPROXY_READY_TIMEOUT_MS, chaguo-msingi 60000)",
     "tls_cert": "Njia ya cheti cha TLS (PEM) cha kutoa HTTPS (pia OMNIROUTE_TLS_CERT)",
     "tls_key": "Njia ya ufunguo binafsi wa TLS (PEM) wa kutoa HTTPS (pia OMNIROUTE_TLS_KEY)"
   },

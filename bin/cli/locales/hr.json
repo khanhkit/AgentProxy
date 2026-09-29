@@ -258,7 +258,7 @@
     "no_tray": "Onemogući ikonu programske trake",
     "tls_cert": "Putanja do TLS certifikata (PEM) za posluživanje HTTPS-a (također OMNIROUTE_TLS_CERT)",
     "tls_key": "Putanja do TLS privatnog ključa (PEM) za posluživanje HTTPS-a (također OMNIROUTE_TLS_KEY)",
-    "ready_timeout": "Vremensko ograničenje provjere spremnosti u ms (također OMNIROUTE_READY_TIMEOUT_MS, zadano 60000)"
+    "ready_timeout": "Vremensko ograničenje provjere spremnosti u ms (također AGENTPROXY_READY_TIMEOUT_MS, zadano 60000)"
   },
   "backup": {
     "title": "Sigurnosna kopija",
