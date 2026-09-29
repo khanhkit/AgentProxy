@@ -15,6 +15,7 @@ import { proxyKeyOf } from "./opencodeGeoBlock.ts";
 import { classifyUpstream429 } from "./opencodeRateLimited.ts";
 import { runWithProxyContext } from "../utils/proxyFetch.ts";
 import type { ExecuteInput, ExecutorExecuteResult } from "./base.ts";
+import * as egressPacing from "./opencodeEgressThrottle.ts";
 
 /** Consecutive transient 429s before a request parks. */
 export const BURST_PARK_THRESHOLD = 6;
@@ -137,6 +138,60 @@ export interface ParkBurstState {
 export type Parkable429Outcome =
   | { kind: "continue" }
   | { kind: "return"; result: ExecutorExecuteResult & { response: Response }; normalize: boolean };
+
+export type PacedParkable429Outcome = Parkable429Outcome | { kind: "break" };
+
+/** Keep paced 429 bookkeeping and park decisions out of the executor loop. */
+export async function handlePacedParkable429<TAccount extends RotatableAccount>(args: {
+  state: ParkBurstState;
+  account: TAccount;
+  skipRecentlyFailed: boolean;
+  release: (() => void) | null;
+  pacing: egressPacing.EgressPacing;
+  earlyStopEnabled: () => boolean;
+  parkEnabled: boolean;
+  driver: ParkDriver<TAccount> & { accounts: TAccount[] };
+  input: ExecuteInput;
+  result: ExecutorExecuteResult & { response: Response };
+  log: ExecuteInput["log"];
+  cid: string;
+}): Promise<PacedParkable429Outcome> {
+  const { state, account, skipRecentlyFailed, parkEnabled } = args;
+  markCooldown(account);
+  const setAsideMs = egressPacing.noteRefusedMember(account.proxy, skipRecentlyFailed);
+  const arm = await egressPacing.settle429Arm(
+    args.release,
+    args.pacing,
+    args.result.response,
+    args.earlyStopEnabled
+  );
+  egressPacing.log429Outcome(args.log, args.cid, arm, maskAccountId(account.fingerprint), setAsideMs);
+  if (arm === "stop") return { kind: "return", result: args.result, normalize: false };
+  if (arm === "park") {
+    if (!parkEnabled) return { kind: "break" };
+    state.burstStreak = Math.max(state.burstStreak + 1, BURST_PARK_THRESHOLD);
+  } else {
+    state.burstStreak += 1;
+  }
+  if (state.parked || !parkEnabled) return { kind: "continue" };
+  const marker = await readPoolStrainMarker();
+  if (state.burstStreak < BURST_PARK_THRESHOLD && !marker.fresh) return { kind: "continue" };
+  state.parked = true;
+  args.log?.warn?.(
+    "OPENCODE",
+    `${args.cid}burstStreak=${state.burstStreak} freshD2=${marker.fresh} park`
+  );
+  const replay = await runParkAndReplay(
+    args.driver,
+    args.input,
+    parkWaitMs(marker.fresh ? marker.ttlLeftMs : null),
+    args.result,
+    args.log,
+    args.cid
+  );
+  if (!replay) return { kind: "continue" };
+  return { kind: "return", result: replay === args.result ? args.result : replay, normalize: true };
+}
 
 /** Keep the repeated-429 decision tree out of the main executor loop. */
 export async function handleParkable429<TAccount extends RotatableAccount>(args: {

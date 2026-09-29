@@ -49,6 +49,7 @@ import { markCooldown, markOutcome, markSuccess, noteResponseServed } from "./op
 import { discardResponseBody } from "./opencodeResponseBody.ts";
 import { createTransientFailoverBackoff, isRetriableUpstreamFailure, sleepAbortable } from "./opencodeTransientFailure.ts";
 import { isProxyAvoided, proxyEgressKey } from "../utils/proxyRefusalMemory.ts";
+import * as egressPacing from "./opencodeEgressThrottle.ts";
 import {
   isNetworkRotationSharedEgressGuardEnabled,
   isOpencodeRateLimited429EarlyStopEnabled,
@@ -58,7 +59,7 @@ import {
   isOpencodeTransientFailoverBackoffEnabled,
   isOpencodeParkAndResumeEnabled,
 } from "@/shared/utils/featureFlags";
-import { handleParkable429 } from "./opencodeParkResume.ts";
+import { handlePacedParkable429 } from "./opencodeParkResume.ts";
 
 /**
  * Per-account proxy configuration, persisted by NoAuthAccountCard under
@@ -649,11 +650,12 @@ export class OpencodeExecutor extends BaseExecutor {
       const skippedCooldown = new Map<string, number>();
       let directTried = false;
       // Stalls before the first Responses byte: one rotation, then fail fast.
-      let stalledAttempts = 0;
+      const stallCounter = { attempts: 0 };
       let abandonedResponse: Response | null = null;
       let userBlockedRotations = 0,
         transientBackoff = createTransientFailoverBackoff(this.transientPauseSleep);
       const parkState = { burstStreak: 0, parked: false };
+      const requestPacing = egressPacing.initEgressPacingForRequest(); // Off by default.
       for (let attempt = 0; attempt < this.accounts.length + emptyRejectionBudget; attempt++) {
         const isProxiedCandidate = (a: OpencodeAccountState): boolean => {
           if (a.cooldownUntil > Date.now()) return false;
@@ -740,6 +742,10 @@ export class OpencodeExecutor extends BaseExecutor {
         // Pin egress to this account's proxy for the whole BaseExecutor dispatch
         // (incl. its intra-URL 429 retries). skipUpstreamRetry lets THIS loop own
         // the cross-account 429 fallback instead of BaseExecutor's same-key retry.
+        const { release: egressRelease, account: pacedAccount } = await egressPacing.startPacedDispatch(
+          requestPacing, account, isProxiedCandidate, () => this.pickAccountWith(isProxiedCandidate), input.signal
+        );
+        account = pacedAccount;
         let result: HttpExecuteResult;
         try {
           // super.execute() here always dispatches the HTTP path (opencode is an
@@ -755,17 +761,15 @@ export class OpencodeExecutor extends BaseExecutor {
           // Stall guard: headers arrived, so the egress works — never a shared-egress
           // outage; proxied and proxy-less accounts rotate alike. A client abort never rotates.
           if (stallWindowMs > 0 && (isResponsesFirstByteTimeout(err) || input.signal?.aborted)) {
-            if (input.signal?.aborted) throw err;
-            markCooldown(account);
-            const stallKey = proxyKeyOf(account.proxy);
-            if (stallKey !== null) geoTriedProxyKeys.add(stallKey);
-            else directTried = true;
-            const rotate = ++stalledAttempts === 1;
+            if (input.signal?.aborted) egressPacing.throwPacedError(egressRelease, err);
+            const rotate = egressPacing.settleStalledDispatch(egressRelease, account, {
+              tried: geoTriedProxyKeys, stalled: stallCounter, cooldown: markCooldown, markDirect: () => (directTried = true),
+            });
             log?.warn?.(
               "OPENCODE",
               `${cid}Responses stream stalled on account ${masked}, ${rotate ? "rotating to next…" : "not rotating again"} (${reason})`
             );
-            if (!rotate) throw err;
+            if (!rotate) egressPacing.throwPacedError(egressRelease, err);
             continue;
           }
           transientBackoff.reset();
@@ -784,165 +788,161 @@ export class OpencodeExecutor extends BaseExecutor {
                 "OPENCODE",
                 `${cid}network error on account ${masked} (no dedicated proxy, shared egress), cooldown applied — trying next available account… (${reason})`
               );
+              egressPacing.releasePacingSlot(egressRelease);
               continue;
             }
             log?.warn?.(
               "OPENCODE",
               `${cid}network error on account ${masked} (no dedicated proxy, shared egress) — not rotating (${reason})`
             );
-            throw err;
+            egressPacing.throwPacedError(egressRelease, err);
           }
           markCooldown(account);
           log?.warn?.(
             "OPENCODE",
             `${cid}network error on account ${masked}, rotating to next… (${reason})`
           );
+          egressPacing.releasePacingSlot(egressRelease);
           continue;
         }
         discardResponseBody(abandonedResponse);
         abandonedResponse = null;
         lastResult = result;
         if (result.response.status !== 429) parkState.burstStreak = 0;
-        const status = result.response.status;
-        if (status === 429) {
-          const outcome = await handleParkable429({
-            state: parkState,
-            account,
-            triedKeys: geoTriedProxyKeys,
-            skipRecentlyFailed,
-            earlyStopEnabled: isOpencodeRateLimited429EarlyStopEnabled(),
-            parkEnabled: isOpencodeParkAndResumeEnabled(),
-            driver: {
-              execute: (i: ExecuteInput) =>
-                super.execute(i) as Promise<ExecutorExecuteResult & { response: Response }>,
-              markSuccess: (a: OpencodeAccountState) => markSuccess(a),
-              sleep: this.parkSleep,
-              accounts: this.accounts,
-            },
-            input,
-            result,
-            log,
-            cid,
-          });
-          if (outcome.kind === "return") {
-            return outcome.normalize
-              ? this.normalizeMuseSparkResponse(input, outcome.result)
-              : outcome.result;
+        try {
+          const status = result.response.status;
+          if (status === 429) {
+            const outcome = await handlePacedParkable429({
+              state: parkState, account, skipRecentlyFailed,
+              release: egressRelease, pacing: requestPacing,
+              earlyStopEnabled: isOpencodeRateLimited429EarlyStopEnabled,
+              parkEnabled: isOpencodeParkAndResumeEnabled(),
+              driver: {
+                execute: (i: ExecuteInput) => super.execute(i) as Promise<ExecutorExecuteResult & { response: Response }>,
+                markSuccess: (a: OpencodeAccountState) => markSuccess(a),
+                sleep: this.parkSleep, accounts: this.accounts,
+              },
+              input, result, log, cid,
+            });
+            if (outcome.kind === "break") break;
+            if (outcome.kind === "return") return outcome.normalize ? this.normalizeMuseSparkResponse(input, outcome.result) : outcome.result;
+            continue;
           }
-          continue;
-        }
-        if (isRetriableUpstreamFailure(status)) {
-          const key = proxyKeyOf(account.proxy);
-          if (key !== null) geoTriedProxyKeys.add(key);
-          else directTried = true;
-          log?.warn?.(
-            "OPENCODE",
-            `${cid}transient upstream ${status} on account ${masked} (proxy ${key ?? "direct"}), rotating to next…`
-          );
-          // Deliberately a separate branch from the 400-empty arm below,
-          // not one merged `if`: this arm never touches the body, the 400
-          // arm must clone-read it. Both share the predicate + tried-set.
-          // Single proxied account: one retry via the existing budget (a
-          // proxy-less single account takes the fast path, never the loop).
-          // Transient is not deterministic like geo: upstream may recover.
-          // No 0-retry guard here (it stays geo-only).
-          continue;
-        }
-
-        if (status === 403 || status === 451) {
-          let bodyText: string | null = null;
-          try {
-            bodyText = await result.response.clone().text();
-          } catch {
-            log?.debug?.("OPENCODE", "body read failed on geo-block check");
-          }
-          if (bodyText !== null && isOpencodeGeoBlocked(status, bodyText)) {
+          if (isRetriableUpstreamFailure(status)) {
             const key = proxyKeyOf(account.proxy);
             if (key !== null) geoTriedProxyKeys.add(key);
             else directTried = true;
             log?.warn?.(
               "OPENCODE",
-              `${cid}geo-blocked on account ${masked} (proxy ${key ?? "direct"}), rotating to next…`
+              `${cid}transient upstream ${status} on account ${masked} (proxy ${key ?? "direct"}), rotating to next…`
             );
-            // Single account with a proxy: 0 retries (same egress = dead latency).
-            // (The fast path above already covers single-without-proxy; here length===1 WITH proxy.)
-            if (this.accounts.length === 1) {
+            // Deliberately a separate branch from the 400-empty arm below,
+            // not one merged `if`: this arm never touches the body, the 400
+            // arm must clone-read it. Both share the predicate + tried-set.
+            // Single proxied account: one retry via the existing budget (a
+            // proxy-less single account takes the fast path, never the loop).
+            // Transient is not deterministic like geo: upstream may recover.
+            // No 0-retry guard here (it stays geo-only).
+            continue;
+          }
+
+          if (status === 403 || status === 451) {
+            let bodyText: string | null = null;
+            try {
+              bodyText = await result.response.clone().text();
+            } catch {
+              log?.debug?.("OPENCODE", "body read failed on geo-block check");
+            }
+            if (bodyText !== null && isOpencodeGeoBlocked(status, bodyText)) {
+              const key = proxyKeyOf(account.proxy);
+              if (key !== null) geoTriedProxyKeys.add(key);
+              else directTried = true;
+              log?.warn?.(
+                "OPENCODE",
+                `${cid}geo-blocked on account ${masked} (proxy ${key ?? "direct"}), rotating to next…`
+              );
+              // Single account with a proxy: 0 retries (same egress = dead latency).
+              // (The fast path above already covers single-without-proxy; here length===1 WITH proxy.)
+              if (this.accounts.length === 1) {
+                if (attributionOn && skippedCooldown.size > 0) {
+                  this.logSkippedCooldownAccounts(log, cid, skippedCooldown);
+                }
+                return result;
+              }
+              continue;
+            }
+            if (bodyText !== null && isOpencodeFreeTierRefusal(status, bodyText)) {
+              log?.warn?.(
+                "OPENCODE",
+                `${cid}free-tier refusal ${status} on account ${masked} (proxy ${proxyKeyOf(account.proxy) ?? "direct"}), returning it unchanged (request-scoped, no rotation)`
+              );
+              noteResponseServed(account);
               if (attributionOn && skippedCooldown.size > 0) {
                 this.logSkippedCooldownAccounts(log, cid, skippedCooldown);
               }
               return result;
             }
-            continue;
+            if (
+              bodyText !== null &&
+              isOpencodeUserBlocked(status, bodyText) &&
+              isOpencodeUserBlockedRotationEnabled()
+            ) {
+              const key = proxyKeyOf(account.proxy);
+              if (key !== null) geoTriedProxyKeys.add(key);
+              else directTried = true;
+              markCooldown(account);
+              const rotate = userBlockedRotations === 0 && this.accounts.length > 1;
+              log?.warn?.(
+                "OPENCODE",
+                `${cid}user_blocked ${status} on account ${masked} (proxy ${key ?? "direct"}), ${rotate ? "rotating to next account once…" : "returning the refusal"}`
+              );
+              if (!rotate) return result;
+              userBlockedRotations++;
+              abandonedResponse = result.response;
+              continue;
+            }
           }
-          if (bodyText !== null && isOpencodeFreeTierRefusal(status, bodyText)) {
-            log?.warn?.(
-              "OPENCODE",
-              `${cid}free-tier refusal ${status} on account ${masked} (proxy ${proxyKeyOf(account.proxy) ?? "direct"}), returning it unchanged (request-scoped, no rotation)`
-            );
-            noteResponseServed(account);
+
+          // Empty upstream rejection (malformed 400: no error field, no real
+          // content, finish_reason null — see isEmptyUpstreamRejection). Rotate/
+          // retry instead of propagating it as a fatal success: the observed
+          // envelope was marking subagent sessions as failed. Read the body ONLY
+          // for a 400 (never a 200/streaming — that would buffer the good path);
+          // classify, log, and continue. Neitheries markCooldown nor markSuccess:
+          // the failure is upstream's, not this account's.
+          if (status === 400) {
+            let bodyText: string | null = null;
+            try {
+              bodyText = await result.response.clone().text();
+            } catch {
+              log?.debug?.("OPENCODE", "body read failed on empty rejection check");
+            }
+            if (bodyText !== null && isRetriableUpstreamFailure(400, bodyText)) {
+              const chatcmplId = extractChatcmplId(bodyText);
+              transientBackoff.noteEmpty400(result.response);
+              log?.warn?.(
+                "OPENCODE",
+                `${cid}upstream empty rejection on account ${masked} (${chatcmplId}), rotating to next…`
+              );
+              continue;
+            }
+            // A 400 carrying a real error (or non-empty content): propagate
+            // immediately, untouched — same as before this change.
+            markOutcome(account, result.response);
             if (attributionOn && skippedCooldown.size > 0) {
               this.logSkippedCooldownAccounts(log, cid, skippedCooldown);
             }
             return result;
           }
-          if (
-            bodyText !== null &&
-            isOpencodeUserBlocked(status, bodyText) &&
-            isOpencodeUserBlockedRotationEnabled()
-          ) {
-            const key = proxyKeyOf(account.proxy);
-            if (key !== null) geoTriedProxyKeys.add(key);
-            else directTried = true;
-            markCooldown(account);
-            const rotate = userBlockedRotations === 0 && this.accounts.length > 1;
-            log?.warn?.(
-              "OPENCODE",
-              `${cid}user_blocked ${status} on account ${masked} (proxy ${key ?? "direct"}), ${rotate ? "rotating to next account once…" : "returning the refusal"}`
-            );
-            if (!rotate) return result;
-            userBlockedRotations++;
-            abandonedResponse = result.response;
-            continue;
-          }
-        }
 
-        // Empty upstream rejection (malformed 400: no error field, no real
-        // content, finish_reason null — see isEmptyUpstreamRejection). Rotate/
-        // retry instead of propagating it as a fatal success: the observed
-        // envelope was marking subagent sessions as failed. Read the body ONLY
-        // for a 400 (never a 200/streaming — that would buffer the good path);
-        // classify, log, and continue. Neitheries markCooldown nor markSuccess:
-        // the failure is upstream's, not this account's.
-        if (status === 400) {
-          let bodyText: string | null = null;
-          try {
-            bodyText = await result.response.clone().text();
-          } catch {
-            log?.debug?.("OPENCODE", "body read failed on empty rejection check");
-          }
-          if (bodyText !== null && isRetriableUpstreamFailure(400, bodyText)) {
-            const chatcmplId = extractChatcmplId(bodyText);
-            transientBackoff.noteEmpty400(result.response);
-            log?.warn?.(
-              "OPENCODE",
-              `${cid}upstream empty rejection on account ${masked} (${chatcmplId}), rotating to next…`
-            );
-            continue;
-          }
-          // A 400 carrying a real error (or non-empty content): propagate
-          // immediately, untouched — same as before this change.
           markOutcome(account, result.response);
           if (attributionOn && skippedCooldown.size > 0) {
             this.logSkippedCooldownAccounts(log, cid, skippedCooldown);
           }
-          return result;
+          return this.normalizeMuseSparkResponse(input, result);
+        } finally {
+          egressPacing.releasePacingSlot(egressRelease);
         }
-
-        markOutcome(account, result.response);
-        if (attributionOn && skippedCooldown.size > 0) {
-          this.logSkippedCooldownAccounts(log, cid, skippedCooldown);
-        }
-        return this.normalizeMuseSparkResponse(input, result);
       }
 
       // The loop exhausted without a result. If it's because every remaining
