@@ -522,6 +522,18 @@ export const FEATURE_FLAG_DEFINITIONS: FeatureFlagDefinition[] = [
     warningLevel: "caution",
   },
   {
+    key: "STREAM_EARLY_EOF_SIBLING_FAILOVER_ENABLED",
+    label: "Early-EOF Sibling Failover",
+    description:
+      "After one bounded same-connection retry for STREAM_EARLY_EOF, fail over at most once to a sibling connection for the request. With no usable sibling, preserve the original STREAM_EARLY_EOF 502. Off by default.",
+    descriptionI18nKey: "featureFlagStreamEarlyEofSiblingFailoverEnabledDescription",
+    category: "runtime",
+    defaultValue: "false",
+    type: "boolean",
+    requiresRestart: false,
+    warningLevel: "info",
+  },
+  {
     key: "STREAM_RECOVERY_ENABLED",
     label: "Stream Recovery",
     description:

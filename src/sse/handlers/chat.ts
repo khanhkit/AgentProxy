@@ -132,6 +132,7 @@ import {
 } from "./reasoningRouting";
 import { createVirtualAutoCombo, resolveAutoRoutingState } from "./autoRouting";
 import { getComboFailureLogError } from "./comboFailureLogging";
+import { createStreamEarlyEofSiblingFailover } from "./chat/streamEarlyEofSiblingFailover";
 
 // Pipeline integration — wired modules
 import { classify429FromError, type FailureKind } from "@/shared/utils/classify429";
@@ -1654,6 +1655,7 @@ async function handleSingleModelChat(
   // re-attempt to exactly one for the whole request. Declared outside both retry
   // loops so it can never reset and loop.
   let streamEarlyEofRetries = 0;
+  const earlyEofFailover = createStreamEarlyEofSiblingFailover();
   const sameAccountTransportRetries = new Map<string, number>();
   const occupancySessionKey =
     runtimeOptions.sessionAffinityKey ?? runtimeOptions.sessionId ?? `request:${randomUUID()}`;
@@ -1726,6 +1728,7 @@ async function handleSingleModelChat(
         "allExpired" in credentials ||
         !credentials.connectionId
       ) {
+        if (earlyEofFailover.original) return earlyEofFailover.original;
         if (credentials?.allRateLimited) {
           const retryDecision = getCooldownAwareRetryDecision({
             retryAfter: credentials.retryAfter,
@@ -2120,7 +2123,13 @@ async function handleSingleModelChat(
 
         // Stream readiness timeout is an upstream stall after an HTTP response was received,
         // not an account/quota failure. Do NOT mark the account unavailable here.
-        return withSelectedConnectionHeader(result.response, credentials?.connectionId);
+        if (earlyEofFailover.shouldHop(isTerminalStreamEarlyEof, hasForcedConnection)) {
+          log.warn("STREAM", `${provider}/${model} early-EOF retry exhausted — trying one sibling`);
+          earlyEofFailover.remember(withSelectedConnectionHeader(result.response, credentials.connectionId));
+          excludedConnectionIds.add(credentials.connectionId);
+          continue;
+        }
+        return earlyEofFailover.original ?? withSelectedConnectionHeader(result.response, credentials?.connectionId);
       }
 
       if (isAntigravityStreamReadinessFailure) {

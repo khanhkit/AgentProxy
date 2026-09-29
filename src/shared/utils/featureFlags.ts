@@ -281,3 +281,16 @@ export function isServerOwnedToolLoopEnabled(
     return false;
   }
 }
+
+/** Stream early-EOF sibling failover (#13153). Opt-in and fail-closed. */
+export function isStreamEarlyEofSiblingFailoverEnabled(): boolean {
+  try {
+    return isFeatureFlagEnabled("STREAM_EARLY_EOF_SIBLING_FAILOVER_ENABLED");
+  } catch (error) {
+    console.error(
+      "[featureFlags] Failed to resolve STREAM_EARLY_EOF_SIBLING_FAILOVER_ENABLED, defaulting to disabled:",
+      error instanceof Error ? error.message : error
+    );
+    return false;
+  }
+}
