@@ -45,14 +45,10 @@ import {
   isResponsesFirstByteTimeout,
   resolveResponsesStallWindowMs,
 } from "./opencodeResponsesStall.ts";
-import { markCooldown, markOutcome, noteResponseServed } from "./opencodeAccountHealth.ts";
+import { markCooldown, markOutcome, markSuccess, noteResponseServed } from "./opencodeAccountHealth.ts";
 import { discardResponseBody } from "./opencodeResponseBody.ts";
 import { createTransientFailoverBackoff, isRetriableUpstreamFailure, sleepAbortable } from "./opencodeTransientFailure.ts";
-import {
-  isProxyAvoided,
-  noteProxyRefusal,
-  proxyEgressKey,
-} from "../utils/proxyRefusalMemory.ts";
+import { isProxyAvoided, proxyEgressKey } from "../utils/proxyRefusalMemory.ts";
 import {
   isNetworkRotationSharedEgressGuardEnabled,
   isOpencodeRateLimited429EarlyStopEnabled,
@@ -60,8 +56,9 @@ import {
   isRotationAttributionEnabled,
   isOpencodeUserBlockedRotationEnabled,
   isOpencodeTransientFailoverBackoffEnabled,
+  isOpencodeParkAndResumeEnabled,
 } from "@/shared/utils/featureFlags";
-import { classifyUpstream429 } from "./opencodeRateLimited.ts";
+import { handleParkable429 } from "./opencodeParkResume.ts";
 
 /**
  * Per-account proxy configuration, persisted by NoAuthAccountCard under
@@ -327,6 +324,7 @@ export class OpencodeExecutor extends BaseExecutor {
   // TS's private-member nominal check rejects `this` there otherwise.
   nextAccountIdx = 0;
   transientPauseSleep = sleepAbortable;
+  parkSleep: (ms: number, signal?: AbortSignal | null) => Promise<boolean> = sleepAbortable;
   constructor(provider: string) {
     super(provider, PROVIDERS[provider] || PROVIDERS.openai);
   }
@@ -655,6 +653,7 @@ export class OpencodeExecutor extends BaseExecutor {
       let abandonedResponse: Response | null = null;
       let userBlockedRotations = 0,
         transientBackoff = createTransientFailoverBackoff(this.transientPauseSleep);
+      const parkState = { burstStreak: 0, parked: false };
       for (let attempt = 0; attempt < this.accounts.length + emptyRejectionBudget; attempt++) {
         const isProxiedCandidate = (a: OpencodeAccountState): boolean => {
           if (a.cooldownUntil > Date.now()) return false;
@@ -803,34 +802,35 @@ export class OpencodeExecutor extends BaseExecutor {
         discardResponseBody(abandonedResponse);
         abandonedResponse = null;
         lastResult = result;
+        if (result.response.status !== 429) parkState.burstStreak = 0;
         const status = result.response.status;
         if (status === 429) {
-          markCooldown(account);
-          const key = proxyKeyOf(account.proxy);
-          if (key !== null) geoTriedProxyKeys.add(key);
-          // Persistent refusal memory complements request-local tried-set bookkeeping.
-          const setAsideMs = skipRecentlyFailed
-            ? noteProxyRefusal(proxyEgressKey(account.proxy), "ip_quota_429")
-            : null;
-          if (
-            isOpencodeRateLimited429EarlyStopEnabled() &&
-            (await classifyUpstream429(result.response)) === "rate_limited"
-          ) {
-            log?.warn?.(
-              "OPENCODE",
-              `${cid}rate-limited 429 on account ${masked}, stopping the account wave`
-            );
-            return result;
+          const outcome = await handleParkable429({
+            state: parkState,
+            account,
+            triedKeys: geoTriedProxyKeys,
+            skipRecentlyFailed,
+            earlyStopEnabled: isOpencodeRateLimited429EarlyStopEnabled(),
+            parkEnabled: isOpencodeParkAndResumeEnabled(),
+            driver: {
+              execute: (i: ExecuteInput) =>
+                super.execute(i) as Promise<ExecutorExecuteResult & { response: Response }>,
+              markSuccess: (a: OpencodeAccountState) => markSuccess(a),
+              sleep: this.parkSleep,
+              accounts: this.accounts,
+            },
+            input,
+            result,
+            log,
+            cid,
+          });
+          if (outcome.kind === "return") {
+            return outcome.normalize
+              ? this.normalizeMuseSparkResponse(input, outcome.result)
+              : outcome.result;
           }
-          log?.warn?.(
-            "OPENCODE",
-            `${cid}Rate limited (429) on account ${masked} (proxy ${key ?? "direct"})` +
-              (setAsideMs ? `, member set aside for ${Math.round(setAsideMs / 1000)}s` : "") +
-              ", rotating to next…"
-          );
           continue;
         }
-
         if (isRetriableUpstreamFailure(status)) {
           const key = proxyKeyOf(account.proxy);
           if (key !== null) geoTriedProxyKeys.add(key);
