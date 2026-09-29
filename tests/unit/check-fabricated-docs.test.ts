@@ -224,6 +224,16 @@ test("env-var: a var present only in .env.example is NOT flagged", () => {
   );
 });
 
+test("env-var: APP_BIND_HOST compose-only contract is NOT flagged", () => {
+  const found = findingsFor({
+    docs: { "self-host.md": "Set `APP_BIND_HOST` to control the published host interface.\n" },
+  });
+  assert.ok(
+    !found.has("env-var::APP_BIND_HOST"),
+    "APP_BIND_HOST is consumed by docker-compose interpolation rather than process.env"
+  );
+});
+
 test("api-path: a documented prefix with sub-routes (/api/cloud/) is NOT flagged", () => {
   const found = findingsFor({
     files: {

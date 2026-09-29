@@ -31,17 +31,6 @@ jobs:
       version: ${{ steps.meta.outputs.version }}
       promote_latest: ${{ steps.meta.outputs.promote_latest }}
     steps:
-      - name: Checkout release policy
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          ref: main
-          persist-credentials: false
-
-      - name: Enforce main-only release branch invariant
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: node scripts/check/check-release-branch-hygiene.mjs
-
       - id: meta
         name: Resolve version
         shell: bash
@@ -132,7 +121,7 @@ jobs:
           platforms: ${{ matrix.platform }}
           build-args: |
             AGENTPROXY_USE_TURBOPACK=0
-            AGENTPROXY_BUILD_MEMORY_MB=7168
+            AGENTPROXY_BUILD_MEMORY_MB=12288
             AGENTPROXY_BUILD_WORKERS=2
           outputs: type=image,push-by-digest=true,name-canonical=true,push=true
           tags: ${{ env.IMAGE_NAME }}
@@ -154,7 +143,7 @@ jobs:
           docker run -d --name agentproxy-smoke \
             -p 127.0.0.1:20128:20128 \
             -p 127.0.0.1:20129:20129 \
-            -e AGENTPROXY_AUTH_DISABLED=1 \
+            -e OMNIROUTE_AUTH_DISABLED=1 \
             "$image_ref"
           for attempt in $(seq 1 120); do
             if curl --fail --silent --max-time 2 http://127.0.0.1:20128/readyz >/dev/null \
@@ -208,19 +197,12 @@ jobs:
     permissions:
       contents: read
       packages: write # Required to create and push the multi-arch manifest in GHCR.
-      id-token: write # Required for keyless Cosign signing and GitHub artifact attestations.
-      attestations: write
-      artifact-metadata: write
+      id-token: write # Required for keyless Cosign signing via GitHub OIDC.
     env:
       IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/agentproxy
       VERSION: ${{ needs.prepare.outputs.version }}
       PROMOTE_LATEST: ${{ needs.prepare.outputs.promote_latest }}
     steps:
-      - name: Harden publish runner
-        uses: step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1 # v2.21.1
-        with:
-          egress-policy: audit
-
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e # v4.3.0
 
@@ -281,13 +263,6 @@ jobs:
             exit 1
           fi
           echo "digest=$digest" >> "$GITHUB_OUTPUT"
-
-      - name: Attest immutable multi-arch manifest
-        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
-        with:
-          subject-name: ${{ env.IMAGE_NAME }}
-          subject-digest: ${{ steps.manifest.outputs.digest }}
-          push-to-registry: true
 
       - name: Sign multi-arch manifest with GitHub OIDC
         env:

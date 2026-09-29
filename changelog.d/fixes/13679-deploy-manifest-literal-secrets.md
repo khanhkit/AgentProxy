@@ -1,0 +1,1 @@
+- **fix(security):** remove copy-pasteable placeholder secrets from deployment examples and reject the well-known default management password from non-loopback dashboard login paths.

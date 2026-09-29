@@ -60,6 +60,28 @@ test("upgrades the legacy seeded default compression combo pipeline", () => {
   assert.deepEqual(combo?.pipeline, [{ engine: "session-dedup" }, { engine: "lite" }]);
 });
 
+test("upgrades an untouched RTK + Caveman seed to the lossless default", () => {
+  const db = core.getDbInstance();
+  db.prepare(
+    `
+    UPDATE compression_combos
+    SET description = ?, pipeline = ?
+    WHERE id = ?
+  `
+  ).run(
+    "Default RTK + Caveman compression pipeline",
+    JSON.stringify([
+      { engine: "rtk", intensity: "standard" },
+      { engine: "caveman", intensity: "full" },
+    ]),
+    "default-caveman"
+  );
+
+  const combo = combosDb.getDefaultCompressionCombo();
+  assert.equal(combo?.description, "Default lossless dedup and whitespace compression");
+  assert.deepEqual(combo?.pipeline, [{ engine: "session-dedup" }, { engine: "lite" }]);
+});
+
 test("does not overwrite a customized default compression combo", () => {
   const db = core.getDbInstance();
   db.prepare(

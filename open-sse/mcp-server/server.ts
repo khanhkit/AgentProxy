@@ -93,6 +93,7 @@ import {
 import { getDbInstance, ensureDbInitialized } from "../../src/lib/db/core.ts";
 import { normalizeQuotaResponse } from "../../src/shared/contracts/quota.ts";
 import { resolveAgentProxyBaseUrl } from "../../src/shared/utils/resolveAgentProxyBaseUrl.ts";
+import { isMcpScopeEnforcementEnabled } from "../../src/shared/utils/featureFlags.ts";
 import { toSafeMcpErrorMessage } from "./errorMessage.ts";
 import { mcpFetchTimeoutSignal } from "./fetchTimeout.ts";
 import { getMcpModelsCatalog } from "./catalog.ts";
@@ -101,7 +102,6 @@ import type { TextToolResult } from "./toolResult.ts";
 export { getMcpModelsCatalog } from "./catalog.ts";
 
 const AGENTPROXY_BASE_URL = resolveAgentProxyBaseUrl();
-const MCP_ENFORCE_SCOPES = process.env.AGENTPROXY_MCP_ENFORCE_SCOPES === "true";
 const MCP_ALLOWED_SCOPES = new Set(
   (process.env.AGENTPROXY_MCP_SCOPES || "")
     .split(",")
@@ -237,7 +237,7 @@ function withScopeEnforcement(
     const scopeCheck = evaluateToolScopes(
       toolName,
       scopeContext.scopes,
-      MCP_ENFORCE_SCOPES,
+      isMcpScopeEnforcementEnabled(),
       toolScopes
     );
     if (!scopeCheck.allowed) {
@@ -1535,7 +1535,7 @@ export async function startMcpStdio(): Promise<void> {
   const version = process.env.npm_package_version || "1.8.1";
   const stopHeartbeat = startMcpHeartbeat({
     version,
-    scopesEnforced: MCP_ENFORCE_SCOPES,
+    scopesEnforced: isMcpScopeEnforcementEnabled,
     allowedScopes: Array.from(MCP_ALLOWED_SCOPES),
     toolCount: TOTAL_MCP_TOOL_COUNT,
   });

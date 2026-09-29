@@ -1,0 +1,1 @@
+- **fix(cli):** `agentproxy mcp restart` no longer 404s — the missing `POST /api/mcp/restart` route now exists — and new `agentproxy mcp enable`/`agentproxy mcp disable` subcommands give the CLI a way to turn the MCP server on without the dashboard

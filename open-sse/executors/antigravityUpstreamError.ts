@@ -21,6 +21,13 @@ const GEO_BLOCKED_HINT =
   "call the model API. Route antigravity/agy egress through a proxy in a " +
   "supported region (e.g. US/EU) or use a different provider.";
 
+function extractUpstreamMessage(details: unknown): string | null {
+  if (!details || typeof details !== "object") return null;
+  const error = (details as { error?: { message?: unknown } }).error;
+  const message = error && typeof error.message === "string" ? error.message.trim() : "";
+  return message || null;
+}
+
 export function buildAntigravityUpstreamError(status: number, statusText: string, rawBody: string) {
   let upstreamDetails: unknown;
   try {
@@ -36,5 +43,9 @@ export function buildAntigravityUpstreamError(status: number, statusText: string
       upstreamDetails
     );
   }
-  return buildErrorBody(status, `Antigravity upstream error (${status})${suffix}`, upstreamDetails);
+  const upstreamMessage = extractUpstreamMessage(upstreamDetails);
+  const message = upstreamMessage
+    ? `Antigravity upstream error (${status}): ${upstreamMessage}`
+    : `Antigravity upstream error (${status})${suffix}`;
+  return buildErrorBody(status, message, upstreamDetails);
 }

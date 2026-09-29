@@ -87,6 +87,20 @@ export function extractPreservedBlocks(
   let result = text;
 
   result = extractFrontmatter(result, addBlock);
+
+  const regionPatterns: CompiledPattern[] = [
+    ...compileUserPatterns(options.preservePatterns),
+    { pattern: /<system-reminder>[\s\S]*?<\/system-reminder>/g, kind: "system_instruction" },
+    { pattern: /<instructions?>[\s\S]*?<\/instructions?>/g, kind: "system_instruction" },
+    {
+      pattern: /<project[- ]instructions?>[\s\S]*?<\/project[- ]instructions?>/g,
+      kind: "system_instruction",
+    },
+  ];
+  for (const { pattern, kind } of regionPatterns) {
+    result = replacePattern(result, ensureGlobal(pattern), kind, addBlock);
+  }
+
   result = extractFencedCodeBlocks(result, (content) => addBlock(content, "fenced_code"));
 
   const builtIns: CompiledPattern[] = [
@@ -125,7 +139,7 @@ export function extractPreservedBlocks(
     },
   ];
 
-  for (const { pattern, kind } of [...builtIns, ...compileUserPatterns(options.preservePatterns)]) {
+  for (const { pattern, kind } of builtIns) {
     result = replacePattern(result, ensureGlobal(pattern), kind, addBlock);
   }
 

@@ -36,6 +36,7 @@ type StreamControllerOptions = {
   provider?: string;
   model?: string;
   connectionId?: string | null;
+  pendingRequestId?: string | null;
   clientResponseFormat?: string | null;
   clientAbortSignal?: AbortSignal | null;
   allowCompletedToolHandoffGrace?: boolean;
@@ -244,6 +245,7 @@ export function createStreamController({
   provider,
   model,
   connectionId,
+  pendingRequestId = null,
   clientResponseFormat,
   clientAbortSignal,
   allowCompletedToolHandoffGrace = false,
@@ -280,7 +282,14 @@ export function createStreamController({
     pendingRequestCleared = true;
     if (!model && !provider && !connectionId) return;
     try {
-      trackPendingRequest(model || "", provider || "", connectionId ?? null, false);
+      trackPendingRequest(
+        model || "",
+        provider || "",
+        connectionId ?? null,
+        false,
+        undefined,
+        pendingRequestId ?? undefined
+      );
     } catch (e) {
       console.error(
         `[${getTimeString()}] [streamHandler] trackPendingRequest decrement failed — counter may drift`,
@@ -605,7 +614,7 @@ function resolveSilentCloseOutcome(input: {
     // #10443: every known path that produces OpenAI chat chunks emits a
     // terminal — the response translators (gemini/claude/kiro/cursor-to-openai)
     // all emit a finish_reason chunk, the non-standard executors (kiro, cursor,
-    // nlpcloud, poe-web, copilot-m365-web, chipotle, gitlab)
+    // nlpcloud, poe-web, copilot-m365-web, gitlab)
     // enqueue `data: [DONE]` themselves, and standard OpenAI-compatible
     // upstreams end with finish_reason + [DONE] per spec. So a close that
     // forwarded content but no terminal marker is an upstream drop, not a

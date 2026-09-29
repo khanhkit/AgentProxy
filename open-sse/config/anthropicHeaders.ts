@@ -65,6 +65,8 @@ export const FORWARDABLE_CLIENT_BETAS = Object.freeze([
   // gate (#9505), so a client that sent it must keep it through the merge —
   // otherwise its effort negotiation is silently dropped.
   "effort-2025-11-24",
+  "thinking-binding-controls-2026-08-01",
+  "thinking-display-updates-2026-08-18",
 ]);
 
 /**

@@ -59,6 +59,14 @@ export function detectVisionInput(record: JsonRecord): boolean {
     const [inputPart] = modality.toLowerCase().split("->");
     if ((inputPart || "").includes("image")) return true;
   }
+
+  if (
+    Array.isArray(record.labels) &&
+    record.labels.some((entry) => toNonEmptyString(entry)?.toLowerCase() === "vision")
+  ) {
+    return true;
+  }
+
   return false;
 }
 
@@ -97,6 +105,43 @@ const effortListSchema = z.array(z.unknown());
 
 const supportedReasoningLevelsSchema = z.object({ supported_reasoning_levels: z.unknown() });
 const thinkingLevelsSchema = z.object({ thinking: z.object({ levels: z.unknown() }).partial() });
+
+const vendorRouteReasoningCapabilitySchema = z.object({
+  effort_values: z.array(z.unknown()).optional(),
+});
+const vendorRoutesSchema = z.record(z.string(), z.unknown());
+
+function parseVendorRouteEffortValues(record: JsonRecord): string[][] {
+  const vendorsParsed = vendorRoutesSchema.safeParse(record.vendors);
+  if (!vendorsParsed.success) return [];
+
+  const perVendor: string[][] = [];
+  for (const vendorValue of Object.values(vendorsParsed.data)) {
+    const vendorRecord = asRecord(vendorValue);
+    const reasoningParsed = vendorRouteReasoningCapabilitySchema.safeParse(
+      asRecord(vendorRecord.capabilities).reasoning
+    );
+    if (!reasoningParsed.success) continue;
+
+    const efforts = Array.from(
+      new Set(
+        (reasoningParsed.data.effort_values ?? [])
+          .filter((effort): effort is string => typeof effort === "string" && effort.length > 0)
+          .map(normalizeSupportedEffort)
+      )
+    );
+    if (efforts.length > 0) perVendor.push(efforts);
+  }
+  return perVendor;
+}
+
+function vendorRouteSharedEfforts(record: JsonRecord): string[] | undefined {
+  const perVendor = parseVendorRouteEffortValues(record);
+  if (perVendor.length === 0) return undefined;
+  return perVendor.reduce((shared, efforts) =>
+    shared.filter((effort) => efforts.includes(effort))
+  );
+}
 
 // Maps common upstream synonyms onto AgentProxy's canonical effort vocabulary
 // (`src/shared/reasoning/effortStandardization.ts`). Values already in
@@ -166,7 +211,40 @@ export function detectDefaultThinkingEffort(record: JsonRecord): string | undefi
     const raw = parsed.data.default_effort;
     if (typeof raw === "string" && raw.length > 0) return normalizeSupportedEffort(raw);
   }
+
+  const shared = vendorRouteSharedEfforts(record);
+  if (shared && shared.length > 0 && !hasUsableDeclaredEffortList(record)) {
+    const ranked = shared
+      .map((tier) => ({
+        tier,
+        rank: (CANONICAL_EFFORT_VALUES as readonly string[]).indexOf(tier),
+      }))
+      .filter((entry) => entry.rank >= 0)
+      .sort((a, b) => b.rank - a.rank);
+    if (ranked.length > 0) return ranked[0]!.tier;
+  }
   return undefined;
+}
+
+function hasUsableDeclaredEffortList(record: JsonRecord): boolean {
+  if (
+    Array.isArray(record.supportedThinkingEfforts) &&
+    record.supportedThinkingEfforts.some(
+      (effort) => typeof effort === "string" && effort.length > 0
+    )
+  ) {
+    return true;
+  }
+
+  for (const holder of [record.reasoning, asRecord(record.metadata).reasoning]) {
+    const parsed = reasoningSupportedEffortsSchema.safeParse(holder);
+    if (!parsed.success || !parsed.data) continue;
+    const raw = parsed.data.supported_efforts;
+    if (Array.isArray(raw) && raw.some((effort) => typeof effort === "string" && effort.length > 0)) {
+      return true;
+    }
+  }
+  return false;
 }
 
 /**
@@ -216,6 +294,11 @@ export function detectSupportedThinkingEfforts(record: JsonRecord): string[] | u
   // #9160: fall back to `capabilities.effort_tiers` before the legacy fields.
   // AgentProxy's own catalog surfaces effort tiers inside `capabilities.effort_tiers`,
   // which the existing `parseEffortList` already handles (string arrays).
+  const shared = vendorRouteSharedEfforts(record);
+  if (shared !== undefined) {
+    return shared.length > 0 ? shared : [];
+  }
+
   const capabilitiesRecord = asRecord(record.capabilities);
   const capabilitiesParsed = effortListSchema.safeParse(capabilitiesRecord.effort_tiers);
   if (capabilitiesParsed.success) {
@@ -246,7 +329,8 @@ function hasDeclaredEffortList(record: JsonRecord): boolean {
   if (Array.isArray(asRecord(record.reasoning).supported_efforts)) return true;
   if (Array.isArray(asRecord(record.capabilities).effort_tiers)) return true;
   if (Array.isArray(record.supported_reasoning_levels)) return true;
-  return Array.isArray(asRecord(record.thinking).levels);
+  if (Array.isArray(asRecord(record.thinking).levels)) return true;
+  return parseVendorRouteEffortValues(record).length > 0;
 }
 
 export function isAutoFetchModelsEnabled(providerSpecificData: unknown): boolean {
@@ -314,10 +398,17 @@ export function normalizeDiscoveredModels(
       record.inputTokenLimit,
       record.context_length,
       record.contextLength,
+      record.max_model_len,
+      record.maxModelLen,
+      record.max_input_tokens,
+      record.maxInputTokens,
       topProvider.context_length
     );
     const outputTokenLimit = firstPositiveNumber(
       record.outputTokenLimit,
+      record.max_output_tokens,
+      record.maxOutputTokens,
+      record.max_tokens,
       topProvider.max_completion_tokens
     );
 

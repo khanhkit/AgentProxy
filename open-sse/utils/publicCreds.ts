@@ -189,6 +189,8 @@ const EMBEDDED_DEFAULTS = {
   // Firefly credits balance endpoint public x-api-key (`SunbreakWebUI1`) from
   // GET firefly.adobe.io/v1/credits/balance browser traffic.
   adobe_firefly_balance_api_key: [50, 18, 11, 12, 6, 21, 19, 4, 47, 28, 79, 37, 60, 83],
+  // Muse Code CLI — Meta public OAuth client id (device grant, no secret).
+  muse_id: [80, 87, 86, 95, 66, 66, 71, 86, 77, 75, 26, 68, 77, 91, 88, 95],
 } as const;
 
 export type EmbeddedDefaultKey = keyof typeof EMBEDDED_DEFAULTS;

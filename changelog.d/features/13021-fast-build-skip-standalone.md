@@ -1,0 +1,1 @@
+- **feat(build):** add build:fast and start:fast to bypass standalone tracing

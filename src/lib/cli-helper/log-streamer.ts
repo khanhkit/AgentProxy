@@ -6,13 +6,15 @@ export interface LogStreamOptions {
   headers?: HeadersInit;
 }
 
+import { resolveOmniRouteBaseUrl } from "../../shared/utils/resolveOmniRouteBaseUrl";
+
 export interface LogStream {
   stream: ReadableStream<Uint8Array>;
   stop: () => void;
 }
 
 export function createLogStream(options: LogStreamOptions = {}): LogStream {
-  const baseUrl = options.baseUrl || "http://localhost:20128";
+  const baseUrl = options.baseUrl || resolveOmniRouteBaseUrl();
   const filters = options.filters || [];
   const follow = options.follow ?? false;
   const timeout = options.timeout || 30000;

@@ -53,6 +53,7 @@ const DEVICE_CODE_PROVIDERS = new Set([
   "codebuddy-cn",
   "ghe-copilot",
   "grok-cli",
+  "muse-code",
 ]);
 
 const TOKEN_PASTE_PROVIDERS = new Set(["devin-desktop", "devin-cli", "grok-cli"]);
@@ -382,7 +383,7 @@ export default function OAuthModal({
   // specific branch synchronously (avoids reading a just-set state value through
   // a stale closure); when omitted, falls back to the grokBrowserMode state.
   const startOAuthFlow = useCallback(
-    async (opts?: { grokBrowser?: boolean }) => {
+    async (opts?: { grokBrowser?: boolean; manualLoopback?: boolean }) => {
       if (!provider) return;
       try {
         setError(null);
@@ -537,7 +538,7 @@ export default function OAuthModal({
               setPolling(false);
               forceManual = true;
             }
-          } else if (isLocalhost) {
+          } else if (isLocalhost && !opts?.manualLoopback) {
             setLoopbackHint(buildPkceLoopbackMismatchHint(provider, loopbackLocation));
             setStep("loopback-mismatch");
             return;
@@ -1146,6 +1147,7 @@ export default function OAuthModal({
           <OAuthLoopbackMismatchPanel
             providerName={providerInfo.name}
             hint={loopbackHint}
+            onManualInput={() => void startOAuthFlow({ manualLoopback: true })}
             onClose={handleClose}
           />
         )}

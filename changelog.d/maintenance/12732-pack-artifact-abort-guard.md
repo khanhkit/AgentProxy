@@ -1,0 +1,1 @@
+- **chore(build):** ship `httpClientAbortGuard.mjs` in the published tarball so the standalone WebSocket wrapper cannot boot with a missing local import.

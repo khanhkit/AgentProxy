@@ -41,6 +41,11 @@ const UNRECOVERABLE_OAUTH_ERROR_CODES = new Set([
   "access_denied",
 ]);
 
+const EMBEDDED_OAUTH_ERROR_CODE_RE = new RegExp(
+  `(?<![0-9a-z_])(${Array.from(UNRECOVERABLE_OAUTH_ERROR_CODES).join("|")})(?![0-9a-z_])`,
+  "i"
+);
+
 /**
  * Extract a canonical OAuth error code from a refresh-endpoint error body of
  * ANY shape. Production proxies/MITMs deliver the same `invalid_grant` 400 in
@@ -76,6 +81,9 @@ export function extractOAuthErrorCode(raw: unknown, depth = 0): string | null {
     // field inside otherwise-unparsed text. Scoped to avoid false positives.
     const m = s.match(/"error(?:_code)?"\s*:\s*"([a-z_]+)"/i);
     if (m && UNRECOVERABLE_OAUTH_ERROR_CODES.has(m[1])) return m[1];
+
+    const embedded = s.match(EMBEDDED_OAUTH_ERROR_CODE_RE);
+    if (embedded) return embedded[1].toLowerCase();
     return null;
   }
 

@@ -16,17 +16,16 @@
  * An id the table does not know resolves to the wildcard baseline 0.5 — the documented
  * neutral for "no evidence", never a quality claim.
  */
-import { readFileSync } from "node:fs";
-import { resolve } from "node:path";
 import { describe, it, expect } from "vitest";
+import lifecycleData from "../../../../config/quality/model-lifecycle.json";
 import { getStaticFitnessTableScore } from "../taskFitness";
 import { REGISTRY } from "../../../config/providers/index.ts";
 
 const TASK_TYPES = ["coding", "review", "planning", "analysis", "debugging", "documentation"];
 
-const lifecycle = JSON.parse(
-  readFileSync(resolve(process.cwd(), "config/quality/model-lifecycle.json"), "utf8")
-) as { retired: Record<string, { status: string }> };
+// Import data through the runner instead of letting Vite rewrite new URL(...)
+// as a browser asset URL in the jsdom lane.
+const lifecycle = lifecycleData as { retired: Record<string, { status: string }> };
 
 const retiredIds = new Set(
   Object.entries(lifecycle.retired)

@@ -1,5 +1,7 @@
 import type { RegistryEntry } from "../../shared.ts";
 
+const AGNES_FLASH_THINKING_EFFORTS = ["none", "low", "medium", "high", "max"] as const;
+
 export const agnesProvider: RegistryEntry = {
   id: "agnes",
   format: "openai",
@@ -22,6 +24,7 @@ export const agnesProvider: RegistryEntry = {
       contextLength: 262144,
       maxOutputTokens: 65536,
       supportsReasoning: true,
+      supportedThinkingEfforts: [...AGNES_FLASH_THINKING_EFFORTS],
       supportsVision: true,
       toolCalling: true,
     },
@@ -31,6 +34,7 @@ export const agnesProvider: RegistryEntry = {
       contextLength: 524288,
       maxOutputTokens: 65536,
       supportsReasoning: true,
+      supportedThinkingEfforts: [...AGNES_FLASH_THINKING_EFFORTS],
       supportsVision: true,
       toolCalling: true,
       interleavedField: "reasoning_content",

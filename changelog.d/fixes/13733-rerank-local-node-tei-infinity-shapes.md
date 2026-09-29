@@ -1,0 +1,1 @@
+- **fix(api):** normalize native TEI/Infinity rerank request and response shapes so `/v1/rerank` and the memory rerank path return consistent Cohere-style relevance results.

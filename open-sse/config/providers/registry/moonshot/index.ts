@@ -5,6 +5,7 @@ import { REASONING_UNSUPPORTED, type RegistryEntry, type RegistryModel } from ".
 export const KIMI_K3_MODEL: RegistryModel = {
   id: "kimi-k3",
   name: "Kimi K3",
+  aliases: ["k3", "k3-256k"],
   contextLength: 1048576,
   maxOutputTokens: 1048576,
   supportsVision: true,

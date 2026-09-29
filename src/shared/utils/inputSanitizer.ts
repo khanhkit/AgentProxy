@@ -12,6 +12,19 @@ import { resolveBlockThreshold, shouldBlockDetections } from "@/shared/utils/inj
 
 // ─── Prompt Injection Patterns ───────────────────────────────────────
 
+const AUTHORITY_FRAMING =
+  "(?:safe\\s+(?:educational|research)\\s+context|as\\s+an?\\s+(?:researcher|red[-\\s]?teamer)" +
+  "|for\\s+(?:testing|research|educational)\\s+purposes\\s+only|controlled\\s+test\\s+scenario)";
+const BYPASS_REQUEST =
+  "(?:(?:ignore|bypass|disable|disregard|override|drop|turn\\s+off)\\s+(?:all\\s+)?(?:of\\s+)?" +
+  "(?:your|the|any)\\s+(?:safety\\s+|ethical\\s+|content\\s+)?" +
+  "(?:guidelines|restrictions|rules|filters|guardrails|safeguards|policies|limitations)" +
+  "|uncensored\\s+(?:outputs?|responses?|answers?|replies|content|mode)" +
+  "|update\\s+your\\s+behaviou?r" +
+  "|(?:respond|answer|reply|proceed|continue|operate|act)\\s+without\\s+(?:any\\s+)?" +
+  "(?:restrictions|limits|limitations|filters|censorship|guardrails))";
+const AUTHORITY_WINDOW = 300;
+
 /** @type {Array<{name: string, pattern: RegExp, severity: string}>} */
 const INJECTION_PATTERNS = [
   {
@@ -52,6 +65,15 @@ const INJECTION_PATTERNS = [
     name: "encoding_evasion",
     pattern:
       /\b(base64\s+decode|rot13|hex\s+decode|unicode\s+escape)\b.*\b(instruction|prompt|command)\b/i,
+    severity: "medium",
+  },
+  {
+    name: "authority_educational_framing",
+    pattern: new RegExp(
+      `\\b(?:${AUTHORITY_FRAMING}\\b[\\s\\S]{0,${AUTHORITY_WINDOW}}?\\b${BYPASS_REQUEST}` +
+        `|${BYPASS_REQUEST}\\b[\\s\\S]{0,${AUTHORITY_WINDOW}}?\\b${AUTHORITY_FRAMING})\\b`,
+      "i"
+    ),
     severity: "medium",
   },
 ];

@@ -1,0 +1,1 @@
+- **feat(dashboard):** add a dedicated full-width API-key routing editor with searchable model/combo choices, deep-linkable key selection, and protection for unsaved routing drafts.

@@ -4,6 +4,7 @@ import {
   getAntigravityFetchAvailableModelsUrls,
 } from "@agentproxy/open-sse/config/antigravityUpstream.ts";
 import {
+  CODEBUDDY_CN_USER_AGENT,
   GITHUB_COPILOT_API_VERSION,
   GITHUB_COPILOT_CHAT_PLUGIN_VERSION,
   GITHUB_COPILOT_CHAT_USER_AGENT,
@@ -106,12 +107,14 @@ export const QODER_CONFIG = {
 // CodeBuddy CN (Tencent — copilot.tencent.com) OAuth Configuration
 // (Custom Device-Auth Flow: POST stateUrl → open authUrl → GET pollUrl?state=).
 // No client_id/secret — the upstream CLI ships none.
+export { CODEBUDDY_CN_USER_AGENT };
+
 export const CODEBUDDY_CN_CONFIG = {
   baseUrl: "https://copilot.tencent.com",
   stateUrl: "https://copilot.tencent.com/v2/plugin/auth/state",
   tokenUrl: "https://copilot.tencent.com/v2/plugin/auth/token",
   refreshUrl: "https://copilot.tencent.com/v2/plugin/auth/token/refresh",
-  userAgent: "CLI/2.63.2 CodeBuddy/2.63.2",
+  userAgent: CODEBUDDY_CN_USER_AGENT,
   platform: "CLI",
   pollInterval: 5000,
 };
@@ -167,6 +170,15 @@ export const OPENFERENCE_CONFIG = {
   loopbackPort: 56123,
   callbackPath: "/callback",
   callbackHost: "127.0.0.1",
+};
+
+// Muse Code (Meta) OAuth — RFC 8628 device grant + subscription key mint.
+// Public CLI client id (Muse Code CLI); PKCE is not used on this grant.
+export const MUSE_CODE_CONFIG = {
+  clientId: resolvePublicCred("muse_id", "MUSE_CODE_OAUTH_CLIENT_ID"),
+  deviceCodeUrl: "https://auth.meta.com/oidc/device/authorization/",
+  tokenUrl: "https://auth.meta.com/oidc/device/token/",
+  mintUrl: "https://api.meta.ai/muse-code/key",
 };
 
 // Kimi Coding OAuth Configuration (Device Code Flow)
@@ -513,4 +525,5 @@ export const PROVIDERS = {
   OPENFERENCE: "openference",
   ZED: "zed",
   ZED_HOSTED: "zed-hosted",
+  MUSE_CODE: "muse-code",
 };

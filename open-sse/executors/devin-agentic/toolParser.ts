@@ -66,6 +66,13 @@ function validateSchema(value: unknown, schema: JsonRecord, path: string): strin
   return errors;
 }
 
+const BARE_SUMMARY_ENVELOPE_RE = /^<summary>\s*([\s\S]*?)\s*<\/summary>$/i;
+
+export function extractBareSummaryEnvelope(text: string): string | null {
+  const match = text.trim().match(BARE_SUMMARY_ENVELOPE_RE);
+  return match ? match[1].trim() : null;
+}
+
 export function parseDevinToolRequest(text: string, tools: AnthropicTool[], idSeed = "") {
   const matches = [...text.matchAll(/<tool>\s*([\s\S]*?)\s*<\/tool>/g)];
   if (matches.length === 0) return null;

@@ -1,0 +1,1 @@
+- **feat(proxies):** the proxy-pool editor can show bounded 24-hour egress observations—distinct exit IPs, observed connections, and busiest exit—behind the default-off `PROXY_POOL_EGRESS_OBSERVATION` feature flag.

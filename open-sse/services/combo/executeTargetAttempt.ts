@@ -58,7 +58,7 @@ import {
   isComboRequestScopedFailure as isScopedFailure,
   isStreamReadinessFailureErrorBody,
   isStreamEarlyEofErrorBody,
-  isTokenLimitBreachErrorBody,
+  isLocalKeyPolicyBreachErrorBody,
   isLocalQueueCapacityErrorBody,
   toRecordedTarget,
   resolveDelayMs,
@@ -90,6 +90,7 @@ import type { AttemptLoopDeps, AttemptLoopState, ExecuteTargetResult } from "./a
 import type { ComboDiagnostics } from "../../utils/error.ts";
 import type { ComboErrorBody, ComboRetryAfter, ResolvedComboTarget } from "./types.ts";
 import type { ResponseValidationConfig } from "./responseValidation.ts";
+import { resolveComboDailyReset } from "./comboDailyResetClock.ts";
 
 export async function executeTargetAttempt(opts: {
   index: number;
@@ -732,8 +733,8 @@ export async function executeTargetAttempt(opts: {
     const isStreamEarlyEof =
       (result.status === 502 || result.status === 504) && isStreamEarlyEofErrorBody(errorBody);
 
-    // FIX 5: a local per-API-key token-limit 429 must not cool shared accounts.
-    const isTokenLimitBreach = result.status === 429 && isTokenLimitBreachErrorBody(errorBody);
+    // FIX 5: a local per-API-key policy 429 (token limit, budget) must not cool shared accounts.
+    const isTokenLimitBreach = result.status === 429 && isLocalKeyPolicyBreachErrorBody(errorBody);
     const isLocalQueueCapacity = isLocalQueueCapacityErrorBody(errorBody);
 
     // Fix #1681: Status 499 means client disconnected — stop combo loop immediately.
@@ -834,7 +835,9 @@ export async function executeTargetAttempt(opts: {
       provider,
       result.headers,
       profile,
-      structuredError
+      structuredError,
+      null,
+      await resolveComboDailyReset(provider)
     );
     const { cooldownMs } = fallbackResult;
     // #6863: a parsed upstream quota reset (e.g. Antigravity "Resets in 92h27m28s")

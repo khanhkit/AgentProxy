@@ -246,7 +246,8 @@ export function resolvePublicOrigin(request: Request): PublicOriginCandidate {
   const requestOrigin = requestUrlOrigin(request);
   if (requestOrigin) return { origin: requestOrigin, source: "request-url" };
 
-  return { origin: "http://localhost:20128", source: "request-url" };
+  const defaultPort = process.env.PORT || process.env.DASHBOARD_PORT || "20128";
+  return { origin: `http://localhost:${defaultPort}`, source: "request-url" };
 }
 
 export function validateBrowserMutationOrigin(request: Request): BrowserMutationOriginVerdict {

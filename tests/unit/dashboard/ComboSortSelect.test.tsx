@@ -1,4 +1,3 @@
-import "../../_setup/jsdomGlobal.ts";
 import { describe, it, expect } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { ComboSortSelect } from "@/app/(dashboard)/dashboard/combos/ComboSortSelect";

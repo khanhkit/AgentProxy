@@ -1,0 +1,1 @@
+- **feat(i18n):** add Bosnian across dashboard, CLI, and required localized documentation surfaces.

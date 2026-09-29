@@ -9,9 +9,6 @@ import { npmBin, npmExecOptions } from "../npm-exec.mjs";
 import { readPidFile, isPidRunning } from "../utils/pid.mjs";
 
 const execFileAsync = promisify(execFile);
-const IMMUTABLE_VERSION_PATTERN = /^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$/;
-const NPM_INTEGRITY_PATTERN =
-  /^sha(?:256|384|512)-[A-Za-z0-9+/=]+(?:\s+sha(?:256|384|512)-[A-Za-z0-9+/=]+)*$/;
 
 // This file lives at <pkgRoot>/bin/cli/commands/update.mjs — resolve package
 // paths relative to the script, NOT process.cwd(). On a global npm/brew install
@@ -40,35 +37,10 @@ export async function getLatestVersion(execFn = execFileAsync) {
     // runtime value into the command line (Hard Rule #13).
     const { stdout } = await execFn(
       npmBin(),
-      ["view", "agentproxy", "version", "--prefer-online"],
+      ["view", "omniroute", "version", "--prefer-online"],
       npmExecOptions(process.platform, { timeoutMs: 15000 })
     );
     return stdout.trim();
-  } catch {
-    return null;
-  }
-}
-
-export async function getLatestArtifact(execFn = execFileAsync) {
-  try {
-    // Keep every argument literal: npm.cmd requires a shell on Windows. Asking
-    // for version + integrity in one registry query also makes the mutable
-    // `latest` dist-tag a discovery input only — both fields describe the same
-    // resolved packument snapshot.
-    const { stdout } = await execFn(
-      npmBin(),
-      ["view", "agentproxy", "version", "dist.integrity", "--json", "--prefer-online"],
-      npmExecOptions(process.platform, { timeoutMs: 15000 })
-    );
-    const parsed = JSON.parse(stdout);
-    const record = Array.isArray(parsed) ? parsed.at(-1) : parsed;
-    const version = typeof record?.version === "string" ? record.version.trim() : "";
-    const integrity =
-      typeof record?.["dist.integrity"] === "string" ? record["dist.integrity"].trim() : "";
-    if (!IMMUTABLE_VERSION_PATTERN.test(version) || !NPM_INTEGRITY_PATTERN.test(integrity)) {
-      return null;
-    }
-    return { version, integrity };
   } catch {
     return null;
   }
@@ -86,14 +58,14 @@ function compareVersions(a, b) {
 
 export async function createBackup() {
   const binPath = BIN_DIR;
-  const backupDir = path.join(homedir(), ".agentproxy", "backups", `agentproxy-${Date.now()}`);
+  const backupDir = path.join(homedir(), ".omniroute", "backups", `omniroute-${Date.now()}`);
 
   try {
     const { mkdirSync, cpSync, existsSync } = await import("node:fs");
     if (!existsSync(binPath)) return null;
 
     mkdirSync(backupDir, { recursive: true });
-    const files = ["agentproxy.mjs", "cli", "nodeRuntimeSupport.mjs", "mcp-server.mjs"];
+    const files = ["omniroute.mjs", "cli", "nodeRuntimeSupport.mjs", "mcp-server.mjs"];
     for (const f of files) {
       const src = path.join(binPath, f);
       if (existsSync(src)) {
@@ -112,10 +84,10 @@ export async function createBackup() {
 // package.json from disk to confirm it, but a long-lived server process keeps
 // serving whatever it loaded at its last start — Node caches a `require()`d
 // package.json per resolved path for the life of the process. A later
-// `agentproxy update` then correctly reports "already up to date" (the files
+// `omniroute update` then correctly reports "already up to date" (the files
 // ARE current) while the running server is still stale, matching the reported
 // symptom. `--apply` never restarted anything and its success message ("Run
-// `agentproxy --version` to verify.") implied the update was already live.
+// `omniroute --version` to verify.") implied the update was already live.
 //
 // `restart.mjs`'s `runRestartCommand()` stops then re-spawns the server in the
 // foreground (via `serve.mjs::runServe`), which can block the calling terminal
@@ -133,16 +105,12 @@ export async function printPostApplyGuidance(latest, deps = { readPidFile, isPid
   const running = await isServerProcessRunning(deps);
   if (running) {
     printWarning(`Files updated to ${latest}, but the running server is still on the old version.`);
-    printInfo("  Run `agentproxy restart` now to apply this update.");
+    printInfo("  Run `omniroute restart` now to apply this update.");
   } else {
-    printInfo(`No running AgentProxy server was detected via the CLI's PID file.`);
-    printInfo(
-      `  Start it with \`agentproxy serve\` (or restart your existing process) to run ${latest}.`
-    );
+    printInfo(`No running OmniRoute server was detected via the CLI's PID file.`);
+    printInfo(`  Start it with \`omniroute serve\` (or restart your existing process) to run ${latest}.`);
   }
-  printInfo(
-    "`agentproxy --version` will keep reporting the old version until the process restarts."
-  );
+  printInfo("`omniroute --version` will keep reporting the old version until the process restarts.");
 }
 
 export function registerUpdate(program) {
@@ -171,9 +139,7 @@ export async function runUpdateCommand(opts = {}) {
   const skipConfirm = opts.yes ?? applyNow;
 
   const current = await getCurrentVersion();
-  const artifact = await getLatestArtifact();
-  const latest = artifact?.version ?? null;
-  const integrity = artifact?.integrity ?? null;
+  const latest = await getLatestVersion();
 
   if (!current) {
     printError("Could not determine current version");
@@ -184,30 +150,26 @@ export async function runUpdateCommand(opts = {}) {
     printError("Could not check latest version. Is npm available?");
     return 1;
   }
-  if (!IMMUTABLE_VERSION_PATTERN.test(latest)) {
-    printError(`Registry returned a non-immutable update version: ${latest}`);
-    return 1;
-  }
 
   if (showChangelog) {
     try {
       const { stdout } = await execFileAsync(
         npmBin(),
-        ["view", "agentproxy", "changelog"],
+        ["view", "omniroute", "changelog"],
         npmExecOptions(process.platform, { timeoutMs: 15000 })
       );
       if (stdout.trim()) {
         console.log(stdout.trim());
       } else {
-        console.log(`Changelog: https://github.com/your-org/agentproxy/releases/tag/v${latest}`);
+        console.log(`Changelog: https://github.com/your-org/omniroute/releases/tag/v${latest}`);
       }
     } catch {
-      console.log(`Changelog: https://github.com/your-org/agentproxy/releases/tag/v${latest}`);
+      console.log(`Changelog: https://github.com/your-org/omniroute/releases/tag/v${latest}`);
     }
     return 0;
   }
 
-  printHeading("AgentProxy Update");
+  printHeading("OmniRoute Update");
   console.log(`  Current version: ${current}`);
   console.log(`  Latest version:  ${latest}`);
 
@@ -220,21 +182,15 @@ export async function runUpdateCommand(opts = {}) {
   console.log(`\n  Update available: ${current} → ${latest}`);
 
   if (checkOnly) {
-    console.log("\n  Run `agentproxy update --apply` to install automatically.");
+    console.log("\n  Run `omniroute update --apply` to install automatically.");
     return 1; // exit 1 = outdated (useful for scripts)
   }
 
-  if (!integrity) {
-    printError(
-      `Missing or invalid npm integrity metadata for agentproxy@${latest}. Aborting update.`
-    );
-    return 1;
-  }
-
   if (dryRun) {
-    console.log(`\n  [DRY RUN] Would run: npm install -g agentproxy@${latest} --include=optional`);
-    console.log(`  [DRY RUN] Verified registry integrity metadata: ${integrity.split("-")[0]}`);
-    if (!skipBackup) console.log("  [DRY RUN] Would create backup in ~/.agentproxy/backups/");
+    console.log(
+      "\n  [DRY RUN] Would run: npm install -g omniroute@latest --include=optional --legacy-peer-deps"
+    );
+    if (!skipBackup) console.log("  [DRY RUN] Would create backup in ~/.omniroute/backups/");
     return 0;
   }
 
@@ -262,16 +218,16 @@ export async function runUpdateCommand(opts = {}) {
     }
   }
 
-  printInfo("Updating AgentProxy...");
+  printInfo("Updating OmniRoute...");
   try {
-    const { execFileSync } = await import("child_process");
-    // Resolve `latest` only for discovery; promotion always uses the exact version
-    // whose registry integrity metadata was validated above. `latest` can move
-    // after discovery without changing the artifact this update installs.
-    const installArgs = ["install", "-g", `agentproxy@${latest}`, "--include=optional"];
-    execFileSync(npmBin(), installArgs, npmExecOptions(process.platform, { stdio: "inherit" }));
+    const { execSync } = await import("child_process");
+    // --include=optional keeps the optionalDependencies (better-sqlite3, keytar,
+    // tls-client, llmlingua SLM stack) on update so an omit=optional config can't drop them.
+    execSync("npm install -g omniroute@latest --include=optional --legacy-peer-deps", {
+      stdio: "inherit",
+    });
     // Trust-but-verify: `npm install -g` exits 0 even when a shadowing local install
-    // (e.g. ~/node_modules/agentproxy ahead of the global prefix on PATH) means the
+    // (e.g. ~/node_modules/omniroute ahead of the global prefix on PATH) means the
     // binary the user actually runs was not touched. Re-read the running binary's
     // version and warn instead of lying about success (#9475).
     const afterVersion = await getCurrentVersion();
@@ -280,25 +236,25 @@ export async function runUpdateCommand(opts = {}) {
         `Global install updated to ${latest}, but the running binary still reports ${afterVersion}.`
       );
       console.log(
-        "  A local `node_modules/agentproxy` is likely shadowing the global install on PATH."
+        "  A local `node_modules/omniroute` is likely shadowing the global install on PATH."
       );
       console.log("  Diagnose with:");
-      console.log("    which -a agentproxy");
-      console.log("    command -v agentproxy");
+      console.log("    which -a omniroute");
+      console.log("    command -v omniroute");
       console.log("    npm prefix -g");
       console.log(
-        "  Then remove the shadowing local copy (e.g. `npm uninstall agentproxy` from its directory)"
+        "  Then remove the shadowing local copy (e.g. `npm uninstall omniroute` from its directory)"
       );
       console.log("  or reorder PATH so the global bin comes first.");
       return 1;
     }
-    printSuccess(`Installed agentproxy@${latest} to disk.`);
+    printSuccess(`Installed omniroute@${latest} to disk.`);
     await printPostApplyGuidance(latest);
     return 0;
   } catch (err) {
     printError(`Update failed: ${err.message}`);
     printInfo("Restore from backup:");
-    const backupDir = path.join(homedir(), ".agentproxy", "backups");
+    const backupDir = path.join(homedir(), ".omniroute", "backups");
     printInfo(`  ls ${backupDir}`);
     return 1;
   }

@@ -1,0 +1,1 @@
+- **fix(api):** `GET /v1/models` now types compatible provider-node rows from the node `apiType` when discovered models do not carry endpoint metadata; explicit model endpoint metadata still takes precedence.

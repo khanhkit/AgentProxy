@@ -1,0 +1,1 @@
+- **fix(mitm):** bound per-request SSE transcript retention to 1 MiB and cancel the upstream read when the downstream disconnects, preventing abandoned streams and inspector capture from growing without bound.

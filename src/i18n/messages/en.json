@@ -3193,7 +3193,13 @@
     "cliproxyapiUnknown": "Unknown",
     "cliproxyapiUpdate": "Update",
     "cliproxyapiUpdateAvailable": "Update available: v{current} → v{latest}",
-    "cliproxyapiVersion": "Version"
+    "cliproxyapiVersion": "Version",
+    "hermesRoleReview": "Review",
+    "hermesRoleReviewDesc": "Full subagent code review",
+    "hermesRoleMoaReference": "MoA Reference",
+    "hermesRoleMoaReferenceDesc": "Mixture-of-Agents reference model",
+    "hermesRoleMoaAggregator": "MoA Aggregator",
+    "hermesRoleMoaAggregatorDesc": "Mixture-of-Agents synthesis model"
   },
   "combos": {
     "title": "Combos",
@@ -3790,7 +3796,16 @@
     "duplicateAutoComboSnapshotMsg": "This will snapshot the currently connected providers/models that match this template into an editable combo.",
     "duplicateAutoComboFailedPrefix": "Failed to duplicate auto-combo:",
     "duplicateAutoComboUnknownError": "Unknown error",
-    "duplicateAutoComboTitle": "Create a static combo from {name}"
+    "duplicateAutoComboTitle": "Create a static combo from {name}",
+    "stickyLimitEffective": "Effective {value} ({source})",
+    "stickyLimitSourceCombo": "combo",
+    "stickyLimitSourceComboDefaults": "combo defaults",
+    "stickyLimitSourceGlobal": "global default",
+    "connectionAwareExpansion": "Connection-aware expansion",
+    "triStateInherit": "inherit",
+    "connectionAwareExpansionOn": "On",
+    "connectionAwareExpansionOff": "Off",
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation."
   },
   "costs": {
     "title": "Costs",
@@ -10972,7 +10987,9 @@
     "poolAddMember": "Add",
     "poolAddFailed": "Failed to add the proxy to the pool",
     "poolSelectProxy": "Select a proxy…",
-    "poolSaveFailed": "Failed to save pool assignment"
+    "poolSaveFailed": "Failed to save pool assignment",
+    "poolEgressFailuresByExit": "Failures via {exit}: {count}",
+    "poolEgressFailuresUnattributed": "Failures with no attributed exit: {count}"
   },
   "playground": {
     "title": "Model Playground",
@@ -11300,6 +11317,10 @@
     "columns": {
       "status": "Status",
       "cacheSource": "Cache Source",
+      "contentProvenance": "Reply",
+      "contentEmpty": "Empty reply",
+      "usageAbsent": "Token count not reported",
+      "usageEstimated": "Token count estimated",
       "model": "Model",
       "requested": "Requested",
       "provider": "Provider",
@@ -11420,7 +11441,9 @@
       "correlationIdValue": "Correlation ID: {id}",
       "detailedPayloadInfo": "Enable detailed logging first if you want the four-stage client/provider payload view for new requests.",
       "copyAll": "Copy all",
-      "copiedAll": "Copied all"
+      "copiedAll": "Copied all",
+      "rawViewOn": "Raw view: on",
+      "rawViewOff": "Raw view: off"
     }
   },
   "proxyLogger": {
@@ -11971,7 +11994,11 @@
       "goNow": "Go now",
       "message": "The MITM Proxy now lives under AgentBridge.",
       "title": "This page has moved"
-    }
+    },
+    "resetAgent": "Restore default",
+    "resetAgentConfirm": "Restore default?",
+    "resetting": "Restoring…",
+    "resetDone": "Default DNS restored for {agent}. Fully quit the app (not just minimize) and reopen it for the change to take effect."
   },
   "providerStats": {
     "unknownError": "Unknown error",
@@ -12165,6 +12192,29 @@
     "raw": "Raw"
   },
   "cliCommon": {
+    "companion": {
+      "title": "CLI companion",
+      "intro": "Copy commands to run on the computer where your CLI is installed. This panel does not execute commands or copy credentials.",
+      "hostNotice": "Detection describes the AgentProxy server host, not this browser's computer. Configured does not mean inference was tested.",
+      "target": "CLI tool",
+      "context": "Existing context name (optional)",
+      "contextHint": "Leave blank to use your CLI's active context. Named contexts can point to a local or remote server; list them in your terminal first.",
+      "contextInvalid": "Use 1–64 letters, digits, dots, hyphens or underscores, starting with a letter or digit.",
+      "modelHint": "This CLI requires a model. Enter a real provider/model identifier before copying its launch preview.",
+      "modelInvalid": "Use a model identifier without spaces or shell characters, starting with a letter or digit.",
+      "runtime": "Runtime",
+      "runnable": "Runnable",
+      "notRunnable": "Not runnable",
+      "unknown": "Unknown",
+      "detectionError": "Server detection unavailable. Refresh detection to retry; terminal commands remain available.",
+      "contextsStep": "Check terminal contexts",
+      "configureStep": "Choose a model and configure",
+      "runStep": "Preview the launch",
+      "configureHint": "This interactive command writes the CLI configuration on the computer where you run it.",
+      "runHint": "Dry-run shows the launch plan without starting the CLI. It is not an inference test.",
+      "copyFailed": "Could not copy. Select and copy the command manually.",
+      "empty": "No executable CLI targets are available in this version. Use the tool guides below."
+    },
     "concept": {
       "code": {
         "title": "CLI Code",
@@ -13947,7 +13997,12 @@
     "hour": "hour",
     "day": "day",
     "unknownModel": "unknown",
-    "pending": "pending"
+    "pending": "pending",
+    "allApiKeys": "All API keys",
+    "mcp": "MCP",
+    "mcpTool": "MCP tool",
+    "scope": "Scope",
+    "apiKey": "API key"
   },
   "metadata": {
     "compressionTitle": "Compression",
@@ -14150,5 +14205,6 @@
     "partnerLinkNote": "Partner link",
     "dismissAriaLabel": "Dismiss"
   },
-  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Disable the generation of thinking level variants (e.g. -low, -medium, -high) in the /v1/models catalog."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Disable the generation of thinking level variants (e.g. -low, -medium, -high) in the /v1/models catalog.",
+  "featureFlagProxyPoolSharedEgressOrderDescription": "For providers whose quota is bucketed by egress address, rank a pool member sharing a recently refused member's observed egress address just below healthy members. Order only, never excluded. Needs PROXY_SKIP_RECENTLY_FAILED, which produces the refusal signal it reads. Off by default: selection order is exactly the plain rotation."
 }

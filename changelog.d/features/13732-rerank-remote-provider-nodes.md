@@ -1,0 +1,1 @@
+- **feat(api):** rerank requests can opt into remote OpenAI-compatible provider nodes through `RERANK_REMOTE_PROVIDER_NODES`, while still enforcing the provider outbound URL policy and preserving loopback behavior by default.

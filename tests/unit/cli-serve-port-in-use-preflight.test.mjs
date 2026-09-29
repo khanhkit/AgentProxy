@@ -141,7 +141,7 @@ test("reportPortInUse degrades gracefully when the owner pid is unknown", async 
   const out = lines.join("\n");
   assert.match(out, /Port 20128 is already in use/, "must still name the port");
   assert.match(out, /unknown|unidentified/, "must say the owner could not be identified");
-  assert.match(out, /omniroute stop/, "must keep the resolution path");
+  assert.match(out, /agentproxy stop/, "must keep the resolution path");
 });
 
 test("serve preflight rejects a busy port even without any discovery tool (end-to-end for #14518)", async () => {
@@ -206,6 +206,6 @@ test("reportPortInUse names the port, the owning pid, and how to resolve it", as
   const out = lines.join("\n");
   assert.match(out, /20128/, "must name the port");
   assert.match(out, /19348/, "must name the process already holding it");
-  assert.match(out, /omniroute stop/, "must tell the user how to free the port");
+  assert.match(out, /agentproxy stop/, "must tell the user how to free the port");
   assert.match(out, /--port/, "must offer running on a different port");
 });

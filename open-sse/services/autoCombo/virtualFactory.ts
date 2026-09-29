@@ -339,7 +339,7 @@ const SYNTHETIC_NOAUTH_CONNECTION_ID = RESILIENCE_NOAUTH_CONNECTION_ID;
 // candidate pool. Narrowed to the backends verified to answer without any
 // configuration on our reference egress (VPS .15): `opencode` returns 200
 // there, while duckduckgo-web (429/VQD rate limit),
-// chipotle (502), aihorde (401, anon key rejected)
+// aihorde (401, anon key rejected)
 // and the others are unreliable. The excluded providers stay fully usable via
 // direct `<alias>/<model>` calls — they are just kept OUT of auto-routing until
 // re-verified. Re-add an id here to bring it back into every auto/* pool.
@@ -680,15 +680,15 @@ export async function prepareVirtualAutoComboInputs(
       .filter(Boolean);
     const hiddenModels = hiddenModelsMap.get(providerId);
 
-    // #auto-pool-visible-only: build the credentialed pool from the models the user
-    // actually has available (synced + custom non-hidden) when any exist, falling
-    // back to the static catalog only when the user has none. This keeps catalog-only
-    // models (e.g. openrouter/auto) out of every auto/* pool when the operator only
-    // synced a subset (e.g. OpenRouter with importFreeModelsOnly).
-    const [syncedByConnection, customModels] = await Promise.all([
+    // Prefer user-visible synced/custom models; otherwise fall back to the static catalog.
+    const [syncedByConnection, rawCustomModels] = await Promise.all([
       getSyncedAvailableModelsByConnection(providerId),
       getCustomModels(providerId),
     ]);
+    const customModels = (Array.isArray(rawCustomModels) ? rawCustomModels : []).filter(
+      (model: unknown): model is { id?: string } =>
+        !!model && typeof model === "object" && !Array.isArray(model)
+    );
     const userVisibleIds = new Set<string>();
     for (const models of Object.values(syncedByConnection)) {
       for (const m of models) if (m.id && !hiddenModels?.has(m.id)) userVisibleIds.add(m.id);

@@ -90,7 +90,7 @@ import {
   resolveDelayMs,
   comboModelNotFoundResponse,
   isStreamReadinessFailureErrorBody,
-  isTokenLimitBreachErrorBody,
+  isLocalKeyPolicyBreachErrorBody,
   isLocalQueueCapacityErrorBody,
   toRecordedTarget,
   getExhaustedTargetSkipReason,
@@ -112,6 +112,7 @@ import {
   resolveComboTargets,
 } from "./comboStructure.ts";
 import { releaseStickyPinOnFailure, clearStaleLKGP } from "../combo.ts";
+import { resolveComboDailyReset } from "./comboDailyResetClock.ts";
 
 /** Per-connection TPM budget for quota reservation. Undefined = store keeps prior limit. */
 async function resolveTargetTokenLimit(target: {
@@ -870,7 +871,7 @@ export async function handleRoundRobinCombo({
 
           // FIX 5: a local per-API-key token-limit 429 must not cool shared accounts.
           const isTokenLimitBreach =
-            result.status === 429 && isTokenLimitBreachErrorBody(errorBody);
+            result.status === 429 && isLocalKeyPolicyBreachErrorBody(errorBody);
           const isLocalQueueCapacity = isLocalQueueCapacityErrorBody(errorBody);
 
           if (isLocalQueueCapacity) {
@@ -921,7 +922,9 @@ export async function handleRoundRobinCombo({
             provider,
             result.headers,
             profile,
-            structuredError
+            structuredError,
+            null,
+            await resolveComboDailyReset(provider)
           );
           const { cooldownMs } = fallbackResult;
           const selectedConnectionId =

@@ -1,23 +1,23 @@
-import { define, type PluginContext } from "@opencode-ai/plugin/v2/promise";
+import { Plugin } from "@opencode/plugin";
 import {
   optionalTierFingerprint,
   catalogContentFingerprint,
   createLogger,
-  defaultAgentProxyAutoCombosFetcher,
-  defaultAgentProxyCombosFetcher,
-  defaultAgentProxyEnrichmentFetcher,
-  defaultAgentProxyModelsFetcher,
-  defaultAgentProxyProvidersFetcher,
-  type AgentProxyEnrichmentMap,
-  type AgentProxyProviderConnection,
+  defaultOmniRouteAutoCombosFetcher,
+  defaultOmniRouteCombosFetcher,
+  defaultOmniRouteEnrichmentFetcher,
+  defaultOmniRouteModelsFetcher,
+  defaultOmniRouteProvidersFetcher,
+  type OmniRouteEnrichmentMap,
+  type OmniRouteProviderConnection,
 } from "./shared/index.js";
 import type {
-  AgentProxyRawAutoCombo,
-  AgentProxyRawCombo,
-  AgentProxyRawModelEntry,
+  OmniRouteRawAutoCombo,
+  OmniRouteRawCombo,
+  OmniRouteRawModelEntry,
 } from "./shared/index.js";
 import type { ResolvedOptions } from "./catalog.js";
-import { publishCatalog } from "./catalog.js";
+import { buildProviderPayload, collectCatalog } from "./catalog.js";
 import {
   DEFAULT_MODEL_CACHE_TTL_MS,
   UNREACHABLE_COOLDOWN_MS,
@@ -31,7 +31,14 @@ import { assertContext } from "./compat.js";
 import { type ApiKeyOrigin, resolveApiKey, warnIfMissing } from "./credentials.js";
 import { createSourceErrorReporter } from "./enrichment-report.js";
 import { sanitizeToolSchemasFor } from "./gemini-language.js";
-import { PLUGIN_ID, parsePluginOptions, resolveTimeouts, type PluginOptions } from "./options.js";
+import {
+  MANAGEMENT_TOKEN_ENV_VAR,
+  PLUGIN_ID,
+  parsePluginOptions,
+  resolveManagementReadToken,
+  resolveTimeouts,
+  type PluginOptions,
+} from "./options.js";
 
 /**
  * A fetch result that says whether it succeeded. Returning a bare `[]` on
@@ -60,8 +67,8 @@ function toResolvedOptions(parsed: PluginOptions): ResolvedOptions {
   return {
     providerId: parsed.providerId,
     baseURL: parsed.baseURL,
-    apiKey: parsed.apiKey ?? process.env.AGENTPROXY_API_KEY ?? "",
-    managementReadToken: parsed.managementReadToken,
+    apiKey: parsed.apiKey ?? process.env.OMNIROUTE_API_KEY ?? "",
+    managementReadToken: resolveManagementReadToken(parsed.managementReadToken),
     timeoutMs: parsed.timeoutMs,
     timeouts: parsed.timeouts,
     logLevel: parsed.logLevel,
@@ -80,9 +87,9 @@ function toResolvedOptions(parsed: PluginOptions): ResolvedOptions {
   };
 }
 
-export default define({
+export default Plugin.define({
   id: PLUGIN_ID,
-  setup: async (ctx: PluginContext) => {
+  setup: async (ctx) => {
     assertContext(ctx);
     const parsed = parsePluginOptions(ctx.options);
     const X = parsed.providerId;
@@ -92,7 +99,17 @@ export default define({
     resolved.logger = log;
     resolved.logLevel = parsed.logLevel;
     resolved.startupDebug = parsed.startupDebug;
-    log.info(`[agentproxy-v2] init providerId=${X}`);
+    log.info(`[omniroute-v2] init providerId=${X}`);
+    // The inference key stands in below when no management token is set, and
+    // gateways usually reject that stand-in with 401/403. Say so once here,
+    // before any fetch, instead of letting the refusal surface per endpoint.
+    if (resolved.managementReadToken === undefined) {
+      log.warn(
+        `[omniroute-v2] no management token configured: management endpoints (/api/*) will reuse the inference key, ` +
+          `which gateways usually reject with 401/403. Set "managementReadToken" in the plugin options ` +
+          `or export ${MANAGEMENT_TOKEN_ENV_VAR}.`
+      );
+    }
 
     // v1 parity port: in-memory TTL + disk snapshot. The memory key
     // `baseURL::sha256(creds)` isolates credential tuples (prod vs
@@ -140,20 +157,20 @@ export default define({
       apiKeyOrigin = next.origin;
       if (moved) ({ cacheKey, identityFingerprint } = credentialsOf());
       if (!credentialChecked) warnIfMissing(next, X, log);
-      else if (moved) log.info(`[agentproxy-v2] API key picked up from the ${next.origin} source`);
+      else if (moved) log.info(`[omniroute-v2] API key picked up from the ${next.origin} source`);
       credentialChecked = true;
     };
 
-    const fetchModelsSafe = async (): Promise<AgentProxyRawModelEntry[]> => {
+    const fetchModelsSafe = async (): Promise<OmniRouteRawModelEntry[]> => {
       try {
-        return await defaultAgentProxyModelsFetcher(
+        return await defaultOmniRouteModelsFetcher(
           resolved.baseURL,
           resolved.apiKey,
           timeouts.models
         );
       } catch (err) {
         log.warn(
-          `[agentproxy-v2] models fetch failed, publishing empty catalog: ${err instanceof Error ? err.message : String(err)}`
+          `[omniroute-v2] models fetch failed, publishing empty catalog: ${err instanceof Error ? err.message : String(err)}`
         );
         return [];
       }
@@ -165,11 +182,11 @@ export default define({
       log,
       resolved.managementReadToken === undefined
     );
-    const fetchCombosSafe = async (): Promise<SourceResult<AgentProxyRawCombo[]>> => {
+    const fetchCombosSafe = async (): Promise<SourceResult<OmniRouteRawCombo[]>> => {
       try {
         return {
           ok: true,
-          value: await defaultAgentProxyCombosFetcher(
+          value: await defaultOmniRouteCombosFetcher(
             resolved.baseURL,
             resolved.managementReadToken ?? resolved.apiKey,
             timeouts.combos
@@ -178,19 +195,19 @@ export default define({
       } catch (err) {
         const reason = err instanceof Error ? err.message : String(err);
         reportSourceError("/api/combos", reason);
-        log.warn(`[agentproxy-v2] combos fetch failed, keeping the last known combos: ${reason}`);
+        log.warn(`[omniroute-v2] combos fetch failed, keeping the last known combos: ${reason}`);
         return { ok: false };
       }
     };
     // Providers connections follow the same rule: gated on usableOnly (no
     // request when false, v1 parity), soft-fail to [] so the filter degrades
     // to keep-all instead of hiding the catalog.
-    const fetchProvidersSafe = async (): Promise<SourceResult<AgentProxyProviderConnection[]>> => {
+    const fetchProvidersSafe = async (): Promise<SourceResult<OmniRouteProviderConnection[]>> => {
       if (!resolved.usableOnly) return { ok: true, value: [] };
       try {
         return {
           ok: true,
-          value: await defaultAgentProxyProvidersFetcher(
+          value: await defaultOmniRouteProvidersFetcher(
             resolved.baseURL,
             resolved.managementReadToken ?? resolved.apiKey,
             timeouts.models,
@@ -199,7 +216,7 @@ export default define({
         };
       } catch (err) {
         log.warn(
-          `[agentproxy-v2] providers fetch failed, keeping the last known provider list: ${err instanceof Error ? err.message : String(err)}`
+          `[omniroute-v2] providers fetch failed, keeping the last known provider list: ${err instanceof Error ? err.message : String(err)}`
         );
         return { ok: false };
       }
@@ -207,12 +224,12 @@ export default define({
     // Enrichment follows the same rule: gated on the option (default on,
     // v1 parity), soft-fail to an empty map so names/pricing degrade to
     // mapper defaults instead of hiding the catalog.
-    const fetchEnrichmentSafe = async (): Promise<SourceResult<AgentProxyEnrichmentMap>> => {
+    const fetchEnrichmentSafe = async (): Promise<SourceResult<OmniRouteEnrichmentMap>> => {
       if (resolved.enrichment === false) return { ok: true, value: new Map() };
       try {
         return {
           ok: true,
-          value: await defaultAgentProxyEnrichmentFetcher(
+          value: await defaultOmniRouteEnrichmentFetcher(
             resolved.baseURL,
             resolved.managementReadToken ?? resolved.apiKey,
             timeouts.enrichment,
@@ -221,16 +238,16 @@ export default define({
         };
       } catch (err) {
         log.warn(
-          `[agentproxy-v2] enrichment fetch failed, keeping the last known names/pricing: ${err instanceof Error ? err.message : String(err)}`
+          `[omniroute-v2] enrichment fetch failed, keeping the last known names/pricing: ${err instanceof Error ? err.message : String(err)}`
         );
         return { ok: false };
       }
     };
-    const fetchAutoCombosSafe = async (): Promise<SourceResult<AgentProxyRawAutoCombo[]>> => {
+    const fetchAutoCombosSafe = async (): Promise<SourceResult<OmniRouteRawAutoCombo[]>> => {
       try {
         return {
           ok: true,
-          value: await defaultAgentProxyAutoCombosFetcher(
+          value: await defaultOmniRouteAutoCombosFetcher(
             resolved.baseURL,
             resolved.managementReadToken ?? resolved.apiKey,
             timeouts.autoCombos,
@@ -243,7 +260,7 @@ export default define({
         // management-token hint); this warn is the fallback for injected
         // stubs that throw without reporting.
         const reason = err instanceof Error ? err.message : String(err);
-        log.warn(`[agentproxy-v2] auto combos fetch failed, keeping the last known ones: ${reason}`);
+        log.warn(`[omniroute-v2] auto combos fetch failed, keeping the last known ones: ${reason}`);
         return { ok: false };
       }
     };
@@ -297,7 +314,7 @@ export default define({
       };
       if (models.length > 0) {
         state.entries.set(cacheKey, snapshot);
-        await writeDiskSnapshot(X, snapshot, identityFingerprint);
+        await writeDiskSnapshot(X, snapshot, identityFingerprint, log);
       }
       void optional.then(
         (parts) => upgradeWithOptional(snapshot, parts),
@@ -305,7 +322,7 @@ export default define({
           // The wrappers never reject; a throw here would be a bug in them, and
           // an unhandled rejection is a worse way to learn about it.
           log.warn(
-            `[agentproxy-v2] optional catalog sources failed unexpectedly: ${err instanceof Error ? err.message : String(err)}`
+            `[omniroute-v2] optional catalog sources failed unexpectedly: ${err instanceof Error ? err.message : String(err)}`
           );
         }
       );
@@ -320,10 +337,10 @@ export default define({
     async function upgradeWithOptional(
       base: CatalogSnapshot,
       [combos, autoCombos, providers, enrichment]: [
-        SourceResult<AgentProxyRawCombo[]>,
-        SourceResult<AgentProxyRawAutoCombo[]>,
-        SourceResult<AgentProxyProviderConnection[]>,
-        SourceResult<AgentProxyEnrichmentMap>,
+        SourceResult<OmniRouteRawCombo[]>,
+        SourceResult<OmniRouteRawAutoCombo[]>,
+        SourceResult<OmniRouteProviderConnection[]>,
+        SourceResult<OmniRouteEnrichmentMap>,
       ]
     ): Promise<void> {
       if (state.entries.get(cacheKey) !== base) return;
@@ -344,7 +361,7 @@ export default define({
       if (unchanged) return;
       state.entries.set(cacheKey, upgraded);
       if (upgraded.models.length > 0) {
-        await writeDiskSnapshot(X, upgraded, identityFingerprint);
+        await writeDiskSnapshot(X, upgraded, identityFingerprint, log);
       }
       // Reload only when the optional tier actually moved: the catalog
       // fingerprint covers ids alone, so without this the host would rebuild
@@ -357,12 +374,12 @@ export default define({
       );
       const optionalChanged = state.optionalFingerprint !== optionalFingerprint;
       state.optionalFingerprint = optionalFingerprint;
-      if (optionalChanged && typeof ctx.catalog.reload === "function") {
+      if (optionalChanged) {
         try {
-          await ctx.catalog.reload();
+          await ctx.provider.reload();
         } catch (err) {
           log.warn(
-            `[agentproxy-v2] catalog reload after late sources failed, keeping current catalog: ${err instanceof Error ? err.message : String(err)}`
+            `[omniroute-v2] provider reload after late sources failed, keeping current catalog: ${err instanceof Error ? err.message : String(err)}`
           );
         }
       }
@@ -413,8 +430,16 @@ export default define({
     // the memory entry on failure, so `entries` stays the last-known-good
     // source — including cross-setup via the disk snapshot.
     // Fail-open one level down, in the wrappers (never reject) and the
-    // `publishCatalog` catches — so no try/catch here.
-    const catalogRegistration = ctx.catalog.transform(async (draft) => {
+    // `collectCatalog` catches — so no try/catch here.
+    //
+    // The stable host replays the registered transform to rebuild its
+    // registry, so the callback only reads the latest collected snapshot;
+    // the refresh below keeps that snapshot current and reloads the host.
+    // The transform callback is synchronous, so it cannot await the fetch:
+    // setup publishes first, then the host replays the callback (during
+    // registration and on every reload) and reads the published snapshot.
+    let latest: { info: unknown; models: unknown[] } | undefined;
+    const refreshAndPublish = async (): Promise<void> => {
       await ensureCredential();
       await ensureWarmSnapshot();
       const snapshot = await loadSnapshot();
@@ -423,7 +448,7 @@ export default define({
         const stale = state.entries.get(cacheKey);
         if (stale !== undefined && stale.models.length > 0) {
           log.warn(
-            `[agentproxy-v2] models fetch returned empty, keeping last-known catalog (${stale.models.length} models, ${stale.combos.length} combos)`
+            `[omniroute-v2] models fetch returned empty, keeping last-known catalog (${stale.models.length} models, ${stale.combos.length} combos)`
           );
           effective = stale;
         }
@@ -433,9 +458,9 @@ export default define({
         combos: number;
         autoCombos: number;
       }> => {
-        // fetcher-level fail-open covers fetches; this guard covers mapper/draft throws.
+        // fetcher-level fail-open covers fetches; this guard covers mapper throws.
         try {
-          return await publishCatalog(draft, resolved, {
+          const collected = await collectCatalog(resolved, {
             onSourceError: reportSourceError,
             models: async () => effective.models,
             combos: async () => effective.combos,
@@ -443,9 +468,12 @@ export default define({
             providers: async () => effective.providers ?? [],
             enrichment: async () => effective.enrichment ?? new Map(),
           });
+          const payload = buildProviderPayload(collected, resolved);
+          latest = payload as unknown as { info: unknown; models: unknown[] };
+          return collected.counts;
         } catch (err) {
           log.warn(
-            `[agentproxy-v2] catalog publish failed, keeping current catalog: ${err instanceof Error ? err.message : String(err)}`
+            `[omniroute-v2] catalog publish failed, keeping current catalog: ${err instanceof Error ? err.message : String(err)}`
           );
           return { models: 0, combos: 0, autoCombos: 0 };
         }
@@ -458,18 +486,34 @@ export default define({
       );
       const changed = state.fingerprint !== undefined && state.fingerprint !== fingerprint;
       state.fingerprint = fingerprint;
-      if (changed && typeof ctx.catalog.reload === "function") {
+      if (changed) {
         await Promise.resolve();
         try {
-          await ctx.catalog.reload();
+          await ctx.provider.reload();
         } catch (err) {
           log.warn(
-            `[agentproxy-v2] catalog reload failed, keeping current catalog: ${err instanceof Error ? err.message : String(err)}`
+            `[omniroute-v2] provider reload failed, keeping current catalog: ${err instanceof Error ? err.message : String(err)}`
+          );
+        }
+      }
+    };
+    // Publish before returning so the first transform replay already has
+    // data; without a key this degrades to an empty provider, not a crash.
+    // A host throw in `editor.add` must not reject setup: the catalog is
+    // the job, and a failed publish keeps the previous one.
+    await refreshAndPublish();
+    const providerRegistration = ctx.provider.transform((editor) => {
+      if (latest !== undefined) {
+        try {
+          editor.add(latest as never);
+        } catch (err) {
+          log.warn(
+            `[omniroute-v2] catalog publish failed, keeping current catalog: ${err instanceof Error ? err.message : String(err)}`
           );
         }
       }
     });
-    const integrationHook = (ctx.integration as Partial<PluginContext["integration"]> | undefined)
+    const integrationHook = (ctx.integration as unknown as { transform?: unknown } | undefined)
       ?.transform;
     // A host that exposes the hook but throws while registering it must cost
     // the plugin nothing but the connect action: the throw happens OUTSIDE
@@ -478,51 +522,102 @@ export default define({
     let integrationRegistration: unknown;
     if (typeof integrationHook === "function") {
       try {
-        integrationRegistration = integrationHook((draft) => {
+        integrationRegistration = (
+          integrationHook as (
+            cb: (draft: {
+              update: (id: string, fn: (i: { name: string }) => void) => void;
+              method: { update: (input: unknown) => void };
+            }) => void
+          ) => unknown
+        )((draft) => {
           draft.update(X, (integration) => {
-            integration.name = parsed.displayName ?? "AgentProxy";
+            integration.name = parsed.displayName ?? "OmniRoute";
           });
           draft.method.update({ integrationID: X, method: { type: "key", label: "API key" } });
           draft.method.update({
             integrationID: X,
-            method: { type: "env", names: ["AGENTPROXY_API_KEY"] },
+            method: { type: "env", names: ["OMNIROUTE_API_KEY"] },
           });
         });
       } catch (err) {
         log.warn(
-          `[agentproxy-v2] host refused the integration hook, the connect action will be missing: ${err instanceof Error ? err.message : String(err)}`
+          `[omniroute-v2] host refused the integration hook, the connect action will be missing: ${err instanceof Error ? err.message : String(err)}`
         );
         integrationRegistration = undefined;
       }
     }
     /**
-     * `aisdk.language` is newer than the catalog domain, so a host may not
-     * expose it; the plugin must stay loadable there, minus the sanitising.
+     * `aisdk.hook("language")` cleans Gemini tool schemas where the model is
+     * still structured data. A host without the domain stays loadable,
+     * minus the sanitising.
      */
-    const languageHook = (ctx.aisdk as Partial<PluginContext["aisdk"]> | undefined)?.language;
+    const languageHook = (ctx.aisdk as unknown as { hook?: unknown } | undefined)?.hook;
     // A host that rejects this registration must cost the catalog nothing: the
     // plugin is a catalog first, and tool-schema cleaning is an extra.
     let languageRegistration: Promise<{ dispose: () => Promise<void> }> | undefined;
     if (parsed.geminiSanitization !== false && typeof languageHook === "function") {
       try {
-        languageRegistration = languageHook((input) => {
+        languageRegistration = (
+          languageHook as (
+            name: string,
+            cb: (input: { model: { providerID: string; id: string }; language?: unknown }) => void
+          ) => Promise<{ dispose: () => Promise<void> }>
+        )("language", (input) => {
           if (input.model.providerID !== X) return;
-          input.language = sanitizeToolSchemasFor(input.language, input.model.id, log);
+          input.language = sanitizeToolSchemasFor(
+            input.language as never,
+            input.model.id,
+            log
+          ) as unknown as undefined;
         });
       } catch (err) {
         log.warn(
-          `[agentproxy-v2] host refused the language-model hook, Gemini tool schemas will not be cleaned: ${err instanceof Error ? err.message : String(err)}`
+          `[omniroute-v2] host refused the language-model hook, Gemini tool schemas will not be cleaned: ${err instanceof Error ? err.message : String(err)}`
         );
       }
     }
 
-    await catalogRegistration;
+    /**
+     * `aisdk.hook("sdk")` carries inference-telemetry options. It is the same
+     * entry point the `"language"` hook above goes through, so a host that
+     * exposes no `aisdk` domain — or refuses this particular name — must still
+     * load the catalog. Strict fallback (no proven options-only marking):
+     * register the hook and record the observation in `options` only — never
+     * wrap fetch, never assign `sdk`. Gated on the opt-in `telemetry` flag
+     * (off by default).
+     */
+    const sdkHook = (ctx.aisdk as unknown as { hook?: unknown } | undefined)?.hook;
+    let sdkRegistration: Promise<{ dispose: () => Promise<void> }> | undefined;
+    if (parsed.telemetry === true && typeof sdkHook === "function") {
+      try {
+        sdkRegistration = (
+          sdkHook as (
+            name: string,
+            cb: (input: {
+              model: { providerID: string; id: string };
+              package: string;
+              options: Record<string, unknown>;
+            }) => void
+          ) => Promise<{ dispose: () => Promise<void> }>
+        )("sdk", (input) => {
+          if (input.model.providerID !== X) return;
+          if (!input.package.includes("@ai-sdk/openai-compatible")) return;
+          input.options.telemetry = true;
+        });
+      } catch (err) {
+        log.warn(
+          `[omniroute-v2] host refused the sdk hook, inference telemetry will not be marked: ${err instanceof Error ? err.message : String(err)}`
+        );
+      }
+    }
+
+    await providerRegistration;
     if (integrationRegistration !== undefined) {
       try {
         await integrationRegistration;
       } catch (err) {
         log.warn(
-          `[agentproxy-v2] host refused the integration hook, the connect action will be missing: ${err instanceof Error ? err.message : String(err)}`
+          `[omniroute-v2] host refused the integration hook, the connect action will be missing: ${err instanceof Error ? err.message : String(err)}`
         );
       }
     }
@@ -531,7 +626,16 @@ export default define({
         await languageRegistration;
       } catch (err) {
         log.warn(
-          `[agentproxy-v2] language-model hook registration failed, Gemini tool schemas will not be cleaned: ${err instanceof Error ? err.message : String(err)}`
+          `[omniroute-v2] language-model hook registration failed, Gemini tool schemas will not be cleaned: ${err instanceof Error ? err.message : String(err)}`
+        );
+      }
+    }
+    if (sdkRegistration !== undefined) {
+      try {
+        await sdkRegistration;
+      } catch (err) {
+        log.warn(
+          `[omniroute-v2] sdk hook registration failed, inference telemetry will not be marked: ${err instanceof Error ? err.message : String(err)}`
         );
       }
     }

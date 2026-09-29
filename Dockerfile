@@ -88,10 +88,8 @@ COPY package*.json ./
 # the workspace and installs its *workspace-only* deps (e.g. safe-regex,
 # @toon-format/toon — declared in open-sse/package.json, not hoisted to root).
 # Without this, `npm ci` skips them and the application build fails with "Module not
-# found" (root cause of the v3.8.39 Docker build break). Keep this list aligned with
-# root package.json workspaces so manifest changes invalidate dependency resolution.
+# found" (root cause of the v3.8.39 Docker build break). workspaces = ["open-sse"].
 COPY open-sse/package.json ./open-sse/package.json
-COPY packages/browser-pool/package.json ./packages/browser-pool/package.json
 COPY scripts/build/postinstall.mjs ./scripts/build/postinstall.mjs
 COPY scripts/build/postinstallSupport.mjs ./scripts/build/postinstallSupport.mjs
 COPY scripts/build/native-binary-compat.mjs ./scripts/build/native-binary-compat.mjs
@@ -227,6 +225,10 @@ ENV API_PORT=20128
 ENV DASHBOARD_PORT=20129
 ENV HOSTNAME=0.0.0.0
 ENV AGENTPROXY_RUST_CORE=1
+# Published container images default to authenticated client API access. This
+# is a deployment posture only; npm/CLI local development keeps the repository
+# default REQUIRE_API_KEY=false unless the operator opts in.
+ENV REQUIRE_API_KEY=true
 # The Rust API is the externally published data plane on 20128. The supervisor
 # defaults to loopback for non-container use, so Docker must opt into binding the
 # container interface; otherwise `-p ...:20128:20128` cannot reach the gateway.
@@ -242,7 +244,7 @@ ENV NODE_OPTIONS="--max-old-space-size=${AGENTPROXY_MEMORY_MB}"
 
 # Data directory inside Docker — must match the volume mount in docker-compose.yml
 ENV DATA_DIR=/app/data
-RUN mkdir -p /app/data
+RUN mkdir -p /app/data && chown node:node /app /app/data
 
 # `npm run build` (build-next-isolated → assembleStandalone) bundles ALL runtime
 # files into .build/next/standalone/ — .next, node_modules, migrations, scripts,
@@ -252,24 +254,23 @@ RUN mkdir -p /app/data
 # The old per-module overrides were therefore pure duplication and were removed
 # (build-output-isolation cleanup). See scripts/build/assembleStandalone.mjs
 # (EXTRA_MODULE_ENTRIES) for the single source of truth.
-COPY --from=builder /app/.build/next/standalone ./
-COPY --from=rust-builder /tmp/agentproxy-gateway ./rust/target/release/agentproxy-gateway
+COPY --chown=node:node --from=builder /app/.build/next/standalone ./
+COPY --chown=node:node --from=rust-builder /tmp/agentproxy-gateway ./rust/target/release/agentproxy-gateway
 # better-sqlite3 is the one exception still copied explicitly: assembleStandalone
 # only syncs its native build/ dir; the JS wrapper (lib/, package.json) is left to
 # Next.js tracing. bootstrap-env requires SQLite BEFORE the standalone server
 # starts, so guarantee the complete package independent of trace behaviour.
-COPY --from=builder /app/node_modules/better-sqlite3 ./node_modules/better-sqlite3
+COPY --chown=node:node --from=builder /app/node_modules/better-sqlite3 ./node_modules/better-sqlite3
 # migrations land at <standalone>/migrations via assembleStandalone; point the runtime at them.
 ENV AGENTPROXY_MIGRATIONS_DIR=/app/migrations
 
 # Docker healthcheck script — not traced by Next.js standalone output, so copy
 # it explicitly. The HEALTHCHECK CMD references it as `node healthcheck.mjs`.
-COPY --from=builder /app/scripts/dev/healthcheck.mjs ./healthcheck.mjs
+COPY --chown=node:node --from=builder /app/scripts/dev/healthcheck.mjs ./healthcheck.mjs
 
-# Hand /app over to the baked-in `node` non-root user (UID/GID 1000) so the
-# runtime process never holds root privileges. The chown happens after all
-# COPYs so it covers files originally owned by root in the builder stage.
-RUN chown -R node:node /app
+# Builder artifacts are copied with node ownership at copy time. Avoid a
+# recursive chown here: overlay filesystems would rewrite the standalone tree
+# into a second image layer. /app and /app/data are handed to node above.
 
 EXPOSE 20128 20129
 
@@ -312,6 +313,7 @@ ENV DASHBOARD_PORT=20129
 ENV HOSTNAME=0.0.0.0
 ENV AGENTPROXY_RUST_CORE=1
 ENV AGENTPROXY_RUST_CORE_HOST=0.0.0.0
+ENV REQUIRE_API_KEY=true
 ENV AGENTPROXY_MEMORY_MB=1024
 ENV NODE_OPTIONS="--max-old-space-size=${AGENTPROXY_MEMORY_MB}"
 ENV DATA_DIR=/app/data
@@ -329,14 +331,14 @@ CMD ["node", "dev/run-standalone.mjs"]
 # ── Runner Web (web-cookie providers: Gemini Web, Claude Turnstile) ───────────
 #
 #  Two image flavors:
-#    runner-base  →  agentproxy:VERSION        Lean base (~500 MB). No browsers.
-#    runner-web   →  agentproxy:VERSION-web    +Chromium/Playwright (~800 MB).
+#    runner-base  →  omniroute:VERSION        Lean base (~500 MB). No browsers.
+#    runner-web   →  omniroute:VERSION-web    +Chromium/Playwright (~800 MB).
 #
 #  Use runner-web when you need web-cookie providers (gemini-web, claude-web,
 #  claude-turnstile). For all other providers runner-base is sufficient.
 #
 #  Build:
-#    docker build --target runner-web -t agentproxy:web .
+#    docker build --target runner-web -t omniroute:web .
 #  Compose:
 #    build:
 #      context: .

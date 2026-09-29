@@ -1,6 +1,6 @@
 # 🌐 Multilingual Documentation — AgentProxy
 
-Translations of documentation into 50 languages; together with the English source, the UI supports 51 locales. Code blocks remain in English.
+Translations of documentation into 66 languages; together with the English source, the UI supports 67 locales. Code blocks remain in English.
 
 ---
 
@@ -54,3 +54,19 @@ Translations of documentation into 50 languages; together with the English sourc
 - 🇻🇳 **Tiếng Việt** (`vi`): [Docs Root](./vi/README.md)
 - 🇹🇼 **中文 (繁體)** (`zh-TW`): [Docs Root](./zh-TW/README.md)
 - 🇨🇳 **中文 (简体)** (`zh-CN`): [Docs Root](./zh-CN/README.md)
+- 🇰🇭 **ខ្មែរ** (`km`): [Docs Root](./km/README.md)
+- 🇮🇳 **ಕನ್ನಡ** (`kn`): [Docs Root](./kn/README.md)
+- 🇮🇳 **മലയാളം** (`ml`): [Docs Root](./ml/README.md)
+- 🇲🇲 **မြန်မာ** (`my`): [Docs Root](./my/README.md)
+- 🇳🇵 **नेपाली** (`ne`): [Docs Root](./ne/README.md)
+- 🇮🇳 **ଓଡ଼ିଆ** (`or`): [Docs Root](./or/README.md)
+- 🇮🇳 **ਪੰਜਾਬੀ** (`pa`): [Docs Root](./pa/README.md)
+- 🇱🇰 **සිංහල** (`si`): [Docs Root](./si/README.md)
+- 🇪🇹 **አማርኛ** (`am`): [Docs Root](./am/README.md)
+- 🇳🇬 **Hausa** (`ha`): [Docs Root](./ha/README.md)
+- 🇦🇲 **Հայերեն** (`hy`): [Docs Root](./hy/README.md)
+- 🇳🇬 **Igbo** (`ig`): [Docs Root](./ig/README.md)
+- 🇬🇪 **ქართული** (`ka`): [Docs Root](./ka/README.md)
+- 🇺🇿 **Oʻzbekcha** (`uz`): [Docs Root](./uz/README.md)
+- 🇳🇬 **Yorùbá** (`yo`): [Docs Root](./yo/README.md)
+- 🇧🇦 **Bosanski** (`bs`): [Docs Root](./bs/README.md)

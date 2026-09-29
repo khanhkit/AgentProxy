@@ -1,0 +1,1 @@
+- **fix(mitm):** AgentBridge certificate trust checks now resolve the active certificate model instead of assuming the legacy `server.crt` path.

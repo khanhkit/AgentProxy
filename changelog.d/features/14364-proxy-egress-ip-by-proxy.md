@@ -1,0 +1,1 @@
+- **feat(proxies):** proxy-pool members can show their last-seen egress IP alongside the aggregate pool observation when egress observation is enabled.
