@@ -455,6 +455,7 @@
     "type-coverage": "^2.30.1",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.70.0",
+    "vite": "^8.0.16",
     "vitest": "^5.0.0",
     "wait-on": "^9.1.0",
     "wtfnode": "^0.10.1"
@@ -485,7 +486,9 @@
     "@parcel/watcher": true,
     "keytar": true,
     "protobufjs": true,
-    "unrs-resolver": true
+    "unrs-resolver": true,
+    "bun": true,
+    "opencode-ai": true
   },
   "overrides": {
     "browserslist": "^4.28.8",

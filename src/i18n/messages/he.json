@@ -986,7 +986,7 @@
     "batchFileDownloadFull": "הורד קובץ מלא"
   },
   "disabled": "מושבת",
-  "featureFlagOmnirouteEmergencyFallbackDescription": "ניתוב בקשות שחרגו מהתקציב לספק/מודל גיבוי חינמי לשעת חירום.",
+  "featureFlagAgentProxyEmergencyFallbackDescription": "ניתוב בקשות שחרגו מהתקציב לספק/מודל גיבוי חינמי לשעת חירום.",
   "featureFlagArenaEloSyncEnabledDescription": "הפעלת סנכרון ELO תקופתי מלוח המובילים של Arena AI עבור דירוגי אינטליגנציית מודלים.",
   "featureFlagUniversalContextHandoffEnabledDescription": "יצירה והוספה של סיכומי שיחות כאשר ניתוב משולב עובר בין מודלים. השביתו אפשרות זו כדי לטפל במעברים בין מודלים באופן עצמאי ולמנוע בקשות העברה ברקע עבור כל השילובים הקיימים והעתידיים.",
   "featureFlagExposeCcDiscoveryAliasesDescription": "פרסם את מזהי המראה של claude/&lt;provider&gt;/&lt;model&gt; ב-/v1/models כך שרשימות גילוי המודלים של Claude Code יכללו מודלים שאינם של Claude. אזהרה: מכפיל את רשומות הקטלוג עבור כל הלקוחות כאשר זה מופעל באופן גלובלי.",
@@ -2254,7 +2254,7 @@
     "requestFlowAria": "האפליקציה שלכם שולחת בקשות אל OmniRoute באמצעות מפתח API",
     "requestFlowYourApp": "האפליקציה שלכם",
     "requestFlowApiKey": "מפתח API",
-    "requestFlowOmniRoute": "OmniRoute",
+    "requestFlowAgentProxy": "OmniRoute",
     "totalKeys": "סך הכל מפתחות",
     "restricted": "מוגבל",
     "totalRequests": "סך כל הבקשות",
@@ -2761,7 +2761,7 @@
     "configurationSaved": "התצורה נשמרה בהצלחה.",
     "failedToSave": "שמירת התצורה נכשלה.",
     "noApiKeysCreateOne": "ללא מפתחות API - צור אחד בדף מפתחות",
-    "defaultOmnirouteKey": "sk_omniroute (ברירת מחדל)",
+    "defaultAgentProxyKey": "sk_omniroute (ברירת מחדל)",
     "selectModel": "בחר דגם",
     "selectModelForAlias": "בחר דגם עבור {alias}",
     "selectModelForTool": "בחר דגם עבור {tool}",
@@ -2858,13 +2858,13 @@
     "applied": "הוחל!",
     "failed": "נכשל",
     "resetDone": "אפס!",
-    "omnirouteConfiguredOpenAiCompatible": "OmniRoute מוגדר כספק תואם OpenAI",
+    "agentproxyConfiguredOpenAiCompatible": "OmniRoute מוגדר כספק תואם OpenAI",
     "provider": "ספק",
     "model": "דגם",
     "providers": "ספקים",
     "auth": "אימות",
     "noApiKeysAvailable": "אין מפתחות API זמינים",
-    "usingDefaultOmniroute": "שימוש בברירת המחדל: sk_omniroute",
+    "usingDefaultAgentProxy": "שימוש בברירת המחדל: sk_omniroute",
     "updateConfig": "עדכן את התצורה",
     "applyConfig": "החל Config",
     "noBackupsAvailable": "אין גיבויים זמינים.",
@@ -3145,8 +3145,8 @@
     "hermesConfiguredRoles": "{configured}/{total} תפקידים",
     "hermesQuickApply": "החל במהירות את אותו המודל על כל התפקידים:",
     "hermesApplyModelToAll": "החל את {model} על כל תפקיד",
-    "hermesViaOmniRoute": "{provider} (דרך OmniRoute)",
-    "hermesNotOmniRoute": "{provider} (לא דרך OmniRoute)",
+    "hermesViaAgentProxy": "{provider} (דרך OmniRoute)",
+    "hermesNotAgentProxy": "{provider} (לא דרך OmniRoute)",
     "hermesRemovePendingRole": "הסר תפקיד זה מהשינויים הממתינים",
     "hermesApply": "החל על Hermes Agent",
     "hermesRolesWillUpdate": "{count, plural, one {תפקיד # יעודכן} other {# תפקידים יעודכנו}}",
@@ -4142,7 +4142,7 @@
     "vscodeAliasModelsLabel": "מודלים של VS Code",
     "vscodeAliasChatLabel": "צ'אט של VS Code",
     "localServer": "שרת מקומי",
-    "cloudOmniroute": "OmniRoute בענן",
+    "cloudAgentProxy": "OmniRoute בענן",
     "copyUrl": "העתק כתובת URL",
     "badgeLoopbackTooltip": "נקודת קצה זו נגישה באופן מקומי בלבד (loopback בלבד)",
     "badgeAlwaysProtectedTooltip": "נקודת קצה זו מוגנת תמיד ודורשת הרשאה",
@@ -9979,7 +9979,7 @@
     "howItWorksStep3Description": "הבקשה מתמלאת על ידי OpenAI, Anthropic, Gemini או אחרים באופן מיידי.",
     "getStartedIn30Seconds": "התחל תוך 30 שניות",
     "getStartedDescription": "התקן את OmniRoute, הגדר את הספקים שלך באמצעות לוח המחוונים באינטרנט, והתחל לנתב בקשות AI.",
-    "installOmniRoute": "התקן את OmniRoute",
+    "installAgentProxy": "התקן את OmniRoute",
     "installStepDescription": "הפעל את פקודת npx כדי להפעיל את השרת באופן מיידי",
     "openDashboard": "פתח את לוח המחוונים",
     "openDashboardStepDescription": "הגדר ספקים ומפתחות API באמצעות ממשק אינטרנט",
@@ -9988,7 +9988,7 @@
     "terminal": "מסוף",
     "copy": "העתק",
     "copied": "✓ הועתק",
-    "startingOmniRoute": "מתחיל את OmniRoute...",
+    "startingAgentProxy": "מתחיל את OmniRoute...",
     "serverRunningOnLabel": "שרת פועל על",
     "dashboardLabel": "לוח מחוונים",
     "readyToRoute": "מוכן למסלול! ✓",
@@ -10382,7 +10382,7 @@
     "versionCommandPlaceholder": "Version Command Placeholder",
     "architectureTitle": "Architecture Title",
     "flowLocalBinary": "Flow Local Binary",
-    "flowOmniRoute": "Flow Omni Route",
+    "flowAgentProxy": "Flow Omni Route",
     "agentNamePlaceholder": "Agent Name Placeholder",
     "architectureDescription": "Architecture Description",
     "flowExecute": "Flow Execute",
@@ -10399,8 +10399,8 @@
     "agentUseCaseHint": "יכול לשמש כיעד ביצוע באמצעות פרוטוקול ACP",
     "flowDiagramClient": "אפליקציית לקוח",
     "flowDiagramClientDesc": "SDK, API או שירות במעלה הזרם",
-    "flowDiagramOmniRoute": "OmniRoute",
-    "flowDiagramOmniRouteDesc": "מקבל בקשה ובוחר יעד",
+    "flowDiagramAgentProxy": "OmniRoute",
+    "flowDiagramAgentProxyDesc": "מקבל בקשה ובוחר יעד",
     "flowDiagramSpawn": "תהליך השרצים",
     "flowDiagramSpawnDesc": "משיק CLI בינארי דרך stdio",
     "flowDiagramCli": "סוכן CLI",
@@ -12965,16 +12965,16 @@
       "PROXY_AUTO_SELECT_ENABLED": {
         "description": "כאשר לא מוקצה פרוקסי לחיבור, בחירה אוטומטית של פרוקסי הרישום הראשון שפעיל. כבוי כברירת מחדל מכיוון שאחרת פרוקסי רישום אחד הופך לגיבוי גלובלי עבור כל התעבורה (#3332)."
       },
-      "OMNIROUTE_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
+      "AGENTPROXY_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
         "description": "התרת עקיפת פרוקסי נעוץ עבור תהליכי OAuth ואימות ספקים כאשר בדיקות הזמינות של הפרוקסי נכשלות. כבוי כברירת מחדל מכיוון שהדבר עלול לשנות את כתובת ה-IP של יציאת החשבון."
       },
       "MITM_DISABLE_TLS_VERIFY": {
         "description": "השבתת אימות תעודות TLS עבור פרוקסי MITM."
       },
-      "OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS": {
         "description": "התרת כתובות URL של ספקים המצביעות על רשתות פרטיות או פנימיות."
       },
-      "OMNIROUTE_ALLOW_LOCAL_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_LOCAL_PROVIDER_URLS": {
         "description": "התרת ספקים ב-localhost, ברשת מקומית (LAN) ובטווחי IP פרטיים. הדבר נדרש עבור מודלים מקומיים תואמי OpenAI ומופעל כברירת מחדל. נקודות קצה של מטא-נתונים בענן כגון 169.254.169.254 נותרות חסומות."
       },
       "ENABLE_CC_COMPATIBLE_PROVIDER": {
@@ -12996,28 +12996,28 @@
       "RESPONSES_PASSTHROUGH_DROP_COMMENTARY": {
         "description": "הסרת פריטי פלט פנימיים של שלב הפרשנות מזרמי העברה של Responses API לפני העברתם ללקוחות. השבת דגל זה כדי לקבל פרשנות גולמית מהמקור."
       },
-      "OMNIROUTE_MCP_ENFORCE_SCOPES": {
+      "AGENTPROXY_MCP_ENFORCE_SCOPES": {
         "description": "אכיפת מגבלות טווח עבור גישה לכלי MCP."
       },
-      "OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS": {
+      "AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS": {
         "description": "דחיסת תיאורי כלי MCP כדי לצמצם את השימוש באסימונים."
       },
-      "OMNIROUTE_ENABLE_RUNTIME_BACKGROUND_TASKS": {
+      "AGENTPROXY_ENABLE_RUNTIME_BACKGROUND_TASKS": {
         "description": "הפעלת עיבוד משימות רקע בזמן ריצה."
       },
-      "OMNIROUTE_DISABLE_BACKGROUND_SERVICES": {
+      "AGENTPROXY_DISABLE_BACKGROUND_SERVICES": {
         "description": "השבתת כל שירותי הרקע, כולל רענון מכסות וסנכרון."
       },
-      "OMNIROUTE_RTK_TRUST_PROJECT_FILTERS": {
+      "AGENTPROXY_RTK_TRUST_PROJECT_FILTERS": {
         "description": "מתן אמון במסנני RTK ברמת הפרויקט ללא אימות."
       },
-      "OMNIROUTE_ENABLE_LIVE_WS": {
+      "AGENTPROXY_ENABLE_LIVE_WS": {
         "description": "הפעלת שרת ה-WebSocket של לוח הבקרה בזמן אמת בעת ייבוא בפורט הלולאה החוזרת 20132. הגדר את הדגל ל-0 או false כדי להשבית אותו. חשיפה לרשת המקומית דורשת גם את LIVE_WS_HOST=0.0.0.0 ו-LIVE_WS_ALLOWED_ORIGINS."
       },
-      "OMNIROUTE_CODEX_WS_ENABLED": {
+      "AGENTPROXY_CODEX_WS_ENABLED": {
         "description": "התרת שימוש ב-Responses על גבי WebSocket עבור Codex. כאשר מושבת, Codex יחזור לשימוש ב-HTTP Responses."
       },
-      "OMNIROUTE_EMERGENCY_FALLBACK": {
+      "AGENTPROXY_EMERGENCY_FALLBACK": {
         "description": "ניתוב בקשות שחרגו מהתקציב אל ספק ומודל הגיבוי החינמי לשעת חירום."
       },
       "STREAM_RECOVERY_ENABLED": {
@@ -13044,16 +13044,16 @@
       "PRICING_SYNC_ENABLED": {
         "description": "סנכרון נתוני תמחור באופן אוטומטי. משתנה הסביבה PRICING_SYNC_ENABLED חייב להיות מוגדר גם הוא כ-true."
       },
-      "OMNIROUTE_AUTO_SYNC_CODEX_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CODEX_PROFILES": {
         "description": "לאחר סנכרון ספק-מודל, יצירה מחדש של פרופילי ~/.codex/*.config.toml מתוך הקטלוג הפעיל. פעולה זו אינה משנה לעולם את תצורת Codex הפעילה או כברירת מחדל, והיא כבויה כברירת מחדל."
       },
-      "OMNIROUTE_AUTO_SYNC_CLAUDE_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CLAUDE_PROFILES": {
         "description": "לאחר סנכרון ספק-מודל, יצירה מחדש של פרופילי ~/.claude/profiles/'<name>'/settings.json מתוך הקטלוג הפעיל. פעולה זו אינה משנה לעולם את תצורת Claude הפעילה או כברירת מחדל, והיא כבויה כברירת מחדל."
       },
-      "OMNIROUTE_DISABLE_LOCAL_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_LOCAL_HEALTHCHECK": {
         "description": "השבתת נקודת הקצה לבדיקת תקינות של המופע המקומי."
       },
-      "OMNIROUTE_DISABLE_TOKEN_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_TOKEN_HEALTHCHECK": {
         "description": "השבתת בדיקת התקינות של אימות אסימונים."
       },
       "SKILLS_SANDBOX_NETWORK_ENABLED": {
@@ -14190,5 +14190,5 @@
     "partnerLinkNote": "קישור שותפים",
     "dismissAriaLabel": "סגירה"
   },
-  "featureFlagOmnirouteDisableThinkingLevelVariantsDescription": "השבתת היצירה של וריאציות של רמת החשיבה (למשל -low, -medium, -high) בקטלוג /v1/models."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "השבתת היצירה של וריאציות של רמת החשיבה (למשל -low, -medium, -high) בקטלוג /v1/models."
 }

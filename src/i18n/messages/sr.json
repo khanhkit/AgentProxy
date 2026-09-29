@@ -986,7 +986,7 @@
     "batchFileDownloadFull": "Преузми цео фајл"
   },
   "disabled": "Онемогућено",
-  "featureFlagOmnirouteEmergencyFallbackDescription": "Усмери захтеве са потрошеним буџетом на резервног бесплатног провајдера/модел у случају хитности.",
+  "featureFlagAgentProxyEmergencyFallbackDescription": "Усмери захтеве са потрошеним буџетом на резервног бесплатног провајдера/модел у случају хитности.",
   "featureFlagArenaEloSyncEnabledDescription": "Омогући периодичну синхронизацију ELO ранг-листе Arena AI ради рангирања интелигенције модела.",
   "featureFlagUniversalContextHandoffEnabledDescription": "Генериши и убризгавај резимее разговора када комбинована рута промени модел. Онемогући ову опцију да би се промене модела третирале независно и спречили позадински захтеви за пренос контекста за све постојеће и будуће комбинације.",
   "featureFlagExposeCcDiscoveryAliasesDescription": "Оглашавај claude/&lt;provider&gt;/&lt;model&gt; mirror идентификаторе на /v1/models тако да откривање модела у Claude Code gateway-у приказује и моделе који нису Claude. Упозорење: када је глобално омогућено, удвостручује број ставки у каталогу за све клијенте.",
@@ -2297,7 +2297,7 @@
     "requestFlowAria": "Ваша апликација шаље захтеве преко API кључа у OmniRoute",
     "requestFlowYourApp": "Ваша апликација",
     "requestFlowApiKey": "API кључ",
-    "requestFlowOmniRoute": "OmniRoute",
+    "requestFlowAgentProxy": "OmniRoute",
     "totalKeys": "Укупан број кључева",
     "restricted": "Ограничено",
     "totalRequests": "Укупан број захтева",
@@ -2804,7 +2804,7 @@
     "configurationSaved": "Конфигурација је успешно сачувана.",
     "failedToSave": "Чување конфигурације није успело.",
     "noApiKeysCreateOne": "Нема API кључева - направите један на страници Keys",
-    "defaultOmnirouteKey": "sk_omniroute (подразумевано)",
+    "defaultAgentProxyKey": "sk_omniroute (подразумевано)",
     "selectModel": "Изабери модел",
     "selectModelForAlias": "Изабери модел за {alias}",
     "selectModelForTool": "Изабери модел за {tool}",
@@ -2901,13 +2901,13 @@
     "applied": "Примењено!",
     "failed": "Неуспешно",
     "resetDone": "Ресетовано!",
-    "omnirouteConfiguredOpenAiCompatible": "OmniRoute је конфигурисан као OpenAI-компатибилан провајдер",
+    "agentproxyConfiguredOpenAiCompatible": "OmniRoute је конфигурисан као OpenAI-компатибилан провајдер",
     "provider": "Провајдер",
     "model": "Модел",
     "providers": "Провајдери",
     "auth": "Аутентикација",
     "noApiKeysAvailable": "Нема доступних API кључева",
-    "usingDefaultOmniroute": "Користи се подразумевано: sk_omniroute",
+    "usingDefaultAgentProxy": "Користи се подразумевано: sk_omniroute",
     "updateConfig": "Ажурирај конфигурацију",
     "applyConfig": "Примени конфигурацију",
     "noBackupsAvailable": "Нема доступних резервних копија.",
@@ -3188,8 +3188,8 @@
     "hermesConfiguredRoles": "{configured}/{total} улога",
     "hermesQuickApply": "Брзо примените исти модел на све улоге:",
     "hermesApplyModelToAll": "Примени {model} на сваку улогу",
-    "hermesViaOmniRoute": "{provider} (преко OmniRoute-а)",
-    "hermesNotOmniRoute": "{provider} (није OmniRoute)",
+    "hermesViaAgentProxy": "{provider} (преко OmniRoute-а)",
+    "hermesNotAgentProxy": "{provider} (није OmniRoute)",
     "hermesRemovePendingRole": "Уклони ову улогу из измена на чекању",
     "hermesApply": "Примени на Hermes Agent",
     "hermesRolesWillUpdate": "{count, plural, one {# улога ће бити ажурирана} few {# улоге ће бити ажуриране} other {# улога ће бити ажурирано}}",
@@ -4185,7 +4185,7 @@
     "vscodeAliasModelsLabel": "VS Code модели",
     "vscodeAliasChatLabel": "VS Code ћаскање",
     "localServer": "Локални сервер",
-    "cloudOmniroute": "OmniRoute у облаку",
+    "cloudAgentProxy": "OmniRoute у облаку",
     "copyUrl": "Копирај URL",
     "badgeLoopbackTooltip": "Ова крајња тачка је доступна само локално (само преко повратне петље)",
     "badgeAlwaysProtectedTooltip": "Ова крајња тачка је увек заштићена и захтева ауторизацију",
@@ -10022,7 +10022,7 @@
     "howItWorksStep3Description": "Захтев одмах обрађују OpenAI, Anthropic, Gemini или други провајдери.",
     "getStartedIn30Seconds": "Почните за 30 секунди",
     "getStartedDescription": "Инсталирајте OmniRoute, конфигуришите своје провајдере преко веб контролне табле и почните да рутирате AI захтеве.",
-    "installOmniRoute": "Инсталирај OmniRoute",
+    "installAgentProxy": "Инсталирај OmniRoute",
     "installStepDescription": "Покрените npx команду да одмах покренете сервер",
     "openDashboard": "Отвори контролну таблу",
     "openDashboardStepDescription": "Конфигуришите провајдере и API кључеве преко веб интерфејса",
@@ -10031,7 +10031,7 @@
     "terminal": "терминал",
     "copy": "Копирај",
     "copied": "✓ Копирано",
-    "startingOmniRoute": "OmniRoute се покреће...",
+    "startingAgentProxy": "OmniRoute се покреће...",
     "serverRunningOnLabel": "Сервер ради на",
     "dashboardLabel": "Контролна табла",
     "readyToRoute": "Спремно за рутирање! ✓",
@@ -10425,7 +10425,7 @@
     "versionCommandPlaceholder": "npr. my-agent --version",
     "architectureTitle": "Како функционишу циљеви агента",
     "flowLocalBinary": "3 · CLI процес са сопственом аутентикацијом",
-    "flowOmniRoute": "1 · Захтев стиже до OmniRoute",
+    "flowAgentProxy": "1 · Захтев стиже до OmniRoute",
     "agentNamePlaceholder": "npr. My Custom Agent",
     "architectureDescription": "Када стигне захтев, OmniRoute може да покрене локалну CLI извршну датотеку (нпр. claude, codex, goose) и проследи захтев кроз њу. CLI обрађује захтев користећи сопствене акредитиве и враћа резултат кроз OmniRoute.",
     "flowExecute": "4 · Одговор враћен клијенту",
@@ -10442,8 +10442,8 @@
     "agentUseCaseHint": "Може се користити као циљ извршења преко ACP протокола",
     "flowDiagramClient": "Клијентска апликација",
     "flowDiagramClientDesc": "SDK, API или надређени сервис",
-    "flowDiagramOmniRoute": "OmniRoute",
-    "flowDiagramOmniRouteDesc": "Прима захтев и бира циљ",
+    "flowDiagramAgentProxy": "OmniRoute",
+    "flowDiagramAgentProxyDesc": "Прима захтев и бира циљ",
     "flowDiagramSpawn": "Покретање процеса",
     "flowDiagramSpawnDesc": "Покреће CLI извршну датотеку преко stdio",
     "flowDiagramCli": "CLI агент",
@@ -13008,16 +13008,16 @@
       "PROXY_AUTO_SELECT_ENABLED": {
         "description": "Када веза нема додељен proxy, аутоматски изабери први исправан proxy из регистра. По подразумеваним подешавањима је искључено, јер би иначе један proxy из регистра постао глобална резервна опција за сав саобраћај (#3332)."
       },
-      "OMNIROUTE_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
+      "AGENTPROXY_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
         "description": "Дозволи токовима OAuth-а и валидације достављача да заобиђу фиксирани proxy када провере доступности proxy-а не успеју. По подразумеваним подешавањима је искључено, јер ово може променити излазну IP адресу налога."
       },
       "MITM_DISABLE_TLS_VERIFY": {
         "description": "Онемогући проверу TLS сертификата за MITM proxy."
       },
-      "OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS": {
         "description": "Дозволи URL-ове достављача који упућују на приватне или интерне мреже."
       },
-      "OMNIROUTE_ALLOW_LOCAL_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_LOCAL_PROVIDER_URLS": {
         "description": "Дозволи достављаче на localhost, LAN и приватним IP опсезима. Ово је потребно за локалне моделе компатибилне са OpenAI и подразумевано је омогућено. Крајње тачке метаподатака у облаку, као што је 169.254.169.254, остају блокиране."
       },
       "ENABLE_CC_COMPATIBLE_PROVIDER": {
@@ -13039,28 +13039,28 @@
       "RESPONSES_PASSTHROUGH_DROP_COMMENTARY": {
         "description": "Уклони интерне излазне ставке из фазе коментара из пролазних токова Responses API пре него што их проследиш клијентима. Онемогући ову опцију да би примао необрађене коментаре из узводног извора."
       },
-      "OMNIROUTE_MCP_ENFORCE_SCOPES": {
+      "AGENTPROXY_MCP_ENFORCE_SCOPES": {
         "description": "Примени ограничења обима за приступ MCP алатима."
       },
-      "OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS": {
+      "AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS": {
         "description": "Компресуј описе MCP алата да смањиш употребу токена."
       },
-      "OMNIROUTE_ENABLE_RUNTIME_BACKGROUND_TASKS": {
+      "AGENTPROXY_ENABLE_RUNTIME_BACKGROUND_TASKS": {
         "description": "Омогући обраду позадинских задатака у току рада."
       },
-      "OMNIROUTE_DISABLE_BACKGROUND_SERVICES": {
+      "AGENTPROXY_DISABLE_BACKGROUND_SERVICES": {
         "description": "Онемогући све позадинске сервисе, укључујући обнову квоте и синхронизацију."
       },
-      "OMNIROUTE_RTK_TRUST_PROJECT_FILTERS": {
+      "AGENTPROXY_RTK_TRUST_PROJECT_FILTERS": {
         "description": "Веруј RTK филтерима на нивоу пројекта без валидације."
       },
-      "OMNIROUTE_ENABLE_LIVE_WS": {
+      "AGENTPROXY_ENABLE_LIVE_WS": {
         "description": "Покрени WebSocket сервер контролне табле у реалном времену при увозу на loopback порту 20132. Постави опцију на 0 или false да је онемогућиш. Излагање LAN мрежи такође захтева LIVE_WS_HOST=0.0.0.0 и LIVE_WS_ALLOWED_ORIGINS."
       },
-      "OMNIROUTE_CODEX_WS_ENABLED": {
+      "AGENTPROXY_CODEX_WS_ENABLED": {
         "description": "Дозволи Codex-у да користи Responses преко WebSocket-а. Када је онемогућено, Codex се враћа на HTTP Responses."
       },
-      "OMNIROUTE_EMERGENCY_FALLBACK": {
+      "AGENTPROXY_EMERGENCY_FALLBACK": {
         "description": "Усмери захтеве са исцрпљеним буџетом на бесплатног резервног провајдера и модел за хитне случајеве."
       },
       "STREAM_RECOVERY_ENABLED": {
@@ -13087,16 +13087,16 @@
       "PRICING_SYNC_ENABLED": {
         "description": "Аутоматски синхронизуј податке о ценама. Променљива окружења PRICING_SYNC_ENABLED такође мора бити true."
       },
-      "OMNIROUTE_AUTO_SYNC_CODEX_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CODEX_PROFILES": {
         "description": "Након синхронизације провајдера и модела, поново генериши профиле ~/.codex/*.config.toml из активног каталога. Ово никада не мења активну или подразумевану Codex конфигурацију и подразумевано је искључено."
       },
-      "OMNIROUTE_AUTO_SYNC_CLAUDE_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CLAUDE_PROFILES": {
         "description": "Након синхронизације провајдера и модела, поново генериши профиле ~/.claude/profiles/'<name>'/settings.json из активног каталога. Ово никада не мења активну или подразумевану Claude конфигурацију и подразумевано је искључено."
       },
-      "OMNIROUTE_DISABLE_LOCAL_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_LOCAL_HEALTHCHECK": {
         "description": "Онемогући крајњу тачку за проверу исправности локалне инстанце."
       },
-      "OMNIROUTE_DISABLE_TOKEN_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_TOKEN_HEALTHCHECK": {
         "description": "Онемогући проверу исправности валидације токена."
       },
       "SKILLS_SANDBOX_NETWORK_ENABLED": {
@@ -14233,5 +14233,5 @@
     "partnerLinkNote": "Партнерски линк",
     "dismissAriaLabel": "Затвори"
   },
-  "featureFlagOmnirouteDisableThinkingLevelVariantsDescription": "Онемогући генерисање варијанти нивоа размишљања (нпр. -low, -medium, -high) у каталогу /v1/models."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Онемогући генерисање варијанти нивоа размишљања (нпр. -low, -medium, -high) у каталогу /v1/models."
 }

@@ -101,4 +101,8 @@
       # it is not itself a credential, token, or secret value.
       '''api-key-vault-v\d+\.secret''',
       '''SunbreakWebUI1''',
+      # AP-ISS-0135 canonical i18n reconciliation (2026-09-29): Uzbek UI copy
+      # `outputTokenDesc: Yakunlash/javob tokenlari` is ordinary translated prose,
+      # not a key/token. gitleaks' generic assignment heuristic flags the label name.
+      '''^Yakunlash/javob$''',
     ]

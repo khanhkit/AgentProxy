@@ -986,7 +986,7 @@
     "batchFileDownloadFull": "Niżżel il-Fajl Sħiħ"
   },
   "disabled": "Diżattivat",
-  "featureFlagOmnirouteEmergencyFallbackDescription": "Idderieġi t-talbiet li eżawrew il-baġit lejn il-fornitur/mudell ta' riżerva bla ħlas għall-emerġenzi.",
+  "featureFlagAgentProxyEmergencyFallbackDescription": "Idderieġi t-talbiet li eżawrew il-baġit lejn il-fornitur/mudell ta' riżerva bla ħlas għall-emerġenzi.",
   "featureFlagArenaEloSyncEnabledDescription": "Ippermetti s-sinkronizzazzjoni perjodika tal-ELO mil-leaderboard ta' Arena AI għall-klassifiki tal-intelliġenza tal-mudelli.",
   "featureFlagUniversalContextHandoffEnabledDescription": "Iġġenera u daħħal sommarji tal-konversazzjonijiet meta r-routing tal-kombinazzjonijiet jaqleb bejn il-mudelli. Iddiżattiva din l-għażla biex il-bidliet bejn il-mudelli jiġu ttrattati b'mod indipendenti u biex tipprevjeni talbiet ta' trasferiment fl-isfond għall-kombinazzjonijiet kollha eżistenti u futuri.",
   "featureFlagExposeCcDiscoveryAliasesDescription": "Uri l-IDs mera claude/&lt;provider&gt;/&lt;model&gt; fuq /v1/models sabiex l-iskoperta tal-mudelli mill-gateway ta' Claude Code telenka mudelli mhux ta' Claude. Twissija: meta din l-għażla tkun attivata globalment, tirdoppja l-entrati fil-katalgu għall-klijenti kollha.",
@@ -2254,7 +2254,7 @@
     "requestFlowAria": "L-app tiegħek tibgħat talbiet lil OmniRoute permezz ta’ ċavetta tal-API",
     "requestFlowYourApp": "L-app tiegħek",
     "requestFlowApiKey": "Ċavetta tal-API",
-    "requestFlowOmniRoute": "OmniRoute",
+    "requestFlowAgentProxy": "OmniRoute",
     "totalKeys": "Total taċ-Ċwievet",
     "restricted": "Ristretti",
     "totalRequests": "Total ta' Talbiet",
@@ -2761,7 +2761,7 @@
     "configurationSaved": "Il-konfigurazzjoni ġiet issejvjata b'suċċess.",
     "failedToSave": "Ma rnexxilniex nissejvjaw il-konfigurazzjoni.",
     "noApiKeysCreateOne": "M'hemm l-ebda ċavetta tal-API - Oħloq waħda fil-paġna taċ-Ċwievet",
-    "defaultOmnirouteKey": "sk_omniroute (predefinita)",
+    "defaultAgentProxyKey": "sk_omniroute (predefinita)",
     "selectModel": "Agħżel Mudell",
     "selectModelForAlias": "Agħżel mudell għal {alias}",
     "selectModelForTool": "Agħżel Mudell għal {tool}",
@@ -2858,13 +2858,13 @@
     "applied": "Ġie applikat!",
     "failed": "Ma rnexxiex",
     "resetDone": "Ġie rrisettjat!",
-    "omnirouteConfiguredOpenAiCompatible": "OmniRoute huwa kkonfigurat bħala fornitur kompatibbli ma' OpenAI",
+    "agentproxyConfiguredOpenAiCompatible": "OmniRoute huwa kkonfigurat bħala fornitur kompatibbli ma' OpenAI",
     "provider": "Fornitur",
     "model": "Mudell",
     "providers": "Fornituri",
     "auth": "Awtentikazzjoni",
     "noApiKeysAvailable": "M'hemm l-ebda ċavetta tal-API disponibbli",
-    "usingDefaultOmniroute": "Qed jintuża l-valur predefinit: sk_omniroute",
+    "usingDefaultAgentProxy": "Qed jintuża l-valur predefinit: sk_omniroute",
     "updateConfig": "Aġġorna l-Konfigurazzjoni",
     "applyConfig": "Applika l-Konfigurazzjoni",
     "noBackupsAvailable": "M'hemm l-ebda kopja ta' riżerva disponibbli.",
@@ -3145,8 +3145,8 @@
     "hermesConfiguredRoles": "{configured}/{total} rwoli",
     "hermesQuickApply": "Applika malajr l-istess mudell għar-rwoli kollha:",
     "hermesApplyModelToAll": "Applika {model} għal kull rwol",
-    "hermesViaOmniRoute": "{provider} (permezz ta' OmniRoute)",
-    "hermesNotOmniRoute": "{provider} (mhux permezz ta' OmniRoute)",
+    "hermesViaAgentProxy": "{provider} (permezz ta' OmniRoute)",
+    "hermesNotAgentProxy": "{provider} (mhux permezz ta' OmniRoute)",
     "hermesRemovePendingRole": "Neħħi dan ir-rwol mill-bidliet pendenti",
     "hermesApply": "Applika għal Hermes Agent",
     "hermesRolesWillUpdate": "{count, plural, one {# rwol se jiġi aġġornat} other {# rwoli se jiġu aġġornati}}",
@@ -4142,7 +4142,7 @@
     "vscodeAliasModelsLabel": "Mudelli ta’ VS Code",
     "vscodeAliasChatLabel": "Chat ta’ VS Code",
     "localServer": "Server Lokali",
-    "cloudOmniroute": "Cloud ta’ OmniRoute",
+    "cloudAgentProxy": "Cloud ta’ OmniRoute",
     "copyUrl": "Ikkopja l-URL",
     "badgeLoopbackTooltip": "Dan l-endpoint huwa aċċessibbli lokalment biss (loopback biss)",
     "badgeAlwaysProtectedTooltip": "Dan l-endpoint huwa dejjem protett u jeħtieġ awtorizzazzjoni",
@@ -9979,7 +9979,7 @@
     "howItWorksStep3Description": "It-talba titwettaq minnufih minn OpenAI, Anthropic, Gemini, jew oħrajn.",
     "getStartedIn30Seconds": "Ibda fi 30 Sekonda",
     "getStartedDescription": "Installa OmniRoute, ikkonfigura l-fornituri tiegħek permezz tal-pannell tal-web, u ibda dderieġi t-talbiet tal-AI.",
-    "installOmniRoute": "Installa OmniRoute",
+    "installAgentProxy": "Installa OmniRoute",
     "installStepDescription": "Ħaddem il-kmand npx biex tibda s-server minnufih",
     "openDashboard": "Iftaħ il-Pannell",
     "openDashboardStepDescription": "Ikkonfigura l-fornituri u ċ-ċwievet tal-API permezz tal-interfaċċa tal-web",
@@ -9988,7 +9988,7 @@
     "terminal": "terminal",
     "copy": "Ikkopja",
     "copied": "✓ Ikkupjat",
-    "startingOmniRoute": "OmniRoute qed jibda...",
+    "startingAgentProxy": "OmniRoute qed jibda...",
     "serverRunningOnLabel": "Is-server qed jaħdem fuq",
     "dashboardLabel": "Pannell",
     "readyToRoute": "Lest biex jidderieġi t-talbiet! ✓",
@@ -10382,7 +10382,7 @@
     "versionCommandPlaceholder": "eż., my-agent --version",
     "architectureTitle": "Kif Jaħdmu l-Miri tal-Aġent",
     "flowLocalBinary": "3 · Proċess CLI bl-awtentikazzjoni tiegħu stess",
-    "flowOmniRoute": "1 · It-talba tasal għand OmniRoute",
+    "flowAgentProxy": "1 · It-talba tasal għand OmniRoute",
     "agentNamePlaceholder": "eż., L-Aġent Personalizzat Tiegħi",
     "architectureDescription": "Meta tasal talba, OmniRoute jista' jniedi binarju CLI lokali (eż., claude, codex, goose) u jgħaddi t-talba minnu. Il-CLI jipproċessa t-talba billi juża l-kredenzjali tiegħu stess u jirritorna r-riżultat permezz ta' OmniRoute.",
     "flowExecute": "4 · Ir-rispons jintbagħat lura lill-klijent",
@@ -10399,8 +10399,8 @@
     "agentUseCaseHint": "Jista' jintuża bħala mira ta' eżekuzzjoni permezz tal-protokoll ACP",
     "flowDiagramClient": "App tal-Klijent",
     "flowDiagramClientDesc": "SDK, API, jew servizz upstream",
-    "flowDiagramOmniRoute": "OmniRoute",
-    "flowDiagramOmniRouteDesc": "Jirċievi t-talba u jagħżel il-mira",
+    "flowDiagramAgentProxy": "OmniRoute",
+    "flowDiagramAgentProxyDesc": "Jirċievi t-talba u jagħżel il-mira",
     "flowDiagramSpawn": "Niedi Proċess",
     "flowDiagramSpawnDesc": "Iniedi binarju CLI permezz ta' stdio",
     "flowDiagramCli": "Aġent CLI",
@@ -12965,16 +12965,16 @@
       "PROXY_AUTO_SELECT_ENABLED": {
         "description": "Meta ma jkun assenjat l-ebda proxy lil konnessjoni, agħżel awtomatikament l-ewwel proxy tar-reġistru li jkun qed jaħdem. Mitfi b’mod awtomatiku għax inkella proxy wieħed tar-reġistru jsir riżerva globali għat-traffiku kollu (#3332)."
       },
-      "OMNIROUTE_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
+      "AGENTPROXY_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
         "description": "Ħalli l-flussi ta’ OAuth u tal-validazzjoni tal-fornitur jaqbżu proxy fiss meta l-kontrolli dwar jekk il-proxy jistax jintlaħaq ifallu. Mitfi b’mod awtomatiku għax dan jista’ jibdel l-indirizz IP tal-ħruġ tal-kont."
       },
       "MITM_DISABLE_TLS_VERIFY": {
         "description": "Iddiżattiva l-verifika taċ-ċertifikat TLS għall-proxy MITM."
       },
-      "OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS": {
         "description": "Ħalli URLs tal-fornituri li jippuntaw lejn netwerks privati jew interni."
       },
-      "OMNIROUTE_ALLOW_LOCAL_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_LOCAL_PROVIDER_URLS": {
         "description": "Ħalli fornituri fuq localhost, LAN, u meded ta’ indirizzi IP privati. Dan huwa meħtieġ għal mudelli lokali kompatibbli ma’ OpenAI u huwa attivat b’mod awtomatiku. Endpoints tal-metadata tal-cloud bħal 169.254.169.254 jibqgħu mblukkati."
       },
       "ENABLE_CC_COMPATIBLE_PROVIDER": {
@@ -12996,28 +12996,28 @@
       "RESPONSES_PASSTHROUGH_DROP_COMMENTARY": {
         "description": "Neħħi l-elementi interni tal-output tal-fażi tal-kummentarju mill-flussi passthrough tal-Responses API qabel ma tgħaddihom lill-klijenti. Iddiżattiva din il-bandiera biex tirċievi l-kummentarju mhux ipproċessat mill-upstream."
       },
-      "OMNIROUTE_MCP_ENFORCE_SCOPES": {
+      "AGENTPROXY_MCP_ENFORCE_SCOPES": {
         "description": "Infurza restrizzjonijiet tal-ambitu għall-aċċess għall-għodod MCP."
       },
-      "OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS": {
+      "AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS": {
         "description": "Ikkompressa d-deskrizzjonijiet tal-għodod MCP biex tnaqqas l-użu tat-tokens."
       },
-      "OMNIROUTE_ENABLE_RUNTIME_BACKGROUND_TASKS": {
+      "AGENTPROXY_ENABLE_RUNTIME_BACKGROUND_TASKS": {
         "description": "Attiva l-ipproċessar tal-kompiti fl-isfond waqt it-tħaddim."
       },
-      "OMNIROUTE_DISABLE_BACKGROUND_SERVICES": {
+      "AGENTPROXY_DISABLE_BACKGROUND_SERVICES": {
         "description": "Iddiżattiva s-servizzi kollha fl-isfond, inklużi l-aġġornament tal-kwota u s-sinkronizzazzjoni."
       },
-      "OMNIROUTE_RTK_TRUST_PROJECT_FILTERS": {
+      "AGENTPROXY_RTK_TRUST_PROJECT_FILTERS": {
         "description": "Afda l-filtri RTK fil-livell tal-proġett mingħajr validazzjoni."
       },
-      "OMNIROUTE_ENABLE_LIVE_WS": {
+      "AGENTPROXY_ENABLE_LIVE_WS": {
         "description": "Ibda s-server WebSocket tal-pannell ta’ kontroll f’ħin reali waqt l-importazzjoni fuq il-port loopback 20132. Issettja l-bandiera għal 0 jew false biex tiddiżattivah. L-esponiment għal-LAN jeħtieġ ukoll LIVE_WS_HOST=0.0.0.0 u LIVE_WS_ALLOWED_ORIGINS."
       },
-      "OMNIROUTE_CODEX_WS_ENABLED": {
+      "AGENTPROXY_CODEX_WS_ENABLED": {
         "description": "Ħalli lil Codex juża Responses permezz ta’ WebSocket. Meta jkun diżattivat, Codex jaqleb għal HTTP Responses."
       },
-      "OMNIROUTE_EMERGENCY_FALLBACK": {
+      "AGENTPROXY_EMERGENCY_FALLBACK": {
         "description": "Idderieġi talbiet li jkunu eżawrew il-baġit lejn il-fornitur u l-mudell ta’ riżerva bla ħlas għall-emerġenzi."
       },
       "STREAM_RECOVERY_ENABLED": {
@@ -13044,16 +13044,16 @@
       "PRICING_SYNC_ENABLED": {
         "description": "Issinkronizza d-data tal-prezzijiet awtomatikament. Il-varjabbli tal-ambjent PRICING_SYNC_ENABLED trid tkun ukoll true."
       },
-      "OMNIROUTE_AUTO_SYNC_CODEX_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CODEX_PROFILES": {
         "description": "Wara s-sinkronizzazzjoni bejn il-fornituri u l-mudelli, iġġenera mill-ġdid il-profili ~/.codex/*.config.toml mill-katalgu attwali. Dan qatt ma jbiddel il-konfigurazzjoni Codex attiva jew predefinita u huwa diżattivat awtomatikament."
       },
-      "OMNIROUTE_AUTO_SYNC_CLAUDE_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CLAUDE_PROFILES": {
         "description": "Wara s-sinkronizzazzjoni bejn il-fornituri u l-mudelli, iġġenera mill-ġdid il-profili ~/.claude/profiles/'<name>'/settings.json mill-katalgu attwali. Dan qatt ma jbiddel il-konfigurazzjoni Claude attiva jew predefinita u huwa diżattivat awtomatikament."
       },
-      "OMNIROUTE_DISABLE_LOCAL_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_LOCAL_HEALTHCHECK": {
         "description": "Iddiżattiva l-endpoint tal-kontroll tas-saħħa tal-istanza lokali."
       },
-      "OMNIROUTE_DISABLE_TOKEN_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_TOKEN_HEALTHCHECK": {
         "description": "Iddiżattiva l-kontroll tas-saħħa għall-validazzjoni tat-token."
       },
       "SKILLS_SANDBOX_NETWORK_ENABLED": {
@@ -14190,5 +14190,5 @@
     "partnerLinkNote": "Link tas-sieħeb",
     "dismissAriaLabel": "Agħlaq"
   },
-  "featureFlagOmnirouteDisableThinkingLevelVariantsDescription": "Itfi l-ġenerazzjoni ta’ varjanti tal-livell ta’ ħsieb (eż. -low, -medium, -high) fil-katalgu /v1/models."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Itfi l-ġenerazzjoni ta’ varjanti tal-livell ta’ ħsieb (eż. -low, -medium, -high) fil-katalgu /v1/models."
 }

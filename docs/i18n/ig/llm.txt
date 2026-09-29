@@ -3,8 +3,6 @@
 🌐 **Languages:** 🇺🇸 [English](../../../llm.txt) · 🇪🇹 [am](../am/llm.txt) · 🇸🇦 [ar](../ar/llm.txt) · 🇦🇿 [az](../az/llm.txt) · 🇧🇬 [bg](../bg/llm.txt) · 🇧🇩 [bn](../bn/llm.txt) · 🇨🇿 [cs](../cs/llm.txt) · 🇩🇰 [da](../da/llm.txt) · 🇩🇪 [de](../de/llm.txt) · 🇬🇷 [el](../el/llm.txt) · 🇪🇸 [es](../es/llm.txt) · 🇪🇪 [et](../et/llm.txt) · 🇮🇷 [fa](../fa/llm.txt) · 🇫🇮 [fi](../fi/llm.txt) · 🇫🇷 [fr](../fr/llm.txt) · 🇮🇪 [ga](../ga/llm.txt) · 🇮🇳 [gu](../gu/llm.txt) · 🇳🇬 [ha](../ha/llm.txt) · 🇮🇱 [he](../he/llm.txt) · 🇮🇳 [hi](../hi/llm.txt) · 🇭🇷 [hr](../hr/llm.txt) · 🇭🇺 [hu](../hu/llm.txt) · 🇦🇲 [hy](../hy/llm.txt) · 🇮🇩 [id](../id/llm.txt) · 🇮🇹 [it](../it/llm.txt) · 🇯🇵 [ja](../ja/llm.txt) · 🇬🇪 [ka](../ka/llm.txt) · 🇰🇭 [km](../km/llm.txt) · 🇮🇳 [kn](../kn/llm.txt) · 🇰🇷 [ko](../ko/llm.txt) · 🇱🇹 [lt](../lt/llm.txt) · 🇱🇻 [lv](../lv/llm.txt) · 🇮🇳 [ml](../ml/llm.txt) · 🇮🇳 [mr](../mr/llm.txt) · 🇲🇾 [ms](../ms/llm.txt) · 🇲🇹 [mt](../mt/llm.txt) · 🇲🇲 [my](../my/llm.txt) · 🇳🇵 [ne](../ne/llm.txt) · 🇳🇱 [nl](../nl/llm.txt) · 🇳🇴 [no](../no/llm.txt) · 🇮🇳 [or](../or/llm.txt) · 🇮🇳 [pa](../pa/llm.txt) · 🇵🇭 [phi](../phi/llm.txt) · 🇵🇱 [pl](../pl/llm.txt) · 🇵🇹 [pt](../pt/llm.txt) · 🇧🇷 [pt-BR](../pt-BR/llm.txt) · 🇷🇴 [ro](../ro/llm.txt) · 🇷🇺 [ru](../ru/llm.txt) · 🇱🇰 [si](../si/llm.txt) · 🇸🇰 [sk](../sk/llm.txt) · 🇸🇮 [sl](../sl/llm.txt) · 🇷🇸 [sr](../sr/llm.txt) · 🇸🇪 [sv](../sv/llm.txt) · 🇰🇪 [sw](../sw/llm.txt) · 🇮🇳 [ta](../ta/llm.txt) · 🇮🇳 [te](../te/llm.txt) · 🇹🇭 [th](../th/llm.txt) · 🇹🇷 [tr](../tr/llm.txt) · 🇺🇦 [uk-UA](../uk-UA/llm.txt) · 🇵🇰 [ur](../ur/llm.txt) · 🇺🇿 [uz](../uz/llm.txt) · 🇻🇳 [vi](../vi/llm.txt) · 🇳🇬 [yo](../yo/llm.txt) · 🇨🇳 [zh-CN](../zh-CN/llm.txt) · 🇹🇼 [zh-TW](../zh-TW/llm.txt)
 
 ---
-
-
 > AgentProxy is an independent, self-hosted AI gateway for coding agents and multi-agent systems. It combines a Rust streaming data plane with an inherited control plane that provides routing, fallback, load balancing, and format translation across 358 AI providers through a single OpenAI-compatible endpoint. It also includes the inherited MCP Server (110 tools), A2A v0.3 protocol, Memory/Skills systems, Cloud Agents, and Guardrails framework.
 
 ## Overview
@@ -19,7 +17,7 @@ AgentProxy solves the problem of managing multiple AI provider subscriptions, qu
 
 - **Runtime:** Node.js `>=22.22.2 <23 || >=24.0.0 <27`, ES Modules (`"type": "module"`)
 - **Framework:** Next.js 16 (App Router) with TypeScript 6
-- **Database:** SQLite via better-sqlite3 (local, zero-config, 172 migrations)
+- **Database:** SQLite via better-sqlite3 (local, zero-config, 182 migrations)
 - **State management:** Zustand (client), SQLite (server persistence)
 - **UI:** React 19, Tailwind CSS 4, Recharts for analytics, @lobehub/icons for 130+ provider SVG icons
 - **Auth:** OAuth 2.0 (PKCE) for providers, bcrypt for local user auth
@@ -29,7 +27,7 @@ AgentProxy solves the problem of managing multiple AI provider subscriptions, qu
 - **Proxy engine:** Custom pipeline with format translation, circuit breaker, rate limiting, auto-combo engine
 - **i18n:** next-intl with 51 languages
 - **Desktop:** Electron (cross-platform: Windows, macOS, Linux)
-- **Package:** Published on npm (`omniroute`) and Docker Hub (`diegosouzapw/omniroute`)
+- **Package:** Published on npm (`agentproxy`) and Docker Hub (`khanhkit/agentproxy`)
 
 ## Project Structure
 
@@ -129,7 +127,7 @@ AgentProxy solves the problem of managing multiple AI provider subscriptions, qu
 │   │   │   ├── secrets.ts        # Secrets management
 │   │   │   ├── stateReset.ts     # State reset utilities
 │   │   │   ├── migrationRunner.ts # Schema migration runner
-│   │   │   └── migrations/       # 172 versioned SQL migration files
+│   │   │   └── migrations/       # 182 versioned SQL migration files
 │   │   ├── evals/                # Eval runner and scheduler
 │   │   ├── memory/               # Persistent conversational memory
 │   │   │   ├── extraction.ts     # Memory extraction from conversations
@@ -274,7 +272,7 @@ AgentProxy solves the problem of managing multiple AI provider subscriptions, qu
 │   ├── ops/                      # RELEASE_CHECKLIST.md, TUNNELS_GUIDE.md, VM deployment
 │   ├── openapi.yaml              # OpenAPI specification
 │   └── screenshots/              # Dashboard screenshots
-├── bin/                          # CLI entry points (omniroute, reset-password)
+├── bin/                          # CLI entry points (agentproxy, reset-password)
 ├── scripts/                      # Build and utility scripts
 └── .env.example                  # Environment variable template
 ```
@@ -378,7 +376,7 @@ diagnostics) plus **memory**, **skill**, **agentSkill**, **githubSkill**, **pool
 
 ## Key Architectural Decisions
 
-1. **OpenAI-compatible API surface:** All incoming requests follow the OpenAI API format. This makes OmniRoute a drop-in replacement for any tool that supports custom OpenAI endpoints.
+1. **OpenAI-compatible API surface:** All incoming requests follow the OpenAI API format. This makes AgentProxy a drop-in replacement for any tool that supports custom OpenAI endpoints.
 
 2. **Provider abstraction via format translators:** Each AI provider has a translator in `open-sse/translator/` that converts between OpenAI format and the provider's native format transparently.
 
@@ -394,7 +392,7 @@ diagnostics) plus **memory**, **skill**, **agentSkill**, **githubSkill**, **pool
 
 8. **ProviderIcon component:** Unified icon system using `@lobehub/icons` (130+ SVG) with PNG fallback and generic icon fallback chain. Used on providers, dashboard, and agents pages.
 
-9. **DB architecture:** `localDb.ts` is a re-export layer only — real logic lives in 122 `src/lib/db/` modules with 172 SQL migrations.
+9. **DB architecture:** `localDb.ts` is a re-export layer only — real logic lives in 122 `src/lib/db/` modules with 182 SQL migrations.
 
 10. **Upstream headers:** Custom headers merged in executors after default auth; same header name replaces executor value. Forbidden header names in `src/shared/constants/upstreamHeaders.ts`.
 
@@ -438,7 +436,7 @@ diagnostics) plus **memory**, **skill**, **agentSkill**, **githubSkill**, **pool
 
 4. **Environment variables:** All configuration is in `.env` (from `.env.example`). Key vars: `PORT`, `NEXT_PUBLIC_BASE_URL`, `API_KEY`, `ADMIN_PASSWORD`.
 
-5. **Database layer:** Operations go through `src/lib/db/` modules (122 domain-specific files, 172 migrations). `localDb.ts` is re-exports only — add new functions to the proper `db/*.ts` module.
+5. **Database layer:** Operations go through `src/lib/db/` modules (122 domain-specific files, 182 migrations). `localDb.ts` is re-exports only — add new functions to the proper `db/*.ts` module.
 
 6. **Tests** use Node.js built-in test runner + Vitest. Run `npm test`. Vitest for MCP/autoCombo (`npm run test:vitest`). Playwright for E2E (`npm run test:e2e`). Coverage gate: ratchet vs `quality-baseline.json`, absolute floor 60% statements/lines/functions/branches.
 
@@ -468,7 +466,7 @@ diagnostics) plus **memory**, **skill**, **agentSkill**, **githubSkill**, **pool
 
 19. **Cloud Agents** in `src/lib/cloudAgent/` — four external autonomous coding agents (Codex Cloud, Cursor, Devin, Jules) with task lifecycle endpoints under `/api/v1/agents/tasks/`. Require management auth, not client auth.
 
-20. **Guardrails framework** in `src/lib/guardrails/` — hot-reloadable registry. Built-ins (priority-ordered): `vision-bridge` (5) → `audio-bridge` (6) → `video-bridge` (7) → `pii-masker` (10) → `prompt-injection` (20) → `credential-masker` (95). Fail-open model: exceptions never block traffic. Per-request opt-out via `x-omniroute-disabled-guardrails` header.
+20. **Guardrails framework** in `src/lib/guardrails/` — hot-reloadable registry. Built-ins (priority-ordered): `vision-bridge` (5) → `audio-bridge` (6) → `video-bridge` (7) → `pii-masker` (10) → `prompt-injection` (20) → `credential-masker` (95). Fail-open model: exceptions never block traffic. Per-request opt-out via `x-agentproxy-disabled-guardrails` header.
 
 21. **Authz pipeline** (`src/server/authz/`): every request is classified as `PUBLIC`, `CLIENT_API`, or `MANAGEMENT`, then run through policy + enforce stages. See `docs/architecture/AUTHZ_GUIDE.md`.
 
@@ -490,10 +488,10 @@ diagnostics) plus **memory**, **skill**, **agentSkill**, **githubSkill**, **pool
 
 ## Links
 
-- Repository: https://github.com/diegosouzapw/OmniRoute
-- Website: https://omniroute.online
-- npm: https://www.npmjs.com/package/omniroute
-- Docker Hub: https://hub.docker.com/r/diegosouzapw/omniroute
+- Repository: https://github.com/khanhkit/AgentProxy
+- Website: https://agentproxy.example.com
+- npm: https://www.npmjs.com/package/agentproxy
+- Docker Hub: https://github.com/khanhkit/AgentProxy/pkgs/container/agentproxy
 - Documentation: See `/docs/` directory
 
 ### Documentation Index

@@ -986,7 +986,7 @@
     "batchFileDownloadFull": "முழு கோப்பை பதிவிறக்கம் செய்க"
   },
   "disabled": "முடக்கப்பட்டது",
-  "featureFlagOmnirouteEmergencyFallbackDescription": "பட்ஜெட் தீர்ந்த கோரிக்கைகளை அவசரகால இலவச ஃபால்பேக் வழங்குநர்/மாடலுக்கு வழிசெலுத்துங்கள்.",
+  "featureFlagAgentProxyEmergencyFallbackDescription": "பட்ஜெட் தீர்ந்த கோரிக்கைகளை அவசரகால இலவச ஃபால்பேக் வழங்குநர்/மாடலுக்கு வழிசெலுத்துங்கள்.",
   "featureFlagArenaEloSyncEnabledDescription": "மாடல் நுண்ணறிவு தரவரிசைகளுக்காக அவ்வப்போதான Arena AI லீடர்போர்டு ELO ஒத்திசைவை இயக்குங்கள்.",
   "featureFlagUniversalContextHandoffEnabledDescription": "காம்போ வழித்தடம் மாடல்களை மாற்றும்போது உரையாடல் சுருக்கங்களை உருவாக்கி உட்செலுத்தவும். மாடல் மாற்றங்களைத் தனித்தனியாகக் கையாளவும், ஏற்கனவே உள்ள மற்றும் எதிர்கால காம்போக்கள் அனைத்திற்குமான பின்னணி ஒப்படைப்புக் கோரிக்கைகளைத் தடுக்கவும் இதை முடக்கவும்.",
   "featureFlagExposeCcDiscoveryAliasesDescription": "/v1/models இல் Claude Code gateway மாதிரி கண்டுபிடிப்பு பட்டியலில் non-Claude மாதிரிகளை காட்ட Claude/&lt;provider&gt;/&lt;model&gt; மின்னூல் அடையாளங்களை விளம்பரம் செய்யவும். எச்சரிக்கை: உலகளாவியமாக செயல்படுத்தப்பட்டால் அனைத்து கிளையன்டுகளுக்கும் பட்டியல் பதிவுகளை இரட்டைப்படுத்துகிறது.",
@@ -2254,7 +2254,7 @@
     "requestFlowAria": "உங்கள் செயலி API விசை மூலம் OmniRoute-க்கு கோரிக்கைகளை அனுப்புகிறது",
     "requestFlowYourApp": "உங்கள் செயலி",
     "requestFlowApiKey": "API விசை",
-    "requestFlowOmniRoute": "OmniRoute",
+    "requestFlowAgentProxy": "OmniRoute",
     "totalKeys": "மொத்த விசைகள்",
     "restricted": "கட்டுப்படுத்தப்பட்டது",
     "totalRequests": "மொத்த கோரிக்கைகள்",
@@ -2761,7 +2761,7 @@
     "configurationSaved": "உள்ளமைவு வெற்றிகரமாகச் சேமிக்கப்பட்டது.",
     "failedToSave": "உள்ளமைவைச் சேமிக்க முடியவில்லை.",
     "noApiKeysCreateOne": "API விசைகள் இல்லை - Keys பக்கத்தில் ஒன்றை உருவாக்கவும்",
-    "defaultOmnirouteKey": "sk_omniroute (இயல்புநிலை)",
+    "defaultAgentProxyKey": "sk_omniroute (இயல்புநிலை)",
     "selectModel": "மாதிரியைத் தேர்ந்தெடுக்கவும்",
     "selectModelForAlias": "{alias} என்பதற்கான மாதிரியைத் தேர்ந்தெடுக்கவும்",
     "selectModelForTool": "{tool} என்பதற்கான மாதிரியைத் தேர்ந்தெடுக்கவும்",
@@ -2858,13 +2858,13 @@
     "applied": "செயல்படுத்தப்பட்டது!",
     "failed": "தோல்வியடைந்தது",
     "resetDone": "மீட்டமைக்கப்பட்டது!",
-    "omnirouteConfiguredOpenAiCompatible": "OmniRoute ஆனது OpenAI-இணக்கமான வழங்குநராக உள்ளமைக்கப்பட்டுள்ளது",
+    "agentproxyConfiguredOpenAiCompatible": "OmniRoute ஆனது OpenAI-இணக்கமான வழங்குநராக உள்ளமைக்கப்பட்டுள்ளது",
     "provider": "வழங்குநர்",
     "model": "Model",
     "providers": "வழங்குநர்கள்",
     "auth": "அங்கீகாரம்",
     "noApiKeysAvailable": "API விசைகள் எதுவும் கிடைக்கவில்லை",
-    "usingDefaultOmniroute": "இயல்புநிலை பயன்படுத்தப்படுகிறது: sk_omniroute",
+    "usingDefaultAgentProxy": "இயல்புநிலை பயன்படுத்தப்படுகிறது: sk_omniroute",
     "updateConfig": "உள்ளமைவைப் புதுப்பி",
     "applyConfig": "உள்ளமைவைச் செயல்படுத்து",
     "noBackupsAvailable": "காப்புப்பிரதிகள் எதுவும் கிடைக்கவில்லை.",
@@ -3145,8 +3145,8 @@
     "hermesConfiguredRoles": "{configured}/{total} பாத்திரங்கள்",
     "hermesQuickApply": "அனைத்து பாத்திரங்களுக்கும் ஒரே மாதிரியை விரைவாகப் பயன்படுத்துங்கள்:",
     "hermesApplyModelToAll": "ஒவ்வொரு பாத்திரத்திற்கும் {model}-ஐப் பயன்படுத்துக",
-    "hermesViaOmniRoute": "{provider} (OmniRoute வழியாக)",
-    "hermesNotOmniRoute": "{provider} (OmniRoute அல்ல)",
+    "hermesViaAgentProxy": "{provider} (OmniRoute வழியாக)",
+    "hermesNotAgentProxy": "{provider} (OmniRoute அல்ல)",
     "hermesRemovePendingRole": "நிலுவையிலுள்ள மாற்றங்களிலிருந்து இந்த பாத்திரத்தை நீக்குக",
     "hermesApply": "Hermes Agent-க்கு பயன்படுத்துக",
     "hermesRolesWillUpdate": "{count, plural, one {# பாத்திரம் புதுப்பிக்கப்படும்} other {# பாத்திரங்கள் புதுப்பிக்கப்படும்}}",
@@ -4142,7 +4142,7 @@
     "vscodeAliasModelsLabel": "VS Code மாதிரிகள்",
     "vscodeAliasChatLabel": "VS Code அரட்டை",
     "localServer": "உள்ளூர் சேவையகம்",
-    "cloudOmniroute": "கிளவுட் OmniRoute",
+    "cloudAgentProxy": "கிளவுட் OmniRoute",
     "copyUrl": "URL ஐ நகலெடுக்கவும்",
     "badgeLoopbackTooltip": "இந்த எண்ட்பாயிண்ட் உள்ளூரில் மட்டுமே அணுகக்கூடியது (லூப்பேக் மட்டும்)",
     "badgeAlwaysProtectedTooltip": "இந்த எண்ட்பாயிண்ட் எப்போதும் பாதுகாக்கப்படுகிறது மற்றும் அங்கீகாரம் தேவைப்படுகிறது",
@@ -9979,7 +9979,7 @@
     "howItWorksStep3Description": "கோரிக்கை OpenAI, Anthropic, Gemini அல்லது பிற வழங்குநர்களால் உடனடியாக நிறைவேற்றப்படுகிறது.",
     "getStartedIn30Seconds": "30 வினாடிகளில் தொடங்குங்கள்",
     "getStartedDescription": "OmniRoute-ஐ நிறுவி, இணைய முகப்புப்பலகை வழியாக உங்கள் வழங்குநர்களை உள்ளமைத்து, AI கோரிக்கைகளை வழிநடத்தத் தொடங்குங்கள்.",
-    "installOmniRoute": "OmniRoute-ஐ நிறுவுங்கள்",
+    "installAgentProxy": "OmniRoute-ஐ நிறுவுங்கள்",
     "installStepDescription": "சேவையகத்தை உடனடியாகத் தொடங்க npx கட்டளையை இயக்குங்கள்",
     "openDashboard": "முகப்புப்பலகையைத் திறக்கவும்",
     "openDashboardStepDescription": "இணைய இடைமுகம் வழியாக வழங்குநர்களையும் API விசைகளையும் உள்ளமைக்கவும்",
@@ -9988,7 +9988,7 @@
     "terminal": "டெர்மினல்",
     "copy": "நகலெடு",
     "copied": "✓ நகலெடுக்கப்பட்டது",
-    "startingOmniRoute": "OmniRoute தொடங்குகிறது...",
+    "startingAgentProxy": "OmniRoute தொடங்குகிறது...",
     "serverRunningOnLabel": "சேவையகம் இயங்கும் முகவரி",
     "dashboardLabel": "கட்டுப்பாட்டுப் பலகம்",
     "readyToRoute": "வழித்தடமிடத் தயார்! ✓",
@@ -10382,7 +10382,7 @@
     "versionCommandPlaceholder": "Version Command Placeholder",
     "architectureTitle": "Architecture Title",
     "flowLocalBinary": "Flow Local Binary",
-    "flowOmniRoute": "Flow Omni Route",
+    "flowAgentProxy": "Flow Omni Route",
     "agentNamePlaceholder": "Agent Name Placeholder",
     "architectureDescription": "Architecture Description",
     "flowExecute": "Flow Execute",
@@ -10399,8 +10399,8 @@
     "agentUseCaseHint": "ஏசிபி நெறிமுறை மூலம் செயல்படுத்தும் இலக்காகப் பயன்படுத்தலாம்",
     "flowDiagramClient": "கிளையண்ட் ஆப்",
     "flowDiagramClientDesc": "SDK, API அல்லது அப்ஸ்ட்ரீம் சேவை",
-    "flowDiagramOmniRoute": "OmniRoute",
-    "flowDiagramOmniRouteDesc": "கோரிக்கையைப் பெற்று, இலக்கைத் தேர்ந்தெடுக்கிறது",
+    "flowDiagramAgentProxy": "OmniRoute",
+    "flowDiagramAgentProxyDesc": "கோரிக்கையைப் பெற்று, இலக்கைத் தேர்ந்தெடுக்கிறது",
     "flowDiagramSpawn": "ஸ்பான் செயல்முறை",
     "flowDiagramSpawnDesc": "stdio வழியாக CLI பைனரியை அறிமுகப்படுத்துகிறது",
     "flowDiagramCli": "CLI முகவர்",
@@ -12965,16 +12965,16 @@
       "PROXY_AUTO_SELECT_ENABLED": {
         "description": "ஒரு இணைப்பிற்கு எந்த ப்ராக்ஸியும் ஒதுக்கப்படாதபோது, செயல்படும் முதல் registry ப்ராக்ஸியைத் தானாகவே தேர்ந்தெடுக்கவும். இயல்பாகவே Off-ல் இருக்கும், ஏனெனில் இல்லையெனில் ஒரு registry ப்ராக்ஸி அனைத்து டிராஃபிக்கிற்கும் உலகளாவிய ஃபால்பேக்காக மாறும் (#3332)."
       },
-      "OMNIROUTE_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
+      "AGENTPROXY_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
         "description": "ப்ராக்ஸி அணுகல்தன்மை சோதனைகள் தோல்வியடையும் போது, OAuth மற்றும் provider-validation செயல்முறைகள் பின் செய்யப்பட்ட ப்ராக்ஸியைத் தவிர்க்க அனுமதிக்கவும். இயல்பாகவே Off-ல் இருக்கும், ஏனெனில் இது கணக்கின் egress IP-ஐ மாற்றக்கூடும்."
       },
       "MITM_DISABLE_TLS_VERIFY": {
         "description": "MITM ப்ராக்ஸிக்கான TLS சான்றிதழ் சரிபார்ப்பை முடக்கவும்."
       },
-      "OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS": {
         "description": "தனிப்பட்ட அல்லது உள் நெட்வொர்க்குகளைக் குறிக்கும் வழங்குநர் URL-களை அனுமதிக்கவும்."
       },
-      "OMNIROUTE_ALLOW_LOCAL_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_LOCAL_PROVIDER_URLS": {
         "description": "localhost, LAN மற்றும் தனிப்பட்ட IP வரம்புகளில் உள்ள வழங்குநர்களை அனுமதிக்கவும். உள்ளூர் OpenAI-இணக்கமான மாடல்களுக்கு இது தேவைப்படுகிறது மற்றும் இயல்பாகவே இயக்கப்பட்டுள்ளது. 169.254.169.254 போன்ற Cloud-metadata இறுதிப்புள்ளிகள் தடுக்கப்பட்ட நிலையிலேயே இருக்கும்."
       },
       "ENABLE_CC_COMPATIBLE_PROVIDER": {
@@ -12996,28 +12996,28 @@
       "RESPONSES_PASSTHROUGH_DROP_COMMENTARY": {
         "description": "Responses API passthrough ஸ்ட்ரீம்களை கிளையண்டுகளுக்கு அனுப்புவதற்கு முன், அவற்றிலிருந்து உள் commentary-phase வெளியீட்டு உருப்படிகளை அகற்றவும். மூல அப்ஸ்ட்ரீம் வர்ணனையைப் பெற இந்தக் கொடியை முடக்கவும்."
       },
-      "OMNIROUTE_MCP_ENFORCE_SCOPES": {
+      "AGENTPROXY_MCP_ENFORCE_SCOPES": {
         "description": "MCP கருவி அணுகலுக்கான வரம்பு கட்டுப்பாடுகளை அமல்படுத்தவும்."
       },
-      "OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS": {
+      "AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS": {
         "description": "டோக்கன் பயன்பாட்டைக் குறைக்க MCP கருவி விளக்கங்களைச் சுருக்கவும்."
       },
-      "OMNIROUTE_ENABLE_RUNTIME_BACKGROUND_TASKS": {
+      "AGENTPROXY_ENABLE_RUNTIME_BACKGROUND_TASKS": {
         "description": "இயக்க நேரத்தில் பின்னணிப் பணி செயலாக்கத்தை இயக்கவும்."
       },
-      "OMNIROUTE_DISABLE_BACKGROUND_SERVICES": {
+      "AGENTPROXY_DISABLE_BACKGROUND_SERVICES": {
         "description": "ஒதுக்கீட்டுப் புதுப்பித்தல் மற்றும் ஒத்திசைவு உட்பட அனைத்துப் பின்னணிச் சேவைகளையும் முடக்கவும்."
       },
-      "OMNIROUTE_RTK_TRUST_PROJECT_FILTERS": {
+      "AGENTPROXY_RTK_TRUST_PROJECT_FILTERS": {
         "description": "சரிபார்ப்பு இல்லாமல் திட்ட அளவிலான RTK வடிப்பான்களை நம்பவும்."
       },
-      "OMNIROUTE_ENABLE_LIVE_WS": {
+      "AGENTPROXY_ENABLE_LIVE_WS": {
         "description": "இறக்குமதியின் போது லூப்பேக் போர்ட் 20132-ல் நிகழ்நேர டாஷ்போர்டு WebSocket சேவையகத்தைத் தொடங்கவும். அதை முடக்க கொடியை 0 அல்லது false என அமைக்கவும். LAN வெளிப்பாட்டிற்கு LIVE_WS_HOST=0.0.0.0 மற்றும் LIVE_WS_ALLOWED_ORIGINS ஆகியவையும் தேவை."
       },
-      "OMNIROUTE_CODEX_WS_ENABLED": {
+      "AGENTPROXY_CODEX_WS_ENABLED": {
         "description": "WebSocket வழியாக Responses-ஐப் பயன்படுத்த Codex-ஐ அனுமதிக்கவும். முடக்கப்பட்டிருக்கும் போது, Codex ஆனது HTTP Responses-க்குத் திரும்பும்."
       },
-      "OMNIROUTE_EMERGENCY_FALLBACK": {
+      "AGENTPROXY_EMERGENCY_FALLBACK": {
         "description": "பட்ஜெட் தீர்ந்துபோன கோரிக்கைகளை அவசரகால இலவச ஃபால்பேக் வழங்குநர் மற்றும் மாடலுக்கு அனுப்பவும்."
       },
       "STREAM_RECOVERY_ENABLED": {
@@ -13044,16 +13044,16 @@
       "PRICING_SYNC_ENABLED": {
         "description": "விலைத் தரவைத் தானாகவே ஒத்திசைக்கவும். PRICING_SYNC_ENABLED சூழல் மாறியும் true ஆக இருக்க வேண்டும்."
       },
-      "OMNIROUTE_AUTO_SYNC_CODEX_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CODEX_PROFILES": {
         "description": "வழங்குநர்-மாடல் ஒத்திசைவுக்குப் பிறகு, நேரலை அட்டவணையில் இருந்து ~/.codex/*.config.toml சுயவிவரங்களை மீண்டும் உருவாக்கவும். இது செயலில் உள்ள அல்லது இயல்புநிலை Codex உள்ளமைவை ஒருபோதும் மாற்றாது மற்றும் இயல்பாகவே முடக்கப்பட்டிருக்கும்."
       },
-      "OMNIROUTE_AUTO_SYNC_CLAUDE_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CLAUDE_PROFILES": {
         "description": "வழங்குநர்-மாடல் ஒத்திசைவுக்குப் பிறகு, நேரலை அட்டவணையில் இருந்து ~/.claude/profiles/'<name>'/settings.json சுயவிவரங்களை மீண்டும் உருவாக்கவும். இது செயலில் உள்ள அல்லது இயல்புநிலை Claude உள்ளமைவை ஒருபோதும் மாற்றாது மற்றும் இயல்பாகவே முடக்கப்பட்டிருக்கும்."
       },
-      "OMNIROUTE_DISABLE_LOCAL_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_LOCAL_HEALTHCHECK": {
         "description": "உள்ளூர் நிகழ்வு health-check இறுதிப்புள்ளியை முடக்கவும்."
       },
-      "OMNIROUTE_DISABLE_TOKEN_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_TOKEN_HEALTHCHECK": {
         "description": "token-validation நிலை சரிபார்ப்பை முடக்கவும்."
       },
       "SKILLS_SANDBOX_NETWORK_ENABLED": {
@@ -14190,5 +14190,5 @@
     "partnerLinkNote": "கூட்டாளர் இணைப்பு",
     "dismissAriaLabel": "மூடு"
   },
-  "featureFlagOmnirouteDisableThinkingLevelVariantsDescription": "/v1/models பட்டியலில் thinking level variants (எ.கா. -low, -medium, -high) உருவாக்கப்படுவதை முடக்கவும்."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "/v1/models பட்டியலில் thinking level variants (எ.கா. -low, -medium, -high) உருவாக்கப்படுவதை முடக்கவும்."
 }

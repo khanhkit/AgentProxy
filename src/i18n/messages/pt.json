@@ -986,7 +986,7 @@
     "batchFileDownloadFull": "Transferir Ficheiro Completo"
   },
   "disabled": "Desativado",
-  "featureFlagOmnirouteEmergencyFallbackDescription": "Encaminhar pedidos com orçamento esgotado para o fornecedor/modelo de contingência gratuito de emergência.",
+  "featureFlagAgentProxyEmergencyFallbackDescription": "Encaminhar pedidos com orçamento esgotado para o fornecedor/modelo de contingência gratuito de emergência.",
   "featureFlagArenaEloSyncEnabledDescription": "Ativar a sincronização periódica do ELO da tabela de classificação da Arena AI para classificações de inteligência do modelo.",
   "featureFlagUniversalContextHandoffEnabledDescription": "Gere e injete resumos das conversas quando o encaminhamento de combinações alternar entre modelos. Desative esta opção para tratar as mudanças de modelo de forma independente e impedir pedidos de transferência em segundo plano para todas as combinações existentes e futuras.",
   "featureFlagExposeCcDiscoveryAliasesDescription": "Anuncie os ids de espelho claude/&lt;provider&gt;/&lt;model&gt; em /v1/models para que a descoberta de modelos do gateway Claude Code liste modelos não Claude. Aviso: duplica entradas de catálogo para todos os clientes quando ativado globalmente.",
@@ -2326,7 +2326,7 @@
     "requestFlowAria": "A sua aplicação envia pedidos para o OmniRoute através de uma chave de API",
     "requestFlowYourApp": "A sua aplicação",
     "requestFlowApiKey": "Chave de API",
-    "requestFlowOmniRoute": "OmniRoute",
+    "requestFlowAgentProxy": "OmniRoute",
     "totalKeys": "Total de chaves",
     "restricted": "Restrito",
     "totalRequests": "Total de solicitações",
@@ -2833,7 +2833,7 @@
     "configurationSaved": "Configuração salva com sucesso.",
     "failedToSave": "Falha ao salvar a configuração.",
     "noApiKeysCreateOne": "Nenhuma chave de API – Crie uma na página Chaves",
-    "defaultOmnirouteKey": "sk_omniroute (padrão)",
+    "defaultAgentProxyKey": "sk_omniroute (padrão)",
     "selectModel": "Selecione o modelo",
     "selectModelForAlias": "Selecione o modelo para {alias}",
     "selectModelForTool": "Selecione o modelo para {tool}",
@@ -2930,13 +2930,13 @@
     "applied": "Aplicado!",
     "failed": "Falha",
     "resetDone": "Redefinir!",
-    "omnirouteConfiguredOpenAiCompatible": "OmniRoute está configurado como provedor compatível com OpenAI",
+    "agentproxyConfiguredOpenAiCompatible": "OmniRoute está configurado como provedor compatível com OpenAI",
     "provider": "Provedor",
     "model": "Modelo",
     "providers": "Provedores",
     "auth": "Autenticação",
     "noApiKeysAvailable": "Nenhuma chave de API disponível",
-    "usingDefaultOmniroute": "Usando o padrão: sk_omniroute",
+    "usingDefaultAgentProxy": "Usando o padrão: sk_omniroute",
     "updateConfig": "Atualizar configuração",
     "applyConfig": "Aplicar configuração",
     "noBackupsAvailable": "Nenhum backup disponível.",
@@ -3223,8 +3223,8 @@
     "hermesConfiguredRoles": "{configured}/{total} funções",
     "hermesQuickApply": "Aplicar rapidamente o mesmo modelo a todas as funções:",
     "hermesApplyModelToAll": "Aplicar {model} a todas as funções",
-    "hermesViaOmniRoute": "{provider} (através do OmniRoute)",
-    "hermesNotOmniRoute": "{provider} (não OmniRoute)",
+    "hermesViaAgentProxy": "{provider} (através do OmniRoute)",
+    "hermesNotAgentProxy": "{provider} (não OmniRoute)",
     "hermesRemovePendingRole": "Remover esta função das alterações pendentes",
     "hermesApply": "Aplicar ao Hermes Agent",
     "hermesRolesWillUpdate": "{count, plural, one {# função será atualizada} other {# funções serão atualizadas}}",
@@ -4214,7 +4214,7 @@
     "vscodeAliasModelsLabel": "Modelos do VS Code",
     "vscodeAliasChatLabel": "Chat do VS Code",
     "localServer": "Servidor local",
-    "cloudOmniroute": "OmniRoute Cloud",
+    "cloudAgentProxy": "OmniRoute Cloud",
     "copyUrl": "Copiar URL",
     "badgeLoopbackTooltip": "Este endpoint só está acessível localmente (apenas loopback)",
     "badgeAlwaysProtectedTooltip": "Este endpoint está sempre protegido e requer autorização",
@@ -10051,7 +10051,7 @@
     "howItWorksStep3Description": "A solicitação é atendida por OpenAI, Anthropic, Gemini ou outros instantaneamente.",
     "getStartedIn30Seconds": "Comece em 30 segundos",
     "getStartedDescription": "Instale o OmniRoute, configure seus provedores por meio do painel da web e comece a rotear solicitações de IA.",
-    "installOmniRoute": "Instalar OmniRoute",
+    "installAgentProxy": "Instalar OmniRoute",
     "installStepDescription": "Execute o comando npx para iniciar o servidor instantaneamente",
     "openDashboard": "Abra o painel",
     "openDashboardStepDescription": "Configure provedores e chaves de API via interface web",
@@ -10060,7 +10060,7 @@
     "terminal": "terminal",
     "copy": "Copiar",
     "copied": "✓ Copiado",
-    "startingOmniRoute": "Iniciando o OmniRoute...",
+    "startingAgentProxy": "Iniciando o OmniRoute...",
     "serverRunningOnLabel": "Servidor em execução",
     "dashboardLabel": "Painel",
     "readyToRoute": "Pronto para rota! ✓",
@@ -10454,7 +10454,7 @@
     "versionCommandPlaceholder": "Version Command Placeholder",
     "architectureTitle": "Architecture Title",
     "flowLocalBinary": "Flow Local Binary",
-    "flowOmniRoute": "Flow Omni Route",
+    "flowAgentProxy": "Flow Omni Route",
     "agentNamePlaceholder": "Agent Name Placeholder",
     "architectureDescription": "Architecture Description",
     "flowExecute": "Flow Execute",
@@ -10471,8 +10471,8 @@
     "agentUseCaseHint": "Pode ser usado como alvo de execução via protocolo ACP",
     "flowDiagramClient": "Aplicativo cliente",
     "flowDiagramClientDesc": "SDK, API ou serviço upstream",
-    "flowDiagramOmniRoute": "OmniRoute",
-    "flowDiagramOmniRouteDesc": "Recebe solicitação e seleciona alvo",
+    "flowDiagramAgentProxy": "OmniRoute",
+    "flowDiagramAgentProxyDesc": "Recebe solicitação e seleciona alvo",
     "flowDiagramSpawn": "Processo de geração",
     "flowDiagramSpawnDesc": "Lança o binário CLI via stdio",
     "flowDiagramCli": "Agente CLI",
@@ -13037,16 +13037,16 @@
       "PROXY_AUTO_SELECT_ENABLED": {
         "description": "Quando nenhum proxy estiver atribuído a uma ligação, selecionar automaticamente o primeiro proxy de registo funcional. Desativado por predefinição porque, caso contrário, um proxy de registo torna-se um fallback global para todo o tráfego (#3332)."
       },
-      "OMNIROUTE_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
+      "AGENTPROXY_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
         "description": "Permitir que os fluxos de OAuth e de validação do fornecedor contornem um proxy fixado quando as verificações de acessibilidade do proxy falharem. Desativado por predefinição porque isto pode alterar o IP de saída da conta."
       },
       "MITM_DISABLE_TLS_VERIFY": {
         "description": "Desativar a verificação de certificados TLS para o proxy MITM."
       },
-      "OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS": {
         "description": "Permitir URLs de fornecedores que apontem para redes privadas ou internas."
       },
-      "OMNIROUTE_ALLOW_LOCAL_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_LOCAL_PROVIDER_URLS": {
         "description": "Permitir fornecedores em localhost, LAN e intervalos de IP privados. Isto é necessário para modelos locais compatíveis com OpenAI e está ativado por predefinição. Os endpoints de metadados de nuvem, como 169.254.169.254, permanecem bloqueados."
       },
       "ENABLE_CC_COMPATIBLE_PROVIDER": {
@@ -13068,28 +13068,28 @@
       "RESPONSES_PASSTHROUGH_DROP_COMMENTARY": {
         "description": "Remover itens de saída internos da fase de comentário dos fluxos de passthrough da Responses API antes de os encaminhar para os clientes. Desative este sinalizador para receber comentários upstream em bruto."
       },
-      "OMNIROUTE_MCP_ENFORCE_SCOPES": {
+      "AGENTPROXY_MCP_ENFORCE_SCOPES": {
         "description": "Aplicar restrições de âmbito para o acesso a ferramentas MCP."
       },
-      "OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS": {
+      "AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS": {
         "description": "Comprimir as descrições das ferramentas MCP para reduzir a utilização de tokens."
       },
-      "OMNIROUTE_ENABLE_RUNTIME_BACKGROUND_TASKS": {
+      "AGENTPROXY_ENABLE_RUNTIME_BACKGROUND_TASKS": {
         "description": "Ativar o processamento de tarefas em segundo plano em tempo de execução."
       },
-      "OMNIROUTE_DISABLE_BACKGROUND_SERVICES": {
+      "AGENTPROXY_DISABLE_BACKGROUND_SERVICES": {
         "description": "Desativar todos os serviços em segundo plano, incluindo a atualização de quotas e a sincronização."
       },
-      "OMNIROUTE_RTK_TRUST_PROJECT_FILTERS": {
+      "AGENTPROXY_RTK_TRUST_PROJECT_FILTERS": {
         "description": "Confiar nos filtros RTK ao nível do projeto sem validação."
       },
-      "OMNIROUTE_ENABLE_LIVE_WS": {
+      "AGENTPROXY_ENABLE_LIVE_WS": {
         "description": "Iniciar o servidor WebSocket do painel em tempo real na importação na porta de loopback 20132. Defina o sinalizador para 0 ou false para o desativar. A exposição à LAN também requer LIVE_WS_HOST=0.0.0.0 and LIVE_WS_ALLOWED_ORIGINS."
       },
-      "OMNIROUTE_CODEX_WS_ENABLED": {
+      "AGENTPROXY_CODEX_WS_ENABLED": {
         "description": "Permitir que o Codex utilize Responses através de WebSocket. Quando desativado, o Codex recorre a HTTP Responses."
       },
-      "OMNIROUTE_EMERGENCY_FALLBACK": {
+      "AGENTPROXY_EMERGENCY_FALLBACK": {
         "description": "Encaminhar pedidos com orçamento esgotado para o fornecedor e modelo de fallback gratuito de emergência."
       },
       "STREAM_RECOVERY_ENABLED": {
@@ -13116,16 +13116,16 @@
       "PRICING_SYNC_ENABLED": {
         "description": "Sincronizar dados de preços automaticamente. A variável de ambiente PRICING_SYNC_ENABLED também deve ser true."
       },
-      "OMNIROUTE_AUTO_SYNC_CODEX_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CODEX_PROFILES": {
         "description": "Após a sincronização de fornecedor-modelo, regenerar os perfis ~/.codex/*.config.toml a partir do catálogo ativo. Isto nunca altera a configuração ativa ou predefinida do Codex e está desativado por predefinição."
       },
-      "OMNIROUTE_AUTO_SYNC_CLAUDE_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CLAUDE_PROFILES": {
         "description": "Após a sincronização de fornecedor-modelo, regenerar os perfis ~/.claude/profiles/'<name>'/settings.json a partir do catálogo ativo. Isto nunca altera a configuração ativa ou predefinida do Claude e está desativado por predefinição."
       },
-      "OMNIROUTE_DISABLE_LOCAL_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_LOCAL_HEALTHCHECK": {
         "description": "Desativar o endpoint de health-check da instância local."
       },
-      "OMNIROUTE_DISABLE_TOKEN_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_TOKEN_HEALTHCHECK": {
         "description": "Desativar a verificação de estado de validação de tokens."
       },
       "SKILLS_SANDBOX_NETWORK_ENABLED": {
@@ -14262,5 +14262,5 @@
     "partnerLinkNote": "Link de parceiro",
     "dismissAriaLabel": "Dispensar"
   },
-  "featureFlagOmnirouteDisableThinkingLevelVariantsDescription": "Desative a geração de variantes de nível de pensamento (por exemplo, -low, -medium, -high) no catálogo /v1/models."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Desative a geração de variantes de nível de pensamento (por exemplo, -low, -medium, -high) no catálogo /v1/models."
 }

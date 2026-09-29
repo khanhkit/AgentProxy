@@ -986,7 +986,7 @@
     "batchFileDownloadFull": "下载完整文件"
   },
   "disabled": "已禁用",
-  "featureFlagOmnirouteEmergencyFallbackDescription": "将预算耗尽的请求路由到紧急免费备用提供者/模型。",
+  "featureFlagAgentProxyEmergencyFallbackDescription": "将预算耗尽的请求路由到紧急免费备用提供者/模型。",
   "featureFlagArenaEloSyncEnabledDescription": "启用定期同步 Arena AI 排行榜 ELO，用于模型智能排名。",
   "featureFlagUniversalContextHandoffEnabledDescription": "在组合路由切换模型时生成并注入对话摘要。禁用后会独立处理模型切换，并阻止所有现有及未来组合的后台交接请求。",
   "featureFlagExposeCcDiscoveryAliasesDescription": "在 /v1/models 上发布 claude/&lt;provider&gt;/&lt;model&gt; 镜像 ID，让 Claude Code 网关模型发现能列出非 Claude 模型。警告：全局启用会使所有客户端的目录条目翻倍。",
@@ -2254,7 +2254,7 @@
     "requestFlowAria": "你的应用通过 API 密钥向 OmniRoute 发送请求",
     "requestFlowYourApp": "你的应用",
     "requestFlowApiKey": "API 密钥",
-    "requestFlowOmniRoute": "OmniRoute",
+    "requestFlowAgentProxy": "OmniRoute",
     "totalKeys": "密钥总数",
     "restricted": "受限",
     "totalRequests": "请求总数",
@@ -2761,7 +2761,7 @@
     "configurationSaved": "配置保存成功。",
     "failedToSave": "保存配置失败。",
     "noApiKeysCreateOne": "无 API 密钥 - 在“密钥”页面创建一个",
-    "defaultOmnirouteKey": "sk_omniroute（默认）",
+    "defaultAgentProxyKey": "sk_omniroute（默认）",
     "selectModel": "选择模型",
     "selectModelForAlias": "选择 {alias} 的模型",
     "selectModelForTool": "选择 {tool} 的模型",
@@ -2858,13 +2858,13 @@
     "applied": "已应用！",
     "failed": "失败",
     "resetDone": "重置！",
-    "omnirouteConfiguredOpenAiCompatible": "OmniRoute 已配置为 OpenAI 兼容提供者",
+    "agentproxyConfiguredOpenAiCompatible": "OmniRoute 已配置为 OpenAI 兼容提供者",
     "provider": "提供者",
     "model": "模型",
     "providers": "提供者",
     "auth": "授权",
     "noApiKeysAvailable": "没有可用的 API 密钥",
-    "usingDefaultOmniroute": "使用默认值：sk_omniroute",
+    "usingDefaultAgentProxy": "使用默认值：sk_omniroute",
     "updateConfig": "更新配置",
     "applyConfig": "应用配置",
     "noBackupsAvailable": "没有可用的备份。",
@@ -3151,8 +3151,8 @@
     "hermesConfiguredRoles": "{configured}/{total} 个角色",
     "hermesQuickApply": "快速将相同模型应用到所有角色：",
     "hermesApplyModelToAll": "将 {model} 应用到每个角色",
-    "hermesViaOmniRoute": "{provider}（通过 OmniRoute）",
-    "hermesNotOmniRoute": "{provider}（非 OmniRoute）",
+    "hermesViaAgentProxy": "{provider}（通过 OmniRoute）",
+    "hermesNotAgentProxy": "{provider}（非 OmniRoute）",
     "hermesRemovePendingRole": "从待处理更改中移除此角色",
     "hermesApply": "应用到 Hermes Agent",
     "hermesRolesWillUpdate": "{count, plural, one {将更新 # 个角色} other {将更新 # 个角色}}",
@@ -4142,7 +4142,7 @@
     "vscodeAliasModelsLabel": "VS Code 模型",
     "vscodeAliasChatLabel": "VS Code 聊天",
     "localServer": "本地服务器",
-    "cloudOmniroute": "云全路由",
+    "cloudAgentProxy": "云全路由",
     "copyUrl": "复制网址",
     "badgeLoopbackTooltip": "此端点仅可本地访问（仅限回环）",
     "badgeAlwaysProtectedTooltip": "此端点始终受保护，需要授权",
@@ -9979,7 +9979,7 @@
     "howItWorksStep3Description": "请求会被立即转发给 OpenAI、Anthropic、Gemini 或其他提供者完成处理。",
     "getStartedIn30Seconds": "30 秒内开始",
     "getStartedDescription": "安装 OmniRoute，通过 Web 仪表板配置你的提供者，然后开始路由 AI 请求。",
-    "installOmniRoute": "安装 OmniRoute",
+    "installAgentProxy": "安装 OmniRoute",
     "installStepDescription": "运行 npx 命令立即启动服务器",
     "openDashboard": "打开仪表板",
     "openDashboardStepDescription": "通过 Web 界面配置提供者和 API 密钥",
@@ -9988,7 +9988,7 @@
     "terminal": "终端",
     "copy": "复制",
     "copied": "✓ 已复制",
-    "startingOmniRoute": "正在启动 OmniRoute...",
+    "startingAgentProxy": "正在启动 OmniRoute...",
     "serverRunningOnLabel": "服务器运行于",
     "dashboardLabel": "仪表板",
     "readyToRoute": "已准备好开始路由！ ✓",
@@ -10382,7 +10382,7 @@
     "versionCommandPlaceholder": "版本命令占位符",
     "architectureTitle": "架构",
     "flowLocalBinary": "本地二进制",
-    "flowOmniRoute": "OmniRoute",
+    "flowAgentProxy": "OmniRoute",
     "agentNamePlaceholder": "Agent 名称占位符",
     "architectureDescription": "了解 OmniRoute 如何在客户端、路由器和 Agent 目标之间转发请求。",
     "flowExecute": "执行",
@@ -10399,8 +10399,8 @@
     "agentUseCaseHint": "可通过 ACP 协议用作执行目标",
     "flowDiagramClient": "客户端应用",
     "flowDiagramClientDesc": "SDK、API 或上游服务",
-    "flowDiagramOmniRoute": "OmniRoute",
-    "flowDiagramOmniRouteDesc": "接收请求并选择目标",
+    "flowDiagramAgentProxy": "OmniRoute",
+    "flowDiagramAgentProxyDesc": "接收请求并选择目标",
     "flowDiagramSpawn": "启动进程",
     "flowDiagramSpawnDesc": "通过 stdio 启动 CLI 二进制文件",
     "flowDiagramCli": "CLI 代理",
@@ -12965,16 +12965,16 @@
       "PROXY_AUTO_SELECT_ENABLED": {
         "description": "当连接未分配代理时，自动选择第一个可用的注册表代理。默认关闭，否则一个注册表代理会成为所有流量的全局备用代理 (#3332)。"
       },
-      "OMNIROUTE_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
+      "AGENTPROXY_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
         "description": "当代理可达性检查失败时，允许 OAuth 和服务商验证流程绕过固定的代理。默认关闭，因为这可能会改变账户的出口 IP。"
       },
       "MITM_DISABLE_TLS_VERIFY": {
         "description": "禁用 MITM 代理的 TLS 证书验证。"
       },
-      "OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS": {
         "description": "允许指向私有或内部网络的服务商 URL。"
       },
-      "OMNIROUTE_ALLOW_LOCAL_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_LOCAL_PROVIDER_URLS": {
         "description": "允许 localhost、局域网 (LAN) 和私有 IP 地址段上的服务商。本地兼容 OpenAI 的模型需要此设置，且默认启用。云元数据端点（如 169.254.169.254）仍将被拦截。"
       },
       "ENABLE_CC_COMPATIBLE_PROVIDER": {
@@ -12996,28 +12996,28 @@
       "RESPONSES_PASSTHROUGH_DROP_COMMENTARY": {
         "description": "在将 Responses API 透传流转发给客户端之前，从中移除内部注释阶段的输出项。禁用此标志以接收原始上游注释。"
       },
-      "OMNIROUTE_MCP_ENFORCE_SCOPES": {
+      "AGENTPROXY_MCP_ENFORCE_SCOPES": {
         "description": "对 MCP 工具访问强制执行作用域限制。"
       },
-      "OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS": {
+      "AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS": {
         "description": "压缩 MCP 工具描述以减少 token 使用量。"
       },
-      "OMNIROUTE_ENABLE_RUNTIME_BACKGROUND_TASKS": {
+      "AGENTPROXY_ENABLE_RUNTIME_BACKGROUND_TASKS": {
         "description": "在运行时启用后台任务处理。"
       },
-      "OMNIROUTE_DISABLE_BACKGROUND_SERVICES": {
+      "AGENTPROXY_DISABLE_BACKGROUND_SERVICES": {
         "description": "禁用所有后台服务，包括配额刷新和同步。"
       },
-      "OMNIROUTE_RTK_TRUST_PROJECT_FILTERS": {
+      "AGENTPROXY_RTK_TRUST_PROJECT_FILTERS": {
         "description": "信任项目级 RTK 过滤器而无需验证。"
       },
-      "OMNIROUTE_ENABLE_LIVE_WS": {
+      "AGENTPROXY_ENABLE_LIVE_WS": {
         "description": "导入时在环回端口 20132 上启动实时仪表板 WebSocket 服务器。将该标志设置为 0 或 false 可禁用它。局域网暴露还需要 LIVE_WS_HOST=0.0.0.0 和 LIVE_WS_ALLOWED_ORIGINS。"
       },
-      "OMNIROUTE_CODEX_WS_ENABLED": {
+      "AGENTPROXY_CODEX_WS_ENABLED": {
         "description": "允许 Codex 通过 WebSocket 使用 Responses。禁用时，Codex 将回退到 HTTP Responses。"
       },
-      "OMNIROUTE_EMERGENCY_FALLBACK": {
+      "AGENTPROXY_EMERGENCY_FALLBACK": {
         "description": "将预算耗尽的请求路由到紧急免费备用提供者和模型。"
       },
       "STREAM_RECOVERY_ENABLED": {
@@ -13044,16 +13044,16 @@
       "PRICING_SYNC_ENABLED": {
         "description": "自动同步定价数据。PRICING_SYNC_ENABLED 环境变量也必须为 true。"
       },
-      "OMNIROUTE_AUTO_SYNC_CODEX_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CODEX_PROFILES": {
         "description": "提供者-模型同步后，从实时目录重新生成 ~/.codex/*.config.toml 配置文件。这绝不会更改活动或默认的 Codex 配置，并且默认关闭。"
       },
-      "OMNIROUTE_AUTO_SYNC_CLAUDE_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CLAUDE_PROFILES": {
         "description": "提供者-模型同步后，从实时目录重新生成 ~/.claude/profiles/'<name>'/settings.json 配置文件。这绝不会更改活动或默认的 Claude 配置，并且默认关闭。"
       },
-      "OMNIROUTE_DISABLE_LOCAL_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_LOCAL_HEALTHCHECK": {
         "description": "禁用本地实例健康检查端点。"
       },
-      "OMNIROUTE_DISABLE_TOKEN_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_TOKEN_HEALTHCHECK": {
         "description": "禁用 token 验证健康检查。"
       },
       "SKILLS_SANDBOX_NETWORK_ENABLED": {
@@ -14190,5 +14190,5 @@
     "partnerLinkNote": "合作伙伴链接",
     "dismissAriaLabel": "关闭"
   },
-  "featureFlagOmnirouteDisableThinkingLevelVariantsDescription": "禁用在 /v1/models 目录中生成思考级别变体（例如 -low、-medium、-high）。"
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "禁用在 /v1/models 目录中生成思考级别变体（例如 -low、-medium、-high）。"
 }

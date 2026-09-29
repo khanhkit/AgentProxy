@@ -986,7 +986,7 @@
     "batchFileDownloadFull": "Stáhnout celý soubor"
   },
   "disabled": "Zakázáno",
-  "featureFlagOmnirouteEmergencyFallbackDescription": "Směrovat požadavky s vyčerpaným rozpočtem na nouzového bezplatného záložního poskytovatele/model.",
+  "featureFlagAgentProxyEmergencyFallbackDescription": "Směrovat požadavky s vyčerpaným rozpočtem na nouzového bezplatného záložního poskytovatele/model.",
   "featureFlagArenaEloSyncEnabledDescription": "Povolit periodickou synchronizaci ELO z žebříčku Arena AI pro hodnocení inteligence modelů.",
   "featureFlagUniversalContextHandoffEnabledDescription": "Generovat a vkládat souhrny konverzací, když kombinované směrování přepíná mezi modely. Vypnutím budou přepnutí modelu zpracována nezávisle a zabrání se požadavkům na předání na pozadí u všech stávajících i budoucích kombinací.",
   "featureFlagExposeCcDiscoveryAliasesDescription": "Inzerujte claude/&lt;provider&gt;/&lt;model&gt; zrcadlové ID na /v1/models, aby seznam objevování modelů brány Claude Code zahrnoval modely, které nejsou Claude. Upozornění: při globálním povolení zdvojuje katalogové položky pro všechny klienty.",
@@ -2254,7 +2254,7 @@
     "requestFlowAria": "Vaše aplikace odesílá požadavky prostřednictvím API klíče do OmniRoute",
     "requestFlowYourApp": "Vaše aplikace",
     "requestFlowApiKey": "API klíč",
-    "requestFlowOmniRoute": "OmniRoute",
+    "requestFlowAgentProxy": "OmniRoute",
     "totalKeys": "Celkem Klíčů",
     "restricted": "Omezený",
     "totalRequests": "Celkově žádostí",
@@ -2761,7 +2761,7 @@
     "configurationSaved": "Nastavení úspěšně uložena.",
     "failedToSave": "Nepodařilo se uložit nastavení.",
     "noApiKeysCreateOne": "Žádné API klíče – Vytvořte si jeden na stránce Klíče",
-    "defaultOmnirouteKey": "sk_omniroute (výchozí)",
+    "defaultAgentProxyKey": "sk_omniroute (výchozí)",
     "selectModel": "Vyberte model",
     "selectModelForAlias": "Vyberte model pro {alias}",
     "selectModelForTool": "Vyberte model pro {tool}",
@@ -2858,13 +2858,13 @@
     "applied": "Aplikováno!",
     "failed": "Selhalo",
     "resetDone": "Resetováno!",
-    "omnirouteConfiguredOpenAiCompatible": "OmniRoute je nastaven jako OpenAI kompatibilní poskytovatel",
+    "agentproxyConfiguredOpenAiCompatible": "OmniRoute je nastaven jako OpenAI kompatibilní poskytovatel",
     "provider": "Poskytovatel",
     "model": "Model",
     "providers": "Poskytovatelé",
     "auth": "Autorizace",
     "noApiKeysAvailable": "Žádné klíče API nejsou k dispozici",
-    "usingDefaultOmniroute": "Používá se výchozí: sk_omniroute",
+    "usingDefaultAgentProxy": "Používá se výchozí: sk_omniroute",
     "updateConfig": "Aktualizovat nastavení",
     "applyConfig": "Použít nastavení",
     "noBackupsAvailable": "Žádné zálohy nejsou k dispozici.",
@@ -3145,8 +3145,8 @@
     "hermesConfiguredRoles": "{configured}/{total} rolí",
     "hermesQuickApply": "Rychle použít stejný model pro všechny role:",
     "hermesApplyModelToAll": "Použít {model} pro každou roli",
-    "hermesViaOmniRoute": "{provider} (přes OmniRoute)",
-    "hermesNotOmniRoute": "{provider} (mimo OmniRoute)",
+    "hermesViaAgentProxy": "{provider} (přes OmniRoute)",
+    "hermesNotAgentProxy": "{provider} (mimo OmniRoute)",
     "hermesRemovePendingRole": "Odebrat tuto roli z čekajících změn",
     "hermesApply": "Použít pro Hermes Agent",
     "hermesRolesWillUpdate": "{count, plural, one {# role bude aktualizována} few {# role budou aktualizovány} other {# rolí bude aktualizováno}}",
@@ -4142,7 +4142,7 @@
     "vscodeAliasModelsLabel": "Modely VS Code",
     "vscodeAliasChatLabel": "Chat VS Code",
     "localServer": "Místní server",
-    "cloudOmniroute": "Cloud OmniRoute",
+    "cloudAgentProxy": "Cloud OmniRoute",
     "copyUrl": "Kopírovat URL",
     "badgeLoopbackTooltip": "Tento koncový bod je přístupný pouze místně (pouze loopback)",
     "badgeAlwaysProtectedTooltip": "Tento koncový bod je vždy chráněn a vyžaduje autorizaci",
@@ -9979,7 +9979,7 @@
     "howItWorksStep3Description": "Požadavek je okamžitě splněn OpenAI, Anthropic, Gemini nebo jinými.",
     "getStartedIn30Seconds": "Začněte za 30 sekund",
     "getStartedDescription": "Nainstalujte si OmniRoute, nastavte poskytovatele přes webovou nástěnku a začněte směrovat AI požadavky.",
-    "installOmniRoute": "Instalace OmniRoute",
+    "installAgentProxy": "Instalace OmniRoute",
     "installStepDescription": "Spuštěním příkazu npx okamžitě spustíte server",
     "openDashboard": "Otevřít nástěnku",
     "openDashboardStepDescription": "Nastavení poskytovatelů a API klíčů přes webové rozhraní",
@@ -9988,7 +9988,7 @@
     "terminal": "terminál",
     "copy": "Kopie",
     "copied": "✓ Zkopírováno",
-    "startingOmniRoute": "Spouštím OmniRoute...",
+    "startingAgentProxy": "Spouštím OmniRoute...",
     "serverRunningOnLabel": "Server běží na",
     "dashboardLabel": "Nástěnka",
     "readyToRoute": "Připraveno k trasování! ✓",
@@ -10382,7 +10382,7 @@
     "versionCommandPlaceholder": "Version Command Placeholder",
     "architectureTitle": "Architecture Title",
     "flowLocalBinary": "Flow Local Binary",
-    "flowOmniRoute": "Flow Omni Route",
+    "flowAgentProxy": "Flow Omni Route",
     "agentNamePlaceholder": "Agent Name Placeholder",
     "architectureDescription": "Architecture Description",
     "flowExecute": "Flow Execute",
@@ -10399,8 +10399,8 @@
     "agentUseCaseHint": "Může být použit jako cíl provádění prostřednictvím protokolu ACP",
     "flowDiagramClient": "Klientská aplikace",
     "flowDiagramClientDesc": "SDK, API nebo upstream služba",
-    "flowDiagramOmniRoute": "OmniRoute",
-    "flowDiagramOmniRouteDesc": "Přijme požadavek a vybere cíl",
+    "flowDiagramAgentProxy": "OmniRoute",
+    "flowDiagramAgentProxyDesc": "Přijme požadavek a vybere cíl",
     "flowDiagramSpawn": "Proces spawnování",
     "flowDiagramSpawnDesc": "Spustí binární CLI přes stdio",
     "flowDiagramCli": "Agent CLI",
@@ -12965,16 +12965,16 @@
       "PROXY_AUTO_SELECT_ENABLED": {
         "description": "Pokud k připojení není přiřazena žádná proxy, automaticky vybrat první funkční proxy registru. Ve výchozím nastavení vypnuto, protože jinak se jedna proxy registru stane globální zálohou pro veškerý provoz (#3332)."
       },
-      "OMNIROUTE_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
+      "AGENTPROXY_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
         "description": "Povolit tokům OAuth a ověřování poskytovatelů obejít připnutou proxy, pokud selžou kontroly dostupnosti proxy. Ve výchozím nastavení vypnuto, protože to může změnit výstupní IP adresu účtu."
       },
       "MITM_DISABLE_TLS_VERIFY": {
         "description": "Zakázat ověřování certifikátů TLS pro proxy MITM."
       },
-      "OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS": {
         "description": "Povolit adresy URL poskytovatelů, které ukazují na soukromé nebo interní sítě."
       },
-      "OMNIROUTE_ALLOW_LOCAL_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_LOCAL_PROVIDER_URLS": {
         "description": "Povolit poskytovatele na localhost, LAN a soukromých rozsazích IP adres. Toto je vyžadováno pro lokální modely kompatibilní s OpenAI a je ve výchozím nastavení povoleno. Koncové body cloudových metadat, jako je 169.254.169.254, zůstávají blokovány."
       },
       "ENABLE_CC_COMPATIBLE_PROVIDER": {
@@ -12996,28 +12996,28 @@
       "RESPONSES_PASSTHROUGH_DROP_COMMENTARY": {
         "description": "Odebrat interní výstupní položky fáze komentáře z průchozích streamů Responses API před jejich předáním klientům. Zakázáním tohoto příznaku získáte nezpracovaný upstream komentář."
       },
-      "OMNIROUTE_MCP_ENFORCE_SCOPES": {
+      "AGENTPROXY_MCP_ENFORCE_SCOPES": {
         "description": "Vynutit omezení rozsahu pro přístup k nástrojům MCP."
       },
-      "OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS": {
+      "AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS": {
         "description": "Komprimovat popisy nástrojů MCP pro snížení spotřeby tokenů."
       },
-      "OMNIROUTE_ENABLE_RUNTIME_BACKGROUND_TASKS": {
+      "AGENTPROXY_ENABLE_RUNTIME_BACKGROUND_TASKS": {
         "description": "Povolit zpracování úloh na pozadí za běhu."
       },
-      "OMNIROUTE_DISABLE_BACKGROUND_SERVICES": {
+      "AGENTPROXY_DISABLE_BACKGROUND_SERVICES": {
         "description": "Zakázat všechny služby na pozadí, včetně obnovování kvót a synchronizace."
       },
-      "OMNIROUTE_RTK_TRUST_PROJECT_FILTERS": {
+      "AGENTPROXY_RTK_TRUST_PROJECT_FILTERS": {
         "description": "Důvěřovat filtrům RTK na úrovni projektu bez ověření."
       },
-      "OMNIROUTE_ENABLE_LIVE_WS": {
+      "AGENTPROXY_ENABLE_LIVE_WS": {
         "description": "Spustit WebSocket server řídicího panelu v reálném čase při importu na portu loopback 20132. Nastavením příznaku na 0 nebo false jej zakážete. Vystavení v síti LAN vyžaduje také LIVE_WS_HOST=0.0.0.0 and LIVE_WS_ALLOWED_ORIGINS."
       },
-      "OMNIROUTE_CODEX_WS_ENABLED": {
+      "AGENTPROXY_CODEX_WS_ENABLED": {
         "description": "Povolit Codexu používat Responses přes WebSocket. Pokud je zakázáno, Codex se vrátí k HTTP Responses."
       },
-      "OMNIROUTE_EMERGENCY_FALLBACK": {
+      "AGENTPROXY_EMERGENCY_FALLBACK": {
         "description": "Směrovat požadavky s vyčerpaným rozpočtem na nouzového bezplatného záložního poskytovatele a model."
       },
       "STREAM_RECOVERY_ENABLED": {
@@ -13044,16 +13044,16 @@
       "PRICING_SYNC_ENABLED": {
         "description": "Automaticky synchronizovat údaje o cenách. Proměnná prostředí PRICING_SYNC_ENABLED musí být také nastavena na true."
       },
-      "OMNIROUTE_AUTO_SYNC_CODEX_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CODEX_PROFILES": {
         "description": "Po synchronizaci poskytovatelů a modelů regenerovat profily ~/.codex/*.config.toml z živého katalogu. Toto nikdy nemění aktivní nebo výchozí konfiguraci Codexu a je ve výchozím nastavení vypnuto."
       },
-      "OMNIROUTE_AUTO_SYNC_CLAUDE_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CLAUDE_PROFILES": {
         "description": "Po synchronizaci poskytovatelů a modelů regenerovat profily ~/.claude/profiles/'<name>'/settings.json z živého katalogu. Toto nikdy nemění aktivní nebo výchozí konfiguraci Claude a je ve výchozím nastavení vypnuto."
       },
-      "OMNIROUTE_DISABLE_LOCAL_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_LOCAL_HEALTHCHECK": {
         "description": "Zakázat koncový bod kontroly stavu lokální instance."
       },
-      "OMNIROUTE_DISABLE_TOKEN_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_TOKEN_HEALTHCHECK": {
         "description": "Zakázat kontrolu stavu ověření tokenu."
       },
       "SKILLS_SANDBOX_NETWORK_ENABLED": {
@@ -14190,5 +14190,5 @@
     "partnerLinkNote": "Partnerský odkaz",
     "dismissAriaLabel": "Zavřít"
   },
-  "featureFlagOmnirouteDisableThinkingLevelVariantsDescription": "Zakázat generování variant úrovně uvažování (např. -low, -medium, -high) v katalogu /v1/models."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Zakázat generování variant úrovně uvažování (např. -low, -medium, -high) v katalogu /v1/models."
 }

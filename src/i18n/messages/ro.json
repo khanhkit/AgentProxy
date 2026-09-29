@@ -986,7 +986,7 @@
     "batchFileDownloadFull": "Descarcă Fișierul Complet"
   },
   "disabled": "Dezactivat",
-  "featureFlagOmnirouteEmergencyFallbackDescription": "Redirecționează cererile cu buget epuizat către furnizorul/modelul de rezervă gratuit de urgență.",
+  "featureFlagAgentProxyEmergencyFallbackDescription": "Redirecționează cererile cu buget epuizat către furnizorul/modelul de rezervă gratuit de urgență.",
   "featureFlagArenaEloSyncEnabledDescription": "Activează sincronizarea periodică ELO a clasamentului Arena AI pentru clasamentele de inteligență ale modelelor.",
   "featureFlagUniversalContextHandoffEnabledDescription": "Generați și inserați rezumate ale conversațiilor atunci când rutarea combinată schimbă modelele. Dezactivați opțiunea pentru a trata separat schimbările de model și pentru a împiedica solicitările de transfer în fundal pentru toate combinațiile existente și viitoare.",
   "featureFlagExposeCcDiscoveryAliasesDescription": "Publica id-urile mirror claude/&lt;provider&gt;/&lt;model&gt; pe /v1/models astfel încât lista de descoperire a modelului Claude Code să includă modele non-Claude. Atenție: dublează intrările din catalog pentru toți clienții când este activat global.",
@@ -2254,7 +2254,7 @@
     "requestFlowAria": "Aplicația dvs. trimite solicitări către OmniRoute printr-o cheie API",
     "requestFlowYourApp": "Aplicația dvs.",
     "requestFlowApiKey": "Cheie API",
-    "requestFlowOmniRoute": "OmniRoute",
+    "requestFlowAgentProxy": "OmniRoute",
     "totalKeys": "Total chei",
     "restricted": "Restricţionat",
     "totalRequests": "Total cereri",
@@ -2761,7 +2761,7 @@
     "configurationSaved": "Configurația a fost salvată cu succes.",
     "failedToSave": "Nu s-a putut salva configurația.",
     "noApiKeysCreateOne": "Fără chei API - Creați una în pagina Chei",
-    "defaultOmnirouteKey": "sk_omniroute (implicit)",
+    "defaultAgentProxyKey": "sk_omniroute (implicit)",
     "selectModel": "Selectați Model",
     "selectModelForAlias": "Selectați modelul pentru {alias}",
     "selectModelForTool": "Selectați modelul pentru {tool}",
@@ -2858,13 +2858,13 @@
     "applied": "Aplicat!",
     "failed": "A eșuat",
     "resetDone": "Resetați!",
-    "omnirouteConfiguredOpenAiCompatible": "OmniRoute este configurat ca furnizor compatibil cu OpenAI",
+    "agentproxyConfiguredOpenAiCompatible": "OmniRoute este configurat ca furnizor compatibil cu OpenAI",
     "provider": "Furnizor",
     "model": "Model",
     "providers": "Furnizorii",
     "auth": "Autentificare",
     "noApiKeysAvailable": "Nu există chei API disponibile",
-    "usingDefaultOmniroute": "Folosind implicit: sk_omniroute",
+    "usingDefaultAgentProxy": "Folosind implicit: sk_omniroute",
     "updateConfig": "Actualizați configurația",
     "applyConfig": "Aplicați Config",
     "noBackupsAvailable": "Nu există copii de rezervă disponibile.",
@@ -3145,8 +3145,8 @@
     "hermesConfiguredRoles": "{configured}/{total} roluri",
     "hermesQuickApply": "Aplicați rapid același model tuturor rolurilor:",
     "hermesApplyModelToAll": "Aplicați {model} fiecărui rol",
-    "hermesViaOmniRoute": "{provider} (prin OmniRoute)",
-    "hermesNotOmniRoute": "{provider} (nu prin OmniRoute)",
+    "hermesViaAgentProxy": "{provider} (prin OmniRoute)",
+    "hermesNotAgentProxy": "{provider} (nu prin OmniRoute)",
     "hermesRemovePendingRole": "Eliminați acest rol din modificările în așteptare",
     "hermesApply": "Aplicați pentru Hermes Agent",
     "hermesRolesWillUpdate": "{count, plural, one {# rol va fi actualizat} few {# roluri vor fi actualizate} other {# de roluri vor fi actualizate}}",
@@ -4142,7 +4142,7 @@
     "vscodeAliasModelsLabel": "Modele VS Code",
     "vscodeAliasChatLabel": "Chat VS Code",
     "localServer": "Server local",
-    "cloudOmniroute": "OmniRoute în cloud",
+    "cloudAgentProxy": "OmniRoute în cloud",
     "copyUrl": "Copiați adresa URL",
     "badgeLoopbackTooltip": "Acest endpoint este accesibil doar local (doar loopback)",
     "badgeAlwaysProtectedTooltip": "Acest endpoint este întotdeauna protejat și necesită autorizare",
@@ -9979,7 +9979,7 @@
     "howItWorksStep3Description": "Solicitarea este îndeplinită instantaneu de OpenAI, Anthropic, Gemini sau altele.",
     "getStartedIn30Seconds": "Începeți în 30 de secunde",
     "getStartedDescription": "Instalați OmniRoute, configurați-vă furnizorii prin intermediul tabloului de bord web și începeți să direcționați cererile AI.",
-    "installOmniRoute": "Instalați OmniRoute",
+    "installAgentProxy": "Instalați OmniRoute",
     "installStepDescription": "Rulați comanda npx pentru a porni serverul instantaneu",
     "openDashboard": "Deschideți tabloul de bord",
     "openDashboardStepDescription": "Configurați furnizorii și cheile API prin interfața web",
@@ -9988,7 +9988,7 @@
     "terminal": "terminal",
     "copy": "Copiere",
     "copied": "✓ Copiat",
-    "startingOmniRoute": "Se pornește OmniRoute...",
+    "startingAgentProxy": "Se pornește OmniRoute...",
     "serverRunningOnLabel": "Serverul rulează",
     "dashboardLabel": "Tabloul de bord",
     "readyToRoute": "Gata de traseu! ✓",
@@ -10382,7 +10382,7 @@
     "versionCommandPlaceholder": "Version Command Placeholder",
     "architectureTitle": "Architecture Title",
     "flowLocalBinary": "Flow Local Binary",
-    "flowOmniRoute": "Flow Omni Route",
+    "flowAgentProxy": "Flow Omni Route",
     "agentNamePlaceholder": "Agent Name Placeholder",
     "architectureDescription": "Architecture Description",
     "flowExecute": "Flow Execute",
@@ -10399,8 +10399,8 @@
     "agentUseCaseHint": "Poate fi folosit ca țintă de execuție prin protocolul ACP",
     "flowDiagramClient": "Aplicația client",
     "flowDiagramClientDesc": "SDK, API sau serviciu în amonte",
-    "flowDiagramOmniRoute": "OmniRoute",
-    "flowDiagramOmniRouteDesc": "Primește cererea și selectează ținta",
+    "flowDiagramAgentProxy": "OmniRoute",
+    "flowDiagramAgentProxyDesc": "Primește cererea și selectează ținta",
     "flowDiagramSpawn": "Procesul de apariție",
     "flowDiagramSpawnDesc": "Lansează binarul CLI prin stdio",
     "flowDiagramCli": "Agent CLI",
@@ -12965,16 +12965,16 @@
       "PROXY_AUTO_SELECT_ENABLED": {
         "description": "Când nu este atribuit niciun proxy unei conexiuni, selectează automat primul proxy funcțional din registru. Dezactivat în mod implicit, deoarece altfel un proxy din registru devine o soluție de rezervă globală pentru tot traficul (#3332)."
       },
-      "OMNIROUTE_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
+      "AGENTPROXY_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
         "description": "Permite fluxurilor OAuth și de validare a furnizorilor să ocolească un proxy fixat atunci când verificările de accesibilitate a proxy-ului eșuează. Dezactivat în mod implicit, deoarece acest lucru poate schimba adresa IP de ieșire a contului."
       },
       "MITM_DISABLE_TLS_VERIFY": {
         "description": "Dezactivează verificarea certificatului TLS pentru proxy-ul MITM."
       },
-      "OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS": {
         "description": "Permite URL-urile de furnizor care indică spre rețele private sau interne."
       },
-      "OMNIROUTE_ALLOW_LOCAL_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_LOCAL_PROVIDER_URLS": {
         "description": "Permite furnizori pe localhost, LAN și intervale de IP-uri private. Acest lucru este necesar pentru modelele locale compatibile cu OpenAI și este activat în mod implicit. Punctele finale de metadate cloud, cum ar fi 169.254.169.254, rămân blocate."
       },
       "ENABLE_CC_COMPATIBLE_PROVIDER": {
@@ -12996,28 +12996,28 @@
       "RESPONSES_PASSTHROUGH_DROP_COMMENTARY": {
         "description": "Elimină elementele de ieșire din faza de comentarii interne din fluxurile passthrough ale Responses API înainte de a le redirecționa către clienți. Dezactivează acest flag pentru a primi comentariile brute din amonte."
       },
-      "OMNIROUTE_MCP_ENFORCE_SCOPES": {
+      "AGENTPROXY_MCP_ENFORCE_SCOPES": {
         "description": "Impune restricții de domeniu pentru accesul la instrumentele MCP."
       },
-      "OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS": {
+      "AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS": {
         "description": "Comprimă descrierile instrumentelor MCP pentru a reduce utilizarea de tokenuri."
       },
-      "OMNIROUTE_ENABLE_RUNTIME_BACKGROUND_TASKS": {
+      "AGENTPROXY_ENABLE_RUNTIME_BACKGROUND_TASKS": {
         "description": "Activează procesarea sarcinilor de fundal la runtime."
       },
-      "OMNIROUTE_DISABLE_BACKGROUND_SERVICES": {
+      "AGENTPROXY_DISABLE_BACKGROUND_SERVICES": {
         "description": "Dezactivează toate serviciile de fundal, inclusiv reîmprospătarea cotelor și sincronizarea."
       },
-      "OMNIROUTE_RTK_TRUST_PROJECT_FILTERS": {
+      "AGENTPROXY_RTK_TRUST_PROJECT_FILTERS": {
         "description": "Acordă încredere filtrelor RTK la nivel de proiect fără validare."
       },
-      "OMNIROUTE_ENABLE_LIVE_WS": {
+      "AGENTPROXY_ENABLE_LIVE_WS": {
         "description": "Pornește serverul WebSocket pentru tabloul de bord în timp real la import pe portul loopback 20132. Setează flagul la 0 sau false pentru a-l dezactiva. Expunerea în LAN necesită, de asemenea, LIVE_WS_HOST=0.0.0.0 și LIVE_WS_ALLOWED_ORIGINS."
       },
-      "OMNIROUTE_CODEX_WS_ENABLED": {
+      "AGENTPROXY_CODEX_WS_ENABLED": {
         "description": "Permite ca Codex să utilizeze Responses prin WebSocket. Când este dezactivat, Codex revine la HTTP Responses."
       },
-      "OMNIROUTE_EMERGENCY_FALLBACK": {
+      "AGENTPROXY_EMERGENCY_FALLBACK": {
         "description": "Redirecționează cererile cu buget epuizat către furnizorul și modelul de rezervă gratuit de urgență."
       },
       "STREAM_RECOVERY_ENABLED": {
@@ -13044,16 +13044,16 @@
       "PRICING_SYNC_ENABLED": {
         "description": "Sincronizează automat datele de preț. Variabila de mediu PRICING_SYNC_ENABLED trebuie să fie, de asemenea, true."
       },
-      "OMNIROUTE_AUTO_SYNC_CODEX_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CODEX_PROFILES": {
         "description": "După sincronizarea furnizor-model, regenerează profilurile ~/.codex/*.config.toml din catalogul live. Acest lucru nu modifică niciodată configurația Codex activă sau implicită și este dezactivat în mod implicit."
       },
-      "OMNIROUTE_AUTO_SYNC_CLAUDE_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CLAUDE_PROFILES": {
         "description": "După sincronizarea furnizor-model, regenerează profilurile ~/.claude/profiles/'<name>'/settings.json din catalogul live. Acest lucru nu modifică niciodată configurația Claude activă sau implicită și este dezactivat în mod implicit."
       },
-      "OMNIROUTE_DISABLE_LOCAL_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_LOCAL_HEALTHCHECK": {
         "description": "Dezactivează endpoint-ul de health-check al instanței locale."
       },
-      "OMNIROUTE_DISABLE_TOKEN_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_TOKEN_HEALTHCHECK": {
         "description": "Dezactivează verificarea de health-check pentru validarea tokenurilor."
       },
       "SKILLS_SANDBOX_NETWORK_ENABLED": {
@@ -14190,5 +14190,5 @@
     "partnerLinkNote": "Link de partener",
     "dismissAriaLabel": "Închideți"
   },
-  "featureFlagOmnirouteDisableThinkingLevelVariantsDescription": "Dezactivați generarea variantelor de nivel de gândire (de ex. -low, -medium, -high) în catalogul /v1/models."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Dezactivați generarea variantelor de nivel de gândire (de ex. -low, -medium, -high) în catalogul /v1/models."
 }

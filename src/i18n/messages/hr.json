@@ -986,7 +986,7 @@
     "batchFileDownloadFull": "Preuzmi cijelu datoteku"
   },
   "disabled": "Onemogućeno",
-  "featureFlagOmnirouteEmergencyFallbackDescription": "Preusmjeri zahtjeve s iscrpljenim budžetom na besplatnog pružatelja/model za hitne slučajeve.",
+  "featureFlagAgentProxyEmergencyFallbackDescription": "Preusmjeri zahtjeve s iscrpljenim budžetom na besplatnog pružatelja/model za hitne slučajeve.",
   "featureFlagArenaEloSyncEnabledDescription": "Omogući periodičnu sinkronizaciju ELO ljestvice Arena AI za rangiranje inteligencije modela.",
   "featureFlagUniversalContextHandoffEnabledDescription": "Generiraj i umetni sažetke razgovora kada kombinirano usmjeravanje promijeni model. Onemogući kako bi se promjene modela tretirale neovisno i spriječili pozadinski zahtjevi za prijenos konteksta za sve postojeće i buduće kombinacije.",
   "featureFlagExposeCcDiscoveryAliasesDescription": "Oglašavaj claude/&lt;provider&gt;/&lt;model&gt; zrcalne identifikatore na /v1/models kako bi otkrivanje modela Claude Code gatewaya prikazivalo modele koji nisu Claude. Upozorenje: udvostručuje unose kataloga za sve klijente kada je globalno omogućeno.",
@@ -2274,7 +2274,7 @@
     "requestFlowAria": "Vaša aplikacija šalje zahtjeve putem API ključa u OmniRoute",
     "requestFlowYourApp": "Vaša aplikacija",
     "requestFlowApiKey": "API ključ",
-    "requestFlowOmniRoute": "OmniRoute",
+    "requestFlowAgentProxy": "OmniRoute",
     "totalKeys": "Ukupno ključeva",
     "restricted": "Ograničeno",
     "totalRequests": "Ukupno zahtjeva",
@@ -2781,7 +2781,7 @@
     "configurationSaved": "Konfiguracija uspješno spremljena.",
     "failedToSave": "Spremanje konfiguracije nije uspjelo.",
     "noApiKeysCreateOne": "Nema API ključeva – izradite jedan na stranici Ključevi",
-    "defaultOmnirouteKey": "sk_omniroute (zadano)",
+    "defaultAgentProxyKey": "sk_omniroute (zadano)",
     "selectModel": "Odaberi model",
     "selectModelForAlias": "Odaberi model za {alias}",
     "selectModelForTool": "Odaberi model za {tool}",
@@ -2878,13 +2878,13 @@
     "applied": "Primijenjeno!",
     "failed": "Neuspješno",
     "resetDone": "Resetirano!",
-    "omnirouteConfiguredOpenAiCompatible": "OmniRoute je konfiguriran kao davatelj kompatibilan s OpenAI-jem",
+    "agentproxyConfiguredOpenAiCompatible": "OmniRoute je konfiguriran kao davatelj kompatibilan s OpenAI-jem",
     "provider": "Davatelj",
     "model": "Model",
     "providers": "Davatelji",
     "auth": "Autentikacija",
     "noApiKeysAvailable": "Nema dostupnih API ključeva",
-    "usingDefaultOmniroute": "Koristi se zadano: sk_omniroute",
+    "usingDefaultAgentProxy": "Koristi se zadano: sk_omniroute",
     "updateConfig": "Ažuriraj konfiguraciju",
     "applyConfig": "Primijeni konfiguraciju",
     "noBackupsAvailable": "Nema dostupnih sigurnosnih kopija.",
@@ -3165,8 +3165,8 @@
     "hermesConfiguredRoles": "{configured}/{total} uloga",
     "hermesQuickApply": "Brzo primijeni isti model na sve uloge:",
     "hermesApplyModelToAll": "Primijeni {model} na svaku ulogu",
-    "hermesViaOmniRoute": "{provider} (putem usluge OmniRoute)",
-    "hermesNotOmniRoute": "{provider} (nije OmniRoute)",
+    "hermesViaAgentProxy": "{provider} (putem usluge OmniRoute)",
+    "hermesNotAgentProxy": "{provider} (nije OmniRoute)",
     "hermesRemovePendingRole": "Ukloni ovu ulogu iz promjena na čekanju",
     "hermesApply": "Primijeni na Hermes Agent",
     "hermesRolesWillUpdate": "{count, plural, one {# uloga će biti ažurirana} other {# uloga će biti ažurirano}}",
@@ -4162,7 +4162,7 @@
     "vscodeAliasModelsLabel": "VS Code modeli",
     "vscodeAliasChatLabel": "Razgovor u VS Codeu",
     "localServer": "Lokalni poslužitelj",
-    "cloudOmniroute": "OmniRoute u oblaku",
+    "cloudAgentProxy": "OmniRoute u oblaku",
     "copyUrl": "Kopiraj URL",
     "badgeLoopbackTooltip": "Ovom endpointu se može pristupiti samo lokalno (samo povratna petlja)",
     "badgeAlwaysProtectedTooltip": "Ovaj endpoint je uvijek zaštićen i zahtijeva autorizaciju",
@@ -9999,7 +9999,7 @@
     "howItWorksStep3Description": "Zahtjev trenutačno obrađuje OpenAI, Anthropic, Gemini ili neki drugi pružatelj.",
     "getStartedIn30Seconds": "Počnite za 30 sekundi",
     "getStartedDescription": "Instalirajte OmniRoute, konfigurirajte svoje pružatelje putem web-nadzorne ploče i počnite usmjeravati AI zahtjeve.",
-    "installOmniRoute": "Instalirajte OmniRoute",
+    "installAgentProxy": "Instalirajte OmniRoute",
     "installStepDescription": "Pokrenite npx naredbu za trenutačno pokretanje poslužitelja",
     "openDashboard": "Otvorite nadzornu ploču",
     "openDashboardStepDescription": "Konfigurirajte pružatelje i API ključeve putem web-sučelja",
@@ -10008,7 +10008,7 @@
     "terminal": "terminal",
     "copy": "Kopiraj",
     "copied": "✓ Kopirano",
-    "startingOmniRoute": "OmniRoute se pokreće...",
+    "startingAgentProxy": "OmniRoute se pokreće...",
     "serverRunningOnLabel": "Poslužitelj je pokrenut na",
     "dashboardLabel": "Nadzorna ploča",
     "readyToRoute": "Spremno za usmjeravanje! ✓",
@@ -10402,7 +10402,7 @@
     "versionCommandPlaceholder": "npr. my-agent --version",
     "architectureTitle": "Kako funkcioniraju ciljevi agenata",
     "flowLocalBinary": "3 · CLI proces s vlastitom autentifikacijom",
-    "flowOmniRoute": "1 · Zahtjev stiže u OmniRoute",
+    "flowAgentProxy": "1 · Zahtjev stiže u OmniRoute",
     "agentNamePlaceholder": "npr. Moj prilagođeni agent",
     "architectureDescription": "Kada zahtjev stigne, OmniRoute može pokrenuti lokalni CLI binarni program (npr. claude, codex, goose) i proslijediti zahtjev kroz njega. CLI obrađuje zahtjev koristeći vlastite vjerodajnice i vraća rezultat natrag kroz OmniRoute.",
     "flowExecute": "4 · Odgovor vraćen klijentu",
@@ -10419,8 +10419,8 @@
     "agentUseCaseHint": "Može se koristiti kao cilj izvršavanja putem ACP protokola",
     "flowDiagramClient": "Klijentska aplikacija",
     "flowDiagramClientDesc": "SDK, API ili uzvodni servis",
-    "flowDiagramOmniRoute": "OmniRoute",
-    "flowDiagramOmniRouteDesc": "Prima zahtjev i odabire cilj",
+    "flowDiagramAgentProxy": "OmniRoute",
+    "flowDiagramAgentProxyDesc": "Prima zahtjev i odabire cilj",
     "flowDiagramSpawn": "Pokretanje procesa",
     "flowDiagramSpawnDesc": "Pokreće CLI binarni program putem stdio",
     "flowDiagramCli": "CLI agent",
@@ -12985,16 +12985,16 @@
       "PROXY_AUTO_SELECT_ENABLED": {
         "description": "Kada nijedan proxy nije dodijeljen vezi, automatski odaberi prvi funkcionalni proxy iz registra. Prema zadanim postavkama ta je opcija isključena jer bi inače jedan proxy iz registra postao globalna pričuvna opcija za sav promet (#3332)."
       },
-      "OMNIROUTE_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
+      "AGENTPROXY_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
         "description": "Dopusti OAuth tokovima i tokovima provjere davatelja usluge da zaobiđu fiksirani proxy kada provjere dostupnosti proxyja ne uspiju. Prema zadanim postavkama ta je opcija isključena jer može promijeniti izlaznu IP adresu računa."
       },
       "MITM_DISABLE_TLS_VERIFY": {
         "description": "Onemogući provjeru TLS certifikata za MITM proxy."
       },
-      "OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS": {
         "description": "Dopusti URL-ove davatelja usluge koji upućuju na privatne ili interne mreže."
       },
-      "OMNIROUTE_ALLOW_LOCAL_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_LOCAL_PROVIDER_URLS": {
         "description": "Dopusti davatelje usluge na localhostu, LAN-u i privatnim IP rasponima. To je potrebno za lokalne modele kompatibilne s OpenAI i omogućeno je prema zadanim postavkama. Krajnje točke metapodataka u oblaku, poput 169.254.169.254, ostaju blokirane."
       },
       "ENABLE_CC_COMPATIBLE_PROVIDER": {
@@ -13016,28 +13016,28 @@
       "RESPONSES_PASSTHROUGH_DROP_COMMENTARY": {
         "description": "Ukloni interne izlazne stavke faze komentara iz prolaznih tokova Responses API-ja prije prosljeđivanja klijentima. Onemogući ovu zastavicu za primanje neobrađenih komentara izvornog poslužitelja."
       },
-      "OMNIROUTE_MCP_ENFORCE_SCOPES": {
+      "AGENTPROXY_MCP_ENFORCE_SCOPES": {
         "description": "Provedi ograničenja opsega za pristup MCP alatima."
       },
-      "OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS": {
+      "AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS": {
         "description": "Komprimiraj opise MCP alata kako bi se smanjila potrošnja tokena."
       },
-      "OMNIROUTE_ENABLE_RUNTIME_BACKGROUND_TASKS": {
+      "AGENTPROXY_ENABLE_RUNTIME_BACKGROUND_TASKS": {
         "description": "Omogući obradu zadataka u pozadini za vrijeme izvođenja."
       },
-      "OMNIROUTE_DISABLE_BACKGROUND_SERVICES": {
+      "AGENTPROXY_DISABLE_BACKGROUND_SERVICES": {
         "description": "Onemogući sve pozadinske usluge, uključujući osvježavanje kvote i sinkronizaciju."
       },
-      "OMNIROUTE_RTK_TRUST_PROJECT_FILTERS": {
+      "AGENTPROXY_RTK_TRUST_PROJECT_FILTERS": {
         "description": "Pouzdaj se u RTK filtre na razini projekta bez provjere valjanosti."
       },
-      "OMNIROUTE_ENABLE_LIVE_WS": {
+      "AGENTPROXY_ENABLE_LIVE_WS": {
         "description": "Pokreni WebSocket poslužitelj nadzorne ploče u stvarnom vremenu pri uvozu na portu povratne petlje 20132. Postavi zastavicu na 0 ili false kako bi ga onemogućio. Izlaganje LAN-u također zahtijeva LIVE_WS_HOST=0.0.0.0 i LIVE_WS_ALLOWED_ORIGINS."
       },
-      "OMNIROUTE_CODEX_WS_ENABLED": {
+      "AGENTPROXY_CODEX_WS_ENABLED": {
         "description": "Dopusti Codexu korištenje Responses putem WebSocketa. Kada je to onemogućeno, Codex se vraća na HTTP Responses."
       },
-      "OMNIROUTE_EMERGENCY_FALLBACK": {
+      "AGENTPROXY_EMERGENCY_FALLBACK": {
         "description": "Preusmjeri zahtjeve s iscrpljenim budžetom na hitnog besplatnog rezervnog davatelja usluge i model."
       },
       "STREAM_RECOVERY_ENABLED": {
@@ -13064,16 +13064,16 @@
       "PRICING_SYNC_ENABLED": {
         "description": "Automatski sinkroniziraj podatke o cijenama. Varijabla okoline PRICING_SYNC_ENABLED također mora biti postavljena na true."
       },
-      "OMNIROUTE_AUTO_SYNC_CODEX_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CODEX_PROFILES": {
         "description": "Nakon sinkronizacije davatelja usluga i modela, regeneriraj profile ~/.codex/*.config.toml iz aktualnog kataloga. Ovo nikada ne mijenja aktivnu ni zadanu Codex konfiguraciju i prema zadanim je postavkama isključeno."
       },
-      "OMNIROUTE_AUTO_SYNC_CLAUDE_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CLAUDE_PROFILES": {
         "description": "Nakon sinkronizacije davatelja usluga i modela, regeneriraj profile ~/.claude/profiles/'<name>'/settings.json iz aktualnog kataloga. Ovo nikada ne mijenja aktivnu ni zadanu Claude konfiguraciju i prema zadanim je postavkama isključeno."
       },
-      "OMNIROUTE_DISABLE_LOCAL_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_LOCAL_HEALTHCHECK": {
         "description": "Onemogući lokalnu krajnju točku za provjeru stanja instance."
       },
-      "OMNIROUTE_DISABLE_TOKEN_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_TOKEN_HEALTHCHECK": {
         "description": "Onemogući provjeru stanja valjanosti tokena."
       },
       "SKILLS_SANDBOX_NETWORK_ENABLED": {
@@ -14210,5 +14210,5 @@
     "partnerLinkNote": "Partnerska poveznica",
     "dismissAriaLabel": "Odbaci"
   },
-  "featureFlagOmnirouteDisableThinkingLevelVariantsDescription": "Onemogući generiranje varijanti razine razmišljanja (npr. -low, -medium, -high) u katalogu /v1/models."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Onemogući generiranje varijanti razine razmišljanja (npr. -low, -medium, -high) u katalogu /v1/models."
 }

@@ -986,7 +986,7 @@
     "batchFileDownloadFull": "പൂർണ്ണ ഫയൽ ഡൗൺലോഡ് ചെയ്യുക"
   },
   "disabled": "പ്രവർത്തനരഹിതമാക്കി",
-  "featureFlagOmnirouteEmergencyFallbackDescription": "ബജറ്റ് തീർന്ന അഭ്യർത്ഥനകൾ അടിയന്തര സൗജന്യ ഫാൾബാക്ക് പ്രൊവൈഡർ/മോഡലിലേക്ക് റൂട്ട് ചെയ്യുക.",
+  "featureFlagAgentProxyEmergencyFallbackDescription": "ബജറ്റ് തീർന്ന അഭ്യർത്ഥനകൾ അടിയന്തര സൗജന്യ ഫാൾബാക്ക് പ്രൊവൈഡർ/മോഡലിലേക്ക് റൂട്ട് ചെയ്യുക.",
   "featureFlagArenaEloSyncEnabledDescription": "മോഡൽ ഇന്റലിജൻസ് റാങ്കിങ്ങുകൾക്കായി Arena AI ലീഡർബോർഡ് ELO ആനുകാലികമായി സമന്വയിപ്പിക്കുന്നത് പ്രവർത്തനക്ഷമമാക്കുക.",
   "featureFlagUniversalContextHandoffEnabledDescription": "കോംബോ റൂട്ടിങ് മോഡലുകൾ മാറുമ്പോൾ സംഭാഷണ സംഗ്രഹങ്ങൾ സൃഷ്ടിച്ച് ഉൾപ്പെടുത്തുക. മോഡൽ മാറ്റങ്ങളെ സ്വതന്ത്രമായി പരിഗണിക്കാനും നിലവിലുള്ളതും ഭാവിയിലുള്ളതുമായ എല്ലാ കോംബോകൾക്കുമുള്ള പശ്ചാത്തല കൈമാറ്റ അഭ്യർത്ഥനകൾ തടയാനും ഇത് പ്രവർത്തനരഹിതമാക്കുക.",
   "featureFlagExposeCcDiscoveryAliasesDescription": "Claude Code ഗേറ്റ്വേ മോഡൽ കണ്ടെത്തലിൽ Claude ഇതര മോഡലുകൾ പട്ടികപ്പെടുത്തുന്നതിനായി /v1/models-ൽ claude/&lt;provider&gt;/&lt;model&gt; മിറർ ഐഡികൾ പ്രസിദ്ധപ്പെടുത്തുക. മുന്നറിയിപ്പ്: ആഗോളതലത്തിൽ പ്രവർത്തനക്ഷമമാക്കുമ്പോൾ എല്ലാ ക്ലയന്റുകൾക്കുമുള്ള കാറ്റലോഗ് എൻട്രികളുടെ എണ്ണം ഇരട്ടിയാകും.",
@@ -2254,7 +2254,7 @@
     "requestFlowAria": "നിങ്ങളുടെ ആപ്പ് ഒരു API കീ വഴി OmniRoute-ലേക്ക് അഭ്യർത്ഥനകൾ അയയ്ക്കുന്നു",
     "requestFlowYourApp": "നിങ്ങളുടെ ആപ്പ്",
     "requestFlowApiKey": "API കീ",
-    "requestFlowOmniRoute": "OmniRoute",
+    "requestFlowAgentProxy": "OmniRoute",
     "totalKeys": "ആകെ കീകൾ",
     "restricted": "നിയന്ത്രിതം",
     "totalRequests": "ആകെ അഭ്യർത്ഥനകൾ",
@@ -2761,7 +2761,7 @@
     "configurationSaved": "കോൺഫിഗറേഷൻ വിജയകരമായി സംരക്ഷിച്ചു.",
     "failedToSave": "കോൺഫിഗറേഷൻ സംരക്ഷിക്കുന്നതിൽ പരാജയപ്പെട്ടു.",
     "noApiKeysCreateOne": "API കീകളൊന്നുമില്ല - Keys പേജിൽ ഒന്ന് സൃഷ്ടിക്കുക",
-    "defaultOmnirouteKey": "sk_omniroute (ഡിഫോൾട്ട്)",
+    "defaultAgentProxyKey": "sk_omniroute (ഡിഫോൾട്ട്)",
     "selectModel": "മോഡൽ തിരഞ്ഞെടുക്കുക",
     "selectModelForAlias": "{alias}-നുള്ള മോഡൽ തിരഞ്ഞെടുക്കുക",
     "selectModelForTool": "{tool}-നുള്ള മോഡൽ തിരഞ്ഞെടുക്കുക",
@@ -2858,13 +2858,13 @@
     "applied": "പ്രയോഗിച്ചു!",
     "failed": "പരാജയപ്പെട്ടു",
     "resetDone": "പുനഃസജ്ജമാക്കി!",
-    "omnirouteConfiguredOpenAiCompatible": "OmniRoute ഒരു OpenAI-അനുയോജ്യ പ്രൊവൈഡറായി കോൺഫിഗർ ചെയ്തിരിക്കുന്നു",
+    "agentproxyConfiguredOpenAiCompatible": "OmniRoute ഒരു OpenAI-അനുയോജ്യ പ്രൊവൈഡറായി കോൺഫിഗർ ചെയ്തിരിക്കുന്നു",
     "provider": "പ്രൊവൈഡർ",
     "model": "മോഡൽ",
     "providers": "പ്രൊവൈഡറുകൾ",
     "auth": "പ്രാമാണീകരണം",
     "noApiKeysAvailable": "API കീകളൊന്നും ലഭ്യമല്ല",
-    "usingDefaultOmniroute": "ഡിഫോൾട്ട് ഉപയോഗിക്കുന്നു: sk_omniroute",
+    "usingDefaultAgentProxy": "ഡിഫോൾട്ട് ഉപയോഗിക്കുന്നു: sk_omniroute",
     "updateConfig": "കോൺഫിഗറേഷൻ അപ്ഡേറ്റ് ചെയ്യുക",
     "applyConfig": "കോൺഫിഗറേഷൻ പ്രയോഗിക്കുക",
     "noBackupsAvailable": "ബാക്കപ്പുകളൊന്നും ലഭ്യമല്ല.",
@@ -3145,8 +3145,8 @@
     "hermesConfiguredRoles": "{configured}/{total} റോളുകൾ",
     "hermesQuickApply": "എല്ലാ റോളുകൾക്കും ഒരേ മോഡൽ വേഗത്തിൽ പ്രയോഗിക്കുക:",
     "hermesApplyModelToAll": "എല്ലാ റോളുകൾക്കും {model} പ്രയോഗിക്കുക",
-    "hermesViaOmniRoute": "{provider} (OmniRoute വഴി)",
-    "hermesNotOmniRoute": "{provider} (OmniRoute വഴിയല്ല)",
+    "hermesViaAgentProxy": "{provider} (OmniRoute വഴി)",
+    "hermesNotAgentProxy": "{provider} (OmniRoute വഴിയല്ല)",
     "hermesRemovePendingRole": "തീർപ്പാക്കാത്ത മാറ്റങ്ങളിൽ നിന്ന് ഈ റോൾ നീക്കം ചെയ്യുക",
     "hermesApply": "Hermes Agent-ന് പ്രയോഗിക്കുക",
     "hermesRolesWillUpdate": "{count, plural, one {# റോൾ അപ്ഡേറ്റ് ചെയ്യപ്പെടും} other {# റോളുകൾ അപ്ഡേറ്റ് ചെയ്യപ്പെടും}}",
@@ -4125,7 +4125,7 @@
     "vscodeAliasModelsLabel": "VS Code മോഡലുകൾ",
     "vscodeAliasChatLabel": "VS Code ചാറ്റ്",
     "localServer": "ലോക്കൽ സെർവർ",
-    "cloudOmniroute": "ക്ലൗഡ് OmniRoute",
+    "cloudAgentProxy": "ക്ലൗഡ് OmniRoute",
     "copyUrl": "URL പകർത്തുക",
     "badgeLoopbackTooltip": "ഈ എൻഡ്പോയിന്റ് ലോക്കലായി മാത്രമേ ആക്സസ് ചെയ്യാനാകൂ (ലൂപ്പ്ബാക്ക് മാത്രം)",
     "badgeAlwaysProtectedTooltip": "ഈ എൻഡ്പോയിന്റ് എല്ലായ്പ്പോഴും പരിരക്ഷിതമാണ്, കൂടാതെ അംഗീകാരം ആവശ്യമാണ്",
@@ -9962,7 +9962,7 @@
     "howItWorksStep3Description": "അഭ്യർത്ഥന OpenAI, Anthropic, Gemini അല്ലെങ്കിൽ മറ്റുള്ളവ വഴി തൽക്ഷണം പൂർത്തീകരിക്കപ്പെടുന്നു.",
     "getStartedIn30Seconds": "30 സെക്കൻഡിനുള്ളിൽ ആരംഭിക്കുക",
     "getStartedDescription": "OmniRoute ഇൻസ്റ്റാൾ ചെയ്യുക, വെബ് ഡാഷ്ബോർഡ് വഴി നിങ്ങളുടെ ദാതാക്കളെ കോൺഫിഗർ ചെയ്യുക, തുടർന്ന് AI അഭ്യർത്ഥനകൾ റൂട്ട് ചെയ്യാൻ ആരംഭിക്കുക.",
-    "installOmniRoute": "OmniRoute ഇൻസ്റ്റാൾ ചെയ്യുക",
+    "installAgentProxy": "OmniRoute ഇൻസ്റ്റാൾ ചെയ്യുക",
     "installStepDescription": "സെർവർ തൽക്ഷണം ആരംഭിക്കാൻ npx കമാൻഡ് പ്രവർത്തിപ്പിക്കുക",
     "openDashboard": "ഡാഷ്ബോർഡ് തുറക്കുക",
     "openDashboardStepDescription": "വെബ് ഇന്റർഫേസ് വഴി പ്രൊവൈഡറുകളും API കീകളും കോൺഫിഗർ ചെയ്യുക",
@@ -9971,7 +9971,7 @@
     "terminal": "ടെർമിനൽ",
     "copy": "പകർത്തുക",
     "copied": "✓ പകർത്തി",
-    "startingOmniRoute": "OmniRoute ആരംഭിക്കുന്നു...",
+    "startingAgentProxy": "OmniRoute ആരംഭിക്കുന്നു...",
     "serverRunningOnLabel": "സെർവർ പ്രവർത്തിക്കുന്ന വിലാസം",
     "dashboardLabel": "ഡാഷ്ബോർഡ്",
     "readyToRoute": "റൂട്ട് ചെയ്യാൻ തയ്യാറാണ്! ✓",
@@ -10365,7 +10365,7 @@
     "versionCommandPlaceholder": "ഉദാ., my-agent --version",
     "architectureTitle": "ഏജന്റ് ലക്ഷ്യങ്ങൾ എങ്ങനെ പ്രവർത്തിക്കുന്നു",
     "flowLocalBinary": "3 · സ്വന്തം പ്രാമാണീകരണമുള്ള CLI പ്രോസസ്",
-    "flowOmniRoute": "1 · അഭ്യർത്ഥന OmniRoute-ൽ എത്തുന്നു",
+    "flowAgentProxy": "1 · അഭ്യർത്ഥന OmniRoute-ൽ എത്തുന്നു",
     "agentNamePlaceholder": "ഉദാ., എന്റെ ഇഷ്ടാനുസൃത ഏജന്റ്",
     "architectureDescription": "ഒരു അഭ്യർത്ഥന എത്തുമ്പോൾ, OmniRoute-ന് ഒരു ലോക്കൽ CLI ബൈനറി (ഉദാ., claude, codex, goose) ആരംഭിച്ച് അതിലൂടെ അഭ്യർത്ഥന കൈമാറാനാകും. CLI സ്വന്തം ക്രെഡൻഷ്യലുകൾ ഉപയോഗിച്ച് അഭ്യർത്ഥന പ്രോസസ് ചെയ്യുകയും ഫലം OmniRoute വഴി തിരികെ നൽകുകയും ചെയ്യുന്നു.",
     "flowExecute": "4 · പ്രതികരണം ക്ലയന്റിന് തിരികെ നൽകുന്നു",
@@ -10382,8 +10382,8 @@
     "agentUseCaseHint": "ACP പ്രോട്ടോക്കോൾ വഴി ഒരു എക്സിക്യൂഷൻ ലക്ഷ്യമായി ഉപയോഗിക്കാം",
     "flowDiagramClient": "ക്ലയന്റ് ആപ്പ്",
     "flowDiagramClientDesc": "SDK, API, അല്ലെങ്കിൽ അപ്സ്ട്രീം സേവനം",
-    "flowDiagramOmniRoute": "OmniRoute",
-    "flowDiagramOmniRouteDesc": "അഭ്യർത്ഥന സ്വീകരിച്ച് ലക്ഷ്യം തിരഞ്ഞെടുക്കുന്നു",
+    "flowDiagramAgentProxy": "OmniRoute",
+    "flowDiagramAgentProxyDesc": "അഭ്യർത്ഥന സ്വീകരിച്ച് ലക്ഷ്യം തിരഞ്ഞെടുക്കുന്നു",
     "flowDiagramSpawn": "പ്രോസസ്സ് ആരംഭിക്കുക",
     "flowDiagramSpawnDesc": "stdio വഴി CLI ബൈനറി പ്രവർത്തിപ്പിക്കുന്നു",
     "flowDiagramCli": "CLI ഏജന്റ്",
@@ -12938,16 +12938,16 @@
       "PROXY_AUTO_SELECT_ENABLED": {
         "description": "ഒരു കണക്ഷന് പ്രോക്സി നിയോഗിച്ചിട്ടില്ലെങ്കിൽ, പ്രവർത്തിക്കുന്ന ആദ്യത്തെ രജിസ്ട്രി പ്രോക്സി സ്വയമേവ തിരഞ്ഞെടുക്കുക. അല്ലാത്തപക്ഷം ഒരു രജിസ്ട്രി പ്രോക്സി എല്ലാ ട്രാഫിക്കിനുമുള്ള ആഗോള ഫാൾബാക്കായി മാറുന്നതിനാൽ സ്ഥിരസ്ഥിതിയായി ഓഫാണ് (#3332)."
       },
-      "OMNIROUTE_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
+      "AGENTPROXY_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
         "description": "പ്രോക്സിയുടെ ലഭ്യതാ പരിശോധനകൾ പരാജയപ്പെടുമ്പോൾ, പിൻ ചെയ്ത പ്രോക്സിയെ മറികടക്കാൻ OAuth, പ്രൊവൈഡർ-സാധൂകരണ പ്രവാഹങ്ങളെ അനുവദിക്കുക. ഇത് അക്കൗണ്ടിന്റെ എഗ്രസ് IP മാറ്റാനിടയുള്ളതിനാൽ സ്ഥിരസ്ഥിതിയായി ഓഫാണ്."
       },
       "MITM_DISABLE_TLS_VERIFY": {
         "description": "MITM പ്രോക്സിക്കായുള്ള TLS സർട്ടിഫിക്കറ്റ് പരിശോധന പ്രവർത്തനരഹിതമാക്കുക."
       },
-      "OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS": {
         "description": "സ്വകാര്യ അല്ലെങ്കിൽ ആന്തരിക നെറ്റ്വർക്കുകളിലേക്ക് ചൂണ്ടുന്ന പ്രൊവൈഡർ URL-കൾ അനുവദിക്കുക."
       },
-      "OMNIROUTE_ALLOW_LOCAL_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_LOCAL_PROVIDER_URLS": {
         "description": "localhost, LAN, സ്വകാര്യ IP ശ്രേണികൾ എന്നിവയിലെ പ്രൊവൈഡർമാരെ അനുവദിക്കുക. ലോക്കൽ OpenAI-അനുയോജ്യ മോഡലുകൾക്ക് ഇത് ആവശ്യമാണ്, കൂടാതെ സ്ഥിരസ്ഥിതിയായി പ്രവർത്തനക്ഷമവുമാണ്. 169.254.169.254 പോലുള്ള ക്ലൗഡ്-മെറ്റാഡാറ്റ എൻഡ്പോയിന്റുകൾ തടഞ്ഞ നിലയിൽ തുടരും."
       },
       "ENABLE_CC_COMPATIBLE_PROVIDER": {
@@ -12969,28 +12969,28 @@
       "RESPONSES_PASSTHROUGH_DROP_COMMENTARY": {
         "description": "ക്ലയന്റുകളിലേക്ക് ഫോർവേഡ് ചെയ്യുന്നതിന് മുമ്പ് Responses API പാസ്ത്രൂ സ്ട്രീമുകളിൽനിന്ന് ആന്തരിക കമന്ററി-ഘട്ട ഔട്ട്പുട്ട് ഇനങ്ങൾ നീക്കംചെയ്യുക. അസംസ്കൃത അപ്സ്ട്രീം കമന്ററി ലഭിക്കാൻ ഈ ഫ്ലാഗ് പ്രവർത്തനരഹിതമാക്കുക."
       },
-      "OMNIROUTE_MCP_ENFORCE_SCOPES": {
+      "AGENTPROXY_MCP_ENFORCE_SCOPES": {
         "description": "MCP ടൂൾ ആക്സസിനുള്ള സ്കോപ്പ് നിയന്ത്രണങ്ങൾ നിർബന്ധമാക്കുക."
       },
-      "OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS": {
+      "AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS": {
         "description": "ടോക്കൺ ഉപയോഗം കുറയ്ക്കാൻ MCP ടൂൾ വിവരണങ്ങൾ കംപ്രസ് ചെയ്യുക."
       },
-      "OMNIROUTE_ENABLE_RUNTIME_BACKGROUND_TASKS": {
+      "AGENTPROXY_ENABLE_RUNTIME_BACKGROUND_TASKS": {
         "description": "റൺടൈമിൽ പശ്ചാത്തല ടാസ്ക് പ്രോസസ്സിംഗ് പ്രവർത്തനക്ഷമമാക്കുക."
       },
-      "OMNIROUTE_DISABLE_BACKGROUND_SERVICES": {
+      "AGENTPROXY_DISABLE_BACKGROUND_SERVICES": {
         "description": "ക്വോട്ട പുതുക്കലും സമന്വയവും ഉൾപ്പെടെ എല്ലാ പശ്ചാത്തല സേവനങ്ങളും പ്രവർത്തനരഹിതമാക്കുക."
       },
-      "OMNIROUTE_RTK_TRUST_PROJECT_FILTERS": {
+      "AGENTPROXY_RTK_TRUST_PROJECT_FILTERS": {
         "description": "സാധൂകരണം കൂടാതെ പ്രോജക്റ്റ്-തല RTK ഫിൽട്ടറുകളെ വിശ്വസിക്കുക."
       },
-      "OMNIROUTE_ENABLE_LIVE_WS": {
+      "AGENTPROXY_ENABLE_LIVE_WS": {
         "description": "ഇംപോർട്ട് ചെയ്യുമ്പോൾ ലൂപ്പ്ബാക്ക് പോർട്ട് 20132-ൽ തത്സമയ ഡാഷ്ബോർഡ് WebSocket സെർവർ ആരംഭിക്കുക. ഇത് പ്രവർത്തനരഹിതമാക്കാൻ ഫ്ലാഗ് 0 അല്ലെങ്കിൽ false ആയി സജ്ജമാക്കുക. LAN-ലേക്ക് ലഭ്യമാക്കുന്നതിന് LIVE_WS_HOST=0.0.0.0, LIVE_WS_ALLOWED_ORIGINS എന്നിവയും ആവശ്യമാണ്."
       },
-      "OMNIROUTE_CODEX_WS_ENABLED": {
+      "AGENTPROXY_CODEX_WS_ENABLED": {
         "description": "WebSocket വഴി Responses ഉപയോഗിക്കാൻ Codex-നെ അനുവദിക്കുക. ഇത് പ്രവർത്തനരഹിതമാക്കിയാൽ Codex, HTTP Responses-ലേക്ക് ഫാൾബാക്ക് ചെയ്യും."
       },
-      "OMNIROUTE_EMERGENCY_FALLBACK": {
+      "AGENTPROXY_EMERGENCY_FALLBACK": {
         "description": "ബജറ്റ് തീർന്ന അഭ്യർത്ഥനകളെ അടിയന്തര സൗജന്യ ഫാൾബാക്ക് പ്രൊവൈഡറിലേക്കും മോഡലിലേക്കും റൂട്ട് ചെയ്യുക."
       },
       "STREAM_RECOVERY_ENABLED": {
@@ -13017,16 +13017,16 @@
       "PRICING_SYNC_ENABLED": {
         "description": "വിലനിർണ്ണയ ഡാറ്റ സ്വയമേവ സമന്വയിപ്പിക്കുക. PRICING_SYNC_ENABLED എൻവയോൺമെന്റ് വേരിയബിളും true ആയിരിക്കണം."
       },
-      "OMNIROUTE_AUTO_SYNC_CODEX_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CODEX_PROFILES": {
         "description": "പ്രൊവൈഡർ-മോഡൽ സമന്വയത്തിനുശേഷം, തത്സമയ കാറ്റലോഗിൽനിന്ന് ~/.codex/*.config.toml പ്രൊഫൈലുകൾ പുനഃസൃഷ്ടിക്കുക. ഇത് സജീവമായതോ സ്ഥിരസ്ഥിതിയായതോ ആയ Codex കോൺഫിഗറേഷൻ ഒരിക്കലും മാറ്റില്ല, കൂടാതെ സ്ഥിരസ്ഥിതിയായി ഓഫാണ്."
       },
-      "OMNIROUTE_AUTO_SYNC_CLAUDE_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CLAUDE_PROFILES": {
         "description": "പ്രൊവൈഡർ-മോഡൽ സമന്വയത്തിനുശേഷം, തത്സമയ കാറ്റലോഗിൽനിന്ന് ~/.claude/profiles/'<name>'/settings.json പ്രൊഫൈലുകൾ പുനഃസൃഷ്ടിക്കുക. ഇത് സജീവമായതോ സ്ഥിരസ്ഥിതിയായതോ ആയ Claude കോൺഫിഗറേഷൻ ഒരിക്കലും മാറ്റില്ല, കൂടാതെ സ്ഥിരസ്ഥിതിയായി ഓഫാണ്."
       },
-      "OMNIROUTE_DISABLE_LOCAL_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_LOCAL_HEALTHCHECK": {
         "description": "പ്രാദേശിക ഇൻസ്റ്റൻസ് ഹെൽത്ത്-ചെക്ക് എൻഡ്പോയിന്റ് പ്രവർത്തനരഹിതമാക്കുക."
       },
-      "OMNIROUTE_DISABLE_TOKEN_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_TOKEN_HEALTHCHECK": {
         "description": "ടോക്കൺ സാധൂകരണ ഹെൽത്ത് ചെക്ക് പ്രവർത്തനരഹിതമാക്കുക."
       },
       "SKILLS_SANDBOX_NETWORK_ENABLED": {
@@ -14158,5 +14158,5 @@
     "partnerLinkNote": "പങ്കാളി ലിങ്ക്",
     "dismissAriaLabel": "അടയ്ക്കുക"
   },
-  "featureFlagOmnirouteDisableThinkingLevelVariantsDescription": "/v1/models കാറ്റലോഗിൽ ചിന്താതല വേരിയന്റുകൾ (ഉദാ. -low, -medium, -high) സൃഷ്ടിക്കുന്നത് പ്രവർത്തനരഹിതമാക്കുക."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "/v1/models കാറ്റലോഗിൽ ചിന്താതല വേരിയന്റുകൾ (ഉദാ. -low, -medium, -high) സൃഷ്ടിക്കുന്നത് പ്രവർത്തനരഹിതമാക്കുക."
 }

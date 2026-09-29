@@ -986,7 +986,7 @@
     "batchFileDownloadFull": "ሙሉውን ፋይል አውርድ"
   },
   "disabled": "ተሰናክሏል",
-  "featureFlagOmnirouteEmergencyFallbackDescription": "በጀታቸው ያለቀባቸውን ጥያቄዎች ወደ ድንገተኛው ነፃ ተተኪ አቅራቢ/ሞዴል ያዛውሩ።",
+  "featureFlagAgentProxyEmergencyFallbackDescription": "በጀታቸው ያለቀባቸውን ጥያቄዎች ወደ ድንገተኛው ነፃ ተተኪ አቅራቢ/ሞዴል ያዛውሩ።",
   "featureFlagArenaEloSyncEnabledDescription": "ለሞዴል ብልህነት ደረጃዎች የArena AI የደረጃ ሰንጠረዥ ELO በየጊዜው እንዲመሳሰል ያንቁ።",
   "featureFlagUniversalContextHandoffEnabledDescription": "የጥምር ማዘዋወሪያ ሞዴሎችን ሲቀይር የውይይት ማጠቃለያዎችን ያመንጩ እና ያስገቡ። የሞዴል ለውጦችን በተናጥል ለመያዝ እና ለሁሉም ነባርና ወደፊት ለሚፈጠሩ ጥምረቶች የጀርባ ርክክብ ጥያቄዎችን ለመከልከል ያሰናክሉት።",
   "featureFlagExposeCcDiscoveryAliasesDescription": "የClaude Code ጌትዌይ ሞዴል ፍለጋ Claude ያልሆኑ ሞዴሎችን እንዲዘረዝር፣ የclaude/&lt;provider&gt;/&lt;model&gt; መስታወት መለያዎችን በ/v1/models ላይ ያስተዋውቁ። ማስጠንቀቂያ፦ በዓለም አቀፍ ደረጃ ሲነቃ ለሁሉም ደንበኞች የካታሎግ ግቤቶችን በእጥፍ ያደርጋል።",
@@ -2254,7 +2254,7 @@
     "requestFlowAria": "መተግበሪያዎ በAPI ቁልፍ በኩል ወደ OmniRoute ጥያቄዎችን ይልካል",
     "requestFlowYourApp": "መተግበሪያዎ",
     "requestFlowApiKey": "API ቁልፍ",
-    "requestFlowOmniRoute": "OmniRoute",
+    "requestFlowAgentProxy": "OmniRoute",
     "totalKeys": "ጠቅላላ ቁልፎች",
     "restricted": "የተገደቡ",
     "totalRequests": "ጠቅላላ ጥያቄዎች",
@@ -2761,7 +2761,7 @@
     "configurationSaved": "ውቅሩ በተሳካ ሁኔታ ተቀምጧል።",
     "failedToSave": "ውቅሩን ማስቀመጥ አልተሳካም።",
     "noApiKeysCreateOne": "ምንም API ቁልፎች የሉም - በቁልፎች ገጽ ላይ አንድ ይፍጠሩ",
-    "defaultOmnirouteKey": "sk_omniroute (ነባሪ)",
+    "defaultAgentProxyKey": "sk_omniroute (ነባሪ)",
     "selectModel": "ሞዴል ይምረጡ",
     "selectModelForAlias": "ለ{alias} ሞዴል ይምረጡ",
     "selectModelForTool": "ለ{tool} ሞዴል ይምረጡ",
@@ -2858,13 +2858,13 @@
     "applied": "ተተግብሯል!",
     "failed": "አልተሳካም",
     "resetDone": "ዳግም ተቀናብሯል!",
-    "omnirouteConfiguredOpenAiCompatible": "OmniRoute እንደ OpenAI-ተኳሃኝ አቅራቢ ተዋቅሯል",
+    "agentproxyConfiguredOpenAiCompatible": "OmniRoute እንደ OpenAI-ተኳሃኝ አቅራቢ ተዋቅሯል",
     "provider": "አቅራቢ",
     "model": "ሞዴል",
     "providers": "አቅራቢዎች",
     "auth": "ማረጋገጫ",
     "noApiKeysAvailable": "ምንም API ቁልፎች የሉም",
-    "usingDefaultOmniroute": "ነባሪውን በመጠቀም ላይ፦ sk_omniroute",
+    "usingDefaultAgentProxy": "ነባሪውን በመጠቀም ላይ፦ sk_omniroute",
     "updateConfig": "ውቅሩን አዘምን",
     "applyConfig": "ውቅሩን ተግብር",
     "noBackupsAvailable": "ምንም ምትኬዎች የሉም።",
@@ -3145,8 +3145,8 @@
     "hermesConfiguredRoles": "{configured}/{total} ሚናዎች",
     "hermesQuickApply": "ተመሳሳዩን ሞዴል በፍጥነት ለሁሉም ሚናዎች ይተግብሩ፦",
     "hermesApplyModelToAll": "{model}ን ለእያንዳንዱ ሚና ተግብር",
-    "hermesViaOmniRoute": "{provider} (በOmniRoute በኩል)",
-    "hermesNotOmniRoute": "{provider} (በOmniRoute በኩል ያልሆነ)",
+    "hermesViaAgentProxy": "{provider} (በOmniRoute በኩል)",
+    "hermesNotAgentProxy": "{provider} (በOmniRoute በኩል ያልሆነ)",
     "hermesRemovePendingRole": "ይህን ሚና በመጠባበቅ ላይ ካሉ ለውጦች ውስጥ ያስወግዱ",
     "hermesApply": "በHermes Agent ላይ ይተግብሩ",
     "hermesRolesWillUpdate": "{count, plural, one {# ሚና ይዘምናል} other {# ሚናዎች ይዘምናሉ}}",
@@ -4125,7 +4125,7 @@
     "vscodeAliasModelsLabel": "VS Code ሞዴሎች",
     "vscodeAliasChatLabel": "VS Code ውይይት",
     "localServer": "አካባቢያዊ አገልጋይ",
-    "cloudOmniroute": "የOmniRoute ደመና",
+    "cloudAgentProxy": "የOmniRoute ደመና",
     "copyUrl": "URL ቅዳ",
     "badgeLoopbackTooltip": "ይህ መዳረሻ በአካባቢው ብቻ ሊደረስበት ይችላል (loopback ብቻ)",
     "badgeAlwaysProtectedTooltip": "ይህ መዳረሻ ሁልጊዜ የተጠበቀ ሲሆን ፈቃድ ይጠይቃል",
@@ -9962,7 +9962,7 @@
     "howItWorksStep3Description": "ጥያቄው በOpenAI፣ Anthropic፣ Gemini ወይም በሌሎች ወዲያውኑ ይፈጸማል።",
     "getStartedIn30Seconds": "በ30 ሰከንድ ውስጥ ይጀምሩ",
     "getStartedDescription": "OmniRouteን ይጫኑ፣ አቅራቢዎችዎን በድር ዳሽቦርድ በኩል ያዋቅሩ፣ እና የAI ጥያቄዎችን ማዘዋወር ይጀምሩ።",
-    "installOmniRoute": "OmniRouteን ይጫኑ",
+    "installAgentProxy": "OmniRouteን ይጫኑ",
     "installStepDescription": "ሰርቨሩን ወዲያውኑ ለማስጀመር የnpx ትእዛዝን ያሂዱ",
     "openDashboard": "ዳሽቦርዱን ይክፈቱ",
     "openDashboardStepDescription": "አቅራቢዎችን እና API ቁልፎችን በድር በይነገጽ በኩል ያዋቅሩ",
@@ -9971,7 +9971,7 @@
     "terminal": "ተርሚናል",
     "copy": "ቅዳ",
     "copied": "✓ ተቀድቷል",
-    "startingOmniRoute": "OmniRoute እየተጀመረ ነው...",
+    "startingAgentProxy": "OmniRoute እየተጀመረ ነው...",
     "serverRunningOnLabel": "ሰርቨሩ የሚሰራው በ",
     "dashboardLabel": "ዳሽቦርድ",
     "readyToRoute": "ለማዘዋወር ዝግጁ! ✓",
@@ -10365,7 +10365,7 @@
     "versionCommandPlaceholder": "ለምሳሌ፣ my-agent --version",
     "architectureTitle": "የወኪል ዒላማዎች እንዴት እንደሚሠሩ",
     "flowLocalBinary": "3 · የራሱን ማረጋገጫ የሚጠቀም የCLI ሂደት",
-    "flowOmniRoute": "1 · ጥያቄው ወደ OmniRoute ይደርሳል",
+    "flowAgentProxy": "1 · ጥያቄው ወደ OmniRoute ይደርሳል",
     "agentNamePlaceholder": "ለምሳሌ፣ My Custom Agent",
     "architectureDescription": "ጥያቄ ሲደርስ OmniRoute አካባቢያዊ የCLI ሁለትዮሽ ፋይልን (ለምሳሌ፣ claude, codex, goose) ማስጀመር እና ጥያቄውን በእሱ በኩል ማስተላለፍ ይችላል። CLIው የራሱን የማረጋገጫ መረጃ በመጠቀም ጥያቄውን ያስኬድና ውጤቱን በOmniRoute በኩል መልሶ ይልካል።",
     "flowExecute": "4 · ምላሹ ወደ ደንበኛው ይመለሳል",
@@ -10382,8 +10382,8 @@
     "agentUseCaseHint": "በACP ፕሮቶኮል በኩል እንደ ማስፈጸሚያ ዒላማ መጠቀም ይቻላል",
     "flowDiagramClient": "የደንበኛ መተግበሪያ",
     "flowDiagramClientDesc": "SDK፣ API ወይም የላይኛ ደረጃ አገልግሎት",
-    "flowDiagramOmniRoute": "OmniRoute",
-    "flowDiagramOmniRouteDesc": "ጥያቄውን ይቀበላል እና ዒላማውን ይመርጣል",
+    "flowDiagramAgentProxy": "OmniRoute",
+    "flowDiagramAgentProxyDesc": "ጥያቄውን ይቀበላል እና ዒላማውን ይመርጣል",
     "flowDiagramSpawn": "ሂደት ማስጀመሪያ",
     "flowDiagramSpawnDesc": "የCLI ሁለትዮሽ ፋይልን በstdio በኩል ያስጀምራል",
     "flowDiagramCli": "CLI ወኪል",
@@ -12938,16 +12938,16 @@
       "PROXY_AUTO_SELECT_ENABLED": {
         "description": "ለአንድ ግንኙነት ፕሮክሲ ካልተመደበ፣ በራስ-ሰር የመጀመሪያውን የሚሠራ የመዝገብ ፕሮክሲ ምረጥ። አለበለዚያ አንድ የመዝገብ ፕሮክሲ ለሁሉም ትራፊክ ዓለም አቀፍ መጠባበቂያ ስለሚሆን፣ በነባሪ ጠፍቷል (#3332)።"
       },
-      "OMNIROUTE_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
+      "AGENTPROXY_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
         "description": "የፕሮክሲ ተደራሽነት ፍተሻዎች ሲወድቁ፣ OAuth እና የአቅራቢ ማረጋገጫ ፍሰቶች የተቸከለ ፕሮክሲን እንዲያልፉ ፍቀድ። ይህ የመለያውን የወጪ IP ሊለውጥ ስለሚችል፣ በነባሪ ጠፍቷል።"
       },
       "MITM_DISABLE_TLS_VERIFY": {
         "description": "ለMITM ፕሮክሲው የTLS ሰርቲፊኬት ማረጋገጫን አሰናክል።"
       },
-      "OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS": {
         "description": "ወደ ግል ወይም ውስጣዊ አውታረ መረቦች የሚያመለክቱ የአቅራቢ URL-ዎችን ፍቀድ።"
       },
-      "OMNIROUTE_ALLOW_LOCAL_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_LOCAL_PROVIDER_URLS": {
         "description": "በlocalhost፣ LAN እና በግል IP ክልሎች ላይ ያሉ አቅራቢዎችን ፍቀድ። ይህ ለአካባቢያዊ OpenAI-ተኳኋኝ ሞዴሎች ያስፈልጋል እና በነባሪ ነቅቷል። እንደ 169.254.169.254 ያሉ የደመና ሜታዳታ መዳረሻዎች እንደታገዱ ይቆያሉ።"
       },
       "ENABLE_CC_COMPATIBLE_PROVIDER": {
@@ -12969,28 +12969,28 @@
       "RESPONSES_PASSTHROUGH_DROP_COMMENTARY": {
         "description": "ወደ ደንበኞች ከመተላለፋቸው በፊት ውስጣዊ የcommentary ደረጃ የውጤት ንጥሎችን ከResponses API ማለፊያ ዥረቶች አስወግድ። ጥሬ የምንጭ commentary ለመቀበል ይህን ጠቋሚ አሰናክል።"
       },
-      "OMNIROUTE_MCP_ENFORCE_SCOPES": {
+      "AGENTPROXY_MCP_ENFORCE_SCOPES": {
         "description": "ለMCP መሣሪያ መዳረሻ የፈቃድ ወሰን ገደቦችን አስፈጽም።"
       },
-      "OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS": {
+      "AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS": {
         "description": "የቶከን አጠቃቀምን ለመቀነስ የMCP መሣሪያ መግለጫዎችን ጨምቅ።"
       },
-      "OMNIROUTE_ENABLE_RUNTIME_BACKGROUND_TASKS": {
+      "AGENTPROXY_ENABLE_RUNTIME_BACKGROUND_TASKS": {
         "description": "በአሂድ ጊዜ የበስተጀርባ ተግባራትን ማስኬድ አንቃ።"
       },
-      "OMNIROUTE_DISABLE_BACKGROUND_SERVICES": {
+      "AGENTPROXY_DISABLE_BACKGROUND_SERVICES": {
         "description": "የኮታ ማደስን እና ማመሳሰልን ጨምሮ ሁሉንም የበስተጀርባ አገልግሎቶች አሰናክል።"
       },
-      "OMNIROUTE_RTK_TRUST_PROJECT_FILTERS": {
+      "AGENTPROXY_RTK_TRUST_PROJECT_FILTERS": {
         "description": "የፕሮጀክት ደረጃ RTK ማጣሪያዎችን ያለማረጋገጫ እመን።"
       },
-      "OMNIROUTE_ENABLE_LIVE_WS": {
+      "AGENTPROXY_ENABLE_LIVE_WS": {
         "description": "በማስመጣት ጊዜ የቀጥታ ጊዜ ዳሽቦርድ WebSocket አገልጋይን በloopback ወደብ 20132 ላይ አስጀምር። ለማሰናከል ጠቋሚውን ወደ 0 ወይም false ያዘጋጁ። ለLAN ተደራሽነት LIVE_WS_HOST=0.0.0.0 እና LIVE_WS_ALLOWED_ORIGINS ያስፈልጋሉ።"
       },
-      "OMNIROUTE_CODEX_WS_ENABLED": {
+      "AGENTPROXY_CODEX_WS_ENABLED": {
         "description": "Codex Responsesን በWebSocket እንዲጠቀም ፍቀድ። ሲሰናከል Codex ወደ HTTP Responses ይመለሳል።"
       },
-      "OMNIROUTE_EMERGENCY_FALLBACK": {
+      "AGENTPROXY_EMERGENCY_FALLBACK": {
         "description": "በጀታቸው ያለቀ ጥያቄዎችን ወደ ድንገተኛ ነፃ መጠባበቂያ አቅራቢ እና ሞዴል ላክ።"
       },
       "STREAM_RECOVERY_ENABLED": {
@@ -13017,16 +13017,16 @@
       "PRICING_SYNC_ENABLED": {
         "description": "የዋጋ መረጃን በራስ-ሰር አመሳስል። የPRICING_SYNC_ENABLED የአካባቢ ተለዋዋጭም true መሆን አለበት።"
       },
-      "OMNIROUTE_AUTO_SYNC_CODEX_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CODEX_PROFILES": {
         "description": "ከአቅራቢ-ሞዴል ማመሳሰል በኋላ፣ የ~/.codex/*.config.toml መገለጫዎችን ከቀጥታ ካታሎጉ እንደገና ፍጠር። ይህ ንቁውን ወይም ነባሪውን የCodex ውቅር ፈጽሞ አይቀይርም፣ በነባሪም ጠፍቷል።"
       },
-      "OMNIROUTE_AUTO_SYNC_CLAUDE_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CLAUDE_PROFILES": {
         "description": "ከአቅራቢ-ሞዴል ማመሳሰል በኋላ፣ የ~/.claude/profiles/'<name>'/settings.json መገለጫዎችን ከቀጥታ ካታሎጉ እንደገና ፍጠር። ይህ ንቁውን ወይም ነባሪውን የClaude ውቅር ፈጽሞ አይቀይርም፣ በነባሪም ጠፍቷል።"
       },
-      "OMNIROUTE_DISABLE_LOCAL_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_LOCAL_HEALTHCHECK": {
         "description": "የአካባቢያዊውን ኢንስታንስ የጤና ፍተሻ መዳረሻ ነጥብ አሰናክል።"
       },
-      "OMNIROUTE_DISABLE_TOKEN_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_TOKEN_HEALTHCHECK": {
         "description": "የቶከን ማረጋገጫ የጤና ፍተሻን አሰናክል።"
       },
       "SKILLS_SANDBOX_NETWORK_ENABLED": {
@@ -14158,5 +14158,5 @@
     "partnerLinkNote": "የአጋር አገናኝ",
     "dismissAriaLabel": "ዝጋ"
   },
-  "featureFlagOmnirouteDisableThinkingLevelVariantsDescription": "በ/v1/models ካታሎግ ውስጥ የአስተሳሰብ ደረጃ ተለዋጮችን (ለምሳሌ -low, -medium, -high) ማመንጨትን አሰናክል።"
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "በ/v1/models ካታሎግ ውስጥ የአስተሳሰብ ደረጃ ተለዋጮችን (ለምሳሌ -low, -medium, -high) ማመንጨትን አሰናክል።"
 }

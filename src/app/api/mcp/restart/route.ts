@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getMcpHttpStatus, shutdownMcpHttp } from "@omniroute/open-sse/mcp-server/httpTransport";
+import { getMcpHttpStatus, shutdownMcpHttp } from "@agentproxy/open-sse/mcp-server/httpTransport";
 import { getCachedSettings } from "@/lib/db/settings";
 import { requireManagementAuth } from "@/lib/api/requireManagementAuth";
 

@@ -986,7 +986,7 @@
     "batchFileDownloadFull": "Download Volledig Bestand"
   },
   "disabled": "Uitgeschakeld",
-  "featureFlagOmnirouteEmergencyFallbackDescription": "Routeer verzoeken met uitgeput budget naar de gratis nood-fallbackprovider/-model.",
+  "featureFlagAgentProxyEmergencyFallbackDescription": "Routeer verzoeken met uitgeput budget naar de gratis nood-fallbackprovider/-model.",
   "featureFlagArenaEloSyncEnabledDescription": "Schakel periodieke ELO-synchronisatie van het Arena AI-leaderboard in voor modelintelligentieranglijsten.",
   "featureFlagUniversalContextHandoffEnabledDescription": "Genereer en voeg gesprekssamenvattingen toe wanneer bij combinatieroutering van model wordt gewisseld. Schakel dit uit om modelwisselingen onafhankelijk te behandelen en overdrachtsverzoeken op de achtergrond te voorkomen voor alle bestaande en toekomstige combinaties.",
   "featureFlagExposeCcDiscoveryAliasesDescription": "Adverteer claude/&lt;provider&gt;/&lt;model&gt; spiegel-id's op /v1/models zodat Claude Code gateway modelontdekking niet-Claude modellen vermeldt. Waarschuwing: dubbele catalogusvermeldingen voor alle klanten wanneer wereldwijd ingeschakeld.",
@@ -2254,7 +2254,7 @@
     "requestFlowAria": "Je app verstuurt verzoeken via een API-sleutel naar OmniRoute",
     "requestFlowYourApp": "Je app",
     "requestFlowApiKey": "API-sleutel",
-    "requestFlowOmniRoute": "OmniRoute",
+    "requestFlowAgentProxy": "OmniRoute",
     "totalKeys": "Totaal aantal sleutels",
     "restricted": "Beperkt",
     "totalRequests": "Totaal aantal verzoeken",
@@ -2761,7 +2761,7 @@
     "configurationSaved": "Configuratie succesvol opgeslagen.",
     "failedToSave": "Kan configuratie niet opslaan.",
     "noApiKeysCreateOne": "Geen API-sleutels - Maak er een op de pagina Sleutels",
-    "defaultOmnirouteKey": "sk_omniroute (standaard)",
+    "defaultAgentProxyKey": "sk_omniroute (standaard)",
     "selectModel": "Selecteer Model",
     "selectModelForAlias": "Selecteer model voor {alias}",
     "selectModelForTool": "Selecteer model voor {tool}",
@@ -2858,13 +2858,13 @@
     "applied": "Toegepast!",
     "failed": "Mislukt",
     "resetDone": "Opnieuw instellen!",
-    "omnirouteConfiguredOpenAiCompatible": "OmniRoute is geconfigureerd als OpenAI-compatibele provider",
+    "agentproxyConfiguredOpenAiCompatible": "OmniRoute is geconfigureerd als OpenAI-compatibele provider",
     "provider": "Aanbieder",
     "model": "Model",
     "providers": "Aanbieders",
     "auth": "Aut",
     "noApiKeysAvailable": "Geen API-sleutels beschikbaar",
-    "usingDefaultOmniroute": "Standaard gebruiken: sk_omniroute",
+    "usingDefaultAgentProxy": "Standaard gebruiken: sk_omniroute",
     "updateConfig": "Configuratie bijwerken",
     "applyConfig": "Configuratie toepassen",
     "noBackupsAvailable": "Geen back-ups beschikbaar.",
@@ -3145,8 +3145,8 @@
     "hermesConfiguredRoles": "{configured}/{total} rollen",
     "hermesQuickApply": "Pas snel hetzelfde model toe op alle rollen:",
     "hermesApplyModelToAll": "Pas {model} toe op elke rol",
-    "hermesViaOmniRoute": "{provider} (via OmniRoute)",
-    "hermesNotOmniRoute": "{provider} (niet OmniRoute)",
+    "hermesViaAgentProxy": "{provider} (via OmniRoute)",
+    "hermesNotAgentProxy": "{provider} (niet OmniRoute)",
     "hermesRemovePendingRole": "Verwijder deze rol uit openstaande wijzigingen",
     "hermesApply": "Toepassen op Hermes Agent",
     "hermesRolesWillUpdate": "{count, plural, one {# rol wordt bijgewerkt} other {# rollen worden bijgewerkt}}",
@@ -4142,7 +4142,7 @@
     "vscodeAliasModelsLabel": "VS Code-modellen",
     "vscodeAliasChatLabel": "VS Code-chat",
     "localServer": "Lokale server",
-    "cloudOmniroute": "Cloud OmniRoute",
+    "cloudAgentProxy": "Cloud OmniRoute",
     "copyUrl": "Kopieer URL",
     "badgeLoopbackTooltip": "Dit eindpunt is alleen lokaal toegankelijk (alleen loopback)",
     "badgeAlwaysProtectedTooltip": "Dit eindpunt is altijd beveiligd en vereist autorisatie",
@@ -9979,7 +9979,7 @@
     "howItWorksStep3Description": "Aan het verzoek wordt onmiddellijk voldaan door OpenAI, Anthropic, Gemini of anderen.",
     "getStartedIn30Seconds": "Ga binnen 30 seconden aan de slag",
     "getStartedDescription": "Installeer OmniRoute, configureer uw providers via een webdashboard en begin met het routeren van AI-verzoeken.",
-    "installOmniRoute": "Installeer OmniRoute",
+    "installAgentProxy": "Installeer OmniRoute",
     "installStepDescription": "Voer de npx-opdracht uit om de server onmiddellijk te starten",
     "openDashboard": "Dashboard openen",
     "openDashboardStepDescription": "Configureer providers en API-sleutels via de webinterface",
@@ -9988,7 +9988,7 @@
     "terminal": "terminaal",
     "copy": "Kopieer",
     "copied": "✓ Gekopieerd",
-    "startingOmniRoute": "OmniRoute starten...",
+    "startingAgentProxy": "OmniRoute starten...",
     "serverRunningOnLabel": "Server draait aan",
     "dashboardLabel": "Dashboard",
     "readyToRoute": "Klaar om te routen! ✓",
@@ -10382,7 +10382,7 @@
     "versionCommandPlaceholder": "Version Command Placeholder",
     "architectureTitle": "Architecture Title",
     "flowLocalBinary": "Flow Local Binary",
-    "flowOmniRoute": "Flow Omni Route",
+    "flowAgentProxy": "Flow Omni Route",
     "agentNamePlaceholder": "Agent Name Placeholder",
     "architectureDescription": "Architecture Description",
     "flowExecute": "Flow Execute",
@@ -10399,8 +10399,8 @@
     "agentUseCaseHint": "Kan worden gebruikt als uitvoeringsdoel via het ACP-protocol",
     "flowDiagramClient": "Klant-app",
     "flowDiagramClientDesc": "SDK, API of upstream-service",
-    "flowDiagramOmniRoute": "OmniRoute",
-    "flowDiagramOmniRouteDesc": "Ontvangt verzoek en selecteert doel",
+    "flowDiagramAgentProxy": "OmniRoute",
+    "flowDiagramAgentProxyDesc": "Ontvangt verzoek en selecteert doel",
     "flowDiagramSpawn": "Spawn-proces",
     "flowDiagramSpawnDesc": "Start CLI binair via stdio",
     "flowDiagramCli": "CLI-agent",
@@ -12965,16 +12965,16 @@
       "PROXY_AUTO_SELECT_ENABLED": {
         "description": "Wanneer er geen proxy is toegewezen aan een verbinding, automatisch de eerste werkende registry-proxy selecteren. Standaard uitgeschakeld omdat één registry-proxy anders een globale fallback wordt voor al het verkeer (#3332)."
       },
-      "OMNIROUTE_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
+      "AGENTPROXY_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
         "description": "OAuth- en provider-validatieflows toestaan een vastgezette proxy te omzeilen wanneer controles van de proxy-bereikbaarheid mislukken. Standaard uitgeschakeld omdat dit het uitgaande IP-adres van het account kan wijzigen."
       },
       "MITM_DISABLE_TLS_VERIFY": {
         "description": "Schakel TLS-certificaatverificatie uit voor de MITM-proxy."
       },
-      "OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS": {
         "description": "Sta provider-URL's toe die naar privé- of interne netwerken verwijzen."
       },
-      "OMNIROUTE_ALLOW_LOCAL_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_LOCAL_PROVIDER_URLS": {
         "description": "Sta providers op localhost, LAN en privé-IP-bereiken toe. Dit is vereist voor lokale OpenAI-compatibele modellen en is standaard ingeschakeld. Cloud-metadata-eindpunten zoals 169.254.169.254 blijven geblokkeerd."
       },
       "ENABLE_CC_COMPATIBLE_PROVIDER": {
@@ -12996,28 +12996,28 @@
       "RESPONSES_PASSTHROUGH_DROP_COMMENTARY": {
         "description": "Verwijder interne commentary-fase-uitvoeritems uit Responses API-passthrough-streams voordat ze worden doorgestuurd naar clients. Schakel deze vlag uit om onbewerkte upstream-commentary te ontvangen."
       },
-      "OMNIROUTE_MCP_ENFORCE_SCOPES": {
+      "AGENTPROXY_MCP_ENFORCE_SCOPES": {
         "description": "Handhaaf scopebeperkingen voor MCP-tooltoegang."
       },
-      "OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS": {
+      "AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS": {
         "description": "Comprimeer MCP-toolbeschrijvingen om tokengebruik te verminderen."
       },
-      "OMNIROUTE_ENABLE_RUNTIME_BACKGROUND_TASKS": {
+      "AGENTPROXY_ENABLE_RUNTIME_BACKGROUND_TASKS": {
         "description": "Schakel de verwerking van achtergrondtaken tijdens runtime in."
       },
-      "OMNIROUTE_DISABLE_BACKGROUND_SERVICES": {
+      "AGENTPROXY_DISABLE_BACKGROUND_SERVICES": {
         "description": "Schakel alle achtergrondservices uit, inclusief het vernieuwen van quota en synchronisatie."
       },
-      "OMNIROUTE_RTK_TRUST_PROJECT_FILTERS": {
+      "AGENTPROXY_RTK_TRUST_PROJECT_FILTERS": {
         "description": "Vertrouw RTK-filters op projectniveau zonder validatie."
       },
-      "OMNIROUTE_ENABLE_LIVE_WS": {
+      "AGENTPROXY_ENABLE_LIVE_WS": {
         "description": "Start de realtime dashboard-WebSocket-server bij het importeren op loopback-poort 20132. Stel de vlag in op 0 of false om deze uit te schakelen. LAN-blootstelling vereist ook LIVE_WS_HOST=0.0.0.0 en LIVE_WS_ALLOWED_ORIGINS."
       },
-      "OMNIROUTE_CODEX_WS_ENABLED": {
+      "AGENTPROXY_CODEX_WS_ENABLED": {
         "description": "Sta Codex toe om Responses via WebSocket te gebruiken. Indien uitgeschakeld, valt Codex terug op HTTP Responses."
       },
-      "OMNIROUTE_EMERGENCY_FALLBACK": {
+      "AGENTPROXY_EMERGENCY_FALLBACK": {
         "description": "Routeer verzoeken waarvan het budget is uitgeput naar de gratis nood-fallbackprovider en het nood-fallbackmodel."
       },
       "STREAM_RECOVERY_ENABLED": {
@@ -13044,16 +13044,16 @@
       "PRICING_SYNC_ENABLED": {
         "description": "Synchroniseer prijsgegevens automatisch. De omgevingsvariabele PRICING_SYNC_ENABLED moet ook true zijn."
       },
-      "OMNIROUTE_AUTO_SYNC_CODEX_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CODEX_PROFILES": {
         "description": "Genereer na provider-modelsynchronisatie ~/.codex/*.config.toml-profielen opnieuw vanuit de live catalogus. Dit wijzigt nooit de actieve of standaard Codex-configuratie en is standaard uitgeschakeld."
       },
-      "OMNIROUTE_AUTO_SYNC_CLAUDE_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CLAUDE_PROFILES": {
         "description": "Genereer na provider-modelsynchronisatie ~/.claude/profiles/'<name>'/settings.json-profielen opnieuw vanuit de live catalogus. Dit wijzigt nooit de actieve of standaard Claude-configuratie en is standaard uitgeschakeld."
       },
-      "OMNIROUTE_DISABLE_LOCAL_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_LOCAL_HEALTHCHECK": {
         "description": "Schakel het health-check-eindpunt van de lokale instantie uit."
       },
-      "OMNIROUTE_DISABLE_TOKEN_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_TOKEN_HEALTHCHECK": {
         "description": "Schakel de tokenvalidatie-health-check uit."
       },
       "SKILLS_SANDBOX_NETWORK_ENABLED": {
@@ -14190,5 +14190,5 @@
     "partnerLinkNote": "Partnerlink",
     "dismissAriaLabel": "Sluiten"
   },
-  "featureFlagOmnirouteDisableThinkingLevelVariantsDescription": "Schakel het genereren van varianten op denkniveau (bijv. -low, -medium, -high) in de catalogus /v1/models uit."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Schakel het genereren van varianten op denkniveau (bijv. -low, -medium, -high) in de catalogus /v1/models uit."
 }

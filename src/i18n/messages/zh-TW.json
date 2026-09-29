@@ -986,7 +986,7 @@
     "batchFileDownloadFull": "下載完整檔案"
   },
   "disabled": "已停用",
-  "featureFlagOmnirouteEmergencyFallbackDescription": "將預算耗盡的請求路由到緊急免費備用提供者/模型。",
+  "featureFlagAgentProxyEmergencyFallbackDescription": "將預算耗盡的請求路由到緊急免費備用提供者/模型。",
   "featureFlagArenaEloSyncEnabledDescription": "啟用定期 Arena AI 排行榜 ELO 同步，用於模型智慧排名。",
   "featureFlagUniversalContextHandoffEnabledDescription": "當組合路由切換模型時，產生並注入對話摘要。停用後，模型切換將各自獨立處理，並防止所有現有及未來的組合發出背景交接請求。",
   "featureFlagExposeCcDiscoveryAliasesDescription": "在 /v1/models 上廣告 claude/&lt;provider&gt;/&lt;model&gt; 鏡像 ID，以便 Claude Code 閘道模型發現列出非 Claude 模型。警告：當全域啟用時，會為所有客戶端重複目錄條目。",
@@ -2254,7 +2254,7 @@
     "requestFlowAria": "您的應用程式透過 API 金鑰將請求傳送至 OmniRoute",
     "requestFlowYourApp": "您的應用程式",
     "requestFlowApiKey": "API 金鑰",
-    "requestFlowOmniRoute": "OmniRoute",
+    "requestFlowAgentProxy": "OmniRoute",
     "totalKeys": "金鑰總數",
     "restricted": "受限",
     "totalRequests": "請求總數",
@@ -2761,7 +2761,7 @@
     "configurationSaved": "設定儲存成功。",
     "failedToSave": "儲存設定失敗。",
     "noApiKeysCreateOne": "無 API 金鑰 - 在“金鑰”頁面建立一個",
-    "defaultOmnirouteKey": "sk_omniroute（預設）",
+    "defaultAgentProxyKey": "sk_omniroute（預設）",
     "selectModel": "選擇模型",
     "selectModelForAlias": "選擇 {alias} 的模型",
     "selectModelForTool": "選擇 {tool} 的模型",
@@ -2858,13 +2858,13 @@
     "applied": "已應用！",
     "failed": "失敗",
     "resetDone": "重置！",
-    "omnirouteConfiguredOpenAiCompatible": "OmniRoute 已設定為 OpenAI 相容提供者",
+    "agentproxyConfiguredOpenAiCompatible": "OmniRoute 已設定為 OpenAI 相容提供者",
     "provider": "提供者",
     "model": "模型",
     "providers": "提供者",
     "auth": "授權",
     "noApiKeysAvailable": "沒有可用的 API 金鑰",
-    "usingDefaultOmniroute": "使用預設值：sk_omniroute",
+    "usingDefaultAgentProxy": "使用預設值：sk_omniroute",
     "updateConfig": "更新設定",
     "applyConfig": "應用設定",
     "noBackupsAvailable": "沒有可用的備份。",
@@ -3151,8 +3151,8 @@
     "hermesConfiguredRoles": "{configured}/{total} 個角色",
     "hermesQuickApply": "快速將相同模型套用至所有角色：",
     "hermesApplyModelToAll": "將 {model} 套用至所有角色",
-    "hermesViaOmniRoute": "{provider} (經由 OmniRoute)",
-    "hermesNotOmniRoute": "{provider}（非 OmniRoute）",
+    "hermesViaAgentProxy": "{provider} (經由 OmniRoute)",
+    "hermesNotAgentProxy": "{provider}（非 OmniRoute）",
     "hermesRemovePendingRole": "從待定變更中移除此角色",
     "hermesApply": "套用至 Hermes Agent",
     "hermesRolesWillUpdate": "{count, plural, one {# 個角色將被更新} other {# 個角色將被更新}}",
@@ -3431,7 +3431,7 @@
       "maxSetRetries": "每個目標失敗時重試完整目標集的次數。 0 = 沒有設定級別重試。",
       "setRetryDelayMs": "設定級別重試嘗試之間的延遲，為暫時性問題提供解決時間。",
       "disableSessionStickiness": "在每次請求時輪換到不同的連線，而不是根據首則訊息雜湊將整個對話固定到單一連線。覆寫全域預設值。保留為「繼承」以保留多輪對話的提示快取命中效果。",
-      "connectionAwareExpansion": "開啟後，本組合會在輪轉前把每個供應商步驟展開成依帳號的目標。繼承使用全域預設（關）。關閉則保持依供應商輪轉。",
+      "connectionAwareExpansion": "開啟後，本組合會在輪轉前把每個提供者步驟展開成依帳號的目標。繼承使用全域預設（關）。關閉則保持依提供者輪轉。",
       "stickyLimit": "輪詢黏滯批大小：連續成功請求發給同一目標後再切到下一個。留空繼承全域黏滯限制；填 1 即每次請求都輪轉。"
     },
     "templatesTitle": "快捷模板",
@@ -4142,7 +4142,7 @@
     "vscodeAliasModelsLabel": "VS Code 模型",
     "vscodeAliasChatLabel": "VS Code 聊天",
     "localServer": "本地伺服器",
-    "cloudOmniroute": "雲全路由",
+    "cloudAgentProxy": "雲全路由",
     "copyUrl": "複製網址",
     "badgeLoopbackTooltip": "此端點僅可本地訪問（僅限迴環）",
     "badgeAlwaysProtectedTooltip": "此端點始終受保護，需要授權",
@@ -9979,7 +9979,7 @@
     "howItWorksStep3Description": "請求會被立即轉發給 OpenAI、Anthropic、Gemini 或其他提供者完成處理。",
     "getStartedIn30Seconds": "30 秒內開始",
     "getStartedDescription": "安裝 OmniRoute，通過 Web 儀表板設定你的提供者，然後開始路由 AI 請求。",
-    "installOmniRoute": "安裝 OmniRoute",
+    "installAgentProxy": "安裝 OmniRoute",
     "installStepDescription": "執行 npx 命令立即啟動伺服器",
     "openDashboard": "開啟儀表板",
     "openDashboardStepDescription": "通過 Web 介面設定提供者和 API 金鑰",
@@ -9988,7 +9988,7 @@
     "terminal": "終端",
     "copy": "複製",
     "copied": "✓ 已複製",
-    "startingOmniRoute": "正在啟動 OmniRoute...",
+    "startingAgentProxy": "正在啟動 OmniRoute...",
     "serverRunningOnLabel": "伺服器運行於",
     "dashboardLabel": "儀表板",
     "readyToRoute": "已準備好開始路由！ ✓",
@@ -10382,7 +10382,7 @@
     "versionCommandPlaceholder": "版本命令佔位符",
     "architectureTitle": "架構",
     "flowLocalBinary": "本地二進位制",
-    "flowOmniRoute": "OmniRoute",
+    "flowAgentProxy": "OmniRoute",
     "agentNamePlaceholder": "Agent 名稱佔位符",
     "architectureDescription": "瞭解 OmniRoute 如何在客戶端、路由器和 Agent 目標之間轉發請求。",
     "flowExecute": "執行",
@@ -10399,8 +10399,8 @@
     "agentUseCaseHint": "可通過 ACP 協議用作執行目標",
     "flowDiagramClient": "客戶端應用",
     "flowDiagramClientDesc": "SDK、API 或上游服務",
-    "flowDiagramOmniRoute": "OmniRoute",
-    "flowDiagramOmniRouteDesc": "接收請求並選擇目標",
+    "flowDiagramAgentProxy": "OmniRoute",
+    "flowDiagramAgentProxyDesc": "接收請求並選擇目標",
     "flowDiagramSpawn": "啟動程式",
     "flowDiagramSpawnDesc": "通過 stdio 啟動 CLI 二進位制檔案",
     "flowDiagramCli": "CLI 代理",
@@ -12965,16 +12965,16 @@
       "PROXY_AUTO_SELECT_ENABLED": {
         "description": "當連線未指定代理時，自動選取第一個可用的註冊表代理。預設為關閉，因為否則一個註冊表代理會成為所有流量的全域備援（#3332）。"
       },
-      "OMNIROUTE_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
+      "AGENTPROXY_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
         "description": "當代理可達性檢查失敗時，允許 OAuth 和提供者驗證流程繞過固定代理。預設為關閉，因為這可能變更帳戶的出口 IP。"
       },
       "MITM_DISABLE_TLS_VERIFY": {
         "description": "停用 MITM 代理的 TLS 憑證驗證。"
       },
-      "OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS": {
         "description": "允許指向私有或內部網路的提供者 URL。"
       },
-      "OMNIROUTE_ALLOW_LOCAL_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_LOCAL_PROVIDER_URLS": {
         "description": "允許 localhost、LAN 和私有 IP 範圍的提供者。這是本機 OpenAI 相容模型所需的設定，且預設為啟用。雲端中繼資料端點（如 169.254.169.254）仍維持封鎖。"
       },
       "ENABLE_CC_COMPATIBLE_PROVIDER": {
@@ -12996,28 +12996,28 @@
       "RESPONSES_PASSTHROUGH_DROP_COMMENTARY": {
         "description": "在將 Responses API 穿透串流轉發至用戶端之前，移除內部註解階段的輸出項目。停用此旗標以接收原始上游註解。"
       },
-      "OMNIROUTE_MCP_ENFORCE_SCOPES": {
+      "AGENTPROXY_MCP_ENFORCE_SCOPES": {
         "description": "強制執行 MCP 工具存取的作用域限制。"
       },
-      "OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS": {
+      "AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS": {
         "description": "壓縮 MCP 工具描述以減少 token 用量。"
       },
-      "OMNIROUTE_ENABLE_RUNTIME_BACKGROUND_TASKS": {
+      "AGENTPROXY_ENABLE_RUNTIME_BACKGROUND_TASKS": {
         "description": "在執行時期啟用背景任務處理。"
       },
-      "OMNIROUTE_DISABLE_BACKGROUND_SERVICES": {
+      "AGENTPROXY_DISABLE_BACKGROUND_SERVICES": {
         "description": "停用所有背景服務，包括配額重新整理和同步。"
       },
-      "OMNIROUTE_RTK_TRUST_PROJECT_FILTERS": {
+      "AGENTPROXY_RTK_TRUST_PROJECT_FILTERS": {
         "description": "信任專案層級的 RTK 篩選器而不進行驗證。"
       },
-      "OMNIROUTE_ENABLE_LIVE_WS": {
+      "AGENTPROXY_ENABLE_LIVE_WS": {
         "description": "在匯入時於回送埠 20132 啟動即時儀表板 WebSocket 伺服器。將旗標設為 0 或 false 以停用。LAN 暴露還需要 LIVE_WS_HOST=0.0.0.0 和 LIVE_WS_ALLOWED_ORIGINS。"
       },
-      "OMNIROUTE_CODEX_WS_ENABLED": {
+      "AGENTPROXY_CODEX_WS_ENABLED": {
         "description": "允許 Codex 透過 WebSocket 使用 Responses。停用時，Codex 會回退至 HTTP Responses。"
       },
-      "OMNIROUTE_EMERGENCY_FALLBACK": {
+      "AGENTPROXY_EMERGENCY_FALLBACK": {
         "description": "將預算耗盡的請求路由至緊急免費備用提供者和模型。"
       },
       "STREAM_RECOVERY_ENABLED": {
@@ -13044,16 +13044,16 @@
       "PRICING_SYNC_ENABLED": {
         "description": "自動同步定價資料。PRICING_SYNC_ENABLED 環境變數也必須為 true。"
       },
-      "OMNIROUTE_AUTO_SYNC_CODEX_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CODEX_PROFILES": {
         "description": "在提供者-模型同步後，從即時目錄重新產生 ~/.codex/*.config.toml 設定檔。這絕不會更改作用中或預設的 Codex 配置，且預設為關閉。"
       },
-      "OMNIROUTE_AUTO_SYNC_CLAUDE_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CLAUDE_PROFILES": {
         "description": "在提供者-模型同步後，從即時目錄重新產生 ~/.claude/profiles/'<name>'/settings.json 設定檔。這絕不會更改作用中或預設的 Claude 配置，且預設為關閉。"
       },
-      "OMNIROUTE_DISABLE_LOCAL_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_LOCAL_HEALTHCHECK": {
         "description": "停用本機執行個體的健康檢查端點。"
       },
-      "OMNIROUTE_DISABLE_TOKEN_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_TOKEN_HEALTHCHECK": {
         "description": "停用權杖驗證的健康檢查。"
       },
       "SKILLS_SANDBOX_NETWORK_ENABLED": {
@@ -14190,5 +14190,5 @@
     "partnerLinkNote": "合作夥伴連結",
     "dismissAriaLabel": "關閉"
   },
-  "featureFlagOmnirouteDisableThinkingLevelVariantsDescription": "停用在 /v1/models 目錄中產生思考層級變體（例如 -low、-medium、-high）。"
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "停用在 /v1/models 目錄中產生思考層級變體（例如 -low、-medium、-high）。"
 }

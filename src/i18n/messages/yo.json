@@ -986,7 +986,7 @@
     "batchFileDownloadFull": "Gba Fáìlì Kíkún Sílẹ̀"
   },
   "disabled": "Ti pa",
-  "featureFlagOmnirouteEmergencyFallbackDescription": "Darí àwọn ìbéèrè tí wọ́n ti lo gbogbo ààlà ìnáwó wọn sí olùpèsè/àwòṣe ìrànlọ́wọ́ pàjáwìrì ọ̀fẹ́.",
+  "featureFlagAgentProxyEmergencyFallbackDescription": "Darí àwọn ìbéèrè tí wọ́n ti lo gbogbo ààlà ìnáwó wọn sí olùpèsè/àwòṣe ìrànlọ́wọ́ pàjáwìrì ọ̀fẹ́.",
   "featureFlagArenaEloSyncEnabledDescription": "Mú ìmúdójúìwọ̀n ELO ti àtòjọ ipò Arena AI lẹ́ẹ̀kọ̀ọ̀kan ṣiṣẹ́ fún àwọn ipò òye àwòṣe.",
   "featureFlagUniversalContextHandoffEnabledDescription": "Ṣẹ̀dá kí o sì fi àwọn àkótán ìjíròrò sínú ìbéèrè nígbà tí combo routing bá yí àwòṣe padà. Pa á láti ṣe ìtọ́jú àwọn ìyípadà àwòṣe lọ́tọ̀ọ̀tọ̀ àti láti dènà àwọn ìbéèrè ìfàṣẹ́ránṣẹ́ abẹ́lẹ̀ fún gbogbo combos tó wà àti ti ọjọ́ iwájú.",
   "featureFlagExposeCcDiscoveryAliasesDescription": "Ṣàfihàn àwọn mirror ids claude/&lt;provider&gt;/&lt;model&gt; lórí /v1/models kí ìṣàwárí àwòṣe gateway Claude Code lè ṣàtòjọ àwọn àwòṣe tí kì í ṣe ti Claude. Ìkìlọ̀: èyí máa sọ iye àwọn àkọsílẹ̀ katalọ́ọ̀gù di ìlọ́po méjì fún gbogbo clients nígbà tí a bá mú un ṣiṣẹ́ kárí ayé.",
@@ -2254,7 +2254,7 @@
     "requestFlowAria": "Ìṣàfilọ́lẹ̀ rẹ ń fi àwọn ìbéèrè ránṣẹ́ sí OmniRoute nípasẹ̀ kọ́kọ́rọ́ API",
     "requestFlowYourApp": "Ìṣàfilọ́lẹ̀ rẹ",
     "requestFlowApiKey": "Kọ́kọ́rọ́ API",
-    "requestFlowOmniRoute": "OmniRoute",
+    "requestFlowAgentProxy": "OmniRoute",
     "totalKeys": "Àpapọ̀ Àwọn Kọ́kọ́rọ́",
     "restricted": "Tí a Fi Ìhámọ́ Sí",
     "totalRequests": "Àpapọ̀ Àwọn Ìbéèrè",
@@ -2761,7 +2761,7 @@
     "configurationSaved": "A ti fi ìṣètò pamọ́ ní àṣeyọrí.",
     "failedToSave": "Fífipamọ́ ìṣètò kùnà.",
     "noApiKeysCreateOne": "Kò sí àwọn kọ́kọ́rọ́ API - Ṣẹ̀dá ọ̀kan ní ojú-ewé Keys",
-    "defaultOmnirouteKey": "sk_omniroute (àiyipada)",
+    "defaultAgentProxyKey": "sk_omniroute (àiyipada)",
     "selectModel": "Yan módẹ́lì",
     "selectModelForAlias": "Yan módẹ́lì fún {alias}",
     "selectModelForTool": "Yan módẹ́lì fún {tool}",
@@ -2858,13 +2858,13 @@
     "applied": "A ti lò ó!",
     "failed": "Ó kùnà",
     "resetDone": "A ti tún un padà!",
-    "omnirouteConfiguredOpenAiCompatible": "A ti ṣètò OmniRoute gẹ́gẹ́ bí olùpèsè tó bá OpenAI mu",
+    "agentproxyConfiguredOpenAiCompatible": "A ti ṣètò OmniRoute gẹ́gẹ́ bí olùpèsè tó bá OpenAI mu",
     "provider": "Olùpèsè",
     "model": "Àwòṣe",
     "providers": "Àwọn Olùpèsè",
     "auth": "Ìfàṣẹsí",
     "noApiKeysAvailable": "Kò sí kọ́kọ́rọ́ API tó wà",
-    "usingDefaultOmniroute": "Ń lo èyí tí a yàn tẹ́lẹ̀: sk_omniroute",
+    "usingDefaultAgentProxy": "Ń lo èyí tí a yàn tẹ́lẹ̀: sk_omniroute",
     "updateConfig": "Ṣe ìmúdójúìwọ̀n ìṣètò",
     "applyConfig": "Lo ìṣètò",
     "noBackupsAvailable": "Kò sí ẹ̀dà àfẹ́yinti kankan.",
@@ -3145,8 +3145,8 @@
     "hermesConfiguredRoles": "Àwọn ipa {configured}/{total}",
     "hermesQuickApply": "Yára lo àwòṣe kan náà fún gbogbo àwọn ipa:",
     "hermesApplyModelToAll": "Lo {model} fún gbogbo ipa",
-    "hermesViaOmniRoute": "{provider} (nípasẹ̀ OmniRoute)",
-    "hermesNotOmniRoute": "{provider} (kì í ṣe OmniRoute)",
+    "hermesViaAgentProxy": "{provider} (nípasẹ̀ OmniRoute)",
+    "hermesNotAgentProxy": "{provider} (kì í ṣe OmniRoute)",
     "hermesRemovePendingRole": "Yọ ipa yìí kúrò nínú àwọn àyípadà tó ń dúró de ìmúlò",
     "hermesApply": "Fi sílò fún Hermes Agent",
     "hermesRolesWillUpdate": "{count, plural, one {A ó ṣe ìmúdójúìwọ̀n ipa #} other {A ó ṣe ìmúdójúìwọ̀n àwọn ipa #}}",
@@ -4125,7 +4125,7 @@
     "vscodeAliasModelsLabel": "Àwọn àwòṣe VS Code",
     "vscodeAliasChatLabel": "Ìfọ̀rọ̀wérọ̀ VS Code",
     "localServer": "Sẹ́fà Agbègbè",
-    "cloudOmniroute": "Àwọsánmà OmniRoute",
+    "cloudAgentProxy": "Àwọsánmà OmniRoute",
     "copyUrl": "Da URL Kọ",
     "badgeLoopbackTooltip": "Ojú-ọ̀nà yìí ṣeé wọlé sí ní agbègbè nìkan (loopback nìkan)",
     "badgeAlwaysProtectedTooltip": "Ojú-ọ̀nà yìí ní ààbò nígbà gbogbo, ó sì nílò ìfúniláṣẹ",
@@ -9962,7 +9962,7 @@
     "howItWorksStep3Description": "OpenAI, Anthropic, Gemini, tàbí àwọn mìíràn yóò mú ìbéèrè náà ṣẹ lẹ́sẹ̀kẹsẹ̀.",
     "getStartedIn30Seconds": "Bẹ̀rẹ̀ ní Ìṣẹ́jú-àáyá 30",
     "getStartedDescription": "Fi OmniRoute sí ẹ̀rọ, ṣètò àwọn olùpèsè rẹ nípasẹ̀ pánẹ́ẹ̀lì ìṣàkóso wẹ́ẹ̀bù, kí o sì bẹ̀rẹ̀ sí í darí àwọn ìbéèrè AI.",
-    "installOmniRoute": "Fi OmniRoute sí Ẹ̀rọ",
+    "installAgentProxy": "Fi OmniRoute sí Ẹ̀rọ",
     "installStepDescription": "Ṣe àṣẹ npx láti bẹ̀rẹ̀ sẹ́ńfà lẹ́sẹ̀kẹsẹ̀",
     "openDashboard": "Ṣí Pánẹ́ẹ̀lì Ìṣàkóso",
     "openDashboardStepDescription": "Ṣètò àwọn olùpèsè àti àwọn kọ́kọ́rọ́ API nípasẹ̀ ojú-iṣẹ́ wẹ́ẹ̀bù",
@@ -9971,7 +9971,7 @@
     "terminal": "tẹ́mìnà",
     "copy": "Ṣe ẹ̀dà",
     "copied": "✓ A ti ṣe ẹ̀dà",
-    "startingOmniRoute": "OmniRoute ń bẹ̀rẹ̀...",
+    "startingAgentProxy": "OmniRoute ń bẹ̀rẹ̀...",
     "serverRunningOnLabel": "Sẹ́ńfà ń ṣiṣẹ́ lórí",
     "dashboardLabel": "Pánẹ́ẹ̀lì Ìṣàkóso",
     "readyToRoute": "Ó ti ṣetán láti darí! ✓",
@@ -10365,7 +10365,7 @@
     "versionCommandPlaceholder": "fún àpẹẹrẹ, my-agent --version",
     "architectureTitle": "Bí Àwọn Àfojúsùn Aṣojú Ṣe Ń Ṣiṣẹ́",
     "flowLocalBinary": "3 · Ìlànà CLI pẹ̀lú ìfàṣẹsí tirẹ̀",
-    "flowOmniRoute": "1 · Ìbéèrè dé sí OmniRoute",
+    "flowAgentProxy": "1 · Ìbéèrè dé sí OmniRoute",
     "agentNamePlaceholder": "fún àpẹẹrẹ, Aṣojú Àkànṣe Mi",
     "architectureDescription": "Nígbà tí ìbéèrè bá dé, OmniRoute lè ṣe ìpilẹ̀ṣẹ̀ fáìlì aláṣẹ CLI abẹ́lé (fún àpẹẹrẹ, claude, codex, goose), kí ó sì fi ìbéèrè náà ránṣẹ́ gba inú rẹ̀. CLI náà yóò ṣiṣẹ́ lórí ìbéèrè náà nípa lílo àwọn ẹ̀rí ìfàṣẹsí tirẹ̀, yóò sì dá èsì náà padà nípasẹ̀ OmniRoute.",
     "flowExecute": "4 · A dá èsì padà sí oníbàárà",
@@ -10382,8 +10382,8 @@
     "agentUseCaseHint": "A lè lò ó gẹ́gẹ́ bí àfojúsùn ìṣiṣẹ́ nípasẹ̀ ìlànà ACP",
     "flowDiagramClient": "Ìṣàfilọ́lẹ̀ Oníbàárà",
     "flowDiagramClientDesc": "SDK, API, tàbí iṣẹ́ òkè",
-    "flowDiagramOmniRoute": "OmniRoute",
-    "flowDiagramOmniRouteDesc": "Ń gba ìbéèrè, ó sì ń yan àfojúsùn",
+    "flowDiagramAgentProxy": "OmniRoute",
+    "flowDiagramAgentProxyDesc": "Ń gba ìbéèrè, ó sì ń yan àfojúsùn",
     "flowDiagramSpawn": "Ìpilẹ̀ṣẹ̀ Ìlànà",
     "flowDiagramSpawnDesc": "Ń ṣe ìpilẹ̀ṣẹ̀ fáìlì aláṣẹ CLI nípasẹ̀ stdio",
     "flowDiagramCli": "Aṣojú CLI",
@@ -12938,16 +12938,16 @@
       "PROXY_AUTO_SELECT_ENABLED": {
         "description": "Nígbà tí a kò bá fi proxy kankan sí ìsopọ̀ kan, yan proxy àkọ́kọ́ tó ń ṣiṣẹ́ láti inú registry láìfọwọ́ṣe. Ó wà ní pípà nípa àkọ́kọ́ nítorí bí bẹ́ẹ̀ kọ́ proxy registry kan yóò di àfirọ́pò àgbáyé fún gbogbo traffic (#3332)."
       },
-      "OMNIROUTE_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
+      "AGENTPROXY_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
         "description": "Gba àwọn ìṣàn OAuth àti ìfọwọ́sí olùpèsè láàyè láti kọjá proxy tí a ti so mọ́ nígbà tí àyẹ̀wò bóyá a lè dé ọ̀dọ̀ proxy bá kùnà. Ó wà ní pípà nípa àkọ́kọ́ nítorí èyí lè yí IP ìjáde àkọọ́lẹ̀ padà."
       },
       "MITM_DISABLE_TLS_VERIFY": {
         "description": "Pa ìfìdí ìjẹ́rìísí TLS múlẹ̀ fún proxy MITM."
       },
-      "OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS": {
         "description": "Gba àwọn URL olùpèsè tó tọ́ka sí nẹ́tíwọ́ọ̀kì aládani tàbí ti inú láàyè."
       },
-      "OMNIROUTE_ALLOW_LOCAL_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_LOCAL_PROVIDER_URLS": {
         "description": "Gba àwọn olùpèsè lórí localhost, LAN, àti àwọn àgbègbè IP aládani láàyè. Èyí pọndandan fún àwọn àwòṣe abẹ́lé tó bá OpenAI mu, ó sì ṣiṣẹ́ nípa àkọ́kọ́. Àwọn endpoint metadata awọsánmà bíi 169.254.169.254 ṣì jẹ́ dídènà."
       },
       "ENABLE_CC_COMPATIBLE_PROVIDER": {
@@ -12969,28 +12969,28 @@
       "RESPONSES_PASSTHROUGH_DROP_COMMENTARY": {
         "description": "Yọ àwọn ohun àbájáde ìpele àsọyé inú kúrò nínú àwọn stream passthrough Responses API kí a tó fi wọ́n ránṣẹ́ sí àwọn client. Pa àsìá yìí láti gba àsọyé upstream gẹ́gẹ́ bí ó ṣe rí."
       },
-      "OMNIROUTE_MCP_ENFORCE_SCOPES": {
+      "AGENTPROXY_MCP_ENFORCE_SCOPES": {
         "description": "Fi àwọn ìdènà scope múlò fún ìwọlé sí irinṣẹ́ MCP."
       },
-      "OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS": {
+      "AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS": {
         "description": "Fún àwọn àpèjúwe irinṣẹ́ MCP pọ̀ láti dín lílo token kù."
       },
-      "OMNIROUTE_ENABLE_RUNTIME_BACKGROUND_TASKS": {
+      "AGENTPROXY_ENABLE_RUNTIME_BACKGROUND_TASKS": {
         "description": "Mú ìṣiṣẹ́ àwọn iṣẹ́ abẹ́lẹ̀ ṣiṣẹ́ ní runtime."
       },
-      "OMNIROUTE_DISABLE_BACKGROUND_SERVICES": {
+      "AGENTPROXY_DISABLE_BACKGROUND_SERVICES": {
         "description": "Pa gbogbo àwọn iṣẹ́ abẹ́lẹ̀, pẹ̀lú ìsọdọ̀tun quota àti ìṣiṣẹ́pọ̀."
       },
-      "OMNIROUTE_RTK_TRUST_PROJECT_FILTERS": {
+      "AGENTPROXY_RTK_TRUST_PROJECT_FILTERS": {
         "description": "Gbẹ́kẹ̀ lé àwọn àlẹ̀mọ́ RTK ti ipele project láìsí ìfọwọ́sí."
       },
-      "OMNIROUTE_ENABLE_LIVE_WS": {
+      "AGENTPROXY_ENABLE_LIVE_WS": {
         "description": "Bẹ̀rẹ̀ server WebSocket dashboard àkókò-gidi nígbà import lórí loopback port 20132. Ṣètò àsìá náà sí 0 tàbí false láti pa á. Ìṣípayá LAN tún nílò LIVE_WS_HOST=0.0.0.0 àti LIVE_WS_ALLOWED_ORIGINS."
       },
-      "OMNIROUTE_CODEX_WS_ENABLED": {
+      "AGENTPROXY_CODEX_WS_ENABLED": {
         "description": "Gba Codex láàyè láti lo Responses lórí WebSocket. Nígbà tí a bá pa á, Codex máa ń padà sí HTTP Responses."
       },
-      "OMNIROUTE_EMERGENCY_FALLBACK": {
+      "AGENTPROXY_EMERGENCY_FALLBACK": {
         "description": "Darí àwọn ìbéèrè tí budget wọn ti tán sí olùpèsè àfirọ́pò ọ̀fẹ́ pajawiri àti àwòṣe rẹ̀."
       },
       "STREAM_RECOVERY_ENABLED": {
@@ -13017,16 +13017,16 @@
       "PRICING_SYNC_ENABLED": {
         "description": "Mú dátà iye owó ṣiṣẹ́pọ̀ laifọwọyi. Àyípadà àyíká PRICING_SYNC_ENABLED gbọdọ̀ jẹ́ true pẹ̀lú."
       },
-      "OMNIROUTE_AUTO_SYNC_CODEX_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CODEX_PROFILES": {
         "description": "Lẹ́yìn ìṣiṣẹ́pọ̀ olùpèsè-àwòṣe, tún àwọn prófáìlì ~/.codex/*.config.toml ṣe láti inú àkójọ tó ń ṣiṣẹ́ lọ́wọ́lọ́wọ́. Èyí kì í yí ìṣètò Codex tó ń ṣiṣẹ́ tàbí ti àiyipada padà láé, a sì pa á ní àiyipada."
       },
-      "OMNIROUTE_AUTO_SYNC_CLAUDE_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CLAUDE_PROFILES": {
         "description": "Lẹ́yìn ìṣiṣẹ́pọ̀ olùpèsè-àwòṣe, tún àwọn prófáìlì ~/.claude/profiles/'<name>'/settings.json ṣe láti inú àkójọ tó ń ṣiṣẹ́ lọ́wọ́lọ́wọ́. Èyí kì í yí ìṣètò Claude tó ń ṣiṣẹ́ tàbí ti àiyipada padà láé, a sì pa á ní àiyipada."
       },
-      "OMNIROUTE_DISABLE_LOCAL_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_LOCAL_HEALTHCHECK": {
         "description": "Pa ibi ìwọlé ìṣàyẹ̀wò ìlera ẹ̀dà agbègbè."
       },
-      "OMNIROUTE_DISABLE_TOKEN_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_TOKEN_HEALTHCHECK": {
         "description": "Pa ìṣàyẹ̀wò ìlera ìfọwọ́sí tókẹnì."
       },
       "SKILLS_SANDBOX_NETWORK_ENABLED": {
@@ -14158,5 +14158,5 @@
     "partnerLinkNote": "Ìjápọ̀ aláṣiṣẹ́pọ̀",
     "dismissAriaLabel": "Pa á tì"
   },
-  "featureFlagOmnirouteDisableThinkingLevelVariantsDescription": "Pa ṣíṣẹ̀dá àwọn ẹ̀yà ìpele ìrònú (fún àpẹẹrẹ -low, -medium, -high) nínú àkójọ /v1/models."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Pa ṣíṣẹ̀dá àwọn ẹ̀yà ìpele ìrònú (fún àpẹẹrẹ -low, -medium, -high) nínú àkójọ /v1/models."
 }

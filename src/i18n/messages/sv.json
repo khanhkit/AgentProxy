@@ -986,7 +986,7 @@
     "batchFileDownloadFull": "Ladda Ner Hela Filen"
   },
   "disabled": "Inaktiverad",
-  "featureFlagOmnirouteEmergencyFallbackDescription": "Dirigera anrop med förbrukad budget till den kostnadsfria reservleverantören/-modellen för nödfall.",
+  "featureFlagAgentProxyEmergencyFallbackDescription": "Dirigera anrop med förbrukad budget till den kostnadsfria reservleverantören/-modellen för nödfall.",
   "featureFlagArenaEloSyncEnabledDescription": "Aktivera periodisk synkronisering av Arena AI-topplistans ELO för rankning av modellintelligens.",
   "featureFlagUniversalContextHandoffEnabledDescription": "Generera och infoga konversationssammanfattningar när kombinationsroutning byter modell. Inaktivera för att behandla modellbyten oberoende av varandra och förhindra bakgrundsförfrågningar för överlämning för alla befintliga och framtida kombinationer.",
   "featureFlagExposeCcDiscoveryAliasesDescription": "Reklamera claude/&lt;provider&gt;/&lt;model&gt; spegel-id på /v1/models så att Claude Code gateway-modellens upptäcktslista visar icke-Claude-modeller. Varning: dubblerar katalogposter för alla klienter när det är aktiverat globalt.",
@@ -2254,7 +2254,7 @@
     "requestFlowAria": "Din app skickar förfrågningar via en API-nyckel till OmniRoute",
     "requestFlowYourApp": "Din app",
     "requestFlowApiKey": "API-nyckel",
-    "requestFlowOmniRoute": "OmniRoute",
+    "requestFlowAgentProxy": "OmniRoute",
     "totalKeys": "Totalt nycklar",
     "restricted": "Begränsad",
     "totalRequests": "Totalt antal förfrågningar",
@@ -2761,7 +2761,7 @@
     "configurationSaved": "Konfigurationen har sparats.",
     "failedToSave": "Det gick inte att spara konfigurationen.",
     "noApiKeysCreateOne": "Inga API-nycklar - Skapa en på sidan Nycklar",
-    "defaultOmnirouteKey": "sk_omniroute (standard)",
+    "defaultAgentProxyKey": "sk_omniroute (standard)",
     "selectModel": "Välj modell",
     "selectModelForAlias": "Välj modell för {alias}",
     "selectModelForTool": "Välj modell för {tool}",
@@ -2858,13 +2858,13 @@
     "applied": "Ansökt!",
     "failed": "Misslyckades",
     "resetDone": "Återställ!",
-    "omnirouteConfiguredOpenAiCompatible": "OmniRoute är konfigurerad som OpenAI-kompatibel leverantör",
+    "agentproxyConfiguredOpenAiCompatible": "OmniRoute är konfigurerad som OpenAI-kompatibel leverantör",
     "provider": "Leverantör",
     "model": "Modell",
     "providers": "Leverantörer",
     "auth": "Autentisering",
     "noApiKeysAvailable": "Inga API-nycklar tillgängliga",
-    "usingDefaultOmniroute": "Använder standard: sk_omniroute",
+    "usingDefaultAgentProxy": "Använder standard: sk_omniroute",
     "updateConfig": "Uppdatera Config",
     "applyConfig": "Använd Config",
     "noBackupsAvailable": "Inga säkerhetskopior tillgängliga.",
@@ -3145,8 +3145,8 @@
     "hermesConfiguredRoles": "{configured}/{total} roller",
     "hermesQuickApply": "Tillämpa snabbt samma modell på alla roller:",
     "hermesApplyModelToAll": "Tillämpa {model} på alla roller",
-    "hermesViaOmniRoute": "{provider} (via OmniRoute)",
-    "hermesNotOmniRoute": "{provider} (ej OmniRoute)",
+    "hermesViaAgentProxy": "{provider} (via OmniRoute)",
+    "hermesNotAgentProxy": "{provider} (ej OmniRoute)",
     "hermesRemovePendingRole": "Ta bort denna roll från väntande ändringar",
     "hermesApply": "Tillämpa på Hermes Agent",
     "hermesRolesWillUpdate": "{count, plural, one {# roll kommer att uppdateras} other {# roller kommer att uppdateras}}",
@@ -4142,7 +4142,7 @@
     "vscodeAliasModelsLabel": "VS Code-modeller",
     "vscodeAliasChatLabel": "VS Code-chatt",
     "localServer": "Lokal server",
-    "cloudOmniroute": "OmniRoute i molnet",
+    "cloudAgentProxy": "OmniRoute i molnet",
     "copyUrl": "Kopiera URL",
     "badgeLoopbackTooltip": "Denna slutpunkt är endast tillgänglig lokalt (endast loopback)",
     "badgeAlwaysProtectedTooltip": "Denna slutpunkt är alltid skyddad och kräver auktorisering",
@@ -9979,7 +9979,7 @@
     "howItWorksStep3Description": "Begäran uppfylls av OpenAI, Anthropic, Gemini eller andra omedelbart.",
     "getStartedIn30Seconds": "Kom igång på 30 sekunder",
     "getStartedDescription": "Installera OmniRoute, konfigurera dina leverantörer via webbinstrumentpanelen och börja dirigera AI-förfrågningar.",
-    "installOmniRoute": "Installera OmniRoute",
+    "installAgentProxy": "Installera OmniRoute",
     "installStepDescription": "Kör npx-kommandot för att starta servern direkt",
     "openDashboard": "Öppna Dashboard",
     "openDashboardStepDescription": "Konfigurera leverantörer och API-nycklar via webbgränssnitt",
@@ -9988,7 +9988,7 @@
     "terminal": "terminal",
     "copy": "Kopiera",
     "copied": "✓ Kopierat",
-    "startingOmniRoute": "Startar OmniRoute...",
+    "startingAgentProxy": "Startar OmniRoute...",
     "serverRunningOnLabel": "Server körs på",
     "dashboardLabel": "Instrumentpanel",
     "readyToRoute": "Redo att färdas! ✓",
@@ -10382,7 +10382,7 @@
     "versionCommandPlaceholder": "Version Command Placeholder",
     "architectureTitle": "Architecture Title",
     "flowLocalBinary": "Flow Local Binary",
-    "flowOmniRoute": "Flow Omni Route",
+    "flowAgentProxy": "Flow Omni Route",
     "agentNamePlaceholder": "Agent Name Placeholder",
     "architectureDescription": "Architecture Description",
     "flowExecute": "Flow Execute",
@@ -10399,8 +10399,8 @@
     "agentUseCaseHint": "Kan användas som ett exekveringsmål via ACP-protokoll",
     "flowDiagramClient": "Klientapp",
     "flowDiagramClientDesc": "SDK, API eller uppströmstjänst",
-    "flowDiagramOmniRoute": "OmniRoute",
-    "flowDiagramOmniRouteDesc": "Tar emot begäran och väljer mål",
+    "flowDiagramAgentProxy": "OmniRoute",
+    "flowDiagramAgentProxyDesc": "Tar emot begäran och väljer mål",
     "flowDiagramSpawn": "Starta process",
     "flowDiagramSpawnDesc": "Startar CLI binär via stdio",
     "flowDiagramCli": "CLI-agent",
@@ -12965,16 +12965,16 @@
       "PROXY_AUTO_SELECT_ENABLED": {
         "description": "När ingen proxy har tilldelats en anslutning väljs automatiskt den första fungerande registerproxyn. Inaktiverad som standard eftersom en registerproxy annars blir en global reservlösning för all trafik (#3332)."
       },
-      "OMNIROUTE_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
+      "AGENTPROXY_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
         "description": "Tillåt OAuth- och leverantörsvalideringsflöden att kringgå en nålad proxy när nåbarhetskontroller för proxyn misslyckas. Inaktiverad som standard eftersom detta kan ändra kontots utgående IP-adress."
       },
       "MITM_DISABLE_TLS_VERIFY": {
         "description": "Inaktivera verifiering av TLS-certifikat för MITM-proxyn."
       },
-      "OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS": {
         "description": "Tillåt leverantörs-URL:er som pekar på privata eller interna nätverk."
       },
-      "OMNIROUTE_ALLOW_LOCAL_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_LOCAL_PROVIDER_URLS": {
         "description": "Tillåt leverantörer på localhost, LAN och privata IP-intervall. Detta krävs för lokala OpenAI-kompatibla modeller och är aktiverat som standard. Molnmetadata-slutpunkter som 169.254.169.254 förblir blockerade."
       },
       "ENABLE_CC_COMPATIBLE_PROVIDER": {
@@ -12996,28 +12996,28 @@
       "RESPONSES_PASSTHROUGH_DROP_COMMENTARY": {
         "description": "Ta bort interna utdataobjekt från kommentarsfasen från Responses API-genomströmningsströmmar innan de vidarebefordras till klienter. Inaktivera denna flagga för att ta emot råa uppströmskommentarer."
       },
-      "OMNIROUTE_MCP_ENFORCE_SCOPES": {
+      "AGENTPROXY_MCP_ENFORCE_SCOPES": {
         "description": "Tillämpa omfångsbegränsningar för MCP-verktygsåtkomst."
       },
-      "OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS": {
+      "AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS": {
         "description": "Komprimera MCP-verktygsbeskrivningar för att minska tokenanvändning."
       },
-      "OMNIROUTE_ENABLE_RUNTIME_BACKGROUND_TASKS": {
+      "AGENTPROXY_ENABLE_RUNTIME_BACKGROUND_TASKS": {
         "description": "Aktivera bearbetning av bakgrundsaktiviteter under körning."
       },
-      "OMNIROUTE_DISABLE_BACKGROUND_SERVICES": {
+      "AGENTPROXY_DISABLE_BACKGROUND_SERVICES": {
         "description": "Inaktivera alla bakgrundstjänster, inklusive kvotuppdatering och synkronisering."
       },
-      "OMNIROUTE_RTK_TRUST_PROJECT_FILTERS": {
+      "AGENTPROXY_RTK_TRUST_PROJECT_FILTERS": {
         "description": "Lita på RTK-filter på projektnivå utan validering."
       },
-      "OMNIROUTE_ENABLE_LIVE_WS": {
+      "AGENTPROXY_ENABLE_LIVE_WS": {
         "description": "Starta WebSocket-servern för realtidspanelen vid import på loopback-port 20132. Sätt flaggan till 0 eller false för att inaktivera den. LAN-exponering kräver även LIVE_WS_HOST=0.0.0.0 och LIVE_WS_ALLOWED_ORIGINS."
       },
-      "OMNIROUTE_CODEX_WS_ENABLED": {
+      "AGENTPROXY_CODEX_WS_ENABLED": {
         "description": "Tillåt Codex att använda Responses över WebSocket. När det är inaktiverat faller Codex tillbaka på HTTP Responses."
       },
-      "OMNIROUTE_EMERGENCY_FALLBACK": {
+      "AGENTPROXY_EMERGENCY_FALLBACK": {
         "description": "Dirigera förfrågningar med förbrukad budget till den kostnadsfria reservleverantören och -modellen för nödfall."
       },
       "STREAM_RECOVERY_ENABLED": {
@@ -13044,16 +13044,16 @@
       "PRICING_SYNC_ENABLED": {
         "description": "Synkronisera prisdata automatiskt. Miljövariabeln PRICING_SYNC_ENABLED måste också vara true."
       },
-      "OMNIROUTE_AUTO_SYNC_CODEX_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CODEX_PROFILES": {
         "description": "Efter synkronisering av leverantörsmodell, generera om ~/.codex/*.config.toml-profiler från den aktiva katalogen. Detta ändrar aldrig den aktiva eller standardinställda Codex-konfigurationen och är inaktiverat som standard."
       },
-      "OMNIROUTE_AUTO_SYNC_CLAUDE_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CLAUDE_PROFILES": {
         "description": "Efter synkronisering av leverantörsmodell, generera om ~/.claude/profiles/'<name>'/settings.json-profiler från den aktiva katalogen. Detta ändrar aldrig den aktiva eller standardinställda Claude-konfigurationen och är inaktiverat som standard."
       },
-      "OMNIROUTE_DISABLE_LOCAL_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_LOCAL_HEALTHCHECK": {
         "description": "Inaktivera slutpunkten för hälsokontroll av den lokala instansen."
       },
-      "OMNIROUTE_DISABLE_TOKEN_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_TOKEN_HEALTHCHECK": {
         "description": "Inaktivera hälsokontrollen för tokenvalidering."
       },
       "SKILLS_SANDBOX_NETWORK_ENABLED": {
@@ -14190,5 +14190,5 @@
     "partnerLinkNote": "Partnerlänk",
     "dismissAriaLabel": "Stäng"
   },
-  "featureFlagOmnirouteDisableThinkingLevelVariantsDescription": "Inaktivera genereringen av varianter med olika tankenivåer (t.ex. -low, -medium, -high) i katalogen /v1/models."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Inaktivera genereringen av varianter med olika tankenivåer (t.ex. -low, -medium, -high) i katalogen /v1/models."
 }

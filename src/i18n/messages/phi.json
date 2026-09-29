@@ -986,7 +986,7 @@
     "batchFileDownloadFull": "I-download ang Buong File"
   },
   "disabled": "Naka-disable",
-  "featureFlagOmnirouteEmergencyFallbackDescription": "I-route ang mga request na naubusan ng budget sa emergency free fallback provider/model.",
+  "featureFlagAgentProxyEmergencyFallbackDescription": "I-route ang mga request na naubusan ng budget sa emergency free fallback provider/model.",
   "featureFlagArenaEloSyncEnabledDescription": "I-enable ang pana-panahong Arena AI leaderboard ELO sync para sa mga ranking ng intelligence ng modelo.",
   "featureFlagUniversalContextHandoffEnabledDescription": "Bumuo at awtomatikong maglagay ng mga buod ng pag-uusap kapag nagpapalit ng mga modelo ang combo routing. I-disable upang ituring nang hiwalay ang mga pagpapalit ng modelo at pigilan ang mga kahilingan sa paglipat sa background para sa lahat ng kasalukuyan at hinaharap na combo.",
   "featureFlagExposeCcDiscoveryAliasesDescription": "I-anunsyo ang claude/&lt;provider&gt;/&lt;model&gt; mirror ids sa /v1/models upang ang Claude Code gateway model discovery ay maglista ng mga non-Claude models. Babala: nagdodoble ng catalog entries para sa lahat ng kliyente kapag pinagana nang globally.",
@@ -2257,7 +2257,7 @@
     "requestFlowAria": "Nagpapadala ang iyong app ng mga kahilingan sa OmniRoute gamit ang isang API key",
     "requestFlowYourApp": "Ang iyong app",
     "requestFlowApiKey": "Susi ng API",
-    "requestFlowOmniRoute": "OmniRoute",
+    "requestFlowAgentProxy": "OmniRoute",
     "totalKeys": "Kabuuang Mga Susi",
     "restricted": "Pinaghihigpitan",
     "totalRequests": "Kabuuang Mga Kahilingan",
@@ -2764,7 +2764,7 @@
     "configurationSaved": "Matagumpay na na-save ang configuration.",
     "failedToSave": "Nabigong i-save ang configuration.",
     "noApiKeysCreateOne": "Walang mga API key - Gumawa ng isa sa pahina ng Keys",
-    "defaultOmnirouteKey": "sk_omniroute (paunang-takda)",
+    "defaultAgentProxyKey": "sk_omniroute (paunang-takda)",
     "selectModel": "Piliin ang Modelo",
     "selectModelForAlias": "Pumili ng modelo para sa {alias}",
     "selectModelForTool": "Pumili ng Modelo para sa {tool}",
@@ -2861,13 +2861,13 @@
     "applied": "Inilapat!",
     "failed": "Nabigo",
     "resetDone": "I-reset!",
-    "omnirouteConfiguredOpenAiCompatible": "Ang OmniRoute ay na-configure bilang OpenAI-compatible na provider",
+    "agentproxyConfiguredOpenAiCompatible": "Ang OmniRoute ay na-configure bilang OpenAI-compatible na provider",
     "provider": "Tagapagbigay",
     "model": "Modelo",
     "providers": "Mga provider",
     "auth": "Awth",
     "noApiKeysAvailable": "Walang available na API key",
-    "usingDefaultOmniroute": "Gamit ang default: sk_omniroute",
+    "usingDefaultAgentProxy": "Gamit ang default: sk_omniroute",
     "updateConfig": "I-update ang Config",
     "applyConfig": "Ilapat ang Config",
     "noBackupsAvailable": "Walang available na backup.",
@@ -3148,8 +3148,8 @@
     "hermesConfiguredRoles": "{configured}/{total} na tungkulin",
     "hermesQuickApply": "Mabilis na ilapat ang parehong modelo sa lahat ng tungkulin:",
     "hermesApplyModelToAll": "Ilapat ang {model} sa bawat tungkulin",
-    "hermesViaOmniRoute": "{provider} (sa pamamagitan ng OmniRoute)",
-    "hermesNotOmniRoute": "{provider} (hindi OmniRoute)",
+    "hermesViaAgentProxy": "{provider} (sa pamamagitan ng OmniRoute)",
+    "hermesNotAgentProxy": "{provider} (hindi OmniRoute)",
     "hermesRemovePendingRole": "Alisin ang tungkuling ito mula sa mga nakabinbing pagbabago",
     "hermesApply": "Ilapat sa Hermes Agent",
     "hermesRolesWillUpdate": "{count, plural, one {# tungkulin ang mau-update} other {# na tungkulin ang mau-update}}",
@@ -4145,7 +4145,7 @@
     "vscodeAliasModelsLabel": "Mga modelo ng VS Code",
     "vscodeAliasChatLabel": "Chat ng VS Code",
     "localServer": "Lokal na Server",
-    "cloudOmniroute": "Cloud OmniRoute",
+    "cloudAgentProxy": "Cloud OmniRoute",
     "copyUrl": "Kopyahin ang URL",
     "badgeLoopbackTooltip": "Ang endpoint na ito ay maa-access lang nang lokal (loopback lang)",
     "badgeAlwaysProtectedTooltip": "Ang endpoint na ito ay palaging protektado at nangangailangan ng awtorisasyon",
@@ -9982,7 +9982,7 @@
     "howItWorksStep3Description": "Ang kahilingan ay agad na tinutupad ng OpenAI, Anthropic, Gemini, o iba pa.",
     "getStartedIn30Seconds": "Magsimula sa 30 Segundo",
     "getStartedDescription": "I-install ang OmniRoute, i-configure ang iyong mga provider sa pamamagitan ng web dashboard, at simulan ang pagruruta ng mga kahilingan sa AI.",
-    "installOmniRoute": "I-install ang OmniRoute",
+    "installAgentProxy": "I-install ang OmniRoute",
     "installStepDescription": "Patakbuhin ang npx command upang masimulan agad ang server",
     "openDashboard": "Buksan ang Dashboard",
     "openDashboardStepDescription": "I-configure ang mga provider at API key sa pamamagitan ng web interface",
@@ -9991,7 +9991,7 @@
     "terminal": "terminal",
     "copy": "Kopyahin",
     "copied": "✓ Kinopya",
-    "startingOmniRoute": "Sinisimulan ang OmniRoute...",
+    "startingAgentProxy": "Sinisimulan ang OmniRoute...",
     "serverRunningOnLabel": "Tumatakbo ang server",
     "dashboardLabel": "Dashboard",
     "readyToRoute": "Handa nang ruta! ✓",
@@ -10385,7 +10385,7 @@
     "versionCommandPlaceholder": "Version Command Placeholder",
     "architectureTitle": "Architecture Title",
     "flowLocalBinary": "Flow Local Binary",
-    "flowOmniRoute": "Flow Omni Route",
+    "flowAgentProxy": "Flow Omni Route",
     "agentNamePlaceholder": "Agent Name Placeholder",
     "architectureDescription": "Architecture Description",
     "flowExecute": "Flow Execute",
@@ -10402,8 +10402,8 @@
     "agentUseCaseHint": "Maaaring gamitin bilang target ng pagpapatupad sa pamamagitan ng ACP protocol",
     "flowDiagramClient": "Aplikasyon ng Kliyente",
     "flowDiagramClientDesc": "SDK, API, o upstream na serbisyo",
-    "flowDiagramOmniRoute": "OmniRoute",
-    "flowDiagramOmniRouteDesc": "Tumatanggap ng kahilingan at pumipili ng target",
+    "flowDiagramAgentProxy": "OmniRoute",
+    "flowDiagramAgentProxyDesc": "Tumatanggap ng kahilingan at pumipili ng target",
     "flowDiagramSpawn": "Proseso ng Pangingitlog",
     "flowDiagramSpawnDesc": "Inilunsad ang CLI binary sa pamamagitan ng stdio",
     "flowDiagramCli": "Ahente ng CLI",
@@ -12968,16 +12968,16 @@
       "PROXY_AUTO_SELECT_ENABLED": {
         "description": "Kapag walang proxy na nakatalaga sa isang koneksyon, awtomatikong piliin ang unang gumaganang registry proxy. Naka-off bilang default dahil kung hindi ay magiging global fallback ang isang registry proxy para sa lahat ng traffic (#3332)."
       },
-      "OMNIROUTE_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
+      "AGENTPROXY_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
         "description": "Payagan ang mga OAuth at provider-validation flow na i-bypass ang isang naka-pin na proxy kapag nabigo ang mga pagsusuri sa reachability ng proxy. Naka-off bilang default dahil maaari nitong baguhin ang egress IP ng account."
       },
       "MITM_DISABLE_TLS_VERIFY": {
         "description": "I-disable ang pag-verify ng TLS certificate para sa MITM proxy."
       },
-      "OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS": {
         "description": "Payagan ang mga URL ng provider na tumuturo sa mga pribado o panloob na network."
       },
-      "OMNIROUTE_ALLOW_LOCAL_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_LOCAL_PROVIDER_URLS": {
         "description": "Payagan ang mga provider sa localhost, LAN, at mga pribadong saklaw ng IP. Kinakailangan ito para sa mga lokal na modelong compatible sa OpenAI at naka-enable bilang default. Mananatiling naka-block ang mga cloud-metadata endpoint tulad ng 169.254.169.254."
       },
       "ENABLE_CC_COMPATIBLE_PROVIDER": {
@@ -12999,28 +12999,28 @@
       "RESPONSES_PASSTHROUGH_DROP_COMMENTARY": {
         "description": "Alisin ang mga panloob na output item ng commentary-phase mula sa mga passthrough stream ng Responses API bago ipasa ang mga ito sa mga client. I-disable ang flag na ito upang makatanggap ng raw upstream commentary."
       },
-      "OMNIROUTE_MCP_ENFORCE_SCOPES": {
+      "AGENTPROXY_MCP_ENFORCE_SCOPES": {
         "description": "Ipatupad ang mga paghihigpit sa saklaw para sa pag-access sa MCP tool."
       },
-      "OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS": {
+      "AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS": {
         "description": "I-compress ang mga paglalarawan ng MCP tool upang mabawasan ang paggamit ng token."
       },
-      "OMNIROUTE_ENABLE_RUNTIME_BACKGROUND_TASKS": {
+      "AGENTPROXY_ENABLE_RUNTIME_BACKGROUND_TASKS": {
         "description": "I-enable ang pagpoproseso ng background-task sa runtime."
       },
-      "OMNIROUTE_DISABLE_BACKGROUND_SERVICES": {
+      "AGENTPROXY_DISABLE_BACKGROUND_SERVICES": {
         "description": "I-disable ang lahat ng serbisyo sa background, kabilang ang pag-refresh ng quota at pag-synchronize."
       },
-      "OMNIROUTE_RTK_TRUST_PROJECT_FILTERS": {
+      "AGENTPROXY_RTK_TRUST_PROJECT_FILTERS": {
         "description": "Pagtiwalaan ang mga RTK filter sa antas ng proyekto nang walang pag-validate."
       },
-      "OMNIROUTE_ENABLE_LIVE_WS": {
+      "AGENTPROXY_ENABLE_LIVE_WS": {
         "description": "Simulan ang real-time dashboard WebSocket server sa pag-import sa loopback port 20132. Itakda ang flag sa 0 o false upang i-disable ito. Ang pag-expose sa LAN ay nangangailangan din ng LIVE_WS_HOST=0.0.0.0 at LIVE_WS_ALLOWED_ORIGINS."
       },
-      "OMNIROUTE_CODEX_WS_ENABLED": {
+      "AGENTPROXY_CODEX_WS_ENABLED": {
         "description": "Payagan ang Codex na gumamit ng Responses sa WebSocket. Kapag naka-disable, babalik ang Codex sa HTTP Responses."
       },
-      "OMNIROUTE_EMERGENCY_FALLBACK": {
+      "AGENTPROXY_EMERGENCY_FALLBACK": {
         "description": "I-route ang mga kahilingang naubos na ang badyet sa emergency na libreng fallback provider at modelo."
       },
       "STREAM_RECOVERY_ENABLED": {
@@ -13047,16 +13047,16 @@
       "PRICING_SYNC_ENABLED": {
         "description": "Awtomatikong i-synchronize ang data ng pagpepresyo. Dapat ding true ang environment variable na PRICING_SYNC_ENABLED."
       },
-      "OMNIROUTE_AUTO_SYNC_CODEX_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CODEX_PROFILES": {
         "description": "Pagkatapos ng pag-synchronize ng provider-model, muling buuin ang mga profile ng ~/.codex/*.config.toml mula sa live catalog. Hindi nito kailanman binabago ang aktibo o default na configuration ng Codex at naka-off bilang default."
       },
-      "OMNIROUTE_AUTO_SYNC_CLAUDE_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CLAUDE_PROFILES": {
         "description": "Pagkatapos ng pag-synchronize ng provider-model, muling buuin ang mga profile ng ~/.claude/profiles/'<name>'/settings.json mula sa live catalog. Hindi nito kailanman binabago ang aktibo o default na configuration ng Claude at naka-off bilang default."
       },
-      "OMNIROUTE_DISABLE_LOCAL_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_LOCAL_HEALTHCHECK": {
         "description": "I-disable ang health-check endpoint ng lokal na instance."
       },
-      "OMNIROUTE_DISABLE_TOKEN_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_TOKEN_HEALTHCHECK": {
         "description": "I-disable ang health check ng token-validation."
       },
       "SKILLS_SANDBOX_NETWORK_ENABLED": {
@@ -14193,5 +14193,5 @@
     "partnerLinkNote": "Link ng partner",
     "dismissAriaLabel": "Isara"
   },
-  "featureFlagOmnirouteDisableThinkingLevelVariantsDescription": "Huwag paganahin ang pagbuo ng mga variant ng antas ng pag-iisip (hal. -low, -medium, -high) sa katalogong /v1/models."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Huwag paganahin ang pagbuo ng mga variant ng antas ng pag-iisip (hal. -low, -medium, -high) sa katalogong /v1/models."
 }

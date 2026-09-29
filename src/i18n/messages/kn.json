@@ -986,7 +986,7 @@
     "batchFileDownloadFull": "ಸಂಪೂರ್ಣ ಫೈಲ್ ಡೌನ್ಲೋಡ್ ಮಾಡಿ"
   },
   "disabled": "ನಿಷ್ಕ್ರಿಯಗೊಳಿಸಲಾಗಿದೆ",
-  "featureFlagOmnirouteEmergencyFallbackDescription": "ಬಜೆಟ್ ಖಾಲಿಯಾದ ವಿನಂತಿಗಳನ್ನು ತುರ್ತು ಉಚಿತ ಫಾಲ್ಬ್ಯಾಕ್ ಪ್ರೊವೈಡರ್/ಮಾಡೆಲ್ಗೆ ರೂಟ್ ಮಾಡಿ.",
+  "featureFlagAgentProxyEmergencyFallbackDescription": "ಬಜೆಟ್ ಖಾಲಿಯಾದ ವಿನಂತಿಗಳನ್ನು ತುರ್ತು ಉಚಿತ ಫಾಲ್ಬ್ಯಾಕ್ ಪ್ರೊವೈಡರ್/ಮಾಡೆಲ್ಗೆ ರೂಟ್ ಮಾಡಿ.",
   "featureFlagArenaEloSyncEnabledDescription": "ಮಾಡೆಲ್ ಬುದ್ಧಿವಂತಿಕೆ ಶ್ರೇಣಿಗಳಿಗಾಗಿ ಪೀರಿಯಾಡಿಕ್ Arena AI ಲೀಡರ್ಬೋರ್ಡ್ ELO ಸಿಂಕ್ ಅನ್ನು ಸಕ್ರಿಯಗೊಳಿಸಿ.",
   "featureFlagUniversalContextHandoffEnabledDescription": "ಕಾಂಬೋ ರೂಟಿಂಗ್ ಮಾಡೆಲ್ಗಳನ್ನು ಬದಲಾಯಿಸಿದಾಗ ಸಂಭಾಷಣೆ ಸಾರಾಂಶಗಳನ್ನು ರಚಿಸಿ ಮತ್ತು ಸೇರಿಸಿ. ಮಾಡೆಲ್ ಬದಲಾವಣೆಗಳನ್ನು ಸ್ವತಂತ್ರವಾಗಿ ಪರಿಗಣಿಸಲು ಮತ್ತು ಎಲ್ಲಾ ಹಾಲಿ ಮತ್ತು ಭವಿಷ್ಯದ ಕಾಂಬೋಗಳಿಗೆ ಹಿನ್ನೆಲೆ ಹ್ಯಾಂಡ್ಒಫ್ ವಿನಂತಿಗಳನ್ನು ತಡೆಯಲು ನಿಷ್ಕ್ರಿಯಗೊಳಿಸಿ.",
   "featureFlagExposeCcDiscoveryAliasesDescription": "claude/&lt;provider&gt;/&lt;model&gt; ಮಿರರ್ ಐಡಿಗಳನ್ನು /v1/models ನಲ್ಲಿ ಪ್ರಕಟಿಸಿ, ಆದ್ದರಿಂದ Claude Code gateway ಮಾಡೆಲ್ ಆವಿಷ್ಕಾರವು non-Claude ಮಾಡೆಲ್ಗಳನ್ನು ಪಟ್ಟಿಮಾಡುತ್ತದೆ. ಎಚ್ಚರಿಕೆ: ಜಾಗತಿಕವಾಗಿ ಸಕ್ರಿಯಗೊಳಿಸಿದಾಗ ಎಲ್ಲಾ ಕ್ಲೈಂಟ್ಗಳಿಗೆ ಕ್ಯಾಟಲಾಗ್ ಎಂಟ್ರಿಗಳನ್ನು ದ್ವಿಗುಣಗೊಳಿಸುತ್ತದೆ.",
@@ -2254,7 +2254,7 @@
     "requestFlowAria": "ನಿಮ್ಮ ಅಪ್ಲಿಕೇಶನ್ API ಕೀ ಮೂಲಕ OmniRoute ಗೆ ವಿನಂತಿಗಳನ್ನು ಕಳುಹಿಸುತ್ತದೆ",
     "requestFlowYourApp": "ನಿಮ್ಮ ಅಪ್ಲಿಕೇಶನ್",
     "requestFlowApiKey": "API ಕೀ",
-    "requestFlowOmniRoute": "OmniRoute",
+    "requestFlowAgentProxy": "OmniRoute",
     "totalKeys": "ಒಟ್ಟು ಕೀಗಳು",
     "restricted": "ನಿರ್ಬಂಧಿತ",
     "totalRequests": "ಒಟ್ಟು ವಿನಂತಿಗಳು",
@@ -2761,7 +2761,7 @@
     "configurationSaved": "ಸಂರಚನೆ ಯಶಸ್ವಿಯಾಗಿ ಉಳಿಸಲಾಗಿದೆ.",
     "failedToSave": "ಸಂರಚನೆ ಉಳಿಸಲು ವಿಫಲವಾಗಿದೆ.",
     "noApiKeysCreateOne": "ಯಾವುದೇ API ಕೀಗಳಿಲ್ಲ - ಕೀಗಳ ಪುಟದಲ್ಲಿ ಒಂದನ್ನು ರಚಿಸಿ",
-    "defaultOmnirouteKey": "sk_omniroute (ಡೀಫಾಲ್ಟ್)",
+    "defaultAgentProxyKey": "sk_omniroute (ಡೀಫಾಲ್ಟ್)",
     "selectModel": "ಮಾದರಿಯನ್ನು ಆಯ್ಕೆಮಾಡಿ",
     "selectModelForAlias": "{alias} ಗಾಗಿ ಮಾದರಿಯನ್ನು ಆಯ್ಕೆಮಾಡಿ",
     "selectModelForTool": "{tool} ಗಾಗಿ ಮಾದರಿಯನ್ನು ಆಯ್ಕೆಮಾಡಿ",
@@ -2858,13 +2858,13 @@
     "applied": "ಅನ್ವಯಿಸಲಾಗಿದೆ!",
     "failed": "ವಿಫಲ",
     "resetDone": "ಮರುಹೊಂದಿಸಲಾಗಿದೆ!",
-    "omnirouteConfiguredOpenAiCompatible": "OmniRoute ಅನ್ನು OpenAI-ಹೊಂದಾಣಿಕೆಯ ಪ್ರೊವೈಡರ್ ಆಗಿ ಕಾನ್ಫಿಗರ್ ಮಾಡಲಾಗಿದೆ",
+    "agentproxyConfiguredOpenAiCompatible": "OmniRoute ಅನ್ನು OpenAI-ಹೊಂದಾಣಿಕೆಯ ಪ್ರೊವೈಡರ್ ಆಗಿ ಕಾನ್ಫಿಗರ್ ಮಾಡಲಾಗಿದೆ",
     "provider": "ಪ್ರೊವೈಡರ್",
     "model": "ಮಾದರಿ",
     "providers": "ಪ್ರೊವೈಡರ್ಗಳು",
     "auth": "ದೃಢೀಕರಣ",
     "noApiKeysAvailable": "ಯಾವುದೇ API ಕೀಗಳು ಲಭ್ಯವಿಲ್ಲ",
-    "usingDefaultOmniroute": "ಡೀಫಾಲ್ಟ್ ಬಳಸಲಾಗುತ್ತಿದೆ: sk_omniroute",
+    "usingDefaultAgentProxy": "ಡೀಫಾಲ್ಟ್ ಬಳಸಲಾಗುತ್ತಿದೆ: sk_omniroute",
     "updateConfig": "ಕಾನ್ಫಿಗರೇಶನ್ ನವೀಕರಿಸಿ",
     "applyConfig": "ಕಾನ್ಫಿಗರೇಶನ್ ಅನ್ವಯಿಸಿ",
     "noBackupsAvailable": "ಯಾವುದೇ ಬ್ಯಾಕ್ಅಪ್ಗಳು ಲಭ್ಯವಿಲ್ಲ.",
@@ -3145,8 +3145,8 @@
     "hermesConfiguredRoles": "{configured}/{total} ಪಾತ್ರಗಳು",
     "hermesQuickApply": "ಎಲ್ಲಾ ಪಾತ್ರಗಳಿಗೂ ಅದೇ ಮಾಡೆಲ್ ಅನ್ನು ತ್ವರಿತವಾಗಿ ಅನ್ವಯಿಸಿ:",
     "hermesApplyModelToAll": "ಪ್ರತಿ ಪಾತ್ರಕ್ಕೂ {model} ಅನ್ನು ಅನ್ವಯಿಸಿ",
-    "hermesViaOmniRoute": "{provider} (OmniRoute ಮೂಲಕ)",
-    "hermesNotOmniRoute": "{provider} (OmniRoute ಮೂಲಕ ಅಲ್ಲ)",
+    "hermesViaAgentProxy": "{provider} (OmniRoute ಮೂಲಕ)",
+    "hermesNotAgentProxy": "{provider} (OmniRoute ಮೂಲಕ ಅಲ್ಲ)",
     "hermesRemovePendingRole": "ಈ ಪಾತ್ರವನ್ನು ಬಾಕಿ ಇರುವ ಬದಲಾವಣೆಗಳಿಂದ ತೆಗೆದುಹಾಕಿ",
     "hermesApply": "Hermes Agent ಗೆ ಅನ್ವಯಿಸಿ",
     "hermesRolesWillUpdate": "{count, plural, one {# ಪಾತ್ರವನ್ನು ನವೀಕರಿಸಲಾಗುವುದು} other {# ಪಾತ್ರಗಳನ್ನು ನವೀಕರಿಸಲಾಗುವುದು}}",
@@ -4125,7 +4125,7 @@
     "vscodeAliasModelsLabel": "VS Code ಮಾದರಿಗಳು",
     "vscodeAliasChatLabel": "VS Code ಚಾಟ್",
     "localServer": "ಸ್ಥಳೀಯ ಸರ್ವರ್",
-    "cloudOmniroute": "ಕ್ಲೌಡ್ OmniRoute",
+    "cloudAgentProxy": "ಕ್ಲೌಡ್ OmniRoute",
     "copyUrl": "URL ನಕಲಿಸಿ",
     "badgeLoopbackTooltip": "ಈ ಎಂಡ್ಪಾಯಿಂಟ್ ಅನ್ನು ಸ್ಥಳೀಯವಾಗಿ ಮಾತ್ರ ಪ್ರವೇಶಿಸಬಹುದು (ಲೂಪ್ಬ್ಯಾಕ್ ಮಾತ್ರ)",
     "badgeAlwaysProtectedTooltip": "ಈ ಎಂಡ್ಪಾಯಿಂಟ್ ಯಾವಾಗಲೂ ಸಂರಕ್ಷಿತವಾಗಿರುತ್ತದೆ ಮತ್ತು ಅಧಿಕೃತ ಅನುಮತಿಯ ಅಗತ್ಯವಿದೆ",
@@ -9962,7 +9962,7 @@
     "howItWorksStep3Description": "ವಿನಂತಿಯನ್ನು OpenAI, Anthropic, Gemini ಅಥವಾ ಇತರ ಪೂರೈಕೆದಾರರು ತಕ್ಷಣವೇ ಪೂರೈಸುತ್ತಾರೆ.",
     "getStartedIn30Seconds": "30 ಸೆಕೆಂಡುಗಳಲ್ಲಿ ಪ್ರಾರಂಭಿಸಿ",
     "getStartedDescription": "OmniRoute ಅನ್ನು ಸ್ಥಾಪಿಸಿ, ವೆಬ್ ಡ್ಯಾಶ್ಬೋರ್ಡ್ ಮೂಲಕ ನಿಮ್ಮ ಪೂರೈಕೆದಾರರನ್ನು ಕಾನ್ಫಿಗರ್ ಮಾಡಿ ಮತ್ತು AI ವಿನಂತಿಗಳನ್ನು ರೂಟ್ ಮಾಡಲು ಪ್ರಾರಂಭಿಸಿ.",
-    "installOmniRoute": "OmniRoute ಅನ್ನು ಸ್ಥಾಪಿಸಿ",
+    "installAgentProxy": "OmniRoute ಅನ್ನು ಸ್ಥಾಪಿಸಿ",
     "installStepDescription": "ಸರ್ವರ್ ಅನ್ನು ತಕ್ಷಣವೇ ಪ್ರಾರಂಭಿಸಲು npx ಕಮಾಂಡ್ ಅನ್ನು ರನ್ ಮಾಡಿ",
     "openDashboard": "ಡ್ಯಾಶ್ಬೋರ್ಡ್ ತೆರೆಯಿರಿ",
     "openDashboardStepDescription": "ವೆಬ್ ಇಂಟರ್ಫೇಸ್ ಮೂಲಕ ಪೂರೈಕೆದಾರರು ಮತ್ತು API ಕೀಗಳನ್ನು ಕಾನ್ಫಿಗರ್ ಮಾಡಿ",
@@ -9971,7 +9971,7 @@
     "terminal": "ಟರ್ಮಿನಲ್",
     "copy": "ನಕಲಿಸಿ",
     "copied": "✓ ನಕಲಿಸಲಾಗಿದೆ",
-    "startingOmniRoute": "OmniRoute ಪ್ರಾರಂಭವಾಗುತ್ತಿದೆ...",
+    "startingAgentProxy": "OmniRoute ಪ್ರಾರಂಭವಾಗುತ್ತಿದೆ...",
     "serverRunningOnLabel": "ಸರ್ವರ್ ಇಲ್ಲಿ ಚಾಲನೆಯಲ್ಲಿದೆ",
     "dashboardLabel": "ಡ್ಯಾಶ್ಬೋರ್ಡ್",
     "readyToRoute": "ರೂಟ್ ಮಾಡಲು ಸಿದ್ಧವಾಗಿದೆ! ✓",
@@ -10365,7 +10365,7 @@
     "versionCommandPlaceholder": "ಉದಾ., my-agent --version",
     "architectureTitle": "ಏಜೆಂಟ್ ಗುರಿಗಳು ಹೇಗೆ ಕಾರ್ಯನಿರ್ವಹಿಸುತ್ತವೆ",
     "flowLocalBinary": "3 · ತನ್ನದೇ ದೃಢೀಕರಣ ಹೊಂದಿರುವ CLI ಪ್ರಕ್ರಿಯೆ",
-    "flowOmniRoute": "1 · ವಿನಂತಿಯು OmniRouteಗೆ ತಲುಪುತ್ತದೆ",
+    "flowAgentProxy": "1 · ವಿನಂತಿಯು OmniRouteಗೆ ತಲುಪುತ್ತದೆ",
     "agentNamePlaceholder": "ಉದಾ., ನನ್ನ ಕಸ್ಟಮ್ ಏಜೆಂಟ್",
     "architectureDescription": "ವಿನಂತಿಯೊಂದು ಬಂದಾಗ, OmniRoute ಸ್ಥಳೀಯ CLI ಬೈನರಿಯನ್ನು (ಉದಾ., claude, codex, goose) ಸ್ಪಾನ್ ಮಾಡಿ ಅದರ ಮೂಲಕ ವಿನಂತಿಯನ್ನು ಪೈಪ್ ಮಾಡಬಹುದು. CLI ತನ್ನದೇ ರುಜುವಾತುಗಳನ್ನು ಬಳಸಿ ವಿನಂತಿಯನ್ನು ಪ್ರಕ್ರಿಯೆಗೊಳಿಸುತ್ತದೆ ಮತ್ತು ಫಲಿತಾಂಶವನ್ನು OmniRoute ಮೂಲಕ ಹಿಂದಿರುಗಿಸುತ್ತದೆ.",
     "flowExecute": "4 · ಪ್ರತಿಕ್ರಿಯೆಯನ್ನು ಕ್ಲೈಂಟ್ಗೆ ಹಿಂದಿರುಗಿಸಲಾಗುತ್ತದೆ",
@@ -10382,8 +10382,8 @@
     "agentUseCaseHint": "ACP ಪ್ರೋಟೋಕಾಲ್ ಮೂಲಕ ಕಾರ್ಯಗತಗೊಳಿಸುವ ಗುರಿಯಾಗಿ ಬಳಸಬಹುದು",
     "flowDiagramClient": "ಕ್ಲೈಂಟ್ ಆ್ಯಪ್",
     "flowDiagramClientDesc": "SDK, API ಅಥವಾ ಅಪ್ಸ್ಟ್ರೀಮ್ ಸೇವೆ",
-    "flowDiagramOmniRoute": "OmniRoute",
-    "flowDiagramOmniRouteDesc": "ವಿನಂತಿಯನ್ನು ಸ್ವೀಕರಿಸಿ ಗುರಿಯನ್ನು ಆಯ್ಕೆಮಾಡುತ್ತದೆ",
+    "flowDiagramAgentProxy": "OmniRoute",
+    "flowDiagramAgentProxyDesc": "ವಿನಂತಿಯನ್ನು ಸ್ವೀಕರಿಸಿ ಗುರಿಯನ್ನು ಆಯ್ಕೆಮಾಡುತ್ತದೆ",
     "flowDiagramSpawn": "ಪ್ರಕ್ರಿಯೆಯನ್ನು ಪ್ರಾರಂಭಿಸಿ",
     "flowDiagramSpawnDesc": "stdio ಮೂಲಕ CLI ಬೈನರಿಯನ್ನು ಪ್ರಾರಂಭಿಸುತ್ತದೆ",
     "flowDiagramCli": "CLI ಏಜೆಂಟ್",
@@ -12938,16 +12938,16 @@
       "PROXY_AUTO_SELECT_ENABLED": {
         "description": "ಸಂಪರ್ಕಕ್ಕೆ ಯಾವುದೇ ಪ್ರಾಕ್ಸಿಯನ್ನು ನಿಯೋಜಿಸದಿದ್ದಾಗ, ಕಾರ್ಯನಿರ್ವಹಿಸುವ ಮೊದಲ ರಿಜಿಸ್ಟ್ರಿ ಪ್ರಾಕ್ಸಿಯನ್ನು ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಆಯ್ಕೆಮಾಡಿ. ಇಲ್ಲವಾದರೆ ಒಂದು ರಿಜಿಸ್ಟ್ರಿ ಪ್ರಾಕ್ಸಿಯು ಎಲ್ಲಾ ಟ್ರಾಫಿಕ್ಗೆ ಜಾಗತಿಕ ಫಾಲ್ಬ್ಯಾಕ್ ಆಗುವುದರಿಂದ ಪೂರ್ವನಿಯೋಜಿತವಾಗಿ ಆಫ್ ಆಗಿರುತ್ತದೆ (#3332)."
       },
-      "OMNIROUTE_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
+      "AGENTPROXY_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
         "description": "ಪ್ರಾಕ್ಸಿ ತಲುಪುವಿಕೆ ಪರಿಶೀಲನೆಗಳು ವಿಫಲವಾದಾಗ, OAuth ಮತ್ತು ಪೂರೈಕೆದಾರ-ಮೌಲ್ಯೀಕರಣ ಪ್ರಕ್ರಿಯೆಗಳು ಪಿನ್ ಮಾಡಿದ ಪ್ರಾಕ್ಸಿಯನ್ನು ಬೈಪಾಸ್ ಮಾಡಲು ಅನುಮತಿಸಿ. ಇದು ಖಾತೆಯ ಎಗ್ರೆಸ್ IP ಅನ್ನು ಬದಲಾಯಿಸಬಹುದಾದ್ದರಿಂದ ಪೂರ್ವನಿಯೋಜಿತವಾಗಿ ಆಫ್ ಆಗಿರುತ್ತದೆ."
       },
       "MITM_DISABLE_TLS_VERIFY": {
         "description": "MITM ಪ್ರಾಕ್ಸಿಗಾಗಿ TLS ಪ್ರಮಾಣಪತ್ರ ಪರಿಶೀಲನೆಯನ್ನು ನಿಷ್ಕ್ರಿಯಗೊಳಿಸಿ."
       },
-      "OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS": {
         "description": "ಖಾಸಗಿ ಅಥವಾ ಆಂತರಿಕ ನೆಟ್ವರ್ಕ್ಗಳನ್ನು ಸೂಚಿಸುವ ಪೂರೈಕೆದಾರ URLಗಳಿಗೆ ಅನುಮತಿಸಿ."
       },
-      "OMNIROUTE_ALLOW_LOCAL_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_LOCAL_PROVIDER_URLS": {
         "description": "localhost, LAN ಮತ್ತು ಖಾಸಗಿ IP ಶ್ರೇಣಿಗಳಲ್ಲಿನ ಪೂರೈಕೆದಾರರಿಗೆ ಅನುಮತಿಸಿ. ಸ್ಥಳೀಯ OpenAI-ಹೊಂದಾಣಿಕೆಯ ಮಾದರಿಗಳಿಗೆ ಇದು ಅಗತ್ಯವಾಗಿದ್ದು, ಪೂರ್ವನಿಯೋಜಿತವಾಗಿ ಸಕ್ರಿಯಗೊಂಡಿರುತ್ತದೆ. 169.254.169.254 ನಂತಹ ಕ್ಲೌಡ್-ಮೆಟಾಡೇಟಾ ಎಂಡ್ಪಾಯಿಂಟ್ಗಳು ನಿರ್ಬಂಧಿತವಾಗಿಯೇ ಇರುತ್ತವೆ."
       },
       "ENABLE_CC_COMPATIBLE_PROVIDER": {
@@ -12969,28 +12969,28 @@
       "RESPONSES_PASSTHROUGH_DROP_COMMENTARY": {
         "description": "ಕ್ಲೈಂಟ್ಗಳಿಗೆ ಫಾರ್ವರ್ಡ್ ಮಾಡುವ ಮೊದಲು Responses API ಪಾಸ್ಥ್ರೂ ಸ್ಟ್ರೀಮ್ಗಳಿಂದ ಆಂತರಿಕ ಕಾಮೆಂಟರಿ-ಹಂತದ ಔಟ್ಪುಟ್ ಐಟಂಗಳನ್ನು ತೆಗೆದುಹಾಕಿ. ಕಚ್ಚಾ ಅಪ್ಸ್ಟ್ರೀಮ್ ಕಾಮೆಂಟರಿಯನ್ನು ಸ್ವೀಕರಿಸಲು ಈ ಫ್ಲ್ಯಾಗ್ ಅನ್ನು ನಿಷ್ಕ್ರಿಯಗೊಳಿಸಿ."
       },
-      "OMNIROUTE_MCP_ENFORCE_SCOPES": {
+      "AGENTPROXY_MCP_ENFORCE_SCOPES": {
         "description": "MCP ಪರಿಕರ ಪ್ರವೇಶಕ್ಕಾಗಿ ಸ್ಕೋಪ್ ನಿರ್ಬಂಧಗಳನ್ನು ಜಾರಿಗೊಳಿಸಿ."
       },
-      "OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS": {
+      "AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS": {
         "description": "ಟೋಕನ್ ಬಳಕೆಯನ್ನು ಕಡಿಮೆ ಮಾಡಲು MCP ಪರಿಕರ ವಿವರಣೆಗಳನ್ನು ಸಂಕುಚಿತಗೊಳಿಸಿ."
       },
-      "OMNIROUTE_ENABLE_RUNTIME_BACKGROUND_TASKS": {
+      "AGENTPROXY_ENABLE_RUNTIME_BACKGROUND_TASKS": {
         "description": "ರನ್ಟೈಮ್ನಲ್ಲಿ ಹಿನ್ನೆಲೆ-ಕಾರ್ಯ ಪ್ರಕ್ರಿಯೆಯನ್ನು ಸಕ್ರಿಯಗೊಳಿಸಿ."
       },
-      "OMNIROUTE_DISABLE_BACKGROUND_SERVICES": {
+      "AGENTPROXY_DISABLE_BACKGROUND_SERVICES": {
         "description": "ಕೋಟಾ ರಿಫ್ರೆಶ್ ಮತ್ತು ಸಮಕಾಲೀಕರಣ ಸೇರಿದಂತೆ ಎಲ್ಲಾ ಹಿನ್ನೆಲೆ ಸೇವೆಗಳನ್ನು ನಿಷ್ಕ್ರಿಯಗೊಳಿಸಿ."
       },
-      "OMNIROUTE_RTK_TRUST_PROJECT_FILTERS": {
+      "AGENTPROXY_RTK_TRUST_PROJECT_FILTERS": {
         "description": "ಮೌಲ್ಯೀಕರಣವಿಲ್ಲದೆ ಪ್ರಾಜೆಕ್ಟ್-ಮಟ್ಟದ RTK ಫಿಲ್ಟರ್ಗಳನ್ನು ನಂಬಿ."
       },
-      "OMNIROUTE_ENABLE_LIVE_WS": {
+      "AGENTPROXY_ENABLE_LIVE_WS": {
         "description": "ಇಂಪೋರ್ಟ್ ಮಾಡುವಾಗ ಲೂಪ್ಬ್ಯಾಕ್ ಪೋರ್ಟ್ 20132 ನಲ್ಲಿ ನೈಜ-ಸಮಯದ ಡ್ಯಾಶ್ಬೋರ್ಡ್ WebSocket ಸರ್ವರ್ ಅನ್ನು ಪ್ರಾರಂಭಿಸಿ. ಇದನ್ನು ನಿಷ್ಕ್ರಿಯಗೊಳಿಸಲು ಫ್ಲ್ಯಾಗ್ ಅನ್ನು 0 ಅಥವಾ false ಗೆ ಹೊಂದಿಸಿ. LAN ಪ್ರವೇಶಕ್ಕೆ LIVE_WS_HOST=0.0.0.0 ಮತ್ತು LIVE_WS_ALLOWED_ORIGINS ಸಹ ಅಗತ್ಯವಿವೆ."
       },
-      "OMNIROUTE_CODEX_WS_ENABLED": {
+      "AGENTPROXY_CODEX_WS_ENABLED": {
         "description": "WebSocket ಮೂಲಕ Responses ಅನ್ನು ಬಳಸಲು Codex ಗೆ ಅನುಮತಿಸಿ. ನಿಷ್ಕ್ರಿಯಗೊಳಿಸಿದಾಗ, Codex HTTP Responses ಗೆ ಫಾಲ್ಬ್ಯಾಕ್ ಆಗುತ್ತದೆ."
       },
-      "OMNIROUTE_EMERGENCY_FALLBACK": {
+      "AGENTPROXY_EMERGENCY_FALLBACK": {
         "description": "ಬಜೆಟ್ ಮುಗಿದಿರುವ ವಿನಂತಿಗಳನ್ನು ತುರ್ತು ಉಚಿತ ಫಾಲ್ಬ್ಯಾಕ್ ಪೂರೈಕೆದಾರ ಮತ್ತು ಮಾದರಿಗೆ ರೂಟ್ ಮಾಡಿ."
       },
       "STREAM_RECOVERY_ENABLED": {
@@ -13017,16 +13017,16 @@
       "PRICING_SYNC_ENABLED": {
         "description": "ಬೆಲೆ ನಿಗದಿ ಡೇಟಾವನ್ನು ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಸಮಕಾಲೀನಗೊಳಿಸಿ. PRICING_SYNC_ENABLED ಪರಿಸರ ಚರವು ಸಹ true ಆಗಿರಬೇಕು."
       },
-      "OMNIROUTE_AUTO_SYNC_CODEX_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CODEX_PROFILES": {
         "description": "ಪೂರೈಕೆದಾರ-ಮಾದರಿ ಸಮಕಾಲೀಕರಣದ ನಂತರ, ಲೈವ್ ಕ್ಯಾಟಲಾಗ್ನಿಂದ ~/.codex/*.config.toml ಪ್ರೊಫೈಲ್ಗಳನ್ನು ಮರುರಚಿಸಿ. ಇದು ಸಕ್ರಿಯ ಅಥವಾ ಪೂರ್ವನಿಯೋಜಿತ Codex ಕಾನ್ಫಿಗರೇಶನ್ ಅನ್ನು ಎಂದಿಗೂ ಬದಲಾಯಿಸುವುದಿಲ್ಲ ಮತ್ತು ಪೂರ್ವನಿಯೋಜಿತವಾಗಿ ಆಫ್ ಆಗಿರುತ್ತದೆ."
       },
-      "OMNIROUTE_AUTO_SYNC_CLAUDE_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CLAUDE_PROFILES": {
         "description": "ಪೂರೈಕೆದಾರ-ಮಾದರಿ ಸಮಕಾಲೀಕರಣದ ನಂತರ, ಲೈವ್ ಕ್ಯಾಟಲಾಗ್ನಿಂದ ~/.claude/profiles/'<name>'/settings.json ಪ್ರೊಫೈಲ್ಗಳನ್ನು ಮರುರಚಿಸಿ. ಇದು ಸಕ್ರಿಯ ಅಥವಾ ಪೂರ್ವನಿಯೋಜಿತ Claude ಕಾನ್ಫಿಗರೇಶನ್ ಅನ್ನು ಎಂದಿಗೂ ಬದಲಾಯಿಸುವುದಿಲ್ಲ ಮತ್ತು ಪೂರ್ವನಿಯೋಜಿತವಾಗಿ ಆಫ್ ಆಗಿರುತ್ತದೆ."
       },
-      "OMNIROUTE_DISABLE_LOCAL_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_LOCAL_HEALTHCHECK": {
         "description": "ಸ್ಥಳೀಯ ಇನ್ಸ್ಟಾನ್ಸ್ ಆರೋಗ್ಯ-ಪರಿಶೀಲನೆ ಎಂಡ್ಪಾಯಿಂಟ್ ಅನ್ನು ನಿಷ್ಕ್ರಿಯಗೊಳಿಸಿ."
       },
-      "OMNIROUTE_DISABLE_TOKEN_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_TOKEN_HEALTHCHECK": {
         "description": "ಟೋಕನ್-ಮೌಲ್ಯೀಕರಣ ಆರೋಗ್ಯ ಪರಿಶೀಲನೆಯನ್ನು ನಿಷ್ಕ್ರಿಯಗೊಳಿಸಿ."
       },
       "SKILLS_SANDBOX_NETWORK_ENABLED": {
@@ -14158,5 +14158,5 @@
     "partnerLinkNote": "ಪಾಲುದಾರರ ಲಿಂಕ್",
     "dismissAriaLabel": "ವಜಾಗೊಳಿಸಿ"
   },
-  "featureFlagOmnirouteDisableThinkingLevelVariantsDescription": "/v1/models ಕ್ಯಾಟಲಾಗ್ನಲ್ಲಿ ಚಿಂತನಾ ಮಟ್ಟದ ರೂಪಾಂತರಗಳ (ಉದಾ. -low, -medium, -high) ರಚನೆಯನ್ನು ನಿಷ್ಕ್ರಿಯಗೊಳಿಸಿ."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "/v1/models ಕ್ಯಾಟಲಾಗ್ನಲ್ಲಿ ಚಿಂತನಾ ಮಟ್ಟದ ರೂಪಾಂತರಗಳ (ಉದಾ. -low, -medium, -high) ರಚನೆಯನ್ನು ನಿಷ್ಕ್ರಿಯಗೊಳಿಸಿ."
 }

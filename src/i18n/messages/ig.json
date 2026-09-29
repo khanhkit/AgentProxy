@@ -986,7 +986,7 @@
     "batchFileDownloadFull": "Budata Faịlụ Zuru Ezu"
   },
   "disabled": "Agbanyụrụ",
-  "featureFlagOmnirouteEmergencyFallbackDescription": "Ziga arịrịọ ndị mmefu ego ha gwụrụ na provider/model ndabere efu maka ọnọdụ mberede.",
+  "featureFlagAgentProxyEmergencyFallbackDescription": "Ziga arịrịọ ndị mmefu ego ha gwụrụ na provider/model ndabere efu maka ọnọdụ mberede.",
   "featureFlagArenaEloSyncEnabledDescription": "Gbanye mmekọrịta ELO nke leaderboard Arena AI kwa oge maka ogo ọgụgụ isi model.",
   "featureFlagUniversalContextHandoffEnabledDescription": "Mepụta ma tinye nchịkọta mkparịta ụka mgbe combo routing gbanwere model. Gbanyụọ ya ka e were mgbanwe model ọ bụla dịka ihe nọọrọ onwe ya ma gbochie arịrịọ nnyefe na ndabere maka combo niile dị ugbu a na ndị ga-adị n'ọdịnihu.",
   "featureFlagExposeCcDiscoveryAliasesDescription": "Kpọsa id mirror claude/&lt;provider&gt;/&lt;model&gt; na /v1/models ka nchọpụta model nke gateway Claude Code depụta model ndị na-abụghị Claude. Ịdọ aka ná ntị: nke a na-eme ka ọnụ ọgụgụ ihe dị na katalọgụ bụrụ okpukpu abụọ maka client niile mgbe agbanyere ya n'ụwa niile.",
@@ -2254,7 +2254,7 @@
     "requestFlowAria": "Ngwa gị na-eziga arịrịọ site na igodo API gaa na OmniRoute",
     "requestFlowYourApp": "Ngwa gị",
     "requestFlowApiKey": "Igodo API",
-    "requestFlowOmniRoute": "OmniRoute",
+    "requestFlowAgentProxy": "OmniRoute",
     "totalKeys": "Ngụkọta Igodo",
     "restricted": "E Tinyere Mmachi",
     "totalRequests": "Ngụkọta Arịrịọ",
@@ -2761,7 +2761,7 @@
     "configurationSaved": "E chekwara nhazi ahụ nke ọma.",
     "failedToSave": "Enweghị ike ichekwa nhazi ahụ.",
     "noApiKeysCreateOne": "Enweghị API keys - Mepụta otu na peeji Keys",
-    "defaultOmnirouteKey": "sk_omniroute (ndabara)",
+    "defaultAgentProxyKey": "sk_omniroute (ndabara)",
     "selectModel": "Họrọ Model",
     "selectModelForAlias": "Họrọ model maka {alias}",
     "selectModelForTool": "Họrọ Model maka {tool}",
@@ -2858,13 +2858,13 @@
     "applied": "Etinyela ya!",
     "failed": "Ọ dara",
     "resetDone": "Atọgharịrị!",
-    "omnirouteConfiguredOpenAiCompatible": "A haziela OmniRoute dịka onye na-eweta nke dakọtara na OpenAI",
+    "agentproxyConfiguredOpenAiCompatible": "A haziela OmniRoute dịka onye na-eweta nke dakọtara na OpenAI",
     "provider": "Onye na-eweta",
     "model": "Ụdị",
     "providers": "Ndị na-eweta",
     "auth": "Nkwenye njirimara",
     "noApiKeysAvailable": "Enweghị igodo API dị",
-    "usingDefaultOmniroute": "Na-eji nke ndabara: sk_omniroute",
+    "usingDefaultAgentProxy": "Na-eji nke ndabara: sk_omniroute",
     "updateConfig": "Melite Nhazi",
     "applyConfig": "Tinye Nhazi n'Ọrụ",
     "noBackupsAvailable": "Enweghị nkwado ndabere dị.",
@@ -3145,8 +3145,8 @@
     "hermesConfiguredRoles": "Ọrụ {configured}/{total}",
     "hermesQuickApply": "Tinye otu model ahụ ngwa ngwa n'ọrụ niile:",
     "hermesApplyModelToAll": "Tinye {model} n'ọrụ niile",
-    "hermesViaOmniRoute": "{provider} (site na OmniRoute)",
-    "hermesNotOmniRoute": "{provider} (ọ bụghị OmniRoute)",
+    "hermesViaAgentProxy": "{provider} (site na OmniRoute)",
+    "hermesNotAgentProxy": "{provider} (ọ bụghị OmniRoute)",
     "hermesRemovePendingRole": "Wepụ ọrụ a na mgbanwe ndị na-echere",
     "hermesApply": "Tinye na Hermes Agent",
     "hermesRolesWillUpdate": "{count, plural, one {A ga-emelite # ọrụ} other {A ga-emelite # ọrụ}}",
@@ -4125,7 +4125,7 @@
     "vscodeAliasModelsLabel": "Ụdị VS Code",
     "vscodeAliasChatLabel": "Mkparịta ụka VS Code",
     "localServer": "Sava Mpaghara",
-    "cloudOmniroute": "OmniRoute nke Igwe Ojii",
+    "cloudAgentProxy": "OmniRoute nke Igwe Ojii",
     "copyUrl": "Detuo URL",
     "badgeLoopbackTooltip": "Enwere ike ịnweta endpoint a naanị na mpaghara (loopback naanị)",
     "badgeAlwaysProtectedTooltip": "A na-echekwa endpoint a mgbe niile, ọ na-achọkwa ikike",
@@ -9962,7 +9962,7 @@
     "howItWorksStep3Description": "OpenAI, Anthropic, Gemini, ma ọ bụ ndị ọzọ na-emezu arịrịọ ahụ ozugbo.",
     "getStartedIn30Seconds": "Bido n'ime Sekọnd 30",
     "getStartedDescription": "Wụnye OmniRoute, hazie ndị na-eweta ọrụ gị site na ogwe njikwa weebụ, wee malite ịtụgharị ụzọ arịrịọ AI.",
-    "installOmniRoute": "Wụnye OmniRoute",
+    "installAgentProxy": "Wụnye OmniRoute",
     "installStepDescription": "Gbaa iwu npx iji malite sava ahụ ozugbo",
     "openDashboard": "Mepee Ogwe Njikwa",
     "openDashboardStepDescription": "Hazie ndị na-eweta ọrụ na igodo API site na ihu weebụ",
@@ -9971,7 +9971,7 @@
     "terminal": "ọdụ iwu",
     "copy": "Detuo",
     "copied": "✓ Edetuo",
-    "startingOmniRoute": "Na-amalite OmniRoute...",
+    "startingAgentProxy": "Na-amalite OmniRoute...",
     "serverRunningOnLabel": "Sava na-arụ ọrụ na",
     "dashboardLabel": "Ogwe Njikwa",
     "readyToRoute": "Ọ dị njikere ịtụgharị ụzọ arịrịọ! ✓",
@@ -10365,7 +10365,7 @@
     "versionCommandPlaceholder": "dịka, my-agent --version",
     "architectureTitle": "Otu Ebumnuche Agent Si Arụ Ọrụ",
     "flowLocalBinary": "3 · Usoro CLI nwere nkwenye njirimara nke ya",
-    "flowOmniRoute": "1 · Arịrịọ rutere na OmniRoute",
+    "flowAgentProxy": "1 · Arịrịọ rutere na OmniRoute",
     "agentNamePlaceholder": "dịka, Agent Omenala Nke M",
     "architectureDescription": "Mgbe arịrịọ rutere, OmniRoute nwere ike ịmalite faịlụ bainari CLI dị na mpaghara (dịka, claude, codex, goose) ma zipụ arịrịọ ahụ site na ya. CLI ahụ na-eji ozi nzere nke ya hazie arịrịọ ahụ ma weghachite nsonaazụ ya site na OmniRoute.",
     "flowExecute": "4 · Eweghachiri nzaghachi nye klayenti",
@@ -10382,8 +10382,8 @@
     "agentUseCaseHint": "Enwere ike iji ya dịka ebumnuche mmezu site na protokol ACP",
     "flowDiagramClient": "Ngwa Klayenti",
     "flowDiagramClientDesc": "SDK, API, ma ọ bụ ọrụ upstream",
-    "flowDiagramOmniRoute": "OmniRoute",
-    "flowDiagramOmniRouteDesc": "Na-anata arịrịọ ma na-ahọrọ ebumnuche",
+    "flowDiagramAgentProxy": "OmniRoute",
+    "flowDiagramAgentProxyDesc": "Na-anata arịrịọ ma na-ahọrọ ebumnuche",
     "flowDiagramSpawn": "Malite Usoro",
     "flowDiagramSpawnDesc": "Na-amalite faịlụ bainari CLI site na stdio",
     "flowDiagramCli": "Agent CLI",
@@ -12938,16 +12938,16 @@
       "PROXY_AUTO_SELECT_ENABLED": {
         "description": "Mgbe ekenyeghị proxy na njikọ, họrọ proxy registry mbụ na-arụ ọrụ na-akpaghị aka. A gbanyụrụ ya na ndabara n’ihi na ma ọ bụghị ya, otu proxy registry ga-abụ ihe ndabere zuru ụwa ọnụ maka okporo ụzọ niile (#3332)."
       },
-      "OMNIROUTE_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
+      "AGENTPROXY_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
         "description": "Kwe ka usoro OAuth na usoro nnyocha izi ezi provider gafee proxy e kenyere mgbe nyocha nnweta proxy dara. A gbanyụrụ ya na ndabara n’ihi na nke a nwere ike ịgbanwe IP ọpụpụ akaụntụ ahụ."
       },
       "MITM_DISABLE_TLS_VERIFY": {
         "description": "Gbanyụọ nkwenye asambodo TLS maka proxy MITM."
       },
-      "OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS": {
         "description": "Kwe ka URL ndị provider na-atụ aka na netwọkụ nkeonwe ma ọ bụ nke ime."
       },
-      "OMNIROUTE_ALLOW_LOCAL_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_LOCAL_PROVIDER_URLS": {
         "description": "Kwe ka ndị provider nọ na localhost, LAN, na mpaghara IP nkeonwe. A chọrọ nke a maka model mpaghara ndị kwekọrọ na OpenAI, a na-akwadokwa ya na ndabara. A ka na-egbochi endpoint metadata cloud dịka 169.254.169.254."
       },
       "ENABLE_CC_COMPATIBLE_PROVIDER": {
@@ -12969,28 +12969,28 @@
       "RESPONSES_PASSTHROUGH_DROP_COMMENTARY": {
         "description": "Wepụ item mmepụta nke commentary-phase dị n’ime na stream passthrough nke Responses API tupu iziga ha n’ihu nye client. Gbanyụọ flag a iji nata commentary upstream na-enweghị nhazi."
       },
-      "OMNIROUTE_MCP_ENFORCE_SCOPES": {
+      "AGENTPROXY_MCP_ENFORCE_SCOPES": {
         "description": "Manye mmachi scope maka nnweta tool MCP."
       },
-      "OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS": {
+      "AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS": {
         "description": "Pakọba nkọwa tool MCP iji belata ojiji token."
       },
-      "OMNIROUTE_ENABLE_RUNTIME_BACKGROUND_TASKS": {
+      "AGENTPROXY_ENABLE_RUNTIME_BACKGROUND_TASKS": {
         "description": "Kwado nhazi background-task n’oge runtime."
       },
-      "OMNIROUTE_DISABLE_BACKGROUND_SERVICES": {
+      "AGENTPROXY_DISABLE_BACKGROUND_SERVICES": {
         "description": "Gbanyụọ ọrụ background niile, gụnyere mmelite quota na synchronization."
       },
-      "OMNIROUTE_RTK_TRUST_PROJECT_FILTERS": {
+      "AGENTPROXY_RTK_TRUST_PROJECT_FILTERS": {
         "description": "Tụkwasị filter RTK nke ọkwa project obi na-enweghị validation."
       },
-      "OMNIROUTE_ENABLE_LIVE_WS": {
+      "AGENTPROXY_ENABLE_LIVE_WS": {
         "description": "Bido sava WebSocket dashboard nke real-time mgbe e mere import na port loopback 20132. Tọọ flag ahụ ka ọ bụrụ 0 ma ọ bụ false iji gbanyụọ ya. Ikpughe ya na LAN chọkwara LIVE_WS_HOST=0.0.0.0 na LIVE_WS_ALLOWED_ORIGINS."
       },
-      "OMNIROUTE_CODEX_WS_ENABLED": {
+      "AGENTPROXY_CODEX_WS_ENABLED": {
         "description": "Kwe ka Codex jiri Responses site na WebSocket. Mgbe agbanyụrụ ya, Codex na-alaghachi na HTTP Responses."
       },
-      "OMNIROUTE_EMERGENCY_FALLBACK": {
+      "AGENTPROXY_EMERGENCY_FALLBACK": {
         "description": "Duga arịrịọ ndị budget ha gwụchara na provider na model ndabere mberede n’efu."
       },
       "STREAM_RECOVERY_ENABLED": {
@@ -13017,16 +13017,16 @@
       "PRICING_SYNC_ENABLED": {
         "description": "Mekọrịta data ọnụahịa na-akpaghị aka. PRICING_SYNC_ENABLED environment variable ga-abụkwa true."
       },
-      "OMNIROUTE_AUTO_SYNC_CODEX_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CODEX_PROFILES": {
         "description": "Mgbe emekọrịtachara provider-model, mepụtaghachi profaịlụ ~/.codex/*.config.toml site na katalọgụ dị ugbu a. Nke a anaghị agbanwe nhazi Codex na-arụ ọrụ ma ọ bụ nke ndabara, a gbanyụrụ ya na ndabara."
       },
-      "OMNIROUTE_AUTO_SYNC_CLAUDE_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CLAUDE_PROFILES": {
         "description": "Mgbe emekọrịtachara provider-model, mepụtaghachi profaịlụ ~/.claude/profiles/'<name>'/settings.json site na katalọgụ dị ugbu a. Nke a anaghị agbanwe nhazi Claude na-arụ ọrụ ma ọ bụ nke ndabara, a gbanyụrụ ya na ndabara."
       },
-      "OMNIROUTE_DISABLE_LOCAL_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_LOCAL_HEALTHCHECK": {
         "description": "Gbanyụọ endpoint nyocha ahụike nke instance mpaghara."
       },
-      "OMNIROUTE_DISABLE_TOKEN_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_TOKEN_HEALTHCHECK": {
         "description": "Gbanyụọ nyocha ahụike maka nkwado token."
       },
       "SKILLS_SANDBOX_NETWORK_ENABLED": {
@@ -14158,5 +14158,5 @@
     "partnerLinkNote": "Njikọ onye mmekọ",
     "dismissAriaLabel": "Mechie"
   },
-  "featureFlagOmnirouteDisableThinkingLevelVariantsDescription": "Gbanyụọ imepụta ụdị ọkwa echiche dị iche iche (dịka -low, -medium, -high) na katalọgụ /v1/models."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Gbanyụọ imepụta ụdị ọkwa echiche dị iche iche (dịka -low, -medium, -high) na katalọgụ /v1/models."
 }
