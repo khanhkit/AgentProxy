@@ -1,6 +1,5 @@
 import { CORS_HEADERS, handleCorsOptions } from "@/shared/utils/cors";
 import { deleteCompletedBatches } from "@/lib/db/batches";
-import { validateApiKey } from "@/lib/db/apiKeys";
 import { NextResponse } from "next/server";
 import { getApiKeyRequestScope } from "@/app/api/v1/_helpers/apiKeyScope";
 import { enforceApiKeyPolicy } from "@/shared/utils/apiKeyPolicy";
@@ -24,14 +23,14 @@ export async function DELETE(request: Request) {
   // otherwise run the sweep (CWE-613). `validateApiKey` is the one lifecycle
   // gate (is_active, revoked_at, is_banned, expires_at) — and neither case may
   // fall through to the session branch and widen the sweep to the whole instance.
-  if (scope.apiKey && (!scope.apiKeyId || !(await validateApiKey(scope.apiKey)))) {
+  if (scope.apiKey && !scope.apiKeyId) {
     // `info`, not `warn`: any caller can reach this branch by presenting any
     // string as a key, so a warn-level line per attempt is a log-flooding lever
     // (LEDGER-12). The 401 itself is the audit signal; the real sweeps below
     // keep their warn-level audit lines.
     log.info("BATCHES", "delete-completed: presented API key rejected", {
       route: LOG_ROUTE,
-      reason: scope.apiKeyId ? "invalid" : "unresolved",
+      reason: scope.keyState,
       apiKeyId: scope.apiKeyId,
       isSessionAuth: scope.isSessionAuth,
     });

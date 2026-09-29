@@ -240,11 +240,12 @@ function normalizeImageAspectRatio(value: unknown, fallbackSize: unknown): strin
   return mapImageSize(typeof fallbackSize === "string" ? fallbackSize : null);
 }
 
-function normalizeImageGenerationSize(snakeCaseValue: unknown, camelCaseValue: unknown): string {
-  const value = snakeCaseValue ?? camelCaseValue;
-  if (typeof value !== "string") return "1K";
+function normalizeImageGenerationSize(value: unknown): { value: string | undefined; clamped: boolean } {
+  if (typeof value !== "string") return { value: undefined, clamped: false };
   const normalized = value.trim().toUpperCase();
-  return IMAGE_SIZE_PATTERN.test(normalized) ? normalized : "1K";
+  return IMAGE_SIZE_PATTERN.test(normalized)
+    ? { value: normalized, clamped: false }
+    : { value: "1K", clamped: true };
 }
 
 function parseJsonOrNull(value: string): unknown | null {
@@ -1039,7 +1040,13 @@ async function handleGeminiImageGeneration({ model, providerConfig, body, creden
     typeof body.n === "number" && Number.isFinite(body.n) && body.n > 0 ? Math.floor(body.n) : 1;
   const promptText = typeof body.prompt === "string" ? body.prompt : String(body.prompt ?? "");
   const aspectRatio = normalizeImageAspectRatio(body.aspect_ratio, body.size);
-  const imageSize = normalizeImageGenerationSize(body.image_size, body.imageSize);
+  const { value: imageSize, clamped: imageSizeClamped } = normalizeImageGenerationSize(body.image_size);
+  if (imageSizeClamped && log && typeof log.warn === "function") {
+    log.warn(
+      "IMAGE",
+      `antigravity/${model}: unsupported image_size ${JSON.stringify(body.image_size)} — clamped to 1K (accepted: 1K|2K|4K)`
+    );
+  }
 
   // Summarized request for call log
   const logRequestBody = {
@@ -1047,7 +1054,8 @@ async function handleGeminiImageGeneration({ model, providerConfig, body, creden
     prompt: promptText.slice(0, 200),
     size: body.size || "default",
     aspect_ratio: aspectRatio,
-    image_size: imageSize,
+    image_size: body.image_size ?? null,
+    image_size_applied: imageSize ?? "default",
     n: candidateCount,
   };
 
@@ -1077,7 +1085,7 @@ async function handleGeminiImageGeneration({ model, providerConfig, body, creden
         candidateCount,
         imageConfig: {
           aspectRatio,
-          imageSize,
+          ...(imageSize ? { imageSize } : {}),
         },
       },
     },

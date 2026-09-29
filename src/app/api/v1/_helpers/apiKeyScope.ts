@@ -1,14 +1,17 @@
 import { NextResponse } from "next/server";
-import { getApiKeyMetadata } from "@/lib/db/apiKeys";
+import { getApiKeyMetadata, validateApiKey } from "@/lib/db/apiKeys";
 import { extractApiKey } from "@/sse/services/auth";
 import { isDashboardSessionAuthenticated } from "@/shared/utils/apiAuth";
 import { CORS_HEADERS } from "@/shared/utils/cors";
 import { buildErrorBody } from "@agentproxy/open-sse/utils/error";
 
+export type ApiKeyState = "none" | "unresolved" | "invalid" | "valid";
+
 export interface ApiKeyRequestScope {
   apiKey: string | null;
   apiKeyId: string | null;
   apiKeyMetadata: Awaited<ReturnType<typeof getApiKeyMetadata>>;
+  keyState: ApiKeyState;
   rejection: Response | null;
   isSessionAuth: boolean;
 }
@@ -17,14 +20,37 @@ export async function getApiKeyRequestScope(request: Request): Promise<ApiKeyReq
   const isSessionAuth = await isDashboardSessionAuthenticated(request);
   const apiKey = extractApiKey(request);
   if (!apiKey) {
-    return { apiKey: null, apiKeyId: null, apiKeyMetadata: null, rejection: null, isSessionAuth };
+    return {
+      apiKey: null,
+      apiKeyId: null,
+      apiKeyMetadata: null,
+      keyState: "none",
+      rejection: null,
+      isSessionAuth,
+    };
   }
 
   const apiKeyMetadata = await getApiKeyMetadata(apiKey);
+  const keyState: ApiKeyState = apiKeyMetadata
+    ? (await validateApiKey(apiKey))
+      ? "valid"
+      : "invalid"
+    : "unresolved";
+  if (keyState !== "valid") {
+    return {
+      apiKey,
+      apiKeyId: null,
+      apiKeyMetadata: null,
+      keyState,
+      rejection: null,
+      isSessionAuth,
+    };
+  }
   return {
     apiKey,
-    apiKeyId: apiKeyMetadata?.id || null,
+    apiKeyId: apiKeyMetadata.id,
     apiKeyMetadata,
+    keyState,
     rejection: null,
     isSessionAuth,
   };
