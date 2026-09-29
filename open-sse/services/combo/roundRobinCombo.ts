@@ -14,6 +14,7 @@ import {
   errorResponseWithComboDiagnostics,
 } from "../../utils/error.ts";
 import { buildRecoveryHint } from "./pinRecovery.ts";
+import { readRetryAfterFromResponse } from "./retryAfterProvenance.ts";
 import { formatExhaustedConnectionKey } from "./comboDiagFormat.ts";
 import { collectQuotaWindowExclusions, formatQuotaSkipMessage } from "./quotaSkipDiagnostics.ts";
 import { recordComboRequest } from "../comboMetrics.ts";
@@ -842,27 +843,19 @@ export async function handleRoundRobinCombo({
           let errorText = result.statusText || "";
           let retryAfter: ComboRetryAfter | null = null;
           let errorBody: ComboErrorBody = null;
-          try {
-            const cloned = result.clone();
-            try {
-              const text = await cloned.text();
-              if (text) {
-                errorText = text.substring(0, 500);
-                errorBody = JSON.parse(text);
-                const parsedError = errorBody?.error;
-                errorText =
-                  (typeof parsedError === "object" && parsedError?.message) ||
-                  (typeof parsedError === "string" ? parsedError : null) ||
-                  errorBody?.message ||
-                  errorText;
-                retryAfter = errorBody?.retryAfter || null;
-              }
-            } catch {
-              /* Clone parse failed */
-            }
-          } catch {
-            /* Clone failed */
+          const retryBody = await readRetryAfterFromResponse(result, log, "COMBO-RR", modelStr);
+          if (retryBody.text) {
+            errorText = retryBody.text.substring(0, 500);
+            errorBody = retryBody.json as ComboErrorBody;
+            const parsedError = errorBody?.error;
+            errorText =
+              (typeof parsedError === "object" && parsedError?.message) ||
+              (typeof parsedError === "string" ? parsedError : null) ||
+              errorBody?.message ||
+              errorText;
+            retryAfter = errorBody?.retryAfter || null;
           }
+          retryAfter ||= retryBody.proseRetryAfter;
 
           if (result.status === 499) {
             log.info(

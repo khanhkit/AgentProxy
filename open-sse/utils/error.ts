@@ -9,6 +9,7 @@ import { getDefaultErrorMessage, getErrorInfo } from "../config/errorConfig.ts";
 import { normalizePayloadForLog } from "@/lib/logPayloads";
 import type { ModelCooldownErrorPayload } from "@/types";
 import { buildPassthroughErrorResponse } from "./upstreamErrorPassthrough.ts";
+import { isFeatureFlagEnabled } from "@/shared/utils/featureFlags";
 
 export { redactSensitiveErrorText, sanitizeErrorMessage, sanitizeUpstreamDetails };
 
@@ -608,6 +609,30 @@ function normalizeRetryAfterSeconds(retryAfter?: string | number | Date | null):
   return 1;
 }
 
+export function isRetryAfterProvenanceEnabled(): boolean {
+  try {
+    return isFeatureFlagEnabled("RETRY_AFTER_PROVENANCE_ENABLED");
+  } catch {
+    return false;
+  }
+}
+
+export function resolveRetryAfterHintSeconds(
+  retryAfter?: string | number | Date | null
+): number | null {
+  if (typeof retryAfter === "number") {
+    if (!Number.isFinite(retryAfter) || retryAfter <= 0) return null;
+    if (retryAfter < 1_000_000_000) return Math.max(Math.ceil(retryAfter), 1);
+  } else if (typeof retryAfter === "string") {
+    if (retryAfter.trim() === "" || !Number.isNaN(Number(retryAfter))) return null;
+  } else if (!(retryAfter instanceof Date)) {
+    return null;
+  }
+  const retryTimeMs = new Date(retryAfter).getTime();
+  if (!Number.isFinite(retryTimeMs) || retryTimeMs <= Date.now()) return null;
+  return Math.max(Math.ceil((retryTimeMs - Date.now()) / 1000), 1);
+}
+
 const MAX_PUBLIC_CONTEXT_LABEL_LENGTH = 256;
 
 function projectPublicContextLabel(value: unknown): string | null {
@@ -665,6 +690,35 @@ export function parseAntigravityRetryTime(message: unknown): number | null {
   }
 
   return totalMs > 0 ? totalMs : null;
+}
+
+const MAX_PROSE_RETRY_MS = 24 * 60 * 60 * 1000;
+
+export function parseProseRetryDelayMs(text: unknown): number | null {
+  if (typeof text !== "string" || text === "") return null;
+  const antigravityMs = parseAntigravityRetryTime(text);
+  if (antigravityMs) return Math.min(antigravityMs, MAX_PROSE_RETRY_MS);
+  const match = /retry\s+after\s+(\d{1,9})\s*s/i.exec(text);
+  const ms = match ? Number.parseInt(match[1], 10) * 1000 : 0;
+  return ms > 0 ? Math.min(ms, MAX_PROSE_RETRY_MS) : null;
+}
+
+export function readProseRetryAfter(text: unknown): string | null {
+  if (!isRetryAfterProvenanceEnabled()) return null;
+  const ms = parseProseRetryDelayMs(text);
+  return ms ? new Date(Date.now() + ms).toISOString() : null;
+}
+
+export function logRetryHintUnreadable(
+  log: { warn: (...args: unknown[]) => void; debug?: (...args: unknown[]) => void },
+  tag: string,
+  model: string,
+  status: number | undefined,
+  reason: "unparseable body" | "clone failed"
+): void {
+  const message = `Retry hint unreadable for ${model} (${reason})`;
+  if (reason === "clone failed") log.warn(tag, message, { status });
+  else log.debug?.(tag, message, { status });
 }
 
 /**
@@ -859,15 +913,21 @@ export function unavailableResponse(
   retryAfter?: string | number | Date | null,
   retryAfterHuman?: string
 ) {
-  const retryAfterSec = normalizeRetryAfterSeconds(retryAfter);
+  const provenance = isRetryAfterProvenanceEnabled();
+  const retryAfterSec = provenance
+    ? resolveRetryAfterHintSeconds(retryAfter)
+    : normalizeRetryAfterSeconds(retryAfter);
   const safeMessage = sanitizeErrorMessage(message) || getDefaultErrorMessage(statusCode);
   const safeRetryAfterHuman = retryAfterHuman ? sanitizeErrorMessage(retryAfterHuman) : "";
   const msg = safeRetryAfterHuman ? `${safeMessage} (${safeRetryAfterHuman})` : safeMessage;
-  return new Response(JSON.stringify({ error: { message: msg } }), {
+  const error = provenance
+    ? { message: msg, retry_after_provenance: retryAfterSec === null ? "none" : "signal" }
+    : { message: msg };
+  return new Response(JSON.stringify({ error }), {
     status: statusCode,
     headers: {
       "Content-Type": "application/json",
-      "Retry-After": String(retryAfterSec),
+      ...(retryAfterSec === null ? {} : { "Retry-After": String(retryAfterSec) }),
     },
   });
 }

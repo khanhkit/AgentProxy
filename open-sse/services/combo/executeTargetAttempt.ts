@@ -20,6 +20,7 @@ import {
 } from "../accountFallback.ts";
 import { errorResponse, errorResponseWithComboDiagnostics } from "../../utils/error.ts";
 import { recordComboFailure, clearComboFailureTracking } from "./failureTracker.ts";
+import { readRetryAfterFromResponse } from "./retryAfterProvenance.ts";
 import { buildRecoveryHint } from "./pinRecovery.ts";
 import { formatExhaustedConnectionKey } from "./comboDiagFormat.ts";
 import { recordComboRequest, getComboMetrics } from "../comboMetrics.ts";
@@ -672,46 +673,28 @@ export async function executeTargetAttempt(opts: {
     let errorText = result.statusText || "";
     let errorBody: ComboErrorBody = null;
     let retryAfter: ComboRetryAfter | null = null;
-    try {
-      const cloned = result.clone();
-      try {
-        const text = await cloned.text();
-        if (text) {
-          errorText = text.substring(0, 500);
-          errorBody = JSON.parse(text);
-          const parsedError = errorBody?.error;
-          errorText =
-            (typeof parsedError === "object" && parsedError?.message) ||
-            (typeof parsedError === "string" ? parsedError : null) ||
-            errorBody?.message ||
-            errorText;
-          // Live incident (log id 1784457764961-73 follow-up): the pre-dispatch
-          // "all credentials cooling down" rejection (buildModelCooldownBody /
-          // handleNoCredentials in src/sse/handlers/chatHelpers.ts) nests its
-          // retry hint as error.retry_after (ISO string) / error.reset_seconds
-          // (seconds), not the top-level `retryAfter` every other 429 shape
-          // uses. Without this fallback, lastStatus gets recorded (fixed above)
-          // but earliestRetryAfter stays null, so the final check falls through
-          // to the generic "all combo models unavailable" error instead of ever
-          // reaching the cooldown-wait decision — same class of bug, different
-          // response shape.
-          const nestedRetryAfter =
-            typeof parsedError === "object" ? (parsedError?.retry_after ?? null) : null;
-          const nestedResetSeconds =
-            typeof parsedError === "object" ? (parsedError?.reset_seconds ?? null) : null;
-          retryAfter =
-            errorBody?.retryAfter ||
-            nestedRetryAfter ||
-            (typeof nestedResetSeconds === "number" && nestedResetSeconds > 0
-              ? new Date(Date.now() + nestedResetSeconds * 1000).toISOString()
-              : null);
-        }
-      } catch {
-        /* Clone parse failed */
-      }
-    } catch {
-      /* Clone failed */
+    const retryBody = await readRetryAfterFromResponse(result, deps.log, "COMBO", modelStr);
+    if (retryBody.text) {
+      errorText = retryBody.text.substring(0, 500);
+      errorBody = retryBody.json as ComboErrorBody;
+      const parsedError = errorBody?.error;
+      errorText =
+        (typeof parsedError === "object" && parsedError?.message) ||
+        (typeof parsedError === "string" ? parsedError : null) ||
+        errorBody?.message ||
+        errorText;
+      const nestedRetryAfter =
+        typeof parsedError === "object" ? (parsedError?.retry_after ?? null) : null;
+      const nestedResetSeconds =
+        typeof parsedError === "object" ? (parsedError?.reset_seconds ?? null) : null;
+      retryAfter =
+        errorBody?.retryAfter ||
+        nestedRetryAfter ||
+        (typeof nestedResetSeconds === "number" && nestedResetSeconds > 0
+          ? new Date(Date.now() + nestedResetSeconds * 1000).toISOString()
+          : null);
     }
+    retryAfter ||= retryBody.proseRetryAfter;
 
     // Track earliest retryAfter
     if (
