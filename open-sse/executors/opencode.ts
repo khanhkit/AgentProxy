@@ -47,7 +47,7 @@ import {
 } from "./opencodeResponsesStall.ts";
 import { markCooldown, markOutcome, noteResponseServed } from "./opencodeAccountHealth.ts";
 import { discardResponseBody } from "./opencodeResponseBody.ts";
-import { isRetriableUpstreamFailure } from "./opencodeTransientFailure.ts";
+import { createTransientFailoverBackoff, isRetriableUpstreamFailure, sleepAbortable } from "./opencodeTransientFailure.ts";
 import {
   isProxyAvoided,
   noteProxyRefusal,
@@ -59,6 +59,7 @@ import {
   isProxySkipRecentlyFailedEnabled,
   isRotationAttributionEnabled,
   isOpencodeUserBlockedRotationEnabled,
+  isOpencodeTransientFailoverBackoffEnabled,
 } from "@/shared/utils/featureFlags";
 import { classifyUpstream429 } from "./opencodeRateLimited.ts";
 
@@ -325,11 +326,10 @@ export class OpencodeExecutor extends BaseExecutor {
   // pickRotatableAccount(), which needs a plain `{ nextAccountIdx }` shape —
   // TS's private-member nominal check rejects `this` there otherwise.
   nextAccountIdx = 0;
-
+  transientPauseSleep = sleepAbortable;
   constructor(provider: string) {
     super(provider, PROVIDERS[provider] || PROVIDERS.openai);
   }
-
   /**
    * Rebuild `accounts` from `providerSpecificData.fingerprints` +
    * `providerSpecificData.accountProxies`. Each configured account id becomes a
@@ -653,8 +653,8 @@ export class OpencodeExecutor extends BaseExecutor {
       // Stalls before the first Responses byte: one rotation, then fail fast.
       let stalledAttempts = 0;
       let abandonedResponse: Response | null = null;
-      let userBlockedRotations = 0;
-
+      let userBlockedRotations = 0,
+        transientBackoff = createTransientFailoverBackoff(this.transientPauseSleep);
       for (let attempt = 0; attempt < this.accounts.length + emptyRejectionBudget; attempt++) {
         const isProxiedCandidate = (a: OpencodeAccountState): boolean => {
           if (a.cooldownUntil > Date.now()) return false;
@@ -725,6 +725,7 @@ export class OpencodeExecutor extends BaseExecutor {
           continue;
         }
 
+        if (!(await transientBackoff.beforeDispatch(lastResult, input.signal, isOpencodeTransientFailoverBackoffEnabled(), log, cid))) break;
         // #5217 (Gap 2): promoted debug→info so the per-request account/proxy
         // rotation selection is visible in the Console log view at the default
         // APP_LOG_LEVEL=info (users could not see which account/proxy was used).
@@ -768,6 +769,7 @@ export class OpencodeExecutor extends BaseExecutor {
             if (!rotate) throw err;
             continue;
           }
+          transientBackoff.reset();
           // A network exception (timeout, connection refused/reset) is only
           // account-scoped when this account has its OWN egress (a configured
           // proxy) — that's the case a dead/unreachable proxy justifies rotating
@@ -801,7 +803,6 @@ export class OpencodeExecutor extends BaseExecutor {
         discardResponseBody(abandonedResponse);
         abandonedResponse = null;
         lastResult = result;
-
         const status = result.response.status;
         if (status === 429) {
           markCooldown(account);
@@ -921,6 +922,7 @@ export class OpencodeExecutor extends BaseExecutor {
           }
           if (bodyText !== null && isRetriableUpstreamFailure(400, bodyText)) {
             const chatcmplId = extractChatcmplId(bodyText);
+            transientBackoff.noteEmpty400(result.response);
             log?.warn?.(
               "OPENCODE",
               `${cid}upstream empty rejection on account ${masked} (${chatcmplId}), rotating to next…`

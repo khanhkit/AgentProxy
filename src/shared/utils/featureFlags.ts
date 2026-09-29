@@ -238,6 +238,19 @@ export function isOpencodeUserBlockedRotationEnabled(): boolean {
   }
 }
 
+/** OpenCode transient-failure failover pause (#13615). Opt-in and fail-closed. */
+export function isOpencodeTransientFailoverBackoffEnabled(): boolean {
+  try {
+    return isFeatureFlagEnabled("OPENCODE_TRANSIENT_FAILOVER_BACKOFF");
+  } catch (error) {
+    console.error(
+      "[featureFlags] Failed to resolve OPENCODE_TRANSIENT_FAILOVER_BACKOFF, defaulting to disabled:",
+      error instanceof Error ? error.message : error
+    );
+    return false;
+  }
+}
+
 export function isServerOwnedToolLoopEnabled(
   reader: (key: string) => boolean = isFeatureFlagEnabled
 ): boolean {
