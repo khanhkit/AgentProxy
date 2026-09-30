@@ -46,7 +46,7 @@ Repository map and Reference Documentation sections below.
 
 ## Project at a Glance
 
-**AgentProxy** — agent-first AI gateway. One endpoint, 358 inherited provider integrations, auto-fallback, and a Rust streaming data plane.
+**AgentProxy** — agent-first AI gateway. One endpoint, 360 inherited provider integrations, auto-fallback, and a Rust streaming data plane.
 
 | Layer         | Location                | Purpose                                                                                                                                                                   |
 | ------------- | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

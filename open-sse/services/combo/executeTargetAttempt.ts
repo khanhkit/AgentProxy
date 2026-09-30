@@ -91,6 +91,7 @@ import type { ComboDiagnostics } from "../../utils/error.ts";
 import type { ComboErrorBody, ComboRetryAfter, ResolvedComboTarget } from "./types.ts";
 import type { ResponseValidationConfig } from "./responseValidation.ts";
 import { resolveComboDailyReset } from "./comboDailyResetClock.ts";
+import { protectedPriorityStopStatus as stopStatus } from "./protectedPriorityStopStatus.ts";
 
 export async function executeTargetAttempt(opts: {
   index: number;
@@ -113,15 +114,13 @@ export async function executeTargetAttempt(opts: {
   const retryDelayMs = resolveDelayMs(deps.config.retryDelayMs, 2000);
   const fallbackDelayMs = resolveDelayMs(deps.config.fallbackDelayMs, 0);
   const universalHandoffConfig = deps.universalHandoffConfig ?? DEFAULT_UNIVERSAL_HANDOFF_CONFIG;
-
-  const stopProtectedPriorityTarget = (message: string) => {
+  const stopProtected = (message: string, cause?: Parameters<typeof stopStatus>[0]) => {
     state.observeFailure(false, target.executionKey);
     deps.clearStaleLKGP(deps.combo.name, target.executionKey, deps.combo.id, deps.log, "COMBO");
     return protectedPriorityTarget
-      ? { ok: false as const, response: errorResponse(503, message) }
+      ? { ok: false as const, response: errorResponse(stopStatus(cause), message) }
       : null;
   };
-
   const buildComboDiag = (
     terminalReason: string,
     retryAfterSeconds?: number
@@ -194,7 +193,8 @@ export async function executeTargetAttempt(opts: {
             decision: "skipped_before_dispatch",
             reason: "predictive_ttft",
           });
-          return stopProtectedPriorityTarget(`Predictive latency check rejected ${modelStr}`);
+          const message = `Predictive latency check rejected ${modelStr}`;
+          return stopProtected(message, "predictive_ttft");
         }
       }
     }

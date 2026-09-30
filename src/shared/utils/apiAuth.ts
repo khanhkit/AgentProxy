@@ -9,12 +9,14 @@
 
 import { jwtVerify } from "jose";
 import { cookies } from "next/headers";
+import { getOrCreateBootstrapToken, peekBootstrapToken } from "@/lib/auth/bootstrapToken";
 import { getSettings } from "@/lib/db/settings";
 import { isPublicApiRoute } from "@/shared/constants/publicApiRoutes";
 import { extractApiKey } from "@/sse/services/auth";
 import { classifyIpScope } from "@/lib/ipUtils";
 import {
   AUTHZ_HEADER_PEER_LOCALITY,
+  BOOTSTRAP_TOKEN_HEADER,
   PEER_IP_HEADER,
   VIA_PROXY_HEADER,
 } from "@/server/authz/headers";
@@ -41,10 +43,10 @@ export interface RequestLocalityOptions {
   trustPipelineLocalityHeader?: boolean;
 }
 
-function hasConfiguredPassword(settings: Record<string, unknown>): boolean {
+export function hasConfiguredPassword(settings: Record<string, unknown>): boolean {
   return typeof settings.password === "string" && settings.password.length > 0;
 }
-function hasConfiguredOidc(settings: Record<string, unknown>): boolean {
+export function hasConfiguredOidc(settings: Record<string, unknown>): boolean {
   return (
     settings.oidcEnabled === true &&
     typeof settings.oidcIssuer === "string" &&
@@ -88,6 +90,43 @@ function isOnboardingBootstrapPath(pathname: string | null): boolean {
 
 function isRequireLoginBootstrapWritePath(pathname: string | null, method: string): boolean {
   return pathname === "/api/settings/require-login" && method.toUpperCase() === "POST";
+}
+
+/**
+ * #14296: a non-loopback caller (typically a Docker/NAT-forwarded local
+ * operator — see docs at the top of bootstrapToken.ts) may still complete
+ * the fresh-install bootstrap window by presenting the one-shot token
+ * printed to the process log. Never widens `isLoopbackRequest` itself —
+ * this is an alternate proof checked only for the require-login bootstrap
+ * write above, and only a non-mutating peek (the route handler consumes/
+ * invalidates the token once the write actually succeeds).
+ */
+function hasBootstrapToken(request: RequestLike | Request | null | undefined): boolean {
+  const header = getRequestHeaders(request)?.get(BOOTSTRAP_TOKEN_HEADER);
+  return peekBootstrapToken(header);
+}
+
+/**
+ * #14296: resolves whether the onboarding bootstrap write (require-login
+ * POST) should stay open for this request.
+ * Extracted out of isAuthRequired() to keep that function's branching flat —
+ * this helper owns the loopback-or-token decision on its own.
+ *
+ * A loopback caller is always exempt. A non-loopback caller (e.g. a
+ * Docker/NAT-forwarded local operator) is exempt ONLY with a valid one-shot
+ * bootstrap token; otherwise a token is minted/announced to the process log
+ * and auth stays required.
+ */
+function isBootstrapWriteExempt(
+  request: RequestLike | Request | null | undefined,
+  loopback: boolean
+): boolean {
+  if (loopback) return true;
+  if (hasBootstrapToken(request)) return true;
+  // No (or a stale/consumed) token — mint/announce one so an operator
+  // watching the log can retrieve it, and keep requiring auth.
+  getOrCreateBootstrapToken();
+  return false;
 }
 
 function getRequestMethod(request: RequestLike | Request | null | undefined): string {
@@ -377,8 +416,13 @@ export async function isAuthRequired(
         return false;
       }
 
+      const loopback = isLoopbackRequest(request, localityOptions);
+
+      // The first-password write remains loopback-only unless the caller presents
+      // the one-shot bootstrap token printed to the process log. Never reclassify
+      // a Docker bridge/NAT peer as loopback: external clients share that peer.
       if (isRequireLoginBootstrapWritePath(pathname, method)) {
-        return false;
+        return !isBootstrapWriteExempt(request, loopback);
       }
 
       return settings.setupComplete === true || !isLoopbackRequest(request, localityOptions);

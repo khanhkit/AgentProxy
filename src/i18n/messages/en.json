@@ -5973,6 +5973,8 @@
     "validationModelIdHint": "Model used to verify the API key. Leave blank to use the provider’s first available model.",
     "validationModelIdLabel": "Validation Model",
     "validationModelIdPlaceholder": "e.g. meta-llama/llama-3.1-8b-instruct",
+    "vertexCredentialLabel": "API Key or Service Account JSON",
+    "vertexCredentialHint": "API keys use the curated project catalog. Service Account JSON enables live Model Garden discovery.",
     "vertexServiceAccountPlaceholder": "Paste your Service Account JSON ({\"type\":\"service_account\",\"project_id\":\"…\",\"client_email\":\"…\",\"private_key\":\"…\"}) or an OAuth access_token",
     "webCookieProviders": "Web Cookie Providers",
     "weeklyShort": "Weekly Short",
@@ -6330,7 +6332,8 @@
       "kiro": "Free tier: 50 credits/month (~25K–100K tokens). ⚠️ Kiro ToS prohibits third-party proxy/harness use.",
       "codex": "Connect OpenAI Codex with the existing OAuth flow.",
       "qwen": "Connect Qwen Code with the existing OAuth flow.",
-      "github-models": "Create a GitHub PAT with 'models: read' scope at github.com/settings/tokens"
+      "github-models": "Create a GitHub PAT with 'models: read' scope at github.com/settings/tokens",
+      "agnes-cn": "Get API key at agnes-ai.com — China endpoint: api.agnes-ai.cn"
     },
     "passthroughModelsDescription": "{provider} accepts provider-native model IDs. Import from /models or add custom IDs for routing.",
     "bedrockModelsDescription": "Amazon Bedrock models are scoped by AWS region. Import from /models or add Bedrock model IDs enabled in the selected region.",
@@ -8595,7 +8598,11 @@
       },
       "compressToolResults": {
         "label": "Proactively truncate long tool results",
-        "description": "Truncates tool results over 2,000 characters during Lite compression. Emergency overflow protection may still trim content when the context exceeds the model budget."
+        "description": "Truncates long tool results during Lite compression. The Maximum tool-result length field (or AGENTPROXY_LITE_MAX_TOOL_LENGTH when that field is unset) sets the cap. Emergency overflow protection may still trim content when the context exceeds the model budget."
+      },
+      "maxToolLength": {
+        "label": "Maximum tool-result length",
+        "description": "Character cap for proactive tool-result truncation. Default 2000. Override with AGENTPROXY_LITE_MAX_TOOL_LENGTH when this field is unset."
       }
     },
     "engineFields": {
@@ -9512,6 +9519,13 @@
     "confirmRedeemResetCreditTitle": "Redeem this reset credit?",
     "confirmRedeemResetCredit": "Redeeming immediately resets the eligible Codex usage windows and permanently consumes this credit.",
     "confirmRedeemResetCreditButton": "Redeem credit",
+    "glmResetCreditsModalTitle": "GLM Coding Plan reset cards",
+    "glmResetCreditsModalExplainer": "Reset cards are ordered by expiration. Choose the 5-hour or weekly window you want to reset.",
+    "glmResetCreditFiveHourTitle": "5-hour window reset",
+    "glmResetCreditWeekTitle": "Weekly window reset",
+    "glmConfirmRedeemResetCredit": "Redeeming immediately resets the selected usage window and permanently consumes this card.",
+    "glmConfirmRedeemFiveHourResetCredit": "Redeeming immediately resets the 5-hour usage window and permanently consumes this card.",
+    "glmConfirmRedeemWeekResetCredit": "Redeeming immediately resets the weekly usage window and permanently consumes this card.",
     "resetCreditRedeemed": "Reset redeemed",
     "resetCreditRedeemFailed": "Failed to redeem reset credit",
     "suiteBuilderSaveFailed": "Failed to save suite",
@@ -13025,6 +13039,13 @@
       },
       "STREAM_RECOVERY_MIDSTREAM_ENABLED": {
         "description": "Allow stream recovery to request the response again and stitch it after bytes have already reached the client."
+      },
+      "STREAM_RECOVERY_TOOLCALL_ORDER_FIX": {
+        "description": "Make mid-stream continuation tool-call safe: never resume a cut stream after a tool call was sent (still in progress or already finished), and stop after one empty continuation instead of using the whole retry budget."
+      },
+      "PROTECTED_PRIORITY_INFRA_502_ENABLED": {
+        "label": "Protected-Priority Infra Stops as 502",
+        "description": "Answer 502 instead of 503 when a quota-only-fallback priority target stops the combo for a cause that is provably not quota: an open provider circuit breaker or a predictive latency skip."
       },
       "MODEL_CATALOG_INCLUDE_NAMES": {
         "description": "Include display-friendly name fields in /v1/models responses. Disable this for clients that accept model IDs only."

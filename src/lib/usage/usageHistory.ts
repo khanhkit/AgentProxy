@@ -676,9 +676,11 @@ export async function getUsageDb(sinceIso?: string | null, limit?: number, curso
       timeToFirstTokenMs: toNumber(r.ttft_ms),
       errorCode: toStringOrNull(r.error_code),
       cpaAuthIndex: toStringOrNull(r.cpa_auth_index),
+      cpaAccountLabel: null as string | null,
       timestamp: toStringOrNull(r.timestamp),
     };
   });
+  await attachCpaAccountLabels(history);
 
   // Provide next cursor if we hit the limit (more rows exist)
   const nextCursor =
@@ -894,7 +896,7 @@ export async function getUsageHistory(filter: UsageHistoryFilter = {}) {
   sql += " ORDER BY timestamp ASC";
 
   const rows = db.prepare(sql).all(params);
-  return rows.map((row) => {
+  const history = rows.map((row) => {
     const r = asRecord(row);
     return {
       provider: toStringOrNull(r.provider),
@@ -916,9 +918,28 @@ export async function getUsageHistory(filter: UsageHistoryFilter = {}) {
       timeToFirstTokenMs: toNumber(r.ttft_ms),
       errorCode: toStringOrNull(r.error_code),
       cpaAuthIndex: toStringOrNull(r.cpa_auth_index),
+      cpaAccountLabel: null as string | null,
       timestamp: toStringOrNull(r.timestamp),
     };
   });
+  await attachCpaAccountLabels(history);
+  return history;
+}
+
+async function attachCpaAccountLabels(
+  rows: Array<{ cpaAuthIndex: string | null; cpaAccountLabel: string | null }>
+): Promise<void> {
+  if (!rows.some((row) => row.cpaAuthIndex)) return;
+  try {
+    const { getCliproxyAccountHealth, labelForCliproxyAuthIndex } =
+      await import("@/lib/services/cliproxyAccountHealth");
+    const health = await getCliproxyAccountHealth();
+    for (const row of rows) {
+      row.cpaAccountLabel = labelForCliproxyAuthIndex(row.cpaAuthIndex, health.accounts);
+    }
+  } catch {
+    // Keep the opaque index even when the sanitized account-health read is unavailable.
+  }
 }
 
 export type { ModelLatencyStatsEntry } from "./usageHistory/helpers";

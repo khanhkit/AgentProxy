@@ -1,4 +1,5 @@
 import { isRetiredGitHubCopilotModelId } from "@agentproxy/open-sse/config/providers/registry/github/retiredModels.ts";
+import type { VertexModelMetadataProvenance } from "@/lib/providerModels/vertexModelMetadata";
 
 import { asRecord, toNonEmptyString } from "./shared";
 
@@ -13,6 +14,8 @@ export interface SyncedAvailableModel {
   supportedThinkingEfforts?: string[];
   defaultThinkingEffort?: string;
   inputTokenLimit?: number;
+  contextWindow?: number;
+  metadataProvenance?: VertexModelMetadataProvenance;
   outputTokenLimit?: number;
   description?: string;
   supportsThinking?: boolean;
@@ -78,6 +81,10 @@ function normalizeSyncedAvailableModel(model: unknown): SyncedAvailableModel | n
       : {}),
     ...(typeof record.inputTokenLimit === "number"
       ? { inputTokenLimit: record.inputTokenLimit }
+      : {}),
+    ...(typeof record.contextWindow === "number" ? { contextWindow: record.contextWindow } : {}),
+    ...(record.metadataProvenance && typeof record.metadataProvenance === "object"
+      ? { metadataProvenance: record.metadataProvenance as VertexModelMetadataProvenance }
       : {}),
     ...(typeof record.outputTokenLimit === "number"
       ? { outputTokenLimit: record.outputTokenLimit }

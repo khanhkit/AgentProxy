@@ -137,6 +137,7 @@ import { liquidProvider } from "./registry/liquid/index.ts";
 import { deepinfraProvider } from "./registry/deepinfra/index.ts";
 import { agyProvider } from "./registry/agy/index.ts";
 import { agnesProvider } from "./registry/agnes/index.ts";
+import { agnes_cnProvider } from "./registry/agnes/cn/index.ts";
 import { aihordeProvider } from "./registry/aihorde/index.ts";
 import { ainativeProvider } from "./registry/ainative/index.ts";
 import { aionProvider } from "./registry/aion/index.ts";
@@ -227,6 +228,7 @@ import { x5labProvider } from "./registry/x5lab/index.ts";
 import { kenariProvider } from "./registry/kenari/index.ts";
 import { navyProvider } from "./registry/navy/index.ts";
 import { naraProvider } from "./registry/nara/index.ts";
+import { xkiroProvider } from "./registry/xkiro/index.ts";
 import { opperProvider } from "./registry/opper/index.ts";
 import { requestyProvider } from "./registry/requesty/index.ts";
 import { sealionProvider } from "./registry/sealion/index.ts";
@@ -244,6 +246,7 @@ import { fastrouterProvider } from "./registry/fastrouter/index.ts";
 import { anyapiProvider } from "./registry/anyapi/index.ts";
 import { electronhubProvider } from "./registry/electronhub/index.ts";
 import { llmgatewayProvider } from "./registry/llmgateway/index.ts";
+import { lyceumProvider } from "./registry/lyceum/index.ts";
 import { llmKiwiProvider } from "./registry/llm-kiwi/index.ts";
 import { literouterProvider } from "./registry/literouter/index.ts";
 import { greenptProvider } from "./registry/greenpt/index.ts";
@@ -407,6 +410,7 @@ export const REGISTRY: Record<string, RegistryEntry> = {
   deepinfra: deepinfraProvider,
   agy: agyProvider,
   agnes: agnesProvider,
+  "agnes-cn": agnes_cnProvider,
   aihorde: aihordeProvider,
   ainative: ainativeProvider,
   aion: aionProvider,
@@ -500,6 +504,7 @@ export const REGISTRY: Record<string, RegistryEntry> = {
   kenari: kenariProvider,
   navy: navyProvider,
   nara: naraProvider,
+  xkiro: xkiroProvider,
   opper: opperProvider,
   requesty: requestyProvider,
   sealion: sealionProvider,
@@ -518,6 +523,7 @@ export const REGISTRY: Record<string, RegistryEntry> = {
   anyapi: anyapiProvider,
   electronhub: electronhubProvider,
   llmgateway: llmgatewayProvider,
+  lyceum: lyceumProvider,
   "llm-kiwi": llmKiwiProvider,
   literouter: literouterProvider,
   greenpt: greenptProvider,

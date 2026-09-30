@@ -1,15 +1,18 @@
 import { NextResponse } from "next/server";
 import { getFile, getFileContent } from "@/lib/db/files";
-import { requireManagementAuth } from "@/lib/api/requireManagementAuth";
+import {
+  canAccessOwnedRecord,
+  getPolicyAwareApiKeyRequestScope,
+} from "@/app/api/v1/_helpers/apiKeyScope";
 
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
-  const authError = await requireManagementAuth(request);
-  if (authError) return authError;
+  const scope = await getPolicyAwareApiKeyRequestScope(request);
+  if (scope.rejection) return scope.rejection;
 
   const { id } = await params;
   const file = getFile(id);
 
-  if (!file) {
+  if (!file || !canAccessOwnedRecord(scope, file.apiKeyId)) {
     return NextResponse.json(
       { error: { message: "File not found", type: "invalid_request_error" } },
       { status: 404 }

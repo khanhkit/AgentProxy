@@ -14,7 +14,7 @@ import {
   shouldUseShellForCommand,
 } from "../../shared/services/cliRuntime";
 import { resolveOpencodeConfigPath } from "../../shared/services/opencodeConfigPath";
-import { resolveOmniRouteBaseUrl } from "../../shared/utils/resolveOmniRouteBaseUrl";
+import { resolveAgentProxyBaseUrl } from "../../shared/utils/resolveAgentProxyBaseUrl";
 
 const execFileAsync = promisify(execFile);
 let execFileImpl = execFileAsync;
@@ -178,7 +178,7 @@ export async function detectTool(id: string): Promise<DetectedTool | null> {
       : getCliPrimaryConfigPath(tool.id) ||
         (tool.id === "opencode" ? resolveOpencodeConfigPath() : "");
   const configContents = await readConfigFile(configPath);
-  const runtimeBaseUrl = resolveOmniRouteBaseUrl();
+  const runtimeBaseUrl = resolveAgentProxyBaseUrl();
   const configured = !!configContents && isConfigured(configContents, runtimeBaseUrl);
 
   const result: DetectedTool = {

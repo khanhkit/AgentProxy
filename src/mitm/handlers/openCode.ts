@@ -7,7 +7,7 @@
  */
 import type { IncomingMessage, ServerResponse } from "node:http";
 import type { AgentId } from "../types";
-import { MitmHandlerBase } from "./base";
+import { MitmHandlerBase, createBoundedCollector } from "./base";
 
 export class OpenCodeHandler extends MitmHandlerBase {
   readonly agentId: AgentId = "open-code";
@@ -16,7 +16,7 @@ export class OpenCodeHandler extends MitmHandlerBase {
     req: IncomingMessage,
     res: ServerResponse,
     body: Buffer,
-    mappedModel: string,
+    mappedModel: string
   ): Promise<void> {
     const startedAt = this.now();
     const intercepted = await this.hookBufferStart(req, body, mappedModel);
@@ -33,17 +33,17 @@ export class OpenCodeHandler extends MitmHandlerBase {
         throw new Error(`AgentProxy ${upstream.status}: ${errText}`);
       }
 
-      let collected = "";
+      const sink = createBoundedCollector();
       await this.pipeSSE(upstream, res, (chunk) => {
-        collected += chunk.toString();
+        sink.push(chunk.toString());
       });
 
       const total = this.now() - startedAt;
       this.hookBufferUpdate(intercepted, {
         status: upstream.status,
         responseHeaders: Object.fromEntries(upstream.headers.entries()),
-        responseBody: collected,
-        responseSize: Buffer.byteLength(collected),
+        responseBody: sink.text,
+        responseSize: sink.totalBytes,
         proxyLatencyMs: upstreamStart - startedAt,
         upstreamLatencyMs: total - (upstreamStart - startedAt),
       });

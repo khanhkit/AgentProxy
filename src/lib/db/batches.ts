@@ -387,6 +387,27 @@ export function getTerminalBatches(): BatchRecord[] {
   return rows.map((row) => parseBatchRow(row));
 }
 
+export function isFileReferencedByOtherBatch(fileId: string, excludeBatchIds: string[]): boolean {
+  const db = getDbInstance();
+  if (excludeBatchIds.length === 0) {
+    return Boolean(
+      db
+        .prepare(
+          "SELECT 1 FROM batches WHERE input_file_id = ? OR output_file_id = ? OR error_file_id = ? LIMIT 1"
+        )
+        .get(fileId, fileId, fileId)
+    );
+  }
+  const marks = excludeBatchIds.map(() => "?").join(",");
+  return Boolean(
+    db
+      .prepare(
+        `SELECT 1 FROM batches WHERE (input_file_id = ? OR output_file_id = ? OR error_file_id = ?) AND id NOT IN (${marks}) LIMIT 1`
+      )
+      .get(fileId, fileId, fileId, ...excludeBatchIds)
+  );
+}
+
 export function deleteBatch(id: string): boolean {
   const db = getDbInstance();
   const batch = getBatch(id);
@@ -394,22 +415,22 @@ export function deleteBatch(id: string): boolean {
 
   db.prepare("DELETE FROM batch_item_checkpoints WHERE batch_id = ?").run(id);
 
-  // Soft-delete associated files (input, output, error)
-  if (batch.inputFileId) {
+  // Soft-delete associated files only when no surviving sibling batch still references them.
+  if (batch.inputFileId && !isFileReferencedByOtherBatch(batch.inputFileId, [id])) {
     try {
       deleteFile(batch.inputFileId);
     } catch {
       /* ignore */
     }
   }
-  if (batch.outputFileId) {
+  if (batch.outputFileId && !isFileReferencedByOtherBatch(batch.outputFileId, [id])) {
     try {
       deleteFile(batch.outputFileId);
     } catch {
       /* ignore */
     }
   }
-  if (batch.errorFileId) {
+  if (batch.errorFileId && !isFileReferencedByOtherBatch(batch.errorFileId, [id])) {
     try {
       deleteFile(batch.errorFileId);
     } catch {
@@ -611,7 +632,9 @@ export function deleteTerminalBatchesOlderThan(days: number): {
       }
     }
 
-    const hasMore = Boolean(db.prepare(`SELECT 1 FROM batches WHERE ${terminalWhere} LIMIT 1`).get(cutoff));
+    const hasMore = Boolean(
+      db.prepare(`SELECT 1 FROM batches WHERE ${terminalWhere} LIMIT 1`).get(cutoff)
+    );
     return {
       deletedBatches: batchResult.changes,
       deletedFiles,

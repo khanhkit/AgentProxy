@@ -152,6 +152,8 @@ export interface ImagePart {
   partIndex: number;
   imageUrl: string;
   imageType: "image_url" | "image" | "url";
+  /** Path from the top-level content part to a nested image object. */
+  path?: (string | number)[];
 }
 
 export interface RequestMessage {
@@ -204,13 +206,14 @@ export function extractImageParts(messages: RequestMessage[]): ImagePart[] {
   // extracted part MUST be replaceable, in the same order, or the positional
   // descriptions shift onto the wrong images.
   return detectMediaParts(messages)
-    .filter((p) => p.kind === "image" && !p.nested && REPLACEABLE_IMAGE_SHAPES.has(p.shape))
+    .filter((p) => p.kind === "image" && REPLACEABLE_IMAGE_SHAPES.has(p.shape))
     .map((p) => ({
       messageIndex: p.messageIndex,
       partIndex: p.partIndex,
       imageUrl: p.ref,
       imageType:
         p.shape === "image_base64" ? "image" : p.shape === "image_source_url" ? "url" : "image_url",
+      ...(p.nested ? { path: p.path } : {}),
     }));
 }
 
@@ -229,7 +232,7 @@ export async function ensureBase64ImagesForClaudeWire(
   fetchImpl?: typeof fetch
 ): Promise<RequestBody> {
   if (!isClaudeWireFormatModel(model)) return body;
-  const parts = extractImageParts(body.messages as RequestMessage[]);
+  const parts = extractImageParts(body.messages as RequestMessage[]).filter((part) => !part.path);
   if (parts.length === 0) return body;
 
   const resolved = await Promise.all(
@@ -246,7 +249,7 @@ export async function ensureBase64ImagesForClaudeWire(
 
   // Map sequential image index → resolved data URI (null = keep original).
   const byIndex = new Map<number, string>();
-  parts.forEach((part, i) => {
+  parts.forEach((_part, i) => {
     if (resolved[i]) byIndex.set(i, resolved[i] as string);
   });
   if (byIndex.size === 0) return body;
@@ -910,45 +913,42 @@ export function replaceImageParts(
   }
 
   const replacementTextType: "text" | "input_text" = usesResponsesInput ? "input_text" : "text";
+  const mediaParts = detectMediaParts(requestMessages).filter(
+    (part) => part.kind === "image" && REPLACEABLE_IMAGE_SHAPES.has(part.shape)
+  );
 
   let descriptionIndex = 0;
+  for (const part of mediaParts) {
+    const description =
+      descriptionIndex < descriptions.length ? descriptions[descriptionIndex++] : null;
+    if (description == null) continue;
 
-  for (let msgIdx = 0; msgIdx < requestMessages.length; msgIdx++) {
-    const message = requestMessages[msgIdx];
-    if (!message || !Array.isArray(message.content)) {
+    const message = requestMessages[part.messageIndex];
+    if (!message || !Array.isArray(message.content)) continue;
+    const replacement = { type: replacementTextType, text: description };
+
+    if (!part.path || part.path.length === 0) {
+      (message.content as unknown[])[part.partIndex] = replacement;
       continue;
     }
 
-    const newContent: RequestContentPart[] = [];
-
-    for (const part of message.content) {
-      // `input_image` (Responses API) is read through a widened type: it is
-      // not part of the historical RequestContentPart union but MUST be
-      // replaceable — extractImageParts allowlists it, and every extracted
-      // part needs a matching splice here (extract↔replace contract).
-      const partType = (part as { type?: string } | null | undefined)?.type;
-      if (partType === "image_url" || partType === "image" || partType === "input_image") {
-        if (descriptionIndex < descriptions.length) {
-          const description = descriptions[descriptionIndex];
-          descriptionIndex++;
-          if (description == null) {
-            // #4012: describe failed for this image — preserve the original
-            // image so a vision-capable upstream can still process it.
-            newContent.push(part as RequestContentPart);
-          } else {
-            newContent.push({
-              type: replacementTextType,
-              text: description,
-            } as RequestContentPart);
-          }
-        }
-      } else {
-        newContent.push(part as RequestContentPart);
-      }
-    }
-
-    message.content = newContent;
+    const container = message.content[part.partIndex] as Record<string, unknown>;
+    replaceObjectAtPath(container, part.path, replacement);
   }
 
   return result;
+}
+
+function replaceObjectAtPath(
+  container: Record<string, unknown>,
+  path: (string | number)[],
+  replacement: Record<string, unknown>
+): void {
+  let node: unknown = container;
+  for (let i = 0; i < path.length - 1; i++) {
+    const next = (node as Record<string, unknown> | null | undefined)?.[path[i] as string];
+    if (next == null || typeof next !== "object") return;
+    node = next;
+  }
+  (node as Record<string, unknown>)[path[path.length - 1] as string] = replacement;
 }

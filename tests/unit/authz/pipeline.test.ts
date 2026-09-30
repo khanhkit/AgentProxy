@@ -102,6 +102,32 @@ test("runAuthzPipeline redirects root to dashboard before management auth", asyn
   assert.equal(response.headers.get("location"), "http://localhost/dashboard");
 });
 
+test("runAuthzPipeline preserves native-app callback query from root", async () => {
+  await forceAuthRequired();
+
+  const response = await pipeline.runAuthzPipeline(
+    request("http://localhost/?user_id=abc123&access_token=tok-xyz"),
+    { enforce: true }
+  );
+
+  assert.equal(response.status, 307);
+  assert.equal(
+    response.headers.get("location"),
+    "http://localhost/callback?user_id=abc123&access_token=tok-xyz"
+  );
+});
+
+test("runAuthzPipeline does not treat a partial native callback as complete", async () => {
+  await forceAuthRequired();
+
+  const response = await pipeline.runAuthzPipeline(request("http://localhost/?user_id=abc123"), {
+    enforce: true,
+  });
+
+  assert.equal(response.status, 307);
+  assert.equal(response.headers.get("location"), "http://localhost/dashboard");
+});
+
 test("runAuthzPipeline redirects unauthenticated dashboard pages to login", async () => {
   await forceAuthRequired();
 

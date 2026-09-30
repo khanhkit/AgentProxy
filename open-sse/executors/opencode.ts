@@ -546,7 +546,7 @@ export class OpencodeExecutor extends BaseExecutor {
         input,
         this._requestFormat,
         this.getTimeoutMs(),
-        this.config?.fetchStartTimeoutCapMs
+        undefined
       );
       // Fast path: no multi-account proxy wiring configured → original behavior,
       // plus exactly ONE bounded retry when the upstream answers a 400 empty

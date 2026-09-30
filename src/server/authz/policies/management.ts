@@ -250,21 +250,23 @@ export const managementPolicy: RoutePolicy = {
       }
     }
 
+    // The one unauthenticated management mutation used by first-run setup is
+    // loopback-only. Keep this explicit LOCAL_ONLY verdict before the generic
+    // auth-required branch so remote callers receive the established 403
+    // contract rather than falling through to a generic 401.
+    if (
+      path === "/api/settings/require-login" &&
+      ctx.request?.method?.toUpperCase() === "POST" &&
+      !isLoopbackRequest(ctx)
+    ) {
+      return reject(403, "LOCAL_ONLY", "Initial login setup requires localhost access");
+    }
+
     // Tier 2: always-protected routes skip the requireLogin=false bypass.
     if (
       !isAlwaysProtectedPath(path) &&
       !(await isAuthRequired(ctx.request, { trustPipelineLocalityHeader: false }))
     ) {
-      // The one unauthenticated management mutation used by first-run setup is
-      // loopback-only. Use the token-stamped TCP peer verdict here; Host/XFF are
-      // client-controlled and must never establish bootstrap ownership.
-      if (
-        path === "/api/settings/require-login" &&
-        ctx.request?.method?.toUpperCase() === "POST" &&
-        !isLoopbackRequest(ctx)
-      ) {
-        return reject(403, "LOCAL_ONLY", "Initial login setup requires localhost access");
-      }
       return allow({ kind: "anonymous", id: "anonymous", label: "auth-disabled" });
     }
 
