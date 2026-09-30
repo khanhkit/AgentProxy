@@ -45,7 +45,7 @@ probe either.
 ## Startup warning
 
 When `REQUIRE_API_KEY` is disabled and a server binds a non-loopback interface,
-AgentProxy logs a warning at boot (`src/lib/startup/nonLoopbackApiKeyGuard.ts`) for the Dashboard/API server that serves `/v1` inference. `scripts/dev/run-next.mjs` publishes the actual `HOST` bind through the internal `OMNIROUTE_BOUND_HOST` compatibility signal; the standalone container path follows Next's `HOSTNAME`.
+AgentProxy logs a warning at boot (`src/lib/startup/nonLoopbackApiKeyGuard.ts`) for the Dashboard/API server that serves `/v1` inference. `scripts/dev/run-next.mjs` publishes the actual `HOST` bind through the internal `AGENTPROXY_BOUND_HOST` compatibility signal; the standalone container path follows Next's `HOSTNAME`.
 
 The warning never blocks boot: a trusted reverse proxy in front of AgentProxy may already enforce authentication.
 

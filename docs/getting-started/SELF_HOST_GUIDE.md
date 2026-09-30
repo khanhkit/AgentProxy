@@ -74,7 +74,7 @@ docker logs agentproxy | grep -i password
 ```
 
 The other variables (`DASHBOARD_PORT`, `API_PORT`, `LIVE_WS_PORT`,
-`OMNIROUTE_MEMORY_MB`) already have sane defaults. Leave them unless you know
+`AGENTPROXY_MEMORY_MB`) already have sane defaults. Leave them unless you know
 you need to change them.
 
 ---
@@ -141,18 +141,18 @@ For provider choice, see the [Providers Guide](./PROVIDERS-GUIDE.md). You can us
 
 ## Sizing the container
 
-The image pins `OMNIROUTE_MEMORY_MB=1024`. That is enough for the dashboard
+The image pins `AGENTPROXY_MEMORY_MB=1024`. That is enough for the dashboard
 and light chat. **Coding agents** (`POST /v1/responses` from Claude Code,
 Codex, Grok, …) retain multiple large context graphs during compression and
 can abort V8 at ~12 GiB old-space under two overlapping long contexts
 ([#7849]()).
 
-`.env.selfhost.example` defaults to `OMNIROUTE_MEMORY_MB=2048` — a safe floor
+`.env.selfhost.example` defaults to `AGENTPROXY_MEMORY_MB=2048` — a safe floor
 for a single user running coding agents. Raise it if you fan out many models
 in parallel (fusion combos) or hit `FATAL ERROR: Reached heap limit`:
 
 ```dotenv
-OMNIROUTE_MEMORY_MB=4096
+AGENTPROXY_MEMORY_MB=4096
 ```
 
 Memory is a V8 heap ceiling; native buffers (SQLite, ONNX, better-sqlite3)
@@ -265,7 +265,7 @@ Or, with the full compose, pick a profile:
 <details>
 <summary><code>FATAL ERROR: Reached heap limit</code> under coding agents</summary>
 
-Raise `OMNIROUTE_MEMORY_MB` in `.env` (e.g. `4096`), then
+Raise `AGENTPROXY_MEMORY_MB` in `.env` (e.g. `4096`), then
 `docker compose -f docker-compose.selfhost.yml up -d`. See
 [Sizing the container](#sizing-the-container).
 </details>
