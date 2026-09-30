@@ -56,7 +56,7 @@ async function main() {
           PORT: String(port),
           DASHBOARD_PORT: String(port),
           API_PORT: String(port),
-          OMNIROUTE_BASE_URL: baseUrl,
+          AGENTPROXY_BASE_URL: baseUrl,
         }),
     AGENTPROXY_E2E_BOOTSTRAP_MODE: process.env.AGENTPROXY_E2E_BOOTSTRAP_MODE || "open",
     REQUIRE_API_KEY: explicitBaseUrl ? process.env.REQUIRE_API_KEY : "false",
