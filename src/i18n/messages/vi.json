@@ -5974,6 +5974,8 @@
     "validationModelIdHint": "Mô hình được sử dụng để xác minh khóa API. Để trống để sử dụng mô hình khả dụng đầu tiên của nhà cung cấp.",
     "validationModelIdLabel": "Mô hình xác thực",
     "validationModelIdPlaceholder": "Ví dụ: meta-llama/llama-3.1-8b-instruct",
+    "vertexCredentialLabel": "API Key or Service Account JSON",
+    "vertexCredentialHint": "API keys use the curated project catalog. Service Account JSON enables live Model Garden discovery.",
     "vertexServiceAccountPlaceholder": "Dán JSON Tài khoản dịch vụ của bạn ({\"type\":\"service_account\",\"project_id\":\"…\",\"client_email\":\"…\",\"private_key\":\"…\"}) hoặc access_token OAuth",
     "webCookieProviders": "Nhà cung cấp Web Cookie",
     "weeklyShort": "Hàng tuần",
@@ -6331,7 +6333,8 @@
       "kiro": "Gói miễn phí: 50 tín dụng/tháng (khoảng 25–100 nghìn token). ⚠️ Điều khoản Kiro cấm sử dụng proxy/harness của bên thứ ba.",
       "codex": "Kết nối OpenAI Codex bằng luồng OAuth hiện có.",
       "qwen": "Kết nối Qwen Code bằng luồng OAuth hiện có.",
-      "github-models": "Tạo GitHub PAT với phạm vi 'models: read' tại github.com/settings/tokens"
+      "github-models": "Tạo GitHub PAT với phạm vi 'models: read' tại github.com/settings/tokens",
+      "agnes-cn": "Lấy khóa API tại agnes-ai.com — China endpoint: api.agnes-ai.cn"
     },
     "passthroughModelsDescription": "{provider} chấp nhận ID mô hình gốc của nhà cung cấp. Nhập từ /models hoặc thêm ID tùy chỉnh để định tuyến.",
     "bedrockModelsDescription": "Các mô hình Amazon Bedrock được giới hạn theo vùng AWS. Nhập từ /models hoặc thêm ID mô hình Bedrock được bật trong vùng đã chọn.",
@@ -8596,7 +8599,11 @@
       },
       "compressToolResults": {
         "label": "Chủ động rút gọn kết quả công cụ dài",
-        "description": "Rút gọn các kết quả công cụ dài hơn 2.000 ký tự trong quá trình nén Lite. Cơ chế bảo vệ tràn khẩn cấp vẫn có thể cắt bớt nội dung khi ngữ cảnh vượt quá ngân sách của mô hình."
+        "description": "Truncates long tool results during Lite compression. The Maximum tool-result length field (or AGENTPROXY_LITE_MAX_TOOL_LENGTH when that field is unset) sets the cap. Emergency overflow protection may still trim content when the context exceeds the model budget."
+      },
+      "maxToolLength": {
+        "label": "Maximum tool-result length",
+        "description": "Character cap for proactive tool-result truncation. Default 2000. Override with AGENTPROXY_LITE_MAX_TOOL_LENGTH when this field is unset."
       }
     },
     "engineFields": {
@@ -9513,6 +9520,13 @@
     "confirmRedeemResetCreditTitle": "Đổi tín dụng đặt lại này?",
     "confirmRedeemResetCredit": "Đổi một tín dụng đặt lại Codex cho tài khoản này? Thao tác này sẽ tiêu tốn một tín dụng đặt lại.",
     "confirmRedeemResetCreditButton": "Đổi tín dụng",
+    "glmResetCreditsModalTitle": "Thẻ đặt lại của GLM Coding Plan",
+    "glmResetCreditsModalExplainer": "Thẻ đặt lại được sắp xếp theo thời gian hết hạn. Chọn cửa sổ 5 giờ hoặc hàng tuần bạn muốn đặt lại.",
+    "glmResetCreditFiveHourTitle": "Đặt lại cửa sổ 5 giờ",
+    "glmResetCreditWeekTitle": "Đặt lại cửa sổ hàng tuần",
+    "glmConfirmRedeemResetCredit": "Việc đổi sẽ đặt lại ngay cửa sổ sử dụng đã chọn và tiêu tốn vĩnh viễn thẻ này.",
+    "glmConfirmRedeemFiveHourResetCredit": "Việc đổi sẽ đặt lại ngay cửa sổ sử dụng 5 giờ và tiêu tốn vĩnh viễn thẻ này.",
+    "glmConfirmRedeemWeekResetCredit": "Việc đổi sẽ đặt lại ngay cửa sổ sử dụng hàng tuần và tiêu tốn vĩnh viễn thẻ này.",
     "resetCreditRedeemed": "Đã đổi lượt đặt lại",
     "resetCreditRedeemFailed": "Không thể đổi tín dụng đặt lại",
     "suiteBuilderSaveFailed": "Không thể lưu bộ đánh giá",
@@ -13026,6 +13040,13 @@
       },
       "STREAM_RECOVERY_MIDSTREAM_ENABLED": {
         "description": "Cho phép khôi phục luồng bằng cách yêu cầu lại và ghép phản hồi sau khi dữ liệu đã bắt đầu được gửi tới ứng dụng khách."
+      },
+      "STREAM_RECOVERY_TOOLCALL_ORDER_FIX": {
+        "description": "Giúp việc tiếp tục luồng giữa chừng an toàn với lệnh gọi công cụ: không bao giờ tiếp tục một luồng bị ngắt sau khi đã gửi lệnh gọi công cụ (đang xử lý hoặc đã hoàn tất), và dừng sau một lần tiếp tục rỗng thay vì dùng hết số lần thử lại."
+      },
+      "PROTECTED_PRIORITY_INFRA_502_ENABLED": {
+        "label": "Dừng ưu tiên được bảo vệ do hạ tầng trả 502",
+        "description": "Trả 502 thay vì 503 khi một mục tiêu ưu tiên chỉ dự phòng theo hạn mức dừng combo vì một nguyên nhân chắc chắn không phải hạn mức: bộ ngắt mạch của nhà cung cấp đang mở hoặc bỏ qua do dự đoán độ trễ."
       },
       "MODEL_CATALOG_INCLUDE_NAMES": {
         "description": "Thêm trường tên dễ đọc vào phản hồi /v1/models. Tắt với các ứng dụng khách chỉ chấp nhận ID mô hình."

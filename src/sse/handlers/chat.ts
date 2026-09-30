@@ -478,6 +478,15 @@ async function handleChatImplementation(
     log.warn("CHAT", "Rejecting request with empty messages array");
     return errorResponse(HTTP_STATUS.BAD_REQUEST, "messages: at least one message is required");
   }
+  if (
+    Array.isArray(msgBody.messages) &&
+    msgBody.messages.some(
+      (message) => message === null || typeof message !== "object" || Array.isArray(message)
+    )
+  ) {
+    log.warn("CHAT", "Rejecting request with non-object message entries");
+    return errorResponse(HTTP_STATUS.BAD_REQUEST, "messages: Expected array of objects");
+  }
   if (!("messages" in msgBody) && !("input" in msgBody) && sourceFormat !== "antigravity") {
     log.warn("CHAT", "Rejecting request with missing messages");
     return errorResponse(HTTP_STATUS.BAD_REQUEST, "messages: Expected array, received undefined");
@@ -1016,7 +1025,15 @@ async function handleChatImplementation(
       if (isComboLiveTest) return true;
       // #12886: combo-name allow-list must not skip inner targets (#9057 still
       // checks auto/* / disableNonPublic via comboTargetPassesKeyModelPolicy).
-      if (!(await comboTargetPassesKeyModelPolicy({ apiKey, apiKeyInfo, requestedModelStr: resolvedModelStr, targetModelStr: modelString, isModelAllowedForKey }))) {
+      if (
+        !(await comboTargetPassesKeyModelPolicy({
+          apiKey,
+          apiKeyInfo,
+          requestedModelStr: resolvedModelStr,
+          targetModelStr: modelString,
+          isModelAllowedForKey,
+        }))
+      ) {
         return false;
       }
 

@@ -223,3 +223,109 @@ test("Alibaba free billing mode syncs all live text models, not only the curated
     globalThis.fetch = originalFetch;
   }
 });
+
+function tokenPlanEnvelope(ids: string[]) {
+  return {
+    code: "200",
+    data: {
+      success: true,
+      DataV2: { data: { code: "200", success: true, data: ids } },
+    },
+  };
+}
+
+for (const provider of ["qwen-cloud-token-plan", "bailian-coding-plan"] as const) {
+  test(`${provider} discovers and persists the public Personal Token Plan catalog`, async () => {
+    await resetStorage();
+    const connection = await providersDb.createProviderConnection({
+      provider,
+      authType: "apikey",
+      name: `${provider}-public-catalog`,
+      apiKey: "secret-account-key",
+      providerSpecificData: { region: "global-sg" },
+    });
+
+    let requestedUrl = "";
+    let requestedInit: RequestInit | undefined;
+    const originalFetch = globalThis.fetch;
+    globalThis.fetch = (async (input, init) => {
+      requestedUrl = typeof input === "string" ? input : input.toString();
+      requestedInit = init;
+      return new Response(
+        JSON.stringify(tokenPlanEnvelope(["qwen3.8-flash", "glm-5.2", "qwen-image-3.0-pro"])),
+        { status: 200, headers: { "Content-Type": "application/json" } }
+      );
+    }) as typeof globalThis.fetch;
+
+    try {
+      const response = await modelsRoute.GET(
+        new Request(`http://localhost/api/providers/${connection.id}/models?refresh=true`),
+        { params: { id: connection.id } }
+      );
+      assert.equal(response.status, 200);
+      const body = await response.json();
+      assert.equal(body.source, "api");
+      assert.equal(body.catalogMode, "live_token_plan_catalog");
+      assert.equal(body.catalogScope, "product");
+      assert.deepEqual(
+        body.models.map((model: { id: string }) => model.id),
+        ["qwen3.8-flash", "glm-5.2"]
+      );
+
+      const expectedHost =
+        provider === "bailian-coding-plan"
+          ? "bailian-singapore-cs.alibabacloud.com"
+          : "cs-data.qwencloud.com";
+      assert.equal(new URL(requestedUrl).hostname, expectedHost);
+      assert.equal(
+        JSON.stringify({ requestedUrl, requestedInit }).includes("secret-account-key"),
+        false
+      );
+
+      const persisted = await modelsDb.getSyncedAvailableModelsForConnection(
+        provider,
+        connection.id
+      );
+      assert.deepEqual(
+        persisted.map((model) => model.id),
+        ["qwen3.8-flash", "glm-5.2"]
+      );
+    } finally {
+      globalThis.fetch = originalFetch;
+    }
+  });
+}
+
+test("Token Plan live-catalog failure preserves a usable connection cache", async () => {
+  await resetStorage();
+  const provider = "qwen-cloud-token-plan";
+  const connection = await providersDb.createProviderConnection({
+    provider,
+    authType: "apikey",
+    name: "qwen-token-plan-cache-fallback",
+    apiKey: "secret-account-key",
+    providerSpecificData: { region: "global-sg" },
+  });
+  await modelsDb.replaceSyncedAvailableModelsForConnection(provider, connection.id, [
+    { id: "qwen-cached-model", name: "Cached model", source: "imported" },
+  ]);
+
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = (async () => new Response("upstream failed", { status: 503 })) as typeof fetch;
+  try {
+    const response = await modelsRoute.GET(
+      new Request(`http://localhost/api/providers/${connection.id}/models?refresh=true`),
+      { params: { id: connection.id } }
+    );
+    assert.equal(response.status, 200);
+    const body = await response.json();
+    assert.equal(body.source, "cache");
+    assert.match(body.warning, /Token Plan live catalog unavailable/);
+    assert.deepEqual(
+      body.models.map((model: { id: string }) => model.id),
+      ["qwen-cached-model"]
+    );
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});

@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Button, Card, Input, Select, Toggle } from "@/shared/components";
+import { Button, Card, ConfirmModal, Input, Select, Toggle } from "@/shared/components";
 
 type RuleScope = "global" | "apiKey" | "combo" | "model" | "connection";
 type TargetKind = "keep" | "model" | "combo";
@@ -93,15 +93,28 @@ function supportsExtendedCodexEffort(model: string, effort: "max" | "ultra"): bo
     : /^gpt-5\.6-(?:sol|terra|luna)(?:-|$)/.test(normalized);
 }
 
-export default function ReasoningRoutingRules({ apiKeyId }: { apiKeyId?: string }) {
+export default function ReasoningRoutingRules({
+  apiKeyId: fixedApiKeyId,
+  initialApiKeyId,
+}: {
+  apiKeyId?: string;
+  initialApiKeyId?: string;
+}) {
   const t = useTranslations("reasoningRouting");
+  const initialSelectedApiKeyId = initialApiKeyId ?? fixedApiKeyId ?? "";
+  const lockedApiKey = fixedApiKeyId !== undefined && initialApiKeyId === undefined;
+  const [apiKeyId, setApiKeyId] = useState(initialSelectedApiKeyId);
   const [rules, setRules] = useState<Rule[]>([]);
   const [combos, setCombos] = useState<Reference[]>([]);
   const [keys, setKeys] = useState<Reference[]>([]);
   const [connections, setConnections] = useState<Reference[]>([]);
-  const [form, setForm] = useState<FormState>(() => emptyRule(apiKeyId));
+  const [form, setForm] = useState<FormState>(() => emptyRule(initialSelectedApiKeyId));
+  const [baseline, setBaseline] = useState(() => JSON.stringify(emptyRule(initialSelectedApiKeyId)));
+  const [sourceKind, setSourceKind] = useState<"all" | "combo" | "pattern">("all");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [loadFailed, setLoadFailed] = useState(false);
+  const [confirmation, setConfirmation] = useState<{ action: () => void } | null>(null);
   const [message, setMessage] = useState("");
   const [scopeFilter, setScopeFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -129,6 +142,7 @@ export default function ReasoningRoutingRules({ apiKeyId }: { apiKeyId?: string 
     setCombos(Array.isArray(comboData.combos) ? comboData.combos : []);
     setKeys(Array.isArray(keyData.keys) ? keyData.keys : []);
     setConnections(Array.isArray(providerData.connections) ? providerData.connections : []);
+    setLoadFailed(false);
   }, [t]);
 
   useEffect(() => {
@@ -136,6 +150,7 @@ export default function ReasoningRoutingRules({ apiKeyId }: { apiKeyId?: string 
       try {
         await load();
       } catch {
+        setLoadFailed(true);
         setMessage(t("loadError"));
       }
     };
@@ -184,14 +199,39 @@ export default function ReasoningRoutingRules({ apiKeyId }: { apiKeyId?: string 
       : t("extendedUnsupportedWarning");
   }, [form.effortMode, form.targetEffort, form.targetKind, t, targetModelForCapability]);
 
-  const reset = () => {
+  const dirty = JSON.stringify(form) !== baseline;
+
+  const reset = (selectedApiKeyId = apiKeyId) => {
+    const fresh = emptyRule(selectedApiKeyId);
     setEditingId(null);
-    setForm(emptyRule(apiKeyId));
+    setForm(fresh);
+    setBaseline(JSON.stringify(fresh));
+    setSourceKind("all");
+    setSimulation(null);
+  };
+
+  const beginNewRule = () => {
+    const fresh = emptyRule(apiKeyId);
+    setEditingId(null);
+    setForm(fresh);
+    setBaseline(JSON.stringify(fresh));
+    setSourceKind("all");
+    setSimulation(null);
+  };
+
+  const chooseKey = (value: string) => {
+    const apply = () => {
+      setApiKeyId(value);
+      reset(value);
+      setMessage("");
+    };
+    if (dirty) setConfirmation({ action: apply });
+    else apply();
   };
 
   const edit = (rule: Rule) => {
     setEditingId(rule.id);
-    setForm({
+    const restored = {
       ...emptyRule(apiKeyId),
       ...rule,
       apiKeyId: rule.apiKeyId || "",
@@ -204,7 +244,17 @@ export default function ReasoningRoutingRules({ apiKeyId }: { apiKeyId?: string 
       requestTags: rule.requestTags.join(", "),
       budgetTokens: rule.budgetTokens ? String(rule.budgetTokens) : "",
       priority: String(rule.priority),
-    });
+    } satisfies FormState;
+    setForm(restored);
+    setBaseline(JSON.stringify(restored));
+    setSourceKind(
+      !rule.modelPattern
+        ? "all"
+        : combos.some((combo) => combo.name === rule.modelPattern)
+          ? "combo"
+          : "pattern"
+    );
+    setSimulation(null);
   };
 
   const payload = () => {
@@ -303,8 +353,39 @@ export default function ReasoningRoutingRules({ apiKeyId }: { apiKeyId?: string 
   }));
 
   return (
-    <Card title={apiKeyId ? t("apiKeyTitle") : t("title")} subtitle={t("subtitle")} icon="route">
+    <>
+      <ConfirmModal
+        isOpen={Boolean(confirmation)}
+        onClose={() => setConfirmation(null)}
+        onConfirm={() => {
+          const action = confirmation?.action;
+          setConfirmation(null);
+          action?.();
+        }}
+        message="Discard unsaved routing changes?"
+      />
+      <Card title={apiKeyId ? t("apiKeyTitle") : t("title")} subtitle={t("subtitle")} icon="route">
       <div className="space-y-5">
+        {!lockedApiKey && (
+          <Select
+            label={t("apiKey")}
+            value={apiKeyId}
+            onChange={(event) => chooseKey(event.target.value)}
+            placeholder={t("all")}
+            placeholderDisabled={false}
+            options={keys.map((key) => ({ value: key.id, label: key.name }))}
+          />
+        )}
+        <div className="flex justify-end">
+          <Button aria-label="New rule" onClick={beginNewRule} disabled={loadFailed || saving}>
+            {t("add")}
+          </Button>
+        </div>
+        {loadFailed && (
+          <p role="alert" className="text-sm text-red-500">
+            {t("loadError")}
+          </p>
+        )}
         <div className="grid gap-3 md:grid-cols-3">
           <Input
             label={t("filterSearch")}
@@ -333,7 +414,7 @@ export default function ReasoningRoutingRules({ apiKeyId }: { apiKeyId?: string 
 
         <div className="space-y-2">
           {visibleRules.length === 0 && <p className="text-sm text-text-muted">{t("empty")}</p>}
-          {visibleRules.map((rule) => (
+          {!loadFailed && visibleRules.map((rule) => (
             <div
               key={rule.id}
               className="flex flex-wrap items-center gap-3 rounded-lg border border-border p-3"
@@ -423,14 +504,45 @@ export default function ReasoningRoutingRules({ apiKeyId }: { apiKeyId?: string 
               }))}
             />
           )}
-          {(form.scope === "model" || form.scope === "apiKey") && (
+          {form.scope === "apiKey" && (
+            <>
+              <Select
+                label="Match requests for"
+                value={sourceKind}
+                onChange={(event) => {
+                  const next = event.target.value as "all" | "combo" | "pattern";
+                  setSourceKind(next);
+                  setForm({ ...form, modelPattern: "" });
+                }}
+                options={[
+                  { value: "all", label: t("allModels") },
+                  { value: "combo", label: t("sourceCombo") },
+                  { value: "pattern", label: t("sourceModel") },
+                ]}
+              />
+              {sourceKind === "combo" && (
+                <Select
+                  label={t("sourceCombo")}
+                  value={form.modelPattern}
+                  onChange={(event) => setForm({ ...form, modelPattern: event.target.value })}
+                  options={combos.map((combo) => ({ value: combo.name, label: combo.name }))}
+                />
+              )}
+              {sourceKind === "pattern" && (
+                <Input
+                  label="Exact request ID or pattern"
+                  value={form.modelPattern}
+                  onChange={(event) => setForm({ ...form, modelPattern: event.target.value })}
+                />
+              )}
+            </>
+          )}
+          {form.scope === "model" && (
             <Input
               label={t("sourceModel")}
               value={form.modelPattern}
-              onChange={(e) => setForm({ ...form, modelPattern: e.target.value })}
-              placeholder={
-                form.scope === "apiKey" ? t("sourceModelOptional") : t("sourceModelExample")
-              }
+              onChange={(event) => setForm({ ...form, modelPattern: event.target.value })}
+              placeholder={t("sourceModelExample")}
             />
           )}
           <Select
@@ -580,7 +692,12 @@ export default function ReasoningRoutingRules({ apiKeyId }: { apiKeyId?: string 
               ]}
             />
           </div>
-          <Button className="mt-3" variant="secondary" onClick={simulate}>
+          <Button
+            className="mt-3"
+            variant="secondary"
+            onClick={simulate}
+            disabled={dirty || loadFailed || saving}
+          >
             {t("simulate")}
           </Button>
           {simulation && (
@@ -591,5 +708,6 @@ export default function ReasoningRoutingRules({ apiKeyId }: { apiKeyId?: string 
         </div>
       </div>
     </Card>
+    </>
   );
 }

@@ -30,6 +30,7 @@ const apiKeysDb = await import("../../src/lib/db/apiKeys.ts");
 const combosDb = await import("../../src/lib/db/combos.ts");
 const modelComboMappingsDb = await import("../../src/lib/db/modelComboMappings.ts");
 const costRules = await import("../../src/domain/costRules.ts");
+const keyQuotaDb = await import("../../src/lib/db/keyQuota.ts");
 const rateLimiter = await import("../../src/shared/utils/rateLimiter.ts");
 
 rateLimiter.setRateLimiterTestMode(true);
@@ -713,6 +714,22 @@ test("enforceApiKeyPolicy treats combo wildcard, empty list, and names as distin
     );
     assert.equal(rejection?.status ?? null, routingCase.status);
   }
+});
+
+test("enforceApiKeyPolicy rejects an API key whose per-key rpm quota is exhausted", async () => {
+  const limitedKey = await createKeyWithPolicy();
+  keyQuotaDb.upsertKeyQuotaLimits(limitedKey.id, { rpmLimit: 1 });
+  keyQuotaDb.incrementKeyQuotaCounter(limitedKey.id, "rpm", 1);
+
+  const policy = await loadPolicy("key-quota-rpm");
+  const result = await policy.enforceApiKeyPolicy(
+    makePolicyRequest(limitedKey.key),
+    "openai/gpt-4.1"
+  );
+
+  assert.ok(result.rejection);
+  assert.equal(result.rejection.status, 429);
+  assert.match(await readErrorMessage(result.rejection), /Request-per-minute quota exceeded/i);
 });
 
 test("enforceApiKeyPolicy applies configured throttle delay", async () => {

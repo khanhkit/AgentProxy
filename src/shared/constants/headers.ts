@@ -2,6 +2,8 @@ export const AGENTPROXY_RESPONSE_HEADERS = {
   cache: "X-AgentProxy-Cache",
   cacheHit: "X-AgentProxy-Cache-Hit",
   cacheLatency: "X-AgentProxy-Cache-Latency",
+  cacheSimilarity: "X-AgentProxy-Cache-Similarity",
+  savingsTokens: "X-AgentProxy-Savings-Tokens",
   compression: "X-AgentProxy-Compression",
   costSaved: "X-AgentProxy-Cost-Saved",
   decision: "X-AgentProxy-Decision",

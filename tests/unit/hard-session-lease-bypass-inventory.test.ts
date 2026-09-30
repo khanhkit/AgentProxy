@@ -179,6 +179,7 @@ const EXPECTED: Record<InventoryKind, Record<string, number>> = {
     "src/lib/usage/callLogs.ts": 1,
     "src/lib/usage/codexResetCredits.ts": 1,
     "src/lib/usage/comboScoringInspector.ts": 1,
+    "src/lib/usage/glmResetCards.ts": 1,
     // Grok reset-credit service explicitly checks auxiliary lease isolation before this read.
     "src/lib/usage/grokResetCredits.ts": 1,
     "src/lib/usage/providerLimits.ts": 4,
@@ -231,6 +232,7 @@ const CLASSIFICATION: Record<InventoryKind, Record<string, BypassClass>> = {
         "src/lib/providers/volcenginePlanBinding.ts",
         "src/lib/services/quotaAutoPing.ts",
         "src/lib/usage/codexResetCredits.ts",
+        "src/lib/usage/glmResetCards.ts",
         "src/lib/usage/grokResetCredits.ts",
         "src/lib/usage/providerLimits.ts",
         "src/lib/vncSession/service.ts",
@@ -328,6 +330,7 @@ test("managed request surfaces are fenced centrally or rejected before independe
     "src/lib/api/modelTestRunner.ts",
     "src/lib/services/quotaAutoPing.ts",
     "src/lib/usage/codexResetCredits.ts",
+    "src/lib/usage/glmResetCards.ts",
     "src/lib/vncSession/service.ts",
     "src/lib/warmupScheduler.ts",
     "src/shared/services/modelSyncScheduler.ts",

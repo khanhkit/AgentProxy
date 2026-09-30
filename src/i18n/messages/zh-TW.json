@@ -5970,6 +5970,8 @@
     "validationModelIdHint": "用於驗證此提供者連線的模型 ID。",
     "validationModelIdLabel": "驗證模型 ID",
     "validationModelIdPlaceholder": "輸入用於測試的模型 ID",
+    "vertexCredentialLabel": "API Key or Service Account JSON",
+    "vertexCredentialHint": "API keys use the curated project catalog. Service Account JSON enables live Model Garden discovery.",
     "vertexServiceAccountPlaceholder": "貼上 Service Account JSON（{\"type\":\"service_account\"...}）或 OAuth access_token",
     "webCookieProviders": "Web Cookie Provider",
     "weeklyShort": "每週",
@@ -6327,7 +6329,8 @@
       "kiro": "免費方案：每月 50 額度（約 2.5 萬至 10 萬 tokens）。⚠️ Kiro 服務條款禁止第三方代理/轉接使用。",
       "codex": "使用現有的 OAuth 流程連線 OpenAI Codex。",
       "qwen": "使用現有的 OAuth 流程連線 Qwen Code。",
-      "github-models": "在 github.com/settings/tokens 建立具有 'models: read' 範圍的 GitHub PAT"
+      "github-models": "在 github.com/settings/tokens 建立具有 'models: read' 範圍的 GitHub PAT",
+      "agnes-cn": "在 agnes-ai.com 取得 API 金鑰 — China endpoint: api.agnes-ai.cn"
     },
     "passthroughModelsDescription": "{provider} 接受提供者本機模型 ID。從 /models 匯入或新增用於路由的自定義 ID。",
     "bedrockModelsDescription": "Amazon Bedrock 模型的範圍按 AWS 區域劃分。從 /models 匯入或新增在所選區域中啟用的基岩模型 ID。",
@@ -8595,7 +8598,11 @@
       },
       "compressToolResults": {
         "label": "主動截斷長工具結果",
-        "description": "在輕量壓縮期間，截斷超過 2,000 個字符的工具結果。當上下文超過模型預算時，緊急溢出保護仍可能修剪內容。"
+        "description": "在輕量壓縮期間截斷過長的工具結果。截斷上限由「最大工具結果長度」欄位決定；該欄位未設定時使用 AGENTPROXY_LITE_MAX_TOOL_LENGTH。當上下文超過模型預算時，緊急溢出保護仍可能修剪內容。"
+      },
+      "maxToolLength": {
+        "label": "最大工具結果長度",
+        "description": "主動截斷工具結果的字元上限。預設 2000。該欄位未設定時可用 AGENTPROXY_LITE_MAX_TOOL_LENGTH 覆寫。"
       }
     },
     "engineFields": {
@@ -13025,6 +13032,13 @@
       },
       "STREAM_RECOVERY_MIDSTREAM_ENABLED": {
         "description": "允許串流復原在位元組已到達用戶端後再次請求回應並將其拼接。"
+      },
+      "STREAM_RECOVERY_TOOLCALL_ORDER_FIX": {
+        "description": "__MISSING__:Make mid-stream continuation tool-call safe: never resume a cut stream after a tool call was sent (still in progress or already finished), and stop after one empty continuation instead of using the whole retry budget."
+      },
+      "PROTECTED_PRIORITY_INFRA_502_ENABLED": {
+        "label": "__MISSING__:Protected-Priority Infra Stops as 502",
+        "description": "__MISSING__:Answer 502 instead of 503 when a quota-only-fallback priority target stops the combo for a cause that is provably not quota: an open provider circuit breaker or a predictive latency skip."
       },
       "MODEL_CATALOG_INCLUDE_NAMES": {
         "description": "在 /v1/models 回應中包含顯示友善的名稱欄位。對於僅接受模型 ID 的用戶端請停用此項。"

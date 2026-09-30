@@ -11,7 +11,9 @@ import {
   type LegacyProxyLogExportCursor,
 } from "@/lib/db/proxyLogs";
 import { sanitizeErrorMessage } from "@agentproxy/open-sse/utils/error";
+import { logger } from "@/shared/utils/logger";
 
+const log = logger.child({ module: "logs-export" });
 const LEGACY_EXPORT_PAGE_SIZE = 100;
 const encoder = new TextEncoder();
 
@@ -62,14 +64,25 @@ async function* generateExportJson(
   yield encoder.encode('{\n  "logs": [');
 
   let count = 0;
-  for await (const row of logs) {
-    yield encoder.encode(`${count === 0 ? "\n" : ",\n"}${indentJson(row)}`);
-    count += 1;
+  let streamError: unknown = null;
+  try {
+    for await (const row of logs) {
+      yield encoder.encode(`${count === 0 ? "\n" : ",\n"}${indentJson(row)}`);
+      count += 1;
+    }
+  } catch (error) {
+    streamError = error;
+    log.error({ err: error, emitted: count, type: logType, hours }, "logs export failed mid-stream");
   }
 
   const logsClose = count === 0 ? "]" : "\n  ]";
+  const errorField = streamError
+    ? `,\n  "emitted": ${count},\n  "error": ${JSON.stringify(
+        sanitizeErrorMessage(streamError instanceof Error ? streamError.message : String(streamError))
+      )}`
+    : "";
   yield encoder.encode(
-    `${logsClose},\n  "count": ${count},\n  "hours": ${hours},\n  "type": ${JSON.stringify(logType)}\n}`
+    `${logsClose},\n  "count": ${count},\n  "hours": ${hours},\n  "type": ${JSON.stringify(logType)}${errorField}\n}`
   );
 }
 

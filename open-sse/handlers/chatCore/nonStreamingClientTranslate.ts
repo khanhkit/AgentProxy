@@ -31,6 +31,7 @@ import {
 } from "../responseSanitizer.ts";
 import { isStripReasoningRequested } from "./headers.ts";
 import { applyClientUsageBuffer } from "./clientUsageBuffer.ts";
+import { resolveRequestToolIdentity } from "../../translator/response/openai-responses/requestToolIdentity.ts";
 
 export type { NonStreamingClientTranslateInput, NonStreamingClientTranslateResult };
 
@@ -124,12 +125,14 @@ export function translateNonStreamingClientResponse(
   // ── Sanitize response for SDK compatibility ────────────────────────────────
   if (clientResponseFormat === FORMATS.OPENAI_RESPONSES) {
     translatedResponse = sanitizeResponsesApiResponse(translatedResponse);
-    // Restore {namespace, name} on function_call items for round-trip closure (#7936)
+    // Restore {namespace, name} on function_call items for round-trip closure.
+    // Follow-up Responses turns may omit their namespace declarations, so the
+    // resolver also recovers the narrow `mcp__<server>__<leaf>` wire shape.
     const responseOutput = translatedResponse?.output;
-    if (requestToolIdentityMap && Array.isArray(responseOutput)) {
+    if (Array.isArray(responseOutput)) {
       for (const item of responseOutput) {
         if (item?.type !== "function_call") continue;
-        const identity = requestToolIdentityMap.get(item.name);
+        const identity = resolveRequestToolIdentity(requestToolIdentityMap, item.name);
         if (identity) {
           item.namespace = identity.namespace;
           item.name = identity.name;

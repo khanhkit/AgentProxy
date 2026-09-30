@@ -263,8 +263,15 @@ export async function runAuthzPipeline(
   const requestId = generateRequestId();
 
   if (pathname === "/") {
+    const { searchParams, search } = request.nextUrl;
+    const hasNativeCallback = searchParams.get("user_id") && searchParams.get("access_token");
     const response = NextResponse.redirect(
-      new URL(`${request.nextUrl.basePath}/dashboard`, request.url)
+      new URL(
+        hasNativeCallback
+          ? `${request.nextUrl.basePath}/callback${search}`
+          : `${request.nextUrl.basePath}/dashboard`,
+        request.url
+      )
     );
     return stampRouteResponse(response, requestId, "MANAGEMENT");
   }

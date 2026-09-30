@@ -14,8 +14,8 @@ import {
   hasProxyRefusals,
   isProxyAvoided,
   proxyEgressKey,
-} from "@omniroute/open-sse/utils/proxyRefusalMemory.ts";
-import { isEgressBucketedLockScope } from "@omniroute/open-sse/config/providerErrorRules.ts";
+} from "@agentproxy/open-sse/utils/proxyRefusalMemory.ts";
+import { isEgressBucketedLockScope } from "@agentproxy/open-sse/config/providerErrorRules.ts";
 import { maybeEmitPoolExhausted } from "@/lib/proxyEvents/proxyTransitionBridge";
 import {
   isProxySkipRecentlyFailedEnabled,

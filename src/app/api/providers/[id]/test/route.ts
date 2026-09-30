@@ -796,6 +796,18 @@ export async function testOAuthConnection(
       connection.provider === "agy"
         ? await res.text().catch(() => "")
         : "";
+    let upstreamDetail = "";
+    if ((connection.provider === "antigravity" || connection.provider === "agy") && bodyText) {
+      try {
+        const parsed = JSON.parse(bodyText) as { error?: { message?: unknown } };
+        if (typeof parsed.error?.message === "string" && parsed.error.message.trim()) {
+          upstreamDetail = `: ${toSafeMessage(parsed.error.message).slice(0, 500)}`;
+        }
+      } catch {
+        // Ignore non-JSON provider bodies; the status remains actionable on its own.
+      }
+    }
+
     const error = isGeoBlockedError(bodyText)
       ? "Egress location blocked by Google (User location is not supported). The Cloud Code API is not offered from this server's proxy exit region — route antigravity/agy through a proxy in a supported region (e.g. US/EU) or use a different provider. This is NOT an account problem."
       : isAccountDeactivatedMessage(bodyText)
@@ -804,7 +816,7 @@ export async function testOAuthConnection(
           ? "Token invalid or revoked"
           : res.status === 403
             ? "Access denied"
-            : `API returned ${res.status}`;
+            : `API returned ${res.status}${upstreamDetail}`;
 
     return {
       valid: false,

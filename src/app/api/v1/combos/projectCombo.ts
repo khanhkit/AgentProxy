@@ -15,6 +15,12 @@
  * those features instead of requiring manual config after import.
  */
 import { getResolvedModelCapabilities } from "@/lib/modelCapabilities";
+import { resolveNestedComboTargets } from "@agentproxy/open-sse/services/combo/comboStructure.ts";
+import type {
+  ComboCollectionLike,
+  ComboLike,
+  ResolvedComboTarget,
+} from "@agentproxy/open-sse/services/combo/types.ts";
 
 export interface PublicComboStep {
   kind: "model" | "combo-ref";
@@ -66,6 +72,8 @@ export interface ProjectComboOptions {
   includeCapabilities?: boolean;
   /** Override the capability resolver (defaults to the model registry). */
   resolveCapabilities?: ComboCapabilityResolver;
+  /** Full combo collection for resolving nested combo-ref targets. */
+  allCombos?: ComboCollectionLike;
 }
 
 const defaultCapabilityResolver: ComboCapabilityResolver = (model) => {
@@ -103,10 +111,11 @@ export function projectComboStep(step: Record<string, unknown>): PublicComboStep
  */
 export function computeComboCapabilities(
   combo: Record<string, unknown>,
-  resolve: ComboCapabilityResolver = defaultCapabilityResolver
+  resolve: ComboCapabilityResolver = defaultCapabilityResolver,
+  allCombos?: ComboCollectionLike
 ): PublicComboCapabilities {
   const rawModels = Array.isArray(combo.models) ? combo.models : [];
-  const modelIds: string[] = [];
+  const directModelIds: string[] = [];
   let hasComboRef = false;
 
   for (const m of rawModels) {
@@ -115,12 +124,22 @@ export function computeComboCapabilities(
     if (step.kind === "combo-ref") {
       hasComboRef = true;
     } else if (step.kind === "model" && typeof step.model === "string") {
-      modelIds.push(step.model);
+      directModelIds.push(step.model);
     }
   }
 
-  let multimodal = modelIds.length > 0 && !hasComboRef;
-  let reasoning = modelIds.length > 0 && !hasComboRef;
+  const modelIds = [...directModelIds];
+  if (hasComboRef && allCombos) {
+    const resolved = resolveNestedComboTargets(combo as unknown as ComboLike, allCombos);
+    for (const target of resolved as ResolvedComboTarget[]) {
+      if (target.kind === "model" && typeof target.modelStr === "string") {
+        modelIds.push(target.modelStr);
+      }
+    }
+  }
+
+  let multimodal = modelIds.length > 0 && (!hasComboRef || Boolean(allCombos));
+  let reasoning = modelIds.length > 0 && (!hasComboRef || Boolean(allCombos));
 
   if (multimodal || reasoning) {
     for (const id of modelIds) {
@@ -158,7 +177,11 @@ export function projectCombo(
   }
 
   if (options?.includeCapabilities) {
-    out.capabilities = computeComboCapabilities(combo, options.resolveCapabilities);
+    out.capabilities = computeComboCapabilities(
+      combo,
+      options.resolveCapabilities,
+      options.allCombos
+    );
   }
 
   return out;

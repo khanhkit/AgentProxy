@@ -15,6 +15,9 @@ const messages: Record<string, string> = {
   codexPoolCoolingDown: "Cooling down",
   codexPoolUsed: "used",
   codexPoolUntil: "Until {value}",
+  clearConnectionCooldown: "Clear cooldown",
+  clearConnectionCooldownTitle: "Clear the cooldown now",
+  failedClearConnectionCooldown: "Failed to clear cooldown",
 };
 
 vi.mock("next-intl", () => ({
@@ -52,6 +55,7 @@ function quota(exhaustedWindow: "5h" | "7d" | null = null) {
 afterEach(() => {
   while (mounted.length) mounted.pop()?.();
   document.body.innerHTML = "";
+  vi.unstubAllGlobals();
 });
 
 describe("CodexAccountDetails", () => {
@@ -81,9 +85,8 @@ describe("CodexAccountDetails", () => {
     expect(container.textContent).toContain("Quota exhausted");
     expect(container.textContent).toContain("Cooling down");
     expect(container.textContent).not.toContain("parent-secret-id");
-    expect(
-      container.querySelectorAll("button, input, [role='button'], [role='checkbox']")
-    ).toHaveLength(0);
+    expect(container.querySelectorAll("button")).toHaveLength(1);
+    expect(container.querySelector("button")?.textContent).toBe("Clear cooldown");
   });
 
   it("prioritizes quota exhaustion when both facts apply and keeps neither available", () => {
@@ -154,5 +157,46 @@ describe("CodexAccountDetails", () => {
     expect(container.textContent).toContain("5h: 100% used");
     expect(container.textContent).toContain("7d: 25% used");
     expect(container.textContent).not.toContain("100/100");
+  });
+
+  it("releases the Codex child cooldown without removing the Spark card", async () => {
+    const fetchMock = vi.fn(async () => new Response(JSON.stringify({ ok: true }), { status: 200 }));
+    vi.stubGlobal("fetch", fetchMock);
+    const cooldown = "2026-01-01T01:00:00.000Z";
+    const container = renderPool({
+      parentConnectionId: "codex-parent-1",
+      aggregate: { status: "fully_limited", limitedChildCount: 2 },
+      children: [
+        {
+          key: { parentConnectionId: "codex-parent-1", scope: "codex" },
+          unavailable: true,
+          cooldown: { active: true, rateLimitedUntil: cooldown },
+          quota: quota("5h"),
+        },
+        {
+          key: { parentConnectionId: "codex-parent-1", scope: "spark" },
+          unavailable: true,
+          cooldown: { active: true, rateLimitedUntil: cooldown },
+          quota: quota(),
+        },
+      ],
+    });
+
+    const button = container.querySelector("button");
+    expect(button?.textContent).toBe("Clear cooldown");
+    await act(async () => {
+      button?.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+      await Promise.resolve();
+    });
+
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    const [url, init] = fetchMock.mock.calls[0];
+    expect(url).toBe("/api/providers/codex-cooldown");
+    expect(init?.method).toBe("POST");
+    expect(JSON.parse(String(init?.body))).toEqual({ connectionId: "codex-parent-1" });
+    expect(container.textContent).toContain("Partially limited · 1 limited");
+    expect(container.textContent).toContain("Codex");
+    expect(container.textContent).toContain("Spark");
+    expect(container.querySelector("button")).toBeNull();
   });
 });

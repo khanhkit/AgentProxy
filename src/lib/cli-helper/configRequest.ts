@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { buildErrorBody } from "@omniroute/open-sse/utils/error.ts";
+import { buildErrorBody } from "@agentproxy/open-sse/utils/error.ts";
 
 export const CONFIG_API_KEY_HEADER = "x-agentproxy-config-api-key";
 export const LEGACY_CONFIG_API_KEY_HEADER = "x-omniroute-config-api-key";

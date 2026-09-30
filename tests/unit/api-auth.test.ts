@@ -529,3 +529,18 @@ test("requireManagementAuth returns null for valid JWT cookie", async () => {
   const res = await requireManagementAuth(request as unknown as Request);
   assert.equal(res, null);
 });
+
+test("AP-ISS-0130 require-login bootstrap write is loopback-only even with localhost URL", async () => {
+  await localDb.updateSettings({ requireLogin: true, password: "", setupComplete: false });
+
+  const bootstrapWrite = (remoteAddress: string) => ({
+    method: "POST",
+    headers: new Headers({ host: "localhost:20128" }),
+    url: "http://localhost/api/settings/require-login",
+    nextUrl: { pathname: "/api/settings/require-login", hostname: "localhost" },
+    socket: { remoteAddress },
+  });
+
+  assert.equal(await apiAuth.isAuthRequired(bootstrapWrite("127.0.0.1")), false);
+  assert.equal(await apiAuth.isAuthRequired(bootstrapWrite("203.0.113.9")), true);
+});

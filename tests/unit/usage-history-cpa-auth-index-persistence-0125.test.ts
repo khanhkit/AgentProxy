@@ -23,7 +23,7 @@ test("TC-OMNIDB-CPA-013A: migration 185 adds nullable opaque auth index", () => 
   }
 });
 
-test("TC-OMNIDB-CPA-013B: usageHistory persists and reads cpaAuthIndex without label coupling", () => {
+test("TC-OMNIDB-CPA-013B: usageHistory persists cpaAuthIndex and permits sanitized read-time labels", () => {
   const source = read("src/lib/usage/usageHistory.ts");
 
   assert.match(source, /cpaAuthIndex\?:\s*string\s*\|\s*null/);
@@ -40,5 +40,6 @@ test("TC-OMNIDB-CPA-013B: usageHistory persists and reads cpaAuthIndex without l
 
   const reads = [...source.matchAll(/cpaAuthIndex:\s*toStringOrNull\(r\.cpa_auth_index\)/g)];
   assert.ok(reads.length >= 2, "both getUsageDb and getUsageHistory should expose cpaAuthIndex");
-  assert.doesNotMatch(source, /attachCpaAccountLabels|labelForCliproxyAuthIndex/);
+  assert.match(source, /attachCpaAccountLabels/);
+  assert.match(source, /labelForCliproxyAuthIndex/);
 });
