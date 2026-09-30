@@ -38,7 +38,7 @@ import { buildNonStreamingResponseHeaders } from "./chatCore/nonStreamingRespons
 import { buildNonStreamingJsonResponse } from "./chatCore/nonStreamingJsonResponse.ts";
 import { enforceOutputTokenBudget } from "./chatCore/outputTokenBudget.ts";
 import { maybeConvertJsonBodyToSse } from "./chatCore/jsonBodyToSse.ts";
-import { assembleStreamingResponseHeaders } from "./chatCore/streamingResponseHeaders.ts";
+import { withResilienceActionsContext } from "./chatCore/resilienceAttemptContext.ts"; import { assembleStreamingResponseHeaders } from "./chatCore/streamingResponseHeaders.ts";
 import { storeStreamingSemanticCacheResponse } from "./chatCore/streamingSemanticCacheStore.ts";
 import { assembleStreamingPipeline } from "./chatCore/streamingPipeline.ts";
 import { sanitizeChatRequestBody } from "./chatCore/sanitization.ts";
@@ -460,8 +460,8 @@ type VideoBridgeLogParam = { observed: boolean; redaction: VideoBridgeLogRedacti
  * @param {string} options.connectionId - Connection ID for settings lookup
  */
 // extractSystemRoleMessages extracted to chatCore/claudeSystemRole.ts (#3501); re-exported above so
-// existing importers (e.g. tests/unit/system-role-extraction.test.ts) keep resolving it from here.
-export async function handleChatCore({
+// existing importers (e.g. tests/unit/system-role-extraction.test.ts) keep resolving it from here. export async function handleChatCore(args: Parameters<typeof handleChatCoreInner>[0]) { return withResilienceActionsContext([args], handleChatCoreInner); }
+async function handleChatCoreInner({
   body,
   modelInfo,
   credentials,

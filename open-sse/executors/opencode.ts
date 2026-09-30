@@ -15,6 +15,7 @@ import {
   hasAmbientProxyContext,
   runWithDirectFetchContext,
   runWithProxyContext,
+  resolveProxyForRequest,
 } from "../utils/proxyFetch.ts";
 import { forwardOpencodeClientHeaders } from "../utils/opencodeHeaders.ts";
 import {
@@ -35,6 +36,7 @@ import {
   type ObservedToolsRetryContext,
 } from "./opencodeFreeTierRetry.ts";
 import { isRetriableUpstreamFailure } from "./opencodeTransientFailure.ts";
+import { createServedAccountTracker } from "./opencodeResilienceNotes.ts";
 import { handlePacedParkable429, parkSleepAbortable } from "./opencodeParkResume.ts";
 import * as egressPacing from "./opencodeEgressThrottle.ts";
 import { headersWaitDispatch, headersWaitState } from "./opencodeHeadersWait.ts";
@@ -349,9 +351,10 @@ export class OpencodeExecutor extends BaseExecutor {
 
   /** Round-robin pick, skipping non-candidates; falls back to the next index. */
   private pickAccountWith(
-    isReady: (account: OpencodeAccountState) => boolean
+    isReady: (account: OpencodeAccountState) => boolean,
+    keyOfMember?: (account: OpencodeAccountState) => string | null
   ): OpencodeAccountState {
-    return pickRotatableAccount(this.accounts, this, isReady);
+    return pickRotatableAccount(this.accounts, this, isReady, keyOfMember);
   }
 
   private markCooldown(
@@ -639,19 +642,27 @@ export class OpencodeExecutor extends BaseExecutor {
       const skipRecentlyFailed = isProxySkipRecentlyFailedEnabled();
       let directTried = false;
       const parkState = { burstStreak: 0, parked: false };
+      const noteServedAccount = createServedAccountTracker();
       const requestPacing = egressPacing.initEgressPacingForRequest();
+      const appliedEgress = egressPacing.createAppliedEgressTracker(
+        this.buildUrl(String(input.model ?? ""), Boolean(input.stream)),
+        resolveProxyForRequest
+      );
+      const { readAppliedKey, keyOfMember } = appliedEgress;
 
       for (let attempt = 0; attempt < this.accounts.length + emptyRejectionBudget; attempt++) {
+        appliedEgress.resetAttempt();
         const isProxiedCandidate = (a: OpencodeAccountState): boolean => {
           if (a.cooldownUntil > Date.now()) return false;
           // Without any geo evidence this pass, every cooldown-ready account
           // stays eligible (preserves the plain round-robin first pick).
+          const memberKey = keyOfMember(a);
+          if (skipRecentlyFailed && isProxyAvoided(memberKey)) return false;
           if (a.proxy === null) return !directTried || geoTriedProxyKeys.size === 0;
-          if (skipRecentlyFailed && isProxyAvoided(proxyEgressKey(a.proxy))) return false;
           const k = proxyKeyOf(a.proxy);
           return k !== null && !geoTriedProxyKeys.has(k);
         };
-        let account = this.pickAccountWith(isProxiedCandidate);
+        let account = this.pickAccountWith(isProxiedCandidate, keyOfMember);
         // Last resort: a single direct attempt (distinct egress that may
         // succeed) once no proxied account is a candidate — never before.
         if (!isProxiedCandidate(account) && !directTried && geoTriedProxyKeys.size > 0) {
@@ -712,10 +723,13 @@ export class OpencodeExecutor extends BaseExecutor {
           requestPacing,
           account,
           isProxiedCandidate,
-          () => this.pickAccountWith(isProxiedCandidate),
-          input.signal
+          () => this.pickAccountWith(isProxiedCandidate, keyOfMember),
+          input.signal,
+          readAppliedKey
         );
         account = pacedAccount;
+        appliedEgress.rememberServed(account);
+        noteServedAccount(maskAccountId(account.fingerprint));
 
         // Pin egress to this account's proxy for the whole BaseExecutor dispatch
         // (incl. its intra-URL 429 retries). skipUpstreamRetry lets THIS loop own
@@ -798,6 +812,11 @@ export class OpencodeExecutor extends BaseExecutor {
             state: parkState,
             account,
             skipRecentlyFailed,
+            noteRefused: () => {
+              const ms = appliedEgress.noteRefused(account, skipRecentlyFailed);
+              appliedEgress.rememberServed(account);
+              return ms;
+            },
             release: egressRelease,
             pacing: requestPacing,
             parkEnabled: isOpencodeParkAndResumeEnabled(),
@@ -808,6 +827,7 @@ export class OpencodeExecutor extends BaseExecutor {
               markSuccess: (a: OpencodeAccountState) => this.markSuccess(a),
               sleep: this.parkSleep,
               accounts: this.accounts,
+              replayKeyOfMember: keyOfMember,
             },
             input,
             result,
