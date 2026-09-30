@@ -8,6 +8,7 @@ import { OpencodeExecutor } from "../../open-sse/executors/opencode.ts";
 import type { ExecutorLog, ProviderCredentials } from "../../open-sse/executors/base.ts";
 import { resolveProxyForRequest } from "../../open-sse/utils/proxyFetch.ts";
 import { BURST_PARK_THRESHOLD } from "../../open-sse/executors/opencodeParkResume.ts";
+import * as throttle from "../../open-sse/executors/opencodeEgressThrottle.ts";
 import { __resetProxyRefusalMemoryForTesting } from "../../open-sse/utils/proxyRefusalMemory.ts";
 
 const FLAG = "OPENCODE_PARK_AND_RESUME";
@@ -64,6 +65,7 @@ describe("opencode 429 park-and-resume", () => {
 
   beforeEach(() => {
     __resetProxyRefusalMemoryForTesting();
+    throttle._clearEgressThrottleForTest();
     originalFetch = globalThis.fetch;
     priorFlag = process.env[FLAG];
     priorMarker = process.env[MARKER_ENV];
@@ -74,6 +76,10 @@ describe("opencode 429 park-and-resume", () => {
   });
 
   afterEach(() => {
+    throttle._clearEgressThrottleForTest();
+    delete process.env.OPENCODE_EGRESS_THROTTLE_ENABLED;
+    delete process.env.OPENCODE_EGRESS_THROTTLE_FLEET_THRESHOLD;
+    delete process.env.OPENCODE_EGRESS_THROTTLE_SUSPECT_SLOTS;
     globalThis.fetch = originalFetch;
     if (priorFlag === undefined) delete process.env[FLAG];
     else process.env[FLAG] = priorFlag;
@@ -200,6 +206,20 @@ describe("opencode 429 park-and-resume", () => {
     const text = await response.text();
     assert.ok(!text.includes(":ping"), "no park when the flag is off");
     assert.strictEqual(observed.length, BURST_PARK_THRESHOLD);
+  });
+
+  it("a fleet-suspect slot budget hands over to park-and-replay", async () => {
+    process.env.OPENCODE_EGRESS_THROTTLE_ENABLED = "1";
+    process.env.OPENCODE_EGRESS_THROTTLE_FLEET_THRESHOLD = "1";
+    process.env.OPENCODE_EGRESS_THROTTLE_SUSPECT_SLOTS = "1";
+    throttle.configureFleetFromConfig(throttle.resolveEgressThrottleConfig(process.env));
+    throttle.noteEgress429(Date.now());
+    installFetch([{ status: 429, body: BURST_BODY }, { status: 200 }]);
+    const result = await run(4, true);
+    const response = (result as { response: Response }).response;
+    assert.strictEqual(response.status, 200);
+    const text = await response.text();
+    assert.ok(text.includes(":ping"), "throttle park runs the heartbeat + replay");
   });
 
   it("a client abort mid-park stops without any further route call", async () => {
