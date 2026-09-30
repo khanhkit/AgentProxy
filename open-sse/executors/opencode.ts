@@ -35,16 +35,17 @@ import {
   type ObservedToolsRetryContext,
 } from "./opencodeFreeTierRetry.ts";
 import { isRetriableUpstreamFailure } from "./opencodeTransientFailure.ts";
+import { handleParkable429, parkSleepAbortable } from "./opencodeParkResume.ts";
 import { headersWaitDispatch, headersWaitState } from "./opencodeHeadersWait.ts";
 import {
   hasProxyRefusals,
   isProxyAvoided,
-  noteProxyRefusal,
   noteProxyServed,
   proxyEgressKey,
 } from "../utils/proxyRefusalMemory.ts";
 import {
   isNetworkRotationSharedEgressGuardEnabled,
+  isOpencodeParkAndResumeEnabled,
   isProxySkipRecentlyFailedEnabled,
 } from "@/shared/utils/featureFlags";
 
@@ -359,6 +360,8 @@ export class OpencodeExecutor extends BaseExecutor {
     markAccountCooldown(account, kind);
   }
 
+  parkSleep: (ms: number, signal?: AbortSignal | null) => Promise<boolean> = parkSleepAbortable;
+
   private markSuccess(account: OpencodeAccountState): void {
     markAccountSuccess(account);
     // A response came back through this proxy: it is usable again for every refusal kind.
@@ -634,6 +637,7 @@ export class OpencodeExecutor extends BaseExecutor {
       // (received refusal or refused TCP probe) are skipped. =false restores plain rotation.
       const skipRecentlyFailed = isProxySkipRecentlyFailedEnabled();
       let directTried = false;
+      const parkState = { burstStreak: 0, parked: false };
 
       for (let attempt = 0; attempt < this.accounts.length + emptyRejectionBudget; attempt++) {
         const isProxiedCandidate = (a: OpencodeAccountState): boolean => {
@@ -767,22 +771,34 @@ export class OpencodeExecutor extends BaseExecutor {
           continue;
         }
         lastResult = result;
+        if (result.response.status !== 429) parkState.burstStreak = 0;
 
         const status = result.response.status;
         if (status === 429) {
-          this.markCooldown(account);
-          const key = proxyKeyOf(account.proxy);
-          if (key !== null) geoTriedProxyKeys.add(key);
-          // Persistent refusal memory complements request-local tried-set bookkeeping.
-          const setAsideMs = skipRecentlyFailed
-            ? noteProxyRefusal(proxyEgressKey(account.proxy), "ip_quota_429")
-            : null;
-          log?.warn?.(
-            "OPENCODE",
-            `${cid}Rate limited (429) on account ${masked} (proxy ${key ?? "direct"})` +
-              (setAsideMs ? `, member set aside for ${Math.round(setAsideMs / 1000)}s` : "") +
-              ", rotating to next…"
-          );
+          const outcome = await handleParkable429({
+            state: parkState,
+            account,
+            triedKeys: geoTriedProxyKeys,
+            skipRecentlyFailed,
+            parkEnabled: isOpencodeParkAndResumeEnabled(),
+            driver: {
+              execute: (retryInput: ExecuteInput) =>
+                super.execute(retryInput) as Promise<HttpExecuteResult>,
+              markCooldown: (a: OpencodeAccountState) => this.markCooldown(a),
+              markSuccess: (a: OpencodeAccountState) => this.markSuccess(a),
+              sleep: this.parkSleep,
+              accounts: this.accounts,
+            },
+            input,
+            result,
+            log,
+            cid,
+          });
+          if (outcome.kind === "return") {
+            return outcome.normalize
+              ? this.normalizeMuseSparkResponse(input, outcome.result)
+              : outcome.result;
+          }
           continue;
         }
 

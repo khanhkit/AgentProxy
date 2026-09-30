@@ -216,6 +216,18 @@ export const FEATURE_FLAG_DEFINITIONS: FeatureFlagDefinition[] = [
     warningLevel: "caution",
   },
   {
+    key: "OPENCODE_PARK_AND_RESUME",
+    label: "OpenCode 429 Park And Resume",
+    description:
+      "For OpenCode multi-account rotation, park after repeated transient 429s (or a fresh pool-strain marker) with a heartbeat, then replay one capped leg instead of fanning out the whole fleet. Off by default.",
+    descriptionI18nKey: "featureFlagOpencodeParkAndResumeDescription",
+    category: "network",
+    defaultValue: "false",
+    type: "boolean",
+    requiresRestart: false,
+    warningLevel: "caution",
+  },
+  {
     key: "MITM_DISABLE_TLS_VERIFY",
     label: "Disable TLS Verify (MITM)",
     description: "Disable TLS certificate verification for MITM proxy",

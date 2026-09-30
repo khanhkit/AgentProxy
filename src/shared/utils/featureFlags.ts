@@ -246,6 +246,19 @@ export function isProxyPoolSharedEgressOrderEnabled(): boolean {
   }
 }
 
+/** OpenCode repeated-429 park/resume. Opt-in and fail-closed. */
+export function isOpencodeParkAndResumeEnabled(): boolean {
+  try {
+    return isFeatureFlagEnabled("OPENCODE_PARK_AND_RESUME");
+  } catch (error) {
+    console.error(
+      "[featureFlags] Failed to resolve OPENCODE_PARK_AND_RESUME, defaulting to disabled:",
+      error instanceof Error ? error.message : error
+    );
+    return false;
+  }
+}
+
 export function isServerOwnedToolLoopEnabled(
   reader: (key: string) => boolean = isFeatureFlagEnabled
 ): boolean {
