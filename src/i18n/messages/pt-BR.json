@@ -13480,7 +13480,7 @@
     "accessContributorRule": "Contribuidores — PRs mergeadas, commits e linhas servem somente para ordenar o ranking semanal. Top 10 recebem 365 dias; posições 11–100 recebem 90 dias; fora do Top 100 não há concessão, independentemente da quantidade de PRs. Sair do ranking nunca encurta o período já concedido.",
     "accessSupporterRule": "Apoiadores — compras únicas concedem 6 meses, 1 ano ou acesso vitalício, sem renovação automática. Compras, doações, períodos de contribuidor e concessões manuais se acumulam; o vitalício sempre prevalece.",
     "accessUseTitle": "Uso pessoal, recuperação e revisão",
-    "accessInstallationRule": "Licença pessoal — use a chave em uma instalação ativa por vez. O OmniRoute não cria fingerprint de hardware. A recuperação revoga e substitui uma chave perdida sem reiniciar a validade.",
+    "accessInstallationRule": "Licença pessoal — use a chave em uma instalação ativa por vez. O AgentProxy não cria fingerprint de hardware. A recuperação revoga e substitui uma chave perdida sem reiniciar a validade.",
     "accessAbuseRule": "Revisão de abuso — o 4º IP distinto em 24 horas cria somente uma sinalização para revisão manual; nunca bloqueia nem revoga a chave automaticamente.",
     "accessOffersRule": "As ofertas ao vivo passam por curadoria manual e podem mudar ou expirar.",
     "privacyTitle": "O que o Radar troca com o serviço",

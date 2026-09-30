@@ -66,7 +66,7 @@ function establishPersistedSalt(dataDir) {
 /** Mirrors getActiveSalt() in src/lib/machineToken.ts so a rotated
  *  OMNIROUTE_CLI_SALT reaches the CLI too (docs/security/CLI_TOKEN.md). */
 function getActiveSalt() {
-  const envSalt = process.env.OMNIROUTE_CLI_SALT;
+  const envSalt = process.env.AGENTPROXY_CLI_SALT;
   if (envSalt) return envSalt;
 
   if (_cachedActiveSalt) return _cachedActiveSalt;
