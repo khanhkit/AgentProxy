@@ -35,10 +35,13 @@ export interface PoolStrainMarker {
   ttlLeftMs: number;
 }
 
-/** Env-overridable marker path (tests point it at a fixture; default is the watcher path). */
+/** Default marker path — where the external pool watcher writes it. */
+export const DEFAULT_POOL_STRAIN_MARKER_PATH = "/tmp/opencode-pool-strain.json";
+
+/** Env-overridable marker path; trust is enforced before reading marker contents. */
 export function poolStrainMarkerPath(): string {
   const override = process.env.OPENCODE_POOL_STRAIN_MARKER_PATH?.trim();
-  return override && override !== "" ? override : "/tmp/opencode-pool-strain.json";
+  return override && override !== "" ? override : DEFAULT_POOL_STRAIN_MARKER_PATH;
 }
 
 function clamp(n: number, lo: number, hi: number): number {
@@ -86,17 +89,27 @@ export async function readPoolStrainMarker(
   }
 }
 
+function isOwnerLockedDown(mode: number, uid: number | undefined): boolean {
+  if (typeof process.getuid !== "function") return true;
+  if (uid !== process.getuid()) return false;
+  return (mode & 0o022) === 0;
+}
+
 async function defaultReadMarker(markerPath: string): Promise<{ mtimeMs: number; text: string }> {
-  const { stat, readFile } = await import("node:fs/promises");
-  const [st, handle] = await Promise.all([stat(markerPath), readFile(markerPath)]);
-  let text: string;
-  if (typeof handle === "string") {
-    text = handle;
-  } else {
-    const bytes = (handle as Uint8Array).subarray(0, STRAIN_MARKER_MAX_BYTES);
-    text = new TextDecoder().decode(bytes);
+  const { lstat, open } = await import("node:fs/promises");
+  const st = await lstat(markerPath);
+  if (!st.isFile()) throw new Error("pool-strain marker is not a regular file");
+  if (!isOwnerLockedDown(st.mode, st.uid)) {
+    throw new Error("pool-strain marker is not owner-locked-down");
   }
-  return { mtimeMs: st.mtimeMs, text };
+  const handle = await open(markerPath, "r");
+  try {
+    const buffer = Buffer.alloc(STRAIN_MARKER_MAX_BYTES);
+    const { bytesRead } = await handle.read(buffer, 0, STRAIN_MARKER_MAX_BYTES, 0);
+    return { mtimeMs: st.mtimeMs, text: buffer.toString("utf8", 0, bytesRead) };
+  } finally {
+    await handle.close();
+  }
 }
 
 /** Park duration: capped at PARK_WAIT_MS and never past the marker budget. */
