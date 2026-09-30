@@ -178,6 +178,7 @@ import {
 import { shouldUseMidConversationSystem } from "../executors/claudeIdentity.ts";
 import { normalizeClaudeHaikuConstraints } from "../services/claudeHaikuConstraints.ts";
 import { applyDefaultReasoningEffort } from "../services/defaultReasoningEffort.ts";
+import { wireAdaptiveEffort } from "./chatCore/adaptiveEffortWiring.ts";
 import { echoModelInObject } from "../services/responseModelEcho.ts";
 import {
   stripGpt5SamplingWhenReasoning,
@@ -2771,9 +2772,9 @@ export async function handleChatCore({
         (modelInfo as { resolvedThinkingEffort?: string })?.resolvedThinkingEffort,
         (modelInfo as { defaultThinkingEffort?: string })?.defaultThinkingEffort
       );
+      translatedBody = wireAdaptiveEffort(translatedBody, { rawBody: body, clientRawRequest, targetFormat });
     }
   }
-
   // Xiaomi MiMo controls reasoning ONLY via `thinking:{type:"enabled"|"disabled"}` and
   // rejects unknown/extra params with a strict "400 Param Incorrect". Map AgentProxy's
   // OpenAI reasoning signals onto that native shape: reduce any thinking object to
@@ -5666,7 +5667,6 @@ export async function handleChatCore({
 
   // Notify success - caller can clear error status if needed
   if (onRequestSuccess) await onRequestSuccess();
-
   const responseHeaders = assembleStreamingResponseHeaders({
     providerHeaders: providerResponse.headers,
     provider,
