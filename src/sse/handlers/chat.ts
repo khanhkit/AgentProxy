@@ -762,7 +762,7 @@ async function handleChatImplementation(
       ? (body as { input: unknown[] }).input
       : [];
     body = { ...body, input: [...stored.input, ...stored.output, ...deltaInput] };
-    delete (body as { previous_response_id?: unknown }).previous_response_id;
+    delete (body as { previous_response_id?: unknown }).previous_response_id; (body as Record<string, unknown>)._agentproxyPreviousResponseResumed = true;
   }
 
   const admissionRejection = await admissionContext.acquire(apiKeyInfo?.id, request, body);

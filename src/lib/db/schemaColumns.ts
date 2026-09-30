@@ -272,6 +272,11 @@ export function ensureCallLogsColumns(db: SqliteDatabase) {
       console.log("[DB] Added call_logs.usage_provenance column");
     }
 
+    if (!columnNames.has("resilience_actions")) {
+      db.exec("ALTER TABLE call_logs ADD COLUMN resilience_actions TEXT DEFAULT NULL");
+      console.log("[DB] Added call_logs.resilience_actions column");
+    }
+
     db.exec(
       "CREATE INDEX IF NOT EXISTS idx_call_logs_requested_model ON call_logs(requested_model)"
     );

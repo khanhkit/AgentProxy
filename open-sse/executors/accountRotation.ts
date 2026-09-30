@@ -70,7 +70,8 @@ export function isAccountReady(account: RotatableAccount): boolean {
 export function pickAccount<T extends RotatableAccount>(
   accounts: T[],
   state: { nextAccountIdx: number; lastHealthyFingerprint?: string },
-  isReady: (account: T) => boolean = isAccountReady
+  isReady: (account: T) => boolean = isAccountReady,
+  keyOfMember: RotationEgressKeyOf = defaultRotationEgressKeyOf
 ): T {
   const serve = (idx: number): T => {
     const account = accounts[idx];
@@ -79,12 +80,12 @@ export function pickAccount<T extends RotatableAccount>(
     return account;
   };
 
-  const stickyIdx = stickyServeIndex(accounts, state, isReady);
+  const stickyIdx = stickyServeIndex(accounts, state, isReady, keyOfMember);
   if (stickyIdx !== null) return serve(stickyIdx);
 
   for (let i = 0; i < accounts.length; i++) {
     const idx = (state.nextAccountIdx + i) % accounts.length;
-    if (isReady(accounts[idx]) && !isStoreDrained(accounts[idx])) return serve(idx);
+    if (isReady(accounts[idx]) && !isStoreDrained(accounts[idx], keyOfMember)) return serve(idx);
   }
 
   for (let i = 0; i < accounts.length; i++) {
@@ -97,6 +98,12 @@ export function pickAccount<T extends RotatableAccount>(
   return accounts[fallbackIdx];
 }
 
+/** Key derivation for the refusal store, injectable for pool-served members. */
+export type RotationEgressKeyOf = (account: RotatableAccount) => string | null;
+
+/** Default derivation: the account's own egress key (direct never). */
+const defaultRotationEgressKeyOf: RotationEgressKeyOf = (account) => proxyEgressKey(account.proxy);
+
 function isStickyDrainEnabled(): boolean {
   try {
     return isProxySkipRecentlyFailedEnabled();
@@ -108,25 +115,39 @@ function isStickyDrainEnabled(): boolean {
 function stickyServeIndex<T extends RotatableAccount>(
   accounts: T[],
   state: { nextAccountIdx: number; lastHealthyFingerprint?: string },
-  isReady: (account: T) => boolean
+  isReady: (account: T) => boolean,
+  keyOfMember: RotationEgressKeyOf = defaultRotationEgressKeyOf
 ): number | null {
-  if (!isStickyDrainEnabled() || !hasStoreHistory(accounts)) return null;
+  if (!isStickyDrainEnabled() || !hasStoreHistory(accounts, keyOfMember)) return null;
   const wanted = state.lastHealthyFingerprint;
   if (!wanted) return null;
   const sticky = accounts.findIndex((account) => account.fingerprint === wanted);
-  if (sticky === -1 || !isReady(accounts[sticky]) || isStoreDrained(accounts[sticky])) return null;
+  if (
+    sticky === -1 ||
+    !isReady(accounts[sticky]) ||
+    isStoreDrained(accounts[sticky], keyOfMember)
+  ) {
+    return null;
+  }
   if (state.nextAccountIdx <= sticky) return null;
   const cursorIdx = state.nextAccountIdx % accounts.length;
-  if (isReady(accounts[cursorIdx]) && !isStoreDrained(accounts[cursorIdx])) return null;
+  if (isReady(accounts[cursorIdx]) && !isStoreDrained(accounts[cursorIdx], keyOfMember)) return null;
   return sticky;
 }
 
-function isStoreDrained(account: RotatableAccount): boolean {
-  return isStickyDrainEnabled() && isProxyAvoided(proxyEgressKey(account.proxy));
+function isStoreDrained(
+  account: RotatableAccount,
+  keyOfMember: RotationEgressKeyOf = defaultRotationEgressKeyOf
+): boolean {
+  if (!isStickyDrainEnabled()) return false;
+  return isProxyAvoided(keyOfMember(account));
 }
 
-function hasStoreHistory(accounts: RotatableAccount[]): boolean {
-  return accounts.some((account) => isProxyAvoided(proxyEgressKey(account.proxy)));
+function hasStoreHistory(
+  accounts: RotatableAccount[],
+  keyOfMember: RotationEgressKeyOf = defaultRotationEgressKeyOf
+): boolean {
+  return accounts.some((account) => isProxyAvoided(keyOfMember(account)));
 }
 
 export function markCooldown(account: RotatableAccount, kind: CooldownKind = "transient"): void {

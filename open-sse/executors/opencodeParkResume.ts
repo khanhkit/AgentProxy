@@ -11,6 +11,8 @@ import { isProxyAvoided, noteProxyRefusal, proxyEgressKey, proxySetAsideSeq } fr
 import { maskAccountId, type RotatableAccount } from "./accountRotation.ts";
 import { proxyKeyOf } from "./opencodeGeoBlock.ts";
 import { runWithProxyContext } from "../utils/proxyFetch.ts";
+import { noteResilienceAction } from "@/lib/usage/resilienceActionsContext.ts";
+import { noteParkWait, noteReplayed, noteStoredFallback } from "./opencodeResilienceNotes.ts";
 import type { ExecuteInput, ExecutorExecuteResult } from "./base.ts";
 import * as egressPacing from "./opencodeEgressThrottle.ts";
 
@@ -141,13 +143,15 @@ export function parkWaitMs(ttlLeftMs: number | null): number {
  */
 export function replayCandidates<T extends RotatableAccount>(
   accounts: T[],
-  nowMs = Date.now()
+  nowMs = Date.now(),
+  keyOfMember: (account: T) => string | null = (a) => proxyEgressKey(a.proxy)
 ): T[] {
-  return accounts
-    .filter((a) => a.cooldownUntil <= nowMs && !isProxyAvoided(proxyEgressKey(a.proxy)))
+  const ready = accounts.filter((a) => a.cooldownUntil <= nowMs);
+  const fresh = ready.filter((a) => !isProxyAvoided(keyOfMember(a)));
+  return (fresh.length > 0 ? fresh : ready)
     .sort((x, y) => {
-      const sx = proxySetAsideSeq(proxyEgressKey(x.proxy)) ?? -1;
-      const sy = proxySetAsideSeq(proxyEgressKey(y.proxy)) ?? -1;
+      const sx = proxySetAsideSeq(keyOfMember(x)) ?? -1;
+      const sy = proxySetAsideSeq(keyOfMember(y)) ?? -1;
       return sx - sy;
     })
     .slice(0, PARK_PROBE_MAX);
@@ -159,6 +163,7 @@ export interface ParkDriver<TAccount extends RotatableAccount = RotatableAccount
   markCooldown: (account: TAccount) => void;
   markSuccess: (account: TAccount) => void;
   sleep: (ms: number, signal?: AbortSignal | null) => Promise<boolean>;
+  replayKeyOfMember?: (account: TAccount) => string | null;
 }
 
 export interface ParkBurstState {
@@ -177,6 +182,7 @@ export async function handlePacedParkable429<TAccount extends RotatableAccount>(
   state: ParkBurstState;
   account: TAccount;
   skipRecentlyFailed: boolean;
+  noteRefused?: () => number | null;
   release: (() => void) | null;
   pacing: egressPacing.EgressPacing;
   parkEnabled: boolean;
@@ -188,7 +194,9 @@ export async function handlePacedParkable429<TAccount extends RotatableAccount>(
 }): Promise<PacedParkable429Outcome> {
   const { state, account, skipRecentlyFailed, parkEnabled } = args;
   args.driver.markCooldown(account);
-  const setAsideMs = egressPacing.noteRefusedMember(account.proxy, skipRecentlyFailed);
+  const setAsideMs = args.noteRefused
+    ? args.noteRefused()
+    : egressPacing.noteRefusedMember(account.proxy, skipRecentlyFailed);
   const arm = await egressPacing.settle429Arm(args.release, args.pacing, args.result.response);
   egressPacing.log429Outcome(args.log, args.cid, arm, maskAccountId(account.fingerprint), setAsideMs);
   if (arm === "park") {
@@ -202,6 +210,7 @@ export async function handlePacedParkable429<TAccount extends RotatableAccount>(
   if (state.burstStreak < BURST_PARK_THRESHOLD && !marker.fresh) return { kind: "continue" };
   state.parked = true;
   args.log?.warn?.("OPENCODE", `${args.cid}burstStreak=${state.burstStreak} freshD2=${marker.fresh} park`);
+  const parkStartMs = Date.now();
   const replay = await runParkAndReplay(
     args.driver,
     args.input,
@@ -210,7 +219,12 @@ export async function handlePacedParkable429<TAccount extends RotatableAccount>(
     args.log,
     args.cid
   );
+  noteParkWait(Date.now() - parkStartMs);
   if (!replay) return { kind: "continue" };
+  if (!args.input.stream) {
+    if (replay === args.result) noteStoredFallback();
+    else noteReplayed();
+  }
   return { kind: "return", result: replay === args.result ? args.result : replay, normalize: true };
 }
 
@@ -249,6 +263,7 @@ export async function handleParkable429<TAccount extends RotatableAccount>(args:
     "OPENCODE",
     `${args.cid}burstStreak=${state.burstStreak} freshD2=${marker.fresh} park`
   );
+  const parkStartMs = Date.now();
   const replay = await runParkAndReplay(
     args.driver,
     args.input,
@@ -257,7 +272,12 @@ export async function handleParkable429<TAccount extends RotatableAccount>(args:
     args.log,
     args.cid
   );
+  noteParkWait(Date.now() - parkStartMs);
   if (!replay) return { kind: "continue" };
+  if (!args.input.stream) {
+    if (replay === args.result) noteStoredFallback();
+    else noteReplayed();
+  }
   return { kind: "return", result: replay === args.result ? args.result : replay, normalize: true };
 }
 
@@ -299,10 +319,18 @@ export async function runParkAndReplay<TAccount extends RotatableAccount>(
         }
         const probe = await replayOneLeg(driver, input, driver.accounts, log, cid);
         const finalBody = probe?.result.response ?? fallback.response;
+        let recopied = true;
         try {
           controller.enqueue(encoder.encode(await finalBody.text()));
         } catch {
-          /* unreadable body — close with the pings already sent */
+          recopied = false;
+        }
+        if (probe == null && fallback.response.status === 429) {
+          noteResilienceAction({ stored429: true, replayed: false });
+        } else if (probe != null && recopied) {
+          noteResilienceAction({ replayed: true });
+        } else if (probe != null) {
+          noteResilienceAction({ replayed: false });
         }
         try {
           controller.close();
@@ -347,7 +375,7 @@ export async function replayOneLeg<TAccount extends RotatableAccount>(
     account: TAccount;
     result: ExecutorExecuteResult & { response: Response };
   } | null = null;
-  for (const account of replayCandidates(accounts)) {
+  for (const account of replayCandidates(accounts, Date.now(), driver.replayKeyOfMember)) {
     const masked = maskAccountId(account.fingerprint);
     const proxy = (account as { proxy?: { host?: string; port?: unknown } | null }).proxy;
     log?.info?.(
