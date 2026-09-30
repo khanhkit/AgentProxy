@@ -244,7 +244,7 @@ import {
   resolveResilienceSettings,
   isStreamRecoveryExplicitlyConfigured,
 } from "@/lib/resilience/settings";
-import { classifyProviderError, PROVIDER_ERROR_TYPES } from "../services/errorClassifier.ts";
+import { classifyProviderError, isAnthropicRequestNotAllowed, PROVIDER_ERROR_TYPES } from "../services/errorClassifier.ts";
 import { updateProviderConnection, getProviderConnectionById } from "@/lib/db/providers";
 import { wasRefreshTokenRotated } from "@agentproxy/open-sse/services/refreshSerializer.ts";
 import { connectionHasExtraKeys } from "../services/apiKeyRotator.ts";
@@ -271,6 +271,9 @@ import {
 import { stageTrace } from "./chatCore/stageTrace.ts";
 import { attachCompressionUsageReceiptAfterAnalytics as attachCompressionUsageReceiptAfterAnalyticsFor } from "./chatCore/compressionUsageReceipt.ts";
 import { prepareUpstreamBody } from "./chatCore/upstreamBody.ts";
+import { excludeConnectionForCooldown } from "./chatCore/connectionCooldown.ts";
+import { handleRequestRejectedFailure } from "./chatCore/requestRejectedFailure.ts";
+import { clearRequestRejectedStreak } from "../services/requestRejectedStreak.ts";
 import { projectRetainedProviderFailureMessage } from "./chatCore/providerFailureRetention.ts";
 import { getQuotaScopeLabelForProvider } from "../services/antigravityQuotaFamily.ts";
 import { getKimiTemporaryRateLimitResetAt } from "./chatCore/kimiQuotaRecovery.ts";
@@ -3969,7 +3972,13 @@ export async function handleChatCore({
       delete translatedBody.stream_options;
     }
 
-    // Handle 401/403 - try token refresh using executor
+    const requestRejectedBeforeRefresh =
+      providerResponse.status === HTTP_STATUS.FORBIDDEN &&
+      provider === "claude" &&
+      (await providerResponse.clone().text().then(isAnthropicRequestNotAllowed).catch(() => false));
+
+    // Handle 401/403 - try token refresh using executor. Anthropic's scoped
+    // "Request not allowed" refusal must reach providerFailure unchanged.
     // T-PROBE: probe-origin failures never attempt the refresh — a probe must
     // not consume a rotating refresh token nor persist an "expired"
     // deactivation on refresh failure (#9817). The 401/403 then flows into
@@ -3978,6 +3987,7 @@ export async function handleChatCore({
       (providerResponse.status === HTTP_STATUS.UNAUTHORIZED ||
         providerResponse.status === HTTP_STATUS.FORBIDDEN) &&
       !hadStreamOptions && // Skip refresh if failure may be from stream_options removal, not auth
+      !requestRejectedBeforeRefresh &&
       !(await shouldIsolateProbeFailures())
     ) {
       // Fix A: wrap refreshCredentials in runWithOnPersist so the persist callback
@@ -4509,52 +4519,22 @@ export async function handleChatCore({
               `[provider] Node ${errorConnectionId} project routing error (${statusCode}) — not banning`
             );
           } else if (errorType === PROVIDER_ERROR_TYPES.GEO_BLOCKED) {
-            // Google regional-availability refusal (e.g. "User location is not
-            // supported for the API use."). Account-independent and non-terminal:
-            // exclude the connection for the cooldown window so routing moves to
-            // other accounts instead of re-selecting this one on every request,
-            // and never mark it banned/expired. It becomes usable again once
-            // egress is routed through a supported-region proxy.
-            const geoCooldownMs = COOLDOWN_MS.geoBlocked ?? 24 * 60 * 60 * 1000;
-            await updateProviderConnection(errorConnectionId, {
-              lastErrorType: errorType,
-              lastError: persistentMessage,
-              errorCode: statusCode,
+            await excludeConnectionForCooldown({
+              connectionId: errorConnectionId, errorType, message: persistentMessage, statusCode,
+              cooldownMs: COOLDOWN_MS.geoBlocked ?? 24 * 60 * 60 * 1000,
+              skipCooldownForProbe: true, label: "geo-blocked", suffix: "trying other accounts",
             });
-            // T-PROBE: the 24h exclusion is a routing mutation — a probe must
-            // not push a connection into a day-long cooldown (#9817).
-            if (!(await shouldIsolateProbeFailures())) {
-              try {
-                const { setConnectionRateLimitUntil } = await import("@/lib/db/providers");
-                setConnectionRateLimitUntil(errorConnectionId, Date.now() + geoCooldownMs);
-              } catch {
-                // DB write failure must never break the fallback loop
-              }
-            }
-            console.warn(
-              `[provider] Node ${errorConnectionId} geo-blocked (${statusCode}) — excluded for ${Math.ceil(geoCooldownMs / 1000)}s, trying other accounts`
-            );
+          } else if (errorType === PROVIDER_ERROR_TYPES.REQUEST_REJECTED) {
+            await handleRequestRejectedFailure({
+              connectionId: errorConnectionId, statusCode, message: persistentMessage,
+            });
           } else if (errorType === PROVIDER_ERROR_TYPES.GCP_PROJECT_REQUIRED) {
-            // Antigravity BYOP: the account must Bring Its Own GCP Project.
-            // Account-specific and fixable by entering a Project ID — never a
-            // model lockout, never a ban. Exclude the connection for the
-            // cooldown window so selection prefers sibling accounts; the 422
-            // body carries the actionable message when no sibling is available.
-            const byopCooldownMs = COOLDOWN_MS.gcpProjectRequired ?? 24 * 60 * 60 * 1000;
-            await updateProviderConnection(errorConnectionId, {
-              lastErrorType: errorType,
-              lastError: persistentMessage,
-              errorCode: statusCode,
+            await excludeConnectionForCooldown({
+              connectionId: errorConnectionId, errorType, message: persistentMessage, statusCode,
+              cooldownMs: COOLDOWN_MS.gcpProjectRequired ?? 24 * 60 * 60 * 1000,
+              skipCooldownForProbe: false, label: "GCP project required",
+              suffix: "routing to other accounts (enter a Project ID to restore)",
             });
-            try {
-              const { setConnectionRateLimitUntil } = await import("@/lib/db/providers");
-              setConnectionRateLimitUntil(errorConnectionId, Date.now() + byopCooldownMs);
-            } catch {
-              // best-effort — never break the error path
-            }
-            console.warn(
-              `[provider] Node ${errorConnectionId} GCP project required (${statusCode}) — excluded for ${Math.ceil(byopCooldownMs / 1000)}s, routing to other accounts (enter a Project ID to restore)`
-            );
           } else if (errorType === PROVIDER_ERROR_TYPES.MODEL_NOT_FOUND) {
             // 404 — model/endpoint does not exist upstream. Lock the model so the
             // retry/backoff loop stops hammering the dead endpoint (which would
@@ -5195,10 +5175,9 @@ export async function handleChatCore({
           : responseBody
       );
       effectiveServiceTier = resolveReportedServiceTier(responseBody) ?? effectiveServiceTier;
-      if (onRequestSuccess) {
-        await onRequestSuccess();
-      }
       const successConnectionId = getCurrentConnectionId();
+      if (successConnectionId) clearRequestRejectedStreak(successConnectionId);
+      if (onRequestSuccess) await onRequestSuccess();
       await maybeSyncClaudeExtraUsageState({
         provider,
         connectionId: successConnectionId,
@@ -5666,7 +5645,9 @@ export async function handleChatCore({
   providerResponse = streamReadiness.response;
   providerResponse = await maybeRetryFlushEmptyTurn({ stream, response: providerResponse, targetFormat, clientResponseFormat, timeoutMs: streamReadinessPolicy.timeoutMs, maxTimeoutMs: streamReadinessPolicy.maxTimeoutMs, provider, model, currentModel, signal: clientRawRequest?.signal, log, getCredentials: () => getProviderCredentials(provider, null, null, currentModel).catch(() => null), applyCredentials: (next) => Object.assign(credentials, next), executeRetry: () => executeProviderRequest(currentModel, false) });
 
-  // Notify success - caller can clear error status if needed
+  // Notify success - caller can clear error status if needed.
+  const successConnectionId = getCurrentConnectionId();
+  if (successConnectionId) clearRequestRejectedStreak(successConnectionId);
   if (onRequestSuccess) await onRequestSuccess();
   const responseHeaders = assembleStreamingResponseHeaders({
     providerHeaders: providerResponse.headers,

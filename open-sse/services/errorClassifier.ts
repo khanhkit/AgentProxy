@@ -100,6 +100,7 @@ export const PROVIDER_ERROR_TYPES = {
   // Google account must Bring Its Own GCP Project. Account-specific and
   // fixable by entering a Project ID — never a model lockout and never a ban.
   GCP_PROJECT_REQUIRED: "gcp_project_required",
+  REQUEST_REJECTED: "request_rejected",
 } as const;
 
 export type ProviderErrorType = (typeof PROVIDER_ERROR_TYPES)[keyof typeof PROVIDER_ERROR_TYPES];
@@ -250,6 +251,14 @@ export function isCloudflareFingerprintRejection(errorText: string): boolean {
   );
 }
 
+export function isAnthropicOAuthProvider(provider?: string | null): boolean {
+  return String(provider || "").toLowerCase() === "claude";
+}
+
+export function isAnthropicRequestNotAllowed(errorText: string): boolean {
+  return /\brequest not allowed\b/i.test(String(errorText || ""));
+}
+
 function responseBodyToString(responseBody: unknown): string {
   if (typeof responseBody === "string") return responseBody;
   if (responseBody !== null && typeof responseBody === "object") {
@@ -383,6 +392,9 @@ export function classifyProviderError(
   }
   if (statusCode === 403 && accountDeactivated) {
     return PROVIDER_ERROR_TYPES.ACCOUNT_DEACTIVATED;
+  }
+  if (statusCode === 403 && isAnthropicOAuthProvider(provider) && isAnthropicRequestNotAllowed(bodyStr)) {
+    return PROVIDER_ERROR_TYPES.REQUEST_REJECTED;
   }
   if (statusCode === 403) {
     // Cloud Code / Antigravity (Gemini Code Assist) 403s are almost always a

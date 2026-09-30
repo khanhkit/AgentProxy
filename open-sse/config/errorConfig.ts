@@ -74,6 +74,8 @@ export const COOLDOWN_MS = {
   transientMax: 60 * 1000,
   transient: TRANSIENT_COOLDOWN_MS,
   requestNotAllowed: 5 * 1000,
+  requestRejected: 5 * 60 * 1000,
+  requestRejectedRepeat: 15 * 60 * 1000,
   rateLimit: 2 * 60 * 1000,
   serviceUnavailable: 2 * 1000,
   authExpired: 2 * 60 * 1000,

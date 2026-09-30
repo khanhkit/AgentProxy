@@ -2619,7 +2619,7 @@ export async function markAccountUnavailable(
     if (isOpencodeFreeTierRefusalForProvider(provider, status, errorText)) {
       return { shouldFallback: true, cooldownMs: 0 };
     }
-
+    if (classifyProviderError(status, errorText, provider) === PROVIDER_ERROR_TYPES.REQUEST_REJECTED) return { shouldFallback: true, cooldownMs: Math.max(0, cooldownUntilMs((await getProviderConnectionById(connectionId).catch(() => null))?.rateLimitedUntil as string | number | Date | null | undefined) - Date.now()) || 0 };
     // STRICT_ZERO_COST: this connection just failed (whatever the reason) —
     // drop any cached "SAFE" free-allowance reading for it immediately rather
     // than waiting out the TTL, so the very next candidate-pool build reads a
