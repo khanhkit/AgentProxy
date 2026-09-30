@@ -192,6 +192,8 @@ export interface NonStreamingClientTranslateInput {
   reasoningCacheScope: string | null;
   clientHeaders: Headers | Record<string, unknown> | null;
   isClaudeCodeCompatible: boolean;
+  /** Explicit Claude thinking intent; undefined preserves legacy relay. */
+  requestedThinking?: boolean;
   phase: "intermediate" | "final";
 }
 

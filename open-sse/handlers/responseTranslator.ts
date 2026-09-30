@@ -144,21 +144,24 @@ export function translateNonStreamingResponse(
   targetFormat: string,
   sourceFormat: string,
   toolNameMap?: Map<string, string> | null,
-  toolSchemas?: Map<string, JsonRecord> | null
+  toolSchemas?: Map<string, JsonRecord> | null,
+  requestedThinking?: boolean
 ): JsonRecord;
 export function translateNonStreamingResponse(
   responseBody: unknown,
   targetFormat: string,
   sourceFormat: string,
   toolNameMap?: Map<string, string> | null,
-  toolSchemas?: Map<string, JsonRecord> | null
+  toolSchemas?: Map<string, JsonRecord> | null,
+  requestedThinking?: boolean
 ): unknown;
 export function translateNonStreamingResponse(
   responseBody: unknown,
   targetFormat: string,
   sourceFormat: string,
   toolNameMap?: Map<string, string> | null,
-  toolSchemas?: Map<string, JsonRecord> | null
+  toolSchemas?: Map<string, JsonRecord> | null,
+  requestedThinking?: boolean
 ): unknown {
   // If already in source format, return as-is
   if (targetFormat === sourceFormat) {
@@ -655,7 +658,7 @@ export function translateNonStreamingResponse(
 
   // Phase 3: Translate from OpenAI back to Client Source format
   if (sourceFormat === FORMATS.CLAUDE && sourceFormat !== targetFormat) {
-    return convertOpenAINonStreamingToClaude(toRecord(intermediateOpenAI), toolNameMap ?? null);
+    return convertOpenAINonStreamingToClaude(toRecord(intermediateOpenAI), toolNameMap ?? null, requestedThinking);
   }
 
   // Gemini-family clients (Gemini, Antigravity): the streaming SSE path already
@@ -701,7 +704,8 @@ function resolveReasoningText(messageObj: JsonRecord): string {
  */
 function convertOpenAINonStreamingToClaude(
   openaiResponse: JsonRecord,
-  toolNameMap?: Map<string, string> | null
+  toolNameMap?: Map<string, string> | null,
+  requestedThinking?: boolean
 ): JsonRecord {
   const choices = openaiResponse.choices as unknown[] | undefined;
   const isChoicesArray = Array.isArray(choices);
@@ -718,12 +722,10 @@ function convertOpenAINonStreamingToClaude(
   let hasTextOrReasoning = false;
 
   const reasoningText = resolveReasoningText(messageObj);
-  if (reasoningText) {
+  const suppressThinking = requestedThinking === false;
+  if (reasoningText && !suppressThinking) {
     hasTextOrReasoning = true;
-    content.push({
-      type: "thinking",
-      thinking: reasoningText,
-    });
+    content.push({ type: "thinking", thinking: reasoningText });
   }
 
   // Always include text if it exists (even empty string), or if there are no tool calls and no reasoning
@@ -736,6 +738,9 @@ function convertOpenAINonStreamingToClaude(
       type: "text",
       text: resolvedText === "" ? "(empty response)" : resolvedText,
     });
+  } else if (suppressThinking && reasoningText) {
+    hasTextOrReasoning = true;
+    content.push({ type: "text", text: reasoningText });
   } else if (!hasTextOrReasoning) {
     content.push({
       type: "text",

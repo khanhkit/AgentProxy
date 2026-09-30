@@ -35,6 +35,7 @@ import {
 } from "../../services/modelFamilyFallback.ts";
 import { isEmptyContentResponse } from "../../services/errorClassifier.ts";
 import { FORMATS } from "../../translator/formats.ts";
+import { hasActiveClaudeThinking } from "../../utils/thinkingBudget.ts";
 
 /* -- exported types -------------------------------------------------------- */
 
@@ -289,6 +290,7 @@ function finishOk(
     reasoningCacheScope: input.reasoningCacheScope ?? null,
     clientHeaders: input.clientHeaders ?? null,
     isClaudeCodeCompatible: input.isClaudeCodeCompatible ?? false,
+    requestedThinking: hasActiveClaudeThinking(input.sourceBody ?? {}),
     phase: input.phase === "initial" ? "final" : "intermediate",
   });
   const receipt = buildReceipt(input, {

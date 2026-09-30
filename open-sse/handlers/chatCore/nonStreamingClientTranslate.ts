@@ -61,6 +61,7 @@ export function translateNonStreamingClientResponse(
     reasoningCacheScope,
     clientHeaders,
     isClaudeCodeCompatible,
+    requestedThinking,
     phase,
   } = input;
 
@@ -75,7 +76,8 @@ export function translateNonStreamingClientResponse(
         responsePayloadFormat,
         clientResponseFormat,
         responseToolNameMap,
-        responseToolSchemas
+        responseToolSchemas,
+        requestedThinking
       )
     : responseBody;
   const responseForMemoryExtraction = translatedResponse;

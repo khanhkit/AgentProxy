@@ -147,6 +147,7 @@ import { ensureStreamReadiness } from "../utils/streamReadiness.ts";
 import { resolveSuppressThinkClose, THINKING_MARKER_HEADER } from "../utils/thinkCloseMarker.ts";
 import { resolveStreamReadinessTimeout } from "../utils/streamReadinessPolicy.ts";
 import { resolveAgentGoalPolicy } from "../utils/agentGoalPolicy.ts";
+import { hasActiveClaudeThinking } from "../utils/thinkingBudget.ts";
 import { createStreamController } from "../utils/streamHandler.ts";
 import * as streamFailure from "../utils/streamFailureFinalization.ts";
 import { normalizeUsage } from "../utils/usageTracking.ts";
@@ -5981,7 +5982,6 @@ export async function handleChatCore({
     !isResponsesEndpoint &&
     !isDroidCLI;
   const streamStateBody = finalBody || body;
-
   if (needsResponsesTranslation) {
     // Provider returns openai-responses, translate to openai (Chat Completions) that clients expect
     log?.debug?.("STREAM", `Responses translation mode: openai-responses → openai`);
@@ -6003,7 +6003,7 @@ export async function handleChatCore({
       // openai-responses → openai translation still wants the namespace identity
       // map for #7936-style round-trip closure when the client also speaks
       // Responses (Codex CLI).
-      requestToolIdentityMap
+      requestToolIdentityMap, hasActiveClaudeThinking((body ?? {}) as Record<string, unknown>)
     );
   } else if (needsTranslation(targetFormat, clientResponseFormat)) {
     // Standard translation for other providers
@@ -6033,7 +6033,7 @@ export async function handleChatCore({
         clientResponseFormat,
       }),
       customToolNames,
-      requestToolIdentityMap
+      requestToolIdentityMap, hasActiveClaudeThinking((body ?? {}) as Record<string, unknown>)
     );
   } else {
     log?.debug?.("STREAM", `Standard passthrough mode`);
