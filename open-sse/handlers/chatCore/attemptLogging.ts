@@ -23,6 +23,10 @@ import { sanitizeErrorMessage } from "../../utils/error.ts";
 import { cloneBoundedChatLogPayload, truncateForLog } from "./logTruncation.ts";
 import { attachLogMeta } from "./cacheUsageMeta.ts";
 
+function omittedVideoTranscriptPayload(): Record<string, unknown> {
+  return { _agentproxy_omitted: "video-transcript" };
+}
+
 /**
  * Apply the video-bridge redaction shadow (P1a's `meta.videoBridgeLogRedaction`,
  * threaded here via `PersistAttemptLogsContext.videoBridgeLogRedaction`) to a
@@ -65,10 +69,15 @@ import { attachLogMeta } from "./cacheUsageMeta.ts";
  */
 export function applyVideoBridgeLogRedaction(
   body: unknown,
-  redaction: VideoBridgeLogRedactionEntry[] | null | undefined
+  redaction: VideoBridgeLogRedactionEntry[] | null | undefined,
+  failClosedOnMiss = false
 ): unknown {
-  if (!redaction || redaction.length === 0) return body;
-  if (!body || typeof body !== "object") return body;
+  if (!redaction || redaction.length === 0) {
+    return failClosedOnMiss ? omittedVideoTranscriptPayload() : body;
+  }
+  if (!body || typeof body !== "object") {
+    return failClosedOnMiss ? omittedVideoTranscriptPayload() : body;
+  }
 
   const source = body as Record<string, unknown>;
   let rootClone: Record<string, unknown> | null = null;
@@ -78,9 +87,16 @@ export function applyVideoBridgeLogRedaction(
 
   for (const entry of redaction) {
     const { container, fullText, redactedText } = entry;
-    if (typeof fullText !== "string" || fullText.length === 0) continue;
+    if (typeof fullText !== "string" || fullText.length === 0) {
+      if (failClosedOnMiss) return omittedVideoTranscriptPayload();
+      continue;
+    }
     const originalContainer = source[container];
-    if (!Array.isArray(originalContainer)) continue;
+    if (!Array.isArray(originalContainer)) {
+      if (failClosedOnMiss) return omittedVideoTranscriptPayload();
+      continue;
+    }
+    let matchedEntry = false;
     // Mirrors the exact `type` replaceVideoParts() writes for this container
     // (videoBridgeHelpers.ts) — a stronger anchor than a loose "text-like"
     // check, at zero extra cost.
@@ -129,6 +145,7 @@ export function applyVideoBridgeLogRedaction(
           typeof messageClone.content === "string" ? messageClone.content : originalContent;
         messageClone.content = currentText.replaceAll(fullText, redactedText);
         redacted = true;
+        matchedEntry = true;
         continue;
       }
       if (!Array.isArray(originalContent)) continue;
@@ -165,8 +182,10 @@ export function applyVideoBridgeLogRedaction(
         const contentClone = messageClone.content as unknown[];
         contentClone[partIndex] = { ...partRecord, text: redactedText };
         redacted = true;
+        matchedEntry = true;
       }
     }
+    if (failClosedOnMiss && !matchedEntry) return omittedVideoTranscriptPayload();
   }
 
   return redacted && rootClone ? rootClone : body;
@@ -385,6 +404,13 @@ export function persistAttemptLogs(args: PersistAttemptLogsArgs, ctx: PersistAtt
     initialConnectionId,
     finalConnectionId
   );
+  const retainedRequest = applyVideoBridgeLogRedaction(
+    body,
+    videoBridgeLogRedaction,
+    videoContentRemoved
+  );
+  const retainedResponse = videoContentRemoved ? omittedVideoTranscriptPayload() : responseBody;
+  const retainedError = videoContentRemoved && error ? "[omitted: video transcript]" : error;
 
   const providerWarnings = extractProviderWarnings(providerResponse, clientResponse, responseBody);
   if (providerWarnings.length > 0) {
@@ -400,7 +426,9 @@ export function persistAttemptLogs(args: PersistAttemptLogsArgs, ctx: PersistAtt
         model,
         connectionId: finalConnectionId,
         httpStatus: status,
-        warnings: providerWarnings,
+        warnings: videoContentRemoved
+          ? providerWarnings.map(() => "[omitted: video transcript]")
+          : providerWarnings,
       },
     });
   }
@@ -412,14 +440,18 @@ export function persistAttemptLogs(args: PersistAttemptLogsArgs, ctx: PersistAtt
     connectionId: finalConnectionId,
     httpStatus: status,
     requestId: skillRequestId,
+    redactViolationDetail: videoContentRemoved,
   });
 
-  const capturedPipeline = reqLogger?.getPipelinePayloads?.() ?? null;
-  const pipelinePayloads = detailedLoggingEnabled
-    ? (capturedPipeline ?? {})
-    : capturedPipeline?.routeDecision
-      ? { routeDecision: capturedPipeline.routeDecision }
-      : null;
+  const capturedPipeline = videoContentRemoved ? null : (reqLogger?.getPipelinePayloads?.() ?? null);
+  const pipelinePayloads = videoContentRemoved
+    ? null
+    : detailedLoggingEnabled
+      ? (capturedPipeline ?? {})
+      : capturedPipeline?.routeDecision
+        ? { routeDecision: capturedPipeline.routeDecision }
+        : null;
+  if (videoContentRemoved && correlationId) takeEarlyKeepaliveBytes(correlationId);
 
   if (pipelinePayloads) {
     if (providerRequest !== undefined && !pipelinePayloads.providerRequest) {
@@ -431,12 +463,12 @@ export function persistAttemptLogs(args: PersistAttemptLogsArgs, ctx: PersistAtt
     if (clientResponse !== undefined) {
       pipelinePayloads.clientResponse = clientResponse as Record<string, unknown>;
     }
-    if (error) {
+    if (retainedError) {
       pipelinePayloads.error = {
         ...(typeof pipelinePayloads.error === "object" && pipelinePayloads.error
           ? (pipelinePayloads.error as Record<string, unknown>)
           : {}),
-        message: error,
+        message: retainedError,
       };
     }
     // withEarlyStreamKeepalive writes keepalive/startup/error frames directly
@@ -469,18 +501,13 @@ export function persistAttemptLogs(args: PersistAttemptLogsArgs, ctx: PersistAtt
     duration: Date.now() - startTime,
     tokens: tokens || {},
     requestBody: cloneBoundedChatLogPayload(
-      attachLogMeta(
-        truncateForLog(
-          applyVideoBridgeLogRedaction(body, videoBridgeLogRedaction) as Record<string, unknown>
-        ),
-        {
-          ...accountRotationMeta,
-          claudePromptCache: claudeCacheMeta,
-        }
-      )
+      attachLogMeta(truncateForLog(retainedRequest as Record<string, unknown>), {
+        ...accountRotationMeta,
+        claudePromptCache: claudeCacheMeta,
+      })
     ),
     responseBody: cloneBoundedChatLogPayload(
-      attachLogMeta(truncateForLog(responseBody as Record<string, unknown>), {
+      attachLogMeta(truncateForLog(retainedResponse as Record<string, unknown>), {
         ...accountRotationMeta,
         claudePromptCache: claudeCacheMeta
           ? {
@@ -492,7 +519,7 @@ export function persistAttemptLogs(args: PersistAttemptLogsArgs, ctx: PersistAtt
         claudePromptCacheUsage: claudeCacheUsageMeta,
       })
     ),
-    error: error || null,
+    error: retainedError || null,
     sourceFormat,
     targetFormat,
     comboName,
@@ -520,7 +547,7 @@ export function persistAttemptLogs(args: PersistAttemptLogsArgs, ctx: PersistAtt
     const lifecycle = resolveRequestLifecycleEvent({
       traceId,
       status,
-      error,
+      error: retainedError,
       model,
       provider,
       comboName,

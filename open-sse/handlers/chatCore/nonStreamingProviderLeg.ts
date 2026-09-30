@@ -91,6 +91,7 @@ export interface ProviderLegInput {
   customToolNames?: ReadonlySet<string>;
   requestToolIdentityMap?: Map<string, { namespace?: string; name: string }> | null;
   reasoningCacheScope?: string | null;
+  videoTranscriptSensitive?: boolean;
   clientHeaders?: Headers | Record<string, unknown> | null;
   isClaudeCodeCompatible?: boolean;
   sleep?: (ms: number) => Promise<void>;
@@ -288,6 +289,7 @@ function finishOk(
     customToolNames: input.customToolNames,
     requestToolIdentityMap: input.requestToolIdentityMap ?? null,
     reasoningCacheScope: input.reasoningCacheScope ?? null,
+    videoTranscriptSensitive: input.videoTranscriptSensitive,
     clientHeaders: input.clientHeaders ?? null,
     isClaudeCodeCompatible: input.isClaudeCodeCompatible ?? false,
     requestedThinking: hasActiveClaudeThinking(input.sourceBody ?? {}),

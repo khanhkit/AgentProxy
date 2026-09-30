@@ -210,6 +210,7 @@ type OpenAIReplayOptions = {
   provider: string;
   model: string;
   reasoningCacheScope?: string | null;
+  videoTranscriptSensitive?: boolean;
 };
 
 function replayOpenAIReasoningMessage(
@@ -263,7 +264,7 @@ function replayOpenAIReasoningMessage(
       ? firstToolCall.id
       : ""
     : buildAssistantMessageCacheKey(options.reasoningCacheScope, messages, messageIndex);
-  if (cacheKey) {
+  if (cacheKey && !options.videoTranscriptSensitive) {
     const cached = lookupReasoning(cacheKey);
     if (cached) {
       message.reasoning_content = cached;
@@ -320,6 +321,8 @@ export function translateRequest(
     signatureNamespace?: string | null;
     preCompressionBody?: Record<string, unknown> | null;
     reasoningCacheScope?: string | null;
+    /** Video-derived requests must not replay retained reasoning from previous turns. */
+    videoTranscriptSensitive?: boolean;
     /** UA-detected GitHub Copilot client. Forwarded to translators via the
      *  transient `_copilotClient` credential flag (see openai-responses → openai). */
     copilotClient?: boolean;
@@ -434,6 +437,7 @@ export function translateRequest(
       provider: normalizedProvider,
       model: normalizedModel,
       reasoningCacheScope: options?.reasoningCacheScope,
+      videoTranscriptSensitive: options?.videoTranscriptSensitive,
     };
     for (let messageIndex = 0; messageIndex < messages.length; messageIndex += 1) {
       replayOpenAIReasoningMessage(messages, messageIndex, replayOptions);
@@ -716,7 +720,7 @@ export function translateRequest(
 
         // Client reasoning wins above. Otherwise try authentic replay before
         // retaining Kimi Code's empty protocol marker as the final fallback.
-        if (firstToolUseId) {
+        if (firstToolUseId && !options?.videoTranscriptSensitive) {
           const cached = lookupReasoning(firstToolUseId);
           if (cached) {
             if (thinkingBlock) {
@@ -760,6 +764,7 @@ export function translateRequest(
         provider: normalizedProvider,
         model: normalizedModel,
         reasoningCacheScope: options?.reasoningCacheScope,
+        videoTranscriptSensitive: options?.videoTranscriptSensitive,
       });
     }
   } else if (
