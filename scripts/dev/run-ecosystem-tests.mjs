@@ -63,7 +63,7 @@ async function main() {
     ENABLE_CLI_TOOLS: "true",
     // The production auth policy derives locality from the real TCP peer stamp.
     HOST: process.env.HOST || "127.0.0.1",
-    OMNIROUTE_DISABLE_BACKGROUND_SERVICES:
+    AGENTPROXY_DISABLE_BACKGROUND_SERVICES:
       process.env.AGENTPROXY_DISABLE_BACKGROUND_SERVICES || "true",
   };
 
