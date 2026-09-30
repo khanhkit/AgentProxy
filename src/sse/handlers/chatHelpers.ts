@@ -47,6 +47,7 @@ import { classify429FromError, type FailureKind } from "../../shared/utils/class
 import { resolveUseUpstream429BreakerHints } from "../../shared/utils/providerHints";
 
 import { logProxyEvent } from "../../lib/proxyLogger";
+import { noteProxyOutcome } from "./proxyOutcomeMemory";
 import { logTranslationEvent } from "../../lib/translatorEvents";
 import { getRuntimeProviderProfile } from "@agentproxy/open-sse/services/accountFallback.ts";
 
@@ -988,6 +989,14 @@ export async function safeLogEvents({
   clientRawRequest,
   tlsFingerprintUsed = false,
 }) {
+  // Feed only the provider's received outcome back to proxy selection. This runs
+  // before the first await so the next pool pick can observe the refusal immediately.
+  try {
+    noteProxyOutcome(provider, proxyInfo);
+  } catch {
+    // Best-effort selection feedback must never break the request path.
+  }
+
   try {
     const rawIp =
       clientRawRequest?.headers?.["x-forwarded-for"] ||

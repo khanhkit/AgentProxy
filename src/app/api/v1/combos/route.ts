@@ -43,9 +43,15 @@ export async function GET(request: Request) {
 
   try {
     const combos = await getCombos();
-    const data = (Array.isArray(combos) ? combos : [])
-      // #3979: advertise resolved capabilities so importing clients enable them
-      .map((c) => projectCombo(c as Record<string, unknown>, { includeCapabilities: true }))
+    const allCombos = Array.isArray(combos) ? combos : [];
+    const data = allCombos
+      // #3979/#14232: include nested combo-ref leaves in projected capabilities.
+      .map((c) =>
+        projectCombo(c as Record<string, unknown>, {
+          includeCapabilities: true,
+          allCombos,
+        })
+      )
       .filter((c): c is PublicCombo => c !== null);
 
     return NextResponse.json(

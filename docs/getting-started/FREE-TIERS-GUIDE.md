@@ -40,7 +40,6 @@ These providers give you **free credits** when you sign up:
 | ------------- | ------------------------------------------------------------------ | ------------------------- | --------------------------------------------------------- |
 | **DeepSeek**  | 5M free tokens                                                     | DeepSeek V4               | Sign up at platform.deepseek.com                          |
 | **LongCat**   | 10M-token one-time grant                                           | LongCat 2.0               | API key + KYC; pay-as-you-go after the grant              |
-| **Together**  | $25 signup credit represented as ~25M tokens in the budget model   | Provider catalog          | Sign up and verify current terms                          |
 | **Vertex AI** | $300 signup credit represented as ~300M tokens in the budget model | Gemini and partner models | Google Cloud account; billing and eligibility rules apply |
 
 ### Other Limited Access

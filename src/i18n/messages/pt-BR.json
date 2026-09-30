@@ -5974,6 +5974,8 @@
     "validationModelIdHint": "Usado como fallback se a listagem de modelos não estiver disponível.",
     "validationModelIdLabel": "ID do Modelo (opcional)",
     "validationModelIdPlaceholder": "ex.: grok-3 ou meta-llama/Llama-3.1-8B-Instruct",
+    "vertexCredentialLabel": "API Key or Service Account JSON",
+    "vertexCredentialHint": "API keys use the curated project catalog. Service Account JSON enables live Model Garden discovery.",
     "vertexServiceAccountPlaceholder": "Cole o JSON da Service Account aqui",
     "webCookieProviders": "Provedores Web / Cookie",
     "weeklyShort": "Semanal",
@@ -6331,7 +6333,8 @@
       "kiro": "Nível gratuito: 50 créditos/mês (~25K–100K tokens). ⚠️ Os Termos de Serviço do Kiro proíbem o uso de proxy/harness de terceiros.",
       "codex": "Conecte o OpenAI Codex com o fluxo OAuth existente.",
       "qwen": "Conecte o Qwen Code com o fluxo OAuth existente.",
-      "github-models": "Crie um PAT do GitHub com o escopo 'models: read' em github.com/settings/tokens"
+      "github-models": "Crie um PAT do GitHub com o escopo 'models: read' em github.com/settings/tokens",
+      "agnes-cn": "Obtenha a chave de API em agnes-ai.com — China endpoint: api.agnes-ai.cn"
     },
     "passthroughModelsDescription": "{provider} aceita IDs de modelo nativos do provedor. Importe de /models ou adicione IDs personalizados para roteamento.",
     "bedrockModelsDescription": "Os modelos Amazon Bedrock têm escopo definido por região da AWS. Importe de /models ou adicione IDs de modelo Bedrock habilitados na região selecionada.",
@@ -8596,7 +8599,11 @@
       },
       "compressToolResults": {
         "label": "Truncar proativamente resultados longos de ferramentas",
-        "description": "Trunca os resultados da ferramenta com mais de 2.000 caracteres durante a compressão Lite. A proteção de transbordo de emergência ainda pode cortar o conteúdo quando o contexto excede o orçamento do modelo."
+        "description": "Trunca resultados longos de ferramenta durante a compressão Lite. O limite é definido pelo campo Comprimento máximo do resultado da ferramenta (ou AGENTPROXY_LITE_MAX_TOOL_LENGTH se estiver vazio). A proteção de transbordo de emergência ainda pode recortar conteúdo quando o contexto excede o orçamento do modelo."
+      },
+      "maxToolLength": {
+        "label": "Comprimento máximo do resultado da ferramenta",
+        "description": "Limite de caracteres para o recorte proativo. Padrão 2000. Substitua com AGENTPROXY_LITE_MAX_TOOL_LENGTH se o campo estiver vazio."
       }
     },
     "engineFields": {
@@ -9513,6 +9520,13 @@
     "confirmRedeemResetCreditTitle": "Resgatar este crédito de redefinição?",
     "confirmRedeemResetCredit": "O resgate redefine imediatamente as janelas de uso elegíveis do Codex e consome este crédito de forma permanente.",
     "confirmRedeemResetCreditButton": "Resgatar crédito",
+    "glmResetCreditsModalTitle": "Cartões de redefinição do GLM Coding Plan",
+    "glmResetCreditsModalExplainer": "Os cartões de redefinição estão ordenados por expiração. Escolha a janela de 5 horas ou semanal que deseja redefinir.",
+    "glmResetCreditFiveHourTitle": "Redefinição da janela de 5 horas",
+    "glmResetCreditWeekTitle": "Redefinição da janela semanal",
+    "glmConfirmRedeemResetCredit": "O resgate redefine imediatamente a janela de uso selecionada e consome este cartão de forma permanente.",
+    "glmConfirmRedeemFiveHourResetCredit": "O resgate redefine imediatamente a janela de uso de 5 horas e consome este cartão de forma permanente.",
+    "glmConfirmRedeemWeekResetCredit": "O resgate redefine imediatamente a janela de uso semanal e consome este cartão de forma permanente.",
     "resetCreditRedeemed": "Redefinição resgatada",
     "resetCreditRedeemFailed": "Falha ao resgatar crédito de redefinição",
     "suiteBuilderSaveFailed": "Falha ao salvar a suíte customizada",
@@ -13026,6 +13040,13 @@
       },
       "STREAM_RECOVERY_MIDSTREAM_ENABLED": {
         "description": "Permite que a recuperação de stream solicite a resposta novamente e a costure depois que bytes já chegaram ao cliente."
+      },
+      "STREAM_RECOVERY_TOOLCALL_ORDER_FIX": {
+        "description": "__MISSING__:Make mid-stream continuation tool-call safe: never resume a cut stream after a tool call was sent (still in progress or already finished), and stop after one empty continuation instead of using the whole retry budget."
+      },
+      "PROTECTED_PRIORITY_INFRA_502_ENABLED": {
+        "label": "__MISSING__:Protected-Priority Infra Stops as 502",
+        "description": "__MISSING__:Answer 502 instead of 503 when a quota-only-fallback priority target stops the combo for a cause that is provably not quota: an open provider circuit breaker or a predictive latency skip."
       },
       "MODEL_CATALOG_INCLUDE_NAMES": {
         "description": "Inclui campos de nome amigável para exibição nas respostas de /v1/models. Desative isso para clientes que aceitam apenas IDs de modelo."

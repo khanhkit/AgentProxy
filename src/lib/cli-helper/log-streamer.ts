@@ -6,7 +6,7 @@ export interface LogStreamOptions {
   headers?: HeadersInit;
 }
 
-import { resolveOmniRouteBaseUrl } from "../../shared/utils/resolveOmniRouteBaseUrl";
+import { resolveAgentProxyBaseUrl } from "../../shared/utils/resolveAgentProxyBaseUrl";
 
 export interface LogStream {
   stream: ReadableStream<Uint8Array>;
@@ -14,7 +14,7 @@ export interface LogStream {
 }
 
 export function createLogStream(options: LogStreamOptions = {}): LogStream {
-  const baseUrl = options.baseUrl || resolveOmniRouteBaseUrl();
+  const baseUrl = options.baseUrl || resolveAgentProxyBaseUrl();
   const filters = options.filters || [];
   const follow = options.follow ?? false;
   const timeout = options.timeout || 30000;

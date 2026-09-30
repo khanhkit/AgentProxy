@@ -12,11 +12,15 @@ test("TC-OMNIDB-TURN-011A: migration 186 indexes conversation turn last_seen_at"
   const sql = read("src/lib/db/migrations/186_conversation_turn_nodes_last_seen_index.sql");
   const db = new DatabaseSync(":memory:");
   try {
-    db.exec("CREATE TABLE conversation_turn_nodes (id TEXT PRIMARY KEY, last_seen_at TEXT NOT NULL)");
+    db.exec(
+      "CREATE TABLE conversation_turn_nodes (id TEXT PRIMARY KEY, last_seen_at TEXT NOT NULL)"
+    );
     db.exec(sql);
-    const row = db.prepare(
-      "SELECT sql FROM sqlite_master WHERE type='index' AND name='idx_turn_nodes_last_seen'"
-    ).get() as { sql?: string } | undefined;
+    const row = db
+      .prepare(
+        "SELECT sql FROM sqlite_master WHERE type='index' AND name='idx_turn_nodes_last_seen'"
+      )
+      .get() as { sql?: string } | undefined;
     assert.match(String(row?.sql ?? ""), /conversation_turn_nodes\s*\(last_seen_at\)/i);
   } finally {
     db.close();
@@ -26,9 +30,11 @@ test("TC-OMNIDB-TURN-011A: migration 186 indexes conversation turn last_seen_at"
 test("TC-OMNIDB-TURN-011B: retention settings expose an independent turn-node window", () => {
   const types = read("src/types/databaseSettings.ts");
   const settings = read("src/lib/db/databaseSettings.ts");
+  const storageUi = read("src/app/(dashboard)/dashboard/settings/components/SystemStorageTab.tsx");
   assert.match(types, /conversationTurnNodes:\s*number/);
   assert.match(types, /conversationTurnNodes:\s*30/);
   assert.match(settings, /conversationTurnNodes:\s*\["conversationTurnNodes"\]/);
+  assert.match(storageUi, /\["conversationTurnNodes",\s*"Conversation turn nodes",\s*30\]/);
 });
 
 test("TC-OMNIDB-TURN-012A: cleanup lifecycle removes old turn nodes and orphan roots", () => {

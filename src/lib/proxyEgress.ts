@@ -363,7 +363,8 @@ export interface ProxyValidationResult {
   egressIp: string | null;
   latencyMs: number;
   previousStatus: string | null;
-  newStatus: "active" | "error";
+  newStatus: string;
+  preserved: boolean;
 }
 
 /**
@@ -428,6 +429,21 @@ export async function validateProxyPool(deps?: {
     });
     const probe = await resolveEgressIp(url, { force: true });
     const alive = !!probe.ip && !probe.error;
+    const previous = (p.status ?? "").toLowerCase();
+    if (previous === "inactive" || previous === "dead") {
+      report.push({
+        proxyId: p.id,
+        host: p.host,
+        port: p.port,
+        alive,
+        egressIp: probe.ip,
+        latencyMs: probe.latencyMs,
+        previousStatus: p.status ?? null,
+        newStatus: p.status as string,
+        preserved: true,
+      });
+      continue;
+    }
     const newStatus: "active" | "error" = alive ? "active" : "error";
     await markStatus(p.id, newStatus, { latencyMs: probe.latencyMs, egressIp: probe.ip });
     report.push({
@@ -439,6 +455,7 @@ export async function validateProxyPool(deps?: {
       latencyMs: probe.latencyMs,
       previousStatus: p.status ?? null,
       newStatus,
+      preserved: false,
     });
   }
 

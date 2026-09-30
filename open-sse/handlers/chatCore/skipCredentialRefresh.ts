@@ -1,5 +1,5 @@
 import { isNoAuthProviderKey } from "@/shared/utils/noAuthProviders";
-import { isOpencodeFreeTierRefusalForProvider } from "../../executors/opencodeGeoBlock.ts";
+import { isOpencodeFreeTierRefusal } from "../../executors/opencodeGeoBlock.ts";
 
 /**
  * True when a 401/403 from `provider` cannot be cured by refreshing credentials.
@@ -21,5 +21,5 @@ export async function shouldSkipCredentialRefresh(
     .clone()
     .text()
     .catch(() => null);
-  return isOpencodeFreeTierRefusalForProvider(provider, response.status, bodyText);
+  return isOpencodeFreeTierRefusal(response.status, bodyText);
 }

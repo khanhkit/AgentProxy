@@ -75,6 +75,7 @@ test("detectTestKind defaults to a plain chat test for ordinary models", () => {
     isEmbedding: false,
     isAudioTranscription: false,
     isResponses: false,
+    isNonChatGeneration: false,
   });
 });
 
@@ -97,6 +98,7 @@ test("detectTestKind detects rerank by id and by metadata, and rerank wins over 
     isEmbedding: false,
     isAudioTranscription: false,
     isResponses: false,
+    isNonChatGeneration: false,
   });
   // apiFormat metadata drives detection even when the id is opaque
   assert.equal(detectTestKind("vendor/opaque-model", { apiFormat: "rerank" }).isRerank, true);
@@ -119,6 +121,7 @@ test("detectTestKind detects audio transcription from metadata, and it wins over
     isEmbedding: false,
     isAudioTranscription: true,
     isResponses: false,
+    isNonChatGeneration: false,
   });
   assert.equal(
     detectTestKind("vendor/opaque-model", { supportedEndpoints: ["audio-transcriptions"] })
@@ -156,6 +159,7 @@ test("detectTestKind falls back to the provider node's configured apiType", () =
     isEmbedding: false,
     isAudioTranscription: false,
     isResponses: false,
+    isNonChatGeneration: false,
   });
 
   // Per-model metadata still wins when present.
@@ -433,5 +437,36 @@ test("runSingleModelTest preserves trusted local limiter HTTP statuses", async (
     }
   } finally {
     await rateLimitManager.__resetRateLimitManagerForTests();
+  }
+});
+
+test("non-chat generation models are skipped with 422 before dispatch", async () => {
+  const { addCustomModel } = await import("@/lib/db/models");
+  await addCustomModel("openai", "image-only-ap0130", "Image only", "manual", "images-generations", [
+    "images",
+  ]);
+
+  const originalFetch = globalThis.fetch;
+  let dispatched = false;
+  globalThis.fetch = async () => {
+    dispatched = true;
+    throw new Error("a generation-only model must not be dispatched as chat");
+  };
+
+  try {
+    const kind = detectTestKind("openai/image-only-ap0130", { supportedEndpoints: ["images"] });
+    assert.equal(kind.isNonChatGeneration, true);
+
+    const result = await runSingleModelTest({
+      providerId: "openai",
+      modelId: "image-only-ap0130",
+      timeoutMs: 1_000,
+    });
+
+    assert.equal(dispatched, false);
+    assert.equal(result.status, "error");
+    assert.equal(result.httpStatus, 422);
+  } finally {
+    globalThis.fetch = originalFetch;
   }
 });

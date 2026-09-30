@@ -116,6 +116,34 @@ test("GET surfaces contextWindowOverride on the custom model row", async () => {
   assert.equal(row!.contextWindowOverrideSource, "manual");
 });
 
+test("GET surfaces provider-level context overrides even without a custom model row", async () => {
+  contextOverrides.setModelContextOverride(
+    "openai-compatible-demo",
+    "synced-only-model",
+    262144,
+    "manual"
+  );
+
+  const getRes = await providerModelsRoute.GET(
+    new Request("http://localhost/api/provider-models?provider=openai-compatible-demo")
+  );
+  const body = (await getRes.json()) as {
+    modelContextOverrides?: Array<{
+      modelId?: string;
+      contextWindowOverride?: number;
+      contextWindowOverrideSource?: string;
+    }>;
+  };
+
+  assert.deepEqual(body.modelContextOverrides, [
+    {
+      modelId: "synced-only-model",
+      contextWindowOverride: 262144,
+      contextWindowOverrideSource: "manual",
+    },
+  ]);
+});
+
 test("PUT with contextWindowOverride: null clears a previously set override", async () => {
   await modelsDb.addCustomModel("openai-compatible-demo", "m2", "M2");
   contextOverrides.setModelContextOverride("openai-compatible-demo", "m2", 50000, "manual");

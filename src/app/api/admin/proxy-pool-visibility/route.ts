@@ -9,7 +9,7 @@ import {
   isProxyAvoided,
   proxyEgressKey,
   snapshotProxySetAside,
-} from "@omniroute/open-sse/utils/proxyRefusalMemory.ts";
+} from "@agentproxy/open-sse/utils/proxyRefusalMemory.ts";
 
 // Read-only pool visibility: per-member set-aside state (motive, start, expected
 // end, repeat count) plus the current preference order computed by the same

@@ -1,13 +1,13 @@
 ---
 title: "Embedded Services"
-description: "Reference for 9Router, CLIProxyAPI, Mux, and Bifrost"
+description: "Reference for 9Router, CLIProxyAPI, Mux, Bifrost, Dario, and open-wa"
 ---
 
 # Embedded Services
 
 > **Version:** v3.8.44
 > **Last updated:** 2026-07-03
-> **Audience:** Engineers adding, maintaining, or debugging embedded services (9Router, CLIProxyAPI, Mux, Bifrost).
+> **Audience:** Engineers adding, maintaining, or debugging embedded services (9Router, CLIProxyAPI, Mux, Bifrost, Dario, open-wa).
 
 Embedded services are locally-installed process sidecar tools that AgentProxy installs, supervises, and
 exposes as first-class routing targets. Unlike external providers (which are reached over the internet
@@ -32,17 +32,18 @@ via API keys), embedded services run on the same machine as AgentProxy and commu
 
 ### Why embedded services?
 
-Five services are embedded:
+Six services are embedded:
 
 | Service         | npm package                        | Default port | Purpose                                                                                                                                                                                |
 | --------------- | ---------------------------------- | :----------: | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **9Router**     | `9router`                          |    20130     | AI router that AgentProxy can use as a sub-provider. Models exposed as `9router/{sub}/{model}`                                                                                          |
+| **9Router**     | `9router`                          |    20130     | AI router that AgentProxy can use as a sub-provider. Models exposed as `9router/{sub}/{model}`                                                                                         |
 | **CLIProxyAPI** | GitHub release binary (`cliproxy`) |     8317     | Local proxy adapter for Anthropic CLI auth flows. Provides fallback routing when OAuth tokens expire                                                                                   |
 | **Mux**         | `mux` (headless `mux server`)      |     8322     | Local agent-orchestration daemon (coder/mux). Lifecycle-managed only — not a routing target (no LLM proxying).                                                                         |
 | **Bifrost**     | `@maximhq/bifrost`                 |     8080     | Go AI-gateway relay backend. When running, auto-selected by the relay route (`/v1/relay/`)                                                                                             |
 | **Dario**       | `@askalf/dario`                    |     3456     | Claude-subscription proxy — alternative/failover to CLIProxyAPI for Claude-Code-shaped traffic; the injected key becomes `DARIO_ADMIN_TOKEN` gating its `/admin/*` OAuth control plane |
+| **open-wa**     | `@open-wa/wa-automate`             |     8323     | WhatsApp Web automation (headless Chromium via Puppeteer). Lifecycle-managed only — not a routing target.                                                                              |
 
-All five follow the same supervisory model:
+All six follow the same supervisory model:
 
 - AgentProxy installs them under `DATA_DIR/services/{name}/` (isolated from AgentProxy's own `package.json`)
 - AgentProxy spawns and monitors them as child processes
@@ -51,14 +52,14 @@ All five follow the same supervisory model:
 
 ### Key decisions (from design plan)
 
-| Decision                              | Value                                                                    |
-| ------------------------------------- | ------------------------------------------------------------------------ |
-| Dashboard access to 9Router native UI | Reverse proxy at `/dashboard/providers/services/9router/embed/*`         |
-| Installation mechanism                | `npm install {package}` via `execFile` (no shell interpolation)          |
-| Consumption mode                      | Provider registered as `9router/{sub}/{model}` in routing engine         |
+| Decision                              | Value                                                                     |
+| ------------------------------------- | ------------------------------------------------------------------------- |
+| Dashboard access to 9Router native UI | Reverse proxy at `/dashboard/providers/services/9router/embed/*`          |
+| Installation mechanism                | `npm install {package}` via `execFile` (no shell interpolation)           |
+| Consumption mode                      | Provider registered as `9router/{sub}/{model}` in routing engine          |
 | API key management                    | AgentProxy generates, encrypts at-rest (AES-256-GCM), and injects via env |
-| Dashboard location                    | `/dashboard/providers/services` (three tabs)                             |
-| Auto-start                            | Toggle per service, default OFF                                          |
+| Dashboard location                    | `/dashboard/providers/services` (three tabs)                              |
+| Auto-start                            | Toggle per service, default OFF                                           |
 
 ### Managed update admission
 
@@ -127,7 +128,7 @@ version therefore remains an explicit rollback target instead of being inferred 
 │  modelSync.ts       Periodic GET /v1/models → service_models table │
 │  ringBuffer.ts      Circular log buffer (5 MB per service)         │
 │  healthCheck.ts     Polling HTTP health probe                      │
-│  installers/        ninerouter.ts, cliproxy.ts, mux.ts             │
+│  installers/        ninerouter.ts, cliproxy.ts, mux.ts, openwa.ts  │
 │                      (installer adapters)                          │
 └──────────────────────┬─────────────────────────────────────────────┘
                        │ OpenAI-compatible HTTP (loopback)
@@ -166,6 +167,7 @@ version therefore remains an explicit rollback target instead of being inferred 
 | `src/lib/services/installers/ninerouter.ts` | npm install/update/uninstall for 9Router         |
 | `src/lib/services/installers/cliproxy.ts`   | npm install/update/uninstall for CLIProxyAPI     |
 | `src/lib/services/installers/mux.ts`        | npm install/update/uninstall for Mux             |
+| `src/lib/services/installers/openwa.ts`     | npm install/update/uninstall for open-wa         |
 | `src/app/api/services/9router/_lib.ts`      | `getOrInitSupervisor()` helper                   |
 | `src/app/api/services/[name]/logs/route.ts` | Shared SSE logs endpoint                         |
 | `open-sse/executors/ninerouter.ts`          | Provider executor (Layer 4)                      |
@@ -529,7 +531,26 @@ Same lifecycle shape as the other services (`install`, `start`, `stop`, `restart
 control plane under `admin/`: `admin/accounts`, `admin/import-from-agentproxy`,
 `admin/login-start`, `admin/login-complete` (all behind `DARIO_ADMIN_TOKEN`).
 
-### 4.6 Reverse proxy (9Router dashboard embed)
+### 4.6 open-wa endpoints (8 routes)
+
+open-wa (`@open-wa/wa-automate`) drives a headless Chromium instance via Puppeteer to automate WhatsApp Web. It uses the same lifecycle shape as Mux and is not an LLM routing target.
+
+| Method | Path                                        | Description                                   |
+| ------ | ------------------------------------------- | --------------------------------------------- |
+| `POST` | `/api/services/openwa/install`              | Install `@open-wa/wa-automate` from npm       |
+| `POST` | `/api/services/openwa/start`                | Start open-wa on port 8323 (default)          |
+| `POST` | `/api/services/openwa/stop`                 | Stop open-wa                                  |
+| `POST` | `/api/services/openwa/restart`              | Restart open-wa                               |
+| `POST` | `/api/services/openwa/update`               | Update to a newer version                     |
+| `GET`  | `/api/services/openwa/status`               | Read live + persisted status                  |
+| `POST` | `/api/services/openwa/auto-start`           | Toggle auto-start                             |
+| `POST` | `/api/services/openwa/auto-restart-adopted` | Toggle restart of an adopted external process |
+
+The shared `/api/services/[name]/logs` route provides the SSE log tail. The generated API key uses the `ow_` prefix and is injected as `WA_KEY`; `/api-docs/` is used as the health probe. First pairing requires scanning the QR code emitted in the logs. open-wa is unofficial and unaffiliated with WhatsApp; automated accounts may be subject to WhatsApp enforcement.
+
+---
+
+### 4.7 Reverse proxy (9Router dashboard embed)
 
 The dashboard embeds the 9Router web UI inside an iframe via an internal reverse
 proxy at:

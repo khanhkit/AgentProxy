@@ -234,6 +234,7 @@ export const CONFIGURABLE_BASE_URL_PROVIDERS = new Set([
   "firecrawl",
   "petals",
   "comfyui",
+  "modal",
   // #7447 — Moonshot/Kimi's international host (api.moonshot.ai) rejects
   // CN-region keys (issued on platform.kimi.com/moonshot.cn — a separate
   // account/keyspace). Neither "kimi" (legacy id) nor "moonshot" (current
@@ -372,6 +373,8 @@ export function getProviderBaseUrlPlaceholder(providerId?: string | null) {
       // #7447 — surfaces the CN-region alternative host as the placeholder
       // example (mirrors the siliconflow.com/siliconflow.cn pattern above).
       return "https://api.moonshot.cn/v1";
+    case "modal":
+      return "https://<workspace>--<app>.modal.run/v1";
     default:
       return "";
   }
@@ -1010,4 +1013,23 @@ export function getHeaderIconProviderId(
     return "anthropic-m";
   }
   return providerInfoId;
+}
+
+/**
+ * #4125: parse the free-text "Context Window Override" field. Blank → no override
+ * (`value: null`, not an error). A non-empty value must be a positive whole number of
+ * tokens; anything else is rejected.
+ *
+ * Lives here rather than in one section because #14337 gives synced/imported rows the
+ * same control: two copies of this rule would be two places for "blank clears" and
+ * "zero is invalid" to drift apart.
+ */
+export function parseContextWindowOverrideInput(raw: string): {
+  value: number | null;
+  invalid: boolean;
+} {
+  const trimmed = raw.trim();
+  if (!trimmed) return { value: null, invalid: false };
+  if (!/^\d+$/.test(trimmed) || Number(trimmed) <= 0) return { value: null, invalid: true };
+  return { value: Number(trimmed), invalid: false };
 }

@@ -18,7 +18,7 @@ type RedisLike = {
   persist: (key: string) => Promise<unknown>;
 };
 
-const KEY_PREFIX = "agentproxy:warmup:cb:";
+const KEY_PREFIX = `${process.env.REDIS_KEY_PREFIX?.trim() || "agentproxy:"}warmup:cb:`;
 
 export class RedisCircuitBreakerStore implements CircuitBreakerStore {
   constructor(private redis: RedisLike) {}
