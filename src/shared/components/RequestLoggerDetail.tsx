@@ -24,7 +24,7 @@ import {
   buildPipelinePayloadSections,
   isBodySizeLimitOmission,
 } from "@/shared/components/RequestLoggerDetail.sections";
-
+import { getResilienceBadges } from "@/shared/components/requestLoggerResilience";
 // ─── Copy-all composition ────────────────────────────────────────────────────
 // Compose every visible payload section + stream chunk into a single block so
 // users can copy the whole request/response transcript with one click instead
@@ -547,9 +547,8 @@ export default function RequestLoggerDetail({
     cacheSource === "semantic"
       ? "bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border-emerald-500/30"
       : "bg-sky-500/20 text-sky-700 dark:text-sky-300 border-sky-500/30";
-  const accountLabel = maskAccount(detail?.account || log.account, emailsVisible);
-  const codexAccountRotation = getCodexAccountRotation(detail);
-  return (
+  const resilienceBadges = getResilienceBadges(log.resilienceActions || detail?.resilienceActions || null, (key, values) => t(key as never, values as never)), accountLabel = maskAccount(detail?.account || log.account, emailsVisible);
+  const codexAccountRotation = getCodexAccountRotation(detail); return (
     <div
       className="fixed inset-0 z-50 flex items-start justify-center px-2 pt-[5vh] sm:px-4"
       onClick={onClose}
@@ -840,6 +839,7 @@ export default function RequestLoggerDetail({
                 >
                   {cacheSourceLabel}
                 </span>
+                {resilienceBadges.map((badge) => <span key={badge.key} title={badge.title}>{badge.label}</span>)}
               </div>
               <CallContentProvenanceBadges
                 hasContent={detail?.hasContent ?? log.hasContent}

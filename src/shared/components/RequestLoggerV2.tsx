@@ -34,12 +34,8 @@ import {
   shouldAutoRefresh,
   shouldTriggerInfiniteScroll,
 } from "./requestLoggerSignature";
-import {
-  DEFAULT_REFRESH_INTERVAL_SEC,
-  clampRefreshIntervalSec,
-  readSavedRefreshIntervalSec,
-  writeSavedRefreshIntervalSec,
-} from "./requestLoggerPreferences";
+import { getResilienceBadges } from "./requestLoggerResilience";
+import { DEFAULT_REFRESH_INTERVAL_SEC, clampRefreshIntervalSec, readSavedRefreshIntervalSec, writeSavedRefreshIntervalSec } from "./requestLoggerPreferences";
 import {
   LOG_TABLE_CLASS,
   LOG_TABLE_HEAD_CLASS,
@@ -1407,6 +1403,9 @@ const RequestLoggerV2 = forwardRef<RequestLoggerV2Handle, { initialSelectedId?: 
                               >
                                 {isSemanticCache ? t("semantic") : t("upstream")}
                               </span>
+                              {getResilienceBadges(log.resilienceActions, (key, values) => t(`detail.${key}`, values)).map((badge) => (
+                                <span key={badge.key} title={badge.title}>[{badge.label}]</span>
+                              ))}
                             )}
                           </td>
                         )}
