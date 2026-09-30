@@ -1,4 +1,7 @@
-import { extractRequestToolIdentityMap, resolveResponseToolNameMap } from "./chatCore/requestToolIdentity.ts";
+import {
+  extractRequestToolIdentityMap,
+  resolveResponseToolNameMap,
+} from "./chatCore/requestToolIdentity.ts";
 import {
   injectMemoryAndSkills,
   mergeInjectedFallbackOwnerNames,
@@ -171,7 +174,7 @@ import {
 } from "../services/claudeAdaptiveThinking.ts";
 import { shouldUseMidConversationSystem } from "../executors/claudeIdentity.ts";
 import { normalizeClaudeHaikuConstraints } from "../services/claudeHaikuConstraints.ts";
-import { applyDefaultReasoningEffort } from "../services/defaultReasoningEffort.ts";
+import { wireAdaptiveEffort } from "./chatCore/adaptiveEffortWiring.ts";
 import { echoModelInObject } from "../services/responseModelEcho.ts";
 import {
   stripGpt5SamplingWhenReasoning,
@@ -680,7 +683,8 @@ async function handleChatCoreInner({
         statusCode,
         errorCode,
         latencyMs: Date.now() - startTime,
-        endpoint: endpointPath, cpaAuthIndex: readCpaAuthIndex(providerResponse),
+        endpoint: endpointPath,
+        cpaAuthIndex: readCpaAuthIndex(providerResponse),
         aggregate: aggregate ?? undefined,
       })
     ).catch(() => {});
@@ -2671,54 +2675,26 @@ async function handleChatCoreInner({
   }
   translatedBody.model = finalModelToUpstream;
 
-  // #3554: a combo/route may substitute the upstream model AFTER the client chose its
-  // `thinking` value. Claude Code sends `thinking:{type:"disabled"}` for internal calls,
-  // which claude-fable-5 (adaptive-only) rejects with a 400. Drop the now-invalid value
-  // when the resolved target model rejects it; models that accept `disabled` are untouched.
+  // Normalize reasoning after route/model substitution so provider-specific constraints
+  // follow the resolved upstream model (adaptive-only Claude, Opus disabled, Haiku shape).
   if (typeof finalModelToUpstream === "string") {
     translatedBody = normalizeThinkingForModel(translatedBody, finalModelToUpstream);
-    // Claude Opus 4.7+/Fable 5 removed manual extended thinking: `thinking.type:"enabled"`
-    // or any `thinking.budget_tokens` is a hard 400. Collapse any manual thinking that
-    // reached this point (passthrough legacy shape, reasoning_effort buckets, per-model
-    // defaults) to `{type:"adaptive"}` — effort stays on `output_config.effort`. Keyed on
-    // the resolved upstream model, so it covers every routing mode. See claudeAdaptiveThinking.ts.
     translatedBody = normalizeClaudeAdaptiveThinking(translatedBody, finalModelToUpstream);
-    // Opus 5 allows disabled thinking only through high effort on Anthropic's direct
-    // Messages API. The helper scopes this constraint to `anthropic` and `claude`;
-    // GitHub Copilot and Claude Web use separate upstream contracts.
     translatedBody = normalizeClaudeDisabledThinkingEffort(
       translatedBody,
       finalModelToUpstream,
       provider
     );
-    // Claude Haiku rejects `thinking.type:"adaptive"` and `output_config.effort`
-    // (both Sonnet 4.6 / Opus 4.5+ only). Several paths can still emit those
-    // shapes on a Haiku target — native passthrough, reasoning_effort buckets,
-    // per-model defaults — so collapse them to a Haiku-valid shape here, after
-    // model substitution. Mirrors upstream 9router 401d93bd5. See
-    // services/claudeHaikuConstraints.ts.
     translatedBody = normalizeClaudeHaikuConstraints(translatedBody, finalModelToUpstream);
-    // #6879: per-model default reasoning_effort, injected only when the request
-    // carries no reasoning field of any shape — an explicit client/combo-leg value
-    // always wins. Scoped to the OpenAI Chat Completions dispatch shape (the shape
-    // `reasoning_effort` is native to); unset ModelSpec.defaultReasoningEffort is a
-    // no-op. #7694: `modelInfo.resolvedThinkingEffort` — set when the request's model
-    // id carried a `<prefix>/<model>-{effort}` synced-model alias suffix
-    // (`src/sse/services/model.ts`) — takes priority over the static per-model default.
-    // The synced catalog's vendor-declared `defaultThinkingEffort` (OpenRouter
-    // `reasoning.default_effort`, captured by `detectDefaultThinkingEffort`) is the
-    // lowest-priority default: it only fires when neither the suffix alias nor a
-    // static operator default exists. See open-sse/services/defaultReasoningEffort.ts.
-    if (targetFormat === FORMATS.OPENAI) {
-      translatedBody = applyDefaultReasoningEffort(
-        translatedBody,
-        finalModelToUpstream,
-        (modelInfo as { resolvedThinkingEffort?: string })?.resolvedThinkingEffort,
-        (modelInfo as { defaultThinkingEffort?: string })?.defaultThinkingEffort
-      );
-    }
+    translatedBody = wireAdaptiveEffort(translatedBody, {
+      rawBody: body,
+      clientRawRequest,
+      targetFormat,
+      modelId: finalModelToUpstream,
+      suffixEffort: (modelInfo as { resolvedThinkingEffort?: string })?.resolvedThinkingEffort,
+      syncedDefaultEffort: (modelInfo as { defaultThinkingEffort?: string })?.defaultThinkingEffort,
+    });
   }
-
   // Xiaomi MiMo controls reasoning ONLY via `thinking:{type:"enabled"|"disabled"}` and
   // rejects unknown/extra params with a strict "400 Param Incorrect". Map AgentProxy's
   // OpenAI reasoning signals onto that native shape: reduce any thinking object to
@@ -3612,10 +3588,16 @@ async function handleChatCoreInner({
   let providerResponse;
   let providerUrl;
   let providerHeaders;
-  let finalBody, claudePromptCacheLogMeta = null;
+  let finalBody,
+    claudePromptCacheLogMeta = null;
   const refreshPipelineCredentials = createPipelineCredentialRefresher({
-    shouldIsolateProbeFailures, credentials, onCredentialsRefreshed, provider, log,
-    refreshCredentials: (currentCredentials) => executor.refreshCredentials(currentCredentials, log),
+    shouldIsolateProbeFailures,
+    credentials,
+    onCredentialsRefreshed,
+    provider,
+    log,
+    refreshCredentials: (currentCredentials) =>
+      executor.refreshCredentials(currentCredentials, log),
   });
   let pipelineRecovered = false;
   if (stream) {
@@ -5184,7 +5166,8 @@ async function handleChatCoreInner({
         effectiveServiceTier,
         isCombo,
         comboStrategy,
-        endpoint: endpointPath, cpaAuthIndex: readCpaAuthIndex(providerResponse),
+        endpoint: endpointPath,
+        cpaAuthIndex: readCpaAuthIndex(providerResponse),
       });
 
       // #12150 P1b surface 3 (fix round 1): a video-bridge-observed request's
@@ -5275,7 +5258,12 @@ async function handleChatCoreInner({
           claudeCacheUsageMeta: cacheUsageLogMeta,
           cacheSource: "upstream",
         });
-        recordChatCallCost(apiKeyInfo, meteredBudgetCost(provider, estimatedCost), chatCostCtx, false);
+        recordChatCallCost(
+          apiKeyInfo,
+          meteredBudgetCost(provider, estimatedCost),
+          chatCostCtx,
+          false
+        );
         log?.warn?.(
           "GUARDRAIL",
           `Response blocked by ${postCallGuardrails.guardrail || "guardrail"}: ${guardrailMessage}`
@@ -5380,7 +5368,8 @@ async function handleChatCoreInner({
         body: bodyForCacheWrite,
         headers: clientRawRequest?.headers,
         translatedResponse,
-        model, provider,
+        model,
+        provider,
         apiKeyId: apiKeyInfo?.id ?? undefined,
         usage,
         log,
@@ -5755,7 +5744,8 @@ async function handleChatCoreInner({
       effectiveServiceTier,
       isCombo,
       comboStrategy,
-      endpoint: endpointPath, cpaAuthIndex: readCpaAuthIndex(providerResponse),
+      endpoint: endpointPath,
+      cpaAuthIndex: readCpaAuthIndex(providerResponse),
     });
 
     // Routing event (feedback foundation) — fire-and-forget, cheap, never blocks
@@ -5872,7 +5862,8 @@ async function handleChatCoreInner({
       streamResponseBody,
       body: bodyForCacheWrite,
       headers: clientRawRequest?.headers,
-      model, provider,
+      model,
+      provider,
       apiKeyId: apiKeyInfo?.id ?? undefined,
       streamUsage,
       log,
