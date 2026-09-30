@@ -1177,6 +1177,7 @@ changing them requires a code edit, not an env var:
 | `CURSOR_STREAM_TIMEOUT_MS`       | `300000`            | `open-sse/executors/cursor.ts`             | Stream idle timeout (ms) for the Cursor executor.                                            |
 | `CURSOR_KV_GRACE_MS`             | `2000`              | `open-sse/executors/cursor.ts`             | Grace after a `kv_after_text` soft terminator when buffered bytes may contain a trailing MCP tool-call frame. |
 | `CURSOR_TOOL_DIRECTIVE`          | enabled (`!== "0"`) | `open-sse/executors/cursor.ts`             | Tool-commit directive that makes composer-2.5 reliably issue tool calls. Set `0` to disable. |
+| `AGENTPROXY_SYSTEM_INSTRUCTION_APPEND` | _(unset)_ | `open-sse/translator/request/claude-to-openai.ts`, `open-sse/translator/response/openai-to-claude.ts` | Operator-defined system directive appended on Claude→OpenAI translation and stripped when echoed as a response preamble. |
 | `CURSOR_IMAGE_FETCH_TIMEOUT_MS`  | `15000`             | `open-sse/utils/cursorImages.ts`           | Per-image fetch timeout (ms) for remote `image_url` vision input.                            |
 | `CURSOR_STATE_DB_PATH`           | _(probed)_          | `open-sse/utils/cursorVersionDetector.ts`  | Override the Cursor IDE state DB lookup used for IDE version detection.                      |
 | `CURSOR_AGENT_CLI_VERSION`       | _(detect / pin)_    | `open-sse/utils/cursorAgentCliVersion.ts`  | Agent CLI build id (`YYYY.MM.DD-<hash>`) for `x-cursor-client-version: cli-…` on Agent Run.   |

@@ -129,7 +129,7 @@ import { resolveChatCoreTargetFormat } from "./chatCore/targetFormat.ts";
 import { resolveOmniGlyphTransport } from "../services/compression/imageTransportPolicy.ts";
 import { stripStore, usesClaudeBridge } from "./chatCore/agentRouterProtocol.ts";
 import { normalizeClaudeToolsForDispatch } from "./chatCore/claudeToolDefaults.ts";
-import { injectSystemPrompt, injectCustomSystemPrompt } from "../services/systemPrompt.ts";
+import { injectCustomSystemPrompt, injectSystemPromptPostTranslation, injectSystemPromptPreTranslation } from "../services/systemPrompt.ts";
 import { translateRequest, needsTranslation } from "../translator/index.ts";
 import { applyReasoningRuleDirective } from "@/lib/reasoningRouting/policy";
 import { withReasoningRuleContext } from "../utils/reasoningRuleContext.ts";
@@ -610,7 +610,6 @@ export async function handleChatCore({
     };
   };
   let tokensCompressed: number | null = null;
-  body = injectSystemPrompt(body);
   // ── Per-endpoint custom system prompt (port of upstream #2063) ──
   // Reads from cachedSettings if available (passed in from combo/chat layer)
   // to avoid an extra DB read on the hot path. Falls through to getCachedSettings()
@@ -2531,6 +2530,7 @@ export async function handleChatCore({
         model || "",
         sourceFormat
       );
+      translatedBody = injectSystemPromptPreTranslation(translatedBody, { targetFormat });
       translatedBody = translateRequest(
         sourceFormat,
         targetFormat,
@@ -3117,7 +3117,7 @@ export async function handleChatCore({
         bypassDefaultToolLimit: isOpencodeClient,
         isOpencodeClient,
       });
-
+      bodyToSend = injectSystemPromptPostTranslation(bodyToSend, { targetFormat });
       updatePendingScope(pendingScope, {
         providerRequest: bodyToSend,
         stage: "payload_prepared",

@@ -165,6 +165,17 @@ export function claudeToOpenAIRequest(model, body, stream, credentials: unknown 
     }
   }
 
+  const systemAppend = process.env.AGENTPROXY_SYSTEM_INSTRUCTION_APPEND?.trim();
+  if (systemAppend) {
+    const sysIndex = result.messages.findIndex((m) => m.role === "system");
+    if (sysIndex >= 0) {
+      const sys = result.messages[sysIndex];
+      if (typeof sys.content === "string") sys.content += "\n\n" + systemAppend;
+      else if (Array.isArray(sys.content)) (sys.content as JsonRecord[]).push({ type: "text", text: systemAppend });
+      else sys.content = systemAppend;
+    } else result.messages.unshift({ role: "system", content: systemAppend });
+  }
+
   // Convert messages
   if (body.messages && Array.isArray(body.messages)) {
     for (let i = 0; i < body.messages.length; i++) {
