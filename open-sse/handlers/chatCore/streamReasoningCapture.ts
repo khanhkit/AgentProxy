@@ -13,6 +13,7 @@ interface StreamReasoningCaptureInput {
   provider: string;
   model: string;
   reasoningCacheScope: string | null | undefined;
+  reasoningReplayHistory?: unknown[] | null;
   videoTranscriptSensitive: boolean;
 }
 
@@ -33,8 +34,10 @@ export function captureStreamReasoningForReplay(input: StreamReasoningCaptureInp
         : streamBody;
     const msg = (cacheStreamBody.choices as { message?: Record<string, unknown> }[] | undefined)?.[0]
       ?.message;
-    const historyMessages = (input.translatedBody as { messages?: unknown[] } | null | undefined)
-      ?.messages;
+    const historyMessages =
+      (input.translatedBody as { messages?: unknown[] } | null | undefined)?.messages ??
+      input.reasoningReplayHistory ??
+      null;
     if (requiresReasoningReplay({ provider: input.provider, model: input.model })) {
       cacheReasoningFromAssistantMessage(msg, input.provider, input.model, {
         scope: input.reasoningCacheScope,
