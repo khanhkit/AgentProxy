@@ -986,7 +986,7 @@
     "batchFileDownloadFull": "Sauke Cikakken Fayil"
   },
   "disabled": "An Kashe",
-  "featureFlagOmnirouteEmergencyFallbackDescription": "Tura buƙatun da kasafin kuɗinsu ya ƙare zuwa provider/model na gaggawa mai kyauta.",
+  "featureFlagAgentProxyEmergencyFallbackDescription": "Tura buƙatun da kasafin kuɗinsu ya ƙare zuwa provider/model na gaggawa mai kyauta.",
   "featureFlagArenaEloSyncEnabledDescription": "Kunna daidaita ELO na jadawalin jagorancin Arena AI lokaci-lokaci domin martabar ƙwarewar samfura.",
   "featureFlagUniversalContextHandoffEnabledDescription": "Ƙirƙira da shigar da taƙaitattun tattaunawa lokacin da tsarin tura haɗe-haɗe ya sauya samfura. Kashe wannan domin ɗaukar sauyin samfura daban-daban da kuma hana buƙatun miƙa aiki na bayan fage ga duk haɗe-haɗe na yanzu da na gaba.",
   "featureFlagExposeCcDiscoveryAliasesDescription": "Bayyana ID na madubi na claude/&lt;provider&gt;/&lt;model&gt; a /v1/models domin gano samfuran gateway na Claude Code ya jera samfuran da ba na Claude ba. Gargadi: idan aka kunna wannan a ko’ina, zai ninka shigarwar kundin ga duk abokan ciniki.",
@@ -2254,7 +2254,7 @@
     "requestFlowAria": "Manhajarka tana aika buƙatu ta hanyar maɓallin API zuwa OmniRoute",
     "requestFlowYourApp": "Manhajarka",
     "requestFlowApiKey": "Maɓallin API",
-    "requestFlowOmniRoute": "OmniRoute",
+    "requestFlowAgentProxy": "AgentProxy",
     "totalKeys": "Jimillar Maɓallai",
     "restricted": "Ƙuntatattu",
     "totalRequests": "Jimillar Buƙatu",
@@ -2761,7 +2761,7 @@
     "configurationSaved": "An adana saitunan cikin nasara.",
     "failedToSave": "An kasa adana saitunan.",
     "noApiKeysCreateOne": "Babu maɓallan API - Ƙirƙiri ɗaya a shafin Keys",
-    "defaultOmnirouteKey": "sk_omniroute (tsoho)",
+    "defaultAgentProxyKey": "sk_agentproxy (tsoho)",
     "selectModel": "Zaɓi Samfuri",
     "selectModelForAlias": "Zaɓi samfuri don {alias}",
     "selectModelForTool": "Zaɓi Samfuri don {tool}",
@@ -2858,13 +2858,13 @@
     "applied": "An aiwatar!",
     "failed": "Ya gaza",
     "resetDone": "An sake saitawa!",
-    "omnirouteConfiguredOpenAiCompatible": "An saita OmniRoute a matsayin mai samarwa mai dacewa da OpenAI",
+    "agentproxyConfiguredOpenAiCompatible": "An saita AgentProxy a matsayin mai samarwa mai dacewa da OpenAI",
     "provider": "Mai samarwa",
     "model": "Samfuri",
     "providers": "Masu samarwa",
     "auth": "Tantancewa",
     "noApiKeysAvailable": "Babu maɓallan API da ake da su",
-    "usingDefaultOmniroute": "Ana amfani da tsoho: sk_omniroute",
+    "usingDefaultAgentProxy": "Ana amfani da tsoho: sk_agentproxy",
     "updateConfig": "Sabunta Saituna",
     "applyConfig": "Aiwatar da Saituna",
     "noBackupsAvailable": "Babu kwafin ajiyar da ake da shi.",
@@ -3145,8 +3145,8 @@
     "hermesConfiguredRoles": "Rawuka {configured}/{total}",
     "hermesQuickApply": "Aiwatar da samfuri ɗaya cikin sauri ga dukkan rawuka:",
     "hermesApplyModelToAll": "Aiwatar da {model} ga kowace rawa",
-    "hermesViaOmniRoute": "{provider} (ta hanyar OmniRoute)",
-    "hermesNotOmniRoute": "{provider} (ba ta hanyar OmniRoute ba)",
+    "hermesViaAgentProxy": "{provider} (ta hanyar AgentProxy)",
+    "hermesNotAgentProxy": "{provider} (ba ta hanyar AgentProxy ba)",
     "hermesRemovePendingRole": "Cire wannan rawa daga canje-canjen da ke jiran aiki",
     "hermesApply": "Aiwatar ga Hermes Agent",
     "hermesRolesWillUpdate": "{count, plural, one {Za a sabunta rawa #} other {Za a sabunta rawuka #}}",
@@ -4125,7 +4125,7 @@
     "vscodeAliasModelsLabel": "Samfuran VS Code",
     "vscodeAliasChatLabel": "Hirar VS Code",
     "localServer": "Sabar Gida",
-    "cloudOmniroute": "OmniRoute na Gajimare",
+    "cloudAgentProxy": "AgentProxy na Gajimare",
     "copyUrl": "Kwafi URL",
     "badgeLoopbackTooltip": "Ana iya samun damar wannan endpoint a cikin na'urar kawai (loopback kawai)",
     "badgeAlwaysProtectedTooltip": "Wannan endpoint yana da kariya koyaushe kuma yana buƙatar izini",
@@ -9962,7 +9962,7 @@
     "howItWorksStep3Description": "OpenAI, Anthropic, Gemini, ko wasu suna aiwatar da buƙatar nan take.",
     "getStartedIn30Seconds": "Fara Cikin Daƙiƙa 30",
     "getStartedDescription": "Shigar da OmniRoute, saita masu samar da sabis ɗinku ta dashboard na yanar gizo, sannan ku fara karkatar da buƙatun AI.",
-    "installOmniRoute": "Shigar da OmniRoute",
+    "installAgentProxy": "Shigar da AgentProxy",
     "installStepDescription": "Gudanar da umarnin npx don fara sabar nan take",
     "openDashboard": "Buɗe Dashboard",
     "openDashboardStepDescription": "Saita masu samar da sabis da maɓallan API ta hanyar mahaɗin yanar gizo",
@@ -9971,7 +9971,7 @@
     "terminal": "tashar umarni",
     "copy": "Kwafi",
     "copied": "✓ An kwafa",
-    "startingOmniRoute": "Ana fara OmniRoute...",
+    "startingAgentProxy": "Ana fara AgentProxy...",
     "serverRunningOnLabel": "Sabar tana aiki a",
     "dashboardLabel": "Allon Bayanai",
     "readyToRoute": "A shirye don karkatarwa! ✓",
@@ -10365,7 +10365,7 @@
     "versionCommandPlaceholder": "misali, my-agent --version",
     "architectureTitle": "Yadda Manufofin Agent Suke Aiki",
     "flowLocalBinary": "3 · Tsarin CLI mai nasa tantancewa",
-    "flowOmniRoute": "1 · Buƙata ta iso OmniRoute",
+    "flowAgentProxy": "1 · Buƙata ta iso AgentProxy",
     "agentNamePlaceholder": "misali, Agent na Musamman nawa",
     "architectureDescription": "Lokacin da buƙata ta iso, OmniRoute na iya ƙaddamar da binary na CLI na cikin na'ura (misali, claude, codex, goose) sannan ya tura buƙatar ta cikinsa. CLI yana sarrafa buƙatar ta amfani da bayanan shaidarsa, sannan ya mayar da sakamakon ta hanyar OmniRoute.",
     "flowExecute": "4 · An mayar da amsa ga abokin ciniki",
@@ -10382,8 +10382,8 @@
     "agentUseCaseHint": "Ana iya amfani da shi a matsayin wurin aiwatarwa ta hanyar ACP protocol",
     "flowDiagramClient": "Manhajar Abokin Ciniki",
     "flowDiagramClientDesc": "SDK, API, ko upstream service",
-    "flowDiagramOmniRoute": "OmniRoute",
-    "flowDiagramOmniRouteDesc": "Yana karɓar buƙata kuma yana zaɓar manufa",
+    "flowDiagramAgentProxy": "AgentProxy",
+    "flowDiagramAgentProxyDesc": "Yana karɓar buƙata kuma yana zaɓar manufa",
     "flowDiagramSpawn": "Ƙaddamar da Tsari",
     "flowDiagramSpawnDesc": "Yana ƙaddamar da binary na CLI ta stdio",
     "flowDiagramCli": "Wakilin CLI",
@@ -12938,16 +12938,16 @@
       "PROXY_AUTO_SELECT_ENABLED": {
         "description": "Idan ba a sanya proxy ga haɗi ba, zaɓi proxy na registry na farko da ke aiki ta atomatik. A kashe yake ta tsohuwa domin idan ba haka ba, proxy ɗaya na registry zai zama madadin gama-gari ga duk zirga-zirga (#3332)."
       },
-      "OMNIROUTE_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
+      "AGENTPROXY_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
         "description": "Ba hanyoyin OAuth da na tabbatar da mai bayarwa damar ƙetare proxy da aka ɗaure idan gwajin isa ga proxy ya gaza. A kashe yake ta tsohuwa domin wannan na iya canza IP ɗin da asusun ke amfani da shi wajen fita."
       },
       "MITM_DISABLE_TLS_VERIFY": {
         "description": "Kashe tabbatar da takardar shaidar TLS ga MITM proxy."
       },
-      "OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS": {
         "description": "Ba da izinin URLs na masu bayarwa waɗanda ke nuni zuwa cibiyoyin sadarwa masu zaman kansu ko na cikin gida."
       },
-      "OMNIROUTE_ALLOW_LOCAL_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_LOCAL_PROVIDER_URLS": {
         "description": "Ba da izinin masu bayarwa a localhost, LAN, da kewayon IP masu zaman kansu. Ana buƙatar wannan don samfurorin gida masu jituwa da OpenAI, kuma an kunna shi ta tsohuwa. Ana ci gaba da toshe endpoints na cloud-metadata kamar 169.254.169.254."
       },
       "ENABLE_CC_COMPATIBLE_PROVIDER": {
@@ -12969,28 +12969,28 @@
       "RESPONSES_PASSTHROUGH_DROP_COMMENTARY": {
         "description": "Cire abubuwan fitarwa na matakin commentary na cikin gida daga rafukan passthrough na Responses API kafin a tura su ga abokan ciniki. Kashe wannan tutar don karɓar commentary na upstream ba tare da sarrafawa ba."
       },
-      "OMNIROUTE_MCP_ENFORCE_SCOPES": {
+      "AGENTPROXY_MCP_ENFORCE_SCOPES": {
         "description": "Tilasta ƙuntatawar scope don samun damar kayan aikin MCP."
       },
-      "OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS": {
+      "AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS": {
         "description": "Matse bayanan kayan aikin MCP don rage amfani da token."
       },
-      "OMNIROUTE_ENABLE_RUNTIME_BACKGROUND_TASKS": {
+      "AGENTPROXY_ENABLE_RUNTIME_BACKGROUND_TASKS": {
         "description": "Kunna sarrafa ayyukan bango a lokacin runtime."
       },
-      "OMNIROUTE_DISABLE_BACKGROUND_SERVICES": {
+      "AGENTPROXY_DISABLE_BACKGROUND_SERVICES": {
         "description": "Kashe duk ayyukan bango, ciki har da sabunta quota da synchronization."
       },
-      "OMNIROUTE_RTK_TRUST_PROJECT_FILTERS": {
+      "AGENTPROXY_RTK_TRUST_PROJECT_FILTERS": {
         "description": "Amince da filters na RTK na matakin project ba tare da validation ba."
       },
-      "OMNIROUTE_ENABLE_LIVE_WS": {
+      "AGENTPROXY_ENABLE_LIVE_WS": {
         "description": "Fara uwar garken WebSocket na dashboard na ainihin lokaci yayin import a loopback port 20132. Saita tutar zuwa 0 ko false don kashe shi. Bayyanawa ga LAN kuma yana buƙatar LIVE_WS_HOST=0.0.0.0 da LIVE_WS_ALLOWED_ORIGINS."
       },
-      "OMNIROUTE_CODEX_WS_ENABLED": {
+      "AGENTPROXY_CODEX_WS_ENABLED": {
         "description": "Ba Codex damar amfani da Responses ta WebSocket. Idan an kashe, Codex zai koma amfani da HTTP Responses."
       },
-      "OMNIROUTE_EMERGENCY_FALLBACK": {
+      "AGENTPROXY_EMERGENCY_FALLBACK": {
         "description": "Tura buƙatun da kasafinsu ya ƙare zuwa mai bayarwa da samfurin madadin gaggawa na kyauta."
       },
       "STREAM_RECOVERY_ENABLED": {
@@ -13017,16 +13017,16 @@
       "PRICING_SYNC_ENABLED": {
         "description": "Daidaita bayanan farashi ta atomatik. Dole ne ma canjin mahalli na PRICING_SYNC_ENABLED ya kasance true."
       },
-      "OMNIROUTE_AUTO_SYNC_CODEX_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CODEX_PROFILES": {
         "description": "Bayan daidaita mai bayarwa da samfurin, sake ƙirƙirar bayanan martaba na ~/.codex/*.config.toml daga kundin da ke aiki. Wannan ba ya taɓa canza saitin Codex mai aiki ko na asali, kuma a kashe yake ta tsohuwa."
       },
-      "OMNIROUTE_AUTO_SYNC_CLAUDE_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CLAUDE_PROFILES": {
         "description": "Bayan daidaita mai bayarwa da samfurin, sake ƙirƙirar bayanan martaba na ~/.claude/profiles/'<name>'/settings.json daga kundin da ke aiki. Wannan ba ya taɓa canza saitin Claude mai aiki ko na asali, kuma a kashe yake ta tsohuwa."
       },
-      "OMNIROUTE_DISABLE_LOCAL_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_LOCAL_HEALTHCHECK": {
         "description": "Kashe endpoint ɗin duba lafiyar instance na cikin gida."
       },
-      "OMNIROUTE_DISABLE_TOKEN_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_TOKEN_HEALTHCHECK": {
         "description": "Kashe duba lafiyar tabbatar da token."
       },
       "SKILLS_SANDBOX_NETWORK_ENABLED": {
@@ -14158,5 +14158,5 @@
     "partnerLinkNote": "Hanyar haɗin abokin hulɗa",
     "dismissAriaLabel": "Yi watsi"
   },
-  "featureFlagOmnirouteDisableThinkingLevelVariantsDescription": "Kashe samar da nau'ikan matakan tunani (misali -low, -medium, -high) a cikin kundin /v1/models."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Kashe samar da nau'ikan matakan tunani (misali -low, -medium, -high) a cikin kundin /v1/models."
 }

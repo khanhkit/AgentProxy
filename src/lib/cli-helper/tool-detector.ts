@@ -43,7 +43,7 @@ export interface DetectedTool {
     {
       model: string;
       provider?: string;
-      usingOmniRoute: boolean;
+      usingAgentProxy: boolean;
     }
   >;
 }
@@ -88,7 +88,7 @@ function isConfigured(content: string, baseUrl: string): boolean {
     content.includes(normalized) ||
     content.includes("localhost:20128") ||
     (!!runtimePort && content.includes(`localhost:${runtimePort}`)) ||
-    content.includes("OMNIROUTE_BASE_URL")
+    content.includes("AGENTPROXY_BASE_URL")
   );
 }
 
@@ -207,14 +207,14 @@ export async function detectTool(id: string): Promise<DetectedTool | null> {
       Object.entries(roles).forEach(([role, info]) => {
         const roleBaseUrl = info?.base_url || "";
         const usingOmni =
-          info?.provider === "omniroute" ||
+          info?.provider === "agentproxy" ||
           roleBaseUrl.includes("20128") ||
           (!!runtimePort && roleBaseUrl.includes(`localhost:${runtimePort}`));
 
         richRoles[role] = {
           model: info.model,
           provider: info.provider,
-          usingOmniRoute: usingOmni,
+          usingAgentProxy: usingOmni,
         };
       });
 

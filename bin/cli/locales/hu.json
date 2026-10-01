@@ -271,7 +271,7 @@
     "max_restarts": "Összeomlás utáni újraindítások maximális száma 30 másodpercen belül a feladás előtt (alapértelmezett: 2)",
     "tray": "Indítás a rendszertálcán (csak asztali környezetben, külön engedélyezendő)",
     "no_tray": "A rendszertálcaikon letiltása",
-    "ready_timeout": "Az üzemkészségi ellenőrzés időkorlátja ezredmásodpercben (az OMNIROUTE_READY_TIMEOUT_MS változóval is megadható, alapértelmezett: 60000)",
+    "ready_timeout": "Az üzemkészségi ellenőrzés időkorlátja ezredmásodpercben (az AGENTPROXY_READY_TIMEOUT_MS változóval is megadható, alapértelmezett: 60000)",
     "tls_cert": "A HTTPS-kiszolgáláshoz használandó TLS-tanúsítvány (PEM) elérési útja (az OMNIROUTE_TLS_CERT változóval is megadható)",
     "tls_key": "A HTTPS-kiszolgáláshoz használandó privát TLS-kulcs (PEM) elérési útja (az OMNIROUTE_TLS_KEY változóval is megadható)"
   },

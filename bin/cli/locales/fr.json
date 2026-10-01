@@ -271,7 +271,7 @@
     "max_restarts": "Nombre maximal de redémarrages après plantage en 30 s avant abandon (par défaut : 2)",
     "tray": "Démarrer dans la zone de notification système (ordinateur uniquement, option à activer)",
     "no_tray": "Désactiver l’icône de la zone de notification système",
-    "ready_timeout": "Délai d’expiration de la sonde de disponibilité en ms (également OMNIROUTE_READY_TIMEOUT_MS, valeur par défaut : 60000)",
+    "ready_timeout": "Délai d’expiration de la sonde de disponibilité en ms (également AGENTPROXY_READY_TIMEOUT_MS, valeur par défaut : 60000)",
     "tls_cert": "Chemin vers un certificat TLS (PEM) pour servir HTTPS (également OMNIROUTE_TLS_CERT)",
     "tls_key": "Chemin vers la clé privée TLS (PEM) pour servir HTTPS (également OMNIROUTE_TLS_KEY)"
   },

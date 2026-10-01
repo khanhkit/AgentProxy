@@ -271,7 +271,7 @@
     "max_restarts": "Maksimalt antall omstarter etter krasj innen 30 s før det gis opp (standard: 2)",
     "tray": "Start i systemstatusfeltet (kun skrivebord, må aktiveres)",
     "no_tray": "Deaktiver ikonet i systemstatusfeltet",
-    "ready_timeout": "Tidsavbrudd for klarhetssjekk i ms (også OMNIROUTE_READY_TIMEOUT_MS, standard 60000)",
+    "ready_timeout": "Tidsavbrudd for klarhetssjekk i ms (også AGENTPROXY_READY_TIMEOUT_MS, standard 60000)",
     "tls_cert": "Bane til et TLS-sertifikat (PEM) for å levere HTTPS (også OMNIROUTE_TLS_CERT)",
     "tls_key": "Bane til den private TLS-nøkkelen (PEM) for å levere HTTPS (også OMNIROUTE_TLS_KEY)"
   },

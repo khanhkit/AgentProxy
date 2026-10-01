@@ -986,7 +986,7 @@
     "batchFileDownloadFull": "Muat Turun Fail Penuh"
   },
   "disabled": "Dilumpuhkan",
-  "featureFlagOmnirouteEmergencyFallbackDescription": "Halakan permintaan yang telah kehabisan belanjawan kepada penyedia/model sandaran percuma kecemasan.",
+  "featureFlagAgentProxyEmergencyFallbackDescription": "Halakan permintaan yang telah kehabisan belanjawan kepada penyedia/model sandaran percuma kecemasan.",
   "featureFlagArenaEloSyncEnabledDescription": "Dayakan penyegerakan ELO papan kedudukan Arena AI secara berkala untuk penarafan kecerdasan model.",
   "featureFlagUniversalContextHandoffEnabledDescription": "Jana dan masukkan ringkasan perbualan apabila penghalaan kombo bertukar model. Lumpuhkan untuk mengendalikan pertukaran model secara berasingan dan menghalang permintaan penyerahan latar belakang bagi semua kombo sedia ada dan akan datang.",
   "featureFlagExposeCcDiscoveryAliasesDescription": "Iklankan claude/&lt;provider&gt;/&lt;model&gt; mirror ids pada /v1/models supaya senarai penemuan model gerbang Claude Code termasuk model bukan Claude. Amaran: menggandakan entri katalog untuk semua klien apabila diaktifkan secara global.",
@@ -2254,7 +2254,7 @@
     "requestFlowAria": "Aplikasi anda menghantar permintaan melalui kunci API ke OmniRoute",
     "requestFlowYourApp": "Aplikasi anda",
     "requestFlowApiKey": "Kunci API",
-    "requestFlowOmniRoute": "OmniRoute",
+    "requestFlowAgentProxy": "AgentProxy",
     "totalKeys": "Jumlah Kunci",
     "restricted": "Terhad",
     "totalRequests": "Jumlah Permintaan",
@@ -2761,7 +2761,7 @@
     "configurationSaved": "Konfigurasi berjaya disimpan.",
     "failedToSave": "Gagal menyimpan konfigurasi.",
     "noApiKeysCreateOne": "Tiada kunci API - Buat satu dalam halaman Kekunci",
-    "defaultOmnirouteKey": "sk_omniroute (lalai)",
+    "defaultAgentProxyKey": "sk_agentproxy (lalai)",
     "selectModel": "Pilih Model",
     "selectModelForAlias": "Pilih model untuk {alias}",
     "selectModelForTool": "Pilih Model untuk {tool}",
@@ -2858,13 +2858,13 @@
     "applied": "Digunakan!",
     "failed": "gagal",
     "resetDone": "Tetapkan semula!",
-    "omnirouteConfiguredOpenAiCompatible": "OmniRoute dikonfigurasikan sebagai pembekal serasi OpenAI",
+    "agentproxyConfiguredOpenAiCompatible": "AgentProxy dikonfigurasikan sebagai pembekal serasi OpenAI",
     "provider": "Pembekal",
     "model": "Model",
     "providers": "Pembekal",
     "auth": "Pengesahan",
     "noApiKeysAvailable": "Tiada kunci API tersedia",
-    "usingDefaultOmniroute": "Menggunakan lalai: sk_omniroute",
+    "usingDefaultAgentProxy": "Menggunakan lalai: sk_agentproxy",
     "updateConfig": "Kemas kini Konfigurasi",
     "applyConfig": "Gunakan Konfigurasi",
     "noBackupsAvailable": "Tiada sandaran tersedia.",
@@ -3145,8 +3145,8 @@
     "hermesConfiguredRoles": "{configured}/{total} peranan",
     "hermesQuickApply": "Gunakan model yang sama dengan cepat pada semua peranan:",
     "hermesApplyModelToAll": "Gunakan {model} pada setiap peranan",
-    "hermesViaOmniRoute": "{provider} (melalui OmniRoute)",
-    "hermesNotOmniRoute": "{provider} (bukan OmniRoute)",
+    "hermesViaAgentProxy": "{provider} (melalui AgentProxy)",
+    "hermesNotAgentProxy": "{provider} (bukan AgentProxy)",
     "hermesRemovePendingRole": "Alih keluar peranan ini daripada perubahan belum selesai",
     "hermesApply": "Gunakan pada Ejen Hermes",
     "hermesRolesWillUpdate": "{count, plural, one {# peranan akan dikemas kini} other {# peranan akan dikemas kini}}",
@@ -4142,7 +4142,7 @@
     "vscodeAliasModelsLabel": "Model VS Code",
     "vscodeAliasChatLabel": "Sembang VS Code",
     "localServer": "Pelayan Tempatan",
-    "cloudOmniroute": "OmniRoute Awan",
+    "cloudAgentProxy": "AgentProxy Awan",
     "copyUrl": "Salin URL",
     "badgeLoopbackTooltip": "Titik akhir ini hanya boleh diakses secara setempat (loopback sahaja)",
     "badgeAlwaysProtectedTooltip": "Titik akhir ini sentiasa dilindungi dan memerlukan kebenaran",
@@ -9979,7 +9979,7 @@
     "howItWorksStep3Description": "Permintaan dipenuhi oleh OpenAI, Anthropic, Gemini atau yang lain serta-merta.",
     "getStartedIn30Seconds": "Bermula dalam 30 Saat",
     "getStartedDescription": "Pasang OmniRoute, konfigurasikan pembekal anda melalui papan pemuka web dan mulakan penghalaan permintaan AI.",
-    "installOmniRoute": "Pasang OmniRoute",
+    "installAgentProxy": "Pasang AgentProxy",
     "installStepDescription": "Jalankan arahan npx untuk memulakan pelayan dengan serta-merta",
     "openDashboard": "Buka Papan Pemuka",
     "openDashboardStepDescription": "Konfigurasikan pembekal dan kunci API melalui antara muka web",
@@ -9988,7 +9988,7 @@
     "terminal": "terminal",
     "copy": "salin",
     "copied": "✓ Disalin",
-    "startingOmniRoute": "Memulakan OmniRoute...",
+    "startingAgentProxy": "Memulakan AgentProxy...",
     "serverRunningOnLabel": "Pelayan berjalan",
     "dashboardLabel": "Papan pemuka",
     "readyToRoute": "Sedia untuk laluan! ✓",
@@ -10382,7 +10382,7 @@
     "versionCommandPlaceholder": "Version Command Placeholder",
     "architectureTitle": "Architecture Title",
     "flowLocalBinary": "Flow Local Binary",
-    "flowOmniRoute": "Flow Omni Route",
+    "flowAgentProxy": "Flow Omni Route",
     "agentNamePlaceholder": "Agent Name Placeholder",
     "architectureDescription": "Architecture Description",
     "flowExecute": "Flow Execute",
@@ -10399,8 +10399,8 @@
     "agentUseCaseHint": "Boleh digunakan sebagai sasaran pelaksanaan melalui protokol ACP",
     "flowDiagramClient": "Apl Pelanggan",
     "flowDiagramClientDesc": "SDK, API atau perkhidmatan huluan",
-    "flowDiagramOmniRoute": "OmniRoute",
-    "flowDiagramOmniRouteDesc": "Menerima permintaan dan memilih sasaran",
+    "flowDiagramAgentProxy": "AgentProxy",
+    "flowDiagramAgentProxyDesc": "Menerima permintaan dan memilih sasaran",
     "flowDiagramSpawn": "Proses Bertelur",
     "flowDiagramSpawnDesc": "Melancarkan perduaan CLI melalui stdio",
     "flowDiagramCli": "Ejen CLI",
@@ -12965,16 +12965,16 @@
       "PROXY_AUTO_SELECT_ENABLED": {
         "description": "Apabila tiada proksi diperuntukkan kepada sambungan, pilih proksi pendaftaran pertama yang berfungsi secara automatik. Mati secara lalai kerana jika tidak, satu proksi pendaftaran akan menjadi sandaran global untuk semua trafik (#3332)."
       },
-      "OMNIROUTE_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
+      "AGENTPROXY_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
         "description": "Benarkan aliran OAuth dan pengesahan penyedia untuk memintas proksi yang dipin apabila semakan kebolehcapaian proksi gagal. Mati secara lalai kerana ini boleh mengubah IP keluar akaun."
       },
       "MITM_DISABLE_TLS_VERIFY": {
         "description": "Nyahdayakan pengesahan sijil TLS untuk proksi MITM."
       },
-      "OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS": {
         "description": "Benarkan URL penyedia yang menunjuk ke rangkaian peribadi atau dalaman."
       },
-      "OMNIROUTE_ALLOW_LOCAL_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_LOCAL_PROVIDER_URLS": {
         "description": "Benarkan penyedia pada localhost, LAN, dan julat IP peribadi. Ini diperlukan untuk model serasi OpenAI tempatan dan didayakan secara lalai. Titik akhir metadata awan seperti 169.254.169.254 kekal disekat."
       },
       "ENABLE_CC_COMPATIBLE_PROVIDER": {
@@ -12996,28 +12996,28 @@
       "RESPONSES_PASSTHROUGH_DROP_COMMENTARY": {
         "description": "Alih keluar item output fasa ulasan dalaman daripada strim laluan Responses API sebelum memajukannya kepada pelanggan. Nyahdayakan bendera ini untuk menerima ulasan huluan mentah."
       },
-      "OMNIROUTE_MCP_ENFORCE_SCOPES": {
+      "AGENTPROXY_MCP_ENFORCE_SCOPES": {
         "description": "Kuat kuasakan sekatan skop untuk akses alat MCP."
       },
-      "OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS": {
+      "AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS": {
         "description": "Mampatkan perihalan alat MCP untuk mengurangkan penggunaan token."
       },
-      "OMNIROUTE_ENABLE_RUNTIME_BACKGROUND_TASKS": {
+      "AGENTPROXY_ENABLE_RUNTIME_BACKGROUND_TASKS": {
         "description": "Dayakan pemprosesan tugas latar belakang semasa masa jalan."
       },
-      "OMNIROUTE_DISABLE_BACKGROUND_SERVICES": {
+      "AGENTPROXY_DISABLE_BACKGROUND_SERVICES": {
         "description": "Nyahdayakan semua perkhidmatan latar belakang, termasuk penyegaran semula dan penyegerakan kuota."
       },
-      "OMNIROUTE_RTK_TRUST_PROJECT_FILTERS": {
+      "AGENTPROXY_RTK_TRUST_PROJECT_FILTERS": {
         "description": "Percayai penapis RTK peringkat projek tanpa pengesahan."
       },
-      "OMNIROUTE_ENABLE_LIVE_WS": {
+      "AGENTPROXY_ENABLE_LIVE_WS": {
         "description": "Mulakan pelayan WebSocket papan pemuka masa nyata semasa import pada port gelung balik 20132. Tetapkan bendera kepada 0 atau false untuk menyahdayakannya. Pendedahan LAN juga memerlukan LIVE_WS_HOST=0.0.0.0 dan LIVE_WS_ALLOWED_ORIGINS."
       },
-      "OMNIROUTE_CODEX_WS_ENABLED": {
+      "AGENTPROXY_CODEX_WS_ENABLED": {
         "description": "Benarkan Codex menggunakan Responses melalui WebSocket. Apabila dinyahdayakan, Codex akan kembali menggunakan HTTP Responses."
       },
-      "OMNIROUTE_EMERGENCY_FALLBACK": {
+      "AGENTPROXY_EMERGENCY_FALLBACK": {
         "description": "Hantar permintaan belanjawan habis ke penyedia dan model sandaran percuma kecemasan."
       },
       "STREAM_RECOVERY_ENABLED": {
@@ -13044,16 +13044,16 @@
       "PRICING_SYNC_ENABLED": {
         "description": "Segerakkan data harga secara automatik. Pemboleh ubah persekitaran PRICING_SYNC_ENABLED juga mestilah true."
       },
-      "OMNIROUTE_AUTO_SYNC_CODEX_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CODEX_PROFILES": {
         "description": "Selepas penyegerakan penyedia-model, jana semula profil ~/.codex/*.config.toml daripada katalog langsung. Ini tidak pernah mengubah konfigurasi Codex yang aktif atau lalai dan dinyahdayakan secara lalai."
       },
-      "OMNIROUTE_AUTO_SYNC_CLAUDE_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CLAUDE_PROFILES": {
         "description": "Selepas penyegerakan penyedia-model, jana semula profil ~/.claude/profiles/'<name>'/settings.json daripada katalog langsung. Ini tidak pernah mengubah konfigurasi Claude yang aktif atau lalai dan dinyahdayakan secara lalai."
       },
-      "OMNIROUTE_DISABLE_LOCAL_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_LOCAL_HEALTHCHECK": {
         "description": "Nyahdayakan titik akhir pemeriksaan kesihatan tika tempatan."
       },
-      "OMNIROUTE_DISABLE_TOKEN_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_TOKEN_HEALTHCHECK": {
         "description": "Nyahdayakan pemeriksaan kesihatan pengesahan token."
       },
       "SKILLS_SANDBOX_NETWORK_ENABLED": {
@@ -14190,5 +14190,5 @@
     "partnerLinkNote": "Pautan rakan kongsi",
     "dismissAriaLabel": "Tutup"
   },
-  "featureFlagOmnirouteDisableThinkingLevelVariantsDescription": "Lumpuhkan penjanaan varian tahap pemikiran (cth. -low, -medium, -high) dalam katalog /v1/models."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Lumpuhkan penjanaan varian tahap pemikiran (cth. -low, -medium, -high) dalam katalog /v1/models."
 }

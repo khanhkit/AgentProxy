@@ -27,7 +27,7 @@ export const configPreviewQuerySchema = z.object({ baseUrl: baseUrlSchema.option
 
 export function defaultConfigBaseUrl(): string {
   const port = process.env.API_PORT || process.env.PORT || 20128;
-  return process.env.OMNIROUTE_BASE_URL || process.env.BASE_URL || `http://localhost:${port}/v1`;
+  return process.env.AGENTPROXY_BASE_URL || process.env.BASE_URL || `http://localhost:${port}/v1`;
 }
 
 /** Canonical AgentProxy header first; legacy OmniRoute header remains a migration alias. */

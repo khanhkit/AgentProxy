@@ -271,7 +271,7 @@
     "max_restarts": "Maksymalna liczba ponownych uruchomień po awarii w ciągu 30 s przed rezygnacją (domyślnie: 2)",
     "tray": "Uruchom w zasobniku systemowym (tylko aplikacja komputerowa, opcjonalnie)",
     "no_tray": "Wyłącz ikonę w zasobniku systemowym",
-    "ready_timeout": "Limit czasu sondy gotowości w ms (również OMNIROUTE_READY_TIMEOUT_MS, domyślnie 60000)",
+    "ready_timeout": "Limit czasu sondy gotowości w ms (również AGENTPROXY_READY_TIMEOUT_MS, domyślnie 60000)",
     "tls_cert": "Ścieżka do certyfikatu TLS (PEM) do obsługi HTTPS (również OMNIROUTE_TLS_CERT)",
     "tls_key": "Ścieżka do klucza prywatnego TLS (PEM) do obsługi HTTPS (również OMNIROUTE_TLS_KEY)"
   },

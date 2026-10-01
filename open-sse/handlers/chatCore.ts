@@ -1658,8 +1658,7 @@ async function handleChatCoreInner({
         }
       }
       const compressionInputBody = body as Record<string, unknown>;
-      // Adaptive context-budget (Sub-project C): model context window + request max_tokens drive
-      // the budget target. getTokenLimit is already imported; provider/effectiveModel resolved above.
+      // Adaptive context-budget: model context window + request max_tokens drive the target.
       const adaptiveModelContextLimit =
         provider && effectiveModel ? getTokenLimit(provider, effectiveModel) : null;
       const requestMaxTokens =

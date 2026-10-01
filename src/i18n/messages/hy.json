@@ -986,7 +986,7 @@
     "batchFileDownloadFull": "Ներբեռնել ամբողջական ֆայլը"
   },
   "disabled": "Անջատված է",
-  "featureFlagOmnirouteEmergencyFallbackDescription": "Բյուջեն սպառած հարցումներն ուղղորդել արտակարգ անվճար պահուստային մատակարարին/մոդելին։",
+  "featureFlagAgentProxyEmergencyFallbackDescription": "Բյուջեն սպառած հարցումներն ուղղորդել արտակարգ անվճար պահուստային մատակարարին/մոդելին։",
   "featureFlagArenaEloSyncEnabledDescription": "Միացնել Arena AI առաջատարների աղյուսակի ELO-ի պարբերական համաժամացումը՝ մոդելների ինտելեկտի վարկանիշների համար։",
   "featureFlagUniversalContextHandoffEnabledDescription": "Ստեղծել և ներարկել զրույցների ամփոփումներ, երբ համակցված երթուղավորումը փոխում է մոդելները։ Անջատեք՝ մոդելների փոխարկումներն անկախ մշակելու և բոլոր առկա ու ապագա համակցությունների համար ֆոնային փոխանցման հարցումները կանխելու նպատակով։",
   "featureFlagExposeCcDiscoveryAliasesDescription": "Հրապարակել claude/&lt;provider&gt;/&lt;model&gt; հայելային նույնացուցիչները /v1/models-ում, որպեսզի Claude Code դարպասի մոդելների հայտնաբերման ցանկում ցուցադրվեն ոչ Claude մոդելները։ Զգուշացում․ գլոբալ միացնելու դեպքում կրկնապատկում է կատալոգի գրառումները բոլոր հաճախորդների համար։",
@@ -2254,7 +2254,7 @@
     "requestFlowAria": "Ձեր հավելվածը API բանալու միջոցով հարցումներ է ուղարկում OmniRoute-ին",
     "requestFlowYourApp": "Ձեր հավելվածը",
     "requestFlowApiKey": "API բանալի",
-    "requestFlowOmniRoute": "OmniRoute",
+    "requestFlowAgentProxy": "AgentProxy",
     "totalKeys": "Բանալիների ընդհանուր քանակը",
     "restricted": "Սահմանափակ",
     "totalRequests": "Հարցումների ընդհանուր քանակը",
@@ -2761,7 +2761,7 @@
     "configurationSaved": "Կարգավորումները հաջողությամբ պահպանվեցին։",
     "failedToSave": "Չհաջողվեց պահպանել կարգավորումները։",
     "noApiKeysCreateOne": "API բանալիներ չկան․ ստեղծեք մեկը Բանալիների էջում",
-    "defaultOmnirouteKey": "sk_omniroute (կանխադրված)",
+    "defaultAgentProxyKey": "sk_agentproxy (կանխադրված)",
     "selectModel": "Ընտրել մոդել",
     "selectModelForAlias": "Ընտրել մոդել՝ {alias}-ի համար",
     "selectModelForTool": "Ընտրել մոդել՝ {tool}-ի համար",
@@ -2858,13 +2858,13 @@
     "applied": "Կիրառվեց։",
     "failed": "Ձախողվեց",
     "resetDone": "Վերակայվեց։",
-    "omnirouteConfiguredOpenAiCompatible": "OmniRoute-ը կարգավորված է որպես OpenAI-ի հետ համատեղելի մատակարար",
+    "agentproxyConfiguredOpenAiCompatible": "AgentProxy-ը կարգավորված է որպես OpenAI-ի հետ համատեղելի մատակարար",
     "provider": "Մատակարար",
     "model": "Մոդել",
     "providers": "Մատակարարներ",
     "auth": "Նույնականացում",
     "noApiKeysAvailable": "API բանալիներ հասանելի չեն",
-    "usingDefaultOmniroute": "Օգտագործվում է լռելյայնը՝ sk_omniroute",
+    "usingDefaultAgentProxy": "Օգտագործվում է լռելյայնը՝ sk_agentproxy",
     "updateConfig": "Թարմացնել կազմաձևումը",
     "applyConfig": "Կիրառել կազմաձևումը",
     "noBackupsAvailable": "Պահուստային պատճեններ չկան։",
@@ -3145,8 +3145,8 @@
     "hermesConfiguredRoles": "{configured}/{total} դեր",
     "hermesQuickApply": "Արագորեն կիրառեք նույն մոդելը բոլոր դերերի համար․",
     "hermesApplyModelToAll": "Կիրառել {model}-ը բոլոր դերերի համար",
-    "hermesViaOmniRoute": "{provider} (OmniRoute-ի միջոցով)",
-    "hermesNotOmniRoute": "{provider} (ոչ OmniRoute-ի միջոցով)",
+    "hermesViaAgentProxy": "{provider} (AgentProxy-ի միջոցով)",
+    "hermesNotAgentProxy": "{provider} (ոչ AgentProxy-ի միջոցով)",
     "hermesRemovePendingRole": "Հեռացնել այս դերը սպասվող փոփոխություններից",
     "hermesApply": "Կիրառել Hermes Agent-ում",
     "hermesRolesWillUpdate": "{count, plural, one {# դեր կթարմացվի} other {# դեր կթարմացվի}}",
@@ -4125,7 +4125,7 @@
     "vscodeAliasModelsLabel": "VS Code մոդելներ",
     "vscodeAliasChatLabel": "VS Code զրույց",
     "localServer": "Տեղային սերվեր",
-    "cloudOmniroute": "Ամպային OmniRoute",
+    "cloudAgentProxy": "Ամպային AgentProxy",
     "copyUrl": "Պատճենել URL-ը",
     "badgeLoopbackTooltip": "Այս վերջնակետը հասանելի է միայն տեղային եղանակով (միայն loopback)",
     "badgeAlwaysProtectedTooltip": "Այս վերջնակետը միշտ պաշտպանված է և պահանջում է լիազորում",
@@ -9962,7 +9962,7 @@
     "howItWorksStep3Description": "Հարցումն ակնթարթորեն կատարվում է OpenAI-ի, Anthropic-ի, Gemini-ի կամ այլ մատակարարների կողմից։",
     "getStartedIn30Seconds": "Սկսեք 30 վայրկյանում",
     "getStartedDescription": "Տեղադրեք OmniRoute-ը, կազմաձևեք ձեր մատակարարները վեբ կառավարման վահանակի միջոցով և սկսեք ուղղորդել AI հարցումները։",
-    "installOmniRoute": "Տեղադրել OmniRoute-ը",
+    "installAgentProxy": "Տեղադրել AgentProxy-ը",
     "installStepDescription": "Գործարկեք npx հրամանը՝ սերվերն անմիջապես մեկնարկելու համար",
     "openDashboard": "Բացել կառավարման վահանակը",
     "openDashboardStepDescription": "Կազմաձևեք մատակարարներն ու API բանալիները վեբ միջերեսի միջոցով",
@@ -9971,7 +9971,7 @@
     "terminal": "տերմինալ",
     "copy": "Պատճենել",
     "copied": "✓ Պատճենված է",
-    "startingOmniRoute": "OmniRoute-ը մեկնարկում է...",
+    "startingAgentProxy": "AgentProxy-ը մեկնարկում է...",
     "serverRunningOnLabel": "Սերվերն աշխատում է՝",
     "dashboardLabel": "Կառավարման վահանակ",
     "readyToRoute": "Պատրաստ է ուղղորդել։ ✓",
@@ -10365,7 +10365,7 @@
     "versionCommandPlaceholder": "օր.՝ my-agent --version",
     "architectureTitle": "Ինչպես են աշխատում գործակալների թիրախները",
     "flowLocalBinary": "3 · CLI գործընթաց՝ սեփական նույնականացմամբ",
-    "flowOmniRoute": "1 · Հարցումը հասնում է OmniRoute-ին",
+    "flowAgentProxy": "1 · Հարցումը հասնում է AgentProxy-ին",
     "agentNamePlaceholder": "օր.՝ Իմ հատուկ գործակալը",
     "architectureDescription": "Երբ հարցում է ստացվում, OmniRoute-ը կարող է գործարկել տեղային CLI բինար ֆայլ (օր.՝ claude, codex, goose) և հարցումը փոխանցել դրա միջոցով։ CLI-ն մշակում է հարցումը՝ օգտագործելով իր սեփական նույնականացման տվյալները, և արդյունքը վերադարձնում է OmniRoute-ի միջոցով։",
     "flowExecute": "4 · Պատասխանը վերադարձվում է հաճախորդին",
@@ -10382,8 +10382,8 @@
     "agentUseCaseHint": "Կարող է օգտագործվել որպես կատարման թիրախ՝ ACP արձանագրության միջոցով",
     "flowDiagramClient": "Հաճախորդ հավելված",
     "flowDiagramClientDesc": "SDK, API կամ վերին մակարդակի ծառայություն",
-    "flowDiagramOmniRoute": "OmniRoute",
-    "flowDiagramOmniRouteDesc": "Ստանում է հարցումը և ընտրում թիրախը",
+    "flowDiagramAgentProxy": "AgentProxy",
+    "flowDiagramAgentProxyDesc": "Ստանում է հարցումը և ընտրում թիրախը",
     "flowDiagramSpawn": "Գործընթացի գործարկում",
     "flowDiagramSpawnDesc": "Գործարկում է CLI բինար ֆայլը stdio-ի միջոցով",
     "flowDiagramCli": "CLI գործակալ",
@@ -12938,16 +12938,16 @@
       "PROXY_AUTO_SELECT_ENABLED": {
         "description": "Երբ կապին պրոքսի նշանակված չէ, ինքնաբերաբար ընտրել գրանցամատյանի առաջին աշխատող պրոքսին։ Լռելյայն անջատված է, քանի որ հակառակ դեպքում գրանցամատյանի մեկ պրոքսին դառնում է ամբողջ տրաֆիկի համընդհանուր պահուստային տարբերակը (#3332)։"
       },
-      "OMNIROUTE_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
+      "AGENTPROXY_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
         "description": "Թույլատրել OAuth-ի և պրովայդերի վավերացման հոսքերին շրջանցել ամրակցված պրոքսին, երբ պրոքսիի հասանելիության ստուգումները ձախողվում են։ Լռելյայն անջատված է, քանի որ դա կարող է փոխել հաշվի ելքային IP-ն։"
       },
       "MITM_DISABLE_TLS_VERIFY": {
         "description": "Անջատել TLS վկայագրի ստուգումը MITM պրոքսիի համար։"
       },
-      "OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS": {
         "description": "Թույլատրել պրովայդերի URL-ներ, որոնք մատնանշում են մասնավոր կամ ներքին ցանցեր։"
       },
-      "OMNIROUTE_ALLOW_LOCAL_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_LOCAL_PROVIDER_URLS": {
         "description": "Թույլատրել պրովայդերներ localhost-ում, LAN-ում և մասնավոր IP տիրույթներում։ Սա անհրաժեշտ է OpenAI-ի հետ համատեղելի տեղային մոդելների համար և լռելյայն միացված է։ Ամպային մետատվյալների վերջնակետերը, օրինակ՝ 169.254.169.254-ը, մնում են արգելափակված։"
       },
       "ENABLE_CC_COMPATIBLE_PROVIDER": {
@@ -12969,28 +12969,28 @@
       "RESPONSES_PASSTHROUGH_DROP_COMMENTARY": {
         "description": "Հեռացնել ներքին մեկնաբանության փուլի ելքային տարրերը Responses API-ի միջանցիկ հոսքերից՝ նախքան դրանք հաճախորդներին փոխանցելը։ Անջատեք այս դրոշակը՝ վերին հոսքի չմշակված մեկնաբանությունը ստանալու համար։"
       },
-      "OMNIROUTE_MCP_ENFORCE_SCOPES": {
+      "AGENTPROXY_MCP_ENFORCE_SCOPES": {
         "description": "Կիրառել գործողության շրջանակի սահմանափակումները MCP գործիքների հասանելիության համար։"
       },
-      "OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS": {
+      "AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS": {
         "description": "Սեղմել MCP գործիքների նկարագրությունները՝ թոքենների օգտագործումը նվազեցնելու համար։"
       },
-      "OMNIROUTE_ENABLE_RUNTIME_BACKGROUND_TASKS": {
+      "AGENTPROXY_ENABLE_RUNTIME_BACKGROUND_TASKS": {
         "description": "Միացնել ֆոնային առաջադրանքների մշակումը գործարկման ժամանակ։"
       },
-      "OMNIROUTE_DISABLE_BACKGROUND_SERVICES": {
+      "AGENTPROXY_DISABLE_BACKGROUND_SERVICES": {
         "description": "Անջատել բոլոր ֆոնային ծառայությունները՝ ներառյալ քվոտայի թարմացումն ու համաժամացումը։"
       },
-      "OMNIROUTE_RTK_TRUST_PROJECT_FILTERS": {
+      "AGENTPROXY_RTK_TRUST_PROJECT_FILTERS": {
         "description": "Վստահել նախագծի մակարդակի RTK զտիչներին՝ առանց վավերացման։"
       },
-      "OMNIROUTE_ENABLE_LIVE_WS": {
+      "AGENTPROXY_ENABLE_LIVE_WS": {
         "description": "Ներմուծման ժամանակ գործարկել իրական ժամանակի կառավարման վահանակի WebSocket սերվերը loopback-ի 20132 պորտում։ Այն անջատելու համար դրոշակը սահմանեք 0 կամ false։ LAN հասանելիության համար անհրաժեշտ են նաև LIVE_WS_HOST=0.0.0.0 և LIVE_WS_ALLOWED_ORIGINS։"
       },
-      "OMNIROUTE_CODEX_WS_ENABLED": {
+      "AGENTPROXY_CODEX_WS_ENABLED": {
         "description": "Թույլատրել Codex-ին օգտագործել Responses-ը WebSocket-ի միջոցով։ Անջատված լինելու դեպքում Codex-ն անցնում է HTTP Responses-ին։"
       },
-      "OMNIROUTE_EMERGENCY_FALLBACK": {
+      "AGENTPROXY_EMERGENCY_FALLBACK": {
         "description": "Սպառված բյուջեով հարցումներն ուղղորդել արտակարգ անվճար պահուստային պրովայդերին և մոդելին։"
       },
       "STREAM_RECOVERY_ENABLED": {
@@ -13017,16 +13017,16 @@
       "PRICING_SYNC_ENABLED": {
         "description": "Ավտոմատ համաժամացնել գնագոյացման տվյալները։ PRICING_SYNC_ENABLED միջավայրի փոփոխականը նույնպես պետք է լինի true։"
       },
-      "OMNIROUTE_AUTO_SYNC_CODEX_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CODEX_PROFILES": {
         "description": "Մատակարարների մոդելների համաժամացումից հետո ընթացիկ կատալոգից վերաստեղծել ~/.codex/*.config.toml պրոֆիլները։ Սա երբեք չի փոխում Codex-ի ակտիվ կամ լռելյայն կազմաձևումը և լռելյայն անջատված է։"
       },
-      "OMNIROUTE_AUTO_SYNC_CLAUDE_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CLAUDE_PROFILES": {
         "description": "Մատակարարների մոդելների համաժամացումից հետո ընթացիկ կատալոգից վերաստեղծել ~/.claude/profiles/'<name>'/settings.json պրոֆիլները։ Սա երբեք չի փոխում Claude-ի ակտիվ կամ լռելյայն կազմաձևումը և լռելյայն անջատված է։"
       },
-      "OMNIROUTE_DISABLE_LOCAL_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_LOCAL_HEALTHCHECK": {
         "description": "Անջատել տեղային ինստանսի աշխատունակության ստուգման վերջնակետը։"
       },
-      "OMNIROUTE_DISABLE_TOKEN_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_TOKEN_HEALTHCHECK": {
         "description": "Անջատել թոքենի վավերացման աշխատունակության ստուգումը։"
       },
       "SKILLS_SANDBOX_NETWORK_ENABLED": {
@@ -14158,5 +14158,5 @@
     "partnerLinkNote": "Գործընկերային հղում",
     "dismissAriaLabel": "Փակել"
   },
-  "featureFlagOmnirouteDisableThinkingLevelVariantsDescription": "Անջատել մտածողության մակարդակի տարբերակների (օր.՝ -low, -medium, -high) ստեղծումը /v1/models կատալոգում։"
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Անջատել մտածողության մակարդակի տարբերակների (օր.՝ -low, -medium, -high) ստեղծումը /v1/models կատալոգում։"
 }

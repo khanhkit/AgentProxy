@@ -90,10 +90,32 @@ export async function findListeningPids(port, deps = {}) {
       .map((entry) => parseInt(entry, 10))
       .filter((entry) => Number.isFinite(entry) && entry > 0);
   } catch {
-    // No netstat/lsof available, or simply no listener. Report "free": a false
+    // Tool missing (ENOENT) or unusable: "no listener" cannot be distinguished
+    // from "cannot look" here, so report null and let the caller decide. The
+    // serve preflight bind-probes the port in that case (#14518) — a false
     // "busy" would block a legitimate start, the worse failure of the two.
-    return [];
+    return null;
   }
+}
+
+// Bind-probe a port without any external binary: try to listen on it. Answers
+// "is anything holding this port" on hosts without lsof/netstat (Termux, slim
+// containers) and on any other discovery failure. EADDRINUSE from the probe
+// attempt means the port is held; EACCES (privileged port) and friends are
+// reported as free — the guard must not block a legitimate start it cannot
+// actually observe (#14518 keeps the false-"busy" failure mode the worse one).
+export async function probePortFree(port, deps = {}) {
+  const net = deps.net || (await import("node:net"));
+  return new Promise((resolve) => {
+    const probe = net.createServer();
+    probe.once("error", (err) => {
+      probe.close();
+      resolve(err.code !== "EADDRINUSE");
+    });
+    probe.listen(port, () => {
+      probe.close(() => resolve(true));
+    });
+  });
 }
 
 function parseNetstatListeningPids(stdout, port) {
@@ -137,7 +159,7 @@ const MIN_PROBE_TIMEOUT_MS = 250;
 // #2460: Default raised from 15s to 60s so Windows users (slower Next.js
 // cold start due to filesystem watchers, antivirus, etc.) get a working
 // "server ready" signal instead of a phantom timeout while the server is
-// still booting. #13369: Made configurable via OMNIROUTE_READY_TIMEOUT_MS
+// still booting. #13369: Made configurable via AGENTPROXY_READY_TIMEOUT_MS
 // so operators on slow cold starts (e.g. 6+ min Windows boots) can raise
 // the budget instead of hitting the warning on every start.
 //
@@ -154,7 +176,7 @@ export function resolveReadyTimeoutMs(overrides = {}) {
   if (typeof overrides.timeoutMs === "number" && overrides.timeoutMs > 0) {
     return overrides.timeoutMs;
   }
-  const envValue = Number.parseInt(process.env.OMNIROUTE_READY_TIMEOUT_MS || "", 10);
+  const envValue = Number.parseInt(process.env.AGENTPROXY_READY_TIMEOUT_MS || "", 10);
   return Number.isFinite(envValue) && envValue > 0 ? envValue : DEFAULT_READY_TIMEOUT_MS;
 }
 

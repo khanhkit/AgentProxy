@@ -14,7 +14,7 @@ test("Docker image ships and enables the AgentProxy Rust gateway", () => {
   assert.match(dockerfile, /cargo build .*--release -p agentproxy-gateway/);
   assert.match(
     dockerfile,
-    /COPY --from=rust-builder \/tmp\/agentproxy-gateway \.\/rust\/target\/release\/agentproxy-gateway/
+    /COPY --chown=node:node --from=rust-builder \/tmp\/agentproxy-gateway \.\/rust\/target\/release\/agentproxy-gateway/
   );
   assert.match(dockerfile, /ENV AGENTPROXY_RUST_CORE=1/);
   assert.match(
@@ -59,7 +59,7 @@ test("Docker publish workflow is AgentProxy GHCR-only and multi-arch", () => {
   assert.doesNotMatch(workflow, /docker\.io/i);
   assert.match(workflow, /linux\/amd64/);
   assert.match(workflow, /linux\/arm64/);
-  assert.match(workflow, /AGENTPROXY_BUILD_MEMORY_MB=7168/);
+  assert.match(workflow, /AGENTPROXY_BUILD_MEMORY_MB=12288/);
   assert.match(workflow, /AGENTPROXY_USE_TURBOPACK=0/);
 });
 

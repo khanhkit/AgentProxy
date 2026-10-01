@@ -986,7 +986,7 @@
     "batchFileDownloadFull": "ดาวน์โหลดไฟล์ทั้งหมด"
   },
   "disabled": "ปิดใช้งาน",
-  "featureFlagOmnirouteEmergencyFallbackDescription": "กำหนดเส้นทางคำขอที่งบประมาณหมดไปยังผู้ให้บริการ/โมเดลสำรองฟรีในกรณีฉุกเฉิน",
+  "featureFlagAgentProxyEmergencyFallbackDescription": "กำหนดเส้นทางคำขอที่งบประมาณหมดไปยังผู้ให้บริการ/โมเดลสำรองฟรีในกรณีฉุกเฉิน",
   "featureFlagArenaEloSyncEnabledDescription": "เปิดใช้งานการซิงค์ ELO ของลีดเดอร์บอร์ด Arena AI เป็นระยะสำหรับการจัดอันดับความฉลาดของโมเดล",
   "featureFlagUniversalContextHandoffEnabledDescription": "สร้างและแทรกข้อมูลสรุปการสนทนาเมื่อการกำหนดเส้นทางแบบคอมโบสลับโมเดล ปิดใช้งานเพื่อให้การสลับโมเดลทำงานแยกจากกัน และป้องกันคำขอส่งต่องานเบื้องหลังสำหรับคอมโบทั้งหมดทั้งที่มีอยู่และที่จะสร้างในอนาคต",
   "featureFlagExposeCcDiscoveryAliasesDescription": "โฆษณา claude/&lt;provider&gt;/&lt;model&gt; mirror ids บน /v1/models เพื่อให้รายการการค้นหาโมเดลของ Claude Code แสดงโมเดลที่ไม่ใช่ Claude เตือน: จะทำให้มีรายการในแคตตาล็อกซ้ำสำหรับลูกค้าทุกคนเมื่อเปิดใช้งานทั่วโลก.",
@@ -2254,7 +2254,7 @@
     "requestFlowAria": "แอปของคุณส่งคำขอผ่านคีย์ API ไปยัง OmniRoute",
     "requestFlowYourApp": "แอปของคุณ",
     "requestFlowApiKey": "คีย์ API",
-    "requestFlowOmniRoute": "OmniRoute",
+    "requestFlowAgentProxy": "AgentProxy",
     "totalKeys": "คีย์ทั้งหมด",
     "restricted": "ถูกจำกัด",
     "totalRequests": "คำขอทั้งหมด",
@@ -2761,7 +2761,7 @@
     "configurationSaved": "บันทึกการกำหนดค่าเรียบร้อยแล้ว",
     "failedToSave": "บันทึกการกำหนดค่าไม่สำเร็จ",
     "noApiKeysCreateOne": "ไม่มีคีย์ API - สร้างคีย์ในหน้าคีย์",
-    "defaultOmnirouteKey": "sk_omniroute (ค่าเริ่มต้น)",
+    "defaultAgentProxyKey": "sk_agentproxy (ค่าเริ่มต้น)",
     "selectModel": "เลือกรุ่น",
     "selectModelForAlias": "เลือกรุ่นสำหรับ {alias}",
     "selectModelForTool": "เลือกรุ่นสำหรับ {tool}",
@@ -2858,13 +2858,13 @@
     "applied": "สมัครแล้ว!",
     "failed": "ล้มเหลว",
     "resetDone": "รีเซ็ต!",
-    "omnirouteConfiguredOpenAiCompatible": "OmniRoute ได้รับการกำหนดค่าให้เป็นผู้ให้บริการที่รองรับ OpenAI",
+    "agentproxyConfiguredOpenAiCompatible": "AgentProxy ได้รับการกำหนดค่าให้เป็นผู้ให้บริการที่รองรับ OpenAI",
     "provider": "ผู้ให้บริการ",
     "model": "รุ่น",
     "providers": "ผู้ให้บริการ",
     "auth": "การรับรองความถูกต้อง",
     "noApiKeysAvailable": "ไม่มีคีย์ API ที่พร้อมใช้งาน",
-    "usingDefaultOmniroute": "ใช้ค่าเริ่มต้น: sk_omniroute",
+    "usingDefaultAgentProxy": "ใช้ค่าเริ่มต้น: sk_agentproxy",
     "updateConfig": "อัปเดตการกำหนดค่า",
     "applyConfig": "ใช้การกำหนดค่า",
     "noBackupsAvailable": "ไม่มีการสำรองข้อมูล",
@@ -3145,8 +3145,8 @@
     "hermesConfiguredRoles": "{configured}/{total} บทบาท",
     "hermesQuickApply": "ใช้โมเดลเดียวกันกับทุกบทบาทอย่างรวดเร็ว:",
     "hermesApplyModelToAll": "ใช้ {model} กับทุกบทบาท",
-    "hermesViaOmniRoute": "{provider} (ผ่าน OmniRoute)",
-    "hermesNotOmniRoute": "{provider} (ไม่ใช่ OmniRoute)",
+    "hermesViaAgentProxy": "{provider} (ผ่าน AgentProxy)",
+    "hermesNotAgentProxy": "{provider} (ไม่ใช่ AgentProxy)",
     "hermesRemovePendingRole": "นำบทบาทนี้ออกจากรายการเปลี่ยนแปลงที่รอดำเนินการ",
     "hermesApply": "ใช้กับ Hermes Agent",
     "hermesRolesWillUpdate": "{count, plural, one {# บทบาทจะได้รับการอัปเดต} other {# บทบาทจะได้รับการอัปเดต}}",
@@ -4142,7 +4142,7 @@
     "vscodeAliasModelsLabel": "โมเดล VS Code",
     "vscodeAliasChatLabel": "แชท VS Code",
     "localServer": "เซิร์ฟเวอร์ท้องถิ่น",
-    "cloudOmniroute": "คลาวด์ OmniRoute",
+    "cloudAgentProxy": "คลาวด์ AgentProxy",
     "copyUrl": "คัดลอก URL",
     "badgeLoopbackTooltip": "ปลายทางนี้สามารถเข้าถึงได้จากภายในเครื่องเท่านั้น (loopback เท่านั้น)",
     "badgeAlwaysProtectedTooltip": "ปลายทางนี้ได้รับการป้องกันเสมอและต้องมีการอนุญาตสิทธิ์",
@@ -9979,7 +9979,7 @@
     "howItWorksStep3Description": "คำขอนี้ดำเนินการโดย OpenAI, Anthropic, Gemini หรืออื่นๆ ทันที",
     "getStartedIn30Seconds": "เริ่มต้นใน 30 วินาที",
     "getStartedDescription": "ติดตั้ง OmniRoute กำหนดค่าผู้ให้บริการของคุณผ่านแดชบอร์ดเว็บ และเริ่มกำหนดเส้นทางคำขอ AI",
-    "installOmniRoute": "ติดตั้ง OmniRoute",
+    "installAgentProxy": "ติดตั้ง AgentProxy",
     "installStepDescription": "รันคำสั่ง npx เพื่อเริ่มเซิร์ฟเวอร์ทันที",
     "openDashboard": "เปิดแดชบอร์ด",
     "openDashboardStepDescription": "กำหนดค่าผู้ให้บริการและคีย์ API ผ่านทางเว็บอินเตอร์เฟส",
@@ -9988,7 +9988,7 @@
     "terminal": "สถานีปลายทาง",
     "copy": "คัดลอก",
     "copied": "✓ คัดลอกแล้ว",
-    "startingOmniRoute": "กำลังเริ่ม OmniRoute...",
+    "startingAgentProxy": "กำลังเริ่ม AgentProxy...",
     "serverRunningOnLabel": "เซิร์ฟเวอร์กำลังทำงานอยู่",
     "dashboardLabel": "แดชบอร์ด",
     "readyToRoute": "พร้อมลุย! ✓",
@@ -10382,7 +10382,7 @@
     "versionCommandPlaceholder": "Version Command Placeholder",
     "architectureTitle": "Architecture Title",
     "flowLocalBinary": "Flow Local Binary",
-    "flowOmniRoute": "Flow Omni Route",
+    "flowAgentProxy": "Flow Omni Route",
     "agentNamePlaceholder": "Agent Name Placeholder",
     "architectureDescription": "Architecture Description",
     "flowExecute": "Flow Execute",
@@ -10399,8 +10399,8 @@
     "agentUseCaseHint": "สามารถใช้เป็นเป้าหมายการดำเนินการผ่านโปรโตคอล ACP",
     "flowDiagramClient": "แอปไคลเอ็นต์",
     "flowDiagramClientDesc": "SDK, API หรือบริการอัปสตรีม",
-    "flowDiagramOmniRoute": "OmniRoute",
-    "flowDiagramOmniRouteDesc": "รับคำขอและเลือกเป้าหมาย",
+    "flowDiagramAgentProxy": "AgentProxy",
+    "flowDiagramAgentProxyDesc": "รับคำขอและเลือกเป้าหมาย",
     "flowDiagramSpawn": "กระบวนการวางไข่",
     "flowDiagramSpawnDesc": "เปิดตัวไบนารี CLI ผ่าน stdio",
     "flowDiagramCli": "ตัวแทน CLI",
@@ -12965,16 +12965,16 @@
       "PROXY_AUTO_SELECT_ENABLED": {
         "description": "เมื่อไม่มีการกำหนดพร็อกซีให้กับการเชื่อมต่อ ให้เลือกพร็อกซีรีจิสทรีตัวแรกที่ใช้งานได้โดยอัตโนมัติ ปิดใช้งานเป็นค่าเริ่มต้นเนื่องจากมิฉะนั้นพร็อกซีรีจิสทรีตัวเดียวจะกลายเป็นตัวสำรองส่วนกลางสำหรับทราฟฟิกทั้งหมด (#3332)"
       },
-      "OMNIROUTE_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
+      "AGENTPROXY_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
         "description": "อนุญาตให้โฟลว์ OAuth และการตรวจสอบความถูกต้องของผู้ให้บริการข้ามพร็อกซีที่ปักหมุดไว้เมื่อการตรวจสอบการเข้าถึงพร็อกซีล้มเหลว ปิดใช้งานเป็นค่าเริ่มต้นเนื่องจากอาจเปลี่ยน IP ขาออกของบัญชีได้"
       },
       "MITM_DISABLE_TLS_VERIFY": {
         "description": "ปิดใช้งานการตรวจสอบใบรับรอง TLS สำหรับพร็อกซี MITM"
       },
-      "OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS": {
         "description": "อนุญาต URL ของผู้ให้บริการที่ชี้ไปยังเครือข่ายส่วนตัวหรือเครือข่ายภายใน"
       },
-      "OMNIROUTE_ALLOW_LOCAL_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_LOCAL_PROVIDER_URLS": {
         "description": "อนุญาตผู้ให้บริการบน localhost, LAN และช่วง IP ส่วนตัว จำเป็นสำหรับโมเดลที่เข้ากันได้กับ OpenAI ในเครื่องและเปิดใช้งานเป็นค่าเริ่มต้น ปลายทาง Cloud-metadata เช่น 169.254.169.254 จะยังคงถูกบล็อก"
       },
       "ENABLE_CC_COMPATIBLE_PROVIDER": {
@@ -12996,28 +12996,28 @@
       "RESPONSES_PASSTHROUGH_DROP_COMMENTARY": {
         "description": "ลบรายการเอาต์พุตช่วงแสดงความคิดเห็นภายในออกจากสตรีมส่งผ่าน Responses API ก่อนส่งต่อไปยังไคลเอนต์ ปิดใช้งานแฟล็กนี้เพื่อรับความคิดเห็นต้นทางแบบดิบ"
       },
-      "OMNIROUTE_MCP_ENFORCE_SCOPES": {
+      "AGENTPROXY_MCP_ENFORCE_SCOPES": {
         "description": "บังคับใช้ข้อจำกัดขอบเขตสำหรับการเข้าถึงเครื่องมือ MCP"
       },
-      "OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS": {
+      "AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS": {
         "description": "บีบอัดคำอธิบายเครื่องมือ MCP เพื่อลดการใช้โทเค็น"
       },
-      "OMNIROUTE_ENABLE_RUNTIME_BACKGROUND_TASKS": {
+      "AGENTPROXY_ENABLE_RUNTIME_BACKGROUND_TASKS": {
         "description": "เปิดใช้งานการประมวลผลงานเบื้องหลังขณะรันไทม์"
       },
-      "OMNIROUTE_DISABLE_BACKGROUND_SERVICES": {
+      "AGENTPROXY_DISABLE_BACKGROUND_SERVICES": {
         "description": "ปิดใช้งานบริการเบื้องหลังทั้งหมด รวมถึงการรีเฟรชโควตาและการซิงโครไนซ์"
       },
-      "OMNIROUTE_RTK_TRUST_PROJECT_FILTERS": {
+      "AGENTPROXY_RTK_TRUST_PROJECT_FILTERS": {
         "description": "เชื่อถือตัวกรอง RTK ระดับโปรเจกต์โดยไม่มีการตรวจสอบความถูกต้อง"
       },
-      "OMNIROUTE_ENABLE_LIVE_WS": {
+      "AGENTPROXY_ENABLE_LIVE_WS": {
         "description": "เริ่มเซิร์ฟเวอร์ WebSocket ของแดชบอร์ดแบบเรียลไทม์เมื่อนำเข้าที่พอร์ต loopback 20132 ตั้งค่าแฟล็กเป็น 0 หรือ false เพื่อปิดใช้งาน การเปิดเผยผ่าน LAN ยังต้องใช้ LIVE_WS_HOST=0.0.0.0 และ LIVE_WS_ALLOWED_ORIGINS"
       },
-      "OMNIROUTE_CODEX_WS_ENABLED": {
+      "AGENTPROXY_CODEX_WS_ENABLED": {
         "description": "อนุญาตให้ Codex ใช้ Responses ผ่าน WebSocket เมื่อปิดใช้งาน Codex จะเปลี่ยนกลับไปใช้ HTTP Responses"
       },
-      "OMNIROUTE_EMERGENCY_FALLBACK": {
+      "AGENTPROXY_EMERGENCY_FALLBACK": {
         "description": "กำหนดเส้นทางคำขอที่งบประมาณหมดไปยังผู้ให้บริการและโมเดลสำรองฟรีในกรณีฉุกเฉิน"
       },
       "STREAM_RECOVERY_ENABLED": {
@@ -13044,16 +13044,16 @@
       "PRICING_SYNC_ENABLED": {
         "description": "ซิงโครไนซ์ข้อมูลราคาโดยอัตโนมัติ ตัวแปรสภาพแวดล้อม PRICING_SYNC_ENABLED จะต้องเป็น true ด้วย"
       },
-      "OMNIROUTE_AUTO_SYNC_CODEX_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CODEX_PROFILES": {
         "description": "หลังจากการซิงโครไนซ์ผู้ให้บริการ-โมเดล ให้สร้างโปรไฟล์ ~/.codex/*.config.toml ใหม่จากแคตตาล็อกที่ใช้งานอยู่ การดำเนินการนี้จะไม่เปลี่ยนการกำหนดค่า Codex ที่ใช้งานอยู่หรือค่าเริ่มต้น และปิดใช้งานเป็นค่าเริ่มต้น"
       },
-      "OMNIROUTE_AUTO_SYNC_CLAUDE_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CLAUDE_PROFILES": {
         "description": "หลังจากการซิงโครไนซ์ผู้ให้บริการ-โมเดล ให้สร้างโปรไฟล์ ~/.claude/profiles/'<name>'/settings.json ใหม่จากแคตตาล็อกที่ใช้งานอยู่ การดำเนินการนี้จะไม่เปลี่ยนการกำหนดค่า Claude ที่ใช้งานอยู่หรือค่าเริ่มต้น และปิดใช้งานเป็นค่าเริ่มต้น"
       },
-      "OMNIROUTE_DISABLE_LOCAL_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_LOCAL_HEALTHCHECK": {
         "description": "ปิดใช้งานปลายทาง health-check ของอินสแตนซ์ในเครื่อง"
       },
-      "OMNIROUTE_DISABLE_TOKEN_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_TOKEN_HEALTHCHECK": {
         "description": "ปิดใช้งาน health check การตรวจสอบความถูกต้องของโทเค็น"
       },
       "SKILLS_SANDBOX_NETWORK_ENABLED": {
@@ -14190,5 +14190,5 @@
     "partnerLinkNote": "ลิงก์พาร์ทเนอร์",
     "dismissAriaLabel": "ปิด"
   },
-  "featureFlagOmnirouteDisableThinkingLevelVariantsDescription": "ปิดใช้งานการสร้างโมเดลรูปแบบย่อยตามระดับการคิด (เช่น -low, -medium, -high) ในแค็ตตาล็อก /v1/models"
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "ปิดใช้งานการสร้างโมเดลรูปแบบย่อยตามระดับการคิด (เช่น -low, -medium, -high) ในแค็ตตาล็อก /v1/models"
 }

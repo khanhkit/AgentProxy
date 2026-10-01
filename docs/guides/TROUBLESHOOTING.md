@@ -775,7 +775,7 @@ with heavy startup workloads.
 
 ```bash
 # Via env var (persists across starts):
-export OMNIROUTE_READY_TIMEOUT_MS=180000   # 3 minutes
+export AGENTPROXY_READY_TIMEOUT_MS=180000   # 3 minutes
 omniroute serve
 
 # Via CLI flag (one-off):
@@ -786,7 +786,7 @@ The default is 60 000 ms (60 s). The warning is informational only; the server
 continues starting in the background and will be reachable once boot completes.
 
 See [`docs/reference/ENVIRONMENT.md`](../reference/ENVIRONMENT.md) for full
-details on `OMNIROUTE_READY_TIMEOUT_MS`.
+details on `AGENTPROXY_READY_TIMEOUT_MS`.
 
 ---
 

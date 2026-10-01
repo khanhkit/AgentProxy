@@ -986,7 +986,7 @@
     "batchFileDownloadFull": "పూర్తి ఫైల్ డౌన్‌లోడ్ చేయండి"
   },
   "disabled": "నిలిపివేయబడింది",
-  "featureFlagOmnirouteEmergencyFallbackDescription": "బడ్జెట్ ముగిసిపోయిన అభ్యర్థనలను అత్యవసర ఉచిత ఫాల్‌బ్యాక్ ప్రొవైడర్/మోడల్‌కు రూట్ చేయండి.",
+  "featureFlagAgentProxyEmergencyFallbackDescription": "బడ్జెట్ ముగిసిపోయిన అభ్యర్థనలను అత్యవసర ఉచిత ఫాల్‌బ్యాక్ ప్రొవైడర్/మోడల్‌కు రూట్ చేయండి.",
   "featureFlagArenaEloSyncEnabledDescription": "మోడల్ ఇంటెలిజెన్స్ ర్యాంకింగ్‌ల కోసం క్రమానుగత Arena AI లీడర్‌బోర్డ్ ELO సమకాలీకరణను ప్రారంభించండి.",
   "featureFlagUniversalContextHandoffEnabledDescription": "కాంబో రూటింగ్ మోడళ్ల మధ్య మారినప్పుడు సంభాషణ సారాంశాలను రూపొందించి, చొప్పిస్తుంది. మోడల్ మార్పులను స్వతంత్రంగా పరిగణించడానికి మరియు ప్రస్తుతం ఉన్న, భవిష్యత్తులో సృష్టించబడే అన్ని కాంబోల కోసం బ్యాక్గ్రౌండ్ హ్యాండ్ఆఫ్ అభ్యర్థనలను నిరోధించడానికి దీన్ని నిలిపివేయండి.",
   "featureFlagExposeCcDiscoveryAliasesDescription": "/v1/models లో claude/&lt;provider&gt;/&lt;model&gt; మిర్రర్ ఐడీలను ప్రచారం చేయండి కాబట్టి Claude Code గేట్వే మోడల్ డిస్కవరీ non-Claude మోడళ్లను జాబితా చేస్తుంది. హెచ్చరిక: ఇది ప్రపంచవ్యాప్తంగా ప్రారంభించినప్పుడు అన్ని క్లయింట్ల కోసం కాటలాగ్ ఎంట్రీలను డబుల్ చేస్తుంది.",
@@ -2254,7 +2254,7 @@
     "requestFlowAria": "మీ యాప్ API కీ ద్వారా OmniRouteకు అభ్యర్థనలను పంపుతుంది",
     "requestFlowYourApp": "మీ యాప్",
     "requestFlowApiKey": "API కీ",
-    "requestFlowOmniRoute": "OmniRoute",
+    "requestFlowAgentProxy": "AgentProxy",
     "totalKeys": "మొత్తం కీలు",
     "restricted": "పరిమితం చేయబడినవి",
     "totalRequests": "మొత్తం అభ్యర్థనలు",
@@ -2761,7 +2761,7 @@
     "configurationSaved": "కాన్ఫిగరేషన్ విజయవంతంగా సేవ్ చేయబడింది.",
     "failedToSave": "కాన్ఫిగరేషన్ను సేవ్ చేయడం విఫలమైంది.",
     "noApiKeysCreateOne": "API కీలు లేవు - Keys పేజీలో ఒకదాన్ని సృష్టించండి",
-    "defaultOmnirouteKey": "sk_omniroute (డిఫాల్ట్)",
+    "defaultAgentProxyKey": "sk_agentproxy (డిఫాల్ట్)",
     "selectModel": "మోడల్ను ఎంచుకోండి",
     "selectModelForAlias": "{alias} కోసం మోడల్ను ఎంచుకోండి",
     "selectModelForTool": "{tool} కోసం మోడల్ను ఎంచుకోండి",
@@ -2858,13 +2858,13 @@
     "applied": "వర్తింపజేయబడింది!",
     "failed": "విఫలమైంది",
     "resetDone": "రీసెట్ చేయబడింది!",
-    "omnirouteConfiguredOpenAiCompatible": "OmniRoute OpenAI-అనుకూల ప్రొవైడర్గా కాన్ఫిగర్ చేయబడింది",
+    "agentproxyConfiguredOpenAiCompatible": "AgentProxy OpenAI-అనుకూల ప్రొవైడర్గా కాన్ఫిగర్ చేయబడింది",
     "provider": "ప్రొవైడర్",
     "model": "Model",
     "providers": "ప్రొవైడర్లు",
     "auth": "ప్రామాణీకరణ",
     "noApiKeysAvailable": "API కీలు అందుబాటులో లేవు",
-    "usingDefaultOmniroute": "డిఫాల్ట్ ఉపయోగించబడుతోంది: sk_omniroute",
+    "usingDefaultAgentProxy": "డిఫాల్ట్ ఉపయోగించబడుతోంది: sk_agentproxy",
     "updateConfig": "కాన్ఫిగ్ను అప్డేట్ చేయి",
     "applyConfig": "కాన్ఫిగ్ను వర్తింపజేయి",
     "noBackupsAvailable": "బ్యాకప్లు అందుబాటులో లేవు.",
@@ -3145,8 +3145,8 @@
     "hermesConfiguredRoles": "{configured}/{total} పాత్రలు",
     "hermesQuickApply": "అన్ని పాత్రలకు ఒకే మోడల్‌ను త్వరగా వర్తింపజేయండి:",
     "hermesApplyModelToAll": "ప్రతి పాత్రకు {model}ని వర్తింపజేయండి",
-    "hermesViaOmniRoute": "{provider} (OmniRoute ద్వారా)",
-    "hermesNotOmniRoute": "{provider} (OmniRoute కాదు)",
+    "hermesViaAgentProxy": "{provider} (AgentProxy ద్వారా)",
+    "hermesNotAgentProxy": "{provider} (AgentProxy కాదు)",
     "hermesRemovePendingRole": "పెండింగ్‌లో ఉన్న మార్పుల నుండి ఈ పాత్రను తీసివేయండి",
     "hermesApply": "Hermes Agentకి వర్తింపజేయండి",
     "hermesRolesWillUpdate": "{count, plural, one {# పాత్ర అప్‌డేట్ చేయబడుతుంది} other {# పాత్రలు అప్‌డేట్ చేయబడతాయి}}",
@@ -4142,7 +4142,7 @@
     "vscodeAliasModelsLabel": "VS Code మోడల్స్",
     "vscodeAliasChatLabel": "VS Code చాట్",
     "localServer": "స్థానిక సర్వర్",
-    "cloudOmniroute": "క్లౌడ్ ఓమ్నిరూట్",
+    "cloudAgentProxy": "క్లౌడ్ ఓమ్నిరూట్",
     "copyUrl": "URLని కాపీ చేయండి",
     "badgeLoopbackTooltip": "ఈ ఎండ్‌పాయింట్ స్థానికంగా మాత్రమే యాక్సెస్ చేయబడుతుంది (లూప్‌బ్యాక్ మాత్రమే)",
     "badgeAlwaysProtectedTooltip": "ఈ ఎండ్‌పాయింట్ ఎల్లప్పుడూ రక్షించబడుతుంది మరియు దీనికి ఆథరైజేషన్ అవసరం",
@@ -9979,7 +9979,7 @@
     "howItWorksStep3Description": "అభ్యర్థనను OpenAI, Anthropic, Gemini లేదా ఇతర ప్రొవైడర్లు తక్షణమే నెరవేరుస్తారు.",
     "getStartedIn30Seconds": "30 సెకన్లలో ప్రారంభించండి",
     "getStartedDescription": "OmniRouteను ఇన్స్టాల్ చేసి, వెబ్ డ్యాష్బోర్డ్ ద్వారా మీ ప్రొవైడర్లను కాన్ఫిగర్ చేసి, AI అభ్యర్థనలను రూట్ చేయడం ప్రారంభించండి.",
-    "installOmniRoute": "OmniRouteను ఇన్స్టాల్ చేయండి",
+    "installAgentProxy": "AgentProxyను ఇన్స్టాల్ చేయండి",
     "installStepDescription": "సర్వర్ను తక్షణమే ప్రారంభించడానికి npx కమాండ్ను అమలు చేయండి",
     "openDashboard": "డ్యాష్బోర్డ్ను తెరవండి",
     "openDashboardStepDescription": "వెబ్ ఇంటర్ఫేస్ ద్వారా ప్రొవైడర్లు మరియు API కీలను కాన్ఫిగర్ చేయండి",
@@ -9988,7 +9988,7 @@
     "terminal": "టెర్మినల్",
     "copy": "కాపీ చేయండి",
     "copied": "✓ కాపీ అయింది",
-    "startingOmniRoute": "OmniRoute ప్రారంభమవుతోంది...",
+    "startingAgentProxy": "AgentProxy ప్రారంభమవుతోంది...",
     "serverRunningOnLabel": "సర్వర్ అమలవుతున్న చిరునామా",
     "dashboardLabel": "డ్యాష్బోర్డ్",
     "readyToRoute": "రూట్ చేయడానికి సిద్ధం! ✓",
@@ -10382,7 +10382,7 @@
     "versionCommandPlaceholder": "Version Command Placeholder",
     "architectureTitle": "Architecture Title",
     "flowLocalBinary": "Flow Local Binary",
-    "flowOmniRoute": "Flow Omni Route",
+    "flowAgentProxy": "Flow Omni Route",
     "agentNamePlaceholder": "Agent Name Placeholder",
     "architectureDescription": "Architecture Description",
     "flowExecute": "Flow Execute",
@@ -10399,8 +10399,8 @@
     "agentUseCaseHint": "ACP ప్రోటోకాల్ ద్వారా అమలు లక్ష్యం వలె ఉపయోగించవచ్చు",
     "flowDiagramClient": "క్లయింట్ యాప్",
     "flowDiagramClientDesc": "SDK, API లేదా అప్‌స్ట్రీమ్ సేవ",
-    "flowDiagramOmniRoute": "ఓమ్నిరూట్",
-    "flowDiagramOmniRouteDesc": "అభ్యర్థనను స్వీకరించి లక్ష్యాన్ని ఎంచుకుంటుంది",
+    "flowDiagramAgentProxy": "ఓమ్నిరూట్",
+    "flowDiagramAgentProxyDesc": "అభ్యర్థనను స్వీకరించి లక్ష్యాన్ని ఎంచుకుంటుంది",
     "flowDiagramSpawn": "స్పాన్ ప్రక్రియ",
     "flowDiagramSpawnDesc": "stdio ద్వారా CLI బైనరీని ప్రారంభిస్తుంది",
     "flowDiagramCli": "CLI ఏజెంట్",
@@ -12965,16 +12965,16 @@
       "PROXY_AUTO_SELECT_ENABLED": {
         "description": "కనెక్షన్‌కు ఎటువంటి ప్రాక్సీ కేటాయించబడనప్పుడు, మొదటి పని చేసే రిజిస్ట్రీ ప్రాక్సీని స్వయంచాలకంగా ఎంచుకోండి. డిఫాల్ట్‌గా ఆఫ్‌లో ఉంటుంది ఎందుకంటే లేకపోతే ఒక రిజిస్ట్రీ ప్రాక్సీ అన్ని ట్రాఫిక్‌లకు గ్లోబల్ ఫాల్‌బ్యాక్‌గా మారుతుంది (#3332)."
       },
-      "OMNIROUTE_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
+      "AGENTPROXY_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
         "description": "ప్రాక్సీ రీచబిలిటీ తనిఖీలు విఫలమైనప్పుడు పిన్ చేయబడిన ప్రాక్సీని బైపాస్ చేయడానికి OAuth మరియు ప్రొవైడర్-ధృవీకరణ ఫ్లోలను అనుమతించండి. ఇది ఖాతా అవుట్‌గోయింగ్ (egress) IPని మార్చగలదు కాబట్టి డిఫాల్ట్‌గా ఆఫ్‌లో ఉంటుంది."
       },
       "MITM_DISABLE_TLS_VERIFY": {
         "description": "MITM ప్రాక్సీ కోసం TLS సర్టిఫికేట్ ధృవీకరణను నిలిపివేయండి."
       },
-      "OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS": {
         "description": "ప్రైవేట్ లేదా అంతర్గత నెట్‌వర్క్‌లను సూచించే ప్రొవైడర్ URLలను అనుమతించండి."
       },
-      "OMNIROUTE_ALLOW_LOCAL_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_LOCAL_PROVIDER_URLS": {
         "description": "localhost, LAN మరియు ప్రైవేట్ IP పరిధులలో ప్రొవైడర్లను అనుమతించండి. స్థానిక OpenAI-అనుకూల మోడళ్లకు ఇది అవసరం మరియు డిఫాల్ట్‌గా ప్రారంభించబడుతుంది. 169.254.169.254 వంటి క్లౌడ్-మెటాడేటా ఎండ్‌పాయింట్లు బ్లాక్ చేయబడే ఉంటాయి."
       },
       "ENABLE_CC_COMPATIBLE_PROVIDER": {
@@ -12996,28 +12996,28 @@
       "RESPONSES_PASSTHROUGH_DROP_COMMENTARY": {
         "description": "క్లయింట్‌లకు ఫార్వార్డ్ చేయడానికి ముందు Responses API పాస్‌త్రూ స్ట్రీమ్‌ల నుండి అంతర్గత వ్యాఖ్యాన-దశ (commentary-phase) అవుట్‌పుట్ అంశాలను తీసివేయండి. ముడి అప్‌స్ట్రీమ్ వ్యాఖ్యానాన్ని స్వీకరించడానికి ఈ ఫ్లాగ్‌ను నిలిపివేయండి."
       },
-      "OMNIROUTE_MCP_ENFORCE_SCOPES": {
+      "AGENTPROXY_MCP_ENFORCE_SCOPES": {
         "description": "MCP టూల్ యాక్సెస్ కోసం స్కోప్ పరిమితులను అమలు చేయండి."
       },
-      "OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS": {
+      "AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS": {
         "description": "టోకెన్ వినియోగాన్ని తగ్గించడానికి MCP టూల్ వివరణలను కుదించండి."
       },
-      "OMNIROUTE_ENABLE_RUNTIME_BACKGROUND_TASKS": {
+      "AGENTPROXY_ENABLE_RUNTIME_BACKGROUND_TASKS": {
         "description": "రన్‌టైమ్‌లో బ్యాక్‌గ్రౌండ్-టాస్క్ ప్రాసెసింగ్‌ను ప్రారంభించండి."
       },
-      "OMNIROUTE_DISABLE_BACKGROUND_SERVICES": {
+      "AGENTPROXY_DISABLE_BACKGROUND_SERVICES": {
         "description": "కోటా రిఫ్రెష్ మరియు సింక్రొనైజేషన్‌తో సహా అన్ని బ్యాక్‌గ్రౌండ్ సేవలను నిలిపివేయండి."
       },
-      "OMNIROUTE_RTK_TRUST_PROJECT_FILTERS": {
+      "AGENTPROXY_RTK_TRUST_PROJECT_FILTERS": {
         "description": "ధృవీకరణ లేకుండా ప్రాజెక్ట్-స్థాయి RTK ఫిల్టర్‌లను విశ్వసించండి."
       },
-      "OMNIROUTE_ENABLE_LIVE_WS": {
+      "AGENTPROXY_ENABLE_LIVE_WS": {
         "description": "లూప్‌బ్యాక్ పోర్ట్ 20132 వద్ద ఇంపోర్ట్ చేసినప్పుడు రియల్-టైమ్ డ్యాష్‌బోర్డ్ WebSocket సర్వర్‌ను ప్రారంభించండి. దీనిని నిలిపివేయడానికి ఫ్లాగ్‌ను 0 లేదా false కి సెట్ చేయండి. LAN ఎక్స్‌పోజర్‌కు LIVE_WS_HOST=0.0.0.0 మరియు LIVE_WS_ALLOWED_ORIGINS కూడా అవసరం."
       },
-      "OMNIROUTE_CODEX_WS_ENABLED": {
+      "AGENTPROXY_CODEX_WS_ENABLED": {
         "description": "WebSocket ద్వారా Responses ని ఉపయోగించడానికి Codex ని అనుమతించండి. నిలిపివేసినప్పుడు, Codex తిరిగి HTTP Responses కి మారుతుంది."
       },
-      "OMNIROUTE_EMERGENCY_FALLBACK": {
+      "AGENTPROXY_EMERGENCY_FALLBACK": {
         "description": "బడ్జెట్ ముగిసిపోయిన అభ్యర్థనలను అత్యవసర ఉచిత ఫాల్‌బ్యాక్ ప్రొవైడర్ మరియు మోడల్‌కు రూట్ చేయండి."
       },
       "STREAM_RECOVERY_ENABLED": {
@@ -13044,16 +13044,16 @@
       "PRICING_SYNC_ENABLED": {
         "description": "ధరల డేటాను స్వయంచాలకంగా సమకాలీకరించండి. PRICING_SYNC_ENABLED ఎన్విరాన్‌మెంట్ వేరియబుల్ కూడా true అయి ఉండాలి."
       },
-      "OMNIROUTE_AUTO_SYNC_CODEX_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CODEX_PROFILES": {
         "description": "ప్రొవైడర్-మోడల్ సమకాలీకరణ తర్వాత, లైవ్ కేటలాగ్ నుండి ~/.codex/*.config.toml ప్రొఫైల్‌లను తిరిగి సృష్టించండి. ఇది సక్రియ లేదా డిఫాల్ట్ Codex కాన్గ్రిగేషన్‌ను ఎప్పటికీ మార్చదు మరియు డిఫాల్ట్‌గా ఆఫ్‌లో ఉంటుంది."
       },
-      "OMNIROUTE_AUTO_SYNC_CLAUDE_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CLAUDE_PROFILES": {
         "description": "ప్రొవైడర్-మోడల్ సమకాలీకరణ తర్వాత, లైవ్ కేటలాగ్ నుండి ~/.claude/profiles/'<name>'/settings.json ప్రొఫైల్‌లను తిరిగి సృష్టించండి. ఇది సక్రియ లేదా డిఫాల్ట్ Claude కాన్ఫిగరేషన్‌ను ఎప్పటికీ మార్చదు మరియు డిఫాల్ట్‌గా ఆఫ్‌లో ఉంటుంది."
       },
-      "OMNIROUTE_DISABLE_LOCAL_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_LOCAL_HEALTHCHECK": {
         "description": "స్థానిక ఇన్‌స్టాన్స్ హెల్త్-చెక్ ఎండ్‌పాయింట్‌ను నిలిపివేయండి."
       },
-      "OMNIROUTE_DISABLE_TOKEN_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_TOKEN_HEALTHCHECK": {
         "description": "టోకెన్-ధృవీకరణ హెల్త్ చెక్‌ను నిలిపివేయండి."
       },
       "SKILLS_SANDBOX_NETWORK_ENABLED": {
@@ -14190,5 +14190,5 @@
     "partnerLinkNote": "భాగస్వామి లింక్",
     "dismissAriaLabel": "మూసివేయి"
   },
-  "featureFlagOmnirouteDisableThinkingLevelVariantsDescription": "/v1/models కేటలాగ్లో ఆలోచనా స్థాయి వేరియంట్ల (ఉదా. -low, -medium, -high) సృష్టిని నిలిపివేయండి."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "/v1/models కేటలాగ్లో ఆలోచనా స్థాయి వేరియంట్ల (ఉదా. -low, -medium, -high) సృష్టిని నిలిపివేయండి."
 }

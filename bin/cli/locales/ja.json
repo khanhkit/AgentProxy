@@ -271,7 +271,7 @@
     "max_restarts": "断念するまでの30秒以内のクラッシュ再起動上限回数（デフォルト: 2）",
     "tray": "システムトレイで起動（デスクトップ版のみ、オプトイン）",
     "no_tray": "システムトレイアイコンを無効化",
-    "ready_timeout": "準備状況プローブのタイムアウト（ミリ秒、OMNIROUTE_READY_TIMEOUT_MS でも設定可能、デフォルト: 60000）",
+    "ready_timeout": "準備状況プローブのタイムアウト（ミリ秒、AGENTPROXY_READY_TIMEOUT_MS でも設定可能、デフォルト: 60000）",
     "tls_cert": "HTTPS の提供に使用する TLS 証明書（PEM）へのパス（OMNIROUTE_TLS_CERT でも設定可能）",
     "tls_key": "HTTPS の提供に使用する TLS 秘密鍵（PEM）へのパス（OMNIROUTE_TLS_KEY でも設定可能）"
   },

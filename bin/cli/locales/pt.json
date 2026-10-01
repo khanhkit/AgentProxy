@@ -271,7 +271,7 @@
     "max_restarts": "Número máximo de reinícios após falha num período de 30 s antes de desistir (predefinição: 2)",
     "tray": "Iniciar na área de notificação do sistema (apenas no ambiente de trabalho, opção facultativa)",
     "no_tray": "Desativar o ícone da área de notificação do sistema",
-    "ready_timeout": "Tempo limite da verificação de disponibilidade em ms (também OMNIROUTE_READY_TIMEOUT_MS, predefinição: 60000)",
+    "ready_timeout": "Tempo limite da verificação de disponibilidade em ms (também AGENTPROXY_READY_TIMEOUT_MS, predefinição: 60000)",
     "tls_cert": "Caminho para um certificado TLS (PEM) para disponibilizar HTTPS (também OMNIROUTE_TLS_CERT)",
     "tls_key": "Caminho para a chave privada TLS (PEM) para disponibilizar HTTPS (também OMNIROUTE_TLS_KEY)"
   },

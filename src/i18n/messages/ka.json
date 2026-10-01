@@ -986,7 +986,7 @@
     "batchFileDownloadFull": "სრული ფაილის ჩამოტვირთვა"
   },
   "disabled": "გამორთულია",
-  "featureFlagOmnirouteEmergencyFallbackDescription": "ბიუჯეტის ამოწურვის გამო დაუმუშავებელი მოთხოვნები გადაამისამართეთ საგანგებო უფასო სარეზერვო პროვაიდერთან/მოდელთან.",
+  "featureFlagAgentProxyEmergencyFallbackDescription": "ბიუჯეტის ამოწურვის გამო დაუმუშავებელი მოთხოვნები გადაამისამართეთ საგანგებო უფასო სარეზერვო პროვაიდერთან/მოდელთან.",
   "featureFlagArenaEloSyncEnabledDescription": "ჩართეთ Arena AI-ის ლიდერბორდის ELO რეიტინგის პერიოდული სინქრონიზაცია მოდელების ინტელექტის რეიტინგებისთვის.",
   "featureFlagUniversalContextHandoffEnabledDescription": "კომბინირებული მარშრუტიზაციისას მოდელის გადართვის დროს შექმენით და ჩასვით საუბრის შეჯამებები. გამორთეთ, რათა მოდელების გადართვები ერთმანეთისგან დამოუკიდებლად დამუშავდეს და ყველა არსებული და მომავალი კომბინაციისთვის ფონური გადაცემის მოთხოვნები აიკრძალოს.",
   "featureFlagExposeCcDiscoveryAliasesDescription": "გამოაქვეყნეთ claude/&lt;provider&gt;/&lt;model&gt; სარკისებური ID-ები /v1/models-ზე, რათა Claude Code-ის კარიბჭის მოდელების აღმოჩენის სიაში არა-Claude მოდელებიც გამოჩნდეს. გაფრთხილება: გლობალურად ჩართვის შემთხვევაში კატალოგის ჩანაწერების რაოდენობა ყველა კლიენტისთვის გაორმაგდება.",
@@ -2254,7 +2254,7 @@
     "requestFlowAria": "თქვენი აპი მოთხოვნებს API გასაღების მეშვეობით OmniRoute-ში აგზავნის",
     "requestFlowYourApp": "თქვენი აპი",
     "requestFlowApiKey": "API გასაღები",
-    "requestFlowOmniRoute": "OmniRoute",
+    "requestFlowAgentProxy": "AgentProxy",
     "totalKeys": "გასაღებების საერთო რაოდენობა",
     "restricted": "შეზღუდული",
     "totalRequests": "მოთხოვნების საერთო რაოდენობა",
@@ -2761,7 +2761,7 @@
     "configurationSaved": "კონფიგურაცია წარმატებით შეინახა.",
     "failedToSave": "კონფიგურაციის შენახვა ვერ მოხერხდა.",
     "noApiKeysCreateOne": "API გასაღებები არ არის — შექმენით გასაღებების გვერდზე",
-    "defaultOmnirouteKey": "sk_omniroute (ნაგულისხმევი)",
+    "defaultAgentProxyKey": "sk_agentproxy (ნაგულისხმევი)",
     "selectModel": "მოდელის არჩევა",
     "selectModelForAlias": "აირჩიეთ მოდელი {alias}-ისთვის",
     "selectModelForTool": "აირჩიეთ მოდელი {tool}-ისთვის",
@@ -2858,13 +2858,13 @@
     "applied": "გამოყენებულია!",
     "failed": "ვერ შესრულდა",
     "resetDone": "ჩამოყრილია!",
-    "omnirouteConfiguredOpenAiCompatible": "OmniRoute კონფიგურირებულია OpenAI-თან თავსებად პროვაიდერად",
+    "agentproxyConfiguredOpenAiCompatible": "AgentProxy კონფიგურირებულია OpenAI-თან თავსებად პროვაიდერად",
     "provider": "პროვაიდერი",
     "model": "მოდელი",
     "providers": "პროვაიდერები",
     "auth": "ავთენტიფიკაცია",
     "noApiKeysAvailable": "API გასაღებები მიუწვდომელია",
-    "usingDefaultOmniroute": "გამოიყენება ნაგულისხმევი: sk_omniroute",
+    "usingDefaultAgentProxy": "გამოიყენება ნაგულისხმევი: sk_agentproxy",
     "updateConfig": "კონფიგურაციის განახლება",
     "applyConfig": "კონფიგურაციის გამოყენება",
     "noBackupsAvailable": "სარეზერვო ასლები ხელმისაწვდომი არ არის.",
@@ -3145,8 +3145,8 @@
     "hermesConfiguredRoles": "{configured}/{total} როლი",
     "hermesQuickApply": "სწრაფად მიანიჭეთ ერთი და იგივე მოდელი ყველა როლს:",
     "hermesApplyModelToAll": "მიანიჭეთ {model} ყველა როლს",
-    "hermesViaOmniRoute": "{provider} (OmniRoute-ის მეშვეობით)",
-    "hermesNotOmniRoute": "{provider} (OmniRoute-ის გარეშე)",
+    "hermesViaAgentProxy": "{provider} (AgentProxy-ის მეშვეობით)",
+    "hermesNotAgentProxy": "{provider} (AgentProxy-ის გარეშე)",
     "hermesRemovePendingRole": "ამ როლის მომლოდინე ცვლილებებიდან ამოშლა",
     "hermesApply": "Hermes Agent-ზე გამოყენება",
     "hermesRolesWillUpdate": "{count, plural, one {განახლდება # როლი} other {განახლდება # როლი}}",
@@ -4125,7 +4125,7 @@
     "vscodeAliasModelsLabel": "VS Code მოდელები",
     "vscodeAliasChatLabel": "VS Code ჩატი",
     "localServer": "ლოკალური სერვერი",
-    "cloudOmniroute": "ღრუბლოვანი OmniRoute",
+    "cloudAgentProxy": "ღრუბლოვანი AgentProxy",
     "copyUrl": "URL-ის კოპირება",
     "badgeLoopbackTooltip": "ეს ენდპოინტი ხელმისაწვდომია მხოლოდ ლოკალურად (მხოლოდ loopback)",
     "badgeAlwaysProtectedTooltip": "ეს ენდპოინტი ყოველთვის დაცულია და ავტორიზაციას მოითხოვს",
@@ -9962,7 +9962,7 @@
     "howItWorksStep3Description": "მოთხოვნას მყისიერად ამუშავებს OpenAI, Anthropic, Gemini ან სხვა პროვაიდერები.",
     "getStartedIn30Seconds": "დაიწყეთ 30 წამში",
     "getStartedDescription": "დააინსტალირეთ OmniRoute, დააკონფიგურირეთ თქვენი პროვაიდერები ვებ-პანელის მეშვეობით და დაიწყეთ AI მოთხოვნების მარშრუტიზაცია.",
-    "installOmniRoute": "OmniRoute-ის ინსტალაცია",
+    "installAgentProxy": "AgentProxy-ის ინსტალაცია",
     "installStepDescription": "სერვერის მყისიერად გასაშვებად შეასრულეთ npx ბრძანება",
     "openDashboard": "მართვის პანელის გახსნა",
     "openDashboardStepDescription": "დააკონფიგურირეთ პროვაიდერები და API გასაღებები ვებინტერფეისის მეშვეობით",
@@ -9971,7 +9971,7 @@
     "terminal": "ტერმინალი",
     "copy": "კოპირება",
     "copied": "✓ დაკოპირებულია",
-    "startingOmniRoute": "OmniRoute ეშვება...",
+    "startingAgentProxy": "AgentProxy ეშვება...",
     "serverRunningOnLabel": "სერვერი მუშაობს მისამართზე",
     "dashboardLabel": "მართვის პანელი",
     "readyToRoute": "მზადაა მარშრუტიზაციისთვის! ✓",
@@ -10365,7 +10365,7 @@
     "versionCommandPlaceholder": "მაგ., my-agent --version",
     "architectureTitle": "როგორ მუშაობს აგენტის სამიზნეები",
     "flowLocalBinary": "3 · CLI პროცესი საკუთარი ავთენტიფიკაციით",
-    "flowOmniRoute": "1 · მოთხოვნა შემოდის OmniRoute-ში",
+    "flowAgentProxy": "1 · მოთხოვნა შემოდის AgentProxy-ში",
     "agentNamePlaceholder": "მაგ., My Custom Agent",
     "architectureDescription": "მოთხოვნის მიღებისას OmniRoute-ს შეუძლია გაუშვას ლოკალური CLI ბინარული ფაილი (მაგ., claude, codex, goose) და მოთხოვნა მისი მეშვეობით დაამუშაოს. CLI მოთხოვნას საკუთარი ავტორიზაციის მონაცემების გამოყენებით ამუშავებს და შედეგს OmniRoute-ის მეშვეობით აბრუნებს.",
     "flowExecute": "4 · პასუხი უბრუნდება კლიენტს",
@@ -10382,8 +10382,8 @@
     "agentUseCaseHint": "შესაძლებელია შესრულების სამიზნედ გამოყენება ACP პროტოკოლის მეშვეობით",
     "flowDiagramClient": "კლიენტის აპლიკაცია",
     "flowDiagramClientDesc": "SDK, API ან ზემდგომი სერვისი",
-    "flowDiagramOmniRoute": "OmniRoute",
-    "flowDiagramOmniRouteDesc": "იღებს მოთხოვნას და ირჩევს სამიზნეს",
+    "flowDiagramAgentProxy": "AgentProxy",
+    "flowDiagramAgentProxyDesc": "იღებს მოთხოვნას და ირჩევს სამიზნეს",
     "flowDiagramSpawn": "პროცესის გაშვება",
     "flowDiagramSpawnDesc": "უშვებს CLI ბინარულ ფაილს stdio-ს მეშვეობით",
     "flowDiagramCli": "CLI აგენტი",
@@ -12938,16 +12938,16 @@
       "PROXY_AUTO_SELECT_ENABLED": {
         "description": "როდესაც კავშირს პროქსი არ აქვს მინიჭებული, ავტომატურად აირჩიეთ რეესტრში არსებული პირველი მუშა პროქსი. ნაგულისხმევად გამორთულია, რადგან წინააღმდეგ შემთხვევაში რეესტრის ერთი პროქსი მთელი ტრაფიკის გლობალური სარეზერვო ვარიანტი გახდება (#3332)."
       },
-      "OMNIROUTE_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
+      "AGENTPROXY_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
         "description": "OAuth-ისა და პროვაიდერის ვალიდაციის პროცესებს მიეცეთ მიმაგრებული პროქსის გვერდის ავლის უფლება, როდესაც პროქსის ხელმისაწვდომობის შემოწმება ვერ ხერხდება. ნაგულისხმევად გამორთულია, რადგან ამან შეიძლება ანგარიშის გამავალი IP შეცვალოს."
       },
       "MITM_DISABLE_TLS_VERIFY": {
         "description": "MITM პროქსისთვის TLS სერტიფიკატის გადამოწმების გამორთვა."
       },
-      "OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS": {
         "description": "კერძო ან შიდა ქსელებზე მიმთითებელი პროვაიდერის URL-ების დაშვება."
       },
-      "OMNIROUTE_ALLOW_LOCAL_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_LOCAL_PROVIDER_URLS": {
         "description": "პროვაიდერების დაშვება localhost-ზე, LAN-ში და კერძო IP დიაპაზონებში. ეს აუცილებელია ლოკალური OpenAI-თან თავსებადი მოდელებისთვის და ნაგულისხმევად ჩართულია. ღრუბლოვანი მეტამონაცემების საბოლოო წერტილები, როგორიცაა 169.254.169.254, კვლავ დაბლოკილი რჩება."
       },
       "ENABLE_CC_COMPATIBLE_PROVIDER": {
@@ -12969,28 +12969,28 @@
       "RESPONSES_PASSTHROUGH_DROP_COMMENTARY": {
         "description": "Responses API-ის გამჭოლი ნაკადებიდან შიდა კომენტარის ფაზის გამომავალი ელემენტების წაშლა კლიენტებისთვის გადაგზავნამდე. გამორთეთ ეს ალამი upstream-ის დაუმუშავებელი კომენტარის მისაღებად."
       },
-      "OMNIROUTE_MCP_ENFORCE_SCOPES": {
+      "AGENTPROXY_MCP_ENFORCE_SCOPES": {
         "description": "MCP ინსტრუმენტებზე წვდომის სფეროების შეზღუდვების აღსრულება."
       },
-      "OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS": {
+      "AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS": {
         "description": "ტოკენების გამოყენების შესამცირებლად MCP ინსტრუმენტების აღწერების შეკუმშვა."
       },
-      "OMNIROUTE_ENABLE_RUNTIME_BACKGROUND_TASKS": {
+      "AGENTPROXY_ENABLE_RUNTIME_BACKGROUND_TASKS": {
         "description": "შესრულების დროს ფონური ამოცანების დამუშავების ჩართვა."
       },
-      "OMNIROUTE_DISABLE_BACKGROUND_SERVICES": {
+      "AGENTPROXY_DISABLE_BACKGROUND_SERVICES": {
         "description": "ყველა ფონური სერვისის, მათ შორის კვოტის განახლებისა და სინქრონიზაციის, გამორთვა."
       },
-      "OMNIROUTE_RTK_TRUST_PROJECT_FILTERS": {
+      "AGENTPROXY_RTK_TRUST_PROJECT_FILTERS": {
         "description": "პროექტის დონის RTK ფილტრების სანდოდ მიჩნევა ვალიდაციის გარეშე."
       },
-      "OMNIROUTE_ENABLE_LIVE_WS": {
+      "AGENTPROXY_ENABLE_LIVE_WS": {
         "description": "იმპორტისას რეალური დროის დაფის WebSocket სერვერის გაშვება loopback პორტზე 20132. მის გამოსართავად ალამს მიანიჭეთ 0 ან false. LAN-იდან წვდომისთვის ასევე საჭიროა LIVE_WS_HOST=0.0.0.0 და LIVE_WS_ALLOWED_ORIGINS."
       },
-      "OMNIROUTE_CODEX_WS_ENABLED": {
+      "AGENTPROXY_CODEX_WS_ENABLED": {
         "description": "Codex-ს მიეცეს Responses-ის WebSocket-ით გამოყენების უფლება. გამორთვის შემთხვევაში Codex გადადის HTTP Responses-ზე."
       },
-      "OMNIROUTE_EMERGENCY_FALLBACK": {
+      "AGENTPROXY_EMERGENCY_FALLBACK": {
         "description": "ამოწურული ბიუჯეტის მქონე მოთხოვნების გადამისამართება საგანგებო უფასო სარეზერვო პროვაიდერსა და მოდელზე."
       },
       "STREAM_RECOVERY_ENABLED": {
@@ -13017,16 +13017,16 @@
       "PRICING_SYNC_ENABLED": {
         "description": "ფასების მონაცემების ავტომატურად სინქრონიზაცია. PRICING_SYNC_ENABLED გარემოს ცვლადიც true უნდა იყოს."
       },
-      "OMNIROUTE_AUTO_SYNC_CODEX_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CODEX_PROFILES": {
         "description": "პროვაიდერისა და მოდელის სინქრონიზაციის შემდეგ, აქტუალური კატალოგიდან ~/.codex/*.config.toml პროფილების ხელახლა შექმნა. ეს არასოდეს ცვლის Codex-ის აქტიურ ან ნაგულისხმევ კონფიგურაციას და ნაგულისხმევად გამორთულია."
       },
-      "OMNIROUTE_AUTO_SYNC_CLAUDE_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CLAUDE_PROFILES": {
         "description": "პროვაიდერისა და მოდელის სინქრონიზაციის შემდეგ, აქტუალური კატალოგიდან ~/.claude/profiles/'<name>'/settings.json პროფილების ხელახლა შექმნა. ეს არასოდეს ცვლის Claude-ის აქტიურ ან ნაგულისხმევ კონფიგურაციას და ნაგულისხმევად გამორთულია."
       },
-      "OMNIROUTE_DISABLE_LOCAL_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_LOCAL_HEALTHCHECK": {
         "description": "ადგილობრივი ინსტანციის მდგომარეობის შემოწმების endpoint-ის გამორთვა."
       },
-      "OMNIROUTE_DISABLE_TOKEN_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_TOKEN_HEALTHCHECK": {
         "description": "ტოკენის ვალიდაციის მდგომარეობის შემოწმების გამორთვა."
       },
       "SKILLS_SANDBOX_NETWORK_ENABLED": {
@@ -14158,5 +14158,5 @@
     "partnerLinkNote": "პარტნიორის ბმული",
     "dismissAriaLabel": "დახურვა"
   },
-  "featureFlagOmnirouteDisableThinkingLevelVariantsDescription": "გამორთეთ აზროვნების დონის ვარიანტების (მაგ. -low, -medium, -high) გენერირება /v1/models კატალოგში."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "გამორთეთ აზროვნების დონის ვარიანტების (მაგ. -low, -medium, -high) გენერირება /v1/models კატალოგში."
 }

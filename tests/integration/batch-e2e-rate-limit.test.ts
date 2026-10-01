@@ -165,6 +165,8 @@ function createServerProcess() {
   const stderrLines: string[] = [];
   let exitInfo: { code: number | null; signal: NodeJS.Signals | null } | null = null;
 
+  // The management calls below only stay open in bootstrap mode for a loopback peer;
+  // locality comes from the TCP-peer stamp written by the custom run-next.mjs server.
   const child = spawn(process.execPath, ["scripts/dev/run-next.mjs", "dev"], {
     cwd: REPO_ROOT,
     env: {

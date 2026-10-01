@@ -229,13 +229,13 @@ test("shouldBuildStandalone honors OMNIROUTE_SKIP_STANDALONE and contributor pro
   assert.equal(shouldBuildStandalone({}), true);
   assert.equal(shouldBuildStandalone({ OMNIROUTE_SKIP_STANDALONE: "0" }), true);
   assert.equal(shouldBuildStandalone({ OMNIROUTE_SKIP_STANDALONE: "1" }), false);
-  assert.equal(shouldBuildStandalone({ OMNIROUTE_BUILD_PROFILE: "contributor" }), false);
+  assert.equal(shouldBuildStandalone({ AGENTPROXY_BUILD_PROFILE: "contributor" }), false);
   assert.equal(
     shouldBuildStandalone({
       OMNIROUTE_SKIP_STANDALONE: "1",
-      OMNIROUTE_BUILD_PROFILE: "minimal",
+      AGENTPROXY_BUILD_PROFILE: "minimal",
     }),
     false
   );
-  assert.equal(shouldBuildStandalone({ OMNIROUTE_BUILD_PROFILE: "minimal" }), true);
+  assert.equal(shouldBuildStandalone({ AGENTPROXY_BUILD_PROFILE: "minimal" }), true);
 });

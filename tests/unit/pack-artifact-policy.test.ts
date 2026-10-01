@@ -320,6 +320,7 @@ test("findMissingArtifactPaths flags missing root runtime files in the tarball",
     "bin/aliasResolver.mjs",
     "bin/aliasResolverHook.mjs",
     "bin/cli/data-dir.mjs",
+    "bin/cli/privateDataDir.mjs",
     "bin/cli/program.mjs",
     "bin/cli/utils/ensureAndroidCacheDir.mjs",
     "bin/cli/utils/parseEnvValue.mjs",
@@ -357,12 +358,12 @@ test("findMissingArtifactPaths flags missing root runtime files in the tarball",
   ]);
 });
 
-test("every explicitly shipped @omniroute workspace package is covered by an artifact prefix", () => {
+test("every explicitly shipped @agentproxy workspace package is covered by an artifact prefix", () => {
   const packageJson = JSON.parse(readFileSync("package.json", "utf8")) as { files: string[] };
-  const shippedWorkspaces = packageJson.files.filter((entry) => entry.startsWith("@omniroute/"));
+  const shippedWorkspaces = packageJson.files.filter((entry) => entry.startsWith("@agentproxy/"));
 
   assert.ok(
-    shippedWorkspaces.includes("@omniroute/opencode-plugin-v2/"),
+    shippedWorkspaces.includes("@agentproxy/opencode-plugin-v2/"),
     "the root npm artifact must ship the OpenCode v2 plugin beside the v1 plugin"
   );
 

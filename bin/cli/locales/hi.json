@@ -271,7 +271,7 @@
     "max_restarts": "हार मानने से पहले 30 सेकंड के भीतर क्रैश के बाद पुनः आरंभ करने की अधिकतम संख्या (डिफ़ॉल्ट: 2)",
     "tray": "सिस्टम ट्रे में शुरू करें (केवल डेस्कटॉप, ऑप्ट-इन)",
     "no_tray": "सिस्टम ट्रे आइकन अक्षम करें",
-    "ready_timeout": "ms में रेडीनेस प्रोब टाइमआउट (OMNIROUTE_READY_TIMEOUT_MS भी, डिफ़ॉल्ट 60000)",
+    "ready_timeout": "ms में रेडीनेस प्रोब टाइमआउट (AGENTPROXY_READY_TIMEOUT_MS भी, डिफ़ॉल्ट 60000)",
     "tls_cert": "HTTPS सेवा देने के लिए TLS प्रमाणपत्र (PEM) का पथ (OMNIROUTE_TLS_CERT भी)",
     "tls_key": "HTTPS सेवा देने के लिए TLS निजी कुंजी (PEM) का पथ (OMNIROUTE_TLS_KEY भी)"
   },

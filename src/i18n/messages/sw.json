@@ -986,7 +986,7 @@
     "batchFileDownloadFull": "Pakua Faili Kamili"
   },
   "disabled": "Imezimwa",
-  "featureFlagOmnirouteEmergencyFallbackDescription": "Elekeza maombi yaliyomaliza bajeti kwenye mtoa huduma/muundo wa dharura wa akiba usiolipiwa.",
+  "featureFlagAgentProxyEmergencyFallbackDescription": "Elekeza maombi yaliyomaliza bajeti kwenye mtoa huduma/muundo wa dharura wa akiba usiolipiwa.",
   "featureFlagArenaEloSyncEnabledDescription": "Washa usawazishaji wa mara kwa mara wa ELO wa ubao wa wanaoongoza wa Arena AI kwa viwango vya akili vya muundo.",
   "featureFlagUniversalContextHandoffEnabledDescription": "Tengeneza na uingize muhtasari wa mazungumzo wakati uelekezaji wa michanganyiko unapobadilisha modeli. Zima ili kushughulikia mabadiliko ya modeli kwa kujitegemea na kuzuia maombi ya uhamishaji ya chinichini kwa michanganyiko yote iliyopo na ya baadaye.",
   "featureFlagExposeCcDiscoveryAliasesDescription": "Tangaza claude/&lt;provider&gt;/&lt;model&gt; vitambulisho vya kioo kwenye /v1/models ili orodha ya kugundua modeli za Claude Code iwe na modeli zisizo za Claude. Onyo: inafanya kuingia mara mbili kwenye katalogi kwa wateja wote inapowekwa kuwa ya ulimwengu mzima.",
@@ -2254,7 +2254,7 @@
     "requestFlowAria": "Programu yako hutuma maombi kupitia ufunguo wa API kwenda OmniRoute",
     "requestFlowYourApp": "Programu yako",
     "requestFlowApiKey": "Ufunguo wa API",
-    "requestFlowOmniRoute": "OmniRoute",
+    "requestFlowAgentProxy": "AgentProxy",
     "totalKeys": "Jumla ya Funguo",
     "restricted": "Zilizowekewa Vizuizi",
     "totalRequests": "Jumla ya Maombi",
@@ -2761,7 +2761,7 @@
     "configurationSaved": "Usanidi umehifadhiwa kwa mafanikio.",
     "failedToSave": "Imeshindwa kuhifadhi usanidi.",
     "noApiKeysCreateOne": "Hakuna funguo za API - Unda mmoja kwenye ukurasa wa Keys",
-    "defaultOmnirouteKey": "sk_omniroute (chaguomsingi)",
+    "defaultAgentProxyKey": "sk_agentproxy (chaguomsingi)",
     "selectModel": "Chagua Modeli",
     "selectModelForAlias": "Chagua modeli kwa ajili ya {alias}",
     "selectModelForTool": "Chagua Modeli kwa ajili ya {tool}",
@@ -2858,13 +2858,13 @@
     "applied": "Imetekelezwa!",
     "failed": "Imeshindikana",
     "resetDone": "Imewekwa upya!",
-    "omnirouteConfiguredOpenAiCompatible": "OmniRoute imesanidiwa kama mtoa huduma anayeoana na OpenAI",
+    "agentproxyConfiguredOpenAiCompatible": "AgentProxy imesanidiwa kama mtoa huduma anayeoana na OpenAI",
     "provider": "Mtoa huduma",
     "model": "Model",
     "providers": "Watoa huduma",
     "auth": "Uthibitishaji",
     "noApiKeysAvailable": "Hakuna funguo za API zinazopatikana",
-    "usingDefaultOmniroute": "Inatumia chaguo-msingi: sk_omniroute",
+    "usingDefaultAgentProxy": "Inatumia chaguo-msingi: sk_agentproxy",
     "updateConfig": "Sasisha Usanidi",
     "applyConfig": "Tekeleza Usanidi",
     "noBackupsAvailable": "Hakuna nakala rudufu zinazopatikana.",
@@ -3145,8 +3145,8 @@
     "hermesConfiguredRoles": "majukumu {configured}/{total}",
     "hermesQuickApply": "Weka kwa haraka muundo huo huo kwenye majukumu yote:",
     "hermesApplyModelToAll": "Weka {model} kwenye kila jukumu",
-    "hermesViaOmniRoute": "{provider} (kupitia OmniRoute)",
-    "hermesNotOmniRoute": "{provider} (sio OmniRoute)",
+    "hermesViaAgentProxy": "{provider} (kupitia AgentProxy)",
+    "hermesNotAgentProxy": "{provider} (sio AgentProxy)",
     "hermesRemovePendingRole": "Ondoa jukumu hili kwenye mabadiliko yanayosubiri",
     "hermesApply": "Weka kwenye Hermes Agent",
     "hermesRolesWillUpdate": "{count, plural, one {jukumu # litasasishwa} other {majukumu # yatasasishwa}}",
@@ -4142,7 +4142,7 @@
     "vscodeAliasModelsLabel": "Modeli za VS Code",
     "vscodeAliasChatLabel": "Gumzo la VS Code",
     "localServer": "Seva ya Ndani",
-    "cloudOmniroute": "OmniRoute ya Wingu",
+    "cloudAgentProxy": "AgentProxy ya Wingu",
     "copyUrl": "Nakili URL",
     "badgeLoopbackTooltip": "Kituo hiki cha mwisho kinafikiwa ndani pekee (loopback pekee)",
     "badgeAlwaysProtectedTooltip": "Kituo hiki cha mwisho kinalindwa kila wakati na kinahitaji idhini",
@@ -9979,7 +9979,7 @@
     "howItWorksStep3Description": "Ombi hutekelezwa papo hapo na OpenAI, Anthropic, Gemini, au wengine.",
     "getStartedIn30Seconds": "Anza Ndani ya Sekunde 30",
     "getStartedDescription": "Sakinisha OmniRoute, sanidi watoa huduma wako kupitia dashibodi ya wavuti, na uanze kuelekeza maombi ya AI.",
-    "installOmniRoute": "Sakinisha OmniRoute",
+    "installAgentProxy": "Sakinisha AgentProxy",
     "installStepDescription": "Endesha amri ya npx ili kuanzisha seva papo hapo",
     "openDashboard": "Fungua Dashibodi",
     "openDashboardStepDescription": "Sanidi watoa huduma na funguo za API kupitia kiolesura cha wavuti",
@@ -9988,7 +9988,7 @@
     "terminal": "terminali",
     "copy": "Nakili",
     "copied": "✓ Imenakiliwa",
-    "startingOmniRoute": "OmniRoute inaanzishwa...",
+    "startingAgentProxy": "AgentProxy inaanzishwa...",
     "serverRunningOnLabel": "Seva inaendeshwa kwenye",
     "dashboardLabel": "Dashibodi",
     "readyToRoute": "Tayari kwa uelekezaji! ✓",
@@ -10382,7 +10382,7 @@
     "versionCommandPlaceholder": "Version Command Placeholder",
     "architectureTitle": "Architecture Title",
     "flowLocalBinary": "Flow Local Binary",
-    "flowOmniRoute": "Flow Omni Route",
+    "flowAgentProxy": "Flow Omni Route",
     "agentNamePlaceholder": "Agent Name Placeholder",
     "architectureDescription": "Architecture Description",
     "flowExecute": "Flow Execute",
@@ -10399,8 +10399,8 @@
     "agentUseCaseHint": "Inaweza kutumika kama lengo la utekelezaji kupitia itifaki ya ACP",
     "flowDiagramClient": "Programu ya Mteja",
     "flowDiagramClientDesc": "SDK, API, au huduma ya juu ya mkondo",
-    "flowDiagramOmniRoute": "OmniRoute",
-    "flowDiagramOmniRouteDesc": "Inapokea ombi na kuchagua lengo",
+    "flowDiagramAgentProxy": "AgentProxy",
+    "flowDiagramAgentProxyDesc": "Inapokea ombi na kuchagua lengo",
     "flowDiagramSpawn": "Mchakato wa kuzaa",
     "flowDiagramSpawnDesc": "Inazindua binary ya CLI kupitia stdio",
     "flowDiagramCli": "Wakala wa CLI",
@@ -12965,16 +12965,16 @@
       "PROXY_AUTO_SELECT_ENABLED": {
         "description": "Wakati hakuna seva mbadala iliyogawiwa kwenye muunganisho, chagua kiotomatiki seva mbadala ya kwanza ya sajili inayofanya kazi. Imezimwa kwa chaguomsingi kwa sababu vinginevyo seva mbadala moja ya sajili inakuwa mbadala wa kimataifa kwa trafiki yote (#3332)."
       },
-      "OMNIROUTE_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
+      "AGENTPROXY_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
         "description": "Ruhusu mtiririko wa OAuth na uthibitishaji wa mtoa huduma kupita seva mbadala iliyobandikwa wakati ukaguzi wa ufikiaji wa seva mbadala unapofeli. Imezimwa kwa chaguomsingi kwa sababu hii inaweza kubadilisha IP ya kutokea ya akaunti."
       },
       "MITM_DISABLE_TLS_VERIFY": {
         "description": "Zima uthibitishaji wa cheti cha TLS kwa seva mbadala ya MITM."
       },
-      "OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS": {
         "description": "Ruhusu URL za mtoa huduma zinazoelekeza kwenye mitandao ya faragha au ya ndani."
       },
-      "OMNIROUTE_ALLOW_LOCAL_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_LOCAL_PROVIDER_URLS": {
         "description": "Ruhusu watoa huduma kwenye localhost, LAN, na masafa ya IP ya faragha. Hii inahitajika kwa mifano ya ndani inayoendana na OpenAI na imewezeshwa kwa chaguomsingi. Vituo vya mwisho vya cloud-metadata kama vile 169.254.169.254 vinasalia kuzuiwa."
       },
       "ENABLE_CC_COMPATIBLE_PROVIDER": {
@@ -12996,28 +12996,28 @@
       "RESPONSES_PASSTHROUGH_DROP_COMMENTARY": {
         "description": "Ondoa vipengele vya pato la awamu ya maoni ya ndani kutoka kwenye mikondo ya kupita ya Responses API kabla ya kuvituma kwa wateja. Zima alama hii ili kupokea maoni ghafi ya mkondo wa juu."
       },
-      "OMNIROUTE_MCP_ENFORCE_SCOPES": {
+      "AGENTPROXY_MCP_ENFORCE_SCOPES": {
         "description": "Tekeleza vizuizi vya upeo kwa ufikiaji wa zana ya MCP."
       },
-      "OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS": {
+      "AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS": {
         "description": "Fupisha maelezo ya zana ya MCP ili kupunguza matumizi ya tokeni."
       },
-      "OMNIROUTE_ENABLE_RUNTIME_BACKGROUND_TASKS": {
+      "AGENTPROXY_ENABLE_RUNTIME_BACKGROUND_TASKS": {
         "description": "Wezesha usindikaji wa kazi za nyuma wakati wa uendeshaji."
       },
-      "OMNIROUTE_DISABLE_BACKGROUND_SERVICES": {
+      "AGENTPROXY_DISABLE_BACKGROUND_SERVICES": {
         "description": "Zima huduma zote za nyuma, ikijumuisha uboreshaji wa upya wa viwango na ulandanishi."
       },
-      "OMNIROUTE_RTK_TRUST_PROJECT_FILTERS": {
+      "AGENTPROXY_RTK_TRUST_PROJECT_FILTERS": {
         "description": "Amini vichujio vya RTK vya kiwango cha mradi bila uthibitishaji."
       },
-      "OMNIROUTE_ENABLE_LIVE_WS": {
+      "AGENTPROXY_ENABLE_LIVE_WS": {
         "description": "Anzisha seva ya WebSocket ya dashibodi ya muda halisi wakati wa kuagiza kwenye lango la loopback 20132. Weka alama kuwa 0 au false ili kuizima. Mfiduo wa LAN pia unahitaji LIVE_WS_HOST=0.0.0.0 na LIVE_WS_ALLOWED_ORIGINS."
       },
-      "OMNIROUTE_CODEX_WS_ENABLED": {
+      "AGENTPROXY_CODEX_WS_ENABLED": {
         "description": "Ruhusu Codex kutumia Responses kupitia WebSocket. Inapozimwa, Codex hurudi kwenye HTTP Responses."
       },
-      "OMNIROUTE_EMERGENCY_FALLBACK": {
+      "AGENTPROXY_EMERGENCY_FALLBACK": {
         "description": "Elekeza maombi ya bajeti iliyoisha kwa mtoa huduma na mfano mbadala wa dharura wa bure."
       },
       "STREAM_RECOVERY_ENABLED": {
@@ -13044,16 +13044,16 @@
       "PRICING_SYNC_ENABLED": {
         "description": "Lanisha data ya bei kiotomatiki. Tofauti ya mazingira ya PRICING_SYNC_ENABLED lazima pia iwe true."
       },
-      "OMNIROUTE_AUTO_SYNC_CODEX_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CODEX_PROFILES": {
         "description": "Baada ya ulandanishi wa mtoa huduma na mfano, zalisha upya wasifu wa ~/.codex/*.config.toml kutoka kwenye katalogi hai. Hii haibadilishi kamwe usanidi amilifu au wa chaguomsingi wa Codex na imezimwa kwa chaguomsingi."
       },
-      "OMNIROUTE_AUTO_SYNC_CLAUDE_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CLAUDE_PROFILES": {
         "description": "Baada ya kusawazisha modeli za watoa huduma, tengeneza upya profaili za ~/.claude/profiles/'<name>'/settings.json kutoka kwenye katalogi ya moja kwa moja. Hatua hii kamwe haibadilishi usanidi unaotumika au chaguomsingi wa Claude, na imezimwa kwa chaguomsingi."
       },
-      "OMNIROUTE_DISABLE_LOCAL_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_LOCAL_HEALTHCHECK": {
         "description": "Zima kituo cha mwisho cha ukaguzi wa afya wa mfano wa ndani."
       },
-      "OMNIROUTE_DISABLE_TOKEN_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_TOKEN_HEALTHCHECK": {
         "description": "Zima ukaguzi wa afya wa uthibitishaji wa tokeni."
       },
       "SKILLS_SANDBOX_NETWORK_ENABLED": {
@@ -14190,5 +14190,5 @@
     "partnerLinkNote": "Kiungo cha mshirika",
     "dismissAriaLabel": "Funga"
   },
-  "featureFlagOmnirouteDisableThinkingLevelVariantsDescription": "Zima uundaji wa vibadala vya kiwango cha kufikiri (k.m. -low, -medium, -high) katika katalogi ya /v1/models."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Zima uundaji wa vibadala vya kiwango cha kufikiri (k.m. -low, -medium, -high) katika katalogi ya /v1/models."
 }

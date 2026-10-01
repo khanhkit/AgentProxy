@@ -28,14 +28,14 @@ test("ecosystem CLI boots the trusted-peer custom server on loopback", async () 
       `
       import { createServer } from "node:http";
       if (process.env.HOST !== "127.0.0.1") process.exit(41);
-      if (process.env.OMNIROUTE_E2E_BOOTSTRAP_MODE !== "open") process.exit(42);
+      if (process.env.AGENTPROXY_E2E_BOOTSTRAP_MODE !== "open") process.exit(42);
       createServer((_req, res) => res.end("{}")).listen(Number(process.env.PORT), process.env.HOST);
     `
     );
     writeFileSync(
       join(dir, "node_modules/vitest/vitest.mjs"),
       `
-      const result = await fetch(process.env.OMNIROUTE_BASE_URL + "/api/monitoring/health");
+      const result = await fetch(process.env.AGENTPROXY_BASE_URL + "/api/monitoring/health");
       process.exit(result.ok ? 0 : 43);
     `
     );
@@ -43,8 +43,8 @@ test("ecosystem CLI boots the trusted-peer custom server on loopback", async () 
       cwd: dir,
       env: {
         ...process.env,
-        OMNIROUTE_BASE_URL: "",
-        OMNIROUTE_E2E_BOOTSTRAP_MODE: "open",
+        AGENTPROXY_BASE_URL: "",
+        AGENTPROXY_E2E_BOOTSTRAP_MODE: "open",
         DATA_DIR: join(dir, "data"),
         HOST: "",
         PORT: String(port),

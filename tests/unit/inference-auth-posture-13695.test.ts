@@ -21,7 +21,7 @@ const REPO_ROOT = path.resolve(import.meta.dirname, "../..");
 // HOSTNAME is exported by the shell on many Linux boxes, so a test that only
 // clears HOST would read the machine name and pass for the wrong reason.
 const CLEAR_HOST = {
-  OMNIROUTE_BOUND_HOST: undefined,
+  AGENTPROXY_BOUND_HOST: undefined,
   HOSTNAME: undefined,
   HOST: undefined,
 } satisfies Record<string, string | undefined>;
@@ -70,7 +70,7 @@ test("inference server warns on its default bind with REQUIRE_API_KEY unset", ()
 });
 
 test("inference server warns on an explicit LAN bind with REQUIRE_API_KEY=false", () => {
-  withEnv({ ...CLEAR_HOST, REQUIRE_API_KEY: "false", OMNIROUTE_BOUND_HOST: "192.168.1.5" }, () => {
+  withEnv({ ...CLEAR_HOST, REQUIRE_API_KEY: "false", AGENTPROXY_BOUND_HOST: "192.168.1.5" }, () => {
     const messages = captureWarn(warnIfInferenceServerExposed);
     assert.equal(messages.length, 1);
     assert.match(messages[0], /non-loopback host "192\.168\.1\.5"/);
@@ -78,10 +78,10 @@ test("inference server warns on an explicit LAN bind with REQUIRE_API_KEY=false"
 });
 
 test("inference server stays silent on loopback, and on 0.0.0.0 with the key required", () => {
-  withEnv({ ...CLEAR_HOST, REQUIRE_API_KEY: "false", OMNIROUTE_BOUND_HOST: "127.0.0.1" }, () => {
+  withEnv({ ...CLEAR_HOST, REQUIRE_API_KEY: "false", AGENTPROXY_BOUND_HOST: "127.0.0.1" }, () => {
     assert.deepEqual(captureWarn(warnIfInferenceServerExposed), []);
   });
-  withEnv({ ...CLEAR_HOST, REQUIRE_API_KEY: "false", OMNIROUTE_BOUND_HOST: "::1" }, () => {
+  withEnv({ ...CLEAR_HOST, REQUIRE_API_KEY: "false", AGENTPROXY_BOUND_HOST: "::1" }, () => {
     assert.deepEqual(captureWarn(warnIfInferenceServerExposed), []);
   });
   withEnv({ ...CLEAR_HOST, REQUIRE_API_KEY: "true" }, () => {
@@ -102,7 +102,7 @@ test("host resolution tracks both entrypoints that bind the inference server", (
   assert.equal(match[1], MAIN_SERVER_DEFAULT_HOST);
   assert.match(
     runner,
-    /process\.env\.OMNIROUTE_BOUND_HOST = hostname;/,
+    /process\.env\.AGENTPROXY_BOUND_HOST = hostname;/,
     "run-next.mjs no longer publishes the host it binds"
   );
 
@@ -117,7 +117,7 @@ test("host resolution tracks both entrypoints that bind the inference server", (
     assert.equal(resolveMainServerHost(), MAIN_SERVER_DEFAULT_HOST);
   });
   // run-next.mjs path: the published value wins over anything ambient.
-  withEnv({ ...CLEAR_HOST, OMNIROUTE_BOUND_HOST: "127.0.0.1", HOSTNAME: "build-box" }, () => {
+  withEnv({ ...CLEAR_HOST, AGENTPROXY_BOUND_HOST: "127.0.0.1", HOSTNAME: "build-box" }, () => {
     assert.equal(resolveMainServerHost(), "127.0.0.1");
   });
   // standalone/Docker path: no published value, Next reads HOSTNAME.
@@ -125,7 +125,7 @@ test("host resolution tracks both entrypoints that bind the inference server", (
     assert.equal(resolveMainServerHost(), "10.0.0.7");
   });
   // HOST is deliberately absent from the chain: the standalone server ignores
-  // it, and run-next.mjs has already folded it into OMNIROUTE_BOUND_HOST.
+  // it, and run-next.mjs has already folded it into AGENTPROXY_BOUND_HOST.
   withEnv({ ...CLEAR_HOST, HOST: "10.0.0.8" }, () => {
     assert.equal(resolveMainServerHost(), MAIN_SERVER_DEFAULT_HOST);
   });

@@ -258,7 +258,7 @@
     "no_tray": "Išjungti sistemos dėklo piktogramą",
     "tls_cert": "Kelias į TLS sertifikatą (PEM), skirtą HTTPS teikti (taip pat OMNIROUTE_TLS_CERT)",
     "tls_key": "Kelias į privatųjį TLS raktą (PEM), skirtą HTTPS teikti (taip pat OMNIROUTE_TLS_KEY)",
-    "ready_timeout": "Parengties patikros skirtasis laikas ms (taip pat OMNIROUTE_READY_TIMEOUT_MS, numatytoji reikšmė 60000)"
+    "ready_timeout": "Parengties patikros skirtasis laikas ms (taip pat AGENTPROXY_READY_TIMEOUT_MS, numatytoji reikšmė 60000)"
   },
   "backup": {
     "title": "Atsarginė kopija",

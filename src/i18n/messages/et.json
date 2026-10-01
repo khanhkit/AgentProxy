@@ -986,7 +986,7 @@
     "batchFileDownloadFull": "Laadi alla kogu fail"
   },
   "disabled": "Keelatud",
-  "featureFlagOmnirouteEmergencyFallbackDescription": "Suunake ammendunud eelarvega päringud tasuta hädaolukorra varupakkuja/-mudeli juurde.",
+  "featureFlagAgentProxyEmergencyFallbackDescription": "Suunake ammendunud eelarvega päringud tasuta hädaolukorra varupakkuja/-mudeli juurde.",
   "featureFlagArenaEloSyncEnabledDescription": "Lubage mudelite intelligentsuse paremusjärjestuste jaoks Arena AI edetabeli ELO perioodiline sünkroonimine.",
   "featureFlagUniversalContextHandoffEnabledDescription": "Looge ja sisestage vestluste kokkuvõtted, kui kombomarsruutimine vahetab mudelit. Keelake see, et käsitleda mudelivahetusi sõltumatult ja takistada taustal üleandmispäringuid kõigi olemasolevate ja tulevaste kombode puhul.",
   "featureFlagExposeCcDiscoveryAliasesDescription": "Avaldage claude/&lt;provider&gt;/&lt;model&gt; peegel-ID-d lõpp-punktis /v1/models, et Claude Code'i lüüsi mudeliotsing loetleks ka mitte-Claude'i mudelid. Hoiatus: globaalsel lubamisel kahekordistab see kõigi klientide kataloogikirjete arvu.",
@@ -2273,7 +2273,7 @@
     "requestFlowAria": "Teie rakendus saadab API-võtme kaudu päringuid teenusele OmniRoute",
     "requestFlowYourApp": "Teie rakendus",
     "requestFlowApiKey": "API-võti",
-    "requestFlowOmniRoute": "OmniRoute",
+    "requestFlowAgentProxy": "AgentProxy",
     "totalKeys": "Võtmeid kokku",
     "restricted": "Piiratud",
     "totalRequests": "Päringuid kokku",
@@ -2780,7 +2780,7 @@
     "configurationSaved": "Konfiguratsioon salvestati edukalt.",
     "failedToSave": "Konfiguratsiooni salvestamine nurjus.",
     "noApiKeysCreateOne": "API-võtmeid pole – loo üks lehel „Võtmed“",
-    "defaultOmnirouteKey": "sk_omniroute (vaikimisi)",
+    "defaultAgentProxyKey": "sk_agentproxy (vaikimisi)",
     "selectModel": "Vali mudel",
     "selectModelForAlias": "Vali mudel aliasele {alias}",
     "selectModelForTool": "Vali mudel tööriista {tool} jaoks",
@@ -2877,13 +2877,13 @@
     "applied": "Rakendatud!",
     "failed": "Nurjus",
     "resetDone": "Lähtestatud!",
-    "omnirouteConfiguredOpenAiCompatible": "OmniRoute on seadistatud OpenAI-ga ühilduva teenusepakkujana",
+    "agentproxyConfiguredOpenAiCompatible": "AgentProxy on seadistatud OpenAI-ga ühilduva teenusepakkujana",
     "provider": "Teenusepakkuja",
     "model": "Mudel",
     "providers": "Teenusepakkujad",
     "auth": "Autentimine",
     "noApiKeysAvailable": "API-võtmeid pole saadaval",
-    "usingDefaultOmniroute": "Kasutatakse vaikeväärtust: sk_omniroute",
+    "usingDefaultAgentProxy": "Kasutatakse vaikeväärtust: sk_agentproxy",
     "updateConfig": "Uuenda konfiguratsiooni",
     "applyConfig": "Rakenda konfiguratsioon",
     "noBackupsAvailable": "Varukoopiaid pole saadaval.",
@@ -3164,8 +3164,8 @@
     "hermesConfiguredRoles": "{configured}/{total} rolli",
     "hermesQuickApply": "Rakendage sama mudel kiiresti kõigile rollidele:",
     "hermesApplyModelToAll": "Rakenda {model} kõigile rollidele",
-    "hermesViaOmniRoute": "{provider} (teenuse OmniRoute kaudu)",
-    "hermesNotOmniRoute": "{provider} (mitte OmniRoute kaudu)",
+    "hermesViaAgentProxy": "{provider} (teenuse AgentProxy kaudu)",
+    "hermesNotAgentProxy": "{provider} (mitte AgentProxy kaudu)",
     "hermesRemovePendingRole": "Eemalda see roll ootel muudatustest",
     "hermesApply": "Rakenda rakendusele Hermes Agent",
     "hermesRolesWillUpdate": "{count, plural, one {Uuendatakse # rolli} other {Uuendatakse # rolli}}",
@@ -4161,7 +4161,7 @@
     "vscodeAliasModelsLabel": "VS Code'i mudelid",
     "vscodeAliasChatLabel": "VS Code'i vestlus",
     "localServer": "Kohalik server",
-    "cloudOmniroute": "Pilvepõhine OmniRoute",
+    "cloudAgentProxy": "Pilvepõhine AgentProxy",
     "copyUrl": "Kopeeri URL",
     "badgeLoopbackTooltip": "See lõpp-punkt on juurdepääsetav ainult kohalikult (ainult loopback-liidese kaudu)",
     "badgeAlwaysProtectedTooltip": "See lõpp-punkt on alati kaitstud ja nõuab autoriseerimist",
@@ -9998,7 +9998,7 @@
     "howItWorksStep3Description": "Päringu täidab viivitamatult OpenAI, Anthropic, Gemini või mõni muu teenusepakkuja.",
     "getStartedIn30Seconds": "Alustage 30 sekundiga",
     "getStartedDescription": "Installige OmniRoute, seadistage teenusepakkujad veebipõhise juhtpaneeli kaudu ja alustage AI-päringute marsruutimist.",
-    "installOmniRoute": "Installige OmniRoute",
+    "installAgentProxy": "Installige AgentProxy",
     "installStepDescription": "Käivitage npx-käsk, et server kohe käivitada",
     "openDashboard": "Avage juhtpaneel",
     "openDashboardStepDescription": "Seadistage teenusepakkujad ja API-võtmed veebiliidese kaudu",
@@ -10007,7 +10007,7 @@
     "terminal": "terminal",
     "copy": "Kopeeri",
     "copied": "✓ Kopeeritud",
-    "startingOmniRoute": "OmniRoute käivitamine...",
+    "startingAgentProxy": "AgentProxy käivitamine...",
     "serverRunningOnLabel": "Server töötab aadressil",
     "dashboardLabel": "Juhtpaneel",
     "readyToRoute": "Marsruutimiseks valmis! ✓",
@@ -10401,7 +10401,7 @@
     "versionCommandPlaceholder": "nt my-agent --version",
     "architectureTitle": "Kuidas agendisihtmärgid töötavad",
     "flowLocalBinary": "3 · Oma autentimisega CLI-protsess",
-    "flowOmniRoute": "1 · Päring saabub OmniRoute’i",
+    "flowAgentProxy": "1 · Päring saabub AgentProxy’i",
     "agentNamePlaceholder": "nt Minu kohandatud agent",
     "architectureDescription": "Päringu saabumisel saab OmniRoute käivitada kohaliku CLI-binaarfaili (nt claude, codex, goose) ja suunata päringu selle kaudu. CLI töötleb päringut oma identimisteabega ja tagastab tulemuse OmniRoute’i kaudu.",
     "flowExecute": "4 · Vastus tagastatakse kliendile",
@@ -10418,8 +10418,8 @@
     "agentUseCaseHint": "Saab kasutada täitmisihtmärgina ACP-protokolli kaudu",
     "flowDiagramClient": "Kliendirakendus",
     "flowDiagramClientDesc": "SDK, API või ülesvoolu teenus",
-    "flowDiagramOmniRoute": "OmniRoute",
-    "flowDiagramOmniRouteDesc": "Võtab päringu vastu ja valib sihtmärgi",
+    "flowDiagramAgentProxy": "AgentProxy",
+    "flowDiagramAgentProxyDesc": "Võtab päringu vastu ja valib sihtmärgi",
     "flowDiagramSpawn": "Protsessi käivitamine",
     "flowDiagramSpawnDesc": "Käivitab CLI-binaarfaili stdio kaudu",
     "flowDiagramCli": "CLI-agent",
@@ -12984,16 +12984,16 @@
       "PROXY_AUTO_SELECT_ENABLED": {
         "description": "Kui ühendusele pole puhverserverit määratud, vali automaatselt registrist esimene töötav puhverserver. Vaikimisi väljas, sest muidu muutub üks registri puhverserver kogu liikluse globaalseks varuvariandiks (#3332)."
       },
-      "OMNIROUTE_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
+      "AGENTPROXY_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
         "description": "Luba OAuthi ja teenusepakkuja valideerimise voogudel kinnistatud puhverserverist mööda minna, kui puhverserveri kättesaadavuse kontroll ebaõnnestub. Vaikimisi väljas, sest see võib muuta konto väljaminevat IP-aadressi."
       },
       "MITM_DISABLE_TLS_VERIFY": {
         "description": "Keela MITM-puhverserveri TLS-sertifikaadi kontrollimine."
       },
-      "OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS": {
         "description": "Luba teenusepakkujate URL-id, mis viitavad privaatsetele või sisemistele võrkudele."
       },
-      "OMNIROUTE_ALLOW_LOCAL_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_LOCAL_PROVIDER_URLS": {
         "description": "Luba teenusepakkujad localhost'is, kohtvõrgus ja privaatsetes IP-vahemikes. See on vajalik kohalike OpenAI-ga ühilduvate mudelite jaoks ja on vaikimisi lubatud. Pilve metaandmete lõpp-punktid, nagu 169.254.169.254, jäävad blokeerituks."
       },
       "ENABLE_CC_COMPATIBLE_PROVIDER": {
@@ -13015,28 +13015,28 @@
       "RESPONSES_PASSTHROUGH_DROP_COMMENTARY": {
         "description": "Eemalda Responses API läbivooluvoogudest sisemised kommentaarifaasi väljundüksused enne nende klientidele edastamist. Toore ülesvoolu kommentaari saamiseks keela see lipp."
       },
-      "OMNIROUTE_MCP_ENFORCE_SCOPES": {
+      "AGENTPROXY_MCP_ENFORCE_SCOPES": {
         "description": "Jõusta MCP-tööriistade juurdepääsu ulatuspiirangud."
       },
-      "OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS": {
+      "AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS": {
         "description": "Tihenda MCP-tööriistade kirjeldusi, et vähendada tokenite kasutust."
       },
-      "OMNIROUTE_ENABLE_RUNTIME_BACKGROUND_TASKS": {
+      "AGENTPROXY_ENABLE_RUNTIME_BACKGROUND_TASKS": {
         "description": "Luba käitusajal taustülesannete töötlemine."
       },
-      "OMNIROUTE_DISABLE_BACKGROUND_SERVICES": {
+      "AGENTPROXY_DISABLE_BACKGROUND_SERVICES": {
         "description": "Keela kõik taustteenused, sealhulgas kvoodi värskendamine ja sünkroonimine."
       },
-      "OMNIROUTE_RTK_TRUST_PROJECT_FILTERS": {
+      "AGENTPROXY_RTK_TRUST_PROJECT_FILTERS": {
         "description": "Usalda projektitaseme RTK-filtreid ilma valideerimiseta."
       },
-      "OMNIROUTE_ENABLE_LIVE_WS": {
+      "AGENTPROXY_ENABLE_LIVE_WS": {
         "description": "Käivita importimisel reaalajas töölaua WebSocket-server loopback-pordil 20132. Selle keelamiseks määra lipu väärtuseks 0 või false. Kohtvõrgus avaldamiseks on vaja ka LIVE_WS_HOST=0.0.0.0 ja LIVE_WS_ALLOWED_ORIGINS."
       },
-      "OMNIROUTE_CODEX_WS_ENABLED": {
+      "AGENTPROXY_CODEX_WS_ENABLED": {
         "description": "Luba Codexil kasutada Responses API-t WebSocketi kaudu. Kui see on keelatud, kasutab Codex varuvariandina HTTP Responses API-t."
       },
-      "OMNIROUTE_EMERGENCY_FALLBACK": {
+      "AGENTPROXY_EMERGENCY_FALLBACK": {
         "description": "Suuna eelarve ammendanud päringud tasuta hädaolukorra varuteenusepakkujale ja -mudelile."
       },
       "STREAM_RECOVERY_ENABLED": {
@@ -13063,16 +13063,16 @@
       "PRICING_SYNC_ENABLED": {
         "description": "Sünkrooni hinnakujunduse andmed automaatselt. Keskkonnamuutuja PRICING_SYNC_ENABLED väärtus peab samuti olema true."
       },
-      "OMNIROUTE_AUTO_SYNC_CODEX_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CODEX_PROFILES": {
         "description": "Pärast teenusepakkujate ja mudelite sünkroonimist loo profiilid ~/.codex/*.config.toml aktiivse kataloogi põhjal uuesti. See ei muuda kunagi Codex aktiivset ega vaikekonfiguratsiooni ning on vaikimisi välja lülitatud."
       },
-      "OMNIROUTE_AUTO_SYNC_CLAUDE_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CLAUDE_PROFILES": {
         "description": "Pärast teenusepakkujate ja mudelite sünkroonimist loo profiilid ~/.claude/profiles/'<name>'/settings.json aktiivse kataloogi põhjal uuesti. See ei muuda kunagi Claude aktiivset ega vaikekonfiguratsiooni ning on vaikimisi välja lülitatud."
       },
-      "OMNIROUTE_DISABLE_LOCAL_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_LOCAL_HEALTHCHECK": {
         "description": "Keela kohaliku eksemplari seisundikontrolli lõpp-punkt."
       },
-      "OMNIROUTE_DISABLE_TOKEN_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_TOKEN_HEALTHCHECK": {
         "description": "Keela tokeni valideerimise seisundikontroll."
       },
       "SKILLS_SANDBOX_NETWORK_ENABLED": {
@@ -14209,5 +14209,5 @@
     "partnerLinkNote": "Partnerlink",
     "dismissAriaLabel": "Sulge"
   },
-  "featureFlagOmnirouteDisableThinkingLevelVariantsDescription": "Keela mõtlemistaseme variantide (nt -low, -medium, -high) loomine /v1/models kataloogis."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Keela mõtlemistaseme variantide (nt -low, -medium, -high) loomine /v1/models kataloogis."
 }

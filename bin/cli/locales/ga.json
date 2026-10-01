@@ -258,7 +258,7 @@
     "no_tray": "Díchumasaigh deilbhín bosca córas",
     "tls_cert": "Cosán go dtí deimhniú TLS (PEM) chun HTTPS a sheirbhísiú (freisin OMNIROUTE_TLS_CERT)",
     "tls_key": "Cosán go dtí eochair phríobháideach TLS (PEM) chun HTTPS a sheirbhísiú (freisin OMNIROUTE_TLS_KEY)",
-    "ready_timeout": "Teorainn ama an tseiceála ullmhachta i ms (OMNIROUTE_READY_TIMEOUT_MS freisin, réamhshocrú 60000)"
+    "ready_timeout": "Teorainn ama an tseiceála ullmhachta i ms (AGENTPROXY_READY_TIMEOUT_MS freisin, réamhshocrú 60000)"
   },
   "backup": {
     "title": "Cúltaca",

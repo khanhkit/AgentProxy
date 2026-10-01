@@ -986,7 +986,7 @@
     "batchFileDownloadFull": "ဖိုင်အပြည့်အစုံကို ဒေါင်းလုဒ်လုပ်ရန်"
   },
   "disabled": "ပိတ်ထားသည်",
-  "featureFlagOmnirouteEmergencyFallbackDescription": "ဘတ်ဂျက်ကုန်ဆုံးသွားသော တောင်းဆိုမှုများကို အရေးပေါ် အခမဲ့ အရန် provider/model သို့ လမ်းကြောင်းပြောင်းပါ။",
+  "featureFlagAgentProxyEmergencyFallbackDescription": "ဘတ်ဂျက်ကုန်ဆုံးသွားသော တောင်းဆိုမှုများကို အရေးပေါ် အခမဲ့ အရန် provider/model သို့ လမ်းကြောင်းပြောင်းပါ။",
   "featureFlagArenaEloSyncEnabledDescription": "မော်ဒယ်ဉာဏ်ရည်ဆိုင်ရာ အဆင့်သတ်မှတ်ချက်များအတွက် Arena AI leaderboard ELO ကို အခါအားလျော်စွာ ထပ်တူပြုခြင်းအား ဖွင့်ပါ။",
   "featureFlagUniversalContextHandoffEnabledDescription": "combo လမ်းကြောင်းရွေးချယ်မှုက မော်ဒယ်များ ပြောင်းသည့်အခါ စကားဝိုင်းအနှစ်ချုပ်များကို ထုတ်လုပ်၍ ထည့်သွင်းပါ။ မော်ဒယ်ပြောင်းလဲမှုများကို သီးခြားစီ ကိုင်တွယ်ရန်နှင့် လက်ရှိနှင့် အနာဂတ် combo အားလုံးအတွက် နောက်ခံလွှဲပြောင်းတောင်းဆိုမှုများကို တားဆီးရန် ပိတ်ပါ။",
   "featureFlagExposeCcDiscoveryAliasesDescription": "Claude Code gateway ၏ မော်ဒယ်ရှာဖွေမှုစာရင်းတွင် Claude မဟုတ်သော မော်ဒယ်များ ပါဝင်စေရန် /v1/models တွင် claude/&lt;provider&gt;/&lt;model&gt; mirror ids များကို ဖော်ပြပါ။ သတိပေးချက်- အားလုံးအတွက် ဖွင့်ထားပါက client အားလုံးတွင် catalog entry အရေအတွက် နှစ်ဆဖြစ်စေသည်။",
@@ -2254,7 +2254,7 @@
     "requestFlowAria": "သင့်အက်ပ်သည် API ကီးမှတစ်ဆင့် OmniRoute သို့ တောင်းဆိုချက်များ ပေးပို့သည်",
     "requestFlowYourApp": "သင့်အက်ပ်",
     "requestFlowApiKey": "API ကီး",
-    "requestFlowOmniRoute": "OmniRoute",
+    "requestFlowAgentProxy": "AgentProxy",
     "totalKeys": "ကီး စုစုပေါင်း",
     "restricted": "ကန့်သတ်ထားသည်",
     "totalRequests": "တောင်းဆိုမှု စုစုပေါင်း",
@@ -2761,7 +2761,7 @@
     "configurationSaved": "ဖွဲ့စည်းသတ်မှတ်ချက်ကို အောင်မြင်စွာ သိမ်းဆည်းပြီးပါပြီ။",
     "failedToSave": "ဖွဲ့စည်းသတ်မှတ်ချက်ကို သိမ်းဆည်း၍ မရပါ။",
     "noApiKeysCreateOne": "API key မရှိပါ - Keys စာမျက်နှာတွင် တစ်ခုဖန်တီးပါ",
-    "defaultOmnirouteKey": "sk_omniroute (မူလသတ်မှတ်ချက်)",
+    "defaultAgentProxyKey": "sk_agentproxy (မူလသတ်မှတ်ချက်)",
     "selectModel": "Model ရွေးချယ်ပါ",
     "selectModelForAlias": "{alias} အတွက် model ရွေးချယ်ပါ",
     "selectModelForTool": "{tool} အတွက် Model ရွေးချယ်ပါ",
@@ -2858,13 +2858,13 @@
     "applied": "အသုံးချပြီးပါပြီ!",
     "failed": "မအောင်မြင်ပါ",
     "resetDone": "ပြန်လည်သတ်မှတ်ပြီးပါပြီ!",
-    "omnirouteConfiguredOpenAiCompatible": "OmniRoute ကို OpenAI-compatible provider အဖြစ် စီစဉ်သတ်မှတ်ထားသည်",
+    "agentproxyConfiguredOpenAiCompatible": "AgentProxy ကို OpenAI-compatible provider အဖြစ် စီစဉ်သတ်မှတ်ထားသည်",
     "provider": "ဝန်ဆောင်မှုပေးသူ",
     "model": "မော်ဒယ်",
     "providers": "ဝန်ဆောင်မှုပေးသူများ",
     "auth": "အထောက်အထားစိစစ်ခြင်း",
     "noApiKeysAvailable": "အသုံးပြုနိုင်သော API key များ မရှိပါ",
-    "usingDefaultOmniroute": "မူလသတ်မှတ်ချက်ကို အသုံးပြုနေသည်: sk_omniroute",
+    "usingDefaultAgentProxy": "မူလသတ်မှတ်ချက်ကို အသုံးပြုနေသည်: sk_agentproxy",
     "updateConfig": "စီစဉ်သတ်မှတ်ချက်ကို အပ်ဒိတ်လုပ်ရန်",
     "applyConfig": "စီစဉ်သတ်မှတ်ချက်ကို အသုံးချရန်",
     "noBackupsAvailable": "အသုံးပြုနိုင်သော အရန်သိမ်းဆည်းမှု မရှိပါ။",
@@ -3145,8 +3145,8 @@
     "hermesConfiguredRoles": "အခန်းကဏ္ဍ {configured}/{total} ခု",
     "hermesQuickApply": "တူညီသောမော်ဒယ်ကို အခန်းကဏ္ဍအားလုံးတွင် အမြန်အသုံးပြုရန်-",
     "hermesApplyModelToAll": "{model} ကို အခန်းကဏ္ဍတိုင်းတွင် အသုံးပြုမည်",
-    "hermesViaOmniRoute": "{provider} (OmniRoute မှတစ်ဆင့်)",
-    "hermesNotOmniRoute": "{provider} (OmniRoute မှတစ်ဆင့် မဟုတ်ပါ)",
+    "hermesViaAgentProxy": "{provider} (AgentProxy မှတစ်ဆင့်)",
+    "hermesNotAgentProxy": "{provider} (AgentProxy မှတစ်ဆင့် မဟုတ်ပါ)",
     "hermesRemovePendingRole": "ဤအခန်းကဏ္ဍကို ဆိုင်းငံ့ပြောင်းလဲမှုများမှ ဖယ်ရှားမည်",
     "hermesApply": "Hermes Agent တွင် အသုံးပြုမည်",
     "hermesRolesWillUpdate": "{count, plural, one {အခန်းကဏ္ဍ # ခုကို အပ်ဒိတ်လုပ်မည်} other {အခန်းကဏ္ဍ # ခုကို အပ်ဒိတ်လုပ်မည်}}",
@@ -4125,7 +4125,7 @@
     "vscodeAliasModelsLabel": "VS Code မော်ဒယ်များ",
     "vscodeAliasChatLabel": "VS Code ချတ်",
     "localServer": "စက်တွင်းဆာဗာ",
-    "cloudOmniroute": "Cloud OmniRoute",
+    "cloudAgentProxy": "Cloud AgentProxy",
     "copyUrl": "URL ကူးယူရန်",
     "badgeLoopbackTooltip": "ဤ endpoint ကို local မှသာ ဝင်ရောက်အသုံးပြုနိုင်သည် (loopback သာ)",
     "badgeAlwaysProtectedTooltip": "ဤ endpoint ကို အမြဲကာကွယ်ထားပြီး ခွင့်ပြုချက်လိုအပ်သည်",
@@ -9962,7 +9962,7 @@
     "howItWorksStep3Description": "တောင်းဆိုမှုကို OpenAI၊ Anthropic၊ Gemini သို့မဟုတ် အခြား provider များက ချက်ချင်း ဆောင်ရွက်ပေးသည်။",
     "getStartedIn30Seconds": "စက္ကန့် ၃၀ အတွင်း စတင်အသုံးပြုပါ",
     "getStartedDescription": "OmniRoute ကို ထည့်သွင်းပြီး web dashboard မှတစ်ဆင့် သင့် provider များကို စီစဉ်သတ်မှတ်ကာ AI တောင်းဆိုမှုများကို စတင်လမ်းကြောင်းပေးပါ။",
-    "installOmniRoute": "OmniRoute ကို ထည့်သွင်းပါ",
+    "installAgentProxy": "AgentProxy ကို ထည့်သွင်းပါ",
     "installStepDescription": "ဆာဗာကို ချက်ချင်းစတင်ရန် npx command ကို လုပ်ဆောင်ပါ",
     "openDashboard": "ဒက်ရှ်ဘုတ်ကို ဖွင့်ပါ",
     "openDashboardStepDescription": "ဝဘ်အင်တာဖေ့စ်မှတစ်ဆင့် ဝန်ဆောင်မှုပေးသူများနှင့် API ကီးများကို စီစဉ်သတ်မှတ်ပါ",
@@ -9971,7 +9971,7 @@
     "terminal": "တာမီနယ်",
     "copy": "ကူးယူပါ",
     "copied": "✓ ကူးယူပြီးပါပြီ",
-    "startingOmniRoute": "OmniRoute ကို စတင်နေသည်...",
+    "startingAgentProxy": "AgentProxy ကို စတင်နေသည်...",
     "serverRunningOnLabel": "ဆာဗာ လည်ပတ်နေသည့် လိပ်စာ",
     "dashboardLabel": "ဒက်ရှ်ဘုတ်",
     "readyToRoute": "လမ်းကြောင်းသတ်မှတ်ရန် အသင့်ဖြစ်ပါပြီ! ✓",
@@ -10365,7 +10365,7 @@
     "versionCommandPlaceholder": "ဥပမာ၊ my-agent --version",
     "architectureTitle": "Agent Target များ အလုပ်လုပ်ပုံ",
     "flowLocalBinary": "3 · ကိုယ်ပိုင် auth ပါရှိသည့် CLI process",
-    "flowOmniRoute": "1 · တောင်းဆိုချက်သည် OmniRoute သို့ ရောက်ရှိသည်",
+    "flowAgentProxy": "1 · တောင်းဆိုချက်သည် AgentProxy သို့ ရောက်ရှိသည်",
     "agentNamePlaceholder": "ဥပမာ၊ My Custom Agent",
     "architectureDescription": "တောင်းဆိုချက်တစ်ခု ရောက်ရှိလာသောအခါ OmniRoute သည် local CLI binary တစ်ခု (ဥပမာ၊ claude, codex, goose) ကို စတင်လုပ်ဆောင်ပြီး တောင်းဆိုချက်ကို ၎င်းမှတစ်ဆင့် ပေးပို့နိုင်သည်။ CLI သည် ၎င်း၏ကိုယ်ပိုင် အထောက်အထားများကို အသုံးပြု၍ တောင်းဆိုချက်ကို လုပ်ဆောင်ပြီး ရလဒ်ကို OmniRoute မှတစ်ဆင့် ပြန်လည်ပေးပို့သည်။",
     "flowExecute": "4 · တုံ့ပြန်ချက်ကို client ထံ ပြန်ပို့သည်",
@@ -10382,8 +10382,8 @@
     "agentUseCaseHint": "ACP protocol မှတစ်ဆင့် လုပ်ဆောင်မှု target အဖြစ် အသုံးပြုနိုင်သည်",
     "flowDiagramClient": "ကလိုင်းယင့်အက်ပ်",
     "flowDiagramClientDesc": "SDK, API သို့မဟုတ် upstream service",
-    "flowDiagramOmniRoute": "OmniRoute",
-    "flowDiagramOmniRouteDesc": "တောင်းဆိုမှုကို လက်ခံပြီး target ကို ရွေးချယ်သည်",
+    "flowDiagramAgentProxy": "AgentProxy",
+    "flowDiagramAgentProxyDesc": "တောင်းဆိုမှုကို လက်ခံပြီး target ကို ရွေးချယ်သည်",
     "flowDiagramSpawn": "Process စတင်ခြင်း",
     "flowDiagramSpawnDesc": "stdio မှတစ်ဆင့် CLI binary ကို စတင်သည်",
     "flowDiagramCli": "CLI အေးဂျင့်",
@@ -12938,16 +12938,16 @@
       "PROXY_AUTO_SELECT_ENABLED": {
         "description": "ချိတ်ဆက်မှုတစ်ခုတွင် proxy သတ်မှတ်ထားခြင်းမရှိပါက အလုပ်လုပ်သော ပထမဆုံး registry proxy ကို အလိုအလျောက်ရွေးချယ်ပါ။ သို့မဟုတ်ပါက registry proxy တစ်ခုသည် traffic အားလုံးအတွက် global fallback ဖြစ်လာမည်ဖြစ်သောကြောင့် မူလအားဖြင့် ပိတ်ထားသည် (#3332)။"
       },
-      "OMNIROUTE_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
+      "AGENTPROXY_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
         "description": "Proxy ရောက်ရှိနိုင်မှု စစ်ဆေးချက်များ မအောင်မြင်သည့်အခါ OAuth နှင့် provider-validation flow များကို pinned proxy အား ကျော်လွှားခွင့်ပြုပါ။ ၎င်းသည် account ၏ egress IP ကို ပြောင်းလဲစေနိုင်သောကြောင့် မူလအားဖြင့် ပိတ်ထားသည်။"
       },
       "MITM_DISABLE_TLS_VERIFY": {
         "description": "MITM proxy အတွက် TLS certificate အတည်ပြုစစ်ဆေးမှုကို ပိတ်ပါ။"
       },
-      "OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS": {
         "description": "Private သို့မဟုတ် internal network များသို့ ညွှန်ပြသော provider URL များကို ခွင့်ပြုပါ။"
       },
-      "OMNIROUTE_ALLOW_LOCAL_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_LOCAL_PROVIDER_URLS": {
         "description": "localhost၊ LAN နှင့် private IP range များရှိ provider များကို ခွင့်ပြုပါ။ ၎င်းသည် local OpenAI-compatible model များအတွက် လိုအပ်ပြီး မူလအားဖြင့် ဖွင့်ထားသည်။ 169.254.169.254 ကဲ့သို့သော cloud-metadata endpoint များကို ဆက်လက်ပိတ်ဆို့ထားမည်။"
       },
       "ENABLE_CC_COMPATIBLE_PROVIDER": {
@@ -12969,28 +12969,28 @@
       "RESPONSES_PASSTHROUGH_DROP_COMMENTARY": {
         "description": "Client များထံ မပို့မီ Responses API passthrough stream များမှ internal commentary-phase output item များကို ဖယ်ရှားပါ။ Raw upstream commentary ကို လက်ခံရယူရန် ဤ flag ကို ပိတ်ပါ။"
       },
-      "OMNIROUTE_MCP_ENFORCE_SCOPES": {
+      "AGENTPROXY_MCP_ENFORCE_SCOPES": {
         "description": "MCP tool အသုံးပြုခွင့်အတွက် scope ကန့်သတ်ချက်များကို မဖြစ်မနေ လိုက်နာစေပါ။"
       },
-      "OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS": {
+      "AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS": {
         "description": "Token အသုံးပြုမှုကို လျှော့ချရန် MCP tool ဖော်ပြချက်များကို ချုံ့ပါ။"
       },
-      "OMNIROUTE_ENABLE_RUNTIME_BACKGROUND_TASKS": {
+      "AGENTPROXY_ENABLE_RUNTIME_BACKGROUND_TASKS": {
         "description": "Runtime တွင် background-task processing ကို ဖွင့်ပါ။"
       },
-      "OMNIROUTE_DISABLE_BACKGROUND_SERVICES": {
+      "AGENTPROXY_DISABLE_BACKGROUND_SERVICES": {
         "description": "Quota refresh နှင့် synchronization အပါအဝင် background service အားလုံးကို ပိတ်ပါ။"
       },
-      "OMNIROUTE_RTK_TRUST_PROJECT_FILTERS": {
+      "AGENTPROXY_RTK_TRUST_PROJECT_FILTERS": {
         "description": "Project-level RTK filter များကို အတည်ပြုစစ်ဆေးခြင်းမရှိဘဲ ယုံကြည်အသုံးပြုပါ။"
       },
-      "OMNIROUTE_ENABLE_LIVE_WS": {
+      "AGENTPROXY_ENABLE_LIVE_WS": {
         "description": "Import ပြုလုပ်ချိန်တွင် loopback port 20132 ပေါ်၌ real-time dashboard WebSocket server ကို စတင်ပါ။ ၎င်းကိုပိတ်ရန် flag ကို 0 သို့မဟုတ် false ဟု သတ်မှတ်ပါ။ LAN သို့ ဖွင့်ပေးရန် LIVE_WS_HOST=0.0.0.0 နှင့် LIVE_WS_ALLOWED_ORIGINS တို့လည်း လိုအပ်သည်။"
       },
-      "OMNIROUTE_CODEX_WS_ENABLED": {
+      "AGENTPROXY_CODEX_WS_ENABLED": {
         "description": "Codex အား WebSocket မှတစ်ဆင့် Responses ကို အသုံးပြုခွင့်ပြုပါ။ ပိတ်ထားပါက Codex သည် HTTP Responses သို့ fallback ပြုလုပ်မည်။"
       },
-      "OMNIROUTE_EMERGENCY_FALLBACK": {
+      "AGENTPROXY_EMERGENCY_FALLBACK": {
         "description": "Budget ကုန်ဆုံးသွားသော request များကို အရေးပေါ် အခမဲ့ fallback provider နှင့် model သို့ route လုပ်ပါ။"
       },
       "STREAM_RECOVERY_ENABLED": {
@@ -13017,16 +13017,16 @@
       "PRICING_SYNC_ENABLED": {
         "description": "Pricing data ကို အလိုအလျောက် synchronize လုပ်ပါ။ PRICING_SYNC_ENABLED environment variable သည်လည်း true ဖြစ်ရမည်။"
       },
-      "OMNIROUTE_AUTO_SYNC_CODEX_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CODEX_PROFILES": {
         "description": "Provider-model synchronization ပြုလုပ်ပြီးနောက် live catalog မှ ~/.codex/*.config.toml profile များကို ပြန်လည်ဖန်တီးပါ။ ၎င်းသည် လက်ရှိအသုံးပြုနေသော သို့မဟုတ် မူလ Codex configuration ကို မည်သည့်အခါမျှ ပြောင်းလဲမည်မဟုတ်ဘဲ မူလအားဖြင့် ပိတ်ထားသည်။"
       },
-      "OMNIROUTE_AUTO_SYNC_CLAUDE_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CLAUDE_PROFILES": {
         "description": "Provider-model synchronization ပြုလုပ်ပြီးနောက် live catalog မှ ~/.claude/profiles/'<name>'/settings.json profile များကို ပြန်လည်ဖန်တီးပါ။ ၎င်းသည် လက်ရှိအသုံးပြုနေသော သို့မဟုတ် မူလ Claude configuration ကို မည်သည့်အခါမျှ ပြောင်းလဲမည်မဟုတ်ဘဲ မူလအားဖြင့် ပိတ်ထားသည်။"
       },
-      "OMNIROUTE_DISABLE_LOCAL_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_LOCAL_HEALTHCHECK": {
         "description": "Local instance health-check endpoint ကို ပိတ်ပါ။"
       },
-      "OMNIROUTE_DISABLE_TOKEN_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_TOKEN_HEALTHCHECK": {
         "description": "Token-validation health check ကို ပိတ်ပါ။"
       },
       "SKILLS_SANDBOX_NETWORK_ENABLED": {
@@ -14158,5 +14158,5 @@
     "partnerLinkNote": "မိတ်ဖက်လင့်ခ်",
     "dismissAriaLabel": "ပိတ်ရန်"
   },
-  "featureFlagOmnirouteDisableThinkingLevelVariantsDescription": "/v1/models catalog တွင် thinking level မူကွဲများ (ဥပမာ -low, -medium, -high) ဖန်တီးခြင်းကို ပိတ်ပါ။"
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "/v1/models catalog တွင် thinking level မူကွဲများ (ဥပမာ -low, -medium, -high) ဖန်တီးခြင်းကို ပိတ်ပါ။"
 }

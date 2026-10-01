@@ -120,9 +120,9 @@ jobs:
           target: runner-base
           platforms: ${{ matrix.platform }}
           build-args: |
-            OMNIROUTE_USE_TURBOPACK=0
-            OMNIROUTE_BUILD_MEMORY_MB=12288
-            OMNIROUTE_BUILD_WORKERS=2
+            AGENTPROXY_USE_TURBOPACK=0
+            AGENTPROXY_BUILD_MEMORY_MB=12288
+            AGENTPROXY_BUILD_WORKERS=2
           outputs: type=image,push-by-digest=true,name-canonical=true,push=true
           tags: ${{ env.IMAGE_NAME }}
           provenance: mode=max
