@@ -211,7 +211,6 @@ export function isMistralAmbiguous401SoftLockoutEnabled(): boolean {
   }
 }
 
-
 /**
  * Proxy refusal memory (#13578): pools and account rotation skip a proxy that just failed.
  * On by default; an unreadable flag store keeps skipping (fail-safe on).
@@ -253,6 +252,93 @@ export function isOpencodeParkAndResumeEnabled(): boolean {
   } catch (error) {
     console.error(
       "[featureFlags] Failed to resolve OPENCODE_PARK_AND_RESUME, defaulting to disabled:",
+      error instanceof Error ? error.message : error
+    );
+    return false;
+  }
+}
+
+/**
+ * Stream readiness stall retry. Opt-in: when off, a stalled first body fails
+ * the request without a retry. Fail closed: an unreadable flag store keeps
+ * the pre-flag behavior (disabled).
+ */
+export function isStreamReadinessStallRetryEnabled(): boolean {
+  try {
+    return isFeatureFlagEnabled("STREAM_READINESS_STALL_RETRY");
+  } catch (error) {
+    console.error(
+      "[featureFlags] Failed to resolve STREAM_READINESS_STALL_RETRY, defaulting to disabled:",
+      error instanceof Error ? error.message : error
+    );
+    return false;
+  }
+}
+
+/** OpenCode Responses first-byte stall rotation (#13484). Opt-in and fail-closed. */
+export function isOpencodeResponsesStallRotationEnabled(): boolean {
+  try {
+    return isFeatureFlagEnabled("OPENCODE_RESPONSES_STALL_ROTATION");
+  } catch (error) {
+    console.error(
+      "[featureFlags] Failed to resolve OPENCODE_RESPONSES_STALL_ROTATION, defaulting to disabled:",
+      error instanceof Error ? error.message : error
+    );
+    return false;
+  }
+}
+
+/** Stream early-EOF sibling failover (#13153). Opt-in and fail-closed. */
+export function isStreamEarlyEofSiblingFailoverEnabled(): boolean {
+  try {
+    return isFeatureFlagEnabled("STREAM_EARLY_EOF_SIBLING_FAILOVER_ENABLED");
+  } catch (error) {
+    console.error(
+      "[featureFlags] Failed to resolve STREAM_EARLY_EOF_SIBLING_FAILOVER_ENABLED, defaulting to disabled:",
+      error instanceof Error ? error.message : error
+    );
+    return false;
+  }
+}
+
+/**
+ * Proxy health sweep (#13608): a target-refused probe resets the consecutive-failure streak.
+ * Opt-in; an unreadable flag store keeps the neutral policy (#10654).
+ */
+export function isProxyHealthBlockedResetsStreakEnabled(): boolean {
+  try {
+    return isFeatureFlagEnabled("PROXY_HEALTH_BLOCKED_RESETS_STREAK");
+  } catch (error) {
+    console.error(
+      "[featureFlags] Failed to resolve PROXY_HEALTH_BLOCKED_RESETS_STREAK, defaulting to disabled:",
+      error instanceof Error ? error.message : error
+    );
+    return false;
+  }
+}
+
+/** Rotation attribution diagnostics; opt-in and fail-safe off. */
+export function isRotationAttributionEnabled(): boolean {
+  try {
+    return isFeatureFlagEnabled("ROTATION_ATTRIBUTION");
+  } catch (error) {
+    console.error(
+      "[featureFlags] Failed to resolve ROTATION_ATTRIBUTION, defaulting to disabled:",
+      error instanceof Error ? error.message : error
+    );
+    return false;
+  }
+}
+
+/** Antigravity streaming-account lease (#13929). Opt-in and fail-closed. */
+export function isAntigravityAccountLeaseEnabled(
+  reader: (key: string) => boolean = isFeatureFlagEnabled
+): boolean {
+  try {
+    return reader("ANTIGRAVITY_ACCOUNT_LEASE_ENABLED");
+  } catch (error) {
+    console.error(
+      "[featureFlags] Failed to resolve ANTIGRAVITY_ACCOUNT_LEASE_ENABLED, defaulting to disabled:",
       error instanceof Error ? error.message : error
     );
     return false;

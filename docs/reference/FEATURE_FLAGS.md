@@ -76,6 +76,7 @@ used when neither a DB override nor an environment variable is present.
 | `AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS`         | boolean | `false` |         | Allow provider URLs pointing to private/internal networks.                                                                                                                                    |
 | `AGENTPROXY_ALLOW_LOCAL_PROVIDER_URLS`           | boolean | `true`  |         | Allow adding/validating providers on local/private addresses (127.0.0.1, localhost, LAN). On by default (local-first); disable for strict public-only blocking. Cloud-metadata stays blocked. |
 | `ENABLE_CC_COMPATIBLE_PROVIDER`                 | boolean | `false` | ✓       | Enable Claude Code compatible provider mode.                                                                                                                                                  |
+| `STREAM_READINESS_STALL_RETRY`                  | boolean | `false` |         | Retry once through the same routing path when a streaming first body stalls before usable output. Default off. |
 
 ### Policies (3)
 

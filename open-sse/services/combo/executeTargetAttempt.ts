@@ -65,6 +65,8 @@ import {
   resolveDelayMs,
   resolvePersistedConnectionCooldownSkipReason,
   isModelScoped400,
+  classifyQualityFailure,
+  requestScopedReplayKey,
 } from "./comboPredicates.ts";
 import { applyComboTargetExhaustion } from "./targetExhaustion.ts";
 import { pinNativeCodexTurn } from "./nativeCodexTurnPin.ts";
@@ -413,29 +415,28 @@ export async function executeTargetAttempt(opts: {
           target: toRecordedTarget(target),
         });
         state.recordedAttempts++;
-        // Fix #1707: Set terminal state so the fallback doesn't emit
-        // misleading ALL_ACCOUNTS_INACTIVE when the real issue is quality.
+        const qualityFailure = classifyQualityFailure(quality);
         state.lastError = `Upstream response failed quality validation: ${quality.reason}`;
-        state.lastStatus = 502;
-        // #10314: record quality failures as a FIRST-CLASS per-target outcome
-        // so a quality reason is never silently dropped from the aggregated
-        // terminal message when a later sibling overwrites lastError.
+        state.lastStatus = qualityFailure.status;
         state.comboErrors.push({
           model: modelStr,
-          status: 502,
+          status: qualityFailure.status,
           error: quality.reason || "upstream response failed quality validation",
-          kind: "quality",
+          kind: qualityFailure.kind,
         });
         if (i > 0) state.fallbackCount++;
-        if (provider && rawModel) {
+        state.requestScopedFailureSeen ||= qualityFailure.requestScoped;
+        if (qualityFailure.requestScoped)
+          state.requestScopedRejectedModelKeys?.add(requestScopedReplayKey(modelStr));
+        if (provider && rawModel && !qualityFailure.requestScoped) {
           const mlSettings = resolveModelLockoutSettings(deps.settings);
-          if (mlSettings.enabled && mlSettings.errorCodes.includes(502)) {
+          if (mlSettings.enabled && mlSettings.errorCodes.includes(qualityFailure.status)) {
             recordModelLockoutFailure(
               provider,
               target.connectionId || "",
               rawModel,
               "quality_failure",
-              502,
+              qualityFailure.status,
               mlSettings.baseCooldownMs,
               profile,
               {
@@ -455,9 +456,8 @@ export async function executeTargetAttempt(opts: {
         });
         state.observeFailure(false, target.executionKey);
         if (handlePreContentStreamRetry(quality, retry, deps, modelStr)) continue;
-        return protectedPriorityTarget ? qualityValidationFailure() : null;
+        return protectedPriorityTarget ? qualityValidationFailure(quality) : null;
       }
-
       if (Boolean(deps.clientManagedResponsesContext) && effectiveConnectionId) {
         pinNativeCodexTurn({
           body: deps.body,
@@ -884,14 +884,14 @@ export async function executeTargetAttempt(opts: {
       (provider && state.exhaustedProviders.has(provider))
     ) {
       deps.clearStaleLKGP(
-      deps.combo.name,
-      target.executionKey,
-      deps.combo.id,
-      deps.log,
-      "COMBO",
-      undefined,
-      target
-    );
+        deps.combo.name,
+        target.executionKey,
+        deps.combo.id,
+        deps.log,
+        "COMBO",
+        undefined,
+        target
+      );
     }
 
     // #2101: Prevent infinite fallback loops with 400 Bad Request errors that are genuinely
@@ -934,14 +934,14 @@ export async function executeTargetAttempt(opts: {
       if (i > 0) state.fallbackCount++;
       deps.log.warn("COMBO", `Model ${modelStr} failed with body-specific error, stopping combo`);
       deps.clearStaleLKGP(
-      deps.combo.name,
-      target.executionKey,
-      deps.combo.id,
-      deps.log,
-      "COMBO",
-      undefined,
-      target
-    );
+        deps.combo.name,
+        target.executionKey,
+        deps.combo.id,
+        deps.log,
+        "COMBO",
+        undefined,
+        target
+      );
       // #4279: surface the 400 via the {ok,response} contract so the OUTER
       // target loop resolves the combo and stops. A bare `break` here only
       // exits the inner retry loop; executeTarget then returns null, which

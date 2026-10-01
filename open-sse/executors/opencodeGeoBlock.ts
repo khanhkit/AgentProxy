@@ -83,6 +83,15 @@ export function isOpencodeFreeTierRefusal(status: number, bodyText: string | nul
   return FREE_TIER_SIGNALS.some((signal) => lower.includes(signal));
 }
 
+export function isOpencodeFreeTierRefusalForProvider(
+  provider: string | null | undefined,
+  status: number,
+  bodyText: string | null
+): boolean {
+  if (!provider || !provider.toLowerCase().startsWith("opencode")) return false;
+  return isOpencodeFreeTierRefusal(status, bodyText);
+}
+
 export function proxyKeyOf(proxy: { host: string; port: number } | null): string | null {
   if (!proxy) return null;
   return `${proxy.host}:${proxy.port}`;

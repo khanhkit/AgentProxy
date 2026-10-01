@@ -109,7 +109,9 @@ export default function ReasoningRoutingRules({
   const [keys, setKeys] = useState<Reference[]>([]);
   const [connections, setConnections] = useState<Reference[]>([]);
   const [form, setForm] = useState<FormState>(() => emptyRule(initialSelectedApiKeyId));
-  const [baseline, setBaseline] = useState(() => JSON.stringify(emptyRule(initialSelectedApiKeyId)));
+  const [baseline, setBaseline] = useState(() =>
+    JSON.stringify(emptyRule(initialSelectedApiKeyId))
+  );
   const [sourceKind, setSourceKind] = useState<"all" | "combo" | "pattern">("all");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
@@ -365,312 +367,194 @@ export default function ReasoningRoutingRules({
         message="Discard unsaved routing changes?"
       />
       <Card title={apiKeyId ? t("apiKeyTitle") : t("title")} subtitle={t("subtitle")} icon="route">
-      <div className="space-y-5">
-        {!lockedApiKey && (
-          <Select
-            label={t("apiKey")}
-            value={apiKeyId}
-            onChange={(event) => chooseKey(event.target.value)}
-            placeholder={t("all")}
-            placeholderDisabled={false}
-            options={keys.map((key) => ({ value: key.id, label: key.name }))}
-          />
-        )}
-        <div className="flex justify-end">
-          <Button aria-label="New rule" onClick={beginNewRule} disabled={loadFailed || saving}>
-            {t("add")}
-          </Button>
-        </div>
-        {loadFailed && (
-          <p role="alert" className="text-sm text-red-500">
-            {t("loadError")}
-          </p>
-        )}
-        <div className="grid gap-3 md:grid-cols-3">
-          <Input
-            label={t("filterSearch")}
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-          {!apiKeyId && (
-            <Select
-              label={t("filterScope")}
-              value={scopeFilter}
-              onChange={(e) => setScopeFilter(e.target.value)}
-              options={[{ value: "all", label: t("all") }, ...scopeOptions]}
-            />
-          )}
-          <Select
-            label={t("filterStatus")}
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            options={[
-              { value: "all", label: t("all") },
-              { value: "enabled", label: t("enabled") },
-              { value: "disabled", label: t("disabled") },
-            ]}
-          />
-        </div>
-
-        <div className="space-y-2">
-          {visibleRules.length === 0 && <p className="text-sm text-text-muted">{t("empty")}</p>}
-          {!loadFailed && visibleRules.map((rule) => (
-            <div
-              key={rule.id}
-              className="flex flex-wrap items-center gap-3 rounded-lg border border-border p-3"
-            >
-              <Toggle
-                checked={rule.enabled}
-                onChange={() => toggle(rule)}
-                size="sm"
-                ariaLabel={t("toggleAria", { name: rule.name })}
-              />
-              <div className="min-w-0 flex-1">
-                <p className="font-medium text-text-main">{rule.name}</p>
-                <p className="text-xs text-text-muted">
-                  {t(`scope.${rule.scope}`)} · {rule.modelPattern || t("allModels")} ·{" "}
-                  {rule.sourceEffort} →{" "}
-                  {rule.targetKind === "keep"
-                    ? t("keepModel")
-                    : rule.targetModel || rule.targetComboId}{" "}
-                  · {t(`mode.${rule.effortMode}`)}
-                  {rule.targetEffort ? ` ${rule.targetEffort}` : ""} ·{" "}
-                  {t("priorityShort", { value: rule.priority })}
-                </p>
-              </div>
-              <Button size="sm" variant="ghost" icon="edit" onClick={() => edit(rule)}>
-                {t("edit")}
-              </Button>
-              <Button size="sm" variant="danger" icon="delete" onClick={() => remove(rule.id)}>
-                {t("delete")}
-              </Button>
-            </div>
-          ))}
-        </div>
-
-        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-          <Input
-            label={t("name")}
-            value={form.name}
-            onChange={(e) => setForm({ ...form, name: e.target.value })}
-            required
-          />
-          <Input
-            label={t("description")}
-            value={form.description}
-            onChange={(e) => setForm({ ...form, description: e.target.value })}
-          />
-          {!apiKeyId && (
-            <Select
-              label={t("scopeLabel")}
-              value={form.scope}
-              onChange={(e) =>
-                setForm({
-                  ...form,
-                  scope: e.target.value as RuleScope,
-                  targetKind: e.target.value === "connection" ? "keep" : form.targetKind,
-                })
-              }
-              options={scopeOptions}
-            />
-          )}
-          {form.scope === "apiKey" && !apiKeyId && (
+        <div className="space-y-5">
+          {!lockedApiKey && (
             <Select
               label={t("apiKey")}
-              value={form.apiKeyId}
-              onChange={(e) => setForm({ ...form, apiKeyId: e.target.value })}
+              value={apiKeyId}
+              onChange={(event) => chooseKey(event.target.value)}
+              placeholder={t("all")}
+              placeholderDisabled={false}
               options={keys.map((key) => ({ value: key.id, label: key.name }))}
             />
           )}
-          {form.scope === "combo" && (
-            <Select
-              label={t("sourceCombo")}
-              value={form.comboId}
-              onChange={(e) => setForm({ ...form, comboId: e.target.value })}
-              options={combos.map((combo) => ({ value: combo.id, label: combo.name }))}
-            />
-          )}
-          {form.scope === "connection" && (
-            <Select
-              label={t("connection")}
-              value={form.connectionId}
-              onChange={(e) => setForm({ ...form, connectionId: e.target.value })}
-              options={connections.map((connection) => ({
-                value: connection.id,
-                label:
-                  connection.displayName ||
-                  connection.name ||
-                  `${connection.provider} · ${connection.id.slice(0, 8)}`,
-              }))}
-            />
-          )}
-          {form.scope === "apiKey" && (
-            <>
-              <Select
-                label="Match requests for"
-                value={sourceKind}
-                onChange={(event) => {
-                  const next = event.target.value as "all" | "combo" | "pattern";
-                  setSourceKind(next);
-                  setForm({ ...form, modelPattern: "" });
-                }}
-                options={[
-                  { value: "all", label: t("allModels") },
-                  { value: "combo", label: t("sourceCombo") },
-                  { value: "pattern", label: t("sourceModel") },
-                ]}
-              />
-              {sourceKind === "combo" && (
-                <Select
-                  label={t("sourceCombo")}
-                  value={form.modelPattern}
-                  onChange={(event) => setForm({ ...form, modelPattern: event.target.value })}
-                  options={combos.map((combo) => ({ value: combo.name, label: combo.name }))}
-                />
-              )}
-              {sourceKind === "pattern" && (
-                <Input
-                  label="Exact request ID or pattern"
-                  value={form.modelPattern}
-                  onChange={(event) => setForm({ ...form, modelPattern: event.target.value })}
-                />
-              )}
-            </>
-          )}
-          {form.scope === "model" && (
-            <Input
-              label={t("sourceModel")}
-              value={form.modelPattern}
-              onChange={(event) => setForm({ ...form, modelPattern: event.target.value })}
-              placeholder={t("sourceModelExample")}
-            />
-          )}
-          <Select
-            label={t("sourceEffort")}
-            value={form.sourceEffort}
-            onChange={(e) => setForm({ ...form, sourceEffort: e.target.value })}
-            options={[
-              { value: "any", label: t("any") },
-              { value: "missing", label: t("missing") },
-              ...[...STANDARD_EFFORTS, ...EXTENDED_EFFORTS].map((value) => ({
-                value,
-                label: value,
-              })),
-            ]}
-          />
-          <Input
-            label={t("requestTags")}
-            value={form.requestTags}
-            onChange={(e) => setForm({ ...form, requestTags: e.target.value })}
-            placeholder={t("requestTagsExample")}
-          />
-          <Select
-            label={t("tagMode")}
-            value={form.tagMatchMode}
-            onChange={(e) => setForm({ ...form, tagMatchMode: e.target.value as "any" | "all" })}
-            options={[
-              { value: "any", label: t("any") },
-              { value: "all", label: t("all") },
-            ]}
-          />
-          <Select
-            label={t("effortMode")}
-            value={form.effortMode}
-            onChange={(e) => setForm({ ...form, effortMode: e.target.value as EffortMode })}
-            options={["inherit", "default", "force"].map((mode) => ({
-              value: mode,
-              label: t(`mode.${mode}`),
-            }))}
-          />
-          {form.effortMode !== "inherit" && (
-            <Select
-              label={t("targetEffort")}
-              value={form.targetEffort}
-              onChange={(e) => setForm({ ...form, targetEffort: e.target.value })}
-              options={effortOptions}
-            />
-          )}
-          <Select
-            label={t("routingTarget")}
-            value={form.scope === "connection" ? "keep" : form.targetKind}
-            disabled={form.scope === "connection"}
-            onChange={(e) => setForm({ ...form, targetKind: e.target.value as TargetKind })}
-            options={[
-              { value: "keep", label: t("keepModel") },
-              { value: "model", label: t("otherModel") },
-              { value: "combo", label: t("combo") },
-            ]}
-          />
-          {form.targetKind === "model" && form.scope !== "connection" && (
-            <Input
-              label={t("targetModel")}
-              value={form.targetModel}
-              onChange={(e) => setForm({ ...form, targetModel: e.target.value })}
-            />
-          )}
-          {form.targetKind === "combo" && form.scope !== "connection" && (
-            <Select
-              label={t("targetCombo")}
-              value={form.targetComboId}
-              onChange={(e) => setForm({ ...form, targetComboId: e.target.value })}
-              options={combos.map((combo) => ({ value: combo.id, label: combo.name }))}
-            />
-          )}
-          <Select
-            label={t("budgetAction")}
-            value={form.budgetAction}
-            onChange={(e) => setForm({ ...form, budgetAction: e.target.value as BudgetAction })}
-            options={["preserve", "remove", "set"].map((action) => ({
-              value: action,
-              label: t(`budget.${action}`),
-            }))}
-          />
-          {form.budgetAction === "set" && (
-            <Input
-              label={t("budgetTokens")}
-              type="number"
-              min="1"
-              value={form.budgetTokens}
-              onChange={(e) => setForm({ ...form, budgetTokens: e.target.value })}
-            />
-          )}
-          <Input
-            label={t("priority")}
-            type="number"
-            value={form.priority}
-            onChange={(e) => setForm({ ...form, priority: e.target.value })}
-          />
-        </div>
-        {capabilityWarning && (
-          <p className="text-sm text-amber-600 dark:text-amber-400">{capabilityWarning}</p>
-        )}
-        <div className="flex gap-2">
-          <Button onClick={save} loading={saving}>
-            {editingId ? t("saveChanges") : t("add")}
-          </Button>
-          {editingId && (
-            <Button variant="ghost" onClick={reset}>
-              {t("cancel")}
+          <div className="flex justify-end">
+            <Button aria-label="New rule" onClick={beginNewRule} disabled={loadFailed || saving}>
+              {t("add")}
             </Button>
+          </div>
+          {loadFailed && (
+            <p role="alert" className="text-sm text-red-500">
+              {t("loadError")}
+            </p>
           )}
-        </div>
-        {message && <p className="text-sm text-text-muted">{message}</p>}
-
-        <div className="border-t border-border pt-5">
-          <h4 className="mb-3 font-medium text-text-main">{t("simulateTitle")}</h4>
-          <div className="grid gap-3 md:grid-cols-4">
+          <div className="grid gap-3 md:grid-cols-3">
             <Input
-              label={t("model")}
-              value={simulator.model}
-              onChange={(e) => setSimulator({ ...simulator, model: e.target.value })}
+              label={t("filterSearch")}
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
             />
+            {!apiKeyId && (
+              <Select
+                label={t("filterScope")}
+                value={scopeFilter}
+                onChange={(e) => setScopeFilter(e.target.value)}
+                options={[{ value: "all", label: t("all") }, ...scopeOptions]}
+              />
+            )}
             <Select
-              label={t("effort")}
-              value={simulator.effort}
-              onChange={(e) => setSimulator({ ...simulator, effort: e.target.value })}
+              label={t("filterStatus")}
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
               options={[
+                { value: "all", label: t("all") },
+                { value: "enabled", label: t("enabled") },
+                { value: "disabled", label: t("disabled") },
+              ]}
+            />
+          </div>
+
+          <div className="space-y-2">
+            {visibleRules.length === 0 && <p className="text-sm text-text-muted">{t("empty")}</p>}
+            {!loadFailed &&
+              visibleRules.map((rule) => (
+                <div
+                  key={rule.id}
+                  className="flex flex-wrap items-center gap-3 rounded-lg border border-border p-3"
+                >
+                  <Toggle
+                    checked={rule.enabled}
+                    onChange={() => toggle(rule)}
+                    size="sm"
+                    ariaLabel={t("toggleAria", { name: rule.name })}
+                  />
+                  <div className="min-w-0 flex-1">
+                    <p className="font-medium text-text-main">{rule.name}</p>
+                    <p className="text-xs text-text-muted">
+                      {t(`scope.${rule.scope}`)} · {rule.modelPattern || t("allModels")} ·{" "}
+                      {rule.sourceEffort} →{" "}
+                      {rule.targetKind === "keep"
+                        ? t("keepModel")
+                        : rule.targetModel || rule.targetComboId}{" "}
+                      · {t(`mode.${rule.effortMode}`)}
+                      {rule.targetEffort ? ` ${rule.targetEffort}` : ""} ·{" "}
+                      {t("priorityShort", { value: rule.priority })}
+                    </p>
+                  </div>
+                  <Button size="sm" variant="ghost" icon="edit" onClick={() => edit(rule)}>
+                    {t("edit")}
+                  </Button>
+                  <Button size="sm" variant="danger" icon="delete" onClick={() => remove(rule.id)}>
+                    {t("delete")}
+                  </Button>
+                </div>
+              ))}
+          </div>
+
+          <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+            <Input
+              label={t("name")}
+              value={form.name}
+              onChange={(e) => setForm({ ...form, name: e.target.value })}
+              required
+            />
+            <Input
+              label={t("description")}
+              value={form.description}
+              onChange={(e) => setForm({ ...form, description: e.target.value })}
+            />
+            {!apiKeyId && (
+              <Select
+                label={t("scopeLabel")}
+                value={form.scope}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    scope: e.target.value as RuleScope,
+                    targetKind: e.target.value === "connection" ? "keep" : form.targetKind,
+                  })
+                }
+                options={scopeOptions}
+              />
+            )}
+            {form.scope === "apiKey" && !apiKeyId && (
+              <Select
+                label={t("apiKey")}
+                value={form.apiKeyId}
+                onChange={(e) => setForm({ ...form, apiKeyId: e.target.value })}
+                options={keys.map((key) => ({ value: key.id, label: key.name }))}
+              />
+            )}
+            {form.scope === "combo" && (
+              <Select
+                label={t("sourceCombo")}
+                value={form.comboId}
+                onChange={(e) => setForm({ ...form, comboId: e.target.value })}
+                options={combos.map((combo) => ({ value: combo.id, label: combo.name }))}
+              />
+            )}
+            {form.scope === "connection" && (
+              <Select
+                label={t("connection")}
+                value={form.connectionId}
+                onChange={(e) => setForm({ ...form, connectionId: e.target.value })}
+                options={connections.map((connection) => ({
+                  value: connection.id,
+                  label:
+                    connection.displayName ||
+                    connection.name ||
+                    `${connection.provider} · ${connection.id.slice(0, 8)}`,
+                }))}
+              />
+            )}
+            {form.scope === "apiKey" && (
+              <>
+                <Select
+                  label="Match requests for"
+                  value={sourceKind}
+                  onChange={(event) => {
+                    const next = event.target.value as "all" | "combo" | "pattern";
+                    setSourceKind(next);
+                    setForm({ ...form, modelPattern: "" });
+                  }}
+                  options={[
+                    { value: "all", label: t("allModels") },
+                    { value: "combo", label: t("sourceCombo") },
+                    { value: "pattern", label: t("sourceModel") },
+                  ]}
+                />
+                {sourceKind === "combo" && (
+                  <Select
+                    label={t("sourceCombo")}
+                    value={form.modelPattern}
+                    onChange={(event) => setForm({ ...form, modelPattern: event.target.value })}
+                    options={combos.map((combo) => ({ value: combo.name, label: combo.name }))}
+                  />
+                )}
+                {sourceKind === "pattern" && (
+                  <Input
+                    label="Exact request ID or pattern"
+                    value={form.modelPattern}
+                    onChange={(event) => setForm({ ...form, modelPattern: event.target.value })}
+                  />
+                )}
+              </>
+            )}
+            {form.scope === "model" && (
+              <Input
+                label={t("sourceModel")}
+                value={form.modelPattern}
+                onChange={(event) => setForm({ ...form, modelPattern: event.target.value })}
+                placeholder={t("sourceModelExample")}
+              />
+            )}
+            <Select
+              label={t("sourceEffort")}
+              value={form.sourceEffort}
+              onChange={(e) => setForm({ ...form, sourceEffort: e.target.value })}
+              options={[
+                { value: "any", label: t("any") },
                 { value: "missing", label: t("missing") },
-                { value: "signal", label: t("signalOnly") },
                 ...[...STANDARD_EFFORTS, ...EXTENDED_EFFORTS].map((value) => ({
                   value,
                   label: value,
@@ -679,35 +563,154 @@ export default function ReasoningRoutingRules({
             />
             <Input
               label={t("requestTags")}
-              value={simulator.requestTags}
-              onChange={(e) => setSimulator({ ...simulator, requestTags: e.target.value })}
+              value={form.requestTags}
+              onChange={(e) => setForm({ ...form, requestTags: e.target.value })}
+              placeholder={t("requestTagsExample")}
             />
             <Select
-              label={t("transport")}
-              value={simulator.transport}
-              onChange={(e) => setSimulator({ ...simulator, transport: e.target.value })}
+              label={t("tagMode")}
+              value={form.tagMatchMode}
+              onChange={(e) => setForm({ ...form, tagMatchMode: e.target.value as "any" | "all" })}
               options={[
-                { value: "http", label: "HTTP" },
-                { value: "codex-ws", label: "Codex WebSocket" },
+                { value: "any", label: t("any") },
+                { value: "all", label: t("all") },
               ]}
             />
+            <Select
+              label={t("effortMode")}
+              value={form.effortMode}
+              onChange={(e) => setForm({ ...form, effortMode: e.target.value as EffortMode })}
+              options={["inherit", "default", "force"].map((mode) => ({
+                value: mode,
+                label: t(`mode.${mode}`),
+              }))}
+            />
+            {form.effortMode !== "inherit" && (
+              <Select
+                label={t("targetEffort")}
+                value={form.targetEffort}
+                onChange={(e) => setForm({ ...form, targetEffort: e.target.value })}
+                options={effortOptions}
+              />
+            )}
+            <Select
+              label={t("routingTarget")}
+              value={form.scope === "connection" ? "keep" : form.targetKind}
+              disabled={form.scope === "connection"}
+              onChange={(e) => setForm({ ...form, targetKind: e.target.value as TargetKind })}
+              options={[
+                { value: "keep", label: t("keepModel") },
+                { value: "model", label: t("otherModel") },
+                { value: "combo", label: t("combo") },
+              ]}
+            />
+            {form.targetKind === "model" && form.scope !== "connection" && (
+              <Input
+                label={t("targetModel")}
+                value={form.targetModel}
+                onChange={(e) => setForm({ ...form, targetModel: e.target.value })}
+              />
+            )}
+            {form.targetKind === "combo" && form.scope !== "connection" && (
+              <Select
+                label={t("targetCombo")}
+                value={form.targetComboId}
+                onChange={(e) => setForm({ ...form, targetComboId: e.target.value })}
+                options={combos.map((combo) => ({ value: combo.id, label: combo.name }))}
+              />
+            )}
+            <Select
+              label={t("budgetAction")}
+              value={form.budgetAction}
+              onChange={(e) => setForm({ ...form, budgetAction: e.target.value as BudgetAction })}
+              options={["preserve", "remove", "set"].map((action) => ({
+                value: action,
+                label: t(`budget.${action}`),
+              }))}
+            />
+            {form.budgetAction === "set" && (
+              <Input
+                label={t("budgetTokens")}
+                type="number"
+                min="1"
+                value={form.budgetTokens}
+                onChange={(e) => setForm({ ...form, budgetTokens: e.target.value })}
+              />
+            )}
+            <Input
+              label={t("priority")}
+              type="number"
+              value={form.priority}
+              onChange={(e) => setForm({ ...form, priority: e.target.value })}
+            />
           </div>
-          <Button
-            className="mt-3"
-            variant="secondary"
-            onClick={simulate}
-            disabled={dirty || loadFailed || saving}
-          >
-            {t("simulate")}
-          </Button>
-          {simulation && (
-            <pre className="mt-3 max-h-64 overflow-auto rounded-lg bg-black/5 p-3 text-xs text-text-main dark:bg-white/5">
-              {JSON.stringify(simulation, null, 2)}
-            </pre>
+          {capabilityWarning && (
+            <p className="text-sm text-amber-600 dark:text-amber-400">{capabilityWarning}</p>
           )}
+          <div className="flex gap-2">
+            <Button onClick={save} loading={saving}>
+              {editingId ? t("saveChanges") : t("add")}
+            </Button>
+            {editingId && (
+              <Button variant="ghost" onClick={() => reset()}>
+                {t("cancel")}
+              </Button>
+            )}
+          </div>
+          {message && <p className="text-sm text-text-muted">{message}</p>}
+
+          <div className="border-t border-border pt-5">
+            <h4 className="mb-3 font-medium text-text-main">{t("simulateTitle")}</h4>
+            <div className="grid gap-3 md:grid-cols-4">
+              <Input
+                label={t("model")}
+                value={simulator.model}
+                onChange={(e) => setSimulator({ ...simulator, model: e.target.value })}
+              />
+              <Select
+                label={t("effort")}
+                value={simulator.effort}
+                onChange={(e) => setSimulator({ ...simulator, effort: e.target.value })}
+                options={[
+                  { value: "missing", label: t("missing") },
+                  { value: "signal", label: t("signalOnly") },
+                  ...[...STANDARD_EFFORTS, ...EXTENDED_EFFORTS].map((value) => ({
+                    value,
+                    label: value,
+                  })),
+                ]}
+              />
+              <Input
+                label={t("requestTags")}
+                value={simulator.requestTags}
+                onChange={(e) => setSimulator({ ...simulator, requestTags: e.target.value })}
+              />
+              <Select
+                label={t("transport")}
+                value={simulator.transport}
+                onChange={(e) => setSimulator({ ...simulator, transport: e.target.value })}
+                options={[
+                  { value: "http", label: "HTTP" },
+                  { value: "codex-ws", label: "Codex WebSocket" },
+                ]}
+              />
+            </div>
+            <Button
+              className="mt-3"
+              variant="secondary"
+              onClick={simulate}
+              disabled={dirty || loadFailed || saving}
+            >
+              {t("simulate")}
+            </Button>
+            {simulation && (
+              <pre className="mt-3 max-h-64 overflow-auto rounded-lg bg-black/5 p-3 text-xs text-text-main dark:bg-white/5">
+                {JSON.stringify(simulation, null, 2)}
+              </pre>
+            )}
+          </div>
         </div>
-      </div>
-    </Card>
+      </Card>
     </>
   );
 }

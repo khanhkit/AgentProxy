@@ -211,6 +211,7 @@ export type PersistAttemptLogsArgs = {
   claudeCacheMeta?: Record<string, unknown>;
   claudeCacheUsageMeta?: Record<string, unknown>;
   cacheSource?: "upstream" | "semantic";
+  reasoningMeta?: { encryptedSeen: boolean; durationMs: number | null } | null;
 };
 
 export type PersistAttemptLogsContext = {
@@ -361,7 +362,6 @@ export function persistAttemptLogs(args: PersistAttemptLogsArgs, ctx: PersistAtt
     skillRequestId,
     detailedLoggingEnabled,
     reqLogger,
-    pendingRequestId,
     clientRawRequest,
     requestedModel,
     credentials,
@@ -415,6 +415,7 @@ export function persistAttemptLogs(args: PersistAttemptLogsArgs, ctx: PersistAtt
     connectionId: finalConnectionId,
     httpStatus: status,
     requestId: skillRequestId,
+    redactViolationDetail: videoContentRemoved === true,
   });
 
   const capturedPipeline = reqLogger?.getPipelinePayloads?.() ?? null;
@@ -461,7 +462,6 @@ export function persistAttemptLogs(args: PersistAttemptLogsArgs, ctx: PersistAtt
   }
 
   saveCallLog({
-    id: traceId,
     pendingRequestId: ctx.pendingRequestId,
     method: "POST",
     path: clientRawRequest?.endpoint || "/v1/chat/completions",
@@ -474,10 +474,15 @@ export function persistAttemptLogs(args: PersistAttemptLogsArgs, ctx: PersistAtt
     tokens: tokens || {},
     usageEstimated:
       args.usageEstimated ??
-      (tokens && typeof tokens === "object" && !Array.isArray(tokens) &&
+      (tokens &&
+      typeof tokens === "object" &&
+      !Array.isArray(tokens) &&
       (tokens as Record<string, unknown>).estimated === true
         ? true
         : null),
+    reasoningMeta: args.reasoningMeta ?? null,
+    clientRequestBody: body ?? null,
+    upstreamRequestBody: providerRequest ?? null,
     requestBody: cloneBoundedChatLogPayload(
       attachLogMeta(
         truncateForLog(
@@ -517,7 +522,7 @@ export function persistAttemptLogs(args: PersistAttemptLogsArgs, ctx: PersistAtt
     apiKeyName: apiKeyInfo?.name || null,
     noLog: noLogEnabled,
     pipelinePayloads,
-    correlationId,
+    correlationId: correlationId || traceId,
     modelPinned: modelPinned || false,
     sessionTag: sessionTag || null,
     responseId: extractResponsesId(sourceFormat, clientResponse),

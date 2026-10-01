@@ -14,11 +14,36 @@ import { COOLDOWN_MS } from "../config/errorConfig.ts";
 import { notifyProxyTransition } from "./proxyTransitionListeners.ts";
 import { stripIpv6Brackets } from "./proxyFamily.ts";
 
+const DEFAULT_QUOTA_429_BASE_MS = COOLDOWN_MS.rateLimit;
+const DEFAULT_QUOTA_429_MAX_MS = 3_600_000;
+const MIN_QUOTA_429_MS = 1_000;
+const MAX_QUOTA_429_MS = 3_600_000;
+
+function readBoundedMs(name: string, fallback: number): number {
+  const raw = process.env[name];
+  if (raw == null || raw.trim() === "") return fallback;
+  const parsed = Math.floor(Number(raw));
+  if (!Number.isFinite(parsed) || parsed < MIN_QUOTA_429_MS || parsed > MAX_QUOTA_429_MS) {
+    console.warn(`[ProxyRefusalMemory] Invalid ${name}="${raw}". Using default ${fallback}ms.`);
+    return fallback;
+  }
+  return parsed;
+}
+
+const quota429BaseMs = readBoundedMs("PROXY_QUOTA_429_BASE_MS", DEFAULT_QUOTA_429_BASE_MS);
+let quota429MaxMs = readBoundedMs("PROXY_QUOTA_429_MAX_MS", DEFAULT_QUOTA_429_MAX_MS);
+if (quota429MaxMs < quota429BaseMs) {
+  console.warn(
+    `[ProxyRefusalMemory] Invalid PROXY_QUOTA_429_MAX_MS="${process.env.PROXY_QUOTA_429_MAX_MS}": below PROXY_QUOTA_429_BASE_MS. Using default ${DEFAULT_QUOTA_429_MAX_MS}ms.`
+  );
+  quota429MaxMs = DEFAULT_QUOTA_429_MAX_MS;
+}
+
 export const REFUSAL_POLICIES = {
   /** The TCP probe could not open a connection to the proxy. */
   proxy_unreachable: { baseMs: 60_000, maxMs: 600_000 },
   /** The provider refused through this proxy; the member is set aside for a cooldown. */
-  ip_quota_429: { baseMs: COOLDOWN_MS.rateLimit, maxMs: 3_600_000 },
+  ip_quota_429: { baseMs: quota429BaseMs, maxMs: quota429MaxMs },
   /** Repeated transport failures with cross-egress success evidence. */
   transport: { baseMs: 60_000, maxMs: 600_000 },
 } as const;

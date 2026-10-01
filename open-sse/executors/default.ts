@@ -15,6 +15,7 @@ import { getRegistryEntry, requireCompatibleBaseUrl } from "../config/providerRe
 import { getModelTargetFormat } from "../config/providerModels.ts";
 import {
   applyClientAnthropicBeta,
+  maybeAppendSkillsBeta,
   normalizeAnthropicHeaderVariants,
 } from "../config/anthropicHeaders.ts";
 import { isOfficialAnthropicBaseUrl } from "../utils/anthropicHost.ts";
@@ -473,7 +474,9 @@ export class DefaultExecutor extends BaseExecutor {
     credentials,
     stream = true,
     clientHeaders?: Record<string, string> | null,
-    model?: string | null
+    model?: string | null,
+    _health?: unknown,
+    body?: unknown
   ) {
     const { headers, effectiveKey } = this.buildHeadersPreamble(credentials, stream);
 
@@ -685,10 +688,12 @@ export class DefaultExecutor extends BaseExecutor {
       const clientBeta = clientHeaders["anthropic-beta"] ?? clientHeaders["Anthropic-Beta"] ?? null;
       applyClientAnthropicBeta(headers, clientBeta, {
         seedWhenAbsent: this.provider?.startsWith?.("anthropic-compatible-") === true,
-        // Gate context-1m on the RESOLVED target model.
         model,
+        body,
       });
     }
+
+    maybeAppendSkillsBeta(headers, this.provider, body, this.usesClaudeCodeProtocol(credentials));
 
     normalizeAnthropicHeaderVariants(headers);
 

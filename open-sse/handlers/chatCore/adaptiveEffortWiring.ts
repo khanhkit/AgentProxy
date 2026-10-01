@@ -3,9 +3,9 @@
 // Semantics live in open-sse/services/adaptiveEffort.ts; this module only
 // adapts the chatCore call-site context (headers, raw body, translated body).
 //
-// Runs AFTER applyDefaultReasoningEffort so its explicit-value precedence and
-// alias-suffix priority are preserved; operates on the pre-translation body so
-// source-format differences are handled by the existing translators.
+// Owns default-effort injection plus adaptive resolution so explicit-value
+// precedence and alias-suffix priority stay in one boundary. Resolution uses the
+// pre-translation body while output is scoped to the OpenAI dispatch shape.
 import {
   applyAdaptiveEffort,
   hasExplicitReasoningField,
@@ -13,12 +13,13 @@ import {
   type ChatMessageLike,
 } from "../../services/adaptiveEffort.ts";
 import { FORMATS } from "../../translator/formats.ts";
+import { applyDefaultReasoningEffort } from "../../services/defaultReasoningEffort.ts";
 import { getHeaderValueCaseInsensitive } from "./headers.ts";
 
 export interface AdaptiveEffortContext {
   /** Raw (pre-translation) request body, for turn-scoped request-shape signals. */
   rawBody: { messages?: ChatMessageLike[] | undefined } | undefined;
-  /** Incoming client request, used to read the x-omniroute-effort header. */
+  /** Incoming client request, used to read the x-agentproxy-effort header. */
   clientRawRequest?: { headers?: unknown } | undefined;
   /** Explicit header value, if already extracted by the caller. */
   headerEffort?: string | null | undefined;
@@ -30,10 +31,14 @@ export interface AdaptiveEffortContext {
    * top-level parameters (e.g. Anthropic's Messages API 400s on one). Every other
    * reasoning-shape normalization in chatCore.ts (applyDefaultReasoningEffort,
    * promoteStrayReasoningEffort for the Responses same-format lane) is scoped the
-   * same way — wiring must match, or an operator's `X-OmniRoute-Effort: auto` header
+   * same way — wiring must match, or an operator's `X-AgentProxy-Effort: auto` header
    * on a Claude/Gemini-targeted request would silently no-op or break the request.
    */
   targetFormat: string | undefined;
+  /** Resolved upstream model plus optional request/catalog defaults. */
+  modelId?: string | undefined;
+  suffixEffort?: string | null | undefined;
+  syncedDefaultEffort?: string | null | undefined;
 }
 
 /**
@@ -48,6 +53,12 @@ export function wireAdaptiveEffort<T extends Record<string, unknown>>(
   ctx: AdaptiveEffortContext
 ): T {
   if (ctx.targetFormat !== FORMATS.OPENAI) return body;
+  body = applyDefaultReasoningEffort(
+    body,
+    ctx.modelId ?? String(body.model ?? ""),
+    ctx.suffixEffort,
+    ctx.syncedDefaultEffort
+  );
   // Lever: applyDefaultReasoningEffort may have just injected the literal
   // "auto" from ModelSpec.defaultReasoningEffort — that is an opt-in marker,
   // not a wire value, so it must NOT count as an explicit client field (it
@@ -59,7 +70,7 @@ export function wireAdaptiveEffort<T extends Record<string, unknown>>(
       ? ctx.headerEffort
       : getHeaderValueCaseInsensitive(
           ctx.clientRawRequest?.headers as Record<string, unknown> | Headers | null | undefined,
-          "x-omniroute-effort"
+          "x-agentproxy-effort"
         );
   if (!modelDefaultAuto && !isAdaptiveEffort(headerEffort)) return body;
   const stripped = modelDefaultAuto ? { ...body } : body;
