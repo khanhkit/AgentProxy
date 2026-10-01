@@ -7,10 +7,14 @@
  * Default: ENABLED for API key providers (safety net), DISABLED for OAuth.
  * Can be toggled per provider connection via dashboard.
  */
-
 import Bottleneck from "bottleneck";
 import { applyBottleneckDoExpirePatch, applyBottleneckHeartbeatPatch } from "./bottleneckPatch.ts";
 import { parseRetryAfterFromBody } from "./accountFallback.ts";
+import { isValidRequestCap, parseRequestCapFromBody } from "./rateLimitManager/requestCap.ts";
+import {
+  capSettingsWithinBudget as resolveCapSettingsWithinBudget,
+  hasRpmOverride as hasConnectionRpmOverride,
+} from "./rateLimitManager/requestCapPolicy.ts";
 import { getAntigravityQuotaFamily } from "./antigravityQuotaFamily.ts";
 import { getProviderCategory } from "../config/providerRegistry.ts";
 import { getCodexRateLimitKey } from "../executors/codex.ts";
@@ -39,7 +43,6 @@ import {
   getExecutorTimeoutMs,
   resolveConnectionTimeoutMs,
 } from "../handlers/chatCore/upstreamTimeouts.ts";
-
 interface LearnedLimitEntry {
   provider: string;
   connectionId: string;
@@ -47,8 +50,9 @@ interface LearnedLimitEntry {
   limit?: number;
   remaining?: number;
   minTime?: number;
+  capRequests?: number;
+  capWindowMs?: number;
 }
-
 interface LimiterUpdateSettings {
   maxConcurrent?: number | null;
   minTime: number;
@@ -56,39 +60,29 @@ interface LimiterUpdateSettings {
   reservoirRefreshAmount?: number | null;
   reservoirRefreshInterval?: number | null;
 }
-
 type JsonRecord = Record<string, unknown>;
-
 function toRecord(value: unknown): JsonRecord {
   return value && typeof value === "object" && !Array.isArray(value) ? (value as JsonRecord) : {};
 }
-
 function isNodeTestRunnerChild(): boolean {
   return typeof process.env.NODE_TEST_CONTEXT === "string";
 }
-
 function logRateLimit(...args: unknown[]): void {
   if (!isNodeTestRunnerChild()) console.log(...args);
 }
-
 function warnRateLimit(...args: unknown[]): void {
   if (!isNodeTestRunnerChild()) console.warn(...args);
 }
-
 function errorRateLimit(...args: unknown[]): void {
   if (!isNodeTestRunnerChild()) console.error(...args);
 }
-
 // Store limiters keyed by "provider:connectionId" (and optionally ":model")
 const limiters = new Map<string, Bottleneck>();
-
 // Store connections that have rate limit protection enabled
 const enabledConnections = new Set<string>();
-
 // Store per-connection rate limit overrides (RPM, TPM, TPD, minTime, maxConcurrent)
 // Populated from provider_connections.rateLimitOverrides on startup and refresh.
 const connectionRateLimitOverrides = new Map<string, Record<string, number>>();
-
 // Store learned limits for persistence (debounced)
 const learnedLimits: Record<string, LearnedLimitEntry> = {};
 const MAX_LEARNED_LIMITS = 200;
@@ -96,10 +90,8 @@ const limiterLastUsed = new Map<string, number>();
 let persistTimer: ReturnType<typeof setTimeout> | null = null;
 const pendingAsyncOperations = new Set<Promise<unknown>>();
 const PERSIST_DEBOUNCE_MS = 60_000; // Debounce persistence to every 60s max
-
 // Track initialization
 let initialized = false;
-
 let currentRequestQueueSettings: RequestQueueSettings = DEFAULT_RESILIENCE_SETTINGS.requestQueue;
 export const ZAI_WEB_REQUEST_QUEUE_MAX_WAIT_MS = 60_000;
 // MaxAI proxies reasoning models (deepseek-r1, gpt-5.6-thinking, grok-4.5,
@@ -109,7 +101,6 @@ export const ZAI_WEB_REQUEST_QUEUE_MAX_WAIT_MS = 60_000;
 // think and surfaces a spurious local 504. Floor MaxAI at 5 min — the same
 // ceiling waitForCooldown.budgetMs uses — so slow reasoning turns complete.
 export const MAXAI_REQUEST_QUEUE_MAX_WAIT_MS = 300_000;
-
 const limiterEffectiveSettings = new WeakMap<Bottleneck, Bottleneck.ConstructorOptions>();
 const preservedReplacementSettings = new Map<string, Bottleneck.ConstructorOptions>();
 const limiterWatchdog = new LimiterWedgeWatchdog({
@@ -124,11 +115,9 @@ const limiterWatchdog = new LimiterWedgeWatchdog({
   warn: warnRateLimit,
 });
 let watchdogInterval: ReturnType<typeof setInterval> | null = null;
-
 type LimiterFactory = (options: Bottleneck.ConstructorOptions) => Bottleneck;
 const defaultLimiterFactory: LimiterFactory = (options) => new Bottleneck(options);
 let limiterFactory: LimiterFactory = defaultLimiterFactory;
-
 /**
  * Env-var override for the auto-enable safety net. Highest priority — wins
  * over the persisted dashboard setting. Use to disable in an incident without
@@ -143,7 +132,6 @@ function isAutoEnableActive(settings: RequestQueueSettings): boolean {
   if (env === "true" || env === "1" || env === "on") return true;
   return settings.autoEnableApiKeyProviders;
 }
-
 // Sentinels for "no rate limit" / effectively infinite capacity. The reservoir
 // value uses Number.MAX_SAFE_INTEGER so the bucket can never realistically be
 // exhausted; maxConcurrent uses a smaller-but-still-vast ceiling since
@@ -151,28 +139,43 @@ function isAutoEnableActive(settings: RequestQueueSettings): boolean {
 // risk internal counter overflow under sustained pressure.
 const EFFECTIVELY_INFINITE = Number.MAX_SAFE_INTEGER;
 const EFFECTIVELY_INFINITE_CONCURRENCY = 1000;
-
 // Shared override-resolution rule for every per-connection rate-limit field:
 // a positive override wins, 0 or missing falls through to `fallback`.
 function resolveOverride(override: number | undefined | null, fallback: number): number {
   return typeof override === "number" && override > 0 ? override : fallback;
 }
-
 // Resolve an RPM override. 0 or missing means "infinite" (no rate cap).
 function resolveRpm(override: number | undefined | null): number {
   return resolveOverride(override, EFFECTIVELY_INFINITE);
 }
-
 // Resolve a minTime override. 0 or missing means "no minimum gap".
 function resolveMinTime(override: number | undefined | null): number {
   return resolveOverride(override, 0);
 }
-
+function hasRpmOverride(connectionId: string): boolean {
+  return hasConnectionRpmOverride(connectionRateLimitOverrides, connectionId);
+}
+function capSettingsWithinBudget(
+  provider: string,
+  connectionId: string,
+  cap: { requests: number; windowMs: number },
+  source: "body-stated" | "learned" | "persisted"
+) {
+  return resolveCapSettingsWithinBudget({
+    provider,
+    connectionId,
+    cap,
+    source,
+    globalMinTimeMs: resolveMinTime(currentRequestQueueSettings.minTimeBetweenRequestsMs),
+    connectionMinTimeMs: resolveMinTime(connectionRateLimitOverrides.get(connectionId)?.minTime),
+    queueBudgetMs: resolveRequestQueueMaxWaitMs(provider, undefined, connectionId),
+    warn: (message) => warnRateLimit(message),
+  });
+}
 // Resolve a maxConcurrent override. 0 or missing means "effectively infinite".
 function resolveMaxConcurrent(override: number | undefined | null): number {
   return resolveOverride(override, EFFECTIVELY_INFINITE_CONCURRENCY);
 }
-
 export function resolveRequestQueueMaxWaitMs(
   provider: string,
   configuredMaxWaitMs: number = currentRequestQueueSettings.maxWaitMs,
@@ -192,7 +195,6 @@ export function resolveRequestQueueMaxWaitMs(
     : undefined;
   return resolveOverride(override, legacyDefault);
 }
-
 /**
  * Limiter-managed execution backstop (Bottleneck `expiration`). Starts only
  * after a job leaves QUEUED; bounds execution, never queue wait. Kept strictly
@@ -208,7 +210,6 @@ export function resolveExecutionMaxWaitMs(connectionId?: string): number {
     : undefined;
   return resolveOverride(override, currentRequestQueueSettings.executionMaxWaitMs);
 }
-
 function buildLimiterDefaults() {
   // 0 or missing values mean "infinite" / no rate limit applies. This treats
   // the global request-queue settings the same way per-connection overrides
@@ -221,7 +222,6 @@ function buildLimiterDefaults() {
     reservoirRefreshInterval: 60 * 1000,
   };
 }
-
 function updateLimiterSettings(
   limiter: Bottleneck,
   updates: Bottleneck.ConstructorOptions
@@ -230,20 +230,17 @@ function updateLimiterSettings(
   limiterEffectiveSettings.set(limiter, { ...effective, ...updates });
   return limiter.updateSettings(updates);
 }
-
 function updateAllLimiterSettings() {
   const defaults = buildLimiterDefaults();
   for (const limiter of limiters.values()) {
     updateLimiterSettings(limiter, defaults);
   }
 }
-
 function clearPreservedReplacementSettings(connectionId: string): void {
   for (const key of preservedReplacementSettings.keys()) {
     if (key.includes(connectionId)) preservedReplacementSettings.delete(key);
   }
 }
-
 function reconcileEnabledConnections(
   connectionsRaw: unknown[],
   requestQueueSettings: RequestQueueSettings
@@ -251,7 +248,6 @@ function reconcileEnabledConnections(
   const nextEnabledConnections = new Set<string>();
   let explicitCount = 0;
   let autoCount = 0;
-
   for (const connRaw of connectionsRaw) {
     const conn = toRecord(connRaw);
     const connectionId = typeof conn.id === "string" ? conn.id : "";
@@ -259,13 +255,11 @@ function reconcileEnabledConnections(
     const isActive = conn.isActive === true;
     const rateLimitProtection = conn.rateLimitProtection === true;
     if (!connectionId || !provider) continue;
-
     if (rateLimitProtection) {
       nextEnabledConnections.add(connectionId);
       explicitCount++;
       continue;
     }
-
     if (
       isAutoEnableActive(requestQueueSettings) &&
       getProviderCategory(provider) === "apikey" &&
@@ -273,31 +267,25 @@ function reconcileEnabledConnections(
     ) {
       nextEnabledConnections.add(connectionId);
       autoCount++;
-
       // Route through getLimiter so the queue-progress listeners are wired up.
       // Otherwise a limiter created here could not be evaluated safely by the watchdog.
       getLimiter(provider, connectionId);
     }
   }
-
   for (const connectionId of Array.from(enabledConnections)) {
     if (!nextEnabledConnections.has(connectionId)) {
       disableRateLimitProtection(connectionId);
     }
   }
-
   for (const connectionId of nextEnabledConnections) {
     enabledConnections.add(connectionId);
   }
-
   return {
     explicitCount,
     autoCount,
   };
 }
-
 let shutdownHandlersRegistered = false;
-
 export function startRateLimitWatchdog(): void {
   if (watchdogInterval) return;
   watchdogInterval = setInterval(() => {
@@ -316,13 +304,11 @@ export function startRateLimitWatchdog(): void {
     process.once("SIGINT", shutdownLimiters);
   }
 }
-
 export function stopRateLimitWatchdog(): void {
   if (!watchdogInterval) return;
   clearInterval(watchdogInterval);
   watchdogInterval = null;
 }
-
 /**
  * Gracefully stop all limiters for process shutdown.
  * Runtime wedge recovery also uses stop(), but only after synchronously
@@ -336,12 +322,10 @@ function shutdownLimiters(): void {
   limiterLastUsed.clear();
   preservedReplacementSettings.clear();
 }
-
 // Only register shutdown handlers when there are active limiters to shut down.
 // Guard with once() so repeated registrations (e.g. test resets) don't stack.
 // Note: these are registered lazily in startRateLimitWatchdog() to avoid
 // interfering with test runner subprocess IPC teardown.
-
 function trackAsyncOperation<T>(promise: Promise<T>): Promise<T> {
   pendingAsyncOperations.add(promise);
   // Do not use a fire-and-forget `.finally()` here: it creates a derived
@@ -358,7 +342,6 @@ function trackAsyncOperation<T>(promise: Promise<T>): Promise<T> {
   );
   return promise;
 }
-
 /**
  * Initialize rate limit protection from persisted connection settings.
  * Called once on app startup.
@@ -369,7 +352,6 @@ export async function initializeRateLimits() {
   // Fix Bottleneck v2.19.5 doExpire bug before any limiter is created.
   applyBottleneckDoExpirePatch();
   applyBottleneckHeartbeatPatch();
-
   try {
     const { getCachedProviderConnections } = await import("@/lib/db/readCache");
     const { getSettings } = await import("@/lib/db/settings");
@@ -388,7 +370,6 @@ export async function initializeRateLimits() {
       currentRequestQueueSettings
     );
     updateAllLimiterSettings();
-
     // Load per-connection rate limit overrides
     connectionRateLimitOverrides.clear();
     for (const conn of connections as Array<Record<string, unknown>>) {
@@ -397,16 +378,13 @@ export async function initializeRateLimits() {
         connectionRateLimitOverrides.set(String(conn.id), overrides as Record<string, number>);
       }
     }
-
     if (explicitCount > 0 || autoCount > 0) {
       logRateLimit(
         `🛡️ [RATE-LIMIT] Loaded ${explicitCount} explicit + ${autoCount} auto-enabled protection(s)`
       );
     }
-
     // Load persisted learned limits
     await loadPersistedLimits();
-
     // Watchdog runs unconditionally — cheap, only fires when something is
     // actually wedged.
     startRateLimitWatchdog();
@@ -414,7 +392,6 @@ export async function initializeRateLimits() {
     errorRateLimit("[RATE-LIMIT] Failed to load settings:", err.message);
   }
 }
-
 export async function applyRequestQueueSettings(nextSettings: RequestQueueSettings) {
   currentRequestQueueSettings = { ...nextSettings };
   // Global policy changes invalidate snapshots from the previous generation.
@@ -426,7 +403,6 @@ export async function applyRequestQueueSettings(nextSettings: RequestQueueSettin
   reconcileEnabledConnections(connections as unknown[], currentRequestQueueSettings);
   updateAllLimiterSettings();
 }
-
 /**
  * Get or create a limiter for a given provider+connection combination
  */
@@ -434,7 +410,6 @@ export function enableRateLimitProtection(connectionId) {
   if (!enabledConnections.has(connectionId)) clearPreservedReplacementSettings(connectionId);
   enabledConnections.add(connectionId);
 }
-
 /**
  * Disable rate limit protection for a connection
  */
@@ -454,14 +429,12 @@ export function disableRateLimitProtection(connectionId) {
     }
   }
 }
-
 /**
  * Check if rate limit protection is enabled for a connection
  */
 export function isRateLimitEnabled(connectionId) {
   return enabledConnections.has(connectionId);
 }
-
 /**
  * Refresh per-connection rate limit overrides.
  *
@@ -479,17 +452,29 @@ export function refreshConnectionRateLimits(connectionId, overrides) {
     connectionRateLimitOverrides.set(connectionId, overrides);
   }
   clearPreservedReplacementSettings(connectionId);
+  let strippedCap = false;
+  for (const [key, entry] of Object.entries(learnedLimits)) {
+    if (entry.connectionId === connectionId && entry.capRequests) {
+      const { capRequests: _cap, capWindowMs: _window, ...rest } = entry;
+      learnedLimits[key] = rest;
+      strippedCap = true;
+    }
+  }
+  if (strippedCap) schedulePersist();
   // Evict limiters referencing this connection so they get recreated on next use
   for (const [key, limiter] of Array.from(limiters)) {
     if (key.includes(connectionId)) {
-      limiters.delete(key);
-      limiterWatchdog.forget(limiter);
-      limiterLastUsed.delete(key);
-      trackAsyncOperation(limiter.disconnect());
+      evictLimiter(key, limiter);
     }
   }
 }
-
+function evictLimiter(key: string, limiter: Bottleneck): void {
+  limiters.delete(key);
+  limiterWatchdog.forget(limiter);
+  limiterLastUsed.delete(key);
+  preservedReplacementSettings.delete(key);
+  trackAsyncOperation(limiter.disconnect());
+}
 /**
  * Get or create a limiter for a given provider+connection combination
  */
@@ -509,10 +494,8 @@ function getLimiterKey(provider, connectionId, model = null) {
   }
   return `${provider}:${connectionId}`;
 }
-
 function getLimiter(provider, connectionId, model = null) {
   const key = getLimiterKey(provider, connectionId, model);
-
   if (!limiters.has(key)) {
     // Idempotent — covers callers (and tests) that reach limiter creation
     // without going through initializeRateLimits().
@@ -543,6 +526,24 @@ function getLimiter(provider, connectionId, model = null) {
         }
         // TODO: TPM/TPD integration requires separate token and request buckets.
       }
+      const learned = learnedLimits[key];
+      if (learned?.capRequests && learned.capWindowMs && !hasRpmOverride(connectionId)) {
+        const cap = capSettingsWithinBudget(
+          provider,
+          connectionId,
+          { requests: learned.capRequests, windowMs: learned.capWindowMs },
+          "learned"
+        );
+        if (cap) {
+          defaults.minTime = cap.minTime;
+          defaults.reservoir = cap.reservoirRefreshAmount;
+          defaults.reservoirRefreshAmount = cap.reservoirRefreshAmount;
+          defaults.reservoirRefreshInterval = cap.reservoirRefreshInterval;
+          logRateLimit(
+            `📏 [RATE-LIMIT] ${key} — applying learned cap: ${learned.capRequests} request(s) per ${Math.ceil(learned.capWindowMs / 1000)}s`
+          );
+        }
+      }
       options = { ...defaults, id: key };
     }
     const limiter = limiterFactory(options);
@@ -557,15 +558,12 @@ function getLimiter(provider, connectionId, model = null) {
     // A long-running job can leave older work queued. Start the idle grace
     // from its completion, not from when that waiting work first arrived.
     limiter.on("done", markQueueProgress);
-
     limiters.set(key, limiter);
     limiterLastUsed.set(key, Date.now());
   }
-
   limiterLastUsed.set(key, Date.now());
   return limiters.get(key);
 }
-
 /**
  * Acquire a rate limit slot before making a request.
  * If rate limiting is disabled for this connection, returns immediately.
@@ -592,7 +590,6 @@ export async function withRateLimit(
   if (!enabledConnections.has(connectionId)) {
     return fn();
   }
-
   if (signal?.aborted) {
     const reason = signal.reason;
     if (reason instanceof Error) throw reason;
@@ -600,7 +597,6 @@ export async function withRateLimit(
     err.name = "AbortError";
     throw err;
   }
-
   const queueBudgetMs = resolveRequestQueueMaxWaitMs(
     provider,
     undefined,
@@ -631,7 +627,6 @@ export async function withRateLimit(
     logRateLimit(
       `[RATE-LIMIT] cid=${correlationId} provider=${provider} remainingForQueue=${remainingForQueue}ms`
     );
-
   const limiter = getLimiter(provider, connectionId, model);
   // Bottleneck's `expiration` starts only after a job leaves QUEUED, so it
   // bounds limiter-managed execution — not queue wait. It is therefore fed by
@@ -661,7 +656,6 @@ export async function withRateLimit(
   }
   const scheduleOpts =
     executionExpirationMs && executionExpirationMs > 0 ? { expiration: executionExpirationMs } : {};
-
   // Issue #6593: opt-in admission cap — fast-reject before Bottleneck's
   // schedule() (and before any downstream compression/prompt work runs) when
   // the queue is already at/over maxQueueDepth. Default 0 = disabled.
@@ -676,7 +670,6 @@ export async function withRateLimit(
     );
     throw admissionErr;
   }
-
   const queueRemainingMs = remainingForQueue;
   let queueTimedOut = false;
   let delayId: ReturnType<typeof setTimeout> | null = null;
@@ -713,7 +706,6 @@ export async function withRateLimit(
   // maxQueueDepth admission sees an inflated depth transiently; this is
   // inherent to Bottleneck (no cancelQueuedJob) and does not affect
   // correctness since fnCalled stays false.
-
   try {
     if (signal) {
       let abortListener: (() => void) | undefined;
@@ -740,7 +732,6 @@ export async function withRateLimit(
         signal.addEventListener("abort", abortListener, { once: true });
       }
       abortPromise.catch(() => {});
-
       try {
         return await Promise.race([scheduled, timeoutPromise, abortPromise]);
       } finally {
@@ -784,14 +775,12 @@ export async function withRateLimit(
         RATE_LIMIT_EXECUTION_TIMEOUT_CODE
       );
     }
-
     if (
       err instanceof Bottleneck.BottleneckError &&
       err.message === "rate-limit-watchdog-wedge-reset"
     ) {
       const cleanup = limiterWatchdog.getEviction(limiter);
       if (!cleanup) throw err;
-
       let cleanupError: unknown;
       try {
         await cleanup;
@@ -799,7 +788,6 @@ export async function withRateLimit(
         cleanupError = error;
         errorRateLimit("[RATE-LIMIT] Wedge cleanup failed:", error);
       }
-
       const key = getLimiterKey(provider, connectionId, model);
       logRateLimit(`↪️ [RATE-LIMIT] ${key} — surfacing local wedge; caller will not be replayed`);
       const wedgeErr = new Error(
@@ -814,7 +802,6 @@ export async function withRateLimit(
     throw err;
   }
 }
-
 /**
  * Update rate limiter based on API response headers.
  * Called after every successful or failed response from a provider.
@@ -828,23 +815,19 @@ export async function withRateLimit(
 export function updateFromHeaders(provider, connectionId, headers, status, model = null) {
   if (!enabledConnections.has(connectionId)) return;
   if (!headers) return;
-
   const plainHeaders = toPlainHeaders(headers);
   const limiter = getLimiter(provider, connectionId, model);
   const headerMap =
     provider === "claude" || provider === "anthropic" ? ANTHROPIC_HEADERS : STANDARD_HEADERS;
-
   // Get header values (handle both Headers object and plain object)
   const getHeader = (name: string) => {
     return plainHeaders[name.toLowerCase()] || null;
   };
-
   const limit = parseInt(getHeader(headerMap.limit));
   const remaining = parseInt(getHeader(headerMap.remaining));
   const resetStr = getHeader(headerMap.reset);
   const retryAfterStr = getHeader(headerMap.retryAfter);
   const overLimit = getHeader(STANDARD_HEADERS.overLimit);
-
   // Handle 429 — rate limited
   if (status === 429) {
     const retryAfterMs = parseResetTime(retryAfterStr) || 60000; // Default 60s
@@ -853,7 +836,6 @@ export function updateFromHeaders(provider, connectionId, headers, status, model
     logRateLimit(
       `🚫 [RATE-LIMIT] ${provider}:${connectionId.slice(0, 8)} — 429 received, pausing for ${Math.ceil(retryAfterMs / 1000)}s, dropping ${counts.QUEUED} queued request(s)`
     );
-
     // Evict from the cache so follow-up learning from the same error body
     // can materialize a fresh limiter immediately. Do NOT call limiter.stop() —
     // it permanently rejects future .schedule() calls with "This limiter has been stopped".
@@ -864,14 +846,9 @@ export function updateFromHeaders(provider, connectionId, headers, status, model
     // without permanently poisoning the instance for any remaining in-flight jobs.
     // Without disconnect() here, every 429 leaks a heartbeat timer until GC reclaims
     // the abandoned Bottleneck; under sustained quota pressure that is a real leak.
-    limiters.delete(limiterKey);
-    limiterWatchdog.forget(limiter);
-    limiterLastUsed.delete(limiterKey);
-    preservedReplacementSettings.delete(limiterKey);
-    trackAsyncOperation(limiter.disconnect());
+    evictLimiter(limiterKey, limiter);
     return;
   }
-
   // Handle "over limit" soft warning (Fireworks)
   if (overLimit === "yes") {
     logRateLimit(
@@ -882,16 +859,12 @@ export function updateFromHeaders(provider, connectionId, headers, status, model
     });
     return;
   }
-
   // Normal response — update limiter from headers
   if (!isNaN(limit) && limit > 0) {
     const resetMs = parseResetTime(resetStr) || 60000;
-
     // Calculate optimal minTime from RPM limit
     const minTime = Math.max(0, Math.floor(60000 / limit) - 10); // Small buffer
-
     const updates: LimiterUpdateSettings = { minTime };
-
     // If remaining is low (< 10% of limit), set reservoir to throttle immediately
     if (!isNaN(remaining)) {
       if (remaining < limit * 0.1) {
@@ -909,9 +882,7 @@ export function updateFromHeaders(provider, connectionId, headers, status, model
         updates.reservoirRefreshInterval = null;
       }
     }
-
     updateLimiterSettings(limiter, updates);
-
     // Persist learned limits (debounced)
     recordLearnedLimit(
       provider,
@@ -921,14 +892,12 @@ export function updateFromHeaders(provider, connectionId, headers, status, model
     );
   }
 }
-
 /**
  * Get current rate limit status for a provider+connection (for dashboard display)
  */
 export function getRateLimitStatus(provider, connectionId) {
   const key = `${provider}:${connectionId}`;
   const limiter = limiters.get(key);
-
   if (!limiter) {
     return {
       enabled: enabledConnections.has(connectionId),
@@ -937,7 +906,6 @@ export function getRateLimitStatus(provider, connectionId) {
       running: 0,
     };
   }
-
   const counts = limiter.counts();
   return {
     enabled: enabledConnections.has(connectionId),
@@ -948,7 +916,6 @@ export function getRateLimitStatus(provider, connectionId) {
     done: counts.DONE || 0,
   };
 }
-
 /**
  * Get all active limiters status (for dashboard overview)
  */
@@ -997,13 +964,17 @@ function recordLearnedLimit(
 ) {
   const key = getLimiterKey(provider, connectionId, model);
   learnedLimits[key] = {
+    ...learnedLimits[key],
     ...limits,
     provider,
     connectionId,
     lastUpdated: Date.now(),
   };
 
-  // Debounce: save at most once per PERSIST_DEBOUNCE_MS
+  schedulePersist();
+}
+
+function schedulePersist(): void {
   if (!persistTimer) {
     persistTimer = setTimeout(async () => {
       persistTimer = null;
@@ -1107,6 +1078,14 @@ async function loadPersistedLimits() {
       const limit = toNumber(data.limit, 0);
       const remaining = toNumber(data.remaining, 0);
       const minTime = toNumber(data.minTime, 0);
+      const capRequests = toNumber(data.capRequests, 0);
+      const capWindowMs = toNumber(data.capWindowMs, 0);
+      const hasCap = isValidRequestCap({ requests: capRequests, windowMs: capWindowMs });
+      if (!hasCap && (data.capRequests !== undefined || data.capWindowMs !== undefined)) {
+        warnRateLimit(
+          `[RATE-LIMIT] ${key} — dropping persisted cap with invalid shape (${String(data.capRequests)} per ${String(data.capWindowMs)}ms)`
+        );
+      }
 
       learnedLimits[key] = {
         provider,
@@ -1115,12 +1094,24 @@ async function loadPersistedLimits() {
         ...(limit > 0 ? { limit } : {}),
         ...(remaining >= 0 ? { remaining } : {}),
         ...(minTime >= 0 ? { minTime } : {}),
+        ...(hasCap ? { capRequests, capWindowMs } : {}),
       };
 
       // Apply to limiter if it exists and has rate limit enabled
       if (connectionId && enabledConnections.has(connectionId)) {
         const limiter = limiters.get(key);
-        if (limiter && limit > 0) {
+        if (limiter && hasCap && !hasRpmOverride(connectionId)) {
+          const cap = capSettingsWithinBudget(
+            provider,
+            connectionId,
+            { requests: capRequests, windowMs: capWindowMs },
+            "persisted"
+          );
+          if (cap) {
+            updateLimiterSettings(limiter, cap);
+            count++;
+          }
+        } else if (limiter && limit > 0) {
           const inferredMinTime = minTime || Math.max(0, Math.floor(60000 / limit) - 10);
           updateLimiterSettings(limiter, { minTime: inferredMinTime });
           count++;
@@ -1164,4 +1155,38 @@ export function updateFromResponseBody(provider, connectionId, responseBody, sta
       reservoirRefreshInterval: retryAfterMs,
     });
   }
+
+  if (status !== 429) return;
+
+  const cap = parseRequestCapFromBody(responseBody);
+  if (!cap) return;
+
+  const settings = capSettingsWithinBudget(provider, connectionId, cap, "body-stated");
+  if (!settings) return;
+
+  const limiterKey = getLimiterKey(provider, connectionId, model);
+  const existing = limiters.get(limiterKey);
+  if (existing) {
+    evictLimiter(limiterKey, existing);
+  }
+  recordLearnedLimit(
+    provider,
+    connectionId,
+    {
+      limit: Math.max(1, Math.round((cap.requests * 60_000) / cap.windowMs)),
+      minTime: settings.minTime,
+      capRequests: cap.requests,
+      capWindowMs: cap.windowMs,
+    },
+    model
+  );
+  const limiter = getLimiter(provider, connectionId, model);
+  if (hasRpmOverride(connectionId)) {
+    updateLimiterSettings(limiter, { reservoir: 0 });
+    return;
+  }
+  logRateLimit(
+    `🚫 [RATE-LIMIT] ${provider}:${connectionId.slice(0, 8)} — body-stated cap: ${cap.requests} request(s) per ${Math.ceil(cap.windowMs / 1000)}s, pacing at ${settings.minTime}ms`
+  );
+  updateLimiterSettings(limiter, { reservoir: 0, ...settings });
 }
