@@ -3,6 +3,7 @@ import { FORMATS } from "../../translator/formats.ts";
 import { needsTranslation } from "../../translator/index.ts";
 import {
   FLUSH_EMPTY_RETRY_MAX_BYTES,
+  formatBufferedVerdictLog,
   judgeBufferedTurn,
   readBoundedResponseOutcome,
 } from "../../utils/emptyTurnRetry.ts";
@@ -30,6 +31,8 @@ export type FlushEmptyRetryArgs = {
   applyCredentials: (next: Record<string, unknown>) => void;
   executeRetry: () => Promise<unknown>;
   onRetryPrepared?: (retryResult: unknown) => void;
+  correlationId?: string | null;
+  traceId?: string;
 };
 
 export async function maybeRetryFlushEmptyTurn(args: FlushEmptyRetryArgs): Promise<Response> {
@@ -53,6 +56,12 @@ export async function maybeRetryFlushEmptyTurn(args: FlushEmptyRetryArgs): Promi
       args.clientResponseFormat,
       args.signal?.aborted === true
     );
+    const verdictLog = formatBufferedVerdictLog(
+      verdict,
+      args.correlationId ?? null,
+      args.traceId ?? "none"
+    );
+    args.log?.[verdictLog.level]?.("FLUSH_EMPTY_RETRY", verdictLog.line);
     if (verdict.kind === "pass") return response;
     if (retries >= STREAM_RECOVERY.EMPTY_TURN_RETRY_MAX) return response;
 

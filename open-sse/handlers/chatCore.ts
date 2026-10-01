@@ -5607,7 +5607,7 @@ async function handleChatCoreInner({
     };
   }
   providerResponse = streamReadiness.response;
-  providerResponse = await maybeRetryFlushEmptyTurn({ stream, response: providerResponse, targetFormat, clientResponseFormat, timeoutMs: streamReadinessPolicy.timeoutMs, maxTimeoutMs: streamReadinessPolicy.maxTimeoutMs, provider, model, currentModel, signal: clientRawRequest?.signal, log, getCredentials: () => getProviderCredentials(provider, null, null, currentModel).catch(() => null), applyCredentials: (next) => Object.assign(credentials, next), executeRetry: () => executeProviderRequest(currentModel, false) });
+  providerResponse = await maybeRetryFlushEmptyTurn({ stream, response: providerResponse, targetFormat, clientResponseFormat, timeoutMs: streamReadinessPolicy.timeoutMs, maxTimeoutMs: streamReadinessPolicy.maxTimeoutMs, provider, model, currentModel, signal: clientRawRequest?.signal, log, correlationId, traceId, getCredentials: () => getProviderCredentials(provider, null, null, currentModel).catch(() => null), applyCredentials: (next) => Object.assign(credentials, next), executeRetry: () => executeProviderRequest(currentModel, false) });
 
   // Notify success - caller can clear error status if needed
   if (onRequestSuccess) await onRequestSuccess();
