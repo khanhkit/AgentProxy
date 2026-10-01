@@ -404,6 +404,7 @@ export { computeFingerprint } from "./claudeCodeFingerprint.ts";
 export { obfuscateSensitiveWords, setSensitiveWords } from "./claudeCodeObfuscation.ts";
 export {
   enforceThinkingTemperature,
+  finalizeClaudeBodyConstraints,
   disableThinkingIfToolChoiceForced,
   enforceCacheControlLimit,
 } from "./claudeCodeConstraints.ts";
