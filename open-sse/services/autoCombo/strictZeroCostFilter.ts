@@ -54,6 +54,7 @@ import {
   grantsFreeAccess,
   type FreeModelBudget,
 } from "@agentproxy/open-sse/config/freeModelCatalog.ts";
+import { recordAutoExclusion } from "./autoEvaluationTrace";
 import { SYNTHETIC_NOAUTH_CONNECTION_ID } from "./resilienceCandidateFilter";
 
 export type FreeAccessStatus = "SAFE" | "EXHAUSTED" | "UNKNOWN";
@@ -284,7 +285,8 @@ export function filterStrictZeroCostCandidatesWithDiagnosis<
   T extends StrictZeroCostCandidate,
 >(
   pool: T[],
-  options: StrictZeroCostOptions
+  options: StrictZeroCostOptions,
+  traceInvocationId?: string
 ): { pool: T[]; diagnosis: StrictFilterDiagnosis | null } {
   if (!options.enabled) return { pool, diagnosis: null };
 
@@ -300,6 +302,19 @@ export function filterStrictZeroCostCandidatesWithDiagnosis<
     );
     if (safeConnectionIds.length === 0) {
       changed = true;
+      recordAutoExclusion(
+        traceInvocationId,
+        candidate,
+        "strict_zero_cost",
+        "auto_strict_zero_cost",
+        () =>
+          classifyStrictZeroCostCandidate(
+            candidate,
+            budgetEntry,
+            options.resolveFreeAccessState,
+            options
+          ).outcome
+      );
       continue;
     }
 
@@ -327,9 +342,10 @@ export function filterStrictZeroCostCandidatesWithDiagnosis<
 
 export function filterStrictZeroCostCandidates<T extends StrictZeroCostCandidate>(
   pool: T[],
-  options: StrictZeroCostOptions
+  options: StrictZeroCostOptions,
+  traceInvocationId?: string
 ): T[] {
-  return filterStrictZeroCostCandidatesWithDiagnosis(pool, options).pool;
+  return filterStrictZeroCostCandidatesWithDiagnosis(pool, options, traceInvocationId).pool;
 }
 
 export function countStrictExclusions<T extends StrictZeroCostCandidate>(
