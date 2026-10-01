@@ -338,7 +338,7 @@ export async function resolveModelOrError(
     log.info("ROUTING", `Provider: ${provider}, Model: ${model}${ctxTag}`);
   }
 
-  return { provider, model, sourceFormat, targetFormat, extendedContext, apiFormat };
+  return { provider, model, sourceFormat, targetFormat, customModelTargetFormat, extendedContext, apiFormat, resolvedThinkingEffort: modelInfo.resolvedThinkingEffort };
 }
 
 export async function checkPipelineGates(
@@ -432,6 +432,7 @@ export async function executeChatWithBreaker({
   extendedContext,
   modelApiFormat,
   modelTargetFormat,
+  resolvedThinkingEffort,
   providerProfile,
   cachedSettings,
   skipUpstreamRetry = false,
@@ -485,6 +486,7 @@ export async function executeChatWithBreaker({
               extendedContext,
               apiFormat: modelApiFormat,
               targetFormat: modelTargetFormat,
+              resolvedThinkingEffort,
             },
             credentials: refreshedCredentials,
             log: handlerLog,
@@ -1074,7 +1076,6 @@ export async function safeLogEvents({
       rotationAccount: rotationAccount || null,
       correlationId: correlationId || null,
       tlsFingerprint: tlsFingerprintUsed,
-      upstreamStatus: proxyInfo?.upstreamStatus ?? null,
     });
   } catch {}
 
