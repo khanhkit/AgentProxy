@@ -96,7 +96,7 @@ import {
   getExhaustedTargetSkipReason,
   requestScopedReplayKey,
 } from "./comboPredicates.ts";
-import { handlePreContentStreamRetry } from "./executeTargetClassify.ts";
+import { handlePreContentStreamRetry } from "./executeTargetClassify.ts"; import { resolveRoundRobinPersistedCooldown } from "./roundRobinPersistedCooldown.ts";
 import { applyComboTargetExhaustion } from "./targetExhaustion.ts";
 import { isRetryAfterEligibleStatus } from "./unavailableRetryGate.ts";
 import { isRecord } from "./comboData.ts";
@@ -115,9 +115,7 @@ import {
 } from "./comboStructure.ts";
 import { releaseStickyPinOnFailure, clearStaleLKGP } from "../combo.ts";
 import { resolveComboDailyReset } from "./comboDailyResetClock.ts";
-
 import { resolveTargetTokenLimit } from "./targetTokenLimit.ts";
-
 /**
  * Handle round-robin combo: each request goes to the next model in circular order.
  * Uses semaphore-based concurrency control with queue + rate-limit awareness.
@@ -480,6 +478,8 @@ export async function handleRoundRobinCombo({
       const semaphoreKey = `combo:${combo.name}:${target.executionKey}`;
       const allowRateLimitedConnection =
         Boolean(provider && provider !== "unknown") && transientRateLimitedProviders.has(provider);
+      const persistedSkip = await resolveRoundRobinPersistedCooldown(target, allowRateLimitedConnection);
+      if (persistedSkip) { log.info("COMBO-RR", persistedSkip); clearStaleLKGP(combo.name, target.executionKey, combo.id, log, "COMBO-RR"); if (offset > 0) fallbackCount++; continue; }
       const targetForAttempt = allowRateLimitedConnection
         ? { ...target, allowRateLimitedConnection: true }
         : target;
