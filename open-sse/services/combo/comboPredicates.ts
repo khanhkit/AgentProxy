@@ -30,6 +30,7 @@ import {
   REQUEST_SCOPED_PARAM_VALIDATION_PATTERNS,
 } from "../accountFallback/requestScoped400.ts";
 import { isResourceNotFoundResponse } from "../errorClassifier.ts";
+import { isOpencodeFreeTierRefusal } from "../../executors/opencodeGeoBlock.ts";
 import { getTrustedLocalRateLimitResponse } from "../rateLimitManager/errors.ts";
 import type { ResolvedComboTarget } from "./types.ts";
 
@@ -270,7 +271,11 @@ export function isRequestScopedUpstreamFailure(error?: {
   return (
     REQUEST_SCOPED_UPSTREAM_ERROR_CODES[code] === true ||
     type === "context_length_exceeded" ||
-    type === "local_queue_capacity"
+    type === "local_queue_capacity" ||
+    // #14313: OpenCode free-tier refusal (FreeTierError) — same verdict on every
+    // account for the same request; never a connection/model health signal.
+    type === "freetiererror" ||
+    code === "freetiererror"
   );
 }
 
@@ -283,7 +288,9 @@ export function isComboRequestScopedFailure(
   return (
     getTrustedLocalRateLimitResponse(response) !== null ||
     isRequestScopedUpstreamFailure(error) ||
-    (response.status === 404 && isResourceNotFoundResponse(errorText))
+    (response.status === 404 && isResourceNotFoundResponse(errorText)) ||
+    // #14313: body-only free-tier refusals (relayed sentence, no error.type kept).
+    isOpencodeFreeTierRefusal(response.status, errorText)
   );
 }
 
@@ -453,7 +460,7 @@ export function isTokenLimitBreachErrorBody(errorBody: unknown): boolean {
 }
 
 /**
- * A local per-API-key POLICY breach: this OmniRoute instance refused the
+ * A local per-API-key POLICY breach: this AgentProxy instance refused the
  * candidate before dispatch because of the key's own limits, not because an
  * upstream said no. Today that is the token-limit 429 above and the metered
  * dollar-budget 429 ("BUDGET_EXCEEDED", see handleSingleModelChat in

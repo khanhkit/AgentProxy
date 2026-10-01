@@ -242,6 +242,8 @@ import {
   isStreamRecoveryExplicitlyConfigured,
 } from "@/lib/resilience/settings";
 import { classifyProviderError, PROVIDER_ERROR_TYPES } from "../services/errorClassifier.ts";
+import { isOpencodeFreeTierRefusal } from "../executors/opencodeGeoBlock.ts";
+import { noteOpencodeFreeTierSkip } from "../services/opencodeFreeTierSkip.ts";
 import { updateProviderConnection, getProviderConnectionById } from "@/lib/db/providers";
 import { wasRefreshTokenRotated } from "@agentproxy/open-sse/services/refreshSerializer.ts";
 import { connectionHasExtraKeys } from "../services/apiKeyRotator.ts";
@@ -4439,6 +4441,13 @@ async function handleChatCoreInner({
             console.warn(
               `[provider] Node ${errorConnectionId} project routing error (${statusCode}) — not banning`
             );
+            if (
+              errorConnectionId === "noauth" &&
+              provider.startsWith("opencode") &&
+              isOpencodeFreeTierRefusal(statusCode, message)
+            ) {
+              noteOpencodeFreeTierSkip(provider);
+            }
           } else if (errorType === PROVIDER_ERROR_TYPES.GEO_BLOCKED) {
             // Google regional-availability refusal (e.g. "User location is not
             // supported for the API use."). Account-independent and non-terminal:
