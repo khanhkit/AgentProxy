@@ -445,7 +445,7 @@ export function isProviderModelUnsupported400(status: number, errorText: string)
 
 // Malformed request patterns — the model rejected the message format but a different
 // provider/model in the combo may accept it.
-const MALFORMED_REQUEST_PATTERNS = [
+export const MALFORMED_REQUEST_PATTERNS = [
   /\bimproperly formed request\b/i,
   /\binvalid.*message.*format/i,
   /\bmessages must alternate\b/i,
@@ -471,7 +471,7 @@ export const RATE_LIMIT_TEXT_PATTERNS = [
 ];
 
 // Parameter validation errors — model-specific constraints (different models = different limits)
-const PARAM_VALIDATION_PATTERNS = [
+export const PARAM_VALIDATION_PATTERNS = [
   /max_tokens.*illegal/i,
   /max_tokens.*must be/i,
   /max_tokens.*range/i,
