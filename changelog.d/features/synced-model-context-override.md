@@ -1,0 +1,1 @@
+- **feat(dashboard):** synced/imported provider models can carry a manual context-window override, with the same set/clear behavior already used by custom models and with the override preserved on the read path.

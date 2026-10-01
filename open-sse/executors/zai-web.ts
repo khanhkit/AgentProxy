@@ -51,6 +51,7 @@ import {
   makeZaiChunkEmitter,
 } from "./zai-web/stream.ts";
 import { browserBackedChat } from "../services/browserBackedChat.ts";
+import { isMissingBrowserExecutable } from "./browserExecutableCheck.ts";
 import { CursorImageError, resolveCursorImages } from "../utils/cursorImages.ts";
 import {
   makeExecutorErrorResult as makeErrorResult,
@@ -424,9 +425,20 @@ export class ZaiWebExecutor extends BaseExecutor {
     try {
       result = await browserBackedChat(buildZaiBrowserChatOptions({ ...input, attachments }));
     } catch (error) {
-      const message = sanitizeErrorMessage(
-        error instanceof Error ? error.message : "browser transport unavailable"
-      );
+      const rawMessage = error instanceof Error ? error.message : "browser transport unavailable";
+      if (isMissingBrowserExecutable(rawMessage)) {
+        return {
+          errorResult: makeErrorResult(
+            503,
+            "Z.ai requires the Playwright Chromium browser, which is not installed. " +
+              "Run `npx playwright install chromium` on the host (or rebuild the Docker image with browsers).",
+            input.body,
+            ZAI_CHAT_URL,
+            { "X-AgentProxy-Fallback-Hint": "connection_cooldown" }
+          ),
+        };
+      }
+      const message = sanitizeErrorMessage(rawMessage);
       return {
         errorResult: makeErrorResult(
           502,
@@ -457,7 +469,7 @@ export class ZaiWebExecutor extends BaseExecutor {
       }),
       auditHeaders: {
         Authorization: "Bearer [REDACTED]",
-        "X-OmniRoute-Transport": "browser",
+        "X-AgentProxy-Transport": "browser",
       },
       auditBody: buildZaiBrowserAuditBody({
         messages: input.messages,

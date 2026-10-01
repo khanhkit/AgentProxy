@@ -7,7 +7,7 @@ import path from "node:path";
 // Regression guard for #10348 — default process logs must not leak client/egress IPs
 // or the raw account prefix. Storage (in-memory ring buffer + SQLite) stays intact;
 // only the process-log emission changes.
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-proxy-10348-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-proxy-10348-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../src/lib/db/core.ts");

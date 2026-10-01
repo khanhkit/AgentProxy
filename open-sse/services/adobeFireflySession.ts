@@ -1,7 +1,7 @@
 /**
  * Adobe Firefly durable session manager.
  *
- * Goal: same as other OmniRoute web-cookie providers (notion-web, perplexity-web):
+ * Goal: same as other AgentProxy web-cookie providers (notion-web, perplexity-web):
  * paste Cookie (+ optional IMS JWT) once and use pure HTTP — **no browser window**.
  *
  *  1) Extract / cache IMS user JWT from paste (or short-lived memory/disk cache)
@@ -131,15 +131,22 @@ const FORTER_PROACTIVE_WARM_MS = 3 * 60_000;
  * unless explicitly disabled with ADOBE_FIREFLY_BROWSER_REFRESH=0. The legacy opt-in value
  * "1" still enables it; any other value (including unset) now also enables it.
  */
+function browserRefreshEnabled(): boolean {
+  if (process.env.ADOBE_FIREFLY_BROWSER_REFRESH === "0") return false;
+  if (process.env.NODE_ENV === "test") return false;
+  if (process.env.VITEST || process.env.NODE_TEST_CONTEXT) return false;
+  return true;
+}
+
 export function adobeFireflyBrowserEnabled(): boolean {
-  return process.env.ADOBE_FIREFLY_BROWSER_REFRESH !== "0";
+  return browserRefreshEnabled();
 }
 /** Persist sessions under DATA_DIR so restarts keep JWT + last cookie. */
 const SESSION_DIR_NAME = "adobe-firefly-sessions";
 
 function dataDir(): string {
   return (
-    String(process.env.DATA_DIR || process.env.OMNIROUTE_DATA_DIR || "").trim() ||
+    String(process.env.DATA_DIR || process.env.AGENTPROXY_DATA_DIR || "").trim() ||
     join(process.cwd(), ".data")
   );
 }
@@ -493,7 +500,7 @@ async function writeBackAdobeFireflyCredentials(
   if (!connectionId || connectionId === "legacy-default") return;
   if (!isAdobeUserAccessToken(session.accessToken)) return;
   // Skip when connectionId looks like a credential fingerprint (32 hex) without a real UUID.
-  // Real OmniRoute connection ids are UUIDs; still attempt write-back for any non-empty key.
+  // Real AgentProxy connection ids are UUIDs; still attempt write-back for any non-empty key.
   try {
     const { updateProviderConnection } = await import("@/lib/db/providers");
     const credential = serializeAdobeFireflyCredential(session);
@@ -953,8 +960,7 @@ export async function rotateAdobeFireflySessionOnError(
   clearAdobeFireflyWorkingArp(session.fingerprint);
   noteAdobeFireflySubmitFailure();
 
-  const tryBrowser =
-    opts?.tryBrowser !== false && process.env.ADOBE_FIREFLY_BROWSER_REFRESH !== "0";
+  const tryBrowser = opts?.tryBrowser !== false && browserRefreshEnabled();
   if (tryBrowser) {
     opts?.log?.info?.(
       "ADOBE-FIREFLY",

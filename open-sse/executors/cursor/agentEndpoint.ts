@@ -99,9 +99,10 @@ export async function resolveCursorAgentUrl(
 ): Promise<string> {
   const accessToken = stripCursorOAuthTokenPrefix(credentials.accessToken || "");
   if (!accessToken) throw new Error("Cursor access token is required");
-  const cacheKey =
-    `${credentials.connectionId || "anonymous"}:` +
-    createHmac("sha256", "omniroute-cursor-agent-url-cache-v1").update(accessToken).digest("hex");
+  const tokenCacheHasher = createHmac("sha256", "agentproxy-cursor-agent-url-cache-v1");
+  // Deterministic in-memory cache partition key for an access token, not a password verifier.
+  const tokenFingerprint = tokenCacheHasher.update(accessToken).digest("hex"); // lgtm[js/insufficient-password-hash]
+  const cacheKey = `${credentials.connectionId || "anonymous"}:${tokenFingerprint}`;
   const now = Date.now();
   let urls = cursorAgentUrlCache.get(cacheKey);
   if (!urls || urls.expiresAt <= now) {

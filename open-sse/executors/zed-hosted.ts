@@ -15,12 +15,12 @@
  * bearer token (see open-sse/shared/zedAuth.ts). The provider-shaped
  * chunk is Claude/Gemini/OpenAI-Responses/xAI(OpenAI-shaped) depending on
  * which upstream Zed is fronting for the requested model — translated back
- * to OpenAI Chat Completions chunks by reusing OmniRoute's own translators
+ * to OpenAI Chat Completions chunks by reusing AgentProxy's own translators
  * (the same ones used for the native claude/gemini/codex executors), never
  * a bespoke per-provider parser.
  *
  * Ported from decolua/9router PR #2328 (open-sse/executors/zed.js),
- * adapted to TypeScript + OmniRoute's BaseExecutor/translator conventions.
+ * adapted to TypeScript + AgentProxy's BaseExecutor/translator conventions.
  * Like DevinDesktopExecutor, this overrides execute() entirely rather than
  * using BaseExecutor's default Claude-Code-oriented pipeline, because the
  * Zed wire request/response shape (thread envelope, LLM-token exchange,
@@ -81,6 +81,44 @@ function normalizeZedProvider(value: unknown, model: unknown): ZedProviderName {
   return ZED_PROVIDER.openai;
 }
 
+function asMutableRecord(value: unknown): Record<string, unknown> | null {
+  return value && typeof value === "object" ? (value as Record<string, unknown>) : null;
+}
+
+const ZED_FUNCTION_CALLING_MODES: Record<string, string> = {
+  VALIDATED: "auto",
+  AUTO: "auto",
+  ANY: "any",
+  NONE: "none",
+};
+
+function adaptGeminiRequestForZed(request: unknown): unknown {
+  const record = asMutableRecord(request);
+  if (!record) return request;
+  if (Array.isArray(record.safetySettings)) {
+    for (const entry of record.safetySettings) {
+      const setting = asMutableRecord(entry);
+      if (setting?.threshold === "OFF") setting.threshold = "BLOCK_NONE";
+    }
+  }
+  const callingConfig = asMutableRecord(asMutableRecord(record.toolConfig)?.functionCallingConfig);
+  const mappedMode = callingConfig
+    ? ZED_FUNCTION_CALLING_MODES[String(callingConfig.mode || "").toUpperCase()]
+    : undefined;
+  if (callingConfig && mappedMode) callingConfig.mode = mappedMode;
+  return request;
+}
+
+function adaptResponsesRequestForZed(request: unknown): unknown {
+  const input = asMutableRecord(request)?.input;
+  if (!Array.isArray(input)) return request;
+  for (const entry of input) {
+    const item = asMutableRecord(entry);
+    if (item?.role === "developer") item.role = "system";
+  }
+  return request;
+}
+
 function buildProviderRequest(
   provider: ZedProviderName,
   model: string,
@@ -92,10 +130,14 @@ function buildProviderRequest(
     return openaiToClaudeRequest(model, body, true);
   }
   if (provider === ZED_PROVIDER.google) {
-    return openaiToGeminiRequest(model, body as Record<string, unknown>, true, credentials);
+    return adaptGeminiRequestForZed(
+      openaiToGeminiRequest(model, body as Record<string, unknown>, true, credentials)
+    );
   }
   if (provider === ZED_PROVIDER.openai) {
-    return openaiToOpenAIResponsesRequest(model, body, true, credentials);
+    return adaptResponsesRequestForZed(
+      openaiToOpenAIResponsesRequest(model, body, true, credentials)
+    );
   }
   return {
     ...(body as Record<string, unknown>),
@@ -238,7 +280,7 @@ function resolveZedSuppressThinkClose(
     userAgent: clientHeaders?.["user-agent"] ?? clientHeaders?.["User-Agent"] ?? null,
     thinkingMarkerHeader:
       clientHeaders?.[THINKING_MARKER_HEADER] ??
-      clientHeaders?.["x-omniroute-thinking-marker"] ??
+      clientHeaders?.["x-agentproxy-thinking-marker"] ??
       null,
     clientResponseFormat: clientResponseFormat ?? null,
   });
@@ -479,7 +521,7 @@ export class ZedHostedExecutor extends BaseExecutor {
         headers: {
           "Content-Type": "application/json",
           Accept: "application/x-ndjson, text/event-stream, */*",
-          "User-Agent": `OmniRoute/zed-hosted`,
+          "User-Agent": `AgentProxy/zed-hosted`,
           "x-zed-version":
             (this.config as Record<string, unknown>)?.appVersion?.toString() || "0.200.0",
           [ZED_HEADERS.clientSupportsStatus]: "true",
@@ -551,6 +593,8 @@ export class ZedHostedExecutor extends BaseExecutor {
 export default ZedHostedExecutor;
 
 export const __test__ = {
+  adaptGeminiRequestForZed,
+  adaptResponsesRequestForZed,
   normalizeZedProvider,
   unwrapZedLine,
   wrapZedCompletionStream,

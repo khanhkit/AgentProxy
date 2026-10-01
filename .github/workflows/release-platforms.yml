@@ -30,7 +30,21 @@ jobs:
       tag: ${{ steps.meta.outputs.tag }}
       version: ${{ steps.meta.outputs.version }}
       publish_assets: ${{ steps.meta.outputs.publish_assets }}
+      source_ref: ${{ steps.meta.outputs.source_ref }}
     steps:
+      - name: Checkout release policy
+        if: ${{ github.event_name == 'release' || inputs.publish_assets == true }}
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: main
+          persist-credentials: false
+
+      - name: Enforce main-only release branch invariant
+        if: ${{ github.event_name == 'release' || inputs.publish_assets == true }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/check/check-release-branch-hygiene.mjs
+
       - id: meta
         name: Validate release tag
         shell: bash
@@ -39,14 +53,23 @@ jobs:
           RELEASE_TAG: ${{ github.event.release.tag_name }}
           INPUT_TAG: ${{ inputs.tag }}
           INPUT_PUBLISH: ${{ inputs.publish_assets }}
+          # Dry-runs exercise the workflow/source commit being dispatched. Publishing
+          # remains tag-pinned so release assets always come from the immutable tag.
+          DISPATCH_SHA: ${{ github.sha }}
         run: |
           set -euo pipefail
           if [ "$EVENT_NAME" = "release" ]; then
             tag="$RELEASE_TAG"
             publish_assets=true
+            source_ref="$tag"
           else
             tag="$INPUT_TAG"
             publish_assets="${INPUT_PUBLISH:-false}"
+            if [ "$publish_assets" = "true" ]; then
+              source_ref="$tag"
+            else
+              source_ref="$DISPATCH_SHA"
+            fi
           fi
           if ! printf '%s' "$tag" | grep -qE '^v[0-9]+\.[0-9]+\.[0-9]+([.-][0-9A-Za-z.-]+)?$'; then
             echo "::error::Invalid release tag: $tag"
@@ -55,6 +78,7 @@ jobs:
           echo "tag=$tag" >> "$GITHUB_OUTPUT"
           echo "version=${tag#v}" >> "$GITHUB_OUTPUT"
           echo "publish_assets=$publish_assets" >> "$GITHUB_OUTPUT"
+          echo "source_ref=$source_ref" >> "$GITHUB_OUTPUT"
 
   web-build:
     name: Build shared Next standalone
@@ -62,10 +86,10 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 45
     steps:
-      - name: Checkout release tag
+      - name: Checkout release source
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: ${{ needs.prepare.outputs.tag }}
+          ref: ${{ needs.prepare.outputs.source_ref }}
           persist-credentials: false
 
       - name: Setup Node.js
@@ -84,8 +108,8 @@ jobs:
         env:
           JWT_SECRET: ci-build-secret-with-sufficient-length-for-validation
           NODE_OPTIONS: "--max-old-space-size=12288"
-          OMNIROUTE_USE_TURBOPACK: "0"
-          OMNIROUTE_NEXT_BUILD_CPUS: "1"
+          AGENTPROXY_USE_TURBOPACK: "0"
+          AGENTPROXY_NEXT_BUILD_CPUS: "1"
         run: npm run build
 
       - name: Pack shared standalone bundle
@@ -144,10 +168,10 @@ jobs:
       CSC_IDENTITY_AUTO_DISCOVERY: "false"
       JWT_SECRET: ci-build-secret-with-sufficient-length-for-validation
     steps:
-      - name: Checkout release tag
+      - name: Checkout release source
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: ${{ needs.prepare.outputs.tag }}
+          ref: ${{ needs.prepare.outputs.source_ref }}
           persist-credentials: false
 
       - name: Setup Node.js
@@ -288,7 +312,15 @@ jobs:
     runs-on: ubuntu-24.04
     permissions:
       contents: write
+      id-token: write
+      attestations: write
+      artifact-metadata: write
     steps:
+      - name: Harden release runner
+        uses: step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1 # v2.21.1
+        with:
+          egress-policy: audit
+
       - name: Download successful native artifacts
         continue-on-error: true
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
@@ -304,6 +336,11 @@ jobs:
           test -d release-assets
           test -n "$(find release-assets -maxdepth 1 -type f -print -quit)"
           find release-assets -maxdepth 1 -type f -printf '%f\n' | sort
+
+      - name: Attest native release assets
+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
+        with:
+          subject-path: release-assets/*
 
       - name: Upload assets to existing release
         shell: bash

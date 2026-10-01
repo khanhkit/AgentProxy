@@ -19,7 +19,7 @@ import { A2ATaskManager } from "../../src/lib/a2a/taskManager.ts";
 // ── DB test hygiene (AGENTS.md "PII & Stream Sanitization Learnings" §3): temp DATA_DIR set
 // BEFORE importing src/lib/db/core.ts (SQLITE_FILE is resolved from DATA_DIR at import time),
 // resetDbInstance()+rm the temp dir in test.after so the node:test runner does not hang.
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-agents-channel-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-agents-channel-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../src/lib/db/core.ts");

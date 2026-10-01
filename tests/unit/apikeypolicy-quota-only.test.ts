@@ -21,7 +21,7 @@ import os from "node:os";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-apikeypolicy-quota-only-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-apikeypolicy-quota-only-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.API_KEY_SECRET = process.env.API_KEY_SECRET || "quota-only-test-secret";
 
@@ -231,8 +231,9 @@ test("key with empty allowedQuotas is subject to normal model restriction checks
 
   const body = await readBody(blocked.rejection);
   assert.match(body.error.message, /not allowed for this API key/);
-  // The code for this case comes from errorConfig (403 → "insufficient_quota")
-  // rather than QUOTA_ONLY — confirming paths are separate
+  // AgentProxy policy rejections use their own response code path rather than
+  // errorConfig; this assertion only guards that normal policy 403s do not
+  // masquerade as quota-pool errors.
   assert.notEqual(
     body.error.code,
     "QUOTA_ONLY",

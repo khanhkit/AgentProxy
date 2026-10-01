@@ -791,7 +791,7 @@ const HELP_ITEMS: readonly SidebarItemDefinition[] = [
   },
   {
     id: "issues",
-    href: "https://github.com/diegosouzapw/OmniRoute/issues",
+    href: "https://github.com/khanhkit/AgentProxy/issues",
     i18nKey: "issues",
     subtitleKey: "issuesSubtitle",
     icon: "bug_report",
@@ -851,7 +851,6 @@ export const SIDEBAR_SECTIONS: readonly SidebarSectionDefinition[] = [
     titleKey: "devtoolsSection",
     titleFallback: "Dev Tools",
     children: DEVTOOLS_ITEMS,
-    visibility: "debug",
   },
   {
     id: "agentic-features",

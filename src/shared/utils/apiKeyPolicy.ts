@@ -14,13 +14,13 @@ import { getComboByName } from "@/lib/db/combos";
 import { isDashboardSessionAuthenticated } from "./apiAuth";
 import { resolveComboForModel } from "@/lib/db/modelComboMappings";
 import { checkBudget } from "@/domain/costRules";
-import { checkTokenLimits } from "@omniroute/open-sse/services/tokenLimitCounter.ts";
+import { checkTokenLimits } from "@agentproxy/open-sse/services/tokenLimitCounter.ts";
 import {
   errorResponse,
   buildErrorBody,
   sanitizeErrorMessage,
-} from "@omniroute/open-sse/utils/error.ts";
-import { HTTP_STATUS } from "@omniroute/open-sse/config/constants.ts";
+} from "@agentproxy/open-sse/utils/error.ts";
+import { HTTP_STATUS } from "@agentproxy/open-sse/config/constants.ts";
 import * as log from "@/sse/utils/logger";
 import { checkRateLimit, RateLimitRule } from "./rateLimiter";
 import { resolveEndpointCategory } from "@/shared/constants/endpointCategories";
@@ -72,6 +72,7 @@ export interface ApiKeyMetadata {
   name?: string;
   modelAccessMode?: "all" | "restricted";
   allowedModels?: string[];
+  blockedModels?: string[];
   allowedCombos?: string[];
   allowedConnections?: string[];
   allowedQuotas?: string[];
@@ -188,6 +189,15 @@ function matchesComboAccessRule(comboName: string, requestedModel: string, rule:
   );
 }
 
+export function isComboNameAllowedForKey(
+  allowedCombos: string[] | null | undefined,
+  comboName: string
+): boolean {
+  if (!Array.isArray(allowedCombos)) return true;
+  if (!comboName) return false;
+  return allowedCombos.some((rule) => matchesComboAccessRule(comboName, comboName, rule));
+}
+
 function isAnthropicMessagesRequest(request: Request): boolean {
   if (request.headers.has("anthropic-version")) return true;
 
@@ -293,6 +303,16 @@ async function validateQuotaRoutingTarget(
   }
 }
 
+function comboCannotBeUsedMessage(modelStr: string, comboName: string | null): string {
+  const name = comboName || modelStr;
+  return (
+    `Combo "${name}" is not allowed for this API key. ` +
+    `This key's allowed combos do not include "${name}" — add "${name}" (or "combo/*") ` +
+    `to this key's allowed combos in Dashboard → API Manager, or route to a combo ` +
+    `this key already permits.`
+  );
+}
+
 async function validateStandardRoutingTarget(
   request: Request,
   apiKey: string,
@@ -307,7 +327,7 @@ async function validateStandardRoutingTarget(
       if (!comboAccess.allowed) {
         return errorResponse(
           HTTP_STATUS.FORBIDDEN,
-          `Combo "${comboAccess.comboName || modelStr}" is not allowed for this API key`
+          comboCannotBeUsedMessage(modelStr, comboAccess.comboName)
         );
       }
     } catch (error) {
@@ -319,6 +339,7 @@ async function validateStandardRoutingTarget(
   const hasModelRestrictions =
     apiKeyInfo.modelAccessMode === "restricted" ||
     Boolean(apiKeyInfo.allowedModels?.length) ||
+    Boolean(apiKeyInfo.blockedModels?.length) ||
     apiKeyInfo.disableNonPublicModels === true;
   if (!requestedComboName && hasModelRestrictions && modelStr.startsWith("auto/")) {
     requestedComboName = modelStr;
@@ -378,6 +399,25 @@ export interface ApiKeyPolicyResult {
   rejection: Response | null;
 }
 
+export interface EnforceApiKeyPolicyOptions {
+  /**
+   * Where the metered dollar budget is enforced for this request.
+   *
+   * `"enforce"` (the default) rejects here, the moment the key's allowance is
+   * spent. That is correct for every endpoint that dispatches to a single,
+   * already-determined provider.
+   *
+   * `"defer-to-candidate"` is for callers that route across several provider
+   * candidates. The budget is scoped by apiKeyId and knows nothing about which
+   * provider will serve the request, so rejecting here also rejects flat-rate
+   * subscription capacity that the allowance does not pay for. A caller passing
+   * this MUST re-apply the budget per resolved candidate — see
+   * `lib/usage/meteredBudgetPolicy` — or it drops metered-spend enforcement
+   * entirely. Every other check on this path is unaffected.
+   */
+  meteredBudget?: "enforce" | "defer-to-candidate";
+}
+
 /**
  * Enforce API key policies for a request.
  *
@@ -387,6 +427,9 @@ export interface ApiKeyPolicyResult {
  *
  * @param request - The incoming HTTP request
  * @param modelStr - The model ID from the request body
+ * @param options - See {@link EnforceApiKeyPolicyOptions}; omitted means every
+ *   check is enforced here, which is the behaviour every caller had before the
+ *   option existed.
  * @returns ApiKeyPolicyResult with apiKey, metadata, and optional rejection response
  *
  * @example
@@ -398,13 +441,13 @@ export interface ApiKeyPolicyResult {
  */
 /** Header carrying the id of the API key a dashboard playground request wants to
  *  test the policy for (never the key secret). */
-const PLAYGROUND_KEY_ID_HEADER = "x-omniroute-playground-key-id";
+const PLAYGROUND_KEY_ID_HEADER = "x-agentproxy-playground-key-id";
 
 /**
  * Dashboard playground support. An authenticated admin session may test a
  * specific API key's policy (allowed_models, budget, …) WITHOUT putting the key
  * secret on the wire: the browser sends only the key id via
- * `x-omniroute-playground-key-id` and we resolve the secret server-side.
+ * `x-agentproxy-playground-key-id` and we resolve the secret server-side.
  *
  * Security: honored ONLY for authenticated dashboard sessions, and only as a
  * fallback when no bearer key was presented — so it can never bypass auth or
@@ -525,6 +568,7 @@ async function validateModelAccess(context: PolicyContext): Promise<Response | n
   const hasModelRestrictions =
     apiKeyInfo.modelAccessMode === "restricted" ||
     Boolean(apiKeyInfo.allowedModels?.length) ||
+    Boolean(apiKeyInfo.blockedModels?.length) ||
     apiKeyInfo.disableNonPublicModels === true;
   if (!requestedComboName && hasModelRestrictions) {
     if (modelStr.startsWith("auto/") || modelStr.startsWith("qtSd/")) {
@@ -561,7 +605,7 @@ async function validateComboAccess(
       comboName: comboAccess.comboName,
       rejection: errorResponse(
         HTTP_STATUS.FORBIDDEN,
-        `Combo "${comboAccess.comboName || modelStr}" is not allowed for this API key`
+        comboCannotBeUsedMessage(modelStr, comboAccess.comboName)
       ),
     };
   } catch (error) {
@@ -571,6 +615,18 @@ async function validateComboAccess(
       rejection: errorResponse(HTTP_STATUS.SERVICE_UNAVAILABLE, "API key combo policy unavailable"),
     };
   }
+}
+
+/**
+ * The metered dollar budget check, skipped when the caller defers it to the
+ * resolved candidate (see {@link EnforceApiKeyPolicyOptions.meteredBudget}).
+ */
+function validateBudgetUnlessDeferred(
+  context: PolicyContext,
+  options: EnforceApiKeyPolicyOptions | undefined
+): Response | null {
+  if (options?.meteredBudget === "defer-to-candidate") return null;
+  return validateBudget(context);
 }
 
 function validateBudget(context: PolicyContext): Response | null {
@@ -660,7 +716,8 @@ function extractUngatedClientApiKey(request: Request): string | null {
 
 export async function enforceApiKeyPolicy(
   request: Request,
-  modelStr: string | null
+  modelStr: string | null,
+  options?: EnforceApiKeyPolicyOptions
 ): Promise<ApiKeyPolicyResult> {
   // A real bearer key wins; then a bare x-api-key/x-goog-api-key that auth
   // accepted but extractApiKey() gates out; otherwise an authenticated dashboard
@@ -708,7 +765,7 @@ export async function enforceApiKeyPolicy(
   const modelRejection = await validateModelAccess(context);
   if (modelRejection) return { apiKey, apiKeyInfo, rejection: modelRejection };
 
-  const budgetRejection = validateBudget(context);
+  const budgetRejection = validateBudgetUnlessDeferred(context, options);
   if (budgetRejection) return { apiKey, apiKeyInfo, rejection: budgetRejection };
   const tokenRejection = validateTokenLimit(context);
   if (tokenRejection) return { apiKey, apiKeyInfo, rejection: tokenRejection };

@@ -15,7 +15,7 @@ lastUpdated: 2026-08-31
 
 🌐 **Languages:** 🇺🇸 [English](../../../../reference/API_REFERENCE.md) · 🇸🇦 [ar](../../../ar/docs/reference/API_REFERENCE.md) · 🇦🇿 [az](../../../az/docs/reference/API_REFERENCE.md) · 🇧🇬 [bg](../../../bg/docs/reference/API_REFERENCE.md) · 🇧🇩 [bn](../../../bn/docs/reference/API_REFERENCE.md) · 🇨🇿 [cs](../../../cs/docs/reference/API_REFERENCE.md) · 🇩🇰 [da](../../../da/docs/reference/API_REFERENCE.md) · 🇩🇪 [de](../../../de/docs/reference/API_REFERENCE.md) · 🇬🇷 [el](../../../el/docs/reference/API_REFERENCE.md) · 🇪🇸 [es](../../../es/docs/reference/API_REFERENCE.md) · 🇮🇷 [fa](../../../fa/docs/reference/API_REFERENCE.md) · 🇫🇮 [fi](../../../fi/docs/reference/API_REFERENCE.md) · 🇫🇷 [fr](../../../fr/docs/reference/API_REFERENCE.md) · 🇮🇪 [ga](../../../ga/docs/reference/API_REFERENCE.md) · 🇮🇳 [gu](../../../gu/docs/reference/API_REFERENCE.md) · 🇮🇱 [he](../../../he/docs/reference/API_REFERENCE.md) · 🇮🇳 [hi](../../../hi/docs/reference/API_REFERENCE.md) · 🇭🇷 [hr](../../../hr/docs/reference/API_REFERENCE.md) · 🇭🇺 [hu](../../../hu/docs/reference/API_REFERENCE.md) · 🇮🇩 [id](../../../id/docs/reference/API_REFERENCE.md) · 🇮🇹 [it](../../../it/docs/reference/API_REFERENCE.md) · 🇯🇵 [ja](../../../ja/docs/reference/API_REFERENCE.md) · 🇰🇷 [ko](../../../ko/docs/reference/API_REFERENCE.md) · 🇱🇹 [lt](../../../lt/docs/reference/API_REFERENCE.md) · 🇱🇻 [lv](../../../lv/docs/reference/API_REFERENCE.md) · 🇮🇳 [mr](../../../mr/docs/reference/API_REFERENCE.md) · 🇲🇾 [ms](../../../ms/docs/reference/API_REFERENCE.md) · 🇲🇹 [mt](../../../mt/docs/reference/API_REFERENCE.md) · 🇳🇱 [nl](../../../nl/docs/reference/API_REFERENCE.md) · 🇳🇴 [no](../../../no/docs/reference/API_REFERENCE.md) · 🇵🇭 [phi](../../../phi/docs/reference/API_REFERENCE.md) · 🇵🇱 [pl](../../../pl/docs/reference/API_REFERENCE.md) · 🇵🇹 [pt](../../../pt/docs/reference/API_REFERENCE.md) · 🇧🇷 [pt-BR](../../../pt-BR/docs/reference/API_REFERENCE.md) · 🇷🇴 [ro](../../../ro/docs/reference/API_REFERENCE.md) · 🇷🇺 [ru](../../../ru/docs/reference/API_REFERENCE.md) · 🇸🇰 [sk](../../../sk/docs/reference/API_REFERENCE.md) · 🇸🇮 [sl](../../../sl/docs/reference/API_REFERENCE.md) · 🇷🇸 [sr](../../../sr/docs/reference/API_REFERENCE.md) · 🇸🇪 [sv](../../../sv/docs/reference/API_REFERENCE.md) · 🇰🇪 [sw](../../../sw/docs/reference/API_REFERENCE.md) · 🇮🇳 [ta](../../../ta/docs/reference/API_REFERENCE.md) · 🇮🇳 [te](../../../te/docs/reference/API_REFERENCE.md) · 🇹🇭 [th](../../../th/docs/reference/API_REFERENCE.md) · 🇹🇷 [tr](../../../tr/docs/reference/API_REFERENCE.md) · 🇺🇦 [uk-UA](../../../uk-UA/docs/reference/API_REFERENCE.md) · 🇵🇰 [ur](../../../ur/docs/reference/API_REFERENCE.md) · 🇻🇳 [vi](../../../vi/docs/reference/API_REFERENCE.md) · 🇨🇳 [zh-CN](../../../zh-CN/docs/reference/API_REFERENCE.md) · 🇹🇼 [zh-TW](../../../zh-TW/docs/reference/API_REFERENCE.md)
 
-OmniRoute API põhiviide. See hõlmab avalikku `/v1` liidest ja enim kasutatavaid haldusotspunkte; masinloetav [`docs/openapi.yaml`](../openapi.yaml) ja marsruutide puu asukohas `src/app/api/` on kõikehõlmavad allikad.
+AgentProxy API põhiviide. See hõlmab avalikku `/v1` liidest ja enim kasutatavaid haldusotspunkte; masinloetav [`docs/openapi.yaml`](../openapi.yaml) ja marsruutide puu asukohas `src/app/api/` on kõikehõlmavad allikad.
 
 ---
 
@@ -72,32 +72,32 @@ Content-Type: application/json
 
 | Päis                     | Suund  | Kirjeldus                                                                                                                                                                                                                        |
 | ------------------------ | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `X-OmniRoute-No-Cache`   | Päring | Määra `true`, et vahemälu mööda jätta                                                                                                                                                                                            |
-| `x-omniroute-no-memory`  | Päring | Määra `true`, et jätta selle päringu puhul mälu- ja oskuste süstimine vahele (peegeldab no-cache käitumist; hoiab ära iga kõne kohta arvutatud token/kulu üldkulu)                                                               |
-| `X-OmniRoute-Progress`   | Päring | Määra `true`, et saada edenemise sündmusi                                                                                                                                                                                        |
+| `X-AgentProxy-No-Cache`   | Päring | Määra `true`, et vahemälu mööda jätta                                                                                                                                                                                            |
+| `x-agentproxy-no-memory`  | Päring | Määra `true`, et jätta selle päringu puhul mälu- ja oskuste süstimine vahele (peegeldab no-cache käitumist; hoiab ära iga kõne kohta arvutatud token/kulu üldkulu)                                                               |
+| `X-AgentProxy-Progress`   | Päring | Määra `true`, et saada edenemise sündmusi                                                                                                                                                                                        |
 | `X-Session-Id`           | Päring | Fikseeritud seansi võti välise seansi püsivuse jaoks                                                                                                                                                                             |
 | `x_session_id`           | Päring | Alakriipsuga variant on ka lubatud (otsene HTTP)                                                                                                                                                                                 |
-| `X-OmniRoute-Session-Id` | Päring | Kutsuja poolt esitatud seansi/vestluse silt (toidab ka mälu). Kui see on olemas, salvestatakse see sõna-sõnalt väljale `call_logs.session_tag` seansipõhise kulude jaotuse jaoks (#8249) — kunagi ei genereerita, kui see puudub |
+| `X-AgentProxy-Session-Id` | Päring | Kutsuja poolt esitatud seansi/vestluse silt (toidab ka mälu). Kui see on olemas, salvestatakse see sõna-sõnalt väljale `call_logs.session_tag` seansipõhise kulude jaotuse jaoks (#8249) — kunagi ei genereerita, kui see puudub |
 | `Idempotency-Key`        | Päring | Dubleerimise vastu kaitsev võti (5 s aken)                                                                                                                                                                                       |
 | `X-Request-Id`           | Päring | Alternatiivne dubleerimise vastane võti                                                                                                                                                                                          |
-| `X-OmniRoute-Cache`      | Vastus | `HIT` või `MISS` (mitte-voogedastuse korral)                                                                                                                                                                                     |
-| `X-OmniRoute-Idempotent` | Vastus | `true`, kui dubleerimine tuvastatud                                                                                                                                                                                              |
-| `X-OmniRoute-Progress`   | Vastus | `enabled`, kui edenemise jälgimine on sisse lülitatud                                                                                                                                                                            |
-| `X-OmniRoute-Session-Id` | Vastus | OmniRoute'i poolt kasutatud tegelik seansi ID                                                                                                                                                                                    |
-| `X-OmniRoute-Request-Id` | Vastus | Päringu korrelatsiooni ID (kui teada)                                                                                                                                                                                            |
-| `X-OmniRoute-Version`    | Vastus | OmniRoute'i väljalaske versioon (alati olemas)                                                                                                                                                                                   |
-| `X-OmniRoute-Cost-Saved` | Vastus | USA dollarites summa, mille vahemälu HIT-i korral vältis (ainult vahemälu tabamuste puhul)                                                                                                                                       |
-| `X-OmniRoute-Decision`   | Vastus | Ruutimise jälg: `strategy=<name>; provider=<alias>; latency_ms=<n>` (`<name>` on kombo strateegia või `single`, kui päring ei ole kombo) — esineb alati lõpetatud vastuste juures                                                |
+| `X-AgentProxy-Cache`      | Vastus | `HIT` või `MISS` (mitte-voogedastuse korral)                                                                                                                                                                                     |
+| `X-AgentProxy-Idempotent` | Vastus | `true`, kui dubleerimine tuvastatud                                                                                                                                                                                              |
+| `X-AgentProxy-Progress`   | Vastus | `enabled`, kui edenemise jälgimine on sisse lülitatud                                                                                                                                                                            |
+| `X-AgentProxy-Session-Id` | Vastus | AgentProxy'i poolt kasutatud tegelik seansi ID                                                                                                                                                                                    |
+| `X-AgentProxy-Request-Id` | Vastus | Päringu korrelatsiooni ID (kui teada)                                                                                                                                                                                            |
+| `X-AgentProxy-Version`    | Vastus | AgentProxy'i väljalaske versioon (alati olemas)                                                                                                                                                                                   |
+| `X-AgentProxy-Cost-Saved` | Vastus | USA dollarites summa, mille vahemälu HIT-i korral vältis (ainult vahemälu tabamuste puhul)                                                                                                                                       |
+| `X-AgentProxy-Decision`   | Vastus | Ruutimise jälg: `strategy=<name>; provider=<alias>; latency_ms=<n>` (`<name>` on kombo strateegia või `single`, kui päring ei ole kombo) — esineb alati lõpetatud vastuste juures                                                |
 
 > Nginxi märkus: kui kasutate alakriipsuga päiseid (näiteks `x_session_id`), lülitage sisse `underscores_in_headers on;`.
 
-> **Kulu telemeetria päised:** edukad mitte-voogedastuse vastused kannavad ka `X-OmniRoute-*` kulu-telemeetria komplekti — `X-OmniRoute-Response-Cost` (USA dollarites, fikseeritud 10 kümnendkohta; `0.0000000000` tasuta/hindamata juhtudel), `X-OmniRoute-Tokens-In` / `X-OmniRoute-Tokens-Out`, `X-OmniRoute-Model`, `X-OmniRoute-Provider`, `X-OmniRoute-Latency-Ms`, `X-OmniRoute-Cache-Hit` ja `X-OmniRoute-Fallback-Attempts` (ainult kui > 0), lisaks `X-OmniRoute-Request-Id` ja `X-OmniRoute-Version`. Need saadetakse vestluse lõpetuste, `/v1/responses`, `/v1/messages` **ja meedia lõpp-punktide** poolt — `/v1/embeddings`, `/v1/images/generations`, `/v1/audio/speech`, `/v1/audio/transcriptions`, `/v1/rerank`, `/v1/videos/generations`, `/v1/music/generations` ja `/v1/moderations` (kulu alati `0`). Meedia kulu arvutatakse modaliteedi kaupa (pildi, sekundi, tähemärgi või otsinguühiku kohta), kui hinnastamine on olemas, vastasel juhul `0` (fail-open).
+> **Kulu telemeetria päised:** edukad mitte-voogedastuse vastused kannavad ka `X-AgentProxy-*` kulu-telemeetria komplekti — `X-AgentProxy-Response-Cost` (USA dollarites, fikseeritud 10 kümnendkohta; `0.0000000000` tasuta/hindamata juhtudel), `X-AgentProxy-Tokens-In` / `X-AgentProxy-Tokens-Out`, `X-AgentProxy-Model`, `X-AgentProxy-Provider`, `X-AgentProxy-Latency-Ms`, `X-AgentProxy-Cache-Hit` ja `X-AgentProxy-Fallback-Attempts` (ainult kui > 0), lisaks `X-AgentProxy-Request-Id` ja `X-AgentProxy-Version`. Need saadetakse vestluse lõpetuste, `/v1/responses`, `/v1/messages` **ja meedia lõpp-punktide** poolt — `/v1/embeddings`, `/v1/images/generations`, `/v1/audio/speech`, `/v1/audio/transcriptions`, `/v1/rerank`, `/v1/videos/generations`, `/v1/music/generations` ja `/v1/moderations` (kulu alati `0`). Meedia kulu arvutatakse modaliteedi kaupa (pildi, sekundi, tähemärgi või otsinguühiku kohta), kui hinnastamine on olemas, vastasel juhul `0` (fail-open).
 
-> **Vahemälu tabamuse kulu semantika:** semantilise vahemälu HIT-i korral (`X-OmniRoute-Cache-Hit: true`) ei tehta ülesvoolu kõnet, mistõttu `X-OmniRoute-Response-Cost` on `0.0000000000` (tabamuse teenindamise **lisakulu**). Algne/oleks-olnud kulu esitatakse eraldi väljal `X-OmniRoute-Cost-Saved`. Arveldust tegevad tarbijad peaksid liitma `X-OmniRoute-Response-Cost` väärtused (tabamused ei maksa midagi); vahemälu analüütika saab koguda `X-OmniRoute-Cost-Saved` väärtusi.
+> **Vahemälu tabamuse kulu semantika:** semantilise vahemälu HIT-i korral (`X-AgentProxy-Cache-Hit: true`) ei tehta ülesvoolu kõnet, mistõttu `X-AgentProxy-Response-Cost` on `0.0000000000` (tabamuse teenindamise **lisakulu**). Algne/oleks-olnud kulu esitatakse eraldi väljal `X-AgentProxy-Cost-Saved`. Arveldust tegevad tarbijad peaksid liitma `X-AgentProxy-Response-Cost` väärtused (tabamused ei maksa midagi); vahemälu analüütika saab koguda `X-AgentProxy-Cost-Saved` väärtusi.
 
 ## Eksklusiivsed halllatavate seansside rendid (leases)
 
-Eksklusiivne halllatava seansi rentimine on liitumispõhine, kliendist sõltumatu ruutimislepe: üks aktiivne omanik hoiab üht sobivat OmniRoute ühendust. See ei rendi mudelit, ei nõua OAuth-i, ei tuvasta konkreetset klienti ega nõua konkreetset teenusepakkujat.
+Eksklusiivne halllatava seansi rentimine on liitumispõhine, kliendist sõltumatu ruutimislepe: üks aktiivne omanik hoiab üht sobivat AgentProxy ühendust. See ei rendi mudelit, ei nõua OAuth-i, ei tuvasta konkreetset klienti ega nõua konkreetset teenusepakkujat.
 
 Autentivat API-võtmel peab olema skoop `lease:exclusive` ja selgesõnaline mittetühi `allowedConnections` loend. Andmebaasi mutatsioonipiir jõustab mõlemad väljad koos võtme loomisel ja osalisel uuendamisel.
 
@@ -105,7 +105,7 @@ Autentivat API-võtmel peab olema skoop `lease:exclusive` ja selgesõnaline mitt
 POST /api/v1/session-leases
 Authorization: Bearer <managed-api-key>
 Content-Type: application/json
-X-OmniRoute-Lease-Owner: vlo_<43-base64url-characters>
+X-AgentProxy-Lease-Owner: vlo_<43-base64url-characters>
 
 {"action":"acquire","model":"glm/glm-4.6"}
 ```
@@ -140,7 +140,7 @@ Aktiivne rendi omanik saab selgesõnaliselt küsida privaatsust arvestavat kuvam
 }
 ```
 
-See liitumispõhine status-tegevus on tõkestatud ühes andmebaasitehingus opaakse omaniku, autenditud halllatava API-võtme ja täpse aktiivse generation väärtuse abil. `displayName` on ainult puhastatud (trimmed) konfigureeritud ühenduse nimi; see on `null`, kui turvalist konfigureeritud nime pole olemas. OmniRoute ei asenda seda kunagi e-postiga või loodud kontoidentiteediga. Provider väärtus on mittetundlik kuvasilt ja mitte kunagi loodud ühilduva teenusepakkuja identifikaator. Mandaadid, tunnusluba (tokens), küpsised, toored ühenduse või API-võtme id-d, omaniku räsid, tõkestussaladused ja sisemine ruutimisandmestik on välja jäetud.
+See liitumispõhine status-tegevus on tõkestatud ühes andmebaasitehingus opaakse omaniku, autenditud halllatava API-võtme ja täpse aktiivse generation väärtuse abil. `displayName` on ainult puhastatud (trimmed) konfigureeritud ühenduse nimi; see on `null`, kui turvalist konfigureeritud nime pole olemas. AgentProxy ei asenda seda kunagi e-postiga või loodud kontoidentiteediga. Provider väärtus on mittetundlik kuvasilt ja mitte kunagi loodud ühilduva teenusepakkuja identifikaator. Mandaadid, tunnusluba (tokens), küpsised, toored ühenduse või API-võtme id-d, omaniku räsid, tõkestussaladused ja sisemine ruutimisandmestik on välja jäetud.
 
 Vale võti, vale omanik, aegunud generation, puuduv, aegunud, vabastatud ja kehtetuks tunnistatud otsingud tagastavad kõik sama `409 LEASE_FENCE_STALE` vea ühendusmetaandmeteta. Klient, kes sai mahupiirangu ootevastuse, ei omab aktiivset seost, mida kontrollida. Kui ruutimine teeb aktiivse rendi puhul ülemineku, jääb sama generation kehtivaks ja status tagastab tehinguna korrektselt uue seose, mitte kunagi vana. Olemasolevad kliendid jäävad muutumatuks, kuna acquire, renew, release ja ootevastused säilitavad oma varasemad kujud.
 
@@ -149,8 +149,8 @@ See serveri lepe ei muuda vaikimisi OpenAI Codexi `/status` käitumist. Vaikimis
 Iga halllatav järeldamispäring edastab siis mõlemad kontrollpäised:
 
 ```http
-X-OmniRoute-Lease-Owner: vlo_<43-base64url-characters>
-X-OmniRoute-Lease-Generation: 1
+X-AgentProxy-Lease-Owner: vlo_<43-base64url-characters>
+X-AgentProxy-Lease-Generation: 1
 ```
 
 Täpne omanik, generation, aktiivne ühendus ja autenditud API-võti on tõkestatud vahetult enne iga toetatud ülesvoolu katset. Omaniku ja generation kordamine teise võtmega ebaõnnestub isegi kui see võti võimaldab sama ühendust. Toored omanikud ei säilitata, ei logita, ei säilitata päringu jäljendis ega edastata ülesvoolu.
@@ -166,9 +166,9 @@ Ajutine ressursikonflikt tagastab HTTP `429` koos `Retry-After` päisega ja:
 }
 ```
 
-See vastus tähendab ainult seda, et tavapärane sobivate ühenduste hulk oli mittetühi ja kõik vabad kandidaadid oli hõivanud võõra aktiivne rent. Toetamata mudelid/teenusepakkujad, poliitika mittevastavus, jahtumisaeg (cooldown), kvoot, tervis ja teised tavapärased sobivuse ebaõnnestumised säilitavad oma olemasolevad OmniRoute vastused.
+See vastus tähendab ainult seda, et tavapärane sobivate ühenduste hulk oli mittetühi ja kõik vabad kandidaadid oli hõivanud võõra aktiivne rent. Toetamata mudelid/teenusepakkujad, poliitika mittevastavus, jahtumisaeg (cooldown), kvoot, tervis ja teised tavapärased sobivuse ebaõnnestumised säilitavad oma olemasolevad AgentProxy vastused.
 
-### `x-omniroute-compression`
+### `x-agentproxy-compression`
 
 Päringupõhine ülekirjutamine (override) tihenduse (compression) plaani jaoks. Kõrgeim eelisõigus — see edestab ruutimiskombinatsiooni (routing-combo) ülekirjutust, aktiivset profiili, automaatpäästikut (auto-trigger) ja paneeli Default väärtust. Väärtused:
 
@@ -189,7 +189,7 @@ Märkused:
 Rakendatud plaan kajastatakse vastuse päises:
 
 ```
-X-OmniRoute-Compression: <mode>; source=<source>
+X-AgentProxy-Compression: <mode>; source=<source>
 ```
 
 kus `<source>` on üks järgnevatest: `request-header`, `routing-override`, `active-profile`, `auto-trigger`, `default` või `off`.
@@ -238,7 +238,7 @@ EmbeddingsV5Request dokumente ja **edastab need muutmata kujul** aadressile `htt
 ```
 
 Natiivsed `{ image | audio | video | pdf }` väärtused võivad olla avalik HTTPS URL, `data:` URI või
-puhas base64. OmniRoute ei muuda neid objekte stringiks ega too natiivseid pildi URL-e —
+puhas base64. AgentProxy ei muuda neid objekte stringiks ega too natiivseid pildi URL-e —
 Jina toob avaliku meedia iseseisvalt. Täiendavad Jina väljad (`task`, `normalized`, `truncate`, `embedding_type`) edastatakse
 muutmata kujul. Ainult tekstipõhised Jina SKU-d lükkavad mitte-teksti dokumendid endiselt tagasi.
 
@@ -355,7 +355,7 @@ kutsujale, nii et kliendikood ei pea pakkuja jaoks erandit teha.
 
 ### Vertex AI DeepSeek OCR autentimine ja lõpp-punkti lahendamine
 
-`vertex-deepseek-ocr` kasutab taaskord sama Vertex AI autentimist, mida OmniRoute juba toetab
+`vertex-deepseek-ocr` kasutab taaskord sama Vertex AI autentimist, mida AgentProxy juba toetab
 vestlus-/pildiliikluse jaoks (`open-sse/executors/vertex.ts`): ühenduse API-võti on kas
 teenusekonto JSON mandaat (vahetatakse lühiajalise OAuth pöörduspääsu tõendi vastu JWT-bearer
 voo kaudu) või juba valmis genereeritud OAuth pöörduspääsu tõend, mida kasutatakse sellisena. Upstream lõpp-punkti URL on Vertexi
@@ -404,10 +404,10 @@ Kliendid, mis kuvavad mudeli valija, peaksid päringu tegema `?prefix=alias` —
 
 ### Mittemõtlevad mudelivariandid
 
-Mõtlemisvõimeliste Claude mudelite jaoks reklaamib `/v1/models` ka **mittemõtlemise** varianti, mille id-le on lisatud eesliide `claude-3-omniroute-no-thinking/`:
+Mõtlemisvõimeliste Claude mudelite jaoks reklaamib `/v1/models` ka **mittemõtlemise** varianti, mille id-le on lisatud eesliide `claude-3-agentproxy-no-thinking/`:
 
 ```
-claude-3-omniroute-no-thinking/<provider>/<model>
+claude-3-agentproxy-no-thinking/<provider>/<model>
 ```
 
 Selle id valimine (nt Claude Code konfiguratsioonis, mis lisab alati `thinking` bloki) lahendub tagasi tegeliku `<provider>/<model>` peale, kusjuures põhjendamine (reasoning) on maha surutud — `thinking:{type:"disabled"}` `/v1/messages` teel, või `reasoning`/`reasoning_effort` väljad jäetakse `/v1/chat/completions` teel välja. Variant on loetletud ainult Claude-perekonna mudelite jaoks, mis toetavad mõtlemist **ja** aktsepteerivad `disabled` väärtust (nii et nt ainult-adaptiivsed mudelid, mis lükkavad `disabled` tagasi, on välja jäetud). Operaatorid saavad varianti mudeli kaupa sundlubada või -keelata `ModelSpec.noThinkingAlias` kaudu.
@@ -458,7 +458,7 @@ Kasuta seda endpointi, kui sidecar töötab väliselt (out-of-process) ja ei saa
 
 Kõik POST-teed järgivad sama struktuuri: `Bearer your-api-key` + Zod-valideeritud JSON-sisu (`v1RerankSchema`, `v1ModerationSchema`, `v1AudioSpeechSchema` jne, vaata `src/shared/validation/schemas.ts`). Skeemi valideerimise ebaõnnestumisel tagastatakse 4xx.
 
-Klientidele, kes ei saa lisada `Authorization: Bearer ...`, aktsepteerib OmniRoute API võtmeid ka URL-is, kas päringustringi ühilduvuse kaudu (`?token=...`, `?apiKey=...`, `?api_key=...`, `?key=...`) või allpool dokumenteeritud eraldi `/api/v1/vscode/{token}/...` endpointide kaudu.
+Klientidele, kes ei saa lisada `Authorization: Bearer ...`, aktsepteerib AgentProxy API võtmeid ka URL-is, kas päringustringi ühilduvuse kaudu (`?token=...`, `?apiKey=...`, `?api_key=...`, `?key=...`) või allpool dokumenteeritud eraldi `/api/v1/vscode/{token}/...` endpointide kaudu.
 
 ```bash
 # Uuesti järjestamine (rerank)
@@ -585,8 +585,8 @@ Valideerib WebSocket upgrade käepigistuse ja tagastab wire-protokolli näidiss�
 
 ```bash
 # Sama host:port nagu HTTP API (vaikimisi 20128); uuenda ühendus:
-wscat -c "ws://localhost:20128/v1/responses?api_key=<OMNIROUTE_API_KEY>"
-# (või: -H "Authorization: Bearer <OMNIROUTE_API_KEY>")
+wscat -c "ws://localhost:20128/v1/responses?api_key=<AGENTPROXY_API_KEY>"
+# (või: -H "Authorization: Bearer <AGENTPROXY_API_KEY>")
 
 # Esimene kaader PEAB olema response.create:
 { "type": "response.create", "model": "gpt-5.5", "input": [ { "role": "user", "content": "hi" } ] }
@@ -610,35 +610,35 @@ peab olema aktiivne sisenemispunkt (see on vaikimisi nii, kui `app/server-ws.mjs
 OpenAI **Codex CLI** valideerib mudeli nime kliendipoolselt, kui
 `supports_websockets = true`, ja **lükkab tagasi pakkuja-eesliitega id-d**, nagu
 `codex/gpt-5.5` (`The 'codex/gpt-5.5' model is not supported when using Codex with
-a ChatGPT account`). Saada **lihtne** id (nt `gpt-5.5`). OmniRoute'i sild on
+a ChatGPT account`). Saada **lihtne** id (nt `gpt-5.5`). AgentProxy'i sild on
 mõeldud ainult codex-ile, seega lahendab see lihtsa id ümber codex mudeliks
 (`resolveCodexWsModelInfo`) enne ülemvoolu tunneldamist — hoolimata sellest, et
 lihtne `gpt-5.5` suunataks muidu HTTP kaudu teise pakkuja juurde.
 
 #### OpenAI Codex CLI konfigureerimine
 
-Suuna Codex CLI OmniRoute'ile, lisades kohandatud pakkuja WebSocket
+Suuna Codex CLI AgentProxy'ile, lisades kohandatud pakkuja WebSocket
 toega faili `~/.codex/config.toml` (kasuta eraldi `CODEX_HOME` väärtust, et vältida
 olemasoleva konfiguratsiooni muutmist):
 
 ```toml
 model = "gpt-5.5"                 # lihtne id — MITTE "codex/gpt-5.5"
-model_provider = "omniroute"
+model_provider = "agentproxy"
 
-[model_providers.omniroute]
-name = "OmniRoute (WS)"
+[model_providers.agentproxy]
+name = "AgentProxy (WS)"
 base_url = "http://localhost:20128/v1"   # ei lõpe kaldkriipsuga; WS URL tuletatakse (kasuta produktsioonis https/wss)
 wire_api = "responses"                    # ainus toetatud väärtus alates 2026. aasta veebruarist
 supports_websockets = true                # lubab Responses-over-WS transpordi
-env_key = "OMNIROUTE_API_KEY"             # hoiab OmniRoute API võtit (Bearer)
+env_key = "AGENTPROXY_API_KEY"             # hoiab AgentProxy API võtit (Bearer)
 ```
 
 ```bash
-export OMNIROUTE_API_KEY=sk-...           # OmniRoute API võti (suvaline võti, kui REQUIRE_API_KEY=false)
+export AGENTPROXY_API_KEY=sk-...           # AgentProxy API võti (suvaline võti, kui REQUIRE_API_KEY=false)
 codex exec "Responda apenas: PONG"
 ```
 
-CLI uuendab `base_url + /responses` WebSocket-iks ja OmniRoute tunneldab selle
+CLI uuendab `base_url + /responses` WebSocket-iks ja AgentProxy tunneldab selle
 valitud codex OAuth ühendusele. Valideeritud otsast-otsani kohaliku serveri vastu:
 ChatGPT tagastab `codex.rate_limits` + `response.created` ja voogesitab
 lõpetamise.
@@ -746,10 +746,10 @@ Vastuse näide:
 
 Semantilise vahemälu **TABAMUS (HIT)** teenindab vastuse vahemälust **ilma
 päritolusüsteemi (upstream) kõnet tegemata**, seega raporteeritud
-`X-OmniRoute-Response-Latency` on ligilähedaselt null (sõltumata algsest
+`X-AgentProxy-Response-Latency` on ligilähedaselt null (sõltumata algsest
 päritolusüsteemi latentsusest). Latentsustundlikud kliendid
 (jõudlustestimine, p50/p99 jälgimine) peaksid kontrollima
-`X-OmniRoute-Cache-Latency` vastuse päist:
+`X-AgentProxy-Cache-Latency` vastuse päist:
 
 | Väärtus     | Tähendus                                                              |
 | ----------- | --------------------------------------------------------------------- |
@@ -776,7 +776,7 @@ Määra võtme loomisel (`POST /api/keys`) või uuendamisel (`PATCH /api/keys/[i
 Igasugune päring saab minna vahemälust mööda, sõltumata võtme seadistustest:
 
 ```
-X-OmniRoute-No-Cache: true
+X-AgentProxy-No-Cache: true
 ```
 
 ---
@@ -998,7 +998,7 @@ Parandab konkreetse pakkuja puuduvad või rikutud OAuth keskkonnamuutujad. Tagas
 {
   "success": true,
   "repaired": ["CLAUDE_CODE_OAUTH_CLIENT_ID", "CLAUDE_CODE_OAUTH_CLIENT_SECRET"],
-  "backupPath": "/home/user/.omniroute/backups/env-repair-2026-04-11.bak"
+  "backupPath": "/home/user/.agentproxy/backups/env-repair-2026-04-11.bak"
 }
 ```
 
@@ -1089,7 +1089,7 @@ Märkused:
 
 - Tokenitud aliased kasutavad samu handlereid kui `/v1/*` ja `/api/tags`; vastuse kujud jäävad identseks.
 - Eelista `Authorization: Bearer ...` alati, kui klient toetab kohandatud päiseid.
-- URL-põhised tokenid võivad ilmuda pöördproksi logidesse, brauseri ajalukku ja telemeetriasse väljaspool OmniRoute'i. Käsitle neid ühilduvusvõimalusena, mitte vaikimisi autentimisrežiimina.
+- URL-põhised tokenid võivad ilmuda pöördproksi logidesse, brauseri ajalukku ja telemeetriasse väljaspool AgentProxy'i. Käsitle neid ühilduvusvõimalusena, mitte vaikimisi autentimisrežiimina.
 
 ---
 
@@ -1197,7 +1197,7 @@ Kõrgema tasandi ruuting kombod (juba kokkuvõtlikult kirjeldatud `/api/combos*`
 
 ## Veebihaagid (Webhooks)
 
-Väljuvad veebihaagi tellimused OmniRoute sündmuste jaoks (päringu lõpetamine, kvoodi ammendumine, võtme rotatsioon jne).
+Väljuvad veebihaagi tellimused AgentProxy sündmuste jaoks (päringu lõpetamine, kvoodi ammendumine, võtme rotatsioon jne).
 
 | Meetod | Tee                       | Kirjeldus                                                               |
 | ------ | ------------------------- | ----------------------------------------------------------------------- |
@@ -1230,7 +1230,7 @@ Kasutatakse automaatse võtmehalduse alamsüsteemi poolt, et väljastada ja rota
 
 ## Agentide protokoll
 
-Pilveagentide ülesanded (Claude Code, Codex Cloud, OpenHands jt), mis käivitatakse kaugjuhtimisega OmniRoute'i kasutajate nimel.
+Pilveagentide ülesanded (Claude Code, Codex Cloud, OpenHands jt), mis käivitatakse kaugjuhtimisega AgentProxy'i kasutajate nimel.
 
 | Metood | Tee                           | Kirjeldus                                                                                                                                                                 |
 | ------ | ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -1276,7 +1276,7 @@ Väljuvad HTTP(S)/SOCKS proksid, mida saab määrata pakkujatele, kontodele või
 
 ## Vastupidavus (laiendatud)
 
-OmniRoute pakub kolme sõltumatut ajutise rikke mehhanismi; allolevad haldusotspunktid võimaldavad operaatoritel neid lugeda ja üle kirjutada:
+AgentProxy pakub kolme sõltumatut ajutise rikke mehhanismi; allolevad haldusotspunktid võimaldavad operaatoritel neid lugeda ja üle kirjutada:
 
 | Ulatus                              | Oleku salvestus                              | Lugemine                                  | Lähtestamine / tühjendamine                                  |
 | ----------------------------------- | -------------------------------------------- | ----------------------------------------- | ------------------------------------------------------------ |
@@ -1305,7 +1305,7 @@ Täielik kontseptuaalne viide ja katkestaja (breaker) vaikeväärtused: vaata [`
 
 ## Oskused (Skills)
 
-Oskuste raamistik OmniRoute laiendamiseks kohandatud käivitatavate handleritega, samuti turuplatsi integratsioonid.
+Oskuste raamistik AgentProxy laiendamiseks kohandatud käivitatavate handleritega, samuti turuplatsi integratsioonid.
 
 | Meetod | Tee                               | Kirjeldus                                                                                                                               |
 | ------ | --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
@@ -1342,7 +1342,7 @@ Püsiv vestlus-/faktimälu hoidla, ulatusega API võtme / seansi kaupa.
 
 ## MCP server
 
-OmniRoute pakub sisseehitatud Model Context Protocol serverit kolme transpordiga (stdio, SSE, streamable-http) ja piiratud ulatusega tööriistadega. Allolevad juhtpaneeli lõpp-punktid loevad oleku-/auditandmeid ja vahendavad HTTP transporte.
+AgentProxy pakub sisseehitatud Model Context Protocol serverit kolme transpordiga (stdio, SSE, streamable-http) ja piiratud ulatusega tööriistadega. Allolevad juhtpaneeli lõpp-punktid loevad oleku-/auditandmeid ja vahendavad HTTP transporte.
 
 | Meetod | Tee | Kirjeldus |
 | ------ | ---------------------- | ------------------------------------------------------------------------------------------------ | -------------------- |
@@ -1364,13 +1364,13 @@ OmniRoute pakub sisseehitatud Model Context Protocol serverit kolme transpordiga
 
 ## A2A server
 
-OmniRoute pakub A2A (Agent-to-Agent) JSON-RPC 2.0 lõpp-punkti ja REST-i ümbrist, mida saab kasutada inspekteerimiseks/juhtpaneelil.
+AgentProxy pakub A2A (Agent-to-Agent) JSON-RPC 2.0 lõpp-punkti ja REST-i ümbrist, mida saab kasutada inspekteerimiseks/juhtpaneelil.
 
 ### JSON-RPC
 
 ```bash
 POST /a2a
-Authorization: Bearer your-api-key   # valikuline, välja arvatud kui OMNIROUTE_API_KEY on määratud
+Authorization: Bearer your-api-key   # valikuline, välja arvatud kui AGENTPROXY_API_KEY on määratud
 Content-Type: application/json
 
 {
@@ -1413,7 +1413,7 @@ Tagastab avaliku A2A agendikaardi (nimi, kirjeldus, võimalused, oskuste kataloo
 | GET    | `/api/a2a/tasks/[id]`        | Ühe ülesande hankimine                                                                                                |
 | POST   | `/api/a2a/tasks/[id]/cancel` | Ülesande tühistamine                                                                                                  |
 
-**Autentimine:** REST-i abifunktsioonid töötavad ilma haldusautentimiseta (juhtpaneelilt loetavad); JSON-RPC `/a2a` tee kasutab Bearer `OMNIROUTE_API_KEY` väärtust, kui see on konfigureeritud.
+**Autentimine:** REST-i abifunktsioonid töötavad ilma haldusautentimiseta (juhtpaneelilt loetavad); JSON-RPC `/a2a` tee kasutab Bearer `AGENTPROXY_API_KEY` väärtust, kui see on konfigureeritud.
 
 ---
 
@@ -1593,7 +1593,7 @@ Ainult administraatoritele mõeldud lõpp-punktid operatiivseks haldamiseks.
 
 ## CLI-tööriistade haldamine
 
-Halda CLI-tööriistu, mis integreeruvad OmniRoute-iga (antigravity, chipotle, commandCode,
+Halda CLI-tööriistu, mis integreeruvad AgentProxy-iga (antigravity, chipotle, commandCode,
 devin-cli jne). Täieliku loendi leiad siit: [Pakkujate viide](./PROVIDER_REFERENCE.md).
 
 | Meetod | Tee                                     | Kirjeldus                                                                                                                                                                              |
@@ -1704,7 +1704,7 @@ Täieliku ülevaate saamiseks vaata [Skillide raamistik](../frameworks/SKILLS.md
 
 ## Pluginad
 
-OmniRoute pluginate (kolmandate osapoolte laienduste) haldamine.
+AgentProxy pluginate (kolmandate osapoolte laienduste) haldamine.
 
 | Meetod | Tee                                | Kirjeldus                              |
 | ------ | ---------------------------------- | -------------------------------------- |
@@ -1730,7 +1730,7 @@ Pakkujate shadow / A-B võrdlus **ei ole eraldiseisev REST-liides** — see konf
 
 ## Guardrails (kaitsemehhanismid)
 
-Käitusaegsete kaitsemehhanismide (PII tuvastus, prompt-süstimise tuvastus, visuaalne sildumine) ülevaatamine. Kaitsemehhanismid töötavad iga päringu puhul; päringupõhine loobumine toimub `x-omniroute-disabled-guardrails` päringu päise kaudu — püsivat lubamise/keelamise liidest ei ole.
+Käitusaegsete kaitsemehhanismide (PII tuvastus, prompt-süstimise tuvastus, visuaalne sildumine) ülevaatamine. Kaitsemehhanismid töötavad iga päringu puhul; päringupõhine loobumine toimub `x-agentproxy-disabled-guardrails` päringu päise kaudu — püsivat lubamise/keelamise liidest ei ole.
 
 | Meetod | Path                   | Kirjeldus                                                                                         |
 | ------ | ---------------------- | ------------------------------------------------------------------------------------------------- |

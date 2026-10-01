@@ -234,29 +234,29 @@ test("a throwing persistence.appendEvent does not break updateTask", () => {
 // ── historyRetentionDays() ───────────────────────────────────────────────────────────────
 
 test("historyRetentionDays()", async (t) => {
-  const original = process.env.OMNIROUTE_A2A_HISTORY_RETENTION_DAYS;
+  const original = process.env.AGENTPROXY_A2A_HISTORY_RETENTION_DAYS;
   t.after(() => {
-    if (original === undefined) delete process.env.OMNIROUTE_A2A_HISTORY_RETENTION_DAYS;
-    else process.env.OMNIROUTE_A2A_HISTORY_RETENTION_DAYS = original;
+    if (original === undefined) delete process.env.AGENTPROXY_A2A_HISTORY_RETENTION_DAYS;
+    else process.env.AGENTPROXY_A2A_HISTORY_RETENTION_DAYS = original;
   });
 
   await t.test("defaults to 30 when unset", () => {
-    delete process.env.OMNIROUTE_A2A_HISTORY_RETENTION_DAYS;
+    delete process.env.AGENTPROXY_A2A_HISTORY_RETENTION_DAYS;
     assert.equal(historyRetentionDays(), 30);
   });
 
   await t.test("uses a valid positive int from env", () => {
-    process.env.OMNIROUTE_A2A_HISTORY_RETENTION_DAYS = "7";
+    process.env.AGENTPROXY_A2A_HISTORY_RETENTION_DAYS = "7";
     assert.equal(historyRetentionDays(), 7);
   });
 
   await t.test("falls back to 30 for '0'", () => {
-    process.env.OMNIROUTE_A2A_HISTORY_RETENTION_DAYS = "0";
+    process.env.AGENTPROXY_A2A_HISTORY_RETENTION_DAYS = "0";
     assert.equal(historyRetentionDays(), 30);
   });
 
   await t.test("falls back to 30 for a non-numeric value", () => {
-    process.env.OMNIROUTE_A2A_HISTORY_RETENTION_DAYS = "x";
+    process.env.AGENTPROXY_A2A_HISTORY_RETENTION_DAYS = "x";
     assert.equal(historyRetentionDays(), 30);
   });
 });
@@ -283,16 +283,16 @@ test("maybePurge() runs when lastPurgeAt is older than 24h, then throttles furth
 });
 
 test("maybePurge() passes historyRetentionDays() to persistence.purge", () => {
-  const original = process.env.OMNIROUTE_A2A_HISTORY_RETENTION_DAYS;
-  process.env.OMNIROUTE_A2A_HISTORY_RETENTION_DAYS = "14";
+  const original = process.env.AGENTPROXY_A2A_HISTORY_RETENTION_DAYS;
+  process.env.AGENTPROXY_A2A_HISTORY_RETENTION_DAYS = "14";
   try {
     const { persistence, purgeCalls } = makeFakePersistence();
     const tm = createManager(5, persistence);
     (tm as unknown as { maybePurge(): void }).maybePurge();
     assert.deepEqual(purgeCalls, [14]);
   } finally {
-    if (original === undefined) delete process.env.OMNIROUTE_A2A_HISTORY_RETENTION_DAYS;
-    else process.env.OMNIROUTE_A2A_HISTORY_RETENTION_DAYS = original;
+    if (original === undefined) delete process.env.AGENTPROXY_A2A_HISTORY_RETENTION_DAYS;
+    else process.env.AGENTPROXY_A2A_HISTORY_RETENTION_DAYS = original;
   }
 });
 

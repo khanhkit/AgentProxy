@@ -4,7 +4,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-codex-3317-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-codex-3317-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../src/lib/db/core.ts");
@@ -25,6 +25,8 @@ test("codex native responses passthrough strips client-only params (#3317)", asy
     safety_identifier: "droid-user-123",
     user: "user-abc",
     max_output_tokens: 16,
+    temperature: 0.7,
+    top_p: 0.9,
   };
 
   const result = (await executor.transformRequest("gpt-5.5", body, false, {} as never)) as Record<
@@ -35,6 +37,8 @@ test("codex native responses passthrough strips client-only params (#3317)", asy
   assert.equal(result.prompt_cache_retention, undefined, "prompt_cache_retention must be stripped");
   assert.equal(result.safety_identifier, undefined, "safety_identifier must be stripped");
   assert.equal(result.user, undefined, "user must be stripped");
+  assert.equal(result.temperature, undefined, "temperature must be stripped before passthrough");
+  assert.equal(result.top_p, undefined, "top_p must be stripped before passthrough");
   // The real request payload must survive the strip.
   assert.ok(Array.isArray(result.input), "input array preserved");
 });

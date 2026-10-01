@@ -30,7 +30,12 @@ import {
 } from "../db/proxies";
 import { bumpProxyConfigGeneration } from "../db/settings";
 import { isSubscriptionDue } from "./due";
-import { isLocalCoreEndpointAllowed } from "./coreEndpoint";
+import {
+  isLocalCoreEndpointAllowed,
+  parseLocalCoreEndpoints,
+  redactCoreEntryForDetail,
+} from "./coreEndpoint";
+import { isProxyReachable } from "../proxyHealth";
 import { resolveTargetScopes } from "./scopes";
 import {
   isSubscriptionFetchUrlAllowed,
@@ -40,7 +45,13 @@ import {
 } from "./fetchGuard";
 import { areLocalProviderUrlsAllowed } from "@/shared/network/outboundUrlGuardPolicy";
 import { withRetry } from "./fetchRetry";
-import { parseSubscription, redactedNodeSummary, type ParsedSubscription } from "./parse";
+import {
+  isUsableSubscriptionContent,
+  parseSubscription,
+  redactedNodeSummary,
+  type ParsedSubscription,
+} from "./parse";
+import { MAX_SUBSCRIPTION_RESPONSE_BYTES } from "./limits";
 
 export type ProxySubscriptionMode = "global" | "rule";
 export type ProxySubscriptionStatus = "ok" | "error" | "empty";
@@ -49,9 +60,7 @@ export type ProxySubscriptionStatus = "ok" | "error" | "empty";
  * column (as JSON) so the dashboard can localize them via i18n instead of
  * showing server-side strings. */
 export type ProxySubscriptionErrorCode =
-  | "LOCAL_CORE_ENDPOINT_INVALID"
-  | "NEEDS_CORE_NOT_CONFIGURED"
-  | "NO_USABLE_NODES";
+  "LOCAL_CORE_ENDPOINT_INVALID" | "NEEDS_CORE_NOT_CONFIGURED" | "NO_USABLE_NODES";
 
 /** Encode a user-facing error as `{ code, detail? }` for i18n on the client. */
 export function subscriptionErrorCode(code: ProxySubscriptionErrorCode, detail?: string): string {
@@ -204,14 +213,18 @@ export async function updateSubscription(
   const name = payload.name ?? existing.name;
   const url = payload.url ?? existing.url;
   const mode = payload.mode ?? existing.mode;
-  const ruleProviders = payload.ruleProviders !== undefined ? payload.ruleProviders : existing.ruleProviders;
+  const ruleProviders =
+    payload.ruleProviders !== undefined ? payload.ruleProviders : existing.ruleProviders;
   const localCoreEndpoint =
-    payload.localCoreEndpoint !== undefined ? payload.localCoreEndpoint : existing.localCoreEndpoint;
+    payload.localCoreEndpoint !== undefined
+      ? payload.localCoreEndpoint
+      : existing.localCoreEndpoint;
   const updateIntervalMinutes = payload.updateIntervalMinutes ?? existing.updateIntervalMinutes;
   const now = new Date().toISOString();
 
   const enabledChanged = payload.enabled !== undefined && payload.enabled !== existing.enabled;
-  const enabled = payload.enabled !== undefined ? (payload.enabled ? 1 : 0) : existing.enabled ? 1 : 0;
+  const enabled =
+    payload.enabled !== undefined ? (payload.enabled ? 1 : 0) : existing.enabled ? 1 : 0;
 
   db.prepare(
     `UPDATE proxy_subscriptions
@@ -254,7 +267,10 @@ export async function updateSubscription(
   return getSubscriptionById(id);
 }
 
-export async function setSubscriptionEnabled(id: string, enabled: boolean): Promise<ProxySubscriptionRecord | null> {
+export async function setSubscriptionEnabled(
+  id: string,
+  enabled: boolean
+): Promise<ProxySubscriptionRecord | null> {
   return updateSubscription(id, { enabled });
 }
 
@@ -318,6 +334,63 @@ async function assertSafeFetchTarget(url: string): Promise<void> {
   }
 }
 
+function subscriptionResponseTooLargeError(): Error {
+  return new Error(`Subscription response exceeds ${MAX_SUBSCRIPTION_RESPONSE_BYTES} bytes`);
+}
+
+/** Read a fetch body with a hard byte ceiling before converting it to text. */
+async function readBoundedResponseText(res: Response): Promise<string> {
+  const contentLength = res.headers?.get?.("content-length");
+  if (contentLength) {
+    const declaredBytes = Number(contentLength);
+    if (Number.isFinite(declaredBytes) && declaredBytes > MAX_SUBSCRIPTION_RESPONSE_BYTES) {
+      throw subscriptionResponseTooLargeError();
+    }
+  }
+
+  const body = res.body;
+  if (!body || typeof body.getReader !== "function") {
+    // Compatibility for test doubles / body-less responses. Real fetch responses
+    // take the streaming branch above so production never relies on unbounded text().
+    const text = await res.text();
+    if (Buffer.byteLength(text, "utf8") > MAX_SUBSCRIPTION_RESPONSE_BYTES) {
+      throw subscriptionResponseTooLargeError();
+    }
+    return text;
+  }
+
+  const reader = body.getReader();
+  const chunks: Uint8Array[] = [];
+  let totalBytes = 0;
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      if (!value) continue;
+      totalBytes += value.byteLength;
+      if (totalBytes > MAX_SUBSCRIPTION_RESPONSE_BYTES) {
+        try {
+          await reader.cancel("subscription response size limit exceeded");
+        } catch {
+          // Best effort: the size limit failure below remains authoritative.
+        }
+        throw subscriptionResponseTooLargeError();
+      }
+      chunks.push(value);
+    }
+  } finally {
+    reader.releaseLock();
+  }
+
+  const merged = new Uint8Array(totalBytes);
+  let offset = 0;
+  for (const chunk of chunks) {
+    merged.set(chunk, offset);
+    offset += chunk.byteLength;
+  }
+  return new TextDecoder().decode(merged);
+}
+
 /**
  * Single fetch attempt: SSRF-validate the target, fetch with manual redirect
  * handling, and re-validate any redirect target. Throws on non-2xx or a
@@ -343,12 +416,12 @@ async function doSafeFetch(url: string, headers: Record<string, string>): Promis
       if (!res2.ok) {
         throw new Error(`Subscription fetch failed: HTTP ${res2.status}`);
       }
-      return await res2.text();
+      return await readBoundedResponseText(res2);
     }
     if (!res.ok) {
       throw new Error(`Subscription fetch failed: HTTP ${res.status}`);
     }
-    return await res.text();
+    return await readBoundedResponseText(res);
   } finally {
     clearTimeout(timeout);
   }
@@ -361,7 +434,13 @@ async function doSafeFetch(url: string, headers: Record<string, string>): Promis
  */
 function isSubscriptionFetchRetryable(e: unknown): boolean {
   const msg = e instanceof Error ? e.message : String(e);
-  if (msg.includes("not allowed") || msg.includes("blocked (internal)")) return false;
+  if (
+    msg.includes("not allowed") ||
+    msg.includes("blocked (internal)") ||
+    msg.includes("Subscription response exceeds")
+  ) {
+    return false;
+  }
   const m = msg.match(/HTTP (\d{3})/);
   if (m) {
     const code = Number(m[1]);
@@ -373,7 +452,7 @@ function isSubscriptionFetchRetryable(e: unknown): boolean {
 }
 
 async function fetchSubscriptionContent(url: string): Promise<string> {
-  const headers = { "User-Agent": "OmniRoute-ProxySubscription" };
+  const headers = { "User-Agent": "AgentProxy-ProxySubscription" };
   // Retry transient failures (timeouts, 5xx, 429) with bounded exponential
   // backoff; give up fast on permanent errors (4xx, SSRF block).
   return withRetry(() => doSafeFetch(url, headers), {
@@ -384,11 +463,30 @@ async function fetchSubscriptionContent(url: string): Promise<string> {
   });
 }
 
+/**
+ * Build the URL the reachability probe dials for a validated core entry.
+ * The explicit row port keeps the probe and persisted registry target aligned.
+ */
+function buildProbeUrl(coreUrl: URL, coreType: string, port: number): string {
+  const auth = coreUrl.username
+    ? `${coreUrl.username}${coreUrl.password ? `:${coreUrl.password}` : ""}@`
+    : "";
+  return `${coreType}://${auth}${coreUrl.hostname.toLowerCase()}:${port}`;
+}
+
 /** Fetch + parse + sync nodes into proxy_registry, then (if enabled) (re)bind. */
 async function syncSubscriptionUnsafe(id: string): Promise<SyncResult> {
   const sub = await getSubscriptionById(id);
   if (!sub) {
-    return { subscriptionId: id, nodes: 0, needsCore: 0, boundProxies: 0, status: "error", error: "not found", applied: false };
+    return {
+      subscriptionId: id,
+      nodes: 0,
+      needsCore: 0,
+      boundProxies: 0,
+      status: "error",
+      error: "not found",
+      applied: false,
+    };
   }
 
   let body: string;
@@ -397,11 +495,74 @@ async function syncSubscriptionUnsafe(id: string): Promise<SyncResult> {
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
     const fetchConsec = (sub.consecutiveFailures || 0) + 1;
-    await updateSubscriptionStatus(id, "error", `Fetch failed: ${msg}`, null, new Date().toISOString(), fetchConsec);
-    return { subscriptionId: id, nodes: 0, needsCore: 0, boundProxies: 0, status: "error", error: msg, applied: false };
+    await updateSubscriptionStatus(
+      id,
+      "error",
+      `Fetch failed: ${msg}`,
+      sub.lastNodes,
+      new Date().toISOString(),
+      fetchConsec
+    );
+    return {
+      subscriptionId: id,
+      nodes: 0,
+      needsCore: 0,
+      boundProxies: 0,
+      status: "error",
+      error: msg,
+      applied: false,
+    };
   }
 
-  const parsed: ParsedSubscription = parseSubscription(body);
+  let parsed: ParsedSubscription;
+  try {
+    parsed = parseSubscription(body);
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    const parseConsec = (sub.consecutiveFailures || 0) + 1;
+    await updateSubscriptionStatus(
+      id,
+      "error",
+      `Parse failed: ${msg}`,
+      sub.lastNodes,
+      new Date().toISOString(),
+      parseConsec
+    );
+    return {
+      subscriptionId: id,
+      nodes: 0,
+      needsCore: 0,
+      boundProxies: 0,
+      status: "error",
+      error: msg,
+      applied: false,
+    };
+  }
+
+  // Refuse unrecognized content before any registry write: invalid or temporarily
+  // broken feeds must keep the persisted last-known-good pool intact.
+  if (!isUsableSubscriptionContent(parsed)) {
+    const refuseError = subscriptionErrorCode("NO_USABLE_NODES");
+    const invalidConsec = (sub.consecutiveFailures || 0) + 1;
+    await updateSubscriptionStatus(
+      id,
+      "error",
+      refuseError,
+      sub.lastNodes,
+      new Date().toISOString(),
+      invalidConsec
+    );
+    return {
+      subscriptionId: id,
+      nodes: 0,
+      needsCore: 0,
+      boundProxies: 0,
+      status: "error",
+      error: refuseError,
+      applied: false,
+    };
+  }
+
   const db = getDbInstance();
 
   const keptIds: string[] = [];
@@ -414,81 +575,192 @@ async function syncSubscriptionUnsafe(id: string): Promise<SyncResult> {
   // better-sqlite3, so instead we guard against an unexpected DB error so a
   // half-completed sync can never be left flagged "ok".
   try {
-  // Directly-usable nodes → upsert into the registry as a pool.
-  for (const node of parsed.nodes) {
-    const upserted = await upsertProxy({
-      name: node.name || `${sub.name} (${node.host}:${node.port})`,
-      type: node.type,
-      host: node.host,
-      port: node.port,
-      username: node.username,
-      password: node.password,
-      source: "subscription",
-      subscriptionId: id,
-      status: "active",
-    });
-    if (upserted.proxy?.id) keptIds.push(upserted.proxy.id);
-  }
+    // Directly-usable nodes → upsert into the registry as a pool.
+    for (const node of parsed.nodes) {
+      const upserted = await upsertProxy({
+        name: node.name || `${sub.name} (${node.host}:${node.port})`,
+        type: node.type,
+        host: node.host,
+        port: node.port,
+        username: node.username,
+        password: node.password,
+        source: "subscription",
+        subscriptionId: id,
+        status: "active",
+      });
+      if (upserted.proxy?.id) keptIds.push(upserted.proxy.id);
+    }
 
-  // needsCore nodes → bind the operator-supplied local core endpoint (single).
-  if (parsed.needsCore.length > 0) {
-    if (sub.localCoreEndpoint && isLocalCoreEndpointAllowed(sub.localCoreEndpoint)) {
-      try {
-        const coreUrl = new URL(sub.localCoreEndpoint);
-        const coreType = coreUrl.protocol === "https:" ? "https" : coreUrl.protocol === "socks5:" ? "socks5" : "http";
-        const upserted = await upsertProxy({
-          name: `${sub.name} (local core)`,
-          type: coreType,
-          host: coreUrl.hostname,
-          port: Number(coreUrl.port) || (coreType === "https" ? 443 : 8080),
-          username: coreUrl.username ? decodeURIComponent(coreUrl.username) : undefined,
-          password: coreUrl.password ? decodeURIComponent(coreUrl.password) : undefined,
-          source: "subscription",
-          subscriptionId: id,
-          status: "active",
+    // needsCore nodes → bind each operator-supplied local core endpoint (one
+    // line of the field becomes its own registry row and pool member).
+    if (parsed.needsCore.length > 0) {
+      const entries = parseLocalCoreEndpoints(sub.localCoreEndpoint);
+      if (entries.length === 0) {
+        const nodes = parsed.needsCore
+          .map((n) => `${n.rawProtocol}://${n.host ?? ""}${n.port ? ":" + n.port : ""}`)
+          .join(", ");
+        warning = subscriptionErrorCode("NEEDS_CORE_NOT_CONFIGURED", nodes);
+      } else {
+        // Normalize per entry for keying: gate first, then dedup on
+        // (scheme, host, port, username). The port default follows the upsert
+        // rule below (https→443, else 8080) — not the probe default.
+        const invalid: string[] = [];
+        const unreachable: string[] = [];
+        const collisions: string[] = [];
+        const seenKeys = new Set<string>();
+        const validEntries: Array<{
+          entry: string;
+          probeUrl: string;
+          coreUrl: URL;
+          coreType: string;
+          port: number;
+          username?: string;
+          password?: string;
+        }> = [];
+        for (const entry of entries) {
+          if (!isLocalCoreEndpointAllowed(entry)) {
+            invalid.push(redactCoreEntryForDetail(entry));
+            continue;
+          }
+          let coreUrl: URL;
+          try {
+            coreUrl = new URL(entry);
+          } catch {
+            invalid.push(redactCoreEntryForDetail(entry));
+            continue;
+          }
+          const coreType =
+            coreUrl.protocol === "https:"
+              ? "https"
+              : coreUrl.protocol === "socks5:"
+                ? "socks5"
+                : "http";
+          const port = Number(coreUrl.port) || (coreType === "https" ? 443 : 8080);
+          let username = "";
+          let password: string | undefined;
+          try {
+            username = coreUrl.username ? decodeURIComponent(coreUrl.username) : "";
+            password = coreUrl.password ? decodeURIComponent(coreUrl.password) : undefined;
+          } catch {
+            invalid.push(redactCoreEntryForDetail(entry));
+            continue;
+          }
+          const key = `${coreType}://${coreUrl.hostname.toLowerCase()}:${port}:${username}`;
+          if (seenKeys.has(key)) continue;
+          const ownerKey = `://${coreUrl.hostname.toLowerCase()}:${port}:${username}`;
+          let collided = false;
+          for (const seen of seenKeys) {
+            if (seen.endsWith(ownerKey)) {
+              collided = true;
+              break;
+            }
+          }
+          if (collided) {
+            collisions.push(redactCoreEntryForDetail(entry));
+            continue;
+          }
+          seenKeys.add(key);
+          const probeUrl = buildProbeUrl(coreUrl, coreType, port);
+          validEntries.push({
+            entry,
+            probeUrl,
+            coreUrl,
+            coreType,
+            port,
+            username: username || undefined,
+            password,
+          });
+        }
+        const probeVerdicts = await Promise.all(
+          validEntries.map(async (valid) => {
+            try {
+              return await isProxyReachable(valid.probeUrl, undefined, 0);
+            } catch {
+              return false;
+            }
+          })
+        );
+        probeVerdicts.forEach((reachable, i) => {
+          if (!reachable) unreachable.push(redactCoreEntryForDetail(validEntries[i].entry));
         });
-        if (upserted.proxy?.id) keptIds.push(upserted.proxy.id);
-      } catch {
-        warning = subscriptionErrorCode("LOCAL_CORE_ENDPOINT_INVALID");
+        for (const valid of validEntries) {
+          try {
+            const upserted = await upsertProxy({
+              name:
+                validEntries.length > 1
+                  ? `${sub.name} (local core :${valid.port}/${valid.coreType})`
+                  : `${sub.name} (local core)`,
+              type: valid.coreType,
+              host: valid.coreUrl.hostname,
+              port: valid.port,
+              username: valid.username,
+              password: valid.password,
+              source: "subscription",
+              subscriptionId: id,
+              status: "active",
+            });
+            if (upserted.proxy?.id) keptIds.push(upserted.proxy.id);
+          } catch {
+            invalid.push(redactCoreEntryForDetail(valid.entry));
+          }
+        }
+        const parts: string[] = [];
+        if (invalid.length > 0) parts.push(`invalid: ${invalid.join("; ")}`);
+        if (unreachable.length > 0) parts.push(`unreachable: ${unreachable.join("; ")}`);
+        if (collisions.length > 0) parts.push(`key-collision: ${collisions.join("; ")}`);
+        if (parts.length > 0) {
+          warning = subscriptionErrorCode("LOCAL_CORE_ENDPOINT_INVALID", parts.join(" | "));
+        }
+      }
+    }
+
+    // Remove stale subscription nodes no longer present in the fetched set.
+    if (keptIds.length > 0) {
+      const placeholders = keptIds.map(() => "?").join(",");
+      const stale = db
+        .prepare(
+          `SELECT id FROM proxy_registry WHERE subscription_id = ? AND id NOT IN (${placeholders})`
+        )
+        .all(id, ...keptIds) as Array<{ id: string }>;
+      for (const r of stale) {
+        try {
+          await deleteProxyById(r.id, { force: true });
+        } catch {
+          // ignore
+        }
       }
     } else {
-      const nodes = parsed.needsCore
-        .map((n) => `${n.rawProtocol}://${n.host ?? ""}${n.port ? ":" + n.port : ""}`)
-        .join(", ");
-      warning = subscriptionErrorCode("NEEDS_CORE_NOT_CONFIGURED", nodes);
-    }
-  }
-
-  // Remove stale subscription nodes no longer present in the fetched set.
-  if (keptIds.length > 0) {
-    const placeholders = keptIds.map(() => "?").join(",");
-    const stale = db
-      .prepare(`SELECT id FROM proxy_registry WHERE subscription_id = ? AND id NOT IN (${placeholders})`)
-      .all(id, ...keptIds) as Array<{ id: string }>;
-    for (const r of stale) {
-      try {
-        await deleteProxyById(r.id, { force: true });
-      } catch {
-        // ignore
+      const stale = db
+        .prepare("SELECT id FROM proxy_registry WHERE subscription_id = ?")
+        .all(id) as Array<{ id: string }>;
+      for (const r of stale) {
+        try {
+          await deleteProxyById(r.id, { force: true });
+        } catch {
+          // ignore
+        }
       }
     }
-  } else {
-    const stale = db
-      .prepare("SELECT id FROM proxy_registry WHERE subscription_id = ?")
-      .all(id) as Array<{ id: string }>;
-    for (const r of stale) {
-      try {
-        await deleteProxyById(r.id, { force: true });
-      } catch {
-        // ignore
-      }
-    }
-  }
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
     const writeConsec = (sub.consecutiveFailures || 0) + 1;
-    await updateSubscriptionStatus(id, "error", `Sync write failed: ${msg}`, null, new Date().toISOString(), writeConsec);
-    return { subscriptionId: id, nodes: 0, needsCore: 0, boundProxies: 0, status: "error", error: msg, applied: false };
+    await updateSubscriptionStatus(
+      id,
+      "error",
+      `Sync write failed: ${msg}`,
+      sub.lastNodes,
+      new Date().toISOString(),
+      writeConsec
+    );
+    return {
+      subscriptionId: id,
+      nodes: 0,
+      needsCore: 0,
+      boundProxies: 0,
+      status: "error",
+      error: msg,
+      applied: false,
+    };
   }
 
   const lastNodes = redactedNodeSummary(parsed);
@@ -687,11 +959,15 @@ export function startSubscriptionScheduler(): void {
         try {
           await syncSubscription(s.id);
         } catch (e) {
-          console.warn(`[ProxySubscription] refresh failed for ${s.id}: ${e instanceof Error ? e.message : e}`);
+          console.warn(
+            `[ProxySubscription] refresh failed for ${s.id}: ${e instanceof Error ? e.message : e}`
+          );
         }
       }
     } catch (e) {
-      console.warn(`[ProxySubscription] scheduler tick error: ${e instanceof Error ? e.message : e}`);
+      console.warn(
+        `[ProxySubscription] scheduler tick error: ${e instanceof Error ? e.message : e}`
+      );
     }
   };
 

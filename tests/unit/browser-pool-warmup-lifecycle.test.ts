@@ -8,7 +8,7 @@ interface WarmupMockState {
   throwOnAcquire: boolean;
 }
 
-const originalPoolFlag = process.env.OMNIROUTE_BROWSER_POOL;
+const originalPoolFlag = process.env.AGENTPROXY_BROWSER_POOL;
 const state: WarmupMockState = {
   acquireCalls: 0,
   pageCount: 1,
@@ -55,15 +55,15 @@ const { startBrowserWarmup } = await import(
 );
 
 beforeEach(() => {
-  process.env.OMNIROUTE_BROWSER_POOL = "on";
+  process.env.AGENTPROXY_BROWSER_POOL = "on";
   state.acquireCalls = 0;
   state.pageCount = 1; // one context-owned warmup page
   state.throwOnAcquire = false;
 });
 
 after(() => {
-  if (originalPoolFlag === undefined) delete process.env.OMNIROUTE_BROWSER_POOL;
-  else process.env.OMNIROUTE_BROWSER_POOL = originalPoolFlag;
+  if (originalPoolFlag === undefined) delete process.env.AGENTPROXY_BROWSER_POOL;
+  else process.env.AGENTPROXY_BROWSER_POOL = originalPoolFlag;
   delete (globalThis as typeof globalThis & { __warmupMockState?: WarmupMockState }).__warmupMockState;
 });
 

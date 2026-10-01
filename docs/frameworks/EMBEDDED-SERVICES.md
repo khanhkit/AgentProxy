@@ -1,17 +1,17 @@
 ---
 title: "Embedded Services"
-description: "Reference for 9Router, CLIProxyAPI, Mux, and Bifrost"
+description: "Reference for 9Router, CLIProxyAPI, Mux, Bifrost, Dario, and open-wa"
 ---
 
 # Embedded Services
 
 > **Version:** v3.8.44
 > **Last updated:** 2026-07-03
-> **Audience:** Engineers adding, maintaining, or debugging embedded services (9Router, CLIProxyAPI, Mux, Bifrost).
+> **Audience:** Engineers adding, maintaining, or debugging embedded services (9Router, CLIProxyAPI, Mux, Bifrost, Dario, open-wa).
 
-Embedded services are locally-installed process sidecar tools that OmniRoute installs, supervises, and
+Embedded services are locally-installed process sidecar tools that AgentProxy installs, supervises, and
 exposes as first-class routing targets. Unlike external providers (which are reached over the internet
-via API keys), embedded services run on the same machine as OmniRoute and communicate over loopback.
+via API keys), embedded services run on the same machine as AgentProxy and communicate over loopback.
 
 ---
 
@@ -32,33 +32,49 @@ via API keys), embedded services run on the same machine as OmniRoute and commun
 
 ### Why embedded services?
 
-Five services are embedded:
+Six services are embedded:
 
 | Service         | npm package                        | Default port | Purpose                                                                                                                                                                                |
 | --------------- | ---------------------------------- | :----------: | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **9Router**     | `9router`                          |    20130     | AI router that OmniRoute can use as a sub-provider. Models exposed as `9router/{sub}/{model}`                                                                                          |
+| **9Router**     | `9router`                          |    20130     | AI router that AgentProxy can use as a sub-provider. Models exposed as `9router/{sub}/{model}`                                                                                         |
 | **CLIProxyAPI** | GitHub release binary (`cliproxy`) |     8317     | Local proxy adapter for Anthropic CLI auth flows. Provides fallback routing when OAuth tokens expire                                                                                   |
 | **Mux**         | `mux` (headless `mux server`)      |     8322     | Local agent-orchestration daemon (coder/mux). Lifecycle-managed only — not a routing target (no LLM proxying).                                                                         |
 | **Bifrost**     | `@maximhq/bifrost`                 |     8080     | Go AI-gateway relay backend. When running, auto-selected by the relay route (`/v1/relay/`)                                                                                             |
 | **Dario**       | `@askalf/dario`                    |     3456     | Claude-subscription proxy — alternative/failover to CLIProxyAPI for Claude-Code-shaped traffic; the injected key becomes `DARIO_ADMIN_TOKEN` gating its `/admin/*` OAuth control plane |
+| **open-wa**     | `@open-wa/wa-automate`             |     8323     | WhatsApp Web automation (headless Chromium via Puppeteer). Lifecycle-managed only — not a routing target.                                                                              |
 
-All five follow the same supervisory model:
+All six follow the same supervisory model:
 
-- OmniRoute installs them under `DATA_DIR/services/{name}/` (isolated from OmniRoute's own `package.json`)
-- OmniRoute spawns and monitors them as child processes
-- OmniRoute injects an ephemeral API key into the child's environment and rotates it without downtime (where applicable)
+- AgentProxy installs them under `DATA_DIR/services/{name}/` (isolated from AgentProxy's own `package.json`)
+- AgentProxy spawns and monitors them as child processes
+- AgentProxy injects an ephemeral API key into the child's environment and rotates it without downtime (where applicable)
 - All management routes (`/api/services/*`) are **LOCAL_ONLY** — accessible only from loopback (hard rule #17)
 
 ### Key decisions (from design plan)
 
-| Decision                              | Value                                                                    |
-| ------------------------------------- | ------------------------------------------------------------------------ |
-| Dashboard access to 9Router native UI | Reverse proxy at `/dashboard/providers/services/9router/embed/*`         |
-| Installation mechanism                | `npm install {package}` via `execFile` (no shell interpolation)          |
-| Consumption mode                      | Provider registered as `9router/{sub}/{model}` in routing engine         |
-| API key management                    | OmniRoute generates, encrypts at-rest (AES-256-GCM), and injects via env |
-| Dashboard location                    | `/dashboard/providers/services` (three tabs)                             |
-| Auto-start                            | Toggle per service, default OFF                                          |
+| Decision                              | Value                                                                     |
+| ------------------------------------- | ------------------------------------------------------------------------- |
+| Dashboard access to 9Router native UI | Reverse proxy at `/dashboard/providers/services/9router/embed/*`          |
+| Installation mechanism                | `npm install {package}` via `execFile` (no shell interpolation)           |
+| Consumption mode                      | Provider registered as `9router/{sub}/{model}` in routing engine          |
+| API key management                    | AgentProxy generates, encrypts at-rest (AES-256-GCM), and injects via env |
+| Dashboard location                    | `/dashboard/providers/services` (three tabs)                              |
+| Auto-start                            | Toggle per service, default OFF                                           |
+
+### Managed update admission
+
+Embedded-service updates treat mutable selectors such as `latest` only as discovery inputs. Before
+promotion, npm-managed services resolve the selector to an exact version and require npm SRI
+(`dist.integrity`); CLIProxyAPI resolves an exact GitHub release and requires a matching SHA-256
+entry from `checksums.txt` before extraction. Missing or malformed verification metadata fails the
+update before install/extraction.
+
+Compatibility admission uses the existing `version_manager` row. `pinnedVersion` rejects any other
+candidate. Operators may additionally set `configOverrides.managedUpdate.allowedVersions` or
+`blockedVersions` to maintain an explicit last-known-good/known-bad policy. Successful managed
+updates preserve that policy and record `managedUpdate.version`, verification metadata,
+`lastKnownGoodVersion`, `rollbackVersion`, and `verifiedAt` in `configOverrides`. The prior installed
+version therefore remains an explicit rollback target instead of being inferred from a mutable tag.
 
 ---
 
@@ -112,7 +128,7 @@ All five follow the same supervisory model:
 │  modelSync.ts       Periodic GET /v1/models → service_models table │
 │  ringBuffer.ts      Circular log buffer (5 MB per service)         │
 │  healthCheck.ts     Polling HTTP health probe                      │
-│  installers/        ninerouter.ts, cliproxy.ts, mux.ts             │
+│  installers/        ninerouter.ts, cliproxy.ts, mux.ts, openwa.ts  │
 │                      (installer adapters)                          │
 └──────────────────────┬─────────────────────────────────────────────┘
                        │ OpenAI-compatible HTTP (loopback)
@@ -151,6 +167,7 @@ All five follow the same supervisory model:
 | `src/lib/services/installers/ninerouter.ts` | npm install/update/uninstall for 9Router         |
 | `src/lib/services/installers/cliproxy.ts`   | npm install/update/uninstall for CLIProxyAPI     |
 | `src/lib/services/installers/mux.ts`        | npm install/update/uninstall for Mux             |
+| `src/lib/services/installers/openwa.ts`     | npm install/update/uninstall for open-wa         |
 | `src/app/api/services/9router/_lib.ts`      | `getOrInitSupervisor()` helper                   |
 | `src/app/api/services/[name]/logs/route.ts` | Shared SSE logs endpoint                         |
 | `open-sse/executors/ninerouter.ts`          | Provider executor (Layer 4)                      |
@@ -217,7 +234,7 @@ Non-loopback requests receive `403 LOCAL_ONLY` regardless of auth token.
 #### `POST /api/services/9router/install`
 
 Install 9Router from npm. Creates `DATA_DIR/services/9router/` with its own
-`package.json` and `node_modules/`. Does not conflict with OmniRoute's own deps.
+`package.json` and `node_modules/`. Does not conflict with AgentProxy's own deps.
 
 **Request body** (all optional):
 
@@ -318,7 +335,18 @@ service is restarted.
 | ------ | --------------------------------------------------------------- |
 | `200`  | `{ ok: true, previousVersion: "...", installedVersion: "..." }` |
 | `400`  | Invalid body                                                    |
+| `409`  | Resolved version is blocked by compatibility/known-bad policy   |
 | `500`  | npm update failed                                               |
+
+Managed updates resolve `latest`/other selectors to an immutable version plus npm
+integrity metadata before admission. 9Router `0.5.75` is currently blocked at that
+admission boundary because upstream issue #4020 reports rapid heap growth and fatal
+OOM under sustained workload. AgentProxy deliberately does **not** raise the existing
+6144 MiB V8 heap cap as a workaround: upstream reports show the failure can recur even
+with 8–16 GiB heaps. A short exact-version health-only soak remained roughly 108–144
+MiB RSS, so the regression is treated as workload-dependent rather than an unconditional
+startup leak. Admit a newer release only after the compatibility block is updated with
+new verification evidence.
 
 ---
 
@@ -378,7 +406,7 @@ Returns combined live + DB status including version metadata and API key preview
 #### `POST /api/services/9router/auto-start`
 
 Toggle the auto-start flag. When `enabled: true`, the service starts automatically
-the next time OmniRoute boots (if the service is installed).
+the next time AgentProxy boots (if the service is installed).
 
 **Request body:**
 
@@ -500,10 +528,29 @@ always takes precedence.
 
 Same lifecycle shape as the other services (`install`, `start`, `stop`, `restart`,
 `update`, `status`, `auto-start`, `auto-restart-adopted`) plus a token-gated OAuth
-control plane under `admin/`: `admin/accounts`, `admin/import-from-omniroute`,
+control plane under `admin/`: `admin/accounts`, `admin/import-from-agentproxy`,
 `admin/login-start`, `admin/login-complete` (all behind `DARIO_ADMIN_TOKEN`).
 
-### 4.6 Reverse proxy (9Router dashboard embed)
+### 4.6 open-wa endpoints (8 routes)
+
+open-wa (`@open-wa/wa-automate`) drives a headless Chromium instance via Puppeteer to automate WhatsApp Web. It uses the same lifecycle shape as Mux and is not an LLM routing target.
+
+| Method | Path                                        | Description                                   |
+| ------ | ------------------------------------------- | --------------------------------------------- |
+| `POST` | `/api/services/openwa/install`              | Install `@open-wa/wa-automate` from npm       |
+| `POST` | `/api/services/openwa/start`                | Start open-wa on port 8323 (default)          |
+| `POST` | `/api/services/openwa/stop`                 | Stop open-wa                                  |
+| `POST` | `/api/services/openwa/restart`              | Restart open-wa                               |
+| `POST` | `/api/services/openwa/update`               | Update to a newer version                     |
+| `GET`  | `/api/services/openwa/status`               | Read live + persisted status                  |
+| `POST` | `/api/services/openwa/auto-start`           | Toggle auto-start                             |
+| `POST` | `/api/services/openwa/auto-restart-adopted` | Toggle restart of an adopted external process |
+
+The shared `/api/services/[name]/logs` route provides the SSE log tail. The generated API key uses the `ow_` prefix and is injected as `WA_KEY`; `/api-docs/` is used as the health probe. First pairing requires scanning the QR code emitted in the logs. open-wa is unofficial and unaffiliated with WhatsApp; automated accounts may be subject to WhatsApp enforcement.
+
+---
+
+### 4.7 Reverse proxy (9Router dashboard embed)
 
 The dashboard embeds the 9Router web UI inside an iframe via an internal reverse
 proxy at:
@@ -515,7 +562,7 @@ GET|POST|... /dashboard/providers/services/9router/embed/[...path]
 This proxy:
 
 - Forwards the request to `http://127.0.0.1:{port}/{path}` (loopback only)
-- Strips incoming `cookie` and `authorization` headers (no leakage of OmniRoute session)
+- Strips incoming `cookie` and `authorization` headers (no leakage of AgentProxy session)
 - Injects `Authorization: Bearer {apiKey}` for 9Router authentication
 - Strips `set-cookie`, `content-security-policy`, `x-frame-options`, `cross-origin-*` from the response
 - Rewrites HTML responses to inject `<base href>` and normalize absolute paths (`/foo` → `/dashboard/.../embed/foo`)
@@ -551,7 +598,7 @@ matrix.
 ### API key injection
 
 9Router and Mux require an API key/bearer token for their own HTTP endpoints.
-OmniRoute:
+AgentProxy:
 
 1. Generates a key via `crypto.randomBytes(32).toString("base64url")` with a
    service-specific prefix (`nr_` for 9Router, `mx_` for Mux).
@@ -731,7 +778,7 @@ If the embedded service exposes an OpenAI-compatible `/v1/chat/completions` endp
 
 1. Check `GET /api/services/{name}/logs` (or the Logs panel in the dashboard). Look
    for lines like `Error: ENOENT`, `address already in use`, or `Cannot find module`.
-2. Verify `npm` is in PATH: `which npm` from the same user account that runs OmniRoute.
+2. Verify `npm` is in PATH: `which npm` from the same user account that runs AgentProxy.
 3. Verify the service is installed: check `GET /api/services/{name}/status` for
    `installedVersion`. If `null`, run install first.
 4. Check `DATA_DIR/services/{name}/node_modules/` exists and is not empty.
@@ -769,7 +816,7 @@ startup times, increase `healthIntervalMs` to 5000 and `stopTimeoutMs` to 30 000
 3. The port is configurable per service in `bootstrap.ts` via the `port` field.
 
 **Note:** 9Router defaults to port 20130 specifically to avoid colliding with
-OmniRoute's default port 20128.
+AgentProxy's default port 20128.
 
 ---
 
@@ -779,13 +826,13 @@ OmniRoute's default port 20128.
 
 **Causes:**
 
-- `DATA_DIR` or its parent is not writable by the OmniRoute process.
+- `DATA_DIR` or its parent is not writable by the AgentProxy process.
 - Running inside Docker rootless without write access to the mapped volume.
 
 **Fix:**
 
-1. Check `DATA_DIR` (default: `~/.omniroute/`): `ls -la ~/.omniroute/`
-2. Ensure the OmniRoute process user owns the directory: `chown -R $USER ~/.omniroute/`
+1. Check `DATA_DIR` (default: `~/.agentproxy/`): `ls -la ~/.agentproxy/`
+2. Ensure the AgentProxy process user owns the directory: `chown -R $USER ~/.agentproxy/`
 3. In Docker, ensure the volume mount has the correct permissions for the container user.
 
 ---
@@ -798,7 +845,7 @@ OmniRoute's default port 20128.
 
 1. Confirm npm registry is reachable: `npm ping`.
 2. Check for corporate proxy: `npm config get proxy`, `npm config get https-proxy`.
-3. Try the install manually: `npm install {package}@latest --prefix ~/.omniroute/services/{name}/`.
+3. Try the install manually: `npm install {package}@latest --prefix ~/.agentproxy/services/{name}/`.
 4. If behind an air-gap, pre-download the tarball and use `npm install /path/to/tarball.tgz`.
 
 ---
@@ -833,18 +880,18 @@ list. See `docs/security/ROUTE_GUARD_TIERS.md`.
 
 **Q: Will 9Router and CLIProxyAPI be available in production/cloud deployments?**
 
-Yes. Both services follow the same local-first model as OmniRoute itself. They run
+Yes. Both services follow the same local-first model as AgentProxy itself. They run
 on the same machine and communicate over loopback. "Production" here means the VPS
-or local server where OmniRoute is deployed, not a remote cloud provider.
+or local server where AgentProxy is deployed, not a remote cloud provider.
 
 ---
 
 **Q: How do I debug the supervisor?**
 
 1. Tail the SSE log stream: `curl -N http://localhost:20128/api/services/9router/logs`.
-2. Check structured logs in OmniRoute's pino output filtered by
+2. Check structured logs in AgentProxy's pino output filtered by
    `service:supervisor` namespace.
-3. Inspect the DB row: `sqlite3 ~/.omniroute/omniroute.db "SELECT * FROM version_manager WHERE tool='9router'"`.
+3. Inspect the DB row: `sqlite3 ~/.agentproxy/agentproxy.db "SELECT * FROM version_manager WHERE tool='9router'"`.
 4. Use `GET /api/services/9router/status` to see the current live state, PID, health,
    and `lastError` in one call.
 

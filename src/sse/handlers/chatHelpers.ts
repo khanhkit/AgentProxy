@@ -8,26 +8,26 @@ import {
   markAccountUnavailable,
   buildExhaustionOptions,
 } from "../services/auth";
-import { connectionHasExtraKeys } from "@omniroute/open-sse/services/apiKeyRotator.ts";
-import { createBuiltinAutoCombo } from "@omniroute/open-sse/services/autoCombo/builtinCatalog.ts";
+import { connectionHasExtraKeys } from "@agentproxy/open-sse/services/apiKeyRotator.ts";
+import { createBuiltinAutoCombo } from "@agentproxy/open-sse/services/autoCombo/builtinCatalog.ts";
 import * as log from "../utils/logger";
 import { updateProviderCredentials } from "../services/tokenRefresh";
-import { detectFormatFromEndpoint } from "@omniroute/open-sse/services/provider.ts";
-import { resolveChatCoreTargetFormat } from "@omniroute/open-sse/handlers/chatCore/targetFormat.ts";
-import { handleChatCore } from "@omniroute/open-sse/handlers/chatCore.ts";
+import { detectFormatFromEndpoint } from "@agentproxy/open-sse/services/provider.ts";
+import { resolveChatCoreTargetFormat } from "@agentproxy/open-sse/handlers/chatCore/targetFormat.ts";
+import { handleChatCore } from "@agentproxy/open-sse/handlers/chatCore.ts";
 import {
   checkResourcePressureGuard,
   type ResourcePressureGuardResult,
-} from "@omniroute/open-sse/utils/resourcePressure.ts";
+} from "@agentproxy/open-sse/utils/resourcePressure.ts";
 import {
   errorResponse,
   modelCooldownResponse,
   providerCircuitOpenResponse,
   unavailableResponse,
-} from "@omniroute/open-sse/utils/error.ts";
-import { inheritTrustedLocalRateLimitResponse } from "@omniroute/open-sse/services/rateLimitManager/errors.ts";
-import { HTTP_STATUS } from "@omniroute/open-sse/config/constants.ts";
-import { getRegistryEntry } from "@omniroute/open-sse/config/providerRegistry.ts";
+} from "@agentproxy/open-sse/utils/error.ts";
+import { inheritTrustedLocalRateLimitResponse } from "@agentproxy/open-sse/services/rateLimitManager/errors.ts";
+import { HTTP_STATUS } from "@agentproxy/open-sse/config/constants.ts";
+import { getRegistryEntry } from "@agentproxy/open-sse/config/providerRegistry.ts";
 import { getCachedProviderNodes } from "@/lib/db/readCache";
 import {
   runWithProxyContext,
@@ -35,7 +35,7 @@ import {
   runWithTlsTracking,
   isTlsFingerprintActive,
   type AppliedProxySink,
-} from "@omniroute/open-sse/utils/proxyFetch.ts";
+} from "@agentproxy/open-sse/utils/proxyFetch.ts";
 import { resolveProxyForConnection } from "@/lib/db/settings";
 import { hasBlockingProxyAssignment } from "@/lib/db/proxies";
 import {
@@ -47,8 +47,9 @@ import { classify429FromError, type FailureKind } from "../../shared/utils/class
 import { resolveUseUpstream429BreakerHints } from "../../shared/utils/providerHints";
 
 import { logProxyEvent } from "../../lib/proxyLogger";
+import { noteProxyOutcome } from "./proxyOutcomeMemory";
 import { logTranslationEvent } from "../../lib/translatorEvents";
-import { getRuntimeProviderProfile } from "@omniroute/open-sse/services/accountFallback.ts";
+import { getRuntimeProviderProfile } from "@agentproxy/open-sse/services/accountFallback.ts";
 
 // Models that explicitly cannot run on the codex/ChatGPT-Pro OAuth pool — when
 // a caller writes `codex/deepseek-v4-pro` we transparently reroute to the
@@ -338,7 +339,7 @@ export async function resolveModelOrError(
     log.info("ROUTING", `Provider: ${provider}, Model: ${model}${ctxTag}`);
   }
 
-  return { provider, model, sourceFormat, targetFormat, extendedContext, apiFormat };
+  return { provider, model, sourceFormat, targetFormat, customModelTargetFormat, extendedContext, apiFormat, resolvedThinkingEffort: modelInfo.resolvedThinkingEffort };
 }
 
 export async function checkPipelineGates(
@@ -432,6 +433,7 @@ export async function executeChatWithBreaker({
   extendedContext,
   modelApiFormat,
   modelTargetFormat,
+  resolvedThinkingEffort,
   providerProfile,
   cachedSettings,
   skipUpstreamRetry = false,
@@ -447,6 +449,7 @@ export async function executeChatWithBreaker({
   // for every non-video request. Passed straight through to handleChatCore;
   // see its own destructure default for the shape and consumers.
   videoBridgeLog = undefined,
+  forcedConnectionId = null,
 }: ExecuteChatWithBreakerOptions): Promise<ExecuteChatWithBreakerResult> {
   let tlsFingerprintUsed = false;
   const normalizedTrafficType: TrafficType =
@@ -484,6 +487,7 @@ export async function executeChatWithBreaker({
               extendedContext,
               apiFormat: modelApiFormat,
               targetFormat: modelTargetFormat,
+              resolvedThinkingEffort,
             },
             credentials: refreshedCredentials,
             log: handlerLog,
@@ -507,6 +511,7 @@ export async function executeChatWithBreaker({
             reasoningTransportFallback,
             managedLease,
             videoBridgeLog,
+            forcedConnectionId,
             skipResourcePressureGuard: true,
             onCredentialsRefreshed: async (newCreds: any) => {
               await updateProviderCredentials(credentials.connectionId, {
@@ -805,6 +810,14 @@ export function handleNoCredentials(
       status === "credits_exhausted" ? HTTP_STATUS.PAYMENT_REQUIRED : HTTP_STATUS.UNAUTHORIZED;
     return errorResponse(httpStatus, message);
   }
+  if (credentials?.blockedByKeyPolicy) {
+    const count = credentials.blockedCount || 1;
+    const message =
+      `[${provider}] ${count} connection(s) exist but are excluded by this API key's ` +
+      `connection allowlist / quota scope — add them to the key in the dashboard, or use a key without that scope`;
+    log.warn("AUTH", message);
+    return errorResponse(HTTP_STATUS.FORBIDDEN, message);
+  }
   if (!excludeConnectionId) {
     // Ported from upstream decolua/9router#336 (Ibrahim Ryan): surface as 404
     // NOT_FOUND instead of 400 BAD_REQUEST so combo routing can fall through to
@@ -899,12 +912,20 @@ export function handleNoCredentials(
  * transient upstream glitch, not a bad key.
  */
 export const STREAM_EARLY_EOF_MAX_RETRIES = 1;
+const RETRYABLE_STREAM_EMPTY_CODES: ReadonlySet<string> = new Set([
+  "STREAM_EARLY_EOF",
+  "empty_response",
+]);
 
 export function shouldRetryStreamEarlyEof(
   errorCode: string | null | undefined,
   attempt: number
 ): boolean {
-  return errorCode === "STREAM_EARLY_EOF" && attempt < STREAM_EARLY_EOF_MAX_RETRIES;
+  return (
+    typeof errorCode === "string" &&
+    RETRYABLE_STREAM_EMPTY_CODES.has(errorCode) &&
+    attempt < STREAM_EARLY_EOF_MAX_RETRIES
+  );
 }
 
 export function decideProxyResolutionFailure(
@@ -926,7 +947,8 @@ export function decideProxyResolutionFailure(
 export async function safeResolveProxy(
   connectionId: string,
   apiKeyId?: string,
-  providerId?: string
+  providerId?: string,
+  comboName?: string | null
 ) {
   try {
     const resolved = await resolveProxyForConnection(connectionId, apiKeyId, providerId);
@@ -936,7 +958,7 @@ export async function safeResolveProxy(
     // opts back into direct). Explicit "proxy off" is not a leak (see the guard).
     if (
       !(resolved as { proxy?: unknown } | null)?.proxy &&
-      hasBlockingProxyAssignment(connectionId, providerId)
+      hasBlockingProxyAssignment(connectionId, providerId, comboName)
     ) {
       return decideProxyResolutionFailure(
         Object.assign(
@@ -973,6 +995,27 @@ export function applyExecutorProxyToInfo(
   };
 }
 
+/**
+ * Carry the HTTP status the provider actually returned (captured on the applied-proxy
+ * sink around the patched fetch) into proxyInfo. Nothing received -> info unchanged.
+ * Pure + unit-testable.
+ */
+export function withUpstreamStatus<T extends object>(
+  info: T | null | undefined,
+  sink: { upstreamStatus?: number }
+) {
+  if (typeof sink.upstreamStatus !== "number") return info;
+  return { ...(info || {}), upstreamStatus: sink.upstreamStatus };
+}
+
+/** Merge both things the applied-proxy sink captured: the executor proxy, then the status. */
+export function mergeAppliedProxySink(
+  proxyInfo: { proxy?: unknown; level?: string; levelId?: string | null } | null | undefined,
+  sink: { proxy: unknown; upstreamStatus?: number }
+) {
+  return withUpstreamStatus(applyExecutorProxyToInfo(proxyInfo, sink.proxy), sink);
+}
+
 // Async because the egress-IP lookup lazy-imports proxyEgress; callers treat
 // this as fire-and-forget logging (the internal try/catch swallows everything).
 export async function safeLogEvents({
@@ -987,7 +1030,17 @@ export async function safeLogEvents({
   comboName,
   clientRawRequest,
   tlsFingerprintUsed = false,
+  rotationAccount = null,
+  correlationId = null,
 }) {
+  // Feed only the provider's received outcome back to proxy selection. This runs
+  // before the first await so the next pool pick can observe the refusal immediately.
+  try {
+    noteProxyOutcome(provider, proxyInfo);
+  } catch {
+    // Best-effort selection feedback must never break the request path.
+  }
+
   try {
     const rawIp =
       clientRawRequest?.headers?.["x-forwarded-for"] ||
@@ -1003,7 +1056,7 @@ export async function safeLogEvents({
     let egressIp: string | null = null;
     try {
       const { getCachedEgressIp, warmEgressIp } = await import("../../lib/proxyEgress");
-      const { proxyConfigToUrl } = await import("@omniroute/open-sse/utils/proxyDispatcher.ts");
+      const { proxyConfigToUrl } = await import("@agentproxy/open-sse/utils/proxyDispatcher.ts");
       const proxyUrl = proxyInfo?.proxy ? proxyConfigToUrl(proxyInfo.proxy) : null;
       egressIp = getCachedEgressIp(proxyUrl);
       warmEgressIp(proxyUrl);
@@ -1029,6 +1082,8 @@ export async function safeLogEvents({
       connectionId: credentials.connectionId,
       comboId: comboName || null,
       account: credentials.connectionId?.slice(0, 8) || null,
+      rotationAccount: rotationAccount || null,
+      correlationId: correlationId || null,
       tlsFingerprint: tlsFingerprintUsed,
     });
   } catch {}
@@ -1053,7 +1108,7 @@ export function withSessionHeader(response: Response, sessionId: string | null):
   if (!response || !sessionId) return response;
 
   try {
-    response.headers.set("X-OmniRoute-Session-Id", sessionId);
+    response.headers.set("X-AgentProxy-Session-Id", sessionId);
     return response;
   } catch {
     const cloned = new Response(response.body, {
@@ -1061,7 +1116,7 @@ export function withSessionHeader(response: Response, sessionId: string | null):
       statusText: response.statusText,
       headers: response.headers,
     });
-    cloned.headers.set("X-OmniRoute-Session-Id", sessionId);
+    cloned.headers.set("X-AgentProxy-Session-Id", sessionId);
     return inheritTrustedLocalRateLimitResponse(response, cloned);
   }
 }
@@ -1085,7 +1140,7 @@ export function withCorrelationId(response: Response, correlationId: string | nu
 
 /**
  * Modality Bridge transparency (PR-1 Task 9): stamp the
- * `x-omniroute-modality-bridge` header on responses whose request payload was
+ * `x-agentproxy-modality-bridge` header on responses whose request payload was
  * transparently transformed (e.g. image→text describe). `value` comes from
  * buildModalityBridgeHeader(); null (untouched/rerouted request) is a no-op.
  * Same try-set/clone-fallback shape as withSessionHeader — the clone reuses
@@ -1095,7 +1150,7 @@ export function withModalityBridgeHeader(response: Response, value: string | nul
   if (!response || !value) return response;
 
   try {
-    response.headers.set("x-omniroute-modality-bridge", value);
+    response.headers.set("x-agentproxy-modality-bridge", value);
     return response;
   } catch {
     const cloned = new Response(response.body, {
@@ -1103,7 +1158,7 @@ export function withModalityBridgeHeader(response: Response, value: string | nul
       statusText: response.statusText,
       headers: response.headers,
     });
-    cloned.headers.set("x-omniroute-modality-bridge", value);
+    cloned.headers.set("x-agentproxy-modality-bridge", value);
     return cloned;
   }
 }
@@ -1132,7 +1187,7 @@ export function withSelectedConnectionHeader(
   if (!response || !connectionId) return response;
 
   try {
-    response.headers.set("X-OmniRoute-Selected-Connection-Id", connectionId);
+    response.headers.set("X-AgentProxy-Selected-Connection-Id", connectionId);
     return response;
   } catch {
     const cloned = new Response(response.body, {
@@ -1140,7 +1195,7 @@ export function withSelectedConnectionHeader(
       statusText: response.statusText,
       headers: response.headers,
     });
-    cloned.headers.set("X-OmniRoute-Selected-Connection-Id", connectionId);
+    cloned.headers.set("X-AgentProxy-Selected-Connection-Id", connectionId);
     return inheritTrustedLocalRateLimitResponse(response, cloned);
   }
 }

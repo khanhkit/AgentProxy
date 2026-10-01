@@ -25,6 +25,7 @@ type StripRule = {
   drop?: string[];
   clampToModelMaxOutput?: boolean;
   maxOutputCap?: number;
+  mapThinkingType?: Record<string, string>;
 };
 
 const MAX_OUTPUT_TOKEN_KEYS = ["max_tokens", "max_completion_tokens", "max_output_tokens"] as const;
@@ -34,6 +35,8 @@ const STRIP_RULES: StripRule[] = [
   { match: /claude-opus-4/i, drop: ["temperature"] },
   // GitHub Copilot gpt-5.4: temperature unsupported.
   { provider: "github", match: /gpt-5\.4/i, drop: ["temperature"] },
+  // Codex /responses rejects sampling params even on native passthrough.
+  { provider: "codex", match: /.*/, drop: ["temperature", "top_p"] },
   // GitHub Copilot Claude (except opus/sonnet 4.6): thinking + reasoning_effort rejected. #713
   {
     provider: "github",
@@ -61,7 +64,7 @@ const STRIP_RULES: StripRule[] = [
   // independent live-endpoint reports hitting the same Ark endpoint for both
   // kimi-k2.5 and kimi-k2.7-code (NousResearch/hermes-agent#51773,
   // MoonshotAI/kimi-cli#1124), and by upstream decolua/9router#2460. Scoped to
-  // OmniRoute's actual volcengine Kimi id (not a broad /kimi/i regex) so it
+  // AgentProxy's actual volcengine Kimi id (not a broad /kimi/i regex) so it
   // never clamps an unrelated future Kimi listing whose Ark cap may differ.
   {
     provider: "volcengine",
@@ -82,7 +85,7 @@ const STRIP_RULES: StripRule[] = [
   { provider: "glm", match: /^glm-4\.6v$/i, clampToModelMaxOutput: true },
   // Azure gpt-4o-mini deployments cap completion tokens at 16384 and 400 on
   // anything larger: "max_tokens is too large: 32000. This model supports at
-  // most 16384 completion tokens". OmniRoute's own tool-calling floor
+  // most 16384 completion tokens". AgentProxy's own tool-calling floor
   // (DEFAULT_MIN_TOKENS = 32000, applied by adjustMaxTokens) raises even a tiny
   // explicit max_tokens to 32000 whenever tools are present, so every agentic
   // client trips this on its first turn. PROVIDER_MAX_TOKENS is not the right
@@ -93,6 +96,7 @@ const STRIP_RULES: StripRule[] = [
   // to read), hence the fixed cap.
   { provider: "azure-openai", match: /^gpt-4o-mini/i, maxOutputCap: 16384 },
   { provider: "azure-ai", match: /^gpt-4o-mini/i, maxOutputCap: 16384 },
+  { provider: "agentrouter", match: /glm-/i, mapThinkingType: { adaptive: "enabled" } },
 ];
 
 function matches(rule: StripRule, model: string): boolean {
@@ -105,6 +109,19 @@ function matches(rule: StripRule, model: string): boolean {
  * (`clampToModelMaxOutput`) and/or a fixed endpoint cap (`maxOutputCap`). Only
  * clamps keys that are present and numeric; never introduces a new key.
  */
+function applyThinkingTypeMap(rule: StripRule, body: Record<string, unknown>): void {
+  if (!rule.mapThinkingType) return;
+  const thinking = body.thinking;
+  if (!thinking || typeof thinking !== "object" || Array.isArray(thinking)) return;
+
+  const currentType = (thinking as Record<string, unknown>).type;
+  if (typeof currentType !== "string") return;
+  const mappedType = rule.mapThinkingType[currentType];
+  if (!mappedType || mappedType === currentType) return;
+
+  body.thinking = { ...(thinking as Record<string, unknown>), type: mappedType };
+}
+
 function applyMaxOutputClamp(
   rule: StripRule,
   provider: string | null | undefined,
@@ -157,6 +174,7 @@ export function stripUnsupportedParams<T>(
       if (rec[key] !== undefined) delete rec[key];
     }
     applyMaxOutputClamp(rule, provider, model, rec);
+    applyThinkingTypeMap(rule, rec);
   }
 
   // Phase 2: Config-driven rules from DB

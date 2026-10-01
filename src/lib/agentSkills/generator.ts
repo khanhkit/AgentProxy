@@ -19,6 +19,7 @@ import path from "node:path";
 import { getCatalog, refreshCatalog } from "./catalog";
 import { parseOpenapi } from "./openapiParser";
 import { parseCliRegistry } from "./cliRegistryParser";
+import { buildApiOperationExample } from "./apiOperationExample";
 import type { AgentSkill, GeneratorOptions, GeneratorReport } from "./types";
 import type { ParsedOpenapi } from "./openapiParser";
 import type { ParsedCliRegistry } from "./cliRegistryParser";
@@ -116,39 +117,7 @@ function buildApiBody(skill: AgentSkill, sources: BuildSources): string {
       // Minimal curl example. Only omni-auth establishes and consumes a dashboard
       // session; generic API skills use independently usable Bearer examples.
       lines.push("```bash");
-      if (usesDashboardSession && op.path === "/api/auth/login" && op.method === "POST") {
-        lines.push(`curl -X POST https://localhost:20128${op.path} \\`);
-        lines.push('  -H "Content-Type: application/json" \\');
-        lines.push("  -c cookie.jar \\");
-        lines.push('  -d \'{"password":"<management-password>"}\'');
-      } else if (usesDashboardSession) {
-        const curlMethod = op.method === "GET" ? "" : `-X ${op.method} `;
-        if (op.method === "GET") {
-          lines.push(`curl ${curlMethod}https://localhost:20128${op.path} \\`);
-          lines.push("  -b cookie.jar");
-        } else {
-          lines.push(
-            "CSRF_TOKEN=$(curl -s https://localhost:20128/api/auth/csrf -b cookie.jar | jq -r .token)"
-          );
-          lines.push(`curl ${curlMethod}https://localhost:20128${op.path} \\`);
-          lines.push("  -b cookie.jar \\");
-          const hasJsonBody = ["POST", "PUT", "PATCH"].includes(op.method);
-          lines.push(`  -H "x-omniroute-csrf: $CSRF_TOKEN"${hasJsonBody ? " \\" : ""}`);
-          if (hasJsonBody) {
-            lines.push('  -H "Content-Type: application/json" \\');
-            lines.push("  -d '{}'");
-          }
-        }
-      } else {
-        const curlMethod = op.method === "GET" ? "" : `-X ${op.method} `;
-        const hasJsonBody = ["POST", "PUT", "PATCH"].includes(op.method);
-        lines.push(`curl ${curlMethod}https://localhost:20128${op.path} \\`);
-        lines.push(`  -H "Authorization: Bearer $OMNIROUTE_TOKEN"${hasJsonBody ? " \\" : ""}`);
-        if (hasJsonBody) {
-          lines.push('  -H "Content-Type: application/json" \\');
-          lines.push("  -d '{}'");
-        }
-      }
+      lines.push(...buildApiOperationExample(op, usesDashboardSession));
       lines.push("```");
       lines.push("");
     }
@@ -167,6 +136,7 @@ function buildApiBody(skill: AgentSkill, sources: BuildSources): string {
 function buildCliBody(skill: AgentSkill, sources: BuildSources): string {
   const familyMap = sources.cliRegistry.families;
   const cmds = familyMap.get(skill.area as Parameters<typeof familyMap.get>[0]) ?? [];
+  const cliBinary = skill.cliBinary ?? "omniroute";
 
   const lines: string[] = [];
 
@@ -176,8 +146,8 @@ function buildCliBody(skill: AgentSkill, sources: BuildSources): string {
 
   lines.push("## Quick install\n");
   lines.push("```bash");
-  lines.push("npm install -g omniroute   # or: npx omniroute");
-  lines.push("omniroute --version");
+  lines.push(`npm install -g ${cliBinary}   # or: npx ${cliBinary}`);
+  lines.push(`${cliBinary} --version`);
   lines.push("```");
   lines.push("");
 
@@ -204,7 +174,7 @@ function buildCliBody(skill: AgentSkill, sources: BuildSources): string {
 
       lines.push("**Example:**\n");
       lines.push("```bash");
-      lines.push(`omniroute ${cmd.name}`);
+      lines.push(`${cliBinary} ${cmd.name}`);
       lines.push("```");
       lines.push("");
     }

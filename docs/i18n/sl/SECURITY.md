@@ -6,10 +6,10 @@
 
 ## Poročanje o ranljivostih
 
-Če odkrijete varnostno ranljivost v OmniRoute, jo odgovorno prijavite:
+Če odkrijete varnostno ranljivost v AgentProxy, jo odgovorno prijavite:
 
 1. **NE** odpirajte javne težave v GitHubu
-2. Uporabite [GitHub Security Advisories](https://github.com/diegosouzapw/OmniRoute/security/advisories/new)
+2. Uporabite [GitHub Security Advisories](https://github.com/khanhkit/AgentProxy/security/advisories/new)
 3. Vključite: opis, korake za reprodukcijo in morebiten vpliv
 
 ## Časovnica odziva
@@ -32,7 +32,7 @@
 
 ## Varnostna arhitektura
 
-OmniRoute uporablja večplastni varnostni model:
+AgentProxy uporablja večplastni varnostni model:
 
 ```
 Zahteva → CORS → Avtorizacijski cevovod (razvrščanje → pravilniki → uveljavljanje)
@@ -69,7 +69,7 @@ STORAGE_ENCRYPTION_KEY=$(openssl rand -hex 32)
 
 ### 🛡️ Ogrodje varoval
 
-OmniRoute vključuje **register varoval** z možnostjo ponovnega nalaganja med delovanjem (`src/lib/guardrails/`) s 3 vgrajenimi varovali, razvrščenimi po prednosti:
+AgentProxy vključuje **register varoval** z možnostjo ponovnega nalaganja med delovanjem (`src/lib/guardrails/`) s 3 vgrajenimi varovali, razvrščenimi po prednosti:
 
 | Varovalo           | Prednost | Namen                                                                                       |
 | ------------------ | -------- | ------------------------------------------------------------------------------------------- |
@@ -77,7 +77,7 @@ OmniRoute vključuje **register varoval** z možnostjo ponovnega nalaganja med d
 | `pii-masker`       | 10       | Prikrivanje PII pred klicem in po njem (e-pošta, telefon, CPF, CNPJ, kreditne kartice, SSN) |
 | `prompt-injection` | 20       | Zazna vzorce preglasitve, prevzema vlog, odklepanja omejitev in uhajanja podatkov           |
 
-Varovala po meri se registrirajo prek `registerGuardrail(new MyGuardrail())`. Model ob napaki dovoljuje promet (izjeme ga nikoli ne blokirajo). Izključitev za posamezno zahtevo je mogoča prek glave `x-omniroute-disabled-guardrails`. → Glejte [`docs/security/GUARDRAILS.md`](docs/security/GUARDRAILS.md).
+Varovala po meri se registrirajo prek `registerGuardrail(new MyGuardrail())`. Model ob napaki dovoljuje promet (izjeme ga nikoli ne blokirajo). Izključitev za posamezno zahtevo je mogoča prek glave `x-agentproxy-disabled-guardrails`. → Glejte [`docs/security/GUARDRAILS.md`](docs/security/GUARDRAILS.md).
 
 ### 🧠 Varovalo pred vrivanjem pozivov
 
@@ -182,15 +182,15 @@ Strežnik dejavno zavrača znane šibke vrednosti, kot so `changeme`, `secret` a
 
 ```bash
 docker run -d \
-  --name omniroute \
+  --name agentproxy \
   --restart unless-stopped \
   --read-only \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
+  -v agentproxy-data:/app/data \
   -e JWT_SECRET="$(openssl rand -base64 48)" \
   -e API_KEY_SECRET="$(openssl rand -hex 32)" \
   -e STORAGE_ENCRYPTION_KEY="$(openssl rand -hex 32)" \
-  diegosouzapw/omniroute:latest
+  khanhkit/agentproxy:latest
 ```
 
 ---
@@ -222,7 +222,7 @@ Ta pravila uveljavljajo orodja in pregledovalci:
 
 ## Ugotovitve pregledovalnikov dobavne verige (Socket.dev / Snyk / podobni)
 
-Objavljeni artefakt npm `omniroute` vključuje gradnjo Next.js `output: "standalone"`,
+Objavljeni artefakt npm `agentproxy` vključuje gradnjo Next.js `output: "standalone"`,
 kar pomeni, da se vsak obravnavalnik poti — vključno z dokumentiranimi privilegiranimi
 funkcijami (MITM, uvoz Zed, Cloud Sync, vgrajeni nadzornik storitev) — znajde
 v pomanjšanih delih `.next/server/*.js`. Hevristični pregledovalniki dobavne verige
@@ -237,7 +237,7 @@ Za vsako kategorijo ugotovitev vzdržujemo potrdilo vzdrževalca za posamezno ug
   kažejo nazaj na isti dokument.
 
 Uporabniki, katerih cevovod ne more omiliti opozorila, naj gradijo z
-`OMNIROUTE_BUILD_PROFILE=minimal npm run build`. To štiri občutljive module
+`AGENTPROXY_BUILD_PROFILE=minimal npm run build`. To štiri občutljive module
 nadomesti z nadomestki, ki med izvajanjem vrnejo HTTP 503 `feature-disabled`,
 zato privilegirane kodne poti fizično niso prisotne v paketu.
 Postopek objave je opisan v dokumentu [`docs/security/SOCKET_DEV_FINDINGS.md`](docs/security/SOCKET_DEV_FINDINGS.md).

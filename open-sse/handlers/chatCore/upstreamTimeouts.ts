@@ -137,7 +137,7 @@ export function getExecutorTimeoutMs(
  * Cross-realm Response detection (#10360).
  *
  * `instanceof Response` is a NOMINAL check against `globalThis.Response`, and
- * OmniRoute's default egress does not use the global one: `proxyFetch.ts`
+ * AgentProxy's default egress does not use the global one: `proxyFetch.ts`
  * dispatches through the npm `undici` package's `fetch`, whose `Response` is a
  * different class from the Node built-in. A bare `instanceof` therefore
  * rejected virtually every real upstream response as a "contract violation".
@@ -271,15 +271,23 @@ export async function executeWithUpstreamStartTimeout<T>({
     }, timeoutMs);
   });
 
+  let abortPromiseListener: (() => void) | null = null;
   const abortPromise = new Promise<never>((_, reject) => {
-    signal.addEventListener("abort", () => reject(createAbortError(signal)), { once: true });
+    abortPromiseListener = () => reject(createAbortError(signal));
+    signal.addEventListener("abort", abortPromiseListener, { once: true });
   });
+  // execute() may throw synchronously before Promise.race subscribes. Mark the
+  // side promises handled so a later client/hedge abort cannot surface as an
+  // orphaned unhandledRejection. Promise.race still observes them normally.
+  abortPromise.catch(() => {});
+  timeoutPromise.catch(() => {});
 
   try {
     return await Promise.race([execute(combinedController.signal), timeoutPromise, abortPromise]);
   } finally {
     if (timeoutId) clearTimeout(timeoutId);
     if (abortListener) signal.removeEventListener("abort", abortListener);
+    if (abortPromiseListener) signal.removeEventListener("abort", abortPromiseListener);
     if (timeoutAbortListener) {
       timeoutController.signal.removeEventListener("abort", timeoutAbortListener);
     }

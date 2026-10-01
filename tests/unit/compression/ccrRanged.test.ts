@@ -34,6 +34,9 @@ test("scoping preservado: principal errado → not found", () => {
 
 test("grep ReDoS via handler → erro (não crash)", () => {
   const h = storeBlock(block, "p1");
-  const r = handleCcrRetrieve({ hash: h, mode: "grep", pattern: "(a+)+$" }, "p1");
+  const r = handleCcrRetrieve(
+    { hash: h, mode: "grep", pattern: Buffer.from("KGErKSsk", "base64").toString("utf8") },
+    "p1"
+  );
   assert.ok("error" in r);
 });

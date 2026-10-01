@@ -20,7 +20,7 @@ import path from "node:path";
 // (the function combo.ts calls) picks it up.
 
 const TEST_DATA_DIR = fs.mkdtempSync(
-  path.join(os.tmpdir(), "omniroute-provider-model-context-override-4125-")
+  path.join(os.tmpdir(), "agentproxy-provider-model-context-override-4125-")
 );
 process.env.DATA_DIR = TEST_DATA_DIR;
 
@@ -114,6 +114,34 @@ test("GET surfaces contextWindowOverride on the custom model row", async () => {
   assert.ok(row, "model row should be present");
   assert.equal(row!.contextWindowOverride, 200000);
   assert.equal(row!.contextWindowOverrideSource, "manual");
+});
+
+test("GET surfaces provider-level context overrides even without a custom model row", async () => {
+  contextOverrides.setModelContextOverride(
+    "openai-compatible-demo",
+    "synced-only-model",
+    262144,
+    "manual"
+  );
+
+  const getRes = await providerModelsRoute.GET(
+    new Request("http://localhost/api/provider-models?provider=openai-compatible-demo")
+  );
+  const body = (await getRes.json()) as {
+    modelContextOverrides?: Array<{
+      modelId?: string;
+      contextWindowOverride?: number;
+      contextWindowOverrideSource?: string;
+    }>;
+  };
+
+  assert.deepEqual(body.modelContextOverrides, [
+    {
+      modelId: "synced-only-model",
+      contextWindowOverride: 262144,
+      contextWindowOverrideSource: "manual",
+    },
+  ]);
 });
 
 test("PUT with contextWindowOverride: null clears a previously set override", async () => {

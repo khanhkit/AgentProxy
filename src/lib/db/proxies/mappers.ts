@@ -1,4 +1,5 @@
 import { decrypt, looksEncrypted } from "../encryption";
+import { decodeUserinfo } from "@/shared/utils/decodeUserinfo";
 import type {
   JsonRecord,
   ProxyScope,
@@ -165,6 +166,12 @@ export function normalizeAssignmentScopeId(scope: ProxyScope, scopeId?: string |
   return scope === "global" ? "__global__" : scopeId || null;
 }
 
+// Shared guard: a non-global scope requires a non-blank scopeId. Takes the
+// scope raw; DB call-sites below pass an already-normalized scope.
+export function isScopeIdMissing(scope: string, scopeId: string | null | undefined): boolean {
+  return scope !== "global" && !scopeId?.trim();
+}
+
 export function toLegacyProxyLevel(scope: ProxyScope) {
   return scope === "account" ? "key" : scope;
 }
@@ -180,8 +187,8 @@ export function coerceProxyPayload(value: unknown, fallbackName: string): ProxyP
         type: parsed.protocol.replace(":", "") || "http",
         host: parsed.hostname,
         port: Number(parsed.port || (parsed.protocol === "https:" ? "443" : "8080")),
-        username: parsed.username ? decodeURIComponent(parsed.username) : "",
-        password: parsed.password ? decodeURIComponent(parsed.password) : "",
+        username: parsed.username ? decodeUserinfo(parsed.username) : "",
+        password: parsed.password ? decodeUserinfo(parsed.password) : "",
         status: "active",
       };
     } catch {

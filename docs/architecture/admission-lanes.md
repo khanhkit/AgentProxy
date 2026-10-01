@@ -6,7 +6,7 @@ lastUpdated: 2026-08-10
 
 # Admission lanes (#9654) — two lane systems, what gates each, where each reports
 
-OmniRoute has **two** process-local lane systems with different scopes. They are
+AgentProxy has **two** process-local lane systems with different scopes. They are
 complementary; operators should know which one they are looking at.
 
 ## 1. Byte-level process-wide admission (`chatBodyAdmission.ts`)
@@ -26,8 +26,8 @@ complementary; operators should know which one they are looking at.
   before this fix) collapsed coding-agent fan-out (multiple subagents/CLIs,
   bodies routinely > 256 KB) to an effective concurrency of ~1, which 503'd
   under completely normal load. It now binds only when an operator explicitly
-  sets `OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT`. Left unset, admission is instead
-  gated by `OMNIROUTE_CHAT_MAX_INFLIGHT_BYTES` — a budget auto-derived from the
+  sets `AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT`. Left unset, admission is instead
+  gated by `AGENTPROXY_CHAT_MAX_INFLIGHT_BYTES` — a budget auto-derived from the
   process's real memory ceiling (`src/shared/middleware/admissionBudget.ts`):
   25% of the tighter of the V8 heap limit and any cgroup/container limit,
   divided by an 8x transient-amplification factor, clamped between 8 MiB and
@@ -41,11 +41,11 @@ complementary; operators should know which one they are looking at.
   `503 resource_pressure` under `critical` pressure, before any bytes are even
   ingested.
 - **Tuning:**
-  - `OMNIROUTE_CHAT_MAX_INFLIGHT_BYTES` — override for the auto-derived byte budget
-  - `OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT` — legacy request-count cap, opt-in only
-  - `OMNIROUTE_CHAT_ADMISSION_QUEUE_MS` — queue-wait before 503 (default 2000)
-  - `OMNIROUTE_CHAT_ADMISSION_MAX_QUEUED_BYTES` — queued-bytes heap valve (default 4 MB)
-  - `OMNIROUTE_CHAT_VIRTUAL_TTL_MS` / `OMNIROUTE_CHAT_VIRTUAL_MAX_SESSIONS` — deprecated
+  - `AGENTPROXY_CHAT_MAX_INFLIGHT_BYTES` — override for the auto-derived byte budget
+  - `AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT` — legacy request-count cap, opt-in only
+  - `AGENTPROXY_CHAT_ADMISSION_QUEUE_MS` — queue-wait before 503 (default 2000)
+  - `AGENTPROXY_CHAT_ADMISSION_MAX_QUEUED_BYTES` — queued-bytes heap valve (default 4 MB)
+  - `AGENTPROXY_CHAT_VIRTUAL_TTL_MS` / `AGENTPROXY_CHAT_VIRTUAL_MAX_SESSIONS` — deprecated
     no-ops since #10110 (accepted for config compatibility, ignored)
 - **Reports:** `GET /api/monitoring/health` → `chatAdmission` (#11244) — including
   the #503-fanout additions `inflightBytes`, `maxInflightBytes`, `budgetSource`
@@ -57,10 +57,10 @@ complementary; operators should know which one they are looking at.
 
 - **Scope:** tenant-key admission for provider dispatch — queue cost, latency-guided
   limit adaptation, lane queueing, and lane metrics.
-- **Gate:** **opt-in.** Disabled unless `OMNIROUTE_CHAT_VIRTUAL_LANES=true`. Without it,
+- **Gate:** **opt-in.** Disabled unless `AGENTPROXY_CHAT_VIRTUAL_LANES=true`. Without it,
   the adaptive controller keeps the shared queue behavior (criterion 1 of #9654 only
   holds once an operator enables lanes).
-- **Tuning:** `OMNIROUTE_CHAT_VIRTUAL_LANES` + adaptive config (`maxQueueCount`,
+- **Tuning:** `AGENTPROXY_CHAT_VIRTUAL_LANES` + adaptive config (`maxQueueCount`,
   `maxQueueCost`, `defaultMaxWaitMs`, …).
 - **Reports:** `GET /api/monitoring/health` → `adaptiveAdmission` → `laneCount`,
   `laneQueuedCount`, `laneQueuedCost`, `laneTenants` (opaque lane IDs, never raw
@@ -75,7 +75,7 @@ against the **parent's** tenant lane.
 
 - **Scope:** every fan-out target dispatched by combo, fusion, and the chaos engine.
   System 1 (byte-level) is unaffected — it never probes fan-out targets.
-- **Gate:** **opt-in with system 2.** A no-op when `OMNIROUTE_CHAT_VIRTUAL_LANES`
+- **Gate:** **opt-in with system 2.** A no-op when `AGENTPROXY_CHAT_VIRTUAL_LANES`
   is unset — the parent request already holds the shared-queue lease in that mode,
   so probing would double-count and reject combo targets.
 - **Semantics:**
@@ -111,7 +111,7 @@ against the **parent's** tenant lane.
 - `adaptiveAdmission.laneCount` / `laneTenants` → **adaptive virtual lanes** (system 2).
 - `adaptiveAdmission.virtualLanes === true` → the fan-out probes of section 3 are
   also active. A payload with `virtualLanes` missing or `false` means
-  `OMNIROUTE_CHAT_VIRTUAL_LANES` is unset — the byte-level lanes (system 1) are
+  `AGENTPROXY_CHAT_VIRTUAL_LANES` is unset — the byte-level lanes (system 1) are
   still active, but nothing under `adaptiveAdmission` (and no fan-out gating) is
   in effect until it is enabled.
 
@@ -123,15 +123,15 @@ another") is enforced by system 1 unconditionally and by system 2 once opt-in is
 
 ## 4. One-process long `/v1/responses` (healthy-headroom)
 
-[#10437](https://github.com/diegosouzapw/OmniRoute/pull/10437) added
+[#10437](https://github.com/khanhkit/AgentProxy/pull/10437) added
 `tryAcquireHealthyHeadroom` so a second structurally-heavy request is admitted
-when the heap is below `OMNIROUTE_CHAT_ADMISSION_HEAP_SHED_RATIO`. The BYTE
-path used by `admitChatRequest` (bodies ≥ `OMNIROUTE_CHAT_LARGE_BODY_BYTES`,
+when the heap is below `AGENTPROXY_CHAT_ADMISSION_HEAP_SHED_RATIO`. The BYTE
+path used by `admitChatRequest` (bodies ≥ `AGENTPROXY_CHAT_LARGE_BODY_BYTES`,
 default 256 KiB, including `POST /v1/responses`) uses the **same** escape.
 
 This is the supported **one-process** recipe for more than two concurrent long
 SSE `/v1/responses`: raise primary + healthy-headroom only as far as the heap
-and the process-wide inflight-byte budget (`OMNIROUTE_CHAT_MAX_INFLIGHT_BYTES`
+and the process-wide inflight-byte budget (`AGENTPROXY_CHAT_MAX_INFLIGHT_BYTES`
 / #10110) allow. Tens of long SSE clients (40–50) is that memory-budget
 question, not a hard “max 2” product limit. A pressured heap still sheds with
 retryable `503` so #7849 does not return.

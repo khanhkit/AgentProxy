@@ -35,11 +35,11 @@ export const MAX_BODY_BYTES_LLM_API = 50 * 1024 * 1024;
 export const MAX_BODY_BYTES_VIDEO_BRIDGE_BROKER = 50 * 1024 * 1024;
 
 /**
- * Media (image generate / edit / upscale / video) is not capped by OmniRoute.
- * JSON + base64 inflates payloads by roughly 33%, and provider limits vary by model,
- * so the provider should decide whether a media request is too large.
+ * Fixed application ceiling for image/video requests: 50 MiB.
+ * This remains above the existing 20 MiB decoded image-edit aggregate contract (including
+ * base64/JSON overhead) while preventing provider-specific limits from being the first bound.
  */
-export const MAX_BODY_BYTES_MEDIA = Number.POSITIVE_INFINITY;
+export const MAX_BODY_BYTES_MEDIA = 50 * 1024 * 1024;
 
 /** @deprecated Use MAX_BODY_BYTES_MEDIA — kept as alias for any external imports. */
 export const MAX_BODY_BYTES_IMAGE_EDIT = MAX_BODY_BYTES_MEDIA;
@@ -64,8 +64,8 @@ const ROUTE_LIMITS: BodySizeRule[] = [
   { prefix: "/api/db-backups/import", limit: MAX_BODY_BYTES_IMPORT },
   { prefix: "/api/v1/chat/completions", limit: MAX_BODY_BYTES_LLM_API },
   { prefix: "/api/v1/responses", limit: MAX_BODY_BYTES_LLM_API },
-  { prefix: "/api/v1/images", limit: MAX_BODY_BYTES_MEDIA },
-  { prefix: "/api/v1/videos", limit: MAX_BODY_BYTES_MEDIA },
+  { prefix: "/api/v1/images", limit: MAX_BODY_BYTES_MEDIA, fixedLimit: true },
+  { prefix: "/api/v1/videos", limit: MAX_BODY_BYTES_MEDIA, fixedLimit: true },
   { prefix: "/api/v1/audio/transcriptions", limit: MAX_BODY_BYTES_AUDIO },
   { prefix: "/api/v1/files", limit: MAX_BODY_BYTES_FILE },
 ];
@@ -90,6 +90,23 @@ export function getBodySizeLimit(pathname: string, settings?: Record<string, unk
   return customRule.fixedLimit ? customRule.limit : Math.max(customRule.limit, configuredLimit);
 }
 
+/** Build the stable 413 payload used by header and streamed body admission. */
+export function requestBodyTooLargeResponse(limit: number): Response {
+  return new Response(
+    JSON.stringify({
+      error: {
+        message: `Request body too large. Maximum allowed: ${formatBytes(limit)}`,
+        type: "payload_too_large",
+        code: "PAYLOAD_TOO_LARGE",
+      },
+    }),
+    {
+      status: 413,
+      headers: { "Content-Type": "application/json" },
+    }
+  );
+}
+
 /**
  * Check Content-Length header against the configured limit.
  * Returns a 413 Response if the body is too large, or null if OK.
@@ -100,21 +117,7 @@ export function checkBodySize(request: Request, limit: number = MAX_BODY_BYTES):
   if (contentLength) {
     const bytes = Number.parseInt(contentLength, 10);
     if (!Number.isNaN(bytes) && bytes > limit) {
-      return new Response(
-        JSON.stringify({
-          error: {
-            message: `Request body too large. Maximum allowed: ${formatBytes(limit)}`,
-            type: "payload_too_large",
-            code: "PAYLOAD_TOO_LARGE",
-          },
-        }),
-        {
-          status: 413,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      return requestBodyTooLargeResponse(limit);
     }
   }
 

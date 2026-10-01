@@ -36,7 +36,7 @@ import {
   CURSOR_TOKEN_LIFETIME_S,
 } from "@/lib/cursor/renewal";
 import { createKeyedMutex } from "@/shared/utils/keyedMutex";
-import { sanitizeErrorMessage } from "@omniroute/open-sse/utils/error";
+import { sanitizeErrorMessage } from "@agentproxy/open-sse/utils/error";
 
 function deferred<T = void>(): { promise: Promise<T>; resolve: (v: T) => void } {
   let resolve!: (v: T) => void;
@@ -111,7 +111,7 @@ describe("runCursorAgentNudge", () => {
   let logPath: string;
 
   beforeEach(() => {
-    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-cursor-nudge-"));
+    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-cursor-nudge-"));
     binary = path.join(tmpDir, "cursor-agent");
     writeFakeCursorAgentBinary(binary);
     logPath = path.join(tmpDir, "log.jsonl");
@@ -166,7 +166,7 @@ describe("checkCursorAgentAvailability", () => {
   let logPath: string;
 
   beforeEach(() => {
-    tmpHome = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-cursor-avail-"));
+    tmpHome = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-cursor-avail-"));
     process.env.HOME = tmpHome;
     process.env.USERPROFILE = tmpHome;
     binaryPath = path.join(tmpHome, ".local", "bin", "cursor-agent");
@@ -284,7 +284,7 @@ describe("getCachedCursorAgentAvailability (Task 5 Step 1 — 5-minute TTL wrapp
   let logPath: string;
 
   beforeEach(() => {
-    tmpHome = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-cursor-avail-cache-"));
+    tmpHome = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-cursor-avail-cache-"));
     process.env.HOME = tmpHome;
     process.env.USERPROFILE = tmpHome;
     writeFakeCursorAgentBinary(path.join(tmpHome, ".local", "bin", "cursor-agent"));
@@ -345,7 +345,7 @@ describe("renewCursorConnection", () => {
     originalPlatformDescriptor = Object.getOwnPropertyDescriptor(process, "platform");
     Object.defineProperty(process, "platform", { value: "darwin", configurable: true });
 
-    tmpHome = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-cursor-renew-"));
+    tmpHome = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-cursor-renew-"));
     process.env.HOME = tmpHome;
     process.env.USERPROFILE = tmpHome;
 

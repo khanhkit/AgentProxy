@@ -24,7 +24,7 @@ function toHex(bytes: Uint8Array): string {
 }
 
 /**
- * Rename a Node process title so OmniRoute is identifiable in `ps`/`htop`
+ * Rename a Node process title so AgentProxy is identifiable in `ps`/`htop`
  * instead of the generic Next.js standalone server name.
  *
  * Only rewrites titles that start with "next-server", preserving any
@@ -35,7 +35,7 @@ function toHex(bytes: Uint8Array): string {
 export function renameProcessTitle(currentTitle: string): string {
   if (!currentTitle) return currentTitle;
   if (!currentTitle.startsWith("next-server")) return currentTitle;
-  return `omniroute${currentTitle.slice("next-server".length)}`;
+  return `agentproxy${currentTitle.slice("next-server".length)}`;
 }
 
 // `normalizeBootError` now lives in `@/lib/instrumentationBootError` (imported
@@ -103,7 +103,7 @@ export async function ensureDbReadyForBoot(
 }
 
 function isBackgroundServicesDisabled(): boolean {
-  const raw = process.env.OMNIROUTE_DISABLE_BACKGROUND_SERVICES;
+  const raw = process.env.AGENTPROXY_DISABLE_BACKGROUND_SERVICES;
   if (!raw) return false;
   return new Set(["1", "true", "yes", "on"]).has(raw.trim().toLowerCase());
 }
@@ -238,7 +238,7 @@ export async function scanComboModelNameCollisionsAtBoot(): Promise<void> {
 /**
  * #9654 U7: fold a dashboard DB toggle for the adaptive virtual-lanes flag into
  * the process-global admission runtime's env at boot. Env-wins: no-op when the
- * operator's OMNIROUTE_CHAT_VIRTUAL_LANES env var is set (the lazy runtime
+ * operator's AGENTPROXY_CHAT_VIRTUAL_LANES env var is set (the lazy runtime
  * already reads process.env correctly). The runtime reads env only at
  * construction, so this must run before the first request touches it — hence
  * awaited here, after ensureDbReadyForBoot(). Non-fatal.
@@ -276,7 +276,7 @@ export async function warmAdaptiveVirtualLanesIntoRuntime(): Promise<void> {
 export async function registerQuotaFetchers(): Promise<void> {
   // Side-effect registrations for agentrouter, freeModel, grokCli, xaiOauth,
   // firecrawl (same ordering as the legacy chat.ts path).
-  await import("@omniroute/open-sse/services/quotaTrackersBatch.ts");
+  await import("@agentproxy/open-sse/services/quotaTrackersBatch.ts");
 
   const [
     { registerCodexQuotaFetcher },
@@ -290,16 +290,16 @@ export async function registerQuotaFetchers(): Promise<void> {
     { registerGrokWebQuotaFetcher },
     { registerGenericQuotaFetchers },
   ] = await Promise.all([
-    import("@omniroute/open-sse/services/codexQuotaFetcher"),
-    import("@omniroute/open-sse/services/bailianQuotaFetcher"),
-    import("@omniroute/open-sse/services/qwenTokenPlanQuotaFetcher"),
-    import("@omniroute/open-sse/services/crofUsageFetcher"),
-    import("@omniroute/open-sse/services/deepseekQuotaFetcher"),
-    import("@omniroute/open-sse/services/moonshotQuotaFetcher"),
-    import("@omniroute/open-sse/services/openrouterQuotaFetcher"),
-    import("@omniroute/open-sse/services/opencodeQuotaFetcher"),
-    import("@omniroute/open-sse/services/grokQuotaFetcher"),
-    import("@omniroute/open-sse/services/genericQuotaFetcher"),
+    import("@agentproxy/open-sse/services/codexQuotaFetcher"),
+    import("@agentproxy/open-sse/services/bailianQuotaFetcher"),
+    import("@agentproxy/open-sse/services/qwenTokenPlanQuotaFetcher"),
+    import("@agentproxy/open-sse/services/crofUsageFetcher"),
+    import("@agentproxy/open-sse/services/deepseekQuotaFetcher"),
+    import("@agentproxy/open-sse/services/moonshotQuotaFetcher"),
+    import("@agentproxy/open-sse/services/openrouterQuotaFetcher"),
+    import("@agentproxy/open-sse/services/opencodeQuotaFetcher"),
+    import("@agentproxy/open-sse/services/grokQuotaFetcher"),
+    import("@agentproxy/open-sse/services/genericQuotaFetcher"),
   ]);
 
   registerCodexQuotaFetcher();
@@ -332,13 +332,24 @@ export async function registerQuotaFetchers(): Promise<void> {
 export async function registerNodejs(): Promise<void> {
   markServerStarting();
 
-  // Rename the process title so OmniRoute is identifiable in ps/htop instead
+  // Rename the process title so AgentProxy is identifiable in ps/htop instead
   // of the generic "next-server" standalone server name.
   process.title = renameProcessTitle(process.title);
 
+  // #13695: the inference API and `/v1/models` follow DIFFERENT auth settings,
+  // so `GET /v1/models` answering 401 does not mean inference is protected.
+  // #12568 added this warning for the API bridge and live-WS servers, but not
+  // for the Next server that actually answers `/v1/chat/completions` and
+  // `/v1/responses` — and that one binds every interface by default. Runs
+  // before the DB work below so it is not buried under the boot log.
+  (await import("@/lib/startup/nonLoopbackApiKeyGuard")).warnIfInferenceServerExposed();
+
   // Initialize proxy fetch patch FIRST (before any HTTP requests)
-  await import("@omniroute/open-sse/utils/proxyFetch.ts");
+  await import("@agentproxy/open-sse/utils/proxyFetch.ts");
   console.log("[STARTUP] Global fetch proxy patch initialized");
+
+  // Subscribe the proxy set-aside webhook bridge (side-effect import only).
+  await import("@/lib/proxyEvents/proxyTransitionBridge");
 
   // Register quota fetchers early so combo routing can use real quota-aware
   // scoring for generic providers in the App Router production runtime.
@@ -371,7 +382,7 @@ export async function registerNodejs(): Promise<void> {
   // that cause every connection to be skipped by getProviderCredentials(), making
   // all subsequent requests time out at Bottleneck's maxWaitMs (120 s default).
   // Terminal states (banned / expired / credits_exhausted) are intentionally kept.
-  // See: https://github.com/diegosouzapw/OmniRoute/issues/3625 (Part A)
+  // See: https://github.com/khanhkit/AgentProxy/issues/3625 (Part A)
   try {
     const { clearStaleCrashCooldowns } = await import("@/lib/db/providers");
     const { cleared } = clearStaleCrashCooldowns();
@@ -446,7 +457,7 @@ export async function registerNodejs(): Promise<void> {
     console.log(
       `[STARTUP] Cloud/model sync background bootstrap ${cloudSyncInitialized ? "initialized" : "skipped"}`
     );
-    const { initBatchProcessor } = await import("@omniroute/open-sse/services/batchProcessor");
+    const { initBatchProcessor } = await import("@agentproxy/open-sse/services/batchProcessor");
     initBatchProcessor();
     console.log("[STARTUP] Batch processor started");
   }
@@ -480,7 +491,7 @@ export async function registerNodejs(): Promise<void> {
     // Restore Global System Prompt into in-memory config (#2468/#2470)
     if (settings.systemPrompt) {
       const { setSystemPromptConfig } =
-        await import("@omniroute/open-sse/services/systemPrompt.ts");
+        await import("@agentproxy/open-sse/services/systemPrompt.ts");
       setSystemPromptConfig(settings.systemPrompt);
       console.log("[STARTUP] Global System Prompt restored from settings");
     }
@@ -491,7 +502,7 @@ export async function registerNodejs(): Promise<void> {
     // the passthrough default on every restart. Previously this was only wired into
     // the unused `server-init.ts`, so it never ran in production.
     const { hydrateThinkingBudgetConfig } =
-      await import("@omniroute/open-sse/services/thinkingBudget.ts");
+      await import("@agentproxy/open-sse/services/thinkingBudget.ts");
     if (hydrateThinkingBudgetConfig(settings)) {
       console.log("[STARTUP] Thinking-Budget config restored from settings");
     }
@@ -502,7 +513,7 @@ export async function registerNodejs(): Promise<void> {
     // reverts to disabled + the default model map on every restart. Same shape as the
     // Thinking-Budget restore above; must live here, not in the unused server-init.ts.
     const { hydrateTaskRoutingConfig } =
-      await import("@omniroute/open-sse/services/taskAwareRouter.ts");
+      await import("@agentproxy/open-sse/services/taskAwareRouter.ts");
     if (hydrateTaskRoutingConfig(settings)) {
       console.log("[STARTUP] Task-Aware Routing config restored from settings");
     }
@@ -539,7 +550,7 @@ export async function registerNodejs(): Promise<void> {
   // connections (cookies that expired overnight) get re-probed and recovered on
   // startup — instead of staying red until the first real request lazily imports
   // the on-demand credentialGate. Idempotent; self-disables via
-  // OMNIROUTE_DISABLE_CREDENTIAL_HEALTH_CHECK and its cadence is tunable via
+  // AGENTPROXY_DISABLE_CREDENTIAL_HEALTH_CHECK and its cadence is tunable via
   // CREDENTIAL_HEALTH_CHECK_INTERVAL. NOTE: this MUST live here (the real Next.js
   // instrumentation startup), NOT in the unused src/server-init.ts.
   try {
@@ -623,7 +634,7 @@ export async function registerNodejs(): Promise<void> {
           console.warn("[STARTUP] Embed WS proxy failed to start (non-fatal):", msg);
         }),
 
-      import("@omniroute/open-sse/services/autoRefreshDaemon")
+      import("@agentproxy/open-sse/services/autoRefreshDaemon")
         .then((m) => m.autoRefreshDaemon.start())
         .catch((err: unknown) => {
           const msg = err instanceof Error ? err.message : String(err);
@@ -742,7 +753,7 @@ export async function registerNodejs(): Promise<void> {
         }),
 
       // Backup schedule (#8513): execute `backup-schedule.json` cron server-side.
-      // Reads the schedule written by `omniroute backup auto enable` and fires
+      // Reads the schedule written by `agentproxy backup auto enable` and fires
       // `runBackupCommand` when the cron expression matches. Self-gated: no-op
       // when no schedule file exists or the schedule is disabled. Never fatal.
       import("@/lib/jobs/backupScheduleJob")
@@ -754,7 +765,7 @@ export async function registerNodejs(): Promise<void> {
 
       // Real-time dashboard WebSocket daemon (port 20132): powers Combo Studio Live,
       // the Home live-pulse, and Live Compression. Side-effect import triggers the
-      // flag-gated auto-start (OMNIROUTE_ENABLE_LIVE_WS, default ON).
+      // flag-gated auto-start (AGENTPROXY_ENABLE_LIVE_WS, default ON).
       import("@/server/ws/liveServer")
         .then(() => {
           console.log("[STARTUP] Live dashboard WebSocket daemon bootstrap invoked");

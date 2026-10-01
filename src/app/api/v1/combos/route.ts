@@ -2,15 +2,15 @@
  * GET /v1/combos — API-key safe read of combo metadata.
  *
  * Issue #2300: `/api/combos` is management-gated, which blocks integrations
- * like `opencode-omniroute-auth` that need to enrich combo capabilities from
+ * like `opencode-agentproxy-auth` that need to enrich combo capabilities from
  * a normal Bearer API key. This endpoint exposes the same public metadata
  * with the API-key auth model used by `/v1/models` and projects out internal
  * routing details (account/connection ids, weights, internal labels).
  */
 import { NextResponse } from "next/server";
 import { getCombos } from "@/lib/db/combos";
-import { errorResponse } from "@omniroute/open-sse/utils/error.ts";
-import { HTTP_STATUS } from "@omniroute/open-sse/config/constants.ts";
+import { errorResponse } from "@agentproxy/open-sse/utils/error.ts";
+import { HTTP_STATUS } from "@agentproxy/open-sse/config/constants.ts";
 import { extractApiKey, isValidApiKey } from "@/sse/services/auth";
 import { isDashboardSessionAuthenticated } from "@/shared/utils/apiAuth";
 import { isRequireApiKeyEnabled } from "@/shared/utils/featureFlags";
@@ -43,9 +43,15 @@ export async function GET(request: Request) {
 
   try {
     const combos = await getCombos();
-    const data = (Array.isArray(combos) ? combos : [])
-      // #3979: advertise resolved capabilities so importing clients enable them
-      .map((c) => projectCombo(c as Record<string, unknown>, { includeCapabilities: true }))
+    const allCombos = Array.isArray(combos) ? combos : [];
+    const data = allCombos
+      // #3979/#14232: include nested combo-ref leaves in projected capabilities.
+      .map((c) =>
+        projectCombo(c as Record<string, unknown>, {
+          includeCapabilities: true,
+          allCombos,
+        })
+      )
       .filter((c): c is PublicCombo => c !== null);
 
     return NextResponse.json(

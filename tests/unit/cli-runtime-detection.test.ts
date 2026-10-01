@@ -15,7 +15,7 @@ const { getCliRuntimeStatus, getKnownToolPaths, normalizeCliToolId, CLI_TOOL_IDS
 // ─── Helpers ──────────────────────────────────────────────────
 
 function createTempDir() {
-  const testRoot = path.join(os.tmpdir(), "omniroute-test-tmp");
+  const testRoot = path.join(os.tmpdir(), "agentproxy-test-tmp");
   if (!fs.existsSync(testRoot)) {
     fs.mkdirSync(testRoot, { recursive: true });
   }
@@ -247,7 +247,9 @@ describe("Continue CLI detection", () => {
     const previousPath = process.env.PATH;
     const previousOverride = process.env.CLI_CONTINUE_BIN;
     process.env.PATH = "";
-    delete process.env.CLI_CONTINUE_BIN;
+    // Force an explicit missing binary so host/runner installations in known
+    // global paths cannot make this absence test environment-dependent.
+    process.env.CLI_CONTINUE_BIN = path.join(createTempDir(), "missing-cn");
 
     try {
       const result = await getCliRuntimeStatus("continue");
@@ -268,6 +270,15 @@ describe("Continue CLI detection", () => {
     assert.ok(
       knownPaths.some((knownPath) => /^cn(?:\.cmd)?$/i.test(path.basename(knownPath))),
       "Continue detection should search for the cn executable"
+    );
+  });
+});
+describe("Oh My Pi (omp) CLI detection", () => {
+  it("should enumerate omp in known installation paths", () => {
+    const knownPaths = getKnownToolPaths("omp");
+    assert.ok(
+      knownPaths.some((knownPath) => /^omp(?:\.exe|\.cmd)?$/i.test(path.basename(knownPath))),
+      "omp detection should search for the omp executable"
     );
   });
 });

@@ -63,10 +63,10 @@ export function initRoutingObservability(env: NodeJS.ProcessEnv = process.env): 
   registerRoutingEventSink(qualitySink);
 
   if (isRoutingOtelEnabled(env)) {
-    const endpoint = (env.OMNIROUTE_OTEL_ENDPOINT ?? env.OTEL_EXPORTER_OTLP_ENDPOINT ?? "").trim();
+    const endpoint = (env.AGENTPROXY_OTEL_ENDPOINT ?? env.OTEL_EXPORTER_OTLP_ENDPOINT ?? "").trim();
     otelSink = new OtlpHttpsEventSink({
       endpoint,
-      serviceName: env.OTEL_SERVICE_NAME ?? "omniroute",
+      serviceName: env.OTEL_SERVICE_NAME ?? "agentproxy",
       maxBatchSize: 64,
       flushIntervalMs: 10_000,
     });

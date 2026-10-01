@@ -1,0 +1,1 @@
+- **fix(i18n):** reconcile the reviewed Brazilian Portuguese dashboard translations with the current AgentProxy catalog and add a reusable locale-review helper.

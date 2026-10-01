@@ -25,7 +25,7 @@ import os from "node:os";
 import path from "node:path";
 
 // ── test isolation: dedicated DATA_DIR ────────────────────────────────────────
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-mitm-upstream-ca-wiring-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-mitm-upstream-ca-wiring-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 // Ensure the mitm subdir exists for CA path file writes.

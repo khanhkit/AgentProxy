@@ -59,7 +59,7 @@ test("extracts a single allowlisted stream to bounded WebVTT text", async () => 
     }
     return { stdout: "", stderr: "" };
   };
-  const outputPath = "/tmp/omniroute-subtitle-runtime-test.vtt";
+  const outputPath = "/tmp/agentproxy-subtitle-runtime-test.vtt";
   await extractSubtitleStreamToFile("/tmp/input.video", outputPath, 3, {
     runner,
     timeoutMs: 5_000,
@@ -69,13 +69,13 @@ test("extracts a single allowlisted stream to bounded WebVTT text", async () => 
 });
 
 test("readBoundedSubtitleOutput rejects output above the byte cap", async () => {
-  const outputPath = "/tmp/omniroute-subtitle-runtime-oversized.vtt";
+  const outputPath = "/tmp/agentproxy-subtitle-runtime-oversized.vtt";
   await writeFile(outputPath, "x".repeat(VIDEO_SUBTITLE_MAX_OUTPUT_BYTES + 1));
   await assert.rejects(() => readBoundedSubtitleOutput(outputPath), /byte limit/);
 });
 
 test("readBoundedSubtitleOutput rejects an empty extraction result", async () => {
-  const outputPath = "/tmp/omniroute-subtitle-runtime-empty.vtt";
+  const outputPath = "/tmp/agentproxy-subtitle-runtime-empty.vtt";
   await writeFile(outputPath, "");
   await assert.rejects(() => readBoundedSubtitleOutput(outputPath), /no output/);
 });
@@ -118,7 +118,7 @@ test("full bytes-to-WebVTT pipeline probes the container once, extracts up to tw
   );
   assert.equal(calls.filter((name) => name === "ffmpeg").length, 2);
 
-  assert.ok(capturedInputPath.includes("omniroute-video-subtitle-"));
+  assert.ok(capturedInputPath.includes("agentproxy-video-subtitle-"));
   const temporaryDirectory = capturedInputPath.slice(0, capturedInputPath.lastIndexOf("/"));
   await assert.rejects(() => access(temporaryDirectory));
 });
@@ -169,7 +169,7 @@ test("temp directory is removed even when the container probe itself fails", asy
       timeoutMs: 5_000,
     })
   );
-  assert.ok(capturedInputPath.includes("omniroute-video-subtitle-"));
+  assert.ok(capturedInputPath.includes("agentproxy-video-subtitle-"));
   const temporaryDirectory = capturedInputPath.slice(0, capturedInputPath.lastIndexOf("/"));
   await assert.rejects(() => access(temporaryDirectory));
 });

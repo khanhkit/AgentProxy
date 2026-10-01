@@ -9,7 +9,7 @@ import {
 // GHSA-6c7w-56xp-wpc6 follow-up. The dedup layer shares ONE upstream call — and
 // therefore one response object — between every concurrent caller landing on the
 // same hash. The hash canonicalized model + prompt + sampling params and nothing
-// about WHO was asking, so two distinct OmniRoute API keys issuing the same
+// about WHO was asking, so two distinct AgentProxy API keys issuing the same
 // request joined the same in-flight promise: the response was produced with the
 // initiator's provider connection, under the initiator's per-key policy, and
 // handed to a different authenticated principal.

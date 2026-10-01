@@ -67,31 +67,31 @@ function seedExistingDb(db: ReturnType<typeof createFileDb>): void {
     CREATE TABLE provider_connections (id TEXT PRIMARY KEY);
     CREATE TABLE combos (id TEXT PRIMARY KEY);
     CREATE TABLE call_logs (id TEXT PRIMARY KEY);
-    CREATE TABLE _omniroute_migrations (
+    CREATE TABLE _agentproxy_migrations (
       version TEXT PRIMARY KEY,
       name TEXT NOT NULL,
       applied_at TEXT NOT NULL DEFAULT (datetime('now'))
     );
     INSERT INTO provider_connections (id) VALUES ('existing-data');
-    INSERT INTO _omniroute_migrations (version, name) VALUES ('001', 'initial_schema');
+    INSERT INTO _agentproxy_migrations (version, name) VALUES ('001', 'initial_schema');
   `);
 }
 
 function seedSetupSkeleton(db: ReturnType<typeof createFileDb>): void {
   db.exec(`
     CREATE TABLE provider_connections (id TEXT PRIMARY KEY);
-    CREATE TABLE _omniroute_migrations (
+    CREATE TABLE _agentproxy_migrations (
       version TEXT PRIMARY KEY,
       name TEXT NOT NULL,
       applied_at TEXT NOT NULL DEFAULT (datetime('now'))
     );
     INSERT INTO provider_connections (id) VALUES ('setup-preserved-data');
-    INSERT INTO _omniroute_migrations (version, name) VALUES ('001', 'initial_schema');
+    INSERT INTO _agentproxy_migrations (version, name) VALUES ('001', 'initial_schema');
   `);
 }
 
 function makeTempDataDir(): string {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-migration-snapshot-"));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-migration-snapshot-"));
   fs.mkdirSync(path.join(dir, "db_backups"), { recursive: true });
   return dir;
 }
@@ -217,7 +217,7 @@ test(
         "an ordinary pending migration must not run without its mandatory snapshot"
       );
       assert.deepEqual(
-        db.prepare("SELECT version, name FROM _omniroute_migrations ORDER BY version").all(),
+        db.prepare("SELECT version, name FROM _agentproxy_migrations ORDER BY version").all(),
         [{ version: "001", name: "initial_schema" }]
       );
       assert.deepEqual(listCanonicalBackups(backupDir), []);

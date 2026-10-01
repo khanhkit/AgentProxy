@@ -21,7 +21,7 @@
  * providers constants) — never from ProviderDetailPageClient.
  */
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { useNotificationStore } from "@/store/notificationStore";
 import { isClaudeCodeCompatibleProvider } from "@/shared/constants/providers";
@@ -135,7 +135,7 @@ async function resolveConnectionProxies(
 
 /**
  * Upstream proxy routing mode for Claude-Code-compatible providers. `native`
- * uses OmniRoute's own executor; `cliproxyapi`/`dario` route every request
+ * uses AgentProxy's own executor; `cliproxyapi`/`dario` route every request
  * through that backend directly; `fallback` tries native first and retries
  * via `fallbackBackend` on failure. Mirrors the `mode` enum in
  * src/app/api/upstream-proxy/[providerId]/route.ts.
@@ -191,6 +191,7 @@ export interface UseProviderConnectionsReturn {
   // Connection fetch
   fetchConnections: () => Promise<void>;
   fetchProxyConfig: () => Promise<void>;
+  refreshProxyState: () => Promise<void>;
 
   // Single-connection handlers
   deleteConfirm: ConnectionDeleteConfirmState;
@@ -213,8 +214,8 @@ export interface UseProviderConnectionsReturn {
   /**
    * Manually lifts a persisted 429 cooldown: PUTs `rateLimitedUntil: null`
    * (plus backoff reset server-side) so the connection rejoins routing
-   * immediately. For the "quota already refreshed upstream but OmniRoute
-   * still benches the key" case — the cooldown timer is OmniRoute's own
+   * immediately. For the "quota already refreshed upstream but AgentProxy
+   * still benches the key" case — the cooldown timer is AgentProxy's own
    * lesson, not upstream truth.
    */
   handleClearCooldown: (connectionId: string) => Promise<void>;
@@ -293,6 +294,13 @@ export function useProviderConnections(
     Record<string, { proxy: any; level: string } | null>
   >({});
 
+  // Latest connections, readable from a stable callback without making that
+  // callback (and every consumer prop depending on it) change every fetch.
+  const connectionsRef = useRef<ConnectionRowConnection[]>(connections);
+  useEffect(() => {
+    connectionsRef.current = connections;
+  }, [connections]);
+
   // ── Upstream proxy routing state (native / CLIProxyAPI / Dario / fallback) ─
   const [upstreamProxyMode, setUpstreamProxyModeState] = useState<UpstreamProxyMode>("native");
   const [upstreamProxyFallbackBackend, setUpstreamProxyFallbackBackendState] =
@@ -312,6 +320,28 @@ export function useProviderConnections(
   const fetchProxyConfig = useCallback(async () => {
     const result = await loadProxyConfigData();
     if (result) setProxyConfig(result.config);
+  }, []);
+
+  /**
+   * Refresh every proxy view the page renders after a proxy assignment is
+   * written elsewhere (ProxyConfigModal saves/clears through
+   * `/api/settings/proxies/assignments`).
+   *
+   * Two independent sources back those views and BOTH must be re-read:
+   *  - `proxyConfig`   ← GET /api/settings/proxy          (provider-level chip)
+   *  - `connProxyMap`  ← GET /api/settings/proxy?resolve= (per-connection badges)
+   *
+   * The `connProxyMap` effect below is keyed on [loading, connections], and a
+   * proxy save changes neither, so without this callback the account-row
+   * badges keep showing pre-save state until a manual reload.
+   */
+  const refreshProxyState = useCallback(async () => {
+    const [configResult, map] = await Promise.all([
+      loadProxyConfigData(),
+      resolveConnectionProxies(connectionsRef.current),
+    ]);
+    if (configResult) setProxyConfig(configResult.config);
+    if (map) setConnProxyMap(map);
   }, []);
 
   const fetchConnections = useCallback(async () => {
@@ -576,7 +606,7 @@ export function useProviderConnections(
   };
 
   const UPSTREAM_PROXY_MODE_MESSAGES: Record<UpstreamProxyMode, string> = {
-    native: "Requests now use native OmniRoute (direct)",
+    native: "Requests now use native AgentProxy (direct)",
     cliproxyapi: "Requests now route through CLIProxyAPI (deeper emulation)",
     dario: "Requests now route through Dario (Claude subscription proxy)",
     fallback: "Requests try native first, retrying via the configured backend on failure",
@@ -688,7 +718,7 @@ export function useProviderConnections(
   // Manually lift a persisted 429 cooldown. Complements the automatic paths
   // (Test-button success / Edit-modal key re-validation): those only clear the
   // bench as a side effect of a successful upstream round-trip, so a user whose
-  // quota already refreshed upstream still waits out OmniRoute's local timer.
+  // quota already refreshed upstream still waits out AgentProxy's local timer.
   // PUT /api/providers/[id] applies updateProviderConnectionDefaults, which
   // resets backoffLevel → 0 alongside rateLimitedUntil → null.
   const handleClearCooldown = async (connectionId: string) => {
@@ -1108,6 +1138,7 @@ export function useProviderConnections(
     // Fetch
     fetchConnections,
     fetchProxyConfig,
+    refreshProxyState,
 
     // Single-connection handlers
     deleteConfirm,

@@ -438,7 +438,7 @@ export async function GET(request: Request) {
     }
     const { computeCostFromPricing, getCodexFastCostMultiplier, normalizeModelName } =
       await import("@/lib/usage/costCalculator");
-    const { PROVIDER_ID_TO_ALIAS } = await import("@omniroute/open-sse/config/providerModels");
+    const { PROVIDER_ID_TO_ALIAS } = await import("@agentproxy/open-sse/config/providerModels");
 
     const summaryRow = getUsageSummary(unifiedSource, unifiedParams) as Record<string, unknown>;
 
@@ -885,10 +885,15 @@ export async function GET(request: Request) {
       }
     }
 
+    const modelNames = Array.from(allModels);
     const dailyByModel = Object.keys(dailyByModelMap)
       .sort()
-      .map((date) => ({ date, ...dailyByModelMap[date] }));
-    const modelNames = Array.from(allModels);
+      .map((date) => ({
+        date,
+        ...Object.fromEntries(
+          modelNames.map((model) => [model, dailyByModelMap[date][model] || 0])
+        ),
+      }));
 
     const analytics = {
       summary,
@@ -961,7 +966,7 @@ export async function GET(request: Request) {
     console.error("Error computing analytics:", error);
     // Surface the real (sanitized) reason so the dashboard can show it instead of a
     // generic placeholder (#3356). buildErrorBody strips stacks/absolute paths.
-    const { buildErrorBody } = await import("@omniroute/open-sse/utils/error");
+    const { buildErrorBody } = await import("@agentproxy/open-sse/utils/error");
     const message = error instanceof Error ? error.message : String(error);
     return NextResponse.json(buildErrorBody(500, message || "Failed to compute analytics"), {
       status: 500,

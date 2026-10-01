@@ -12,9 +12,9 @@ test("createProgram returns a Command instance", () => {
   assert.equal(typeof program.commands, "object", "has commands array");
 });
 
-test("program name is 'omniroute'", () => {
+test("program name is 'agentproxy'", () => {
   const program = createProgram();
-  assert.equal(program.name(), "omniroute");
+  assert.equal(program.name(), "agentproxy");
 });
 
 test("program description is non-empty", () => {
@@ -55,14 +55,14 @@ test("program has --api-key option bound to env", () => {
   const program = createProgram();
   const opt = program.options.find((o) => o.long === "--api-key");
   assert.ok(opt, "--api-key option exists");
-  assert.equal(opt.envVar, "OMNIROUTE_API_KEY");
+  assert.equal(opt.envVar, "AGENTPROXY_API_KEY");
 });
 
 test("program has --base-url option bound to env", () => {
   const program = createProgram();
   const opt = program.options.find((o) => o.long === "--base-url");
   assert.ok(opt, "--base-url option exists");
-  assert.equal(opt.envVar, "OMNIROUTE_BASE_URL");
+  assert.equal(opt.envVar, "AGENTPROXY_BASE_URL");
 });
 
 // ─── registered commands ──────────────────────────────────────────────────────
@@ -172,7 +172,7 @@ test("nodes endpoint commands keep the global server target separate from payloa
     },
   ];
   const originalFetch = globalThis.fetch;
-  const originalBaseUrl = process.env.OMNIROUTE_BASE_URL;
+  const originalBaseUrl = process.env.AGENTPROXY_BASE_URL;
 
   try {
     for (const { command, args, expectedUrl, expectedMethod } of cases) {
@@ -192,7 +192,7 @@ test("nodes endpoint commands keep the global server target separate from payloa
       const program = createProgram();
       await program.parseAsync([
         "node",
-        "omniroute",
+        "agentproxy",
         "--base-url",
         "https://server.example",
         "nodes",
@@ -207,7 +207,7 @@ test("nodes endpoint commands keep the global server target separate from payloa
       assert.equal(capturedBody.baseUrl, "https://provider.example/v1");
     }
 
-    process.env.OMNIROUTE_BASE_URL = "https://env-server.example";
+    process.env.AGENTPROXY_BASE_URL = "https://env-server.example";
     let envCapturedUrl = "";
     let envCapturedBody: Record<string, unknown> = {};
     globalThis.fetch = (async (url, init) => {
@@ -222,7 +222,7 @@ test("nodes endpoint commands keep the global server target separate from payloa
     const envProgram = createProgram();
     await envProgram.parseAsync([
       "node",
-      "omniroute",
+      "agentproxy",
       "nodes",
       "validate",
       "--provider",
@@ -235,8 +235,8 @@ test("nodes endpoint commands keep the global server target separate from payloa
     assert.equal(envCapturedBody.baseUrl, "https://provider.example/v1");
   } finally {
     globalThis.fetch = originalFetch;
-    if (originalBaseUrl === undefined) delete process.env.OMNIROUTE_BASE_URL;
-    else process.env.OMNIROUTE_BASE_URL = originalBaseUrl;
+    if (originalBaseUrl === undefined) delete process.env.AGENTPROXY_BASE_URL;
+    else process.env.AGENTPROXY_BASE_URL = originalBaseUrl;
   }
 });
 
@@ -245,7 +245,7 @@ test("nodes endpoint commands keep the global server target separate from payloa
 test("--help throws CommanderError with exit code 0", async () => {
   const program = createProgram();
   try {
-    await program.parseAsync(["node", "omniroute", "--help"]);
+    await program.parseAsync(["node", "agentproxy", "--help"]);
     assert.fail("expected error to be thrown");
   } catch (err: any) {
     assert.equal(err.exitCode, 0, `expected exitCode 0, got: ${err.exitCode}`);
@@ -256,7 +256,7 @@ test("--help throws CommanderError with exit code 0", async () => {
 test("--version throws CommanderError with exit code 0", async () => {
   const program = createProgram();
   try {
-    await program.parseAsync(["node", "omniroute", "--version"]);
+    await program.parseAsync(["node", "agentproxy", "--version"]);
     assert.fail("expected error to be thrown");
   } catch (err: any) {
     assert.equal(err.exitCode, 0, `expected exitCode 0, got: ${err.exitCode}`);
@@ -266,7 +266,7 @@ test("--version throws CommanderError with exit code 0", async () => {
 test("unknown global flag throws CommanderError with exit code 1", async () => {
   const program = createProgram();
   try {
-    await program.parseAsync(["node", "omniroute", "--definitely-not-a-flag"]);
+    await program.parseAsync(["node", "agentproxy", "--definitely-not-a-flag"]);
     assert.fail("expected error to be thrown");
   } catch (err: any) {
     assert.ok(err.exitCode !== undefined, "error has exitCode");

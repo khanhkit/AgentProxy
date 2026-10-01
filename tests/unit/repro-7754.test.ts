@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { createBuiltinAutoCombo } from "@omniroute/open-sse/services/autoCombo/builtinCatalog.ts";
+import { createBuiltinAutoCombo } from "@agentproxy/open-sse/services/autoCombo/builtinCatalog.ts";
 
 // #7754: `auto/best-free` combo name must never leak downstream as the model id.
 // When the free-tier candidate pool resolves non-empty, every model in the combo

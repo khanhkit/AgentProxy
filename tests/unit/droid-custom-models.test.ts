@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 
 import {
   buildDroidCustomModels,
-  isOmniRouteCustomModel,
+  isAgentProxyCustomModel,
   normalizeDroidModelList,
 } from "../../src/shared/services/droidCustomModels.ts";
 
@@ -43,11 +43,11 @@ test("normalizeDroidModelList returns [] on missing/invalid input", () => {
 test("buildDroidCustomModels emits one entry per model with sequential ids", () => {
   const out = buildDroidCustomModels(["openai/gpt-5", "anthropic/claude-4"], {
     baseUrl: "http://localhost:20128/v1",
-    apiKey: "sk_omniroute",
+    apiKey: "sk_agentproxy",
   });
 
   assert.equal(out.length, 2);
-  assert.equal(out[0].id, "custom:OmniRoute-0");
+  assert.equal(out[0].id, "custom:AgentProxy-0");
   assert.equal(out[0].index, 0);
   assert.equal(out[0].model, "openai/gpt-5");
   assert.equal(out[0].displayName, "openai/gpt-5");
@@ -55,34 +55,34 @@ test("buildDroidCustomModels emits one entry per model with sequential ids", () 
   assert.equal(out[0].maxOutputTokens, 131072);
   assert.equal(out[0].noImageSupport, false);
   assert.equal(out[0].baseUrl, "http://localhost:20128/v1");
-  assert.equal(out[0].apiKey, "sk_omniroute");
-  assert.equal(out[1].id, "custom:OmniRoute-1");
+  assert.equal(out[0].apiKey, "sk_agentproxy");
+  assert.equal(out[1].id, "custom:AgentProxy-1");
   assert.equal(out[1].index, 1);
 });
 
 test("buildDroidCustomModels promotes activeModel to index 0", () => {
   const out = buildDroidCustomModels(["openai/gpt-5", "anthropic/claude-4", "google/gemini"], {
     baseUrl: "http://localhost:20128/v1",
-    apiKey: "sk_omniroute",
+    apiKey: "sk_agentproxy",
     activeModel: "anthropic/claude-4",
   });
 
   assert.equal(out[0].model, "anthropic/claude-4");
-  assert.equal(out[0].id, "custom:OmniRoute-0");
+  assert.equal(out[0].id, "custom:AgentProxy-0");
   assert.equal(out[0].index, 0);
   // Remaining entries are re-indexed in their original relative order
   assert.equal(out[1].model, "openai/gpt-5");
-  assert.equal(out[1].id, "custom:OmniRoute-1");
+  assert.equal(out[1].id, "custom:AgentProxy-1");
   assert.equal(out[1].index, 1);
   assert.equal(out[2].model, "google/gemini");
-  assert.equal(out[2].id, "custom:OmniRoute-2");
+  assert.equal(out[2].id, "custom:AgentProxy-2");
   assert.equal(out[2].index, 2);
 });
 
 test("buildDroidCustomModels keeps order when activeModel is not in the list", () => {
   const out = buildDroidCustomModels(["openai/gpt-5", "anthropic/claude-4"], {
     baseUrl: "http://localhost:20128/v1",
-    apiKey: "sk_omniroute",
+    apiKey: "sk_agentproxy",
     activeModel: "unknown/model",
   });
   assert.equal(out[0].model, "openai/gpt-5");
@@ -92,7 +92,7 @@ test("buildDroidCustomModels keeps order when activeModel is not in the list", (
 test("buildDroidCustomModels keeps order when activeModel === '' (no promotion)", () => {
   const out = buildDroidCustomModels(["openai/gpt-5", "anthropic/claude-4"], {
     baseUrl: "http://localhost:20128/v1",
-    apiKey: "sk_omniroute",
+    apiKey: "sk_agentproxy",
     activeModel: "",
   });
   assert.equal(out[0].model, "openai/gpt-5");
@@ -104,19 +104,19 @@ test("buildDroidCustomModels throws on empty list", () => {
     () =>
       buildDroidCustomModels([], {
         baseUrl: "http://localhost:20128/v1",
-        apiKey: "sk_omniroute",
+        apiKey: "sk_agentproxy",
       }),
     /requires at least one model/
   );
 });
 
-test("isOmniRouteCustomModel matches any custom:OmniRoute-<i> id (multi-model)", () => {
-  assert.equal(isOmniRouteCustomModel({ id: "custom:OmniRoute-0" }), true);
-  assert.equal(isOmniRouteCustomModel({ id: "custom:OmniRoute-1" }), true);
-  assert.equal(isOmniRouteCustomModel({ id: "custom:OmniRoute-42" }), true);
-  assert.equal(isOmniRouteCustomModel({ id: "custom:Other-0" }), false);
-  assert.equal(isOmniRouteCustomModel({ id: 42 as unknown }), false);
-  assert.equal(isOmniRouteCustomModel(null), false);
-  assert.equal(isOmniRouteCustomModel(undefined), false);
-  assert.equal(isOmniRouteCustomModel({}), false);
+test("isAgentProxyCustomModel matches any custom:AgentProxy-<i> id (multi-model)", () => {
+  assert.equal(isAgentProxyCustomModel({ id: "custom:AgentProxy-0" }), true);
+  assert.equal(isAgentProxyCustomModel({ id: "custom:AgentProxy-1" }), true);
+  assert.equal(isAgentProxyCustomModel({ id: "custom:AgentProxy-42" }), true);
+  assert.equal(isAgentProxyCustomModel({ id: "custom:Other-0" }), false);
+  assert.equal(isAgentProxyCustomModel({ id: 42 as unknown }), false);
+  assert.equal(isAgentProxyCustomModel(null), false);
+  assert.equal(isAgentProxyCustomModel(undefined), false);
+  assert.equal(isAgentProxyCustomModel({}), false);
 });

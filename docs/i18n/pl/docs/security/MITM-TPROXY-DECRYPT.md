@@ -6,7 +6,7 @@ lastUpdated: 2026-06-28
 
 # MITM TPROXY — przezroczyste deszyfrowanie
 
-TPROXY transparent decrypt to **5. tryb przechwytywania** OmniRoute w stosie MITM
+TPROXY transparent decrypt to **5. tryb przechwytywania** AgentProxy w stosie MITM
 [Traffic Inspector](../frameworks/TRAFFIC_INSPECTOR.md) / [AgentBridge](../frameworks/AGENTBRIDGE.md).
 Przechwytuje i **deszyfruje** lokalny ruch HTTPS wychodzący na Linuksie
 przy użyciu kernelowego TPROXY + policy routing — **bez** spoofingu `/etc/hosts` i
@@ -55,7 +55,7 @@ Użyj go, gdy chcesz przechwycić i odszyfrować ruch z procesu, który:
 - nie chcesz go ruszać systemową zmianą proxy.
 
 Ponieważ przechwycenie dzieje się w kernelu, proces źródłowy **nie wymaga żadnej
-zmiany konfiguracji** — ale musi ufać dynamicznemu CA instalowanemu przez OmniRoute
+zmiany konfiguracji** — ale musi ufać dynamicznemu CA instalowanemu przez AgentProxy
 (zob. [§4](#4-dynamiczne-ca-per-sni-i-instalator-trust-store)).
 
 ---
@@ -73,7 +73,7 @@ zmiany konfiguracji** — ale musi ufać dynamicznemu CA instalowanemu przez Omn
 addon nie zbudowany), loader addonu (`src/mitm/tproxy/transparentSocket.ts::loadTransparentAddon`)
 zwraca `null` zamiast rzucać wyjątek. Status trybu przechwytywania raportuje wtedy
 `available: false`, przełącznik w dashboardzie jest **disabled** z tooltipem
-"TPROXY decrypt requires Linux + root + the native addon", a reszta OmniRoute
+"TPROXY decrypt requires Linux + root + the native addon", a reszta AgentProxy
 działa normalnie.
 
 ---
@@ -122,9 +122,9 @@ Loader sonduje, w kolejności priorytetu:
 > współdzieli ten sam wzorzec architektury CA/leaf zamiast pojedynczego statycznego
 > self-signed leaf. Używa **oddzielnej** instancji CA
 > (`src/mitm/cert/rootCa.ts`, persystowanej w `<DATA_DIR>/mitm/ca.key`/`ca.crt`)
-> i instaluje pod istniejącym slotem trust-store `omniroute-mitm.crt`
+> i instaluje pod istniejącym slotem trust-store `agentproxy-mitm.crt`
 > (zastępując stary pojedynczy leaf — bez potrzeby dual-trust cleanup),
-> w pełni oddzielony od slotu TPROXY `omniroute-tproxy-ca.crt` opisanego poniżej.
+> w pełni oddzielony od slotu TPROXY `agentproxy-tproxy-ca.crt` opisanego poniżej.
 > Świeże instalacje AgentBridge dostają model CA automatycznie; instalacja, która
 > już ufała staremu static leaf, nadal go używa, dopóki operator nie włączy
 > `MITM_ROOT_CA_ENABLED=true` (zob. `src/mitm/cert/migration.ts`) — zaufane CA MITM
@@ -142,7 +142,7 @@ hostów antigravity.
 
 `DynamicCertStore` uruchamia lokalne CA (na zależności `selfsigned`), które:
 
-- Generuje długowieczne CA przez `generateMitmCa()` (CN `"OmniRoute MITM CA"`,
+- Generuje długowieczne CA przez `generateMitmCa()` (CN `"AgentProxy MITM CA"`,
   ważność 10 lat, `basicConstraints CA=true` + `keyUsage keyCertSign,cRLSign`,
   2048-bit RSA / SHA-256).
 - Wystawia **leaf per hostname SNI na żądanie** przez `issueLeafCert()` (ważność 1 rok,
@@ -158,8 +158,8 @@ Klucz prywatny CA **nigdy nie opuszcza maszyny**.
 
 Przechwycony klient musi ufać dynamicznemu CA, więc start trybu przechwytywania
 instaluje cert CA w OS trust store pod **dedykowanym slotem** —
-`omniroute-tproxy-ca.crt` (stała `TPROXY_CA_CERT_NAME`) — oddzielonym od
-slotu statycznego certu MITM (`omniroute-mitm.crt`), żeby te dwa nigdy się nie nadpisywały.
+`agentproxy-tproxy-ca.crt` (stała `TPROXY_CA_CERT_NAME`) — oddzielonym od
+slotu statycznego certu MITM (`agentproxy-mitm.crt`), żeby te dwa nigdy się nie nadpisywały.
 
 `installTproxyCa(caPem, sudoPassword?)` wykrywa katalog anchor dystrybucji
 (w kolejności: najpierw styl Debian) i uruchamia pasującą komendę odświeżenia:
@@ -247,7 +247,7 @@ ponownie zaszyfrowany forward proxy zostałby normalnie przechwycony ponownie �
 | Control                          | Detail                                                                                                                                                                                                                                                                                                                                                             |
 | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | **Loopback-only API**            | `/api/tools/agent-bridge/tproxy` is covered by the `/api/tools/agent-bridge/` prefix in `LOCAL_ONLY_API_PREFIXES` (`src/server/authz/routeGuard.ts`). Loopback enforcement runs **before** auth (Hard Rules #15 + #17) — a leaked JWT over a tunnel cannot start TPROXY capture, which applies `iptables` rules and installs a trust-store CA via child processes. |
-| **Dedicated CA slot**            | The dynamic CA installs to `omniroute-tproxy-ca.crt`, never clobbering the static MITM cert.                                                                                                                                                                                                                                                                       |
+| **Dedicated CA slot**            | The dynamic CA installs to `agentproxy-tproxy-ca.crt`, never clobbering the static MITM cert.                                                                                                                                                                                                                                                                       |
 | **CA key never leaves the host** | `DynamicCertStore` holds the CA key in memory; it is not exported.                                                                                                                                                                                                                                                                                                 |
 | **Secret masking**               | `maskSecret()` on request/response bodies and `sanitizeHeaders()` on headers run **before** `globalTrafficBuffer.push()`.                                                                                                                                                                                                                                          |
 | **No shell interpolation**       | All `iptables`/`ip`/trust-store commands run via `execFile`/`execFileWithPassword` with arg arrays (Hard Rule #13).                                                                                                                                                                                                                                                |
@@ -255,7 +255,7 @@ ponownie zaszyfrowany forward proxy zostałby normalnie przechwycony ponownie �
 | **Error sanitization**           | The route's error responses go through `sanitizeErrorMessage()` (Hard Rule #12).                                                                                                                                                                                                                                                                                   |
 
 **CA MITM to potężna zdolność.** CA zaufane przez OS, które może podpisać dowolny
-host, oznacza, że wszystko przechwycone przez OmniRoute może zostać odszyfrowane. Jest bramkowane przez
+host, oznacza, że wszystko przechwycone przez AgentProxy może zostać odszyfrowane. Jest bramkowane przez
 explicit, local-only tryb przechwytywania TPROXY, domyślnie wyłączony, a wpis trust-store
 jest usuwany po zatrzymaniu trybu.
 
@@ -356,7 +356,7 @@ zwraca `available: false`, gdy addon brakuje.
 - Potwierdź, że przechwytywany proces faktycznie łączy się na skonfigurowany `dport`
   (domyślnie `443`).
 - Potwierdź, że proces ufa dynamicznemu CA. CA jest instalowane pod
-  `omniroute-tproxy-ca.crt`; aplikacje z własnym trust store (Firefox/Chrome NSS)
+  `agentproxy-tproxy-ca.crt`; aplikacje z własnym trust store (Firefox/Chrome NSS)
   mogą wymagać dodania certu także tam.
 - Uruchom self-test AgentBridge **Diagnose** (zob.
   [`AGENTBRIDGE.md`](../frameworks/AGENTBRIDGE.md)) pod kątem cert-trusted / server
@@ -365,7 +365,7 @@ zwraca `available: false`, gdy addon brakuje.
 ### Stare reguły firewalla po crashu
 
 `revertTproxy()` jest dokładną odwrotnością apply i jest idempotentne. Zatrzymanie
-trybu cofa reguły; jeśli OmniRoute zostało zabite w trakcie sesji, użyj akcji AgentBridge
+trybu cofa reguły; jeśli AgentProxy zostało zabite w trakcie sesji, użyj akcji AgentBridge
 **Repair** (`POST /api/tools/agent-bridge/repair`), by cofnąć osierocony stan systemu
 (DNS spoof, root CA, system proxy). Reguły TPROXY `mangle` i trasa również
 czyszczą się automatycznie po restarcie.

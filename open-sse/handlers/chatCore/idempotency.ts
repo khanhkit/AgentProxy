@@ -1,7 +1,7 @@
 import { createHash } from "node:crypto";
 import { getIdempotencyKey, checkIdempotency } from "@/lib/idempotencyLayer";
 import { calculateCost } from "@/lib/usage/costCalculator";
-import { attachOmniRouteMetaHeaders } from "@/domain/omnirouteResponseMeta";
+import { attachAgentProxyMetaHeaders } from "@/domain/agentproxyResponseMeta";
 import type { EffectiveServiceTier } from "./serviceTier.ts";
 
 type HeadersLike = Headers | Record<string, unknown> | null | undefined;
@@ -124,6 +124,7 @@ export async function checkIdempotencyCache({
   effectiveServiceTier,
   startTime,
   log,
+  videoTranscriptSensitive,
 }: {
   clientRawRequest: IdempotencyRequest;
   provider: string;
@@ -132,7 +133,9 @@ export async function checkIdempotencyCache({
   effectiveServiceTier: EffectiveServiceTier | null | undefined;
   startTime: number;
   log: LoggerLike;
+  videoTranscriptSensitive?: boolean;
 }): Promise<{ hit: { success: true; response: Response } | null; idempotencyKey: string | null }> {
+  if (videoTranscriptSensitive) return { hit: null, idempotencyKey: null };
   // NEXA fusion-idempotency fix: namespace the raw header key (see composeIdempotencyKey).
   const rawIdempotencyKey = getIdempotencyKey(clientRawRequest?.headers);
   const idempotencyKey = composeIdempotencyKey({
@@ -157,9 +160,9 @@ export async function checkIdempotencyCache({
       : 0;
     const headers: Record<string, string> = {
       "Content-Type": "application/json",
-      "X-OmniRoute-Idempotent": "true",
+      "X-AgentProxy-Idempotent": "true",
     };
-    attachOmniRouteMetaHeaders(headers, {
+    attachAgentProxyMetaHeaders(headers, {
       provider,
       model,
       cacheHit: false,

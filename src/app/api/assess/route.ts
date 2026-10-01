@@ -9,11 +9,11 @@ import {
   type ModelCategory,
 } from "@/domain/assessment/types";
 import { validateBody } from "@/shared/validation/helpers";
-import { sanitizeErrorMessage } from "@omniroute/open-sse/utils/error";
+import { sanitizeErrorMessage } from "@agentproxy/open-sse/utils/error";
 
 const assessor = new Assessor(
-  process.env.OMNIROUTe_API_KEY ?? process.env.API_KEY ?? "",
-  process.env.OMNIROUTe_BASE_URL ?? "http://localhost:20128/v1"
+  process.env.AgentProxy_API_KEY ?? process.env.API_KEY ?? "",
+  process.env.AgentProxy_BASE_URL ?? "http://localhost:20128/v1"
 );
 
 const categorizer = new Categorizer();
@@ -144,7 +144,7 @@ async function getAllModels(): Promise<Array<{ providerId: string; modelId: stri
   try {
     const resp = await fetch("http://localhost:20128/v1/models", {
       headers: {
-        Authorization: `Bearer ${process.env.OMNIROUTe_API_KEY ?? process.env.API_KEY ?? ""}`,
+        Authorization: `Bearer ${process.env.AgentProxy_API_KEY ?? process.env.API_KEY ?? ""}`,
       },
     });
     const data = (await resp.json()) as { data?: unknown };

@@ -11,7 +11,7 @@
  *
  * Authentication:
  *   None. Auggie delegates auth entirely to the user's local `auggie login`
- *   session — OmniRoute never sees or stores credentials for this provider.
+ *   session — AgentProxy never sees or stores credentials for this provider.
  *   The connection is registered `noAuth: true` and `refreshCredentials()` is
  *   a no-op (nothing to refresh).
  *
@@ -23,7 +23,7 @@
  *   5. ~/.auggie/bin/auggie                  (alternate installer layout)
  */
 
-import { spawn } from "node:child_process";
+import { spawn, type StdioOptions } from "node:child_process";
 import path from "node:path";
 import os from "node:os";
 import fs from "node:fs";
@@ -92,12 +92,7 @@ export async function initAuggieModels(
     liveModelSet = new Set();
     return;
   }
-  const child = spawn(bin, ["model", "list"], {
-    env: process.env,
-    stdio: ["ignore", "pipe", "pipe"],
-    shell: false,
-    windowsHide: true,
-  });
+  const child = spawn(bin, ["model", "list"], buildAuggieSpawnOptions(["ignore", "pipe", "pipe"]));
   const fragments: string[] = [];
   child.stdout.on("data", (d: Buffer) => fragments.push(d.toString("utf8")));
   let settled = false;
@@ -218,15 +213,17 @@ function buildAuggieArgs(model: string): string[] {
  * elements to the shell, it does not concatenate them into a single
  * command line.
  */
-export function buildAuggieSpawnOptions(stdio: ["pipe", "pipe", "pipe"]): {
+export function buildAuggieSpawnOptions(stdio: StdioOptions): {
   env: NodeJS.ProcessEnv;
-  stdio: ["pipe", "pipe", "pipe"];
+  stdio: StdioOptions;
   shell: boolean;
+  windowsHide: true;
 } {
   return {
     env: process.env,
     stdio,
     shell: process.platform === "win32",
+    windowsHide: true,
   };
 }
 
@@ -294,6 +291,34 @@ function isEnoentLike(message: string): boolean {
   return message.includes("ENOENT") || message.includes("not found");
 }
 
+const AUGGIE_QUOTA_EXHAUSTED_PATTERNS = [
+  /you have run out of usage/i,
+  /run out of usage for/i,
+  /usage limit exceeded/i,
+];
+
+export function isAuggieQuotaExhaustedText(text: string): boolean {
+  return AUGGIE_QUOTA_EXHAUSTED_PATTERNS.some((pattern) => pattern.test(text));
+}
+
+const AUGGIE_QUOTA_EXHAUSTED_CODE = "AUGGIE_QUOTA_EXHAUSTED";
+
+function buildAuggieQuotaErrorResponse(message: string): Response {
+  return new Response(
+    JSON.stringify({
+      error: {
+        message: sanitizeErrorMessage(message),
+        type: "upstream_error",
+        code: AUGGIE_QUOTA_EXHAUSTED_CODE,
+      },
+    }),
+    {
+      status: 429,
+      headers: { "Content-Type": "application/json" },
+    }
+  );
+}
+
 export type AuggieCliVersionCheck = { ok: boolean; version?: string; error?: string };
 
 /**
@@ -313,11 +338,7 @@ export function checkAuggieCliVersion(timeoutMs = 5000): Promise<AuggieCliVersio
 
     let child: ReturnType<typeof spawn>;
     try {
-      // No `shell` option — fixed argv, no cmd.exe interpretation.
-      child = spawn(bin, ["--version"], {
-        env: process.env,
-        stdio: ["ignore", "pipe", "pipe"],
-      });
+      child = spawn(bin, ["--version"], buildAuggieSpawnOptions(["ignore", "pipe", "pipe"]));
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       settle({ ok: false, error: isEnoentLike(message) ? cliNotFoundMessage(bin) : message });
@@ -374,7 +395,7 @@ export class AuggieExecutor extends BaseExecutor {
     return null;
   }
 
-  /** No-op — auggie has no OmniRoute-managed credentials to refresh. */
+  /** No-op — auggie has no AgentProxy-managed credentials to refresh. */
   async refreshCredentials(
     _credentials: ProviderCredentials
   ): Promise<Partial<ProviderCredentials> | null> {
@@ -504,8 +525,8 @@ export class AuggieExecutor extends BaseExecutor {
           );
         };
 
-        const emitError = (message: string) => {
-          emit(`data: ${JSON.stringify(buildErrorBody(502, message))}\n\n`);
+        const emitError = (message: string, statusCode = 502) => {
+          emit(`data: ${JSON.stringify(buildErrorBody(statusCode, message))}\n\n`);
           emit("data: [DONE]\n\n");
           finish();
         };
@@ -567,8 +588,33 @@ export class AuggieExecutor extends BaseExecutor {
         });
 
         let stderrTail = "";
+        const QUOTA_DETECTION_BUFFER_BYTES = 2048;
+        let pendingBuffer = "";
+        let bufferFlushed = false;
+        let quotaDetected = false;
+
+        const flushPendingBuffer = () => {
+          if (bufferFlushed) return;
+          bufferFlushed = true;
+          if (isAuggieQuotaExhaustedText(pendingBuffer)) {
+            quotaDetected = true;
+            emitError(sanitizeErrorMessage(pendingBuffer.trim()), 429);
+            return;
+          }
+          if (pendingBuffer) emitDelta(pendingBuffer);
+          pendingBuffer = "";
+        };
+
         child.stdout?.on("data", (chunk: Buffer) => {
-          emitDelta(chunk.toString("utf8"));
+          if (quotaDetected || finished) return;
+          if (bufferFlushed) {
+            emitDelta(chunk.toString("utf8"));
+            return;
+          }
+          pendingBuffer += chunk.toString("utf8");
+          if (pendingBuffer.length >= QUOTA_DETECTION_BUFFER_BYTES) {
+            flushPendingBuffer();
+          }
         });
 
         child.stderr?.on("data", (chunk: Buffer) => {
@@ -586,6 +632,8 @@ export class AuggieExecutor extends BaseExecutor {
             );
             return;
           }
+          flushPendingBuffer();
+          if (quotaDetected || finished) return;
           emitStop();
         });
       },
@@ -669,6 +717,10 @@ export class AuggieExecutor extends BaseExecutor {
               )
             )
           );
+          return;
+        }
+        if (isAuggieQuotaExhaustedText(stdout)) {
+          settle(buildAuggieQuotaErrorResponse(stdout.trim()));
           return;
         }
         settle(buildChatCompletionResponse(model, promptText, stdout));

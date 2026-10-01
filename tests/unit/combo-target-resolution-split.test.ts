@@ -13,7 +13,7 @@ import path from "node:path";
 // path. The strategy-specific branches stay covered end-to-end by the combo-*
 // consumer suites through combo.ts.
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-combo-target-resolution-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-combo-target-resolution-"));
 const ORIGINAL_DATA_DIR = process.env.DATA_DIR;
 process.env.DATA_DIR = TEST_DATA_DIR;
 

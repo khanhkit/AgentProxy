@@ -15,11 +15,11 @@
  *
  * interface HermesAgentRoleSelection {
  *   role: 'default' | 'delegation' | 'vision' | 'compression' | 'web_extract' | 'skills_hub' | 'approval' | ...;
- *   model: string;                    // the model name the user chose from OmniRoute
+ *   model: string;                    // the model name the user chose from AgentProxy
  * }
  *
  * interface HermesAgentConfigPayload {
- *   baseUrl: string;                  // usually the OmniRoute base URL
+ *   baseUrl: string;                  // usually the AgentProxy base URL
  *   keyId?: string | null;            // preferred: reference to a stored key
  *   apiKey?: string | null;           // fallback plaintext key
  *   selections: HermesAgentRoleSelection[];
@@ -41,6 +41,7 @@ export const HERMES_AGENT_ROLES = [
   { id: "compression", label: "Compression", description: "Prompt compression and summarization" },
   { id: "skills_hub", label: "Skills Hub", description: "Skills and tool-use reasoning" },
   { id: "approval", label: "Approval", description: "Safety and approval decisions" },
+  { id: "review", label: "Review", description: "Full subagent code review" },
   { id: "mcp", label: "MCP", description: "MCP server tool calls" },
   { id: "title_generation", label: "Title Generation", description: "Session title generation" },
   {
@@ -67,6 +68,12 @@ export const HERMES_AGENT_ROLES = [
     id: "background_review",
     label: "Background Review",
     description: "Background code review",
+  },
+  { id: "moa_reference", label: "MoA Reference", description: "Mixture-of-Agents reference model" },
+  {
+    id: "moa_aggregator",
+    label: "MoA Aggregator",
+    description: "Mixture-of-Agents synthesis model",
   },
 ] as const;
 
@@ -98,7 +105,7 @@ function normalizeBaseUrl(base: string): string {
 function getProviderBlock(baseUrl: string, apiKey: string) {
   const normalized = normalizeBaseUrl(baseUrl);
   return {
-    provider: "omniroute",
+    provider: "agentproxy",
     model: "", // will be filled per-role
     base_url: `${normalized}/v1`,
     api_key: apiKey,
@@ -119,7 +126,7 @@ export async function generateHermesAgentConfig(
   }
 
   // Resolve the actual key to use (in real impl we would look up keyId)
-  const resolvedKey = apiKey || "YOUR_OMNIROUTE_API_KEY_HERE";
+  const resolvedKey = apiKey || "YOUR_AGENTPROXY_API_KEY_HERE";
 
   // Read existing config if present (non-destructive merge)
   let existing: any = {};
@@ -131,9 +138,9 @@ export async function generateHermesAgentConfig(
     // no existing file — start fresh
   }
 
-  // Build the providers.omniroute entry (shared)
+  // Build the providers.agentproxy entry (shared)
   const normalizedBase = normalizeBaseUrl(baseUrl);
-  const omnirouteProvider = {
+  const agentproxyProvider = {
     base_url: `${normalizedBase}/v1`,
     api_key: resolvedKey,
   };
@@ -143,7 +150,7 @@ export async function generateHermesAgentConfig(
     ...existing,
     providers: {
       ...(existing.providers || {}),
-      omniroute: omnirouteProvider,
+      agentproxy: agentproxyProvider,
     },
   };
 
@@ -155,14 +162,14 @@ export async function generateHermesAgentConfig(
       next.model = {
         ...(existing.model || {}),
         default: model,
-        provider: "omniroute",
+        provider: "agentproxy",
         base_url: `${normalizedBase}/v1`,
       };
     } else if (role === "delegation") {
       next.delegation = {
         ...(existing.delegation || {}),
         model,
-        provider: "omniroute",
+        provider: "agentproxy",
         base_url: `${normalizedBase}/v1`,
         api_key: resolvedKey,
       };
@@ -171,7 +178,7 @@ export async function generateHermesAgentConfig(
       if (!next.auxiliary) next.auxiliary = {};
       next.auxiliary[role] = {
         ...(existing.auxiliary?.[role] || {}),
-        provider: "omniroute",
+        provider: "agentproxy",
         model,
         base_url: `${normalizedBase}/v1`,
         api_key: resolvedKey,

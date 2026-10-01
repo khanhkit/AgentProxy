@@ -6,12 +6,13 @@ import {
   isOpenAICompatibleProvider,
   NOAUTH_PROVIDERS,
 } from "@/shared/constants/providers";
-import { getRegistryEntry } from "@omniroute/open-sse/config/providerRegistry.ts";
+import { getRegistryEntry } from "@agentproxy/open-sse/config/providerRegistry.ts";
 import { getModelsByProviderId } from "@/shared/constants/models";
 import { resolveAlibabaProviderModelsUrl } from "@/shared/constants/alibabaProviderRegions";
 import { getStaticModelsForProvider } from "@/lib/providers/staticModels";
 import { providerUsesCuratedModelsOnly } from "@/lib/providers/modelListingCapability";
 import { mergeModelsWithCustomPrecedence } from "@/lib/providers/modelMetadataPrecedence";
+import { addModelsSuffix } from "@/lib/providers/validation/urlHelpers";
 import { getCachedProviderConnectionById } from "@/lib/db/readCache";
 import { resolveProxyForProvider } from "@/lib/db/proxies";
 import {
@@ -24,62 +25,53 @@ import {
   getProviderOutboundGuard,
   getProviderValidationGuard,
 } from "@/shared/network/outboundUrlGuardPolicy";
-import { errorResponse, sanitizeErrorMessage } from "@omniroute/open-sse/utils/error";
-import { getStaticQoderModels } from "@omniroute/open-sse/services/qoderCli.ts";
+import { errorResponse, sanitizeErrorMessage } from "@agentproxy/open-sse/utils/error";
 import { deriveConfigFromRegistryModelsUrl } from "./discoveryConfig";
-import { resolveZedModels } from "@omniroute/open-sse/shared/zedAuth.ts";
+import { resolveZedModels } from "@agentproxy/open-sse/shared/zedAuth.ts";
 import {
   fetchGitHubCopilotModels,
   fetchGheCopilotModels,
-} from "@omniroute/open-sse/services/githubCopilotModels.ts";
-import { fetchKiroAvailableModels } from "@omniroute/open-sse/services/kiroModels.ts";
+} from "@agentproxy/open-sse/services/githubCopilotModels.ts";
+import { fetchKiroAvailableModels } from "@agentproxy/open-sse/services/kiroModels.ts";
 import {
   buildGlmCodingHeaders,
   buildGlmModelsUrl,
-} from "@omniroute/open-sse/config/glmProvider.ts";
-import { getImageProvider } from "@omniroute/open-sse/config/imageRegistry.ts";
-import { getVideoProvider } from "@omniroute/open-sse/config/videoRegistry.ts";
+} from "@agentproxy/open-sse/config/glmProvider.ts";
 import {
   discoverBedrockNativeModels,
   isBedrockNativeApiError,
-} from "@omniroute/open-sse/services/bedrock.ts";
+} from "@agentproxy/open-sse/services/bedrock.ts";
 import {
   discoverPromptQlModels,
   PROMPTQL_FALLBACK_MODELS,
-} from "@omniroute/open-sse/services/promptqlModels.ts";
+} from "@agentproxy/open-sse/services/promptqlModels.ts";
 import {
   discoverNotionWebModels,
   NOTION_WEB_FALLBACK_MODELS,
-} from "@omniroute/open-sse/services/notionWebModels.ts";
+} from "@agentproxy/open-sse/services/notionWebModels.ts";
 import {
   discoverMaxaiModels,
   MAXAI_REGISTRY_MODELS,
-} from "@omniroute/open-sse/services/maxaiModels.ts";
+} from "@agentproxy/open-sse/services/maxaiModels.ts";
 import {
   AZURE_AI_DEFAULT_BASE_URL,
   buildAzureAiModelsUrl,
-} from "@omniroute/open-sse/config/azureAi.ts";
+} from "@agentproxy/open-sse/config/azureAi.ts";
 import {
   DATAROBOT_DEFAULT_BASE_URL,
   buildDataRobotCatalogUrl,
   isDataRobotDeploymentUrl,
-} from "@omniroute/open-sse/config/datarobot.ts";
-import { OCI_DEFAULT_BASE_URL, buildOciModelsUrl } from "@omniroute/open-sse/config/oci.ts";
+} from "@agentproxy/open-sse/config/datarobot.ts";
+import { OCI_DEFAULT_BASE_URL, buildOciModelsUrl } from "@agentproxy/open-sse/config/oci.ts";
 import {
   SAP_DEFAULT_BASE_URL,
   buildSapModelsUrl,
   getSapResourceGroup,
-} from "@omniroute/open-sse/config/sap.ts";
+} from "@agentproxy/open-sse/config/sap.ts";
 import {
   WATSONX_DEFAULT_BASE_URL,
   buildWatsonxModelsUrl,
-} from "@omniroute/open-sse/config/watsonx.ts";
-import { getEmbeddingProvider } from "@omniroute/open-sse/config/embeddingRegistry.ts";
-import { getRerankProvider } from "@omniroute/open-sse/config/rerankRegistry.ts";
-import {
-  getSpeechProvider,
-  getTranscriptionProvider,
-} from "@omniroute/open-sse/config/audioRegistry.ts";
+} from "@agentproxy/open-sse/config/watsonx.ts";
 import {
   getCachedDiscoveredModels,
   isAutoFetchModelsEnabled,
@@ -95,7 +87,6 @@ import { fetchCursorAvailableModels } from "@/lib/providerModels/cursorAvailable
 import { ensureCursorAutoCatalogEntry } from "@/lib/providerModels/cursorAutoCatalog";
 import { resolveCopilotDiscoveryToken } from "@/lib/providerModels/copilotDiscoveryToken";
 import {
-  type JsonRecord,
   asRecord,
   toNonEmptyString,
   getProviderBaseUrl,
@@ -118,16 +109,17 @@ import {
 import { isNamedOpenAIStyleProvider } from "./discovery/providerSets";
 import { buildStaleEncryptionKeyResponse } from "./staleEncryptionGuard";
 import {
-  type ProviderModelsConfigEntry,
   assembleProviderModelsHeaders,
+  getXaiOauthLiveModelsConfig,
   PROVIDER_MODELS_CONFIG,
 } from "./discovery/providerModelsConfig";
 import {
-  buildCodexDiscoveryCatalog,
   enrichCodexModelsFromGithubCatalog,
   fetchCodexDiscoveryModels,
   fetchCodexGithubCatalogModels,
+  reconcileCodexDiscoveryCatalog,
 } from "./discovery/codex";
+import { getCodexDiscoveryMode } from "@/shared/services/codexDiscoveryPolicy";
 import { maybeHandleConolModelDiscovery } from "./conolDiscovery";
 import { buildNoAuthModelsResponse, filterModelsForRoute } from "./modelRouteProjection";
 
@@ -147,9 +139,10 @@ export async function GET(
     const excludeHidden = searchParams.get("excludeHidden") === "true";
     const excludeCustom = searchParams.get("excludeCustom") === "true";
     const refresh = searchParams.get("refresh") === "true";
+    const includeCandidates = searchParams.get("includeCandidates") === "true";
     const chatOnly =
       searchParams.get("chatOnly") === "true" ||
-      request.headers.get("x-omniroute-model-surface")?.toLowerCase() === "chat";
+      request.headers.get("x-agentproxy-model-surface")?.toLowerCase() === "chat";
 
     const connection = await getCachedProviderConnectionById(id);
     const connectionProvider =
@@ -246,7 +239,12 @@ export async function GET(
     const connectionId = typeof connection.id === "string" ? connection.id : id;
     const apiKey = typeof connection.apiKey === "string" ? connection.apiKey : "";
     const accessToken = typeof connection.accessToken === "string" ? connection.accessToken : "";
-    const autoFetchModels = isAutoFetchModelsEnabled(connection.providerSpecificData);
+    const codexDiscoveryMode =
+      provider === "codex" ? getCodexDiscoveryMode(connection.providerSpecificData) : "off";
+    const autoFetchModels =
+      provider === "codex"
+        ? codexDiscoveryMode !== "off"
+        : isAutoFetchModelsEnabled(connection.providerSpecificData);
     const cachedDiscoveryModels = usesCuratedModelsOnly
       ? []
       : filterModelsForRoute(
@@ -1707,7 +1705,6 @@ export async function GET(
       const models = await fetchGheCopilotModels({
         apiUrl: copilotApiUrl,
         token: copilotToken,
-        fetchImpl: (url, init) => fetch(url as string, init as RequestInit),
       });
 
       if (models.length > 0) {
@@ -1804,7 +1801,7 @@ export async function GET(
       let bearerToken: string | null = null;
       try {
         const { parseSAFromApiKey, getAccessToken } =
-          await import("@omniroute/open-sse/executors/vertex.ts");
+          await import("@agentproxy/open-sse/executors/vertex.ts");
         if (accessToken) {
           bearerToken = accessToken;
         } else if (credential) {
@@ -1844,6 +1841,49 @@ export async function GET(
           { error: "No usable Vertex AI credential configured for model discovery." },
           { status: 400 }
         );
+      }
+
+      if (queryKey) {
+        const { discoverVertexExpressModels } =
+          await import("@/lib/providerModels/vertexExpressDiscovery");
+        const curatedExpressModels = toLocalCatalogModels().filter((model) =>
+          /^gemini-/i.test(model.id)
+        );
+        const discovery = await discoverVertexExpressModels({
+          apiKey: queryKey,
+          curatedModels: curatedExpressModels,
+          fetchImpl: (url, init) =>
+            safeOutboundFetch(url, {
+              ...SAFE_OUTBOUND_FETCH_PRESETS.modelsDiscovery,
+              guard: getProviderOutboundGuard(),
+              proxyConfig: proxy,
+              ...init,
+            }),
+        });
+
+        if (discovery.models.length > 0) {
+          return buildApiDiscoveryResponse(discovery.models);
+        }
+
+        const warning = discovery.failureStatus
+          ? "Vertex model listing rejected the API key (HTTP " +
+            discovery.failureStatus +
+            "). No live catalog available for this API key — using curated Express catalog"
+          : "Vertex model discovery temporarily unavailable — using curated Express catalog";
+        const fallback = buildDiscoveryFallbackResponse({
+          cacheWarning: warning,
+          localWarning: warning,
+          localIntentional: true,
+        });
+        if (fallback) return fallback;
+        return buildResponse({
+          provider,
+          connectionId,
+          models: curatedExpressModels,
+          source: "local_catalog",
+          intentional: true,
+          warning,
+        });
       }
 
       const baseUrl = "https://generativelanguage.googleapis.com/v1beta/models?pageSize=1000";
@@ -2085,19 +2125,29 @@ export async function GET(
       }
     }
 
+    const xaiOauthLiveConfig =
+      provider === "xai-oauth" ? getXaiOauthLiveModelsConfig() : undefined;
     const config =
-      provider in PROVIDER_MODELS_CONFIG
+      xaiOauthLiveConfig ??
+      (provider in PROVIDER_MODELS_CONFIG
         ? PROVIDER_MODELS_CONFIG[provider as keyof typeof PROVIDER_MODELS_CONFIG]
-        : deriveConfigFromRegistryModelsUrl(provider);
+        : deriveConfigFromRegistryModelsUrl(provider));
     if (provider === "codex") {
-      // Auto-merge live/GitHub/local (future-proof discovery), then apply explicit
-      // denylist filters (e.g. drop GPT-5.4 family). Do not gate remote-only IDs.
       const staticCodexCatalog = mergeLocalCatalogModels(
         getModelsByProviderId("codex") || [],
         getStaticModelsForProvider("codex") || []
       );
+      const reconcileCodexCatalog = (
+        remoteModels: typeof cachedDiscoveryModels,
+        source: "live" | "github" = "live"
+      ) =>
+        reconcileCodexDiscoveryCatalog(
+          remoteModels.map((model) => ({ ...model, discoverySource: source })),
+          staticCodexCatalog,
+          codexDiscoveryMode
+        );
       const finalizeCodexCatalog = (remoteModels: typeof cachedDiscoveryModels) =>
-        buildCodexDiscoveryCatalog(remoteModels, staticCodexCatalog);
+        reconcileCodexCatalog(remoteModels).activeModels;
       const cachedCatalogModels = finalizeCodexCatalog(cachedDiscoveryModels);
       const cachedIdsMatchFinalCatalog =
         cachedDiscoveryModels.length === cachedCatalogModels.length &&
@@ -2109,11 +2159,14 @@ export async function GET(
 
       if (!refresh && cachedDiscoveryModels.length > 0) {
         await persistFilteredCacheIfNeeded();
+        const catalog = reconcileCodexCatalog(cachedDiscoveryModels);
         return buildResponse({
           provider,
           connectionId,
-          models: cachedCatalogModels,
+          models: catalog.activeModels,
           source: "cache",
+          discovery: { mode: codexDiscoveryMode },
+          ...(includeCandidates ? { candidateModels: catalog.candidateModels } : {}),
         });
       }
 
@@ -2152,29 +2205,40 @@ export async function GET(
           githubCatalogModels && githubCatalogModels.length > 0
             ? enrichCodexModelsFromGithubCatalog(liveModels, githubCatalogModels)
             : liveModels;
-        return buildApiDiscoveryResponse(finalizeCodexCatalog(enrichedLiveModels));
+        const catalog = reconcileCodexCatalog(enrichedLiveModels);
+        return buildApiDiscoveryResponse(catalog.activeModels, undefined, {
+          discovery: { mode: codexDiscoveryMode },
+          ...(includeCandidates ? { candidateModels: catalog.candidateModels } : {}),
+        });
       }
 
       if (githubCatalogModels && githubCatalogModels.length > 0) {
+        const catalog = reconcileCodexCatalog(githubCatalogModels, "github");
         return buildResponse({
           provider,
           connectionId,
-          models: finalizeCodexCatalog(githubCatalogModels),
+          models: catalog.activeModels,
           source: "github_catalog",
           warning: "Codex live catalog unavailable — using GitHub model catalog",
+          discovery: { mode: codexDiscoveryMode },
+          ...(includeCandidates ? { candidateModels: catalog.candidateModels } : {}),
         });
       }
 
       if (cachedDiscoveryModels.length > 0) {
         await persistFilteredCacheIfNeeded();
+        const catalog = reconcileCodexCatalog(cachedDiscoveryModels);
         return buildResponse({
           provider,
           connectionId,
-          models: cachedCatalogModels,
+          models: catalog.activeModels,
           source: "cache",
           warning: "Codex live catalog unavailable — using cached catalog",
+          discovery: { mode: codexDiscoveryMode },
+          ...(includeCandidates ? { candidateModels: catalog.candidateModels } : {}),
         });
       }
+
       return buildResponse({
         provider,
         connectionId,
@@ -2182,6 +2246,7 @@ export async function GET(
         source: "local_catalog",
         intentional: true,
         warning: "Codex live and GitHub catalogs unavailable — using local catalog",
+        discovery: { mode: codexDiscoveryMode },
       });
     }
 
@@ -2273,6 +2338,12 @@ export async function GET(
           base = base.slice(0, -"/v1".length);
         }
         url = `${base}/v1/models`;
+      }
+    }
+    if (provider === "openrouter") {
+      const customBaseUrl = getProviderBaseUrl(connection.providerSpecificData);
+      if (customBaseUrl) {
+        url = addModelsSuffix(customBaseUrl) || url;
       }
     }
     if (provider === "cloudflare-ai") {
@@ -2375,11 +2446,11 @@ export async function GET(
 
     if (getProviderConnectionFamilyIds("alibaba").includes(provider)) {
       const { shouldUseLiveAlibabaFreeModelDiscovery } =
-        await import("@omniroute/open-sse/services/alibabaFreeTier.ts");
+        await import("@agentproxy/open-sse/services/alibabaFreeTier.ts");
       const { scheduleAlibabaFreeTierProbeRefresh } =
-        await import("@omniroute/open-sse/services/alibabaFreeTierDiscovery.ts");
+        await import("@agentproxy/open-sse/services/alibabaFreeTierDiscovery.ts");
       const { scheduleAlibabaFreeTierQuotaRefresh, hasAlibabaConsoleFreeTierAuth } =
-        await import("@omniroute/open-sse/services/alibabaFreeTierQuotaFetcher.ts");
+        await import("@agentproxy/open-sse/services/alibabaFreeTierQuotaFetcher.ts");
       const { resolveAlibabaProviderBaseUrl } =
         await import("@/shared/constants/alibabaProviderRegions.ts");
       const providerSpecificData = connection.providerSpecificData as Record<

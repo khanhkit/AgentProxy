@@ -16,7 +16,7 @@ import { makeManagementSessionRequest } from "../../helpers/managementSession.ts
 // ─── isolated temp DB ─────────────────────────────────────────────────────────
 
 const TEST_DATA_DIR = fs.mkdtempSync(
-  path.join(os.tmpdir(), "omniroute-compression-engines-route-")
+  path.join(os.tmpdir(), "agentproxy-compression-engines-route-")
 );
 const originalDataDir = process.env.DATA_DIR;
 const originalJwtSecret = process.env.JWT_SECRET;
@@ -121,6 +121,24 @@ describe("GET /api/compression/engines", () => {
     assert.ok(
       hasMinRows,
       `headroom configSchema should contain a field with key 'minRows', got keys: ${headroom.configSchema.map((f) => f.key).join(", ")}`
+    );
+  });
+
+  test("lite configSchema includes the 'maxToolLength' field key", async () => {
+    const req = await makeManagementSessionRequest("http://localhost/api/compression/engines");
+    const res = await enginesRoute.GET(req);
+    const body = (await res.json()) as {
+      engines: Array<{
+        id: string;
+        configSchema: Array<{ key: string }>;
+      }>;
+    };
+    const lite = body.engines.find((e) => e.id === "lite");
+    assert.ok(lite, "lite engine should be present");
+    const hasMaxToolLength = lite.configSchema.some((f) => f.key === "maxToolLength");
+    assert.ok(
+      hasMaxToolLength,
+      `lite configSchema should contain a field with key 'maxToolLength', got keys: ${lite.configSchema.map((f) => f.key).join(", ")}`
     );
   });
 });

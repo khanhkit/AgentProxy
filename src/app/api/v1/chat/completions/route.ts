@@ -4,17 +4,18 @@ import { callCloudWithMachineId } from "@/shared/utils/cloud";
 import { handleChat } from "@/sse/handlers/chat";
 import { generateRequestId } from "@/shared/utils/requestId";
 import { resolveIncomingCorrelationId } from "@/shared/utils/correlationPreserve.ts";
-import { errorResponse } from "@omniroute/open-sse/utils/error.ts";
-import { initTranslators } from "@omniroute/open-sse/translator/index.ts";
+import { errorResponse } from "@agentproxy/open-sse/utils/error.ts";
+import { handleSelfHostedCompletions } from "@agentproxy/open-sse/services/selfHostedEntry.ts";
+import { initTranslators } from "@agentproxy/open-sse/translator/index.ts";
 import { createInjectionGuard } from "@/middleware/promptInjectionGuard";
-import { acceptHeaderForcesStream } from "@omniroute/open-sse/utils/aiSdkCompat.ts";
+import { acceptHeaderForcesStream } from "@agentproxy/open-sse/utils/aiSdkCompat.ts";
 import {
   OPENAI_CHAT_ERROR_FRAME,
   OPENAI_KEEPALIVE_FRAME,
   OPENAI_STARTUP_FRAME,
   withEarlyStreamKeepalive,
-} from "@omniroute/open-sse/utils/earlyStreamKeepalive";
-import { resolveKeepaliveThreshold } from "@omniroute/open-sse/utils/keepaliveThreshold";
+} from "@agentproxy/open-sse/utils/earlyStreamKeepalive";
+import { resolveKeepaliveThreshold } from "@agentproxy/open-sse/utils/keepaliveThreshold";
 import {
   admitChatRequest,
   admitChatStructure,
@@ -36,6 +37,7 @@ import {
   assertCommonChatGptWebModelAvailable,
   isCommonChatGptWebRetirementError,
 } from "@/shared/constants/chatgptWebRetirement";
+import { ensureSemanticCacheDbBridge } from "@/lib/cache/semanticCacheDbBridge";
 
 let initPromise = null;
 
@@ -48,6 +50,7 @@ const injectionGuard = createInjectionGuard({ logger: null });
  */
 function ensureInitialized() {
   if (!initPromise) {
+    ensureSemanticCacheDbBridge();
     initPromise = Promise.resolve(initTranslators()).then(() => {
       console.log("[SSE] Translators initialized");
     });
@@ -121,13 +124,13 @@ export async function POST(request) {
   const admission = admissionResult;
   request = admission.request;
   const finishAdmission = (response: Response) =>
-    releaseChatAdmissionWhenDone(response, admission.lease);
+    releaseChatAdmissionWhenDone(response, admission.lease, { signal: request.signal });
 
   try {
     // One-line marker for diagnosing 413 / Server-Action interceptions.
     // Logs only when Content-Length is present so debug noise stays low for
-    // typical chat payloads. Opt-in via OMNIROUTE_LOG_REQUEST_SHAPE=1.
-    if (process.env.OMNIROUTE_LOG_REQUEST_SHAPE === "1") {
+    // typical chat payloads. Opt-in via AGENTPROXY_LOG_REQUEST_SHAPE=1.
+    if (process.env.AGENTPROXY_LOG_REQUEST_SHAPE === "1") {
       const ct = contentType;
       const cl = requestContentLengthHeader;
       if (cl && Number(cl) > 256 * 1024) {
@@ -156,6 +159,16 @@ export async function POST(request) {
             return finishAdmission(
               errorResponse(400, `${field}: ${issue?.message ?? "Invalid request"}`)
             );
+          }
+
+          // Self-hosted unified entry (D4 — RIC-738): when a provider config is
+          // present, divert BEFORE the cloud-only model retirement/alias checks so
+          // self-hosted model ids (`local/llama3`, `ollama/qwen2`, ...) never trip
+          // cloud-peer 410s or alias rewrites. Config-absent requests proceed to the
+          // normal cloud pipeline unchanged.
+          const selfHostedResponse = await handleSelfHostedCompletions(request, parsedBody);
+          if (selfHostedResponse) {
+            return finishAdmission(selfHostedResponse);
           }
 
           try {
@@ -257,7 +270,8 @@ export async function POST(request) {
       // eventual handler body; only that confirmed cleanup releases heavyweight capacity.
       const handlerResponse = releaseChatAdmissionAfterHandler(
         handleChat(request, null, parsedBody, reqId),
-        admission.lease
+        admission.lease,
+        { signal: request.signal }
       );
       const streamedResponse = await withEarlyStreamKeepalive(handlerResponse, {
         signal: request.signal,
@@ -265,6 +279,7 @@ export async function POST(request) {
         keepaliveFrame: OPENAI_KEEPALIVE_FRAME,
         startupFrame: OPENAI_STARTUP_FRAME,
         errorFrame: OPENAI_CHAT_ERROR_FRAME,
+        correlationId: reqId,
         extraHeaders: { "X-Correlation-Id": reqId },
       });
       return withCompressionHeaderEcho(streamedResponse, compressionRequestHeader);

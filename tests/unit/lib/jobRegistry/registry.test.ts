@@ -17,7 +17,7 @@ import path from "node:path";
 
 import type { JobDefinition } from "@/lib/jobRegistry/core.ts";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-jr-rt-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-jr-rt-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.DISABLE_SQLITE_AUTO_BACKUP = "true";
 
@@ -192,11 +192,11 @@ test("runNow: env gate blocks when env explicitly disabled", async () => {
   const reg = getJobRegistry();
   let calls = 0;
   reg.register(
-    def("j", async () => ({ success: true }), { envFlag: "OMNIROUTE_TEST_JOB_ENABLED" })
+    def("j", async () => ({ success: true }), { envFlag: "AGENTPROXY_TEST_JOB_ENABLED" })
   );
-  process.env.OMNIROUTE_TEST_JOB_ENABLED = "0";
+  process.env.AGENTPROXY_TEST_JOB_ENABLED = "0";
   const res = await reg.runNow("j");
-  delete process.env.OMNIROUTE_TEST_JOB_ENABLED;
+  delete process.env.AGENTPROXY_TEST_JOB_ENABLED;
   assert.deepEqual(res, { started: false, reason: "env_disabled" });
   assert.equal(calls, 0);
 });
@@ -255,7 +255,7 @@ test("envFlag gate generic: unset env fires (defaultWhenUnset=true)", async () =
         type: "cron",
         cron: "* * * * * *",
         intervalMs: null,
-        envFlag: "OMNIROUTE_GENERIC_JOB_ENABLED", // unset -> default true -> fires
+        envFlag: "AGENTPROXY_GENERIC_JOB_ENABLED", // unset -> default true -> fires
         config: { timezone: "UTC" },
       }
     )
@@ -274,7 +274,7 @@ test("envFlag gate warmup: unset env does NOT fire (envDefault=false)", async ()
       type: "cron",
       cron: "* * * * * *",
       intervalMs: null,
-      envFlag: "OMNIROUTE_WARMUP_ENABLED",
+      envFlag: "AGENTPROXY_WARMUP_ENABLED",
       config: { timezone: "UTC", envDefault: false },
     })
   );

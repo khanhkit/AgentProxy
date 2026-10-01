@@ -41,9 +41,9 @@ function decodeChunk(value) {
 }
 
 test("wantsProgress reads the opt-in header from Headers and plain objects", () => {
-  assert.equal(wantsProgress(new Headers({ "x-omniroute-progress": "true" })), true);
-  assert.equal(wantsProgress({ "x-omniroute-progress": "true" }), true);
-  assert.equal(wantsProgress({ "x-omniroute-progress": "false" }), false);
+  assert.equal(wantsProgress(new Headers({ "x-agentproxy-progress": "true" })), true);
+  assert.equal(wantsProgress({ "x-agentproxy-progress": "true" }), true);
+  assert.equal(wantsProgress({ "x-agentproxy-progress": "false" }), false);
   assert.equal(wantsProgress(null), false);
 });
 
@@ -99,5 +99,44 @@ test("createProgressTransform clears the interval when aborted", async () => {
 
     await writer.close();
     await reader.cancel();
+  });
+});
+
+test("createProgressTransform preserves split UTF-8 and counts split data lines per stream", async () => {
+  await withFakeIntervals(async () => {
+    const first = createProgressTransform();
+    const second = createProgressTransform();
+    const firstWriter = first.writable.getWriter();
+    const secondWriter = second.writable.getWriter();
+    const firstOutput = [];
+    const secondOutput = [];
+    const pump = async (transform, output) => {
+      for await (const chunk of transform.readable) output.push(chunk);
+    };
+    const firstPump = pump(first, firstOutput);
+    const secondPump = pump(second, secondOutput);
+    const firstBytes = new TextEncoder().encode("data: one 🚀\n\n");
+    const secondBytes = new TextEncoder().encode("data: two 🧭\n\n");
+
+    await firstWriter.write(firstBytes.slice(0, 2));
+    await secondWriter.write(secondBytes.slice(0, 11));
+    await firstWriter.write(firstBytes.slice(2, 12));
+    await secondWriter.write(secondBytes.slice(11));
+    await firstWriter.write(firstBytes.slice(12));
+    await Promise.all([firstWriter.close(), secondWriter.close()]);
+    await Promise.all([firstPump, secondPump]);
+
+    assert.equal(
+      new TextDecoder().decode(Buffer.concat(firstOutput.slice(0, -1))),
+      "data: one 🚀\n\n"
+    );
+    assert.equal(
+      new TextDecoder().decode(Buffer.concat(secondOutput.slice(0, -1))),
+      "data: two 🧭\n\n"
+    );
+    const firstFinal = decodeChunk(firstOutput.at(-1));
+    const secondFinal = decodeChunk(secondOutput.at(-1));
+    assert.equal(JSON.parse(firstFinal.split("data: ")[1]).tokens_generated, 1);
+    assert.equal(JSON.parse(secondFinal.split("data: ")[1]).tokens_generated, 1);
   });
 });

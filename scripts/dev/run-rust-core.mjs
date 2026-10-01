@@ -32,7 +32,7 @@ if (release) cargoArgs.push("--release");
 
 try {
   await run("cargo", cargoArgs);
-  const env = { ...process.env, AGENTPROXY_RUST_CORE: "1", OMNIROUTE_RUST_CORE: "1" };
+  const env = { ...process.env, AGENTPROXY_RUST_CORE: "1" };
   await run(process.execPath, ["scripts/dev/run-next.mjs", mode], env);
 } catch (error) {
   console.error("[AgentProxy Rust Launcher]", error instanceof Error ? error.message : String(error));

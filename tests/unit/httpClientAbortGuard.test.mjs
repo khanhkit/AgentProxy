@@ -118,7 +118,7 @@ test("shouldSwallowUncaught preserves crash semantics for genuine errors", () =>
 test("installProcessCrashGuard does not throw on import and is idempotent", () => {
   assert.doesNotThrow(() => installProcessCrashGuard(() => {}));
 });
-test("isClientAbortError matches OmniRoute SSE AbortError shapes (#fix-crash-guard-logger-7)", () => {
+test("isClientAbortError matches AgentProxy SSE AbortError shapes (#fix-crash-guard-logger-7)", () => {
   // Exact production shape from the 2026-08-31 crash log:
   //   ⨯ unhandledRejection: Error [AbortError]: request_signal_aborted
   const sseAbort = Object.assign(new Error("request_signal_aborted"), { name: "AbortError" });
@@ -129,6 +129,31 @@ test("isClientAbortError matches OmniRoute SSE AbortError shapes (#fix-crash-gua
   // A genuine TypeError that merely MENTIONS 'abort' must NOT be absorbed.
   const typo = new TypeError("Cannot read properties of undefined (reading 'abort')");
   assert.equal(isClientAbortError(typo), false);
+});
+
+test("isClientAbortError absorbs combo abort reasons and raw disconnect strings", () => {
+  for (const reason of [
+    "hedge-cancelled",
+    "combo-per-model-timeout",
+    "request_signal_aborted",
+    "client_closed",
+    "cancelled",
+  ]) {
+    assert.equal(isClientAbortError(reason), true, reason);
+  }
+  for (const reason of ["genuine failure", "permission denied", "timeout while writing database"]) {
+    assert.equal(isClientAbortError(reason), false, reason);
+  }
+  assert.equal(isClientAbortError(new Error("hedge-cancelled")), true);
+  assert.equal(isClientAbortError(new Error("combo-per-model-timeout")), true);
+});
+
+test("shouldSwallowUncaught absorbs combo cancellation rejections", () => {
+  assert.equal(shouldSwallowUncaught("hedge-cancelled", "unhandledRejection"), true);
+  assert.equal(
+    shouldSwallowUncaught(new Error("combo-per-model-timeout"), "unhandledRejection"),
+    true
+  );
 });
 
 test("shouldSwallowUncaught absorbs SSE AbortError rejections", () => {
@@ -201,4 +226,39 @@ test("installProcessCrashGuard still crashes on genuine errors (no over-swallowi
   });
   assert.notEqual(status, 0, "genuine errors must keep crash semantics");
   assert.doesNotMatch(stdout, /SHOULD_NOT_REACH/);
+});
+
+// A swallowed error is the ONLY evidence it ever happened; logging just
+// code/message throws away the stack. The logger must receive the full
+// error object so the origin stays diagnosable.
+test("installProcessCrashGuard logs the full error object for swallowed errors", async () => {
+  const guardPath = fileURLToPath(
+    new URL("../../src/shared/utils/httpClientAbortGuard.mjs", import.meta.url)
+  );
+  const script = `
+    const { installProcessCrashGuard } = await import(process.argv[1]);
+    installProcessCrashGuard((level, ...args) => {
+      console.log(
+        "LOGARGS",
+        level,
+        args.map((a) => (a instanceof Error ? "Error" : typeof a)).join(",")
+      );
+    });
+    process.emit(
+      "unhandledRejection",
+      Object.assign(new Error("hedge-cancelled"), { name: "AbortError" }),
+      Promise.resolve()
+    );
+  `;
+  const { status, stdout } = await new Promise((resolve, reject) => {
+    const child = spawn(process.execPath, ["--input-type=module", "-e", script, guardPath], {
+      stdio: ["ignore", "pipe", "pipe"],
+    });
+    let out = "";
+    child.stdout.on("data", (d) => (out += d));
+    child.on("close", (status) => resolve({ status, stdout: out }));
+    child.on("error", reject);
+  });
+  assert.equal(status, 0);
+  assert.match(stdout, /LOGARGS warn string,Error/);
 });

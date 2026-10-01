@@ -117,7 +117,7 @@ test("#9100: 5 concurrent requests through a mocked HTTP proxy all resolve over 
     // With the old keepAliveTimeout: 1 the socket died after the first response
     // and each queued request opened a fresh connection (count would be 5);
     // with keep-alive restored all 5 reuse the same socket (count stays 1).
-    await withEnv({ OMNIROUTE_PROXY_DISPATCHER_CONNECTIONS: "1" }, async () => {
+    await withEnv({ AGENTPROXY_PROXY_DISPATCHER_CONNECTIONS: "1" }, async () => {
       clearDispatcherCache();
       const results = await Promise.all(
         Array.from({ length: 5 }, (_, i) =>
@@ -161,7 +161,7 @@ test("#9100: 5 concurrent requests through a mocked Vercel-relay proxy all resol
 
   const VERCEL_CTX = {
     type: "vercel" as const,
-    host: "omniroute-relay-abc123.vercel.app",
+    host: "agentproxy-relay-abc123.vercel.app",
     relayAuth: "live-relay-secret",
   };
 

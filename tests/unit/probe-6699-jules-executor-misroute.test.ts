@@ -1,6 +1,6 @@
 // Probe for issue #6699 -- "Google Jules provider validation rejects a valid API key".
 //
-// A second reporter (MohammadMD1383) supplied screenshots showing that OmniRoute, when
+// A second reporter (MohammadMD1383) supplied screenshots showing that AgentProxy, when
 // actually routing a chat-completion request for a saved "jules" connection, sends the
 // request to https://api.openai.com/v1/chat/completions and surfaces OpenAI's own
 // "Incorrect API key provided ... platform.openai.com" error -- even though the provider

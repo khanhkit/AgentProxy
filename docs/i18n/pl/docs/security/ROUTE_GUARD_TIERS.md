@@ -6,7 +6,7 @@ title: "Poziomy ochrony tras (Route Guard Tiers)"
 
 ## Przegląd
 
-Wszystkie trasy management API OmniRoute są klasyfikowane do jednego z trzech
+Wszystkie trasy management API AgentProxy są klasyfikowane do jednego z trzech
 poziomów ochrony. Klasyfikacja jest statyczna, zdefiniowana w
 `src/server/authz/routeGuard.ts`, i oceniana przed uruchomieniem jakiejkolwiek
 innej gałęzi auth.
@@ -28,9 +28,9 @@ przez tunel Cloudflared/Ngrok), wywołać spawnowanie procesów — znana klasa 
 **Czym jest GHSA-fhh6-4qxv-rpqj (klasa ataku):** serwer management/agent
 udostępnia endpoint, który uruchamia subprocess (`npm install`, `node`, przeglądarkę,
 proxy, `git`, `tar`, …). Jeśli ten endpoint jest osiągalny spoza hosta — bo
-operator wystawił OmniRoute za tunelem nginx/Cloudflare/Tailscale i wyciekł JWT,
+operator wystawił AgentProxy za tunelem nginx/Cloudflare/Tailscale i wyciekł JWT,
 albo auth był źle skonfigurowany — atakujący zamienia „wywołaj API” na „uruchom
-komendę na hoście” (remote code execution). OmniRoute zamyka to, egzekwując
+komendę na hoście” (remote code execution). AgentProxy zamyka to, egzekwując
 **sprawdzenie hosta loopback bezwarunkowo, przed jakimkolwiek sprawdzeniem auth**,
 na każdej trasie zdolnej do spawnu: wycieknięty token przez tunel nadal nie
 dotrze do spawnu.
@@ -98,7 +98,7 @@ powinni potrzebować szerokiego dostępu management.
 
 #### Wskazówki dla operatora i audyt
 
-Jeśli uruchamiasz OmniRoute za reverse proxy lub tunelem (nginx, Caddy, Cloudflare
+Jeśli uruchamiasz AgentProxy za reverse proxy lub tunelem (nginx, Caddy, Cloudflare
 Tunnel, Tailscale, Ngrok), sprawdzenie loopback nadal chroni powyższe trasy
 spawn-capable — request, którego adres klienta nie jest loopback, jest odrzucany
 z `403 LOCAL_ONLY` **zanim uruchomi się auth**, więc wycieknięty JWT nie dotrze
@@ -122,7 +122,7 @@ do spawnu. Zostają dwie odpowiedzialności operatora:
 - Przeszukaj logi reverse-proxy / access pod kątem powyższych prefiksów w parze z
   adresem klienta non-loopback. Każde takie trafienie, które zwróciło `200` zamiast
   `403 LOCAL_ONLY`, oznacza, że proxy maskuje prawdziwe IP klienta — napraw proxy.
-- `403 LOCAL_ONLY` w logach OmniRoute dla jednej z tych ścieżek to strażnik
+- `403 LOCAL_ONLY` w logach AgentProxy dla jednej z tych ścieżek to strażnik
   działający zgodnie z zamiarem, a nie błąd do wyciszenia.
 
 ### Tier 2 — ALWAYS_PROTECTED

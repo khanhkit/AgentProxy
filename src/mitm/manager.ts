@@ -12,7 +12,7 @@ import { provisionDnsEntries } from "./dns/provision.ts";
 import { generateCert } from "./cert/generate.ts";
 import { installCertResult, installCaCert } from "./cert/install.ts";
 import { loadOrCreateMitmCa, resolveMitmCertDir } from "./cert/rootCa.ts";
-import { decideCertMigration } from "./cert/migration.ts";
+import { resolveActiveCertPath } from "./cert/activeCert.ts";
 import { ALL_TARGETS } from "./targets/index.ts";
 import { detectAgent } from "./detection/index.ts";
 import type { AgentId, DetectionResult, MitmTarget } from "./types.ts";
@@ -53,7 +53,7 @@ export function interpretMitmStartupError(stderr: string, port: number): string 
     return `MITM server failed to start: permission denied for port ${port} (run with elevated privileges, or use a port ≥ 1024)`;
   }
   if (lower.includes("router_api_key")) {
-    return "MITM server failed to start: no API key was provided (ROUTER_API_KEY is required). Set a router API key in OmniRoute and retry.";
+    return "MITM server failed to start: no API key was provided (ROUTER_API_KEY is required). Set a router API key in AgentProxy and retry.";
   }
 
   // Surface the first "❌ <message>" diagnostic line verbatim (marker stripped),
@@ -419,9 +419,13 @@ export async function getMitmStatus(agentId?: string): Promise<{
     // Ignore
   }
 
-  // Check cert
+  // Check cert. #14070: resolve the file the active migration decision
+  // actually installs (ca.crt under the root-CA model), not always the
+  // legacy server.crt — otherwise a root-CA install with no leaf ever
+  // generated would wrongly report certExists:false.
   const certDir = path.join(resolveMitmDataDir(), "mitm");
-  const certExists = fs.existsSync(path.join(certDir, "server.crt"));
+  const rootCaEnabledForStatus = process.env.MITM_ROOT_CA_ENABLED === "true";
+  const certExists = fs.existsSync(resolveActiveCertPath(certDir, rootCaEnabledForStatus).certPath);
 
   return {
     running,
@@ -434,7 +438,7 @@ export async function getMitmStatus(agentId?: string): Promise<{
 
 /**
  * Start MITM proxy
- * @param {string} apiKey - OmniRoute API key
+ * @param {string} apiKey - AgentProxy API key
  * @param {string} sudoPassword - Sudo password for DNS/cert operations
  */
 export async function startMitm(
@@ -516,7 +520,7 @@ async function startMitmInternal(
   //    `tproxy/dynamicCert.ts`).
   const certDir = resolveMitmCertDir();
   const rootCaEnabled = process.env.MITM_ROOT_CA_ENABLED === "true";
-  const migrationDecision = decideCertMigration(certDir, rootCaEnabled);
+  const { mode: migrationDecision } = resolveActiveCertPath(certDir, rootCaEnabled);
   let certPath: string;
   if (migrationDecision === "use-legacy-leaf") {
     certPath = path.join(resolveMitmDataDir(), "mitm", "server.crt");
@@ -596,7 +600,7 @@ async function startMitmInternal(
       : 443;
   // D4 — resolve the inspector ingest token so the spawned proxy can post
   // captured AgentBridge traffic to the local-only ingest endpoint. The token
-  // is shared with the OmniRoute process: getIngestTokenForBootstrap() returns
+  // is shared with the AgentProxy process: getIngestTokenForBootstrap() returns
   // the same value the ingest route validates against (env or auto-generated).
   // Best-effort — if it cannot be resolved, the proxy simply skips capture.
   let ingestToken = process.env.INSPECTOR_INTERNAL_INGEST_TOKEN || "";

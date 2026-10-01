@@ -25,7 +25,7 @@ import { SignJWT } from "jose";
 // Isolate DB + feature flag state
 // ---------------------------------------------------------------------------
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-radar-api-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-radar-api-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.STORAGE_ENCRYPTION_KEY = "test-encryption-key-for-radar-api-tests-32b!";
 process.env.JWT_SECRET = "test-jwt-secret-for-radar-api-tests";
@@ -379,8 +379,8 @@ test("GET /api/radar/settings: flag on, authenticated, default state => optIn fa
   assert.equal(body.hasSupporterKey, false);
   assert.equal(body.supporterKeyMasked, null);
   // F4/T7: default claim/plans links are always present, opt-in or not.
-  assert.equal(body.contributorClaimUrl, "https://radar.omniroute.online/auth/github");
-  assert.equal(body.supporterPlansUrl, "https://radar.omniroute.online/planos");
+  assert.equal(body.contributorClaimUrl, "https://github.com/khanhkit/AgentProxy");
+  assert.equal(body.supporterPlansUrl, "https://github.com/khanhkit/AgentProxy");
 });
 
 test("GET /api/radar/settings: flag on, authenticated, after opt-in + key => reflects persisted state, never raw key", async () => {

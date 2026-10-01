@@ -6,8 +6,9 @@
  * are cached after assembly; cache hits always return JSON.
  * Two-tier: in-memory LRU (fast) + SQLite (persistent across restarts).
  *
- * Cache key = SHA-256(model + normalized messages + temperature + top_p)
- * Bypass: X-OmniRoute-No-Cache: true
+ * Cache key = SHA-256(model + normalized messages + temperature + top_p
+ *             + output contract, when present)
+ * Bypass: X-AgentProxy-No-Cache: true
  *
  * @module lib/semanticCache
  */
@@ -15,20 +16,12 @@
 import crypto from "crypto";
 import { LRUCache } from "./cacheLayer";
 import { getDbInstance } from "./db/core";
+import { toNumber } from "@/shared/utils/numeric";
 
 type JsonRecord = Record<string, unknown>;
 
 function asRecord(value: unknown): JsonRecord {
   return value && typeof value === "object" && !Array.isArray(value) ? (value as JsonRecord) : {};
-}
-
-function toNumber(value: unknown, fallback = 0): number {
-  if (typeof value === "number" && Number.isFinite(value)) return value;
-  if (typeof value === "string" && value.trim().length > 0) {
-    const parsed = Number(value);
-    return Number.isFinite(parsed) ? parsed : fallback;
-  }
-  return fallback;
 }
 
 /**
@@ -137,6 +130,57 @@ export function clearMemoryCache(): void {
 
 // ─── Signature Generation ─────────────────
 
+/** Output-shaping constraints that must participate in the semantic-cache key. */
+export interface SignatureConstraints {
+  toolChoice?: unknown;
+  tools?: unknown;
+  responseFormat?: unknown;
+  tool_choice?: unknown;
+  response_format?: unknown;
+  text_format?: unknown;
+}
+
+/**
+ * Extract the request fields that define what a valid response looks like.
+ * Returns null for legacy plain-chat requests so their existing signatures remain unchanged.
+ */
+export function outputContractOf(body: unknown): SignatureConstraints | null {
+  const record = asRecord(body);
+  const text = asRecord(record.text);
+  const contract: SignatureConstraints = {};
+  if (record.response_format != null) {
+    contract.response_format = record.response_format;
+    contract.responseFormat = record.response_format;
+  }
+  if (text.format != null) contract.text_format = text.format;
+  if (record.tools != null) contract.tools = record.tools;
+  if (record.tool_choice != null) {
+    contract.tool_choice = record.tool_choice;
+    contract.toolChoice = record.tool_choice;
+  }
+  return Object.keys(contract).length > 0 ? contract : null;
+}
+
+/** Normalize one tool definition to the policy fields that affect model behavior. */
+function normalizeTool(tool: unknown): unknown {
+  const record = asRecord(tool);
+  const fn = asRecord(record.function);
+  if (Object.keys(fn).length === 0 && Object.keys(record).length === 0) return tool;
+  return {
+    type: typeof record.type === "string" ? record.type : "function",
+    function: {
+      name: fn.name,
+      description: fn.description,
+      parameters: fn.parameters,
+    },
+  };
+}
+
+function normalizeTools(tools: unknown): unknown {
+  if (!Array.isArray(tools) || tools.length === 0) return undefined;
+  return tools.map(normalizeTool);
+}
+
 /**
  * Generate deterministic cache signature from request params.
  * @param {string} model
@@ -151,13 +195,18 @@ export function generateSignature(
   conversation,
   temperature = 0,
   topP = 1,
-  apiKeyId?: string
+  apiKeyId?: string,
+  constraints?: SignatureConstraints | null
 ) {
   const payload = JSON.stringify({
     model,
     messages: normalizeConversation(conversation),
     temperature,
     top_p: topP,
+    tool_choice: constraints?.toolChoice ?? constraints?.tool_choice,
+    tools: normalizeTools(constraints?.tools),
+    response_format: constraints?.responseFormat ?? constraints?.response_format,
+    text_format: constraints?.text_format,
   });
   const digest = crypto.createHash("sha256").update(payload).digest("hex");
   // Per-key cache isolation (#3740) namespaces the signature with the apiKeyId as a
@@ -250,6 +299,22 @@ export function getCachedResponse(signature) {
 
   incrementMetric("misses");
   return null;
+}
+
+/** Record a dual-layer semantic cache hit in the legacy SQLite metrics too. */
+export function recordSemanticCacheHit(signature: string, tokensSaved = 0): void {
+  try {
+    const db = getDbInstance();
+    if (signature) {
+      db.prepare(
+        "UPDATE semantic_cache SET hit_count = hit_count + 1 WHERE signature = ? OR prompt_hash = ?"
+      ).run(signature, signature.slice(0, 16));
+    }
+    incrementMetric("hits");
+    if (tokensSaved > 0) incrementMetric("tokens_saved", tokensSaved);
+  } catch {
+    // DB not available — fail open.
+  }
 }
 
 /**
@@ -385,9 +450,11 @@ export function getCacheStats() {
  * because the provider default may be non-deterministic (e.g. random/creative tasks).
  */
 export function isCacheableForRead(body, headers) {
-  if ((getHeaderValue(headers, "x-omniroute-no-cache") || "").toLowerCase() === "true") {
+  if ((getHeaderValue(headers, "x-agentproxy-no-cache") || "").toLowerCase() === "true") {
     return false;
   }
+  const cacheControl = (getHeaderValue(headers, "cache-control") || "").toLowerCase();
+  if (cacheControl.includes("no-cache")) return false;
   if (typeof body.temperature !== "number" || body.temperature !== 0) return false;
   return true;
 }
@@ -399,9 +466,41 @@ export function isCacheableForRead(body, headers) {
  * because the provider default may be non-deterministic.
  */
 export function isCacheableForWrite(body, headers) {
-  if ((getHeaderValue(headers, "x-omniroute-no-cache") || "").toLowerCase() === "true") {
+  if ((getHeaderValue(headers, "x-agentproxy-no-cache") || "").toLowerCase() === "true") {
     return false;
   }
+  const cacheControl = (getHeaderValue(headers, "cache-control") || "").toLowerCase();
+  if (cacheControl.includes("no-cache")) return false;
   if (body.temperature !== 0) return false;
   return true;
+}
+
+/** Partial completions must never poison the semantic cache. */
+const TRUNCATED_FINISH_REASONS = new Set(["length", "max_tokens"]);
+
+export function isTruncatedCompletion(response: unknown): boolean {
+  if (!response || typeof response !== "object") return false;
+  const r = response as { choices?: Array<{ finish_reason?: unknown }>; stop_reason?: unknown };
+  if (Array.isArray(r.choices)) {
+    for (const choice of r.choices) {
+      const reason = choice?.finish_reason;
+      if (typeof reason === "string" && TRUNCATED_FINISH_REASONS.has(reason)) return true;
+    }
+  }
+  return typeof r.stop_reason === "string" && TRUNCATED_FINISH_REASONS.has(r.stop_reason);
+}
+
+export function isTruncatedStreamBody(streamBody: unknown): boolean {
+  if (streamBody && typeof streamBody === "object") return isTruncatedCompletion(streamBody);
+  if (typeof streamBody !== "string" || streamBody.length === 0) return false;
+  for (const line of streamBody.split("\n")) {
+    const trimmed = line.trim();
+    if (!trimmed.startsWith("data:")) continue;
+    const payload = trimmed.slice(5).trim();
+    if (!payload || payload === "[DONE]") continue;
+    try {
+      if (isTruncatedCompletion(JSON.parse(payload))) return true;
+    } catch {}
+  }
+  return false;
 }

@@ -19,7 +19,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-ag-host-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-ag-host-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.API_KEY_SECRET = "test-ag-host-secret";
 
@@ -60,7 +60,7 @@ test("#8965: quota reads use the runtime host (daily-cloudcode-pa), not cloudcod
     const url =
       typeof input === "string" ? input : input instanceof URL ? input.toString() : input.url;
 
-    if (url.includes("daily-cloudcode-pa.googleapis.com")) {
+    if (new URL(url).hostname === "daily-cloudcode-pa.googleapis.com") {
       dailyCount.value++;
 
       if (url.includes("retrieveUserQuotaSummary")) {
@@ -126,7 +126,7 @@ test("#8965: quota reads use the runtime host (daily-cloudcode-pa), not cloudcod
       } as Response;
     }
 
-    if (url.includes("cloudcode-pa.googleapis.com")) {
+    if (new URL(url).hostname === "cloudcode-pa.googleapis.com") {
       cloudcodeCount.value++;
       return { ok: false, status: 500, json: async () => ({}) } as Response;
     }
@@ -171,7 +171,7 @@ test("#8965 behavioral impact: live quota source + weekly bucket unreachable whe
     const url =
       typeof input === "string" ? input : input instanceof URL ? input.toString() : input.url;
 
-    if (url.includes("daily-cloudcode-pa.googleapis.com")) {
+    if (new URL(url).hostname === "daily-cloudcode-pa.googleapis.com") {
       if (url.includes("retrieveUserQuotaSummary")) {
         return {
           ok: true,
@@ -232,7 +232,7 @@ test("#8965 behavioral impact: live quota source + weekly bucket unreachable whe
       } as Response;
     }
 
-    if (url.includes("cloudcode-pa.googleapis.com")) {
+    if (new URL(url).hostname === "cloudcode-pa.googleapis.com") {
       return { ok: false, status: 500, json: async () => ({}) } as Response;
     }
 

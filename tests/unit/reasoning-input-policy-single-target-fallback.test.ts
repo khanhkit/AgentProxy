@@ -20,21 +20,21 @@ test("single-target default is drop when nothing is configured", () => {
   assert.equal(action, "drop");
 });
 
-test("env OMNIROUTE_SINGLE_TARGET_REASONING_FALLBACK=reject enforces rejection", () => {
+test("env AGENTPROXY_SINGLE_TARGET_REASONING_FALLBACK=reject enforces rejection", () => {
   const action = resolveIncompatibleReasoningAction({
     reasoningTransportFallback: "skip",
     isComboStep: false,
     headers: null,
-    env: { OMNIROUTE_SINGLE_TARGET_REASONING_FALLBACK: "reject" },
+    env: { AGENTPROXY_SINGLE_TARGET_REASONING_FALLBACK: "reject" },
   });
   assert.equal(action, "reject");
 });
 
-test("x-omniroute-reasoning-fallback header overrides env and default", () => {
+test("x-agentproxy-reasoning-fallback header overrides env and default", () => {
   const rejectHeader = resolveIncompatibleReasoningAction({
     reasoningTransportFallback: "skip",
     isComboStep: false,
-    headers: { "x-omniroute-reasoning-fallback": "reject" },
+    headers: { "x-agentproxy-reasoning-fallback": "reject" },
     env: {},
   });
   assert.equal(rejectHeader, "reject");
@@ -42,8 +42,8 @@ test("x-omniroute-reasoning-fallback header overrides env and default", () => {
   const dropOverridesEnv = resolveIncompatibleReasoningAction({
     reasoningTransportFallback: "skip",
     isComboStep: false,
-    headers: new Headers({ "X-OmniRoute-Reasoning-Fallback": "drop" }),
-    env: { OMNIROUTE_SINGLE_TARGET_REASONING_FALLBACK: "reject" },
+    headers: new Headers({ "X-AgentProxy-Reasoning-Fallback": "drop" }),
+    env: { AGENTPROXY_SINGLE_TARGET_REASONING_FALLBACK: "reject" },
   });
   assert.equal(dropOverridesEnv, "drop");
 });

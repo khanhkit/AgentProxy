@@ -72,7 +72,7 @@ function runTypeScriptScript(args: string[]) {
   });
 }
 const defaultFixtureDir = path.join(repoRoot, "tests/fixtures/router-eval");
-const defaultArtifactDir = path.join(os.tmpdir(), "omniroute-router-eval");
+const defaultArtifactDir = path.join(os.tmpdir(), "agentproxy-router-eval");
 
 function getArgValue(name: string): string | undefined {
   const index = process.argv.indexOf(`--${name}`);

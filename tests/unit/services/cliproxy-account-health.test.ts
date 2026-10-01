@@ -182,4 +182,35 @@ describe("CLIProxyAPI account health", () => {
     assert.equal(result.state, "unreachable");
     assert.ok(Date.now() - started < 1_000);
   });
+  it("an external key without CLIPROXYAPI_HOST targets the documented 127.0.0.1 default", async () => {
+    const saved = {
+      host: process.env.CLIPROXYAPI_HOST,
+      key: process.env.CLIPROXYAPI_MANAGEMENT_KEY,
+      port: process.env.CLIPROXYAPI_PORT,
+    };
+    delete process.env.CLIPROXYAPI_HOST;
+    delete process.env.CLIPROXYAPI_PORT;
+    process.env.CLIPROXYAPI_MANAGEMENT_KEY = "external-key";
+    try {
+      let url = "";
+      const result = await getCliproxyAccountHealth({
+        fetchImpl: async (input) => {
+          url = String(input);
+          return Response.json({ files: [] });
+        },
+      });
+      assert.equal(url, "http://127.0.0.1:8317/v0/management/auth-files");
+      assert.equal(result.state, "ready");
+    } finally {
+      for (const [name, value] of [
+        ["CLIPROXYAPI_HOST", saved.host],
+        ["CLIPROXYAPI_MANAGEMENT_KEY", saved.key],
+        ["CLIPROXYAPI_PORT", saved.port],
+      ] as const) {
+        if (value === undefined) delete process.env[name];
+        else process.env[name] = value;
+      }
+    }
+  });
+
 });

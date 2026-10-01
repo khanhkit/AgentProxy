@@ -12,7 +12,7 @@ import { updateKeyPermissionsSchema } from "@/shared/validation/schemas";
 import { isValidationFailure, validateBody } from "@/shared/validation/helpers";
 import { requireManagementAuth } from "@/lib/api/requireManagementAuth";
 import * as log from "@/sse/utils/logger";
-import { buildErrorBody } from "@omniroute/open-sse/utils/error.ts";
+import { buildErrorBody } from "@agentproxy/open-sse/utils/error.ts";
 
 // GET /api/keys/[id] - Get single API key
 export async function GET(request, { params }) {
@@ -86,6 +86,8 @@ export async function PATCH(request, { params }) {
       allowedEndpoints,
       streamDefaultMode,
       compressionEnabled,
+      allowAutoCombos,
+      catalogScope,
       cacheDefaultMode,
       disableNonPublicModels,
       allowUsageCommand,
@@ -119,6 +121,8 @@ export async function PATCH(request, { params }) {
     if (allowedEndpoints !== undefined) payload.allowedEndpoints = allowedEndpoints;
     if (streamDefaultMode !== undefined) payload.streamDefaultMode = streamDefaultMode;
     if (compressionEnabled !== undefined) payload.compressionEnabled = compressionEnabled;
+    if (allowAutoCombos !== undefined) payload.allowAutoCombos = allowAutoCombos;
+    if (catalogScope !== undefined) payload.catalogScope = catalogScope;
     if (cacheDefaultMode !== undefined) payload.cacheDefaultMode = cacheDefaultMode;
     if (disableNonPublicModels !== undefined)
       payload.disableNonPublicModels = disableNonPublicModels;
@@ -157,6 +161,8 @@ export async function PATCH(request, { params }) {
       ...(allowedEndpoints !== undefined && { allowedEndpoints }),
       ...(streamDefaultMode !== undefined && { streamDefaultMode }),
       ...(compressionEnabled !== undefined && { compressionEnabled }),
+      ...(allowAutoCombos !== undefined && { allowAutoCombos }),
+      ...(catalogScope !== undefined && { catalogScope }),
       ...(cacheDefaultMode !== undefined && { cacheDefaultMode }),
       ...(disableNonPublicModels !== undefined && { disableNonPublicModels }),
       ...(allowUsageCommand !== undefined && { allowUsageCommand }),

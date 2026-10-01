@@ -5,7 +5,7 @@ import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-process.env.DATA_DIR = mkdtempSync(join(tmpdir(), "omniroute-fal-images-"));
+process.env.DATA_DIR = mkdtempSync(join(tmpdir(), "agentproxy-fal-images-"));
 
 const originalDnsLookup = dns.promises.lookup;
 (dns.promises as { lookup: unknown }).lookup = (async (
@@ -20,10 +20,11 @@ process.on("exit", () => {
 });
 
 const { handleImageGeneration } = await import("../../open-sse/handlers/imageGeneration.ts");
+const { setPinnedFetchTestOverride } = await import("../../src/shared/network/remoteImageFetch.ts");
 
 test("handleImageGeneration returns Fal images as base64 when response_format is omitted", async () => {
   const originalFetch = globalThis.fetch;
-  globalThis.fetch = async (url) => {
+  const mockFetchImpl: typeof fetch = async (url) => {
     const stringUrl = String(url);
     if (stringUrl === "https://fal.run/fal-ai/flux-2-flex") {
       return new Response(
@@ -39,6 +40,8 @@ test("handleImageGeneration returns Fal images as base64 when response_format is
     }
     throw new Error(`Unexpected URL: ${stringUrl}`);
   };
+  globalThis.fetch = mockFetchImpl;
+  setPinnedFetchTestOverride(mockFetchImpl);
 
   try {
     const result = await handleImageGeneration({
@@ -51,5 +54,6 @@ test("handleImageGeneration returns Fal images as base64 when response_format is
     assert.equal(result.data.data[0].url, undefined);
   } finally {
     globalThis.fetch = originalFetch;
+    setPinnedFetchTestOverride(undefined);
   }
 });

@@ -23,7 +23,7 @@ const SERVICE_ACCOUNT_JSON = JSON.stringify({
 
 const VALID_CONFIG = {
   projectId: "test-project",
-  datasetId: "omniroute_test",
+  datasetId: "agentproxy_test",
   tableId: "call_logs",
   location: "EU",
   serviceAccountJson: SERVICE_ACCOUNT_JSON,
@@ -128,7 +128,7 @@ test("POST_destinations_UnknownType_IsRejected", async () => {
 
 test("POST_destinations_MissingRequiredConfigKey_ReturnsFieldLevelErrors", async () => {
   const { response, body } = await createDestination({
-    config: { datasetId: "omniroute_test", tableId: "call_logs" },
+    config: { datasetId: "agentproxy_test", tableId: "call_logs" },
   });
 
   assert.equal(response.status, 400);

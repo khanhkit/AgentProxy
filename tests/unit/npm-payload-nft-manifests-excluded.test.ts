@@ -6,7 +6,7 @@ import { join } from "node:path";
 
 /**
  * v3.8.50 was refused by the registry with `413 Payload Too Large` on
- * `POST /-/stage/package/omniroute`: the tarball had reached 288.7 MB packed
+ * `POST /-/stage/package/agentproxy`: the tarball had reached 288.7 MB packed
  * (1.1 GB unpacked), against 174.5 MB for the 3.8.49 that published fine.
  *
  * 668.7 MB of that — 61% of the whole package — was 842 `*.nft.json` files.

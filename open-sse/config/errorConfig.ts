@@ -25,7 +25,7 @@ export const ERROR_TYPES: Record<number, ErrorInfo> = {
   400: { type: "invalid_request_error", code: "bad_request" },
   401: { type: "authentication_error", code: "invalid_api_key" },
   402: { type: "billing_error", code: "payment_required" },
-  403: { type: "permission_error", code: "insufficient_quota" },
+  403: { type: "permission_error", code: "permission_denied" },
   404: { type: "invalid_request_error", code: "model_not_found" },
   406: { type: "invalid_request_error", code: "model_not_supported" },
   410: { type: "invalid_request_error", code: "model_shutdown" },
@@ -42,7 +42,7 @@ export const DEFAULT_ERROR_MESSAGES: Record<number, string> = {
   400: "Bad request",
   401: "Invalid API key provided",
   402: "Payment required",
-  403: "You exceeded your current quota",
+  403: "Permission denied",
   404: "Model not found",
   406: "Model not supported",
   410: "Model has been shut down",
@@ -55,7 +55,7 @@ export const DEFAULT_ERROR_MESSAGES: Record<number, string> = {
 };
 
 // Exponential backoff config for rate limits.
-// Preserve OmniRoute's existing 2-minute cap to avoid changing runtime behavior.
+// Preserve AgentProxy's existing 2-minute cap to avoid changing runtime behavior.
 export const BACKOFF_CONFIG = {
   base: 1000,
   max: 2 * 60 * 1000,
@@ -74,6 +74,8 @@ export const COOLDOWN_MS = {
   transientMax: 60 * 1000,
   transient: TRANSIENT_COOLDOWN_MS,
   requestNotAllowed: 5 * 1000,
+  requestRejected: 5 * 60 * 1000,
+  requestRejectedRepeat: 15 * 60 * 1000,
   rateLimit: 2 * 60 * 1000,
   serviceUnavailable: 2 * 1000,
   authExpired: 2 * 60 * 1000,
@@ -176,7 +178,7 @@ export const ERROR_RULES: ErrorRule[] = [
   { id: "high_demand", text: "high demand", backoff: true, reason: "model_capacity" },
   { id: "status_401", status: 401, cooldownMs: 0, reason: "auth_error" },
   { id: "status_402", status: 402, cooldownMs: 0, reason: "quota_exhausted" },
-  { id: "status_403", status: 403, cooldownMs: 0, reason: "quota_exhausted" },
+  { id: "status_403", status: 403, cooldownMs: 0, reason: "unknown" },
   { id: "status_404", status: 404, cooldownMs: COOLDOWN_MS.notFound, reason: "unknown" },
   { id: "status_406", status: 406, backoff: true, reason: "server_error" },
   { id: "status_408", status: 408, backoff: true, reason: "server_error" },
@@ -259,8 +261,11 @@ export function serviceSupervisorCooldown(
   if (status !== 503 || !headers) return null;
   const hintValue =
     typeof (headers as Headers).get === "function"
-      ? (headers as Headers).get("x-omni-fallback-hint")
-      : (headers as Record<string, string>)["x-omni-fallback-hint"] ||
+      ? (headers as Headers).get("x-agentproxy-fallback-hint") ||
+        (headers as Headers).get("x-omni-fallback-hint")
+      : (headers as Record<string, string>)["x-agentproxy-fallback-hint"] ||
+        (headers as Record<string, string>)["X-AgentProxy-Fallback-Hint"] ||
+        (headers as Record<string, string>)["x-omni-fallback-hint"] ||
         (headers as Record<string, string>)["X-Omni-Fallback-Hint"];
   if (typeof hintValue !== "string" || hintValue.toLowerCase() !== "connection_cooldown") {
     return null;

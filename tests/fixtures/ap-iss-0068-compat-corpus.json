@@ -4,7 +4,7 @@
   "contracts": [
     {
       "id": "Q06",
-      "name": "internal _omniroute metadata confinement",
+      "name": "internal _agentproxy metadata confinement",
       "classification": "VERIFIED_PROTECTED",
       "evidence": [
         "tests/unit/strip-store-responses.test.ts",

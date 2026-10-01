@@ -8,14 +8,14 @@ import path from "node:path";
 /**
  * Container-guard homologation for POST /api/cli-tools/apply.
  *
- * Both runtime modes are exercised by SCOPED `OMNIROUTE_CONTAINER` overrides
+ * Both runtime modes are exercised by SCOPED `AGENTPROXY_CONTAINER` overrides
  * (set per test, restored in finally). The override is the documented test
  * seam of `isRunningInContainer()`; it is never forced globally — forcing it
  * off for the whole suite would hide a regression in the guard itself.
  */
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-apply-guard-data-"));
-const TEST_XDG_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-apply-guard-xdg-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-apply-guard-data-"));
+const TEST_XDG_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-apply-guard-xdg-"));
 const originalDataDir = process.env.DATA_DIR;
 const originalXdg = process.env.XDG_CONFIG_HOME;
 // Fresh DB without a configured password → management auth is open, so these
@@ -66,17 +66,17 @@ function applyRequest(body: Record<string, unknown>): Request {
 }
 
 async function withContainerMode<T>(mode: "1" | "0", run: () => Promise<T>): Promise<T> {
-  const original = process.env.OMNIROUTE_CONTAINER;
-  const originalAllow = process.env.OMNIROUTE_ALLOW_CONTAINER_CONFIG_WRITE;
-  process.env.OMNIROUTE_CONTAINER = mode;
-  delete process.env.OMNIROUTE_ALLOW_CONTAINER_CONFIG_WRITE;
+  const original = process.env.AGENTPROXY_CONTAINER;
+  const originalAllow = process.env.AGENTPROXY_ALLOW_CONTAINER_CONFIG_WRITE;
+  process.env.AGENTPROXY_CONTAINER = mode;
+  delete process.env.AGENTPROXY_ALLOW_CONTAINER_CONFIG_WRITE;
   try {
     return await run();
   } finally {
-    if (original === undefined) delete process.env.OMNIROUTE_CONTAINER;
-    else process.env.OMNIROUTE_CONTAINER = original;
+    if (original === undefined) delete process.env.AGENTPROXY_CONTAINER;
+    else process.env.AGENTPROXY_CONTAINER = original;
     if (originalAllow !== undefined) {
-      process.env.OMNIROUTE_ALLOW_CONTAINER_CONFIG_WRITE = originalAllow;
+      process.env.AGENTPROXY_ALLOW_CONTAINER_CONFIG_WRITE = originalAllow;
     }
   }
 }
@@ -110,7 +110,7 @@ describe("POST /api/cli-tools/apply — container guard", () => {
     assert.strictEqual(res.status, 422);
     const body = await res.json();
     assert.ok(body.containerEphemeralTarget, "422 must be keyed as containerEphemeralTarget");
-    assert.strictEqual(body.hostSetupCommand, "omniroute setup-opencode");
+    assert.strictEqual(body.hostSetupCommand, "agentproxy setup-opencode");
     assert.ok(typeof body.error === "string" && body.error.length > 0);
     assert.ok(!body.error.includes("at /"), "error must not leak a stack trace");
     assert.ok(!body.error.includes("sk-test-guard"), "error must not leak the API key");

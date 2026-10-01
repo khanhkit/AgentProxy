@@ -2,8 +2,8 @@
 // (god-file decomposition) — top-level functions with no dispatcher-state captures; behavior is
 // byte-identical to the original inline defs.
 import { WEB_COOKIE_PROVIDERS, isLocalProvider } from "@/shared/constants/providers";
-import { getRegistryEntry } from "@omniroute/open-sse/config/providerRegistry.ts";
-import { extractZaiToken } from "@omniroute/open-sse/executors/zai-web.ts";
+import { getRegistryEntry } from "@agentproxy/open-sse/config/providerRegistry.ts";
+import { extractZaiToken } from "@agentproxy/open-sse/executors/zai-web.ts";
 import { normalizeBaseUrl } from "./urlHelpers";
 import { STANDARD_USER_AGENT, buildBearerHeaders } from "./headers";
 import { validateChatGptWebProvider } from "./chatgptWeb";
@@ -55,7 +55,7 @@ function resolveWebCookieProbe(
   // regardless of cookie validity, which would silently report an expired/garbage
   // cookie as "OK" (worse than an honest "not supported"). The same refusal covers
   // providers whose registry entry exists only for the model catalog and whose
-  // baseUrl is a browser console rather than an API host (#12107, gemini-business).
+  // baseUrl is a browser console rather than an API host (#12107).
   if (!entry || WEB_COOKIE_PROVIDERS_WITHOUT_AUTH_PROBE.has(provider)) {
     return { rejection: UNSUPPORTED };
   }

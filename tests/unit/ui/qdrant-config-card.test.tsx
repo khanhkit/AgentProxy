@@ -20,7 +20,7 @@ const MOCK_QDRANT_SETTINGS = {
   enabled: false,
   host: "http://127.0.0.1",
   port: 6333,
-  collection: "omniroute_memory",
+  collection: "agentproxy_memory",
   embeddingModel: "openai/text-embedding-3-small",
   hasApiKey: false,
   apiKeyMasked: null,

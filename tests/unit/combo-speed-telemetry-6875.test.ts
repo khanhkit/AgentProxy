@@ -25,7 +25,7 @@ import path from "node:path";
 // src/lib/localDb, both of which open the shared SQLite singleton. Point
 // DATA_DIR at a throwaway dir before any import that could open the handle
 // (CLAUDE.md "Database Handles in Tests").
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-speed-telemetry-6875-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-speed-telemetry-6875-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.API_KEY_SECRET = process.env.API_KEY_SECRET || "combo-speed-telemetry-6875-test-secret";
 

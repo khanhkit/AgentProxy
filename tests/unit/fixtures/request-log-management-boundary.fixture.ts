@@ -4,21 +4,23 @@ import os from "node:os";
 import path from "node:path";
 import test from "node:test";
 
-const TEST_ROOT = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-log-management-boundary-"));
+const TEST_ROOT = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-log-management-boundary-"));
 const TEST_DATA_DIR = path.join(TEST_ROOT, "data");
 const TEST_PLUGINS_DIR = path.join(TEST_ROOT, "plugins");
 const ORIGINAL_DATA_DIR = process.env.DATA_DIR;
-const ORIGINAL_PLUGINS_DIR = process.env.OMNIROUTE_PLUGINS_DIR;
+const ORIGINAL_PLUGINS_DIR = process.env.AGENTPROXY_PLUGINS_DIR;
 const ORIGINAL_DISABLE_BACKUP = process.env.DISABLE_SQLITE_AUTO_BACKUP;
 
 fs.mkdirSync(TEST_DATA_DIR, { recursive: true });
 fs.mkdirSync(TEST_PLUGINS_DIR, { recursive: true });
 process.env.DATA_DIR = TEST_DATA_DIR;
-process.env.OMNIROUTE_PLUGINS_DIR = TEST_PLUGINS_DIR;
+process.env.AGENTPROXY_PLUGINS_DIR = TEST_PLUGINS_DIR;
 process.env.DISABLE_SQLITE_AUTO_BACKUP = "1";
 
 const core = await import("../../../src/lib/db/core.ts");
 const usageHistory = await import("../../../src/lib/usage/usageHistory.ts");
+const pendingScope = await import("../../../src/lib/usage/pendingRequestScope.ts");
+const { createRequestLogger } = await import("../../../open-sse/utils/requestLogger.ts");
 const logsRoute = await import("../../../src/app/api/logs/[id]/route.ts");
 const usageHistoryRoute = await import("../../../src/app/api/usage/history/route.ts");
 
@@ -31,8 +33,8 @@ test.after(() => {
   core.resetDbInstance();
   if (ORIGINAL_DATA_DIR === undefined) delete process.env.DATA_DIR;
   else process.env.DATA_DIR = ORIGINAL_DATA_DIR;
-  if (ORIGINAL_PLUGINS_DIR === undefined) delete process.env.OMNIROUTE_PLUGINS_DIR;
-  else process.env.OMNIROUTE_PLUGINS_DIR = ORIGINAL_PLUGINS_DIR;
+  if (ORIGINAL_PLUGINS_DIR === undefined) delete process.env.AGENTPROXY_PLUGINS_DIR;
+  else process.env.AGENTPROXY_PLUGINS_DIR = ORIGINAL_PLUGINS_DIR;
   if (ORIGINAL_DISABLE_BACKUP === undefined) delete process.env.DISABLE_SQLITE_AUTO_BACKUP;
   else process.env.DISABLE_SQLITE_AUTO_BACKUP = ORIGINAL_DISABLE_BACKUP;
   fs.rmSync(TEST_ROOT, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
@@ -85,6 +87,57 @@ test("management detail sanitizes completed error metadata and cached chunks", a
   assert.doesNotMatch(
     serializedDetail(detail),
     /management-cache-secret|srv\/private|completed-request\.ts|\bat finalize\b/i
+  );
+});
+
+test("observed video omits transcript echoes from active and completed management detail", async () => {
+  const secret = "video-management-private-sentinel";
+  const requestId = usageHistory.trackPendingRequest(
+    "video-model",
+    "provider",
+    "conn-video",
+    true,
+    {
+      providerRequest: pendingScope.initialPendingBody({ prompt: secret }, "video-model", true),
+    }
+  );
+  assert.ok(requestId);
+  const scope = {
+    id: requestId,
+    model: "video-model",
+    provider: "provider",
+    connectionId: "conn-video",
+    videoTranscriptSensitive: true,
+  };
+  pendingScope.updatePendingScope(scope, {
+    providerRequest: { prompt: secret },
+    providerResponse: { text: secret },
+    clientResponse: { text: secret },
+    error: secret,
+  });
+  const logger = await createRequestLogger("openai", "openai", "video-model", {
+    enabled: false,
+    captureStreamChunks: false,
+    requestId,
+    model: "video-model",
+    provider: "provider",
+    connectionId: "conn-video",
+  });
+  logger.appendProviderChunk(`data: ${secret}`);
+  assert.doesNotMatch(
+    serializedDetail(await readManagementDetail(requestId)),
+    /video-management-private-sentinel/
+  );
+
+  pendingScope.finalizePendingScope(scope, {
+    providerResponse: { text: secret },
+    clientResponse: { text: secret },
+    error: secret,
+    status: 200,
+  });
+  assert.doesNotMatch(
+    serializedDetail(await readManagementDetail(requestId)),
+    /video-management-private-sentinel/
   );
 });
 

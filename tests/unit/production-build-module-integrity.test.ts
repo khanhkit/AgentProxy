@@ -45,7 +45,7 @@ test("videoGeneration handler links with a single handleFalVideoGeneration bindi
   // A duplicate import binding is an ESM early SyntaxError, so the import itself is
   // the assertion. The Fal video path must resolve to the provider-neutral module
   // that #9982 added (it also covers the #9969 Grok Imagine routing).
-  const mod = await import("@omniroute/open-sse/handlers/videoGeneration.ts");
+  const mod = await import("@agentproxy/open-sse/handlers/videoGeneration.ts");
   assert.equal(typeof mod.handleVideoGeneration, "function");
 
   const source = readFileSync(path.join(repoRoot, "open-sse/handlers/videoGeneration.ts"), "utf8");
@@ -114,7 +114,7 @@ test("conolDiscovery resolves getProviderOutboundGuard from the policy module (#
 
   // The fix must stay on the consumer side. outboundUrlGuard.ts is loaded by the packaged
   // CLI, where no tsconfig resolves `@/*`, so re-exporting the policy helpers from it
-  // (they pull in featureFlags → the DB layer) would break `omniroute setup-opencode`
+  // (they pull in featureFlags → the DB layer) would break `agentproxy setup-opencode`
   // (#7682). Guard that nobody "fixes" this by adding the re-export instead.
   const guardSource = readFileSync(
     path.join(repoRoot, "src/shared/network/outboundUrlGuard.ts"),

@@ -8,7 +8,7 @@ import { toValidationErrorResult, validationWrite } from "./transport";
 import {
   NIMBLE_CLIENT_SOURCE,
   NIMBLE_CLIENT_SOURCE_HEADER,
-} from "@omniroute/open-sse/config/nimble.ts";
+} from "@agentproxy/open-sse/config/nimble.ts";
 
 export async function validateSearchProvider(
   url: string,

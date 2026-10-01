@@ -1,0 +1,61 @@
+{
+  "source": {
+    "family": "9router",
+    "commit": "39e36d3d0c849e0e01dfeacddf111edf892448fc"
+  },
+  "providerConnections": [
+    {
+      "id": "9r-sql-conn-1",
+      "provider": "openai",
+      "authType": "oauth",
+      "name": "Work",
+      "email": "work@example.invalid",
+      "priority": 1,
+      "isActive": 1,
+      "data": "{\"accessToken\":\"fixture-secret-must-not-migrate\",\"refreshToken\":\"fixture-secret-must-not-migrate\",\"displayName\":\"Work account\",\"defaultModel\":\"gpt-example\",\"testStatus\":\"active\",\"backoffLevel\":3}"
+    }
+  ],
+  "providerNodes": [
+    {
+      "id": "9r-sql-node-1",
+      "type": "openai",
+      "name": "Node",
+      "data": "{\"prefix\":\"custom\",\"apiType\":\"openai\",\"baseUrl\":\"https://node.example.invalid\"}"
+    }
+  ],
+  "combos": [
+    {
+      "id": "9r-sql-combo-1",
+      "name": "Routed",
+      "kind": "fallback",
+      "models": "[{\"model\":\"gpt-example\",\"connectionId\":\"9r-sql-conn-1\"}]"
+    }
+  ],
+  "apiKeys": [
+    {
+      "id": "9r-sql-key-1",
+      "key": "fixture-key-must-not-migrate",
+      "name": "Client key",
+      "machineId": "machine-source",
+      "isActive": 1
+    }
+  ],
+  "settings": [
+    {
+      "id": 1,
+      "data": "{\"comboStrategy\":\"fallback\",\"providerStrategies\":{\"openai\":\"round-robin\"},\"outboundProxyUrl\":\"http://host-specific.invalid:3128\"}"
+    }
+  ],
+  "modelAliases": [
+    {
+      "key": "fast-alias",
+      "value": "\"openai/gpt-example\""
+    }
+  ],
+  "pricing": [
+    {
+      "key": "openai",
+      "value": "{\"gpt-example\": {\"input\": 1, \"output\": 2}}"
+    }
+  ]
+}

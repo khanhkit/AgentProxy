@@ -23,14 +23,14 @@ const providers = picks
       apiKeyEnvar: "HOMOLOG_API_KEY",
       max_tokens: 5,
       temperature: 0,
-      // OmniRoute streama por default quando "stream" é omitido (streamDefaultMode
+      // AgentProxy streama por default quando "stream" é omitido (streamDefaultMode
       // legacy) — o parser JSON do promptfoo precisa da resposta non-stream.
       passthrough: { stream: false, max_tokens: 5 },
     },
   }));
 
 const config = {
-  description: "OmniRoute homolog — smoke real 1 request/provider crítico",
+  description: "AgentProxy homolog — smoke real 1 request/provider crítico",
   prompts: ["Reply with exactly: OK"],
   providers,
   // O smoke valida o WIRING do provider (respondeu sem erro), não o comportamento

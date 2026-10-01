@@ -17,7 +17,7 @@ import path from "node:path";
 
 import { updateSettings } from "../../src/lib/db/settings";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-cli-logs-route-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-cli-logs-route-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 // Write a small pino-format log file before route is imported
@@ -85,7 +85,7 @@ test("GET /api/cli-tools/logs respects filter param", async () => {
 
 test("GET /api/cli-tools/logs returns empty array when log file does not exist", async () => {
   const origPath = process.env.APP_LOG_FILE_PATH;
-  process.env.APP_LOG_FILE_PATH = "/tmp/omniroute-nonexistent-cli-logs-test.log";
+  process.env.APP_LOG_FILE_PATH = "/tmp/agentproxy-nonexistent-cli-logs-test.log";
 
   const res = await GET(makeReq());
   assert.equal(res.status, 200);
@@ -175,6 +175,46 @@ test("log-streamer.ts calls /api/cli-tools/logs (correct URL, not the missing ro
     !captured.some((u) => u.includes("/api/logs/console")),
     "log-streamer should not call /api/logs/console"
   );
+});
+
+test("log-streamer derives its default base URL from PORT", async () => {
+  const { createLogStream } = await import("../../src/lib/cli-helper/log-streamer.ts");
+  const captured: string[] = [];
+  const origFetch = globalThis.fetch;
+  const origPort = process.env.PORT;
+  const origBaseUrl = process.env.OMNIROUTE_BASE_URL;
+  const origGenericBaseUrl = process.env.BASE_URL;
+  process.env.PORT = "37128";
+  delete process.env.OMNIROUTE_BASE_URL;
+  delete process.env.BASE_URL;
+
+  globalThis.fetch = (async (url: string) => {
+    captured.push(typeof url === "string" ? url : String(url));
+    return new Response(
+      new ReadableStream({
+        start(c) {
+          c.close();
+        },
+      }),
+      { status: 200 }
+    );
+  }) as typeof fetch;
+
+  try {
+    const { stream, stop } = createLogStream();
+    await stream.getReader().read().catch(() => {});
+    stop();
+  } finally {
+    globalThis.fetch = origFetch;
+    if (origPort === undefined) delete process.env.PORT;
+    else process.env.PORT = origPort;
+    if (origBaseUrl === undefined) delete process.env.OMNIROUTE_BASE_URL;
+    else process.env.OMNIROUTE_BASE_URL = origBaseUrl;
+    if (origGenericBaseUrl === undefined) delete process.env.BASE_URL;
+    else process.env.BASE_URL = origGenericBaseUrl;
+  }
+
+  assert.equal(captured[0], "http://localhost:37128/api/cli-tools/logs?follow=false");
 });
 
 test("log-streamer forwards auth headers to fetch (regression: 401 against authed servers)", async () => {

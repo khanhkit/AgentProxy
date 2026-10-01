@@ -1,5 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { EventEmitter } from "node:events";
 
 // Pure helpers of the release-green validator (Solution C). The orchestration is
 // guarded behind a direct-run check, so importing the module here is side-effect-free.
@@ -13,12 +14,17 @@ const {
   isDrift,
   computeVerdict,
   classifyRunError,
+  terminateProcessTree,
+  runAsync,
   extractCiGates,
   FULL_CI_SKIP,
   fullCiTimeoutFor,
   curatedEquivalentId,
   fullCiKindFor,
   ESLINT_TIMEOUT_MS,
+  PACK_ARTIFACT_TIMEOUT_MS,
+  PACK_BOOT_TIMEOUT_MS,
+  PACK_ARTIFACT_ENV,
 } = mod;
 
 const extract = extractCiGates as (
@@ -104,7 +110,7 @@ test("isDrift flags only growth past the committed baseline (down-direction ratc
 
 test("firstFailureLine surfaces the meaningful failure, not boilerplate", () => {
   const out = [
-    "> omniroute@3.8.34 typecheck:core",
+    "> agentproxy@3.8.34 typecheck:core",
     "src/x.ts(10,5): error TS2322: Type 'string' is not assignable to 'number'.",
     "done",
   ].join("\n");
@@ -192,6 +198,93 @@ test("classifyRunError: a kill WITHOUT a configured timeout is not misreported a
   assert.doesNotMatch(r.out, /ceiling/);
 });
 
+test("terminateProcessTree: POSIX signals the detached process group, then SIGKILLs surviving descendants", async () => {
+  const calls: Array<[number, NodeJS.Signals | 0]> = [];
+  const processKill = (pid: number, signal: NodeJS.Signals | 0) => {
+    calls.push([pid, signal]);
+  };
+
+  await terminateProcessTree(4321, {
+    platform: "linux",
+    processKill,
+    sleepFn: async () => {},
+    graceMs: 0,
+  });
+
+  assert.deepEqual(calls, [
+    [-4321, "SIGTERM"],
+    [-4321, 0],
+    [-4321, "SIGKILL"],
+  ]);
+});
+
+test("terminateProcessTree: Windows uses taskkill /T /F for descendants", async () => {
+  const calls: Array<{ cmd: string; args: string[]; options: Record<string, unknown> }> = [];
+  const killer = new EventEmitter();
+  const spawnFn = (cmd: string, args: string[], options: Record<string, unknown>) => {
+    calls.push({ cmd, args, options });
+    queueMicrotask(() => killer.emit("close", 0));
+    return killer;
+  };
+  const processKill = () => {
+    throw new Error("fallback processKill should not run when taskkill succeeds");
+  };
+
+  await terminateProcessTree(7654, {
+    platform: "win32",
+    processKill,
+    spawnFn,
+  });
+
+  assert.equal(calls.length, 1);
+  assert.equal(calls[0].cmd, "taskkill");
+  assert.deepEqual(calls[0].args, ["/PID", "7654", "/T", "/F"]);
+  assert.equal(calls[0].options.windowsHide, true);
+});
+
+test("release-green async timeout runner owns a process tree and reaps it before returning", async () => {
+  const fs = await import("node:fs");
+  const src = fs.readFileSync(
+    new URL("../../scripts/quality/validate-release-green.mjs", import.meta.url),
+    "utf8"
+  );
+
+  assert.match(src, /child = spawn\(cmd, cmdArgs,/);
+  assert.match(src, /detached:\s*process\.platform !== "win32"/);
+  assert.match(src, /await terminateProcessTree\(child\.pid\)/);
+  assert.match(src, /taskkill", \["\/PID", String\(pid\), "\/T", "\/F"\]/);
+});
+
+test("runAsync timeout leaves no spawned grandchild behind", async () => {
+  const { mkdtemp, readFile, rm } = await import("node:fs/promises");
+  const { tmpdir } = await import("node:os");
+  const { join } = await import("node:path");
+  const dir = await mkdtemp(join(tmpdir(), "release-green-tree-"));
+  const pidFile = join(dir, "grandchild.pid");
+  const script = [
+    'const { spawn } = require("node:child_process");',
+    'const fs = require("node:fs");',
+    'const child = spawn(process.execPath, ["-e", "setInterval(() => {}, 1000)"], { stdio: "ignore" });',
+    "fs.writeFileSync(" + JSON.stringify(pidFile) + ", String(child.pid));",
+    "setInterval(() => {}, 1000);",
+  ].join("\n");
+
+  try {
+    const result = await runAsync(process.execPath, ["-e", script], { timeout: 1000 });
+    assert.equal(result.code, 124);
+
+    const grandchildPid = Number(await readFile(pidFile, "utf8"));
+    assert.ok(Number.isInteger(grandchildPid) && grandchildPid > 0);
+    assert.throws(
+      () => process.kill(grandchildPid, 0),
+      (err: NodeJS.ErrnoException) => err?.code === "ESRCH",
+      "timed-out gate must not leave its grandchild alive"
+    );
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+});
+
 test("pre-flight wires the test-masking PR-context gate against origin/main (v3.8.43 gap fix)", async () => {
   const fs = await import("node:fs");
   const src = fs.readFileSync(
@@ -227,9 +320,9 @@ test("pre-flight --hermetic scrubs the live-test trigger vars (2026-07-05 false-
     new URL("../../scripts/quality/validate-release-green.mjs", import.meta.url),
     "utf8"
   );
-  // A dev machine with OMNIROUTE_API_KEY set runs 17+ live tests that CI skips —
+  // A dev machine with AGENTPROXY_API_KEY set runs 17+ live tests that CI skips —
   // the pre-flight must be able to reproduce the CI env exactly.
-  assert.match(src, /HERMETIC_SCRUB\s*=\s*\["OMNIROUTE_API_KEY",\s*"OMNIROUTE_URL"\]/);
+  assert.match(src, /HERMETIC_SCRUB\s*=\s*\["AGENTPROXY_API_KEY",\s*"AGENTPROXY_URL"\]/);
   assert.match(src, /args\.has\("--hermetic"\)/, "--hermetic flag must be parsed");
   // Per-gate logs: a red must be diagnosable from _artifacts/release-green/<gate>.log
   // without re-running the gate.
@@ -246,7 +339,12 @@ test("pre-flight runs the slow suites CONCURRENTLY (v3.8.45 perf — was ~1h ser
   // main() must be async and the slow suites (unit/vitest/integration/pack-artifact)
   // must run via a single Promise.all over runAsync — not four sequential hardCmd calls.
   assert.match(src, /async function main\(\)/, "main must be async to await the parallel wave");
-  assert.match(src, /const execFileAsync = promisify\(execFile\)/, "async runner must exist");
+  assert.match(src, /export async function runAsync\(/, "async runner must exist");
+  assert.match(
+    src,
+    /child = spawn\(cmd, cmdArgs,/,
+    "async runner must retain a ChildProcess handle"
+  );
   assert.match(src, /await Promise\.all\(\s*slow\.map\(/, "slow suites must run concurrently");
   // The four slow-gate ids must all be present in the parallel wave.
   for (const id of ["unit", "vitest", "integration", "pack-artifact"]) {
@@ -262,7 +360,7 @@ test("pre-flight runs tarball boot only after the package artifact builder compl
     new URL("../../scripts/quality/validate-release-green.mjs", import.meta.url),
     "utf8"
   );
-  const parallelWave = src.indexOf("const slowResults = await Promise.all");
+  const parallelWave = src.indexOf("slowResults = await Promise.all");
   const packBoot = src.indexOf('id: "pack-boot"');
 
   assert.ok(parallelWave >= 0, "the parallel slow-gate wave must exist");
@@ -275,6 +373,33 @@ test("pre-flight runs tarball boot only after the package artifact builder compl
     /packArtifactResult[\s\S]*?check:pack-boot/,
     "pack-boot must be explicitly sequenced from the package-artifact result"
   );
+});
+
+test("pack gate builds, stamps dist/BUILD_SHA, then validates against the tree under test (#10427)", async () => {
+  const fs = await import("node:fs");
+  const src = fs.readFileSync(
+    new URL("../../scripts/quality/validate-release-green.mjs", import.meta.url),
+    "utf8"
+  );
+  const gate = src.slice(src.indexOf("async function runPackArtifactGate"));
+  assert.ok(gate.length > 0, "the pack gate runner must exist");
+  const buildAt = gate.indexOf('"build:cli"');
+  const stampAt = gate.indexOf("scripts/build/write-build-sha.mjs");
+  const checkAt = gate.indexOf('"check:pack-artifact"');
+  // `build:cli` never writes dist/BUILD_SHA, so a bare `check:pack-artifact` always failed
+  // the provenance guard with "dist/BUILD_SHA is missing" — the same trap ci.yml avoids.
+  assert.ok(buildAt >= 0 && stampAt > buildAt, "BUILD_SHA must be stamped after build:cli");
+  assert.ok(checkAt > stampAt, "the artifact must be validated only after it is stamped");
+  assert.match(
+    gate.slice(checkAt, checkAt + 200),
+    /env: PACK_GATE_ENV/,
+    "a release-branch tip is never an ancestor of origin/main mid-cycle"
+  );
+  assert.match(src, /const PACK_GATE_ENV = \{ OMNIROUTE_RELEASE_REF: "HEAD" \}/);
+  // Both entry points (the parallel wave and --with-build --quick) must use it.
+  assert.equal(src.match(/runPackArtifactGate\b/g)?.length, 3);
+  assert.doesNotMatch(src, /runAsync\(npmCmd, \["run", "check:pack-artifact"\]/);
+  assert.doesNotMatch(src, /id: "pack-artifact",[^}]*args:/);
 });
 
 // ─── --full-ci gate extraction (P0, v3.8.46 post-mortem) ─────────────────────
@@ -390,7 +515,7 @@ test("firstFailureLine never blames a PASSING line whose test FILE NAME contains
   // i.e. a GREEN line, matched only because the unanchored /FAIL/i marker hit the
   // substring "fail" inside the file name. The real ✖ line was three lines below.
   const out = [
-    "> omniroute@3.8.50 test:unit",
+    "> agentproxy@3.8.50 test:unit",
     " ✓ tests/unit/runtime/fail-fast-concurrency-gate.test.ts (4 tests) 203ms",
     " ✓ tests/unit/router/failover-budget.test.ts (9 tests) 41ms",
     " ✖ tests/unit/router/pricing.test.ts > picks the cheapest candidate",
@@ -493,5 +618,64 @@ test("the --full-ci loop classifies from the curated results, not a hardcoded ki
     src,
     /kind:\s*fullCiKindFor\(g\.id,\s*results\)/,
     "--full-ci must classify each ci.yml gate through fullCiKindFor()"
+  );
+});
+
+test("pre-flight --serial-slow preserves the same slow hard gates but runs them one at a time", async () => {
+  const fs = await import("node:fs");
+  const src = fs.readFileSync(
+    new URL("../../scripts/quality/validate-release-green.mjs", import.meta.url),
+    "utf8"
+  );
+
+  assert.match(src, /args\.has\("--serial-slow"\)/, "--serial-slow flag must be parsed");
+  assert.match(
+    src,
+    /if \(SERIAL_SLOW\)[\s\S]*?for \(const g of slow\)/,
+    "serial mode must iterate the same slow gate list"
+  );
+  assert.match(
+    src,
+    /slowResults\.push\(await runAsync\(npmCmd, g\.args, \{ timeout: g\.timeout, env: g\.env \}\)\)/,
+    "serial mode must keep each gate's timeout, env, and runner"
+  );
+  for (const id of ["unit", "vitest", "integration", "pack-artifact"]) {
+    assert.ok(src.includes(`id: "${id}"`), `serial mode must retain slow gate ${id}`);
+  }
+});
+
+test("package gates use finite ceilings backed by ARM authority measurements", async () => {
+  assert.equal(PACK_ARTIFACT_TIMEOUT_MS, 7 * 60 * 60 * 1000);
+  assert.equal(PACK_BOOT_TIMEOUT_MS, 7 * 60 * 60 * 1000);
+  assert.deepEqual(PACK_ARTIFACT_ENV, {
+    AGENTPROXY_USE_TURBOPACK: "0",
+    AGENTPROXY_NEXT_BUILD_CPUS: "1",
+  });
+
+  const fs = await import("node:fs");
+  const src = fs.readFileSync(
+    new URL("../../scripts/quality/validate-release-green.mjs", import.meta.url),
+    "utf8"
+  );
+
+  assert.match(
+    src,
+    /id: "pack-artifact"[\s\S]*?timeout: PACK_ARTIFACT_TIMEOUT_MS,[\s\S]*?env: PACK_ARTIFACT_ENV/,
+    "full slow-wave Pack gate must use the shared measured timeout and CI-equivalent env"
+  );
+  assert.match(
+    src,
+    /slow\.map\(\(g\) => runAsync\(npmCmd, g\.args, \{ timeout: g\.timeout, env: g\.env \}\)\)/,
+    "parallel slow-wave must propagate per-gate env"
+  );
+  assert.match(
+    src,
+    /runAsync\(npmCmd, \["run", "check:pack-artifact"\], \{[\s\S]*?timeout: PACK_ARTIFACT_TIMEOUT_MS,[\s\S]*?env: PACK_ARTIFACT_ENV/,
+    "--quick --with-build Pack path must use the same timeout/env contract"
+  );
+  assert.match(
+    src,
+    /runAsync\(npmCmd, \["run", "check:pack-boot"\], \{[\s\S]*?timeout: PACK_BOOT_TIMEOUT_MS/,
+    "tarball boot-smoke must use the measured finite timeout"
   );
 });

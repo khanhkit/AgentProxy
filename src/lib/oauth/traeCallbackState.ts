@@ -56,7 +56,7 @@ export function isTrustedTraeCallbackPeer(request: Request): boolean {
     classifyStampedPeerLocality(
       request.headers.get(PEER_IP_HEADER),
       request.headers.get(VIA_PROXY_HEADER),
-      process.env.OMNIROUTE_PEER_STAMP_TOKEN
+      process.env.AGENTPROXY_PEER_STAMP_TOKEN
     ) === "loopback"
   );
 }

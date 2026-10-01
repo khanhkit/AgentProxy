@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 export const dynamic = "force-dynamic";
 import { clearMemoryCache, getMemoryCacheStats } from "@/lib/semanticCache";
 import { isAuthenticated } from "@/shared/utils/apiAuth";
-import { sanitizeErrorMessage } from "@omniroute/open-sse/utils/error.ts";
+import { sanitizeErrorMessage } from "@agentproxy/open-sse/utils/error.ts";
 
 export async function GET(req: NextRequest) {
   if (!(await isAuthenticated(req))) {

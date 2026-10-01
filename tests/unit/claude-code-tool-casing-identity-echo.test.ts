@@ -111,7 +111,7 @@ describe("Claude Code cron-era tool names survive identity-echo alias maps", () 
 
 /**
  * Live-reproduced 2026-08-22: an `ox-alpha-free` upstream answered the
- * stream:true /v1/messages request with a non-streaming JSON body; omniroute
+ * stream:true /v1/messages request with a non-streaming JSON body; agentproxy
  * converted it via translateNonStreamingResponse, which emitted tool_use.name
  * verbatim ("bash") — Claude Code rejected it with "No such tool available",
  * killing Bash/Read/Write/CronCreate for the whole session.

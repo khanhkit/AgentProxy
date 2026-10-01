@@ -1,6 +1,6 @@
 // Allow large audio/video file uploads — 5min for processing large files (up to 2GB)
 export const maxDuration = 300;
-import { handleAudioTranslation } from "@omniroute/open-sse/handlers/audioTranslation.ts";
+import { handleAudioTranslation } from "@agentproxy/open-sse/handlers/audioTranslation.ts";
 import {
   getProviderCredentialsWithQuotaPreflight,
   clearRecoveredProviderState,
@@ -8,16 +8,17 @@ import {
 import {
   parseTranslationModel,
   getTranslationProvider,
-} from "@omniroute/open-sse/config/audioRegistry.ts";
+} from "@agentproxy/open-sse/config/audioRegistry.ts";
 import { resolveDynamicAudioProviders } from "@/app/api/v1/_shared/audioProviderNodes";
-import { errorResponse } from "@omniroute/open-sse/utils/error.ts";
-import { HTTP_STATUS } from "@omniroute/open-sse/config/constants.ts";
+import { errorResponse } from "@agentproxy/open-sse/utils/error.ts";
+import { HTTP_STATUS } from "@agentproxy/open-sse/config/constants.ts";
 import { enforceApiKeyPolicy } from "@/shared/utils/apiKeyPolicy";
 import {
   isAllRateLimitedCredentials,
   rateLimitedProviderResponse,
 } from "@/app/api/v1/_shared/rateLimit";
-import { attachOmniRouteMetaToResponse } from "@/domain/omnirouteResponseMeta";
+import { attachAgentProxyMetaToResponse } from "@/domain/agentproxyResponseMeta";
+import { saveCallLog } from "@/lib/usage/callLogs";
 import { generateRequestId } from "@/shared/utils/requestId";
 
 /**
@@ -99,17 +100,39 @@ export async function POST(request) {
     resolvedProvider: providerConfig,
     resolvedModel,
   });
+  const latencyMs = Date.now() - startTime;
+  const logModel = resolvedModel ? `${provider}/${resolvedModel}` : String(model);
+  const connectionId = (credentials as { connectionId?: string } | null)?.connectionId || undefined;
+
   if (response?.ok) {
     await clearRecoveredProviderState(credentials);
     // No text body / playback duration available from the multipart upload, so
     // per-second pricing cannot be applied → cost 0 (ADD-only headers, body intact).
-    response = attachOmniRouteMetaToResponse(response, {
+    response = attachAgentProxyMetaToResponse(response, {
       provider,
       model: resolvedModel,
       costUsd: 0,
-      latencyMs: Date.now() - startTime,
+      latencyMs,
       requestId: generateRequestId(),
     });
   }
+
+  if (response) {
+    saveCallLog({
+      method: "POST",
+      path: "/v1/audio/translations",
+      status: response.status,
+      model: logModel,
+      provider,
+      connectionId,
+      duration: latencyMs,
+      requestType: "audio_translation",
+      error: response.ok ? null : `Audio translation failed with status ${response.status}`,
+      apiKeyId: policy.apiKeyInfo?.id || null,
+      apiKeyName: policy.apiKeyInfo?.name || null,
+      noLog: policy.apiKeyInfo?.noLog === true,
+    }).catch(() => {});
+  }
+
   return response;
 }

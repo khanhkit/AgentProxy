@@ -106,8 +106,18 @@ export function listFiles(
   }
 
   if (after) {
-    // Get the creation time of the 'after' file to use for pagination
-    const afterFile = getFile(after);
+    // Get the creation time of the 'after' file to use for pagination.
+    // #14481 item 5/LEDGER-20/21 (same pattern as listBatches()): getFile()
+    // applies no owner filter, so a foreign tenant's file id used to still
+    // resolve here and its created_at was used as the pagination bound — an
+    // existence + timestamp oracle for another tenant's file. When this call
+    // IS owner-scoped, a cursor belonging to a DIFFERENT owner is treated
+    // exactly like an unknown one (ignored) instead of trusted.
+    const resolvedAfterFile = getFile(after);
+    const afterFile =
+      apiKeyId && resolvedAfterFile && resolvedAfterFile.apiKeyId !== apiKeyId
+        ? null
+        : resolvedAfterFile;
     if (afterFile) {
       if (order === "desc") {
         query += " AND (created_at < ? OR (created_at = ? AND id < ?))";
@@ -167,4 +177,27 @@ export function deleteFile(id: string): boolean {
     .prepare("UPDATE files SET deleted_at = ?, content = NULL WHERE id = ?")
     .run(Math.floor(Date.now() / 1000), id);
   return result.changes > 0;
+}
+
+export function deleteFileOwnedBy(id: string, apiKeyId: string): boolean {
+  if (typeof apiKeyId !== "string" || apiKeyId.trim() === "") {
+    throw new Error("deleteFileOwnedBy: apiKeyId is required");
+  }
+  const db = getDbInstance();
+  const result = db
+    .prepare("UPDATE files SET deleted_at = ?, content = NULL WHERE id = ? AND api_key_id = ?")
+    .run(Math.floor(Date.now() / 1000), id, apiKeyId);
+  return result.changes > 0;
+}
+
+/**
+ * Clear expired file content while retaining metadata/audit rows.
+ */
+export function pruneExpiredFiles(now: number): number {
+  const result = getDbInstance()
+    .prepare(
+      "UPDATE files SET deleted_at = ?, content = NULL WHERE expires_at IS NOT NULL AND expires_at < ? AND deleted_at IS NULL"
+    )
+    .run(now, now);
+  return result.changes ?? 0;
 }

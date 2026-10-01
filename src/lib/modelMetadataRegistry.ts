@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { parseModel } from "@omniroute/open-sse/services/model.ts";
+import { parseModel } from "@agentproxy/open-sse/services/model.ts";
 import { getModelInfo } from "@/sse/services/model";
 import { getModelAliases } from "@/lib/db/models";
 import {
@@ -303,25 +303,30 @@ export function getCanonicalModelMetadata(input: {
 // a rebuild instead of rebuilt per lookup.
 const lowercaseIndexCache = new WeakMap<object, Map<string, unknown>>();
 
-function findInsensitive<T>(obj: Record<string, T> | null | undefined, key: string): T | undefined {
+/** Test hook (#13601): exercised directly by the collision-naming regression. */
+export function findInsensitive<T>(
+  obj: Record<string, T> | null | undefined,
+  key: string
+): T | undefined {
   if (!obj || !key) return undefined;
   if (key in obj) return obj[key];
   let index = lowercaseIndexCache.get(obj);
   if (!index) {
     index = new Map();
+    const firstKeyByLower = new Map<string, string>();
     for (const [k, v] of Object.entries(obj)) {
       const lowerKey = k.toLowerCase();
       // Warn once at index-build time (not per-lookup) if two keys collide
-      // case-insensitively — a real data-quality signal from an upstream sync (e.g.
-      // models.dev returning both "OpenAI" and "openai" as distinct provider keys).
-      // Matches the pre-fix scan's silent first-match-wins behavior, just surfaced
-      // instead of swallowed.
-      if (index.has(lowerKey)) {
+      // case-insensitively. Name both original keys so operators can identify
+      // the conflicting upstream rows while preserving first-seen-wins.
+      const firstKey = firstKeyByLower.get(lowerKey);
+      if (firstKey !== undefined) {
         console.warn(
-          `[modelMetadataRegistry] findInsensitive: case-insensitive key collision on "${lowerKey}" — keeping first-seen value, later one discarded`
+          `[modelMetadataRegistry] findInsensitive: case-insensitive key collision on "${lowerKey}" ("${firstKey}" vs "${k}") — keeping first-seen value, later one discarded`
         );
         continue;
       }
+      firstKeyByLower.set(lowerKey, k);
       index.set(lowerKey, v);
     }
     lowercaseIndexCache.set(obj, index);

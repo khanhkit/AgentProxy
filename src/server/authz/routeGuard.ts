@@ -39,6 +39,20 @@ export const LOCAL_ONLY_API_PREFIXES: ReadonlyArray<string> = [
   "/api/cli-tools/forge-settings", // spawns via getCliRuntimeStatus() to detect the `forge` CLI install (Hard Rules #15 + #17, #7263)
   "/api/cli-tools/jcode-settings", // spawns via getCliRuntimeStatus() to detect the `jcode` CLI install (Hard Rules #15 + #17, #7263)
   "/api/cli-tools/qwen-settings", // GET probes the local `qwen` binary; writes target ~/.qwen config files (Hard Rules #15 + #17)
+  "/api/cli-tools/all-statuses",
+  "/api/cli-tools/claude-settings",
+  "/api/cli-tools/cline-settings",
+  "/api/cli-tools/codewhale-settings",
+  "/api/cli-tools/codex-settings",
+  "/api/cli-tools/crush-settings",
+  "/api/cli-tools/deepseek-tui-settings",
+  "/api/cli-tools/detect",
+  "/api/cli-tools/droid-settings",
+  "/api/cli-tools/kilo-settings",
+  "/api/cli-tools/openclaw-settings",
+  "/api/cli-tools/pi-settings",
+  "/api/cli-tools/smelt-settings",
+  "/api/cli-tools/status",
   "/api/services/", // T-10: embedded service lifecycle (spawn child processes)
   "/api/tunnels/cloudflared", // POST installs/starts/stops cloudflared; safe methods are exempted below
   "/api/tunnels/tailscale/disable", // stops Funnel and may stop tailscaled/Tailscale service
@@ -65,7 +79,7 @@ export const LOCAL_ONLY_API_PREFIXES: ReadonlyArray<string> = [
   "/api/jobs/", // sub-paths: /api/jobs/:id/{runs,enable,disable,run-now} (the bare `/api/jobs` above matches the list route; this matches children)
   "/api/oauth/cursor/auto-import", // spawns execFile("which", argv-array-of-one-arg "cursor") to verify a local Cursor install before importing creds — RCE-via-tunnel surface (Hard Rules #15 + #17, found by 6A.8 route-guard gate). Specific path only: the rest of /api/oauth/ (browser redirect/callback flows) must stay remote-reachable. Note: this comment intentionally avoids a literal closing square bracket character — check-openapi-security-tiers.mjs's naive regex parser for this array stops at the first one it finds, silently truncating its view of every entry after this one.
   "/api/oauth/kiro/auto-import", // reads host-local Kiro credential files (homedir kiro-cli data) — must reach the loopback-only gate, not the PUBLIC /api/oauth/ prefix (GHSA-wgwc-crjm-pmwv, GHSA-gxv4-955v-v6cm). Excluded from PUBLIC in publicApiRoutes.ts.
-  "/api/skills/collect/", // Skill Collector CLI detection: GET .../detect probes getCliRuntimeStatus() per CLI_TOOL_IDS entry, which spawns a child process to check each tool — RCE-via-tunnel surface (Hard Rules #15 + #17, PR #6294 review).
+  "/api/skills/collect/", // Skill Collector CLI detection: GET .../detect probes getCliRuntimeStatus() per CLI_TOOL_IDS entry, which spawns a child process to check each tool — RCE-via-tunnel surface (Hard Rules #15 + #17, PR #6294 review).\n  "/api/skills/install",\n  "/api/skills/executions",
   "/api/discovery/", // Discovery tool (opt-in provider scanner): the scan route makes outbound probes to provider endpoints (SSRF-adjacent) and the whole surface is an admin research tool — strict-loopback only, no manage-scope bypass (NOT in LOCAL_ONLY_MANAGE_SCOPE_BYPASS_PREFIXES). See _tasks/features-v3.8.42/gaps/DISCOVERY_TOOL_DESIGN.md.
   VNC_ROUTE_PREFIX, // #7892: /api/vnc-session/* spawns Docker containers via child_process.spawn (src/lib/vncSession/service.ts) — RCE-via-tunnel surface (Hard Rules #15 + #17), same CVE class (GHSA-fhh6-4qxv-rpqj).
   "/api/acp/agents", // ACP custom-agent registry: POST registers a client-chosen `binary`; GET / POST {action:"refresh"} runs detectInstalledAgents() -> execFileSync(probe.command, probe.args, { shell }) transitively (src/lib/acp/registry.ts) — RCE-via-tunnel surface (Hard Rules #15 + #17, #7948)
@@ -154,6 +168,10 @@ export const ALWAYS_PROTECTED_API_PATHS: ReadonlyArray<string> = [
   // as the {claude,codex}-auth/apply-local pattern below; a plain path because
   // it carries no dynamic segment.
   "/api/providers/agy-auth/apply-local",
+  // Obsidian/WebDAV can issue reusable file-service credentials and repoint
+  // the served vault root. Keep it authenticated even when login is otherwise
+  // disabled during local-first bootstrap.
+  "/api/settings/obsidian",
 ];
 
 /**
@@ -259,6 +277,12 @@ export function isPrivateLanHost(hostHeader: string | null): boolean {
 export const LOCAL_ONLY_API_GET_EXEMPTIONS: ReadonlySet<string> = new Set([
   "/api/system/version",
   "/api/tunnels/cloudflared",
+  // GET /api/mcp/audit and /stats are read-only SQLite queries behind
+  // requireManagementAuth. The rest of /api/mcp/* stays local-only because
+  // SSE/stream can spawn. Without this exemption a tunnel-served dashboard
+  // 403s the timeline MCP poll forever (#13941).
+  "/api/mcp/audit",
+  "/api/mcp/audit/stats",
 ]);
 
 /** Safe HTTP methods that can be exempted for read-only paths. */

@@ -102,3 +102,57 @@ test("T14: runWithProxyContext fails an in-flight request fast when the proxy is
   assert.equal(executed, true, "dispatch is optimistic; the request was started before the abort");
   releaseRequest();
 });
+
+test("#13571: SOCKS5 ordinary data-plane skips bare TCP health probe", async () => {
+  const proxyUrl = "socks5://127.0.0.1:1080";
+  invalidateProxyHealth(proxyUrl);
+  let probeCount = 0;
+  __setProxyHealthTcpCheckForTesting(async () => {
+    probeCount += 1;
+    return true;
+  });
+  try {
+    let executed = false;
+    const result = await runWithProxyContext(proxyUrl, async () => {
+      executed = true;
+      return "socks5-data-plane-ok";
+    });
+    assert.equal(result, "socks5-data-plane-ok");
+    assert.equal(executed, true);
+    assert.equal(probeCount, 0);
+  } finally {
+    __setProxyHealthTcpCheckForTesting(null);
+    invalidateProxyHealth(proxyUrl);
+  }
+});
+
+test("#13571: explicit control-plane direct fallback still probes SOCKS5", async () => {
+  const proxyUrl = "socks5://127.0.0.1:1080";
+  invalidateProxyHealth(proxyUrl);
+  const prev = process.env.AGENTPROXY_CONTROL_PLANE_PROXY_DIRECT_FALLBACK;
+  process.env.AGENTPROXY_CONTROL_PLANE_PROXY_DIRECT_FALLBACK = "true";
+  let probeCount = 0;
+  __setProxyHealthTcpCheckForTesting(async () => {
+    probeCount += 1;
+    return false;
+  });
+  try {
+    let executed = false;
+    const result = await runWithProxyContext(
+      proxyUrl,
+      async () => {
+        executed = true;
+        return "fallback-ok";
+      },
+      { directFallbackOnUnreachable: true }
+    );
+    assert.equal(result, "fallback-ok");
+    assert.equal(executed, true);
+    assert.equal(probeCount, 1);
+  } finally {
+    __setProxyHealthTcpCheckForTesting(null);
+    invalidateProxyHealth(proxyUrl);
+    if (prev === undefined) delete process.env.AGENTPROXY_CONTROL_PLANE_PROXY_DIRECT_FALLBACK;
+    else process.env.AGENTPROXY_CONTROL_PLANE_PROXY_DIRECT_FALLBACK = prev;
+  }
+});

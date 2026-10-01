@@ -1,14 +1,14 @@
 ---
-title: "🌐 Przewodnik po proxy OmniRoute"
+title: "🌐 Przewodnik po proxy AgentProxy"
 version: 3.8.40
 lastUpdated: 2026-06-28
 ---
 
-# 🌐 Przewodnik po proxy OmniRoute
+# 🌐 Przewodnik po proxy AgentProxy
 
 > **Omijaj blokady geograficzne, chroń tożsamość i kieruj ruch AI przez dowolne proxy — bez złożonej konfiguracji.**
 
-OmniRoute zawiera pełny system zarządzania proxy, który pozwala kierować ruch do upstreamowych dostawców AI przez proxy HTTP, HTTPS lub SOCKS5. Niezależnie od tego, czy jesteś w zablokowanym regionie, potrzebujesz rotacji IP, czy fingerprintingu stealth — ten przewodnik obejmuje wszystko.
+AgentProxy zawiera pełny system zarządzania proxy, który pozwala kierować ruch do upstreamowych dostawców AI przez proxy HTTP, HTTPS lub SOCKS5. Niezależnie od tego, czy jesteś w zablokowanym regionie, potrzebujesz rotacji IP, czy fingerprintingu stealth — ten przewodnik obejmuje wszystko.
 
 ---
 
@@ -53,7 +53,7 @@ Nawet poza zablokowanymi regionami proxy są przydatne do:
 
 ```
 ┌───────────────────────────────────────────────────────────────┐
-│                       OmniRoute Server                        │
+│                       AgentProxy Server                        │
 │                                                               │
 │  ┌─────────────┐    ┌──────────────┐    ┌──────────────────┐  │
 │  │ Proxy       │    │ Proxy        │    │ Proxy            │  │
@@ -84,7 +84,7 @@ Nawet poza zablokowanymi regionami proxy są przydatne do:
 
 ## 4-poziomowy system proxy
 
-OmniRoute obsługuje konfigurację proxy w **czterech niezależnych zakresach**, rozwiązywanych w kolejności priorytetu:
+AgentProxy obsługuje konfigurację proxy w **czterech niezależnych zakresach**, rozwiązywanych w kolejności priorytetu:
 
 ```
 Priority Resolution Order (highest → lowest):
@@ -97,7 +97,7 @@ Priority Resolution Order (highest → lowest):
 
 ### Jak działa rozwiązywanie
 
-Gdy OmniRoute wysyła żądanie do upstreamowego dostawcy, wywołuje `resolveProxyForConnectionFromRegistry()`, które sprawdza kolejne poziomy w kolejności:
+Gdy AgentProxy wysyła żądanie do upstreamowego dostawcy, wywołuje `resolveProxyForConnectionFromRegistry()`, które sprawdza kolejne poziomy w kolejności:
 
 1. **Poziom konta** — Czy jest proxy przypisane do tego konkretnego ID połączenia?
 2. **Poziom dostawcy** — Czy jest proxy przypisane do tego dostawcy (np. `openai`)?
@@ -239,7 +239,7 @@ curl -X POST http://localhost:20128/api/v1/management/proxies/bulk-assign \
 
 ### Import/Export
 
-Proxy są uwzględnione w systemie **Backup/Restore**. Gdy eksportujesz konfigurację OmniRoute:
+Proxy są uwzględnione w systemie **Backup/Restore**. Gdy eksportujesz konfigurację AgentProxy:
 
 1. Przejdź do **Dashboard → Settings → Backup**
 2. Kliknij **Export** — rejestr proxy i przypisania są włączone
@@ -249,7 +249,7 @@ Rejestr proxy obsługuje też **upsert po host+port** — jeśli importujesz pro
 
 ### Migracja legacy
 
-Jeśli skonfigurowałeś proxy w starszej wersji (przed rejestrem), OmniRoute migruje je automatycznie:
+Jeśli skonfigurowałeś proxy w starszej wersji (przed rejestrem), AgentProxy migruje je automatycznie:
 
 ```
 Legacy key_value store → proxy_registry + proxy_assignments
@@ -261,9 +261,9 @@ Dzieje się to raz przy pierwszym starcie po upgrade. Użyj `migrateLegacyProxyC
 
 ## 1proxy — darmowy marketplace
 
-> 🆕 **Wkład [@oyi77](https://github.com/oyi77)** — PR [#1847](https://github.com/diegosouzapw/OmniRoute/pull/1847) (Issue [#1788](https://github.com/diegosouzapw/OmniRoute/issues/1788))
+> 🆕 **Wkład [@oyi77](https://github.com/oyi77)** — PR [#1847](https://github.com/khanhkit/AgentProxy/pull/1847) (Issue [#1788](https://github.com/khanhkit/AgentProxy/issues/1788))
 
-OmniRoute integruje się z platformą społecznościową **[1proxy](https://1proxy-api.aitradepulse.com)**, by dać dostęp do **setek darmowych, zwalidowanych proxy** z całego świata. Idealne dla użytkowników bez własnej infrastruktury proxy.
+AgentProxy integruje się z platformą społecznościową **[1proxy](https://1proxy-api.aitradepulse.com)**, by dać dostęp do **setek darmowych, zwalidowanych proxy** z całego świata. Idealne dla użytkowników bez własnej infrastruktury proxy.
 
 ### Jak to działa
 
@@ -274,7 +274,7 @@ OmniRoute integruje się z platformą społecznościową **[1proxy](https://1pro
 └─────────────┘    proxies    └─────────────────┘               └──────────┘
 ```
 
-1. **Sync** — OmniRoute pobiera zwalidowane proxy z API 1proxy
+1. **Sync** — AgentProxy pobiera zwalidowane proxy z API 1proxy
 2. **Store** — Proxy są zapisywane w tej samej tabeli `proxy_registry` z `source = 'oneproxy'`
 3. **Filter** — Filtrowanie po protokole, kraju, quality score
 4. **Rotate** — Wybór najlepszego proxy strategiami quality, random lub sequential
@@ -374,7 +374,7 @@ curl -X DELETE "http://localhost:20128/api/settings/oneproxy?clearAll=1"
 
 ## Antywykrywanie i stealth
 
-OmniRoute nie tylko kieruje ruch przez proxy — sprawia, że ruch wygląda na legalny:
+AgentProxy nie tylko kieruje ruch przez proxy — sprawia, że ruch wygląda na legalny:
 
 ### Spoofing fingerprintu TLS
 
@@ -408,11 +408,11 @@ Odznaka pokazuje też rozwiązane IP proxy do weryfikacji.
 
 ## Tryby upstream proxy
 
-Dla dostawców używających wzorca CLIProxyAPI OmniRoute obsługuje trzy tryby upstream proxy:
+Dla dostawców używających wzorca CLIProxyAPI AgentProxy obsługuje trzy tryby upstream proxy:
 
 | Tryb          | Opis                                              |
 | ------------- | ------------------------------------------------- |
-| `native`      | OmniRoute sam obsługuje routing proxy (domyślnie) |
+| `native`      | AgentProxy sam obsługuje routing proxy (domyślnie) |
 | `cliproxyapi` | Deleguje do zewnętrznej instancji CLIProxyAPI     |
 | `fallback`    | Najpierw native, potem fallback do CLIProxyAPI    |
 
@@ -477,7 +477,7 @@ curl -X PUT "http://localhost:20128/api/upstream-proxy/openai" \
 
 ### Tunnels API
 
-Aby wystawić instancję OmniRoute do publicznego internetu (Cloudflare/ngrok/Tailscale) zamiast kierować ruch wychodzący przez proxy, zobacz [TUNNELS_GUIDE.md](./TUNNELS_GUIDE.md). REST API tuneli jest pod `/api/tunnels/{cloudflared,ngrok,tailscale}/*` i jest ortogonalne względem łańcucha outbound proxy opisanego powyżej.
+Aby wystawić instancję AgentProxy do publicznego internetu (Cloudflare/ngrok/Tailscale) zamiast kierować ruch wychodzący przez proxy, zobacz [TUNNELS_GUIDE.md](./TUNNELS_GUIDE.md). REST API tuneli jest pod `/api/tunnels/{cloudflared,ngrok,tailscale}/*` i jest ortogonalne względem łańcucha outbound proxy opisanego powyżej.
 
 ### 1proxy API
 
@@ -517,7 +517,7 @@ Ustaw `ENABLE_SOCKS5_PROXY=true` w pliku `.env` i zrestartuj.
 
 ### Błędy „socket hang up” przez proxy
 
-To normalne przy tanich proxy zrywających idle connections. OmniRoute już to obsługuje przez:
+To normalne przy tanich proxy zrywających idle connections. AgentProxy już to obsługuje przez:
 
 - Wyłączenie keep-alive na połączeniach proxy (`keepAliveTimeout: 1`)
 - Wyłączenie pipelining (`pipelining: 0`)
@@ -527,7 +527,7 @@ Jeśli problem trwa, spróbuj innego proxy lub użyj rotacji 1proxy.
 
 ### „unsupported_country_region_territory” podczas OAuth
 
-Upewnij się, że proxy jest skonfigurowane **przed** startem flow OAuth. OmniRoute kieruje wymianę tokenów OAuth przez skonfigurowane proxy. Najpierw ustaw globalne lub provider-level proxy, potem połącz.
+Upewnij się, że proxy jest skonfigurowane **przed** startem flow OAuth. AgentProxy kieruje wymianę tokenów OAuth przez skonfigurowane proxy. Najpierw ustaw globalne lub provider-level proxy, potem połącz.
 
 ### Proxy nie jest używane
 
@@ -595,7 +595,7 @@ CREATE TABLE proxy_assignments (
 
 ## Sprawdzanie health proxy (v3.8.16+)
 
-Mechanizm **proxy fast-fail** OmniRoute (`src/lib/proxyHealth.ts`) wykrywa martwe proxy w <2s szybkim sprawdzeniem połączenia TCP, potem **cache’uje wynik**, by uniknąć narzutu na każde żądanie.
+Mechanizm **proxy fast-fail** AgentProxy (`src/lib/proxyHealth.ts`) wykrywa martwe proxy w <2s szybkim sprawdzeniem połączenia TCP, potem **cache’uje wynik**, by uniknąć narzutu na każde żądanie.
 
 ### Jak to działa
 
@@ -631,7 +631,7 @@ Bez tego martwe proxy blokowałoby każde żądanie na pełne `PROXY_TIMEOUT_MS`
 ### Inspekcja health proxy
 
 ```ts
-import { getAllProxyHealthStatuses, invalidateProxyHealth } from "omniroute/proxyHealth";
+import { getAllProxyHealthStatuses, invalidateProxyHealth } from "agentproxy/proxyHealth";
 
 const statuses = getAllProxyHealthStatuses();
 for (const s of statuses) {
@@ -660,11 +660,11 @@ Własne porty w URL (`http://host:9999`) zawsze mają pierwszeństwo przed domy�
 
 ## Analityka i observability proxy
 
-OmniRoute śledzi użycie per-proxy, by operatorzy mogli diagnozować wzorce routingu, skoki latencji i powtarzające się awarie.
+AgentProxy śledzi użycie per-proxy, by operatorzy mogli diagnozować wzorce routingu, skoki latencji i powtarzające się awarie.
 
 ### Co jest śledzone
 
-Dla każdego żądania przez skonfigurowane proxy OmniRoute zapisuje:
+Dla każdego żądania przez skonfigurowane proxy AgentProxy zapisuje:
 
 | Metryka      | Opis                                              |
 | ------------ | ------------------------------------------------- |
@@ -680,7 +680,7 @@ Dla każdego żądania przez skonfigurowane proxy OmniRoute zapisuje:
 
 ```bash
 # Recent proxy events
-curl -H "Authorization: Bearer $OMNIROUTE_KEY" \
+curl -H "Authorization: Bearer $AGENTPROXY_KEY" \
   "http://localhost:20128/api/usage/proxy-logs?limit=100"
 ```
 
@@ -726,7 +726,7 @@ ORDER BY latency_ms DESC;
 
 ## Drzewo decyzyjne strategii rotacji
 
-Gdy do zakresu przypisano wiele proxy, OmniRoute używa **strategii rotacji**, by wybrać, którego użyć na każde żądanie. Strategia jest konfigurowana na poziomie zakresu (global, per-provider, per-account, per-combo).
+Gdy do zakresu przypisano wiele proxy, AgentProxy używa **strategii rotacji**, by wybrać, którego użyć na każde żądanie. Strategia jest konfigurowana na poziomie zakresu (global, per-provider, per-account, per-combo).
 
 ### Dostępne strategie
 

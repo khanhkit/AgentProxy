@@ -4,7 +4,7 @@ import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-const TEST_DATA_DIR = mkdtempSync(join(tmpdir(), "omniroute-lmstudio-embedding-11233-"));
+const TEST_DATA_DIR = mkdtempSync(join(tmpdir(), "agentproxy-lmstudio-embedding-11233-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const { parseEmbeddingModel } = await import("../../open-sse/config/embeddingRegistry.ts");

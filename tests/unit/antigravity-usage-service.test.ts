@@ -28,7 +28,7 @@ describe("getUsageForProvider (antigravity in usage.ts)", () => {
     projectId: undefined,
   };
 
-  it("defaults to 0% remaining when remainingFraction is undefined", async () => {
+  it("keeps missing remainingFraction unknown rather than exhausted", async () => {
     const originalFetch = globalThis.fetch;
     globalThis.fetch = async () =>
       ({
@@ -53,9 +53,11 @@ describe("getUsageForProvider (antigravity in usage.ts)", () => {
       if ("quotas" in result) {
         const quota = result.quotas["gemini-3.7-flash-high"];
         assert.ok(quota, "should have quota for gemini-3.7-flash-high");
-        assert.equal(quota.remainingPercentage, 0, "remaining should be 0%");
-        assert.equal(quota.unlimited, false, "should not be unlimited");
-        assert.equal(quota.used > 0, true, "used should be > 0 when quota is exhausted");
+        assert.equal(quota.remainingPercentage, undefined, "remaining should stay unknown");
+        assert.equal(quota.unlimited, false, "unknown quota should not be unlimited");
+        assert.equal(quota.fractionReported, false, "upstream did not report a fraction");
+        assert.equal(quota.total, 0, "unknown quota should not synthesize a numeric total");
+        assert.equal(quota.used, 0, "unknown quota should not synthesize exhaustion");
       }
     } finally {
       globalThis.fetch = originalFetch;

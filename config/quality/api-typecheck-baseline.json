@@ -11,6 +11,9 @@
   "open-sse/utils/stream.ts": {
     "TS2353": 1
   },
+  "src/app/api/agentproxy/route/preview/route.ts": {
+    "TS2345": 1
+  },
   "src/app/api/assess/route.ts": {
     "TS2339": 1
   },
@@ -41,9 +44,6 @@
   "src/app/api/cli-tools/omp-settings/route.ts": {
     "TS2339": 8
   },
-  "src/app/api/cli-tools/qwen-settings/route.ts": {
-    "TS2322": 1
-  },
   "src/app/api/combos/auto/route.ts": {
     "TS2322": 1
   },
@@ -68,13 +68,6 @@
   },
   "src/app/api/guardrails/test/route.ts": {
     "TS2554": 1
-  },
-  "src/app/api/internal/codex-responses-ws/route.ts": {
-    "TS2740": 1,
-    "TS2339": 7
-  },
-  "src/app/api/keys/[id]/route.ts": {
-    "TS2339": 1
   },
   "src/app/api/local/redis/start/route.ts": {
     "TS2339": 1
@@ -113,9 +106,6 @@
     "TS2554": 1
   },
   "src/app/api/oauth/kiro/auto-import/route.ts": {
-    "TS2345": 1
-  },
-  "src/app/api/omniroute/route/preview/route.ts": {
     "TS2345": 1
   },
   "src/app/api/playground/presets/[id]/route.ts": {
@@ -340,6 +330,10 @@
     "TS2554": 1,
     "TS2345": 1
   },
+  "src/lib/agentproxyStatus.ts": {
+    "TS2322": 1,
+    "TS2558": 1
+  },
   "src/lib/db/tierConfig.ts": {
     "TS2345": 2
   },
@@ -349,10 +343,6 @@
   },
   "src/lib/monitoring/providerHealthAutopilot.ts": {
     "TS2352": 4
-  },
-  "src/lib/omnirouteStatus.ts": {
-    "TS2322": 1,
-    "TS2558": 1
   },
   "src/lib/providerModels/managedModelImport.ts": {
     "TS2352": 4
@@ -390,9 +380,6 @@
   },
   "src/mitm/detection/index.ts": {
     "TS2741": 1
-  },
-  "src/mitm/inspector/httpProxyServer.ts": {
-    "TS2769": 1
   },
   "src/shared/schemas/cliCatalog.ts": {
     "TS2554": 2

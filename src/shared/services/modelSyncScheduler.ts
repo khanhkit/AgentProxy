@@ -15,6 +15,12 @@ import { isConnectionUnavailableToAuxiliaryActivity } from "@/lib/exclusiveLease
 import { getRuntimePorts } from "@/lib/runtime/ports";
 
 export const DEFAULT_INTERVAL_MS = 6 * 60 * 60 * 1000; // 6 hours
+/** Cycle-wide in-flight cap. Heap cost is total catalog JSON, not one upstream. */
+export const MODEL_SYNC_CYCLE_CONCURRENCY = 4;
+/** First cycle after boot. Past cleanup's 30s so the two jobs do not overlap. */
+export const MODEL_SYNC_STARTUP_DELAY_MS = 90_000;
+/** Phase offset against cleanup.ts's own 6h recurring scheduler. */
+export const MODEL_SYNC_STAGGER_OFFSET_MS = 45 * 60 * 1000; // 45 minutes
 const MODEL_SYNC_SETTING_KEY = "model_sync_last_run";
 const MODEL_SYNC_INTERNAL_AUTH_HEADER = "x-model-sync-internal-auth";
 
@@ -43,11 +49,11 @@ export function getModelSyncInternalBaseUrl(): string {
 
 export function resolveModelSyncInternalBaseUrl(_candidate?: string): string {
   const { dashboardPort } = getRuntimePorts();
-  const nativeTls = process.env.OMNIROUTE_INTERNAL_SCHEME === "https";
+  const nativeTls = process.env.AGENTPROXY_INTERNAL_SCHEME === "https";
   const origin = nativeTls
     ? `https://localhost:${dashboardPort}`
     : `http://127.0.0.1:${dashboardPort}`;
-  return `${origin}${normalizeInternalBasePath(process.env.OMNIROUTE_BASE_PATH)}`;
+  return `${origin}${normalizeInternalBasePath(process.env.AGENTPROXY_BASE_PATH)}`;
 }
 
 export function createPinnedModelSyncTlsConnector(
@@ -113,17 +119,18 @@ export const fetchModelSyncInternal: typeof fetch = async (input, init = {}) => 
 };
 
 const globalState = globalThis as typeof globalThis & {
-  __omnirouteModelSyncInternalAuthToken?: string;
+  __agentproxyModelSyncInternalAuthToken?: string;
 };
 
 let schedulerTimer: NodeJS.Timeout | null = null;
+let phaseTimer: NodeJS.Timeout | null = null;
 let isRunning = false;
 let internalAuthToken: string | null = null;
 
 function getInternalAuthToken(): string {
   if (!internalAuthToken) {
-    internalAuthToken = globalState.__omnirouteModelSyncInternalAuthToken || randomUUID();
-    globalState.__omnirouteModelSyncInternalAuthToken = internalAuthToken;
+    internalAuthToken = globalState.__agentproxyModelSyncInternalAuthToken || randomUUID();
+    globalState.__agentproxyModelSyncInternalAuthToken = internalAuthToken;
   }
   return internalAuthToken;
 }
@@ -137,8 +144,8 @@ export function buildModelSyncInternalHeaders(): Record<string, string> {
 }
 
 export function isModelSyncInternalRequest(request: { headers: Headers }): boolean {
-  if (!internalAuthToken && globalState.__omnirouteModelSyncInternalAuthToken) {
-    internalAuthToken = globalState.__omnirouteModelSyncInternalAuthToken;
+  if (!internalAuthToken && globalState.__agentproxyModelSyncInternalAuthToken) {
+    internalAuthToken = globalState.__agentproxyModelSyncInternalAuthToken;
   }
   const headerToken = request.headers.get(MODEL_SYNC_INTERNAL_AUTH_HEADER);
   return Boolean(headerToken && internalAuthToken && headerToken === internalAuthToken);
@@ -224,6 +231,29 @@ export async function syncConnectionModels(
   }
 }
 
+async function mapWithConcurrencySettled<T, R>(
+  values: T[],
+  concurrency: number,
+  mapper: (value: T) => Promise<R>
+): Promise<PromiseSettledResult<R>[]> {
+  const results = new Array<PromiseSettledResult<R>>(values.length);
+  let nextIndex = 0;
+  const workerCount = Math.min(Math.max(1, concurrency), values.length);
+  const workers = Array.from({ length: workerCount }, async () => {
+    while (nextIndex < values.length) {
+      const index = nextIndex++;
+      try {
+        const value = await mapper(values[index]);
+        results[index] = { status: "fulfilled", value };
+      } catch (reason) {
+        results[index] = { status: "rejected", reason };
+      }
+    }
+  });
+  await Promise.all(workers);
+  return results;
+}
+
 /**
  * Run one full model-sync cycle across all auto-sync connections.
  */
@@ -245,10 +275,10 @@ async function runSyncCycle(apiBaseUrl: string): Promise<void> {
 
     console.log(`[ModelSync] Starting model sync cycle — ${connections.length} connection(s)`);
 
-    const results = await Promise.allSettled(
-      connections.map((conn) =>
-        syncConnectionModels(conn.id, conn.name || conn.provider, apiBaseUrl)
-      )
+    const results = await mapWithConcurrencySettled(
+      connections,
+      MODEL_SYNC_CYCLE_CONCURRENCY,
+      (conn) => syncConnectionModels(conn.id, conn.name || conn.provider, apiBaseUrl)
     );
 
     const succeeded = results.filter((r) => r.status === "fulfilled" && r.value === true).length;
@@ -269,14 +299,14 @@ async function runSyncCycle(apiBaseUrl: string): Promise<void> {
 
 /**
  * Start the model sync scheduler.
- * @param apiBaseUrl — internal base URL to call OmniRoute's own API
+ * @param apiBaseUrl — internal base URL to call AgentProxy's own API
  * @param intervalMs — sync interval in milliseconds (default: 6h)
  */
 export function startModelSyncScheduler(
   apiBaseUrl = getModelSyncInternalBaseUrl(),
   intervalMs = DEFAULT_INTERVAL_MS
 ): void {
-  if (schedulerTimer) {
+  if (schedulerTimer || phaseTimer) {
     console.log("[ModelSync] Scheduler already running — skipping start");
     return;
   }
@@ -287,10 +317,16 @@ export function startModelSyncScheduler(
     !isNaN(envHours) && envHours > 0 ? envHours * 60 * 60 * 1000 : intervalMs;
   const trustedApiBaseUrl = resolveModelSyncInternalBaseUrl(apiBaseUrl);
 
-  console.log(`[ModelSync] Scheduler started — interval: ${effectiveIntervalMs / 3_600_000}h`);
+  console.log(
+    `[ModelSync] Scheduler started — interval: ${effectiveIntervalMs / 3_600_000}h ` +
+      `(phase offset +${MODEL_SYNC_STAGGER_OFFSET_MS / 60_000}m)`
+  );
 
-  // Run immediately on startup (staggered by 5s to avoid startup congestion)
-  const startupDelay = setTimeout(() => runSyncCycle(trustedApiBaseUrl), 5_000);
+  // Serve traffic first; cleanup's first pass is +30s, so stay past that window.
+  const startupDelay = setTimeout(
+    () => runSyncCycle(trustedApiBaseUrl),
+    MODEL_SYNC_STARTUP_DELAY_MS
+  );
   startupDelay.unref?.();
 
   // Codex-only: revalidate catalog only on first-start or app upgrade (not every boot).
@@ -302,15 +338,25 @@ export function startModelSyncScheduler(
       // silent
     });
 
-  // Then run on the regular interval
-  schedulerTimer = setInterval(() => runSyncCycle(trustedApiBaseUrl), effectiveIntervalMs);
-  schedulerTimer.unref?.();
+  // Keep the configured period unchanged, but phase-shift recurring model sync
+  // away from cleanup.ts so the two 6h jobs do not collide for process lifetime.
+  phaseTimer = setTimeout(() => {
+    phaseTimer = null;
+    schedulerTimer = setInterval(() => runSyncCycle(trustedApiBaseUrl), effectiveIntervalMs);
+    schedulerTimer.unref?.();
+  }, MODEL_SYNC_STAGGER_OFFSET_MS);
+  phaseTimer.unref?.();
 }
 
 /**
  * Stop the model sync scheduler.
  */
 export function stopModelSyncScheduler(): void {
+  if (phaseTimer) {
+    clearTimeout(phaseTimer);
+    phaseTimer = null;
+    console.log("[ModelSync] Scheduler stopped");
+  }
   if (schedulerTimer) {
     clearInterval(schedulerTimer);
     schedulerTimer = null;

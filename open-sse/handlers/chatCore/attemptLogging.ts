@@ -20,6 +20,7 @@ import type { VideoBridgeLogRedactionEntry } from "@/lib/guardrails/videoBridge"
 import { FORMATS } from "../../translator/formats.ts";
 import { takeEarlyKeepaliveBytes } from "../../utils/earlyKeepaliveByteBuffer.ts";
 import { sanitizeErrorMessage } from "../../utils/error.ts";
+import { isEstimatedUsage } from "../../utils/usageTracking.ts";
 import { cloneBoundedChatLogPayload, truncateForLog } from "./logTruncation.ts";
 import { attachLogMeta } from "./cacheUsageMeta.ts";
 
@@ -174,7 +175,7 @@ export function applyVideoBridgeLogRedaction(
 
 /**
  * Extract the OpenAI Responses API response id this attempt produced, so it
- * can be indexed for OmniRoute-native `previous_response_id` continuation
+ * can be indexed for AgentProxy-native `previous_response_id` continuation
  * (see src/lib/db/responsesContinuationStore.ts). Only meaningful when the
  * client actually used the Responses endpoint -- a Chat Completions
  * `chatcmpl-*` id must never be mistaken for a Responses response id.
@@ -201,6 +202,7 @@ export function extractResponsesId(sourceFormat: unknown, clientResponse: unknow
 export type PersistAttemptLogsArgs = {
   status: number;
   tokens?: unknown;
+  usageEstimated?: boolean | null;
   responseBody?: unknown;
   error?: string | null;
   providerRequest?: unknown;
@@ -237,7 +239,7 @@ export type PersistAttemptLogsContext = {
   noLogEnabled: unknown;
   correlationId?: string | null;
   modelPinned?: boolean;
-  /** #8249: caller-supplied X-OmniRoute-Session-Id header, only set when the header was
+  /** #8249: caller-supplied X-AgentProxy-Session-Id header, only set when the header was
    * explicitly present (never synthesized from skillRequestId) — persisted as call_logs.session_tag
    * for per-session cost attribution. */
   sessionTag?: string | null;
@@ -459,7 +461,8 @@ export function persistAttemptLogs(args: PersistAttemptLogsArgs, ctx: PersistAtt
   }
 
   saveCallLog({
-    id: pendingRequestId,
+    id: traceId,
+    pendingRequestId: ctx.pendingRequestId,
     method: "POST",
     path: clientRawRequest?.endpoint || "/v1/chat/completions",
     status,
@@ -469,6 +472,12 @@ export function persistAttemptLogs(args: PersistAttemptLogsArgs, ctx: PersistAtt
     connectionId: finalConnectionId || undefined,
     duration: Date.now() - startTime,
     tokens: tokens || {},
+    usageEstimated:
+      args.usageEstimated ??
+      (tokens && typeof tokens === "object" && !Array.isArray(tokens) &&
+      (tokens as Record<string, unknown>).estimated === true
+        ? true
+        : null),
     requestBody: cloneBoundedChatLogPayload(
       attachLogMeta(
         truncateForLog(
@@ -491,6 +500,9 @@ export function persistAttemptLogs(args: PersistAttemptLogsArgs, ctx: PersistAtt
             }
           : null,
         claudePromptCacheUsage: claudeCacheUsageMeta,
+        // Operators can tell estimated token counts (and the cost derived from them)
+        // apart from provider-reported ones. Log-only: billing is unchanged.
+        usageEstimated: isEstimatedUsage(tokens) ? true : null,
       })
     ),
     error: error || null,

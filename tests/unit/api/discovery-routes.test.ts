@@ -22,10 +22,10 @@ function req(method: string, url: string, body?: unknown): Request {
 }
 
 before(async () => {
-  tmpDataDir = mkdtempSync(join(tmpdir(), "omniroute-discovery-routes-"));
+  tmpDataDir = mkdtempSync(join(tmpdir(), "agentproxy-discovery-routes-"));
   process.env.DATA_DIR = tmpDataDir;
   delete process.env.REQUIRE_API_KEY;
-  process.env.OMNIROUTE_DISABLE_AUTH = "1";
+  process.env.AGENTPROXY_DISABLE_AUTH = "1";
   core = await import("@/lib/db/core");
   core.resetDbInstance();
   core.getDbInstance();

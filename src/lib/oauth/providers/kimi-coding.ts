@@ -6,8 +6,8 @@ import {
   buildKimiCodeIdentityHeaders,
   normalizeKimiDeviceId,
   sanitizeKimiHeaderValue,
-} from "@omniroute/open-sse/config/providers/registry/kimi/coding/runtime.ts";
-import { getKimiDeviceModel } from "@omniroute/open-sse/utils/kimiDevice.ts";
+} from "@agentproxy/open-sse/config/providers/registry/kimi/coding/runtime.ts";
+import { getKimiDeviceModel } from "@agentproxy/open-sse/utils/kimiDevice.ts";
 import { resolveDataDir } from "../../dataPaths";
 import { KIMI_CODING_CONFIG } from "../constants/oauth";
 
@@ -98,11 +98,11 @@ export const kimiCoding = {
       }),
     });
 
+    const text = await response.text();
     let data;
     try {
-      data = await response.json();
-    } catch (e) {
-      const text = await response.text();
+      data = JSON.parse(text);
+    } catch {
       data = { error: "invalid_response", error_description: text };
     }
 

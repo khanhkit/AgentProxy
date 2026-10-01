@@ -11,8 +11,8 @@ const FORBIDDEN = new Set(
     "keep-alive",
     "proxy-connection",
     // The two RFC 7230 §6.1 hop-by-hop names this list was missing. They belong
-    // to the connection between the client and OmniRoute (or its upstream
-    // proxy), never to the request OmniRoute makes to the model provider —
+    // to the connection between the client and AgentProxy (or its upstream
+    // proxy), never to the request AgentProxy makes to the model provider —
     // forwarding `proxy-authorization` hands that proxy credential to the
     // provider. `src/lib/services/reverseProxy.ts` (HOP_BY_HOP),
     // `src/mitm/sanitizeHeaders.ts`, `src/mitm/inspector/httpProxyServer.ts`,
@@ -27,7 +27,15 @@ const FORBIDDEN = new Set(
   ].map((s) => s.toLowerCase())
 );
 
-const FORWARDED_PROVENANCE = new Set(["forwarded", "forward-to", "x-real-ip"]);
+const FORWARDED_PROVENANCE = new Set([
+  "forwarded",
+  "forward-to",
+  "x-real-ip",
+  "cf-connecting-ip",
+  "true-client-ip",
+  "client-ip",
+  "via",
+]);
 
 function normalizeHeaderName(name: string): string {
   return String(name).trim().toLowerCase();

@@ -5,11 +5,13 @@ import os from "node:os";
 import path from "node:path";
 import { createServer, type Server } from "node:http";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-conductor-a2a-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-conductor-a2a-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
+process.env.API_KEY_SECRET = process.env.API_KEY_SECRET || "conductor-a2a-post-test-secret";
 
 const core = await import("../../src/lib/db/core.ts");
 const settings = await import("../../src/lib/db/settings.ts");
+const apiKeysDb = await import("../../src/lib/db/apiKeys.ts");
 const tasksRoute = await import("../../src/app/api/a2a/tasks/route.ts");
 
 const servers: Server[] = [];
@@ -46,14 +48,16 @@ test.beforeEach(() => {
   fs.rmSync(TEST_DATA_DIR, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
   fs.mkdirSync(TEST_DATA_DIR, { recursive: true });
   delete process.env.CONDUCTOR_HUB_URL;
-  delete process.env.OMNIROUTE_API_KEY;
+  delete process.env.AGENTPROXY_API_KEY;
+  delete process.env.REQUIRE_API_KEY;
 });
 
 test.after(async () => {
   core.resetDbInstance();
   fs.rmSync(TEST_DATA_DIR, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
   delete process.env.CONDUCTOR_HUB_URL;
-  delete process.env.OMNIROUTE_API_KEY;
+  delete process.env.AGENTPROXY_API_KEY;
+  delete process.env.REQUIRE_API_KEY;
   while (servers.length > 0) {
     const s = servers.pop();
     await new Promise((resolve) => s?.close(resolve));
@@ -65,9 +69,12 @@ test("A2A desabilitado → 503 (mesmo gate do JSON-RPC)", async () => {
   assert.equal(res.status, 503);
 });
 
-test("com OMNIROUTE_API_KEY configurada, bearer errado → 401 e bearer certo passa", async () => {
+test("REQUIRE_API_KEY rejects a bearer that is not a persisted AgentProxy key", async () => {
   await enableA2A();
-  process.env.OMNIROUTE_API_KEY = "chave-certa";
+  process.env.REQUIRE_API_KEY = "true";
+  const valid = await apiKeysDb.createApiKey("conductor-a2a-post", "conductor-a2a-machine", []);
+  assert.ok(valid?.key);
+
   const denied = await tasksRoute.POST(delegationRequest(VALID_BODY, "chave-errada"));
   assert.equal(denied.status, 401);
 });

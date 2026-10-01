@@ -42,7 +42,7 @@ npm-publish iş akışı doğrudan yayınlama yapmaz: paketlenmiş tarball'ı (`
 
 ### Onay Akışı
 
-1. `npm stage list omniroute` — aşama kimliğini (stage id) bulun.
+1. `npm stage list agentproxy` — aşama kimliğini (stage id) bulun.
 2. Paketlenmiş baytları doğrulayın: `npm stage download <id>`, ardından geçici bir dizine kurun ve başlatın (`npm run check:pack-boot`).
 3. `npm stage approve <id>` — 2FA istemi yayını tamamlar. `npm stage reject <id>` iptal eder.
 

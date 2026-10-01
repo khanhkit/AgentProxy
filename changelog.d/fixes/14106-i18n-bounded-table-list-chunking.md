@@ -1,0 +1,1 @@
+- **fix(docs):** keep translation requests bounded for oversized Markdown tables and tight lists, splitting only at row/item boundaries and preserving their original seams when translated chunks are rejoined.

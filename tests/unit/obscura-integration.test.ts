@@ -51,24 +51,24 @@ async function waitForCdp(endpoint: string, timeoutMs = 30_000): Promise<boolean
 }
 
 describe("obscura engine", () => {
-  it("respects OMNIROUTE_BROWSER_POOL=off", () => {
-    const original = process.env.OMNIROUTE_BROWSER_POOL;
-    process.env.OMNIROUTE_BROWSER_POOL = "off";
+  it("respects AGENTPROXY_BROWSER_POOL=off", () => {
+    const original = process.env.AGENTPROXY_BROWSER_POOL;
+    process.env.AGENTPROXY_BROWSER_POOL = "off";
     try {
       assert.equal(isObscuraUsable(), false);
     } finally {
-      if (original === undefined) delete process.env.OMNIROUTE_BROWSER_POOL;
-      else process.env.OMNIROUTE_BROWSER_POOL = original;
+      if (original === undefined) delete process.env.AGENTPROXY_BROWSER_POOL;
+      else process.env.AGENTPROXY_BROWSER_POOL = original;
     }
   });
 
   it("is enabled by default (no env var)", () => {
-    const original = process.env.OMNIROUTE_BROWSER_POOL;
-    delete process.env.OMNIROUTE_BROWSER_POOL;
+    const original = process.env.AGENTPROXY_BROWSER_POOL;
+    delete process.env.AGENTPROXY_BROWSER_POOL;
     try {
       assert.equal(isObscuraUsable(), true);
     } finally {
-      if (original !== undefined) process.env.OMNIROUTE_BROWSER_POOL = original;
+      if (original !== undefined) process.env.AGENTPROXY_BROWSER_POOL = original;
     }
   });
 

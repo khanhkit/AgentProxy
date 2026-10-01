@@ -4,11 +4,11 @@ import { buildComboTestRequestBody, extractComboTestResponseText } from "@/lib/c
 import { getComboByName, getCombos } from "@/lib/db/combos";
 import { pickApiKeyForInternalUse } from "@/lib/db/apiKeys";
 import { getRuntimePorts } from "@/lib/runtime/ports";
-import { resolveNestedComboTargets } from "@omniroute/open-sse/services/combo.ts";
+import { resolveNestedComboTargets } from "@agentproxy/open-sse/services/combo.ts";
 import { testComboSchema } from "@/shared/validation/schemas";
 import { isValidationFailure, validateBody } from "@/shared/validation/helpers";
 import { requireManagementAuth } from "@/lib/api/requireManagementAuth";
-import { sanitizeErrorMessage } from "@omniroute/open-sse/utils/error";
+import { sanitizeErrorMessage } from "@agentproxy/open-sse/utils/error";
 
 async function getInternalApiKey(): Promise<string | null> {
   // Combo health-check probes hit /v1/chat/completions, which enforces
@@ -29,7 +29,12 @@ function buildComboTestResult(target, partial = {}) {
   };
 }
 
-async function testComboTarget(target, baseInternalUrl, internalApiKey: string | null) {
+async function testComboTarget(
+  target,
+  baseInternalUrl,
+  internalApiKey: string | null,
+  parentSignal: AbortSignal | null = null
+) {
   const startTime = Date.now();
   try {
     // Issue #2359: combo entries with a malformed/missing modelStr surfaced
@@ -54,6 +59,9 @@ async function testComboTarget(target, baseInternalUrl, internalApiKey: string |
 
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 20000);
+    const combinedSignal = parentSignal
+      ? AbortSignal.any([parentSignal, controller.signal])
+      : controller.signal;
 
     let res;
     try {
@@ -64,13 +72,13 @@ async function testComboTarget(target, baseInternalUrl, internalApiKey: string |
           ...(internalApiKey ? { Authorization: `Bearer ${internalApiKey}` } : {}),
           "X-Internal-Test": "combo-health-check",
           // Force a fresh execution path so combo tests cannot be satisfied by
-          // OmniRoute's semantic cache or other request reuse layers.
-          "X-OmniRoute-No-Cache": "true",
-          ...(target.connectionId ? { "X-OmniRoute-Connection": target.connectionId } : {}),
+          // AgentProxy's semantic cache or other request reuse layers.
+          "X-AgentProxy-No-Cache": "true",
+          ...(target.connectionId ? { "X-AgentProxy-Connection": target.connectionId } : {}),
           "X-Request-Id": `combo-test-${randomUUID()}`,
         },
         body: JSON.stringify(testBody),
-        signal: controller.signal,
+        signal: combinedSignal,
       });
     } finally {
       clearTimeout(timeout);
@@ -115,9 +123,15 @@ async function testComboTarget(target, baseInternalUrl, internalApiKey: string |
     });
   } catch (error) {
     const latencyMs = Date.now() - startTime;
+    const err = error as Error;
     return buildComboTestResult(target, {
       status: "error",
-      error: error.name === "AbortError" ? "Timeout (20s)" : sanitizeErrorMessage(error.message),
+      error:
+        err.name === "AbortError"
+          ? parentSignal?.aborted
+            ? sanitizeErrorMessage("Client disconnected")
+            : "Timeout (20s)"
+          : sanitizeErrorMessage(err.message),
       latencyMs,
     });
   }
@@ -169,7 +183,9 @@ export async function POST(request) {
     const baseInternalUrl = getInternalBaseUrl();
     const internalApiKey = await getInternalApiKey();
     const results = await Promise.all(
-      targets.map((target) => testComboTarget(target, baseInternalUrl, internalApiKey))
+      targets.map((target) =>
+        testComboTarget(target, baseInternalUrl, internalApiKey, request.signal ?? null)
+      )
     );
     const resolvedResult = results.find((result) => result.status === "ok") || null;
     const resolvedBy = resolvedResult?.model || null;

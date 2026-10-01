@@ -1,5 +1,5 @@
 import { trackPendingRequest } from "@/lib/usageDb";
-import { STREAM_IDLE_TIMEOUT_MS } from "../config/constants.ts";
+import { STREAM_ACTIVE_TIMEOUT_MS, STREAM_IDLE_TIMEOUT_MS } from "../config/constants.ts";
 import { FORMATS } from "../translator/formats.ts";
 import { buildErrorBody } from "./error.ts";
 import { PENDING_REQUEST_CLEARED_MARKER } from "./stream.ts";
@@ -36,6 +36,7 @@ type StreamControllerOptions = {
   provider?: string;
   model?: string;
   connectionId?: string | null;
+  pendingRequestId?: string | null;
   clientResponseFormat?: string | null;
   clientAbortSignal?: AbortSignal | null;
   allowCompletedToolHandoffGrace?: boolean;
@@ -150,7 +151,7 @@ function isPendingRequestClearedError(error: unknown): boolean {
 /**
  * A client disconnect — the caller aborted the request or closed the SSE
  * connection — is NOT a provider failure. It surfaces either as an
- * AbortError/ResponseAborted, or, when OmniRoute then tries to enqueue another
+ * AbortError/ResponseAborted, or, when AgentProxy then tries to enqueue another
  * chunk into the now-closed response stream, as a "Controller is already closed"
  * TypeError. Treating any of these as an upstream error wrongly cools down the
  * account/connection, so the stream error path uses this to skip the provider
@@ -244,6 +245,7 @@ export function createStreamController({
   provider,
   model,
   connectionId,
+  pendingRequestId = null,
   clientResponseFormat,
   clientAbortSignal,
   allowCompletedToolHandoffGrace = false,
@@ -280,7 +282,14 @@ export function createStreamController({
     pendingRequestCleared = true;
     if (!model && !provider && !connectionId) return;
     try {
-      trackPendingRequest(model || "", provider || "", connectionId ?? null, false);
+      trackPendingRequest(
+        model || "",
+        provider || "",
+        connectionId ?? null,
+        false,
+        undefined,
+        pendingRequestId ?? undefined
+      );
     } catch (e) {
       console.error(
         `[${getTimeString()}] [streamHandler] trackPendingRequest decrement failed — counter may drift`,
@@ -429,7 +438,7 @@ export function createStreamController({
     const handleClientAbort = () => {
       const reason = clientAbortSignal.reason;
       if (isDeadlineAbortReason(reason)) {
-        // An AbortSignal can represent an OmniRoute-owned deadline as well as
+        // An AbortSignal can represent an AgentProxy-owned deadline as well as
         // a caller disconnect. Preserve deadline failures as 504; classifying
         // them as client disconnects writes a misleading 499 to the call log.
         abortController.abort(reason);
@@ -605,7 +614,7 @@ function resolveSilentCloseOutcome(input: {
     // #10443: every known path that produces OpenAI chat chunks emits a
     // terminal — the response translators (gemini/claude/kiro/cursor-to-openai)
     // all emit a finish_reason chunk, the non-standard executors (kiro, cursor,
-    // nlpcloud, poe-web, copilot-m365-web, chipotle, gitlab)
+    // nlpcloud, poe-web, copilot-m365-web, gitlab)
     // enqueue `data: [DONE]` themselves, and standard OpenAI-compatible
     // upstreams end with finish_reason + [DONE] per spec. So a close that
     // forwarded content but no terminal marker is an upstream drop, not a
@@ -842,7 +851,9 @@ export function createDisconnectAwareStream(
  * output for long stretches while partial EventStream frames keep arriving;
  * measuring stall on the transform output caused false stalls. Any upstream
  * chunk resets the timer. If no bytes arrive for `stallTimeoutMs`, the
- * stream surfaces a "stream stall timeout" error and aborts.
+ * stream surfaces a "stream stall timeout" error and aborts. A separate
+ * active lifetime budget never resets on bytes and surfaces
+ * "stream active timeout" when exceeded.
  *
  * Ported from decolua/9router#1243 by @zakirkun.
  *
@@ -852,14 +863,24 @@ export function createDisconnectAwareStream(
  * @param opts.stallTimeoutMs - Override the stall budget (defaults to
  *   STREAM_IDLE_TIMEOUT_MS / DEFAULT_STREAM_STALL_TIMEOUT_MS). `0` disables
  *   the watchdog.
+ * @param opts.activeTimeoutMs - Override the total active-stream budget
+ *   (defaults to STREAM_ACTIVE_TIMEOUT_MS). `0` disables the active watchdog.
  */
 export function pipeWithDisconnect(
   providerResponse: Response,
   transformStream: TransformStream<Uint8Array, Uint8Array>,
   streamController: StreamController,
-  opts: { stallTimeoutMs?: number; contentStallTimeoutMs?: number; highWaterMark?: number } = {}
+  opts: {
+    stallTimeoutMs?: number;
+    activeTimeoutMs?: number;
+    contentStallTimeoutMs?: number;
+    highWaterMark?: number;
+  } = {}
 ) {
   const stallTimeoutMs = opts.stallTimeoutMs ?? DEFAULT_STREAM_STALL_TIMEOUT_MS;
+  const activeTimeoutMs = opts.activeTimeoutMs ?? STREAM_ACTIVE_TIMEOUT_MS;
+  const stallEnabled = Number.isFinite(stallTimeoutMs) && stallTimeoutMs > 0;
+  const activeEnabled = Number.isFinite(activeTimeoutMs) && activeTimeoutMs > 0;
   // Disabled unless a caller opts in with an explicit budget (chatCore wires
   // the adaptive streamReadinessPolicy.timeoutMs — see its own doc comment).
   // No blanket default here: an arbitrary constant picked at this layer,
@@ -869,7 +890,7 @@ export function pipeWithDisconnect(
   const contentStallTimeoutMs = opts.contentStallTimeoutMs ?? 0;
 
   // Watchdogs disabled — preserve legacy behavior verbatim.
-  if ((!stallTimeoutMs || stallTimeoutMs <= 0) && contentStallTimeoutMs <= 0) {
+  if (!stallEnabled && !activeEnabled && contentStallTimeoutMs <= 0) {
     const transformedBody = providerResponse.body.pipeThrough(transformStream);
     return createDisconnectAwareStream(
       { readable: transformedBody, writable: createNoopAbortWritable() },
@@ -879,6 +900,7 @@ export function pipeWithDisconnect(
   }
 
   let stallTimer: ReturnType<typeof setTimeout> | null = null;
+  let activeTimer: ReturnType<typeof setTimeout> | null = null;
   // Captured on the upstream tap's `start`, used by the watchdog to error the
   // pipeline so the downstream reader unblocks and emits a clean SSE error
   // event. Without this, aborting the AbortController alone does not unblock
@@ -890,41 +912,52 @@ export function pipeWithDisconnect(
   // handleError a second time — pending-cleanup is idempotent but onError
   // callbacks should fire once per error.
   let stallFired = false;
+  let activeFired = false;
 
   const clearStall = () => {
-    if (stallTimer) {
-      clearTimeout(stallTimer);
-      stallTimer = null;
+    if (stallTimer) clearTimeout(stallTimer);
+    stallTimer = null;
+  };
+  const clearActive = () => {
+    if (activeTimer) clearTimeout(activeTimer);
+    activeTimer = null;
+  };
+  const clearByteWatchdogs = () => {
+    clearStall();
+    clearActive();
+  };
+  const triggerByteWatchdog = (kind: "stall" | "active") => {
+    if (stallFired || activeFired) return;
+    const message = kind === "active" ? "stream active timeout" : "stream stall timeout";
+    if (kind === "active") activeFired = true;
+    else stallFired = true;
+    clearByteWatchdogs();
+    const error = new Error(message);
+    try {
+      streamController.handleError?.(error);
+    } catch (e) {
+      console.debug(`[STREAM-HANDLER] ${kind} watchdog handleError failed:`, e);
+    }
+    try {
+      upstreamTapController?.error(error);
+    } catch (e) {
+      console.debug(`[STREAM-HANDLER] ${kind} watchdog upstream tap error failed:`, e);
+    }
+    try {
+      streamController.abort?.();
+    } catch (e) {
+      console.debug(`[STREAM-HANDLER] ${kind} watchdog abort failed:`, e);
     }
   };
   const armStall = () => {
-    if (!stallTimeoutMs || stallTimeoutMs <= 0) return;
+    if (!stallEnabled) return;
     clearStall();
-    stallTimer = setTimeout(() => {
-      stallTimer = null;
-      stallFired = true;
-      const stallError = new Error("stream stall timeout");
-      // Notify the controller (onError callback + pending-request cleanup).
-      try {
-        streamController.handleError?.(stallError);
-      } catch (e) {
-        console.debug(`[STREAM-HANDLER] stall watchdog handleError failed:`, e);
-      }
-      // Error the pipeline so the downstream reader unblocks. createDisconnect-
-      // AwareStream's catch block translates this into buildStreamErrorChunks
-      // (sanitized SSE error event with finish_reason:"error", per the format).
-      try {
-        upstreamTapController?.error(stallError);
-      } catch (e) {
-        console.debug(`[STREAM-HANDLER] stall watchdog upstream tap error failed:`, e);
-      }
-      // Abort the underlying fetch so upstream releases the connection.
-      try {
-        streamController.abort?.();
-      } catch (e) {
-        console.debug(`[STREAM-HANDLER] stall watchdog abort failed:`, e);
-      }
-    }, stallTimeoutMs);
+    stallTimer = setTimeout(() => triggerByteWatchdog("stall"), stallTimeoutMs);
+  };
+  const armActive = () => {
+    if (!activeEnabled) return;
+    clearActive();
+    activeTimer = setTimeout(() => triggerByteWatchdog("active"), activeTimeoutMs);
   };
 
   // Second, independent watchdog: fires when the upstream keeps sending raw
@@ -941,7 +974,7 @@ export function pipeWithDisconnect(
   // but response.in_progress pings indefinitely, relayed byte-for-byte to
   // the client, until the CLIENT's own idle timeout eventually gave up --
   // sometimes 120s, sometimes 900s depending on the calling task, always
-  // slower and less informative than OmniRoute failing this attempt itself
+  // slower and less informative than AgentProxy failing this attempt itself
   // with a clear error the client's own retry/fallback logic can react to
   // immediately. Armed ONCE at stream start (not re-armed by lifecycle-only
   // bytes, unlike armStall above) and cleared permanently the first time
@@ -985,32 +1018,32 @@ export function pipeWithDisconnect(
     }, contentStallTimeoutMs);
   };
 
-  // Wrap controller so every termination path clears both stall timers.
+  // Wrap controller so every termination path clears all watchdog timers.
   // Without this, abort/complete/error/disconnect paths leave a timer armed
   // and a stale abort could fire after the request has already ended.
   const wrappedController: StreamController = {
     ...streamController,
     handleComplete: () => {
-      clearStall();
+      clearByteWatchdogs();
       clearContentStall();
       streamController.handleComplete();
     },
     handleError: (e: unknown) => {
-      clearStall();
+      clearByteWatchdogs();
       clearContentStall();
       // A watchdog already fired its own handleError — the inner pull()
       // catch sees the same error propagated through the pipeline; suppress
       // the duplicate to keep onError callbacks single-fire.
-      if (stallFired || contentStallFired) return;
+      if (stallFired || activeFired || contentStallFired) return;
       streamController.handleError(e);
     },
     handleDisconnect: (reason?: string) => {
-      clearStall();
+      clearByteWatchdogs();
       clearContentStall();
       streamController.handleDisconnect(reason);
     },
     abort: () => {
-      clearStall();
+      clearByteWatchdogs();
       clearContentStall();
       streamController.abort();
     },
@@ -1025,6 +1058,7 @@ export function pipeWithDisconnect(
     start(controller) {
       upstreamTapController = controller;
       armStall();
+      armActive();
       armContentStall();
     },
     transform(chunk, controller) {
@@ -1036,7 +1070,7 @@ export function pipeWithDisconnect(
       controller.enqueue(chunk);
     },
     flush() {
-      clearStall();
+      clearByteWatchdogs();
       clearContentStall();
     },
   });

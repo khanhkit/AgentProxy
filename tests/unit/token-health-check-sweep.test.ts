@@ -31,7 +31,7 @@ import path from "node:path";
 
 process.env.NODE_ENV = "test";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-sweep-reentrancy-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-sweep-reentrancy-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../src/lib/db/core.ts");
@@ -68,7 +68,7 @@ test.after(async () => {
 
 /** Read the shared health-check global state's `sweeping` flag. */
 function isSweeping(): boolean {
-  const hc = (globalThis as Record<string, unknown>).__omnirouteTokenHC as
+  const hc = (globalThis as Record<string, unknown>).__agentproxyTokenHC as
     { sweeping?: boolean } | undefined;
   return hc?.sweeping ?? false;
 }

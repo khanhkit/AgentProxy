@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 
 import { isVisionModelId } from "@/shared/constants/visionModels";
+import { MUSE_SPARK_PATTERN } from "./base/reasoningEffort.ts";
 import { REGISTRY } from "../config/providerRegistry.ts";
 import {
   BaseExecutor,
@@ -59,6 +60,16 @@ function clampMaxTokens(value: unknown): number | undefined {
   return Math.min(Math.floor(numeric), MAX_COMMAND_CODE_TOKENS);
 }
 
+const MUSE_SPARK_MIN_OUTPUT_TOKENS = 512;
+
+function applyMuseSparkMinOutputTokens(model: string, body: JsonRecord): void {
+  if (!MUSE_SPARK_PATTERN.test(model)) return;
+  const current = body.max_tokens;
+  if (typeof current !== "number" || !Number.isFinite(current)) return;
+  if (current >= MUSE_SPARK_MIN_OUTPUT_TOKENS) return;
+  body.max_tokens = MUSE_SPARK_MIN_OUTPUT_TOKENS;
+}
+
 const COMMAND_CODE_PASSTHROUGH_FIELDS = [
   "reasoning_effort",
   "reasoning",
@@ -111,6 +122,7 @@ function buildOpenAiBody(model: string, body: unknown, stream: boolean): { body:
   if (maxTokens !== undefined) {
     out.max_tokens = maxTokens;
   }
+  applyMuseSparkMinOutputTokens(resolvedModel, out);
 
   return { body: out };
 }
@@ -135,7 +147,7 @@ const COMMAND_CODE_RESERVED_TOOL_NAMES = new Set(["tool_search"]);
 
 function wireToolName(clientName: string, toolNameMap: Map<string, string>): string {
   if (COMMAND_CODE_RESERVED_TOOL_NAMES.has(clientName)) {
-    const wire = `omniroute_${clientName}`;
+    const wire = `agentproxy_${clientName}`;
     toolNameMap.set(wire, clientName);
     return wire;
   }
@@ -374,6 +386,7 @@ function buildCommandCodeCliBody(
   if (maxTokens !== undefined) {
     params.max_tokens = maxTokens;
   }
+  applyMuseSparkMinOutputTokens(resolvedModel, params);
 
   for (const field of COMMAND_CODE_PASSTHROUGH_FIELDS) {
     const value = input[field];

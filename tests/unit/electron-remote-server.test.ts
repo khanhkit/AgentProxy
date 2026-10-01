@@ -29,7 +29,7 @@ const {
 } = require("../../electron/lib/remoteServerPreferences");
 
 function withTempDir(fn: (dir: string) => void) {
-  const dir = mkdtempSync(join(tmpdir(), "omniroute-remote-server-"));
+  const dir = mkdtempSync(join(tmpdir(), "agentproxy-remote-server-"));
   try {
     fn(dir);
   } finally {
@@ -46,13 +46,13 @@ describe("resolveRemoteServerUrl precedence", () => {
     });
   });
 
-  it("prefers OMNIROUTE_REMOTE_URL env var over the persisted prefs file", () => {
+  it("prefers AGENTPROXY_REMOTE_URL env var over the persisted prefs file", () => {
     withTempDir((dir) => {
       const prefsPath = join(dir, "electron-preferences.json");
       writeRemoteServerUrl(prefsPath, "http://from-prefs:20128");
 
       const result = resolveRemoteServerUrl({
-        env: { OMNIROUTE_REMOTE_URL: "http://from-env:20128" },
+        env: { AGENTPROXY_REMOTE_URL: "http://from-env:20128" },
         prefsPath,
       });
       assert.equal(result, "http://from-env:20128");
@@ -73,7 +73,7 @@ describe("resolveRemoteServerUrl precedence", () => {
     withTempDir((dir) => {
       const prefsPath = join(dir, "electron-preferences.json");
       const result = resolveRemoteServerUrl({
-        env: { OMNIROUTE_REMOTE_URL: "http://localhost:20128/" },
+        env: { AGENTPROXY_REMOTE_URL: "http://localhost:20128/" },
         prefsPath,
       });
       assert.equal(result, "http://localhost:20128");
@@ -84,7 +84,7 @@ describe("resolveRemoteServerUrl precedence", () => {
     withTempDir((dir) => {
       const prefsPath = join(dir, "electron-preferences.json");
       for (const bad of ["file:///etc/passwd", "javascript:alert(1)", "not a url", ""]) {
-        const result = resolveRemoteServerUrl({ env: { OMNIROUTE_REMOTE_URL: bad }, prefsPath });
+        const result = resolveRemoteServerUrl({ env: { AGENTPROXY_REMOTE_URL: bad }, prefsPath });
         assert.equal(result, null, `expected null for ${JSON.stringify(bad)}`);
       }
     });
@@ -111,7 +111,7 @@ describe("resolveRemoteServerUrl precedence", () => {
 describe("isValidHttpUrl", () => {
   it("accepts http and https", () => {
     assert.equal(isValidHttpUrl("http://localhost:20128"), true);
-    assert.equal(isValidHttpUrl("https://omniroute.example.com"), true);
+    assert.equal(isValidHttpUrl("https://agentproxy.example.com"), true);
   });
 
   it("rejects other protocols and invalid strings", () => {
@@ -171,10 +171,10 @@ describe("remoteServerPreferences read/write", () => {
   it("persists close behavior without discarding the remote server URL", () => {
     withTempDir((dir) => {
       const prefsPath = join(dir, "electron-preferences.json");
-      writeRemoteServerUrl(prefsPath, "https://omniroute.example.com");
+      writeRemoteServerUrl(prefsPath, "https://agentproxy.example.com");
       writeCloseBehavior(prefsPath, "unload");
       assert.deepEqual(readPreferences(prefsPath), {
-        remoteServerUrl: "https://omniroute.example.com",
+        remoteServerUrl: "https://agentproxy.example.com",
         closeBehavior: "unload",
       });
     });

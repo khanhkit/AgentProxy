@@ -1,5 +1,5 @@
 import { getMachineId } from "@/shared/utils/machine";
-import { getSettings } from "@/lib/db/settings";
+import { loadHomeSettings } from "./loadHomeSettings";
 import HomePageClient from "../dashboard/HomePageClient";
 import BootstrapBanner from "../dashboard/BootstrapBanner";
 import KimiSponsorBanner from "../dashboard/KimiSponsorBanner";
@@ -11,10 +11,9 @@ import FirstRunReadinessCard from "../dashboard/FirstRunReadinessCard";
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
-  // Even if getSettings() rejects, getMachineId() runs concurrently, which is acceptable
-  // as both paths fail-fast on error and avoids the waterfall penalty.
-  const [settings, machineId] = await Promise.all([getSettings(), getMachineId()]);
-  const isBootstrapped = process.env.OMNIROUTE_BOOTSTRAPPED === "true";
+  // Display-only settings failures degrade locally; auth callers still fail closed on DB errors.
+  const [settings, machineId] = await Promise.all([loadHomeSettings(), getMachineId()]);
+  const isBootstrapped = process.env.AGENTPROXY_BOOTSTRAPPED === "true";
   return (
     <>
       {isBootstrapped && <BootstrapBanner />}

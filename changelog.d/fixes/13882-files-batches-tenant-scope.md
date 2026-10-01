@@ -1,0 +1,1 @@
+- **fix(security):** scope `/api/files` and `/api/batches` management access to the caller's API key while preserving instance-wide dashboard-session access, preventing cross-tenant file and batch reads.

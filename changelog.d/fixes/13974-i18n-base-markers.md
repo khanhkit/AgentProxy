@@ -1,0 +1,1 @@
+- **fix(i18n):** complete the reviewed translations for dashboard keys that were previously represented by missing markers across the current AgentProxy locale set.

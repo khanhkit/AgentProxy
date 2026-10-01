@@ -236,13 +236,22 @@ describe("OpencodeExecutor", () => {
     });
 
     it("omits accept header when stream is false", async () => {
-      const result = await zenExecutor.execute(createInput("big-pickle", false));
+      // A paid model carries the client's non-streaming expectation through. A free-tier
+      // model does not: the gated tier only answers streamed requests, so the executor
+      // announces the event stream and the JSON body is rebuilt from it.
+      const result = await zenExecutor.execute(createInput("gpt-5.6-luna", false));
 
       assert.deepEqual(result.headers, {
         Authorization: "Bearer test-key",
         "Content-Type": "application/json",
       });
       assert.deepEqual(fetchCalls[0].options.headers, result.headers);
+    });
+
+    it("announces the event stream for a free-tier model even when the client wants JSON", async () => {
+      const result = await zenExecutor.execute(createInput("big-pickle", false));
+
+      assert.equal(result.headers["Accept"], "text/event-stream");
     });
 
     it("omits authorization when credentials are missing", async () => {
@@ -460,7 +469,7 @@ describe("OpencodeExecutor", () => {
   });
 
   // #4022: OpenCode CLI only emits x-opencode-* when the provider id starts with
-  // "opencode". For a custom-named provider (e.g. "omniroute") it instead sends
+  // "opencode". For a custom-named provider (e.g. "agentproxy") it instead sends
   // x-session-affinity / X-Session-Id (both carry the same OpenCode sessionID).
   // The executor must map that session id onto x-opencode-session so session
   // continuity to the opencode.ai upstream works regardless of provider name.

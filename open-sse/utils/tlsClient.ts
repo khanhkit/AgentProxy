@@ -2,7 +2,13 @@ import { createHash } from "node:crypto";
 import * as nodeModule from "node:module";
 import { getTlsClientTimeoutConfig } from "@/shared/utils/runtimeTimeouts";
 
-const runtimeRequire = nodeModule.createRequire(import.meta.url);
+// #12491 — anchor on process.argv[1]||cwd() rather than import.meta.url: the
+// standalone Docker runtime re-lays-out files at a different relative depth
+// than the build, so an import.meta.url-relative resolution can miss even
+// though this loader already keeps the specifier itself dynamic (see
+// loadRuntimeModule() below). Matches src/lib/machineToken.ts and
+// src/lib/db/adapters/runtimeRequire.ts's established anchor pattern.
+const runtimeRequire = nodeModule.createRequire(process.argv[1] || process.cwd());
 
 function loadRuntimeModule(moduleName: string): unknown {
   // Keep the specifier dynamic. Turbopack rewrites a literal createRequire call
@@ -77,8 +83,8 @@ function getWreqRuntimeModule(): Record<string, unknown> {
   throw wreqRuntimeModuleError ?? new Error("wreq-js runtime unavailable");
 }
 
-const TRANSPORT_POOL_KEY = Symbol.for("omniroute.wreqTransportPool.instance");
-const TRANSPORT_POOL_LIFECYCLE_KEY = Symbol.for("omniroute.wreqTransportPool.lifecycle");
+const TRANSPORT_POOL_KEY = Symbol.for("agentproxy.wreqTransportPool.instance");
+const TRANSPORT_POOL_LIFECYCLE_KEY = Symbol.for("agentproxy.wreqTransportPool.lifecycle");
 type WreqLifecycleResource = {
   closeAll: () => Promise<void> | void;
 };
@@ -1025,7 +1031,7 @@ export class TlsClient {
   }
 }
 
-const TLS_CLIENT_KEY = Symbol.for("omniroute.tlsClient.instance");
+const TLS_CLIENT_KEY = Symbol.for("agentproxy.tlsClient.instance");
 const scopedGlobal = globalThis as typeof globalThis & {
   [TLS_CLIENT_KEY]?: TlsClient;
 };

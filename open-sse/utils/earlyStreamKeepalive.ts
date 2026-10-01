@@ -4,8 +4,8 @@
  * while the handler waits on upstream first-byte (reasoning models, combo failover).
  *
  * @changes
- * - [2026-07-28] [Cursor Grok 4.5] - Scrub omniroute from client-facing keepalive id/model/comment frames
- * - [2026-07-28] [Cursor Grok 4.5] - Neutralize Responses startup thinking text (no OmniRoute brand leak)
+ * - [2026-07-28] [Cursor Grok 4.5] - Scrub agentproxy from client-facing keepalive id/model/comment frames
+ * - [2026-07-28] [Cursor Grok 4.5] - Neutralize Responses startup thinking text (no AgentProxy brand leak)
  *
  * Strict HTTP clients (notably Codex CLI's `reqwest`, which has a ~5s idle-read
  * timeout) drop the connection if no bytes arrive shortly after the request.
@@ -32,6 +32,7 @@
  */
 
 import { recordEarlyKeepaliveBytes } from "./earlyKeepaliveByteBuffer.ts";
+import { SYNTHETIC_RESPONSES_SEQUENCE_NUMBER } from "./responsesSequence.ts";
 
 const ENCODER = new TextEncoder();
 const KEEPALIVE_FRAME = ENCODER.encode(": keepalive\n\n");
@@ -86,8 +87,51 @@ export const OPENAI_RESPONSES_ERROR_FRAME = ENCODER.encode(
     code: null,
     message: "Upstream stream failed before completion.",
     param: null,
+    // #14330: synthesized outside the real per-stream counter; use a shared
+    // non-zero seed instead of colliding with the stream's first event.
+    sequence_number: SYNTHETIC_RESPONSES_SEQUENCE_NUMBER,
   })}\n\n`
 );
+
+function buildResponsesErrorDataLine(text: string): string {
+  const trimmed = text.trim();
+  let parsed: Record<string, unknown> | null = null;
+  if (trimmed) {
+    try {
+      const candidate = JSON.parse(trimmed);
+      if (candidate && typeof candidate === "object") {
+        parsed = candidate as Record<string, unknown>;
+      }
+    } catch {
+      parsed = null;
+    }
+  }
+
+  const errorObj =
+    parsed && typeof parsed.error === "object" && parsed.error !== null
+      ? (parsed.error as Record<string, unknown>)
+      : null;
+  const message =
+    (typeof errorObj?.message === "string" && errorObj.message) ||
+    (typeof parsed?.message === "string" && parsed.message) ||
+    trimmed ||
+    "Upstream stream failed before completion.";
+  const code = (typeof errorObj?.code === "string" && errorObj.code) || null;
+  const param = (typeof errorObj?.param === "string" && errorObj.param) || null;
+  const extras =
+    parsed && typeof parsed.diagnostics === "object" && parsed.diagnostics !== null
+      ? { diagnostics: parsed.diagnostics }
+      : {};
+
+  return JSON.stringify({
+    type: "error",
+    code,
+    message,
+    param,
+    sequence_number: SYNTHETIC_RESPONSES_SEQUENCE_NUMBER,
+    ...extras,
+  });
+}
 
 export type EarlyStreamKeepaliveOptions = {
   /** Wait this long for the handler before committing to a keepalive stream. */
@@ -155,7 +199,7 @@ export async function withEarlyStreamKeepalive(
   options: EarlyStreamKeepaliveOptions = {}
 ): Promise<Response> {
   const thresholdMs = Math.max(0, options.thresholdMs ?? 2_000);
-  const intervalMs = Math.max(250, options.intervalMs ?? 2_500);
+  const intervalMs = Math.max(250, options.intervalMs ?? 1_500);
   const signal = options.signal ?? null;
   const keepaliveFrame = options.keepaliveFrame ?? KEEPALIVE_FRAME;
   const startupFrame = options.startupFrame ?? keepaliveFrame;
@@ -168,11 +212,21 @@ export async function withEarlyStreamKeepalive(
       : null;
   const extraHeaders = options.extraHeaders ?? {};
   const errorFrame = options.errorFrame ?? ERROR_FRAME;
-  // Single source of truth for whether THIS route's error framing uses a named SSE
-  // `event: error` line (Anthropic) or a plain `data:` line (OpenAI Chat Completions /
-  // Responses) — derived from errorFrame itself so the dynamic real-upstream-body case
-  // below stays consistent with the static default-message case without a second option.
-  const errorFrameUsesNamedEvent = new TextDecoder().decode(errorFrame).startsWith("event:");
+  const decodedErrorFrame = new TextDecoder().decode(errorFrame);
+  const errorFrameFormat: "anthropic" | "responses" | "chat" = decodedErrorFrame.startsWith(
+    "event:"
+  )
+    ? "anthropic"
+    : (() => {
+        const dataLine = decodedErrorFrame.match(/^data: (.+)\n\n$/);
+        if (!dataLine) return "chat";
+        try {
+          const parsed = JSON.parse(dataLine[1]);
+          return parsed && typeof parsed === "object" && "type" in parsed ? "responses" : "chat";
+        } catch {
+          return "chat";
+        }
+      })();
   const correlationId = options.correlationId;
   const frameDecoder = correlationId ? new TextDecoder() : null;
   // Records every direct-to-client write EXCEPT the forwarded real response
@@ -321,11 +375,14 @@ export async function withEarlyStreamKeepalive(
             // instead of forwarding raw JSON, which would be malformed SSE.
             const text = response.body ? await response.text().catch(() => "") : "";
             const dataLine =
-              text.trim() ||
-              JSON.stringify({ error: { message: "stream_error", type: "stream_error" } });
-            const framed = errorFrameUsesNamedEvent
-              ? `event: error\ndata: ${dataLine}\n\n`
-              : `data: ${dataLine}\n\n`;
+              errorFrameFormat === "responses"
+                ? buildResponsesErrorDataLine(text)
+                : text.trim() ||
+                  JSON.stringify({ error: { message: "stream_error", type: "stream_error" } });
+            const framed =
+              errorFrameFormat === "anthropic"
+                ? `event: error\ndata: ${dataLine}\n\n`
+                : `data: ${dataLine}\n\n`;
             const framedBytes = ENCODER.encode(framed);
             controller.enqueue(framedBytes);
             recordClientBytes(framedBytes);

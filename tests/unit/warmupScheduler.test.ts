@@ -15,7 +15,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-warmup-orch-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-warmup-orch-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.NODE_ENV = "test";
 process.env.DISABLE_SQLITE_AUTO_BACKUP = "true";
@@ -64,10 +64,10 @@ function installMockFetch(
 
 test.beforeEach(async () => {
   await resetStorage();
-  delete process.env.OMNIROUTE_WARMUP_ENABLED;
-  delete process.env.OMNIROUTE_WARMUP_CRON;
-  delete process.env.OMNIROUTE_WARMUP_CONCURRENCY;
-  delete process.env.OMNIROUTE_WARMUP_MODEL;
+  delete process.env.AGENTPROXY_WARMUP_ENABLED;
+  delete process.env.AGENTPROXY_WARMUP_CRON;
+  delete process.env.AGENTPROXY_WARMUP_CONCURRENCY;
+  delete process.env.AGENTPROXY_WARMUP_MODEL;
   delete process.env.REDIS_URL;
   // Reset the globalThis scheduler singleton so lastFireMinute/minuteKey latch
   // from a prior test does not suppress the tick in the next test.
@@ -90,7 +90,7 @@ test("startWarmupScheduler: disabled → null (default)", async () => {
 test("startWarmupScheduler: enabled → returns timer and is a singleton", async () => {
   const { startWarmupScheduler, stopWarmupScheduler } =
     await import("../../src/lib/warmupScheduler.ts");
-  process.env.OMNIROUTE_WARMUP_ENABLED = "1";
+  process.env.AGENTPROXY_WARMUP_ENABLED = "1";
   const timer = startWarmupScheduler();
   assert.ok(timer !== null, "should return a timer when enabled");
   // Second call returns the same timer (singleton survives re-entry).
@@ -98,19 +98,19 @@ test("startWarmupScheduler: enabled → returns timer and is a singleton", async
   stopWarmupScheduler();
   assert.ok(startWarmupScheduler() !== null, "after stop, scheduler restarts");
   stopWarmupScheduler();
-  delete process.env.OMNIROUTE_WARMUP_ENABLED;
+  delete process.env.AGENTPROXY_WARMUP_ENABLED;
 });
 
 test("env parsing: cron default + concurrency clamp", async () => {
   const { startWarmupScheduler, stopWarmupScheduler } =
     await import("../../src/lib/warmupScheduler.ts");
-  process.env.OMNIROUTE_WARMUP_ENABLED = "1";
-  process.env.OMNIROUTE_WARMUP_CONCURRENCY = "99"; // clamps to 10
+  process.env.AGENTPROXY_WARMUP_ENABLED = "1";
+  process.env.AGENTPROXY_WARMUP_CONCURRENCY = "99"; // clamps to 10
   const timer = startWarmupScheduler();
   assert.ok(timer !== null);
   stopWarmupScheduler();
-  delete process.env.OMNIROUTE_WARMUP_ENABLED;
-  delete process.env.OMNIROUTE_WARMUP_CONCURRENCY;
+  delete process.env.AGENTPROXY_WARMUP_ENABLED;
+  delete process.env.AGENTPROXY_WARMUP_CONCURRENCY;
 });
 
 test("integration: opt-in gating — connection not in claudeWarmup.connections is skipped", async () => {
@@ -135,8 +135,8 @@ test("integration: opt-in gating — connection not in claudeWarmup.connections 
     body: { usage: { input_tokens: 3, output_tokens: 1 } },
   }));
 
-  process.env.OMNIROUTE_WARMUP_ENABLED = "1";
-  process.env.OMNIROUTE_WARMUP_CRON = "*/1 * * * *"; // every minute
+  process.env.AGENTPROXY_WARMUP_ENABLED = "1";
+  process.env.AGENTPROXY_WARMUP_CRON = "*/1 * * * *"; // every minute
   startWarmupScheduler();
   // Allow the immediate tick + any scheduled ticks to run.
   await new Promise((r) => setTimeout(r, 50));
@@ -144,8 +144,8 @@ test("integration: opt-in gating — connection not in claudeWarmup.connections 
   mock.restore();
 
   assert.equal(mock.calls.length, 0, "no fetch should fire when no connection is opted in");
-  delete process.env.OMNIROUTE_WARMUP_ENABLED;
-  delete process.env.OMNIROUTE_WARMUP_CRON;
+  delete process.env.AGENTPROXY_WARMUP_ENABLED;
+  delete process.env.AGENTPROXY_WARMUP_CRON;
 });
 
 test("integration: opted-in claude_pro connection → fetch fires with Bearer token + beta suffix", async () => {
@@ -172,8 +172,8 @@ test("integration: opted-in claude_pro connection → fetch fires with Bearer to
     body: { usage: { input_tokens: 3, output_tokens: 1 } },
   }));
 
-  process.env.OMNIROUTE_WARMUP_ENABLED = "1";
-  process.env.OMNIROUTE_WARMUP_CRON = "*/1 * * * *";
+  process.env.AGENTPROXY_WARMUP_ENABLED = "1";
+  process.env.AGENTPROXY_WARMUP_CRON = "*/1 * * * *";
   startWarmupScheduler();
   await new Promise((r) => setTimeout(r, 50));
   stopWarmupScheduler();
@@ -190,8 +190,8 @@ test("integration: opted-in claude_pro connection → fetch fires with Bearer to
   assert.equal(body.max_tokens, 1, "warmup must use max_tokens=1 to minimize quota burn");
   assert.equal(body.model, "claude-3-5-haiku-20241022");
 
-  delete process.env.OMNIROUTE_WARMUP_ENABLED;
-  delete process.env.OMNIROUTE_WARMUP_CRON;
+  delete process.env.AGENTPROXY_WARMUP_ENABLED;
+  delete process.env.AGENTPROXY_WARMUP_CRON;
 });
 
 test("warmup pings an opted-in lease-capable connection while its lease is FREE", async () => {
@@ -217,16 +217,16 @@ test("warmup pings an opted-in lease-capable connection while its lease is FREE"
   await settingsDb.updateSettings({ claudeWarmup: { connections: { [conn.id]: true } } });
 
   const mock = installMockFetch(() => new Response("{}", { status: 200 }));
-  process.env.OMNIROUTE_WARMUP_ENABLED = "1";
-  process.env.OMNIROUTE_WARMUP_CRON = "*/1 * * * *";
+  process.env.AGENTPROXY_WARMUP_ENABLED = "1";
+  process.env.AGENTPROXY_WARMUP_CRON = "*/1 * * * *";
   startWarmupScheduler();
   await new Promise((resolve) => setTimeout(resolve, 50));
   stopWarmupScheduler();
   mock.restore();
 
   assert.ok(mock.calls.length >= 1, "FREE lease-capable connection is warmed like any other");
-  delete process.env.OMNIROUTE_WARMUP_ENABLED;
-  delete process.env.OMNIROUTE_WARMUP_CRON;
+  delete process.env.AGENTPROXY_WARMUP_ENABLED;
+  delete process.env.AGENTPROXY_WARMUP_CRON;
 });
 
 test("integration: message rotation — different content across sequential pings", async () => {
@@ -251,8 +251,8 @@ test("integration: message rotation — different content across sequential ping
     body: { usage: { input_tokens: 1, output_tokens: 1 } },
   }));
 
-  process.env.OMNIROUTE_WARMUP_ENABLED = "1";
-  process.env.OMNIROUTE_WARMUP_CRON = "*/1 * * * *";
+  process.env.AGENTPROXY_WARMUP_ENABLED = "1";
+  process.env.AGENTPROXY_WARMUP_CRON = "*/1 * * * *";
   // First ping.
   startWarmupScheduler();
   await new Promise((r) => setTimeout(r, 30));
@@ -268,8 +268,8 @@ test("integration: message rotation — different content across sequential ping
   mock.restore();
 
   assert.ok(mock.calls.length >= 2, "expected at least two pings across both runs");
-  delete process.env.OMNIROUTE_WARMUP_ENABLED;
-  delete process.env.OMNIROUTE_WARMUP_CRON;
+  delete process.env.AGENTPROXY_WARMUP_ENABLED;
+  delete process.env.AGENTPROXY_WARMUP_CRON;
 });
 
 test("integration: 403 → forbidden persisted, no further fetch for that connection", async () => {
@@ -292,8 +292,8 @@ test("integration: 403 → forbidden persisted, no further fetch for that connec
 
   const mock = installMockFetch(() => ({ status: 403, body: { error: "forbidden" } }));
 
-  process.env.OMNIROUTE_WARMUP_ENABLED = "1";
-  process.env.OMNIROUTE_WARMUP_CRON = "*/1 * * * *";
+  process.env.AGENTPROXY_WARMUP_ENABLED = "1";
+  process.env.AGENTPROXY_WARMUP_CRON = "*/1 * * * *";
   startWarmupScheduler();
   await new Promise((r) => setTimeout(r, 50));
   stopWarmupScheduler();
@@ -303,8 +303,8 @@ test("integration: 403 → forbidden persisted, no further fetch for that connec
   const state = crs.getConnectionRuntimeState(conn.id);
   assert.equal(state?.lastWarmupResult, "forbidden", "forbidden must be persisted to SQLite");
 
-  delete process.env.OMNIROUTE_WARMUP_ENABLED;
-  delete process.env.OMNIROUTE_WARMUP_CRON;
+  delete process.env.AGENTPROXY_WARMUP_ENABLED;
+  delete process.env.AGENTPROXY_WARMUP_CRON;
 });
 
 test("integration: 429 → rate_limit with Retry-After parsed", async () => {
@@ -331,8 +331,8 @@ test("integration: 429 → rate_limit with Retry-After parsed", async () => {
     headers: { "retry-after": "120" },
   }));
 
-  process.env.OMNIROUTE_WARMUP_ENABLED = "1";
-  process.env.OMNIROUTE_WARMUP_CRON = "*/1 * * * *";
+  process.env.AGENTPROXY_WARMUP_ENABLED = "1";
+  process.env.AGENTPROXY_WARMUP_CRON = "*/1 * * * *";
   startWarmupScheduler();
   await new Promise((r) => setTimeout(r, 50));
   stopWarmupScheduler();
@@ -348,8 +348,8 @@ test("integration: 429 → rate_limit with Retry-After parsed", async () => {
     `until should honor Retry-After ~120s, got ${untilMs}ms`
   );
 
-  delete process.env.OMNIROUTE_WARMUP_ENABLED;
-  delete process.env.OMNIROUTE_WARMUP_CRON;
+  delete process.env.AGENTPROXY_WARMUP_ENABLED;
+  delete process.env.AGENTPROXY_WARMUP_CRON;
 });
 
 test("integration: api_key connection is skipped even when opted in", async () => {
@@ -372,8 +372,8 @@ test("integration: api_key connection is skipped even when opted in", async () =
     body: { usage: { input_tokens: 1, output_tokens: 1 } },
   }));
 
-  process.env.OMNIROUTE_WARMUP_ENABLED = "1";
-  process.env.OMNIROUTE_WARMUP_CRON = "*/1 * * * *";
+  process.env.AGENTPROXY_WARMUP_ENABLED = "1";
+  process.env.AGENTPROXY_WARMUP_CRON = "*/1 * * * *";
   startWarmupScheduler();
   await new Promise((r) => setTimeout(r, 50));
   stopWarmupScheduler();
@@ -381,6 +381,6 @@ test("integration: api_key connection is skipped even when opted in", async () =
 
   assert.equal(mock.calls.length, 0, "api_key connections must be skipped");
 
-  delete process.env.OMNIROUTE_WARMUP_ENABLED;
-  delete process.env.OMNIROUTE_WARMUP_CRON;
+  delete process.env.AGENTPROXY_WARMUP_ENABLED;
+  delete process.env.AGENTPROXY_WARMUP_CRON;
 });

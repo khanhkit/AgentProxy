@@ -2,13 +2,14 @@ import {
   ANTIGRAVITY_BOOTSTRAP_BASE_URLS,
   ANTIGRAVITY_RUNTIME_BASE_URLS,
   getAntigravityFetchAvailableModelsUrls,
-} from "@omniroute/open-sse/config/antigravityUpstream.ts";
+} from "@agentproxy/open-sse/config/antigravityUpstream.ts";
 import {
+  CODEBUDDY_CN_USER_AGENT,
   GITHUB_COPILOT_API_VERSION,
   GITHUB_COPILOT_CHAT_PLUGIN_VERSION,
   GITHUB_COPILOT_CHAT_USER_AGENT,
   GITHUB_COPILOT_EDITOR_VERSION,
-} from "@omniroute/open-sse/config/providerHeaderProfiles.ts";
+} from "@agentproxy/open-sse/config/providerHeaderProfiles.ts";
 // userAgent / editorVersion on GITHUB_CONFIG are captured-pin snapshots for
 // lockstep tests. Request construction must call getGitHubCopilotChatUserAgent()
 // (#12417) — see providers/github.ts and providers/ghe-copilot.ts.
@@ -17,9 +18,9 @@ import {
   GROK_BUILD_OAUTH_ISSUER,
   GROK_BUILD_OAUTH_SCOPES,
   GROK_BUILD_TOKEN_URL,
-} from "@omniroute/open-sse/config/grokBuild.ts";
-import { resolvePublicCred } from "@omniroute/open-sse/utils/publicCreds.ts";
-import { CURSOR_AGENT_CLI_VERSION } from "@omniroute/open-sse/utils/cursorAgentCliVersion.ts";
+} from "@agentproxy/open-sse/config/grokBuild.ts";
+import { resolvePublicCred } from "@agentproxy/open-sse/utils/publicCreds.ts";
+import { CURSOR_AGENT_CLI_VERSION } from "@agentproxy/open-sse/utils/cursorAgentCliVersionPin.ts";
 import { buildGitLabOAuthEndpoints, GITLAB_DUO_DEFAULT_BASE_URL } from "../gitlab";
 
 /**
@@ -106,12 +107,14 @@ export const QODER_CONFIG = {
 // CodeBuddy CN (Tencent — copilot.tencent.com) OAuth Configuration
 // (Custom Device-Auth Flow: POST stateUrl → open authUrl → GET pollUrl?state=).
 // No client_id/secret — the upstream CLI ships none.
+export { CODEBUDDY_CN_USER_AGENT };
+
 export const CODEBUDDY_CN_CONFIG = {
   baseUrl: "https://copilot.tencent.com",
   stateUrl: "https://copilot.tencent.com/v2/plugin/auth/state",
   tokenUrl: "https://copilot.tencent.com/v2/plugin/auth/token",
   refreshUrl: "https://copilot.tencent.com/v2/plugin/auth/token/refresh",
-  userAgent: "CLI/2.63.2 CodeBuddy/2.63.2",
+  userAgent: CODEBUDDY_CN_USER_AGENT,
   platform: "CLI",
   pollInterval: 5000,
 };
@@ -167,6 +170,15 @@ export const OPENFERENCE_CONFIG = {
   loopbackPort: 56123,
   callbackPath: "/callback",
   callbackHost: "127.0.0.1",
+};
+
+// Muse Code (Meta) OAuth — RFC 8628 device grant + subscription key mint.
+// Public CLI client id (Muse Code CLI); PKCE is not used on this grant.
+export const MUSE_CODE_CONFIG = {
+  clientId: resolvePublicCred("muse_id", "MUSE_CODE_OAUTH_CLIENT_ID"),
+  deviceCodeUrl: "https://auth.meta.com/oidc/device/authorization/",
+  tokenUrl: "https://auth.meta.com/oidc/device/token/",
+  mintUrl: "https://api.meta.ai/muse-code/key",
 };
 
 // Kimi Coding OAuth Configuration (Device Code Flow)
@@ -372,7 +384,7 @@ export const KIRO_CONFIG = {
 // Cursor stores credentials in SQLite database: state.vscdb
 // Keys: cursorAuth/accessToken, cursorAuth/refreshToken, storage.serviceMachineId
 // Deep-control PKCE + refresh aligned with OpenCodex (lidge-jun/opencodex src/oauth/cursor.ts).
-// clientVersion pin lives in open-sse/utils/cursorAgentCliVersion.ts — single source of truth.
+// clientVersion pin lives in open-sse/utils/cursorAgentCliVersionPin.ts — single source of truth.
 export const CURSOR_CONFIG = {
   // API endpoints
   apiEndpoint: "https://api2.cursor.sh",
@@ -466,7 +478,7 @@ export const ZED_CONFIG = {
 // attempt and sends the public key to zed.dev/native_app_signin; Zed
 // encrypts the resulting access token against that public key and redirects
 // the browser to a local "native app" callback
-// (http://127.0.0.1:<port>/?user_id=...&access_token=...). OmniRoute decrypts
+// (http://127.0.0.1:<port>/?user_id=...&access_token=...). AgentProxy decrypts
 // the token with the matching private key — see open-sse/shared/zedAuth.ts.
 // No client_id/secret/Firebase key is embedded here (Hard Rule #11 does not
 // apply — there is no upstream secret to embed).
@@ -513,4 +525,5 @@ export const PROVIDERS = {
   OPENFERENCE: "openference",
   ZED: "zed",
   ZED_HOSTED: "zed-hosted",
+  MUSE_CODE: "muse-code",
 };

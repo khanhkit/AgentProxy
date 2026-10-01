@@ -4,7 +4,7 @@
  */
 
 import { NextResponse } from "next/server";
-import { sanitizeErrorMessage } from "@omniroute/open-sse/utils/error";
+import { sanitizeErrorMessage } from "@agentproxy/open-sse/utils/error";
 import { getWebhook, recordWebhookDelivery } from "@/lib/db/webhooks";
 import { decryptMetadata } from "@/lib/webhookDispatcher";
 import { buildSlackPayload } from "@/lib/webhooks/integrations/slack";
@@ -42,7 +42,7 @@ async function testFetch(
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "User-Agent": "OmniRoute-Webhook/1.0",
+        "User-Agent": "AgentProxy-Webhook/1.0",
         ...headers,
       },
       body: JSON.stringify(body),
@@ -87,7 +87,7 @@ export async function POST(_: Request, { params }: { params: Promise<{ id: strin
 
     const kind = webhook.kind ?? "custom";
     const testData = {
-      message: "Test webhook delivery from OmniRoute",
+      message: "Test webhook delivery from AgentProxy",
       webhookId: webhook.id,
     };
     const testPayload = { event: "test.ping", timestamp: new Date().toISOString(), data: testData };

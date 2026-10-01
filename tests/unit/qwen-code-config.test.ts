@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import {
-  hasOmniRouteQwenCodeConfig,
+  hasAgentProxyQwenCodeConfig,
   mergeQwenCodeEnv,
   mergeQwenCodeSettings,
   removeQwenCodeEnv,
@@ -19,8 +19,8 @@ test("writes the upstream V4 bare-array modelProviders contract without a secret
     openai: [
       {
         id: "qwen/qwen3.8-max-preview",
-        name: "qwen/qwen3.8-max-preview (OmniRoute)",
-        envKey: "OMNIROUTE_API_KEY",
+        name: "qwen/qwen3.8-max-preview (AgentProxy)",
+        envKey: "AGENTPROXY_API_KEY",
         baseUrl: "http://localhost:20128/v1",
       },
     ],
@@ -87,7 +87,7 @@ test("replaces only the managed entry and unwraps the reverted V5 provider shape
           models: [
             {
               id: "old-model",
-              name: "old-model (OmniRoute)",
+              name: "old-model (AgentProxy)",
               envKey: "OPENAI_API_KEY",
               baseUrl: "http://old-host/v1",
             },
@@ -111,8 +111,8 @@ test("replaces only the managed entry and unwraps the reverted V5 provider shape
     },
     {
       id: "new-model",
-      name: "new-model (OmniRoute)",
-      envKey: "OMNIROUTE_API_KEY",
+      name: "new-model (AgentProxy)",
+      envKey: "AGENTPROXY_API_KEY",
       baseUrl: "http://new-host/v1",
     },
   ]);
@@ -123,10 +123,10 @@ test("migrates the removed integration's root-array shape without dropping other
     {
       modelProviders: [
         {
-          id: "omniroute",
-          name: "OmniRoute",
+          id: "agentproxy",
+          name: "AgentProxy",
           authType: "openai",
-          envKey: "OMNIROUTE_API_KEY",
+          envKey: "AGENTPROXY_API_KEY",
           baseUrl: "http://old/v1",
         },
         {
@@ -137,7 +137,7 @@ test("migrates the removed integration's root-array shape without dropping other
           baseUrl: "https://personal.example/v1",
         },
       ],
-      selectedProvider: "omniroute",
+      selectedProvider: "agentproxy",
     },
     { baseUrl: "http://new", model: "new-model" }
   );
@@ -151,8 +151,8 @@ test("migrates the removed integration's root-array shape without dropping other
     },
     {
       id: "new-model",
-      name: "new-model (OmniRoute)",
-      envKey: "OMNIROUTE_API_KEY",
+      name: "new-model (AgentProxy)",
+      envKey: "AGENTPROXY_API_KEY",
       baseUrl: "http://new/v1",
     },
   ]);
@@ -188,7 +188,7 @@ test("migrates matching legacy security.auth credentials out of settings.json", 
 
 test("detection is precise and does not claim arbitrary custom endpoints", () => {
   assert.equal(
-    hasOmniRouteQwenCodeConfig({
+    hasAgentProxyQwenCodeConfig({
       modelProviders: {
         openai: [
           {
@@ -204,13 +204,13 @@ test("detection is precise and does not claim arbitrary custom endpoints", () =>
   );
 
   assert.equal(
-    hasOmniRouteQwenCodeConfig({
+    hasAgentProxyQwenCodeConfig({
       modelProviders: {
         openai: [
           {
             id: "custom-model",
-            name: "custom-model (OmniRoute)",
-            envKey: "OMNIROUTE_API_KEY",
+            name: "custom-model (AgentProxy)",
+            envKey: "AGENTPROXY_API_KEY",
             baseUrl: "https://omni.example/v1",
           },
         ],
@@ -220,14 +220,14 @@ test("detection is precise and does not claim arbitrary custom endpoints", () =>
   );
 });
 
-test("env merge owns only OMNIROUTE_API_KEY and preserves all user keys", () => {
+test("env merge owns only AGENTPROXY_API_KEY and preserves all user keys", () => {
   const original = [
     "# user credentials",
     "OPENAI_API_KEY=sk-openai",
     "ANTHROPIC_API_KEY=sk-anthropic",
     "GEMINI_API_KEY=sk-gemini",
-    "export OMNIROUTE_API_KEY=old-value",
-    "OMNIROUTE_API_KEY_BACKUP=keep-me",
+    "export AGENTPROXY_API_KEY=old-value",
+    "AGENTPROXY_API_KEY_BACKUP=keep-me",
     "",
   ].join("\n");
 
@@ -235,13 +235,13 @@ test("env merge owns only OMNIROUTE_API_KEY and preserves all user keys", () => 
   assert.match(merged, /^OPENAI_API_KEY=sk-openai$/m);
   assert.match(merged, /^ANTHROPIC_API_KEY=sk-anthropic$/m);
   assert.match(merged, /^GEMINI_API_KEY=sk-gemini$/m);
-  assert.match(merged, /^OMNIROUTE_API_KEY_BACKUP=keep-me$/m);
-  assert.match(merged, /^OMNIROUTE_API_KEY="sk-new \\"quoted\\" value"$/m);
-  assert.equal((merged.match(/^OMNIROUTE_API_KEY=/gm) || []).length, 1);
+  assert.match(merged, /^AGENTPROXY_API_KEY_BACKUP=keep-me$/m);
+  assert.match(merged, /^AGENTPROXY_API_KEY="sk-new \\"quoted\\" value"$/m);
+  assert.equal((merged.match(/^AGENTPROXY_API_KEY=/gm) || []).length, 1);
 
   const removed = removeQwenCodeEnv(merged);
-  assert.doesNotMatch(removed, /^OMNIROUTE_API_KEY=/m);
-  assert.match(removed, /^OMNIROUTE_API_KEY_BACKUP=keep-me$/m);
+  assert.doesNotMatch(removed, /^AGENTPROXY_API_KEY=/m);
+  assert.match(removed, /^AGENTPROXY_API_KEY_BACKUP=keep-me$/m);
   assert.match(removed, /^OPENAI_API_KEY=sk-openai$/m);
 });
 
@@ -289,8 +289,8 @@ test("reset also removes matching deprecated security.auth credentials", () => {
       openai: [
         {
           id: "managed",
-          name: "managed (OmniRoute)",
-          envKey: "OMNIROUTE_API_KEY",
+          name: "managed (AgentProxy)",
+          envKey: "AGENTPROXY_API_KEY",
           baseUrl: "http://omni-host/v1",
         },
       ],
@@ -316,8 +316,8 @@ test("reset removes matching deprecated auth when the selected model is unrelate
       openai: [
         {
           id: "managed",
-          name: "managed (OmniRoute)",
-          envKey: "OMNIROUTE_API_KEY",
+          name: "managed (AgentProxy)",
+          envKey: "AGENTPROXY_API_KEY",
           baseUrl: "http://omni-host/v1",
         },
       ],

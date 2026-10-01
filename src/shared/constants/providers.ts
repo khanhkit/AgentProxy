@@ -25,7 +25,7 @@ export const FREE_APIKEY_PROVIDER_IDS = new Set([
   "opencode",
   "dahl",
   // auggie is a fully local, credential-less CLI passthrough (auth handled by
-  // `auggie login` outside OmniRoute). Admitted here purely so POST /api/providers
+  // `auggie login` outside AgentProxy). Admitted here purely so POST /api/providers
   // accepts an optional connection row for display/priority/testStatus tracking —
   // no apiKey is ever required or sent upstream.
   "auggie",
@@ -43,7 +43,7 @@ export function supportsApiKeyOnFreeProvider(providerId: unknown): boolean {
 
 // Providers presented as one dashboard card with OAuth as the primary action
 // and a direct API-key alternative. Keep these out of FREE_APIKEY_PROVIDER_IDS.
-const DUAL_AUTH_PROVIDER_IDS = new Set(["clinepass", "codebuddy-cn", "xai"]);
+const DUAL_AUTH_PROVIDER_IDS = new Set(["clinepass", "codebuddy-cn", "xai", "muse-code"]);
 
 export function supportsDualAuthProvider(providerId: unknown): boolean {
   return typeof providerId === "string" && DUAL_AUTH_PROVIDER_IDS.has(providerId);
@@ -102,6 +102,7 @@ export const AGGREGATOR_PROVIDER_IDS = new Set([
   "laozhang",
   "vercel-ai-gateway",
   "unorouter",
+  "xkiro",
   "agentrouter",
   "thebai",
   "fenayai",
@@ -121,6 +122,7 @@ export const AGGREGATOR_PROVIDER_IDS = new Set([
   "anyapi",
   "electronhub",
   "llmgateway",
+  "lyceum",
   "llm-kiwi",
   "literouter",
   "eurouter",
@@ -487,7 +489,7 @@ export const ID_TO_ALIAS = new Proxy({} as Record<string, string>, {
   },
 });
 
-export { USAGE_SUPPORTED_PROVIDERS } from "@omniroute/open-sse/services/usage/supportedProviders.ts";
+export { USAGE_SUPPORTED_PROVIDERS } from "@agentproxy/open-sse/services/usage/supportedProviders.ts";
 
 // ── Zod validation, lazily on first AI_PROVIDERS access (perf: skips the walk
 // for processes that never touch AI_PROVIDERS, e.g. short-lived CLI commands) ──

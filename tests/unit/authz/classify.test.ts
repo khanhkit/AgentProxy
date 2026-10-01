@@ -260,3 +260,18 @@ test("classify module public surface only exposes route classification", () => {
   assert.equal("isManagement" in classifyPublicApi, false);
   assert.equal("isPublic" in classifyPublicApi, false);
 });
+
+for (const [alias, canonical, method] of [
+  ["/anthropic/messages", "/api/anthropic/messages", "POST"],
+  ["/openai/chat/completions", "/api/openai/chat/completions", "POST"],
+  ["/metrics", "/api/metrics", "GET"],
+  ["/debug", "/api/debug", "GET"],
+] as const) {
+  test(`classifyRoute: rewrite alias ${alias} has canonical authz parity (AP-ISS-0009)`, () => {
+    const aliasResult = classifyRoute(alias, method);
+    const canonicalResult = classifyRoute(canonical, method);
+    assert.equal(aliasResult.routeClass, canonicalResult.routeClass);
+    assert.equal(aliasResult.normalizedPath, canonical);
+    assert.equal(aliasResult.normalizedPath, canonicalResult.normalizedPath);
+  });
+}

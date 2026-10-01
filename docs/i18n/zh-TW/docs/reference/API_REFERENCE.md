@@ -8,7 +8,7 @@ lastUpdated: 2026-06-28
 
 🌐 **Languages:** 🇺🇸 [English](../../../../reference/API_REFERENCE.md) · 🇸🇦 [ar](../../../ar/docs/reference/API_REFERENCE.md) · 🇦🇿 [az](../../../az/docs/reference/API_REFERENCE.md) · 🇧🇬 [bg](../../../bg/docs/reference/API_REFERENCE.md) · 🇧🇩 [bn](../../../bn/docs/reference/API_REFERENCE.md) · 🇨🇿 [cs](../../../cs/docs/reference/API_REFERENCE.md) · 🇩🇰 [da](../../../da/docs/reference/API_REFERENCE.md) · 🇩🇪 [de](../../../de/docs/reference/API_REFERENCE.md) · 🇬🇷 [el](../../../el/docs/reference/API_REFERENCE.md) · 🇪🇸 [es](../../../es/docs/reference/API_REFERENCE.md) · 🇪🇪 [et](../../../et/docs/reference/API_REFERENCE.md) · 🇮🇷 [fa](../../../fa/docs/reference/API_REFERENCE.md) · 🇫🇮 [fi](../../../fi/docs/reference/API_REFERENCE.md) · 🇫🇷 [fr](../../../fr/docs/reference/API_REFERENCE.md) · 🇮🇪 [ga](../../../ga/docs/reference/API_REFERENCE.md) · 🇮🇳 [gu](../../../gu/docs/reference/API_REFERENCE.md) · 🇮🇱 [he](../../../he/docs/reference/API_REFERENCE.md) · 🇮🇳 [hi](../../../hi/docs/reference/API_REFERENCE.md) · 🇭🇷 [hr](../../../hr/docs/reference/API_REFERENCE.md) · 🇭🇺 [hu](../../../hu/docs/reference/API_REFERENCE.md) · 🇮🇩 [id](../../../id/docs/reference/API_REFERENCE.md) · 🇮🇹 [it](../../../it/docs/reference/API_REFERENCE.md) · 🇯🇵 [ja](../../../ja/docs/reference/API_REFERENCE.md) · 🇰🇷 [ko](../../../ko/docs/reference/API_REFERENCE.md) · 🇱🇹 [lt](../../../lt/docs/reference/API_REFERENCE.md) · 🇱🇻 [lv](../../../lv/docs/reference/API_REFERENCE.md) · 🇮🇳 [mr](../../../mr/docs/reference/API_REFERENCE.md) · 🇲🇾 [ms](../../../ms/docs/reference/API_REFERENCE.md) · 🇲🇹 [mt](../../../mt/docs/reference/API_REFERENCE.md) · 🇳🇱 [nl](../../../nl/docs/reference/API_REFERENCE.md) · 🇳🇴 [no](../../../no/docs/reference/API_REFERENCE.md) · 🇵🇭 [phi](../../../phi/docs/reference/API_REFERENCE.md) · 🇵🇱 [pl](../../../pl/docs/reference/API_REFERENCE.md) · 🇵🇹 [pt](../../../pt/docs/reference/API_REFERENCE.md) · 🇧🇷 [pt-BR](../../../pt-BR/docs/reference/API_REFERENCE.md) · 🇷🇴 [ro](../../../ro/docs/reference/API_REFERENCE.md) · 🇷🇺 [ru](../../../ru/docs/reference/API_REFERENCE.md) · 🇸🇰 [sk](../../../sk/docs/reference/API_REFERENCE.md) · 🇸🇮 [sl](../../../sl/docs/reference/API_REFERENCE.md) · 🇷🇸 [sr](../../../sr/docs/reference/API_REFERENCE.md) · 🇸🇪 [sv](../../../sv/docs/reference/API_REFERENCE.md) · 🇰🇪 [sw](../../../sw/docs/reference/API_REFERENCE.md) · 🇮🇳 [ta](../../../ta/docs/reference/API_REFERENCE.md) · 🇮🇳 [te](../../../te/docs/reference/API_REFERENCE.md) · 🇹🇭 [th](../../../th/docs/reference/API_REFERENCE.md) · 🇹🇷 [tr](../../../tr/docs/reference/API_REFERENCE.md) · 🇺🇦 [uk-UA](../../../uk-UA/docs/reference/API_REFERENCE.md) · 🇵🇰 [ur](../../../ur/docs/reference/API_REFERENCE.md) · 🇻🇳 [vi](../../../vi/docs/reference/API_REFERENCE.md) · 🇨🇳 [zh-CN](../../../zh-CN/docs/reference/API_REFERENCE.md)
 
-所有 OmniRoute API 端點的完整參考資料。
+所有 AgentProxy API 端點的完整參考資料。
 
 ---
 
@@ -63,29 +63,29 @@ Content-Type: application/json
 
 | 標頭                     | 方向 | 說明                                                                                                                              |
 | ------------------------ | ---- | --------------------------------------------------------------------------------------------------------------------------------- |
-| `X-OmniRoute-No-Cache`   | 請求 | 設為 `true` 以略過快取                                                                                                            |
-| `x-omniroute-no-memory`  | 請求 | 設為 `true` 以跳過此請求的記憶與技能注入（等同於 no-cache；避免每次呼叫的權杖/成本開銷）                                          |
-| `X-OmniRoute-Progress`   | 請求 | 設為 `true` 以取得進度事件                                                                                                        |
+| `X-AgentProxy-No-Cache`   | 請求 | 設為 `true` 以略過快取                                                                                                            |
+| `x-agentproxy-no-memory`  | 請求 | 設為 `true` 以跳過此請求的記憶與技能注入（等同於 no-cache；避免每次呼叫的權杖/成本開銷）                                          |
+| `X-AgentProxy-Progress`   | 請求 | 設為 `true` 以取得進度事件                                                                                                        |
 | `X-Session-Id`           | 請求 | 用於外部工作階段親和性的黏性工作階段金鑰                                                                                          |
 | `x_session_id`           | 請求 | 也接受底線變體（直接 HTTP）                                                                                                       |
 | `Idempotency-Key`        | 請求 | 去重金鑰（5 秒窗口）                                                                                                              |
 | `X-Request-Id`           | 請求 | 替代去重金鑰                                                                                                                      |
-| `X-OmniRoute-Cache`      | 回應 | `HIT` 或 `MISS`（非串流）                                                                                                         |
-| `X-OmniRoute-Idempotent` | 回應 | `true` 表示已去重                                                                                                                 |
-| `X-OmniRoute-Progress`   | 回應 | `enabled` 表示進度追蹤已啟用                                                                                                      |
-| `X-OmniRoute-Session-Id` | 回應 | OmniRoute 使用的有效工作階段 ID                                                                                                   |
-| `X-OmniRoute-Request-Id` | 回應 | 請求關聯 ID（已知時）                                                                                                             |
-| `X-OmniRoute-Version`    | 回應 | OmniRoute 建置版本（始終存在）                                                                                                    |
-| `X-OmniRoute-Cost-Saved` | 回應 | 快取命中避免的美金成本（僅限快取命中）                                                                                            |
-| `X-OmniRoute-Decision`   | 回應 | 路由追蹤：`strategy=<名稱>; provider=<別名>; latency_ms=<n>`（`<名稱>` 為組合策略，非組合請求則為 `single`）—— 完成回應時始終存在 |
+| `X-AgentProxy-Cache`      | 回應 | `HIT` 或 `MISS`（非串流）                                                                                                         |
+| `X-AgentProxy-Idempotent` | 回應 | `true` 表示已去重                                                                                                                 |
+| `X-AgentProxy-Progress`   | 回應 | `enabled` 表示進度追蹤已啟用                                                                                                      |
+| `X-AgentProxy-Session-Id` | 回應 | AgentProxy 使用的有效工作階段 ID                                                                                                   |
+| `X-AgentProxy-Request-Id` | 回應 | 請求關聯 ID（已知時）                                                                                                             |
+| `X-AgentProxy-Version`    | 回應 | AgentProxy 建置版本（始終存在）                                                                                                    |
+| `X-AgentProxy-Cost-Saved` | 回應 | 快取命中避免的美金成本（僅限快取命中）                                                                                            |
+| `X-AgentProxy-Decision`   | 回應 | 路由追蹤：`strategy=<名稱>; provider=<別名>; latency_ms=<n>`（`<名稱>` 為組合策略，非組合請求則為 `single`）—— 完成回應時始終存在 |
 
 > Nginx 注意：如果您依賴底線標頭（例如 `x_session_id`），請啟用 `underscores_in_headers on;`。
 
-> **成本遙測標頭：** 非串流成功回應也會攜帶 `X-OmniRoute-*` 成本遙測組 — `X-OmniRoute-Response-Cost`（美金，固定 10 位小數；免費/未定價為 `0.0000000000`）、`X-OmniRoute-Tokens-In` / `X-OmniRoute-Tokens-Out`、`X-OmniRoute-Model`、`X-OmniRoute-Provider`、`X-OmniRoute-Latency-Ms`、`X-OmniRoute-Cache-Hit` 以及 `X-OmniRoute-Fallback-Attempts`（僅大於 0 時），加上 `X-OmniRoute-Request-Id` 和 `X-OmniRoute-Version`。這些由聊天補全、`/v1/responses`、`/v1/messages` **以及媒體端點** — `/v1/embeddings`、`/v1/images/generations`、`/v1/audio/speech`、`/v1/audio/transcriptions`、`/v1/rerank`、`/v1/videos/generations`、`/v1/music/generations` 和 `/v1/moderations`（成本始終為 `0`）發出。媒體成本按模態計算（每張圖片、每秒、每字元、每個搜尋單位），有定價時適用，否則為 `0`（故障開放）。
+> **成本遙測標頭：** 非串流成功回應也會攜帶 `X-AgentProxy-*` 成本遙測組 — `X-AgentProxy-Response-Cost`（美金，固定 10 位小數；免費/未定價為 `0.0000000000`）、`X-AgentProxy-Tokens-In` / `X-AgentProxy-Tokens-Out`、`X-AgentProxy-Model`、`X-AgentProxy-Provider`、`X-AgentProxy-Latency-Ms`、`X-AgentProxy-Cache-Hit` 以及 `X-AgentProxy-Fallback-Attempts`（僅大於 0 時），加上 `X-AgentProxy-Request-Id` 和 `X-AgentProxy-Version`。這些由聊天補全、`/v1/responses`、`/v1/messages` **以及媒體端點** — `/v1/embeddings`、`/v1/images/generations`、`/v1/audio/speech`、`/v1/audio/transcriptions`、`/v1/rerank`、`/v1/videos/generations`、`/v1/music/generations` 和 `/v1/moderations`（成本始終為 `0`）發出。媒體成本按模態計算（每張圖片、每秒、每字元、每個搜尋單位），有定價時適用，否則為 `0`（故障開放）。
 
-> **快取命中的成本語義：** 當語義快取命中時（`X-OmniRoute-Cache-Hit: true`），不會進行上游呼叫，因此 `X-OmniRoute-Response-Cost` 為 `0.0000000000`（服務命中的**增量**成本）。原始/原本的成本單獨在 `X-OmniRoute-Cost-Saved` 中回報。計費消費者應加總 `X-OmniRoute-Response-Cost`（命中不計費）；快取分析可匯總 `X-OmniRoute-Cost-Saved`。
+> **快取命中的成本語義：** 當語義快取命中時（`X-AgentProxy-Cache-Hit: true`），不會進行上游呼叫，因此 `X-AgentProxy-Response-Cost` 為 `0.0000000000`（服務命中的**增量**成本）。原始/原本的成本單獨在 `X-AgentProxy-Cost-Saved` 中回報。計費消費者應加總 `X-AgentProxy-Response-Cost`（命中不計費）；快取分析可匯總 `X-AgentProxy-Cost-Saved`。
 
-### `x-omniroute-compression`
+### `x-agentproxy-compression`
 
 按請求覆寫壓縮方案。最高優先順序 — 勝過路由組合覆寫、作用中設定檔、自動觸發和面板預設。值：
 
@@ -106,7 +106,7 @@ Content-Type: application/json
 套用的方案會透過回應標頭回顯：
 
 ```
-X-OmniRoute-Compression: <mode>; source=<source>
+X-AgentProxy-Compression: <mode>; source=<source>
 ```
 
 其中 `<source>` 為 `request-header`、`routing-override`、`active-profile`、`auto-trigger`、`default` 或 `off` 之一。
@@ -169,10 +169,10 @@ Authorization: Bearer ***
 
 ### 無思考模型變體
 
-對於支援思考的 Claude 模型，`/v1/models` 也會提供一個**無思考**變體，其 ID 前綴為 `claude-3-omniroute-no-thinking/`：
+對於支援思考的 Claude 模型，`/v1/models` 也會提供一個**無思考**變體，其 ID 前綴為 `claude-3-agentproxy-no-thinking/`：
 
 ```
-claude-3-omniroute-no-thinking/<provider>/<model>
+claude-3-agentproxy-no-thinking/<provider>/<model>
 ```
 
 選取此 ID（例如在始終附加 `thinking` 區塊的 Claude Code 配置中）會解析回實際的 `<provider>/<model>`，並抑制推理 — 在 `/v1/messages` 路徑上設定 `thinking:{type:"disabled"}`，或在 `/v1/chat/completions` 路徑上刪除 `reasoning`/`reasoning_effort` 欄位。僅針對支援 thinking **且**遵循 `disabled` 的 Claude 系列模型列出此變體（因此例如僅適配且拒絕 `disabled` 的模型會被排除）。運算子可以透過 `ModelSpec.noThinkingAlias` 強制為每個模型啟用或停用此變體。
@@ -221,7 +221,7 @@ GET /api/v1/provider-plugin-manifest
 
 所有 POST 路由遵循相同格式：`Bearer your-api-key` + Zod 驗證的 JSON 主體（`v1RerankSchema`、`v1ModerationSchema`、`v1AudioSpeechSchema` 等，請參閱 `src/shared/validation/schemas.ts`）。結構描述失敗時會回傳 4xx。
 
-對於無法附加 `Authorization: Bearer ***` 的客戶端，OmniRoute 也接受 URL 中的 API 金鑰，可透過查詢字串相容性（`?token=...`、`?apiKey=...`、`?api_key=...`、`?key=...`）或下方記錄的專用 `/api/v1/vscode/{token}/...` 端點。
+對於無法附加 `Authorization: Bearer ***` 的客戶端，AgentProxy 也接受 URL 中的 API 金鑰，可透過查詢字串相容性（`?token=...`、`?apiKey=...`、`?api_key=...`、`?key=...`）或下方記錄的專用 `/api/v1/vscode/{token}/...` 端點。
 
 ```bash
 # 重新排序
@@ -313,7 +313,7 @@ GET /v1/ws?handshake=1
 
 ```bash
 # 與 HTTP API 相同的主機:埠（預設 20128）；升級連線：
-wscat -c "ws://localhost:20128/v1/responses?api_key=<OMNIROUTE_API_KEY>"
+wscat -c "ws://localhost:20128/v1/responses?api_key=<AGENTPROXY_API_KEY>"
 # （或：-H "Authorization: Bearer <OMNIR...KEY>"）
 
 # 第一幀必須是 response.create：
@@ -326,30 +326,30 @@ Responses-API-over-WebSocket 代理**僅連線至 `codex`**（ChatGPT 後端）�
 
 #### 模型 ID：使用 bare ChatGPT ID（不含 `codex/` 前綴）
 
-OpenAI **Codex CLI** 在 `supports_websockets = true` 時會於用戶端驗證模型名稱，並**拒絕帶提供者前綴的 ID**，例如 `codex/gpt-5.5`（`使用 ChatGPT 帳戶使用 Codex 時不支援 'codex/gpt-5.5' 模型`）。請傳送**裸** ID（例如 `gpt-5.5`）。OmniRoute 的橋接器僅限 codex，因此它會將裸 ID 重新解析為 codex 模型（`resolveCodexWsModelInfo`），然後再隧道至上游 — 即使裸 `gpt-5.5` 在其他情況下會透過 HTTP 路由至另一個提供者。
+OpenAI **Codex CLI** 在 `supports_websockets = true` 時會於用戶端驗證模型名稱，並**拒絕帶提供者前綴的 ID**，例如 `codex/gpt-5.5`（`使用 ChatGPT 帳戶使用 Codex 時不支援 'codex/gpt-5.5' 模型`）。請傳送**裸** ID（例如 `gpt-5.5`）。AgentProxy 的橋接器僅限 codex，因此它會將裸 ID 重新解析為 codex 模型（`resolveCodexWsModelInfo`），然後再隧道至上游 — 即使裸 `gpt-5.5` 在其他情況下會透過 HTTP 路由至另一個提供者。
 
 #### 配置 OpenAI Codex CLI
 
-將 Codex CLI 指向 OmniRoute，方法是在 `~/.codex/config.toml` 中新增一個支援 WebSocket 的自訂提供者（使用單獨的 `CODEX_HOME` 以避免觸碰現有配置）：
+將 Codex CLI 指向 AgentProxy，方法是在 `~/.codex/config.toml` 中新增一個支援 WebSocket 的自訂提供者（使用單獨的 `CODEX_HOME` 以避免觸碰現有配置）：
 
 ```toml
 model = "gpt-5.5"                 # 裸 ID — 不是 "codex/gpt-5.5"
-model_provider = "omniroute"
+model_provider = "agentproxy"
 
-[model_providers.omniroute]
-name = "OmniRoute (WS)"
+[model_providers.agentproxy]
+name = "AgentProxy (WS)"
 base_url = "http://localhost:20128/v1"   # 無尾斜線；WS URL 由此衍生（生產環境使用 https/wss）
 wire_api = "responses"                    # 自 2026 年 2 月以來唯一支援的值
 supports_websockets = true                # 啟用 Responses-over-WS 傳輸
-env_key = "OMNIROUTE_API_KEY"             # 存放 OmniRoute API 金鑰（Bearer）
+env_key = "AGENTPROXY_API_KEY"             # 存放 AgentProxy API 金鑰（Bearer）
 ```
 
 ```bash
-export OMNIROUTE_API_KEY=sk-...           # OmniRoute API 金鑰（若 REQUIRE_API_KEY=false 則任意金鑰）
+export AGENTPROXY_API_KEY=sk-...           # AgentProxy API 金鑰（若 REQUIRE_API_KEY=false 則任意金鑰）
 codex exec "Responda apenas: PONG"
 ```
 
-CLI 將 `base_url + /responses` 升級為 WebSocket，而 OmniRoute 將其隧道至選取的 codex OAuth 連線。已針對本機伺服器進行端到端驗證：ChatGPT 回傳 `codex.rate_limits` + `response.created` 並串流完成內容。
+CLI 將 `base_url + /responses` 升級為 WebSocket，而 AgentProxy 將其隧道至選取的 codex OAuth 連線。已針對本機伺服器進行端到端驗證：ChatGPT 回傳 `codex.rate_limits` + `response.created` 並串流完成內容。
 
 ---
 
@@ -601,7 +601,7 @@ Content-Type: application/json
 {
   "success": true,
   "repaired": ["CLAUDE_CODE_OAUTH_CLIENT_ID", "CLAUDE_CODE_OAUTH_CLIENT_SECRET"],
-  "backupPath": "/home/user/.omniroute/backups/env-repair-2026-04-11.bak"
+  "backupPath": "/home/user/.agentproxy/backups/env-repair-2026-04-11.bak"
 }
 ```
 
@@ -688,7 +688,7 @@ curl -X POST https://your-host.example/api/v1/vscode/YOUR_API_KEY/chat/completio
 
 - 權杖化別名重用與 `/v1/*` 和 `/api/tags` 相同的處理常式；回應格式保持不變。
 - 當用戶端支援自訂標頭時，優先使用 `Authorization: Bearer ***`。
-- URL 中的權杖可能會出現於反向代理日誌、瀏覽器歷史記錄和 OmniRoute 外的遙測資料中。請將其視為相容性選項，而非預設驗證模式。
+- URL 中的權杖可能會出現於反向代理日誌、瀏覽器歷史記錄和 AgentProxy 外的遙測資料中。請將其視為相容性選項，而非預設驗證模式。
 
 ---
 
@@ -796,7 +796,7 @@ DELETE /api/usage/token-limits?id=tl-abc
 
 ## Webhook
 
-OmniRoute 事件（請求完成、配額耗盡、金鑰輪換等）的外送 Webhook 訂閱。
+AgentProxy 事件（請求完成、配額耗盡、金鑰輪換等）的外送 Webhook 訂閱。
 
 | 方法   | 路徑                      | 說明                                                                |
 | ------ | ------------------------- | ------------------------------------------------------------------- |
@@ -829,7 +829,7 @@ OmniRoute 事件（請求完成、配額耗盡、金鑰輪換等）的外送 Web
 
 ## 代理程式協定
 
-雲端代理程式任務（Claude Code、Codex Cloud、OpenHands 等），代表 OmniRoute 使用者遠端執行。
+雲端代理程式任務（Claude Code、Codex Cloud、OpenHands 等），代表 AgentProxy 使用者遠端執行。
 
 | 方法   | 路徑                          | 說明                                                                                                                       |
 | ------ | ----------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
@@ -875,7 +875,7 @@ curl -X POST http://localhost:20128/api/v1/agents/tasks \
 
 ## 彈性（進階）
 
-OmniRoute 公開三種獨立的暫時性故障機制；下面的管理端點讓運算子可以讀取和覆寫它們：
+AgentProxy 公開三種獨立的暫時性故障機制；下面的管理端點讓運算子可以讀取和覆寫它們：
 
 | 範圍         | 狀態儲存                             | 讀取                                      | 重設/清除                                |
 | ------------ | ------------------------------------ | ----------------------------------------- | ---------------------------------------- |
@@ -904,7 +904,7 @@ curl -X DELETE http://localhost:20128/api/resilience/model-cooldowns \
 
 ## 技能
 
-用於以自訂可執行處理常式擴充 OmniRoute 的技能框架，以及市集整合。
+用於以自訂可執行處理常式擴充 AgentProxy 的技能框架，以及市集整合。
 
 | 方法   | 路徑                              | 說明                                                                                                          |
 | ------ | --------------------------------- | ------------------------------------------------------------------------------------------------------------- |
@@ -941,7 +941,7 @@ curl -X DELETE http://localhost:20128/api/resilience/model-cooldowns \
 
 ## MCP 伺服器
 
-OmniRoute 內嵌了一個模型上下文協定伺服器，具有 3 種傳輸方式（stdio、SSE、streamable-http）和範圍限定的工具。下方的儀表板端點可讀取狀態/稽核資料並代理 HTTP 傳輸。
+AgentProxy 內嵌了一個模型上下文協定伺服器，具有 3 種傳輸方式（stdio、SSE、streamable-http）和範圍限定的工具。下方的儀表板端點可讀取狀態/稽核資料並代理 HTTP 傳輸。
 
 | 方法 | 路徑 | 說明 |
 | ------ | ------------------------ | ----------------------------------------------------------------------------------------------- | -------------------- |
@@ -963,13 +963,13 @@ OmniRoute 內嵌了一個模型上下文協定伺服器，具有 3 種傳輸方�
 
 ## A2A 伺服器
 
-OmniRoute 公開一個 A2A（代理程式對代理程式）JSON-RPC 2.0 端點，以及用於檢視/儀表板使用的 REST 包裝器。
+AgentProxy 公開一個 A2A（代理程式對代理程式）JSON-RPC 2.0 端點，以及用於檢視/儀表板使用的 REST 包裝器。
 
 ### JSON-RPC
 
 ```bash
 POST /a2a
-Authorization: Bearer ***   # 選用，除非設定了 OMNIROUTE_API_KEY
+Authorization: Bearer ***   # 選用，除非設定了 AGENTPROXY_API_KEY
 Content-Type: application/json
 
 {
@@ -1012,7 +1012,7 @@ GET /.well-known/agent.json
 | GET  | `/api/a2a/tasks/[id]`        | 取得單一任務                                                                                                   |
 | POST | `/api/a2a/tasks/[id]/cancel` | 取消任務                                                                                                       |
 
-**驗證：** REST 輔助工具在無管理驗證下執行（可從儀表板讀取）；JSON-RPC `/a2a` 路由在配置時使用 Bearer `OMNIROUTE_API_KEY`。
+**驗證：** REST 輔助工具在無管理驗證下執行（可從儀表板讀取）；JSON-RPC `/a2a` 路由在配置時使用 Bearer `AGENTPROXY_API_KEY`。
 
 ---
 
@@ -1189,7 +1189,7 @@ ACP 代理程式以子程序執行。這些端點管理 ACP 代理程式偵測�
 
 ## CLI 工具管理
 
-管理與 OmniRoute 整合的 CLI 工具（antigravity、chipotle、commandCode、devin-cli 等）。請參閱[提供者參考](./PROVIDER_REFERENCE.md)以取得完整清單。
+管理與 AgentProxy 整合的 CLI 工具（antigravity、chipotle、commandCode、devin-cli 等）。請參閱[提供者參考](./PROVIDER_REFERENCE.md)以取得完整清單。
 
 | 方法 | 路徑                                    | 說明                                                                             |
 | ---- | --------------------------------------- | -------------------------------------------------------------------------------- |
@@ -1302,7 +1302,7 @@ ACP 代理程式以子程序執行。這些端點管理 ACP 代理程式偵測�
 
 ## 外掛程式
 
-管理 OmniRoute 外掛程式（第三方擴充套件）。
+管理 AgentProxy 外掛程式（第三方擴充套件）。
 
 | 方法   | 路徑                             | 說明                          |
 | ------ | -------------------------------- | ----------------------------- |
@@ -1328,7 +1328,7 @@ ACP 代理程式以子程序執行。這些端點管理 ACP 代理程式偵測�
 
 ## 防護機制
 
-檢查執行時期防護機制（PII 偵測、提示注入偵測、視覺橋接）。防護機制在每個請求上執行；每次呼叫的選擇退出方式是透過 `x-omniroute-disabled-guardrails` 請求標頭 — 沒有持久的啟用/停用表面。
+檢查執行時期防護機制（PII 偵測、提示注入偵測、視覺橋接）。防護機制在每個請求上執行；每次呼叫的選擇退出方式是透過 `x-agentproxy-disabled-guardrails` 請求標頭 — 沒有持久的啟用/停用表面。
 
 | 方法 | 路徑                   | 說明                                                              |
 | ---- | ---------------------- | ----------------------------------------------------------------- |

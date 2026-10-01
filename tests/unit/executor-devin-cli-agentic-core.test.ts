@@ -89,7 +89,7 @@ test("devin agentic serializer marks bounded tool-result truncation explicitly",
       },
     ],
   });
-  assert.match(prompt.text, /\[TRUNCATED 9 CHARACTERS BY OMNIROUTE\]/);
+  assert.match(prompt.text, /\[TRUNCATED 9 CHARACTERS BY AGENTPROXY\]/);
 });
 
 test("devin agentic serializer rejects images explicitly", () => {

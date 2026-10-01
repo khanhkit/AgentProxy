@@ -92,17 +92,21 @@ export type AttemptLoopDeps = {
     executionKey: string | undefined,
     comboId: string | undefined,
     log: ComboLogger,
-    tag: string
-  ) => void;
+    tag: string,
+    clearLKGP?: ((comboName: string, modelKey: string) => Promise<void>) | undefined,
+    failed?: { provider?: string | null; connectionId?: string | null } | null
+  ) => void | Promise<void>;
   /**
    * Closed-over setup values from handleComboChatInner. Optional so Task 2
    * gate tests keep compiling; attempt uses defaults when absent.
    */
   clientManagedResponsesContext?: boolean;
+  nativeCodexAutoResume?: boolean;
   reasoningTokenBufferEnabled?: boolean;
   stickyWeightedLimit?: number;
   getWeightedStepKeyForTarget?: (target: ResolvedComboTarget) => string | null;
   universalHandoffConfig?: UniversalHandoffConfig;
+  sourceFormat?: string | null;
   relayOptions?: { sessionId?: string | null } | null;
   relayConfig?: ContextRelayConfig | null;
 };

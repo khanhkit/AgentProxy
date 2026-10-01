@@ -11,10 +11,14 @@ export async function POST(request: Request) {
     const retentionMs = getCallLogRetentionDays() * 24 * 60 * 60 * 1000;
     const cutoff = new Date(Date.now() - retentionMs).toISOString();
     const result = deleteCallLogsBefore(cutoff);
-    return NextResponse.json({
-      deleted: result.deletedRows,
-      deletedArtifacts: result.deletedArtifacts,
-    });
+    return NextResponse.json(
+      {
+        deleted: result.deletedRows,
+        deletedArtifacts: result.deletedArtifacts,
+        errors: result.errors,
+      },
+      { status: result.errors > 0 ? 500 : 200 }
+    );
   } catch (err: unknown) {
     const error = err instanceof Error ? err.message : String(err);
     return NextResponse.json({ error }, { status: 500 });

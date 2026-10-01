@@ -81,6 +81,7 @@
       "tests/unit/quota-window-label.test.ts",
       "tests/unit/repro-combo-persisted-cooldown-preskip.test.ts",
       "tests/unit/repro-glm-iso-reset-24h-cap.test.ts",
+      "tests/unit/glm-reset-cards.test.ts",
       "tests/unit/security-route-guard-tiers.test.ts",
       "tests/unit/egress-ip-lock-10880.test.ts",
       "tests/unit/egress-lock-allowlist-10880.test.ts",
@@ -232,6 +233,7 @@
       "tests/unit/combo/combo-exhausted-skip.test.ts",
       "tests/unit/combo/combo-target-timeout-standards.test.ts",
       "tests/unit/combo/effective-max-concurrency.test.ts",
+      "tests/unit/combo/protected-priority-stop-status-13439.test.ts",
       "tests/unit/combo/quota-weighted-strategy.test.ts",
       "tests/unit/combo/recovery-hint.test.ts",
       "tests/unit/combo/reset-window-strategy-9330.test.ts",
@@ -290,6 +292,7 @@
       "tests/unit/mark-account-unavailable-numeric-epoch-guard.test.ts",
       "tests/unit/masked-200-exhaustion-fallback-6427.test.ts",
       "tests/unit/mcp-connect-scope.test.ts",
+      "tests/unit/mcp-restart-route-13012.test.ts",
       "tests/unit/memory-embedding-remote.test.ts",
       "tests/unit/memory-embedding-transformers.test.ts",
       "tests/unit/middleware-header-strip-5849.test.ts",
@@ -328,7 +331,6 @@
       "tests/unit/permanent-failure-hammering-other-providers.test.ts",
       "tests/unit/persist-429-cooldown-account-fallback.test.ts",
       "tests/unit/plan3-p0.test.ts",
-      "tests/unit/plugin-sandbox-permissions.test.ts",
       "tests/unit/plugins-route-error-sanitization.test.ts",
       "tests/unit/probe-gate-autodisable.test.ts",
       "tests/unit/probe-production-path.test.ts",
@@ -366,7 +368,7 @@
       "tests/unit/resilience-connections.test.ts",
       "tests/unit/responses-handler.test.ts",
       "tests/unit/responses-passthrough-openai-compatible.test.ts",
-      "tests/unit/rotation-config-omniroute.test.ts",
+      "tests/unit/rotation-config-agentproxy.test.ts",
       "tests/unit/route-explainability.test.ts",
       "tests/unit/route-guard-acp-agents-local-only.test.ts",
       "tests/unit/route-guard-cursor-agent-availability.test.ts",
@@ -406,6 +408,7 @@
       "tests/unit/stream-early-eof-breaker.test.ts",
       "tests/unit/stream-readiness.test.ts",
       "tests/unit/strict-random-deck.test.ts",
+      "tests/unit/strong-credential-token-linear-scan.test.ts",
       "tests/unit/strip-reasoning-header.test.ts",
       "tests/unit/system-role-extraction.test.ts",
       "tests/unit/t23-t24-fallback-resilience.test.ts",
@@ -578,5 +581,5 @@
     "  grep -rlE \"circuitBreaker|publicCreds|accountFallback|routeGuard|services/auth|chatCore|services/combo|utils/error|public-client|account-fallback|route-guard|circuit-breaker\" tests/unit --include=\"*.test.ts\" | sort -u"
   ],
   "dryRunTimeoutMinutes": 30,
-  "_concurrency_comment": "concurrency=4 (was 1): the covering node:test files used to share SQLite/module state via the default DATA_DIR (~/.omniroute), so running them concurrently in the Stryker sandbox caused cross-file races that failed the all-green baseline. tap.nodeArgs now imports ./tests/_setup/isolateDataDir.ts, which gives each spawned test process its own temp DATA_DIR — eliminating the shared on-disk DB, so concurrency>1 is deterministic. A/B verified 2026-06-17: dry-run at concurrency=4 fails WITHOUT the isolation import (account-fallback-service tap exit 9) and passes WITH it. Raise further only if the runner has spare cores."
+  "_concurrency_comment": "concurrency=4 (was 1): the covering node:test files used to share SQLite/module state via the default DATA_DIR (~/.agentproxy), so running them concurrently in the Stryker sandbox caused cross-file races that failed the all-green baseline. tap.nodeArgs now imports ./tests/_setup/isolateDataDir.ts, which gives each spawned test process its own temp DATA_DIR — eliminating the shared on-disk DB, so concurrency>1 is deterministic. A/B verified 2026-06-17: dry-run at concurrency=4 fails WITHOUT the isolation import (account-fallback-service tap exit 9) and passes WITH it. Raise further only if the runner has spare cores."
 }

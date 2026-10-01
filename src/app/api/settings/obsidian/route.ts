@@ -11,12 +11,35 @@ import {
   setObsidianVaultPath,
 } from "@/lib/db/obsidian";
 import { createObsidianClient } from "@/lib/obsidian/api";
-import { sanitizeErrorMessage } from "@omniroute/open-sse/utils/error";
+import { sanitizeErrorMessage } from "@agentproxy/open-sse/utils/error";
+import {
+  CLOUD_METADATA_BLOCKED_MESSAGE,
+  parseAndValidateNonMetadataUrl,
+} from "@/shared/network/outboundUrlGuard";
 
-const setTokenSchema = z.object({
-  token: z.string().min(1).max(5000),
-  baseUrl: z.string().url().optional(),
-}).strict();
+// The base URL is operator-controlled. Loopback / LAN / Tailscale are valid
+// Obsidian targets, but cloud-metadata and link-local addresses never are.
+const obsidianBaseUrlSchema = z
+  .string()
+  .url()
+  .refine(
+    (value) => {
+      try {
+        parseAndValidateNonMetadataUrl(value);
+        return true;
+      } catch {
+        return false;
+      }
+    },
+    { message: CLOUD_METADATA_BLOCKED_MESSAGE }
+  );
+
+const setTokenSchema = z
+  .object({
+    token: z.string().min(1).max(5000),
+    baseUrl: obsidianBaseUrlSchema.optional(),
+  })
+  .strict();
 
 export async function GET(request: NextRequest) {
   if (!(await isAuthenticated(request))) {
@@ -50,8 +73,14 @@ export async function POST(request: NextRequest) {
 
   const parsed = setTokenSchema.safeParse(rawBody);
   if (!parsed.success) {
+    const baseUrlIssue = parsed.error.issues.find((issue) => issue.path[0] === "baseUrl");
     return NextResponse.json(
-      { error: "Missing or invalid token", details: parsed.error.issues },
+      {
+        error: baseUrlIssue
+          ? `Invalid baseUrl: ${baseUrlIssue.message}`
+          : "Missing or invalid token",
+        details: parsed.error.issues,
+      },
       { status: 400 }
     );
   }
@@ -97,7 +126,10 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error);
-    return NextResponse.json({ error: sanitizeErrorMessage(msg), connected: false }, { status: 400 });
+    return NextResponse.json(
+      { error: sanitizeErrorMessage(msg), connected: false },
+      { status: 400 }
+    );
   }
 }
 

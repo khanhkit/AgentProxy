@@ -32,6 +32,7 @@ import {
   resolveComfyUiBaseUrl,
 } from "../utils/comfyuiClient.ts";
 import { fetchRemoteImage } from "@/shared/network/remoteImageFetch";
+import { getProviderOutboundGuard } from "@/shared/network/outboundUrlGuardPolicy";
 import {
   FetchTimeoutError,
   fetchWithTimeout,
@@ -57,6 +58,7 @@ import { handleSegmindImageGeneration } from "./imageGeneration/providers/segmin
 import { handleUcImageGeneration } from "./imageGeneration/providers/ucImage.ts";
 import { handleCursorAgentImageGeneration } from "./imageGeneration/providers/cursorAgentImage.ts";
 import { handleMinimaxImageGeneration } from "./imageGeneration/providers/minimax.ts";
+import { handleCloudflareAiImageGeneration } from "./imageGeneration/providers/cloudflareAi.ts";
 import { handleMaxaiImageGeneration } from "./imageGeneration/providers/maxaiImage.ts";
 import { handleAdobeFireflyImageGeneration } from "./imageGeneration/providers/adobeFirefly.ts";
 import { handleAlibabaImageGeneration } from "./imageGeneration/providers/alibabaImage.ts";
@@ -65,6 +67,7 @@ import {
   applyPollinationsAnonymousFallback,
   reportPollinationsAnonOutcome,
 } from "./imageGeneration/pollinationsAnonAuth.ts";
+import { inferResolutionFromSize, normalizePositiveNumber } from "./imageGenerationNumbers";
 
 // Re-export so /v1/images/edits can dispatch Firefly reference-image edits.
 export { handleAdobeFireflyImageGeneration };
@@ -92,8 +95,7 @@ interface KieImageOptions {
     error: (scope: string, message: string) => void;
   } | null;
 }
-
-// KIE Market catalog ids are namespaced for OmniRoute's catalog
+// KIE Market catalog ids are namespaced for AgentProxy's catalog
 // (`<vendor>/<model>`), but the KIE Market createTask API expects
 // vendor-specific upstream ids that do not follow a single consistent
 // pattern. Every entry below was confirmed individually against the literal
@@ -239,11 +241,12 @@ function normalizeImageAspectRatio(value: unknown, fallbackSize: unknown): strin
   return mapImageSize(typeof fallbackSize === "string" ? fallbackSize : null);
 }
 
-function normalizeImageGenerationSize(snakeCaseValue: unknown, camelCaseValue: unknown): string {
-  const value = snakeCaseValue ?? camelCaseValue;
-  if (typeof value !== "string") return "1K";
+function normalizeImageGenerationSize(value: unknown): { value: string | undefined; clamped: boolean } {
+  if (typeof value !== "string") return { value: undefined, clamped: false };
   const normalized = value.trim().toUpperCase();
-  return IMAGE_SIZE_PATTERN.test(normalized) ? normalized : "1K";
+  return IMAGE_SIZE_PATTERN.test(normalized)
+    ? { value: normalized, clamped: false }
+    : { value: "1K", clamped: true };
 }
 
 function parseJsonOrNull(value: string): unknown | null {
@@ -384,6 +387,9 @@ const FAL_PRESET_SIZES = {
  *   forwarded from `AUTHZ_HEADER_PEER_LOCALITY` (src/server/authz/headers.ts). Only consumed by
  *   spawn-capable providers (e.g. cursor-agent-image) to enforce Hard Rules #15/#17 without
  *   loopback-gating the whole route for every non-spawning image provider.
+ * @param {typeof fetch|undefined} [options.remoteMediaFetchImpl] - Internal/test fetch seam for
+ *   client-controlled remote media. Production leaves this undefined so public-only DNS pinning
+ *   owns the network connection.
  */
 export async function handleImageGeneration({
   body,
@@ -393,6 +399,7 @@ export async function handleImageGeneration({
   signal = null,
   clientHeaders = null,
   peerLocality = null,
+  remoteMediaFetchImpl = undefined,
 }) {
   const requestedModel = typeof body?.model === "string" ? body.model : "";
   const slash = requestedModel.indexOf("/");
@@ -500,6 +507,7 @@ export async function handleImageGeneration({
       credentials,
       log,
       signal,
+      remoteMediaFetchImpl,
     });
   }
 
@@ -559,6 +567,7 @@ export async function handleImageGeneration({
       body,
       credentials,
       log,
+      remoteMediaFetchImpl,
     });
   }
 
@@ -570,6 +579,7 @@ export async function handleImageGeneration({
       body,
       credentials,
       log,
+      remoteMediaFetchImpl,
     });
   }
 
@@ -592,6 +602,7 @@ export async function handleImageGeneration({
       body,
       credentials,
       log,
+      remoteMediaFetchImpl,
     });
   }
 
@@ -746,6 +757,17 @@ export async function handleImageGeneration({
     });
   }
 
+  if (providerConfig.format === "cloudflare-ai-image") {
+    return handleCloudflareAiImageGeneration({
+      model,
+      provider,
+      providerConfig,
+      body,
+      credentials,
+      log,
+    });
+  }
+
   if (providerConfig.format === "minimax-image") {
     return handleMinimaxImageGeneration({
       model,
@@ -812,6 +834,8 @@ function normalizeKieImageResult(recordData: unknown): string[] {
   // Check data.response (common in 4o-image API)
   add(response.resultUrls);
   add(response.resultUrl);
+  add(response.resultImageUrl);
+  add(response.resultImageUrls);
 
   // Check direct data fields
   add(data.resultImageUrls);
@@ -959,12 +983,12 @@ async function handleKieImageGeneration({
       pollIntervalMs,
     });
 
-    if (state === "success") {
+    const kieUrls = state === "success" ? normalizeKieImageResult(recordData) : [];
+    if (kieUrls.length > 0) {
       if (log) {
         log.info("IMAGE", `KIE poll success for task ${taskId}`);
       }
-      const urls = normalizeKieImageResult(recordData);
-      const images = urls.map((url: string) => ({ url, revised_prompt: prompt }));
+      const images = kieUrls.map((url: string) => ({ url, revised_prompt: prompt }));
 
       return saveImageSuccessResult({
         provider,
@@ -1030,7 +1054,13 @@ async function handleGeminiImageGeneration({ model, providerConfig, body, creden
     typeof body.n === "number" && Number.isFinite(body.n) && body.n > 0 ? Math.floor(body.n) : 1;
   const promptText = typeof body.prompt === "string" ? body.prompt : String(body.prompt ?? "");
   const aspectRatio = normalizeImageAspectRatio(body.aspect_ratio, body.size);
-  const imageSize = normalizeImageGenerationSize(body.image_size, body.imageSize);
+  const { value: imageSize, clamped: imageSizeClamped } = normalizeImageGenerationSize(body.image_size);
+  if (imageSizeClamped && log && typeof log.warn === "function") {
+    log.warn(
+      "IMAGE",
+      `antigravity/${model}: unsupported image_size ${JSON.stringify(body.image_size)} — clamped to 1K (accepted: 1K|2K|4K)`
+    );
+  }
 
   // Summarized request for call log
   const logRequestBody = {
@@ -1038,7 +1068,8 @@ async function handleGeminiImageGeneration({ model, providerConfig, body, creden
     prompt: promptText.slice(0, 200),
     size: body.size || "default",
     aspect_ratio: aspectRatio,
-    image_size: imageSize,
+    image_size: body.image_size ?? null,
+    image_size_applied: imageSize ?? "default",
     n: candidateCount,
   };
 
@@ -1049,7 +1080,7 @@ async function handleGeminiImageGeneration({ model, providerConfig, body, creden
       status: 400,
       startTime,
       error:
-        "Missing Google projectId for Antigravity account. Please reconnect OAuth in Providers so OmniRoute can fetch your Cloud Code project.",
+        "Missing Google projectId for Antigravity account. Please reconnect OAuth in Providers so AgentProxy can fetch your Cloud Code project.",
       requestBody: logRequestBody,
     });
   }
@@ -1068,7 +1099,7 @@ async function handleGeminiImageGeneration({ model, providerConfig, body, creden
         candidateCount,
         imageConfig: {
           aspectRatio,
-          imageSize,
+          ...(imageSize ? { imageSize } : {}),
         },
       },
     },
@@ -1400,7 +1431,7 @@ export async function handleOpenAIImageEdit({
   // makes undici serialize it as the string "[object FormData]" (text/plain), dropping every
   // field (including `model`, which reaches the upstream empty). A Buffer body is accepted
   // verbatim by any fetch implementation. (#3273)
-  const boundary = `----OmniRouteImageEdit${randomUUID().replace(/-/g, "")}`;
+  const boundary = `----AgentProxyImageEdit${randomUUID().replace(/-/g, "")}`;
   const CRLF = "\r\n";
   const partBuffers: Buffer[] = [];
   const appendField = (name: string, value: string) => {
@@ -1676,6 +1707,7 @@ async function handleStabilityAIImageGeneration({
   body,
   credentials,
   log,
+  remoteMediaFetchImpl,
 }) {
   const startTime = Date.now();
   const token = credentials.apiKey || credentials.accessToken;
@@ -1720,7 +1752,7 @@ async function handleStabilityAIImageGeneration({
       }
 
       if (imageUrl) {
-        const imageSource = await resolveImageSource(imageUrl);
+        const imageSource = await resolveImageSource(imageUrl, { fetchImpl: remoteMediaFetchImpl });
         upstreamBody.mode = "image-to-image";
         appendOptionalFormValue(formData, "mode", "image-to-image");
         upstreamBody.image = imageSource.base64;
@@ -1746,13 +1778,13 @@ async function handleStabilityAIImageGeneration({
       }
     } else {
       if (imageUrl) {
-        const imageSource = await resolveImageSource(imageUrl);
+        const imageSource = await resolveImageSource(imageUrl, { fetchImpl: remoteMediaFetchImpl });
         upstreamBody.image = imageSource.base64;
         appendImageFormValue(formData, "image", imageSource, "image");
       }
 
       if (maskUrl && shouldIncludeStabilityMask(model)) {
-        const maskSource = await resolveImageSource(maskUrl);
+        const maskSource = await resolveImageSource(maskUrl, { fetchImpl: remoteMediaFetchImpl });
         upstreamBody.mask = maskSource.base64;
         appendImageFormValue(formData, "mask", maskSource, "mask");
       }
@@ -1866,6 +1898,7 @@ async function handleBlackForestLabsImageGeneration({
   body,
   credentials,
   log,
+  remoteMediaFetchImpl,
 }) {
   const startTime = Date.now();
   const token = credentials.apiKey || credentials.accessToken;
@@ -1887,13 +1920,17 @@ async function handleBlackForestLabsImageGeneration({
 
   try {
     if (BFL_EDIT_MODELS.has(model) && imageUrl) {
-      upstreamBody.input_image = (await resolveImageSource(imageUrl)).base64;
+      upstreamBody.input_image = (
+        await resolveImageSource(imageUrl, { fetchImpl: remoteMediaFetchImpl })
+      ).base64;
     } else if (imageUrl && isHttpUrl(imageUrl)) {
       upstreamBody.image_url = imageUrl;
     }
 
     if (maskUrl && (model === "flux-pro-1.0-fill" || model === "flux-kontext-pro")) {
-      upstreamBody.mask = (await resolveImageSource(maskUrl)).base64;
+      upstreamBody.mask = (
+        await resolveImageSource(maskUrl, { fetchImpl: remoteMediaFetchImpl })
+      ).base64;
     }
 
     if (model === "flux-kontext-pro" || model === "flux-kontext-max") {
@@ -2060,6 +2097,7 @@ async function handleTopazImageGeneration({
   body,
   credentials,
   log,
+  remoteMediaFetchImpl,
 }) {
   const startTime = Date.now();
   const token = credentials.apiKey || credentials.accessToken;
@@ -2074,7 +2112,7 @@ async function handleTopazImageGeneration({
   }
 
   try {
-    const imageSource = await resolveImageSource(imageUrl);
+    const imageSource = await resolveImageSource(imageUrl, { fetchImpl: remoteMediaFetchImpl });
     const formData = new FormData();
     const blob = new Blob([imageSource.buffer], { type: imageSource.contentType || "image/png" });
     formData.append("image", blob, "image.png");
@@ -2226,7 +2264,7 @@ function extractImageInputs(body) {
   };
 }
 
-async function resolveImageSource(source) {
+export async function resolveImageSource(source, remoteFetchOptions = {}) {
   if (typeof source !== "string" || source.trim().length === 0) {
     throw new Error("Invalid image source");
   }
@@ -2243,7 +2281,13 @@ async function resolveImageSource(source) {
   }
 
   if (isHttpUrl(trimmed)) {
-    const remoteImage = await fetchRemoteImage(trimmed);
+    // Caller-controlled image/mask URLs are always strict public-only and DNS-pinned.
+    // Preserve the internal test fetch seam, but never let caller options relax the guard.
+    const remoteImage = await fetchRemoteImage(trimmed, {
+      ...remoteFetchOptions,
+      guard: "public-only",
+      pinDns: true,
+    });
     return {
       buffer: remoteImage.buffer,
       base64: remoteImage.buffer.toString("base64"),
@@ -2385,7 +2429,7 @@ async function normalizeProviderImageCandidate(candidate, body, defaultFormat) {
   }
 
   if (wantsBase64 && !b64 && url) {
-    b64 = (await resolveImageSource(url)).base64;
+    b64 = (await resolveImageSource(url, { guard: getProviderOutboundGuard() })).base64;
   }
 
   if (url && !wantsBase64) {
@@ -2869,12 +2913,36 @@ async function fetchImageEndpoint(url, headers, body, provider, log) {
 
     const data = await response.json();
 
-    // Normalize response to OpenAI format
+    // Normalize response to OpenAI format. A 2xx without at least one usable
+    // image must not terminate combo fallback with an image-less success.
+    const items = Array.isArray(data?.data) ? data.data : [];
+    const hasUsableImage = items.some(
+      (item: unknown) =>
+        isJsonObject(item) &&
+        ((typeof item.b64_json === "string" && item.b64_json.length > 0) ||
+          (typeof item.url === "string" && item.url.length > 0))
+    );
+    if (!hasUsableImage) {
+      if (log) {
+        log.warn(
+          "IMAGE",
+          `${provider} returned 200 without a usable image payload; treating as retryable 502`
+        );
+      }
+      return {
+        success: false,
+        status: HTTP_STATUS.BAD_GATEWAY,
+        error: sanitizeErrorMessage(
+          "Image provider returned a success status without an image payload"
+        ),
+      };
+    }
+
     return {
       success: true,
       data: {
         created: data.created || Math.floor(Date.now() / 1000),
-        data: data.data || [],
+        data: items,
       },
     };
   } catch (err: unknown) {
@@ -3170,7 +3238,7 @@ function normalizeNanoBananaSyncPayload(data, prompt) {
   return { data: images.filter(Boolean) };
 }
 
-async function normalizeNanoBananaTaskResult(taskData, body, log) {
+export async function normalizeNanoBananaTaskResult(taskData, body, log) {
   const response = taskData?.response || {};
 
   const urlCandidates = [
@@ -3208,7 +3276,10 @@ async function normalizeNanoBananaTaskResult(taskData, body, log) {
 
     if (urlCandidates.length > 0) {
       const firstUrl = urlCandidates[0];
-      const remoteImage = await fetchRemoteImage(firstUrl);
+      const remoteImage = await fetchRemoteImage(firstUrl, {
+        guard: "public-only",
+        pinDns: true,
+      });
       const base64 = remoteImage.buffer.toString("base64");
       return [{ b64_json: base64, revised_prompt: body.prompt }];
     }
@@ -3230,25 +3301,6 @@ async function normalizeNanoBananaTaskResult(taskData, body, log) {
   }
 
   return [];
-}
-
-function inferResolutionFromSize(size) {
-  if (typeof size !== "string") return null;
-  const [wRaw, hRaw] = size.split("x");
-  const width = Number(wRaw);
-  const height = Number(hRaw);
-  if (!Number.isFinite(width) || !Number.isFinite(height) || width <= 0 || height <= 0) return null;
-
-  const longestSide = Math.max(width, height);
-  if (longestSide <= 1024) return "1K";
-  if (longestSide <= 2048) return "2K";
-  return "4K";
-}
-
-function normalizePositiveNumber(value, fallback) {
-  const n = Number(value);
-  if (!Number.isFinite(n) || n <= 0) return fallback;
-  return Math.floor(n);
 }
 
 /**

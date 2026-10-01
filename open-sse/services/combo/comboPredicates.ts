@@ -16,14 +16,13 @@ import {
   isLocalExecutionError,
   isModelCapacityOverloadError,
 } from "@/shared/utils/circuitBreaker";
-import {
-  CONTEXT_OVERFLOW_PATTERNS,
-  MODEL_ACCESS_DENIED_PATTERNS,
-  cooldownUntilMs,
-} from "../accountFallback.ts";
+import { CONTEXT_OVERFLOW_PATTERNS, cooldownUntilMs } from "../accountFallback.ts";
 import { isResourceNotFoundResponse } from "../errorClassifier.ts";
 import { getTrustedLocalRateLimitResponse } from "../rateLimitManager/errors.ts";
 import type { ResolvedComboTarget } from "./types.ts";
+import type { ComboErrorEntry } from "./comboErrorAggregation.ts";
+
+export { isModelScoped400 } from "../modelAccessDenied.ts";
 
 // Status codes that should mark round-robin target semaphores as cooling down.
 export const TRANSIENT_FOR_SEMAPHORE = [429, 502, 503, 504];
@@ -53,8 +52,8 @@ export function isAllAccountsRateLimitedResponse(
   return ALL_ACCOUNTS_RATE_LIMITED_PATTERNS.some((p) => p.test(errorText));
 }
 
-// #1731v2 guard: a provider circuit-breaker-open response (503 + `X-OmniRoute-Provider-Breaker`
-// header / `provider_circuit_open` error code, see providerCircuitOpenResponse) is an OmniRoute
+// #1731v2 guard: a provider circuit-breaker-open response (503 + `X-AgentProxy-Provider-Breaker`
+// header / `provider_circuit_open` error code, see providerCircuitOpenResponse) is an AgentProxy
 // resilience signal, NOT a per-connection upstream failure. It must keep being treated as an
 // ordinary target failure (try the next target, including same-provider ones) — so it must NOT
 // poison exhaustedConnections/exhaustedProviders, otherwise remaining same-provider targets get
@@ -63,7 +62,7 @@ export function isProviderCircuitOpenResult(
   result: { headers?: Headers | null; status?: number },
   errorText: string
 ): boolean {
-  const breakerHeader = result.headers?.get?.("x-omniroute-provider-breaker");
+  const breakerHeader = result.headers?.get?.("x-agentproxy-provider-breaker");
   if (typeof breakerHeader === "string" && breakerHeader.toLowerCase() === "open") return true;
   return /provider_circuit_open/i.test(errorText);
 }
@@ -110,6 +109,26 @@ export const MAX_GLOBAL_ATTEMPTS = 30;
 // but never above this cap — an unbounded attempt budget is the same runaway
 // background-request DoS risk that motivated MAX_COMBO_DEPTH_HARD_CAP.
 export const MAX_GLOBAL_ATTEMPTS_HARD_CAP = 200;
+
+// A malformed/unsupported request shape fails identically across fallback
+// targets because it is a property of the request, not a provider-local outage.
+// Stop after three consecutive identical model errors rather than replaying the
+// same bad payload through every target and every whole-set retry.
+export const IDENTICAL_MODEL_ERROR_STREAK = 3;
+
+export function hasIdenticalModelErrorStreak(
+  comboErrors: ReadonlyArray<ComboErrorEntry>,
+  streak: number = IDENTICAL_MODEL_ERROR_STREAK
+): boolean {
+  if (comboErrors.length < streak) return false;
+  const tail = comboErrors.slice(-streak);
+  const [first, ...rest] = tail;
+  if (first.kind !== "model") return false;
+  return rest.every(
+    (entry) =>
+      entry.kind === first.kind && entry.status === first.status && entry.error === first.error
+  );
+}
 
 /**
  * Clamp an operator-configured combo nesting depth (config.maxComboDepth) to a
@@ -246,6 +265,7 @@ const REQUEST_SCOPED_UPSTREAM_ERROR_CODES: Record<string, true> = {
   rate_limit_queue_timeout: true,
   rate_limit_queue_full: true,
   rate_limit_queue_wedged: true,
+  token_limit_exceeded: true,
   // #10360: our own executor-result contract violation. An internal defect, not
   // a provider/account fault — it must never cool a connection or trip a breaker.
   [EXECUTOR_CONTRACT_VIOLATION_CODE]: true,
@@ -413,6 +433,37 @@ export function isTokenLimitBreachErrorBody(errorBody: unknown): boolean {
   const error = (errorBody as Record<string, unknown>).error;
   if (!error || typeof error !== "object") return false;
   return (error as Record<string, unknown>).code === "TOKEN_LIMIT_EXCEEDED";
+}
+
+/**
+ * A local per-API-key POLICY breach: this OmniRoute instance refused the
+ * candidate before dispatch because of the key's own limits, not because an
+ * upstream said no. Today that is the token-limit 429 above and the metered
+ * dollar-budget 429 ("BUDGET_EXCEEDED", see handleSingleModelChat in
+ * src/sse/handlers/chat.ts).
+ *
+ * Both share one consequence: the shared account/provider is healthy and must
+ * not be cooled, deprioritised or retried as if an upstream had rate-limited
+ * it. They differ in what comes next, and the combo loop gets that right
+ * without another flag — a token limit is key-scoped, so every remaining
+ * candidate breaches it too and the loop runs out of targets; a budget breach
+ * is scoped to candidates that draw on the allowance, so the loop advances and
+ * a flat-rate candidate still serves the request.
+ */
+export function isLocalKeyPolicyBreachErrorBody(errorBody: unknown): boolean {
+  return isTokenLimitBreachErrorBody(errorBody) || isBudgetBreachErrorBody(errorBody);
+}
+
+/**
+ * The metered dollar budget refused this candidate before dispatch — see the
+ * eligibility gate in handleSingleModelChat. Only candidates that DRAW on the
+ * allowance can raise it, so it is never a verdict on the combo as a whole.
+ */
+export function isBudgetBreachErrorBody(errorBody: unknown): boolean {
+  if (!errorBody || typeof errorBody !== "object") return false;
+  const error = (errorBody as Record<string, unknown>).error;
+  if (!error || typeof error !== "object") return false;
+  return (error as Record<string, unknown>).code === "BUDGET_EXCEEDED";
 }
 
 /** Local limiter capacity is not an upstream/provider failure and must not cascade. */
@@ -624,20 +675,5 @@ export function isParamValidation400(errorText: string | null | undefined): bool
     /\bmax_tokens\b.*(?:illegal|must|range|invalid)/i.test(text) ||
     /\bparameter is illegal\b/i.test(text) ||
     /\bis illegal.*range\b/i.test(text)
-  );
-}
-
-/**
- * #5249 / #2101: model-scoped 400s must NEVER stop the combo.
- */
-export function isModelScoped400(errorText: string | null | undefined): boolean {
-  const text = String(errorText || "");
-  if (!text) return false;
-  if (MODEL_ACCESS_DENIED_PATTERNS.some((p) => p.test(text))) return true;
-  return (
-    /\bmodel\b[\s\S]{0,80}?\b(?:not\s+supported|unsupported|unknown|unavailable)\b/i.test(text) ||
-    /\b(?:not\s+supported|unsupported|unknown)\b[\s\S]{0,80}?\bmodel\b/i.test(text) ||
-    /\bunsupported_api_for_model\b/i.test(text) ||
-    /\bdoes\s+not\s+support\s+(?:the\s+)?responses\s+api\b/i.test(text)
   );
 }

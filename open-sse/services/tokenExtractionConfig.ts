@@ -372,7 +372,7 @@ const RAW_CONFIGS: TokenExtractionConfig[] = [
     "https://chat.z.ai/",
     "https://chat.z.ai",
     [{ type: "localStorage", key: "token" }],
-    'Log in to Z.ai at chat.z.ai. OmniRoute extracts the Local Storage value named "token"; chat CAPTCHA is handled by the browser transport.'
+    'Log in to Z.ai at chat.z.ai. AgentProxy extracts the Local Storage value named "token"; chat CAPTCHA is handled by the browser transport.'
   ),
 ];
 
@@ -394,5 +394,5 @@ export function listExtractionConfigs(): TokenExtractionConfig[] {
   return [...RAW_CONFIGS];
 }
 
-/** The shared config map — used by LoginManager and InAppLoginService */
+/** The shared config map — used by InAppLoginService */
 export const TOKEN_EXTRACTION_CONFIGS = CONFIG_MAP;

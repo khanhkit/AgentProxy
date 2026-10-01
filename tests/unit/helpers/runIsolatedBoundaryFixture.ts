@@ -22,7 +22,7 @@ export function runIsolatedBoundaryFixture({
   label,
   timeoutMs = 180_000,
 }: IsolatedBoundaryFixtureOptions): void {
-  const root = mkdtempSync(join(tmpdir(), "omniroute-public-error-child-"));
+  const root = mkdtempSync(join(tmpdir(), "agentproxy-public-error-child-"));
   const dataDir = join(root, "data");
   const pluginsDir = join(root, "plugins");
   mkdirSync(dataDir, { recursive: true });
@@ -43,8 +43,8 @@ export function runIsolatedBoundaryFixture({
           LANG: "C.UTF-8",
           LC_ALL: "C.UTF-8",
           NODE_ENV: "test",
-          OMNIROUTE_DISABLE_CREDENTIAL_HEALTH_CHECK: "true",
-          OMNIROUTE_PLUGINS_DIR: pluginsDir,
+          AGENTPROXY_DISABLE_CREDENTIAL_HEALTH_CHECK: "true",
+          AGENTPROXY_PLUGINS_DIR: pluginsDir,
           PATH: CHILD_PATH,
           TZ: "UTC",
         },

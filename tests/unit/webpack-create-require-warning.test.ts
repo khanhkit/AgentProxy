@@ -35,7 +35,7 @@ function renderIssue(issue: unknown): string {
 }
 
 async function compileRuntimeRequireModules(): Promise<string[]> {
-  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-webpack-create-require-"));
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-webpack-create-require-"));
   const sourcePaths = [
     "src/lib/db/adapters/runtimeRequire.ts",
     "src/lib/machineToken.ts",
@@ -79,6 +79,8 @@ async function compileRuntimeRequireModules(): Promise<string[]> {
         // has no repo tree, so treat the sibling as external instead of
         // erroring "Can't resolve './obscura.ts'".
         "./obscura.ts",
+        "./tlsFirstByteWatchdog.ts",
+        "./dataPaths",
       ],
       externalsPresets: { node: true },
       mode: "development",

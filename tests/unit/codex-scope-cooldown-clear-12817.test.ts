@@ -4,7 +4,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-codex-clear-12817-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-codex-clear-12817-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.API_KEY_SECRET = process.env.API_KEY_SECRET || "codex-clear-12817-secret";
 

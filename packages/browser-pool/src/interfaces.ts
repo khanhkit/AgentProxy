@@ -1,5 +1,5 @@
 /**
- * interfaces.ts — Shared type definitions for @omniroute/browser-pool.
+ * interfaces.ts — Shared type definitions for @agentproxy/browser-pool.
  *
  * These types are used by both the package entry and the core stubs.
  * The core stubs re-export them so existing import paths remain stable.

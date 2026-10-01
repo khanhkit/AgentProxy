@@ -10,6 +10,8 @@
  */
 
 import { sanitizeErrorMessage } from "./error.ts";
+import { classifyFakeSuccessBody } from "../services/errorClassifier.ts";
+import { SYNTHETIC_RESPONSES_SEQUENCE_NUMBER } from "./responsesSequence.ts";
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -22,6 +24,7 @@ export type MalformedReason =
   | "parse_fail"
   | "empty_choices"
   | "empty_stream"
+  | "content_is_upstream_error"
   | string;
 
 export interface ReportMalformed200Opts {
@@ -140,6 +143,10 @@ export function synthResponsesFailure(reason?: MalformedReason): string {
   );
   const event = {
     type: "response.failed",
+    // #14330: this frame is synthesized outside the real per-stream sequence
+    // counter, so it uses the shared synthetic seed instead of omitting the
+    // required field — a strict Responses decoder aborts without it.
+    sequence_number: SYNTHETIC_RESPONSES_SEQUENCE_NUMBER,
     response: {
       id: null,
       status: "failed",
@@ -173,7 +180,10 @@ export function synthResponsesFailure(reason?: MalformedReason): string {
  *   since a Claude client receives the body in that shape (no
  *   `choices`/`object:"response"`).
  */
-export function detectMalformedNonStream(resp: unknown): MalformedReason | null {
+export function detectMalformedNonStream(
+  resp: unknown,
+  provider?: string | null
+): MalformedReason | null {
   if (!resp || typeof resp !== "object") return "empty_choices";
 
   const body = resp as Record<string, unknown>;
@@ -251,26 +261,15 @@ export function detectMalformedNonStream(resp: unknown): MalformedReason | null 
     });
     if (hasOutput) return null;
 
-    // No per-block output. Two distinct situations remain:
-    //  1) A block IS present but invalid (e.g. text:"", a lone "(empty response)"
-    //     sentinel, or only null entries) — the model genuinely produced no
-    //     usable output. That is a MALFORMED-200 empty_choices regardless of
-    //     stop_reason (parity with the OpenAI content:"" path).
-    //  2) `content: []` — no block at all. #9971: a truncated / non-terminal
-    //     body (no stop_reason) must not become empty_choices. A terminal
-    //     stop_reason with no output usually is empty_choices — except the
-    //     same legitimate empty stops that `isEmptyContentResponse` already
-    //     accepts (`max_tokens`, `tool_use`). Claude Code's `/model` probe
-    //     sends `max_tokens: 1`; Opus can burn that budget on thinking and
-    //     return content:[] + stop_reason max_tokens. Treating that as
-    //     empty_choices turns a valid 200 into MALFORMED-200 → 502 even
-    //     though errorClassifier would have let it through.
-    if (content.length === 0) {
-      const stopReason = typeof body.stop_reason === "string" ? body.stop_reason : "";
-      if (stopReason.length === 0) return null;
-      if (stopReason === "max_tokens" || stopReason === "tool_use") return null;
-      return "empty_choices";
+    // No per-block output. Legitimate truncated completions may still
+    // carry a structurally present but empty text block, so the max_tokens/tool_use
+    // exemption applies whenever visible output is absent, not only to content:[].
+    const stopReason = typeof body.stop_reason === "string" ? body.stop_reason : "";
+    if (stopReason === "max_tokens" || stopReason === "tool_use" || stopReason === "length") {
+      return null;
     }
+    // content:[] with no stop_reason is non-terminal, not empty (#9971).
+    if (content.length === 0 && stopReason.length === 0) return null;
     return "empty_choices";
   }
 
@@ -313,8 +312,42 @@ export function detectMalformedNonStream(resp: unknown): MalformedReason | null 
     return false;
   });
 
-  if (!anyHasOutput) return "empty_choices";
+  if (!anyHasOutput) {
+    const truncatedAtLimit = choices.some((choice) => {
+      const c = choice as Record<string, unknown>;
+      return (
+        c?.finish_reason === "length" ||
+        c?.finish_reason === "tool_calls" ||
+        c?.finish_reason === "content_filter"
+      );
+    });
+    if (truncatedAtLimit) return null;
+    return "empty_choices";
+  }
+
+  if (provider && classifyFakeSuccessBody(extractChatCompletionText(choices), provider)) {
+    return "content_is_upstream_error";
+  }
   return null;
+}
+
+function extractChatCompletionText(choices: unknown[]): string {
+  const parts: string[] = [];
+  for (const choice of choices) {
+    const c = choice as Record<string, unknown>;
+    const msg = c?.message as Record<string, unknown> | undefined;
+    if (typeof msg?.content === "string") {
+      parts.push(msg.content);
+    } else if (Array.isArray(msg?.content)) {
+      for (const block of msg.content as unknown[]) {
+        const b = block as Record<string, unknown> | null;
+        if (b && typeof b === "object" && b.type === "text" && typeof b.text === "string") {
+          parts.push(b.text);
+        }
+      }
+    }
+  }
+  return parts.join(" ");
 }
 
 export function describeMalformedNonStream(
@@ -332,6 +365,13 @@ export function describeMalformedNonStream(
         ? `upstream reported a failed response: ${rawMessage}`
         : "upstream reported a failed response without usable output",
       code: "upstream_response_failed",
+      type: "upstream_response_error",
+    };
+  }
+  if (reason === "content_is_upstream_error") {
+    return {
+      message: "upstream reported a failure disguised as a successful response",
+      code: "upstream_fake_success",
       type: "upstream_response_error",
     };
   }

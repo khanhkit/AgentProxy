@@ -1,18 +1,18 @@
 ---
-title: "OmniRoute Fly.io Deployment Guide"
+title: "AgentProxy Fly.io Deployment Guide"
 version: 3.8.40
 lastUpdated: 2026-06-28
 ---
 
-# OmniRoute Fly.io Deployment Guide
+# AgentProxy Fly.io Deployment Guide
 
-This document describes the actual deployment process for OmniRoute on Fly.io, covering two scenarios:
+This document describes the actual deployment process for AgentProxy on Fly.io, covering two scenarios:
 
 - Deploying the current project to Fly.io for the first time
 - Publishing subsequent code updates
 - New projects following the same deployment workflow
 
-This guide is based on a verified working configuration for the current project. The application name is `omniroute`.
+This guide is based on a verified working configuration for the current project. The application name is `agentproxy`.
 
 ---
 
@@ -22,7 +22,7 @@ This guide is based on a verified working configuration for the current project.
 - Deployment method: Local `flyctl` direct publish
 - Runtime: Using the existing `Dockerfile` and `fly.toml` in the repository
 - Data persistence: Fly Volume mounted to `/data`
-- Access URL: `https://omniroute.fly.dev/`
+- Access URL: `https://agentproxy.example.com/`
 
 ---
 
@@ -31,7 +31,7 @@ This guide is based on a verified working configuration for the current project.
 The `fly.toml` in the current repository has been confirmed to contain the following key items:
 
 ```toml
-app = 'omniroute'
+app = 'agentproxy'
 primary_region = 'sin'
 
 [[mounts]]
@@ -53,7 +53,7 @@ primary_region = 'sin'
 
 Notes:
 
-- `app = 'omniroute'` determines which Fly application the deployment targets
+- `app = 'agentproxy'` determines which Fly application the deployment targets
 - `destination = '/data'` determines the persistent volume mount directory
 - This project must set `DATA_DIR=/data`, otherwise the database and keys will be written to the container's temporary directory
 
@@ -91,8 +91,8 @@ flyctl version
 ### 4.1 Clone the Code and Enter the Directory
 
 ```powershell
-git clone https://github.com/diegosouzapw/OmniRoute.git
-cd OmniRoute
+git clone https://github.com/khanhkit/AgentProxy.git
+cd AgentProxy
 ```
 
 ### 4.2 Confirm the Application Name
@@ -100,29 +100,29 @@ cd OmniRoute
 Open `fly.toml` and verify the following line:
 
 ```toml
-app = 'omniroute'
+app = 'agentproxy'
 ```
 
 If you are deploying to your own new application, you can change it to a globally unique name, for example:
 
 ```toml
-app = 'omniroute-yourname'
+app = 'agentproxy-yourname'
 ```
 
 Note:
 
 - Make sure the application you see in the console matches the `app` value in `fly.toml`
-- If you previously used a different name, such as `oroute`, do not confuse it with `omniroute`
+- If you previously used a different name, such as `oroute`, do not confuse it with `agentproxy`
 
 ### 4.3 Create the Application
 
 If the application does not yet exist:
 
 ```powershell
-flyctl apps create omniroute
+flyctl apps create agentproxy
 ```
 
-If you changed the application name, replace `omniroute` with your chosen name.
+If you changed the application name, replace `agentproxy` with your chosen name.
 
 ### 4.4 First Deploy
 
@@ -138,14 +138,14 @@ This project recommends configuring at least the following parameters on Fly.io.
 
 ### 5.1 Verified Parameters
 
-These parameters have been used in actual deployments on the current `omniroute` application:
+These parameters have been used in actual deployments on the current `agentproxy` application:
 
 - `API_KEY_SECRET`
 - `DATA_DIR`
 - `JWT_SECRET`
 - `MACHINE_ID_SALT`
 - `NEXT_PUBLIC_BASE_URL`
-- `OMNIROUTE_WS_BRIDGE_SECRET` (required in production — used for WebSocket bridge authentication)
+- `AGENTPROXY_WS_BRIDGE_SECRET` (required in production — used for WebSocket bridge authentication)
 - `STORAGE_ENCRYPTION_KEY`
 
 ### 5.2 About `INITIAL_PASSWORD`
@@ -173,7 +173,7 @@ The following variables are recommended for Fly Secrets:
 | ----------------------------- | ---------------------- | ----------------------------------------------------- |
 | `API_KEY_SECRET`              | Required               | Used for API Key generation and validation            |
 | `JWT_SECRET`                  | Required               | Used for login sessions and JWT signing               |
-| `OMNIROUTE_WS_BRIDGE_SECRET`  | Required in production | WebSocket bridge authentication secret                |
+| `AGENTPROXY_WS_BRIDGE_SECRET`  | Required in production | WebSocket bridge authentication secret                |
 | `STORAGE_ENCRYPTION_KEY`      | Strongly recommended   | Encrypts sensitive connection information at rest     |
 | `MACHINE_ID_SALT`             | Recommended            | Generates a stable machine identifier                 |
 | `INITIAL_PASSWORD`            | Optional               | Sets the initial backend password at first deployment |
@@ -184,7 +184,7 @@ The following variables are recommended for Fly Secrets:
 | Variable               | Recommended Value           |
 | ---------------------- | --------------------------- |
 | `DATA_DIR`             | `/data`                     |
-| `NEXT_PUBLIC_BASE_URL` | `https://omniroute.fly.dev` |
+| `NEXT_PUBLIC_BASE_URL` | `https://agentproxy.example.com` |
 
 Notes:
 
@@ -198,10 +198,10 @@ If you need to enable OAuth-based providers (e.g. Antigravity, Gemini, Cursor) o
 1. **Set `NEXT_PUBLIC_BASE_URL` to your public HTTPS domain**
 
    ```powershell
-   flyctl secrets set NEXT_PUBLIC_BASE_URL=https://omniroute.fly.dev -a omniroute
+   flyctl secrets set NEXT_PUBLIC_BASE_URL=https://agentproxy.example.com -a agentproxy
    ```
 
-   If you are using a custom domain, replace it with the corresponding domain (e.g. `https://omniroute.yourdomain.com`).
+   If you are using a custom domain, replace it with the corresponding domain (e.g. `https://agentproxy.yourdomain.com`).
 
 2. **Configure the callback URL on the provider console**
 
@@ -212,7 +212,7 @@ If you need to enable OAuth-based providers (e.g. Antigravity, Gemini, Cursor) o
    ```
 
    For example, regardless of Gemini, Antigravity, Cursor, or GitLab Duo:
-   - `https://omniroute.fly.dev/callback`
+   - `https://agentproxy.example.com/callback`
 
    If `NEXT_PUBLIC_BASE_URL` does not match the callback URL registered with the provider, the OAuth flow will fail at the browser redirect step.
 
@@ -225,7 +225,7 @@ The following commands generate secure random values and write all required para
 Notes:
 
 - Does not include `INITIAL_PASSWORD`
-- Intended for the current project `omniroute`
+- Intended for the current project `agentproxy`
 
 ```powershell
 $apiKeySecret = [Convert]::ToHexString((1..32 | ForEach-Object { Get-Random -Minimum 0 -Maximum 256 })).ToLower()
@@ -239,26 +239,26 @@ flyctl secrets set `
   JWT_SECRET=$jwtSecret `
   MACHINE_ID_SALT=$machineIdSalt `
   STORAGE_ENCRYPTION_KEY=$storageKey `
-  OMNIROUTE_WS_BRIDGE_SECRET=$wsBridgeSecret `
+  AGENTPROXY_WS_BRIDGE_SECRET=$wsBridgeSecret `
   DATA_DIR=/data `
-  NEXT_PUBLIC_BASE_URL=https://omniroute.fly.dev `
-  -a omniroute
+  NEXT_PUBLIC_BASE_URL=https://agentproxy.example.com `
+  -a agentproxy
 ```
 
 On Linux / macOS, you can also use `openssl rand -hex 32`:
 
 ```bash
-flyctl secrets set OMNIROUTE_WS_BRIDGE_SECRET=$(openssl rand -hex 32) -a omniroute
+flyctl secrets set AGENTPROXY_WS_BRIDGE_SECRET=$(openssl rand -hex 32) -a agentproxy
 ```
 
 Notes:
 
-- `OMNIROUTE_WS_BRIDGE_SECRET` is required in production; missing it will break the WebSocket bridge handshake
+- `AGENTPROXY_WS_BRIDGE_SECRET` is required in production; missing it will break the WebSocket bridge handshake
 
 If you also want to set an initial password:
 
 ```powershell
-flyctl secrets set INITIAL_PASSWORD=your-strong-password -a omniroute
+flyctl secrets set INITIAL_PASSWORD=your-strong-password -a agentproxy
 ```
 
 ---
@@ -266,12 +266,12 @@ flyctl secrets set INITIAL_PASSWORD=your-strong-password -a omniroute
 ## 8. Viewing Current Parameters
 
 ```powershell
-flyctl secrets list -a omniroute
+flyctl secrets list -a agentproxy
 ```
 
 If the `Secrets` page in the console does not show the expected variables, check:
 
-- That you are viewing the `omniroute` application
+- That you are viewing the `agentproxy` application
 - That the `app` value in `fly.toml` matches the application in the console
 
 ---
@@ -288,14 +288,14 @@ flyctl deploy
 If you only need to update parameters without changing code:
 
 ```powershell
-flyctl secrets set KEY=value -a omniroute
+flyctl secrets set KEY=value -a agentproxy
 ```
 
 Fly will automatically perform a rolling update of machines.
 
 ### 9.1 Tracking Upstream Repository Updates While Preserving Your Fork's `fly.toml`
 
-If the current repository is a fork and you want to sync updates from the upstream `https://github.com/diegosouzapw/OmniRoute`, follow the workflow below.
+If the current repository is a fork and you want to sync updates from the upstream `https://github.com/khanhkit/AgentProxy`, follow the workflow below.
 
 First, verify your remotes:
 
@@ -311,7 +311,7 @@ You should see at least:
 If `upstream` is not configured, add it:
 
 ```powershell
-git remote add upstream https://github.com/diegosouzapw/OmniRoute.git
+git remote add upstream https://github.com/khanhkit/AgentProxy.git
 ```
 
 Before syncing with upstream, fetch the latest commits and tags:
@@ -363,8 +363,8 @@ After syncing with the original repository, follow this recommended release orde
 3. Restore the fork's `fly.toml`
 4. `git push origin main`
 5. `flyctl deploy`
-6. `flyctl status -a omniroute`
-7. `flyctl logs --no-tail -a omniroute`
+6. `flyctl status -a agentproxy`
+7. `flyctl logs --no-tail -a agentproxy`
 
 This is the actual workflow used when upgrading the current project to `v3.4.7` (the example refers to a historical version; the current actual version is `v3.8.0`).
 
@@ -375,20 +375,20 @@ This is the actual workflow used when upgrading the current project to `v3.4.7` 
 ### 10.1 Check Application Status
 
 ```powershell
-flyctl status -a omniroute
+flyctl status -a agentproxy
 ```
 
 ### 10.2 View Startup Logs
 
 ```powershell
-flyctl logs --no-tail -a omniroute
+flyctl logs --no-tail -a agentproxy
 ```
 
 ### 10.3 Verify Site Accessibility
 
 ```powershell
 try {
-  (Invoke-WebRequest -Uri "https://omniroute.fly.dev" -MaximumRedirection 5 -UseBasicParsing).StatusCode
+  (Invoke-WebRequest -Uri "https://agentproxy.example.com" -MaximumRedirection 5 -UseBasicParsing).StatusCode
 } catch {
   if ($_.Exception.Response) {
     $_.Exception.Response.StatusCode.value__
@@ -427,14 +427,14 @@ If you see `/app/data/...` instead, `DATA_DIR` is misconfigured and must be corr
 There are usually two reasons:
 
 - You have not yet run `flyctl secrets set`
-- You are viewing a different application (e.g. `oroute` instead of `omniroute`)
+- You are viewing a different application (e.g. `oroute` instead of `agentproxy`)
 
 ### 12.2 `flyctl deploy` Reports `app not found`
 
 Create the application first:
 
 ```powershell
-flyctl apps create omniroute
+flyctl apps create agentproxy
 ```
 
 ### 12.3 `fly.toml` Parsing Fails
@@ -477,10 +477,10 @@ The most commonly used commands for subsequent releases are:
 
 ```powershell
 flyctl auth whoami
-flyctl status -a omniroute
-flyctl secrets list -a omniroute
+flyctl status -a agentproxy
+flyctl secrets list -a agentproxy
 flyctl deploy
-flyctl logs --no-tail -a omniroute
+flyctl logs --no-tail -a agentproxy
 ```
 
 For a normal release, the core command is simply:
@@ -492,7 +492,7 @@ flyctl deploy
 For a first-time deployment in a new environment, the core steps are:
 
 1. `flyctl auth login`
-2. `flyctl apps create omniroute`
-3. `flyctl secrets set ... -a omniroute`
+2. `flyctl apps create agentproxy`
+3. `flyctl secrets set ... -a agentproxy`
 4. `flyctl deploy`
-5. `flyctl logs --no-tail -a omniroute`
+5. `flyctl logs --no-tail -a agentproxy`

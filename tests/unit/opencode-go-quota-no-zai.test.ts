@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import test, { after } from "node:test";
 
-const originalQuotaUrl = process.env.OMNIROUTE_OPENCODE_QUOTA_URL;
-delete process.env.OMNIROUTE_OPENCODE_QUOTA_URL;
+const originalQuotaUrl = process.env.AGENTPROXY_OPENCODE_QUOTA_URL;
+delete process.env.AGENTPROXY_OPENCODE_QUOTA_URL;
 
 // Dynamic import is required so the module captures the cleared endpoint override.
 const { fetchOpencodeQuota, invalidateOpencodeQuotaCache } =
@@ -12,8 +12,8 @@ const originalFetch = globalThis.fetch;
 
 after(() => {
   globalThis.fetch = originalFetch;
-  if (originalQuotaUrl === undefined) delete process.env.OMNIROUTE_OPENCODE_QUOTA_URL;
-  else process.env.OMNIROUTE_OPENCODE_QUOTA_URL = originalQuotaUrl;
+  if (originalQuotaUrl === undefined) delete process.env.AGENTPROXY_OPENCODE_QUOTA_URL;
+  else process.env.AGENTPROXY_OPENCODE_QUOTA_URL = originalQuotaUrl;
 });
 
 test("fetchOpencodeQuota uses the official OpenCode Go usage endpoint by default", async () => {

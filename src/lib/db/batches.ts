@@ -1,5 +1,5 @@
 import { getDbInstance, rowToCamel, objToSnake } from "./core";
-import { deleteFile } from "./files";
+import { deleteFile, deleteFileOwnedBy } from "./files";
 import { v4 as uuidv4 } from "uuid";
 
 function parseBatchRow(row: any): BatchRecord {
@@ -316,7 +316,17 @@ export function markBatchItemError(
 
 export function listBatches(apiKeyId?: string, limit: number = 20, after?: string): BatchRecord[] {
   const db = getDbInstance();
-  const afterBatch = after ? getBatch(after) : null;
+  const resolvedAfterBatch = after ? getBatch(after) : null;
+  // #14481 item 5/LEDGER-20: `getBatch()` applies no owner filter, so an
+  // `after` cursor belonging to a DIFFERENT tenant used to still resolve and
+  // its `created_at` was used as the pagination bound — an existence +
+  // timestamp oracle for another tenant's batch. When this call IS
+  // owner-scoped (`apiKeyId` set), treat a foreign-owned cursor exactly like
+  // an unknown one (ignore it) instead of trusting its timestamp.
+  const afterBatch =
+    apiKeyId && resolvedAfterBatch && resolvedAfterBatch.apiKeyId !== apiKeyId
+      ? null
+      : resolvedAfterBatch;
   let rows: any[];
   if (apiKeyId) {
     if (afterBatch) {
@@ -377,6 +387,27 @@ export function getTerminalBatches(): BatchRecord[] {
   return rows.map((row) => parseBatchRow(row));
 }
 
+export function isFileReferencedByOtherBatch(fileId: string, excludeBatchIds: string[]): boolean {
+  const db = getDbInstance();
+  if (excludeBatchIds.length === 0) {
+    return Boolean(
+      db
+        .prepare(
+          "SELECT 1 FROM batches WHERE input_file_id = ? OR output_file_id = ? OR error_file_id = ? LIMIT 1"
+        )
+        .get(fileId, fileId, fileId)
+    );
+  }
+  const marks = excludeBatchIds.map(() => "?").join(",");
+  return Boolean(
+    db
+      .prepare(
+        `SELECT 1 FROM batches WHERE (input_file_id = ? OR output_file_id = ? OR error_file_id = ?) AND id NOT IN (${marks}) LIMIT 1`
+      )
+      .get(fileId, fileId, fileId, ...excludeBatchIds)
+  );
+}
+
 export function deleteBatch(id: string): boolean {
   const db = getDbInstance();
   const batch = getBatch(id);
@@ -384,22 +415,22 @@ export function deleteBatch(id: string): boolean {
 
   db.prepare("DELETE FROM batch_item_checkpoints WHERE batch_id = ?").run(id);
 
-  // Soft-delete associated files (input, output, error)
-  if (batch.inputFileId) {
+  // Soft-delete associated files only when no surviving sibling batch still references them.
+  if (batch.inputFileId && !isFileReferencedByOtherBatch(batch.inputFileId, [id])) {
     try {
       deleteFile(batch.inputFileId);
     } catch {
       /* ignore */
     }
   }
-  if (batch.outputFileId) {
+  if (batch.outputFileId && !isFileReferencedByOtherBatch(batch.outputFileId, [id])) {
     try {
       deleteFile(batch.outputFileId);
     } catch {
       /* ignore */
     }
   }
-  if (batch.errorFileId) {
+  if (batch.errorFileId && !isFileReferencedByOtherBatch(batch.errorFileId, [id])) {
     try {
       deleteFile(batch.errorFileId);
     } catch {
@@ -411,72 +442,206 @@ export function deleteBatch(id: string): boolean {
   return result.changes > 0;
 }
 
+const DELETE_COMPLETED_BATCHES_PAGE_SIZE = 100;
+
 /**
- * Bulk-delete completed batches and the files they reference.
+ * Delete one bounded page of completed batches and files that become
+ * unreferenced after those rows are removed.
  *
- * `apiKeyId` scopes EVERY statement to that owner. Omitting it keeps the
- * instance-wide sweep, which is legitimate for the operator's own dashboard
- * (session auth) and for nothing else: without the predicate, an ordinary
- * inference key could wipe every tenant's completed batches and null out their
- * file contents (GHSA-wvxc-jp3v-5mg5). Same ownership shape as `listBatches`
- * and `countBatches` above.
+ * `apiKeyId` scopes the selected batch rows to one owner. Omitting it keeps the
+ * instance-wide operator sweep. File reference checks are deliberately global:
+ * a file shared with any surviving batch, including another owner or status,
+ * must remain intact.
  */
 export function deleteCompletedBatches(apiKeyId?: string | null): {
   deletedBatches: number;
   deletedFiles: number;
+  hasMore: boolean;
+  pageSize: number;
 } {
   const db = getDbInstance();
   const scoped = typeof apiKeyId === "string" && apiKeyId.length > 0;
 
-  // Collect unique file IDs from the completed batches in scope
-  const rows = (
-    scoped
-      ? db
-          .prepare(
-            "SELECT input_file_id, output_file_id, error_file_id FROM batches WHERE status = 'completed' AND api_key_id = ?"
-          )
-          .all(apiKeyId)
-      : db
-          .prepare(
-            "SELECT input_file_id, output_file_id, error_file_id FROM batches WHERE status = 'completed'"
-          )
-          .all()
-  ) as Array<{
-    input_file_id: string | null;
-    output_file_id: string | null;
-    error_file_id: string | null;
-  }>;
+  const cleanupPage = db.transaction(() => {
+    const rows = (
+      scoped
+        ? db
+            .prepare(
+              `SELECT id, input_file_id, output_file_id, error_file_id
+               FROM batches
+               WHERE status = 'completed' AND api_key_id = ?
+               ORDER BY created_at ASC, id ASC
+               LIMIT ?`
+            )
+            .all(apiKeyId, DELETE_COMPLETED_BATCHES_PAGE_SIZE)
+        : db
+            .prepare(
+              `SELECT id, input_file_id, output_file_id, error_file_id
+               FROM batches
+               WHERE status = 'completed'
+               ORDER BY created_at ASC, id ASC
+               LIMIT ?`
+            )
+            .all(DELETE_COMPLETED_BATCHES_PAGE_SIZE)
+    ) as Array<{
+      id: string;
+      input_file_id: string | null;
+      output_file_id: string | null;
+      error_file_id: string | null;
+    }>;
 
-  const fileIds = new Set<string>();
-  for (const row of rows) {
-    if (row.input_file_id) fileIds.add(row.input_file_id);
-    if (row.output_file_id) fileIds.add(row.output_file_id);
-    if (row.error_file_id) fileIds.add(row.error_file_id);
-  }
-
-  let deletedFiles = 0;
-  for (const fid of fileIds) {
-    try {
-      if (deleteFile(fid)) deletedFiles++;
-    } catch {
-      /* ignore */
+    if (rows.length === 0) {
+      return {
+        deletedBatches: 0,
+        deletedFiles: 0,
+        hasMore: false,
+        pageSize: DELETE_COMPLETED_BATCHES_PAGE_SIZE,
+      };
     }
-  }
 
-  if (scoped) {
-    db.prepare(
-      "DELETE FROM batch_item_checkpoints WHERE batch_id IN (SELECT id FROM batches WHERE status = 'completed' AND api_key_id = ?)"
-    ).run(apiKeyId);
-    const result = db
-      .prepare("DELETE FROM batches WHERE status = 'completed' AND api_key_id = ?")
-      .run(apiKeyId);
-    return { deletedBatches: result.changes, deletedFiles };
-  }
+    const batchIds = rows.map((row) => row.id);
+    const placeholders = batchIds.map(() => "?").join(", ");
+    const fileIds = new Set<string>();
+    for (const row of rows) {
+      if (row.input_file_id) fileIds.add(row.input_file_id);
+      if (row.output_file_id) fileIds.add(row.output_file_id);
+      if (row.error_file_id) fileIds.add(row.error_file_id);
+    }
 
-  db.prepare(
-    "DELETE FROM batch_item_checkpoints WHERE batch_id IN (SELECT id FROM batches WHERE status = 'completed')"
-  ).run();
+    // Keep checkpoint + batch deletion atomic. If either statement fails, the
+    // transaction rolls back before any file can be left dangling.
+    db.prepare(`DELETE FROM batch_item_checkpoints WHERE batch_id IN (${placeholders})`).run(
+      ...batchIds
+    );
+    const batchResult = db
+      .prepare(`DELETE FROM batches WHERE id IN (${placeholders})`)
+      .run(...batchIds);
 
-  const result = db.prepare("DELETE FROM batches WHERE status = 'completed'").run();
-  return { deletedBatches: result.changes, deletedFiles };
+    const stillReferenced = db.prepare(
+      `SELECT 1
+       FROM batches
+       WHERE input_file_id = ? OR output_file_id = ? OR error_file_id = ?
+       LIMIT 1`
+    );
+
+    let deletedFiles = 0;
+    for (const fileId of fileIds) {
+      if (stillReferenced.get(fileId, fileId, fileId)) continue;
+      try {
+        const removed = scoped ? deleteFileOwnedBy(fileId, apiKeyId as string) : deleteFile(fileId);
+        if (removed) deletedFiles++;
+      } catch {
+        // A file cleanup failure is safe to leave as an orphan. Do not turn it
+        // into a dangling surviving-batch reference by partially undoing rows.
+      }
+    }
+
+    const hasMore = scoped
+      ? Boolean(
+          db
+            .prepare("SELECT 1 FROM batches WHERE status = 'completed' AND api_key_id = ? LIMIT 1")
+            .get(apiKeyId)
+        )
+      : Boolean(db.prepare("SELECT 1 FROM batches WHERE status = 'completed' LIMIT 1").get());
+
+    return {
+      deletedBatches: batchResult.changes,
+      deletedFiles,
+      hasMore,
+      pageSize: DELETE_COMPLETED_BATCHES_PAGE_SIZE,
+    };
+  });
+
+  return cleanupPage();
+}
+
+/**
+ * Delete one bounded page of terminal batches older than the retention window.
+ * This reuses the same one-page safety model as deleteCompletedBatches so the
+ * automatic cleanup never monopolizes the synchronous SQLite writer.
+ */
+export function deleteTerminalBatchesOlderThan(days: number): {
+  deletedBatches: number;
+  deletedFiles: number;
+  hasMore: boolean;
+  pageSize: number;
+} {
+  const db = getDbInstance();
+  const retentionDays = Number.isFinite(days) && days >= 0 ? Math.floor(days) : 30;
+  const cutoff = Math.floor(Date.now() / 1000) - retentionDays * 24 * 60 * 60;
+  const terminalWhere =
+    "status IN ('completed', 'failed', 'cancelled', 'expired') AND " +
+    "COALESCE(completed_at, failed_at, cancelled_at, expired_at, created_at) < ?";
+
+  const cleanupPage = db.transaction(() => {
+    const rows = db
+      .prepare(
+        `SELECT id, input_file_id, output_file_id, error_file_id
+         FROM batches
+         WHERE ${terminalWhere}
+         ORDER BY COALESCE(completed_at, failed_at, cancelled_at, expired_at, created_at) ASC, id ASC
+         LIMIT ?`
+      )
+      .all(cutoff, DELETE_COMPLETED_BATCHES_PAGE_SIZE) as Array<{
+      id: string;
+      input_file_id: string | null;
+      output_file_id: string | null;
+      error_file_id: string | null;
+    }>;
+
+    if (rows.length === 0) {
+      return {
+        deletedBatches: 0,
+        deletedFiles: 0,
+        hasMore: false,
+        pageSize: DELETE_COMPLETED_BATCHES_PAGE_SIZE,
+      };
+    }
+
+    const batchIds = rows.map((row) => row.id);
+    const placeholders = batchIds.map(() => "?").join(", ");
+    const fileIds = new Set<string>();
+    for (const row of rows) {
+      if (row.input_file_id) fileIds.add(row.input_file_id);
+      if (row.output_file_id) fileIds.add(row.output_file_id);
+      if (row.error_file_id) fileIds.add(row.error_file_id);
+    }
+
+    db.prepare(`DELETE FROM batch_item_checkpoints WHERE batch_id IN (${placeholders})`).run(
+      ...batchIds
+    );
+    const batchResult = db
+      .prepare(`DELETE FROM batches WHERE id IN (${placeholders})`)
+      .run(...batchIds);
+
+    const stillReferenced = db.prepare(
+      `SELECT 1
+       FROM batches
+       WHERE input_file_id = ? OR output_file_id = ? OR error_file_id = ?
+       LIMIT 1`
+    );
+
+    let deletedFiles = 0;
+    for (const fileId of fileIds) {
+      if (stillReferenced.get(fileId, fileId, fileId)) continue;
+      try {
+        if (deleteFile(fileId)) deletedFiles++;
+      } catch {
+        // File cleanup is best-effort; leaving orphaned content is safer than
+        // risking a surviving batch reference to nulled content.
+      }
+    }
+
+    const hasMore = Boolean(
+      db.prepare(`SELECT 1 FROM batches WHERE ${terminalWhere} LIMIT 1`).get(cutoff)
+    );
+    return {
+      deletedBatches: batchResult.changes,
+      deletedFiles,
+      hasMore,
+      pageSize: DELETE_COMPLETED_BATCHES_PAGE_SIZE,
+    };
+  });
+
+  return cleanupPage();
 }

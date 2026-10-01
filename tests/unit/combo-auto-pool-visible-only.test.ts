@@ -12,7 +12,7 @@ import path from "node:path";
 // falling back to the static catalog only when the user has no synced/custom
 // models for that provider at all.
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-auto-visible-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-auto-visible-"));
 const ORIGINAL_DATA_DIR = process.env.DATA_DIR;
 process.env.DATA_DIR = TEST_DATA_DIR;
 
@@ -171,5 +171,37 @@ test("virtual auto-combo pool filters EVERY provider with partial sync, not just
     kilocodeCandidates.map((c) => c.model).sort(),
     ["kilocode/gpt-oss-120b", "kilocode/qwen3-coder"],
     "kilocode pool must contain exactly the two synced models"
+  );
+});
+
+test("virtual auto-combo pool survives a malformed customModels row", async () => {
+  const conn = await providersDb.createProviderConnection({
+    provider: "openai",
+    authType: "apikey",
+    name: "OpenAI",
+    apiKey: "sk-test-openai",
+  });
+  const connectionId = (conn as { id?: string }).id;
+  await modelsDb.replaceSyncedAvailableModelsForConnection("openai", connectionId, [
+    { id: "gpt-4o-mini", name: "GPT-4o mini", source: "imported" as const },
+  ]);
+  core
+    .getDbInstance()
+    .prepare("INSERT OR REPLACE INTO key_value (namespace, key, value) VALUES (?, ?, ?)")
+    .run(
+      "customModels",
+      "openai",
+      JSON.stringify([null, "not-an-object", { name: "Missing Id" }, { id: "operator-custom" }])
+    );
+
+  const prepared = await virtualFactory.prepareVirtualAutoComboInputs();
+  const openaiCandidates = prepared.regularCandidates.filter((c) => c.provider === "openai");
+  assert.ok(
+    openaiCandidates.some((c) => c.model === "gpt-4o-mini"),
+    "the synced model must still reach the pool despite malformed custom rows"
+  );
+  assert.ok(
+    openaiCandidates.some((c) => c.model === "operator-custom"),
+    "the well-formed custom row must still reach the pool"
   );
 });

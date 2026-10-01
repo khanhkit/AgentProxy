@@ -33,7 +33,7 @@ test("official IDE, IDE Node, and CLI User-Agent grammars match the native darwi
 });
 
 test("User-Agent OS/arch token stays pinned to darwin/arm64 regardless of host (fingerprint fidelity)", () => {
-  // The upstream Antigravity backend expects the native macOS build, so OmniRoute presents
+  // The upstream Antigravity backend expects the native macOS build, so AgentProxy presents
   // that fingerprint no matter which platform it actually runs on (#8098 protocol fidelity).
   // The CLI builder's second argument is authMethod, not platform — the OS/arch token is
   // never host-derived, preserving the IDE/CLI User-Agent split (#8013).

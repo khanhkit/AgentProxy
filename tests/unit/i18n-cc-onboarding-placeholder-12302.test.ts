@@ -4,7 +4,7 @@ import { readFileSync, readdirSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 
-// #12302: ccOnboardingKeyPlaceholder used raw angle brackets (<your OmniRoute
+// #12302: ccOnboardingKeyPlaceholder used raw angle brackets (<your AgentProxy
 // API key>) in all 43 locale files. next-intl's IntlMessageFormat parser treated
 // these as rich-text tags and threw INVALID_MESSAGE: INVALID_TAG, crashing the
 // Claude Code onboarding block. The fix wraps values in ICU single quotes so

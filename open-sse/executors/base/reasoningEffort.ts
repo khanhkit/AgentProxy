@@ -69,6 +69,16 @@ export const GROK_46_PATTERN = /(?:^|\/|\b)grok-4\.6/i;
 export const GLM_53_FAMILY_PATTERN = /(?:^|\/|\b)glm-5\.3(?:$|-)/i;
 export const GLM_52_FAMILY_PATTERN = /(?:^|\/|\b)glm-5\.2(?:$|-)/i;
 
+function isSenseNovaDeepSeekV4Flash(provider: string, model: string): boolean {
+  const normalizedModel = model.toLowerCase();
+  const modelMatches =
+    /(?:^|\/)deepseek-v4-flash(?:$|-)/.test(normalizedModel) &&
+    !normalizedModel.includes("vision");
+  if (!modelMatches) return false;
+  if (provider === "sensenova" || provider === "snova") return true;
+  return /(?:^|\/)snova(?:\/|$)/.test(normalizedModel);
+}
+
 export function isCommandCodeProvider(provider: string): boolean {
   return (
     provider === "command-code" ||
@@ -163,7 +173,7 @@ function withNvidiaGlm52TemplateKwargs(
 }
 
 /**
- * Map OmniRoute's reasoning-effort inputs onto the binary thinking switch exposed by
+ * Map AgentProxy's reasoning-effort inputs onto the binary thinking switch exposed by
  * NVIDIA's hosted GLM-5.2 chat template. This runs before DefaultExecutor's unsupported
  * parameter stripping so a nested `reasoning.effort` is not discarded first, and is also
  * reused by the final provider sanitizer for non-default execution paths.
@@ -216,8 +226,8 @@ export function supportsMaxEffortForProvider(provider: string, model: string): b
 }
 
 // ── Effort carrier helpers (#7044) ──────────────────────────────────────────
-// OmniRoute carries the requested effort on up to three shapes:
-//   1. top-level `reasoning_effort`        — OpenAI / OmniRoute-internal
+// AgentProxy carries the requested effort on up to three shapes:
+//   1. top-level `reasoning_effort`        — OpenAI / AgentProxy-internal
 //   2. `reasoning.effort`                  — OpenAI Responses shape
 //   3. `output_config.effort`              — Anthropic Messages native (Claude Code / Claude passthrough)
 // Carrier (3) was previously invisible to this sanitizer, so a native Claude request
@@ -308,6 +318,13 @@ export function sanitizeReasoningEffortForProvider(
   if (c.effort === undefined) return body;
   const effortStr = typeof c.effort === "string" ? c.effort.toLowerCase() : "";
   const modelStr = model || "";
+
+  if (
+    isSenseNovaDeepSeekV4Flash(provider, modelStr) &&
+    (effortStr === "xhigh" || effortStr === "max")
+  ) {
+    return writeEffortValue(b, "high", c);
+  }
 
   // ── o1-preview: does not accept reasoning_effort parameter at all ─────────
   if (O1_PREVIEW_PATTERN.test(modelStr)) {
@@ -477,7 +494,7 @@ export function sanitizeReasoningEffortForProvider(
   }
 
   // Providers and model families whose top reasoning tier is `max` natively
-  // (or whose gateways expect `max` rather than OmniRoute's internal `xhigh`):
+  // (or whose gateways expect `max` rather than AgentProxy's internal `xhigh`):
   //   - Command Code (`command-code` / `cmd`)
   //   - Ollama Cloud (`ollama-cloud` / `ollamacloud`)
   //   - OpenCode Go (`opencode-go` / `opencode-zen` / `opencode`)
@@ -502,7 +519,7 @@ export function sanitizeReasoningEffortForProvider(
 
   // Native DeepSeek (api.deepseek.com) — V4 Pro and Flash use the native
   // {low, high, max} vocabulary, while other model ids retain the {high, max}
-  // floor. OmniRoute's internal top tier xhigh maps to DeepSeek's literal max,
+  // floor. AgentProxy's internal top tier xhigh maps to DeepSeek's literal max,
   // while compatibility-only medium maps to high. `none` is already the OpenAI
   // no-thinking carrier and passes through unchanged.
   if (provider === "deepseek") {
@@ -573,7 +590,7 @@ export function sanitizeReasoningEffortForProvider(
   const supportsMax = supportsMaxEffortForProvider(provider, modelStr);
 
   // ── xhigh handling ──────────────────────────────────────────────────────
-  // xhigh is OmniRoute-internal. Map it to the best effort the model accepts.
+  // xhigh is AgentProxy-internal. Map it to the best effort the model accepts.
   if (effortStr === "xhigh") {
     if (supportsXHigh) return body; // model accepts xhigh natively
     if (supportsMax) {

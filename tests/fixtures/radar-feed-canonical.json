@@ -1,5 +1,5 @@
 {
-  "feed": "omniroute-radar",
+  "feed": "agentproxy-radar",
   "schemaVersion": 1,
   "version": "2026.08.01.1",
   "generatedAt": "2026-08-01T12:00:00Z",
@@ -51,7 +51,7 @@
             "pt": "Crie uma conta gratuita no console da Groq"
           },
           "Gere uma API key na página de keys",
-          "Adicione a key no OmniRoute com o provider groq"
+          "Adicione a key no AgentProxy com o provider groq"
         ]
       },
       "enabled": true
@@ -85,7 +85,7 @@
         "keyUrl": "https://aistudio.google.com/apikey",
         "steps": [
           "Gere uma API key no Google AI Studio",
-          "Adicione a key no OmniRoute com o provider gemini"
+          "Adicione a key no AgentProxy com o provider gemini"
         ]
       },
       "enabled": true

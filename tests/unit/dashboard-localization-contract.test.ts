@@ -79,7 +79,7 @@ test("feature-flag descriptions are localized without changing flag values", () 
   assert.match(card, /enumValues\.\$\{val\}/);
   assert.ok(messages.featureFlags.definitions.REQUIRE_API_KEY.description.includes("khóa API"));
   assert.ok(
-    messages.featureFlags.definitions.OMNIROUTE_AUTO_SYNC_CLAUDE_PROFILES.description.includes(
+    messages.featureFlags.definitions.AGENTPROXY_AUTO_SYNC_CLAUDE_PROFILES.description.includes(
       "Claude Code"
     )
   );

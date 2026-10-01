@@ -99,7 +99,7 @@ export async function buildMultipartBody(
   fields: Record<string, string>,
   fileFieldName = "file"
 ): Promise<{ body: Uint8Array<ArrayBuffer>; contentType: string }> {
-  const boundary = "----OmniRouteAudioBoundary" + Date.now().toString(36);
+  const boundary = "----AgentProxyAudioBoundary" + Date.now().toString(36);
   const parts: Uint8Array[] = [];
   const encoder = new TextEncoder();
 
@@ -352,11 +352,77 @@ async function handleGladiaTranscription(providerConfig, file, modelId, token) {
   return errorResponse(504, "Gladia transcription timed out after 120s");
 }
 
+type SonioxToken = {
+  text?: string;
+  start_ms?: number;
+  end_ms?: number;
+  speaker?: string | number | null;
+  language?: string | null;
+};
+
+type SonioxOptions = {
+  diarize: boolean;
+  context: string;
+  language: string;
+  verbose: boolean;
+  wantWords: boolean;
+};
+
+function readSonioxOptions(formData?: FormData): SonioxOptions {
+  const str = (key: string): string => {
+    const value = formData?.get(key);
+    return typeof value === "string" ? value.trim() : "";
+  };
+  const flag = (...keys: string[]): boolean =>
+    keys.some((key) => /^(1|true|yes|on)$/i.test(str(key)));
+
+  const granularities = (formData?.getAll?.("timestamp_granularities[]") ?? []).map((value) =>
+    String(value).toLowerCase()
+  );
+  const diarize = flag("enable_speaker_diarization", "diarization", "speaker_labels");
+  const responseFormat = str("response_format").toLowerCase();
+
+  return {
+    diarize,
+    context: str("context"),
+    language: str("language"),
+    verbose: diarize || responseFormat === "verbose_json",
+    wantWords: granularities.includes("word"),
+  };
+}
+
+function groupSonioxTokensBySpeaker(tokens: SonioxToken[]) {
+  const segments: { speaker: string | null; startMs: number; endMs: number; text: string }[] = [];
+  for (const token of tokens) {
+    const speaker = token.speaker == null ? null : String(token.speaker);
+    const previous = segments[segments.length - 1];
+    if (!previous || previous.speaker !== speaker) {
+      segments.push({
+        speaker,
+        startMs: token.start_ms ?? 0,
+        endMs: token.end_ms ?? token.start_ms ?? 0,
+        text: token.text ?? "",
+      });
+      continue;
+    }
+    previous.endMs = token.end_ms ?? previous.endMs;
+    previous.text += token.text ?? "";
+  }
+  return segments;
+}
+
 /**
  * Handle Soniox transcription (async: upload file → create job → poll → get transcript)
  */
-async function handleSonioxTranscription(providerConfig, file, modelId, token) {
+async function handleSonioxTranscription(
+  providerConfig,
+  file,
+  modelId,
+  token,
+  formData?: FormData
+) {
   const authHeaders = buildAuthHeaders(providerConfig, token);
+  const options = readSonioxOptions(formData);
 
   const { body: uploadBody, contentType: uploadContentType } = await buildMultipartBody(file, {});
   const uploadRes = await fetch("https://api.soniox.com/v1/files", {
@@ -369,14 +435,19 @@ async function handleSonioxTranscription(providerConfig, file, modelId, token) {
   }
   const fileId = (await uploadRes.json()).id;
 
+  const jobBody: Record<string, unknown> = {
+    model: modelId,
+    file_id: fileId,
+    enable_language_identification: true,
+  };
+  if (options.diarize) jobBody.enable_speaker_diarization = true;
+  if (options.context) jobBody.context = options.context;
+  if (options.language) jobBody.language_hints = [options.language];
+
   const createRes = await fetch(providerConfig.baseUrl, {
     method: "POST",
     headers: { ...authHeaders, "Content-Type": "application/json" },
-    body: JSON.stringify({
-      model: modelId,
-      file_id: fileId,
-      enable_language_identification: true,
-    }),
+    body: JSON.stringify(jobBody),
   });
   if (!createRes.ok) {
     return upstreamErrorResponse(createRes, await createRes.text());
@@ -390,9 +461,7 @@ async function handleSonioxTranscription(providerConfig, file, modelId, token) {
   while (Date.now() - start < maxWait) {
     await new Promise((r) => setTimeout(r, 2000));
     const pollRes = await fetch(statusUrl, { headers: authHeaders });
-    if (!pollRes.ok) {
-      continue;
-    }
+    if (!pollRes.ok) continue;
     const result = await pollRes.json();
     if (result.status === "completed") {
       completed = true;
@@ -405,23 +474,53 @@ async function handleSonioxTranscription(providerConfig, file, modelId, token) {
       );
     }
   }
-  if (!completed) {
-    return errorResponse(504, "Soniox transcription timed out after 120s");
-  }
+  if (!completed) return errorResponse(504, "Soniox transcription timed out after 120s");
 
   const transcriptRes = await fetch(`${statusUrl}/transcript`, { headers: authHeaders });
   if (!transcriptRes.ok) {
     return upstreamErrorResponse(transcriptRes, await transcriptRes.text());
   }
   const transcript = await transcriptRes.json();
+  const tokens: SonioxToken[] = Array.isArray(transcript.tokens) ? transcript.tokens : [];
   const text =
     typeof transcript.text === "string" && transcript.text.length > 0
       ? transcript.text
-      : Array.isArray(transcript.tokens)
-        ? transcript.tokens.map((t: { text?: string }) => t.text ?? "").join("")
-        : "";
+      : tokens.map((t) => t.text ?? "").join("");
 
-  return Response.json({ text }, { headers: { ...CORS_HEADERS } });
+  if (!options.verbose) {
+    return Response.json({ text }, { headers: { ...CORS_HEADERS } });
+  }
+
+  const segments = groupSonioxTokensBySpeaker(tokens).map((segment, index) => ({
+    id: index,
+    start: segment.startMs / 1000,
+    end: segment.endMs / 1000,
+    text: segment.text.trim(),
+    ...(segment.speaker !== null ? { speaker: segment.speaker } : {}),
+  }));
+  const language = tokens.find((t) => typeof t.language === "string" && t.language)?.language;
+  const durationMs = tokens.length ? (tokens[tokens.length - 1].end_ms ?? 0) : 0;
+
+  return Response.json(
+    {
+      task: "transcribe",
+      ...(language ? { language } : {}),
+      duration: durationMs / 1000,
+      text,
+      segments,
+      ...(options.wantWords
+        ? {
+            words: tokens.map((t) => ({
+              word: t.text ?? "",
+              start: (t.start_ms ?? 0) / 1000,
+              end: (t.end_ms ?? 0) / 1000,
+              ...(t.speaker != null ? { speaker: String(t.speaker) } : {}),
+            })),
+          }
+        : {}),
+    },
+    { headers: { ...CORS_HEADERS } }
+  );
 }
 
 /**
@@ -824,7 +923,7 @@ export async function handleAudioTranscription({
   }
 
   if (providerConfig.format === "soniox") {
-    return handleSonioxTranscription(providerConfig, file, modelId, token);
+    return handleSonioxTranscription(providerConfig, file, modelId, token, formData);
   }
 
   if (providerConfig.format === "nvidia-asr") {

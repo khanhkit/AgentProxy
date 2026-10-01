@@ -5,7 +5,7 @@ import os from "node:os";
 import path from "node:path";
 
 const TEST_DATA_DIR = fs.mkdtempSync(
-  path.join(os.tmpdir(), "omniroute-context-reconcile-runtime-")
+  path.join(os.tmpdir(), "agentproxy-context-reconcile-runtime-")
 );
 process.env.DATA_DIR = TEST_DATA_DIR;
 

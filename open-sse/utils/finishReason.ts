@@ -16,6 +16,15 @@ const SAFETY_FINISH_REASONS = new Set([
   "malformed_response",
 ]);
 
+const CLAUDE_TO_OPENAI_FINISH_REASONS: Record<string, string> = {
+  end_turn: "stop",
+  stop_sequence: "stop",
+  pause_turn: "stop",
+  refusal: "content_filter",
+  tool_use: "tool_calls",
+  model_context_window_exceeded: "length",
+};
+
 // Gemini/Antigravity finish reasons that mean the model ABORTED the turn before
 // completing it — most commonly a tool call the model started narrating but
 // Gemini could not parse/execute (MALFORMED_FUNCTION_CALL, UNEXPECTED_TOOL_CALL).
@@ -68,6 +77,8 @@ export function normalizeOpenAICompatibleFinishReason(value: unknown): unknown {
   if (OPENAI_FINISH_REASONS.has(normalized)) return normalized;
   if (normalized === "max_tokens") return "length";
   if (SAFETY_FINISH_REASONS.has(normalized)) return "content_filter";
+  const claudeEquivalent = CLAUDE_TO_OPENAI_FINISH_REASONS[normalized];
+  if (claudeEquivalent) return claudeEquivalent;
 
   return normalized;
 }

@@ -4,7 +4,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-sse-auth-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-sse-auth-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.API_KEY_SECRET = process.env.API_KEY_SECRET || "sse-auth-test-secret";
 
@@ -1725,4 +1725,17 @@ test("markAccountUnavailable persists in-memory model lockout for combo transien
   const updated = await providersDb.getProviderConnectionById(connId);
   assert.equal(updated.rateLimitedUntil == null, true);
   assert.notEqual(updated.testStatus, "unavailable");
+});
+
+test("getProviderCredentials reports when allowedConnections hides every provider connection (#13832)", async () => {
+  await seedConnection("openai", {
+    name: "allowlist-hidden",
+    apiKey: "sk-hidden",
+  });
+
+  const selected = await auth.getProviderCredentials("openai", null, [
+    "00000000-0000-4000-8000-000000000999",
+  ]);
+
+  assert.deepEqual(selected, { blockedByKeyPolicy: true, blockedCount: 1 });
 });

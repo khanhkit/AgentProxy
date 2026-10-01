@@ -69,20 +69,29 @@ export type HandleSingleModel = (
   target?: SingleModelTarget
 ) => Promise<Response>;
 
+export type ModelAvailabilityResult = boolean | "model_not_in_catalog";
+
 export type IsModelAvailable = (
   modelStr: string,
   target?: ResolvedComboTarget & { allowRateLimitedConnection?: boolean }
-) => Promise<boolean> | boolean;
+) => Promise<ModelAvailabilityResult> | ModelAvailabilityResult;
+
+export function modelAvailabilitySkipReason(
+  result: ModelAvailabilityResult
+): "availability" | "model_not_in_catalog" | null {
+  if (result === true) return null;
+  return result === "model_not_in_catalog" ? "model_not_in_catalog" : "availability";
+}
 
 export type ComboRelayOptions = {
   sessionId?: string | null;
   config?: Record<string, unknown> | null;
   bypassProviderQuotaPolicy?: boolean;
-  /** Per-request X-OmniRoute-Mode value (auto-combo preset / mode-pack name) — #6024/#6025. */
+  /** Per-request X-AgentProxy-Mode value (auto-combo preset / mode-pack name) — #6024/#6025. */
   mode?: string | null;
-  /** Per-request X-OmniRoute-Budget value (hard cost ceiling in USD) — #6023. */
+  /** Per-request X-AgentProxy-Budget value (hard cost ceiling in USD) — #6023. */
   budgetCap?: number | null;
-  /** Per-request X-OmniRoute-Budget-Fallback value ("cheapest" | "strict") — #3470. */
+  /** Per-request X-AgentProxy-Budget-Fallback value ("cheapest" | "strict") — #3470. */
   budgetFallback?: "cheapest" | "strict" | null;
   [key: string]: unknown;
 };

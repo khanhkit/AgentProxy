@@ -11,7 +11,7 @@ import fs from "node:fs";
 // behavior — chatCore.ts never called any web_fetch interception logic before
 // this change, so "byte-identical" here means prepareWebFetchFallbackBody must
 // be a true no-op end to end (resolver -> body-prep), not just individually.
-const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-test-chatcore-intercept-fetch-"));
+const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-test-chatcore-intercept-fetch-"));
 process.env.DATA_DIR = tmpDir;
 
 const core = await import("../../src/lib/db/core.ts");

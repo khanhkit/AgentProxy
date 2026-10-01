@@ -19,7 +19,7 @@ const { persistAttemptLogs } = await import("../../open-sse/handlers/chatCore/at
 const { getAuditLog } = await import("../../src/lib/compliance/index.ts");
 
 type CodexRotationEnvelope = {
-  _omniroute?: {
+  _agentproxy?: {
     codexAccountRotation?: {
       initialConnectionId: unknown;
       finalConnectionId: unknown;
@@ -28,14 +28,16 @@ type CodexRotationEnvelope = {
 };
 
 function baseCtx(overrides: Record<string, unknown> = {}) {
+  const pendingRequestId = (overrides.pendingRequestId as string) ?? "REPLACE";
   return {
+    traceId: overrides.traceId ?? pendingRequestId,
     provider: "openai",
     connectionId: "conn-1",
     model: "gpt-x",
     skillRequestId: "skill-1",
     detailedLoggingEnabled: false,
     reqLogger: null,
-    pendingRequestId: "REPLACE",
+    pendingRequestId,
     clientRawRequest: { endpoint: "/v1/chat/completions" },
     requestedModel: "gpt-x-requested",
     credentials: { connectionId: "cred-conn" },
@@ -64,7 +66,7 @@ async function pollForCallLog(id: string, tries = 120) {
 
 function getCodexAccountRotation(value: unknown) {
   if (!value || typeof value !== "object") return undefined;
-  return (value as CodexRotationEnvelope)._omniroute?.codexAccountRotation;
+  return (value as CodexRotationEnvelope)._agentproxy?.codexAccountRotation;
 }
 
 before(async () => {
@@ -170,6 +172,27 @@ test("duplicate tool_calls in the assembled body writes provider.spec_violation 
   );
 });
 
+test("video-observed duplicate tool calls retain an audit verdict without retaining the tool name", () => {
+  const privateName = "PRIVATE_VIDEO_TRANSCRIPT_IN_TOOL_NAME";
+  persistAttemptLogs(
+    {
+      status: 200,
+      responseBody: {
+        choices: [{ message: { tool_calls: [
+          { function: { name: privateName, arguments: "{}" } },
+          { function: { name: privateName, arguments: "{}" } },
+        ] } }],
+      },
+    },
+    baseCtx({ pendingRequestId: "attempt-spec-video-1", skillRequestId: "skill-spec-video-1", videoContentRemoved: true })
+  );
+  const rows = getAuditLog({ action: "provider.spec_violation", requestId: "skill-spec-video-1" });
+  assert.equal(rows.length, 1);
+  const details = rows[0]?.details;
+  assert.ok(details && typeof details === "object");
+  assert.equal((details as { violation?: string }).violation, "duplicate tool_calls entry");
+  assert.equal(JSON.stringify(rows).includes(privateName), false);
+});
 test("unique tool_calls do not write provider.spec_violation audit", () => {
   persistAttemptLogs(
     {
@@ -194,4 +217,39 @@ test("unique tool_calls do not write provider.spec_violation audit", () => {
     requestId: "skill-spec-clean-1",
   });
   assert.equal(rows.length, 0);
+});
+
+test("combo attempts persist separate call-log rows keyed by traceId", async () => {
+  const pendingRequestId = "combo-shared-request";
+  const firstTraceId = "combo-attempt-trace-1";
+  const secondTraceId = "combo-attempt-trace-2";
+
+  persistAttemptLogs(
+    { status: 502, error: "first leg failed" },
+    baseCtx({
+      traceId: firstTraceId,
+      pendingRequestId,
+      comboName: "test-combo",
+      comboStepId: "leg-1",
+    })
+  );
+  persistAttemptLogs(
+    { status: 200, tokens: { input: 3, output: 4 } },
+    baseCtx({
+      traceId: secondTraceId,
+      pendingRequestId,
+      comboName: "test-combo",
+      comboStepId: "leg-2",
+    })
+  );
+
+  const first = await pollForCallLog(firstTraceId);
+  const second = await pollForCallLog(secondTraceId);
+  assert.ok(first, "first combo attempt should be persisted");
+  assert.ok(second, "second combo attempt should be persisted");
+  assert.equal(first.status, 502);
+  assert.equal(first.comboStepId, "leg-1");
+  assert.equal(second.status, 200);
+  assert.equal(second.comboStepId, "leg-2");
+  assert.equal(await getCallLogById(pendingRequestId), null);
 });

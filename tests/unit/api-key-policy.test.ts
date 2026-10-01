@@ -21,7 +21,7 @@ import os from "node:os";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-api-key-policy-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-api-key-policy-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.API_KEY_SECRET = process.env.API_KEY_SECRET || "task-607-api-key-secret";
 
@@ -30,6 +30,7 @@ const apiKeysDb = await import("../../src/lib/db/apiKeys.ts");
 const combosDb = await import("../../src/lib/db/combos.ts");
 const modelComboMappingsDb = await import("../../src/lib/db/modelComboMappings.ts");
 const costRules = await import("../../src/domain/costRules.ts");
+const keyQuotaDb = await import("../../src/lib/db/keyQuota.ts");
 const rateLimiter = await import("../../src/shared/utils/rateLimiter.ts");
 
 rateLimiter.setRateLimiterTestMode(true);
@@ -517,6 +518,37 @@ test("enforceApiKeyPolicy rejects disallowed models and exhausted budgets", asyn
   assert.match(await readErrorMessage(overBudget.rejection), /Daily budget exceeded/);
 });
 
+test("enforceApiKeyPolicy applies blockedModels in all-access mode", async () => {
+  const key = await createKeyWithPolicy({
+    modelAccessMode: "all",
+    allowedModels: [],
+    blockedModels: ["gpt-6*", "*/gpt-6*"],
+  });
+  const policy = await loadPolicy("all-mode-blocked-models");
+
+  const blocked = await policy.enforceApiKeyPolicy(
+    makePolicyRequest(key.key),
+    "mbrouter/gpt-6-codex"
+  );
+  assert.equal(blocked.rejection.status, 403);
+
+  const allowed = await policy.enforceApiKeyPolicy(
+    makePolicyRequest(key.key),
+    "mbrouter/gpt-5.6-sol"
+  );
+  assert.equal(allowed.rejection, null);
+
+  const metadata = await apiKeysDb.getApiKeyMetadata(key.key);
+  assert.ok(metadata);
+  const rerouted = await policy.validateApiKeyRoutingTarget(
+    makePolicyRequest(key.key),
+    key.key,
+    metadata,
+    "gpt-6"
+  );
+  assert.equal(rerouted?.status, 403);
+});
+
 test("enforceApiKeyPolicy returns Anthropic error envelope for /v1/messages model denials", async () => {
   const restrictedKey = await createKeyWithPolicy({
     allowedModels: ["cc/*"],
@@ -538,7 +570,7 @@ test("enforceApiKeyPolicy returns Anthropic error envelope for /v1/messages mode
     body.error.message,
     'Model "claude-fable-5" is not enabled or quota is insufficient. Choose another allowed model.'
   );
-  assert.doesNotMatch(body.error.message, /login|authenticate|api key|credential|omniroute/i);
+  assert.doesNotMatch(body.error.message, /login|authenticate|api key|credential|agentproxy/i);
   assert.equal(body.error.code, undefined);
 });
 
@@ -632,7 +664,10 @@ test("enforceApiKeyPolicy enforces combo allowlists separately from model allowl
     "combo/fast-chat"
   );
   assert.equal(blocked.rejection.status, 403);
-  assert.match(await readErrorMessage(blocked.rejection), /Combo "fast-chat" is not allowed/);
+  const blockedMessage = await readErrorMessage(blocked.rejection);
+  assert.match(blockedMessage, /Combo "fast-chat" is not allowed/);
+  assert.match(blockedMessage, /combo\/\*/);
+  assert.match(blockedMessage, /Dashboard → API Manager/);
 
   const mapped = await policy.enforceApiKeyPolicy(
     makePolicyRequest(allowedKey.key),
@@ -712,7 +747,28 @@ test("enforceApiKeyPolicy treats combo wildcard, empty list, and names as distin
       routingCase.model
     );
     assert.equal(rejection?.status ?? null, routingCase.status);
+    if (routingCase.status === 403 && rejection) {
+      const message = await readErrorMessage(rejection);
+      assert.match(message, /combo\/\*/);
+      assert.match(message, /Dashboard → API Manager/);
+    }
   }
+});
+
+test("enforceApiKeyPolicy rejects an API key whose per-key rpm quota is exhausted", async () => {
+  const limitedKey = await createKeyWithPolicy();
+  keyQuotaDb.upsertKeyQuotaLimits(limitedKey.id, { rpmLimit: 1 });
+  keyQuotaDb.incrementKeyQuotaCounter(limitedKey.id, "rpm", 1);
+
+  const policy = await loadPolicy("key-quota-rpm");
+  const result = await policy.enforceApiKeyPolicy(
+    makePolicyRequest(limitedKey.key),
+    "openai/gpt-4.1"
+  );
+
+  assert.ok(result.rejection);
+  assert.equal(result.rejection.status, 429);
+  assert.match(await readErrorMessage(result.rejection), /Request-per-minute quota exceeded/i);
 });
 
 test("enforceApiKeyPolicy applies configured throttle delay", async () => {

@@ -7,7 +7,9 @@ import {
   hasManagementPasswordConfigured,
   hashManagementPassword,
 } from "@/lib/auth/managementPassword";
-import { isAuthenticated } from "@/shared/utils/apiAuth";
+import { consumeBootstrapToken, peekBootstrapToken } from "@/lib/auth/bootstrapToken";
+import { hasConfiguredOidc, isAuthenticated } from "@/shared/utils/apiAuth";
+import { AUTHZ_HEADER_PEER_LOCALITY, BOOTSTRAP_TOKEN_HEADER } from "@/server/authz/headers";
 import { getNodeRuntimeSupport } from "@/shared/utils/nodeRuntimeSupport.ts";
 import { updateRequireLoginSchema } from "@/shared/validation/schemas";
 import { isValidationFailure, validateBody } from "@/shared/validation/helpers";
@@ -41,7 +43,11 @@ function hasConfiguredPassword(settings: Record<string, unknown>) {
 }
 
 function isBootstrapSecurityWindow(settings: Record<string, unknown>) {
-  return !hasConfiguredPassword(settings);
+  return (
+    !hasConfiguredPassword(settings) &&
+    !hasConfiguredOidc(settings) &&
+    !process.env.INITIAL_PASSWORD
+  );
 }
 
 export async function GET() {
@@ -56,8 +62,8 @@ export async function GET() {
     const oidcDisablePasswordLogin =
       oidcEnabled &&
       (settings.oidcDisablePasswordLogin === true ||
-        isFeatureFlagEnabled("OMNIROUTE_OIDC_DISABLE_PASSWORD_LOGIN") ||
-        process.env.OMNIROUTE_OIDC_DISABLE_PASSWORD_LOGIN === "true" ||
+        isFeatureFlagEnabled("AGENTPROXY_OIDC_DISABLE_PASSWORD_LOGIN") ||
+        process.env.AGENTPROXY_OIDC_DISABLE_PASSWORD_LOGIN === "true" ||
         process.env.OIDC_DISABLE_PASSWORD_LOGIN === "true");
     return NextResponse.json({
       authenticated,
@@ -91,7 +97,19 @@ export async function GET() {
  */
 export async function POST(request: Request) {
   const settings = await getSettings();
-  if (!isBootstrapSecurityWindow(settings) && !(await isAuthenticated(request))) {
+  if (isBootstrapSecurityWindow(settings)) {
+    const peerLocality = request.headers.get(AUTHZ_HEADER_PEER_LOCALITY);
+    // In production this header is stripped from client input and re-stamped by
+    // the authz pipeline from the authenticated TCP-peer stamp. Reject any
+    // explicitly non-loopback verdict before parsing or persisting the body.
+    if (
+      peerLocality &&
+      peerLocality !== "loopback" &&
+      !peekBootstrapToken(request.headers.get(BOOTSTRAP_TOKEN_HEADER))
+    ) {
+      return NextResponse.json({ error: "Local bootstrap required" }, { status: 403 });
+    }
+  } else if (!(await isAuthenticated(request))) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -130,6 +148,10 @@ export async function POST(request: Request) {
     }
 
     await updateSettings(updates);
+    // #14296: one-shot — a Docker/NAT-forwarded operator that authenticated
+    // this write via the bootstrap token cannot replay it for a second write.
+    // A no-op when the header is absent or stale (never matches).
+    consumeBootstrapToken(request.headers.get(BOOTSTRAP_TOKEN_HEADER));
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("[API] Error updating require-login settings:", error);

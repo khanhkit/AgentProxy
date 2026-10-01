@@ -1,0 +1,1 @@
+- **fix(dashboard):** saving or clearing a provider proxy now refreshes per-connection proxy badges immediately instead of leaving stale state until a manual reload.

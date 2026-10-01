@@ -1,14 +1,14 @@
 ---
-title: "OmniRoute — Przewodnik wdrożenia na VM z Cloudflare"
+title: "AgentProxy — Przewodnik wdrożenia na VM z Cloudflare"
 version: 3.8.40
 lastUpdated: 2026-06-28
 ---
 
-# OmniRoute — Przewodnik wdrożenia na VM z Cloudflare
+# AgentProxy — Przewodnik wdrożenia na VM z Cloudflare
 
 🌐 **Languages:** 🇺🇸 [English](../../../../ops/VM_DEPLOYMENT_GUIDE.md) · 🇸🇦 [ar](../../../ar/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇦🇿 [az](../../../az/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇧🇬 [bg](../../../bg/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇧🇩 [bn](../../../bn/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇨🇿 [cs](../../../cs/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇩🇰 [da](../../../da/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇩🇪 [de](../../../de/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇬🇷 [el](../../../el/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇪🇸 [es](../../../es/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇪🇪 [et](../../../et/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇷 [fa](../../../fa/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇫🇮 [fi](../../../fi/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇫🇷 [fr](../../../fr/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇪 [ga](../../../ga/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇳 [gu](../../../gu/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇱 [he](../../../he/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇳 [hi](../../../hi/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇭🇷 [hr](../../../hr/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇭🇺 [hu](../../../hu/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇩 [id](../../../id/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇹 [it](../../../it/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇯🇵 [ja](../../../ja/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇰🇷 [ko](../../../ko/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇱🇹 [lt](../../../lt/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇱🇻 [lv](../../../lv/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇳 [mr](../../../mr/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇲🇾 [ms](../../../ms/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇲🇹 [mt](../../../mt/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇳🇱 [nl](../../../nl/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇳🇴 [no](../../../no/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇵🇭 [phi](../../../phi/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇵🇹 [pt](../../../pt/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇧🇷 [pt-BR](../../../pt-BR/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇷🇴 [ro](../../../ro/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇷🇺 [ru](../../../ru/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇸🇰 [sk](../../../sk/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇸🇮 [sl](../../../sl/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇷🇸 [sr](../../../sr/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇸🇪 [sv](../../../sv/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇰🇪 [sw](../../../sw/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇳 [ta](../../../ta/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇳 [te](../../../te/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇹🇭 [th](../../../th/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇹🇷 [tr](../../../tr/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇺🇦 [uk-UA](../../../uk-UA/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇵🇰 [ur](../../../ur/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇻🇳 [vi](../../../vi/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇨🇳 [zh-CN](../../../zh-CN/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇹🇼 [zh-TW](../../../zh-TW/docs/ops/VM_DEPLOYMENT_GUIDE.md)
 
-Kompletny przewodnik instalacji i konfiguracji OmniRoute na VM (VPS) z domeną zarządzaną przez Cloudflare.
+Kompletny przewodnik instalacji i konfiguracji AgentProxy na VM (VPS) z domeną zarządzaną przez Cloudflare.
 
 ---
 
@@ -86,18 +86,18 @@ ufw enable
 
 ---
 
-## 2. Instalacja OmniRoute
+## 2. Instalacja AgentProxy
 
 ### 2.1 Utwórz katalog konfiguracji
 
 ```bash
-mkdir -p /opt/omniroute
+mkdir -p /opt/agentproxy
 ```
 
 ### 2.2 Utwórz plik zmiennych środowiskowych
 
 ```bash
-cat > /opt/omniroute/.env << 'EOF'
+cat > /opt/agentproxy/.env << 'EOF'
 # === Security ===
 JWT_SECRET=CHANGE-TO-A-UNIQUE-64-CHAR-SECRET-KEY
 INITIAL_PASSWORD=YourSecurePassword123!
@@ -105,7 +105,7 @@ API_KEY_SECRET=REPLACE-WITH-ANOTHER-SECRET-KEY
 STORAGE_ENCRYPTION_KEY=REPLACE-WITH-THIRD-SECRET-KEY
 STORAGE_ENCRYPTION_KEY_VERSION=v1
 MACHINE_ID_SALT=CHANGE-TO-A-UNIQUE-SALT
-OMNIROUTE_WS_BRIDGE_SECRET=REPLACE-WITH-WS-BRIDGE-SECRET  # REQUIRED em produção: usado pelo Codex Responses WS bridge
+AGENTPROXY_WS_BRIDGE_SECRET=REPLACE-WITH-WS-BRIDGE-SECRET  # REQUIRED em produção: usado pelo Codex Responses WS bridge
 
 # === App ===
 PORT=20128
@@ -122,11 +122,11 @@ BASE_URL=http://127.0.0.1:20128
 # Browser-facing URL used for OAuth callbacks, dashboard links, and generated public URLs.
 NEXT_PUBLIC_BASE_URL=https://llms.seudominio.com
 # Optional explicit public origin override for generated public asset URLs.
-# OMNIROUTE_PUBLIC_BASE_URL=https://llms.seudominio.com
+# AGENTPROXY_PUBLIC_BASE_URL=https://llms.seudominio.com
 
 # === Cloud Sync (optional) ===
-# CLOUD_URL=https://cloud.omniroute.online
-# NEXT_PUBLIC_CLOUD_URL=https://cloud.omniroute.online
+# CLOUD_URL=https://cloud.agentproxy.example.com
+# NEXT_PUBLIC_CLOUD_URL=https://cloud.agentproxy.example.com
 EOF
 ```
 
@@ -135,22 +135,22 @@ EOF
 ### 2.3 Uruchom kontener
 
 ```bash
-docker pull diegosouzapw/omniroute:latest
+docker pull khanhkit/agentproxy:latest
 
 docker run -d \
-  --name omniroute \
+  --name agentproxy \
   --restart unless-stopped \
-  --env-file /opt/omniroute/.env \
+  --env-file /opt/agentproxy/.env \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
-  diegosouzapw/omniroute:latest
+  -v agentproxy-data:/app/data \
+  khanhkit/agentproxy:latest
 ```
 
 ### 2.4 Sprawdź, czy działa
 
 ```bash
-docker ps | grep omniroute
-docker logs omniroute --tail 20
+docker ps | grep agentproxy
+docker logs agentproxy --tail 20
 ```
 
 Powinno pojawić się: `[DB] SQLite database ready` oraz `listening on port 20128`.
@@ -183,7 +183,7 @@ chmod 600 /etc/nginx/ssl/origin.key
 ### 3.2 Konfiguracja Nginx
 
 ```bash
-cat > /etc/nginx/sites-available/omniroute << 'NGINX'
+cat > /etc/nginx/sites-available/agentproxy << 'NGINX'
 # Default server — blocks direct access via IP
 server {
     listen 80 default_server;
@@ -196,7 +196,7 @@ server {
     return 444;
 }
 
-# OmniRoute — HTTPS
+# AgentProxy — HTTPS
 server {
     listen 443 ssl;
     listen [::]:443 ssl;
@@ -239,16 +239,16 @@ server {
 NGINX
 ```
 
-Utrzymuj limity czasu strumienia reverse proxy w zgodzie ze zmiennymi timeout OmniRoute. Jeśli podniesiesz
+Utrzymuj limity czasu strumienia reverse proxy w zgodzie ze zmiennymi timeout AgentProxy. Jeśli podniesiesz
 `FETCH_TIMEOUT_MS` / `STREAM_IDLE_TIMEOUT_MS`, podnieś też `proxy_read_timeout` / `proxy_send_timeout`
 powyżej tego samego progu.
 
-OmniRoute używa `NEXT_PUBLIC_BASE_URL` jako kanonicznego, przeglądarkowego originu dla callbacków OAuth
+AgentProxy używa `NEXT_PUBLIC_BASE_URL` jako kanonicznego, przeglądarkowego originu dla callbacków OAuth
 oraz generowanych publicznych linków. Uwierzytelnione zapisy w panelu korzystają z żądań same-origin
 oraz ochrony CSRF powiązanej z sesją, więc nie wymagają statycznego publicznego base URL. Nagłówki
 `X-Forwarded-*` powyżej nadal są przydatnymi metadanymi routingu, ale nie zastępują jawnego publicznego
 URL, gdy OAuth lub generowane linki przeglądarkowe go potrzebują. Włączaj
-`OMNIROUTE_TRUST_PROXY` tylko wtedy, gdy OmniRoute nie jest bezpośrednio osiągalny przez klientów, a Twój proxy
+`AGENTPROXY_TRUST_PROXY` tylko wtedy, gdy AgentProxy nie jest bezpośrednio osiągalny przez klientów, a Twój proxy
 usuwa/przebudowuje przychodzące nagłówki forwarded.
 
 ### 3.3 Włącz i przetestuj
@@ -257,8 +257,8 @@ usuwa/przebudowuje przychodzące nagłówki forwarded.
 # Remove default configuration
 rm -f /etc/nginx/sites-enabled/default
 
-# Enable OmniRoute
-ln -sf /etc/nginx/sites-available/omniroute /etc/nginx/sites-enabled/omniroute
+# Enable AgentProxy
+ln -sf /etc/nginx/sites-available/agentproxy /etc/nginx/sites-enabled/agentproxy
 
 # Test and reload
 nginx -t && systemctl reload nginx
@@ -302,40 +302,40 @@ curl -sI https://llms.seudominio.com/health
 ### Aktualizacja do nowej wersji
 
 ```bash
-docker pull diegosouzapw/omniroute:latest
-docker stop omniroute && docker rm omniroute
-docker run -d --name omniroute --restart unless-stopped \
-  --env-file /opt/omniroute/.env \
+docker pull khanhkit/agentproxy:latest
+docker stop agentproxy && docker rm agentproxy
+docker run -d --name agentproxy --restart unless-stopped \
+  --env-file /opt/agentproxy/.env \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
-  diegosouzapw/omniroute:latest
+  -v agentproxy-data:/app/data \
+  khanhkit/agentproxy:latest
 ```
 
 ### Podgląd logów
 
 ```bash
-docker logs -f omniroute          # Real-time stream
-docker logs omniroute --tail 50   # Last 50 lines
+docker logs -f agentproxy          # Real-time stream
+docker logs agentproxy --tail 50   # Last 50 lines
 ```
 
 ### Ręczna kopia zapasowa bazy danych
 
 ```bash
 # Copy data from the volume to the host
-docker cp omniroute:/app/data ./backup-$(date +%F)
+docker cp agentproxy:/app/data ./backup-$(date +%F)
 
 # Or compress the entire volume
-docker run --rm -v omniroute-data:/data -v $(pwd):/backup \
-  alpine tar czf /backup/omniroute-data-$(date +%F).tar.gz /data
+docker run --rm -v agentproxy-data:/data -v $(pwd):/backup \
+  alpine tar czf /backup/agentproxy-data-$(date +%F).tar.gz /data
 ```
 
 ### Przywracanie z kopii zapasowej
 
 ```bash
-docker stop omniroute
-docker run --rm -v omniroute-data:/data -v $(pwd):/backup \
-  alpine sh -c "rm -rf /data/* && tar xzf /backup/omniroute-data-YYYY-MM-DD.tar.gz -C /"
-docker start omniroute
+docker stop agentproxy
+docker run --rm -v agentproxy-data:/data -v $(pwd):/backup \
+  alpine sh -c "rm -rf /data/* && tar xzf /backup/agentproxy-data-YYYY-MM-DD.tar.gz -C /"
+docker start agentproxy
 ```
 
 ---
@@ -404,13 +404,13 @@ Dla zdalnego dostępu przez Cloudflare Workers (bez bezpośredniego wystawiania 
 
 ```bash
 # In the local repository
-cd omnirouteCloud
+cd agentproxyCloud
 npm install
 npx wrangler login
 npx wrangler deploy
 ```
 
-Zobacz też [TUNNELS_GUIDE.md](./TUNNELS_GUIDE.md) — przewodnik po Cloudflare Tunnel w tym repozytorium. Samodzielny worker `omnirouteCloud/` znajduje się w osobnym repozytorium towarzyszącym.
+Zobacz też [TUNNELS_GUIDE.md](./TUNNELS_GUIDE.md) — przewodnik po Cloudflare Tunnel w tym repozytorium. Samodzielny worker `agentproxyCloud/` znajduje się w osobnym repozytorium towarzyszącym.
 
 ---
 
@@ -421,4 +421,4 @@ Zobacz też [TUNNELS_GUIDE.md](./TUNNELS_GUIDE.md) — przewodnik po Cloudflare 
 | 22    | SSH         | Publiczny (z fail2ban)        |
 | 80    | nginx HTTP  | Przekierowanie → HTTPS        |
 | 443   | nginx HTTPS | Przez Cloudflare Proxy        |
-| 20128 | OmniRoute   | Tylko localhost (przez nginx) |
+| 20128 | AgentProxy   | Tylko localhost (przez nginx) |

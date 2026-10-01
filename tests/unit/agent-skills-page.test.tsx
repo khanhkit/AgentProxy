@@ -58,8 +58,8 @@ function makeSkill(overrides: Partial<AgentSkill> = {}): AgentSkill {
     icon: "hub",
     endpoints: ["POST /api/providers", "GET /api/providers"],
     rawUrl:
-      "https://raw.githubusercontent.com/diegosouzapw/OmniRoute/refs/heads/main/skills/omni-providers/SKILL.md",
-    githubUrl: "https://github.com/diegosouzapw/OmniRoute/blob/main/skills/omni-providers/SKILL.md",
+      "https://raw.githubusercontent.com/khanhkit/AgentProxy/refs/heads/main/skills/omni-providers/SKILL.md",
+    githubUrl: "https://github.com/khanhkit/AgentProxy/blob/main/skills/omni-providers/SKILL.md",
     ...overrides,
   };
 }

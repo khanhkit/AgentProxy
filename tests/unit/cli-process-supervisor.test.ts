@@ -257,7 +257,7 @@ test("ServerSupervisor.handleExit com string code não passa string para process
 
 test("writePidFile/readPidFile/cleanupPidFile operam por service", async () => {
   const os = await import("node:os");
-  const tmpDir = os.default.tmpdir() + "/omniroute-pid-test-" + Date.now();
+  const tmpDir = os.default.tmpdir() + "/agentproxy-pid-test-" + Date.now();
   process.env.DATA_DIR = tmpDir;
 
   const { writePidFile, readPidFile, cleanupPidFile } = await import("../../bin/cli/utils/pid.mjs");
@@ -334,4 +334,18 @@ test("every Bun server spawn (supervisor, --daemon, --no-recovery) uses the shar
     "serve.mjs --daemon and --no-recovery must both preload BUN_PRELOAD_PATH"
   );
   assert.doesNotMatch(serveSrc, /join\(APP_DIR,\s*"open-sse/);
+});
+
+test("#13992: supervised server spawn hides the console window on Windows", () => {
+  const supervisorSrc = fs.readFileSync(
+    path.join(REPO_ROOT, "bin/cli/runtime/processSupervisor.mjs"),
+    "utf8"
+  );
+
+  assert.match(
+    supervisorSrc,
+    /spawn\(process\.execPath,\s*buildServerSpawnArgs\([\s\S]*?\),\s*\{[\s\S]*?windowsHide:\s*true[\s\S]*?\}\)/,
+    "the supervised server spawn() must pass windowsHide: true so a tray-mode restart never " +
+      "flashes a visible console on Windows"
+  );
 });

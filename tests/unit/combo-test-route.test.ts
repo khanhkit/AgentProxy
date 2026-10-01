@@ -4,7 +4,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-combo-test-route-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-combo-test-route-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.API_KEY_SECRET = process.env.API_KEY_SECRET || "combo-test-route-secret";
 
@@ -135,7 +135,7 @@ test("combo test route marks a model healthy only when it returns assistant text
   assert.equal(fetchCalls.length, 1);
   assert.equal(fetchCalls[0].url, expectedInternalUrl("/v1/chat/completions"));
   assert.equal(fetchCalls[0].init.headers["X-Internal-Test"], "combo-health-check");
-  assert.equal(fetchCalls[0].init.headers["X-OmniRoute-No-Cache"], "true");
+  assert.equal(fetchCalls[0].init.headers["X-AgentProxy-No-Cache"], "true");
   assert.match(fetchCalls[0].init.headers["X-Request-Id"], /^combo-test-/);
   assert.equal(forwardedBody.model, "openrouter/openai/gpt-5.4");
   assert.equal(
@@ -359,8 +359,8 @@ test("combo test route preserves structured step metadata for repeated model/acc
     fetchCalls.map(({ init }) => JSON.parse(init.body).model),
     ["openai/gpt-4o-mini", "openai/gpt-4o-mini"]
   );
-  assert.equal(fetchCalls[0].init.headers["X-OmniRoute-Connection"], "conn-openai-a");
-  assert.equal(fetchCalls[1].init.headers["X-OmniRoute-Connection"], "conn-openai-b");
+  assert.equal(fetchCalls[0].init.headers["X-AgentProxy-Connection"], "conn-openai-a");
+  assert.equal(fetchCalls[1].init.headers["X-AgentProxy-Connection"], "conn-openai-b");
   assert.equal(body.results[0].connectionId, "conn-openai-a");
   assert.equal(body.results[0].label, "Account A");
   assert.equal(body.results[1].connectionId, "conn-openai-b");
@@ -459,5 +459,75 @@ test("combo test route handles upstream timeouts and non-JSON error bodies", asy
         statusCode: 502,
       },
     ]
+  );
+});
+
+test("combo test route aborts all parallel probes when the client disconnects", async () => {
+  await createTestCombo(["provider/first", "provider/second"]);
+
+  const externalController = new AbortController();
+  const observedSignals: AbortSignal[] = [];
+  let inFlight = 0;
+  let maxInFlight = 0;
+
+  globalThis.fetch = async (_url, init: RequestInit = {}) => {
+    const signal = init.signal as AbortSignal;
+    observedSignals.push(signal);
+    inFlight += 1;
+    maxInFlight = Math.max(maxInFlight, inFlight);
+    try {
+      await new Promise((_resolve, reject) => {
+        if (signal.aborted) {
+          const error = new Error("aborted");
+          error.name = "AbortError";
+          reject(error);
+          return;
+        }
+        signal.addEventListener(
+          "abort",
+          () => {
+            const error = new Error("aborted");
+            error.name = "AbortError";
+            reject(error);
+          },
+          { once: true }
+        );
+      });
+      throw new Error("probe should have been aborted");
+    } finally {
+      inFlight -= 1;
+    }
+  };
+
+  const pending = route.POST(
+    new Request("http://localhost/api/combos/test", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ comboName: "strict-live-test" }),
+      signal: externalController.signal,
+    })
+  );
+
+  for (let i = 0; i < 50 && observedSignals.length < 2; i += 1) {
+    await new Promise((resolve) => setTimeout(resolve, 10));
+  }
+  assert.equal(observedSignals.length, 2);
+  assert.equal(maxInFlight, 2);
+  externalController.abort();
+
+  const response = await pending;
+  const body = (await response.json()) as {
+    resolvedBy: string | null;
+    results: Array<{ error?: string }>;
+  };
+
+  assert.equal(response.status, 200);
+  assert.equal(inFlight, 0);
+  assert.equal(observedSignals.every((signal) => signal.aborted), true);
+  assert.equal(observedSignals.every((signal) => signal !== externalController.signal), true);
+  assert.equal(body.resolvedBy, null);
+  assert.deepEqual(
+    body.results.map((result) => result.error),
+    ["Client disconnected", "Client disconnected"]
   );
 });

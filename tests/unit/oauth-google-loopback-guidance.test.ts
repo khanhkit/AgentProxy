@@ -45,14 +45,14 @@ test("a SINGLE forward is enough — unlike codex, there is no second port", () 
 test("antigravity gets the local login helper as the recommended path", () => {
   assert.equal(
     buildGoogleLoopbackHint("antigravity", LAN).helperCommand,
-    "npx omniroute login antigravity"
+    "npx agentproxy login antigravity"
   );
 });
 
 test("agy gets NO helper command — the CLI only mints antigravity blobs", () => {
   // bin/cli/commands/login.mjs pins PROVIDER = "antigravity", and
   // parsePastedCredentials() rejects a blob whose provider !== the route provider.
-  // Offering `omniroute login antigravity` on the agy dialog would send the operator
+  // Offering `agentproxy login antigravity` on the agy dialog would send the operator
   // to a blob that is guaranteed to be refused.
   const hint = buildGoogleLoopbackHint("agy", LAN);
 

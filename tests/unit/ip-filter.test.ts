@@ -6,8 +6,8 @@ import path from "node:path";
 
 // Isolate DATA_DIR before importing ipFilter: since #6131 the filter lazily
 // loads/persists its config to the DB, so an un-isolated run would touch the
-// real ~/.omniroute DB (side-effect + WAL-lock flake). Pin a throwaway dir.
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-ipfilter-unit-"));
+// real ~/.agentproxy DB (side-effect + WAL-lock flake). Pin a throwaway dir.
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-ipfilter-unit-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../src/lib/db/core.ts");
@@ -77,6 +77,12 @@ test("whitelist: CIDR match", () => {
   assert.equal(checkIP("11.0.0.1").allowed, false);
 });
 
+test("whitelist: empty list allows all IPs to prevent admin lockout", () => {
+  configureIPFilter({ enabled: true, mode: "whitelist", whitelist: [] });
+  assert.equal(checkIP("1.2.3.4").allowed, true);
+  assert.equal(checkIP("5.6.7.8").allowed, true);
+});
+
 // ─── Whitelist Priority Mode ────────────────────────────────────────────────
 
 test("whitelist-priority: whitelist overrides blacklist", () => {
@@ -120,9 +126,12 @@ test("addToBlacklist/removeFromBlacklist: dynamic updates", () => {
 test("addToWhitelist/removeFromWhitelist: dynamic updates", () => {
   configureIPFilter({ enabled: true, mode: "whitelist" });
   addToWhitelist("1.1.1.1");
+  addToWhitelist("2.2.2.2");
   assert.equal(checkIP("1.1.1.1").allowed, true);
   removeFromWhitelist("1.1.1.1");
   assert.equal(checkIP("1.1.1.1").allowed, false);
+  removeFromWhitelist("2.2.2.2");
+  assert.equal(checkIP("1.1.1.1").allowed, true);
 });
 
 // ─── IPv6 Normalization ─────────────────────────────────────────────────────

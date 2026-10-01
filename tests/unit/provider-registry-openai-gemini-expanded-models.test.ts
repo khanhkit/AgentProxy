@@ -2,12 +2,12 @@
  * Inspired by upstream PR decolua/9router#398 — expand the static OpenAI and
  * Gemini model lists with current first-class variants.
  *
- * Scope (minimal): only models that OmniRoute already references throughout
+ * Scope (minimal): only models that AgentProxy already references throughout
  * its sibling subsystems (cost estimator, task fitness, free catalog, image
  * registry) but happens not to expose in the direct `openai` / `gemini`
- * provider registry. We do NOT restore models OmniRoute deliberately curated
+ * provider registry. We do NOT restore models AgentProxy deliberately curated
  * out (e.g. o1, gpt-4-turbo) nor re-add embedding/TTS/image entries that
- * OmniRoute deliberately keeps in their own typed registries
+ * AgentProxy deliberately keeps in their own typed registries
  * (`embeddingRegistry.ts`, `audioRegistry.ts`, `imageRegistry.ts`).
  */
 import test from "node:test";
@@ -44,6 +44,13 @@ test("gemini registry exposes the flash-lite variants present in sibling subsyst
   for (const id of GEMINI_ADDED_IDS) {
     assert.ok(ids.has(id), `gemini registry must include ${id}`);
   }
+});
+
+test("gemini registry exposes Gemini 3.8 Flash", () => {
+  const model = geminiProvider.models.find((item) => item.id === "gemini-3.8-flash");
+  assert.ok(model, "gemini registry must include gemini-3.8-flash");
+  assert.equal(model.toolCalling, true);
+  assert.equal(model.supportsVision, true);
 });
 
 test("port did not regress previously curated openai/gemini ids", () => {

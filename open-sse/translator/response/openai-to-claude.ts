@@ -11,6 +11,11 @@ import {
 import { REVERSE_MAP, restoreClaudeToolName } from "../../services/claudeCodeToolRemapper.ts";
 import { sanitizeToolId } from "../helpers/schemaCoercion.ts";
 import { splitMarkdownBoundary } from "../helpers/markdownBoundary.ts";
+import { hasDsmlToolCalls, parseDsmlToolCalls } from "../../utils/dsmlToolCalls.ts";
+import {
+  createDirectivePreambleStripper,
+  createSystemPreambleStripper,
+} from "../../utils/directivePreambleStripper.ts";
 
 function normalizeToolName(name: string): string {
   return REVERSE_MAP[name] ?? name;
@@ -245,7 +250,7 @@ export function openaiToClaudeResponse(chunk, state) {
   // block — including prompt_tokens_details.cached_tokens — on a trailing
   // usage-only chunk shaped `{"choices":[],"usage":{...}}`. Returning early on
   // that chunk discarded the real numbers and left downstream accounting on
-  // OmniRoute's own tokenizer estimate (#11817).
+  // AgentProxy's own tokenizer estimate (#11817).
   //
   // Harvesting alone is not enough: if the finish_reason chunk arrives BEFORE
   // this trailing usage chunk (the normal order for these upstreams), the
@@ -274,6 +279,7 @@ export function openaiToClaudeResponse(chunk, state) {
     state.model = chunk.model || "unknown";
     state.nextBlockIndex = 0;
     state._pendingXmlToolCalls = [];
+    state._dsmlHoldback = undefined;
     state._xmlInvokeBuffer = "";
     state._markdownBuffer = "";
     state._markdownCodeSpanRun = 0;
@@ -310,28 +316,29 @@ export function openaiToClaudeResponse(chunk, state) {
     }
     if (parts.length > 0) reasoningContent = parts.join("");
   }
-  if (
+  const hasReasoning =
     typeof reasoningContent === "string" &&
     reasoningContent !== "" &&
-    !isInternalReasoningPlaceholder(reasoningContent)
-  ) {
-    stopTextBlock(state, results);
-
-    if (!state.thinkingBlockStarted) {
-      state.thinkingBlockIndex = state.nextBlockIndex++;
-      state.thinkingBlockStarted = true;
+    !isInternalReasoningPlaceholder(reasoningContent);
+  if (hasReasoning) {
+    if (state.requestedThinking !== false) {
+      stopTextBlock(state, results);
+      if (!state.thinkingBlockStarted) {
+        state.thinkingBlockIndex = state.nextBlockIndex++;
+        state.thinkingBlockStarted = true;
+        results.push({
+          type: "content_block_start",
+          index: state.thinkingBlockIndex,
+          content_block: { type: "thinking", thinking: "" },
+        });
+      }
       results.push({
-        type: "content_block_start",
+        type: "content_block_delta",
         index: state.thinkingBlockIndex,
-        content_block: { type: "thinking", thinking: "" },
+        delta: { type: "thinking_delta", thinking: reasoningContent },
       });
     }
-
-    results.push({
-      type: "content_block_delta",
-      index: state.thinkingBlockIndex,
-      delta: { type: "thinking_delta", thinking: reasoningContent },
-    });
+    state._reasoningAccum = (state._reasoningAccum || "") + reasoningContent;
   }
 
   // Handle regular content — strip the internal reasoning placeholder if
@@ -341,7 +348,16 @@ export function openaiToClaudeResponse(chunk, state) {
   if (delta?.content) {
     const strippedContent = stripInternalReasoningPlaceholder(delta.content);
     if (strippedContent) {
-      stopThinkingBlock(state, results);
+      const directive = process.env.AGENTPROXY_SYSTEM_INSTRUCTION_APPEND?.trim();
+      if (directive) state._directiveStripper ??= createDirectivePreambleStripper(directive);
+      if (process.env.AGENTPROXY_STRIP_SYSTEM_PREAMBLE === "1") {
+        state._systemPreambleStripper ??= createSystemPreambleStripper();
+      }
+      let scrubbedContent = state._directiveStripper
+        ? state._directiveStripper(strippedContent)
+        : strippedContent;
+      if (state._systemPreambleStripper) scrubbedContent = state._systemPreambleStripper(scrubbedContent);
+      if (scrubbedContent) stopThinkingBlock(state, results);
 
       // Rehydrate any Markdown boundary suffix buffered from the previous chunk
       // before searching for XML tool calls, so the prefix is not lost.
@@ -349,16 +365,30 @@ export function openaiToClaudeResponse(chunk, state) {
       state._markdownBuffer = "";
 
       // Check for XML <invoke> blocks that some models emit instead of JSON tool_calls
+      let dsmlContent = scrubbedContent;
+      if (state._dsmlHoldback) {
+        dsmlContent = state._dsmlHoldback + dsmlContent;
+        state._dsmlHoldback = undefined;
+      }
+      let dsmlToolCalls: { id: string; name: string; args: Record<string, string> }[] = [];
+      if (hasDsmlToolCalls(dsmlContent)) {
+        const dsmlResult = parseDsmlToolCalls(dsmlContent);
+        dsmlContent = dsmlResult.content;
+        if (dsmlResult.holdback) state._dsmlHoldback = dsmlResult.holdback;
+        dsmlToolCalls = dsmlResult.toolCalls.map((tc) => ({
+          id: tc.id, name: tc.function.name, args: JSON.parse(tc.function.arguments) as Record<string, string>,
+        }));
+      }
       const { cleaned, toolCalls: xmlToolCalls } = extractXmlInvokeBlocks(
-        bufferedPrefix + strippedContent,
+        bufferedPrefix + dsmlContent,
         state
       );
 
       // Accumulate extracted tool calls for emission at finish
-      if (xmlToolCalls.length > 0) {
+      if (xmlToolCalls.length > 0 || dsmlToolCalls.length > 0) {
         // Close any ongoing text block before tool calls
         stopTextBlock(state, results);
-        state._pendingXmlToolCalls.push(...xmlToolCalls);
+        state._pendingXmlToolCalls.push(...xmlToolCalls, ...dsmlToolCalls);
       }
 
       // Defer any trailing incomplete Markdown boundary token to the next chunk.
@@ -521,6 +551,44 @@ export function openaiToClaudeResponse(chunk, state) {
 
     state.claudeFinishEmitted = true;
     stopThinkingBlock(state, results);
+
+    const flushedPreamble =
+      (state._directiveStripper?.flush?.() ?? "") +
+      (state._systemPreambleStripper?.flush?.() ?? "");
+    if (flushedPreamble) {
+      if (!state.textBlockStarted || state.textBlockClosed) {
+        state.textBlockIndex = state.nextBlockIndex++;
+        state.textBlockStarted = true;
+        state.textBlockClosed = false;
+        results.push({
+          type: "content_block_start",
+          index: state.textBlockIndex,
+          content_block: { type: "text", text: "" },
+        });
+      }
+      results.push({
+        type: "content_block_delta",
+        index: state.textBlockIndex,
+        delta: { type: "text_delta", text: flushedPreamble },
+      });
+    }
+
+    if (!state.textBlockStarted && state._reasoningAccum && state.requestedThinking === false) {
+      state.textBlockIndex = state.nextBlockIndex++;
+      state.textBlockStarted = true;
+      state.textBlockClosed = false;
+      results.push({
+        type: "content_block_start",
+        index: state.textBlockIndex,
+        content_block: { type: "text", text: "" },
+      });
+      results.push({
+        type: "content_block_delta",
+        index: state.textBlockIndex,
+        delta: { type: "text_delta", text: state._reasoningAccum },
+      });
+    }
+
     stopTextBlock(state, results);
 
     for (const [, toolInfo] of state.toolCalls) {

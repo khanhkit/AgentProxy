@@ -11,8 +11,8 @@ Run initial setup, configure global CLI settings, manage environment variables, 
 ## Quick install
 
 ```bash
-npm install -g omniroute   # or: npx omniroute
-omniroute --version
+npm install -g agentproxy   # or: npx agentproxy
+agentproxy --version
 ```
 
 ## Subcommands
@@ -22,7 +22,7 @@ omniroute --version
 **Example:**
 
 ```bash
-omniroute autostart
+agentproxy autostart
 ```
 
 ### `autostart enable`
@@ -30,7 +30,7 @@ omniroute autostart
 **Example:**
 
 ```bash
-omniroute autostart enable
+agentproxy autostart enable
 ```
 
 ### `autostart disable`
@@ -38,7 +38,7 @@ omniroute autostart enable
 **Example:**
 
 ```bash
-omniroute autostart disable
+agentproxy autostart disable
 ```
 
 ### `autostart toggle`
@@ -46,7 +46,7 @@ omniroute autostart disable
 **Example:**
 
 ```bash
-omniroute autostart toggle
+agentproxy autostart toggle
 ```
 
 ### `autostart status`
@@ -54,7 +54,7 @@ omniroute autostart toggle
 **Example:**
 
 ```bash
-omniroute autostart status
+agentproxy autostart status
 ```
 
 ### `config`
@@ -64,7 +64,7 @@ Show or update CLI tool configuration
 **Example:**
 
 ```bash
-omniroute config
+agentproxy config
 ```
 
 ### `config list`
@@ -78,7 +78,7 @@ List all CLI tools and config status
 **Example:**
 
 ```bash
-omniroute config list
+agentproxy config list
 ```
 
 ### `config get <tool>`
@@ -92,7 +92,7 @@ Show current config for a tool
 **Example:**
 
 ```bash
-omniroute config get <tool>
+agentproxy config get <tool>
 ```
 
 ### `config set <tool>`
@@ -109,7 +109,7 @@ Write config for a tool
 **Example:**
 
 ```bash
-omniroute config set <tool>
+agentproxy config set <tool>
 ```
 
 ### `config validate <tool>`
@@ -124,7 +124,7 @@ Validate config format without writing
 **Example:**
 
 ```bash
-omniroute config validate <tool>
+agentproxy config validate <tool>
 ```
 
 ### `config opencode`
@@ -141,7 +141,7 @@ Generate OpenCode config (alias for
 **Example:**
 
 ```bash
-omniroute config opencode
+agentproxy config opencode
 ```
 
 ### `config lang`
@@ -149,7 +149,7 @@ omniroute config opencode
 **Example:**
 
 ```bash
-omniroute config lang
+agentproxy config lang
 ```
 
 ### `config get`
@@ -161,7 +161,7 @@ omniroute config lang
 **Example:**
 
 ```bash
-omniroute config get
+agentproxy config get
 ```
 
 ### `config set <code>`
@@ -173,7 +173,7 @@ omniroute config get
 **Example:**
 
 ```bash
-omniroute config set <code>
+agentproxy config set <code>
 ```
 
 ### `config list`
@@ -185,7 +185,7 @@ omniroute config set <code>
 **Example:**
 
 ```bash
-omniroute config list
+agentproxy config list
 ```
 
 ### `env`
@@ -195,7 +195,7 @@ Show and manage environment variables
 **Example:**
 
 ```bash
-omniroute env
+agentproxy env
 ```
 
 ### `env show`
@@ -209,7 +209,7 @@ Show current environment variables
 **Example:**
 
 ```bash
-omniroute env show
+agentproxy env show
 ```
 
 ### `env get <key>`
@@ -219,7 +219,7 @@ Get a single environment variable
 **Example:**
 
 ```bash
-omniroute env get <key>
+agentproxy env get <key>
 ```
 
 ### `env set <key> <value>`
@@ -229,7 +229,7 @@ Set an environment variable (current session only)
 **Example:**
 
 ```bash
-omniroute env set <key> <value>
+agentproxy env set <key> <value>
 ```
 
 ### `setup`
@@ -250,7 +250,7 @@ omniroute env set <key> <value>
 **Example:**
 
 ```bash
-omniroute setup
+agentproxy setup
 ```
 
 ### `update`
@@ -267,5 +267,5 @@ omniroute setup
 **Example:**
 
 ```bash
-omniroute update
+agentproxy update
 ```

@@ -1,9 +1,14 @@
-import type { RequestPipelinePayloads } from "@omniroute/open-sse/utils/requestLogger.ts";
-import { classifyProviderError } from "@omniroute/open-sse/services/errorClassifier.ts";
+import { z } from "zod";
+import type { RequestPipelinePayloads } from "@agentproxy/open-sse/utils/requestLogger.ts";
+import {
+  classifyProviderError,
+  ERROR_TYPE_CONTRACT,
+  type ErrorTypeContract,
+} from "@agentproxy/open-sse/services/errorClassifier.ts";
 import {
   sanitizeErrorMessage,
   sanitizeUpstreamDetails,
-} from "@omniroute/open-sse/utils/errorSanitization.ts";
+} from "@agentproxy/open-sse/utils/errorSanitization.ts";
 import { sanitizePII } from "../../piiSanitizer";
 import {
   omitEncryptedReasoningFromLogChunks,
@@ -143,10 +148,24 @@ export function buildRequestSummary(
   requestType: string | null,
   requestBody: unknown
 ): string | null {
-  if (requestType !== "search") return null;
-
   const body = asRecord(requestBody);
   if (Object.keys(body).length === 0) return null;
+
+  if (requestType === "audio_transcription") {
+    const summary: JsonRecord = {};
+    if (typeof body.audioDurationSeconds === "number" && Number.isFinite(body.audioDurationSeconds)) {
+      summary.audioDurationSeconds = body.audioDurationSeconds;
+    }
+    if (typeof body.contentType === "string" && body.contentType.trim().length > 0) {
+      summary.contentType = body.contentType;
+    }
+    if (typeof body.sizeBytes === "number" && Number.isFinite(body.sizeBytes) && body.sizeBytes >= 0) {
+      summary.sizeBytes = body.sizeBytes;
+    }
+    return Object.keys(summary).length > 0 ? JSON.stringify(summary) : null;
+  }
+
+  if (requestType !== "search") return null;
 
   const summary: JsonRecord = {};
   if (typeof body.query === "string" && body.query.trim().length > 0) {
@@ -177,8 +196,25 @@ export function classifyCallLogError(
   status: number,
   error: unknown,
   provider?: string | null
-): string | null {
+): ErrorTypeContract | null {
   const errorText = typeof error === "string" ? error : error instanceof Error ? error.message : "";
-  if (status < 400 && errorText.length === 0) return null;
-  return classifyProviderError(status, errorText, provider);
+  if (status === 0 ? errorText.length === 0 : status < 400) return null;
+  return classifyProviderError(status, errorText, provider) ?? "unknown";
+}
+
+let storedErrorTypeSchema: z.ZodEnum<Record<ErrorTypeContract, ErrorTypeContract>> | null = null;
+
+function getStoredErrorTypeSchema() {
+  if (storedErrorTypeSchema === null) {
+    storedErrorTypeSchema = z.enum(
+      ERROR_TYPE_CONTRACT as readonly [ErrorTypeContract, ...ErrorTypeContract[]]
+    );
+  }
+  return storedErrorTypeSchema;
+}
+
+export function toStoredErrorType(value: unknown): ErrorTypeContract | null {
+  if (value === null || value === undefined) return null;
+  const parsed = getStoredErrorTypeSchema().safeParse(value);
+  return parsed.success ? parsed.data : "unknown";
 }

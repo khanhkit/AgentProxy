@@ -4,15 +4,15 @@ import {
   fetchAndPersistProviderLimits,
   refreshAndUpdateCredentials,
 } from "@/lib/usage/providerLimits";
-import { invalidateGrokCliQuotaCache } from "@omniroute/open-sse/services/grokCliQuotaFetcher.ts";
+import { invalidateGrokCliQuotaCache } from "@agentproxy/open-sse/services/grokCliQuotaFetcher.ts";
 import {
   consumeGrokResetCredit as consumeGrokResetCreditRpc,
   GrokResetCreditError,
   listGrokResetCreditTokens,
   type GrokResetCreditOutcome,
   type PublicGrokResetCredit,
-} from "@omniroute/open-sse/services/grokResetCredits.ts";
-import { sanitizeErrorMessage } from "@omniroute/open-sse/utils/error.ts";
+} from "@agentproxy/open-sse/services/grokResetCredits.ts";
+import { sanitizeErrorMessage } from "@agentproxy/open-sse/utils/error.ts";
 
 export { GrokResetCreditError };
 

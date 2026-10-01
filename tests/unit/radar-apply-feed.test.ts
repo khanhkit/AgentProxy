@@ -496,7 +496,7 @@ test("origin switches to 'radar' when feed updates a baseline entry", () => {
 
 /** Minimal valid RadarFeed payload (passes RadarFeedSchema.parse). */
 const VALID_FEED_JSON = JSON.stringify({
-  feed: "omniroute-radar",
+  feed: "agentproxy-radar",
   schemaVersion: 1,
   version: "2026.08.01.1",
   generatedAt: "2026-08-01T12:00:00Z",

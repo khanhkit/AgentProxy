@@ -6,30 +6,30 @@
 
 ---
 
-title: "Dokumentazzjoni tal-Server OmniRoute MCP"
+title: "Dokumentazzjoni tal-Server AgentProxy MCP"
 version: 3.8.50
 lastUpdated: 2026-08-08
 ---
 
-# Dokumentazzjoni tal-Server OmniRoute MCP
+# Dokumentazzjoni tal-Server AgentProxy MCP
 
 > Protokoll tal-Kuntest tal-Mudell b'110 għodda fost operazzjonijiet ta' rotot, cache, kompressjoni, memorja, ħiliet, prokwi, pool, Radar, u sorsi tal-kuntest.
 >
-> Is-sors tal-verità: `open-sse/mcp-server/server.ts` jikkalkula **110 għodda unika** b'`countUniqueMcpTools()`: 45 definizzjonijiet kanoniċi (inklużi s-sitt għodod tal-ħajja ta' CCR, il-trio tal-ħiliet tal-ewlieni, `omniroute_radar_catalog`, u `omniroute_x_search`), flimkien mal-memorja (3), ħiliet (4), ħiliet GitHub (3), pool (6), gamifikazzjoni (8), plugins (8), Notion (6), Obsidian (22), corpus lokali (3), u żewġ għodod tal-kompressjoni biss-RTK.
+> Is-sors tal-verità: `open-sse/mcp-server/server.ts` jikkalkula **110 għodda unika** b'`countUniqueMcpTools()`: 45 definizzjonijiet kanoniċi (inklużi s-sitt għodod tal-ħajja ta' CCR, il-trio tal-ħiliet tal-ewlieni, `agentproxy_radar_catalog`, u `agentproxy_x_search`), flimkien mal-memorja (3), ħiliet (4), ħiliet GitHub (3), pool (6), gamifikazzjoni (8), plugins (8), Notion (6), Obsidian (22), corpus lokali (3), u żewġ għodod tal-kompressjoni biss-RTK.
 
 ## Installazzjoni
 
-OmniRoute MCP huwa mibni fid-dħul. Beda billi:
+AgentProxy MCP huwa mibni fid-dħul. Beda billi:
 
 ```bash
-omniroute --mcp
+agentproxy --mcp
 ```
 
 Jew permezz tal-ġbir open-sse:
 
 ```bash
 # Ġbir li jista' jiġi strimjat HTTP (port 20130)
-omniroute --dev  # L-MCP jibda awtomatikament fuq il-ponta /mcp
+agentproxy --dev  # L-MCP jibda awtomatikament fuq il-ponta /mcp
 ```
 
 ## Ġabriet
@@ -75,61 +75,61 @@ Cursor, Cline, u l-issettjar ta' klijenti MCP kompatibbli.
 
 | Għodda                          | Skopijiet             | Deskrizzjoni                                                                                                                              |
 | :------------------------------ | :-------------------- | :---------------------------------------------------------------------------------------------------------------------------------------- |
-| `omniroute_get_health`          | `read:health`         | Ħin ta' ħidma, memorija, breakers tal-ċirkuwitu, limiti tar-rata, statistiċi tal-cache                                                    |
-| `omniroute_list_combos`         | `read:combos`         | Kollha l-kombos konfigurati bl-istrateġiji (metrici opzjonali)                                                                            |
-| `omniroute_get_combo_metrics`   | `read:combos`         | Metriċi tal-prestazzjoni għal kombu speċifiku                                                                                             |
-| `omniroute_switch_combo`        | `write:combos`        | Attiva jew diżattiva kombu                                                                                                                |
-| `omniroute_create_combo`        | `write:combos`        | Ħloq kombu validat permezz tal-API tal-kombu eżistenti                                                                                    |
-| `omniroute_check_quota`         | `read:quota`          | Kwantità użata/kollha, perċentwal fadal, ħin ta' reset, saħħa tal-token                                                                   |
-| `omniroute_route_request`       | `execute:completions` | Agħti t-tlestija tal-chat permezz tal-irbit ta' OmniRoute                                                                                 |
-| `omniroute_cost_report`         | `read:usage`          | Rapport tal-ispejji skont l-iperjodu (session/jum/ġimgħa/xahar)                                                                           |
-| `omniroute_list_models_cartier` | `read:models`         | Katalogu tal-mudelli sħiħ b'kapaċitajiet, statut, prezz                                                                                   |
-| `omniroute_radar_cartier`       | `read:radar`          | Katalogu lokali iffirmat Radar; filtr tal-fornitur/familja opzjonali                                                                      |
-| `omniroute_tool_search`         | `read:tools`          | Skopri għodod mill-katalogu MCP irreġistrat                                                                                               |
-| `omniroute_web_search`          | `execute:search`      | Tiftix tal-web permezz tal-fornituri tat-tiftix konfigurati. Mhux X/Twitter.                                                              |
-| `omniroute_x_search`            | `execute:search`      | Fittix X permezz ta' xAI/SuperGrok, jew agħżel `xquik-search` għar-riżultati tal-API tal-Xquik. Teħtieġ credentials għal backend magħżul. |
-| `omniroute_web_fetch`           | `execute:search`      | Ġib kontenut tal-web permezz tal-fornituri tal-ġbid konfigurati                                                                           |
+| `agentproxy_get_health`          | `read:health`         | Ħin ta' ħidma, memorija, breakers tal-ċirkuwitu, limiti tar-rata, statistiċi tal-cache                                                    |
+| `agentproxy_list_combos`         | `read:combos`         | Kollha l-kombos konfigurati bl-istrateġiji (metrici opzjonali)                                                                            |
+| `agentproxy_get_combo_metrics`   | `read:combos`         | Metriċi tal-prestazzjoni għal kombu speċifiku                                                                                             |
+| `agentproxy_switch_combo`        | `write:combos`        | Attiva jew diżattiva kombu                                                                                                                |
+| `agentproxy_create_combo`        | `write:combos`        | Ħloq kombu validat permezz tal-API tal-kombu eżistenti                                                                                    |
+| `agentproxy_check_quota`         | `read:quota`          | Kwantità użata/kollha, perċentwal fadal, ħin ta' reset, saħħa tal-token                                                                   |
+| `agentproxy_route_request`       | `execute:completions` | Agħti t-tlestija tal-chat permezz tal-irbit ta' AgentProxy                                                                                 |
+| `agentproxy_cost_report`         | `read:usage`          | Rapport tal-ispejji skont l-iperjodu (session/jum/ġimgħa/xahar)                                                                           |
+| `agentproxy_list_models_cartier` | `read:models`         | Katalogu tal-mudelli sħiħ b'kapaċitajiet, statut, prezz                                                                                   |
+| `agentproxy_radar_cartier`       | `read:radar`          | Katalogu lokali iffirmat Radar; filtr tal-fornitur/familja opzjonali                                                                      |
+| `agentproxy_tool_search`         | `read:tools`          | Skopri għodod mill-katalogu MCP irreġistrat                                                                                               |
+| `agentproxy_web_search`          | `execute:search`      | Tiftix tal-web permezz tal-fornituri tat-tiftix konfigurati. Mhux X/Twitter.                                                              |
+| `agentproxy_x_search`            | `execute:search`      | Fittix X permezz ta' xAI/SuperGrok, jew agħżel `xquik-search` għar-riżultati tal-API tal-Xquik. Teħtieġ credentials għal backend magħżul. |
+| `agentproxy_web_fetch`           | `execute:search`      | Ġib kontenut tal-web permezz tal-fornituri tal-ġbid konfigurati                                                                           |
 
 ## Għodod Avvanzati (11) — Fażi 2
 
 | Għodda                             | Ambiti                               | Deskrizzjoni                                                                                                          |
 | :--------------------------------- | :----------------------------------- | :-------------------------------------------------------------------------------------------------------------------- |
-| `omniroute_simulate_route`         | `read:health`, `read:combos`         | Simulazzjoni tat-tħaddim b'itradd għal ġurnata mingħajr effett f'ħin reali mal-permezz tal-pju ta' fallback           |
-| `omniroute_set_budget_guard`       | `write:budget`                       | Iżżur is-sessjoni bil-ħlas b'azzjonijiet ta' degradazzjoni/blokki/tħabbir                                             |
-| `omniroute_set_routing_strategy`   | `write:combos`                       | Aġġorna l-istrateġija tal-kombu f'ħin reali (priorità/pżżata/awtomatika/ieħor)                                        |
-| `omniroute_set_resilience_profile` | `write:resilience`                   | Introduċi preset ta' reżiljenza `aggressiv` / `bilanċjat` / `konservattiv`                                            |
-| `omniroute_test_combo`             | `execute:completions`, `read:combos` | Test ħaj ta' kull fornitur f'kombu juża sejħa reali ta' upstream                                                      |
-| `omniroute_get_provider_metrics`   | `read:health`                        | Metriċi għal kull fornitur b'latenzja p50/p95/p99 u l-istat tal-qtar tal-circuit breaker                              |
-| `omniroute_best_combo_for_task`    | `read:combos`, `read:health`         | Irrakkomanda kombu skont it-tip tax-xogħol b'kuntinjenzi ta' buġit/latenzja                                           |
-| `omniroute_explain_route`          | `read:health`, `read:usage`          | Spjega għaliex sejħa ġiet immexxija lejn fornitur (fatturi tal-punteġġ + fallbacks)                                   |
-| `omniroute_get_session_snapshot`   | `read:usage`                         | Stampi sħiħa tas-sessjoni: spejjeż, tokens, mudelli/fornituri ewlenin, żbalji, gwardija tal-buġit                     |
-| `omniroute_db_health_check`        | `read:health`, `write:resilience`    | Diġanos u (jekk mixtieq) tirranġa awtomatikament telfa tal-bażi tad-dejta bħal referenzi kompu miksura / linji orfani |
-| `omniroute_sync_pricing`           | `pricing:write`                      | Sincronizza data tal-prezzijiet minn sorsi esterni (LiteLLM); jappoġġa `dryRun`                                       |
+| `agentproxy_simulate_route`         | `read:health`, `read:combos`         | Simulazzjoni tat-tħaddim b'itradd għal ġurnata mingħajr effett f'ħin reali mal-permezz tal-pju ta' fallback           |
+| `agentproxy_set_budget_guard`       | `write:budget`                       | Iżżur is-sessjoni bil-ħlas b'azzjonijiet ta' degradazzjoni/blokki/tħabbir                                             |
+| `agentproxy_set_routing_strategy`   | `write:combos`                       | Aġġorna l-istrateġija tal-kombu f'ħin reali (priorità/pżżata/awtomatika/ieħor)                                        |
+| `agentproxy_set_resilience_profile` | `write:resilience`                   | Introduċi preset ta' reżiljenza `aggressiv` / `bilanċjat` / `konservattiv`                                            |
+| `agentproxy_test_combo`             | `execute:completions`, `read:combos` | Test ħaj ta' kull fornitur f'kombu juża sejħa reali ta' upstream                                                      |
+| `agentproxy_get_provider_metrics`   | `read:health`                        | Metriċi għal kull fornitur b'latenzja p50/p95/p99 u l-istat tal-qtar tal-circuit breaker                              |
+| `agentproxy_best_combo_for_task`    | `read:combos`, `read:health`         | Irrakkomanda kombu skont it-tip tax-xogħol b'kuntinjenzi ta' buġit/latenzja                                           |
+| `agentproxy_explain_route`          | `read:health`, `read:usage`          | Spjega għaliex sejħa ġiet immexxija lejn fornitur (fatturi tal-punteġġ + fallbacks)                                   |
+| `agentproxy_get_session_snapshot`   | `read:usage`                         | Stampi sħiħa tas-sessjoni: spejjeż, tokens, mudelli/fornituri ewlenin, żbalji, gwardija tal-buġit                     |
+| `agentproxy_db_health_check`        | `read:health`, `write:resilience`    | Diġanos u (jekk mixtieq) tirranġa awtomatikament telfa tal-bażi tad-dejta bħal referenzi kompu miksura / linji orfani |
+| `agentproxy_sync_pricing`           | `pricing:write`                      | Sincronizza data tal-prezzijiet minn sorsi esterni (LiteLLM); jappoġġa `dryRun`                                       |
 
 ## Għodod tal-Cache (2)
 
 | Għodda                  | Ambiti        | Deskrizzjoni                                                     |
 | :---------------------- | :------------ | :--------------------------------------------------------------- |
-| `omniroute_cache_stats` | `read:cache`  | Kaxxa semantika, kaxxa ta' prompts, u statistiċi tal-idempotenzi |
-| `omniroute_cache_flush` | `write:cache` | Tneħħi l-cache globalment jew skont il-firxa/mudell              |
+| `agentproxy_cache_stats` | `read:cache`  | Kaxxa semantika, kaxxa ta' prompts, u statistiċi tal-idempotenzi |
+| `agentproxy_cache_flush` | `write:cache` | Tneħħi l-cache globalment jew skont il-firxa/mudell              |
 
 ## Għodod tal-Kompressjoni (13)
 
 | Għodda                              | Ambiti              | Deskrizzjoni                                                                                                                                                     |
 | :---------------------------------- | :------------------ | :--------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `omniroute_compression_status`      | `read:compression`  | Settings tal-kompressjoni, sommarju tal-analiżi, u statistiki tal-cache-aware (jinkludi metadata `analytics.mcpDescriptionCompression`)                          |
-| `omniroute_compression_configure`   | `write:compression` | Ikkonfigura l-modalità tal-kompressjoni, il-limitu, l-għan tar-rata, il-preservazzjoni tal-prompt tas-sistema, u l-buttuna tal-kompressjoni tal-deskrizzjoni MCP |
-| `omniroute_set_compression_engine`  | `write:compression` | Agħżel il-magna attiva (ttara/caveman/rtk/stacked) u l-intensità tal-Caveman/RTK                                                                                 |
-| `omniroute_list_compression_combos` | `read:compression`  | Ippreżenta l-kombinazzjonijiet tal-kompressjoni b'isimhom u l-pipeline tal-magni tagħhom                                                                         |
-| `omniroute_compression_combo_stats` | `read:compression`  | Analitiċi mogħtija skont il-kombinazzjoni tal-kompressjoni u l-magna                                                                                             |
-| `omniroute_ccr_store`               | `write:compression` | Ħażen kontenut isolat għas-sejħa fil-maħżen ġewwa CCR u ġab markatur flimkien b'referenza `ccr://`                                                               |
-| `omniroute_ccr_retrieve`            | `read:compression`  | Retrieval ta' kontenut CCR sħiħ jew b'modi ta' ras, denb, linji, grep, u statistiċi                                                                              |
-| `omniroute_ccr_inspect`             | `read:compression`  | Ispezzjoni tal-metadata tal-CCR li jappartjeni għas-sejħa mingħajr ma terġa' lura l-kontenut                                                                     |
-| `omniroute_ccr_list`                | `read:compression`  | Ippreżenta metadata paginat għal blokki tal-CCR li jappartjeni għas-sejħa                                                                                        |
-| `omniroute_ccr_delete`              | `write:compression` | Ħassar blokka tal-CCR li jappartjeni għas-sejħa                                                                                                                  |
-| `omniroute_ccr_stats`               | `read:compression`  | Rapporta l-użu tal-memorja skopat għas-sejħa, konturi tal-ħajja, u limiti tal-maħżen                                                                             |
-| `omniroute_rtk_discover`            | `read:compression`  | Skopri t-telliegħa ripetutivi f'sampjunijiet RTK ta' għażla                                                                                                      |
-| `omniroute_rtk_learn`               | `read:compression`  | Ġenera abbozz rivedibbli tal-filtri RTK minn sampjunijiet ta' għażla                                                                                             |
+| `agentproxy_compression_status`      | `read:compression`  | Settings tal-kompressjoni, sommarju tal-analiżi, u statistiki tal-cache-aware (jinkludi metadata `analytics.mcpDescriptionCompression`)                          |
+| `agentproxy_compression_configure`   | `write:compression` | Ikkonfigura l-modalità tal-kompressjoni, il-limitu, l-għan tar-rata, il-preservazzjoni tal-prompt tas-sistema, u l-buttuna tal-kompressjoni tal-deskrizzjoni MCP |
+| `agentproxy_set_compression_engine`  | `write:compression` | Agħżel il-magna attiva (ttara/caveman/rtk/stacked) u l-intensità tal-Caveman/RTK                                                                                 |
+| `agentproxy_list_compression_combos` | `read:compression`  | Ippreżenta l-kombinazzjonijiet tal-kompressjoni b'isimhom u l-pipeline tal-magni tagħhom                                                                         |
+| `agentproxy_compression_combo_stats` | `read:compression`  | Analitiċi mogħtija skont il-kombinazzjoni tal-kompressjoni u l-magna                                                                                             |
+| `agentproxy_ccr_store`               | `write:compression` | Ħażen kontenut isolat għas-sejħa fil-maħżen ġewwa CCR u ġab markatur flimkien b'referenza `ccr://`                                                               |
+| `agentproxy_ccr_retrieve`            | `read:compression`  | Retrieval ta' kontenut CCR sħiħ jew b'modi ta' ras, denb, linji, grep, u statistiċi                                                                              |
+| `agentproxy_ccr_inspect`             | `read:compression`  | Ispezzjoni tal-metadata tal-CCR li jappartjeni għas-sejħa mingħajr ma terġa' lura l-kontenut                                                                     |
+| `agentproxy_ccr_list`                | `read:compression`  | Ippreżenta metadata paginat għal blokki tal-CCR li jappartjeni għas-sejħa                                                                                        |
+| `agentproxy_ccr_delete`              | `write:compression` | Ħassar blokka tal-CCR li jappartjeni għas-sejħa                                                                                                                  |
+| `agentproxy_ccr_stats`               | `read:compression`  | Rapporta l-użu tal-memorja skopat għas-sejħa, konturi tal-ħajja, u limiti tal-maħżen                                                                             |
+| `agentproxy_rtk_discover`            | `read:compression`  | Skopri t-telliegħa ripetutivi f'sampjunijiet RTK ta' għażla                                                                                                      |
+| `agentproxy_rtk_learn`               | `read:compression`  | Ġenera abbozz rivedibbli tal-filtri RTK minn sampjunijiet ta' għażla                                                                                             |
 
 L-ingħad CCR huma ġewwa l-memorja biss u jisparixxu malli terġa' tibda l-applikazzjoni. Kull blokka hija limitata għal 2 MiB, kull
 prinċipal għal 16 MiB, u l-maħżen għal 64 MiB. L-ingħad jinbidlu għal TTL ta' 24 siegħa (massimu
@@ -137,13 +137,13 @@ seba' ijiem). Ir-ritrival sħiħ tal-MCP huwa limitat għal 256 KiB; blokki akba
 modi tal-firxa u l-grep. L-ħażna, l-irkupru, l-ippreżentazzjoni, l-ispezzjoni, l-ħassar, u l-istatistiċi huma iżolati minn
 il-prinċipal tal-API-key identifikat. Ir-rekords tal-awdit jinkludu l-ħotob u metadata tal-kobor, qatt kontenut.
 
-`omniroute_compression_status` jirrapporta l-kompressjoni tal-deskrizzjoni tal-MCP separatament taħt
+`agentproxy_compression_status` jirrapporta l-kompressjoni tal-deskrizzjoni tal-MCP separatament taħt
 `analytics.mcpDescriptionCompression`. Dawn il-valuri huma stimi tad-daqs tal-metadata għal deskrizzjonijiet MCP listable
 (`tools`, `prompts`, `resources`, u `resourceTemplates`); mhumiex rċevi tal-użu tal-furnitur u huma markati b'`source: "mcp_metadata_estimate"`.
 
 ### Filtru tal-Arbu tal-Aċċessibbiltà MCP (v3.8.0)
 
-Skont l-għodod tal-kompressjoni ta' hawn fuq, OmniRoute jinkludi filtr wara l-eżekuzzjoni li
+Skont l-għodod tal-kompressjoni ta' hawn fuq, AgentProxy jinkludi filtr wara l-eżekuzzjoni li
 jikkompressa ir-riżultati tal-**għodod** tal-għodod tal-aċċessibbiltà tal-browser MCP qabel ma jintbagħtu lill-
 aġent. Dan il-filtr mhuwiex għodda stess — jaħdem b'mod trasparenti fuq kwalunkwe riżultat tal-għodda li fih
 test verbose ta' arboret tal-aċċessibbiltà jew stampi tal-browser (≥2000 karattru).
@@ -166,9 +166,9 @@ mudell tal-kompressjoni f'ħin reali wara dawn l-għodod.
 
 | Għodda                      | Ambiti         | Deskrizzjoni                                                                                      |
 | :-------------------------- | :------------- | :------------------------------------------------------------------------------------------------ |
-| `omniroute_oneproxy_fetch`  | `read:proxies` | Ġib prokxies ħielsa mill-1proxy marketplace (filtri ta' protokoll/pajjiż/kwalità/limitu)          |
-| `omniroute_oneproxy_rotate` | `read:proxies` | Ġib il-prokxi li jmiss disponibbli skont l-istrateġija (`random` / `quality` / `sequential`)      |
-| `omniroute_oneproxy_stats`  | `read:proxies` | Statistika tal-pula, status tal-issinkronizzazzjoni, distribuzzjoni skont il-protokoll u l-pajjiż |
+| `agentproxy_oneproxy_fetch`  | `read:proxies` | Ġib prokxies ħielsa mill-1proxy marketplace (filtri ta' protokoll/pajjiż/kwalità/limitu)          |
+| `agentproxy_oneproxy_rotate` | `read:proxies` | Ġib il-prokxi li jmiss disponibbli skont l-istrateġija (`random` / `quality` / `sequential`)      |
+| `agentproxy_oneproxy_stats`  | `read:proxies` | Statistika tal-pula, status tal-issinkronizzazzjoni, distribuzzjoni skont il-protokoll u l-pajjiż |
 
 ## Għodod tal-Memorja (3)
 
@@ -176,9 +176,9 @@ Definiti f'`open-sse/mcp-server/tools/memoryTools.ts`. L-awtentikazzjoni/ambiti 
 
 | Għodda                    | Ambiti         | Deskrizzjoni                                                                                 |
 | :------------------------ | :------------- | :------------------------------------------------------------------------------------------- |
-| `omniroute_memory_search` | `read:memory`  | Fittex memorji permezz ta' titlob/tip/chave API b'infurzar ta' baġit ta' token               |
-| `omniroute_memory_add`    | `write:memory` | Żid entrata ġdida tal-memorja (`factual` / `episodic` / `procedural` / `semantic`)           |
-| `omniroute_memory_clear`  | `write:memory` | Ħassar il-memorji għal chiave API, eventwalment iffiltrat bil-mist jew `olderThan` timestamp |
+| `agentproxy_memory_search` | `read:memory`  | Fittex memorji permezz ta' titlob/tip/chave API b'infurzar ta' baġit ta' token               |
+| `agentproxy_memory_add`    | `write:memory` | Żid entrata ġdida tal-memorja (`factual` / `episodic` / `procedural` / `semantic`)           |
+| `agentproxy_memory_clear`  | `write:memory` | Ħassar il-memorji għal chiave API, eventwalment iffiltrat bil-mist jew `olderThan` timestamp |
 
 ## Għodod tal-Ħiliet (4)
 
@@ -186,10 +186,10 @@ Definiti f'`open-sse/mcp-server/tools/skillTools.ts`. Appoġġjati minn `src/lib
 
 | Għodda                        | Ambiti           | Deskrizzjoni                                                                                     |
 | :---------------------------- | :--------------- | :----------------------------------------------------------------------------------------------- |
-| `omniroute_skills_list`       | `read:skills`    | Reġistra l-ħiliet irreġistrati b'filtru awtonomu skont il-chave API, l-isem, jew l-istat attivat |
-| `omniroute_skills_enable`     | `write:skills`   | Attiva jew diżattiva ħila speċifika permezz ta' ID                                               |
-| `omniroute_skills_execute`    | `execute:skills` | Eżekuta ħila b'data input provduta u erġa lura r-record tal-eżekuzzjoni                          |
-| `omniroute_skills_executions` | `read:skills`    | Reġistra l-istorja tal-eżekuzzjoni tal-ħiliet reċenti                                            |
+| `agentproxy_skills_list`       | `read:skills`    | Reġistra l-ħiliet irreġistrati b'filtru awtonomu skont il-chave API, l-isem, jew l-istat attivat |
+| `agentproxy_skills_enable`     | `write:skills`   | Attiva jew diżattiva ħila speċifika permezz ta' ID                                               |
+| `agentproxy_skills_execute`    | `execute:skills` | Eżekuta ħila b'data input provduta u erġa lura r-record tal-eżekuzzjoni                          |
+| `agentproxy_skills_executions` | `read:skills`    | Reġistra l-istorja tal-eżekuzzjoni tal-ħiliet reċenti                                            |
 
 ## Sors ta' Kuntest Notion (6)
 
@@ -225,9 +225,9 @@ Definit f'`open-sse/mcp-server/tools/agentSkillTools.ts`. Appoġġjat minn `src/
 
 | Għodda                            | Skopijiet      | Deskrizzjoni                                                                                                                                    |
 | :-------------------------------- | :------------- | :---------------------------------------------------------------------------------------------------------------------------------------------- |
-| `omniroute_agent_skills_list`     | `read:catalog` | Lista ta' l-45 ħila tal-aġenti bi filtri fakultattivi `category` (api\|cli) u `area`; jirritorna metadata + koperanza                           |
-| `omniroute_agent_skills_get`      | `read:catalog` | Ħu metadata sħiħ + kontenut SKILL.md għal ħila waħda permezz tal-`id` kanonika                                                                  |
-| `omniroute_agent_skills_coverage` | `read:catalog` | Statistiċi tal-koperanza: kemm mill-23 API, 21 CLI u 1 ħila tal-konfigurazzjoni għandhom fajls SKILL.md fuq il-filesystem vs totali tal-katalgu |
+| `agentproxy_agent_skills_list`     | `read:catalog` | Lista ta' l-45 ħila tal-aġenti bi filtri fakultattivi `category` (api\|cli) u `area`; jirritorna metadata + koperanza                           |
+| `agentproxy_agent_skills_get`      | `read:catalog` | Ħu metadata sħiħ + kontenut SKILL.md għal ħila waħda permezz tal-`id` kanonika                                                                  |
+| `agentproxy_agent_skills_coverage` | `read:catalog` | Statistiċi tal-koperanza: kemm mill-23 API, 21 CLI u 1 ħila tal-konfigurazzjoni għandhom fajls SKILL.md fuq il-filesystem vs totali tal-katalgu |
 
 Ara [AGENT-SKILLS.md](./AGENT-SKILLS.md) għall-katalgu sħiħ u kif l-aġenti esterni jikkunsmawh.
 
@@ -240,7 +240,7 @@ tal-madwar jmorru flimkien mal-server MCP fil-v3.8.0 u huma dokumentati separata
 ### Aġenti tal-Ħruġ (Cloud Agents)
 
 L-Aġenti tal-Ħruġ huma aġenti tal-kodiċjarja AI barra mill-proċess (codex-cloud, cursor-cloud, devin, jules) marbutin
-mal-Omniroute permezz tal-mudell ta' konnessjoni stess użat għall-fornituri LLM. Huma esposti permezz
+mal-AgentProxy permezz tal-mudell ta' konnessjoni stess użat għall-fornituri LLM. Huma esposti permezz
 ta' wieqfa REST propja (`/api/v1/agents/*`) u **mhumiex** parti mill-katalgu tal-għodod MCP
 — il-ħolqien ta' Aġent tal-Ħruġ ma jikkonsmax skop MCP.
 
@@ -310,8 +310,8 @@ L-għodod tal-MCP huma awtentikati permezz ta' skopijiet tal-API key. L-infurzar
 | `write:skills`        | `skills_enable`                                                                                                                                                                   |
 | `execute:skills`      | `skills_execute`                                                                                                                                                                  |
 | `read:catalog`        | `agent_skills_list`, `agent_skills_get`, `agent_skills_coverage`                                                                                                                  |
-| `read:tools`          | `omniroute_tool_search`                                                                                                                                                           |
-| `read:radar`          | `omniroute_radar_catalog`                                                                                                                                                         |
+| `read:tools`          | `agentproxy_tool_search`                                                                                                                                                           |
+| `read:radar`          | `agentproxy_radar_catalog`                                                                                                                                                         |
 | `read:gamification`   | `gamification_profile`, `gamification_rank`, `gamification_leaderboard`, `gamification_badges`, `gamification_servers`, `gamification_anomalies`                                  |
 | `write:gamification`  | `gamification_invite`, `gamification_transfer`                                                                                                                                    |
 | `read:plugins`        | `plugin_list`, `plugin_executions`                                                                                                                                                |
@@ -328,7 +328,7 @@ Il-wasla għat-trasport HTTP/SSE tal-MCP (`/api/mcp/*`) minn barra loopback teħ
 
 ### Rbit tal-iskop HTTP skont il-key (#7895)
 
-Fuq HTTP/SSE, `open-sse/mcp-server/httpTransport.ts` issa jirrisolvi t-`api_keys.scopes` reali tal-istitwenti permezz ta' `resolveMcpCallerAuthInfo()` (`open-sse/mcp-server/httpAuthContext.ts`) u jgħaddu lill-SDK tal-MCP fi `transport.handleRequest(req, { authInfo })`, sabiex `extra.authInfo.scopes` li jilħaq kull sejħa tal-għodda jirrifletti l-iskopijiet tal-key Bearer innifisha. `resolveCallerScopeContext()` ta' `scopeEnforcement.ts` diġà kienet tagħti prijorità lil `authInfo` fuq l-għażliet `_meta` u `OMNIROUTE_MCP_SCOPES` — dan jimla dak l-ewwel sors, l-ogħla prijorità, li qabel kien nieqes fuq HTTP. Meta ma tiġirrisolvix key API (ebda header, key invalid), `authInfo` jibqa' `undefined` u r-risoluzzjoni tinżel għall-katina ta' `meta`/env li diġà teżisti, mingħajr tibdil. Dan MAgħmilx default ta' `OMNIROUTE_MCP_ENFORCE_SCOPES` — l-infurzar għadu jrid ikun attivat b'mod esplicitu; dan il-biddil jagħmel it-triq tal-key tipprevali darba jkun attiv. L-stdio m'għandu l-ebda identità tal-istitwenti (ara `mcpCallerIdentity.ts`) u mhuwa affettwatx — jibqa' fuq il-katina ta' l-għażliet `_meta`/env.
+Fuq HTTP/SSE, `open-sse/mcp-server/httpTransport.ts` issa jirrisolvi t-`api_keys.scopes` reali tal-istitwenti permezz ta' `resolveMcpCallerAuthInfo()` (`open-sse/mcp-server/httpAuthContext.ts`) u jgħaddu lill-SDK tal-MCP fi `transport.handleRequest(req, { authInfo })`, sabiex `extra.authInfo.scopes` li jilħaq kull sejħa tal-għodda jirrifletti l-iskopijiet tal-key Bearer innifisha. `resolveCallerScopeContext()` ta' `scopeEnforcement.ts` diġà kienet tagħti prijorità lil `authInfo` fuq l-għażliet `_meta` u `AGENTPROXY_MCP_SCOPES` — dan jimla dak l-ewwel sors, l-ogħla prijorità, li qabel kien nieqes fuq HTTP. Meta ma tiġirrisolvix key API (ebda header, key invalid), `authInfo` jibqa' `undefined` u r-risoluzzjoni tinżel għall-katina ta' `meta`/env li diġà teżisti, mingħajr tibdil. Dan MAgħmilx default ta' `AGENTPROXY_MCP_ENFORCE_SCOPES` — l-infurzar għadu jrid ikun attivat b'mod esplicitu; dan il-biddil jagħmel it-triq tal-key tipprevali darba jkun attiv. L-stdio m'għandu l-ebda identità tal-istitwenti (ara `mcpCallerIdentity.ts`) u mhuwa affettwatx — jibqa' fuq il-katina ta' l-għażliet `_meta`/env.
 
 ---
 
@@ -336,17 +336,17 @@ Fuq HTTP/SSE, `open-sse/mcp-server/httpTransport.ts` issa jirrisolvi t-`api_keys
 
 | Varaġenti                               | Implemetata b'mod                    | Għan                                                                                                                                                |
 | :-------------------------------------- | :----------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `OMNIROUTE_BASE_URL`                    | `http://localhost:20128`             | URL bażi li l-MCP server juża meta jsejjaħ għall-APIs interni tal-OmniRoute                                                                         |
-| `OMNIROUTE_API_KEY`                     | (bojda)                              | Ċavetta API li tiġi mibgħuta bħala `Authorization: Bearer` lil sejħiet API interni                                                                  |
-| `OMNIROUTE_MCP_ENFORCE_SCOPES`          | `false` (biss `"true"` jiġi attivat) | Meta jkun attivat, is-skopijiet nieqsa jiċħdu l-għodod u jirreġistraw `scope_denied:<reason>` fil-log tal-awditjar                                  |
-| `OMNIROUTE_MCP_SCOPES`                  | (bojda)                              | Lista blt-turija ta' skopijiet separati b'virgola meqjusa "disponibbli" b'mod default (użata meta l-sejjaħ ma jipprovdix l-iskopijiet tiegħu stess) |
-| `OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS`   | (mhux issettjat = mixgħul)           | Meta jkun issettjat għal `0/false/off/no`, jisketta l-kompressjoni tad-deskrizzjoni tal-MCP meta jiġi rreġistrat                                    |
-| `OMNIROUTE_MCP_DESCRIPTION_COMPRESSION` | (mhux issettjat = mixgħul)           | Alias alternattiv għall-istess toggle ta' hawn fuq                                                                                                  |
-| `OMNIROUTE_MCP_FETCH_TIMEOUT_MS`        | `10000`                              | Baġit ta' abboj għal qari maniġerjali interni (saħħa, reżiljenza, kombos, kota, użu)                                                                |
-| `OMNIROUTE_MCP_UPSTREAM_TIMEOUT_MS`     | `60000`                              | Baġit ta' abboj għal passi li jistennew fornitur (`route_request`, `web_search`, `web_fetch`)                                                       |
+| `AGENTPROXY_BASE_URL`                    | `http://localhost:20128`             | URL bażi li l-MCP server juża meta jsejjaħ għall-APIs interni tal-AgentProxy                                                                         |
+| `AGENTPROXY_API_KEY`                     | (bojda)                              | Ċavetta API li tiġi mibgħuta bħala `Authorization: Bearer` lil sejħiet API interni                                                                  |
+| `AGENTPROXY_MCP_ENFORCE_SCOPES`          | `false` (biss `"true"` jiġi attivat) | Meta jkun attivat, is-skopijiet nieqsa jiċħdu l-għodod u jirreġistraw `scope_denied:<reason>` fil-log tal-awditjar                                  |
+| `AGENTPROXY_MCP_SCOPES`                  | (bojda)                              | Lista blt-turija ta' skopijiet separati b'virgola meqjusa "disponibbli" b'mod default (użata meta l-sejjaħ ma jipprovdix l-iskopijiet tiegħu stess) |
+| `AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS`   | (mhux issettjat = mixgħul)           | Meta jkun issettjat għal `0/false/off/no`, jisketta l-kompressjoni tad-deskrizzjoni tal-MCP meta jiġi rreġistrat                                    |
+| `AGENTPROXY_MCP_DESCRIPTION_COMPRESSION` | (mhux issettjat = mixgħul)           | Alias alternattiv għall-istess toggle ta' hawn fuq                                                                                                  |
+| `AGENTPROXY_MCP_FETCH_TIMEOUT_MS`        | `10000`                              | Baġit ta' abboj għal qari maniġerjali interni (saħħa, reżiljenza, kombos, kota, użu)                                                                |
+| `AGENTPROXY_MCP_UPSTREAM_TIMEOUT_MS`     | `60000`                              | Baġit ta' abboj għal passi li jistennew fornitur (`route_request`, `web_search`, `web_fetch`)                                                       |
 | `MCP_TOOL_DENY`                         | (mhux issettjat = l-ebda filtr)      | Għodod separati b'virgola biex jitneħħew minn `tools/list` (tnaqqis tal-kardinalità tal-għoda — ara t'hawn isfel)                                   |
 | `MCP_TOOL_ALLOW`                        | (mhux issettjat = l-ebda filtr)      | Għodod separati b'virgola biex jinżammu esklużivament (modalità allow-list — ara t'hawn isfel)                                                      |
-| `DATA_DIR`                              | `~/.omniroute`                       | Il-fajl tal-ħjiels tal-qalb jiġi miktub f'`${DATA_DIR}/runtime/mcp-heartbeat.json`                                                                  |
+| `DATA_DIR`                              | `~/.agentproxy`                       | Il-fajl tal-ħjiels tal-qalb jiġi miktub f'`${DATA_DIR}/runtime/mcp-heartbeat.json`                                                                  |
 
 ---
 
@@ -356,8 +356,8 @@ Ir-reġistri tal-għodod, prompts, u riżorsi tal-MCP jistgħu jikkompressaw id-
 
 - Il-kompressjoni topera fuq it-test tad-deskrizzjoni bl-użu tas-sett tar-regoli Caveman (`getRulesForContext("all", "full")`) b'estrazzjoni ta' blokki preżervati (span tal-kodiċi, blokki iġgarafu, eċċ.) sabiex il-kontenut strutturali ma jinbidilx.
 - Twaqqaf għal kull impjieg permezz tal-valur `compression.mcpDescriptionCompressionEnabled` fit-tabella tal-issettjar `key_value` (default: mixgħul) — esposta fl-interfaċċ bħala **Analitiċi → Kompressjoni tad-deskrizzjoni tal-MCP**.
-- Twaqqaf għal proċess kollu permezz ta' wieħed minn `OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS=false` jew `OMNIROUTE_MCP_DESCRIPTION_COMPRESSION=false`.
-- L-istatistika reali turi permezz ta' `omniroute_compression_status` taħt `analytics.mcpDescriptionCompression` u tittagga b'`source: "mcp_metadata_estimate"` biex jiġi diskriminat minn irċeviċi reali tal-użu tal-fornitur.
+- Twaqqaf għal proċess kollu permezz ta' wieħed minn `AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS=false` jew `AGENTPROXY_MCP_DESCRIPTION_COMPRESSION=false`.
+- L-istatistika reali turi permezz ta' `agentproxy_compression_status` taħt `analytics.mcpDescriptionCompression` u tittagga b'`source: "mcp_metadata_estimate"` biex jiġi diskriminat minn irċeviċi reali tal-użu tal-fornitur.
 
 ## Tnaqqis tal-Kardinalità tal-Għodod (F4.3)
 
@@ -374,10 +374,10 @@ Id-deskrizzjoni tin压缩 kull metadatal tal-għodda; **il-tnaqqis tal-kardinali
 
 ```bash
 # Aħli żewġ għodod mill-katalogu
-MCP_TOOL_DENY="omniroute_get_health,omniroute_list_combos" omniroute --mcp
+MCP_TOOL_DENY="agentproxy_get_health,agentproxy_list_combos" agentproxy --mcp
 
 # Ippubblika biss l-għodod tal-rotta + il-kwantità (modalità lista ta' permessi)
-MCP_TOOL_ALLOW="omniroute_route_request,omniroute_check_quota" omniroute --mcp
+MCP_TOOL_ALLOW="agentproxy_route_request,agentproxy_check_quota" agentproxy --mcp
 ```
 
 **Kif l-għodod filtrati jitneħħew:** ir-reġistrazzjoni dejjem tirnexxi; għodda li l-profil jirrifjuta mbagħad tingħata `.disable()` fuq il-handle tal-SDK tal-MCP, sabiex qatt ma tidher f'`tools/list` iżda l-wiring iżommha intatta (tattiv/attivat b'mod nadif, l-ebda reġistrazzjoni mill-ġdid). L-analizzatur tal-profil huwa `readMcpToolProfileFromEnv(process.env)`, li jirritorna `null` (bla filtru) meta l-variabli kollha jkun vojta.

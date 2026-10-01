@@ -6,20 +6,20 @@
 
 ---
 
-title: "OmniRoute diegimo Fly.io vadovas"
+title: "AgentProxy diegimo Fly.io vadovas"
 version: 3.8.40
 lastUpdated: 2026-06-28
 ---
 
-# OmniRoute diegimo Fly.io vadovas
+# AgentProxy diegimo Fly.io vadovas
 
-Šiame dokumente aprašomas faktinis „OmniRoute“ diegimo procesas Fly.io platformoje, apimantis šiuos scenarijus:
+Šiame dokumente aprašomas faktinis „AgentProxy“ diegimo procesas Fly.io platformoje, apimantis šiuos scenarijus:
 
 - Dabartinio projekto diegimas Fly.io platformoje pirmą kartą
 - Vėlesnių kodo naujinimų publikavimas
 - Nauji projektai, kuriuose naudojama tokia pati diegimo eiga
 
-Šis vadovas parengtas remiantis patikrinta ir veikiančia dabartinio projekto konfigūracija. Programos pavadinimas yra `omniroute`.
+Šis vadovas parengtas remiantis patikrinta ir veikiančia dabartinio projekto konfigūracija. Programos pavadinimas yra `agentproxy`.
 
 ---
 
@@ -29,7 +29,7 @@ lastUpdated: 2026-06-28
 - Diegimo būdas: tiesioginis publikavimas naudojant vietinį `flyctl`
 - Vykdymo aplinka: naudojami saugykloje esantys `Dockerfile` ir `fly.toml`
 - Duomenų išsaugojimas: „Fly Volume“ tomas prijungiamas prie `/data`
-- Prieigos URL: `https://omniroute.fly.dev/`
+- Prieigos URL: `https://agentproxy.example.com/`
 
 ---
 
@@ -38,7 +38,7 @@ lastUpdated: 2026-06-28
 Patvirtinta, kad dabartinės saugyklos faile `fly.toml` yra šie pagrindiniai elementai:
 
 ```toml
-app = 'omniroute'
+app = 'agentproxy'
 primary_region = 'sin'
 
 [[mounts]]
@@ -60,7 +60,7 @@ primary_region = 'sin'
 
 Pastabos:
 
-- `app = 'omniroute'` nustato, kuriai „Fly“ programai skirtas diegimas
+- `app = 'agentproxy'` nustato, kuriai „Fly“ programai skirtas diegimas
 - `destination = '/data'` nustato nuolatinio tomo prijungimo katalogą
 - Šiame projekte būtina nustatyti `DATA_DIR=/data`, antraip duomenų bazė ir raktai bus įrašyti į laikinąjį konteinerio katalogą
 
@@ -98,8 +98,8 @@ flyctl version
 ### 4.1 Klonuokite kodą ir pereikite į katalogą
 
 ```powershell
-git clone https://github.com/diegosouzapw/OmniRoute.git
-cd OmniRoute
+git clone https://github.com/khanhkit/AgentProxy.git
+cd AgentProxy
 ```
 
 ### 4.2 Patvirtinkite programos pavadinimą
@@ -107,29 +107,29 @@ cd OmniRoute
 Atidarykite `fly.toml` ir patikrinkite šią eilutę:
 
 ```toml
-app = 'omniroute'
+app = 'agentproxy'
 ```
 
 Jei diegiate savo naują programą, galite pakeisti pavadinimą į visuotinai unikalų, pavyzdžiui:
 
 ```toml
-app = 'omniroute-yourname'
+app = 'agentproxy-yourname'
 ```
 
 Pastaba:
 
 - Įsitikinkite, kad valdymo pulte rodomos programos pavadinimas sutampa su `app` reikšme faile `fly.toml`
-- Jei anksčiau naudojote kitą pavadinimą, pavyzdžiui, `oroute`, nepainiokite jo su `omniroute`
+- Jei anksčiau naudojote kitą pavadinimą, pavyzdžiui, `oroute`, nepainiokite jo su `agentproxy`
 
 ### 4.3 Sukurkite programą
 
 Jei programa dar neegzistuoja:
 
 ```powershell
-flyctl apps create omniroute
+flyctl apps create agentproxy
 ```
 
-Jei pakeitėte programos pavadinimą, pakeiskite `omniroute` savo pasirinktu pavadinimu.
+Jei pakeitėte programos pavadinimą, pakeiskite `agentproxy` savo pasirinktu pavadinimu.
 
 ### 4.4 Pirmasis diegimas
 
@@ -145,14 +145,14 @@ flyctl deploy
 
 ### 5.1 Patikrinti parametrai
 
-Šie parametrai buvo naudojami faktiškai diegiant dabartinę `omniroute` programą:
+Šie parametrai buvo naudojami faktiškai diegiant dabartinę `agentproxy` programą:
 
 - `API_KEY_SECRET`
 - `DATA_DIR`
 - `JWT_SECRET`
 - `MACHINE_ID_SALT`
 - `NEXT_PUBLIC_BASE_URL`
-- `OMNIROUTE_WS_BRIDGE_SECRET` (privalomas produkcinėje aplinkoje — naudojamas „WebSocket“ tilto autentifikavimui)
+- `AGENTPROXY_WS_BRIDGE_SECRET` (privalomas produkcinėje aplinkoje — naudojamas „WebSocket“ tilto autentifikavimui)
 - `STORAGE_ENCRYPTION_KEY`
 
 ### 5.2 Apie `INITIAL_PASSWORD`
@@ -180,7 +180,7 @@ Jei norite automatiškai inicijuoti serverio slaptažodį, vėliau galite pridė
 | ------------------------------------- | --------------------------- | -------------------------------------------------------- |
 | `API_KEY_SECRET`                      | Privalomas                  | Naudojamas API raktams generuoti ir tikrinti             |
 | `JWT_SECRET`                          | Privalomas                  | Naudojamas prisijungimo seansams ir JWT pasirašyti       |
-| `OMNIROUTE_WS_BRIDGE_SECRET`          | Privalomas produkcijoje     | WebSocket tilto autentifikavimo paslaptis                |
+| `AGENTPROXY_WS_BRIDGE_SECRET`          | Privalomas produkcijoje     | WebSocket tilto autentifikavimo paslaptis                |
 | `STORAGE_ENCRYPTION_KEY`              | Primygtinai rekomenduojamas | Užšifruoja neskelbtiną ryšio informaciją saugojimo metu  |
 | `MACHINE_ID_SALT`                     | Rekomenduojamas             | Sugeneruoja stabilų įrenginio identifikatorių            |
 | `INITIAL_PASSWORD`                    | Neprivalomas                | Nustato pradinį serverio slaptažodį pirmojo diegimo metu |
@@ -191,7 +191,7 @@ Jei norite automatiškai inicijuoti serverio slaptažodį, vėliau galite pridė
 | Kintamasis             | Rekomenduojama reikšmė      |
 | ---------------------- | --------------------------- |
 | `DATA_DIR`             | `/data`                     |
-| `NEXT_PUBLIC_BASE_URL` | `https://omniroute.fly.dev` |
+| `NEXT_PUBLIC_BASE_URL` | `https://agentproxy.example.com` |
 
 Pastabos:
 
@@ -205,10 +205,10 @@ Jei „Fly.io“ dieginyje reikia įjungti OAuth pagrindu veikiančius teikėjus
 1. **Nustatykite `NEXT_PUBLIC_BASE_URL` į savo viešą HTTPS domeną**
 
    ```powershell
-   flyctl secrets set NEXT_PUBLIC_BASE_URL=https://omniroute.fly.dev -a omniroute
+   flyctl secrets set NEXT_PUBLIC_BASE_URL=https://agentproxy.example.com -a agentproxy
    ```
 
-   Jei naudojate pasirinktinį domeną, pakeiskite jį atitinkamu domenu (pvz., `https://omniroute.yourdomain.com`).
+   Jei naudojate pasirinktinį domeną, pakeiskite jį atitinkamu domenu (pvz., `https://agentproxy.yourdomain.com`).
 
 2. **Sukonfigūruokite atgalinio iškvietimo URL teikėjo valdymo pulte**
 
@@ -219,7 +219,7 @@ Jei „Fly.io“ dieginyje reikia įjungti OAuth pagrindu veikiančius teikėjus
    ```
 
    Pavyzdžiui, nesvarbu, ar naudojate Gemini, Antigravity, Cursor, ar GitLab Duo:
-   - `https://omniroute.fly.dev/callback`
+   - `https://agentproxy.example.com/callback`
 
    Jei `NEXT_PUBLIC_BASE_URL` nesutampa su teikėjo sistemoje užregistruotu atgalinio iškvietimo URL, OAuth eiga nutrūks naršyklės peradresavimo etape.
 
@@ -232,7 +232,7 @@ Toliau pateiktos komandos sugeneruoja saugias atsitiktines reikšmes ir vienu ve
 Pastabos:
 
 - `INITIAL_PASSWORD` neįtrauktas
-- Skirta dabartiniam projektui `omniroute`
+- Skirta dabartiniam projektui `agentproxy`
 
 ```powershell
 $apiKeySecret = [Convert]::ToHexString((1..32 | ForEach-Object { Get-Random -Minimum 0 -Maximum 256 })).ToLower()
@@ -246,26 +246,26 @@ flyctl secrets set `
   JWT_SECRET=$jwtSecret `
   MACHINE_ID_SALT=$machineIdSalt `
   STORAGE_ENCRYPTION_KEY=$storageKey `
-  OMNIROUTE_WS_BRIDGE_SECRET=$wsBridgeSecret `
+  AGENTPROXY_WS_BRIDGE_SECRET=$wsBridgeSecret `
   DATA_DIR=/data `
-  NEXT_PUBLIC_BASE_URL=https://omniroute.fly.dev `
-  -a omniroute
+  NEXT_PUBLIC_BASE_URL=https://agentproxy.example.com `
+  -a agentproxy
 ```
 
 Linux / macOS sistemose taip pat galite naudoti `openssl rand -hex 32`:
 
 ```bash
-flyctl secrets set OMNIROUTE_WS_BRIDGE_SECRET=$(openssl rand -hex 32) -a omniroute
+flyctl secrets set AGENTPROXY_WS_BRIDGE_SECRET=$(openssl rand -hex 32) -a agentproxy
 ```
 
 Pastabos:
 
-- `OMNIROUTE_WS_BRIDGE_SECRET` yra privalomas produkcijoje; jei jo nebus, WebSocket tilto ryšio užmezgimas neveiks
+- `AGENTPROXY_WS_BRIDGE_SECRET` yra privalomas produkcijoje; jei jo nebus, WebSocket tilto ryšio užmezgimas neveiks
 
 Jei taip pat norite nustatyti pradinį slaptažodį:
 
 ```powershell
-flyctl secrets set INITIAL_PASSWORD=your-strong-password -a omniroute
+flyctl secrets set INITIAL_PASSWORD=your-strong-password -a agentproxy
 ```
 
 ---
@@ -273,12 +273,12 @@ flyctl secrets set INITIAL_PASSWORD=your-strong-password -a omniroute
 ## 8. Dabartinių parametrų peržiūra
 
 ```powershell
-flyctl secrets list -a omniroute
+flyctl secrets list -a agentproxy
 ```
 
 Jei konsolės puslapyje `Secrets` nerodomi numatyti kintamieji, patikrinkite:
 
-- Ar peržiūrite programą `omniroute`
+- Ar peržiūrite programą `agentproxy`
 - Ar `app` reikšmė faile `fly.toml` atitinka konsolėje esančią programą
 
 ---
@@ -295,14 +295,14 @@ flyctl deploy
 Jei reikia tik atnaujinti parametrus nekeičiant kodo:
 
 ```powershell
-flyctl secrets set KEY=value -a omniroute
+flyctl secrets set KEY=value -a agentproxy
 ```
 
 „Fly“ automatiškai atliks laipsnišką mašinų naujinimą.
 
 ### 9.1 Pagrindinės saugyklos naujinimų sekimas išsaugant jūsų atšakos `fly.toml`
 
-Jei dabartinė saugykla yra atšaka ir norite sinchronizuoti naujinimus iš pagrindinės saugyklos `https://github.com/diegosouzapw/OmniRoute`, atlikite toliau nurodytus veiksmus.
+Jei dabartinė saugykla yra atšaka ir norite sinchronizuoti naujinimus iš pagrindinės saugyklos `https://github.com/khanhkit/AgentProxy`, atlikite toliau nurodytus veiksmus.
 
 Pirmiausia patikrinkite nuotolines saugyklas:
 
@@ -318,7 +318,7 @@ Turėtumėte matyti bent:
 Jei `upstream` nesukonfigūruota, pridėkite ją:
 
 ```powershell
-git remote add upstream https://github.com/diegosouzapw/OmniRoute.git
+git remote add upstream https://github.com/khanhkit/AgentProxy.git
 ```
 
 Prieš sinchronizuodami su pagrindine saugykla, gaukite naujausius pakeitimus ir žymas:
@@ -370,8 +370,8 @@ Sinchronizavę su pradine saugykla, laikykitės šios rekomenduojamos leidimo ve
 3. Atkurkite atšakos `fly.toml`
 4. `git push origin main`
 5. `flyctl deploy`
-6. `flyctl status -a omniroute`
-7. `flyctl logs --no-tail -a omniroute`
+6. `flyctl status -a agentproxy`
+7. `flyctl logs --no-tail -a agentproxy`
 
 Tai yra faktinė darbo eiga, naudota naujinant dabartinį projektą į `v3.4.7` (pavyzdyje nurodyta istorinė versija; dabartinė faktinė versija yra `v3.8.0`).
 
@@ -382,20 +382,20 @@ Tai yra faktinė darbo eiga, naudota naujinant dabartinį projektą į `v3.4.7` 
 ### 10.1 Patikrinkite programos būseną
 
 ```powershell
-flyctl status -a omniroute
+flyctl status -a agentproxy
 ```
 
 ### 10.2 Peržiūrėkite paleidimo žurnalus
 
 ```powershell
-flyctl logs --no-tail -a omniroute
+flyctl logs --no-tail -a agentproxy
 ```
 
 ### 10.3 Patikrinkite svetainės pasiekiamumą
 
 ```powershell
 try {
-  (Invoke-WebRequest -Uri "https://omniroute.fly.dev" -MaximumRedirection 5 -UseBasicParsing).StatusCode
+  (Invoke-WebRequest -Uri "https://agentproxy.example.com" -MaximumRedirection 5 -UseBasicParsing).StatusCode
 } catch {
   if ($_.Exception.Response) {
     $_.Exception.Response.StatusCode.value__
@@ -434,14 +434,14 @@ Jei vietoje to matote `/app/data/...`, `DATA_DIR` sukonfigūruotas netinkamai ir
 Paprastai tam yra dvi priežastys:
 
 - Dar nepaleidote `flyctl secrets set`
-- Peržiūrite kitą programą (pvz., `oroute`, o ne `omniroute`)
+- Peržiūrite kitą programą (pvz., `oroute`, o ne `agentproxy`)
 
 ### 12.2 `flyctl deploy` praneša `app not found`
 
 Pirmiausia sukurkite programą:
 
 ```powershell
-flyctl apps create omniroute
+flyctl apps create agentproxy
 ```
 
 ### 12.3 Nepavyksta išanalizuoti `fly.toml`
@@ -484,10 +484,10 @@ Vėlesniems leidimams dažniausiai naudojamos šios komandos:
 
 ```powershell
 flyctl auth whoami
-flyctl status -a omniroute
-flyctl secrets list -a omniroute
+flyctl status -a agentproxy
+flyctl secrets list -a agentproxy
 flyctl deploy
-flyctl logs --no-tail -a omniroute
+flyctl logs --no-tail -a agentproxy
 ```
 
 Įprastam leidimui pagrindinė komanda yra tiesiog:
@@ -499,7 +499,7 @@ flyctl deploy
 Pirmą kartą diegiant naujoje aplinkoje, pagrindiniai veiksmai yra šie:
 
 1. `flyctl auth login`
-2. `flyctl apps create omniroute`
-3. `flyctl secrets set ... -a omniroute`
+2. `flyctl apps create agentproxy`
+3. `flyctl secrets set ... -a agentproxy`
 4. `flyctl deploy`
-5. `flyctl logs --no-tail -a omniroute`
+5. `flyctl logs --no-tail -a agentproxy`

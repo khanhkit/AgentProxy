@@ -1,5 +1,6 @@
 import "./setupPolyfill.ts";
 import { Agent, ProxyAgent, type Dispatcher } from "undici";
+import { decodeUserinfo } from "@/shared/utils/decodeUserinfo";
 import { getUpstreamTimeoutConfig } from "@/shared/utils/runtimeTimeouts";
 import { stripIpv6Brackets, detectIpLiteralFamily, parseProxyFamily } from "./proxyFamily.ts";
 import { createSocksDispatcherWithFamily } from "./socksConnectorWithFamily.ts";
@@ -80,13 +81,13 @@ function getDispatcherOptions() {
 export function getProxyDispatcherConnectionLimit(
   env: Record<string, string | undefined> = process.env
 ): number {
-  const raw = env.OMNIROUTE_PROXY_DISPATCHER_CONNECTIONS;
+  const raw = env.AGENTPROXY_PROXY_DISPATCHER_CONNECTIONS;
   if (raw == null || raw.trim() === "") return DEFAULT_PROXY_DISPATCHER_CONNECTIONS;
 
   const parsed = Number(raw);
   if (!Number.isFinite(parsed) || parsed < 1) {
     console.warn(
-      `[ProxyDispatcher] Invalid OMNIROUTE_PROXY_DISPATCHER_CONNECTIONS="${raw}". Using default ${DEFAULT_PROXY_DISPATCHER_CONNECTIONS}.`
+      `[ProxyDispatcher] Invalid AGENTPROXY_PROXY_DISPATCHER_CONNECTIONS="${raw}". Using default ${DEFAULT_PROXY_DISPATCHER_CONNECTIONS}.`
     );
     return DEFAULT_PROXY_DISPATCHER_CONNECTIONS;
   }
@@ -123,13 +124,13 @@ function getProxyDispatcherOptions(env: Record<string, string | undefined> = pro
 export function getDefaultDispatcherConnectionLimit(
   env: Record<string, string | undefined> = process.env
 ): number {
-  const raw = env.OMNIROUTE_DIRECT_DISPATCHER_CONNECTIONS;
+  const raw = env.AGENTPROXY_DIRECT_DISPATCHER_CONNECTIONS;
   if (raw == null || raw.trim() === "") return DEFAULT_PROXY_DISPATCHER_CONNECTIONS;
 
   const parsed = Number(raw);
   if (!Number.isFinite(parsed) || parsed < 1) {
     console.warn(
-      `[ProxyDispatcher] Invalid OMNIROUTE_DIRECT_DISPATCHER_CONNECTIONS="${raw}". Using default ${DEFAULT_PROXY_DISPATCHER_CONNECTIONS}.`
+      `[ProxyDispatcher] Invalid AGENTPROXY_DIRECT_DISPATCHER_CONNECTIONS="${raw}". Using default ${DEFAULT_PROXY_DISPATCHER_CONNECTIONS}.`
     );
     return DEFAULT_PROXY_DISPATCHER_CONNECTIONS;
   }
@@ -436,6 +437,14 @@ export function __createRoundRobinDispatcherForTest(dispatchers: Dispatcher[]): 
   return createRoundRobinDispatcher(dispatchers);
 }
 
+/** Proxy-Authorization token built with guarded userinfo decoding. */
+function buildProxyAuthorizationToken(parsed: URL): string | null {
+  if (!parsed.username) return null;
+  const user = decodeUserinfo(parsed.username);
+  const pass = parsed.password ? decodeUserinfo(parsed.password) : "";
+  return "Basic " + Buffer.from(user + ":" + pass).toString("base64");
+}
+
 /**
  * Build a ProxyAgent / socks dispatcher for a normalized proxy URL using the
  * given options. Shared by the pooled dispatcher (keep-alive, pipelining 4)
@@ -458,8 +467,8 @@ function buildProxyDispatcher(
       host: stripIpv6Brackets(parsed.hostname),
       port: Number(port),
     };
-    if (parsed.username) socksOptions.userId = decodeURIComponent(parsed.username);
-    if (parsed.password) socksOptions.password = decodeURIComponent(parsed.password);
+    if (parsed.username) socksOptions.userId = decodeUserinfo(parsed.username);
+    if (parsed.password) socksOptions.password = decodeUserinfo(parsed.password);
     return createSocksDispatcherWithFamily(
       socksOptions as unknown as Parameters<typeof createSocksDispatcherWithFamily>[0],
       family,
@@ -473,15 +482,17 @@ function buildProxyDispatcher(
   // `{ family, autoSelectFamily }` pin. At runtime undici merges these options into
   // net.connect (the uri already carries the host:port), so the partial pin is
   // valid; the cast suppresses the spurious missing-`port` error.
+  const proxyAuthorization = buildProxyAuthorizationToken(parsed);
   return new ProxyAgent({
     uri: cleanUri,
     // undici 8.6+ forwards plain-HTTP requests through the proxy as an origin
     // request (GET http://host/…) instead of a CONNECT tunnel; upstream proxies
-    // that only speak CONNECT then reject it (501). OmniRoute tunnels ALL proxied
+    // that only speak CONNECT then reject it (501). AgentProxy tunnels ALL proxied
     // traffic (HTTP + HTTPS) via CONNECT, so force tunneling. Unknown option on
     // undici <8.6 → silently ignored (that version already tunneled by default).
     proxyTunnel: true,
     ...options,
+    ...(proxyAuthorization ? { token: proxyAuthorization } : {}),
     ...(family !== null
       ? { proxyTls: { family, autoSelectFamily: false } as ProxyAgent.Options["proxyTls"] }
       : {}),
@@ -553,7 +564,7 @@ export function __getSocksOptionsForTest(proxyUrl: string): SocksDispatcherOptio
     host: stripIpv6Brackets(parsed.hostname),
     port: Number(port),
   };
-  if (parsed.username) socksOptions.userId = decodeURIComponent(parsed.username);
-  if (parsed.password) socksOptions.password = decodeURIComponent(parsed.password);
+  if (parsed.username) socksOptions.userId = decodeUserinfo(parsed.username);
+  if (parsed.password) socksOptions.password = decodeUserinfo(parsed.password);
   return socksOptions;
 }

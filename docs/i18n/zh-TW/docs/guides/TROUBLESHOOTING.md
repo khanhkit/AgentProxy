@@ -10,17 +10,17 @@ lastUpdated: 2026-07-15
 
 🌐 **Languages:** 🇺🇸 [English](../../../../guides/TROUBLESHOOTING.md) · 🇸🇦 [ar](../../../ar/docs/guides/TROUBLESHOOTING.md) · 🇦🇿 [az](../../../az/docs/guides/TROUBLESHOOTING.md) · 🇧🇬 [bg](../../../bg/docs/guides/TROUBLESHOOTING.md) · 🇧🇩 [bn](../../../bn/docs/guides/TROUBLESHOOTING.md) · 🇨🇿 [cs](../../../cs/docs/guides/TROUBLESHOOTING.md) · 🇩🇰 [da](../../../da/docs/guides/TROUBLESHOOTING.md) · 🇩🇪 [de](../../../de/docs/guides/TROUBLESHOOTING.md) · 🇬🇷 [el](../../../el/docs/guides/TROUBLESHOOTING.md) · 🇪🇸 [es](../../../es/docs/guides/TROUBLESHOOTING.md) · 🇪🇪 [et](../../../et/docs/guides/TROUBLESHOOTING.md) · 🇮🇷 [fa](../../../fa/docs/guides/TROUBLESHOOTING.md) · 🇫🇮 [fi](../../../fi/docs/guides/TROUBLESHOOTING.md) · 🇫🇷 [fr](../../../fr/docs/guides/TROUBLESHOOTING.md) · 🇮🇪 [ga](../../../ga/docs/guides/TROUBLESHOOTING.md) · 🇮🇳 [gu](../../../gu/docs/guides/TROUBLESHOOTING.md) · 🇮🇱 [he](../../../he/docs/guides/TROUBLESHOOTING.md) · 🇮🇳 [hi](../../../hi/docs/guides/TROUBLESHOOTING.md) · 🇭🇷 [hr](../../../hr/docs/guides/TROUBLESHOOTING.md) · 🇭🇺 [hu](../../../hu/docs/guides/TROUBLESHOOTING.md) · 🇮🇩 [id](../../../id/docs/guides/TROUBLESHOOTING.md) · 🇮🇹 [it](../../../it/docs/guides/TROUBLESHOOTING.md) · 🇯🇵 [ja](../../../ja/docs/guides/TROUBLESHOOTING.md) · 🇰🇷 [ko](../../../ko/docs/guides/TROUBLESHOOTING.md) · 🇱🇹 [lt](../../../lt/docs/guides/TROUBLESHOOTING.md) · 🇱🇻 [lv](../../../lv/docs/guides/TROUBLESHOOTING.md) · 🇮🇳 [mr](../../../mr/docs/guides/TROUBLESHOOTING.md) · 🇲🇾 [ms](../../../ms/docs/guides/TROUBLESHOOTING.md) · 🇲🇹 [mt](../../../mt/docs/guides/TROUBLESHOOTING.md) · 🇳🇱 [nl](../../../nl/docs/guides/TROUBLESHOOTING.md) · 🇳🇴 [no](../../../no/docs/guides/TROUBLESHOOTING.md) · 🇵🇭 [phi](../../../phi/docs/guides/TROUBLESHOOTING.md) · 🇵🇱 [pl](../../../pl/docs/guides/TROUBLESHOOTING.md) · 🇵🇹 [pt](../../../pt/docs/guides/TROUBLESHOOTING.md) · 🇧🇷 [pt-BR](../../../pt-BR/docs/guides/TROUBLESHOOTING.md) · 🇷🇴 [ro](../../../ro/docs/guides/TROUBLESHOOTING.md) · 🇷🇺 [ru](../../../ru/docs/guides/TROUBLESHOOTING.md) · 🇸🇰 [sk](../../../sk/docs/guides/TROUBLESHOOTING.md) · 🇸🇮 [sl](../../../sl/docs/guides/TROUBLESHOOTING.md) · 🇷🇸 [sr](../../../sr/docs/guides/TROUBLESHOOTING.md) · 🇸🇪 [sv](../../../sv/docs/guides/TROUBLESHOOTING.md) · 🇰🇪 [sw](../../../sw/docs/guides/TROUBLESHOOTING.md) · 🇮🇳 [ta](../../../ta/docs/guides/TROUBLESHOOTING.md) · 🇮🇳 [te](../../../te/docs/guides/TROUBLESHOOTING.md) · 🇹🇭 [th](../../../th/docs/guides/TROUBLESHOOTING.md) · 🇹🇷 [tr](../../../tr/docs/guides/TROUBLESHOOTING.md) · 🇺🇦 [uk-UA](../../../uk-UA/docs/guides/TROUBLESHOOTING.md) · 🇵🇰 [ur](../../../ur/docs/guides/TROUBLESHOOTING.md) · 🇻🇳 [vi](../../../vi/docs/guides/TROUBLESHOOTING.md) · 🇨🇳 [zh-CN](../../../zh-CN/docs/guides/TROUBLESHOOTING.md)
 
-OmniRoute 的常見問題與解決方案。
+AgentProxy 的常見問題與解決方案。
 
 ---
 
 ## 快速參考
 
-**剛接觸 OmniRoute？** 從這裡開始 — 這些能解決 90% 的問題：
+**剛接觸 AgentProxy？** 從這裡開始 — 這些能解決 90% 的問題：
 
 | 我看見這個                | 代表什麼                | 該怎麼做                                                                      |
 | ------------------------- | ----------------------- | ----------------------------------------------------------------------------- |
-| 「無法連線」              | OmniRoute 未在執行      | 執行 `omniroute` 或 `docker restart omniroute`                                |
+| 「無法連線」              | AgentProxy 未在執行      | 執行 `agentproxy` 或 `docker restart agentproxy`                                |
 | 「API 金鑰無效」          | 金鑰錯誤或已過期        | 從提供者網站重新複製金鑰                                                      |
 | 「超出速率限制」          | 請求傳送過於頻繁        | 等待 1 分鐘，或使用 `model: "auto"` 自動切換                                  |
 | 「超出配額」              | 免費/付費配額已用完     | 連接更多提供者，或使用免費提供者（Kiro, Pollinations）                        |
@@ -45,10 +45,10 @@ OmniRoute 的常見問題與解決方案。
 | 首次登入無法運作                                     | 在 `.env` 中設定 `INITIAL_PASSWORD`（無硬編碼預設值）                                                                                      |
 | 儀表板開啟在錯誤的連接埠                             | 設定 `PORT=20128` 和 `NEXT_PUBLIC_BASE_URL=http://localhost:20128`                                                                         |
 | 沒有日誌寫入磁碟                                     | 設定 `APP_LOG_TO_FILE=true`，並確認呼叫記錄捕捉功能已啟用                                                                                  |
-| EACCES：權限被拒                                     | 設定 `DATA_DIR=/path/to/writable/dir` 以覆蓋 `~/.omniroute`                                                                                |
+| EACCES：權限被拒                                     | 設定 `DATA_DIR=/path/to/writable/dir` 以覆蓋 `~/.agentproxy`                                                                                |
 | 路由策略未儲存                                       | 更新至最新的 v3.x 版本（早期版本已修復 Zod schema 以確保設定持續性）                                                                       |
 | 登入崩潰／空白頁面                                   | 檢查 Node.js 版本 — 請參閱下方的 [Node.js 相容性](#nodejs-相容性)                                                                          |
-| `dlopen` / `slice is not valid mach-o file`（macOS） | 執行 `cd $(npm root -g)/omniroute/app && npm rebuild better-sqlite3 && omniroute` — 請參閱下方的 [macOS 原生模組重建](#macos-原生模組重建) |
+| `dlopen` / `slice is not valid mach-o file`（macOS） | 執行 `cd $(npm root -g)/agentproxy/app && npm rebuild better-sqlite3 && agentproxy` — 請參閱下方的 [macOS 原生模組重建](#macos-原生模組重建) |
 | Proxy「fetch 失敗」                                  | 確保 Proxy 設定在正確的層級 — 請參閱下方的 [Proxy 問題](#proxy-問題)                                                                       |
 | 防毒軟體隔離 `README.md`                             | 誤判 — 請參閱下方的[防毒軟體誤判](#防毒軟體誤判)                                                                                           |
 | Kaspersky 將桌面應用程式標記為木馬                   | 未簽署安裝程式的行為分析誤判 — 請參閱下方的[防毒軟體誤判](#防毒軟體誤判)                                                                   |
@@ -63,7 +63,7 @@ OmniRoute 的常見問題與解決方案。
 
 **這是誤判。沒有任何檔案受感染，也無需任何操作。**
 
-Avast 和 AVG 執行啟發式掃描，會將包含大量類似 HTTP 請求連結的純文字/Markdown 檔案標記為可疑。OmniRoute 的 `README.md` 隨 npm 套件一起發布（它列在 `package.json` → `files` 中），因此在全域安裝時會出現在 `node_modules/omniroute/README.md` — 而其中包含約 15 個 `http://localhost:20128/...` 的範例（MCP HTTP/SSE 端點、A2A `.well-known` URL 以及 `curl` 程式碼片段）。這樣的連結密度足以觸發啟發式掃描。
+Avast 和 AVG 執行啟發式掃描，會將包含大量類似 HTTP 請求連結的純文字/Markdown 檔案標記為可疑。AgentProxy 的 `README.md` 隨 npm 套件一起發布（它列在 `package.json` → `files` 中），因此在全域安裝時會出現在 `node_modules/agentproxy/README.md` — 而其中包含約 15 個 `http://localhost:20128/...` 的範例（MCP HTTP/SSE 端點、A2A `.well-known` URL 以及 `curl` 程式碼片段）。這樣的連結密度足以觸發啟發式掃描。
 
 如果這個問題是最近才發生的：檔案的本質並未改變。README 增加了端點表格（新增了 MCP HTTP + SSE + A2A）和更多 `curl` 範例，使其超過了閾值。
 
@@ -71,7 +71,7 @@ Avast 和 AVG 執行啟發式掃描，會將包含大量類似 HTTP 請求連結
 
 **該怎麼做：**
 
-1. **停止通知** — 在防毒軟體中排除安裝目錄（Avast：設定 → 例外），加入您的全域 `node_modules` 路徑和/或 OmniRoute 資料目錄（`~/.omniroute/`）。
+1. **停止通知** — 在防毒軟體中排除安裝目錄（Avast：設定 → 例外），加入您的全域 `node_modules` 路徑和/或 AgentProxy 資料目錄（`~/.agentproxy/`）。
 2. **回報誤判** — <https://www.avast.com/false-positive-file-form.php>，附上被隔離的 `README.md`。這能幫助所有人，因為這是提供者的啟發式掃描對文字檔案的過度反應。
 
 **為什麼我們不在這邊「修復」這個問題：** 範例全都是 `http://localhost`，而 localhost 若要使用 `https` 會需要自簽憑證，增加使用摩擦。為了避開某家廠商的啟發式掃描而修改文件，會損害所有讀者的閱讀體驗，只為了一個掃描器的錯誤。
@@ -85,18 +85,18 @@ Avast 和 AVG 執行啟發式掃描，會將包含大量類似 HTTP 請求連結
 - `resources/app/.build/next/node_modules/playwright-<hash>/lib/…/agentParser.js` 和 `workerProcessEntry.js` — [Playwright](https://playwright.dev)，用於應用程式內提供者登入和瀏覽器支援聊天的瀏覽器自動化函式庫。
 - `resources/app/.build/next/node_modules/tls-client-node-<hash>/bin/tls-client-windows-64-<ver>.dll` — 來自 `tls-client-node` 的原生二進位檔案，用於某些網路提供者的 Cloudflare 相容 HTTP。
 
-**為什麼會觸發：** Windows 安裝程式**尚未進行程式碼簽署**，因此未簽署的 NSIS 安裝程式沒有信譽，行為啟發式掃描會以最大強度執行。加上捆綁的原生 DLL 和數百個寫入 `%LOCALAPPDATA%\Programs\OmniRoute` 的 `.js` 檔案（包括 Next.js 獨立建置的雜湊後綴套件目錄），這就足以觸發啟發式掃描。程式碼簽署已規劃中；在完成之前，新版本可能會重複觸發此問題。
+**為什麼會觸發：** Windows 安裝程式**尚未進行程式碼簽署**，因此未簽署的 NSIS 安裝程式沒有信譽，行為啟發式掃描會以最大強度執行。加上捆綁的原生 DLL 和數百個寫入 `%LOCALAPPDATA%\Programs\AgentProxy` 的 `.js` 檔案（包括 Next.js 獨立建置的雜湊後綴套件目錄），這就足以觸發啟發式掃描。程式碼簽署已規劃中；在完成之前，新版本可能會重複觸發此問題。
 
 **該怎麼做：**
 
-1. **先驗證您的下載**（排除檔案被竄改的可能性）。每個版本都會發布 `latest.yml`，其 `sha512` 欄位（base64）涵蓋 `OmniRoute.Setup.<version>.exe` 安裝程式。在 PowerShell 中，從包含安裝程式的目錄執行：
+1. **先驗證您的下載**（排除檔案被竄改的可能性）。每個版本都會發布 `latest.yml`，其 `sha512` 欄位（base64）涵蓋 `AgentProxy.Setup.<version>.exe` 安裝程式。在 PowerShell 中，從包含安裝程式的目錄執行：
    ```powershell
    $b = [System.Security.Cryptography.SHA512]::Create().ComputeHash(
-     [System.IO.File]::ReadAllBytes("$PWD\OmniRoute.Setup.<version>.exe"))
+     [System.IO.File]::ReadAllBytes("$PWD\AgentProxy.Setup.<version>.exe"))
    [Convert]::ToBase64String($b)
    ```
-   輸出必須與 `latest.yml` → `sha512` 相符。如果不符，請刪除檔案並僅從 [GitHub 發布頁面](https://github.com/diegosouzapw/OmniRoute/releases) 重新下載。
-2. **還原 + 排除** — 從隔離區還原被回滾的項目，並為 `%LOCALAPPDATA%\Programs\OmniRoute` 加入排除規則（Kaspersky → 設定 → 威脅與排除），然後重新安裝。
+   輸出必須與 `latest.yml` → `sha512` 相符。如果不符，請刪除檔案並僅從 [GitHub 發布頁面](https://github.com/khanhkit/AgentProxy/releases) 重新下載。
+2. **還原 + 排除** — 從隔離區還原被回滾的項目，並為 `%LOCALAPPDATA%\Programs\AgentProxy` 加入排除規則（Kaspersky → 設定 → 威脅與排除），然後重新安裝。
 3. **回報誤判** — <https://opentip.kaspersky.com/>。使用者提交的誤判報告確實能加速允許清單的建立。
 
 ---
@@ -107,7 +107,7 @@ Avast 和 AVG 執行啟發式掃描，會將包含大量類似 HTTP 請求連結
 
 ### 登入頁面崩潰或顯示「Module self-registration」錯誤
 
-**原因：** 您執行的 Node.js 版本低於 OmniRoute 核准的安全執行環境最低版本。最常見的情況是執行較舊的 Node 22 或 24 修補版本，低於 OmniRoute 所需的修補安全門檻。
+**原因：** 您執行的 Node.js 版本低於 AgentProxy 核准的安全執行環境最低版本。最常見的情況是執行較舊的 Node 22 或 24 修補版本，低於 AgentProxy 所需的修補安全門檻。
 
 **症狀：**
 
@@ -123,8 +123,8 @@ Avast 和 AVG 執行啟發式掃描，會將包含大量類似 HTTP 請求連結
    nvm use 24
    ```
 2. 驗證版本：`node --version` 應顯示 `v24.0.0` 或更高的 24.x LTS 版本
-3. 重新安裝 OmniRoute：`npm install -g omniroute`
-4. 重新啟動：`omniroute`
+3. 重新安裝 AgentProxy：`npm install -g agentproxy`
+4. 重新啟動：`agentproxy`
 
 > **支援的安全版本：** `>=22.22.2 <23` 或 `>=24.0.0 <27`。Node.js 24.x LTS（Krypton）和 Node.js 26 皆受完整支援。
 
@@ -132,7 +132,7 @@ Avast 和 AVG 執行啟發式掃描，會將包含大量類似 HTTP 請求連結
 
 <a name="macos-原生模組重建"></a>
 
-**原因：** 在全域 `npm install -g omniroute` 之後，套件內的 `better-sqlite3` 原生二進位檔案可能是為與本地執行環境不同的架構或 Node.js ABI 所編譯。這在 macOS（Apple Silicon 和 Intel 皆適用）上很常見，當預先編譯的二進位檔案與您的環境不符時就會發生。
+**原因：** 在全域 `npm install -g agentproxy` 之後，套件內的 `better-sqlite3` 原生二進位檔案可能是為與本地執行環境不同的架構或 Node.js ABI 所編譯。這在 macOS（Apple Silicon 和 Intel 皆適用）上很常見，當預先編譯的二進位檔案與您的環境不符時就會發生。
 
 **症狀：**
 
@@ -141,15 +141,15 @@ Avast 和 AVG 執行啟發式掃描，會將包含大量類似 HTTP 請求連結
 - 完整範例：
 
 ```
-dlopen(/Users/<user>/.nvm/versions/node/v24.14.1/lib/node_modules/omniroute/app/node_modules/better-sqlite3/build/Release/better_sqlite3.node, 0x0001): tried: '...' (slice is not valid mach-o file)
+dlopen(/Users/<user>/.nvm/versions/node/v24.14.1/lib/node_modules/agentproxy/app/node_modules/better-sqlite3/build/Release/better_sqlite3.node, 0x0001): tried: '...' (slice is not valid mach-o file)
 ```
 
 **修復方式 — 為您的本地環境重建（無需降級 Node.js）：**
 
 ```bash
-cd $(npm root -g)/omniroute/app
+cd $(npm root -g)/agentproxy/app
 npm rebuild better-sqlite3
-omniroute
+agentproxy
 ```
 
 > **注意：** 這會針對您當地的 Node.js 版本和 CPU 架構重新編譯原生綁定，解決二進位檔案不匹配的問題。官方支援的執行環境範圍為 **`>=22.22.2 <23` 或 `>=24.0.0 <27`**（`src/shared/utils/nodeRuntimeSupport.ts` 中的 `SUPPORTED_NODE_RANGE`，與 `package.json` 的 `engines` 欄位一致）。Node.js 24.x LTS（Krypton）和 Node.js 26 搭配 `better-sqlite3` v12.x 皆受完整支援。
@@ -176,13 +176,13 @@ omniroute
 
 **原因：** 在 Node.js 22 上，undici@8 的分派器與 Node 內建的 `fetch()` 實作不相容。
 
-**修復方式（v3.5.5+）：** OmniRoute 現在在啟用 Proxy 分派器時使用 undici 自己的 `fetch()` 函式，確保行為一致。請更新至 v3.5.5+。
+**修復方式（v3.5.5+）：** AgentProxy 現在在啟用 Proxy 分派器時使用 undici 自己的 `fetch()` 函式，確保行為一致。請更新至 v3.5.5+。
 
 ### WSL 下的 MITM Proxy：Windows 主機上的桌面應用程式未被攔截
 
-**原因：** MITM Proxy 及其 CA 憑證會安裝在 OmniRoute 執行的環境中。在 WSL 下，該環境是 Linux 客體，而 AI 桌面應用程式（Kiro、Trae、Copilot、Zed 等）則在 Windows 主機上執行。主機應用程式不信任客體的憑證儲存區，也不會透過客體的系統 Proxy 路由，因此桌面攔截無法在該處生效。
+**原因：** MITM Proxy 及其 CA 憑證會安裝在 AgentProxy 執行的環境中。在 WSL 下，該環境是 Linux 客體，而 AI 桌面應用程式（Kiro、Trae、Copilot、Zed 等）則在 Windows 主機上執行。主機應用程式不信任客體的憑證儲存區，也不會透過客體的系統 Proxy 路由，因此桌面攔截無法在該處生效。
 
-**建議：** 在與您要攔截的桌面應用程式相同的作業系統上原生執行 OmniRoute（Windows 應用程式用 Windows；macOS/Linux 同理）。在 WSL 內執行 OmniRoute 同時鎖定主機應用程式，需要手動在 Windows 主機上信任所產生的 CA 憑證，並將每個主機應用程式的網路/Proxy 設定指向 WSL Proxy 端點 — 這是不受支援且脆弱的設定。
+**建議：** 在與您要攔截的桌面應用程式相同的作業系統上原生執行 AgentProxy（Windows 應用程式用 Windows；macOS/Linux 同理）。在 WSL 內執行 AgentProxy 同時鎖定主機應用程式，需要手動在 Windows 主機上信任所產生的 CA 憑證，並將每個主機應用程式的網路/Proxy 設定指向 WSL Proxy 端點 — 這是不受支援且脆弱的設定。
 
 ---
 
@@ -209,7 +209,7 @@ omniroute
 
 ### OAuth Token 已過期
 
-OmniRoute 會自動刷新 Token。如果問題持續存在：
+AgentProxy 會自動刷新 Token。如果問題持續存在：
 
 1. 儀表板 → 提供者 → 重新連線
 2. 刪除並重新加入提供者連線
@@ -231,7 +231,7 @@ OmniRoute 會自動刷新 Token。如果問題持續存在：
 ### 雲端同步錯誤
 
 1. 確認 `BASE_URL` 指向您執行的實例（例如 `http://localhost:20128`）
-2. 確認 `CLOUD_URL` 指向您的雲端端點（例如 `https://omniroute.dev`）
+2. 確認 `CLOUD_URL` 指向您的雲端端點（例如 `https://agentproxy.example.com`）
 3. 保持 `NEXT_PUBLIC_*` 的值與伺服器端的值一致
 
 ### 雲端 `stream=false` 回傳 500
@@ -389,13 +389,13 @@ curl http://localhost:20128/api/monitoring/health
 
 ### 防止驚群效應
 
-當大量並發請求湧入一個已達速率限制的提供者時，OmniRoute 會使用互斥鎖 + 自動速率限制來序列化請求，防止連鎖失敗。這對 API 金鑰提供者是自動生效的。
+當大量並發請求湧入一個已達速率限制的提供者時，AgentProxy 會使用互斥鎖 + 自動速率限制來序列化請求，防止連鎖失敗。這對 API 金鑰提供者是自動生效的。
 
 ---
 
 ## 選用：RAG / LLM 失敗分類（16 種問題）
 
-部分 OmniRoute 使用者將閘道器部署在 RAG 或 Agent 堆疊之前。在這些設定中，常會看到一種奇怪的現象：OmniRoute 看起來正常（提供者正常、路由設定檔無誤、無速率限制警示），但最終答案仍然錯誤。
+部分 AgentProxy 使用者將閘道器部署在 RAG 或 Agent 堆疊之前。在這些設定中，常會看到一種奇怪的現象：AgentProxy 看起來正常（提供者正常、路由設定檔無誤、無速率限制警示），但最終答案仍然錯誤。
 
 實際上，這些問題通常來自下游的 RAG 管線，而非閘道器本身。
 
@@ -414,17 +414,17 @@ curl http://localhost:20128/api/monitoring/health
 
 1. 當您調查一個錯誤回應時，記錄：
    - 使用者的任務與請求
-   - OmniRoute 中的路由或提供者組合
+   - AgentProxy 中的路由或提供者組合
    - 下游使用的任何 RAG 上下文（檢索的文件、工具呼叫等）
 2. 將事件對應到一或兩個 WFGY ProblemMap 編號（`No.1` … `No.16`）。
-3. 將編號儲存在您自己的儀表板、Runbook 或事件追蹤器中，放在 OmniRoute 日誌旁邊。
+3. 將編號儲存在您自己的儀表板、Runbook 或事件追蹤器中，放在 AgentProxy 日誌旁邊。
 4. 使用對應的 WFGY 頁面來決定是否需要變更您的 RAG 堆疊、檢索器或路由策略。
 
 完整文字與具體做法在此（MIT 授權，僅文字）：
 
 [WFGY ProblemMap README](https://github.com/onestardao/WFGY/blob/main/ProblemMap/README.md)
 
-如果您沒有在 OmniRoute 後方執行 RAG 或 Agent 管線，可以忽略本節。
+如果您沒有在 AgentProxy 後方執行 RAG 或 Agent 管線，可以忽略本節。
 
 ---
 
@@ -448,7 +448,7 @@ v3.8.0 版本特有的問題及其目前的解決方法。如果後續修補版�
 
 1. 為您的平台安裝 Devin CLI
 2. 在 `.env` 中設定 `CLI_DEVIN_BIN=/usr/local/bin/devin`（或實際路徑）
-3. 重新啟動 OmniRoute 並從**儀表板 → CLI 工具**重新測試
+3. 重新啟動 AgentProxy 並從**儀表板 → CLI 工具**重新測試
 
 ### 模型冷卻卡住（手動重設）
 
@@ -473,7 +473,7 @@ v3.8.0 版本特有的問題及其目前的解決方法。如果後續修補版�
 
 **修復方式：**
 
-- 從 CLI 執行 `omniroute providers` 以重新觸發 OAuth 流程，或
+- 從 CLI 執行 `agentproxy providers` 以重新觸發 OAuth 流程，或
 - 從**儀表板 → 提供者 → Command Code → 重新連線**重新執行 OAuth
 
 ### ModelScope 回傳積極的 429 冷卻
@@ -490,20 +490,20 @@ v3.8.0 版本特有的問題及其目前的解決方法。如果後續修補版�
 - 確保您使用 v3.8.0 或更新版本
 - 確認**設定 → 備援**下的 `useUpstream429BreakerHints` 切換已啟用
 
-### OMNIROUTE_WS_BRIDGE_SECRET 在生產環境中遺失
+### AGENTPROXY_WS_BRIDGE_SECRET 在生產環境中遺失
 
 **症狀：**
 
 - 在遠端生產主機上執行時，每個 Codex/Responses WebSocket 橋接請求都出現 401
 - WebSocket 橋接握手在連線後立即關閉
 
-**原因：** 生產環境缺少 `OMNIROUTE_WS_BRIDGE_SECRET` 環境變數。
+**原因：** 生產環境缺少 `AGENTPROXY_WS_BRIDGE_SECRET` 環境變數。
 
 **修復方式：**
 
 1. 產生隨機密鑰：`openssl rand -hex 32`
-2. 在生產伺服器環境中設定 `OMNIROUTE_WS_BRIDGE_SECRET=<隨機密鑰>`（以及任何與橋接通訊的用戶端）
-3. 重新啟動 OmniRoute
+2. 在生產伺服器環境中設定 `AGENTPROXY_WS_BRIDGE_SECRET=<隨機密鑰>`（以及任何與橋接通訊的用戶端）
+3. 重新啟動 AgentProxy
 
 ### Responses API：背景模式降級為同步
 
@@ -523,7 +523,7 @@ v3.8.0 版本特有的問題及其目前的解決方法。如果後續修補版�
 
 ## 還是卡住了？
 
-- **GitHub Issues**：[github.com/diegosouzapw/OmniRoute/issues](https://github.com/diegosouzapw/OmniRoute/issues)
+- **GitHub Issues**：[github.com/khanhkit/AgentProxy/issues](https://github.com/khanhkit/AgentProxy/issues)
 - **架構**：請參閱 [`docs/architecture/ARCHITECTURE.md`](../architecture/ARCHITECTURE.md) 了解內部細節
 - **API 參考**：請參閱 [`docs/reference/API_REFERENCE.md`](../reference/API_REFERENCE.md) 了解所有端點
 - **健康狀態儀表板**：查看**儀表板 → 健康狀態**以取得即時系統狀態

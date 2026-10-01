@@ -160,7 +160,48 @@ test("event stream hidden when debugEnabled is false", () => {
   );
 });
 
-test("status discrepancy shows both OmniRoute and provider statuses", () => {
+// Regression: concatenated-JSON recovery must default to the rendered tree;
+// raw wire capture remains an explicit opt-in.
+test("Provider Event Stream defaults to the rendered JsonView tree, not the raw capture", () => {
+  const html = renderToStaticMarkup(
+    React.createElement(RequestLoggerDetail, {
+      log: {
+        status: 200,
+        method: "POST",
+        path: "/v1/chat/completions",
+        timestamp: "2026-04-09T21:27:08.000Z",
+        duration: 2500,
+        provider: "gemini",
+        sourceFormat: "openai-chat",
+        model: "test-model",
+        tokens: { in: 1, out: 1 },
+      },
+      detail: {
+        pipelinePayloads: {
+          streamChunks: { provider: ['data: {"content": "hello"}\n\n'] },
+        },
+        responseBody: "{}",
+      },
+      loading: false,
+      debugEnabled: true,
+      onClose: () => {},
+      onCopy: async () => true,
+    })
+  );
+
+  assert.notEqual(
+    html.indexOf('aria-label="Raw view: off"'),
+    -1,
+    "raw-view toggle should render, defaulting to off"
+  );
+  assert.equal(
+    html.indexOf('data: {"content": "hello"}'),
+    -1,
+    "default view should be the rendered JsonView tree, not the raw captured line"
+  );
+});
+
+test("status discrepancy shows both AgentProxy and provider statuses", () => {
   const html = renderToStaticMarkup(
     React.createElement(RequestLoggerDetail, {
       log: {
@@ -188,9 +229,9 @@ test("status discrepancy shows both OmniRoute and provider statuses", () => {
 
   assert.notEqual(html.indexOf("Upstream: 200"), -1, "Should display upstream/provider status");
   assert.notEqual(
-    html.indexOf("OmniRoute returned 504"),
+    html.indexOf("AgentProxy returned 504"),
     -1,
-    "Should indicate OmniRoute returned its own status"
+    "Should indicate AgentProxy returned its own status"
   );
 });
 
@@ -211,7 +252,7 @@ test("request logger detail renders stream chunks correctly", () => {
         provider: [
           'data: {"type": "message_start"}\n\n',
           'data: {"type": "content_block_start"}\n\n',
-          ": x-omniroute-latency-ms=1\n",
+          ": x-agentproxy-latency-ms=1\n",
           "data: [DONE]\n\n",
         ],
       },

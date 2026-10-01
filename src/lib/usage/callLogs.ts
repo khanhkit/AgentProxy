@@ -7,12 +7,15 @@
 
 import fs from "node:fs";
 import path from "node:path";
-import type { RequestPipelinePayloads } from "@omniroute/open-sse/utils/requestLogger.ts";
-import { sanitizeErrorMessage } from "@omniroute/open-sse/utils/errorSanitization.ts";
+import type { RequestPipelinePayloads } from "@agentproxy/open-sse/utils/requestLogger.ts";
+import { sanitizeErrorMessage } from "@agentproxy/open-sse/utils/errorSanitization.ts";
 import { getDbInstance } from "../db/core";
 import { getRequestDetailLogByCallLogId } from "../db/detailedLogs";
 import { shouldPersistToDisk } from "./migrations";
+import { updateRequestTokensById } from "./usageHistory";
 import { getCallLogApiKeyContext } from "./callLogApiKeyContext";
+import { serializeResilienceActions, resetResilienceActions } from "./resilienceActionsContext";
+import { parseResilienceActions } from "./resilienceActionsParse";
 import {
   seedPendingContinuationState,
   clearPendingContinuationState,
@@ -26,6 +29,11 @@ import {
   getReasoningTokensOrNull,
   getObservedReasoning,
 } from "./tokenAccounting";
+import {
+  hasRenderedContent,
+  isNonTextRequest,
+  resolveUsageProvenance,
+} from "./callContentProvenance";
 import { isNoLog } from "../compliance/noLog";
 import {
   parseStoredPayload,
@@ -50,6 +58,7 @@ import {
   protectPipelinePayloads,
   buildRequestSummary,
   classifyCallLogError,
+  toStoredErrorType,
 } from "./callLogs/format";
 import {
   clearArtifactReference,
@@ -120,6 +129,9 @@ type CallLogSummaryRow = {
   correlation_id?: string | null;
   model_pinned?: number | null;
   session_tag?: string | null;
+  has_content?: number | null;
+  usage_provenance?: string | null;
+  resilience_actions?: string | null;
 };
 
 const RESOLVED_ACCOUNT_SQL = "COALESCE(NULLIF(pc.name, ''), NULLIF(pc.email, ''), cl.account)";
@@ -371,6 +383,27 @@ export function resolveProviderDisplay(
   return null;
 }
 
+function hasCallLogsColumn(columnName: string): boolean {
+  const cached = (hasCallLogsColumn as { cache?: Map<string, boolean> }).cache;
+  if (cached?.has(columnName)) return cached.get(columnName) as boolean;
+  try {
+    const rows = getDbInstance().prepare("PRAGMA table_info(call_logs)").all() as Array<{ name?: string }>;
+    const found = rows.some((row) => row.name === columnName);
+    const map = cached ?? new Map<string, boolean>();
+    map.set(columnName, found);
+    (hasCallLogsColumn as { cache?: Map<string, boolean> }).cache = map;
+    return found;
+  } catch {
+    return false;
+  }
+}
+
+export function invalidateCallLogsColumnCache(): void {
+  (hasCallLogsColumn as { cache?: Map<string, boolean> }).cache = undefined;
+}
+
+export { parseResilienceActions };
+
 function mapSummaryRow(row: CallLogSummaryRow) {
   const detailState = normalizeDetailState(row.detail_state);
   const provider = row.provider;
@@ -398,6 +431,8 @@ function mapSummaryRow(row: CallLogSummaryRow) {
       compressed: row.tokens_compressed != null ? toNumber(row.tokens_compressed) : null,
     },
     cacheSource: row.cache_source || "upstream",
+    hasContent: row.has_content ?? null,
+    usageProvenance: row.usage_provenance ?? null,
     requestType: row.request_type,
     sourceFormat: row.source_format,
     targetFormat: row.target_format,
@@ -418,6 +453,7 @@ function mapSummaryRow(row: CallLogSummaryRow) {
     correlationId: row.correlation_id || null,
     modelPinned: toNumber(row.model_pinned) === 1,
     sessionTag: row.session_tag || null,
+    resilienceActions: parseResilienceActions(row.resilience_actions ?? null),
   };
 }
 
@@ -451,6 +487,7 @@ function getLegacyInlineDetail(id: string) {
 
 async function saveCallLogOperation(entry: any): Promise<void> {
   try {
+    const db = getDbInstance();
     const apiKeyContext = getCallLogApiKeyContext();
     // `||` (not `??`): an empty-string apiKeyId/apiKeyName is "unattributed",
     // same as before this fallback existed — it must not be persisted verbatim
@@ -474,6 +511,8 @@ async function saveCallLogOperation(entry: any): Promise<void> {
           failedResponse ? responseStatus : undefined
         );
     const protectedError = sanitizeErrorForLog(entry.error);
+    const resilienceActions = serializeResilienceActions();
+    const hasResilienceColumn = hasCallLogsColumn("resilience_actions");
 
     // Bridges the window before this row's own artifact write (queued below,
     // async) lands with detail_state = 'ready': a client that fires its next
@@ -507,7 +546,30 @@ async function saveCallLogOperation(entry: any): Promise<void> {
     // while reasoning source/char-count are recorded separately for observability.
     const tokensReasoning = getReasoningTokensOrNull(entry.tokens);
     const reasoningObservation = resolveReasoningObservation(tokensReasoning, entry.responseBody);
-    const errorType = classifyCallLogError(entry.status, entry.error, entry.provider);
+    const errorType = toStoredErrorType(
+      classifyCallLogError(entry.status, entry.error, entry.provider)
+    );
+    // Rendered-content presence plus usage provenance: success-only, additive,
+    // nullable. A 2xx is a success even with token counts at zero, so the
+    // success bound is 200-299 (not <400).
+    const numericStatus = Number(entry.status);
+    const isSuccess = Number.isFinite(numericStatus) && numericStatus >= 200 && numericStatus < 300;
+    const clientVisibleBody =
+      entry.clientResponse ??
+      (entry.pipelinePayloads as { clientResponse?: unknown } | null | undefined)?.clientResponse ??
+      (entry.pipeline as { clientResponse?: unknown } | null | undefined)?.clientResponse ??
+      entry.responseBody;
+    const measurableContent =
+      isSuccess &&
+      !noLogEnabled &&
+      !isNonTextRequest(entry.requestType, entry.path ?? entry.method);
+    const renderedContent = measurableContent ? hasRenderedContent(clientVisibleBody) : null;
+    const hasContent = renderedContent === null ? null : renderedContent ? 1 : 0;
+    const usageProvenance = resolveUsageProvenance({
+      usageEstimated: entry.usageEstimated === true,
+      tokens: entry.tokens,
+      isSuccess,
+    });
     const logEntry = {
       id: typeof entry.id === "string" && entry.id.length > 0 ? entry.id : generateLogId(),
       timestamp: typeof entry.timestamp === "string" ? entry.timestamp : new Date().toISOString(),
@@ -544,7 +606,7 @@ async function saveCallLogOperation(entry: any): Promise<void> {
       sessionTag: entry.sessionTag || null,
       // OpenAI Responses API response id, when this attempt produced one --
       // indexed so a later request's `previous_response_id` can resolve
-      // this row's artifact for OmniRoute-native continuation. See
+      // this row's artifact for AgentProxy-native continuation. See
       // src/lib/db/responsesContinuationStore.ts.
       responseId: typeof entry.responseId === "string" ? entry.responseId : null,
       // #12150 P2 surface 2: 1 when this request's persisted client snapshot had
@@ -552,6 +614,8 @@ async function saveCallLogOperation(entry: any): Promise<void> {
       // resolvePreviousResponseState refuses to rehydrate it as continuation
       // history. See src/lib/db/responsesContinuationStore.ts.
       videoContentRemoved: entry.videoContentRemoved ? 1 : 0,
+      hasContent,
+      usageProvenance,
     };
 
     const requestSummary = noLogEnabled
@@ -588,7 +652,8 @@ async function saveCallLogOperation(entry: any): Promise<void> {
       }
     }
 
-    const db = getDbInstance();
+    const resilienceCol = hasResilienceColumn ? ", resilience_actions" : "";
+    const resilienceParam = hasResilienceColumn ? ", @resilienceActions" : "";
     db.prepare(
       `
       INSERT INTO call_logs (
@@ -601,7 +666,7 @@ async function saveCallLogOperation(entry: any): Promise<void> {
         artifact_relpath, artifact_size_bytes, artifact_sha256,
         has_request_body, has_response_body, has_pipeline_details, request_summary,
         correlation_id, model_pinned, session_tag, response_id, error_type,
-        video_content_removed
+        video_content_removed, has_content, usage_provenance${resilienceCol}
       )
       VALUES (
         @id, @timestamp, @method, @path, @status, @model, @requestedModel, @provider,
@@ -613,7 +678,7 @@ async function saveCallLogOperation(entry: any): Promise<void> {
         @artifactRelPath, @artifactSizeBytes, @artifactSha256,
         @hasRequestBody, @hasResponseBody, @hasPipelineDetails, @requestSummary,
         @correlationId, @modelPinned, @sessionTag, @responseId, @errorType,
-        @videoContentRemoved
+        @videoContentRemoved, @hasContent, @usageProvenance${resilienceParam}
       )
     `
     ).run({
@@ -627,7 +692,9 @@ async function saveCallLogOperation(entry: any): Promise<void> {
       hasResponseBody: protectedResponseBody !== null ? 1 : 0,
       hasPipelineDetails: protectedPipelinePayloads ? 1 : 0,
       requestSummary,
+      resilienceActions,
     });
+    resetResilienceActions();
 
     if (detailState === "ready" && typeof logEntry.responseId === "string") {
       // The durable row is now authoritative; drop the bridge entry instead
@@ -645,6 +712,18 @@ async function saveCallLogOperation(entry: any): Promise<void> {
 }
 
 export function saveCallLog(entry: any): Promise<void> {
+  // Usage is also needed by the live dashboard when disk history is disabled.
+  // Retain only counters, never the request/response bodies from this entry.
+  if (entry?.tokens && typeof entry.tokens === "object") {
+    updateRequestTokensById(entry.pendingRequestId ?? entry.id, {
+      in: getLoggedInputTokens(entry.tokens),
+      out: getLoggedOutputTokens(entry.tokens),
+      cacheRead: getPromptCacheReadTokensOrNull(entry.tokens),
+      cacheCreation: getPromptCacheCreationTokensOrNull(entry.tokens),
+      reasoning: getReasoningTokensOrNull(entry.tokens),
+      compressed: typeof entry.tokensCompressed === "number" ? entry.tokensCompressed : null,
+    });
+  }
   if (!shouldPersistToDisk || callLogSavesClosing) return Promise.resolve();
 
   const operation = saveCallLogOperation(entry);
@@ -892,17 +971,122 @@ export async function getCallLogById(id: string) {
   };
 }
 
-export async function exportCallLogsSince(since: string) {
-  const db = getDbInstance();
-  const ids = db
-    .prepare("SELECT id FROM call_logs WHERE timestamp >= ? ORDER BY timestamp DESC")
-    .all(since)
-    .map((row) => String((row as { id: string }).id));
+export interface LegacyCallLogExportCursor {
+  timestamp: string;
+  rowId: number;
+}
 
+export interface LegacyCallLogExportIdRow extends LegacyCallLogExportCursor {
+  id: string;
+}
+
+export function getLegacyCallLogExportMaxRowId(since: string): number {
+  const db = getDbInstance();
+  const row = db
+    .prepare("SELECT COALESCE(MAX(rowid), 0) AS max_row_id FROM call_logs WHERE timestamp >= ?")
+    .get(since) as { max_row_id?: number } | undefined;
+  return Number(row?.max_row_id ?? 0);
+}
+
+export function getLegacyCallLogExportIdPage(
+  since: string,
+  maxRowId: number,
+  cursor: LegacyCallLogExportCursor | null,
+  limit: number
+): LegacyCallLogExportIdRow[] {
+  const db = getDbInstance();
+  const boundedLimit = Math.max(1, Math.min(Math.trunc(limit), 100));
+  const rows = cursor
+    ? db
+        .prepare(
+          `SELECT rowid AS row_id, id, timestamp
+             FROM call_logs
+            WHERE timestamp >= @since
+              AND rowid <= @maxRowId
+              AND (timestamp < @cursorTimestamp
+                   OR (timestamp = @cursorTimestamp AND rowid < @cursorRowId))
+            ORDER BY timestamp DESC, rowid DESC
+            LIMIT @limit`
+        )
+        .all({
+          since,
+          maxRowId,
+          cursorTimestamp: cursor.timestamp,
+          cursorRowId: cursor.rowId,
+          limit: boundedLimit,
+        })
+    : db
+        .prepare(
+          `SELECT rowid AS row_id, id, timestamp
+             FROM call_logs
+            WHERE timestamp >= @since
+              AND rowid <= @maxRowId
+            ORDER BY timestamp DESC, rowid DESC
+            LIMIT @limit`
+        )
+        .all({ since, maxRowId, limit: boundedLimit });
+
+  return (rows as Array<{ row_id: number; id: string; timestamp: string }>).map((row) => ({
+    id: String(row.id),
+    timestamp: String(row.timestamp),
+    rowId: Number(row.row_id),
+  }));
+}
+
+export async function exportCallLogsSince(since: string) {
+  const maxRowId = getLegacyCallLogExportMaxRowId(since);
   const logs: unknown[] = [];
-  for (const id of ids) {
-    const log = await getCallLogById(id);
-    if (log) logs.push(log);
+  let cursor: LegacyCallLogExportCursor | null = null;
+
+  while (true) {
+    const page = getLegacyCallLogExportIdPage(since, maxRowId, cursor, 100);
+    if (page.length === 0) break;
+
+    for (const row of page) {
+      const log = await getCallLogById(row.id);
+      if (log) logs.push(log);
+    }
+
+    const last = page[page.length - 1];
+    cursor = { timestamp: last.timestamp, rowId: last.rowId };
   }
+
   return logs;
+}
+
+export function countCallLogsSince(since: string): number {
+  const db = getDbInstance();
+  const row = db
+    .prepare("SELECT COUNT(*) AS count FROM call_logs WHERE timestamp >= ?")
+    .get(since) as { count?: number } | undefined;
+  return Number(row?.count ?? 0);
+}
+
+export async function* iterateCallLogsSince(
+  since: string,
+  limit: number
+): AsyncGenerator<unknown, void, void> {
+  const maxRows = Math.max(0, Math.trunc(limit));
+  if (maxRows === 0) return;
+
+  const maxRowId = getLegacyCallLogExportMaxRowId(since);
+  let cursor: LegacyCallLogExportCursor | null = null;
+  let processed = 0;
+
+  while (processed < maxRows) {
+    const pageLimit = Math.min(100, maxRows - processed);
+    const page = getLegacyCallLogExportIdPage(since, maxRowId, cursor, pageLimit);
+    if (page.length === 0) break;
+
+    for (const row of page) {
+      const log = await getCallLogById(row.id);
+      if (log) yield log;
+      processed++;
+      if (processed >= maxRows) break;
+    }
+
+    const last = page[page.length - 1];
+    cursor = { timestamp: last.timestamp, rowId: last.rowId };
+    if (page.length < pageLimit) break;
+  }
 }

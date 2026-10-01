@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getCachedSettings } from "@/lib/db/readCache";
+import { resolvePublicOrigin } from "@/server/origin/publicOrigin";
 
 /**
  * GET /api/auth/oidc/login
@@ -32,15 +33,7 @@ export async function GET(request: Request) {
     );
   }
 
-  // Absolute redirect_uri from the incoming request (respects x-forwarded-proto)
-  const forwardedProto = (request.headers.get("x-forwarded-proto") || "")
-    .split(",")[0]
-    .trim()
-    .toLowerCase();
-  const reqUrl = new URL(request.url);
-  const scheme = forwardedProto === "https" || reqUrl.protocol === "https:" ? "https" : "http";
-  const host = request.headers.get("host") || request.headers.get("Host") || reqUrl.host;
-  const origin = `${scheme}://${host}`;
+  const origin = resolvePublicOrigin(request).origin;
   const redirectUri = `${origin}${redirectPath}`;
 
   // Discover authorization_endpoint
@@ -74,7 +67,7 @@ export async function GET(request: Request) {
   url.searchParams.set("redirect_uri", redirectUri);
   url.searchParams.set("scope", scope);
   url.searchParams.set("state", state);
-  const isHttpsRequest = scheme === "https";
+  const isHttpsRequest = new URL(origin).protocol === "https:";
   const useSecureCookie = process.env.AUTH_COOKIE_SECURE === "true" || isHttpsRequest;
 
   const res = NextResponse.redirect(url.toString());

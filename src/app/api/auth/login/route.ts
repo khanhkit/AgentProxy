@@ -8,6 +8,7 @@ import { cookies } from "next/headers";
 import {
   ensurePersistentManagementPasswordHash,
   getStoredManagementPassword,
+  isKnownInsecureManagementPassword,
   verifyManagementPassword,
 } from "@/lib/auth/managementPassword";
 import { isFeatureFlagEnabled } from "@/shared/utils/featureFlags";
@@ -15,6 +16,7 @@ import { loginSchema } from "@/shared/validation/schemas";
 import { isValidationFailure, validateBody } from "@/shared/validation/helpers";
 import { checkLoginGuard, clearLoginAttempts, recordLoginFailure } from "@/server/auth/loginGuard";
 import { AUTHZ_HEADER_TRUSTED_PEER_IP } from "@/server/authz/headers";
+import { resolvePublicOrigin } from "@/server/origin/publicOrigin";
 
 // SECURITY: No hardcoded fallback — JWT_SECRET must be configured.
 if (!process.env.JWT_SECRET) {
@@ -77,15 +79,15 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Invalid password payload" }, { status: 400 });
     }
     const settings = await getCachedSettings();
-    const trustedPeerIp = process.env.OMNIROUTE_PEER_STAMP_TOKEN
+    const trustedPeerIp = process.env.AGENTPROXY_PEER_STAMP_TOKEN
       ? request.headers.get(AUTHZ_HEADER_TRUSTED_PEER_IP)
       : null;
     const clientIp = trustedPeerIp || auditContext.ipAddress || null;
     const oidcDisabledPassword =
       settings.oidcEnabled === true &&
       (settings.oidcDisablePasswordLogin === true ||
-        isFeatureFlagEnabled("OMNIROUTE_OIDC_DISABLE_PASSWORD_LOGIN") ||
-        process.env.OMNIROUTE_OIDC_DISABLE_PASSWORD_LOGIN === "true" ||
+        isFeatureFlagEnabled("AGENTPROXY_OIDC_DISABLE_PASSWORD_LOGIN") ||
+        process.env.AGENTPROXY_OIDC_DISABLE_PASSWORD_LOGIN === "true" ||
         process.env.OIDC_DISABLE_PASSWORD_LOGIN === "true");
 
     if (oidcDisabledPassword) {
@@ -153,11 +155,45 @@ export async function POST(request: NextRequest) {
 
     const isValid = await verifyManagementPassword(password, storedHash);
 
+    // #8336: tag the origin scope so the audit view can distinguish a mistyped
+    // password from the host itself / the LAN (loopback / private) from a
+    // genuinely external attempt, instead of every failure reading as intrusion.
+    // Computed once and reused below for the #13679 insecure-default gate.
+    const sourceScope = classifyIpScope(auditContext.ipAddress);
+
+    // #13679 (PR D, item #5): the well-known INITIAL_PASSWORD placeholder shipped
+    // in .env.example / contrib/podman/omniroute.container / docker deploy
+    // manifests is a public, guessable credential. Anyone who knows it (i.e.
+    // everyone) can otherwise sign in from anywhere the dashboard is reachable.
+    // `ensurePersistentManagementPasswordHash()` already warns loudly on boot,
+    // but that is a log line, not a control — refuse the login here instead
+    // whenever it matches AND the request is not loopback, forcing the operator
+    // to rotate the password from a trusted local console first.
+    if (isValid && isKnownInsecureManagementPassword(password) && sourceScope !== "loopback") {
+      logAuditEvent({
+        action: "auth.login.insecure_default_blocked",
+        actor: "anonymous",
+        target: "dashboard-auth",
+        resourceType: "auth_session",
+        status: "failed",
+        ipAddress: auditContext.ipAddress || undefined,
+        requestId: auditContext.requestId,
+        metadata: { reason: "well_known_default_password_non_loopback", sourceScope },
+      });
+      return NextResponse.json(
+        {
+          error:
+            "The management password is still set to the well-known default. " +
+            "Log in from localhost and change it before signing in remotely.",
+        },
+        { status: 403 }
+      );
+    }
+
     if (isValid) {
       const forceSecureCookie = process.env.AUTH_COOKIE_SECURE === "true";
-      const forwardedProtoHeader = request.headers.get("x-forwarded-proto") || "";
-      const forwardedProto = forwardedProtoHeader.split(",")[0].trim().toLowerCase();
-      const isHttpsRequest = forwardedProto === "https" || request.nextUrl?.protocol === "https:";
+      const publicOrigin = resolvePublicOrigin(request).origin;
+      const isHttpsRequest = new URL(publicOrigin).protocol === "https:";
       const useSecureCookie = forceSecureCookie || isHttpsRequest;
 
       const token = await new SignJWT({ authenticated: true })
@@ -196,11 +232,6 @@ export async function POST(request: NextRequest) {
     }
 
     const failureDecision = recordLoginFailure(clientIp, { enabled: bruteForceEnabled });
-
-    // #8336: tag the origin scope so the audit view can distinguish a mistyped
-    // password from the host itself / the LAN (loopback / private) from a
-    // genuinely external attempt, instead of every failure reading as intrusion.
-    const sourceScope = classifyIpScope(auditContext.ipAddress);
 
     logAuditEvent({
       action: "auth.login.failed",

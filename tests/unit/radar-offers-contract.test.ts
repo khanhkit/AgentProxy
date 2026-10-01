@@ -10,7 +10,7 @@ import {
   localizeRadarOfferText,
 } from "../../src/lib/radar/offersFeedSchema.ts";
 
-const EXPECTED_FIXTURE_HASH = "f01a4c03a72adbffa944b4bcc8610ad2fec31dc500feaed18bdd9d1af4f06216";
+const EXPECTED_FIXTURE_HASH = "d6d93f8ee459f16d9ec53619b798d7e16083a66f8e69b48a51ff5370148de5da";
 
 async function canonicalFixture(): Promise<Buffer> {
   return readFile(new URL("../fixtures/radar-offers-canonical.json", import.meta.url));

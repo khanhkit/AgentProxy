@@ -79,7 +79,7 @@ test("byte-heavy admitChatRequest: a pressured heap still 503s the second concur
   for (const result of admitted) if (result.admit) result.lease?.release();
 });
 
-test("OMNIROUTE_CHAT_LARGE_BODY_BYTES default threshold takes the heavyweight lease and healthy-headroom", async () => {
+test("AGENTPROXY_CHAT_LARGE_BODY_BYTES default threshold takes the heavyweight lease and healthy-headroom", async () => {
   const controller = new ChatAdmissionController(1, undefined, 1);
   const body = byteHeavyBody(CHAT_LARGE_BODY_BYTES);
   assert.ok(

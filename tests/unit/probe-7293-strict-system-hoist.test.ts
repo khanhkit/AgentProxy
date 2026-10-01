@@ -174,7 +174,14 @@ test("#7293: Claude-source request keeps a single leading system message after c
     .filter((i) => i >= 0);
 
   assert.deepEqual(systemIndices, [0]);
-  // Merge, never drop: both the top-level system and the offender survive.
   assert.match(outMessages[0].content, /You are a coding assistant\./);
-  assert.match(outMessages[0].content, /deferred tools list/);
+
+  const offender = outMessages.find((m) => m.content === "deferred tools list");
+  assert.ok(offender, "the mid-array system instruction must not be dropped");
+  assert.equal(offender.role, "user", "it is demoted, not merged (#12908)");
+  assert.deepEqual(
+    outMessages.filter((m) => m.role === "user").map((m) => m.content),
+    ["hi", "deferred tools list", "go"],
+    "corrected ordering — the demoted turn keeps its chronological position (#13948)"
+  );
 });

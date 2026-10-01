@@ -4,7 +4,7 @@
  * Defines per-provider "fingerprints" that control the exact ordering of HTTP headers
  * and JSON body fields to match the native CLI tools exactly.
  *
- * When `cliCompatMode` is enabled for a provider, OmniRoute reorders outgoing requests
+ * When `cliCompatMode` is enabled for a provider, AgentProxy reorders outgoing requests
  * to be indistinguishable from the real CLI binary, reducing account flagging risk.
  *
  * Header order and body field order were captured via mitmproxy traffic analysis.
@@ -265,15 +265,32 @@ export function orderHeaders(
  * Apply a CLI fingerprint to headers and body.
  * Returns { headers, bodyString } with the correct ordering.
  */
-export function stripInternalBodyFields(body: unknown): unknown {
+const INTERNAL_BODY_FIELDS: readonly string[] = [
+  "_claudeCodeRequiresLowercaseToolNames",
+  "_nativeCodexPassthrough",
+  "_nativeXaiResponsesPassthrough",
+  "_nativeOpenAICompatibleResponsesPassthrough",
+];
+
+const INTERNAL_BODY_FIELD_PREFIX = "_agentproxy";
+
+export function stripInternalBodyFields(
+  body: unknown,
+  options: { preserve?: readonly string[] } = {}
+): unknown {
   if (!body || typeof body !== "object" || Array.isArray(body)) return body;
 
   const record = body as Record<string, unknown>;
-  delete record._claudeCodeRequiresLowercaseToolNames;
-  delete record._nativeCodexPassthrough;
-  delete record._nativeXaiResponsesPassthrough;
-  delete record._nativeOpenAICompatibleResponsesPassthrough;
-  delete record._omnirouteResponsesStore;
+  const preserve = new Set(options.preserve ?? []);
+
+  for (const field of INTERNAL_BODY_FIELDS) {
+    delete record[field];
+  }
+  for (const key of Object.keys(record)) {
+    if (key.startsWith(INTERNAL_BODY_FIELD_PREFIX) && !preserve.has(key)) {
+      delete record[key];
+    }
+  }
   return body;
 }
 

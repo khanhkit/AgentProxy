@@ -7,8 +7,9 @@
  */
 import { AgentBridgeServerActionSchema } from "@/shared/schemas/agentBridge";
 import { getCachedPassword, setCachedPassword } from "@/mitm/manager";
-import { installCertResult, checkCertInstalled } from "@/mitm/cert/install";
+import { installCertResult, installCaCert, checkCertInstalled } from "@/mitm/cert/install";
 import { generateCert } from "@/mitm/cert/generate";
+import { resolveActiveCertPath } from "@/mitm/cert/activeCert";
 import { resolveMitmDataDir } from "@/mitm/dataDir";
 import {
   isMitmSudoPasswordRequired,
@@ -16,12 +17,12 @@ import {
   resolveMitmSudoPassword,
 } from "@/mitm/sudoGate";
 import path from "path";
-import { sanitizeErrorMessage } from "@omniroute/open-sse/utils/error";
+import { sanitizeErrorMessage } from "@agentproxy/open-sse/utils/error";
 import { createErrorResponse } from "@/lib/api/errorResponse";
 import { pickApiKeyForInternalUse } from "@/lib/db/apiKeys";
 
 /**
- * Resolve the OmniRoute API key the spawned MITM child (`server.cjs`) uses to
+ * Resolve the AgentProxy API key the spawned MITM child (`server.cjs`) uses to
  * authenticate its own outbound calls back to `/v1/chat/completions`
  * (`ROUTER_API_KEY` env — see `src/mitm/manager.ts::startMitmInternal`).
  *
@@ -30,7 +31,7 @@ import { pickApiKeyForInternalUse } from "@/lib/db/apiKeys";
  * `apiKey` field) and the `ROUTER_API_KEY` process env var (unset unless an
  * operator manually exports it). On a normal install neither is ever set, so
  * `startMitm()` always received `""` and the MITM child exited with
- * "ROUTER_API_KEY required" even though OmniRoute already had a usable key in
+ * "ROUTER_API_KEY required" even though AgentProxy already had a usable key in
  * its own DB (#6403). Falls back to the same DB-backed selector used by the
  * combo-health-check / cloud-sync-verify internal probes.
  */
@@ -104,8 +105,17 @@ export async function POST(request: Request): Promise<Response> {
       if (isMitmSudoPasswordRequired(sudoPassword)) {
         return createErrorResponse({ status: 400, message: "Missing sudoPassword" });
       }
-      const certPath = path.join(resolveMitmDataDir(), "mitm", "server.crt");
-      const result = await installCertResult(sudoPassword, certPath);
+      // #14070: resolve + trust the file the active migration decision
+      // actually installs (ca.crt via installCaCert() under the root-CA
+      // model) instead of always hard-coding/trusting the legacy
+      // server.crt — mirrors manager.ts's own branch (startMitmInternal).
+      const certDir = path.join(resolveMitmDataDir(), "mitm");
+      const rootCaEnabled = process.env.MITM_ROOT_CA_ENABLED === "true";
+      const { certPath, mode } = resolveActiveCertPath(certDir, rootCaEnabled);
+      const result =
+        mode === "use-root-ca"
+          ? await installCaCert(sudoPassword, certPath)
+          : await installCertResult(sudoPassword, certPath);
       if (result.installed) {
         const suppliedPassword =
           typeof raw.sudoPassword === "string"

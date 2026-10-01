@@ -4,15 +4,15 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-const TEST_ROOT = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-chatcore-translation-"));
+const TEST_ROOT = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-chatcore-translation-"));
 const TEST_DATA_DIR = path.join(TEST_ROOT, "data");
 const TEST_PLUGINS_DIR = path.join(TEST_ROOT, "plugins");
 const ORIGINAL_DATA_DIR = process.env.DATA_DIR;
-const ORIGINAL_PLUGINS_DIR = process.env.OMNIROUTE_PLUGINS_DIR;
+const ORIGINAL_PLUGINS_DIR = process.env.AGENTPROXY_PLUGINS_DIR;
 fs.mkdirSync(TEST_DATA_DIR, { recursive: true });
 fs.mkdirSync(TEST_PLUGINS_DIR, { recursive: true });
 process.env.DATA_DIR = TEST_DATA_DIR;
-process.env.OMNIROUTE_PLUGINS_DIR = TEST_PLUGINS_DIR;
+process.env.AGENTPROXY_PLUGINS_DIR = TEST_PLUGINS_DIR;
 const core = await import("../../src/lib/db/core.ts");
 const providersDb = await import("../../src/lib/db/providers.ts");
 const settingsDb = await import("../../src/lib/db/settings.ts");
@@ -379,6 +379,7 @@ async function invokeChatCore({
   reasoningTransportFallback = "drop",
   managedLease = null,
   cachedSettings = null,
+  modelTargetFormat = undefined,
 }: any = {}) {
   const calls: any[] = [];
 
@@ -408,10 +409,19 @@ async function invokeChatCore({
     const requestBody = structuredClone(body);
     const result = await handleChatCore({
       body: requestBody,
-      modelInfo: { provider, model, extendedContext: false },
+      modelInfo:
+        modelTargetFormat !== undefined
+          ? { provider, model, extendedContext: false, targetFormat: modelTargetFormat }
+          : { provider, model, extendedContext: false },
       credentials: credentials || {
         apiKey: "sk-test",
-        providerSpecificData: {},
+        // #13452/#13798: buildUrl() refuses an `*-compatible-*` node with no baseUrl
+        // rather than defaulting to the real OpenAI/Anthropic API, so the default
+        // fixture has to hydrate the connection the way a configured one is. Real
+        // providers keep the empty bag — their URL comes from the registry.
+        providerSpecificData: /-compatible-/.test(provider)
+          ? { baseUrl: "https://compatible.example/v1" }
+          : {},
       },
       log: noopLog(),
       clientRawRequest: {
@@ -457,8 +467,8 @@ test.after(async () => {
   await resetStorage();
   if (ORIGINAL_DATA_DIR === undefined) delete process.env.DATA_DIR;
   else process.env.DATA_DIR = ORIGINAL_DATA_DIR;
-  if (ORIGINAL_PLUGINS_DIR === undefined) delete process.env.OMNIROUTE_PLUGINS_DIR;
-  else process.env.OMNIROUTE_PLUGINS_DIR = ORIGINAL_PLUGINS_DIR;
+  if (ORIGINAL_PLUGINS_DIR === undefined) delete process.env.AGENTPROXY_PLUGINS_DIR;
+  else process.env.AGENTPROXY_PLUGINS_DIR = ORIGINAL_PLUGINS_DIR;
   fs.rmSync(TEST_ROOT, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
 });
 test("chatCore times out upstream execution before provider response headers", async () => {
@@ -1331,7 +1341,7 @@ test("chatCore normalizes native Claude Code messages for native Claude OAuth pa
     endpoint: "/v1/messages",
     credentials: { apiKey: "claude-key", providerSpecificData: {} },
     body: {
-      model: "omniroute/alias-that-should-resolve",
+      model: "agentproxy/alias-that-should-resolve",
       max_tokens: 64,
       system: [{ type: "text", text: "top-level-system" }],
       messages: clientMessages,
@@ -1430,6 +1440,44 @@ test("chatCore preserves Opus 5 mid-conversation system cache breakpoints", asyn
     ttl: "5m",
   });
 });
+test("chatCore preserves Fable 5 mid-conversation system cache breakpoints", async () => {
+  await settingsDb.updateSettings({ alwaysPreserveClientCache: "auto" });
+  invalidateCacheControlSettingsCache();
+
+  const { call, result } = await invokeChatCore({
+    provider: "claude",
+    model: "claude-fable-5",
+    endpoint: "/v1/messages",
+    credentials: { apiKey: "claude-key", providerSpecificData: {} },
+    body: {
+      model: "claude-fable-5",
+      max_tokens: 64,
+      system: [{ type: "text", text: "stable system prompt", cache_control: { type: "ephemeral", ttl: "5m" } }],
+      messages: [
+        { role: "user", content: [{ type: "text", text: "first turn" }] },
+        { role: "assistant", content: [{ type: "text", text: "first response" }] },
+        { role: "system", content: [{ type: "text", text: "compact continuation", cache_control: { type: "ephemeral" } }] },
+        { role: "user", content: [{ type: "text", text: "latest turn" }] },
+      ],
+      tools: [{ name: "Bash", input_schema: { type: "object", properties: {} } }],
+    },
+    userAgent: "Claude-Code/2.1.220",
+    requestHeaders: { "x-app": "cli", "x-claude-code-session-id": "session-fable" },
+    responseFormat: "claude",
+  });
+
+  assert.equal(result.success, true);
+  assert.deepEqual(
+    call.body.messages.map((message: { role: string }) => message.role),
+    ["user", "assistant", "system", "user"]
+  );
+  assert.equal(
+    call.body.system.some((item: { text?: string }) => item.text === "compact continuation"),
+    false
+  );
+  assert.deepEqual(call.body.messages[2].content[0].cache_control, { type: "ephemeral", ttl: "5m" });
+});
+
 test("chatCore keeps Claude normalization for non-Claude-Code Claude passthrough", async () => {
   const { call, result } = await invokeChatCore({
     provider: "claude",
@@ -1557,6 +1605,60 @@ test("chatCore normalizes native Claude Code messages before CC-compatible relay
   // user msg[2] (was clientMessages[3]): tool_result preserved (preserveToolResultBlocks:true)
   assert.equal(call.body.messages[2].content[0].type, "tool_result");
 });
+
+function ccBridgeToolResultCall(modelTargetFormat?: string) {
+  return invokeChatCore({
+    provider: "anthropic-compatible-cc-test",
+    model: "claude-sonnet-4-6",
+    endpoint: "/v1/messages",
+    credentials: {
+      apiKey: "sk-test",
+      providerSpecificData: { baseUrl: "https://proxy.example.com/v1/messages" },
+    },
+    body: {
+      model: "claude-sonnet-4-6",
+      max_tokens: 64,
+      messages: [
+        {
+          role: "assistant",
+          content: [{ type: "tool_use", id: "toolu_x", name: "Read", input: {} }],
+        },
+        {
+          role: "user",
+          content: [{ type: "tool_result", tool_use_id: "toolu_x", content: "file contents" }],
+        },
+      ],
+      tools: [{ name: "Read", input_schema: { type: "object", properties: {} } }],
+    },
+    userAgent: "unit-test",
+    responseFormat: "claude",
+    modelTargetFormat,
+  });
+}
+
+test("chatCore strips raw tool_result blocks for OpenAI-compatible CC bridge targets", async () => {
+  const { call, result } = await ccBridgeToolResultCall("openai");
+  assert.equal(result.success, true);
+  for (const message of call.body.messages) {
+    for (const block of message.content) {
+      assert.notEqual(block.type, "tool_result");
+      assert.notEqual(block.type, "tool_use");
+    }
+  }
+  const flattened = call.body.messages
+    .flatMap((message: { content: Array<{ text?: string }> }) => message.content)
+    .map((block: { text?: string }) => block.text)
+    .join("\n");
+  assert.match(flattened, /file contents/);
+});
+
+test("chatCore preserves raw tool_result blocks for Claude-native CC bridge targets", async () => {
+  const { call, result } = await ccBridgeToolResultCall();
+  assert.equal(result.success, true);
+  assert.equal(call.body.messages[0].content[0].type, "tool_use");
+  assert.equal(call.body.messages[1].content[0].type, "tool_result");
+});
+
 test("chatCore preserves cache_control automatically for Claude Code single-model requests", async () => {
   await settingsDb.updateSettings({ alwaysPreserveClientCache: "auto" });
   invalidateCacheControlSettingsCache();
@@ -1824,6 +1926,37 @@ test("chatCore sets Claude tool prefix disabling, strips empty Anthropic text bl
     ["hello"]
   );
 });
+test("chatCore still prefixes ordinary third-party tool names for non-Anthropic providers targeting Claude", async () => {
+  const { call } = await invokeChatCore({
+    provider: "github",
+    model: "claude-haiku-4.5",
+    endpoint: "/v1/chat/completions",
+    credentials: { apiKey: "gh-key", providerSpecificData: {} },
+    body: {
+      model: "github/claude-haiku-4.5",
+      messages: [{ role: "user", content: "fetch a url" }],
+      tools: [
+        {
+          type: "function",
+          function: {
+            name: "web_fetch",
+            description: "Fetches a URL from the internet.",
+            parameters: {
+              type: "object",
+              properties: { url: { type: "string" } },
+              required: ["url"],
+            },
+          },
+        },
+      ],
+    },
+    responseFormat: "claude",
+  });
+
+  assert.equal(call.body.tools[0].name, "proxy_web_fetch");
+  assert.equal(call.body._toolNameMap, undefined);
+});
+
 test("chatCore restores prefixed Claude passthrough tool names in upstream responses", async () => {
   const { result } = await invokeChatCore({
     provider: "claude",
@@ -2253,7 +2386,7 @@ test("chatCore serves a cached idempotent response without hitting the provider 
   assert.equal(first.calls.length, 1);
   assert.equal(second.calls.length, 0);
   assert.equal(second.result.success, true);
-  assert.equal(second.result.response.headers.get("X-OmniRoute-Idempotent"), "true");
+  assert.equal(second.result.response.headers.get("X-AgentProxy-Idempotent"), "true");
 
   const payload = (await second.result.response.json()) as any;
   assert.equal(payload.choices[0].message.content, "ok");
@@ -2290,9 +2423,9 @@ test("chatCore returns a semantic cache HIT for repeated deterministic requests"
   });
 
   assert.equal(first.calls.length, 1);
-  assert.equal(first.result.response.headers.get("X-OmniRoute-Cache"), "MISS");
+  assert.equal(first.result.response.headers.get("X-AgentProxy-Cache"), "MISS");
   assert.equal(second.calls.length, 0);
-  assert.equal(second.result.response.headers.get("X-OmniRoute-Cache"), "HIT");
+  assert.equal(second.result.response.headers.get("X-AgentProxy-Cache"), "HIT");
   assert.equal(upstreamHits, 1);
 
   const payload = (await second.result.response.json()) as any;
@@ -2346,13 +2479,13 @@ test("chatCore skips semantic cache when disabled in settings", async () => {
   assert.equal(first.calls.length, 1);
   assert.equal(second.calls.length, 1);
   assert.equal(upstreamHits, 2);
-  assert.equal(first.result.response.headers.get("X-OmniRoute-Cache"), "MISS");
-  assert.equal(second.result.response.headers.get("X-OmniRoute-Cache"), "MISS");
+  assert.equal(first.result.response.headers.get("X-AgentProxy-Cache"), "MISS");
+  assert.equal(second.result.response.headers.get("X-AgentProxy-Cache"), "MISS");
 
   const payload = (await second.result.response.json()) as any;
   assert.equal(payload.choices[0].message.content, "fresh-2");
 });
-test("chatCore attaches OmniRoute response metadata headers to non-stream responses", async () => {
+test("chatCore attaches AgentProxy response metadata headers to non-stream responses", async () => {
   const { result } = await invokeChatCore({
     provider: "claude",
     model: "claude-sonnet-4-6",
@@ -2365,13 +2498,13 @@ test("chatCore attaches OmniRoute response metadata headers to non-stream respon
   });
 
   assert.equal(result.success, true);
-  assert.equal(result.response.headers.get("X-OmniRoute-Provider"), "cc");
-  assert.equal(result.response.headers.get("X-OmniRoute-Model"), "claude-sonnet-4-6");
-  assert.equal(result.response.headers.get("X-OmniRoute-Cache-Hit"), "false");
-  assert.equal(result.response.headers.get("X-OmniRoute-Tokens-In"), "12");
-  assert.equal(result.response.headers.get("X-OmniRoute-Tokens-Out"), "3");
-  assert.ok(Number(result.response.headers.get("X-OmniRoute-Latency-Ms")) >= 0);
-  assert.match(String(result.response.headers.get("X-OmniRoute-Response-Cost")), /^\d+\.\d{10}$/);
+  assert.equal(result.response.headers.get("X-AgentProxy-Provider"), "cc");
+  assert.equal(result.response.headers.get("X-AgentProxy-Model"), "claude-sonnet-4-6");
+  assert.equal(result.response.headers.get("X-AgentProxy-Cache-Hit"), "false");
+  assert.equal(result.response.headers.get("X-AgentProxy-Tokens-In"), "12");
+  assert.equal(result.response.headers.get("X-AgentProxy-Tokens-Out"), "3");
+  assert.ok(Number(result.response.headers.get("X-AgentProxy-Latency-Ms")) >= 0);
+  assert.match(String(result.response.headers.get("X-AgentProxy-Response-Cost")), /^\d+\.\d{10}$/);
 });
 test("chatCore does not expose provider request credentials in non-stream response headers", async () => {
   const { result } = await invokeChatCore({
@@ -2389,7 +2522,7 @@ test("chatCore does not expose provider request credentials in non-stream respon
   assert.equal(result.response.headers.get("authorization"), null);
   assert.equal(result.response.headers.get("x-api-key"), null);
   assert.equal(result.response.headers.get("Content-Type"), "application/json");
-  assert.equal(result.response.headers.get("X-OmniRoute-Cache"), "MISS");
+  assert.equal(result.response.headers.get("X-AgentProxy-Cache"), "MISS");
 });
 test("chatCore normalizes tool finish reasons and estimates usage when upstream omits it", async () => {
   const { result } = await invokeChatCore({
@@ -2859,14 +2992,14 @@ test("chatCore records Claude prompt cache and cache usage metadata in call logs
 
   assert.equal(result.success, true);
   assert.ok(detail);
-  assert.equal(detail.requestBody._omniroute.claudePromptCache.applied, true);
+  assert.equal(detail.requestBody._agentproxy.claudePromptCache.applied, true);
   // Breakpoints: system[2] (1), message content (1), assistant response (1). Tools cache_control is stripped by base.ts.
-  assert.equal(detail.requestBody._omniroute.claudePromptCache.totalBreakpoints, 3);
-  assert.equal(detail.responseBody._omniroute.claudePromptCache.applied, true);
-  assert.equal(detail.responseBody._omniroute.claudePromptCache.totalBreakpoints, 3);
-  assert.equal(typeof detail.responseBody._omniroute.claudePromptCache.anthropicBeta, "string");
-  assert.match(detail.responseBody._omniroute.claudePromptCache.anthropicBeta, /prompt-caching/i);
-  assert.deepEqual(detail.responseBody._omniroute.claudePromptCacheUsage, {
+  assert.equal(detail.requestBody._agentproxy.claudePromptCache.totalBreakpoints, 3);
+  assert.equal(detail.responseBody._agentproxy.claudePromptCache.applied, true);
+  assert.equal(detail.responseBody._agentproxy.claudePromptCache.totalBreakpoints, 3);
+  assert.equal(typeof detail.responseBody._agentproxy.claudePromptCache.anthropicBeta, "string");
+  assert.match(detail.responseBody._agentproxy.claudePromptCache.anthropicBeta, /prompt-caching/i);
+  assert.deepEqual(detail.responseBody._agentproxy.claudePromptCacheUsage, {
     cacheReadTokens: 4,
     cacheCreationTokens: 2,
   });
@@ -2915,7 +3048,7 @@ test("chatCore injects progress events into streaming responses when requested",
     provider: "openai",
     model: "gpt-4o-mini",
     accept: "text/event-stream",
-    requestHeaders: { "x-omniroute-progress": "true" },
+    requestHeaders: { "x-agentproxy-progress": "true" },
     body: {
       model: "gpt-4o-mini",
       stream: true,
@@ -2928,7 +3061,7 @@ test("chatCore injects progress events into streaming responses when requested",
 
   const streamText = await result.response.text();
   assert.equal(result.success, true);
-  assert.equal(result.response.headers.get("X-OmniRoute-Progress"), "enabled");
+  assert.equal(result.response.headers.get("X-AgentProxy-Progress"), "enabled");
   assert.match(streamText, /event: progress/);
 });
 test("chatCore keeps the SSE stream comment-free by default and still ends with [DONE]", async () => {
@@ -2951,17 +3084,17 @@ test("chatCore keeps the SSE stream comment-free by default and still ends with 
   assert.equal(result.success, true);
   // The per-request metadata reaches the client through these headers regardless
   // of the comment setting — that is what makes the trailer optional.
-  assert.equal(result.response.headers.get("X-OmniRoute-Provider"), "openai");
-  assert.equal(result.response.headers.get("X-OmniRoute-Model"), "gpt-4o-mini");
+  assert.equal(result.response.headers.get("X-AgentProxy-Provider"), "openai");
+  assert.equal(result.response.headers.get("X-AgentProxy-Model"), "gpt-4o-mini");
 
-  // #10524 flipped OMNIROUTE_SSE_COMMENTS to off-by-default: strict SSE clients
-  // JSON.parse every line and crash on `: x-omniroute-*` comments. This test used
+  // #10524 flipped AGENTPROXY_SSE_COMMENTS to off-by-default: strict SSE clients
+  // JSON.parse every line and crash on `: x-agentproxy-*` comments. This test used
   // to assert the opposite and went red on the release branch when that default
   // landed. The opt-in half — trailer present, after the finish chunk and before
   // [DONE] — is owned by sse-comments-optout-9305.test.ts, which drives the env
   // var through all three states; enabling it here instead leaks process.env into
   // the sibling call-log tests in this file.
-  assert.doesNotMatch(streamText, /: x-omniroute-/);
+  assert.doesNotMatch(streamText, /: x-agentproxy-/);
   assert.match(streamText, /data: \[DONE\]/);
 });
 test("buildStreamingResponseHeaders drops upstream compression and framing headers", () => {
@@ -2990,7 +3123,7 @@ test("buildStreamingResponseHeaders drops upstream compression and framing heade
   assert.equal(headers.get("Content-Length"), null);
   assert.equal(headers.get("Transfer-Encoding"), null);
   assert.equal(headers.get("X-Upstream-Trace"), "trace-1");
-  assert.equal(headers.get("X-OmniRoute-Cache"), "MISS");
+  assert.equal(headers.get("X-AgentProxy-Cache"), "MISS");
 });
 test("chatCore strips upstream compression and length headers from streaming responses", async () => {
   const upstreamPayload = `data: ${JSON.stringify({
@@ -3023,7 +3156,7 @@ test("chatCore strips upstream compression and length headers from streaming res
   assert.equal(result.response.headers.get("Content-Type"), "text/event-stream");
   assert.equal(result.response.headers.get("Content-Length"), null);
   assert.equal(result.response.headers.get("X-Upstream-Trace"), "trace-1");
-  assert.equal(result.response.headers.get("X-OmniRoute-Cache"), "MISS");
+  assert.equal(result.response.headers.get("X-AgentProxy-Cache"), "MISS");
   await result.response.text();
 });
 test("chatCore maps upstream aborts to request-aborted errors", async () => {
@@ -3294,7 +3427,7 @@ test("chatCore caches streaming response and serves cache HIT on repeat", async 
 
   assert.equal(upstreamHits, 1, "upstream should be called only once");
   assert.equal(second.calls.length, 0, "second request should not reach upstream");
-  assert.equal(second.result.response.headers.get("X-OmniRoute-Cache"), "HIT");
+  assert.equal(second.result.response.headers.get("X-AgentProxy-Cache"), "HIT");
 
   // #2952 — a streaming client receives the cache HIT as an SSE stream (not a
   // raw JSON body), so content + reasoning_content arrive in the streaming shape.
@@ -3347,7 +3480,7 @@ test("chatCore does not cache streaming response when temperature > 0", async ()
   assert.equal(upstreamHits, 2, "both requests should hit upstream");
   assert.equal(second.calls.length, 1, "second request should reach upstream");
 });
-test("chatCore skips streaming cache when X-OmniRoute-No-Cache header is set", async () => {
+test("chatCore skips streaming cache when X-AgentProxy-No-Cache header is set", async () => {
   let upstreamHits = 0;
   const sharedBody = {
     model: "gpt-4o-mini",
@@ -3360,7 +3493,7 @@ test("chatCore skips streaming cache when X-OmniRoute-No-Cache header is set", a
     provider: "openai",
     model: "gpt-4o-mini",
     accept: "text/event-stream",
-    requestHeaders: { "x-omniroute-no-cache": "true" },
+    requestHeaders: { "x-agentproxy-no-cache": "true" },
     body: sharedBody,
     responseFormat: "openai",
     responseFactory() {
@@ -3381,7 +3514,7 @@ test("chatCore skips streaming cache when X-OmniRoute-No-Cache header is set", a
     provider: "openai",
     model: "gpt-4o-mini",
     accept: "text/event-stream",
-    requestHeaders: { "x-omniroute-no-cache": "true" },
+    requestHeaders: { "x-agentproxy-no-cache": "true" },
     body: sharedBody,
     responseFormat: "openai",
     responseFactory() {
@@ -3425,7 +3558,7 @@ test("chatCore returns cache HIT as SSE when the client requests streaming", asy
   });
 
   assert.equal(second.calls.length, 0, "cached response should prevent upstream call");
-  assert.equal(second.result.response.headers.get("X-OmniRoute-Cache"), "HIT");
+  assert.equal(second.result.response.headers.get("X-AgentProxy-Cache"), "HIT");
   // #2952 — even though the cache was populated by a non-streaming request, a
   // later streaming request gets the cached completion SSE-wrapped, so streaming
   // clients keep their streaming shape (and reasoning_content) on cache hits.

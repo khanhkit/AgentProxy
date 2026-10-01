@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 // Ported from upstream decolua/9router#2584 ("add Antigravity reasoning effort
-// overrides"), adapted to OmniRoute's alias storage shape and canonical reasoning-effort
+// overrides"), adapted to AgentProxy's alias storage shape and canonical reasoning-effort
 // vocabulary (`@/shared/reasoning/effortStandardization.ts`).
 const { normalizeAliasEntry, normalizeAliasMappings, hasInvalidReasoningEffort } =
   await import("../../src/mitm/aliasConfig.ts");

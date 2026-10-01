@@ -9,6 +9,7 @@ import { getDefaultErrorMessage, getErrorInfo } from "../config/errorConfig.ts";
 import { normalizePayloadForLog } from "@/lib/logPayloads";
 import type { ModelCooldownErrorPayload } from "@/types";
 import { buildPassthroughErrorResponse } from "./upstreamErrorPassthrough.ts";
+import { isFeatureFlagEnabled } from "@/shared/utils/featureFlags";
 
 export { redactSensitiveErrorText, sanitizeErrorMessage, sanitizeUpstreamDetails };
 
@@ -49,7 +50,9 @@ const SAFE_PUBLIC_ERROR_IDENTIFIERS = new Set([
   "admission_shutdown",
   "admission_unavailable",
   "all_accounts_inactive",
+  "all_targets_cooling_down",
   "all_targets_skipped",
+  "antigravity_pool_busy",
   "antigravity_pre_response_timeout",
   "api_error",
   "authentication_error",
@@ -64,6 +67,7 @@ const SAFE_PUBLIC_ERROR_IDENTIFIERS = new Set([
   "blackbox_subscription_required",
   "body_exceeds_budget",
   "browser_stream_inconsistent",
+  "budget_exceeded",
   "capability_mismatch",
   "cf_mitigated_challenge",
   "chat_admission_busy",
@@ -91,7 +95,6 @@ const SAFE_PUBLIC_ERROR_IDENTIFIERS = new Set([
   "connection_error",
   "context_length_exceeded",
   "context_window",
-  "chipotle_error",
   "devin_agentic_error",
   "devin_cli_error",
   "devin_desktop_error",
@@ -238,6 +241,7 @@ const SAFE_PUBLIC_ERROR_IDENTIFIERS = new Set([
   "tls_session_capacity",
   "tool_calling_not_supported",
   "tools",
+  "turn_in_progress",
   "undeclared_historical_tool",
   "und_err_body_timeout",
   "und_err_connect_timeout",
@@ -402,7 +406,7 @@ function clampDiagStr(v: unknown, max = 128): string {
 }
 
 const RECOVERY_ROUTE_PLACEHOLDERS = [
-  ["/dashboard/providers", "OMNIROUTE_SAFE_DASHBOARD_PROVIDERS_ROUTE"],
+  ["/dashboard/providers", "AGENTPROXY_SAFE_DASHBOARD_PROVIDERS_ROUTE"],
 ] as const;
 
 function clampRecoveryStr(value: unknown, max: number): string {
@@ -487,12 +491,12 @@ export function sanitizeComboDiagnostics(d: ComboDiagnostics): ComboDiagnostics 
 
 /**
  * errorResponse variant that attaches a sanitized combo diagnostic trace as BOTH
- * `x-omniroute-combo-*` headers and a `diagnostics` field in the OpenAI-shaped
+ * `x-agentproxy-combo-*` headers and a `diagnostics` field in the OpenAI-shaped
  * error body (extra field — backward-compatible with standard error parsers).
  * `opts.code`/`opts.type` override the status-derived defaults (e.g. to preserve
  * the `ALL_ACCOUNTS_INACTIVE` code on the 503 terminal path). When the diagnostic
- * carries a `recovery` hint it is mirrored as `x-omniroute-recovery-action` /
- * `x-omniroute-recovery-next-step` / `x-omniroute-retry-after-seconds` headers and as a
+ * carries a `recovery` hint it is mirrored as `x-agentproxy-recovery-action` /
+ * `x-agentproxy-recovery-next-step` / `x-agentproxy-retry-after-seconds` headers and as a
  * top-level `recovery_hint` field on the body so non-header-aware clients (curl,
  * MCP tools, log scrapers) can also pick it up.
  */
@@ -517,17 +521,17 @@ export function errorResponseWithComboDiagnostics(
   );
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
-    "x-omniroute-combo-pool-size": String(safe.poolSize),
-    "x-omniroute-combo-attempted": String(safe.attempted),
-    "x-omniroute-combo-excluded": excludedHeader,
-    "x-omniroute-combo-terminal-reason": toHeaderSafeAscii(safe.terminalReason.slice(0, 200)),
+    "x-agentproxy-combo-pool-size": String(safe.poolSize),
+    "x-agentproxy-combo-attempted": String(safe.attempted),
+    "x-agentproxy-combo-excluded": excludedHeader,
+    "x-agentproxy-combo-terminal-reason": toHeaderSafeAscii(safe.terminalReason.slice(0, 200)),
   };
 
   if (safe.recovery) {
-    headers["x-omniroute-recovery-action"] = safe.recovery.action;
+    headers["x-agentproxy-recovery-action"] = safe.recovery.action;
     // Header limit of 128 chars — keep next_step compact for fast parsing.
     // The body field carries the full 200-char value for richer display.
-    headers["x-omniroute-recovery-next-step"] = toHeaderSafeAscii(safe.recovery.next_step).slice(
+    headers["x-agentproxy-recovery-next-step"] = toHeaderSafeAscii(safe.recovery.next_step).slice(
       0,
       128
     );
@@ -535,7 +539,7 @@ export function errorResponseWithComboDiagnostics(
       typeof safe.recovery.retry_after_seconds === "number" &&
       safe.recovery.retry_after_seconds > 0
     ) {
-      headers["x-omniroute-retry-after-seconds"] = String(safe.recovery.retry_after_seconds);
+      headers["x-agentproxy-retry-after-seconds"] = String(safe.recovery.retry_after_seconds);
     }
   }
 
@@ -607,6 +611,30 @@ function normalizeRetryAfterSeconds(retryAfter?: string | number | Date | null):
   return 1;
 }
 
+export function isRetryAfterProvenanceEnabled(): boolean {
+  try {
+    return isFeatureFlagEnabled("RETRY_AFTER_PROVENANCE_ENABLED");
+  } catch {
+    return false;
+  }
+}
+
+export function resolveRetryAfterHintSeconds(
+  retryAfter?: string | number | Date | null
+): number | null {
+  if (typeof retryAfter === "number") {
+    if (!Number.isFinite(retryAfter) || retryAfter <= 0) return null;
+    if (retryAfter < 1_000_000_000) return Math.max(Math.ceil(retryAfter), 1);
+  } else if (typeof retryAfter === "string") {
+    if (retryAfter.trim() === "" || !Number.isNaN(Number(retryAfter))) return null;
+  } else if (!(retryAfter instanceof Date)) {
+    return null;
+  }
+  const retryTimeMs = new Date(retryAfter).getTime();
+  if (!Number.isFinite(retryTimeMs) || retryTimeMs <= Date.now()) return null;
+  return Math.max(Math.ceil((retryTimeMs - Date.now()) / 1000), 1);
+}
+
 const MAX_PUBLIC_CONTEXT_LABEL_LENGTH = 256;
 
 function projectPublicContextLabel(value: unknown): string | null {
@@ -664,6 +692,35 @@ export function parseAntigravityRetryTime(message: unknown): number | null {
   }
 
   return totalMs > 0 ? totalMs : null;
+}
+
+const MAX_PROSE_RETRY_MS = 24 * 60 * 60 * 1000;
+
+export function parseProseRetryDelayMs(text: unknown): number | null {
+  if (typeof text !== "string" || text === "") return null;
+  const antigravityMs = parseAntigravityRetryTime(text);
+  if (antigravityMs) return Math.min(antigravityMs, MAX_PROSE_RETRY_MS);
+  const match = /retry\s+after\s+(\d{1,9})\s*s/i.exec(text);
+  const ms = match ? Number.parseInt(match[1], 10) * 1000 : 0;
+  return ms > 0 ? Math.min(ms, MAX_PROSE_RETRY_MS) : null;
+}
+
+export function readProseRetryAfter(text: unknown): string | null {
+  if (!isRetryAfterProvenanceEnabled()) return null;
+  const ms = parseProseRetryDelayMs(text);
+  return ms ? new Date(Date.now() + ms).toISOString() : null;
+}
+
+export function logRetryHintUnreadable(
+  log: { warn: (...args: unknown[]) => void; debug?: (...args: unknown[]) => void },
+  tag: string,
+  model: string,
+  status: number | undefined,
+  reason: "unparseable body" | "clone failed"
+): void {
+  const message = `Retry hint unreadable for ${model} (${reason})`;
+  if (reason === "clone failed") log.warn(tag, message, { status });
+  else log.debug?.(tag, message, { status });
 }
 
 /**
@@ -858,15 +915,21 @@ export function unavailableResponse(
   retryAfter?: string | number | Date | null,
   retryAfterHuman?: string
 ) {
-  const retryAfterSec = normalizeRetryAfterSeconds(retryAfter);
+  const provenance = isRetryAfterProvenanceEnabled();
+  const retryAfterSec = provenance
+    ? resolveRetryAfterHintSeconds(retryAfter)
+    : normalizeRetryAfterSeconds(retryAfter);
   const safeMessage = sanitizeErrorMessage(message) || getDefaultErrorMessage(statusCode);
   const safeRetryAfterHuman = retryAfterHuman ? sanitizeErrorMessage(retryAfterHuman) : "";
   const msg = safeRetryAfterHuman ? `${safeMessage} (${safeRetryAfterHuman})` : safeMessage;
-  return new Response(JSON.stringify({ error: { message: msg } }), {
+  const error = provenance
+    ? { message: msg, retry_after_provenance: retryAfterSec === null ? "none" : "signal" }
+    : { message: msg };
+  return new Response(JSON.stringify({ error }), {
     status: statusCode,
     headers: {
       "Content-Type": "application/json",
-      "Retry-After": String(retryAfterSec),
+      ...(retryAfterSec === null ? {} : { "Retry-After": String(retryAfterSec) }),
     },
   });
 }
@@ -892,7 +955,7 @@ export function providerCircuitOpenResponse(
       headers: {
         "Content-Type": "application/json",
         "Retry-After": String(retryAfterSec),
-        "X-OmniRoute-Provider-Breaker": "open",
+        "X-AgentProxy-Provider-Breaker": "open",
       },
     }
   );
@@ -980,7 +1043,8 @@ export function makeExecutorErrorResult(
   status: number,
   message: string,
   body: unknown,
-  url: string
+  url: string,
+  extraResponseHeaders?: Record<string, string>
 ) {
   return {
     response: new Response(
@@ -991,7 +1055,10 @@ export function makeExecutorErrorResult(
           code: `HTTP_${status}`,
         },
       }),
-      { status, headers: { "Content-Type": "application/json" } }
+      {
+        status,
+        headers: { "Content-Type": "application/json", ...extraResponseHeaders },
+      }
     ),
     url,
     headers: {} as Record<string, string>,

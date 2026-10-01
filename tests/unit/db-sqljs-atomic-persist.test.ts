@@ -34,7 +34,7 @@ test(
   "sql.js persist() publishes the database atomically — a reader holding the file " +
     "open never observes a truncated image (rename, not in-place O_TRUNC)",
   async () => {
-    const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-sqljs-atomic-"));
+    const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-sqljs-atomic-"));
     const sqliteFile = path.join(dataDir, "storage.sqlite");
     let adapter: Awaited<ReturnType<typeof openAdapter>> | null = null;
     let readerFd: number | null = null;
@@ -102,7 +102,7 @@ test(
 );
 
 test("sql.js persist() is a no-op for :memory: databases (no temp file, no throw)", async () => {
-  const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-sqljs-atomic-mem-"));
+  const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-sqljs-atomic-mem-"));
   let adapter: Awaited<ReturnType<typeof openAdapter>> | null = null;
   try {
     adapter = await openAdapter(":memory:");

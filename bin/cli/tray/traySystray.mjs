@@ -15,7 +15,7 @@ export function isTraySupported() {
 }
 
 // systray2 is NOT a static dependency — it is lazily installed into
-// ~/.omniroute/runtime by trayRuntime.ts (loadSystray). The previous inline
+// ~/.agentproxy/runtime by trayRuntime.ts (loadSystray). The previous inline
 // loader called `require("module")`, which throws `ReferenceError: require is
 // not defined` in this ESM file (package "type":"module"); the throw was
 // silently swallowed, so the tray never appeared on macOS/Linux with no error
@@ -29,7 +29,9 @@ async function loadSystray2() {
 function getIconBase64() {
   // Icon ships at bin/cli/tray/icon.png — the previous "icons/icon.png" path
   // never existed, so the tray was created with an empty icon (#4605).
-  const iconPath = join(__dirname, "icon.png");
+  // systray2 expects an ICO payload on Windows; the PNG asset is used elsewhere.
+  // (ported from #13991, credit @prabhtheone)
+  const iconPath = join(__dirname, process.platform === "win32" ? "icon.ico" : "icon.png");
   if (existsSync(iconPath)) return readFileSync(iconPath).toString("base64");
   return "";
 }
@@ -43,14 +45,14 @@ export async function initSystrayUnix(
 
   const autostartEnabled = isAutostartEnabled();
   const items = [
-    { title: `OmniRoute  •  port ${port}`, tooltip: "Server running", enabled: false },
+    { title: `AgentProxy  •  port ${port}`, tooltip: "Server running", enabled: false },
     { title: "Open Dashboard", enabled: true },
     { title: "Show Logs", enabled: true },
     {
       title: autostartEnabled ? "✓ Auto-start (click to disable)" : "Enable Auto-start",
       enabled: true,
     },
-    { title: "Quit OmniRoute", enabled: true },
+    { title: "Quit AgentProxy", enabled: true },
   ];
 
   let tray;
@@ -63,7 +65,7 @@ export async function initSystrayUnix(
         // (the icon looked "missing" even when the tray loaded). (PR #1080)
         isTemplateIcon: false,
         title: "",
-        tooltip: `OmniRoute — port ${port}`,
+        tooltip: `AgentProxy — port ${port}`,
         items,
       },
       debug: false,

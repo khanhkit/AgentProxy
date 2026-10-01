@@ -3,7 +3,7 @@
  *
  * The reporter's symptom: HTTP 200, a few content chunks forwarded, then the
  * upstream (antigravity/Gemini) drops the stream without a terminal marker —
- * no finish_reason chunk, no `data: [DONE]`. OmniRoute used to close the stream
+ * no finish_reason chunk, no `data: [DONE]`. AgentProxy used to close the stream
  * silently, so OpenAI-compatible clients (Hermes) see a truncated stream with
  * no finish_reason at all.
  *

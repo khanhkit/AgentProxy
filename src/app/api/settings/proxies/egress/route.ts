@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 import { requireManagementAuth } from "@/lib/api/requireManagementAuth";
-import { createErrorResponseFromUnknown } from "@/lib/api/errorResponse";
+import {
+  EGRESS_IP_LOOKUP_WINDOW_MS,
+  getPoolEgressFailureBreakdown,
+} from "@/lib/db/proxyLogs";
+import { createErrorResponse, createErrorResponseFromUnknown } from "@/lib/api/errorResponse";
 import {
   diagnoseAllEgressIps,
   getRecentEgressSharingSummary,
@@ -21,11 +25,38 @@ export async function GET(request: Request) {
   const authError = await requireManagementAuth(request);
   if (authError) return authError;
   try {
+    const { searchParams } = new URL(request.url);
+    const rawScope = searchParams.get("scope");
+    const scope = rawScope === "key" ? "account" : rawScope;
+    const scopeId = scope === "global" ? null : searchParams.get("scopeId")?.trim() || null;
+    const validPoolScopes = new Set(["global", "provider", "account", "combo"]);
+    if (scope && !validPoolScopes.has(scope)) {
+      return createErrorResponse({ status: 400, message: "Invalid pool scope", type: "invalid_request" });
+    }
+    if (scope && scope !== "global" && !scopeId) {
+      return createErrorResponse({
+        status: 400,
+        message: "scopeId is required for scoped pool diagnostics",
+        type: "invalid_request",
+      });
+    }
+
     const [diagnostic, { summary }] = await Promise.all([
       diagnoseAllEgressIps(),
       getRecentEgressSharingSummary(),
     ]);
-    return NextResponse.json({ ...diagnostic, summary });
+    const poolFailures = scope
+      ? getPoolEgressFailureBreakdown(
+          scope,
+          scopeId,
+          new Date(Date.now() - EGRESS_IP_LOOKUP_WINDOW_MS).toISOString()
+        )
+      : undefined;
+    return NextResponse.json({
+      ...diagnostic,
+      summary,
+      ...(poolFailures ? { poolFailures } : {}),
+    });
   } catch (error) {
     return createErrorResponseFromUnknown(error, "Failed to diagnose egress IPs");
   }

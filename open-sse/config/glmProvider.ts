@@ -34,7 +34,7 @@ export const GLM_SHARED_MODELS = Object.freeze([
   },
   {
     // GLM-5.3 exposes low|high|max reasoning_effort (default max); -high/-low
-    // are OmniRoute aliases resolved by GlmExecutor::parseGlmEffortTier.
+    // are AgentProxy aliases resolved by GlmExecutor::parseGlmEffortTier.
     // https://docs.z.ai/guides/llm/glm-5.3
     id: "glm-5.3",
     name: "GLM 5.3",
@@ -380,6 +380,41 @@ export function buildGlmQuotaFetch(
     Accept: "application/json",
   };
 
+  if (teamConfig.state === "configured") {
+    headers["bigmodel-organization"] = teamConfig.organizationId;
+    headers["bigmodel-project"] = teamConfig.projectId;
+  }
+
+  return { url, headers };
+}
+
+/**
+ * Coding Plan Reset Card endpoints, mirroring GLM_QUOTA_URLS. `/list` reports the cards
+ * banked on the key, `/use` redeems one. Same Bearer credential as the quota route.
+ */
+export const GLM_RESET_CARD_URLS = Object.freeze({
+  international: "https://api.z.ai/api/biz/customer-package-reset",
+  china: "https://open.bigmodel.cn/api/biz/customer-package-reset",
+});
+
+export type GlmResetCardAction = "list" | "use";
+
+export function buildGlmResetCardFetch(
+  apiKey: string,
+  providerSpecificData: unknown,
+  action: GlmResetCardAction
+): { url: string; headers: Record<string, string> } {
+  const base = GLM_RESET_CARD_URLS[getGlmApiRegion(providerSpecificData)];
+  const url = action === "list" ? `${base}/list?targetType=PERSONAL` : `${base}/use`;
+
+  const headers: Record<string, string> = {
+    Authorization: `Bearer ${apiKey}`,
+    Accept: "application/json",
+    ...(action === "use" ? { "Content-Type": "application/json" } : {}),
+  };
+
+  // Team-plan keys carry the same org/project routing headers as the quota fetch.
+  const teamConfig = getGlmTeamQuotaConfig(providerSpecificData);
   if (teamConfig.state === "configured") {
     headers["bigmodel-organization"] = teamConfig.organizationId;
     headers["bigmodel-project"] = teamConfig.projectId;

@@ -13,7 +13,7 @@ const require = createRequire(import.meta.url);
 // package.json keeps the assertion just as strict (the binary must report exactly
 // the version this repo pins) while surviving future bumps.
 const OPENCODE_VERSION: string = require("opencode-ai/package.json").version;
-const testHome = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-opencode-8849-"));
+const testHome = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-opencode-8849-"));
 const originalHome = process.env.HOME;
 const originalFetch = globalThis.fetch;
 

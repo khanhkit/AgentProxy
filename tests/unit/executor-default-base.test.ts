@@ -164,7 +164,7 @@ test("DefaultExecutor.buildUrl handles openai-compatible and anthropic-compatibl
     openAICompat.buildUrl("gpt-4.1", true, 0, {
       providerSpecificData: {
         baseUrl: "https://proxy.example/v1/",
-        _omnirouteForceResponsesUpstream: true,
+        _agentproxyForceResponsesUpstream: true,
       },
     }),
     "https://proxy.example/v1/responses"
@@ -603,6 +603,7 @@ test("DefaultExecutor.execute uses CC-compatible connection defaults to append 1
         apiKey: "cc-key",
         providerSpecificData: {
           ccSessionId: "session-1",
+          baseUrl: "https://cc.test/v1",
         },
       },
       clientHeaders: {
@@ -623,6 +624,7 @@ test("DefaultExecutor.execute uses CC-compatible connection defaults to append 1
         apiKey: "cc-key",
         providerSpecificData: {
           ccSessionId: "session-1",
+          baseUrl: "https://cc.test/v1",
           requestDefaults: { context1m: true, redactThinking: true },
         },
       },
@@ -658,6 +660,7 @@ test("DefaultExecutor.execute uses CC-compatible connection defaults to append 1
         apiKey: "cc-key",
         providerSpecificData: {
           ccSessionId: "session-1",
+          baseUrl: "https://cc-proxy.example.test/v1",
           requestDefaults: { context1m: true },
         },
       },
@@ -736,6 +739,7 @@ test("DefaultExecutor.execute reports the exact serialized provider request befo
           apiKey: "cc-key",
           providerSpecificData: {
             ccSessionId: "session-1",
+            baseUrl: "https://cc.test/v1",
           },
         },
       })
@@ -779,6 +783,7 @@ test("DefaultExecutor.execute only injects adaptive thinking defaults for Claude
         apiKey: "cc-key",
         providerSpecificData: {
           ccSessionId: "session-1",
+          baseUrl: "https://cc.test/v1",
         },
       },
       clientHeaders: {

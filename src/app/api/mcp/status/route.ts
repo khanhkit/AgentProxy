@@ -1,16 +1,17 @@
 import { NextResponse } from "next/server";
-import { getAuditStats, queryAuditEntries } from "@omniroute/open-sse/mcp-server/audit";
+import { getAuditStats, queryAuditEntries } from "@agentproxy/open-sse/mcp-server/audit";
 import {
   isMcpHeartbeatOnline,
   isProcessAlive,
   readMcpHeartbeat,
   resolveMcpHeartbeatPath,
-} from "@omniroute/open-sse/mcp-server/runtimeHeartbeat";
+} from "@agentproxy/open-sse/mcp-server/runtimeHeartbeat";
 import {
   getMcpHttpStatus,
   isMcpHttpTransportReady,
 } from "../../../../../open-sse/mcp-server/httpTransport";
 import { getCachedSettings } from "@/lib/db/settings";
+import { isMcpScopeEnforcementEnabled } from "@/shared/utils/featureFlags";
 import { requireManagementAuth } from "@/lib/api/requireManagementAuth";
 
 export async function GET(request: Request) {
@@ -38,7 +39,7 @@ export async function GET(request: Request) {
         ? mcpEnabled && stdioOnline
         : isMcpHttpTransportReady(mcpEnabled, mcpTransport);
 
-    const scopesEnforced = process.env.OMNIROUTE_MCP_ENFORCE_SCOPES === "true";
+    const scopesEnforced = isMcpScopeEnforcementEnabled();
 
     const lastCall = lastCallPage.entries[0] || null;
     const now = Date.now();

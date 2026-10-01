@@ -2,10 +2,10 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { resolveServerHost, resolveExposureWarning } from "../../bin/cli/utils/serverHost.mjs";
 
-test("serve hostname: Linux honors OMNIROUTE_SERVER_HOST when HOSTNAME is set", () => {
+test("serve hostname: Linux honors AGENTPROXY_SERVER_HOST when HOSTNAME is set", () => {
   assert.equal(
     resolveServerHost(
-      { OMNIROUTE_SERVER_HOST: "127.0.0.1", HOSTNAME: "fedora" },
+      { AGENTPROXY_SERVER_HOST: "127.0.0.1", HOSTNAME: "fedora" },
       "linux",
       "localhost-live"
     ),
@@ -13,10 +13,10 @@ test("serve hostname: Linux honors OMNIROUTE_SERVER_HOST when HOSTNAME is set", 
   );
 });
 
-test("serve hostname: OMNIROUTE_SERVER_HOST overrides the Windows legacy HOSTNAME", () => {
+test("serve hostname: AGENTPROXY_SERVER_HOST overrides the Windows legacy HOSTNAME", () => {
   assert.equal(
     resolveServerHost(
-      { OMNIROUTE_SERVER_HOST: "127.0.0.1", HOSTNAME: "192.168.1.50" },
+      { AGENTPROXY_SERVER_HOST: "127.0.0.1", HOSTNAME: "192.168.1.50" },
       "win32",
       "windows-pc"
     ),
@@ -40,7 +40,7 @@ test("serve hostname: falls back to 0.0.0.0 when no bind variable is set", () =>
 
 test("serve hostname: falls back to 0.0.0.0 when bind variables are empty", () => {
   assert.equal(
-    resolveServerHost({ OMNIROUTE_SERVER_HOST: "", HOSTNAME: "" }, "linux", "myhostname"),
+    resolveServerHost({ AGENTPROXY_SERVER_HOST: "", HOSTNAME: "" }, "linux", "myhostname"),
     "0.0.0.0"
   );
 });
@@ -60,7 +60,7 @@ test("exposure warning: fires when bound to all interfaces with no API-key requi
   const warning = resolveExposureWarning({}, "0.0.0.0");
   assert.ok(warning, "a warning must be returned for the shipped default posture");
   assert.match(warning, /REQUIRE_API_KEY/);
-  assert.match(warning, /OMNIROUTE_SERVER_HOST/);
+  assert.match(warning, /AGENTPROXY_SERVER_HOST/);
 });
 
 test("exposure warning: silent when REQUIRE_API_KEY is enabled", () => {

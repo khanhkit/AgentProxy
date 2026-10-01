@@ -74,7 +74,7 @@ test("#6686: previously-plain-selector routes must call the quota-preflight-awar
 });
 
 test("#6686: getProviderCredentialsWithQuotaPreflight (now used by every credentialed route) blocks an account already 100% out of quota upstream", async () => {
-  const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-issue-6686-"));
+  const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-issue-6686-"));
   process.env.DATA_DIR = TEST_DATA_DIR;
   process.env.API_KEY_SECRET = process.env.API_KEY_SECRET || "issue-6686-secret";
 

@@ -5,15 +5,14 @@ import { spawn } from "node:child_process";
 import { setTimeout as delay } from "node:timers/promises";
 
 export function isRustCoreEnabled(env = process.env) {
-  return String(env.AGENTPROXY_RUST_CORE || env.OMNIROUTE_RUST_CORE || "") === "1";
+  return String(env.AGENTPROXY_RUST_CORE || "") === "1";
 }
 
 export function ensureRustCoreInternalToken(env = process.env) {
-  const existing = String(env.AGENTPROXY_INTERNAL_SERVICE_TOKEN || env.OMNIROUTE_INTERNAL_SERVICE_TOKEN || "").trim();
+  const existing = String(env.AGENTPROXY_INTERNAL_SERVICE_TOKEN || "").trim();
   if (existing) return existing;
   const token = randomBytes(32).toString("hex");
   env.AGENTPROXY_INTERNAL_SERVICE_TOKEN = token;
-  env.OMNIROUTE_INTERNAL_SERVICE_TOKEN = token;
   return token;
 }
 
@@ -23,7 +22,7 @@ export function supportsLoopbackControl(host) {
 }
 
 export function resolveRustCoreBinary({ cwd = process.cwd(), env = process.env, dev = false }) {
-  const override = String(env.AGENTPROXY_RUST_CORE_BINARY || env.OMNIROUTE_RUST_CORE_BINARY || "").trim();
+  const override = String(env.AGENTPROXY_RUST_CORE_BINARY || "").trim();
   const candidates = override
     ? [path.resolve(cwd, override)]
     : dev
@@ -107,22 +106,15 @@ export async function startRustCore({
 
   const token = ensureRustCoreInternalToken(env);
   const binary = resolveRustCoreBinary({ cwd, env, dev });
-  const rustHost = String(env.AGENTPROXY_RUST_CORE_HOST || env.OMNIROUTE_RUST_CORE_HOST || env.API_HOST || "127.0.0.1").trim();
+  const rustHost = String(env.AGENTPROXY_RUST_CORE_HOST || env.API_HOST || "127.0.0.1").trim();
   const childEnv = {
     ...env,
     AGENTPROXY_INTERNAL_SERVICE_TOKEN: token,
-    OMNIROUTE_INTERNAL_SERVICE_TOKEN: token,
     API_PORT: String(apiPort),
     DASHBOARD_PORT: String(dashboardPort),
     AGENTPROXY_RUST_CORE_HOST: rustHost,
-    OMNIROUTE_RUST_CORE_HOST: rustHost,
     AGENTPROXY_RUST_CORE_SNAPSHOT_URL:
       env.AGENTPROXY_RUST_CORE_SNAPSHOT_URL ||
-      env.OMNIROUTE_RUST_CORE_SNAPSHOT_URL ||
-      `http://127.0.0.1:${dashboardPort}/api/internal/rust-core/snapshot`,
-    OMNIROUTE_RUST_CORE_SNAPSHOT_URL:
-      env.AGENTPROXY_RUST_CORE_SNAPSHOT_URL ||
-      env.OMNIROUTE_RUST_CORE_SNAPSHOT_URL ||
       `http://127.0.0.1:${dashboardPort}/api/internal/rust-core/snapshot`,
   };
 

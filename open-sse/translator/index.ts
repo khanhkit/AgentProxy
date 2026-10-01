@@ -204,12 +204,42 @@ function requiresReasoningContentPresence(provider: unknown, model: unknown): bo
   return normalizedProvider === "xiaomi-mimo" || /(^|\/)mimo/i.test(normalizedModel);
 }
 
+/**
+ * Projects the pivot transcript down to what `buildAssistantMessageCacheKey`
+ * digests (`role`, `name`, `content`, and `tool_calls[].{type, function.name,
+ * function.arguments}`). The caller keeps the result for the whole request, so
+ * nothing the digest ignores is retained: `reasoning_content` is dropped (the
+ * write side receives the upstream reasoning separately) and tool-call ids are
+ * dropped. `content` is shared by reference — the digest only reads it, and the
+ * Responses conversion that follows re-references content parts without mutating
+ * them.
+ */
+function snapshotReasoningReplayHistory(
+  messages: Array<Record<string, unknown>>
+): Array<Record<string, unknown>> {
+  return messages.map((message) => {
+    const record = message && typeof message === "object" ? message : {};
+    const snapshot: Record<string, unknown> = { role: record.role };
+    if (record.name !== undefined) snapshot.name = record.name;
+    if (record.content !== undefined) snapshot.content = record.content;
+    if (Array.isArray(record.tool_calls)) {
+      snapshot.tool_calls = record.tool_calls.map((toolCall) => {
+        const call = (toolCall ?? {}) as Record<string, unknown>;
+        const fn = (call.function ?? {}) as Record<string, unknown>;
+        return { type: call.type, function: { name: fn.name, arguments: fn.arguments } };
+      });
+    }
+    return snapshot;
+  });
+}
+
 type OpenAIReplayOptions = {
   canReplayReasoningOnly: boolean;
   requiresExplicitReasoningReplay: boolean;
   provider: string;
   model: string;
   reasoningCacheScope?: string | null;
+  videoTranscriptSensitive?: boolean;
 };
 
 function replayOpenAIReasoningMessage(
@@ -263,7 +293,7 @@ function replayOpenAIReasoningMessage(
       ? firstToolCall.id
       : ""
     : buildAssistantMessageCacheKey(options.reasoningCacheScope, messages, messageIndex);
-  if (cacheKey) {
+  if (cacheKey && !options.videoTranscriptSensitive) {
     const cached = lookupReasoning(cacheKey);
     if (cached) {
       message.reasoning_content = cached;
@@ -320,6 +350,17 @@ export function translateRequest(
     signatureNamespace?: string | null;
     preCompressionBody?: Record<string, unknown> | null;
     reasoningCacheScope?: string | null;
+
+    /** Video-derived requests must not replay retained reasoning from previous turns. */
+    videoTranscriptSensitive?: boolean;
+
+    /** Receives the normalized OpenAI-format transcript the reasoning replay pass
+     *  digested for a Responses-API target. A Responses body carries `input`, not
+     *  `messages`, so the caller cannot recover that transcript from the returned
+     *  body; the replay cache keys plain (non-tool-call) assistant turns on exactly
+     *  this transcript, and the write side must digest the same one (#1682). */
+    onReasoningReplayHistory?: (messages: Array<Record<string, unknown>>) => void;
+
     /** UA-detected GitHub Copilot client. Forwarded to translators via the
      *  transient `_copilotClient` credential flag (see openai-responses → openai). */
     copilotClient?: boolean;
@@ -410,28 +451,18 @@ export function translateRequest(
   // execute — so a client-injected mid-array system message (OpenCode/Kilo Code style
   // clients) is still normalized before reaching the upstream. No-op for non-strict
   // providers and for already-compliant requests (prompt-cache prefix stability).
-  if (targetFormat === FORMATS.OPENAI && result.messages && Array.isArray(result.messages)) {
+  // Claude->OpenAI is excluded here because claude-to-openai demotes mid-array
+  // system messages in place; pre-hoisting them would destroy chronological order.
+  if (
+    targetFormat === FORMATS.OPENAI &&
+    sourceFormat !== FORMATS.CLAUDE &&
+    result.messages &&
+    Array.isArray(result.messages)
+  ) {
     result.messages = hoistLeadingSystemMessage(result.messages, provider);
   }
 
-  if (
-    sourceFormat === FORMATS.OPENAI &&
-    targetFormat === FORMATS.OPENAI_RESPONSES &&
-    isReasoner &&
-    Array.isArray(result.messages)
-  ) {
-    const messages = result.messages as Array<Record<string, unknown>>;
-    const replayOptions: OpenAIReplayOptions = {
-      canReplayReasoningOnly: isReasoningOnlyReplayTarget(normalizedProvider, normalizedModel),
-      requiresExplicitReasoningReplay,
-      provider: normalizedProvider,
-      model: normalizedModel,
-      reasoningCacheScope: options?.reasoningCacheScope,
-    };
-    for (let messageIndex = 0; messageIndex < messages.length; messageIndex += 1) {
-      replayOpenAIReasoningMessage(messages, messageIndex, replayOptions);
-    }
-  }
+
 
   // If same format, skip translation steps
   if (sourceFormat !== targetFormat) {
@@ -489,6 +520,37 @@ export function translateRequest(
           // Log OpenAI intermediate format
           reqLogger?.logOpenAIRequest?.(result);
         }
+      }
+
+      // Reasoning replay for Responses-API targets runs on the OpenAI pivot, before
+      // the Responses conversion discards `messages`. It used to be gated on
+      // `sourceFormat === "openai"`, which left Anthropic Messages clients (Claude →
+      // OpenAI → Responses) with no replay at all: the generic pass further down only
+      // sees `result.messages`, and a Responses body has none. The pivot is the same
+      // transcript the replay cache keys plain turns on, so report it to the caller
+      // for the write side (#1682 — DeepSeek requires every prior turn's reasoning
+      // once `tools` is present). Known divergence: a `_ensureUserTurn` synthetic
+      // user turn appended by step 1 is part of this transcript but not of the
+      // client's next request, so that (tool-loop-only) shape keys a plain turn
+      // the next read cannot match — it degrades to a cache miss, never a wrong hit.
+      if (
+        targetFormat === FORMATS.OPENAI_RESPONSES &&
+        isReasoner &&
+        Array.isArray(result.messages)
+      ) {
+        const messages = result.messages as Array<Record<string, unknown>>;
+        const replayOptions: OpenAIReplayOptions = {
+          canReplayReasoningOnly: isReasoningOnlyReplayTarget(normalizedProvider, normalizedModel),
+          requiresExplicitReasoningReplay,
+          provider: normalizedProvider,
+          model: normalizedModel,
+          reasoningCacheScope: options?.reasoningCacheScope,
+          videoTranscriptSensitive: options?.videoTranscriptSensitive,
+        };
+        for (let messageIndex = 0; messageIndex < messages.length; messageIndex += 1) {
+          replayOpenAIReasoningMessage(messages, messageIndex, replayOptions);
+        }
+        options?.onReasoningReplayHistory?.(snapshotReasoningReplayHistory(messages));
       }
 
       // Step 2: openai -> target (if target is not openai)
@@ -709,7 +771,7 @@ export function translateRequest(
 
         // Client reasoning wins above. Otherwise try authentic replay before
         // retaining Kimi Code's empty protocol marker as the final fallback.
-        if (firstToolUseId) {
+        if (firstToolUseId && !options?.videoTranscriptSensitive) {
           const cached = lookupReasoning(firstToolUseId);
           if (cached) {
             if (thinkingBlock) {
@@ -753,6 +815,7 @@ export function translateRequest(
         provider: normalizedProvider,
         model: normalizedModel,
         reasoningCacheScope: options?.reasoningCacheScope,
+        videoTranscriptSensitive: options?.videoTranscriptSensitive,
       });
     }
   } else if (
@@ -776,7 +839,7 @@ export function translateRequest(
   // as `store`. When the destination stays in Chat Completions shape (no
   // such re-conversion happens), nothing else consumes the marker, and it
   // was leaking verbatim into the real upstream request body — e.g. OpenAI
-  // itself rejects it with "Unknown parameter: '_omnirouteResponsesStore'".
+  // itself rejects it with "Unknown parameter: '_agentproxyResponsesStore'".
   // Always drop it here: any handler that still needs the client's original
   // `store` value would have already read the marker before this point.
   if (RESPONSES_STORE_MARKER in result) {

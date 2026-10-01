@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { resolveCompressionPlan } from "@omniroute/open-sse/services/compression/resolveCompressionPlan.ts";
+import { resolveCompressionPlan } from "@agentproxy/open-sse/services/compression/resolveCompressionPlan.ts";
 
 const base = { enabled:true, engines:{ caveman:{enabled:true,level:"full"} }, activeComboId:null, comboOverrides:{} };
 test("derived default when no override/active/header", () => {

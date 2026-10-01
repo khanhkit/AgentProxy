@@ -12,7 +12,7 @@ import {
   resolveMemoryCustomEmbeddingProvider,
 } from "../../src/lib/memory/embedding/customProvider.ts";
 import { resolveEmbeddingSource } from "../../src/lib/memory/embedding/index.ts";
-import { EMBEDDING_PROVIDERS } from "@omniroute/open-sse/config/embeddingRegistry.ts";
+import { EMBEDDING_PROVIDERS } from "@agentproxy/open-sse/config/embeddingRegistry.ts";
 import { createEmbeddingResponse } from "../../src/lib/embeddings/service.ts";
 
 describe("Memory custom embedding endpoint", () => {

@@ -8,7 +8,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 const { computeSnapshotWeights } =
-  await import("@omniroute/open-sse/services/autoCombo/virtualFactory");
+  await import("@agentproxy/open-sse/services/autoCombo/virtualFactory");
 
 function makeCandidate(
   modelStr: string,

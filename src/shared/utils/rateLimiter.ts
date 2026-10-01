@@ -4,9 +4,9 @@ import type Redis from "ioredis";
 // instead of probing localhost on every API request.
 const REDIS_URL = process.env.REDIS_URL?.trim() || "";
 
-// Namespace prefix for all OmniRoute Redis keys. Prevents key collisions when
-// OmniRoute shares a Redis instance with other apps (e.g. on 127.0.0.1:6379).
-const REDIS_KEY_PREFIX = process.env.REDIS_KEY_PREFIX?.trim() || "omniroute:";
+// Namespace prefix for all AgentProxy Redis keys. Prevents key collisions when
+// AgentProxy shares a Redis instance with other apps (e.g. on 127.0.0.1:6379).
+const REDIS_KEY_PREFIX = process.env.REDIS_KEY_PREFIX?.trim() || "agentproxy:";
 if (process.env.NODE_ENV === "production" && !REDIS_URL) {
   console.warn("[REDIS] REDIS_URL is not set in production. Using in-memory rate limiting.");
 }
@@ -230,10 +230,7 @@ export async function checkRateLimit(
   if (!rules || rules.length === 0) return { allowed: true };
 
   // ── In-memory mock for unit tests ──
-  const isTestMode =
-    explicitTestMode ||
-    process.env.NODE_ENV === "test" ||
-    process.env.DISABLE_SQLITE_AUTO_BACKUP === "true";
+  const isTestMode = explicitTestMode || process.env.NODE_ENV === "test";
 
   if (isTestMode) {
     return checkInMemoryRateLimit(TEST_MEMORY_STORE, keyId, rules);

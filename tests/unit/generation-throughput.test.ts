@@ -9,10 +9,10 @@ import { filterUsageForFormat } from "../../open-sse/utils/usageTracking.ts";
 import { FORMATS } from "../../open-sse/translator/formats.ts";
 import { createStreamTiming } from "../../open-sse/utils/streamTiming.ts";
 import {
-  buildOmniRouteResponseMetaHeaders,
-  buildOmniRouteSseMetadataComment,
-} from "../../src/domain/omnirouteResponseMeta.ts";
-import { OMNIROUTE_RESPONSE_HEADERS } from "../../src/shared/constants/headers.ts";
+  buildAgentProxyResponseMetaHeaders,
+  buildAgentProxySseMetadataComment,
+} from "../../src/domain/agentproxyResponseMeta.ts";
+import { AGENTPROXY_RESPONSE_HEADERS } from "../../src/shared/constants/headers.ts";
 
 test("#12616 tok/s excludes TTFT (200 tokens over 2s generation after 3s TTFT)", () => {
   const generationMs = generationDurationMs(5000, 3000);
@@ -45,32 +45,32 @@ test("#12616 filterUsageForFormat keeps tokens_per_second for OpenAI and Claude"
 });
 
 test("#12616 headers omit tok/s without ttftMs and emit it when TTFT is known", () => {
-  const without = buildOmniRouteResponseMetaHeaders({
+  const without = buildAgentProxyResponseMetaHeaders({
     provider: "openai",
     model: "gpt-4o-mini",
     latencyMs: 5000,
     usage: { prompt_tokens: 11, completion_tokens: 200 },
   });
-  assert.equal(without[OMNIROUTE_RESPONSE_HEADERS.tokensPerSecond], undefined);
+  assert.equal(without[AGENTPROXY_RESPONSE_HEADERS.tokensPerSecond], undefined);
 
-  const withTtft = buildOmniRouteResponseMetaHeaders({
+  const withTtft = buildAgentProxyResponseMetaHeaders({
     provider: "openai",
     model: "gpt-4o-mini",
     latencyMs: 5000,
     ttftMs: 3000,
     usage: { prompt_tokens: 11, completion_tokens: 200 },
   });
-  assert.equal(withTtft[OMNIROUTE_RESPONSE_HEADERS.tokensPerSecond], "100.000");
+  assert.equal(withTtft[AGENTPROXY_RESPONSE_HEADERS.tokensPerSecond], "100.000");
 });
 
 test("#12616 SSE comment carries tok/s from usage.tokens_per_second when TTFT is unknown", () => {
-  const comment = buildOmniRouteSseMetadataComment({
+  const comment = buildAgentProxySseMetadataComment({
     provider: "openai",
     model: "gpt-4o-mini",
     latencyMs: 50,
     usage: { prompt_tokens: 4, completion_tokens: 2, tokens_per_second: 12.5 },
   });
-  assert.match(comment, /^: x-omniroute-tokens-per-second=12.500/m);
+  assert.match(comment, /^: x-agentproxy-tokens-per-second=12.500/m);
 });
 
 test("#12616 StreamTiming.withTps attaches tok/s after first forward", async () => {

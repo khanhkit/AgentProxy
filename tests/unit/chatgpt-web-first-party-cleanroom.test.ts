@@ -12,8 +12,8 @@ import type { ChatGptWebResolvedAttachment } from "../../open-sse/utils/chatgptW
 
 type SafePost = (path: string, options: Record<string, unknown>) => Promise<unknown>;
 
-const BRIDGE_KEY = "__omnirouteChatGptFirstPartyV1";
-const ABORT_KEY = "__omnirouteChatGptAbortV1";
+const BRIDGE_KEY = "__agentproxyChatGptFirstPartyV1";
+const ABORT_KEY = "__agentproxyChatGptAbortV1";
 
 function createDirectPage(): import("playwright").Page {
   return {

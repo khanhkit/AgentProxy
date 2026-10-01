@@ -4,7 +4,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-model-sync-route-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-model-sync-route-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 // FASE-01: API_KEY_SECRET is required for CRC operations (no hardcoded fallback)
 if (!process.env.API_KEY_SECRET) {
@@ -775,6 +775,10 @@ test("model sync route forwards cookies, filters built-ins, and syncs aliases fo
   });
 
   await localDb.setModelAlias("stale-model", "openrouter/stale-model");
+  // Mark it as AgentProxy-managed (simulating it was assigned by a prior sync) so the
+  // #11836 provenance check still prunes it below — an alias would only survive a prune
+  // pass if it were hand-created and never touched by the managed sync.
+  await modelsDb.markManagedModelAlias("stale-model");
   await localDb.setModelAlias("router-v2", "other-provider/router-v2");
 
   globalThis.fetch = async (url, init = {}) => {
@@ -1022,7 +1026,7 @@ test("model sync route falls back to in-process discovery when internal self-fet
   // contains 3 self-fetch URLs followed by 1 upstream URL.
   // Route forces IPv4 origin (http://127.0.0.1:PORT) — never "localhost" — to avoid
   // ::1 (IPv6) resolution issues in containers. PORT defaults to 20128 when env unset.
-  const expectedPort = process.env.OMNIROUTE_PORT || process.env.PORT || "20128";
+  const expectedPort = process.env.AGENTPROXY_PORT || process.env.PORT || "20128";
   const selfFetchUrl = `http://127.0.0.1:${expectedPort}/api/providers/${connection.id}/models?refresh=true&excludeCustom=true`;
   assert.equal(
     fetchCalls.slice(0, 3).every((u) => u === selfFetchUrl),

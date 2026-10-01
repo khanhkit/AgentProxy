@@ -1,13 +1,13 @@
-import { handleAudioSpeech } from "@omniroute/open-sse/handlers/audioSpeech.ts";
+import { handleAudioSpeech } from "@agentproxy/open-sse/handlers/audioSpeech.ts";
 import { withInjectionGuard } from "@/middleware/promptInjectionGuard";
 import {
   getProviderCredentialsWithQuotaPreflight,
   clearRecoveredProviderState,
 } from "@/sse/services/auth";
-import { parseSpeechModel, getSpeechProvider } from "@omniroute/open-sse/config/audioRegistry.ts";
+import { parseSpeechModel, getSpeechProvider } from "@agentproxy/open-sse/config/audioRegistry.ts";
 import { resolveDynamicAudioProviders } from "@/app/api/v1/_shared/audioProviderNodes";
-import { errorResponse } from "@omniroute/open-sse/utils/error.ts";
-import { HTTP_STATUS } from "@omniroute/open-sse/config/constants.ts";
+import { errorResponse } from "@agentproxy/open-sse/utils/error.ts";
+import { HTTP_STATUS } from "@agentproxy/open-sse/config/constants.ts";
 import { enforceApiKeyPolicy } from "@/shared/utils/apiKeyPolicy";
 import { v1AudioSpeechSchema } from "@/shared/validation/schemas";
 import { isValidationFailure, validateBody } from "@/shared/validation/helpers";
@@ -15,8 +15,9 @@ import {
   isAllRateLimitedCredentials,
   rateLimitedProviderResponse,
 } from "@/app/api/v1/_shared/rateLimit";
-import { attachOmniRouteMetaToResponse } from "@/domain/omnirouteResponseMeta";
+import { attachAgentProxyMetaToResponse } from "@/domain/agentproxyResponseMeta";
 import { calculateModalCost } from "@/lib/usage/costCalculator";
+import { saveCallLog } from "@/lib/usage/callLogs";
 import { generateRequestId } from "@/shared/utils/requestId";
 
 /**
@@ -62,7 +63,7 @@ async function postHandler(request, context) {
     const { getComboByName } = await import("@/lib/db/combos");
     const combo = await getComboByName(body.model);
     if (combo) {
-      const { executeSpeechCombo } = await import("@omniroute/open-sse/services/speechCombo");
+      const { executeSpeechCombo } = await import("@agentproxy/open-sse/services/speechCombo");
       return executeSpeechCombo(body.model, body, startTime);
     }
   }
@@ -102,6 +103,10 @@ async function postHandler(request, context) {
     resolvedProvider: providerConfig,
     resolvedModel,
   });
+  const latencyMs = Date.now() - startTime;
+  const logModel = resolvedModel ? `${provider}/${resolvedModel}` : body.model;
+  const connectionId = (credentials as { connectionId?: string } | null)?.connectionId || undefined;
+
   if (response?.ok) {
     await clearRecoveredProviderState(credentials);
     // TTS is billed per input character; attach cost telemetry without
@@ -110,14 +115,32 @@ async function postHandler(request, context) {
     const costUsd = await calculateModalCost("audio", provider, resolvedModel || body.model, {
       characters,
     });
-    response = attachOmniRouteMetaToResponse(response, {
+    response = attachAgentProxyMetaToResponse(response, {
       provider,
       model: resolvedModel || body.model,
       costUsd,
-      latencyMs: Date.now() - startTime,
+      latencyMs,
       requestId: generateRequestId(),
     });
   }
+
+  if (response) {
+    saveCallLog({
+      method: "POST",
+      path: "/v1/audio/speech",
+      status: response.status,
+      model: logModel,
+      provider,
+      connectionId,
+      duration: latencyMs,
+      requestType: "audio_speech",
+      error: response.ok ? null : `Audio speech failed with status ${response.status}`,
+      apiKeyId: policy.apiKeyInfo?.id || null,
+      apiKeyName: policy.apiKeyInfo?.name || null,
+      noLog: policy.apiKeyInfo?.noLog === true,
+    }).catch(() => {});
+  }
+
   return response;
 }
 

@@ -1,12 +1,12 @@
 /**
- * Telegram → OmniRoute chat proxy.
+ * Telegram → AgentProxy chat proxy.
  *
  * Turns a plain Telegram message into a chat.completions call through the
  * existing handleChat pipeline and returns the assistant text. Non-streaming
  * for Phase 1 (Telegram has no native SSE); streaming is emulated later via
  * progressive editMessageText.
  *
- * Auth model: each Telegram user is mapped to a generated OmniRoute API key
+ * Auth model: each Telegram user is mapped to a generated AgentProxy API key
  * (createApiKey) so the existing policy/rate-limit/model-allowlist machinery
  * applies unchanged. The key is cached in-memory per user id.
  */
@@ -18,7 +18,7 @@ import { randomUUID } from "node:crypto";
 const DEFAULT_MODEL = process.env.TELEGRAM_DEFAULT_MODEL || "auto/chat";
 
 /**
- * Resolve (and lazily mint) an OmniRoute API key for a Telegram user.
+ * Resolve (and lazily mint) an AgentProxy API key for a Telegram user.
  * Returns the plaintext key value, cached per user id.
  */
 // Bounded LRU. The webhook path passes a caller-supplied chat id, so the key
@@ -109,7 +109,7 @@ async function extractResponseText(response: Response): Promise<string> {
 }
 
 /**
- * Proxy one user prompt through the OmniRoute chat pipeline.
+ * Proxy one user prompt through the AgentProxy chat pipeline.
  * @returns assistant text (may be empty on failure)
  */
 export async function proxyChat(

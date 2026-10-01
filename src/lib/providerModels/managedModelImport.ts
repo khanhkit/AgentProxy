@@ -21,11 +21,12 @@ import {
   ANTIGRAVITY_MODEL_ALIASES,
   ANTIGRAVITY_REVERSE_MODEL_ALIASES,
   isDiscoverableAntigravityModelId,
-} from "@omniroute/open-sse/config/antigravityModelAliases.ts";
-import { isDiscoverableAgyModelId } from "@omniroute/open-sse/config/agyModels.ts";
-import { filterChatSelectableModels } from "@omniroute/open-sse/services/modelEndpointPolicy.ts";
-import { filterSelectableModels } from "@omniroute/open-sse/services/modelLifecycle.ts";
+} from "@agentproxy/open-sse/config/antigravityModelAliases.ts";
+import { isDiscoverableAgyModelId } from "@agentproxy/open-sse/config/agyModels.ts";
+import { filterChatSelectableModels } from "@agentproxy/open-sse/services/modelEndpointPolicy.ts";
+import { filterSelectableModels } from "@agentproxy/open-sse/services/modelLifecycle.ts";
 import { isSelfHostedChatProvider } from "@/shared/constants/providers";
+import type { VertexModelMetadataProvenance } from "@/lib/providerModels/vertexModelMetadata";
 
 type JsonRecord = Record<string, unknown>;
 
@@ -42,6 +43,8 @@ export type ManagedImportedModel = {
   supportedThinkingEfforts?: string[];
   defaultThinkingEffort?: string;
   inputTokenLimit?: number;
+  contextWindow?: number;
+  metadataProvenance?: VertexModelMetadataProvenance;
   outputTokenLimit?: number;
   description?: string;
   supportsThinking?: boolean;
@@ -77,6 +80,10 @@ function copyImportedModelMetadata(target: ManagedImportedModel, model: JsonReco
     target.defaultThinkingEffort = model.defaultThinkingEffort as string;
   }
   if (typeof model.inputTokenLimit === "number") target.inputTokenLimit = model.inputTokenLimit;
+  if (typeof model.contextWindow === "number") target.contextWindow = model.contextWindow;
+  if (model.metadataProvenance && typeof model.metadataProvenance === "object") {
+    target.metadataProvenance = model.metadataProvenance as VertexModelMetadataProvenance;
+  }
   if (typeof model.outputTokenLimit === "number") {
     target.outputTokenLimit = model.outputTokenLimit;
   }
@@ -124,6 +131,10 @@ function copyComparableModelMetadata(target: JsonRecord, model: JsonRecord): voi
     target.defaultThinkingEffort = model.defaultThinkingEffort;
   }
   if (typeof model.inputTokenLimit === "number") target.inputTokenLimit = model.inputTokenLimit;
+  if (typeof model.contextWindow === "number") target.contextWindow = model.contextWindow;
+  if (model.metadataProvenance && typeof model.metadataProvenance === "object") {
+    target.metadataProvenance = model.metadataProvenance;
+  }
   if (typeof model.outputTokenLimit === "number") {
     target.outputTokenLimit = model.outputTokenLimit;
   }
@@ -307,6 +318,8 @@ export async function importManagedModels({
       supportedThinkingEfforts?: string[];
       defaultThinkingEffort?: string;
       inputTokenLimit?: number;
+      contextWindow?: number;
+      metadataProvenance?: VertexModelMetadataProvenance;
       outputTokenLimit?: number;
       description?: string;
       supportsThinking?: boolean;

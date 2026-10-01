@@ -293,8 +293,8 @@ test("npm, standalone, Electron, and container assembly carry the wreq license e
   assert.match(topLevelNotices, /Copyright \(c\) 2025 Oleksandr Herasymov/);
   assert.match(topLevelNotices, /wreq-js-rust-notices\.md/);
 
-  const fixtureRoot = mkdtempSync(join(tmpdir(), "omniroute-wreq-notices-source-"));
-  const outputRoot = mkdtempSync(join(tmpdir(), "omniroute-wreq-notices-output-"));
+  const fixtureRoot = mkdtempSync(join(tmpdir(), "agentproxy-wreq-notices-source-"));
+  const outputRoot = mkdtempSync(join(tmpdir(), "agentproxy-wreq-notices-output-"));
   try {
     const copiedPaths = ["THIRD_PARTY_NOTICES.md", ...RELEASE_EVIDENCE_PATHS];
     for (const relativePath of copiedPaths) {

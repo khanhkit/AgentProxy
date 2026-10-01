@@ -22,7 +22,7 @@ import {
 import { applyStackedCompression } from "../../../open-sse/services/compression/strategySelector.ts";
 import { headroomEngine } from "../../../open-sse/services/compression/engines/headroom/index.ts";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-headroom-minrows-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-headroom-minrows-"));
 const ORIGINAL_DATA_DIR = process.env.DATA_DIR;
 process.env.DATA_DIR = TEST_DATA_DIR;
 
@@ -79,6 +79,34 @@ describe("#8056 headroom minRows persistence", () => {
       lite: { compressToolResults: "no" },
     });
     assert.equal(result.success, false);
+  });
+
+  it("schema accepts Lite maxToolLength", () => {
+    const result = compressionSettingsUpdateSchema.safeParse({
+      lite: { compressToolResults: true, maxToolLength: 8000 },
+    });
+    assert.equal(result.success, true, JSON.stringify(result.error?.issues));
+  });
+
+  it("schema rejects a string Lite maxToolLength", () => {
+    const result = compressionSettingsUpdateSchema.safeParse({
+      lite: { maxToolLength: "8000" },
+    });
+    assert.equal(result.success, false);
+  });
+
+  it("schema rejects a Lite maxToolLength below 256", () => {
+    const result = compressionSettingsUpdateSchema.safeParse({
+      lite: { maxToolLength: 10 },
+    });
+    assert.equal(result.success, false);
+  });
+
+  it("schema accepts null Lite maxToolLength to clear a stored cap", () => {
+    const result = compressionSettingsUpdateSchema.safeParse({
+      lite: { compressToolResults: true, maxToolLength: null },
+    });
+    assert.equal(result.success, true, JSON.stringify(result.error?.issues));
   });
 
   it("schema accepts headroom.minRows=5", () => {

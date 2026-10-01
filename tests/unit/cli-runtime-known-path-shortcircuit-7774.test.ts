@@ -7,8 +7,8 @@ import path from "node:path";
 // HOME must be overridden BEFORE importing cliRuntime.ts — the module computes
 // EXPECTED_PARENT_PATHS (the known-path realpath containment check) once at
 // import time from os.homedir().
-const fakeHome = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-7774-home-"));
-const realBinDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-7774-realbin-"));
+const fakeHome = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-7774-home-"));
+const realBinDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-7774-realbin-"));
 
 const savedEnv: Record<string, string | undefined> = {
   HOME: process.env.HOME,

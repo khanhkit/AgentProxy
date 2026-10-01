@@ -126,11 +126,11 @@ test("groups/[id]/route.ts: DELETE returns early when authError is truthy", () =
 
 // ── Error sanitization ────────────────────────────────────────────────────────
 
-test("groups/route.ts: uses buildErrorBody from @omniroute/open-sse/utils/error", () => {
+test("groups/route.ts: uses buildErrorBody from @agentproxy/open-sse/utils/error", () => {
   assert.ok(listSrc.includes("buildErrorBody"), "route must use buildErrorBody — Hard Rule #12");
   assert.ok(
-    listSrc.includes("@omniroute/open-sse/utils/error"),
-    "route must import buildErrorBody from @omniroute/open-sse/utils/error",
+    listSrc.includes("@agentproxy/open-sse/utils/error"),
+    "route must import buildErrorBody from @agentproxy/open-sse/utils/error",
   );
 });
 
@@ -138,11 +138,11 @@ test("groups/route.ts: does NOT put raw err.stack in response (no stack leak)", 
   assert.ok(!listSrc.includes("err.stack"), "route must not leak err.stack in response");
 });
 
-test("groups/[id]/route.ts: uses buildErrorBody from @omniroute/open-sse/utils/error", () => {
+test("groups/[id]/route.ts: uses buildErrorBody from @agentproxy/open-sse/utils/error", () => {
   assert.ok(idSrc.includes("buildErrorBody"), "route must use buildErrorBody — Hard Rule #12");
   assert.ok(
-    idSrc.includes("@omniroute/open-sse/utils/error"),
-    "route must import buildErrorBody from @omniroute/open-sse/utils/error",
+    idSrc.includes("@agentproxy/open-sse/utils/error"),
+    "route must import buildErrorBody from @agentproxy/open-sse/utils/error",
   );
 });
 

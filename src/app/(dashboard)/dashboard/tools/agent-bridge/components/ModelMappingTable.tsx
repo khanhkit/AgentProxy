@@ -16,7 +16,7 @@ interface ModelMappingTableProps {
 }
 
 /**
- * Editable table: source model → target OmniRoute model.
+ * Editable table: source model → target AgentProxy model.
  */
 export function ModelMappingTable({ agentId, mappings, onSave }: ModelMappingTableProps) {
   const t = useTranslations("agentBridge");
@@ -56,7 +56,7 @@ export function ModelMappingTable({ agentId, mappings, onSave }: ModelMappingTab
         <div className="rounded-lg border border-border/40 bg-surface/30 px-4 py-6 text-center">
           <p className="text-xs text-text-muted mb-3">
             {t("noMappingsDesc") ||
-              "No model mappings configured yet. Add mappings to route agent requests through OmniRoute."}
+              "No model mappings configured yet. Add mappings to route agent requests through AgentProxy."}
           </p>
           <button
             type="button"
@@ -77,7 +77,7 @@ export function ModelMappingTable({ agentId, mappings, onSave }: ModelMappingTab
                     {t("sourceModel") || "Source model (agent native)"}
                   </th>
                   <th className="px-3 py-2 text-left text-xs font-medium text-text-muted">
-                    {t("targetModel") || "Target model (OmniRoute)"}
+                    {t("targetModel") || "Target model (AgentProxy)"}
                   </th>
                   <th className="px-3 py-2 w-12"></th>
                 </tr>
@@ -90,7 +90,7 @@ export function ModelMappingTable({ agentId, mappings, onSave }: ModelMappingTab
                         type="text"
                         value={row.source}
                         onChange={(e) => updateSource(i, e.target.value)}
-                        placeholder="e.g., gpt-4"
+                        placeholder="e.g., gemini-3.6-flash-medium, or * for all unmapped"
                         className="w-full rounded border border-border/40 bg-card px-2 py-1 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-primary/50"
                       />
                     </td>
@@ -125,6 +125,11 @@ export function ModelMappingTable({ agentId, mappings, onSave }: ModelMappingTab
               </tbody>
             </table>
           </div>
+
+          <p className="text-xs text-text-muted">
+            Use * as the source to route every model without an explicit mapping through AgentProxy
+            to the selected target. Exact source matches always win over *.
+          </p>
 
           <div className="flex justify-between items-center">
             <button

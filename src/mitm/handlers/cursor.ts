@@ -3,11 +3,11 @@
  *
  * Host: `api2.cursor.sh`.
  * Format: OpenAI-compatible Chat Completions — `body.model` is rewritten to
- * the mapped target and the request is forwarded to the OmniRoute router.
+ * the mapped target and the request is forwarded to the AgentProxy router.
  */
 import type { IncomingMessage, ServerResponse } from "node:http";
 import type { AgentId } from "../types";
-import { MitmHandlerBase } from "./base";
+import { MitmHandlerBase, createBoundedCollector } from "./base";
 
 export class CursorHandler extends MitmHandlerBase {
   readonly agentId: AgentId = "cursor";
@@ -16,7 +16,7 @@ export class CursorHandler extends MitmHandlerBase {
     req: IncomingMessage,
     res: ServerResponse,
     body: Buffer,
-    mappedModel: string,
+    mappedModel: string
   ): Promise<void> {
     const startedAt = this.now();
     const intercepted = await this.hookBufferStart(req, body, mappedModel);
@@ -30,20 +30,20 @@ export class CursorHandler extends MitmHandlerBase {
 
       if (!upstream.ok) {
         const errText = await upstream.text().catch(() => "");
-        throw new Error(`OmniRoute ${upstream.status}: ${errText}`);
+        throw new Error(`AgentProxy ${upstream.status}: ${errText}`);
       }
 
-      let collected = "";
+      const sink = createBoundedCollector();
       await this.pipeSSE(upstream, res, (chunk) => {
-        collected += chunk.toString();
+        sink.push(chunk.toString());
       });
 
       const total = this.now() - startedAt;
       this.hookBufferUpdate(intercepted, {
         status: upstream.status,
         responseHeaders: Object.fromEntries(upstream.headers.entries()),
-        responseBody: collected,
-        responseSize: Buffer.byteLength(collected),
+        responseBody: sink.text,
+        responseSize: sink.totalBytes,
         proxyLatencyMs: upstreamStart - startedAt,
         upstreamLatencyMs: total - (upstreamStart - startedAt),
       });

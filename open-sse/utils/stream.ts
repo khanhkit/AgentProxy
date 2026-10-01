@@ -1,6 +1,7 @@
 import { translateResponse, initState } from "../translator/index.ts";
 import { FORMATS } from "../translator/formats.ts";
-import { trackPendingRequest, appendRequestLog } from "@/lib/usageDb";
+import { appendRequestLog } from "@/lib/usageDb";
+import { clearPendingRequestOnce } from "./pendingRequestCleanup.ts";
 import {
   extractUsage,
   hasValidUsage,
@@ -28,7 +29,7 @@ import {
 } from "./streamHelpers.ts";
 import { rejectEmptyChoicesStream, buildEmptyChoicesStreamError } from "./streamEmptyChoices.ts";
 import { calculateCost } from "@/lib/usage/costCalculator";
-import { buildOmniRouteSseMetadataComment } from "@/domain/omnirouteResponseMeta";
+import { buildAgentProxySseMetadataComment } from "@/domain/agentproxyResponseMeta";
 import { sseCommentsEnabled } from "./sseHeartbeat.ts";
 import { createStructuredSSECollector } from "./streamPayloadCollector.ts";
 import { STREAM_IDLE_TIMEOUT_MS, FETCH_BODY_TIMEOUT_MS, HTTP_STATUS } from "../config/constants.ts";
@@ -112,7 +113,7 @@ export { backfillResponsesCompletedOutput, stripResponsesLifecycleEcho };
 
 type JsonRecord = Record<string, unknown>;
 
-export const PENDING_REQUEST_CLEARED_MARKER = "__omniroutePendingRequestCleared";
+export const PENDING_REQUEST_CLEARED_MARKER = "__agentproxyPendingRequestCleared";
 
 function markPendingRequestCleared(error: Error): Error {
   (error as Error & Record<string, unknown>)[PENDING_REQUEST_CLEARED_MARKER] = true;
@@ -156,6 +157,7 @@ type StreamOptions = {
   copilotCompatibleReasoning?: boolean;
   /** Suppress the `</think>` close marker for clients that render it verbatim (#5245). */
   suppressThinkClose?: boolean;
+  requestedThinking?: boolean;
   /**
    * Drop internal commentary-phase output items from Responses API passthrough
    * streams before forwarding (#6199). When omitted, falls back to the
@@ -189,6 +191,7 @@ type StreamOptions = {
    * codex-compatible `namespace` + `name` fields.
    */
   requestToolIdentityMap?: Map<string, { namespace: string; name: string }> | null;
+  pendingRequestId?: string | null;
 };
 
 type TranslateState = ReturnType<typeof initState> & {
@@ -200,6 +203,7 @@ type TranslateState = ReturnType<typeof initState> & {
   copilotCompatibleReasoning?: boolean;
   /** Suppress the `</think>` close marker for clients that render it verbatim (#5245). */
   suppressThinkClose?: boolean;
+  requestedThinking?: boolean;
   /** Accumulated message content for call log response body */
   accumulatedContent?: string;
   /** Accumulated reasoning content (separate from content) */
@@ -603,7 +607,8 @@ function getOpenAIIntermediateChunks(value: unknown): unknown[] {
 
 export function restoreClaudePassthroughToolUseName(
   parsed: JsonRecord,
-  toolNameMap: unknown
+  toolNameMap: unknown,
+  requestTools?: unknown
 ): boolean {
   const block =
     parsed.content_block && typeof parsed.content_block === "object"
@@ -612,11 +617,82 @@ export function restoreClaudePassthroughToolUseName(
   if (!block || block.type !== "tool_use" || typeof block.name !== "string") return false;
 
   const map = toolNameMap instanceof Map ? toolNameMap : null;
-  const restoredName = restoreClaudeToolName(block.name, map);
 
+  // 1) Alias ledger, direct lookups only. restoreClaudeToolName() is NOT used
+  //    here on purpose: its canonical-upgrade fallback (bash -> Bash) fires
+  //    even when an alias ledger exists (canonical beats the identity match),
+  //    which poisoned claude->claude passthrough: the proxy_ ledger
+  //    (buildClaudePassthroughToolNameMap) is always non-empty for claude
+  //    passthrough, so every lowercase-declaring client (pi/OpenCode on
+  //    claude-format executors like devin-cli-agentic) received "Bash" on the
+  //    SSE path while the JSON path (direct map.get) stayed correct (#12721).
+  if (map && map.size > 0) {
+    const exact = map.get(block.name);
+    if (typeof exact === "string" && exact !== block.name) {
+      block.name = exact;
+      return true;
+    }
+    const lower = block.name.toLowerCase();
+    for (const [sanitized, original] of map.entries()) {
+      if (sanitized.toLowerCase() !== lower && original.toLowerCase() !== lower) {
+        continue;
+      }
+      if (original !== block.name) {
+        block.name = original;
+        return true;
+      }
+      break; // identity echo in the ledger — nothing to restore
+    }
+  }
+
+  // 2) Normalize upstream case drift to the request's DECLARED casing so a
+  //    passthrough can never hand the client a name it did not declare
+  //    (#12721). Conversely a genuine Claude Code client (declared "Bash")
+  //    still gets "Bash" back when an OpenAI-style upstream downcased it
+  //    (#7926).
+  const declaredName = findDeclaredToolName(requestTools, block.name);
+  if (declaredName !== null) {
+    if (declaredName === block.name) return false;
+    block.name = declaredName;
+    return true;
+  }
+
+  // 3) Undeclared name with no alias: legacy canonicalization (canonical
+  //    Claude Code spelling) as a last resort for CC-shaped traffic whose
+  //    request body carries no tools[] (server tools, bare probes).
+  if (map && map.size > 0) return false;
+  const restoredName = restoreClaudeToolName(block.name, null);
   if (restoredName === block.name) return false;
   block.name = restoredName;
   return true;
+}
+
+/**
+ * Exact- then case-insensitive lookup of `name` inside the request's tools[]
+ * (Anthropic `name` or OpenAI `function.name`). Returns the DECLARED spelling,
+ * or null when no declared tool matches (server tools, undeclared names).
+ */
+function findDeclaredToolName(requestTools: unknown, name: string): string | null {
+  if (!Array.isArray(requestTools)) return null;
+  const lower = name.toLowerCase();
+  let caseInsensitive: string | null = null;
+  for (const tool of requestTools) {
+    if (!tool || typeof tool !== "object" || Array.isArray(tool)) continue;
+    const item = tool as JsonRecord;
+    const directName = typeof item.name === "string" ? item.name.trim() : "";
+    const fn =
+      item.function && typeof item.function === "object" && !Array.isArray(item.function)
+        ? (item.function as JsonRecord)
+        : null;
+    const functionName = typeof fn?.name === "string" ? fn.name.trim() : "";
+    const declared = functionName || directName;
+    if (!declared) continue;
+    if (declared === name) return declared;
+    if (caseInsensitive === null && declared.toLowerCase() === lower) {
+      caseInsensitive = declared;
+    }
+  }
+  return caseInsensitive;
 }
 
 // Note: TextDecoder/TextEncoder are created per-stream inside createSSEStream()
@@ -651,9 +727,8 @@ export function createSSEStream(options: StreamOptions = {}) {
     mode = STREAM_MODE.TRANSLATE,
     targetFormat,
     sourceFormat,
-    clientResponseFormat = null,
-    copilotCompatibleReasoning = false,
-    suppressThinkClose = false,
+    clientResponseFormat = null, copilotCompatibleReasoning = false,
+    suppressThinkClose = false, requestedThinking,
     provider = null,
     reqLogger = null,
     toolNameMap = null,
@@ -667,8 +742,8 @@ export function createSSEStream(options: StreamOptions = {}) {
     customToolNames = new Set<string>(),
     requestToolIdentityMap = null,
     streamBufferBytes = DEFAULT_STREAM_BUFFER_BYTES,
+    pendingRequestId = null,
   } = options;
-  const signatureNamespace = connectionId;
   // Request-body-size metric (for monitoring payload size distribution & correlation with TTFT).
   // The size is JSON-serialised byte count; stored as a performance mark detail so monitoring
   // tools can query performance.getEntriesByType("mark") filtered by name.
@@ -756,9 +831,10 @@ export function createSSEStream(options: StreamOptions = {}) {
           ...(initState(sourceFormat) as TranslateState),
           provider,
           toolNameMap,
-          signatureNamespace,
+          signatureNamespace: connectionId,
           copilotCompatibleReasoning,
           suppressThinkClose,
+          requestedThinking,
           accumulatedContent: "",
           accumulatedReasoning: "",
           toolSchemas: extractToolSchemaMap(body),
@@ -1009,11 +1085,9 @@ export function createSSEStream(options: StreamOptions = {}) {
     }
   };
 
-  let pendingRequestClearedByStream = false;
+  const clearSeen = { done: false };
   const clearPendingRequestFromStream = () => {
-    if (pendingRequestClearedByStream) return;
-    pendingRequestClearedByStream = true;
-    trackPendingRequest(model, provider, connectionId, false);
+    clearPendingRequestOnce(clearSeen, { model, provider, connectionId, pendingRequestId });
   };
 
   const emitClaudeEmptyStreamErrorAndAbort = (
@@ -1043,7 +1117,9 @@ export function createSSEStream(options: StreamOptions = {}) {
     if (decrementPendingRequest && !failureHandled) {
       clearPendingRequestFromStream();
     }
-    controller.error(markPendingRequestCleared(new Error(msg)));
+    const emptyStreamError = new Error(msg) as Error & { code?: string };
+    emptyStreamError.code = "empty_response";
+    controller.error(markPendingRequestCleared(emptyStreamError));
   };
 
   const emitTranslatedClientItem = (
@@ -1101,15 +1177,15 @@ export function createSSEStream(options: StreamOptions = {}) {
     controller: TransformStreamDefaultController,
     finalUsage: UsageTokenRecord | Record<string, unknown> | null | undefined
   ) => {
-    // Skip SSE metadata comment lines when OMNIROUTE_SSE_COMMENTS is disabled
+    // Skip SSE metadata comment lines when AGENTPROXY_SSE_COMMENTS is disabled
     // (e.g., "off", "false", "0", "no"). Strict OpenAI-compatible clients that
-    // JSON.parse every SSE line will crash on `: x-omniroute-*` comment lines.
+    // JSON.parse every SSE line will crash on `: x-agentproxy-*` comment lines.
     if (!sseCommentsEnabled()) return;
 
     const costUsd = finalUsage
       ? await calculateCost(provider, model, normalizeTokenUsage(finalUsage))
       : 0;
-    const comment = buildOmniRouteSseMetadataComment({
+    const comment = buildAgentProxySseMetadataComment({
       provider,
       model,
       cacheHit: false,
@@ -1772,7 +1848,11 @@ export function createSSEStream(options: StreamOptions = {}) {
                     return;
                   }
                   updateClaudeEmptyResponseLifecycle(claudeEmptyResponseLifecycle, parsed);
-                  const restoredToolName = restoreClaudePassthroughToolUseName(parsed, toolNameMap);
+                  const restoredToolName = restoreClaudePassthroughToolUseName(
+                    parsed,
+                    toolNameMap,
+                    body
+                  );
                   // Track content length and accumulate from Claude format
                   if (parsed.delta?.text) {
                     totalContentLength += parsed.delta.text.length;
@@ -1809,7 +1889,7 @@ export function createSSEStream(options: StreamOptions = {}) {
                   //
                   // For a malformed empty `choices: []` chunk WITHOUT valid usage we DROP
                   // it (log server-side only). We must NOT inject an assistant-content
-                  // chunk like "[OmniRoute] Upstream returned an empty response. Please
+                  // chunk like "[AgentProxy] Upstream returned an empty response. Please
                   // retry." with finish_reason: "stop" — clients (Goose/opencode) feed that
                   // text back as a turn and spin in a retry loop. This restores the #3400
                   // behavior that #3422 inadvertently reverted (regression #3388/#3502).
@@ -1883,6 +1963,9 @@ export function createSSEStream(options: StreamOptions = {}) {
                     parsed?.id != null && typeof parsed.id !== "string";
                   const rawDelta = parsed.choices?.[0]?.delta;
                   const hadReasoningAlias = hasUnsupportedReasoningSignal(rawDelta);
+                  const hadUpstreamReasoningContent =
+                    typeof rawDelta?.reasoning_content === "string" &&
+                    rawDelta.reasoning_content.length > 0;
 
                   if (!projectedFailure) {
                     parsed = sanitizeStreamingChunk(parsed);
@@ -1949,7 +2032,10 @@ export function createSSEStream(options: StreamOptions = {}) {
                     splitMixedReasoningContent ||
                     thinkParsed ||
                     hadReasoningAlias ||
-                    (delta?.content === "" && delta?.reasoning_content);
+                    (delta?.content === "" && delta?.reasoning_content) ||
+                    (!hadUpstreamReasoningContent &&
+                      typeof delta?.reasoning_content === "string" &&
+                      delta.reasoning_content.length > 0);
 
                   // T18: Track if we saw tool calls & accumulate for call log
                   if (delta?.tool_calls && delta.tool_calls.length > 0) {
@@ -2220,8 +2306,13 @@ export function createSSEStream(options: StreamOptions = {}) {
                 openAiReasoning
               );
           }
-          // Mirror only client-unsupported reasoning aliases into `reasoning_content`.
-          if (!openAiReasoning) {
+          // Mirror client-unsupported aliases whenever reasoning_content itself is absent.
+          const openAiReasoningContent =
+            typeof openAiDelta?.reasoning_content === "string" &&
+            openAiDelta.reasoning_content.length > 0
+              ? openAiDelta.reasoning_content
+              : "";
+          if (!openAiReasoningContent) {
             const delta = openAiDelta;
             const r = getUnsupportedReasoningValue(delta);
             if (typeof r === "string" && r.length > 0) {
@@ -3046,19 +3137,15 @@ export default createSSEStream;
 export function createSSETransformStreamWithLogger(
   targetFormat: string,
   sourceFormat: string,
-  provider: string | null = null,
-  reqLogger: StreamLogger | null = null,
-  toolNameMap: unknown = null,
-  model: string | null = null,
-  connectionId: string | null = null,
-  body: unknown = null,
+  provider: string | null = null, reqLogger: StreamLogger | null = null,
+  toolNameMap: unknown = null, model: string | null = null,
+  connectionId: string | null = null, body: unknown = null,
   onComplete: ((payload: StreamCompletePayload) => void) | null = null,
-  apiKeyInfo: unknown = null,
-  onFailure: ((payload: StreamFailurePayload) => boolean | void | Promise<void>) | null = null,
-  copilotCompatibleReasoning = false,
-  suppressThinkClose = false,
+  apiKeyInfo: unknown = null, onFailure: ((payload: StreamFailurePayload) => boolean | void | Promise<void>) | null = null,
+  copilotCompatibleReasoning = false, suppressThinkClose = false,
   customToolNames: ReadonlySet<string> = new Set(),
   requestToolIdentityMap: Map<string, { namespace: string; name: string }> | null = null,
+  requestedThinkingOrLegacyBuffer: boolean | number | undefined = undefined,
   streamBufferBytes: number = DEFAULT_STREAM_BUFFER_BYTES
 ) {
   return createSSEStream({
@@ -3078,7 +3165,8 @@ export function createSSETransformStreamWithLogger(
     suppressThinkClose,
     customToolNames,
     requestToolIdentityMap,
-    streamBufferBytes,
+    streamBufferBytes: typeof requestedThinkingOrLegacyBuffer === "number" ? requestedThinkingOrLegacyBuffer : streamBufferBytes,
+    requestedThinking: typeof requestedThinkingOrLegacyBuffer === "boolean" ? requestedThinkingOrLegacyBuffer : undefined,
   });
 }
 

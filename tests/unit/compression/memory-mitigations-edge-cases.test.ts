@@ -1,6 +1,6 @@
 /**
  * Comprehensive Edge Cases, Failure Modes, and Workflows Test Suite
- * for all #7847 OOM & Memory Mitigations in OmniRoute.
+ * for all #7847 OOM & Memory Mitigations in AgentProxy.
  *
  * Verifies the memory mitigations hold across edge cases and failure modes:
  * 1. jsonSha256: BigInt/circular throws, toJSON/Date, Unicode, control chars,

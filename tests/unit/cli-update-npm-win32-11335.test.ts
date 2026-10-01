@@ -2,8 +2,8 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
 
-// #11335 — `omniroute update` printed "Could not check latest version. Is npm
-// available?" on Windows while `npm view omniroute version` worked in the same
+// #11335 — `agentproxy update` printed "Could not check latest version. Is npm
+// available?" on Windows while `npm view agentproxy version` worked in the same
 // shell. `bin/cli/commands/update.mjs` called `execFile("npm", …)` with no shell:
 // on Node ≥ 24 a `.cmd` cannot be spawned without one (nodejs/node#52554), and a
 // bare `npm` can resolve to an extensionless shim CreateProcess refuses.
@@ -77,4 +77,20 @@ test("#11335 the shell is only enabled where argv is literal (Hard Rule #13)", (
   for (const argv of argvArrays) {
     assert.equal(/\$\{|\+\s*\w|\.\.\./.test(argv), false, `argv must stay literal: ${argv}`);
   }
+});
+
+test("CLI updater preserves the supported peer-dependency install mode", () => {
+  const src = fs.readFileSync(
+    new URL("../../bin/cli/commands/update.mjs", import.meta.url),
+    "utf8"
+  );
+
+  assert.match(
+    src,
+    /\[DRY RUN\] Would run: npm install -g omniroute@latest --include=optional --legacy-peer-deps/
+  );
+  assert.match(
+    src,
+    /execSync\("npm install -g omniroute@latest --include=optional --legacy-peer-deps"/
+  );
 });

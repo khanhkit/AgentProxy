@@ -1,10 +1,10 @@
 ---
-title: "Architektura OmniRoute"
+title: "Architektura AgentProxy"
 version: 3.8.40
 lastUpdated: 2026-06-28
 ---
 
-# Architektura OmniRoute
+# Architektura AgentProxy
 
 🌐 **Languages:** 🇺🇸 [English](../../../../architecture/ARCHITECTURE.md) · 🇸🇦 [ar](../../../ar/docs/architecture/ARCHITECTURE.md) · 🇦🇿 [az](../../../az/docs/architecture/ARCHITECTURE.md) · 🇧🇬 [bg](../../../bg/docs/architecture/ARCHITECTURE.md) · 🇧🇩 [bn](../../../bn/docs/architecture/ARCHITECTURE.md) · 🇨🇿 [cs](../../../cs/docs/architecture/ARCHITECTURE.md) · 🇩🇰 [da](../../../da/docs/architecture/ARCHITECTURE.md) · 🇩🇪 [de](../../../de/docs/architecture/ARCHITECTURE.md) · 🇬🇷 [el](../../../el/docs/architecture/ARCHITECTURE.md) · 🇪🇸 [es](../../../es/docs/architecture/ARCHITECTURE.md) · 🇪🇪 [et](../../../et/docs/architecture/ARCHITECTURE.md) · 🇮🇷 [fa](../../../fa/docs/architecture/ARCHITECTURE.md) · 🇫🇮 [fi](../../../fi/docs/architecture/ARCHITECTURE.md) · 🇫🇷 [fr](../../../fr/docs/architecture/ARCHITECTURE.md) · 🇮🇪 [ga](../../../ga/docs/architecture/ARCHITECTURE.md) · 🇮🇳 [gu](../../../gu/docs/architecture/ARCHITECTURE.md) · 🇮🇱 [he](../../../he/docs/architecture/ARCHITECTURE.md) · 🇮🇳 [hi](../../../hi/docs/architecture/ARCHITECTURE.md) · 🇭🇷 [hr](../../../hr/docs/architecture/ARCHITECTURE.md) · 🇭🇺 [hu](../../../hu/docs/architecture/ARCHITECTURE.md) · 🇮🇩 [id](../../../id/docs/architecture/ARCHITECTURE.md) · 🇮🇹 [it](../../../it/docs/architecture/ARCHITECTURE.md) · 🇯🇵 [ja](../../../ja/docs/architecture/ARCHITECTURE.md) · 🇰🇷 [ko](../../../ko/docs/architecture/ARCHITECTURE.md) · 🇱🇹 [lt](../../../lt/docs/architecture/ARCHITECTURE.md) · 🇱🇻 [lv](../../../lv/docs/architecture/ARCHITECTURE.md) · 🇮🇳 [mr](../../../mr/docs/architecture/ARCHITECTURE.md) · 🇲🇾 [ms](../../../ms/docs/architecture/ARCHITECTURE.md) · 🇲🇹 [mt](../../../mt/docs/architecture/ARCHITECTURE.md) · 🇳🇱 [nl](../../../nl/docs/architecture/ARCHITECTURE.md) · 🇳🇴 [no](../../../no/docs/architecture/ARCHITECTURE.md) · 🇵🇭 [phi](../../../phi/docs/architecture/ARCHITECTURE.md) · 🇵🇹 [pt](../../../pt/docs/architecture/ARCHITECTURE.md) · 🇧🇷 [pt-BR](../../../pt-BR/docs/architecture/ARCHITECTURE.md) · 🇷🇴 [ro](../../../ro/docs/architecture/ARCHITECTURE.md) · 🇷🇺 [ru](../../../ru/docs/architecture/ARCHITECTURE.md) · 🇸🇰 [sk](../../../sk/docs/architecture/ARCHITECTURE.md) · 🇸🇮 [sl](../../../sl/docs/architecture/ARCHITECTURE.md) · 🇷🇸 [sr](../../../sr/docs/architecture/ARCHITECTURE.md) · 🇸🇪 [sv](../../../sv/docs/architecture/ARCHITECTURE.md) · 🇰🇪 [sw](../../../sw/docs/architecture/ARCHITECTURE.md) · 🇮🇳 [ta](../../../ta/docs/architecture/ARCHITECTURE.md) · 🇮🇳 [te](../../../te/docs/architecture/ARCHITECTURE.md) · 🇹🇭 [th](../../../th/docs/architecture/ARCHITECTURE.md) · 🇹🇷 [tr](../../../tr/docs/architecture/ARCHITECTURE.md) · 🇺🇦 [uk-UA](../../../uk-UA/docs/architecture/ARCHITECTURE.md) · 🇵🇰 [ur](../../../ur/docs/architecture/ARCHITECTURE.md) · 🇻🇳 [vi](../../../vi/docs/architecture/ARCHITECTURE.md) · 🇨🇳 [zh-CN](../../../zh-CN/docs/architecture/ARCHITECTURE.md) · 🇹🇼 [zh-TW](../../../zh-TW/docs/architecture/ARCHITECTURE.md)
 
@@ -12,7 +12,7 @@ _Ostatnia aktualizacja: 2026-06-28_
 
 ## Podsumowanie wykonawcze
 
-OmniRoute to lokalna brama routingu AI i panel (dashboard) zbudowane na Next.js.
+AgentProxy to lokalna brama routingu AI i panel (dashboard) zbudowane na Next.js.
 Udostępnia pojedynczy endpoint zgodny z OpenAI (`/v1/*`) i kieruje ruch przez wielu dostawców upstream z tłumaczeniem, fallbackiem, odświeżaniem tokenów oraz śledzeniem użycia.
 
 Główne możliwości:
@@ -166,7 +166,7 @@ flowchart LR
         BROWSER[Browser Dashboard]
     end
 
-    subgraph Router[OmniRoute Local Process]
+    subgraph Router[AgentProxy Local Process]
         API[V1 Compatibility API\n/v1/*]
         DASH[Dashboard + Management API\n/api/*]
         CORE[SSE + Translation Core\nopen-sse + src/sse]
@@ -329,7 +329,7 @@ Moduły dostawców OAuth (22 osobne pliki w `src/lib/oauth/providers/`):
 
 ## 5) Osadzone usługi (v3.8.4)
 
-OmniRoute może instalować, nadzorować i routować do lokalnie działających procesów narzędzi AI
+AgentProxy może instalować, nadzorować i routować do lokalnie działających procesów narzędzi AI
 nazywanych **embedded services**. W v3.8.4 dostarczone są dwa: 9Router i CLIProxyAPI.
 
 Warstwy architektury:
@@ -434,7 +434,7 @@ same składać logiki lockout/budget/fallback.
 - Cache quota: `src/domain/quotaCache.ts`
 - Stan degradacji: `src/domain/degradation.ts`
 - Audyt konfiguracji: `src/domain/configAudit.ts`
-- Builder metadanych odpowiedzi OmniRoute: `src/domain/omnirouteResponseMeta.ts`
+- Builder metadanych odpowiedzi AgentProxy: `src/domain/agentproxyResponseMeta.ts`
 - Podsystem assessment: `src/domain/assessment/` — okresowe zadania ewaluacji
 
 ### E. Potok autoryzacji
@@ -515,7 +515,7 @@ Główna baza stanu (SQLite):
 
 - Infrastruktura rdzenia: `src/lib/db/core.ts` (better-sqlite3, migracje, WAL)
 - Fasada re-eksportu: `src/lib/localDb.ts` (cienka warstwa kompatybilności dla callerów)
-- plik: `${DATA_DIR}/storage.sqlite` (lub `$XDG_CONFIG_HOME/omniroute/storage.sqlite` gdy ustawione, w przeciwnym razie `~/.omniroute/storage.sqlite`)
+- plik: `${DATA_DIR}/storage.sqlite` (lub `$XDG_CONFIG_HOME/agentproxy/storage.sqlite` gdy ustawione, w przeciwnym razie `~/.agentproxy/storage.sqlite`)
 - encje (tabele + przestrzenie KV): providerConnections, providerNodes, modelAliases, combos, apiKeys, settings, pricing, **customModels**, **proxyConfig**, **ipFilter**, **thinkingBudget**, **systemPrompt**
 
 Persystencja użycia:
@@ -811,7 +811,7 @@ flowchart LR
         Browser[Dashboard Browser]
     end
 
-    subgraph ContainerOrProcess[OmniRoute Runtime]
+    subgraph ContainerOrProcess[AgentProxy Runtime]
         Next[Next.js Server\nPORT=20128]
         Core[SSE Core + Executors]
         MainDB[(storage.sqlite)]
@@ -930,7 +930,7 @@ Wszystkie pozostałe dostawcy (w tym niestandardowe węzły kompatybilne) używa
 ## Macierz kompatybilności dostawców
 
 > **Uwaga:** Poniższa macierz to reprezentatywna próbka spośród 351 zarejestrowanych dostawców w
-> OmniRoute v3.8.0. Kanoniczna i stale aktualizowana lista: zob.
+> AgentProxy v3.8.0. Kanoniczna i stale aktualizowana lista: zob.
 > [`docs/reference/PROVIDER_REFERENCE.md`](../reference/PROVIDER_REFERENCE.md) (auto-generowana) lub źródło
 > prawdy w `src/shared/constants/providers.ts` (walidowane Zod przy ładowaniu).
 
@@ -1112,7 +1112,7 @@ Szczegółowe przechwytywanie payloadów żądań przechowuje do czterech etapó
 - surowe żądanie otrzymane od klienta
 - przetłumaczone żądanie faktycznie wysłane upstream
 - odpowiedź dostawcy zrekonstruowana jako JSON; odpowiedzi streamowane są kompaktowane do końcowego podsumowania plus metadanych strumienia
-- końcowa odpowiedź klienta zwrócona przez OmniRoute; odpowiedzi streamowane są przechowywane w tej samej zwartej formie podsumowania
+- końcowa odpowiedź klienta zwrócona przez AgentProxy; odpowiedzi streamowane są przechowywane w tej samej zwartej formie podsumowania
 
 ## Granice wrażliwe na bezpieczeństwo
 
@@ -1139,11 +1139,11 @@ Zmienne środowiskowe aktywnie używane w kodzie:
 
 ## Znane uwagi architektoniczne
 
-1. `usageDb` i `localDb` współdzielą tę samą politykę katalogu bazowego (`DATA_DIR` -> `XDG_CONFIG_HOME/omniroute` -> `~/.omniroute`) z migracją plików legacy.
+1. `usageDb` i `localDb` współdzielą tę samą politykę katalogu bazowego (`DATA_DIR` -> `XDG_CONFIG_HOME/agentproxy` -> `~/.agentproxy`) z migracją plików legacy.
 2. `/api/v1/route.ts` deleguje do tego samego ujednoliconego buildera katalogu używanego przez `/api/v1/models` (`src/app/api/v1/models/catalog.ts`), aby uniknąć dryfu semantycznego.
 3. Logger żądań zapisuje pełne nagłówki/body, gdy jest włączony; traktuj katalog logów jako wrażliwy.
 4. Zachowanie chmury zależy od poprawnego `NEXT_PUBLIC_BASE_URL` i osiągalności endpointu chmury.
-5. Katalog `open-sse/` jest publikowany jako **pakiet npm workspace** `@omniroute/open-sse`. Kod źródłowy importuje go przez `@omniroute/open-sse/...` (rozwiązywane przez Next.js `transpilePackages`). Ścieżki plików w tym dokumencie nadal używają nazwy katalogu `open-sse/` dla spójności.
+5. Katalog `open-sse/` jest publikowany jako **pakiet npm workspace** `@agentproxy/open-sse`. Kod źródłowy importuje go przez `@agentproxy/open-sse/...` (rozwiązywane przez Next.js `transpilePackages`). Ścieżki plików w tym dokumencie nadal używają nazwy katalogu `open-sse/` dla spójności.
 6. Wykresy w dashboardzie używają **Recharts** (oparte na SVG) dla dostępnych, interaktywnych wizualizacji analitycznych (wykresy słupkowe użycia modeli, tabele breakdown dostawców ze wskaźnikami sukcesu).
 7. Testy E2E używają **Playwright** (`tests/e2e/`), uruchamiane przez `npm run test:e2e`. Testy jednostkowe używają **Node.js test runner** (`tests/unit/`), uruchamiane przez `npm run test:unit`. Kod źródłowy w `src/` to **TypeScript** (`.ts`/`.tsx`); workspace `open-sse/` pozostaje JavaScript (`.js`).
 8. Strona ustawień jest zorganizowana w 7 zakładek: General, Appearance, AI, Security, Routing, Resilience, Advanced. Strona Resilience konfiguruje tylko kolejkę żądań, cooldown połączenia, provider breaker i zachowanie wait-for-cooldown; żywy stan runtime breakerów jest pokazywany na stronie Health.
@@ -1154,7 +1154,7 @@ Zmienne środowiskowe aktywnie używane w kodzie:
 ## Lista weryfikacji operacyjnej
 
 - Build ze źródeł: `npm run build`
-- Build obrazu Docker: `docker build -t omniroute .`
+- Build obrazu Docker: `docker build -t agentproxy .`
 - Uruchom usługę i zweryfikuj:
 - `GET /api/settings`
 - `GET /api/v1/models`

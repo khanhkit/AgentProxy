@@ -1,0 +1,1 @@
+- **fix(dashboard):** keep the Dev Tools sidebar section discoverable without requiring Debug Mode.

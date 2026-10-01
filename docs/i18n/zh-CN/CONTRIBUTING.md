@@ -1,10 +1,10 @@
-# Contributing to OmniRoute (中文 (简体))
+# Contributing to AgentProxy (中文 (简体))
 
 🌐 **Languages:** 🇺🇸 [English](../../../CONTRIBUTING.md) · 🇸🇦 [ar](../ar/CONTRIBUTING.md) · 🇦🇿 [az](../az/CONTRIBUTING.md) · 🇧🇬 [bg](../bg/CONTRIBUTING.md) · 🇧🇩 [bn](../bn/CONTRIBUTING.md) · 🇨🇿 [cs](../cs/CONTRIBUTING.md) · 🇩🇰 [da](../da/CONTRIBUTING.md) · 🇩🇪 [de](../de/CONTRIBUTING.md) · 🇬🇷 [el](../el/CONTRIBUTING.md) · 🇪🇸 [es](../es/CONTRIBUTING.md) · 🇪🇪 [et](../et/CONTRIBUTING.md) · 🇮🇷 [fa](../fa/CONTRIBUTING.md) · 🇫🇮 [fi](../fi/CONTRIBUTING.md) · 🇫🇷 [fr](../fr/CONTRIBUTING.md) · 🇮🇪 [ga](../ga/CONTRIBUTING.md) · 🇮🇳 [gu](../gu/CONTRIBUTING.md) · 🇮🇱 [he](../he/CONTRIBUTING.md) · 🇮🇳 [hi](../hi/CONTRIBUTING.md) · 🇭🇷 [hr](../hr/CONTRIBUTING.md) · 🇭🇺 [hu](../hu/CONTRIBUTING.md) · 🇮🇩 [id](../id/CONTRIBUTING.md) · 🇮🇹 [it](../it/CONTRIBUTING.md) · 🇯🇵 [ja](../ja/CONTRIBUTING.md) · 🇰🇷 [ko](../ko/CONTRIBUTING.md) · 🇱🇹 [lt](../lt/CONTRIBUTING.md) · 🇱🇻 [lv](../lv/CONTRIBUTING.md) · 🇮🇳 [mr](../mr/CONTRIBUTING.md) · 🇲🇾 [ms](../ms/CONTRIBUTING.md) · 🇲🇹 [mt](../mt/CONTRIBUTING.md) · 🇳🇱 [nl](../nl/CONTRIBUTING.md) · 🇳🇴 [no](../no/CONTRIBUTING.md) · 🇵🇭 [phi](../phi/CONTRIBUTING.md) · 🇵🇱 [pl](../pl/CONTRIBUTING.md) · 🇵🇹 [pt](../pt/CONTRIBUTING.md) · 🇧🇷 [pt-BR](../pt-BR/CONTRIBUTING.md) · 🇷🇴 [ro](../ro/CONTRIBUTING.md) · 🇷🇺 [ru](../ru/CONTRIBUTING.md) · 🇸🇰 [sk](../sk/CONTRIBUTING.md) · 🇸🇮 [sl](../sl/CONTRIBUTING.md) · 🇷🇸 [sr](../sr/CONTRIBUTING.md) · 🇸🇪 [sv](../sv/CONTRIBUTING.md) · 🇰🇪 [sw](../sw/CONTRIBUTING.md) · 🇮🇳 [ta](../ta/CONTRIBUTING.md) · 🇮🇳 [te](../te/CONTRIBUTING.md) · 🇹🇭 [th](../th/CONTRIBUTING.md) · 🇹🇷 [tr](../tr/CONTRIBUTING.md) · 🇺🇦 [uk-UA](../uk-UA/CONTRIBUTING.md) · 🇵🇰 [ur](../ur/CONTRIBUTING.md) · 🇻🇳 [vi](../vi/CONTRIBUTING.md) · 🇹🇼 [zh-TW](../zh-TW/CONTRIBUTING.md)
 
 ---
 
-感谢你对 OmniRoute 的关注！本文档将引导你从零开始参与项目贡献。
+感谢你对 AgentProxy 的关注！本文档将引导你从零开始参与项目贡献。
 
 ---
 
@@ -19,8 +19,8 @@
 ### 克隆与安装
 
 ```bash
-git clone https://github.com/diegosouzapw/OmniRoute.git
-cd OmniRoute
+git clone https://github.com/khanhkit/AgentProxy.git
+cd AgentProxy
 npm install
 ```
 
@@ -93,7 +93,7 @@ npm run build
 `npm run build:release` 会额外清理上述两个目录，并写入
 `dist/BUILD_SHA`（= `git rev-parse --short HEAD`）作为部署完整性哨兵。
 
-> **VPS 部署说明：** 远程镜像目录 `/usr/lib/node_modules/omniroute/app/`
+> **VPS 部署说明：** 远程镜像目录 `/usr/lib/node_modules/agentproxy/app/`
 > 保持不变。部署脚本会将 `dist/` 的内容 rsync 到该目录中。
 > 仅仓库内的构建输出路径发生了变动（`app/` → `dist/`）。
 
@@ -256,7 +256,7 @@ src/                        # TypeScript（.ts / .tsx）
 │   └── validation/         # Zod v4 Schema
 └── sse/                    # SSE 代理流水线
 
-open-sse/                   # @omniroute/open-sse 工作区
+open-sse/                   # @agentproxy/open-sse 工作区
 ├── executors/              # 89 个执行器实现模块
 ├── handlers/               # 11 个请求处理器（chat、responses、embeddings、images 等）
 ├── mcp-server/             # MCP Server（107 个工具、3 种传输、32 个权限域）
@@ -278,7 +278,7 @@ tests/
 docs/
 ├── adr/                     # 架构决策记录
 ├── architecture/            # 系统架构与容灾
-├── comparison/              # OmniRoute 与竞品对比
+├── comparison/              # AgentProxy 与竞品对比
 ├── compression/             # 压缩指南与规则
 ├── dev/                     # 开发指南
 ├── diagrams/                # 架构图
@@ -369,5 +369,5 @@ VPS 部署时，请使用 `npm run build:release`（而非 `npm run build`）—
 - **API 参考**：参见 [`docs/reference/API_REFERENCE.md`](docs/reference/API_REFERENCE.md)
 - **安全文档**：[`docs/security/CLI_TOKEN.md`](docs/security/CLI_TOKEN.md)、[`docs/security/ROUTE_GUARD_TIERS.md`](docs/security/ROUTE_GUARD_TIERS.md)、[`docs/security/ERROR_SANITIZATION.md`](docs/security/ERROR_SANITIZATION.md)、[`docs/security/PUBLIC_CREDS.md`](docs/security/PUBLIC_CREDS.md)
 - **运维文档**：[`docs/ops/SQLITE_RUNTIME.md`](docs/ops/SQLITE_RUNTIME.md)
-- **问题反馈**：[github.com/diegosouzapw/OmniRoute/issues](https://github.com/diegosouzapw/OmniRoute/issues)
+- **问题反馈**：[github.com/khanhkit/AgentProxy/issues](https://github.com/khanhkit/AgentProxy/issues)
 - **架构决策记录**：参见 `docs/adr/` 目录

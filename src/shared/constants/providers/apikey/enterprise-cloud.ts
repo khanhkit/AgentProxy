@@ -28,7 +28,7 @@ export const APIKEY_PROVIDERS_ENTERPRISE = {
     authHint:
       "Use your Azure AI Foundry key. Base URL can be https://<resource>.services.ai.azure.com/openai/v1/ or https://<resource>.openai.azure.com/openai/v1/.",
     apiHint:
-      "Foundry uses the OpenAI v1 surface with deployment names as models. OmniRoute normalizes root resource URLs to the v1 chat and /models endpoints.",
+      "Foundry uses the OpenAI v1 surface with deployment names as models. AgentProxy normalizes root resource URLs to the v1 chat and /models endpoints.",
     passthroughModels: true,
   },
   bedrock: {
@@ -41,7 +41,7 @@ export const APIKEY_PROVIDERS_ENTERPRISE = {
     textIcon: "BR",
     website: "https://aws.amazon.com/bedrock",
     authHint:
-      "Use your Amazon Bedrock API key and configure the AWS region where your models are enabled (for example eu-west-2). OmniRoute calls Bedrock's native Converse API directly.",
+      "Use your Amazon Bedrock API key and configure the AWS region where your models are enabled (for example eu-west-2). AgentProxy calls Bedrock's native Converse API directly.",
     apiHint:
       "Native Bedrock integration: model discovery uses Bedrock foundation models and inference profiles, while chat uses the regional Bedrock Runtime Converse/ConverseStream APIs.",
     passthroughModels: true,
@@ -73,7 +73,7 @@ export const APIKEY_PROVIDERS_ENTERPRISE = {
     authHint:
       "Use your OCI Generative AI API key or IAM bearer token. Base URL can be https://inference.generativeai.<region>.oci.oraclecloud.com/openai/v1/.",
     apiHint:
-      "OCI exposes OpenAI-compatible chat and responses endpoints. Project ID is optional in OmniRoute but may be required for Responses and agentic workflows.",
+      "OCI exposes OpenAI-compatible chat and responses endpoints. Project ID is optional in AgentProxy but may be required for Responses and agentic workflows.",
     passthroughModels: true,
   },
   sap: {
@@ -104,7 +104,7 @@ export const APIKEY_PROVIDERS_ENTERPRISE = {
     authHint:
       "Use the bearer token that protects your Modal deployment, if enabled. Base URL should point to your OpenAI-compatible Modal app, for example https://<workspace>--<app>.modal.run/v1.",
     apiHint:
-      "Modal commonly serves user-hosted OpenAI-compatible apps on /v1. OmniRoute will probe /v1/models and route chat traffic to /v1/chat/completions.",
+      "Modal commonly serves user-hosted OpenAI-compatible apps on /v1. AgentProxy will probe /v1/models and route chat traffic to /v1/chat/completions.",
     hasFree: true,
     freeNote: "$30/month free credits for new accounts",
     passthroughModels: true,
@@ -119,7 +119,8 @@ export const APIKEY_PROVIDERS_ENTERPRISE = {
     textIcon: "VA",
     website: "https://cloud.google.com/vertex-ai",
     hasFree: true,
-    authHint: "Provide Service Account JSON or OAuth access_token",
+    authHint:
+      "Provide Service Account JSON, an OAuth access token, a Vertex Express API key, or a service-account-bound authorization key. Express mode supports Gemini only; partner models require project-scoped credentials.",
   },
   "vertex-partner": {
     id: "vertex-partner",
@@ -130,7 +131,8 @@ export const APIKEY_PROVIDERS_ENTERPRISE = {
     color: "#34A853",
     textIcon: "VP",
     website: "https://cloud.google.com/vertex-ai",
-    authHint: "Provide the same Service Account JSON used for Vertex AI partner models.",
+    authHint:
+      "Provide Service Account JSON or OAuth credentials. A service-account-bound authorization key also supports discovery, but partner inference additionally requires its Google Cloud project ID. Standard Express keys support Gemini only.",
   },
   "cloudflare-ai": {
     id: "cloudflare-ai",
@@ -143,7 +145,7 @@ export const APIKEY_PROVIDERS_ENTERPRISE = {
     website: "https://developers.cloudflare.com/workers-ai",
     hasFree: true,
     freeNote:
-      "Free 10K Neurons/day: ~150 LLM responses or 500s Whisper audio — edge inference globally",
+      "Free 10K Neurons/day: ~150 LLM responses, 500s Whisper audio, or ~500 FLUX.1 Schnell images at 1024x1024 (4.80 Neurons per 512x512 tile) — edge inference globally",
     authHint: "Requires API Token AND Account ID (found at dash.cloudflare.com)",
   },
   scaleway: {
@@ -213,7 +215,7 @@ export const APIKEY_PROVIDERS_ENTERPRISE = {
     textIcon: "CF",
     website: "https://docs.clarifai.com",
     authHint:
-      "Use your Clarifai PAT or app-specific API key. OmniRoute targets the OpenAI-compatible endpoint at https://api.clarifai.com/v2/ext/openai/v1 and authenticates with Authorization: Key <token>.",
+      "Use your Clarifai PAT or app-specific API key. AgentProxy targets the OpenAI-compatible endpoint at https://api.clarifai.com/v2/ext/openai/v1 and authenticates with Authorization: Key <token>.",
     apiHint:
       "Clarifai exposes OpenAI-compatible chat, responses and /models on /v2/ext/openai/v1. Public/community models typically require a PAT; app-scoped keys only work for resources inside that app.",
     passthroughModels: true,

@@ -23,7 +23,7 @@ import { join } from "node:path";
 // getAppLogToFile() at module load, and tests/_setup/isolateDataDir.ts sets
 // APP_LOG_TO_FILE ||= "false", which would otherwise make initConsoleInterceptor() a no-op
 // and every assertion here vacuous. Static imports hoist, so this must be a dynamic import.
-const dir = mkdtempSync(join(tmpdir(), "omniroute-interceptor-8181-"));
+const dir = mkdtempSync(join(tmpdir(), "agentproxy-interceptor-8181-"));
 const logFile = join(dir, "logs", "application", "app.log");
 
 // Capture the prior values so test.after() can put them back. test:unit:fast runs with
@@ -134,7 +134,7 @@ test("a non-EPIPE stream error is still fatal: it must be re-raised (#8181)", as
   const interceptor = fileURLToPath(
     new URL("../../../src/lib/consoleInterceptor.ts", import.meta.url)
   );
-  const childDir = mkdtempSync(join(tmpdir(), "omniroute-interceptor-8181-child-"));
+  const childDir = mkdtempSync(join(tmpdir(), "agentproxy-interceptor-8181-child-"));
   const childFile = join(childDir, "reraise-probe.mts");
 
   writeFileSync(
@@ -177,7 +177,7 @@ test("a non-EPIPE stream error is still fatal: it must be re-raised (#8181)", as
 // if the listeners were only installed on the interception path.
 test("the stdio guard is installed even when file logging is disabled (#8181)", () => {
   const probe = fileURLToPath(new URL("../../../src/lib/consoleInterceptor.ts", import.meta.url));
-  const childDir = mkdtempSync(join(tmpdir(), "omniroute-interceptor-8181-nofile-"));
+  const childDir = mkdtempSync(join(tmpdir(), "agentproxy-interceptor-8181-nofile-"));
   const childFile = join(childDir, "nofile-probe.mts");
 
   writeFileSync(

@@ -28,6 +28,16 @@ export function targetSupportsVerbosity(model: string | null | undefined): boole
   return typeof model === "string" && /(?:^|\/)gpt-5(?:[._-]|$)/i.test(model.trim());
 }
 
+function stripToolChoiceWithoutTools(body: JsonRecord): boolean {
+  if (!Object.hasOwn(body, "tool_choice")) return false;
+  const toolChoice = body.tool_choice;
+  if (!toolChoice) return false;
+  const tools = body.tools;
+  if (Array.isArray(tools) && tools.length > 0) return false;
+  delete body.tool_choice;
+  return true;
+}
+
 function stripVerbosityForTarget(body: JsonRecord, model: string): string[] {
   if (targetSupportsVerbosity(model)) return [];
 
@@ -79,10 +89,14 @@ export function sanitizeRequestForResolvedTarget<T extends JsonRecord>(
   // boundary so custom executors cannot accidentally bypass them.
   stripUnsupportedParams(options.provider, options.model, next);
 
-  if (stripped.length > 0) {
+  const strippedToolChoice = stripToolChoiceWithoutTools(next);
+
+  if (stripped.length > 0 || strippedToolChoice) {
+    const parts = [...stripped];
+    if (strippedToolChoice) parts.push("tool_choice (no tools)");
     options.log?.debug?.(
       "TARGET_PARAMS",
-      `Stripped ${stripped.join(", ")} for resolved target ${options.provider || "unknown"}/${options.model}`
+      `Stripped ${parts.join(", ")} for resolved target ${options.provider || "unknown"}/${options.model}`
     );
   }
 

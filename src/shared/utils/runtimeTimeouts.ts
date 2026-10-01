@@ -27,14 +27,24 @@ export const DEFAULT_API_BRIDGE_SERVER_SOCKET_TIMEOUT_MS = 0;
 // idle-pool window, mirroring the API bridge server's pattern.
 export const DEFAULT_MAIN_SERVER_KEEPALIVE_TIMEOUT_MS = 65_000;
 export const DEFAULT_MAIN_SERVER_HEADERS_TIMEOUT_MS = 66_000;
+export const DEFAULT_CUSTOM_HTTP_SERVER_TIMEOUTS: Readonly<CustomHttpServerTimeoutPolicy> =
+  Object.freeze({
+    requestTimeoutMs: 300_000,
+    headersTimeoutMs: 60_000,
+    keepAliveTimeoutMs: 5_000,
+  });
 // A client that closes its connection right after reading a fully-completed
-// SSE stream can race OmniRoute's own completion bookkeeping (#9653): the
+// SSE stream can race AgentProxy's own completion bookkeeping (#9653): the
 // bytes already reached the client, but the disconnect handler can fire
 // before the stream's own completion callback finishes recording it,
 // persisting a false 499 with zero token usage. Before committing to that
 // failure, wait this long for the real completion to land. Set to 0 to
 // disable and restore the old immediate-fail behavior.
 export const DEFAULT_STREAM_DISCONNECT_GRACE_PERIOD_MS = 10_000;
+// Suggested operator value when enabling the OpenCode Responses headers-wait bound.
+// This is not an active default: the getter returns 0 unless explicitly configured.
+export const SUGGESTED_OPENCODE_RESPONSES_HEADERS_WAIT_MS = 30_000;
+export const DEFAULT_OPENCODE_RESPONSES_HEADERS_WAIT_MAX_ROTATIONS = 2;
 
 function hasEnvValue(env: EnvSource, name: string): boolean {
   const raw = env[name];
@@ -69,6 +79,18 @@ export type ApiBridgeTimeoutConfig = {
 export type MainServerTimeoutConfig = {
   keepAliveTimeoutMs: number;
   headersTimeoutMs: number;
+};
+
+export type CustomHttpServerTimeoutPolicy = {
+  requestTimeoutMs: number;
+  headersTimeoutMs: number;
+  keepAliveTimeoutMs: number;
+};
+
+type CustomHttpServerTimeoutTarget = {
+  requestTimeout: number;
+  headersTimeout: number;
+  keepAliveTimeout: number;
 };
 
 function readTimeoutMs(
@@ -212,6 +234,28 @@ export function getTlsClientTimeoutConfig(
   };
 }
 
+export function getOpencodeResponsesHeadersWaitMs(
+  env: EnvSource = process.env,
+  logger?: TimeoutLogger
+): number {
+  return readTimeoutMs(env, "OPENCODE_RESPONSES_HEADERS_WAIT_MS", 0, {
+    allowZero: true,
+    logger,
+  });
+}
+
+export function getOpencodeResponsesHeadersWaitMaxRotations(
+  env: EnvSource = process.env,
+  logger?: TimeoutLogger
+): number {
+  return readTimeoutMs(
+    env,
+    "OPENCODE_RESPONSES_HEADERS_WAIT_MAX_ROTATIONS",
+    DEFAULT_OPENCODE_RESPONSES_HEADERS_WAIT_MAX_ROTATIONS,
+    { allowZero: true, logger }
+  );
+}
+
 export function getApiBridgeTimeoutConfig(
   env: EnvSource = process.env,
   logger?: TimeoutLogger
@@ -320,4 +364,23 @@ export function getMainServerTimeoutConfig(
         ? Math.max(headersTimeoutMs, keepAliveTimeoutMs + 1_000)
         : headersTimeoutMs,
   };
+}
+
+/** Apply one explicit slow-client policy to custom Node HTTP listeners. */
+export function applyCustomHttpServerTimeouts(
+  server: CustomHttpServerTimeoutTarget,
+  policy: CustomHttpServerTimeoutPolicy = DEFAULT_CUSTOM_HTTP_SERVER_TIMEOUTS
+): void {
+  const values = [policy.requestTimeoutMs, policy.headersTimeoutMs, policy.keepAliveTimeoutMs];
+  if (values.some((value) => !Number.isFinite(value) || value <= 0)) {
+    throw new Error("Custom HTTP server timeouts must be finite positive milliseconds");
+  }
+
+  const requestTimeoutMs = Math.floor(policy.requestTimeoutMs);
+  const keepAliveTimeoutMs = Math.floor(policy.keepAliveTimeoutMs);
+  const headersTimeoutMs = Math.max(Math.floor(policy.headersTimeoutMs), keepAliveTimeoutMs + 1);
+
+  server.requestTimeout = requestTimeoutMs;
+  server.headersTimeout = headersTimeoutMs;
+  server.keepAliveTimeout = keepAliveTimeoutMs;
 }

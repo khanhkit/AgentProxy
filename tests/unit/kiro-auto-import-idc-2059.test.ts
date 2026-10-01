@@ -38,7 +38,7 @@ import path from "node:path";
 
 // ── Hermetic DATA_DIR so DB setup / requireLogin does not hit real disk ──────
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-kiro-idc-2059-data-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-kiro-idc-2059-data-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.JWT_SECRET = process.env.JWT_SECRET || "test-jwt-secret-idc-2059";
 process.env.API_KEY_SECRET = process.env.API_KEY_SECRET || "test-api-key-secret-idc-2059";
@@ -55,7 +55,7 @@ const ORIGINAL_FETCH = globalThis.fetch;
 let tmpHome: string;
 
 test.beforeEach(() => {
-  tmpHome = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-kiro-idc-2059-"));
+  tmpHome = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-kiro-idc-2059-"));
   core.resetDbInstance();
   fs.rmSync(TEST_DATA_DIR, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
   fs.mkdirSync(TEST_DATA_DIR, { recursive: true });

@@ -1,4 +1,6 @@
 import {
+  ACCOUNT_DEACTIVATED_SIGNALS,
+  CREDITS_EXHAUSTED_SIGNALS,
   isAccountDeactivated,
   isCreditsExhausted,
   isDailyQuotaExhausted,
@@ -13,8 +15,16 @@ import { getProviderCategory, getRegistryEntry } from "../config/providerRegistr
 // (e.g. a Claude Code `max_tokens: 1` connectivity ping) into a synthetic 502.
 const LEGIT_EMPTY_CLAUDE_STOP = new Set(["max_tokens", "tool_use"]);
 const LEGIT_EMPTY_OPENAI_FINISH = new Set(["length", "tool_calls", "content_filter"]);
+const TRUSTED_EMPTY_STOP_PROVIDERS = new Set(["antigravity"]);
+const NORMAL_STOP_OPENAI_FINISH = new Set(["stop"]);
+const NORMAL_STOP_CLAUDE_STOP = new Set(["end_turn"]);
 
-export function isEmptyContentResponse(responseBody: unknown): boolean {
+export function isEmptyContentResponse(
+  responseBody: unknown,
+  opts?: { provider?: string | null }
+): boolean {
+  const trustedEmptyStop =
+    typeof opts?.provider === "string" && TRUSTED_EMPTY_STOP_PROVIDERS.has(opts.provider);
   if (!responseBody || typeof responseBody !== "object") return false;
 
   const body = responseBody as Record<string, unknown>;
@@ -45,6 +55,7 @@ export function isEmptyContentResponse(responseBody: unknown): boolean {
     const finishReason =
       typeof firstChoice.finish_reason === "string" ? firstChoice.finish_reason : "";
     if (LEGIT_EMPTY_OPENAI_FINISH.has(finishReason)) return false;
+    if (trustedEmptyStop && NORMAL_STOP_OPENAI_FINISH.has(finishReason)) return false;
 
     return !hasContent && !hasReasoning && !hasToolCalls;
   }
@@ -55,6 +66,7 @@ export function isEmptyContentResponse(responseBody: unknown): boolean {
     // to emit a tool_use block) is a legitimate terminal state, not a silent
     // failure. Only flag empty content when no such terminal stop_reason is present.
     const stopReason = typeof body.stop_reason === "string" ? body.stop_reason : "";
+    if (trustedEmptyStop && NORMAL_STOP_CLAUDE_STOP.has(stopReason)) return false;
     return !LEGIT_EMPTY_CLAUDE_STOP.has(stopReason);
   }
 
@@ -88,7 +100,17 @@ export const PROVIDER_ERROR_TYPES = {
   // Google account must Bring Its Own GCP Project. Account-specific and
   // fixable by entering a Project ID — never a model lockout and never a ban.
   GCP_PROJECT_REQUIRED: "gcp_project_required",
-};
+  REQUEST_REJECTED: "request_rejected",
+} as const;
+
+export type ProviderErrorType = (typeof PROVIDER_ERROR_TYPES)[keyof typeof PROVIDER_ERROR_TYPES];
+
+export type ErrorTypeContract = ProviderErrorType | "unknown";
+export const ERROR_TYPE_CONTRACT: readonly ErrorTypeContract[] = Object.freeze([
+  ...Object.values(PROVIDER_ERROR_TYPES),
+  "unknown",
+]);
+export const ERROR_TYPE_CONTRACT_VERSION = 1;
 
 export const CONTEXT_OVERFLOW_SIGNALS = [
   "context overflow",
@@ -156,6 +178,19 @@ export function isGeoBlockedError(errorMessage: string): boolean {
 // classified as an egress-fixable geo block, or it would get the non-terminal
 // 24h exclusion treatment instead of that provider's own (possibly terminal)
 // path.
+// OpenCode free-tier request refusal. Keep this mirror local so the executor leaf
+// remains dependency-free; parity tests pin both predicates to the same vectors.
+const FREE_TIER_REFUSAL_SIGNALS = ["freetiererror", "free tier can only be used"];
+
+function isOpencodeFreeTierProvider(provider?: string | null): boolean {
+  return (provider || "").toLowerCase().startsWith("opencode");
+}
+
+function isFreeTierClientRefusal(bodyStr: string): boolean {
+  const lower = bodyStr.toLowerCase();
+  return FREE_TIER_REFUSAL_SIGNALS.some((signal) => lower.includes(signal));
+}
+
 function isGeoBlockEligibleProvider(provider?: string | null): boolean {
   const p = (provider || "").toLowerCase();
   if (
@@ -194,13 +229,34 @@ function isGeoBlockEligibleProvider(provider?: string | null): boolean {
 const CLOUDFLARE_1010_REGEX =
   /(?<![A-Za-z0-9_-])error[\s_-]?code[\\"':=\s]{0,12}1010(?!\w)|(?<![A-Za-z0-9_-])error[-_]\s?1010(?!\w)\/?/i;
 
+const CLOUDFLARE_CHALLENGE_MARKERS = [
+  "_cf_chl_opt",
+  "cdn-cgi/challenge-platform",
+  'id="challenge-error-text"',
+  String.raw`id=\"challenge-error-text\"`,
+] as const;
+
+export function isCloudflareChallengeInterstitial(errorText: string): boolean {
+  const text = String(errorText || "").toLowerCase();
+  return CLOUDFLARE_CHALLENGE_MARKERS.some((marker) => text.includes(marker.toLowerCase()));
+}
+
 export function isCloudflareFingerprintRejection(errorText: string): boolean {
   const text = String(errorText || "").toLowerCase();
   return (
     CLOUDFLARE_1010_REGEX.test(text) ||
     text.includes("browser_signature_banned") ||
-    text.includes("fingerprint_rejection")
+    text.includes("fingerprint_rejection") ||
+    isCloudflareChallengeInterstitial(text)
   );
+}
+
+export function isAnthropicOAuthProvider(provider?: string | null): boolean {
+  return String(provider || "").toLowerCase() === "claude";
+}
+
+export function isAnthropicRequestNotAllowed(errorText: string): boolean {
+  return /\brequest not allowed\b/i.test(String(errorText || ""));
 }
 
 function responseBodyToString(responseBody: unknown): string {
@@ -248,7 +304,7 @@ export function classifyProviderError(
   statusCode: number,
   responseBody: unknown,
   provider?: string | null
-): string | null {
+): ProviderErrorType | null {
   const bodyStr = responseBodyToString(responseBody);
   const creditsExhausted = isCreditsExhausted(bodyStr);
   const subscriptionQuotaExhausted = isSubscriptionQuotaText(bodyStr.toLowerCase());
@@ -337,6 +393,9 @@ export function classifyProviderError(
   if (statusCode === 403 && accountDeactivated) {
     return PROVIDER_ERROR_TYPES.ACCOUNT_DEACTIVATED;
   }
+  if (statusCode === 403 && isAnthropicOAuthProvider(provider) && isAnthropicRequestNotAllowed(bodyStr)) {
+    return PROVIDER_ERROR_TYPES.REQUEST_REJECTED;
+  }
   if (statusCode === 403) {
     // Cloud Code / Antigravity (Gemini Code Assist) 403s are almost always a
     // RECOVERABLE project-config issue — the Cloud AI Companion API not enabled
@@ -388,6 +447,12 @@ export function classifyProviderError(
       return PROVIDER_ERROR_TYPES.FORBIDDEN;
     }
 
+    // Request-scoped OpenCode free-tier refusal: record as recoverable routing error,
+    // never as a connection ban/model lockout. Must precede the apikey short-circuit.
+    if (isOpencodeFreeTierProvider(provider) && isFreeTierClientRefusal(bodyStr)) {
+      return PROVIDER_ERROR_TYPES.PROJECT_ROUTE_ERROR;
+    }
+
     if (provider && getProviderCategory(provider) === "apikey") {
       return null;
     }
@@ -427,5 +492,41 @@ export function classifyProviderError(
     }
   }
 
+  return null;
+}
+
+const FAKE_SUCCESS_BODY_ALLOWLIST = new Set(["pollinations", "perplexity-web"]);
+const FAKE_SUCCESS_MAX_CONTENT_LENGTH = 400;
+const FAKE_SUCCESS_MIN_SIGNAL_COVERAGE = 0.12;
+
+export function isFakeSuccessBodyAllowlistedProvider(provider?: string | null): boolean {
+  if (!provider) return false;
+  return FAKE_SUCCESS_BODY_ALLOWLIST.has(provider.toLowerCase());
+}
+
+function matchedSignalCoverage(lowerText: string, signals: readonly string[]): number {
+  let best = 0;
+  for (const signal of signals) {
+    if (lowerText.includes(signal) && signal.length > best) best = signal.length;
+  }
+  return lowerText.length > 0 ? best / lowerText.length : 0;
+}
+
+export function classifyFakeSuccessBody(
+  content: string,
+  provider?: string | null
+): ProviderErrorType | null {
+  if (!isFakeSuccessBodyAllowlistedProvider(provider)) return null;
+  const text = String(content || "").trim();
+  if (!text || text.length > FAKE_SUCCESS_MAX_CONTENT_LENGTH) return null;
+  const lower = text.toLowerCase();
+  if (matchedSignalCoverage(lower, CREDITS_EXHAUSTED_SIGNALS) >= FAKE_SUCCESS_MIN_SIGNAL_COVERAGE) {
+    return PROVIDER_ERROR_TYPES.QUOTA_EXHAUSTED;
+  }
+  if (
+    matchedSignalCoverage(lower, ACCOUNT_DEACTIVATED_SIGNALS) >= FAKE_SUCCESS_MIN_SIGNAL_COVERAGE
+  ) {
+    return PROVIDER_ERROR_TYPES.ACCOUNT_DEACTIVATED;
+  }
   return null;
 }

@@ -4,11 +4,13 @@
  */
 
 import { estimateSizeFast } from "../../utils/estimateSize.ts";
-import type { AdmissionCostFeatures } from "./types.ts";
+import { resolveCostConfig } from "./cost.ts";
+import type { AdmissionCostConfig, AdmissionCostFeatures } from "./types.ts";
 
 export type AdmissionFeatureExtractionContext = {
   /** When set, wins over any body/wrapped stream field. */
   streaming?: boolean;
+  cost?: Partial<AdmissionCostConfig>;
 };
 
 /**
@@ -159,11 +161,18 @@ export function extractAdmissionCostFeatures(
   body: unknown,
   context?: AdmissionFeatureExtractionContext
 ): AdmissionCostFeatures {
-  const bodyBytes = estimateSizeFast(body);
+  const cost = resolveCostConfig(context?.cost);
+  const measurementLimit = cost.bodyBytesPerUnit * cost.maxRequestCost;
   const layers = featureLayers(body);
+  const toolCount = countTools(layers);
+  // An oversized tool source already means the request must saturate admission cost.
+  // Avoid walking an unbounded/proxied tool tail during byte estimation; charge the
+  // full active byte budget instead.
+  const bodyBytes =
+    toolCount === Number.MAX_SAFE_INTEGER ? measurementLimit : estimateSizeFast(body, measurementLimit);
   const draft: FeatureDraft = {
     messageCount: 0,
-    toolCount: countTools(layers),
+    toolCount,
     requestedFanout: null,
     streaming: null,
   };

@@ -4,7 +4,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-responses-parse-once-"));
+const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-responses-parse-once-"));
 process.env.DATA_DIR = dataDir;
 after(() => fs.rmSync(dataDir, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 }));
 

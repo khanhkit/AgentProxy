@@ -20,11 +20,7 @@ import {
 
 import { getHiddenModelsByProvider } from "@/models";
 
-import {
-  evaluateQuotaCutoff,
-  getQuotaFetcher,
-  type QuotaInfo,
-} from "./quotaPreflight.ts";
+import { evaluateQuotaCutoff, getQuotaFetcher, type QuotaInfo } from "./quotaPreflight.ts";
 import { resolveProviderId } from "../../src/shared/constants/providers.ts";
 import { getQuotaFetchScope } from "./antigravityQuotaFamily.ts";
 import { getCircuitBreaker } from "../../src/shared/utils/circuitBreaker";
@@ -37,10 +33,7 @@ import { projectAccountTier, type ProviderCandidate } from "./autoCombo/scoring.
 
 import { getSessionConnection } from "./sessionManager.ts";
 import { getOAuthSessionAvailability } from "./oauthSessionOccupancy.ts";
-import {
-  clearStickyBinding,
-  peekStickyConnectionId,
-} from "./combo/sessionStickiness.ts";
+import { clearStickyBinding, peekStickyConnectionId } from "./combo/sessionStickiness.ts";
 
 import { lookupPositiveCap } from "./combo/concurrencyCaps.ts";
 import { acquireQuotaShareConcurrencySlot } from "./combo/quotaShareConcurrency.ts";
@@ -97,6 +90,7 @@ export {
 import {
   applyNativeCodexTurnPin,
   areAllPinnedTargetsModelScopedUnusable,
+  canAutoResumeNativeCodexTurn,
   createPinnedModelUnavailableResponse,
   getNativeCodexTurnPin,
 } from "./combo/nativeCodexTurnPin.ts";
@@ -107,20 +101,13 @@ import {
   tryPipelineDispatch,
   tryRuntimeUnitDispatch,
 } from "./combo/dispatchPrelude.ts";
-import {
-  resolveShadowTargets,
-  scheduleShadowRouting,
-} from "./combo/shadowRouting.ts";
+import { resolveShadowTargets, scheduleShadowRouting } from "./combo/shadowRouting.ts";
 import {
   filterTargetsByRequestCompatibility,
   resolveComboRuntimeUnits,
   resolveComboTargets,
 } from "./combo/comboStructure.ts";
-import {
-  createInvocationId,
-  getComboTrace,
-  startComboTrace,
-} from "./combo/decisionTrace.ts";
+import { createInvocationId, getComboTrace, startComboTrace } from "./combo/decisionTrace.ts";
 import {
   QUOTA_SOFT_DEPRIORITIZE_FACTOR,
   setCandidateQuotaSoftPenalty,
@@ -132,23 +119,18 @@ import {
 } from "./combo/autoStrategy.ts";
 import {
   resolveResetWindowConfig,
-  calculateResetWindowAffinity,
+  calculateAutoResetWindowAffinity,
+  resolveAutoResetWindowConfig,
   type ResetWindowConfig,
 } from "./combo/quotaScoring.ts";
-import {
-  fetchResetAwareQuotaWithCache,
-  preScreenTargets,
-} from "./combo/quotaStrategies.ts";
+import { fetchResetAwareQuotaWithCache, preScreenTargets } from "./combo/quotaStrategies.ts";
 import { buildAutoQuotaThresholds } from "./combo/quotaExhaustionCutoff.ts";
 import { expandTargetsByFingerprints } from "./combo/fingerprintExpansion.ts";
 import { resolveComboTargetPipeline } from "./combo/targetResolution.ts";
 import { dispatchWithCooldownRetry } from "./combo/comboAttemptLoop.ts";
 import { evaluateExecuteTargetGates } from "./combo/executeTargetGates.ts";
 import { executeTargetAttempt } from "./combo/executeTargetAttempt.ts";
-import type {
-  AttemptLoopDeps,
-  AttemptLoopState,
-} from "./combo/attemptLoopTypes.ts";
+import type { AttemptLoopDeps, AttemptLoopState } from "./combo/attemptLoopTypes.ts";
 
 export { RESET_WINDOW_NAMES, QUOTA_SOFT_DEPRIORITIZE_FACTOR, setCandidateQuotaSoftPenalty };
 export { scoreAutoTargets, expandAutoComboCandidatePool };
@@ -195,32 +177,11 @@ export function releaseStickyPinOnFailure(
   clearStickyBinding(messageHash);
 }
 
-/**
- * Clear persisted LKGP pins when a target fails or is skipped due to
- * exhaustion, cooldown, or unavailability (#11911 #919).
- */
-export function clearStaleLKGP(
-  comboName: string,
-  executionKey?: string | null,
-  comboId?: string | null,
-  log?: { warn?: (tag: string, msg: string, data?: unknown) => void } | null,
-  tag: string = "COMBO"
-): void {
-  void (async () => {
-    try {
-      const { clearLKGP } = await import("@/lib/db/settings");
-      const promises: Promise<void>[] = [clearLKGP(comboName, comboId || comboName)];
-      if (executionKey) {
-        promises.push(clearLKGP(comboName, executionKey));
-      }
-      await Promise.all(promises);
-    } catch (err) {
-      log?.warn?.(tag, "Failed to clear Last Known Good Provider. This is non-fatal.", {
-        err,
-      });
-    }
-  })();
-}
+// #11911 #919/#13614: non-blocking stale-pin clear whose failures log with
+// combo context. The implementation lives in a leaf so tests can await it
+// without importing the full combo runtime.
+export { clearStaleLKGP } from "./combo/staleLkgpClear.ts";
+import { clearStaleLKGP } from "./combo/staleLkgpClear.ts";
 
 const DEFAULT_MODEL_P95_MS: Record<string, number> = {
   "grok-4-fast-non-reasoning": 1143,
@@ -312,7 +273,7 @@ export async function buildAutoCandidates(
   targets: ResolvedComboTarget[],
   comboName: string,
   sessionId: string | null | undefined = null,
-  resetWindowConfig: ResetWindowConfig = resolveResetWindowConfig(null),
+  resetWindowConfig: ResetWindowConfig = resolveAutoResetWindowConfig(null),
   resilienceSettings: ResilienceSettings | null = null
 ): Promise<AutoProviderCandidate[]> {
   const hiddenModelsMap = getHiddenModelsByProvider();
@@ -509,7 +470,7 @@ export async function buildAutoCandidates(
           );
         }
         const quota = await quotaPromises.get(quotaKey)!;
-        resetWindowAffinity = calculateResetWindowAffinity(quota, resetWindowConfig);
+        resetWindowAffinity = calculateAutoResetWindowAffinity(quota, resetWindowConfig);
         if (!quotaCutoffBlocked) {
           quotaRemaining = quotaRemainingPercentFromQuota(quota, {
             provider,
@@ -642,14 +603,14 @@ export async function resolveTargetTimeoutMsForTarget(
 
 /**
  * #10681 egress: every combo response carries the opaque trace id in an
- * `X-OmniRoute-Combo-Trace` header so a post-incident lookup of the ordered
+ * `X-AgentProxy-Combo-Trace` header so a post-incident lookup of the ordered
  * per-target decisions is possible; the finalized summary is also emitted as
  * one metadata-only log line for durability across restarts.
  */
 export async function handleComboChat(options: HandleComboChatOptions): Promise<Response> {
   const traceInvocationId = options.invocationId ?? createInvocationId();
   const response = await handleComboChatInner({ ...options, invocationId: traceInvocationId });
-  response.headers.set("X-OmniRoute-Combo-Trace", traceInvocationId);
+  response.headers.set("X-AgentProxy-Combo-Trace", traceInvocationId);
   const trace = getComboTrace(traceInvocationId);
   options.log.info(
     "COMBO",
@@ -822,6 +783,7 @@ async function handleComboChatInner({
   const activeNativeTurnPin = clientManagedResponsesContext
     ? getNativeCodexTurnPin(body, combo.name)
     : null;
+  let nativeCodexAutoResume = false;
 
   // Route new round-robin turns to the specialized handler. A native Codex
   // continuation with an established provider/account pin must use the common
@@ -850,7 +812,10 @@ async function handleComboChatInner({
     });
   }
 
-  const maxRetries = activeNativeTurnPin ? 0 : (config.maxRetries ?? 1);
+  // Native Codex turns must stay on their pinned target, but a pre-content
+  // stream failure is safe to retry because no output reached the client.
+  // Keep set retries disabled while preserving same-target retries.
+  const maxRetries = config.maxRetries ?? 1;
   const maxSetRetries = activeNativeTurnPin ? 0 : (config.maxSetRetries ?? 0);
   const setRetryDelayMs = resolveDelayMs(config.setRetryDelayMs, 2000);
 
@@ -899,12 +864,34 @@ async function handleComboChatInner({
       isModelAvailable,
     });
     if (allPinnedUnusable) {
-      targetResolution.quotaShareRelease?.();
-      log.warn(
-        "COMBO",
-        `Native Codex turn cannot continue: pinned model ${activeNativeTurnPin.modelStr} is unavailable (model-scoped); preserving turn pin and terminating turn`
-      );
-      return createPinnedModelUnavailableResponse();
+      const resume = await canAutoResumeNativeCodexTurn({
+        body: body as Record<string, unknown>,
+        comboName: combo.name,
+        activePin: activeNativeTurnPin,
+        allTargets: orderedTargets,
+        resilienceSettings,
+        quotaCutoffResetWindowConfig,
+        isModelAvailable,
+      });
+      if (resume.eligible === true) {
+        orderedTargets = orderedTargets.filter(
+          (target) =>
+            target.modelStr === resume.selectedTarget.modelStr &&
+            target.provider === resume.selectedTarget.provider
+        );
+        nativeCodexAutoResume = true;
+        log.info(
+          "COMBO",
+          `Native Codex auto-resume: ${activeNativeTurnPin.provider}/${activeNativeTurnPin.modelStr} -> ${resume.selectedTarget.provider}/${resume.selectedTarget.modelStr}`
+        );
+      } else {
+        targetResolution.quotaShareRelease?.();
+        log.warn(
+          "COMBO",
+          `Native Codex turn cannot continue: pinned model ${activeNativeTurnPin.modelStr} is unavailable (model-scoped); auto-resume rejected (${resume.reason}); preserving turn pin and terminating turn`
+        );
+        return createPinnedModelUnavailableResponse();
+      }
     } else {
       orderedTargets = pinnedTargets;
       log.info(
@@ -1026,10 +1013,12 @@ async function handleComboChatInner({
     releaseStickyPinOnFailure,
     clearStaleLKGP,
     clientManagedResponsesContext,
+    nativeCodexAutoResume,
     reasoningTokenBufferEnabled,
     stickyWeightedLimit,
     getWeightedStepKeyForTarget,
     universalHandoffConfig,
+    sourceFormat,
     relayOptions,
     relayConfig,
   };
@@ -1081,4 +1070,3 @@ async function handleComboChatInner({
     _unregisterExecutionCandidates(_registeredExecutionKeys);
   }
 }
-

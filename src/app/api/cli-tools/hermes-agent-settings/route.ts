@@ -8,10 +8,17 @@ import { validateBaseUrl } from "@/lib/cli-helper/config-generator";
 import {
   generateHermesAgentConfig,
   getCurrentHermesAgentRoles,
+  HERMES_AGENT_ROLES,
+  type HermesAgentRole,
 } from "@/lib/cli-helper/config-generator/hermes-agent";
 import { getHermesConfigPath } from "@/lib/cli-helper/config-generator/hermesHome";
 import { recoverApiKeyById } from "@/lib/db/apiKeys";
-import { sanitizeErrorMessage } from "@omniroute/open-sse/utils/error.ts";
+import { sanitizeErrorMessage } from "@agentproxy/open-sse/utils/error.ts";
+
+const hermesRoleIds = HERMES_AGENT_ROLES.map((role) => role.id) as [
+  HermesAgentRole,
+  ...HermesAgentRole[],
+];
 
 const hermesAgentSettingsSchema = z.object({
   baseUrl: z.string().min(1, "baseUrl is required"),
@@ -20,7 +27,7 @@ const hermesAgentSettingsSchema = z.object({
   selections: z
     .array(
       z.object({
-        role: z.string(),
+        role: z.enum(hermesRoleIds),
         model: z.string(),
       })
     )
@@ -104,7 +111,7 @@ export async function POST(request: Request) {
   // a raw `apiKey`) — the same precedented pattern as claude-settings/route.ts
   // and codex-settings/route.ts. Resolve the real key by ID here so
   // generateHermesAgentConfig() does not fall through to its
-  // "YOUR_OMNIROUTE_API_KEY_HERE" placeholder. Never trust a client-supplied
+  // "YOUR_AGENTPROXY_API_KEY_HERE" placeholder. Never trust a client-supplied
   // key string directly: the /api/keys list endpoint returns masked values,
   // so the only safe source of a usable key is resolving by ID from the DB.
   let resolvedApiKey = apiKey ?? null;
@@ -142,7 +149,7 @@ export async function POST(request: Request) {
 
   await fs.writeFile(configPath, result.yaml, "utf-8");
 
-  // Record first setup time if this is the first save via OmniRoute
+  // Record first setup time if this is the first save via AgentProxy
   const metaPath = getMetadataPath(configPath);
   try {
     await fs.access(metaPath);

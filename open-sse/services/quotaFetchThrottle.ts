@@ -85,7 +85,7 @@ export class MinIntervalThrottle {
 export function resolveQuotaFetchMinIntervalMs(
   env: Record<string, string | undefined> = process.env
 ): number {
-  const raw = env.OMNIROUTE_QUOTA_FETCH_MIN_INTERVAL_MS;
+  const raw = env.AGENTPROXY_QUOTA_FETCH_MIN_INTERVAL_MS;
   if (raw === undefined || raw === null || raw.trim() === "") return DEFAULT_MIN_INTERVAL_MS;
   const n = Number(raw.trim());
   if (!Number.isFinite(n) || n < 0) return DEFAULT_MIN_INTERVAL_MS;

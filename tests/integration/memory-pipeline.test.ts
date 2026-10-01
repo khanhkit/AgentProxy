@@ -111,7 +111,7 @@ test("successful responses extract facts and persist them as memories", async ()
   const response = await handleChat(
     buildRequest({
       authKey: apiKey.key,
-      headers: { "x-omniroute-session-id": "session-extract" },
+      headers: { "x-agentproxy-session-id": "session-extract" },
       body: {
         model: "openai/gpt-4o-mini",
         stream: false,
@@ -158,7 +158,7 @@ test("later requests inject retrieved memories into upstream messages", async ()
   const response = await handleChat(
     buildRequest({
       authKey: apiKey.key,
-      headers: { "x-omniroute-session-id": "session-inject" },
+      headers: { "x-agentproxy-session-id": "session-inject" },
       body: {
         model: "openai/gpt-4o-mini",
         stream: false,
@@ -177,7 +177,7 @@ test("memory search ranks query-relevant memories first", async () => {
   const apiKey = await seedApiKey();
   await enableMemory(400, "hybrid");
 
-  await memoryTools.omniroute_memory_add.handler({
+  await memoryTools.agentproxy_memory_add.handler({
     apiKeyId: apiKey.id,
     sessionId: "search",
     type: "factual",
@@ -185,7 +185,7 @@ test("memory search ranks query-relevant memories first", async () => {
     content: "The user writes TypeScript services every day.",
     metadata: {},
   });
-  await memoryTools.omniroute_memory_add.handler({
+  await memoryTools.agentproxy_memory_add.handler({
     apiKeyId: apiKey.id,
     sessionId: "search",
     type: "factual",
@@ -193,7 +193,7 @@ test("memory search ranks query-relevant memories first", async () => {
     content: "The user enjoys gardening on weekends.",
     metadata: {},
   });
-  await memoryTools.omniroute_memory_add.handler({
+  await memoryTools.agentproxy_memory_add.handler({
     apiKeyId: apiKey.id,
     sessionId: "search",
     type: "factual",
@@ -202,7 +202,7 @@ test("memory search ranks query-relevant memories first", async () => {
     metadata: {},
   });
 
-  const result = await memoryTools.omniroute_memory_search.handler({
+  const result = await memoryTools.agentproxy_memory_search.handler({
     apiKeyId: apiKey.id,
     query: "typescript backend",
     limit: 2,
@@ -218,10 +218,10 @@ test("MCP memory tools fall back to caller principal id when apiKeyId is omitted
   const apiKey = await seedApiKey();
   await enableMemory(400, "hybrid");
 
-  const prevEnvKey = process.env.OMNIROUTE_API_KEY;
-  process.env.OMNIROUTE_API_KEY = apiKey.key;
+  const prevEnvKey = process.env.AGENTPROXY_API_KEY;
+  process.env.AGENTPROXY_API_KEY = apiKey.key;
   try {
-    const added = await memoryTools.omniroute_memory_add.handler({
+    const added = await memoryTools.agentproxy_memory_add.handler({
       sessionId: "mcp-auto",
       type: "factual",
       key: "pref:auto-owner",
@@ -236,7 +236,7 @@ test("MCP memory tools fall back to caller principal id when apiKeyId is omitted
     assert.equal(list.length, 1);
     assert.equal(list[0].key, "pref:auto-owner");
 
-    const searched = await memoryTools.omniroute_memory_search.handler({
+    const searched = await memoryTools.agentproxy_memory_search.handler({
       query: "explicit apiKeyId",
       limit: 5,
     });
@@ -245,9 +245,9 @@ test("MCP memory tools fall back to caller principal id when apiKeyId is omitted
     assert.equal(searched.data.memories[0].apiKeyId, "env-key");
   } finally {
     if (prevEnvKey === undefined) {
-      delete process.env.OMNIROUTE_API_KEY;
+      delete process.env.AGENTPROXY_API_KEY;
     } else {
-      process.env.OMNIROUTE_API_KEY = prevEnvKey;
+      process.env.AGENTPROXY_API_KEY = prevEnvKey;
     }
   }
 });
@@ -255,13 +255,13 @@ test("MCP memory tools fall back to caller principal id when apiKeyId is omitted
 test("MCP memory tools resolve ownership to the caller principal, ignoring a foreign explicit apiKeyId", async () => {
   // GHSA-cpv3-xr7r-xf8q: resolveMemoryOwnerId() gives the authenticated caller's
   // principal ABSOLUTE precedence over a caller-supplied apiKeyId (IDOR). With
-  // OMNIROUTE_API_KEY set, the env key resolves to the synthetic "env-key"
+  // AGENTPROXY_API_KEY set, the env key resolves to the synthetic "env-key"
   // principal — so a write that passes apiKeyId:"principal-b" must land in the
   // CALLER's bucket ("env-key"), and nothing may exist under "principal-b".
-  const prevEnvKey = process.env.OMNIROUTE_API_KEY;
-  process.env.OMNIROUTE_API_KEY = "sk-other-principal";
+  const prevEnvKey = process.env.AGENTPROXY_API_KEY;
+  process.env.AGENTPROXY_API_KEY = "sk-other-principal";
   try {
-    const added = await memoryTools.omniroute_memory_add.handler({
+    const added = await memoryTools.agentproxy_memory_add.handler({
       apiKeyId: "principal-b",
       sessionId: "mcp-mismatch",
       type: "factual",
@@ -276,7 +276,7 @@ test("MCP memory tools resolve ownership to the caller principal, ignoring a for
       "caller principal wins over the foreign explicit apiKeyId"
     );
 
-    const searchedAsCaller = await memoryTools.omniroute_memory_search.handler({
+    const searchedAsCaller = await memoryTools.agentproxy_memory_search.handler({
       query: "cross-tenant",
       limit: 5,
     });
@@ -294,9 +294,9 @@ test("MCP memory tools resolve ownership to the caller principal, ignoring a for
     assert.equal(leaked.length, 0, "no memory may be written into the foreign principal bucket");
   } finally {
     if (prevEnvKey === undefined) {
-      delete process.env.OMNIROUTE_API_KEY;
+      delete process.env.AGENTPROXY_API_KEY;
     } else {
-      process.env.OMNIROUTE_API_KEY = prevEnvKey;
+      process.env.AGENTPROXY_API_KEY = prevEnvKey;
     }
   }
 });
@@ -390,7 +390,7 @@ test("disabled memory skips both extraction and injection", async () => {
 test("memory clear removes all stored memories for an API key", async () => {
   const apiKey = await seedApiKey();
 
-  await memoryTools.omniroute_memory_add.handler({
+  await memoryTools.agentproxy_memory_add.handler({
     apiKeyId: apiKey.id,
     sessionId: "clear",
     type: "factual",
@@ -398,7 +398,7 @@ test("memory clear removes all stored memories for an API key", async () => {
     content: "First memory",
     metadata: {},
   });
-  await memoryTools.omniroute_memory_add.handler({
+  await memoryTools.agentproxy_memory_add.handler({
     apiKeyId: apiKey.id,
     sessionId: "clear",
     type: "episodic",
@@ -407,7 +407,7 @@ test("memory clear removes all stored memories for an API key", async () => {
     metadata: {},
   });
 
-  const cleared = await memoryTools.omniroute_memory_clear.handler({
+  const cleared = await memoryTools.agentproxy_memory_clear.handler({
     apiKeyId: apiKey.id,
   });
   const remaining = await listMemories({ apiKeyId: apiKey.id });
@@ -427,7 +427,7 @@ test("extracted memories remain isolated by session id", async () => {
   await handleChat(
     buildRequest({
       authKey: apiKey.key,
-      headers: { "x-omniroute-session-id": "session-a" },
+      headers: { "x-agentproxy-session-id": "session-a" },
       body: {
         model: "openai/gpt-4o-mini",
         stream: false,
@@ -440,7 +440,7 @@ test("extracted memories remain isolated by session id", async () => {
   await handleChat(
     buildRequest({
       authKey: apiKey.key,
-      headers: { "x-omniroute-session-id": "session-b" },
+      headers: { "x-agentproxy-session-id": "session-b" },
       body: {
         model: "openai/gpt-4o-mini",
         stream: false,

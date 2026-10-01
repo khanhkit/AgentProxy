@@ -934,29 +934,6 @@
       "stream": "https://chenzk.top/v1/chat/completions"
     }
   },
-  "chipotle": {
-    "format": "openai",
-    "headers": {
-      "apiKey": {
-        "Accept": "text/event-stream",
-        "Authorization": "Bearer <TOK>",
-        "Content-Type": "application/json"
-      },
-      "nonStream": {
-        "Authorization": "Bearer <TOK>",
-        "Content-Type": "application/json"
-      },
-      "oauth": {
-        "Accept": "text/event-stream",
-        "Authorization": "Bearer <TOK>",
-        "Content-Type": "application/json"
-      }
-    },
-    "url": {
-      "nonStream": "https://amelia.chipotle.com",
-      "stream": "https://amelia.chipotle.com"
-    }
-  },
   "chutes": {
     "format": "openai",
     "headers": {
@@ -1077,7 +1054,7 @@
         "Content-Type": "application/json",
         "HTTP-Referer": "https://cline.bot",
         "User-Agent": "Cline/<APP>",
-        "X-CLIENT-TYPE": "omniroute",
+        "X-CLIENT-TYPE": "agentproxy",
         "X-CLIENT-VERSION": "<APP>",
         "X-CORE-VERSION": "<APP>",
         "X-IS-MULTIROOT": "false",
@@ -1090,7 +1067,7 @@
         "Content-Type": "application/json",
         "HTTP-Referer": "https://cline.bot",
         "User-Agent": "Cline/<APP>",
-        "X-CLIENT-TYPE": "omniroute",
+        "X-CLIENT-TYPE": "agentproxy",
         "X-CLIENT-VERSION": "<APP>",
         "X-CORE-VERSION": "<APP>",
         "X-IS-MULTIROOT": "false",
@@ -1104,7 +1081,7 @@
         "Content-Type": "application/json",
         "HTTP-Referer": "https://cline.bot",
         "User-Agent": "Cline/<APP>",
-        "X-CLIENT-TYPE": "omniroute",
+        "X-CLIENT-TYPE": "agentproxy",
         "X-CLIENT-VERSION": "<APP>",
         "X-CORE-VERSION": "<APP>",
         "X-IS-MULTIROOT": "false",
@@ -1311,16 +1288,16 @@
         "Authorization": "Bearer <TOK>",
         "Content-Type": "application/json",
         "Openai-Beta": "responses=experimental",
-        "User-Agent": "codex-cli/0.153.2 (<OS>; <ARCH>)",
-        "Version": "0.153.2",
+        "User-Agent": "codex-cli/0.155.0 (<OS>; <ARCH>)",
+        "Version": "0.155.0",
         "X-Codex-Beta-Features": "responses_websockets"
       },
       "nonStream": {
         "Authorization": "Bearer <TOK>",
         "Content-Type": "application/json",
         "Openai-Beta": "responses=experimental",
-        "User-Agent": "codex-cli/0.153.2 (<OS>; <ARCH>)",
-        "Version": "0.153.2",
+        "User-Agent": "codex-cli/0.155.0 (<OS>; <ARCH>)",
+        "Version": "0.155.0",
         "X-Codex-Beta-Features": "responses_websockets"
       },
       "oauth": {
@@ -1328,8 +1305,8 @@
         "Authorization": "Bearer <TOK>",
         "Content-Type": "application/json",
         "Openai-Beta": "responses=experimental",
-        "User-Agent": "codex-cli/0.153.2 (<OS>; <ARCH>)",
-        "Version": "0.153.2",
+        "User-Agent": "codex-cli/0.155.0 (<OS>; <ARCH>)",
+        "Version": "0.155.0",
         "X-Codex-Beta-Features": "responses_websockets"
       }
     },
@@ -3280,18 +3257,18 @@
         "Accept": "text/event-stream",
         "Authorization": "Bearer <TOK>",
         "Content-Type": "application/json",
-        "X-KILOCODE-EDITORNAME": "OmniRoute"
+        "X-KILOCODE-EDITORNAME": "AgentProxy"
       },
       "nonStream": {
         "Authorization": "Bearer <TOK>",
         "Content-Type": "application/json",
-        "X-KILOCODE-EDITORNAME": "OmniRoute"
+        "X-KILOCODE-EDITORNAME": "AgentProxy"
       },
       "oauth": {
         "Accept": "text/event-stream",
         "Authorization": "Bearer <TOK>",
         "Content-Type": "application/json",
-        "X-KILOCODE-EDITORNAME": "OmniRoute"
+        "X-KILOCODE-EDITORNAME": "AgentProxy"
       }
     },
     "url": {
@@ -3681,6 +3658,29 @@
     "url": {
       "nonStream": "https://api.longcat.chat/openai/v1/chat/completions",
       "stream": "https://api.longcat.chat/openai/v1/chat/completions"
+    }
+  },
+  "lyceum": {
+    "format": "openai",
+    "headers": {
+      "apiKey": {
+        "Accept": "text/event-stream",
+        "Authorization": "Bearer <TOK>",
+        "Content-Type": "application/json"
+      },
+      "nonStream": {
+        "Authorization": "Bearer <TOK>",
+        "Content-Type": "application/json"
+      },
+      "oauth": {
+        "Accept": "text/event-stream",
+        "Authorization": "Bearer <TOK>",
+        "Content-Type": "application/json"
+      }
+    },
+    "url": {
+      "nonStream": "https://api.lyceum.technology/openai/v1/chat/completions",
+      "stream": "https://api.lyceum.technology/openai/v1/chat/completions"
     }
   },
   "maritalk": {
@@ -4193,18 +4193,18 @@
         "Accept": "text/event-stream",
         "Authorization": "Bearer <TOK>",
         "Content-Type": "application/json",
-        "User-Agent": "OmniRoute/1.0"
+        "User-Agent": "AgentProxy/1.0"
       },
       "nonStream": {
         "Authorization": "Bearer <TOK>",
         "Content-Type": "application/json",
-        "User-Agent": "OmniRoute/1.0"
+        "User-Agent": "AgentProxy/1.0"
       },
       "oauth": {
         "Accept": "text/event-stream",
         "Authorization": "Bearer <TOK>",
         "Content-Type": "application/json",
-        "User-Agent": "OmniRoute/1.0"
+        "User-Agent": "AgentProxy/1.0"
       }
     },
     "url": {
@@ -4254,8 +4254,8 @@
       }
     },
     "url": {
-      "nonStream": "https://api.nlpcloud.io/v1/chat/completions",
-      "stream": "https://api.nlpcloud.io/v1/chat/completions"
+      "nonStream": "https://api.nlpcloud.io/v1/gpu",
+      "stream": "https://api.nlpcloud.io/v1/gpu"
     }
   },
   "notion-web": {
@@ -5223,18 +5223,18 @@
         "Accept": "text/event-stream",
         "Authorization": "Bearer <TOK>",
         "Content-Type": "application/json",
-        "User-Agent": "Mozilla/5.0 OmniRoute/1.0"
+        "User-Agent": "Mozilla/5.0 AgentProxy/1.0"
       },
       "nonStream": {
         "Authorization": "Bearer <TOK>",
         "Content-Type": "application/json",
-        "User-Agent": "Mozilla/5.0 OmniRoute/1.0"
+        "User-Agent": "Mozilla/5.0 AgentProxy/1.0"
       },
       "oauth": {
         "Accept": "text/event-stream",
         "Authorization": "Bearer <TOK>",
         "Content-Type": "application/json",
-        "User-Agent": "Mozilla/5.0 OmniRoute/1.0"
+        "User-Agent": "Mozilla/5.0 AgentProxy/1.0"
       }
     },
     "url": {

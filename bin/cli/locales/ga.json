@@ -257,7 +257,8 @@
     "tray": "Tosaigh i mbosca córas (leicsitheoir amháin, roghnach)",
     "no_tray": "Díchumasaigh deilbhín bosca córas",
     "tls_cert": "Cosán go dtí deimhniú TLS (PEM) chun HTTPS a sheirbhísiú (freisin OMNIROUTE_TLS_CERT)",
-    "tls_key": "Cosán go dtí eochair phríobháideach TLS (PEM) chun HTTPS a sheirbhísiú (freisin OMNIROUTE_TLS_KEY)"
+    "tls_key": "Cosán go dtí eochair phríobháideach TLS (PEM) chun HTTPS a sheirbhísiú (freisin OMNIROUTE_TLS_KEY)",
+    "ready_timeout": "Teorainn ama an tseiceála ullmhachta i ms (OMNIROUTE_READY_TIMEOUT_MS freisin, réamhshocrú 60000)"
   },
   "backup": {
     "title": "Cúltaca",
@@ -374,6 +375,16 @@
     },
     "audit": {
       "description": "Log iniúcháin MCP (ailias le haghaidh iniúchadh --source mcp)"
+    },
+    "stoppedHint": "Rith `omniroute mcp enable` chun é a chur ar siúl.",
+    "enabled": "Freastalaí MCP cumasaithe.",
+    "disabled": "Freastalaí MCP díchumasaithe.",
+    "enable": {
+      "description": "Cumasaigh an freastalaí MCP",
+      "transport": "Iompar le húsáid: stdio|sse|streamable-http"
+    },
+    "disable": {
+      "description": "Díchumasaigh an freastalaí MCP"
     }
   },
   "a2a": {

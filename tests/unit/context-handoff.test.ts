@@ -4,7 +4,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-context-handoff-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-context-handoff-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../src/lib/db/core.ts");
@@ -67,6 +67,62 @@ test("buildHandoffSystemMessage and injectHandoffIntoBody preserve existing hist
   assert.match(String(injected.messages[0].content), /<context_handoff>/);
   assert.equal(injected.messages[1].content, "Original system message");
   assert.equal(body.messages.length, 2);
+});
+
+test("injectHandoffIntoBody appends Claude-native handoff to top-level system", () => {
+  const payload = {
+    sessionId: "sess-1",
+    comboName: "relay-combo",
+    fromAccount: "conn-a",
+    summary: "Keep the Claude-native request shape",
+    keyDecisions: ["keep system prompts top-level"],
+    taskProgress: "Continue the request",
+    activeEntities: ["contextHandoff.ts"],
+    messageCount: 8,
+    model: "claude/claude-opus-5",
+    warningThresholdPct: 0.85,
+    generatedAt: "2099-04-08T12:00:00.000Z",
+    expiresAt: "2099-04-08T17:00:00.000Z",
+  };
+  const body = {
+    system: "Existing Claude prompt",
+    max_tokens: 64,
+    messages: [{ role: "user", content: [{ type: "text", text: "Continue" }] }],
+  };
+
+  const injected = contextHandoff.injectHandoffIntoBody(body, payload, undefined, "claude");
+  const system = injected.system as Array<Record<string, unknown>>;
+
+  assert.strictEqual(injected.messages, body.messages);
+  assert.deepEqual(system[0], { type: "text", text: "Existing Claude prompt" });
+  assert.match(String(system[1]?.text), /<context_handoff>/);
+  assert.equal(system[1]?.type, "text");
+});
+
+test("injectHandoffIntoBody keeps OpenAI system fields on the message-based path", () => {
+  const payload = {
+    sessionId: "sess-1",
+    comboName: "relay-combo",
+    fromAccount: "conn-a",
+    summary: "Keep the OpenAI request shape",
+    keyDecisions: [],
+    taskProgress: "Continue",
+    activeEntities: [],
+    messageCount: 1,
+    model: "openai/gpt-5",
+    warningThresholdPct: 0.85,
+    generatedAt: "2099-04-08T12:00:00.000Z",
+    expiresAt: "2099-04-08T17:00:00.000Z",
+  };
+  const body = {
+    system: undefined,
+    messages: [{ role: "user", content: "Continue" }],
+  };
+
+  const injected = contextHandoff.injectHandoffIntoBody(body, payload, undefined, "openai");
+
+  assert.equal((injected.messages as Array<Record<string, unknown>>)[0]?.role, "system");
+  assert.equal(injected.system, undefined);
 });
 
 test("injectHandoffIntoBody preserves Responses API shape for native Codex requests", () => {
@@ -198,8 +254,8 @@ test("maybeGenerateHandoff persists a structured handoff once the threshold is r
   assert.deepEqual(saved.keyDecisions, ["Use context-relay"]);
   assert.equal(calls.length, 1);
   assert.equal(calls[0].modelStr, "codex/gpt-5.6-sol");
-  assert.equal(calls[0].body._omnirouteSkipContextRelay, true);
-  assert.equal(calls[0].body._omnirouteInternalRequest, "context-handoff");
+  assert.equal(calls[0].body._agentproxySkipContextRelay, true);
+  assert.equal(calls[0].body._agentproxyInternalRequest, "context-handoff");
 });
 
 test("maybeGenerateHandoff deduplicates concurrent in-flight generations for the same session", async () => {

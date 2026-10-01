@@ -241,7 +241,12 @@ export async function handleVideoJobGeneration({
     // passthrough of the remainder — the API keeps catchall extras
     extras: Object.fromEntries(
       Object.entries(body ?? {}).filter(
-        ([key]) => key !== "model" && key !== "prompt" && key !== "duration"
+        ([key]) =>
+          key !== "model" &&
+          key !== "prompt" &&
+          key !== "duration" &&
+          key !== "poll_interval_ms" &&
+          key !== "max_polls"
       )
     ),
   });

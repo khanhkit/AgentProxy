@@ -13,7 +13,7 @@
  *   - Target host is always 127.0.0.1 and port comes from the registry — never
  *     from user input. No SSRF risk.
  *   - Server binds to 127.0.0.1 only (loopback) unless EMBED_WS_PROXY_HOST
- *     is set explicitly. The OmniRoute LOCAL_ONLY rule is enforced at the
+ *     is set explicitly. The AgentProxy LOCAL_ONLY rule is enforced at the
  *     dashboard layer; the proxy itself is loopback-only as defence-in-depth.
  *   - Max 50 concurrent connections per service. The 51st request receives 503.
  *   - Idle timeout: 5 minutes without any data → both sockets are destroyed.
@@ -31,6 +31,7 @@ import {
   attachRequestStreamGuards,
   installProcessCrashGuard,
 } from "@/shared/utils/httpClientAbortGuard.mjs";
+import { applyCustomHttpServerTimeouts } from "@/shared/utils/runtimeTimeouts";
 import {
   connectionHeaderTokens,
   isForbiddenProxyBoundaryHeaderName,
@@ -57,7 +58,7 @@ const WS_HANDSHAKE_HEADERS = new Set([
 ]);
 
 declare global {
-  var __omnirouteEmbedWsStarted: boolean | undefined;
+  var __agentproxyEmbedWsStarted: boolean | undefined;
 }
 
 /**
@@ -279,7 +280,7 @@ export function initEmbedWsProxy(): void {
   // becomes an uncaughtException that kills the server. Benign aborts are
   // swallowed; genuine errors still crash loudly (#fix-dev-server-aborted).
   installProcessCrashGuard();
-  if (globalThis.__omnirouteEmbedWsStarted) return;
+  if (globalThis.__agentproxyEmbedWsStarted) return;
 
   const host = resolveEmbedWsHost();
   const port = parseInt(process.env.EMBED_WS_PROXY_PORT ?? String(DEFAULT_PORT), 10);
@@ -292,6 +293,7 @@ export function initEmbedWsProxy(): void {
     res.writeHead(426, "Upgrade Required", { "content-type": "application/json" });
     res.end(JSON.stringify({ error: "upgrade_required", message: "Use WebSocket." }));
   });
+  applyCustomHttpServerTimeouts(server);
 
   server.on("upgrade", (req: IncomingMessage, socket: net.Socket, head: Buffer) => {
     proxyUpgrade(req, socket, head).catch((err: unknown) => {
@@ -309,7 +311,7 @@ export function initEmbedWsProxy(): void {
   });
 
   server.listen(port, host, () => {
-    globalThis.__omnirouteEmbedWsStarted = true;
+    globalThis.__agentproxyEmbedWsStarted = true;
     console.log(`[EmbedWsProxy] Listening on ${host}:${port}`);
   });
 }

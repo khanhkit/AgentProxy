@@ -1,3 +1,4 @@
+import { syncCodexQuotaObservation } from "@/lib/db/providers/codexAccountRecovery";
 import {
   getProviderConnectionById,
   getProviderConnections,
@@ -18,19 +19,19 @@ import { clearRecoveredProviderState } from "@/sse/services/auth";
 import { getMachineId } from "@/shared/utils/machine";
 import { supportsProviderQuota } from "@/shared/utils/providerQuotaVisibility";
 import { mergeProviderLimitsCacheEntry, toProviderLimitsCacheEntry } from "./providerLimitsCache";
-import { getCredentialRefreshExecutor } from "@omniroute/open-sse/executors/credential.ts";
-import { getUsageForProvider } from "@omniroute/open-sse/services/usage.ts";
-import { cooldownUntilMs } from "@omniroute/open-sse/services/accountFallback.ts";
-import { rotationGroupFor } from "@omniroute/open-sse/services/refreshSerializer.ts";
+import { getCredentialRefreshExecutor } from "@agentproxy/open-sse/executors/credential.ts";
+import { getUsageForProvider } from "@agentproxy/open-sse/services/usage.ts";
+import { cooldownUntilMs } from "@agentproxy/open-sse/services/accountFallback.ts";
+import { rotationGroupFor } from "@agentproxy/open-sse/services/refreshSerializer.ts";
 import {
   extractCodeAssistOnboardTierId,
   extractCodeAssistSubscriptionTier,
-} from "@omniroute/open-sse/services/codeAssistSubscription.ts";
+} from "@agentproxy/open-sse/services/codeAssistSubscription.ts";
 import {
   extractAntigravityProjectIdFromPayload,
   getStoredAntigravityProjectId,
-} from "@omniroute/open-sse/services/antigravityProjectPersistence.ts";
-import { runWithProxyContext } from "@omniroute/open-sse/utils/proxyFetch.ts";
+} from "@agentproxy/open-sse/services/antigravityProjectPersistence.ts";
+import { runWithProxyContext } from "@agentproxy/open-sse/utils/proxyFetch.ts";
 import { onUsageRecorded } from "./usageEvents";
 import {
   isRecord,
@@ -91,6 +92,8 @@ const PROVIDER_LIMITS_APIKEY_PROVIDERS = new Set([
   "agentrouter",
   // OpenRouter API key → /key limits + /credits account balance
   "openrouter",
+  // Lyceum API key (lk_…) → GET /api/v2/external/billing/credits balance
+  "lyceum",
 ]);
 const DEFAULT_PROVIDER_LIMITS_SYNC_INTERVAL_MINUTES = 70;
 const PROVIDER_LIMITS_AUTO_SYNC_SETTING_KEY = "provider_limits_auto_sync_last_run";
@@ -864,6 +867,15 @@ async function fetchLiveProviderLimitsWithOptions(
     result = await fetchUsageWithContext(null);
   }
 
+  if (connection.provider === "codex") {
+    const data = await syncCodexQuotaObservation(
+      connection.id,
+      result.usage,
+      connection.providerSpecificData
+    );
+    if (data) connection = { ...connection, providerSpecificData: data };
+  }
+
   if (isRecord(result.usage.quotas)) {
     setQuotaCache(connectionId, connection.provider, result.usage.quotas);
   }
@@ -902,6 +914,7 @@ export async function fetchAndPersistProviderLimits(
     const staleUsage: JsonRecord = {
       ...usage,
       quotas: previous.quotas,
+      modelQuotas: previous.modelQuotas,
       plan: previous.plan ?? usage.plan ?? null,
       bankedResetCredits: previous.bankedResetCredits,
       billing: previous.billing,

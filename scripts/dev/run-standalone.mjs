@@ -24,8 +24,8 @@ const childEnv = withRuntimePortEnv(env, runtimePorts);
 const rustCoreEnabled = isRustCoreEnabled(childEnv);
 if (rustCoreEnabled) ensureRustCoreInternalToken(childEnv);
 
-// #2939 / #10353: OMNIROUTE_MEMORY_MB is the Docker/standalone heap knob.
-const maxOldSpaceMb = resolveMaxOldSpaceMb(childEnv.OMNIROUTE_MEMORY_MB);
+// #2939 / #10353: AGENTPROXY_MEMORY_MB is the Docker/standalone heap knob.
+const maxOldSpaceMb = resolveMaxOldSpaceMb(childEnv.AGENTPROXY_MEMORY_MB);
 warnConflictingHeapLimits(childEnv, maxOldSpaceMb);
 childEnv.NODE_OPTIONS = buildStandaloneNodeOptions(childEnv, maxOldSpaceMb);
 

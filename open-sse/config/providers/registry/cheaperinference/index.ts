@@ -2,7 +2,7 @@ import type { RegistryEntry, RegistryModel } from "../../shared.ts";
 
 /**
  * Cheaper Inference (https://api.cheaperinference.com) — cost-ranked OpenAI-compatible
- * gateway, OmniRoute Open Source Friend.
+ * gateway, AgentProxy Open Source Friend.
  *
  * Catalog captured from a live `GET /v1/models` on 2026-07-31 (42 entries: these 39
  * `type:"text"` models plus 3 `type:"image"` models that live in imageRegistry.ts —
@@ -242,6 +242,7 @@ export const cheaperinferenceProvider: RegistryEntry = {
   format: "openai",
   executor: "cheaperinference",
   baseUrl: "https://api.cheaperinference.com/v1/chat/completions",
+  modelsUrl: "https://api.cheaperinference.com/v1/models",
   // The gateway serves a native, STATELESS /v1/responses endpoint alongside
   // /v1/chat/completions. Consumed by CheaperInferenceExecutor.buildUrl for the
   // models tagged targetFormat: "openai-responses" above.

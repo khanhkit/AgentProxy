@@ -2,7 +2,7 @@
  * Generic reverse-proxy helper for embedded service UIs.
  *
  * Forwards HTTP traffic to a locally-running embedded service so its web UI
- * can be iframed inside the OmniRoute dashboard without CORS issues.
+ * can be iframed inside the AgentProxy dashboard without CORS issues.
  *
  * Security:
  *   - Target URL is constructed from the service's registered port — never
@@ -10,7 +10,7 @@
  *   - Routes that use this helper must be classified LOCAL_ONLY in routeGuard.ts;
  *     loopback enforcement blocks all non-loopback access before any handler runs.
  *   - Client cookies and Authorization headers are stripped before forwarding
- *     to prevent credential leakage between OmniRoute and the embedded service.
+ *     to prevent credential leakage between AgentProxy and the embedded service.
  *   - Upstream set-cookie, x-frame-options, content-security-policy, and
  *     cross-origin-* headers are stripped from responses so the iframe is not
  *     broken by the embedded service's own security policies.
@@ -27,7 +27,7 @@ import {
   connectionHeaderTokens,
   isForbiddenProxyBoundaryHeaderName,
 } from "@/shared/constants/upstreamHeaders";
-import { sanitizeErrorMessage } from "@omniroute/open-sse/utils/error";
+import { sanitizeErrorMessage } from "@agentproxy/open-sse/utils/error";
 
 // ─── constants ────────────────────────────────────────────────────────────────
 
@@ -48,7 +48,7 @@ export const HOP_BY_HOP = new Set([
 
 /**
  * Request headers stripped before forwarding to the embedded service.
- * Prevents OmniRoute session cookies and Authorization from leaking upstream.
+ * Prevents AgentProxy session cookies and Authorization from leaking upstream.
  */
 export const STRIPPED_REQUEST_HEADERS = new Set(["cookie", "authorization"]);
 
@@ -56,11 +56,11 @@ export const STRIPPED_REQUEST_HEADERS = new Set(["cookie", "authorization"]);
  * Response headers stripped before returning to the browser.
  *
  * - set-cookie: prevents the embedded service from setting cookies in the
- *   OmniRoute origin, which would conflict with session management.
+ *   AgentProxy origin, which would conflict with session management.
  * - content-security-policy / content-security-policy-report-only: the
- *   embedded service's CSP is irrelevant inside the OmniRoute iframe.
+ *   embedded service's CSP is irrelevant inside the AgentProxy iframe.
  * - x-frame-options: would block the iframe entirely if set to DENY/SAMEORIGIN
- *   by the embedded service (OmniRoute controls framing via its own CSP).
+ *   by the embedded service (AgentProxy controls framing via its own CSP).
  * - cross-origin-*: remove COOP/COEP/CORP that could break the framed page.
  */
 export const STRIPPED_RESPONSE_HEADERS = new Set([
@@ -96,6 +96,57 @@ export function shouldStripProxyResponseHeader(
 }
 
 export const PROXY_TIMEOUT_MS = 30_000;
+
+/** Maximum upstream HTML bytes buffered for path rewriting. */
+export const MAX_HTML_REWRITE_BYTES = 8 * 1024 * 1024;
+
+function htmlResponseTooLargeError(limitBytes: number): Error {
+  return new Error(`HTML response exceeds ${limitBytes} bytes`);
+}
+
+/**
+ * Read an upstream HTML response through a strict byte budget.
+ *
+ * Declared oversized bodies are cancelled before the first read. Responses
+ * without a trustworthy Content-Length are streamed incrementally and cancelled
+ * immediately once their observed UTF-8 byte payload crosses the same budget.
+ */
+export async function readHtmlResponseWithLimit(
+  response: Response,
+  maxBytes: number = MAX_HTML_REWRITE_BYTES
+): Promise<string> {
+  const declaredRaw = response.headers.get("content-length")?.trim() ?? "";
+  if (/^\d+$/.test(declaredRaw)) {
+    const declaredBytes = Number(declaredRaw);
+    if (Number.isFinite(declaredBytes) && declaredBytes > maxBytes) {
+      await response.body?.cancel("HTML response size limit exceeded").catch(() => undefined);
+      throw htmlResponseTooLargeError(maxBytes);
+    }
+  }
+
+  if (!response.body) return "";
+
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  let totalBytes = 0;
+  let html = "";
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    if (!value) continue;
+
+    totalBytes += value.byteLength;
+    if (totalBytes > maxBytes) {
+      await reader.cancel("HTML response size limit exceeded").catch(() => undefined);
+      throw htmlResponseTooLargeError(maxBytes);
+    }
+    html += decoder.decode(value, { stream: true });
+  }
+
+  html += decoder.decode();
+  return html;
+}
 
 // ─── public interface ─────────────────────────────────────────────────────────
 
@@ -190,7 +241,7 @@ export async function proxyRequest(
 
     // HTML responses: buffer, rewrite links, return as string.
     if (htmlRewrite && contentType.startsWith("text/html")) {
-      const html = await upstream.text();
+      const html = await readHtmlResponseWithLimit(upstream);
       const rewritten = rewriteHtml(html, publicPrefix);
       return new Response(rewritten, {
         status: upstream.status,

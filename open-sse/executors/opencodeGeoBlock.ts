@@ -11,6 +11,14 @@
 // (2026-09-07 — app.log: "This model is not available in your country.");
 // siblings cover the same class, not the single incident. No bare "in your
 // country/region": location text without the full prefix is not a geo signal.
+// `user_blocked` refusal (observed 2026-09-13 — upstream 403 with this token).
+// Rotation on it is opt-in (OPENCODE_USER_BLOCKED_ROTATION) and bounded to one
+// hop; when enabled it reuses the geo tried-set. 403 and 451 are classified the
+// same way. Literal exact token only; `user-blocked` / `user blocked` are
+// unobserved phrasings (fail closed).
+const USER_BLOCKED_SIGNAL = "user_blocked";
+
+const FREE_TIER_SIGNALS = ["freetiererror", "free tier can only be used"];
 const GEO_SIGNALS = [
   "not available in your country",
   "not available in your region",
@@ -47,6 +55,32 @@ export function isOpencodeGeoBlocked(status: number, bodyText: string): boolean 
   const lower = text.toLowerCase();
   if (REGION_ERROR_REGEX.test(text)) return true;
   return GEO_SIGNALS.some((signal) => lower.includes(signal));
+}
+
+/** 403 or 451 whose body carries the user_blocked token and is not a geo block or 1010 rejection. */
+export function isOpencodeUserBlocked(status: number, bodyText: string | null): boolean {
+  if (status !== 403 && status !== 451) return false;
+  const text = String(bodyText || "");
+  if (isFingerprintRejection(text) || isOpencodeGeoBlocked(status, text)) return false;
+  return text.toLowerCase().includes(USER_BLOCKED_SIGNAL);
+}
+
+/**
+ * Request-scoped OpenCode free-tier refusal. This is not an account-health or
+ * rotation signal; more specific fingerprint/geo/user-block refusals win.
+ */
+export function isOpencodeFreeTierRefusal(status: number, bodyText: string | null): boolean {
+  if (status !== 403 && status !== 451) return false;
+  const text = String(bodyText || "");
+  if (
+    isFingerprintRejection(text) ||
+    isOpencodeGeoBlocked(status, text) ||
+    isOpencodeUserBlocked(status, text)
+  ) {
+    return false;
+  }
+  const lower = text.toLowerCase();
+  return FREE_TIER_SIGNALS.some((signal) => lower.includes(signal));
 }
 
 export function proxyKeyOf(proxy: { host: string; port: number } | null): string | null {

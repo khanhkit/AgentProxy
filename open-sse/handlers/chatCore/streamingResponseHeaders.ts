@@ -8,7 +8,7 @@
  * optional compression header. Pure builder (returns a fresh map). Behaviour is byte-identical to
  * the previous inline block.
  */
-import { OMNIROUTE_RESPONSE_HEADERS } from "@/shared/constants/headers";
+import { AGENTPROXY_RESPONSE_HEADERS } from "@/shared/constants/headers";
 import { buildStreamingResponseHeaders as defaultBuildStreaming } from "./responseHeaders.ts";
 
 export function assembleStreamingResponseHeaders(
@@ -19,6 +19,9 @@ export function assembleStreamingResponseHeaders(
     pendingRequestId: string;
     compressionResponseMeta?: string | null | undefined;
     comboStrategy?: string | null | undefined;
+    isCombo?: boolean;
+    requestedConnectionId?: string | null;
+    selectedConnectionId?: string | null;
   },
   buildStreamingResponseHeaders: typeof defaultBuildStreaming = defaultBuildStreaming
 ): Record<string, string> {
@@ -31,11 +34,14 @@ export function assembleStreamingResponseHeaders(
       usage: null,
       costUsd: 0,
       strategy: args.comboStrategy ?? "single",
+      isCombo: args.isCombo,
+      requestedConnectionId: args.requestedConnectionId,
+      selectedConnectionId: args.selectedConnectionId,
     }),
-    "x-omniroute-request-id": args.pendingRequestId,
+    "x-agentproxy-request-id": args.pendingRequestId,
   };
   if (args.compressionResponseMeta) {
-    responseHeaders[OMNIROUTE_RESPONSE_HEADERS.compression] = args.compressionResponseMeta;
+    responseHeaders[AGENTPROXY_RESPONSE_HEADERS.compression] = args.compressionResponseMeta;
   }
   return responseHeaders;
 }

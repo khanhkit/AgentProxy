@@ -461,15 +461,16 @@ function protocolErrorBody(): Record<string, unknown> {
 }
 
 function responseHeaders(contentType: string, metadata: Record<string, string>): Headers {
+  const charsetAware = contentType.includes("charset") ? contentType : `${contentType}; charset=utf-8`;
   const headers = new Headers({
-    "Content-Type": contentType,
+    "Content-Type": charsetAware,
     "Cache-Control": "no-cache",
   });
   const headerNames: Record<string, string> = {
-    operation: "X-OmniRoute-Claude-Web-Operation",
-    conversation_id: "X-OmniRoute-Claude-Web-Conversation-Id",
-    parent_message_uuid: "X-OmniRoute-Claude-Web-Parent-Message-Uuid",
-    assistant_message_uuid: "X-OmniRoute-Claude-Web-Assistant-Message-Uuid",
+    operation: "X-AgentProxy-Claude-Web-Operation",
+    conversation_id: "X-AgentProxy-Claude-Web-Conversation-Id",
+    parent_message_uuid: "X-AgentProxy-Claude-Web-Parent-Message-Uuid",
+    assistant_message_uuid: "X-AgentProxy-Claude-Web-Assistant-Message-Uuid",
   };
   for (const [key, headerName] of Object.entries(headerNames)) {
     const value = metadata[key];

@@ -4,7 +4,7 @@ import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-process.env.DATA_DIR = mkdtempSync(join(tmpdir(), "omniroute-jina-omni-"));
+process.env.DATA_DIR = mkdtempSync(join(tmpdir(), "agentproxy-jina-omni-"));
 
 const { v1EmbeddingsSchema } = await import("../../src/shared/validation/schemas/apiV1.ts");
 const { handleEmbedding } = await import("../../open-sse/handlers/embeddings.ts");
@@ -78,7 +78,7 @@ test("handleEmbedding forwards Jina Omni native text+image URL intact and does n
   globalThis.fetch = async (url, init = {}) => {
     const target = String(url);
     if (target === IMAGE_URL || target.includes("bike.png")) {
-      throw new Error("OmniRoute must not fetch Jina-native image URLs");
+      throw new Error("AgentProxy must not fetch Jina-native image URLs");
     }
     seen.push({
       url: target,

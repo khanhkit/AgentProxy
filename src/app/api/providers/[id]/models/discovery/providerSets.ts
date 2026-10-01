@@ -100,6 +100,8 @@ export const NAMED_OPENAI_STYLE_PROVIDERS = new Set([
   // (11 chat-capable). Live fetch keeps it fresh; the registry seed stays as the
   // offline fallback.
   "logfare",
+  "agnes",
+  "agnes-cn",
 ]);
 
 export function isNamedOpenAIStyleProvider(provider: string): boolean {

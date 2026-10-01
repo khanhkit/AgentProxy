@@ -45,8 +45,8 @@ export const ANTHROPIC_BETA_CLAUDE_OAUTH = [
 
 /**
  * Client-negotiated `anthropic-beta` values that are safe to forward to the
- * claude.ai backend on top of OmniRoute's own set. Kept to betas the backend
- * actually accepts and that OmniRoute does not otherwise emit — so a blind
+ * claude.ai backend on top of AgentProxy's own set. Kept to betas the backend
+ * actually accepts and that AgentProxy does not otherwise emit — so a blind
  * passthrough cannot reintroduce the over-sending fingerprint/rejection bugs
  * (#3415, #2454). Currently: deferred-tool negotiation (#3974) and the
  * client's own `[1m]` long-context negotiation (context-1m). selectBetaFlags
@@ -65,6 +65,8 @@ export const FORWARDABLE_CLIENT_BETAS = Object.freeze([
   // gate (#9505), so a client that sent it must keep it through the merge —
   // otherwise its effort negotiation is silently dropped.
   "effort-2025-11-24",
+  "thinking-binding-controls-2026-08-01",
+  "thinking-display-updates-2026-08-18",
 ]);
 
 /**

@@ -8,7 +8,6 @@ import {
   parseAndValidatePublicUrl,
   parseOutboundUrl,
 } from "@/shared/network/outboundUrlGuard";
-import { getProviderOutboundGuard } from "@/shared/network/outboundUrlGuardPolicy";
 
 const DEFAULT_MAX_REMOTE_IMAGE_BYTES = 20 * 1024 * 1024;
 const DEFAULT_MAX_REDIRECTS = 3;
@@ -27,6 +26,7 @@ export interface RemoteImageFetchOptions {
   /** Require HTTPS for the initial URL and every redirect hop. Default false for compatibility. */
   enforceHttps?: boolean;
   fetchImpl?: typeof fetch;
+  headers?: HeadersInit;
   /** Pin the network connection to a DNS answer that passed validation. */
   pinDns?: boolean;
   guard?: OutboundUrlGuardMode;
@@ -143,6 +143,13 @@ function combineSignals(signal: AbortSignal | undefined, timeoutMs: number) {
   return AbortSignal.any([signal, timeoutSignal]);
 }
 
+let pinnedFetchTestOverride: typeof fetch | undefined;
+
+/** Test-only seam for pinDns callers whose tests mock global fetch. Production leaves this unset. */
+export function setPinnedFetchTestOverride(fetchImpl: typeof fetch | undefined): void {
+  pinnedFetchTestOverride = fetchImpl;
+}
+
 async function readResponseBuffer(response: Response, maxBytes: number) {
   const contentLengthHeader = response.headers.get("content-length");
   const contentLength = contentLengthHeader ? Number.parseInt(contentLengthHeader, 10) : null;
@@ -187,11 +194,8 @@ export async function fetchRemoteMedia(
   options: RemoteMediaFetchOptions = {}
 ): Promise<RemoteMediaFetchResult> {
   const injectedFetch = options.fetchImpl;
-  // Default off: production callers that need connection pinning opt in. This keeps
-  // globalThis.fetch mockable for image-generation tests and preserves the previous
-  // DNS pre-check behavior for non-embedding callers.
-  const pinDns = options.pinDns === true;
-  const guard = options.guard ?? getProviderOutboundGuard();
+  const guard = options.guard ?? "public-only";
+  const pinDns = options.pinDns ?? guard === "public-only";
   const maxBytes = options.maxBytes ?? DEFAULT_MAX_REMOTE_IMAGE_BYTES;
   const maxRedirects = options.maxRedirects ?? DEFAULT_MAX_REDIRECTS;
   const signal = combineSignals(options.signal, options.timeoutMs ?? DEFAULT_TIMEOUT_MS);
@@ -207,12 +211,14 @@ export async function fetchRemoteMedia(
     const addresses = await assertHostnameResolvesPublic(currentUrl, guard, lookup);
     const fetchImpl =
       injectedFetch ??
+      pinnedFetchTestOverride ??
       (pinDns && addresses.length
         ? createPinnedFetch(addresses[0].address, addresses[0].family)
         : fetch);
     const response = await fetchImpl(currentUrl.toString(), {
       method: "GET",
       redirect: "manual",
+      headers: options.headers,
       signal,
     });
 

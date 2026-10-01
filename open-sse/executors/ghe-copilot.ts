@@ -1,6 +1,7 @@
 import { GithubExecutor } from "./github.ts";
-import type { ProviderCredentials, ExecuteInput, ExecutorLog } from "./base.ts";
+import type { ProviderCredentials, ExecutorLog } from "./base.ts";
 import { getModelTargetFormat } from "../config/providerModels.ts";
+import { safeOutboundFetch } from "@/shared/network/safeOutboundFetch";
 
 /** Result of a successful GHE Copilot internal token exchange. */
 type CopilotTokenResult = {
@@ -107,7 +108,7 @@ export class GheCopilotExecutor extends GithubExecutor {
       : model;
   }
 
-  override buildUrl(model: string, stream: boolean, urlIndex = 0, credentials: ProviderCredentials | null = null): string {
+  override buildUrl(model: string, _stream: boolean, _urlIndex = 0, credentials: ProviderCredentials | null = null): string {
     const bareModel = this.stripPrefix(model);
     const targetFormat = getModelTargetFormat("ghe-copilot", bareModel);
     // Claude models: ALWAYS route to the Anthropic-native /v1/messages shim
@@ -162,11 +163,15 @@ export class GheCopilotExecutor extends GithubExecutor {
       const baseUrl = gheUrl.replace(/\/chat\/completions\/?$/, "").replace(/\/responses\/?$/, "");
       const tokenUrl = `${baseUrl}/api/v3/copilot_internal/v2/token`;
 
-      const response = await fetch(tokenUrl, {
+      const response = await safeOutboundFetch(tokenUrl, {
         headers: {
           Authorization: `Bearer ${githubAccessToken}`,
           Accept: "application/json",
         },
+        guard: "block-metadata",
+        pinDns: true,
+        allowRedirect: false,
+        retry: false,
       });
 
       if (!response.ok) return null;
@@ -215,13 +220,17 @@ export class GheCopilotExecutor extends GithubExecutor {
         params.set("client_secret", this.config.clientSecret);
       }
 
-      const response = await fetch(tokenUrl, {
+      const response = await safeOutboundFetch(tokenUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
           Accept: "application/json",
         },
         body: params,
+        guard: "block-metadata",
+        pinDns: true,
+        allowRedirect: false,
+        retry: false,
       });
       
       if (!response.ok) return null;

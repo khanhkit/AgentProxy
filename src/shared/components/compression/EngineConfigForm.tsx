@@ -1,5 +1,5 @@
 "use client";
-import type { EngineConfigField } from "@omniroute/open-sse/services/compression/engines/types";
+import type { EngineConfigField } from "@agentproxy/open-sse/services/compression/engines/types";
 
 export interface EngineConfigFormProps {
   schema: EngineConfigField[];
@@ -23,10 +23,21 @@ export function EngineConfigForm({ schema, value, onChange }: EngineConfigFormPr
             {f.type === "number" && (
               <input
                 type="number"
-                value={v as number}
+                value={
+                  f.key === "maxToolLength" && !(typeof v === "number" && Number.isFinite(v))
+                    ? ""
+                    : (v as number)
+                }
                 min={f.min}
                 max={f.max}
-                onChange={(e) => set(f.key, Number(e.target.value))}
+                onChange={(e) =>
+                  set(
+                    f.key,
+                    f.key === "maxToolLength" && e.target.value === ""
+                      ? Number.NaN
+                      : Number(e.target.value)
+                  )
+                }
                 className="border border-border rounded px-2 py-1"
               />
             )}

@@ -8,26 +8,26 @@ import {
 } from "../../open-sse/utils/sseHeartbeat.ts";
 
 function withEnv(value: string | undefined, fn: () => void) {
-  const prev = process.env.OMNIROUTE_SSE_COMMENTS;
+  const prev = process.env.AGENTPROXY_SSE_COMMENTS;
   try {
-    if (value === undefined) delete process.env.OMNIROUTE_SSE_COMMENTS;
-    else process.env.OMNIROUTE_SSE_COMMENTS = value;
+    if (value === undefined) delete process.env.AGENTPROXY_SSE_COMMENTS;
+    else process.env.AGENTPROXY_SSE_COMMENTS = value;
     fn();
   } finally {
-    if (prev === undefined) delete process.env.OMNIROUTE_SSE_COMMENTS;
-    else process.env.OMNIROUTE_SSE_COMMENTS = prev;
+    if (prev === undefined) delete process.env.AGENTPROXY_SSE_COMMENTS;
+    else process.env.AGENTPROXY_SSE_COMMENTS = prev;
   }
 }
 
 async function withEnvAsync<T>(value: string | undefined, fn: () => Promise<T>): Promise<T> {
-  const prev = process.env.OMNIROUTE_SSE_COMMENTS;
+  const prev = process.env.AGENTPROXY_SSE_COMMENTS;
   try {
-    if (value === undefined) delete process.env.OMNIROUTE_SSE_COMMENTS;
-    else process.env.OMNIROUTE_SSE_COMMENTS = value;
+    if (value === undefined) delete process.env.AGENTPROXY_SSE_COMMENTS;
+    else process.env.AGENTPROXY_SSE_COMMENTS = value;
     return await fn();
   } finally {
-    if (prev === undefined) delete process.env.OMNIROUTE_SSE_COMMENTS;
-    else process.env.OMNIROUTE_SSE_COMMENTS = prev;
+    if (prev === undefined) delete process.env.AGENTPROXY_SSE_COMMENTS;
+    else process.env.AGENTPROXY_SSE_COMMENTS = prev;
   }
 }
 
@@ -91,6 +91,10 @@ test("comment opt-out suppresses only COMMENT heartbeats, not data-event heartbe
     assert.match(anthropic, /event: ping\ndata: \{"type":"ping"\}/);
 
     const responses = await collectHeartbeatOutput(HEARTBEAT_SHAPES.OPENAI_RESPONSES_IN_PROGRESS);
-    assert.match(responses, /data: \{"type":"response\.in_progress"\}/);
+    // #14330: the frame now carries a required `sequence_number` and `response` object.
+    assert.match(
+      responses,
+      /data: \{"type":"response\.in_progress","sequence_number":1,"response":/
+    );
   });
 });

@@ -1,8 +1,8 @@
 import {
   PROVIDER_ID_TO_ALIAS,
   PROVIDER_MODELS,
-} from "@omniroute/open-sse/config/providerModels.ts";
-import { parseModel, resolveCanonicalProviderModel } from "@omniroute/open-sse/services/model.ts";
+} from "@agentproxy/open-sse/config/providerModels.ts";
+import { parseModel, resolveCanonicalProviderModel } from "@agentproxy/open-sse/services/model.ts";
 import {
   findModelSpecIdByExactOrAlias,
   getAuthoritativeContextWindow,
@@ -17,7 +17,7 @@ import {
   getModelCapabilityOverride,
   getReasoningEffortsOverride,
 } from "@/lib/db/modelCapabilityOverrides";
-import { getCustomModelVisionOverride } from "@/lib/db/models";
+import { getCustomModelVisionOverride, getSyncedAvailableModelVision } from "@/lib/db/models";
 import type { ModelCapabilityResolutionSnapshot } from "@/lib/modelCapabilityResolutionSnapshot";
 import { resolveAudioCapability, resolveVideoCapability } from "@/lib/modelCapabilityModalities";
 
@@ -25,11 +25,11 @@ export type { ModelCapabilityResolutionSnapshot } from "@/lib/modelCapabilityRes
 export { createModelCapabilityResolutionSnapshot } from "@/lib/modelCapabilityResolutionSnapshot";
 export { resolveAudioCapability } from "@/lib/modelCapabilityModalities";
 import { isVisionModelId } from "@/shared/constants/visionModels";
-import { getUnsupportedParams } from "@omniroute/open-sse/config/providerRegistry.ts";
+import { getUnsupportedParams } from "@agentproxy/open-sse/config/providerRegistry.ts";
 import {
   getLearnedThinkingCap,
   GEMINI_FALLBACK_THINKING_CAP,
-} from "@omniroute/open-sse/services/learnedThinkingCaps.ts";
+} from "@agentproxy/open-sse/services/learnedThinkingCaps.ts";
 
 const TOOL_CALLING_UNSUPPORTED_PATTERNS: string[] = [
   // Specialty / non-chat surfaces must never inherit optimistic tool defaults (#8016)
@@ -372,7 +372,7 @@ function stripLatestAlias(modelId: string | null): string | null {
 const reverseModelsDevProvidersCache = new Map<string, readonly string[]>();
 
 function reverseModelsDevProviders(provider: string): readonly string[] {
-  // models.dev may store capabilities under a different OmniRoute provider id
+  // models.dev may store capabilities under a different AgentProxy provider id
   // that also maps from the same upstream models.dev provider. Build reverse
   // candidates from MODELS_DEV_PROVIDER_MAP (e.g. openai ↔ cx).
   //
@@ -508,7 +508,8 @@ function resolveVisionCapability(
   modalitiesInput: string[],
   modalitiesOutput: string[],
   modelId?: string,
-  customVisionOverride?: boolean | null
+  customVisionOverride?: boolean | null,
+  syncedAvailableModelVision?: boolean | null
 ): boolean | null {
   const allModalities = [...modalitiesInput, ...modalitiesOutput].map((entry) =>
     String(entry).toLowerCase()
@@ -526,6 +527,14 @@ function resolveVisionCapability(
   // win for models the vendor documents as text-only. Beats every branch below so an
   // image request can never be routed to a blind model (#4071).
   if (isKnownTextOnlyDespiteSync(modelId)) return false;
+
+  // #14081: a custom OpenAI-compatible node's synced `syncedAvailableModels`
+  // row already made /v1/models report capabilities.vision:true for this
+  // model (buildSyncedCapabilities). Agree with that catalog verdict here too
+  // so the Vision Bridge guardrail does not reroute an image-capable model as
+  // text-only. Positive-only: this source is never `false`, so it can only
+  // add vision, never downgrade another source's verdict.
+  if (syncedAvailableModelVision === true) return true;
 
   if (typeof synced?.attachment === "boolean") {
     // #8250: models.dev sometimes ships attachment=false alongside image/video
@@ -856,6 +865,17 @@ export function getResolvedModelCapabilities(
         )
       : null;
 
+  // #14081: positive-only vision verdict from a custom node's synced
+  // `syncedAvailableModels` row, mirroring the catalog's buildSyncedCapabilities.
+  const syncedAvailableModelVision =
+    resolved.provider && resolved.model
+      ? getSyncedAvailableModelVision(
+          resolved.provider,
+          resolved.model,
+          snapshot?.syncedAvailableModelVision
+        )
+      : null;
+
   const supportsVision = resolveVisionCapability(
     visionSpec,
     registryModel,
@@ -863,7 +883,8 @@ export function getResolvedModelCapabilities(
     modalitiesInput,
     modalitiesOutput,
     lookupKey,
-    customVisionOverride
+    customVisionOverride,
+    syncedAvailableModelVision
   );
   const supportsAudio = resolveAudioCapability(spec, registryModel, modalitiesInput);
   const supportsVideo = resolveVideoCapability(spec, registryModel, modalitiesInput);

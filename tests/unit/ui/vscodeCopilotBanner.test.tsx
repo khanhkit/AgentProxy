@@ -10,7 +10,7 @@ import { act } from "react";
 import { createRoot } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-const STORAGE_KEY = "omniroute-vscode-copilot-banner-dismissed-v1";
+const STORAGE_KEY = "agentproxy-vscode-copilot-banner-dismissed-v1";
 const MARKETPLACE_URL =
   "https://marketplace.visualstudio.com/items?itemName=diegosouzapw.omnicopilot";
 

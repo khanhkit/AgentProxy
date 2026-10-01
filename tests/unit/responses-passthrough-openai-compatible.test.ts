@@ -38,7 +38,7 @@ test("shouldUseNativeOpenAICompatibleResponsesPassthrough respects forceResponse
   const result = shouldUseNativeOpenAICompatibleResponsesPassthrough({
     provider: "openai-compatible-custom-123",
     sourceFormat: FORMATS.OPENAI_RESPONSES,
-    providerSpecificData: { _omnirouteForceResponsesUpstream: true },
+    providerSpecificData: { _agentproxyForceResponsesUpstream: true },
   });
   assert.equal(result, true);
 });

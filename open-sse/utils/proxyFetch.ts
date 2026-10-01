@@ -14,6 +14,8 @@ import {
   proxyUrlForLogs,
 } from "./proxyDispatcher.ts";
 import tlsClient, { type TlsFetchOptions } from "./tlsClient.ts";
+import { recordFinalTransportOutcome, recordProxiedSuccess } from "./proxyTransportOutcome.ts";
+import { describeFallbackFailure, redactProxyDetailsInMessage } from "./proxyFetchRedaction.ts";
 import { isProxyReachable } from "@/lib/proxyHealth";
 import {
   isControlPlaneProxyDirectFallbackEnabled,
@@ -60,15 +62,15 @@ const RELAY_RETRY_AGENT = new Agent({
 
 // A hung relay must fail BEFORE the client/agent timeout (typically 30s) so the
 // caller sees a relay-specific failure instead of a generic upstream timeout.
-// Overridable via OMNIROUTE_RELAY_FETCH_TIMEOUT_MS (capped at 29s so the
+// Overridable via AGENTPROXY_RELAY_FETCH_TIMEOUT_MS (capped at 29s so the
 // relay-specific timeout always fires first).
 function readRelayFetchTimeoutMs(): number {
-  const raw = process.env.OMNIROUTE_RELAY_FETCH_TIMEOUT_MS;
+  const raw = process.env.AGENTPROXY_RELAY_FETCH_TIMEOUT_MS;
   if (raw == null || raw.trim() === "") return 25_000;
   const parsed = Number(raw);
   if (!Number.isFinite(parsed) || parsed < 1) {
     console.warn(
-      `[ProxyFetch] Invalid OMNIROUTE_RELAY_FETCH_TIMEOUT_MS="${raw}". Using default 25000.`
+      `[ProxyFetch] Invalid AGENTPROXY_RELAY_FETCH_TIMEOUT_MS="${raw}". Using default 25000.`
     );
     return 25_000;
   }
@@ -77,17 +79,33 @@ function readRelayFetchTimeoutMs(): number {
 const RELAY_FETCH_TIMEOUT_MS = readRelayFetchTimeoutMs();
 
 // Shared retry backoff for the direct / relay / proxy retry-once paths.
-// Overridable via OMNIROUTE_RETRY_BACKOFF_MS (0 = retry immediately).
-const RETRY_BACKOFF_MS = Math.max(Number(process.env.OMNIROUTE_RETRY_BACKOFF_MS) || 10, 0);
+// Overridable via AGENTPROXY_RETRY_BACKOFF_MS (0 = retry immediately).
+const RETRY_BACKOFF_MS = Math.max(Number(process.env.AGENTPROXY_RETRY_BACKOFF_MS) || 10, 0);
 
 function isTlsFingerprintEnabled() {
   return process.env.ENABLE_TLS_FINGERPRINT === "true";
 }
 
+function isGroqTlsFingerprintTarget(
+  provider: string | null | undefined,
+  url?: string | null
+): boolean {
+  if (provider?.trim().toLowerCase() === "groq") return true;
+  if (!url) return false;
+  try {
+    const host = new URL(url).hostname.toLowerCase();
+    return host === "api.groq.com" || host.endsWith(".groq.com");
+  } catch {
+    return false;
+  }
+}
+
 function tlsFingerprintProviderAllowed(
   provider: string | null | undefined,
-  proxied: boolean
+  proxied: boolean,
+  url?: string | null
 ): boolean {
+  if (isGroqTlsFingerprintTarget(provider, url)) return false;
   const configured = process.env.TLS_FINGERPRINT_PROVIDERS?.trim();
   // Preserve the legacy direct-only opt-in. The new proxied transport requires
   // an explicit allowlist so enabling TLS cannot silently change proxy traffic.
@@ -340,20 +358,6 @@ function isWreqProxySupported(proxyUrl: string): boolean {
   }
 }
 
-/**
- * Redact proxy URLs (and any bare `user:pass@host` credential tokens) from an
- * upstream transport-error message before it is surfaced. #10032 keeps the
- * underlying failure reason in the propagated error for diagnosability, but
- * the raw message can embed the full proxy URL — including userinfo
- * credentials — which must never bubble into response bodies (#9837, Hard
- * Rule #12).
- */
-function redactProxyDetailsInMessage(message: string): string {
-  return message
-    .replace(/\b(?:https?|socks[45][ah]?|socks):\/\/\S+/gi, "[redacted-proxy]")
-    .replace(/\b[^\s:@/]+:[^\s@/]*@\S+/g, "[redacted-proxy]");
-}
-
 function sanitizeTransportError(
   error: unknown,
   message: string,
@@ -393,8 +397,8 @@ type PatchState = {
 };
 
 const isCloud = typeof caches !== "undefined" && typeof caches === "object";
-const PATCH_STATE_KEY = Symbol.for("omniroute.proxyFetch.state");
-const DIRECT_PROXY_CONTEXT = Symbol.for("omniroute.proxyFetch.direct-context");
+const PATCH_STATE_KEY = Symbol.for("agentproxy.proxyFetch.state");
+const DIRECT_PROXY_CONTEXT = Symbol.for("agentproxy.proxyFetch.direct-context");
 
 function getPatchState(): PatchState {
   const scopedGlobal = globalThis as typeof globalThis & {
@@ -667,7 +671,7 @@ export async function runWithProxyContext(
       // #9158: this fires on EVERY proxied request (innermost context wins).
       // Gate it behind the same env flag as the relay routing log so request
       // traffic doesn't spam stdout at production log levels.
-      if (process.env.OMNIROUTE_PROXY_FETCH_DEBUG === "true") {
+      if (process.env.AGENTPROXY_PROXY_FETCH_DEBUG === "true") {
         console.log(
           `[ProxyFetch] Applied request proxy context: ${proxyUrlForLogs(resolvedProxyUrl)}`
         );
@@ -746,7 +750,7 @@ export function hasAmbientProxyContext(): boolean {
  * as a generic "Internal server error"). Data-plane chat keeps strict pinning via
  * runWithProxyContext so per-account egress-IP isolation is preserved.
  *
- * This remains disabled unless OMNIROUTE_CONTROL_PLANE_PROXY_DIRECT_FALLBACK is enabled
+ * This remains disabled unless AGENTPROXY_CONTROL_PLANE_PROXY_DIRECT_FALLBACK is enabled
  * from Feature Flags or the environment.
  */
 export async function runWithProxyContextOrDirect(proxyConfig, fn) {
@@ -792,7 +796,7 @@ async function patchedFetch(
     if (
       isTlsFingerprintEnabled() &&
       activeTlsClient.available &&
-      tlsFingerprintProviderAllowed(tlsStore?.provider, false) &&
+      tlsFingerprintProviderAllowed(tlsStore?.provider, false, targetUrl) &&
       isTlsRequestEligible(input, options)
     ) {
       try {
@@ -907,7 +911,10 @@ async function patchedFetch(
             continue;
           }
           if (hasNonReplayableBody) {
-            const detail = `dispatcher=[${describeFetchCause(dispatcherError)}] native=[skipped: non-replayable request body]`;
+            const detail = describeFallbackFailure(
+              describeFetchCause(dispatcherError),
+              "skipped: non-replayable request body"
+            );
             console.warn(
               `[ProxyFetch] skipping native fetch fallback for non-replayable body: ${detail}`
             );
@@ -951,7 +958,10 @@ async function patchedFetch(
             return await _nativeFallback(input, options);
           } catch (nativeError) {
             // Surface both dispatcher and native causes immediately.
-            const detail = `dispatcher=[${describeFetchCause(dispatcherError)}] native=[${describeFetchCause(nativeError)}]`;
+            const detail = describeFallbackFailure(
+              describeFetchCause(dispatcherError),
+              describeFetchCause(nativeError)
+            );
             console.warn(`[ProxyFetch] native fetch fallback ALSO failed: ${detail}`);
             if (nativeError instanceof Error) {
               (nativeError as Error & { proxyFetchDetail?: string }).proxyFetchDetail = detail;
@@ -992,7 +1002,7 @@ async function patchedFetch(
     // Pass host through proxyUrlForLogs so the same redaction policy applies
     // to relay routing logs (the rest of this module already follows that rule).
     const hostForLogs = proxyUrlForLogs(vc.host ? `https://${vc.host}` : "");
-    if (process.env.OMNIROUTE_PROXY_FETCH_DEBUG === "true") {
+    if (process.env.AGENTPROXY_PROXY_FETCH_DEBUG === "true") {
       console.debug(`[ProxyFetch] Routing via ${vc.type || "edge"} relay: ${hostForLogs}`);
     }
 
@@ -1059,7 +1069,7 @@ async function patchedFetch(
           msg.includes("UND_ERR");
         if (attempt === 0 && maxRelayAttempts > 1 && isTransportFailure) {
           lastRelayError = relayError;
-          // #9158: fixed OMNIROUTE_RETRY_BACKOFF_MS backoff — the retry uses a
+          // #9158: fixed AGENTPROXY_RETRY_BACKOFF_MS backoff — the retry uses a
           // FRESH no-keep-alive RELAY_RETRY_AGENT (connections: 1, keepAliveTimeout:
           // 1ms) instead of reusing the pooled agent, so a stale pooled socket
           // that the relay half-closed is guaranteed a clean TCP handshake.
@@ -1084,7 +1094,7 @@ async function patchedFetch(
     typeof tlsStore?.sessionScope === "string" &&
     tlsStore.sessionScope.trim().length > 0 &&
     activeTlsClient.available &&
-    tlsFingerprintProviderAllowed(tlsStore?.provider, true) &&
+    tlsFingerprintProviderAllowed(tlsStore?.provider, true, targetUrl) &&
     isTlsRequestEligible(input, options) &&
     isWreqProxySupported(proxyUrl)
   ) {
@@ -1134,11 +1144,13 @@ async function patchedFetch(
   let lastProxyError: unknown = null;
   for (let attempt = 0; attempt < maxProxyAttempts; attempt++) {
     try {
-      return await _undiciProxy(input, {
+      const response = await _undiciProxy(input, {
         ...options,
         dispatcher:
           attempt === 0 ? createProxyDispatcher(proxyUrl) : getProxyRetryDispatcher(proxyUrl),
       });
+      recordProxiedSuccess(proxyUrl, targetUrl); // completed response, any status
+      return response;
     } catch (error) {
       if (isCallerAbort(error, getEffectiveSignal(input, options))) throw error;
       const msg = error instanceof Error ? error.message : String(error);
@@ -1151,7 +1163,7 @@ async function patchedFetch(
         msg.includes("UND_ERR");
       if (attempt === 0 && maxProxyAttempts > 1 && isTransportFailure) {
         lastProxyError = error;
-        // #9158: fixed OMNIROUTE_RETRY_BACKOFF_MS backoff — the retry uses a
+        // #9158: fixed AGENTPROXY_RETRY_BACKOFF_MS backoff — the retry uses a
         // fresh no-keep-alive dispatcher (getProxyRetryDispatcher), so the old
         // random jitter was pure latency on every recovered request with no
         // herd risk (per-host pool).
@@ -1170,6 +1182,9 @@ async function patchedFetch(
         originalMsg ? `Proxy request failed: ${originalMsg}` : "Proxy request failed",
         "PROXY_REQUEST_FAILED"
       );
+      // A tagged final transport failure is evidence only; cross-egress success decides set-aside.
+      if (sanitized.errorCode === "proxy_unreachable")
+        recordFinalTransportOutcome(proxyUrl, targetUrl);
       console.error(
         `[ProxyFetch] Proxy request failed (${source}, fail-closed; code=${sanitized.code})`
       );

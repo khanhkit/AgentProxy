@@ -6,9 +6,23 @@
 // dependency back on ../proxies.ts — mutators that also need to bump the registry
 // generation counter (addProxyToScopePool, removeProxyFromScopePool,
 // setScopeRotationStrategy) stay in ../proxies.ts and import the pure helpers here.
+import { isIP } from "node:net";
 import { randomInt } from "crypto";
 import { getDbInstance } from "../core";
 import { pickByLatency } from "../proxyLatency";
+import {
+  hasProxyRefusals,
+  isProxyAvoided,
+  proxyEgressKey,
+} from "@agentproxy/open-sse/utils/proxyRefusalMemory.ts";
+import { isEgressBucketedLockScope } from "@agentproxy/open-sse/config/providerErrorRules.ts";
+import { maybeEmitPoolExhausted } from "@/lib/proxyEvents/proxyTransitionBridge";
+import {
+  isProxySkipRecentlyFailedEnabled,
+  isProxyPoolSharedEgressOrderEnabled,
+} from "@/shared/utils/featureFlags";
+import { getCachedProxyHealth } from "@/lib/proxyHealth";
+import { getRecentEgressIpsForProxy } from "../proxyLogs";
 import type { JsonRecord, ProxyScope, ProxyRotationStrategy } from "./types";
 import { PROXY_ROTATION_STRATEGIES, DEFAULT_PROXY_ROTATION_STRATEGY } from "./types";
 import {
@@ -129,36 +143,296 @@ function getOrCreateRotationRow(
   };
 }
 
+// Indexes of the members not currently set aside by the proxy refusal memory, or null to
+// keep the plain behavior: nothing set aside, every member set aside (an all-failed pool
+// keeps today's selection and its #6246 fail-closed contract), or PROXY_SKIP_RECENTLY_FAILED
+// off. The flag is read last, only when skipping would actually change the pick.
+function eligibleMemberIndexes(candidates: unknown[]): number[] | null {
+  if (!hasProxyRefusals()) return null;
+  const eligible: number[] = [];
+  candidates.forEach((row, index) => {
+    if (!isProxyAvoided(proxyEgressKey(row))) eligible.push(index);
+  });
+  if (eligible.length === 0 || eligible.length === candidates.length) return null;
+  return isProxySkipRecentlyFailedEnabled() ? eligible : null;
+}
+
+// True once the sticky window elapsed (or never started): the held member is due
+// for rotation. Shared by the pre-rank bypass (held member served untouched) and
+// the sticky branch below (advance on expiry) — same `state`, no extra DB read.
+function isStickyExpired(state: { stickyWindowMinutes: number; rotatedAt: string | null }): boolean {
+  const lastRotated = state.rotatedAt ? Date.parse(state.rotatedAt) : NaN;
+  return !Number.isFinite(lastRotated) || Date.now() - lastRotated >= state.stickyWindowMinutes * 60_000;
+}
+
+// First eligible index at or after `start`, going round the pool.
+function firstEligibleFrom(start: number, eligible: number[], size: number): number {
+  for (let step = 0; step < size; step++) {
+    const index = (start + step) % size;
+    if (eligible.includes(index)) return index;
+  }
+  return start;
+}
+
+/** Health signals read from short-lived process memory, injectable for tests. */
+export interface PoolRankSignals {
+  isAvoided: (key: string | null) => boolean;
+  probeHealth: (url: string) => boolean | null;
+  sharesHotEgress?: (candidate: unknown) => boolean;
+}
+
+const DEFAULT_POOL_RANK_SIGNALS: PoolRankSignals = {
+  isAvoided: isProxyAvoided,
+  probeHealth: getCachedProxyHealth,
+};
+
+// Relay entries carry the relay URL in `host` and no dispatcher: not rankable.
+const RELAY_TYPES = new Set(["vercel", "deno", "cloudflare"]);
+// Same scheme defaults as proxyConfigToUrl() so the rebuilt URL hits the probe cache key.
+const DEFAULT_PORTS: Record<string, string> = { http: "8080", https: "443", socks5: "1080" };
+
+// Rebuild the probe URL for a pool row the way the dispatcher builds it
+// (`proxyConfigToUrl`, read-only replica): scheme + encoded auth + host + port,
+// with the `?family=` marker when set. Null when the row cannot egress.
+function candidateProbeUrl(row: unknown): string | null {
+  if (!row || typeof row !== "object" || Array.isArray(row)) return null;
+  const record = row as Record<string, unknown>;
+  const host = typeof record.host === "string" ? record.host : "";
+  if (!host) return null;
+  const type = String(record.type || "http").toLowerCase();
+  if (RELAY_TYPES.has(type) || !(type in DEFAULT_PORTS)) return null;
+  const parsed = Number(record.port);
+  const port =
+    record.port && Number.isInteger(parsed) && parsed >= 1 && parsed <= 65535
+      ? String(parsed)
+      : DEFAULT_PORTS[type];
+  const bracketed = host.includes(":") && !host.startsWith("[") ? `[${host}]` : host;
+  const username = typeof record.username === "string" ? record.username : "";
+  const password = typeof record.password === "string" ? record.password : "";
+  const auth =
+    username || password ? `${encodeURIComponent(username)}:${encodeURIComponent(password)}@` : "";
+  const family = typeof record.family === "string" ? record.family : "";
+  const marker = family === "ipv4" || family === "ipv6" ? `?family=${family}` : "";
+  return `${type}://${auth}${bracketed}:${port}${marker}`;
+}
+
+function expandIpv6ToGroups(text: string): number[] | null {
+  const halves = text.split("::");
+  if (halves.length > 2) return null;
+  const head = halves[0] ? halves[0].split(":") : [];
+  const tail = halves[1] ? halves[1].split(":") : [];
+  if (halves.length === 1 && head.length !== 8) return null;
+  if (halves.length === 2 && head.length + tail.length > 7) return null;
+  if ([...head, ...tail].some((part) => !/^[0-9a-f]{1,4}$/.test(part))) return null;
+  const groups = [
+    ...head.map((part) => parseInt(part, 16)),
+    ...new Array(halves.length === 2 ? 8 - head.length - tail.length : 0).fill(0),
+    ...tail.map((part) => parseInt(part, 16)),
+  ];
+  return groups.length === 8 ? groups : null;
+}
+
+/** IPv4 whole-address / IPv6-/64 key used only for shared-egress ranking. */
+export function normalizeEgressAddressForRanking(ip: unknown): string | null {
+  if (typeof ip !== "string") return null;
+  const text = ip.trim().toLowerCase();
+  if (!text || text.includes("%")) return null;
+  const mapped = text.startsWith("::ffff:") ? text.slice("::ffff:".length) : text;
+  if (isIP(mapped) === 4) return mapped;
+  if (isIP(text) !== 6) return null;
+  const groups = expandIpv6ToGroups(text);
+  if (groups === null) return null;
+  return `v6:${groups.slice(0, 4).map((group) => group.toString(16)).join(":")}`;
+}
+
+const EGRESS_RANKING_WINDOW_MS = 30 * 60_000;
+const HOT_EGRESS_CACHE_TTL_MS = 30_000;
+const HOT_EGRESS_CACHE_MAX_ENTRIES = 200;
+const hotEgressCache = new Map<string, { at: number; value: string | null }>();
+
+function writeHotEgressCache(key: string, value: string | null, nowMs: number): void {
+  if (!hotEgressCache.has(key) && hotEgressCache.size >= HOT_EGRESS_CACHE_MAX_ENTRIES) {
+    const oldest = hotEgressCache.keys().next().value;
+    if (oldest !== undefined) hotEgressCache.delete(oldest);
+  }
+  hotEgressCache.set(key, { at: nowMs, value });
+}
+
+export function __resetHotEgressCacheForTesting(): void {
+  hotEgressCache.clear();
+}
+
+function hotEgressCacheKey(row: unknown): string | null {
+  if (!row || typeof row !== "object" || Array.isArray(row)) return null;
+  const record = row as Record<string, unknown>;
+  const rawHost = typeof record.host === "string" ? record.host.trim() : "";
+  if (!rawHost) return null;
+  const host =
+    rawHost.startsWith("[") && rawHost.endsWith("]") && rawHost.length > 2
+      ? rawHost.slice(1, -1).trim()
+      : rawHost;
+  const port = Number(record.port);
+  if (!host || !Number.isInteger(port) || port < 1 || port > 65535) return null;
+  return `${host.toLowerCase()}:${port}`;
+}
+
+function readNormalizedEgressForMember(row: unknown, nowMs: number): string | null {
+  const key = hotEgressCacheKey(row);
+  if (key === null) return null;
+  const cached = hotEgressCache.get(key);
+  if (cached && nowMs - cached.at < HOT_EGRESS_CACHE_TTL_MS) return cached.value;
+  const record = row as Record<string, unknown>;
+  const host = typeof record.host === "string" ? record.host : "";
+  const port = Number(record.port);
+  let value: string | null = null;
+  try {
+    const observed = getRecentEgressIpsForProxy(
+      host,
+      port,
+      new Date(nowMs - EGRESS_RANKING_WINDOW_MS).toISOString(),
+      3
+    );
+    const distinct = new Set(
+      observed.map(normalizeEgressAddressForRanking).filter((ip): ip is string => ip !== null)
+    );
+    value = distinct.size === 1 ? [...distinct][0] : null;
+  } catch {
+    value = null;
+  }
+  writeHotEgressCache(key, value, nowMs);
+  return value;
+}
+
+/**
+ * Returns a predicate for candidates sharing the observed egress address of a
+ * currently refused member. Order only; it never removes a candidate.
+ */
+export function buildHotEgressPredicate(
+  provider: string | null | undefined,
+  candidates: unknown[],
+  signals?: Partial<PoolRankSignals>,
+  nowMs: number = Date.now()
+): (candidate: unknown) => boolean {
+  const none = () => false;
+  if (!isProxySkipRecentlyFailedEnabled()) return none;
+  if (!isProxyPoolSharedEgressOrderEnabled()) return none;
+  if (!isEgressBucketedLockScope(provider)) return none;
+  if (!hasProxyRefusals()) return none;
+  const isAvoided = signals?.isAvoided ?? DEFAULT_POOL_RANK_SIGNALS.isAvoided;
+  const hot = new Set<string>();
+  for (const candidate of candidates) {
+    if (!isAvoided(proxyEgressKey(candidate))) continue;
+    const egress = readNormalizedEgressForMember(candidate, nowMs);
+    if (egress !== null) hot.add(egress);
+  }
+  if (hot.size === 0) return none;
+  return (candidate: unknown) => {
+    const egress = readNormalizedEgressForMember(candidate, nowMs);
+    return egress !== null && hot.has(egress);
+  };
+}
+
+/**
+ * Order pool candidates by crossed short-memory health signals without removing
+ * anyone: a member just set aside ranks last, then a member whose last cached
+ * probe verdict was negative. Unknown (no signal, unreconstructible URL) keeps
+ * the current position order. Stable: health ties keep their relative order, so
+ * an all-clear or all-set-aside pool returns its input order unchanged.
+ */
+export function rankPoolCandidates<T>(candidates: T[], signals?: Partial<PoolRankSignals>): T[] {
+  if (candidates.length < 2) return [...candidates];
+  const { isAvoided, probeHealth, sharesHotEgress } = {
+    ...DEFAULT_POOL_RANK_SIGNALS,
+    isAvoided: signals?.isAvoided ?? DEFAULT_POOL_RANK_SIGNALS.isAvoided,
+    probeHealth: signals?.probeHealth ?? DEFAULT_POOL_RANK_SIGNALS.probeHealth,
+    sharesHotEgress: signals?.sharesHotEgress ?? DEFAULT_POOL_RANK_SIGNALS.sharesHotEgress,
+  };
+  const scored = candidates.map((candidate, index) => {
+    if (isAvoided(proxyEgressKey(candidate))) return { candidate, index, score: 3 };
+    if (sharesHotEgress?.(candidate) === true) return { candidate, index, score: 2 };
+    const url = candidateProbeUrl(candidate);
+    if (url !== null && probeHealth(url) === false) return { candidate, index, score: 1 };
+    return { candidate, index, score: 0 };
+  });
+  if (scored.every((entry) => entry.score === scored[0].score)) return [...candidates];
+  return scored
+    .sort((a, b) => a.score - b.score || a.index - b.index)
+    .map((entry) => entry.candidate);
+}
+
 /**
  * Pick one member from an already-alive candidate list according to the scope's
  * rotation strategy. Assumes `candidates` is non-empty and ordered by position.
  * Round-robin uses (and persists) a monotonic cursor; random uses crypto.randomInt;
  * sticky holds the current member until its window elapses, then advances.
+ * Members that just failed (see proxyRefusalMemory) are skipped while another member is
+ * eligible; the cursor then advances past the member actually served.
  */
 function pickFromCandidates<T>(
   db: ReturnType<typeof getDbInstance>,
   normalizedScope: string,
   rotationScopeId: string,
-  candidates: T[]
+  candidates: T[],
+  provider?: string | null
 ): T {
+  // Pool-exhausted check first: a single-member pool set aside is exhausted
+  // too, and this runs before the length-1 early return below. Flag-gated
+  // inside (zero cost when off), rebound window shared with the bridge.
+  maybeEmitPoolExhausted(
+    normalizedScope,
+    candidates,
+    (row) => proxyEgressKey(row),
+    (key) => isProxyAvoided(key)
+  );
   if (candidates.length === 1) return candidates[0];
 
   const state = getOrCreateRotationRow(db, normalizedScope, rotationScopeId);
+
+  if (state.strategy === "sticky") {
+    const expired = isStickyExpired(state);
+    if (!expired) {
+      const idx = ((state.cursor % candidates.length) + candidates.length) % candidates.length;
+      const eligible = eligibleMemberIndexes(candidates);
+      return candidates[eligible ? firstEligibleFrom(idx, eligible, candidates.length) : idx];
+    }
+  }
+
+  // Order by crossed short-memory health signals (opt-in, PROXY_SKIP_RECENTLY_FAILED):
+  // stops re-serving at the head a proxy that just failed, without removing anyone.
+  // Sticky past its window and every other strategy rank normally; a held sticky
+  // member returns above, untouched. The eligible-skip below still applies on the
+  // ranked list, so a set-aside member stays skipped while another is eligible and
+  // the cursor advances past the member actually served.
+  // NOTE: ranking changes which member the persisted cursor lands on. After a
+  // set-aside, the next pick serves the healthiest member at-or-after the cursor
+  // (not the cursor member itself when it was set aside) — the cursor then
+  // advances past the member served, preserving rotation without re-serving the
+  // failed head first.
+  const ranked = isProxySkipRecentlyFailedEnabled()
+    ? rankPoolCandidates(
+        candidates,
+        provider
+          ? { sharesHotEgress: buildHotEgressPredicate(provider, candidates) }
+          : undefined
+      )
+    : [...candidates];
+  const eligible = eligibleMemberIndexes(ranked);
 
   if (state.strategy === "random") {
     // crypto.randomInt (unbiased, uniform in [0, length)) instead of Math.random —
     // CodeQL js/insecure-randomness flags Math.random flowing into the selected proxy's
     // credentials (a "security context"). Load-balancing selection is not a secret, but
     // crypto.randomInt silences the alert at the source and is unbiased (#6365 follow-up).
-    return candidates[randomInt(candidates.length)];
+    if (eligible) return ranked[eligible[randomInt(eligible.length)]];
+    return ranked[randomInt(ranked.length)];
   }
 
-  if (state.strategy === "latency") return pickByLatency(db, candidates);
+  if (state.strategy === "latency") {
+    return pickByLatency(db, eligible ? eligible.map((index) => ranked[index]) : ranked);
+  }
 
   if (state.strategy === "sticky") {
-    const windowMs = state.stickyWindowMinutes * 60_000;
-    const lastRotated = state.rotatedAt ? Date.parse(state.rotatedAt) : NaN;
-    const expired = !Number.isFinite(lastRotated) || Date.now() - lastRotated >= windowMs;
+    const expired = isStickyExpired(state);
     let cursor = state.cursor;
     if (expired) {
       cursor = state.cursor + 1;
@@ -172,16 +446,20 @@ function pickFromCandidates<T>(
         rotationScopeId
       );
     }
-    const idx = ((cursor % candidates.length) + candidates.length) % candidates.length;
-    return candidates[idx];
+    const idx = ((cursor % ranked.length) + ranked.length) % ranked.length;
+    // A held member set aside is replaced for this pick only: no extra write.
+    return ranked[eligible ? firstEligibleFrom(idx, eligible, ranked.length) : idx];
   }
 
-  // round-robin (default): pick at the current cursor, then advance it monotonically.
-  const idx = ((state.cursor % candidates.length) + candidates.length) % candidates.length;
+  // round-robin (default): pick at the current cursor, then advance it monotonically,
+  // past any member skipped so the next pick starts after the one actually served.
+  const idx = ((state.cursor % ranked.length) + ranked.length) % ranked.length;
+  const served = eligible ? firstEligibleFrom(idx, eligible, ranked.length) : idx;
+  const skipped = (served - idx + ranked.length) % ranked.length;
   db.prepare(
     "UPDATE proxy_scope_rotation SET cursor = ?, updated_at = ? WHERE scope = ? AND scope_id IS ?"
-  ).run(state.cursor + 1, new Date().toISOString(), normalizedScope, rotationScopeId);
-  return candidates[idx];
+  ).run(state.cursor + skipped + 1, new Date().toISOString(), normalizedScope, rotationScopeId);
+  return ranked[served];
 }
 
 // Fetch the alive, position-ordered candidate rows for a (scope, scope_id) pool.
@@ -206,6 +484,15 @@ function fetchAlivePoolRows(
   return db
     .prepare(`${baseSelect}AND a.scope_id IS ? AND ${PROXY_ALIVE_PREDICATE}${order}`)
     .all(scope, scopeIdFilter) as JsonRecord[];
+}
+
+// Read-only view of a scope pool's alive candidate rows (same joined source as the
+// selection path above): registry fields joined to assignments, alive-predicate
+// applied, position order. Lets a read-only status screen rank the same rows the
+// selector ranks, without embedding SQL in a route (Hard Rule #5).
+export function getScopePoolEgressRows(scope: string, scopeIdFilter: string | null): JsonRecord[] {
+  const db = getDbInstance();
+  return fetchAlivePoolRows(db, scope, scopeIdFilter, scopeIdFilter === null);
 }
 
 // A proxy is "alive" for resolution unless it has been explicitly marked dead
@@ -233,7 +520,25 @@ function resolveScopePoolInternal(
     options.matchAnyScopeId === true
   );
   if (rows.length === 0) return null;
-  const picked = pickFromCandidates(db, scope, options.rotationScopeId, rows);
+  let provider: string | null = scope === "provider" ? levelId : null;
+  if (
+    provider === null &&
+    scope === "account" &&
+    options.scopeIdFilter &&
+    isProxySkipRecentlyFailedEnabled() &&
+    isProxyPoolSharedEgressOrderEnabled() &&
+    hasProxyRefusals()
+  ) {
+    try {
+      const row = db
+        .prepare("SELECT provider FROM provider_connections WHERE id = ?")
+        .get(options.scopeIdFilter) as { provider?: string } | undefined;
+      provider = typeof row?.provider === "string" && row.provider ? row.provider : null;
+    } catch {
+      provider = null;
+    }
+  }
+  const picked = pickFromCandidates(db, scope, options.rotationScopeId, rows, provider);
   return toRegistryProxyResolution(picked, scope, levelId);
 }
 

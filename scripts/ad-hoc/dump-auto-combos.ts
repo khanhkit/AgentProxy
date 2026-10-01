@@ -7,9 +7,9 @@
  */
 
 const { AUTO_TEMPLATE_VARIANTS, AUTO_SUFFIX_VARIANTS, AUTO_FAMILY_IDS } =
-  await import("@omniroute/open-sse/services/autoCombo/builtinCatalog");
+  await import("@agentproxy/open-sse/services/autoCombo/builtinCatalog");
 const { createBuiltinAutoCombo, prepareBuiltinAutoComboInputs } =
-  await import("@omniroute/open-sse/services/autoCombo/builtinCatalog");
+  await import("@agentproxy/open-sse/services/autoCombo/builtinCatalog");
 
 // Prepares the candidate pool once (DB reads: connections, settings, capabilities)
 const prepared = await prepareBuiltinAutoComboInputs();

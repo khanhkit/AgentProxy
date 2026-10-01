@@ -113,6 +113,12 @@ export function detectFormatFromEndpoint(body, endpointPath = "") {
     return "antigravity";
   }
 
+  if (/\/v1beta(?:\/|$)/i.test(path) || /^v1beta(?:\/|$)/i.test(path)) {
+    if (!(body && typeof body === "object" && body.contents && Array.isArray(body.contents))) {
+      return "openai";
+    }
+  }
+
   if (
     /\/(?:chat\/completions|completions)(?=\/|$)/i.test(path) ||
     /^(?:chat\/completions|completions)(?=\/|$)/i.test(path)
@@ -140,7 +146,7 @@ export function detectFormatFromUrl(body, requestUrl) {
   try {
     // Supplying a base URL keeps relative client endpoints (for example,
     // `/v1/messages`) valid while preserving pathname-only detection.
-    pathname = new URL(rawUrl || "/", "http://omniroute.local").pathname;
+    pathname = new URL(rawUrl || "/", "http://agentproxy.local").pathname;
   } catch {
     // Fall back to the raw value; detectFormatFromEndpoint is intentionally
     // safe for unknown or malformed paths.

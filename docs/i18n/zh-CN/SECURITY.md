@@ -6,10 +6,10 @@
 
 ## 报告漏洞
 
-若您在 OmniRoute 中发现安全漏洞，请负责任地报告：
+若您在 AgentProxy 中发现安全漏洞，请负责任地报告：
 
 1. **切勿**在 GitHub 上创建公开 issue
-2. 使用 [GitHub Security Advisories](https://github.com/diegosouzapw/OmniRoute/security/advisories/new)
+2. 使用 [GitHub Security Advisories](https://github.com/khanhkit/AgentProxy/security/advisories/new)
 3. 包含：漏洞描述、复现步骤和潜在影响
 
 ## 响应时间
@@ -32,7 +32,7 @@
 
 ## 安全架构
 
-OmniRoute 实现了多层安全模型：
+AgentProxy 实现了多层安全模型：
 
 ```
 Request → CORS → Authz pipeline (classify → policies → enforce)
@@ -69,7 +69,7 @@ STORAGE_ENCRYPTION_KEY=$(openssl rand -hex 32)
 
 ### 🛡️ 安全护栏框架
 
-OmniRoute 附带一个支持热重载的**安全护栏注册表**（`src/lib/guardrails/`），包含 3 个内置安全护栏，按优先级排序：
+AgentProxy 附带一个支持热重载的**安全护栏注册表**（`src/lib/guardrails/`），包含 3 个内置安全护栏，按优先级排序：
 
 | 安全护栏           | 优先级 | 用途                                                          |
 | ------------------ | ------ | ------------------------------------------------------------- |
@@ -77,7 +77,7 @@ OmniRoute 附带一个支持热重载的**安全护栏注册表**（`src/lib/gua
 | `pii-masker`       | 10     | 调用前后的 PII 脱敏（邮箱、电话、CPF、CNPJ、信用卡、SSN）     |
 | `prompt-injection` | 20     | 检测指令覆盖/角色劫持/越狱/泄露模式                           |
 
-自定义安全护栏通过 `registerGuardrail(new MyGuardrail())` 注册。模型采用 fail-open 策略（异常不会阻断流量）。可通过 `x-omniroute-disabled-guardrails` 请求头按请求单独退出。→ 参见 [`docs/security/GUARDRAILS.md`](docs/security/GUARDRAILS.md)。
+自定义安全护栏通过 `registerGuardrail(new MyGuardrail())` 注册。模型采用 fail-open 策略（异常不会阻断流量）。可通过 `x-agentproxy-disabled-guardrails` 请求头按请求单独退出。→ 参见 [`docs/security/GUARDRAILS.md`](docs/security/GUARDRAILS.md)。
 
 ### 🧠 提示注入防护
 
@@ -174,15 +174,15 @@ STORAGE_ENCRYPTION_KEY=$(openssl rand -hex 32)
 
 ```bash
 docker run -d \
-  --name omniroute \
+  --name agentproxy \
   --restart unless-stopped \
   --read-only \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
+  -v agentproxy-data:/app/data \
   -e JWT_SECRET="$(openssl rand -base64 48)" \
   -e API_KEY_SECRET="$(openssl rand -hex 32)" \
   -e STORAGE_ENCRYPTION_KEY="$(openssl rand -hex 32)" \
-  diegosouzapw/omniroute:latest
+  khanhkit/agentproxy:latest
 ```
 
 ---
@@ -214,7 +214,7 @@ docker run -d \
 
 ## 供应链扫描器检测项（Socket.dev / Snyk / 类似工具）
 
-已发布的 `omniroute` npm 制品包含 Next.js `output: "standalone"` 构建输出，这意味着所有路由处理器 — 包括已记录的特权功能（MITM、Zed 导入、Cloud Sync、嵌入式服务监管）— 都会出现在 `.next/server/*.js` 压缩块中。启发式供应链扫描器经常将这些压缩块的模式匹配为恶意软件签名。
+已发布的 `agentproxy` npm 制品包含 Next.js `output: "standalone"` 构建输出，这意味着所有路由处理器 — 包括已记录的特权功能（MITM、Zed 导入、Cloud Sync、嵌入式服务监管）— 都会出现在 `.next/server/*.js` 压缩块中。启发式供应链扫描器经常将这些压缩块的模式匹配为恶意软件签名。
 
 对于每个检测类别，我们维护了一份逐项的维护者声明：
 
@@ -223,7 +223,7 @@ docker run -d \
 - 在源码中被标记的函数处，均包含 `SECURITY-AUDITOR-NOTE:` 注释块，指向同一文档。
 
 对于无法放宽警报的管线，可使用以下方式构建：
-`OMNIROUTE_BUILD_PROFILE=minimal npm run build`。此方式将四个
+`AGENTPROXY_BUILD_PROFILE=minimal npm run build`。此方式将四个
 敏感模块替换为桩代码，运行时返回 HTTP 503 `feature-disabled`，
 从而使特权代码路径从构建产物中物理消失。
 参见 [`docs/security/SOCKET_DEV_FINDINGS.md`](docs/security/SOCKET_DEV_FINDINGS.md) 了解发布方法。

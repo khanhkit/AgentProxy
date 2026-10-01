@@ -7,7 +7,7 @@ import type { FreeProxyItem } from "@/lib/freeProxyProviders/types";
 
 // DATA_DIR must be set before the DB core module evaluates its singleton, so we
 // make the temp dir + env assignment first, then dynamic-import the modules.
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-free-list-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-free-list-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../src/lib/db/core.ts");

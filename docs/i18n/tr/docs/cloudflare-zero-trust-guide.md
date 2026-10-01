@@ -4,11 +4,11 @@
 
 ---
 
-Bu kılavuz, **OmniRoute**'u korumak ve uygulamanızı **hiçbir gelen bağlantı portu açmadan (Zero Inbound)** internete güvenli bir şekilde sunmak için altın standart ağ altyapısını belgeler.
+Bu kılavuz, **AgentProxy**'u korumak ve uygulamanızı **hiçbir gelen bağlantı portu açmadan (Zero Inbound)** internete güvenli bir şekilde sunmak için altın standart ağ altyapısını belgeler.
 
 ## Sanal Makinenizde (VM) Ne Yapıldı?
 
-OmniRoute'u PM2 aracılığıyla **Split-Port (Ayrık Port)** modunda etkinleştiriyoruz:
+AgentProxy'u PM2 aracılığıyla **Split-Port (Ayrık Port)** modunda etkinleştiriyoruz:
 
 - **Port `20128`:** **Yalnızca API** (`/v1`) çalıştırır.
 - **Port `20129`:** **Yalnızca görsel Yönetim Panosunu** çalıştırır.
@@ -25,7 +25,7 @@ Bu yapı ağda tamamen bağımsız iki kural oluşturmamıza olanak tanır. **Cl
 
 1. **Cloudflare Zero Trust** panonuza erişin (one.dash.cloudflare.com).
 2. Sol menüden **Networks > Tunnels** yolunu izleyin.
-3. **Add a Tunnel** seçeneğine tıklayın, **Cloudflared** seçin ve tünele `OmniRoute-VM` adını verin.
+3. **Add a Tunnel** seçeneğine tıklayın, **Cloudflared** seçin ve tünele `AgentProxy-VM` adını verin.
 4. Ekranda "Install and run a connector" başlıklı bir komut oluşturulacaktır. **Yalnızca Belirteci (`--token` sonrasındaki uzun dize) kopyalamanız yeterlidir**.
 5. Sanal makinenize SSH ile bağlanın ve çalıştırın:
    ```bash
@@ -48,7 +48,7 @@ Yeni oluşturulan Tunnel ekranında **Public Hostnames** sekmesine gidin ve yapt
 
 ### Rota 2: Zero Trust Pano (Kapalı)
 
-- **Subdomain:** `omniroute` veya `panel`
+- **Subdomain:** `agentproxy` veya `panel`
 - **Domain:** `alanadiniz.com`
 - **Service Type:** `HTTP`
 - **URL:** `127.0.0.1:20129` _(Dahili Uygulama/Pano portu)_
@@ -61,14 +61,14 @@ Hiçbir yerel şifre, panonuzu internete tamamen kapatmaktan daha iyi koruyamaz.
 
 1. Zero Trust panosunda **Access > Applications > Add an application** seçeneğine gidin.
 2. **Self-hosted** seçin.
-3. **Application name** kısmına `OmniRoute Paneli` yazın.
-4. **Application domain** kısmına `omniroute.alanadiniz.com` ("Rota 2"de belirlediğiniz adres) yazın.
+3. **Application name** kısmına `AgentProxy Paneli` yazın.
+4. **Application domain** kısmına `agentproxy.alanadiniz.com` ("Rota 2"de belirlediğiniz adres) yazın.
 5. **Next** butonuna tıklayın.
 6. **Rule action** için `Allow` seçin. Kural adına `Yalnızca Yönetici` yazın.
 7. **Include** altında "Selector" olarak `Emails` seçin ve e-posta adresinizi girin (örn. `admin@alanadiniz.com`).
 8. Kaydedin (`Add application`).
 
-> **Bu ne sağladı:** Artık `omniroute.alanadiniz.com` adresini açtığınızda doğrudan uygulamanıza düşmez! Cloudflare'in e-posta isteyen şık bir giriş ekranı çıkar. Yalnızca belirttiğiniz e-posta girildiğinde, gelen kutunuza `20129` portuna tüneli açan tek kullanımlık 6 haneli bir kod gönderilir.
+> **Bu ne sağladı:** Artık `agentproxy.alanadiniz.com` adresini açtığınızda doğrudan uygulamanıza düşmez! Cloudflare'in e-posta isteyen şık bir giriş ekranı çıkar. Yalnızca belirttiğiniz e-posta girildiğinde, gelen kutunuza `20129` portuna tüneli açan tek kullanımlık 6 haneli bir kod gönderilir.
 
 ---
 
@@ -79,7 +79,7 @@ Zero Trust Panosu API rotasına (`api.alanadiniz.com`) uygulanmaz; çünkü bu t
 1. Cloudflare **Normal Panosuna** (dash.cloudflare.com) erişin ve Alan Adınıza girin.
 2. Sol menüden **Security > WAF > Rate limiting rules** yolunu izleyin.
 3. **Create rule** butonuna tıklayın.
-4. **Name:** `OmniRoute API Kötüye Kullanım Önleme`
+4. **Name:** `AgentProxy API Kötüye Kullanım Önleme`
 5. **If incoming requests match...**
    - Field: `Hostname`
    - Operator: `equals`
@@ -98,6 +98,6 @@ Zero Trust Panosu API rotasına (`api.alanadiniz.com`) uygulanmaz; çünkü bu t
 ## Özet
 
 1. Sanal makinenizde güvenlik duvarında (`/etc/ufw`) **hiçbir açık gelen port bulunmaz**.
-2. OmniRoute yalnızca giden HTTPS (`cloudflared`) trafiğiyle haberleşir ve dünyadan doğrudan TCP bağlantısı almaz.
+2. AgentProxy yalnızca giden HTTPS (`cloudflared`) trafiğiyle haberleşir ve dünyadan doğrudan TCP bağlantısı almaz.
 3. Yönetim web panonuz e-posta tabanlı İki Faktörlü Doğrulama (2FA) ile korunur.
 4. API'niz Cloudflare tarafından sınırlandırılmıştır ve yalnızca Bearer Token'lar kabul edilir.

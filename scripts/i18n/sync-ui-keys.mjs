@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * OmniRoute — UI i18n key sync (next-intl message catalogs).
+ * AgentProxy — UI i18n key sync (next-intl message catalogs).
  *
  * Source of truth: `src/i18n/messages/en.json`. Every other locale JSON in
  * `src/i18n/messages/` should mirror the same key tree. This script replicates
@@ -16,7 +16,7 @@
  *   npm run i18n:sync-ui -- --translate-markers --locale=pt-BR --concurrency=4
  *   npm run i18n:sync-ui -- --translate-markers --batch-size=40
  *
- * --translate-markers calls the OmniRoute translation backend (same env vars
+ * --translate-markers calls the AgentProxy translation backend (same env vars
  * as `run-translation.mjs`; the client lives in `lib/translate-backend.mjs`)
  * and replaces every `__MISSING__:<en>` placeholder with a translated string.
  * Missing env vars cause the script to fail fast — the markers stay in place
@@ -72,7 +72,28 @@ import { backendConfig, translateBatch, translateString } from "./lib/translate-
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(SCRIPT_DIR, "..", "..");
 const CONFIG_PATH = path.join(ROOT, "config", "i18n.json");
-const MESSAGES_DIR = path.join(ROOT, "src", "i18n", "messages");
+
+const CATALOGS = {
+  ui: {
+    name: "ui",
+    dir: path.join(ROOT, "src", "i18n", "messages"),
+    allowlistPath: path.join(SCRIPT_DIR, "untranslatable-keys.json"),
+  },
+  cli: {
+    name: "cli",
+    dir: path.join(ROOT, "bin", "cli", "locales"),
+    allowlistPath: path.join(SCRIPT_DIR, "untranslatable-cli-keys.json"),
+  },
+};
+
+/** Which flat-JSON catalog family a run targets: the dashboard (`ui`) or the CLI (`cli`). */
+export function resolveCatalog(name = "ui") {
+  const catalog = CATALOGS[name];
+  if (!catalog) throw new Error(`unknown catalog "${name}" (expected ui or cli)`);
+  return catalog;
+}
+
+let MESSAGES_DIR = CATALOGS.ui.dir; // reassigned in main() from --catalog
 const SOURCE_LOCALE = "en";
 const PLACEHOLDER_PREFIX = "__MISSING__:";
 
@@ -93,12 +114,16 @@ function parseArgs(argv) {
     locales: null,
     dryRun: false,
     translateMarkers: false,
+    retranslateIdentical: false,
     concurrency: null,
     batchSize: 1,
+    catalog: "ui",
   };
   for (const arg of argv.slice(2)) {
     if (arg === "--dry-run" || arg === "--dryrun") opts.dryRun = true;
     else if (arg === "--translate-markers") opts.translateMarkers = true;
+    else if (arg === "--retranslate-identical") opts.retranslateIdentical = true;
+    else if (arg.startsWith("--catalog=")) opts.catalog = arg.slice(10).trim();
     else if (arg.startsWith("--locale=")) {
       opts.locales = arg
         .slice(9)
@@ -123,6 +148,8 @@ function parseArgs(argv) {
           "Usage: node scripts/i18n/sync-ui-keys.mjs [options]",
           "",
           "  --locale=<csv>          Target locales (default: all except `en`)",
+          "  --catalog=ui|cli        Catalog family (default ui = src/i18n/messages; cli = bin/cli/locales)",
+          "  --retranslate-identical Mark verbatim-English leaves as __MISSING__ for translation",
           "  --dry-run               Report what would change, write nothing",
           "  --translate-markers     Call the translation backend to translate every",
           "                          __MISSING__:<en> placeholder",
@@ -154,6 +181,27 @@ async function loadJson(filePath) {
 
 function isPlainObject(value) {
   return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+
+export function markIdenticalAsMissing(merged, source, untranslatable, prefix = "") {
+  let count = 0;
+  for (const [key, sourceValue] of Object.entries(source)) {
+    if (FORBIDDEN_KEYS.has(key)) continue;
+    const fullKey = prefix ? `${prefix}.${key}` : key;
+    const targetValue = merged[key];
+    if (isPlainObject(sourceValue) && isPlainObject(targetValue)) {
+      count += markIdenticalAsMissing(targetValue, sourceValue, untranslatable, fullKey);
+    } else if (
+      typeof sourceValue === "string" &&
+      sourceValue !== "" &&
+      targetValue === sourceValue &&
+      !untranslatable.has(fullKey)
+    ) {
+      merged[key] = `${PLACEHOLDER_PREFIX}${sourceValue}`;
+      count += 1;
+    }
+  }
+  return count;
 }
 
 // Defensive: reject any key that could traverse into the object prototype
@@ -357,6 +405,11 @@ async function processLocale(locale, source, config, opts, backend) {
   }
 
   const { merged, addedPaths } = mergeMissing(source, target);
+  if (opts.retranslateIdentical && locale !== SOURCE_LOCALE) {
+    const allow = new Set((await loadJson(resolveCatalog(opts.catalog).allowlistPath)).keys ?? []);
+    const flagged = markIdenticalAsMissing(merged, source, allow);
+    logInfo(`${locale}: ${flagged} English leaves flagged for retranslation`);
+  }
   const placeholderCountBefore = countPlaceholders(merged);
 
   let translateStats = { translated: 0, failed: 0 };
@@ -366,7 +419,7 @@ async function processLocale(locale, source, config, opts, backend) {
       logWarn(`${locale}: not present in config/i18n.json — skipping translation`);
     } else {
       const concurrency =
-        opts.concurrency ?? Number(process.env.OMNIROUTE_TRANSLATION_CONCURRENCY || 4);
+        opts.concurrency ?? Number(process.env.AGENTPROXY_TRANSLATION_CONCURRENCY || 4);
       translateStats = await translatePlaceholders(
         merged,
         localeEntry,
@@ -402,6 +455,9 @@ async function processLocale(locale, source, config, opts, backend) {
 
 async function main() {
   const opts = parseArgs(process.argv);
+  const catalog = resolveCatalog(opts.catalog);
+  MESSAGES_DIR = catalog.dir;
+  logInfo(`catalog: ${catalog.name} (${path.relative(ROOT, catalog.dir)})`);
   const config = await loadConfig();
 
   const sourcePath = path.join(MESSAGES_DIR, `${SOURCE_LOCALE}.json`);
@@ -438,7 +494,7 @@ async function main() {
   if (opts.translateMarkers && !opts.dryRun) {
     backend = backendConfig();
     backend.concurrency =
-      opts.concurrency ?? Number(process.env.OMNIROUTE_TRANSLATION_CONCURRENCY || 4);
+      opts.concurrency ?? Number(process.env.AGENTPROXY_TRANSLATION_CONCURRENCY || 4);
     const batchInfo = opts.batchSize > 1 ? `, batch=${opts.batchSize}` : "";
     logInfo(
       `backend: ${backend.apiUrl} (model=${backend.model}, concurrency=${backend.concurrency}${batchInfo}, timeout=${backend.timeoutMs}ms)`

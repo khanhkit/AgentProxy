@@ -10,7 +10,7 @@ import { mkdtempSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 
-process.env.DATA_DIR = mkdtempSync(join(tmpdir(), "omniroute-conv-tracker-"));
+process.env.DATA_DIR = mkdtempSync(join(tmpdir(), "agentproxy-conv-tracker-"));
 process.env.API_KEY_SECRET = process.env.API_KEY_SECRET || "conversation-tracker-test-secret";
 
 // Dynamic imports (not static) are required here: a static `import` of a module
@@ -144,6 +144,37 @@ test("computeFingerprintHash: identical apiKeyId/model/toolNames produce the sam
   assert.equal(a, b);
 });
 
+test("resolveConversationId: disabled tracking skips database access and message parsing", async () => {
+  const { getDbInstance } = await import("../../src/lib/db/core.ts");
+  const db = getDbInstance();
+  const previous = process.env.AGENTPROXY_DISABLE_CONVERSATION_TRACKING;
+  const prepare = test.mock.method(db, "prepare", () => {
+    throw new Error("disabled tracking must not access SQLite");
+  });
+  process.env.AGENTPROXY_DISABLE_CONVERSATION_TRACKING = "1";
+  try {
+    for (const clientSessionIdHeader of [null, "explicit-session"]) {
+      const result = await resolveConversationId({
+        body: {
+          get messages() {
+            throw new Error("disabled tracking must not parse messages");
+          },
+        },
+        model: "test-model",
+        apiKeyId: "test-key",
+        clientSessionIdHeader,
+        correlationId: "disabled-tracking",
+      });
+      assert.deepEqual(result, { conversationId: null, isNewConversation: false });
+    }
+    assert.equal(prepare.mock.callCount(), 0);
+  } finally {
+    prepare.mock.restore();
+    if (previous === undefined) delete process.env.AGENTPROXY_DISABLE_CONVERSATION_TRACKING;
+    else process.env.AGENTPROXY_DISABLE_CONVERSATION_TRACKING = previous;
+  }
+});
+
 test("resolveConversationId: exact-match continuation reuses the same id", async () => {
   const apiKeyId = "key-exact";
   const turn1 = await resolveConversationId({
@@ -213,7 +244,7 @@ test("resolveConversationId: an edited/duplicated mid-history turn mints its own
   // requests:
   //   request 1: a b c  d e f g h i
   //   request 2: a b c' d e f g h i' i j k
-  // `a`/`b` are byte-identical, but every OmniRoute conversation is a single
+  // `a`/`b` are byte-identical, but every AgentProxy conversation is a single
   // straight line — it never forks. So request 2 must become its OWN
   // independent conversation (not request1's), with its OWN complete chain
   // (a b c' d e f g h i' i j k), and request1's chain must stay untouched.
@@ -609,7 +640,7 @@ test("resolveConversationId: a byte-identical repeat of a single-turn request co
   assert.equal(tree.length, 1);
 });
 
-test("resolveConversationId: client-supplied X-Omniroute-Session-Id wins outright", async () => {
+test("resolveConversationId: client-supplied X-AgentProxy-Session-Id wins outright", async () => {
   const headerValue = "client-pinned-session-abc";
   const first = await resolveConversationId({
     body: { model: "big-pickle", messages: [{ role: "user", content: "conversation A" }] },

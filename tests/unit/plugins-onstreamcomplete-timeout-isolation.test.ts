@@ -66,7 +66,7 @@ test(
   "onStreamComplete timeout drops the call but keeps the plugin process alive",
   { timeout: 60_000 },
   async (t) => {
-    const pluginDir = await mkdtemp(join(tmpdir(), "omniroute-plugin-sc-timeout-"));
+    const pluginDir = await mkdtemp(join(tmpdir(), "agentproxy-plugin-sc-timeout-"));
     const entryPoint = join(pluginDir, "index.mjs");
     let loaded: LoadedPlugin | undefined;
 
@@ -158,7 +158,7 @@ test(
   "blocking-hook (onRequest) timeout still kills the plugin process (semantics unchanged)",
   { timeout: 30_000 },
   async (t) => {
-    const pluginDir = await mkdtemp(join(tmpdir(), "omniroute-plugin-req-timeout-"));
+    const pluginDir = await mkdtemp(join(tmpdir(), "agentproxy-plugin-req-timeout-"));
     const entryPoint = join(pluginDir, "index.mjs");
     let loaded: LoadedPlugin | undefined;
 

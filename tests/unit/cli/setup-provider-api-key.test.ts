@@ -6,13 +6,13 @@ import { mergeSetupOptions } from "../../../bin/cli/commands/setup.mjs";
 
 /**
  * Reproduces the flag shape of the real CLI: bin/cli/program.mjs declares a
- * program-level `--api-key` (OmniRoute server key) and bin/cli/commands/setup.mjs
+ * program-level `--api-key` (AgentProxy server key) and bin/cli/commands/setup.mjs
  * declares its own `--api-key` (provider key).
  */
 function parseSetupArgv(argv: string[]) {
   const program = new Command();
   program.exitOverride();
-  program.addOption(new Option("--api-key <key>", "server key").env("OMNIROUTE_API_KEY"));
+  program.addOption(new Option("--api-key <key>", "server key").env("AGENTPROXY_API_KEY"));
   program.addOption(new Option("--output <format>", "output").default("table"));
 
   let captured: Record<string, unknown> | null = null;
@@ -27,7 +27,7 @@ function parseSetupArgv(argv: string[]) {
       captured = mergeSetupOptions(opts, cmd.optsWithGlobals());
     });
 
-  program.parse(["node", "omniroute", ...argv]);
+  program.parse(["node", "agentproxy", ...argv]);
   return captured as unknown as Record<string, unknown>;
 }
 
@@ -50,15 +50,15 @@ test("setup --api-key reaches runSetupCommand despite the program-level --api-ke
   assert.equal(merged.addProvider, true);
 });
 
-test("OMNIROUTE_API_KEY satisfies the provider key the error message advertises", () => {
-  const original = process.env.OMNIROUTE_API_KEY;
-  process.env.OMNIROUTE_API_KEY = "sk-from-env";
+test("AGENTPROXY_API_KEY satisfies the provider key the error message advertises", () => {
+  const original = process.env.AGENTPROXY_API_KEY;
+  process.env.AGENTPROXY_API_KEY = "sk-from-env";
   try {
     const merged = parseSetupArgv(["setup", "--non-interactive", "--add-provider"]);
     assert.equal(merged.apiKey, "sk-from-env");
   } finally {
-    if (original === undefined) delete process.env.OMNIROUTE_API_KEY;
-    else process.env.OMNIROUTE_API_KEY = original;
+    if (original === undefined) delete process.env.AGENTPROXY_API_KEY;
+    else process.env.AGENTPROXY_API_KEY = original;
   }
 });
 

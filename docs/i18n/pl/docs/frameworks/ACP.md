@@ -4,13 +4,13 @@ title: ACP (Agent Client Protocol)
 
 # ACP (Agent Client Protocol)
 
-> **TL;DR**: ACP pozwala OmniRoute uruchamiać agentów CLI (np. Claude Code, Codex) jako procesy potomne zamiast korzystać z API HTTP. Daje to transport typu „CLI-as-backend”.
+> **TL;DR**: ACP pozwala AgentProxy uruchamiać agentów CLI (np. Claude Code, Codex) jako procesy potomne zamiast korzystać z API HTTP. Daje to transport typu „CLI-as-backend”.
 
 ---
 
 ## Czym jest ACP?
 
-ACP (Agent Client Protocol) to transport **"CLI-as-backend"** dla OmniRoute. Zamiast przechwytywać wywołania HTTP API do dostawców AI, ACP **uruchamia agentów CLI jako procesy potomne** i przekazuje prompty przez ich natywny interfejs.
+ACP (Agent Client Protocol) to transport **"CLI-as-backend"** dla AgentProxy. Zamiast przechwytywać wywołania HTTP API do dostawców AI, ACP **uruchamia agentów CLI jako procesy potomne** i przekazuje prompty przez ich natywny interfejs.
 
 ### Po co używać ACP?
 
@@ -69,7 +69,7 @@ ACP automatycznie wykrywa zainstalowane agenty CLI w systemie. Konfiguracja nie 
 
 ### Krok 3: Użyj transportu ACP
 
-Po wykryciu ACP może służyć jako transport dla dowolnego obsługiwanego providera. OmniRoute automatycznie użyje ACP, gdy CLI jest dostępne.
+Po wykryciu ACP może służyć jako transport dla dowolnego obsługiwanego providera. AgentProxy automatycznie użyje ACP, gdy CLI jest dostępne.
 
 ---
 
@@ -79,7 +79,7 @@ Po wykryciu ACP może służyć jako transport dla dowolnego obsługiwanego prov
 
 ```
 ┌─────────────────┐
-│  OmniRoute      │
+│  AgentProxy      │
 │  (HTTP Proxy)   │
 └────────┬────────┘
          │
@@ -134,7 +134,7 @@ interface CliAgentInfo {
   versionCommand: string; // Version detection command
   version: string | null; // Detected version (null if not installed)
   installed: boolean; // Whether the agent is installed
-  providerAlias: string; // Provider ID in OmniRoute
+  providerAlias: string; // Provider ID in AgentProxy
   spawnArgs: string[]; // Arguments to pass when spawning
   protocol: "stdio" | "http"; // Communication protocol
   isCustom?: boolean; // Whether this is a user-defined custom agent
@@ -458,7 +458,7 @@ await acpManager.sendPrompt(sessionId, prompt, 300000); // 5 minutes
 **Rozwiązania**:
 
 1. **Sprawdź uprawnienia pliku**: `chmod +x /usr/local/bin/claude`
-2. **Sprawdź właściciela**: upewnij się, że OmniRoute ma uprawnienia odczytu/wykonania
+2. **Sprawdź właściciela**: upewnij się, że AgentProxy ma uprawnienia odczytu/wykonania
 3. **Sprawdź SELinux/AppArmor**: mogą blokować tworzenie procesów
 
 ---

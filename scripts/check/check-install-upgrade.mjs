@@ -47,7 +47,7 @@ const warn = (msg) => console.log(`[install-upgrade] ⚠️  ${msg}`);
 
 /** Root of the installed package inside an `npm install -g --prefix` tree. */
 function packageRootFor(prefix) {
-  return path.join(prefix, "lib", "node_modules", "omniroute");
+  return path.join(prefix, "lib", "node_modules", "agentproxy");
 }
 
 /**
@@ -61,7 +61,7 @@ function packageRootFor(prefix) {
  * "clean: health reports version undefined, expected 3.8.50" for exactly that reason.
  *
  * The gate spawns the server itself, so it can mint the credential instead of guessing one:
- * `OMNIROUTE_INTERNAL_SERVICE_TOKEN` + the `x-omniroute-internal-service-token` header is
+ * `AGENTPROXY_INTERNAL_SERVICE_TOKEN` + the `x-agentproxy-internal-service-token` header is
  * accepted by requireManagementAuth() via isTrustedLoopbackInternalServiceRequest(), and the
  * probe is loopback by construction. Unlike the machine token `check:pack-boot` derives, this
  * does not depend on a readable machine-id, and an older PREVIOUS version that never gated
@@ -69,7 +69,7 @@ function packageRootFor(prefix) {
  * a credential.
  */
 const INTERNAL_SERVICE_TOKEN = crypto.randomBytes(32).toString("hex");
-const INTERNAL_SERVICE_HEADER = "x-omniroute-internal-service-token";
+const INTERNAL_SERVICE_HEADER = "x-agentproxy-internal-service-token";
 
 /**
  * Secondary credential: the same loopback machine token `check:pack-boot` derives from the
@@ -161,7 +161,7 @@ function readTables(dbPath) {
 }
 
 function findDb(dataDir) {
-  const candidates = ["storage.sqlite", "omniroute.sqlite", "data.sqlite"];
+  const candidates = ["storage.sqlite", "agentproxy.sqlite", "data.sqlite"];
   for (const name of candidates) {
     const p = path.join(dataDir, name);
     if (fs.existsSync(p)) return p;
@@ -172,14 +172,14 @@ function findDb(dataDir) {
 
 /** Boot an installed CLI and poll health. Returns { ok, version, failures, tail }. */
 async function bootAndProbe({ prefix, dataDir, port, expectVersion, label }) {
-  const binPath = path.join(prefix, "bin", "omniroute");
+  const binPath = path.join(prefix, "bin", "agentproxy");
   if (!fs.existsSync(binPath)) {
     return { ok: false, failures: [`${label}: bin not found at ${binPath}`], tail: [] };
   }
   const cliToken = derivePackagedCliToken(prefix);
   const probeHeaders = {
     [INTERNAL_SERVICE_HEADER]: INTERNAL_SERVICE_TOKEN,
-    ...(cliToken ? { "x-omniroute-cli-token": cliToken } : {}),
+    ...(cliToken ? { "x-agentproxy-cli-token": cliToken } : {}),
   };
   const child = spawn(binPath, ["serve", "--port", String(port)], {
     env: {
@@ -189,8 +189,8 @@ async function bootAndProbe({ prefix, dataDir, port, expectVersion, label }) {
       JWT_SECRET: "install-upgrade-gate-secret-with-sufficient-length",
       API_KEY_SECRET: "install-upgrade-gate-api-key-secret-long",
       DISABLE_SQLITE_AUTO_BACKUP: "true",
-      OMNIROUTE_SKIP_SYSTEM_TRUST: "1",
-      OMNIROUTE_INTERNAL_SERVICE_TOKEN: INTERNAL_SERVICE_TOKEN,
+      AGENTPROXY_SKIP_SYSTEM_TRUST: "1",
+      AGENTPROXY_INTERNAL_SERVICE_TOKEN: INTERNAL_SERVICE_TOKEN,
     },
     stdio: ["ignore", "pipe", "pipe"],
     detached: true,
@@ -262,7 +262,7 @@ async function bootAndProbe({ prefix, dataDir, port, expectVersion, label }) {
  *
  * That is not a theoretical concern: on the v3.8.50 publish run the Phase B upgrade install
  * emitted 5611 `npm warn tar TAR_ENTRY_ERROR ENOSPC: no space left on device` lines, exited
- * 0, and left a truncated package behind. `omniroute serve` then "exited with code 0 before
+ * 0, and left a truncated package behind. `agentproxy serve` then "exited with code 0 before
  * serving", no migration ever ran, and the gate concluded the release was missing 15 tables
  * — a full false alarm produced by a full disk. Each install tree is ~3 GB, and the run
  * builds two of them plus a ~275 MB tarball.
@@ -325,14 +325,14 @@ let workDirForMessages = os.tmpdir();
 
 function resolvePreviousVersion(current, explicit) {
   if (explicit) return explicit;
-  const out = execFileSync("npm", ["view", "omniroute", "dist-tags.latest"], { encoding: "utf8" });
+  const out = execFileSync("npm", ["view", "agentproxy", "dist-tags.latest"], { encoding: "utf8" });
   const latest = out.trim();
-  if (!latest) throw new Error("could not resolve omniroute@latest from npm");
+  if (!latest) throw new Error("could not resolve agentproxy@latest from npm");
   if (latest === current) {
     // The version under test is already published (re-run of a shipped release): step back
     // to the highest published version strictly below it.
     const all = JSON.parse(
-      execFileSync("npm", ["view", "omniroute", "versions", "--json"], { encoding: "utf8" })
+      execFileSync("npm", ["view", "agentproxy", "versions", "--json"], { encoding: "utf8" })
     );
     const stable = all.filter((v) => !/-(rc|alpha|beta|pre|next)/.test(v) && v !== current);
     return stable[stable.length - 1];
@@ -359,9 +359,9 @@ async function main() {
   // previous code could only report as a crash. Freeing disk did not help because the disk
   // was never the constraint. Work on real disk beside the repo instead.
   const workRoot =
-    process.env.OMNIROUTE_INSTALL_UPGRADE_WORKDIR || path.join(ROOT, ".install-upgrade");
+    process.env.AGENTPROXY_INSTALL_UPGRADE_WORKDIR || path.join(ROOT, ".install-upgrade");
   fs.mkdirSync(workRoot, { recursive: true });
-  const tmp = fs.mkdtempSync(path.join(workRoot, "omniroute-install-upgrade-"));
+  const tmp = fs.mkdtempSync(path.join(workRoot, "agentproxy-install-upgrade-"));
   workDirForMessages = tmp;
   const failures = [];
   const warnings = [];
@@ -444,12 +444,12 @@ async function main() {
       warn("PHASE B skipped (--skip-upgrade)");
     } else {
       const previous = resolvePreviousVersion(version, explicitFrom);
-      log(`PHASE B — upgrade path: omniroute@${previous} → v${version}`);
+      log(`PHASE B — upgrade path: agentproxy@${previous} → v${version}`);
       const bPrefix = path.join(tmp, "b-prefix");
       const bData = path.join(tmp, "b-data");
       fs.mkdirSync(bData, { recursive: true });
 
-      npmInstallInto(bPrefix, `omniroute@${previous}`, `previous(${previous}) install`);
+      npmInstallInto(bPrefix, `agentproxy@${previous}`, `previous(${previous}) install`);
       const before = await bootAndProbe({
         prefix: bPrefix,
         dataDir: bData,

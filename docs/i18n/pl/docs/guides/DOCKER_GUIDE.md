@@ -1,10 +1,10 @@
 ---
-title: "🐳 Przewodnik Docker — OmniRoute"
+title: "🐳 Przewodnik Docker — AgentProxy"
 version: 3.8.40
 lastUpdated: 2026-06-28
 ---
 
-# 🐳 Przewodnik Docker — OmniRoute
+# 🐳 Przewodnik Docker — AgentProxy
 
 > Kompletne odniesienie do wdrożenia w Dockerze. Szybki start: [sekcja Docker w README](../README.md#-docker).
 
@@ -29,12 +29,12 @@ lastUpdated: 2026-06-28
 
 ```bash
 docker run -d \
-  --name omniroute \
+  --name agentproxy \
   --restart unless-stopped \
   --stop-timeout 40 \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
-  diegosouzapw/omniroute:latest
+  -v agentproxy-data:/app/data \
+  khanhkit/agentproxy:latest
 ```
 
 ## Z plikiem środowiskowym
@@ -44,13 +44,13 @@ docker run -d \
 cp .env.example .env
 
 docker run -d \
-  --name omniroute \
+  --name agentproxy \
   --restart unless-stopped \
   --stop-timeout 40 \
   --env-file .env \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
-  diegosouzapw/omniroute:latest
+  -v agentproxy-data:/app/data \
+  khanhkit/agentproxy:latest
 ```
 
 ## Docker Compose
@@ -71,28 +71,28 @@ docker compose --profile cli --profile cliproxyapi up -d
 
 ## Dostępne profile
 
-OmniRoute dostarcza cztery profile Compose. Wybierz ten, który pasuje do Twojego środowiska.
+AgentProxy dostarcza cztery profile Compose. Wybierz ten, który pasuje do Twojego środowiska.
 
 | Profil            | Usługa           | Kiedy używać                                                                                                                              | Polecenie                                    |
 | ----------------- | ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------- |
-| `base` (domyślny) | `omniroute-base` | Serwer headless / minimalne runtime, bez dołączonych CLI providerów                                                                       | `docker compose --profile base up -d`        |
-| `cli`             | `omniroute-cli`  | Przepływy agentowe wywołujące `omniroute providers/setup/doctor` oraz dołączone CLI (Codex, Claude Code, Droid, OpenClaw)                 | `docker compose --profile cli up -d`         |
-| `host`            | `omniroute-host` | Hosty Linux z dostępem do CLI hosta w stylu `network_mode` przez montowanie `~/.local/bin`, `~/.codex`, `~/.claude` itd. tylko do odczytu | `docker compose --profile host up -d`        |
+| `base` (domyślny) | `agentproxy-base` | Serwer headless / minimalne runtime, bez dołączonych CLI providerów                                                                       | `docker compose --profile base up -d`        |
+| `cli`             | `agentproxy-cli`  | Przepływy agentowe wywołujące `agentproxy providers/setup/doctor` oraz dołączone CLI (Codex, Claude Code, Droid, OpenClaw)                 | `docker compose --profile cli up -d`         |
+| `host`            | `agentproxy-host` | Hosty Linux z dostępem do CLI hosta w stylu `network_mode` przez montowanie `~/.local/bin`, `~/.codex`, `~/.claude` itd. tylko do odczytu | `docker compose --profile host up -d`        |
 | `cliproxyapi`     | `cliproxyapi`    | Uruchomienie sidecara [CLIProxyAPI](https://github.com/router-for-me/CLIProxyAPI) na porcie `8317` do proxy CLI upstream                  | `docker compose --profile cliproxyapi up -d` |
 
 > Profile można łączyć: `docker compose --profile cli --profile cliproxyapi up -d`.
 
 ## Sidecar Redis
 
-OmniRoute korzysta z Redis jako zaplecza rozproszonego rate limitera i współdzielonej pamięci podręcznej. Usługa `redis` jest **zawsze zdefiniowana** w `docker-compose.yml` (bez bramki profilu) i startuje razem z każdym innym profilem.
+AgentProxy korzysta z Redis jako zaplecza rozproszonego rate limitera i współdzielonej pamięci podręcznej. Usługa `redis` jest **zawsze zdefiniowana** w `docker-compose.yml` (bez bramki profilu) i startuje razem z każdym innym profilem.
 
 | Szczegół             | Wartość                           |
 | -------------------- | --------------------------------- |
 | Image                | `redis:7-alpine`                  |
-| Container name       | `omniroute-redis`                 |
+| Container name       | `agentproxy-redis`                 |
 | Internal port        | `6379`                            |
 | Host port (override) | `REDIS_PORT` (defaults to `6379`) |
-| Volume               | `omniroute-redis-data` → `/data`  |
+| Volume               | `agentproxy-redis-data` → `/data`  |
 | Healthcheck          | `redis-cli ping` (10s interval)   |
 
 Powiązane zmienne środowiskowe:
@@ -115,9 +115,9 @@ Dla izolowanego snapshota produkcyjnego działającego obok dev użyj `docker-co
 | File                   | `docker-compose.prod.yml`                                                          |
 | Default dashboard port | `PROD_DASHBOARD_PORT=20130` (mapped to internal `${DASHBOARD_PORT:-20128}`)        |
 | Default API port       | `PROD_API_PORT=20131`                                                              |
-| Image                  | `omniroute:prod` (built from `runner-cli` target)                                  |
-| Redis container        | `omniroute-redis-prod` (`redis:8.6.2`, dedicated `redis-prod-data` volume)         |
-| Data volume            | `omniroute-prod-data` (named, persisted across rebuilds)                           |
+| Image                  | `agentproxy:prod` (built from `runner-cli` target)                                  |
+| Redis container        | `agentproxy-redis-prod` (`redis:8.6.2`, dedicated `redis-prod-data` volume)         |
+| Data volume            | `agentproxy-prod-data` (named, persisted across rebuilds)                           |
 | Healthchecks           | `node healthcheck.mjs` + `redis-cli ping`, with `depends_on` gated on Redis health |
 
 Jak używać:
@@ -148,18 +148,18 @@ Repozytorium dostarcza wieloetapowy Dockerfile (`Dockerfile`). Udostępnione są
 Ręczne zbudowanie wybranego targetu:
 
 ```bash
-docker build --target runner-base -t omniroute:base .
-docker build --target runner-cli  -t omniroute:cli  .
+docker build --target runner-base -t agentproxy:base .
+docker build --target runner-cli  -t agentproxy:cli  .
 ```
 
-Domyślne wartości eksportowane przez `runner-base`: `PORT=20128`, `HOSTNAME=0.0.0.0`, `NODE_OPTIONS=--max-old-space-size=512`, `DATA_DIR=/app/data`, `OMNIROUTE_MIGRATIONS_DIR=/app/migrations`.
+Domyślne wartości eksportowane przez `runner-base`: `PORT=20128`, `HOSTNAME=0.0.0.0`, `NODE_OPTIONS=--max-old-space-size=512`, `DATA_DIR=/app/data`, `AGENTPROXY_MIGRATIONS_DIR=/app/migrations`.
 
 Zachowanie pamięci w Dockerze:
 
 - `NODE_OPTIONS=--max-old-space-size=512` jest wbudowane w obraz jako fallback.
-- Właściwy proces serwera uruchamia launcher standalone, który czyta `OMNIROUTE_MEMORY_MB` i dopisuje `--max-old-space-size=<OMNIROUTE_MEMORY_MB>`.
-- Node używa ostatniej powtórzonej wartości `--max-old-space-size`, więc ustawienie `OMNIROUTE_MEMORY_MB` kontroluje efektywny limit heapa w Dockerze.
-- Gdy `OMNIROUTE_MEMORY_MB` nie jest ustawione, launcher używa `512`.
+- Właściwy proces serwera uruchamia launcher standalone, który czyta `AGENTPROXY_MEMORY_MB` i dopisuje `--max-old-space-size=<AGENTPROXY_MEMORY_MB>`.
+- Node używa ostatniej powtórzonej wartości `--max-old-space-size`, więc ustawienie `AGENTPROXY_MEMORY_MB` kontroluje efektywny limit heapa w Dockerze.
+- Gdy `AGENTPROXY_MEMORY_MB` nie jest ustawione, launcher używa `512`.
 
 ## Kluczowe zmienne środowiskowe
 
@@ -167,23 +167,23 @@ Poza domyślnymi wartościami opisanymi w [ENVIRONMENT.md](../reference/ENVIRONM
 
 | Zmienna                       | Przeznaczenie                                                                                | Domyślnie                |
 | ----------------------------- | -------------------------------------------------------------------------------------------- | ------------------------ |
-| `OMNIROUTE_WS_BRIDGE_SECRET`  | Współdzielony sekret mostu WebSocket. **Wymagany w produkcji** — ustaw silny, losowy ciąg.   | unset (must be provided) |
+| `AGENTPROXY_WS_BRIDGE_SECRET`  | Współdzielony sekret mostu WebSocket. **Wymagany w produkcji** — ustaw silny, losowy ciąg.   | unset (must be provided) |
 | `REDIS_URL`                   | Connection string zaplecza rate limitera / cache                                             | `redis://redis:6379`     |
 | `REDIS_PORT`                  | Port po stronie hosta dla dołączonego kontenera Redis                                        | `6379`                   |
-| `AUTO_UPDATE_HOST_REPO_DIR`   | Ścieżka hosta montowana w profilu `cli` pod `/workspace/omniroute` na potrzeby self-update   | `.` (current directory)  |
-| `OMNIROUTE_MEMORY_MB`         | Sufit heapa Node w runtime dla serwera standalone Dockera; nadpisuje fallback obrazu powyżej | `512`                    |
+| `AUTO_UPDATE_HOST_REPO_DIR`   | Ścieżka hosta montowana w profilu `cli` pod `/workspace/agentproxy` na potrzeby self-update   | `.` (current directory)  |
+| `AGENTPROXY_MEMORY_MB`         | Sufit heapa Node w runtime dla serwera standalone Dockera; nadpisuje fallback obrazu powyżej | `512`                    |
 | `DASHBOARD_PORT` / `API_PORT` | Nadpisanie eksponowanych portów dashboardu (20128) i API (20129)                             | `20128` / `20129`        |
-| `OMNIROUTE_BASE_PATH`         | Podścieżka URL, gdy aplikacja jest publikowana za reverse proxy (np. `/omniroute`)           | _(empty = root)_         |
-| `NEXT_PUBLIC_BASE_URL`        | Publiczny origin przeglądarki wraz z podścieżką (np. `https://host/omniroute`)               | unset                    |
+| `AGENTPROXY_BASE_PATH`         | Podścieżka URL, gdy aplikacja jest publikowana za reverse proxy (np. `/agentproxy`)           | _(empty = root)_         |
+| `NEXT_PUBLIC_BASE_URL`        | Publiczny origin przeglądarki wraz z podścieżką (np. `https://host/agentproxy`)               | unset                    |
 | `PROD_DASHBOARD_PORT`         | Port dashboardu po stronie hosta dla `docker-compose.prod.yml`                               | `20130`                  |
 | `CLIPROXYAPI_PORT`            | Port po stronie hosta dla sidecara `cliproxyapi`                                             | `8317`                   |
 
 ## Reverse proxy na podścieżce (Traefik / nginx)
 
-Next.js `basePath` jest kompilowany do bundla standalone. OmniRoute zapisuje wbudowaną
+Next.js `basePath` jest kompilowany do bundla standalone. AgentProxy zapisuje wbudowaną
 wartość w pliku-sentinelu w katalogu głównym aplikacji (zapisywany podczas `npm run build`; czytany przez
 `scripts/docker/ensure-docker-base-path.mjs`) i porównuje ją z
-`OMNIROUTE_BASE_PATH` przy starcie kontenera. Gdy się różnią, a obraz był
+`AGENTPROXY_BASE_PATH` przy starcie kontenera. Gdy się różnią, a obraz był
 zbudowany pod root domeny, entrypoint przepisuje manifesty standalone i osadzone
 literały `basePath` zanim uruchomi się `node dev/run-standalone.mjs`.
 
@@ -193,60 +193,60 @@ Ustaw obie zmienne w `.env`, potem przebuduj, aby obraz i runtime były zgodne:
 
 ```bash
 # .env
-OMNIROUTE_BASE_PATH=/omniroute
-NEXT_PUBLIC_BASE_URL=https://myhostname.example.com/omniroute
+AGENTPROXY_BASE_PATH=/agentproxy
+NEXT_PUBLIC_BASE_URL=https://myhostname.example.com/agentproxy
 ```
 
 ```bash
 docker compose --profile base up -d --build
 ```
 
-`docker-compose.yml` przekazuje `OMNIROUTE_BASE_PATH` jako Docker build-arg oraz jako
+`docker-compose.yml` przekazuje `AGENTPROXY_BASE_PATH` jako Docker build-arg oraz jako
 zmienną środowiskową runtime.
 
 ### Wstępnie zbudowany obraz root + podścieżka w runtime
 
-Opublikowane obrazy `diegosouzapw/omniroute:*` są budowane pod root domeny. Nadal możesz
-ustawić `OMNIROUTE_BASE_PATH` w runtime; kontener jednorazowo patchuje bundel przy starcie.
+Opublikowane obrazy `khanhkit/agentproxy:*` są budowane pod root domeny. Nadal możesz
+ustawić `AGENTPROXY_BASE_PATH` w runtime; kontener jednorazowo patchuje bundel przy starcie.
 Połącz to z pasującym publicznym originem:
 
 ```yaml
 services:
-  omniroute:
-    image: diegosouzapw/omniroute:latest
+  agentproxy:
+    image: khanhkit/agentproxy:latest
     environment:
-      OMNIROUTE_BASE_PATH: /omniroute
-      NEXT_PUBLIC_BASE_URL: https://myhostname.example.com/omniroute
+      AGENTPROXY_BASE_PATH: /agentproxy
+      NEXT_PUBLIC_BASE_URL: https://myhostname.example.com/agentproxy
 ```
 
 Skonfiguruj reverse proxy tak, aby przekazywało **pełną** zewnętrzną ścieżkę (nie usuwaj
-prefiksu). Traefik powinien routować `PathPrefix(`/omniroute`)` do kontenera bez
-`StripPrefix`, żeby Next.js otrzymywał `/omniroute/...` i serwował assety z
-`/omniroute/_next/...`.
+prefiksu). Traefik powinien routować `PathPrefix(`/agentproxy`)` do kontenera bez
+`StripPrefix`, żeby Next.js otrzymywał `/agentproxy/...` i serwował assety z
+`/agentproxy/_next/...`.
 
 Healthcheck Dockera sonduje lekki endpoint cyklu życia `/healthz` z prefiksem aktywnego
-`OMNIROUTE_BASE_PATH`. `/api/monitoring/health` pozostaje dostępny do diagnostyki
+`AGENTPROXY_BASE_PATH`. `/api/monitoring/health` pozostaje dostępny do diagnostyki
 człowieka/pulpit; aby ustawić HEALTHCHECK kontenera z powrotem na niego (np. dla
-głębokiej kontroli stanu), ustaw `OMNIROUTE_HEALTHCHECK_PATH=/api/monitoring/health`.
+głębokiej kontroli stanu), ustaw `AGENTPROXY_HEALTHCHECK_PATH=/api/monitoring/health`.
 
 ## Docker Compose z Caddy (HTTPS Auto-TLS)
 
-OmniRoute można bezpiecznie udostępnić dzięki automatycznemu provisionowaniu SSL w Caddy. Upewnij się, że rekord DNS A domeny wskazuje na IP Twojego serwera.
+AgentProxy można bezpiecznie udostępnić dzięki automatycznemu provisionowaniu SSL w Caddy. Upewnij się, że rekord DNS A domeny wskazuje na IP Twojego serwera.
 
 ```yaml
 services:
-  omniroute:
-    image: diegosouzapw/omniroute:latest
-    container_name: omniroute
+  agentproxy:
+    image: khanhkit/agentproxy:latest
+    container_name: agentproxy
     restart: unless-stopped
     volumes:
-      - omniroute-data:/app/data
+      - agentproxy-data:/app/data
     environment:
       - PORT=20128
       # Browser-facing origin for OAuth callbacks, dashboard links, and generated public URLs.
       - NEXT_PUBLIC_BASE_URL=https://your-domain.com
       # Internal server-to-server URL for scheduled jobs / self-fetches.
-      - BASE_URL=http://omniroute:20128
+      - BASE_URL=http://agentproxy:20128
       - AUTH_COOKIE_SECURE=true
 
   caddy:
@@ -256,17 +256,17 @@ services:
     ports:
       - "80:80"
       - "443:443"
-    command: caddy reverse-proxy --from https://your-domain.com --to http://omniroute:20128
+    command: caddy reverse-proxy --from https://your-domain.com --to http://agentproxy:20128
 
 volumes:
-  omniroute-data:
+  agentproxy-data:
 ```
 
-Caddy ustawia standardowe nagłówki forwardingu dla kontenera upstream. OmniRoute używa
+Caddy ustawia standardowe nagłówki forwardingu dla kontenera upstream. AgentProxy używa
 `NEXT_PUBLIC_BASE_URL` jako kanonicznego publicznego originu dla callbacków OAuth i generowanych publicznych
 linków; uwierzytelnione zapisy dashboardu używają żądań same-origin oraz ochrony CSRF
-związanej z sesją. Włączaj `OMNIROUTE_TRUST_PROXY` tylko w zaawansowanych wdrożeniach, gdzie świadomie
-chcesz, by OmniRoute wyprowadzał publiczny origin z zaufanych nagłówków forwarded zamiast z jawnej
+związanej z sesją. Włączaj `AGENTPROXY_TRUST_PROXY` tylko w zaawansowanych wdrożeniach, gdzie świadomie
+chcesz, by AgentProxy wyprowadzał publiczny origin z zaufanych nagłówków forwarded zamiast z jawnej
 konfiguracji.
 
 ## Cloudflare Quick Tunnel
@@ -278,24 +278,24 @@ Panele tuneli endpointów (Cloudflare, Tailscale, ngrok) można pokazywać lub u
 ### Uwagi o tunelach
 
 - URL-e Quick Tunnel są tymczasowe i zmieniają się po każdym restarcie.
-- Quick Tunnels nie są automatycznie przywracane po restarcie OmniRoute ani kontenera. Włącz je ponownie z dashboardu, gdy potrzeba.
+- Quick Tunnels nie są automatycznie przywracane po restarcie AgentProxy ani kontenera. Włącz je ponownie z dashboardu, gdy potrzeba.
 - Managed install obecnie obsługuje Linux, macOS i Windows na `x64` / `arm64`.
 - Managed Quick Tunnels domyślnie używają transportu HTTP/2, aby uniknąć hałaśliwych ostrzeżeń o buforze QUIC UDP w ograniczonych środowiskach kontenerowych. Ustaw `CLOUDFLARED_PROTOCOL=quic` lub `auto`, jeśli chcesz inny transport.
 - Obrazy Dockera dołączają systemowe korzenie CA i przekazują je do managed `cloudflared`, co unika błędów zaufania TLS przy bootstrapie tunelu wewnątrz kontenera.
-- Ustaw `CLOUDFLARED_BIN=/absolute/path/to/cloudflared`, jeśli chcesz, by OmniRoute używał istniejącego binarium zamiast pobierać własne.
+- Ustaw `CLOUDFLARED_BIN=/absolute/path/to/cloudflared`, jeśli chcesz, by AgentProxy używał istniejącego binarium zamiast pobierać własne.
 
 ## Tagi obrazów
 
 | Obraz                    | Tag      | Rozmiar | Opis                       |
 | ------------------------ | -------- | ------- | -------------------------- |
-| `diegosouzapw/omniroute` | `latest` | ~250MB  | Najnowsze stabilne wydanie |
-| `diegosouzapw/omniroute` | `3.8.0`  | ~250MB  | Bieżąca wersja             |
+| `khanhkit/agentproxy` | `latest` | ~250MB  | Najnowsze stabilne wydanie |
+| `khanhkit/agentproxy` | `3.8.0`  | ~250MB  | Bieżąca wersja             |
 
 Manifest multi-platform: natywne `linux/amd64` + `linux/arm64` (Apple Silicon, AWS Graviton, Raspberry Pi). Docker automatycznie wybiera pasującą architekturę; podaj `--platform linux/amd64`, jeśli musisz wymusić emulację AMD64 na hostach ARM.
 
 ## Ważne uwagi
 
-- **Tryb SQLite WAL:** `docker stop` powinien móc się dokończyć, żeby OmniRoute mógł zrobić checkpoint najnowszych zmian z powrotem do `storage.sqlite`. Dołączone pliki Compose ustawiają już 40s grace period stopu. Przy bezpośrednim uruchomieniu obrazu zachowaj `--stop-timeout 40`.
+- **Tryb SQLite WAL:** `docker stop` powinien móc się dokończyć, żeby AgentProxy mógł zrobić checkpoint najnowszych zmian z powrotem do `storage.sqlite`. Dołączone pliki Compose ustawiają już 40s grace period stopu. Przy bezpośrednim uruchomieniu obrazu zachowaj `--stop-timeout 40`.
 - **`DISABLE_SQLITE_AUTO_BACKUP`:** Ustaw na `true`, jeśli backupy są zarządzane zewnętrznie.
 - **Trwałość danych:** Zawsze montuj wolumen pod `/app/data`, aby zachować bazę, klucze i konfiguracje między restartami kontenera.
 - **Konfiguracja portu:** Nadpisz zmienną środowiskową `PORT`, aby zmienić domyślny port `20128`.

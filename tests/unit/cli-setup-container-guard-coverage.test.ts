@@ -5,7 +5,7 @@ import path from "node:path";
 
 /**
  * Static scan, not behavior: a new `setup-*` command that writes a CLI-tool
- * config must not silently no-op inside the OmniRoute container. Anything that
+ * config must not silently no-op inside the AgentProxy container. Anything that
  * writes has to route through the container guard first.
  */
 
@@ -15,7 +15,7 @@ const GUARD_CALL = /guardHostConfigTarget\s*\(/;
 
 /**
  * Commands whose writes never target a host CLI's own config (they write to a
- * user-chosen --out path, OmniRoute's own data dir, etc.). Keep this list tiny
+ * user-chosen --out path, AgentProxy's own data dir, etc.). Keep this list tiny
  * and justified — an entry here is an opt-out from the guard.
  */
 const NOT_CLI_TOOL_CONFIG = new Set<string>([]);

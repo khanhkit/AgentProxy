@@ -1,19 +1,19 @@
-import { errorResponse } from "@omniroute/open-sse/utils/error.ts";
-import { HTTP_STATUS } from "@omniroute/open-sse/config/constants.ts";
-import type { AutoVariant } from "@omniroute/open-sse/services/autoCombo/autoPrefix.ts";
+import { errorResponse } from "@agentproxy/open-sse/utils/error.ts";
+import { HTTP_STATUS } from "@agentproxy/open-sse/config/constants.ts";
+import type { AutoVariant } from "@agentproxy/open-sse/services/autoCombo/autoPrefix.ts";
 import {
   AUTO_TEMPLATE_VARIANTS,
   VALID_AUTO_VARIANTS,
-} from "@omniroute/open-sse/services/autoCombo/builtinCatalog.ts";
+} from "@agentproxy/open-sse/services/autoCombo/builtinCatalog.ts";
 import {
   parseAutoSuffix,
   type AutoCategory,
   type AutoTier,
-} from "@omniroute/open-sse/services/autoCombo/suffixComposition.ts";
+} from "@agentproxy/open-sse/services/autoCombo/suffixComposition.ts";
 import {
   isValidModelFamily,
   type ModelFamily,
-} from "@omniroute/open-sse/services/autoCombo/modelFamily.ts";
+} from "@agentproxy/open-sse/services/autoCombo/modelFamily.ts";
 import { getCachedSettings } from "@/lib/db/readCache";
 import * as log from "../utils/logger";
 
@@ -68,16 +68,15 @@ async function applyAutoPrefix(
 ): Promise<Pick<AutoRoutingState, "variant" | "spec">> {
   try {
     const { parseAutoPrefix } =
-      await import("@omniroute/open-sse/services/autoCombo/autoPrefix.ts");
+      await import("@agentproxy/open-sse/services/autoCombo/autoPrefix.ts");
     const parsed = parseAutoPrefix(model);
-    if (!parsed.valid) {
+    const recognizedBuiltIn = Object.prototype.hasOwnProperty.call(AUTO_TEMPLATE_VARIANTS, model);
+    if (!parsed.valid && !recognizedBuiltIn) {
       if (!state.spec) log.warn("AUTO", `Invalid auto prefix format: ${model}`);
       return state;
     }
 
-    const variant = Object.prototype.hasOwnProperty.call(AUTO_TEMPLATE_VARIANTS, model)
-      ? state.variant
-      : parsed.variant;
+    const variant = recognizedBuiltIn ? state.variant : parsed.variant;
     const defaultVariant =
       model === "auto" && variant === undefined
         ? (settings.autoRoutingDefaultVariant as AutoVariant | undefined)
@@ -134,7 +133,7 @@ export async function createVirtualAutoCombo(
 
   try {
     const { createVirtualAutoCombo: createVirtual } =
-      await import("@omniroute/open-sse/services/autoCombo/virtualFactory.ts");
+      await import("@agentproxy/open-sse/services/autoCombo/virtualFactory.ts");
     // #7819 (Level 2): scope candidate exclusions to this API key + the
     // requested auto channel (e.g. "auto/best-coding"). Omitted for any
     // caller that doesn't pass apiKeyId — routing stays unfiltered.

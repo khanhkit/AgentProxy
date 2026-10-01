@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { deriveDefaultPlan } from "@omniroute/open-sse/services/compression/deriveDefaultPlan.ts";
+import { deriveDefaultPlan } from "@agentproxy/open-sse/services/compression/deriveDefaultPlan.ts";
 
 const on = (level?: string) => ({ enabled: true, ...(level ? { level } : {}) });
 

@@ -11,7 +11,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-auto-aliases-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-auto-aliases-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const { deriveSyncedTierAliases, getSyncedAutoAliases } =

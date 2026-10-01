@@ -31,7 +31,7 @@ test("NATIVE_ASSET_ENTRIES registers onnxruntime-node's native bin/ directory", 
 });
 
 test("syncStandaloneNativeAssets copies onnxruntime-node's libonnxruntime.so.1 into the standalone bundle", async () => {
-  const root = mkdtempSync(join(tmpdir(), "omniroute-assemble-onnx-"));
+  const root = mkdtempSync(join(tmpdir(), "agentproxy-assemble-onnx-"));
   try {
     // Mirror the real package's shape: dist/binding.js (traced fine by Next)
     // plus the platform-specific native .so under bin/napi-v3/<platform>/<arch>/.

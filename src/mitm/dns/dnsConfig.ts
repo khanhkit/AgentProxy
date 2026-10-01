@@ -153,7 +153,7 @@ export async function addDNSEntries(
   sudoPassword: string,
   deps?: DnsCommandDependencies
 ): Promise<void> {
-  if (process.env.OMNIROUTE_SKIP_DNS_WRITE === "1") return;
+  if (process.env.AGENTPROXY_SKIP_DNS_WRITE === "1") return;
   const commands = resolveCommandDependencies(deps);
   const hostsContent = readHostsFile();
   const missingEntries: string[] = [];
@@ -222,7 +222,7 @@ export async function removeDNSEntries(
   sudoPassword: string,
   deps?: DnsCommandDependencies
 ): Promise<void> {
-  if (process.env.OMNIROUTE_SKIP_DNS_WRITE === "1") return;
+  if (process.env.AGENTPROXY_SKIP_DNS_WRITE === "1") return;
   const commands = resolveCommandDependencies(deps);
   const hostsContent = readHostsFile();
   const presentHosts = hosts.filter((h) => hasHostEntry(hostsContent, h));
@@ -310,4 +310,24 @@ export async function removeDNSEntry(
   deps?: DnsCommandDependencies
 ): Promise<void> {
   await removeDNSEntries(resolveHostsForAgent(agentId), sudoPassword, deps);
+}
+
+/**
+ * Best-effort flush of the Windows DNS Client resolver cache after editing
+ * the hosts file. Unlike POSIX resolvers (which re-read /etc/hosts on every
+ * lookup), Windows caches hosts-file-sourced resolutions until flushed or
+ * rebooted — so a just-removed `127.0.0.1 <host>` spoof can keep resolving
+ * from cache for a while after the line is gone, making a "restore defaults"
+ * action look like it didn't work. `ipconfig /flushdns` does not require
+ * elevation. No-op on non-Windows platforms; failures are swallowed since
+ * this is a courtesy step, not a correctness requirement (the hosts file
+ * edit itself already succeeded).
+ */
+export function flushWindowsDnsCache(): void {
+  if (!isWin32()) return;
+  try {
+    execFileSync("ipconfig", ["/flushdns"], { stdio: "ignore", windowsHide: true, timeout: 5000 });
+  } catch {
+    // best-effort — never block the caller on this
+  }
 }

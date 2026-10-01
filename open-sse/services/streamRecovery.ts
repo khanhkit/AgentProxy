@@ -2,7 +2,7 @@
  * Stream-recovery primitives — opt-in transparent retry of truncated upstream streams.
  *
  * Ported from free-claude-code's always-on recovery (`core/anthropic/stream_recovery.py`).
- * OmniRoute keeps the holdback OFF by default (see ResilienceSettings.streamRecovery)
+ * AgentProxy keeps the holdback OFF by default (see ResilienceSettings.streamRecovery)
  * because holding the opening SSE window adds up to STREAM_RECOVERY.HOLDBACK_MS of
  * time-to-first-token latency on every streaming request. When enabled, an upstream
  * truncation that happens *before* any byte reaches the client is retried invisibly.
@@ -11,6 +11,7 @@
  * without real sockets. The ReadableStream wiring lives in `createRecoverableStream`.
  */
 import { STREAM_RECOVERY } from "../config/constants.ts";
+import { isFeatureFlagEnabled } from "@/shared/utils/featureFlags";
 import {
   createThroughputWatchdog,
   ThroughputWatchdogError,
@@ -18,6 +19,20 @@ import {
 } from "./throughputWatchdog.ts";
 
 export { ThroughputWatchdogError } from "./throughputWatchdog.ts";
+
+const TOOLCALL_ORDER_FIX_FLAG = "STREAM_RECOVERY_TOOLCALL_ORDER_FIX";
+
+/**
+ * Read the opt-in tool-call-safe continuation flag. Fail-closed: any resolution failure
+ * (DB not ready, unknown key) keeps the release behavior.
+ */
+function isToolcallOrderFixEnabled(): boolean {
+  try {
+    return isFeatureFlagEnabled(TOOLCALL_ORDER_FIX_FLAG);
+  } catch {
+    return false;
+  }
+}
 
 /** Raised internally when an upstream stream ends without a terminal SSE marker. */
 export class TruncatedStreamError extends Error {
@@ -155,7 +170,7 @@ export function isRetryableStreamError(error: unknown): boolean {
   return false;
 }
 
-// Terminal SSE markers OmniRoute emits across formats: OpenAI `data: [DONE]`,
+// Terminal SSE markers AgentProxy emits across formats: OpenAI `data: [DONE]`,
 // Anthropic `event: message_stop`. Presence means the stream ended cleanly.
 const OPENAI_DONE_MARKER = "[DONE]";
 const ANTHROPIC_STOP_MARKER = "message_stop";
@@ -335,6 +350,16 @@ export function trimContinuationOverlap(emitted: string, continuation: string): 
   return continuation;
 }
 
+/** Why a post-commit cut was not continued (see `ContinuationOutcome`). */
+export type ContinuationRefusal = "budget" | "tool-call" | "not-continuable";
+
+/** Result of one mid-stream continuation decision, for observability only. */
+export type ContinuationOutcome =
+  | { attempt: number; outcome: "suffix"; suffixChars: number }
+  | { attempt: number; outcome: "overlap-reject"; overlapChars: number }
+  | { attempt: number; outcome: "terminal" | "empty" | "no-stream" }
+  | { attempt: number; outcome: "refused"; reason: ContinuationRefusal };
+
 export interface RecoverableStreamOptions {
   /** Released exactly once when the wrapped stream closes, errors, or is cancelled. */
   finalize: () => void;
@@ -356,6 +381,8 @@ export interface RecoverableStreamOptions {
   maxContinuations?: number;
   /** Observability hook fired on each continuation attempt. */
   onContinue?: (attempt: number, assistantSoFar: string) => void;
+  /** Observability hook fired with each continuation outcome or refused cut. */
+  onContinueOutcome?: (event: ContinuationOutcome) => void;
   /** Opt-in active-stream output-quality watchdog. Disabled when omitted. */
   throughputWatchdog?: ThroughputWatchdogOptions;
   /** Sanitized observability hook fired before the active attempt is aborted. */
@@ -433,7 +460,12 @@ export function createRecoverableStream(
   let emittedTerminal = false;
   let emittedToolCallInFlight = false;
   let emittedSawToolCall = false; // any tool_call delta seen, complete or not
+  let emittedToolCallFinish = false; // any finish_reason "tool_calls" seen
   let emittedParsedOpenAi = false;
+  // STREAM_RECOVERY_TOOLCALL_ORDER_FIX, resolved lazily at most once per stream and only
+  // on a recovery decision, so the flag costs nothing on streams that end cleanly.
+  let toolCallOrderFix: boolean | undefined;
+  const isToolCallOrderFixOn = () => (toolCallOrderFix ??= isToolcallOrderFixEnabled());
 
   // Enqueue to the client and, when continuation is enabled, fold the chunk into the
   // running scan so a later continuation can be prefilled with exactly what was sent.
@@ -455,6 +487,7 @@ export function createRecoverableStream(
     if (scan.terminal) emittedTerminal = true;
     if (scan.sawToolCallInFlight) emittedToolCallInFlight = true;
     if (scan.sawToolCall) emittedSawToolCall = true;
+    if (scan.finishReason === "tool_calls") emittedToolCallFinish = true;
     if (scan.parsedOpenAi) emittedParsedOpenAi = true;
   };
 
@@ -484,7 +517,7 @@ export function createRecoverableStream(
   // double-close of the underlying `ReadableStream` (`controller.close()` runs exactly once,
   // after `tryContinue` returns). An SSE client that treats a bare `finish_reason:"stop"` as an
   // unconditional end-of-turn (rather than waiting for `[DONE]`) may need updating separately —
-  // out of scope for this fix, which targets the observed opencode/OmniRoute pairing where the
+  // out of scope for this fix, which targets the observed opencode/AgentProxy pairing where the
   // client kept the connection open.
   const hallucinatedEmptyStop = () =>
     emittedFinishReason === "stop" &&
@@ -492,12 +525,31 @@ export function createRecoverableStream(
     emittedText.length === 0 &&
     emittedReasoningText.length > 0;
 
+  // With STREAM_RECOVERY_TOOLCALL_ORDER_FIX on, any tool-call activity makes the turn
+  // non-continuable. The per-batch scan above is order-blind: a batch carrying a finished
+  // call followed by a new partial call reports nothing in flight, and a call finished with
+  // finish_reason "tool_calls" is a completed turn where only [DONE] can be missing — a
+  // continuation there spends an upstream request and appends content plus a second
+  // finish_reason after the tool-call finish. Every tool call is either still pending or
+  // already finished, so the order-independent check is exact. Off: the release gate.
+  const toolCallBlocksContinuation = () =>
+    (emittedSawToolCall || emittedToolCallFinish) && isToolCallOrderFixOn();
+
   const canContinue = () =>
     continueEnabled &&
     continuations < maxContinuations &&
     emittedParsedOpenAi &&
     !emittedToolCallInFlight &&
-    (emittedText.length > 0 ? !emittedTerminal : hallucinatedEmptyStop());
+    (emittedText.length > 0 ? !emittedTerminal : hallucinatedEmptyStop()) &&
+    !toolCallBlocksContinuation();
+
+  const reportRefusal = () => {
+    if (!continueEnabled || !emittedParsedOpenAi || !options.onContinueOutcome) return;
+    let reason: ContinuationRefusal = "not-continuable";
+    if (continuations >= maxContinuations) reason = "budget";
+    else if (emittedToolCallInFlight) reason = "tool-call";
+    options.onContinueOutcome({ attempt: continuations, outcome: "refused", reason });
+  };
 
   const emitCleanTerminal = (controller: ReadableStreamDefaultController<Uint8Array>) => {
     controller.enqueue(
@@ -510,11 +562,16 @@ export function createRecoverableStream(
   // Returns true once the recovered stream has been terminated (caller closes); false to
   // fall back to the unchanged #4131 error/close behavior.
   const tryContinue = async (
-    controller: ReadableStreamDefaultController<Uint8Array>
+    controller: ReadableStreamDefaultController<Uint8Array>,
+    cut = true
   ): Promise<boolean> => {
-    if (!canContinue()) return false;
+    if (!canContinue()) {
+      if (cut) reportRefusal();
+      return false;
+    }
     continuations += 1;
     options.onContinue?.(continuations, emittedText);
+    const report = (event: ContinuationOutcome) => options.onContinueOutcome?.(event);
 
     let contStream: ReadableStream<Uint8Array> | null = null;
     try {
@@ -522,7 +579,10 @@ export function createRecoverableStream(
     } catch {
       contStream = null;
     }
-    if (!contStream) return false;
+    if (!contStream) {
+      report({ attempt: continuations, outcome: "no-stream" });
+      return false;
+    }
 
     // Drain the continuation fully (recovery favors correctness over token-by-token
     // streaming of the recovered tail), then emit only the de-duplicated suffix.
@@ -554,6 +614,7 @@ export function createRecoverableStream(
       scan.text.length > 0 &&
       overlapChars < STREAM_RECOVERY.MIN_CONTINUATION_OVERLAP_CHARS;
     if (isSuspectedRestart) {
+      report({ attempt: continuations, outcome: "overlap-reject", overlapChars });
       if (await tryContinue(controller)) return true;
       emitCleanTerminal(controller);
       return true;
@@ -566,9 +627,18 @@ export function createRecoverableStream(
           `data: ${JSON.stringify({ choices: [{ index: 0, delta: { content: suffix } }] })}\n\n`
         )
       );
+      report({ attempt: continuations, outcome: "suffix", suffixChars: suffix.length });
     }
     // A clean finish, or a tool call we cannot safely stitch, ends the recovered stream.
     if (scan.terminal || scan.sawToolCall) {
+      if (!suffix) report({ attempt: continuations, outcome: "terminal" });
+      emitCleanTerminal(controller);
+      return true;
+    }
+    // With STREAM_RECOVERY_TOOLCALL_ORDER_FIX on, a continuation that delivered no text
+    // carries no new information (the next re-request replays the same prefill), so close
+    // after this one spent request instead of burning the rest of the budget.
+    if (scan.text.length === 0 && isToolCallOrderFixOn()) {
       emitCleanTerminal(controller);
       return true;
     }
@@ -619,7 +689,7 @@ export function createRecoverableStream(
             // says the stream is worth continuing (silent truncation, or a clean-but-empty
             // reasoning-only stop) — canContinue() is the single source of truth here, same as
             // the read-error branch above.
-            if (await tryContinue(controller)) {
+            if (await tryContinue(controller, !emittedTerminal)) {
               runFinalize();
               controller.close();
               return;

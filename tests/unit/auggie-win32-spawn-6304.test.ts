@@ -16,7 +16,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-const { buildAuggieSpawnOptions } = await import("@omniroute/open-sse/executors/auggie");
+const { buildAuggieSpawnOptions } = await import("@agentproxy/open-sse/executors/auggie");
 
 /** Temporarily override process.platform for the duration of `fn`. */
 function withPlatform<T>(platform: string, fn: () => T): T {

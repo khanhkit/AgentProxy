@@ -19,10 +19,14 @@ export const FETCH_TIMEOUT_MS = upstreamTimeouts.fetchTimeoutMs;
 // idle for this duration. Override with STREAM_IDLE_TIMEOUT_MS env var.
 export const STREAM_IDLE_TIMEOUT_MS = upstreamTimeouts.streamIdleTimeoutMs;
 
+// Hard cap for a connected upstream stream. Unlike the idle timeout this never
+// resets on byte activity. Set STREAM_ACTIVE_TIMEOUT_MS=0 to disable it.
+export const STREAM_ACTIVE_TIMEOUT_MS = upstreamTimeouts.streamActiveTimeoutMs;
+
 // Grace period (ms) a client-disconnect finalization waits for the stream's own
 // completion bookkeeping to land before persisting a 499. See #9653 — a client
 // that closes right after reading a fully-completed SSE stream can otherwise
-// race OmniRoute's own completion callback, resulting in a false 499 with zero
+// race AgentProxy's own completion callback, resulting in a false 499 with zero
 // token usage for a request that actually delivered its full response. Set
 // STREAM_DISCONNECT_GRACE_PERIOD_MS=0 to disable and restore the old
 // immediate-fail behavior.
@@ -174,6 +178,7 @@ export const HTTP_STATUS = {
   UNPROCESSABLE_ENTITY: 422,
   REQUEST_TIMEOUT: 408,
   GONE: 410,
+  PAYLOAD_TOO_LARGE: 413,
   RATE_LIMITED: 429,
   PLAN_LIMIT_EXCEEDED: 432,
   SERVER_ERROR: 500,
@@ -232,7 +237,7 @@ export const RateLimitReason = {
 // ─── Provider Resilience Profiles ───────────────────────────────────────────
 // Separate behavior for OAuth (low-limit, session-based) vs API Key (high-limit, metered)
 // Circuit-breaker thresholds and reset windows are overridable via
-// OMNIROUTE_CIRCUIT_BREAKER_* env vars so operators can dampen or harden
+// AGENTPROXY_CIRCUIT_BREAKER_* env vars so operators can dampen or harden
 // behavior without recompiling.
 function envInt(name: string, fallback: number): number {
   const raw = process.env[name];
@@ -246,34 +251,34 @@ export const PROVIDER_PROFILES = {
     transientCooldown: 5000, // 5s (session tokens — short recovery)
     rateLimitCooldown: 60000, // 60s default when no retry-after header
     maxBackoffLevel: 8, // Higher ceiling (sessions may stay bad longer)
-    circuitBreakerThreshold: envInt("OMNIROUTE_CIRCUIT_BREAKER_OAUTH_THRESHOLD", 8),
-    circuitBreakerReset: envInt("OMNIROUTE_CIRCUIT_BREAKER_OAUTH_RESET_MS", 60000),
+    circuitBreakerThreshold: envInt("AGENTPROXY_CIRCUIT_BREAKER_OAUTH_THRESHOLD", 8),
+    circuitBreakerReset: envInt("AGENTPROXY_CIRCUIT_BREAKER_OAUTH_RESET_MS", 60000),
     // Provider-level circuit breaker (entire provider cooldown after repeated failures)
-    providerFailureThreshold: envInt("OMNIROUTE_PROVIDER_BREAKER_OAUTH_FAILURE_THRESHOLD", 10), // Scaled for 500+ connections (was 3)
-    providerFailureWindowMs: envInt("OMNIROUTE_PROVIDER_BREAKER_OAUTH_FAILURE_WINDOW_MS", 900000), // 15min window (was 10min)
-    providerCooldownMs: envInt("OMNIROUTE_PROVIDER_BREAKER_OAUTH_COOLDOWN_MS", 300000), // 5min cooldown when threshold reached
+    providerFailureThreshold: envInt("AGENTPROXY_PROVIDER_BREAKER_OAUTH_FAILURE_THRESHOLD", 10), // Scaled for 500+ connections (was 3)
+    providerFailureWindowMs: envInt("AGENTPROXY_PROVIDER_BREAKER_OAUTH_FAILURE_WINDOW_MS", 900000), // 15min window (was 10min)
+    providerCooldownMs: envInt("AGENTPROXY_PROVIDER_BREAKER_OAUTH_COOLDOWN_MS", 300000), // 5min cooldown when threshold reached
     // Adaptive circuit breaker v2 settings
-    degradationThreshold: envInt("OMNIROUTE_PROVIDER_BREAKER_OAUTH_DEGRADATION_THRESHOLD", 5), // Enter DEGRADED at this many failures
-    maxBackoffMultiplier: envInt("OMNIROUTE_PROVIDER_BREAKER_OAUTH_MAX_BACKOFF_MULTIPLIER", 8), // Max 8x resetTimeout escalation
-    backoffEscalationCount: envInt("OMNIROUTE_PROVIDER_BREAKER_OAUTH_BACKOFF_ESCALATION_COUNT", 2), // Escalate after 2 open cycles
+    degradationThreshold: envInt("AGENTPROXY_PROVIDER_BREAKER_OAUTH_DEGRADATION_THRESHOLD", 5), // Enter DEGRADED at this many failures
+    maxBackoffMultiplier: envInt("AGENTPROXY_PROVIDER_BREAKER_OAUTH_MAX_BACKOFF_MULTIPLIER", 8), // Max 8x resetTimeout escalation
+    backoffEscalationCount: envInt("AGENTPROXY_PROVIDER_BREAKER_OAUTH_BACKOFF_ESCALATION_COUNT", 2), // Escalate after 2 open cycles
   },
   apikey: {
     transientCooldown: 3000, // 3s (API providers recover faster)
     rateLimitCooldown: 0, // 0 = respect retry-after header from provider
     maxBackoffLevel: 5, // Lower ceiling (API quotas reset at known intervals)
-    circuitBreakerThreshold: envInt("OMNIROUTE_CIRCUIT_BREAKER_API_KEY_THRESHOLD", 12),
-    circuitBreakerReset: envInt("OMNIROUTE_CIRCUIT_BREAKER_API_KEY_RESET_MS", 30000),
+    circuitBreakerThreshold: envInt("AGENTPROXY_CIRCUIT_BREAKER_API_KEY_THRESHOLD", 12),
+    circuitBreakerReset: envInt("AGENTPROXY_CIRCUIT_BREAKER_API_KEY_RESET_MS", 30000),
     // Provider-level circuit breaker (entire provider cooldown after repeated failures)
-    providerFailureThreshold: envInt("OMNIROUTE_PROVIDER_BREAKER_API_KEY_FAILURE_THRESHOLD", 15), // Scaled for 500+ connections (was 5)
+    providerFailureThreshold: envInt("AGENTPROXY_PROVIDER_BREAKER_API_KEY_FAILURE_THRESHOLD", 15), // Scaled for 500+ connections (was 5)
     providerFailureWindowMs: envInt(
-      "OMNIROUTE_PROVIDER_BREAKER_API_KEY_FAILURE_WINDOW_MS",
+      "AGENTPROXY_PROVIDER_BREAKER_API_KEY_FAILURE_WINDOW_MS",
       1800000
     ), // 30min window (was 20min)
-    providerCooldownMs: envInt("OMNIROUTE_PROVIDER_BREAKER_API_KEY_COOLDOWN_MS", 600000), // 10min cooldown when threshold reached
-    degradationThreshold: envInt("OMNIROUTE_PROVIDER_BREAKER_API_KEY_DEGRADATION_THRESHOLD", 7),
-    maxBackoffMultiplier: envInt("OMNIROUTE_PROVIDER_BREAKER_API_KEY_MAX_BACKOFF_MULTIPLIER", 4),
+    providerCooldownMs: envInt("AGENTPROXY_PROVIDER_BREAKER_API_KEY_COOLDOWN_MS", 600000), // 10min cooldown when threshold reached
+    degradationThreshold: envInt("AGENTPROXY_PROVIDER_BREAKER_API_KEY_DEGRADATION_THRESHOLD", 7),
+    maxBackoffMultiplier: envInt("AGENTPROXY_PROVIDER_BREAKER_API_KEY_MAX_BACKOFF_MULTIPLIER", 4),
     backoffEscalationCount: envInt(
-      "OMNIROUTE_PROVIDER_BREAKER_API_KEY_BACKOFF_ESCALATION_COUNT",
+      "AGENTPROXY_PROVIDER_BREAKER_API_KEY_BACKOFF_ESCALATION_COUNT",
       3
     ),
   },
@@ -284,12 +289,12 @@ export const PROVIDER_PROFILES = {
     transientCooldown: 2000, // 2s (local — very fast recovery)
     rateLimitCooldown: 5000, // 5s (local — no real rate limits)
     maxBackoffLevel: 3, // Low ceiling (local either works or doesn't)
-    circuitBreakerThreshold: envInt("OMNIROUTE_CIRCUIT_BREAKER_LOCAL_THRESHOLD", 2),
-    circuitBreakerReset: envInt("OMNIROUTE_CIRCUIT_BREAKER_LOCAL_RESET_MS", 15000),
+    circuitBreakerThreshold: envInt("AGENTPROXY_CIRCUIT_BREAKER_LOCAL_THRESHOLD", 2),
+    circuitBreakerReset: envInt("AGENTPROXY_CIRCUIT_BREAKER_LOCAL_RESET_MS", 15000),
     // Provider-level circuit breaker (entire provider cooldown after repeated failures)
-    providerFailureThreshold: envInt("OMNIROUTE_PROVIDER_BREAKER_LOCAL_FAILURE_THRESHOLD", 2), // 2 failures trigger provider cooldown
-    providerFailureWindowMs: envInt("OMNIROUTE_PROVIDER_BREAKER_LOCAL_FAILURE_WINDOW_MS", 300000), // 5min window for counting failures
-    providerCooldownMs: envInt("OMNIROUTE_PROVIDER_BREAKER_LOCAL_COOLDOWN_MS", 60000), // 1min cooldown when threshold reached
+    providerFailureThreshold: envInt("AGENTPROXY_PROVIDER_BREAKER_LOCAL_FAILURE_THRESHOLD", 2), // 2 failures trigger provider cooldown
+    providerFailureWindowMs: envInt("AGENTPROXY_PROVIDER_BREAKER_LOCAL_FAILURE_WINDOW_MS", 300000), // 5min window for counting failures
+    providerCooldownMs: envInt("AGENTPROXY_PROVIDER_BREAKER_LOCAL_COOLDOWN_MS", 60000), // 1min cooldown when threshold reached
   },
 };
 
@@ -312,7 +317,7 @@ export const MAX_TOOLS_LIMIT = 128;
 
 /**
  * Interval (ms) for the background credential health check scheduler.
- * Default: 300000 (5 minutes). Minimum: 10000 (10 seconds).
+ * Default: 3600000 (60 minutes). Minimum: 10000 (10 seconds).
  */
 export const CREDENTIAL_HEALTH_CHECK_INTERVAL = (() => {
   const raw = process.env.CREDENTIAL_HEALTH_CHECK_INTERVAL;
@@ -320,7 +325,7 @@ export const CREDENTIAL_HEALTH_CHECK_INTERVAL = (() => {
     const parsed = Number(raw);
     if (Number.isFinite(parsed) && parsed >= 10_000) return parsed;
   }
-  return 300_000;
+  return 3_600_000;
 })();
 
 /**
@@ -341,7 +346,7 @@ export const CREDENTIAL_HEALTH_CACHE_TTL = (() => {
  * Stream-recovery tuning (opt-in, see ResilienceSettings.streamRecovery).
  *
  * Ported from free-claude-code's always-on recovery (`core/anthropic/stream_recovery.py`).
- * In OmniRoute the holdback is disabled by default because buffering the opening
+ * In AgentProxy the holdback is disabled by default because buffering the opening
  * window adds up to HOLDBACK_MS of time-to-first-token latency on every stream;
  * operators opt in via STREAM_RECOVERY_ENABLED / the resilience settings.
  *
@@ -356,6 +361,7 @@ export const STREAM_RECOVERY = {
   HOLDBACK_MS: 750,
   BUFFER_MAX_BYTES: 65536,
   EARLY_RETRY_MAX: 4,
+  EMPTY_TURN_RETRY_MAX: 4,
   /**
    * Minimum character overlap `trimContinuationOverlap` must find between the
    * already-emitted text and a mid-stream continuation for the continuation to be

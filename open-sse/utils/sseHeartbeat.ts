@@ -5,8 +5,17 @@
  * @changes
  * - [2026-07-28] [Cursor Grok 4.5] - Brand-neutral default OpenAI keepalive id/model
  */
+import { SYNTHETIC_RESPONSES_SEQUENCE_NUMBER } from "./responsesSequence.ts";
+
 const HEARTBEAT_ENCODER = new TextEncoder();
-const OPENAI_RESPONSES_IN_PROGRESS_PAYLOAD = 'data: {"type":"response.in_progress"}\n\n';
+// #14330: a bare {"type":"response.in_progress"} frame has no `sequence_number` or
+// `response` object, so a strict Responses decoder (openai-python, Codex/OpenCode/Grok
+// CLIs) aborts on it. Every typed Responses event requires both fields.
+const OPENAI_RESPONSES_IN_PROGRESS_PAYLOAD = `data: ${JSON.stringify({
+  type: "response.in_progress",
+  sequence_number: SYNTHETIC_RESPONSES_SEQUENCE_NUMBER,
+  response: { id: null, status: "in_progress" },
+})}\n\n`;
 
 export const DEFAULT_SSE_HEARTBEAT_INTERVAL_MS = 15_000;
 
@@ -75,16 +84,16 @@ type SseHeartbeatTransformOptions = {
 };
 
 /**
- * Whether OmniRoute may emit SSE `:` comment lines (e.g. the `: keepalive` heartbeat).
+ * Whether AgentProxy may emit SSE `:` comment lines (e.g. the `: keepalive` heartbeat).
  * Some strict OpenAI-compatible clients parse every SSE line as JSON and crash on `:` comments.
- * Set OMNIROUTE_SSE_COMMENTS=on to enable comment-shaped heartbeats and telemetry trailers.
- * #10524: defaults to disabled — strict SSE clients (WorkBuddy, etc.) break on `: x-omniroute-*`
- * comment lines. Operators who want the telemetry can opt in with OMNIROUTE_SSE_COMMENTS=on.
+ * Set AGENTPROXY_SSE_COMMENTS=on to enable comment-shaped heartbeats and telemetry trailers.
+ * #10524: defaults to disabled — strict SSE clients (WorkBuddy, etc.) break on `: x-agentproxy-*`
+ * comment lines. Operators who want the telemetry can opt in with AGENTPROXY_SSE_COMMENTS=on.
  */
 export function sseCommentsEnabled(): boolean {
   // SSR/edge safety: `process` is not defined in Workers/Deno/edge runtimes.
   if (typeof process === "undefined") return false;
-  const v = process.env.OMNIROUTE_SSE_COMMENTS;
+  const v = process.env.AGENTPROXY_SSE_COMMENTS;
   if (v === undefined || v === "") return false;
   const normalized = v.trim().toLowerCase();
   return normalized === "on" || normalized === "true" || normalized === "1" || normalized === "yes";
@@ -102,7 +111,7 @@ export function createSseHeartbeatTransform({
   }
 
   // Opt-out for strict OpenAI-compatible clients that JSON.parse every SSE line and
-  // crash on `:` comment heartbeats. OMNIROUTE_SSE_COMMENTS=off disables comment-shaped
+  // crash on `:` comment heartbeats. AGENTPROXY_SSE_COMMENTS=off disables comment-shaped
   // heartbeats (they become a no-op); valid `data:` heartbeats are unaffected.
   if (!sseCommentsEnabled() && shape === HEARTBEAT_SHAPES.COMMENT) {
     return new TransformStream<Uint8Array, Uint8Array>();

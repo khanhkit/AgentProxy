@@ -13,10 +13,10 @@ import type {
   ProbeLevel,
   AssessmentConfig,
   AssessmentRun,
-  AssessmentScope,
   AssessmentTrigger,
 } from "./types";
 import { DEFAULT_ASSESSMENT_CONFIG, PROBE_MESSAGES, PROBE_MAX_TOKENS } from "./types";
+import { resolveAgentProxyBaseUrl } from "@/shared/utils/resolveAgentProxyBaseUrl";
 
 interface ProbeResult {
   status: AssessmentStatus;
@@ -34,7 +34,7 @@ export class Assessor {
 
   constructor(
     apiKey: string,
-    baseUrl: string = "http://localhost:20128/v1",
+    baseUrl: string = resolveAgentProxyBaseUrl(),
     config: Partial<AssessmentConfig> = {}
   ) {
     this.apiKey = apiKey;

@@ -1,15 +1,15 @@
 ---
-title: "OmniRoute Plugin SDK"
+title: "AgentProxy Plugin SDK"
 version: 3.8.40
 lastUpdated: 2026-06-28
 ---
 
-# OmniRoute Plugin SDK
+# AgentProxy Plugin SDK
 
 ## Szybki start
 
 ```ts
-import { definePlugin } from "omniroute/plugins/sdk";
+import { definePlugin } from "agentproxy/plugins/sdk";
 
 export default definePlugin({
   name: "my-plugin",
@@ -196,7 +196,7 @@ Wartości konfiguracji są utrwalane w bazie danych i dostępne przez stronę ko
 ### Request Logger
 
 ```ts
-import { definePlugin } from "omniroute/plugins/sdk";
+import { definePlugin } from "agentproxy/plugins/sdk";
 
 export default definePlugin({
   name: "request-logger",
@@ -209,7 +209,7 @@ export default definePlugin({
 ### Rate Limiter
 
 ```ts
-import { definePlugin, blockRequest } from "omniroute/plugins/sdk";
+import { definePlugin, blockRequest } from "agentproxy/plugins/sdk";
 
 const requests = new Map<string, number[]>();
 
@@ -236,7 +236,7 @@ export default definePlugin({
 ### Response Transformer
 
 ```ts
-import { definePlugin } from "omniroute/plugins/sdk";
+import { definePlugin } from "agentproxy/plugins/sdk";
 
 export default definePlugin({
   name: "response-transformer",

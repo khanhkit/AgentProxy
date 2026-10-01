@@ -19,7 +19,7 @@ import os from "node:os";
 import path from "node:path";
 
 // ── DB harness (mirrors quota-pool-connections.test.ts) ─────────────────────
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-quota-groups-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-quota-groups-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../src/lib/db/core.ts");

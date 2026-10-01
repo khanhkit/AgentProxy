@@ -6,16 +6,16 @@
 
 ---
 
-title: "OmniRoute — Vodič za implementaciju na VM-u s Cloudflareom"
+title: "AgentProxy — Vodič za implementaciju na VM-u s Cloudflareom"
 version: 3.8.40
 lastUpdated: 2026-06-28
 ---
 
-# OmniRoute — Vodič za implementaciju na VM-u s Cloudflareom
+# AgentProxy — Vodič za implementaciju na VM-u s Cloudflareom
 
 🌐 **Languages:** 🇺🇸 [English](../../../../ops/VM_DEPLOYMENT_GUIDE.md) · 🇸🇦 [ar](../../../ar/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇦🇿 [az](../../../az/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇧🇬 [bg](../../../bg/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇧🇩 [bn](../../../bn/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇨🇿 [cs](../../../cs/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇩🇰 [da](../../../da/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇩🇪 [de](../../../de/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇬🇷 [el](../../../el/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇪🇸 [es](../../../es/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇪🇪 [et](../../../et/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇷 [fa](../../../fa/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇫🇮 [fi](../../../fi/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇫🇷 [fr](../../../fr/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇪 [ga](../../../ga/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇳 [gu](../../../gu/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇱 [he](../../../he/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇳 [hi](../../../hi/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇭🇺 [hu](../../../hu/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇩 [id](../../../id/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇹 [it](../../../it/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇯🇵 [ja](../../../ja/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇰🇷 [ko](../../../ko/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇱🇹 [lt](../../../lt/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇱🇻 [lv](../../../lv/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇳 [mr](../../../mr/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇲🇾 [ms](../../../ms/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇲🇹 [mt](../../../mt/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇳🇱 [nl](../../../nl/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇳🇴 [no](../../../no/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇵🇭 [phi](../../../phi/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇵🇱 [pl](../../../pl/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇵🇹 [pt](../../../pt/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇧🇷 [pt-BR](../../../pt-BR/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇷🇴 [ro](../../../ro/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇷🇺 [ru](../../../ru/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇸🇰 [sk](../../../sk/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇸🇮 [sl](../../../sl/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇷🇸 [sr](../../../sr/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇸🇪 [sv](../../../sv/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇰🇪 [sw](../../../sw/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇳 [ta](../../../ta/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇳 [te](../../../te/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇹🇭 [th](../../../th/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇹🇷 [tr](../../../tr/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇺🇦 [uk-UA](../../../uk-UA/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇵🇰 [ur](../../../ur/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇻🇳 [vi](../../../vi/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇨🇳 [zh-CN](../../../zh-CN/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇹🇼 [zh-TW](../../../zh-TW/docs/ops/VM_DEPLOYMENT_GUIDE.md)
 
-Cjeloviti vodič za instalaciju i konfiguraciju OmniRoutea na VM-u (VPS) s domenom kojom se upravlja putem Cloudflarea.
+Cjeloviti vodič za instalaciju i konfiguraciju AgentProxya na VM-u (VPS) s domenom kojom se upravlja putem Cloudflarea.
 
 ---
 
@@ -93,18 +93,18 @@ ufw enable
 
 ---
 
-## 2. Instaliranje OmniRoute
+## 2. Instaliranje AgentProxy
 
 ### 2.1 Kreiranje direktorija za konfiguraciju
 
 ```bash
-mkdir -p /opt/omniroute
+mkdir -p /opt/agentproxy
 ```
 
 ### 2.2 Kreiranje datoteke s varijablama okoline
 
 ```bash
-cat > /opt/omniroute/.env << 'EOF'
+cat > /opt/agentproxy/.env << 'EOF'
 # === Sigurnost ===
 JWT_SECRET=CHANGE-TO-A-UNIQUE-64-CHAR-SECRET-KEY
 INITIAL_PASSWORD=YourSecurePassword123!
@@ -112,7 +112,7 @@ API_KEY_SECRET=REPLACE-WITH-ANOTHER-SECRET-KEY
 STORAGE_ENCRYPTION_KEY=REPLACE-WITH-THIRD-SECRET-KEY
 STORAGE_ENCRYPTION_KEY_VERSION=v1
 MACHINE_ID_SALT=CHANGE-TO-A-UNIQUE-SALT
-OMNIROUTE_WS_BRIDGE_SECRET=REPLACE-WITH-WS-BRIDGE-SECRET  # POTREBNO u produkciji: koristi ga Codex Responses WS bridge
+AGENTPROXY_WS_BRIDGE_SECRET=REPLACE-WITH-WS-BRIDGE-SECRET  # POTREBNO u produkciji: koristi ga Codex Responses WS bridge
 
 # === Aplikacija ===
 PORT=20128
@@ -129,11 +129,11 @@ BASE_URL=http://127.0.0.1:20128
 # Javni URL vidljiv u pregledniku koji se koristi za OAuth povratne pozive, veze nadzorne ploče i generirane javne URL-ove.
 NEXT_PUBLIC_BASE_URL=https://llms.seudominio.com
 # Opcionalno explicitno preklapanje javnog izvora za generirane javne URL-ove resursa.
-# OMNIROUTE_PUBLIC_BASE_URL=https://llms.seudominio.com
+# AGENTPROXY_PUBLIC_BASE_URL=https://llms.seudominio.com
 
 # === Cloud sinkronizacija (opcionalno) ===
-# CLOUD_URL=https://cloud.omniroute.online
-# NEXT_PUBLIC_CLOUD_URL=https://cloud.omniroute.online
+# CLOUD_URL=https://cloud.agentproxy.example.com
+# NEXT_PUBLIC_CLOUD_URL=https://cloud.agentproxy.example.com
 EOF
 ```
 
@@ -142,22 +142,22 @@ EOF
 ### 2.3 Pokretanje kontejnera
 
 ```bash
-docker pull diegosouzapw/omniroute:latest
+docker pull khanhkit/agentproxy:latest
 
 docker run -d \
-  --name omniroute \
+  --name agentproxy \
   --restart unless-stopped \
-  --env-file /opt/omniroute/.env \
+  --env-file /opt/agentproxy/.env \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
-  diegosouzapw/omniroute:latest
+  -v agentproxy-data:/app/data \
+  khanhkit/agentproxy:latest
 ```
 
 ### 2.4 Provjerite je li pokrenuto
 
 ```bash
-docker ps | grep omniroute
-docker logs omniroute --tail 20
+docker ps | grep agentproxy
+docker logs agentproxy --tail 20
 ```
 
 Trebalo bi prikazati: `[DB] SQLite database ready` i `listening on port 20128`.
@@ -190,7 +190,7 @@ chmod 600 /etc/nginx/ssl/origin.key
 ### 3.2 Konfiguracija Nginx-a
 
 ```bash
-cat > /etc/nginx/sites-available/omniroute << 'NGINX'
+cat > /etc/nginx/sites-available/agentproxy << 'NGINX'
 # Zadani server — blokira izravan pristup putem IP adrese
 server {
     listen 80 default_server;
@@ -203,7 +203,7 @@ server {
     return 444;
 }
 
-# OmniRoute — HTTPS
+# AgentProxy — HTTPS
 server {
     listen 443 ssl;
     listen [::]:443 ssl;
@@ -246,16 +246,16 @@ server {
 NGINX
 ```
 
-Neka vremenska ograničenja (timeouts) reverse-proxy streama budu usklađena s OmniRoute env varijablama za timeout. Ako povećate
+Neka vremenska ograničenja (timeouts) reverse-proxy streama budu usklađena s AgentProxy env varijablama za timeout. Ako povećate
 `FETCH_TIMEOUT_MS` / `STREAM_IDLE_TIMEOUT_MS`, povećajte `proxy_read_timeout` / `proxy_send_timeout`
 iznad istog praga.
 
-OmniRoute koristi `NEXT_PUBLIC_BASE_URL` kao kanonsko podrijetlo (origin) okrenuto prema pregledniku za OAuth
+AgentProxy koristi `NEXT_PUBLIC_BASE_URL` kao kanonsko podrijetlo (origin) okrenuto prema pregledniku za OAuth
 callback-ove i generirane javne veze. Autentificirani upisi na nadzornoj ploči koriste zahtjeve istog podrijetla (same-origin)
 te CSRF zaštitu vezanu za sesiju, pa im nije potreban statički javni base URL. Zaglavlja
 `X-Forwarded-*` iznad ostaju korisni metapodaci za usmjeravanje, ali nisu zamjena
 za postavljanje eksplicitnog javnog URL-a kada su OAuth ili generirane veze u pregledniku potrebne. Omogućite
-`OMNIROUTE_TRUST_PROXY` samo ako OmniRoute nije izravno dostupan klijentima i vaš proxy
+`AGENTPROXY_TRUST_PROXY` samo ako AgentProxy nije izravno dostupan klijentima i vaš proxy
 uklanja/ponovno izgrađuje dolazna forwarded zaglavlja.
 
 ### 3.3 Omogućavanje i testiranje
@@ -264,8 +264,8 @@ uklanja/ponovno izgrađuje dolazna forwarded zaglavlja.
 # Uklonite zadanu konfiguraciju
 rm -f /etc/nginx/sites-enabled/default
 
-# Omogućite OmniRoute
-ln -sf /etc/nginx/sites-available/omniroute /etc/nginx/sites-enabled/omniroute
+# Omogućite AgentProxy
+ln -sf /etc/nginx/sites-available/agentproxy /etc/nginx/sites-enabled/agentproxy
 
 # Testirajte i ponovno učitajte
 nginx -t && systemctl reload nginx
@@ -309,40 +309,40 @@ curl -sI https://llms.seudominio.com/health
 ### Nadogradnja na novu verziju
 
 ```bash
-docker pull diegosouzapw/omniroute:latest
-docker stop omniroute && docker rm omniroute
-docker run -d --name omniroute --restart unless-stopped \
-  --env-file /opt/omniroute/.env \
+docker pull khanhkit/agentproxy:latest
+docker stop agentproxy && docker rm agentproxy
+docker run -d --name agentproxy --restart unless-stopped \
+  --env-file /opt/agentproxy/.env \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
-  diegosouzapw/omniroute:latest
+  -v agentproxy-data:/app/data \
+  khanhkit/agentproxy:latest
 ```
 
 ### Pregled zapisnika
 
 ```bash
-docker logs -f omniroute          # Prikaz u stvarnom vremenu
-docker logs omniroute --tail 50   # Zadnjih 50 redaka
+docker logs -f agentproxy          # Prikaz u stvarnom vremenu
+docker logs agentproxy --tail 50   # Zadnjih 50 redaka
 ```
 
 ### Ručna sigurnosna kopija baze podataka
 
 ```bash
 # Kopiranje podataka iz volumena na host
-docker cp omniroute:/app/data ./backup-$(date +%F)
+docker cp agentproxy:/app/data ./backup-$(date +%F)
 
 # Ili komprimiranje cijelog volumena
-docker run --rm -v omniroute-data:/data -v $(pwd):/backup \
-  alpine tar czf /backup/omniroute-data-$(date +%F).tar.gz /data
+docker run --rm -v agentproxy-data:/data -v $(pwd):/backup \
+  alpine tar czf /backup/agentproxy-data-$(date +%F).tar.gz /data
 ```
 
 ### Vraćanje iz sigurnosne kopije
 
 ```bash
-docker stop omniroute
-docker run --rm -v omniroute-data:/data -v $(pwd):/backup \
-  alpine sh -c "rm -rf /data/* && tar xzf /backup/omniroute-data-YYYY-MM-DD.tar.gz -C /"
-docker start omniroute
+docker stop agentproxy
+docker run --rm -v agentproxy-data:/data -v $(pwd):/backup \
+  alpine sh -c "rm -rf /data/* && tar xzf /backup/agentproxy-data-YYYY-MM-DD.tar.gz -C /"
+docker start agentproxy
 ```
 
 ---
@@ -411,13 +411,13 @@ Za udaljeni pristup putem Cloudflare Workers (bez izravnog izlaganja VM-a):
 
 ```bash
 # U lokalnom repozitoriju
-cd omnirouteCloud
+cd agentproxyCloud
 npm install
 npx wrangler login
 npx wrangler deploy
 ```
 
-Pogledajte također [TUNNELS_GUIDE.md](./TUNNELS_GUIDE.md) za vodič kroz Cloudflare Tunnel unutar repozitorija. Samostalni `omnirouteCloud/` worker nalazi se u odvojenom pratećem repozitoriju.
+Pogledajte također [TUNNELS_GUIDE.md](./TUNNELS_GUIDE.md) za vodič kroz Cloudflare Tunnel unutar repozitorija. Samostalni `agentproxyCloud/` worker nalazi se u odvojenom pratećem repozitoriju.
 
 ---
 
@@ -428,15 +428,15 @@ Pogledajte također [TUNNELS_GUIDE.md](./TUNNELS_GUIDE.md) za vodič kroz Cloudf
 | 22    | SSH         | Javno (uz fail2ban)          |
 | 80    | nginx HTTP  | Preusmjeravanje → HTTPS      |
 | 443   | nginx HTTPS | Putem Cloudflare Proxy-a     |
-| 20128 | OmniRoute   | Samo localhost (putem nginx) |
+| 20128 | AgentProxy   | Samo localhost (putem nginx) |
 
 ## Optimizacija za slabe/male VPS-ove
 
 Za implementacije na malim VPS instancama (1 GB RAM-a ili manje):
 
-- **Isključite pozadinske servise** — postavite `OMNIROUTE_DISABLE_BACKGROUND_SERVICES=1` da biste izostavili scheduler, MCP server i periodične zadatke održavanja. Pogledajte `docs/reference/ENVIRONMENT.md`.
+- **Isključite pozadinske servise** — postavite `AGENTPROXY_DISABLE_BACKGROUND_SERVICES=1` da biste izostavili scheduler, MCP server i periodične zadatke održavanja. Pogledajte `docs/reference/ENVIRONMENT.md`.
 - **Koristite SQLite WAL mod** — omogućen je po zadanim postavkama, smanjuje maksimalnu potrošnju memorije prilikom istovremenih čitanja.
-- **Ograničite V8 heap** — postavite `OMNIROUTE_MEMORY_MB` (npr. `512`) tako da runtime ne kalibrira gornju granicu veću od same VM-a. Pogledajte `docs/reference/ENVIRONMENT.md`.
-- **Prihvat teških zadataka automatski se skalira s ograničenjem heap-a** -- kada je iznad postavljen `OMNIROUTE_MEMORY_MB`, budžet za ulazne bajtove (`OMNIROUTE_CHAT_MAX_INFLIGHT_BYTES`) izvodi se iz te iste gornje granice, tako da memorijski ograničena VM automatski dobiva manji budžet za istovremene zahtjeve bez dodatnog podešavanja; suvišni zahtjevi dobivaju odgovor koji se može ponoviti, `503`, s `Retry-After` umjesto da se natječu za memoriju. Postavite naslijeđeno ograničenje broja zahtjeva `OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT` samo ako vam je potrebna tvrda gornja granica povrh toga.
+- **Ograničite V8 heap** — postavite `AGENTPROXY_MEMORY_MB` (npr. `512`) tako da runtime ne kalibrira gornju granicu veću od same VM-a. Pogledajte `docs/reference/ENVIRONMENT.md`.
+- **Prihvat teških zadataka automatski se skalira s ograničenjem heap-a** -- kada je iznad postavljen `AGENTPROXY_MEMORY_MB`, budžet za ulazne bajtove (`AGENTPROXY_CHAT_MAX_INFLIGHT_BYTES`) izvodi se iz te iste gornje granice, tako da memorijski ograničena VM automatski dobiva manji budžet za istovremene zahtjeve bez dodatnog podešavanja; suvišni zahtjevi dobivaju odgovor koji se može ponoviti, `503`, s `Retry-After` umjesto da se natječu za memoriju. Postavite naslijeđeno ograničenje broja zahtjeva `AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT` samo ako vam je potrebna tvrda gornja granica povrh toga.
 - **Izbjegavajte `next build` na VPS-u** — izgradite lokalno i implementirajte samostalni (standalone) izlaz (`.next/standalone/`).
-- **Nadzirite pomoću `top` / `free -m`** — OmniRoute obično koristi 200-400 MB RSS-a u stanju mirovanja na 1 GB VM-u.
+- **Nadzirite pomoću `top` / `free -m`** — AgentProxy obično koristi 200-400 MB RSS-a u stanju mirovanja na 1 GB VM-u.

@@ -4,11 +4,11 @@
  * Host: `api.anthropic.com` (opt-in — typical Anthropic API requests originate
  * from many callers, so this handler only fires when the user explicitly
  * configures DNS routing for Claude Code).
- * Format: Anthropic Messages API — POST `/v1/messages` on the OmniRoute router.
+ * Format: Anthropic Messages API — POST `/v1/messages` on the AgentProxy router.
  */
 import type { IncomingMessage, ServerResponse } from "node:http";
 import type { AgentId } from "../types";
-import { MitmHandlerBase } from "./base";
+import { MitmHandlerBase, createBoundedCollector } from "./base";
 
 export class ClaudeCodeHandler extends MitmHandlerBase {
   readonly agentId: AgentId = "claude-code";
@@ -48,20 +48,20 @@ export class ClaudeCodeHandler extends MitmHandlerBase {
 
       if (!upstream.ok) {
         const errText = await upstream.text().catch(() => "");
-        throw new Error(`OmniRoute ${upstream.status}: ${errText}`);
+        throw new Error(`AgentProxy ${upstream.status}: ${errText}`);
       }
 
-      let collected = "";
+      const sink = createBoundedCollector();
       await this.pipeSSE(upstream, res, (chunk) => {
-        collected += chunk.toString();
+        sink.push(chunk.toString());
       });
 
       const total = this.now() - startedAt;
       this.hookBufferUpdate(intercepted, {
         status: upstream.status,
         responseHeaders: Object.fromEntries(upstream.headers.entries()),
-        responseBody: collected,
-        responseSize: Buffer.byteLength(collected),
+        responseBody: sink.text,
+        responseSize: sink.totalBytes,
         proxyLatencyMs: upstreamStart - startedAt,
         upstreamLatencyMs: total - (upstreamStart - startedAt),
       });

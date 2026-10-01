@@ -7,6 +7,7 @@ import {
   supportsDualAuthProvider,
 } from "../../src/shared/constants/providers.ts";
 import { REGISTRY } from "../../open-sse/config/providerRegistry.ts";
+import { CODEBUDDY_CN_USER_AGENT } from "../../open-sse/config/providerHeaderProfiles.ts";
 import { getExecutor } from "../../open-sse/executors/index.ts";
 import { CodeBuddyCnExecutor } from "../../open-sse/executors/codebuddy-cn.ts";
 import {
@@ -143,6 +144,7 @@ test("codebuddy-cn registry entry has expected shape", () => {
   assert.equal(r.headers?.["X-IDE-Name"], "CLI");
   assert.equal(r.headers?.["x-requested-with"], "XMLHttpRequest");
   assert.equal(r.headers?.["x-codebuddy-request"], "1");
+  assert.equal(r.headers?.["User-Agent"], CODEBUDDY_CN_USER_AGENT);
   // 15 models from the upstream catalog
   const ids = r.models.map((m) => m.id);
   for (const expected of [
@@ -171,7 +173,7 @@ test("codebuddy-cn glm-5.2 carries 1M context and openai-style reasoning that ca
   const r = REGISTRY["codebuddy-cn"];
   const m = r.models.find((x) => x.id === "glm-5.2");
   assert.ok(m, "glm-5.2 must exist");
-  // contextLength is the OmniRoute analogue of upstream's contextWindow
+  // contextLength is the AgentProxy analogue of upstream's contextWindow
   assert.equal(m.contextLength, 1000000);
   assert.equal(m.supportsReasoning, true);
 });
@@ -466,6 +468,7 @@ test("codebuddy-cn OAuth provider is wired with device_code flow and GET-poll on
   const cb = PROVIDERS_MAP["codebuddy-cn"];
   assert.ok(cb, "PROVIDERS map must include 'codebuddy-cn'");
   assert.equal(cb.flowType, "device_code");
+  assert.equal(CODEBUDDY_CN_CONFIG.userAgent, CODEBUDDY_CN_USER_AGENT);
   assert.equal(typeof cb.requestDeviceCode, "function");
   assert.equal(typeof cb.pollToken, "function");
 
@@ -516,7 +519,9 @@ test("codebuddy-cn is in USAGE_SUPPORTED_PROVIDERS and quota handler parses Tenc
   const deductionEnd = 32503680000; // very far future (seconds)
   const bonus1End = "2026-07-01T00:00:00Z";
   const bonus2End = "2026-06-25T00:00:00Z";
-  globalThis.fetch = async () => {
+  let usageHeaders: HeadersInit | undefined;
+  globalThis.fetch = async (_url: string | URL | Request, init?: RequestInit) => {
+    usageHeaders = init?.headers;
     return new Response(
       JSON.stringify({
         code: 0,
@@ -572,6 +577,7 @@ test("codebuddy-cn is in USAGE_SUPPORTED_PROVIDERS and quota handler parses Tenc
     // Soonest-expiring first: Bonus B (Jun 25) before Bonus A (Jul 1).
     assert.equal(r.quotas["Bonus Pack 1"].total, 25, "Bonus Pack 1 should be the soonest (B)");
     assert.equal(r.quotas["Bonus Pack 2"].total, 50, "Bonus Pack 2 should be the later (A)");
+    assert.equal(new Headers(usageHeaders).get("User-Agent"), CODEBUDDY_CN_USER_AGENT);
   } finally {
     globalThis.fetch = origFetch;
   }

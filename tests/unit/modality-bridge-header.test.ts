@@ -1,6 +1,6 @@
 /**
  * Modality Bridge stats + transparency header (PR-1 Task 9):
- * - buildModalityBridgeHeader() derives the `x-omniroute-modality-bridge`
+ * - buildModalityBridgeHeader() derives the `x-agentproxy-modality-bridge`
  *   response header value from pre-call guardrail results (describe path only —
  *   reroute and untouched requests get no header).
  * - recordBridgeUse()/getBridgeStats() keep in-memory per-modality counters.

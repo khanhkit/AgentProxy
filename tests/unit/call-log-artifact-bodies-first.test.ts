@@ -7,17 +7,16 @@ import path from "node:path";
 import { useDecollidedMigrationsDir } from "./helpers/decollidedMigrationsDir.ts";
 
 useDecollidedMigrationsDir();
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-call-log-bodies-first-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-call-log-bodies-first-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
-const { writeCallArtifact, readCallArtifact, isSizeLimitOmissionMarker } = await import(
-  "../../src/lib/usage/callLogArtifacts.ts"
-);
+const { writeCallArtifact, readCallArtifact, isSizeLimitOmissionMarker } =
+  await import("../../src/lib/usage/callLogArtifacts.ts");
 
 const OMITTED = "[omitted: call log artifact size limit exceeded]";
 const PIPELINE_MARKER = {
   error: {
-    _omniroute_truncated: true,
+    _agentproxy_truncated: true,
     reason: "call_log_artifact_size_limit_exceeded",
   },
 };
@@ -81,7 +80,7 @@ test("artifact bodies-first eviction", async (t) => {
     );
 
     assert.equal(stored.requestBody, OMITTED);
-    assert.equal(stored.responseBody, OMITTED);
+    assert.deepEqual(stored.responseBody, { output: "response" });
     // camelCase per requestLogger.ts:19.
     assert.deepEqual(
       (stored.pipeline as Record<string, unknown>).providerResponse,
@@ -163,8 +162,8 @@ test("artifact bodies-first eviction", async (t) => {
       })
     );
 
-    assert.ok(stored.responseBody, "the marker is truthy -- that is the trap");
-    assert.equal(isSizeLimitOmissionMarker(stored.responseBody), true);
+    assert.deepEqual(stored.responseBody, { output: "response" });
+    assert.equal(isSizeLimitOmissionMarker(stored.responseBody), false);
     assert.equal(isSizeLimitOmissionMarker(stored.requestBody), true);
     assert.equal(isSizeLimitOmissionMarker({ output: "response" }), false);
     assert.equal(isSizeLimitOmissionMarker(null), false);

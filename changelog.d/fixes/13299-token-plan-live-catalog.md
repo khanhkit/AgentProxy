@@ -1,0 +1,1 @@
+- **fix(providers):** Fetch Qwen and Alibaba Token Plan model catalogs from their public regional product-catalog gateways, with public-only URL validation and cached/local fallback when discovery is unavailable.

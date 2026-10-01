@@ -11,7 +11,7 @@ import path from "node:path";
 // write but get silently dropped on DB read-back. This file proves the round trip
 // and the parallel-schema acceptance.
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-omniglyph-registries-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-omniglyph-registries-"));
 const ORIGINAL_DATA_DIR = process.env.DATA_DIR;
 process.env.DATA_DIR = TEST_DATA_DIR;
 
@@ -19,7 +19,7 @@ const core = await import("../../../src/lib/db/core.ts");
 const { getCompressionSettings, updateCompressionSettings, normalizeStackedPipeline } =
   await import("../../../src/lib/db/compression.ts");
 const { deriveDefaultPlan } =
-  await import("@omniroute/open-sse/services/compression/deriveDefaultPlan.ts");
+  await import("@agentproxy/open-sse/services/compression/deriveDefaultPlan.ts");
 const { compressionModeSchema } = await import("../../../src/shared/validation/schemas/combo.ts");
 const { compressionConfigureInput } = await import("../../../open-sse/mcp-server/schemas/tools.ts");
 

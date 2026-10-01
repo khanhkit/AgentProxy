@@ -13,7 +13,7 @@ import path from "node:path";
 //   2. GET/PUT resolve without crashing.
 //   3. `modelCatalogCacheTtlMs` round-trips through PUT then GET.
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-cache-config-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-cache-config-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.DISABLE_SQLITE_AUTO_BACKUP = "true";
 

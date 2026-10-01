@@ -6,16 +6,16 @@
 
 ---
 
-title: "OmniRoute — Treoir Imeartha ar VM le Cloudflare"
+title: "AgentProxy — Treoir Imeartha ar VM le Cloudflare"
 version: 3.8.40
 lastUpdated: 2026-06-28
 ---
 
-# OmniRoute — Treoir Imeartha ar VM le Cloudflare
+# AgentProxy — Treoir Imeartha ar VM le Cloudflare
 
 🌐 **Languages:** 🇺🇸 [English](../../../../ops/VM_DEPLOYMENT_GUIDE.md) · 🇸🇦 [ar](../../../ar/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇦🇿 [az](../../../az/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇧🇬 [bg](../../../bg/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇧🇩 [bn](../../../bn/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇨🇿 [cs](../../../cs/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇩🇰 [da](../../../da/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇩🇪 [de](../../../de/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇬🇷 [el](../../../el/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇪🇸 [es](../../../es/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇪🇪 [et](../../../et/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇷 [fa](../../../fa/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇫🇮 [fi](../../../fi/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇫🇷 [fr](../../../fr/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇳 [gu](../../../gu/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇱 [he](../../../he/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇳 [hi](../../../hi/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇭🇷 [hr](../../../hr/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇭🇺 [hu](../../../hu/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇩 [id](../../../id/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇹 [it](../../../it/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇯🇵 [ja](../../../ja/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇰🇷 [ko](../../../ko/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇱🇹 [lt](../../../lt/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇱🇻 [lv](../../../lv/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇳 [mr](../../../mr/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇲🇾 [ms](../../../ms/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇲🇹 [mt](../../../mt/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇳🇱 [nl](../../../nl/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇳🇴 [no](../../../no/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇵🇭 [phi](../../../phi/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇵🇱 [pl](../../../pl/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇵🇹 [pt](../../../pt/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇧🇷 [pt-BR](../../../pt-BR/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇷🇴 [ro](../../../ro/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇷🇺 [ru](../../../ru/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇸🇰 [sk](../../../sk/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇸🇮 [sl](../../../sl/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇷🇸 [sr](../../../sr/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇸🇪 [sv](../../../sv/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇰🇪 [sw](../../../sw/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇳 [ta](../../../ta/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇮🇳 [te](../../../te/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇹🇭 [th](../../../th/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇹🇷 [tr](../../../tr/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇺🇦 [uk-UA](../../../uk-UA/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇵🇰 [ur](../../../ur/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇻🇳 [vi](../../../vi/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇨🇳 [zh-CN](../../../zh-CN/docs/ops/VM_DEPLOYMENT_GUIDE.md) · 🇹🇼 [zh-TW](../../../zh-TW/docs/ops/VM_DEPLOYMENT_GUIDE.md)
 
-Treoir iomlán chun OmniRoute a shuitear agus a chumrú ar VM (VPS) le fearann á bhainistiú trí Cloudflare.
+Treoir iomlán chun AgentProxy a shuitear agus a chumrú ar VM (VPS) le fearann á bhainistiú trí Cloudflare.
 
 ## Réamhriachtanais
 
@@ -91,18 +91,18 @@ ufw enable
 
 ---
 
-## 2. Suiteáil OmniRoute
+## 2. Suiteáil AgentProxy
 
 ### 2.1 Cruthaigh eolaire cumraíochta
 
 ```bash
-mkdir -p /opt/omniroute
+mkdir -p /opt/agentproxy
 ```
 
 ### 2.2 Cruthaigh comhad athróga timpeallachta
 
 ```bash
-cat > /opt/omniroute/.env << 'EOF'
+cat > /opt/agentproxy/.env << 'EOF'
 # === Slándáil ===
 JWT_SECRET=Cuir le eochair rúnda uathúil 64 carachtar
 INITIAL_PASSWORD=D'FhocalFaireSábháilte123!
@@ -110,7 +110,7 @@ API_KEY_SECRET=ATHCHUIR le heochair rúnda eile
 STORAGE_ENCRYPTION_KEY=ATHCHUIR le heochair rúnda tríú
 STORAGE_ENCRYPTION_KEY_VERSION=v1
 MACHINE_ID_SALT=ATHCHUIR le salann uathúil
-OMNIROUTE_WS_BRIDGE_SECRET=ATHCHUIR le rún comhshreafa WS  # RIACHTANACH i dtáirgeadh: úsáidte ag Codex Responses WS bridge
+AGENTPROXY_WS_BRIDGE_SECRET=ATHCHUIR le rún comhshreafa WS  # RIACHTANACH i dtáirgeadh: úsáidte ag Codex Responses WS bridge
 
 # === App ===
 PORT=20128
@@ -127,11 +127,11 @@ BASE_URL=http://127.0.0.1:20128
 # URL atá dírithe ar an mbrabhsálaí a úsáidtear le haghaidh aischallúcháin OAuth, naisc painéil, agus URLanna poiblí ghineadh.
 NEXT_PUBLIC_BASE_URL=https://llms.seudominio.com
 # Forchur ardtollsú poiblí roghnach d'URLanna sócmhainní poiblí ghineadh.
-# OMNIROUTE_PUBLIC_BASE_URL=https://llms.seudominio.com
+# AGENTPROXY_PUBLIC_BASE_URL=https://llms.seudominio.com
 
 # === Sioncronú Scamall (roghnach) ===
-# CLOUD_URL=https://cloud.omniroute.online
-# NEXT_PUBLIC_CLOUD_URL=https://cloud.omniroute.online
+# CLOUD_URL=https://cloud.agentproxy.example.com
+# NEXT_PUBLIC_CLOUD_URL=https://cloud.agentproxy.example.com
 EOF
 ```
 
@@ -140,22 +140,22 @@ EOF
 ### 2.3 Tosaigh an coimeádán
 
 ```bash
-docker pull diegosouzapw/omniroute:latest
+docker pull khanhkit/agentproxy:latest
 
 docker run -d \
-  --name omniroute \
+  --name agentproxy \
   --restart unless-stopped \
-  --env-file /opt/omniroute/.env \
+  --env-file /opt/agentproxy/.env \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
-  diegosouzapw/omniroute:latest
+  -v agentproxy-data:/app/data \
+  khanhkit/agentproxy:latest
 ```
 
 ### 2.4 Deimhnigh go bhfuil sé ag rith
 
 ```bash
-docker ps | grep omniroute
-docker logs omniroute --tail 20
+docker ps | grep agentproxy
+docker logs agentproxy --tail 20
 ```
 
 Ba cheart go dtaifeadhfaí: `[DB] SQLite database ready` agus `ag éisteacht ar phort 20128`.
@@ -188,7 +188,7 @@ chmod 600 /etc/nginx/ssl/origin.key
 ### 3.2 Cumraíocht Nginx
 
 ```bash
-cat > /etc/nginx/sites-available/omniroute << 'NGINX'
+cat > /etc/nginx/sites-available/agentproxy << 'NGINX'
 # Freastalaí réamhshocraithe — cosnaíonn sé rochtain dhíreach trí IP
 server {
     listen 80 default_server;
@@ -201,7 +201,7 @@ server {
     return 444;
 }
 
-# OmniRoute — HTTPS
+# AgentProxy — HTTPS
 server {
     listen 443 ssl;
     listen [::]:443 ssl;
@@ -244,16 +244,16 @@ server {
 NGINX
 ```
 
-Coinnigh amanna amach seachfhreastalaí aisiompaithe ag teacht le do athróga timpeallachta am amach OmniRoute. Má ardúann tú
+Coinnigh amanna amach seachfhreastalaí aisiompaithe ag teacht le do athróga timpeallachta am amach AgentProxy. Má ardúann tú
 `FETCH_TIMEOUT_MS` / `STREAM_IDLE_TIMEOUT_MS`, ardú `proxy_read_timeout` / `proxy_send_timeout`
 thuas an tairseach chéanna.
 
-Úsáideann OmniRoute `NEXT_PUBLIC_BASE_URL` mar bhunús canónach brabhsálaí-polaireachta do callbacks
+Úsáideann AgentProxy `NEXT_PUBLIC_BASE_URL` mar bhunús canónach brabhsálaí-polaireachta do callbacks
 OAuth agus naisc phoiblí gineadh. Úsáideann tuairiscí clárlainne fíordheimhnithe iarratais comhfhoinse
 le cosaint CSRF teoranta seisiún, mar sin ní theastaíonn uathoibriú URL poiblí statach. Tá na
 ceanntoiscí `X-Forwarded-*` thuas fós úsáideach mar mhaisc faisnéise ródaithe, ach níl siad ina n-ionad
 chun URL poiblí soiléir a shocrú nuair a theastaíonn ceann amháin do OAuth nó do naisc brabhsálaí gineadh. Ná cumasaigh ach amháin
-`OMNIROUTE_TRUST_PROXY` mura bhfuil OmniRoute inrochtana go díreach ag cliaint agus do seachfhreastalaí
+`AGENTPROXY_TRUST_PROXY` mura bhfuil AgentProxy inrochtana go díreach ag cliaint agus do seachfhreastalaí
 ag ceansú/athchóirigh ceanntoiscí aisiompaithe isteach.
 
 ## 4. Cumraigh DNS Cloudflare
@@ -280,40 +280,40 @@ curl -sI https://llms.seudominio.com/health
 ### Uasghrádú go leagan nua
 
 ```bash
-docker pull diegosouzapw/omniroute:latest
-docker stop omniroute && docker rm omniroute
-docker run -d --name omniroute --restart unless-stopped \
-  --env-file /opt/omniroute/.env \
+docker pull khanhkit/agentproxy:latest
+docker stop agentproxy && docker rm agentproxy
+docker run -d --name agentproxy --restart unless-stopped \
+  --env-file /opt/agentproxy/.env \
   -p 20128:20128 \
-  -v omniroute-data:/app/data \
-  diegosouzapw/omniroute:latest
+  -v agentproxy-data:/app/data \
+  khanhkit/agentproxy:latest
 ```
 
 ### Amharc logaí
 
 ```bash
-docker logs -f omniroute          # Sruth fíor-ama
-docker logs omniroute --tail 50   # An 50 líne deireanach
+docker logs -f agentproxy          # Sruth fíor-ama
+docker logs agentproxy --tail 50   # An 50 líne deireanach
 ```
 
 ### Táirgeadh láimhe de bhunachar sonraí
 
 ```bash
 # Cóip sonraí ón toirt go dtí an óstach
-docker cp omniroute:/app/data ./backup-$(date +%F)
+docker cp agentproxy:/app/data ./backup-$(date +%F)
 
 # Nó comhbhrúigh an toirt iomlán
-docker run --rm -v omniroute-data:/data -v $(pwd):/backup \
-  alpine tar czf /backup/omniroute-data-$(date +%F).tar.gz /data
+docker run --rm -v agentproxy-data:/data -v $(pwd):/backup \
+  alpine tar czf /backup/agentproxy-data-$(date +%F).tar.gz /data
 ```
 
 ### Athchóirigh ó thaisclann
 
 ```bash
-docker stop omniroute
-docker run --rm -v omniroute-data:/data -v $(pwd):/backup \
-  alpine sh -c "rm -rf /data/* && tar xzf /backup/omniroute-data-YYYY-MM-DD.tar.gz -C /"
-docker start omniroute
+docker stop agentproxy
+docker run --rm -v agentproxy-data:/data -v $(pwd):/backup \
+  alpine sh -c "rm -rf /data/* && tar xzf /backup/agentproxy-data-YYYY-MM-DD.tar.gz -C /"
+docker start agentproxy
 ```
 
 ---
@@ -382,13 +382,13 @@ Le haghaidh rochtain iarghalta trí Cloudflare Workers (gan an VM a nochtadh go 
 
 ```bash
  san stór áitiúil
-cd omnirouteCloud
+cd agentproxyCloud
 npm install
 npx wrangler login
 npx wrangler deploy
 ```
 
-Féach freisin [TUNNELS_GUIDE.md](./TUNNELS_GUIDE.md) le haghaidh an treoir siúlóid Cloudflare Tunnel sa stór. Tá an fostaí Scartha `omnirouteCloud/` ina stór comhshaoil ar leith.
+Féach freisin [TUNNELS_GUIDE.md](./TUNNELS_GUIDE.md) le haghaidh an treoir siúlóid Cloudflare Tunnel sa stór. Tá an fostaí Scartha `agentproxyCloud/` ina stór comhshaoil ar leith.
 
 ---
 
@@ -399,15 +399,15 @@ Féach freisin [TUNNELS_GUIDE.md](./TUNNELS_GUIDE.md) le haghaidh an treoir siú
 | 22    | SSH         | Poiblí (le fail2ban)         |
 | 80    | nginx HTTP  | Atreorú → HTTPS              |
 | 443   | nginx HTTPS | Trí Cloudflare Proxy         |
-| 20128 | OmniRoute   | Localhost amháin (trí nginx) |
+| 20128 | AgentProxy   | Localhost amháin (trí nginx) |
 
 ## Optamú do VPS le Cuimhne Íseal / Beag
 
 Le haghaidh imscaradh ar chásanna beaga VPS (1 GB RAM nó níos lú):
 
-- **Díchumasaigh seirbhísí cúlra** — socraigh `OMNIROUTE_DISABLE_BACKGROUND_SERVICES=1` chun sceidealóir, freastalaí MCP, agus tascanna cothabhála tréimhsiúla a scipeáil. Féach `docs/reference/ENVIRONMENT.md`.
+- **Díchumasaigh seirbhísí cúlra** — socraigh `AGENTPROXY_DISABLE_BACKGROUND_SERVICES=1` chun sceidealóir, freastalaí MCP, agus tascanna cothabhála tréimhsiúla a scipeáil. Féach `docs/reference/ENVIRONMENT.md`.
 - **Úsáid mód WAL SQLite** — cumasaithe de réir réamhshocraithe, laghdaíonn sé buaicchuimhne le linn léamha comhthráthacha.
-- **Cuir caipín ar an gcarn V8** — socraigh `OMNIROUTE_MEMORY_MB` (m.sh. `512`) ionas nach ndéanfaidh an t-am rite uasteorainn a chalabrú níos mó ná an VM. Féach `docs/reference/ENVIRONMENT.md`.
-- **Scálaíonn ligean isteach trom-mheáchain go huathoibríoch le caipín an chairn** -- nuair a bhíonn `OMNIROUTE_MEMORY_MB` socraithe thuas, díorthaíonn an buiséad beart ionghabhála (`OMNIROUTE_CHAT_MAX_INFLIGHT_BYTES`) é féin ón uasteorainn chéanna sin, mar sin faigheann VM atá srianta ó thaobh cuimhne de buiséad níos lú d'iarratais chomhthráthacha cheana féin gan tiúnadh breise; faigheann iarratais iomarcacha `503` in-aththriail le `Retry-After` in ionad dul san iomaíocht ar chuimhne. Socraigh an caipín comhairimh iarratas `OMNIROUTE_CHAT_MAX_HEAVY_IN_FLIGHT` oidhreachtúil ach amháin má theastaíonn uasteorainn chrua uait ar a bharr sin.
+- **Cuir caipín ar an gcarn V8** — socraigh `AGENTPROXY_MEMORY_MB` (m.sh. `512`) ionas nach ndéanfaidh an t-am rite uasteorainn a chalabrú níos mó ná an VM. Féach `docs/reference/ENVIRONMENT.md`.
+- **Scálaíonn ligean isteach trom-mheáchain go huathoibríoch le caipín an chairn** -- nuair a bhíonn `AGENTPROXY_MEMORY_MB` socraithe thuas, díorthaíonn an buiséad beart ionghabhála (`AGENTPROXY_CHAT_MAX_INFLIGHT_BYTES`) é féin ón uasteorainn chéanna sin, mar sin faigheann VM atá srianta ó thaobh cuimhne de buiséad níos lú d'iarratais chomhthráthacha cheana féin gan tiúnadh breise; faigheann iarratais iomarcacha `503` in-aththriail le `Retry-After` in ionad dul san iomaíocht ar chuimhne. Socraigh an caipín comhairimh iarratas `AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT` oidhreachtúil ach amháin má theastaíonn uasteorainn chrua uait ar a bharr sin.
 - **Seachain `next build` ar an VPS** — tóg go háitiúil agus imlonnaigh an t-aschur neamhspleách (`.next/standalone/`).
-- **Déan monatóireacht le `top` / `free -m`** — úsáideann OmniRoute 200-400 MB RSS de ghnáth agus é díomhaoin ar VM 1 GB.
+- **Déan monatóireacht le `top` / `free -m`** — úsáideann AgentProxy 200-400 MB RSS de ghnáth agus é díomhaoin ar VM 1 GB.

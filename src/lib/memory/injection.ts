@@ -28,7 +28,8 @@ export interface ChatMessage {
 export interface ChatRequest {
   model: string;
   messages: ChatMessage[];
-  system?: string;
+  /** Anthropic-shaped bodies carry the system prompt here, as a string or text blocks. */
+  system?: string | Array<{ type: string; text?: string; [key: string]: unknown }>;
   temperature?: number;
   max_tokens?: number;
   stream?: boolean;
@@ -76,7 +77,7 @@ export function providerSupportsSystemMessage(provider: string | null | undefine
  * they are documented as strict.
  *
  * Self-hosted deployments can extend this list without a source change via
- * OMNIROUTE_STRICT_SYSTEM_PROVIDERS (comma-separated provider ids,
+ * AGENTPROXY_STRICT_SYSTEM_PROVIDERS (comma-separated provider ids,
  * case-insensitive) — e.g. a custom OpenAI-compatible connection in front of a
  * self-hosted Qwen3.5+/3.6 model, whose chat template enforces the same
  * single-leading-system-message constraint as xiaomi-mimo.
@@ -84,13 +85,11 @@ export function providerSupportsSystemMessage(provider: string | null | undefine
 const BUILTIN_PROVIDERS_SYSTEM_MUST_BE_FIRST = new Set(["xiaomi-mimo", "mimo", "tokenrouter"]);
 
 /**
- * Parses OMNIROUTE_STRICT_SYSTEM_PROVIDERS into a normalized id list.
+ * Parses AGENTPROXY_STRICT_SYSTEM_PROVIDERS into a normalized id list.
  * Exported for tests; not expected to be called directly by other modules.
  */
-export function parseStrictSystemProvidersEnv(
-  env: NodeJS.ProcessEnv = process.env,
-): string[] {
-  const raw = env.OMNIROUTE_STRICT_SYSTEM_PROVIDERS ?? "";
+export function parseStrictSystemProvidersEnv(env: NodeJS.ProcessEnv = process.env): string[] {
+  const raw = env.AGENTPROXY_STRICT_SYSTEM_PROVIDERS ?? "";
   return raw
     .split(",")
     .map((id) => id.trim().toLowerCase())
@@ -106,11 +105,11 @@ function resolveProvidersSystemMustBeFirst(env: NodeJS.ProcessEnv = process.env)
 /**
  * Returns true when the given provider requires the system message to be first.
  * Falls back to false for unknown/null providers (preserves current behavior).
- * Honors OMNIROUTE_STRICT_SYSTEM_PROVIDERS for self-hosted additions (see above).
+ * Honors AGENTPROXY_STRICT_SYSTEM_PROVIDERS for self-hosted additions (see above).
  */
 export function systemMessageMustBeFirst(
   provider: string | null | undefined,
-  env: NodeJS.ProcessEnv = process.env,
+  env: NodeJS.ProcessEnv = process.env
 ): boolean {
   if (!provider) return false;
   const normalized = provider.toLowerCase().trim();
@@ -169,6 +168,15 @@ function injectSystemFirst(
   if (first && first.role === "system") {
     const merged: ChatMessage = { ...first, content: `${memoryText}\n${first.content}` };
     return { ...request, messages: [merged, ...messages.slice(1)] };
+  }
+  // Anthropic-shaped bodies carry the system prompt in the top-level `system`
+  // field. Merge memory there instead of creating a system-role message that
+  // Anthropic rejects inside the messages array.
+  if (typeof request.system === "string") {
+    return { ...request, system: `${memoryText}\n${request.system}` };
+  }
+  if (Array.isArray(request.system)) {
+    return { ...request, system: [{ type: "text", text: memoryText }, ...request.system] };
   }
   const memorySystemMessage: ChatMessage = { role: "system", content: memoryText };
   return { ...request, messages: [memorySystemMessage, ...messages] };
@@ -279,6 +287,15 @@ export function injectMemory(
     !endsWithServerToolResult(messages[cacheSafeIndex - 1])
   ) {
     return injectSystemFirst(request, messages, memoryText, memories.length);
+  }
+
+  // Anthropic-shaped requests with a top-level system field must keep memory
+  // there instead of introducing a system-role message into `messages`.
+  if (supportsSystem && (typeof request.system === "string" || Array.isArray(request.system))) {
+    if (typeof request.system === "string") {
+      return { ...request, system: `${memoryText}\n${request.system}` };
+    }
+    return { ...request, system: [{ type: "text", text: memoryText }, ...request.system] };
   }
 
   // Strategy 1 (system): prepend before existing system messages, preserving the

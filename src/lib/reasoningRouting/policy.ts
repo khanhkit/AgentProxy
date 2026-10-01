@@ -8,7 +8,10 @@ import {
 } from "@/lib/db/reasoningRoutingRules";
 import { getResolvedModelCapabilities } from "@/lib/modelCapabilities";
 import { normalizeRoutingTags } from "@/domain/tagRouter";
-import { splitClaudeEffortSuffix } from "@omniroute/open-sse/config/providerModels.ts";
+import {
+  splitClaudeEffortSuffix,
+  getProviderModels,
+} from "@agentproxy/open-sse/config/providerModels.ts";
 
 type JsonRecord = Record<string, unknown>;
 const EFFORTS = new Set<ReasoningEffort>([
@@ -264,6 +267,29 @@ function capabilityFor(
   const capabilities = getResolvedModelCapabilities(model);
   if (capabilities.supportsThinking === false) return "unsupported" as const;
   if (targetEffort === "max" || targetEffort === "ultra") {
+    const declaredEfforts = capabilities.supportedThinkingEfforts;
+    const provider = model.includes("/") ? model.slice(0, model.indexOf("/")) : "";
+    const modelIdForRegistry = model.startsWith(`${provider}/`)
+      ? model.slice(provider.length + 1)
+      : model;
+    const registryDeclared = provider
+      ? getProviderModels(provider).find(
+          (entry) => entry.id === modelIdForRegistry || entry.aliases?.includes(modelIdForRegistry)
+        )?.supportedThinkingEfforts
+      : undefined;
+
+    if (Array.isArray(registryDeclared) && registryDeclared.length > 0) {
+      return registryDeclared.includes(targetEffort)
+        ? ("supported" as const)
+        : ("unsupported" as const);
+    }
+
+    if (Array.isArray(declaredEfforts) && declaredEfforts.length > 0) {
+      return declaredEfforts.includes(targetEffort)
+        ? ("supported" as const)
+        : ("unsupported" as const);
+    }
+
     const normalized = model.toLowerCase().replace(/^(?:codex|cx)\//, "");
     const supported =
       targetEffort === "ultra"
@@ -508,14 +534,14 @@ export function attachReasoningRuleDirective(
     ...source,
     model: decision.rule.scope === "connection" ? source.model : decision.targetModel,
   };
-  body._omnirouteReasoningRule = {
+  body._agentproxyReasoningRule = {
     id: decision.rule.id,
     effortMode: decision.rule.effortMode,
     targetEffort: decision.targetEffort,
     budgetAction: decision.targetEffort === "none" ? "remove" : decision.rule.budgetAction,
     budgetTokens: decision.rule.budgetTokens,
   };
-  body._omnirouteReasoningRouteTrace = {
+  body._agentproxyReasoningRouteTrace = {
     ruleId: decision.rule.id,
     ruleName: decision.rule.name,
     scope: decision.rule.scope,
@@ -531,20 +557,25 @@ export function attachReasoningRuleDirective(
   return body;
 }
 
-export function applyReasoningRuleDirective(bodyInput: unknown): unknown {
+export function applyReasoningRuleDirective(
+  bodyInput: unknown,
+  targetFormat?: "openai-responses" | "claude"
+): unknown {
   const source = asRecord(bodyInput);
-  const directive = asRecord(source._omnirouteReasoningRule);
+  const directive = asRecord(source._agentproxyReasoningRule);
   if (!directive.id) return bodyInput;
   const body = { ...source };
-  delete body._omnirouteReasoningRule;
+  delete body._agentproxyReasoningRule;
   const effortMode = directive.effortMode;
   const targetEffort = effort(directive.targetEffort);
   if (effortMode === "force" && targetEffort === "none") clearReasoning(body);
   else if ((effortMode === "force" || effortMode === "default") && targetEffort) {
     if (effortMode === "force") clearDiscreteReasoning(body);
-    body.reasoning_effort = targetEffort;
-    body.reasoning = { ...asRecord(body.reasoning), effort: targetEffort };
-    body.output_config = { ...asRecord(body.output_config), effort: targetEffort };
+    if (!targetFormat) body.reasoning_effort = targetEffort;
+    if (targetFormat !== "claude")
+      body.reasoning = { ...asRecord(body.reasoning), effort: targetEffort };
+    if (targetFormat !== "openai-responses")
+      body.output_config = { ...asRecord(body.output_config), effort: targetEffort };
   }
   applyBudget(
     body,

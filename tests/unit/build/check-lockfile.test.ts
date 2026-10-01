@@ -252,7 +252,7 @@ test("runWorkspaceDependencyCheck: reports npm ls failures without masking diagn
 });
 
 test("workspace check validates lock entries independently of node_modules", (t) => {
-  const root = mkdtempSync(path.join(os.tmpdir(), "omniroute-lockfile-check-"));
+  const root = mkdtempSync(path.join(os.tmpdir(), "agentproxy-lockfile-check-"));
   t.after(() => rmSync(root, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 }));
   mkdirSync(path.join(root, "packages", "example"), { recursive: true });
   writeFileSync(

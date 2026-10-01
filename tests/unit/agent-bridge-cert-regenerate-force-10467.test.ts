@@ -15,7 +15,7 @@ import { X509Certificate } from "node:crypto";
 const certModule = "../../src/mitm/cert/generate.ts";
 
 async function withTempDataDir<T>(fn: (dir: string) => Promise<T>): Promise<T> {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-cert-10467-"));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-cert-10467-"));
   const previous = process.env.DATA_DIR;
   process.env.DATA_DIR = dir;
   try {

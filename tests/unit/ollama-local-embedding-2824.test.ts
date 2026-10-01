@@ -4,7 +4,7 @@ import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-const TEST_DATA_DIR = mkdtempSync(join(tmpdir(), "omniroute-ollama-embedding-2824-"));
+const TEST_DATA_DIR = mkdtempSync(join(tmpdir(), "agentproxy-ollama-embedding-2824-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const { getEmbeddingProvider, parseEmbeddingModel } =

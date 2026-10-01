@@ -9,7 +9,7 @@ import path from "node:path";
 // and error columns without a preceding SELECT/re-encrypt/backup pass. It had zero
 // direct test coverage prior to this file — regression guard added per Hard Rule #8.
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-reset-backoff-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-reset-backoff-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.API_KEY_SECRET = "test-reset-connection-backoff-secret";
 

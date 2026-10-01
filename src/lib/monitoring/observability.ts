@@ -1,8 +1,8 @@
 import {
   createCodexAccountPool,
   getCodexParentAccountDiagnostic,
-} from "@omniroute/open-sse/services/codexAccount/index.ts";
-import type { AdaptiveAdmissionPublicSnapshot } from "@omniroute/open-sse/services/admission/runtime.ts";
+} from "@agentproxy/open-sse/services/codexAccount/index.ts";
+import type { AdaptiveAdmissionPublicSnapshot } from "@agentproxy/open-sse/services/admission/runtime.ts";
 import type { PerConnectionAdmissionController } from "@/shared/middleware/chatBodyAdmission";
 import type { WalMaintenanceState } from "@/lib/db/walMaintenance";
 
@@ -605,4 +605,67 @@ export function buildHealthPayload({
     },
     setupComplete: settings?.setupComplete || false,
   };
+}
+
+/** Short cache window for the opt-in deep-health verdict. */
+export const DEEP_HEALTH_VERDICT_TTL_MS = 30_000;
+/** Bound the deep probe independently from the ordinary health payload path. */
+export const DEEP_HEALTH_PROBE_TIMEOUT_MS = 3_000;
+
+export interface DeepHealthVerdict {
+  ok: boolean;
+  /** Only gateway/service-unavailable responses are actionable failover signals. */
+  failover: boolean;
+  status: number | null;
+  latencyMs: number;
+  at: string;
+}
+
+/**
+ * Minimal fail-open liveness probe against a completion-compatible surface.
+ * It never throws and never reads/logs a response body.
+ */
+export async function probeDeepHealth(
+  url: string,
+  opts: { timeoutMs?: number; token?: string; fetcher?: typeof fetch } = {}
+): Promise<DeepHealthVerdict> {
+  const timeoutMs = opts.timeoutMs ?? DEEP_HEALTH_PROBE_TIMEOUT_MS;
+  const fetcher = opts.fetcher ?? fetch;
+  const started = Date.now();
+  const controller = new AbortController();
+  let timeoutHandle: ReturnType<typeof setTimeout> | null = null;
+  const verdict = (ok: boolean, failover: boolean, status: number | null): DeepHealthVerdict => ({
+    ok,
+    failover,
+    status,
+    latencyMs: Date.now() - started,
+    at: new Date().toISOString(),
+  });
+
+  try {
+    const request = fetcher(url, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        ...(opts.token ? { authorization: `Bearer ${opts.token}` } : {}),
+      },
+      body: JSON.stringify({ max_tokens: 1, stream: false }),
+      signal: controller.signal,
+    });
+    const timeout = new Promise<never>((_, reject) => {
+      timeoutHandle = setTimeout(() => {
+        controller.abort();
+        reject(new Error("deep health probe timed out"));
+      }, timeoutMs);
+      timeoutHandle.unref?.();
+    });
+    const response = await Promise.race([request, timeout]);
+    const status = response.status;
+    if (status >= 200 && status < 300) return verdict(true, false, status);
+    return verdict(false, status === 502 || status === 503, status);
+  } catch {
+    return verdict(false, false, null);
+  } finally {
+    if (timeoutHandle) clearTimeout(timeoutHandle);
+  }
 }

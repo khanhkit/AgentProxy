@@ -1,7 +1,7 @@
 /**
  * Unit tests for `liveServerAllowList`.
  *
- * Bug #1 (plans/2026-06-23-omniroute-v3.8.34-deep-audit.md) introduced the
+ * Bug #1 (plans/2026-06-23-agentproxy-v3.8.34-deep-audit.md) introduced the
  * `LIVE_WS_ALLOWED_HOSTS` opt-in for LAN/Tailscale deployments. These tests
  * pin down the contract: defaults remain loopback-only; the env var extends
  * the allow-list with bare hostnames or `host:port` pairs; the absence of
@@ -64,6 +64,18 @@ describe("buildAllowedOrigins", () => {
     assert.equal(out.has("https://dash.example.com"), true);
     assert.equal(out.has("https://other.example.com"), true);
     // Defaults remain.
+    assert.equal(out.has("http://localhost:20128"), true);
+  });
+
+  it("includes dynamic loopback origins when custom PORT is configured", () => {
+    const env = {
+      ...EMPTY_ENV,
+      PORT: "37128",
+    };
+    const out = buildAllowedOrigins(env);
+    assert.equal(out.has("http://localhost:37128"), true);
+    assert.equal(out.has("http://127.0.0.1:37128"), true);
+    assert.equal(out.has("http://[::1]:37128"), true);
     assert.equal(out.has("http://localhost:20128"), true);
   });
 });
@@ -148,6 +160,11 @@ describe("isOriginAllowed", () => {
   it("accepts a Tailscale Origin matched by host:port when LIVE_WS_ALLOWED_HOSTS is set", () => {
     const env = { ...EMPTY_ENV, LIVE_WS_ALLOWED_HOSTS: "100.96.135.160:20128" };
     assert.equal(isOriginAllowed("http://100.96.135.160:20128", env), true);
+  });
+
+  it("does not treat a wildcard host as an allow-all origin policy", () => {
+    const env = { ...EMPTY_ENV, LIVE_WS_ALLOWED_HOSTS: "*" };
+    assert.equal(isOriginAllowed("http://100.90.139.116:37128", env), false);
   });
 
   it("does NOT accept a Tailscale Origin when LIVE_WS_ALLOWED_HOSTS is unset", () => {

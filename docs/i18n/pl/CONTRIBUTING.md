@@ -1,4 +1,4 @@
-# Współtworzenie OmniRoute
+# Współtworzenie AgentProxy
 
 Dziękujemy za zainteresowanie współtworzeniem projektu! Ten przewodnik zawiera wszystko, czego potrzebujesz, aby zacząć.
 
@@ -15,8 +15,8 @@ Dziękujemy za zainteresowanie współtworzeniem projektu! Ten przewodnik zawier
 ### Klonowanie i instalacja
 
 ```bash
-git clone https://github.com/diegosouzapw/OmniRoute.git
-cd OmniRoute
+git clone https://github.com/khanhkit/AgentProxy.git
+cd AgentProxy
 npm install
 ```
 
@@ -89,7 +89,7 @@ npm run build
 `npm run build:release` dodatkowo najpierw czyści oba katalogi i zapisuje
 `dist/BUILD_SHA` (= `git rev-parse --short HEAD`) jako sentinel integralności deployu.
 
-> **Uwaga o deployu VPS:** zdalny katalog obrazu `/usr/lib/node_modules/omniroute/app/`
+> **Uwaga o deployu VPS:** zdalny katalog obrazu `/usr/lib/node_modules/agentproxy/app/`
 > pozostaje bez zmian. Skille deployu robią rsync zawartości `dist/` do tego katalogu.
 > Zmieniła się tylko ścieżka wyjścia builda w repozytorium (`app/` → `dist/`).
 
@@ -286,7 +286,7 @@ src/                        # TypeScript (.ts / .tsx)
 │   └── validation/         # Zod v4 schemas
 └── sse/                    # SSE proxy pipeline
 
-open-sse/                   # @omniroute/open-sse workspace
+open-sse/                   # @agentproxy/open-sse workspace
 ├── executors/              # 89 executor implementation modules
 ├── handlers/               # 11 request handlers (chat, responses, embeddings, images, etc.)
 ├── mcp-server/             # MCP server (107 tools, 3 transports, 32 scopes)
@@ -308,7 +308,7 @@ tests/
 docs/
 ├── adr/                     # Architecture Decision Records
 ├── architecture/            # System architecture & resilience
-├── comparison/              # OmniRoute vs alternatives
+├── comparison/              # AgentProxy vs alternatives
 ├── compression/             # Compression guides & rules
 ├── dev/                     # Development guides
 ├── diagrams/                # Architecture diagrams
@@ -399,5 +399,5 @@ Następnie użyj skilli `/deploy-vps-*-cc`, które robią rsync `dist/` do zdaln
 - **Dokumentacja API**: Zobacz [`docs/reference/API_REFERENCE.md`](docs/reference/API_REFERENCE.md)
 - **Dokumenty bezpieczeństwa**: [`docs/security/CLI_TOKEN.md`](docs/security/CLI_TOKEN.md), [`docs/security/ROUTE_GUARD_TIERS.md`](docs/security/ROUTE_GUARD_TIERS.md), [`docs/security/ERROR_SANITIZATION.md`](docs/security/ERROR_SANITIZATION.md), [`docs/security/PUBLIC_CREDS.md`](docs/security/PUBLIC_CREDS.md)
 - **Dokumenty ops**: [`docs/ops/SQLITE_RUNTIME.md`](docs/ops/SQLITE_RUNTIME.md)
-- **Issues**: [github.com/diegosouzapw/OmniRoute/issues](https://github.com/diegosouzapw/OmniRoute/issues)
+- **Issues**: [github.com/khanhkit/AgentProxy/issues](https://github.com/khanhkit/AgentProxy/issues)
 - **ADR-y**: Zobacz `docs/adr/` dla architectural decision records
