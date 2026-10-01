@@ -16,6 +16,7 @@ export function buildClientRawRequest(request: Request, body: unknown) {
   const headers = Object.fromEntries(request.headers.entries());
   delete headers["x-agentproxy-lease-owner"];
   delete headers["x-agentproxy-lease-generation"];
+  delete headers["x-deadline-token"];
   return {
     endpoint: url.pathname,
     // #7847: bounded, not a full deep clone. Every consumer of clientRawRequest.body is
