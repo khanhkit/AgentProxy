@@ -1,4 +1,7 @@
-import { extractRequestToolIdentityMap, resolveResponseToolNameMap } from "./chatCore/requestToolIdentity.ts";
+import {
+  extractRequestToolIdentityMap,
+  resolveResponseToolNameMap,
+} from "./chatCore/requestToolIdentity.ts";
 import {
   injectMemoryAndSkills,
   mergeInjectedFallbackOwnerNames,
@@ -38,7 +41,9 @@ import { buildNonStreamingResponseHeaders } from "./chatCore/nonStreamingRespons
 import { buildNonStreamingJsonResponse } from "./chatCore/nonStreamingJsonResponse.ts";
 import { enforceOutputTokenBudget } from "./chatCore/outputTokenBudget.ts";
 import { maybeConvertJsonBodyToSse } from "./chatCore/jsonBodyToSse.ts";
-import { withResilienceActionsContext } from "./chatCore/resilienceAttemptContext.ts"; import { assembleStreamingResponseHeaders } from "./chatCore/streamingResponseHeaders.ts";
+import { withResilienceActionsContext } from "./chatCore/resilienceAttemptContext.ts";
+import { maybeRetryFlushEmptyTurn } from "./chatCore/flushEmptyRetry.ts";
+import { assembleStreamingResponseHeaders } from "./chatCore/streamingResponseHeaders.ts";
 import { storeStreamingSemanticCacheResponse } from "./chatCore/streamingSemanticCacheStore.ts";
 import { assembleStreamingPipeline } from "./chatCore/streamingPipeline.ts";
 import { sanitizeChatRequestBody } from "./chatCore/sanitization.ts";
@@ -85,6 +90,7 @@ import {
   isClaudeCodeSemanticPassthroughRequest,
 } from "./chatCore/passthroughHelpers.ts";
 import { recoverAnthropicThinkingSignature } from "./chatCore/thinkingSignatureRecovery.ts";
+import { maybeFallbackAfterReadiness } from "./chatCore/streamReadinessFallback.ts";
 import { runProviderExecutionPipeline } from "./chatCore/providerExecutionPipeline.ts";
 import { createPipelineCredentialRefresher } from "./chatCore/pipelineCredentialRefresh.ts";
 import { runNonStreamingProviderLeg } from "./chatCore/nonStreamingProviderLeg.ts";
@@ -171,7 +177,7 @@ import {
 } from "../services/claudeAdaptiveThinking.ts";
 import { shouldUseMidConversationSystem } from "../executors/claudeIdentity.ts";
 import { normalizeClaudeHaikuConstraints } from "../services/claudeHaikuConstraints.ts";
-import { applyDefaultReasoningEffort } from "../services/defaultReasoningEffort.ts";
+import { wireAdaptiveEffort } from "./chatCore/adaptiveEffortWiring.ts";
 import { echoModelInObject } from "../services/responseModelEcho.ts";
 import {
   stripGpt5SamplingWhenReasoning,
@@ -237,6 +243,8 @@ import {
   isStreamRecoveryExplicitlyConfigured,
 } from "@/lib/resilience/settings";
 import { classifyProviderError, PROVIDER_ERROR_TYPES } from "../services/errorClassifier.ts";
+import { isOpencodeFreeTierRefusal } from "../executors/opencodeGeoBlock.ts";
+import { noteOpencodeFreeTierSkip } from "../services/opencodeFreeTierSkip.ts";
 import { updateProviderConnection, getProviderConnectionById } from "@/lib/db/providers";
 import { wasRefreshTokenRotated } from "@agentproxy/open-sse/services/refreshSerializer.ts";
 import { connectionHasExtraKeys } from "../services/apiKeyRotator.ts";
@@ -460,7 +468,10 @@ type VideoBridgeLogParam = { observed: boolean; redaction: VideoBridgeLogRedacti
  * @param {string} options.connectionId - Connection ID for settings lookup
  */
 // extractSystemRoleMessages extracted to chatCore/claudeSystemRole.ts (#3501); re-exported above so
-// existing importers (e.g. tests/unit/system-role-extraction.test.ts) keep resolving it from here. export async function handleChatCore(args: Parameters<typeof handleChatCoreInner>[0]) { return withResilienceActionsContext([args], handleChatCoreInner); }
+// existing importers (e.g. tests/unit/system-role-extraction.test.ts) keep resolving it from here.
+export async function handleChatCore(args: Parameters<typeof handleChatCoreInner>[0]) {
+  return withResilienceActionsContext([args], handleChatCoreInner);
+}
 async function handleChatCoreInner({
   body,
   modelInfo,
@@ -527,8 +538,8 @@ async function handleChatCoreInner({
   // Per-request trace id + checkpoint helper. Lets us see exactly which await
   // a hung request was sitting on in `[STAGE_TRACE]` log lines. Uses crypto RNG
   // (not Math.random) purely to satisfy CodeQL js/insecure-randomness — this id
-  // is a log-correlation token, not a security secret.
-  const traceId = globalThis.crypto.randomUUID().slice(0, 6);
+  // is a log-correlation token, not a security secret; keep the full UUID to avoid collisions.
+  const traceId = globalThis.crypto.randomUUID();
   // Emit request.started event for real-time dashboard
   setImmediate(() => {
     emit("request.started", {
@@ -680,7 +691,8 @@ async function handleChatCoreInner({
         statusCode,
         errorCode,
         latencyMs: Date.now() - startTime,
-        endpoint: endpointPath, cpaAuthIndex: readCpaAuthIndex(providerResponse),
+        endpoint: endpointPath,
+        cpaAuthIndex: readCpaAuthIndex(providerResponse),
         aggregate: aggregate ?? undefined,
       })
     ).catch(() => {});
@@ -2671,54 +2683,26 @@ async function handleChatCoreInner({
   }
   translatedBody.model = finalModelToUpstream;
 
-  // #3554: a combo/route may substitute the upstream model AFTER the client chose its
-  // `thinking` value. Claude Code sends `thinking:{type:"disabled"}` for internal calls,
-  // which claude-fable-5 (adaptive-only) rejects with a 400. Drop the now-invalid value
-  // when the resolved target model rejects it; models that accept `disabled` are untouched.
+  // Normalize reasoning after route/model substitution so provider-specific constraints
+  // follow the resolved upstream model (adaptive-only Claude, Opus disabled, Haiku shape).
   if (typeof finalModelToUpstream === "string") {
     translatedBody = normalizeThinkingForModel(translatedBody, finalModelToUpstream);
-    // Claude Opus 4.7+/Fable 5 removed manual extended thinking: `thinking.type:"enabled"`
-    // or any `thinking.budget_tokens` is a hard 400. Collapse any manual thinking that
-    // reached this point (passthrough legacy shape, reasoning_effort buckets, per-model
-    // defaults) to `{type:"adaptive"}` — effort stays on `output_config.effort`. Keyed on
-    // the resolved upstream model, so it covers every routing mode. See claudeAdaptiveThinking.ts.
     translatedBody = normalizeClaudeAdaptiveThinking(translatedBody, finalModelToUpstream);
-    // Opus 5 allows disabled thinking only through high effort on Anthropic's direct
-    // Messages API. The helper scopes this constraint to `anthropic` and `claude`;
-    // GitHub Copilot and Claude Web use separate upstream contracts.
     translatedBody = normalizeClaudeDisabledThinkingEffort(
       translatedBody,
       finalModelToUpstream,
       provider
     );
-    // Claude Haiku rejects `thinking.type:"adaptive"` and `output_config.effort`
-    // (both Sonnet 4.6 / Opus 4.5+ only). Several paths can still emit those
-    // shapes on a Haiku target — native passthrough, reasoning_effort buckets,
-    // per-model defaults — so collapse them to a Haiku-valid shape here, after
-    // model substitution. Mirrors upstream 9router 401d93bd5. See
-    // services/claudeHaikuConstraints.ts.
     translatedBody = normalizeClaudeHaikuConstraints(translatedBody, finalModelToUpstream);
-    // #6879: per-model default reasoning_effort, injected only when the request
-    // carries no reasoning field of any shape — an explicit client/combo-leg value
-    // always wins. Scoped to the OpenAI Chat Completions dispatch shape (the shape
-    // `reasoning_effort` is native to); unset ModelSpec.defaultReasoningEffort is a
-    // no-op. #7694: `modelInfo.resolvedThinkingEffort` — set when the request's model
-    // id carried a `<prefix>/<model>-{effort}` synced-model alias suffix
-    // (`src/sse/services/model.ts`) — takes priority over the static per-model default.
-    // The synced catalog's vendor-declared `defaultThinkingEffort` (OpenRouter
-    // `reasoning.default_effort`, captured by `detectDefaultThinkingEffort`) is the
-    // lowest-priority default: it only fires when neither the suffix alias nor a
-    // static operator default exists. See open-sse/services/defaultReasoningEffort.ts.
-    if (targetFormat === FORMATS.OPENAI) {
-      translatedBody = applyDefaultReasoningEffort(
-        translatedBody,
-        finalModelToUpstream,
-        (modelInfo as { resolvedThinkingEffort?: string })?.resolvedThinkingEffort,
-        (modelInfo as { defaultThinkingEffort?: string })?.defaultThinkingEffort
-      );
-    }
+    translatedBody = wireAdaptiveEffort(translatedBody, {
+      rawBody: body,
+      clientRawRequest,
+      targetFormat,
+      modelId: finalModelToUpstream,
+      suffixEffort: (modelInfo as { resolvedThinkingEffort?: string })?.resolvedThinkingEffort,
+      syncedDefaultEffort: (modelInfo as { defaultThinkingEffort?: string })?.defaultThinkingEffort,
+    });
   }
-
   // Xiaomi MiMo controls reasoning ONLY via `thinking:{type:"enabled"|"disabled"}` and
   // rejects unknown/extra params with a strict "400 Param Incorrect". Map AgentProxy's
   // OpenAI reasoning signals onto that native shape: reduce any thinking object to
@@ -3374,7 +3358,7 @@ async function handleChatCoreInner({
 
                   // Mid-stream continuation (Fase 4.4): re-request with the partial text as an
                   // assistant prefill. Gated by its own setting and only for OpenAI-compatible
-                  // bodies (makeContinuationBody returns null otherwise).
+                  // request bodies, chat or Responses (makeContinuationBody returns null otherwise).
                   const continueStream = continueMidStreamEnabled
                     ? (assistantSoFar: string) => {
                         const continuationBody = makeContinuationBody(
@@ -3403,8 +3387,31 @@ async function handleChatCoreInner({
                       onContinue: (attempt) =>
                         log?.warn?.(
                           "STREAM_RECOVERY",
-                          `mid-stream continuation attempt ${attempt}/${STREAM_RECOVERY.EARLY_RETRY_MAX}`
+                          `mid-stream continuation attempt ${attempt}/${STREAM_RECOVERY.EARLY_RETRY_MAX} correlationId=${correlationId || "none"}`
                         ),
+                      onContinueOutcome: (event) => {
+                        const details = [
+                          `mid-stream continuation attempt ${event.attempt}/${STREAM_RECOVERY.EARLY_RETRY_MAX}`,
+                          `outcome=${event.outcome}`,
+                          "reason" in event && event.reason ? `reason=${event.reason}` : null,
+                          "suffixChars" in event && typeof event.suffixChars === "number"
+                            ? `suffixChars=${event.suffixChars}`
+                            : null,
+                          "overlapChars" in event && typeof event.overlapChars === "number"
+                            ? `overlapChars=${event.overlapChars}`
+                            : null,
+                          `correlationId=${correlationId || "none"}`,
+                        ]
+                          .filter(Boolean)
+                          .join(" ");
+                        const giveUp =
+                          event.outcome === "no-stream" ||
+                          (event.outcome === "refused" && event.reason === "budget");
+                        if (giveUp) log?.warn?.("STREAM_RECOVERY", details);
+                        else if (event.outcome === "refused" && event.reason === "tool-call")
+                          log?.debug?.("STREAM_RECOVERY", details);
+                        else log?.info?.("STREAM_RECOVERY", details);
+                      },
                       throughputWatchdog,
                       onWatchdogAbort: () =>
                         log?.warn?.(
@@ -3612,10 +3619,16 @@ async function handleChatCoreInner({
   let providerResponse;
   let providerUrl;
   let providerHeaders;
-  let finalBody, claudePromptCacheLogMeta = null;
+  let finalBody,
+    claudePromptCacheLogMeta = null;
   const refreshPipelineCredentials = createPipelineCredentialRefresher({
-    shouldIsolateProbeFailures, credentials, onCredentialsRefreshed, provider, log,
-    refreshCredentials: (currentCredentials) => executor.refreshCredentials(currentCredentials, log),
+    shouldIsolateProbeFailures,
+    credentials,
+    onCredentialsRefreshed,
+    provider,
+    log,
+    refreshCredentials: (currentCredentials) =>
+      executor.refreshCredentials(currentCredentials, log),
   });
   let pipelineRecovered = false;
   if (stream) {
@@ -4452,6 +4465,12 @@ async function handleChatCoreInner({
             console.warn(
               `[provider] Node ${errorConnectionId} project routing error (${statusCode}) — not banning`
             );
+            if (
+              errorConnectionId === "noauth" &&
+              provider.startsWith("opencode") &&
+              isOpencodeFreeTierRefusal(statusCode, message)
+            )
+              noteOpencodeFreeTierSkip(provider);
           } else if (errorType === PROVIDER_ERROR_TYPES.GEO_BLOCKED) {
             // Google regional-availability refusal (e.g. "User location is not
             // supported for the API use."). Account-independent and non-terminal:
@@ -5184,7 +5203,8 @@ async function handleChatCoreInner({
         effectiveServiceTier,
         isCombo,
         comboStrategy,
-        endpoint: endpointPath, cpaAuthIndex: readCpaAuthIndex(providerResponse),
+        endpoint: endpointPath,
+        cpaAuthIndex: readCpaAuthIndex(providerResponse),
       });
 
       // #12150 P1b surface 3 (fix round 1): a video-bridge-observed request's
@@ -5275,7 +5295,12 @@ async function handleChatCoreInner({
           claudeCacheUsageMeta: cacheUsageLogMeta,
           cacheSource: "upstream",
         });
-        recordChatCallCost(apiKeyInfo, meteredBudgetCost(provider, estimatedCost), chatCostCtx, false);
+        recordChatCallCost(
+          apiKeyInfo,
+          meteredBudgetCost(provider, estimatedCost),
+          chatCostCtx,
+          false
+        );
         log?.warn?.(
           "GUARDRAIL",
           `Response blocked by ${postCallGuardrails.guardrail || "guardrail"}: ${guardrailMessage}`
@@ -5380,7 +5405,8 @@ async function handleChatCoreInner({
         body: bodyForCacheWrite,
         headers: clientRawRequest?.headers,
         translatedResponse,
-        model, provider,
+        model,
+        provider,
         apiKeyId: apiKeyInfo?.id ?? undefined,
         usage,
         log,
@@ -5559,14 +5585,35 @@ async function handleChatCoreInner({
       `adaptive readiness timeout=${streamReadinessPolicy.timeoutMs}ms base=${streamReadinessPolicy.baseTimeoutMs}ms reason=${streamReadinessPolicy.reasons.join(",")}`
     );
   }
-
-  const streamReadiness = await ensureStreamReadiness(providerResponse, {
+  let streamReadiness = await ensureStreamReadiness(providerResponse, {
     timeoutMs: streamReadinessPolicy.timeoutMs,
     maxTimeoutMs: streamReadinessPolicy.maxTimeoutMs,
     provider,
     model,
     log,
   });
+  ({
+    readiness: streamReadiness,
+    providerResponse,
+    finalBody,
+  } = await maybeFallbackAfterReadiness({
+    streamReadiness,
+    clientAborted: streamController.signal.aborted,
+    failedConnectionId: getCurrentConnectionId(),
+    failedBody: providerResponse,
+    currentModel,
+    streamReadinessPolicy,
+    provider,
+    model,
+    log,
+    reqLogger,
+    providerUrl,
+    providerHeaders,
+    finalBody,
+    translatedBody,
+    executeProviderRequest,
+    providerRequestCapture,
+  }));
   if (streamReadiness.ok === false) {
     const { response: failureResponse, reason } = streamReadiness;
     const { classificationReason, upstreamDiagnostic } = streamReadiness;
@@ -5604,11 +5651,28 @@ async function handleChatCoreInner({
     };
   }
   providerResponse = streamReadiness.response;
+  providerResponse = await maybeRetryFlushEmptyTurn({
+    stream,
+    response: providerResponse,
+    targetFormat,
+    clientResponseFormat,
+    timeoutMs: streamReadinessPolicy.timeoutMs,
+    maxTimeoutMs: streamReadinessPolicy.maxTimeoutMs,
+    provider,
+    model,
+    currentModel,
+    signal: clientRawRequest?.signal,
+    log,
+    correlationId,
+    traceId,
+    getCredentials: () =>
+      getProviderCredentials(provider, null, null, currentModel).catch(() => null),
+    applyCredentials: (next) => Object.assign(credentials, next),
+    executeRetry: () => executeProviderRequest(currentModel, false),
+  });
 
   // Notify success - caller can clear error status if needed
-  if (onRequestSuccess) {
-    await onRequestSuccess();
-  }
+  if (onRequestSuccess) await onRequestSuccess();
 
   const responseHeaders = assembleStreamingResponseHeaders({
     providerHeaders: providerResponse.headers,
@@ -5647,6 +5711,7 @@ async function handleChatCoreInner({
     responseBody: streamResponseBody,
     providerPayload,
     clientPayload,
+    reasoningMeta: streamReasoningMeta,
     error: streamError,
     errorCode: streamErrorCode,
     ttft,
@@ -5755,7 +5820,8 @@ async function handleChatCoreInner({
       effectiveServiceTier,
       isCombo,
       comboStrategy,
-      endpoint: endpointPath, cpaAuthIndex: readCpaAuthIndex(providerResponse),
+      endpoint: endpointPath,
+      cpaAuthIndex: readCpaAuthIndex(providerResponse),
     });
 
     // Routing event (feedback foundation) — fire-and-forget, cheap, never blocks
@@ -5816,6 +5882,7 @@ async function handleChatCoreInner({
       claudeCacheMeta: claudePromptCacheLogMeta,
       claudeCacheUsageMeta: cacheUsageLogMeta,
       cacheSource: "upstream",
+      reasoningMeta: streamReasoningMeta ?? null,
     });
 
     recordStreamingCost({
@@ -5872,7 +5939,8 @@ async function handleChatCoreInner({
       streamResponseBody,
       body: bodyForCacheWrite,
       headers: clientRawRequest?.headers,
-      model, provider,
+      model,
+      provider,
       apiKeyId: apiKeyInfo?.id ?? undefined,
       streamUsage,
       log,

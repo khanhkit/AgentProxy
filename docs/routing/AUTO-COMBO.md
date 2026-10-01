@@ -252,10 +252,10 @@ combo's stored config. These apply only to the `auto` strategy and only for the 
 that carries them; the combo's saved `modePack`/`budgetCap`/`budgetFallback` are used
 when the header is absent.
 
-| Header                        | Accepts                                                                                                                                                                                 | Effect                                                                                                                                                                                                                                               |
-| :---------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Header                         | Accepts                                                                                                                                                                                 | Effect                                                                                                                                                                                                                                               |
+| :----------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `X-AgentProxy-Mode`            | a preset alias (`fast`, `balanced`, `quality`, `cheap`, `reliable`, `offline`) or a raw pack name (`ship-fast`, `cost-saver`, `quality-first`, `offline-friendly`, `reliability-first`) | Overrides the scoring weights for this request. `balanced`/`default` force the default weights (no pack). Unknown values are ignored (config preserved).                                                                                             |
-| `X-AgentProxy-Budget`          | a positive number (max USD per request)                                                                                                                                                 | Hard cost ceiling: candidates whose estimated cost exceeds it are filtered before selection. What happens when **every** candidate exceeds it is controlled by `X-AgentProxy-Budget-Fallback` below.                                                  |
+| `X-AgentProxy-Budget`          | a positive number (max USD per request)                                                                                                                                                 | Hard cost ceiling: candidates whose estimated cost exceeds it are filtered before selection. What happens when **every** candidate exceeds it is controlled by `X-AgentProxy-Budget-Fallback` below.                                                 |
 | `X-AgentProxy-Budget-Fallback` | `cheapest` (default, aliases: `cheapest-viable`, `soft`) or `strict` (aliases: `block`, `hard`)                                                                                         | `cheapest`: falls back to the globally cheapest candidate even though it still exceeds the cap (legacy behavior). `strict`: refuses to select — the request fails fast with `HTTP 402` instead of silently overspending. Unknown values are ignored. |
 
 ```bash
@@ -320,6 +320,31 @@ AgentProxy's combo engine supports **19 routing strategies** (declared in `src/s
 
 For strict rotation use `round-robin`; equal weights on `weighted` give statistical — not
 strict — balance.
+
+### Agentic pipeline mode
+
+A two-step `pipeline` combo can opt into planner/executor routing with
+`config.agenticOrchestration.enabled`. The first target owns planning and final answers;
+the second target emits client-native tool calls. AgentProxy detects tool-result
+continuations from the request protocol, asks the planner whether another tool round is
+needed, and dynamically makes either the executor or planner the client-facing final
+step.
+
+```json
+{
+  "strategy": "pipeline",
+  "models": [{ "model": "provider/planner" }, { "model": "provider/executor" }],
+  "config": {
+    "agenticOrchestration": { "enabled": true, "maxToolRounds": 8 }
+  }
+}
+```
+
+The executor may emit multiple independent calls in one response. Dependent calls are
+handled in later client tool-result turns, with the planner reviewing every result.
+`maxToolRounds` defaults to `8` and accepts `1`–`32`; once reached, the planner must
+produce the best available final answer. Internal planner decisions are buffered, while
+the selected client-facing response preserves the original streaming preference.
 
 ### `round-robin` sticky batch and account expansion
 
@@ -776,11 +801,11 @@ This suite runs in CI (`test:integration` job) with `--test-concurrency=1` and
 
 ### Gated live smoke (NOT in CI — real providers)
 
-| Command                                | What it does                                                                   |
-| :------------------------------------- | :----------------------------------------------------------------------------- |
+| Command                                | What it does                                                                    |
+| :------------------------------------- | :------------------------------------------------------------------------------ |
 | `npm run test:combo:live`              | In-process real routing with `RUN_COMBO_LIVE=1`; snapshots a live AgentProxy DB |
 | `npm run test:combo:live:vps`          | HTTP calls against a live AgentProxy server (set `COMBO_LIVE_BASE_URL`)         |
-| `npm run test:combo:live:vps:failover` | Same, with deliberate failover scenarios                                       |
+| `npm run test:combo:live:vps:failover` | Same, with deliberate failover scenarios                                        |
 
 These smoke tests exercise the real wire path (combo → provider → completion). They are
 intentionally excluded from CI because they require live credentials and VPS access.

@@ -102,6 +102,7 @@ import {
   classifyProviderError,
   PROVIDER_ERROR_TYPES,
 } from "@agentproxy/open-sse/services/errorClassifier.ts";
+import { isOpencodeFreeTierSkipped } from "@agentproxy/open-sse/services/opencodeFreeTierSkip.ts";
 import { resolveTerminalConnectionStatus } from "./authTerminalStatus.ts";
 import {
   ALIBABA_FREE_DRAINED_LOCK_MS,
@@ -774,6 +775,7 @@ async function maybeSyntheticNoAuthFallback(
   // key reach free providers (OpenCode Free, etc.) that it should not access.
   if (Array.isArray(allowedConnections) && allowedConnections.length > 0) return null;
   if (excludedConnectionIds.has(SYNTHETIC_NOAUTH_CONNECTION_ID)) return null;
+  if (isOpencodeFreeTierSkipped(providerId)) return null;
   if (
     isAnonymousFallbackOnlyProvider(providerId) &&
     (await isAnonymousFallbackDisabledBySettings(providerId))

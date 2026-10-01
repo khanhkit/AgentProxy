@@ -207,11 +207,6 @@ function calculateTargetContextAffinity(
   return 0.1;
 }
 
-function getBootstrapLatencyMs(modelId: string): number {
-  const normalized = String(modelId || "").toLowerCase();
-  return DEFAULT_MODEL_P95_MS[normalized] ?? 1500;
-}
-
 export function poolMedianP95Ms(
   stats: Record<string, { p95LatencyMs?: unknown }>
 ): number | undefined {
@@ -608,7 +603,13 @@ export async function resolveTargetTimeoutMsForTarget(
  * one metadata-only log line for durability across restarts.
  */
 export async function handleComboChat(options: HandleComboChatOptions): Promise<Response> {
-  const traceInvocationId = options.invocationId ?? createInvocationId();
+  const comboInvocationId = (options.combo as { traceInvocationId?: unknown } | null | undefined)
+    ?.traceInvocationId;
+  const traceInvocationId =
+    options.invocationId ??
+    (typeof comboInvocationId === "string" && comboInvocationId.length > 0
+      ? comboInvocationId
+      : createInvocationId());
   const response = await handleComboChatInner({ ...options, invocationId: traceInvocationId });
   response.headers.set("X-AgentProxy-Combo-Trace", traceInvocationId);
   const trace = getComboTrace(traceInvocationId);
@@ -812,9 +813,8 @@ async function handleComboChatInner({
     });
   }
 
-  // Native Codex turns must stay on their pinned target, but a pre-content
-  // stream failure is safe to retry because no output reached the client.
-  // Keep set retries disabled while preserving same-target retries.
+  // A pinned native Codex turn must not rotate across targets, but a pre-content
+  // transient stream failure is safe to retry against the SAME pinned target.
   const maxRetries = config.maxRetries ?? 1;
   const maxSetRetries = activeNativeTurnPin ? 0 : (config.maxSetRetries ?? 0);
   const setRetryDelayMs = resolveDelayMs(config.setRetryDelayMs, 2000);
@@ -976,6 +976,7 @@ async function handleComboChatInner({
     globalAttempts: 0,
     observedFailure: false,
     allObservedFailuresQuota: true,
+    requestScopedFailureSeen: false,
     observeFailure(quotaExhausted, targetExecutionKey) {
       this.observedFailure = true;
       this.allObservedFailuresQuota &&= quotaExhausted;

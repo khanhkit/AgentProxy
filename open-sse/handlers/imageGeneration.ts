@@ -241,7 +241,10 @@ function normalizeImageAspectRatio(value: unknown, fallbackSize: unknown): strin
   return mapImageSize(typeof fallbackSize === "string" ? fallbackSize : null);
 }
 
-function normalizeImageGenerationSize(value: unknown): { value: string | undefined; clamped: boolean } {
+function normalizeImageGenerationSize(value: unknown): {
+  value: string | undefined;
+  clamped: boolean;
+} {
   if (typeof value !== "string") return { value: undefined, clamped: false };
   const normalized = value.trim().toUpperCase();
   return IMAGE_SIZE_PATTERN.test(normalized)
@@ -313,12 +316,6 @@ const BFL_EDIT_MODELS = new Set([
 ]);
 
 const BFL_FAILURE_STATUSES = new Set(["Error", "Failed", "Content Moderated", "Request Moderated"]);
-
-function formatImageProviderError(err) {
-  const sanitized = sanitizeErrorMessage(err);
-  const message = (sanitized || "").replace(/^Error:\s*/i, "").trim();
-  return message ? `Image provider error: ${message}` : "Image provider error";
-}
 
 const STABILITY_GENERATION_ENDPOINTS = {
   "sd3.5-large": "/v2beta/stable-image/generate/sd3",
@@ -1054,7 +1051,9 @@ async function handleGeminiImageGeneration({ model, providerConfig, body, creden
     typeof body.n === "number" && Number.isFinite(body.n) && body.n > 0 ? Math.floor(body.n) : 1;
   const promptText = typeof body.prompt === "string" ? body.prompt : String(body.prompt ?? "");
   const aspectRatio = normalizeImageAspectRatio(body.aspect_ratio, body.size);
-  const { value: imageSize, clamped: imageSizeClamped } = normalizeImageGenerationSize(body.image_size);
+  const { value: imageSize, clamped: imageSizeClamped } = normalizeImageGenerationSize(
+    body.image_size
+  );
   if (imageSizeClamped && log && typeof log.warn === "function") {
     log.warn(
       "IMAGE",

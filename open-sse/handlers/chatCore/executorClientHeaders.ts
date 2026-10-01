@@ -17,7 +17,11 @@ export function buildExecutorClientHeaders(
   const normalized: Record<string, string> = {};
   const isLeaseControlHeader = (key: string) => {
     const lowerKey = key.toLowerCase();
-    return lowerKey === "x-agentproxy-lease-owner" || lowerKey === "x-agentproxy-lease-generation";
+    return (
+      lowerKey === "x-agentproxy-lease-owner" ||
+      lowerKey === "x-agentproxy-lease-generation" ||
+      lowerKey === "x-deadline-token"
+    );
   };
 
   if (headers instanceof Headers) {

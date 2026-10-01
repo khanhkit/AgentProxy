@@ -38,6 +38,7 @@ import { isRetryAfterEligibleStatus } from "./unavailableRetryGate.ts";
 import { withQuotaExhaustionClassification } from "./quotaExhaustion.ts";
 import {
   COMBO_LOOP_SAFETY_TIMEOUT_MS,
+  requestScopedReplayKey,
   COMBO_SAFETY_DRAIN_MS,
   IDENTICAL_MODEL_ERROR_STREAK,
   hasIdenticalModelErrorStreak,
@@ -194,6 +195,7 @@ export async function dispatchWithCooldownRetry(opts: {
         }
       };
       state.abortControllers = new Map<number, AbortController>();
+      const rejectedModelKeys = (state.requestScopedRejectedModelKeys ??= new Set<string>());
       const zeroLatencyOptimizationsEnabled = deps.config.zeroLatencyOptimizationsEnabled === true;
       const hasProtectedPriorityTarget =
         deps.strategy === "priority" &&
@@ -214,6 +216,13 @@ export async function dispatchWithCooldownRetry(opts: {
 
       for (let i = 0; i < state.orderedTargets.length; i++) {
         if (anySuccess || state.comboExpired || comboRequestMalformed) break;
+        if (rejectedModelKeys.has(requestScopedReplayKey(state.orderedTargets[i].modelStr))) {
+          deps.log.info(
+            "COMBO",
+            `Skipping ${state.orderedTargets[i].modelStr} — same request already refused as request-scoped`
+          );
+          continue;
+        }
 
         const abortController = new AbortController();
         state.abortControllers.set(i, abortController);
