@@ -16,14 +16,13 @@ import {
   isLocalExecutionError,
   isModelCapacityOverloadError,
 } from "@/shared/utils/circuitBreaker";
-import {
-  CONTEXT_OVERFLOW_PATTERNS,
-  MODEL_ACCESS_DENIED_PATTERNS,
-  cooldownUntilMs,
-} from "../accountFallback.ts";
+import { CONTEXT_OVERFLOW_PATTERNS, cooldownUntilMs } from "../accountFallback.ts";
 import { isResourceNotFoundResponse } from "../errorClassifier.ts";
 import { getTrustedLocalRateLimitResponse } from "../rateLimitManager/errors.ts";
 import type { ResolvedComboTarget } from "./types.ts";
+import type { ComboErrorEntry } from "./comboErrorAggregation.ts";
+
+export { isModelScoped400 } from "../modelAccessDenied.ts";
 
 // Status codes that should mark round-robin target semaphores as cooling down.
 export const TRANSIENT_FOR_SEMAPHORE = [429, 502, 503, 504];
@@ -110,6 +109,26 @@ export const MAX_GLOBAL_ATTEMPTS = 30;
 // but never above this cap — an unbounded attempt budget is the same runaway
 // background-request DoS risk that motivated MAX_COMBO_DEPTH_HARD_CAP.
 export const MAX_GLOBAL_ATTEMPTS_HARD_CAP = 200;
+
+// A malformed/unsupported request shape fails identically across fallback
+// targets because it is a property of the request, not a provider-local outage.
+// Stop after three consecutive identical model errors rather than replaying the
+// same bad payload through every target and every whole-set retry.
+export const IDENTICAL_MODEL_ERROR_STREAK = 3;
+
+export function hasIdenticalModelErrorStreak(
+  comboErrors: ReadonlyArray<ComboErrorEntry>,
+  streak: number = IDENTICAL_MODEL_ERROR_STREAK
+): boolean {
+  if (comboErrors.length < streak) return false;
+  const tail = comboErrors.slice(-streak);
+  const [first, ...rest] = tail;
+  if (first.kind !== "model") return false;
+  return rest.every(
+    (entry) =>
+      entry.kind === first.kind && entry.status === first.status && entry.error === first.error
+  );
+}
 
 /**
  * Clamp an operator-configured combo nesting depth (config.maxComboDepth) to a
@@ -656,20 +675,5 @@ export function isParamValidation400(errorText: string | null | undefined): bool
     /\bmax_tokens\b.*(?:illegal|must|range|invalid)/i.test(text) ||
     /\bparameter is illegal\b/i.test(text) ||
     /\bis illegal.*range\b/i.test(text)
-  );
-}
-
-/**
- * #5249 / #2101: model-scoped 400s must NEVER stop the combo.
- */
-export function isModelScoped400(errorText: string | null | undefined): boolean {
-  const text = String(errorText || "");
-  if (!text) return false;
-  if (MODEL_ACCESS_DENIED_PATTERNS.some((p) => p.test(text))) return true;
-  return (
-    /\bmodel\b[\s\S]{0,80}?\b(?:not\s+supported|unsupported|unknown|unavailable)\b/i.test(text) ||
-    /\b(?:not\s+supported|unsupported|unknown)\b[\s\S]{0,80}?\bmodel\b/i.test(text) ||
-    /\bunsupported_api_for_model\b/i.test(text) ||
-    /\bdoes\s+not\s+support\s+(?:the\s+)?responses\s+api\b/i.test(text)
   );
 }

@@ -15,6 +15,7 @@
  * Source: operator-supplied subscription feature (Karing-style proxy).
  */
 import * as yaml from "js-yaml";
+import { decodeUserinfo } from "@/shared/utils/decodeUserinfo";
 import { MAX_SUBSCRIPTION_NODES } from "./limits";
 
 export type DirectProxyType = "http" | "https" | "socks5";
@@ -184,8 +185,8 @@ function nodeFromUri(uri: string): SubscriptionNode | NeedsCoreNode | null {
       type: scheme as DirectProxyType,
       host,
       port,
-      username: parsed.username ? decodeURIComponent(parsed.username) : undefined,
-      password: parsed.password ? decodeURIComponent(parsed.password) : undefined,
+      username: parsed.username ? decodeUserinfo(parsed.username) : undefined,
+      password: parsed.password ? decodeUserinfo(parsed.password) : undefined,
       rawProtocol: scheme as RawProxyProtocol,
     };
   }

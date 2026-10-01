@@ -12,26 +12,26 @@ import {
 } from "../../open-sse/utils/keepaliveThreshold.ts";
 
 describe("resolveKeepaliveThreshold", () => {
-  it("returns 2000ms default for undefined model", () => {
-    assert.equal(resolveKeepaliveThreshold(undefined), 2000);
+  it("returns 1000ms default for undefined model", () => {
+    assert.equal(resolveKeepaliveThreshold(undefined), 1000);
   });
 
-  it("returns 2000ms default for null model", () => {
-    assert.equal(resolveKeepaliveThreshold(null), 2000);
+  it("returns 1000ms default for null model", () => {
+    assert.equal(resolveKeepaliveThreshold(null), 1000);
   });
 
-  it("returns 2000ms default for empty string", () => {
-    assert.equal(resolveKeepaliveThreshold(""), 2000);
+  it("returns 1000ms default for empty string", () => {
+    assert.equal(resolveKeepaliveThreshold(""), 1000);
   });
 
-  it("returns 2000ms default for model without prefix", () => {
-    assert.equal(resolveKeepaliveThreshold("gpt-4"), 2000);
+  it("returns 1000ms default for model without prefix", () => {
+    assert.equal(resolveKeepaliveThreshold("gpt-4"), 1000);
   });
 
-  it("returns 2000ms default for normal API-key provider", () => {
-    assert.equal(resolveKeepaliveThreshold("openai/gpt-4"), 2000);
-    assert.equal(resolveKeepaliveThreshold("anthropic/claude-sonnet-4"), 2000);
-    assert.equal(resolveKeepaliveThreshold("deepseek/deepseek-chat"), 2000);
+  it("returns 1000ms default for normal API-key provider", () => {
+    assert.equal(resolveKeepaliveThreshold("openai/gpt-4"), 1000);
+    assert.equal(resolveKeepaliveThreshold("anthropic/claude-sonnet-4"), 1000);
+    assert.equal(resolveKeepaliveThreshold("deepseek/deepseek-chat"), 1000);
   });
 
   it("returns 15000ms for anonymous fallback provider (pollinations)", () => {
@@ -48,7 +48,7 @@ describe("resolveKeepaliveThreshold", () => {
 
   it("uses a longer threshold for clean-room ChatGPT Web but not its retired alias", () => {
     assert.equal(resolveKeepaliveThreshold("chatgpt-web/gpt-5"), 15000);
-    assert.equal(resolveKeepaliveThreshold("cgpt-web/gpt-5"), 2000);
+    assert.equal(resolveKeepaliveThreshold("cgpt-web/gpt-5"), 1000);
   });
 
   it("keeps the longer threshold for ChatGPT Web Codex", () => {
@@ -61,6 +61,12 @@ describe("resolveKeepaliveThreshold", () => {
 
   it("returns 15000ms for web-session provider (claude-web)", () => {
     assert.equal(resolveKeepaliveThreshold("claude-web/claude-sonnet-4"), 15000);
+  });
+
+  it("keeps the default tier below a 2s first-byte watchdog, including bare combo names", () => {
+    assert.ok(resolveKeepaliveThreshold(undefined) < 2000);
+    assert.equal(resolveKeepaliveThreshold("paper-stack"), 1000);
+    assert.equal(resolveKeepaliveThreshold("free-stack"), 1000);
   });
 
   it("SLOW_KEEPALIVE_PROVIDERS set contains expected providers", () => {

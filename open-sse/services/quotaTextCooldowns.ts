@@ -165,3 +165,23 @@ export function buildSessionQuotaFallback(errorStr: string): QuotaTextFallback |
     reason: RateLimitReason.QUOTA_EXHAUSTED,
   };
 }
+
+// xAI Grok Build free-tier rolling 24h token cap (#13984).
+const ROLLING_24H_QUOTA_COOLDOWN_MS = 24 * 60 * 60 * 1000;
+
+export function isRolling24hUsageLimitText(lower: string): boolean {
+  return (
+    lower.includes("used all the included free usage") ||
+    (lower.includes("rolling 24-hour window") && lower.includes("tokens (actual/limit)"))
+  );
+}
+
+export function buildRolling24hQuotaFallback(errorStr: string): QuotaTextFallback | null {
+  if (!isRolling24hUsageLimitText(errorStr.toLowerCase())) return null;
+  return {
+    shouldFallback: true,
+    cooldownMs: ROLLING_24H_QUOTA_COOLDOWN_MS,
+    reason: RateLimitReason.QUOTA_EXHAUSTED,
+    quotaResetHintMs: ROLLING_24H_QUOTA_COOLDOWN_MS,
+  };
+}

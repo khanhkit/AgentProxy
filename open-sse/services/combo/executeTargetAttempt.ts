@@ -20,6 +20,7 @@ import {
 } from "../accountFallback.ts";
 import { errorResponse, errorResponseWithComboDiagnostics } from "../../utils/error.ts";
 import { recordComboFailure, clearComboFailureTracking } from "./failureTracker.ts";
+import { readRetryAfterFromResponse } from "./retryAfterProvenance.ts";
 import { buildRecoveryHint } from "./pinRecovery.ts";
 import { formatExhaustedConnectionKey } from "./comboDiagFormat.ts";
 import { recordComboRequest, getComboMetrics } from "../comboMetrics.ts";
@@ -81,6 +82,8 @@ import {
 import { classifyComboOutcome, redactConnectionLabel } from "./comboErrorAggregation.ts";
 import { readConnectionForCooldownGate } from "./executeTargetGates.ts";
 import {
+  handlePreContentStreamRetry,
+  qualityValidationFailure,
   remainderIsHomogeneous,
   shouldAbortOnInputBoundFailure,
   shouldSurfaceBodySpecific400,
@@ -116,7 +119,15 @@ export async function executeTargetAttempt(opts: {
   const universalHandoffConfig = deps.universalHandoffConfig ?? DEFAULT_UNIVERSAL_HANDOFF_CONFIG;
   const stopProtected = (message: string, cause?: Parameters<typeof stopStatus>[0]) => {
     state.observeFailure(false, target.executionKey);
-    deps.clearStaleLKGP(deps.combo.name, target.executionKey, deps.combo.id, deps.log, "COMBO");
+    deps.clearStaleLKGP(
+      deps.combo.name,
+      target.executionKey,
+      deps.combo.id,
+      deps.log,
+      "COMBO",
+      undefined,
+      target
+    );
     return protectedPriorityTarget
       ? { ok: false as const, response: errorResponse(stopStatus(cause), message) }
       : null;
@@ -286,14 +297,13 @@ export async function executeTargetAttempt(opts: {
       }
     }
 
-    // Universal handoff: inject existing handoff if model changed. i === 0
-    // only: a fallback target (i > 0) serves the SAME client request the
-    // failed primary target would have served, with the original messages
-    // already intact -- there's nothing to hand off, since the client never
-    // saw the earlier target fail. Injecting a handoff note there replaces
-    // real context with a context-free note, which weaker fallback models
-    // have been observed treating as license to fabricate content instead
-    // of just answering the actual request (#12227 follow-up).
+    // Universal handoff: inject on model change only when i === 0. A fallback
+    // target (i > 0) serves the SAME client request the failed primary target
+    // would have served, with the original messages already intact -- there is
+    // nothing to hand off, since the client never saw the earlier target fail.
+    // Injecting a handoff note there replaces real context with a context-free
+    // note, which weaker fallback models have been observed treating as license
+    // to fabricate content instead of answering the request (#12227 follow-up).
     if (
       i === 0 &&
       universalHandoffConfig.enabled &&
@@ -309,7 +319,8 @@ export async function executeTargetAttempt(opts: {
           modelStr,
           `Model routing: ${lastModel} → ${modelStr}`,
           existingHandoff,
-          universalHandoffConfig.relayMode
+          universalHandoffConfig.relayMode,
+          deps.sourceFormat
         );
       }
     }
@@ -443,12 +454,8 @@ export async function executeTargetAttempt(opts: {
           latencyMs: Date.now() - deps.startTime,
         });
         state.observeFailure(false, target.executionKey);
-        return protectedPriorityTarget
-          ? {
-              ok: false,
-              response: errorResponse(502, "Upstream response failed quality validation"),
-            }
-          : null;
+        if (handlePreContentStreamRetry(quality, retry, deps, modelStr)) continue;
+        return protectedPriorityTarget ? qualityValidationFailure() : null;
       }
 
       if (Boolean(deps.clientManagedResponsesContext) && effectiveConnectionId) {
@@ -667,46 +674,28 @@ export async function executeTargetAttempt(opts: {
     let errorText = result.statusText || "";
     let errorBody: ComboErrorBody = null;
     let retryAfter: ComboRetryAfter | null = null;
-    try {
-      const cloned = result.clone();
-      try {
-        const text = await cloned.text();
-        if (text) {
-          errorText = text.substring(0, 500);
-          errorBody = JSON.parse(text);
-          const parsedError = errorBody?.error;
-          errorText =
-            (typeof parsedError === "object" && parsedError?.message) ||
-            (typeof parsedError === "string" ? parsedError : null) ||
-            errorBody?.message ||
-            errorText;
-          // Live incident (log id 1784457764961-73 follow-up): the pre-dispatch
-          // "all credentials cooling down" rejection (buildModelCooldownBody /
-          // handleNoCredentials in src/sse/handlers/chatHelpers.ts) nests its
-          // retry hint as error.retry_after (ISO string) / error.reset_seconds
-          // (seconds), not the top-level `retryAfter` every other 429 shape
-          // uses. Without this fallback, lastStatus gets recorded (fixed above)
-          // but earliestRetryAfter stays null, so the final check falls through
-          // to the generic "all combo models unavailable" error instead of ever
-          // reaching the cooldown-wait decision — same class of bug, different
-          // response shape.
-          const nestedRetryAfter =
-            typeof parsedError === "object" ? (parsedError?.retry_after ?? null) : null;
-          const nestedResetSeconds =
-            typeof parsedError === "object" ? (parsedError?.reset_seconds ?? null) : null;
-          retryAfter =
-            errorBody?.retryAfter ||
-            nestedRetryAfter ||
-            (typeof nestedResetSeconds === "number" && nestedResetSeconds > 0
-              ? new Date(Date.now() + nestedResetSeconds * 1000).toISOString()
-              : null);
-        }
-      } catch {
-        /* Clone parse failed */
-      }
-    } catch {
-      /* Clone failed */
+    const retryBody = await readRetryAfterFromResponse(result, deps.log, "COMBO", modelStr);
+    if (retryBody.text) {
+      errorText = retryBody.text.substring(0, 500);
+      errorBody = retryBody.json as ComboErrorBody;
+      const parsedError = errorBody?.error;
+      errorText =
+        (typeof parsedError === "object" && parsedError?.message) ||
+        (typeof parsedError === "string" ? parsedError : null) ||
+        errorBody?.message ||
+        errorText;
+      const nestedRetryAfter =
+        typeof parsedError === "object" ? (parsedError?.retry_after ?? null) : null;
+      const nestedResetSeconds =
+        typeof parsedError === "object" ? (parsedError?.reset_seconds ?? null) : null;
+      retryAfter =
+        errorBody?.retryAfter ||
+        nestedRetryAfter ||
+        (typeof nestedResetSeconds === "number" && nestedResetSeconds > 0
+          ? new Date(Date.now() + nestedResetSeconds * 1000).toISOString()
+          : null);
     }
+    retryAfter ||= retryBody.proseRetryAfter;
 
     // Track earliest retryAfter
     if (
@@ -894,7 +883,15 @@ export async function executeTargetAttempt(opts: {
       state.exhaustedConnections.has(`${provider}:${targetWithConnection.connectionId}`) ||
       (provider && state.exhaustedProviders.has(provider))
     ) {
-      deps.clearStaleLKGP(deps.combo.name, target.executionKey, deps.combo.id, deps.log, "COMBO");
+      deps.clearStaleLKGP(
+      deps.combo.name,
+      target.executionKey,
+      deps.combo.id,
+      deps.log,
+      "COMBO",
+      undefined,
+      target
+    );
     }
 
     // #2101: Prevent infinite fallback loops with 400 Bad Request errors that are genuinely
@@ -936,7 +933,15 @@ export async function executeTargetAttempt(opts: {
       state.lastStatus = result.status;
       if (i > 0) state.fallbackCount++;
       deps.log.warn("COMBO", `Model ${modelStr} failed with body-specific error, stopping combo`);
-      deps.clearStaleLKGP(deps.combo.name, target.executionKey, deps.combo.id, deps.log, "COMBO");
+      deps.clearStaleLKGP(
+      deps.combo.name,
+      target.executionKey,
+      deps.combo.id,
+      deps.log,
+      "COMBO",
+      undefined,
+      target
+    );
       // #4279: surface the 400 via the {ok,response} contract so the OUTER
       // target loop resolves the combo and stops. A bare `break` here only
       // exits the inner retry loop; executeTarget then returns null, which
@@ -1119,7 +1124,15 @@ export async function executeTargetAttempt(opts: {
     // *next* separate request. Circuit breaker / model lockout deliberately
     // don't react to request-scoped failure classes (see scopedFailure below),
     // so nothing else clears this stale pin.
-    deps.clearStaleLKGP(deps.combo.name, target.executionKey, deps.combo.id, deps.log, "COMBO");
+    deps.clearStaleLKGP(
+      deps.combo.name,
+      target.executionKey,
+      deps.combo.id,
+      deps.log,
+      "COMBO",
+      undefined,
+      target
+    );
     state.recordedAttempts++;
     state.lastError = errorText || String(result.status);
     state.comboErrors.push({

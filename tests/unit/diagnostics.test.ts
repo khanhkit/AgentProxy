@@ -128,6 +128,16 @@ test("detectMalformedNonStream returns 'empty_choices' when choice message has n
   assert.equal(detectMalformedNonStream(body), "empty_choices");
 });
 
+test("detectMalformedNonStream accepts empty content at a terminal truncation stop", () => {
+  for (const finish_reason of ["length", "tool_calls", "content_filter"]) {
+    const body = {
+      choices: [{ message: { content: "", tool_calls: null }, finish_reason }],
+      usage: { reasoning_tokens: 28 },
+    };
+    assert.equal(detectMalformedNonStream(body), null, finish_reason);
+  }
+});
+
 test("detectMalformedNonStream returns null for valid chat completion", () => {
   const body = {
     choices: [{ message: { content: "Hello!", tool_calls: null }, finish_reason: "stop" }],
@@ -384,4 +394,13 @@ test("reportMalformed200 runs without throwing", () => {
       elapsedMs: 200,
     })
   );
+});
+
+test("AP-ISS-0124 Claude-compatible length stop_reason is a legitimate truncated completion", () => {
+  const resp = {
+    type: "message",
+    content: [{ type: "text", text: "(empty response)" }],
+    stop_reason: "length",
+  };
+  assert.equal(detectMalformedNonStream(resp), null);
 });

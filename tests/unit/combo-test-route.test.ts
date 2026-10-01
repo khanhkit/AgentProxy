@@ -461,3 +461,73 @@ test("combo test route handles upstream timeouts and non-JSON error bodies", asy
     ]
   );
 });
+
+test("combo test route aborts all parallel probes when the client disconnects", async () => {
+  await createTestCombo(["provider/first", "provider/second"]);
+
+  const externalController = new AbortController();
+  const observedSignals: AbortSignal[] = [];
+  let inFlight = 0;
+  let maxInFlight = 0;
+
+  globalThis.fetch = async (_url, init: RequestInit = {}) => {
+    const signal = init.signal as AbortSignal;
+    observedSignals.push(signal);
+    inFlight += 1;
+    maxInFlight = Math.max(maxInFlight, inFlight);
+    try {
+      await new Promise((_resolve, reject) => {
+        if (signal.aborted) {
+          const error = new Error("aborted");
+          error.name = "AbortError";
+          reject(error);
+          return;
+        }
+        signal.addEventListener(
+          "abort",
+          () => {
+            const error = new Error("aborted");
+            error.name = "AbortError";
+            reject(error);
+          },
+          { once: true }
+        );
+      });
+      throw new Error("probe should have been aborted");
+    } finally {
+      inFlight -= 1;
+    }
+  };
+
+  const pending = route.POST(
+    new Request("http://localhost/api/combos/test", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ comboName: "strict-live-test" }),
+      signal: externalController.signal,
+    })
+  );
+
+  for (let i = 0; i < 50 && observedSignals.length < 2; i += 1) {
+    await new Promise((resolve) => setTimeout(resolve, 10));
+  }
+  assert.equal(observedSignals.length, 2);
+  assert.equal(maxInFlight, 2);
+  externalController.abort();
+
+  const response = await pending;
+  const body = (await response.json()) as {
+    resolvedBy: string | null;
+    results: Array<{ error?: string }>;
+  };
+
+  assert.equal(response.status, 200);
+  assert.equal(inFlight, 0);
+  assert.equal(observedSignals.every((signal) => signal.aborted), true);
+  assert.equal(observedSignals.every((signal) => signal !== externalController.signal), true);
+  assert.equal(body.resolvedBy, null);
+  assert.deepEqual(
+    body.results.map((result) => result.error),
+    ["Client disconnected", "Client disconnected"]
+  );
+});

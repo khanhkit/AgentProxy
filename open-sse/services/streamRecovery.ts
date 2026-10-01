@@ -350,6 +350,16 @@ export function trimContinuationOverlap(emitted: string, continuation: string): 
   return continuation;
 }
 
+/** Why a post-commit cut was not continued (see `ContinuationOutcome`). */
+export type ContinuationRefusal = "budget" | "tool-call" | "not-continuable";
+
+/** Result of one mid-stream continuation decision, for observability only. */
+export type ContinuationOutcome =
+  | { attempt: number; outcome: "suffix"; suffixChars: number }
+  | { attempt: number; outcome: "overlap-reject"; overlapChars: number }
+  | { attempt: number; outcome: "terminal" | "empty" | "no-stream" }
+  | { attempt: number; outcome: "refused"; reason: ContinuationRefusal };
+
 export interface RecoverableStreamOptions {
   /** Released exactly once when the wrapped stream closes, errors, or is cancelled. */
   finalize: () => void;
@@ -371,6 +381,8 @@ export interface RecoverableStreamOptions {
   maxContinuations?: number;
   /** Observability hook fired on each continuation attempt. */
   onContinue?: (attempt: number, assistantSoFar: string) => void;
+  /** Observability hook fired with each continuation outcome or refused cut. */
+  onContinueOutcome?: (event: ContinuationOutcome) => void;
   /** Opt-in active-stream output-quality watchdog. Disabled when omitted. */
   throughputWatchdog?: ThroughputWatchdogOptions;
   /** Sanitized observability hook fired before the active attempt is aborted. */
@@ -531,6 +543,14 @@ export function createRecoverableStream(
     (emittedText.length > 0 ? !emittedTerminal : hallucinatedEmptyStop()) &&
     !toolCallBlocksContinuation();
 
+  const reportRefusal = () => {
+    if (!continueEnabled || !emittedParsedOpenAi || !options.onContinueOutcome) return;
+    let reason: ContinuationRefusal = "not-continuable";
+    if (continuations >= maxContinuations) reason = "budget";
+    else if (emittedToolCallInFlight) reason = "tool-call";
+    options.onContinueOutcome({ attempt: continuations, outcome: "refused", reason });
+  };
+
   const emitCleanTerminal = (controller: ReadableStreamDefaultController<Uint8Array>) => {
     controller.enqueue(
       encoder.encode('data: {"choices":[{"index":0,"delta":{},"finish_reason":"stop"}]}\n\n')
@@ -542,11 +562,16 @@ export function createRecoverableStream(
   // Returns true once the recovered stream has been terminated (caller closes); false to
   // fall back to the unchanged #4131 error/close behavior.
   const tryContinue = async (
-    controller: ReadableStreamDefaultController<Uint8Array>
+    controller: ReadableStreamDefaultController<Uint8Array>,
+    cut = true
   ): Promise<boolean> => {
-    if (!canContinue()) return false;
+    if (!canContinue()) {
+      if (cut) reportRefusal();
+      return false;
+    }
     continuations += 1;
     options.onContinue?.(continuations, emittedText);
+    const report = (event: ContinuationOutcome) => options.onContinueOutcome?.(event);
 
     let contStream: ReadableStream<Uint8Array> | null = null;
     try {
@@ -554,7 +579,10 @@ export function createRecoverableStream(
     } catch {
       contStream = null;
     }
-    if (!contStream) return false;
+    if (!contStream) {
+      report({ attempt: continuations, outcome: "no-stream" });
+      return false;
+    }
 
     // Drain the continuation fully (recovery favors correctness over token-by-token
     // streaming of the recovered tail), then emit only the de-duplicated suffix.
@@ -586,6 +614,7 @@ export function createRecoverableStream(
       scan.text.length > 0 &&
       overlapChars < STREAM_RECOVERY.MIN_CONTINUATION_OVERLAP_CHARS;
     if (isSuspectedRestart) {
+      report({ attempt: continuations, outcome: "overlap-reject", overlapChars });
       if (await tryContinue(controller)) return true;
       emitCleanTerminal(controller);
       return true;
@@ -598,9 +627,11 @@ export function createRecoverableStream(
           `data: ${JSON.stringify({ choices: [{ index: 0, delta: { content: suffix } }] })}\n\n`
         )
       );
+      report({ attempt: continuations, outcome: "suffix", suffixChars: suffix.length });
     }
     // A clean finish, or a tool call we cannot safely stitch, ends the recovered stream.
     if (scan.terminal || scan.sawToolCall) {
+      if (!suffix) report({ attempt: continuations, outcome: "terminal" });
       emitCleanTerminal(controller);
       return true;
     }
@@ -658,7 +689,7 @@ export function createRecoverableStream(
             // says the stream is worth continuing (silent truncation, or a clean-but-empty
             // reasoning-only stop) — canContinue() is the single source of truth here, same as
             // the read-error branch above.
-            if (await tryContinue(controller)) {
+            if (await tryContinue(controller, !emittedTerminal)) {
               runFinalize();
               controller.close();
               return;

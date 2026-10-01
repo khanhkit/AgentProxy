@@ -72,6 +72,7 @@ export interface ApiKeyMetadata {
   name?: string;
   modelAccessMode?: "all" | "restricted";
   allowedModels?: string[];
+  blockedModels?: string[];
   allowedCombos?: string[];
   allowedConnections?: string[];
   allowedQuotas?: string[];
@@ -302,6 +303,16 @@ async function validateQuotaRoutingTarget(
   }
 }
 
+function comboCannotBeUsedMessage(modelStr: string, comboName: string | null): string {
+  const name = comboName || modelStr;
+  return (
+    `Combo "${name}" is not allowed for this API key. ` +
+    `This key's allowed combos do not include "${name}" — add "${name}" (or "combo/*") ` +
+    `to this key's allowed combos in Dashboard → API Manager, or route to a combo ` +
+    `this key already permits.`
+  );
+}
+
 async function validateStandardRoutingTarget(
   request: Request,
   apiKey: string,
@@ -316,7 +327,7 @@ async function validateStandardRoutingTarget(
       if (!comboAccess.allowed) {
         return errorResponse(
           HTTP_STATUS.FORBIDDEN,
-          `Combo "${comboAccess.comboName || modelStr}" is not allowed for this API key`
+          comboCannotBeUsedMessage(modelStr, comboAccess.comboName)
         );
       }
     } catch (error) {
@@ -328,6 +339,7 @@ async function validateStandardRoutingTarget(
   const hasModelRestrictions =
     apiKeyInfo.modelAccessMode === "restricted" ||
     Boolean(apiKeyInfo.allowedModels?.length) ||
+    Boolean(apiKeyInfo.blockedModels?.length) ||
     apiKeyInfo.disableNonPublicModels === true;
   if (!requestedComboName && hasModelRestrictions && modelStr.startsWith("auto/")) {
     requestedComboName = modelStr;
@@ -556,6 +568,7 @@ async function validateModelAccess(context: PolicyContext): Promise<Response | n
   const hasModelRestrictions =
     apiKeyInfo.modelAccessMode === "restricted" ||
     Boolean(apiKeyInfo.allowedModels?.length) ||
+    Boolean(apiKeyInfo.blockedModels?.length) ||
     apiKeyInfo.disableNonPublicModels === true;
   if (!requestedComboName && hasModelRestrictions) {
     if (modelStr.startsWith("auto/") || modelStr.startsWith("qtSd/")) {
@@ -592,7 +605,7 @@ async function validateComboAccess(
       comboName: comboAccess.comboName,
       rejection: errorResponse(
         HTTP_STATUS.FORBIDDEN,
-        `Combo "${comboAccess.comboName || modelStr}" is not allowed for this API key`
+        comboCannotBeUsedMessage(modelStr, comboAccess.comboName)
       ),
     };
   } catch (error) {

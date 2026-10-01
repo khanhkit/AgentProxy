@@ -35,7 +35,7 @@ test("NlpCloudExecutor is registered in the executor index", async () => {
   assert.ok((await getExecutor("nlpcloud")) instanceof NlpCloudExecutor);
 });
 
-test.skip("NlpCloudExecutor converts OpenAI messages into chatbot input/context/history and wraps JSON responses", async () => {
+test("NlpCloudExecutor converts OpenAI messages into chatbot input/context/history and wraps JSON responses", async () => {
   const executor = new NlpCloudExecutor();
   const originalFetch = globalThis.fetch;
   const calls: Array<{

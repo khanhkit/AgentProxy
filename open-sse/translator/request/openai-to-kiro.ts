@@ -183,6 +183,7 @@ function convertMessages(messages, tools, model) {
   let currentRole = null;
   let toolsAttached = false;
   let toolDocs = "";
+  let toolDocsCarrier = null;
 
   // Only Claude models support images in Kiro. Kiro also routes non-Claude
   // models (deepseek, minimax, glm, qwen3-coder-next) that do not accept image
@@ -242,7 +243,10 @@ function convertMessages(messages, tools, model) {
         }
         const built = buildKiroToolSpecs(tools);
         userMsg.userInputMessage.userInputMessageContext.tools = built.specs;
-        if (built.docs) toolDocs = built.docs;
+        if (built.docs) {
+          toolDocs = built.docs;
+          toolDocsCarrier = userMsg;
+        }
         toolsAttached = true;
       }
 
@@ -530,8 +534,22 @@ function convertMessages(messages, tools, model) {
     }
     const built = buildKiroToolSpecs(tools);
     currentMessage.userInputMessage.userInputMessageContext.tools = built.specs;
-    if (built.docs) toolDocs = built.docs;
+    if (built.docs) {
+      toolDocs = built.docs;
+      toolDocsCarrier = currentMessage;
+    }
     toolsAttached = true;
+  }
+
+  // The relocated docs should stay anchored to the turn that originally
+  // carried the tools. If that turn has moved into history, embed the docs
+  // there and clear toolDocs so buildKiroPayload() does not prepend them onto
+  // the newest currentMessage again on every resent multi-turn request.
+  if (toolDocs && toolDocsCarrier && toolDocsCarrier !== currentMessage) {
+    const carrierMessage = toolDocsCarrier.userInputMessage;
+    const existingContent = carrierMessage.content || "";
+    carrierMessage.content = `# Tool Documentation\n\n${toolDocs}\n\n---\n\n${existingContent}`;
+    toolDocs = "";
   }
 
   // Clean up history for Kiro API compatibility

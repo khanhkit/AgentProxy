@@ -1,10 +1,12 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { getEventListeners } from "node:events";
 
 import {
   createBodyTimeoutError,
   createUpstreamStartTimeoutError,
   createAbortError,
+  executeWithUpstreamStartTimeout,
   computeBillableTokens,
   getExecutorTimeoutMs,
   normalizeExecutorResult,
@@ -56,4 +58,51 @@ test("normalizeExecutorResult rejects malformed executor output", () => {
     () => normalizeExecutorResult({ response: "not-a-response" }),
     /must contain a Response/
   );
+});
+
+
+test("executeWithUpstreamStartTimeout leaves no abort listener on the client signal", async () => {
+  const client = new AbortController();
+  const before = getEventListeners(client.signal, "abort").length;
+  const result = await executeWithUpstreamStartTimeout({
+    executor: {},
+    provider: "test-provider",
+    model: "test-model",
+    connectionTimeoutMs: 5_000,
+    signal: client.signal,
+    execute: async () => "ok",
+  });
+  assert.equal(result, "ok");
+  assert.equal(getEventListeners(client.signal, "abort").length, before);
+});
+
+test("executeWithUpstreamStartTimeout synchronous throw cannot orphan abortPromise", async () => {
+  const client = new AbortController();
+  const before = getEventListeners(client.signal, "abort").length;
+  await assert.rejects(
+    executeWithUpstreamStartTimeout({
+      executor: {},
+      provider: "test-provider",
+      model: "test-model",
+      connectionTimeoutMs: 5_000,
+      signal: client.signal,
+      execute: () => {
+        throw new Error("sync failure before race");
+      },
+    }),
+    /sync failure before race/
+  );
+  assert.equal(getEventListeners(client.signal, "abort").length, before);
+  let unhandled: unknown = null;
+  const onUnhandled = (reason: unknown) => {
+    unhandled = reason;
+  };
+  process.on("unhandledRejection", onUnhandled);
+  try {
+    client.abort("hedge-cancelled");
+    await new Promise((resolve) => setTimeout(resolve, 25));
+  } finally {
+    process.off("unhandledRejection", onUnhandled);
+  }
+  assert.equal(unhandled, null);
 });

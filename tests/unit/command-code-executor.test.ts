@@ -334,6 +334,34 @@ test("Command Code executor honors a smaller client-provided max_tokens", async 
   assert.equal((calls[0].body as Record<string, unknown>).max_tokens, 2048);
 });
 
+test("Command Code executor floors tiny muse-spark output budgets", async () => {
+  const calls = captureFetch({});
+  (await getExecutor("command-code")).execute({
+    model: "meta/muse-spark-1.2-contributor",
+    stream: false,
+    credentials: { apiKey: "cc_test_key" },
+    body: {
+      messages: [{ role: "user", content: "Hi" }],
+      max_tokens: 64,
+    },
+  });
+  assert.equal((calls[0].body as Record<string, unknown>).max_tokens, 512);
+});
+
+test("Command Code executor leaves existing large muse-spark budgets untouched", async () => {
+  const calls = captureFetch({});
+  (await getExecutor("command-code")).execute({
+    model: "meta/muse-spark-1.2-contributor",
+    stream: false,
+    credentials: { apiKey: "cc_test_key" },
+    body: {
+      messages: [{ role: "user", content: "Hi" }],
+      max_tokens: 4096,
+    },
+  });
+  assert.equal((calls[0].body as Record<string, unknown>).max_tokens, 4096);
+});
+
 test("Command Code stream preserves the upstream OpenAI usage chunk (passthrough)", async () => {
   const sse =
     openAiSse({

@@ -7,13 +7,48 @@ type DirectFetch = (
 const DEFAULT_DIRECT_HEADERS_TIMEOUT_MS = 30_000;
 const DIRECT_RESPONSE_START_TIMEOUT_CODE = "DIRECT_RESPONSE_START_TIMEOUT";
 
+const REASONING_READINESS_CEILING_MS = 180_000;
+const HIGH_REASONING_EFFORT_PATTERN = /"(?:reasoning_effort|effort)"\s*:\s*"(?:high|max)"/i;
+const DEFAULT_DIRECT_RETRY_CEILING_MS = 600_000;
+
+function hasHighReasoningEffort(body?: string | null): boolean {
+  return typeof body === "string" && body.length > 0 && HIGH_REASONING_EFFORT_PATTERN.test(body);
+}
+
 export function resolveDirectHeadersTimeoutMs(
-  env: Record<string, string | undefined> = process.env
+  env: Record<string, string | undefined> = process.env,
+  body?: string | null,
+  attempt = 0,
+  hasCallerDeadline = false
 ): number {
   const raw = env.AGENTPROXY_DIRECT_HEADERS_TIMEOUT_MS;
-  if (raw == null || raw.trim() === "") return DEFAULT_DIRECT_HEADERS_TIMEOUT_MS;
-  const parsed = Number(raw);
-  return Number.isFinite(parsed) && parsed > 0 ? Math.floor(parsed) : 0;
+  const base =
+    raw == null || raw.trim() === ""
+      ? DEFAULT_DIRECT_HEADERS_TIMEOUT_MS
+      : Number.isFinite(Number(raw)) && Number(raw) > 0
+        ? Math.floor(Number(raw))
+        : 0;
+  const flatFloorMs = hasHighReasoningEffort(body)
+    ? Math.max(base, REASONING_READINESS_CEILING_MS)
+    : base;
+  if (attempt === 0) return flatFloorMs;
+  return resolveDirectRetryTimeoutMs(flatFloorMs, hasCallerDeadline, env);
+}
+
+export function resolveDirectRetryTimeoutMs(
+  flatFloorMs: number,
+  hasCallerDeadline: boolean,
+  env: Record<string, string | undefined> = process.env
+): number {
+  if (!hasCallerDeadline) return flatFloorMs;
+  const raw = env.AGENTPROXY_DIRECT_RESPONSE_RETRY_TIMEOUT_MS;
+  const ceiling =
+    raw == null || raw.trim() === ""
+      ? DEFAULT_DIRECT_RETRY_CEILING_MS
+      : Number.isFinite(Number(raw)) && Number(raw) > 0
+        ? Math.floor(Number(raw))
+        : DEFAULT_DIRECT_RETRY_CEILING_MS;
+  return Math.max(flatFloorMs, ceiling);
 }
 
 function createDirectResponseStartTimeout(timeoutMs: number): Error & { code: string } {

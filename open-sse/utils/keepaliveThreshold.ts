@@ -17,7 +17,7 @@ import { APIKEY_PROVIDERS } from "@/shared/constants/providers";
 import { WEB_COOKIE_PROVIDERS } from "@/shared/constants/providers";
 import { WEB_SESSION_CREDENTIAL_REQUIREMENTS } from "@/shared/providers/webSessionCredentials";
 
-const DEFAULT_THRESHOLD_MS = 2_000;
+const DEFAULT_THRESHOLD_MS = 1_000;
 const SLOW_THRESHOLD_MS = 15_000;
 
 const SLOW_PROVIDER_IDS: Set<string> = new Set();

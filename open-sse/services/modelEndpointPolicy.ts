@@ -83,13 +83,28 @@ function classifyOpenAiModel(modelId: string): ModelEndpointDecision | null {
   return null;
 }
 
+const OPENROUTER_BATCH_SUFFIX = ":batch";
+
+function classifyOpenRouterModel(modelId: string): ModelEndpointDecision | null {
+  return modelId.trim().toLowerCase().endsWith(OPENROUTER_BATCH_SUFFIX)
+    ? { kind: "non-chat", chatSelectable: false, reason: "provider-policy" }
+    : null;
+}
+
 export function getModelEndpointDecision(
   provider: string | null | undefined,
   modelId: string,
   supportedEndpoints?: readonly string[]
 ): ModelEndpointDecision {
   const explicit = classifyExplicitEndpoints(supportedEndpoints);
-  if (provider?.trim().toLowerCase() === "openai") {
+  const normalizedProvider = provider?.trim().toLowerCase();
+  if (normalizedProvider === "openrouter") {
+    // OpenRouter's :batch variant is Batch-API-only. Existing imported rows can
+    // carry a synthetic ["chat"] default, so provider policy must win first.
+    const openRouterDecision = classifyOpenRouterModel(modelId);
+    if (openRouterDecision) return openRouterDecision;
+  }
+  if (normalizedProvider === "openai") {
     const openAiDecision = classifyOpenAiModel(modelId);
     if (openAiDecision) {
       // Old imported rows were persisted with `["chat"]` as a synthetic default

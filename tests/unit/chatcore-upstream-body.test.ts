@@ -363,3 +363,39 @@ test("injects prompt_cache_key for Kimi Code's OpenAI protocol", async () => {
   });
   assert.match(String(out.prompt_cache_key), /^omni-[0-9a-f]{32}$/);
 });
+
+test("shared pre-executor boundary strips AgentProxy routing markers but preserves executor-consumed store marker", async () => {
+  const translatedBody = {
+    model: "model-a",
+    messages: [{ role: "user", content: "summarize this context" }],
+    _agentproxySkipContextRelay: true,
+    _agentproxyInternalRequest: "universal-handoff",
+    _agentproxyReasoningRule: "auto",
+    _agentproxyFutureMarker: "internal",
+    _agentproxyResponsesStore: false,
+    _nativeCodexPassthrough: true,
+    _claudeCodeRequiresLowercaseToolNames: true,
+    _custom_private: "client-value",
+  };
+
+  const out = await prepareUpstreamBody({
+    translatedBody,
+    modelToCall: "model-a",
+    provider: "custom-provider",
+    targetFormat: FORMATS.OPENAI,
+    credentials: null,
+  });
+
+  assert.equal(out._agentproxySkipContextRelay, undefined);
+  assert.equal(out._agentproxyInternalRequest, undefined);
+  assert.equal(out._agentproxyReasoningRule, undefined);
+  assert.equal(out._agentproxyFutureMarker, undefined);
+  assert.equal(out._nativeCodexPassthrough, undefined);
+  assert.equal(out._claudeCodeRequiresLowercaseToolNames, undefined);
+  assert.equal(out._agentproxyResponsesStore, false);
+  assert.equal(out._custom_private, "client-value");
+
+  assert.equal(translatedBody._agentproxySkipContextRelay, true);
+  assert.equal(translatedBody._agentproxyInternalRequest, "universal-handoff");
+  assert.equal(translatedBody._agentproxyResponsesStore, false);
+});

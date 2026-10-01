@@ -173,6 +173,20 @@ test("reasoning replay: no-tool history comes from historyMessages, not requestB
   );
 });
 
+test("transcript-observed non-streaming replies bypass reasoning cache without changing the client reply", () => {
+  clearReasoningCacheAll();
+  const sentinel = "PRIVATE_NONSTREAM_REASONING_TRANSCRIPT_SENTINEL";
+  const input = baseInput({
+    provider: "deepseek", model: "deepseek-v4-pro", videoTranscriptSensitive: true,
+    responseBody: { choices: [{ index: 0, message: {
+      role: "assistant", content: "visible client reply", reasoning_content: sentinel,
+      tool_calls: [{ id: "call_video_nonstream", type: "function", function: { name: "f", arguments: "{}" } }],
+    }, finish_reason: "tool_calls" }] },
+  });
+  const result = translateNonStreamingClientResponse(input);
+  assert.equal(result.response.choices[0].message.reasoning_content, sentinel);
+  assert.equal(lookupReasoning("call_video_nonstream"), null);
+});
 test("phase=final applies client usage buffer", () => {
   // Gemini format skips OpenAI/Responses sanitize, so extra usage fields
   // only disappear if applyClientUsageBuffer → filterUsageForFormat runs.
@@ -268,6 +282,40 @@ test("Responses API format: sanitizeResponsesApiResponse is applied", () => {
   assert.equal(output[0]?.type, "function_call");
   assert.equal(output[0]?.namespace, "ns", "#7936 restore namespace");
   assert.equal(output[0]?.name, "get_weather", "#7936 restore original name");
+});
+
+test("#12370: alias-shaped requestToolIdentityMap preserves function_call name", () => {
+  const input = baseInput({
+    responsePayloadFormat: FORMATS.GEMINI,
+    clientResponseFormat: FORMATS.OPENAI_RESPONSES,
+    sourceFormat: FORMATS.OPENAI_RESPONSES,
+    provider: "gemini",
+    model: "gemini-3-flash-preview",
+    responseBody: {
+      candidates: [
+        {
+          content: {
+            role: "model",
+            parts: [{ functionCall: { name: "shell", args: { command: ["ls"] } } }],
+          },
+          finishReason: "STOP",
+          index: 0,
+        },
+      ],
+    },
+    requestToolIdentityMap: new Map([["shell", "shell"]]) as unknown as Map<
+      string,
+      { namespace?: string; name: string }
+    >,
+  });
+
+  const result = translateNonStreamingClientResponse(input);
+  const output = result.response.output as Array<Record<string, unknown>>;
+  const functionCall = output.find((item) => item.type === "function_call");
+
+  assert.ok(functionCall, "expected a function_call output item");
+  assert.equal(functionCall.name, "shell", "alias map must not erase the function name");
+  assert.equal("name" in functionCall, true, "name key must survive serialization");
 });
 
 test("empty content response: passthrough without crash", () => {

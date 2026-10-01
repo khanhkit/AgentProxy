@@ -143,6 +143,13 @@ function combineSignals(signal: AbortSignal | undefined, timeoutMs: number) {
   return AbortSignal.any([signal, timeoutSignal]);
 }
 
+let pinnedFetchTestOverride: typeof fetch | undefined;
+
+/** Test-only seam for pinDns callers whose tests mock global fetch. Production leaves this unset. */
+export function setPinnedFetchTestOverride(fetchImpl: typeof fetch | undefined): void {
+  pinnedFetchTestOverride = fetchImpl;
+}
+
 async function readResponseBuffer(response: Response, maxBytes: number) {
   const contentLengthHeader = response.headers.get("content-length");
   const contentLength = contentLengthHeader ? Number.parseInt(contentLengthHeader, 10) : null;
@@ -204,6 +211,7 @@ export async function fetchRemoteMedia(
     const addresses = await assertHostnameResolvesPublic(currentUrl, guard, lookup);
     const fetchImpl =
       injectedFetch ??
+      pinnedFetchTestOverride ??
       (pinDns && addresses.length
         ? createPinnedFetch(addresses[0].address, addresses[0].family)
         : fetch);

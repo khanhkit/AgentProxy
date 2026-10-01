@@ -9,6 +9,7 @@ import { projectCompletedStreamError } from "../../utils/streamErrorFormat.ts";
 import { fallbackToolCallId } from "../helpers/toolCallHelper.ts";
 import { shouldParseTextualReasoningTags } from "../../handlers/responseSanitizer.ts";
 import { getReadableReasoningValue } from "../../utils/reasoningFields.ts";
+import { pickCacheCreationTokens } from "../../utils/pickCacheCreationTokens.ts";
 import {
   isInternalReasoningPlaceholder,
   stripInternalReasoningPlaceholder,
@@ -24,6 +25,7 @@ import {
 import { createEventEmitter } from "./openai-responses/eventEmitter.ts";
 import { buildResponsesToolCallItem } from "./responsesToolItem.ts";
 import { resolveRequestToolIdentity } from "./openai-responses/requestToolIdentity.ts";
+import { applyFunctionCallIdentity } from "./openai-responses/functionCallIdentity.ts";
 import { resolveLocalToolCallIndex } from "./openai-responses/toolCallLocalIndex.ts";
 import {
   synthesizeCompletedToolCalls,
@@ -113,6 +115,37 @@ function escapeJsonStringValues(json: string, escapeState: JsonStringEscapeState
   return result;
 }
 
+function fixDoubleEscapedTabs(json: string): string {
+  let result = "";
+  let inString = false;
+
+  for (let i = 0; i < json.length; i++) {
+    const ch = json[i];
+
+    if (inString && ch === "\\" && json[i + 1] === "\\" && json[i + 2] === "t") {
+      result += "\\t";
+      i += 2;
+      continue;
+    }
+
+    if (inString && ch === "\\") {
+      result += ch + (json[i + 1] ?? "");
+      i++;
+      continue;
+    }
+
+    if (ch === '"') {
+      result += ch;
+      inString = !inString;
+      continue;
+    }
+
+    result += ch;
+  }
+
+  return result;
+}
+
 /**
  * Translate OpenAI chunk to Responses API events
  * @returns {Array} Array of events with { event, data } structure
@@ -127,21 +160,27 @@ export function openaiToOpenAIResponsesResponse(chunk, state) {
     const u = chunk.usage;
     const input_tokens = u.input_tokens ?? u.prompt_tokens ?? 0;
     const output_tokens = u.output_tokens ?? u.completion_tokens ?? 0;
-    state.usage = {
-      input_tokens,
-      output_tokens,
-      total_tokens: u.total_tokens ?? input_tokens + output_tokens,
-    };
     const cachedTokens =
       u.input_tokens_details?.cached_tokens ?? u.prompt_tokens_details?.cached_tokens;
-    if (cachedTokens) {
-      state.usage.input_tokens_details = { cached_tokens: cachedTokens };
-    }
+    const cacheCreationTokens = pickCacheCreationTokens(u);
     const reasoningTokens =
       u.output_tokens_details?.reasoning_tokens ?? u.completion_tokens_details?.reasoning_tokens;
-    if (reasoningTokens) {
-      state.usage.output_tokens_details = { reasoning_tokens: reasoningTokens };
-    }
+    state.usage = {
+      input_tokens,
+      input_tokens_details: {
+        cached_tokens:
+          typeof cachedTokens === "number" && Number.isFinite(cachedTokens) ? cachedTokens : 0,
+        ...(cacheCreationTokens ? { cache_creation_tokens: cacheCreationTokens } : {}),
+      },
+      output_tokens,
+      output_tokens_details: {
+        reasoning_tokens:
+          typeof reasoningTokens === "number" && Number.isFinite(reasoningTokens)
+            ? reasoningTokens
+            : 0,
+      },
+      total_tokens: u.total_tokens ?? input_tokens + output_tokens,
+    };
   }
 
   if (!chunk.choices?.length) {
@@ -225,6 +264,9 @@ export function openaiToOpenAIResponsesResponse(chunk, state) {
       object: "response",
       created_at: state.created,
       status: "in_progress",
+      background: false,
+      error: null,
+      output: [],
     };
     if (state.model) inProgressResponse.model = state.model;
     emit("response.in_progress", {
@@ -288,7 +330,7 @@ export function openaiToOpenAIResponsesResponse(chunk, state) {
   }
 
   // Handle tool_calls
-  if (delta.tool_calls) {
+  if (delta.tool_calls?.length) {
     // Close reasoning first so tool calls do not collide with an open
     // reasoning item, then close the message at its real index.
     if (state.reasoningId && !state.reasoningDone) {
@@ -352,7 +394,12 @@ function startReasoning(state, emit, idx) {
     emit("response.output_item.added", {
       type: "response.output_item.added",
       output_index: idx,
-      item: { id: state.reasoningId, type: "reasoning", summary: [] },
+      item: {
+        id: state.reasoningId,
+        type: "reasoning",
+        summary: [],
+        status: "in_progress",
+      },
     });
 
     emit("response.reasoning_summary_part.added", {
@@ -402,6 +449,7 @@ function closeReasoning(state, emit) {
       id: state.reasoningId,
       type: "reasoning",
       summary: [{ type: "summary_text", text: state.reasoningBuf }],
+      status: "completed",
     };
 
     emit("response.output_item.done", {
@@ -422,7 +470,13 @@ function emitTextContent(state, emit, idx, content) {
     emit("response.output_item.added", {
       type: "response.output_item.added",
       output_index: idx,
-      item: { id: msgId, type: "message", content: [], role: "assistant" },
+      item: {
+        id: msgId,
+        type: "message",
+        content: [],
+        role: "assistant",
+        status: "in_progress",
+      },
     });
   }
 
@@ -480,6 +534,7 @@ function closeMessage(state, emit, idx) {
       type: "message",
       content: [{ type: "output_text", annotations: [], logprobs: [], text: fullText }],
       role: "assistant",
+      status: "completed",
     };
 
     emit("response.output_item.done", {
@@ -589,7 +644,7 @@ function emitToolCall(state, emit, tc) {
       state.funcArgsEscapeState[tcIdx] = createJsonStringEscapeState();
     }
     const sanitized = escapeJsonStringValues(
-      tc.function.arguments,
+      fixDoubleEscapedTabs(tc.function.arguments),
       state.funcArgsEscapeState[tcIdx]
     );
     const nextArgs = appendToolCallArgumentDelta(existingArgs, sanitized);
@@ -689,18 +744,11 @@ function closeToolCall(state, emit, idx, recordAsCompleted = true) {
         status: "completed",
       };
 
-      // #7936 identity closure: rewrite the function_call item's `name` back to
-      // its bare leaf and stamp the original `namespace` alongside it, matching
-      // the codex ResponseItem::FunctionCall schema (independent `namespace`
-      // field, NOT a `__` split on `name`).
-      const fnIdentity = resolveRequestToolIdentity(
+      applyFunctionCallIdentity(
+        funcItem,
         state.requestToolIdentityMap,
         state.funcNames[idx] || ""
       );
-      if (fnIdentity) {
-        funcItem.namespace = fnIdentity.namespace;
-        funcItem.name = fnIdentity.name;
-      }
 
       emit("response.output_item.done", {
         type: "response.output_item.done",

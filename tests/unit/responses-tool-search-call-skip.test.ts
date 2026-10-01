@@ -58,6 +58,30 @@ test("tool_search_result input item is silently skipped", () => {
   assert.equal(messages[0].role, "user");
 });
 
+test("#13304: web_search_call replay is skipped while paired function result survives", () => {
+  const body = {
+    model: "test-model",
+    input: [
+      { type: "message", role: "user", content: [{ type: "input_text", text: "Find docs" }] },
+      {
+        type: "function_call", call_id: "call_search", name: "agentproxy_web_search",
+        arguments: '{"query":"AgentProxy docs"}',
+      },
+      {
+        type: "function_call_output", call_id: "call_search",
+        output: '{"success":true,"results":[{"url":"https://example.com"}]}',
+      },
+      { type: "web_search_call", id: "ws_search", status: "completed", action: { type: "web_search" } },
+    ],
+    stream: false,
+  };
+  const result = translateRequest("openai-responses", "openai", "test-model", body, false) as {
+    messages?: Array<{ role?: string; content?: unknown }>;
+  };
+  assert.deepEqual(result.messages?.map((m) => m.role), ["user", "assistant", "tool"]);
+  assert.equal(result.messages?.[2]?.content, body.input[2].output);
+});
+
 test("multiple tool_search_call items interspersed with messages are skipped in order", () => {
   const body = {
     model: "test-model",

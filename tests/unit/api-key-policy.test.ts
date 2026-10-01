@@ -518,6 +518,37 @@ test("enforceApiKeyPolicy rejects disallowed models and exhausted budgets", asyn
   assert.match(await readErrorMessage(overBudget.rejection), /Daily budget exceeded/);
 });
 
+test("enforceApiKeyPolicy applies blockedModels in all-access mode", async () => {
+  const key = await createKeyWithPolicy({
+    modelAccessMode: "all",
+    allowedModels: [],
+    blockedModels: ["gpt-6*", "*/gpt-6*"],
+  });
+  const policy = await loadPolicy("all-mode-blocked-models");
+
+  const blocked = await policy.enforceApiKeyPolicy(
+    makePolicyRequest(key.key),
+    "mbrouter/gpt-6-codex"
+  );
+  assert.equal(blocked.rejection.status, 403);
+
+  const allowed = await policy.enforceApiKeyPolicy(
+    makePolicyRequest(key.key),
+    "mbrouter/gpt-5.6-sol"
+  );
+  assert.equal(allowed.rejection, null);
+
+  const metadata = await apiKeysDb.getApiKeyMetadata(key.key);
+  assert.ok(metadata);
+  const rerouted = await policy.validateApiKeyRoutingTarget(
+    makePolicyRequest(key.key),
+    key.key,
+    metadata,
+    "gpt-6"
+  );
+  assert.equal(rerouted?.status, 403);
+});
+
 test("enforceApiKeyPolicy returns Anthropic error envelope for /v1/messages model denials", async () => {
   const restrictedKey = await createKeyWithPolicy({
     allowedModels: ["cc/*"],
@@ -633,7 +664,10 @@ test("enforceApiKeyPolicy enforces combo allowlists separately from model allowl
     "combo/fast-chat"
   );
   assert.equal(blocked.rejection.status, 403);
-  assert.match(await readErrorMessage(blocked.rejection), /Combo "fast-chat" is not allowed/);
+  const blockedMessage = await readErrorMessage(blocked.rejection);
+  assert.match(blockedMessage, /Combo "fast-chat" is not allowed/);
+  assert.match(blockedMessage, /combo\/\*/);
+  assert.match(blockedMessage, /Dashboard → API Manager/);
 
   const mapped = await policy.enforceApiKeyPolicy(
     makePolicyRequest(allowedKey.key),
@@ -713,6 +747,11 @@ test("enforceApiKeyPolicy treats combo wildcard, empty list, and names as distin
       routingCase.model
     );
     assert.equal(rejection?.status ?? null, routingCase.status);
+    if (routingCase.status === 403 && rejection) {
+      const message = await readErrorMessage(rejection);
+      assert.match(message, /combo\/\*/);
+      assert.match(message, /Dashboard → API Manager/);
+    }
   }
 });
 

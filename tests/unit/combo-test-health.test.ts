@@ -28,6 +28,14 @@ test("combo test helper builds a realistic smoke payload", () => {
   assert.equal(body.max_tokens, 2048);
   assert.equal("temperature" in body, false);
   assert.equal(body.stream, false);
+  assert.equal("reasoning_effort" in body, false);
+});
+
+test("combo test helper disables thinking only for Gemini probes", () => {
+  const gemini = buildComboTestRequestBody("agy/gemini-3.8-flash-high");
+  const other = buildComboTestRequestBody("openrouter/openai/gpt-5.4");
+  assert.equal(gemini.reasoning_effort, "none");
+  assert.equal("reasoning_effort" in other, false);
 });
 
 test("combo test helper builds a small streaming model probe", () => {

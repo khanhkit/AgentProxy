@@ -186,7 +186,7 @@ export function acquire(
  * @param {number} cooldownMs - How long to block (milliseconds)
  */
 export function markRateLimited(modelStr: string, cooldownMs: number): void {
-  const gate = getGate(modelStr);
+  const gate = getGate(modelStr, gates.get(modelStr)?.max);
   gate.rateLimitedUntil = Date.now() + cooldownMs;
 
   // Schedule drain after cooldown expires

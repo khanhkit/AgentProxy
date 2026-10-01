@@ -15,7 +15,7 @@ import path from "node:path";
 const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-lkgp-stale-11911-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
-const { handleComboChat } = await import("../../open-sse/services/combo.ts");
+const { handleComboChat, clearStaleLKGP } = await import("../../open-sse/services/combo.ts");
 const settingsDb = await import("../../src/lib/db/settings.ts");
 const core = await import("../../src/lib/db/core.ts");
 const { resetAllComboMetrics } = await import("../../open-sse/services/comboMetrics.ts");
@@ -162,4 +162,47 @@ test("#11911: handleComboChat (round-robin) clears LKGP pin when target is skipp
   assert.equal(result.status, 502);
   const pinAfter = await settingsDb.getLKGP(comboName, comboName);
   assert.equal(pinAfter, null, "stale LKGP pin in round-robin must be cleared on unavailable skip");
+});
+
+test("#11911 follow-up: a pin naming a healthy provider survives another target being skipped", async () => {
+  const comboName = "auto-cross-provider-pin";
+  await settingsDb.setLKGP(comboName, comboName, "felo", undefined);
+  const result = await handleComboChat({
+    body: { messages: [{ role: "user", content: "hi" }] },
+    combo: {
+      name: comboName,
+      strategy: "auto",
+      models: ["opencode/deepseek-free", "felo/felo-flash"],
+      config: { maxRetries: 0 },
+    },
+    handleSingleModel: async (_body, targetModel) =>
+      targetModel.includes("felo")
+        ? jsonResponse(200, { ok: true })
+        : jsonResponse(502, { error: { message: "opencode down" } }),
+    isModelAvailable: async (modelStr) => !modelStr.includes("opencode"),
+    log: createLog(),
+    settings: null,
+    relayOptions: null,
+    allCombos: null,
+  });
+  assert.equal(result.status, 200);
+  assert.deepEqual(await settingsDb.getLKGP(comboName, comboName), { provider: "felo" });
+});
+
+test("#12235: a sibling connection failing does not clear a pin naming the same provider", async () => {
+  const comboName = "sibling-connection-pin";
+  await settingsDb.setLKGP(comboName, comboName, "felo", "conn-A");
+  await clearStaleLKGP(comboName, null, comboName, null, "COMBO", undefined, {
+    provider: "felo",
+    connectionId: "conn-B",
+  });
+  assert.deepEqual(await settingsDb.getLKGP(comboName, comboName), {
+    provider: "felo",
+    connectionId: "conn-A",
+  });
+  await clearStaleLKGP(comboName, null, comboName, null, "COMBO", undefined, {
+    provider: "felo",
+    connectionId: "conn-A",
+  });
+  assert.equal(await settingsDb.getLKGP(comboName, comboName), null);
 });

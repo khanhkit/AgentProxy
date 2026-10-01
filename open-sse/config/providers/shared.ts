@@ -177,6 +177,8 @@ export interface RegistryEntry {
   chatPath?: string;
   clientVersion?: string;
   timeoutMs?: number;
+  /** Optional per-provider streaming response-start timeout cap. */
+  fetchStartTimeoutCapMs?: number;
   passthroughModels?: boolean;
   /**
    * Whether a non-empty synchronized live model list is exhaustive enough
@@ -275,6 +277,7 @@ export interface LegacyProvider {
   chatPath?: string;
   clientVersion?: string;
   timeoutMs?: number;
+  fetchStartTimeoutCapMs?: number;
 }
 
 export const buildModels = (ids: readonly string[]): RegistryModel[] =>

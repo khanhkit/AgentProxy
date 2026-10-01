@@ -89,6 +89,20 @@ export function resolveVideoBaseUrl(
  * provider/model id. Returns null when the model has no preset configured (or
  * the registry is unreadable), so callers can fall back to the sync path.
  */
+function resolveVideoJobPollingOverrides(body: Record<string, unknown>): {
+  maxPolls?: number;
+  pollIntervalMs?: number;
+} {
+  const maxPolls = Number(body.max_polls);
+  const pollIntervalMs = Number(body.poll_interval_ms);
+  return {
+    ...(Number.isFinite(maxPolls) && maxPolls > 0 ? { maxPolls: Math.floor(maxPolls) } : {}),
+    ...(Number.isFinite(pollIntervalMs) && pollIntervalMs > 0
+      ? { pollIntervalMs: Math.floor(pollIntervalMs) }
+      : {}),
+  };
+}
+
 async function getCustomModelVideoPreset(
   providerId: string,
   modelId: string
@@ -172,6 +186,7 @@ export async function handleVideoGeneration({ body, credentials, log, resolvedPr
         body,
         credentials,
         log,
+        ...resolveVideoJobPollingOverrides(body),
       });
     }
     if (log)
@@ -202,6 +217,7 @@ export async function handleVideoGeneration({ body, credentials, log, resolvedPr
       body,
       credentials,
       log,
+      ...resolveVideoJobPollingOverrides(body),
     });
   }
   if (providerConfig.format === "openai-video") {

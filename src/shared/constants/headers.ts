@@ -7,6 +7,7 @@ export const AGENTPROXY_RESPONSE_HEADERS = {
   compression: "X-AgentProxy-Compression",
   costSaved: "X-AgentProxy-Cost-Saved",
   decision: "X-AgentProxy-Decision",
+  droppedUpstreamHeaders: "X-AgentProxy-Dropped-Upstream-Headers",
   fallbackAttempts: "X-AgentProxy-Fallback-Attempts",
   latencyMs: "X-AgentProxy-Latency-Ms",
   model: "X-AgentProxy-Model",
