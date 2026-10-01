@@ -14,6 +14,7 @@ import { getRequestDetailLogByCallLogId } from "../db/detailedLogs";
 import { shouldPersistToDisk } from "./migrations";
 import { updateRequestTokensById } from "./usageHistory";
 import { getCallLogApiKeyContext } from "./callLogApiKeyContext";
+import { generateCallLogId, runCallLogInsertWithIdRetry } from "./callLogId";
 import { serializeResilienceActions, resetResilienceActions } from "./resilienceActionsContext";
 import { parseResilienceActions } from "./resilienceActionsParse";
 import {
@@ -146,13 +147,6 @@ type DeleteResult = {
   deletedRows: number;
   deletedArtifacts: number;
 };
-
-let logIdCounter = 0;
-
-function generateLogId() {
-  logIdCounter++;
-  return `${Date.now()}-${logIdCounter}`;
-}
 
 async function resolveAccountName(connectionId: string | null | undefined) {
   let account = connectionId ? connectionId.slice(0, 8) : "-";
@@ -655,7 +649,7 @@ async function saveCallLogOperation(entry: any): Promise<void> {
       isSuccess,
     });
     const logEntry = {
-      id: typeof entry.id === "string" && entry.id.length > 0 ? entry.id : generateLogId(),
+      id: typeof entry.id === "string" && entry.id.length > 0 ? entry.id : generateCallLogId(),
       timestamp: typeof entry.timestamp === "string" ? entry.timestamp : new Date().toISOString(),
       method: entry.method || "POST",
       path: entry.path || "/v1/chat/completions",
@@ -742,7 +736,7 @@ async function saveCallLogOperation(entry: any): Promise<void> {
 
     const resilienceCol = hasResilienceColumn ? ", resilience_actions" : "";
     const resilienceParam = hasResilienceColumn ? ", @resilienceActions" : "";
-    db.prepare(
+    const insertStmt = db.prepare(
       `
       INSERT INTO call_logs (
         id, timestamp, method, path, status, model, requested_model, provider,
@@ -773,7 +767,8 @@ async function saveCallLogOperation(entry: any): Promise<void> {
         @videoContentRemoved, @hasContent, @usageProvenance${resilienceParam}
       )
     `
-    ).run({
+    );
+    const insertParams = {
       ...logEntry,
       errorSummary: toStoredErrorSummary(protectedError),
       detailState,
@@ -785,7 +780,8 @@ async function saveCallLogOperation(entry: any): Promise<void> {
       hasPipelineDetails: protectedPipelinePayloads ? 1 : 0,
       requestSummary,
       resilienceActions,
-    });
+    };
+    runCallLogInsertWithIdRetry(insertParams, (params) => insertStmt.run(params));
     resetResilienceActions();
 
     if (detailState === "ready" && typeof logEntry.responseId === "string") {

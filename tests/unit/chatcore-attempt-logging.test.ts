@@ -10,11 +10,11 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const testDataDir = fs.mkdtempSync(path.join(os.tmpdir(), "omni-attempt-logging-test-"));
+const testDataDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-attempt-logging-test-"));
 process.env.DATA_DIR = testDataDir;
 
 const coreDb = await import("../../src/lib/db/core.ts");
-const { getCallLogById } = await import("../../src/lib/usage/callLogs.ts");
+const { getCallLogById, getCallLogs } = await import("../../src/lib/usage/callLogs.ts");
 const { persistAttemptLogs } = await import("../../open-sse/handlers/chatCore/attemptLogging.ts");
 const { getAuditLog } = await import("../../src/lib/compliance/index.ts");
 
@@ -28,14 +28,16 @@ type CodexRotationEnvelope = {
 };
 
 function baseCtx(overrides: Record<string, unknown> = {}) {
+  const pendingRequestId = (overrides.pendingRequestId as string) ?? "REPLACE";
   return {
+    traceId: overrides.traceId ?? pendingRequestId,
     provider: "openai",
     connectionId: "conn-1",
     model: "gpt-x",
     skillRequestId: "skill-1",
     detailedLoggingEnabled: false,
     reqLogger: null,
-    pendingRequestId: "REPLACE",
+    pendingRequestId,
     clientRawRequest: { endpoint: "/v1/chat/completions" },
     requestedModel: "gpt-x-requested",
     credentials: { connectionId: "cred-conn" },
@@ -53,10 +55,13 @@ function baseCtx(overrides: Record<string, unknown> = {}) {
   } as Parameters<typeof persistAttemptLogs>[1];
 }
 
-async function pollForCallLog(id: string, tries = 120) {
+async function pollForCallLog(traceId: string, tries = 120) {
   for (let i = 0; i < tries; i++) {
-    const row = await getCallLogById(id);
-    if (row) return row as Record<string, unknown>;
+    const rows = await getCallLogs({ correlationId: traceId, limit: 5 });
+    if (rows[0]?.id) {
+      const row = await getCallLogById(rows[0].id);
+      if (row) return row as Record<string, unknown>;
+    }
     await new Promise((r) => setTimeout(r, 20));
   }
   return null;

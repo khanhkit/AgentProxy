@@ -461,7 +461,6 @@ export function persistAttemptLogs(args: PersistAttemptLogsArgs, ctx: PersistAtt
   }
 
   saveCallLog({
-    id: traceId,
     pendingRequestId: ctx.pendingRequestId,
     method: "POST",
     path: clientRawRequest?.endpoint || "/v1/chat/completions",
@@ -520,7 +519,7 @@ export function persistAttemptLogs(args: PersistAttemptLogsArgs, ctx: PersistAtt
     apiKeyName: apiKeyInfo?.name || null,
     noLog: noLogEnabled,
     pipelinePayloads,
-    correlationId,
+    correlationId: correlationId || traceId,
     modelPinned: modelPinned || false,
     sessionTag: sessionTag || null,
     responseId: extractResponsesId(sourceFormat, clientResponse),
