@@ -162,6 +162,12 @@ import { loadOptionalNoAuthApiKeyCredentials } from "./noAuthOptionalApiKey";
 import { getResource404Bypass } from "./requestResourceHealth";
 import { isVertexConnectionWidePermissionDenied } from "./vertexErrorClassifier";
 import { maybeAutoDisableBannedAccount } from "./autoDisableBannedAccount";
+import {
+  buildAntigravityRoutingFields,
+  releaseRoutingLeaseFromCredentials,
+  reserveAntigravityLeaseForSelection,
+  type AntigravityLease,
+} from "./antigravityLeaseSelection";
 import * as log from "../utils/logger";
 import {
   fisherYatesShuffle,
@@ -207,6 +213,8 @@ export interface CredentialSelectionOptions {
   _leaseRetryWithLockHeld?: boolean;
   /** Internal: freeze the original policy-valid candidate set across lease race/preflight retry. */
   _leaseCandidateIds?: string[];
+  reserveAntigravityLease?: boolean;
+  routingRequestId?: string | null;
 }
 export type ExclusiveLeaseSelectionResult = {
   exclusiveLease: ExclusiveConnectionLease;
@@ -1064,10 +1072,17 @@ async function hydrateAccountProxyReferences(
 async function materializeConnection(
   connection: ProviderConnectionView,
   options: CredentialSelectionOptions,
-  extra: DeferredLeaseSelection & { exclusiveLease?: ExclusiveConnectionLease } = {}
+  extra: DeferredLeaseSelection & {
+    exclusiveLease?: ExclusiveConnectionLease;
+    routingLease?: AntigravityLease;
+    requestedModel?: string | null;
+  } = {}
 ) {
   const proxyHydrated = await hydrateAccountProxyReferences(connection.providerSpecificData);
-  const providerSpecificData = await hydrateCompatibleNodeBaseUrl(connection.provider, proxyHydrated);
+  const providerSpecificData = await hydrateCompatibleNodeBaseUrl(
+    connection.provider,
+    proxyHydrated
+  );
   const apiKeyHealth = providerSpecificData.apiKeyHealth as Record<string, KeyHealth> | undefined;
   if (apiKeyHealth) syncHealthFromDB(connection.id, apiKeyHealth);
   const releaseOAuthSession =
@@ -1100,6 +1115,7 @@ async function materializeConnection(
     maxConcurrent: connection.maxConcurrent,
     quotaWindowThresholds: connection.quotaWindowThresholds ?? null,
     ...(releaseOAuthSession ? { releaseOAuthSession } : {}),
+    ...buildAntigravityRoutingFields(extra.routingLease, connection.id, extra.requestedModel),
     ...extra,
   };
 }
@@ -1170,20 +1186,16 @@ export async function getProviderCredentials(
     log.warn("AUTH", "Retired provider credential selection denied");
     return null;
   }
-
   if (isRuntimeRetiredProviderId(provider)) {
     invalidateManagedLease(options, "CONNECTION_INELIGIBLE");
     log.warn("AUTH", "Retired provider rejected before credential selection");
     return null;
   }
-
   const selectionLock = options._leaseRetryWithLockHeld
     ? null
     : createSelectionLock(getSelectionMutexKey(provider, options));
-
   try {
     await selectionLock?.wait;
-
     // No-auth providers (e.g. opencode) need no DB connection — return synthetic credentials
     // so the executor receives a valid credentials object without auth headers being added.
     const resolvedId = resolveProviderId(provider);
@@ -1221,7 +1233,6 @@ export async function getProviderCredentials(
         return await maybeSyntheticNoAuthFallback(resolvedId, excludedForNoAuth);
       }
     }
-
     const allowSuppressedConnections = options.allowSuppressedConnections === true;
     const allowRateLimitedConnections =
       allowSuppressedConnections || options.allowRateLimitedConnections === true;
@@ -1234,19 +1245,16 @@ export async function getProviderCredentials(
       excludeConnectionId,
       options.excludeConnectionIds
     );
-
     // Fetched early so the session-affinity-pin override (#5903) can consult
     // the TTL before forcedConnectionId narrows the connection pool.
     const settings = await getSettings();
     const sessionAffinityTtlMs = resolveSessionAffinityTtlMs(provider, options, settings);
-
     // Fix #922: Check for aliases (nvidia/nvidia_nim) to ensure credentials are found
     const providersToSearch = await getProviderSearchPool(provider);
     const connectionResults = await Promise.all(
       providersToSearch.map((p) => getCachedRawProviderConnections({ provider: p, isActive: true }))
     );
     const connectionsRaw = connectionResults.filter(Array.isArray).flat();
-
     let connections = (Array.isArray(connectionsRaw) ? connectionsRaw : [])
       .map(createLazyConnectionView)
       .filter((conn) => conn.id.length > 0);
@@ -1272,12 +1280,10 @@ export async function getProviderCredentials(
         return { leaseConnectionMismatch: true };
       }
     }
-
     const isCodexScopeUnavailable = (
       connection: ProviderConnectionView,
       model: string | null
     ): boolean => provider === "codex" && isCodexChildUnavailable(connection, model);
-
     // #5903: an active session-affinity pin outranks a per-request reset-aware
     // forcedConnectionId (see sessionAffinityPin leaf for the full rationale).
     if (!options.lease) {
@@ -1296,7 +1302,6 @@ export async function getProviderCredentials(
             evaluateQuotaLimitPolicy(provider, c as ProviderConnectionView, requestedModel).blocked,
         }) ?? forcedConnectionId;
     }
-
     // A forced connection (combo step `connectionId` / `x-agentproxy-connection`) is an
     // operator instruction, not a suggestion. resolveForcedConnectionForCredentialPool()
     // legitimately returns null for several *intentional* pin-release cases (forced ID
@@ -2159,6 +2164,14 @@ export async function getProviderCredentials(
       }
     }
 
+    const reserved = reserveAntigravityLeaseForSelection(
+      provider,
+      connection,
+      requestedModel,
+      options
+    );
+    if (reserved.busy) return reserved.busy;
+
     if (provider === "antigravity" && connection) {
       log.info(
         "AUTH",
@@ -2166,7 +2179,11 @@ export async function getProviderCredentials(
       );
     }
 
-    return materializeConnection(connection, options, { exclusiveLease });
+    return materializeConnection(connection, options, {
+      exclusiveLease,
+      routingLease: reserved.lease,
+      requestedModel,
+    });
   } finally {
     selectionLock?.release();
   }
@@ -2275,15 +2292,20 @@ export async function getProviderCredentialsWithQuotaPreflight(
       );
       if (claim.kind === "LOST") {
         selectedCredentials.releaseOAuthSession?.();
+        releaseRoutingLeaseFromCredentials(credentials);
         excludedConnectionIds.add(connectionId);
         pendingCredentialSelection =
           await selectedCredentials.selectNextLeaseCandidate?.(connectionId);
         return null;
       }
-      if (claim.kind === "STALE") return { leaseFenceStale: true };
+      if (claim.kind === "STALE") {
+        releaseRoutingLeaseFromCredentials(credentials);
+        return { leaseFenceStale: true };
+      }
       await selectedCredentials.commitSelectionSideEffects?.();
       if (options.materializeCredentials === false) {
         selectedCredentials.releaseOAuthSession?.();
+        releaseRoutingLeaseFromCredentials(credentials);
         return { exclusiveLease: claim.lease, connectionId, provider };
       }
       return { ...credentials, exclusiveLease: claim.lease };
@@ -2382,6 +2404,7 @@ export async function getProviderCredentialsWithQuotaPreflight(
       );
     } catch (error) {
       selectedCredentials.releaseOAuthSession?.();
+      releaseRoutingLeaseFromCredentials(credentials);
       throw error;
     }
     if (preflight.proceed) {
@@ -2391,6 +2414,7 @@ export async function getProviderCredentialsWithQuotaPreflight(
     }
 
     selectedCredentials.releaseOAuthSession?.();
+    releaseRoutingLeaseFromCredentials(credentials);
 
     const unavailableUntil = await markQuotaPreflightAccountUnavailable(
       provider,
@@ -2619,7 +2643,20 @@ export async function markAccountUnavailable(
     if (isOpencodeFreeTierRefusalForProvider(provider, status, errorText)) {
       return { shouldFallback: true, cooldownMs: 0 };
     }
-    if (classifyProviderError(status, errorText, provider) === PROVIDER_ERROR_TYPES.REQUEST_REJECTED) return { shouldFallback: true, cooldownMs: Math.max(0, cooldownUntilMs((await getProviderConnectionById(connectionId).catch(() => null))?.rateLimitedUntil as string | number | Date | null | undefined) - Date.now()) || 0 };
+    if (
+      classifyProviderError(status, errorText, provider) === PROVIDER_ERROR_TYPES.REQUEST_REJECTED
+    )
+      return {
+        shouldFallback: true,
+        cooldownMs:
+          Math.max(
+            0,
+            cooldownUntilMs(
+              (await getProviderConnectionById(connectionId).catch(() => null))
+                ?.rateLimitedUntil as string | number | Date | null | undefined
+            ) - Date.now()
+          ) || 0,
+      };
     // STRICT_ZERO_COST: this connection just failed (whatever the reason) —
     // drop any cached "SAFE" free-allowance reading for it immediately rather
     // than waiting out the TTL, so the very next candidate-pool build reads a

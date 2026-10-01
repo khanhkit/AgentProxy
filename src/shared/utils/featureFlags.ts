@@ -268,6 +268,21 @@ export function isOpencodeParkAndResumeEnabled(): boolean {
   }
 }
 
+/** Antigravity streaming-account lease (#13929). Opt-in and fail-closed. */
+export function isAntigravityAccountLeaseEnabled(
+  reader: (key: string) => boolean = isFeatureFlagEnabled
+): boolean {
+  try {
+    return reader("ANTIGRAVITY_ACCOUNT_LEASE_ENABLED");
+  } catch (error) {
+    console.error(
+      "[featureFlags] Failed to resolve ANTIGRAVITY_ACCOUNT_LEASE_ENABLED, defaulting to disabled:",
+      error instanceof Error ? error.message : error
+    );
+    return false;
+  }
+}
+
 export function isServerOwnedToolLoopEnabled(
   reader: (key: string) => boolean = isFeatureFlagEnabled
 ): boolean {

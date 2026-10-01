@@ -139,6 +139,7 @@ import { classify429FromError, type FailureKind } from "@/shared/utils/classify4
 import { isSubscriptionQuotaText } from "@agentproxy/open-sse/services/quotaTextCooldowns.ts";
 import { resolveUseUpstream429BreakerHints } from "@/shared/utils/providerHints";
 import { isFeatureFlagEnabled, isRotationAttributionEnabled } from "@/shared/utils/featureFlags";
+import * as agyLease from "../services/antigravityLeaseLifecycle";
 import { shouldIsolateProbeFailures } from "@/shared/utils/probeOrigin";
 import { getCircuitBreaker, isLocalStreamLifecycleError } from "../../shared/utils/circuitBreaker";
 import { markAccountExhaustedFrom429 } from "../../domain/quotaCache";
@@ -1427,7 +1428,6 @@ async function handleSingleModelChat(
     clientRawRequest?.headers
   );
   if (resolved.error) return resolved.error;
-
   // Safety net: if auto-combo resolution returned a combo object, redirect
   // to combo flow. This handles the case where the auto-fuzzy match in
   // resolveModelOrError found a combo but the main handler's combo lookup missed it.
@@ -1506,7 +1506,6 @@ async function handleSingleModelChat(
       ),
     });
   }
-
   const {
     provider: resolvedProvider,
     model,
@@ -1545,7 +1544,6 @@ async function handleSingleModelChat(
     apiKeyInfo?.allowedConnections ?? null,
     comboPinAllowlist(isCombo, forcedConnectionId || null, runtimeOptions.allowedConnectionIds)
   );
-
   // A4: quota-exclusive keys must only use the pool's connection(s).
   if (apiKeyInfo?.allowedQuotas && apiKeyInfo.allowedQuotas.length > 0) {
     const quotaScope = await resolveQuotaKeyScope(apiKeyInfo.allowedQuotas);
@@ -1554,13 +1552,11 @@ async function handleSingleModelChat(
       quotaScope.connectionIds
     );
   }
-
   const bypassReason = forceLiveComboTest
     ? "combo live test"
     : hasForcedConnection
       ? "fixed combo step connection"
       : undefined;
-
   // 2. Local pressure precedes availability/breaker gates and account selection.
   const pressureGuard = checkResourcePressureBeforeProviderWork();
   if (pressureGuard) return pressureGuard.response;
@@ -1596,7 +1592,6 @@ async function handleSingleModelChat(
     } catch {}
     return gate;
   }
-
   // Issue #2100 follow-up: opt-in upstream 429 hint trust per provider.
   const useHints429 = resolveUseUpstream429BreakerHints(
     provider,
@@ -1620,7 +1615,6 @@ async function handleSingleModelChat(
         }
       : {}),
   });
-
   const userAgent = request?.headers?.get("user-agent") || "";
   const baseRetrySettings = resolveCooldownAwareRetrySettings(
     runtimeOptions.cachedSettings ?? (await getCachedSettings().catch(() => ({})))
@@ -1637,7 +1631,6 @@ async function handleSingleModelChat(
   // combo.ts's comboCooldownBudgetLeftMs. Declared outside requestAttemptLoop so
   // it persists (and only decreases) across `continue requestAttemptLoop` retries.
   let requestRetryBudgetLeftMs = retrySettings.budgetMs;
-
   if (Array.isArray(effectiveAllowedConnections) && effectiveAllowedConnections.length === 0) {
     log.debug("AUTH", `${provider}/${model} filtered out by connection-level routing constraints`);
     return errorResponse(
@@ -1645,7 +1638,6 @@ async function handleSingleModelChat(
       "No eligible connections matched the requested routing constraints"
     );
   }
-
   // 3. Credential retry loop
   let requestRetryAttempt = 0;
   let requestRetryLastError = null;
@@ -1660,18 +1652,17 @@ async function handleSingleModelChat(
   const occupancySessionKey =
     runtimeOptions.sessionAffinityKey ?? runtimeOptions.sessionId ?? `request:${randomUUID()}`;
   let initialPreselectedCredentials = runtimeOptions.preselectedCredentials;
-
+  const agy = agyLease.startAntigravityLeaseRequest(provider, runtimeOptions.correlationId);
   requestAttemptLoop: while (true) {
-    const excludedConnectionIds = new Set<string>();
+    const excludedConnectionIds = new Set<string>(agy.on ? agy.attempted : []);
     let lastError = requestRetryLastError;
     let lastStatus = requestRetryLastStatus;
     let lastCooldownMs = requestRetryLastCooldownMs;
     let preselectedCredentials = initialPreselectedCredentials;
     initialPreselectedCredentials = null;
-
     while (true) {
       const credentials =
-        preselectedCredentials && excludedConnectionIds.size === 0
+        preselectedCredentials && excludedConnectionIds.size === 0 && !agy.on
           ? preselectedCredentials
           : await getProviderCredentialsWithQuotaPreflight(
               provider,
@@ -1682,6 +1673,9 @@ async function handleSingleModelChat(
                 sessionKey: occupancySessionKey,
                 reserveOAuthSession: true,
                 excludeConnectionIds: Array.from(excludedConnectionIds),
+                ...(agy.on
+                  ? { reserveAntigravityLease: true, routingRequestId: agy.requestId }
+                  : {}),
                 ...(runtimeOptions.allowRateLimitedConnection
                   ? { allowRateLimitedConnections: true }
                   : {}),
@@ -1713,12 +1707,15 @@ async function handleSingleModelChat(
               }
             );
       preselectedCredentials = null;
-
+      if (credentials && "leaseUnavailable" in credentials && credentials.leaseUnavailable) {
+        excludedConnectionIds.add(agyLease.trackAntigravityLeaseBusy(agy, credentials));
+        if (!hasForcedConnection) continue;
+        return agyLease.buildAntigravityPoolBusyResponse(agy.earliestRetryHintAtMs ?? Date.now());
+      }
       if (runtimeOptions.managedLease && credentials) {
         const leaseError = buildManagedLeaseSelectionErrorResponse(credentials);
         if (leaseError) return leaseError;
       }
-
       // #9467: also treat the auth layer's allExpired verdict as a no-credentials
       // outcome (auth.ts produces it; without this check an all-expired pool fell
       // through to a connectionless dispatch).
@@ -1729,6 +1726,8 @@ async function handleSingleModelChat(
         !credentials.connectionId
       ) {
         if (earlyEofFailover.original) return earlyEofFailover.original;
+        if (!credentials?.allRateLimited && agy.earliestRetryHintAtMs !== null)
+          return agyLease.buildAntigravityPoolBusyResponse(agy.earliestRetryHintAtMs);
         if (credentials?.allRateLimited) {
           const retryDecision = getCooldownAwareRetryDecision({
             retryAfter: credentials.retryAfter,
@@ -1736,14 +1735,12 @@ async function handleSingleModelChat(
             attempt: requestRetryAttempt,
             budgetLeftMs: requestRetryBudgetLeftMs,
           });
-
           if (retryDecision.shouldRetry) {
             const waitSec = Math.max(Math.ceil(retryDecision.waitMs / 1000), 0);
             log.info(
               "COOLDOWN_RETRY",
               `${provider}/${model} all connections cooling down (${retryDecision.retryAfterHuman || `retry in ${waitSec}s`}) — waiting ${waitSec}s before retry ${requestRetryAttempt + 1}/${retrySettings.maxRetries}`
             );
-
             const completed = await waitForCooldownAwareRetry(retryDecision.waitMs, requestSignal);
             if (!completed) {
               log.info(
@@ -1752,7 +1749,6 @@ async function handleSingleModelChat(
               );
               return errorResponse(499, "Request aborted");
             }
-
             requestRetryAttempt += 1;
             requestRetryBudgetLeftMs = Math.max(0, requestRetryBudgetLeftMs - retryDecision.waitMs);
             log.info(
@@ -1762,7 +1758,6 @@ async function handleSingleModelChat(
             continue requestAttemptLoop;
           }
         }
-
         const breakerFailureStatus = Number(lastStatus ?? credentials?.lastErrorCode);
         // lastError is a string here — check for the proxy_unreachable tag embedded by
         // tagProxyUnreachable (proxyFetch.ts) and AgentProxy's own queue timeouts. Both mean
@@ -1819,6 +1814,8 @@ async function handleSingleModelChat(
 
       const accountId = credentials.connectionId.slice(0, 8);
       const releaseOAuthSession = credentials.releaseOAuthSession ?? (() => {});
+      const leaseId: string | undefined = credentials.routing?.leaseId;
+      if (agy.on) agy.attempted.add(credentials.connectionId);
       // #10348: redact the account prefix by default. Gated on the narrow
       // AUTH_LOG_INCLUDE_ACCOUNT_ID flag (default off) rather than the broad
       // `debugMode` setting — `debugMode` is a general dashboard-visibility
@@ -1862,9 +1859,10 @@ async function handleSingleModelChat(
           reasoningIntent: runtimeOptions.reasoningIntent,
           reasoningDecision: runtimeOptions.reasoningDecision,
           requestRoutingTags: runtimeOptions.reasoningRequestTags,
-        });
+        }).catch(agyLease.releasingRethrow(leaseId));
         if (connectionRouting.response) {
           releaseOAuthSession();
+          agyLease.release(leaseId);
           return connectionRouting.response;
         }
         requestBody = connectionRouting.body;
@@ -1893,7 +1891,9 @@ async function handleSingleModelChat(
       }
       let refreshedCredentials;
       try {
-        refreshedCredentials = await checkAndRefreshToken(provider, credentials);
+        refreshedCredentials = await checkAndRefreshToken(provider, credentials).catch(
+          agyLease.releasingRethrow(leaseId)
+        );
       } catch (error) {
         releaseOAuthSession();
         throw error;
@@ -1934,7 +1934,7 @@ async function handleSingleModelChat(
           apiKeyInfo?.id,
           provider,
           comboName
-        );
+        ).catch(agyLease.releasingRethrow(leaseId));
       } catch (error) {
         releaseOAuthSession();
         throw error;
@@ -1992,14 +1992,23 @@ async function handleSingleModelChat(
         );
       } catch (error) {
         releaseOAuthSession();
+        agyLease.release(leaseId);
         throw error;
       }
       if (telemetry) telemetry.endPhase();
       if ("localResourcePressureResult" in execution) {
+        agyLease.release(leaseId);
         return execution.localResourcePressureResult.response;
       }
       const { result, tlsFingerprintUsed } = execution;
       if (!result.success) releaseOAuthSession();
+      if (result.success && agyLease.isStreamingAntigravityResponse(result.response))
+        result.response = agyLease.holdAntigravityLeaseThroughResponse(
+          result.response,
+          leaseId,
+          clientRawRequest?.signal
+        );
+      else agyLease.release(leaseId);
 
       const proxyLatency = Date.now() - proxyStartTime;
       const providerAlias = PROVIDER_ID_TO_ALIAS[provider] || provider;
@@ -2125,11 +2134,16 @@ async function handleSingleModelChat(
         // not an account/quota failure. Do NOT mark the account unavailable here.
         if (earlyEofFailover.shouldHop(isTerminalStreamEarlyEof, hasForcedConnection)) {
           log.warn("STREAM", `${provider}/${model} early-EOF retry exhausted — trying one sibling`);
-          earlyEofFailover.remember(withSelectedConnectionHeader(result.response, credentials.connectionId));
+          earlyEofFailover.remember(
+            withSelectedConnectionHeader(result.response, credentials.connectionId)
+          );
           excludedConnectionIds.add(credentials.connectionId);
           continue;
         }
-        return earlyEofFailover.original ?? withSelectedConnectionHeader(result.response, credentials?.connectionId);
+        return (
+          earlyEofFailover.original ??
+          withSelectedConnectionHeader(result.response, credentials?.connectionId)
+        );
       }
 
       if (isAntigravityStreamReadinessFailure) {
