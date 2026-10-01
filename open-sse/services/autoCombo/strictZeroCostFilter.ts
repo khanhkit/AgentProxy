@@ -271,20 +271,22 @@ export function classifyStrictZeroCostCandidate(
   return { outcome: sawExhausted ? "exhausted" : "state-unknown" };
 }
 
-/**
- * Pool-level filter, same off-by-default identity contract as
- * `filterPaidOnlyCandidates`. For a candidate that survives with a NARROWED
- * connection set (the multi-account case), the returned object has
- * `allowedConnectionIds` rewritten to exactly the SAFE subset — dispatch can
- * then never select a connection this filter didn't verify, because
- * `autoStrategy.ts` already enforces `allowedConnectionIds` as a hard
- * allowlist downstream (see the module docstring above).
- */
-export function filterStrictZeroCostCandidates<T extends StrictZeroCostCandidate>(
+/** Pool-level STRICT filter with a compact exclusion diagnosis for operator logs. */
+export type StrictFilterDiagnosis = {
+  excluded: number;
+  noHardStop: number;
+  exhausted: number;
+  stateUnknown: number;
+  total: number;
+};
+
+export function filterStrictZeroCostCandidatesWithDiagnosis<
+  T extends StrictZeroCostCandidate,
+>(
   pool: T[],
   options: StrictZeroCostOptions
-): T[] {
-  if (!options.enabled) return pool;
+): { pool: T[]; diagnosis: StrictFilterDiagnosis | null } {
+  if (!options.enabled) return { pool, diagnosis: null };
 
   const kept: T[] = [];
   let changed = false;
@@ -304,39 +306,40 @@ export function filterStrictZeroCostCandidates<T extends StrictZeroCostCandidate
     const isGenuineNoAuthCandidate = candidate.connectionId === SYNTHETIC_NOAUTH_CONNECTION_ID;
     const isSingleConnectionCandidate = candidate.connectionId !== null;
     if (isGenuineNoAuthCandidate || isSingleConnectionCandidate) {
-      // Nothing to narrow — either the no-auth sentinel, or a candidate that
-      // already pointed at exactly one connection which proved safe.
       kept.push(candidate);
       continue;
     }
 
-    // Multi-account candidate: only rewrite if the safe subset is actually
-    // narrower than what was there before, to preserve the same
-    // identity-when-nothing-changed contract as `filterPaidOnlyCandidates`.
     const original = candidate.allowedConnectionIds ?? [];
     const isSameSet =
       original.length === safeConnectionIds.length &&
       safeConnectionIds.every((id) => original.includes(id));
-    if (isSameSet) {
-      kept.push(candidate);
-    } else {
+    if (isSameSet) kept.push(candidate);
+    else {
       changed = true;
       kept.push({ ...candidate, allowedConnectionIds: safeConnectionIds });
     }
   }
-  return changed ? kept : pool;
+  if (!changed) return { pool, diagnosis: null };
+  const counts = countStrictExclusions(pool, options);
+  return { pool: kept, diagnosis: { ...counts, total: pool.length } };
 }
 
-/**
- * How many candidates the STRICT filter drops outright (the same verdict it keeps on),
- * and how many of those only for lack of a hard-stop guarantee.
- */
+export function filterStrictZeroCostCandidates<T extends StrictZeroCostCandidate>(
+  pool: T[],
+  options: StrictZeroCostOptions
+): T[] {
+  return filterStrictZeroCostCandidatesWithDiagnosis(pool, options).pool;
+}
+
 export function countStrictExclusions<T extends StrictZeroCostCandidate>(
   pool: T[],
   options: StrictZeroCostOptions
-): { excluded: number; noHardStop: number } {
+): { excluded: number; noHardStop: number; exhausted: number; stateUnknown: number } {
   let excluded = 0;
   let noHardStop = 0;
+  let exhausted = 0;
+  let stateUnknown = 0;
   for (const candidate of pool) {
     const budgetEntry = findBudgetEntry(candidate, options.catalog);
     const verdict = classifyStrictZeroCostCandidate(
@@ -348,8 +351,19 @@ export function countStrictExclusions<T extends StrictZeroCostCandidate>(
     if (verdict.outcome === "safe") continue;
     excluded++;
     if (verdict.outcome === "no-hard-stop") noHardStop++;
+    if (verdict.outcome === "exhausted") exhausted++;
+    if (verdict.outcome === "state-unknown") stateUnknown++;
   }
-  return { excluded, noHardStop };
+  return { excluded, noHardStop, exhausted, stateUnknown };
+}
+
+export function describeStrictExclusions(
+  counts: Pick<
+    ReturnType<typeof countStrictExclusions>,
+    "noHardStop" | "exhausted" | "stateUnknown"
+  >
+): string {
+  return ` (no-hard-stop ${counts.noHardStop}, exhausted ${counts.exhausted}, state-unknown ${counts.stateUnknown})`;
 }
 
 /**
