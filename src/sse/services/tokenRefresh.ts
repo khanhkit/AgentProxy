@@ -2,7 +2,11 @@
 import * as log from "../utils/logger";
 import { updateProviderConnection } from "@/lib/db/providers";
 import { resolveProxyForConnection } from "@/lib/db/settings";
-import { hasBlockingAccountProxyAssignment, resolveProxyForProvider } from "@/lib/db/proxies";
+import {
+  hasBlockingAccountProxyAssignment,
+  hasBlockingProxyAssignment,
+  resolveProxyForProvider,
+} from "@/lib/db/proxies";
 import { stripTrailingSlashes } from "@agentproxy/open-sse/utils/urlSanitize.ts";
 import {
   TOKEN_EXPIRY_BUFFER_MS as BUFFER_MS,
@@ -82,6 +86,14 @@ async function resolveProxyForCredentials(provider: string, credentials?: any) {
     const resolved = await resolveProxyForConnection(credentials.connectionId);
     if (resolved?.proxy) {
       return resolved.proxy;
+    }
+    if (hasBlockingProxyAssignment(credentials.connectionId, provider)) {
+      throw Object.assign(
+        new Error(
+          "PROXY_ASSIGNED_UNAVAILABLE: assigned proxy pool is inactive/unavailable; refusing OAuth refresh fallback egress"
+        ),
+        { code: "PROXY_ASSIGNED_UNAVAILABLE" }
+      );
     }
   }
 

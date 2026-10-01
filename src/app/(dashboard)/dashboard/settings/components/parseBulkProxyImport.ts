@@ -30,7 +30,8 @@ export type ParsedProxyEntry = {
   password: string;
   type: string;
   region: string;
-  status: string;
+  /** Absent when the line carries no status: the import then leaves the stored one alone. */
+  status?: string;
   notes: string;
 };
 
@@ -55,7 +56,10 @@ function looksLikeHost(s: string): boolean {
   if (!s) return false;
   // IPv4: four dot-separated octets, each 0–255
   const ipParts = s.split(".");
-  if (ipParts.length === 4 && ipParts.every((o) => /^\d+$/.test(o) && Number(o) >= 0 && Number(o) <= 255)) {
+  if (
+    ipParts.length === 4 &&
+    ipParts.every((o) => /^\d+$/.test(o) && Number(o) >= 0 && Number(o) <= 255)
+  ) {
     return true;
   }
   // Hostname: alphanumeric + dots/hyphens, at least one char
@@ -74,7 +78,7 @@ function pushShorthandEntry(
   portStr: string,
   username: string,
   password: string,
-  type: string,
+  type: string
 ): boolean {
   if (!host) {
     errors.push({ line: lineNum, reason: "bulkImportErrorMissingHost" });
@@ -98,7 +102,6 @@ function pushShorthandEntry(
     password,
     type: normalizedType,
     region: "",
-    status: "active",
     notes: "",
   });
   return true;
@@ -120,7 +123,7 @@ function parseShorthandLine(
   lineNum: number,
   defaultType: string,
   entries: ParsedProxyEntry[],
-  errors: ParseError[],
+  errors: ParseError[]
 ): boolean {
   let type = defaultType;
   let working = raw;
@@ -169,8 +172,10 @@ function parseShorthandLine(
   if (colonParts.length === 4) {
     // Two possibilities: ip:port:user:pass OR user:pass:ip:port
     // Require the "host" slot to look like an IP/hostname AND the "port" slot to be a valid port.
-    const isPort1 = /^\d+$/.test(colonParts[1]) && Number(colonParts[1]) >= 1 && Number(colonParts[1]) <= 65535;
-    const isPort3 = /^\d+$/.test(colonParts[3]) && Number(colonParts[3]) >= 1 && Number(colonParts[3]) <= 65535;
+    const isPort1 =
+      /^\d+$/.test(colonParts[1]) && Number(colonParts[1]) >= 1 && Number(colonParts[1]) <= 65535;
+    const isPort3 =
+      /^\d+$/.test(colonParts[3]) && Number(colonParts[3]) >= 1 && Number(colonParts[3]) <= 65535;
     const hostLooksLikePart0 = looksLikeHost(colonParts[0]);
     const hostLooksLikePart2 = looksLikeHost(colonParts[2]);
 
@@ -244,8 +249,8 @@ export function parseBulkImportText(text: string): {
         errors.push({ line: lineNum, reason: "bulkImportErrorInvalidType" });
         continue;
       }
-      const normalizedStatus = (status || "active").toLowerCase();
-      if (!VALID_PROXY_STATUSES[normalizedStatus]) {
+      const normalizedStatus = status ? status.toLowerCase() : undefined;
+      if (normalizedStatus !== undefined && !VALID_PROXY_STATUSES[normalizedStatus]) {
         errors.push({ line: lineNum, reason: "bulkImportErrorInvalidStatus" });
         continue;
       }
@@ -258,7 +263,7 @@ export function parseBulkImportText(text: string): {
         password: password || "",
         type: normalizedType,
         region: region || "",
-        status: normalizedStatus,
+        ...(normalizedStatus ? { status: normalizedStatus } : {}),
         notes: notes || "",
       });
       continue;

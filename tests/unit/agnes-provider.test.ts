@@ -259,8 +259,10 @@ test("agnes Video V2.0 submits with Bearer auth and polls by video_id", async ()
     headers: Record<string, string>;
     body?: Record<string, unknown>;
   }> = [];
+  const timeoutDelays: Array<number | undefined> = [];
 
   globalThis.setTimeout = ((callback: (...args: unknown[]) => void, _ms?: number, ...args) => {
+    timeoutDelays.push(_ms);
     callback(...args);
     return 0;
   }) as typeof setTimeout;
@@ -302,6 +304,8 @@ test("agnes Video V2.0 submits with Bearer auth and polls by video_id", async ()
         height: 768,
         num_frames: 121,
         frame_rate: 24,
+        poll_interval_ms: 60000,
+        max_polls: 3,
         extra_body: {
           image: ["https://example.com/keyframe-one.png", "https://example.com/keyframe-two.png"],
           mode: "keyframes",
@@ -314,6 +318,8 @@ test("agnes Video V2.0 submits with Bearer auth and polls by video_id", async ()
     assert.equal(result.success, true);
     assert.equal(result.data.data[0].url, "https://platform-outputs.agnes-ai.space/video-123.mp4");
     assert.equal(calls.length, 2);
+    assert.ok(timeoutDelays.includes(60000));
+    assert.equal(timeoutDelays.includes(2000), false);
     assert.deepEqual(calls[0], {
       url: "https://apihub.agnes-ai.com/v1/videos",
       method: "POST",

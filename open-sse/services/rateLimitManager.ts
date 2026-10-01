@@ -611,15 +611,16 @@ export async function withRateLimit(
     undefined,
     connectionId ?? undefined
   );
-  const budgetForSlot =
-    typeof remainingBudgetMs === "number" && Number.isFinite(remainingBudgetMs)
-      ? remainingBudgetMs
+  const hasBudget = typeof remainingBudgetMs === "number" && Number.isFinite(remainingBudgetMs);
+  // maxWaitMs=0 is the explicit sentinel for disabling the queue-wait deadline.
+  // Keep that distinct from a finite caller budget that has actually reached zero.
+  const queueWaitDisabled = !hasBudget && queueBudgetMs <= 0;
+  const budgetForSlot = hasBudget
+    ? remainingBudgetMs
+    : queueWaitDisabled
+      ? undefined
       : queueBudgetMs;
-  if (
-    typeof remainingBudgetMs === "number" &&
-    Number.isFinite(remainingBudgetMs) &&
-    remainingBudgetMs <= 0
-  ) {
+  if (hasBudget && remainingBudgetMs <= 0) {
     throw markLocalRateLimitError(
       new Error(`Queue budget exhausted before rate-limit (remaining=${remainingBudgetMs}ms)`),
       LEGACY_RATE_LIMIT_QUEUE_TIMEOUT_CODE
@@ -691,8 +692,9 @@ export async function withRateLimit(
     ),
     LEGACY_RATE_LIMIT_QUEUE_TIMEOUT_CODE
   );
-  if (queueRemainingMs <= 0) throw queueTimeoutErr;
+  if (!queueWaitDisabled && queueRemainingMs <= 0) throw queueTimeoutErr;
   const timeoutPromise = new Promise<never>((_, reject) => {
+    if (queueWaitDisabled) return;
     delayId = setTimeout(() => {
       queueTimedOut = true;
       reject(queueTimeoutErr);

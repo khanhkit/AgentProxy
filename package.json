@@ -1,7 +1,7 @@
 {
   "name": "agentproxy",
   "version": "0.1.0",
-  "description": "Agent-first AI gateway with a Rust streaming data plane and an inherited 355-provider control plane for routing, MCP, memory, RAG, and knowledge workflows.",
+  "description": "Agent-first AI gateway with a Rust streaming data plane and an inherited 360-provider control plane for routing, MCP, memory, RAG, and knowledge workflows.",
   "type": "module",
   "bin": {
     "agentproxy": "bin/agentproxy.mjs",
@@ -194,7 +194,6 @@
     "check:provider-asset-provenance": "node scripts/check/check-provider-asset-provenance.mjs",
     "check:radar-sentinels": "node scripts/check/check-radar-sentinels.mjs",
     "check:nvidia-catalog-drift": "node --import tsx/esm scripts/check/check-nvidia-catalog-drift.ts",
-    "check:cli-fingerprint-drift": "node --import tsx/esm scripts/check/check-cli-fingerprint-drift.ts",
     "check:fetch-targets": "node scripts/check/check-fetch-targets.mjs",
     "check:openapi-routes": "node scripts/check/check-openapi-routes.mjs",
     "check:api-docs-refs": "node scripts/check/check-api-docs-refs.mjs",
@@ -302,7 +301,8 @@
     "i18n:check-new-keys": "node scripts/i18n/check-new-key-coverage.mjs",
     "i18n:translate-new-keys": "bash scripts/i18n/translate-new-keys.sh",
     "i18n:check-keys": "node scripts/i18n/check-key-completeness.mjs",
-    "i18n:check-keys:cli": "node scripts/i18n/check-key-completeness.mjs --catalog=cli"
+    "i18n:check-keys:cli": "node scripts/i18n/check-key-completeness.mjs --catalog=cli",
+    "check:cli-fingerprint-drift": "node --import tsx/esm scripts/check/check-cli-fingerprint-drift.ts"
   },
   "dependencies": {
     "@aws-sdk/client-bedrock-runtime": "^3.1120.0",
@@ -455,10 +455,10 @@
     "type-coverage": "^2.30.1",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.70.0",
-    "vite": "^8.0.16",
     "vitest": "^5.0.0",
     "wait-on": "^9.1.0",
     "wtfnode": "^0.10.1",
+    "vite": "^8.0.16",
     "node-gyp": "13.0.2",
     "markdownlint-cli2": "0.23.2"
   },
@@ -477,7 +477,7 @@
       "@swc/core",
       "better-sqlite3",
       "esbuild",
-      "agentproxy",
+      "omniroute",
       "sharp"
     ]
   },
@@ -488,9 +488,7 @@
     "@parcel/watcher": true,
     "keytar": true,
     "protobufjs": true,
-    "unrs-resolver": true,
-    "bun": true,
-    "opencode-ai": true
+    "unrs-resolver": true
   },
   "overrides": {
     "browserslist": "^4.28.8",

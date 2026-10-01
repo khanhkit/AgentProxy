@@ -14,6 +14,8 @@ import { getRequestDetailLogByCallLogId } from "../db/detailedLogs";
 import { shouldPersistToDisk } from "./migrations";
 import { updateRequestTokensById } from "./usageHistory";
 import { getCallLogApiKeyContext } from "./callLogApiKeyContext";
+import { serializeResilienceActions, resetResilienceActions } from "./resilienceActionsContext";
+import { parseResilienceActions } from "./resilienceActionsParse";
 import {
   seedPendingContinuationState,
   clearPendingContinuationState,
@@ -129,6 +131,7 @@ type CallLogSummaryRow = {
   session_tag?: string | null;
   has_content?: number | null;
   usage_provenance?: string | null;
+  resilience_actions?: string | null;
 };
 
 const RESOLVED_ACCOUNT_SQL = "COALESCE(NULLIF(pc.name, ''), NULLIF(pc.email, ''), cl.account)";
@@ -380,6 +383,27 @@ export function resolveProviderDisplay(
   return null;
 }
 
+function hasCallLogsColumn(columnName: string): boolean {
+  const cached = (hasCallLogsColumn as { cache?: Map<string, boolean> }).cache;
+  if (cached?.has(columnName)) return cached.get(columnName) as boolean;
+  try {
+    const rows = getDbInstance().prepare("PRAGMA table_info(call_logs)").all() as Array<{ name?: string }>;
+    const found = rows.some((row) => row.name === columnName);
+    const map = cached ?? new Map<string, boolean>();
+    map.set(columnName, found);
+    (hasCallLogsColumn as { cache?: Map<string, boolean> }).cache = map;
+    return found;
+  } catch {
+    return false;
+  }
+}
+
+export function invalidateCallLogsColumnCache(): void {
+  (hasCallLogsColumn as { cache?: Map<string, boolean> }).cache = undefined;
+}
+
+export { parseResilienceActions };
+
 function mapSummaryRow(row: CallLogSummaryRow) {
   const detailState = normalizeDetailState(row.detail_state);
   const provider = row.provider;
@@ -429,6 +453,7 @@ function mapSummaryRow(row: CallLogSummaryRow) {
     correlationId: row.correlation_id || null,
     modelPinned: toNumber(row.model_pinned) === 1,
     sessionTag: row.session_tag || null,
+    resilienceActions: parseResilienceActions(row.resilience_actions ?? null),
   };
 }
 
@@ -486,6 +511,8 @@ async function saveCallLogOperation(entry: any): Promise<void> {
           failedResponse ? responseStatus : undefined
         );
     const protectedError = sanitizeErrorForLog(entry.error);
+    const resilienceActions = serializeResilienceActions();
+    const hasResilienceColumn = hasCallLogsColumn("resilience_actions");
 
     // Bridges the window before this row's own artifact write (queued below,
     // async) lands with detail_state = 'ready': a client that fires its next
@@ -625,6 +652,8 @@ async function saveCallLogOperation(entry: any): Promise<void> {
       }
     }
 
+    const resilienceCol = hasResilienceColumn ? ", resilience_actions" : "";
+    const resilienceParam = hasResilienceColumn ? ", @resilienceActions" : "";
     db.prepare(
       `
       INSERT INTO call_logs (
@@ -637,7 +666,7 @@ async function saveCallLogOperation(entry: any): Promise<void> {
         artifact_relpath, artifact_size_bytes, artifact_sha256,
         has_request_body, has_response_body, has_pipeline_details, request_summary,
         correlation_id, model_pinned, session_tag, response_id, error_type,
-        video_content_removed, has_content, usage_provenance
+        video_content_removed, has_content, usage_provenance${resilienceCol}
       )
       VALUES (
         @id, @timestamp, @method, @path, @status, @model, @requestedModel, @provider,
@@ -649,7 +678,7 @@ async function saveCallLogOperation(entry: any): Promise<void> {
         @artifactRelPath, @artifactSizeBytes, @artifactSha256,
         @hasRequestBody, @hasResponseBody, @hasPipelineDetails, @requestSummary,
         @correlationId, @modelPinned, @sessionTag, @responseId, @errorType,
-        @videoContentRemoved, @hasContent, @usageProvenance
+        @videoContentRemoved, @hasContent, @usageProvenance${resilienceParam}
       )
     `
     ).run({
@@ -663,7 +692,9 @@ async function saveCallLogOperation(entry: any): Promise<void> {
       hasResponseBody: protectedResponseBody !== null ? 1 : 0,
       hasPipelineDetails: protectedPipelinePayloads ? 1 : 0,
       requestSummary,
+      resilienceActions,
     });
+    resetResilienceActions();
 
     if (detailState === "ready" && typeof logEntry.responseId === "string") {
       // The durable row is now authoritative; drop the bridge entry instead

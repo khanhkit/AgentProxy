@@ -53,7 +53,8 @@ function isNonTerminalProviderError(providerErrorType: string | null): boolean {
     providerErrorType === PROVIDER_ERROR_TYPES.OAUTH_INVALID_TOKEN ||
     // #1010: Cloudflare fingerprint rejection is the CDN refusing the CLIENT's
     // signature, not the account's credentials — never a terminal account state.
-    providerErrorType === PROVIDER_ERROR_TYPES.FINGERPRINT_REJECTION
+    providerErrorType === PROVIDER_ERROR_TYPES.FINGERPRINT_REJECTION ||
+    providerErrorType === PROVIDER_ERROR_TYPES.REQUEST_REJECTED
   );
 }
 

@@ -5970,6 +5970,8 @@
     "validationModelIdHint": "Model używany do weryfikacji klucza API. Pozostaw puste, aby użyć pierwszego dostępnego model dla provider.",
     "validationModelIdLabel": "Model weryfikacyjny",
     "validationModelIdPlaceholder": "np. meta-llama/llama-3.1-8b-instruct",
+    "vertexCredentialLabel": "API Key or Service Account JSON",
+    "vertexCredentialHint": "API keys use the curated project catalog. Service Account JSON enables live Model Garden discovery.",
     "vertexServiceAccountPlaceholder": "Wklej Service Account JSON ({\"type\":\"service_account\",\"project_id\":\"…\",\"client_email\":\"…\",\"private_key\":\"…\"}) lub OAuth access_token",
     "webCookieProviders": "Dostawcy korzystający z ciasteczek WWW",
     "weeklyShort": "Tygodniowo",
@@ -6327,7 +6329,8 @@
       "kiro": "Darmowy plan: 50 kredytów/miesiąc (~25K–100K tokenów). ⚠️ ToS Kiro zabrania korzystania z zewnętrznych proxy/harness.",
       "codex": "Połącz OpenAI Codex za pomocą istniejącego przepływu OAuth.",
       "qwen": "Połącz Qwen Code za pomocą istniejącego przepływu OAuth.",
-      "github-models": "Utwórz token GitHub PAT z zakresem 'models: read' na github.com/settings/tokens"
+      "github-models": "Utwórz token GitHub PAT z zakresem 'models: read' na github.com/settings/tokens",
+      "agnes-cn": "Pobierz klucz API na stronie agnes-ai.com — China endpoint: api.agnes-ai.cn"
     },
     "passthroughModelsDescription": "{provider} akceptuje natywne ID models dla provider. Zaimportuj z /models lub dodaj własne ID do routing.",
     "bedrockModelsDescription": "Models Amazon Bedrock są ograniczone do regionu AWS. Zaimportuj z /models lub dodaj Bedrock ID models włączone w wybranym regionie.",
@@ -8595,7 +8598,11 @@
       },
       "compressToolResults": {
         "label": "Proaktywnie skracaj długie wyniki narzędzi",
-        "description": "Obcina wyniki narzędzia powyżej 2 000 znaków podczas kompresji Lite. Ochrona przed przepełnieniem w trybie awaryjnym może nadal przycinać treść, gdy kontekst przekracza budżet modelu."
+        "description": "Truncates long tool results during Lite compression. The Maximum tool-result length field (or AGENTPROXY_LITE_MAX_TOOL_LENGTH when that field is unset) sets the cap. Emergency overflow protection may still trim content when the context exceeds the model budget."
+      },
+      "maxToolLength": {
+        "label": "Maximum tool-result length",
+        "description": "Character cap for proactive tool-result truncation. Default 2000. Override with AGENTPROXY_LITE_MAX_TOOL_LENGTH when this field is unset."
       }
     },
     "engineFields": {
@@ -13025,6 +13032,13 @@
       },
       "STREAM_RECOVERY_MIDSTREAM_ENABLED": {
         "description": "Zezwalaj na odzyskiwanie strumienia w celu ponownego zażądania odpowiedzi i połączenia jej po tym, jak bajty dotarły już do klienta."
+      },
+      "STREAM_RECOVERY_TOOLCALL_ORDER_FIX": {
+        "description": "__MISSING__:Make mid-stream continuation tool-call safe: never resume a cut stream after a tool call was sent (still in progress or already finished), and stop after one empty continuation instead of using the whole retry budget."
+      },
+      "PROTECTED_PRIORITY_INFRA_502_ENABLED": {
+        "label": "__MISSING__:Protected-Priority Infra Stops as 502",
+        "description": "__MISSING__:Answer 502 instead of 503 when a quota-only-fallback priority target stops the combo for a cause that is provably not quota: an open provider circuit breaker or a predictive latency skip."
       },
       "MODEL_CATALOG_INCLUDE_NAMES": {
         "description": "Dołączaj przyjazne do wyświetlania pola nazw w odpowiedziach /v1/models. Wyłącz tę opcję dla klientów, którzy akceptują tylko identyfikatory modeli."

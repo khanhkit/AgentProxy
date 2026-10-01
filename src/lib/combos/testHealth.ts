@@ -119,6 +119,10 @@ export function buildComboTestPrompt() {
   return `Calculate ${left}+${right}, and reply with the result only.`;
 }
 
+function isGeminiComboProbe(modelStr: string) {
+  return /(?:^|\/)gemini(?:-|$)/i.test(modelStr);
+}
+
 export function buildComboTestRequestBody(
   modelStr: string,
   isEmbedding: boolean = false,
@@ -131,7 +135,13 @@ export function buildComboTestRequestBody(
     };
   }
 
-  return {
+  const body: {
+    model: string;
+    messages: { role: string; content: string }[];
+    max_tokens: number;
+    stream: boolean;
+    reasoning_effort?: "none";
+  } = {
     model: modelStr,
     // Randomize the arithmetic prompt so upstream providers are less likely to
     // satisfy the smoke test with cached completions.
@@ -143,6 +153,8 @@ export function buildComboTestRequestBody(
       (options.stream ? STREAMING_MODEL_TEST_MAX_TOKENS : COMBO_TEST_MAX_TOKENS),
     stream: options.stream ?? false,
   };
+  if (isGeminiComboProbe(modelStr)) body.reasoning_effort = "none";
+  return body;
 }
 
 export type ComboTestStreamResult = {

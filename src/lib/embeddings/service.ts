@@ -298,6 +298,10 @@ export async function createEmbeddingResponse(
   }
 
   if (!providerConfig) {
+    log.warn(
+      "EMBED",
+      `Unknown embedding provider ${provider} for model "${body.model}" -- checked static registry, provider nodes, chat-provider fallback, and synced-endpoint routing with no match`
+    );
     return errorResponse(
       HTTP_STATUS.BAD_REQUEST,
       formatUnknownEmbeddingProviderError(provider, resolvedModel)
@@ -353,6 +357,30 @@ export async function createEmbeddingResponse(
       !("allExpired" in localCredentials)
     ) {
       credentials = localCredentials;
+    }
+  } else if (!credentials && providerConfig.authType === "none") {
+    // A private/LAN provider node stays keyless by default, but if the user
+    // stored a credential for that node it must ride on the embeddings request.
+    const keyedCredentials = await getProviderCredentials(credentialsProviderId);
+    if (
+      keyedCredentials &&
+      !("allRateLimited" in keyedCredentials) &&
+      !("allExpired" in keyedCredentials)
+    ) {
+      const token =
+        (typeof (keyedCredentials as { apiKey?: unknown }).apiKey === "string" &&
+          (keyedCredentials as { apiKey?: string }).apiKey) ||
+        (typeof (keyedCredentials as { accessToken?: unknown }).accessToken === "string" &&
+          (keyedCredentials as { accessToken?: string }).accessToken) ||
+        "";
+      if (token) {
+        credentials = keyedCredentials;
+        providerConfig = {
+          ...providerConfig,
+          authType: "apikey",
+          authHeader: "bearer",
+        };
+      }
     }
   }
 

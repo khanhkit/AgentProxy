@@ -22,6 +22,12 @@ type GeminiSSEAccumulator = {
 
 function stripZeroWidth(value: unknown): unknown {
   if (typeof value === "string") return stripObfuscationZeroWidth(value);
+  if (value && typeof value === "object") {
+    if (Array.isArray(value)) return value.map(stripZeroWidth);
+    return Object.fromEntries(
+      Object.entries(value as Record<string, unknown>).map(([key, nested]) => [key, stripZeroWidth(nested)])
+    );
+  }
   return value;
 }
 
@@ -54,7 +60,18 @@ function extractGeminiMarkdownShortcut(parsed: Record<string, unknown>): string 
 
 /** Append one candidate content part (text or textual tool call) onto the accumulator. */
 function applyCandidatePart(part: Record<string, unknown>, acc: GeminiSSEAccumulator): void {
-  if (typeof part.text !== "string" || part.thought || part.thoughtSignature) return;
+  const fc = part.functionCall as Record<string, unknown> | undefined;
+  if (fc && typeof fc.name === "string") {
+    acc.toolCalls.push({
+      id: typeof fc.id === "string" && fc.id.length > 0 ? fc.id : `${fc.name}-${Date.now()}-${acc.toolCalls.length}`,
+      index: acc.toolCalls.length,
+      type: "function",
+      function: { name: fc.name, arguments: JSON.stringify(stripZeroWidth(fc.args ?? {})) },
+    });
+    acc.sawContent = true;
+    return;
+  }
+  if (typeof part.text !== "string" || part.thought === true) return;
 
   const textualToolCall = tryParseTextualToolCall(part.text);
   if (textualToolCall) {

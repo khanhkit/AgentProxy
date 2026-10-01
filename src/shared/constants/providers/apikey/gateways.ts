@@ -1,7 +1,5 @@
-/**
- * APIKEY provider catalog — gateways family (aggregators, multi-model routers & API marketplaces).
- * Pure data; merged by apikey/index.ts via spread (god-file decomposition; semantic split).
- */
+import { LYCEUM_APIKEY_PROVIDER } from "./gateways/lyceum";
+import { XKIRO_APIKEY_PROVIDER } from "./gateways/xkiro";
 export const APIKEY_PROVIDERS_GATEWAYS = {
   // 1min.ai (https://docs.1min.ai) — multi-model chat aggregator with its own
   // custom API (single `prompt` string + real SSE, not OpenAI-compatible).
@@ -234,6 +232,7 @@ export const APIKEY_PROVIDERS_GATEWAYS = {
     apiHint:
       "Create an LLM Gateway API key, then use https://api.llmgateway.io/v1 as the OpenAI-compatible base URL.",
   },
+  lyceum: LYCEUM_APIKEY_PROVIDER,
   "llm-kiwi": {
     id: "llm-kiwi",
     serviceKinds: ["llm"],
@@ -1376,6 +1375,7 @@ export const APIKEY_PROVIDERS_GATEWAYS = {
     apiHint:
       "OpenAI-compatible endpoint at https://router.bynara.id/v1. Free-tier models are pinned; others need credit.",
   },
+  xkiro: XKIRO_APIKEY_PROVIDER,
   regolo: {
     id: "regolo",
     serviceKinds: ["llm"],

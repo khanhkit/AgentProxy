@@ -5970,6 +5970,8 @@
     "validationModelIdHint": "النموذج المستخدم للتحقق من الاتصال",
     "validationModelIdLabel": "معرّف نموذج التحقق",
     "validationModelIdPlaceholder": "مثال: gpt-4o-mini",
+    "vertexCredentialLabel": "API Key or Service Account JSON",
+    "vertexCredentialHint": "API keys use the curated project catalog. Service Account JSON enables live Model Garden discovery.",
     "vertexServiceAccountPlaceholder": "ألصق JSON لحساب الخدمة ({\"type\":\"service_account\",\"project_id\":\"…\",\"client_email\":\"…\",\"private_key\":\"…\"}) أو OAuth access_token",
     "webCookieProviders": "مزودو ملفات تعريف ارتباط الويب",
     "weeklyShort": "أسبوعي",
@@ -6327,7 +6329,8 @@
       "kiro": "الفئة المجانية: 50 رصيدًا شهريًا (~25 ألف–100 ألف توكن). ⚠️ تحظر شروط خدمة Kiro استخدام وكيل/أداة خارجية.",
       "codex": "ربط OpenAI Codex باستخدام تدفق OAuth الحالي.",
       "qwen": "ربط Qwen Code باستخدام تدفق OAuth الحالي.",
-      "github-models": "أنشئ رمز وصول شخصي (PAT) لـ GitHub بنطاق 'models: read' على github.com/settings/tokens"
+      "github-models": "أنشئ رمز وصول شخصي (PAT) لـ GitHub بنطاق 'models: read' على github.com/settings/tokens",
+      "agnes-cn": "احصل على مفتاح API من agnes-ai.com — China endpoint: api.agnes-ai.cn"
     },
     "passthroughModelsDescription": "{provider} يقبل معرفات النماذج الأصلية للموفر. قم بالاستيراد من /models أو قم بإضافة معرفات مخصصة للتوجيه.",
     "bedrockModelsDescription": "يتم تحديد نطاق نماذج Amazon Bedrock حسب منطقة AWS. قم بالاستيراد من /models أو قم بإضافة معرفات نماذج Bedrock الممكنة في المنطقة المحددة.",
@@ -8595,7 +8598,11 @@
       },
       "compressToolResults": {
         "label": "قم بقطع نتائج الأدوات الطويلة بشكل استباقي",
-        "description": "يقطع نتائج الأداة التي تتجاوز 2000 حرف أثناء ضغط Lite. قد تقوم حماية الفائض الطارئة بتقليص المحتوى عندما يتجاوز السياق ميزانية النموذج."
+        "description": "Truncates long tool results during Lite compression. The Maximum tool-result length field (or AGENTPROXY_LITE_MAX_TOOL_LENGTH when that field is unset) sets the cap. Emergency overflow protection may still trim content when the context exceeds the model budget."
+      },
+      "maxToolLength": {
+        "label": "Maximum tool-result length",
+        "description": "Character cap for proactive tool-result truncation. Default 2000. Override with AGENTPROXY_LITE_MAX_TOOL_LENGTH when this field is unset."
       }
     },
     "engineFields": {
@@ -13025,6 +13032,13 @@
       },
       "STREAM_RECOVERY_MIDSTREAM_ENABLED": {
         "description": "السماح لاسترداد التدفق بطلب الاستجابة مرة أخرى ودمجها بعد وصول البايتات بالفعل إلى العميل."
+      },
+      "STREAM_RECOVERY_TOOLCALL_ORDER_FIX": {
+        "description": "__MISSING__:Make mid-stream continuation tool-call safe: never resume a cut stream after a tool call was sent (still in progress or already finished), and stop after one empty continuation instead of using the whole retry budget."
+      },
+      "PROTECTED_PRIORITY_INFRA_502_ENABLED": {
+        "label": "__MISSING__:Protected-Priority Infra Stops as 502",
+        "description": "__MISSING__:Answer 502 instead of 503 when a quota-only-fallback priority target stops the combo for a cause that is provably not quota: an open provider circuit breaker or a predictive latency skip."
       },
       "MODEL_CATALOG_INCLUDE_NAMES": {
         "description": "تضمين حقول الأسماء المناسبة للعرض في استجابات /v1/models. عطل هذا للعملاء الذين يقبلون معرفات النماذج فقط."

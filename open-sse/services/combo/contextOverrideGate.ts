@@ -90,6 +90,11 @@ function resolveContextOverrideVerdict(
   return override >= requiredContextTokens;
 }
 
+export function getModelContextOverrideValue(modelStr: string | undefined): number | null {
+  if (!modelStr) return null;
+  return lookupOverrideWithEffortInheritance(modelStr);
+}
+
 /**
  * Decide whether a target's known context limit accommodates the request.
  *

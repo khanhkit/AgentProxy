@@ -7,7 +7,8 @@
  * provider knowledge here so discovery, import, and catalog projection agree.
  */
 
-export type ModelEndpointKind = "chat" | "image" | "video" | "non-chat" | "unknown";
+export type ModelEndpointKind =
+  "chat" | "image" | "video" | "embedding" | "rerank" | "non-chat" | "unknown";
 
 export type ModelEndpointDecision = {
   kind: ModelEndpointKind;
@@ -27,6 +28,8 @@ const CHAT_ENDPOINTS = new Set([
   "messages",
   "responses",
 ]);
+const EMBEDDING_ENDPOINTS = new Set(["embeddings", "embedding"]);
+const RERANK_ENDPOINTS = new Set(["rerank", "reranking"]);
 const IMAGE_ENDPOINTS = new Set(["image", "images", "images/generations"]);
 const VIDEO_ENDPOINTS = new Set(["video", "videos", "videos/generations"]);
 
@@ -43,6 +46,12 @@ function classifyExplicitEndpoints(
   if (endpoints.some((endpoint) => CHAT_ENDPOINTS.has(endpoint))) {
     return { kind: "chat", chatSelectable: true, reason: "explicit-endpoints" };
   }
+  if (endpoints.some((endpoint) => EMBEDDING_ENDPOINTS.has(endpoint))) {
+    return { kind: "embedding", chatSelectable: false, reason: "explicit-endpoints" };
+  }
+  if (endpoints.some((endpoint) => RERANK_ENDPOINTS.has(endpoint))) {
+    return { kind: "rerank", chatSelectable: false, reason: "explicit-endpoints" };
+  }
   if (endpoints.some((endpoint) => IMAGE_ENDPOINTS.has(endpoint))) {
     return { kind: "image", chatSelectable: false, reason: "explicit-endpoints" };
   }
@@ -58,6 +67,9 @@ function normalizeOpenAiModelId(modelId: string): string {
 
 function classifyOpenAiModel(modelId: string): ModelEndpointDecision | null {
   const normalized = normalizeOpenAiModelId(modelId).toLowerCase();
+  if (normalized.startsWith("text-embedding-")) {
+    return { kind: "embedding", chatSelectable: false, reason: "provider-policy" };
+  }
   if (
     normalized.startsWith("gpt-image-") ||
     normalized.startsWith("dall-e-") ||
@@ -71,13 +83,28 @@ function classifyOpenAiModel(modelId: string): ModelEndpointDecision | null {
   return null;
 }
 
+const OPENROUTER_BATCH_SUFFIX = ":batch";
+
+function classifyOpenRouterModel(modelId: string): ModelEndpointDecision | null {
+  return modelId.trim().toLowerCase().endsWith(OPENROUTER_BATCH_SUFFIX)
+    ? { kind: "non-chat", chatSelectable: false, reason: "provider-policy" }
+    : null;
+}
+
 export function getModelEndpointDecision(
   provider: string | null | undefined,
   modelId: string,
   supportedEndpoints?: readonly string[]
 ): ModelEndpointDecision {
   const explicit = classifyExplicitEndpoints(supportedEndpoints);
-  if (provider?.trim().toLowerCase() === "openai") {
+  const normalizedProvider = provider?.trim().toLowerCase();
+  if (normalizedProvider === "openrouter") {
+    // OpenRouter's :batch variant is Batch-API-only. Existing imported rows can
+    // carry a synthetic ["chat"] default, so provider policy must win first.
+    const openRouterDecision = classifyOpenRouterModel(modelId);
+    if (openRouterDecision) return openRouterDecision;
+  }
+  if (normalizedProvider === "openai") {
     const openAiDecision = classifyOpenAiModel(modelId);
     if (openAiDecision) {
       // Old imported rows were persisted with `["chat"]` as a synthetic default

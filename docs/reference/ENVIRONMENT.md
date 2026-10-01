@@ -1672,3 +1672,19 @@ Used by `open-sse/services/combo.ts` and `src/lib/quota/quotaScheduler.ts` for p
 
 - `OPENCODE_RESPONSES_HEADERS_WAIT_MS`: optional streamed-Responses response-header wait bound in milliseconds. Default `0` disables it; `30000` is the suggested starting value. Chat completions and non-streamed requests are unaffected.
 - `OPENCODE_RESPONSES_HEADERS_WAIT_MAX_ROTATIONS`: maximum rotations caused by this bound per request. Default `2`. The last remaining account keeps the full headers window.
+
+### Current migration/runtime compatibility controls
+
+| Variable | Default | Used by | Purpose |
+| --- | --- | --- | --- |
+| `AGENTPROXY_DISABLE_CONVERSATION_TRACKING` | `0` | `open-sse/services/conversationTracker.ts` | Set `1` to disable off-path conversation tracking. |
+| `AGENTPROXY_STRIP_SYSTEM_PREAMBLE` | `0` | Open-SSE translators | Set `1` to strip recognized echoed system preambles from translated responses. |
+| `AGENTPROXY_SYSTEM_INSTRUCTION_APPEND` | _(unset)_ | Open-SSE translators | Optional text appended to translated system instructions. |
+| `COPILOT_INTEGRATION_ID` | `copilot-developer-cli` | GitHub/Copilot executor headers | Override the Copilot integration identity header. |
+| `CURSOR_KV_GRACE_MS` | `2000` | `open-sse/executors/cursor.ts` | Cursor KV stream grace window in milliseconds. |
+| `OPENCODE_FREE_TIER_REQUEST_CONTRACT` | enabled | `open-sse/executors/opencodeFreeTierContract.ts` | Set `off` to disable the OpenCode free-tier request-shape contract. |
+| `OPENCODE_FREE_TIER_PLACEHOLDER_TOOLS` | _(unset)_ | `open-sse/executors/opencodeFreeTierContract.ts` | Optional comma-separated fallback tool names for free-tier requests. |
+| `OPENCODE_POOL_STRAIN_MARKER_PATH` | `/tmp/opencode-pool-strain.json` | `open-sse/executors/opencodeParkResume.ts` | Override the trusted pool-strain marker path. |
+| `OPENWA_SERVICE_PORT` | `8323` | managed OpenWA service | Override the managed OpenWA service port. |
+| `PROXY_HEALTH_RECOVERY_INTERVAL_MS` | `600000` | `src/lib/proxyHealth/scheduler.ts` | Recovery-pass interval in milliseconds; values below 60000 fall back to the default. |
+| `AGENTPROXY_LITE_MAX_TOOL_LENGTH` | `2000` | Lite compression | Fallback maximum tool-result length when no per-request option is supplied. |

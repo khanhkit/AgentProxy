@@ -18,6 +18,8 @@ export const CREDENTIAL_PATTERNS: CredentialPattern[] = [
     regex: /sk-ant-[A-Za-z0-9_-]{20,}/g,
     replacement: "[REDACTED:anthropic]",
   },
+  { name: "groq", regex: /\bgsk_[A-Za-z0-9]{20,}/g, replacement: "[REDACTED:groq]" },
+  { name: "xai", regex: /\bxai-[A-Za-z0-9]{20,}/g, replacement: "[REDACTED:xai]" },
   // {20,} rather than the exact {35} of a standard 39-char Google API key. #12506 added
   // this pattern with the exact length; #12620 landed the anti-drift test that asserts
   // /\bAIza[A-Za-z0-9_-]{20,}/ must not survive. Anything shorter or longer than 39 was
@@ -81,5 +83,12 @@ export const CREDENTIAL_PATTERNS: CredentialPattern[] = [
     regex:
       /((?:["\x27]?(?:Authorization|x-api-key|api-key|apikey)["\x27]?\s*[:=]\s*["\x27]?)(?:(?:Bearer|Basic|Token)\s+)?)[A-Za-z0-9._~+/=-]{10,}/gi,
     replacement: "$1[REDACTED:auth_header]",
+  },
+  // Generic OpenAI-compatible fallback must stay last so provider-specific sk-
+  // patterns above retain their more specific labels.
+  {
+    name: "openai_compatible",
+    regex: /(?<![A-Za-z0-9])sk-[A-Za-z0-9._~+/=-]{20,}/g,
+    replacement: "[REDACTED:openai_compatible]",
   },
 ];

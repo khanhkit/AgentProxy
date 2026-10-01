@@ -1,6 +1,7 @@
 import { PROVIDER_MODELS, PROVIDER_ID_TO_ALIAS } from "@/shared/constants/models";
 import { NOAUTH_PROVIDERS } from "@/shared/constants/providers";
 import { getCombos } from "@/lib/db/combos";
+import { isComboNameAllowedForKey } from "@/shared/utils/apiKeyPolicy";
 import { getSettings } from "@/lib/db/settings";
 import { getUserDatabaseSettings } from "@/lib/db/databaseSettings";
 import { createLazyConnectionView } from "@/lib/db/providers/lazyConnectionView";
@@ -117,6 +118,7 @@ import {
   getProviderPrefixes as getProviderPrefixesFromMaps,
   getComboTargetModelId as getComboTargetModelIdFromMaps,
 } from "./catalogProviderMaps";
+import { indexNodeApiTypes, nodeModelEndpoints, overlayEndpoints } from "./catalogNodeModality";
 import {
   getModelCatalogAuthRejection,
   isCodexModelCatalogClient,
@@ -384,6 +386,7 @@ async function buildUnifiedModelsResponseCore(
     const providerIdToPrefix: Record<string, string> = {};
     const providerNodeIdByPrefix: Record<string, string> = {};
     const nodeIdToProviderType: Record<string, string> = {};
+    const nodeApiTypes = indexNodeApiTypes(providerNodes);
     for (const node of providerNodes) {
       const resolvedPrefix =
         node.prefix?.trim() ||
@@ -806,9 +809,12 @@ async function buildUnifiedModelsResponseCore(
     // `buildComboCatalogMetadata`) already exists here, so return before the
     // provider/auto-combo/registry loops start.
     const earlyApiKey = extractApiKey(request);
+    let earlyKeyMeta: Awaited<
+      ReturnType<typeof import("@/lib/db/apiKeys").getApiKeyMetadata>
+    > | null = null;
     if (earlyApiKey) {
       const { getApiKeyMetadata } = await import("@/lib/db/apiKeys");
-      const earlyKeyMeta = await getApiKeyMetadata(earlyApiKey);
+      earlyKeyMeta = await getApiKeyMetadata(earlyApiKey);
       if (earlyKeyMeta?.allowedQuotas && earlyKeyMeta.allowedQuotas.length > 0) {
         const { buildQuotaExclusiveModels } = await import("@/lib/quota/quotaCombos");
         const quotaModels = await buildQuotaExclusiveModels(
@@ -842,6 +848,7 @@ async function buildUnifiedModelsResponseCore(
     // #9199: prepare the shared connection/settings/registry candidate snapshot once for this
     // catalog build. Runtime auto routing still prepares fresh request-scoped inputs.
     let preparedAutoInputs: Awaited<ReturnType<typeof prepareBuiltinAutoComboInputs>> | undefined;
+    const autoCombosDisallowedForKey = earlyKeyMeta?.allowAutoCombos === false;
     let materializedAutoCount = 0;
     const autoMeta = memoizeTargetMetadata(getComboTargetCatalogMetadata, maybeYieldCatalogBuild);
     for (const autoId of [
@@ -851,7 +858,7 @@ async function buildUnifiedModelsResponseCore(
     ]) {
       // #9418: skip the entire loop when hideAutoCombos is on — the ids are still
       // routable when sent explicitly, just not advertised in the catalog.
-      if (hideAuto) break;
+      if (hideAuto || autoCombosDisallowedForKey) break;
       if (blockedProviders.has("auto") || listedIds.has(autoId)) continue; // #5192
       // #6328 (follow-up to #6495 / #6512): REMOVE — not just hide — paid-tier
       // auto/* ids (auto/pro-* + auto/*:pro) from the advertised catalog when the
@@ -955,6 +962,10 @@ async function buildUnifiedModelsResponseCore(
       const comboMetadata = buildComboCatalogMetadata(combo, visibleTargets);
 
       listedIds.add(combo.name);
+      const comboDescription =
+        typeof combo.description === "string" ? combo.description.trim() : "";
+      const comboDisplayName =
+        typeof combo.displayName === "string" ? combo.displayName.trim() : "";
       models.push({
         id: combo.name,
         object: "model",
@@ -963,6 +974,8 @@ async function buildUnifiedModelsResponseCore(
         permission: [],
         root: combo.name,
         parent: null,
+        ...(comboDisplayName ? { display_name: comboDisplayName } : {}),
+        ...(comboDescription ? { description: comboDescription } : {}),
         ...comboMetadata,
       });
 
@@ -1246,7 +1259,7 @@ async function buildUnifiedModelsResponseCore(
               : sm.id;
 
           const aliasId = `${alias}/${displayModelId}`;
-          const endpoints = Array.isArray(sm.supportedEndpoints) ? sm.supportedEndpoints : ["chat"];
+          const endpoints = nodeModelEndpoints(sm.supportedEndpoints, nodeApiTypes[providerId]);
           const apiFormat = typeof sm.apiFormat === "string" ? sm.apiFormat : "chat-completions";
           const classification = classifyModelSupportedEndpoints(endpoints);
           const modelType = classification.type;
@@ -1712,7 +1725,7 @@ async function buildUnifiedModelsResponseCore(
               id: aliasId,
               ...(typeof model.name === "string" ? { name: model.name } : {}),
               ...(apiFormat ? { api_format: apiFormat } : {}),
-              ...(endpoints ? { supported_endpoints: endpoints } : {}),
+              ...overlayEndpoints(endpoints),
               ...(typeof model.inputTokenLimit === "number"
                 ? { context_length: model.inputTokenLimit }
                 : {}),
@@ -1725,10 +1738,8 @@ async function buildUnifiedModelsResponseCore(
             continue;
           }
 
-          // Determine type from supportedEndpoints
-          const endpoints = Array.isArray(model.supportedEndpoints)
-            ? model.supportedEndpoints
-            : ["chat"];
+          // Determine type from explicit endpoints or the provider-node modality.
+          const endpoints = nodeModelEndpoints(model.supportedEndpoints, nodeApiTypes[providerId]);
           const apiFormat =
             typeof model.apiFormat === "string" ? model.apiFormat : "chat-completions";
           const classification = classifyModelSupportedEndpoints(endpoints);
@@ -1981,8 +1992,16 @@ async function buildUnifiedModelsResponseCore(
         // Without this branch, isModelAllowedForKey returns false for every model
         // (metadata missing → deny), collapsing /v1/models to 0 entries.
       } else {
+        const catalogScope = keyMeta.catalogScope ?? "all";
         const filtered = [];
         for (const m of models) {
+          const isComboRow = m.owned_by === "combo";
+          if (catalogScope === "combos" && !isComboRow) continue;
+          if (catalogScope === "models" && isComboRow) continue;
+          if (isComboRow && !String(m.id).startsWith("auto/")) {
+            if (isComboNameAllowedForKey(keyMeta.allowedCombos, String(m.id))) filtered.push(m);
+            continue;
+          }
           // m.id is the full identifier (e.g. openai/gpt-4o), m.root is the raw model string
           // check either one as the config could use either patterns
           if (

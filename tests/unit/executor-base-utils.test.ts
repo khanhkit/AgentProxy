@@ -1,5 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { getEventListeners } from "node:events";
 
 const base = await import("../../open-sse/executors/base.ts");
 
@@ -114,6 +115,19 @@ test("mergeAbortSignals aborts when secondary fires", () => {
   assert.ok(!merged.aborted);
   c2.abort(new Error("secondary"));
   assert.ok(merged.aborted);
+});
+
+test("mergeAbortSignals removes listeners after each merged signal settles", () => {
+  const longLived = new AbortController();
+  const before = getEventListeners(longLived.signal, "abort").length;
+  for (let i = 0; i < 25; i++) {
+    const perAttempt = new AbortController();
+    const merged = base.mergeAbortSignals(longLived.signal, perAttempt.signal);
+    assert.equal(merged.aborted, false);
+    perAttempt.abort(new Error(`attempt-${i}-timeout`));
+    assert.equal(merged.aborted, true);
+  }
+  assert.ok(getEventListeners(longLived.signal, "abort").length <= before + 1);
 });
 
 test("sanitizeReasoningEffortForProvider passes through body without reasoning_effort", () => {

@@ -200,7 +200,12 @@ export function initGracefulShutdown(): void {
   }
 
   const shutdown = (signal: string) => {
-    void globalThis.__agentproxyRequestShutdown?.(signal).then(() => process.exit(0));
+    void globalThis.__agentproxyRequestShutdown?.(signal).then(() => {
+      // On Windows, sql.js/Emscripten can leave libuv async-handle teardown
+      // pending after cleanup resolves. Give that teardown one macrotask before
+      // synchronously terminating the process.
+      setTimeout(() => process.exit(0), 0);
+    });
   };
 
   process.on("SIGTERM", () => void shutdown("SIGTERM"));

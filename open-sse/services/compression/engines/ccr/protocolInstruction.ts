@@ -15,6 +15,15 @@
  */
 
 const CCR_RETRIEVE_TOOL_NAME = "agentproxy_ccr_retrieve";
+const CCR_RETRIEVE_TOOL_NAME_SEPARATORS = ["__", ".", "/", ":"];
+
+function matchesCcrRetrieveToolName(name: string | undefined): boolean {
+  if (typeof name !== "string") return false;
+  if (name === CCR_RETRIEVE_TOOL_NAME) return true;
+  return CCR_RETRIEVE_TOOL_NAME_SEPARATORS.some((separator) =>
+    name.endsWith(`${separator}${CCR_RETRIEVE_TOOL_NAME}`)
+  );
+}
 
 /** Leading marker that identifies the injected instruction (also the idempotency sentinel). */
 export const CCR_PROTOCOL_MARKER_SENTINEL = "[CCR protocol]";
@@ -41,7 +50,7 @@ export function callerSupportsCcrRetrieve(body: Record<string, unknown>): boolea
     const t = tool as ToolLike;
     const flatName = typeof t?.name === "string" ? t.name : undefined;
     const nestedName = typeof t?.function?.name === "string" ? t.function.name : undefined;
-    return flatName === CCR_RETRIEVE_TOOL_NAME || nestedName === CCR_RETRIEVE_TOOL_NAME;
+    return matchesCcrRetrieveToolName(flatName) || matchesCcrRetrieveToolName(nestedName);
   });
 }
 

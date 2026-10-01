@@ -82,6 +82,36 @@ test("OpenAI -> Responses translator omits model when the upstream never sent on
   assert.equal("model" in (completed!.data.response as Record<string, unknown>), false);
 });
 
+
+test("#13956: translator emits strict Responses lifecycle/item fields and usage details", () => {
+  const events = collectResponsesEvents([
+    {
+      id: "chatcmpl-strict",
+      model: "gpt-5.5",
+      choices: [{ index: 0, delta: { content: "hi" }, finish_reason: null }],
+      usage: { prompt_tokens: 10, completion_tokens: 5, total_tokens: 15 },
+    },
+    { id: "chatcmpl-strict", choices: [{ index: 0, delta: {}, finish_reason: "stop" }] },
+    null,
+  ]);
+  const inProgress = events.find((e) => e.event === "response.in_progress")!.data.response as Record<string, unknown>;
+  assert.deepEqual(inProgress.output, []);
+  assert.equal(inProgress.background, false);
+  assert.equal(inProgress.error, null);
+  const added = events.find((e) => e.event === "response.output_item.added")!.data.item as Record<string, unknown>;
+  assert.equal(added.status, "in_progress");
+  const completed = events.find((e) => e.event === "response.completed")!.data.response as Record<string, unknown>;
+  const output = completed.output as Array<Record<string, unknown>>;
+  assert.equal(output[0].status, "completed");
+  assert.deepEqual(completed.usage, {
+    input_tokens: 10,
+    input_tokens_details: { cached_tokens: 0 },
+    output_tokens: 5,
+    output_tokens_details: { reasoning_tokens: 0 },
+    total_tokens: 15,
+  });
+});
+
 test("full shim pipeline: bare upstream model in Responses payloads gets rewritten to the requested effort-suffixed id", () => {
   const events = collectResponsesEvents([
     {

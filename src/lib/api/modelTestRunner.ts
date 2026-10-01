@@ -285,12 +285,15 @@ export function detectTestKind(modelStr: string, customModel: any, nodeApiType?:
     !isRerank &&
     (apiFormat === "embeddings" ||
       nodeType === "embeddings" ||
+      customModel?.modelType === "embedding" ||
       supportedEndpoints.includes("embeddings") ||
       lowerModel.includes("embedding") ||
       lowerModel.includes("bge-") ||
       lowerModel.includes("text-embed") ||
       lowerModel.includes("jina-clip") ||
-      lowerModel.includes("colbert"));
+      lowerModel.includes("colbert") ||
+      lowerModel.includes("harrier-") ||
+      lowerModel.includes("nomic-embed"));
   // A Responses node answers on /v1/responses only. Without this the model fell
   // through to the chat branch below, which posts a Chat Completions body to
   // /v1/chat/completions: the route can still answer 200 while carrying nothing a
@@ -306,7 +309,17 @@ export function detectTestKind(modelStr: string, customModel: any, nodeApiType?:
     (apiFormat === "responses" ||
       nodeType === "responses" ||
       supportedEndpoints.includes("responses"));
-  return { isRerank, isEmbedding, isAudioTranscription, isResponses };
+  const isNonChatGeneration =
+    !isAudioTranscription &&
+    !isRerank &&
+    !isEmbedding &&
+    !isResponses &&
+    supportedEndpoints.length > 0 &&
+    !supportedEndpoints.includes("chat") &&
+    (supportedEndpoints.includes("images") ||
+      supportedEndpoints.includes("music") ||
+      supportedEndpoints.includes("videos"));
+  return { isRerank, isEmbedding, isAudioTranscription, isResponses, isNonChatGeneration };
 }
 
 /**
@@ -465,11 +478,19 @@ export async function runSingleModelTest(
     findCustomModelMetadata(providerId, fullModelStr),
     findProviderNodeApiType(providerId),
   ]);
-  const { isRerank, isEmbedding, isAudioTranscription, isResponses } = detectTestKind(
-    fullModelStr,
-    customModel,
-    nodeApiType
-  );
+  const { isRerank, isEmbedding, isAudioTranscription, isResponses, isNonChatGeneration } =
+    detectTestKind(fullModelStr, customModel, nodeApiType);
+
+  if (isNonChatGeneration) {
+    return {
+      modelId: fullModelStr,
+      status: "error",
+      latencyMs: 0,
+      httpStatus: 422,
+      error:
+        "Skipped: non-chat generation model (images/music/video) — use the corresponding generation endpoint instead",
+    };
+  }
 
   const testBody = isRerank
     ? {

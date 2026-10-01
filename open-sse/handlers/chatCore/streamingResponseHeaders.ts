@@ -19,6 +19,9 @@ export function assembleStreamingResponseHeaders(
     pendingRequestId: string;
     compressionResponseMeta?: string | null | undefined;
     comboStrategy?: string | null | undefined;
+    isCombo?: boolean;
+    requestedConnectionId?: string | null;
+    selectedConnectionId?: string | null;
   },
   buildStreamingResponseHeaders: typeof defaultBuildStreaming = defaultBuildStreaming
 ): Record<string, string> {
@@ -31,6 +34,9 @@ export function assembleStreamingResponseHeaders(
       usage: null,
       costUsd: 0,
       strategy: args.comboStrategy ?? "single",
+      isCombo: args.isCombo,
+      requestedConnectionId: args.requestedConnectionId,
+      selectedConnectionId: args.selectedConnectionId,
     }),
     "x-agentproxy-request-id": args.pendingRequestId,
   };

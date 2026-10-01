@@ -17,6 +17,7 @@ import {
 } from "@/app/api/v1/_shared/rateLimit";
 import { attachAgentProxyMetaToResponse } from "@/domain/agentproxyResponseMeta";
 import { calculateModalCost } from "@/lib/usage/costCalculator";
+import { saveCallLog } from "@/lib/usage/callLogs";
 import { generateRequestId } from "@/shared/utils/requestId";
 
 /**
@@ -102,6 +103,10 @@ async function postHandler(request, context) {
     resolvedProvider: providerConfig,
     resolvedModel,
   });
+  const latencyMs = Date.now() - startTime;
+  const logModel = resolvedModel ? `${provider}/${resolvedModel}` : body.model;
+  const connectionId = (credentials as { connectionId?: string } | null)?.connectionId || undefined;
+
   if (response?.ok) {
     await clearRecoveredProviderState(credentials);
     // TTS is billed per input character; attach cost telemetry without
@@ -114,10 +119,28 @@ async function postHandler(request, context) {
       provider,
       model: resolvedModel || body.model,
       costUsd,
-      latencyMs: Date.now() - startTime,
+      latencyMs,
       requestId: generateRequestId(),
     });
   }
+
+  if (response) {
+    saveCallLog({
+      method: "POST",
+      path: "/v1/audio/speech",
+      status: response.status,
+      model: logModel,
+      provider,
+      connectionId,
+      duration: latencyMs,
+      requestType: "audio_speech",
+      error: response.ok ? null : `Audio speech failed with status ${response.status}`,
+      apiKeyId: policy.apiKeyInfo?.id || null,
+      apiKeyName: policy.apiKeyInfo?.name || null,
+      noLog: policy.apiKeyInfo?.noLog === true,
+    }).catch(() => {});
+  }
+
   return response;
 }
 
