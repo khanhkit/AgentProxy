@@ -89,7 +89,7 @@ import {
   redactPassthroughThinkingSignatures,
   isClaudeCodeSemanticPassthroughRequest,
 } from "./chatCore/passthroughHelpers.ts";
-import { recoverAnthropicThinkingSignature } from "./chatCore/thinkingSignatureRecovery.ts";
+import { recoverAnthropicThinkingSignature } from "./chatCore/thinkingSignatureRecovery.ts"; import { maybeFallbackAfterReadiness } from "./chatCore/streamReadinessFallback.ts";
 import { runProviderExecutionPipeline } from "./chatCore/providerExecutionPipeline.ts";
 import { createPipelineCredentialRefresher } from "./chatCore/pipelineCredentialRefresh.ts";
 import { runNonStreamingProviderLeg } from "./chatCore/nonStreamingProviderLeg.ts";
@@ -5578,14 +5578,14 @@ async function handleChatCoreInner({
       `adaptive readiness timeout=${streamReadinessPolicy.timeoutMs}ms base=${streamReadinessPolicy.baseTimeoutMs}ms reason=${streamReadinessPolicy.reasons.join(",")}`
     );
   }
-
-  const streamReadiness = await ensureStreamReadiness(providerResponse, {
+  let streamReadiness = await ensureStreamReadiness(providerResponse, {
     timeoutMs: streamReadinessPolicy.timeoutMs,
     maxTimeoutMs: streamReadinessPolicy.maxTimeoutMs,
     provider,
     model,
     log,
   });
+  ({ readiness: streamReadiness, providerResponse, finalBody } = await maybeFallbackAfterReadiness({ streamReadiness, clientAborted: streamController.signal.aborted, failedConnectionId: getCurrentConnectionId(), failedBody: providerResponse, currentModel, streamReadinessPolicy, provider, model, log, reqLogger, providerUrl, providerHeaders, finalBody, translatedBody, executeProviderRequest, providerRequestCapture }));
   if (streamReadiness.ok === false) {
     const { response: failureResponse, reason } = streamReadiness;
     const { classificationReason, upstreamDiagnostic } = streamReadiness;
