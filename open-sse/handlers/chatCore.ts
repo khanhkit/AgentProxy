@@ -137,7 +137,7 @@ import { FORMATS } from "../translator/formats.ts";
 import { collectCustomToolNamesForSourceFormat } from "../translator/request/openai-responses/additionalTools.ts";
 import { sanitizeKiroTools } from "../utils/kiroSanitizer.ts";
 import { splitMisplacedToolResults } from "../translator/helpers/claudeHelper.ts";
-import { ensureCacheControlOnLastUserMessage } from "../services/claudeCodeConstraints.ts";
+import { ensureCacheControlOnLastUserMessage, hoistLeadingSystemMessages } from "../services/claudeCodeConstraints.ts";
 import {
   createSSETransformStreamWithLogger,
   createPassthroughStreamWithLogger,
@@ -2387,10 +2387,10 @@ async function handleChatCoreInner({
         ) {
           extractSystemRoleMessages(translatedBody);
         } else {
-          // The mid-conversation-system path keeps system-role messages inside
-          // messages[], but a directive-only message (content: [] +
-          // output_config) at messages[0] is rejected by Anthropic. Move it past
-          // the first real turn; Anthropic accepts the form at any other position.
+          // The mid-conversation-system path keeps system roles in messages[]. Hoist only
+          // leading text, then move any directive-only messages[0] past the first real turn;
+          // genuine mid-conversation system turns stay in place.
+          hoistLeadingSystemMessages(translatedBody);
           relocateDirectiveOnlyMessages(translatedBody);
         }
         if (Array.isArray(translatedBody.messages)) {
