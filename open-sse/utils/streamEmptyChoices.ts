@@ -67,8 +67,12 @@ type EmptyChoicesRejectContext = {
  * must abort the stream (controller.error + early return); `false` when the
  * stream legitimately forwarded content/usage and should complete normally.
  */
+export function isEmptyTurnCore(forwardedValuableChunk: boolean, hasValidUsage: boolean): boolean {
+  return !forwardedValuableChunk && !hasValidUsage;
+}
+
 export function rejectEmptyChoicesStream(ctx: EmptyChoicesRejectContext): boolean {
-  if (ctx.forwardedValuableChunk || ctx.hasValidUsage) return false;
+  if (!isEmptyTurnCore(ctx.forwardedValuableChunk, ctx.hasValidUsage)) return false;
 
   const error = new Error(
     "Provider returned empty content — stream forwarded no valuable chunks"

@@ -331,7 +331,8 @@ function applyAntigravityGenerationDefaults(
   if (
     Number.isFinite(thinkingBudget) &&
     thinkingBudget > 0 &&
-    (!Number.isFinite(maxOutputTokens) || maxOutputTokens <= thinkingBudget)
+    Number.isFinite(maxOutputTokens) &&
+    maxOutputTokens <= thinkingBudget
   ) {
     generationConfig.maxOutputTokens = Math.floor(thinkingBudget) + 1;
   }

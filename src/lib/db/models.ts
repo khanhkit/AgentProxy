@@ -798,20 +798,29 @@ function applyTriStateBooleanOverride(
 export async function updateCustomModel(
   providerId: string,
   modelId: string,
-  updates: Record<string, unknown> = {}
+  updates: Record<string, unknown> = {},
+  options: { createIfMissing?: boolean } = {}
 ) {
   const db = getDbInstance();
   const row = db
     .prepare("SELECT value FROM key_value WHERE namespace = 'customModels' AND key = ?")
     .get(providerId);
-  if (!row) return null;
 
-  const value = getKeyValue(row).value;
-  if (!value) return null;
+  const value = row ? getKeyValue(row).value : null;
+  const models: JsonRecord[] = value ? JSON.parse(value) : [];
+  let index = models.findIndex((m: JsonRecord) => m.id === modelId);
 
-  const models = JSON.parse(value);
-  const index = models.findIndex((m: JsonRecord) => m.id === modelId);
-  if (index === -1) return null;
+  if (index === -1) {
+    if (!options.createIfMissing) return null;
+    models.push({
+      id: modelId,
+      name: modelId,
+      source: "manual",
+      apiFormat: "chat-completions",
+      supportedEndpoints: ["chat"],
+    });
+    index = models.length - 1;
+  }
 
   const current = models[index];
   const currentCompat = (current as JsonRecord).compatByProtocol as CompatByProtocolMap | undefined;
@@ -882,10 +891,9 @@ export async function updateCustomModel(
 
   models[index] = next;
 
-  db.prepare("UPDATE key_value SET value = ? WHERE namespace = 'customModels' AND key = ?").run(
-    JSON.stringify(models),
-    providerId
-  );
+  db.prepare(
+    "INSERT OR REPLACE INTO key_value (namespace, key, value) VALUES ('customModels', ?, ?)"
+  ).run(providerId, JSON.stringify(models));
 
   finishModelCatalogWriteWithBackup();
   return next;

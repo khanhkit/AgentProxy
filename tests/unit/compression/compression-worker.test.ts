@@ -78,22 +78,34 @@ describe("compression worker eligibility", () => {
     }
   });
 
-  it("rejects functions, symbols, classes, special objects, cycles, and non-finite numbers", () => {
-    for (const value of [
-      () => undefined,
-      Symbol("x"),
-      new Date(),
-      new Map(),
-      new Set(),
-      /x/,
-      NaN,
-      Infinity,
-    ]) {
+  it("rejects functions, symbols, cycles, and non-finite numbers", () => {
+    for (const value of [() => undefined, Symbol("x"), NaN, Infinity]) {
       assert.equal(isStrictlySerializable(value), false);
     }
     const cyclic: Record<string, unknown> = {};
     cyclic.self = cyclic;
     assert.equal(isStrictlySerializable(cyclic), false);
+  });
+
+  it("#13154: accepts structured-clone-native values and undefined", () => {
+    for (const value of [undefined, new Date(), new Map([["k", 1]]), new Set([1]), /x/]) {
+      assert.equal(isStrictlySerializable(value), true);
+    }
+  });
+
+  it("#13154: accepts realistic worker options with optional fields unset", () => {
+    const workerOptions = {
+      model: "gpt-test",
+      supportsVision: undefined,
+      providerTransport: undefined,
+      provider: undefined,
+      imageTransportFidelity: undefined,
+      sourceFormat: undefined,
+      targetFormat: undefined,
+      compressionStage: undefined,
+      config,
+    };
+    assert.equal(isCompressionWorkerEligible(body, "stacked", workerOptions), true);
   });
 });
 

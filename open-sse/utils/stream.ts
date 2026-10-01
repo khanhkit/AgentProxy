@@ -157,6 +157,7 @@ type StreamOptions = {
   copilotCompatibleReasoning?: boolean;
   /** Suppress the `</think>` close marker for clients that render it verbatim (#5245). */
   suppressThinkClose?: boolean;
+  requestedThinking?: boolean;
   /**
    * Drop internal commentary-phase output items from Responses API passthrough
    * streams before forwarding (#6199). When omitted, falls back to the
@@ -202,6 +203,7 @@ type TranslateState = ReturnType<typeof initState> & {
   copilotCompatibleReasoning?: boolean;
   /** Suppress the `</think>` close marker for clients that render it verbatim (#5245). */
   suppressThinkClose?: boolean;
+  requestedThinking?: boolean;
   /** Accumulated message content for call log response body */
   accumulatedContent?: string;
   /** Accumulated reasoning content (separate from content) */
@@ -725,9 +727,8 @@ export function createSSEStream(options: StreamOptions = {}) {
     mode = STREAM_MODE.TRANSLATE,
     targetFormat,
     sourceFormat,
-    clientResponseFormat = null,
-    copilotCompatibleReasoning = false,
-    suppressThinkClose = false,
+    clientResponseFormat = null, copilotCompatibleReasoning = false,
+    suppressThinkClose = false, requestedThinking,
     provider = null,
     reqLogger = null,
     toolNameMap = null,
@@ -833,6 +834,7 @@ export function createSSEStream(options: StreamOptions = {}) {
           signatureNamespace: connectionId,
           copilotCompatibleReasoning,
           suppressThinkClose,
+          requestedThinking,
           accumulatedContent: "",
           accumulatedReasoning: "",
           toolSchemas: extractToolSchemaMap(body),
@@ -1115,7 +1117,9 @@ export function createSSEStream(options: StreamOptions = {}) {
     if (decrementPendingRequest && !failureHandled) {
       clearPendingRequestFromStream();
     }
-    controller.error(markPendingRequestCleared(new Error(msg)));
+    const emptyStreamError = new Error(msg) as Error & { code?: string };
+    emptyStreamError.code = "empty_response";
+    controller.error(markPendingRequestCleared(emptyStreamError));
   };
 
   const emitTranslatedClientItem = (
@@ -1959,6 +1963,9 @@ export function createSSEStream(options: StreamOptions = {}) {
                     parsed?.id != null && typeof parsed.id !== "string";
                   const rawDelta = parsed.choices?.[0]?.delta;
                   const hadReasoningAlias = hasUnsupportedReasoningSignal(rawDelta);
+                  const hadUpstreamReasoningContent =
+                    typeof rawDelta?.reasoning_content === "string" &&
+                    rawDelta.reasoning_content.length > 0;
 
                   if (!projectedFailure) {
                     parsed = sanitizeStreamingChunk(parsed);
@@ -2025,7 +2032,10 @@ export function createSSEStream(options: StreamOptions = {}) {
                     splitMixedReasoningContent ||
                     thinkParsed ||
                     hadReasoningAlias ||
-                    (delta?.content === "" && delta?.reasoning_content);
+                    (delta?.content === "" && delta?.reasoning_content) ||
+                    (!hadUpstreamReasoningContent &&
+                      typeof delta?.reasoning_content === "string" &&
+                      delta.reasoning_content.length > 0);
 
                   // T18: Track if we saw tool calls & accumulate for call log
                   if (delta?.tool_calls && delta.tool_calls.length > 0) {
@@ -2296,8 +2306,13 @@ export function createSSEStream(options: StreamOptions = {}) {
                 openAiReasoning
               );
           }
-          // Mirror only client-unsupported reasoning aliases into `reasoning_content`.
-          if (!openAiReasoning) {
+          // Mirror client-unsupported aliases whenever reasoning_content itself is absent.
+          const openAiReasoningContent =
+            typeof openAiDelta?.reasoning_content === "string" &&
+            openAiDelta.reasoning_content.length > 0
+              ? openAiDelta.reasoning_content
+              : "";
+          if (!openAiReasoningContent) {
             const delta = openAiDelta;
             const r = getUnsupportedReasoningValue(delta);
             if (typeof r === "string" && r.length > 0) {
@@ -3122,19 +3137,15 @@ export default createSSEStream;
 export function createSSETransformStreamWithLogger(
   targetFormat: string,
   sourceFormat: string,
-  provider: string | null = null,
-  reqLogger: StreamLogger | null = null,
-  toolNameMap: unknown = null,
-  model: string | null = null,
-  connectionId: string | null = null,
-  body: unknown = null,
+  provider: string | null = null, reqLogger: StreamLogger | null = null,
+  toolNameMap: unknown = null, model: string | null = null,
+  connectionId: string | null = null, body: unknown = null,
   onComplete: ((payload: StreamCompletePayload) => void) | null = null,
-  apiKeyInfo: unknown = null,
-  onFailure: ((payload: StreamFailurePayload) => boolean | void | Promise<void>) | null = null,
-  copilotCompatibleReasoning = false,
-  suppressThinkClose = false,
+  apiKeyInfo: unknown = null, onFailure: ((payload: StreamFailurePayload) => boolean | void | Promise<void>) | null = null,
+  copilotCompatibleReasoning = false, suppressThinkClose = false,
   customToolNames: ReadonlySet<string> = new Set(),
   requestToolIdentityMap: Map<string, { namespace: string; name: string }> | null = null,
+  requestedThinkingOrLegacyBuffer: boolean | number | undefined = undefined,
   streamBufferBytes: number = DEFAULT_STREAM_BUFFER_BYTES
 ) {
   return createSSEStream({
@@ -3154,7 +3165,8 @@ export function createSSETransformStreamWithLogger(
     suppressThinkClose,
     customToolNames,
     requestToolIdentityMap,
-    streamBufferBytes,
+    streamBufferBytes: typeof requestedThinkingOrLegacyBuffer === "number" ? requestedThinkingOrLegacyBuffer : streamBufferBytes,
+    requestedThinking: typeof requestedThinkingOrLegacyBuffer === "boolean" ? requestedThinkingOrLegacyBuffer : undefined,
   });
 }
 

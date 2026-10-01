@@ -113,6 +113,12 @@ export function detectFormatFromEndpoint(body, endpointPath = "") {
     return "antigravity";
   }
 
+  if (/\/v1beta(?:\/|$)/i.test(path) || /^v1beta(?:\/|$)/i.test(path)) {
+    if (!(body && typeof body === "object" && body.contents && Array.isArray(body.contents))) {
+      return "openai";
+    }
+  }
+
   if (
     /\/(?:chat\/completions|completions)(?=\/|$)/i.test(path) ||
     /^(?:chat\/completions|completions)(?=\/|$)/i.test(path)

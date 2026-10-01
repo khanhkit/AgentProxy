@@ -75,6 +75,16 @@ test("slow handler emits early keepalive then forwards the real body (#2544)", a
 // Anthropic clients (Claude Code, the Anthropic SDK) ignore SSE comments for their
 // stream/first-token watchdog and abort+retry on a slow first token. The /v1/messages
 // route keeps the connection warm with a REAL `event: ping` instead of the comment frame.
+test("default keepalive cadence emits another heartbeat inside a 2s watchdog", async () => {
+  const slow = new Promise<Response>((resolve) => {
+    setTimeout(() => resolve(sseResponse("data: [DONE]\n\n")), 1650);
+  });
+  const result = await withEarlyStreamKeepalive(slow, { thresholdMs: 5 });
+  const body = await readAll(result);
+  const keepalives = body.split("\n\n").filter((frame) => frame === ": keepalive");
+  assert.ok(keepalives.length >= 2, "expected startup plus a recurring default heartbeat");
+});
+
 test("ANTHROPIC_PING_FRAME is a real Anthropic ping event (not a comment)", () => {
   const decoded = new TextDecoder().decode(ANTHROPIC_PING_FRAME);
   assert.equal(decoded, 'event: ping\ndata: {"type":"ping"}\n\n');
@@ -196,7 +206,13 @@ test("slow Responses handler uses comments plus sparse in_progress events", asyn
   const body = await readAll(result);
   const frames = body.split("\n\n").filter(Boolean);
   const earlyFrames = frames.slice(0, -1);
-  assert.equal(earlyFrames[0], 'data: {"type":"response.in_progress"}');
+  // #14330: the frame now carries a required `sequence_number` and `response`
+  // object so a strict Responses decoder does not abort on it.
+  assert.deepEqual(JSON.parse(earlyFrames[0].slice("data: ".length)), {
+    type: "response.in_progress",
+    sequence_number: 1,
+    response: { id: null, status: "in_progress" },
+  });
   assert.ok(
     earlyFrames.some((frame) => frame === ": keepalive"),
     "transport ticks must remain lightweight SSE comments"
@@ -206,6 +222,8 @@ test("slow Responses handler uses comments plus sparse in_progress events", asyn
   for (const frame of applicationFrames) {
     assert.deepEqual(JSON.parse(frame.slice("data: ".length)), {
       type: "response.in_progress",
+      sequence_number: 1,
+      response: { id: null, status: "in_progress" },
     });
     assert.doesNotMatch(frame, /output_item|reasoning|✨/);
   }
@@ -240,7 +258,7 @@ test("a correlationId records the startup frame and keepalive ticks, but not the
   const recorded = takeEarlyKeepaliveBytes(correlationId).join("");
   assert.match(
     recorded,
-    /data: {"type":"response\.in_progress"}/,
+    /data: {"type":"response\.in_progress","sequence_number":1,"response":/,
     "startup frame must be recorded"
   );
   assert.match(recorded, /: keepalive/, "transport heartbeat must be recorded");

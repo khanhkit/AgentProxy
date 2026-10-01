@@ -314,6 +314,61 @@ test("401 refresh succeeds then retries once on same connection", async () => {
   }
 });
 
+test("Claude Request not allowed 403 skips credential refresh in the stream pipeline", async () => {
+  const { runProviderExecutionPipeline } = await import(
+    "../../open-sse/handlers/chatCore/providerExecutionPipeline.ts"
+  );
+  let refreshCount = 0;
+  const input = makeInput({
+    policy: { allowAccountRotation: true, allowModelFallback: true },
+    provider: "claude",
+    model: "claude-sonnet-5",
+    connectionId: "claude-a",
+    stream: true,
+    send: async () =>
+      makeAttempt({ error: { type: "permission_error", message: "Request not allowed" } }, 403),
+    refreshCredentials: async () => {
+      refreshCount += 1;
+      return { accessToken: "should-not-be-used" };
+    },
+  });
+
+  const outcome = await runProviderExecutionPipeline(input);
+  assert.equal(refreshCount, 0, "request-scoped refusal must not consume OAuth refresh");
+  assert.equal(outcome.kind, "error");
+  if (outcome.kind === "error") assert.equal(outcome.result.status, 403);
+});
+
+test("generic Claude 403 keeps the existing credential-refresh path", async () => {
+  const { runProviderExecutionPipeline } = await import(
+    "../../open-sse/handlers/chatCore/providerExecutionPipeline.ts"
+  );
+  let sendCount = 0;
+  let refreshCount = 0;
+  const input = makeInput({
+    policy: { allowAccountRotation: true, allowModelFallback: true },
+    provider: "claude",
+    model: "claude-sonnet-5",
+    connectionId: "claude-a",
+    stream: true,
+    send: async () => {
+      sendCount += 1;
+      return sendCount === 1
+        ? makeAttempt({ error: { type: "permission_error", message: "organization disabled" } }, 403)
+        : makeAttempt({ id: "ok", content: [] }, 200);
+    },
+    refreshCredentials: async (creds) => {
+      refreshCount += 1;
+      return { ...creds, accessToken: "new-token" };
+    },
+  });
+
+  const outcome = await runProviderExecutionPipeline(input);
+  assert.equal(refreshCount, 1, "generic 403 keeps refresh-first behavior");
+  assert.equal(sendCount, 2);
+  assert.equal(outcome.kind, "response");
+});
+
 test("status restatement rewrites agentrouter 403 quota exhaustion to 429 before classification", async () => {
   const { runProviderExecutionPipeline } = await import(
     "../../open-sse/handlers/chatCore/providerExecutionPipeline.ts"

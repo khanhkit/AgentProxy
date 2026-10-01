@@ -165,16 +165,34 @@ export function claudeToOpenAIRequest(model, body, stream, credentials: unknown 
     }
   }
 
+  const systemAppend = process.env.AGENTPROXY_SYSTEM_INSTRUCTION_APPEND?.trim();
+  if (systemAppend) {
+    const sysIndex = result.messages.findIndex((m) => m.role === "system");
+    if (sysIndex >= 0) {
+      const sys = result.messages[sysIndex];
+      if (typeof sys.content === "string") sys.content += "\n\n" + systemAppend;
+      else if (Array.isArray(sys.content)) (sys.content as JsonRecord[]).push({ type: "text", text: systemAppend });
+      else sys.content = systemAppend;
+    } else result.messages.unshift({ role: "system", content: systemAppend });
+  }
+
   // Convert messages
   if (body.messages && Array.isArray(body.messages)) {
     for (let i = 0; i < body.messages.length; i++) {
       const msg = body.messages[i];
       const converted = convertClaudeMessage(msg, preserveCacheControl);
       if (converted) {
+        const demoteMidConversationSystem = (message: JsonRecord) => {
+          if (message.role === "system" && result.messages.length > 0) {
+            message.role = "user";
+          }
+        };
         // Handle array of messages (multiple tool results)
         if (Array.isArray(converted)) {
+          converted.forEach(demoteMidConversationSystem);
           result.messages.push(...converted);
         } else {
+          demoteMidConversationSystem(converted);
           result.messages.push(converted);
         }
       }
@@ -464,6 +482,9 @@ function convertClaudeMessage(msg, preserveCacheControl = false) {
                   },
                 });
                 hasImage = true;
+              } else if (c.type === "image" && c.source?.type === "url" && c.source.url) {
+                parts.push({ type: "image_url", image_url: { url: c.source.url } });
+                hasImage = true;
               }
             }
             resultContent =
@@ -541,6 +562,8 @@ function convertToolChoice(choice, hasServerWebSearch = false) {
   switch (choice.type) {
     case "auto":
       return "auto";
+    case "none":
+      return "none";
     case TOOL_CHOICE_ANY:
       return "required";
     case "tool":

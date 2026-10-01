@@ -17,8 +17,12 @@ const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-9507-"))
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../src/lib/db/core.ts");
-const { resolveReasoningBufferedMaxTokens } =
+const { resolveReasoningBufferedMaxTokens, REASONING_MIN_BUDGET_ENV } =
   await import("../../open-sse/services/reasoningTokenBuffer.ts");
+
+test.afterEach(() => {
+  delete process.env[REASONING_MIN_BUDGET_ENV];
+});
 
 test.after(() => {
   core.resetDbInstance();
@@ -41,4 +45,24 @@ test("#9507 reasoning buffer does NOT enlarge a Claude sonnet-5 client budget up
     result === null || result <= client,
     `client max_tokens=${client} must not be enlarged, got ${result}`
   );
+});
+
+test("AP-ISS-0124 reasoning minimum budget is opt-in", () => {
+  process.env[REASONING_MIN_BUDGET_ENV] = "96000";
+  assert.equal(resolveReasoningBufferedMaxTokens("anthropic/claude-opus-5", 64000), 96000);
+});
+
+test("AP-ISS-0124 tiny reasoning probes stay verbatim even with a floor", () => {
+  process.env[REASONING_MIN_BUDGET_ENV] = "96000";
+  assert.equal(resolveReasoningBufferedMaxTokens("anthropic/claude-opus-5", 1), 1);
+});
+
+test("AP-ISS-0124 reasoning floor never exceeds the model output cap", () => {
+  process.env[REASONING_MIN_BUDGET_ENV] = "200000";
+  assert.equal(resolveReasoningBufferedMaxTokens("anthropic/claude-opus-5", 64000), 128000);
+});
+
+test("AP-ISS-0124 invalid reasoning minimum budget is ignored", () => {
+  process.env[REASONING_MIN_BUDGET_ENV] = "not-a-number";
+  assert.equal(resolveReasoningBufferedMaxTokens("anthropic/claude-opus-5", 64000), 64000);
 });

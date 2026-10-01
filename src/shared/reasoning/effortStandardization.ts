@@ -32,12 +32,19 @@ export function extendCodexGpt56EffortValues(
     .replace(/^(?:codex|cx|kiro|kr)\//, "");
   if (!normalizedModel) return values;
 
+  const isKiroProvider = normalizedProvider === "kiro" || normalizedProvider === "kr";
+  if (
+    isKiroProvider &&
+    /^claude-opus-5(?:-(?:none|low|medium|high|xhigh|max))?$/.test(normalizedModel)
+  ) {
+    return values.includes("max") ? values : [...values, "max"];
+  }
+
   const match = normalizedModel.match(
     /^gpt-5\.6-(sol|terra|luna)(?:-(?:none|low|medium|high|xhigh|max|ultra))?$/
   );
   if (!match) return values;
 
-  const isKiroProvider = normalizedProvider === "kiro" || normalizedProvider === "kr";
   if (isKiroProvider) {
     return values.includes("max") ? values : [...values, "max"];
   }
