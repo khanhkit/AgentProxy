@@ -40,7 +40,7 @@ const {
 // the dead ONEPROXY_ENABLED (readerless since the 1proxy purge, #12091)
 // brought it back to 53. UNIVERSAL_CONTEXT_HANDOFF_ENABLED bumped it to 54.
 // PROXY_POOL_SHARED_EGRESS_ORDER adds one default-off network flag (#14657).
-const EXPECTED_FEATURE_FLAG_COUNT = 57;
+const EXPECTED_FEATURE_FLAG_COUNT = 61;
 
 // ──────────────────────────────────────────────────────
 // Test group 1 — Flag definitions registry

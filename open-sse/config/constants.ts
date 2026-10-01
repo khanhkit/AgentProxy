@@ -356,6 +356,7 @@ export const STREAM_RECOVERY = {
   HOLDBACK_MS: 750,
   BUFFER_MAX_BYTES: 65536,
   EARLY_RETRY_MAX: 4,
+  EMPTY_TURN_RETRY_MAX: 4,
   /**
    * Minimum character overlap `trimContinuationOverlap` must find between the
    * already-emitted text and a mid-stream continuation for the continuation to be
