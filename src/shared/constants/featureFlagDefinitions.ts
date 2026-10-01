@@ -228,6 +228,18 @@ export const FEATURE_FLAG_DEFINITIONS: FeatureFlagDefinition[] = [
     warningLevel: "caution",
   },
   {
+    key: "STREAM_READINESS_STALL_RETRY",
+    label: "Stream Readiness Stall Retry",
+    description:
+      "For streaming chat requests, when the first upstream body stalls before producing a usable event, issue one bounded second attempt through the same routing path with the same readiness budget and no account penalty. Off by default: a stalled first body fails the request without a retry.",
+    descriptionI18nKey: "featureFlagStreamReadinessStallRetryDescription",
+    category: "network",
+    defaultValue: "false",
+    type: "boolean",
+    requiresRestart: false,
+    warningLevel: "caution",
+  },
+  {
     key: "MITM_DISABLE_TLS_VERIFY",
     label: "Disable TLS Verify (MITM)",
     description: "Disable TLS certificate verification for MITM proxy",
@@ -459,6 +471,18 @@ export const FEATURE_FLAG_DEFINITIONS: FeatureFlagDefinition[] = [
     descriptionI18nKey: "featureFlagAgentProxyEmergencyFallbackDescription",
     category: "runtime",
     defaultValue: "true",
+    type: "boolean",
+    requiresRestart: false,
+    warningLevel: "caution",
+  },
+  {
+    key: "FLUSH_EMPTY_RETRY_ENABLED",
+    label: "Flush Empty Turn Retry",
+    description:
+      "On translated streaming turns, retry a bounded empty upstream turn through the normal credential path before anything reaches the client. Off by default.",
+    descriptionI18nKey: "featureFlagFlushEmptyRetryEnabledDescription",
+    category: "runtime",
+    defaultValue: "false",
     type: "boolean",
     requiresRestart: false,
     warningLevel: "caution",

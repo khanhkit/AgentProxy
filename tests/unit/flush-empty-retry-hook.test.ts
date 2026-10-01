@@ -10,7 +10,7 @@ import path from "node:path";
 // path always goes through the translate transform — the hook's
 // `isTranslatePath` gate is armed. Two Gemini accounts isolate rotation:
 // the first serves an empty turn, the second serves content.
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-flush-empty-retry-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-flush-empty-retry-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.REQUIRE_API_KEY = "false";
 process.env.DASHBOARD_PASSWORD = "";

@@ -14,6 +14,7 @@ import { getRequestDetailLogByCallLogId } from "../db/detailedLogs";
 import { shouldPersistToDisk } from "./migrations";
 import { updateRequestTokensById } from "./usageHistory";
 import { getCallLogApiKeyContext } from "./callLogApiKeyContext";
+import { generateCallLogId, runCallLogInsertWithIdRetry } from "./callLogId";
 import { serializeResilienceActions, resetResilienceActions } from "./resilienceActionsContext";
 import { parseResilienceActions } from "./resilienceActionsParse";
 import {
@@ -146,13 +147,6 @@ type DeleteResult = {
   deletedRows: number;
   deletedArtifacts: number;
 };
-
-let logIdCounter = 0;
-
-function generateLogId() {
-  logIdCounter++;
-  return `${Date.now()}-${logIdCounter}`;
-}
 
 async function resolveAccountName(connectionId: string | null | undefined) {
   let account = connectionId ? connectionId.slice(0, 8) : "-";
@@ -299,10 +293,49 @@ function extractAssistantMessage(responseBody: unknown): unknown {
 // non-zero reasoning tokens; otherwise we fall back to observed reasoning
 // content so "reasoned but metered 0" stays distinguishable. reasoning_chars is
 // a CHARACTER count, never a token count — it must not touch cost math.
+//
+// Encrypted-reasoning observability: an opaque Responses `reasoning` item
+// (`encrypted_content` / signature / format, no readable summary) overrides
+// every other source with 'encrypted'. The sink-side scan covers non-streaming
+// snapshots and batch-completed-without-added payloads; the streaming path
+// threads the same signal via `entry.reasoningMeta` (flag + wall-clock delta).
+// NEVER inspect or persist the opaque blob itself — presence only.
+function snapshotHasOpaqueReasoningItem(body: unknown): boolean {
+  const record =
+    body !== null && typeof body === "object" && !Array.isArray(body) ? (body as JsonRecord) : null;
+  if (!record) return false;
+  const outputs: unknown[] = [];
+  if (Array.isArray(record.output)) outputs.push(...record.output);
+  const nested =
+    record.response !== null &&
+    typeof record.response === "object" &&
+    !Array.isArray(record.response)
+      ? (record.response as JsonRecord)
+      : null;
+  if (nested && Array.isArray(nested.output)) outputs.push(...nested.output);
+  return outputs.some((item) => {
+    const itemRecord =
+      item !== null && typeof item === "object" && !Array.isArray(item)
+        ? (item as JsonRecord)
+        : null;
+    if (!itemRecord || itemRecord.type !== "reasoning") return false;
+    return (
+      (typeof itemRecord.encrypted_content === "string" &&
+        itemRecord.encrypted_content.length > 0) ||
+      itemRecord.signature !== undefined ||
+      itemRecord.format !== undefined
+    );
+  });
+}
+
 function resolveReasoningObservation(
   usageReasoning: number | null,
-  responseBody: unknown
+  responseBody: unknown,
+  streamMeta?: { encryptedSeen?: boolean } | null
 ): { source: string | null; chars: number | null } {
+  if (streamMeta?.encryptedSeen === true || snapshotHasOpaqueReasoningItem(responseBody)) {
+    return { source: "encrypted", chars: null };
+  }
   if (usageReasoning != null && usageReasoning > 0) {
     return { source: "usage", chars: null };
   }
@@ -545,7 +578,52 @@ async function saveCallLogOperation(entry: any): Promise<void> {
     // #6187: usage-derived reasoning tokens stay UNCHANGED (cost math reads this),
     // while reasoning source/char-count are recorded separately for observability.
     const tokensReasoning = getReasoningTokensOrNull(entry.tokens);
-    const reasoningObservation = resolveReasoningObservation(tokensReasoning, entry.responseBody);
+    const streamReasoningMeta =
+      entry.reasoningMeta !== null && typeof entry.reasoningMeta === "object"
+        ? (entry.reasoningMeta as { encryptedSeen?: boolean; durationMs?: unknown })
+        : null;
+    const reasoningObservation = resolveReasoningObservation(
+      tokensReasoning,
+      entry.responseBody,
+      streamReasoningMeta
+    );
+    // Encrypted-reasoning observability (nullable, additive): stream-side
+    // flag+duration win when present; the sink scan above already forced
+    // source='encrypted' for opaque snapshots (duration NULL there).
+    const streamDurationRaw = streamReasoningMeta?.durationMs;
+    const streamDurationMs =
+      typeof streamDurationRaw === "number" &&
+      Number.isFinite(streamDurationRaw) &&
+      streamDurationRaw >= 0 &&
+      streamDurationRaw <= 86_400_000
+        ? Math.round(streamDurationRaw)
+        : null;
+    const reasoningEncrypted =
+      streamReasoningMeta?.encryptedSeen === true || reasoningObservation.source === "encrypted"
+        ? 1
+        : null;
+    const reasoningDurationMs =
+      reasoningObservation.source === "encrypted" ? streamDurationMs : null;
+    const readEffortValue = (body: unknown): string | null => {
+      if (body === null || typeof body !== "object" || Array.isArray(body)) return null;
+      const record = body as Record<string, unknown>;
+      const direct = record.reasoning_effort;
+      if (typeof direct === "string" && direct.trim().length > 0) return direct;
+      const nested = record.reasoning;
+      if (nested !== null && typeof nested === "object" && !Array.isArray(nested)) {
+        const effort = (nested as Record<string, unknown>).effort;
+        if (typeof effort === "string" && effort.trim().length > 0) return effort;
+      }
+      return null;
+    };
+    const reasoningEffortRequested =
+      reasoningObservation.source === "encrypted"
+        ? readEffortValue(entry.clientRequestBody ?? entry.requestBody)
+        : null;
+    const reasoningEffortUpstream =
+      reasoningObservation.source === "encrypted"
+        ? readEffortValue(entry.upstreamRequestBody)
+        : null;
     const errorType = toStoredErrorType(
       classifyCallLogError(entry.status, entry.error, entry.provider)
     );
@@ -571,7 +649,7 @@ async function saveCallLogOperation(entry: any): Promise<void> {
       isSuccess,
     });
     const logEntry = {
-      id: typeof entry.id === "string" && entry.id.length > 0 ? entry.id : generateLogId(),
+      id: typeof entry.id === "string" && entry.id.length > 0 ? entry.id : generateCallLogId(),
       timestamp: typeof entry.timestamp === "string" ? entry.timestamp : new Date().toISOString(),
       method: entry.method || "POST",
       path: entry.path || "/v1/chat/completions",
@@ -590,6 +668,10 @@ async function saveCallLogOperation(entry: any): Promise<void> {
       tokensReasoning,
       reasoningSource: reasoningObservation.source,
       reasoningChars: reasoningObservation.chars,
+      reasoningDurationMs,
+      reasoningEffortRequested,
+      reasoningEffortUpstream,
+      reasoningEncrypted,
       tokensCompressed: entry.tokensCompressed != null ? toNumber(entry.tokensCompressed) : null,
       cacheSource: entry.cacheSource === "semantic" ? "semantic" : "upstream",
       requestType: entry.requestType || null,
@@ -654,13 +736,15 @@ async function saveCallLogOperation(entry: any): Promise<void> {
 
     const resilienceCol = hasResilienceColumn ? ", resilience_actions" : "";
     const resilienceParam = hasResilienceColumn ? ", @resilienceActions" : "";
-    db.prepare(
+    const insertStmt = db.prepare(
       `
       INSERT INTO call_logs (
         id, timestamp, method, path, status, model, requested_model, provider,
         account, connection_id, duration, tokens_in, tokens_out,
         tokens_cache_read, tokens_cache_creation, tokens_reasoning, tokens_compressed,
         reasoning_source, reasoning_chars,
+        reasoning_duration_ms, reasoning_effort_requested, reasoning_effort_upstream,
+        reasoning_encrypted,
         cache_source, request_type, source_format, target_format, api_key_id, api_key_name,
         combo_name, combo_step_id, combo_execution_key, error_summary, detail_state,
         artifact_relpath, artifact_size_bytes, artifact_sha256,
@@ -673,6 +757,8 @@ async function saveCallLogOperation(entry: any): Promise<void> {
         @account, @connectionId, @duration, @tokensIn, @tokensOut,
         @tokensCacheRead, @tokensCacheCreation, @tokensReasoning, @tokensCompressed,
         @reasoningSource, @reasoningChars,
+        @reasoningDurationMs, @reasoningEffortRequested, @reasoningEffortUpstream,
+        @reasoningEncrypted,
         @cacheSource, @requestType, @sourceFormat, @targetFormat, @apiKeyId, @apiKeyName,
         @comboName, @comboStepId, @comboExecutionKey, @errorSummary, @detailState,
         @artifactRelPath, @artifactSizeBytes, @artifactSha256,
@@ -681,7 +767,8 @@ async function saveCallLogOperation(entry: any): Promise<void> {
         @videoContentRemoved, @hasContent, @usageProvenance${resilienceParam}
       )
     `
-    ).run({
+    );
+    const insertParams = {
       ...logEntry,
       errorSummary: toStoredErrorSummary(protectedError),
       detailState,
@@ -693,7 +780,8 @@ async function saveCallLogOperation(entry: any): Promise<void> {
       hasPipelineDetails: protectedPipelinePayloads ? 1 : 0,
       requestSummary,
       resilienceActions,
-    });
+    };
+    runCallLogInsertWithIdRetry(insertParams, (params) => insertStmt.run(params));
     resetResilienceActions();
 
     if (detailState === "ready" && typeof logEntry.responseId === "string") {

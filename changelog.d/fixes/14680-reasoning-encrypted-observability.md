@@ -1,0 +1,1 @@
+- **fix(call-logs):** record encrypted reasoning presence, duration and requested effort in call logs (upstream #14680)

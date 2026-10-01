@@ -245,7 +245,7 @@ export function applyIntelligentRoutingConfigPatch(
       : ((patch.modePack as string | undefined) ?? normalized.modePack),
     weights: {
       ...normalized.weights,
-      ...(editsWeights ? patch.weights : {}),
+      ...(editsWeights ? (patch.weights as Record<string, unknown>) : {}),
     },
   };
 }

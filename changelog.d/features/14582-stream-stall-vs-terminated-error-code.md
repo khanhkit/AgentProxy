@@ -1,0 +1,1 @@
+- **feat(sse):** tell stalled content streams apart from severed transport connections in stored stream error codes (upstream #14582) — thanks @maxmad64bis

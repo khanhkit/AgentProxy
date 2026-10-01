@@ -159,6 +159,22 @@ test("bounded read returns small bodies intact", async () => {
   assert.equal(out, body);
 });
 
+test("bounded read returns an over-cap outcome without awaiting clone cancel", async () => {
+  const neverClosing = new ReadableStream<Uint8Array>({
+    start(controller) {
+      controller.enqueue(new TextEncoder().encode("x".repeat(FLUSH_EMPTY_RETRY_MAX_BYTES + 1)));
+    },
+  });
+  const response = new Response(neverClosing, { status: 200 });
+  const result = await Promise.race([
+    readBoundedResponseOutcome(response, FLUSH_EMPTY_RETRY_MAX_BYTES),
+    new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error("timed out waiting for over-cap verdict")), 250)
+    ),
+  ]);
+  assert.deepEqual(result, { kind: "skipped" });
+});
+
 test("bounded read outcome tells a read failure apart from an over-cap body", async () => {
   const failing = new ReadableStream<Uint8Array>({
     pull(controller) {

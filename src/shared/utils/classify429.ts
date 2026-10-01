@@ -101,6 +101,9 @@ const QUOTA_PATTERNS: ReadonlyArray<RegExp> = [
   /insufficient balance/i,
 
   // CJK long-window quota exhaustion.
+  /\[1308\]/,
+  /\[1310\]/,
+  /usage limit reached for \d+\s*hour/i,
   /使用上限/,
   /限额将在/,
   /已达?到.*上限/,

@@ -64,14 +64,14 @@ export async function evaluateExecuteTargetGates(opts: {
   const stopProtectedPriorityTarget = (message: string, cause?: ProtectedPriorityStopCause) => {
     state.observeFailure(false, target.executionKey);
     deps.clearStaleLKGP(
-        deps.combo.name,
-        target.executionKey,
-        deps.combo.id,
-        deps.log,
-        "COMBO",
-        undefined,
-        target
-      );
+      deps.combo.name,
+      target.executionKey,
+      deps.combo.id,
+      deps.log,
+      "COMBO",
+      undefined,
+      target
+    );
     return protectedPriorityTarget
       ? { ok: false as const, response: errorResponse(protectedPriorityStopStatus(cause), message) }
       : null;
@@ -158,7 +158,7 @@ export async function evaluateExecuteTargetGates(opts: {
       }
     : { ...target, modelAbortSignal: abortSignal };
 
-  if (target.connectionId && !allowRateLimitedConnection) {
+  if (target.connectionId) {
     const persistedSkip = await resolvePersistedConnectionCooldownSkipReason(
       target,
       (id) => readConnectionForCooldownGate(id, false),
