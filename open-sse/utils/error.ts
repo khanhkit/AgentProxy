@@ -220,6 +220,7 @@ const SAFE_PUBLIC_ERROR_IDENTIFIERS = new Set([
   "session_pool_exhausted",
   "spawn_failed",
   "stream_error",
+  "stream_content_stall",
   "stream_disconnected",
   "stream_early_eof",
   "stream_idle_timeout",

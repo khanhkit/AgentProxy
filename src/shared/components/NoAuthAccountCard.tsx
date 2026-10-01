@@ -225,7 +225,8 @@ function egressShieldText(
       ? `Proxy: ${proxy.type}://${proxy.host}:${proxy.port}`
       : t("proxyConfigured", { host: proxy.host });
   }
-  if (egress.kind === "own" && egress.proxy) {
+  if (egress.kind === "own") {
+    if (!egress.proxy) return t("configureProxy");
     return field === "title"
       ? `Proxy: ${egress.proxy.type}://${egress.proxy.host}:${egress.proxy.port}`
       : t("proxyConfigured", { host: egress.proxy.host });

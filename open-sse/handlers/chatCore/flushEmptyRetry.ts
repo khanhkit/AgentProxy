@@ -3,6 +3,7 @@ import { FORMATS } from "../../translator/formats.ts";
 import { needsTranslation } from "../../translator/index.ts";
 import {
   FLUSH_EMPTY_RETRY_MAX_BYTES,
+  formatBufferedVerdictLog,
   judgeBufferedTurn,
   readBoundedResponseOutcome,
 } from "../../utils/emptyTurnRetry.ts";
@@ -21,18 +22,30 @@ export type FlushEmptyRetryArgs = {
   model: string;
   currentModel: string;
   signal?: AbortSignal | null;
-  log?: { debug?: (...args: unknown[]) => void; info?: (...args: unknown[]) => void; warn?: (...args: unknown[]) => void };
+  log?: {
+    debug?: (...args: unknown[]) => void;
+    info?: (...args: unknown[]) => void;
+    warn?: (...args: unknown[]) => void;
+  };
   getCredentials: () => Promise<Record<string, unknown> | null>;
   applyCredentials: (next: Record<string, unknown>) => void;
   executeRetry: () => Promise<unknown>;
   onRetryPrepared?: (retryResult: unknown) => void;
+  correlationId?: string | null;
+  traceId?: string;
 };
 
 export async function maybeRetryFlushEmptyTurn(args: FlushEmptyRetryArgs): Promise<Response> {
   if (!args.stream || !args.response.ok || !args.response.body) return args.response;
   let enabled = false;
-  try { enabled = isFeatureFlagEnabled("FLUSH_EMPTY_RETRY_ENABLED"); } catch { enabled = false; }
-  const translatePath = args.targetFormat === FORMATS.OPENAI_RESPONSES || needsTranslation(args.targetFormat, args.clientResponseFormat);
+  try {
+    enabled = isFeatureFlagEnabled("FLUSH_EMPTY_RETRY_ENABLED");
+  } catch {
+    enabled = false;
+  }
+  const translatePath =
+    args.targetFormat === FORMATS.OPENAI_RESPONSES ||
+    needsTranslation(args.targetFormat, args.clientResponseFormat);
   if (!enabled || !translatePath) return args.response;
 
   let response = args.response;
@@ -43,6 +56,12 @@ export async function maybeRetryFlushEmptyTurn(args: FlushEmptyRetryArgs): Promi
       args.clientResponseFormat,
       args.signal?.aborted === true
     );
+    const verdictLog = formatBufferedVerdictLog(
+      verdict,
+      args.correlationId ?? null,
+      args.traceId ?? "none"
+    );
+    args.log?.[verdictLog.level]?.("FLUSH_EMPTY_RETRY", verdictLog.line);
     if (verdict.kind === "pass") return response;
     if (retries >= STREAM_RECOVERY.EMPTY_TURN_RETRY_MAX) return response;
 
@@ -52,13 +71,21 @@ export async function maybeRetryFlushEmptyTurn(args: FlushEmptyRetryArgs): Promi
     await response.body?.cancel().catch(() => undefined);
 
     let retryResult: unknown;
-    try { retryResult = await args.executeRetry(); } catch { return response; }
+    try {
+      retryResult = await args.executeRetry();
+    } catch {
+      return response;
+    }
     const retryResponse = (retryResult as { response?: Response })?.response;
     if (!retryResponse?.ok || !retryResponse.body) {
       await retryResponse?.body?.cancel().catch(() => undefined);
       return response;
     }
-    const prepared = await maybeConvertJsonBodyToSse(retryResponse, { log: args.log, provider: args.provider, model: args.model });
+    const prepared = await maybeConvertJsonBodyToSse(retryResponse, {
+      log: args.log,
+      provider: args.provider,
+      model: args.model,
+    });
     if (!prepared.ok) return response;
     const ready = await ensureStreamReadiness(prepared, {
       timeoutMs: args.timeoutMs,

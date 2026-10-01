@@ -1,0 +1,1 @@
+- **fix(call-logs):** chat-path `call_logs.id` is a fresh UUID (not the dashboard `traceId`), so two attempts in one request cannot collide or overwrite each other's artifact; an explicit-id UNIQUE collision still retries with a generated id (upstream #14451). Thanks @VIPKaiser for the production evidence (upstream #14338): `UNIQUE constraint failed: call_logs.id` reports.

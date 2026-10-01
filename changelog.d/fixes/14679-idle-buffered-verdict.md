@@ -1,0 +1,1 @@
+- **fix(sse):** Judge stalled buffered turns by raw stream content and keep reading while reasoning remains open.

@@ -7,7 +7,7 @@
 //   - explicit client reasoning fields are never overwritten (precedence),
 //   - the literal "auto" injected by ModelSpec.defaultReasoningEffort is an
 //     opt-in marker and must be stripped before resolution, not sent upstream,
-//   - the x-omniroute-effort header opts in independently (read inside the
+//   - the x-agentproxy-effort header opts in independently (read inside the
 //     module from `clientRawRequest.headers`, or passed pre-extracted),
 //   - a non-opted-in body is returned untouched (same reference),
 //   - the whole wiring is scoped to OpenAI Chat-Completions dispatch.
@@ -104,14 +104,14 @@ test("missing rawBody does not throw", () => {
   assert.ok(["low", "medium", "high"].includes(out.reasoning_effort as string));
 });
 
-// The x-omniroute-effort header is read INSIDE the module from the incoming
+// The x-agentproxy-effort header is read INSIDE the module from the incoming
 // client request (chatCore.ts passes `clientRawRequest` through untouched), so
 // the call site does not need its own header extraction.
 test("header is read from clientRawRequest.headers (plain record, case-insensitive)", () => {
   const body = { model: "m" };
   const out = wireAdaptiveEffort(body, {
     rawBody: { messages: heavyMsgs },
-    clientRawRequest: { headers: { "X-OmniRoute-Effort": "auto" } },
+    clientRawRequest: { headers: { "X-AgentProxy-Effort": "auto" } },
     targetFormat: FORMATS.OPENAI,
   });
   assert.equal(out.reasoning_effort, "high");
@@ -121,7 +121,7 @@ test("header is read from clientRawRequest.headers (Headers instance)", () => {
   const body = { model: "m" };
   const out = wireAdaptiveEffort(body, {
     rawBody: { messages: trivialMsgs },
-    clientRawRequest: { headers: new Headers({ "x-omniroute-effort": "auto" }) },
+    clientRawRequest: { headers: new Headers({ "x-agentproxy-effort": "auto" }) },
     targetFormat: FORMATS.OPENAI,
   });
   assert.equal(out.reasoning_effort, "low");
@@ -153,7 +153,7 @@ test("a pre-extracted headerEffort takes precedence over clientRawRequest.header
   const out = wireAdaptiveEffort(body, {
     rawBody: { messages: heavyMsgs },
     headerEffort: null,
-    clientRawRequest: { headers: { "x-omniroute-effort": "auto" } },
+    clientRawRequest: { headers: { "x-agentproxy-effort": "auto" } },
     targetFormat: FORMATS.OPENAI,
   });
   assert.equal(out, body, "explicit null means the caller already decided: no opt-in");
@@ -192,7 +192,7 @@ test("header read from clientRawRequest is also a no-op on a non-OpenAI target",
   const body = { model: "m" };
   const out = wireAdaptiveEffort(body, {
     rawBody: { messages: heavyMsgs },
-    clientRawRequest: { headers: { "x-omniroute-effort": "auto" } },
+    clientRawRequest: { headers: { "x-agentproxy-effort": "auto" } },
     targetFormat: FORMATS.CLAUDE,
   });
   assert.equal(out, body);
@@ -202,7 +202,7 @@ test("header read from clientRawRequest is also a no-op on a non-OpenAI target",
 test("model-default 'auto' marker is left untouched (not stripped, not resolved) on a non-OpenAI target", () => {
   // Guards against a partial fix that strips the "auto" marker before the
   // targetFormat check -- on a non-OpenAI target the body (including any stray
-  // literal "auto") must be untouched, since it was never OmniRoute's own
+  // literal "auto") must be untouched, since it was never AgentProxy's own
   // injection to interpret on that dispatch shape.
   const body = { model: "m", reasoning_effort: "auto" };
   const out = wireAdaptiveEffort(body, {

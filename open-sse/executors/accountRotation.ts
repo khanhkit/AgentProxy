@@ -131,7 +131,8 @@ function stickyServeIndex<T extends RotatableAccount>(
   }
   if (state.nextAccountIdx <= sticky) return null;
   const cursorIdx = state.nextAccountIdx % accounts.length;
-  if (isReady(accounts[cursorIdx]) && !isStoreDrained(accounts[cursorIdx], keyOfMember)) return null;
+  if (isReady(accounts[cursorIdx]) && !isStoreDrained(accounts[cursorIdx], keyOfMember))
+    return null;
   return sticky;
 }
 
@@ -171,6 +172,31 @@ export function markSuccess(account: RotatableAccount): void {
 export function maskAccountId(fingerprint: string): string {
   if (!fingerprint) return "direct";
   return `${fingerprint.slice(0, 8)}…`;
+}
+
+/** One per-account rotation entry, keyed by connection id (never a fingerprint). */
+export interface RotationAccountSnapshot {
+  /** Already-masked id (`maskAccountId` output) — never the full fingerprint. */
+  masked: string;
+  ready: boolean;
+  cooldownUntilMs: number | null;
+  consecutiveFails: number;
+}
+
+const rotationSnapshots = new Map<string, RotationAccountSnapshot[]>();
+
+/** Record the current rotation state for a connection (sync, in-memory only). */
+export function recordRotationSnapshot(
+  connectionKey: string,
+  entries: RotationAccountSnapshot[]
+): void {
+  rotationSnapshots.set(connectionKey, [...entries]);
+}
+
+/** Read the last recorded rotation state (no side effects — never clears). */
+export function readRotationSnapshot(connectionKey: string): RotationAccountSnapshot[] | null {
+  const snap = rotationSnapshots.get(connectionKey);
+  return snap ? [...snap] : null;
 }
 
 /**

@@ -22,6 +22,10 @@ import {
   normalizeUpstreamFailure,
   getVisibleResponsesReasoningSummaryText,
 } from "./openai-responses/pureHelpers.ts";
+import {
+  markToolCallOutputIndex,
+  nextFreeMessageIndex,
+} from "./openai-responses/outputIndexLifecycle.ts";
 import { createEventEmitter } from "./openai-responses/eventEmitter.ts";
 import { buildResponsesToolCallItem } from "./responsesToolItem.ts";
 import { resolveRequestToolIdentity } from "./openai-responses/requestToolIdentity.ts";
@@ -463,6 +467,7 @@ function closeReasoning(state, emit) {
 }
 
 function emitTextContent(state, emit, idx, content) {
+  if (state.msgItemDone[idx]) idx = nextFreeMessageIndex(state, idx, normalizeOutputIndex);
   if (!state.msgItemAdded[idx]) {
     state.msgItemAdded[idx] = true;
     const msgId = `msg_${state.responseId}_${idx}`;
@@ -563,6 +568,7 @@ function toolCallOutputIndexBase(state) {
 function emitToolCall(state, emit, tc) {
   const tcIdx = tc.index ?? 0;
   const outputIndex = toolCallOutputIndexBase(state) + resolveLocalToolCallIndex(state, tcIdx);
+  markToolCallOutputIndex(state, outputIndex);
   const newCallId = tc.id;
   const funcName = tc.function?.name;
 
@@ -744,11 +750,7 @@ function closeToolCall(state, emit, idx, recordAsCompleted = true) {
         status: "completed",
       };
 
-      applyFunctionCallIdentity(
-        funcItem,
-        state.requestToolIdentityMap,
-        state.funcNames[idx] || ""
-      );
+      applyFunctionCallIdentity(funcItem, state.requestToolIdentityMap, state.funcNames[idx] || "");
 
       emit("response.output_item.done", {
         type: "response.output_item.done",

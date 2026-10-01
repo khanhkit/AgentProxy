@@ -28,11 +28,11 @@ import path from "node:path";
 
 import { logClientRawRequestRedacted } from "../../src/lib/guardrails/videoBridgeSnapshotRedaction.ts";
 
-const testDataDir = fs.mkdtempSync(path.join(os.tmpdir(), "omni-video-log-redaction-test-"));
+const testDataDir = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-video-log-redaction-test-"));
 process.env.DATA_DIR = testDataDir;
 
 const coreDb = await import("../../src/lib/db/core.ts");
-const { getCallLogById } = await import("../../src/lib/usage/callLogs.ts");
+const { getCallLogById, getCallLogs } = await import("../../src/lib/usage/callLogs.ts");
 const { persistAttemptLogs } = await import("../../open-sse/handlers/chatCore/attemptLogging.ts");
 
 const SECRET = "secret words";
@@ -60,8 +60,7 @@ function videoBody() {
 }
 
 function baseCtx(overrides: Record<string, unknown> = {}) {
-  // #13481/#13546: the call log row is keyed on traceId. It defaults to
-  // pendingRequestId so these tests keep polling by the id they pass in.
+  // Keep trace correlation stable while the durable call-log row gets its own UUID.
   const pendingRequestId = (overrides.pendingRequestId as string) ?? "REPLACE";
   return {
     traceId: overrides.traceId ?? pendingRequestId,
@@ -98,11 +97,14 @@ function baseCtx(overrides: Record<string, unknown> = {}) {
 // write while still bounded, and a fast machine still returns on the first pass.
 const POLL_DEADLINE_MS = 30_000;
 
-async function pollForCallLog(id: string, deadlineMs = POLL_DEADLINE_MS) {
+async function pollForCallLog(traceId: string, deadlineMs = POLL_DEADLINE_MS) {
   const deadline = Date.now() + deadlineMs;
   for (;;) {
-    const row = await getCallLogById(id);
-    if (row) return row as Record<string, unknown>;
+    const rows = await getCallLogs({ correlationId: traceId, limit: 5 });
+    if (rows[0]?.id) {
+      const row = await getCallLogById(rows[0].id);
+      if (row) return row as Record<string, unknown>;
+    }
     if (Date.now() >= deadline) return null;
     await new Promise((r) => setTimeout(r, 20));
   }
@@ -169,7 +171,7 @@ test("#12150 P2 surface 2: persistAttemptLogs marks the call_logs row video_cont
   const marker = coreDb
     .getDbInstance()
     .prepare("SELECT video_content_removed FROM call_logs WHERE id = ?")
-    .get(id) as { video_content_removed: number };
+    .get(String(row.id)) as { video_content_removed: number };
   assert.equal(marker.video_content_removed, 1);
 });
 
@@ -184,7 +186,7 @@ test("#12150 P2 surface 2: the marker defaults to 0 for an ordinary (non-video) 
   const marker = coreDb
     .getDbInstance()
     .prepare("SELECT video_content_removed FROM call_logs WHERE id = ?")
-    .get(id) as { video_content_removed: number };
+    .get(String(row.id)) as { video_content_removed: number };
   assert.equal(marker.video_content_removed, 0);
 });
 
