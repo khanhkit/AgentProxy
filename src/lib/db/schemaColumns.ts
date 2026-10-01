@@ -277,6 +277,24 @@ export function ensureCallLogsColumns(db: SqliteDatabase) {
       console.log("[DB] Added call_logs.resilience_actions column");
     }
 
+    // added by 192_call_logs_reasoning_encrypted
+    if (!columnNames.has("reasoning_duration_ms")) {
+      db.exec("ALTER TABLE call_logs ADD COLUMN reasoning_duration_ms INTEGER DEFAULT NULL");
+      console.log("[DB] Added call_logs.reasoning_duration_ms column");
+    }
+    if (!columnNames.has("reasoning_effort_requested")) {
+      db.exec("ALTER TABLE call_logs ADD COLUMN reasoning_effort_requested TEXT DEFAULT NULL");
+      console.log("[DB] Added call_logs.reasoning_effort_requested column");
+    }
+    if (!columnNames.has("reasoning_effort_upstream")) {
+      db.exec("ALTER TABLE call_logs ADD COLUMN reasoning_effort_upstream TEXT DEFAULT NULL");
+      console.log("[DB] Added call_logs.reasoning_effort_upstream column");
+    }
+    if (!columnNames.has("reasoning_encrypted")) {
+      db.exec("ALTER TABLE call_logs ADD COLUMN reasoning_encrypted INTEGER DEFAULT NULL");
+      console.log("[DB] Added call_logs.reasoning_encrypted column");
+    }
+
     db.exec(
       "CREATE INDEX IF NOT EXISTS idx_call_logs_requested_model ON call_logs(requested_model)"
     );

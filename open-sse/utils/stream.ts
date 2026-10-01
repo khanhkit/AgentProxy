@@ -53,6 +53,7 @@ import {
   type StreamFailurePayload,
 } from "./streamErrorFormat.ts";
 import { createStreamFailureAborter } from "./streamFailureBoundary.ts";
+import { createReasoningStreamObserver } from "./responsesReasoningObservation.ts";
 import { recordToolLatency } from "../services/toolLatencyTracker.ts";
 import { extractToolSchemaMap } from "../translator/response/openai-responses/toolSchemas.ts";
 import {
@@ -144,8 +145,8 @@ type StreamCompletePayload = {
   itlMs?: number | null;
   /** True when the stream was interrupted (timeout/abort/error) before a clean finish. */
   interrupted?: boolean;
+  reasoningMeta?: { encryptedSeen: boolean; durationMs: number | null } | null;
 };
-
 /** Queue budget every provider used before `streamBufferBytes` existed. */
 const DEFAULT_STREAM_BUFFER_BYTES = 16384;
 
@@ -863,18 +864,12 @@ export function createSSEStream(options: StreamOptions = {}) {
   let passthroughLastChatId: string | null = null;
   let passthroughResponsesCurrentFunctionCallKey: string | null = null;
   const passthroughResponsesReasoningSummarySeen = new Set<string>();
-  // #6199 — commentary-phase items announced via `response.output_item.added` are
-  // internal. Their `response.output_text.delta`/`response.output_text.done`/
-  // `response.output_item.done` events do not carry the `phase`, so we remember the
-  // item id + output_index here and drop every matching follow-up event.
+  const reasoningObserver = createReasoningStreamObserver();
+  // #6199: remember commentary item ids/indexes because follow-up events omit `phase`.
   const passthroughResponsesCommentaryItemIds = new Set<string>();
   const passthroughResponsesCommentaryIndexes = new Set<number>();
   const dropCommentary = createTranslateCommentaryFilter(targetFormat);
-  // #5786 — highest Responses-API `sequence_number` already forwarded on this stream.
-  // The Responses API guarantees a strictly increasing sequence_number, so any event at
-  // or below this watermark is an upstream reconnect/retry replay and must be dropped —
-  // otherwise the replayed deltas glue duplicated text into the client stream. Applies to
-  // both translate mode (openai-responses → claude/openai) and Responses passthrough.
+  // #5786: drop replayed Responses events at/below the highest forwarded sequence number.
   let lastSeenResponsesSequenceNumber = -1;
   const isDuplicateResponsesSequence = (value: unknown): boolean => {
     if (typeof value !== "number" || !Number.isFinite(value)) return false;
@@ -1452,6 +1447,7 @@ export function createSSEStream(options: StreamOptions = {}) {
               continue;
             }
 
+            if (parsedPassthroughData) reasoningObserver.note(parsedPassthroughData, Date.now());
             if (trimmed.startsWith("data:")) {
               const providerPayload = parsedPassthroughData ?? parseSSELine(trimmed);
               if (providerPayload) {
@@ -2243,6 +2239,7 @@ export function createSSEStream(options: StreamOptions = {}) {
             continue;
           }
 
+          reasoningObserver.note(parsed, Date.now());
           if (shouldDropResponsesCommentary && dropCommentary(parsed as JsonRecord)) continue;
           providerPayloadCollector.push(parsed);
           if (parsed && parsed.done) {
@@ -2770,6 +2767,7 @@ export function createSSEStream(options: StreamOptions = {}) {
                   status: 200,
                   usage,
                   responseBody,
+                  reasoningMeta: reasoningObserver.take(),
                   ttft: timing.ttftMs(),
                   itlMs: timing.avgItlMs(),
                   interrupted: timing.interrupted,
@@ -3059,6 +3057,7 @@ export function createSSEStream(options: StreamOptions = {}) {
                 status: 200,
                 usage: state?.usage,
                 responseBody,
+                reasoningMeta: reasoningObserver.take(),
                 // Same OPENAI_RESPONSES carve-out as the passthrough branch above —
                 // the synthesized chat-shaped responseBody drops the `response` object,
                 // and (like the passthrough branch) never carries an `object` marker at

@@ -211,6 +211,7 @@ export type PersistAttemptLogsArgs = {
   claudeCacheMeta?: Record<string, unknown>;
   claudeCacheUsageMeta?: Record<string, unknown>;
   cacheSource?: "upstream" | "semantic";
+  reasoningMeta?: { encryptedSeen: boolean; durationMs: number | null } | null;
 };
 
 export type PersistAttemptLogsContext = {
@@ -361,7 +362,6 @@ export function persistAttemptLogs(args: PersistAttemptLogsArgs, ctx: PersistAtt
     skillRequestId,
     detailedLoggingEnabled,
     reqLogger,
-    pendingRequestId,
     clientRawRequest,
     requestedModel,
     credentials,
@@ -478,6 +478,9 @@ export function persistAttemptLogs(args: PersistAttemptLogsArgs, ctx: PersistAtt
       (tokens as Record<string, unknown>).estimated === true
         ? true
         : null),
+    reasoningMeta: args.reasoningMeta ?? null,
+    clientRequestBody: body ?? null,
+    upstreamRequestBody: providerRequest ?? null,
     requestBody: cloneBoundedChatLogPayload(
       attachLogMeta(
         truncateForLog(

@@ -5664,7 +5664,7 @@ async function handleChatCoreInner({
     usage: streamUsage,
     responseBody: streamResponseBody,
     providerPayload,
-    clientPayload,
+    clientPayload, reasoningMeta: streamReasoningMeta,
     error: streamError,
     errorCode: streamErrorCode,
     ttft,
@@ -5834,7 +5834,7 @@ async function handleChatCoreInner({
       clientResponse: clientPayload ?? streamResponseBody ?? undefined,
       claudeCacheMeta: claudePromptCacheLogMeta,
       claudeCacheUsageMeta: cacheUsageLogMeta,
-      cacheSource: "upstream",
+      cacheSource: "upstream", reasoningMeta: streamReasoningMeta ?? null,
     });
 
     recordStreamingCost({
