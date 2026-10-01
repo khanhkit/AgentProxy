@@ -54,9 +54,9 @@ test("contributor instrumentation stubs are reversible", async () => {
 
 test("shouldBuildStandalone disables standalone output for contributor and fast build while default keeps it", () => {
   assert.equal(shouldBuildStandalone({}), true);
-  assert.equal(shouldBuildStandalone({ OMNIROUTE_BUILD_PROFILE: "backend" }), true);
-  assert.equal(shouldBuildStandalone({ OMNIROUTE_BUILD_PROFILE: "minimal" }), true);
-  assert.equal(shouldBuildStandalone({ OMNIROUTE_BUILD_PROFILE: "contributor" }), false);
+  assert.equal(shouldBuildStandalone({ AGENTPROXY_BUILD_PROFILE: "backend" }), true);
+  assert.equal(shouldBuildStandalone({ AGENTPROXY_BUILD_PROFILE: "minimal" }), true);
+  assert.equal(shouldBuildStandalone({ AGENTPROXY_BUILD_PROFILE: "contributor" }), false);
   assert.equal(shouldBuildStandalone({ OMNIROUTE_SKIP_STANDALONE: "1" }), false);
   assert.match(packageJson.scripts["build:fast"], /OMNIROUTE_SKIP_STANDALONE=1/);
   assert.match(packageJson.scripts["prebuild:fast"], /check:native-deps/);

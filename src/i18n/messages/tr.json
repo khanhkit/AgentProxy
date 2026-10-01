@@ -986,7 +986,7 @@
     "batchFileDownloadFull": "Tam Dosyayı İndir"
   },
   "disabled": "Devre dışı",
-  "featureFlagOmnirouteEmergencyFallbackDescription": "Bütçesi tükenmiş istekleri acil durum ücretsiz yedek sağlayıcıya/modele yönlendirin.",
+  "featureFlagAgentProxyEmergencyFallbackDescription": "Bütçesi tükenmiş istekleri acil durum ücretsiz yedek sağlayıcıya/modele yönlendirin.",
   "featureFlagArenaEloSyncEnabledDescription": "Model zekası sıralamaları için periyodik Arena AI liderlik tablosu ELO senkronizasyonunu etkinleştirin.",
   "featureFlagUniversalContextHandoffEnabledDescription": "Kombinasyon yönlendirmesi model değiştirdiğinde konuşma özetleri oluşturup ekleyin. Model değişikliklerini birbirinden bağımsız ele almak ve mevcut ve gelecekteki tüm kombinasyonlar için arka plandaki devir isteklerini önlemek üzere devre dışı bırakın.",
   "featureFlagExposeCcDiscoveryAliasesDescription": "/v1/models üzerinde claude/&lt;provider&gt;/&lt;model&gt; ayna kimliklerini tanıtın, böylece Claude Code geçidi model keşfi, Claude olmayan modelleri listeler. Uyarı: Küresel olarak etkinleştirildiğinde tüm istemciler için katalog girişlerini iki katına çıkarır.",
@@ -2254,7 +2254,7 @@
     "requestFlowAria": "Uygulamanız, bir API anahtarı aracılığıyla OmniRoute'a istek gönderir",
     "requestFlowYourApp": "Uygulamanız",
     "requestFlowApiKey": "API anahtarı",
-    "requestFlowOmniRoute": "OmniRoute",
+    "requestFlowAgentProxy": "AgentProxy",
     "totalKeys": "Toplam Anahtar",
     "restricted": "Kısıtlı",
     "totalRequests": "Toplam İstek",
@@ -2761,7 +2761,7 @@
     "configurationSaved": "Yapılandırma başarıyla kaydedildi.",
     "failedToSave": "Yapılandırma kaydedilemedi.",
     "noApiKeysCreateOne": "API anahtarı yok. Anahtarlar sayfasında bir anahtar oluşturun.",
-    "defaultOmnirouteKey": "sk_omniroute (varsayılan)",
+    "defaultAgentProxyKey": "sk_agentproxy (varsayılan)",
     "selectModel": "Model Seç",
     "selectModelForAlias": "{alias} için model seçin",
     "selectModelForTool": "{tool} için model seçin",
@@ -2858,13 +2858,13 @@
     "applied": "Uygulandı!",
     "failed": "Başarısız",
     "resetDone": "Sıfırlandı!",
-    "omnirouteConfiguredOpenAiCompatible": "OmniRoute, OpenAI uyumlu bir sağlayıcı olarak yapılandırıldı",
+    "agentproxyConfiguredOpenAiCompatible": "AgentProxy, OpenAI uyumlu bir sağlayıcı olarak yapılandırıldı",
     "provider": "Sağlayıcı",
     "model": "Model",
     "providers": "Sağlayıcılar",
     "auth": "Kimlik Doğrulama",
     "noApiKeysAvailable": "Kullanılabilir API anahtarı yok",
-    "usingDefaultOmniroute": "Varsayılan kullanılıyor: sk_omniroute",
+    "usingDefaultAgentProxy": "Varsayılan kullanılıyor: sk_agentproxy",
     "updateConfig": "Yapılandırmayı Güncelle",
     "applyConfig": "Yapılandırmayı Uygula",
     "noBackupsAvailable": "Kullanılabilir yedek yok.",
@@ -3145,8 +3145,8 @@
     "hermesConfiguredRoles": "{configured}/{total} rol",
     "hermesQuickApply": "Aynı modeli tüm rollere hızlıca uygulayın:",
     "hermesApplyModelToAll": "{model} modelini her role uygula",
-    "hermesViaOmniRoute": "{provider} (OmniRoute üzerinden)",
-    "hermesNotOmniRoute": "{provider} (OmniRoute değil)",
+    "hermesViaAgentProxy": "{provider} (AgentProxy üzerinden)",
+    "hermesNotAgentProxy": "{provider} (AgentProxy değil)",
     "hermesRemovePendingRole": "Bu rolü bekleyen değişikliklerden kaldır",
     "hermesApply": "Hermes Agent'a uygula",
     "hermesRolesWillUpdate": "{count, plural, one {# rol güncellenecek} other {# rol güncellenecek}}",
@@ -4142,7 +4142,7 @@
     "vscodeAliasModelsLabel": "VS Code modelleri",
     "vscodeAliasChatLabel": "VS Code sohbeti",
     "localServer": "Yerel Sunucu",
-    "cloudOmniroute": "Bulut OmniRoute",
+    "cloudAgentProxy": "Bulut AgentProxy",
     "copyUrl": "URL'yi kopyala",
     "badgeLoopbackTooltip": "Bu uç noktaya yalnızca yerel olarak erişilebilir (yalnızca loopback)",
     "badgeAlwaysProtectedTooltip": "Bu uç nokta her zaman korumalıdır ve yetkilendirme gerektirir",
@@ -9979,7 +9979,7 @@
     "howItWorksStep3Description": "İstek, OpenAI, Anthropic, Gemini veya diğer sağlayıcılar tarafından anında karşılanır.",
     "getStartedIn30Seconds": "30 Saniyede Başlayın",
     "getStartedDescription": "OmniRoute'u yükleyin, sağlayıcılarınızı web kontrol paneli aracılığıyla yapılandırın ve AI isteklerini yönlendirmeye başlayın.",
-    "installOmniRoute": "OmniRoute'u yükleyin",
+    "installAgentProxy": "AgentProxy'u yükleyin",
     "installStepDescription": "Sunucuyu anında başlatmak için npx komutunu çalıştırın",
     "openDashboard": "Kontrol Panelini Aç",
     "openDashboardStepDescription": "Sağlayıcıları ve API anahtarlarını web arayüzü üzerinden yapılandırın",
@@ -9988,7 +9988,7 @@
     "terminal": "terminal",
     "copy": "Kopyala",
     "copied": "✓ Kopyalandı",
-    "startingOmniRoute": "OmniRoute başlatılıyor...",
+    "startingAgentProxy": "AgentProxy başlatılıyor...",
     "serverRunningOnLabel": "Sunucu şu adreste çalışıyor:",
     "dashboardLabel": "Kontrol Paneli",
     "readyToRoute": "Yönlendirmeye hazır! ✓",
@@ -10382,7 +10382,7 @@
     "versionCommandPlaceholder": "Version Command Placeholder",
     "architectureTitle": "Architecture Title",
     "flowLocalBinary": "Flow Local Binary",
-    "flowOmniRoute": "Flow Omni Route",
+    "flowAgentProxy": "Flow Omni Route",
     "agentNamePlaceholder": "Agent Name Placeholder",
     "architectureDescription": "Architecture Description",
     "flowExecute": "Flow Execute",
@@ -10399,8 +10399,8 @@
     "agentUseCaseHint": "ACP protokolü aracılığıyla yürütme hedefi olarak kullanılabilir",
     "flowDiagramClient": "İstemci Uygulaması",
     "flowDiagramClientDesc": "SDK, API veya yukarı akış hizmeti",
-    "flowDiagramOmniRoute": "OmniRoute",
-    "flowDiagramOmniRouteDesc": "İsteği alır ve hedefi seçer",
+    "flowDiagramAgentProxy": "AgentProxy",
+    "flowDiagramAgentProxyDesc": "İsteği alır ve hedefi seçer",
     "flowDiagramSpawn": "Doğma Süreci",
     "flowDiagramSpawnDesc": "CLI ikili dosyasını stdio aracılığıyla başlatır",
     "flowDiagramCli": "CLI Aracısı",
@@ -12965,16 +12965,16 @@
       "PROXY_AUTO_SELECT_ENABLED": {
         "description": "Bir bağlantıya proxy atanmadığında, çalışan ilk kayıt defteri proxy'sini otomatik olarak seçin. Varsayılan olarak kapalıdır, aksi takdirde bir kayıt defteri proxy'si tüm trafik için genel bir yedek haline gelir (#3332)."
       },
-      "OMNIROUTE_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
+      "AGENTPROXY_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
         "description": "Proxy erişilebilirlik kontrolleri başarısız olduğunda, OAuth ve sağlayıcı doğrulama akışlarının sabitlenmiş bir proxy'yi atlamasına izin verin. Bu işlem hesabın çıkış IP'sini değiştirebileceğinden varsayılan olarak kapalıdır."
       },
       "MITM_DISABLE_TLS_VERIFY": {
         "description": "MITM proxy'si için TLS sertifikası doğrulamasını devre dışı bırakın."
       },
-      "OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS": {
         "description": "Özel veya dahili ağları işaret eden sağlayıcı URL'lerine izin verin."
       },
-      "OMNIROUTE_ALLOW_LOCAL_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_LOCAL_PROVIDER_URLS": {
         "description": "localhost, LAN ve özel IP aralıklarındaki sağlayıcılara izin verin. Bu, yerel OpenAI uyumlu modeller için gereklidir ve varsayılan olarak etkindir. 169.254.169.254 gibi bulut meta veri uç noktaları engellenmeye devam eder."
       },
       "ENABLE_CC_COMPATIBLE_PROVIDER": {
@@ -12996,28 +12996,28 @@
       "RESPONSES_PASSTHROUGH_DROP_COMMENTARY": {
         "description": "İstemcilere iletmeden önce Responses API doğrudan geçiş akışlarından dahili yorum aşaması çıktı öğelerini kaldırın. Ham kaynak yorumlarını almak için bu bayrağı devre dışı bırakın."
       },
-      "OMNIROUTE_MCP_ENFORCE_SCOPES": {
+      "AGENTPROXY_MCP_ENFORCE_SCOPES": {
         "description": "MCP aracı erişimi için kapsam kısıtlamalarını uygulayın."
       },
-      "OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS": {
+      "AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS": {
         "description": "Token kullanımını azaltmak için MCP aracı açıklamalarını sıkıştırın."
       },
-      "OMNIROUTE_ENABLE_RUNTIME_BACKGROUND_TASKS": {
+      "AGENTPROXY_ENABLE_RUNTIME_BACKGROUND_TASKS": {
         "description": "Çalışma zamanında arka plan görevi işlemeyi etkinleştirin."
       },
-      "OMNIROUTE_DISABLE_BACKGROUND_SERVICES": {
+      "AGENTPROXY_DISABLE_BACKGROUND_SERVICES": {
         "description": "Kota yenileme ve senkronizasyon dahil tüm arka plan hizmetlerini devre dışı bırakın."
       },
-      "OMNIROUTE_RTK_TRUST_PROJECT_FILTERS": {
+      "AGENTPROXY_RTK_TRUST_PROJECT_FILTERS": {
         "description": "Proje düzeyindeki RTK filtrelerine doğrulama yapmadan güvenin."
       },
-      "OMNIROUTE_ENABLE_LIVE_WS": {
+      "AGENTPROXY_ENABLE_LIVE_WS": {
         "description": "İçe aktarma sırasında gerçek zamanlı panel WebSocket sunucusunu 20132 numaralı geri döngü (loopback) bağlantı noktasında başlatın. Devre dışı bırakmak için bayrağı 0 veya false olarak ayarlayın. LAN erişimi için ayrıca LIVE_WS_HOST=0.0.0.0 ve LIVE_WS_ALLOWED_ORIGINS gerekir."
       },
-      "OMNIROUTE_CODEX_WS_ENABLED": {
+      "AGENTPROXY_CODEX_WS_ENABLED": {
         "description": "Codex'in WebSocket üzerinden Responses kullanmasına izin verin. Devre dışı bırakıldığında, Codex HTTP Responses'a geri döner."
       },
-      "OMNIROUTE_EMERGENCY_FALLBACK": {
+      "AGENTPROXY_EMERGENCY_FALLBACK": {
         "description": "Bütçesi tükenmiş istekleri acil durum ücretsiz yedek sağlayıcısına ve modeline yönlendirin."
       },
       "STREAM_RECOVERY_ENABLED": {
@@ -13044,16 +13044,16 @@
       "PRICING_SYNC_ENABLED": {
         "description": "Fiyatlandırma verilerini otomatik olarak senkronize edin. PRICING_SYNC_ENABLED ortam değişkeni de true olmalıdır."
       },
-      "OMNIROUTE_AUTO_SYNC_CODEX_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CODEX_PROFILES": {
         "description": "Sağlayıcı-model senkronizasyonundan sonra, canlı katalogdan ~/.codex/*.config.toml profillerini yeniden oluşturun. Bu işlem aktif veya varsayılan Codex yapılandırmasını asla değiştirmez ve varsayılan olarak kapalıdır."
       },
-      "OMNIROUTE_AUTO_SYNC_CLAUDE_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CLAUDE_PROFILES": {
         "description": "Sağlayıcı-model senkronizasyonundan sonra, canlı katalogdan ~/.claude/profiles/'<name>'/settings.json profillerini yeniden oluşturun. Bu işlem aktif veya varsayılan Claude yapılandırmasını asla değiştirmez ve varsayılan olarak kapalıdır."
       },
-      "OMNIROUTE_DISABLE_LOCAL_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_LOCAL_HEALTHCHECK": {
         "description": "Yerel örnek sağlık kontrolü (health-check) uç noktasını devre dışı bırakın."
       },
-      "OMNIROUTE_DISABLE_TOKEN_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_TOKEN_HEALTHCHECK": {
         "description": "Token doğrulama sağlık kontrolünü devre dışı bırakın."
       },
       "SKILLS_SANDBOX_NETWORK_ENABLED": {
@@ -14190,5 +14190,5 @@
     "partnerLinkNote": "İş ortağı bağlantısı",
     "dismissAriaLabel": "Kapat"
   },
-  "featureFlagOmnirouteDisableThinkingLevelVariantsDescription": "/v1/models kataloğunda düşünme düzeyi varyantlarının (ör. -low, -medium, -high) oluşturulmasını devre dışı bırakın."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "/v1/models kataloğunda düşünme düzeyi varyantlarının (ör. -low, -medium, -high) oluşturulmasını devre dışı bırakın."
 }

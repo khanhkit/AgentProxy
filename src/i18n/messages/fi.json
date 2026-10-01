@@ -986,7 +986,7 @@
     "batchFileDownloadFull": "Lataa Koko Tiedosto"
   },
   "disabled": "Poistettu käytöstä",
-  "featureFlagOmnirouteEmergencyFallbackDescription": "Reititä budjettinsa ylittäneet pyynnöt varalla olevalle ilmaiselle varatarjoajalle/-mallille.",
+  "featureFlagAgentProxyEmergencyFallbackDescription": "Reititä budjettinsa ylittäneet pyynnöt varalla olevalle ilmaiselle varatarjoajalle/-mallille.",
   "featureFlagArenaEloSyncEnabledDescription": "Ota käyttöön jaksottainen Arena AI -tulostaulukon ELO-synkronointi mallien älykkyysluokituksia varten.",
   "featureFlagUniversalContextHandoffEnabledDescription": "Luo ja lisää keskusteluyhteenvedot, kun yhdistelmäreititys vaihtaa mallia. Poista käytöstä, jos haluat käsitellä mallinvaihdot toisistaan riippumatta ja estää taustalla tehtävät siirtopyynnöt kaikissa nykyisissä ja tulevissa yhdistelmissä.",
   "featureFlagExposeCcDiscoveryAliasesDescription": "Mainosta claude/&lt;provider&gt;/&lt;model&gt; peilid tunnuksia /v1/models, jotta Claude Code -portin mallin löytölistalla näkyvät ei-Claude-mallit. Varoitus: kaksinkertaistaa luettelo-merkinnät kaikille asiakkaille, kun se on otettu käyttöön globaalisti.",
@@ -2254,7 +2254,7 @@
     "requestFlowAria": "Sovelluksesi lähettää pyynnöt API-avaimella OmniRouteen",
     "requestFlowYourApp": "Sovelluksesi",
     "requestFlowApiKey": "API-avain",
-    "requestFlowOmniRoute": "OmniRoute",
+    "requestFlowAgentProxy": "AgentProxy",
     "totalKeys": "Avaimet yhteensä",
     "restricted": "Rajoitettu",
     "totalRequests": "Pyyntöjä yhteensä",
@@ -2761,7 +2761,7 @@
     "configurationSaved": "Määritykset tallennettu onnistuneesti.",
     "failedToSave": "Määrityksen tallentaminen epäonnistui.",
     "noApiKeysCreateOne": "Ei API-avaimia – Luo yksi Avaimet-sivulla",
-    "defaultOmnirouteKey": "sk_omniroute (oletus)",
+    "defaultAgentProxyKey": "sk_agentproxy (oletus)",
     "selectModel": "Valitse Malli",
     "selectModelForAlias": "Valitse malli kohteelle {alias}",
     "selectModelForTool": "Valitse malli kohteelle {tool}",
@@ -2858,13 +2858,13 @@
     "applied": "Sovellettu!",
     "failed": "Epäonnistui",
     "resetDone": "Nollaa!",
-    "omnirouteConfiguredOpenAiCompatible": "OmniRoute on määritetty OpenAI-yhteensopivaksi palveluntarjoajaksi",
+    "agentproxyConfiguredOpenAiCompatible": "AgentProxy on määritetty OpenAI-yhteensopivaksi palveluntarjoajaksi",
     "provider": "Palveluntarjoaja",
     "model": "Malli",
     "providers": "Palveluntarjoajat",
     "auth": "Tod",
     "noApiKeysAvailable": "API-avaimia ei ole saatavilla",
-    "usingDefaultOmniroute": "Oletuksena: sk_omniroute",
+    "usingDefaultAgentProxy": "Oletuksena: sk_agentproxy",
     "updateConfig": "Päivitä Config",
     "applyConfig": "Käytä konfiguraatiota",
     "noBackupsAvailable": "Varmuuskopioita ei ole saatavilla.",
@@ -3145,8 +3145,8 @@
     "hermesConfiguredRoles": "{configured}/{total} roolia",
     "hermesQuickApply": "Käytä samaa mallia nopeasti kaikkiin rooleihin:",
     "hermesApplyModelToAll": "Käytä mallia {model} jokaiseen rooliin",
-    "hermesViaOmniRoute": "{provider} (OmniRouten kautta)",
-    "hermesNotOmniRoute": "{provider} (ei OmniRoute)",
+    "hermesViaAgentProxy": "{provider} (AgentProxyn kautta)",
+    "hermesNotAgentProxy": "{provider} (ei AgentProxy)",
     "hermesRemovePendingRole": "Poista tämä rooli odottavista muutoksista",
     "hermesApply": "Käytä Hermes-agenttiin",
     "hermesRolesWillUpdate": "{count, plural, one {# rooli päivitetään} other {# roolia päivitetään}}",
@@ -4142,7 +4142,7 @@
     "vscodeAliasModelsLabel": "VS Code -mallit",
     "vscodeAliasChatLabel": "VS Code -chat",
     "localServer": "Paikallinen palvelin",
-    "cloudOmniroute": "Pilvi OmniRoute",
+    "cloudAgentProxy": "Pilvi AgentProxy",
     "copyUrl": "Kopioi URL-osoite",
     "badgeLoopbackTooltip": "Tähän päätepisteeseen pääsee vain paikallisesti (vain loopback)",
     "badgeAlwaysProtectedTooltip": "Tämä päätepiste on aina suojattu ja vaatii valtuutuksen",
@@ -9979,7 +9979,7 @@
     "howItWorksStep3Description": "OpenAI, Anthropic, Gemini tai muut täyttävät pyynnön välittömästi.",
     "getStartedIn30Seconds": "Aloita 30 sekunnissa",
     "getStartedDescription": "Asenna OmniRoute, määritä palveluntarjoajasi web-hallintapaneelin kautta ja aloita AI-pyyntöjen reitittäminen.",
-    "installOmniRoute": "Asenna OmniRoute",
+    "installAgentProxy": "Asenna AgentProxy",
     "installStepDescription": "Suorita npx-komento käynnistääksesi palvelimen välittömästi",
     "openDashboard": "Avaa Dashboard",
     "openDashboardStepDescription": "Määritä palveluntarjoajat ja API-avaimet verkkokäyttöliittymän kautta",
@@ -9988,7 +9988,7 @@
     "terminal": "terminaali",
     "copy": "Kopioi",
     "copied": "✓ Kopioitu",
-    "startingOmniRoute": "OmniRoute aloitetaan...",
+    "startingAgentProxy": "AgentProxy aloitetaan...",
     "serverRunningOnLabel": "Palvelin käynnissä",
     "dashboardLabel": "Kojelauta",
     "readyToRoute": "Valmiina reittiin! ✓",
@@ -10382,7 +10382,7 @@
     "versionCommandPlaceholder": "Version Command Placeholder",
     "architectureTitle": "Architecture Title",
     "flowLocalBinary": "Flow Local Binary",
-    "flowOmniRoute": "Flow Omni Route",
+    "flowAgentProxy": "Flow Omni Route",
     "agentNamePlaceholder": "Agent Name Placeholder",
     "architectureDescription": "Architecture Description",
     "flowExecute": "Flow Execute",
@@ -10399,8 +10399,8 @@
     "agentUseCaseHint": "Voidaan käyttää suorituskohteena ACP-protokollan kautta",
     "flowDiagramClient": "Asiakassovellus",
     "flowDiagramClientDesc": "SDK, API tai ylempi palvelu",
-    "flowDiagramOmniRoute": "OmniRoute",
-    "flowDiagramOmniRouteDesc": "Vastaanottaa pyynnön ja valitsee kohteen",
+    "flowDiagramAgentProxy": "AgentProxy",
+    "flowDiagramAgentProxyDesc": "Vastaanottaa pyynnön ja valitsee kohteen",
     "flowDiagramSpawn": "Spawn-prosessi",
     "flowDiagramSpawnDesc": "Käynnistää CLI-binaarin stdion kautta",
     "flowDiagramCli": "CLI-agentti",
@@ -12965,16 +12965,16 @@
       "PROXY_AUTO_SELECT_ENABLED": {
         "description": "Kun yhteydelle ei ole määritetty välityspalvelinta, valitse automaattisesti ensimmäinen toimiva rekisterivälityspalvelin. Oletuksena pois päältä, koska muuten yhdestä rekisterivälityspalvelimesta tulee yleinen varavaihtoehto kaikelle liikenteelle (#3332)."
       },
-      "OMNIROUTE_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
+      "AGENTPROXY_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
         "description": "Salli OAuth- ja tarjoajan varmennustyönkulkujen ohittaa kiinnitetty välityspalvelin, kun välityspalvelimen tavoitettavuustarkistukset epäonnistuvat. Oletuksena pois päältä, koska tämä voi muuttaa tilin lähtevää IP-osoitetta."
       },
       "MITM_DISABLE_TLS_VERIFY": {
         "description": "Poista TLS-varmenteen varmistus käytöstä MITM-välityspalvelimelle."
       },
-      "OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS": {
         "description": "Salli tarjoajien URL-osoitteet, jotka osoittavat yksityisiin tai sisäisiin verkkoihin."
       },
-      "OMNIROUTE_ALLOW_LOCAL_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_LOCAL_PROVIDER_URLS": {
         "description": "Salli tarjoajat localhostissa, lähiverkossa (LAN) ja yksityisissä IP-alueissa. Tämä vaaditaan paikallisille OpenAI-yhteensopiville malleille ja on oletuksena käytössä. Pilvipalvelun metatietojen päätepisteet, kuten 169.254.169.254, pysyvät estettyinä."
       },
       "ENABLE_CC_COMPATIBLE_PROVIDER": {
@@ -12996,28 +12996,28 @@
       "RESPONSES_PASSTHROUGH_DROP_COMMENTARY": {
         "description": "Poista sisäiset kommentointivaiheen tulostetiedot Responses API -läpivientivirroista ennen niiden välittämistä asiakkaille. Poista tämä valinta käytöstä vastaanottaaksesi raakaa ylävirran kommentointia."
       },
-      "OMNIROUTE_MCP_ENFORCE_SCOPES": {
+      "AGENTPROXY_MCP_ENFORCE_SCOPES": {
         "description": "Valvo laajuusrajoituksia MCP-työkalujen käytössä."
       },
-      "OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS": {
+      "AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS": {
         "description": "Tiivistä MCP-työkalujen kuvaukset tokenien käytön vähentämiseksi."
       },
-      "OMNIROUTE_ENABLE_RUNTIME_BACKGROUND_TASKS": {
+      "AGENTPROXY_ENABLE_RUNTIME_BACKGROUND_TASKS": {
         "description": "Ota käyttöön taustatehtävien käsittely ajon aikana."
       },
-      "OMNIROUTE_DISABLE_BACKGROUND_SERVICES": {
+      "AGENTPROXY_DISABLE_BACKGROUND_SERVICES": {
         "description": "Poista käytöstä kaikki taustapalvelut, mukaan lukien kiintiöiden päivitys ja synkronointi."
       },
-      "OMNIROUTE_RTK_TRUST_PROJECT_FILTERS": {
+      "AGENTPROXY_RTK_TRUST_PROJECT_FILTERS": {
         "description": "Luota projektitason RTK-suodattimiin ilman varmennusta."
       },
-      "OMNIROUTE_ENABLE_LIVE_WS": {
+      "AGENTPROXY_ENABLE_LIVE_WS": {
         "description": "Käynnistä reaaliaikaisen hallintapaneelin WebSocket-palvelin tuonnin yhteydessä loopback-portissa 20132. Aseta valinnaksi 0 tai false poistaaksesi sen käytöstä. Lähiverkolle altistaminen vaatii myös asetukset LIVE_WS_HOST=0.0.0.0 ja LIVE_WS_ALLOWED_ORIGINS."
       },
-      "OMNIROUTE_CODEX_WS_ENABLED": {
+      "AGENTPROXY_CODEX_WS_ENABLED": {
         "description": "Salli Codexin käyttää Responses-rajapintaa WebSocketin kautta. Kun tämä on poistettu käytöstä, Codex siirtyy käyttämään HTTP Responses -vaihtoehtoa."
       },
-      "OMNIROUTE_EMERGENCY_FALLBACK": {
+      "AGENTPROXY_EMERGENCY_FALLBACK": {
         "description": "Ohjaa budjetin ylittäneet pyynnöt hätätilanteen ilmaiseen varatarjoajaan ja -malliin."
       },
       "STREAM_RECOVERY_ENABLED": {
@@ -13044,16 +13044,16 @@
       "PRICING_SYNC_ENABLED": {
         "description": "Synkronoi hinnoittelutiedot automaattisesti. Ympäristömuuttujan PRICING_SYNC_ENABLED on myös oltava true."
       },
-      "OMNIROUTE_AUTO_SYNC_CODEX_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CODEX_PROFILES": {
         "description": "Tarjoajamallien synkronoinnin jälkeen luo ~/.codex/*.config.toml -profiilit uudelleen reaaliaikaisesta luettelosta. Tämä ei koskaan muuta aktiivista tai oletusarvoista Codex-konfiguraatiota ja on oletuksena pois päältä."
       },
-      "OMNIROUTE_AUTO_SYNC_CLAUDE_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CLAUDE_PROFILES": {
         "description": "Tarjoajamallien synkronoinnin jälkeen luo ~/.claude/profiles/'<name>'/settings.json -profiilit uudelleen reaaliaikaisesta luettelosta. Tämä ei koskaan muuta aktiivista tai oletusarvoista Claude-konfiguraatiota ja on oletuksena pois päältä."
       },
-      "OMNIROUTE_DISABLE_LOCAL_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_LOCAL_HEALTHCHECK": {
         "description": "Poista käytöstä paikallisen instanssin terveystarkistuksen päätepiste."
       },
-      "OMNIROUTE_DISABLE_TOKEN_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_TOKEN_HEALTHCHECK": {
         "description": "Poista käytöstä tokenin varmennuksen terveystarkistus."
       },
       "SKILLS_SANDBOX_NETWORK_ENABLED": {
@@ -14190,5 +14190,5 @@
     "partnerLinkNote": "Kumppanilinkki",
     "dismissAriaLabel": "Sulje"
   },
-  "featureFlagOmnirouteDisableThinkingLevelVariantsDescription": "Poista käytöstä ajattelutason varianttien (esim. -low, -medium, -high) luonti /v1/models-luettelossa."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Poista käytöstä ajattelutason varianttien (esim. -low, -medium, -high) luonti /v1/models-luettelossa."
 }

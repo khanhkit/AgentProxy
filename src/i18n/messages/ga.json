@@ -986,7 +986,7 @@
     "batchFileDownloadFull": "Íoslódáil Comhad Iomlán"
   },
   "disabled": "Díchumasaithe",
-  "featureFlagOmnirouteEmergencyFallbackDescription": "Seol iarratais a bhfuil a mbuiséad ídithe chuig an soláthraí/samhail chúltaca éigeandála saor in aisce.",
+  "featureFlagAgentProxyEmergencyFallbackDescription": "Seol iarratais a bhfuil a mbuiséad ídithe chuig an soláthraí/samhail chúltaca éigeandála saor in aisce.",
   "featureFlagArenaEloSyncEnabledDescription": "Cumasaigh sioncronú tréimhsiúil ELO chlár ceannaireachta AI Arena le haghaidh rangú faisnéise samhlacha.",
   "featureFlagUniversalContextHandoffEnabledDescription": "Gin agus insteall achoimrí comhrá nuair a athraíonn ródú comhcheangail ó shamhail go samhail. Díchumasaigh é chun déileáil le hathruithe samhla go neamhspleách agus chun iarratais aistrithe sa chúlra a chosc do gach comhcheangal reatha agus amach anseo.",
   "featureFlagExposeCcDiscoveryAliasesDescription": "Fógraigh aitheantais scátháin claude/&lt;provider&gt;/&lt;model&gt; ar /v1/models ionas go liostóidh fionnachtain samhlacha gheata Claude Code samhlacha neamh-Claude. Rabhadh: déantar líon na n-iontrálacha catalóige a dhúbailt do gach cliant nuair a chumasaítear é go domhanda.",
@@ -2313,7 +2313,7 @@
     "requestFlowAria": "Seolann d’aip iarratais trí eochair API chuig OmniRoute",
     "requestFlowYourApp": "D’aip",
     "requestFlowApiKey": "Eochair API",
-    "requestFlowOmniRoute": "OmniRoute",
+    "requestFlowAgentProxy": "AgentProxy",
     "totalKeys": "Eochracha san Iomlán",
     "restricted": "Srianta",
     "totalRequests": "Iarratais san Iomlán",
@@ -2820,7 +2820,7 @@
     "configurationSaved": "Sábháladh an chumraíocht go rathúil.",
     "failedToSave": "Theip ar an chumraíocht a shábháil.",
     "noApiKeysCreateOne": "Níl aon eochracha API ann - Cruthaigh ceann ar an leathanach Eochracha",
-    "defaultOmnirouteKey": "sk_omniroute (réamhshocraithe)",
+    "defaultAgentProxyKey": "sk_agentproxy (réamhshocraithe)",
     "selectModel": "Roghnaigh Samhail",
     "selectModelForAlias": "Roghnaigh samhail do {alias}",
     "selectModelForTool": "Roghnaigh Samhail do {tool}",
@@ -2917,13 +2917,13 @@
     "applied": "Curtha i bhfeidhm!",
     "failed": "Theip",
     "resetDone": "Athshocraithe!",
-    "omnirouteConfiguredOpenAiCompatible": "Tá OmniRoute cumraithe mar sholáthraí atá comhoiriúnach le OpenAI",
+    "agentproxyConfiguredOpenAiCompatible": "Tá AgentProxy cumraithe mar sholáthraí atá comhoiriúnach le OpenAI",
     "provider": "Soláthraí",
     "model": "Samhail",
     "providers": "Soláthraithe",
     "auth": "Fíordheimhniú",
     "noApiKeysAvailable": "Níl aon eochracha API ar fáil",
-    "usingDefaultOmniroute": "Ag baint úsáid as an réamhshocrú: sk_omniroute",
+    "usingDefaultAgentProxy": "Ag baint úsáid as an réamhshocrú: sk_agentproxy",
     "updateConfig": "Nuashonraigh an Chumraíocht",
     "applyConfig": "Cuir an Chumraíocht i bhfeidhm",
     "noBackupsAvailable": "Níl aon chúltacaí ar fáil.",
@@ -3204,8 +3204,8 @@
     "hermesConfiguredRoles": "{configured}/{total} ról",
     "hermesQuickApply": "Cuir an tsamhail chéanna i bhfeidhm go tapa ar na róil go léir:",
     "hermesApplyModelToAll": "Cuir {model} i bhfeidhm ar gach ról",
-    "hermesViaOmniRoute": "{provider} (trí OmniRoute)",
-    "hermesNotOmniRoute": "{provider} (ní trí OmniRoute)",
+    "hermesViaAgentProxy": "{provider} (trí AgentProxy)",
+    "hermesNotAgentProxy": "{provider} (ní trí AgentProxy)",
     "hermesRemovePendingRole": "Bain an ról seo ó na hathruithe ar feitheamh",
     "hermesApply": "Cuir i bhfeidhm ar Hermes Agent",
     "hermesRolesWillUpdate": "{count, plural, one {Nuashonrófar # ról} few {Nuashonrófar # ról} other {Nuashonrófar # ról}}",
@@ -4201,7 +4201,7 @@
     "vscodeAliasModelsLabel": "Múnlaí VS Code",
     "vscodeAliasChatLabel": "Comhrá VS Code",
     "localServer": "Freastalaí Áitiúil",
-    "cloudOmniroute": "OmniRoute sa Néal",
+    "cloudAgentProxy": "AgentProxy sa Néal",
     "copyUrl": "Cóipeáil URL",
     "badgeLoopbackTooltip": "Níl an críochphointe seo inrochtana ach go háitiúil (loopback amháin)",
     "badgeAlwaysProtectedTooltip": "Tá an críochphointe seo cosanta i gcónaí agus éilíonn sé údarú",
@@ -10038,7 +10038,7 @@
     "howItWorksStep3Description": "Comhlíonann OpenAI, Anthropic, Gemini nó soláthraí eile an t-iarratas láithreach.",
     "getStartedIn30Seconds": "Tosaigh i gceann 30 Soicind",
     "getStartedDescription": "Suiteáil OmniRoute, cumraigh do sholáthraithe tríd an bpainéal rialúcháin gréasáin, agus tosaigh ar iarrataí AI a ródú.",
-    "installOmniRoute": "Suiteáil OmniRoute",
+    "installAgentProxy": "Suiteáil AgentProxy",
     "installStepDescription": "Rith an t-ordú npx chun an freastalaí a thosú láithreach",
     "openDashboard": "Oscail an Painéal Rialúcháin",
     "openDashboardStepDescription": "Cumraigh soláthraithe agus eochracha API tríd an gcomhéadan gréasáin",
@@ -10047,7 +10047,7 @@
     "terminal": "teirminéal",
     "copy": "Cóipeáil",
     "copied": "✓ Cóipeáladh",
-    "startingOmniRoute": "OmniRoute á thosú...",
+    "startingAgentProxy": "AgentProxy á thosú...",
     "serverRunningOnLabel": "Tá an freastalaí ag rith ar",
     "dashboardLabel": "Painéal Rialúcháin",
     "readyToRoute": "Réidh le ródáil! ✓",
@@ -10441,7 +10441,7 @@
     "versionCommandPlaceholder": "m.sh., my-agent --version",
     "architectureTitle": "Conas a oibríonn Agent Targets",
     "flowLocalBinary": "3 · Próiseas CLI lena fhíordheimhniú féin",
-    "flowOmniRoute": "1 · Tagann iarratas chuig OmniRoute",
+    "flowAgentProxy": "1 · Tagann iarratas chuig AgentProxy",
     "agentNamePlaceholder": "m.sh., Mo Ghníomhaire Saincheaptha",
     "architectureDescription": "Nuair a thagann iarratas, is féidir le OmniRoute bineár CLI áitiúil (m.sh., claude, codex, goose) a thosú agus an t-iarratas a sheoladh tríd. Próiseálann an CLI an t-iarratas ag baint úsáid as a dhintiúir féin agus seolann sé an toradh ar ais trí OmniRoute.",
     "flowExecute": "4 · Seoltar an freagra ar ais chuig an gcliant",
@@ -10458,8 +10458,8 @@
     "agentUseCaseHint": "Is féidir é a úsáid mar sprioc rite tríd an phrótacal ACP",
     "flowDiagramClient": "Aip Chliaint",
     "flowDiagramClientDesc": "SDK, API, nó seirbhís réamhtheachtach",
-    "flowDiagramOmniRoute": "OmniRoute",
-    "flowDiagramOmniRouteDesc": "Faigheann sé an t-iarratas agus roghnaíonn sé sprioc",
+    "flowDiagramAgentProxy": "AgentProxy",
+    "flowDiagramAgentProxyDesc": "Faigheann sé an t-iarratas agus roghnaíonn sé sprioc",
     "flowDiagramSpawn": "Tosú Próisis",
     "flowDiagramSpawnDesc": "Tosaíonn sé bineár CLI trí stdio",
     "flowDiagramCli": "Gníomhaire CLI",
@@ -13024,16 +13024,16 @@
       "PROXY_AUTO_SELECT_ENABLED": {
         "description": "Nuair nach bhfuil seachfhreastalaí sannta do nasc, roghnaigh go huathoibríoch an chéad seachfhreastalaí clárlainne atá ag obair. Bíonn sé as de réir réamhshocraithe mar, murach sin, d’éireodh seachfhreastalaí clárlainne amháin ina chúltaca domhanda don trácht ar fad (#3332)."
       },
-      "OMNIROUTE_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
+      "AGENTPROXY_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
         "description": "Ceadaigh do shreafaí OAuth agus bailíochtaithe soláthraí seachfhreastalaí seasta a sheachbhóthar nuair a theipeann ar sheiceálacha insroichteachta an tseachfhreastalaí. Bíonn sé as de réir réamhshocraithe mar gur féidir leis seo seoladh IP amach an chuntais a athrú."
       },
       "MITM_DISABLE_TLS_VERIFY": {
         "description": "Díchumasaigh fíorú deimhnithe TLS don seachfhreastalaí MITM."
       },
-      "OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS": {
         "description": "Ceadaigh URLanna soláthraí a dhíríonn ar líonraí príobháideacha nó inmheánacha."
       },
-      "OMNIROUTE_ALLOW_LOCAL_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_LOCAL_PROVIDER_URLS": {
         "description": "Ceadaigh soláthraithe ar localhost, LAN agus raonta IP príobháideacha. Tá sé seo riachtanach do mhúnlaí áitiúla atá comhoiriúnach le OpenAI agus bíonn sé cumasaithe de réir réamhshocraithe. Fanann críochphointí meiteashonraí néil ar nós 169.254.169.254 blocáilte."
       },
       "ENABLE_CC_COMPATIBLE_PROVIDER": {
@@ -13055,28 +13055,28 @@
       "RESPONSES_PASSTHROUGH_DROP_COMMENTARY": {
         "description": "Bain míreanna aschuir inmheánacha ó chéim na tráchtaireachta as sruthanna pas-trí Responses API sula gcuirtear ar aghaidh chuig cliaint iad. Díchumasaigh an bhratach seo chun tráchtaireacht amh ón bhfoinse réamhtheachtach a fháil."
       },
-      "OMNIROUTE_MCP_ENFORCE_SCOPES": {
+      "AGENTPROXY_MCP_ENFORCE_SCOPES": {
         "description": "Cuir srianta raoin feidhme i bhfeidhm maidir le rochtain ar uirlisí MCP."
       },
-      "OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS": {
+      "AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS": {
         "description": "Comhbhrúigh tuairiscí uirlisí MCP chun úsáid tóicín a laghdú."
       },
-      "OMNIROUTE_ENABLE_RUNTIME_BACKGROUND_TASKS": {
+      "AGENTPROXY_ENABLE_RUNTIME_BACKGROUND_TASKS": {
         "description": "Cumasaigh próiseáil tascanna cúlra ag am rite."
       },
-      "OMNIROUTE_DISABLE_BACKGROUND_SERVICES": {
+      "AGENTPROXY_DISABLE_BACKGROUND_SERVICES": {
         "description": "Díchumasaigh gach seirbhís chúlra, lena n-áirítear athnuachan cuóta agus sioncrónú."
       },
-      "OMNIROUTE_RTK_TRUST_PROJECT_FILTERS": {
+      "AGENTPROXY_RTK_TRUST_PROJECT_FILTERS": {
         "description": "Cuir muinín i scagairí RTK ar leibhéal an tionscadail gan iad a bhailíochtú."
       },
-      "OMNIROUTE_ENABLE_LIVE_WS": {
+      "AGENTPROXY_ENABLE_LIVE_WS": {
         "description": "Tosaigh freastalaí WebSocket fíor-ama na deaise tráth an allmhairithe ar phort lúb-ais 20132. Socraigh an bhratach go 0 nó false chun é a dhíchumasú. Chun é a nochtadh ar LAN, teastaíonn LIVE_WS_HOST=0.0.0.0 agus LIVE_WS_ALLOWED_ORIGINS freisin."
       },
-      "OMNIROUTE_CODEX_WS_ENABLED": {
+      "AGENTPROXY_CODEX_WS_ENABLED": {
         "description": "Ceadaigh do Codex Responses a úsáid thar WebSocket. Nuair atá sé díchumasaithe, téann Codex ar ais chuig HTTP Responses."
       },
-      "OMNIROUTE_EMERGENCY_FALLBACK": {
+      "AGENTPROXY_EMERGENCY_FALLBACK": {
         "description": "Seol iarratais a bhfuil buiséad ídithe acu chuig an soláthraí agus múnla cúltaca éigeandála saor in aisce."
       },
       "STREAM_RECOVERY_ENABLED": {
@@ -13103,16 +13103,16 @@
       "PRICING_SYNC_ENABLED": {
         "description": "Sioncrónaigh sonraí praghsála go huathoibríoch. Ní mór don athróg timpeallachta PRICING_SYNC_ENABLED a bheith true freisin."
       },
-      "OMNIROUTE_AUTO_SYNC_CODEX_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CODEX_PROFILES": {
         "description": "Tar éis sioncrónú soláthraithe agus múnlaí, athghin próifílí ~/.codex/*.config.toml ón gcatalóg bheo. Ní athraíonn sé seo cumraíocht ghníomhach ná réamhshocraithe Codex riamh agus tá sé as de réir réamhshocraithe."
       },
-      "OMNIROUTE_AUTO_SYNC_CLAUDE_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CLAUDE_PROFILES": {
         "description": "Tar éis sioncrónú soláthraithe agus múnlaí, athghin próifílí ~/.claude/profiles/'<name>'/settings.json ón gcatalóg bheo. Ní athraíonn sé seo cumraíocht ghníomhach ná réamhshocraithe Claude riamh agus tá sé as de réir réamhshocraithe."
       },
-      "OMNIROUTE_DISABLE_LOCAL_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_LOCAL_HEALTHCHECK": {
         "description": "Díchumasaigh críochphointe seiceála sláinte na háisce logánta."
       },
-      "OMNIROUTE_DISABLE_TOKEN_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_TOKEN_HEALTHCHECK": {
         "description": "Díchumasaigh an tseiceáil sláinte um bhailíochtú tócan."
       },
       "SKILLS_SANDBOX_NETWORK_ENABLED": {
@@ -14249,5 +14249,5 @@
     "partnerLinkNote": "Nasc comhpháirtíochta",
     "dismissAriaLabel": "Dún"
   },
-  "featureFlagOmnirouteDisableThinkingLevelVariantsDescription": "Díchumasaigh giniúint leaganacha leibhéil smaointeoireachta (m.sh. -low, -medium, -high) i gcatalóg /v1/models."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Díchumasaigh giniúint leaganacha leibhéil smaointeoireachta (m.sh. -low, -medium, -high) i gcatalóg /v1/models."
 }

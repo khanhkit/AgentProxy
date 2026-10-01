@@ -271,7 +271,7 @@
     "max_restarts": "포기하기 전 30초 이내 최대 충돌 재시작 횟수(기본값: 2)",
     "tray": "시스템 트레이에서 시작(데스크톱 전용, 선택 사항)",
     "no_tray": "시스템 트레이 아이콘 비활성화",
-    "ready_timeout": "준비 상태 프로브 제한 시간(ms)(OMNIROUTE_READY_TIMEOUT_MS로도 설정 가능, 기본값: 60000)",
+    "ready_timeout": "준비 상태 프로브 제한 시간(ms)(AGENTPROXY_READY_TIMEOUT_MS로도 설정 가능, 기본값: 60000)",
     "tls_cert": "HTTPS 제공을 위한 TLS 인증서(PEM) 경로(OMNIROUTE_TLS_CERT로도 설정 가능)",
     "tls_key": "HTTPS 제공을 위한 TLS 비공개 키(PEM) 경로(OMNIROUTE_TLS_KEY로도 설정 가능)"
   },

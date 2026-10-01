@@ -259,7 +259,7 @@
     "max_restarts": "Bilangan maksimum mula semula akibat ranap dalam tempoh 30s sebelum berhenti mencuba (lalai: 2)",
     "tray": "Mulakan dalam dulang sistem (desktop sahaja, ikut serta)",
     "no_tray": "Lumpuhkan ikon dulang sistem",
-    "ready_timeout": "Tamat masa prob kesediaan dalam ms (juga OMNIROUTE_READY_TIMEOUT_MS, lalai 60000)",
+    "ready_timeout": "Tamat masa prob kesediaan dalam ms (juga AGENTPROXY_READY_TIMEOUT_MS, lalai 60000)",
     "tls_cert": "Laluan ke sijil TLS (PEM) untuk menyediakan HTTPS (juga OMNIROUTE_TLS_CERT)",
     "tls_key": "Laluan ke kunci peribadi TLS (PEM) untuk menyediakan HTTPS (juga OMNIROUTE_TLS_KEY)"
   },

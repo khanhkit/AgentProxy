@@ -3771,6 +3771,16 @@
     "disableSessionStickiness": "Disable session stickiness",
     "sessionStickinessEnabled": "Stickiness on",
     "sessionStickinessDisabled": "Stickiness off",
+    "stickyLimitInherit": "inherit",
+    "stickyLimitEffective": "Effective {value} ({source})",
+    "stickyLimitSourceCombo": "combo",
+    "stickyLimitSourceComboDefaults": "combo defaults",
+    "stickyLimitSourceGlobal": "global default",
+    "connectionAwareExpansion": "Connection-aware expansion",
+    "triStateInherit": "inherit",
+    "connectionAwareExpansionOn": "On",
+    "connectionAwareExpansionOff": "Off",
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation.",
     "kimiPresetTitle": "Kimi Coding preset",
     "kimiPresetDescription": "Kimi K3 as the primary model (Moonshot API), with automatic fallback to your Kimi Code connections (kimi-coding, kimi-web) when configured.",
     "kimiPresetCta": "Add preset",
@@ -12716,7 +12726,12 @@
     "createDahlTokenFailed": "Failed to create Dahl token",
     "providerProxy": "Proxy",
     "providerProxyConfigureHint": "Configure proxy",
-    "providerProxyTitleConfigured": "Proxy configured: {host}"
+    "providerProxyTitleConfigured": "Proxy configured: {host}",
+    "inheritConnectionOption": "No own proxy (inherits connection)",
+    "inheritedProxy": "Inherits connection: {host}",
+    "inheritedPool": "Inherits connection pool ({count})",
+    "poolEmptyBlocked": "Pool empty — requests fail (not direct)",
+    "directEgress": "Direct (no proxy)"
   },
   "gamification": {
     "leaderboardScopes": {

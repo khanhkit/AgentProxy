@@ -986,7 +986,7 @@
     "batchFileDownloadFull": "සම්පූර්ණ ගොනුව බාගන්න"
   },
   "disabled": "අක්රියයි",
-  "featureFlagOmnirouteEmergencyFallbackDescription": "අයවැය අවසන් වූ ඉල්ලීම් හදිසි නොමිලේ විකල්ප සපයන්නා/මාදිලිය වෙත යොමු කරන්න.",
+  "featureFlagAgentProxyEmergencyFallbackDescription": "අයවැය අවසන් වූ ඉල්ලීම් හදිසි නොමිලේ විකල්ප සපයන්නා/මාදිලිය වෙත යොමු කරන්න.",
   "featureFlagArenaEloSyncEnabledDescription": "මාදිලි බුද්ධි ශ්රේණිගත කිරීම් සඳහා Arena AI ප්රමුඛතා පුවරුවේ ELO දත්ත කාලානුරූපව සමමුහුර්ත කිරීම සබල කරන්න.",
   "featureFlagUniversalContextHandoffEnabledDescription": "සංයෝජන මාර්ගගත කිරීමේදී මාදිලි මාරු වන විට සංවාද සාරාංශ ජනනය කර ඇතුළත් කරන්න. මාදිලි මාරු කිරීම් ස්වාධීනව සැලකීමට සහ පවතින හා අනාගත සියලු සංයෝජන සඳහා පසුබිම් භාරදීමේ ඉල්ලීම් වැළැක්වීමට මෙය අක්රිය කරන්න.",
   "featureFlagExposeCcDiscoveryAliasesDescription": "Claude Code ද්වාරයේ මාදිලි සොයාගැනීම් ලැයිස්තුවේ Claude නොවන මාදිලි පෙන්වීම සඳහා /v1/models හි claude/&lt;provider&gt;/&lt;model&gt; කැඩපත් හැඳුනුම් ප්රචාරය කරන්න. අවවාදයයි: ගෝලීයව සබල කළ විට සියලු සේවාලාභීන් සඳහා නාමාවලි ඇතුළත් කිරීම් දෙගුණ වේ.",
@@ -2254,7 +2254,7 @@
     "requestFlowAria": "ඔබේ යෙදුම API යතුරක් හරහා OmniRoute වෙත ඉල්ලීම් යවයි",
     "requestFlowYourApp": "ඔබේ යෙදුම",
     "requestFlowApiKey": "API යතුර",
-    "requestFlowOmniRoute": "OmniRoute",
+    "requestFlowAgentProxy": "AgentProxy",
     "totalKeys": "මුළු යතුරු",
     "restricted": "සීමා කළ",
     "totalRequests": "මුළු ඉල්ලීම්",
@@ -2761,7 +2761,7 @@
     "configurationSaved": "වින්යාසය සාර්ථකව සුරකින ලදී.",
     "failedToSave": "වින්යාසය සුරැකීමට අසමත් විය.",
     "noApiKeysCreateOne": "API යතුරු නොමැත - යතුරු පිටුවේ එකක් සාදන්න",
-    "defaultOmnirouteKey": "sk_omniroute (පෙරනිමිය)",
+    "defaultAgentProxyKey": "sk_agentproxy (පෙරනිමිය)",
     "selectModel": "ආකෘතිය තෝරන්න",
     "selectModelForAlias": "{alias} සඳහා ආකෘතිය තෝරන්න",
     "selectModelForTool": "{tool} සඳහා ආකෘතිය තෝරන්න",
@@ -2858,13 +2858,13 @@
     "applied": "යොදන ලදී!",
     "failed": "අසාර්ථකයි",
     "resetDone": "යළි සකසන ලදී!",
-    "omnirouteConfiguredOpenAiCompatible": "OmniRoute, OpenAI සමඟ අනුකූල සැපයුම්කරුවෙකු ලෙස වින්යාස කර ඇත",
+    "agentproxyConfiguredOpenAiCompatible": "AgentProxy, OpenAI සමඟ අනුකූල සැපයුම්කරුවෙකු ලෙස වින්යාස කර ඇත",
     "provider": "සැපයුම්කරු",
     "model": "ආකෘතිය",
     "providers": "සැපයුම්කරුවන්",
     "auth": "සත්යාපනය",
     "noApiKeysAvailable": "API යතුරු නොමැත",
-    "usingDefaultOmniroute": "පෙරනිමිය භාවිත කරයි: sk_omniroute",
+    "usingDefaultAgentProxy": "පෙරනිමිය භාවිත කරයි: sk_agentproxy",
     "updateConfig": "වින්යාසය යාවත්කාලීන කරන්න",
     "applyConfig": "වින්යාසය යොදන්න",
     "noBackupsAvailable": "උපස්ථ පිටපත් නොමැත.",
@@ -3145,8 +3145,8 @@
     "hermesConfiguredRoles": "භූමිකා {configured}/{total}ක් වින්යාස කර ඇත",
     "hermesQuickApply": "එකම ආකෘතිය සියලු භූමිකාවලට ඉක්මනින් යොදන්න:",
     "hermesApplyModelToAll": "{model} සෑම භූමිකාවකටම යොදන්න",
-    "hermesViaOmniRoute": "{provider} (OmniRoute හරහා)",
-    "hermesNotOmniRoute": "{provider} (OmniRoute නොවේ)",
+    "hermesViaAgentProxy": "{provider} (AgentProxy හරහා)",
+    "hermesNotAgentProxy": "{provider} (AgentProxy නොවේ)",
     "hermesRemovePendingRole": "මෙම භූමිකාව පොරොත්තු වෙනස්කම්වලින් ඉවත් කරන්න",
     "hermesApply": "Hermes Agent වෙත යොදන්න",
     "hermesRolesWillUpdate": "{count, plural, one {# භූමිකාවක් යාවත්කාලීන කෙරේ} other {# භූමිකා යාවත්කාලීන කෙරේ}}",
@@ -4125,7 +4125,7 @@
     "vscodeAliasModelsLabel": "VS Code මාදිලි",
     "vscodeAliasChatLabel": "VS Code සංවාදය",
     "localServer": "ස්ථානීය සේවාදායකය",
-    "cloudOmniroute": "Cloud OmniRoute",
+    "cloudAgentProxy": "Cloud AgentProxy",
     "copyUrl": "URL පිටපත් කරන්න",
     "badgeLoopbackTooltip": "මෙම අන්ත ලක්ෂ්යයට ප්රවේශ විය හැක්කේ ස්ථානීයව පමණි (loopback පමණි)",
     "badgeAlwaysProtectedTooltip": "මෙම අන්ත ලක්ෂ්යය සැමවිටම ආරක්ෂිත වන අතර අවසර දීම අවශ්ය වේ",
@@ -9962,7 +9962,7 @@
     "howItWorksStep3Description": "ඉල්ලීම OpenAI, Anthropic, Gemini හෝ වෙනත් සැපයුම්කරුවෙකු විසින් ක්ෂණිකව සපුරාලනු ලැබේ.",
     "getStartedIn30Seconds": "තත්පර 30කින් ආරම්භ කරන්න",
     "getStartedDescription": "OmniRoute ස්ථාපනය කර, වෙබ් උපකරණ පුවරුව හරහා ඔබගේ සැපයුම්කරුවන් වින්යාස කර, AI ඉල්ලීම් route කිරීම ආරම්භ කරන්න.",
-    "installOmniRoute": "OmniRoute ස්ථාපනය කරන්න",
+    "installAgentProxy": "AgentProxy ස්ථාපනය කරන්න",
     "installStepDescription": "server එක ක්ෂණිකව ආරම්භ කිරීමට npx විධානය ක්රියාත්මක කරන්න",
     "openDashboard": "උපකරණ පුවරුව විවෘත කරන්න",
     "openDashboardStepDescription": "වෙබ් අතුරුමුහුණත හරහා සපයන්නන් සහ API යතුරු වින්යාස කරන්න",
@@ -9971,7 +9971,7 @@
     "terminal": "ටර්මිනලය",
     "copy": "පිටපත් කරන්න",
     "copied": "✓ පිටපත් කරන ලදී",
-    "startingOmniRoute": "OmniRoute ආරම්භ වෙමින් පවතී...",
+    "startingAgentProxy": "AgentProxy ආරම්භ වෙමින් පවතී...",
     "serverRunningOnLabel": "සේවාදායකය ක්රියාත්මක වන්නේ",
     "dashboardLabel": "උපකරණ පුවරුව",
     "readyToRoute": "යොමු කිරීමට සූදානම්! ✓",
@@ -10365,7 +10365,7 @@
     "versionCommandPlaceholder": "උදා., my-agent --version",
     "architectureTitle": "නියෝජිත ඉලක්ක ක්රියා කරන ආකාරය",
     "flowLocalBinary": "3 · තමන්ගේම සත්යාපනය සහිත CLI ක්රියාවලිය",
-    "flowOmniRoute": "1 · ඉල්ලීම OmniRoute වෙත පැමිණේ",
+    "flowAgentProxy": "1 · ඉල්ලීම AgentProxy වෙත පැමිණේ",
     "agentNamePlaceholder": "උදා., මගේ අභිරුචි නියෝජිතයා",
     "architectureDescription": "ඉල්ලීමක් පැමිණි විට, OmniRoute හට දේශීය CLI ද්විමය ගොනුවක් (උදා., claude, codex, goose) ආරම්භ කර එය හරහා ඉල්ලීම යැවිය හැක. CLI එක තමන්ගේම අක්තපත්ර භාවිතයෙන් ඉල්ලීම සකසා, ප්රතිඵලය OmniRoute හරහා ආපසු ලබා දෙයි.",
     "flowExecute": "4 · ප්රතිචාරය සේවාලාභියා වෙත ආපසු යවයි",
@@ -10382,8 +10382,8 @@
     "agentUseCaseHint": "ACP ප්රොටෝකෝලය හරහා ක්රියාත්මක කිරීමේ ඉලක්කයක් ලෙස භාවිත කළ හැක",
     "flowDiagramClient": "සේවාලාභී යෙදුම",
     "flowDiagramClientDesc": "SDK, API, හෝ ඉහළ ප්රවාහ සේවාව",
-    "flowDiagramOmniRoute": "OmniRoute",
-    "flowDiagramOmniRouteDesc": "ඉල්ලීම ලබාගෙන ඉලක්කය තෝරයි",
+    "flowDiagramAgentProxy": "AgentProxy",
+    "flowDiagramAgentProxyDesc": "ඉල්ලීම ලබාගෙන ඉලක්කය තෝරයි",
     "flowDiagramSpawn": "ක්රියාවලිය ආරම්භ කිරීම",
     "flowDiagramSpawnDesc": "stdio හරහා CLI ද්විමය ගොනුව දියත් කරයි",
     "flowDiagramCli": "CLI ඒජන්තය",
@@ -12938,16 +12938,16 @@
       "PROXY_AUTO_SELECT_ENABLED": {
         "description": "සම්බන්ධතාවයකට ප්රොක්සියක් පවරා නොමැති විට, ක්රියා කරන පළමු රෙජිස්ට්රි ප්රොක්සිය ස්වයංක්රියව තෝරන්න. එසේ නොමැති නම් එක් රෙජිස්ට්රි ප්රොක්සියක් සියලු ගමනාගමනය සඳහා ගෝලීය පසුබැසුමක් වන බැවින් පෙරනිමියෙන් අක්රිය කර ඇත (#3332)."
       },
-      "OMNIROUTE_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
+      "AGENTPROXY_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
         "description": "ප්රොක්සි වෙත ළඟා විය හැකිදැයි කරන පරීක්ෂණ අසමත් වූ විට, OAuth සහ සපයන්නා වලංගු කිරීමේ ප්රවාහවලට නිශ්චිතව බැඳූ ප්රොක්සියක් මඟහැරීමට ඉඩ දෙන්න. මෙය ගිණුමේ පිටතට යන IP ලිපිනය වෙනස් කළ හැකි බැවින් පෙරනිමියෙන් අක්රිය කර ඇත."
       },
       "MITM_DISABLE_TLS_VERIFY": {
         "description": "MITM ප්රොක්සිය සඳහා TLS සහතික සත්යාපනය අක්රිය කරන්න."
       },
-      "OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS": {
         "description": "පෞද්ගලික හෝ අභ්යන්තර ජාල වෙත යොමු වන සපයන්නාගේ URL සඳහා ඉඩ දෙන්න."
       },
-      "OMNIROUTE_ALLOW_LOCAL_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_LOCAL_PROVIDER_URLS": {
         "description": "localhost, LAN සහ පෞද්ගලික IP පරාසවල ඇති සපයන්නන්ට ඉඩ දෙන්න. දේශීය OpenAI-අනුකූල ආකෘති සඳහා මෙය අවශ්ය වන අතර පෙරනිමියෙන් සබල කර ඇත. 169.254.169.254 වැනි වලාකුළු-පාරදත්ත අන්ත ලක්ෂ්ය තවදුරටත් අවහිර කර ඇත."
       },
       "ENABLE_CC_COMPATIBLE_PROVIDER": {
@@ -12969,28 +12969,28 @@
       "RESPONSES_PASSTHROUGH_DROP_COMMENTARY": {
         "description": "සේවාලාභීන් වෙත යැවීමට පෙර Responses API passthrough ප්රවාහවලින් අභ්යන්තර විවරණ-අදියර ප්රතිදාන අයිතම ඉවත් කරන්න. අමු upstream විවරණය ලැබීමට මෙම ධජය අක්රිය කරන්න."
       },
-      "OMNIROUTE_MCP_ENFORCE_SCOPES": {
+      "AGENTPROXY_MCP_ENFORCE_SCOPES": {
         "description": "MCP මෙවලම් ප්රවේශය සඳහා විෂයපථ සීමා බලාත්මක කරන්න."
       },
-      "OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS": {
+      "AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS": {
         "description": "ටෝකන භාවිතය අඩු කිරීමට MCP මෙවලම් විස්තර සම්පීඩනය කරන්න."
       },
-      "OMNIROUTE_ENABLE_RUNTIME_BACKGROUND_TASKS": {
+      "AGENTPROXY_ENABLE_RUNTIME_BACKGROUND_TASKS": {
         "description": "ධාවන කාලයේදී පසුබිම් කාර්ය සැකසීම සබල කරන්න."
       },
-      "OMNIROUTE_DISABLE_BACKGROUND_SERVICES": {
+      "AGENTPROXY_DISABLE_BACKGROUND_SERVICES": {
         "description": "කෝටා නැවුම් කිරීම සහ සමමුහුර්තකරණය ඇතුළුව සියලුම පසුබිම් සේවා අක්රිය කරන්න."
       },
-      "OMNIROUTE_RTK_TRUST_PROJECT_FILTERS": {
+      "AGENTPROXY_RTK_TRUST_PROJECT_FILTERS": {
         "description": "වලංගුකරණයකින් තොරව ව්යාපෘති-මට්ටමේ RTK පෙරහන් විශ්වාස කරන්න."
       },
-      "OMNIROUTE_ENABLE_LIVE_WS": {
+      "AGENTPROXY_ENABLE_LIVE_WS": {
         "description": "ආයාත කිරීමේදී loopback පෝට් 20132 මත තත්ය-කාලීන උපකරණ පුවරුවේ WebSocket සේවාදායකය ආරම්භ කරන්න. එය අක්රිය කිරීමට ධජය 0 හෝ false ලෙස සකසන්න. LAN වෙත නිරාවරණය කිරීම සඳහා LIVE_WS_HOST=0.0.0.0 සහ LIVE_WS_ALLOWED_ORIGINS ද අවශ්ය වේ."
       },
-      "OMNIROUTE_CODEX_WS_ENABLED": {
+      "AGENTPROXY_CODEX_WS_ENABLED": {
         "description": "WebSocket හරහා Responses භාවිත කිරීමට Codex වෙත ඉඩ දෙන්න. අක්රිය කළ විට, Codex HTTP Responses වෙත මාරු වේ."
       },
-      "OMNIROUTE_EMERGENCY_FALLBACK": {
+      "AGENTPROXY_EMERGENCY_FALLBACK": {
         "description": "අයවැය අවසන් වූ ඉල්ලීම් හදිසි නොමිලේ fallback සපයන්නා සහ ආකෘතිය වෙත යොමු කරන්න."
       },
       "STREAM_RECOVERY_ENABLED": {
@@ -13017,16 +13017,16 @@
       "PRICING_SYNC_ENABLED": {
         "description": "මිලකරණ දත්ත ස්වයංක්රීයව සමමුහුර්ත කරන්න. PRICING_SYNC_ENABLED පරිසර විචල්යය ද true විය යුතුය."
       },
-      "OMNIROUTE_AUTO_SYNC_CODEX_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CODEX_PROFILES": {
         "description": "සපයන්නා-ආකෘති සමමුහුර්තකරණයෙන් පසු, සජීවී නාමාවලියෙන් ~/.codex/*.config.toml පැතිකඩ නැවත ජනනය කරන්න. මෙය කිසිවිටෙක සක්රිය හෝ පෙරනිමි Codex වින්යාසය වෙනස් නොකරන අතර පෙරනිමියෙන් අක්රිය කර ඇත."
       },
-      "OMNIROUTE_AUTO_SYNC_CLAUDE_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CLAUDE_PROFILES": {
         "description": "සපයන්නා-ආකෘති සමමුහුර්තකරණයෙන් පසු, සජීවී නාමාවලියෙන් ~/.claude/profiles/'<name>'/settings.json පැතිකඩ නැවත ජනනය කරන්න. මෙය කිසිවිටෙක සක්රිය හෝ පෙරනිමි Claude වින්යාසය වෙනස් නොකරන අතර පෙරනිමියෙන් අක්රිය කර ඇත."
       },
-      "OMNIROUTE_DISABLE_LOCAL_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_LOCAL_HEALTHCHECK": {
         "description": "ස්ථානීය instance එකේ සෞඛ්ය-පරීක්ෂණ අන්ත ලක්ෂ්යය අක්රිය කරන්න."
       },
-      "OMNIROUTE_DISABLE_TOKEN_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_TOKEN_HEALTHCHECK": {
         "description": "ටෝකන-වලංගුකරණ සෞඛ්ය පරීක්ෂණය අක්රිය කරන්න."
       },
       "SKILLS_SANDBOX_NETWORK_ENABLED": {
@@ -14158,5 +14158,5 @@
     "partnerLinkNote": "හවුල්කරු සබැඳිය",
     "dismissAriaLabel": "ඉවත දමන්න"
   },
-  "featureFlagOmnirouteDisableThinkingLevelVariantsDescription": "/v1/models නාමාවලිය තුළ චින්තන මට්ටමේ ප්රභේද (උදා. -low, -medium, -high) ජනනය කිරීම අක්රිය කරන්න."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "/v1/models නාමාවලිය තුළ චින්තන මට්ටමේ ප්රභේද (උදා. -low, -medium, -high) ජනනය කිරීම අක්රිය කරන්න."
 }

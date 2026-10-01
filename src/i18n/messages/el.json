@@ -986,7 +986,7 @@
     "batchFileDownloadFull": "Λήψη Πλήρους Αρχείου"
   },
   "disabled": "Απενεργοποιημένο",
-  "featureFlagOmnirouteEmergencyFallbackDescription": "Δρομολόγηση αιτημάτων των οποίων ο προϋπολογισμός έχει εξαντληθεί στον δωρεάν εφεδρικό πάροχο/μοντέλο έκτακτης ανάγκης.",
+  "featureFlagAgentProxyEmergencyFallbackDescription": "Δρομολόγηση αιτημάτων των οποίων ο προϋπολογισμός έχει εξαντληθεί στον δωρεάν εφεδρικό πάροχο/μοντέλο έκτακτης ανάγκης.",
   "featureFlagArenaEloSyncEnabledDescription": "Ενεργοποίηση περιοδικού συγχρονισμού ELO του πίνακα κατάταξης Arena AI για βαθμολογίες ευφυΐας μοντέλων.",
   "featureFlagUniversalContextHandoffEnabledDescription": "Δημιουργία και εισαγωγή περιλήψεων συνομιλιών όταν η δρομολόγηση combo αλλάζει μοντέλα. Απενεργοποιήστε για να αντιμετωπίζονται οι αλλαγές μοντέλων ανεξάρτητα και να αποτρέπονται αιτήματα παρασκηνίου handoff για όλα τα υπάρχοντα και μελλοντικά combo.",
   "featureFlagExposeCcDiscoveryAliasesDescription": "Διαφήμιση αναγνωριστικών καθρέφτη claude/&lt;provider&gt;/&lt;model&gt; στο /v1/models ώστε η ανακάλυψη μοντέλων πύλης Claude Code να εμφανίζει μη-Claude μοντέλα. Προειδοποίηση: διπλασιάζει τις εγγραφές καταλόγου για όλους τους πελάτες όταν ενεργοποιείται καθολικά.",
@@ -2322,7 +2322,7 @@
     "requestFlowAria": "Η εφαρμογή σας αποστέλλει αιτήματα μέσω ενός κλειδιού API στο OmniRoute",
     "requestFlowYourApp": "Η εφαρμογή σας",
     "requestFlowApiKey": "Κλειδί API",
-    "requestFlowOmniRoute": "OmniRoute",
+    "requestFlowAgentProxy": "AgentProxy",
     "totalKeys": "Σύνολο Κλειδιών",
     "restricted": "Περιορισμένα",
     "totalRequests": "Σύνολο Αιτημάτων",
@@ -2829,7 +2829,7 @@
     "configurationSaved": "Η διαμόρφωση αποθηκεύτηκε με επιτυχία.",
     "failedToSave": "Αποτυχία αποθήκευσης διαμόρφωσης.",
     "noApiKeysCreateOne": "Δεν υπάρχουν κλειδιά API - Δημιουργήστε ένα στη σελίδα Κλειδιά",
-    "defaultOmnirouteKey": "sk_omniroute (προεπιλογή)",
+    "defaultAgentProxyKey": "sk_agentproxy (προεπιλογή)",
     "selectModel": "Επιλογή Μοντέλου",
     "selectModelForAlias": "Επιλογή μοντέλου για {alias}",
     "selectModelForTool": "Επιλογή μοντέλου για {tool}",
@@ -2926,13 +2926,13 @@
     "applied": "Εφαρμόστηκε!",
     "failed": "Αποτυχία",
     "resetDone": "Επαναφέρθηκε!",
-    "omnirouteConfiguredOpenAiCompatible": "Το OmniRoute έχει ρυθμιστεί ως πάροχος συμβατός με το OpenAI",
+    "agentproxyConfiguredOpenAiCompatible": "Το AgentProxy έχει ρυθμιστεί ως πάροχος συμβατός με το OpenAI",
     "provider": "Πάροχος",
     "model": "Μοντέλο",
     "providers": "Πάροχοι",
     "auth": "Έλεγχος ταυτότητας",
     "noApiKeysAvailable": "Δεν υπάρχουν διαθέσιμα κλειδιά API",
-    "usingDefaultOmniroute": "Χρήση προεπιλεγμένου: sk_omniroute",
+    "usingDefaultAgentProxy": "Χρήση προεπιλεγμένου: sk_agentproxy",
     "updateConfig": "Ενημέρωση ρυθμίσεων",
     "applyConfig": "Εφαρμογή ρυθμίσεων",
     "noBackupsAvailable": "Δεν υπάρχουν διαθέσιμα αντίγραφα ασφαλείας.",
@@ -3213,8 +3213,8 @@
     "hermesConfiguredRoles": "{configured}/{total} ρόλοι",
     "hermesQuickApply": "Εφαρμόστε γρήγορα το ίδιο μοντέλο σε όλους τους ρόλους:",
     "hermesApplyModelToAll": "Εφαρμογή {model} σε κάθε ρόλο",
-    "hermesViaOmniRoute": "{provider} (μέσω OmniRoute)",
-    "hermesNotOmniRoute": "{provider} (όχι μέσω OmniRoute)",
+    "hermesViaAgentProxy": "{provider} (μέσω AgentProxy)",
+    "hermesNotAgentProxy": "{provider} (όχι μέσω AgentProxy)",
     "hermesRemovePendingRole": "Αφαίρεση αυτού του ρόλου από τις εκκρεμείς αλλαγές",
     "hermesApply": "Εφαρμογή στον Hermes Agent",
     "hermesRolesWillUpdate": "{count, plural, one {# ρόλος θα ενημερωθεί} other {# ρόλοι θα ενημερωθούν}}",
@@ -4210,7 +4210,7 @@
     "vscodeAliasModelsLabel": "Μοντέλα VS Code",
     "vscodeAliasChatLabel": "Συνομιλία VS Code",
     "localServer": "Τοπικός Διακομιστής",
-    "cloudOmniroute": "OmniRoute στο cloud",
+    "cloudAgentProxy": "AgentProxy στο cloud",
     "copyUrl": "Αντιγραφή URL",
     "badgeLoopbackTooltip": "Αυτό το endpoint είναι προσβάσιμο μόνο τοπικά (μόνο loopback)",
     "badgeAlwaysProtectedTooltip": "Αυτό το endpoint προστατεύεται πάντα και απαιτεί εξουσιοδότηση",
@@ -10047,7 +10047,7 @@
     "howItWorksStep3Description": "Το αίτημα διεκπεραιώνεται άμεσα από τους OpenAI, Anthropic, Gemini ή άλλους παρόχους.",
     "getStartedIn30Seconds": "Ξεκινήστε σε 30 δευτερόλεπτα",
     "getStartedDescription": "Εγκαταστήστε το OmniRoute, ρυθμίστε τους παρόχους σας μέσω του διαδικτυακού πίνακα ελέγχου και αρχίστε να δρομολογείτε αιτήματα AI.",
-    "installOmniRoute": "Εγκατάσταση OmniRoute",
+    "installAgentProxy": "Εγκατάσταση AgentProxy",
     "installStepDescription": "Εκτελέστε την εντολή npx για άμεση εκκίνηση του διακομιστή",
     "openDashboard": "Άνοιγμα πίνακα ελέγχου",
     "openDashboardStepDescription": "Ρυθμίστε παρόχους και κλειδιά API μέσω της διαδικτυακής διεπαφής",
@@ -10056,7 +10056,7 @@
     "terminal": "τερματικό",
     "copy": "Αντιγραφή",
     "copied": "✓ Αντιγράφηκε",
-    "startingOmniRoute": "Εκκίνηση του OmniRoute...",
+    "startingAgentProxy": "Εκκίνηση του AgentProxy...",
     "serverRunningOnLabel": "Ο διακομιστής εκτελείται στη διεύθυνση",
     "dashboardLabel": "Πίνακας ελέγχου",
     "readyToRoute": "Έτοιμο για δρομολόγηση! ✓",
@@ -10450,7 +10450,7 @@
     "versionCommandPlaceholder": "π.χ., my-agent --version",
     "architectureTitle": "Πώς λειτουργούν οι στόχοι Agent",
     "flowLocalBinary": "3 · Διεργασία CLI με δική της αυθεντικοποίηση",
-    "flowOmniRoute": "1 · Το αίτημα φτάνει στο OmniRoute",
+    "flowAgentProxy": "1 · Το αίτημα φτάνει στο AgentProxy",
     "agentNamePlaceholder": "π.χ., Ο προσαρμοσμένος Agent μου",
     "architectureDescription": "Όταν φτάνει ένα αίτημα, το OmniRoute μπορεί να εκκινήσει ένα τοπικό εκτελέσιμο CLI (π.χ., claude, codex, goose) και να διοχετεύσει το αίτημα μέσω αυτού. Το CLI επεξεργάζεται το αίτημα χρησιμοποιώντας τα δικά του διαπιστευτήρια και επιστρέφει το αποτέλεσμα μέσω του OmniRoute.",
     "flowExecute": "4 · Η απάντηση επιστρέφεται στον πελάτη",
@@ -10467,8 +10467,8 @@
     "agentUseCaseHint": "Μπορεί να χρησιμοποιηθεί ως στόχος εκτέλεσης μέσω πρωτοκόλλου ACP",
     "flowDiagramClient": "Εφαρμογή-πελάτης",
     "flowDiagramClientDesc": "SDK, API ή υπηρεσία ανάντη",
-    "flowDiagramOmniRoute": "OmniRoute",
-    "flowDiagramOmniRouteDesc": "Λαμβάνει το αίτημα και επιλέγει στόχο",
+    "flowDiagramAgentProxy": "AgentProxy",
+    "flowDiagramAgentProxyDesc": "Λαμβάνει το αίτημα και επιλέγει στόχο",
     "flowDiagramSpawn": "Εκκίνηση διεργασίας",
     "flowDiagramSpawnDesc": "Εκκινεί το εκτελέσιμο CLI μέσω stdio",
     "flowDiagramCli": "Πράκτορας CLI",
@@ -13033,16 +13033,16 @@
       "PROXY_AUTO_SELECT_ENABLED": {
         "description": "Όταν δεν έχει εκχωρηθεί διακομιστής μεσολάβησης σε μια σύνδεση, επιλέγεται αυτόματα ο πρώτος λειτουργικός διακομιστής μεσολάβησης του μητρώου. Είναι απενεργοποιημένο από προεπιλογή, επειδή διαφορετικά ένας διακομιστής μεσολάβησης του μητρώου γίνεται καθολική εφεδρική επιλογή για όλη την κίνηση (#3332)."
       },
-      "OMNIROUTE_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
+      "AGENTPROXY_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
         "description": "Να επιτρέπεται στις ροές OAuth και επικύρωσης παρόχου να παρακάμπτουν έναν καθορισμένο διακομιστή μεσολάβησης όταν αποτυγχάνουν οι έλεγχοι προσβασιμότητάς του. Είναι απενεργοποιημένο από προεπιλογή, επειδή αυτό μπορεί να αλλάξει τη διεύθυνση IP εξόδου του λογαριασμού."
       },
       "MITM_DISABLE_TLS_VERIFY": {
         "description": "Απενεργοποίηση επαλήθευσης πιστοποιητικού TLS για τον διακομιστή μεσολάβησης MITM."
       },
-      "OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS": {
         "description": "Να επιτρέπονται URL παρόχων που παραπέμπουν σε ιδιωτικά ή εσωτερικά δίκτυα."
       },
-      "OMNIROUTE_ALLOW_LOCAL_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_LOCAL_PROVIDER_URLS": {
         "description": "Να επιτρέπονται πάροχοι σε localhost, LAN και ιδιωτικές περιοχές IP. Αυτό απαιτείται για τοπικά μοντέλα συμβατά με OpenAI και είναι ενεργοποιημένο από προεπιλογή. Τα τελικά σημεία cloud-metadata, όπως το 169.254.169.254, παραμένουν αποκλεισμένα."
       },
       "ENABLE_CC_COMPATIBLE_PROVIDER": {
@@ -13064,28 +13064,28 @@
       "RESPONSES_PASSTHROUGH_DROP_COMMENTARY": {
         "description": "Αφαίρεση στοιχείων εξόδου της εσωτερικής φάσης σχολιασμού από τις ροές διέλευσης του Responses API πριν προωθηθούν στους πελάτες. Απενεργοποιήστε αυτή τη σημαία για να λαμβάνετε την ακατέργαστη έξοδο σχολιασμού από την ανάντη υπηρεσία."
       },
-      "OMNIROUTE_MCP_ENFORCE_SCOPES": {
+      "AGENTPROXY_MCP_ENFORCE_SCOPES": {
         "description": "Επιβολή περιορισμών πεδίου εφαρμογής για την πρόσβαση σε εργαλεία MCP."
       },
-      "OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS": {
+      "AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS": {
         "description": "Συμπίεση περιγραφών εργαλείων MCP για μείωση χρήσης διακριτικών."
       },
-      "OMNIROUTE_ENABLE_RUNTIME_BACKGROUND_TASKS": {
+      "AGENTPROXY_ENABLE_RUNTIME_BACKGROUND_TASKS": {
         "description": "Ενεργοποίηση επεξεργασίας εργασιών παρασκηνίου κατά την εκτέλεση."
       },
-      "OMNIROUTE_DISABLE_BACKGROUND_SERVICES": {
+      "AGENTPROXY_DISABLE_BACKGROUND_SERVICES": {
         "description": "Απενεργοποίηση όλων των υπηρεσιών παρασκηνίου, συμπεριλαμβανομένης της ανανέωσης ποσόστωσης και του συγχρονισμού."
       },
-      "OMNIROUTE_RTK_TRUST_PROJECT_FILTERS": {
+      "AGENTPROXY_RTK_TRUST_PROJECT_FILTERS": {
         "description": "Θεώρηση των φίλτρων RTK σε επίπεδο έργου ως αξιόπιστων χωρίς επικύρωση."
       },
-      "OMNIROUTE_ENABLE_LIVE_WS": {
+      "AGENTPROXY_ENABLE_LIVE_WS": {
         "description": "Εκκίνηση του διακομιστή WebSocket του πίνακα ελέγχου πραγματικού χρόνου κατά την εισαγωγή, στη θύρα loopback 20132. Ορίστε τη σημαία σε 0 ή false για να τον απενεργοποιήσετε. Για πρόσβαση μέσω LAN απαιτούνται επίσης τα LIVE_WS_HOST=0.0.0.0 και LIVE_WS_ALLOWED_ORIGINS."
       },
-      "OMNIROUTE_CODEX_WS_ENABLED": {
+      "AGENTPROXY_CODEX_WS_ENABLED": {
         "description": "Να επιτρέπεται στο Codex να χρησιμοποιεί Responses μέσω WebSocket. Όταν αυτή η επιλογή είναι απενεργοποιημένη, το Codex χρησιμοποιεί ως εναλλακτική το HTTP Responses."
       },
-      "OMNIROUTE_EMERGENCY_FALLBACK": {
+      "AGENTPROXY_EMERGENCY_FALLBACK": {
         "description": "Δρομολόγηση αιτημάτων που έχουν εξαντλήσει τον προϋπολογισμό τους στον δωρεάν εφεδρικό πάροχο και μοντέλο έκτακτης ανάγκης."
       },
       "STREAM_RECOVERY_ENABLED": {
@@ -13112,16 +13112,16 @@
       "PRICING_SYNC_ENABLED": {
         "description": "Αυτόματος συγχρονισμός δεδομένων τιμολόγησης. Η μεταβλητή περιβάλλοντος PRICING_SYNC_ENABLED πρέπει επίσης να είναι true."
       },
-      "OMNIROUTE_AUTO_SYNC_CODEX_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CODEX_PROFILES": {
         "description": "Μετά τον συγχρονισμό παρόχου-μοντέλου, αναδημιουργία των προφίλ ~/.codex/*.config.toml από τον τρέχοντα κατάλογο. Αυτό δεν αλλάζει ποτέ την ενεργή ή την προεπιλεγμένη διαμόρφωση του Codex και είναι απενεργοποιημένο από προεπιλογή."
       },
-      "OMNIROUTE_AUTO_SYNC_CLAUDE_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CLAUDE_PROFILES": {
         "description": "Μετά τον συγχρονισμό παρόχου-μοντέλου, αναδημιουργία των προφίλ ~/.claude/profiles/'<name>'/settings.json από τον τρέχοντα κατάλογο. Αυτό δεν αλλάζει ποτέ την ενεργή ή την προεπιλεγμένη διαμόρφωση του Claude και είναι απενεργοποιημένο από προεπιλογή."
       },
-      "OMNIROUTE_DISABLE_LOCAL_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_LOCAL_HEALTHCHECK": {
         "description": "Απενεργοποίηση του endpoint ελέγχου εύρυθμης λειτουργίας της τοπικής παρουσίας."
       },
-      "OMNIROUTE_DISABLE_TOKEN_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_TOKEN_HEALTHCHECK": {
         "description": "Απενεργοποίηση του ελέγχου εύρυθμης λειτουργίας για την επικύρωση token."
       },
       "SKILLS_SANDBOX_NETWORK_ENABLED": {
@@ -14258,5 +14258,5 @@
     "partnerLinkNote": "Σύνδεσμος συνεργάτη",
     "dismissAriaLabel": "Κλείσιμο"
   },
-  "featureFlagOmnirouteDisableThinkingLevelVariantsDescription": "Απενεργοποίηση της δημιουργίας παραλλαγών επιπέδου σκέψης (π.χ. -low, -medium, -high) στον κατάλογο /v1/models."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Απενεργοποίηση της δημιουργίας παραλλαγών επιπέδου σκέψης (π.χ. -low, -medium, -high) στον κατάλογο /v1/models."
 }

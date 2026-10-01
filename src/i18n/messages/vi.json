@@ -986,8 +986,8 @@
     "batchFileDownloadFull": "Tải xuống toàn bộ tệp"
   },
   "disabled": "Đã tắt",
-  "featureFlagOmnirouteEmergencyFallbackDescription": "Định tuyến các yêu cầu đã hết ngân sách đến nhà cung cấp/mô hình dự phòng khẩn cấp miễn phí.",
-  "featureFlagOmnirouteDisableThinkingLevelVariantsDescription": "Tắt tính năng tạo biến thể cấp độ suy nghĩ (ví dụ: -low, -medium, -high) trong danh mục /v1/models.",
+  "featureFlagAgentProxyEmergencyFallbackDescription": "Định tuyến các yêu cầu đã hết ngân sách đến nhà cung cấp/mô hình dự phòng khẩn cấp miễn phí.",
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Tắt tính năng tạo biến thể cấp độ suy nghĩ (ví dụ: -low, -medium, -high) trong danh mục /v1/models.",
   "featureFlagArenaEloSyncEnabledDescription": "Bật đồng bộ ELO định kỳ từ bảng xếp hạng Arena AI để xếp hạng năng lực của mô hình.",
   "featureFlagUniversalContextHandoffEnabledDescription": "Tạo và chèn bản tóm tắt hội thoại khi định tuyến combo chuyển đổi mô hình. Tắt để xử lý các lần chuyển mô hình một cách độc lập và ngăn các yêu cầu bàn giao chạy nền cho mọi combo hiện có và trong tương lai.",
   "featureFlagExposeCcDiscoveryAliasesDescription": "Quảng bá các id phản chiếu claude/&lt;provider&gt;/&lt;model&gt; trên /v1/models để tính năng khám phá mô hình qua gateway của Claude Code liệt kê được các mô hình không phải Claude. Cảnh báo: khi bật ở phạm vi toàn cục, số mục trong danh mục tăng gấp đôi với mọi client.",
@@ -2255,7 +2255,7 @@
     "requestFlowAria": "Ứng dụng của bạn gửi yêu cầu qua một API key tới OmniRoute",
     "requestFlowYourApp": "Ứng dụng của bạn",
     "requestFlowApiKey": "Khóa API",
-    "requestFlowOmniRoute": "OmniRoute",
+    "requestFlowAgentProxy": "AgentProxy",
     "totalKeys": "Tổng số khóa",
     "restricted": "Bị hạn chế",
     "totalRequests": "Tổng số yêu cầu",
@@ -2762,7 +2762,7 @@
     "configurationSaved": "Đã lưu cấu hình thành công.",
     "failedToSave": "Không thể lưu cấu hình.",
     "noApiKeysCreateOne": "Không có khóa API - Hãy tạo một khóa trong trang Khóa",
-    "defaultOmnirouteKey": "sk_omniroute (mặc định)",
+    "defaultAgentProxyKey": "sk_agentproxy (mặc định)",
     "selectModel": "Chọn mô hình",
     "selectModelForAlias": "Chọn mô hình cho {alias}",
     "selectModelForTool": "Chọn mô hình cho {tool}",
@@ -2859,13 +2859,13 @@
     "applied": "Đã áp dụng!",
     "failed": "Thất bại",
     "resetDone": "Đã đặt lại!",
-    "omnirouteConfiguredOpenAiCompatible": "OmniRoute được cấu hình là nhà cung cấp tương thích với OpenAI",
+    "agentproxyConfiguredOpenAiCompatible": "AgentProxy được cấu hình là nhà cung cấp tương thích với OpenAI",
     "provider": "Nhà cung cấp",
     "model": "Mô hình",
     "providers": "Nhà cung cấp",
     "auth": "Xác thực",
     "noApiKeysAvailable": "Không có khóa API nào khả dụng",
-    "usingDefaultOmniroute": "Đang sử dụng mặc định: sk_omniroute",
+    "usingDefaultAgentProxy": "Đang sử dụng mặc định: sk_agentproxy",
     "updateConfig": "Cập nhật cấu hình",
     "applyConfig": "Áp dụng cấu hình",
     "noBackupsAvailable": "Không có bản sao lưu nào khả dụng.",
@@ -3152,8 +3152,8 @@
     "hermesConfiguredRoles": "{configured}/{total} vai trò",
     "hermesQuickApply": "Áp dụng nhanh cùng một mô hình cho mọi vai trò:",
     "hermesApplyModelToAll": "Áp dụng {model} cho mọi vai trò",
-    "hermesViaOmniRoute": "{provider} (qua OmniRoute)",
-    "hermesNotOmniRoute": "{provider} (không qua OmniRoute)",
+    "hermesViaAgentProxy": "{provider} (qua AgentProxy)",
+    "hermesNotAgentProxy": "{provider} (không qua AgentProxy)",
     "hermesRemovePendingRole": "Bỏ vai trò này khỏi các thay đổi đang chờ",
     "hermesApply": "Áp dụng cho Hermes Agent",
     "hermesRolesWillUpdate": "{count, plural, one {# vai trò sẽ được cập nhật} other {# vai trò sẽ được cập nhật}}",
@@ -3772,6 +3772,16 @@
     "disableSessionStickiness": "Tắt tính năng liên kết phiên",
     "sessionStickinessEnabled": "Bật liên kết phiên",
     "sessionStickinessDisabled": "Tắt liên kết phiên",
+    "stickyLimitInherit": "kế thừa",
+    "stickyLimitEffective": "Hiệu lực {value} ({source})",
+    "stickyLimitSourceCombo": "combo",
+    "stickyLimitSourceComboDefaults": "mặc định combo",
+    "stickyLimitSourceGlobal": "mặc định toàn cục",
+    "connectionAwareExpansion": "Mở rộng theo tài khoản",
+    "triStateInherit": "kế thừa",
+    "connectionAwareExpansionOn": "Bật",
+    "connectionAwareExpansionOff": "Tắt",
+    "promptCacheAffinityHint": "Định tuyến theo cache prompt được ưu tiên hơn round-robin/weighted giữa các tài khoản đã ghim. Tắt trong Settings → Combo defaults nếu cần xoay vòng nghiêm ngặt.",
     "kimiPresetTitle": "Cấu hình sẵn Kimi Coding",
     "kimiPresetDescription": "Kimi K3 làm model chính (Moonshot API), với khả năng tự động chuyển sang các kết nối Kimi Code dự phòng của bạn (kimi-coding, kimi-web) khi được cấu hình.",
     "kimiPresetCta": "Thêm cấu hình sẵn",
@@ -4143,7 +4153,7 @@
     "vscodeAliasModelsLabel": "Mô hình VS Code",
     "vscodeAliasChatLabel": "Trò chuyện trong VS Code",
     "localServer": "Máy chủ cục bộ",
-    "cloudOmniroute": "OmniRoute trên đám mây",
+    "cloudAgentProxy": "AgentProxy trên đám mây",
     "copyUrl": "Sao chép URL",
     "badgeLoopbackTooltip": "Endpoint này chỉ có thể truy cập cục bộ (chỉ loopback)",
     "badgeAlwaysProtectedTooltip": "Endpoint này luôn được bảo vệ và yêu cầu ủy quyền",
@@ -9994,7 +10004,7 @@
     "howItWorksStep3Description": "Yêu cầu được xử lý ngay lập tức bởi OpenAI, Anthropic, Gemini hoặc các nhà cung cấp khác.",
     "getStartedIn30Seconds": "Bắt đầu trong 30 giây",
     "getStartedDescription": "Cài đặt OmniRoute, cấu hình các nhà cung cấp của bạn thông qua trang tổng quan web và bắt đầu định tuyến các yêu cầu AI.",
-    "installOmniRoute": "Cài đặt OmniRoute",
+    "installAgentProxy": "Cài đặt AgentProxy",
     "installStepDescription": "Chạy lệnh npx để khởi động máy chủ ngay lập tức",
     "openDashboard": "Mở trang tổng quan",
     "openDashboardStepDescription": "Cấu hình các nhà cung cấp và khóa API thông qua giao diện web",
@@ -10003,7 +10013,7 @@
     "terminal": "thiết bị đầu cuối",
     "copy": "Sao chép",
     "copied": "✓ Đã sao chép",
-    "startingOmniRoute": "Đang khởi động OmniRoute...",
+    "startingAgentProxy": "Đang khởi động AgentProxy...",
     "serverRunningOnLabel": "Máy chủ đang chạy trên",
     "dashboardLabel": "Trang tổng quan",
     "readyToRoute": "Sẵn sàng định tuyến! ✓",
@@ -10397,7 +10407,7 @@
     "versionCommandPlaceholder": "Ví dụ: my-agent --version",
     "architectureTitle": "Cách hoạt động của mục tiêu tác nhân",
     "flowLocalBinary": "3 · Tiến trình CLI với thông tin xác thực riêng",
-    "flowOmniRoute": "1 · Yêu cầu gửi đến OmniRoute",
+    "flowAgentProxy": "1 · Yêu cầu gửi đến AgentProxy",
     "agentNamePlaceholder": "Ví dụ: Tác nhân tùy chỉnh của tôi",
     "architectureDescription": "Khi một yêu cầu đến, OmniRoute có thể khởi chạy một tệp nhị phân CLI cục bộ (ví dụ: claude, codex, goose) và chuyển yêu cầu qua đó. CLI sẽ xử lý yêu cầu bằng thông tin xác thực riêng và trả kết quả về qua OmniRoute.",
     "flowExecute": "4 · Phản hồi được trả về cho ứng dụng khách",
@@ -10414,8 +10424,8 @@
     "agentUseCaseHint": "Có thể được sử dụng làm mục tiêu thực thi thông qua giao thức ACP",
     "flowDiagramClient": "Ứng dụng khách",
     "flowDiagramClientDesc": "SDK, API hoặc dịch vụ thượng nguồn",
-    "flowDiagramOmniRoute": "OmniRoute",
-    "flowDiagramOmniRouteDesc": "Nhận yêu cầu và chọn mục tiêu",
+    "flowDiagramAgentProxy": "AgentProxy",
+    "flowDiagramAgentProxyDesc": "Nhận yêu cầu và chọn mục tiêu",
     "flowDiagramSpawn": "Tạo tiến trình",
     "flowDiagramSpawnDesc": "Khởi chạy tệp nhị phân CLI qua stdio",
     "flowDiagramCli": "Tác nhân CLI",
@@ -12717,7 +12727,12 @@
     "createDahlTokenFailed": "Không thể tạo token Dahl",
     "providerProxy": "Proxy",
     "providerProxyConfigureHint": "Cấu hình proxy",
-    "providerProxyTitleConfigured": "Đã cấu hình proxy: {host}"
+    "providerProxyTitleConfigured": "Đã cấu hình proxy: {host}",
+    "inheritConnectionOption": "Không proxy riêng (kế thừa kết nối)",
+    "inheritedProxy": "Kế thừa kết nối: {host}",
+    "inheritedPool": "Kế thừa nhóm proxy của kết nối ({count})",
+    "poolEmptyBlocked": "Nhóm proxy trống — yêu cầu thất bại (không phải trực tiếp)",
+    "directEgress": "Kết nối trực tiếp (không dùng proxy)"
   },
   "gamification": {
     "leaderboardScopes": {
@@ -12980,16 +12995,16 @@
       "PROXY_AUTO_SELECT_ENABLED": {
         "description": "Khi kết nối chưa được gán proxy, tự động chọn proxy hoạt động đầu tiên trong danh sách. Mặc định tắt vì nếu bật, một proxy trong danh sách có thể trở thành đường dự phòng toàn cục cho mọi lưu lượng (#3332)."
       },
-      "OMNIROUTE_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
+      "AGENTPROXY_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
         "description": "Cho phép luồng OAuth và xác thực nhà cung cấp bỏ qua proxy đã ghim khi kiểm tra khả năng kết nối proxy thất bại. Mặc định tắt vì có thể làm thay đổi IP đầu ra của tài khoản."
       },
       "MITM_DISABLE_TLS_VERIFY": {
         "description": "Tắt xác minh chứng chỉ TLS cho proxy MITM."
       },
-      "OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS": {
         "description": "Cho phép URL nhà cung cấp trỏ đến mạng riêng tư hoặc nội bộ."
       },
-      "OMNIROUTE_ALLOW_LOCAL_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_LOCAL_PROVIDER_URLS": {
         "description": "Cho phép thêm và xác thực nhà cung cấp trên localhost, LAN và các dải IP riêng. Tính năng này cần cho mô hình tương thích OpenAI chạy cục bộ và được bật mặc định. Các endpoint metadata đám mây như 169.254.169.254 vẫn luôn bị chặn."
       },
       "ENABLE_CC_COMPATIBLE_PROVIDER": {
@@ -13011,28 +13026,28 @@
       "RESPONSES_PASSTHROUGH_DROP_COMMENTARY": {
         "description": "Loại các mục đầu ra thuộc giai đoạn commentary nội bộ khỏi luồng chuyển tiếp Responses API trước khi gửi tới ứng dụng khách. Tắt cờ này để nhận nguyên dữ liệu commentary từ thượng nguồn."
       },
-      "OMNIROUTE_MCP_ENFORCE_SCOPES": {
+      "AGENTPROXY_MCP_ENFORCE_SCOPES": {
         "description": "Thực thi giới hạn phạm vi khi truy cập công cụ MCP."
       },
-      "OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS": {
+      "AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS": {
         "description": "Nén mô tả công cụ MCP để giảm lượng token sử dụng."
       },
-      "OMNIROUTE_ENABLE_RUNTIME_BACKGROUND_TASKS": {
+      "AGENTPROXY_ENABLE_RUNTIME_BACKGROUND_TASKS": {
         "description": "Bật xử lý tác vụ nền trong runtime."
       },
-      "OMNIROUTE_DISABLE_BACKGROUND_SERVICES": {
+      "AGENTPROXY_DISABLE_BACKGROUND_SERVICES": {
         "description": "Tắt mọi dịch vụ nền, bao gồm làm mới hạn ngạch và đồng bộ hóa."
       },
-      "OMNIROUTE_RTK_TRUST_PROJECT_FILTERS": {
+      "AGENTPROXY_RTK_TRUST_PROJECT_FILTERS": {
         "description": "Tin cậy các bộ lọc RTK cấp dự án mà không cần xác thực."
       },
-      "OMNIROUTE_ENABLE_LIVE_WS": {
+      "AGENTPROXY_ENABLE_LIVE_WS": {
         "description": "Khởi chạy máy chủ WebSocket thời gian thực của bảng điều khiển trên cổng loopback 20132 khi import. Đặt cờ thành 0 hoặc false để tắt. Muốn mở trong LAN còn phải đặt LIVE_WS_HOST=0.0.0.0 và LIVE_WS_ALLOWED_ORIGINS."
       },
-      "OMNIROUTE_CODEX_WS_ENABLED": {
+      "AGENTPROXY_CODEX_WS_ENABLED": {
         "description": "Cho phép Codex dùng giao thức Responses qua WebSocket. Khi tắt, Codex sẽ dự phòng bằng HTTP Responses."
       },
-      "OMNIROUTE_EMERGENCY_FALLBACK": {
+      "AGENTPROXY_EMERGENCY_FALLBACK": {
         "description": "Định tuyến yêu cầu đã cạn ngân sách đến nhà cung cấp và mô hình miễn phí dự phòng khẩn cấp."
       },
       "STREAM_RECOVERY_ENABLED": {
@@ -13066,16 +13081,16 @@
       "PRICING_SYNC_ENABLED": {
         "description": "Tự động đồng bộ dữ liệu giá. Biến môi trường PRICING_SYNC_ENABLED cũng phải được đặt thành true."
       },
-      "OMNIROUTE_AUTO_SYNC_CODEX_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CODEX_PROFILES": {
         "description": "Sau khi đồng bộ mô hình nhà cung cấp, tạo lại các hồ sơ ~/.codex/*.config.toml từ danh mục trực tiếp. Không bao giờ thay đổi cấu hình Codex đang hoạt động hoặc cấu hình mặc định. Tính năng này mặc định tắt."
       },
-      "OMNIROUTE_AUTO_SYNC_CLAUDE_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CLAUDE_PROFILES": {
         "description": "Sau khi đồng bộ mô hình nhà cung cấp, tạo lại các hồ sơ Claude Code tại ~/.claude/profiles/'<name>'/settings.json từ danh mục trực tiếp. Không bao giờ thay đổi cấu hình Claude đang hoạt động hoặc cấu hình mặc định. Tính năng này mặc định tắt."
       },
-      "OMNIROUTE_DISABLE_LOCAL_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_LOCAL_HEALTHCHECK": {
         "description": "Tắt endpoint kiểm tra tình trạng của phiên bản cục bộ."
       },
-      "OMNIROUTE_DISABLE_TOKEN_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_TOKEN_HEALTHCHECK": {
         "description": "Tắt kiểm tra tình trạng xác thực token."
       },
       "SKILLS_SANDBOX_NETWORK_ENABLED": {

@@ -24,7 +24,7 @@ export const MAIN_SERVER_DEFAULT_HOST = "0.0.0.0";
 
 /** Resolve the host used by the Next server that serves /v1 inference. */
 export function resolveMainServerHost(): string {
-  return process.env.OMNIROUTE_BOUND_HOST || process.env.HOSTNAME || MAIN_SERVER_DEFAULT_HOST;
+  return process.env.AGENTPROXY_BOUND_HOST || process.env.HOSTNAME || MAIN_SERVER_DEFAULT_HOST;
 }
 
 /** Warn, without blocking startup, when /v1 inference is exposed without API-key auth. */

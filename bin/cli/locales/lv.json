@@ -258,7 +258,7 @@
     "no_tray": "Atspējot sistēmas tray ikonu",
     "tls_cert": "Ceļš uz TLS sertifikātu (PEM) HTTPS apkalpošanai (arī OMNIROUTE_TLS_CERT)",
     "tls_key": "Ceļš uz TLS privāto atslēgu (PEM) HTTPS apkalpošanai (arī OMNIROUTE_TLS_KEY)",
-    "ready_timeout": "Gatavības pārbaudes taimauts milisekundēs (arī OMNIROUTE_READY_TIMEOUT_MS, noklusējuma vērtība 60000)"
+    "ready_timeout": "Gatavības pārbaudes taimauts milisekundēs (arī AGENTPROXY_READY_TIMEOUT_MS, noklusējuma vērtība 60000)"
   },
   "backup": {
     "title": "Dublēšana",

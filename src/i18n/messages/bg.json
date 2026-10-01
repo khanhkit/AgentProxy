@@ -986,7 +986,7 @@
     "batchFileDownloadFull": "Изтеглете целия файл"
   },
   "disabled": "Деактивирано",
-  "featureFlagOmnirouteEmergencyFallbackDescription": "Маршрутизиране на заявки с изчерпан бюджет към аварийния безплатен резервен доставчик/модел.",
+  "featureFlagAgentProxyEmergencyFallbackDescription": "Маршрутизиране на заявки с изчерпан бюджет към аварийния безплатен резервен доставчик/модел.",
   "featureFlagArenaEloSyncEnabledDescription": "Активиране на периодична синхронизация на ELO от класацията на Arena AI за класиране на интелигентността на моделите.",
   "featureFlagUniversalContextHandoffEnabledDescription": "Генериране и вмъкване на обобщения на разговорите, когато комбинираното маршрутизиране превключва между модели. Деактивирайте, за да третирате превключванията между модели независимо и да предотвратите фонови заявки за предаване за всички съществуващи и бъдещи комбинации.",
   "featureFlagExposeCcDiscoveryAliasesDescription": "Рекламирайте claude/&lt;provider&gt;/&lt;model&gt; mirror идентификатори на /v1/models, така че списъкът с модели на Claude Code gateway да включва неклаудови модели. Внимание: удвоява записите в каталога за всички клиенти, когато е активирано глобално.",
@@ -2254,7 +2254,7 @@
     "requestFlowAria": "Приложението ви изпраща заявки към OmniRoute чрез API ключ",
     "requestFlowYourApp": "Вашето приложение",
     "requestFlowApiKey": "API ключ",
-    "requestFlowOmniRoute": "OmniRoute",
+    "requestFlowAgentProxy": "AgentProxy",
     "totalKeys": "Общо ключове",
     "restricted": "Ограничен",
     "totalRequests": "Общо заявки",
@@ -2761,7 +2761,7 @@
     "configurationSaved": "Конфигурацията е запазена успешно.",
     "failedToSave": "Неуспешно запазване на конфигурацията.",
     "noApiKeysCreateOne": "Без API ключове – Създайте такъв в страницата Ключове",
-    "defaultOmnirouteKey": "sk_omniroute (по подразбиране)",
+    "defaultAgentProxyKey": "sk_agentproxy (по подразбиране)",
     "selectModel": "Изберете Модел",
     "selectModelForAlias": "Изберете модел за {alias}",
     "selectModelForTool": "Изберете модел за {tool}",
@@ -2858,13 +2858,13 @@
     "applied": "Приложено!",
     "failed": "Неуспешно",
     "resetDone": "Нулиране!",
-    "omnirouteConfiguredOpenAiCompatible": "OmniRoute е конфигуриран като OpenAI-съвместим доставчик",
+    "agentproxyConfiguredOpenAiCompatible": "AgentProxy е конфигуриран като OpenAI-съвместим доставчик",
     "provider": "Доставчик",
     "model": "Модел",
     "providers": "Доставчици",
     "auth": "авт",
     "noApiKeysAvailable": "Няма налични API ключове",
-    "usingDefaultOmniroute": "Използва се по подразбиране: sk_omniroute",
+    "usingDefaultAgentProxy": "Използва се по подразбиране: sk_agentproxy",
     "updateConfig": "Актуализиране на конфигурацията",
     "applyConfig": "Прилагане на конфигур",
     "noBackupsAvailable": "Няма налични резервни копия.",
@@ -3145,8 +3145,8 @@
     "hermesConfiguredRoles": "{configured}/{total} роли",
     "hermesQuickApply": "Бързо прилагане на същия модел за всички роли:",
     "hermesApplyModelToAll": "Прилагане на {model} за всяка роля",
-    "hermesViaOmniRoute": "{provider} (чрез OmniRoute)",
-    "hermesNotOmniRoute": "{provider} (не е OmniRoute)",
+    "hermesViaAgentProxy": "{provider} (чрез AgentProxy)",
+    "hermesNotAgentProxy": "{provider} (не е AgentProxy)",
     "hermesRemovePendingRole": "Премахване на тази роля от чакащите промени",
     "hermesApply": "Прилагане към Hermes Agent",
     "hermesRolesWillUpdate": "{count, plural, one {# роля ще бъде актуализирана} other {# роли ще бъдат актуализирани}}",
@@ -4142,7 +4142,7 @@
     "vscodeAliasModelsLabel": "VS Code модели",
     "vscodeAliasChatLabel": "VS Code чат",
     "localServer": "Локален сървър",
-    "cloudOmniroute": "OmniRoute в облака",
+    "cloudAgentProxy": "AgentProxy в облака",
     "copyUrl": "Копиране на URL",
     "badgeLoopbackTooltip": "Тази крайна точка е достъпна само локално (само loopback)",
     "badgeAlwaysProtectedTooltip": "Тази крайна точка винаги е защитена и изисква оторизация",
@@ -9979,7 +9979,7 @@
     "howItWorksStep3Description": "Заявката се изпълнява незабавно от OpenAI, Anthropic, Gemini или други.",
     "getStartedIn30Seconds": "Започнете за 30 секунди",
     "getStartedDescription": "Инсталирайте OmniRoute, конфигурирайте вашите доставчици чрез уеб таблото за управление и започнете да маршрутизирате AI заявки.",
-    "installOmniRoute": "Инсталирайте OmniRoute",
+    "installAgentProxy": "Инсталирайте AgentProxy",
     "installStepDescription": "Изпълнете командата npx, за да стартирате сървъра незабавно",
     "openDashboard": "Отворете таблото за управление",
     "openDashboardStepDescription": "Конфигурирайте доставчици и API ключове чрез уеб интерфейс",
@@ -9988,7 +9988,7 @@
     "terminal": "терминал",
     "copy": "копие",
     "copied": "✓ Копирано",
-    "startingOmniRoute": "Стартиране на OmniRoute...",
+    "startingAgentProxy": "Стартиране на AgentProxy...",
     "serverRunningOnLabel": "Сървърът работи",
     "dashboardLabel": "Табло",
     "readyToRoute": "Готов за маршрут! ✓",
@@ -10382,7 +10382,7 @@
     "versionCommandPlaceholder": "Version Command Placeholder",
     "architectureTitle": "Architecture Title",
     "flowLocalBinary": "Flow Local Binary",
-    "flowOmniRoute": "Flow Omni Route",
+    "flowAgentProxy": "Flow Omni Route",
     "agentNamePlaceholder": "Agent Name Placeholder",
     "architectureDescription": "Architecture Description",
     "flowExecute": "Flow Execute",
@@ -10399,8 +10399,8 @@
     "agentUseCaseHint": "Може да се използва като цел за изпълнение чрез ACP протокол",
     "flowDiagramClient": "Клиентско приложение",
     "flowDiagramClientDesc": "SDK, API или услуга нагоре по веригата",
-    "flowDiagramOmniRoute": "OmniRoute",
-    "flowDiagramOmniRouteDesc": "Получава заявка и избира цел",
+    "flowDiagramAgentProxy": "AgentProxy",
+    "flowDiagramAgentProxyDesc": "Получава заявка и избира цел",
     "flowDiagramSpawn": "Процес на размножаване",
     "flowDiagramSpawnDesc": "Стартира CLI двоичен файл чрез stdio",
     "flowDiagramCli": "CLI агент",
@@ -12965,16 +12965,16 @@
       "PROXY_AUTO_SELECT_ENABLED": {
         "description": "Когато към връзка не е присвоено прокси, автоматично да се избира първото работещо прокси на регистъра. Изключено по подразбиране, тъй като в противен случай едно прокси на регистъра се превръща в глобален резервен вариант за целия трафик (#3332)."
       },
-      "OMNIROUTE_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
+      "AGENTPROXY_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
         "description": "Разрешаване на потоците за OAuth и валидиране на доставчици да заобикалят фиксирано прокси, когато проверките за достъпност на проксито неуспеят. Изключено по подразбиране, тъй като това може да промени изходящия IP адрес на акаунта."
       },
       "MITM_DISABLE_TLS_VERIFY": {
         "description": "Деактивиране на проверката на TLS сертификати за MITM проксито."
       },
-      "OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS": {
         "description": "Разрешаване на URL адреси на доставчици, които сочат към частни или вътрешни мрежи."
       },
-      "OMNIROUTE_ALLOW_LOCAL_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_LOCAL_PROVIDER_URLS": {
         "description": "Разрешаване на доставчици на localhost, LAN и частни IP диапазони. Това е необходимо за локални OpenAI-съвместими модели и е активирано по подразбиране. Крайните точки за облачни метаданни като 169.254.169.254 остават блокирани."
       },
       "ENABLE_CC_COMPATIBLE_PROVIDER": {
@@ -12996,28 +12996,28 @@
       "RESPONSES_PASSTHROUGH_DROP_COMMENTARY": {
         "description": "Премахване на вътрешните изходни елементи от фазата на коментари от транзитните потоци на Responses API, преди да бъдат препратени към клиентите. Деактивирайте този флаг, за да получавате необработени коментари от източника."
       },
-      "OMNIROUTE_MCP_ENFORCE_SCOPES": {
+      "AGENTPROXY_MCP_ENFORCE_SCOPES": {
         "description": "Прилагане на ограничения на обхвата за достъп до MCP инструменти."
       },
-      "OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS": {
+      "AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS": {
         "description": "Компресиране на описанията на MCP инструментите за намаляване на използването на токени."
       },
-      "OMNIROUTE_ENABLE_RUNTIME_BACKGROUND_TASKS": {
+      "AGENTPROXY_ENABLE_RUNTIME_BACKGROUND_TASKS": {
         "description": "Активиране на обработката на фонови задачи по време на изпълнение."
       },
-      "OMNIROUTE_DISABLE_BACKGROUND_SERVICES": {
+      "AGENTPROXY_DISABLE_BACKGROUND_SERVICES": {
         "description": "Деактивиране на всички фонови услуги, включително опресняване на квоти и синхронизация."
       },
-      "OMNIROUTE_RTK_TRUST_PROJECT_FILTERS": {
+      "AGENTPROXY_RTK_TRUST_PROJECT_FILTERS": {
         "description": "Доверяване на RTK филтри на ниво проект без валидиране."
       },
-      "OMNIROUTE_ENABLE_LIVE_WS": {
+      "AGENTPROXY_ENABLE_LIVE_WS": {
         "description": "Стартиране на WebSocket сървъра за таблото в реално време при импортиране на loopback порт 20132. Задайте флага на 0 или false, за да го деактивирате. Излагането в LAN също изисква LIVE_WS_HOST=0.0.0.0 и LIVE_WS_ALLOWED_ORIGINS."
       },
-      "OMNIROUTE_CODEX_WS_ENABLED": {
+      "AGENTPROXY_CODEX_WS_ENABLED": {
         "description": "Разрешаване на Codex да използва Responses през WebSocket. Когато е деактивирано, Codex преминава към HTTP Responses."
       },
-      "OMNIROUTE_EMERGENCY_FALLBACK": {
+      "AGENTPROXY_EMERGENCY_FALLBACK": {
         "description": "Маршрутизиране на заявки с изчерпан бюджет към аварийния безплатен резервен доставчик и модел."
       },
       "STREAM_RECOVERY_ENABLED": {
@@ -13044,16 +13044,16 @@
       "PRICING_SYNC_ENABLED": {
         "description": "Автоматично синхронизиране на данните за ценообразуване. Променливата на средата PRICING_SYNC_ENABLED също трябва да бъде true."
       },
-      "OMNIROUTE_AUTO_SYNC_CODEX_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CODEX_PROFILES": {
         "description": "След синхронизиране на доставчик-модел, регенериране на ~/.codex/*.config.toml профили от каталога на живо. Това никога не променя активната или подразбиращата се конфигурация на Codex и е изключено по подразбиране."
       },
-      "OMNIROUTE_AUTO_SYNC_CLAUDE_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CLAUDE_PROFILES": {
         "description": "След синхронизирането на моделите на доставчиците генерирайте отново профилите ~/.claude/profiles/'<name>'/settings.json от актуалния каталог. Това никога не променя активната или стандартната конфигурация на Claude и по подразбиране е изключено."
       },
-      "OMNIROUTE_DISABLE_LOCAL_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_LOCAL_HEALTHCHECK": {
         "description": "Деактивиране на крайната точка за проверка на състоянието на локалния екземпляр."
       },
-      "OMNIROUTE_DISABLE_TOKEN_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_TOKEN_HEALTHCHECK": {
         "description": "Деактивиране на проверката на състоянието за валидиране на токени."
       },
       "SKILLS_SANDBOX_NETWORK_ENABLED": {
@@ -14190,5 +14190,5 @@
     "partnerLinkNote": "Партньорска връзка",
     "dismissAriaLabel": "Затваряне"
   },
-  "featureFlagOmnirouteDisableThinkingLevelVariantsDescription": "Деактивирайте генерирането на варианти за ниво на разсъждение (напр. -low, -medium, -high) в каталога /v1/models."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Деактивирайте генерирането на варианти за ниво на разсъждение (напр. -low, -medium, -high) в каталога /v1/models."
 }

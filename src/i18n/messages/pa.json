@@ -986,7 +986,7 @@
     "batchFileDownloadFull": "ਪੂਰੀ ਫ਼ਾਈਲ ਡਾਊਨਲੋਡ ਕਰੋ"
   },
   "disabled": "ਅਯੋਗ",
-  "featureFlagOmnirouteEmergencyFallbackDescription": "ਬਜਟ ਖ਼ਤਮ ਹੋ ਚੁੱਕੀਆਂ ਬੇਨਤੀਆਂ ਨੂੰ ਐਮਰਜੈਂਸੀ ਮੁਫ਼ਤ ਫਾਲਬੈਕ ਪ੍ਰਦਾਤਾ/ਮਾਡਲ ਵੱਲ ਭੇਜੋ।",
+  "featureFlagAgentProxyEmergencyFallbackDescription": "ਬਜਟ ਖ਼ਤਮ ਹੋ ਚੁੱਕੀਆਂ ਬੇਨਤੀਆਂ ਨੂੰ ਐਮਰਜੈਂਸੀ ਮੁਫ਼ਤ ਫਾਲਬੈਕ ਪ੍ਰਦਾਤਾ/ਮਾਡਲ ਵੱਲ ਭੇਜੋ।",
   "featureFlagArenaEloSyncEnabledDescription": "ਮਾਡਲ ਇੰਟੈਲੀਜੈਂਸ ਰੈਂਕਿੰਗਾਂ ਲਈ ਸਮੇਂ-ਸਮੇਂ 'ਤੇ Arena AI ਲੀਡਰਬੋਰਡ ELO ਸਿੰਕ ਸਮਰੱਥ ਕਰੋ।",
   "featureFlagUniversalContextHandoffEnabledDescription": "ਜਦੋਂ ਕੰਬੋ ਰਾਊਟਿੰਗ ਮਾਡਲ ਬਦਲਦੀ ਹੈ, ਤਾਂ ਗੱਲਬਾਤ ਦੇ ਸਾਰ ਤਿਆਰ ਕਰਕੇ ਸ਼ਾਮਲ ਕਰੋ। ਮਾਡਲ ਬਦਲਾਵਾਂ ਨੂੰ ਸੁਤੰਤਰ ਤੌਰ 'ਤੇ ਸੰਭਾਲਣ ਅਤੇ ਸਾਰੇ ਮੌਜੂਦਾ ਤੇ ਭਵਿੱਖੀ ਕੰਬੋਜ਼ ਲਈ ਬੈਕਗ੍ਰਾਊਂਡ ਹੈਂਡਆਫ਼ ਬੇਨਤੀਆਂ ਨੂੰ ਰੋਕਣ ਵਾਸਤੇ ਇਸਨੂੰ ਅਯੋਗ ਕਰੋ।",
   "featureFlagExposeCcDiscoveryAliasesDescription": "/v1/models ਉੱਤੇ claude/&lt;provider&gt;/&lt;model&gt; ਮਿਰਰ IDs ਦਾ ਪ੍ਰਚਾਰ ਕਰੋ, ਤਾਂ ਜੋ Claude Code ਗੇਟਵੇ ਮਾਡਲ ਖੋਜ ਵਿੱਚ ਗੈਰ-Claude ਮਾਡਲ ਸੂਚੀਬੱਧ ਹੋਣ। ਚੇਤਾਵਨੀ: ਗਲੋਬਲ ਤੌਰ 'ਤੇ ਸਮਰੱਥ ਕਰਨ 'ਤੇ ਇਹ ਸਾਰੇ ਕਲਾਇੰਟਾਂ ਲਈ ਕੈਟਾਲਾਗ ਐਂਟਰੀਆਂ ਨੂੰ ਦੁੱਗਣਾ ਕਰ ਦਿੰਦਾ ਹੈ।",
@@ -2254,7 +2254,7 @@
     "requestFlowAria": "ਤੁਹਾਡੀ ਐਪ ਇੱਕ API ਕੁੰਜੀ ਰਾਹੀਂ OmniRoute ਨੂੰ ਬੇਨਤੀਆਂ ਭੇਜਦੀ ਹੈ",
     "requestFlowYourApp": "ਤੁਹਾਡੀ ਐਪ",
     "requestFlowApiKey": "API ਕੁੰਜੀ",
-    "requestFlowOmniRoute": "OmniRoute",
+    "requestFlowAgentProxy": "AgentProxy",
     "totalKeys": "ਕੁੱਲ ਕੁੰਜੀਆਂ",
     "restricted": "ਸੀਮਤ",
     "totalRequests": "ਕੁੱਲ ਬੇਨਤੀਆਂ",
@@ -2761,7 +2761,7 @@
     "configurationSaved": "ਕੌਂਫਿਗਰੇਸ਼ਨ ਸਫਲਤਾਪੂਰਵਕ ਸੰਭਾਲੀ ਗਈ।",
     "failedToSave": "ਕੌਂਫਿਗਰੇਸ਼ਨ ਸੰਭਾਲੀ ਨਹੀਂ ਜਾ ਸਕੀ।",
     "noApiKeysCreateOne": "ਕੋਈ API ਕੁੰਜੀ ਨਹੀਂ - Keys ਪੰਨੇ ਵਿੱਚ ਇੱਕ ਬਣਾਓ",
-    "defaultOmnirouteKey": "sk_omniroute (ਡਿਫੌਲਟ)",
+    "defaultAgentProxyKey": "sk_agentproxy (ਡਿਫੌਲਟ)",
     "selectModel": "ਮਾਡਲ ਚੁਣੋ",
     "selectModelForAlias": "{alias} ਲਈ ਮਾਡਲ ਚੁਣੋ",
     "selectModelForTool": "{tool} ਲਈ ਮਾਡਲ ਚੁਣੋ",
@@ -2858,13 +2858,13 @@
     "applied": "ਲਾਗੂ ਹੋ ਗਿਆ!",
     "failed": "ਅਸਫਲ",
     "resetDone": "ਰੀਸੈੱਟ ਹੋ ਗਿਆ!",
-    "omnirouteConfiguredOpenAiCompatible": "OmniRoute ਨੂੰ OpenAI-ਅਨੁਕੂਲ ਪ੍ਰਦਾਤਾ ਵਜੋਂ ਸੰਰਚਿਤ ਕੀਤਾ ਗਿਆ ਹੈ",
+    "agentproxyConfiguredOpenAiCompatible": "AgentProxy ਨੂੰ OpenAI-ਅਨੁਕੂਲ ਪ੍ਰਦਾਤਾ ਵਜੋਂ ਸੰਰਚਿਤ ਕੀਤਾ ਗਿਆ ਹੈ",
     "provider": "ਪ੍ਰਦਾਤਾ",
     "model": "ਮਾਡਲ",
     "providers": "ਪ੍ਰਦਾਤੇ",
     "auth": "ਪ੍ਰਮਾਣੀਕਰਨ",
     "noApiKeysAvailable": "ਕੋਈ API ਕੁੰਜੀਆਂ ਉਪਲਬਧ ਨਹੀਂ ਹਨ",
-    "usingDefaultOmniroute": "ਡਿਫੌਲਟ ਵਰਤਿਆ ਜਾ ਰਿਹਾ ਹੈ: sk_omniroute",
+    "usingDefaultAgentProxy": "ਡਿਫੌਲਟ ਵਰਤਿਆ ਜਾ ਰਿਹਾ ਹੈ: sk_agentproxy",
     "updateConfig": "ਸੰਰਚਨਾ ਅੱਪਡੇਟ ਕਰੋ",
     "applyConfig": "ਸੰਰਚਨਾ ਲਾਗੂ ਕਰੋ",
     "noBackupsAvailable": "ਕੋਈ ਬੈਕਅੱਪ ਉਪਲਬਧ ਨਹੀਂ ਹੈ।",
@@ -3145,8 +3145,8 @@
     "hermesConfiguredRoles": "{configured}/{total} ਸੰਰਚਿਤ ਭੂਮਿਕਾਵਾਂ",
     "hermesQuickApply": "ਇੱਕੋ ਮਾਡਲ ਨੂੰ ਸਾਰੀਆਂ ਭੂਮਿਕਾਵਾਂ 'ਤੇ ਤੁਰੰਤ ਲਾਗੂ ਕਰੋ:",
     "hermesApplyModelToAll": "ਹਰ ਭੂਮਿਕਾ 'ਤੇ {model} ਲਾਗੂ ਕਰੋ",
-    "hermesViaOmniRoute": "{provider} (OmniRoute ਰਾਹੀਂ)",
-    "hermesNotOmniRoute": "{provider} (OmniRoute ਰਾਹੀਂ ਨਹੀਂ)",
+    "hermesViaAgentProxy": "{provider} (AgentProxy ਰਾਹੀਂ)",
+    "hermesNotAgentProxy": "{provider} (AgentProxy ਰਾਹੀਂ ਨਹੀਂ)",
     "hermesRemovePendingRole": "ਇਸ ਭੂਮਿਕਾ ਨੂੰ ਬਕਾਇਆ ਤਬਦੀਲੀਆਂ ਵਿੱਚੋਂ ਹਟਾਓ",
     "hermesApply": "Hermes Agent 'ਤੇ ਲਾਗੂ ਕਰੋ",
     "hermesRolesWillUpdate": "{count, plural, one {# ਭੂਮਿਕਾ ਅੱਪਡੇਟ ਕੀਤੀ ਜਾਵੇਗੀ} other {# ਭੂਮਿਕਾਵਾਂ ਅੱਪਡੇਟ ਕੀਤੀਆਂ ਜਾਣਗੀਆਂ}}",
@@ -4125,7 +4125,7 @@
     "vscodeAliasModelsLabel": "VS Code ਮਾਡਲ",
     "vscodeAliasChatLabel": "VS Code ਚੈਟ",
     "localServer": "ਲੋਕਲ ਸਰਵਰ",
-    "cloudOmniroute": "ਕਲਾਉਡ OmniRoute",
+    "cloudAgentProxy": "ਕਲਾਉਡ AgentProxy",
     "copyUrl": "URL ਕਾਪੀ ਕਰੋ",
     "badgeLoopbackTooltip": "ਇਹ ਐਂਡਪੌਇੰਟ ਸਿਰਫ਼ ਲੋਕਲ ਤੌਰ 'ਤੇ ਪਹੁੰਚਯੋਗ ਹੈ (ਕੇਵਲ ਲੂਪਬੈਕ)",
     "badgeAlwaysProtectedTooltip": "ਇਹ ਐਂਡਪੌਇੰਟ ਹਮੇਸ਼ਾ ਸੁਰੱਖਿਅਤ ਹੁੰਦਾ ਹੈ ਅਤੇ ਇਸ ਲਈ ਪ੍ਰਮਾਣੀਕਰਨ ਦੀ ਲੋੜ ਹੁੰਦੀ ਹੈ",
@@ -9962,7 +9962,7 @@
     "howItWorksStep3Description": "ਬੇਨਤੀ ਨੂੰ OpenAI, Anthropic, Gemini ਜਾਂ ਹੋਰ ਪ੍ਰਦਾਤਾਵਾਂ ਵੱਲੋਂ ਤੁਰੰਤ ਪੂਰਾ ਕੀਤਾ ਜਾਂਦਾ ਹੈ।",
     "getStartedIn30Seconds": "30 ਸਕਿੰਟਾਂ ਵਿੱਚ ਸ਼ੁਰੂ ਕਰੋ",
     "getStartedDescription": "OmniRoute ਇੰਸਟਾਲ ਕਰੋ, ਵੈੱਬ ਡੈਸ਼ਬੋਰਡ ਰਾਹੀਂ ਆਪਣੇ ਪ੍ਰਦਾਤਾਵਾਂ ਨੂੰ ਸੰਰਚਿਤ ਕਰੋ ਅਤੇ AI ਬੇਨਤੀਆਂ ਨੂੰ ਰੂਟ ਕਰਨਾ ਸ਼ੁਰੂ ਕਰੋ।",
-    "installOmniRoute": "OmniRoute ਇੰਸਟਾਲ ਕਰੋ",
+    "installAgentProxy": "AgentProxy ਇੰਸਟਾਲ ਕਰੋ",
     "installStepDescription": "ਸਰਵਰ ਨੂੰ ਤੁਰੰਤ ਸ਼ੁਰੂ ਕਰਨ ਲਈ npx ਕਮਾਂਡ ਚਲਾਓ",
     "openDashboard": "ਡੈਸ਼ਬੋਰਡ ਖੋਲ੍ਹੋ",
     "openDashboardStepDescription": "ਵੈੱਬ ਇੰਟਰਫੇਸ ਰਾਹੀਂ ਪ੍ਰਦਾਤਾਵਾਂ ਅਤੇ API ਕੁੰਜੀਆਂ ਨੂੰ ਸੰਰਚਿਤ ਕਰੋ",
@@ -9971,7 +9971,7 @@
     "terminal": "ਟਰਮੀਨਲ",
     "copy": "ਕਾਪੀ ਕਰੋ",
     "copied": "✓ ਕਾਪੀ ਕੀਤਾ ਗਿਆ",
-    "startingOmniRoute": "OmniRoute ਸ਼ੁਰੂ ਹੋ ਰਿਹਾ ਹੈ...",
+    "startingAgentProxy": "AgentProxy ਸ਼ੁਰੂ ਹੋ ਰਿਹਾ ਹੈ...",
     "serverRunningOnLabel": "ਸਰਵਰ ਇਸ 'ਤੇ ਚੱਲ ਰਿਹਾ ਹੈ",
     "dashboardLabel": "ਡੈਸ਼ਬੋਰਡ",
     "readyToRoute": "ਰੂਟ ਕਰਨ ਲਈ ਤਿਆਰ! ✓",
@@ -10365,7 +10365,7 @@
     "versionCommandPlaceholder": "ਜਿਵੇਂ ਕਿ, my-agent --version",
     "architectureTitle": "ਏਜੰਟ ਟਾਰਗੇਟ ਕਿਵੇਂ ਕੰਮ ਕਰਦੇ ਹਨ",
     "flowLocalBinary": "3 · ਆਪਣੇ ਪ੍ਰਮਾਣੀਕਰਨ ਵਾਲੀ CLI ਪ੍ਰਕਿਰਿਆ",
-    "flowOmniRoute": "1 · ਬੇਨਤੀ OmniRoute 'ਤੇ ਪਹੁੰਚਦੀ ਹੈ",
+    "flowAgentProxy": "1 · ਬੇਨਤੀ AgentProxy 'ਤੇ ਪਹੁੰਚਦੀ ਹੈ",
     "agentNamePlaceholder": "ਜਿਵੇਂ ਕਿ, ਮੇਰਾ ਕਸਟਮ ਏਜੰਟ",
     "architectureDescription": "ਜਦੋਂ ਕੋਈ ਬੇਨਤੀ ਆਉਂਦੀ ਹੈ, ਤਾਂ OmniRoute ਇੱਕ ਸਥਾਨਕ CLI ਬਾਈਨਰੀ (ਜਿਵੇਂ ਕਿ claude, codex, goose) ਸਪੌਨ ਕਰਕੇ ਬੇਨਤੀ ਨੂੰ ਉਸ ਰਾਹੀਂ ਪਾਈਪ ਕਰ ਸਕਦਾ ਹੈ। CLI ਆਪਣੇ ਪ੍ਰਮਾਣ-ਪੱਤਰਾਂ ਦੀ ਵਰਤੋਂ ਕਰਕੇ ਬੇਨਤੀ ਦੀ ਪ੍ਰਕਿਰਿਆ ਕਰਦਾ ਹੈ ਅਤੇ ਨਤੀਜਾ OmniRoute ਰਾਹੀਂ ਵਾਪਸ ਭੇਜਦਾ ਹੈ।",
     "flowExecute": "4 · ਜਵਾਬ ਕਲਾਇੰਟ ਨੂੰ ਵਾਪਸ ਭੇਜਿਆ ਜਾਂਦਾ ਹੈ",
@@ -10382,8 +10382,8 @@
     "agentUseCaseHint": "ACP ਪ੍ਰੋਟੋਕੋਲ ਰਾਹੀਂ ਐਗਜ਼ਿਕਿਊਸ਼ਨ ਟਾਰਗੇਟ ਵਜੋਂ ਵਰਤਿਆ ਜਾ ਸਕਦਾ ਹੈ",
     "flowDiagramClient": "ਕਲਾਇੰਟ ਐਪ",
     "flowDiagramClientDesc": "SDK, API, ਜਾਂ ਅੱਪਸਟ੍ਰੀਮ ਸੇਵਾ",
-    "flowDiagramOmniRoute": "OmniRoute",
-    "flowDiagramOmniRouteDesc": "ਬੇਨਤੀ ਪ੍ਰਾਪਤ ਕਰਦਾ ਹੈ ਅਤੇ ਟਾਰਗੇਟ ਚੁਣਦਾ ਹੈ",
+    "flowDiagramAgentProxy": "AgentProxy",
+    "flowDiagramAgentProxyDesc": "ਬੇਨਤੀ ਪ੍ਰਾਪਤ ਕਰਦਾ ਹੈ ਅਤੇ ਟਾਰਗੇਟ ਚੁਣਦਾ ਹੈ",
     "flowDiagramSpawn": "ਪ੍ਰੋਸੈਸ ਸ਼ੁਰੂ ਕਰੋ",
     "flowDiagramSpawnDesc": "stdio ਰਾਹੀਂ CLI ਬਾਈਨਰੀ ਲਾਂਚ ਕਰਦਾ ਹੈ",
     "flowDiagramCli": "CLI ਏਜੰਟ",
@@ -12938,16 +12938,16 @@
       "PROXY_AUTO_SELECT_ENABLED": {
         "description": "ਜਦੋਂ ਕਿਸੇ ਕਨੈਕਸ਼ਨ ਨੂੰ ਕੋਈ ਪ੍ਰੌਕਸੀ ਨਿਰਧਾਰਤ ਨਾ ਹੋਵੇ, ਤਾਂ ਆਪਣੇ ਆਪ ਪਹਿਲੀ ਕਾਰਜਸ਼ੀਲ ਰਜਿਸਟਰੀ ਪ੍ਰੌਕਸੀ ਚੁਣੋ। ਇਹ ਮੂਲ ਰੂਪ ਵਿੱਚ ਬੰਦ ਹੈ ਕਿਉਂਕਿ ਨਹੀਂ ਤਾਂ ਇੱਕ ਰਜਿਸਟਰੀ ਪ੍ਰੌਕਸੀ ਸਾਰੇ ਟ੍ਰੈਫਿਕ ਲਈ ਗਲੋਬਲ ਫਾਲਬੈਕ ਬਣ ਜਾਂਦੀ ਹੈ (#3332)।"
       },
-      "OMNIROUTE_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
+      "AGENTPROXY_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
         "description": "ਜਦੋਂ ਪ੍ਰੌਕਸੀ ਪਹੁੰਚਯੋਗਤਾ ਜਾਂਚਾਂ ਅਸਫਲ ਹੋਣ, ਤਾਂ OAuth ਅਤੇ ਪ੍ਰਦਾਤਾ-ਪ੍ਰਮਾਣਿਕਤਾ ਪ੍ਰਵਾਹਾਂ ਨੂੰ ਪਿੰਨ ਕੀਤੀ ਪ੍ਰੌਕਸੀ ਨੂੰ ਬਾਈਪਾਸ ਕਰਨ ਦੀ ਇਜਾਜ਼ਤ ਦਿਓ। ਇਹ ਮੂਲ ਰੂਪ ਵਿੱਚ ਬੰਦ ਹੈ ਕਿਉਂਕਿ ਇਸ ਨਾਲ ਖਾਤੇ ਦਾ ਐਗ੍ਰੈਸ IP ਬਦਲ ਸਕਦਾ ਹੈ।"
       },
       "MITM_DISABLE_TLS_VERIFY": {
         "description": "MITM ਪ੍ਰੌਕਸੀ ਲਈ TLS ਸਰਟੀਫਿਕੇਟ ਤਸਦੀਕ ਅਸਮਰੱਥ ਕਰੋ।"
       },
-      "OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS": {
         "description": "ਨਿੱਜੀ ਜਾਂ ਅੰਦਰੂਨੀ ਨੈੱਟਵਰਕਾਂ ਵੱਲ ਇਸ਼ਾਰਾ ਕਰਨ ਵਾਲੇ ਪ੍ਰਦਾਤਾ URLs ਦੀ ਇਜਾਜ਼ਤ ਦਿਓ।"
       },
-      "OMNIROUTE_ALLOW_LOCAL_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_LOCAL_PROVIDER_URLS": {
         "description": "localhost, LAN ਅਤੇ ਨਿੱਜੀ IP ਰੇਂਜਾਂ ਉੱਤੇ ਪ੍ਰਦਾਤਾਵਾਂ ਦੀ ਇਜਾਜ਼ਤ ਦਿਓ। ਇਹ ਸਥਾਨਕ OpenAI-ਅਨੁਕੂਲ ਮਾਡਲਾਂ ਲਈ ਲੋੜੀਂਦਾ ਹੈ ਅਤੇ ਮੂਲ ਰੂਪ ਵਿੱਚ ਸਮਰੱਥ ਹੈ। 169.254.169.254 ਵਰਗੇ ਕਲਾਉਡ-ਮੈਟਾਡਾਟਾ ਐਂਡਪੋਇੰਟ ਬਲੌਕ ਹੀ ਰਹਿੰਦੇ ਹਨ।"
       },
       "ENABLE_CC_COMPATIBLE_PROVIDER": {
@@ -12969,28 +12969,28 @@
       "RESPONSES_PASSTHROUGH_DROP_COMMENTARY": {
         "description": "ਕਲਾਇੰਟਾਂ ਨੂੰ ਅੱਗੇ ਭੇਜਣ ਤੋਂ ਪਹਿਲਾਂ Responses API ਪਾਸਥਰੂ ਸਟ੍ਰੀਮਾਂ ਵਿੱਚੋਂ ਅੰਦਰੂਨੀ ਟਿੱਪਣੀ-ਪੜਾਅ ਆਉਟਪੁੱਟ ਆਈਟਮਾਂ ਹਟਾਓ। ਕੱਚੀਆਂ ਅੱਪਸਟ੍ਰੀਮ ਟਿੱਪਣੀਆਂ ਪ੍ਰਾਪਤ ਕਰਨ ਲਈ ਇਸ ਫਲੈਗ ਨੂੰ ਅਸਮਰੱਥ ਕਰੋ।"
       },
-      "OMNIROUTE_MCP_ENFORCE_SCOPES": {
+      "AGENTPROXY_MCP_ENFORCE_SCOPES": {
         "description": "MCP ਟੂਲ ਪਹੁੰਚ ਲਈ ਸਕੋਪ ਪਾਬੰਦੀਆਂ ਲਾਗੂ ਕਰੋ।"
       },
-      "OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS": {
+      "AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS": {
         "description": "ਟੋਕਨ ਵਰਤੋਂ ਘਟਾਉਣ ਲਈ MCP ਟੂਲ ਵਰਣਨਾਂ ਨੂੰ ਸੰਕੁਚਿਤ ਕਰੋ।"
       },
-      "OMNIROUTE_ENABLE_RUNTIME_BACKGROUND_TASKS": {
+      "AGENTPROXY_ENABLE_RUNTIME_BACKGROUND_TASKS": {
         "description": "ਰਨਟਾਈਮ ਦੌਰਾਨ ਬੈਕਗ੍ਰਾਊਂਡ-ਟਾਸਕ ਪ੍ਰੋਸੈਸਿੰਗ ਸਮਰੱਥ ਕਰੋ।"
       },
-      "OMNIROUTE_DISABLE_BACKGROUND_SERVICES": {
+      "AGENTPROXY_DISABLE_BACKGROUND_SERVICES": {
         "description": "ਕੋਟਾ ਰਿਫ੍ਰੈਸ਼ ਅਤੇ ਸਮਕਾਲੀਕਰਨ ਸਮੇਤ ਸਾਰੀਆਂ ਬੈਕਗ੍ਰਾਊਂਡ ਸੇਵਾਵਾਂ ਅਸਮਰੱਥ ਕਰੋ।"
       },
-      "OMNIROUTE_RTK_TRUST_PROJECT_FILTERS": {
+      "AGENTPROXY_RTK_TRUST_PROJECT_FILTERS": {
         "description": "ਪੁਸ਼ਟੀ ਤੋਂ ਬਿਨਾਂ ਪ੍ਰੋਜੈਕਟ-ਪੱਧਰੀ RTK ਫਿਲਟਰਾਂ 'ਤੇ ਭਰੋਸਾ ਕਰੋ।"
       },
-      "OMNIROUTE_ENABLE_LIVE_WS": {
+      "AGENTPROXY_ENABLE_LIVE_WS": {
         "description": "ਇੰਪੋਰਟ ਵੇਲੇ ਲੂਪਬੈਕ ਪੋਰਟ 20132 ਉੱਤੇ ਰੀਅਲ-ਟਾਈਮ ਡੈਸ਼ਬੋਰਡ WebSocket ਸਰਵਰ ਸ਼ੁਰੂ ਕਰੋ। ਇਸਨੂੰ ਅਸਮਰੱਥ ਕਰਨ ਲਈ ਫਲੈਗ ਨੂੰ 0 ਜਾਂ false ਸੈੱਟ ਕਰੋ। LAN ਉੱਤੇ ਉਪਲਬਧਤਾ ਲਈ LIVE_WS_HOST=0.0.0.0 ਅਤੇ LIVE_WS_ALLOWED_ORIGINS ਵੀ ਲੋੜੀਂਦੇ ਹਨ।"
       },
-      "OMNIROUTE_CODEX_WS_ENABLED": {
+      "AGENTPROXY_CODEX_WS_ENABLED": {
         "description": "Codex ਨੂੰ WebSocket ਰਾਹੀਂ Responses ਵਰਤਣ ਦੀ ਇਜਾਜ਼ਤ ਦਿਓ। ਅਸਮਰੱਥ ਹੋਣ 'ਤੇ, Codex HTTP Responses ਉੱਤੇ ਫਾਲਬੈਕ ਕਰਦਾ ਹੈ।"
       },
-      "OMNIROUTE_EMERGENCY_FALLBACK": {
+      "AGENTPROXY_EMERGENCY_FALLBACK": {
         "description": "ਬਜਟ ਖ਼ਤਮ ਹੋ ਚੁੱਕੀਆਂ ਬੇਨਤੀਆਂ ਨੂੰ ਐਮਰਜੈਂਸੀ ਮੁਫ਼ਤ ਫਾਲਬੈਕ ਪ੍ਰਦਾਤਾ ਅਤੇ ਮਾਡਲ ਵੱਲ ਰੂਟ ਕਰੋ।"
       },
       "STREAM_RECOVERY_ENABLED": {
@@ -13017,16 +13017,16 @@
       "PRICING_SYNC_ENABLED": {
         "description": "ਕੀਮਤ ਡੇਟਾ ਆਪਣੇ ਆਪ ਸਮਕਾਲੀ ਕਰੋ। PRICING_SYNC_ENABLED ਇਨਵਾਇਰਨਮੈਂਟ ਵੇਰੀਏਬਲ ਵੀ true ਹੋਣਾ ਲਾਜ਼ਮੀ ਹੈ।"
       },
-      "OMNIROUTE_AUTO_SYNC_CODEX_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CODEX_PROFILES": {
         "description": "ਪ੍ਰਦਾਤਾ-ਮਾਡਲ ਸਮਕਾਲੀਕਰਨ ਤੋਂ ਬਾਅਦ, ਲਾਈਵ ਕੈਟਾਲੌਗ ਤੋਂ ~/.codex/*.config.toml ਪ੍ਰੋਫ਼ਾਈਲਾਂ ਮੁੜ ਬਣਾਓ। ਇਹ ਕਦੇ ਵੀ ਸਰਗਰਮ ਜਾਂ ਮੂਲ Codex ਸੰਰਚਨਾ ਨੂੰ ਨਹੀਂ ਬਦਲਦਾ ਅਤੇ ਮੂਲ ਰੂਪ ਵਿੱਚ ਬੰਦ ਹੈ।"
       },
-      "OMNIROUTE_AUTO_SYNC_CLAUDE_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CLAUDE_PROFILES": {
         "description": "ਪ੍ਰਦਾਤਾ-ਮਾਡਲ ਸਮਕਾਲੀਕਰਨ ਤੋਂ ਬਾਅਦ, ਲਾਈਵ ਕੈਟਾਲੌਗ ਤੋਂ ~/.claude/profiles/'<name>'/settings.json ਪ੍ਰੋਫ਼ਾਈਲਾਂ ਮੁੜ ਬਣਾਓ। ਇਹ ਕਦੇ ਵੀ ਸਰਗਰਮ ਜਾਂ ਮੂਲ Claude ਸੰਰਚਨਾ ਨੂੰ ਨਹੀਂ ਬਦਲਦਾ ਅਤੇ ਮੂਲ ਰੂਪ ਵਿੱਚ ਬੰਦ ਹੈ।"
       },
-      "OMNIROUTE_DISABLE_LOCAL_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_LOCAL_HEALTHCHECK": {
         "description": "ਸਥਾਨਕ ਇੰਸਟੈਂਸ ਦਾ ਹੈਲਥ-ਚੈੱਕ ਐਂਡਪੋਇੰਟ ਅਸਮਰੱਥ ਕਰੋ।"
       },
-      "OMNIROUTE_DISABLE_TOKEN_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_TOKEN_HEALTHCHECK": {
         "description": "ਟੋਕਨ-ਪ੍ਰਮਾਣਿਕਤਾ ਹੈਲਥ ਚੈੱਕ ਅਸਮਰੱਥ ਕਰੋ।"
       },
       "SKILLS_SANDBOX_NETWORK_ENABLED": {
@@ -14158,5 +14158,5 @@
     "partnerLinkNote": "ਭਾਈਵਾਲ ਲਿੰਕ",
     "dismissAriaLabel": "ਬੰਦ ਕਰੋ"
   },
-  "featureFlagOmnirouteDisableThinkingLevelVariantsDescription": "/v1/models ਕੈਟਾਲਾਗ ਵਿੱਚ ਸੋਚਣ ਦੇ ਪੱਧਰ ਦੇ ਰੂਪਾਂ (ਉਦਾਹਰਨ ਲਈ -low, -medium, -high) ਦੀ ਰਚਨਾ ਨੂੰ ਅਯੋਗ ਕਰੋ।"
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "/v1/models ਕੈਟਾਲਾਗ ਵਿੱਚ ਸੋਚਣ ਦੇ ਪੱਧਰ ਦੇ ਰੂਪਾਂ (ਉਦਾਹਰਨ ਲਈ -low, -medium, -high) ਦੀ ਰਚਨਾ ਨੂੰ ਅਯੋਗ ਕਰੋ।"
 }

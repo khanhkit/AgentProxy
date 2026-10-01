@@ -986,7 +986,7 @@
     "batchFileDownloadFull": "Atsisiųsti visą failą"
   },
   "disabled": "Išjungta",
-  "featureFlagOmnirouteEmergencyFallbackDescription": "Nukreipti užklausas, kurių biudžetas išnaudotas, į avarinį nemokamą atsarginį teikėją / modelį.",
+  "featureFlagAgentProxyEmergencyFallbackDescription": "Nukreipti užklausas, kurių biudžetas išnaudotas, į avarinį nemokamą atsarginį teikėją / modelį.",
   "featureFlagArenaEloSyncEnabledDescription": "Įjungti periodinę Arena AI lyderių lentelės ELO sinchronizaciją modelių intelekto reitingams.",
   "featureFlagUniversalContextHandoffEnabledDescription": "Generuoti ir įterpti pokalbio santraukas, kai kombinuoto maršruto parinkimas perjungia modelius. Išjunkite, kad modelių perjungimai būtų vertinami nepriklausomai ir būtų išvengta foninių perdavimo užklausų visoms esamoms ir būsimoms kombinacijoms.",
   "featureFlagExposeCcDiscoveryAliasesDescription": "Skelbti claude/&lt;provider&gt;/&lt;model&gt; dubliuojamuosius ID per /v1/models, kad Claude Code šliuzo modelių aptikimo funkcija rodytų ne Claude modelius. Įspėjimas: įjungus visuotinai, katalogo įrašų skaičius padvigubėja visiems klientams.",
@@ -2277,7 +2277,7 @@
     "requestFlowAria": "Jūsų programa siunčia užklausas per API raktą į OmniRoute",
     "requestFlowYourApp": "Jūsų programa",
     "requestFlowApiKey": "API raktas",
-    "requestFlowOmniRoute": "OmniRoute",
+    "requestFlowAgentProxy": "AgentProxy",
     "totalKeys": "Iš viso raktų",
     "restricted": "Apriboti",
     "totalRequests": "Iš viso užklausų",
@@ -2784,7 +2784,7 @@
     "configurationSaved": "Konfigūracija sėkmingai išsaugota.",
     "failedToSave": "Nepavyko išsaugoti konfigūracijos.",
     "noApiKeysCreateOne": "Nėra API raktų – sukurkite raktą puslapyje „Raktai“",
-    "defaultOmnirouteKey": "sk_omniroute (numatytasis)",
+    "defaultAgentProxyKey": "sk_agentproxy (numatytasis)",
     "selectModel": "Pasirinkti modelį",
     "selectModelForAlias": "Pasirinkite modelį pseudonimui {alias}",
     "selectModelForTool": "Pasirinkite modelį įrankiui {tool}",
@@ -2881,13 +2881,13 @@
     "applied": "Pritaikyta!",
     "failed": "Nepavyko",
     "resetDone": "Atstatyta!",
-    "omnirouteConfiguredOpenAiCompatible": "OmniRoute sukonfigūruotas kaip su OpenAI suderinamas teikėjas",
+    "agentproxyConfiguredOpenAiCompatible": "AgentProxy sukonfigūruotas kaip su OpenAI suderinamas teikėjas",
     "provider": "Teikėjas",
     "model": "Modelis",
     "providers": "Teikėjai",
     "auth": "Autentifikacija",
     "noApiKeysAvailable": "Nėra prieinamų API raktų",
-    "usingDefaultOmniroute": "Naudojama numatytoji reikšmė: sk_omniroute",
+    "usingDefaultAgentProxy": "Naudojama numatytoji reikšmė: sk_agentproxy",
     "updateConfig": "Atnaujinti konfigūraciją",
     "applyConfig": "Taikyti konfigūraciją",
     "noBackupsAvailable": "Nėra atsarginių kopijų.",
@@ -3168,8 +3168,8 @@
     "hermesConfiguredRoles": "{configured}/{total} vaidmenų",
     "hermesQuickApply": "Greitai pritaikykite tą patį modelį visiems vaidmenims:",
     "hermesApplyModelToAll": "Pritaikyti {model} visiems vaidmenims",
-    "hermesViaOmniRoute": "{provider} (per OmniRoute)",
-    "hermesNotOmniRoute": "{provider} (ne OmniRoute)",
+    "hermesViaAgentProxy": "{provider} (per AgentProxy)",
+    "hermesNotAgentProxy": "{provider} (ne AgentProxy)",
     "hermesRemovePendingRole": "Pašalinti šį vaidmenį iš numatytų pakeitimų",
     "hermesApply": "Pritaikyti Hermes Agent",
     "hermesRolesWillUpdate": "{count, plural, one {# vaidmuo bus atnaujintas} few {# vaidmenys bus atnaujinti} other {# vaidmenų bus atnaujinta}}",
@@ -4165,7 +4165,7 @@
     "vscodeAliasModelsLabel": "VS Code modeliai",
     "vscodeAliasChatLabel": "VS Code pokalbis",
     "localServer": "Vietinis serveris",
-    "cloudOmniroute": "OmniRoute debesija",
+    "cloudAgentProxy": "AgentProxy debesija",
     "copyUrl": "Kopijuoti URL",
     "badgeLoopbackTooltip": "Šis galinis taškas pasiekiamas tik vietoje (tik loopback)",
     "badgeAlwaysProtectedTooltip": "Šis galinis taškas visada apsaugotas ir reikalauja autorizacijos",
@@ -10002,7 +10002,7 @@
     "howItWorksStep3Description": "Užklausą akimirksniu įvykdo OpenAI, Anthropic, Gemini arba kiti paslaugų teikėjai.",
     "getStartedIn30Seconds": "Pradėkite per 30 sekundžių",
     "getStartedDescription": "Įdiekite OmniRoute, žiniatinklio valdymo skydelyje sukonfigūruokite paslaugų teikėjus ir pradėkite maršrutizuoti DI užklausas.",
-    "installOmniRoute": "Įdiekite OmniRoute",
+    "installAgentProxy": "Įdiekite AgentProxy",
     "installStepDescription": "Paleiskite npx komandą, kad serveris būtų nedelsiant paleistas",
     "openDashboard": "Atidaryti valdymo skydelį",
     "openDashboardStepDescription": "Sukonfigūruokite paslaugų teikėjus ir API raktus žiniatinklio sąsajoje",
@@ -10011,7 +10011,7 @@
     "terminal": "terminalas",
     "copy": "Kopijuoti",
     "copied": "✓ Nukopijuota",
-    "startingOmniRoute": "Paleidžiama OmniRoute...",
+    "startingAgentProxy": "Paleidžiama AgentProxy...",
     "serverRunningOnLabel": "Serveris veikia adresu",
     "dashboardLabel": "Valdymo skydelis",
     "readyToRoute": "Pasiruošta maršrutizuoti! ✓",
@@ -10405,7 +10405,7 @@
     "versionCommandPlaceholder": "pvz., my-agent --version",
     "architectureTitle": "Kaip veikia agentų paskirtys",
     "flowLocalBinary": "3 · CLI procesas su savo autentifikavimo duomenimis",
-    "flowOmniRoute": "1 · Užklausa pasiekia OmniRoute",
+    "flowAgentProxy": "1 · Užklausa pasiekia AgentProxy",
     "agentNamePlaceholder": "pvz., Mano pasirinktinis agentas",
     "architectureDescription": "Kai gaunama užklausa, OmniRoute gali paleisti vietinį CLI vykdomąjį failą (pvz., claude, codex, goose) ir perduoti jam užklausą. CLI apdoroja užklausą naudodamas savo prisijungimo duomenis ir per OmniRoute grąžina rezultatą.",
     "flowExecute": "4 · Atsakymas grąžinamas klientui",
@@ -10422,8 +10422,8 @@
     "agentUseCaseHint": "Galima naudoti kaip vykdymo paskirtį per ACP protokolą",
     "flowDiagramClient": "Kliento programa",
     "flowDiagramClientDesc": "SDK, API arba pirminė paslauga",
-    "flowDiagramOmniRoute": "OmniRoute",
-    "flowDiagramOmniRouteDesc": "Gauna užklausą ir parenka paskirtį",
+    "flowDiagramAgentProxy": "AgentProxy",
+    "flowDiagramAgentProxyDesc": "Gauna užklausą ir parenka paskirtį",
     "flowDiagramSpawn": "Proceso paleidimas",
     "flowDiagramSpawnDesc": "Paleidžia CLI vykdomąjį failą per stdio",
     "flowDiagramCli": "CLI agentas",
@@ -12988,16 +12988,16 @@
       "PROXY_AUTO_SELECT_ENABLED": {
         "description": "Kai ryšiui nepriskirtas tarpinis serveris, automatiškai pasirinkti pirmąjį veikiantį registro tarpinį serverį. Pagal numatytuosius nustatymus išjungta, nes kitu atveju vienas registro tarpinis serveris taptų visuotine atsargine parinktimi visam srautui (#3332)."
       },
-      "OMNIROUTE_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
+      "AGENTPROXY_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
         "description": "Leisti OAuth ir tiekėjo tikrinimo eigoms apeiti susietą tarpinį serverį, kai nepavyksta tarpinio serverio pasiekiamumo patikros. Pagal numatytuosius nustatymus išjungta, nes tai gali pakeisti paskyros išeinančio srauto IP adresą."
       },
       "MITM_DISABLE_TLS_VERIFY": {
         "description": "Išjungti MITM tarpinio serverio TLS sertifikato tikrinimą."
       },
-      "OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS": {
         "description": "Leisti tiekėjų URL, nukreipiančius į privačius arba vidinius tinklus."
       },
-      "OMNIROUTE_ALLOW_LOCAL_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_LOCAL_PROVIDER_URLS": {
         "description": "Leisti naudoti tiekėjus localhost, LAN ir privačių IP adresų diapazonuose. Tai būtina vietiniams su OpenAI suderinamiems modeliams ir įjungta pagal numatytuosius nustatymus. Debesijos metaduomenų galiniai taškai, pvz., 169.254.169.254, lieka užblokuoti."
       },
       "ENABLE_CC_COMPATIBLE_PROVIDER": {
@@ -13019,28 +13019,28 @@
       "RESPONSES_PASSTHROUGH_DROP_COMMENTARY": {
         "description": "Prieš persiunčiant klientams pašalinti vidinius komentarų fazės išvesties elementus iš Responses API tiesioginio perdavimo srautų. Išjunkite šią parinktį, kad gautumėte neapdorotus išorinio tiekėjo komentarus."
       },
-      "OMNIROUTE_MCP_ENFORCE_SCOPES": {
+      "AGENTPROXY_MCP_ENFORCE_SCOPES": {
         "description": "Taikyti aprėpčių apribojimus MCP įrankių prieigai."
       },
-      "OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS": {
+      "AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS": {
         "description": "Glaudinti MCP įrankių aprašus, kad būtų naudojama mažiau žetonų."
       },
-      "OMNIROUTE_ENABLE_RUNTIME_BACKGROUND_TASKS": {
+      "AGENTPROXY_ENABLE_RUNTIME_BACKGROUND_TASKS": {
         "description": "Įjungti foninių užduočių apdorojimą vykdymo metu."
       },
-      "OMNIROUTE_DISABLE_BACKGROUND_SERVICES": {
+      "AGENTPROXY_DISABLE_BACKGROUND_SERVICES": {
         "description": "Išjungti visas fonines paslaugas, įskaitant kvotų atnaujinimą ir sinchronizavimą."
       },
-      "OMNIROUTE_RTK_TRUST_PROJECT_FILTERS": {
+      "AGENTPROXY_RTK_TRUST_PROJECT_FILTERS": {
         "description": "Pasitikėti projekto lygmens RTK filtrais jų netikrinant."
       },
-      "OMNIROUTE_ENABLE_LIVE_WS": {
+      "AGENTPROXY_ENABLE_LIVE_WS": {
         "description": "Importavimo metu paleisti realiojo laiko valdymo skydelio WebSocket serverį grįžtamojo ryšio sąsajos prievade 20132. Norėdami jį išjungti, nustatykite parinktį į 0 arba false. Prieigai per LAN taip pat reikia LIVE_WS_HOST=0.0.0.0 ir LIVE_WS_ALLOWED_ORIGINS."
       },
-      "OMNIROUTE_CODEX_WS_ENABLED": {
+      "AGENTPROXY_CODEX_WS_ENABLED": {
         "description": "Leisti Codex naudoti Responses per WebSocket. Kai išjungta, Codex grįžta prie HTTP Responses."
       },
-      "OMNIROUTE_EMERGENCY_FALLBACK": {
+      "AGENTPROXY_EMERGENCY_FALLBACK": {
         "description": "Išnaudojus biudžetą, nukreipti užklausas į avarinį nemokamą atsarginį tiekėją ir modelį."
       },
       "STREAM_RECOVERY_ENABLED": {
@@ -13067,16 +13067,16 @@
       "PRICING_SYNC_ENABLED": {
         "description": "Automatiškai sinchronizuoti kainodaros duomenis. Aplinkos kintamojo PRICING_SYNC_ENABLED reikšmė taip pat turi būti true."
       },
-      "OMNIROUTE_AUTO_SYNC_CODEX_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CODEX_PROFILES": {
         "description": "Sinchronizavus teikėjų modelius, iš naujo sugeneruoti ~/.codex/*.config.toml profilius pagal aktualų katalogą. Tai niekada nepakeičia aktyvios ar numatytosios Codex konfigūracijos ir pagal numatytuosius nustatymus yra išjungta."
       },
-      "OMNIROUTE_AUTO_SYNC_CLAUDE_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CLAUDE_PROFILES": {
         "description": "Sinchronizavus teikėjų modelius, iš naujo sugeneruoti ~/.claude/profiles/'<name>'/settings.json profilius pagal aktualų katalogą. Tai niekada nepakeičia aktyvios ar numatytosios Claude konfigūracijos ir pagal numatytuosius nustatymus yra išjungta."
       },
-      "OMNIROUTE_DISABLE_LOCAL_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_LOCAL_HEALTHCHECK": {
         "description": "Išjungti vietinio egzemplioriaus būklės patikros galinį tašką."
       },
-      "OMNIROUTE_DISABLE_TOKEN_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_TOKEN_HEALTHCHECK": {
         "description": "Išjungti prieigos rakto tikrinimo būklės patikrą."
       },
       "SKILLS_SANDBOX_NETWORK_ENABLED": {
@@ -14213,5 +14213,5 @@
     "partnerLinkNote": "Partnerio nuoroda",
     "dismissAriaLabel": "Uždaryti"
   },
-  "featureFlagOmnirouteDisableThinkingLevelVariantsDescription": "Išjungti mąstymo lygio variantų (pvz., -low, -medium, -high) generavimą /v1/models kataloge."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Išjungti mąstymo lygio variantų (pvz., -low, -medium, -high) generavimą /v1/models kataloge."
 }

@@ -258,7 +258,7 @@
     "no_tray": "Keela süsteemisalve ikoon",
     "tls_cert": "TLS-sertifikaadi (PEM) tee HTTPS-i teenindamiseks (ka OMNIROUTE_TLS_CERT)",
     "tls_key": "TLS privaatvõtme (PEM) tee HTTPS-i teenindamiseks (ka OMNIROUTE_TLS_KEY)",
-    "ready_timeout": "Valmisolekukontrolli ajalõpp millisekundites (ka OMNIROUTE_READY_TIMEOUT_MS, vaikimisi 60000)"
+    "ready_timeout": "Valmisolekukontrolli ajalõpp millisekundites (ka AGENTPROXY_READY_TIMEOUT_MS, vaikimisi 60000)"
   },
   "backup": {
     "title": "Varukoopia",

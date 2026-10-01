@@ -986,7 +986,7 @@
     "batchFileDownloadFull": "ទាញយកឯកសារពេញលេញ"
   },
   "disabled": "បានបិទ",
-  "featureFlagOmnirouteEmergencyFallbackDescription": "បញ្ជូនសំណើដែលអស់ថវិកាទៅកាន់ provider/model ជំនួសឥតគិតថ្លៃសម្រាប់គ្រាអាសន្ន។",
+  "featureFlagAgentProxyEmergencyFallbackDescription": "បញ្ជូនសំណើដែលអស់ថវិកាទៅកាន់ provider/model ជំនួសឥតគិតថ្លៃសម្រាប់គ្រាអាសន្ន។",
   "featureFlagArenaEloSyncEnabledDescription": "បើកការធ្វើសមកាលកម្ម ELO តាមកាលកំណត់ពីតារាងចំណាត់ថ្នាក់ Arena AI សម្រាប់ចំណាត់ថ្នាក់ភាពវៃឆ្លាតរបស់ម៉ូដែល។",
   "featureFlagUniversalContextHandoffEnabledDescription": "បង្កើត និងបញ្ចូលសេចក្ដីសង្ខេបការសន្ទនា នៅពេល combo routing ប្ដូរម៉ូដែល។ បិទវា ដើម្បីចាត់ទុកការប្ដូរម៉ូដែលដាច់ដោយឡែកពីគ្នា និងទប់ស្កាត់សំណើប្រគល់បន្តនៅផ្ទៃខាងក្រោយសម្រាប់ combo ដែលមានស្រាប់ និងនាពេលអនាគតទាំងអស់។",
   "featureFlagExposeCcDiscoveryAliasesDescription": "ផ្សព្វផ្សាយ mirror ids របស់ claude/&lt;provider&gt;/&lt;model&gt; នៅលើ /v1/models ដើម្បីឱ្យការស្វែងរកម៉ូដែលតាម gateway របស់ Claude Code រាយបញ្ជីម៉ូដែលដែលមិនមែនជា Claude។ ការព្រមាន៖ វានឹងបង្កើនធាតុក្នុងកាតាឡុកទ្វេដងសម្រាប់ client ទាំងអស់ នៅពេលបើកជាសកល។",
@@ -2254,7 +2254,7 @@
     "requestFlowAria": "កម្មវិធីរបស់អ្នកផ្ញើសំណើតាមរយៈសោ API ទៅ OmniRoute",
     "requestFlowYourApp": "កម្មវិធីរបស់អ្នក",
     "requestFlowApiKey": "សោ API",
-    "requestFlowOmniRoute": "OmniRoute",
+    "requestFlowAgentProxy": "AgentProxy",
     "totalKeys": "សោសរុប",
     "restricted": "បានដាក់កម្រិត",
     "totalRequests": "សំណើសរុប",
@@ -2761,7 +2761,7 @@
     "configurationSaved": "បានរក្សាទុកការកំណត់រចនាសម្ព័ន្ធដោយជោគជ័យ។",
     "failedToSave": "មិនអាចរក្សាទុកការកំណត់រចនាសម្ព័ន្ធបានទេ។",
     "noApiKeysCreateOne": "គ្មាន API key ទេ - បង្កើតមួយនៅទំព័រ Keys",
-    "defaultOmnirouteKey": "sk_omniroute (លំនាំដើម)",
+    "defaultAgentProxyKey": "sk_agentproxy (លំនាំដើម)",
     "selectModel": "ជ្រើសរើសម៉ូដែល",
     "selectModelForAlias": "ជ្រើសរើសម៉ូដែលសម្រាប់ {alias}",
     "selectModelForTool": "ជ្រើសរើសម៉ូដែលសម្រាប់ {tool}",
@@ -2858,13 +2858,13 @@
     "applied": "បានអនុវត្ត!",
     "failed": "បរាជ័យ",
     "resetDone": "បានកំណត់ឡើងវិញ!",
-    "omnirouteConfiguredOpenAiCompatible": "OmniRoute ត្រូវបានកំណត់រចនាសម្ព័ន្ធជាអ្នកផ្តល់សេវាដែលឆបគ្នាជាមួយ OpenAI",
+    "agentproxyConfiguredOpenAiCompatible": "AgentProxy ត្រូវបានកំណត់រចនាសម្ព័ន្ធជាអ្នកផ្តល់សេវាដែលឆបគ្នាជាមួយ OpenAI",
     "provider": "អ្នកផ្តល់សេវា",
     "model": "ម៉ូដែល",
     "providers": "អ្នកផ្តល់សេវា",
     "auth": "ការផ្ទៀងផ្ទាត់អត្តសញ្ញាណ",
     "noApiKeysAvailable": "មិនមាន API keys ទេ",
-    "usingDefaultOmniroute": "កំពុងប្រើលំនាំដើម៖ sk_omniroute",
+    "usingDefaultAgentProxy": "កំពុងប្រើលំនាំដើម៖ sk_agentproxy",
     "updateConfig": "ធ្វើបច្ចុប្បន្នភាពការកំណត់រចនាសម្ព័ន្ធ",
     "applyConfig": "អនុវត្តការកំណត់រចនាសម្ព័ន្ធ",
     "noBackupsAvailable": "មិនមានការបម្រុងទុកទេ។",
@@ -3145,8 +3145,8 @@
     "hermesConfiguredRoles": "{configured}/{total} តួនាទី",
     "hermesQuickApply": "អនុវត្តម៉ូដែលដូចគ្នាទៅគ្រប់តួនាទីយ៉ាងរហ័ស៖",
     "hermesApplyModelToAll": "អនុវត្ត {model} ទៅគ្រប់តួនាទី",
-    "hermesViaOmniRoute": "{provider} (តាមរយៈ OmniRoute)",
-    "hermesNotOmniRoute": "{provider} (មិនមែន OmniRoute)",
+    "hermesViaAgentProxy": "{provider} (តាមរយៈ AgentProxy)",
+    "hermesNotAgentProxy": "{provider} (មិនមែន AgentProxy)",
     "hermesRemovePendingRole": "ដកតួនាទីនេះចេញពីការផ្លាស់ប្ដូរដែលកំពុងរង់ចាំ",
     "hermesApply": "អនុវត្តទៅ Hermes Agent",
     "hermesRolesWillUpdate": "{count, plural, one {# តួនាទីនឹងត្រូវបានធ្វើបច្ចុប្បន្នភាព} other {# តួនាទីនឹងត្រូវបានធ្វើបច្ចុប្បន្នភាព}}",
@@ -4125,7 +4125,7 @@
     "vscodeAliasModelsLabel": "ម៉ូដែល VS Code",
     "vscodeAliasChatLabel": "ការជជែក VS Code",
     "localServer": "ម៉ាស៊ីនមេមូលដ្ឋាន",
-    "cloudOmniroute": "Cloud OmniRoute",
+    "cloudAgentProxy": "Cloud AgentProxy",
     "copyUrl": "ចម្លង URL",
     "badgeLoopbackTooltip": "endpoint នេះអាចចូលប្រើបានតែក្នុងមូលដ្ឋានប៉ុណ្ណោះ (សម្រាប់តែ loopback)",
     "badgeAlwaysProtectedTooltip": "endpoint នេះត្រូវបានការពារជានិច្ច និងទាមទារការផ្ទៀងផ្ទាត់សិទ្ធិ",
@@ -9962,7 +9962,7 @@
     "howItWorksStep3Description": "សំណើត្រូវបានបំពេញភ្លាមៗដោយ OpenAI, Anthropic, Gemini ឬអ្នកផ្តល់សេវាផ្សេងទៀត។",
     "getStartedIn30Seconds": "ចាប់ផ្ដើមក្នុងរយៈពេល 30 វិនាទី",
     "getStartedDescription": "ដំឡើង OmniRoute កំណត់រចនាសម្ព័ន្ធអ្នកផ្តល់សេវារបស់អ្នកតាមរយៈផ្ទាំងគ្រប់គ្រងលើបណ្ដាញ ហើយចាប់ផ្ដើមកំណត់ផ្លូវសំណើ AI។",
-    "installOmniRoute": "ដំឡើង OmniRoute",
+    "installAgentProxy": "ដំឡើង AgentProxy",
     "installStepDescription": "ដំណើរការពាក្យបញ្ជា npx ដើម្បីចាប់ផ្ដើមម៉ាស៊ីនបម្រើភ្លាមៗ",
     "openDashboard": "បើកផ្ទាំងគ្រប់គ្រង",
     "openDashboardStepDescription": "កំណត់រចនាសម្ព័ន្ធអ្នកផ្តល់សេវា និង API keys តាមរយៈចំណុចប្រទាក់លើបណ្ដាញ",
@@ -9971,7 +9971,7 @@
     "terminal": "ស្ថានីយបញ្ជា",
     "copy": "ចម្លង",
     "copied": "✓ បានចម្លង",
-    "startingOmniRoute": "កំពុងចាប់ផ្ដើម OmniRoute...",
+    "startingAgentProxy": "កំពុងចាប់ផ្ដើម AgentProxy...",
     "serverRunningOnLabel": "ម៉ាស៊ីនបម្រើកំពុងដំណើរការនៅ",
     "dashboardLabel": "ផ្ទាំងគ្រប់គ្រង",
     "readyToRoute": "រួចរាល់សម្រាប់កំណត់ផ្លូវ! ✓",
@@ -10365,7 +10365,7 @@
     "versionCommandPlaceholder": "ឧ. my-agent --version",
     "architectureTitle": "របៀបដែល Agent Targets ដំណើរការ",
     "flowLocalBinary": "3 · ដំណើរការ CLI ជាមួយការផ្ទៀងផ្ទាត់អត្តសញ្ញាណផ្ទាល់ខ្លួន",
-    "flowOmniRoute": "1 · សំណើមកដល់ OmniRoute",
+    "flowAgentProxy": "1 · សំណើមកដល់ AgentProxy",
     "agentNamePlaceholder": "ឧ. Agent ផ្ទាល់ខ្លួនរបស់ខ្ញុំ",
     "architectureDescription": "នៅពេលសំណើមកដល់ OmniRoute អាចបើកដំណើរការ binary CLI មូលដ្ឋាន (ឧ. claude, codex, goose) ហើយបញ្ជូនសំណើឆ្លងកាត់វា។ CLI ដំណើរការសំណើដោយប្រើព័ត៌មានសម្គាល់អត្តសញ្ញាណផ្ទាល់ខ្លួន ហើយបញ្ជូនលទ្ធផលត្រឡប់មកវិញតាមរយៈ OmniRoute។",
     "flowExecute": "4 · ការឆ្លើយតបត្រូវបានបញ្ជូនត្រឡប់ទៅ client",
@@ -10382,8 +10382,8 @@
     "agentUseCaseHint": "អាចប្រើជាគោលដៅប្រតិបត្តិការតាមរយៈពិធីការ ACP",
     "flowDiagramClient": "កម្មវិធីអតិថិជន",
     "flowDiagramClientDesc": "SDK, API ឬសេវា upstream",
-    "flowDiagramOmniRoute": "OmniRoute",
-    "flowDiagramOmniRouteDesc": "ទទួលសំណើ និងជ្រើសរើសគោលដៅ",
+    "flowDiagramAgentProxy": "AgentProxy",
+    "flowDiagramAgentProxyDesc": "ទទួលសំណើ និងជ្រើសរើសគោលដៅ",
     "flowDiagramSpawn": "ចាប់ផ្តើមដំណើរការ",
     "flowDiagramSpawnDesc": "បើកដំណើរការឯកសារប្រតិបត្តិ CLI តាមរយៈ stdio",
     "flowDiagramCli": "ភ្នាក់ងារ CLI",
@@ -12938,16 +12938,16 @@
       "PROXY_AUTO_SELECT_ENABLED": {
         "description": "នៅពេលគ្មានប្រូកស៊ីត្រូវបានកំណត់ឱ្យការតភ្ជាប់ សូមជ្រើសរើសប្រូកស៊ី registry ដំបូងដែលដំណើរការដោយស្វ័យប្រវត្តិ។ តាមលំនាំដើម វាត្រូវបានបិទ ព្រោះបើមិនដូច្នោះទេ ប្រូកស៊ី registry មួយនឹងក្លាយជាប្រូកស៊ីបម្រុងសកលសម្រាប់ចរាចរណ៍ទាំងអស់ (#3332)។"
       },
-      "OMNIROUTE_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
+      "AGENTPROXY_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
         "description": "អនុញ្ញាតឱ្យលំហូរ OAuth និងលំហូរផ្ទៀងផ្ទាត់ provider រំលងប្រូកស៊ីដែលបានខ្ទាស់ នៅពេលការត្រួតពិនិត្យលទ្ធភាពតភ្ជាប់ទៅប្រូកស៊ីបរាជ័យ។ តាមលំនាំដើម វាត្រូវបានបិទ ព្រោះវាអាចផ្លាស់ប្ដូរ IP ចេញរបស់គណនី។"
       },
       "MITM_DISABLE_TLS_VERIFY": {
         "description": "បិទការផ្ទៀងផ្ទាត់វិញ្ញាបនបត្រ TLS សម្រាប់ប្រូកស៊ី MITM។"
       },
-      "OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS": {
         "description": "អនុញ្ញាត URL របស់ provider ដែលចង្អុលទៅបណ្តាញឯកជន ឬបណ្តាញខាងក្នុង។"
       },
-      "OMNIROUTE_ALLOW_LOCAL_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_LOCAL_PROVIDER_URLS": {
         "description": "អនុញ្ញាត providers នៅលើ localhost, LAN និងជួរ IP ឯកជន។ វាចាំបាច់សម្រាប់ម៉ូដែលក្នុងមូលដ្ឋានដែលឆបគ្នាជាមួយ OpenAI ហើយត្រូវបានបើកតាមលំនាំដើម។ endpoints ទិន្នន័យមេតារបស់ cloud ដូចជា 169.254.169.254 នៅតែត្រូវបានទប់ស្កាត់។"
       },
       "ENABLE_CC_COMPATIBLE_PROVIDER": {
@@ -12969,28 +12969,28 @@
       "RESPONSES_PASSTHROUGH_DROP_COMMENTARY": {
         "description": "ដកធាតុលទ្ធផល commentary-phase ខាងក្នុងចេញពី passthrough streams របស់ Responses API មុនពេលបញ្ជូនបន្តទៅ clients។ បិទទង់នេះ ដើម្បីទទួលបាន commentary ដើមពី upstream។"
       },
-      "OMNIROUTE_MCP_ENFORCE_SCOPES": {
+      "AGENTPROXY_MCP_ENFORCE_SCOPES": {
         "description": "អនុវត្តការរឹតត្បិត scope សម្រាប់ការចូលប្រើ MCP tool។"
       },
-      "OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS": {
+      "AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS": {
         "description": "បង្រួមការពិពណ៌នា MCP tool ដើម្បីកាត់បន្ថយការប្រើប្រាស់ token។"
       },
-      "OMNIROUTE_ENABLE_RUNTIME_BACKGROUND_TASKS": {
+      "AGENTPROXY_ENABLE_RUNTIME_BACKGROUND_TASKS": {
         "description": "បើកដំណើរការ background-task នៅពេល runtime។"
       },
-      "OMNIROUTE_DISABLE_BACKGROUND_SERVICES": {
+      "AGENTPROXY_DISABLE_BACKGROUND_SERVICES": {
         "description": "បិទសេវាកម្មផ្ទៃខាងក្រោយទាំងអស់ រួមទាំងការធ្វើឱ្យ quota ស្រស់ឡើងវិញ និងការធ្វើសមកាលកម្ម។"
       },
-      "OMNIROUTE_RTK_TRUST_PROJECT_FILTERS": {
+      "AGENTPROXY_RTK_TRUST_PROJECT_FILTERS": {
         "description": "ទុកចិត្ត project-level RTK filters ដោយមិនធ្វើការផ្ទៀងផ្ទាត់។"
       },
-      "OMNIROUTE_ENABLE_LIVE_WS": {
+      "AGENTPROXY_ENABLE_LIVE_WS": {
         "description": "ចាប់ផ្តើម WebSocket server របស់ផ្ទាំងគ្រប់គ្រង real-time នៅពេល import លើ loopback port 20132។ កំណត់ទង់ជា 0 ឬ false ដើម្បីបិទវា។ ការបើកឱ្យ LAN ចូលប្រើក៏តម្រូវឱ្យមាន LIVE_WS_HOST=0.0.0.0 និង LIVE_WS_ALLOWED_ORIGINS ផងដែរ។"
       },
-      "OMNIROUTE_CODEX_WS_ENABLED": {
+      "AGENTPROXY_CODEX_WS_ENABLED": {
         "description": "អនុញ្ញាតឱ្យ Codex ប្រើ Responses តាមរយៈ WebSocket។ នៅពេលបិទ Codex នឹងត្រឡប់ទៅប្រើ HTTP Responses វិញ។"
       },
-      "OMNIROUTE_EMERGENCY_FALLBACK": {
+      "AGENTPROXY_EMERGENCY_FALLBACK": {
         "description": "បញ្ជូនសំណើដែលបានប្រើអស់ថវិកា ទៅកាន់ provider និង model បម្រុងឥតគិតថ្លៃសម្រាប់គ្រាអាសន្ន។"
       },
       "STREAM_RECOVERY_ENABLED": {
@@ -13017,16 +13017,16 @@
       "PRICING_SYNC_ENABLED": {
         "description": "ធ្វើសមកាលកម្មទិន្នន័យតម្លៃដោយស្វ័យប្រវត្តិ។ environment variable PRICING_SYNC_ENABLED ក៏ត្រូវតែជា true ផងដែរ។"
       },
-      "OMNIROUTE_AUTO_SYNC_CODEX_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CODEX_PROFILES": {
         "description": "បន្ទាប់ពីការធ្វើសមកាលកម្ម provider-model បង្កើត profiles ~/.codex/*.config.toml ឡើងវិញពី catalog ដែលកំពុងប្រើប្រាស់។ វាមិនដែលផ្លាស់ប្តូរការកំណត់រចនាសម្ព័ន្ធ Codex ដែលសកម្ម ឬលំនាំដើមឡើយ ហើយត្រូវបានបិទតាមលំនាំដើម។"
       },
-      "OMNIROUTE_AUTO_SYNC_CLAUDE_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CLAUDE_PROFILES": {
         "description": "បន្ទាប់ពីការធ្វើសមកាលកម្ម provider-model បង្កើត profiles ~/.claude/profiles/'<name>'/settings.json ឡើងវិញពី catalog ដែលកំពុងប្រើប្រាស់។ វាមិនដែលផ្លាស់ប្តូរការកំណត់រចនាសម្ព័ន្ធ Claude ដែលសកម្ម ឬលំនាំដើមឡើយ ហើយត្រូវបានបិទតាមលំនាំដើម។"
       },
-      "OMNIROUTE_DISABLE_LOCAL_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_LOCAL_HEALTHCHECK": {
         "description": "បិទ endpoint សម្រាប់ការត្រួតពិនិត្យស្ថានភាពដំណើរការរបស់ instance ក្នុងមូលដ្ឋាន។"
       },
-      "OMNIROUTE_DISABLE_TOKEN_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_TOKEN_HEALTHCHECK": {
         "description": "បិទការត្រួតពិនិត្យស្ថានភាពនៃការផ្ទៀងផ្ទាត់ token។"
       },
       "SKILLS_SANDBOX_NETWORK_ENABLED": {
@@ -14158,5 +14158,5 @@
     "partnerLinkNote": "តំណដៃគូ",
     "dismissAriaLabel": "បិទ"
   },
-  "featureFlagOmnirouteDisableThinkingLevelVariantsDescription": "បិទការបង្កើតវ៉ារ្យ៉ង់កម្រិតនៃការគិត (ឧ. -low, -medium, -high) នៅក្នុងកាតាឡុក /v1/models។"
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "បិទការបង្កើតវ៉ារ្យ៉ង់កម្រិតនៃការគិត (ឧ. -low, -medium, -high) នៅក្នុងកាតាឡុក /v1/models។"
 }

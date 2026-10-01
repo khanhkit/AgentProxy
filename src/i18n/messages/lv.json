@@ -986,7 +986,7 @@
     "batchFileDownloadFull": "Lejupielādēt pilnu failu"
   },
   "disabled": "Izslēgts",
-  "featureFlagOmnirouteEmergencyFallbackDescription": "Novirzīt pieprasījumus, kuriem izsmelts budžets, uz avārijas bezmaksas rezerves nodrošinātāju/modeli.",
+  "featureFlagAgentProxyEmergencyFallbackDescription": "Novirzīt pieprasījumus, kuriem izsmelts budžets, uz avārijas bezmaksas rezerves nodrošinātāju/modeli.",
   "featureFlagArenaEloSyncEnabledDescription": "Iespējot periodisku Arena AI ranga tabulas ELO sinhronizāciju modeļu intelekta reitingiem.",
   "featureFlagUniversalContextHandoffEnabledDescription": "Ģenerēt un ievietot sarunu kopsavilkumus, kad kombinētais maršrutēšanas process pārslēdz modeļus. Izslēdziet, lai modeļu pārslēgšanu apskatītu neatkarīgi un novērstu fona nodošanas pieprasījumus visiem esošajiem un turpmākajiem kombo iestatījumiem.",
   "featureFlagExposeCcDiscoveryAliasesDescription": "Izziņot claude/&lt;provider&gt;/&lt;model&gt; spoguļa ID vietnē /v1/models, lai Claude Code vārtejas modeļu atrašana uzrādītu modeļus, kas nav Claude modeļi. Brīdinājums: kad šī funkcija ir iespējota globāli, kataloga ierakstu skaits visiem klientiem dubultojas.",
@@ -2283,7 +2283,7 @@
     "requestFlowAria": "Jūsu lietotne sūta pieprasījumus, izmantojot API atslēgu, uz OmniRoute",
     "requestFlowYourApp": "Jūsu lietotne",
     "requestFlowApiKey": "API atslēga",
-    "requestFlowOmniRoute": "OmniRoute",
+    "requestFlowAgentProxy": "AgentProxy",
     "totalKeys": "Kopējais atslēgu skaits",
     "restricted": "Ierobežots",
     "totalRequests": "Kopējais pieprasījumu skaits",
@@ -2790,7 +2790,7 @@
     "configurationSaved": "Konfigurācija veiksmīgi saglabāta.",
     "failedToSave": "Neizdevās saglabāt konfigurāciju.",
     "noApiKeysCreateOne": "Nav API atslēgu — izveidojiet vienu lapā Keys",
-    "defaultOmnirouteKey": "sk_omniroute (noklusējums)",
+    "defaultAgentProxyKey": "sk_agentproxy (noklusējums)",
     "selectModel": "Izvēlēties modeli",
     "selectModelForAlias": "Izvēlēties modeli aizstājvārdam {alias}",
     "selectModelForTool": "Izvēlēties modeli rīkam {tool}",
@@ -2887,13 +2887,13 @@
     "applied": "Pielietots!",
     "failed": "Neizdevās",
     "resetDone": "Atiestatīts!",
-    "omnirouteConfiguredOpenAiCompatible": "OmniRoute ir konfigurēts kā ar OpenAI saderīgs nodrošinātājs",
+    "agentproxyConfiguredOpenAiCompatible": "AgentProxy ir konfigurēts kā ar OpenAI saderīgs nodrošinātājs",
     "provider": "Nodrošinātājs",
     "model": "Modelis",
     "providers": "Nodrošinātāji",
     "auth": "Autentifikācija",
     "noApiKeysAvailable": "Nav pieejamu API atslēgu",
-    "usingDefaultOmniroute": "Tiek izmantota noklusējuma vērtība: sk_omniroute",
+    "usingDefaultAgentProxy": "Tiek izmantota noklusējuma vērtība: sk_agentproxy",
     "updateConfig": "Atjaunināt konfigurāciju",
     "applyConfig": "Lietot konfigurāciju",
     "noBackupsAvailable": "Rezerves kopijas nav pieejamas.",
@@ -3174,8 +3174,8 @@
     "hermesConfiguredRoles": "{configured}/{total} lomas",
     "hermesQuickApply": "Ātri piemērojiet vienu un to pašu modeli visām lomām:",
     "hermesApplyModelToAll": "Piemērot {model} visām lomām",
-    "hermesViaOmniRoute": "{provider} (izmantojot OmniRoute)",
-    "hermesNotOmniRoute": "{provider} (neizmantojot OmniRoute)",
+    "hermesViaAgentProxy": "{provider} (izmantojot AgentProxy)",
+    "hermesNotAgentProxy": "{provider} (neizmantojot AgentProxy)",
     "hermesRemovePendingRole": "Noņemt šo lomu no gaidošajām izmaiņām",
     "hermesApply": "Piemērot Hermes Agent",
     "hermesRolesWillUpdate": "{count, plural, one {# loma tiks atjaunināta} other {# lomas tiks atjauninātas}}",
@@ -4171,7 +4171,7 @@
     "vscodeAliasModelsLabel": "VS Code modeļi",
     "vscodeAliasChatLabel": "VS Code tērzēšana",
     "localServer": "Vietējais serveris",
-    "cloudOmniroute": "OmniRoute mākonī",
+    "cloudAgentProxy": "AgentProxy mākonī",
     "copyUrl": "Kopēt URL",
     "badgeLoopbackTooltip": "Šis galapunkts ir pieejams tikai lokāli (tikai loopback režīmā)",
     "badgeAlwaysProtectedTooltip": "Šis galapunkts vienmēr ir aizsargāts, un tam ir nepieciešama autorizācija",
@@ -10008,7 +10008,7 @@
     "howItWorksStep3Description": "Pieprasījumu nekavējoties izpilda OpenAI, Anthropic, Gemini vai citi.",
     "getStartedIn30Seconds": "Sāciet darbu 30 sekundēs",
     "getStartedDescription": "Instalējiet OmniRoute, konfigurējiet savus piegādātājus, izmantojot tīmekļa vadības paneli, un sāciet maršrutēt AI pieprasījumus.",
-    "installOmniRoute": "Instalēt OmniRoute",
+    "installAgentProxy": "Instalēt AgentProxy",
     "installStepDescription": "Palaidiet npx komandu, lai nekavējoties startētu serveri",
     "openDashboard": "Atvērt vadības paneli",
     "openDashboardStepDescription": "Konfigurējiet piegādātājus un API atslēgas, izmantojot tīmekļa saskarni",
@@ -10017,7 +10017,7 @@
     "terminal": "terminālis",
     "copy": "Kopēt",
     "copied": "✓ Nokopēts",
-    "startingOmniRoute": "OmniRoute tiek startēts...",
+    "startingAgentProxy": "AgentProxy tiek startēts...",
     "serverRunningOnLabel": "Serveris darbojas adresē",
     "dashboardLabel": "Vadības panelis",
     "readyToRoute": "Gatavs maršrutēšanai! ✓",
@@ -10411,7 +10411,7 @@
     "versionCommandPlaceholder": "piem., my-agent --version",
     "architectureTitle": "Kā darbojas aģentu mērķi",
     "flowLocalBinary": "3 · CLI process ar savu autentifikāciju",
-    "flowOmniRoute": "1 · Pieprasījums ierodas OmniRoute",
+    "flowAgentProxy": "1 · Pieprasījums ierodas AgentProxy",
     "agentNamePlaceholder": "piem., Mans pielāgotais aģents",
     "architectureDescription": "Kad pieprasījums ierodas, OmniRoute var palaist lokālu CLI bināro failu (piem., claude, codex, goose) un caur to novirzīt pieprasījumu. CLI apstrādā pieprasījumu, izmantojot savus akreditīvus, un atgriež rezultātu atpakaļ caur OmniRoute.",
     "flowExecute": "4 · Atbilde atgriezta klientam",
@@ -10428,8 +10428,8 @@
     "agentUseCaseHint": "Var tikt izmantots kā izpildes mērķis, izmantojot ACP protokolu",
     "flowDiagramClient": "Klienta lietotne",
     "flowDiagramClientDesc": "SDK, API vai augšposma pakalpojums",
-    "flowDiagramOmniRoute": "OmniRoute",
-    "flowDiagramOmniRouteDesc": "Saņem pieprasījumu un izvēlas mērķi",
+    "flowDiagramAgentProxy": "AgentProxy",
+    "flowDiagramAgentProxyDesc": "Saņem pieprasījumu un izvēlas mērķi",
     "flowDiagramSpawn": "Procesa palaišana",
     "flowDiagramSpawnDesc": "Palaiž CLI bināro failu, izmantojot stdio",
     "flowDiagramCli": "CLI aģents",
@@ -12994,16 +12994,16 @@
       "PROXY_AUTO_SELECT_ENABLED": {
         "description": "Ja savienojumam nav piešķirts starpniekserveris, automātiski atlasīt pirmo darbojošos reģistra starpniekserveri. Pēc noklusējuma atspējots, jo pretējā gadījumā viens reģistra starpniekserveris kļūst par globālu rezerves risinājumu visai datplūsmai (#3332)."
       },
-      "OMNIROUTE_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
+      "AGENTPROXY_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
         "description": "Ļaut OAuth un pakalpojumu sniedzēja validācijas plūsmām apiet piesaistīto starpniekserveri, ja starpniekservera sasniedzamības pārbaudes neizdodas. Pēc noklusējuma atspējots, jo tas var mainīt konta izejošo IP adresi."
       },
       "MITM_DISABLE_TLS_VERIFY": {
         "description": "Atspējot TLS sertifikāta pārbaudi MITM starpniekserverim."
       },
-      "OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS": {
         "description": "Atļaut pakalpojumu sniedzēju URL, kas norāda uz privātiem vai iekšējiem tīkliem."
       },
-      "OMNIROUTE_ALLOW_LOCAL_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_LOCAL_PROVIDER_URLS": {
         "description": "Atļaut pakalpojumu sniedzējus localhost, LAN un privāto IP adrešu diapazonos. Tas ir nepieciešams lokāliem, ar OpenAI saderīgiem modeļiem un pēc noklusējuma ir iespējots. Mākoņa metadatu galapunkti, piemēram, 169.254.169.254, joprojām ir bloķēti."
       },
       "ENABLE_CC_COMPATIBLE_PROVIDER": {
@@ -13025,28 +13025,28 @@
       "RESPONSES_PASSTHROUGH_DROP_COMMENTARY": {
         "description": "Pirms pārsūtīšanas klientiem noņemt iekšējās komentāru fāzes izvades vienumus no Responses API caurlaides straumēm. Atspējot šo karogu, lai saņemtu neapstrādātus augšupstraumes komentārus."
       },
-      "OMNIROUTE_MCP_ENFORCE_SCOPES": {
+      "AGENTPROXY_MCP_ENFORCE_SCOPES": {
         "description": "Piemērot tvēruma ierobežojumus MCP rīku piekļuvei."
       },
-      "OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS": {
+      "AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS": {
         "description": "Saspiest MCP rīku aprakstus, lai samazinātu tokenu lietojumu."
       },
-      "OMNIROUTE_ENABLE_RUNTIME_BACKGROUND_TASKS": {
+      "AGENTPROXY_ENABLE_RUNTIME_BACKGROUND_TASKS": {
         "description": "Iespējot fona uzdevumu apstrādi izpildlaikā."
       },
-      "OMNIROUTE_DISABLE_BACKGROUND_SERVICES": {
+      "AGENTPROXY_DISABLE_BACKGROUND_SERVICES": {
         "description": "Atspējot visus fona pakalpojumus, tostarp kvotu atsvaidzināšanu un sinhronizāciju."
       },
-      "OMNIROUTE_RTK_TRUST_PROJECT_FILTERS": {
+      "AGENTPROXY_RTK_TRUST_PROJECT_FILTERS": {
         "description": "Uzticēties projekta līmeņa RTK filtriem bez validācijas."
       },
-      "OMNIROUTE_ENABLE_LIVE_WS": {
+      "AGENTPROXY_ENABLE_LIVE_WS": {
         "description": "Importēšanas laikā palaist reāllaika informācijas paneļa WebSocket serveri atgriezeniskās cilpas portā 20132. Iestatīt karogu uz 0 vai false, lai to atspējotu. Piekļuvei no LAN nepieciešami arī LIVE_WS_HOST=0.0.0.0 un LIVE_WS_ALLOWED_ORIGINS."
       },
-      "OMNIROUTE_CODEX_WS_ENABLED": {
+      "AGENTPROXY_CODEX_WS_ENABLED": {
         "description": "Ļaut Codex izmantot Responses, izmantojot WebSocket. Ja šī opcija ir atspējota, Codex pārslēdzas uz HTTP Responses."
       },
-      "OMNIROUTE_EMERGENCY_FALLBACK": {
+      "AGENTPROXY_EMERGENCY_FALLBACK": {
         "description": "Maršrutēt budžetu pārsniegušos pieprasījumus uz ārkārtas bezmaksas rezerves pakalpojumu sniedzēju un modeli."
       },
       "STREAM_RECOVERY_ENABLED": {
@@ -13073,16 +13073,16 @@
       "PRICING_SYNC_ENABLED": {
         "description": "Automātiski sinhronizēt cenu datus. Vides mainīgajam PRICING_SYNC_ENABLED arī jābūt true."
       },
-      "OMNIROUTE_AUTO_SYNC_CODEX_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CODEX_PROFILES": {
         "description": "Pēc pakalpojumu sniedzēju un modeļu sinhronizācijas no tiešā kataloga no jauna ģenerēt ~/.codex/*.config.toml profilus. Tas nekad nemaina aktīvo vai noklusējuma Codex konfigurāciju un pēc noklusējuma ir izslēgts."
       },
-      "OMNIROUTE_AUTO_SYNC_CLAUDE_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CLAUDE_PROFILES": {
         "description": "Pēc pakalpojumu sniedzēju un modeļu sinhronizācijas no tiešā kataloga no jauna ģenerēt ~/.claude/profiles/'<name>'/settings.json profilus. Tas nekad nemaina aktīvo vai noklusējuma Claude konfigurāciju un pēc noklusējuma ir izslēgts."
       },
-      "OMNIROUTE_DISABLE_LOCAL_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_LOCAL_HEALTHCHECK": {
         "description": "Atspējot lokālās instances veselības pārbaudes galapunktu."
       },
-      "OMNIROUTE_DISABLE_TOKEN_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_TOKEN_HEALTHCHECK": {
         "description": "Atspējot tokena validācijas veselības pārbaudi."
       },
       "SKILLS_SANDBOX_NETWORK_ENABLED": {
@@ -14219,5 +14219,5 @@
     "partnerLinkNote": "Partnera saite",
     "dismissAriaLabel": "Aizvērt"
   },
-  "featureFlagOmnirouteDisableThinkingLevelVariantsDescription": "Atspējot domāšanas līmeņu variantu (piem., -low, -medium, -high) ģenerēšanu /v1/models katalogā."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Atspējot domāšanas līmeņu variantu (piem., -low, -medium, -high) ģenerēšanu /v1/models katalogā."
 }

@@ -233,21 +233,50 @@ async function loadConfig() {
   return cfg;
 }
 
+// An unreadable state is an error, never "start fresh": a runner that read the file while
+// another one was rewriting it saw "" or a JSON prefix, started from { sources: {} } and wrote
+// back only its own entries — the state went from 153 sources to 1 (2026-09-24).
+export function parseStateText(raw) {
+  let parsed;
+  try {
+    parsed = JSON.parse(raw);
+  } catch (err) {
+    throw new Error(`translation state is not valid JSON (${err.message})`);
+  }
+  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed) || !parsed.sources) {
+    throw new Error("translation state has no `sources` object");
+  }
+  return parsed;
+}
+
 async function loadState() {
   if (!existsSync(STATE_PATH)) return { sources: {} };
-  try {
-    const raw = await fs.readFile(STATE_PATH, "utf8");
-    const parsed = JSON.parse(raw);
-    return parsed && typeof parsed === "object" && parsed.sources ? parsed : { sources: {} };
-  } catch (err) {
-    logWarn(`could not parse ${path.relative(ROOT, STATE_PATH)} — starting fresh (${err.message})`);
-    return { sources: {} };
-  }
+  return parseStateText(await fs.readFile(STATE_PATH, "utf8"));
+}
+
+// Write to a temp file and rename it over the state, so a concurrent reader (or a runner
+// killed mid-write) never sees a truncated file.
+export async function writeStateAtomic(filePath, state) {
+  const tmp = `${filePath}.${process.pid}.tmp`;
+  await fs.writeFile(tmp, JSON.stringify(state, null, 2) + "\n", "utf8");
+  await fs.rename(tmp, filePath);
 }
 
 async function saveState(state) {
-  const json = JSON.stringify(state, null, 2) + "\n";
-  await fs.writeFile(STATE_PATH, json, "utf8");
+  await writeStateAtomic(STATE_PATH, state);
+}
+
+export function mergeStateUpdates(existing, touched, snapshot = { sources: {} }) {
+  const merged = structuredClone(existing ?? snapshot ?? { sources: {} });
+  merged.sources ||= {};
+  for (const { rel, locale, sourceHash, record } of touched) {
+    const entry = merged.sources[rel] ?? { source_hash: sourceHash, locales: {} };
+    entry.source_hash = sourceHash;
+    entry.locales ||= {};
+    entry.locales[locale] = { ...record };
+    merged.sources[rel] = entry;
+  }
+  return merged;
 }
 
 async function collectDocsSources() {
@@ -401,6 +430,45 @@ const SYSTEM_PROMPT = (englishName, native) =>
     `Return ONLY the translated markdown — no preamble, no explanation, no surrounding fences.`,
   ].join(" ");
 
+// ----- Output guard ---------------------------------------------------------
+// The hash-based drift check cannot tell a good mirror from a broken one, and
+// fallback models broke mirrors in two ways that shipped (refresh-5/6,
+// 2026-09-23): reasoning models leaked their `<think>` block and English
+// meta-prose ("I'll keep the table header…") into the translation, and long
+// tables came back with rows missing. Each chunk is therefore cleaned and
+// checked against its source before it is accepted; a chunk that still fails is
+// retried, and a doc whose chunk never validates fails instead of being written.
+
+const THINK_BLOCK = /<think>[\s\S]*?<\/think>\s*/g;
+const WRAPPING_FENCE = /^```(?:markdown|md)?[ \t]*\n([\s\S]*?)\n```[ \t]*$/;
+const META_PROSE = [
+  /\bI'll /g,
+  /\bI will /g,
+  /\bI need to /g,
+  /\bLet me /g,
+  /\bMy plan\b/g,
+  /\bOkay, /g,
+  /\bThe user /g,
+];
+const countMatches = (re, text) => (text.match(re) || []).length;
+const countLines = (re, text) => text.split("\n").filter((l) => re.test(l)).length;
+
+export function validateTranslatedChunk(source, output) {
+  let text = output.replace(THINK_BLOCK, "").trim();
+  const unwrapped = !/^\s*```/.test(source) && text.match(WRAPPING_FENCE);
+  if (unwrapped) text = unwrapped[1].trim();
+  const problems = [];
+  if (/<\/?think>/.test(text)) problems.push("leaked <think> tag");
+  const fences = [countLines(/^\s*```/, source), countLines(/^\s*```/, text)];
+  if (fences[0] !== fences[1]) problems.push(`code fences ${fences[1]}/${fences[0]}`);
+  const rows = [countLines(/^\s*\|/, source), countLines(/^\s*\|/, text)];
+  if (rows[0] !== rows[1]) problems.push(`table rows ${rows[1]}/${rows[0]}`);
+  const meta = META_PROSE.filter((re) => countMatches(re, text) > countMatches(re, source));
+  if (meta.length) problems.push(`meta-prose ${meta.map((re) => re.source).join(", ")}`);
+  return { text, problems };
+}
+
+const CHUNK_ATTEMPTS = 3;
 // Splits a markdown body into chunks of <= maxChars. Top-level `## ` headings
 // are the preferred cut; an oversized section is then split on sub-headings,
 // paragraph boundaries, and finally table/list item boundaries. Fenced code
@@ -871,11 +939,23 @@ async function translateBody(body, localeEntry, backend) {
       { role: "system", content: system },
       { role: "user", content: chunks[i] },
     ];
-    const out = await callChat(messages, backend);
-    translated.push(out.trim());
+    let checked;
+    for (let attempt = 1; attempt <= CHUNK_ATTEMPTS; attempt++) {
+      checked = validateTranslatedChunk(chunks[i], await callChat(messages, backend));
+      if (checked.problems.length === 0) break;
+      logWarn(
+        `  chunk ${i + 1}/${chunks.length} rejected (attempt ${attempt}/${CHUNK_ATTEMPTS}): ${checked.problems.join("; ")}`
+      );
+    }
+    if (checked.problems.length > 0) {
+      throw new Error(
+        `chunk ${i + 1}/${chunks.length} failed validation: ${checked.problems.join("; ")}`
+      );
+    }
+    translated.push(checked.text);
     if (chunks.length > 1) {
       logInfo(
-        `  chunk ${i + 1}/${chunks.length} translated (${chunks[i].length} → ${out.length} chars)`
+        `  chunk ${i + 1}/${chunks.length} translated (${chunks[i].length} → ${checked.text.length} chars)`
       );
     }
   }
@@ -916,22 +996,6 @@ function createLimiter(max) {
 }
 
 // ----- Main ----------------------------------------------------------------
-
-/**
- * Merge one run's (source, locale) records into a freshly re-read state. Source-level
- * `source_hash` follows the record; untouched entries stay as the other runners left them.
- * `fallback` is this run's in-memory state, used only when the file could not be read.
- */
-export function mergeStateUpdates(fresh, touched, fallback) {
-  const base = fresh && fresh.sources ? fresh : fallback || { sources: {} };
-  for (const { rel, locale, sourceHash, record } of touched) {
-    const entry =
-      base.sources[rel] || (base.sources[rel] = { source_hash: sourceHash, locales: {} });
-    entry.source_hash = sourceHash;
-    entry.locales[locale] = record;
-  }
-  return base;
-}
 
 async function main() {
   const opts = parseArgs(process.argv);
@@ -1096,6 +1160,7 @@ async function main() {
 
   let stats = { translated: 0, skipped: 0, failed: 0, considered: 0 };
   const failures = [];
+  const touched = [];
 
   // Precompute source hashes once per source.
   const sourceHashes = new Map();
@@ -1107,7 +1172,6 @@ async function main() {
 
   // Build a flat queue of (source, locale) work units.
   const tasks = [];
-  const touched = [];
   for (const rel of sources) {
     const { hash: sourceHash } = sourceHashes.get(rel);
     const entry =
@@ -1329,10 +1393,15 @@ async function main() {
   );
 
   // Save state even on partial failure so future runs only retry what failed. Several
-  // `--locale=<code>` runs execute in parallel during a batch, so re-read the file and merge
-  // only this run's entries instead of overwriting the whole state (last writer used to win
-  // and the other runners' work vanished from the state — 2026-09-16).
-  await saveState(mergeStateUpdates(await loadState(), touched, state));
+  // `--locale=<code>` runs can execute in parallel, so re-read and merge only this run's
+  // successful entries instead of letting the last writer discard unrelated locale state.
+  let fresh = null;
+  try {
+    fresh = await loadState();
+  } catch (err) {
+    logWarn(`${err.message} at save time — merging into this run's snapshot instead`);
+  }
+  await saveState(mergeStateUpdates(fresh, touched, state));
 
   const elapsedSec = ((Date.now() - startMs) / 1000).toFixed(1);
   logInfo(

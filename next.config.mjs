@@ -104,15 +104,15 @@ function filterKnownInfrastructureWarnings(baseConsole) {
   return filteredConsole;
 }
 
-// OMNIROUTE_BUILD_PROFILE=minimal physically removes four optional privileged
+// AGENTPROXY_BUILD_PROFILE=minimal physically removes four optional privileged
 // modules (MITM cert install, Zed keychain import, Cloud Sync, 9router
 // installer) from the built bundle by aliasing them to feature-disabled stubs.
 // The resulting artifact is intended to be published as `omniroute-secure`
 // for security-sensitive environments. See docs/security/SOCKET_DEV_FINDINGS.md.
-const isMinimalBuild = process.env.OMNIROUTE_BUILD_PROFILE === "minimal";
+const isMinimalBuild = process.env.AGENTPROXY_BUILD_PROFILE === "minimal";
 
 // #10273: `null` unless the operator opts in with DASHBOARD_ALLOW_EMBED=vscode. Read at build
-// time like every other knob in this file (OMNIROUTE_BASE_PATH, OMNIROUTE_BUILD_PROFILE, …),
+// time like every other knob in this file (AGENTPROXY_BASE_PATH, AGENTPROXY_BUILD_PROFILE, …),
 // so changing it requires a rebuild. See scripts/build/dashboardEmbed.mjs.
 const dashboardEmbedMode = resolveDashboardEmbedMode(process.env);
 
@@ -141,7 +141,7 @@ function readPositiveInteger(value) {
   return Number.isInteger(parsed) && parsed > 0 ? parsed : undefined;
 }
 
-const staticGenerationCpus = readPositiveInteger(process.env.OMNIROUTE_NEXT_BUILD_CPUS);
+const staticGenerationCpus = readPositiveInteger(process.env.AGENTPROXY_NEXT_BUILD_CPUS);
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -151,19 +151,19 @@ const nextConfig = {
   // before route matching, so authz classification (classifyRoute/isLocalOnlyPath)
   // keeps operating on un-prefixed paths — see src/server/authz/pipeline.ts for
   // the two redirect call sites that re-add it via `request.nextUrl.basePath`.
-  basePath: normalizeBasePath(process.env.OMNIROUTE_BASE_PATH),
+  basePath: normalizeBasePath(process.env.AGENTPROXY_BASE_PATH),
   // Next 16 (both webpack and Turbopack) app-router renders SSR asset URLs from
   // `assetPrefix` ALONE — basePath only affects routing/links. Without mirroring
   // it here, a subpath build emits /_next/static shell references that 404
   // behind a reverse proxy. The Docker runtime patcher (ensure-docker-base-path)
   // rewrites the same knob for prebuilt root-path images.
-  assetPrefix: normalizeBasePath(process.env.OMNIROUTE_BASE_PATH) || undefined,
+  assetPrefix: normalizeBasePath(process.env.AGENTPROXY_BASE_PATH) || undefined,
   // Client-visible mirror of basePath for fetch/EventSource rewriting under reverse
   // proxies (installBasePathFetch), and for client display helpers (useDisplayBaseUrl)
   // that append the subpath to window.location.origin when building curl/endpoint
   // examples. Empty by default (root deploys unchanged).
   env: {
-    NEXT_PUBLIC_OMNIROUTE_BASE_PATH: normalizeBasePath(process.env.OMNIROUTE_BASE_PATH),
+    NEXT_PUBLIC_AGENTPROXY_BASE_PATH: normalizeBasePath(process.env.AGENTPROXY_BASE_PATH),
     // Deployment identity for the PWA service worker URL (PwaRegister):
     // a browser holding a worker from an older deployment must see a
     // different /sw.js?v=<id> URL so the browser treats it as an update
@@ -178,7 +178,7 @@ const nextConfig = {
     root: projectRoot,
     resolveAlias: {
       // @/mitm/manager → stub ONLY where the runtime can't run the MITM stack
-      // (Docker sets OMNIROUTE_MITM_STUB=1 — #3390 graceful degradation). The
+      // (Docker sets AGENTPROXY_MITM_STUB=1 — #3390 graceful degradation). The
       // alias used to be unconditional, which was fine while Docker was the
       // only Turbopack consumer — but the v3.8.45 bundler-default flip shipped
       // the stub to every npm/Electron/VPS artifact and broke Agent Bridge
@@ -268,7 +268,7 @@ const nextConfig = {
     // or the full date-fns surface when only one helper is used.
     //
     // NOTE: this list must only contain EXTERNAL barrel libraries. Do NOT add
-    // the internal `@omniroute/open-sse` workspace here: optimizePackageImports
+    // the internal `@agentproxy/open-sse` workspace here: optimizePackageImports
     // makes Next.js resolve every export of the package's barrel at build time,
     // and open-sse's `index.ts` re-exports the entire streaming engine
     // (executors/translators/services/handlers/mcp-server — thousands of
@@ -395,7 +395,7 @@ const nextConfig = {
     "util",
     "process",
   ],
-  transpilePackages: ["@omniroute/open-sse", "@lobehub/icons", "fumadocs-ui", "fumadocs-core"],
+  transpilePackages: ["@agentproxy/open-sse", "@lobehub/icons", "fumadocs-ui", "fumadocs-core"],
   allowedDevOrigins: ["localhost", "127.0.0.1", "192.168.0.250"],
   typescript: {
     // TODO: Re-enable after fixing all sub-component useTranslations scope issues
@@ -747,8 +747,12 @@ const nextConfig = {
         destination: "/api/v1",
       },
       {
-        source: "/codex/:path*",
+        source: "/codex",
         destination: "/api/v1/responses",
+      },
+      {
+        source: "/codex/:path*",
+        destination: "/api/v1/responses/:path*",
       },
       {
         source: "/v1/:path*",

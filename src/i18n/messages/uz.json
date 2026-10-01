@@ -986,7 +986,7 @@
     "batchFileDownloadFull": "Toʻliq faylni yuklab olish"
   },
   "disabled": "Oʻchirilgan",
-  "featureFlagOmnirouteEmergencyFallbackDescription": "Byudjeti tugagan soʻrovlarni favqulodda bepul zaxira provayder/modelga yoʻnaltirish.",
+  "featureFlagAgentProxyEmergencyFallbackDescription": "Byudjeti tugagan soʻrovlarni favqulodda bepul zaxira provayder/modelga yoʻnaltirish.",
   "featureFlagArenaEloSyncEnabledDescription": "Modellar intellekti reytinglari uchun Arena AI peshqadamlar jadvalidagi ELO maʼlumotlarini davriy sinxronlashni yoqish.",
   "featureFlagUniversalContextHandoffEnabledDescription": "Kombinatsiyalangan marshrutlash modellarni almashtirganda suhbat xulosalarini yaratish va kiritish. Model almashtirishlarini bir-biridan mustaqil tarzda boshqarish hamda barcha mavjud va kelajakdagi kombinatsiyalar uchun fonda topshirish soʻrovlarini oldini olish uchun oʻchiring.",
   "featureFlagExposeCcDiscoveryAliasesDescription": "Claude Code shlyuzidagi modelni aniqlash funksiyasi Claude boʻlmagan modellarni roʻyxatga olishi uchun /v1/models manzilida claude/&lt;provider&gt;/&lt;model&gt; akslantirma identifikatorlarini eʼlon qilish. Ogohlantirish: global miqyosda yoqilganda barcha mijozlar uchun katalog yozuvlari sonini ikki baravar oshiradi.",
@@ -2254,7 +2254,7 @@
     "requestFlowAria": "Ilovangiz API kaliti orqali OmniRoute xizmatiga soʻrovlar yuboradi",
     "requestFlowYourApp": "Ilovangiz",
     "requestFlowApiKey": "API kaliti",
-    "requestFlowOmniRoute": "OmniRoute",
+    "requestFlowAgentProxy": "AgentProxy",
     "totalKeys": "Jami kalitlar",
     "restricted": "Cheklangan",
     "totalRequests": "Jami soʻrovlar",
@@ -2761,7 +2761,7 @@
     "configurationSaved": "Konfiguratsiya muvaffaqiyatli saqlandi.",
     "failedToSave": "Konfiguratsiyani saqlab bo‘lmadi.",
     "noApiKeysCreateOne": "API kalitlari yo‘q — Kalitlar sahifasida yarating",
-    "defaultOmnirouteKey": "sk_omniroute (standart)",
+    "defaultAgentProxyKey": "sk_agentproxy (standart)",
     "selectModel": "Modelni tanlash",
     "selectModelForAlias": "{alias} uchun modelni tanlash",
     "selectModelForTool": "{tool} uchun modelni tanlash",
@@ -2858,13 +2858,13 @@
     "applied": "Qo‘llandi!",
     "failed": "Muvaffaqiyatsiz",
     "resetDone": "Qayta tiklandi!",
-    "omnirouteConfiguredOpenAiCompatible": "OmniRoute OpenAI bilan mos keluvchi provayder sifatida sozlangan",
+    "agentproxyConfiguredOpenAiCompatible": "AgentProxy OpenAI bilan mos keluvchi provayder sifatida sozlangan",
     "provider": "Provayder",
     "model": "Model",
     "providers": "Provayderlar",
     "auth": "Autentifikatsiya",
     "noApiKeysAvailable": "API kalitlari mavjud emas",
-    "usingDefaultOmniroute": "Standart qiymat ishlatilmoqda: sk_omniroute",
+    "usingDefaultAgentProxy": "Standart qiymat ishlatilmoqda: sk_agentproxy",
     "updateConfig": "Konfiguratsiyani yangilash",
     "applyConfig": "Konfiguratsiyani qo‘llash",
     "noBackupsAvailable": "Zaxira nusxalari mavjud emas.",
@@ -3145,8 +3145,8 @@
     "hermesConfiguredRoles": "{configured}/{total} ta rol",
     "hermesQuickApply": "Bir xil modelni barcha rollarga tezda qoʻllash:",
     "hermesApplyModelToAll": "{model} modelini barcha rollarga qoʻllash",
-    "hermesViaOmniRoute": "{provider} (OmniRoute orqali)",
-    "hermesNotOmniRoute": "{provider} (OmniRoute orqali emas)",
+    "hermesViaAgentProxy": "{provider} (AgentProxy orqali)",
+    "hermesNotAgentProxy": "{provider} (AgentProxy orqali emas)",
     "hermesRemovePendingRole": "Bu rolni kutilayotgan oʻzgarishlardan olib tashlash",
     "hermesApply": "Hermes Agent’ga qoʻllash",
     "hermesRolesWillUpdate": "{count, plural, one {# ta rol yangilanadi} other {# ta rol yangilanadi}}",
@@ -4125,7 +4125,7 @@
     "vscodeAliasModelsLabel": "VS Code modellari",
     "vscodeAliasChatLabel": "VS Code chati",
     "localServer": "Mahalliy server",
-    "cloudOmniroute": "Bulutli OmniRoute",
+    "cloudAgentProxy": "Bulutli AgentProxy",
     "copyUrl": "URL manzilini nusxalash",
     "badgeLoopbackTooltip": "Bu endpoint faqat mahalliy ravishda mavjud (faqat loopback)",
     "badgeAlwaysProtectedTooltip": "Bu endpoint doimo himoyalangan va avtorizatsiyani talab qiladi",
@@ -9962,7 +9962,7 @@
     "howItWorksStep3Description": "Soʻrov OpenAI, Anthropic, Gemini yoki boshqalar tomonidan bir zumda bajariladi.",
     "getStartedIn30Seconds": "30 soniyada boshlang",
     "getStartedDescription": "OmniRoute’ni oʻrnating, provayderlaringizni veb-boshqaruv paneli orqali sozlang va AI soʻrovlarini yoʻnaltirishni boshlang.",
-    "installOmniRoute": "OmniRoute’ni oʻrnatish",
+    "installAgentProxy": "AgentProxy’ni oʻrnatish",
     "installStepDescription": "Serverni bir zumda ishga tushirish uchun npx buyrugʻini bajaring",
     "openDashboard": "Boshqaruv panelini ochish",
     "openDashboardStepDescription": "Provayderlar va API kalitlarini veb-interfeys orqali sozlang",
@@ -9971,7 +9971,7 @@
     "terminal": "terminal",
     "copy": "Nusxalash",
     "copied": "✓ Nusxalandi",
-    "startingOmniRoute": "OmniRoute ishga tushirilmoqda...",
+    "startingAgentProxy": "AgentProxy ishga tushirilmoqda...",
     "serverRunningOnLabel": "Server quyidagi manzilda ishlamoqda:",
     "dashboardLabel": "Boshqaruv paneli",
     "readyToRoute": "Yoʻnaltirishga tayyor! ✓",
@@ -10365,7 +10365,7 @@
     "versionCommandPlaceholder": "masalan, my-agent --version",
     "architectureTitle": "Agent nishonlari qanday ishlaydi",
     "flowLocalBinary": "3 · O‘z autentifikatsiyasiga ega CLI jarayoni",
-    "flowOmniRoute": "1 · So‘rov OmniRoute’ga keladi",
+    "flowAgentProxy": "1 · So‘rov AgentProxy’ga keladi",
     "agentNamePlaceholder": "masalan, Mening maxsus agentim",
     "architectureDescription": "So‘rov kelganda, OmniRoute mahalliy CLI bajariluvchi faylini (masalan, claude, codex, goose) ishga tushirishi va so‘rovni u orqali uzatishi mumkin. CLI so‘rovni o‘z hisob ma’lumotlari yordamida qayta ishlaydi va natijani OmniRoute orqali qaytaradi.",
     "flowExecute": "4 · Javob mijozga qaytariladi",
@@ -10382,8 +10382,8 @@
     "agentUseCaseHint": "ACP protokoli orqali ijro nishoni sifatida foydalanish mumkin",
     "flowDiagramClient": "Mijoz ilovasi",
     "flowDiagramClientDesc": "SDK, API yoki yuqori oqim xizmati",
-    "flowDiagramOmniRoute": "OmniRoute",
-    "flowDiagramOmniRouteDesc": "So‘rovni qabul qiladi va nishonni tanlaydi",
+    "flowDiagramAgentProxy": "AgentProxy",
+    "flowDiagramAgentProxyDesc": "So‘rovni qabul qiladi va nishonni tanlaydi",
     "flowDiagramSpawn": "Jarayonni ishga tushirish",
     "flowDiagramSpawnDesc": "CLI bajariluvchi faylini stdio orqali ishga tushiradi",
     "flowDiagramCli": "CLI agenti",
@@ -12938,16 +12938,16 @@
       "PROXY_AUTO_SELECT_ENABLED": {
         "description": "Ulanishga proksi tayinlanmaganida, avtomatik ravishda reyestrdagi birinchi ishlaydigan proksini tanlash. Odatiy holatda oʻchirilgan, chunki aks holda reyestrdagi bitta proksi barcha trafik uchun global zaxira variantiga aylanadi (#3332)."
       },
-      "OMNIROUTE_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
+      "AGENTPROXY_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
         "description": "Proksiga ulanish imkoniyati tekshiruvlari muvaffaqiyatsiz boʻlganda OAuth va provayderni tekshirish jarayonlariga biriktirilgan proksini chetlab oʻtishga ruxsat berish. Odatiy holatda oʻchirilgan, chunki bu hisobning chiquvchi IP manzilini oʻzgartirishi mumkin."
       },
       "MITM_DISABLE_TLS_VERIFY": {
         "description": "MITM proksi uchun TLS sertifikatini tekshirishni oʻchirish."
       },
-      "OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS": {
         "description": "Xususiy yoki ichki tarmoqlarga yoʻnaltirilgan provayder URL manzillariga ruxsat berish."
       },
-      "OMNIROUTE_ALLOW_LOCAL_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_LOCAL_PROVIDER_URLS": {
         "description": "localhost, LAN va xususiy IP diapazonlaridagi provayderlarga ruxsat berish. Bu mahalliy OpenAI bilan mos modellar uchun talab qilinadi va odatiy holatda yoqilgan. 169.254.169.254 kabi bulut metamaʼlumotlari endpointlari bloklangan holda qoladi."
       },
       "ENABLE_CC_COMPATIBLE_PROVIDER": {
@@ -12969,28 +12969,28 @@
       "RESPONSES_PASSTHROUGH_DROP_COMMENTARY": {
         "description": "Responses API orqali oʻtkaziladigan oqimlardan ichki sharhlash bosqichining chiqish elementlarini mijozlarga yuborishdan oldin olib tashlash. Yuqori oqimdan keladigan xom sharhlarni olish uchun bu belgini oʻchiring."
       },
-      "OMNIROUTE_MCP_ENFORCE_SCOPES": {
+      "AGENTPROXY_MCP_ENFORCE_SCOPES": {
         "description": "MCP vositalariga kirish uchun qamrov cheklovlarini majburiy qoʻllash."
       },
-      "OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS": {
+      "AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS": {
         "description": "Token sarfini kamaytirish uchun MCP vositalari tavsiflarini siqish."
       },
-      "OMNIROUTE_ENABLE_RUNTIME_BACKGROUND_TASKS": {
+      "AGENTPROXY_ENABLE_RUNTIME_BACKGROUND_TASKS": {
         "description": "Ishlash vaqtida fon vazifalarini qayta ishlashni yoqish."
       },
-      "OMNIROUTE_DISABLE_BACKGROUND_SERVICES": {
+      "AGENTPROXY_DISABLE_BACKGROUND_SERVICES": {
         "description": "Kvotani yangilash va sinxronlashni ham oʻz ichiga olgan barcha fon xizmatlarini oʻchirish."
       },
-      "OMNIROUTE_RTK_TRUST_PROJECT_FILTERS": {
+      "AGENTPROXY_RTK_TRUST_PROJECT_FILTERS": {
         "description": "Loyiha darajasidagi RTK filtrlariga tekshiruvsiz ishonish."
       },
-      "OMNIROUTE_ENABLE_LIVE_WS": {
+      "AGENTPROXY_ENABLE_LIVE_WS": {
         "description": "Import paytida real vaqt boshqaruv panelining WebSocket serverini 20132 loopback portida ishga tushirish. Uni oʻchirish uchun bayroqni 0 yoki false qiymatiga oʻrnating. LAN orqali foydalanish uchun LIVE_WS_HOST=0.0.0.0 va LIVE_WS_ALLOWED_ORIGINS ham talab qilinadi."
       },
-      "OMNIROUTE_CODEX_WS_ENABLED": {
+      "AGENTPROXY_CODEX_WS_ENABLED": {
         "description": "Codexʼga Responsesʼdan WebSocket orqali foydalanishga ruxsat berish. Oʻchirilganda Codex HTTP Responsesʼga qaytadi."
       },
-      "OMNIROUTE_EMERGENCY_FALLBACK": {
+      "AGENTPROXY_EMERGENCY_FALLBACK": {
         "description": "Byudjeti tugagan soʻrovlarni favqulodda bepul zaxira provayder va modelga yoʻnaltirish."
       },
       "STREAM_RECOVERY_ENABLED": {
@@ -13017,16 +13017,16 @@
       "PRICING_SYNC_ENABLED": {
         "description": "Narxlash maʼlumotlarini avtomatik sinxronlang. PRICING_SYNC_ENABLED muhit oʻzgaruvchisi ham true boʻlishi kerak."
       },
-      "OMNIROUTE_AUTO_SYNC_CODEX_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CODEX_PROFILES": {
         "description": "Provayder-model sinxronlashidan soʻng jonli katalog asosida ~/.codex/*.config.toml profillarini qayta yarating. Bu faol yoki standart Codex konfiguratsiyasini hech qachon oʻzgartirmaydi va sukut boʻyicha oʻchirilgan."
       },
-      "OMNIROUTE_AUTO_SYNC_CLAUDE_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CLAUDE_PROFILES": {
         "description": "Provayder-model sinxronlashidan soʻng jonli katalog asosida ~/.claude/profiles/'<name>'/settings.json profillarini qayta yarating. Bu faol yoki standart Claude konfiguratsiyasini hech qachon oʻzgartirmaydi va sukut boʻyicha oʻchirilgan."
       },
-      "OMNIROUTE_DISABLE_LOCAL_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_LOCAL_HEALTHCHECK": {
         "description": "Mahalliy nusxaning holatini tekshirish endpointini oʻchiring."
       },
-      "OMNIROUTE_DISABLE_TOKEN_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_TOKEN_HEALTHCHECK": {
         "description": "Tokenni tasdiqlash holati tekshiruvini oʻchiring."
       },
       "SKILLS_SANDBOX_NETWORK_ENABLED": {
@@ -14158,5 +14158,5 @@
     "partnerLinkNote": "Hamkor havolasi",
     "dismissAriaLabel": "Yopish"
   },
-  "featureFlagOmnirouteDisableThinkingLevelVariantsDescription": "/v1/models katalogida fikrlash darajasi variantlarini (masalan, -low, -medium, -high) yaratishni o‘chirib qo‘ying."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "/v1/models katalogida fikrlash darajasi variantlarini (masalan, -low, -medium, -high) yaratishni o‘chirib qo‘ying."
 }

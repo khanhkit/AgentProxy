@@ -258,7 +258,7 @@
     "no_tray": "Онемогући икону у системској траци",
     "tls_cert": "Путања до TLS сертификата (PEM) за HTTPS (такође OMNIROUTE_TLS_CERT)",
     "tls_key": "Путања до TLS приватног кључа (PEM) за HTTPS (такође OMNIROUTE_TLS_KEY)",
-    "ready_timeout": "Временско ограничење провере спремности у ms (такође OMNIROUTE_READY_TIMEOUT_MS, подразумевано 60000)"
+    "ready_timeout": "Временско ограничење провере спремности у ms (такође AGENTPROXY_READY_TIMEOUT_MS, подразумевано 60000)"
   },
   "backup": {
     "title": "Резервна копија",

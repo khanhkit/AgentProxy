@@ -986,7 +986,7 @@
     "batchFileDownloadFull": "Tam Faylı Yüklə"
   },
   "disabled": "Deaktiv",
-  "featureFlagOmnirouteEmergencyFallbackDescription": "Büdcəsi tükənmiş sorğuları təcili pulsuz ehtiyat təminatçıya/modelə yönləndirin.",
+  "featureFlagAgentProxyEmergencyFallbackDescription": "Büdcəsi tükənmiş sorğuları təcili pulsuz ehtiyat təminatçıya/modelə yönləndirin.",
   "featureFlagArenaEloSyncEnabledDescription": "Model intellekti reytinqləri üçün dövri Arena AI liderlər cədvəli ELO sinxronizasiyasını aktivləşdirin.",
   "featureFlagUniversalContextHandoffEnabledDescription": "Kombinə edilmiş marşrutlaşdırma model dəyişdirdikdə söhbət xülasələrini yaradın və əlavə edin. Model dəyişikliklərini müstəqil şəkildə idarə etmək və bütün mövcud və gələcək kombinasiyalar üçün fonda ötürmə sorğularının qarşısını almaq üçün bunu deaktiv edin.",
   "featureFlagExposeCcDiscoveryAliasesDescription": "/v1/models üzərində claude/&lt;provider&gt;/&lt;model&gt; güzgü id-lərini reklam edin ki, Claude Code keçid modeli kəşfiyyatında qeyri-Claude modelləri siyahıya alsın. Diqqət: qlobal olaraq aktivləşdirildikdə bütün müştərilər üçün kataloq girişlərini ikiqat artırır.",
@@ -2254,7 +2254,7 @@
     "requestFlowAria": "Tətbiqiniz sorğuları API açarı vasitəsilə OmniRoute-a göndərir",
     "requestFlowYourApp": "Tətbiqiniz",
     "requestFlowApiKey": "API açarı",
-    "requestFlowOmniRoute": "OmniRoute",
+    "requestFlowAgentProxy": "AgentProxy",
     "totalKeys": "Ümumi açar sayı",
     "restricted": "Məhdud",
     "totalRequests": "Ümumi sorğu sayı",
@@ -2761,7 +2761,7 @@
     "configurationSaved": "Konfiqurasiya uğurla saxlanıldı.",
     "failedToSave": "Konfiqurasiyanı saxlamaq mümkün olmadı.",
     "noApiKeysCreateOne": "API açarları yoxdur — Açarlar səhifəsində birini yaradın",
-    "defaultOmnirouteKey": "sk_omniroute (standart)",
+    "defaultAgentProxyKey": "sk_agentproxy (standart)",
     "selectModel": "Model seçin",
     "selectModelForAlias": "{alias} üçün model seçin",
     "selectModelForTool": "{tool} üçün model seçin",
@@ -2858,13 +2858,13 @@
     "applied": "Tətbiq edildi!",
     "failed": "Uğursuz oldu",
     "resetDone": "Sıfırlandı!",
-    "omnirouteConfiguredOpenAiCompatible": "OmniRoute OpenAI ilə uyğun provayder kimi konfiqurasiya edilib",
+    "agentproxyConfiguredOpenAiCompatible": "AgentProxy OpenAI ilə uyğun provayder kimi konfiqurasiya edilib",
     "provider": "Provayder",
     "model": "Model",
     "providers": "Provayderlər",
     "auth": "Autentifikasiya",
     "noApiKeysAvailable": "Heç bir API açarı mövcud deyil",
-    "usingDefaultOmniroute": "Standart istifadə olunur: sk_omniroute",
+    "usingDefaultAgentProxy": "Standart istifadə olunur: sk_agentproxy",
     "updateConfig": "Konfiqurasiyanı yenilə",
     "applyConfig": "Konfiqurasiyanı tətbiq et",
     "noBackupsAvailable": "Heç bir yedək mövcud deyil.",
@@ -3145,8 +3145,8 @@
     "hermesConfiguredRoles": "{configured}/{total} rol",
     "hermesQuickApply": "Eyni modeli bütün rollara tez tətbiq edin:",
     "hermesApplyModelToAll": "{model} modelini hər bir rola tətbiq edin",
-    "hermesViaOmniRoute": "{provider} (OmniRoute vasitəsilə)",
-    "hermesNotOmniRoute": "{provider} (OmniRoute deyil)",
+    "hermesViaAgentProxy": "{provider} (AgentProxy vasitəsilə)",
+    "hermesNotAgentProxy": "{provider} (AgentProxy deyil)",
     "hermesRemovePendingRole": "Bu rolu gözləyən dəyişikliklərdən çıxarın",
     "hermesApply": "Hermes Agent-ə tətbiq edin",
     "hermesRolesWillUpdate": "{count, plural, one {# rol yenilənəcək} other {# rol yenilənəcək}}",
@@ -4142,7 +4142,7 @@
     "vscodeAliasModelsLabel": "VS Code modelləri",
     "vscodeAliasChatLabel": "VS Code söhbəti",
     "localServer": "Yerli server",
-    "cloudOmniroute": "Bulud OmniRoute",
+    "cloudAgentProxy": "Bulud AgentProxy",
     "copyUrl": "URL-i kopyalayın",
     "badgeLoopbackTooltip": "Bu son nöqtəyə yalnız yerli olaraq daxil olmaq mümkündür (yalnız loopback)",
     "badgeAlwaysProtectedTooltip": "Bu son nöqtə həmişə qorunur və avtorizasiya tələb edir",
@@ -9979,7 +9979,7 @@
     "howItWorksStep3Description": "Sorğu OpenAI, Anthropic, Gemini və ya digərləri tərəfindən dərhal yerinə yetirilir.",
     "getStartedIn30Seconds": "30 saniyə ərzində işə başlayın",
     "getStartedDescription": "OmniRoute-u quraşdırın, provayderlərinizi veb idarəetmə paneli vasitəsilə konfiqurasiya edin və süni intellekt sorğularını marşrutlaşdırmağa başlayın.",
-    "installOmniRoute": "OmniRoute-u quraşdırın",
+    "installAgentProxy": "AgentProxy-u quraşdırın",
     "installStepDescription": "Serveri dərhal işə salmaq üçün npx əmrini icra edin",
     "openDashboard": "İdarəetmə panelini açın",
     "openDashboardStepDescription": "Provayderləri və API açarlarını veb interfeysi vasitəsilə konfiqurasiya edin",
@@ -9988,7 +9988,7 @@
     "terminal": "terminal",
     "copy": "Kopyalayın",
     "copied": "✓ Kopyalandı",
-    "startingOmniRoute": "OmniRoute işə salınır...",
+    "startingAgentProxy": "AgentProxy işə salınır...",
     "serverRunningOnLabel": "Server bu ünvanda işləyir:",
     "dashboardLabel": "İdarəetmə paneli",
     "readyToRoute": "Marşrutlaşdırmaya hazırdır! ✓",
@@ -10382,7 +10382,7 @@
     "versionCommandPlaceholder": "məs., my-agent --version",
     "architectureTitle": "Agent hədəfləri necə işləyir",
     "flowLocalBinary": "3 · Öz autentifikasiyasına malik CLI prosesi",
-    "flowOmniRoute": "1 · Sorğu OmniRoute-a daxil olur",
+    "flowAgentProxy": "1 · Sorğu AgentProxy-a daxil olur",
     "agentNamePlaceholder": "məs., Mənim Fərdi Agentim",
     "architectureDescription": "Sorğu daxil olduqda OmniRoute yerli CLI binar faylını (məs., claude, codex, goose) işə sala və sorğunu onun üzərindən ötürə bilər. CLI sorğunu öz giriş məlumatlarından istifadə edərək emal edir və nəticəni OmniRoute vasitəsilə geri qaytarır.",
     "flowExecute": "4 · Cavab müştəriyə qaytarılır",
@@ -10399,8 +10399,8 @@
     "agentUseCaseHint": "ACP protokolu vasitəsilə icra hədəfi kimi istifadə edilə bilər",
     "flowDiagramClient": "Müştəri tətbiqi",
     "flowDiagramClientDesc": "SDK, API və ya yuxarı səviyyəli xidmət",
-    "flowDiagramOmniRoute": "OmniRoute",
-    "flowDiagramOmniRouteDesc": "Sorğunu qəbul edir və hədəfi seçir",
+    "flowDiagramAgentProxy": "AgentProxy",
+    "flowDiagramAgentProxyDesc": "Sorğunu qəbul edir və hədəfi seçir",
     "flowDiagramSpawn": "Prosesi işə sal",
     "flowDiagramSpawnDesc": "CLI binar faylını stdio vasitəsilə işə salır",
     "flowDiagramCli": "CLI agenti",
@@ -12965,16 +12965,16 @@
       "PROXY_AUTO_SELECT_ENABLED": {
         "description": "Bağlantıya heç bir proksi təyin edilmədikdə, avtomatik olaraq ilk işlək reyestr proksisini seçin. Defolt olaraq qapalıdır, çünki əks halda bir reyestr proksisi bütün trafik üçün qlobal ehtiyat variant olur (#3332)."
       },
-      "OMNIROUTE_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
+      "AGENTPROXY_CONTROL_PLANE_PROXY_DIRECT_FALLBACK": {
         "description": "Proksi əlçatanlığı yoxlamaları uğursuz olduqda, OAuth və provayder-validasiya axınlarının bərkidilmiş proksidən yan keçməsinə icazə verin. Defolt olaraq qapalıdır, çünki bu, hesabın çıxış IP-sini dəyişə bilər."
       },
       "MITM_DISABLE_TLS_VERIFY": {
         "description": "MITM proksisi üçün TLS sertifikatı yoxlamasını sıradan çıxarın."
       },
-      "OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_PRIVATE_PROVIDER_URLS": {
         "description": "Özəl və ya daxili şəbəkələrə yönələn provayder URL-lərinə icazə verin."
       },
-      "OMNIROUTE_ALLOW_LOCAL_PROVIDER_URLS": {
+      "AGENTPROXY_ALLOW_LOCAL_PROVIDER_URLS": {
         "description": "Localhost, LAN və özəl IP diapazonlarında provayderlərə icazə verin. Bu, yerli OpenAI-uyğun modellər üçün tələb olunur və defolt olaraq aktivdir. 169.254.169.254 kimi bulud-meta-məlumat son nöqtələri bloklanmış olaraq qalır."
       },
       "ENABLE_CC_COMPATIBLE_PROVIDER": {
@@ -12996,28 +12996,28 @@
       "RESPONSES_PASSTHROUGH_DROP_COMMENTARY": {
         "description": "Müştərilərə yönləndirməzdən əvvəl Responses API tranzit axınlarından daxili şərh mərhələsi çıxış elementlərini silin. Xam upstream şərhlərini qəbul etmək üçün bu bayrağı sıradan çıxarın."
       },
-      "OMNIROUTE_MCP_ENFORCE_SCOPES": {
+      "AGENTPROXY_MCP_ENFORCE_SCOPES": {
         "description": "MCP alətinə giriş üçün əhatə dairəsi məhdudiyyətlərini tətbiq edin."
       },
-      "OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS": {
+      "AGENTPROXY_MCP_COMPRESS_DESCRIPTIONS": {
         "description": "Token istifadəsini azaltmaq üçün MCP alət təsvirlərini sıxın."
       },
-      "OMNIROUTE_ENABLE_RUNTIME_BACKGROUND_TASKS": {
+      "AGENTPROXY_ENABLE_RUNTIME_BACKGROUND_TASKS": {
         "description": "İcra zamanı arxa plan tapşırıqlarının emalını aktivləşdirin."
       },
-      "OMNIROUTE_DISABLE_BACKGROUND_SERVICES": {
+      "AGENTPROXY_DISABLE_BACKGROUND_SERVICES": {
         "description": "Kvota yenilənməsi və sinxronizasiya daxil olmaqla bütün arxa plan xidmətlərini sıradan çıxarın."
       },
-      "OMNIROUTE_RTK_TRUST_PROJECT_FILTERS": {
+      "AGENTPROXY_RTK_TRUST_PROJECT_FILTERS": {
         "description": "Layihə səviyyəli RTK filtrlərinə yoxlama olmadan etibar edin."
       },
-      "OMNIROUTE_ENABLE_LIVE_WS": {
+      "AGENTPROXY_ENABLE_LIVE_WS": {
         "description": "İdxal zamanı real-vaxt idarəetmə paneli WebSocket serverini 20132 nömrəli loopback portunda başladın. Sıradan çıxarmaq üçün bayrağı 0 və ya false olaraq təyin edin. LAN üzərindən əlçatanlıq həmçinin LIVE_WS_HOST=0.0.0.0 və LIVE_WS_ALLOWED_ORIGINS tələb edir."
       },
-      "OMNIROUTE_CODEX_WS_ENABLED": {
+      "AGENTPROXY_CODEX_WS_ENABLED": {
         "description": "Codex-ə WebSocket üzərindən Responses istifadə etməyə icazə verin. Sıradan çıxarıldıqda, Codex HTTP Responses-a keçid edir."
       },
-      "OMNIROUTE_EMERGENCY_FALLBACK": {
+      "AGENTPROXY_EMERGENCY_FALLBACK": {
         "description": "Büdcəsi tükənmiş sorğuları təcili pulsuz ehtiyat provayderə və modelə yönləndirin."
       },
       "STREAM_RECOVERY_ENABLED": {
@@ -13044,16 +13044,16 @@
       "PRICING_SYNC_ENABLED": {
         "description": "Qiymət məlumatlarını avtomatik sinxronlaşdırın. PRICING_SYNC_ENABLED mühit dəyişəni də true olmalıdır."
       },
-      "OMNIROUTE_AUTO_SYNC_CODEX_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CODEX_PROFILES": {
         "description": "Provayder-model sinxronizasiyasından sonra canlı kataloqdan ~/.codex/*.config.toml profillərini yenidən yaradın. Bu, heç vaxt aktiv və ya defolt Codex konfiqurasiyasını dəyişmir və defolt olaraq qapalıdır."
       },
-      "OMNIROUTE_AUTO_SYNC_CLAUDE_PROFILES": {
+      "AGENTPROXY_AUTO_SYNC_CLAUDE_PROFILES": {
         "description": "Provayder-model sinxronizasiyasından sonra canlı kataloqdan ~/.claude/profiles/'<name>'/settings.json profillərini yenidən yaradın. Bu, heç vaxt aktiv və ya defolt Claude konfiqurasiyasını dəyişmir və defolt olaraq qapalıdır."
       },
-      "OMNIROUTE_DISABLE_LOCAL_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_LOCAL_HEALTHCHECK": {
         "description": "Yerli instansiyanın sağlamlıq yoxlaması son nöqtəsini sıradan çıxarın."
       },
-      "OMNIROUTE_DISABLE_TOKEN_HEALTHCHECK": {
+      "AGENTPROXY_DISABLE_TOKEN_HEALTHCHECK": {
         "description": "Token-validasiya sağlamlıq yoxlamasını sıradan çıxarın."
       },
       "SKILLS_SANDBOX_NETWORK_ENABLED": {
@@ -14190,5 +14190,5 @@
     "partnerLinkNote": "Tərəfdaş keçidi",
     "dismissAriaLabel": "Bağla"
   },
-  "featureFlagOmnirouteDisableThinkingLevelVariantsDescription": "/v1/models kataloqunda düşünmə səviyyəsi variantlarının (məsələn, -low, -medium, -high) yaradılmasını deaktiv edin."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "/v1/models kataloqunda düşünmə səviyyəsi variantlarının (məsələn, -low, -medium, -high) yaradılmasını deaktiv edin."
 }

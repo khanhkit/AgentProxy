@@ -259,7 +259,7 @@
     "max_restarts": "מספר ההפעלות מחדש המרבי עקב קריסה בתוך 30 שניות לפני ויתור (ברירת מחדל: 2)",
     "tray": "הפעלה במגש המערכת (שולחן עבודה בלבד, בהסכמה)",
     "no_tray": "השבתת סמל מגש המערכת",
-    "ready_timeout": "זמן קצוב לבדיקת מוכנות באלפיות שנייה (גם OMNIROUTE_READY_TIMEOUT_MS, ברירת מחדל 60000)",
+    "ready_timeout": "זמן קצוב לבדיקת מוכנות באלפיות שנייה (גם AGENTPROXY_READY_TIMEOUT_MS, ברירת מחדל 60000)",
     "tls_cert": "נתיב לאישור TLS‏ (PEM) לצורך אספקת HTTPS (גם OMNIROUTE_TLS_CERT)",
     "tls_key": "נתיב למפתח TLS הפרטי (PEM) לצורך אספקת HTTPS (גם OMNIROUTE_TLS_KEY)"
   },
