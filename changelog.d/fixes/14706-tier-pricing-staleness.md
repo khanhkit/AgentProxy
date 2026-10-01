@@ -1,0 +1,1 @@
+- **fix(routing):** Sync tier classification serves the stored pricing snapshot instead of stale built-in prices (#14706)
