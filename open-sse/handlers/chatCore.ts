@@ -3386,8 +3386,24 @@ async function handleChatCoreInner({
                       onContinue: (attempt) =>
                         log?.warn?.(
                           "STREAM_RECOVERY",
-                          `mid-stream continuation attempt ${attempt}/${STREAM_RECOVERY.EARLY_RETRY_MAX}`
+                          `mid-stream continuation attempt ${attempt}/${STREAM_RECOVERY.EARLY_RETRY_MAX} correlationId=${correlationId || "none"}`
                         ),
+                      onContinueOutcome: (event) => {
+                        const details = [
+                          `mid-stream continuation attempt ${event.attempt}/${STREAM_RECOVERY.EARLY_RETRY_MAX}`,
+                          `outcome=${event.outcome}`,
+                          "reason" in event && event.reason ? `reason=${event.reason}` : null,
+                          "suffixChars" in event && typeof event.suffixChars === "number" ? `suffixChars=${event.suffixChars}` : null,
+                          "overlapChars" in event && typeof event.overlapChars === "number" ? `overlapChars=${event.overlapChars}` : null,
+                          `correlationId=${correlationId || "none"}`,
+                        ].filter(Boolean).join(" ");
+                        const giveUp = event.outcome === "no-stream" ||
+                          (event.outcome === "refused" && event.reason === "budget");
+                        if (giveUp) log?.warn?.("STREAM_RECOVERY", details);
+                        else if (event.outcome === "refused" && event.reason === "tool-call")
+                          log?.debug?.("STREAM_RECOVERY", details);
+                        else log?.info?.("STREAM_RECOVERY", details);
+                      },
                       throughputWatchdog,
                       onWatchdogAbort: () =>
                         log?.warn?.(
