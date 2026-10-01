@@ -1629,7 +1629,7 @@ async function handleChatCoreInner({
             outputStyleResult = applyOutputStyles(
               body as Parameters<typeof applyOutputStyles>[0],
               selection,
-              outputStyleLanguage
+              outputStyleLanguage, { autoClarity: config.cavemanOutputMode?.autoClarity }
             );
             if (outputStyleResult.applied) {
               body = outputStyleResult.body as typeof body;
