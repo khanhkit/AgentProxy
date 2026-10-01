@@ -213,11 +213,7 @@ export async function readBoundedResponseOutcome(
       return { kind: "idle", text: concatChunks(chunks, total) ?? "" };
     }
     if (over) {
-      try {
-        await reader.cancel();
-      } catch {
-        // best-effort
-      }
+      void reader.cancel().catch(() => undefined);
       return { kind: "skipped" };
     }
     const text = concatChunks(chunks, total);
