@@ -49,6 +49,7 @@ import {
 } from "../services/openrouterFreeWindow.ts";
 import { gateOutboundRequest } from "../services/wafRateLimit.ts";
 import { ClaudeUsageLimitGuard } from "./claudeUsageLimit.ts";
+import { shouldSkipIntraRetryFor429 } from "./rateLimitIntraRetry.ts";
 import type { PoolConfig } from "../services/sessionPool/types.ts";
 import type { Session } from "../services/sessionPool/session.ts";
 import { SessionPool } from "../services/sessionPool/sessionPool.ts";
@@ -1699,7 +1700,8 @@ export class BaseExecutor {
         if (
           !skipUpstreamRetry &&
           response.status === HTTP_STATUS.RATE_LIMITED &&
-          (retryAttemptsByUrl[urlIndex] ?? 0) < BaseExecutor.RETRY_CONFIG.maxAttempts
+          (retryAttemptsByUrl[urlIndex] ?? 0) < BaseExecutor.RETRY_CONFIG.maxAttempts &&
+          !(await shouldSkipIntraRetryFor429(response))
         ) {
           retryAttemptsByUrl[urlIndex] = (retryAttemptsByUrl[urlIndex] ?? 0) + 1;
           const attempt = retryAttemptsByUrl[urlIndex];
