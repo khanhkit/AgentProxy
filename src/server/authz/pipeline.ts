@@ -1,4 +1,3 @@
-import { jwtVerify, SignJWT } from "jose";
 import { NextResponse, type NextRequest } from "next/server";
 import { getCachedSettings } from "../../lib/db/readCache";
 import { isDraining } from "../../lib/gracefulShutdown";
@@ -33,6 +32,12 @@ import {
   CLIENT_IP_HEADER,
 } from "./headers";
 import type { AuthSubject, RouteClass, RouteClassification } from "./types";
+import {
+  DASHBOARD_SESSION_COOKIE,
+  getDashboardJwtSecret,
+  mintDashboardSessionToken,
+  verifyDashboardSessionToken,
+} from "@/shared/utils/dashboardSessionToken";
 import type { AuthOutcome, RoutePolicy } from "./context";
 
 export interface AuthzPipelineOptions {
@@ -129,11 +134,6 @@ function getCookieValue(request: NextRequest, name: string): string | null {
   return null;
 }
 
-function getJwtSecret(): Uint8Array | null {
-  const secret = process.env.JWT_SECRET?.trim();
-  return secret ? new TextEncoder().encode(secret) : null;
-}
-
 function shouldUseSecureCookie(request: NextRequest): boolean {
   if (process.env.AUTH_COOKIE_SECURE === "true") return true;
   const forwardedProto = (request.headers.get("x-forwarded-proto") || "")
@@ -147,14 +147,18 @@ async function refreshDashboardSessionIfNeeded(
   response: NextResponse,
   request: NextRequest
 ): Promise<void> {
-  const secret = getJwtSecret();
+  const secret = getDashboardJwtSecret();
   if (!secret) return;
 
-  const token = getCookieValue(request, "auth_token");
+  const token = getCookieValue(request, DASHBOARD_SESSION_COOKIE);
   if (!token) return;
 
   try {
-    const { payload } = await jwtVerify(token, secret);
+    const payload = await verifyDashboardSessionToken(token, secret);
+    if (!payload) {
+      response.cookies.delete(DASHBOARD_SESSION_COOKIE);
+      return;
+    }
     const exp = typeof payload.exp === "number" ? payload.exp : null;
     if (!exp) return;
 
@@ -162,12 +166,9 @@ async function refreshDashboardSessionIfNeeded(
     const refreshWindowSeconds = 7 * 24 * 60 * 60;
     if (exp - now >= refreshWindowSeconds) return;
 
-    const freshToken = await new SignJWT({ authenticated: true })
-      .setProtectedHeader({ alg: "HS256" })
-      .setExpirationTime("30d")
-      .sign(secret);
+    const freshToken = await mintDashboardSessionToken(secret);
 
-    response.cookies.set("auth_token", freshToken, {
+    response.cookies.set(DASHBOARD_SESSION_COOKIE, freshToken, {
       httpOnly: true,
       secure: shouldUseSecureCookie(request),
       sameSite: "lax",

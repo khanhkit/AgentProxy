@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { getAuditRequestContext, logAuditEvent } from "@/lib/compliance/index";
 import { getCachedSettings } from "@/lib/db/settings";
-import { SignJWT } from "jose";
 import { cookies } from "next/headers";
 import {
   ensurePersistentManagementPasswordHash,
@@ -22,14 +21,11 @@ import {
 } from "@/server/auth/loginPeer";
 import { getRequestPeerLocality } from "@/shared/utils/apiAuth";
 import { resolvePublicOrigin } from "@/server/origin/publicOrigin";
+import { getDashboardJwtSecret, mintDashboardSessionToken } from "@/shared/utils/dashboardSessionToken";
 
 // SECURITY: No hardcoded fallback — JWT_SECRET must be configured.
 if (!process.env.JWT_SECRET) {
   console.error("[SECURITY] FATAL: JWT_SECRET is not set. Login authentication is disabled.");
-}
-
-function getJwtSecret(): Uint8Array {
-  return new TextEncoder().encode(process.env.JWT_SECRET || "");
 }
 
 // Test seam for cookie store injection without affecting runtime behavior.
@@ -206,10 +202,14 @@ export async function POST(request: NextRequest) {
       const isHttpsRequest = new URL(publicOrigin).protocol === "https:";
       const useSecureCookie = forceSecureCookie || isHttpsRequest;
 
-      const token = await new SignJWT({ authenticated: true })
-        .setProtectedHeader({ alg: "HS256" })
-        .setExpirationTime("30d")
-        .sign(getJwtSecret());
+      const secret = getDashboardJwtSecret();
+      if (!secret) {
+        return NextResponse.json(
+          { error: "Server misconfigured: JWT_SECRET not set. Contact administrator." },
+          { status: 500 }
+        );
+      }
+      const token = await mintDashboardSessionToken(secret);
 
       const cookieStore = await authRouteInternals.getCookieStore();
       cookieStore.set("auth_token", token, {

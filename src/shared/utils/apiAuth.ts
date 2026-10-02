@@ -7,7 +7,6 @@
  * @module shared/utils/apiAuth
  */
 
-import { jwtVerify } from "jose";
 import { cookies } from "next/headers";
 import { getOrCreateBootstrapToken, peekBootstrapToken } from "@/lib/auth/bootstrapToken";
 import { getSettings } from "@/lib/db/settings";
@@ -21,6 +20,7 @@ import {
   VIA_PROXY_HEADER,
 } from "@/server/authz/headers";
 import { resolveStampedPeer, resolveStampedViaProxy } from "@/server/authz/peerStamp";
+import { verifyDashboardSessionToken } from "@/shared/utils/dashboardSessionToken";
 
 type RequestLike = {
   cookies?: {
@@ -42,9 +42,8 @@ export interface RequestLocalityOptions {
    */
   trustPipelineLocalityHeader?: boolean;
   /**
-   * Judge a public-classified path as if it were a management path. Routes that
-   * perform their own management authorization must not inherit the public/fresh-install
-   * shortcut merely because /api/oauth/* is pipeline-public.
+   * Judge a public-classified path as if it were management-owned. Public routes
+   * with their own management gate must not inherit the fresh-install public bypass.
    */
   ignorePublicRoute?: boolean;
 }
@@ -331,13 +330,7 @@ export async function isDashboardSessionAuthenticated(
 
   if (!token) return false;
 
-  try {
-    const secret = new TextEncoder().encode(process.env.JWT_SECRET);
-    await jwtVerify(token, secret);
-    return true;
-  } catch {
-    return false;
-  }
+  return Boolean(await verifyDashboardSessionToken(token));
 }
 
 // ──────────────── Auth Verification ────────────────

@@ -18,7 +18,6 @@
  */
 
 import { WebSocketServer, WebSocket } from "ws";
-import { jwtVerify } from "jose";
 import { createServer, type IncomingMessage, type ServerResponse } from "http";
 import { createHash, randomUUID } from "crypto";
 
@@ -33,6 +32,7 @@ import type { DashboardEventName, DashboardChannel } from "@/lib/events/types";
 import { CHANNEL_EVENTS, getChannelForEvent } from "@/lib/events/types";
 import { isAutomatedTestProcess, isBuildProcess } from "@/shared/utils/testProcess";
 import { applyCustomHttpServerTimeouts } from "@/shared/utils/runtimeTimeouts";
+import { verifyDashboardSessionToken } from "@/shared/utils/dashboardSessionToken";
 import { hasProxyHopHeader } from "@/server/authz/proxyHeaders";
 
 import {
@@ -259,8 +259,8 @@ async function getDashboardCookiePrincipal(
   const token = getCookieValueFromHeader(request.headers, "auth_token");
   if (!token || !process.env.JWT_SECRET) return null;
   try {
-    const secret = new TextEncoder().encode(process.env.JWT_SECRET);
-    const { payload } = await jwtVerify(token, secret);
+    const payload = await verifyDashboardSessionToken(token);
+    if (!payload) return null;
     const subject = typeof payload.sub === "string" ? payload.sub.trim() : "";
     const remoteAddress = request.socket?.remoteAddress || "unknown";
     return subject ? `dashboard:${subject}` : `ip:${remoteAddress}`;
