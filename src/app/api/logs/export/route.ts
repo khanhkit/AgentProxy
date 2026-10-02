@@ -1,116 +1,116 @@
-import {
-  getCallLogById,
-  getLegacyCallLogExportIdPage,
-  getLegacyCallLogExportMaxRowId,
-  type LegacyCallLogExportCursor,
-} from "@/lib/usage/callLogs";
+import { countCallLogsSince, iterateCallLogsSince } from "@/lib/usage/callLogs";
 import { requireManagementAuth } from "@/lib/api/requireManagementAuth";
-import {
-  getLegacyProxyLogExportMaxRowId,
-  getLegacyProxyLogExportPage,
-  type LegacyProxyLogExportCursor,
-} from "@/lib/db/proxyLogs";
-import { sanitizeErrorMessage } from "@agentproxy/open-sse/utils/error";
+import { countProxyLogsSince, iterateProxyLogsSince } from "@/lib/db/proxyLogs";
+import { sanitizeErrorMessage } from "@omniroute/open-sse/utils/error";
 import { logger } from "@/shared/utils/logger";
+import {
+  LOG_EXPORT_DEFAULT_ROWS,
+  LOG_EXPORT_MAX_ROWS,
+  buildLogExportHeaders,
+} from "@/shared/utils/logExport";
 
 const log = logger.child({ module: "logs-export" });
-const LEGACY_EXPORT_PAGE_SIZE = 100;
-const encoder = new TextEncoder();
 
-function indentJson(value: unknown): string {
-  return JSON.stringify(value, null, 2).replace(/^/gm, "    ");
-}
+/**
+ * GET /api/logs/export — export logs as JSON (streamed)
+ * Query params: ?hours=24 (1, 6, 12, 24; default 24)
+ *               &type=call-logs|request-logs|proxy-logs (default call-logs)
+ *               &limit=10000 (max rows; default 10000, max 50000)
+ *
+ * #13123: The original implementation buffered every matching row into a single
+ * JSON.stringify call with pretty-printing, which roughly doubled the string
+ * size and could OOM the process on large tables. A first fix pass added
+ * streaming + a row cap at the ROUTE layer only, but `exportCallLogsSince()`/
+ * `exportProxyLogsSince()` still hydrated and buffered every matching row
+ * (including rows beyond the cap) before the cap was ever applied — the peak
+ * V8 heap was essentially unchanged. This version pushes the cap down to the
+ * DB layer itself:
+ *  - `countCallLogsSince()`/`countProxyLogsSince()` run a cheap COUNT(*) for
+ *    `totalAvailable`, never touching the matching rows.
+ *  - `iterateCallLogsSince()`/`iterateProxyLogsSince()` bound the query with
+ *    SQL LIMIT and hydrate/yield one row at a time (fixed-size LIMIT/OFFSET
+ *    pages for proxy_logs, a generator over a LIMIT-bounded id list for
+ *    call_logs), so the full matching row set is never fully buffered.
+ *  - Pretty-printing stays removed (callers that need formatting can
+ *    pretty-print client-side).
+ *  - BREAKING (documented in changelog): `limit` still defaults to 10,000 —
+ *    exports that previously returned every row are silently truncated
+ *    unless the caller passes a larger `limit`.
+ */
+const MAX_ROWS = LOG_EXPORT_MAX_ROWS;
+const DEFAULT_ROWS = LOG_EXPORT_DEFAULT_ROWS;
 
-async function* iterateCallLogs(since: string, maxRowId: number): AsyncGenerator<unknown> {
-  let cursor: LegacyCallLogExportCursor | null = null;
-
-  while (true) {
-    const page = getLegacyCallLogExportIdPage(since, maxRowId, cursor, LEGACY_EXPORT_PAGE_SIZE);
-    if (page.length === 0) return;
-
-    for (const row of page) {
-      const log = await getCallLogById(row.id);
-      if (log) yield log;
-    }
-
-    const last = page[page.length - 1];
-    cursor = { timestamp: last.timestamp, rowId: last.rowId };
-  }
-}
-
-async function* iterateProxyLogs(since: string, maxRowId: number): AsyncGenerator<unknown> {
-  let cursor: LegacyProxyLogExportCursor | null = null;
-
-  while (true) {
-    const page = getLegacyProxyLogExportPage(since, maxRowId, cursor, LEGACY_EXPORT_PAGE_SIZE);
-    if (page.length === 0) return;
-
-    for (const row of page) yield row.record;
-
-    const last = page[page.length - 1];
-    cursor = { timestamp: last.timestamp, rowId: last.rowId };
-  }
-}
-
-async function* emptyLogs(): AsyncGenerator<unknown> {
-  return;
-}
-
-async function* generateExportJson(
-  logs: AsyncIterable<unknown>,
-  hours: number,
-  logType: string
-): AsyncGenerator<Uint8Array> {
-  yield encoder.encode('{\n  "logs": [');
-
-  let count = 0;
-  let streamError: unknown = null;
-  try {
-    for await (const row of logs) {
-      yield encoder.encode(`${count === 0 ? "\n" : ",\n"}${indentJson(row)}`);
-      count += 1;
-    }
-  } catch (error) {
-    streamError = error;
-    log.error({ err: error, emitted: count, type: logType, hours }, "logs export failed mid-stream");
-  }
-
-  const logsClose = count === 0 ? "]" : "\n  ]";
-  const errorField = streamError
-    ? `,\n  "emitted": ${count},\n  "error": ${JSON.stringify(
-        sanitizeErrorMessage(streamError instanceof Error ? streamError.message : String(streamError))
-      )}`
-    : "";
-  yield encoder.encode(
-    `${logsClose},\n  "count": ${count},\n  "hours": ${hours},\n  "type": ${JSON.stringify(logType)}${errorField}\n}`
-  );
-}
-
-function streamFrom(iterator: AsyncGenerator<Uint8Array>): ReadableStream<Uint8Array> {
-  return new ReadableStream<Uint8Array>({
-    async pull(controller) {
+/**
+ * Build the streamed JSON body for a log export.
+ *
+ * Streams one row at a time — the row source (`rows`) is a cursor/generator
+ * bounded by SQL LIMIT, so peak memory is bounded by one hydrated row, not the
+ * full matching set (#13123). `capped`/`limit`/`totalAvailable` travel in the
+ * HEADER (not a trailer, as before) so a client consuming the stream
+ * incrementally learns about truncation before it has processed every row.
+ */
+function buildLogExportStream({
+  rows,
+  header,
+  logType,
+  hours,
+}: {
+  rows: AsyncIterable<unknown> | Iterable<unknown>;
+  header: Record<string, unknown>;
+  logType: string;
+  hours: number;
+}): ReadableStream<Uint8Array> {
+  const encoder = new TextEncoder();
+  return new ReadableStream({
+    async start(controller) {
+      // header ends with `}`, we strip it to append `,"logs":[...]}`
+      controller.enqueue(encoder.encode(JSON.stringify(header).slice(0, -1) + ',"logs":['));
+      let index = 0;
+      let streamError: unknown = null;
       try {
-        const next = await iterator.next();
-        if (next.done) {
-          controller.close();
-          return;
+        for await (const row of rows) {
+          if (index > 0) controller.enqueue(encoder.encode(","));
+          controller.enqueue(encoder.encode(JSON.stringify(row)));
+          index++;
         }
-        controller.enqueue(next.value);
-      } catch (error) {
-        controller.error(error);
+      } catch (err) {
+        // #13999: the row source (a DB cursor/generator) can throw partway through
+        // iteration, after headers and some rows have already gone out over the wire.
+        // Letting the exception propagate out of an async `start()` auto-errors the
+        // underlying Web ReadableStream, but once that stream is bridged onto a real
+        // Node HTTP response (as any Node-based adapter does), a source error does not
+        // end or destroy the destination response — the client's fetch() never resolves
+        // and never rejects, and it hangs forever (proven by
+        // tests/unit/repro-13999-mid-stream-error.test.ts). Instead of erroring the
+        // stream, close the JSON document out cleanly with a trailing `error`/`emitted`
+        // marker so the HTTP response always completes, and log the failure server-side.
+        streamError = err;
+        log.error(
+          { err, emitted: index, type: logType, hours },
+          "logs export stream failed mid-iteration"
+        );
       }
-    },
-    async cancel() {
-      await iterator.return(undefined);
+      controller.enqueue(encoder.encode("]"));
+      controller.enqueue(encoder.encode(streamError ? errorTail(index, streamError) : "}\n"));
+      controller.close();
     },
   });
 }
 
 /**
- * GET /api/logs/export — export logs as JSON
- * Query params: ?hours=24 (1, 6, 12, 24; default 24)
- *               &type=call-logs|request-logs|proxy-logs (default call-logs)
+ * `,"emitted":N,"error":"..."}` — the sibling fields that close a truncated
+ * export out as well-formed JSON (#13999).
  */
+function errorTail(emitted: number, streamError: unknown): string {
+  const tail = JSON.stringify({
+    emitted,
+    error: sanitizeErrorMessage(
+      streamError instanceof Error ? streamError.message : String(streamError)
+    ),
+  });
+  return "," + tail.slice(1, -1) + "}\n";
+}
+
 export async function GET(request: Request) {
   const authError = await requireManagementAuth(request);
   if (authError) return authError;
@@ -119,34 +119,56 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const hours = Math.min(Math.max(parseInt(searchParams.get("hours") || "24") || 24, 1), 168);
     const logType = searchParams.get("type") || "call-logs";
+    const limit = Math.min(
+      Math.max(parseInt(searchParams.get("limit") || String(DEFAULT_ROWS)) || DEFAULT_ROWS, 1),
+      MAX_ROWS
+    );
 
     const since = new Date(Date.now() - hours * 3600 * 1000).toISOString();
 
     let tableName = "";
-    let logs: AsyncIterable<unknown> = emptyLogs();
+    let totalAvailable = 0;
+    let rows: AsyncIterable<unknown> | Iterable<unknown> = [];
 
     if (logType === "call-logs" || logType === "request-logs") {
       tableName = "call_logs";
-      const maxRowId = getLegacyCallLogExportMaxRowId(since);
-      logs = iterateCallLogs(since, maxRowId);
+      totalAvailable = countCallLogsSince(since);
+      rows = iterateCallLogsSince(since, limit);
     } else if (logType === "proxy-logs") {
       tableName = "proxy_logs";
-      // NOTE: proxy export records retain the historical `public_ip` column, NOT `clientIp`.
-      // This intentionally differs from GET /api/usage/proxy-logs which exposes the
-      // value as `clientIp`. Callers of this export endpoint should read `public_ip`.
-      // This inconsistency will be resolved in a future DB migration (#2880).
-      const maxRowId = getLegacyProxyLogExportMaxRowId(since);
-      logs = iterateProxyLogs(since, maxRowId);
+      // NOTE: iterateProxyLogsSince returns the historical `public_ip` column, NOT
+      // `clientIp`. This intentionally differs from GET /api/usage/proxy-logs which
+      // exposes the value as `clientIp`. Callers of this export endpoint should read
+      // `public_ip`. This inconsistency will be resolved in a future DB migration
+      // (#2880).
+      totalAvailable = countProxyLogsSince(since);
+      rows = iterateProxyLogsSince(since, limit);
     }
 
-    const filename = `agentproxy-${tableName}-${hours}h-${new Date().toISOString().slice(0, 10)}.json`;
-    const body = streamFrom(generateExportJson(logs, hours, logType));
+    const capped = totalAvailable > limit;
+    const count = Math.min(totalAvailable, limit);
+    const filename = `omniroute-${tableName}-${hours}h-${new Date().toISOString().slice(0, 10)}.json`;
 
-    return new Response(body, {
+    const stream = buildLogExportStream({
+      rows,
+      header: {
+        count,
+        hours,
+        type: logType,
+        ...(capped ? { capped: true, limit, totalAvailable } : {}),
+      },
+      logType,
+      hours,
+    });
+
+    return new Response(stream, {
       status: 200,
       headers: {
-        "Content-Type": "application/json",
+        "Content-Type": "application/json; charset=utf-8",
         "Content-Disposition": `attachment; filename="${filename}"`,
+        // #13999: mirror the cap metadata in headers so a client that saves the body as a
+        // Blob (the dashboard Export button) can warn about truncation without parsing it.
+        ...buildLogExportHeaders({ count, limit, totalAvailable }),
       },
     });
   } catch (error) {

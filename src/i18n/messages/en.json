@@ -3796,16 +3796,7 @@
     "duplicateAutoComboSnapshotMsg": "This will snapshot the currently connected providers/models that match this template into an editable combo.",
     "duplicateAutoComboFailedPrefix": "Failed to duplicate auto-combo:",
     "duplicateAutoComboUnknownError": "Unknown error",
-    "duplicateAutoComboTitle": "Create a static combo from {name}",
-    "stickyLimitEffective": "Effective {value} ({source})",
-    "stickyLimitSourceCombo": "combo",
-    "stickyLimitSourceComboDefaults": "combo defaults",
-    "stickyLimitSourceGlobal": "global default",
-    "connectionAwareExpansion": "Connection-aware expansion",
-    "triStateInherit": "inherit",
-    "connectionAwareExpansionOn": "On",
-    "connectionAwareExpansionOff": "Off",
-    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation."
+    "duplicateAutoComboTitle": "Create a static combo from {name}"
   },
   "costs": {
     "title": "Costs",
@@ -4981,7 +4972,8 @@
     },
     "compressionLogTitle": "Compression Log",
     "compressionLogEmpty": "No compressed requests yet. Compression stats will appear here when requests are processed with compression enabled.",
-    "tokens": "tokens"
+    "tokens": "tokens",
+    "exportTruncated": "Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
   },
   "onboarding": {
     "welcome": "Welcome",
