@@ -12,25 +12,28 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import type { NextRequest } from "next/server";
-import { SignJWT } from "jose";
 
 const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-oauth-ghe-ssrf-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
-process.env.JWT_SECRET = "agentproxy-ghe-ssrf-test-secret";
+process.env.API_KEY_SECRET = "ghe-ssrf-test-api-key-secret-0123456789";
 
 const core = await import("../../src/lib/db/core.ts");
+const apiKeys = await import("../../src/lib/db/apiKeys.ts");
+const managementKey = await apiKeys.createApiKey(
+  "ghe-ssrf-test",
+  "ghe-ssrf-test-machine",
+  ["manage"]
+);
 const route = await import("../../src/app/api/oauth/[provider]/[action]/route.ts");
-const { runWithProxyContext } = await import("../../open-sse/utils/proxyFetch.ts");
-const TEST_PROXY_CONTEXT = { type: "vercel", host: "relay.invalid" };
-const AUTH_TOKEN = await new SignJWT({ sub: "ghe-ssrf-test" })
-  .setProtectedHeader({ alg: "HS256" })
-  .setExpirationTime("1h")
-  .sign(new TextEncoder().encode(process.env.JWT_SECRET));
 
 const METADATA_URL = "http://169.254.169.254/latest/meta-data/iam/security-credentials/role";
 const METADATA_SECRET = "metadata-secret-access-key";
 
 const originalFetch = globalThis.fetch;
+const dns = await import("node:dns");
+const originalDnsLookup = dns.promises.lookup;
+const { setSafeOutboundPinnedFetchTestOverride } =
+  await import("../../src/shared/network/safeOutboundFetch.ts");
 let requestedUrls: string[] = [];
 
 // Models a GHE host that answers every request with a redirect to the metadata service.
@@ -43,10 +46,7 @@ function installRedirectingFetch() {
     if (url.startsWith("http://169.254.169.254/")) {
       return new Response(JSON.stringify({ SecretAccessKey: METADATA_SECRET }), {
         status: 200,
-        headers: {
-      "content-type": "application/json",
-      cookie: "auth_token=" + AUTH_TOKEN,
-    },
+        headers: { "content-type": "application/json" },
       });
     }
     if (init?.redirect === "manual") {
@@ -78,11 +78,21 @@ test.beforeEach(() => {
   restoreGuardEnv();
   for (const key of GUARD_ENV_KEYS) delete process.env[key];
   requestedUrls = [];
+  dns.promises.lookup = async (hostname, options) => {
+    if (hostname === "ghe.example.test") {
+      const answer = { address: "93.184.216.34", family: 4 };
+      return options?.all ? [answer] : answer;
+    }
+    return originalDnsLookup(hostname, options);
+  };
+  setSafeOutboundPinnedFetchTestOverride(() => (input, init) => globalThis.fetch(input, init));
   installRedirectingFetch();
 });
 
 test.afterEach(() => {
   globalThis.fetch = originalFetch;
+  dns.promises.lookup = originalDnsLookup;
+  setSafeOutboundPinnedFetchTestOverride(undefined);
   restoreGuardEnv();
 });
 
@@ -98,13 +108,9 @@ function reachedMetadata() {
 async function deviceCode(gheUrl: string) {
   const url =
     "http://localhost/api/oauth/ghe-copilot/device-code" + `?gheUrl=${encodeURIComponent(gheUrl)}`;
-  return runWithProxyContext(TEST_PROXY_CONTEXT, () =>
-    route.GET(
-      new Request(url, { headers: { cookie: "auth_token=" + AUTH_TOKEN } }) as unknown as NextRequest,
-      {
-        params: Promise.resolve({ provider: "ghe-copilot", action: "device-code" }),
-      }
-    )
+  return route.GET(
+    new Request(url, { headers: { authorization: `Bearer ${managementKey.key}` } }) as unknown as NextRequest,
+    { params: Promise.resolve({ provider: "ghe-copilot", action: "device-code" }) }
   );
 }
 
@@ -113,15 +119,13 @@ async function poll(gheUrl: string) {
     method: "POST",
     headers: {
       "content-type": "application/json",
-      cookie: "auth_token=" + AUTH_TOKEN,
+      authorization: `Bearer ${managementKey.key}`,
     },
     body: JSON.stringify({ deviceCode: "device-code", extraData: { gheUrl } }),
   });
-  return runWithProxyContext(TEST_PROXY_CONTEXT, () =>
-    route.POST(request as unknown as NextRequest, {
-      params: Promise.resolve({ provider: "ghe-copilot", action: "poll" }),
-    })
-  );
+  return route.POST(request as unknown as NextRequest, {
+    params: Promise.resolve({ provider: "ghe-copilot", action: "poll" }),
+  });
 }
 
 test("ghe-copilot device-code does not contact a metadata gheUrl", async () => {
@@ -131,7 +135,7 @@ test("ghe-copilot device-code does not contact a metadata gheUrl", async () => {
 });
 
 test("ghe-copilot device-code does not follow a redirect from the GHE host", async () => {
-  const res = await deviceCode("https://example.com");
+  const res = await deviceCode("https://ghe.example.test");
   const body = await res.text();
   assert.equal(reachedMetadata(), false, `unexpected requests: ${requestedUrls.join(", ")}`);
   assert.equal(body.includes(METADATA_SECRET), false);
@@ -139,7 +143,7 @@ test("ghe-copilot device-code does not follow a redirect from the GHE host", asy
 });
 
 test("ghe-copilot poll does not follow a redirect from the GHE host", async () => {
-  const res = await poll("https://example.com");
+  const res = await poll("https://ghe.example.test");
   assert.equal(reachedMetadata(), false, `unexpected requests: ${requestedUrls.join(", ")}`);
   const body = await res.text();
   assert.equal(body.includes(METADATA_SECRET), false);
@@ -159,11 +163,11 @@ test("ghe-copilot device-code still works against a GHE host that answers direct
     );
   }) as typeof fetch;
 
-  const res = await deviceCode("https://example.com/");
+  const res = await deviceCode("https://ghe.example.test/");
   assert.equal(res.status, 200);
   const body = await res.json();
   assert.equal(body.user_code, "ABCD-EFGH");
-  assert.deepEqual(requestedUrls, ["https://example.com/login/device/code"]);
+  assert.deepEqual(requestedUrls, ["https://ghe.example.test/login/device/code"]);
 });
 
 test("ghe-copilot never contacts a metadata gheUrl even with private provider URLs allowed", async () => {
@@ -187,7 +191,7 @@ test("ghe-copilot device-code relays only the device-flow fields", async () => {
       { status: 200, headers: { "content-type": "application/json" } }
     )) as typeof fetch;
 
-  const res = await deviceCode("https://example.com");
+  const res = await deviceCode("https://ghe.example.test");
   assert.equal(res.status, 200);
   const body = await res.json();
   assert.equal(body.device_code, "dc");
@@ -198,7 +202,7 @@ test("ghe-copilot device-code relays only the device-flow fields", async () => {
 test("ghe-copilot device-code does not echo the host's error body", async () => {
   globalThis.fetch = (async () => new Response(METADATA_SECRET, { status: 502 })) as typeof fetch;
 
-  const res = await deviceCode("https://example.com");
+  const res = await deviceCode("https://ghe.example.test");
   const text = await res.text();
   assert.notEqual(res.status, 200);
   assert.equal(text.includes(METADATA_SECRET), false);
@@ -208,7 +212,7 @@ test("ghe-copilot poll reports a non-json answer without echoing it", async () =
   globalThis.fetch = (async () =>
     new Response(`<html>${METADATA_SECRET}</html>`, { status: 200 })) as typeof fetch;
 
-  const res = await poll("https://example.com");
+  const res = await poll("https://ghe.example.test");
   const text = await res.text();
   assert.equal(text.includes(METADATA_SECRET), false);
   assert.equal(JSON.parse(text).success, false);
@@ -221,7 +225,7 @@ test("ghe-copilot poll maps an unknown error code to a fixed one", async () => {
       headers: { "content-type": "application/json" },
     })) as typeof fetch;
 
-  const res = await poll("https://example.com");
+  const res = await poll("https://ghe.example.test");
   const text = await res.text();
   assert.equal(text.includes(METADATA_SECRET), false);
   assert.equal(JSON.parse(text).error, "invalid_response");
@@ -234,14 +238,14 @@ test("ghe-copilot keeps authorization_pending as a pending answer", async () => 
       headers: { "content-type": "application/json" },
     })) as typeof fetch;
 
-  const res = await poll("https://example.com");
+  const res = await poll("https://ghe.example.test");
   const body = await res.json();
   assert.equal(body.pending, true);
   assert.equal(body.error, "authorization_pending");
 });
 
 test("ghe-copilot post-login lookups do not follow a redirect from the GHE host", async () => {
-  const tokenUrl = "https://example.com/login/oauth/access_token";
+  const tokenUrl = "https://ghe.example.test/login/oauth/access_token";
   globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
     const url = String(input instanceof Request ? input.url : input);
     requestedUrls.push(url);
@@ -261,7 +265,7 @@ test("ghe-copilot post-login lookups do not follow a redirect from the GHE host"
     });
   }) as typeof fetch;
 
-  const res = await poll("https://example.com");
+  const res = await poll("https://ghe.example.test");
   const text = await res.text();
   assert.equal(reachedMetadata(), false, `unexpected requests: ${requestedUrls.join(", ")}`);
   assert.equal(text.includes(METADATA_SECRET), false);

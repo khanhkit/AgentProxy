@@ -4,6 +4,8 @@
  * Handles both response shapes AgentProxy routes emit:
  * - OpenAI-style `{ error: { message, type, code } }` (from `buildErrorBody`)
  * - legacy `{ error: "..." }` string bodies
+ * - validation `{ error: { message: "Invalid request", details: [{ field, message }] } }`,
+ *   where the first detail is surfaced as `field: message`
  *
  * The server already sanitizes these messages (stack traces / absolute paths
  * stripped via `sanitizeErrorMessage`), so surfacing them in the UI is safe.
@@ -25,6 +27,9 @@ export function errorMessageFromBody(body: unknown, fallback: string): string {
   const err = (body as { error?: unknown } | null)?.error;
   if (typeof err === "string" && err.trim()) return err.trim();
   if (err && typeof err === "object") {
+    // Validation failures (`validateBody` / `validatedJsonBody`) send the
+    // generic "Invalid request" in `message` and the actual reason in
+    // `details`. Prefer the first detail so the UI names the offending field.
     const details = (err as { details?: unknown }).details;
     const first = Array.isArray(details) ? (details[0] as unknown) : null;
     if (first && typeof first === "object") {
@@ -32,7 +37,7 @@ export function errorMessageFromBody(body: unknown, fallback: string): string {
       const field = (first as { field?: unknown }).field;
       if (typeof detailMessage === "string" && detailMessage.trim()) {
         return typeof field === "string" && field.trim()
-          ? field.trim() + ": " + detailMessage.trim()
+          ? `${field.trim()}: ${detailMessage.trim()}`
           : detailMessage.trim();
       }
     }

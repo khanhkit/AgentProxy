@@ -159,6 +159,63 @@ export function* iterateProxyLogsSince(
 // Exported so callers can build `since` without duplicating the window.
 export const EGRESS_IP_LOOKUP_WINDOW_MS = 24 * 60 * 60 * 1000;
 
+export type PoolEgressObservationCounts = {
+  connections: number;
+  distinctExits: number;
+  maxConnectionsOnOneExit: number;
+};
+
+export function getPoolEgressObservation(
+  scope: string,
+  scopeId: string | null,
+  since: string
+): PoolEgressObservationCounts {
+  const db = getDbInstance();
+  const perExit = db
+    .prepare(
+      `SELECT COUNT(DISTINCT l.connection_id) AS n
+       FROM proxy_logs l
+       JOIN proxy_registry r ON l.proxy_host = r.host AND l.proxy_port = r.port
+       WHERE r.id IN (SELECT proxy_id FROM proxy_assignments WHERE scope = ? AND scope_id IS ?)
+         AND l.timestamp >= ? AND l.egress_ip IS NOT NULL AND l.connection_id IS NOT NULL
+       GROUP BY l.egress_ip`
+    )
+    .all(scope, scopeId, since) as Array<{ n: number }>;
+  const total = db
+    .prepare(
+      `SELECT COUNT(DISTINCT l.connection_id) AS n
+       FROM proxy_logs l
+       JOIN proxy_registry r ON l.proxy_host = r.host AND l.proxy_port = r.port
+       WHERE r.id IN (SELECT proxy_id FROM proxy_assignments WHERE scope = ? AND scope_id IS ?)
+         AND l.timestamp >= ? AND l.egress_ip IS NOT NULL AND l.connection_id IS NOT NULL`
+    )
+    .get(scope, scopeId, since) as { n: number };
+  return {
+    connections: total.n,
+    distinctExits: perExit.length,
+    maxConnectionsOnOneExit: perExit.reduce((max, row) => Math.max(max, row.n), 0),
+  };
+}
+
+export function getRecentEgressIpForProxy(
+  host: string,
+  port: number
+): { egressIp: string; at: string } | null {
+  const normalizedHost = typeof host === "string" ? host.trim().replace(/^\[|\]$/g, "").toLowerCase() : "";
+  if (!normalizedHost || !Number.isInteger(port) || port < 1 || port > 65535) return null;
+  const db = getDbInstance();
+  const since = new Date(Date.now() - EGRESS_IP_LOOKUP_WINDOW_MS).toISOString();
+  const row = db
+    .prepare(
+      `SELECT egress_ip, timestamp FROM proxy_logs
+       WHERE LOWER(TRIM(REPLACE(REPLACE(proxy_host, '[', ''), ']', ''))) = ?
+         AND proxy_port = ? AND egress_ip IS NOT NULL AND timestamp >= ?
+       ORDER BY timestamp DESC LIMIT 1`
+    )
+    .get(normalizedHost, port, since) as { egress_ip: string; timestamp: string } | undefined;
+  return row ? { egressIp: row.egress_ip, at: row.timestamp } : null;
+}
+
 
 export type PoolEgressFailureFamily = {
   family: string;

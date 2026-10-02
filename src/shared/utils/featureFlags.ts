@@ -305,6 +305,18 @@ export function isStreamEarlyEofSiblingFailoverEnabled(): boolean {
  * Proxy health sweep (#13608): a target-refused probe resets the consecutive-failure streak.
  * Opt-in; an unreadable flag store keeps the neutral policy (#10654).
  */
+export function isPoolEgressObservationEnabled(): boolean {
+  try {
+    return isFeatureFlagEnabled("PROXY_POOL_EGRESS_OBSERVATION");
+  } catch (error) {
+    console.error(
+      "[featureFlags] Failed to resolve PROXY_POOL_EGRESS_OBSERVATION, defaulting to disabled:",
+      error instanceof Error ? error.message : error
+    );
+    return false;
+  }
+}
+
 export function isProxyHealthBlockedResetsStreakEnabled(): boolean {
   try {
     return isFeatureFlagEnabled("PROXY_HEALTH_BLOCKED_RESETS_STREAK");
