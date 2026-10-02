@@ -112,7 +112,7 @@ export const NATIVE_ASSET_ENTRIES = [
 ];
 
 /** @type {{label:string, src:string[], dest:string[]}[]} */
-const EXTRA_MODULE_ENTRIES = [
+export const EXTRA_MODULE_ENTRIES = [
   {
     // tlsClient.ts intentionally resolves wreq-js through a runtime-dynamic
     // require so Turbopack cannot rewrite the package name to a hashed external.
@@ -163,6 +163,19 @@ const EXTRA_MODULE_ENTRIES = [
     dest: ["node_modules", "pino-pretty"],
   },
   { label: "split2", src: ["node_modules", "split2"], dest: ["node_modules", "split2"] },
+  { label: "compression worker external: uuid", src: ["node_modules", "uuid"], dest: ["node_modules", "uuid"] },
+  { label: "compression worker external: @toon-format/toon", src: ["node_modules", "@toon-format", "toon"], dest: ["node_modules", "@toon-format", "toon"] },
+  { label: "compression worker external: omniglyph", src: ["node_modules", "omniglyph"], dest: ["node_modules", "omniglyph"] },
+  { label: "compression worker external: gpt-tokenizer", src: ["node_modules", "gpt-tokenizer"], dest: ["node_modules", "gpt-tokenizer"] },
+  { label: "compression worker external: safe-regex", src: ["node_modules", "safe-regex"], dest: ["node_modules", "safe-regex"] },
+  { label: "compression worker external: regexp-tree", src: ["node_modules", "regexp-tree"], dest: ["node_modules", "regexp-tree"] },
+  { label: "compression worker external: smol-toml", src: ["node_modules", "smol-toml"], dest: ["node_modules", "smol-toml"] },
+  { label: "compression worker external: socks", src: ["node_modules", "socks"], dest: ["node_modules", "socks"] },
+  { label: "compression worker external: ip-address", src: ["node_modules", "ip-address"], dest: ["node_modules", "ip-address"] },
+  { label: "compression worker external: smart-buffer", src: ["node_modules", "smart-buffer"], dest: ["node_modules", "smart-buffer"] },
+  { label: "compression worker external: xxhash-wasm", src: ["node_modules", "xxhash-wasm"], dest: ["node_modules", "xxhash-wasm"] },
+  { label: "compression worker external: yazl", src: ["node_modules", "yazl"], dest: ["node_modules", "yazl"] },
+  { label: "compression worker external: buffer-crc32", src: ["node_modules", "buffer-crc32"], dest: ["node_modules", "buffer-crc32"] },
   {
     // ioredis is a deliberately LAZY dependency (Redis is optional — see the
     // #6559 comment in src/shared/utils/rateLimiter.ts) — reached only via a
