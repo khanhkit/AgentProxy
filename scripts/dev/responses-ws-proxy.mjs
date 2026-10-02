@@ -1,7 +1,7 @@
 import { createHash, randomUUID } from "node:crypto";
 import { createRequire } from "node:module";
 import { STATUS_CODES } from "node:http";
-import { PEER_IP_HEADER, stampPeerIp } from "./peer-stamp.mjs";
+import { relayForwardingHeaders, stampPeerIp } from "./peer-stamp.mjs";
 
 const _wreqRequire = createRequire(import.meta.url);
 
@@ -298,7 +298,7 @@ export function writeHttpError(socket, status, body, headers = {}) {
   socket.end(bodyBuffer);
 }
 
-function getAuthHeaders(requestUrl, requestHeaders) {
+function getAuthHeaders(requestUrl, requestHeaders, forwarding = {}) {
   const headers = {};
   if (isText(requestHeaders.authorization)) {
     headers.authorization = requestHeaders.authorization;
@@ -316,11 +316,8 @@ function getAuthHeaders(requestUrl, requestHeaders) {
   if (isText(requestHeaders.cookie)) headers.cookie = requestHeaders.cookie;
   if (isText(requestHeaders.origin)) headers.origin = requestHeaders.origin;
   if (isText(requestHeaders.host)) headers.host = requestHeaders.host;
-  if (isText(requestHeaders[PEER_IP_HEADER]))
-    headers[PEER_IP_HEADER] = requestHeaders[PEER_IP_HEADER];
-  for (const key of ["forwarded", "x-forwarded-for", "x-forwarded-host", "x-forwarded-proto"]) {
-    if (isText(requestHeaders[key])) headers[key] = requestHeaders[key];
-  }
+  // Only the relay's sanitized client-address envelope crosses the loopback hop.
+  Object.assign(headers, forwarding);
   for (const key of [
     "session-id",
     "session_id",
@@ -377,12 +374,13 @@ function withPreparedResponseCreate(message, preparedBody) {
   return next;
 }
 
-async function callInternal(fetchImpl, baseUrl, bridgeSecret, action, payload) {
+async function callInternal(fetchImpl, baseUrl, bridgeSecret, action, payload, forwarding = {}) {
   const response = await fetchImpl(new URL(INTERNAL_ROUTE, baseUrl), {
     method: "POST",
     headers: {
       "content-type": "application/json",
       "x-agentproxy-ws-bridge-secret": bridgeSecret,
+      ...forwarding,
     },
     body: JSON.stringify({ action, ...payload }),
   });
@@ -403,6 +401,7 @@ class ResponsesWsSession {
     fetchImpl,
     socket,
     requestHeaders,
+    forwarding,
     requestUrl,
     wsFactory,
     pingIntervalMs,
@@ -415,6 +414,7 @@ class ResponsesWsSession {
     this.fetchImpl = fetchImpl;
     this.socket = socket;
     this.requestHeaders = requestHeaders;
+    this.forwarding = forwarding ?? { "x-forwarded-for": "unknown" };
     this.requestUrl = requestUrl;
     this.wsFactory = wsFactory;
     this.pingIntervalMs = pingIntervalMs;
@@ -610,10 +610,11 @@ class ResponsesWsSession {
       "prepare",
       {
         requestUrl: this.requestUrl,
-        headers: getAuthHeaders(this.requestUrl, this.requestHeaders),
+        headers: getAuthHeaders(this.requestUrl, this.requestHeaders, this.forwarding),
         message,
         response: responseBody,
-      }
+      },
+      this.forwarding
     );
 
     if (!prepared.ok) {
@@ -798,7 +799,14 @@ class ResponsesWsSession {
     if (this.leaseReleased || this.leaseReleaseInFlight || !this.leaseId) return;
     this.leaseReleaseInFlight = true;
     const leaseId = this.leaseId;
-    void callInternal(this.fetchImpl, this.baseUrl, this.bridgeSecret, "release", { leaseId })
+    void callInternal(
+      this.fetchImpl,
+      this.baseUrl,
+      this.bridgeSecret,
+      "release",
+      { leaseId },
+      this.forwarding
+    )
       .then((response) => {
         if (!response.ok) throw new Error("lease release rejected");
         this.leaseReleased = true;
@@ -813,7 +821,14 @@ class ResponsesWsSession {
 
   releaseLeaseId(leaseId) {
     if (!leaseId) return;
-    void callInternal(this.fetchImpl, this.baseUrl, this.bridgeSecret, "release", { leaseId })
+    void callInternal(
+      this.fetchImpl,
+      this.baseUrl,
+      this.bridgeSecret,
+      "release",
+      { leaseId },
+      this.forwarding
+    )
       .then((response) => {
         if (!response.ok) throw new Error("lease release rejected");
       })
@@ -849,7 +864,7 @@ class ResponsesWsSession {
         sessionId: this.sessionId,
         transport: "responses_websocket",
         requestUrl: this.requestUrl,
-        headers: getAuthHeaders(this.requestUrl, this.requestHeaders),
+        headers: getAuthHeaders(this.requestUrl, this.requestHeaders, this.forwarding),
         path: new URL(this.requestUrl || "/v1/responses", "http://agentproxy.local").pathname,
         startedAt: new Date(this.startedAt).toISOString(),
         completedAt: new Date(finishedAt).toISOString(),
@@ -864,7 +879,7 @@ class ResponsesWsSession {
         sourceFormat: "openai-responses",
         targetFormat: "openai-responses",
         ...this.preparedContext,
-      });
+      }, this.forwarding);
     } catch {
       // History logging must never break an already-established WebSocket session.
     }
@@ -972,13 +987,21 @@ export function createResponsesWsProxy({
       // token-authenticated copy of the REAL upgrade peer before bridging the
       // browser Origin/Host context. stampPeerIp() deletes any client-supplied
       // peer stamp before writing the trusted process stamp.
+      const forwarding = relayForwardingHeaders(req.socket?.remoteAddress, req.headers);
       stampPeerIp(req);
 
       try {
-        const auth = await callInternal(fetchImpl, baseUrl, bridgeSecret, "authenticate", {
-          requestUrl: req.url || pathname,
-          headers: getAuthHeaders(req.url || pathname, req.headers),
-        });
+        const auth = await callInternal(
+          fetchImpl,
+          baseUrl,
+          bridgeSecret,
+          "authenticate",
+          {
+            requestUrl: req.url || pathname,
+            headers: getAuthHeaders(req.url || pathname, req.headers, forwarding),
+          },
+          forwarding
+        );
         if (!auth.ok) {
           // Do NOT forward the internal fetch's response headers onto the raw
           // upgrade socket — they carry chunked transfer-encoding + Next security
@@ -1025,6 +1048,7 @@ export function createResponsesWsProxy({
           socket,
           requestUrl: req.url || pathname,
           requestHeaders: req.headers,
+          forwarding,
           wsFactory,
           pingIntervalMs,
           idleTimeoutMs,
