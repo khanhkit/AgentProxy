@@ -64,6 +64,7 @@ These **must** be set before the first run. Without them, the application will e
 | `SOURCE_VERSION` | No | _(unset)_ | `next.config.mjs`, `scripts/build/assembleStandalone.mjs` | Second in the chain — set by PaaS builders (e.g. Heroku-style) as the deployed commit. |
 | `NEXT_PUBLIC_SW_BUILD_ID` | No | _(derived)_ | `src/shared/components/PwaRegister.tsx` | Build-time public value the client uses to register `/sw.js?v=…`; derived from the two above, then the git SHA. |
 | `AGENTPROXY_PEER_STAMP_TOKEN` | No (auto)            | _(auto per boot)_ | `src/server/authz/policies/management.ts`          | Per-process secret proving the trusted peer-IP stamp came from AgentProxy's own HTTP server (`scripts/dev/peer-stamp.mjs`). The authz middleware trusts request locality (loopback/LAN gating of LOCAL_ONLY routes) only when the stamp carries this token. Auto-generated each boot — leave unset; only pin it for multi-process setups that must share the stamp. |
+| `AGENTPROXY_TRUSTED_PROXIES` | No | _(unset)_ | `scripts/dev/peer-stamp.mjs` | Comma-separated IPs or CIDR ranges of public reverse proxies whose `X-Forwarded-For` / `X-Real-IP` AgentProxy may trust for the IP allow/deny list. Loopback, private-network proxies, and Cloudflare edges are recognized automatically. |
 
 ### Generation Commands
 
