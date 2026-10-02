@@ -350,6 +350,8 @@ function extractChatCompletionText(choices: unknown[]): string {
   return parts.join(" ");
 }
 
+export const UPSTREAM_RESPONDED_ERROR_TYPE = "upstream_response_error";
+
 export function describeMalformedNonStream(
   resp: unknown,
   reason: MalformedReason
@@ -365,14 +367,14 @@ export function describeMalformedNonStream(
         ? `upstream reported a failed response: ${rawMessage}`
         : "upstream reported a failed response without usable output",
       code: "upstream_response_failed",
-      type: "upstream_response_error",
+      type: UPSTREAM_RESPONDED_ERROR_TYPE,
     };
   }
   if (reason === "content_is_upstream_error") {
     return {
       message: "upstream reported a failure disguised as a successful response",
       code: "upstream_fake_success",
-      type: "upstream_response_error",
+      type: UPSTREAM_RESPONDED_ERROR_TYPE,
     };
   }
   return {
@@ -381,7 +383,7 @@ export function describeMalformedNonStream(
         ? "upstream response did not reach a terminal state"
         : "upstream returned an empty response without usable output",
     code: "upstream_empty_response",
-    type: "upstream_response_error",
+    type: UPSTREAM_RESPONDED_ERROR_TYPE,
   };
 }
 
