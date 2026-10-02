@@ -90,11 +90,12 @@ test("SPAWN_CAPABLE_PREFIXES is defined in the server-free constants leaf with t
     "/api/tunnels/tailscale/install",
     "/api/tunnels/tailscale/login",
     "/api/tunnels/tailscale/start-daemon",
+    "/api/version-manager/",
   ]) {
     assert.ok(
       SPAWN_CAPABLE_PREFIXES.includes(prefix),
       `SPAWN_CAPABLE_PREFIXES lost the spawn-capable prefix "${prefix}" during extraction`
     );
   }
-  assert.equal(SPAWN_CAPABLE_PREFIXES.length, 20);
+  assert.equal(SPAWN_CAPABLE_PREFIXES.length, 35);
 });

@@ -164,42 +164,54 @@ function getDirectPeerAddress(request: RequestLike | Request | null | undefined)
   return candidate?.trim() || null;
 }
 
-export function isLoopbackRequest(
+function localityOfPeer(peer: string | null): "loopback" | "lan" | "remote" {
+  const scope = classifyIpScope(peer);
+  if (scope === "loopback") return "loopback";
+  if (scope === "private") return "lan";
+  return "remote";
+}
+
+/**
+ * Trusted three-way caller locality. This uses only AgentProxy's signed peer
+ * stamp, the authz pipeline verdict, or a direct socket peer with no forwarding
+ * evidence; client-controlled Host/X-Forwarded-* values can never promote a
+ * remote request to local.
+ */
+export function getRequestPeerLocality(
   request: RequestLike | Request | null | undefined,
   options: RequestLocalityOptions = {}
-): boolean {
-  if (!request || typeof request !== "object") return false;
+): "loopback" | "lan" | "remote" {
+  if (!request || typeof request !== "object") return "remote";
   const requestHeaders = getRequestHeaders(request);
 
-  // Highest-authority signal: the custom server's token-stamped TCP peer. A
-  // signed via-proxy marker explicitly downgrades a loopback proxy hop to
-  // remote, so Host/XFF can never promote it back to local.
   const peerStamp = requestHeaders?.get(PEER_IP_HEADER) ?? null;
   const viaProxyStamp = requestHeaders?.get(VIA_PROXY_HEADER) ?? null;
   const stampToken = process.env.AGENTPROXY_PEER_STAMP_TOKEN;
   const stampedPeer = resolveStampedPeer(peerStamp, stampToken);
   if (stampedPeer) {
-    if (resolveStampedViaProxy(viaProxyStamp, stampToken)) return false;
-    return classifyIpScope(stampedPeer) === "loopback";
+    if (resolveStampedViaProxy(viaProxyStamp, stampToken)) return "remote";
+    return localityOfPeer(stampedPeer);
   }
 
-  // A client-supplied/invalid stamp must never fall through to weaker authority.
-  if (peerStamp || viaProxyStamp) return false;
+  // A client-supplied/invalid stamp is evidence of an untrusted path.
+  if (peerStamp || viaProxyStamp) return "remote";
 
-  // Route handlers execute after the pipeline has stripped any client-supplied
-  // trusted headers and re-stamped this non-secret verdict. Policy evaluation
-  // happens before that strip and therefore opts out via the function option.
   if (options.trustPipelineLocalityHeader !== false) {
     const pipelineLocality = requestHeaders?.get(AUTHZ_HEADER_PEER_LOCALITY);
-    if (pipelineLocality === "loopback") return true;
-    if (pipelineLocality === "lan" || pipelineLocality === "remote") return false;
+    if (pipelineLocality === "loopback" || pipelineLocality === "lan") return pipelineLocality;
+    if (pipelineLocality === "remote") return "remote";
   }
 
-  // Direct/raw-Node compatibility: a real socket peer is trustworthy only when
-  // there is no forwarding evidence indicating that the socket is a proxy hop.
   const directPeer = getDirectPeerAddress(request);
-  if (!directPeer || hasForwardingEvidence(requestHeaders)) return false;
-  return classifyIpScope(directPeer) === "loopback";
+  if (!directPeer || hasForwardingEvidence(requestHeaders)) return "remote";
+  return localityOfPeer(directPeer);
+}
+
+export function isLoopbackRequest(
+  request: RequestLike | Request | null | undefined,
+  options: RequestLocalityOptions = {}
+): boolean {
+  return getRequestPeerLocality(request, options) === "loopback";
 }
 
 function getCookieValueFromHeader(headers: Headers | undefined, name: string): string | null {
