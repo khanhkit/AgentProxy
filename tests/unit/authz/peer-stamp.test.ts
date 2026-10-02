@@ -96,14 +96,18 @@ test("Cloudflare bypass guard: direct forger sending cf-connecting-ip keeps via-
   );
 });
 
-test("x-forwarded-for still wins via-proxy=1 even when cf-connecting-ip is forged", () => {
+test("an untrusted public peer cannot promote itself to proxy with forwarding headers", () => {
   const req = makeReq("203.0.113.7", {
     "x-forwarded-for": "203.0.113.99",
     "cf-connecting-ip": "198.51.100.1",
   });
   stampPeerIp(req);
 
-  assert.equal(getViaProxy(req), "stamp-tok|1", "x-forwarded-for must still set via-proxy=1");
+  assert.equal(
+    getViaProxy(req),
+    "stamp-tok|0",
+    "forwarding headers from an untrusted public peer must not change peer authority"
+  );
 });
 
 test("F-05: non-Cloudflare proxy (x-forwarded-for only, no cf-connecting-ip) marks via-proxy=1", () => {
