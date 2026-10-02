@@ -59,6 +59,51 @@ export function normalizeHost(hostname: string) {
   return end === unwrapped.length ? unwrapped : unwrapped.slice(0, end);
 }
 
+
+/** The eight 16-bit groups of an IPv6 literal, or null when `host` is not one. */
+function ipv6Hextets(host: string): number[] | null {
+  if (ipVersion(host) !== 6) return null;
+  let text = host.split("%")[0];
+  const lastColon = text.lastIndexOf(":");
+  const tail = text.slice(lastColon + 1);
+  if (tail.includes(".")) {
+    const [a, b, c, d] = tail.split(".").map((part) => parseInt(part, 10));
+    text = `${text.slice(0, lastColon + 1)}${((a << 8) | b).toString(16)}:${((c << 8) | d).toString(16)}`;
+  }
+  const halves = text.split("::");
+  if (halves.length > 2) return null;
+  const head = halves[0] ? halves[0].split(":") : [];
+  const rest = halves.length === 2 && halves[1] ? halves[1].split(":") : [];
+  const missing = 8 - head.length - rest.length;
+  if (halves.length === 1 ? missing !== 0 : missing < 0) return null;
+  const groups = [...head, ...Array<string>(halves.length === 2 ? missing : 0).fill("0"), ...rest];
+  const hextets = groups.map((group) => parseInt(group, 16));
+  return hextets.length === 8 && hextets.every((value) => value >= 0 && value <= 0xffff) ? hextets : null;
+}
+
+const dottedQuad = (high: number, low: number) => `${high >> 8}.${high & 0xff}.${low >> 8}.${low & 0xff}`;
+
+function embeddedIpv4FromHextets(hextets: number[], mappedOnly: boolean): string | null {
+  const leadingZeros = (count: number) => hextets.slice(0, count).every((value) => value === 0);
+  if (leadingZeros(5) && hextets[5] === 0xffff) return dottedQuad(hextets[6], hextets[7]);
+  if (mappedOnly) return null;
+  if (leadingZeros(6) && !(hextets[6] === 0 && hextets[7] <= 1)) return dottedQuad(hextets[6], hextets[7]);
+  if (hextets[0] === 0x64 && hextets[1] === 0xff9b && hextets.slice(2, 6).every((v) => v === 0)) return dottedQuad(hextets[6], hextets[7]);
+  if (hextets[0] === 0x2002) return dottedQuad(hextets[1], hextets[2]);
+  return null;
+}
+
+export function embeddedIpv4Host(hostname: string, mappedOnly = false): string | null {
+  const hextets = ipv6Hextets(normalizeHost(hostname));
+  return hextets ? embeddedIpv4FromHextets(hextets, mappedOnly) : null;
+}
+
+export function isSameIpv6Address(a: string, b: string): boolean {
+  const first = ipv6Hextets(normalizeHost(a));
+  const second = ipv6Hextets(normalizeHost(b));
+  return !!first && !!second && first.every((value, index) => value === second[index]);
+}
+
 export function isPrivateHost(hostname: string) {
   const normalized = normalizeHost(hostname);
   if (!normalized) return true;
@@ -84,22 +129,30 @@ export function isPrivateHost(hostname: string) {
 
   if (ipVersion(normalized) === 4) {
     const octets = normalized.split(".").map((segment) => parseInt(segment, 10));
-    const [a, b] = octets;
+    const [a, b, c, d] = octets;
 
     if (a === 0 || a === 10 || a === 127) return true;
     if (a === 169 && b === 254) return true;
     if (a === 192 && b === 168) return true;
     if (a === 172 && b >= 16 && b <= 31) return true;
     if (a === 100 && b >= 64 && b <= 127) return true;
+    if (a === 192 && b === 0 && c === 0) return true;
+    if (a >= 224 && a <= 239) return true;
+    if (a === 168 && b === 63 && c === 129 && d === 16) return true;
     return false;
   }
 
-  if (ipVersion(normalized) === 6) {
+  const hextets = ipv6Hextets(normalized);
+  if (hextets) {
+    const embedded = embeddedIpv4FromHextets(hextets, false);
+    if (embedded !== null && isPrivateHost(embedded)) return true;
+    const [first] = hextets;
     return (
-      normalized === "::1" ||
-      normalized.startsWith("fc") ||
-      normalized.startsWith("fd") ||
-      normalized.startsWith("fe80:")
+      (hextets.slice(0, 7).every((value) => value === 0) && hextets[7] <= 1) ||
+      (first & 0xfe00) === 0xfc00 ||
+      (first & 0xffc0) === 0xfe80 ||
+      (first & 0xffc0) === 0xfec0 ||
+      first >> 8 === 0xff
     );
   }
 
