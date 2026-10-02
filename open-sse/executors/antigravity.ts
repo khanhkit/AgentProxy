@@ -1334,11 +1334,17 @@ export class AntigravityExecutor extends BaseExecutor {
           throw signal?.reason ?? error;
         }
         lastError = error;
-        l.error(
+        const cause =
+          error instanceof Error && error.cause instanceof Error
+            ? (error.cause as NodeJS.ErrnoException).code || error.cause.message
+            : "";
+        const detail = `${error instanceof Error ? error.message : String(error)}${cause ? ` (cause: ${cause})` : ""}`;
+        const hasFallback = urlIndex + 1 < this.getFallbackCount();
+        l[hasFallback ? "warn" : "error"](
           "TELEMETRY",
-          `[Antigravity] Network/Fetch Error - URL: ${url}, Model: ${model}, Error: ${error instanceof Error ? error.message : String(error)}`
+          `[Antigravity] Network/Fetch Error - URL: ${url}, Model: ${model}, Error: ${detail}`
         );
-        if (urlIndex + 1 < fallbackCount) {
+        if (hasFallback) {
           l.debug("RETRY", `Error on ${url}, trying fallback ${urlIndex + 1}`);
           continue;
         }
@@ -1371,7 +1377,6 @@ export class AntigravityExecutor extends BaseExecutor {
       accountId,
       urlIndex,
       retryAttemptsByUrl,
-      fallbackCount,
       physicalSendCounter,
       correlationId,
     } = ctx;
