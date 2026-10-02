@@ -102,6 +102,10 @@ export const CHAT_ADMISSION_MAX_QUEUED_BYTES = parsePositiveInt(
  */
 export const CHAT_ADMISSION_RETRY_AFTER_MAX_SECONDS = 60;
 
+// #13649: defensive cleanup for orphaned empty queue metadata; live parked waiters are never evicted.
+export const CHAT_ADMISSION_QUEUE_CLEANUP_INTERVAL_MS = 60_000;
+export const CHAT_ADMISSION_QUEUE_IDLE_TTL_MS = 300_000;
+
 export const CHAT_HEAVY_MESSAGE_COUNT = parsePositiveInt(
   process.env.AGENTPROXY_CHAT_HEAVY_MESSAGE_COUNT,
   200
@@ -299,6 +303,7 @@ export class ChatAdmissionController {
    * shed was invisible. Same in-memory lifetime as the rest of the snapshot state. */
   #shedTotal = 0;
   #shedsByReason = new Map<string, number>();
+  #queueTimestamps = new Map<string, number>();
   readonly #onShed: ChatAdmissionShedSink;
 
   readonly #ingestBudget: IngestByteAdmissionController;
@@ -334,6 +339,27 @@ export class ChatAdmissionController {
       ...budgetOptions,
       onShed: (reason, lane) => this.recordShed(reason, lane),
     });
+    setInterval(() => this.#cleanup(), CHAT_ADMISSION_QUEUE_CLEANUP_INTERVAL_MS).unref();
+  }
+
+  #cleanup(now = Date.now()) {
+    for (const [key, timestamp] of this.#queueTimestamps) {
+      if (now - timestamp <= CHAT_ADMISSION_QUEUE_IDLE_TTL_MS) continue;
+      const queue = this.#queues.get(key);
+      if (queue && queue.length > 0) continue;
+      this.#removeFairKey(key);
+    }
+  }
+
+  _runCleanupForTest(now = Date.now()): void {
+    this.#cleanup(now);
+  }
+  _seedQueueTimestampForTest(key: string, timestamp: number): void {
+    this.#queueTimestamps.set(key, timestamp);
+  }
+  _queueTimestampCountForTest(): number {
+    return this.#queueTimestamps.size;
+
   }
 
   get activeHeavy(): number {
@@ -523,6 +549,7 @@ export class ChatAdmissionController {
         queue = [];
         this.#queues.set(sessionKey, queue);
         this.#fairKeys.push(sessionKey);
+        this.#queueTimestamps.set(sessionKey, Date.now());
       }
       const lane = queue;
       let resolveParked: (() => void) | null = null;
@@ -581,6 +608,7 @@ export class ChatAdmissionController {
 
   #removeFairKey(key: string): void {
     this.#queues.delete(key);
+    this.#queueTimestamps.delete(key);
     const index = this.#fairKeys.indexOf(key);
     if (index < 0) return;
     this.#fairKeys.splice(index, 1);
