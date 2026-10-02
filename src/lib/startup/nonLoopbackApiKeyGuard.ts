@@ -9,7 +9,7 @@ function isRequireApiKeyDisabled(): boolean {
   return raw !== "true" && raw !== "1" && raw !== "yes";
 }
 
-function warnIfNonLoopbackWithoutApiKey(serverLabel: string, host: string): void {
+export function warnIfNonLoopbackWithoutApiKey(serverLabel: string, host: string): void {
   if (isLoopbackHost(host) || !isRequireApiKeyDisabled()) return;
 
   console.warn(

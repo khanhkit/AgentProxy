@@ -220,6 +220,49 @@ function applyUrlGuard(targetUrl: URL, guard: SafeOutboundFetchGuard, method: st
 const defaultDnsLookup: SafeOutboundDnsLookup = (hostname) =>
   dns.promises.lookup(hostname, { all: true });
 
+type PinnedFetchFactory = (address: string, family: number) => typeof fetch;
+let pinnedFetchTestOverride: PinnedFetchFactory | undefined;
+
+export function setSafeOutboundPinnedFetchTestOverride(factory: PinnedFetchFactory | undefined) {
+  pinnedFetchTestOverride = factory;
+}
+
+const PUBLIC_HOST_LOOKUP_TIMEOUT_MS = 5000;
+
+async function lookupWithDeadline(
+  hostname: string,
+  lookup: SafeOutboundDnsLookup,
+  timeoutMs: number | undefined,
+  signal: AbortSignal | null | undefined
+): Promise<Array<{ address: string; family: number }>> {
+  const deadline =
+    typeof timeoutMs === "number" && timeoutMs > 0
+      ? Math.min(timeoutMs, PUBLIC_HOST_LOOKUP_TIMEOUT_MS)
+      : PUBLIC_HOST_LOOKUP_TIMEOUT_MS;
+  return await new Promise((resolve, reject) => {
+    let settled = false;
+    const finish = (run: () => void) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      signal?.removeEventListener("abort", onAbort);
+      run();
+    };
+    const onAbort = () => finish(() => reject(new Error(`Lookup of "${hostname}" was aborted`)));
+    const timer = setTimeout(
+      () => finish(() => reject(new Error(`Lookup of "${hostname}" timed out`))),
+      deadline
+    );
+    timer.unref?.();
+    if (signal?.aborted) return onAbort();
+    signal?.addEventListener("abort", onAbort, { once: true });
+    lookup(hostname).then(
+      (answers) => finish(() => resolve(answers)),
+      (error) => finish(() => reject(error))
+    );
+  });
+}
+
 function isIpv6LinkLocal(address: string): boolean {
   const normalized = address.trim().toLowerCase().replace(/^\[/, "").replace(/\]$/, "").split("%")[0];
   if (isIP(normalized) !== 6) return false;
@@ -239,7 +282,8 @@ async function resolveValidatedDns(
   targetUrl: URL,
   guard: SafeOutboundFetchGuard,
   lookup: SafeOutboundDnsLookup,
-  method: string
+  method: string,
+  options: { timeoutMs?: number; signal?: AbortSignal | null; failClosed?: boolean } = {}
 ): Promise<Array<{ address: string; family: number }>> {
   if (guard === "none") return [];
 
@@ -253,20 +297,22 @@ async function resolveValidatedDns(
     resolved = [{ address: hostname, family: isIP(hostname) }];
   } else {
     try {
-      resolved = await lookup(hostname);
+      resolved = await lookupWithDeadline(hostname, lookup, options.timeoutMs, options.signal);
     } catch (cause) {
+      if (options.failClosed === false) return [];
       throw new SafeOutboundFetchError(`Outbound host could not be resolved: ${hostname}`, {
         code: "NETWORK_ERROR",
         url: targetUrl.toString(),
         method,
         attempts: 1,
-        isRetryable: true,
+        isRetryable: false,
         cause,
       });
     }
   }
 
   if (!resolved.length) {
+    if (options.failClosed === false) return [];
     throw new SafeOutboundFetchError(`Outbound host could not be resolved: ${hostname}`, {
       code: "NETWORK_ERROR",
       url: targetUrl.toString(),
@@ -421,8 +467,13 @@ export async function safeOutboundFetch(url: string | URL, options: SafeOutbound
         // immediately before transport. Redirect targets must pass the same
         // URL + DNS policy as the initial request.
         applyUrlGuard(activeUrl, guard, activeMethod);
-        const resolvedAddresses = pinDns
-          ? await resolveValidatedDns(activeUrl, guard, dnsLookup, activeMethod)
+        const shouldResolve = pinDns || guard === "public-only";
+        const resolvedAddresses = shouldResolve
+          ? await resolveValidatedDns(activeUrl, guard, dnsLookup, activeMethod, {
+              timeoutMs,
+              signal,
+              failClosed: pinDns || guard !== "public-only",
+            })
           : [];
 
         const executeFetch = () => {
@@ -431,7 +482,10 @@ export async function safeOutboundFetch(url: string | URL, options: SafeOutbound
           // egress retains the proxy route after local DNS pre-validation.
           const pinnedFetch =
             pinDns && resolvedAddresses.length > 0 && !proxyIsActive && !fetchImpl
-              ? createPinnedFetch(resolvedAddresses[0].address, resolvedAddresses[0].family)
+              ? (pinnedFetchTestOverride ?? createPinnedFetch)(
+                  resolvedAddresses[0].address,
+                  resolvedAddresses[0].family
+                )
               : undefined;
           const selectedFetch =
             fetchImpl || pinnedFetch || (bypassProxyPatch ? getOriginalFetch() : undefined);

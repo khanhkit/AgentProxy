@@ -33,6 +33,7 @@ import type { DashboardEventName, DashboardChannel } from "@/lib/events/types";
 import { CHANNEL_EVENTS, getChannelForEvent } from "@/lib/events/types";
 import { isAutomatedTestProcess, isBuildProcess } from "@/shared/utils/testProcess";
 import { applyCustomHttpServerTimeouts } from "@/shared/utils/runtimeTimeouts";
+import { hasProxyHopHeader } from "@/server/authz/proxyHeaders";
 
 import {
   attachRequestStreamGuards,
@@ -140,12 +141,7 @@ function loadAuthModule(): Promise<typeof import("../../sse/services/auth.ts")> 
  * reverse-proxy/tunnel hop and therefore disable the fresh-install bypass.
  */
 function isLocalWsPeer(request: import("http").IncomingMessage): boolean {
-  if (
-    request.headers["x-forwarded-for"] !== undefined ||
-    request.headers["x-real-ip"] !== undefined
-  ) {
-    return false;
-  }
+  if (hasProxyHopHeader(request.headers)) return false;
 
   let peer = request.socket?.remoteAddress ?? null;
   if (!peer) return false;

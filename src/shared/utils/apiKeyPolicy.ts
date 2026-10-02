@@ -252,11 +252,24 @@ async function resolveRequestedComboName(modelStr: string): Promise<string | nul
   return mappedName;
 }
 
+/**
+ * Built-in virtual routes (`auto/*`, `qtSd/*`) dispatch like combos but are not
+ * persisted combo rows, so `resolveRequestedComboName` cannot find them. They
+ * must still be matched against the key's combo allow-list; otherwise a key
+ * restricted to one named combo could reach every provider through them
+ * (GHSA-7j4q-6gx6-pg77).
+ */
+function isVirtualComboModel(modelStr: string): boolean {
+  return modelStr.startsWith("auto/") || modelStr.startsWith("qtSd/");
+}
+
 async function isComboAllowedForKey(
   allowedCombos: string[],
   modelStr: string
 ): Promise<{ allowed: boolean; comboName: string | null }> {
-  const comboName = await resolveRequestedComboName(modelStr);
+  const comboName =
+    (await resolveRequestedComboName(modelStr)) ??
+    (isVirtualComboModel(modelStr) ? modelStr : null);
   if (!comboName) return { allowed: true, comboName: null };
 
   const allowed = allowedCombos.some((rule) => matchesComboAccessRule(comboName, modelStr, rule));
@@ -561,6 +574,12 @@ async function validateQuotaAccess(context: PolicyContext): Promise<Response | n
 async function validateModelAccess(context: PolicyContext): Promise<Response | null> {
   const { request, apiKey, apiKeyInfo, modelStr } = context;
   if (!modelStr || apiKeyInfo.allowedQuotas?.length) return null;
+  if (isVirtualComboModel(modelStr) && apiKeyInfo.allowAutoCombos === false) {
+    return errorResponse(
+      HTTP_STATUS.FORBIDDEN,
+      `Auto combo "${modelStr}" is disabled for this API key`
+    );
+  }
   const comboAccess = await validateComboAccess(apiKeyInfo.allowedCombos, modelStr);
   if (comboAccess.rejection) return comboAccess.rejection;
   let requestedComboName = comboAccess.comboName;
@@ -571,7 +590,7 @@ async function validateModelAccess(context: PolicyContext): Promise<Response | n
     Boolean(apiKeyInfo.blockedModels?.length) ||
     apiKeyInfo.disableNonPublicModels === true;
   if (!requestedComboName && hasModelRestrictions) {
-    if (modelStr.startsWith("auto/") || modelStr.startsWith("qtSd/")) {
+    if (isVirtualComboModel(modelStr)) {
       requestedComboName = modelStr;
     } else {
       try {
