@@ -49,9 +49,10 @@ export const KNOWN_DUPLICATE_VERSIONS = new Set([
 // (148_provider_quota_state.sql) e a 149 aterrissou junto com #10066
 // (149_api_key_combo_access.sql) — nenhuma das duas é mais um gap. O
 // stale-enforcement exige que cada reserva seja removida quando os arquivos
-// correspondentes aterrissarem na release.
+// correspondentes aterrissarem na release. Slots 187-189 were intentionally
+// skipped when the post-migration AP-ISS-0126 telemetry chain resumed at 190.
 // ---------------------------------------------------------------------------
-export const KNOWN_GAPS = new Set(["026", "055", "121", "180"]); // 121: número queimado no ciclo v3.8.47 — 122 (#6909) mergeou antes e 121 nunca aterrissou (validação e2e 2026-07-12); 144/145 aterrissaram na release (radar offers/intel cache), 148/149 aterrissaram (provider_quota_state, api_key_combo_access)
+export const KNOWN_GAPS = new Set(["026", "055", "121", "187", "188", "189"]); // 121: número queimado no ciclo v3.8.47 — 122 (#6909) mergeou antes e 121 nunca aterrissou (validação e2e 2026-07-12); 144/145 aterrissaram na release (radar offers/intel cache), 148/149 aterrissaram (provider_quota_state, api_key_combo_access)
 
 function pad3(n) {
   return String(n).padStart(3, "0");

@@ -238,6 +238,8 @@ export const FORWARDABLE_CLIENT_BETAS = Object.freeze([
   // gate (#9505), so a client that sent it must keep it through the merge —
   // otherwise its effort negotiation is silently dropped.
   "effort-2025-11-24",
+  "mid-conversation-output-config-2026-07-01",
+  "per-turn-control-2026-07-01",
   // Fable 5.1 betas (@ai-sdk/anthropic sends both automatically): without them
   // upstream rejects `thinking.block_binding` / `thinking.display` with 400.
   "thinking-binding-controls-2026-08-01",

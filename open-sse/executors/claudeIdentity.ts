@@ -400,12 +400,18 @@ export function selectBetaFlags(
   const isHeavyAgent = isFullAgent && isHeavyAgentModel(effectiveModel);
   const isOpusAgent = shouldUseMidConversationSystem(b, effectiveModel);
   const isContext1m = isFullAgent && isContext1mModel(effectiveModel);
+  const hasMessageOutputConfig = Array.isArray(b.messages)
+    ? (b.messages as unknown[]).some(
+        (m) => !!m && typeof m === "object" && "output_config" in (m as Record<string, unknown>)
+      )
+    : false;
 
   const flags: string[] = [];
   if (isFullAgent) flags.push("claude-code-20250219");
   flags.push("oauth-2025-04-20");
   if (isContext1m) flags.push("context-1m-2025-08-07");
   if (isOpusAgent) flags.push("mid-conversation-system-2026-04-07");
+  if (hasMessageOutputConfig) flags.push("mid-conversation-output-config-2026-07-01");
   // Thinking betas: gated on the client header (#3415). interleaved-thinking forces
   // interleaved-thinking semantics that conflict with a tool_choice-forced turn,
   // producing malformed opus tool_use streams when the client never asked for it.

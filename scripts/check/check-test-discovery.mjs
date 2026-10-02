@@ -92,6 +92,7 @@ export const COLLECTORS = [
   // tests are runnable/discoverable without inflating ordinary CI. The service lifecycle test
   // self-skips unless RUN_SERVICES_INT=1; the DeepSeek live test self-skips without its cookie;
   // the pipeline benchmark requires DEEPSEEK_API_KEY and is intentionally manual/live-cost.
+  // AP-ISS-0105 explicit non-default collectors. These runners are intentionally manual/live-cost.
   { glob: "tests/golden-set/*.test.ts", sources: ["package.json"] },
   { glob: "tests/benchmarks/pipeline-accuracy.test.ts", sources: ["package.json"] },
   { glob: "tests/integration/services/*.test.ts", sources: ["package.json"] },

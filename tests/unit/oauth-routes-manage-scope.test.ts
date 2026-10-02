@@ -11,7 +11,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-oauth-manage-scope-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omni-oauth-manage-scope-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.API_KEY_SECRET = "oauth-manage-scope-api-key-secret";
 process.env.JWT_SECRET = "oauth-manage-scope-jwt-secret";
@@ -22,7 +22,6 @@ const apiKeysDb = await import("../../src/lib/db/apiKeys.ts");
 const { getProviderConnections } = await import("../../src/models/index.ts");
 const { SignJWT } = await import("jose");
 const { createAccessToken } = await import("../../src/lib/db/accessTokens.ts");
-const { PEER_IP_HEADER } = await import("../../src/server/authz/headers.ts");
 const actionRoute = await import("../../src/app/api/oauth/[provider]/[action]/route.ts");
 const pasteCredentialsRoute =
   await import("../../src/app/api/oauth/[provider]/paste-credentials/route.ts");
@@ -215,26 +214,23 @@ test("an admin access token can use the routes and a read access token cannot", 
   assert.equal((await callImportToken({ authorization: `Bearer ${read.secret}` })).status, 403);
 });
 
-test("before a password exists only a trusted local peer may use the routes", async () => {
+test("before a password exists only a local caller may use the routes", async () => {
   const savedPassword = process.env.INITIAL_PASSWORD;
-  const savedPeerToken = process.env.AGENTPROXY_PEER_STAMP_TOKEN;
   delete process.env.INITIAL_PASSWORD;
-  process.env.AGENTPROXY_PEER_STAMP_TOKEN = "oauth-manage-peer-stamp";
   await updateSettings({ password: "", setupComplete: false });
   try {
     assert.equal((await callImportToken({})).status, 401);
     assert.equal(
       (
-        await callImportToken({
-          [PEER_IP_HEADER]: "oauth-manage-peer-stamp|127.0.0.1",
-        })
+        await callImportToken(
+          { "x-agentproxy-peer-locality": "loopback" },
+          "http://localhost"
+        )
       ).status,
       200
     );
   } finally {
     await updateSettings({ password: "configured-password-hash" });
     if (savedPassword !== undefined) process.env.INITIAL_PASSWORD = savedPassword;
-    if (savedPeerToken === undefined) delete process.env.AGENTPROXY_PEER_STAMP_TOKEN;
-    else process.env.AGENTPROXY_PEER_STAMP_TOKEN = savedPeerToken;
   }
 });
