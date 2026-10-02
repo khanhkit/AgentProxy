@@ -25,6 +25,8 @@ process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.JWT_SECRET = "test-jwt-secret-13679d";
 
 const ORIGINAL_INITIAL_PASSWORD = process.env.INITIAL_PASSWORD;
+const ORIGINAL_STAMP_TOKEN = process.env.AGENTPROXY_PEER_STAMP_TOKEN;
+process.env.AGENTPROXY_PEER_STAMP_TOKEN = "ap0130-login-peer-stamp";
 
 const core = await import("../../src/lib/db/core.ts");
 const { updateSettings } = await import("../../src/lib/db/settings.ts");
@@ -59,15 +61,20 @@ test.after(() => {
   } else {
     process.env.INITIAL_PASSWORD = ORIGINAL_INITIAL_PASSWORD;
   }
+  if (ORIGINAL_STAMP_TOKEN === undefined) delete process.env.AGENTPROXY_PEER_STAMP_TOKEN;
+  else process.env.AGENTPROXY_PEER_STAMP_TOKEN = ORIGINAL_STAMP_TOKEN;
 });
 
-function postLogin(password: string, forwardedFor: string) {
+function postLogin(password: string, peerIp: string) {
+  const loopback = peerIp === "127.0.0.1";
   return loginRoute.POST(
     new Request("http://localhost/api/auth/login", {
       method: "POST",
       headers: {
         "content-type": "application/json",
-        "x-forwarded-for": forwardedFor,
+        "x-forwarded-for": loopback ? "203.0.113.88" : "127.0.0.1",
+        "x-agentproxy-trusted-peer-ip": peerIp,
+        "x-agentproxy-peer-locality": loopback ? "loopback" : "remote",
       },
       body: JSON.stringify({ password }),
     })

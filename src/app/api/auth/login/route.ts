@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { getAuditRequestContext, logAuditEvent } from "@/lib/compliance/index";
-import { classifyIpScope } from "@/lib/ipUtils";
 import { getCachedSettings } from "@/lib/db/settings";
 import { SignJWT } from "jose";
 import { cookies } from "next/headers";
@@ -16,6 +15,12 @@ import { loginSchema } from "@/shared/validation/schemas";
 import { isValidationFailure, validateBody } from "@/shared/validation/helpers";
 import { checkLoginGuard, clearLoginAttempts, recordLoginFailure } from "@/server/auth/loginGuard";
 import { AUTHZ_HEADER_TRUSTED_PEER_IP } from "@/server/authz/headers";
+import {
+  getLoginLockoutKey,
+  getLoginSourceScope,
+  isHostOperatorRequest,
+} from "@/server/auth/loginPeer";
+import { getRequestPeerLocality } from "@/shared/utils/apiAuth";
 import { resolvePublicOrigin } from "@/server/origin/publicOrigin";
 
 // SECURITY: No hardcoded fallback — JWT_SECRET must be configured.
@@ -83,6 +88,7 @@ export async function POST(request: NextRequest) {
       ? request.headers.get(AUTHZ_HEADER_TRUSTED_PEER_IP)
       : null;
     const clientIp = trustedPeerIp || auditContext.ipAddress || null;
+    const lockoutKey = getLoginLockoutKey(request, auditContext.ipAddress);
     const oidcDisabledPassword =
       settings.oidcEnabled === true &&
       (settings.oidcDisablePasswordLogin === true ||
@@ -109,7 +115,7 @@ export async function POST(request: NextRequest) {
 
     const bruteForceEnabled = settings.bruteForceProtection !== false;
 
-    const guardCheck = checkLoginGuard(clientIp, { enabled: bruteForceEnabled });
+    const guardCheck = checkLoginGuard(lockoutKey, { enabled: bruteForceEnabled });
     if (!guardCheck.allowed) {
       logAuditEvent({
         action: "auth.login.locked",
@@ -159,7 +165,7 @@ export async function POST(request: NextRequest) {
     // password from the host itself / the LAN (loopback / private) from a
     // genuinely external attempt, instead of every failure reading as intrusion.
     // Computed once and reused below for the #13679 insecure-default gate.
-    const sourceScope = classifyIpScope(auditContext.ipAddress);
+    const sourceScope = getLoginSourceScope(request, auditContext.ipAddress);
 
     // #13679 (PR D, item #5): the well-known INITIAL_PASSWORD placeholder shipped
     // in .env.example / contrib/podman/omniroute.container / docker deploy
@@ -169,7 +175,7 @@ export async function POST(request: NextRequest) {
     // but that is a log line, not a control — refuse the login here instead
     // whenever it matches AND the request is not loopback, forcing the operator
     // to rotate the password from a trusted local console first.
-    if (isValid && isKnownInsecureManagementPassword(password) && sourceScope !== "loopback") {
+    if (isValid && isKnownInsecureManagementPassword(password) && !isHostOperatorRequest(request)) {
       logAuditEvent({
         action: "auth.login.insecure_default_blocked",
         actor: "anonymous",
@@ -178,7 +184,11 @@ export async function POST(request: NextRequest) {
         status: "failed",
         ipAddress: auditContext.ipAddress || undefined,
         requestId: auditContext.requestId,
-        metadata: { reason: "well_known_default_password_non_loopback", sourceScope },
+        metadata: {
+          reason: "well_known_default_password_non_loopback",
+          sourceScope,
+          peerLocality: getRequestPeerLocality(request),
+        },
       });
       return NextResponse.json(
         {
@@ -227,11 +237,11 @@ export async function POST(request: NextRequest) {
         },
       });
 
-      clearLoginAttempts(clientIp);
+      clearLoginAttempts(lockoutKey);
       return NextResponse.json({ success: true });
     }
 
-    const failureDecision = recordLoginFailure(clientIp, { enabled: bruteForceEnabled });
+    const failureDecision = recordLoginFailure(lockoutKey, { enabled: bruteForceEnabled });
 
     logAuditEvent({
       action: "auth.login.failed",
