@@ -191,8 +191,9 @@ function dedupeWithinMessage(
  * Returns the replaced texts for duplicate messages, a reverse map, and a count.
  */
 function dedupMessageTexts(
-  msgTexts: Array<{ msgIdx: number; text: string }>,
-  minBlockChars: number
+  msgTexts: Array<{ msgIdx: number; messageIndex: number; text: string }>,
+  minBlockChars: number,
+  currentTurnStart: number
 ): {
   deduped: Map<number, string>;
   dedupCount: number;
@@ -228,7 +229,9 @@ function dedupMessageTexts(
   }
 
   // Pass 2: for each message, find blocks that were FIRST seen in an earlier message.
-  for (const { msgIdx, text } of msgTexts) {
+  // The current turn is never rewritten.
+  for (const { msgIdx, messageIndex, text } of msgTexts) {
+    if (messageIndex >= currentTurnStart) continue;
     const lines = text.split("\n");
     const blocks = findSuffixBlocks(lines, minBlockChars);
 
@@ -294,19 +297,23 @@ function processMessages(
 ): { messages: MessageLike[]; dedupCount: number } {
   // Collect (msgIdx, text) for non-system string-content messages.
   // For multipart, index each text part separately.
-  const msgTexts: Array<{ msgIdx: number; text: string }> = [];
+  const msgTexts: Array<{ msgIdx: number; messageIndex: number; text: string }> = [];
 
   for (let i = 0; i < messages.length; i++) {
     const msg = messages[i];
     if (msg.role === "system") continue;
     if (typeof msg.content === "string") {
-      msgTexts.push({ msgIdx: i, text: msg.content });
+      msgTexts.push({ msgIdx: i, messageIndex: i, text: msg.content });
     } else if (Array.isArray(msg.content)) {
       for (let p = 0; p < msg.content.length; p++) {
         const part = msg.content[p];
         if (part["type"] === "text" && typeof part["text"] === "string") {
           // Composite key: i * 100000 + p + 1 (safe for reasonable message counts)
-          msgTexts.push({ msgIdx: i * 100000 + p + 1, text: part["text"] as string });
+          msgTexts.push({
+            msgIdx: i * 100000 + p + 1,
+            messageIndex: i,
+            text: part["text"] as string,
+          });
         }
       }
     }
@@ -316,7 +323,14 @@ function processMessages(
     return { messages, dedupCount: 0 };
   }
 
-  const { deduped, dedupCount } = dedupMessageTexts(msgTexts, minBlockChars);
+  let currentTurnStart = 0;
+  for (let i = messages.length - 1; i >= 0; i--) {
+    if (messages[i].role === "assistant") {
+      currentTurnStart = i + 1;
+      break;
+    }
+  }
+  const { deduped, dedupCount } = dedupMessageTexts(msgTexts, minBlockChars, currentTurnStart);
 
   if (dedupCount === 0) {
     return { messages, dedupCount: 0 };
