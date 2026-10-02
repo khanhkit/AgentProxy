@@ -4,13 +4,16 @@ import { timingSafeCompare } from "@/shared/utils/timingSafeCompare";
 const ADMISSION_BYPASS_VALUE = "internal";
 const FINGERPRINT_KEY = "agentproxy-admission-fingerprint-v1";
 
-let generatedSelfLoopSecret: string | null = null;
+const SELF_LOOP_SECRET_KEY = Symbol.for("agentproxy.selfLoopSecret");
+const selfLoopStore = globalThis as unknown as Record<symbol, string | undefined>;
 
 function getGeneratedSelfLoopSecret(): string {
-  if (!generatedSelfLoopSecret) {
-    generatedSelfLoopSecret = randomBytes(32).toString("hex");
-  }
-  return generatedSelfLoopSecret;
+  selfLoopStore[SELF_LOOP_SECRET_KEY] ??= randomBytes(32).toString("hex");
+  return selfLoopStore[SELF_LOOP_SECRET_KEY];
+}
+
+export function peekGeneratedSelfLoopSecret(): string | null {
+  return selfLoopStore[SELF_LOOP_SECRET_KEY] ?? null;
 }
 
 export const ADMISSION_BYPASS_HEADER = "x-agentproxy-admission-bypass";

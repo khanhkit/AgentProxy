@@ -1,64 +1,88 @@
 /**
- * Regression: the vision-bridge SELF-LOOP must authenticate with a real
- * DB-backed API key, not the `sk_agentproxy` sentinel.
+ * Regression for the AgentProxy vision self-loop credential.
  *
- * Root cause on runtime v3.8.49: `callVisionModelSingle` used
- * `resolvedApiKey || "sk_agentproxy"` for the Authorization header of the
- * AgentProxy self-loop request. On instances with REQUIRE_API_KEY enabled the
- * runtime rejects `sk_agentproxy` with 401 "Missing API key", so EVERY
- * vision-bridge describe call failed and image requests were never processed.
+ * The internal bridge must use the per-process self-loop bearer accepted by
+ * API-key validation. It must not create a persistent DB key, send the internal
+ * bearer to an unrelated localhost service, or fall back to a checked-in sentinel.
  */
 import test from "node:test";
 import assert from "node:assert/strict";
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
 
-const { resolveSelfLoopApiKey } = await import(
-  "../../../src/lib/guardrails/visionBridgeHelpers.ts"
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-vision-selfloop-"));
+process.env.DATA_DIR = TEST_DATA_DIR;
+process.env.API_KEY_SECRET = "vision-selfloop-test-secret";
+delete process.env.AGENTPROXY_API_KEY;
+delete process.env.ROUTER_API_KEY;
+
+const core = await import("../../../src/lib/db/core.ts");
+const apiKeys = await import("../../../src/lib/db/apiKeys.ts");
+const { resolveSelfLoopBearer } = await import(
+  "../../../src/shared/middleware/chatAdmissionIdentity.ts"
 );
+const { callVisionModel } = await import("../../../src/lib/guardrails/visionBridgeHelpers.ts");
 
-test("uses VISION_BRIDGE_API_KEY when set", async () => {
-  const previous = process.env.VISION_BRIDGE_API_KEY;
-  process.env.VISION_BRIDGE_API_KEY = "sk-operator-key";
+test.after(() => {
+  core.resetDbInstance();
+  fs.rmSync(TEST_DATA_DIR, { recursive: true, force: true });
+});
+
+test("the generated self-loop bearer is accepted without a persisted API key", async () => {
+  const bearer = resolveSelfLoopBearer();
+  assert.notEqual(bearer, "sk_agentproxy");
+  assert.equal(await apiKeys.validateApiKey(bearer), true);
+  assert.equal((await apiKeys.getApiKeys()).length, 0);
+});
+
+test("an unrelated localhost vision endpoint never receives AgentProxy's self-loop bearer", async () => {
+  const oldBase = process.env.VISION_BRIDGE_BASE_URL;
+  process.env.VISION_BRIDGE_BASE_URL = "http://localhost:11434/v1";
+  let authorization: string | undefined;
   try {
-    const key = await resolveSelfLoopApiKey(async () => "sk-db-key");
-    assert.strictEqual(key, "sk-operator-key");
+    await callVisionModel("data:image/png;base64,iVBORw0KGgo", {
+      model: "openai/gpt-4o-mini",
+      prompt: "Describe",
+      timeoutMs: 30000,
+      maxImages: 1,
+      fetchImpl: async (_input, init) => {
+        authorization = (init?.headers as Record<string, string> | undefined)?.Authorization;
+        return Response.json({ choices: [{ message: { content: "ok" } }] });
+      },
+    });
+    assert.notEqual(authorization, `Bearer ${resolveSelfLoopBearer()}`);
   } finally {
-    if (previous === undefined) delete process.env.VISION_BRIDGE_API_KEY;
-    else process.env.VISION_BRIDGE_API_KEY = previous;
+    if (oldBase === undefined) delete process.env.VISION_BRIDGE_BASE_URL;
+    else process.env.VISION_BRIDGE_BASE_URL = oldBase;
   }
 });
 
-test("falls back to the injected resolver (DB key) when no env key is set", async () => {
-  const previous = process.env.VISION_BRIDGE_API_KEY;
-  delete process.env.VISION_BRIDGE_API_KEY;
+test("the own listener uses the self-loop bearer and admission bypass", async () => {
+  const oldBase = process.env.VISION_BRIDGE_BASE_URL;
+  const oldPort = process.env.PORT;
+  process.env.PORT = "20128";
+  process.env.VISION_BRIDGE_BASE_URL = "http://127.0.0.1:20128/v1";
+  let headers: Record<string, string> = {};
   try {
-    const key = await resolveSelfLoopApiKey(async () => "sk-real-db-key");
-    assert.strictEqual(key, "sk-real-db-key");
+    await callVisionModel("data:image/png;base64,iVBORw0KGgo", {
+      model: "openai/gpt-4o-mini",
+      prompt: "Describe",
+      timeoutMs: 30000,
+      maxImages: 1,
+      fetchImpl: async (_input, init) => {
+        headers = (init?.headers ?? {}) as Record<string, string>;
+        return Response.json({ choices: [{ message: { content: "ok" } }] });
+      },
+    });
+    assert.equal(headers.Authorization, `Bearer ${resolveSelfLoopBearer()}`);
+    assert.equal(headers["x-agentproxy-admission-bypass"], "internal");
+    assert.equal(headers["x-agentproxy-compression"], "off");
+    assert.equal((await apiKeys.getApiKeys()).length, 0);
   } finally {
-    if (previous === undefined) delete process.env.VISION_BRIDGE_API_KEY;
-    else process.env.VISION_BRIDGE_API_KEY = previous;
-  }
-});
-
-test("never returns the sk_agentproxy sentinel when a real key is resolvable", async () => {
-  const previous = process.env.VISION_BRIDGE_API_KEY;
-  delete process.env.VISION_BRIDGE_API_KEY;
-  try {
-    const key = await resolveSelfLoopApiKey(async () => "sk-db-key");
-    assert.notStrictEqual(key, "sk_agentproxy");
-  } finally {
-    if (previous === undefined) delete process.env.VISION_BRIDGE_API_KEY;
-    else process.env.VISION_BRIDGE_API_KEY = previous;
-  }
-});
-
-test("falls back to sk_agentproxy only when nothing else is available", async () => {
-  const previous = process.env.VISION_BRIDGE_API_KEY;
-  delete process.env.VISION_BRIDGE_API_KEY;
-  try {
-    const key = await resolveSelfLoopApiKey(async () => "");
-    assert.strictEqual(key, "sk_agentproxy");
-  } finally {
-    if (previous === undefined) delete process.env.VISION_BRIDGE_API_KEY;
-    else process.env.VISION_BRIDGE_API_KEY = previous;
+    if (oldBase === undefined) delete process.env.VISION_BRIDGE_BASE_URL;
+    else process.env.VISION_BRIDGE_BASE_URL = oldBase;
+    if (oldPort === undefined) delete process.env.PORT;
+    else process.env.PORT = oldPort;
   }
 });
