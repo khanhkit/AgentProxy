@@ -2064,7 +2064,7 @@ async function handleChatCoreInner({
     ) {
       log?.info?.(
         "CONTEXT",
-        `Proactive compression triggered: ${estimatedTokens} tokens > ${threshold} threshold (${contextLimit} limit)`
+        `Proactive compression triggered: ${estimatedTokens} message tokens > ${threshold} threshold (${contextLimit} limit, tools reserve ${reservedTokens})`
       );
 
       // Adapt Responses `input[]` → messages so compressContext can run, then restore.
@@ -2091,7 +2091,7 @@ async function handleChatCoreInner({
 
         log?.info?.(
           "CONTEXT",
-          `Context compressed: ${stats.original} → ${stats.final} tokens${layersInfo}`
+          `Context compressed: ${stats.original} → ${stats.final} message tokens${layersInfo}`
         );
 
         logAuditEvent({
