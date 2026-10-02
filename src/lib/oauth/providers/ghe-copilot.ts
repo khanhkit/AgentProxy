@@ -1,8 +1,9 @@
 import { getGitHubCopilotChatUserAgent } from "@agentproxy/open-sse/config/providerHeaderProfiles.ts";
 import { GHE_COPILOT_CONFIG } from "../constants/oauth";
-import { sanitizeErrorMessage } from "@agentproxy/open-sse/utils/error";
 import { stripTrailingSlashes } from "@agentproxy/open-sse/utils/urlSanitize.ts";
-import { safeOutboundFetch } from "@/shared/network/safeOutboundFetch";
+import { sanitizeErrorMessage } from "@agentproxy/open-sse/utils/error";
+import { SafeOutboundFetchError, safeOutboundFetch } from "@/shared/network/safeOutboundFetch";
+import { getProviderOutboundGuard } from "@/shared/network/outboundUrlGuardPolicy";
 
 /**
  * GHE Copilot OAuth provider.
@@ -20,12 +21,73 @@ function normalizeGheUrl(value: unknown): string {
   return stripTrailingSlashes(value.trim());
 }
 
+// gheUrl is supplied by whoever starts the device flow, and the route only checks that it is
+// https. Send every request built from it through the provider outbound guard and refuse
+// redirects, otherwise an https host can bounce the request to an internal or metadata
+// address over plain http and the response is handed back to the caller. A GHE host is never
+// a cloud metadata endpoint, so that block stays on even when private provider URLs are allowed.
+function gheFetch(url: string, init: RequestInit) {
+  const guard = getProviderOutboundGuard();
+  return safeOutboundFetch(url, {
+    ...init,
+    guard: guard === "none" ? "block-metadata" : guard,
+    pinDns: true,
+    allowRedirect: false,
+    retry: false,
+  });
+}
+
+// The device-flow responses are relayed to the browser, so only the fields the flow uses are
+// passed on instead of whatever the host chose to send.
+const DEVICE_CODE_STRING_FIELDS = [
+  "device_code",
+  "user_code",
+  "verification_uri",
+  "verification_uri_complete",
+] as const;
+const DEVICE_CODE_NUMBER_FIELDS = ["expires_in", "interval"] as const;
+const TOKEN_STRING_FIELDS = ["access_token", "refresh_token", "token_type", "scope"] as const;
+const DEVICE_FLOW_ERRORS = new Set([
+  "authorization_pending",
+  "slow_down",
+  "expired_token",
+  "access_denied",
+  "incorrect_device_code",
+  "incorrect_client_credentials",
+  "device_flow_disabled",
+  "unsupported_grant_type",
+]);
+
+function pickFields(source: any, strings: readonly string[], numbers: readonly string[]) {
+  const picked: Record<string, string | number> = {};
+  if (!source || typeof source !== "object") return picked;
+  for (const key of strings) {
+    if (typeof source[key] === "string") picked[key] = source[key];
+  }
+  for (const key of numbers) {
+    if (typeof source[key] === "number") picked[key] = source[key];
+  }
+  return picked;
+}
+
+// Lookups that only enrich the connection: a host that refuses them, or redirects them, just
+// leaves the extra fields empty.
+async function optionalJson(url: string, init: RequestInit) {
+  try {
+    const response = await gheFetch(url, init);
+    return response.ok ? await response.json() : {};
+  } catch (error) {
+    if (error instanceof SafeOutboundFetchError) return {};
+    throw error;
+  }
+}
+
 export const gheCopilot = {
   config: GHE_COPILOT_CONFIG,
   flowType: "device_code" as const,
   requestDeviceCode: async (config: any) => {
     const gheUrl = normalizeGheUrl(config.gheUrl);
-    const response = await safeOutboundFetch(`${gheUrl}/login/device/code`, {
+    const response = await gheFetch(`${gheUrl}/login/device/code`, {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
@@ -35,20 +97,15 @@ export const gheCopilot = {
         client_id: config.clientId,
         scope: config.scopes,
       }),
-      guard: "block-metadata",
-      pinDns: true,
-      allowRedirect: false,
-      retry: false,
     });
     if (!response.ok) {
-      const error = await response.text();
-      throw new Error(`Device code request failed: ${error}`);
+      throw new Error(`Device code request failed (HTTP ${response.status})`);
     }
-    return await response.json();
+    return pickFields(await response.json(), DEVICE_CODE_STRING_FIELDS, DEVICE_CODE_NUMBER_FIELDS);
   },
   pollToken: async (config: any, deviceCode: string, _codeVerifier?: string, extraData?: any) => {
     const gheUrl = normalizeGheUrl(extraData?.gheUrl || config.gheUrl);
-    const response = await safeOutboundFetch(`${gheUrl}/login/oauth/access_token`, {
+    const response = await gheFetch(`${gheUrl}/login/oauth/access_token`, {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
@@ -59,51 +116,44 @@ export const gheCopilot = {
         device_code: deviceCode,
         grant_type: "urn:ietf:params:oauth:grant-type:device_code",
       }),
-      guard: "block-metadata",
-      pinDns: true,
-      allowRedirect: false,
-      retry: false,
     });
-    let data;
+    const text = await response.text();
+    let raw: any;
     try {
-      data = await response.json();
+      raw = JSON.parse(text);
     } catch {
-      const text = await response.text();
-      data = { error: "invalid_response", error_description: sanitizeErrorMessage(text) };
+      return {
+        ok: response.ok,
+        data: { error: "invalid_response", error_description: "Unexpected response from GHE host" },
+      };
+    }
+    const data: Record<string, unknown> = pickFields(raw, TOKEN_STRING_FIELDS, ["expires_in"]);
+    if (typeof raw?.error === "string") {
+      data.error = DEVICE_FLOW_ERRORS.has(raw.error) ? raw.error : "invalid_response";
+      if (typeof raw.error_description === "string") {
+        data.error_description = sanitizeErrorMessage(raw.error_description);
+      }
     }
     return {
       ok: response.ok,
-      data: data,
+      data,
     };
   },
   postExchange: async (tokens: any, extra?: any) => {
     const gheUrl = normalizeGheUrl(extra?.gheUrl);
-    const copilotRes = await safeOutboundFetch(`${gheUrl}/api/v3/copilot_internal/v2/token`, {
+    const lookupInit = {
       headers: {
         Authorization: `Bearer ${tokens.access_token}`,
         Accept: "application/json",
         "X-GitHub-Api-Version": GHE_COPILOT_CONFIG.apiVersion,
         "User-Agent": getGitHubCopilotChatUserAgent(),
       },
-      guard: "block-metadata",
-      pinDns: true,
-      allowRedirect: false,
-      retry: false,
-    });
-    const copilotToken = copilotRes.ok ? await copilotRes.json() : {};
-    const userRes = await safeOutboundFetch(`${gheUrl}/api/v3/user`, {
-      headers: {
-        Authorization: `Bearer ${tokens.access_token}`,
-        Accept: "application/json",
-        "X-GitHub-Api-Version": GHE_COPILOT_CONFIG.apiVersion,
-        "User-Agent": getGitHubCopilotChatUserAgent(),
-      },
-      guard: "block-metadata",
-      pinDns: true,
-      allowRedirect: false,
-      retry: false,
-    });
-    const userInfo = userRes.ok ? await userRes.json() : {};
+    };
+    const copilotToken = await optionalJson(
+      `${gheUrl}/api/v3/copilot_internal/v2/token`,
+      lookupInit
+    );
+    const userInfo = await optionalJson(`${gheUrl}/api/v3/user`, lookupInit);
     return {
       copilotToken,
       userInfo,
