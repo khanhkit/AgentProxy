@@ -548,10 +548,8 @@ export const MODEL_SPECS: Record<string, ModelSpec> = {
   },
 
   // ── Xiaomi MiMo V2.5 (1M context, consensus across 7+ sync sources) ──
-  // Vision: ONLY mimo-v2.5 and mimo-v2-omni accept images per Xiaomi's docs
-  // (mimo.mi.com .../image-understanding). The *-pro chat models are TEXT-ONLY;
-  // models.dev mislabels them (hermes-agent#18884) — a hard override in
-  // src/lib/modelCapabilities.ts also beats that wrong synced attachment.
+  // Vision: v2.5 pro remains text-only, while documented v2.6 pro/flash ids are
+  // handled by the shared vision-id heuristic. Keep generation-specific exceptions narrow.
   "mimo-v2.5-pro": {
     maxOutputTokens: 131072,
     contextWindow: 1048576,
