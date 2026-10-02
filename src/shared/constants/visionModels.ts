@@ -35,6 +35,8 @@ export const VISION_MODEL_ID_FRAGMENTS = [
   "moondream",
   "mimo-vl",
   "mimo-v2.5",
+  "mimo-v2.6-pro",
+  "mimo-v2.6-flash",
   "step-3.7-flash",
   "kimi-vl",
   "glm-4v",
