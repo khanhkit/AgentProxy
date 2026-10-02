@@ -41,6 +41,12 @@ export interface RequestLocalityOptions {
    * and rely on the signed peer stamp or a direct socket peer instead.
    */
   trustPipelineLocalityHeader?: boolean;
+  /**
+   * Judge a public-classified path as if it were a management path. Routes that
+   * perform their own management authorization must not inherit the public/fresh-install
+   * shortcut merely because /api/oauth/* is pipeline-public.
+   */
+  ignorePublicRoute?: boolean;
 }
 
 export function hasConfiguredPassword(settings: Record<string, unknown>): boolean {
@@ -424,7 +430,7 @@ export async function isAuthRequired(
         return false;
       }
 
-      if (pathname && isPublicApiRoute(pathname, method)) {
+      if (!localityOptions.ignorePublicRoute && pathname && isPublicApiRoute(pathname, method)) {
         return false;
       }
 
