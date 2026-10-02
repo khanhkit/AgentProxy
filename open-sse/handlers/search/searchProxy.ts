@@ -266,6 +266,19 @@ export async function executeProviderFetch(
     });
     await emitEvent("success", response.status);
 
+    if (connectionId) {
+      try {
+        const { getProviderConnectionById } = await import("@/lib/db/providers");
+        const current = await getProviderConnectionById(connectionId);
+        if (current) {
+          const { clearAccountError } = await import("@/sse/services/auth.ts");
+          await clearAccountError(connectionId, current as never);
+        }
+      } catch {
+        /* non-critical - clearing stale error state must not break the search response */
+      }
+    }
+
     return {
       success: true,
       data: {
