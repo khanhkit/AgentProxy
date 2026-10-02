@@ -1,12 +1,10 @@
 import { classifyHostLocality } from "@/server/authz/routeGuard";
 import { PEER_IP_HEADER } from "@/server/authz/headers";
 import { resolveStampedPeer } from "@/server/authz/peerStamp";
+import { getTrustProxyMode } from "./trustProxyMode";
 
 export type PublicOriginSource =
-  | "configured"
-  | "trusted-forwarded"
-  | "request-url"
-  | "direct-local-host";
+  "configured" | "trusted-forwarded" | "request-url" | "direct-local-host";
 
 export interface PublicOriginCandidate {
   origin: string;
@@ -116,18 +114,8 @@ function sanitizeForwardedHost(host: string | null): string | null {
   }
 }
 
-function trustProxyMode(): "none" | "loopback" | "private" {
-  const raw = process.env.AGENTPROXY_TRUST_PROXY?.trim().toLowerCase();
-  if (!raw || ["0", "false", "none", "off", "no", "disable", "disabled"].includes(raw)) {
-    return "none";
-  }
-  if (["true", "1", "loopback"].includes(raw)) return "loopback";
-  if (raw === "private" || raw === "lan") return "private";
-  return "none";
-}
-
 export function trustsForwardedHeaders(request: Request): boolean {
-  const mode = trustProxyMode();
+  const mode = getTrustProxyMode();
   if (mode === "none") return false;
 
   const peer = resolveStampedPeer(
@@ -200,7 +188,7 @@ function directLocalHostOrigin(request: Request): string | null {
   if (classifyHostLocality(peer) === "remote") return null;
 
   const rawHost = trustsForwardedHeaders(request)
-    ? firstHeaderValue(request.headers.get("x-forwarded-host")) ?? request.headers.get("host")
+    ? (firstHeaderValue(request.headers.get("x-forwarded-host")) ?? request.headers.get("host"))
     : request.headers.get("host");
   const host = sanitizeForwardedHost(rawHost);
   if (!host) return null;

@@ -26,7 +26,7 @@ export const PEER_IP_HEADER = "x-agentproxy-peer-ip";
  * came from a peer that may be a reverse proxy (this host, a private-network
  * address, a Cloudflare edge or an address named in AGENTPROXY_TRUSTED_PROXIES)
  * and carried forwarding headers (`x-forwarded-for` / `x-real-ip`), or arrived
- * from a Cloudflare edge IP with `cf-connecting-ip`; `<token>|0` otherwise.
+ * and carried a forwarding header (see `hasProxyHopHeader`), or arrived * from a Cloudflare edge IP with `cf-connecting-ip`; `<token>|0` otherwise.
  * Required so the middleware can tell that a loopback socket is the
  * reverse-proxy hop (nginx / Caddy / Cloudflare Tunnel) and NOT trust it as
  * local — without this, a leaked JWT over a public tunnel would reach the
@@ -185,6 +185,20 @@ export function isCloudflareIP(ip) {
   return false;
 }
 
+/** True when a request carries a reverse-proxy/tunnel forwarding header. */
+export function hasProxyHopHeader(headers) {
+  for (const [rawName, value] of Object.entries(headers || {})) {
+    if (!value || (Array.isArray(value) && value.length === 0)) continue;
+    const name = rawName.toLowerCase();
+    if (
+      name.startsWith("x-forwarded-") ||
+      name === "x-real-ip" ||
+      name === "forwarded" ||
+      name === "via"
+    ) return true;
+  }
+  return false;
+}
 // Same ranges as PRIVATE_LAN_PATTERNS in src/server/authz/routeGuard.ts
 // (tests/unit/authz/peer-stamp.test.ts checks they agree).
 const PRIVATE_LAN_PATTERNS = [
@@ -316,7 +330,7 @@ export function stampPeerIp(req) {
       // direct client. Only treat it as a proxy marker when the TCP peer itself
       // is a Cloudflare edge IP; otherwise a direct forger could flip the
       // via-proxy bit and force the middleware to ignore the real peer IP.
-      const hasForwardingHeaders = !!(req.headers["x-forwarded-for"] || req.headers["x-real-ip"]);
+      const hasForwardingHeaders = hasProxyHopHeader(req.headers);
       const viaProxy =
         (hasForwardingHeaders && isTrustedProxyPeer(ip)) ||
         (!!req.headers["cf-connecting-ip"] && isCloudflareIP(ip));

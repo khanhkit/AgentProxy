@@ -18,6 +18,7 @@ import { invalidateReasoningRoutingRuleCache } from "./reasoningRoutingRules";
 import { checkKeyModelAccess } from "./apiKeyGroups";
 import { API_KEY_COLUMN_FALLBACKS } from "./apiKeyColumnFallbacks";
 import { SYNTHETIC_ENV_API_KEY_ID } from "@/shared/constants/apiKeyIdentities";
+import { timingSafeCompare } from "@/shared/utils/timingSafeCompare";
 import { parseApiKeyUsageLimitFields } from "./apiKeyUsageLimitFields";
 import { setNoLog } from "../compliance/noLog";
 import { resolveModelAlias } from "@agentproxy/open-sse/services/modelDeprecation.ts";
@@ -285,7 +286,7 @@ function toRecord(value: unknown): JsonRecord {
 
 function isConfiguredEnvApiKey(key: string): boolean {
   const envKey = process.env.AGENTPROXY_API_KEY || process.env.ROUTER_API_KEY;
-  return Boolean(envKey && key === envKey);
+  return Boolean(envKey && timingSafeCompare(key, envKey));
 }
 
 function isRedisAuthCacheEnabled(): boolean {

@@ -17,7 +17,7 @@ import { WebSocket } from "ws";
 
 // ── Env setup ─────────────────────────────────────────────────────────────
 // Must be done before importing the DB, which reads DATA_DIR at import time.
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-live-ws-require-login-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-live-ws-require-login-"));
 const ORIG_DATA_DIR = process.env.DATA_DIR;
 const ORIG_JWT_SECRET = process.env.JWT_SECRET;
 const ORIG_LIVE_WS_HOST = process.env.LIVE_WS_HOST;
@@ -206,6 +206,29 @@ describe("LiveWS authorizeConnection — requireLogin=false bypass (#14256)", ()
       const msg = await connectAndWait(port, {
         "x-forwarded-for": "203.0.113.7",
         "x-real-ip": "203.0.113.7",
+      });
+      assert.equal(msg.type, "error", `Expected error but got type=${msg.type}`);
+      assert.equal(msg.code, "UNAUTHORIZED");
+    } finally {
+      await new Promise<void>((r) => server.close(() => r()));
+    }
+  });
+
+  test("fresh-install bypass is refused for a proxy that sets only X-Forwarded-Proto/Host", async () => {
+    // The proxy example in docs/security/CORS.md sets these and no address header. The peer is
+    // the proxy on this host, so the window must stay shut for its callers too.
+    resetDbInstance();
+    fs.rmSync(TEST_DATA_DIR, { recursive: true, force: true });
+    fs.mkdirSync(TEST_DATA_DIR, { recursive: true });
+
+    await updateSettings({ requireLogin: true });
+
+    const port = await getFreePort("127.0.0.1");
+    const server = await startLiveDashboardServer(port, "127.0.0.1");
+    try {
+      const msg = await connectAndWait(port, {
+        "x-forwarded-proto": "https",
+        "x-forwarded-host": "omni.example.com",
       });
       assert.equal(msg.type, "error", `Expected error but got type=${msg.type}`);
       assert.equal(msg.code, "UNAUTHORIZED");

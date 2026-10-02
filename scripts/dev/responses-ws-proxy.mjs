@@ -1,8 +1,7 @@
 import { createHash, randomUUID } from "node:crypto";
 import { createRequire } from "node:module";
 import { STATUS_CODES } from "node:http";
-import { relayForwardingHeaders, stampPeerIp } from "./peer-stamp.mjs";
-
+import { PEER_IP_HEADER, relayForwardingHeaders, stampPeerIp } from "./peer-stamp.mjs";
 const _wreqRequire = createRequire(import.meta.url);
 
 let _websocketFn = null;
@@ -317,6 +316,11 @@ function getAuthHeaders(requestUrl, requestHeaders, forwarding = {}) {
   if (isText(requestHeaders.origin)) headers.origin = requestHeaders.origin;
   if (isText(requestHeaders.host)) headers.host = requestHeaders.host;
   // Only the relay's sanitized client-address envelope crosses the loopback hop.
+  if (isText(requestHeaders[PEER_IP_HEADER]))
+    headers[PEER_IP_HEADER] = requestHeaders[PEER_IP_HEADER];
+  for (const key of ["forwarded", "x-forwarded-host", "x-forwarded-proto"]) {
+    if (isText(requestHeaders[key])) headers[key] = requestHeaders[key];
+  }
   Object.assign(headers, forwarding);
   for (const key of [
     "session-id",
@@ -783,7 +787,7 @@ class ResponsesWsSession {
       }
       const code = error?.code || "upstream_websocket_connect_failed";
       const messageText = error instanceof Error ? error.message : String(error);
-      const failurePayload = this.sendFailure(code, messageText);
+      const failurePayload = this.sendFailure(code, "Upstream WebSocket connection failed");
       void this.persistHistory({
         status: Number.isInteger(error?.status) ? error.status : 502,
         success: false,
@@ -987,8 +991,11 @@ export function createResponsesWsProxy({
       // token-authenticated copy of the REAL upgrade peer before bridging the
       // browser Origin/Host context. stampPeerIp() deletes any client-supplied
       // peer stamp before writing the trusted process stamp.
-      const forwarding = relayForwardingHeaders(req.socket?.remoteAddress, req.headers);
       stampPeerIp(req);
+      const forwarding = relayForwardingHeaders(
+        req.socket && req.socket.remoteAddress,
+        req.headers
+      );
 
       try {
         const auth = await callInternal(
