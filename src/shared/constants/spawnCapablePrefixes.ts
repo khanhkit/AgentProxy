@@ -41,6 +41,7 @@ export const SPAWN_CAPABLE_PREFIXES: ReadonlyArray<string> = [
   "/api/cli-tools/smelt-settings",
   "/api/cli-tools/status",
   "/api/services/", // T-10: can run npm install + spawn node processes
+  "/api/version-manager/", // downloads, unpacks and runs the CLIProxyAPI binary (Hard Rules #15 + #17)
   "/api/tunnels/cloudflared", // POST installs/starts/stops cloudflared; safe methods remain read-only exempt
   "/api/tunnels/tailscale/disable", // stops Funnel and may stop tailscaled/Tailscale service
   "/api/tunnels/tailscale/enable", // starts tailscaled/login/funnel subprocesses
