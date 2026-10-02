@@ -163,6 +163,7 @@ export const EXTRA_MODULE_ENTRIES = [
     dest: ["node_modules", "pino-pretty"],
   },
   { label: "split2", src: ["node_modules", "split2"], dest: ["node_modules", "split2"] },
+  { label: "compression worker external: @agentproxy/open-sse", src: ["node_modules", "@agentproxy", "open-sse"], dest: ["node_modules", "@agentproxy", "open-sse"] },
   { label: "compression worker external: uuid", src: ["node_modules", "uuid"], dest: ["node_modules", "uuid"] },
   { label: "compression worker external: @toon-format/toon", src: ["node_modules", "@toon-format", "toon"], dest: ["node_modules", "@toon-format", "toon"] },
   { label: "compression worker external: omniglyph", src: ["node_modules", "omniglyph"], dest: ["node_modules", "omniglyph"] },
