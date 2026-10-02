@@ -230,8 +230,7 @@ Each stub exports the same surface but every function throws a
 module return HTTP 503 with a clear message instead of activating the
 sensitive code path.
 
-The resulting bundle is intended to be published as `agentproxy-secure`. See
-`docs/ops/PUBLISHING_SECURE.md` for the publishing recipe.
+The resulting bundle is intended to be published as `agentproxy-secure`.
 
 ---
 
