@@ -4954,7 +4954,8 @@
     },
     "compressionLogTitle": "កំណត់ហេតុនៃការបង្ហាប់",
     "compressionLogEmpty": "មិនទាន់មានសំណើដែលបានបង្ហាប់ទេ។ ស្ថិតិនៃការបង្ហាប់នឹងបង្ហាញនៅទីនេះ នៅពេលសំណើត្រូវបានដំណើរការដោយបើកការបង្ហាប់។",
-    "tokens": "តូខឹន"
+    "tokens": "តូខឹន",
+    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
   },
   "onboarding": {
     "welcome": "សូមស្វាគមន៍",

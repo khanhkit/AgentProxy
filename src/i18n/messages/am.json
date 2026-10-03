@@ -4954,7 +4954,8 @@
     },
     "compressionLogTitle": "የማመቅ ምዝግብ",
     "compressionLogEmpty": "እስካሁን የታመቁ ጥያቄዎች የሉም። መጭመቅ እንዲሠራ ተደርጎ ጥያቄዎች ሲከናወኑ የመጭመቅ ስታቲስቲክስ እዚህ ይታያል።",
-    "tokens": "ቶከኖች"
+    "tokens": "ቶከኖች",
+    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
   },
   "onboarding": {
     "welcome": "እንኳን ደህና መጡ",

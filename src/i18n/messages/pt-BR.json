@@ -4973,7 +4973,8 @@
     },
     "compressionLogTitle": "Log de compactação",
     "compressionLogEmpty": "Ainda não há solicitações compactadas. As estatísticas de compactação aparecerão aqui quando as solicitações forem processadas com a compactação ativada.",
-    "tokens": "tokens"
+    "tokens": "tokens",
+    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
   },
   "onboarding": {
     "welcome": "Bem-vindo",

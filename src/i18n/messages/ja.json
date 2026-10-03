@@ -4971,7 +4971,8 @@
     },
     "compressionLogTitle": "圧縮ログ",
     "compressionLogEmpty": "圧縮されたリクエストはまだありません。圧縮を有効にしてリクエストが処理されると、ここに圧縮統計が表示されます。",
-    "tokens": "トークン"
+    "tokens": "トークン",
+    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
   },
   "onboarding": {
     "welcome": "ようこそ",
@@ -8595,7 +8596,7 @@
       },
       "compressToolResults": {
         "label": "長いツールの結果を積極的に切り詰める",
-        "description": "Lite圧縮中に2,000文字を超えるツール結果を切り捨てます。コンテキストがモデルの予算を超えると、緊急オーバーフロープロテクションがコンテンツをトリムする場合があります。"
+        "description": "__MISSING__:Truncates long tool results during Lite compression. The Maximum tool-result length field (or AGENTPROXY_LITE_MAX_TOOL_LENGTH when that field is unset) sets the cap. Emergency overflow protection may still trim content when the context exceeds the model budget."
       }
     },
     "engineFields": {

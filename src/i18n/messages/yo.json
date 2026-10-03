@@ -4954,7 +4954,8 @@
     },
     "compressionLogTitle": "Àkọsílẹ̀ Ìfúnpọ̀",
     "compressionLogEmpty": "Kò tíì sí àwọn ìbéèrè tí a fúnpọ̀. Àwọn ìṣirò ìfúnpọ̀ yóò hàn níbí nígbà tí a bá ṣiṣẹ́ lórí àwọn ìbéèrè pẹ̀lú ìfúnpọ̀ tí a mú ṣiṣẹ́.",
-    "tokens": "àwọn tókìnì"
+    "tokens": "àwọn tókìnì",
+    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
   },
   "onboarding": {
     "welcome": "Káàbọ̀",

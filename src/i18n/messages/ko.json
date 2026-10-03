@@ -4971,7 +4971,8 @@
     },
     "compressionLogTitle": "압축 로그",
     "compressionLogEmpty": "아직 압축된 요청이 없습니다. 압축을 활성화한 상태에서 요청이 처리되면 여기에 압축 통계가 표시됩니다.",
-    "tokens": "토큰"
+    "tokens": "토큰",
+    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
   },
   "onboarding": {
     "welcome": "환영합니다",
@@ -8595,7 +8596,7 @@
       },
       "compressToolResults": {
         "label": "긴 도구 결과를 사전적으로 잘라내기",
-        "description": "Lite 압축 중 2,000자를 초과하는 도구 결과를 잘라냅니다. 모델 예산을 초과하는 경우 긴급 오버플로우 보호가 여전히 콘텐츠를 잘라낼 수 있습니다."
+        "description": "__MISSING__:Truncates long tool results during Lite compression. The Maximum tool-result length field (or AGENTPROXY_LITE_MAX_TOOL_LENGTH when that field is unset) sets the cap. Emergency overflow protection may still trim content when the context exceeds the model budget."
       }
     },
     "engineFields": {

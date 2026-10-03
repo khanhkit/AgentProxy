@@ -5009,7 +5009,8 @@
     },
     "compressionLogTitle": "কম্প্রেশন লগ",
     "compressionLogEmpty": "এখনও কোনো কম্প্রেস করা রিকোয়েস্ট নেই। কম্প্রেশন সক্রিয় থাকা অবস্থায় রিকোয়েস্ট প্রসেস করা হলে কম্প্রেশন পরিসংখ্যান এখানে প্রদর্শিত হবে।",
-    "tokens": "টোকেন"
+    "tokens": "টোকেন",
+    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
   },
   "onboarding": {
     "welcome": "স্বাগতম",

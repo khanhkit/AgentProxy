@@ -4971,7 +4971,8 @@
     },
     "compressionLogTitle": "కంప్రెషన్ లాగ్",
     "compressionLogEmpty": "ఇంకా కంప్రెస్డ్ అభ్యర్థనలు లేవు. కంప్రెషన్ ప్రారంభించబడి అభ్యర్థనలు ప్రాసెస్ చేయబడినప్పుడు కంప్రెషన్ గణాంకాలు ఇక్కడ కనిపిస్తాయి.",
-    "tokens": "టోకెన్లు"
+    "tokens": "టోకెన్లు",
+    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
   },
   "onboarding": {
     "welcome": "స్వాగతం",

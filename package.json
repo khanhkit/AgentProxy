@@ -1,7 +1,7 @@
 {
   "name": "agentproxy",
   "version": "0.1.0",
-  "description": "Agent-first AI gateway with a Rust streaming data plane and an inherited 360-provider control plane for routing, MCP, memory, RAG, and knowledge workflows.",
+  "description": "Agent-first AI gateway with a Rust streaming data plane and an inherited 358-provider control plane for routing, MCP, memory, RAG, and knowledge workflows.",
   "type": "module",
   "bin": {
     "agentproxy": "bin/agentproxy.mjs",
@@ -330,7 +330,7 @@
     "commander": "^15.0.0",
     "cron-parser": "^5.10.0",
     "csv-stringify": "^6.8.3",
-    "dompurify": "^3.4.14",
+    "dompurify": "^3.4.16",
     "express": "^5.2.1",
     "fetch-socks": "^1.3.3",
     "fflate": "^0.8.3",
@@ -352,7 +352,7 @@
     "material-symbols": "^0.47.0",
     "mermaid": "^11.17.2",
     "monaco-editor": "^0.56.0",
-    "next": "16.3.3",
+    "next": "16.3.8",
     "next-intl": "^4.14.0",
     "next-themes": "^0.4.6",
     "node-machine-id": "^1.1.12",
@@ -376,7 +376,7 @@
     "safe-regex": "^2.1.1",
     "selfsigned": "^5.5.0",
     "sharp": "^0.35.4",
-    "smol-toml": "1.8.0",
+    "smol-toml": "1.9.0",
     "socks": "^2.8.7",
     "sql.js": "^1.14.2",
     "tailwind-merge": "^3.6.0",
@@ -511,7 +511,7 @@
     "@babel/core": "^7.29.6",
     "hono": "^4.13.7",
     "@hono/node-server": "^2.0.5",
-    "fast-uri": "^3.1.7",
+    "fast-uri": "^4.2.1",
     "body-parser": "^2.3.0",
     "@yarnpkg/parsers": {
       "js-yaml": "^4.3.2"
@@ -561,7 +561,11 @@
     "monaco-editor": {
       "dompurify": "^3.4.14"
     },
-    "csv-parse": "^7.0.2"
+    "csv-parse": "^7.0.2",
+    "engine.io": "^6.6.11",
+    "fflate": "^0.8.3",
+    "http-cache-semantics": "^4.2.0",
+    "markdown-it": "^15.0.2"
   },
   "packageManager": "npm@12.0.2"
 }

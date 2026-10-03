@@ -5014,7 +5014,8 @@
     },
     "compressionLogTitle": "Log kompresije",
     "compressionLogEmpty": "Još nema kompresovanih zahteva. Statistika kompresije će se prikazati ovde kada se zahtevi obrađuju sa uključenom kompresijom.",
-    "tokens": "tokeni"
+    "tokens": "tokeni",
+    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
   },
   "onboarding": {
     "welcome": "Dobrodošli",

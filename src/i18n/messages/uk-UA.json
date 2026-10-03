@@ -4971,7 +4971,8 @@
     },
     "compressionLogTitle": "Лог стиснення",
     "compressionLogEmpty": "Поки що немає стиснутих запитів. Статистика стиснення з'явиться тут, коли запити будуть оброблятися з увімкненим стисненням.",
-    "tokens": "токени"
+    "tokens": "токени",
+    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
   },
   "onboarding": {
     "welcome": "Ласкаво просимо",

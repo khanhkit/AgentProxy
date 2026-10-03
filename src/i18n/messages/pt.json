@@ -5043,7 +5043,8 @@
     },
     "compressionLogTitle": "Registo de Compressão",
     "compressionLogEmpty": "Ainda não existem pedidos comprimidos. As estatísticas de compressão aparecerão aqui quando os pedidos forem processados com a compressão ativada.",
-    "tokens": "tokens"
+    "tokens": "tokens",
+    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
   },
   "onboarding": {
     "welcome": "Bem vindo",

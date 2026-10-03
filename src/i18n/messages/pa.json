@@ -4954,7 +4954,8 @@
     },
     "compressionLogTitle": "ਕੰਪ੍ਰੈਸ਼ਨ ਲੌਗ",
     "compressionLogEmpty": "ਹਾਲੇ ਕੋਈ ਕੰਪ੍ਰੈੱਸ ਕੀਤੀ ਬੇਨਤੀ ਨਹੀਂ ਹੈ। ਜਦੋਂ ਕੰਪ੍ਰੈਸ਼ਨ ਯੋਗ ਕਰਕੇ ਬੇਨਤੀਆਂ ਪ੍ਰੋਸੈਸ ਕੀਤੀਆਂ ਜਾਣਗੀਆਂ, ਤਾਂ ਕੰਪ੍ਰੈਸ਼ਨ ਅੰਕੜੇ ਇੱਥੇ ਦਿਖਾਈ ਦੇਣਗੇ।",
-    "tokens": "ਟੋਕਨ"
+    "tokens": "ਟੋਕਨ",
+    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
   },
   "onboarding": {
     "welcome": "ਜੀ ਆਇਆਂ ਨੂੰ",

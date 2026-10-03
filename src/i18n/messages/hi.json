@@ -4971,7 +4971,8 @@
     },
     "compressionLogTitle": "कम्प्रेशन लॉग",
     "compressionLogEmpty": "अभी तक कोई कंप्रेस किए गए अनुरोध नहीं हैं। जब अनुरोधों को कम्प्रेशन सक्षम करके संसाधित किया जाएगा, तो कम्प्रेशन आँकड़े यहाँ दिखाई देंगे।",
-    "tokens": "टोकन"
+    "tokens": "टोकन",
+    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
   },
   "onboarding": {
     "welcome": "स्वागत है",

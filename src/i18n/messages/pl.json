@@ -4971,7 +4971,8 @@
     },
     "compressionLogTitle": "Log kompresji",
     "compressionLogEmpty": "Brak jeszcze skompresowanych żądań. Statystyki kompresji pojawią się tutaj, gdy żądania będą przetwarzane z włączoną kompresją.",
-    "tokens": "tokeny"
+    "tokens": "tokeny",
+    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
   },
   "onboarding": {
     "welcome": "Witamy",

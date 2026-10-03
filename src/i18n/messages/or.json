@@ -4954,7 +4954,8 @@
     },
     "compressionLogTitle": "ସଙ୍କୋଚନ ଲଗ୍",
     "compressionLogEmpty": "ଏପର୍ଯ୍ୟନ୍ତ କୌଣସି ସଙ୍କୋଚିତ ଅନୁରୋଧ ନାହିଁ। ସଙ୍କୋଚନ ସକ୍ଷମ ଥିବାବେଳେ ଅନୁରୋଧଗୁଡ଼ିକର ପ୍ରକ୍ରିୟାକରଣ କରାଗଲେ ସଙ୍କୋଚନ ପରିସଂଖ୍ୟାନ ଏଠାରେ ଦେଖାଯିବ।",
-    "tokens": "ଟୋକେନ୍ଗୁଡ଼ିକ"
+    "tokens": "ଟୋକେନ୍ଗୁଡ଼ିକ",
+    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
   },
   "onboarding": {
     "welcome": "ସ୍ୱାଗତ",

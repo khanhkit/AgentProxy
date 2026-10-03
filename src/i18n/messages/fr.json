@@ -4971,7 +4971,8 @@
     },
     "compressionLogTitle": "Journal de compression",
     "compressionLogEmpty": "Aucune requête compressée pour le moment. Les statistiques de compression apparaîtront ici lorsque les requêtes seront traitées avec la compression activée.",
-    "tokens": "jetons"
+    "tokens": "jetons",
+    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
   },
   "onboarding": {
     "welcome": "Bienvenue",
@@ -8595,7 +8596,7 @@
       },
       "compressToolResults": {
         "label": "Tronquer proactivement les longs résultats d'outils",
-        "description": "Tronque les résultats des outils à plus de 2 000 caractères lors de la compression Lite. La protection d'urgence contre les débordements peut toujours réduire le contenu lorsque le contexte dépasse le budget du modèle."
+        "description": "__MISSING__:Truncates long tool results during Lite compression. The Maximum tool-result length field (or AGENTPROXY_LITE_MAX_TOOL_LENGTH when that field is unset) sets the cap. Emergency overflow protection may still trim content when the context exceeds the model budget."
       }
     },
     "engineFields": {

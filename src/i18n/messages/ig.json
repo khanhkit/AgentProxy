@@ -4954,7 +4954,8 @@
     },
     "compressionLogTitle": "Ndekọ Mkpakọ",
     "compressionLogEmpty": "Enwebeghị arịrịọ ndị e ji mkpakọ hazie. Ọnụọgụ mkpakọ ga-apụta ebe a mgbe a haziri arịrịọ mgbe agbanyere mkpakọ.",
-    "tokens": "token"
+    "tokens": "token",
+    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
   },
   "onboarding": {
     "welcome": "Nnọọ",

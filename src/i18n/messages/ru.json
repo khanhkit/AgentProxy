@@ -4971,7 +4971,8 @@
     },
     "compressionLogTitle": "Журнал сжатия",
     "compressionLogEmpty": "Пока нет сжатых запросов. Статистика сжатия появится здесь, когда запросы будут обработаны с включенным сжатием.",
-    "tokens": "токены"
+    "tokens": "токены",
+    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
   },
   "onboarding": {
     "welcome": "Добро пожаловать",

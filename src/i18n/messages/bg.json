@@ -4971,7 +4971,8 @@
     },
     "compressionLogTitle": "Лог на компресията",
     "compressionLogEmpty": "Все още няма компресирани заявки. Статистиката за компресията ще се появи тук, когато заявките се обработват с активирана компресия.",
-    "tokens": "токени"
+    "tokens": "токени",
+    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
   },
   "onboarding": {
     "welcome": "Добре дошли",

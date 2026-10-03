@@ -4971,7 +4971,8 @@
     },
     "compressionLogTitle": "Log komprese",
     "compressionLogEmpty": "Zatím žádné komprimované požadavky. Statistiky komprese se zde zobrazí, jakmile budou zpracovány požadavky s povolenou kompresí.",
-    "tokens": "tokeny"
+    "tokens": "tokeny",
+    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
   },
   "onboarding": {
     "welcome": "Vítejte",
@@ -8595,7 +8596,7 @@
       },
       "compressToolResults": {
         "label": "Proaktivně zkracujte dlouhé výsledky nástrojů",
-        "description": "Zkracuje výsledky nástroje na více než 2 000 znaků během Lite komprese. Ochrana proti přetečení v nouzi může stále oříznout obsah, když kontext překročí rozpočet modelu."
+        "description": "__MISSING__:Truncates long tool results during Lite compression. The Maximum tool-result length field (or AGENTPROXY_LITE_MAX_TOOL_LENGTH when that field is unset) sets the cap. Emergency overflow protection may still trim content when the context exceeds the model budget."
       }
     },
     "engineFields": {
