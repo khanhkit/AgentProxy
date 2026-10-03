@@ -3,10 +3,12 @@
   "_justifications": {
     "@testing-library/dom": "Peer dep obrigatoria de @testing-library/react v16 (adicionada no PR #11224); Refs #9985.",
     "@testing-library/user-event": "Utilitario oficial do ecossistema testing-library para testes de UI (adicionada no PR #11224); Refs #9985.",
+    "@opencode/plugin": "Official OpenCode plugin SDK consumed by the bundled opencode-plugin-v2 package; required by its package-local runtime/types contract.",
     "babel-plugin-react-compiler": "Official React Compiler Babel plugin (facebook/react, MIT). Required peer of Next.js 16 `reactCompiler: true`; Next declares it optional (`*`) and does not auto-install. Added by PR #11783 / issue #67.",
     "eslint-plugin-react-hooks": "React Hooks lint rules (set-state-in-effect, immutability, refs, purity) pinned at 7.0.1 by the release/v3.8.51 cycle; the 224 findings it raised are tracked in #11924. Refs #11924.",
-    "markdownlint-cli2": "Pinned project-local Markdown lint CLI (markdownlint-cli2@0.23.2, MIT, DavidAnson/markdownlint-cli2) introduced by AP-ISS-0053 to replace mutable registry-current npx execution.",
-    "node-gyp": "Pinned project-local native addon build tool (node-gyp@12.4.0, MIT, nodejs/node-gyp) introduced by AP-ISS-0053 for deterministic native tproxy builds instead of mutable npx execution."
+    "remark-gfm": "Official unified/remark plugin adding GitHub Flavored Markdown support; direct dependency ported with the docs/toolchain sync.",
+    "markdownlint-cli2": "Pinned project-local Markdown lint CLI (markdownlint-cli2@0.23.2, MIT) restored from the pre-merge AgentProxy toolchain contract to replace mutable registry-current npx execution.",
+    "node-gyp": "Pinned project-local native addon build tool (node-gyp@13.0.2, MIT) restored from the pre-merge AgentProxy toolchain contract for deterministic tproxy builds instead of mutable npx execution."
   },
   "allowed": [
     "@atjsh/llmlingua-2",
@@ -23,6 +25,7 @@
     "@monaco-editor/react",
     "@ngrok/ngrok",
     "@opencode-ai/plugin",
+    "@opencode/plugin",
     "@playwright/test",
     "@size-limit/file",
     "@stryker-mutator/core",
@@ -134,6 +137,7 @@
     "react-reconciler",
     "react18-json-view",
     "recharts",
+    "remark-gfm",
     "safe-regex",
     "selfsigned",
     "sharp",
@@ -155,6 +159,7 @@
     "undici",
     "update-notifier",
     "uuid",
+    "vite",
     "vitest",
     "wait-on",
     "wreq-js",

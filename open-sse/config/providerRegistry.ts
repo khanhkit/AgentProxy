@@ -54,6 +54,9 @@ export function generateLegacyProviders(): Record<string, LegacyProvider> {
     if (typeof entry.timeoutMs === "number") {
       p.timeoutMs = entry.timeoutMs;
     }
+    if (typeof entry.fetchStartTimeoutCapMs === "number") {
+      p.fetchStartTimeoutCapMs = entry.fetchStartTimeoutCapMs;
+    }
 
     // Headers
     const mergedHeaders = {
@@ -252,9 +255,9 @@ function ensureUnsupportedParamsPopulated(): void {
  */
 export function getUnsupportedParams(provider: string, modelId: string): readonly string[] {
   ensureUnsupportedParamsPopulated();
-  // 1. Check current provider's registry (exact match)
+  // 1. Check current provider's registry (exact match, then declared aliases)
   const entry = getRegistryEntry(provider);
-  const modelEntry = entry?.models?.find((m) => m.id === modelId);
+  const modelEntry = entry?.models?.find((m) => m.id === modelId || m.aliases?.includes(modelId));
   if (modelEntry?.unsupportedParams) return modelEntry.unsupportedParams;
 
   // 2. O(1) lookup in precomputed map (handles cross-provider routing)
@@ -318,4 +321,16 @@ export function getClaudeCodeDefaultModels(): {
     sonnet: find(/sonnet/i),
     haiku: find(/haiku/i),
   };
+}
+
+/** Fail closed for dynamic compatible-provider nodes that were not hydrated. */
+export function requireCompatibleBaseUrl(
+  provider: string | null | undefined,
+  providerSpecificData: { baseUrl?: unknown } | null | undefined
+): string {
+  const baseUrl = providerSpecificData?.baseUrl;
+  if (typeof baseUrl === "string" && baseUrl.trim()) return baseUrl.trim();
+  throw new Error(
+    `provider node "${provider}" has no baseUrl — node missing or connection not hydrated`
+  );
 }

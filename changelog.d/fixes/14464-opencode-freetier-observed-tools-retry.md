@@ -1,0 +1,1 @@
+- **fix(opencode):** retry a gated free-tier request once on the same egress when a caller-owned tool subset is refused, appending previously accepted tool names without changing account health or rotating sibling accounts.

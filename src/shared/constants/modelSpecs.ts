@@ -48,7 +48,7 @@ export interface ModelSpec {
   // operator strip-by-default a thinks-by-default model (measured: gemini-flash-lite
   // burns ~277 reasoning tokens on a plain request; `reasoning_effort:"none"` → 0)
   // without patching every client. See open-sse/services/defaultReasoningEffort.ts.
-  defaultReasoningEffort?: "none" | "low" | "medium" | "high";
+  defaultReasoningEffort?: "none" | "low" | "medium" | "high" | "auto";
 }
 
 const BEDROCK_CLAUDE_ALIASES = (...modelIds: string[]) => [
@@ -514,6 +514,14 @@ export const MODEL_SPECS: Record<string, ModelSpec> = {
     supportsVision: true,
     aliases: ["qwen3.7-max", "qwen3-max-2026-01-23"],
   },
+  "qwen3.8-max": {
+    maxOutputTokens: 65536,
+    contextWindow: 1000000,
+    thinkingBudgetCap: 38912,
+    supportsThinking: true,
+    supportsTools: true,
+    supportsVision: true,
+  },
   "qwen3.8-max-preview": {
     maxOutputTokens: 65536,
     contextWindow: 1000000,
@@ -521,7 +529,6 @@ export const MODEL_SPECS: Record<string, ModelSpec> = {
     supportsThinking: true,
     supportsTools: true,
     supportsVision: true,
-    aliases: ["qwen3.8-max"],
   },
   "qwen3.6-plus": {
     maxOutputTokens: 65536,
@@ -541,10 +548,8 @@ export const MODEL_SPECS: Record<string, ModelSpec> = {
   },
 
   // ── Xiaomi MiMo V2.5 (1M context, consensus across 7+ sync sources) ──
-  // Vision: ONLY mimo-v2.5 and mimo-v2-omni accept images per Xiaomi's docs
-  // (mimo.mi.com .../image-understanding). The *-pro chat models are TEXT-ONLY;
-  // models.dev mislabels them (hermes-agent#18884) — a hard override in
-  // src/lib/modelCapabilities.ts also beats that wrong synced attachment.
+  // Vision: v2.5 pro remains text-only, while documented v2.6 pro/flash ids are
+  // handled by the shared vision-id heuristic. Keep generation-specific exceptions narrow.
   "mimo-v2.5-pro": {
     maxOutputTokens: 131072,
     contextWindow: 1048576,

@@ -69,8 +69,9 @@ describe("detectModelFamily (pure)", () => {
     assert.equal(detectModelFamily("gemini-3-pro"), "gemini");
   });
 
-  it("returns null for unrelated model ids", () => {
-    assert.equal(detectModelFamily("gpt-4o"), null);
+  it("recognizes newly advertised GPT-family ids and rejects unrelated ids", () => {
+    assert.equal(detectModelFamily("gpt-4o"), "gpt");
+    assert.equal(detectModelFamily("claude-sonnet-4"), null);
     assert.equal(detectModelFamily(""), null);
     assert.equal(detectModelFamily(null), null);
   });
@@ -81,22 +82,37 @@ describe("detectModelFamily (pure)", () => {
     assert.equal(detectModelFamily("zai-glm-5.2"), null);
   });
 
-  it("isValidModelFamily accepts exactly the 7 advertised families", () => {
-    for (const family of ["glm", "minimax", "mimo", "zai", "gemma", "llama", "gemini"]) {
+  it("isValidModelFamily accepts every advertised family", () => {
+    for (const family of [
+      "glm",
+      "minimax",
+      "mimo",
+      "zai",
+      "gemma",
+      "llama",
+      "gemini",
+      "kimi",
+      "qwen",
+      "deepseek",
+      "gpt",
+    ]) {
       assert.equal(isValidModelFamily(family), true);
     }
-    assert.equal(isValidModelFamily("gpt"), false);
     assert.equal(isValidModelFamily(undefined), false);
   });
 
   it("advertises exactly one auto/<family> catalog id per family", () => {
     assert.deepEqual([...AUTO_FAMILY_IDS].sort(), [
+      "auto/deepseek",
       "auto/gemini",
       "auto/gemma",
       "auto/glm",
+      "auto/gpt",
+      "auto/kimi",
       "auto/llama",
       "auto/mimo",
       "auto/minimax",
+      "auto/qwen",
       "auto/zai",
     ]);
   });

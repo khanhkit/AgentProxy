@@ -12,6 +12,7 @@ import { resolveAlibabaProviderModelsUrl } from "@/shared/constants/alibabaProvi
 import { getStaticModelsForProvider } from "@/lib/providers/staticModels";
 import { providerUsesCuratedModelsOnly } from "@/lib/providers/modelListingCapability";
 import { mergeModelsWithCustomPrecedence } from "@/lib/providers/modelMetadataPrecedence";
+import { addModelsSuffix } from "@/lib/providers/validation/urlHelpers";
 import { getCachedProviderConnectionById } from "@/lib/db/readCache";
 import { resolveProxyForProvider } from "@/lib/db/proxies";
 import {
@@ -109,14 +110,16 @@ import { isNamedOpenAIStyleProvider } from "./discovery/providerSets";
 import { buildStaleEncryptionKeyResponse } from "./staleEncryptionGuard";
 import {
   assembleProviderModelsHeaders,
+  getXaiOauthLiveModelsConfig,
   PROVIDER_MODELS_CONFIG,
 } from "./discovery/providerModelsConfig";
 import {
-  buildCodexDiscoveryCatalog,
   enrichCodexModelsFromGithubCatalog,
   fetchCodexDiscoveryModels,
   fetchCodexGithubCatalogModels,
+  reconcileCodexDiscoveryCatalog,
 } from "./discovery/codex";
+import { getCodexDiscoveryMode } from "@/shared/services/codexDiscoveryPolicy";
 import { maybeHandleConolModelDiscovery } from "./conolDiscovery";
 import { buildNoAuthModelsResponse, filterModelsForRoute } from "./modelRouteProjection";
 
@@ -136,6 +139,7 @@ export async function GET(
     const excludeHidden = searchParams.get("excludeHidden") === "true";
     const excludeCustom = searchParams.get("excludeCustom") === "true";
     const refresh = searchParams.get("refresh") === "true";
+    const includeCandidates = searchParams.get("includeCandidates") === "true";
     const chatOnly =
       searchParams.get("chatOnly") === "true" ||
       request.headers.get("x-agentproxy-model-surface")?.toLowerCase() === "chat";
@@ -235,7 +239,12 @@ export async function GET(
     const connectionId = typeof connection.id === "string" ? connection.id : id;
     const apiKey = typeof connection.apiKey === "string" ? connection.apiKey : "";
     const accessToken = typeof connection.accessToken === "string" ? connection.accessToken : "";
-    const autoFetchModels = isAutoFetchModelsEnabled(connection.providerSpecificData);
+    const codexDiscoveryMode =
+      provider === "codex" ? getCodexDiscoveryMode(connection.providerSpecificData) : "off";
+    const autoFetchModels =
+      provider === "codex"
+        ? codexDiscoveryMode !== "off"
+        : isAutoFetchModelsEnabled(connection.providerSpecificData);
     const cachedDiscoveryModels = usesCuratedModelsOnly
       ? []
       : filterModelsForRoute(
@@ -1834,6 +1843,49 @@ export async function GET(
         );
       }
 
+      if (queryKey) {
+        const { discoverVertexExpressModels } =
+          await import("@/lib/providerModels/vertexExpressDiscovery");
+        const curatedExpressModels = toLocalCatalogModels().filter((model) =>
+          /^gemini-/i.test(model.id)
+        );
+        const discovery = await discoverVertexExpressModels({
+          apiKey: queryKey,
+          curatedModels: curatedExpressModels,
+          fetchImpl: (url, init) =>
+            safeOutboundFetch(url, {
+              ...SAFE_OUTBOUND_FETCH_PRESETS.modelsDiscovery,
+              guard: getProviderOutboundGuard(),
+              proxyConfig: proxy,
+              ...init,
+            }),
+        });
+
+        if (discovery.models.length > 0) {
+          return buildApiDiscoveryResponse(discovery.models);
+        }
+
+        const warning = discovery.failureStatus
+          ? "Vertex model listing rejected the API key (HTTP " +
+            discovery.failureStatus +
+            "). No live catalog available for this API key — using curated Express catalog"
+          : "Vertex model discovery temporarily unavailable — using curated Express catalog";
+        const fallback = buildDiscoveryFallbackResponse({
+          cacheWarning: warning,
+          localWarning: warning,
+          localIntentional: true,
+        });
+        if (fallback) return fallback;
+        return buildResponse({
+          provider,
+          connectionId,
+          models: curatedExpressModels,
+          source: "local_catalog",
+          intentional: true,
+          warning,
+        });
+      }
+
       const baseUrl = "https://generativelanguage.googleapis.com/v1beta/models?pageSize=1000";
       const headers: Record<string, string> = { "Content-Type": "application/json" };
       if (bearerToken) headers["Authorization"] = `Bearer ${bearerToken}`;
@@ -2073,19 +2125,29 @@ export async function GET(
       }
     }
 
+    const xaiOauthLiveConfig =
+      provider === "xai-oauth" ? getXaiOauthLiveModelsConfig() : undefined;
     const config =
-      provider in PROVIDER_MODELS_CONFIG
+      xaiOauthLiveConfig ??
+      (provider in PROVIDER_MODELS_CONFIG
         ? PROVIDER_MODELS_CONFIG[provider as keyof typeof PROVIDER_MODELS_CONFIG]
-        : deriveConfigFromRegistryModelsUrl(provider);
+        : deriveConfigFromRegistryModelsUrl(provider));
     if (provider === "codex") {
-      // Auto-merge live/GitHub/local (future-proof discovery), then apply explicit
-      // denylist filters (e.g. drop GPT-5.4 family). Do not gate remote-only IDs.
       const staticCodexCatalog = mergeLocalCatalogModels(
         getModelsByProviderId("codex") || [],
         getStaticModelsForProvider("codex") || []
       );
+      const reconcileCodexCatalog = (
+        remoteModels: typeof cachedDiscoveryModels,
+        source: "live" | "github" = "live"
+      ) =>
+        reconcileCodexDiscoveryCatalog(
+          remoteModels.map((model) => ({ ...model, discoverySource: source })),
+          staticCodexCatalog,
+          codexDiscoveryMode
+        );
       const finalizeCodexCatalog = (remoteModels: typeof cachedDiscoveryModels) =>
-        buildCodexDiscoveryCatalog(remoteModels, staticCodexCatalog);
+        reconcileCodexCatalog(remoteModels).activeModels;
       const cachedCatalogModels = finalizeCodexCatalog(cachedDiscoveryModels);
       const cachedIdsMatchFinalCatalog =
         cachedDiscoveryModels.length === cachedCatalogModels.length &&
@@ -2097,11 +2159,14 @@ export async function GET(
 
       if (!refresh && cachedDiscoveryModels.length > 0) {
         await persistFilteredCacheIfNeeded();
+        const catalog = reconcileCodexCatalog(cachedDiscoveryModels);
         return buildResponse({
           provider,
           connectionId,
-          models: cachedCatalogModels,
+          models: catalog.activeModels,
           source: "cache",
+          discovery: { mode: codexDiscoveryMode },
+          ...(includeCandidates ? { candidateModels: catalog.candidateModels } : {}),
         });
       }
 
@@ -2140,29 +2205,40 @@ export async function GET(
           githubCatalogModels && githubCatalogModels.length > 0
             ? enrichCodexModelsFromGithubCatalog(liveModels, githubCatalogModels)
             : liveModels;
-        return buildApiDiscoveryResponse(finalizeCodexCatalog(enrichedLiveModels));
+        const catalog = reconcileCodexCatalog(enrichedLiveModels);
+        return buildApiDiscoveryResponse(catalog.activeModels, undefined, {
+          discovery: { mode: codexDiscoveryMode },
+          ...(includeCandidates ? { candidateModels: catalog.candidateModels } : {}),
+        });
       }
 
       if (githubCatalogModels && githubCatalogModels.length > 0) {
+        const catalog = reconcileCodexCatalog(githubCatalogModels, "github");
         return buildResponse({
           provider,
           connectionId,
-          models: finalizeCodexCatalog(githubCatalogModels),
+          models: catalog.activeModels,
           source: "github_catalog",
           warning: "Codex live catalog unavailable — using GitHub model catalog",
+          discovery: { mode: codexDiscoveryMode },
+          ...(includeCandidates ? { candidateModels: catalog.candidateModels } : {}),
         });
       }
 
       if (cachedDiscoveryModels.length > 0) {
         await persistFilteredCacheIfNeeded();
+        const catalog = reconcileCodexCatalog(cachedDiscoveryModels);
         return buildResponse({
           provider,
           connectionId,
-          models: cachedCatalogModels,
+          models: catalog.activeModels,
           source: "cache",
           warning: "Codex live catalog unavailable — using cached catalog",
+          discovery: { mode: codexDiscoveryMode },
+          ...(includeCandidates ? { candidateModels: catalog.candidateModels } : {}),
         });
       }
+
       return buildResponse({
         provider,
         connectionId,
@@ -2170,6 +2246,7 @@ export async function GET(
         source: "local_catalog",
         intentional: true,
         warning: "Codex live and GitHub catalogs unavailable — using local catalog",
+        discovery: { mode: codexDiscoveryMode },
       });
     }
 
@@ -2261,6 +2338,12 @@ export async function GET(
           base = base.slice(0, -"/v1".length);
         }
         url = `${base}/v1/models`;
+      }
+    }
+    if (provider === "openrouter") {
+      const customBaseUrl = getProviderBaseUrl(connection.providerSpecificData);
+      if (customBaseUrl) {
+        url = addModelsSuffix(customBaseUrl) || url;
       }
     }
     if (provider === "cloudflare-ai") {

@@ -56,10 +56,21 @@ describe("stripTrailingAssistantForProvider (#3396)", () => {
     assert.strictEqual(result.length, 2);
   });
 
-  it("does NOT strip trailing text assistant for anthropic/claude", () => {
+  it("strips trailing text-only assistant message for claude", () => {
     const msgs = [user("hi"), assistant("continue from here")];
     const result = stripTrailingAssistantForProvider(msgs, "claude");
-    assert.strictEqual(result.length, 2);
+    assert.strictEqual(result.length, 1);
+    assert.strictEqual(result[0].role, "user");
+  });
+
+  it("strips trailing assistant with array-string content for claude", () => {
+    const msgs = [
+      user("hi"),
+      { role: "assistant", content: [{ type: "text", text: "continue from here" }] },
+    ];
+    const result = stripTrailingAssistantForProvider(msgs, "claude");
+    assert.strictEqual(result.length, 1);
+    assert.strictEqual(result[0].role, "user");
   });
 
   it("returns messages unchanged when last message is user", () => {

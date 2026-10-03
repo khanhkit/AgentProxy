@@ -1,0 +1,1 @@
+- **test(sse):** lock per-key ceiling 429s out of neighbor cooldown scope (upstream #14581) — thanks @maxmad64bis

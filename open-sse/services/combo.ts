@@ -119,7 +119,8 @@ import {
 } from "./combo/autoStrategy.ts";
 import {
   resolveResetWindowConfig,
-  calculateResetWindowAffinity,
+  calculateAutoResetWindowAffinity,
+  resolveAutoResetWindowConfig,
   type ResetWindowConfig,
 } from "./combo/quotaScoring.ts";
 import { fetchResetAwareQuotaWithCache, preScreenTargets } from "./combo/quotaStrategies.ts";
@@ -176,32 +177,11 @@ export function releaseStickyPinOnFailure(
   clearStickyBinding(messageHash);
 }
 
-/**
- * Clear persisted LKGP pins when a target fails or is skipped due to
- * exhaustion, cooldown, or unavailability (#11911 #919).
- */
-export function clearStaleLKGP(
-  comboName: string,
-  executionKey?: string | null,
-  comboId?: string | null,
-  log?: { warn?: (tag: string, msg: string, data?: unknown) => void } | null,
-  tag: string = "COMBO"
-): void {
-  void (async () => {
-    try {
-      const { clearLKGP } = await import("@/lib/db/settings");
-      const promises: Promise<void>[] = [clearLKGP(comboName, comboId || comboName)];
-      if (executionKey) {
-        promises.push(clearLKGP(comboName, executionKey));
-      }
-      await Promise.all(promises);
-    } catch (err) {
-      log?.warn?.(tag, "Failed to clear Last Known Good Provider. This is non-fatal.", {
-        err,
-      });
-    }
-  })();
-}
+// #11911 #919/#13614: non-blocking stale-pin clear whose failures log with
+// combo context. The implementation lives in a leaf so tests can await it
+// without importing the full combo runtime.
+export { clearStaleLKGP } from "./combo/staleLkgpClear.ts";
+import { clearStaleLKGP } from "./combo/staleLkgpClear.ts";
 
 const DEFAULT_MODEL_P95_MS: Record<string, number> = {
   "grok-4-fast-non-reasoning": 1143,
@@ -225,11 +205,6 @@ function calculateTargetContextAffinity(
   if (target.connectionId === sessionConnectionId) return 1;
   if (!target.connectionId) return 0.5;
   return 0.1;
-}
-
-function getBootstrapLatencyMs(modelId: string): number {
-  const normalized = String(modelId || "").toLowerCase();
-  return DEFAULT_MODEL_P95_MS[normalized] ?? 1500;
 }
 
 export function poolMedianP95Ms(
@@ -293,7 +268,7 @@ export async function buildAutoCandidates(
   targets: ResolvedComboTarget[],
   comboName: string,
   sessionId: string | null | undefined = null,
-  resetWindowConfig: ResetWindowConfig = resolveResetWindowConfig(null),
+  resetWindowConfig: ResetWindowConfig = resolveAutoResetWindowConfig(null),
   resilienceSettings: ResilienceSettings | null = null
 ): Promise<AutoProviderCandidate[]> {
   const hiddenModelsMap = getHiddenModelsByProvider();
@@ -490,7 +465,7 @@ export async function buildAutoCandidates(
           );
         }
         const quota = await quotaPromises.get(quotaKey)!;
-        resetWindowAffinity = calculateResetWindowAffinity(quota, resetWindowConfig);
+        resetWindowAffinity = calculateAutoResetWindowAffinity(quota, resetWindowConfig);
         if (!quotaCutoffBlocked) {
           quotaRemaining = quotaRemainingPercentFromQuota(quota, {
             provider,
@@ -628,7 +603,13 @@ export async function resolveTargetTimeoutMsForTarget(
  * one metadata-only log line for durability across restarts.
  */
 export async function handleComboChat(options: HandleComboChatOptions): Promise<Response> {
-  const traceInvocationId = options.invocationId ?? createInvocationId();
+  const comboInvocationId = (options.combo as { traceInvocationId?: unknown } | null | undefined)
+    ?.traceInvocationId;
+  const traceInvocationId =
+    options.invocationId ??
+    (typeof comboInvocationId === "string" && comboInvocationId.length > 0
+      ? comboInvocationId
+      : createInvocationId());
   const response = await handleComboChatInner({ ...options, invocationId: traceInvocationId });
   response.headers.set("X-AgentProxy-Combo-Trace", traceInvocationId);
   const trace = getComboTrace(traceInvocationId);
@@ -832,7 +813,9 @@ async function handleComboChatInner({
     });
   }
 
-  const maxRetries = activeNativeTurnPin ? 0 : (config.maxRetries ?? 1);
+  // A pinned native Codex turn must not rotate across targets, but a pre-content
+  // transient stream failure is safe to retry against the SAME pinned target.
+  const maxRetries = config.maxRetries ?? 1;
   const maxSetRetries = activeNativeTurnPin ? 0 : (config.maxSetRetries ?? 0);
   const setRetryDelayMs = resolveDelayMs(config.setRetryDelayMs, 2000);
 
@@ -993,6 +976,7 @@ async function handleComboChatInner({
     globalAttempts: 0,
     observedFailure: false,
     allObservedFailuresQuota: true,
+    requestScopedFailureSeen: false,
     observeFailure(quotaExhausted, targetExecutionKey) {
       this.observedFailure = true;
       this.allObservedFailuresQuota &&= quotaExhausted;
@@ -1035,6 +1019,7 @@ async function handleComboChatInner({
     stickyWeightedLimit,
     getWeightedStepKeyForTarget,
     universalHandoffConfig,
+    sourceFormat,
     relayOptions,
     relayConfig,
   };

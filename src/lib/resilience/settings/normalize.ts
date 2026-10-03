@@ -131,7 +131,7 @@ export function normalizeRequestQueueSettings(
     { min: 0, max: 100_000 }
   );
   const maxWaitMs = toInteger(record.maxWaitMs, fallback.maxWaitMs, {
-    min: 1,
+    min: 0,
     max: 24 * 60 * 60 * 1000,
   });
   const executionMaxWaitMs = toInteger(

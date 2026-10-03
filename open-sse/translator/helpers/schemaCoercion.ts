@@ -629,13 +629,73 @@ export function stripInvalidSchemaConstructs(schema: unknown): unknown {
   return result;
 }
 
+const CLAUDE_ROOT_UNION_KEYWORDS = ["anyOf", "oneOf", "allOf"] as const;
+
+function claudeUnionBranchCanBeObject(branch: JsonRecord): boolean {
+  const type = branch.type;
+  if (type === undefined) return true;
+  if (typeof type === "string") return type === "object";
+  if (Array.isArray(type)) return type.includes("object");
+  return false;
+}
+
+function mergeClaudeRequired(target: string[], seen: Set<string>, branchRequired: unknown): void {
+  if (!Array.isArray(branchRequired)) return;
+  for (const name of branchRequired) {
+    if (typeof name !== "string" || seen.has(name)) continue;
+    seen.add(name);
+    target.push(name);
+  }
+}
+
+export function hasRootLevelSchemaUnion(schema: unknown): boolean {
+  if (!isPlainObject(schema)) return false;
+  return CLAUDE_ROOT_UNION_KEYWORDS.some((keyword) => hasOwn(schema, keyword));
+}
+
+export function normalizeClaudeToolInputSchema(schema: unknown): unknown {
+  if (!hasRootLevelSchemaUnion(schema)) return schema;
+
+  const source = schema as JsonRecord;
+  const result: JsonRecord = { ...source };
+  const properties: JsonRecord = isPlainObject(source.properties) ? { ...source.properties } : {};
+  const required: string[] = [];
+  const requiredSeen = new Set<string>();
+  mergeClaudeRequired(required, requiredSeen, source.required);
+
+  for (const keyword of CLAUDE_ROOT_UNION_KEYWORDS) {
+    if (!hasOwn(result, keyword)) continue;
+    const branches = result[keyword];
+    delete result[keyword];
+    if (!Array.isArray(branches)) continue;
+
+    for (const branch of branches) {
+      if (!isPlainObject(branch) || !claudeUnionBranchCanBeObject(branch)) continue;
+      if (isPlainObject(branch.properties)) {
+        for (const [name, propertySchema] of Object.entries(branch.properties)) {
+          if (!hasOwn(properties, name)) properties[name] = propertySchema;
+        }
+      }
+      if (keyword === "allOf") mergeClaudeRequired(required, requiredSeen, branch.required);
+    }
+  }
+
+  result.type = "object";
+  result.properties = properties;
+  if (required.length > 0) result.required = required;
+  else delete result.required;
+  return result;
+}
+
 export function sanitizeClaudeToolSchema(schema: unknown): unknown {
   // stripInvalidSchemaConstructs now also coerces numeric-string constraints, so
   // it is the single pass for the Claude path. We deliberately do NOT compose
   // coerceSchemaNumericFields: it strips the valid `default` keyword (Fix #1782,
   // a translator concern) which on the native / passthrough surface would
   // silently alter tool schemas that were previously forwarded verbatim.
-  return stripInvalidSchemaConstructs(schema);
+  // Flatten root composition last so malformed/index-keyed unions repaired by
+  // the sanitizer are normalized before reaching Anthropic.
+  return normalizeClaudeToolInputSchema(stripInvalidSchemaConstructs(schema));
 }
 
 export function sanitizeClaudeToolSchemas(tools: unknown): unknown {

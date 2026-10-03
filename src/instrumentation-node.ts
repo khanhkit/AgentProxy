@@ -336,9 +336,20 @@ export async function registerNodejs(): Promise<void> {
   // of the generic "next-server" standalone server name.
   process.title = renameProcessTitle(process.title);
 
+  // #13695: the inference API and `/v1/models` follow DIFFERENT auth settings,
+  // so `GET /v1/models` answering 401 does not mean inference is protected.
+  // #12568 added this warning for the API bridge and live-WS servers, but not
+  // for the Next server that actually answers `/v1/chat/completions` and
+  // `/v1/responses` — and that one binds every interface by default. Runs
+  // before the DB work below so it is not buried under the boot log.
+  (await import("@/lib/startup/nonLoopbackApiKeyGuard")).warnIfInferenceServerExposed();
+
   // Initialize proxy fetch patch FIRST (before any HTTP requests)
   await import("@agentproxy/open-sse/utils/proxyFetch.ts");
   console.log("[STARTUP] Global fetch proxy patch initialized");
+
+  // Subscribe the proxy set-aside webhook bridge (side-effect import only).
+  await import("@/lib/proxyEvents/proxyTransitionBridge");
 
   // Register quota fetchers early so combo routing can use real quota-aware
   // scoring for generic providers in the App Router production runtime.

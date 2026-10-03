@@ -32,7 +32,7 @@ import {
 } from "@/shared/constants/sidebarVisibility";
 import { useIsElectron } from "@/shared/hooks/useElectron";
 
-const isE2EMode = process.env.NEXT_PUBLIC_AGENTPROXY_E2E_MODE === "1";
+const isE2EMode = process.env.NEXT_PUBLIC_OMNIROUTE_E2E_MODE === "1";
 
 // Map sidebar item id → header description i18n key
 // "omni-skills" is an extended key for the /dashboard/omni-skills route (graceful fallback during deploy)
@@ -207,7 +207,9 @@ export default function Header({
     <header
       className="sticky top-0 z-10 flex items-center justify-between border-b border-black/5 bg-bg px-8 py-4 dark:border-white/5"
       style={{
-        paddingTop: isMacElectron ? "calc(1rem + var(--desktop-safe-top))" : undefined,
+        paddingTop: isMacElectron
+          ? "calc(1rem + var(--desktop-safe-top))"
+          : "calc(1rem + var(--ios-safe-top, 0px))",
       }}
     >
       {/* Mobile menu button */}

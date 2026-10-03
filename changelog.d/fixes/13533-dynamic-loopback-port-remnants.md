@@ -1,0 +1,1 @@
+- **fix(runtime):** remove remaining hardcoded local gateway port assumptions across dashboard, CLI, MITM, API, and Electron development paths; configured runtime ports are now respected while preserving the 20128 compatibility default.

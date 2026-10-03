@@ -27,7 +27,15 @@ const FORBIDDEN = new Set(
   ].map((s) => s.toLowerCase())
 );
 
-const FORWARDED_PROVENANCE = new Set(["forwarded", "forward-to", "x-real-ip"]);
+const FORWARDED_PROVENANCE = new Set([
+  "forwarded",
+  "forward-to",
+  "x-real-ip",
+  "cf-connecting-ip",
+  "true-client-ip",
+  "client-ip",
+  "via",
+]);
 
 function normalizeHeaderName(name: string): string {
   return String(name).trim().toLowerCase();

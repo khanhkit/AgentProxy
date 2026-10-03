@@ -7,9 +7,13 @@ import {
   mergeInjectedFallbackOwnerNames,
 } from "./chatCore/memorySkillsInjection.ts";
 import { resolveChatCoreRequestSetup } from "./chatCore/requestSetup.ts";
-import { normalizeOpenAICompatibleTools } from "./chatCore/openAICompatibleTools.ts";
+import {
+  normalizeOpenAICompatibleTools,
+  shouldNormalizeFunctionToolsOnly,
+} from "./chatCore/openAICompatibleTools.ts";
 import {
   buildFailureUsageRecord,
+  readCpaAuthIndex,
   projectFailureUsageErrorCode,
   type FailureUsageAggregate,
 } from "./chatCore/failureUsage.ts";
@@ -37,6 +41,8 @@ import { buildNonStreamingResponseHeaders } from "./chatCore/nonStreamingRespons
 import { buildNonStreamingJsonResponse } from "./chatCore/nonStreamingJsonResponse.ts";
 import { enforceOutputTokenBudget } from "./chatCore/outputTokenBudget.ts";
 import { maybeConvertJsonBodyToSse } from "./chatCore/jsonBodyToSse.ts";
+import { withResilienceActionsContext } from "./chatCore/resilienceAttemptContext.ts";
+import { maybeRetryFlushEmptyTurn } from "./chatCore/flushEmptyRetry.ts";
 import { assembleStreamingResponseHeaders } from "./chatCore/streamingResponseHeaders.ts";
 import { storeStreamingSemanticCacheResponse } from "./chatCore/streamingSemanticCacheStore.ts";
 import { assembleStreamingPipeline } from "./chatCore/streamingPipeline.ts";
@@ -84,6 +90,7 @@ import {
   isClaudeCodeSemanticPassthroughRequest,
 } from "./chatCore/passthroughHelpers.ts";
 import { recoverAnthropicThinkingSignature } from "./chatCore/thinkingSignatureRecovery.ts";
+import { maybeFallbackAfterReadiness } from "./chatCore/streamReadinessFallback.ts";
 import { runProviderExecutionPipeline } from "./chatCore/providerExecutionPipeline.ts";
 import { createPipelineCredentialRefresher } from "./chatCore/pipelineCredentialRefresh.ts";
 import { runNonStreamingProviderLeg } from "./chatCore/nonStreamingProviderLeg.ts";
@@ -130,7 +137,7 @@ import { FORMATS } from "../translator/formats.ts";
 import { collectCustomToolNamesForSourceFormat } from "../translator/request/openai-responses/additionalTools.ts";
 import { sanitizeKiroTools } from "../utils/kiroSanitizer.ts";
 import { splitMisplacedToolResults } from "../translator/helpers/claudeHelper.ts";
-import { ensureCacheControlOnLastUserMessage } from "../services/claudeCodeConstraints.ts";
+import { ensureCacheControlOnLastUserMessage, hoistLeadingSystemMessages } from "../services/claudeCodeConstraints.ts";
 import {
   createSSETransformStreamWithLogger,
   createPassthroughStreamWithLogger,
@@ -170,7 +177,7 @@ import {
 } from "../services/claudeAdaptiveThinking.ts";
 import { shouldUseMidConversationSystem } from "../executors/claudeIdentity.ts";
 import { normalizeClaudeHaikuConstraints } from "../services/claudeHaikuConstraints.ts";
-import { applyDefaultReasoningEffort } from "../services/defaultReasoningEffort.ts";
+import { wireAdaptiveEffort } from "./chatCore/adaptiveEffortWiring.ts";
 import { echoModelInObject } from "../services/responseModelEcho.ts";
 import {
   stripGpt5SamplingWhenReasoning,
@@ -178,6 +185,7 @@ import {
 } from "../services/gpt5SamplingGuard.ts";
 import { getUnsupportedParams, REGISTRY } from "../config/providerRegistry.ts";
 import { stripUnsupportedParams } from "./chatCore/unsupportedParamsStrip.ts";
+import { shouldSkipCredentialRefresh } from "./chatCore/skipCredentialRefresh.ts";
 import { checkToolCallingRequiredButUnsupported } from "./chatCore/toolCallingRequiredCheck.ts";
 import {
   supportsMaxTokens,
@@ -235,6 +243,8 @@ import {
   isStreamRecoveryExplicitlyConfigured,
 } from "@/lib/resilience/settings";
 import { classifyProviderError, PROVIDER_ERROR_TYPES } from "../services/errorClassifier.ts";
+import { isOpencodeFreeTierRefusal } from "../executors/opencodeGeoBlock.ts";
+import { noteOpencodeFreeTierSkip } from "../services/opencodeFreeTierSkip.ts";
 import { updateProviderConnection, getProviderConnectionById } from "@/lib/db/providers";
 import { wasRefreshTokenRotated } from "@agentproxy/open-sse/services/refreshSerializer.ts";
 import { connectionHasExtraKeys } from "../services/apiKeyRotator.ts";
@@ -274,7 +284,8 @@ import { ensureEngineBreakdown } from "../services/compression/engineBreakdown.t
 import { handleBypassRequest } from "../utils/bypassHandler.ts";
 import { saveRequestUsage, trackPendingRequest, appendRequestLog } from "@/lib/usageDb";
 import { finalizePendingScope, updatePendingScope } from "@/lib/usage/pendingRequestScope";
-import { recordCost } from "@/domain/costRules";
+import { recordCost, recordChatCallCost, buildCostCtx } from "@/domain/costRules";
+import { meteredBudgetCost } from "@/lib/usage/meteredBudgetPolicy";
 import { calculateCost } from "@/lib/usage/costCalculator";
 import {
   buildClaudePassthroughToolNameMap,
@@ -308,7 +319,7 @@ import {
 } from "./chatCore/pluginOnResponse.ts";
 import { scheduleStreamingQuotaShareConsumption } from "./chatCore/streamingQuotaShare.ts";
 import { recordStreamingUsageStats } from "./chatCore/streamingUsageStats.ts";
-import { recordStreamingCost } from "./chatCore/streamingCost.ts";
+import { recordStreamingCost, buildStreamLedgerDetails } from "./chatCore/streamingCost.ts";
 import { isJsonRecord } from "./chatCore/nonStreamingResponseParse.ts";
 import { recordNonStreamingUsageStats } from "./chatCore/nonStreamingUsageStats.ts";
 import {
@@ -458,7 +469,10 @@ type VideoBridgeLogParam = { observed: boolean; redaction: VideoBridgeLogRedacti
  */
 // extractSystemRoleMessages extracted to chatCore/claudeSystemRole.ts (#3501); re-exported above so
 // existing importers (e.g. tests/unit/system-role-extraction.test.ts) keep resolving it from here.
-export async function handleChatCore({
+export async function handleChatCore(args: Parameters<typeof handleChatCoreInner>[0]) {
+  return withResilienceActionsContext([args], handleChatCoreInner);
+}
+async function handleChatCoreInner({
   body,
   modelInfo,
   credentials,
@@ -524,8 +538,8 @@ export async function handleChatCore({
   // Per-request trace id + checkpoint helper. Lets us see exactly which await
   // a hung request was sitting on in `[STAGE_TRACE]` log lines. Uses crypto RNG
   // (not Math.random) purely to satisfy CodeQL js/insecure-randomness — this id
-  // is a log-correlation token, not a security secret.
-  const traceId = globalThis.crypto.randomUUID().slice(0, 6);
+  // is a log-correlation token, not a security secret; keep the full UUID to avoid collisions.
+  const traceId = globalThis.crypto.randomUUID();
   // Emit request.started event for real-time dashboard
   setImmediate(() => {
     emit("request.started", {
@@ -678,6 +692,7 @@ export async function handleChatCore({
         errorCode,
         latencyMs: Date.now() - startTime,
         endpoint: endpointPath,
+        cpaAuthIndex: readCpaAuthIndex(providerResponse),
         aggregate: aggregate ?? undefined,
       })
     ).catch(() => {});
@@ -697,10 +712,10 @@ export async function handleChatCore({
     clientRawRequest,
     provider,
     model,
-    // NEXA fusion-idempotency fix: body.messages feeds the key digest so combo-internal
-    // sub-requests (fusion panel + judge re-enter chatCore sharing the client's headers)
-    // can never collide on the raw Idempotency-Key/x-request-id header key.
+    // NEXA fusion-idempotency fix: body.messages feeds the key digest so combo-internal sub-requests
+    // (fusion panel + judge share the client's headers) never collide on the raw header key.
     body,
+    apiKeyId: apiKeyInfo?.id ?? null,
     effectiveServiceTier,
     startTime,
     log,
@@ -1225,7 +1240,7 @@ export async function handleChatCore({
     stream: !!stream,
     reqLogger,
     effectiveServiceTier,
-    connectionId,
+    pendingScope,
     startTime,
     log,
     persistAttemptLogs,
@@ -1264,7 +1279,7 @@ export async function handleChatCore({
       }
     );
     if (policy.incompatibleReasoning) {
-      trackPendingRequest(model, provider, connectionId, false);
+      trackPendingRequest(model, provider, pendingConnId, false, undefined, pendingRequestId);
       return createErrorResult(
         HTTP_STATUS.BAD_REQUEST,
         "Reasoning continuation is not compatible with the selected target"
@@ -1615,7 +1630,8 @@ export async function handleChatCore({
             outputStyleResult = applyOutputStyles(
               body as Parameters<typeof applyOutputStyles>[0],
               selection,
-              outputStyleLanguage
+              outputStyleLanguage,
+              { autoClarity: config.cavemanOutputMode?.autoClarity }
             );
             if (outputStyleResult.applied) {
               body = outputStyleResult.body as typeof body;
@@ -1642,8 +1658,7 @@ export async function handleChatCore({
         }
       }
       const compressionInputBody = body as Record<string, unknown>;
-      // Adaptive context-budget (Sub-project C): model context window + request max_tokens drive
-      // the budget target. getTokenLimit is already imported; provider/effectiveModel resolved above.
+      // Adaptive context-budget: model context window + request max_tokens drive the target.
       const adaptiveModelContextLimit =
         provider && effectiveModel ? getTokenLimit(provider, effectiveModel) : null;
       const requestMaxTokens =
@@ -2049,7 +2064,7 @@ export async function handleChatCore({
     ) {
       log?.info?.(
         "CONTEXT",
-        `Proactive compression triggered: ${estimatedTokens} tokens > ${threshold} threshold (${contextLimit} limit)`
+        `Proactive compression triggered: ${estimatedTokens} message tokens > ${threshold} threshold (${contextLimit} limit, tools reserve ${reservedTokens})`
       );
 
       // Adapt Responses `input[]` → messages so compressContext can run, then restore.
@@ -2076,7 +2091,7 @@ export async function handleChatCore({
 
         log?.info?.(
           "CONTEXT",
-          `Context compressed: ${stats.original} → ${stats.final} tokens${layersInfo}`
+          `Context compressed: ${stats.original} → ${stats.final} message tokens${layersInfo}`
         );
 
         logAuditEvent({
@@ -2168,7 +2183,7 @@ export async function handleChatCore({
       `estimated ${outputBudget.estimatedInputTokens} input tokens, ${exceededInputCap ? `max input ${outputBudget.maxInputTokens}` : `limit ${outputBudget.contextLimit}`}. ` +
       `Reduce the prompt or route to a model with a larger ${exceededInputCap ? "input limit" : "context window"}.`;
     log?.warn?.("CONTEXT", message);
-    trackPendingRequest(model, provider, connectionId, false);
+    trackPendingRequest(model, provider, pendingConnId, false, undefined, pendingRequestId);
     return createErrorResult(
       HTTP_STATUS.BAD_REQUEST,
       message,
@@ -2372,10 +2387,10 @@ export async function handleChatCore({
         ) {
           extractSystemRoleMessages(translatedBody);
         } else {
-          // The mid-conversation-system path keeps system-role messages inside
-          // messages[], but a directive-only message (content: [] +
-          // output_config) at messages[0] is rejected by Anthropic. Move it past
-          // the first real turn; Anthropic accepts the form at any other position.
+          // The mid-conversation-system path keeps system roles in messages[]. Hoist only
+          // leading text, then move any directive-only messages[0] past the first real turn;
+          // genuine mid-conversation system turns stay in place.
+          hoistLeadingSystemMessages(translatedBody);
           relocateDirectiveOnlyMessages(translatedBody);
         }
         if (Array.isArray(translatedBody.messages)) {
@@ -2439,9 +2454,12 @@ export async function handleChatCore({
       // This must happen before translateRequest, which validates and throws on unknown types.
       // Skip normalization when we are in native openai-compatible Responses passthrough mode
       // to preserve native tool definitions (exec with lark grammar, collaboration namespace, etc.).
+      // #13789: built-in providers observed to reject non-function tool types (agentrouter GLM:
+      // `400 tools[0].type:type is illegal`) are normalized too, via a conservative allowlist
+      // in shouldNormalizeFunctionToolsOnly that keeps openai's own `custom` tools untouched.
       if (
         !nativeOpenAICompatibleResponsesPassthrough &&
-        provider?.startsWith("openai-compatible-") &&
+        shouldNormalizeFunctionToolsOnly(provider, targetFormat) &&
         Array.isArray(translatedBody.tools)
       ) {
         const normalized = normalizeOpenAICompatibleTools(
@@ -2453,7 +2471,7 @@ export async function handleChatCore({
         if (dropped > 0) {
           log?.debug?.(
             "TOOLS",
-            `Dropped ${dropped} unconvertible tool(s) for openai-compatible provider`
+            `Dropped ${dropped} unconvertible tool(s) for ${provider} (function-tools-only)`
           );
         }
       }
@@ -2513,7 +2531,7 @@ export async function handleChatCore({
     const result = createTranslationFailureResult(statusCode, message, errorType);
     log?.warn?.("TRANSLATE", `Request translation failed: ${result.error}`);
 
-    trackPendingRequest(model, provider, connectionId, false);
+    trackPendingRequest(model, provider, pendingConnId, false, undefined, pendingRequestId);
     return result;
   }
 
@@ -2665,54 +2683,26 @@ export async function handleChatCore({
   }
   translatedBody.model = finalModelToUpstream;
 
-  // #3554: a combo/route may substitute the upstream model AFTER the client chose its
-  // `thinking` value. Claude Code sends `thinking:{type:"disabled"}` for internal calls,
-  // which claude-fable-5 (adaptive-only) rejects with a 400. Drop the now-invalid value
-  // when the resolved target model rejects it; models that accept `disabled` are untouched.
+  // Normalize reasoning after route/model substitution so provider-specific constraints
+  // follow the resolved upstream model (adaptive-only Claude, Opus disabled, Haiku shape).
   if (typeof finalModelToUpstream === "string") {
     translatedBody = normalizeThinkingForModel(translatedBody, finalModelToUpstream);
-    // Claude Opus 4.7+/Fable 5 removed manual extended thinking: `thinking.type:"enabled"`
-    // or any `thinking.budget_tokens` is a hard 400. Collapse any manual thinking that
-    // reached this point (passthrough legacy shape, reasoning_effort buckets, per-model
-    // defaults) to `{type:"adaptive"}` — effort stays on `output_config.effort`. Keyed on
-    // the resolved upstream model, so it covers every routing mode. See claudeAdaptiveThinking.ts.
     translatedBody = normalizeClaudeAdaptiveThinking(translatedBody, finalModelToUpstream);
-    // Opus 5 allows disabled thinking only through high effort on Anthropic's direct
-    // Messages API. The helper scopes this constraint to `anthropic` and `claude`;
-    // GitHub Copilot and Claude Web use separate upstream contracts.
     translatedBody = normalizeClaudeDisabledThinkingEffort(
       translatedBody,
       finalModelToUpstream,
       provider
     );
-    // Claude Haiku rejects `thinking.type:"adaptive"` and `output_config.effort`
-    // (both Sonnet 4.6 / Opus 4.5+ only). Several paths can still emit those
-    // shapes on a Haiku target — native passthrough, reasoning_effort buckets,
-    // per-model defaults — so collapse them to a Haiku-valid shape here, after
-    // model substitution. Mirrors upstream 9router 401d93bd5. See
-    // services/claudeHaikuConstraints.ts.
     translatedBody = normalizeClaudeHaikuConstraints(translatedBody, finalModelToUpstream);
-    // #6879: per-model default reasoning_effort, injected only when the request
-    // carries no reasoning field of any shape — an explicit client/combo-leg value
-    // always wins. Scoped to the OpenAI Chat Completions dispatch shape (the shape
-    // `reasoning_effort` is native to); unset ModelSpec.defaultReasoningEffort is a
-    // no-op. #7694: `modelInfo.resolvedThinkingEffort` — set when the request's model
-    // id carried a `<prefix>/<model>-{effort}` synced-model alias suffix
-    // (`src/sse/services/model.ts`) — takes priority over the static per-model default.
-    // The synced catalog's vendor-declared `defaultThinkingEffort` (OpenRouter
-    // `reasoning.default_effort`, captured by `detectDefaultThinkingEffort`) is the
-    // lowest-priority default: it only fires when neither the suffix alias nor a
-    // static operator default exists. See open-sse/services/defaultReasoningEffort.ts.
-    if (targetFormat === FORMATS.OPENAI) {
-      translatedBody = applyDefaultReasoningEffort(
-        translatedBody,
-        finalModelToUpstream,
-        (modelInfo as { resolvedThinkingEffort?: string })?.resolvedThinkingEffort,
-        (modelInfo as { defaultThinkingEffort?: string })?.defaultThinkingEffort
-      );
-    }
+    translatedBody = wireAdaptiveEffort(translatedBody, {
+      rawBody: body,
+      clientRawRequest,
+      targetFormat,
+      modelId: finalModelToUpstream,
+      suffixEffort: (modelInfo as { resolvedThinkingEffort?: string })?.resolvedThinkingEffort,
+      syncedDefaultEffort: (modelInfo as { defaultThinkingEffort?: string })?.defaultThinkingEffort,
+    });
   }
-
   // Xiaomi MiMo controls reasoning ONLY via `thinking:{type:"enabled"|"disabled"}` and
   // rejects unknown/extra params with a strict "400 Param Incorrect". Map AgentProxy's
   // OpenAI reasoning signals onto that native shape: reduce any thinking object to
@@ -2784,7 +2774,7 @@ export async function handleChatCore({
     model
   );
   if (toolCallingCheck.blocked) {
-    trackPendingRequest(model, provider, connectionId, false);
+    trackPendingRequest(model, provider, pendingConnId, false, undefined, pendingRequestId);
     return createErrorResult(400, toolCallingCheck.message!, null, "tool_calling_not_supported");
   }
 
@@ -2923,12 +2913,7 @@ export async function handleChatCore({
         // return path never reaches the upstream, and without the decrement the
         // pending detail lingers as an orphaned status-0 call-log row until the
         // reaper sweeps it (mirrors the other pre-upstream error returns).
-        trackPendingRequest(
-          model,
-          provider,
-          connectionId || credentials?.connectionId || null,
-          false
-        );
+        trackPendingRequest(model, provider, pendingConnId, false, undefined, pendingRequestId);
         const headers: Record<string, string> = { "Content-Type": "application/json" };
         if (decision.retryAfterSeconds) {
           headers["Retry-After"] = String(decision.retryAfterSeconds);
@@ -2976,7 +2961,7 @@ export async function handleChatCore({
     if (!fit.compatible) {
       const msg = buildCapabilityMismatchMessage(fit.terminalReason!, provider, effectiveModel);
       log?.warn?.("CAPABILITY", msg);
-      trackPendingRequest(model, provider, connectionId, false);
+      trackPendingRequest(model, provider, pendingConnId, false, undefined, pendingRequestId);
       return createErrorResult(400, msg, null, fit.terminalReason, "invalid_request_error");
     }
   }
@@ -3023,6 +3008,7 @@ export async function handleChatCore({
     provider,
     model,
     connectionId,
+    pendingRequestId,
     clientResponseFormat,
     clientAbortSignal: clientRawRequest?.signal,
     allowCompletedToolHandoffGrace: isCodexResponsesEcho,
@@ -3372,7 +3358,7 @@ export async function handleChatCore({
 
                   // Mid-stream continuation (Fase 4.4): re-request with the partial text as an
                   // assistant prefill. Gated by its own setting and only for OpenAI-compatible
-                  // bodies (makeContinuationBody returns null otherwise).
+                  // request bodies, chat or Responses (makeContinuationBody returns null otherwise).
                   const continueStream = continueMidStreamEnabled
                     ? (assistantSoFar: string) => {
                         const continuationBody = makeContinuationBody(
@@ -3401,8 +3387,31 @@ export async function handleChatCore({
                       onContinue: (attempt) =>
                         log?.warn?.(
                           "STREAM_RECOVERY",
-                          `mid-stream continuation attempt ${attempt}/${STREAM_RECOVERY.EARLY_RETRY_MAX}`
+                          `mid-stream continuation attempt ${attempt}/${STREAM_RECOVERY.EARLY_RETRY_MAX} correlationId=${correlationId || "none"}`
                         ),
+                      onContinueOutcome: (event) => {
+                        const details = [
+                          `mid-stream continuation attempt ${event.attempt}/${STREAM_RECOVERY.EARLY_RETRY_MAX}`,
+                          `outcome=${event.outcome}`,
+                          "reason" in event && event.reason ? `reason=${event.reason}` : null,
+                          "suffixChars" in event && typeof event.suffixChars === "number"
+                            ? `suffixChars=${event.suffixChars}`
+                            : null,
+                          "overlapChars" in event && typeof event.overlapChars === "number"
+                            ? `overlapChars=${event.overlapChars}`
+                            : null,
+                          `correlationId=${correlationId || "none"}`,
+                        ]
+                          .filter(Boolean)
+                          .join(" ");
+                        const giveUp =
+                          event.outcome === "no-stream" ||
+                          (event.outcome === "refused" && event.reason === "budget");
+                        if (giveUp) log?.warn?.("STREAM_RECOVERY", details);
+                        else if (event.outcome === "refused" && event.reason === "tool-call")
+                          log?.debug?.("STREAM_RECOVERY", details);
+                        else log?.info?.("STREAM_RECOVERY", details);
+                      },
                       throughputWatchdog,
                       onWatchdogAbort: () =>
                         log?.warn?.(
@@ -3569,7 +3578,7 @@ export async function handleChatCore({
             : `${tokenBreach.scopeType} "${tokenBreach.scopeValue}"`;
         // FIX 6: clear the pending request marker before the early return so we do
         // not leak a phantom pending request (start was tracked at line ~1847).
-        trackPendingRequest(model, provider, connectionId, false);
+        trackPendingRequest(model, provider, pendingConnId, false, undefined, pendingRequestId);
         // FIX 5: tag this as a per-API-key token-limit breach (errorCode
         // TOKEN_LIMIT_EXCEEDED) so the combo loop can distinguish it from an
         // upstream 429 and NOT cool shared accounts / retry it transiently.
@@ -3593,7 +3602,7 @@ export async function handleChatCore({
   if (provider === "gemini") {
     try {
       if (isTpmExhausted(effectiveModel)) {
-        trackPendingRequest(model, provider, connectionId, false);
+        trackPendingRequest(model, provider, pendingConnId, false, undefined, pendingRequestId);
         return createErrorResult(
           HTTP_STATUS.RATE_LIMITED,
           `Gemini TPM rate limit reached for ${effectiveModel}. Please try again later.`,
@@ -3610,10 +3619,16 @@ export async function handleChatCore({
   let providerResponse;
   let providerUrl;
   let providerHeaders;
-  let finalBody, claudePromptCacheLogMeta = null;
+  let finalBody,
+    claudePromptCacheLogMeta = null;
   const refreshPipelineCredentials = createPipelineCredentialRefresher({
-    shouldIsolateProbeFailures, credentials, onCredentialsRefreshed, provider, log,
-    refreshCredentials: (currentCredentials) => executor.refreshCredentials(currentCredentials, log),
+    shouldIsolateProbeFailures,
+    credentials,
+    onCredentialsRefreshed,
+    provider,
+    log,
+    refreshCredentials: (currentCredentials) =>
+      executor.refreshCredentials(currentCredentials, log),
   });
   let pipelineRecovered = false;
   if (stream) {
@@ -3772,7 +3787,7 @@ export async function handleChatCore({
         // fail-open: saturation signal is best-effort
       }
     } catch (error) {
-      trackPendingRequest(model, provider, connectionId, false);
+      trackPendingRequest(model, provider, pendingConnId, false, undefined, pendingRequestId);
       if (isManagedLeaseFenceError(error)) return managedLeaseFenceErrorResult(error);
       if (isSemaphoreCapacityError(error)) {
         appendRequestLog({
@@ -3922,7 +3937,8 @@ export async function handleChatCore({
       (providerResponse.status === HTTP_STATUS.UNAUTHORIZED ||
         providerResponse.status === HTTP_STATUS.FORBIDDEN) &&
       !hadStreamOptions && // Skip refresh if failure may be from stream_options removal, not auth
-      !(await shouldIsolateProbeFailures())
+      !(await shouldIsolateProbeFailures()) &&
+      !(await shouldSkipCredentialRefresh(provider, providerResponse))
     ) {
       // Fix A: wrap refreshCredentials in runWithOnPersist so the persist callback
       // executes INSIDE the per-connection mutex held by getAccessToken. This makes
@@ -4077,7 +4093,7 @@ export async function handleChatCore({
 
     // Check provider response - return error info for fallback handling
     providerFailure: if (!providerResponse.ok) {
-      trackPendingRequest(model, provider, connectionId, false);
+      trackPendingRequest(model, provider, pendingConnId, false, undefined, pendingRequestId);
 
       let statusCode = providerResponse.status;
       let message = "";
@@ -4449,6 +4465,12 @@ export async function handleChatCore({
             console.warn(
               `[provider] Node ${errorConnectionId} project routing error (${statusCode}) — not banning`
             );
+            if (
+              errorConnectionId === "noauth" &&
+              provider.startsWith("opencode") &&
+              isOpencodeFreeTierRefusal(statusCode, message)
+            )
+              noteOpencodeFreeTierSkip(provider);
           } else if (errorType === PROVIDER_ERROR_TYPES.GEO_BLOCKED) {
             // Google regional-availability refusal (e.g. "User location is not
             // supported for the API use."). Account-independent and non-terminal:
@@ -4948,7 +4970,7 @@ export async function handleChatCore({
           cacheSource: "upstream",
         });
         persistFailureUsage(err.status, err.errorCode || `upstream_${err.status}`);
-        trackPendingRequest(model, provider, connectionId, false);
+        trackPendingRequest(model, provider, pendingConnId, false, undefined, pendingRequestId);
         return err;
       }
 
@@ -5071,11 +5093,12 @@ export async function handleChatCore({
           loop: loopApply.loop,
           model,
           provider,
-          connectionId,
+          connectionId: pendingConnId,
           providerRequest: loopApply.loop.finalProviderRequest || finalBody || translatedBody,
           persistFailureUsage,
           persistAttemptLogs,
           trackPendingRequest,
+          pendingRequestId,
         });
       }
       // `legResult` is declared as the full NonStreamingProviderLegResult union. The
@@ -5181,6 +5204,7 @@ export async function handleChatCore({
         isCombo,
         comboStrategy,
         endpoint: endpointPath,
+        cpaAuthIndex: readCpaAuthIndex(providerResponse),
       });
 
       // #12150 P1b surface 3 (fix round 1): a video-bridge-observed request's
@@ -5250,6 +5274,7 @@ export async function handleChatCore({
       const estimatedCost = costUsage
         ? await calculateCost(provider, model, costUsage, { serviceTier: effectiveServiceTier })
         : 0;
+      const chatCostCtx = buildCostCtx(provider, model, usage, effectiveServiceTier, traceId);
 
       if (postCallGuardrails.blocked) {
         const guardrailMessage = postCallGuardrails.message || "Response blocked by guardrail";
@@ -5270,9 +5295,12 @@ export async function handleChatCore({
           claudeCacheUsageMeta: cacheUsageLogMeta,
           cacheSource: "upstream",
         });
-        if (apiKeyInfo?.id && estimatedCost > 0) {
-          recordCost(apiKeyInfo.id, estimatedCost);
-        }
+        recordChatCallCost(
+          apiKeyInfo,
+          meteredBudgetCost(provider, estimatedCost),
+          chatCostCtx,
+          false
+        );
         log?.warn?.(
           "GUARDRAIL",
           `Response blocked by ${postCallGuardrails.guardrail || "guardrail"}: ${guardrailMessage}`
@@ -5340,7 +5368,7 @@ export async function handleChatCore({
           cacheSource: "upstream",
         });
         persistFailureUsage(HTTP_STATUS.BAD_GATEWAY, "malformed_translated_response");
-        trackPendingRequest(model, provider, pendingConnId, false);
+        trackPendingRequest(model, provider, pendingConnId, false, undefined, pendingRequestId);
         // Routing event (feedback foundation) — record the malformed outcome so
         // the quality tracker de-prioritizes this model over time.
         void emitRoutingEvent(
@@ -5378,6 +5406,7 @@ export async function handleChatCore({
         headers: clientRawRequest?.headers,
         translatedResponse,
         model,
+        provider,
         apiKeyId: apiKeyInfo?.id ?? undefined,
         usage,
         log,
@@ -5405,9 +5434,7 @@ export async function handleChatCore({
         claudeCacheUsageMeta: cacheUsageLogMeta,
         cacheSource: "upstream",
       });
-      if (apiKeyInfo?.id && estimatedCost > 0) {
-        recordCost(apiKeyInfo.id, estimatedCost);
-      }
+      recordChatCallCost(apiKeyInfo, meteredBudgetCost(provider, estimatedCost), chatCostCtx, true);
 
       // === Quota Share POST-hook (B/F7) — fire-and-forget, fail-open ===
       await scheduleQuotaShareConsumption({
@@ -5504,7 +5531,7 @@ export async function handleChatCore({
         response: buildNonStreamingJsonResponse(translatedResponse, responseHeaders),
       };
     } catch (error) {
-      trackPendingRequest(model, provider, connectionId, false);
+      trackPendingRequest(model, provider, pendingConnId, false, undefined, pendingRequestId);
       if (isManagedLeaseFenceError(error)) return managedLeaseFenceErrorResult(error);
       if (isSemaphoreCapacityError(error)) {
         appendRequestLog({
@@ -5558,18 +5585,39 @@ export async function handleChatCore({
       `adaptive readiness timeout=${streamReadinessPolicy.timeoutMs}ms base=${streamReadinessPolicy.baseTimeoutMs}ms reason=${streamReadinessPolicy.reasons.join(",")}`
     );
   }
-
-  const streamReadiness = await ensureStreamReadiness(providerResponse, {
+  let streamReadiness = await ensureStreamReadiness(providerResponse, {
     timeoutMs: streamReadinessPolicy.timeoutMs,
     maxTimeoutMs: streamReadinessPolicy.maxTimeoutMs,
     provider,
     model,
     log,
   });
+  ({
+    readiness: streamReadiness,
+    providerResponse,
+    finalBody,
+  } = await maybeFallbackAfterReadiness({
+    streamReadiness,
+    clientAborted: streamController.signal.aborted,
+    failedConnectionId: getCurrentConnectionId(),
+    failedBody: providerResponse,
+    currentModel,
+    streamReadinessPolicy,
+    provider,
+    model,
+    log,
+    reqLogger,
+    providerUrl,
+    providerHeaders,
+    finalBody,
+    translatedBody,
+    executeProviderRequest,
+    providerRequestCapture,
+  }));
   if (streamReadiness.ok === false) {
     const { response: failureResponse, reason } = streamReadiness;
     const { classificationReason, upstreamDiagnostic } = streamReadiness;
-    trackPendingRequest(model, provider, connectionId, false);
+    trackPendingRequest(model, provider, pendingConnId, false, undefined, pendingRequestId);
     appendRequestLog({
       model,
       provider,
@@ -5603,11 +5651,28 @@ export async function handleChatCore({
     };
   }
   providerResponse = streamReadiness.response;
+  providerResponse = await maybeRetryFlushEmptyTurn({
+    stream,
+    response: providerResponse,
+    targetFormat,
+    clientResponseFormat,
+    timeoutMs: streamReadinessPolicy.timeoutMs,
+    maxTimeoutMs: streamReadinessPolicy.maxTimeoutMs,
+    provider,
+    model,
+    currentModel,
+    signal: clientRawRequest?.signal,
+    log,
+    correlationId,
+    traceId,
+    getCredentials: () =>
+      getProviderCredentials(provider, null, null, currentModel).catch(() => null),
+    applyCredentials: (next) => Object.assign(credentials, next),
+    executeRetry: () => executeProviderRequest(currentModel, false),
+  });
 
   // Notify success - caller can clear error status if needed
-  if (onRequestSuccess) {
-    await onRequestSuccess();
-  }
+  if (onRequestSuccess) await onRequestSuccess();
 
   const responseHeaders = assembleStreamingResponseHeaders({
     providerHeaders: providerResponse.headers,
@@ -5646,6 +5711,7 @@ export async function handleChatCore({
     responseBody: streamResponseBody,
     providerPayload,
     clientPayload,
+    reasoningMeta: streamReasoningMeta,
     error: streamError,
     errorCode: streamErrorCode,
     ttft,
@@ -5755,6 +5821,7 @@ export async function handleChatCore({
       isCombo,
       comboStrategy,
       endpoint: endpointPath,
+      cpaAuthIndex: readCpaAuthIndex(providerResponse),
     });
 
     // Routing event (feedback foundation) — fire-and-forget, cheap, never blocks
@@ -5815,6 +5882,7 @@ export async function handleChatCore({
       claudeCacheMeta: claudePromptCacheLogMeta,
       claudeCacheUsageMeta: cacheUsageLogMeta,
       cacheSource: "upstream",
+      reasoningMeta: streamReasoningMeta ?? null,
     });
 
     recordStreamingCost({
@@ -5824,7 +5892,11 @@ export async function handleChatCore({
       streamUsage,
       serviceTier: effectiveServiceTier,
       calculateCost,
-      recordCost,
+      recordCost: (apiKeyId, cost, details) => {
+        const budgetCost = meteredBudgetCost(provider, cost);
+        if (budgetCost > 0) recordCost(apiKeyId, budgetCost, details);
+      },
+      ledger: buildStreamLedgerDetails(effectiveServiceTier, normalizedStreamStatus < 400, traceId),
     });
 
     // === Quota Share POST-hook streaming (B/F7) — fire-and-forget, fail-open ===
@@ -5868,6 +5940,7 @@ export async function handleChatCore({
       body: bodyForCacheWrite,
       headers: clientRawRequest?.headers,
       model,
+      provider,
       apiKeyId: apiKeyInfo?.id ?? undefined,
       streamUsage,
       log,

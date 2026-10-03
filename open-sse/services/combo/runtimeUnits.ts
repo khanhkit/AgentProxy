@@ -8,10 +8,15 @@
 import { errorResponse, errorResponseWithComboDiagnostics } from "../../utils/error.ts";
 import type { ComboDiagnostics } from "../../utils/error.ts";
 import { recordComboRequest } from "../comboMetrics.ts";
-import { resolveDelayMs } from "./comboPredicates.ts";
+import { resolveDelayMs, requestScopedReplayKey } from "./comboPredicates.ts";
+import { qualityValidationFailure } from "./executeTargetClassify.ts";
 import { isRuntimeUnitAtConcurrencyCap } from "./runtimeUnitCapacity.ts";
 import { isQuotaExhaustionResponse, withQuotaExhaustionClassification } from "./quotaExhaustion.ts";
-import { validateResponseQuality, releaseQualityClone } from "./validateQuality.ts";
+import {
+  validateResponseQuality,
+  releaseQualityClone,
+  releaseRejectedQualityResponse,
+} from "./validateQuality.ts";
 import type { ResponseValidationConfig } from "./responseValidation.ts";
 import type {
   ComboCollectionLike,
@@ -82,7 +87,7 @@ async function executeModelUnit(args: {
 }): Promise<Response> {
   if (args.isModelAvailable) {
     const available = await args.isModelAvailable(args.unit.modelStr, args.unit);
-    if (!available) return errorResponse(503, `Model ${args.unit.modelStr} is unavailable`);
+    if (available !== true) return errorResponse(503, `Model ${args.unit.modelStr} is unavailable`);
   }
   return args.handleSingleModel(args.body, args.unit.modelStr, {
     ...args.unit,
@@ -194,6 +199,9 @@ export async function executeRuntimeUnitCombo(args: {
   const maxRetries = Number(args.config.maxRetries ?? 1);
   const retryDelayMs = resolveDelayMs(args.config.retryDelayMs, 2000);
   const orderedUnits = orderUnitsForStrategy(args.strategy, args.units);
+  // A request-scoped refusal repeats identically for every account of the same
+  // model, so later units of that model are skipped rather than replayed.
+  const rejectedModelKeys = new Set<string>();
   const clientRequestedStream = args.body?.stream === true;
   const startTime = Date.now();
   const effectiveStrategy = args.effectiveComboStrategy ?? args.strategy;
@@ -232,6 +240,14 @@ export async function executeRuntimeUnitCombo(args: {
   for (const unit of orderedUnits) {
     const protectedPriorityUnit =
       effectiveStrategy === "priority" && unit.fallbackOnlyOnQuotaExhaustion === true;
+    if (unit.kind === "model" && rejectedModelKeys.has(requestScopedReplayKey(unit.modelStr))) {
+      args.log.info(
+        "COMBO",
+        `Skipping model ${unit.modelStr} — same request already refused as request-scoped`
+      );
+      fallbackCount += 1;
+      continue;
+    }
     if (
       await isRuntimeUnitAtConcurrencyCap(
         unit,
@@ -278,6 +294,7 @@ export async function executeRuntimeUnitCombo(args: {
         "COMBO",
         `Trying ${unit.kind} ${unitDisplayName(unit)}${retry > 0 ? ` (retry ${retry})` : ""}`
       );
+      let qualityRetryable: boolean | null = null;
       const response = await executeRuntimeUnit({
         body: args.body,
         unit,
@@ -312,7 +329,8 @@ export async function executeRuntimeUnitCombo(args: {
           unitClone,
           clientRequestedStream,
           args.log,
-          args.config.responseValidation as ResponseValidationConfig | undefined
+          args.config.responseValidation as ResponseValidationConfig | undefined,
+          args.signal
         );
         releaseQualityClone(unitClone, response, quality);
         if (quality.valid) {
@@ -325,7 +343,11 @@ export async function executeRuntimeUnitCombo(args: {
           });
           return { response, unit };
         }
-        lastResponse = errorResponse(502, "Upstream response failed quality validation");
+        releaseRejectedQualityResponse(unitClone, response);
+        qualityRetryable = quality.upstreamFailure?.retryable ?? false;
+        if (quality.upstreamFailure?.requestScoped)
+          rejectedModelKeys.add(requestScopedReplayKey(unit.modelStr));
+        lastResponse = qualityValidationFailure(quality).response;
       }
       if (lastResponse) {
         const quotaExhausted = await observeFailure(lastResponse, unit);
@@ -339,7 +361,12 @@ export async function executeRuntimeUnitCombo(args: {
           targetFailureTrust.set(unit.executionKey, trust);
         }
       }
-      if (![408, 429, 500, 502, 503, 504].includes(response.status)) break;
+      if (
+        ![408, 429, 500, 502, 503, 504].includes(lastResponse.status) ||
+        qualityRetryable === false
+      ) {
+        break;
+      }
     }
     const protectedTargetTrust = targetFailureTrust.get(unit.executionKey);
     if (

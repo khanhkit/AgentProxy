@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { isValidationFailure, validateBody } from "@/shared/validation/helpers";
 import { getCachedProviderConnectionById } from "@/lib/db/readCache";
-import { updateProviderConnection } from "@/lib/db/providers";
+import { getProviderConnectionById, updateProviderConnection } from "@/lib/db/providers";
 import { isCloudEnabled, resolveProxyForConnection } from "@/lib/db/settings";
 import { getConsistentMachineId } from "@/shared/utils/machineId";
 import { syncToCloud } from "@/lib/cloudSync";
@@ -49,6 +49,8 @@ export { classifyFailure, projectProviderRuntimeForPublicResponse } from "./publ
 const OAUTH_TEST_TIMEOUT_MS = 30_000;
 
 import { CLI_RUNTIME_PROVIDER_MAP } from "./cliRuntimeProviderMap";
+import { isOperatorDisabled } from "@/lib/providers/operatorDisable";
+import { getRequestPeerLocality } from "@/shared/utils/apiAuth";
 
 /** POST body is optional; when present, only known fields are validated. */
 const providerConnectionTestBodySchema = z.object({
@@ -68,7 +70,17 @@ function hasQoderToken(connection: any): boolean {
   return false;
 }
 
-async function getProviderRuntimeStatus(connection: any) {
+// GHSA-jmq6-8j86-8xqj: getCliRuntimeStatus() spawns on the host (LOCAL_ONLY capability),
+// but these routes stay remote-reachable — only loopback/LAN callers and the scheduler probe.
+export type ConnectionTestOptions = { allowLocalRuntimeProbe?: boolean };
+
+export async function getProviderRuntimeStatus(
+  connection: any,
+  {
+    allowLocalRuntimeProbe = true,
+    probe = getCliRuntimeStatus,
+  }: ConnectionTestOptions & { probe?: typeof getCliRuntimeStatus } = {}
+) {
   const provider = typeof connection?.provider === "string" ? connection.provider : "";
   let toolId = CLI_RUNTIME_PROVIDER_MAP[provider];
 
@@ -95,9 +107,10 @@ async function getProviderRuntimeStatus(connection: any) {
     toolId = null;
   }
   if (!toolId) return null;
+  if (!allowLocalRuntimeProbe) return null;
 
   try {
-    const runtime = await getCliRuntimeStatus(toolId);
+    const runtime = await probe(toolId);
     if (runtime.installed && runtime.runnable) {
       return runtime;
     }
@@ -796,6 +809,18 @@ export async function testOAuthConnection(
       connection.provider === "agy"
         ? await res.text().catch(() => "")
         : "";
+    let upstreamDetail = "";
+    if ((connection.provider === "antigravity" || connection.provider === "agy") && bodyText) {
+      try {
+        const parsed = JSON.parse(bodyText) as { error?: { message?: unknown } };
+        if (typeof parsed.error?.message === "string" && parsed.error.message.trim()) {
+          upstreamDetail = `: ${toSafeMessage(parsed.error.message).slice(0, 500)}`;
+        }
+      } catch {
+        // Ignore non-JSON provider bodies; the status remains actionable on its own.
+      }
+    }
+
     const error = isGeoBlockedError(bodyText)
       ? "Egress location blocked by Google (User location is not supported). The Cloud Code API is not offered from this server's proxy exit region — route antigravity/agy through a proxy in a supported region (e.g. US/EU) or use a different provider. This is NOT an account problem."
       : isAccountDeactivatedMessage(bodyText)
@@ -804,7 +829,7 @@ export async function testOAuthConnection(
           ? "Token invalid or revoked"
           : res.status === 403
             ? "Access denied"
-            : `API returned ${res.status}`;
+            : `API returned ${res.status}${upstreamDetail}`;
 
     return {
       valid: false,
@@ -876,7 +901,11 @@ async function testApiKeyConnection(connection: any) {
  * @param {string} validationModelId Optional custom model ID to test connection with
  * @returns {Promise<object>} Test result (same shape as the JSON response)
  */
-export async function testSingleConnection(connectionId: string, validationModelId?: string) {
+export async function testSingleConnection(
+  connectionId: string,
+  validationModelId?: string,
+  options: ConnectionTestOptions = {}
+) {
   const connection = await getCachedProviderConnectionById(connectionId);
 
   if (!connection) {
@@ -922,7 +951,7 @@ export async function testSingleConnection(connectionId: string, validationModel
 
   let result;
   const startTime = Date.now();
-  const runtime = await getProviderRuntimeStatus(connection);
+  const runtime = await getProviderRuntimeStatus(connection, options);
 
   // Codex app-server connections carry no validatable OpenAI token (the codex
   // app-server process self-manages its own OAuth). Probe the app-server's
@@ -980,16 +1009,16 @@ export async function testSingleConnection(connectionId: string, validationModel
     lockModelIfPerModelQuota(provider, connectionId, probedModelId, "credits", 60 * 60 * 1000);
   }
 
-  // Unsupported validation capability is neutral: the probe established that
-  // this provider cannot be verified through the generic test surface, not
-  // that its credential is invalid. Do not mutate persisted credential health
-  // (testStatus/lastError/etc.) — but DO activate it if it isn't already: a
-  // connection that can never be health-checked would otherwise stay hidden
-  // from /v1/models forever under the "only advertise tested connections"
-  // default (isActive starts false on creation — see POST /api/providers),
-  // silently regressing every provider without a test surface.
+  // Re-read the row after the probe: an operator may have switched it off while
+  // network validation was in flight, and the stale pre-probe snapshot must not
+  // turn it back on.
+  const latest = ((await getProviderConnectionById(connectionId)) ?? connection) as typeof connection;
+  const operatorDisabled = isOperatorDisabled(latest);
+
+  // Unsupported validation capability is neutral: activate only when the latest
+  // row is not explicitly operator-disabled.
   if (result.skipped === true) {
-    if (connection.isActive !== true) {
+    if (latest.isActive !== true && !operatorDisabled) {
       try {
         await updateProviderConnection(connectionId, { isActive: true });
       } catch (activateError) {
@@ -1050,7 +1079,7 @@ export async function testSingleConnection(connectionId: string, validationModel
     // failure on an already-active, already-working connection must not take
     // it out of rotation — that's what the cooldown/rateLimitedUntil below is
     // for), so this never deactivates anything.
-    ...(result.valid ? { isActive: true } : {}),
+    ...(result.valid && !operatorDisabled ? { isActive: true } : {}),
     lastError: clearErrorState ? null : result.valid ? connection.lastError : result.error,
     lastErrorAt: clearErrorState ? null : result.valid ? connection.lastErrorAt : now,
     lastTested: now,
@@ -1079,7 +1108,7 @@ export async function testSingleConnection(connectionId: string, validationModel
   }
 
   if (result.valid && (connection.apiKey || connection.accessToken)) {
-    const recovered = recoverKeyHealth(connectionId, "primary", connection.providerSpecificData);
+    const recovered = recoverKeyHealth(connectionId, "primary", latest.providerSpecificData);
     if (recovered) updateData.providerSpecificData = recovered;
   }
 
@@ -1167,7 +1196,9 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     }
     const { validationModelId } = validation.data;
 
-    const data = await testSingleConnection(id, validationModelId);
+    const data = await testSingleConnection(id, validationModelId, {
+      allowLocalRuntimeProbe: getRequestPeerLocality(request) !== "remote",
+    });
 
     if (data.error === "Connection not found") {
       return NextResponse.json({ error: "Connection not found" }, { status: 404 });

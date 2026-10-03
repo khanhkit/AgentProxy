@@ -113,6 +113,37 @@ function findSuffixBlocks(
  * Deduplicates repeated lines within a single message (intra-message dedup).
  * Replaces repeated suffix blocks with markers.
  */
+function countLiteralOccurrences(text: string, needle: string): number {
+  if (!needle) return 0;
+  let count = 0;
+  let offset = 0;
+  while (true) {
+    const idx = text.indexOf(needle, offset);
+    if (idx === -1) return count;
+    count++;
+    offset = idx + needle.length;
+  }
+}
+
+function replaceLiteralOccurrencesAfterFirst(text: string, needle: string, replacement: string): string {
+  if (!needle) return text;
+  const first = text.indexOf(needle);
+  if (first === -1) return text;
+
+  let result = text.slice(0, first + needle.length);
+  let offset = first + needle.length;
+
+  while (true) {
+    const idx = text.indexOf(needle, offset);
+    if (idx === -1) {
+      result += text.slice(offset);
+      return result;
+    }
+    result += text.slice(offset, idx) + replacement;
+    offset = idx + needle.length;
+  }
+}
+
 function dedupeWithinMessage(
   text: string,
   minBlockChars: number
@@ -138,18 +169,17 @@ function dedupeWithinMessage(
   let changed = false;
 
   for (const { block } of sortedBlocks) {
-    // Only dedup blocks that appear 2+ times in the text.
-    const occurrences = (result.match(new RegExp(block.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "g")) || []).length;
+    // Only dedup blocks that appear 2+ times in the text. Use literal indexOf
+    // scanning instead of compiling the whole block into a RegExp: remembered
+    // JSON/tool blobs can be hundreds of KB and V8 rejects such regex sources
+    // with "Regular expression too large".
+    const occurrences = countLiteralOccurrences(result, block);
     if (occurrences < 2) continue;
 
     const sha = hashBlock(block);
     const marker = `[dedup:ref sha=${sha}]`;
     // Replace ALL occurrences except the first (keep the original once).
-    let count = 0;
-    result = result.replace(new RegExp(block.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "g"), () => {
-      count++;
-      return count === 1 ? block : marker;
-    });
+    result = replaceLiteralOccurrencesAfterFirst(result, block, marker);
     changed = true;
   }
 
@@ -161,8 +191,9 @@ function dedupeWithinMessage(
  * Returns the replaced texts for duplicate messages, a reverse map, and a count.
  */
 function dedupMessageTexts(
-  msgTexts: Array<{ msgIdx: number; text: string }>,
-  minBlockChars: number
+  msgTexts: Array<{ msgIdx: number; messageIndex: number; text: string }>,
+  minBlockChars: number,
+  currentTurnStart: number
 ): {
   deduped: Map<number, string>;
   dedupCount: number;
@@ -198,7 +229,9 @@ function dedupMessageTexts(
   }
 
   // Pass 2: for each message, find blocks that were FIRST seen in an earlier message.
-  for (const { msgIdx, text } of msgTexts) {
+  // The current turn is never rewritten.
+  for (const { msgIdx, messageIndex, text } of msgTexts) {
+    if (messageIndex >= currentTurnStart) continue;
     const lines = text.split("\n");
     const blocks = findSuffixBlocks(lines, minBlockChars);
 
@@ -264,19 +297,23 @@ function processMessages(
 ): { messages: MessageLike[]; dedupCount: number } {
   // Collect (msgIdx, text) for non-system string-content messages.
   // For multipart, index each text part separately.
-  const msgTexts: Array<{ msgIdx: number; text: string }> = [];
+  const msgTexts: Array<{ msgIdx: number; messageIndex: number; text: string }> = [];
 
   for (let i = 0; i < messages.length; i++) {
     const msg = messages[i];
     if (msg.role === "system") continue;
     if (typeof msg.content === "string") {
-      msgTexts.push({ msgIdx: i, text: msg.content });
+      msgTexts.push({ msgIdx: i, messageIndex: i, text: msg.content });
     } else if (Array.isArray(msg.content)) {
       for (let p = 0; p < msg.content.length; p++) {
         const part = msg.content[p];
         if (part["type"] === "text" && typeof part["text"] === "string") {
           // Composite key: i * 100000 + p + 1 (safe for reasonable message counts)
-          msgTexts.push({ msgIdx: i * 100000 + p + 1, text: part["text"] as string });
+          msgTexts.push({
+            msgIdx: i * 100000 + p + 1,
+            messageIndex: i,
+            text: part["text"] as string,
+          });
         }
       }
     }
@@ -286,7 +323,14 @@ function processMessages(
     return { messages, dedupCount: 0 };
   }
 
-  const { deduped, dedupCount } = dedupMessageTexts(msgTexts, minBlockChars);
+  let currentTurnStart = 0;
+  for (let i = messages.length - 1; i >= 0; i--) {
+    if (messages[i].role === "assistant") {
+      currentTurnStart = i + 1;
+      break;
+    }
+  }
+  const { deduped, dedupCount } = dedupMessageTexts(msgTexts, minBlockChars, currentTurnStart);
 
   if (dedupCount === 0) {
     return { messages, dedupCount: 0 };

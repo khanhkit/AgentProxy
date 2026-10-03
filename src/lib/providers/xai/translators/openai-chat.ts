@@ -38,6 +38,7 @@ interface OpenAiMessage {
   content?: MessageContent;
   tool_calls?: OpenAiToolCall[];
   tool_call_id?: string;
+  function_call?: { name?: string; arguments?: string };
 }
 
 interface OpenAiChatRequest {
@@ -213,6 +214,18 @@ export function chatRequestToXaiResponses(req: OpenAiChatRequest): XaiResponsesR
       }
       continue;
     }
+    if (m.role === "assistant" && m.function_call?.name) {
+      if (m.content) {
+        input.push({ role: "assistant", content: messageContentToXaiBlocks(m.content) });
+      }
+      input.push({
+        type: "function_call",
+        call_id: genId("call"),
+        name: m.function_call.name,
+        arguments: m.function_call.arguments ?? "",
+      });
+      continue;
+    }
     input.push({ role: m.role ?? "user", content: messageContentToXaiBlocks(m.content ?? "") });
   }
 
@@ -303,7 +316,9 @@ export function xaiCompletedToChatJson(
     out.usage = {
       prompt_tokens: u.input_tokens ?? u.prompt_tokens ?? 0,
       completion_tokens: u.output_tokens ?? u.completion_tokens ?? 0,
-      total_tokens: u.total_tokens ?? (u.input_tokens ?? 0) + (u.output_tokens ?? 0),
+      total_tokens:
+        u.total_tokens ??
+        (u.input_tokens ?? u.prompt_tokens ?? 0) + (u.output_tokens ?? u.completion_tokens ?? 0),
     };
   }
   return out;

@@ -599,12 +599,13 @@ export class GitlabExecutor extends BaseExecutor {
         };
       }
 
-      if (response.status === 403 && !isGitLabDirectAccessDisabled(response.status, bodyText)) {
-        return {
-          target: null,
-          credentials,
-          errorResponse: toOpenAIError(403, "GitLab Duo direct access scope is unavailable"),
-        };
+      if (response.status === 403 && input.log) {
+        input.log.warn(
+          "GITLAB-DUO",
+          isGitLabDirectAccessDisabled(response.status, bodyText)
+            ? "direct_access exchange rejected (403, direct connections disabled); falling back to public completions endpoint"
+            : `direct_access exchange rejected (403); falling back to public completions endpoint. Body: ${bodyText.slice(0, 500)}`
+        );
       }
 
       return {

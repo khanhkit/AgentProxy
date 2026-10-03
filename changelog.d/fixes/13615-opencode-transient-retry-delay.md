@@ -1,0 +1,1 @@
+- **fix(opencode):** add opt-in `OPENCODE_TRANSIENT_FAILOVER_BACKOFF` (default off): after two consecutive transient failures, pause failover with bounded exponential backoff, release the failed body before waiting, and stop dispatching if the client disconnects during the pause; flag-off behavior remains immediate. (upstream PR #13615)

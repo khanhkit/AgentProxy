@@ -24,12 +24,21 @@ let healthPayloadCache: { payload: unknown; expiresAt: number } | null = null;
 let healthPayloadRefreshInFlight = false;
 let healthPayloadCacheGeneration = 0;
 const HEALTH_PAYLOAD_TTL_MS = 1000;
+let deepHealthVerdictCache: { verdict: unknown; expiresAt: number } | null = null;
+let deepHealthRefreshInFlight = false;
 
-/** Test-only: drop the in-process health payload cache. */
+/** Test-only: drop the in-process health payload and deep-health caches. */
 export function __test_resetMonitoringHealthPayloadCache(): void {
   healthPayloadCache = null;
   healthPayloadRefreshInFlight = false;
   healthPayloadCacheGeneration += 1;
+  deepHealthVerdictCache = null;
+  deepHealthRefreshInFlight = false;
+}
+
+/** Test-only: seed the deep-health verdict cache to prove auth/TTL passthrough. */
+export function __test_seedDeepHealthVerdict(verdict: unknown, ttlMs = 30_000): void {
+  deepHealthVerdictCache = { verdict, expiresAt: Date.now() + ttlMs };
 }
 
 // GHSA-mvf8-qc78-5mxm: the full health payload fingerprints the host (version,
@@ -65,19 +74,73 @@ function scheduleHealthPayloadRefresh(): void {
   });
 }
 
+function isDeepHealthOptedIn(request: Request): boolean {
+  if ((process.env.DEEP_HEALTH_CHECK_ENABLED ?? "").trim() !== "1") return false;
+  return new URL(request.url).searchParams.get("deep") === "1";
+}
+
+function resolveDeepHealthTarget(): { url: string; token?: string } | null {
+  const rawUrl = (process.env.DEEP_HEALTH_CHECK_URL ?? "").trim();
+  if (!rawUrl) return null;
+  try {
+    const parsed = new URL(rawUrl);
+    if (parsed.protocol !== "http:" && parsed.protocol !== "https:") return null;
+    if (parsed.username || parsed.password) return null;
+    const token = (process.env.DEEP_HEALTH_CHECK_TOKEN ?? "").trim();
+    return { url: parsed.toString(), ...(token ? { token } : {}) };
+  } catch {
+    return null;
+  }
+}
+
+function withDeepHealth(payload: unknown, wantDeep: boolean): unknown {
+  if (!wantDeep || !deepHealthVerdictCache) return payload;
+  return { ...(payload as Record<string, unknown>), deepHealth: deepHealthVerdictCache.verdict };
+}
+
+function refreshDeepHealthVerdict(): void {
+  if (deepHealthRefreshInFlight) return;
+  if (deepHealthVerdictCache && Date.now() <= deepHealthVerdictCache.expiresAt) return;
+  const target = resolveDeepHealthTarget();
+  if (!target) return;
+
+  deepHealthRefreshInFlight = true;
+  setImmediate(() => {
+    void (async () => {
+      try {
+        const { probeDeepHealth, DEEP_HEALTH_PROBE_TIMEOUT_MS, DEEP_HEALTH_VERDICT_TTL_MS } =
+          await import("@/lib/monitoring/observability");
+        const verdict = await probeDeepHealth(target.url, {
+          timeoutMs: DEEP_HEALTH_PROBE_TIMEOUT_MS,
+          token: target.token,
+        });
+        deepHealthVerdictCache = {
+          verdict,
+          expiresAt: Date.now() + DEEP_HEALTH_VERDICT_TTL_MS,
+        };
+      } finally {
+        deepHealthRefreshInFlight = false;
+      }
+    })();
+  });
+}
+
 export async function GET(request: Request) {
   const fullView = (await requireManagementAuth(request, { alwaysRequireAuth: true })) === null;
+  const wantDeep = fullView && isDeepHealthOptedIn(request);
+  if (wantDeep) refreshDeepHealthVerdict();
+
   const cachedNow = Date.now();
   if (healthPayloadCache) {
     if (cachedNow > healthPayloadCache.expiresAt) {
       scheduleHealthPayloadRefresh();
     }
-    return serveHealthPayload(fullView, healthPayloadCache.payload);
+    return serveHealthPayload(fullView, withDeepHealth(healthPayloadCache.payload, wantDeep));
   }
 
   try {
     const payload = await rebuildHealthPayload();
-    return serveHealthPayload(fullView, payload);
+    return serveHealthPayload(fullView, withDeepHealth(payload, wantDeep));
   } catch (error) {
     console.error("[API] GET /api/monitoring/health error:", error);
     return NextResponse.json({

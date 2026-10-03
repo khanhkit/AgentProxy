@@ -3,6 +3,12 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import {
+  toPlainHeaders,
+  type FetchCall,
+  type SeedApiKeyOptions,
+  type SeedConnectionOverrides,
+} from "./_chatPipelineTypes.ts";
 
 const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "agentproxy-chat-pipeline-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
@@ -16,6 +22,7 @@ const settingsDb = await import("../../src/lib/db/settings.ts");
 const apiKeysDb = await import("../../src/lib/db/apiKeys.ts");
 const readCacheDb = await import("../../src/lib/db/readCache.ts");
 const { getLatestCallLog, getResponsesCallLogs } = await import("./_chatPipelineCallLogs.ts");
+const { waitForCallLogSaves } = await import("../../src/lib/usage/callLogs.ts");
 const { invalidateMemorySettingsCache } = await import("../../src/lib/memory/settings.ts");
 const { skillRegistry } = await import("../../src/lib/skills/registry.ts");
 const { skillExecutor } = await import("../../src/lib/skills/executor.ts");
@@ -32,46 +39,6 @@ const { clearProviderFailure } = await import("../../open-sse/services/accountFa
 
 const originalFetch = globalThis.fetch;
 const originalRetryDelayMs = BaseExecutor.RETRY_CONFIG.delayMs;
-
-type SeedConnectionOverrides = {
-  name?: string;
-  authType?: string;
-  apiKey?: string;
-  accessToken?: string;
-  refreshToken?: string;
-  tokenType?: string;
-  expiresAt?: string;
-  tokenExpiresAt?: string;
-  isActive?: boolean;
-  testStatus?: string;
-  priority?: number;
-  rateLimitedUntil?: string | number | null;
-  providerSpecificData?: Record<string, unknown>;
-};
-
-type FetchCall = {
-  url: string;
-  method?: string;
-  headers: Record<string, string>;
-  body: Record<string, any> | null;
-};
-
-type SeedApiKeyOptions = {
-  name?: string;
-  noLog?: boolean;
-  allowedConnections?: string[];
-  allowedCombos?: string[];
-  allowedModels?: string[];
-};
-
-function toPlainHeaders(headers: HeadersInit | undefined | null) {
-  if (!headers) return {};
-  if (headers instanceof Headers) return Object.fromEntries(headers.entries());
-  if (Array.isArray(headers)) return Object.fromEntries(headers);
-  return Object.fromEntries(
-    Object.entries(headers).map(([key, value]) => [key, value == null ? "" : String(value)])
-  );
-}
 
 function buildRequest({
   url = "http://localhost/v1/chat/completions",
@@ -372,6 +339,15 @@ async function resetStorage() {
   readCacheDb.invalidateDbCache();
   invalidateMemorySettingsCache();
   await new Promise((resolve) => setTimeout(resolve, 20));
+  // Call-log persistence is fire-and-forget (persistAttemptLogs → saveCallLog with
+  // a .catch(() => {})), and the first cold artifact-worker spawn can take ~2.4s, so
+  // the previous test's saves may still be in flight here. Draining before the DB
+  // reset keeps those rows in the DB being torn down instead of letting them land
+  // in the next test's fresh database (#12780).
+  const drained = await waitForCallLogSaves(10_000);
+  if (!drained) {
+    console.warn("[chat-pipeline] call-log saves did not drain within 10s; resetting anyway");
+  }
   core.resetDbInstance();
   fs.rmSync(TEST_DATA_DIR, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
   fs.mkdirSync(TEST_DATA_DIR, { recursive: true });
@@ -575,7 +551,13 @@ test("chat pipeline persists Codex responses cache and reasoning tokens to call 
   );
 
   const json = (await response.json()) as any;
-  const callLog = await waitFor(() => getLatestCallLog());
+  // Wait specifically for THIS request's Codex /v1/responses row instead of taking
+  // whatever the latest row happens to be: an unfiltered read can surface a row from
+  // a previous test that landed late in this database (#12780).
+  const callLog = await waitFor(async () => {
+    const rows = await getResponsesCallLogs();
+    return rows.find((row) => row.provider === "codex") ?? null;
+  });
 
   assert.equal(response.status, 200);
   assert.equal(fetchCalls.length, 1);

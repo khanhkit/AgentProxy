@@ -699,3 +699,82 @@ test("401 carrying a real fingerprint signal still marks auth-level (exemption i
   assert.equal(exhausted, true, "a 401 with a fingerprint-looking body must still mark auth-level");
   assert.ok(s.exhaustedConnections.has("test-dedup-provider:conn-1"));
 });
+
+test("AP-ISS-0124 403 on per-model-quota provider keeps sibling models eligible", () => {
+  const s = sets();
+  const exhausted = applyComboTargetExhaustion(
+    target({ provider: "gemini", connectionId: "gemini-conn-1" }),
+    {
+      ...baseOpts,
+      errorText: "User does not have permission to access model gemini-1.5-pro",
+      rawModel: "gemini-1.5-pro",
+      result: { status: 403 },
+      fallbackResult: { creditsExhausted: false },
+      sets: s,
+    }
+  );
+
+  assert.equal(exhausted, false);
+  assert.equal(s.exhaustedConnections.size, 0);
+  assert.equal(s.exhaustedProviders.size, 0);
+});
+
+test("AP-ISS-0124 Vertex model-scoped 403 keeps the connection eligible", () => {
+  const s = sets();
+  const errorText = JSON.stringify({
+    error: {
+      code: 403,
+      details: [
+        {
+          reason: "IAM_PERMISSION_DENIED",
+          metadata: {
+            resource:
+              "projects/test-p/locations/us-central1/publishers/google/models/gemini-ultra",
+          },
+        },
+      ],
+    },
+  });
+
+  const exhausted = applyComboTargetExhaustion(
+    target({ provider: "vertex", connectionId: "vertex-conn-1" }),
+    {
+      ...baseOpts,
+      errorText,
+      rawModel: "gemini-ultra",
+      result: { status: 403 },
+      fallbackResult: { creditsExhausted: false },
+      sets: s,
+    }
+  );
+
+  assert.equal(exhausted, false);
+  assert.equal(s.exhaustedConnections.size, 0);
+  assert.equal(s.exhaustedProviders.size, 0);
+});
+
+test("AP-ISS-0124 Vertex connection-wide 403 still exhausts the connection", () => {
+  const s = sets();
+  const errorText = JSON.stringify({
+    error: {
+      code: 403,
+      details: [{ reason: "SERVICE_DISABLED" }],
+    },
+  });
+
+  const exhausted = applyComboTargetExhaustion(
+    target({ provider: "vertex", connectionId: "vertex-conn-1" }),
+    {
+      ...baseOpts,
+      errorText,
+      rawModel: "gemini-ultra",
+      result: { status: 403 },
+      fallbackResult: { creditsExhausted: false },
+      sets: s,
+    }
+  );
+
+  assert.equal(exhausted, true);
+  assert.ok(s.exhaustedConnections.has("vertex:vertex-conn-1"));
+  assert.equal(s.exhaustedProviders.size, 0);
+});

@@ -25,7 +25,7 @@
 
 import fs from "node:fs";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { execSync } from "node:child_process";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -104,6 +104,8 @@ const IGNORE_FROM_CODE = new Set([
   // CI providers (set by the runner).
   "GITHUB_BASE_REF",
   "GITHUB_BASE_SHA",
+  // check-ai-attribution.mjs reads the PR of the Actions event payload when run without args (#14436)
+  "GITHUB_EVENT_PATH",
   // CodeQL ratchet execution context injected by the CodeQL workflow. These
   // values identify the exact analysis/PR being checked; they are CI-only
   // verification signals, not AgentProxy runtime configuration.
@@ -217,6 +219,10 @@ const IGNORE_FROM_CODE = new Set([
   // Listener-owned self-fetch transport signal. The HTTP/HTTPS launchers set
   // this before application imports; it is not user-configurable product env.
   "AGENTPROXY_INTERNAL_SCHEME",
+  // Runner-owned bind-host signal. scripts/dev/run-next.mjs publishes the
+  // interface it actually binds so the in-process startup guard can name it
+  // (#13695); operators configure HOST / HOSTNAME, never this.
+  "AGENTPROXY_BOUND_HOST",
   // Source typo / placeholder.
   "OMNIROUT",
   // Static config alias path (the canonical var is AGENTPROXY_PAYLOAD_RULES_PATH).
@@ -237,6 +243,9 @@ const IGNORE_FROM_CODE = new Set([
   // Test-only override: points setup-open-code.mjs at a fixture plugin dir without
   // requiring the real bundled plugin to be built.
   "AGENTPROXY_OPENCODE_PLUGIN_DIR",
+  // Test-only escape hatch: makes getMachineIdRaw() skip the macOS ioreg strategy so
+  // machineId tests reach the fallback strategies on darwin (#13539). Not user config.
+  "DISABLE_IOREG_STRATEGY",
 ]);
 
 // Vars documented in ENVIRONMENT.md but intentionally absent from .env.example.
@@ -448,6 +457,23 @@ function main() {
   process.exit(1);
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+/**
+ * True when this module was launched directly as the Node entry point.
+ *
+ * `process.argv[1]` is an absolute filesystem path while `import.meta.url` is a
+ * file URL, so the two only match when encoded through `pathToFileURL`. A raw
+ * `file://${argv[1]}` comparison silently never matches when the checkout path
+ * contains characters the URL form percent-encodes (e.g. a space).
+ */
+export function isMainEntry(argv1, moduleUrl) {
+  if (!argv1) return false;
+  try {
+    return pathToFileURL(argv1).href === moduleUrl;
+  } catch {
+    return false;
+  }
+}
+
+if (isMainEntry(process.argv[1], import.meta.url)) {
   main();
 }

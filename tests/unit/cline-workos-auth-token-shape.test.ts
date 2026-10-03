@@ -138,3 +138,40 @@ test("DefaultExecutor labels internal health checks separately from user traffic
   applyClineProtocolHeaders(headers, { taskId: headers["X-Task-ID"] });
   assert.equal(headers["X-CLIENT-TYPE"], "agentproxy-internal-health-check");
 });
+
+test("DefaultExecutor clinepass dual-auth uses matching headers and observability", () => {
+  const executor = new DefaultExecutor("clinepass");
+  const originalDebug = console.debug;
+  const logs: string[] = [];
+  console.debug = (...args: unknown[]) => logs.push(args.map(String).join(" "));
+  try {
+    const apiKeyHeaders = executor.buildHeaders(
+      { apiKey: "sk-cline-123", authType: "apikey" },
+      true,
+      {}
+    );
+    const oauthHeaders = executor.buildHeaders(
+      { accessToken: "workos_tok_456", authType: "oauth" },
+      true,
+      {}
+    );
+
+    assert.equal(apiKeyHeaders.Authorization, "Bearer sk-cline-123");
+    assert.equal(oauthHeaders.Authorization, "Bearer workos:workos_tok_456");
+    assert.ok(logs.some((line) => line.includes("direct API key")));
+    assert.ok(logs.some((line) => line.includes("OAuth token")));
+
+    assert.equal(
+      apiKeyHeaders.Authorization,
+      buildClinepassHeaders({ apiKey: "sk-cline-123", authType: "apikey" }, "sk-cline-123")
+        .Authorization
+    );
+    assert.equal(
+      oauthHeaders.Authorization,
+      buildClinepassHeaders({ accessToken: "workos_tok_456", authType: "oauth" }, undefined)
+        .Authorization
+    );
+  } finally {
+    console.debug = originalDebug;
+  }
+});

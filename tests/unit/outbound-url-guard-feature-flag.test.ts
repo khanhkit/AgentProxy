@@ -69,6 +69,16 @@ test("arePrivateProviderUrlsAllowed honors env = 'true' when DB has no override"
   });
 });
 
+test("dashboard OFF beats an env opt-in for private provider URLs", async () => {
+  await withEnv("true", async () => {
+    await withDbOverride("false", async () => {
+      const { arePrivateProviderUrlsAllowed } =
+        await import("../../src/shared/network/outboundUrlGuardPolicy.ts");
+      assert.equal(arePrivateProviderUrlsAllowed(), false);
+    });
+  });
+});
+
 test("arePrivateProviderUrlsAllowed default (no env, no DB) returns false", async () => {
   await withEnv(undefined, async () => {
     await withDbOverride(undefined, async () => {

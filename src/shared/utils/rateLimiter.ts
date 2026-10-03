@@ -230,10 +230,7 @@ export async function checkRateLimit(
   if (!rules || rules.length === 0) return { allowed: true };
 
   // ── In-memory mock for unit tests ──
-  const isTestMode =
-    explicitTestMode ||
-    process.env.NODE_ENV === "test" ||
-    process.env.DISABLE_SQLITE_AUTO_BACKUP === "true";
+  const isTestMode = explicitTestMode || process.env.NODE_ENV === "test";
 
   if (isTestMode) {
     return checkInMemoryRateLimit(TEST_MEMORY_STORE, keyId, rules);

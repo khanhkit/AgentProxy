@@ -9,7 +9,7 @@
 
 import { getDbInstance } from "../db/core";
 import { resolveProviderId } from "@/shared/constants/providers";
-import { protectPayloadForLog } from "../logPayloads";
+import { normalizePayloadForLog, protectPayloadForLog } from "../logPayloads";
 import { sanitizeErrorMessage } from "@agentproxy/open-sse/utils/errorSanitization.ts";
 import {
   resolveOrphanedUsageAccountIdentity,
@@ -24,7 +24,8 @@ import {
   resolvePositiveOption,
   toNumber,
   toStringOrNull,
-  truncatePendingPreview,
+  prunePendingPreview,
+  truncatePendingPreviewStrings,
 } from "./usageHistory/helpers";
 import type { ModelLatencyStatsEntry } from "./usageHistory/helpers";
 import {
@@ -32,6 +33,7 @@ import {
   maybeEnrichCompletedDetail,
   scheduleCompletedDetailCleanup,
   storeCompletedDetail,
+  getCompletedDetails,
 } from "./completedRequestDetails";
 import { shouldPersistToDisk } from "./migrations";
 import { emitUsageRecorded } from "./usageEvents";
@@ -59,6 +61,14 @@ export type PendingRequestMetadata = {
   sessionTag?: string | null;
 };
 export type PendingRequestDetail = {
+  tokens?: {
+    in: number;
+    out: number;
+    cacheRead: number | null;
+    cacheCreation: number | null;
+    reasoning: number | null;
+    compressed: number | null;
+  };
   id: string;
   model: string;
   provider: string;
@@ -79,12 +89,28 @@ export type PendingRequestDetail = {
   stageUpdatedAt?: number | null;
   correlationId?: string | null;
   sessionTag?: string | null;
+  stale?: boolean;
+  sweptAt?: number | null;
   streamChunks?: {
     provider?: string[];
     openai?: string[];
     client?: string[];
   } | null;
 };
+
+// The preview is bounded (MAX_PREVIEW_*), the payload is not: chatCore pushes
+// the full provider body through here at every stage of a request, and
+// protecting a multi-megabyte agentic body four times per request was a large
+// synchronous cost on the event loop. So the structure is pruned to the preview
+// shape first, then protected, and only then are strings cut. The regex-based
+// stages (error message sanitizing, opt-in PII sanitizing) must see whole
+// strings: a secret straddling the cut would otherwise survive as a fragment
+// no pattern matches. Normalizing first keeps a JSON string payload parsed.
+function protectPendingPreview(payload: unknown): unknown {
+  return truncatePendingPreviewStrings(
+    protectPayloadForLog(prunePendingPreview(normalizePayloadForLog(payload)))
+  );
+}
 
 function normalizePendingMetadata(metadata?: PendingRequestMetadata): PendingRequestMetadata {
   if (!metadata) return {};
@@ -108,22 +134,16 @@ function normalizePendingMetadata(metadata?: PendingRequestMetadata): PendingReq
         : null;
   }
   if (metadata.clientRequest !== undefined) {
-    normalized.clientRequest = truncatePendingPreview(protectPayloadForLog(metadata.clientRequest));
+    normalized.clientRequest = protectPendingPreview(metadata.clientRequest);
   }
   if (metadata.providerRequest !== undefined) {
-    normalized.providerRequest = truncatePendingPreview(
-      protectPayloadForLog(metadata.providerRequest)
-    );
+    normalized.providerRequest = protectPendingPreview(metadata.providerRequest);
   }
   if (metadata.providerResponse !== undefined) {
-    normalized.providerResponse = truncatePendingPreview(
-      protectPayloadForLog(metadata.providerResponse)
-    );
+    normalized.providerResponse = protectPendingPreview(metadata.providerResponse);
   }
   if (metadata.clientResponse !== undefined) {
-    normalized.clientResponse = truncatePendingPreview(
-      protectPayloadForLog(metadata.clientResponse)
-    );
+    normalized.clientResponse = protectPendingPreview(metadata.clientResponse);
   }
   if (metadata.status !== undefined) {
     const status = Number(metadata.status);
@@ -228,9 +248,11 @@ function ensurePendingSweepTimer(): void {
 }
 
 /**
- * Evicts orphaned pending-request details older than `maxAgeMs` and enforces a hard size
- * cap. Mirrors the normal removal path (decrement counters + cleanup detail buckets) so the
- * dashboard's pending counts self-heal. Exported for deterministic testing.
+ * Marks over-age pending-request details so a stuck request stays visible on the
+ * dashboard, and enforces a hard size cap. Marked entries keep their map, detail
+ * bucket and counters; only the cap path removes entries (marked first, oldest
+ * first), mirroring the normal removal path so the dashboard's pending counts
+ * self-heal. Exported for deterministic testing.
  * @returns number of entries removed.
  */
 export function sweepStalePendingRequests(
@@ -255,7 +277,11 @@ export function sweepStalePendingRequests(
   };
 
   for (const detail of pendingById.values()) {
-    if (now - detail.startedAt > maxAgeMs) remove(detail);
+    if (detail.stale) continue;
+    if (now - detail.startedAt > maxAgeMs) {
+      detail.stale = true;
+      detail.sweptAt = now;
+    }
   }
 
   // Hard backstop: if entries are still piling up faster than they age out, drop the oldest
@@ -263,7 +289,10 @@ export function sweepStalePendingRequests(
   if (pendingById.size > MAX_PENDING_DETAILS) {
     const overflow = pendingById.size - MAX_PENDING_DETAILS;
     const oldest = [...pendingById.values()]
-      .sort((a, b) => a.startedAt - b.startedAt)
+      .sort((a, b) => {
+        if (Boolean(a.stale) !== Boolean(b.stale)) return a.stale ? -1 : 1;
+        return a.startedAt - b.startedAt;
+      })
       .slice(0, overflow);
     for (const detail of oldest) remove(detail);
   }
@@ -299,11 +328,18 @@ export function trackPendingRequest(
   provider: string,
   connectionId: string | null,
   started: boolean,
-  metadata?: PendingRequestMetadata
+  metadata?: PendingRequestMetadata,
+  pendingRequestId?: string
 ) {
   const modelKey = provider ? `${model} (${provider})` : model;
   if (!isSafeKey(modelKey)) return;
   const normalizedMetadata = normalizePendingMetadata(metadata);
+  // An id that is no longer listed was already withdrawn (completion and
+  // disconnect both end the same request): leave every counter untouched.
+  if (!started && pendingRequestId && connectionId) {
+    const listed = pendingRequests.details[connectionId]?.[modelKey];
+    if (!listed?.some((entry) => entry.id === pendingRequestId)) return;
+  }
 
   // Ensure the orphaned-pending reaper is running once pending tracking is in use.
   if (started) ensurePendingSweepTimer();
@@ -371,7 +407,14 @@ export function trackPendingRequest(
       }
       return newDetail.id;
     } else if (!started && nextCount >= 0) {
-      if (pendingRequests.details[connectionId]?.[modelKey]?.length) {
+      if (pendingRequestId) {
+        const bucket = pendingRequests.details[connectionId][modelKey];
+        const [removed] = bucket.splice(
+          bucket.findIndex((entry) => entry.id === pendingRequestId),
+          1
+        );
+        if (removed) pendingById.delete(removed.id);
+      } else if (pendingRequests.details[connectionId]?.[modelKey]?.length) {
         const removed = pendingRequests.details[connectionId][modelKey].shift();
         if (removed) pendingById.delete(removed.id);
       }
@@ -405,6 +448,18 @@ export function updatePendingRequestById(id: string | null, metadata: PendingReq
   if (!detail) return false;
   Object.assign(detail, normalizePendingMetadata(metadata));
   return true;
+}
+
+/** Attach scalar usage to the exact attempt, even if its stream already finalized. */
+export function updateRequestTokensById(id: unknown, tokens: PendingRequestDetail["tokens"]) {
+  if (typeof id !== "string") return;
+  const pending = pendingById.get(id);
+  if (pending) {
+    pending.tokens = tokens;
+    return;
+  }
+  const completed = getCompletedDetails().get(id);
+  if (completed) storeCompletedDetail({ ...completed, tokens });
 }
 
 /**
@@ -466,9 +521,11 @@ function finalizePendingDetailAt(
     completedAt,
     durationMs: Math.max(0, completedAt - details[index].startedAt),
   };
-  storeCompletedDetail(updated);
-  maybeEnrichCompletedDetail(updated, connectionId);
-  scheduleCompletedDetailCleanup(updated.id);
+  const storedCompletedDetail = storeCompletedDetail(updated);
+  if (storedCompletedDetail) {
+    maybeEnrichCompletedDetail(updated, connectionId);
+    scheduleCompletedDetailCleanup(updated.id);
+  }
 
   details.splice(index, 1);
   pendingById.delete(updated.id);
@@ -632,9 +689,11 @@ export async function getUsageDb(sinceIso?: string | null, limit?: number, curso
       timeToFirstTokenMs: toNumber(r.ttft_ms),
       errorCode: toStringOrNull(r.error_code),
       cpaAuthIndex: toStringOrNull(r.cpa_auth_index),
+      cpaAccountLabel: null as string | null,
       timestamp: toStringOrNull(r.timestamp),
     };
   });
+  await attachCpaAccountLabels(history);
 
   // Provide next cursor if we hit the limit (more rows exist)
   const nextCursor =
@@ -850,7 +909,7 @@ export async function getUsageHistory(filter: UsageHistoryFilter = {}) {
   sql += " ORDER BY timestamp ASC";
 
   const rows = db.prepare(sql).all(params);
-  return rows.map((row) => {
+  const history = rows.map((row) => {
     const r = asRecord(row);
     return {
       provider: toStringOrNull(r.provider),
@@ -872,9 +931,28 @@ export async function getUsageHistory(filter: UsageHistoryFilter = {}) {
       timeToFirstTokenMs: toNumber(r.ttft_ms),
       errorCode: toStringOrNull(r.error_code),
       cpaAuthIndex: toStringOrNull(r.cpa_auth_index),
+      cpaAccountLabel: null as string | null,
       timestamp: toStringOrNull(r.timestamp),
     };
   });
+  await attachCpaAccountLabels(history);
+  return history;
+}
+
+async function attachCpaAccountLabels(
+  rows: Array<{ cpaAuthIndex: string | null; cpaAccountLabel: string | null }>
+): Promise<void> {
+  if (!rows.some((row) => row.cpaAuthIndex)) return;
+  try {
+    const { getCliproxyAccountHealth, labelForCliproxyAuthIndex } =
+      await import("@/lib/services/cliproxyAccountHealth");
+    const health = await getCliproxyAccountHealth();
+    for (const row of rows) {
+      row.cpaAccountLabel = labelForCliproxyAuthIndex(row.cpaAuthIndex, health.accounts);
+    }
+  } catch {
+    // Keep the opaque index even when the sanitized account-health read is unavailable.
+  }
 }
 
 export type { ModelLatencyStatsEntry } from "./usageHistory/helpers";

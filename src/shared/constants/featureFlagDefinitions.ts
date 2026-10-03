@@ -192,6 +192,66 @@ export const FEATURE_FLAG_DEFINITIONS: FeatureFlagDefinition[] = [
     warningLevel: "info",
   },
   {
+    key: "PROXY_SKIP_RECENTLY_FAILED",
+    label: "Skip Recently Failed Proxies",
+    description:
+      "Proxy pools and the per-account rotation of opencode stop re-serving a proxy that just failed (refused TCP probe, or a 429 received through it) for a per-process period that doubles on each repeat, up to a cap. No proxy status is written; with every candidate set aside the choice is unchanged. On by default: selection order is exactly the plain rotation only with PROXY_SKIP_RECENTLY_FAILED=false.",
+    descriptionI18nKey: "featureFlagProxySkipRecentlyFailedDescription",
+    category: "network",
+    defaultValue: "true",
+    type: "boolean",
+    requiresRestart: false,
+    warningLevel: "caution",
+  },
+  {
+    key: "PROXY_POOL_SHARED_EGRESS_ORDER",
+    label: "Shared Egress Pool Order",
+    description:
+      "For providers whose quota is bucketed by egress address, rank a pool member sharing a recently refused member's observed egress address just below healthy members. Order only, never excluded. Needs PROXY_SKIP_RECENTLY_FAILED, which produces the refusal signal it reads. Off by default: selection order is exactly the plain rotation.",
+    descriptionI18nKey: "featureFlagProxyPoolSharedEgressOrderDescription",
+    category: "network",
+    defaultValue: "false",
+    type: "boolean",
+    requiresRestart: false,
+    warningLevel: "caution",
+  },
+  {
+    key: "OPENCODE_PARK_AND_RESUME",
+    label: "OpenCode 429 Park And Resume",
+    description:
+      "For OpenCode multi-account rotation, park after repeated transient 429s (or a fresh pool-strain marker) with a heartbeat, then replay one capped leg instead of fanning out the whole fleet. Off by default.",
+    descriptionI18nKey: "featureFlagOpencodeParkAndResumeDescription",
+    category: "network",
+    defaultValue: "false",
+    type: "boolean",
+    requiresRestart: false,
+    warningLevel: "caution",
+  },
+  {
+    key: "STREAM_READINESS_STALL_RETRY",
+    label: "Stream Readiness Stall Retry",
+    description:
+      "For streaming chat requests, when the first upstream body stalls before producing a usable event, issue one bounded second attempt through the same routing path with the same readiness budget and no account penalty. Off by default: a stalled first body fails the request without a retry.",
+    descriptionI18nKey: "featureFlagStreamReadinessStallRetryDescription",
+    category: "network",
+    defaultValue: "false",
+    type: "boolean",
+    requiresRestart: false,
+    warningLevel: "caution",
+  },
+  {
+    key: "PROXY_POOL_EGRESS_OBSERVATION",
+    label: "Proxy Pool Egress Observation",
+    description:
+      "Show, under a proxy pool in the dashboard, how many observed egress IPs served its members over the last 24 h, how many connections used them and the most seen behind one IP. Read-only, computed from the proxy log, never used for routing. Off by default: the pool editor is unchanged and the observation route answers null.",
+    descriptionI18nKey: "featureFlagProxyPoolEgressObservationDescription",
+    category: "network",
+    defaultValue: "false",
+    type: "boolean",
+    requiresRestart: false,
+    warningLevel: "info",
+  },
+  {
     key: "MITM_DISABLE_TLS_VERIFY",
     label: "Disable TLS Verify (MITM)",
     description: "Disable TLS certificate verification for MITM proxy",
@@ -329,7 +389,9 @@ export const FEATURE_FLAG_DEFINITIONS: FeatureFlagDefinition[] = [
     description: "Enforce scope restrictions on MCP tool access",
     descriptionI18nKey: "featureFlagAgentProxyMcpEnforceScopesDescription",
     category: "runtime",
-    defaultValue: "true",
+    // Ships off: the gate rejects a caller that sends no scopes at all, so turning it on
+    // is an operator decision (.env.example has shipped `=false` since the gate landed).
+    defaultValue: "false",
     type: "boolean",
     requiresRestart: false,
     warningLevel: "caution",
@@ -421,6 +483,18 @@ export const FEATURE_FLAG_DEFINITIONS: FeatureFlagDefinition[] = [
     descriptionI18nKey: "featureFlagAgentProxyEmergencyFallbackDescription",
     category: "runtime",
     defaultValue: "true",
+    type: "boolean",
+    requiresRestart: false,
+    warningLevel: "caution",
+  },
+  {
+    key: "FLUSH_EMPTY_RETRY_ENABLED",
+    label: "Flush Empty Turn Retry",
+    description:
+      "On translated streaming turns, retry a bounded empty upstream turn through the normal credential path before anything reaches the client. Off by default.",
+    descriptionI18nKey: "featureFlagFlushEmptyRetryEnabledDescription",
+    category: "runtime",
+    defaultValue: "false",
     type: "boolean",
     requiresRestart: false,
     warningLevel: "caution",
@@ -570,6 +644,18 @@ export const FEATURE_FLAG_DEFINITIONS: FeatureFlagDefinition[] = [
     requiresRestart: false,
     warningLevel: "caution",
   },
+  {
+    key: "MISTRAL_AMBIGUOUS_401_SOFT_LOCKOUT",
+    label: "Mistral Ambiguous 401 Soft Lockout",
+    description:
+      'A bare Mistral 401 ({"detail":"Unauthorized"}, no explicit auth signal) is byte-identical for a revoked key and for exhausted quota. When enabled, such a 401 cools the connection down instead of parking it as expired, up to 3 times within an hour; the next one still parks it as expired, so a revoked key converges. Off by default: every bare Mistral 401 parks the connection as expired, as before.',
+    descriptionI18nKey: "featureFlagMistralAmbiguous401SoftLockoutDescription",
+    category: "runtime",
+    defaultValue: "false",
+    type: "boolean",
+    requiresRestart: false,
+    warningLevel: "caution",
+  },
 
   // ──────────────── CLI (5) ────────────────
   {
@@ -660,6 +746,18 @@ export const FEATURE_FLAG_DEFINITIONS: FeatureFlagDefinition[] = [
     description: "Enable network access in the skills sandbox environment",
     descriptionI18nKey: "featureFlagSkillsSandboxNetworkEnabledDescription",
     category: "health",
+    defaultValue: "false",
+    type: "boolean",
+    requiresRestart: false,
+    warningLevel: "caution",
+  },
+  {
+    key: "XAI_OAUTH_LIVE_MODEL_DISCOVERY",
+    label: "xAI OAuth Live Model Discovery",
+    description:
+      "Fetch the live xAI model catalog for xai-oauth connections from https://api.x.ai/v1/models using the OAuth bearer token, instead of the frozen static seed. Off by default: xai-oauth keeps serving the static seed unchanged. On any resolution error, discovery falls back to the seed.",
+    descriptionI18nKey: "featureFlagXaiOauthLiveModelDiscoveryDescription",
+    category: "runtime",
     defaultValue: "false",
     type: "boolean",
     requiresRestart: false,

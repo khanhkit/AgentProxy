@@ -5,6 +5,7 @@ import { Card, Button, Badge, ConfirmModal } from "@/shared/components";
 import { useLocale, useTranslations } from "next-intl";
 import DatabaseBackupRetentionCard from "./DatabaseBackupRetentionCard";
 import SelectiveMigrationPanel from "./SelectiveMigrationPanel";
+import { extractApiErrorMessage } from "@/shared/http/apiErrorMessage";
 // Whitelist mirrored from src/lib/db/cleanup.ts::RESET_USAGE_HISTORY_PERIODS.
 const RESET_USAGE_PERIOD_VALUES = [
   "5m",
@@ -198,7 +199,7 @@ export default function SystemStorageTab() {
       } else {
         setBackupRetentionStatus({
           type: "error",
-          message: data.error || t("backupRetentionSaveFailed"),
+          message: extractApiErrorMessage(data, t("backupRetentionSaveFailed")),
         });
       }
     } catch {
@@ -231,7 +232,7 @@ export default function SystemStorageTab() {
       } else {
         setCleanupBackupsStatus({
           type: "error",
-          message: data.error || t("backupCleanupFailed"),
+          message: extractApiErrorMessage(data, t("backupCleanupFailed")),
         });
       }
     } catch {
@@ -255,7 +256,7 @@ export default function SystemStorageTab() {
       } else {
         setClearCacheStatus({
           type: "error",
-          message: data?.error || t("clearCacheFailed"),
+          message: extractApiErrorMessage(data, t("clearCacheFailed")),
         });
       }
     } catch {
@@ -280,7 +281,7 @@ export default function SystemStorageTab() {
       } else {
         setPurgeLogsStatus({
           type: "error",
-          message: data?.error || t("purgeLogsFailed"),
+          message: extractApiErrorMessage(data, t("purgeLogsFailed")),
         });
       }
     } catch {
@@ -304,7 +305,7 @@ export default function SystemStorageTab() {
       } else {
         setPurgeQuotaSnapshotsStatus({
           type: "error",
-          message: data.error || t("purgeQuotaSnapshotsFailed"),
+          message: extractApiErrorMessage(data, t("purgeQuotaSnapshotsFailed")),
         });
       }
     } catch {
@@ -328,7 +329,7 @@ export default function SystemStorageTab() {
       } else {
         setPurgeCallLogsStatus({
           type: "error",
-          message: data.error || t("purgeCallLogsFailed"),
+          message: extractApiErrorMessage(data, t("purgeCallLogsFailed")),
         });
       }
     } catch {
@@ -352,7 +353,7 @@ export default function SystemStorageTab() {
       } else {
         setPurgeDetailedLogsStatus({
           type: "error",
-          message: data.error || t("purgeDetailedLogsFailed"),
+          message: extractApiErrorMessage(data, t("purgeDetailedLogsFailed")),
         });
       }
     } catch {
@@ -418,10 +419,7 @@ export default function SystemStorageTab() {
         await loadDatabaseSettings();
         await loadStorageHealth();
       } else {
-        setManualVacuumStatus({
-          type: "error",
-          message: data?.error || t("vacuumFailed"),
-        });
+        setManualVacuumStatus({ type: "error", message: extractApiErrorMessage(data, t("vacuumFailed")) });
       }
     } catch {
       setManualVacuumStatus({ type: "error", message: t("errorOccurred") });
@@ -451,7 +449,7 @@ export default function SystemStorageTab() {
         await loadStorageHealth();
         if (backupsExpanded) await loadBackups();
       } else {
-        setManualBackupStatus({ type: "error", message: data.error || t("backupFailed") });
+        setManualBackupStatus({ type: "error", message: extractApiErrorMessage(data, t("backupFailed")) });
       }
     } catch {
       setManualBackupStatus({ type: "error", message: t("errorOccurred") });
@@ -483,7 +481,7 @@ export default function SystemStorageTab() {
         await loadBackups();
         await loadStorageHealth();
       } else {
-        setRestoreStatus({ type: "error", message: data.error || t("restoreFailed") });
+        setRestoreStatus({ type: "error", message: extractApiErrorMessage(data, t("restoreFailed")) });
       }
     } catch {
       setRestoreStatus({ type: "error", message: t("errorDuringRestore") });
@@ -529,7 +527,7 @@ export default function SystemStorageTab() {
     const res = await fetch(apiUrl);
     if (!res.ok) {
       const data = await res.json().catch(() => ({}));
-      throw new Error((data as { error?: string }).error || errorMessage);
+      throw new Error(extractApiErrorMessage(data, errorMessage));
     }
     const blob = await res.blob();
     const disposition = res.headers.get("Content-Disposition") || "";
@@ -590,9 +588,9 @@ export default function SystemStorageTab() {
           await loadStorageHealth();
           if (backupsExpanded) await loadBackups();
         } else {
-          setImportStatus({ type: "error", message: data.error || t("jsonImportFailed") });
+          setImportStatus({ type: "error", message: extractApiErrorMessage(data, t("jsonImportFailed")) });
         }
-      } catch (err) {
+      } catch {
         setImportStatus({ type: "error", message: t("jsonImportError") });
       } finally {
         setImportLoading(false);
@@ -669,7 +667,7 @@ export default function SystemStorageTab() {
         await loadStorageHealth();
         if (backupsExpanded) await loadBackups();
       } else {
-        setImportStatus({ type: "error", message: data.error || t("importFailed") });
+        setImportStatus({ type: "error", message: extractApiErrorMessage(data, t("importFailed")) });
       }
     } catch {
       setImportStatus({ type: "error", message: t("errorDuringImport") });
@@ -935,6 +933,7 @@ export default function SystemStorageTab() {
       ["mcpAudit", t("retentionMcpAudit"), 30],
       ["a2aEvents", t("retentionA2aEvents"), 30],
       ["callLogs", t("retentionCallLogs"), 30],
+      ["conversationTurnNodes", "Conversation turn nodes", 30],
       ["usageHistory", t("retentionUsageHistory"), 30],
       ["memoryEntries", t("retentionMemoryEntries"), 30],
       ["xpAuditLog", t("retentionXpAuditLog"), 30],

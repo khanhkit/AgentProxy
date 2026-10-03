@@ -53,7 +53,7 @@ const TURN_SHAPES = {
   "no user messages": [{ role: "assistant", content: "only" }],
 };
 
-test("relocated tool documentation reaches the current turn for every turn shape", () => {
+test("relocated tool documentation reaches exactly one turn for every turn shape", () => {
   for (const [label, messages] of Object.entries(TURN_SHAPES)) {
     const payload = buildKiroPayload(
       "claude-sonnet-4.5",
@@ -62,13 +62,20 @@ test("relocated tool documentation reaches the current turn for every turn shape
       {}
     );
     const current = payload.conversationState.currentMessage.userInputMessage;
+    const history = payload.conversationState.history as Array<{
+      userInputMessage?: { content?: string };
+    }>;
+    const allContents = [...history.map((h) => h.userInputMessage?.content || ""), current.content];
+    const combined = allContents.join("\n");
+    const occurrences = (combined.match(new RegExp(DOCS_HEADING, "g")) || []).length;
 
-    assert.ok(
-      current.content.includes(DOCS_HEADING),
-      `${label}: full tool documentation must be prepended to the current turn`
+    assert.equal(
+      occurrences,
+      1,
+      `${label}: the tool documentation must reach the model exactly once`
     );
     assert.ok(
-      current.content.includes("D".repeat(12000)),
+      combined.includes("D".repeat(12000)),
       `${label}: the relocated description text itself must survive`
     );
     assert.equal(
@@ -187,12 +194,18 @@ test("only oversized descriptions are relocated in a mixed tool inventory", () =
   );
   const current = payload.conversationState.currentMessage.userInputMessage;
   const specs = current.userInputMessageContext?.tools;
+  const history = payload.conversationState.history as Array<{
+    userInputMessage?: { content?: string };
+  }>;
+  const combined = [...history.map((h) => h.userInputMessage?.content || ""), current.content].join(
+    "\n"
+  );
 
   assert.equal(specs[0].toolSpecification.description, "compact");
   assert.equal(specs[1].toolSpecification.description, POINTER);
-  assert.ok(current.content.includes("## Tool: big_tool"));
+  assert.ok(combined.includes("## Tool: big_tool"));
   assert.ok(
-    !current.content.includes("## Tool: small_tool"),
+    !combined.includes("## Tool: small_tool"),
     "a tool that was never relocated must not get a documentation section"
   );
 });

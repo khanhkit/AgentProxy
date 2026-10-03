@@ -70,6 +70,30 @@ test("runFabricatedDocsCheck: real documentation has no fabricated claims", () =
   assert.equal(result.totalFindings, 0, formatHumanReport(result));
 });
 
+test("runFabricatedDocsCheck: historical handoff evidence is excluded from live-doc accuracy", () => {
+  const root = makeFixtureRoot({
+    docs: {
+      "handoff/session.md": "Historical claim: `FABRICATED_HANDOFF_ONLY_VAR`.\n",
+      "live.md": "Current docs stay clean.\n",
+    },
+  });
+  try {
+    const result = runFabricatedDocsCheck({ root });
+    assert.equal(result.totalFindings, 0, formatHumanReport(result));
+    assert.ok(
+      !result.files.some((file) => file.rel.startsWith("docs/handoff/")),
+      "historical handoff evidence must not be scanned as live documentation"
+    );
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
+  }
+});
+
+test("runFabricatedDocsCheck: live docs are still checked after handoff exclusion", () => {
+  const found = findingsFor({ docs: { "live.md": "Set `FABRICATED_LIVE_ONLY_VAR` today.\n" } });
+  assert.ok(found.has("env-var::FABRICATED_LIVE_ONLY_VAR"));
+});
+
 test("isDirectExecution: matches a module URL to its filesystem argv path", () => {
   const scriptPath = path.resolve("scripts/check/check-fabricated-docs.mjs");
   const testPath = path.resolve("tests/unit/check-fabricated-docs.test.ts");
@@ -221,6 +245,16 @@ test("env-var: a var present only in .env.example is NOT flagged", () => {
   assert.ok(
     !found.has("env-var::SOME_DOCUMENTED_CONTRACT_VAR"),
     ".env.example is the env contract — its vars are documented, not fabricated"
+  );
+});
+
+test("env-var: APP_BIND_HOST compose-only contract is NOT flagged", () => {
+  const found = findingsFor({
+    docs: { "self-host.md": "Set `APP_BIND_HOST` to control the published host interface.\n" },
+  });
+  assert.ok(
+    !found.has("env-var::APP_BIND_HOST"),
+    "APP_BIND_HOST is consumed by docker-compose interpolation rather than process.env"
   );
 });
 

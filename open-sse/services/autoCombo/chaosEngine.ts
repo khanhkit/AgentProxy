@@ -353,6 +353,49 @@ function concatSseText(sse: string): string {
   return out.join("");
 }
 
+
+async function filterPanelByAdmission(
+  panel: string[],
+  body: Body,
+  perTargetAdmission: PerTargetAdmissionHook | null | undefined,
+  log?: { info?: (...a: unknown[]) => void }
+): Promise<string[]> {
+  if (!perTargetAdmission) return panel;
+  const gates = await Promise.all(
+    panel.map(async (model) => ({
+      model,
+      ok: await perTargetAdmission({ modelStr: model, executionKey: model, body }),
+    }))
+  );
+  const dropped = gates.filter((g) => !g.ok);
+  if (dropped.length > 0) {
+    log?.info?.(
+      "CHAOS",
+      `Skipping ${dropped.length} panel member(s) — admission lane full: ${dropped
+        .map((g) => g.model)
+        .join(", ")}`
+    );
+  }
+  return gates.filter((g) => g.ok).map((g) => g.model);
+}
+
+function pickPrimaryPart(allParts: ChaosPart[], primaryModel?: string | null): ChaosPart | undefined {
+  return (
+    (primaryModel ? allParts.find((p) => p.model === primaryModel && p.ok) : undefined) ||
+    allParts.filter((p) => p.ok).slice(-1)[0]
+  );
+}
+
+function describeAllPanelFailed(
+  allParts: ChaosPart[],
+  comboName: string | undefined,
+  log?: { warn?: (...a: unknown[]) => void }
+): string {
+  const modelErrors = allParts.map((p) => `${p.model}: ${p.error ?? "unknown"}`).join(" | ");
+  log?.warn?.("CHAOS", `All chaos panel models failed for ${comboName ?? "panel"}: ${modelErrors}`);
+  return `All chaos panel models failed — ${modelErrors}`;
+}
+
 /**
  * Top-level chaos dispatch entrypoint used by `handleComboChat` when a combo's
  * `config.chaos.enabled` flag is set (the `auto/chaos` virtual combo).
@@ -414,6 +457,48 @@ export async function handleChaosChat(opts: {
 
   const chunkId = `chaos-${comboName ?? "panel"}`;
 
+  if (body?.stream !== true) {
+    const panelToDispatch = await filterPanelByAdmission(panel, body, perTargetAdmission, log);
+    const allParts = await Promise.all(
+      panelToDispatch.map((model, index) => {
+        const ctrl = new AbortController();
+        return dispatchOnePanelModel({
+          body,
+          model,
+          index,
+          handleSingleModel,
+          ctrl,
+          hardTimeout,
+          log,
+        }).finally(() => {
+          if (!ctrl.signal.aborted) ctrl.abort();
+        });
+      })
+    );
+    const chaosHeaders = {
+      "X-AgentProxy-Chaos": "true",
+      "X-AgentProxy-Chaos-Panel": String(panel.length),
+      "X-AgentProxy-Chaos-Primary": primaryModel ?? "",
+    };
+    if (!allParts.some((p) => p.ok)) {
+      const errResponse = errorResponse(502, describeAllPanelFailed(allParts, comboName, log));
+      for (const [key, value] of Object.entries(chaosHeaders)) errResponse.headers.set(key, value);
+      return errResponse;
+    }
+    const primaryPart = pickPrimaryPart(allParts, primaryModel);
+    const payload = {
+      id: chunkId,
+      object: "chat.completion",
+      created: Math.floor(Date.now() / 1000),
+      model: primaryPart?.model ?? panel[0],
+      choices: [{ index: 0, message: { role: "assistant", content: primaryPart?.text ?? "" }, finish_reason: "stop" }],
+    };
+    return new Response(JSON.stringify(payload), {
+      status: 200,
+      headers: { "Content-Type": "application/json", ...chaosHeaders },
+    });
+  }
+
   const stream = new ReadableStream<Uint8Array>({
     async start(controller) {
       const enc = new TextEncoder();
@@ -433,27 +518,7 @@ export async function handleChaosChat(opts: {
 
       const abortControllers: AbortController[] = [];
 
-      // #9654 Wave 2: per-target lane-aware admission probe — drop lane-full
-      // panel members before fan-out (strictly non-blocking; no-op when off).
-      let panelToDispatch = panel;
-      if (perTargetAdmission) {
-        const gates = await Promise.all(
-          panel.map(async (model) => ({
-            model,
-            ok: await perTargetAdmission({ modelStr: model, executionKey: model, body }),
-          }))
-        );
-        const dropped = gates.filter((g) => !g.ok);
-        if (dropped.length > 0) {
-          log?.info?.(
-            "CHAOS",
-            `Skipping ${dropped.length} panel member(s) — admission lane full: ${dropped
-              .map((g) => g.model)
-              .join(", ")}`
-          );
-        }
-        panelToDispatch = gates.filter((g) => g.ok).map((g) => g.model);
-      }
+      const panelToDispatch = await filterPanelByAdmission(panel, body, perTargetAdmission, log);
 
       const modelPromises = panelToDispatch.map((model, index) => {
         const ctrl = new AbortController();
@@ -485,12 +550,7 @@ export async function handleChaosChat(opts: {
         // The status stays 200 (SSE envelope must stay well-formed), but the
         // failure is now logged with the per-model errors so operators can see
         // why the chaos panel produced nothing.
-        const modelErrors = allParts.map((p) => `${p.model}: ${p.error ?? "unknown"}`).join(" | ");
-        log?.warn?.(
-          "CHAOS",
-          `All chaos panel models failed for ${comboName ?? "panel"}: ${modelErrors}`
-        );
-        const errText = `All chaos panel models failed — ${modelErrors}`;
+        const errText = describeAllPanelFailed(allParts, comboName, log);
         await safeEnqueue(chatChunk(chunkId, panelToDispatch[0] ?? panel[0] ?? "", errText));
         await safeEnqueue(SSE_DONE);
         await enqueueChain;
@@ -502,10 +562,7 @@ export async function handleChaosChat(opts: {
       // If fewer than minPanel succeeded, still return the best we have.
       // The primary is the explicit primaryModel if it succeeded, else the
       // last successful part (by construction that's the top-scored stable model).
-      const primaryPart =
-        (primaryModel && allParts.find((p) => p.model === primaryModel && p.ok)) ||
-        allParts.filter((p) => p.ok).slice(-1)[0] ||
-        successes[0];
+      const primaryPart = pickPrimaryPart(allParts, primaryModel) || successes[0];
 
       // Final canonical answer (non-aware clients consume this).
       await safeEnqueue(

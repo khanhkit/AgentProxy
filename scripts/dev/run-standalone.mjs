@@ -30,7 +30,7 @@ warnConflictingHeapLimits(childEnv, maxOldSpaceMb);
 childEnv.NODE_OPTIONS = buildStandaloneNodeOptions(childEnv, maxOldSpaceMb);
 
 const entry = existsSync("server-ws.mjs") ? "server-ws.mjs" : "server.js";
-const nextChild = spawn("node", [entry], { stdio: "inherit", env: childEnv });
+const nextChild = spawn(process.execPath, [entry], { stdio: "inherit", env: childEnv });
 let rustCoreHandle = null;
 let shuttingDown = false;
 

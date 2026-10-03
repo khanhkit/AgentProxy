@@ -8,6 +8,7 @@
 // untouched when the feature is off — this generic strip covers that case.
 export const KNOWN_OFFENDING_FIELDS: readonly string[] = [
   "reasoning_budget",
+  "reasoning_effort",
   "chat_template",
   "reasoning_content",
   "context_management",

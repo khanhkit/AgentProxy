@@ -1,0 +1,1 @@
+- **feat(proxy):** support multiple local proxy-core endpoints, one endpoint per line.

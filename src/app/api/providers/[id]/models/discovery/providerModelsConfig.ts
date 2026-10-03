@@ -26,6 +26,7 @@ import { filterAlibabaFreeEligibleModels } from "@agentproxy/open-sse/services/a
 import { shouldUseLiveAlibabaFreeModelDiscovery } from "@agentproxy/open-sse/services/alibabaFreeTier.ts";
 import { isDashscopeTextModelId } from "@agentproxy/open-sse/services/dashscopeTextModels.ts";
 import { extractZaiToken } from "@agentproxy/open-sse/services/zaiWebCredentials.ts";
+import { isFeatureFlagEnabled } from "@/shared/utils/featureFlags";
 import { normalizeOpenAiLikeModelsResponse } from "./normalizers";
 
 const QWEN_CLOUD_TEXT_MODEL_IDS = new Set(QWEN_CLOUD_TEXT_MODELS.map((model) => model.id));
@@ -396,6 +397,25 @@ const KIMI_CODING_MODELS_CONFIG: ProviderModelsConfigEntry = {
   parseResponse: parseKimiCodingModels,
 };
 
+export const XAI_MODELS_CONFIG: ProviderModelsConfigEntry = {
+  url: "https://api.x.ai/v1/models",
+  method: "GET",
+  headers: { "Content-Type": "application/json" },
+  authHeader: "Authorization",
+  authPrefix: "Bearer ",
+  parseResponse: (data) => data.data || data.models || [],
+};
+
+export function getXaiOauthLiveModelsConfig(): ProviderModelsConfigEntry | undefined {
+  try {
+    return isFeatureFlagEnabled("XAI_OAUTH_LIVE_MODEL_DISCOVERY")
+      ? XAI_MODELS_CONFIG
+      : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 // Provider models endpoints configuration
 export const PROVIDER_MODELS_CONFIG: Record<string, ProviderModelsConfigEntry> = {
   alibaba: ALIBABA_MODEL_STUDIO_MODELS_CONFIG,
@@ -592,14 +612,7 @@ export const PROVIDER_MODELS_CONFIG: Record<string, ProviderModelsConfigEntry> =
     authPrefix: "Bearer ",
     parseResponse: (data) => data.data || data.models || [],
   },
-  xai: {
-    url: "https://api.x.ai/v1/models",
-    method: "GET",
-    headers: { "Content-Type": "application/json" },
-    authHeader: "Authorization",
-    authPrefix: "Bearer ",
-    parseResponse: (data) => data.data || data.models || [],
-  },
+  xai: XAI_MODELS_CONFIG,
   mistral: {
     url: "https://api.mistral.ai/v1/models",
     method: "GET",

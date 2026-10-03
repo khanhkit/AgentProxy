@@ -336,12 +336,16 @@ test("codex.normalizeCodexGithubCatalogResponse parses current client catalog me
 
   assert.deepEqual(
     parsed.map((model) => model.id),
-    ["gpt-5.6-sol"]
+    ["gpt-5.6-sol", "future-model"]
   );
   assert.equal(parsed[0]?.description, "Latest frontier agentic coding model.");
   assert.equal(parsed[0]?.inputTokenLimit, 372000);
   assert.equal(parsed[0]?.supportsThinking, true);
   assert.equal(parsed[0]?.supportsVision, true);
+  assert.equal(parsed[1]?.visibility, "list");
+  assert.equal(parsed[1]?.supportedInApi, true);
+  assert.equal(parsed[1]?.minimalClientVersion, "999.0.0");
+  assert.equal(parsed[1]?.discoverySource, "github");
 });
 
 test("codex.enrichCodexModelsFromGithubCatalog keeps live entitlement list authoritative", () => {

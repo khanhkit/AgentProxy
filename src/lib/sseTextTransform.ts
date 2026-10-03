@@ -1,6 +1,6 @@
 export type FieldCategory = "content" | "reasoning" | "toolArgs" | "partialJson";
 
-const CATEGORY_MAP: Record<string, FieldCategory> = {
+const FIXED_CATEGORY_MAP: Record<string, FieldCategory> = {
   reasoning: "reasoning",
   thinking: "reasoning",
   reasoning_content: "reasoning",
@@ -8,8 +8,50 @@ const CATEGORY_MAP: Record<string, FieldCategory> = {
   partial_json: "partialJson",
 };
 
+export const METADATA_KEYS = new Set([
+  "id",
+  "model",
+  "object",
+  "created",
+  "finish_reason",
+  "finishReason",
+  "native_finish_reason",
+  "role",
+  "type",
+  "index",
+  "stop_reason",
+  "stop_sequence",
+  "system_fingerprint",
+  "service_tier",
+  "usage",
+  "prompt_tokens",
+  "completion_tokens",
+  "total_tokens",
+  "input_tokens",
+  "output_tokens",
+  "logprobs",
+  "refusal",
+  "name",
+  "event",
+  "provider",
+  "format",
+]);
+
+export function classifyField(key: string, parentKey = ""): FieldCategory | null {
+  if (FIXED_CATEGORY_MAP[key]) {
+    return FIXED_CATEGORY_MAP[key];
+  }
+  if (key === "text" && parentKey === "reasoning_details") {
+    return "reasoning";
+  }
+  if (METADATA_KEYS.has(key)) {
+    return null;
+  }
+  return "content";
+}
+
 export function getFieldCategory(key: string): FieldCategory {
-  return CATEGORY_MAP[key] || "content";
+  return classifyField(key) ?? "content";
 }
 
 const STOP_EVENT_TYPES = new Set([
@@ -123,34 +165,14 @@ export function createSseTextTransform(
           const isStopSignal = checkIfStopSignal(json);
           const isSnapshot = checkIfSnapshot(json);
 
-          const METADATA_KEYS = [
-            "id",
-            "model",
-            "object",
-            "created",
-            "finish_reason",
-            "finishReason",
-            "role",
-            "type",
-            "index",
-            "stop_reason",
-            "stop_sequence",
-            "system_fingerprint",
-            "service_tier",
-            "usage",
-            "prompt_tokens",
-            "completion_tokens",
-            "total_tokens",
-            "input_tokens",
-            "output_tokens",
-            "logprobs",
-            "refusal",
-            "name",
-            "event",
-          ];
-
-          // Recursively sanitize all string properties (except system metadata)
-          const sanitizeObject = (obj: any, currentChoiceIdx = 0, currentToolIdx = 0) => {
+          // Recursively sanitize string properties, skipping recognized system metadata.
+          // parentKey disambiguates reasoning_details[].text from ordinary content text.
+          const sanitizeObject = (
+            obj: any,
+            currentChoiceIdx = 0,
+            currentToolIdx = 0,
+            parentKey = ""
+          ) => {
             if (!obj || typeof obj !== "object") return;
 
             let choiceIdx = currentChoiceIdx;
@@ -167,14 +189,15 @@ export function createSseTextTransform(
             }
 
             const compositeKey = `${choiceIdx}_${toolIdx}`;
+            const isArray = Array.isArray(obj);
 
             for (const key of Object.keys(obj)) {
-              if (METADATA_KEYS.includes(key)) {
-                continue;
-              }
               if (typeof obj[key] === "string") {
                 const val = obj[key];
-                const field: FieldCategory = getFieldCategory(key);
+                const field = classifyField(key, parentKey);
+                if (field === null) {
+                  continue;
+                }
                 if (field === "toolArgs" || field === "partialJson") {
                   obj[key] = val;
                   matched = true;
@@ -183,7 +206,7 @@ export function createSseTextTransform(
                 obj[key] = processor(val, field, isStopSignal, compositeKey, isSnapshot);
                 matched = true;
               } else if (typeof obj[key] === "object") {
-                sanitizeObject(obj[key], choiceIdx, toolIdx);
+                sanitizeObject(obj[key], choiceIdx, toolIdx, isArray ? parentKey : key);
               }
             }
           };

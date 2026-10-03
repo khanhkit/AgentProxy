@@ -7,18 +7,20 @@
  * @module shared/utils/apiAuth
  */
 
-import { jwtVerify } from "jose";
 import { cookies } from "next/headers";
+import { getOrCreateBootstrapToken, peekBootstrapToken } from "@/lib/auth/bootstrapToken";
 import { getSettings } from "@/lib/db/settings";
 import { isPublicApiRoute } from "@/shared/constants/publicApiRoutes";
 import { extractApiKey } from "@/sse/services/auth";
 import { classifyIpScope } from "@/lib/ipUtils";
 import {
   AUTHZ_HEADER_PEER_LOCALITY,
+  BOOTSTRAP_TOKEN_HEADER,
   PEER_IP_HEADER,
   VIA_PROXY_HEADER,
 } from "@/server/authz/headers";
 import { resolveStampedPeer, resolveStampedViaProxy } from "@/server/authz/peerStamp";
+import { verifyDashboardSessionToken } from "@/shared/utils/dashboardSessionToken";
 
 type RequestLike = {
   cookies?: {
@@ -39,12 +41,17 @@ export interface RequestLocalityOptions {
    * and rely on the signed peer stamp or a direct socket peer instead.
    */
   trustPipelineLocalityHeader?: boolean;
+  /**
+   * Judge a public-classified path as if it were management-owned. Public routes
+   * with their own management gate must not inherit the fresh-install public bypass.
+   */
+  ignorePublicRoute?: boolean;
 }
 
-function hasConfiguredPassword(settings: Record<string, unknown>): boolean {
+export function hasConfiguredPassword(settings: Record<string, unknown>): boolean {
   return typeof settings.password === "string" && settings.password.length > 0;
 }
-function hasConfiguredOidc(settings: Record<string, unknown>): boolean {
+export function hasConfiguredOidc(settings: Record<string, unknown>): boolean {
   return (
     settings.oidcEnabled === true &&
     typeof settings.oidcIssuer === "string" &&
@@ -90,6 +97,43 @@ function isRequireLoginBootstrapWritePath(pathname: string | null, method: strin
   return pathname === "/api/settings/require-login" && method.toUpperCase() === "POST";
 }
 
+/**
+ * #14296: a non-loopback caller (typically a Docker/NAT-forwarded local
+ * operator — see docs at the top of bootstrapToken.ts) may still complete
+ * the fresh-install bootstrap window by presenting the one-shot token
+ * printed to the process log. Never widens `isLoopbackRequest` itself —
+ * this is an alternate proof checked only for the require-login bootstrap
+ * write above, and only a non-mutating peek (the route handler consumes/
+ * invalidates the token once the write actually succeeds).
+ */
+function hasBootstrapToken(request: RequestLike | Request | null | undefined): boolean {
+  const header = getRequestHeaders(request)?.get(BOOTSTRAP_TOKEN_HEADER);
+  return peekBootstrapToken(header);
+}
+
+/**
+ * #14296: resolves whether the onboarding bootstrap write (require-login
+ * POST) should stay open for this request.
+ * Extracted out of isAuthRequired() to keep that function's branching flat —
+ * this helper owns the loopback-or-token decision on its own.
+ *
+ * A loopback caller is always exempt. A non-loopback caller (e.g. a
+ * Docker/NAT-forwarded local operator) is exempt ONLY with a valid one-shot
+ * bootstrap token; otherwise a token is minted/announced to the process log
+ * and auth stays required.
+ */
+function isBootstrapWriteExempt(
+  request: RequestLike | Request | null | undefined,
+  loopback: boolean
+): boolean {
+  if (loopback) return true;
+  if (hasBootstrapToken(request)) return true;
+  // No (or a stale/consumed) token — mint/announce one so an operator
+  // watching the log can retrieve it, and keep requiring auth.
+  getOrCreateBootstrapToken();
+  return false;
+}
+
 function getRequestMethod(request: RequestLike | Request | null | undefined): string {
   if (
     request &&
@@ -125,42 +169,54 @@ function getDirectPeerAddress(request: RequestLike | Request | null | undefined)
   return candidate?.trim() || null;
 }
 
-export function isLoopbackRequest(
+function localityOfPeer(peer: string | null): "loopback" | "lan" | "remote" {
+  const scope = classifyIpScope(peer);
+  if (scope === "loopback") return "loopback";
+  if (scope === "private") return "lan";
+  return "remote";
+}
+
+/**
+ * Trusted three-way caller locality. This uses only AgentProxy's signed peer
+ * stamp, the authz pipeline verdict, or a direct socket peer with no forwarding
+ * evidence; client-controlled Host/X-Forwarded-* values can never promote a
+ * remote request to local.
+ */
+export function getRequestPeerLocality(
   request: RequestLike | Request | null | undefined,
   options: RequestLocalityOptions = {}
-): boolean {
-  if (!request || typeof request !== "object") return false;
+): "loopback" | "lan" | "remote" {
+  if (!request || typeof request !== "object") return "remote";
   const requestHeaders = getRequestHeaders(request);
 
-  // Highest-authority signal: the custom server's token-stamped TCP peer. A
-  // signed via-proxy marker explicitly downgrades a loopback proxy hop to
-  // remote, so Host/XFF can never promote it back to local.
   const peerStamp = requestHeaders?.get(PEER_IP_HEADER) ?? null;
   const viaProxyStamp = requestHeaders?.get(VIA_PROXY_HEADER) ?? null;
   const stampToken = process.env.AGENTPROXY_PEER_STAMP_TOKEN;
   const stampedPeer = resolveStampedPeer(peerStamp, stampToken);
   if (stampedPeer) {
-    if (resolveStampedViaProxy(viaProxyStamp, stampToken)) return false;
-    return classifyIpScope(stampedPeer) === "loopback";
+    if (resolveStampedViaProxy(viaProxyStamp, stampToken)) return "remote";
+    return localityOfPeer(stampedPeer);
   }
 
-  // A client-supplied/invalid stamp must never fall through to weaker authority.
-  if (peerStamp || viaProxyStamp) return false;
+  // A client-supplied/invalid stamp is evidence of an untrusted path.
+  if (peerStamp || viaProxyStamp) return "remote";
 
-  // Route handlers execute after the pipeline has stripped any client-supplied
-  // trusted headers and re-stamped this non-secret verdict. Policy evaluation
-  // happens before that strip and therefore opts out via the function option.
   if (options.trustPipelineLocalityHeader !== false) {
     const pipelineLocality = requestHeaders?.get(AUTHZ_HEADER_PEER_LOCALITY);
-    if (pipelineLocality === "loopback") return true;
-    if (pipelineLocality === "lan" || pipelineLocality === "remote") return false;
+    if (pipelineLocality === "loopback" || pipelineLocality === "lan") return pipelineLocality;
+    if (pipelineLocality === "remote") return "remote";
   }
 
-  // Direct/raw-Node compatibility: a real socket peer is trustworthy only when
-  // there is no forwarding evidence indicating that the socket is a proxy hop.
   const directPeer = getDirectPeerAddress(request);
-  if (!directPeer || hasForwardingEvidence(requestHeaders)) return false;
-  return classifyIpScope(directPeer) === "loopback";
+  if (!directPeer || hasForwardingEvidence(requestHeaders)) return "remote";
+  return localityOfPeer(directPeer);
+}
+
+export function isLoopbackRequest(
+  request: RequestLike | Request | null | undefined,
+  options: RequestLocalityOptions = {}
+): boolean {
+  return getRequestPeerLocality(request, options) === "loopback";
 }
 
 function getCookieValueFromHeader(headers: Headers | undefined, name: string): string | null {
@@ -274,13 +330,7 @@ export async function isDashboardSessionAuthenticated(
 
   if (!token) return false;
 
-  try {
-    const secret = new TextEncoder().encode(process.env.JWT_SECRET);
-    await jwtVerify(token, secret);
-    return true;
-  } catch {
-    return false;
-  }
+  return Boolean(await verifyDashboardSessionToken(token));
 }
 
 // ──────────────── Auth Verification ────────────────
@@ -373,12 +423,17 @@ export async function isAuthRequired(
         return false;
       }
 
-      if (pathname && isPublicApiRoute(pathname, method)) {
+      if (!localityOptions.ignorePublicRoute && pathname && isPublicApiRoute(pathname, method)) {
         return false;
       }
 
+      const loopback = isLoopbackRequest(request, localityOptions);
+
+      // The first-password write remains loopback-only unless the caller presents
+      // the one-shot bootstrap token printed to the process log. Never reclassify
+      // a Docker bridge/NAT peer as loopback: external clients share that peer.
       if (isRequireLoginBootstrapWritePath(pathname, method)) {
-        return false;
+        return !isBootstrapWriteExempt(request, loopback);
       }
 
       return settings.setupComplete === true || !isLoopbackRequest(request, localityOptions);

@@ -49,6 +49,8 @@ the request, and that permission must be linked from the entry.
 | ---------- | ----------- | ------ | --------------------------------------- | ------------------------------------ | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
 | 2026-08-12 | `puter`     | `pu`   | `puter.com`                             | Puter's owner (Nariman Jelveh)       | [#10210](https://github.com/khanhkit/AgentProxy/pull/10210) | API-key provider. Migration `152_remove_puter_provider.sql` cleans stored config.                             |
 | 2026-09-02 | `theoldllm` | `tllm` | `theoldllm.com`, `theoldllm.vercel.app` | The service operator (support email) | [#12440](https://github.com/khanhkit/AgentProxy/pull/12440) | Keyless provider. Written request received 2026-08-30. Dedicated issues and discussion deleted, PRs retitled. |
+| 2026-09-21 | `gemini-business` | `gembiz` | `business.gemini.google` | Project owner decision (#14217) | [#14467](https://github.com/khanhkit/AgentProxy/pull/14467) | Cookie-based web provider retired because its targeted protocol is dead and the replacement cannot be validated without a live Enterprise/Workspace account. |
+| 2026-09-21 | `suno`      | `suno` | `studio-api.suno.ai`, `studio-api-prod.suno.com` | Project owner decision (#14224) | [#14468](https://github.com/khanhkit/AgentProxy/pull/14468) | Cookie-auth direct provider retired; KIE-hosted `kie/suno-v4.0` and `kie/suno-v3.5` remain supported. |
 
 ## Adding an entry
 

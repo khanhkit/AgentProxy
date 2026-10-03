@@ -15,6 +15,9 @@ export const QUOTA_AUTOPING_FAILURE_COOLDOWN_MS = 15 * 60 * 1000;
 // within this window of it (Codex resetAt slides constantly while idle, so we
 // still poll every tick, but this bounds how eagerly we ping right after a slide).
 export const QUOTA_AUTOPING_REFRESH_AHEAD_MS = 5 * 60 * 1000;
+// Never warm a quota window whose reset is more than a day away. Such a
+// window cannot roll soon, so a probe only wastes quota and produces noise.
+export const QUOTA_AUTOPING_FAR_RESET_SKIP_MS = 24 * 60 * 60 * 1000;
 
 export type QuotaAutoPingProviderConfig = {
   settingsKey: string;

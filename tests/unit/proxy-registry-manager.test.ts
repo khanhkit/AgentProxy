@@ -164,12 +164,9 @@ test("http://user:pass@ip:port parses correctly", () => {
 // ── Protocol header mode ───────────────────────────────────────────────────────
 
 test("protocol header sets default type for subsequent shorthand lines", () => {
-  const text = [
-    "http",
-    "1.2.3.4:8080",
-    "5.6.7.8:3128:user:pass",
-    "user:pass@9.10.11.12:443",
-  ].join("\n");
+  const text = ["http", "1.2.3.4:8080", "5.6.7.8:3128:user:pass", "user:pass@9.10.11.12:443"].join(
+    "\n"
+  );
   const { entries, errors } = parseBulkImportText(text);
   assert.equal(errors.length, 0);
   assert.equal(entries.length, 3);
@@ -179,11 +176,7 @@ test("protocol header sets default type for subsequent shorthand lines", () => {
 });
 
 test("protocol:// prefix overrides protocol header default", () => {
-  const text = [
-    "socks5",
-    "http://1.2.3.4:8080",
-    "1.2.3.4:1080",
-  ].join("\n");
+  const text = ["socks5", "http://1.2.3.4:8080", "1.2.3.4:1080"].join("\n");
   const { entries, errors } = parseBulkImportText(text);
   assert.equal(errors.length, 0);
   assert.equal(entries.length, 2);
@@ -205,11 +198,7 @@ test("protocol header mode with mixed shorthand and pipe formats", () => {
 });
 
 test("protocol header only affects lines after it", () => {
-  const text = [
-    "1.2.3.4:1080",
-    "http",
-    "1.2.3.4:8080",
-  ].join("\n");
+  const text = ["1.2.3.4:1080", "http", "1.2.3.4:8080"].join("\n");
   const { entries, errors } = parseBulkImportText(text);
   assert.equal(errors.length, 0);
   assert.equal(entries.length, 2);
@@ -337,4 +326,30 @@ test("bare text with no colons or pipes produces error", () => {
   assert.equal(entries.length, 0);
   assert.equal(errors.length, 1);
   assert.equal(errors[0].reason, "bulkImportErrorMissingHost");
+});
+
+// ── Registry-derived import statuses (#14579) ────────────────────────────────
+
+test("pipe-delimited line with STATUS=active keeps it (#14579)", () => {
+  const { entries, errors } = parseBulkImportText("p|10.0.0.8|1080|||socks5|US|active|note");
+  assert.equal(errors.length, 0);
+  assert.equal(entries[0].status, "active");
+});
+
+test("pipe-delimited line with STATUS=Inactive normalizes to lowercase inactive (#14579)", () => {
+  const { entries, errors } = parseBulkImportText("p|10.0.0.9|1080|||socks5|US|Inactive|note");
+  assert.equal(errors.length, 0);
+  assert.equal(entries[0].status, "inactive");
+});
+
+test("pipe-delimited line with STATUS=dead is rejected (#14579)", () => {
+  const { entries, errors } = parseBulkImportText("p|10.0.0.10|1080|||socks5|US|dead|note");
+  assert.equal(entries.length, 0);
+  assert.equal(errors[0].reason, "bulkImportErrorInvalidStatus");
+});
+
+test("pipe-delimited line with STATUS=error is rejected (#14579)", () => {
+  const { entries, errors } = parseBulkImportText("p|10.0.0.11|1080|||socks5|US|error|note");
+  assert.equal(entries.length, 0);
+  assert.equal(errors[0].reason, "bulkImportErrorInvalidStatus");
 });

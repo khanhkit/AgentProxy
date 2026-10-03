@@ -180,6 +180,29 @@ describe("ccr protocol instruction (#8033)", () => {
     );
   });
 
+  it("recognizes MCP-gateway-namespaced AgentProxy CCR retrieve tool names", () => {
+    for (const name of [
+      "mcp__docker__agentproxy__agentproxy_ccr_retrieve",
+      "mcp__docker__agentproxy_ccr_retrieve",
+      "agentproxy.agentproxy_ccr_retrieve",
+      "agentproxy/agentproxy_ccr_retrieve",
+      "gateway:agentproxy_ccr_retrieve",
+    ]) {
+      assert.equal(callerSupportsCcrRetrieve({ tools: [{ name }] }), true, name);
+    }
+  });
+
+  it("does not loosen CCR retrieve matching into a substring test", () => {
+    assert.equal(
+      callerSupportsCcrRetrieve({ tools: [{ name: "agentproxy_ccr_retrieve_v2" }] }),
+      false
+    );
+    assert.equal(
+      callerSupportsCcrRetrieve({ tools: [{ name: "xagentproxy_ccr_retrieve" }] }),
+      false
+    );
+  });
+
   it("injectCcrProtocolInstruction is a pure helper usable directly", () => {
     const messages: Msg[] = [{ role: "user", content: "hi" }];
     const withInstruction = injectCcrProtocolInstruction(messages, { tools: [RETRIEVE_TOOL_FLAT] });

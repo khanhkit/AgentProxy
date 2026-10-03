@@ -1,0 +1,1 @@
+- **fix(i18n):** reconcile reviewed dashboard translations across the pre-Bosnian locale set and harden the locale-review tool with dotted-key support, retries, and checkpoints.

@@ -47,6 +47,9 @@ export type AttemptLoopState = {
   /** Quota-trust accumulators; persist across set retries and cooldown re-dispatch. */
   observedFailure: boolean;
   allObservedFailuresQuota: boolean;
+  requestScopedFailureSeen: boolean;
+  /** Normalized provider/model keys already refused request-scoped this dispatch. */
+  requestScopedRejectedModelKeys?: Set<string>;
   observeFailure(quotaExhausted: boolean, targetExecutionKey?: string): void;
 };
 
@@ -92,8 +95,10 @@ export type AttemptLoopDeps = {
     executionKey: string | undefined,
     comboId: string | undefined,
     log: ComboLogger,
-    tag: string
-  ) => void;
+    tag: string,
+    clearLKGP?: ((comboName: string, modelKey: string) => Promise<void>) | undefined,
+    failed?: { provider?: string | null; connectionId?: string | null } | null
+  ) => void | Promise<void>;
   /**
    * Closed-over setup values from handleComboChatInner. Optional so Task 2
    * gate tests keep compiling; attempt uses defaults when absent.
@@ -104,6 +109,7 @@ export type AttemptLoopDeps = {
   stickyWeightedLimit?: number;
   getWeightedStepKeyForTarget?: (target: ResolvedComboTarget) => string | null;
   universalHandoffConfig?: UniversalHandoffConfig;
+  sourceFormat?: string | null;
   relayOptions?: { sessionId?: string | null } | null;
   relayConfig?: ContextRelayConfig | null;
 };

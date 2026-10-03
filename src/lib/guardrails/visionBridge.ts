@@ -31,10 +31,71 @@ import {
   isProviderConnectionUsable,
   hasUsableCredentialsForModel,
 } from "./visionBridgeCredentials";
+import { MAX_COMBO_DEPTH } from "@agentproxy/open-sse/services/combo/comboPredicates.ts";
 
 export { isProviderConnectionUsable, hasUsableCredentialsForModel };
 
 type ComboVisionBridgeDecision = "process" | "skip" | "not-combo" | "no-vision";
+type LeafVisionTally = { hasVision: boolean; hasNonVision: boolean };
+
+function evaluateModelStepCapability(
+  step: Record<string, unknown>
+): "vision" | "non-vision" | null {
+  const targetModel = step.model;
+  if (typeof targetModel !== "string") return null;
+  const provider =
+    typeof step.providerId === "string"
+      ? step.providerId
+      : typeof step.provider === "string"
+        ? step.provider
+        : null;
+  const caps = getResolvedModelCapabilities({ provider, model: targetModel });
+  return caps.supportsVision === true ? "vision" : "non-vision";
+}
+
+async function resolveComboRefVisionCapability(
+  comboName: string,
+  visited: Set<string>,
+  depth: number
+): Promise<LeafVisionTally> {
+  const fallback: LeafVisionTally = { hasVision: false, hasNonVision: true };
+  if (depth > MAX_COMBO_DEPTH || visited.has(comboName)) return fallback;
+
+  const { getComboByName } = await import("@/lib/db/combos");
+  const nestedCombo = await getComboByName(comboName);
+  if (!nestedCombo) return fallback;
+
+  const nestedVisited = new Set(visited);
+  nestedVisited.add(comboName);
+
+  const nestedRawModels = (nestedCombo as Record<string, unknown>).models;
+  if (!Array.isArray(nestedRawModels) || nestedRawModels.length === 0) return fallback;
+
+  const tally: LeafVisionTally = { hasVision: false, hasNonVision: false };
+  let hasLeaf = false;
+  for (const rawStep of nestedRawModels) {
+    const step = rawStep as Record<string, unknown>;
+    if (step.kind === "combo-ref" && typeof step.comboName === "string") {
+      hasLeaf = true;
+      const nested = await resolveComboRefVisionCapability(
+        step.comboName,
+        nestedVisited,
+        depth + 1
+      );
+      tally.hasVision ||= nested.hasVision;
+      tally.hasNonVision ||= nested.hasNonVision;
+      continue;
+    }
+    if (step.kind === "model") {
+      hasLeaf = true;
+      const capability = evaluateModelStepCapability(step);
+      if (capability === "vision") tally.hasVision = true;
+      else tally.hasNonVision = true;
+    }
+  }
+
+  return hasLeaf ? tally : fallback;
+}
 
 export function resolveVisionComboName(mapping: Record<string, unknown>): string | null {
   const comboName = mapping.comboName ?? mapping.name ?? null;
@@ -59,6 +120,10 @@ export async function getComboVisionBridgeDecision(
     // 1. Try to find combo by exact name match
     let combo = await getComboByName(model);
 
+    if (!combo && model.startsWith("combo/")) {
+      combo = await getComboByName(model.slice("combo/".length));
+    }
+
     // 2. If no exact match, try model-combo mapping
     if (!combo) {
       const mapping = await resolveComboForModel(model);
@@ -74,39 +139,40 @@ export async function getComboVisionBridgeDecision(
     const rawModels = (combo as Record<string, unknown>).models;
     if (!Array.isArray(rawModels)) return "process";
 
-    // 4. Check each target for vision support
-    // combo-ref → conservative (process images)
-    // model step with no native vision → process images
-    // all model steps with native vision → safe to skip
-    // zero vision-capable model steps → "no-vision" (reroute-eligible)
+    // 4. Check each target for vision support. combo-ref steps recurse to
+    // their real leaf models with the same bounded-depth semantics as combo flattening.
     let hasModelStep = false;
     let hasVisionCapableStep = false;
     let hasNonVisionStep = false;
-    for (const step of rawModels) {
-      const s = step as Record<string, unknown>;
-      if (s.kind === "combo-ref") return "process";
-      if (s.kind === "model") {
+    const rootComboName =
+      typeof (combo as Record<string, unknown>).name === "string"
+        ? ((combo as Record<string, unknown>).name as string)
+        : model;
+
+    for (const rawStep of rawModels) {
+      const step = rawStep as Record<string, unknown>;
+      if (step.kind === "combo-ref") {
         hasModelStep = true;
-        const targetModel = s.model;
-        if (typeof targetModel === "string") {
-          const provider =
-            typeof s.providerId === "string"
-              ? s.providerId
-              : typeof s.provider === "string"
-                ? s.provider
-                : null;
-          const caps = getResolvedModelCapabilities({
-            provider,
-            model: targetModel,
-          });
-          if (caps.supportsVision === true) {
-            hasVisionCapableStep = true;
-          } else {
-            hasNonVisionStep = true;
-          }
-        } else {
-          return "process";
+        if (typeof step.comboName !== "string") {
+          hasNonVisionStep = true;
+          continue;
         }
+        const nested = await resolveComboRefVisionCapability(
+          step.comboName,
+          new Set([rootComboName]),
+          1
+        );
+        if (nested.hasVision) hasVisionCapableStep = true;
+        if (nested.hasNonVision) hasNonVisionStep = true;
+        continue;
+      }
+
+      if (step.kind === "model") {
+        hasModelStep = true;
+        const capability = evaluateModelStepCapability(step);
+        if (capability === null) return "process";
+        if (capability === "vision") hasVisionCapableStep = true;
+        else hasNonVisionStep = true;
       }
     }
 

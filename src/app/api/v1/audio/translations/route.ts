@@ -18,6 +18,7 @@ import {
   rateLimitedProviderResponse,
 } from "@/app/api/v1/_shared/rateLimit";
 import { attachAgentProxyMetaToResponse } from "@/domain/agentproxyResponseMeta";
+import { saveCallLog } from "@/lib/usage/callLogs";
 import { generateRequestId } from "@/shared/utils/requestId";
 
 /**
@@ -99,6 +100,10 @@ export async function POST(request) {
     resolvedProvider: providerConfig,
     resolvedModel,
   });
+  const latencyMs = Date.now() - startTime;
+  const logModel = resolvedModel ? `${provider}/${resolvedModel}` : String(model);
+  const connectionId = (credentials as { connectionId?: string } | null)?.connectionId || undefined;
+
   if (response?.ok) {
     await clearRecoveredProviderState(credentials);
     // No text body / playback duration available from the multipart upload, so
@@ -107,9 +112,27 @@ export async function POST(request) {
       provider,
       model: resolvedModel,
       costUsd: 0,
-      latencyMs: Date.now() - startTime,
+      latencyMs,
       requestId: generateRequestId(),
     });
   }
+
+  if (response) {
+    saveCallLog({
+      method: "POST",
+      path: "/v1/audio/translations",
+      status: response.status,
+      model: logModel,
+      provider,
+      connectionId,
+      duration: latencyMs,
+      requestType: "audio_translation",
+      error: response.ok ? null : `Audio translation failed with status ${response.status}`,
+      apiKeyId: policy.apiKeyInfo?.id || null,
+      apiKeyName: policy.apiKeyInfo?.name || null,
+      noLog: policy.apiKeyInfo?.noLog === true,
+    }).catch(() => {});
+  }
+
   return response;
 }

@@ -20,8 +20,16 @@ traffic is never affected by it.
 | Thing               | What it is                                                                                                     | Where documented                                     |
 | ------------------- | -------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
 | **Chaos Mode**      | The dashboard page + API described here: fan one task out to many providers (parallel or collaborative).       | This guide                                           |
-| `auto/chaos`        | An Auto-Combo model id with fault-injection scoring weights, for resilience testing. Nothing to configure.     | [AUTO-COMBO.md](../routing/AUTO-COMBO.md)            |
+| `auto/chaos`        | Auto-Combo model id: parallel fan-out, one model per provider, one upstream call each. Not fault injection.   | [AUTO-COMBO.md](../routing/AUTO-COMBO.md)            |
 | Chaos combo config  | A persisted combo with `config.chaos.enabled` fans out to a panel with an optional judge model (API-only).      | `open-sse/services/autoCombo/chaosEngine.ts`         |
+
+### `auto/chaos`: parallel fan-out
+
+`auto/chaos` is not a fault-injection knob. It builds a panel of models from distinct providers, sends the same request to the panel in parallel, and returns one completion. One user request therefore consumes one upstream request per panel member. The default panel is 5 members and is capped by the runtime chaos-panel limit.
+
+The fan-out streams per-member status metadata while preserving a single OpenAI-style final answer. Persisted chaos combo configuration uses the same fan-out engine; a configured judge selects the final answer rather than turning the mode into failure injection.
+
+See [`AUTO-COMBO.md`](../routing/AUTO-COMBO.md) for routing details.
 
 ## Setup
 

@@ -17,6 +17,8 @@ export const command_codeProvider: RegistryEntry = {
   // The discovery response is a partial routing catalog; static registry
   // entries omitted from it can still be accepted by the gateway.
   liveCatalogAuthoritative: false,
+  requestDefaults: { maxTokens: 16_384 },
+  fetchStartTimeoutCapMs: 600_000,
   authType: "apikey",
   authHeader: "Authorization",
   authPrefix: "Bearer ",

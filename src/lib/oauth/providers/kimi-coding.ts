@@ -98,11 +98,11 @@ export const kimiCoding = {
       }),
     });
 
+    const text = await response.text();
     let data;
     try {
-      data = await response.json();
-    } catch (e) {
-      const text = await response.text();
+      data = JSON.parse(text);
+    } catch {
       data = { error: "invalid_response", error_description: text };
     }
 

@@ -99,6 +99,25 @@ const QUOTA_PATTERNS: ReadonlyArray<RegExp> = [
   /organization TPD rate limit/i,
   /\bTPD rate limit\b/i,
   /insufficient balance/i,
+
+  // CJK long-window quota exhaustion.
+  /\[1308\]/,
+  /\[1310\]/,
+  /usage limit reached for \d+\s*hour/i,
+  /使用上限/,
+  /限额将在/,
+  /已达?到.*上限/,
+  /额度已用尽/,
+  /额度已用完/,
+  /今日调用上限/,
+  /调用上限/,
+  /配额[已超]/,
+  /超出.*配额/,
+  /クォータに達しました/,
+  /上限に達しました/,
+  /利用制限に達しました/,
+  /할당량을 초과/,
+  /사용 한도를 초과/,
 ];
 
 /**

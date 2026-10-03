@@ -18,6 +18,7 @@
 import {
   classifyErrorText,
   hasPerModelQuota,
+  hasPerModelFailureScope,
   isProviderExhaustedReason,
 } from "../accountFallback.ts";
 import {
@@ -33,6 +34,7 @@ import { isCloudflareFingerprintRejection } from "../errorClassifier.ts";
 // Exclusive in practice to agentrouter's "额度不足" rule: no opencode-family
 // rule matches 403 today, so only agentrouter reaches this predicate via 403.
 import { isAgentrouterConnectionQuotaScope } from "@/sse/services/auth";
+import { isVertexConnectionWidePermissionDenied } from "@/sse/services/vertexErrorClassifier";
 import type { ComboLogger, ResolvedComboTarget } from "./types.ts";
 
 // Connection-level failure statuses: the provider connection itself is likely bad (upstream
@@ -211,6 +213,16 @@ export function applyComboTargetExhaustion(
       result.status === 403 &&
       isAlibabaModelStudioProvider(provider) &&
       isAlibabaFreeQuotaExhaustedError(opts.errorText)
+    ) {
+      return false;
+    }
+    // Per-model-quota providers can return 403 for model access/tier restrictions.
+    // Keep sibling models on the same connection eligible unless Vertex provides
+    // positive evidence that the permission denial is connection/project-wide.
+    if (
+      result.status === 403 &&
+      hasPerModelQuota(provider, opts.rawModel) &&
+      !(provider === "vertex" && isVertexConnectionWidePermissionDenied(opts.errorText))
     ) {
       return false;
     }
@@ -412,7 +424,12 @@ function markConnectionLevelExhaustion(
     // must NOT exhaust the connection — other models on the same connection may still succeed.
     // Other connection-level statuses (408/502/503/504/524) indicate the connection itself is
     // bad, so they correctly exhaust even for per-model-quota providers.
-    (result.status === 500 && hasPerModelQuota(provider, rawModel))
+    (result.status === 500 && hasPerModelQuota(provider, rawModel)) ||
+    // #12334: a 404 names one model the account cannot serve, never a bad connection.
+    // On a provider that multiplexes models behind a single credential — a Claude OAuth
+    // subscription serving Fable 5, Opus 5/4.8/4.7/4.6, Sonnet and Haiku — exhausting the
+    // connection here stopped a priority combo at its first step.
+    (result.status === 404 && hasPerModelFailureScope(provider, rawModel))
   ) {
     return;
   }

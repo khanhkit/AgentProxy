@@ -44,21 +44,25 @@ type EmptyChoicesRejectContext = {
   targetFormat?: string;
   model?: string | null;
   usage?: unknown;
-  onFailure?: ((payload: {
-    status: number;
-    message: string;
-    code?: string;
-    type?: string;
-  }) => boolean | void | Promise<void>) | null;
-  onComplete?: ((payload: {
-    status: number;
-    usage: unknown;
-    responseBody?: unknown;
-    providerPayload?: unknown;
-    clientPayload?: unknown;
-    error?: string | null;
-    errorCode?: string | null;
-  }) => void) | null;
+  onFailure?:
+    | ((payload: {
+        status: number;
+        message: string;
+        code?: string;
+        type?: string;
+      }) => boolean | void | Promise<void>)
+    | null;
+  onComplete?:
+    | ((payload: {
+        status: number;
+        usage: unknown;
+        responseBody?: unknown;
+        providerPayload?: unknown;
+        clientPayload?: unknown;
+        error?: string | null;
+        errorCode?: string | null;
+      }) => void)
+    | null;
   clearPendingRequestFromStream?: () => void;
 };
 
@@ -67,8 +71,12 @@ type EmptyChoicesRejectContext = {
  * must abort the stream (controller.error + early return); `false` when the
  * stream legitimately forwarded content/usage and should complete normally.
  */
+export function isEmptyTurnCore(forwardedValuableChunk: boolean, hasValidUsage: boolean): boolean {
+  return !forwardedValuableChunk && !hasValidUsage;
+}
+
 export function rejectEmptyChoicesStream(ctx: EmptyChoicesRejectContext): boolean {
-  if (ctx.forwardedValuableChunk || ctx.hasValidUsage) return false;
+  if (!isEmptyTurnCore(ctx.forwardedValuableChunk, ctx.hasValidUsage)) return false;
 
   const error = new Error(
     "Provider returned empty content — stream forwarded no valuable chunks"

@@ -58,6 +58,7 @@ import { handleSegmindImageGeneration } from "./imageGeneration/providers/segmin
 import { handleUcImageGeneration } from "./imageGeneration/providers/ucImage.ts";
 import { handleCursorAgentImageGeneration } from "./imageGeneration/providers/cursorAgentImage.ts";
 import { handleMinimaxImageGeneration } from "./imageGeneration/providers/minimax.ts";
+import { handleCloudflareAiImageGeneration } from "./imageGeneration/providers/cloudflareAi.ts";
 import { handleMaxaiImageGeneration } from "./imageGeneration/providers/maxaiImage.ts";
 import { handleAdobeFireflyImageGeneration } from "./imageGeneration/providers/adobeFirefly.ts";
 import { handleAlibabaImageGeneration } from "./imageGeneration/providers/alibabaImage.ts";
@@ -240,11 +241,15 @@ function normalizeImageAspectRatio(value: unknown, fallbackSize: unknown): strin
   return mapImageSize(typeof fallbackSize === "string" ? fallbackSize : null);
 }
 
-function normalizeImageGenerationSize(snakeCaseValue: unknown, camelCaseValue: unknown): string {
-  const value = snakeCaseValue ?? camelCaseValue;
-  if (typeof value !== "string") return "1K";
+function normalizeImageGenerationSize(value: unknown): {
+  value: string | undefined;
+  clamped: boolean;
+} {
+  if (typeof value !== "string") return { value: undefined, clamped: false };
   const normalized = value.trim().toUpperCase();
-  return IMAGE_SIZE_PATTERN.test(normalized) ? normalized : "1K";
+  return IMAGE_SIZE_PATTERN.test(normalized)
+    ? { value: normalized, clamped: false }
+    : { value: "1K", clamped: true };
 }
 
 function parseJsonOrNull(value: string): unknown | null {
@@ -311,12 +316,6 @@ const BFL_EDIT_MODELS = new Set([
 ]);
 
 const BFL_FAILURE_STATUSES = new Set(["Error", "Failed", "Content Moderated", "Request Moderated"]);
-
-function formatImageProviderError(err) {
-  const sanitized = sanitizeErrorMessage(err);
-  const message = (sanitized || "").replace(/^Error:\s*/i, "").trim();
-  return message ? `Image provider error: ${message}` : "Image provider error";
-}
 
 const STABILITY_GENERATION_ENDPOINTS = {
   "sd3.5-large": "/v2beta/stable-image/generate/sd3",
@@ -755,6 +754,17 @@ export async function handleImageGeneration({
     });
   }
 
+  if (providerConfig.format === "cloudflare-ai-image") {
+    return handleCloudflareAiImageGeneration({
+      model,
+      provider,
+      providerConfig,
+      body,
+      credentials,
+      log,
+    });
+  }
+
   if (providerConfig.format === "minimax-image") {
     return handleMinimaxImageGeneration({
       model,
@@ -821,6 +831,8 @@ function normalizeKieImageResult(recordData: unknown): string[] {
   // Check data.response (common in 4o-image API)
   add(response.resultUrls);
   add(response.resultUrl);
+  add(response.resultImageUrl);
+  add(response.resultImageUrls);
 
   // Check direct data fields
   add(data.resultImageUrls);
@@ -968,12 +980,12 @@ async function handleKieImageGeneration({
       pollIntervalMs,
     });
 
-    if (state === "success") {
+    const kieUrls = state === "success" ? normalizeKieImageResult(recordData) : [];
+    if (kieUrls.length > 0) {
       if (log) {
         log.info("IMAGE", `KIE poll success for task ${taskId}`);
       }
-      const urls = normalizeKieImageResult(recordData);
-      const images = urls.map((url: string) => ({ url, revised_prompt: prompt }));
+      const images = kieUrls.map((url: string) => ({ url, revised_prompt: prompt }));
 
       return saveImageSuccessResult({
         provider,
@@ -1039,7 +1051,15 @@ async function handleGeminiImageGeneration({ model, providerConfig, body, creden
     typeof body.n === "number" && Number.isFinite(body.n) && body.n > 0 ? Math.floor(body.n) : 1;
   const promptText = typeof body.prompt === "string" ? body.prompt : String(body.prompt ?? "");
   const aspectRatio = normalizeImageAspectRatio(body.aspect_ratio, body.size);
-  const imageSize = normalizeImageGenerationSize(body.image_size, body.imageSize);
+  const { value: imageSize, clamped: imageSizeClamped } = normalizeImageGenerationSize(
+    body.image_size
+  );
+  if (imageSizeClamped && log && typeof log.warn === "function") {
+    log.warn(
+      "IMAGE",
+      `antigravity/${model}: unsupported image_size ${JSON.stringify(body.image_size)} — clamped to 1K (accepted: 1K|2K|4K)`
+    );
+  }
 
   // Summarized request for call log
   const logRequestBody = {
@@ -1047,7 +1067,8 @@ async function handleGeminiImageGeneration({ model, providerConfig, body, creden
     prompt: promptText.slice(0, 200),
     size: body.size || "default",
     aspect_ratio: aspectRatio,
-    image_size: imageSize,
+    image_size: body.image_size ?? null,
+    image_size_applied: imageSize ?? "default",
     n: candidateCount,
   };
 
@@ -1077,7 +1098,7 @@ async function handleGeminiImageGeneration({ model, providerConfig, body, creden
         candidateCount,
         imageConfig: {
           aspectRatio,
-          imageSize,
+          ...(imageSize ? { imageSize } : {}),
         },
       },
     },
@@ -2242,7 +2263,7 @@ function extractImageInputs(body) {
   };
 }
 
-async function resolveImageSource(source, remoteFetchOptions = {}) {
+export async function resolveImageSource(source, remoteFetchOptions = {}) {
   if (typeof source !== "string" || source.trim().length === 0) {
     throw new Error("Invalid image source");
   }
@@ -2259,7 +2280,13 @@ async function resolveImageSource(source, remoteFetchOptions = {}) {
   }
 
   if (isHttpUrl(trimmed)) {
-    const remoteImage = await fetchRemoteImage(trimmed, remoteFetchOptions);
+    // Caller-controlled image/mask URLs are always strict public-only and DNS-pinned.
+    // Preserve the internal test fetch seam, but never let caller options relax the guard.
+    const remoteImage = await fetchRemoteImage(trimmed, {
+      ...remoteFetchOptions,
+      guard: "public-only",
+      pinDns: true,
+    });
     return {
       buffer: remoteImage.buffer,
       base64: remoteImage.buffer.toString("base64"),
@@ -2885,12 +2912,36 @@ async function fetchImageEndpoint(url, headers, body, provider, log) {
 
     const data = await response.json();
 
-    // Normalize response to OpenAI format
+    // Normalize response to OpenAI format. A 2xx without at least one usable
+    // image must not terminate combo fallback with an image-less success.
+    const items = Array.isArray(data?.data) ? data.data : [];
+    const hasUsableImage = items.some(
+      (item: unknown) =>
+        isJsonObject(item) &&
+        ((typeof item.b64_json === "string" && item.b64_json.length > 0) ||
+          (typeof item.url === "string" && item.url.length > 0))
+    );
+    if (!hasUsableImage) {
+      if (log) {
+        log.warn(
+          "IMAGE",
+          `${provider} returned 200 without a usable image payload; treating as retryable 502`
+        );
+      }
+      return {
+        success: false,
+        status: HTTP_STATUS.BAD_GATEWAY,
+        error: sanitizeErrorMessage(
+          "Image provider returned a success status without an image payload"
+        ),
+      };
+    }
+
     return {
       success: true,
       data: {
         created: data.created || Math.floor(Date.now() / 1000),
-        data: data.data || [],
+        data: items,
       },
     };
   } catch (err: unknown) {
@@ -3186,7 +3237,7 @@ function normalizeNanoBananaSyncPayload(data, prompt) {
   return { data: images.filter(Boolean) };
 }
 
-async function normalizeNanoBananaTaskResult(taskData, body, log) {
+export async function normalizeNanoBananaTaskResult(taskData, body, log) {
   const response = taskData?.response || {};
 
   const urlCandidates = [
@@ -3224,7 +3275,10 @@ async function normalizeNanoBananaTaskResult(taskData, body, log) {
 
     if (urlCandidates.length > 0) {
       const firstUrl = urlCandidates[0];
-      const remoteImage = await fetchRemoteImage(firstUrl, { guard: getProviderOutboundGuard() });
+      const remoteImage = await fetchRemoteImage(firstUrl, {
+        guard: "public-only",
+        pinDns: true,
+      });
       const base64 = remoteImage.buffer.toString("base64");
       return [{ b64_json: base64, revised_prompt: body.prompt }];
     }

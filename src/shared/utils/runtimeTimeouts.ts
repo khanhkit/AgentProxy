@@ -8,6 +8,11 @@ type ReadTimeoutOptions = {
 
 export const DEFAULT_FETCH_TIMEOUT_MS = 600_000;
 export const DEFAULT_STREAM_IDLE_TIMEOUT_MS = 600_000;
+// Hard cap on a connected stream's total lifetime. It must stay above the
+// largest registered per-model timeout so valid long-running models are not
+// killed before their own budget expires.
+export const MAX_REGISTERED_MODEL_TIMEOUT_MARGIN_MS = 60_000;
+export const DEFAULT_STREAM_ACTIVE_TIMEOUT_MS = 1_260_000;
 export const MAX_TIMER_TIMEOUT_MS = 2_147_483_647;
 export const DEFAULT_SSE_HEARTBEAT_INTERVAL_MS = 15_000;
 export const DEFAULT_STREAM_READINESS_TIMEOUT_MS = 80_000;
@@ -41,6 +46,12 @@ export const DEFAULT_CUSTOM_HTTP_SERVER_TIMEOUTS: Readonly<CustomHttpServerTimeo
 // failure, wait this long for the real completion to land. Set to 0 to
 // disable and restore the old immediate-fail behavior.
 export const DEFAULT_STREAM_DISCONNECT_GRACE_PERIOD_MS = 10_000;
+// OpenCode Responses emits a lifecycle event before generation; bound silence after headers.
+export const DEFAULT_RESPONSES_FIRST_BYTE_TIMEOUT_MS = 15_000;
+// Suggested operator value when enabling the OpenCode Responses headers-wait bound.
+// This is not an active default: the getter returns 0 unless explicitly configured.
+export const SUGGESTED_OPENCODE_RESPONSES_HEADERS_WAIT_MS = 30_000;
+export const DEFAULT_OPENCODE_RESPONSES_HEADERS_WAIT_MAX_ROTATIONS = 2;
 
 function hasEnvValue(env: EnvSource, name: string): boolean {
   const raw = env[name];
@@ -50,6 +61,7 @@ function hasEnvValue(env: EnvSource, name: string): boolean {
 export type UpstreamTimeoutConfig = {
   fetchTimeoutMs: number;
   streamIdleTimeoutMs: number;
+  streamActiveTimeoutMs: number;
   sseHeartbeatIntervalMs: number;
   streamReadinessTimeoutMs: number;
   streamReadinessMaxTimeoutMs: number;
@@ -136,6 +148,15 @@ export function getUpstreamTimeoutConfig(
       logger,
     }
   );
+  const streamActiveTimeoutMs = readTimeoutMs(
+    env,
+    "STREAM_ACTIVE_TIMEOUT_MS",
+    DEFAULT_STREAM_ACTIVE_TIMEOUT_MS,
+    {
+      allowZero: true,
+      logger,
+    }
+  );
   const streamReadinessTimeoutMs = readTimeoutMs(
     env,
     "STREAM_READINESS_TIMEOUT_MS",
@@ -176,6 +197,7 @@ export function getUpstreamTimeoutConfig(
   return {
     fetchTimeoutMs,
     streamIdleTimeoutMs,
+    streamActiveTimeoutMs,
     streamReadinessTimeoutMs,
     streamReadinessMaxTimeoutMs,
     sseHeartbeatIntervalMs,
@@ -228,6 +250,40 @@ export function getTlsClientTimeoutConfig(
       logger,
     }),
   };
+}
+
+export function getOpencodeResponsesHeadersWaitMs(
+  env: EnvSource = process.env,
+  logger?: TimeoutLogger
+): number {
+  return readTimeoutMs(env, "OPENCODE_RESPONSES_HEADERS_WAIT_MS", 0, {
+    allowZero: true,
+    logger,
+  });
+}
+
+export function getOpencodeResponsesHeadersWaitMaxRotations(
+  env: EnvSource = process.env,
+  logger?: TimeoutLogger
+): number {
+  return readTimeoutMs(
+    env,
+    "OPENCODE_RESPONSES_HEADERS_WAIT_MAX_ROTATIONS",
+    DEFAULT_OPENCODE_RESPONSES_HEADERS_WAIT_MAX_ROTATIONS,
+    { allowZero: true, logger }
+  );
+}
+
+export function getResponsesFirstByteTimeoutMs(
+  env: EnvSource = process.env,
+  logger?: TimeoutLogger
+): number {
+  return readTimeoutMs(
+    env,
+    "RESPONSES_FIRST_BYTE_TIMEOUT_MS",
+    DEFAULT_RESPONSES_FIRST_BYTE_TIMEOUT_MS,
+    { allowZero: true, logger }
+  );
 }
 
 export function getApiBridgeTimeoutConfig(

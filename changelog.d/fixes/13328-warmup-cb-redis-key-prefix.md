@@ -1,0 +1,1 @@
+- **fix(redis):** warmup circuit-breaker keys honor the configured `REDIS_KEY_PREFIX` instead of using a fixed namespace once the owning runtime slice is present.

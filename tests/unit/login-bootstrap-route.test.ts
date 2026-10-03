@@ -11,6 +11,9 @@ process.env.DATA_DIR = TEST_DATA_DIR;
 const core = await import("../../src/lib/db/core.ts");
 const settingsDb = await import("../../src/lib/db/settings.ts");
 const route = await import("../../src/app/api/settings/require-login/route.ts");
+const bootstrapToken = await import("../../src/lib/auth/bootstrapToken.ts");
+const { AUTHZ_HEADER_PEER_LOCALITY, BOOTSTRAP_TOKEN_HEADER } =
+  await import("../../src/server/authz/headers.ts");
 
 type BootstrapResponse = {
   nodeVersion: string;
@@ -28,6 +31,7 @@ async function resetStorage() {
 
 test.beforeEach(async () => {
   delete process.env.INITIAL_PASSWORD;
+  bootstrapToken.__resetBootstrapTokenForTest();
   await resetStorage();
 });
 
@@ -37,6 +41,7 @@ test.afterEach(() => {
 
 test.after(() => {
   delete process.env.INITIAL_PASSWORD;
+  bootstrapToken.__resetBootstrapTokenForTest();
   core.resetDbInstance();
   fs.rmSync(TEST_DATA_DIR, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
 });
@@ -306,6 +311,39 @@ test("TC-AUTH-SEC-002: remote peer cannot mutate passwordless setupComplete stat
     },
     { rejected: true, requireLogin: true, hasPassword: false, setupComplete: true }
   );
+});
+
+function remoteBootstrapPost(tokenHeader?: string): Request {
+  const headers = new Headers({ "content-type": "application/json" });
+  headers.set(AUTHZ_HEADER_PEER_LOCALITY, "remote");
+  if (tokenHeader !== undefined) headers.set(BOOTSTRAP_TOKEN_HEADER, tokenHeader);
+  return new Request("https://dashboard.example/api/settings/require-login", {
+    method: "POST",
+    headers,
+    body: JSON.stringify({ requireLogin: false }),
+  });
+}
+
+test("#14296 AgentProxy route guard rejects a wrong token without burning the real one", async () => {
+  await settingsDb.updateSettings({ requireLogin: true, password: "", setupComplete: false });
+  const token = bootstrapToken.getOrCreateBootstrapToken({ log: () => {} });
+
+  const response = await route.POST(remoteBootstrapPost("wrong-token"));
+  const settings = await settingsDb.getSettings();
+  assert.equal(response.status, 403);
+  assert.equal(settings.requireLogin, true);
+  assert.equal(bootstrapToken.peekBootstrapToken(token), true);
+});
+
+test("#14296 AgentProxy route guard accepts and consumes the valid one-shot token", async () => {
+  await settingsDb.updateSettings({ requireLogin: true, password: "", setupComplete: false });
+  const token = bootstrapToken.getOrCreateBootstrapToken({ log: () => {} });
+
+  const response = await route.POST(remoteBootstrapPost(token));
+  const settings = await settingsDb.getSettings();
+  assert.equal(response.status, 200);
+  assert.equal(settings.requireLogin, false);
+  assert.equal(bootstrapToken.peekBootstrapToken(token), false, "successful write consumes token");
 });
 
 test("public login bootstrap route POST returns 500 when hashing fails", async () => {

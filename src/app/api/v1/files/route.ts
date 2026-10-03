@@ -1,7 +1,11 @@
 import { CORS_HEADERS, handleCorsOptions } from "@/shared/utils/cors";
 import { createFile, listFiles, formatFileResponse, countFiles } from "@/lib/db/files";
 import { NextResponse } from "next/server";
-import { getApiKeyRequestScope } from "@/app/api/v1/_helpers/apiKeyScope";
+import {
+  getPolicyAwareApiKeyRequestScope,
+  resolveEffectiveApiKeyId,
+  resolveListScope,
+} from "@/app/api/v1/_helpers/apiKeyScope";
 
 export async function OPTIONS() {
   return handleCorsOptions();
@@ -63,9 +67,9 @@ export function parseFilesListQuery(searchParams: URLSearchParams):
 }
 
 export async function POST(request: Request) {
-  const scope = await getApiKeyRequestScope(request);
+  const scope = await getPolicyAwareApiKeyRequestScope(request);
   if (scope.rejection) return scope.rejection;
-  const apiKeyId = scope.apiKeyId;
+  const apiKeyId = resolveEffectiveApiKeyId(scope, null);
 
   try {
     const formData = await request.formData();
@@ -128,9 +132,11 @@ export async function POST(request: Request) {
 }
 
 export async function GET(request: Request) {
-  const scope = await getApiKeyRequestScope(request);
+  const scope = await getPolicyAwareApiKeyRequestScope(request);
   if (scope.rejection) return scope.rejection;
-  const apiKeyId = scope.apiKeyId;
+  const listScope = resolveListScope(scope);
+  if (listScope.mode === "rejected") return listScope.response;
+  const apiKeyId = listScope.mode === "api_key" ? listScope.apiKeyId : undefined;
 
   const { searchParams } = new URL(request.url);
   const parsed = parseFilesListQuery(searchParams);
@@ -139,7 +145,7 @@ export async function GET(request: Request) {
 
   // We fetch limit + 1 to check if there are more items
   const files = listFiles({
-    apiKeyId: apiKeyId || undefined,
+    apiKeyId,
     purpose,
     limit: limit + 1,
     after,
@@ -148,7 +154,7 @@ export async function GET(request: Request) {
 
   const hasMore = files.length > limit;
   const data = files.slice(0, limit);
-  const totalCount = countFiles({ apiKeyId: apiKeyId || undefined, purpose });
+  const totalCount = countFiles({ apiKeyId, purpose });
 
   return NextResponse.json(
     {

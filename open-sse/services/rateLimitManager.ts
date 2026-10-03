@@ -8,6 +8,7 @@
  * Can be toggled per provider connection via dashboard.
  */
 
+import { AsyncResource } from "node:async_hooks";
 import Bottleneck from "bottleneck";
 import { applyBottleneckDoExpirePatch, applyBottleneckHeartbeatPatch } from "./bottleneckPatch.ts";
 import { parseRetryAfterFromBody } from "./accountFallback.ts";
@@ -34,11 +35,13 @@ import {
   LEGACY_RATE_LIMIT_QUEUE_TIMEOUT_CODE,
 } from "./rateLimitManager/errors";
 import { LimiterWedgeWatchdog, WATCHDOG_INTERVAL_MS } from "./rateLimitManager/wedgeWatchdog";
+import { createCancellableJob } from "./rateLimitManager/queuedJobCancel";
 import { toNumber } from "@/shared/utils/numeric";
 import {
   getExecutorTimeoutMs,
   resolveConnectionTimeoutMs,
 } from "../handlers/chatCore/upstreamTimeouts.ts";
+import { boundedMap } from "../../src/lib/quota/boundedMap.ts";
 
 interface LearnedLimitEntry {
   provider: string;
@@ -90,8 +93,12 @@ const enabledConnections = new Set<string>();
 const connectionRateLimitOverrides = new Map<string, Record<string, number>>();
 
 // Store learned limits for persistence (debounced)
-const learnedLimits: Record<string, LearnedLimitEntry> = {};
-const MAX_LEARNED_LIMITS = 200;
+// One learned entry per limiter key (provider:connection[:model]). The previous
+// `MAX_LEARNED_LIMITS = 200` was declared but never enforced; enforcing 200 would
+// start evicting (dropping persisted limits) on deployments with many
+// connection×model limiters, so the enforced cap is set well above that.
+export const MAX_LEARNED_LIMITS = 2048;
+const learnedLimits = boundedMap<LearnedLimitEntry>("learned-limits", MAX_LEARNED_LIMITS, "lru");
 const limiterLastUsed = new Map<string, number>();
 let persistTimer: ReturnType<typeof setTimeout> | null = null;
 const pendingAsyncOperations = new Set<Promise<unknown>>();
@@ -606,15 +613,16 @@ export async function withRateLimit(
     undefined,
     connectionId ?? undefined
   );
-  const budgetForSlot =
-    typeof remainingBudgetMs === "number" && Number.isFinite(remainingBudgetMs)
-      ? remainingBudgetMs
+  const hasBudget = typeof remainingBudgetMs === "number" && Number.isFinite(remainingBudgetMs);
+  // maxWaitMs=0 is the explicit sentinel for disabling the queue-wait deadline.
+  // Keep that distinct from a finite caller budget that has actually reached zero.
+  const queueWaitDisabled = !hasBudget && queueBudgetMs <= 0;
+  const budgetForSlot = hasBudget
+    ? remainingBudgetMs
+    : queueWaitDisabled
+      ? undefined
       : queueBudgetMs;
-  if (
-    typeof remainingBudgetMs === "number" &&
-    Number.isFinite(remainingBudgetMs) &&
-    remainingBudgetMs <= 0
-  ) {
+  if (hasBudget && remainingBudgetMs <= 0) {
     throw markLocalRateLimitError(
       new Error(`Queue budget exhausted before rate-limit (remaining=${remainingBudgetMs}ms)`),
       LEGACY_RATE_LIMIT_QUEUE_TIMEOUT_CODE
@@ -659,8 +667,11 @@ export async function withRateLimit(
       `[RATE-LIMIT] executionMaxWaitMs ${perConnExec}ms clamped to upstream ${upstreamMs}ms for ${provider}/${model ?? ""}`
     );
   }
-  const scheduleOpts =
-    executionExpirationMs && executionExpirationMs > 0 ? { expiration: executionExpirationMs } : {};
+  const { scheduleOpts, abandon: abandonQueuedJob } = createCancellableJob(
+    limiter,
+    executionExpirationMs,
+    trackAsyncOperation
+  );
 
   // Issue #6593: opt-in admission cap — fast-reject before Bottleneck's
   // schedule() (and before any downstream compression/prompt work runs) when
@@ -686,10 +697,12 @@ export async function withRateLimit(
     ),
     LEGACY_RATE_LIMIT_QUEUE_TIMEOUT_CODE
   );
-  if (queueRemainingMs <= 0) throw queueTimeoutErr;
+  if (!queueWaitDisabled && queueRemainingMs <= 0) throw queueTimeoutErr;
   const timeoutPromise = new Promise<never>((_, reject) => {
+    if (queueWaitDisabled) return;
     delayId = setTimeout(() => {
       queueTimedOut = true;
+      abandonQueuedJob();
       reject(queueTimeoutErr);
     }, queueRemainingMs);
   });
@@ -705,20 +718,21 @@ export async function withRateLimit(
     }
     return (fn as unknown as (s?: AbortSignal) => Promise<unknown>)(signal ?? undefined);
   };
-  const scheduled = limiter.schedule(scheduleOpts, wrappedFn as unknown as () => Promise<unknown>);
+  // A queued job must run in the async context of the caller that scheduled
+  // it. Bottleneck dispatches from the job that frees the slot, so without
+  // binding a queued request would borrow the output/logging/attribution of
+  // another request.
+  const boundFn = AsyncResource.bind(wrappedFn);
+  const scheduled = limiter.schedule(scheduleOpts, boundFn as unknown as () => Promise<unknown>);
   scheduled.catch(() => {});
-  // Note: if timeoutPromise wins while the job is still QUEUED (blocked by
-  // maxConcurrent), Bottleneck cannot cancel it — wrappedFn rejects only on
-  // dispatch after the slot frees. Until then counts().QUEUED stays 1 and
-  // maxQueueDepth admission sees an inflated depth transiently; this is
-  // inherent to Bottleneck (no cancelQueuedJob) and does not affect
-  // correctness since fnCalled stays false.
+  // Queue timeout/abort removes an abandoned QUEUED job via queuedJobCancel.ts.
 
   try {
     if (signal) {
       let abortListener: (() => void) | undefined;
       const { promise: abortPromise, reject: rejectAbort } = Promise.withResolvers<never>();
       const onAbort = () => {
+        abandonQueuedJob();
         const reason = signal.reason;
         // Preserve native Error reasons (including AbortController's
         // read-only DOMException) instead of mutating or wrapping them.
@@ -969,7 +983,7 @@ export function getAllRateLimitStatus() {
  * Get all learned limits (for dashboard display).
  */
 export function getLearnedLimits() {
-  return { ...learnedLimits };
+  return { ...Object.fromEntries(learnedLimits) };
 }
 
 // ─── Persistence ────────────────────────────────────────────────────────────
@@ -977,10 +991,8 @@ export function getLearnedLimits() {
 async function persistLearnedLimitsNow() {
   try {
     const { updateSettings } = await import("@/lib/db/settings");
-    await updateSettings({ learnedRateLimits: JSON.stringify(learnedLimits) });
-    logRateLimit(
-      `💾 [RATE-LIMIT] Persisted learned limits for ${Object.keys(learnedLimits).length} provider(s)`
-    );
+    await updateSettings({ learnedRateLimits: JSON.stringify(Object.fromEntries(learnedLimits)) });
+    logRateLimit(`💾 [RATE-LIMIT] Persisted learned limits for ${learnedLimits.size} provider(s)`);
   } catch (err) {
     errorRateLimit("[RATE-LIMIT] Failed to persist learned limits:", err.message);
   }
@@ -996,12 +1008,12 @@ function recordLearnedLimit(
   model: string | null = null
 ) {
   const key = getLimiterKey(provider, connectionId, model);
-  learnedLimits[key] = {
+  learnedLimits.set(key, {
     ...limits,
     provider,
     connectionId,
     lastUpdated: Date.now(),
-  };
+  });
 
   // Debounce: save at most once per PERSIST_DEBOUNCE_MS
   if (!persistTimer) {
@@ -1054,8 +1066,8 @@ export async function __resetRateLimitManagerForTests() {
   limiterWatchdog.reset();
   shutdownHandlersRegistered = false;
 
-  for (const key of Object.keys(learnedLimits)) {
-    delete learnedLimits[key];
+  for (const key of [...learnedLimits.keys()]) {
+    learnedLimits.delete(key);
   }
 
   if (pendingAsyncOperations.size > 0) {
@@ -1108,14 +1120,14 @@ async function loadPersistedLimits() {
       const remaining = toNumber(data.remaining, 0);
       const minTime = toNumber(data.minTime, 0);
 
-      learnedLimits[key] = {
+      learnedLimits.set(key, {
         provider,
         connectionId,
         lastUpdated,
         ...(limit > 0 ? { limit } : {}),
         ...(remaining >= 0 ? { remaining } : {}),
         ...(minTime >= 0 ? { minTime } : {}),
-      };
+      });
 
       // Apply to limiter if it exists and has rate limit enabled
       if (connectionId && enabledConnections.has(connectionId)) {

@@ -34,6 +34,10 @@ export const VISION_MODEL_ID_FRAGMENTS = [
   "minicpm-v",
   "moondream",
   "mimo-vl",
+  "mimo-v2.5",
+  "mimo-v2.6-pro",
+  "mimo-v2.6-flash",
+  "step-3.7-flash",
   "kimi-vl",
   "glm-4v",
   "glm-4.5v",
@@ -74,5 +78,7 @@ export const VISION_MODEL_ID_FRAGMENTS = [
 export function isVisionModelId(modelId: string | null | undefined): boolean {
   if (!modelId) return false;
   const normalized = String(modelId).toLowerCase();
+  if (/(?:^|\/)mimo-v2\.5-pro(?:$|[:/])/i.test(normalized)) return false;
+  if (/(?:^|\/)mimo-v2-pro(?:$|[:/])/i.test(normalized)) return false;
   return VISION_MODEL_ID_FRAGMENTS.some((fragment) => normalized.includes(fragment));
 }

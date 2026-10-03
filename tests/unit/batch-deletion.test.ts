@@ -29,6 +29,39 @@ describe("deleteBatch", () => {
     assert.strictEqual(getFile(inputFile.id), null);
   });
 
+  it("should preserve a shared file while a sibling batch still references it", () => {
+    const sharedFile = createFile({
+      bytes: 10,
+      filename: "single-delete-shared-input.jsonl",
+      purpose: "batch",
+      content: Buffer.from("shared"),
+    });
+    const deleted = createBatch({
+      endpoint: "/v1/chat/completions",
+      completionWindow: "24h",
+      inputFileId: sharedFile.id,
+      status: "completed",
+    });
+    const survivor = createBatch({
+      endpoint: "/v1/chat/completions",
+      completionWindow: "24h",
+      inputFileId: sharedFile.id,
+      status: "in_progress",
+    });
+
+    assert.strictEqual(deleteBatch(deleted.id), true);
+    assert.strictEqual(getBatch(deleted.id), null);
+    assert.ok(getBatch(survivor.id), "sibling batch must survive");
+    assert.ok(getFile(sharedFile.id), "shared file must survive while sibling references it");
+
+    assert.strictEqual(deleteBatch(survivor.id), true);
+    assert.strictEqual(
+      getFile(sharedFile.id),
+      null,
+      "file is deleted after the last reference is gone"
+    );
+  });
+
   it("should return false for a non-existent batch id", () => {
     const result = deleteBatch("batch_nonexistent");
     assert.strictEqual(result, false);

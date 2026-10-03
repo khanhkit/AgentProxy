@@ -792,10 +792,13 @@ test("external clients cannot use the bypass header without a trusted self-loop 
 
 // ── self-loop bearer resolution (env-key aware, #1350) ─────────────────
 
-test("resolveSelfLoopBearer falls back to sk_agentproxy when no env key is set", () => {
+test("resolveSelfLoopBearer falls back to a stable random secret when no env key is set", () => {
   const restore = withSelfLoopEnv({});
   try {
-    assert.equal(resolveSelfLoopBearer(), "sk_agentproxy");
+    const first = resolveSelfLoopBearer();
+    assert.equal(resolveSelfLoopBearer(), first);
+    assert.notEqual(first, "sk_agentproxy");
+    assert.ok(first.length >= 32);
   } finally {
     restore();
   }

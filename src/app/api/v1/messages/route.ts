@@ -1,9 +1,13 @@
 import { handleChat } from "@/sse/handlers/chat";
+import { generateRequestId } from "@/shared/utils/requestId";
+import { resolveIncomingCorrelationId } from "@/shared/utils/correlationPreserve.ts";
 import { initTranslators } from "@agentproxy/open-sse/translator/index.ts";
 import { withInjectionGuard } from "@/middleware/promptInjectionGuard";
 import { withChatAdmission } from "@/shared/middleware/withChatAdmission";
 import { requireJsonContentType } from "@/shared/middleware/requireJsonContentType";
 import {
+  getDeadlineController,
+  withDeadlineSignal,
   withEarlyStreamKeepalive,
   ANTHROPIC_PING_FRAME,
 } from "@agentproxy/open-sse/utils/earlyStreamKeepalive";
@@ -70,10 +74,13 @@ async function postHandler(request: any, context: any, preParsedBody: any = null
   const accept = String(request.headers?.get?.("accept") || "");
   const wantsStreaming = resolveStreamFlag(body?.stream, accept, "claude");
   if (wantsStreaming) {
-    return await withEarlyStreamKeepalive(handleChat(request, null, body), {
+    const correlationId = resolveIncomingCorrelationId(request.headers.get("x-correlation-id")) ?? generateRequestId();
+    return await withEarlyStreamKeepalive(handleChat(request, null, body, correlationId), {
       signal: request.signal,
       thresholdMs: resolveKeepaliveThreshold(body?.model),
       keepaliveFrame: ANTHROPIC_PING_FRAME,
+      correlationId,
+      deadlineController: getDeadlineController(request),
     });
   }
   return await handleChat(request, null, body);
@@ -81,4 +88,14 @@ async function postHandler(request: any, context: any, preParsedBody: any = null
 
 // `logger: null` — the guardrail registry re-evaluates this request inside
 // handleChat with the pino logger (#11936 dedupe).
-export const POST = withChatAdmission(withInjectionGuard(postHandler, { logger: null }));
+function withDeadlineAdmission(handler: (...args: any[]) => Promise<Response> | Response) {
+  return async function deadlineAdmittedHandler(...args: any[]) {
+    const [request, ...rest] = args;
+    const { wrappedReq } = withDeadlineSignal(request);
+    return handler(wrappedReq, ...rest);
+  };
+}
+
+export const POST = withDeadlineAdmission(
+  withChatAdmission(withInjectionGuard(postHandler, { logger: null }))
+);

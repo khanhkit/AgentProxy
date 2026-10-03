@@ -1,3 +1,4 @@
+import { UPSTREAM_RESPONDED_ERROR_TYPE } from "@agentproxy/open-sse/utils/diagnostics.ts";
 /**
  * Same-account retry for retryable pre-output transport failures (#9708).
  *
@@ -25,7 +26,7 @@ const RETRYABLE_TRANSPORT_TEXT = [
   /und_err_socket/i,
 ];
 
-const NON_RETRYABLE_ERROR_TYPES = new Set(["lease_error", "account_semaphore_capacity"]);
+const NON_RETRYABLE_ERROR_TYPES = new Set(["lease_error", "account_semaphore_capacity", UPSTREAM_RESPONDED_ERROR_TYPE]);
 
 export function isRetryableTransportStatus(status: unknown): boolean {
   const numeric = Number(status);

@@ -1,0 +1,1 @@
+- **fix(auto-combo):** STRICT zero-cost pool filtering now surfaces its exclusion diagnosis (`excluded` / `no-hard-stop` share) to the operator log without changing routing (upstream #14656)

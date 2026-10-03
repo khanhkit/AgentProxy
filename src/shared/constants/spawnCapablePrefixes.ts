@@ -26,7 +26,22 @@
 export const SPAWN_CAPABLE_PREFIXES: ReadonlyArray<string> = [
   "/api/cli-tools/runtime/",
   "/api/cli-tools/qwen-settings", // GET probes the Qwen Code binary; the route also mutates local ~/.qwen files
+  "/api/cli-tools/all-statuses",
+  "/api/cli-tools/claude-settings",
+  "/api/cli-tools/cline-settings",
+  "/api/cli-tools/codewhale-settings",
+  "/api/cli-tools/codex-settings",
+  "/api/cli-tools/crush-settings",
+  "/api/cli-tools/deepseek-tui-settings",
+  "/api/cli-tools/detect",
+  "/api/cli-tools/droid-settings",
+  "/api/cli-tools/kilo-settings",
+  "/api/cli-tools/openclaw-settings",
+  "/api/cli-tools/pi-settings",
+  "/api/cli-tools/smelt-settings",
+  "/api/cli-tools/status",
   "/api/services/", // T-10: can run npm install + spawn node processes
+  "/api/version-manager/", // downloads, unpacks and runs the CLIProxyAPI binary (Hard Rules #15 + #17)
   "/api/tunnels/cloudflared", // POST installs/starts/stops cloudflared; safe methods remain read-only exempt
   "/api/tunnels/tailscale/disable", // stops Funnel and may stop tailscaled/Tailscale service
   "/api/tunnels/tailscale/enable", // starts tailscaled/login/funnel subprocesses
@@ -39,7 +54,7 @@ export const SPAWN_CAPABLE_PREFIXES: ReadonlyArray<string> = [
   "/api/tools/traffic-inspector/", // http-proxy listener + system proxy (Hard Rules #15 + #17)
   "/api/plugins/", // plugins: load/execute via worker_threads + child_process (Hard Rules #15 + #17)
   "/api/local/", // T-12: 1-click local service launchers (Redis today) — must never be whitelistable via manage-scope bypass (Hard Rules #15 + #17)
-  "/api/skills/collect/", // Skill Collector CLI detection: GET .../detect spawns a child process per CLI_TOOL_IDS entry — must never be whitelistable via manage-scope bypass (Hard Rules #15 + #17, PR #6294 review)
+  "/api/skills/collect/", // Skill Collector CLI detection: GET .../detect spawns a child process per CLI_TOOL_IDS entry — must never be whitelistable via manage-scope bypass (Hard Rules #15 + #17, PR #6294 review)\n  "/api/skills/install",\n  "/api/skills/executions",
   "/api/headroom/start", // spawns headroom-ai python CLI — must never be bypassable (Hard Rules #15 + #17)
   "/api/headroom/stop", // kills tracked PID — must never be bypassable (Hard Rules #15 + #17)
   "/api/vnc-session", // #7892: spawns Docker containers via child_process.spawn (src/lib/vncSession/service.ts) — must never be whitelistable via manage-scope bypass (Hard Rules #15 + #17)

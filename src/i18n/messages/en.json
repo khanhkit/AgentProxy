@@ -3193,7 +3193,13 @@
     "cliproxyapiUnknown": "Unknown",
     "cliproxyapiUpdate": "Update",
     "cliproxyapiUpdateAvailable": "Update available: v{current} → v{latest}",
-    "cliproxyapiVersion": "Version"
+    "cliproxyapiVersion": "Version",
+    "hermesRoleReview": "Review",
+    "hermesRoleReviewDesc": "Full subagent code review",
+    "hermesRoleMoaReference": "MoA Reference",
+    "hermesRoleMoaReferenceDesc": "Mixture-of-Agents reference model",
+    "hermesRoleMoaAggregator": "MoA Aggregator",
+    "hermesRoleMoaAggregatorDesc": "Mixture-of-Agents synthesis model"
   },
   "combos": {
     "title": "Combos",
@@ -3424,7 +3430,9 @@
       "failoverBeforeRetry": "When enabled, any upstream error triggers immediate failover to the next combo target, skipping all retries and fallback URLs.",
       "maxSetRetries": "Number of times to retry the full target set when every target fails. 0 = no set-level retry.",
       "setRetryDelayMs": "Delay between set-level retry attempts, giving transient issues time to resolve.",
-      "disableSessionStickiness": "Rotate to a different connection on every request instead of pinning a whole conversation to one connection by the first-message hash. Overrides the global default. Leave on Inherit to preserve prompt-cache hits for multi-turn chats."
+      "disableSessionStickiness": "Rotate to a different connection on every request instead of pinning a whole conversation to one connection by the first-message hash. Overrides the global default. Leave on Inherit to preserve prompt-cache hits for multi-turn chats.",
+      "connectionAwareExpansion": "When on, this combo expands each provider-level step into per-account targets before rotating. Inherit uses the global default (off). Off keeps provider-level rotation.",
+      "stickyLimit": "Round-robin sticky batch size: consecutive successful requests sent to one target before rotating to the next. Empty inherits the global Sticky Limit setting; 1 disables batching (pure one-request rotation)."
     },
     "templatesTitle": "Quick templates",
     "templatesDescription": "Apply a starting profile, then adjust models and config.",
@@ -3763,6 +3771,16 @@
     "disableSessionStickiness": "Disable session stickiness",
     "sessionStickinessEnabled": "Stickiness on",
     "sessionStickinessDisabled": "Stickiness off",
+    "stickyLimitInherit": "inherit",
+    "stickyLimitEffective": "Effective {value} ({source})",
+    "stickyLimitSourceCombo": "combo",
+    "stickyLimitSourceComboDefaults": "combo defaults",
+    "stickyLimitSourceGlobal": "global default",
+    "connectionAwareExpansion": "Connection-aware expansion",
+    "triStateInherit": "inherit",
+    "connectionAwareExpansionOn": "On",
+    "connectionAwareExpansionOff": "Off",
+    "promptCacheAffinityHint": "Prompt-cache locality routing takes precedence over round-robin/weighted rotation across pinned accounts. Turn it off under Settings, Combo defaults, if you need strict rotation.",
     "kimiPresetTitle": "Kimi Coding preset",
     "kimiPresetDescription": "Kimi K3 as the primary model (Moonshot API), with automatic fallback to your Kimi Code connections (kimi-coding, kimi-web) when configured.",
     "kimiPresetCta": "Add preset",
@@ -4954,7 +4972,8 @@
     },
     "compressionLogTitle": "Compression Log",
     "compressionLogEmpty": "No compressed requests yet. Compression stats will appear here when requests are processed with compression enabled.",
-    "tokens": "tokens"
+    "tokens": "tokens",
+    "exportTruncated": "Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
   },
   "onboarding": {
     "welcome": "Welcome",
@@ -5956,6 +5975,8 @@
     "validationModelIdHint": "Model used to verify the API key. Leave blank to use the provider’s first available model.",
     "validationModelIdLabel": "Validation Model",
     "validationModelIdPlaceholder": "e.g. meta-llama/llama-3.1-8b-instruct",
+    "vertexCredentialLabel": "API Key or Service Account JSON",
+    "vertexCredentialHint": "API keys use the curated project catalog. Service Account JSON enables live Model Garden discovery.",
     "vertexServiceAccountPlaceholder": "Paste your Service Account JSON ({\"type\":\"service_account\",\"project_id\":\"…\",\"client_email\":\"…\",\"private_key\":\"…\"}) or an OAuth access_token",
     "webCookieProviders": "Web Cookie Providers",
     "weeklyShort": "Weekly Short",
@@ -6313,7 +6334,8 @@
       "kiro": "Free tier: 50 credits/month (~25K–100K tokens). ⚠️ Kiro ToS prohibits third-party proxy/harness use.",
       "codex": "Connect OpenAI Codex with the existing OAuth flow.",
       "qwen": "Connect Qwen Code with the existing OAuth flow.",
-      "github-models": "Create a GitHub PAT with 'models: read' scope at github.com/settings/tokens"
+      "github-models": "Create a GitHub PAT with 'models: read' scope at github.com/settings/tokens",
+      "agnes-cn": "Get API key at agnes-ai.com — China endpoint: api.agnes-ai.cn"
     },
     "passthroughModelsDescription": "{provider} accepts provider-native model IDs. Import from /models or add custom IDs for routing.",
     "bedrockModelsDescription": "Amazon Bedrock models are scoped by AWS region. Import from /models or add Bedrock model IDs enabled in the selected region.",
@@ -8578,7 +8600,11 @@
       },
       "compressToolResults": {
         "label": "Proactively truncate long tool results",
-        "description": "Truncates tool results over 2,000 characters during Lite compression. Emergency overflow protection may still trim content when the context exceeds the model budget."
+        "description": "Truncates long tool results during Lite compression. The Maximum tool-result length field (or AGENTPROXY_LITE_MAX_TOOL_LENGTH when that field is unset) sets the cap. Emergency overflow protection may still trim content when the context exceeds the model budget."
+      },
+      "maxToolLength": {
+        "label": "Maximum tool-result length",
+        "description": "Character cap for proactive tool-result truncation. Default 2000. Override with AGENTPROXY_LITE_MAX_TOOL_LENGTH when this field is unset."
       }
     },
     "engineFields": {
@@ -9495,6 +9521,13 @@
     "confirmRedeemResetCreditTitle": "Redeem this reset credit?",
     "confirmRedeemResetCredit": "Redeeming immediately resets the eligible Codex usage windows and permanently consumes this credit.",
     "confirmRedeemResetCreditButton": "Redeem credit",
+    "glmResetCreditsModalTitle": "GLM Coding Plan reset cards",
+    "glmResetCreditsModalExplainer": "Reset cards are ordered by expiration. Choose the 5-hour or weekly window you want to reset.",
+    "glmResetCreditFiveHourTitle": "5-hour window reset",
+    "glmResetCreditWeekTitle": "Weekly window reset",
+    "glmConfirmRedeemResetCredit": "Redeeming immediately resets the selected usage window and permanently consumes this card.",
+    "glmConfirmRedeemFiveHourResetCredit": "Redeeming immediately resets the 5-hour usage window and permanently consumes this card.",
+    "glmConfirmRedeemWeekResetCredit": "Redeeming immediately resets the weekly usage window and permanently consumes this card.",
     "resetCreditRedeemed": "Reset redeemed",
     "resetCreditRedeemFailed": "Failed to redeem reset credit",
     "suiteBuilderSaveFailed": "Failed to save suite",
@@ -10960,7 +10993,9 @@
     "poolAddMember": "Add",
     "poolAddFailed": "Failed to add the proxy to the pool",
     "poolSelectProxy": "Select a proxy…",
-    "poolSaveFailed": "Failed to save pool assignment"
+    "poolSaveFailed": "Failed to save pool assignment",
+    "poolEgressFailuresByExit": "Failures via {exit}: {count}",
+    "poolEgressFailuresUnattributed": "Failures with no attributed exit: {count}"
   },
   "playground": {
     "title": "Model Playground",
@@ -11288,6 +11323,10 @@
     "columns": {
       "status": "Status",
       "cacheSource": "Cache Source",
+      "contentProvenance": "Reply",
+      "contentEmpty": "Empty reply",
+      "usageAbsent": "Token count not reported",
+      "usageEstimated": "Token count estimated",
       "model": "Model",
       "requested": "Requested",
       "provider": "Provider",
@@ -11408,7 +11447,9 @@
       "correlationIdValue": "Correlation ID: {id}",
       "detailedPayloadInfo": "Enable detailed logging first if you want the four-stage client/provider payload view for new requests.",
       "copyAll": "Copy all",
-      "copiedAll": "Copied all"
+      "copiedAll": "Copied all",
+      "rawViewOn": "Raw view: on",
+      "rawViewOff": "Raw view: off"
     }
   },
   "proxyLogger": {
@@ -11959,7 +12000,11 @@
       "goNow": "Go now",
       "message": "The MITM Proxy now lives under AgentBridge.",
       "title": "This page has moved"
-    }
+    },
+    "resetAgent": "Restore default",
+    "resetAgentConfirm": "Restore default?",
+    "resetting": "Restoring…",
+    "resetDone": "Default DNS restored for {agent}. Fully quit the app (not just minimize) and reopen it for the change to take effect."
   },
   "providerStats": {
     "unknownError": "Unknown error",
@@ -12153,6 +12198,29 @@
     "raw": "Raw"
   },
   "cliCommon": {
+    "companion": {
+      "title": "CLI companion",
+      "intro": "Copy commands to run on the computer where your CLI is installed. This panel does not execute commands or copy credentials.",
+      "hostNotice": "Detection describes the AgentProxy server host, not this browser's computer. Configured does not mean inference was tested.",
+      "target": "CLI tool",
+      "context": "Existing context name (optional)",
+      "contextHint": "Leave blank to use your CLI's active context. Named contexts can point to a local or remote server; list them in your terminal first.",
+      "contextInvalid": "Use 1–64 letters, digits, dots, hyphens or underscores, starting with a letter or digit.",
+      "modelHint": "This CLI requires a model. Enter a real provider/model identifier before copying its launch preview.",
+      "modelInvalid": "Use a model identifier without spaces or shell characters, starting with a letter or digit.",
+      "runtime": "Runtime",
+      "runnable": "Runnable",
+      "notRunnable": "Not runnable",
+      "unknown": "Unknown",
+      "detectionError": "Server detection unavailable. Refresh detection to retry; terminal commands remain available.",
+      "contextsStep": "Check terminal contexts",
+      "configureStep": "Choose a model and configure",
+      "runStep": "Preview the launch",
+      "configureHint": "This interactive command writes the CLI configuration on the computer where you run it.",
+      "runHint": "Dry-run shows the launch plan without starting the CLI. It is not an inference test.",
+      "copyFailed": "Could not copy. Select and copy the command manually.",
+      "empty": "No executable CLI targets are available in this version. Use the tool guides below."
+    },
     "concept": {
       "code": {
         "title": "CLI Code",
@@ -12650,7 +12718,12 @@
     "createDahlTokenFailed": "Failed to create Dahl token",
     "providerProxy": "Proxy",
     "providerProxyConfigureHint": "Configure proxy",
-    "providerProxyTitleConfigured": "Proxy configured: {host}"
+    "providerProxyTitleConfigured": "Proxy configured: {host}",
+    "inheritConnectionOption": "No own proxy (inherits connection)",
+    "inheritedProxy": "Inherits connection: {host}",
+    "inheritedPool": "Inherits connection pool ({count})",
+    "poolEmptyBlocked": "Pool empty — requests fail (not direct)",
+    "directEgress": "Direct (no proxy)"
   },
   "gamification": {
     "leaderboardScopes": {
@@ -12973,6 +13046,13 @@
       },
       "STREAM_RECOVERY_MIDSTREAM_ENABLED": {
         "description": "Allow stream recovery to request the response again and stitch it after bytes have already reached the client."
+      },
+      "STREAM_RECOVERY_TOOLCALL_ORDER_FIX": {
+        "description": "Make mid-stream continuation tool-call safe: never resume a cut stream after a tool call was sent (still in progress or already finished), and stop after one empty continuation instead of using the whole retry budget."
+      },
+      "PROTECTED_PRIORITY_INFRA_502_ENABLED": {
+        "label": "Protected-Priority Infra Stops as 502",
+        "description": "Answer 502 instead of 503 when a quota-only-fallback priority target stops the combo for a cause that is provably not quota: an open provider circuit breaker or a predictive latency skip."
       },
       "MODEL_CATALOG_INCLUDE_NAMES": {
         "description": "Include display-friendly name fields in /v1/models responses. Disable this for clients that accept model IDs only."
@@ -13930,7 +14010,12 @@
     "hour": "hour",
     "day": "day",
     "unknownModel": "unknown",
-    "pending": "pending"
+    "pending": "pending",
+    "allApiKeys": "All API keys",
+    "mcp": "MCP",
+    "mcpTool": "MCP tool",
+    "scope": "Scope",
+    "apiKey": "API key"
   },
   "metadata": {
     "compressionTitle": "Compression",
@@ -14133,5 +14218,6 @@
     "partnerLinkNote": "Partner link",
     "dismissAriaLabel": "Dismiss"
   },
-  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Disable the generation of thinking level variants (e.g. -low, -medium, -high) in the /v1/models catalog."
+  "featureFlagAgentProxyDisableThinkingLevelVariantsDescription": "Disable the generation of thinking level variants (e.g. -low, -medium, -high) in the /v1/models catalog.",
+  "featureFlagProxyPoolSharedEgressOrderDescription": "For providers whose quota is bucketed by egress address, rank a pool member sharing a recently refused member's observed egress address just below healthy members. Order only, never excluded. Needs PROXY_SKIP_RECENTLY_FAILED, which produces the refusal signal it reads. Off by default: selection order is exactly the plain rotation."
 }

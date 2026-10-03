@@ -97,6 +97,15 @@ test("#10315: responses within budget never warn", () => {
   const { logger, warns, debugs } = makeLogger();
   const headers = buildStreamingResponseHeaders(new Headers({ "x-fits": "ok" }), meta, logger);
   assert.equal(headers["x-fits"], "ok");
+  assert.equal(headers["X-AgentProxy-Dropped-Upstream-Headers"], undefined);
   assert.equal(warns.length, 0);
   assert.equal(debugs.length, 0);
+});
+
+test("#13601: oversized responses surface dropped-header count to the caller", () => {
+  resetDroppedHeaderWarnFingerprints();
+  const { logger } = makeLogger();
+  const headers = buildStreamingResponseHeaders(oversizedProviderHeaders(), meta, logger);
+  assert.equal(headers["X-AgentProxy-Dropped-Upstream-Headers"], "1");
+  assert.equal(headers["X-AgentProxy-Cache"], "MISS");
 });

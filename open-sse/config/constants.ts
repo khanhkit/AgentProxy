@@ -19,6 +19,10 @@ export const FETCH_TIMEOUT_MS = upstreamTimeouts.fetchTimeoutMs;
 // idle for this duration. Override with STREAM_IDLE_TIMEOUT_MS env var.
 export const STREAM_IDLE_TIMEOUT_MS = upstreamTimeouts.streamIdleTimeoutMs;
 
+// Hard cap for a connected upstream stream. Unlike the idle timeout this never
+// resets on byte activity. Set STREAM_ACTIVE_TIMEOUT_MS=0 to disable it.
+export const STREAM_ACTIVE_TIMEOUT_MS = upstreamTimeouts.streamActiveTimeoutMs;
+
 // Grace period (ms) a client-disconnect finalization waits for the stream's own
 // completion bookkeeping to land before persisting a 499. See #9653 — a client
 // that closes right after reading a fully-completed SSE stream can otherwise
@@ -174,6 +178,7 @@ export const HTTP_STATUS = {
   UNPROCESSABLE_ENTITY: 422,
   REQUEST_TIMEOUT: 408,
   GONE: 410,
+  PAYLOAD_TOO_LARGE: 413,
   RATE_LIMITED: 429,
   PLAN_LIMIT_EXCEEDED: 432,
   SERVER_ERROR: 500,
@@ -312,7 +317,7 @@ export const MAX_TOOLS_LIMIT = 128;
 
 /**
  * Interval (ms) for the background credential health check scheduler.
- * Default: 300000 (5 minutes). Minimum: 10000 (10 seconds).
+ * Default: 3600000 (60 minutes). Minimum: 10000 (10 seconds).
  */
 export const CREDENTIAL_HEALTH_CHECK_INTERVAL = (() => {
   const raw = process.env.CREDENTIAL_HEALTH_CHECK_INTERVAL;
@@ -320,7 +325,7 @@ export const CREDENTIAL_HEALTH_CHECK_INTERVAL = (() => {
     const parsed = Number(raw);
     if (Number.isFinite(parsed) && parsed >= 10_000) return parsed;
   }
-  return 300_000;
+  return 3_600_000;
 })();
 
 /**
@@ -356,6 +361,7 @@ export const STREAM_RECOVERY = {
   HOLDBACK_MS: 750,
   BUFFER_MAX_BYTES: 65536,
   EARLY_RETRY_MAX: 4,
+  EMPTY_TURN_RETRY_MAX: 4,
   /**
    * Minimum character overlap `trimContinuationOverlap` must find between the
    * already-emitted text and a mid-stream continuation for the continuation to be

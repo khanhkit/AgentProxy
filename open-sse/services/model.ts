@@ -102,6 +102,9 @@ const PROVIDER_MODEL_ALIASES: ProviderModelAliasMap = {
     "claude-sonnet-4-5": "claude-sonnet-4.5",
     "claude-haiku-4-5": "claude-haiku-4.5",
   },
+  "zed-hosted": {
+    "claude-haiku-4-5": "claude-haiku-4.5",
+  },
 };
 
 const CROSS_PROXY_MODEL_ALIASES: Record<string, string> = {

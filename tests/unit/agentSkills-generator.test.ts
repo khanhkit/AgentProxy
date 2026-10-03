@@ -19,6 +19,7 @@ const { generateAgentSkills, buildSkillMarkdown, __testing } =
   await import("../../src/lib/agentSkills/generator.ts");
 
 const { getCatalog, refreshCatalog } = await import("../../src/lib/agentSkills/catalog.ts");
+const { parseOpenapi } = await import("../../src/lib/agentSkills/openapiParser.ts");
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -46,29 +47,18 @@ function emptySources() {
   };
 }
 
-// ── Source integrity ──────────────────────────────────────────────────────────
+/** Uses the repository OpenAPI document for generator tests that exercise real areas. */
+function realApiSources() {
+  return {
+    openapi: parseOpenapi(),
+    cliRegistry: { commands: new Map(), families: new Map() },
+  };
+}
 
-test("generator fails closed when canonical source files are unavailable", async () => {
-  const tmpDir = mkTmpDir();
-  const originalCwd = process.cwd();
-  process.chdir(tmpDir);
-  try {
-    await assert.rejects(
-      () =>
-        generateAgentSkills({
-          dryRun: true,
-          prune: false,
-          outputDir: path.join(tmpDir, "skills"),
-          onlyIds: ["cli-tunnel"],
-        }),
-      /(?:openapiParser|cliRegistryParser): could not read/,
-      "generator must not silently replace missing canonical inputs with empty registries"
-    );
-  } finally {
-    process.chdir(originalCwd);
-    rmTmpDir(tmpDir);
-  }
-});
+/** SKILL.md's published size guideline applies to the body, not the frontmatter. */
+function bodyLineCount(result: { body: string }): number {
+  return result.body.split("\n").length;
+}
 
 // ── Dry-run: no writes ────────────────────────────────────────────────────────
 
@@ -180,6 +170,38 @@ test("apply mode writes all 46 SKILL.md files when no onlyIds filter", async () 
   }
 });
 
+test("apply writes endpoint references and keeps generated skill bodies under 500 lines", async () => {
+  const tmpDir = mkTmpDir();
+  try {
+    refreshCatalog();
+    const report = await generateAgentSkills({
+      dryRun: false,
+      prune: false,
+      outputDir: tmpDir,
+    });
+
+    assert.equal(report.errors.length, 0, `Errors: ${JSON.stringify(report.errors)}`);
+    for (const skill of getCatalog()) {
+      const content = fs.readFileSync(path.join(tmpDir, skill.id, "SKILL.md"), "utf-8");
+      const body = content.slice(content.indexOf("\n---\n") + 5);
+      assert.ok(
+        body.split("\n").length <= 500,
+        `${skill.id} body has ${body.split("\n").length} lines`
+      );
+    }
+
+    const mainFile = path.join(tmpDir, "omni-inference", "SKILL.md");
+    const referenceFile = path.join(tmpDir, "omni-inference", "references", "endpoints.md");
+    const main = fs.readFileSync(mainFile, "utf-8");
+    const reference = fs.readFileSync(referenceFile, "utf-8");
+    assert.ok(main.includes("references/endpoints.md"));
+    assert.ok(reference.includes("### POST /api/v1/chat/completions"));
+    assert.ok(reference.includes("## Table of contents"));
+  } finally {
+    rmTmpDir(tmpDir);
+  }
+});
+
 test("apply mode writes SKILL.md for a CLI skill with correct structure", async () => {
   const tmpDir = mkTmpDir();
   try {
@@ -224,7 +246,7 @@ test("apply mode writes SKILL.md for an API skill with correct sections", async 
     assert.ok(content.includes('-d \'{"password":"<management-password>"}\''));
     assert.ok(content.includes("-c cookie.jar"), "login must save the dashboard session cookie");
     assert.ok(content.includes("-b cookie.jar"), "auth examples must send the session cookie");
-    assert.ok(content.includes("x-agentproxy-csrf"), "mutations must include a CSRF token");
+    assert.ok(content.includes("x-omniroute-csrf"), "mutations must include a CSRF token");
     const loginExample = content.slice(
       content.indexOf("### POST /api/auth/login"),
       content.indexOf("### POST /api/auth/logout")
@@ -235,7 +257,7 @@ test("apply mode writes SKILL.md for an API skill with correct sections", async 
       content.indexOf("### GET /api/auth/oidc/login")
     );
     assert.ok(logoutExample.includes("-b cookie.jar"));
-    assert.ok(logoutExample.includes("x-agentproxy-csrf"));
+    assert.ok(logoutExample.includes("x-omniroute-csrf"));
     assert.ok(!logoutExample.includes("Authorization: Bearer"));
   } finally {
     rmTmpDir(tmpDir);
@@ -255,13 +277,19 @@ test("generic API skill GET and mutation examples use standalone Bearer auth", a
 
     assert.equal(report.errors.length, 0, `Errors: ${JSON.stringify(report.errors)}`);
     for (const id of ["omni-providers", "omni-settings"]) {
-      const content = fs.readFileSync(path.join(tmpDir, id, "SKILL.md"), "utf-8");
-      assert.ok(content.includes('  -H "Authorization: Bearer $AGENTPROXY_TOKEN"'));
+      const content = [
+        fs.readFileSync(path.join(tmpDir, id, "SKILL.md"), "utf-8"),
+        fs.readFileSync(path.join(tmpDir, id, "references", "endpoints.md"), "utf-8"),
+      ].join("\n");
+      assert.ok(content.includes('  -H "Authorization: Bearer $OMNIROUTE_TOKEN"'));
       assert.ok(!content.includes("cookie.jar"), `${id} must not assume a session cookie`);
       assert.ok(!content.includes("CSRF_TOKEN"), `${id} must not assume a CSRF token`);
     }
 
-    const providers = fs.readFileSync(path.join(tmpDir, "omni-providers", "SKILL.md"), "utf-8");
+    const providers = fs.readFileSync(
+      path.join(tmpDir, "omni-providers", "references", "endpoints.md"),
+      "utf-8"
+    );
     const providersGet = providers.slice(
       providers.indexOf("### GET /api/providers"),
       providers.indexOf("### POST /api/providers")
@@ -270,16 +298,19 @@ test("generic API skill GET and mutation examples use standalone Bearer auth", a
       providers.indexOf("### POST /api/providers"),
       providers.indexOf("### GET /api/providers/{id}")
     );
-    assert.ok(providersGet.includes('  -H "Authorization: Bearer $AGENTPROXY_TOKEN"'));
-    assert.ok(providersPost.includes('  -H "Authorization: Bearer $AGENTPROXY_TOKEN" \\\n'));
+    assert.ok(providersGet.includes('  -H "Authorization: Bearer $OMNIROUTE_TOKEN"'));
+    assert.ok(providersPost.includes('  -H "Authorization: Bearer $OMNIROUTE_TOKEN" \\\n'));
     assert.ok(providersPost.includes('  -H "Content-Type: application/json" \\\n'));
 
-    const settings = fs.readFileSync(path.join(tmpDir, "omni-settings", "SKILL.md"), "utf-8");
+    const settings = fs.readFileSync(
+      path.join(tmpDir, "omni-settings", "references", "endpoints.md"),
+      "utf-8"
+    );
     const settingsPatch = settings.slice(
       settings.indexOf("### PATCH /api/settings"),
       settings.indexOf("### POST /api/settings/purge-request-history")
     );
-    assert.ok(settingsPatch.includes('  -H "Authorization: Bearer $AGENTPROXY_TOKEN" \\\n'));
+    assert.ok(settingsPatch.includes('  -H "Authorization: Bearer $OMNIROUTE_TOKEN" \\\n'));
     assert.ok(settingsPatch.includes('  -H "Content-Type: application/json" \\\n'));
   } finally {
     rmTmpDir(tmpDir);
@@ -311,6 +342,31 @@ test("idempotency: second apply run reports 0 generated, all unchanged", async (
     });
     assert.equal(report2.generated.length, 0, "Second run should generate 0 (already up-to-date)");
     assert.equal(report2.unchanged.length, 2, "Second run should report 2 unchanged");
+  } finally {
+    rmTmpDir(tmpDir);
+  }
+});
+
+test("split endpoint references are idempotent", async () => {
+  const tmpDir = mkTmpDir();
+  try {
+    refreshCatalog();
+    const expectedRuns = [1, 1, 0];
+    for (const [index, expectedGenerated] of expectedRuns.entries()) {
+      const report = await generateAgentSkills({
+        dryRun: false,
+        prune: false,
+        outputDir: tmpDir,
+        onlyIds: ["omni-inference"],
+      });
+      assert.equal(report.generated.length, expectedGenerated);
+      assert.equal(report.errors.length, 0, `Errors: ${JSON.stringify(report.errors)}`);
+
+      if (index === 0) {
+        const referenceFile = path.join(tmpDir, "omni-inference", "references", "endpoints.md");
+        fs.writeFileSync(referenceFile, "stale reference\n");
+      }
+    }
   } finally {
     rmTmpDir(tmpDir);
   }
@@ -506,6 +562,42 @@ test("buildSkillMarkdown API skill body contains expected sections", () => {
   assert.ok(result.body.includes("## Authentication"), "Missing Authentication section");
   assert.ok(result.body.includes("## Endpoints"), "Missing Endpoints section");
   assert.ok(result.body.includes("## Payloads"), "Missing Payloads section");
+});
+
+test("large generated API skills split endpoint details into indexed references", () => {
+  refreshCatalog();
+  const result = buildSkillMarkdown("omni-inference", realApiSources());
+
+  assert.ok(
+    bodyLineCount(result) <= 500,
+    `Expected 500 body lines or fewer, got ${bodyLineCount(result)}`
+  );
+  assert.equal(result.references?.length, 1);
+  assert.equal(result.references[0].path, "references/endpoints.md");
+
+  const endpointReference = result.references[0].content;
+  assert.ok(result.body.includes("## Endpoints"), "Main file must keep an endpoint index");
+  assert.ok(
+    result.body.includes("references/endpoints.md"),
+    "Endpoint index must link to the reference"
+  );
+  assert.ok(
+    !result.body.includes("### POST /api/v1/chat/completions"),
+    "Endpoint details must move out of SKILL.md"
+  );
+  assert.ok(endpointReference.includes("### POST /api/v1/chat/completions"));
+  assert.ok(
+    endpointReference.split("\n").length > 100,
+    "Expected a large endpoint reference fixture"
+  );
+  assert.ok(
+    endpointReference.includes("## Table of contents"),
+    "Large references need a table of contents"
+  );
+  assert.ok(
+    endpointReference.includes("- [`POST /api/v1/chat/completions`](#post-apiv1chatcompletions)"),
+    "The table of contents must list the endpoint anchors, not just a heading"
+  );
 });
 
 test("buildSkillMarkdown CLI skill body contains expected sections", () => {

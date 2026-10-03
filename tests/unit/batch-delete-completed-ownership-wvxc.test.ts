@@ -108,8 +108,12 @@ describe("the route passes the caller's key through", () => {
       "the route still calls deleteCompletedBatches() with no owner — every tenant's batches go"
     );
     assert.ok(
-      /deleteCompletedBatches\(\s*scope\./.test(src),
-      "the route must pass the caller's scope into the helper"
+      /deleteCompletedBatches\(\s*scope\.apiKeyId\s*\?\?\s*undefined\s*\)/.test(src),
+      "a presented API key must remain the sweep owner even when dashboard session auth is also present"
+    );
+    assert.ok(
+      !/scope\.isSessionAuth\s*\?\s*undefined\s*:\s*scope\.apiKeyId/.test(src),
+      "session auth must not widen a request that also presented a valid API key"
     );
   });
 });

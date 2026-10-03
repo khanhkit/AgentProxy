@@ -84,7 +84,7 @@ test("persistAttemptLogs redacts request.failed delivery, replay, and persisted 
     assert.equal(result.delivered.statusCode, 502);
     assert.equal(result.delivered.model, "private-model");
     assert.equal(result.delivered.provider, "private-provider");
-    assert.equal(result.delivered.error, "Error: Provider failed in <path>");
+    assert.equal(result.delivered.error, "Error: Provider failed in <path> with api_key='[REDACTED]'");
     assert.equal(result.replayMatches, true);
     assert.equal(result.persistedSafe, true);
     assert.equal(result.writerDrained, true);

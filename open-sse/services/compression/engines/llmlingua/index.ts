@@ -94,6 +94,41 @@ interface TextSegment {
   text: string;
 }
 
+const PROTECTED_SPAN_RE =
+  /(<\/?[A-Za-z][A-Za-z0-9._-]*(?:\s[^<>]*?)?\/?>|\b\w+(?:n't|n’t)\b|(?<![A-Za-z0-9_-])(?:not|no|never|none|nothing|nobody|nowhere|neither|nor|cannot|always|must)(?![A-Za-z0-9_-]))/gi;
+
+function splitProtectedSpans(prose: string): TextSegment[] {
+  PROTECTED_SPAN_RE.lastIndex = 0;
+  const out: TextSegment[] = [];
+  let cursor = 0;
+  for (const m of prose.matchAll(PROTECTED_SPAN_RE)) {
+    const idx = m.index ?? 0;
+    if (idx > cursor) out.push({ kind: "prose", text: prose.slice(cursor, idx) });
+    out.push({ kind: "preserved", text: m[0] });
+    cursor = idx + m[0].length;
+  }
+  if (cursor < prose.length) out.push({ kind: "prose", text: prose.slice(cursor) });
+  return out;
+}
+
+const WORD_RE = /[A-Za-z0-9]+(?:['\u2019][A-Za-z0-9]+)*/g;
+
+function restoreSourceCase(source: string, output: string): string {
+  const forms = new Map<string, string[]>();
+  for (const w of source.matchAll(WORD_RE)) {
+    const key = w[0].toLowerCase();
+    const list = forms.get(key);
+    if (list) list.push(w[0]);
+    else forms.set(key, [w[0]]);
+  }
+  if (forms.size === 0) return output;
+  return output.replace(WORD_RE, (w) => {
+    const list = forms.get(w.toLowerCase());
+    const form = list?.shift();
+    return form ?? w;
+  });
+}
+
 /**
  * Split `text` into alternating prose / preserved segments using
  * `extractPreservedBlocks` from preservation.ts.
@@ -111,7 +146,7 @@ function splitProseAndPreserved(text: string): TextSegment[] {
   const { text: withPlaceholders, blocks } = extractPreservedBlocks(text);
 
   if (blocks.length === 0) {
-    return [{ kind: "prose", text }];
+    return splitProtectedSpans(text);
   }
 
   const segments: TextSegment[] = [];
@@ -129,7 +164,7 @@ function splitProseAndPreserved(text: string): TextSegment[] {
     if (original !== undefined) {
       segments.push({ kind: "preserved", text: original });
     } else {
-      segments.push({ kind: "prose", text: part });
+      segments.push(...splitProtectedSpans(part));
     }
   }
 
@@ -156,9 +191,19 @@ async function compressProseText(
   if (!text.trim()) return { text, didCompress: false };
   try {
     const compressed = await backend(text, opts);
-    // Accept only if it actually gets shorter (reject no-ops or expansions)
-    if (typeof compressed === "string" && compressed.length < text.length) {
-      return { text: compressed, didCompress: true };
+    if (typeof compressed !== "string" || !compressed.trim()) {
+      return { text, didCompress: false };
+    }
+
+    let out = restoreSourceCase(text, compressed);
+    const leading = text.match(/^\s*/)?.[0] ?? "";
+    const trailing = text.match(/\s*$/)?.[0] ?? "";
+    if (leading && !/^\s/.test(out)) out = leading + out;
+    if (trailing && !/\s$/.test(out)) out = out + trailing;
+
+    // Accept only if it actually gets shorter (reject no-ops or expansions).
+    if (out.length < text.length) {
+      return { text: out, didCompress: true };
     }
     return { text, didCompress: false };
   } catch {

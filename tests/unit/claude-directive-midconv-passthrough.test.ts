@@ -10,6 +10,7 @@ process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../src/lib/db/core.ts");
 const { handleChatCore } = await import("../../open-sse/handlers/chatCore.ts");
+const { hoistLeadingSystemMessages } = await import("../../open-sse/services/claudeCodeConstraints.ts");
 
 const originalFetch = globalThis.fetch;
 
@@ -115,4 +116,83 @@ test("claude mid-conversation-system passthrough relocates a directive-only mess
   // The directive stays message-level; the top level (if set) is the base
   // executor's own default injection, not the hoisted directive value.
   assert.notDeepEqual(captured.body.output_config, { effort: "medium" });
+});
+
+test("claude mid-conversation-system passthrough hoists only the leading text system run", async () => {
+  let captured = null;
+
+  globalThis.fetch = async (url, init = {}) => {
+    captured = {
+      url: String(url),
+      body: JSON.parse(String(init.body || "{}")),
+    };
+    return new Response(
+      JSON.stringify({
+        id: "msg_test_hoist",
+        type: "message",
+        role: "assistant",
+        model: "claude-opus-5",
+        content: [{ type: "text", text: "OK" }],
+        usage: { input_tokens: 4, output_tokens: 1 },
+      }),
+      { status: 200, headers: { "Content-Type": "application/json" } }
+    );
+  };
+
+  const body = {
+    model: "claude-opus-5",
+    max_tokens: 64,
+    system: [{ type: "text", text: "You are Claude." }],
+    messages: [
+      { role: "system", content: "[AgentProxy Output Styles]\nRespond tersely." },
+      { role: "user", content: "hello" },
+      { role: "system", content: "mid-conversation context" },
+      { role: "assistant", content: "hi" },
+    ],
+    stream: false,
+  };
+
+  const result = await handleChatCore({
+    body: structuredClone(body),
+    modelInfo: { provider: "claude", model: "claude-opus-5", extendedContext: false },
+    credentials: { apiKey: "test-claude-key", providerSpecificData: {} },
+    log: noopLog(),
+    clientRawRequest: {
+      endpoint: "/v1/messages",
+      body: structuredClone(body),
+      headers: new Headers({
+        accept: "application/json",
+        "content-type": "application/json",
+        "user-agent": "claude-code/2.1.154",
+      }),
+    },
+    userAgent: "claude-code/2.1.154",
+  });
+
+  assert.equal(result.success, true);
+  assert.ok(captured, "fetch was not called");
+  assert.ok(
+    captured.body.system.some(
+      (block) => block.type === "text" && block.text === "[AgentProxy Output Styles]\nRespond tersely."
+    ),
+    "leading system text was not hoisted"
+  );
+  assert.notEqual(captured.body.messages[0]?.role, "system", "leading system role leaked upstream");
+
+  const helperProbe = {
+    system: "base",
+    messages: [
+      { role: "system", content: "lead" },
+      { role: "user", content: "hello" },
+      { role: "system", content: "mid-conversation context" },
+      { role: "assistant", content: "hi" },
+    ],
+  };
+  hoistLeadingSystemMessages(helperProbe);
+  assert.deepEqual(helperProbe.messages.map((message) => message.role), [
+    "user",
+    "system",
+    "assistant",
+  ]);
+  assert.equal(helperProbe.messages[1].content, "mid-conversation context");
 });

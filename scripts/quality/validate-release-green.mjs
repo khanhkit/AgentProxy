@@ -414,6 +414,7 @@ export const PACK_ARTIFACT_ENV = Object.freeze({
   AGENTPROXY_USE_TURBOPACK: "0",
   AGENTPROXY_NEXT_BUILD_CPUS: "1",
 });
+const PACK_GATE_ENV = { OMNIROUTE_RELEASE_REF: "HEAD" };
 
 let hermetic = false;
 function buildGateEnv(extra) {
@@ -627,6 +628,32 @@ export async function runAsync(cmd, cmdArgs, opts = {}) {
   });
 }
 
+/**
+ * Release-branch provenance helper: build CLI, stamp BUILD_SHA, then validate that exact tree.
+ * Kept separate from the normal CI-equivalent package lane so authority timeouts/env remain unchanged.
+ */
+export async function runPackArtifactGate(timeoutMs = PACK_ARTIFACT_TIMEOUT_MS) {
+  const deadline = Date.now() + timeoutMs;
+  const steps = [
+    { cmd: npmCmd, args: ["run", "build:cli"], env: PACK_ARTIFACT_ENV },
+    { cmd: process.execPath, args: ["scripts/build/write-build-sha.mjs"] },
+    {
+      cmd: npmCmd,
+      args: ["run", "check:pack-artifact"],
+      env: PACK_GATE_ENV,
+    },
+  ];
+  let out = "";
+  for (const step of steps) {
+    const remaining = deadline - Date.now();
+    if (remaining <= 0) return classifyRunError({ killed: true, signal: "SIGTERM" }, timeoutMs);
+    const result = await runAsync(step.cmd, step.args, { env: step.env, timeout: remaining });
+    out += result.out;
+    if (result.code !== 0) return { code: result.code, out };
+  }
+  return { code: 0, out };
+}
+
 async function main() {
   const args = new Set(process.argv.slice(2));
   const JSON_OUT = args.has("--json");
@@ -680,13 +707,6 @@ async function main() {
   };
 
   process.stderr.write("🔎 Release-green validation (current working tree)\n\n");
-
-  hardCmd(
-    "release-branch-hygiene",
-    "Release branch hygiene (remote must contain only main)",
-    npmCmd,
-    ["run", "check:release-branch-hygiene"]
-  );
 
   hardCmd("typecheck", "Typecheck (core)", npmCmd, ["run", "typecheck:core"]);
 

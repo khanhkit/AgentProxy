@@ -100,6 +100,27 @@ export function isApiKeyRevealEnabledFlag(): boolean {
   }
 }
 
+let lastResolvedMcpScopeEnforcement: boolean | undefined;
+
+/**
+ * MCP tool-call scope enforcement. Resolved per call so the Feature Flags toggle
+ * (requiresRestart: false) applies without a restart. An unavailable flag store must never
+ * silently drop the gate, so a failed read keeps the last value that did resolve, and falls
+ * back to the environment variable the gate used before only if none ever did.
+ */
+export function isMcpScopeEnforcementEnabled(): boolean {
+  try {
+    lastResolvedMcpScopeEnforcement = isFeatureFlagEnabled("AGENTPROXY_MCP_ENFORCE_SCOPES");
+    return lastResolvedMcpScopeEnforcement;
+  } catch (error) {
+    console.error(
+      "[featureFlags] Failed to resolve AGENTPROXY_MCP_ENFORCE_SCOPES, keeping the last known value:",
+      error instanceof Error ? error.message : error
+    );
+    return lastResolvedMcpScopeEnforcement ?? process.env.AGENTPROXY_MCP_ENFORCE_SCOPES === "true";
+  }
+}
+
 export function isModelCatalogNamesEnabled(): boolean {
   return isFeatureFlagEnabled("MODEL_CATALOG_INCLUDE_NAMES");
 }
@@ -170,6 +191,169 @@ export function isNetworkRotationSharedEgressGuardEnabled(): boolean {
       error instanceof Error ? error.message : error
     );
     return true;
+  }
+}
+
+/**
+ * Mistral bare-401 bounded soft lockout (#13609). Opt-in: when off, a bare Mistral 401 parks
+ * the connection as expired exactly as before.
+ * Fail closed: an unreadable flag store keeps the pre-flag behavior (disabled).
+ */
+export function isMistralAmbiguous401SoftLockoutEnabled(): boolean {
+  try {
+    return isFeatureFlagEnabled("MISTRAL_AMBIGUOUS_401_SOFT_LOCKOUT");
+  } catch (error) {
+    console.error(
+      "[featureFlags] Failed to resolve MISTRAL_AMBIGUOUS_401_SOFT_LOCKOUT, defaulting to disabled:",
+      error instanceof Error ? error.message : error
+    );
+    return false;
+  }
+}
+
+/**
+ * Proxy refusal memory (#13578): pools and account rotation skip a proxy that just failed.
+ * On by default; an unreadable flag store keeps skipping (fail-safe on).
+ * Opt-out: PROXY_SKIP_RECENTLY_FAILED=false restores the plain selection.
+ */
+export function isProxySkipRecentlyFailedEnabled(): boolean {
+  try {
+    return isFeatureFlagEnabled("PROXY_SKIP_RECENTLY_FAILED");
+  } catch (error) {
+    console.error(
+      "[featureFlags] Failed to resolve PROXY_SKIP_RECENTLY_FAILED, defaulting to enabled:",
+      error instanceof Error ? error.message : error
+    );
+    return true;
+  }
+}
+
+/**
+ * Shared-egress pool ordering (opt-in, default off). Needs
+ * PROXY_SKIP_RECENTLY_FAILED, which produces the refusal signal it reads.
+ * Fail-closed: an unreadable flag store keeps the plain selection.
+ */
+export function isProxyPoolSharedEgressOrderEnabled(): boolean {
+  try {
+    return isFeatureFlagEnabled("PROXY_POOL_SHARED_EGRESS_ORDER");
+  } catch (error) {
+    console.error(
+      "[featureFlags] Failed to resolve PROXY_POOL_SHARED_EGRESS_ORDER, defaulting to disabled:",
+      error instanceof Error ? error.message : error
+    );
+    return false;
+  }
+}
+
+/** OpenCode repeated-429 park/resume. Opt-in and fail-closed. */
+export function isOpencodeParkAndResumeEnabled(): boolean {
+  try {
+    return isFeatureFlagEnabled("OPENCODE_PARK_AND_RESUME");
+  } catch (error) {
+    console.error(
+      "[featureFlags] Failed to resolve OPENCODE_PARK_AND_RESUME, defaulting to disabled:",
+      error instanceof Error ? error.message : error
+    );
+    return false;
+  }
+}
+
+/**
+ * Stream readiness stall retry. Opt-in: when off, a stalled first body fails
+ * the request without a retry. Fail closed: an unreadable flag store keeps
+ * the pre-flag behavior (disabled).
+ */
+export function isStreamReadinessStallRetryEnabled(): boolean {
+  try {
+    return isFeatureFlagEnabled("STREAM_READINESS_STALL_RETRY");
+  } catch (error) {
+    console.error(
+      "[featureFlags] Failed to resolve STREAM_READINESS_STALL_RETRY, defaulting to disabled:",
+      error instanceof Error ? error.message : error
+    );
+    return false;
+  }
+}
+
+/** OpenCode Responses first-byte stall rotation (#13484). Opt-in and fail-closed. */
+export function isOpencodeResponsesStallRotationEnabled(): boolean {
+  try {
+    return isFeatureFlagEnabled("OPENCODE_RESPONSES_STALL_ROTATION");
+  } catch (error) {
+    console.error(
+      "[featureFlags] Failed to resolve OPENCODE_RESPONSES_STALL_ROTATION, defaulting to disabled:",
+      error instanceof Error ? error.message : error
+    );
+    return false;
+  }
+}
+
+/** Stream early-EOF sibling failover (#13153). Opt-in and fail-closed. */
+export function isStreamEarlyEofSiblingFailoverEnabled(): boolean {
+  try {
+    return isFeatureFlagEnabled("STREAM_EARLY_EOF_SIBLING_FAILOVER_ENABLED");
+  } catch (error) {
+    console.error(
+      "[featureFlags] Failed to resolve STREAM_EARLY_EOF_SIBLING_FAILOVER_ENABLED, defaulting to disabled:",
+      error instanceof Error ? error.message : error
+    );
+    return false;
+  }
+}
+
+/**
+ * Proxy health sweep (#13608): a target-refused probe resets the consecutive-failure streak.
+ * Opt-in; an unreadable flag store keeps the neutral policy (#10654).
+ */
+export function isPoolEgressObservationEnabled(): boolean {
+  try {
+    return isFeatureFlagEnabled("PROXY_POOL_EGRESS_OBSERVATION");
+  } catch (error) {
+    console.error(
+      "[featureFlags] Failed to resolve PROXY_POOL_EGRESS_OBSERVATION, defaulting to disabled:",
+      error instanceof Error ? error.message : error
+    );
+    return false;
+  }
+}
+
+export function isProxyHealthBlockedResetsStreakEnabled(): boolean {
+  try {
+    return isFeatureFlagEnabled("PROXY_HEALTH_BLOCKED_RESETS_STREAK");
+  } catch (error) {
+    console.error(
+      "[featureFlags] Failed to resolve PROXY_HEALTH_BLOCKED_RESETS_STREAK, defaulting to disabled:",
+      error instanceof Error ? error.message : error
+    );
+    return false;
+  }
+}
+
+/** Rotation attribution diagnostics; opt-in and fail-safe off. */
+export function isRotationAttributionEnabled(): boolean {
+  try {
+    return isFeatureFlagEnabled("ROTATION_ATTRIBUTION");
+  } catch (error) {
+    console.error(
+      "[featureFlags] Failed to resolve ROTATION_ATTRIBUTION, defaulting to disabled:",
+      error instanceof Error ? error.message : error
+    );
+    return false;
+  }
+}
+
+/** Antigravity streaming-account lease (#13929). Opt-in and fail-closed. */
+export function isAntigravityAccountLeaseEnabled(
+  reader: (key: string) => boolean = isFeatureFlagEnabled
+): boolean {
+  try {
+    return reader("ANTIGRAVITY_ACCOUNT_LEASE_ENABLED");
+  } catch (error) {
+    console.error(
+      "[featureFlags] Failed to resolve ANTIGRAVITY_ACCOUNT_LEASE_ENABLED, defaulting to disabled:",
+      error instanceof Error ? error.message : error
+    );
+    return false;
   }
 }
 

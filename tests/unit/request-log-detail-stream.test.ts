@@ -160,6 +160,47 @@ test("event stream hidden when debugEnabled is false", () => {
   );
 });
 
+// Regression: concatenated-JSON recovery must default to the rendered tree;
+// raw wire capture remains an explicit opt-in.
+test("Provider Event Stream defaults to the rendered JsonView tree, not the raw capture", () => {
+  const html = renderToStaticMarkup(
+    React.createElement(RequestLoggerDetail, {
+      log: {
+        status: 200,
+        method: "POST",
+        path: "/v1/chat/completions",
+        timestamp: "2026-04-09T21:27:08.000Z",
+        duration: 2500,
+        provider: "gemini",
+        sourceFormat: "openai-chat",
+        model: "test-model",
+        tokens: { in: 1, out: 1 },
+      },
+      detail: {
+        pipelinePayloads: {
+          streamChunks: { provider: ['data: {"content": "hello"}\n\n'] },
+        },
+        responseBody: "{}",
+      },
+      loading: false,
+      debugEnabled: true,
+      onClose: () => {},
+      onCopy: async () => true,
+    })
+  );
+
+  assert.notEqual(
+    html.indexOf('aria-label="Raw view: off"'),
+    -1,
+    "raw-view toggle should render, defaulting to off"
+  );
+  assert.equal(
+    html.indexOf('data: {"content": "hello"}'),
+    -1,
+    "default view should be the rendered JsonView tree, not the raw captured line"
+  );
+});
+
 test("status discrepancy shows both AgentProxy and provider statuses", () => {
   const html = renderToStaticMarkup(
     React.createElement(RequestLoggerDetail, {

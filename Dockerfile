@@ -32,7 +32,7 @@ RUN --mount=type=cache,id=s/92ca8a61-c1ba-421f-a389-d48ac7258c2d-apt-cache,targe
 #
 # Refreshing npm does NOT fix them. Measured on npm@12.0.2 (2026-08-12, latest):
 #   brace-expansion 5.0.7  (needs >= 5.0.9)   CVE-2026-69152, CVE-2026-14257
-#   ip-address      10.2.0 (needs >= 10.3.1)  CVE-2026-69192/-69198/-54272
+#   ip-address      10.2.0 (needs >= 10.5.1)  CVE-2026-69192/-69198/-54272
 #   tar             7.5.19 (needs >= 7.5.21)  GHSA-r292-9mhp-454m
 #   undici          6.27.0 (needs >= 6.28.0)  CVE-2026-16729/-16728/-15157
 # No published npm release carries patched copies, so `npm install -g npm@12.0.2`
@@ -54,7 +54,7 @@ RUN set -eux; \
   npm install -g npm@12.0.2; \
   npm install --prefix /tmp/npm-cve-patch --no-audit --no-fund --ignore-scripts \
     --install-strategy=nested \
-    brace-expansion@5.0.9 ip-address@10.5.0 tar@7.5.22 undici@6.28.0; \
+    brace-expansion@5.0.9 ip-address@10.7.2 tar@7.5.22 undici@6.28.0; \
   for pkg in brace-expansion ip-address tar undici; do \
     test -d "/usr/local/lib/node_modules/npm/node_modules/$pkg"; \
     rm -rf "/usr/local/lib/node_modules/npm/node_modules/$pkg"; \
@@ -122,22 +122,17 @@ RUN --mount=type=cache,id=s/92ca8a61-c1ba-421f-a389-d48ac7258c2d-npm-cache,targe
   && node -e "require('better-sqlite3')(':memory:').close()" \
   && node -e "const wreq=require('wreq-js'); if(typeof wreq.createTransport!=='function') process.exit(1)"
 
-# Build with Turbopack (stable in Next 16, the repo default). The v3.8.27-era
-# TurbopackInternalError panic ("entered unreachable code: there must be a path to a
-# root" in ImportTracer::get_traces) no longer reproduces on Next 16.2.9 — validated
-# 2026-07-05 with clean amd64 (12min14s, image smoke-tested: /api/monitoring/health
-# 200) and arm64 (qemu, exit 0, zero panic strings) builds. Turbopack cut the bare
-# build from 17min to 9min on the same 32-core box. Webpack stays available as the
-# escape hatch: `--build-arg`/-e AGENTPROXY_USE_TURBOPACK=0.
-# See docs/ops/QUALITY_GATE_PLAYBOOK.md Parte 6.
+# Bundler for the image build. Docker defaults to webpack
+# (AGENTPROXY_USE_TURBOPACK=0), deliberately different from the repo code default
+# for local dev and non-Docker builds (Turbopack =1). Bare `docker build .` is
+# common on Railway/one-click and memory-capped builders, where Turbopack native
+# Rust memory sits outside the V8 heap and can be OOM-killed without useful text.
+# Official publish builds already pin webpack explicitly. On a large builder,
+# opt back into Turbopack with `--build-arg AGENTPROXY_USE_TURBOPACK=1`.
 #
-# Declared as ARG+ENV, not a bare ENV: a bare ENV shadows any same-named ARG for
-# the rest of the stage, so `--build-arg AGENTPROXY_USE_TURBOPACK=0` was silently
-# ignored and the escape hatch above only ever worked via `-e` at runtime, never
-# at build time. Turbopack compiles in native Rust memory that lives outside the
-# V8 heap, so AGENTPROXY_BUILD_MEMORY_MB cannot bound it and a memory-constrained
-# build host gets SIGKILLed by the cgroup OOM killer with no error message.
-ARG AGENTPROXY_USE_TURBOPACK=1
+# Declared as ARG+ENV, not a bare ENV: a bare ENV shadows same-named build args.
+# AGENTPROXY_BUILD_MEMORY_MB only bounds V8 and cannot cap Turbopack native memory.
+ARG AGENTPROXY_USE_TURBOPACK=0
 ENV AGENTPROXY_USE_TURBOPACK="${AGENTPROXY_USE_TURBOPACK}"
 
 # Next.js basePath is fixed at build time; pass AGENTPROXY_BASE_PATH here when the
@@ -232,6 +227,10 @@ ENV API_PORT=20128
 ENV DASHBOARD_PORT=20129
 ENV HOSTNAME=0.0.0.0
 ENV AGENTPROXY_RUST_CORE=1
+# Published container images default to authenticated client API access. This
+# is a deployment posture only; npm/CLI local development keeps the repository
+# default REQUIRE_API_KEY=false unless the operator opts in.
+ENV REQUIRE_API_KEY=true
 # The Rust API is the externally published data plane on 20128. The supervisor
 # defaults to loopback for non-container use, so Docker must opt into binding the
 # container interface; otherwise `-p ...:20128:20128` cannot reach the gateway.
@@ -247,7 +246,7 @@ ENV NODE_OPTIONS="--max-old-space-size=${AGENTPROXY_MEMORY_MB}"
 
 # Data directory inside Docker — must match the volume mount in docker-compose.yml
 ENV DATA_DIR=/app/data
-RUN mkdir -p /app/data
+RUN mkdir -p /app/data && chown node:node /app /app/data
 
 # `npm run build` (build-next-isolated → assembleStandalone) bundles ALL runtime
 # files into .build/next/standalone/ — .next, node_modules, migrations, scripts,
@@ -257,24 +256,23 @@ RUN mkdir -p /app/data
 # The old per-module overrides were therefore pure duplication and were removed
 # (build-output-isolation cleanup). See scripts/build/assembleStandalone.mjs
 # (EXTRA_MODULE_ENTRIES) for the single source of truth.
-COPY --from=builder /app/.build/next/standalone ./
-COPY --from=rust-builder /tmp/agentproxy-gateway ./rust/target/release/agentproxy-gateway
+COPY --chown=node:node --from=builder /app/.build/next/standalone ./
+COPY --chown=node:node --from=rust-builder /tmp/agentproxy-gateway ./rust/target/release/agentproxy-gateway
 # better-sqlite3 is the one exception still copied explicitly: assembleStandalone
 # only syncs its native build/ dir; the JS wrapper (lib/, package.json) is left to
 # Next.js tracing. bootstrap-env requires SQLite BEFORE the standalone server
 # starts, so guarantee the complete package independent of trace behaviour.
-COPY --from=builder /app/node_modules/better-sqlite3 ./node_modules/better-sqlite3
+COPY --chown=node:node --from=builder /app/node_modules/better-sqlite3 ./node_modules/better-sqlite3
 # migrations land at <standalone>/migrations via assembleStandalone; point the runtime at them.
 ENV AGENTPROXY_MIGRATIONS_DIR=/app/migrations
 
 # Docker healthcheck script — not traced by Next.js standalone output, so copy
 # it explicitly. The HEALTHCHECK CMD references it as `node healthcheck.mjs`.
-COPY --from=builder /app/scripts/dev/healthcheck.mjs ./healthcheck.mjs
+COPY --chown=node:node --from=builder /app/scripts/dev/healthcheck.mjs ./healthcheck.mjs
 
-# Hand /app over to the baked-in `node` non-root user (UID/GID 1000) so the
-# runtime process never holds root privileges. The chown happens after all
-# COPYs so it covers files originally owned by root in the builder stage.
-RUN chown -R node:node /app
+# Builder artifacts are copied with node ownership at copy time. Avoid a
+# recursive chown here: overlay filesystems would rewrite the standalone tree
+# into a second image layer. /app and /app/data are handed to node above.
 
 EXPOSE 20128 20129
 
@@ -317,6 +315,7 @@ ENV DASHBOARD_PORT=20129
 ENV HOSTNAME=0.0.0.0
 ENV AGENTPROXY_RUST_CORE=1
 ENV AGENTPROXY_RUST_CORE_HOST=0.0.0.0
+ENV REQUIRE_API_KEY=true
 ENV AGENTPROXY_MEMORY_MB=1024
 ENV NODE_OPTIONS="--max-old-space-size=${AGENTPROXY_MEMORY_MB}"
 ENV DATA_DIR=/app/data
