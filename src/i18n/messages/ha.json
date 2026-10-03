@@ -4954,7 +4954,8 @@
     },
     "compressionLogTitle": "Rajistar Matse Bayanai",
     "compressionLogEmpty": "Babu buƙatun da aka matse tukuna. Ƙididdigar matsawa za ta bayyana a nan idan aka sarrafa buƙatu tare da kunna matsawa.",
-    "tokens": "token-token"
+    "tokens": "token-token",
+    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
   },
   "onboarding": {
     "welcome": "Barka da zuwa",

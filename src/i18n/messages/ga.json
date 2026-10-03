@@ -5030,7 +5030,8 @@
     },
     "compressionLogTitle": "Loga Comhbhrú",
     "compressionLogEmpty": "Níl aon iarratas comhbhrúite fós. Beidh staitisticí comhbhrú le feiceáil anseo nuair a phróiseáiltear iarratais le comhbhrú cumasaithe.",
-    "tokens": "comharthaí"
+    "tokens": "comharthaí",
+    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
   },
   "onboarding": {
     "welcome": "Fáilte",
@@ -8654,7 +8655,7 @@
       },
       "compressToolResults": {
         "label": "Bearr torthaí fada uirlisí go réamhghníomhach",
-        "description": "Gearrann sé torthaí uirlisí os cionn 2,000 carachtar le linn comhbhrú Éadrom. Féadfaidh cosaint éigeandála ró-shreafa fós bearradh a dhéanamh ar ábhar nuair a sháraíonn an comhthéacs buiséad an mhúnla."
+        "description": "__MISSING__:Truncates long tool results during Lite compression. The Maximum tool-result length field (or AGENTPROXY_LITE_MAX_TOOL_LENGTH when that field is unset) sets the cap. Emergency overflow protection may still trim content when the context exceeds the model budget."
       }
     },
     "engineFields": {

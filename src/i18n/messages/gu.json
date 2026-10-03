@@ -4971,7 +4971,8 @@
     },
     "compressionLogTitle": "કમ્પ્રેશન લૉગ",
     "compressionLogEmpty": "હજી સુધી કોઈ સંકુચિત વિનંતીઓ નથી. જ્યારે વિનંતીઓ કમ્પ્રેશન સક્ષમ સાથે પ્રક્રિયા કરવામાં આવશે ત્યારે કમ્પ્રેશન આંકડા અહીં દેખાશે.",
-    "tokens": "ટોકન્સ"
+    "tokens": "ટોકન્સ",
+    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
   },
   "onboarding": {
     "welcome": "સ્વાગત છે",

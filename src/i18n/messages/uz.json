@@ -4954,7 +4954,8 @@
     },
     "compressionLogTitle": "Siqish jurnali",
     "compressionLogEmpty": "Hali siqilgan soʻrovlar yoʻq. Siqish yoqilgan holda soʻrovlar qayta ishlanganda, siqish statistikasi shu yerda paydo boʻladi.",
-    "tokens": "tokenlar"
+    "tokens": "tokenlar",
+    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
   },
   "onboarding": {
     "welcome": "Xush kelibsiz",

@@ -4971,7 +4971,8 @@
     },
     "compressionLogTitle": "சுருக்கப் பதிவு",
     "compressionLogEmpty": "இதுவரை சுருக்கப்பட்ட கோரிக்கைகள் எதுவும் இல்லை. சுருக்கம் இயக்கப்பட்டு கோரிக்கைகள் செயலாக்கப்படும் போது சுருக்கப் புள்ளிவிவரங்கள் இங்கே தோன்றும்.",
-    "tokens": "டோக்கன்கள்"
+    "tokens": "டோக்கன்கள்",
+    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
   },
   "onboarding": {
     "welcome": "வரவேற்கிறோம்",

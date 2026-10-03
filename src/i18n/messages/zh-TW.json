@@ -4971,7 +4971,8 @@
     },
     "compressionLogTitle": "壓縮日誌",
     "compressionLogEmpty": "尚未有壓縮請求。啟用壓縮處理請求時，壓縮統計資訊將出現在此處。",
-    "tokens": "權杖"
+    "tokens": "權杖",
+    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
   },
   "onboarding": {
     "welcome": "歡迎",

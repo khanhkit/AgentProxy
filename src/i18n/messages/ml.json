@@ -4954,7 +4954,8 @@
     },
     "compressionLogTitle": "കംപ്രഷൻ ലോഗ്",
     "compressionLogEmpty": "ഇതുവരെ കംപ്രസ് ചെയ്ത അഭ്യർത്ഥനകളൊന്നുമില്ല. കംപ്രഷൻ പ്രവർത്തനക്ഷമമാക്കി അഭ്യർത്ഥനകൾ പ്രോസസ് ചെയ്യുമ്പോൾ കംപ്രഷൻ സ്ഥിതിവിവരക്കണക്കുകൾ ഇവിടെ ദൃശ്യമാകും.",
-    "tokens": "ടോക്കണുകൾ"
+    "tokens": "ടോക്കണുകൾ",
+    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
   },
   "onboarding": {
     "welcome": "സ്വാഗതം",

@@ -4954,7 +4954,8 @@
     },
     "compressionLogTitle": "සම්පීඩන ලොගය",
     "compressionLogEmpty": "තවමත් සම්පීඩිත ඉල්ලීම් නොමැත. සම්පීඩනය සක්රිය කර ඉල්ලීම් සකසන විට සම්පීඩන සංඛ්යාලේඛන මෙහි දිස්වනු ඇත.",
-    "tokens": "ටෝකන"
+    "tokens": "ටෝකන",
+    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
   },
   "onboarding": {
     "welcome": "සාදරයෙන් පිළිගනිමු",

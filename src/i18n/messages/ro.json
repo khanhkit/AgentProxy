@@ -4971,7 +4971,8 @@
     },
     "compressionLogTitle": "Log de compresie",
     "compressionLogEmpty": "Nu există încă cereri compresate. Statisticile de compresie vor apărea aici când cererile sunt procesate cu compresia activată.",
-    "tokens": "tokenuri"
+    "tokens": "tokenuri",
+    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
   },
   "onboarding": {
     "welcome": "Bun venit",
@@ -8595,7 +8596,7 @@
       },
       "compressToolResults": {
         "label": "Trunchiați proactiv rezultatele lungi ale instrumentului",
-        "description": "Trunchiază rezultatele instrumentului peste 2.000 de caractere în timpul compresiei Lite. Protecția de suprasarcină de urgență poate tăia în continuare conținutul atunci când contextul depășește bugetul modelului."
+        "description": "__MISSING__:Truncates long tool results during Lite compression. The Maximum tool-result length field (or AGENTPROXY_LITE_MAX_TOOL_LENGTH when that field is unset) sets the cap. Emergency overflow protection may still trim content when the context exceeds the model budget."
       }
     },
     "engineFields": {

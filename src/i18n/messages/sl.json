@@ -4974,7 +4974,8 @@
     },
     "compressionLogTitle": "Dnevnik stiskanja",
     "compressionLogEmpty": "Stisnjenih zahtev še ni. Statistični podatki o stiskanju se bodo prikazali tukaj, ko bodo zahteve obdelane z omogočenim stiskanjem.",
-    "tokens": "žetoni"
+    "tokens": "žetoni",
+    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
   },
   "onboarding": {
     "welcome": "Dobrodošli",
@@ -8598,7 +8599,7 @@
       },
       "compressToolResults": {
         "label": "Vnaprej skrajšaj dolge rezultate orodij",
-        "description": "Med lahkim stiskanjem skrajša rezultate orodij, daljše od 2.000 znakov. Zaščita pred prekoračitvijo v sili lahko še vedno obreže vsebino, ko kontekst preseže proračun modela."
+        "description": "__MISSING__:Truncates long tool results during Lite compression. The Maximum tool-result length field (or AGENTPROXY_LITE_MAX_TOOL_LENGTH when that field is unset) sets the cap. Emergency overflow protection may still trim content when the context exceeds the model budget."
       }
     },
     "engineFields": {

@@ -4954,7 +4954,8 @@
     },
     "compressionLogTitle": "ಕಂಪ್ರೆಷನ್ ಲಾಗ್",
     "compressionLogEmpty": "ಇನ್ನೂ ಯಾವುದೇ ಕಂಪ್ರೆಸ್ ಮಾಡಿದ ವಿನಂತಿಗಳಿಲ್ಲ. ಕಂಪ್ರೆಷನ್ ಸಕ್ರಿಯವಾಗಿರುವಾಗ ವಿನಂತಿಗಳನ್ನು ಪ್ರಕ್ರಿಯೆಗೊಳಿಸಿದರೆ, ಕಂಪ್ರೆಷನ್ ಅಂಕಿಅಂಶಗಳು ಇಲ್ಲಿ ಕಾಣಿಸಿಕೊಳ್ಳುತ್ತವೆ.",
-    "tokens": "ಟೋಕನ್ಗಳು"
+    "tokens": "ಟೋಕನ್ಗಳು",
+    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
   },
   "onboarding": {
     "welcome": "ಸ್ವಾಗತ",

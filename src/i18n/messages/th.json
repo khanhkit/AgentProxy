@@ -4971,7 +4971,8 @@
     },
     "compressionLogTitle": "บันทึกการบีบอัด",
     "compressionLogEmpty": "ยังไม่มีคำขอที่ถูกบีบอัด สถิติการบีบอัดจะแสดงที่นี่เมื่อคำขอถูกประมวลผลโดยเปิดใช้งานการบีบอัด",
-    "tokens": "โทเค็น"
+    "tokens": "โทเค็น",
+    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
   },
   "onboarding": {
     "welcome": "ยินดีต้อนรับ",

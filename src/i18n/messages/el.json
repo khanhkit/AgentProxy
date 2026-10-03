@@ -5039,7 +5039,8 @@
     },
     "compressionLogTitle": "Καταγραφή Συμπίεσης",
     "compressionLogEmpty": "Δεν υπάρχουν συμπιεσμένα αιτήματα ακόμα. Τα στατιστικά συμπίεσης θα εμφανιστούν εδώ όταν επεξεργαστούν αιτήματα με ενεργοποιημένη τη συμπίεση.",
-    "tokens": "token"
+    "tokens": "token",
+    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
   },
   "onboarding": {
     "welcome": "Καλώς ορίσατε",

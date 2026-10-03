@@ -4971,7 +4971,8 @@
     },
     "compressionLogTitle": "سجل الضغط",
     "compressionLogEmpty": "لا توجد طلبات مضغوطة حتى الآن. ستظهر إحصائيات الضغط هنا عند معالجة الطلبات مع تفعيل الضغط.",
-    "tokens": "رموز"
+    "tokens": "رموز",
+    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
   },
   "onboarding": {
     "welcome": "مرحبًا",

@@ -5009,7 +5009,8 @@
     },
     "compressionLogTitle": "कॉम्प्रेशन लॉग",
     "compressionLogEmpty": "अद्याप कोणत्याही कॉम्प्रेस केलेल्या विनंत्या नाहीत. कॉम्प्रेशन सक्षम करून विनंत्यांवर प्रक्रिया केल्यावर कॉम्प्रेशन आकडेवारी येथे दिसेल.",
-    "tokens": "टोकन्स"
+    "tokens": "टोकन्स",
+    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
   },
   "onboarding": {
     "welcome": "स्वागत आहे",

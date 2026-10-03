@@ -4954,7 +4954,8 @@
     },
     "compressionLogTitle": "Սեղմման մատյան",
     "compressionLogEmpty": "Սեղմված հարցումներ դեռ չկան։ Սեղմման վիճակագրությունը կհայտնվի այստեղ, երբ հարցումները մշակվեն միացված սեղմման գործառույթով։",
-    "tokens": "թոքեններ"
+    "tokens": "թոքեններ",
+    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
   },
   "onboarding": {
     "welcome": "Բարի գալուստ",

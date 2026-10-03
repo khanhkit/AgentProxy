@@ -4954,7 +4954,8 @@
     },
     "compressionLogTitle": "შეკუმშვის ჟურნალი",
     "compressionLogEmpty": "შეკუმშული მოთხოვნები ჯერ არ არის. შეკუმშვის სტატისტიკა აქ გამოჩნდება, როდესაც მოთხოვნები შეკუმშვის ჩართული ფუნქციით დამუშავდება.",
-    "tokens": "ტოკენები"
+    "tokens": "ტოკენები",
+    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
   },
   "onboarding": {
     "welcome": "კეთილი იყოს თქვენი მობრძანება",

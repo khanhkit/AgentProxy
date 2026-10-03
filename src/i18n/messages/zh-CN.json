@@ -4971,7 +4971,8 @@
     },
     "compressionLogTitle": "压缩日志",
     "compressionLogEmpty": "尚未有压缩请求。启用压缩处理请求时，压缩统计信息将出现在此处。",
-    "tokens": "令牌"
+    "tokens": "令牌",
+    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
   },
   "onboarding": {
     "welcome": "欢迎",

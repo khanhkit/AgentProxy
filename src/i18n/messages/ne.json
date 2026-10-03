@@ -4954,7 +4954,8 @@
     },
     "compressionLogTitle": "कम्प्रेसन लग",
     "compressionLogEmpty": "अहिलेसम्म कुनै कम्प्रेस गरिएका अनुरोधहरू छैनन्। कम्प्रेसन सक्षम गरी अनुरोधहरू प्रशोधन भएपछि कम्प्रेसनका तथ्याङ्कहरू यहाँ देखिनेछन्।",
-    "tokens": "टोकनहरू"
+    "tokens": "टोकनहरू",
+    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
   },
   "onboarding": {
     "welcome": "स्वागत छ",

@@ -4954,7 +4954,8 @@
     },
     "compressionLogTitle": "ချုံ့ခြင်းမှတ်တမ်း",
     "compressionLogEmpty": "ချုံ့ထားသော တောင်းဆိုမှုများ မရှိသေးပါ။ ချုံ့ခြင်းကို ဖွင့်ထားပြီး တောင်းဆိုမှုများကို လုပ်ဆောင်သည့်အခါ ချုံ့ခြင်းဆိုင်ရာ စာရင်းအင်းများကို ဤနေရာတွင် ပြသပါမည်။",
-    "tokens": "တိုကင်များ"
+    "tokens": "တိုကင်များ",
+    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
   },
   "onboarding": {
     "welcome": "ကြိုဆိုပါသည်",

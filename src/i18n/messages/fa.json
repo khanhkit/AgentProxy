@@ -4971,7 +4971,8 @@
     },
     "compressionLogTitle": "لاگ فشرده‌سازی",
     "compressionLogEmpty": "هنوز هیچ درخواست فشرده‌شده‌ای وجود ندارد. آمار فشرده‌سازی زمانی که درخواست‌ها با فشرده‌سازی فعال پردازش شوند، در اینجا نمایش داده خواهد شد.",
-    "tokens": "توکن‌ها"
+    "tokens": "توکن‌ها",
+    "exportTruncated": "__MISSING__:Export truncated: only {exported} of {total} log entries were included. Pick a shorter time range to export the rest."
   },
   "onboarding": {
     "welcome": "خوش آمدید",
@@ -8595,7 +8596,7 @@
       },
       "compressToolResults": {
         "label": "به‌طور پیش‌گیرانه نتایج طولانی ابزار را کوتاه کنید",
-        "description": "نتایج ابزار را در طول فشرده‌سازی Lite بیش از ۲,۰۰۰ کاراکتر کوتاه می‌کند. حفاظت از سرریز اضطراری ممکن است هنوز محتوا را زمانی که زمینه از بودجه مدل فراتر رود، کوتاه کند."
+        "description": "__MISSING__:Truncates long tool results during Lite compression. The Maximum tool-result length field (or AGENTPROXY_LITE_MAX_TOOL_LENGTH when that field is unset) sets the cap. Emergency overflow protection may still trim content when the context exceeds the model budget."
       }
     },
     "engineFields": {
