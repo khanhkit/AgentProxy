@@ -188,7 +188,7 @@
     "check:openapi-coverage": "node scripts/check/check-openapi-coverage.mjs",
     "check:openapi-security-tiers": "node scripts/check/check-openapi-security-tiers.mjs",
     "check:model-lifecycle": "node --import tsx/esm scripts/check/check-model-lifecycle.mjs",
-    "check:provider-consistency": "bun scripts/check/check-provider-consistency.ts",
+    "check:provider-consistency": "node --import tsx/esm scripts/check/check-provider-consistency.ts",
     "check:provider-assets": "node scripts/check/check-provider-assets.mjs",
     "check:provider-order-sync": "node scripts/check/check-provider-order-sync.mjs",
     "check:provider-asset-provenance": "node scripts/check/check-provider-asset-provenance.mjs",
@@ -516,32 +516,32 @@
       "js-yaml": "^4.3.2"
     },
     "@openai/codex-security": {
-      "smol-toml": "^1.8.0"
+      "smol-toml": "^1.9.0"
     },
     "jsdom": {
-      "undici": "^7.29.0"
+      "undici": "^7.30.0"
     },
     "node-gyp": {
-      "undici": "^6.28.0"
+      "undici": "^6.29.0"
     },
     "concurrently": {
       "shell-quote": "^1.9.0"
     },
     "adm-zip": "^0.6.1",
     "promptfoo": {
-      "js-yaml": "^5.2.2",
-      "undici": "^7.29.0"
+      "js-yaml": "^5.4.2",
+      "undici": "^7.30.0"
     },
     "socket.io-parser": "^4.2.7",
     "tar": "^7.5.21",
     "libxmljs2": {
       "minimatch": {
-        "brace-expansion": "^2.1.4"
+        "brace-expansion": "^2.1.7"
       }
     },
     "rimraf": {
       "minimatch": {
-        "brace-expansion": "^2.1.4"
+        "brace-expansion": "^2.1.7"
       }
     },
     "@apidevtools/json-schema-ref-parser": {
