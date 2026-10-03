@@ -45,8 +45,6 @@ complementary; operators should know which one they are looking at.
   - `AGENTPROXY_CHAT_MAX_HEAVY_IN_FLIGHT` — legacy request-count cap, opt-in only
   - `AGENTPROXY_CHAT_ADMISSION_QUEUE_MS` — queue-wait before 503 (default 2000)
   - `AGENTPROXY_CHAT_ADMISSION_MAX_QUEUED_BYTES` — queued-bytes heap valve (default 4 MB)
-  - `AGENTPROXY_CHAT_VIRTUAL_TTL_MS` / `AGENTPROXY_CHAT_VIRTUAL_MAX_SESSIONS` — deprecated
-    no-ops since #10110 (accepted for config compatibility, ignored)
 - **Reports:** `GET /api/monitoring/health` → `chatAdmission` (#11244) — including
   the #503-fanout additions `inflightBytes`, `maxInflightBytes`, `budgetSource`
   (`v8_heap` | `cgroup` | `override`), `pressureSeverity`, and `countCapEnabled`
