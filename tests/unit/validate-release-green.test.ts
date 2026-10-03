@@ -396,10 +396,9 @@ test("pack gate builds, stamps dist/BUILD_SHA, then validates against the tree u
     "a release-branch tip is never an ancestor of origin/main mid-cycle"
   );
   assert.match(src, /const PACK_GATE_ENV = \{ OMNIROUTE_RELEASE_REF: "HEAD" \}/);
-  // Both entry points (the parallel wave and --with-build --quick) must use it.
-  assert.equal(src.match(/runPackArtifactGate\b/g)?.length, 3);
-  assert.doesNotMatch(src, /runAsync\(npmCmd, \["run", "check:pack-artifact"\]/);
-  assert.doesNotMatch(src, /id: "pack-artifact",[^}]*args:/);
+  // The provenance helper remains available for release-branch validation, while the normal
+  // pre-flight package lane mirrors CI with the measured timeout/env contract below.
+  assert.ok((src.match(/runPackArtifactGate\b/g)?.length ?? 0) >= 1);
 });
 
 // ─── --full-ci gate extraction (P0, v3.8.46 post-mortem) ─────────────────────
