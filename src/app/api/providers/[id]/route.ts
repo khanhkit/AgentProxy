@@ -31,6 +31,7 @@ import {
   disableRateLimitProtection,
 } from "@/../open-sse/services/rateLimitManager";
 import { rejectRetiredCommonChatGptWebProvider } from "@/lib/providers/chatgptWebRetirementResponse";
+import { applyOperatorActivationIntent } from "@/lib/providers/operatorDisable";
 
 function normalizeCodexLimitPolicy(
   incoming: unknown,
@@ -343,6 +344,15 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
       }
     }
 
+    const changedFields = Object.keys(updateData);
+
+    if (typeof isActive === "boolean") {
+      updateData.providerSpecificData = applyOperatorActivationIntent(
+        updateData.providerSpecificData ?? existing.providerSpecificData,
+        isActive
+      );
+    }
+
     const updated = await updateProviderConnection(id, updateData);
 
     // If rateLimitOverrides was included in the request, refresh the in-memory
@@ -386,7 +396,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
       requestId: auditContext.requestId,
       metadata: {
         provider: existing.provider,
-        changedFields: Object.keys(updateData),
+        changedFields,
         before: summarizeProviderConnectionForAudit(existing),
         after: summarizeProviderConnectionForAudit(updated),
       },
