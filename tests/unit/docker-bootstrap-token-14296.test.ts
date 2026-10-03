@@ -21,7 +21,7 @@ process.env.API_KEY_SECRET = "test-api-key-secret";
 const core = await import("../../src/lib/db/core.ts");
 const { updateSettings } = await import("../../src/lib/db/settings.ts");
 const apiAuth = await import("../../src/shared/utils/apiAuth.ts");
-const { PEER_IP_HEADER, VIA_PROXY_HEADER, BOOTSTRAP_TOKEN_HEADER, AUTHZ_HEADER_PEER_LOCALITY } =
+const { PEER_IP_HEADER, VIA_PROXY_HEADER, BOOTSTRAP_TOKEN_HEADER } =
   await import("../../src/server/authz/headers.ts");
 const bootstrapToken = await import("../../src/lib/auth/bootstrapToken.ts");
 
