@@ -124,6 +124,7 @@ const ENV_VAR_ALLOWLIST = new Set([
   "OPENAI_API_BASE", // legacy OpenAI base-URL env var some downstream tools (e.g. Aider) read (CLI-INTEGRATIONS.md)
   "PROMPTFOO_PROVIDER_KEY", // promptfoo's own provider-key env var, used by the red-team suite (GUARDRAILS.md)
   "REDIS_PORT", // docker-compose host-port override (DOCKER_GUIDE.md)
+  "APP_BIND_HOST", // docker-compose host-publish bind override; Compose consumes it directly, so JS env scanning cannot observe it.
   "PROD_BIND_HOST", // docker-compose.prod.yml host-publish bind override; Compose consumes it directly, so JS env scanning cannot observe it.
   "AUTO_UPDATE_HOST_REPO_DIR", // docker-compose self-update mount (DOCKER_GUIDE.md)
   "LINUX_GPG_KEY", // electron AppImage signing key, CI/build only (ELECTRON_GUIDE.md)
@@ -392,6 +393,11 @@ const SKIP_DOC_FILES = new Set([
   "docs/reference/PROVIDER_REFERENCE.md", // auto-generated from providers.ts
   "docs/openapi.yaml",
   "docs/i18n", // translations — separate workflow
+  // Historical task/session evidence is intentionally immutable. It records claims
+  // that were true (or under investigation) at a point in time and must not be
+  // rewritten when the live codebase moves on. Accuracy gates apply to current
+  // documentation, while docs/handoff remains lossless historical evidence.
+  "docs/handoff",
   // Forward-looking coverage plan: a `- [ ]` checklist of test targets and helper
   // components to be created. Same rationale as the design/plan docs above.
   "docs/ops/COVERAGE_PLAN.md",
