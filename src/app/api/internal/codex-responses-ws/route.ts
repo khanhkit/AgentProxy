@@ -325,7 +325,10 @@ async function enforceCodexWsApiKeyPolicy(
   if (apiKey) policyHeaders.set("Authorization", `Bearer ${apiKey}`);
   const policyRequest = new Request(authRequest.url, { headers: policyHeaders });
   const policy = await enforceApiKeyPolicy(policyRequest, requestedModel);
-  return { rejection: policy.rejection, apiKeyInfo: policy.apiKeyInfo };
+  return {
+    rejection: policy.rejection,
+    apiKeyInfo: policy.apiKeyInfo as ApiKeyMetadata | null,
+  };
 }
 
 async function prepareReasoningRoute(
@@ -526,7 +529,7 @@ async function resolveCodexProxy(provider: string): Promise<string | undefined> 
   try {
     return proxyConfigToUrl(await resolveProxy(provider)) || undefined;
   } catch (err) {
-    logger.warn(`[codex-responses-ws] proxy resolution failed: ${sanitizeErrorMessage(err)}`);
+    log.warn(`[codex-responses-ws] proxy resolution failed: ${sanitizeErrorMessage(err)}`);
     return undefined;
   }
 }
@@ -547,6 +550,14 @@ async function prepare(body: JsonRecord) {
   }
   const upstream = await resolveCodexUpstreamContext(context);
   if ("error" in upstream) return upstream.error;
+  if (
+    !("responseBody" in upstream) ||
+    !("provider" in upstream) ||
+    !("model" in upstream) ||
+    !("credentials" in upstream)
+  ) {
+    return jsonError(500, "codex_ws_context_invalid", "Codex WebSocket context is incomplete");
+  }
   const { responseBody, metadata, provider, model, credentials: refreshedCredentials } = upstream;
   const reasoningDecision = upstream.reasoningDecision;
 

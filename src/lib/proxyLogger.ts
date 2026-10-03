@@ -68,6 +68,8 @@ interface ProxyLogEntry {
 
 type ProxyLogInput = Partial<ProxyLogEntry> & {
   publicIp?: string | null;
+  rotationAccount?: string | null;
+  correlationId?: string | null;
 };
 
 interface ProxyLogFilters {
