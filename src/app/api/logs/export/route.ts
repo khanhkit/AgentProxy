@@ -1,7 +1,7 @@
 import { countCallLogsSince, iterateCallLogsSince } from "@/lib/usage/callLogs";
 import { requireManagementAuth } from "@/lib/api/requireManagementAuth";
 import { countProxyLogsSince, iterateProxyLogsSince } from "@/lib/db/proxyLogs";
-import { sanitizeErrorMessage } from "@omniroute/open-sse/utils/error";
+import { sanitizeErrorMessage } from "@agentproxy/open-sse/utils/error.ts";
 import { logger } from "@/shared/utils/logger";
 import {
   LOG_EXPORT_DEFAULT_ROWS,
