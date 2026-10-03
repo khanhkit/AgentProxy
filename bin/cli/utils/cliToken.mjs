@@ -9,7 +9,7 @@ import { resolveDataDir } from "../data-dir.mjs";
 const BUILTIN_DEFAULT_SALT = "omniroute-cli-auth-v1";
 const SALT_FILE_NAME = "cli-token-salt.json";
 const PERSISTED_SALT_RE = /^[0-9a-f]{64}$/;
-export const CLI_TOKEN_HEADER = "x-omniroute-cli-token";
+export const CLI_TOKEN_HEADER = "x-agentproxy-cli-token";
 
 let _cached = null;
 let _cachedSalt = null;
