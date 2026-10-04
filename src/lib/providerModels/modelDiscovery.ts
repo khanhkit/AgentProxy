@@ -410,19 +410,28 @@ export function normalizeDiscoveredModels(
 
     const topProvider = asRecord(record.top_provider);
 
-    // OpenRouter (and similar passthrough catalogs) report the context window as
-    // `context_length` / `top_provider.context_length`, not `inputTokenLimit`.
-    // Fall back across those names so synced models carry a real window instead
-    // of the provider default (128K). Explicit `inputTokenLimit` still wins. #3202
-    const inputTokenLimit = firstPositiveNumber(
-      record.inputTokenLimit,
+    // Keep the total context window distinct from an explicit maximum-input limit. Existing
+    // providers historically stored context_length as inputTokenLimit, so retain that compatibility
+    // outside Vertex while persisting the separate contextWindow field for Vertex consumers.
+    const contextWindow = firstPositiveNumber(
       record.context_length,
       record.contextLength,
-      record.max_model_len,
-      record.maxModelLen,
-      record.max_input_tokens,
-      record.maxInputTokens,
+      record.contextWindow,
       topProvider.context_length
+    );
+    const isVertexProvider = providerId === "vertex" || providerId === "vertex-partner";
+    const inputTokenLimit = firstPositiveNumber(
+      record.inputTokenLimit,
+      ...(isVertexProvider
+        ? []
+        : [
+            contextWindow,
+            record.max_model_len,
+            record.maxModelLen,
+            record.max_input_tokens,
+            record.maxInputTokens,
+          ]),
+      ...(!isVertexProvider ? [topProvider.context_length] : [])
     );
     const outputTokenLimit = firstPositiveNumber(
       record.outputTokenLimit,
@@ -469,6 +478,10 @@ export function normalizeDiscoveredModels(
       ...(supportedThinkingEfforts !== undefined ? { supportedThinkingEfforts } : {}),
       ...(defaultThinkingEffort !== undefined ? { defaultThinkingEffort } : {}),
       ...(typeof inputTokenLimit === "number" ? { inputTokenLimit } : {}),
+      ...(isVertexProvider && typeof contextWindow === "number" ? { contextWindow } : {}),
+      ...(record.metadataProvenance && typeof record.metadataProvenance === "object"
+        ? { metadataProvenance: record.metadataProvenance }
+        : {}),
       ...(typeof outputTokenLimit === "number" ? { outputTokenLimit } : {}),
       ...(typeof record.description === "string" ? { description: record.description } : {}),
       ...(typeof record.supportsThinking === "boolean"
