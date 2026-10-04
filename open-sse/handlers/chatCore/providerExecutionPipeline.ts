@@ -17,6 +17,7 @@ import { isModelUnavailableError, getNextFamilyFallback as defaultGetNextFamilyF
 import { COOLDOWN_MS } from "../../config/errorConfig.ts";
 import { normalizeHeaders } from "../../utils/headers.ts";
 import { shouldSkipCredentialRefresh } from "./skipCredentialRefresh.ts";
+import { handleRequestRejectedFailure } from "./requestRejectedFailure.ts";
 
 export interface ChatCoreExecutorResult {
   response: Response;
@@ -345,9 +346,21 @@ export async function runProviderExecutionPipeline(
 
     const isolateProbe = await state.isolateProbeFailures();
     const canRotateAccount = policy.allowAccountRotation && !isolateProbe;
+    const failureType = classifyProviderError(status, failureDetails.message, target.provider);
+
+    if (
+      failureType === PROVIDER_ERROR_TYPES.REQUEST_REJECTED &&
+      failedConnectionId &&
+      !target.stream
+    ) {
+      await handleRequestRejectedFailure({
+        connectionId: failedConnectionId,
+        statusCode: status,
+        message: failureDetails.message,
+      });
+    }
 
     if (!isolateProbe && failedConnectionId) {
-      const failureType = classifyProviderError(status, failureDetails.message, target.provider);
       if (failureType === PROVIDER_ERROR_TYPES.QUOTA_EXHAUSTED) {
         const bodyRetryAfterMs = parseRetryAfterFromBody(failureDetails.body).retryAfterMs;
         const quotaCooldownMs = bodyRetryAfterMs ?? retryAfterMsFrom(attempt) ?? COOLDOWN_MS.rateLimit;
@@ -429,6 +442,7 @@ export async function runProviderExecutionPipeline(
 
     if (
       !authRefreshed &&
+      failureType !== PROVIDER_ERROR_TYPES.REQUEST_REJECTED &&
       (status === 401 || status === 403) &&
       typeof connection.refreshCredentials === "function" &&
       !(await shouldSkipCredentialRefresh(target.provider, attempt.response))
