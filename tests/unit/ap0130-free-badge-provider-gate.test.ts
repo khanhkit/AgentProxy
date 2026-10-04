@@ -30,6 +30,6 @@ test("AP-ISS-0130 strict free badge flag is opt-in and registry remains unique",
   const def = defs.find((item) => item.key === FREE_BADGE_STRICT_FLAG);
   assert.equal(def?.defaultValue, "false");
   assert.equal(def?.type, "boolean");
-  assert.equal(defs.length, 58);
-  assert.equal(new Set(defs.map((item) => item.key)).size, 58);
+  assert.equal(defs.length, 66);
+  assert.equal(new Set(defs.map((item) => item.key)).size, 66);
 });
