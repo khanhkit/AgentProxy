@@ -517,7 +517,11 @@ export function openaiResponsesToOpenAIRequest(
     // conversation where Codex previously used tool_search (the whole session
     // would carry tool_search_call items forward in `input`). Skipping matches
     // the reasoning-item policy: display-only metadata, no chat side-effect.
-    if (itemType === "tool_search_call" || itemType === "tool_search_result") {
+    if (
+      itemType === "tool_search_call" ||
+      itemType === "tool_search_result" ||
+      itemType === "web_search_call"
+    ) {
       continue;
     }
 
