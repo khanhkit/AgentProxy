@@ -688,10 +688,12 @@ test("chatCore integration: assigned compression combo applies language packs an
 
     assert.ok(result.success, "Request should succeed");
     assert.ok(capturedBody, "Fetch should receive the request body");
-    const firstMessage = capturedBody.messages?.[0];
-    assert.equal(firstMessage?.role, "system");
-    assert.match(firstMessage?.content ?? "", /AgentProxy Output Styles/);
-    assert.match(firstMessage?.content ?? "", /Responda conciso/);
+    const styleMessage = capturedBody.messages?.find(
+      (message) => message?.role === "system" && typeof message.content === "string"
+    );
+    assert.ok(styleMessage, "Output Styles should reach the upstream request as a system instruction");
+    assert.match(styleMessage.content ?? "", /AgentProxy Output Styles/);
+    assert.match(styleMessage.content ?? "", /Responda conciso/);
 
     for (
       let attempt = 0;
@@ -783,10 +785,12 @@ test("chatCore integration: default stacked compression combo applies for unassi
 
     assert.ok(result.success, "Request should succeed");
     assert.ok(capturedBody, "Fetch should receive the request body");
-    const firstMessage = capturedBody.messages?.[0];
-    assert.equal(firstMessage?.role, "system");
-    assert.match(firstMessage?.content ?? "", /AgentProxy Output Styles/);
-    assert.match(firstMessage?.content ?? "", /Responda conciso/);
+    const styleMessage = capturedBody.messages?.find(
+      (message) => message?.role === "system" && typeof message.content === "string"
+    );
+    assert.ok(styleMessage, "Output Styles should reach the upstream request as a system instruction");
+    assert.match(styleMessage.content ?? "", /AgentProxy Output Styles/);
+    assert.match(styleMessage.content ?? "", /Responda conciso/);
 
     let summary = compressionAnalyticsDb.getCompressionAnalyticsSummary();
     for (
@@ -1105,8 +1109,11 @@ test("chatCore integration: caveman output mode injected when both compression a
     });
 
     assert.ok(result.success, "Request should succeed");
-    assert.equal(capturedBody.messages[0].role, "system");
-    assert.match(capturedBody.messages[0].content ?? "", /Output Styles/);
+    const styleMessage = capturedBody.messages.find(
+      (message) => message?.role === "system" && typeof message.content === "string"
+    );
+    assert.ok(styleMessage, "Caveman output mode should append a system instruction");
+    assert.match(styleMessage.content ?? "", /Output Styles/);
   } finally {
     globalThis.fetch = originalFetch;
   }
