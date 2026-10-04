@@ -4,6 +4,7 @@ import net from "node:net";
 import { OpencodeExecutor } from "../../open-sse/executors/opencode.ts";
 import type { ExecutorLog, ProviderCredentials } from "../../open-sse/executors/base.ts";
 import { resolveProxyForRequest } from "../../open-sse/utils/proxyFetch.ts";
+import { __resetProxyRefusalMemoryForTesting } from "../../open-sse/utils/proxyRefusalMemory.ts";
 
 const log: ExecutorLog = { debug() {}, info() {}, warn() {}, error() {} };
 
@@ -67,6 +68,7 @@ describe("OpencodeExecutor transient-failure rotation", () => {
   let observed: string[];
 
   beforeEach(() => {
+    __resetProxyRefusalMemoryForTesting();
     originalFetch = globalThis.fetch;
     observed = [];
   });

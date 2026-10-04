@@ -197,7 +197,12 @@ export async function handlePacedParkable429<TAccount extends RotatableAccount>(
   const setAsideMs = args.noteRefused
     ? args.noteRefused()
     : egressPacing.noteRefusedMember(account.proxy, skipRecentlyFailed);
-  const arm = await egressPacing.settle429Arm(args.release, args.pacing, args.result.response);
+  const arm = await egressPacing.settle429Arm(
+    args.release,
+    args.pacing,
+    args.result.response,
+    () => false
+  );
   egressPacing.log429Outcome(args.log, args.cid, arm, maskAccountId(account.fingerprint), setAsideMs);
   if (arm === "park") {
     if (!parkEnabled) return { kind: "break" };

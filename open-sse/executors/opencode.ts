@@ -982,6 +982,7 @@ export class OpencodeExecutor extends BaseExecutor {
                   {
                     execute: (i: ExecuteInput) =>
                       super.execute(i) as Promise<ExecutorExecuteResult & { response: Response }>,
+                    markCooldown: (a: ScopedAccount) => markCooldown(a),
                     markSuccess: (a: ScopedAccount) => markSuccess(a),
                     sleep: parkSleepCounting,
                     accounts,
