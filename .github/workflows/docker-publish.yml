@@ -31,6 +31,11 @@ jobs:
       version: ${{ steps.meta.outputs.version }}
       promote_latest: ${{ steps.meta.outputs.promote_latest }}
     steps:
+      - name: Enforce main-only release branch invariant
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/check/check-release-branch-hygiene.mjs
+
       - id: meta
         name: Resolve version
         shell: bash
