@@ -7,6 +7,7 @@ import {
   mergeInjectedFallbackOwnerNames,
 } from "./chatCore/memorySkillsInjection.ts";
 import { resolveChatCoreRequestSetup } from "./chatCore/requestSetup.ts";
+import { captureStreamReasoningForReplay } from "./chatCore/streamReasoningCapture.ts";
 import {
   normalizeOpenAICompatibleTools,
   shouldNormalizeFunctionToolsOnly,
@@ -1052,6 +1053,7 @@ async function handleChatCoreInner({
   const reasoningCacheScope = reasoningReplaySessionKey
     ? `api-key:${String(apiKeyInfo?.id ?? "local")}\x1f${String(reasoningReplaySessionKey)}`
     : null;
+  let reasoningReplayHistory: unknown[] | null = null;
   const persistAttemptLogs = (args: PersistAttemptLogsArgs) =>
     persistAttemptLogsFor(args, {
       traceId,
@@ -2503,6 +2505,9 @@ async function handleChatCoreInner({
           signatureNamespace: connectionId,
           copilotClient: copilotCompatibleReasoning,
           reasoningCacheScope,
+          onReasoningReplayHistory: (messages) => {
+            reasoningReplayHistory = messages;
+          },
           ...(preCompressionBody ? { preCompressionBody } : {}),
         }
       );
@@ -4927,6 +4932,7 @@ async function handleChatCoreInner({
         toolNameMap,
         requestToolIdentityMap,
         reasoningCacheScope,
+        reasoningReplayHistory,
         clientHeaders: clientRawRequest?.headers ?? null,
         isClaudeCodeCompatible,
         log,
@@ -5053,6 +5059,9 @@ async function handleChatCoreInner({
               signatureNamespace: connectionId,
               copilotClient: copilotCompatibleReasoning,
               reasoningCacheScope,
+              onReasoningReplayHistory: (messages) => {
+                reasoningReplayHistory = messages;
+              },
             }
           );
           return runNonStreamingProviderLeg(
@@ -5078,6 +5087,7 @@ async function handleChatCoreInner({
                 toolNameMap,
                 requestToolIdentityMap,
                 reasoningCacheScope,
+                reasoningReplayHistory,
                 clientHeaders: clientRawRequest?.headers ?? null,
                 isClaudeCodeCompatible,
                 log,
@@ -5741,36 +5751,20 @@ async function handleChatCoreInner({
       });
     }
 
-    // Reasoning Replay Cache (#1628): Capture reasoning_content from streaming responses
-    // with tool_calls so it can be replayed on subsequent turns (DeepSeek V4, Kimi K2, etc.)
+    // Reasoning Replay Cache (#1628): Capture reasoning content from successful streams.
     if (normalizedStreamStatus === 200 && streamResponseBody) {
-      try {
-        const streamBody = streamResponseBody as Record<string, unknown>;
-        const cacheStreamBody = Array.isArray(streamBody.choices)
-          ? streamBody
-          : needsTranslation(clientResponseFormat, FORMATS.OPENAI)
-            ? (translateNonStreamingResponse(
-                streamBody,
-                clientResponseFormat,
-                FORMATS.OPENAI,
-                responseToolNameMap,
-                extractToolSchemaMap(finalBody || translatedBody || body)
-              ) as Record<string, unknown>)
-            : streamBody;
-        const choices = cacheStreamBody.choices as
-          { message?: Record<string, unknown> }[] | undefined;
-        const msg = choices?.[0]?.message;
-        const historyMessages = (translatedBody as { messages?: unknown[] } | null | undefined)
-          ?.messages;
-        if (requiresReasoningReplay({ provider, model })) {
-          cacheReasoningFromAssistantMessage(msg, provider, model, {
-            scope: reasoningCacheScope,
-            historyMessages: Array.isArray(historyMessages) ? historyMessages : [],
-          });
-        }
-      } catch {
-        // Cache capture is non-critical — never block the stream
-      }
+      captureStreamReasoningForReplay({
+        streamResponseBody,
+        clientResponseFormat,
+        responseToolNameMap,
+        providerRequestBody: finalBody || translatedBody || body,
+        translatedBody,
+        provider,
+        model,
+        reasoningCacheScope,
+        reasoningReplayHistory,
+        videoTranscriptSensitive: videoBridgeObserved,
+      });
     }
     effectiveServiceTier = resolveReportedServiceTier(streamResponseBody) ?? effectiveServiceTier;
 
