@@ -18,6 +18,7 @@ vi.mock("next-intl", () => ({
     const messages: Record<string, string> = {
       "endpoint.apiEndpointsCatalogUnavailable": "API catalog unavailable",
       "endpoint.apiEndpointsSearchPlaceholder": "Search endpoints",
+      "endpoint.catalogStats": "{endpoints} endpoints across {categories} categories",
       "endpoint.badgeLoopbackTooltip": "Loopback only",
       "endpoint.badgeAlwaysProtectedTooltip": "Always protected",
       "endpoint.badgeInternalTooltip": "Internal endpoint",
@@ -56,7 +57,13 @@ vi.mock("next-intl", () => ({
       "endpoint.openJsonResponse": "Open JSON response",
     };
 
-    return (key: string) => messages[`${namespace}.${key}`] || key;
+    return (key: string, values?: Record<string, string | number>) => {
+      const template = messages[`${namespace}.${key}`] || key;
+      return Object.entries(values ?? {}).reduce(
+        (text, [name, value]) => text.replaceAll(`{${name}}`, String(value)),
+        template
+      );
+    };
   },
 }));
 
@@ -132,7 +139,6 @@ describe("ApiEndpointsTab", () => {
     });
 
     renderApiEndpointsTab();
-
     await waitForText("VS Code Token Alias");
     await waitForText("API catalog unavailable");
     expect(document.body.textContent).toContain("openapi.yaml not found");
@@ -170,9 +176,9 @@ describe("ApiEndpointsTab", () => {
     });
 
     renderApiEndpointsTab();
-
     await waitForText("VS Code Token Alias");
     await waitForText("AgentProxy API");
+    await waitForText("/api/v1/vscode/sk-live-123/models");
     expect(document.body.textContent).toContain("1 endpoints across 1 categories");
     expect(document.body.textContent).toContain("/api/v1/vscode/sk-live-123/models");
     expect(document.body.textContent).toContain("/api/v1/chat/completions");
@@ -207,18 +213,17 @@ describe("ApiEndpointsTab", () => {
     });
 
     renderApiEndpointsTab();
-
     await waitForText("AgentProxy API");
 
     // Expand the endpoint to reveal the curl example
-    const endpointRow = Array.from(document.body.querySelectorAll("code")).find((node) =>
+    const endpointCode = Array.from(document.body.querySelectorAll("code")).find((node) =>
       node.textContent?.includes("/api/v1/chat/completions")
     );
-    if (endpointRow?.parentElement) {
-      await act(async () => {
-        endpointRow.parentElement!.click();
-      });
-    }
+    const endpointRow = endpointCode?.closest("div.cursor-pointer");
+    expect(endpointRow).not.toBeNull();
+    act(() => {
+      endpointRow!.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+    });
 
     await waitForText("curl -X POST");
 
