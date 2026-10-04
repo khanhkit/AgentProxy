@@ -99,6 +99,7 @@ import {
   maybeOmitCatalogModelName,
   getThinkingCapabilityFields,
   mergeComboCapabilities,
+  visionDerivedModalities,
   getConnectionScopedEffortTiers,
   type ConnectionScopedReasoningCatalog,
   memoizeTargetMetadata,
@@ -789,8 +790,7 @@ async function buildUnifiedModelsResponseCore(
         ...(contextLength ? { context_length: contextLength } : {}),
         ...(maxInputTokens ? { max_input_tokens: maxInputTokens } : {}),
         ...(maxOutputTokens ? { max_output_tokens: maxOutputTokens } : {}),
-        ...(inputModalities.length > 0 ? { input_modalities: inputModalities } : {}),
-        ...(outputModalities.length > 0 ? { output_modalities: outputModalities } : {}),
+        ...visionDerivedModalities(capabilities, inputModalities, outputModalities),
         ...(Object.keys(capabilities).length > 0 ? { capabilities } : {}),
       };
     };

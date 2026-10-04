@@ -226,6 +226,29 @@ export function mergeComboCapabilities(
  * cold build from ~4s to ~18s, past the 8s cold-build bound). Metadata depends only on
  * the target fields in the key, so each distinct target is resolved once per build.
  */
+/**
+ * Derive models.dev-style modalities from an already-advertised vision verdict
+ * when synced modality intersections are unavailable. Synced values always win.
+ */
+export function visionDerivedModalities(
+  capabilities: Record<string, boolean | string[]>,
+  syncedInput: string[],
+  syncedOutput: string[]
+): { input_modalities?: string[]; output_modalities?: string[] } {
+  return {
+    ...(syncedInput.length > 0
+      ? { input_modalities: syncedInput }
+      : capabilities.vision === true
+        ? { input_modalities: ["text", "image"] }
+        : {}),
+    ...(syncedOutput.length > 0
+      ? { output_modalities: syncedOutput }
+      : capabilities.vision === true
+        ? { output_modalities: ["text"] }
+        : {}),
+  };
+}
+
 export function memoizeTargetMetadata<T>(
   resolve: (target: ComboCatalogTarget) => T | null,
   afterMiss: () => Promise<void>
