@@ -23,6 +23,7 @@
  */
 import { parseSSEToOpenAIResponse, parseSSEToResponsesOutput } from "../handlers/sseParser.ts";
 import {
+  getObservedToolNames,
   noteRefusedBorrowedToolNames,
   recordAcceptedToolNames,
   resolvePlaceholderNames,
@@ -51,6 +52,12 @@ export interface FreeTierContractAttempt {
   readonly clientToolNames: readonly string[];
   /** A refusal may still be replayed in the other shape: its outcome is noted afterwards. */
   readonly probe?: boolean;
+  /**
+   * True when this attempt injected placeholder tools the caller had not sent. Kept as a
+   * separate flag from `borrowed`: a placeholder this layer added is ours to attribute, while
+   * `borrowed` means it came from the observation store.
+   */
+  readonly injectedPlaceholders?: boolean;
 }
 
 /**
@@ -188,18 +195,10 @@ const PLACEHOLDER_TOOL_DESCRIPTION =
 const PLACEHOLDER_TOOL_PARAMETERS = { type: "object", properties: {} } as const;
 
 /**
- * An empty `tools` array counts as no tools: it is the exact shape the upstream refuses
- * (upstream anomalyco/opencode#49433 reports it from the client's own compaction path),
- * so it has to be filled like an absent one rather than passed through.
- */
-function hasTools(body: Record<string, unknown>): boolean {
-  return Array.isArray(body.tools) && body.tools.length > 0;
-}
-
-/**
  * Bring a free-tier request up to the upstream contract, without overriding anything the
  * caller already decided: client tools are kept as they are, and the placeholder tool is
- * only added when the caller sent none. Idempotent.
+ * only added when the caller sent none or when client-supplied tools do not yet carry the
+ * required placeholder tool. Idempotent.
  *
  * The placeholder differs per surface: Chat Completions takes the nested function shape,
  * the Responses surface takes the flat one. Neither carries a `tool_choice` — the upstream
@@ -220,33 +219,107 @@ export function applyFreeTierRequestContract<T>(
   const record = body as Record<string, unknown>;
   const next: Record<string, unknown> = { ...record, stream: true };
 
-  if (hasTools(next)) return next as T;
+  const existingNames = new Set(clientToolNamesOf(next));
+  const baseNames = placeholderNames.length > 0 ? placeholderNames : [PLACEHOLDER_TOOL_NAME];
+  const namesToAdd = baseNames.filter((name) => !existingNames.has(name));
 
-  const names = placeholderNames.length > 0 ? placeholderNames : [PLACEHOLDER_TOOL_NAME];
+  if (namesToAdd.length === 0) return next as T;
+
+  const existingTools = Array.isArray(next.tools) ? [...next.tools] : [];
 
   if (requestFormat === "openai-responses") {
-    next.tools = names.map((name) => ({
-      type: "function",
-      name,
-      description: PLACEHOLDER_TOOL_DESCRIPTION,
-      parameters: PLACEHOLDER_TOOL_PARAMETERS,
-    }));
+    next.tools = [
+      ...existingTools,
+      ...namesToAdd.map((name) => ({
+        type: "function",
+        name,
+        description: PLACEHOLDER_TOOL_DESCRIPTION,
+        parameters: PLACEHOLDER_TOOL_PARAMETERS,
+      })),
+    ];
     return next as T;
   }
 
   if (requestFormat === "openai" || requestFormat === null) {
-    next.tools = names.map((name) => ({
-      type: "function",
-      function: {
-        name,
-        description: PLACEHOLDER_TOOL_DESCRIPTION,
-        parameters: PLACEHOLDER_TOOL_PARAMETERS,
-      },
-    }));
+    next.tools = [
+      ...existingTools,
+      ...namesToAdd.map((name) => ({
+        type: "function",
+        function: {
+          name,
+          description: PLACEHOLDER_TOOL_DESCRIPTION,
+          parameters: PLACEHOLDER_TOOL_PARAMETERS,
+        },
+      })),
+    ];
     return next as T;
   }
 
   return next as T;
+}
+
+/**
+ * Merge a gated request's own tools with the names the store last saw accepted.
+ *
+ * A client that declares tools is left alone by `applyFreeTierRequestContract` — but the
+ * upstream inspects WHICH names are declared, and a subset it never saw pass (measured
+ * 2026-09-21: the 5 explore-agent tools `[glob, grep, read, webfetch, websearch]` on
+ * `muse-spark-1.3-contributor-free`, 11 refusals, zero passes) is answered 403
+ * FreeTierError. When such a refusal comes back, this rebuilds the same body with the
+ * observed names appended after the client's own entries: the client tools keep their
+ * full shape (description, parameters) so the model can still call them, while the
+ * appended names are list entries with an empty parameter object — the same shape the
+ * placeholder path uses, never a callable tool.
+ *
+ * Pure: returns the input body unchanged when no observed names are missing, so the
+ * caller can skip the retry on identity alone. Resolution order is the store's own:
+ * this conversation first, then any conversation on the model, then the operator's
+ * configured names.
+ */
+export function mergeClientToolsWithObserved<T>(
+  body: T,
+  requestFormat: string | null,
+  provider: string,
+  model: string,
+  session: string | undefined,
+  configured: readonly string[]
+): T {
+  if (!body || typeof body !== "object" || Array.isArray(body)) return body;
+  const record = body as Record<string, unknown>;
+  if (!Array.isArray(record.tools) || record.tools.length === 0) return body;
+  const own = session ? getObservedToolNames(provider, model, session) : null;
+  const observed = own ?? getObservedToolNames(provider, model) ?? configured;
+  const have = new Set(clientToolNamesOf(body));
+  const missing = observed.filter((name) => !have.has(name));
+  if (missing.length === 0) return body;
+  const next: Record<string, unknown> = { ...(record as Record<string, unknown>) };
+  if (requestFormat === "openai-responses") {
+    next.tools = [
+      ...(record.tools as unknown[]),
+      ...missing.map((name) => ({
+        type: "function",
+        name,
+        description: PLACEHOLDER_TOOL_DESCRIPTION,
+        parameters: PLACEHOLDER_TOOL_PARAMETERS,
+      })),
+    ];
+    return next as T;
+  }
+  if (requestFormat === "openai" || requestFormat === null) {
+    next.tools = [
+      ...(record.tools as unknown[]),
+      ...missing.map((name) => ({
+        type: "function",
+        function: {
+          name,
+          description: PLACEHOLDER_TOOL_DESCRIPTION,
+          parameters: PLACEHOLDER_TOOL_PARAMETERS,
+        },
+      })),
+    ];
+    return next as T;
+  }
+  return body;
 }
 
 function clientToolNamesOf(body: unknown): string[] {
