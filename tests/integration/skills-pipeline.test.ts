@@ -108,11 +108,15 @@ test("enabling a disabled skill makes it available in the request pipeline", asy
     handler: "weather-handler-enable",
     enabled: false,
   });
+  const managementKey = await seedApiKey({ name: "skills-enable-manage", scopes: ["manage"] });
 
   const updateResponse = await skillByIdRouteModule.PUT(
     new Request("http://localhost/api/skills/id", {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${managementKey.key}`,
+      },
       body: JSON.stringify({ enabled: true }),
     }),
     { params: Promise.resolve({ id: skill.id }) }
@@ -297,11 +301,15 @@ test("disabling a skill removes it from request tool injection", async () => {
     name: "lookupWeather",
     handler: "weather-handler-disable",
   });
+  const managementKey = await seedApiKey({ name: "skills-disable-manage", scopes: ["manage"] });
 
   const updateResponse = await skillByIdRouteModule.PUT(
     new Request("http://localhost/api/skills/id", {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${managementKey.key}`,
+      },
       body: JSON.stringify({ enabled: false }),
     }),
     { params: Promise.resolve({ id: skill.id }) }
