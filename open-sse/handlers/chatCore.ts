@@ -352,16 +352,10 @@ import {
   resolveReportedServiceTier as resolveReportedServiceTierFor,
   type EffectiveServiceTier,
 } from "./chatCore/serviceTier.ts";
-import {
-  cacheReasoningFromAssistantMessage,
-  requiresReasoningReplay,
-} from "../services/reasoningCache.ts";
 import { isCompactResponsesEndpoint } from "../executors/codex.ts";
 import { persistCodexChildQuotaResponse } from "../services/codexAccount/index.ts";
 import { invalidateCodexQuotaCache } from "../services/codexQuotaFetcher.ts";
 import { invalidateGenericQuotaCacheOnStatus } from "../services/genericQuotaFetcher.ts";
-import { translateNonStreamingResponse } from "./responseTranslator.ts";
-import { extractToolSchemaMap } from "../translator/response/openai-responses/toolSchemas.ts";
 import { extractUsageFromResponse } from "./usageExtractor.ts";
 import {
   withRateLimit,
