@@ -54,7 +54,6 @@
     "bcryptjs",
     "better-sqlite3",
     "bottleneck",
-    "bun",
     "c8",
     "clsx",
     "commander",
